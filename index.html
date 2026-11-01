@@ -13021,6 +13021,16 @@ body.theme-dark .v82-forecast-breakdown b{color:#d7e9ff}
 }
 @media(max-width:360px){.v85-commit-actions{gap:5px}.v85-load-chip{max-width:100%;white-space:normal}}
 </style>
+<style id="vive-v89-endeudamiento">
+.v89-capacity-feature{border:1px solid #dce4ed;border-radius:20px;padding:19px;margin-bottom:14px;background:#f7fafc;display:flex;flex-direction:column;gap:6px}
+.v89-capacity-feature>span{font-size:11px;font-weight:800;letter-spacing:.08em}.v89-capacity-feature>strong{font-size:clamp(38px,5vw,56px);letter-spacing:-.05em;line-height:1.1;font-variant-numeric:tabular-nums}.v89-capacity-feature>p{font-size:13px;margin:0}
+.v89-debt-breakdown{grid-column:1/-1;min-width:0;padding:14px;border:1px solid #e3e9ef;border-radius:17px;background:rgba(248,250,252,.72)}.v89-debt-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid #e6ebf1;font-size:12px}.v89-debt-row strong{font-size:13px;font-variant-numeric:tabular-nums;text-align:right}.v89-debt-total{font-weight:800}.v89-debt-breakdown p{color:#64748b;font-size:11px;line-height:1.55;margin:11px 0 0}
+.v85-risk-over,.v82-burden-over{background:#fff0f0!important;border-color:#efb5b5!important;color:#ae1825!important}.v85-risk-over strong,.v82-burden-over strong{color:#c01828!important}
+@media(max-width:600px){.v89-debt-row{gap:6px}.v89-debt-row strong{white-space:normal}.v89-capacity-feature{padding:14px}}
+</style>
+<style id="vive-v90-gasto-capacidad">
+.v90-expense-advisor{min-width:0}.v90-expense-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0}.v90-expense-compare>div{min-width:0;padding:12px;border:1px solid #e3eaf0;border-radius:13px;background:rgba(248,250,252,.8);display:flex;flex-direction:column;gap:5px}.v90-expense-compare small{font-size:9px;font-weight:750;letter-spacing:.04em;line-height:1.4;color:#718096}.v90-expense-compare strong{font-size:clamp(17px,2.4vw,25px);font-weight:850;letter-spacing:-.04em;overflow-wrap:anywhere}.v90-expense-compare .v90-after{background:#eff9f3;border-color:#b4ddc3;color:#17643d}.v90-expense-compare .v90-after.v90-caution{background:#fff8e8;border-color:#efcf87;color:#945d06}.v90-expense-compare .v90-after.v90-over{background:#fff0f0;border-color:#f2a8a8;color:#b4232a}.v90-expense-balance{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:10px 0;padding:11px 13px;border-radius:12px;background:#eef7f3;color:#186a45;font-size:12px;font-weight:730}.v90-expense-balance strong{font-size:18px}.v90-expense-balance.v90-negative{background:#ffe9e9;color:#b4232a}.v90-expense-mini.v80-over,.v90-expense-mini.v80-over *{color:#b4232a}.fastx-form .v90-expense-advisor{margin-bottom:10px}@media(max-width:600px){.v90-expense-compare{grid-template-columns:repeat(2,minmax(0,1fr))}.v90-expense-compare strong{font-size:18px}}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -13749,7 +13759,7 @@ const totalLoanDebt=()=>db.loans.reduce((v,l)=>v+fx(loanStatus(l).balance,l.curr
   return {capital,days,gross,tax,net:rnd(gross-tax),expiry:diffDays(c.maturityDate,today()),collected:db.transactions.filter(t=>t.type==='income'&&t.certificateId===c.id).reduce((x,t)=>x+num(t.amount),0)};
  };
 function upcoming(){let all=[];for(let c of db.cards){for(let ccy of ['DOP','USD']){let st=cardStatus(c,ccy);for(let [due,amount] of Object.entries(st.dueMap)){if(amount>0.005)all.push({id:c.id+'-'+ccy+'-'+due,kind:'card',name:c.name+' · '+ccy,amount:rnd(amount),currency:ccy,date:due,action:'payCard',ref:c.id,ccy})}}}
-for(let l of db.loans){let s=loanStatus(l);if(!s.settled)all.push({id:l.id,kind:'loan',name:l.name,amount:rnd(Math.min(s.balance+s.estimatedInterest,s.installment)+v49LoanPeriodInsurance(l,s.periods)+v49LoanPeriodFee(l,s.periods)),currency:l.currency,date:s.next,action:'payLoan',ref:l.id})}
+for(let l of db.loans){try{let s=loanStatus(l);if(!s.settled&&s.balance>.005){const contracted=Math.max(0,num(s.installment)||num(fullOriginalLoan(l).installment));const interest=Math.max(0,num(s.estimatedInterest));const quota=rnd(Math.min(s.balance+interest,Math.max(contracted,interest))+v49LoanPeriodInsurance(l,s.periods)+v49LoanPeriodFee(l,s.periods));all.push({id:l.id,kind:'loan',name:l.name,amount:quota,currency:l.currency,date:s.next||today(),action:'payLoan',ref:l.id})}}catch(err){console.warn('No fue posible calcular compromiso de préstamo',l.id,err)}}
 for(let l of db.personalLoans){let balance=personalBalance(l);if(balance>0&&l.dueDate)all.push({id:l.id,kind:l.direction==='borrowed'?'personal':'personal_recv',name:l.person,amount:balance,currency:l.currency,date:l.dueDate,action:'payPersonal',ref:l.id})}
  for(let r of db.recurring){if(r.active!==false)all.push({id:r.id,kind:'recurring',name:r.name,amount:r.amount,currency:r.currency,date:r.nextDue,action:'payRecurring',ref:r.id})}
 return all.sort((a,b)=>a.date.localeCompare(b.date))}
@@ -13857,7 +13867,8 @@ function mobileTransactions(limit=5){
 function mobileMiniTrend(){
  const ref=dateObj(ui.month+'-01');const months=Array.from({length:5},(_,i)=>{let d=new Date(ref.getFullYear(),ref.getMonth()-(4-i),1),x=monthlyTotals(d.getFullYear(),d.getMonth()+1);return {m:d.toLocaleDateString('es-DO',{month:'short'}).replace('.',''),income:x.income,expense:x.expense}});
  const max=Math.max(1,...months.flatMap(m=>[m.income,m.expense]));
- return `<div class="vive-mobile-mini-trend" role="img" aria-label="Ingresos y egresos de los últimos cinco meses">${months.map(m=>`<div class="vive-mobile-trend-group" title="${m.m}: Ingresos ${money(m.income)} · Egresos ${money(m.expense)}"><div class="vive-mobile-trend-bars"><span class="vive-mobile-trend-in" style="height:${Math.max(5,m.income/max*100)}%"></span><span class="vive-mobile-trend-out" style="height:${Math.max(5,m.expense/max*100)}%"></span></div><small>${m.m}</small></div>`).join('')}</div>`;
+ const forecast=v82ForecastMonth();
+ return `<div class="vive-mobile-mini-trend" role="img" aria-label="Ingresos y egresos de los últimos cinco meses">${months.map(m=>`<div class="vive-mobile-trend-group" title="${m.m}: Ingresos ${money(m.income)} · Egresos ${money(m.expense)}${m.m.toLowerCase()===dateObj(forecast.period+'-01').toLocaleDateString('es-DO',{month:'short'}).replace('.','').toLowerCase()?` · Proyección ingresos ${money(forecast.income)} · egresos ${money(forecast.expense)} · neto ${money(forecast.net)} (estimados)`: ''}"><div class="vive-mobile-trend-bars"><span class="vive-mobile-trend-in" style="height:${Math.max(5,m.income/max*100)}%"></span><span class="vive-mobile-trend-out" style="height:${Math.max(5,m.expense/max*100)}%"></span></div><small>${m.m}</small></div>`).join('')}</div>`;
 }
 
 /* V64 · Total de saldo por naturaleza: no confundir deuda íntegra con cuotas por vencer. */
@@ -13939,7 +13950,7 @@ function mobileHome(){
    <section class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Suma de próximos vencimientos: ${money(pendingTotal,'DOP',2)}">${money(pendingTotal)}</div><div class="vive-mobile-commitment-foot"><span>Vencimientos registrados · RD$ equivalente</span><span>${commitments.length} pago${commitments.length===1?'':'s'}</span></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
    <section class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
    <section class="vive-mobile-net-card v36-month-capsule" aria-label="Balance del mes"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RESUMEN MENSUAL</span><h2>Balance del mes</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="advanced">Ver análisis ${icon('up')}</button></div><div class="v36-month-columns"><span><small>Ingresos</small><strong class="v36-income">${money(m.income)}</strong></span><span><small>Egresos</small><strong class="v36-expense">${money(m.expense)}</strong></span></div><div class="v36-month-net"><span><small>Neto</small><strong class="vive-mobile-net-value ${m.net<0?'negative':''}" title="Ingresos menos egresos: ${money(m.net,'DOP',2)}">${money(m.net)}</strong></span><small>${netLabel}</small></div></section>
-   ${v82ForecastMarkup(true)}
+
   </div>`;
 }
 function mobileHub(){
@@ -14089,6 +14100,8 @@ function overview(){
  }).join('');
  const five=Array.from({length:5},(_,i)=>{const base=dateObj(ui.month+'-01');base.setMonth(base.getMonth()-4+i);let y=base.getFullYear(),mo=base.getMonth()+1;return {date:base,tot:monthlyTotals(y,mo)}});
  const high=Math.max(1,...five.flatMap(x=>[x.tot.income,x.tot.expense]));
+ const v88Forecast=v82ForecastMonth();
+ const v88ProjectionTip=`Proyección del cierre · ${v88Forecast.period}|Ingresos previstos: ${money(v88Forecast.income)}|Egresos previstos: ${money(v88Forecast.expense)}|Neto previsto: ${money(v88Forecast.net)}|Cobros pendientes previstos: ${money(v88Forecast.expectedIncome)}|Gastos pendientes previstos: ${money(v88Forecast.expectedExpense)}|Estimación, no movimientos confirmados`;
  const bars=five.map((x,i)=>{
    let inH=Math.max(4,100*Math.max(0,x.tot.income)/high),outH=Math.max(4,100*Math.max(0,x.tot.expense)/high),mn=x.date.toLocaleDateString('es-DO',{month:'short'}).replace('.','').toUpperCase();
    return `<div class="ff-bar-group" tabindex="0" data-chart-tip="${x.date.toLocaleDateString('es-DO',{month:'long',year:'numeric'})}|Ingresos: ${money(x.tot.income)}|Egresos: ${money(x.tot.expense)}|Neto: ${money(x.tot.net)}"><div class="ff-bar-cluster"><span class="ff-bar ff-bar-in" style="height:${inH}%"></span><span class="ff-bar ff-bar-out" style="height:${outH}%"></span></div><span class="ff-bar-label">${mn}</span></div>`;
@@ -14510,18 +14523,43 @@ function fullOriginalLoan(l){
   }
   return {rows,installment:rnd(payment),interest:rnd(rows.reduce((a,b)=>a+b.interest,0)),insurance:rnd(rows.reduce((a,b)=>a+b.insurance,0)),fees:rnd(rows.reduce((a,b)=>a+b.fee,0)),end:rows.at(-1)?.date||l.firstDue};
 }
+/* V88 · Reconstrucción retrospectiva: NO crea transacciones ni presume pagos bancarios confirmados. */
+function v88LoanReconstruction(l){
+ const principal=Math.max(0,num(l.principal)),hasSnapshot=l.openingMode==='existing'&&l.openingDebt!==null&&l.openingDebt!==undefined&&l.openingDebt!=='';
+ const opening=hasSnapshot?Math.max(0,Math.min(principal,num(l.openingDebt))):principal;
+ const snapshot=(l.openingBalanceDate||today()).slice(0,10);
+ const reduction=rnd(Math.max(0,principal-opening)),count=v49LoanPeriodCount(l);
+ if(!hasSnapshot||reduction<=.005||!l.firstDue)return {rows:[],periods:0,interest:0,insurance:0,fees:0,opening,reduction,snapshot};
+ let dates=[];
+ for(let i=0;i<count;i++){const due=v49LoanPeriodDate(l,i);if(!due||due>snapshot||due>today())break;dates.push(due);}
+ if(!dates.length)return {rows:[],periods:0,interest:0,insurance:0,fees:0,opening,reduction,snapshot};
+ // Reparto proporcional del capital realmente reducido entre las cuotas transcurridas.
+ // El saldo final se reconcilia exactamente con el saldo que proporcionó el usuario.
+ const plan=fullOriginalLoan(l).rows,weights=dates.map((_,i)=>Math.max(.01,num(plan[i]?.principal)));
+ const totalWeight=weights.reduce((x,y)=>x+y,0);let balance=principal,rows=[],interest=0,insurance=0,fees=0;
+ dates.forEach((due,i)=>{
+  const cap=i===dates.length-1?rnd(Math.max(0,balance-opening)):rnd(Math.min(Math.max(0,balance-opening),reduction*weights[i]/totalWeight));
+  const it=v49LoanPeriodInterest(l,balance,due),ins=v49LoanPeriodInsurance(l,i),fee=v49LoanPeriodFee(l,i);
+  const before=balance;balance=rnd(Math.max(0,balance-cap));interest+=it;insurance+=ins;fees+=fee;
+  rows.push({period:i+1,date:due,opening:before,principal:cap,interest:it,insurance:ins,fee,extra:0,payment:rnd(cap+it+ins+fee),balance,kind:'Histórico estimado',estimated:true});
+ });
+ return {rows,periods:dates.length,interest:rnd(interest),insurance:rnd(insurance),fees:rnd(fees),opening,reduction,snapshot};
+}
 function loanAccounting(l){
-  let history=loanTransactions(l.id).filter(t=>t.date<=today()),opening=(l.openingMode==='existing'&&l.openingDebt!==undefined&&l.openingDebt!==null&&l.openingDebt!=='')?Math.max(0,Math.min(num(l.principal),num(l.openingDebt))):num(l.principal),running=opening,rows=[],interest=0,insurance=0,fees=0,extras=0,periods=new Set();
-  history.forEach((t,i)=>{
-    const principal=rnd(Math.max(0,num(t.principal))),isExtra=t.paymentKind==='extra';
-    const old=running;running=rnd(Math.max(0,running-principal));
-    interest+=num(t.interest);insurance+=num(t.insurance);fees+=num(t.fee);
-    if(isExtra)extras+=principal;
-    else periods.add(t.installmentPeriod||(v49LoanPeriodsPerMonth(l)===2?t.date:t.date.slice(0,7)));
-    rows.push({period:i+1,date:t.date,opening:old,principal,interest:num(t.interest),insurance:num(t.insurance),fee:num(t.fee),extra:isExtra?principal:0,payment:num(t.amount),balance:running,kind:isExtra?'Abono real':'Cuota real',txId:t.id});
-  });
-  const first=v49LoanPeriodDate(l,periods.size);
-  return {balance:rnd(running),paidPrincipal:rnd(num(l.principal)-running),openingPrincipal:rnd(opening),historicReduction:rnd(Math.max(0,num(l.principal)-opening)),recordedPrincipal:rnd(opening-running),interest:rnd(interest),insurance:rnd(insurance),fees:rnd(fees),extras:rnd(extras),periods:periods.size,rows,next:first,settled:running<.01};
+ const modeled=v88LoanReconstruction(l),historic=modeled.rows;
+ let history=loanTransactions(l.id).filter(t=>t.date<=today()).sort((a,b)=>a.date.localeCompare(b.date)),opening=modeled.opening,running=opening,rows=[...historic],interest=0,insurance=0,fees=0,extras=0,periods=new Set();
+ // Solo los registros hechos DESPUÉS del saldo de apertura reducen nuevamente ese capital.
+ if(l.openingMode==='existing')history=history.filter(t=>t.date>modeled.snapshot);
+ history.forEach((t,i)=>{
+  const capital=rnd(Math.min(running,Math.max(0,num(t.principal)))),isExtra=t.paymentKind==='extra';
+  const old=running;running=rnd(Math.max(0,running-capital));
+  interest+=num(t.interest);insurance+=num(t.insurance);fees+=num(t.fee);
+  if(isExtra)extras+=capital;
+  else periods.add(t.installmentPeriod||(v49LoanPeriodsPerMonth(l)===2?t.date:t.date.slice(0,7)));
+  rows.push({period:modeled.periods+i+1,date:t.date,opening:old,principal:capital,interest:num(t.interest),insurance:num(t.insurance),fee:num(t.fee),extra:isExtra?capital:0,payment:num(t.amount),balance:running,kind:isExtra?'Abono real':'Cuota real',txId:t.id});
+ });
+ const elapsed=Math.min(v49LoanPeriodCount(l),modeled.periods+periods.size),first=v49LoanPeriodDate(l,elapsed);
+ return {balance:rnd(running),paidPrincipal:rnd(num(l.principal)-running),openingPrincipal:rnd(opening),historicReduction:modeled.reduction,recordedPrincipal:rnd(opening-running),interest:rnd(interest),insurance:rnd(insurance),fees:rnd(fees),estimatedHistoricInterest:modeled.interest,estimatedHistoricInsurance:modeled.insurance,estimatedHistoricFees:modeled.fees,historicPeriods:modeled.periods,recordedPeriods:periods.size,extras:rnd(extras),periods:elapsed,rows,next:first,settled:running<.01};
 }
 function loanForecast(l,ac,opt={}){
   const origRate=Math.max(0,num(l.rate))/1200/v49LoanPeriodsPerMonth(l),latestRate=Math.max(0,num(l.currentRate??l.rate))/1200/v49LoanPeriodsPerMonth(l),original=fullOriginalLoan(l);
@@ -14550,7 +14588,7 @@ function loanForecast(l,ac,opt={}){
 function loanBundle(l){
   let original=fullOriginalLoan(l),actual=loanAccounting(l),baseline=loanForecast(l,actual,{amount:0});
   let simOpt=loanOptions(l),scenario=loanForecast(l,actual,simOpt);
-  let baselineInterest=rnd(actual.interest+baseline.interest),scenarioInterest=rnd(actual.interest+scenario.interest),baselineInsurance=rnd(actual.insurance+baseline.insurance),scenarioInsurance=rnd(actual.insurance+scenario.insurance);
+  let baselineInterest=rnd(actual.interest+actual.estimatedHistoricInterest+baseline.interest),scenarioInterest=rnd(actual.interest+actual.estimatedHistoricInterest+scenario.interest),baselineInsurance=rnd(actual.insurance+actual.estimatedHistoricInsurance+baseline.insurance),scenarioInsurance=rnd(actual.insurance+actual.estimatedHistoricInsurance+scenario.insurance);
   return {original,actual,baseline,scenario,simOpt,baselineInterest,scenarioInterest,baselineInsurance,scenarioInsurance,
     projectedInterestSavings:rnd(baseline.interest-scenario.interest),projectedInsuranceSavings:rnd(baseline.insurance-scenario.insurance),
     globalInterestDifference:rnd(original.interest-scenarioInterest),monthsAdvanced:baseline.rows.length-scenario.rows.length};
@@ -14598,8 +14636,8 @@ function loanCurves(bundle,l){
    <div class="loan-legend"><span><i style="background:#9aabc7"></i> Original</span><span><i style="background:#138c79"></i> Registrado</span><span><i style="background:#4a76c7"></i> Proyección vigente</span>${bundle.simOpt.amount>0?'<span><i style="background:#d89058"></i> Estrategia</span>':''}</div>`;
 }
 function loanComparison(l,b){
-  let curr=b.actual.interest+b.baseline.interest,currIns=b.actual.insurance+b.baseline.insurance,currFee=b.actual.fees+b.baseline.fees;
-  let sim=b.actual.interest+b.scenario.interest,simIns=b.actual.insurance+b.scenario.insurance,simFee=b.actual.fees+b.scenario.fees;
+  let curr=b.actual.interest+b.actual.estimatedHistoricInterest+b.baseline.interest,currIns=b.actual.insurance+b.actual.estimatedHistoricInsurance+b.baseline.insurance,currFee=b.actual.fees+b.actual.estimatedHistoricFees+b.baseline.fees;
+  let sim=b.actual.interest+b.actual.estimatedHistoricInterest+b.scenario.interest,simIns=b.actual.insurance+b.actual.estimatedHistoricInsurance+b.scenario.insurance,simFee=b.actual.fees+b.actual.estimatedHistoricFees+b.scenario.fees;
   const r=(title,first,second,third)=>`<div class="loan-compare-row"><span>${title}</span><b>${first}</b><b>${second}</b><b>${third}</b></div>`;
   const fmt=v=>money(v,l.currency,2);
   return `<div class="glass-loan loan-compare"><div class="loan-panel-title"><h3>Tres escenarios, una misma deuda.</h3><p>Comparación basada en las condiciones registradas, no en valores confirmados por el banco.</p></div><div class="loan-compare-scroll"><div class="loan-compare-table"><div class="loan-compare-header"><span>Concepto</span><strong>Plan original</strong><strong>Proyección vigente</strong><strong>Con estrategia</strong></div>
@@ -14613,7 +14651,7 @@ function loanComparison(l,b){
 }
 function loanKpis(l,b){
   const a=b.actual,pct=num(l.principal)>0?a.paidPrincipal/num(l.principal)*100:0;
-  return `<div class="loan-detail-kpis">${loanStat('Saldo pendiente',money(a.balance,l.currency,2),'Capital real según pagos','wallet','violet')}${loanStat('Avance de capital',pct.toFixed(1)+'%','Reducción de capital: '+money(a.paidPrincipal,l.currency),'check','teal')}${loanStat('Intereses pagados',money(a.interest,l.currency,2),'Desembolso histórico','chart','blue')}${loanStat('Abonos extraordinarios',money(a.extras,l.currency,2),'Reducen principal directamente','up','amber')}</div>`;
+  return `<div class="loan-detail-kpis">${loanStat('Saldo pendiente',money(a.balance,l.currency,2),'Capital real según pagos','wallet','violet')}${loanStat('Avance de capital',pct.toFixed(1)+'%','Reducción de capital: '+money(a.paidPrincipal,l.currency),'check','teal')}${loanStat('Intereses históricos',money(a.interest+a.estimatedHistoricInterest,l.currency,2),a.estimatedHistoricInterest>0?'Incluye '+money(a.estimatedHistoricInterest,l.currency,2)+' estimados; confirmados: '+money(a.interest,l.currency,2):'Pagos registrados','chart','blue')}${loanStat('Abonos extraordinarios',money(a.extras,l.currency,2),'Reducen principal directamente','up','amber')}</div>`;
 }
 function loanDetail(l){
   let b=loanBundle(l),a=b.actual,status=a.settled?'Liquidado':diffDays(a.next,today())<0?'Cuota vencida':'Activo',next=a.settled?'Sin cuotas pendientes':prettyDate(a.next);
@@ -14621,9 +14659,9 @@ function loanDetail(l){
   let tab=loanWorkspace.tab;
   let body=tab==='vision'?loanVision(l,b)+loanConditions(l):tab==='amort'?loanAmortView(l,b):tab==='payments'?loanPaymentHistory(l,b):loanSimulator(l,b);
   return `<section class="loan-workspace" id="loan-workspace"><div class="loan-detail-top"><div><button class="loan-back" data-act="closeLoanDetails">${icon('arrow')} Volver a mi cartera</button><div class="loan-detail-micro">${sanitize(bankOf(l))} <span>·</span> ${sanitize(l.currency)} <span>·</span> ${status}</div><h2>${sanitize(l.name)}</h2><p>Capital original: ${money(l.principal,l.currency,2)} · ${num(l.rate).toFixed(2)}% anual · ${v49LoanPeriodCount(l)} ${v49LoanPeriodsPerMonth(l)===2?'quincenas':'cuotas mensuales'}${l.originationDate?' · desde '+prettyDate(l.originationDate):''}</p>${a.historicReduction>0?`<div class="v83-loan-snapshot"><span>Saldo al registrar: <b>${money(a.openingPrincipal,l.currency,2)}</b></span><span>Capital reducido previamente: <b>${money(a.historicReduction,l.currency,2)}</b></span><span>Saldo actual: <b>${money(a.balance,l.currency,2)}</b></span></div>`:''}</div><div class="loan-detail-top-actions"><button class="btn sm ghost" data-act="editLoan" data-id="${l.id}">Editar ficha</button><button class="btn sm soft" data-act="extraLoan" data-id="${l.id}" ${a.settled?'disabled':''}>Abono extraordinario</button><button class="btn sm loan-primary" data-act="payLoan" data-id="${l.id}" ${a.settled?'disabled':''}>Registrar cuota</button></div></div>
-    ${loanKpis(l,b)}<div class="loan-compact-facts glass-loan"><div><span>PRÓXIMO VENCIMIENTO</span><strong>${next}</strong></div><div><span>CUOTA CONTRACTUAL</span><strong>${money(loanStatus(l).installment,l.currency,2)}</strong></div><div><span>CUOTAS REGISTRADAS</span><strong>${a.periods} registradas / ${v49LoanPeriodCount(l)} pactadas</strong></div><div><span>INTERÉS + SEGURO + COMISIONES PAGADOS</span><strong>${money(a.interest+a.insurance+a.fees,l.currency,2)}</strong></div></div>
+    ${loanKpis(l,b)}<div class="loan-compact-facts glass-loan"><div><span>PRÓXIMO VENCIMIENTO</span><strong>${next}</strong></div><div><span>CUOTA CONTRACTUAL</span><strong>${money(loanStatus(l).installment,l.currency,2)}</strong></div><div><span>CUOTAS TRANSCURRIDAS</span><strong>${a.periods} registradas / ${v49LoanPeriodCount(l)} pactadas</strong></div><div><span>INTERÉS + SEGURO + CARGOS (CONFIRMADOS Y ESTIMADOS)</span><strong>${money(a.interest+a.insurance+a.fees+a.estimatedHistoricInterest+a.estimatedHistoricInsurance+a.estimatedHistoricFees,l.currency,2)}</strong></div></div>
     <nav class="loan-tabs" aria-label="Detalle de préstamo">${tabs.map(([key,title])=>`<button class="loan-tab ${key===tab?'on':''}" data-act="loanTab" data-id="${key}">${title}</button>`).join('')}</nav><div class="loan-tab-content">${body}</div>
-    <div class="loan-alert"><span>${icon('shield')}</span><div><strong>Control financiero y conciliación.</strong> La deuda se calcula desde el saldo de apertura informado, menos el capital de los nuevos pagos registrados. La reducción histórica es una diferencia de saldos, no un pago verificado. Los intereses y seguros futuros se estiman; verifica cada importe contra el estado de cuenta de tu institución.${num(l.reportedBalance)>0?` <strong>Saldo confirmado por banco (${prettyDate(l.balanceAsOf||today())}): ${money(l.reportedBalance,l.currency,2)}. Diferencia frente al registro: ${money(a.balance-num(l.reportedBalance),l.currency,2)}.</strong>`:''}</div></div></section>`;
+    <div class="loan-alert"><span>${icon('shield')}</span><div><strong>Control financiero y conciliación.</strong> La deuda parte del saldo de apertura informado y descuenta los pagos posteriores. Las quincenas anteriores se reconstruyen como estimaciones, no como movimientos bancarios verificados; su interés es orientativo y puede diferir del cobrado por el banco. Los intereses y seguros futuros se estiman; verifica cada importe contra el estado de cuenta de tu institución.${num(l.reportedBalance)>0?` <strong>Saldo confirmado por banco (${prettyDate(l.balanceAsOf||today())}): ${money(l.reportedBalance,l.currency,2)}. Diferencia frente al registro: ${money(a.balance-num(l.reportedBalance),l.currency,2)}.</strong>`:''}</div></div></section>`;
 }
 function loanConditions(l){let arr=l.conditionHistory||[];return `<div class="glass-loan loan-conditions"><div class="loan-panel-title"><h3>Condiciones originales y vigentes</h3><p>El contrato original no se sobrescribe cuando cambian las condiciones del banco.</p></div><div class="condition-grid"><div><span>TASA ORIGINAL</span><strong>${num(l.rate).toFixed(3)}%</strong></div><div><span>TASA VIGENTE</span><strong>${num(l.currentRate??l.rate).toFixed(3)}%</strong></div><div><span>SEGURO ACTUAL</span><strong>${money(l.insuranceMonthly||0,l.currency,2)}</strong></div><div><span>CAMBIOS REGISTRADOS</span><strong>${arr.length}</strong></div></div><div class="hstack" style="margin:15px 0"><button class="btn sm soft" data-act="editLoan" data-id="${l.id}">Actualizar condiciones</button>${productControls('loan',l.id,l.archived)}</div>${arr.length?`<div class="table-wrap"><table><thead><tr><th>Registrado</th><th>Vigente desde</th><th>Tasa anterior</th><th>Nueva tasa</th><th>Seguro anterior</th><th>Nuevo seguro</th><th>Cuota anterior</th><th>Nueva cuota</th></tr></thead><tbody>${arr.slice().reverse().map(x=>`<tr><td>${prettyDate(x.at.slice(0,10))}</td><td>${prettyDate(x.effectiveFrom)}</td><td>${num(x.fromRate).toFixed(3)}%</td><td>${num(x.toRate).toFixed(3)}%</td><td>${money(x.fromInsurance,l.currency,2)}</td><td>${money(x.toInsurance,l.currency,2)}</td><td>${x.fromInstallment===undefined?'—':money(x.fromInstallment,l.currency,2)}</td><td>${x.toInstallment===undefined?'—':money(x.toInstallment,l.currency,2)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="footnote">Todavía no existen revisiones de tasa, seguro o comisiones.</p>'}</div>`}
 
@@ -14647,7 +14685,7 @@ function loanAmortView(l,b){
 }
 function loanPaymentHistory(l,b){
   let a=b.actual;
-  return `<div class="glass-loan loan-history">${a.historicReduction>0?`<div class="v83-opening-banner"><span>HISTORIAL PREVIO · SALDO DE APERTURA</span><strong>${money(a.historicReduction,l.currency,2)} de capital reducido antes del registro</strong><small>Diferencia entre el capital original y el saldo al incorporar este préstamo. No se creó un pago, interés ni movimiento bancario; los pagos posteriores figuran en la tabla.</small></div>`:''}<div class="loan-panel-title loan-with-actions"><div><h3>Tu historial verificado</h3><p>Cada registro modifica el saldo de capital y el balance de su cuenta bancaria.</p></div><div class="loan-action-row"><button class="btn sm soft" data-act="extraLoan" data-id="${l.id}">+ Abono</button><button class="btn sm loan-primary" data-act="payLoan" data-id="${l.id}">+ Cuota</button></div></div><div class="loan-mini-summary"><span><small>Capital reducido desde origen</small><strong>${money(a.paidPrincipal,l.currency,2)}</strong></span><span><small>Interés pagado</small><strong>${money(a.interest,l.currency,2)}</strong></span><span><small>Seguro</small><strong>${money(a.insurance,l.currency,2)}</strong></span><span><small>Comisiones</small><strong>${money(a.fees,l.currency,2)}</strong></span></div><div class="loan-table-scroll"><table class="loan-data-table"><thead><tr><th>Fecha</th><th>Operación</th><th class="right">Capital</th><th class="right">Intereses</th><th class="right">Seguro + cargos</th><th class="right">Importe</th><th class="right">Saldo después</th><th></th></tr></thead><tbody>${a.rows.length?a.rows.map(r=>`<tr><td>${prettyDate(r.date)}</td><td><span class="loan-mini-state">${sanitize(r.kind)}</span></td><td class="right">${money(r.principal,l.currency,2)}</td><td class="right">${money(r.interest,l.currency,2)}</td><td class="right">${money(r.insurance+r.fee,l.currency,2)}</td><td class="right">${money(r.payment,l.currency,2)}</td><td class="right loan-balance-cell">${money(r.balance,l.currency,2)}</td><td><button class="loan-delete" data-act="deleteTransaction" data-id="${r.txId}" title="Eliminar movimiento">×</button></td></tr>`).join(''):'<tr><td colspan="8"><div class="loan-empty-small">Todavía no has registrado pagos. El préstamo conservará su plan original hasta que añadas el primer movimiento.</div></td></tr>'}</tbody></table></div></div>`;
+  return `<div class="glass-loan loan-history">${a.historicReduction>0?`<div class="v83-opening-banner"><span>HISTORIAL PREVIO · SALDO DE APERTURA</span><strong>${money(a.historicReduction,l.currency,2)} de capital reducido antes del registro</strong><small>Diferencia entre el capital original y el saldo al incorporar este préstamo. Se reconstruyeron las fechas e intereses estimados de las cuotas previas; no se crearon débitos ni movimientos reales.</small></div>`:''}<div class="loan-panel-title loan-with-actions"><div><h3>Historial de cuotas</h3><p>Los pagos confirmados se distinguen de las cuotas históricas reconstruidas. Las estimaciones no mueven cuentas.</p></div><div class="loan-action-row"><button class="btn sm soft" data-act="extraLoan" data-id="${l.id}">+ Abono</button><button class="btn sm loan-primary" data-act="payLoan" data-id="${l.id}">+ Cuota</button></div></div><div class="loan-mini-summary"><span><small>Capital reducido desde origen</small><strong>${money(a.paidPrincipal,l.currency,2)}</strong></span><span><small>Interés pagado</small><strong>${money(a.interest,l.currency,2)} confirmado · ${money(a.estimatedHistoricInterest,l.currency,2)} estimado</strong></span><span><small>Seguro</small><strong>${money(a.insurance,l.currency,2)}</strong></span><span><small>Comisiones</small><strong>${money(a.fees,l.currency,2)}</strong></span></div><div class="loan-table-scroll"><table class="loan-data-table"><thead><tr><th>Fecha</th><th>Operación</th><th class="right">Capital</th><th class="right">Intereses</th><th class="right">Seguro + cargos</th><th class="right">Importe</th><th class="right">Saldo después</th><th></th></tr></thead><tbody>${a.rows.length?a.rows.map(r=>`<tr><td>${prettyDate(r.date)}</td><td><span class="loan-mini-state">${sanitize(r.kind)}</span></td><td class="right">${money(r.principal,l.currency,2)}</td><td class="right">${money(r.interest,l.currency,2)}</td><td class="right">${money(r.insurance+r.fee,l.currency,2)}</td><td class="right">${money(r.payment,l.currency,2)}</td><td class="right loan-balance-cell">${money(r.balance,l.currency,2)}</td><td>${r.txId?`<button class="loan-delete" data-act="deleteTransaction" data-id="${r.txId}" title="Eliminar movimiento">×</button>`:`<small title="Reconstrucción orientativa, sin movimiento bancario">Estimado</small>`}</td></tr>`).join(''):'<tr><td colspan="8"><div class="loan-empty-small">Todavía no has registrado pagos. El préstamo conservará su plan original hasta que añadas el primer movimiento.</div></td></tr>'}</tbody></table></div></div>`;
 }
 function loanSimulator(l,b){
   let s=b.simOpt,fmt=v=>money(v,l.currency,2),hasStrategy=num(s.amount)>0,bad=b.scenario.error;
@@ -15326,7 +15364,7 @@ function overview(){
    const prevRecorded=db.transactions.some(t=>t.date?.startsWith(prevPrefix)&&['income','expense','card_charge','card_refund','card_reward','bank_reward','loan_payment','personal_settlement'].includes(t.type));
    const priorText=prevRecorded?`Neto vs. ${prevYr}: ${money(prev.net)}|Diferencia neta: ${money(x.tot.net-prev.net)}${Math.abs(prev.net)>.005?`|Cambio neto: ${((x.tot.net-prev.net)/Math.abs(prev.net)*100).toFixed(1)}%`:''}`:`Sin resultado comparable de ${prevYr}`;
    const liquidText=hasLiquidity&&liquidFive[i]!==null?`Liquidez al cierre: ${money(liquidFive[i])}`:'Liquidez al cierre: sin saldo registrado';
-   return `<div class="ff-bar-group" tabindex="0" data-chart-tip="${name}|Ingresos: ${money(x.tot.income)}|Egresos: ${money(x.tot.expense)}|Neto: ${money(x.tot.net)}|${priorText}"><div class="ff-bar-cluster"><span class="ff-bar ff-bar-in" title="Ingresos: ${money(x.tot.income)}" style="height:${inH}%"></span><span class="ff-bar ff-bar-out" title="Egresos: ${money(x.tot.expense)}" style="height:${outH}%"></span></div><span class="ff-bar-label">${mn}</span></div>`;
+   return `<div class="ff-bar-group" tabindex="0" data-chart-tip="${name}|Ingresos: ${money(x.tot.income)}|Egresos: ${money(x.tot.expense)}|Neto: ${money(x.tot.net)}|${priorText}${x.date.getFullYear()===Number(v88Forecast.period.slice(0,4))&&x.date.getMonth()+1===Number(v88Forecast.period.slice(5,7))?`|${v88ProjectionTip}`:''}"><div class="ff-bar-cluster"><span class="ff-bar ff-bar-in" title="Ingresos: ${money(x.tot.income)}" style="height:${inH}%"></span><span class="ff-bar ff-bar-out" title="Egresos: ${money(x.tot.expense)}" style="height:${outH}%"></span></div><span class="ff-bar-label">${mn}</span></div>`;
  }).join('');
  const lastLiq=hasLiquidity?liquidFive[4]:null;
  const priorYear=Number(ui.month.slice(0,4))-1;
@@ -15335,7 +15373,7 @@ function overview(){
  const hasPreviousResult=db.transactions.some(t=>t.date?.startsWith(previousMonthId)&&['income','expense','card_charge','card_refund','card_reward','bank_reward','loan_payment','personal_settlement'].includes(t.type));
  const netDifference=m.net-previousMonth.net;
  const previousNetLabel=hasPreviousResult?`Neto ${priorYear}: ${money(previousMonth.net)}|Ingresos ${priorYear}: ${money(previousMonth.income)}|Egresos ${priorYear}: ${money(previousMonth.expense)}|Diferencia vs. ${priorYear}: ${money(netDifference)}${Math.abs(previousMonth.net)>.005?`|Variación: ${(netDifference/Math.abs(previousMonth.net)*100).toFixed(1)}%`:'|Variación porcentual: sin base'}`:`Sin resultado registrado en ${priorYear}`;
- const monthlyNetTip=`Neto del mes · ${period}|Ingresos: ${money(m.income)}|Egresos: ${money(m.expense)}|Resultado actual: ${money(m.net)}|${previousNetLabel}`;
+ const monthlyNetTip=`Neto del mes · ${period}|Ingresos: ${money(m.income)}|Egresos: ${money(m.expense)}|Resultado actual: ${money(m.net)}|${previousNetLabel}|${v88ProjectionTip}`;
  const series=Array.from({length:7},(_,i)=>{let d=dateObj(ui.month+'-01');d.setMonth(d.getMonth()-6+i);return monthlyTotals(d.getFullYear(),d.getMonth()+1).net});
  let hi=Math.max(...series,1),lo=Math.min(...series,0),range=Math.max(1,hi-lo);
  let points=series.map((v,i)=>[12+i*62,105-(v-lo)/range*78]);
@@ -15355,7 +15393,7 @@ function overview(){
    <section class="ff-balance ff-tile" aria-label="Balance y productos principales"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><div class="ff-pos-amount">${money(allNet,'DOP',2)}</div><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="navigate" data-id="accounts" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v64Variance(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="navigate" data-id="cards" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v64Variance(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="navigate" data-id="patrimony" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v64Variance(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
    <aside class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(allDue)}</div><strong>${money(allDue)}</strong><span>Incluye cuotas y obligaciones previstas, no pagadas. Puede haber vencimientos de diferentes fechas.</span></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} registros por confirmar <span>${icon('arrow')}</span></button></aside>
    <div class="ff-mid">
-    <section class="ff-expense-card ff-tile"><div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses · cierre estimado disponible</p></div><div class="v82-chart-actions"><span class="ff-inline-pill">Mensual</span>${v82ChartShortcut()}</div></div><div class="ff-bar-chart" role="group" aria-label="Gráfico de ingresos y egresos de los últimos cinco meses">${bars}</div><div class="ff-stat-footer"><span title="Ingresos reconocidos del mes"><i class="ff-legend-blue"></i>Ingresos <b>${bubbleMoney(m.income)}</b></span><span title="Gastos reconocidos del mes"><i class="ff-legend-white"></i>Egresos <b>${bubbleMoney(m.expense)}</b></span></div></section>
+    <section class="ff-expense-card ff-tile"><div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses</p></div><div class="v82-chart-actions"><span class="ff-inline-pill">Mensual</span></div></div><div class="ff-bar-chart" role="group" aria-label="Gráfico de ingresos y egresos de los últimos cinco meses">${bars}</div><div class="ff-stat-footer"><span title="Ingresos reconocidos del mes"><i class="ff-legend-blue"></i>Ingresos <b>${bubbleMoney(m.income)}</b></span><span title="Gastos reconocidos del mes"><i class="ff-legend-white"></i>Egresos <b>${bubbleMoney(m.expense)}</b></span></div></section>
     <section class="ff-health-card ff-tile"><div class="ff-panel-top"><div><h2>Neto del mes</h2><p>Ingresos − egresos</p></div></div><div class="ff-health-number ff-net-hover" tabindex="0" data-chart-tip="${monthlyNetTip}" aria-label="Porcentaje neto mensual. Consulta la comparación con el año anterior">${ratioText}</div><div class="ff-health-caption">${ratio===null?'Sin ingresos registrados':'Del ingreso que queda después de gastos'}</div>${spark}<div class="ff-health-foot"><span>Resultado neto</span><strong tabindex="0" data-chart-tip="${monthlyNetTip}">${money(m.net)}</strong></div></section>
    </div>
    <section class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
@@ -16430,7 +16468,7 @@ function guidedTransactionForm(partial={},editId=null){
   if(mode==='income'||mode==='spend')enhanceIncomeExpenseExpress(f,mode,editing);
   else enhanceGuidedStudio(f,mode,editing);
  }
- if(!editing&&(mode==='spend'||mode==='service'))v80InstallAdvisor(f);
+ if(mode==='spend'||mode==='service')v80InstallAdvisor(f);
 }
 
 /* ------------- INGRESOS Y EGRESOS · REGISTRO EXPRESS -------------
@@ -19776,22 +19814,47 @@ function v80Assessment(amount=0,currency='DOP',opts={}){
  return {income,cost,recurring,loans,cards,personal,spent,obligations,obligationsRatio,base,total,ratio,prior,margin,cash,cashAfter,risk,debtRatio,debtRatioNet,debtService,cardMinimum,spending,selectedLimit,selectedBalance,currency,sourceType};
 }
 function v80StatusLabel(s){return s==='over'?'Supera tus ingresos previstos':s==='caution'?'Margen ajustado':s==='ok'?'Dentro del margen estimado':'Falta una base mensual de ingresos'}
+/* V90 — La carga mensual real y el efecto de un gasto se comparan SIEMPRE
+   con la proyección mensual. Un gasto puntual no se convierte en cuota recurrente. */
+function v90ExpenseImpact(a){
+ const d=v89DebtCapacity(),cost=Math.max(0,num(a.cost));
+ const before=d.ratio,after=d.income>0?rnd((d.monthly+cost)/d.income*100):null;
+ const available=d.income>0?rnd(d.income-d.monthly):null;
+ const remaining=available===null?null:rnd(available-cost);
+ const risk=after===null?'missing':after>100?'over':after>=80?'caution':'ok';
+ return {d,cost,before,after,available,remaining,risk};
+}
+function v90ExpenseStatus(z){
+ if(z.after===null)return 'Registra ingresos previstos para evaluar el pago';
+ if(z.after>100)return 'Al pagar, superarías tus ingresos proyectados';
+ if(z.after===100)return 'El pago comprometería el 100% de tus ingresos';
+ if(z.after>=80)return 'Después del pago, tu margen quedaría muy ajustado';
+ return 'Después del pago, conservarías margen disponible';
+}
 function v80SummaryMarkup(a,compact=false){
- const number=a.ratio===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1}).format(a.ratio)+'%';
- const moneyNote=a.ratio===null?'Agrega ingresos recurrentes o una base neta mensual.':a.margin<0?'Exceso estimado: '+v80Money(Math.abs(a.margin)):'Margen estimado: '+v80Money(a.margin);
- return `<div class="v80-preview v80-${a.risk} ${compact?'v80-preview-mini':''}"><span class="v80-preview-sign">${icon(a.risk==='over'?'receipt':a.risk==='ok'?'shield':'chart')}</span><span class="v80-preview-copy"><small>${compact?'SI HACES ESTA COMPRA':'RADAR DE COMPRA · CARGA DEL MES'}</small><strong>${v80StatusLabel(a.risk)}</strong>${compact?'':`<em>${moneyNote}</em>`}</span><b class="v80-preview-number">${number}</b></div>`;
+ const z=v90ExpenseImpact(a),pct=v85Pct(z.after);
+ return `<div class="v80-preview v80-${z.risk} v90-expense-mini ${compact?'v80-preview-mini':''}"><span class="v80-preview-sign">${icon(z.risk==='over'?'receipt':'shield')}</span><span class="v80-preview-copy"><small>CAPACIDAD DE ENDEUDAMIENTO · ${compact?'VISTA PREVIA':'AL REGISTRAR EL GASTO'}</small><strong>${v90ExpenseStatus(z)}</strong>${compact?'':`<em>Hoy ${v85Pct(z.before)} · Después ${pct}</em>`}</span><b class="v80-preview-number">${pct}</b></div>`;
 }
 function v80DetailsMarkup(a){
- const pct=(n)=>n===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(n)+'%';
- const override=Number(db.settings?.purchaseMonthlyNetOverride)||0;
- const rows=[['Ingreso neto mensual',a.income.net===null?'—':v80Money(a.income.net)],['Suscripciones y costos recurrentes',v80Money(a.recurring)],['Cuotas mensuales de préstamos',v80Money(a.loans)],['Mínimos de tarjetas (brutos)',v80Money(a.cardMinimum.gross)],['Consumos ya facturados que se solapan',a.cardMinimum.overlap?'− '+v80Money(a.cardMinimum.overlap):v80Money(0)],['Mínimos pendientes sin duplicación estimada',v80Money(a.cards)],['Deudas entre personas exigibles',v80Money(a.personal)],['Egresos y cargos bancarios reconocidos',v80Money(a.spent)],['Compra que se está evaluando',v80Money(a.cost)]];
- return `<details class="v80-breakdown"><summary>¿Cómo se calculó? <span>Ver detalle ${icon('down')}</span></summary><div class="v80-breakdown-body"><div class="v80-breakdown-note">${sanitize(a.income.source)}. Solo se utilizan operaciones registradas y obligaciones conocidas. Los cálculos son estimativos.</div>${rows.map(([label,value])=>`<div class="v80-breakdown-row"><span>${sanitize(label)}</span><b>${sanitize(value)}</b></div>`).join('')}<div class="v80-breakdown-row v80-separator"><span>Compromisos / ingreso neto mensual</span><b>${pct(a.obligationsRatio)}</b></div><div class="v80-breakdown-row"><span>Compromisos + egresos + compra / ingreso neto</span><b>${pct(a.ratio)}</b></div><div class="v80-breakdown-row"><span>Cuotas de deuda / ingreso neto</span><b>${pct(a.debtRatioNet)}</b></div><div class="v80-breakdown-row"><span>Cuotas de deuda / ingreso bruto verificable</span><b>${pct(a.debtRatio)}</b></div><p>Los consumos reales del mes se cuentan una vez. Los recurrentes vinculados se reflejan dentro de su obligación mensual, no de nuevo como egreso. Si una compra actual ya entró en el corte de una tarjeta, se reduce la parte coincidente de su mínimo para evitar duplicar la misma carga.</p><p>Los pagos de capital de préstamos y tarjetas no se registran como un segundo gasto: son compromisos de liquidez. Sin fechas o estados oficiales puede haber solapamientos o gastos fijos no identificados. Esta evaluación no garantiza que una compra sea asequible ni reemplaza el presupuesto personal.</p><div class="v80-configure"><span>Ingreso neto mensual de referencia</span><div><input class="field" data-v80-input="income" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Automático" value="${override>0?override:''}" aria-label="Ingreso neto mensual de referencia"><button type="button" data-v80-action="saveIncome">${override?'Actualizar':'Guardar'}</button></div><small>En blanco o en 0 se usa la base automática. No crea movimientos ni modifica balances.</small></div></div></details>`;
+ const z=v90ExpenseImpact(a),d=z.d, override=Number(db.settings?.purchaseMonthlyNetOverride)||0;
+ const rows=[
+ ['Ingresos proyectados de este mes',money(d.income)],
+ ['Suscripciones y recurrentes',money(d.a.recurring)],
+ ['Cuotas de préstamos activos',money(d.a.loans)],
+ ['Mínimos exigibles de tarjetas (netos de solapamiento)',money(d.a.cards)],
+ ['Pagos entre personas exigibles',money(d.a.personal)],
+ ['Todos los compromisos mensuales',money(d.monthly)],
+ ['Gasto que estás registrando',money(z.cost)],
+ ['Compromisos ÷ ingresos (antes)',v85Pct(z.before)],
+ ['(Compromisos + gasto) ÷ ingresos (después)',v85Pct(z.after)],
+ ['Disponible después del gasto',z.remaining===null?'—':(z.remaining<0?'Déficit ':'')+money(Math.abs(z.remaining))]
+ ];
+ return `<details class="v80-breakdown"><summary>¿Cómo cambia mi capacidad? <span>Ver desglose ${icon('down')}</span></summary><div class="v80-breakdown-body">${rows.map(([label,value])=>`<div class="v80-breakdown-row"><span>${sanitize(label)}</span><b>${sanitize(value)}</b></div>`).join('')}<p>Esta vista previa suma el gasto una sola vez para ilustrar su impacto en la liquidez del mes. El indicador permanente de endeudamiento sigue calculándose solamente con obligaciones mensuales. No se añade una nueva cuota automáticamente al registrar una compra ocasional. Si un gasto ya pertenece a un compromiso registrado (por ejemplo una suscripción), no debe considerarse una segunda obligación: el impacto mostrado es una simulación de desembolso y no una suma contable definitiva.</p><p>Un pago con tarjeta genera saldo por pagar; la fecha de corte y el mínimo podrían cambiar la exigibilidad. La proyección no es un ingreso garantizado y la evaluación no sustituye verificar fondos disponibles.</p><div class="v80-configure"><span>Referencia neta histórica (otros análisis)</span><div><input class="field" data-v80-input="income" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Automático" value="${override>0?override:''}" aria-label="Ingreso neto mensual histórico"><button type="button" data-v80-action="saveIncome">${override?'Actualizar':'Guardar'}</button></div><small>Esta referencia no sustituye los ingresos proyectados empleados en capacidad de endeudamiento.</small></div></div></details>`;
 }
 function v80AdvisorMarkup(a){
- const lowCash=a.selectedLimit!==null&&a.selectedLimit<a.cost-.01;
- const limitMessage=lowCash?(a.sourceType==='card'?'El límite disponible de la tarjeta seleccionada no alcanza.':'La cuenta elegida no tiene saldo suficiente.'):'';
- const creditReminder=a.sourceType==='card'?'Pagar con tarjeta aumenta deuda; no aumenta tu efectivo disponible.':'La compra reduce los fondos de la cuenta al registrarla.';
- return `<section class="v80-advisor" id="v80PurchaseAdvisor" aria-label="Capacidad para esta compra"><div class="v80-advisor-head"><span>${icon('shield')} ¿Me puedo permitir esta compra?</span><small>Vista previa · No afecta saldos</small></div>${v80SummaryMarkup(a)}<div class="v80-advisor-note">${a.ratio===null?'— · Registra el ingreso neto mensual para calcular el indicador.':`Antes: ${a.prior.toFixed(1)}% · Con la compra: ${a.ratio.toFixed(1)}% · Liquidez total referencial: ${v80Money(a.cash)}`}<br>${creditReminder}</div>${limitMessage?`<div class="v80-limit-alert">${icon('receipt')} ${limitMessage}</div>`:''}${v80DetailsMarkup(a)}</section>`;
+ const z=v90ExpenseImpact(a),lowCash=a.selectedLimit!==null&&a.selectedLimit<z.cost-.01;
+ const limitMessage=lowCash?(a.sourceType==='card'?'El límite disponible de esta tarjeta no cubre la compra.':'El saldo de la cuenta no cubre este gasto.') : '';
+ return `<section class="v80-advisor v90-expense-advisor" id="v80PurchaseAdvisor" aria-label="Capacidad de endeudamiento antes y después del gasto"><div class="v80-advisor-head"><span>${icon('shield')} Capacidad de endeudamiento</span><small>Antes de registrar · No modifica saldos</small></div><div class="v90-expense-compare"><div><small>INGRESOS PROYECTADOS</small><strong>${money(z.d.income)}</strong></div><div><small>COMPROMISOS DEL MES</small><strong>${money(z.d.monthly)}</strong></div><div><small>CAPACIDAD ACTUAL</small><strong>${v85Pct(z.before)}</strong></div><div class="v90-after v90-${z.risk}"><small>DESPUÉS DE ESTE PAGO</small><strong>${v85Pct(z.after)}</strong></div></div>${v80SummaryMarkup(a)}<div class="v90-expense-balance ${z.remaining!==null&&z.remaining<0?'v90-negative':''}"><span>${z.remaining===null?'Disponible sin calcular':z.remaining<0?'Te faltarían para cubrir obligaciones y este gasto':'Te quedaría disponible después del pago'}</span><strong>${z.remaining===null?'—':money(Math.abs(z.remaining))}</strong></div>${limitMessage?`<div class="v80-limit-alert">${icon('receipt')} ${limitMessage}</div>`:''}${v80DetailsMarkup(a)}</section>`;
 }
 function v80AdvisorFromForm(f){
  let source=f.elements.paymentSource?.value||'account';if(!['account','card'].includes(source))source='account';
@@ -19922,48 +19985,41 @@ function v82OpenForecast(){
 document.addEventListener('click',event=>{
  const el=event.target?.closest?.('[data-v82-action]');if(el?.dataset.v82Action==='openForecast'){event.preventDefault();v82OpenForecast();}
 });
-/* V85 — Porcentajes consultables en Compromisos, Mis indicadores y Tarjetas. */
+/* V89 — Endeudamiento / ingresos PROYECTADOS del mes; cuotas, no principal total. */
+function v89DebtCapacity(){
+ const a=v80Assessment(0),f=v82ForecastMonth();
+ const income=Math.max(0,num(f.income));
+ const monthly=Math.max(0,num(a.recurring)+num(a.loans)+num(a.cards)+num(a.personal));
+ const ratio=income>0?rnd(monthly/income*100):null;
+ const balance=income>0?rnd(income-monthly):null;
+ const risk=ratio===null?'missing':ratio>100?'over':ratio>=80?'caution':'ok';
+ return {a,f,income,monthly,ratio,balance,risk};
+}
 function v85Pct(n){return n===null||!Number.isFinite(n)?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(n)+'%'}
-function v85LoadChip(label='Carga de compromisos'){
- const a=v80Assessment(0),risk=a.obligationsRatio===null?'missing':a.obligationsRatio>=100?'over':a.obligationsRatio>=80?'caution':'ok';
- return `<button type="button" class="v85-load-chip v85-risk-${risk}" data-v85-action="capacity" title="Ver desglose de obligaciones e ingresos" aria-label="${sanitize(label)}: ${v85Pct(a.obligationsRatio)}. Abrir desglose"><span>${sanitize(label)}</span><strong>${v85Pct(a.obligationsRatio)}</strong>${icon('arrow')}</button>`;
+function v89CapacityExplanation(d){
+ const line=(name,value)=>`<div class="v89-debt-row"><span>${sanitize(name)}</span><strong>${money(value)}</strong></div>`;
+ return `<div class="v89-debt-breakdown"><div class="v89-debt-row v89-income-row"><span>Ingresos proyectados · ${sanitize(d.f.period)}</span><strong>${money(d.income)}</strong></div>${line('Suscripciones y recurrentes',d.a.recurring)}${line('Cuotas de préstamos activos',d.a.loans)}${line('Mínimos de tarjetas, sin solapamientos',d.a.cards)}${line('Pagos exigibles entre personas',d.a.personal)}<div class="v89-debt-row v89-debt-total"><span>Total a pagar al mes</span><strong>${money(d.monthly)}</strong></div><div class="v89-debt-row"><span>${d.balance!==null&&d.balance<0?'Déficit previsto':'Disponible después de compromisos'}</span><strong>${d.balance===null?'—':money(Math.abs(d.balance))}</strong></div><p>Endeudamiento = compromisos mensuales ÷ ingresos proyectados × 100. El 100% indica que todos los ingresos se destinarían a pagos; por encima del 100% hay déficit. Este indicador mide carga mensual, no el saldo completo de las deudas. Se emplean cuotas mensuales equivalentes y obligaciones registradas; la proyección puede variar cuando se registran nuevos ingresos o pagos. Los gastos no comprometidos se analizan aparte.</p></div>`;
+}
+function v85LoadChip(label='Endeudamiento'){
+ const d=v89DebtCapacity();
+ return `<button type="button" class="v85-load-chip v85-risk-${d.risk}" data-v85-action="capacity" title="Compromisos mensuales ${money(d.monthly)} / ingresos proyectados ${money(d.income)}" aria-label="${sanitize(label)}: ${v85Pct(d.ratio)}. Ver detalle"><span>${sanitize(label)}</span><strong>${v85Pct(d.ratio)}</strong>${icon('arrow')}</button>`;
 }
 function v85CreditUtilization(c){
- try{
-  const d=cardStatus(c,'DOP'),u=cardStatus(c,'USD');
-  const limit=Math.max(0,num(d.limit))+fx(Math.max(0,num(u.limit)),'USD');
-  const balance=Math.max(0,num(d.debt))+fx(Math.max(0,num(u.debt)),'USD');
-  return limit>0?rnd(balance/limit*100):null;
- }catch(_){return null;}
+ try{const d=cardStatus(c,'DOP'),u=cardStatus(c,'USD');const limit=Math.max(0,num(d.limit))+fx(Math.max(0,num(u.limit)),'USD');const balance=Math.max(0,num(d.debt))+fx(Math.max(0,num(u.debt)),'USD');return limit>0?rnd(balance/limit*100):null}catch(_){return null;}
 }
 function v85OpenCapacity(kind='capacity',id=''){
- const a=v80Assessment(0),load=v85Pct(a.obligationsRatio),full=v85Pct(a.ratio),credit=v85Pct(a.debtRatioNet);
- let selected='';
- if(kind==='card'&&id){const c=card(id);if(c){const util=v85CreditUtilization(c);selected=`<div class="v85-card-context"><small>${sanitize(c.name)} · Utilización del límite</small><strong>${v85Pct(util)}</strong><span>La utilización de crédito es diferente de la carga mensual respecto a ingresos.</span></div>`;}}
+ const d=v89DebtCapacity();let selected='';
+ if(kind==='card'&&id){const c=card(id);if(c){const util=v85CreditUtilization(c);selected=`<div class="v85-card-context"><small>${sanitize(c.name)} · Utilización del límite</small><strong>${v85Pct(util)}</strong><span>El crédito utilizado no equivale al porcentaje mensual de endeudamiento.</span></div>`;}}
+ const status=d.ratio===null?'Faltan ingresos proyectados':d.ratio>100?'Tus compromisos superan tus ingresos':d.ratio===100?'El 100% de tus ingresos está comprometido':d.ratio>=80?'Capacidad de pago muy ajustada':'Compromisos dentro de los ingresos previstos';
  document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false);
- document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v85-capacity-modal" role="dialog" aria-modal="true" aria-label="Detalle de capacidad de pago"><div class="modal-head"><h2>Mi capacidad de pago</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v85-capacity-body"><p class="v85-lead">Lo comprometido y lo gastado frente al ingreso neto mensual de referencia.</p>${selected}<div class="v85-capacity-metrics"><div><span>Compromisos mensuales</span><strong>${load}</strong><small>Cuotas, mínimos y suscripciones</small></div><div><span>Carga con egresos del mes</span><strong class="${a.ratio!==null&&a.ratio>=100?'v85-over':''}">${full}</strong><small>Sin una nueva compra</small></div></div><div class="v85-capacity-metrics v85-mini"><div><span>Cuotas de deuda / ingreso neto</span><strong>${credit}</strong></div><div><span>Margen neto estimado</span><strong>${a.margin===null?'—':money(a.margin)}</strong></div></div>${v80DetailsMarkup(a)}</div></section></div>`;
+ document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v85-capacity-modal" role="dialog" aria-modal="true" aria-label="Detalle de endeudamiento"><div class="modal-head"><h2>Capacidad de endeudamiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v85-capacity-body"><p class="v85-lead">Lo que debes pagar cada mes comparado con tus ingresos proyectados del mismo mes.</p>${selected}<div class="v89-capacity-feature v85-risk-${d.risk}"><span>INGRESOS COMPROMETIDOS</span><strong>${v85Pct(d.ratio)}</strong><p>${status}</p></div><div class="v85-capacity-metrics"><div><span>Ingresos proyectados</span><strong>${money(d.income)}</strong><small>Registrados + cobros previstos</small></div><div><span>Compromisos del mes</span><strong>${money(d.monthly)}</strong><small>Cuotas, tarjetas, suscripciones y personas</small></div></div><div class="v85-capacity-metrics v85-mini"><div><span>${d.balance!==null&&d.balance<0?'Déficit del mes':'Disponible luego de pagar'}</span><strong class="${d.balance!==null&&d.balance<0?'v85-over':''}">${d.balance===null?'—':money(Math.abs(d.balance))}</strong></div><div><span>Utilización de ingresos</span><strong class="${d.ratio!==null&&d.ratio>100?'v85-over':''}">${v85Pct(d.ratio)}</strong></div></div>${v89CapacityExplanation(d)}</div></section></div>`;
 }
-document.addEventListener('click',ev=>{
- const b=ev.target.closest?.('[data-v85-action]');if(!b)return;
- const kind=b.dataset.v85Action;
- if(kind==='capacity'||kind==='card'){
-  ev.preventDefault();ev.stopPropagation();v85OpenCapacity(kind,b.dataset.id||'');
- }
-},true);
-
-/* V82 — Porcentaje de compromisos programados contra ingreso mensual de referencia. */
-function v82CapacityPct(amount){
- const basis=v80IncomeReference(),valid=basis.net>0;
- const pct=valid?rnd(100*Math.max(0,num(amount))/basis.net):null;
- return {percent:pct,source:basis.source,net:basis.net,risk:pct===null?'missing':pct>=100?'over':pct>=80?'warn':'ok'};
-}
-function v82CapacityBadge(amount){
- const a=v80Assessment(0),risk=a.obligationsRatio===null?'missing':a.obligationsRatio>=100?'over':a.obligationsRatio>=80?'caution':'ok';
- return `<button type="button" class="v82-burden v82-burden-${risk} v85-summary-burden" data-v85-action="capacity" title="Carga mensual de compromisos frente a ingreso neto mensual: ${v85Pct(a.obligationsRatio)}. El total programado puede corresponder a distintos vencimientos.">${v85Pct(a.obligationsRatio)} <small>compromisos / ingresos</small></button>`;
-}
+document.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-v85-action]');if(!b)return;const kind=b.dataset.v85Action;if(kind==='capacity'||kind==='card'){ev.preventDefault();ev.stopPropagation();v85OpenCapacity(kind,b.dataset.id||'');}},true);
+function v82CapacityPct(amount){const d=v89DebtCapacity();return {percent:d.ratio,source:'Ingresos proyectados del mes',net:d.income,risk:d.risk};}
+function v82CapacityBadge(amount){const d=v89DebtCapacity();return `<button type="button" class="v82-burden v82-burden-${d.risk} v85-summary-burden v85-risk-${d.risk}" data-v85-action="capacity" title="Compromisos ${money(d.monthly)} / ingresos proyectados ${money(d.income)}">${v85Pct(d.ratio)} <small>endeudamiento</small></button>`;}
 function v82CapacityWidget(){
- const a=v80Assessment(0),risk=a.risk,loadRisk=a.obligationsRatio===null?'missing':a.obligationsRatio>=100?'over':a.obligationsRatio>=80?'caution':'ok';
- return `<section class="v82-capacity-widget v82-capacity-${risk} v85-capacity-widget" aria-label="Capacidad de pago estimada"><div class="v85-capacity-desc"><span class="v82-kicker">MI CAPACIDAD DE PAGO</span><h3>¿Cuánto tengo comprometido?</h3><p>Comparación mensual de ingresos, obligaciones y compras. Pulsa un porcentaje para ver el cálculo.</p></div><div class="v85-kpi-pair"><button type="button" data-v85-action="capacity" class="v85-kpi-percentage v85-risk-${loadRisk}"><span>Compromisos / ingreso</span><strong>${v85Pct(a.obligationsRatio)}</strong></button><button type="button" data-v85-action="capacity" class="v85-kpi-percentage v85-risk-${risk}"><span>Con egresos</span><strong>${v85Pct(a.ratio)}</strong></button></div>${v80DetailsMarkup(a)}</section>`;
+ const d=v89DebtCapacity(),status=d.ratio===null?'Sin proyección suficiente':d.ratio>100?'Ingresos insuficientes':d.ratio>=80?'Margen de pago ajustado':'Dentro de los ingresos proyectados';
+ return `<section class="v82-capacity-widget v82-capacity-${d.risk} v85-capacity-widget" aria-label="Capacidad de endeudamiento"><div class="v85-capacity-desc"><span class="v82-kicker">CAPACIDAD DE ENDEUDAMIENTO</span><h3>¿Qué parte de mis ingresos debo pagar?</h3><p>${status} · Compromisos del mes frente a ingresos proyectados.</p></div><div class="v85-kpi-pair"><button type="button" data-v85-action="capacity" class="v85-kpi-percentage v85-risk-${d.risk}"><span>Ingresos comprometidos</span><strong>${v85Pct(d.ratio)}</strong></button><button type="button" data-v85-action="capacity" class="v85-kpi-percentage ${d.balance!==null&&d.balance<0?'v85-risk-over':''}"><span>${d.balance!==null&&d.balance<0?'Déficit previsto':'Disponible para otros gastos'}</span><strong>${d.balance===null?'—':money(Math.abs(d.balance))}</strong></button></div>${v89CapacityExplanation(d)}</section>`;
 }
 /* V83 · PRÉSTAMOS | CAPTURA DE SALDO HISTÓRICO Y NAVEGACIÓN EJECUTIVA */
 function v83LoanOpeningRefresh(form){
@@ -20205,6 +20261,7 @@ loanForm=function(id,preBank){
    ['Cuota capital + interés',inst>0?moneyOf(inst):'Se estima según contrato'],
    ['Cargos adicionales al mes',fee>0?moneyOf(fee):'Sin cargos'],
    ['Fecha primer vencimiento',e.firstDue?.value||'—'],
+   ...(e.loanOpeningMode?.value==='existing'&&e.originationDate?.value&&e.firstDue?.value&&num(e.principal?.value)>num(e.openingDebt?.value)?(()=>{const tmp={principal:num(e.principal.value),openingMode:'existing',openingDebt:num(e.openingDebt.value),openingBalanceDate:e.openingBalanceDate?.value||today(),firstDue:e.firstDue.value,rate:num(e.rate?.value),currentRate:num(e.currentRate?.value),rateEffectiveFrom:e.rateEffectiveFrom?.value||today(),months:num(e.months?.value),paymentFrequency:e.paymentFrequency?.value,termQuincenas:e.termUnit?.value==='fortnights'?num(e.termCount?.value):null,insuranceMonthly:insurance,monthlyFee:fee};const h=v88LoanReconstruction(tmp);return [['Cuotas anteriores estimadas',String(h.periods)],['Intereses anteriores estimados',moneyOf(h.interest)],['Capital amortizado histórico',moneyOf(h.reduction)]]})():[]),
    ['Registro de cuotas',e.postingMode?.value==='auto'?'Automático interno':'Confirmación manual']
   ];
   summaryGrid.innerHTML=rows.map(([label,value],i)=>`<div class="v87-review-row ${i===5||i===6?'v87-review-emphasis':''}"><span>${clean(label)}</span><strong>${clean(value)}</strong></div>`).join('');
