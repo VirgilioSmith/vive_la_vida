@@ -2,13 +2,14 @@
 
 <html lang="es">
 <head>
-<link rel="manifest" href="/manifest.webmanifest?v=47"/>
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v47.png"/>
-<link rel="icon" type="image/png" href="/favicon-v47.png"/>
+<link rel="manifest" href="./manifest.webmanifest?v=79"/>
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v47.png"/>
+<link rel="icon" type="image/png" href="./favicon-v47.png"/>
 
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
 <meta name="theme-color" content="#e5edfa"/>
+<!-- V79: recursos PWA y notificaciones con rutas relativas para GitHub Pages /repositorio/ y dominio raíz. -->
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Vive el hoy"/>
@@ -763,6 +764,29 @@ body.theme-dark .v67-review-footer,body.theme-dark .v67-review-metric{background
 @media(max-width:790px){
  .v71-commitment-card .v71-commitment-icon{width:60px!important;height:60px!important;flex-basis:60px!important;border-radius:19px!important}
  .v71-commitment-card .v71-commitment-icon svg{width:33px!important;height:33px!important}
+}
+
+/* V80 · Centro de Compromisos — diseño solicitado: icono grande y corte a la izquierda,
+   cuenta e importe a la derecha; cuatro tarjetas de tamaño idéntico. */
+.v71-commitment-card{height:294px!important;min-height:294px!important;max-height:294px!important;display:flex!important;flex-direction:column!important;padding:19px!important;min-width:0!important;overflow:hidden!important}
+.v71-commitment-card>.v71-commitment-head{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(104px,auto)!important;align-items:start!important;justify-content:stretch!important;column-gap:14px!important;min-height:112px!important;margin:0 0 10px!important;flex:0 0 auto!important}
+.v71-commitment-card .v71-commitment-identity{min-width:0!important;width:auto!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:10px!important}
+.v71-commitment-card .v71-commitment-icon{width:65px!important;height:65px!important;flex:0 0 65px!important;border-radius:20px!important;display:grid!important;place-items:center!important}
+.v71-commitment-card .v71-commitment-icon svg{width:36px!important;height:36px!important}
+.v71-commitment-card .v76-commitment-title{width:100%!important;min-width:0!important;display:block!important}
+.v71-commitment-card .v71-commitment-head h3{font-size:14px!important;line-height:1.18!important;letter-spacing:-.25px!important;overflow-wrap:break-word!important}
+.v71-commitment-card .v76-commitment-bottom{min-width:0!important;max-width:100%!important;margin:0!important;width:auto!important;display:flex!important;flex-direction:column!important;align-items:flex-end!important;justify-content:flex-start!important;gap:8px!important;text-align:right!important}
+.v71-commitment-card .v76-commitment-count{font-size:11px!important;color:#657b96!important;font-weight:760!important;white-space:nowrap!important}
+.v71-commitment-card .v71-commitment-amount{font-size:clamp(16px,1.7vw,21px)!important;font-weight:830!important;letter-spacing:-.55px!important;line-height:1.1!important;text-align:right!important;white-space:normal!important;overflow-wrap:anywhere!important;max-width:100%!important}
+.v71-commitment-card .v71-commitment-list{min-height:0!important;flex:1!important;overflow-y:auto!important;scrollbar-width:thin!important;overscroll-behavior:contain!important}
+@media(max-width:790px){
+ .v71-commitment-card{height:282px!important;min-height:282px!important;max-height:282px!important;padding:15px!important}
+ .v71-commitment-card>.v71-commitment-head{grid-template-columns:minmax(0,1fr) minmax(100px,auto)!important;column-gap:9px!important;min-height:106px!important}
+ .v71-commitment-card .v71-commitment-icon{width:60px!important;height:60px!important;flex:0 0 60px!important;border-radius:18px!important}
+ .v71-commitment-card .v71-commitment-icon svg{width:34px!important;height:34px!important}
+ .v71-commitment-card .v71-commitment-head h3{font-size:13px!important}
+ .v71-commitment-card .v71-commitment-amount{font-size:clamp(15px,4vw,19px)!important}
+ .v71-commitment-card .v76-commitment-count{font-size:10.5px!important}
 }
 </style>
 <style id="benefits-studio-v6">
@@ -12647,6 +12671,77 @@ body.theme-dark .v58-drill-modal{background:#1b2b42}body.theme-dark .v58-drill-r
   .vive-mobile-top>.v65-header-tools>.v36-notifications>summary{width:35px!important;height:35px!important;flex-basis:35px!important}
 }
 </style>
+<style id="v80-purchase-advisor-style">
+/* V80 · Radar de compra, adaptación móvil y escritorio, mantiene el diseño Liquid Glass */
+.v80-advisor-slot{min-width:0;margin:12px 0 4px;width:100%;grid-column:1/-1}
+.v80-advisor{padding:16px;border:1px solid rgba(116,151,208,.28);border-radius:22px;background:linear-gradient(148deg,rgba(247,250,255,.96),rgba(232,241,255,.82));color:#1c304c;box-shadow:0 12px 34px rgba(21,59,121,.07);font-family:Inter,'Segoe UI',Arial,sans-serif}
+.v80-advisor-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:11px}
+.v80-advisor-head>span{display:flex;align-items:center;gap:7px;font-weight:800;font-size:13px;letter-spacing:-.15px}
+.v80-advisor-head svg{width:17px;height:17px}
+.v80-advisor-head>small{font-size:10px;color:#8192ab}
+.v80-preview{display:flex;align-items:center;gap:10px;border-radius:17px;padding:13px 14px;background:#edf6f3;border:1px solid #c9e7da;min-width:0}
+.v80-preview-sign{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:rgba(20,135,97,.10);color:#117d60}
+.v80-preview-sign svg{width:20px;height:20px}
+.v80-preview-copy{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+.v80-preview-copy small{font-size:9px;font-weight:850;letter-spacing:.11em;color:#68877b}
+.v80-preview-copy strong{font-size:12px;font-weight:850;line-height:1.28;color:#16654b}
+.v80-preview-copy em{font-size:11px;font-style:normal;color:#597e71}
+.v80-preview-number{font-size:27px;font-weight:870;letter-spacing:-.85px;color:#176f53;white-space:nowrap;font-variant-numeric:tabular-nums}
+.v80-caution{background:#fff5e7;border-color:#f7dcb7}
+.v80-caution .v80-preview-sign{background:rgba(172,101,25,.1);color:#a96a20}
+.v80-caution .v80-preview-copy strong,.v80-caution .v80-preview-number{color:#96561b}
+.v80-caution .v80-preview-copy small,.v80-caution .v80-preview-copy em{color:#a57b4c}
+.v80-over{background:#fff0f0;border-color:#f3c2c2}
+.v80-over .v80-preview-sign{background:rgba(191,56,63,.1);color:#b33d4a}
+.v80-over .v80-preview-copy strong,.v80-over .v80-preview-number{color:#b23c47}
+.v80-over .v80-preview-copy small,.v80-over .v80-preview-copy em{color:#a56a70}
+.v80-missing{background:#f0f3f8;border-color:#e0e6ee}
+.v80-missing .v80-preview-sign{background:#e1e7f1;color:#68809e}
+.v80-missing .v80-preview-copy strong,.v80-missing .v80-preview-number{color:#6d7e98}
+.v80-missing .v80-preview-copy small,.v80-missing .v80-preview-copy em{color:#7889a1}
+.v80-advisor-note{padding:10px 2px;color:#667c97;font-size:11px;line-height:1.55}
+.v80-limit-alert{padding:11px 12px;margin:5px 0 10px;background:#fff0e7;border-radius:12px;color:#9c5824;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:740}
+.v80-limit-alert svg{width:15px;height:15px}
+.v80-breakdown{margin-top:5px;border-top:1px solid rgba(141,166,204,.22);padding-top:10px}
+.v80-breakdown>summary{display:flex;justify-content:space-between;align-items:center;gap:10px;list-style:none;font-size:11px;font-weight:790;color:#425d81;cursor:pointer}
+.v80-breakdown>summary::-webkit-details-marker{display:none}
+.v80-breakdown>summary span{display:flex;align-items:center;gap:5px;font-size:10px;color:#7690b3;font-weight:650}
+.v80-breakdown>summary svg{height:13px;width:13px}
+.v80-breakdown[open]>summary svg{transform:rotate(180deg)}
+.v80-breakdown-body{padding-top:13px}
+.v80-breakdown-note{font-size:11px;color:#70819d;line-height:1.6;margin-bottom:10px}
+.v80-breakdown-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #e3e9f2;font-size:11px;color:#64748b}
+.v80-breakdown-row b{color:#304b70;white-space:nowrap;font-variant-numeric:tabular-nums}
+.v80-breakdown-row.v80-separator{margin-top:6px;border-bottom:0;font-weight:760}
+.v80-breakdown-body p{font-size:10px;line-height:1.65;color:#7b89a0}
+.v80-configure{margin-top:10px;padding:12px;background:#fff;border:1px solid #e6ebf4;border-radius:14px}
+.v80-configure>span{font-size:11px;font-weight:780;color:#466085}
+.v80-configure>div{display:flex;gap:8px;margin:9px 0 7px}
+.v80-configure .field{min-width:0;flex:1;min-height:38px}
+.v80-configure button{border:0;background:#316be4;color:white;padding:0 12px;border-radius:11px;font-size:11px;font-weight:750}
+.v80-configure small{color:#7c90ab;font-size:10px;line-height:1.4;display:block}
+#v80QuickAssessment{width:100%;margin-top:8px}
+.v80-preview-mini{border-radius:13px;padding:9px 10px;gap:8px}
+.v80-preview-mini .v80-preview-sign{width:29px;height:29px;border-radius:9px}
+.v80-preview-mini .v80-preview-sign svg{width:16px;height:16px}
+.v80-preview-mini .v80-preview-copy small{font-size:8px;letter-spacing:.05em}
+.v80-preview-mini .v80-preview-copy strong{font-size:10px}
+.v80-preview-mini .v80-preview-number{font-size:21px}
+@media(max-width:790px){
+ .v80-advisor-slot{margin:9px 0 3px}
+ .v80-advisor{padding:13px 12px;border-radius:19px}
+ .v80-advisor-head{align-items:flex-start}
+ .v80-advisor-head>small{max-width:85px;text-align:right;line-height:1.3}
+ .v80-preview{padding:11px 10px}
+ .v80-preview-number{font-size:24px}
+ .v80-advisor-note{font-size:10px}
+ .v80-preview-mini{padding:6px 10px}
+ .v80-preview-mini .v80-preview-number{font-size:20px}
+ .mqr-display:has(#v80QuickAssessment){padding-bottom:9px}
+}
+@media(max-width:355px){.v80-preview-mini .v80-preview-copy strong{font-size:9px}.v80-preview-mini .v80-preview-number{font-size:19px}}
+
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -15888,7 +15983,8 @@ function renderMobileQuickRegister(){
  const presetsHtml=presets.length?`<div class="mqr-presets">${presets.map(([k,t])=>`<button type="button" class="mqr-chip ${state.preset===k?'active':''}" data-mqr-act="preset" data-id="${k}">${t}</button>`).join('')}</div>`:'';
  const keypad=['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(n=>`<button class="mqr-key ${n==='⌫'||n==='.'?'soft':''}" type="button" data-mqr-act="key" data-id="${n}" aria-label="${n==='⌫'?'Borrar último dígito':n}">${n}</button>`).join('');
  document.querySelectorAll('.v36-notifications[open]').forEach(el=>el.open=false);
- document.getElementById('modal-root').innerHTML=`<div class="modal-layer mqr-layer" data-backdrop="true"><section class="modal mqr-modal" role="dialog" aria-modal="true" aria-label="Registrar un movimiento"><header class="modal-head mqr-header"><h2>Nuevo movimiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="mqr-scroll"><div class="mqr-shell"><div class="mqr-step-caption">PASO 1 DE 2 · IMPORTE</div><nav class="mqr-segment" aria-label="Qué deseas registrar">${kinds}</nav>${sub}<div class="mqr-display"><small>¿Cuánto ${state.mode==='income'?'recibiste':state.mode==='spend'?'gastaste':'vas a transferir'}?</small><strong id="mqrAmountValue" aria-live="polite">${mqrAmountText(state.amount)}</strong><span>Escribe el importe en el teclado</span></div>${presetsHtml}<div class="mqr-keypad">${keypad}</div></div></div><footer class="mqr-bottom"><button class="mqr-primary" type="button" data-mqr-act="continue">Siguiente ${icon('arrow')}</button></footer></section></div>`;
+ document.getElementById('modal-root').innerHTML=`<div class="modal-layer mqr-layer" data-backdrop="true"><section class="modal mqr-modal" role="dialog" aria-modal="true" aria-label="Registrar un movimiento"><header class="modal-head mqr-header"><h2>Nuevo movimiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="mqr-scroll"><div class="mqr-shell"><div class="mqr-step-caption">PASO 1 DE 2 · IMPORTE</div><nav class="mqr-segment" aria-label="Qué deseas registrar">${kinds}</nav>${sub}<div class="mqr-display"><small>¿Cuánto ${state.mode==='income'?'recibiste':state.mode==='spend'?'gastaste':'vas a transferir'}?</small><strong id="mqrAmountValue" aria-live="polite">${mqrAmountText(state.amount)}</strong><span>Escribe el importe en el teclado</span>${state.mode==='spend'?'<div id="v80QuickAssessment" aria-live="polite"></div>':''}</div>${presetsHtml}<div class="mqr-keypad">${keypad}</div></div></div><footer class="mqr-bottom"><button class="mqr-primary" type="button" data-mqr-act="continue">Siguiente ${icon('arrow')}</button></footer></section></div>`;
+ v80RefreshQuickAdvisor();
 }
 function mqrApplyKey(key){
  const st=mqrState(),current=String(st.amount||'');
@@ -15900,6 +15996,7 @@ function mqrApplyKey(key){
  }
  // Change only the number; don't rebuild the entire modal on every keystroke.
  const number=document.getElementById('mqrAmountValue');if(number)number.textContent=mqrAmountText(st.amount);
+ v80RefreshQuickAdvisor();
 }
 function mqrContinue(){
  const st=mqrState(),amount=Number(st.amount);
@@ -16040,6 +16137,7 @@ function guidedTransactionForm(partial={},editId=null){
   if(mode==='income'||mode==='spend')enhanceIncomeExpenseExpress(f,mode,editing);
   else enhanceGuidedStudio(f,mode,editing);
  }
+ if(!editing&&(mode==='spend'||mode==='service'))v80InstallAdvisor(f);
 }
 
 /* ------------- INGRESOS Y EGRESOS · REGISTRO EXPRESS -------------
@@ -17472,7 +17570,7 @@ const f37Standalone=()=>window.matchMedia('(display-mode: standalone)').matches|
 const f37IsIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent);
 const f37Escape=x=>sanitize(String(x??''));
 function f37DeviceLabel(){const ua=navigator.userAgent;return /iPhone/i.test(ua)?'iPhone · Vive el hoy':/iPad/i.test(ua)?'iPad · Vive el hoy':/Macintosh/i.test(ua)?'Mac · Navegador':/Windows/i.test(ua)?'Laptop Windows': 'Navegador web';}
-async function f37Worker(){return await navigator.serviceWorker.register('/sw.js',{scope:'/'});}
+async function f37Worker(){return await navigator.serviceWorker.register('./sw.js',{scope:'./'});}
 function f37SettingsPanel(){
  const state=f37Busy?'Guardando…':!f37Loaded?'Cargando dispositivos…':!f37SchemaReady?'Requiere activar las tablas de notificaciones':f37Message||'Configura las alertas del dispositivo';
  const checked=d=>Array.isArray(f37Prefs?.days_before)&&f37Prefs.days_before.includes(d)?'checked':'';
@@ -19236,6 +19334,144 @@ document.addEventListener('keydown',event=>{
  else if(event.key==='Escape'&&document.getElementById('v71-search-overlay')){event.preventDefault();v71SearchClose()}
 },true);
 
+/* V80 · Radar de compra, presupuesto y carga de obligaciones.
+   Simulador informativo: no modifica el libro, la deuda ni el saldo hasta guardar.
+   No sustituye el DTI formal de un prestamista. */
+function v80Money(n){return money(Number(n)||0,'DOP',2)}
+function v80MonthlyFactor(f){return f==='weekly'?52/12:f==='semi_monthly'?2:f==='quarterly'?1/3:f==='annual'?1/12:f==='semiannual'?1/6:1}
+function v80IncomeReference(){
+ const manual=Math.max(0,num(db.settings?.purchaseMonthlyNetOverride));
+ if(manual>0)return {net:rnd(manual),gross:null,source:'Ingreso neto mensual configurado',quality:'manual'};
+ const schedules=(db.incomeSchedules||[]).filter(s=>s.active!==false&&num(s.grossMonthly)>0);
+ let net=0,gross=0,accepted=0;
+ for(const s of schedules){try{
+   const p=v40Payroll(s,today());const factor=v80MonthlyFactor(s.frequency);
+   const estimated=fx(Math.max(0,num(p.net))*factor,s.currency||'DOP');
+   const grossPart=fx(Math.max(0,num(p.gross))*factor,s.currency||'DOP');
+   if(estimated>0){net+=estimated;gross+=grossPart;accepted++;}
+ }catch(_){/* Sin regla fiscal válida: nunca inventar un neto. */}}
+ if(accepted)return {net:rnd(net),gross:rnd(gross),source:accepted+' fuente'+(accepted===1?'':'s')+' de ingreso programado',quality:accepted<schedules.length?'partial':'scheduled'};
+ // No anualizar un mes que aún no terminó: media conservadora de tres meses cerrados.
+ const now=dateObj(today());let sum=0,monthsWithData=0;
+ for(let ago=1;ago<=3;ago++){
+  const d=new Date(now.getFullYear(),now.getMonth()-ago,1);
+  const stats=monthlyTotals(d.getFullYear(),d.getMonth()+1);
+  const earned=Math.max(0,num(stats.income));sum+=earned;if(earned>0)monthsWithData++;
+ }
+ if(monthsWithData)return {net:rnd(sum/3),gross:null,source:'Media conservadora de los últimos 3 meses cerrados',quality:monthsWithData<3?'partial':'historical'};
+ return {net:null,gross:null,source:'Sin ingreso neto mensual verificable',quality:'missing'};
+}
+function v80RecurringMonthly(){return (db.recurring||[]).filter(r=>r.active!==false).reduce((sum,r)=>sum+fx(Math.max(0,num(r.amount))*v80MonthlyFactor(r.frequency),r.currency||'DOP'),0)}
+function v80LoanMonthly(){return (db.loans||[]).reduce((sum,l)=>{
+ try{const st=loanStatus(l);if(st.settled||st.balance<=0)return sum;
+  return sum+fx(Math.max(0,num(st.installment))*v49LoanPeriodsPerMonth(l)+Math.max(0,num(l.insuranceMonthly))+Math.max(0,num(l.monthlyFee)),l.currency||'DOP');}
+ catch(_){return sum;}
+ },0)}
+function v80CardMinimumMonthly(){return (db.cards||[]).reduce((sum,c)=>{
+  if(c.archived)return sum;
+  for(const ccy of ['DOP','USD']){try{const st=cardStatus(c,ccy);if(st.debt>0)sum+=fx(Math.min(st.debt,Math.max(0,num(st.minimum))),ccy)}catch(_){}}
+  return sum;
+ },0)}
+function v80PersonalMonth(){const month=today().slice(0,7);return (db.personalLoans||[]).reduce((sum,l)=>{
+  if(l.direction!=='borrowed'||!l.dueDate||l.dueDate.slice(0,7)>month)return sum;
+  try{return sum+fx(Math.max(0,personalBalance(l)),l.currency||'DOP')}catch(_){return sum}
+ },0)}
+function v80SpentMonth(){
+ const start=today().slice(0,7);let result=0;
+ for(const t of db.transactions||[]){if(String(t.date||'').slice(0,7)!==start||t.date>today())continue;
+  // Un pago de suscripción programada no es un segundo gasto previsto.
+  if(t.recurringId)continue;
+  const rate=num(t.fxRateSnapshot)>0?num(t.fxRateSnapshot):num(db.settings.fx);
+  const amount=num(t.amount)*(t.currency==='USD'?rate:1);
+  if(t.type==='expense'||t.type==='card_charge')result+=amount;
+  else if(t.type==='card_refund')result-=amount;
+  else if(t.type==='adjustment'&&num(t.amount)<0)result+=Math.abs(amount);
+ }
+ return Math.max(0,rnd(result));
+}
+function v80Assessment(amount=0,currency='DOP',opts={}){
+ const income=v80IncomeReference(),estimated=Math.max(0,num(amount)),cost=currency==='USD'?fx(estimated,'USD'):estimated;
+ const recurring=v80RecurringMonthly(),loans=v80LoanMonthly(),cards=v80CardMinimumMonthly(),personal=v80PersonalMonth(),spent=v80SpentMonth();
+ const obligations=recurring+loans+cards+personal,base=obligations+spent,total=base+cost;
+ const ratio=income.net>0?rnd(total/income.net*100):null;
+ const prior=income.net>0?rnd(base/income.net*100):null;
+ const margin=income.net>0?rnd(income.net-total):null;
+ const cash=totalLiquid();const cashAfter=rnd(cash-cost);
+ const risk=ratio===null?'missing':ratio>=100?'over':ratio>=80?'caution':'ok';
+ const debtRatio=income.gross>0?rnd((loans+cards+personal)/income.gross*100):null;
+ const sourceType=opts.paymentSource==='card'?'card':'account';
+ let selectedLimit=null,selectedBalance=null;
+ if(opts.accountId&&sourceType==='account'){
+  const acc=account(opts.accountId);
+  if(acc){selectedBalance=getAccountBalance(acc);selectedLimit=acc.currency===currency?selectedBalance:null;}
+ }
+ if(opts.cardId&&sourceType==='card'){
+  const c=card(opts.cardId);if(c){try{selectedLimit=cardStatus(c,currency).available;}catch(_){}}
+ }
+ return {income,cost,recurring,loans,cards,personal,spent,obligations,base,total,ratio,prior,margin,cash,cashAfter,risk,debtRatio,selectedLimit,selectedBalance,currency,sourceType};
+}
+function v80StatusLabel(s){return s==='over'?'Supera tus ingresos previstos':s==='caution'?'Margen ajustado':s==='ok'?'Dentro del margen estimado':'Falta una base mensual de ingresos'}
+function v80SummaryMarkup(a,compact=false){
+ const number=a.ratio===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1}).format(a.ratio)+'%';
+ const moneyNote=a.ratio===null?'Agrega ingresos recurrentes o una base neta mensual.':a.margin<0?'Exceso estimado: '+v80Money(Math.abs(a.margin)):'Margen estimado: '+v80Money(a.margin);
+ return `<div class="v80-preview v80-${a.risk} ${compact?'v80-preview-mini':''}"><span class="v80-preview-sign">${icon(a.risk==='over'?'receipt':a.risk==='ok'?'shield':'chart')}</span><span class="v80-preview-copy"><small>${compact?'SI HACES ESTA COMPRA':'RADAR DE COMPRA · CARGA DEL MES'}</small><strong>${v80StatusLabel(a.risk)}</strong>${compact?'':`<em>${moneyNote}</em>`}</span><b class="v80-preview-number">${number}</b></div>`;
+}
+function v80DetailsMarkup(a){
+ const debt=a.debtRatio===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(a.debtRatio)+'%';
+ const override=Number(db.settings?.purchaseMonthlyNetOverride)||0;
+ const rows=[['Ingreso neto mensual',a.income.net===null?'—':v80Money(a.income.net)],['Suscripciones y fijos',v80Money(a.recurring)],['Cuotas de préstamos',v80Money(a.loans)],['Mínimos de tarjetas',v80Money(a.cards)],['Deudas entre personas exigibles',v80Money(a.personal)],['Gastos del mes sin recurrencias enlazadas',v80Money(a.spent)],['Esta compra',v80Money(a.cost)]];
+ return `<details class="v80-breakdown"><summary>¿Cómo se calculó? <span>Ver detalle ${icon('down')}</span></summary><div class="v80-breakdown-body"><div class="v80-breakdown-note">${sanitize(a.income.source)}. Los importes mensuales son estimaciones basadas en registros disponibles.</div>${rows.map(([label,value])=>`<div class="v80-breakdown-row"><span>${sanitize(label)}</span><b>${sanitize(value)}</b></div>`).join('')}<div class="v80-breakdown-row v80-separator"><span>Servicio de deuda / ingreso bruto</span><b>${debt}</b></div><p>El porcentaje principal compara compromisos, gastos registrados del mes y compra simulada con ingreso neto mensual. Es un semáforo presupuestario, no un límite de crédito ni una aprobación bancaria. La ratio de deuda usa ingreso bruto si existen fuentes programadas.</p><p>El gasto con tarjeta se reconoce al comprar; pagar la tarjeta después no debe registrarse otra vez como gasto. Los pagos mínimos son obligaciones de caja y esta simulación puede ser conservadora cuando coinciden con consumos ya incluidos. Revisa que tus suscripciones estén enlazadas para evitar solapamientos.</p><div class="v80-configure"><span>Ingreso neto mensual de referencia</span><div><input class="field" data-v80-input="income" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Automático" value="${override>0?override:''}" aria-label="Ingreso neto mensual de referencia"><button type="button" data-v80-action="saveIncome">${override?'Actualizar':'Guardar'}</button></div><small>Deja en blanco o introduce 0 para volver al cálculo automático. No genera movimientos ni cambia balances.</small></div></div></details>`;
+}
+function v80AdvisorMarkup(a){
+ const lowCash=a.selectedLimit!==null&&a.selectedLimit<a.cost-.01;
+ const limitMessage=lowCash?(a.sourceType==='card'?'El límite disponible de la tarjeta seleccionada no alcanza.':'La cuenta elegida no tiene saldo suficiente.'):'';
+ const creditReminder=a.sourceType==='card'?'Pagar con tarjeta aumenta deuda; no aumenta tu efectivo disponible.':'La compra reduce los fondos de la cuenta al registrarla.';
+ return `<section class="v80-advisor" id="v80PurchaseAdvisor" aria-label="Capacidad para esta compra"><div class="v80-advisor-head"><span>${icon('shield')} ¿Me puedo permitir esta compra?</span><small>Vista previa · No afecta saldos</small></div>${v80SummaryMarkup(a)}<div class="v80-advisor-note">${a.ratio===null?'— · Registra el ingreso neto mensual para calcular el indicador.':`Antes: ${a.prior.toFixed(1)}% · Con la compra: ${a.ratio.toFixed(1)}% · Liquidez total referencial: ${v80Money(a.cash)}`}<br>${creditReminder}</div>${limitMessage?`<div class="v80-limit-alert">${icon('receipt')} ${limitMessage}</div>`:''}${v80DetailsMarkup(a)}</section>`;
+}
+function v80AdvisorFromForm(f){
+ let source=f.elements.paymentSource?.value||'account';if(!['account','card'].includes(source))source='account';
+ const acc=account(f.elements.accountId?.value),curr=source==='card'?f.elements.currency?.value||'DOP':acc?.currency||'DOP';
+ return v80Assessment(f.elements.amount?.value||0,curr,{paymentSource:source,accountId:acc?.id,cardId:f.elements.cardId?.value});
+}
+function v80InstallAdvisor(f){
+ if(!f||f.querySelector('#v80PurchaseAdvisor'))return;
+ const amount=f.elements.amount;if(!amount)return;
+ const node=document.createElement('div');node.className='v80-advisor-slot';node.dataset.v80Slot='yes';
+ const fast=f.querySelector('.fastx-amount-zone');
+ if(fast)fast.insertAdjacentElement('afterend',node);
+ else{
+  const main=f.querySelector('.studio-step[data-step="1"]')||f.querySelector('.form-grid');
+  const target=amount.closest('label')||amount.closest('.form-full');
+  if(target&&target.parentElement===main)target.insertAdjacentElement('afterend',node);
+  else main?.insertAdjacentElement?.('afterbegin',node);
+ }
+ v80UpdateAdvisor(f);
+}
+function v80UpdateAdvisor(f){
+ const host=f?.querySelector('.v80-advisor-slot');if(!host)return;
+ const active=host.querySelector('.v80-breakdown')?.open;
+ host.innerHTML=v80AdvisorMarkup(v80AdvisorFromForm(f));
+ if(active)host.querySelector('.v80-breakdown')?.setAttribute('open','');
+}
+function v80RefreshQuickAdvisor(){
+ const target=document.getElementById('v80QuickAssessment');if(!target)return;
+ const s=mqrState();target.innerHTML=s.mode==='spend'?v80SummaryMarkup(v80Assessment(Number(s.amount)||0,'DOP'),true):'';
+}
+document.addEventListener('input',ev=>{if(ev.target?.matches?.('[data-v80-input]'))return;const f=ev.target?.form;if(f?.id==='transactionForm'&&f.querySelector('.v80-advisor-slot'))v80UpdateAdvisor(f)});
+document.addEventListener('change',ev=>{if(ev.target?.matches?.('[data-v80-input]'))return;const f=ev.target?.form;if(f?.id==='transactionForm'&&f.querySelector('.v80-advisor-slot'))v80UpdateAdvisor(f)});
+document.addEventListener('click',ev=>{
+ const btn=ev.target?.closest?.('[data-v80-action]');if(!btn)return;
+ if(btn.dataset.v80Action!=='saveIncome')return;
+ const near=btn.closest('.v80-configure');const input=near?.querySelector('[data-v80-input="income"]');
+ if(!input)return;
+ if(input.value!==''&&(!Number.isFinite(Number(input.value))||Number(input.value)<0)){toast('Introduce un ingreso válido o déjalo vacío para usar el cálculo automático.');return;}
+ db.settings.purchaseMonthlyNetOverride=Math.max(0,Number(input.value)||0);
+ persist();const f=document.getElementById('transactionForm');if(f)v80UpdateAdvisor(f);v80RefreshQuickAdvisor();
+ toast('Base de ingresos actualizada. No se ha registrado ningún movimiento.');
+});
+
+
+
 f33Boot();
 
 })();
@@ -19253,6 +19489,7 @@ document.addEventListener('keydown',function(ev){
 /* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
 window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
 document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
+
 
 </script>
 <!-- V40: compromisos por modalidad, nómina recurrente, instituciones no bancarias y reglas fiscales versionadas. -->
