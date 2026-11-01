@@ -14491,18 +14491,23 @@ function loanOptions(l){return loanWorkspace.sim[l.id] ||= {amount:2500,frequenc
 /* V49 · Calendario de cuotas por periodicidad.  Quincenal = dos cobros por mes. */
 function v49LoanPeriodsPerMonth(l){return l?.paymentFrequency==='semi_monthly'?2:1;}
 function v49LoanPeriodCount(l){const exact=num(l?.termQuincenas);return l?.paymentFrequency==='semi_monthly'&&exact>0?Math.max(1,Math.floor(exact)):Math.max(1,Math.floor(num(l?.months)||1))*v49LoanPeriodsPerMonth(l);}
+function v91AnchoredMonthDay(year,month,anchor){
+ // A fixed contractual day is capped to the last valid day, without changing its anchor.
+ const d=new Date(year,month-1,1);
+ return monthDay(d.getFullYear(),d.getMonth()+1,Math.max(1,Math.min(31,Number(anchor)||1)));
+}
 function v49LoanPeriodDate(l,index){
  const start=l?.firstDue||today();index=Math.max(0,Math.floor(index));
- if(v49LoanPeriodsPerMonth(l)===1)return plusMonths(start,index);
+ const first=dateObj(start),day=first.getDate(),y=first.getFullYear(),m=first.getMonth()+1;
+ // Preserve the original contracted day across February and 30-day months.
+ if(v49LoanPeriodsPerMonth(l)===1)return v91AnchoredMonthDay(y,m+index,day);
  if(index===0)return start;
- const first=dateObj(start),firstDay=first.getDate(),startMonth=first.getMonth(),startYear=first.getFullYear();
- if(firstDay<=15){
-  const cycle=Math.floor(index/2),d=new Date(startYear,startMonth+cycle,1),year=d.getFullYear(),month=d.getMonth()+1;
-  return monthDay(year,month,index%2===0?firstDay:31);
+ if(day<=15){
+  const cycle=Math.floor(index/2);
+  return v91AnchoredMonthDay(y,m+cycle,index%2===0?day:30);
  }
- const cycle=Math.floor(index/2),d=new Date(startYear,startMonth+cycle,1),year=d.getFullYear(),month=d.getMonth()+1;
- if(index%2===0)return monthDay(year,month,Math.max(16,firstDay));
- const next=new Date(startYear,startMonth+cycle+1,1);return monthDay(next.getFullYear(),next.getMonth()+1,15);
+ const cycle=Math.floor(index/2);
+ return index%2===0?v91AnchoredMonthDay(y,m+cycle,day):v91AnchoredMonthDay(y,m+cycle+1,15);
 }
 function v49LoanPeriodInterest(l,balance,due){
  const annual=(due&&(due<(l.rateEffectiveFrom||'0000-00-00')))?num(l.rate):num(l.currentRate??l.rate);
@@ -14529,7 +14534,7 @@ function v88LoanReconstruction(l){
  const opening=hasSnapshot?Math.max(0,Math.min(principal,num(l.openingDebt))):principal;
  const snapshot=(l.openingBalanceDate||today()).slice(0,10);
  const reduction=rnd(Math.max(0,principal-opening)),count=v49LoanPeriodCount(l);
- if(!hasSnapshot||reduction<=.005||!l.firstDue)return {rows:[],periods:0,interest:0,insurance:0,fees:0,opening,reduction,snapshot};
+ if(!hasSnapshot||!l.firstDue)return {rows:[],periods:0,interest:0,insurance:0,fees:0,opening,reduction,snapshot};
  let dates=[];
  for(let i=0;i<count;i++){const due=v49LoanPeriodDate(l,i);if(!due||due>snapshot||due>today())break;dates.push(due);}
  if(!dates.length)return {rows:[],periods:0,interest:0,insurance:0,fees:0,opening,reduction,snapshot};
@@ -14600,14 +14605,14 @@ function loans(){
   const arr=db.loans,visible=arr.filter(l=>ui.showHidden||!isHidden(l)),active=arr.filter(l=>!loanAccounting(l).settled);
   const total=arr.reduce((s,l)=>s+fx(loanAccounting(l).balance,l.currency),0);
   const paid=arr.reduce((s,l)=>s+fx(loanAccounting(l).paidPrincipal,l.currency),0);
-  const ints=arr.reduce((s,l)=>s+fx(loanAccounting(l).interest,l.currency),0);
+  const ints=arr.reduce((s,l)=>{const a=loanAccounting(l);return s+fx(a.interest+a.estimatedHistoricInterest,l.currency)},0);
   const extra=arr.reduce((s,l)=>s+fx(loanAccounting(l).extras,l.currency),0);
   return `<div class="loans-world">
     <header class="loan-intro"><div><span class="loan-overline">FINANCIAMIENTO / CENTRO DE CONTROL</span><h2>Préstamos. <em>Cada peso cuenta.</em></h2><p>Contratos originales, movimientos verificados y estrategias de abonos, separados con absoluta claridad.</p></div><div class="hstack">${visibilityControl()}<button class="btn loan-primary" data-act="addLoan">${icon('plus')} Nuevo préstamo</button></div></header>
     <div class="loan-overview-grid">
       ${loanStat('Capital pendiente',money(total),'Total de tus préstamos · RD$','building','violet')}
       ${loanStat('Capital reducido',money(paid),'Diferencia histórica + capital registrado','check','teal')}
-      ${loanStat('Intereses pagados',money(ints),'Importes reales registrados','chart','blue')}
+      ${loanStat('Intereses históricos',money(ints),'Estimados + confirmados; consultar desglose','chart','blue')}
       ${loanStat('Abonos extraordinarios',money(extra),'Principal pagado fuera de cuota','up','amber')}
     </div>
     <div class="loan-section-bar"><div><h3>Tu cartera de préstamos</h3><p>${active.length} activos · ${arr.length} registrados</p></div><span class="loan-soft-tag">Banco → préstamo → cuota → capital</span></div>
@@ -14633,7 +14638,7 @@ function loanCurves(bundle,l){
    <path d="${path(A)}" stroke="#138c79" stroke-width="4" fill="none"/>
    ${A.length>1?`<circle cx="${pos(A.at(-1))[0]}" cy="${pos(A.at(-1))[1]}" r="6" fill="#138c79" stroke="#fff" stroke-width="3"/>`:''}
    <text x="${x0}" y="${h-24}" font-size="11" fill="#8797ae">Inicio</text><text x="${x0+cw}" y="${h-24}" text-anchor="end" font-size="11" fill="#8797ae">${count} períodos</text></svg></div>
-   <div class="loan-legend"><span><i style="background:#9aabc7"></i> Original</span><span><i style="background:#138c79"></i> Registrado</span><span><i style="background:#4a76c7"></i> Proyección vigente</span>${bundle.simOpt.amount>0?'<span><i style="background:#d89058"></i> Estrategia</span>':''}</div>`;
+   <div class="loan-legend"><span><i style="background:#9aabc7"></i> Original</span><span><i style="background:#138c79"></i> Histórico estimado + registrado</span><span><i style="background:#4a76c7"></i> Proyección vigente</span>${bundle.simOpt.amount>0?'<span><i style="background:#d89058"></i> Estrategia</span>':''}</div>`;
 }
 function loanComparison(l,b){
   let curr=b.actual.interest+b.actual.estimatedHistoricInterest+b.baseline.interest,currIns=b.actual.insurance+b.actual.estimatedHistoricInsurance+b.baseline.insurance,currFee=b.actual.fees+b.actual.estimatedHistoricFees+b.baseline.fees;
@@ -15353,6 +15358,8 @@ function overview(){
  const high=Math.max(1,...five.flatMap(x=>[x.tot.income,x.tot.expense]));
  // Liquidez es saldo, no flujo. La barra verde lleva escala propia y su cifra exacta figura en el tooltip.
  const liquidityScale=Math.max(1,...liquidFive.filter(v=>v!==null).map(v=>Math.max(0,v)));
+ const v88Forecast=v82ForecastMonth();
+ const v88ProjectionTip=`Proyección del cierre · ${v88Forecast.period}|Ingresos previstos: ${money(v88Forecast.income)}|Egresos previstos: ${money(v88Forecast.expense)}|Neto previsto: ${money(v88Forecast.net)}|Cobros pendientes previstos: ${money(v88Forecast.expectedIncome)}|Gastos pendientes previstos: ${money(v88Forecast.expectedExpense)}|Estimación, no movimientos confirmados`;
  const bars=five.map((x,i)=>{
    const inH=Math.max(4,100*Math.max(0,x.tot.income)/high),outH=Math.max(4,100*Math.max(0,x.tot.expense)/high);
    const liquidH=liquidFive[i]===null?0:Math.max(4,100*Math.max(0,liquidFive[i])/liquidityScale);
