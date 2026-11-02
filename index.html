@@ -14541,6 +14541,82 @@ body.theme-dark .main .topbar .top-actions .v36-notifications>summary,
 body.theme-dark .main .topbar .top-actions .v165-search-icon{background:linear-gradient(160deg,rgba(57,75,109,.75),rgba(37,53,87,.72))!important;color:#e9f0ff!important;border-color:rgba(188,205,243,.2)!important}
 @media (prefers-reduced-motion:reduce){.main .topbar .top-actions .v36-notifications>summary,.main .topbar .top-actions .v165-search-icon{transition:none!important}}
 </style>
+
+<style id="vive-v167-strategy">
+/* V167 · Simulador integral: liquidez, pasivos, calendario y posición neta */
+#modal-root .v119-modal{width:min(920px,calc(100vw - 24px))!important;max-width:calc(100vw - 24px)!important}
+.v167-tomorrow .v159-tomorrow-intro h3{font-size:29px}
+.v167-choice-modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;border-radius:17px;padding:6px;background:rgba(222,232,250,.62);border:1px solid #ffffffc7}
+.v167-choice-modes button{border:0;border-radius:12px;background:transparent;color:#5e7292;display:flex;align-items:center;justify-content:center;gap:7px;min-height:43px;font-weight:780;font-size:12px;cursor:pointer;transition:background .19s,box-shadow .19s,transform .19s}
+.v167-choice-modes button svg{width:16px;height:16px;flex:none}
+.v167-choice-modes button.active{background:rgba(255,255,255,.95);box-shadow:0 5px 15px rgba(54,77,128,.13);color:#24436f}
+.v167-choice-modes button:hover{transform:translateY(-1px)}
+.v167-decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;align-items:end}
+.v167-decision-grid>.v167-target-box{grid-column:1/-1}
+.v167-decision-grid .v159-decision-horizon{grid-column:1/-1;margin-top:0}
+.v167-decision-grid .v159-timing-label{margin:0 0 10px}
+.v167-decision-grid .v119-field{margin:0 0 7px}
+.v167-target-box{display:grid;gap:8px}
+.v167-target-box label{font-size:12px;font-weight:790;color:#355175}
+.v167-target-box select{display:block;width:100%;min-width:0;min-height:46px;border:1px solid rgba(165,187,224,.63);border-radius:12px;background:linear-gradient(135deg,#fff,#eef4ff);color:#30486d;padding:0 13px;font-size:12px;font-weight:680}
+.v167-target-box small{font-size:10px;color:#6a809f}
+.v167-target-guidance{margin:0 0 5px;font-size:11px;color:#657b9a;line-height:1.48}
+.v167-section-heading{display:flex;justify-content:space-between;gap:12px;align-items:end;margin:2px 0 11px}
+.v167-section-heading span{font-size:9px;font-weight:850;color:#667fa8;letter-spacing:.135em}
+.v167-section-heading h4{margin:4px 0 0;font-size:18px;color:#233b60;letter-spacing:-.025em}
+.v167-section-heading .v167-proforma{letter-spacing:0;color:#7286a4;font-size:10px;text-align:right;font-weight:650}
+.v167-executive,.v167-map{display:grid;gap:8px}
+.v167-impact-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.v167-metric{min-width:0;padding:14px 13px;border:1px solid rgba(183,205,234,.6);background:linear-gradient(150deg,rgba(255,255,255,.96),rgba(238,245,255,.83));border-radius:17px;box-shadow:0 7px 19px rgba(46,72,127,.05)}
+.v167-metric.is-net{background:linear-gradient(125deg,rgba(221,233,255,.98),rgba(237,245,255,.92))}
+.v167-metric.is-debt{background:linear-gradient(125deg,rgba(238,236,255,.92),rgba(250,250,255,.96))}
+.v167-metric>small{display:block;color:#526b8e;font-size:10px;font-weight:810;letter-spacing:.02em;margin-bottom:9px}
+.v167-before{font-size:9px;color:#8293ac;display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
+.v167-before span{font-weight:780;color:#657997;font-size:10px}
+.v167-after{font-size:clamp(16px,2.1vw,22px);font-weight:900;color:#1e365c;letter-spacing:-.052em;overflow-wrap:anywhere;margin-top:5px;line-height:1.15}
+.v167-after.is-negative-value{color:#b8485d}
+.v167-difference{font-size:10px;font-weight:780;color:#6c7c94;margin-top:7px}
+.v167-difference.is-positive{color:#138566}.v167-difference.is-negative{color:#c45652}
+.v167-metric p{font-size:9px;line-height:1.36;color:#8b99ac;margin:7px 0 0}
+.v167-strategic-insight{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border:1px solid rgba(143,173,229,.33);border-radius:15px;background:linear-gradient(110deg,rgba(231,239,253,.81),rgba(243,249,255,.92))}
+.v167-strategic-insight .v167-insight-dot{display:grid;place-items:center;width:23px;height:23px;flex:none;border-radius:50%;background:#e5edfc;color:#456db5;font-size:13px}
+.v167-strategic-insight p{margin:1px 0 0!important;color:#526987!important;line-height:1.55;font-size:11px!important}
+.v167-register{border:1px solid rgba(185,203,229,.55);border-radius:15px;background:rgba(255,255,255,.58);padding:0 14px 13px}
+.v167-register>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:13px 0 10px;color:#2f4a75;font-weight:820;font-size:12px}
+.v167-register>summary::-webkit-details-marker{display:none}
+.v167-register>summary>span{display:flex;align-items:center;gap:8px}
+.v167-register>summary svg{width:16px;height:16px;color:#597fc2}
+.v167-register>summary small{font-size:10px;color:#778cac;font-weight:650}
+.v167-debt-groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:10px}
+.v167-debt-groups>div{border-radius:11px;background:rgba(233,240,252,.68);border:1px solid rgba(255,255,255,.95);padding:10px 11px;min-width:0}
+.v167-debt-groups small{display:block;color:#7d8eaa;font-size:9px;line-height:1.4;margin-bottom:4px}
+.v167-debt-groups strong{font-size:14px;color:#2d476b;line-height:1.2;overflow-wrap:anywhere}
+.v167-scroll-list{display:grid;gap:0;max-height:205px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:4px}
+.v167-record{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(151,175,210,.16);padding:9px 4px;min-width:0}
+.v167-record:last-child{border-bottom:0}
+.v167-record.is-target{background:rgba(223,235,255,.58);border-radius:9px;padding-inline:9px}
+.v167-record>span{display:flex;flex-direction:column;gap:3px;min-width:0}
+.v167-record>span strong{font-weight:750;font-size:11px;color:#365377;line-height:1.26;overflow-wrap:anywhere}
+.v167-record>span small{font-size:9px;color:#8090a8;line-height:1.35}
+.v167-record>div{text-align:right;display:flex;flex-direction:column;gap:3px;flex:none;max-width:48%}
+.v167-record>div b{font-size:11px;color:#263f65}
+.v167-record>div small{font-size:9px;line-height:1.25;color:#16836f}
+.v167-detail-note{font-size:10px;color:#8290a6;line-height:1.5;margin:9px 1px 0!important}
+@media(max-width:790px){
+ .v167-choice-modes{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .v167-choice-modes button{min-height:40px;font-size:11px}
+ .v167-decision-grid{grid-template-columns:1fr}
+ .v167-decision-grid>.v167-target-box,.v167-decision-grid .v159-decision-horizon{grid-column:1}
+ .v167-impact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .v167-metric{padding:12px}
+ .v167-after{font-size:clamp(16px,4.8vw,21px)}
+ .v167-debt-groups{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .v167-section-heading h4{font-size:15px}
+ .v167-section-heading .v167-proforma{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.v167-choice-modes button{transition:none!important}}
+</style>
+
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -23463,7 +23539,7 @@ function v159SimulateDecision(amount,kind,scenario,horizon){
   projectedEnding:ending,projectedMinimum:rnd(min),projectedCritical:critical,
   projectedMissingDays:missingDays,extraRisk:rnd(Math.max(0,-min)-Math.max(0,-baseline.minimum)),points};
 }
-function v159LiveSummary(result,kind){
+function v159LiveSummary(result,kind,executiveHtml=''){
  const valid=result.valid;
  const final=valid?result.projectedEnding:result.ending;
  const minimum=valid?result.projectedMinimum:result.minimum;
@@ -23471,7 +23547,11 @@ function v159LiveSummary(result,kind){
  const change=rnd(final-result.ending);
  const critical=valid?result.projectedCritical:result.critical;
  const label=gap>.005?`Faltante previsto de ${money(gap)}`:critical?'Saldo justo, conviene mantener reserva':'Sin faltante previsto';
- const explain=!valid?result.note:kind==='income'?
+ const explain=!valid?result.note:kind==='commitment'?
+   'Este adelanto traslada al día de hoy un pago ya incluido en los compromisos previstos; el desembolso no se duplica en el saldo final.':
+   kind==='debt'?
+   'El abono extraordinario reduce efectivo y deuda nominal; no modifica por sí solo la posición neta si es capital sin comisiones.':
+   kind==='income'?
    gap<baseGap-.005?`Este ingreso reduce tu faltante previsto en ${money(baseGap-gap)}.`:
    gap>.005?'El ingreso ayuda, pero no cubre todos los vencimientos.':'El ingreso mejora tu disponibilidad prevista.':
    gap>baseGap+.005?`Este gasto aumenta el faltante previsto en ${money(gap-baseGap)}.`:
@@ -23480,57 +23560,227 @@ function v159LiveSummary(result,kind){
   <span class="v159-outcome-label">Saldo proyectado al final de ${result.horizon} días</span>
   <strong class="v159-outcome-money ${final<0?'v119-danger':''}">${money(final)}</strong>
   <div class="v159-outcome-comparison"><span>${valid?(change>=0?'+':'−')+money(Math.abs(change))+' frente al escenario base':'Escenario aún no calculable'}</span><span class="v159-outcome-status">${gap>.005?'Atención':'En control'}</span></div>
- </div><div class="v159-outcome-metrics">
+ </div>${executiveHtml}<div class="v159-outcome-metrics">
   <div><small>Disponible prudente</small><strong class="${minimum<0?'v119-danger':''}">${money(Math.max(0,minimum))}</strong></div>
   <div><small>${critical?'Primer día crítico':'Riesgo de déficit'}</small><strong class="${critical?'v119-danger':''}">${critical?prettyDate(critical):'Ninguno'}</strong></div>
   <div><small>Impacto de la decisión</small><strong class="${change>0?'v143-income-value':change<0?'v119-danger':''}">${change>0?'+':change<0?'−':''}${money(Math.abs(change))}</strong></div>
  </div><div class="v159-outcome-guidance ${gap>.005?'is-risk':''}"><span aria-hidden="true">${gap>.005?'!':'✓'}</span><p><strong>${label}.</strong> ${sanitize(explain)}</p></div>`;
 }
+/* V167 · Fuente real de deuda, capital y vencimientos.
+   El stock de deuda nunca se resta del flujo: solo se descuentan pagos
+   programados y decisiones nuevas. Abonar capital cambia el pasivo y
+   el efectivo, sin generar por sí solo pérdida patrimonial. */
+function v167DebtOptions(){
+ const options=[];
+ for(const c of db.cards||[]){
+  for(const currency of ['DOP','USD']){
+   try{
+    const amount=rnd(fx(Math.max(0,num(cardStatus(c,currency).debt)),currency));
+    if(amount>.005)options.push({key:'card:'+c.id+':'+currency,label:(c.name||'Tarjeta')+' · '+currency,category:'card',amount});
+   }catch(error){console.warn('V167 tarjeta no proyectable',error)}
+  }
+ }
+ for(const l of db.loans||[]){
+  try{const amount=rnd(fx(Math.max(0,num(loanStatus(l).balance)),l.currency||'DOP'));
+   if(amount>.005)options.push({key:'loan:'+l.id,label:(l.name||'Préstamo')+' · '+(l.currency||'DOP'),category:'loan',amount});
+  }catch(error){console.warn('V167 préstamo no proyectable',error)}
+ }
+ for(const l of db.personalLoans||[]){
+  if(l.direction!=='borrowed')continue;
+  try{const amount=rnd(fx(Math.max(0,num(personalBalance(l))),l.currency||'DOP'));
+   if(amount>.005)options.push({key:'personal:'+l.id,label:(l.person||'Deuda entre personas')+' · '+(l.currency||'DOP'),category:'personal',amount});
+  }catch(error){console.warn('V167 préstamo entre personas no proyectable',error)}
+ }
+ return options;
+}
+function v167EventKind(event){
+ const p=String(event?.key||'').split(':');
+ if(['debt','overdue'].includes(p[0])&&['card','loan','personal','recurring'].includes(p[1]))return p[1];
+ return 'manual';
+}
+function v167Commitments(baseline){
+ return baseline.events.filter(e=>e.type==='expense'&&['debt','overdue'].includes(String(e.key).split(':')[0]));
+}
+function v167Snapshot(){
+ const people=personalTotals(),debt=v143TomorrowOutstanding(),liquid=v119AvailableToday(),certificates=totalCertificates();
+ return {liquid:rnd(liquid),certificates:rnd(certificates),receivable:rnd(people.receivable),debt,
+  net:rnd(liquid+certificates+people.receivable-debt.total)};
+}
+function v167AdvanceCommitment(baseline,selected,requested){
+ if(!selected)return {...baseline,valid:false,note:'Selecciona un compromiso registrado para anticiparlo.',amount:0};
+ const amount=rnd(Math.min(Math.max(0,num(requested)),selected.amount));
+ let min=baseline.initial,ending=baseline.initial,critical=null,missingDays=0;
+ const points=[];
+ for(const p of baseline.dayByDay){
+  // La cuota figura una vez en el calendario. Se mueve su fecha a hoy:
+  // desembolso ahora, pero devolución de su gasto original al llegar el vencimiento.
+  const advanced=p.date>=today()&&p.date<selected.date?amount:0;
+  ending=rnd(p.balance-advanced);
+  if(ending<min)min=ending;
+  if(ending<0){missingDays++;if(!critical)critical=p.date}
+  points.push({...p,balance:ending,decision:p.date===today()?amount:0});
+ }
+ return {...baseline,valid:true,amount,kind:'commitment',selectedEvent:selected,
+  projectedEnding:ending,projectedMinimum:rnd(min),projectedCritical:critical,
+  projectedMissingDays:missingDays,extraRisk:rnd(Math.max(0,-min)-Math.max(0,-baseline.minimum)),points};
+}
+function v167Calculate(state=v119DecisionState){
+ const kind=['income','expense','debt','commitment'].includes(state.kind)?state.kind:'expense';
+ const value=Math.max(0,rnd(Number(state.amount)||0)),baseline=v119Baseline(state.horizon);
+ const debtOptions=v167DebtOptions(),commitments=v167Commitments(baseline);
+ const debtTarget=debtOptions.find(x=>x.key===state.debtTarget)||debtOptions[0]||null;
+ const commitmentTarget=commitments.find(x=>x.key===state.commitmentTarget)||commitments[0]||null;
+ let applied=value,capNote='';
+ if(kind==='debt'){
+  applied=debtTarget?rnd(Math.min(value,debtTarget.amount)):0;
+  if(!debtTarget)capNote='No hay deudas registradas con saldo pendiente.';
+  else if(value>applied+.005)capNote='El abono se limita al saldo actual del producto seleccionado.';
+ }else if(kind==='commitment'){
+  applied=commitmentTarget?rnd(Math.min(value,commitmentTarget.amount)):0;
+  if(!commitmentTarget)capNote='No hay compromisos con fecha registrada para este horizonte.';
+  else if(value>applied+.005)capNote='El adelanto se limita al compromiso seleccionado.';
+ }
+ let result;
+ if(kind==='commitment')result=v167AdvanceCommitment(baseline,commitmentTarget,applied);
+ else if(kind==='debt')result=debtTarget?v119Decision(applied,'today',state.horizon):{...baseline,valid:false,note:capNote,amount:0};
+ else result=v159SimulateDecision(value,kind,kind==='income'?(state.incomeTiming||'today'):state.scenario,state.horizon);
+ if(!result.valid)applied=0;
+ const snapshot=v167Snapshot();
+ // Reconocer capital solo cuando la decisión o el producto lo permite:
+ // una cuota de préstamo suele contener intereses y no equivale íntegramente a capital.
+ const selectedCategory=kind==='debt'?debtTarget?.category:kind==='commitment'?v167EventKind(commitmentTarget):null;
+ const knownStock=kind==='commitment'&&['card','personal'].includes(selectedCategory)?debtOptions.find(option=>{
+  const parts=String(commitmentTarget?.key||'').split(':');
+  if(selectedCategory==='card')return option.category==='card'&&option.key==='card:'+parts[2]+':'+parts[3];
+  return option.category==='personal'&&option.key==='personal:'+parts[2];
+ }):null;
+ const uncertain=kind==='commitment'&&applied>.005&&(selectedCategory==='loan'||(['card','personal'].includes(selectedCategory)&&!knownStock));
+ const capitalReduction=kind==='debt'?applied:kind==='commitment'&&knownStock?rnd(Math.min(applied,knownStock.amount)):0;
+ const liquidChange=kind==='income'?applied:-applied;
+ const liabilityAfter=uncertain?null:rnd(Math.max(0,snapshot.debt.total-capitalReduction));
+ const netAfter=uncertain?null:rnd(snapshot.net+liquidChange+capitalReduction);
+ const planned=commitments.reduce((sum,e)=>sum+e.amount,0);
+ const plannedAfter=rnd(Math.max(0,planned-(kind==='commitment'?applied:0)));
+ return {kind,baseline,result,snapshot,debtOptions,commitments,debtTarget,commitmentTarget,
+  selectedCategory,requested:value,applied,capNote,capitalReduction,uncertain,
+  liquidAfter:rnd(snapshot.liquid+liquidChange),liabilityAfter,netAfter,planned:rnd(planned),plannedAfter};
+}
+function v167Delta(value){
+ const n=rnd(value);return (n>0?'+':n<0?'−':'')+money(Math.abs(n));
+}
+function v167Metric(label,before,after,{uncertain=false,description='',accent=''}={}){
+ const delta=after===null?null:rnd(after-before);
+ return `<article class="v167-metric ${accent}"><small>${label}</small><div class="v167-before">Actual <span>${money(before)}</span></div><div class="v167-after ${after!==null&&after<0?'is-negative-value':''}">${uncertain?'Estimación no disponible':money(after)}</div><div class="v167-difference ${delta>0?'is-positive':delta<0?'is-negative':''}">${delta===null?'Capital/intereses por separar':delta===0?(accent==='is-net'?'Sin cambio patrimonial':'Sin cambios'):v167Delta(delta)+' por la decisión'}</div>${description?`<p>${sanitize(description)}</p>`:''}</article>`;
+}
+function v167Insight(context){
+ const {kind,applied,capNote,commitmentTarget,selectedCategory,uncertain,result}=context;
+ if(!result.valid)return result.note||capNote||'Selecciona una operación válida.';
+ if(kind==='income')return `Un ingreso nuevo incrementa la liquidez y la posición neta en ${money(applied)}. Las deudas y cuotas existentes no desaparecen.`;
+ if(kind==='expense')return `Un gasto nuevo reduce la liquidez y la posición neta en ${money(applied)}; tus deudas existentes no disminuyen.`;
+ if(kind==='debt')return `Este abono extraordinario reduce deuda y efectivo en ${money(applied)}: su efecto directo sobre la posición neta es RD$0, sin intereses ni comisiones adicionales. Las cuotas programadas aún se mantienen.`;
+ if(uncertain)return `El adelanto de ${money(applied)} a ${commitmentTarget?.name||'la cuota'} mueve el vencimiento al día de hoy. No se estima capital amortizado ni posición neta porque la cuota puede contener intereses, seguro y cargos.`;
+ const type=selectedCategory==='recurring'?'servicio':selectedCategory==='card'?'tarjeta':selectedCategory==='personal'?'préstamo personal':'compromiso';
+ return `Adelantar ${money(applied)} de ${commitmentTarget?.name||type} reduce lo pendiente de pagar más adelante, pero NO reduce dos veces el saldo final de ${result.horizon} días.`;
+}
+function v167ExecutiveImpact(context){
+ const {snapshot,liquidAfter,liabilityAfter,netAfter,planned,plannedAfter,uncertain,kind,applied,capNote}=context;
+ const groups=[
+  v167Metric('Liquidez inmediata',snapshot.liquid,liquidAfter,{description:'Cuentas y efectivo después de la decisión'}),
+  v167Metric('Deudas totales',snapshot.debt.total,liabilityAfter,{uncertain,description:'Tarjetas + préstamos + dinero por devolver',accent:'is-debt'}),
+  v167Metric('Compromisos por vencer',planned,plannedAfter,{description:'Vencimientos registrados dentro del horizonte'}),
+  v167Metric('Posición neta',snapshot.net,netAfter,{uncertain,description:'Liquidez + inversiones + por cobrar − deuda',accent:'is-net'})
+ ];
+ return `<section class="v167-executive" aria-label="Efecto sobre deudas, compromisos y posición neta">
+   <div class="v167-section-heading"><div><span>EFECTO DE TU DECISIÓN</span><h4>Tu situación financiera, antes y después</h4></div><span class="v167-proforma">Simulación · no modifica registros</span></div>
+   <div class="v167-impact-grid">${groups.join('')}</div>
+   <div class="v167-strategic-insight"><span class="v167-insight-dot" aria-hidden="true">✦</span><p>${sanitize(v167Insight(context))}${capNote?' '+sanitize(capNote):''}</p></div>
+  </section>`;
+}
+function v167DebtTable(context){
+ const d=context.snapshot.debt;
+ const groups=[['Tarjetas de crédito',d.cards],['Préstamos bancarios',d.loans],['Deudas entre personas',d.people]];
+ const rows=context.debtOptions.map(option=>{
+  const applied=(context.kind==='debt'&&context.debtTarget?.key===option.key)?context.applied:0;
+  const isAdvance=context.kind==='commitment'&&context.commitmentTarget&&context.capitalReduction>.005&&(()=>{
+   const parts=context.commitmentTarget.key.split(':');
+   return option.category==='card'?option.key==='card:'+parts[2]+':'+parts[3]:
+          option.category==='personal'&&option.key==='personal:'+parts[2];
+  })();
+  const isTarget=(context.kind==='debt'&&context.debtTarget?.key===option.key)||!!isAdvance;
+  // En un adelanto con fecha agregada y posible mezcla de monedas,
+  // no inferir reducción por producto salvo selección exacta de abono.
+  const payment=isAdvance?context.capitalReduction:applied;
+  return `<div class="v167-record ${isTarget?'is-target':''}"><span><strong>${sanitize(option.label)}</strong><small>${option.category==='card'?'Tarjeta':option.category==='loan'?'Préstamo bancario':'Entre personas'}</small></span><div><b>${money(option.amount)}</b>${isTarget&&payment>.005?`<small class="v167-negative">−${money(payment)} → ${money(Math.max(0,option.amount-payment))}</small>`:''}</div></div>`;
+ }).join('');
+ return `<details class="v167-register" open><summary><span>${icon('wallet')} Deudas completas · ${money(d.total)}</span><small>Ver cada producto</small></summary>
+  <div class="v167-debt-groups">${groups.map(([label,value])=>`<div><small>${label}</small><strong>${money(value)}</strong></div>`).join('')}</div>
+  <div class="v167-scroll-list">${rows||'<p class="v119-note">No existen deudas de tarjetas, préstamos o entre personas con saldo pendiente.</p>'}</div>
+  <p class="v167-detail-note">Estos saldos son obligaciones de capital y crédito. No se vuelven a restar del flujo de caja: solo sus pagos con vencimiento conocido.</p>
+ </details>`;
+}
+function v167CommitmentTable(context){
+ const groups=[['card','Tarjetas'],['loan','Préstamos'],['recurring','Servicios y suscripciones'],['personal','Entre personas']];
+ const sums=new Map(groups.map(([id])=>[id,0]));
+ for(const event of context.commitments){const k=v167EventKind(event);sums.set(k,rnd((sums.get(k)||0)+event.amount))}
+ const rows=context.commitments.map(event=>{
+  const applied=context.kind==='commitment'&&context.commitmentTarget?.key===event.key?context.applied:0;
+  return `<div class="v167-record ${applied>.005?'is-target':''}"><span><strong>${sanitize(event.name)}</strong><small>${prettyDate(event.date)} · ${sanitize(({card:'Tarjeta',loan:'Préstamo',recurring:'Suscripción',personal:'Entre personas'})[v167EventKind(event)]||'Otro pago')}${event.quality==='overdue'?' · Vencido':''}</small></span><div><b>${money(event.amount)}</b>${applied>.005?`<small class="v167-negative">Adelanto −${money(applied)} · resta ${money(Math.max(0,event.amount-applied))}</small>`:''}</div></div>`;
+ }).join('');
+ return `<details class="v167-register" open><summary><span>${icon('calendar')} Compromisos · ${money(context.planned)}</span><small>Con fecha y por producto</small></summary>
+  <div class="v167-debt-groups">${groups.map(([kind,label])=>`<div><small>${label}</small><strong>${money(sums.get(kind)||0)}</strong></div>`).join('')}</div>
+  <div class="v167-scroll-list">${rows||'<p class="v119-note">No hay compromisos identificados con fecha dentro del período.</p>'}</div>
+  <p class="v167-detail-note">El total agrupa vencimientos del horizonte elegido. Los gastos manuales no clasificados como compromisos siguen incorporados al flujo, por separado.</p>
+ </details>`;
+}
+function v167Detail(context){
+ return `<section class="v167-map" aria-label="Mapa completo de deudas y compromisos">
+  <div class="v167-section-heading"><div><span>MAPA DE OBLIGACIONES</span><h4>¿Qué debes y cuándo lo pagarás?</h4></div></div>
+  ${v167DebtTable(context)}${v167CommitmentTable(context)}
+ </section>`;
+}
+function v167Result(context){
+ const kind=context.kind,result=context.result;
+ return v159LiveSummary(result,kind,v167ExecutiveImpact(context));
+}
 function v119Markup(){
  const state=v119DecisionState;
- const kind=state.kind==='income'?'income':'expense';
- const amount=Math.max(0,Number(state.amount)||0);
- const incomeTiming=state.incomeTiming||'today';
- const scenario=kind==='income'?incomeTiming:state.scenario;
- const result=v159SimulateDecision(amount,kind,scenario,state.horizon);
- const recovery=v119Recovery(result),baseline=v119Baseline(state.horizon);
- const incomeflow=baseline.events.filter(e=>e.type==='income').length;
- const expenseflow=baseline.events.filter(e=>e.type==='expense').length;
- const dateText=kind==='income'?(scenario==='today'?'hoy':scenario==='week'?'en 7 días':'en 15 días'):
- scenario==='today'?'hoy':scenario==='split'?'en dos pagos':'con el próximo ingreso';
- const currentScenario=kind==='income'
-  ?[['today','Hoy'],['week','En 7 días'],['fortnight','En 15 días']]
-  :[['today','Hoy'],['next','Próximo ingreso'],['split','En dos pagos']];
- return `<div class="v119-content v159-tomorrow">
-  <div class="v159-tomorrow-intro"><span>DECISIONES INTELIGENTES · SIN MOVIMIENTOS REALES</span><h3>¿Qué pasa si…?</h3><p>Prueba un ingreso o un gasto y anticipa cómo cambia tu dinero antes de decidir.</p></div>
-  <div class="v159-tomorrow-mode" role="group" aria-label="Tipo de simulación">
-   <button type="button" data-v159-kind="expense" class="${kind==='expense'?'active':''}" aria-pressed="${kind==='expense'}">${icon('down')} Simular gasto</button>
-   <button type="button" data-v159-kind="income" class="${kind==='income'?'active':''}" aria-pressed="${kind==='income'}">${icon('up')} Simular ingreso</button>
+ const context=v167Calculate(state),kind=context.kind;
+ const {baseline,result,recovery}=Object.assign({recovery:v119Recovery(context.result)},context);
+ const income=kind==='income',expense=kind==='expense',debt=kind==='debt',commitment=kind==='commitment';
+ const timing=income?(state.incomeTiming||'today'):state.scenario;
+ const choices=income? [['today','Hoy'],['week','En 7 días'],['fortnight','En 15 días']]:[['today','Hoy'],['next','Próximo ingreso'],['split','En dos pagos']];
+ const targetOptions=debt?context.debtOptions:context.commitments;
+ const target=debt?context.debtTarget:context.commitmentTarget;
+ const selector=debt||commitment?`<div class="v167-target-box"><label for="v167-target">${debt?'¿A cuál deuda quieres abonar?':'¿Qué compromiso deseas adelantar?'}</label><select id="v167-target" aria-label="${debt?'Seleccionar deuda':'Seleccionar compromiso'}" ${!targetOptions.length?'disabled':''}>${targetOptions.length?targetOptions.map(o=>`<option value="${sanitize(o.key)}" ${target?.key===o.key?'selected':''}>${sanitize(o.label||o.name)} · ${money(o.amount)}${o.date?' · '+prettyDate(o.date):''}</option>`).join(''):'<option>Sin obligaciones registradas</option>'}</select>${target?`<small>${debt?'Saldo del producto':'Pago programado'}: <b>${money(target.amount)}</b>${target.date?' · vence '+prettyDate(target.date):''}</small>`:''}</div>`:'';
+ return `<div class="v119-content v159-tomorrow v167-tomorrow">
+  <div class="v159-tomorrow-intro"><span>ESTRATEGIA FINANCIERA · SIMULACIONES SIN REGISTROS</span><h3>El costo de mañana</h3><p>Comprueba el efecto sobre tu efectivo, deudas, compromisos y posición neta antes de decidir.</p></div>
+  <div class="v167-choice-modes" role="group" aria-label="Tipo de simulación">
+   ${[['expense','Gastar','down'],['income','Recibir','up'],['debt','Abonar deuda','wallet'],['commitment','Adelantar cuota','calendar']].map(([id,label,ico])=>`<button type="button" data-v159-kind="${id}" class="${kind===id?'active':''}" aria-pressed="${kind===id}">${icon(ico)}<span>${label}</span></button>`).join('')}
   </div>
-  <div class="v159-decision-card">
-   <label class="v119-field" for="v119-amount">${kind==='income'?'¿Cuánto dinero recibirías?':'¿Cuánto dinero gastarías?'} <span class="v159-unit">RD$</span></label>
-   <input id="v119-amount" class="v159-money-input" type="number" min="0" step="0.01" inputmode="decimal" value="${sanitize(String(state.amount))}" placeholder="0.00" aria-describedby="v159-simulation-note">
-   <div class="v159-timing-label">${kind==='income'?'¿Cuándo recibirías el dinero?':'¿Cuándo harías el pago?'}</div>
-   <div class="v159-timing-choices" role="group" aria-label="Momento de la simulación">
-     ${currentScenario.map(([id,label])=>`<button type="button" data-v159-timing="${id}" class="${scenario===id?'active':''}" aria-pressed="${scenario===id}">${label}</button>`).join('')}
-   </div>
-   <div class="v159-decision-horizon"><span>Analizar los próximos</span><div class="v119-switch" role="group" aria-label="Horizonte de simulación">${[30,60,90].map(n=>`<button type="button" data-v119-horizon="${n}" class="${state.horizon===n?'active':''}" aria-pressed="${state.horizon===n}">${n} días</button>`).join('')}</div></div>
+  <div class="v159-decision-card v167-decision-grid">
+   ${selector}
+   <div class="v167-input-column"><label class="v119-field" for="v119-amount">${income?'Ingreso previsto':expense?'Gasto nuevo':debt?'Abono extraordinario a capital':'Monto a adelantar'} <span class="v159-unit">RD$</span></label>
+    <input id="v119-amount" class="v159-money-input" type="number" min="0" step="0.01" inputmode="decimal" value="${sanitize(String(state.amount))}" placeholder="0.00" aria-describedby="v159-simulation-note"></div>
+   ${income||expense?`<div class="v167-timing-column"><div class="v159-timing-label">${income?'¿Cuándo se recibirá?':'¿Cuándo se gastará?'}</div><div class="v159-timing-choices" role="group" aria-label="Momento de la simulación">${choices.map(([id,label])=>`<button type="button" data-v159-timing="${id}" class="${timing===id?'active':''}" aria-pressed="${timing===id}">${label}</button>`).join('')}</div></div>`:
+    `<p class="v167-target-guidance">${debt?'Abono adicional a las cuotas ya previstas, destinado íntegramente a capital.':'El pago ya está en tu calendario: se adelanta a hoy y se elimina la misma parte del vencimiento original.'}</p>`}
+   <div class="v159-decision-horizon"><span>Proyección a</span><div class="v119-switch" role="group" aria-label="Horizonte de simulación">${[30,60,90].map(n=>`<button type="button" data-v119-horizon="${n}" class="${state.horizon===n?'active':''}" aria-pressed="${state.horizon===n}">${n} días</button>`).join('')}</div></div>
   </div>
-  <div class="v159-outcome" id="v159-live" role="status" aria-live="polite">${v159LiveSummary(result,kind)}</div>
-  <p class="v159-decision-meta" id="v159-simulation-note">${kind==='income'?'Ingreso hipotético':'Gasto hipotético'} ${dateText}. No se registra ni se modifica el saldo real.</p>
-  <details class="v159-details"><summary>${icon('chart')} Cómo se calcula · ver entradas y compromisos</summary>
-   <div class="v159-baseline-grid"><div><small>Liquidez actual</small><strong>${money(baseline.initial)}</strong></div><div><small>Ingresos previstos (${incomeflow})</small><strong class="v143-income-value">+${money(baseline.incomes)}</strong></div><div><small>Pagos y vencimientos (${expenseflow})</small><strong class="v119-danger">−${money(baseline.dues)}</strong></div><div><small>Saldo sin simular</small><strong>${money(baseline.ending)}</strong></div></div>
-   <p class="v119-note">Se usan exclusivamente cuentas, ingresos programados, previsiones y pagos registrados. Las deudas completas no se descuentan dos veces.</p>
+  <div class="v159-outcome" id="v159-live" role="status" aria-live="polite">${v167Result(context)}</div>
+  <p class="v159-decision-meta" id="v159-simulation-note">Los importes y escenarios son hipotéticos. No se crea ningún movimiento ni se alteran saldos registrados.</p>
+  <div id="v167-detail-updates">${v167Detail(context)}</div>
+  <details class="v159-details"><summary>${icon('chart')} Flujo de caja y cómo se calcula</summary>
+   <div class="v159-baseline-grid"><div><small>Liquidez actual</small><strong>${money(baseline.initial)}</strong></div><div><small>Ingresos previstos</small><strong class="v143-income-value">+${money(baseline.incomes)}</strong></div><div><small>Pagos y vencimientos</small><strong class="v119-danger">−${money(baseline.dues)}</strong></div><div><small>Saldo de base al cierre</small><strong>${money(baseline.ending)}</strong></div></div>
+   <p class="v119-note">Solo se suman ingresos previstos y compromisos con fecha. El stock total de deuda se muestra aparte: no se descuenta de nuevo.</p>
    <details class="v143-timeline-details"><summary>Calendario de cobros, pagos y saldo</summary>${v143TomorrowTimeline(baseline)}</details>
-   <details class="v143-debt-breakdown"><summary>Desglose de todas mis deudas</summary>${(()=>{const d=v143TomorrowOutstanding();return `<div class="v143-debt-row"><span>Tarjetas</span><b>${money(d.cards)}</b></div><div class="v143-debt-row"><span>Préstamos</span><b>${money(d.loans)}</b></div><div class="v143-debt-row"><span>Entre personas</span><b>${money(d.people)}</b></div><div class="v143-debt-row total"><span>Deuda total registrada</span><b>${money(d.total)}</b></div>`})()}</details>
   </details>
   <details class="v159-details"><summary>${icon('wallet')} Plan de recuperación y días críticos</summary>
-   <div class="v119-duo"><div><small>Faltante máximo estimado</small><strong class="${recovery.gap>.005?'v119-danger':''}">${money(recovery.gap)}</strong></div><div><small>Ingreso adicional para cubrirlo</small><strong>${money(recovery.additionalIncome)}</strong></div></div>
-   <p class="v119-note">${recovery.gap>.005?`Para cubrir el déficit, habría que disponer de ${money(recovery.gap)} antes del primer vencimiento sin fondos. No basta cobrar después.`:'En este escenario no se detecta un faltante con las obligaciones registradas. Conviene mantener un fondo para imprevistos.'}</p>
+   <div class="v119-duo"><div><small>Faltante máximo estimado</small><strong class="${recovery.gap>.005?'v119-danger':''}">${money(recovery.gap)}</strong></div><div><small>Ingreso adicional requerido</small><strong>${money(recovery.additionalIncome)}</strong></div></div>
+   <p class="v119-note">${recovery.gap>.005?`Para evitar el déficit previsto, se requieren ${money(recovery.gap)} antes del primer día sin fondos. Un ingreso posterior no elimina el problema anterior.`:'No se identifica faltante con el calendario registrado; los gastos no programados podrían alterar el resultado.'}</p>
   </details>
-  <p class="v119-disclaimer">Simulación orientativa en RD$. No registra operaciones, no predice ingresos no programados y no garantiza saldos futuros. Considera exclusivamente la información disponible.</p>
+  <p class="v119-disclaimer">Simulación orientativa en RD$. La posición neta presentada es una foto pro forma del efecto inmediato, no una predicción de valor futuro. Tasas, impuestos, seguros y amortizaciones no confirmadas pueden variar los resultados. No registra transacciones.</p>
  </div>`;
 }
+
 function v119Open(){
  const root=document.getElementById('modal-root');if(!root)return;
  root.innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v119-modal" role="dialog" aria-modal="true" aria-label="El costo de mañana"><div class="modal-head"><h2>El costo de mañana</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div id="v119-results">${v119Markup()}</div></section></div>`;
@@ -23542,12 +23792,23 @@ document.addEventListener('click',event=>{
  const timing=event.target.closest?.('[data-v159-timing]');if(timing){v119DecisionState.amount=document.getElementById('v119-amount')?.value??v119DecisionState.amount;if(v119DecisionState.kind==='income')v119DecisionState.incomeTiming=timing.dataset.v159Timing;else v119DecisionState.scenario=timing.dataset.v159Timing;v119Refresh();return}
  const horizon=event.target.closest?.('[data-v119-horizon]');if(horizon){v119DecisionState.amount=document.getElementById('v119-amount')?.value??v119DecisionState.amount;v119DecisionState.horizon=Number(horizon.dataset.v119Horizon);v119Refresh();return}
 });
+document.addEventListener('change',event=>{
+ if(event.target.id!=='v167-target')return;
+ v119DecisionState.amount=document.getElementById('v119-amount')?.value??v119DecisionState.amount;
+ if(v119DecisionState.kind==='debt')v119DecisionState.debtTarget=event.target.value;
+ if(v119DecisionState.kind==='commitment')v119DecisionState.commitmentTarget=event.target.value;
+ v119Refresh();
+});
 document.addEventListener('input',event=>{
  if(event.target.id!=='v119-amount')return;
  v119DecisionState.amount=event.target.value;
- const state=v119DecisionState,kind=state.kind==='income'?'income':'expense';
- const result=v159SimulateDecision(Math.max(0,Number(state.amount)||0),kind,kind==='income'?(state.incomeTiming||'today'):state.scenario,state.horizon);
- const live=document.getElementById('v159-live');if(live)live.innerHTML=v159LiveSummary(result,kind);
+ const context=v167Calculate();
+ const live=document.getElementById('v159-live');if(live)live.innerHTML=v167Result(context);
+ const detail=document.getElementById('v167-detail-updates');if(detail){
+  const openKeys=[...detail.querySelectorAll('details[open]')].map(el=>el.querySelector('summary')?.textContent.trim()).filter(Boolean);
+  detail.innerHTML=v167Detail(context);
+  for(const item of detail.querySelectorAll('details'))if(!openKeys.includes(item.querySelector('summary')?.textContent.trim()))item.open=false;
+ }
 });
 /* Reutiliza el Resumen existente, sin reestructurar las demás vistas. */
 /* V123 · Alertas de gasto por categoría, exclusivamente desde datos locales.
