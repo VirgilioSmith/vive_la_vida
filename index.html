@@ -13555,6 +13555,344 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
  #modal-root .mqr-key,#modal-root .mqr-mode,#modal-root .mqr-primary{transition:none!important;animation:none!important}
 }
 </style>
+
+<style id="vive-v127-payment-mobile-final">
+@media(max-width:790px){
+ #modal-root .studio-form[data-mode="cardpay"] .studio-navigation{
+  grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)!important;
+ }
+ #modal-root .studio-form[data-mode="cardpay"][data-studio-step="1"] .studio-navigation{
+  grid-template-columns:1fr!important;
+ }
+ #modal-root .studio-form[data-mode="cardpay"] .studio-navigation button[data-studio-next]{
+  width:100%!important;min-width:0!important;justify-content:center!important;
+ }
+ #modal-root .studio-form[data-mode="cardpay"] .studio-navigation [hidden]{display:none!important}
+ #modal-root .studio-form[data-mode="cardpay"] .form-foot[style*="none"]{display:none!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-fields :is(select,input,textarea){min-width:0!important;max-width:100%!important}
+ #modal-root .mqr-detail-form .flow-hero-quick,
+ #modal-root .mqr-detail-form>.form-grid>.flow-section-heading{display:none!important}
+}
+</style>
+<style id="vive-v128-iphone-adaptive">
+/* V128: iPhone viewport-fit reconciliation – single safe-area offset, one scroll area, one footer. */
+@media screen and (max-width:790px){
+  #modal-root .modal-layer:has(.studio-form),
+  #modal-root .modal-layer:has(.mqr-detail-form){display:flex!important;align-items:stretch!important;padding:0!important;overflow:hidden!important}
+  #modal-root .modal-layer>.modal:has(.studio-form),
+  #modal-root .modal-layer>.modal:has(.mqr-detail-form){
+    height:100dvh!important;min-height:0!important;max-height:100dvh!important;
+    width:100%!important;max-width:100%!important;
+    padding:0!important;margin:0!important;
+    border-radius:0!important;overflow:hidden!important;
+    display:flex!important;flex-direction:column!important;background:#f5f8fc!important;
+  }
+  #modal-root .modal:has(.studio-form)>.modal-head,
+  #modal-root .modal:has(.mqr-detail-form)>.modal-head{
+    display:flex!important;flex:0 0 auto!important;position:relative!important;
+    padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 13px!important;
+    min-height:0!important;margin:0!important;
+    background:#f5f8fc!important;border:0!important;box-shadow:none!important;
+  }
+  #modal-root .modal:has(.studio-form)>.modal-head h2,
+  #modal-root .modal:has(.mqr-detail-form)>.modal-head h2{
+    font-size:clamp(19px,5.1vw,23px)!important;line-height:1.2!important;
+    letter-spacing:-.04em!important;margin:0!important;
+  }
+  #modal-root .modal:has(.studio-form)>form,
+  #modal-root .modal:has(.mqr-detail-form)>form{
+    flex:1 1 0!important;min-height:0!important;max-height:none!important;
+    overflow:hidden!important;padding:0!important;
+    display:flex!important;flex-direction:column!important;
+  }
+  #modal-root .mqr-detail-form .form-grid{
+    flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;
+    overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
+    padding:9px 14px 18px!important;gap:9px!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  #modal-root .mqr-detail-form .form-grid>label{min-height:0!important;padding:10px 11px!important;border-radius:15px!important}
+  #modal-root .mqr-detail-form .form-grid>label .filter-label{margin-bottom:7px!important;font-size:9px!important;line-height:1.25!important}
+  #modal-root .mqr-detail-form .form-grid .field{height:47px!important;min-height:47px!important;padding:10px 11px!important;border-radius:12px!important;font-size:16px!important}
+  #modal-root .mqr-detail-form .mqr-detail-amount{
+    order:0!important;min-height:62px!important;border-radius:16px!important;
+    padding:9px 14px!important;margin:0!important;background:#eef4ff!important;
+  }
+  #modal-root .mqr-detail-form .mqr-detail-amount strong{font-size:clamp(22px,6.8vw,30px)!important;line-height:1.1!important}
+  /* Transfer: source/destination belong above optional conversion details, not above the amount header. */
+  #modal-root .mqr-detail-form[data-mqr-mode="transfer"] .form-grid>label:has([name="date"]){order:1!important}
+  #modal-root .mqr-detail-form[data-mqr-mode="transfer"] .form-grid>label:has([name="amount"]){order:2!important}
+  #modal-root .mqr-detail-form[data-mqr-mode="transfer"] .form-grid>label:has([name="accountId"]){order:3!important;grid-column:1/-1!important}
+  #modal-root .mqr-detail-form[data-mqr-mode="transfer"] .form-grid>label:has([name="toAccountId"]){order:4!important;grid-column:1/-1!important}
+  #modal-root .mqr-detail-form[data-mqr-mode="transfer"] .form-grid>.flow-route{order:5!important}
+  #modal-root .mqr-detail-form[data-mqr-mode="transfer"] .form-grid>[data-flow-context="conversion"]{order:7!important;grid-column:1/-1!important}
+  #modal-root .mqr-detail-form[data-mqr-mode="transfer"] .form-grid>label:has([name="fxRate"]){order:7!important}
+  #modal-root .mqr-detail-form[data-mqr-mode="transfer"] .form-grid>label:has([name="receiveMode"]){order:8!important}
+  #modal-root .mqr-detail-form[data-mqr-mode="transfer"] .form-grid>.flow-payment-preview{order:9!important}
+  #modal-root .mqr-detail-form .form-foot{
+    flex:0 0 auto!important;position:relative!important;bottom:auto!important;
+    margin:0!important;padding:12px 14px calc(env(safe-area-inset-bottom,0px) + 12px)!important;
+    border-top:1px solid #e6edf6!important;background:#f5f8fc!important;box-shadow:none!important;
+    display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)!important;gap:10px!important;
+  }
+  #modal-root .mqr-detail-form .form-foot .btn{min-height:51px!important;font-size:13px!important;border-radius:16px!important}
+  #modal-root .studio-form[data-mode="cardpay"]{height:100%!important;min-height:0!important;max-height:100%!important;flex:1 1 0!important;overflow:hidden!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-shell{
+    flex:1 1 0!important;min-height:0!important;max-height:none!important;height:100%!important;
+    display:flex!important;flex-direction:column!important;overflow:hidden!important;gap:0!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail{
+    flex:0 0 auto!important;min-height:0!important;padding:10px 14px!important;
+    margin:0 14px 4px!important;border:0!important;border-radius:17px!important;
+    background:#ecf3ff!important;box-shadow:none!important;
+    display:flex!important;flex-direction:column!important;gap:0!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-brand,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail-name,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail-icon,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail-desc,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail-foot{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-steps-nav{
+    margin:0!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step{
+    min-height:45px!important;padding:7px 5px!important;gap:5px!important;
+    border-radius:12px!important;background:transparent!important;border-color:transparent!important;
+    display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step.current{background:#fff!important;border-color:#bad0fb!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step>span:last-child{font-size:clamp(9px,2.65vw,11px)!important;line-height:1.2!important;display:block!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step small{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-step-number{flex:none!important;width:23px!important;height:23px!important;font-size:10px!important;border-radius:8px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-main{
+    flex:1 1 0!important;min-height:0!important;max-height:none!important;height:auto!important;
+    padding:0 14px!important;overflow:hidden!important;
+    display:flex!important;flex-direction:column!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-panels{
+    flex:1 1 0!important;min-height:0!important;max-height:none!important;
+    overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
+    padding:7px 0 16px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;
+    padding:0!important;align-items:start!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>[data-flow-context],
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>.flow-payment-preview{
+    padding:10px 12px!important;border-radius:15px!important;min-height:0!important;
+    background:#fff!important;box-shadow:none!important;border:1px solid #e1e9f5!important;
+    grid-column:1/-1!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label:has([name="accountId"]){
+    order:0!important;border-color:#aac6f3!important;background:#f3f8ff!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label:has([name="cardId"]){order:-2!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label:has([name="currency"]){order:-1!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label:has([name="date"]){order:1!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>.flow-payment-preview{order:2!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields .field{
+    height:45px!important;min-height:45px!important;font-size:16px!important;
+    padding:10px 12px!important;border-radius:12px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields label .filter-label{
+    font-size:10px!important;letter-spacing:.08em!important;margin-bottom:6px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-navigation,
+  #modal-root .studio-form[data-mode="cardpay"][data-studio-step="3"] .form-foot{
+    flex:0 0 auto!important;position:relative!important;bottom:auto!important;margin:0!important;
+    background:#f5f8fc!important;padding:11px 0 calc(env(safe-area-inset-bottom,0px) + 12px)!important;
+    border-top:1px solid #e3eaf4!important;box-shadow:none!important;
+    display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)!important;gap:10px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-navigation button,
+  #modal-root .studio-form[data-mode="cardpay"] .form-foot .btn{
+    min-height:52px!important;border-radius:15px!important;font-size:13px!important;max-width:100%!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"][data-studio-step="3"] .studio-navigation{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"]:not([data-studio-step="3"]) .form-foot{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"] [hidden]{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-step[hidden]{display:none!important}
+  /* Other guided forms must likewise fill usable height rather than inheriting enormous padding. */
+  #modal-root .modal:has(.studio-form) .studio-main:not(.v128-unrelated),
+  #modal-root .modal:has(.mqr-detail-form) .form-grid{scrollbar-width:thin!important}
+}
+@media screen and (max-width:360px){
+ #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step>span:last-child{font-size:9px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-rail{margin:0 9px 4px!important;padding:9px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-main{padding:0 9px!important}
+ #modal-root .mqr-detail-form .form-grid{padding-left:9px!important;padding-right:9px!important;gap:7px!important}
+}
+</style>
+
+<style id="vive-v129-ux-organizacion-registros">
+/* Reglas visuales unificadas para ingreso, gasto y transferencia en web y móvil. */
+#modal-root .v129-express-organized .fastx-body{gap:14px!important}
+#modal-root .v129-express-organized .fastx-category-section,
+#modal-root .v129-express-organized .fastx-source-section,
+#modal-root .v129-express-organized .fastx-date-and-channel{min-width:0}
+#modal-root .v129-express-organized .fastx-category-controls,
+#modal-root .v129-express-organized .fastx-sources{min-width:0;gap:11px}
+#modal-root .v129-express-organized .fastx-category-controls>* ,
+#modal-root .v129-express-organized .fastx-sources>*{min-width:0;max-width:100%}
+#modal-root .v129-express-organized .fastx-section-title{align-items:baseline;gap:10px}
+#modal-root .v129-express-organized .fastx-section-title strong{font-weight:770;letter-spacing:-.02em}
+#modal-root .v129-express-organized .fastx-section-title small{line-height:1.4}
+#modal-root .studio-form .studio-fields[data-v129-group]{min-width:0;gap:12px}
+#modal-root .studio-form .studio-fields[data-v129-group]>label,
+#modal-root .studio-form .studio-fields[data-v129-group]>div{min-width:0;max-width:100%}
+#modal-root .studio-form .studio-fields[data-v129-group] select{max-width:100%;text-overflow:ellipsis}
+@media(max-width:790px){
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-content:start!important;gap:10px!important;padding:12px 14px 25px!important}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>*{min-width:0;max-width:100%}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details .mqr-detail-amount{grid-column:1/-1!important}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details .v80-advisor-slot{grid-column:1/-1!important}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label:has([name="category"]),
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label:has([name="subcategory"]),
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label:has([name="date"]),
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label:has([name="amount"]){grid-column:span 1!important}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label:has([name="accountId"]),
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label:has([name="toAccountId"]),
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label:has([name="paymentSource"]),
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label:has([name="cardId"]),
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label:has([name="paymentChannel"]),
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>.flow-context,
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>.flow-context-wide,
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>.flow-route,
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>.flow-receipt,
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>details{grid-column:1/-1!important}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label{min-height:0!important;height:auto!important;border-radius:16px!important;padding:11px 12px!important}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details label .filter-label{font-size:10px!important;line-height:1.3!important;letter-spacing:.06em!important;margin-bottom:7px!important}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details select.field,
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details input.field{height:49px!important;min-height:49px!important;font-size:16px!important;padding:10px 12px!important}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details .v80-advisor-slot{margin:0!important}
+ #modal-root .studio-form .studio-fields[data-v129-group]{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+ #modal-root .studio-form .studio-fields[data-v129-group]>label,
+ #modal-root .studio-form .studio-fields[data-v129-group]>div{grid-column:1/-1!important}
+ #modal-root .studio-form .studio-fields[data-v129-group] input.field,
+ #modal-root .studio-form .studio-fields[data-v129-group] select.field{width:100%!important;max-width:100%!important;min-height:48px!important;font-size:16px!important}
+ #modal-root .studio-form .studio-navigation button:not([hidden]){min-height:50px!important}
+ #modal-root .fastx-shell .fastx-category-controls{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:360px){
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details{grid-template-columns:minmax(0,1fr)!important}
+ #modal-root .mqr-detail-form .form-grid.v129-organized-details>label{grid-column:1/-1!important}
+}
+</style>
+<style id="vive-v130-wallet-cut-mobile">
+@media(max-width:790px){
+ .v130-wallet-cut{background:rgba(255,255,255,.82);border:1px solid rgba(216,228,242,.88);border-radius:20px;padding:15px 14px;margin:12px 0;box-shadow:0 7px 22px rgba(30,58,98,.04);min-width:0}
+ .v130-wallet-cut-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+ .v130-wallet-cut-head h3{font-size:15px;margin:0;color:#294465;letter-spacing:-.025em}
+ .v130-wallet-cut-head>span{font-size:10px;color:#7e91aa}
+ .v130-wallet-cut-row{display:grid;grid-template-columns:37px minmax(0,1fr) auto;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #ecf1f8}
+ .v130-wallet-cut-currency{display:grid;place-items:center;min-width:37px;height:37px;background:#edf4fd;color:#406aa3;border-radius:12px;font-size:11px;font-weight:800}
+ .v130-wallet-cut-copy{display:grid;gap:3px;min-width:0}.v130-wallet-cut-copy strong{font-size:12px;color:#344e6b;line-height:1.3}.v130-wallet-cut-copy small{font-size:10px;color:#8293a8;line-height:1.35}
+ .v130-wallet-cut-money{font-size:12px;color:#315c98;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}.v130-wallet-cut-money.late{color:#b9384c}
+ .v130-wallet-cut>p{margin:11px 0 13px;color:#8b9ab0;font-size:10px;line-height:1.45}
+ .v130-wallet-pay{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:1px solid #d8e7fa;background:#eef5ff;border-radius:14px;min-height:43px;color:#2b62b0;font-size:12px;font-weight:760}
+ .v130-wallet-pay svg{width:16px;height:16px}
+}
+</style>
+<style id="vive-v131-overview-focus">
+@media(min-width:791px){
+ .ff-dashboard.summary-space .ff-dashboard-filters{gap:8px;justify-content:flex-end}
+ .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{align-items:start}
+ .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-balance{min-width:0}
+ .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-obligations{min-width:0}
+}
+</style>
+
+<style id="vive-v132-desktop-summary-restore">
+/* Recuperación de la composición ejecutiva original del resumen de PC.
+   No cambia módulos, datos, cálculos ni la personalización de iPhone. */
+@media(min-width:1100px){
+  .world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid,
+  .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+    display:grid!important;
+    grid-template-columns:repeat(12,minmax(0,1fr))!important;
+    grid-template-rows:minmax(286px,1.38fr) minmax(192px,.96fr) minmax(174px,.86fr)!important;
+    grid-auto-flow:row!important;
+    grid-auto-rows:auto!important;
+    align-items:stretch!important;
+    gap:12px!important;
+    height:calc(100dvh - 190px)!important;
+    min-height:700px!important;
+    max-height:850px!important;
+  }
+  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-balance,
+  .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-balance{
+    grid-column:1/8!important;grid-row:1!important;order:0!important;
+    min-width:0!important;min-height:0!important;height:100%!important;
+  }
+  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-obligations,
+  .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-obligations{
+    grid-column:8/-1!important;grid-row:1/3!important;order:0!important;
+    min-width:0!important;min-height:0!important;height:100%!important;
+  }
+  .ff-dashboard.summary-space .v105-grid>.ff-mid{
+    display:contents!important;
+  }
+  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card,
+  .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card{
+    grid-column:1/5!important;grid-row:2!important;order:0!important;
+    min-width:0!important;min-height:0!important;height:100%!important;
+  }
+  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card,
+  .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card{
+    grid-column:5/8!important;grid-row:2!important;order:0!important;
+    min-width:0!important;min-height:0!important;height:100%!important;
+  }
+  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming,
+  .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-upcoming{
+    grid-column:1/8!important;grid-row:3!important;order:0!important;
+    min-width:0!important;min-height:0!important;height:100%!important;
+  }
+  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-personal,
+  .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-personal{
+    grid-column:8/-1!important;grid-row:3!important;order:0!important;
+    min-width:0!important;min-height:0!important;height:100%!important;
+  }
+  .ff-dashboard.summary-space .ff-obligations .ff-obligation-list{min-height:0!important;overflow:auto!important}
+  .ff-dashboard.summary-space .ff-executive-bubbles{max-width:100%!important}
+  .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble{min-width:0!important}
+}
+/* En portátiles estrechos conservamos dos columnas jerarquizadas, sin desbordamiento. */
+@media(min-width:791px) and (max-width:1099px){
+  .world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-template-rows:none!important;grid-auto-rows:auto!important;
+    height:auto!important;max-height:none!important;
+  }
+  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-balance{grid-column:1/-1!important;grid-row:auto!important}
+  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-obligations{grid-column:2!important;grid-row:auto!important}
+  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming{grid-column:1!important;grid-row:auto!important}
+}
+</style>
+<style id="vive-v133-tomorrow-indicators">
+.v133-tomorrow-body{display:grid;gap:12px;min-width:0}
+.v133-tomorrow-primary{padding:14px;border-radius:16px;background:linear-gradient(135deg,#f0f5ff,#f9fbff);border:1px solid #dce6fb;display:grid;gap:5px}
+.v133-tomorrow-primary small,.v133-tomorrow-meta small{font-size:9px;color:#7790b1;font-weight:790;letter-spacing:.1em}
+.v133-tomorrow-primary strong{color:#234d91;font-size:clamp(23px,3vw,32px);line-height:1.13;letter-spacing:-.04em;overflow-wrap:anywhere}
+.v133-tomorrow-primary span{color:#788da9;font-size:10px;line-height:1.35}
+.v133-tomorrow-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.v133-tomorrow-meta>div{border:1px solid #e5ecf6;background:rgba(255,255,255,.75);border-radius:13px;padding:10px;display:grid;gap:5px;min-width:0}
+.v133-tomorrow-meta strong{color:#274767;font-size:14px;overflow-wrap:anywhere}
+.v133-tomorrow-meta strong.v133-risk{color:#bb4050}
+.v133-tomorrow-body p{margin:0;font-size:10px;line-height:1.45;color:#7b8daa}
+.widget-card[data-widget="tomorrowCost"]{background:linear-gradient(165deg,#ffffff,#f4f8ff);border-color:#e5ecfa}
+.widget-card[data-widget="tomorrowCost"] .widget-kicker{color:#6886b5}
+.widget-card[data-widget="tomorrowCost"] .v133-tomorrow-open{background:#386df0;color:#fff;border-color:transparent;border-radius:12px;min-height:40px}
+@media(max-width:790px){
+ .universe-switch{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:2px!important}
+ .universe-switch button{font-size:9px!important;padding:9px 3px!important;white-space:normal!important;line-height:1.15!important;min-width:0!important}
+ .universe-switch button svg{width:15px!important;height:15px!important}
+ .widget-card[data-widget="tomorrowCost"]{min-width:0}
+ .v133-tomorrow-meta strong{font-size:12px}
+}
+@media(max-width:360px){.universe-switch button{font-size:8px!important}}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -14388,7 +14726,7 @@ const RAIL_DESTINATIONS=[
 function nav(){
  const one=([id,label,ic,description])=>{let active=id==='overview'?navFamilyForPage(ui.page)==='overview':navFamilyForPage(ui.page)===id;return `<button type="button" class="rail-action ${active?'active':''}" data-act="navigate" data-id="${id}" title="${label}" aria-label="${label}: ${description}" ${active?'aria-current="page"':''}><span class="rail-symbol">${icon(ic)}</span><span class="rail-tooltip" role="presentation"><strong>${label}</strong><small>${description}</small></span></button>`};
  return `<aside class="sidebar rail-sidebar ${ui.mobile?'open':''}" aria-label="Navegación principal">
-   <div class="rail-top"><button type="button" class="vive-p-brand" data-act="navigate" data-id="overview" aria-label="vive el hoy · Ir al Resumen" title="vive el hoy · Volver al Resumen">P</button></div>
+   <div class="rail-top"><button type="button" class="vive-p-brand" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="El costo de mañana">P</button></div>
    <div class="rail-main" role="navigation" aria-label="Módulos financieros">${RAIL_DESTINATIONS.map(one).join('')}</div>
    <div class="rail-bottom">
      <div class="rail-hairline"></div>
@@ -14427,7 +14765,7 @@ function v36Bell(){
 }
 function mobileHeader(){
  const pageName={overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
- return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v71-search-open aria-label="vive el hoy · Abrir búsqueda general" title="Buscar en vive el hoy"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><div class="v65-header-tools">${v36Bell()}<button type="button" class="v65-settings-button ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir ajustes" title="Ajustes" ${ui.page==='settings'?'aria-current="page"':''}>${icon('settings')}</button></div></header>`;
+ return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><div class="v65-header-tools">${v36Bell()}<button type="button" class="v65-settings-button ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir ajustes" title="Ajustes" ${ui.page==='settings'?'aria-current="page"':''}>${icon('settings')}</button></div></header>`;
 }
 function mobileBottomNavigation(){
  const current=ui.page==='overview'?'overview':ui.page==='wallet'?'wallet':ui.page==='banks'?'banks':'mobilehub';
@@ -14560,8 +14898,18 @@ function v68Wallet(){
  const tx=recentTx().filter(t=>t.cardId===active.id).slice(0,8);
  const next=[{...dataD,ccy:'DOP'},{...dataU,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>.005).sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
  const tier=cardTierKey(active);
+ const walletCutRows=[{st:dataD,ccy:'DOP'},{st:dataU,ccy:'USD'}].map(({st,ccy})=>{
+   const dueEntries=Object.entries(st.dueMap||{}).filter(([date,amount])=>num(amount)>.005).sort((a,b)=>a[0].localeCompare(b[0]));
+   const overdue=dueEntries.filter(([date])=>date<today()).reduce((sum,[,amount])=>sum+num(amount),0);
+   const remaining=dueEntries.reduce((sum,[,amount])=>sum+num(amount),0);
+   const state=overdue>.005?'overdue':remaining>.005?'pending':'clear';
+   const label=state==='overdue'?'Pago vencido':state==='pending'?'Corte por pagar':st.official?'Al día con el corte':'Sin corte pendiente registrado';
+   const detail=state==='overdue'?'Vencimiento anterior sin liquidar':state==='pending'?'Próximo vencimiento: '+prettyDate(dueEntries[0][0]):'Próximo corte: '+prettyDate(st.nextCut);
+   return `<div class="v130-wallet-cut-row"><span class="v130-wallet-cut-currency">${ccy==='USD'?'US$':'RD$'}</span><span class="v130-wallet-cut-copy"><strong>${label}</strong><small>${sanitize(detail)}</small></span><span class="v130-wallet-cut-money ${state==='overdue'?'late':''}">${money(state==='overdue'?overdue:remaining,ccy,2)}</span></div>`;
+ }).join('');
+ const walletCutSummary=`<section class="v130-wallet-cut" aria-label="Estado al corte de la tarjeta"><div class="v130-wallet-cut-head"><h3>Estado al corte</h3><span>Por moneda</span></div>${walletCutRows}<p>Estado calculado con movimientos y cortes registrados en vive el hoy. Confirma los importes oficiales con el banco.</p><button type="button" class="v130-wallet-pay" data-act="payCard" data-id="${active.id}">${icon('card')} Registrar pago</button></section>`;
  const face=(c)=>{const selected=c.id===active.id;return `<button type="button" class="v68-wallet-face tier-${cardTierKey(c)} ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${c.id}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v68-wallet-top">${bankLogoInline(c.bankId)}<b>${sanitize(bankOf(c))}</b><small>${sanitize(CARD_TIER_NAMES[cardTierKey(c)])}</small></span><span class="v68-wallet-name">${sanitize(c.name)}</span><span class="v68-wallet-number">•••• ${sanitize(c.last4||'••••')}</span><span class="v68-wallet-bottom"><small>CRÉDITO · RD$ / US$</small>${cardNetworkMark(c)}</span></button>`;};
- return `<section class="v68-wallet" aria-label="Wallet móvil"><div class="v68-wallet-header"><span>WALLET · vive el hoy</span><h1>Mis tarjetas</h1><p>Selecciona una tarjeta para consultar sus cifras y sus movimientos.</p></div><div class="v68-wallet-gallery" aria-label="Tus tarjetas">${list.map(face).join('')}</div><div class="v68-wallet-dots" aria-label="Tarjeta seleccionada">${list.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${c.id}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div><div class="v68-wallet-actions"><button data-act="newTransaction" data-type="income"><i>${icon('plus')}</i><span>Añadir dinero</span></button><button data-act="newTransaction" data-type="transfer"><i>${icon('wallet')}</i><span>Enviar dinero</span></button><button data-act="payCard" data-id="${active.id}"><i>${icon('card')}</i><span>Pagar tarjeta</span></button></div><div class="v68-wallet-section"><div class="v68-wallet-section-head"><h2>Tu tarjeta</h2><span>${sanitize(CARD_TIER_NAMES[tier])}</span></div><div class="v68-wallet-stat"><div><small>Deuda utilizada</small><strong>${money(debt)}</strong></div><div><small>Crédito disponible</small><strong>${money(available)}</strong></div></div><div class="v68-wallet-util"><button type="button" class="v85-wallet-util-button" data-v85-action="card" data-id="${active.id}"><span>Utilización de crédito · Ver detalle</span><strong>${ratio===null?'—':ratio.toFixed(1)+'%'} ${icon('arrow')}</strong></button></div><div class="v68-wallet-track"><span style="width:${Math.min(100,Math.max(0,ratio||0))}%"></span></div><div class="v68-wallet-foot"><span>RD$ ${money(dataD.debt)}</span><span>US$ ${money(dataU.debt,'USD',2)}</span><span>${next?'Pago: '+prettyDate(next.nextDue):'Sin pago facturado'}</span></div></div><div class="v68-wallet-section"><div class="v68-wallet-section-head"><h2>Movimientos recientes</h2><button data-act="navigate" data-id="cards">Gestionar ${icon('arrow')}</button></div>${tx.length?tx.map(t=>{const incoming=['card_payment','card_refund','card_reward'].includes(t.type);return `<article class="v68-wallet-tx"><span class="v68-wallet-tx-icon">${icon(incoming?'up':'cycle')}</span><div><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)}</small></div><b class="${incoming?'positive':''}">${incoming?'+':'−'}${money(num(t.amount),t.currency,2)}</b></article>`}).join(''):'<p class="v68-wallet-no-tx">Aún no hay movimientos en esta tarjeta.</p>'}</div><p class="v68-wallet-disclaimer">Wallet es una vista de consulta. No almacena tarjetas para pagos sin contacto ni realiza transacciones bancarias por sí sola.</p></section>`;
+ return `<section class="v68-wallet" aria-label="Wallet móvil"><div class="v68-wallet-header"><span>WALLET · vive el hoy</span><h1>Mis tarjetas</h1><p>Selecciona una tarjeta para consultar sus cifras y sus movimientos.</p></div><div class="v68-wallet-gallery" aria-label="Tus tarjetas">${list.map(face).join('')}</div><div class="v68-wallet-dots" aria-label="Tarjeta seleccionada">${list.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${c.id}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div><div class="v68-wallet-actions"><button data-act="newTransaction" data-type="income"><i>${icon('plus')}</i><span>Añadir dinero</span></button><button data-act="newTransaction" data-type="transfer"><i>${icon('wallet')}</i><span>Enviar dinero</span></button><button data-act="payCard" data-id="${active.id}"><i>${icon('card')}</i><span>Pagar tarjeta</span></button></div><div class="v68-wallet-section"><div class="v68-wallet-section-head"><h2>Tu tarjeta</h2><span>${sanitize(CARD_TIER_NAMES[tier])}</span></div><div class="v68-wallet-stat"><div><small>Deuda utilizada</small><strong>${money(debt)}</strong></div><div><small>Crédito disponible</small><strong>${money(available)}</strong></div></div><div class="v68-wallet-util"><button type="button" class="v85-wallet-util-button" data-v85-action="card" data-id="${active.id}"><span>Utilización de crédito · Ver detalle</span><strong>${ratio===null?'—':ratio.toFixed(1)+'%'} ${icon('arrow')}</strong></button></div><div class="v68-wallet-track"><span style="width:${Math.min(100,Math.max(0,ratio||0))}%"></span></div><div class="v68-wallet-foot"><span>RD$ ${money(dataD.debt)}</span><span>US$ ${money(dataU.debt,'USD',2)}</span><span>${next?'Pago: '+prettyDate(next.nextDue):'Sin pago facturado'}</span></div></div>${walletCutSummary}<div class="v68-wallet-section"><div class="v68-wallet-section-head"><h2>Movimientos recientes</h2><button data-act="navigate" data-id="cards">Gestionar ${icon('arrow')}</button></div>${tx.length?tx.map(t=>{const incoming=['card_payment','card_refund','card_reward'].includes(t.type);return `<article class="v68-wallet-tx"><span class="v68-wallet-tx-icon">${icon(incoming?'up':'cycle')}</span><div><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)}</small></div><b class="${incoming?'positive':''}">${incoming?'+':'−'}${money(num(t.amount),t.currency,2)}</b></article>`}).join(''):'<p class="v68-wallet-no-tx">Aún no hay movimientos en esta tarjeta.</p>'}</div><p class="v68-wallet-disclaimer">Wallet es una vista de consulta. No almacena tarjetas para pagos sin contacto ni realiza transacciones bancarias por sí sola.</p></section>`;
 }
 
 function mobileCardsIntro(){
@@ -14573,7 +14921,7 @@ function main(){
  const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y operaciones por confirmar'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
-  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div><div class="ff-header-middle"><button type="button" class="ff-master-card vive-top-home" data-v71-search-open title="Buscar en vive el hoy" aria-label="vive el hoy · Abrir búsqueda general"><span>${APP_BRAND}</span></button></div><div class="top-actions">${v36Bell()}<span class="date-chip">${prettyDate(today())}</span><button class="btn ghost top-privacy" data-act="togglePrivacy" title="Ocultar o mostrar importes" aria-label="Ocultar o mostrar importes">${icon('shield')}</button><button class="btn ghost top-backup" data-act="export" title="Descargar respaldo" aria-label="Descargar respaldo">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
+  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div><div class="ff-header-middle"><button type="button" class="ff-master-card vive-top-home" data-v119-open="1" title="El costo de mañana · Abrir las cuatro herramientas" aria-label="vive el hoy · Abrir El costo de mañana"><span>${APP_BRAND}</span></button></div><div class="top-actions">${v36Bell()}<span class="date-chip">${prettyDate(today())}</span><button class="btn ghost top-privacy" data-act="togglePrivacy" title="Ocultar o mostrar importes" aria-label="Ocultar o mostrar importes">${icon('shield')}</button><button class="btn ghost top-backup" data-act="export" title="Descargar respaldo" aria-label="Descargar respaldo">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
  
  ${ui.page==='wallet'?'':['overview','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
  ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='wallet'?v68Wallet():ui.page==='payments'?payments():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
@@ -16009,10 +16357,9 @@ function overview(){
  const peopleRows=loans.slice(0,3).map(l=>`<div class="ff-person-row"><span class="ff-person-initial">${sanitize((l.person||'?').slice(0,1).toUpperCase())}</span><span class="ff-person-name"><strong>${sanitize(l.person)}</strong><small>${l.direction==='lent'?'Me deben':'Yo debo'} · ${prettyDate(l.dueDate)}</small></span><b>${money(personalBalance(l),l.currency,2)}</b></div>`).join('');
  const ratioText=ratio===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(ratio)+'%';
  return `<div class="ff-dashboard summary-space">
-  <div class="ff-dashboard-tools"><div class="ff-overline"><span class="ff-blue-dot"></span> TU PANORAMA FINANCIERO <span class="ff-tools-separator">/</span> <strong>${sanitize(period)}</strong></div><div class="ff-dashboard-filters"><button type="button" class="v105-custom-btn" data-v105-customize="1">${icon('grid')} Personalizar</button><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
+  <div class="ff-dashboard-tools"><div class="ff-overline"><span class="ff-blue-dot"></span> TU PANORAMA FINANCIERO <span class="ff-tools-separator">/</span> <strong>${sanitize(period)}</strong></div><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
   <div class="ff-dashboard-grid v105-grid">
    <section class="ff-balance ff-tile" aria-label="Balance y productos principales"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><div class="ff-pos-amount">${money(allNet,'DOP',2)}</div><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="navigate" data-id="accounts" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="navigate" data-id="cards" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="navigate" data-id="patrimony" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
-   ${v105CapacityWidget()}
    <aside data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>COMPROMISOS MENSUALES · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong><span>Pendientes hasta fin de mes, incluidos vencidos: ${money(allDue)}. La carga mensual es distinta del saldo total de deuda.</span></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} registros por confirmar <span>${icon('arrow')}</span></button></aside>
    <div class="ff-mid">
     <section data-v105-widget="chart" class="ff-expense-card ff-tile"><div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses</p></div><div class="v82-chart-actions"><span class="ff-inline-pill">Mensual</span></div></div><div class="ff-bar-chart" role="group" aria-label="Gráfico de ingresos y egresos de los últimos cinco meses">${bars}</div><div class="ff-stat-footer"><span title="Ingresos reconocidos del mes"><i class="ff-legend-blue"></i>Ingresos <b>${bubbleMoney(m.income)}</b></span><span title="Gastos reconocidos del mes"><i class="ff-legend-white"></i>Egresos <b>${bubbleMoney(m.expense)}</b></span></div></section>
@@ -16024,7 +16371,7 @@ function overview(){
  </div>`;
 }
 function universeSwitch(active){
- const tabs=[['overview','Resumen','home'],['advanced','Analítica avanzada','analytics'],['patrimony','Patrimonio','wallet']];
+ const tabs=[['overview','Resumen','home'],['kpis','Mis indicadores','grid'],['advanced','Analítica avanzada','analytics'],['patrimony','Patrimonio','wallet']];
  return `<div class="universe-switch-wrap"><div class="universe-switch" role="tablist" aria-label="Vistas del resumen">${tabs.map(([id,label,ic])=>`<button type="button" role="tab" aria-selected="${active===id}" class="${active===id?'active':''}" data-act="navigate" data-id="${id}">${icon(ic)}<span>${label}</span></button>`).join('')}</div></div>`;
 }
 function accountDetail(a){
@@ -16078,8 +16425,9 @@ function cards(){let result=originalCards();const limD=db.cards.reduce((s,c)=>s+
  return result.replace('<div class="card-portfolio-kpis">',`<div class="v85-cards-burden" aria-label="Relación de compromisos e ingresos">${v85LoadChip('Compromisos / ingresos')}<span>Para valorar una compra, usa Registrar gasto y consulta el porcentaje con ese importe.</span></div><div class="card-portfolio-kpis">`);
 }
 
-const WIDGET_PRESET=['liquidity','cashDOP','cashUSD','totalDebt','netPosition','cardLimit','utilization','incomeVsExpense'];
+const WIDGET_PRESET=['tomorrowCost','liquidity','cashDOP','cashUSD','totalDebt','netPosition','cardLimit','utilization','incomeVsExpense'];
 const WIDGET_METRICS=[
+ ['tomorrowCost','El costo de mañana','calendar','decisions'],
  ['liquidity','Liquidez total','wallet','assets'],['cashDOP','Fondos RD$','wallet','assets'],['cashUSD','Fondos US$','wallet','assets'],
  ['physicalDOP','Efectivo físico RD$','wallet','assets'],['physicalUSD','Efectivo físico US$','wallet','assets'],
  ['totalDebt','Deuda total','card','liabilities'],['netPosition','Posición neta registrada','analytics','wealth'],
@@ -16108,9 +16456,22 @@ const WIDGET_METRICS=[
  ['assetMixChart','Composición de activos','chart','products']
 ];
 const widgetCatalog=()=>[...WIDGET_METRICS,...db.accounts.map(a=>['account:'+a.id,a.name, 'wallet','products']),...db.cards.map(c=>['card:'+c.id,c.name,'card','products']),...db.loans.map(l=>['loan:'+l.id,l.name,'receipt','products']),...db.certificates.map(c=>['cert:'+c.id,c.name,'building','products'])];
-function widgetsState(){const s=db.settings.widgetsBoard;if(Array.isArray(s))return s.filter(id=>widgetCatalog().some(x=>x[0]===id));return WIDGET_PRESET.slice()}
-function saveWidgets(ids){db.settings.widgetsBoard=ids.slice(0,40);persist();}
-function widgetPicture(id){const m=monthStats(),fundD=db.accounts.filter(a=>a.currency==='DOP').reduce((s,a)=>s+getAccountBalance(a),0),fundU=db.accounts.filter(a=>a.currency==='USD').reduce((s,a)=>s+getAccountBalance(a),0),liq=fundD+fx(fundU,'USD'),debtC=totalCardDebt(),debtL=totalLoanDebt(),p=personalTotals(),debt=debtC+debtL+p.payable,limitD=db.cards.reduce((s,c)=>s+num(c.limitDOP),0),limitU=db.cards.reduce((s,c)=>s+num(c.limitUSD),0),limit=limitD+fx(limitU,'USD'),creditRatio=limit?100*debtC/limit:0;
+function widgetsState(){
+ const saved=db.settings.widgetsBoard;
+ const valid=new Set(widgetCatalog().map(x=>x[0]));
+ const list=Array.isArray(saved)?saved.filter(id=>valid.has(id)):WIDGET_PRESET.slice();
+ // Primera visita tras la actualización: aparece una vez, pero después puede quitarse.
+ if(db.settings.v133TomorrowWidgetConfigured!==true&&!list.includes('tomorrowCost'))list.unshift('tomorrowCost');
+ return list;
+}
+function saveWidgets(ids){
+ db.settings.widgetsBoard=ids.slice(0,40);
+ db.settings.v133TomorrowWidgetConfigured=true;
+ persist();
+}
+function widgetPicture(id){
+ if(id==='tomorrowCost'){const b=v119Baseline(30);return {value:money(Math.max(0,b.minimum)),foot:b.critical?'Primer día crítico: '+prettyDate(b.critical):'Sin días críticos previstos en 30 días',route:'kpis'};}
+ const m=monthStats(),fundD=db.accounts.filter(a=>a.currency==='DOP').reduce((s,a)=>s+getAccountBalance(a),0),fundU=db.accounts.filter(a=>a.currency==='USD').reduce((s,a)=>s+getAccountBalance(a),0),liq=fundD+fx(fundU,'USD'),debtC=totalCardDebt(),debtL=totalLoanDebt(),p=personalTotals(),debt=debtC+debtL+p.payable,limitD=db.cards.reduce((s,c)=>s+num(c.limitDOP),0),limitU=db.cards.reduce((s,c)=>s+num(c.limitUSD),0),limit=limitD+fx(limitU,'USD'),creditRatio=limit?100*debtC/limit:0;
  const give=(value,foot,route)=>({value,foot,route});
  const mapping={
  liquidity:give(money(liq),'Cuentas y efectivo físico · RD$','accounts'),cashDOP:give(money(fundD),'Todos los fondos en pesos','accounts'),cashUSD:give(money(fundU,'USD',2),`RD$ equivalente: ${money(fx(fundU,'USD'))}`,'accounts'),
@@ -16249,16 +16610,25 @@ function widgetProductsOverview(){
 
 const VIVE_CHART_KEYS=new Set(["incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
 function widgetPreview(id,definition){
+ if(id==='tomorrowCost'){const b=v119Baseline(30);return `<div class="ws-preview-body ws-preview-number"><span class="ws-preview-orb">${icon('calendar')}</span><strong>${money(Math.max(0,b.minimum))}</strong><small>${b.critical?'Día crítico: '+prettyDate(b.critical):'Sin faltantes previstos en 30 días'}</small></div>`;}
  const isChart=VIVE_CHART_KEYS.has(id);
  if(isChart)return `<div class="ws-preview-body ws-preview-chart">${widgetGraph(id)}</div>`;
  const value=widgetPicture(id),fmt=value?.value||'—',foot=value?.foot||'Se calcula con tus registros';
  return `<div class="ws-preview-body ws-preview-number"><span class="ws-preview-orb">${icon(definition?.[2]||'wallet')}</span><strong>${fmt}</strong><small>${sanitize(foot)}</small></div>`;
 }
 function widgetSize(id){return (db.settings.widgetSizes||{})[id]===2?2:1}
+function v133TomorrowWidgetBody(){
+ const b=v119Baseline(30),min=Math.max(0,b.minimum),gap=Math.max(0,-b.minimum);
+ return `<div class="v133-tomorrow-body">
+  <div class="v133-tomorrow-primary"><small>DINERO REALMENTE DISPONIBLE · 30 DÍAS</small><strong>${money(min)}</strong><span>Mínimo previsto de liquidez, no saldo garantizado</span></div>
+  <div class="v133-tomorrow-meta"><div><small>PRIMER DÍA CRÍTICO</small><strong class="${b.critical?'v133-risk':''}">${b.critical?prettyDate(b.critical):'Sin alertas'}</strong></div><div><small>FALTANTE MÁXIMO</small><strong class="${gap?'v133-risk':''}">${money(gap)}</strong></div></div>
+  <p>Detector de días críticos · Simulador · Plan de recuperación · Dinero disponible</p>
+ </div>`;
+}
 function kpiStudio(){
  const selected=widgetsState(),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
  const map=Object.fromEntries(all.map(x=>[x[0],x])),chartKeys=VIVE_CHART_KEYS;
- const libraryGroups=[['all','Todos'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
+ const libraryGroups=[['all','Todos'],['decisions','Decisiones'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
  const group=ui.widgetCatalogFilter||'all';
  const visible=all.filter(x=>group==='all'||x[3]===group);
  const tile=(id,i)=>{
@@ -16266,9 +16636,9 @@ function kpiStudio(){
    const route=m?.route||({incomeVsExpense:'income',creditVisual:'cards',fundsVisual:'accounts',subscriptionVisual:'recurring',incomeYoYTrend:'advanced',expenseYoYTrend:'advanced',netYoYTrend:'advanced',incomeYtdYoY:'advanced',expenseYtdYoY:'advanced',netYtdYoY:'advanced',netTrendChart:'income',liquidityTrendChart:'accounts',incomeMixChart:'income',expenseMixChart:'advanced',subscriptionsParetoChart:'recurring',creditByCardChart:'cards',loanBalancesChart:'loans',assetMixChart:'patrimony'}[id])||'kpis';
    return `<article class="widget-card ws-tile ${isChart?'widget-chart':''} ${size===2?'ws-wide':''}" data-widget="${sanitize(id)}" draggable="${editing?'true':'false'}" tabindex="0" aria-label="Widget ${sanitize(def[1])}">
     <div class="widget-card-top"><div><span class="widget-kicker">${isChart?'GRÁFICO INTERACTIVO':'INDICADOR FINANCIERO'}</span><h3>${sanitize(def[1])}</h3></div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size===2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size===2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
-    ${isChart?widgetGraph(id):`<div class="widget-number">${m?.value||'—'}</div><p class="widget-foot">${sanitize(m?.foot||'')}</p>${v12WidgetHistory(id)}`}
+    ${id==='tomorrowCost'?v133TomorrowWidgetBody():isChart?widgetGraph(id):`<div class="widget-number">${m?.value||'—'}</div><p class="widget-foot">${sanitize(m?.foot||'')}</p>${v12WidgetHistory(id)}`}
     ${['burden','affordability','utilization'].includes(id)?`<button type="button" class="v85-widget-open" data-v85-action="capacity">Ver cálculo ${icon('arrow')}</button>`:''}
-    <button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>
+    ${id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Abrir las 4 herramientas ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
    </article>`;
  };
  const catalogueTile=x=>{
@@ -16965,6 +17335,63 @@ function mqrApplyKey(key){
  const number=document.getElementById('mqrAmountValue');if(number)number.textContent=mqrAmountText(st.amount);
  v80RefreshQuickAdvisor();
 }
+/* V129 · Orden narrativo por operación, idéntico para la versión web y móvil.
+   Solo reorganiza nodos del mismo formulario. Nunca recalcula importes ni crea registros. */
+const V129_FIELD_ORDER=Object.freeze({
+ income:['amount','category','subcategory','accountId','date','note','postingStatus','tags'],
+ spend:['amount','category','subcategory','paymentSource','accountId','cardId','currency','paymentChannel','date','note','postingStatus','tags'],
+ own:['amount','accountId','toAccountId','date','paymentChannel','fxRate','receiveMode','targetAmount','transferSpeed','note','postingStatus','tags'],
+ outgoing:['amount','accountId','payee','date','paymentChannel','category','subcategory','transferSpeed','note','postingStatus','tags'],
+ cardpay:['cardId','currency','accountId','cardPaymentMode','amount','date','paymentChannel','paymentFxRate','actualDebitMode','sourceAmount','note','postingStatus','tags']
+});
+function v129FieldName(el){
+ if(!el||!el.querySelector)return '';
+ return el.getAttribute('name')||el.querySelector('[name]')?.getAttribute('name')||'';
+}
+function v129ArrangeMobileDetails(container,mode){
+ if(!container)return;
+ const sequence=V129_FIELD_ORDER[mode]||V129_FIELD_ORDER.spend;
+ const nodes=Array.from(container.children);
+ const getPriority=el=>{
+  if(el.classList.contains('mqr-detail-amount'))return -200;
+  if(el.classList.contains('v80-advisor-slot'))return mode==='spend'?-90:80;
+  if(el.id==='flowRoute')return mode==='own'?-55:80;
+  if(el.id==='guidedReceipt')return 900;
+  if(el.classList.contains('confirm-status'))return 950;
+  if(el.matches('.flow-minor-details'))return 800;
+  const name=v129FieldName(el);
+  const order=sequence.indexOf(name);
+  if(order>=0)return order*10;
+  if(el.dataset.flowContext==='account'||el.dataset.flowContext==='card')return mode==='spend'?35:70;
+  if(el.dataset.flowContext==='conversion')return 650;
+  if(el.dataset.flowContext==='transferSpeedSection')return 700;
+  if(el.classList.contains('flow-payment-preview'))return 600;
+  return 750;
+ };
+ nodes.forEach((el,i)=>{el.style.setProperty('order',String(getPriority(el)*100+i),'important');});
+ container.classList.add('v129-organized-details');
+}
+function v129OrderStudioFields(mode,steps){
+ const order=V129_FIELD_ORDER[mode]||V129_FIELD_ORDER.own;
+ steps.forEach((step,stepIndex)=>{
+  const group=step.firstElementChild;
+  const nodes=Array.from(group.children);
+  nodes.sort((a,b)=>{
+   const p=el=>{
+    const n=v129FieldName(el),ix=order.indexOf(n);
+    if(el.id==='flowRoute')return 28;
+    if(el.classList.contains('flow-payment-preview'))return 800;
+    if(el.matches('[data-segment="cardPaymentMode"]'))return 35;
+    if(el.dataset.flowContext==='conversion')return 500;
+    if(el.dataset.flowContext==='transferSpeedSection')return 520;
+    return ix>=0?ix*10:700;
+   };
+   return p(a)-p(b);
+  });
+  nodes.forEach(el=>group.appendChild(el));
+  group.dataset.v129Group=mode+'-'+(stepIndex+1);
+ });
+}
 function mqrContinue(){
  const st=mqrState(),amount=Number(st.amount);
  if(!Number.isFinite(amount)||amount<=0){toast('Introduce un importe mayor que cero.');return;}
@@ -16996,6 +17423,7 @@ function mqrContinue(){
    const advisor=body.querySelector('.v80-advisor-slot');
    const last=body.querySelector('label:has([name="subcategory"])')||body.querySelector('label:has([name="category"])');
    if(advisor&&last&&last.parentElement===body)last.after(advisor);
+   v129ArrangeMobileDetails(body, st.mode==='transfer'?(st.transferKind==='outgoing'?'outgoing':'own'):st.mode);
   }
  }
 }
@@ -17205,7 +17633,7 @@ function enhanceIncomeExpenseExpress(f,mode,editing=false){
  const submit=footer.querySelector('[type="submit"]');if(submit)submit.innerHTML=`${icon('check')} ${editing?'Guardar cambios':mode==='income'?'Registrar ingreso':'Registrar egreso'}`;
  right.appendChild(footer);shell.append(left,right);
  grid.replaceWith(shell);
- f.classList.add('fastx-form');f.classList.remove('studio-form');f.noValidate=true;
+ f.classList.add('fastx-form','v129-express-organized');f.classList.remove('studio-form');f.noValidate=true;
  f.addEventListener('click',ev=>{
   const categoryButton=ev.target.closest('[data-fast-category]');if(categoryButton){ev.preventDefault();const x=f.elements.category;if(x){x.value=categoryButton.dataset.fastCategory;x.dispatchEvent(new Event('change',{bubbles:true}))}queueMicrotask(()=>fastxSync(f));return}
   const sourceButton=ev.target.closest('[data-fast-source]');if(sourceButton){ev.preventDefault();const x=f.elements.paymentSource;if(x){x.value=sourceButton.dataset.fastSource;x.dispatchEvent(new Event('change',{bubbles:true}))}queueMicrotask(()=>fastxSync(f));return}
@@ -17262,6 +17690,16 @@ function enhanceGuidedStudio(f,mode,editing=false){
  const detail=FLOW_CATALOG[mode];
  const roots=[...grid.children];const steps=[1,2,3].map(step=>{const sect=document.createElement('section');sect.className='studio-step';sect.dataset.step=step;sect.setAttribute('aria-label',STUDIO_STEP_TITLES[step-1]);const content=document.createElement('div');content.className='studio-fields';sect.appendChild(content);return sect});
  for(const el of roots){const target=studioSectionFor(el);if(target===0){el.remove();continue}steps[target-1].firstElementChild.appendChild(el)}
+ // V129: use the same organized sequence on desktop and mobile.
+ v129OrderStudioFields(mode,steps);
+ // V128: mobile/card payments prioritise the source account in step 1; all original nodes and validators are retained.
+ if(mode==='cardpay'){
+  const fields=steps[0].firstElementChild;
+  const byName=name=>[...fields.children].find(el=>el.getAttribute('name')===name||el.querySelector(`[name="${name}"]`));
+  const preferred=['cardId','currency','accountId','date','cardPaymentMode','amount'];
+  const picked=preferred.map(byName).filter(Boolean);
+  for(let i=picked.length-1;i>=0;i--)fields.insertBefore(picked[i],fields.firstChild);
+ }
  const shell=document.createElement('div');shell.className='studio-shell';
  const nav=document.createElement('aside');nav.className='studio-rail';
  nav.innerHTML=`<div class="studio-brand"><span>✦</span> vive el hoy <small>REGISTRO STUDIO</small></div><div class="studio-rail-icon">${detail.symbol}</div><div class="studio-rail-name">${editing?'Editar':'Registrar'}<br><strong>${detail.name}</strong></div><p class="studio-rail-desc">${detail.subtitle}</p><nav class="studio-steps-nav" aria-label="Pasos para registrar">${STUDIO_STEP_TITLES.map((label,i)=>`<button type="button" class="studio-nav-step" data-studio-jump="${i+1}"><span class="studio-step-number">${String(i+1).padStart(2,'0')}</span><span>${label}<small>${i===0?'Información esencial':i===1?'Detalles contextuales':'Comprobante'}</small></span></button>`).join('')}</nav><div class="studio-rail-foot">${icon('shield')} Sin duplicar gastos ni convertir monedas innecesariamente.</div>`;
@@ -17431,7 +17869,7 @@ if(v.type==='card_payment'){
  if(cross&&!(rate>0))throw Error('Escribe la tasa a la que compraste US$1.');
  base.cardPaymentMode=['cut','total','custom'].includes(v.cardPaymentMode)?v.cardPaymentMode:'custom';
  base.paymentFxRate=cross?rate:null;
- const manualDebit=cross&&v.sourceAmount!==''&&(v.actualDebitMode==='manual'||v.actualDebitMode===undefined);
+ const manualDebit=cross&&v.actualDebitMode==='manual'&&v.sourceAmount!=='';
  base.sourceAmount=manualDebit?rnd(num(v.sourceAmount)):v120CardDebit(amount,base.currency,a.currency,rate);
  if(!(base.sourceAmount>0)||!Number.isFinite(base.sourceAmount))throw Error('El importe debitado debe ser positivo.');
 }
@@ -21329,10 +21767,12 @@ function v105CapacityWidget(isMobile=false){
 }
 function v105ApplyWidgetPreferences(){
  const cfg=v105Config();
+ const mobile=window.matchMedia('(max-width:790px)').matches;
  for(const el of document.querySelectorAll('[data-v105-widget]')){
   const id=el.dataset.v105Widget;
-  el.hidden=!cfg.visible.includes(id);
-  el.style.order=String(cfg.order.indexOf(id)+1);
+  // Las preferencias son exclusivas del Resumen móvil; escritorio es fijo.
+  el.hidden=mobile?!cfg.visible.includes(id):false;
+  el.style.order=mobile?String(cfg.order.indexOf(id)+1):'';
  }
 }
 function v105SaveConfig(c){
@@ -21592,7 +22032,7 @@ function v123AlertWidget(){
  return `<section class="v123-spending-panel" aria-label="Alertas de gastos fuera de lo habitual"><div class="v123-spending-head"><span class="v123-spending-symbol">${icon('chart')}</span><div><small>TUS HÁBITOS · ANÁLISIS PREVENTIVO</small><h2>Gastos fuera de lo habitual</h2><p>Comparación con los últimos tres meses completos.</p></div></div><div class="v123-spending-list">${alerts.slice(0,3).map(a=>`<div class="v123-spending-item"><div><strong>${sanitize(a.category)}</strong><small>${sanitize(v123AlertText(a))}</small></div><span class="v123-spending-percent">${a.kind==='trend'?'Tendencia al alza':`+${a.pct.toFixed(0)}%`}</span></div>`).join('')}</div><p class="v123-spending-disclaimer">Avisos orientativos según los gastos registrados. No incluyen abonos de tarjetas como nuevas compras.</p></section>`;
 }
 const v119PreviousOverview=pages.overview;
-pages.overview=function(){return v123AlertWidget()+v119SmallWidget()+v119PreviousOverview()};
+pages.overview=function(){return v123AlertWidget()+v119PreviousOverview()};
 
 
 f33Boot();
@@ -22204,76 +22644,6 @@ document.addEventListener('click',event=>{if(!event.target.closest('.v36-notific
   #modal-root .studio-form[data-mode="cardpay"] .flow-segment{grid-template-columns:1fr!important}
 }
 </style>
-<script id="vive-v126-mobile-ui-script">
-(function(){
-  function fmtAmt(value,currency){
-    try{return (currency==='USD'?'US$':'RD$') + Number(value||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
-    catch(_){return (currency==='USD'?'US$':'RD$') + (Math.round((Number(value)||0)*100)/100).toFixed(2)}
-  }
-  function compactAccountLabel(a){
-    if(!a) return '';
-    var bal = (typeof getAccountBalance==='function') ? getAccountBalance(a) : (Number(a.opening)||0);
-    var name = (a.kind==='cash' ? 'Efectivo' : String(a.name||'Cuenta').trim()) || 'Cuenta';
-    return name + ' · ' + fmtAmt(bal,a.currency||'DOP');
-  }
-  function compactCardLabel(c){
-    if(!c) return '';
-    var bank = (typeof bankOf==='function') ? bankOf(c) : '';
-    return [String(c.name||'Tarjeta').trim(), bank, 'RD$ / US$'].filter(Boolean).join(' · ');
-  }
-  function patchOptions(scope){
-    if(window.innerWidth>790 || !scope) return;
-    scope.querySelectorAll('select[name="accountId"], select[name="toAccountId"], select[name="instrumentId"]').forEach(function(sel){
-      Array.from(sel.options).forEach(function(opt){
-        if(!opt.value) return;
-        if(!opt.dataset.originalLabel) opt.dataset.originalLabel = opt.textContent;
-        var a = (window.db && Array.isArray(db.accounts)) ? db.accounts.find(function(x){ return String(x.id)===String(opt.value); }) : null;
-        if(a) opt.textContent = compactAccountLabel(a);
-      });
-    });
-    scope.querySelectorAll('select[name="cardId"]').forEach(function(sel){
-      Array.from(sel.options).forEach(function(opt){
-        if(!opt.value) return;
-        if(!opt.dataset.originalLabel) opt.dataset.originalLabel = opt.textContent;
-        var c = (window.db && Array.isArray(db.cards)) ? db.cards.find(function(x){ return String(x.id)===String(opt.value); }) : null;
-        if(c) opt.textContent = compactCardLabel(c);
-      });
-    });
-  }
-  function patchCategoryLabels(scope){
-    if(window.innerWidth>790 || !scope) return;
-    scope.querySelectorAll('.mqr-detail-form label:has([name="category"]), .mqr-detail-form label:has([name="subcategory"])').forEach(function(label){
-      label.classList.add('v126-category-block');
-    });
-  }
-  function markForms(scope){
-    if(!scope) return;
-    scope.querySelectorAll('#transactionForm.studio-form').forEach(function(form){
-      form.classList.toggle('v126-cardpay-mobile', form.dataset.mode==='cardpay');
-    });
-  }
-  function runPatches(){
-    var root = document.getElementById('modal-root') || document;
-    patchOptions(root);
-    patchCategoryLabels(root);
-    markForms(root);
-  }
-  var boot = function(){
-    runPatches();
-    var root = document.getElementById('modal-root');
-    if(root && !root.__v126Observed){
-      root.__v126Observed = true;
-      new MutationObserver(function(){ window.requestAnimationFrame(runPatches); }).observe(root,{childList:true,subtree:true});
-    }
-  };
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot, {once:true});
-  else boot();
-  window.addEventListener('resize', function(){ window.requestAnimationFrame(runPatches); }, {passive:true});
-  document.addEventListener('change', function(e){ if(e.target && e.target.closest('#modal-root')) window.requestAnimationFrame(runPatches); }, true);
-  setTimeout(runPatches, 250);
-  setTimeout(runPatches, 900);
-})();
-</script>
 
 </body>
 </html>
