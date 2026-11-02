@@ -13939,7 +13939,89 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 }
 </style>
 
-</head>
+
+<style id="vive-v146-header-service-sync">
+/* V146: Únicamente barra de acciones, sin alterar Resumen ni navegación principal. */
+@media(min-width:791px){
+ .v146-header-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:nowrap;gap:10px!important}
+ .v146-header-actions>.v146-header-date{order:0!important;display:inline-flex!important}
+ .v146-header-actions>.v71-search-button{order:1!important;margin:0!important}
+ .v146-header-actions>.v36-notifications{order:2!important;margin:0!important}
+ .v146-header-actions>.ff-header-new{order:3!important;margin:0!important}
+}
+@media(max-width:790px){
+ .topbar>.top-actions.v146-header-actions{display:none!important}
+ .vive-mobile-top{gap:6px!important}
+ .vive-mobile-top>.vive-mobile-brand{flex:0 1 auto!important;min-width:0;max-width:94px!important;white-space:nowrap;overflow:hidden}
+ .vive-mobile-top>.vive-mobile-brand>span{font-size:12px;white-space:nowrap;letter-spacing:-.25px}
+ .vive-mobile-top>.v146-mobile-date{display:inline-flex!important;align-items:center;flex-shrink:0;min-width:0;white-space:nowrap;font-size:10.5px;font-weight:650;color:var(--mob-ink,#314365);opacity:.82}
+ .vive-mobile-top>.v146-mobile-actions{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important;min-width:0!important;gap:5px!important}
+ .vive-mobile-top>.v146-mobile-actions>.v71-search-button{flex:0 0 34px!important;width:34px!important;height:34px!important;margin:0!important}
+ .vive-mobile-top>.v146-mobile-actions>.v36-notifications{flex:0 0 34px!important;width:34px!important;height:34px!important;margin:0!important}
+ .vive-mobile-top>.v146-mobile-actions>.v36-notifications>summary{width:34px!important;height:34px!important}
+ .v146-mobile-register{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:35px;height:35px;padding:0 10px;border:0;border-radius:13px;background:#151d2b;color:#fff;font-size:10.5px;font-weight:750;white-space:nowrap;flex:0 0 auto}
+ .v146-mobile-register svg{width:16px;height:16px}
+}
+@media(max-width:400px){
+ .vive-mobile-top>.vive-mobile-brand{max-width:68px!important}
+ .vive-mobile-top>.vive-mobile-brand>span{font-size:11px}
+ .v146-mobile-register{width:35px;padding:0}
+ .v146-mobile-register>span{display:none}
+}
+@media(max-width:350px){
+ .vive-mobile-top>.vive-mobile-brand{max-width:28px!important;min-width:25px!important}
+ .vive-mobile-top>.vive-mobile-brand>span{font-size:0!important}
+ .vive-mobile-top>.vive-mobile-brand>span::after{content:'V';font-size:15px;font-weight:850}
+ .vive-mobile-top{padding-left:8px!important;padding-right:8px!important;gap:5px!important}
+ .vive-mobile-top>.v146-mobile-date{font-size:10px}
+ .vive-mobile-top>.v146-mobile-actions{gap:4px!important}
+}
+.v146-service-modal{max-width:630px;width:min(95vw,630px);border-radius:23px;overflow:auto;max-height:min(85dvh,760px)}
+.v146-service-picker{display:grid;gap:9px;padding:14px 18px 18px}
+.v146-service-picker-intro{font-size:12px;color:#667997;margin:2px 0 4px;line-height:1.45}
+.v146-service-choice{appearance:none;border:1px solid #dae4f5;border-radius:15px;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;color:inherit;padding:14px 15px;min-height:63px;width:100%;transition:transform .18s,border-color .18s,background .18s}
+.v146-service-choice:hover{border-color:#91a6e6;background:#f6f9ff;transform:translateY(-1px)}
+.v146-service-choice>span{display:grid;gap:5px;min-width:0}
+.v146-service-choice strong{font-size:13px;overflow-wrap:anywhere}
+.v146-service-choice small{font-size:11px;color:#7587a4}
+.v146-service-choice>b{font-size:13px;white-space:nowrap}
+.v146-service-choice-occasional{background:rgba(230,238,255,.62)}
+@media(max-width:790px){.v146-service-modal{max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px)}.v146-service-picker{padding:12px}.v146-service-choice{min-height:58px;padding:12px 13px}.v146-service-choice>b{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.v146-service-choice{transition:none!important}}
+</style>
+<style id="vive-v147-premium-recurring">
+/* V147 — A dedicated recurring-commitment experience, original financial form + save path retained. */
+#modal-root .modal:has(.v147-rec-form){width:min(1010px,calc(100vw - 28px));max-width:1010px;max-height:calc(100dvh - 44px);overflow-y:auto;overflow-x:hidden;border-radius:28px;padding:0!important;box-shadow:0 32px 100px rgba(16,37,79,.25)}
+#modal-root .modal:has(.v147-rec-form)>.modal-head{padding:18px 25px 15px;background:rgba(251,253,255,.87);border-bottom:1px solid rgba(156,176,214,.17);position:relative;z-index:3;margin:0!important}
+#modal-root .v147-rec-form{padding:0!important}
+#modal-root .v147-rec-form>.form-grid{display:block!important;padding:0!important;gap:0!important}
+#modal-root .v147-rec-form .v147-rec-shell{display:block!important;grid-column:1/-1!important;width:100%;min-width:0}
+.v147-rec-hero{position:relative;display:flex;justify-content:space-between;align-items:center;gap:15px;min-height:144px;padding:26px 32px;background:radial-gradient(ellipse at 85% -40%,rgba(255,255,255,.7),transparent 50%),linear-gradient(128deg,#e4ecff 0%,#e9f2ff 52%,#f5f8ff 100%);border-bottom:1px solid rgba(150,176,218,.18);overflow:hidden}
+.v147-rec-hero:before{content:'';position:absolute;width:310px;height:310px;border:1px solid rgba(89,112,197,.11);border-radius:50%;right:-80px;top:-160px;box-shadow:0 0 0 30px rgba(120,146,225,.045),0 0 0 70px rgba(120,146,225,.025)}
+.v147-hero-copy{position:relative;z-index:1;min-width:0}.v147-eyebrow{display:block;font-size:10px;letter-spacing:.16em;font-weight:850;color:#6684b2;margin-bottom:9px}.v147-hero-copy>strong{display:block;font-size:clamp(24px,3.1vw,38px);letter-spacing:-.065em;font-weight:850;color:#1d355b;line-height:1.09}.v147-hero-copy>p{font-size:12px;line-height:1.5;color:#677f9f;margin:10px 0 0;max-width:430px}
+.v147-hero-stamp{display:grid;place-items:center;position:relative;z-index:1;width:67px;height:67px;flex:0 0 67px;border-radius:22px;background:linear-gradient(135deg,#5971ea,#8192f6);box-shadow:0 15px 26px rgba(63,82,183,.27);color:white;transform:rotate(-8deg)}.v147-hero-stamp svg{width:27px;height:27px}
+.v147-rec-layout{display:grid;grid-template-columns:minmax(0,1.52fr) minmax(255px,.85fr);align-items:start;gap:23px;padding:24px 27px 18px}
+.v147-rec-editor{display:grid;gap:16px;min-width:0}.v147-rec-section{background:rgba(255,255,255,.64);border:1px solid rgba(180,195,221,.45);border-radius:22px;padding:21px;min-width:0}
+.v147-sec-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}.v147-step{display:grid;place-items:center;flex:0 0 35px;width:35px;height:35px;border-radius:12px;background:#edf1ff;color:#5c6ed5;font-size:12px;font-weight:850}.v147-sec-head strong{display:block;font-size:17px;font-weight:850;color:#253a59;letter-spacing:-.035em;line-height:1.2}.v147-sec-head small{display:block;color:#8695ae;font-size:11px;margin-top:5px;line-height:1.35}
+.v147-form-duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start;margin-bottom:13px}.v147-form-duo>*{min-width:0!important;margin:0!important}.v147-rec-form .v147-form-duo .field,.v147-rec-form .v147-form-duo select,.v147-rec-form .v147-form-duo input{width:100%;min-height:43px;max-height:52px;border-radius:12px!important}
+.v147-popular-head{display:flex;align-items:center;justify-content:space-between;color:#5e7190;font-size:11px;font-weight:760;margin:9px 0 10px}.v147-popular-head span{font-size:10px;font-weight:600;color:#91a1b5}
+.v147-quick-icons{display:flex;gap:8px;flex-wrap:wrap}.v147-preset{display:inline-flex;align-items:center;gap:6px;min-width:0;padding:6px 9px 6px 6px;border-radius:12px;background:rgba(244,247,255,.92);border:1px solid rgba(172,189,219,.45);color:#506481;font-size:11px;font-weight:740;transition:transform .2s,background .2s,border-color .2s}.v147-preset:hover{transform:translateY(-2px);background:white;border-color:#98b4e8}.v147-preset .v41-service-mark{width:25px;height:25px;border-radius:9px}
+.v147-icon-drawer{margin-top:12px;min-width:0;border-top:1px solid #e9eef8}.v147-icon-drawer>summary{display:flex;align-items:center;gap:8px;min-height:43px;color:#516b9e;font-size:12px;font-weight:730;cursor:pointer;list-style:none}.v147-icon-drawer>summary::-webkit-details-marker{display:none}.v147-icon-drawer>summary>svg:first-child{width:15px;height:15px}.v147-icon-drawer>summary small{font-size:10px;color:#99a7b9;font-weight:500;margin-left:auto}.v147-icon-drawer>summary>svg:last-child{width:14px;height:14px;margin-left:4px;transition:transform .2s}.v147-icon-drawer[open]>summary>svg:last-child{transform:rotate(180deg)}.v147-icon-content{padding-top:8px}.v147-icon-content .v41-icon-selector{padding:12px!important;border-radius:16px}.v147-icon-content .v41-service-grid{grid-template-columns:repeat(5,minmax(0,1fr));max-height:250px}.v147-icon-content .v41-service-choice{min-height:74px}
+.v147-cycle-label{display:block;font-size:11px;font-weight:730;color:#63748f;margin:0 0 9px}.v147-frequencies{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:15px;background:#eef2fb;border:1px solid rgba(169,187,215,.28);padding:4px;border-radius:13px}.v147-freq-btn{min-width:0;border:1px solid transparent;border-radius:9px;background:transparent;min-height:37px;color:#60728f;font-size:11px;font-weight:770;cursor:pointer;transition:background .18s,box-shadow .18s,color .18s}.v147-freq-btn[aria-pressed=true]{background:#fff;box-shadow:0 3px 12px rgba(60,80,134,.1);color:#5062c8;border-color:#e1e8f8}.v147-hidden-freq{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+.v147-fineprint{display:flex;align-items:flex-start;gap:7px;margin:5px 0 0!important;font-size:10px!important;line-height:1.55;color:#7f8fa5}.v147-fineprint svg{width:14px;height:14px;flex:0 0 14px;margin-top:1px}
+.v147-rec-more{padding:0;border:1px solid rgba(175,194,220,.48);border-radius:16px;background:rgba(248,250,255,.86);overflow:hidden}.v147-rec-more>summary{list-style:none;padding:15px 17px;display:flex;align-items:center;justify-content:space-between;color:#536984;font-size:12px;font-weight:750;cursor:pointer}.v147-rec-more>summary::-webkit-details-marker{display:none}.v147-rec-more>summary>span{display:inline-flex;align-items:center;gap:9px}.v147-rec-more svg{width:15px;height:15px}.v147-rec-more>summary>svg{transition:transform .2s}.v147-rec-more[open]>summary>svg{transform:rotate(180deg)}.v147-more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;padding:5px 16px 16px}.v147-more-grid>*{min-width:0}
+.v147-rec-aside{position:sticky;top:20px;min-width:0;padding:21px;border-radius:23px;background:linear-gradient(145deg,#f4f7ff,#e9efff 76%,#edf6ff);border:1px solid rgba(162,180,225,.4);box-shadow:0 15px 32px rgba(61,87,157,.08);overflow:hidden}.v147-rec-aside:before{content:'';position:absolute;width:170px;height:170px;border-radius:50%;top:-115px;right:-70px;border:1px solid rgba(116,133,214,.18);box-shadow:0 0 0 30px rgba(116,133,214,.035);pointer-events:none}.v147-aside-label{display:block;color:#6a7ea3;font-size:9px;letter-spacing:.13em;font-weight:850;margin-bottom:18px}.v147-card-top{display:flex;align-items:center;gap:11px;min-width:0}.v147-card-top>.v41-service-mark{width:46px;height:46px;border-radius:15px}.v147-card-top>div{min-width:0}.v147-card-top strong{display:block;font-weight:830;font-size:14px;color:#243858;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}.v147-card-top small{display:block;font-size:11px;color:#798bb2;margin-top:5px}.v147-price{display:block;margin:29px 0 2px;color:#223a64;font-size:clamp(26px,2.5vw,35px);font-weight:870;letter-spacing:-.055em;line-height:1.1;word-break:break-word}.v147-price-caption{font-size:10px;color:#7c8eac}.v147-preview-rule{height:1px;background:rgba(141,158,206,.24);margin:21px 0}.v147-preview-pair{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;margin:0 0 15px}.v147-preview-pair span{font-size:10px;color:#788bad}.v147-preview-pair strong{font-size:11px;font-weight:760;text-align:right;color:#30496d;overflow-wrap:anywhere;max-width:62%}.v147-preview-note{display:flex;align-items:flex-start;gap:8px;padding:12px;border:1px solid rgba(135,163,227,.25);background:rgba(255,255,255,.62);border-radius:12px;color:#506e9a;font-size:10px;line-height:1.45}.v147-preview-note svg{width:16px;height:16px;flex:0 0 16px}.v147-preview-footnote{display:block;color:#90a0b7;font-size:9px;margin-top:13px;line-height:1.5}
+#modal-root .v147-rec-form>.form-foot{position:sticky;bottom:0;margin:0!important;padding:13px 27px calc(13px + env(safe-area-inset-bottom,0px))!important;background:rgba(249,251,255,.97);backdrop-filter:blur(16px);border-top:1px solid rgba(143,168,207,.26);z-index:4;display:flex!important;justify-content:flex-end;gap:10px}
+#modal-root .v147-rec-form>.form-foot .btn{min-height:43px;border-radius:12px;padding:0 18px}
+#modal-root .v147-rec-form>.form-foot .btn[type=submit]{background:#273046;color:#fff;box-shadow:0 8px 20px rgba(37,48,75,.16)}
+#modal-root .v147-rec-form #formError{margin:0 27px!important}
+@media(max-width:780px){#modal-root .modal:has(.v147-rec-form){width:calc(100vw - 12px)!important;max-width:none!important;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 12px)!important;margin:6px auto!important;border-radius:24px!important}#modal-root .modal:has(.v147-rec-form)>.modal-head{padding:13px 18px 12px!important}.v147-rec-hero{padding:22px 20px;min-height:120px}.v147-hero-copy>strong{font-size:27px}.v147-hero-copy>p{font-size:11px}.v147-hero-stamp{width:49px;height:49px;flex-basis:49px;border-radius:16px}.v147-hero-stamp svg{width:22px;height:22px}.v147-rec-layout{grid-template-columns:minmax(0,1fr);gap:16px;padding:15px 13px 19px}.v147-rec-editor{gap:12px}.v147-rec-section{padding:16px;border-radius:19px}.v147-rec-aside{position:static;order:-1;padding:15px 16px;border-radius:19px}.v147-aside-label{margin-bottom:10px}.v147-price{font-size:26px;margin:14px 0 0}.v147-preview-rule{margin:13px 0}.v147-preview-pair{margin-bottom:9px}.v147-preview-note{padding:9px}.v147-preview-footnote{display:none}#modal-root .v147-rec-form>.form-foot{padding:11px 15px calc(11px + env(safe-area-inset-bottom,0px))!important}#modal-root .v147-rec-form>.form-foot .btn{flex:1;min-width:0}.v147-icon-content .v41-service-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:390px){.v147-form-duo{grid-template-columns:minmax(0,1fr)!important;gap:10px}.v147-frequencies{grid-template-columns:repeat(2,minmax(0,1fr))}.v147-quick-icons{gap:6px}.v147-preset{font-size:10px;padding:5px 7px 5px 5px}.v147-sec-head strong{font-size:15px}.v147-hero-copy>strong{font-size:24px}.v147-hero-stamp{display:none}.v147-more-grid{grid-template-columns:1fr}.v147-rec-aside .v147-preview-pair:nth-of-type(6){display:none}}
+@media(min-width:791px){#modal-root .modal.wide:has(.v147-rec-form){width:min(1010px,calc(100vw - 48px))!important;max-width:1010px!important}}
+@media(max-width:780px){#modal-root .v147-rec-aside{order:1!important}}
+@media(prefers-reduced-motion:reduce){.v147-freq-btn,.v147-preset,.v147-icon-drawer>summary svg,.v147-rec-more>summary svg{transition:none!important}}
+.theme-dark #modal-root .v147-rec-hero{background:linear-gradient(135deg,#273653,#22334e);border-color:#334661}.theme-dark #modal-root .v147-hero-copy strong,.theme-dark #modal-root .v147-rec-section strong,.theme-dark #modal-root .v147-card-top strong,.theme-dark #modal-root .v147-price{color:#edf4ff}.theme-dark #modal-root .v147-rec-aside{background:linear-gradient(135deg,#223351,#263b59);border-color:#4b6082}.theme-dark #modal-root .v147-rec-section{background:#1e2a41;border-color:#455776}.theme-dark #modal-root .v147-rec-more{background:#213249;border-color:#455776}.theme-dark #modal-root .v147-frequencies{background:#26344c}.theme-dark #modal-root .v147-freq-btn[aria-pressed=true]{background:#364e79;color:#fff;border-color:#6684b0}.theme-dark #modal-root .v147-rec-form>.form-foot{background:#1d283b}.theme-dark #modal-root .v147-preview-pair strong{color:#dceaff}
+</style></head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
 /* Refinamiento EXCLUSIVAMENTE dentro de #page. No modifica barra, navegación, topbar ni fondos globales. */
@@ -14811,7 +14893,7 @@ function v36Bell(){
 }
 function mobileHeader(){
  const pageName={overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
- return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><div class="v65-header-tools"><button type="button" class="v71-search-button" data-v71-search-open="1" title="Buscar en toda la aplicación" aria-label="Buscar en toda la aplicación">${icon('search')}</button>${v36Bell()}<button type="button" class="v65-settings-button ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir ajustes" title="Ajustes" ${ui.page==='settings'?'aria-current="page"':''}>${icon('settings')}</button></div></header>`;
+ return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions"><button type="button" class="v71-search-button" data-v71-search-open="1" title="Buscar en toda la aplicación" aria-label="Buscar en toda la aplicación">${icon('search')}</button>${v36Bell()}<button type="button" class="v146-mobile-register" data-act="newTransaction" aria-label="Registrar operación" title="Registrar operación">${icon('plus')}<span>Registrar</span></button></div></header>`;
 }
 function mobileBottomNavigation(){
  const current=ui.page==='overview'?'overview':ui.page==='wallet'?'wallet':ui.page==='banks'?'banks':'mobilehub';
@@ -14967,7 +15049,7 @@ function main(){
  const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y operaciones por confirmar'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
-  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div><div class="ff-header-middle"><button type="button" class="ff-master-card vive-top-home" data-v119-open="1" title="El costo de mañana · Abrir las cuatro herramientas" aria-label="vive el hoy · Abrir El costo de mañana"><span>${APP_BRAND}</span></button></div><div class="top-actions"><button type="button" class="v71-search-button v71-search-desktop" data-v71-search-open="1" title="Buscar en toda la aplicación · Ctrl/⌘ K" aria-label="Buscar en toda la aplicación" aria-keyshortcuts="Control+K Meta+K">${icon('search')}</button>${v36Bell()}<span class="date-chip">${prettyDate(today())}</span><button class="btn ghost top-privacy" data-act="togglePrivacy" title="Ocultar o mostrar importes" aria-label="Ocultar o mostrar importes">${icon('shield')}</button><button class="btn ghost top-backup" data-act="export" title="Descargar respaldo" aria-label="Descargar respaldo">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
+  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div><div class="ff-header-middle"><button type="button" class="ff-master-card vive-top-home" data-v119-open="1" title="El costo de mañana · Abrir las cuatro herramientas" aria-label="vive el hoy · Abrir El costo de mañana"><span>${APP_BRAND}</span></button></div><div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button type="button" class="v71-search-button v71-search-desktop" data-v71-search-open="1" title="Buscar en toda la aplicación · Ctrl/⌘ K" aria-label="Buscar en toda la aplicación" aria-keyshortcuts="Control+K Meta+K">${icon('search')}</button>${v36Bell()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
  
  ${ui.page==='wallet'?'':['overview','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
  ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='wallet'?v68Wallet():ui.page==='payments'?payments():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
@@ -15330,22 +15412,88 @@ function personalPaymentForm(id){let l=personalLoan(id);if(!l)return;
 }
 function v97CurrentMonthEnd(){return v99End(ui.month)}
 function payments(){
- const cap=v89DebtCapacity(ui.month);
- const due=v99PendingForPeriod(ui.month).filter(x=>v99DueInPeriod(x.date,ui.month)).sort((a,b)=>a.date.localeCompare(b.date));
- const groups=[['card','Tarjetas','card'],['loan','Préstamos','receipt'],['recurring','Suscripciones','calendar'],['personal','Entre personas','wallet']];
- const sums={card:cap.a.cards,loan:cap.a.loans,recurring:cap.a.recurring,personal:cap.a.personal};
- const blocks=groups.map(([kind,title,ico])=>{
-  const items=due.filter(x=>x.kind===kind);
-  const count=items.length;
-  const countText=`${count} ${count===1?'compromiso':'compromisos'}`;
-  return `<section class="panel v71-commitment-card"><div class="panel-head v71-commitment-head"><div class="v71-commitment-identity"><span class="v71-commitment-icon">${icon(ico)}</span><div><h3>${title}</h3><div class="v72-commitment-caption">${countText}</div></div></div><strong class="v71-commitment-amount" title="Carga del mes seleccionado">${money(sums[kind])}</strong></div><div class="v71-commitment-list">${items.length?items.map(x=>`<div class="mini-row"><div><div class="mini-title">${sanitize(x.name)}</div><div class="mini-sub">${prettyDate(x.date)}${x.date<today()?' · Vencido':''}</div></div><div class="hstack"><strong>${money(x.amount,x.currency,2)}</strong><button class="btn sm soft" data-act="${x.action}" data-id="${x.ref}" data-ccy="${x.ccy||''}">Pagar</button></div></div>`).join(''):'<div class="empty">Sin pagos pendientes de este grupo para el mes.</div>'}</div></section>`;
- }).join('');
- const ratioText=cap.ratio===null?'Sin ingresos':v85Pct(cap.ratio);
- return `<div class="section-title"><div><h2>Compromisos · ${sanitize(dateObj(ui.month+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}))}</h2><p>Pagos del mes y porcentaje de tus ingresos comprometidos.</p></div><label class="v99-period-picker">Mes <input id="v99CommitmentMonth" type="month" value="${ui.month}" aria-label="Mes de compromisos"></label></div>
- <div class="v100-summary-grid"><div class="v100-summary-item"><small>Compromisos del mes</small><strong>${money(cap.monthly)}</strong></div><div class="v100-summary-item"><small>Ingresos del mes</small><strong>${money(cap.income)}</strong></div><button type="button" class="v100-summary-item v100-summary-action v99-${cap.risk}" data-v85-action="capacity"><small>Endeudamiento</small><strong>${ratioText}</strong><span>${cap.ratio!==null&&cap.ratio>100?'Excedes tus ingresos':cap.ratio===null?'Registra ingresos':'Compromisos ÷ ingresos'}</span></button></div>
- <div class="grid columns equal section v81-payments-grid">${blocks}</div><p class="footnote">El porcentaje usa compromisos e ingresos del mismo mes. Los pagos confirmados se consultan en Movimientos. Ninguna acción de esta pantalla debita el banco automáticamente.</p>`;
+  // V145 · Centro de pagos ejecutivo. Solo presentacion: reutiliza los
+  // calculos originales de compromiso, pendientes, ingreso y FX.
+  const period=v99Period(ui.month),now=today(),current=period===now.slice(0,7);
+  const cap=v89DebtCapacity(period);
+  const all=v99PendingForPeriod(period).filter(x=>x&&x.date&&num(x.amount)>0)
+    .sort((a,b)=>a.date.localeCompare(b.date));
+  const due=all.filter(x=>v99DueInPeriod(x.date,period));
+  const overdue=current?all.filter(x=>x.date<now):[];
+  const pendingValue=rnd(all.reduce((sum,x)=>sum+v99MoneyInDop(x.amount,x.currency),0));
+  const overdueValue=rnd(overdue.reduce((sum,x)=>sum+v99MoneyInDop(x.amount,x.currency),0));
+  const next=all.find(x=>x.date>=now)||null;
+  const ratioText=cap.ratio===null?'No disponible':v85Pct(cap.ratio);
+  const monthLabel=sanitize(dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}));
+  const kindInfo={card:['Tarjetas de crédito','card'],loan:['Préstamos bancarios','receipt'],recurring:['Suscripciones y servicios','calendar'],personal:['Entre personas','wallet']};
+  const groups=[['card','Tarjetas de crédito','card'],['loan','Préstamos bancarios','receipt'],['recurring','Suscripciones y servicios','calendar'],['personal','Entre personas','wallet']];
+  const totals={card:cap.a.cards,loan:cap.a.loans,recurring:cap.a.recurring,personal:cap.a.personal};
+  const blocks=groups.map(([kind,title,ico])=>{
+    const items=(current?all:due).filter(x=>x.kind===kind);
+    const count=items.length;
+    const countText=`${count} ${count===1?'pago':'pagos'} en agenda`;
+    return `<section class="panel v71-commitment-card v145-pay-large-card" aria-label="${title}">
+      <div class="panel-head v71-commitment-head"><div class="v71-commitment-identity"><span class="v71-commitment-icon">${icon(ico)}</span><div class="v145-card-name"><h3>${title}</h3><span class="v72-commitment-caption">${countText}</span></div></div>
+      <div class="v145-card-number"><small>Carga del mes</small><strong class="v71-commitment-amount" title="Total programado para ${monthLabel}">${money(totals[kind])}</strong></div></div>
+      <div class="v145-card-list-label">${items.length?'PAGOS POR ATENDER':'ESTADO DEL MES'}</div>
+      <div class="v71-commitment-list">${items.length?items.map(x=>`<div class="mini-row"><div><div class="mini-title">${sanitize(x.name)}</div><div class="mini-sub">${prettyDate(x.date)}${current&&x.date<now?' · Vencido':''}${x.estimated?' · Previsto':''}</div></div><div class="hstack"><strong>${money(x.amount,x.currency,2)}</strong><button class="btn sm soft" type="button" data-act="${x.action}" data-id="${x.ref}" data-ccy="${x.ccy||''}" aria-label="Pagar ${sanitize(x.name)}">Pagar</button></div></div>`).join(''):'<div class="v145-card-empty">Sin vencimientos pendientes registrados para este grupo.</div>'}</div>
+      <div class="v145-card-foot">${kind==='card'?'Pagos al corte y vencimientos':kind==='loan'?'Cuotas según contrato':kind==='recurring'?'Servicios recurrentes':'Préstamos entre personas'}</div>
+    </section>`;
+  }).join('');
+  const filter=['all','overdue','upcoming'].includes(ui.v145PayFilter)?ui.v145PayFilter:'all';
+  const view=all.filter(x=>filter==='all'||(filter==='overdue'?current&&x.date<now:x.date>=now));
+  const agenda=view.slice(0,12).map(x=>{
+    const late=current&&x.date<now;
+    const ico=kindInfo[x.kind]?.[1]||'wallet';
+    const tag=late?'Vencido':x.estimated?'Previsto':'Por atender';
+    return `<div class="v145-agenda-row"><div class="v145-agenda-date"><b>${sanitize(String(x.date).slice(8,10))}</b><small>${sanitize(dateObj(x.date).toLocaleDateString('es-DO',{month:'short'}).replace('.',''))}</small></div>
+      <span class="v145-agenda-icon">${icon(ico)}</span>
+      <div class="v145-agenda-description"><strong>${sanitize(x.name)}</strong><small>${sanitize(kindInfo[x.kind]?.[0]||'Compromiso')} <span class="v145-agenda-status ${late?'is-late':''}">${tag}</span></small></div>
+      <div class="v145-agenda-payment"><b>${money(x.amount,x.currency,2)}</b><button class="btn sm soft" type="button" data-act="${x.action}" data-id="${x.ref}" data-ccy="${x.ccy||''}">Pagar ${icon('arrow')}</button></div></div>`;
+  }).join('');
+  const risk=cap.risk==='over'?'is-over':cap.risk==='caution'?'is-caution':'is-ok';
+  const coverage=cap.ratio===null?0:Math.min(100,Math.max(0,cap.ratio));
+  const balance=cap.income>0?money(cap.income-cap.monthly):'Sin ingresos registrados o previstos';
+  const balanceNegative=cap.income>0&&cap.income<cap.monthly;
+  return `<div class="v145-paycenter" id="v145-payment-center">
+    <header class="v145-pay-hero"><div class="v145-pay-hero-head"><div class="v145-pay-hero-heading">
+       <span class="v145-eyebrow"><span class="v145-status-dot"></span> GESTIÓN FINANCIERA · PAGOS</span>
+       <h2>Centro de pagos</h2><p>Control de tus vencimientos, cuentas y obligaciones en un solo lugar.</p>
+      </div><label class="v99-period-picker v145-period-control"><span>Período</span><input id="v99CommitmentMonth" type="month" value="${period}" aria-label="Seleccionar mes del centro de pagos"></label></div>
+      <div class="v145-pay-hero-foot"><span class="v145-pay-period">${monthLabel}</span><button type="button" class="v145-debt-indicator ${risk}" data-v85-action="capacity" aria-label="Abrir detalle de capacidad de endeudamiento">${icon('receipt')} <span>${cap.ratio===null?'Sin referencia de ingreso':`Ingresos comprometidos · ${ratioText}`}</span>${icon('arrow')}</button></div>
+     </header>
+     <div class="v145-payment-kpis" aria-label="Indicadores del centro de pagos">
+      <div class="v145-payment-kpi"><small>Compromisos del mes</small><strong>${money(cap.monthly)}</strong><span>Carga contractual programada</span></div>
+      <div class="v145-payment-kpi"><small>Pendientes en agenda</small><strong>${money(pendingValue)}</strong><span>${all.length} vencimiento${all.length===1?'':'s'} registrado${all.length===1?'':'s'}</span></div>
+      <div class="v145-payment-kpi ${overdue.length?'is-danger':''}"><small>Vencidos a hoy</small><strong>${money(overdueValue)}</strong><span>${current?`${overdue.length} compromiso${overdue.length===1?'':'s'} atrasado${overdue.length===1?'':'s'}`:'Consulta el mes actual para ver atrasos'}</span></div>
+      <div class="v145-payment-kpi"><small>Ingresos considerados</small><strong>${money(cap.income)}</strong><span>Del mismo período seleccionado</span></div>
+     </div>
+     <section class="v145-pay-quick" aria-label="Acciones de pago"><div class="v145-pay-quick-title"><span>OPERAR</span><strong>¿Qué necesitas hacer?</strong></div>
+       <div class="v145-quick-buttons">
+       <button type="button" data-act="guidedFlow" data-mode="cardpay">${icon('card')} Pagar tarjeta</button>
+       <button type="button" data-act="guidedFlow" data-mode="service">${icon('receipt')} Pagar servicio</button>
+       <button type="button" data-act="guidedFlow" data-mode="own">${icon('cycle')} Transferir</button>
+       <button type="button" data-act="addRecurring">${icon('plus')} Nuevo compromiso</button>
+       </div></section>
+     <div class="v145-payment-section-head"><div><span class="v145-eyebrow">TUS CUATRO FRENTES</span><h3>Pagos por categoría</h3><p>Los cuatro grupos conservan sus acciones de pago.</p></div><span class="v145-section-meta">${(current?all:due).length} pagos por atender</span></div>
+     <div class="grid columns equal section v81-payments-grid v145-pay-cardgrid">${blocks}</div>
+     <div class="v145-pay-lower">
+      <section class="v145-pay-agenda"><div class="v145-agenda-header"><div><span class="v145-eyebrow">CALENDARIO OPERATIVO</span><h3>Agenda de vencimientos</h3><p>Ordenada por fecha para anticipar los próximos pagos.</p></div><span class="v145-section-meta">${all.length} registros</span></div>
+        <div class="v145-pay-filters" role="group" aria-label="Filtrar la agenda de pagos">${[['all','Todos'],['upcoming','Por vencer'],['overdue','Vencidos']].map(([id,label])=>`<button type="button" data-act="v145PayFilter" data-id="${id}" class="${filter===id?'active':''}" aria-pressed="${filter===id}">${label}${id==='overdue'&&overdue.length?` <b>${overdue.length}</b>`:''}</button>`).join('')}</div>
+        <div class="v145-agenda-list">${agenda||`<div class="v145-agenda-empty">${filter==='overdue'?'No hay vencimientos atrasados en esta selección.':filter==='upcoming'?'No hay pagos próximos registrados.':'Sin pagos pendientes para mostrar.'}</div>`}</div>
+        ${view.length>12?`<p class="v145-agenda-overflow">Mostrando los primeros 12 vencimientos de ${view.length}. Los demás permanecen en las cuatro categorías anteriores.</p>`:''}
+      </section>
+      <aside class="v145-pay-insights"><span class="v145-eyebrow">CONTROL DEL MES</span><h3>Capacidad para cumplir</h3>
+       <div class="v145-insight-balance"><small>Ingresos menos compromisos</small><strong class="${balanceNegative?'is-negative':''}">${balance}</strong><span>${cap.income>0?'Diferencia del período, no saldo disponible de cuenta':'No se calcula una diferencia sin ingresos'}</span></div>
+       <div class="v145-capacity-line"><div><span>Ingresos comprometidos</span><b>${ratioText}</b></div><div class="v145-capacity-track"><i class="${risk}" style="width:${coverage}%"></i></div><p>Se compara el total mensual contratado con los ingresos considerados para ese mismo mes.</p></div>
+       ${next?`<div class="v145-next-due"><span>PRÓXIMO VENCIMIENTO</span><strong>${sanitize(next.name)}</strong><div><small>${prettyDate(next.date)}</small><b>${money(next.amount,next.currency,2)}</b></div></div>`:'<div class="v145-next-due"><span>PRÓXIMO VENCIMIENTO</span><strong>Sin fecha futura pendiente registrada</strong></div>'}
+       <div class="v145-insight-actions"><button type="button" data-v85-action="capacity">Detalle del endeudamiento ${icon('arrow')}</button><button type="button" data-act="navigate" data-id="register">Consultar movimientos ${icon('arrow')}</button></div>
+       <p class="v145-pay-tax-note">Las tasas, impuestos y cargos se determinan antes de confirmar el pago, según la cuenta, el canal y los Ajustes. Esta pantalla no descuenta saldos.</p>
+      </aside>
+     </div>
+     <p class="footnote v145-pay-bottom-note">Compromisos del mes y pendientes en agenda son métricas diferentes. La carga mensual incluye cuotas contractuales, aun si ya se pagaron; la agenda muestra vencimientos pendientes registrados. Para conciliación histórica, consulta Movimientos.</p>
+    </div>`;
 }
-
 function benefits(){
  const year=new Date().getFullYear();const cards=db.cards.filter(c=>ui.showHidden||!isHidden(c));
  const dop=cards.map(c=>benefitBreakdown(c,'DOP',year)),usd=cards.map(c=>benefitBreakdown(c,'USD',year));
@@ -16037,7 +16185,7 @@ function settings(){let s=db.settings;return `<div class="settings-layout">
 ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div class="form-grid">${formItem('fx','RD$ por cada US$1 · tasa de referencia',s.fx,'number','required min="0.001" step="0.0001"')}${formItem('transferTaxPct','Impuesto de transferencias y pagos bancarios (%)',num(s.transferTaxPct),'number','required min="0" max="100" step="0.001"')}</div><div class="settings-explain">El impuesto general a determinadas transferencias es <b>0.20% desde el 3 de julio de 2026</b> (era 0.15%); no todas las operaciones están gravadas. Las transferencias entre cuentas propias y los consumos con tarjeta pueden estar exentos. Para pagos de tarjeta desde cuenta bancaria, Internet Banking utiliza la tasa manual de este ajuste y Presencial no genera este impuesto en la aplicación; verifica posibles excepciones según el banco. No existe una comisión fija general. <b>Pago al instante</b> es una modalidad que puedes elegir en cada transferencia y agrega RD$100 solamente cuando la seleccionas. Ejemplo: una transferencia gravada de RD$10,000 con Pago al instante suma RD$20 de impuesto y RD$100 por esa modalidad, totalizando RD$10,120. La tasa USD/DOP se consulta automáticamente y solo se usa para valoración y nuevas conversiones. Los movimientos históricos conservan la tasa registrada en cada operación.</div><div class="form-foot"><button class="btn" type="submit">Guardar configuración financiera</button></div></form></div>
 <div class="settings-group-title"><div><span class="summary-tag">05 / CENTRO DE REVISIÓN</span><h3>Protección y coherencia financiera</h3></div></div>${v30ReviewContent(true)}${v30RecoveryContent()}
 <div class="settings-group-title"><div><span class="summary-tag">06 / HISTORIAL Y PRIVACIDAD</span><h3>Control de productos y registros</h3></div></div>
-<div class="grid columns equal"><div class="panel"><div class="panel-head"><h3>Productos archivados</h3></div><p class="form-note">Desactivar una relación financiera no debe eliminar sus transacciones. Los productos archivados permanecen en cálculos históricos, aunque se oculten de los listados habituales.</p>${visibilityControl()}<p class="form-note">Archivados: ${[...db.banks,...db.accounts,...db.cards,...db.loans,...db.certificates].filter(x=>x.archived).length}. La eliminación definitiva solo se permite cuando no hay operaciones ni saldos iniciales o dependencias.</p></div><div class="panel"><div class="panel-head"><h3>Protección y respaldo</h3></div><p class="form-note">Respalda tus datos JSON antes de modificar contratos o importar versiones nuevas. El respaldo local no está cifrado.</p><div class="hstack"><button class="btn soft" data-act="export">${icon('download')} Exportar JSON</button><button class="btn ghost" data-act="import">${icon('upload')} Importar JSON</button></div><div class="mini-divider"></div><div class="hstack"><button class="btn ghost" data-act="demo">Demostración</button><button class="btn danger" data-act="clear">Eliminar todos los datos</button></div><input id="importFile" type="file" accept="application/json,.json" class="hidden" /></div></div>
+<div class="grid columns equal"><div class="panel"><div class="panel-head"><h3>Productos archivados</h3></div><p class="form-note">Desactivar una relación financiera no debe eliminar sus transacciones. Los productos archivados permanecen en cálculos históricos, aunque se oculten de los listados habituales.</p>${visibilityControl()}<p class="form-note">Archivados: ${[...db.banks,...db.accounts,...db.cards,...db.loans,...db.certificates].filter(x=>x.archived).length}. La eliminación definitiva solo se permite cuando no hay operaciones ni saldos iniciales o dependencias.</p></div><div class="panel"><div class="panel-head"><h3>Protección y respaldo</h3></div><p class="form-note">Respalda tus datos JSON antes de modificar contratos o importar versiones nuevas. El respaldo local no está cifrado.</p><div class="hstack"><button class="btn soft" data-act="export" title="Descargar una copia de seguridad de todos tus registros en JSON">${icon('download')} Descargar respaldo JSON</button><button class="btn ghost" data-act="import">${icon('upload')} Importar JSON</button></div><div class="mini-divider"></div><div class="hstack"><button class="btn ghost" data-act="demo">Demostración</button><button class="btn danger" data-act="clear">Eliminar todos los datos</button></div><input id="importFile" type="file" accept="application/json,.json" class="hidden" /></div></div>
 <div class="panel section"><div class="panel-head"><h3>Información guardada</h3></div><div class="settings-counts">${[['Instituciones',db.banks.length],['Cuentas',db.accounts.length],['Tarjetas',db.cards.length],['Préstamos',db.loans.length],['Certificados',db.certificates.length],['Movimientos',db.transactions.length],['Suscripciones',db.recurring.length]].map(([l,n])=>`<div><span>${l}</span><strong>${n}</strong></div>`).join('')}</div><div class="notification warning">vive el hoy es local: no consulta bancos en tiempo real, no ejecuta pagos ni comprueba automáticamente impuestos. No guardes CVV, PIN, contraseñas ni números completos.</div></div></div>`}
 function moneyRegister(){
  const m=monthStats(),incomeOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['income','bank_reward','card_reward'].includes(t.type)),expenseOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['expense','card_charge','card_refund','loan_payment'].includes(t.type));
@@ -17364,13 +17512,72 @@ const V41_SERVICES=[
  {id:'insurance',label:'Seguros',glyph:'shield',bg:'#eaf7ea',fg:'#397c59'},
  {id:'utilities',label:'Servicios',glyph:'bolt',bg:'#fff2d7',fg:'#bb8626'},
  {id:'home',label:'Vivienda',glyph:'home',bg:'#f0eeea',fg:'#786c62'},
- {id:'other',label:'Otro',glyph:'dots',bg:'#f0eff9',fg:'#786e9f'}
+ {id:'other',label:'Otro',glyph:'dots',bg:'#f0eff9',fg:'#786e9f'},
+ {id:'hbo',label:'Max / HBO',glyph:'M',bg:'#2d2272',fg:'#fff'},
+ {id:'paramount',label:'Paramount+',glyph:'P+',bg:'#2067d7',fg:'#fff'},
+ {id:'crunchyroll',label:'Crunchyroll',glyph:'C',bg:'#fd7124',fg:'#fff'},
+ {id:'twitch',label:'Twitch',glyph:'T',bg:'#7044d2',fg:'#fff'},
+ {id:'hulu',label:'Hulu',glyph:'h',bg:'#182b23',fg:'#5de29b'},
+ {id:'deezer',label:'Deezer',glyph:'≋',bg:'#25202e',fg:'#f3a2d1'},
+ {id:'tidal',label:'Tidal',glyph:'◆',bg:'#1f2633',fg:'#fff'},
+ {id:'applemusic',label:'Apple Music',glyph:'♫',bg:'#f2e8f0',fg:'#e75171'},
+ {id:'soundcloud',label:'SoundCloud',glyph:'☁',bg:'#f47b3f',fg:'#fff'},
+ {id:'dropbox',label:'Dropbox',glyph:'◇',bg:'#e6f0ff',fg:'#2466e5'},
+ {id:'google',label:'Google One',glyph:'G',bg:'#eaf2ff',fg:'#4276d8'},
+ {id:'drive',label:'Drive',glyph:'△',bg:'#e8f7e8',fg:'#3e9c68'},
+ {id:'adobe',label:'Adobe',glyph:'A',bg:'#fbe8e8',fg:'#df3c3c'},
+ {id:'figma',label:'Figma',glyph:'F',bg:'#efecff',fg:'#7056bd'},
+ {id:'zoom',label:'Zoom',glyph:'Z',bg:'#eaf1ff',fg:'#3772da'},
+ {id:'slack',label:'Slack',glyph:'S',bg:'#f3e7f2',fg:'#85426e'},
+ {id:'github',label:'GitHub',glyph:'⌘',bg:'#e9edf5',fg:'#243653'},
+ {id:'linkedin',label:'LinkedIn',glyph:'in',bg:'#eaf3ff',fg:'#2873c8'},
+ {id:'xbox',label:'Xbox',glyph:'X',bg:'#e4f4e9',fg:'#217d41'},
+ {id:'playstation',label:'PlayStation',glyph:'PS',bg:'#e6edfc',fg:'#2354a7'},
+ {id:'nintendo',label:'Nintendo',glyph:'N',bg:'#ffe9e9',fg:'#db4444'},
+ {id:'steam',label:'Steam',glyph:'S',bg:'#e7edf8',fg:'#2b477c'},
+ {id:'duolingo',label:'Duolingo',glyph:'D',bg:'#e8fae1',fg:'#58a82c'},
+ {id:'coursera',label:'Coursera',glyph:'C',bg:'#e9efff',fg:'#2b60b7'},
+ {id:'udemy',label:'Udemy',glyph:'U',bg:'#f2e8ff',fg:'#7043b6'},
+ {id:'claro',label:'Claro',glyph:'C',bg:'#fff0ed',fg:'#de4937'},
+ {id:'altice',label:'Altice',glyph:'A',bg:'#e6f4ff',fg:'#2772d4'},
+ {id:'starlink',label:'Starlink',glyph:'S',bg:'#e7eef7',fg:'#344c6d'},
+ {id:'electric',label:'Electricidad',glyph:'bolt',bg:'#fff4d8',fg:'#ad7a21'},
+ {id:'water',label:'Agua',glyph:'drop',bg:'#e6f5ff',fg:'#2c8ecb'},
+ {id:'gas',label:'Gas',glyph:'flame',bg:'#fff0e4',fg:'#dd7939'},
+ {id:'transport',label:'Transporte',glyph:'car',bg:'#eaf1fc',fg:'#466bb3'},
+ {id:'fuel',label:'Combustible',glyph:'pump',bg:'#fff3df',fg:'#b47a30'},
+ {id:'parking',label:'Estacionamiento',glyph:'P',bg:'#e9f2fb',fg:'#3b6ca2'},
+ {id:'food',label:'Alimentación',glyph:'fork',bg:'#fff0eb',fg:'#b76b52'},
+ {id:'coffee',label:'Cafetería',glyph:'cup',bg:'#f6eee4',fg:'#976741'},
+ {id:'shopping',label:'Compras',glyph:'bag',bg:'#f8eafb',fg:'#a25cad'},
+ {id:'health',label:'Salud',glyph:'heart',bg:'#ffeaf0',fg:'#c65d70'},
+ {id:'pharmacy',label:'Farmacia',glyph:'cross',bg:'#e8f6ed',fg:'#46875f'},
+ {id:'pet',label:'Mascotas',glyph:'paw',bg:'#f8ecdf',fg:'#a97750'},
+ {id:'kids',label:'Familia',glyph:'users',bg:'#eff1ff',fg:'#596dc3'},
+ {id:'security',label:'Seguridad',glyph:'lock',bg:'#e8eff7',fg:'#566d88'},
+ {id:'tax',label:'Impuestos',glyph:'receipt',bg:'#fff1dd',fg:'#bb7b32'},
+ {id:'bank',label:'Banco',glyph:'bank',bg:'#e9f1ff',fg:'#4669af'},
+ {id:'card',label:'Tarjeta',glyph:'card',bg:'#e8eef9',fg:'#5972ac'},
+ {id:'debt',label:'Préstamo',glyph:'coins',bg:'#f0edff',fg:'#7761bb'},
+ {id:'donation',label:'Donaciones',glyph:'heart',bg:'#ffecec',fg:'#ca6068'},
+ {id:'cloud',label:'Almacenamiento',glyph:'cloud',bg:'#e8f4fd',fg:'#4e8ab4'},
+ {id:'software',label:'Software',glyph:'tiles',bg:'#e9effc',fg:'#5778a7'},
+ {id:'website',label:'Dominio web',glyph:'globe',bg:'#e9f7f5',fg:'#347f78'},
+ {id:'maintenance',label:'Mantenimiento',glyph:'tool',bg:'#f2f1eb',fg:'#8a7958'},
+ {id:'beauty',label:'Cuidado personal',glyph:'sparkle',bg:'#ffedf5',fg:'#c46d96'},
+ {id:'sport',label:'Deportes',glyph:'ball',bg:'#ebf8ed',fg:'#4b995d'},
+ {id:'travel',label:'Viajes',glyph:'plane',bg:'#eaf4fc',fg:'#3e85b3'},
+ {id:'homeoffice',label:'Oficina',glyph:'briefcase',bg:'#ecf1fb',fg:'#5674a2'},
+ {id:'calendar',label:'Membresía',glyph:'calendar',bg:'#e9ebff',fg:'#6971b7'},
+ {id:'gift',label:'Regalos',glyph:'gift',bg:'#ffebf3',fg:'#bd6c90'},
+ {id:'generic1',label:'Servicio genérico',glyph:'circle',bg:'#eef2fb',fg:'#687894'},
+ {id:'generic2',label:'Otro pago',glyph:'dots',bg:'#edf2fa',fg:'#61769b'}
 ];
 const V41_SVC_BY_ID=Object.fromEntries(V41_SERVICES.map(x=>[x.id,x]));
 function v41ValidIcon(id){return Object.hasOwn(V41_SVC_BY_ID,String(id||''))?String(id):'general'}
 function v41GuessIcon(value){
  const name=String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
- const patterns=[[/netflix/,'netflix'],[/spotify/,'spotify'],[/youtube/,'youtube'],[/chatgpt|openai/,'chatgpt'],[/icloud/,'icloud'],[/apple|app store|apple one/,'apple'],[/disney/,'disney'],[/prime|amazon/,'prime'],[/notion/,'notion'],[/canva/,'canva'],[/microsoft|office|onedrive|xbox/,'microsoft'],[/wifi|internet|fibra|banda ancha/,'internet'],[/telefon|celular|movil|movistar|claro|altice/,'phone'],[/video|hbo|max|hulu|paramount|stream|cine/,'streaming'],[/musica|music|deezer|tidal/,'music'],[/gimnasio|gym|fitness/,'gym'],[/curso|educa|univers|escuela/,'education'],[/seguro|poliza|salud/,'insurance'],[/luz|agua|electric|energia/,'utilities'],[/alquiler|renta|vivienda|condominio/,'home']];
+ const patterns=[[/max\b|hbo/,'hbo'],[/paramount/,'paramount'],[/crunchyroll/,'crunchyroll'],[/twitch/,'twitch'],[/hulu/,'hulu'],[/tidal/,'tidal'],[/deezer/,'deezer'],[/apple music/,'applemusic'],[/soundcloud/,'soundcloud'],[/dropbox/,'dropbox'],[/google one/,'google'],[/google drive/,'drive'],[/adobe/,'adobe'],[/figma/,'figma'],[/zoom/,'zoom'],[/slack/,'slack'],[/github/,'github'],[/linkedin/,'linkedin'],[/playstation/,'playstation'],[/nintendo/,'nintendo'],[/steam/,'steam'],[/duolingo/,'duolingo'],[/coursera/,'coursera'],[/udemy/,'udemy'],[/claro/,'claro'],[/altice/,'altice'],[/starlink/,'starlink'],[/agua|acueducto/,'water'],[/gas/,'gas'],[/combustible|gasolina/,'fuel'],[/alimento|supermercado/,'food'],[/farmacia|medicina/,'pharmacy'],[/mascota|veterinar/,'pet'],[/impuesto|dgii/,'tax'],[/mantenimiento/,'maintenance'],[/dominio|hosting/,'website'],[/netflix/,'netflix'],[/spotify/,'spotify'],[/youtube/,'youtube'],[/chatgpt|openai/,'chatgpt'],[/icloud/,'icloud'],[/apple|app store|apple one/,'apple'],[/disney/,'disney'],[/prime|amazon/,'prime'],[/notion/,'notion'],[/canva/,'canva'],[/microsoft|office|onedrive|xbox/,'microsoft'],[/wifi|internet|fibra|banda ancha/,'internet'],[/telefon|celular|movil|movistar|claro|altice/,'phone'],[/video|hbo|max|hulu|paramount|stream|cine/,'streaming'],[/musica|music|deezer|tidal/,'music'],[/gimnasio|gym|fitness/,'gym'],[/curso|educa|univers|escuela/,'education'],[/seguro|poliza|salud/,'insurance'],[/luz|agua|electric|energia/,'utilities'],[/alquiler|renta|vivienda|condominio/,'home']];
  for(const [pattern,id] of patterns)if(pattern.test(name))return id;
  return 'general';
 }
@@ -17390,7 +17597,32 @@ function v41ServiceIcon(id,small=''){
  shield:'<path d="M12 2 21 6v6c0 6-4 9-9 10-5-1-9-4-9-10V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
  bolt:'<path d="m13 2-9 12h7l-1 8 10-13h-7z"/>',
  home:'<path d="m2 11 10-8 10 8v10H2V11Z"/><path d="M9 21v-7h6v7"/>',
- dots:'<circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/>'
+ dots:'<circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/>',
+ drop:'<path d="M12 2C9 7 5 10 5 14a7 7 0 0 0 14 0c0-4-4-7-7-12Z"/>',
+ flame:'<path d="M12 22c5 0 8-4 8-8 0-5-3-8-5-10 0 5-3 6-3 8-1-1-2-3-2-5-3 4-6 6-6 10a8 8 0 0 0 8 5Z"/>',
+ car:'<path d="m4 12 2-6h12l2 6v7H4v-7Zm1 0h14M7 19v2m10-2v2"/><circle cx="7.5" cy="15.5" r="1"/><circle cx="16.5" cy="15.5" r="1"/>',
+ pump:'<rect x="3" y="4" width="12" height="17" rx="2"/><path d="M6 8h6m3 2 4 1v7a2 2 0 0 0 4 0V8l-3-3M3 21h14"/>',
+ fork:'<path d="M5 3v8m3-8v8M2 3v4a5 5 0 0 0 6 5m-3 0v9M17 3c-4 4-4 9 0 10v8"/>',
+ cup:'<path d="M5 7h14v8a7 7 0 0 1-14 0V7Zm14 1h2a3 3 0 0 1 0 6h-2M4 22h16"/>',
+ bag:'<path d="M4 8h16l1 13H3L4 8ZM8 9V6a4 4 0 0 1 8 0v3"/>',
+ heart:'<path d="M20.5 6.5a5 5 0 0 0-7.1 0L12 8l-1.4-1.5a5 5 0 1 0-7.1 7.1L12 22l8.5-8.4a5 5 0 0 0 0-7.1Z"/>',
+ cross:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
+ paw:'<circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="17" cy="7" r="1.5"/><path d="M7 16c1-2 3-5 5-5s4 3 5 5 0 5-5 4-6 1-5-4Z"/>',
+ users:'<circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2m2-15a3 3 0 0 1 0 6m1 3c2 1 3 3 3 6"/>',
+ lock:'<rect x="4" y="10" width="16" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+ receipt:'<path d="M5 2v20l3-2 4 2 4-2 3 2V2H5Zm4 6h6m-6 4h6m-6 4h4"/>',
+ bank:'<path d="M2 9 12 3l10 6M4 9h16M5 10v10m5-10v10m5-10v10m5-10v10M2 21h20"/>',
+ card:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h5"/>',
+ coins:'<circle cx="10" cy="9" r="6"/><path d="M15 6a6 6 0 1 1-6 10m2-11v8m-3-6h5"/>',
+ globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2c-6 6-6 14 0 20m0-20c6 6 6 14 0 20"/>',
+ tool:'<path d="M20 7a6 6 0 0 1-7 7l-7 7-3-3 7-7a6 6 0 0 1 7-7l-4 4 3 3 4-4Z"/>',
+ sparkle:'<path d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2Z"/>',
+ ball:'<circle cx="12" cy="12" r="10"/><path d="m12 2 4 5-2 6h-5l-2-6m2 6-3 5m8-5 5 5"/>',
+ plane:'<path d="m22 2-8 20-4-8-8-4 20-8ZM10 14l12-12"/>',
+ briefcase:'<rect x="2" y="7" width="20" height="15" rx="2"/><path d="M8 7V4h8v3M2 13h20"/>',
+ calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v5m10-5v5M3 10h18"/>',
+ gift:'<rect x="3" y="10" width="18" height="11" rx="2"/><path d="M2 7h20v4H2zM12 7v14M12 7c-6 0-8-2-6-5 2-2 5 1 6 5m0 0c6 0 8-2 6-5-2-2-5 1-6 5"/>',
+ circle:'<circle cx="12" cy="12" r="8"/>'
  };
  const child=paths[opt.glyph]?`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[opt.glyph]}</svg>`:sanitize(opt.glyph);
  return `<span class="v41-service-mark ${small==='tiny'?'is-tiny':small?'is-small':''}" style="--v41-service-bg:${opt.bg};--v41-service-fg:${opt.fg}" aria-hidden="true">${child}</span>`;
@@ -17418,26 +17650,75 @@ function v41WireServicePicker(form){
  name?.addEventListener('input',()=>{if(form.dataset.v41IconManual==='1')return;const guess=v41GuessIcon(name.value);if(guess!=='general')v41SetServiceIcon(form,guess);});
 }
 
+function v147CostPreview(form){
+ if(!form)return;
+ const text=(id,value)=>{const e=form.querySelector(id);if(e)e.textContent=value};
+ const number=Math.max(0,Number(form.elements.amount?.value||0));
+ const currency=form.elements.currency?.value||'DOP';
+ const symbol=currency==='USD'?'US$':'RD$';
+ const freq=form.elements.frequency?.value||'monthly';
+ const labels={monthly:'Cada mes',weekly:'Cada semana',quarterly:'Cada 3 meses',annual:'Una vez al año'};
+ const monthly=number*({monthly:1,weekly:52/12,quarterly:1/3,annual:1/12}[freq]||1);
+ const fmt=n=>symbol+new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
+ text('[data-v147-amount]',fmt(number));
+ text('[data-v147-monthly]',fmt(monthly));
+ text('[data-v147-cycle]',labels[freq]||'Recurrente');
+ const due=form.elements.nextDue?.value||'';
+ let dueLabel=due; if(/^\d{4}-\d{2}-\d{2}$/.test(due)){try{dueLabel=new Date(due+'T12:00:00').toLocaleDateString('es-DO',{day:'numeric',month:'short',year:'numeric'})}catch(e){}}
+ text('[data-v147-due]',dueLabel||'Por definir');
+ const name=form.elements.name?.value?.trim()||'Tu próximo pago';
+ text('[data-v147-name]',name);
+ const sel=form.elements.source;
+ text('[data-v147-account]',sel?.selectedOptions?.[0]?.text?.trim()||'Selecciona cuenta o tarjeta');
+ const ico=form.querySelector('[name="serviceIcon"]')?.value||'general';
+ const mark=form.querySelector('[data-v147-mark]');if(mark)mark.innerHTML=v41ServiceIcon(ico);
+ form.querySelectorAll('[data-v147-frequency]').forEach(btn=>{let active=btn.dataset.v147Frequency===freq;btn.setAttribute('aria-pressed',String(active))});
+}
+function v147WireRecurring(form){
+ if(!form)return;
+ const update=()=>v147CostPreview(form);
+ form.addEventListener('input',update);
+ form.addEventListener('change',update);
+ form.addEventListener('click',event=>{
+  const freq=event.target.closest('[data-v147-frequency]');
+  if(freq){event.preventDefault();form.elements.frequency.value=freq.dataset.v147Frequency;form.elements.frequency.dispatchEvent(new Event('change',{bubbles:true}));update();return}
+  const preset=event.target.closest('[data-v147-preset]');
+  if(preset){event.preventDefault();const k=preset.dataset.v147Preset;const names={netflix:'Netflix',spotify:'Spotify',internet:'Internet hogar',utilities:'Servicios básicos',gym:'Gimnasio',insurance:'Seguro'};
+   if(!form.elements.name?.value?.trim())form.elements.name.value=names[k]||'';
+   v41SetServiceIcon(form,k);form.dataset.v41IconManual='1';update();return}
+  if(event.target.closest('[data-act="v41PickServiceIcon"]'))requestAnimationFrame(update);
+ });
+ update();
+}
 function recurringForm(id){
  const r=db.recurring.find(r=>r.id===id)||{},o={name:'',category:'Servicios básicos',frequency:'monthly',amount:0,currency:'DOP',source:'',nextDue:today(),active:true,...r};
  const sources=[['','Selecciona la cuenta o tarjeta'],...db.accounts.map(a=>[`account:${a.id}`,`${a.name} · ${a.currency}`]),...db.cards.map(c=>[`card:${c.id}`,`${c.name} · RD$ / US$`])];
- const body=`<div class="form-full smart-sub-intro"><span class="smart-kicker">PAGOS · REPETICIONES</span><strong>${id?'Editar pago recurrente':'Nuevo pago recurrente'}</strong><small>Controla el próximo vencimiento sin contabilizar el gasto por adelantado.</small></div>
- ${v41ServicePicker(o.iconId||v41GuessIcon(o.name))}
- ${formItem('name','Nombre del pago',o.name,'text','required maxlength="90" placeholder="Ej. Internet hogar"')}
- ${formItem('amount','Importe',o.amount,'number','min="0.01" step="0.01" required')}
- ${formSelect('currency','Moneda',[['DOP','Pesos · RD$'],['USD','Dólares · US$']],o.currency)}
- ${formSelect('source','Pagar con',sources,o.source,'required')}
- ${formSelect('frequency','Frecuencia',[['monthly','Mensual'],['weekly','Semanal'],['quarterly','Trimestral'],['annual','Anual']],o.frequency)}
- ${formItem('nextDue','Próximo pago',o.nextDue,'date','required')}
- ${v40ModeField(o,'recurring')}
- <p class="form-full v40-help">Automático registra el cargo en el libro al abrir la aplicación después del vencimiento; no cobra al proveedor ni verifica el banco. Para revisar antes de descontar elige Confirmar manualmente.</p>
- <details class="form-full smart-fold"><summary><span class="smart-fold-icon">＋</span><span><strong>Organización y estado</strong><small>Categoría, subcategoría y pausa</small></span><span class="smart-chevron">⌄</span></summary><div class="smart-fold-grid">
- ${formSelect('category','Categoría',categoryOptions('gasto'),o.category,'id="recCategory"')}
- ${subSelect('gasto',o.category,o.subcategory||'')}
- ${formSelect('active','Estado',[['true','Activa'],['false','Pausada']],String(o.active))}
- </div></details>`;
+ const cycle=[['monthly','Mensual'],['weekly','Semanal'],['quarterly','Trimestral'],['annual','Anual']];
+ const mark=v41ServiceIcon(o.iconId||v41GuessIcon(o.name));
+ const body=`<div class="v147-rec-shell form-full">
+  <div class="v147-rec-hero"><div class="v147-hero-copy"><span class="v147-eyebrow">VIVE EL HOY · COMPROMISOS</span><strong>${id?'Perfecciona tu pago':'Un pago menos que recordar.'}</strong><p>Configura el compromiso una vez. Tu agenda sabrá cuándo vuelve a vencer.</p></div><div class="v147-hero-stamp" aria-hidden="true">${icon('cycle')}</div></div>
+  <div class="v147-rec-layout"><div class="v147-rec-editor">
+   <section class="v147-rec-section" aria-label="Identidad del pago"><div class="v147-sec-head"><span class="v147-step">01</span><div><strong>¿Qué vas a pagar?</strong><small>El nombre y el importe son suficientes para empezar.</small></div></div>
+    <div class="v147-form-duo">${formItem('name','Nombre del servicio',o.name,'text','required maxlength="90" placeholder="Ej. Internet hogar"')}
+    ${formItem('amount','Importe por cobro',o.amount,'number','min="0.01" step="0.01" required')}</div>
+    <div class="v147-popular-head">Accesos visuales rápidos <span>Opcional</span></div>
+    <div class="v147-quick-icons">${[['netflix','Netflix'],['spotify','Spotify'],['internet','Internet'],['utilities','Servicios'],['gym','Gimnasio'],['insurance','Seguro']].map(([key,label])=>`<button type="button" class="v147-preset" data-v147-preset="${key}">${v41ServiceIcon(key,'tiny')}<span>${label}</span></button>`).join('')}</div>
+    <details class="v147-icon-drawer"><summary>${icon('palette')} <span>Personalizar icono</span><small>Más de 70 opciones · buscar</small>${icon('chevron-down')}</summary><div class="v147-icon-content">${v41ServicePicker(o.iconId||v41GuessIcon(o.name))}</div></details>
+   </section>
+   <section class="v147-rec-section" aria-label="Pago y calendario"><div class="v147-sec-head"><span class="v147-step">02</span><div><strong>¿Cómo y cuándo se cobra?</strong><small>Define la cuenta, el ciclo y la fecha que verá Próximos pagos.</small></div></div>
+    <div class="v147-form-duo">${formSelect('currency','Moneda',[['DOP','Pesos · RD$'],['USD','Dólares · US$']],o.currency)}${formSelect('source','Cuenta o tarjeta de pago',sources,o.source,'required')}</div>
+    <label class="v147-cycle-label">Periodicidad</label><div class="v147-frequencies" role="group" aria-label="Periodicidad del pago">${cycle.map(([key,label])=>`<button type="button" class="v147-freq-btn" data-v147-frequency="${key}" aria-pressed="${String(o.frequency===key)}">${label}</button>`).join('')}</div>
+    <div class="v147-hidden-freq">${formSelect('frequency','Frecuencia',cycle,o.frequency)}</div>
+    <div class="v147-form-duo">${formItem('nextDue','Próximo vencimiento',o.nextDue,'date','required')}${v40ModeField(o,'recurring')}</div>
+    <p class="v147-fineprint">${icon('info')} El registro automático crea movimientos dentro de la app al procesar el vencimiento; no ejecuta cargos en el banco. Si prefieres revisar cada pago, elige confirmación manual.</p>
+   </section>
+   <details class="v147-rec-more"><summary><span>${icon('sliders-horizontal')} Más opciones</span>${icon('chevron-down')}</summary><div class="v147-more-grid">${formSelect('category','Categoría del catálogo de Gastos',categoryOptions('gasto'),o.category,'id="recCategory"')}${subSelect('gasto',o.category,o.subcategory||'')}${formSelect('active','Estado del compromiso',[['true','Activa'],['false','Pausada']],String(o.active))}</div></details>
+  </div>
+  <aside class="v147-rec-aside" aria-label="Vista previa del nuevo compromiso"><span class="v147-aside-label">VISTA PREVIA · PRÓXIMO COMPROMISO</span><div class="v147-card-top"><span data-v147-mark>${mark}</span><div><strong data-v147-name>${sanitize(o.name||'Tu próximo pago')}</strong><small data-v147-cycle>Recurrente</small></div></div><strong class="v147-price" data-v147-amount>RD$0.00</strong><div class="v147-price-caption">Importe por vencimiento</div><div class="v147-preview-rule"></div><div class="v147-preview-pair"><span>Próximo pago</span><strong data-v147-due>${sanitize(o.nextDue)}</strong></div><div class="v147-preview-pair"><span>Equivalente mensual*</span><strong data-v147-monthly>RD$0.00</strong></div><div class="v147-preview-pair"><span>Desde</span><strong data-v147-account>Elige una cuenta</strong></div><div class="v147-preview-note">${icon('calendar')} Aparecerá en Próximos pagos. Guardarlo no descuenta tu saldo.</div><small class="v147-preview-footnote">*Estimación de periodicidad para planificación; no es un gasto registrado.</small></aside>
+  </div>
+ </div>`;
  modal(id?'Editar pago recurrente':'Nuevo pago recurrente',body,'recurringForm',true);
- const f=document.getElementById('recurringForm');if(f){f.dataset.id=id||'';f.classList.add('smart-sub-form');v41WireServicePicker(f)}
+ const f=document.getElementById('recurringForm');if(f){f.dataset.id=id||'';f.classList.add('smart-sub-form','v147-rec-form');v41WireServicePicker(f);v147WireRecurring(f)}
 }
 
 function budgetForm(cat,sub){let category=cat||EXP[0],subcategory=sub||'',row=budgetRowsAt(ui.month).find(b=>b.category===category&&(b.subcategory||'')===subcategory)||{};modal('Presupuesto por categoría y subcategoría',`${formItem('effectiveMonth','Mes de vigencia',ui.month,'month','required')}${formSelect('category','Categoría de gasto',categoryOptions('gasto'),category,'id="budgetCategory"')}${subSelect('gasto',category,subcategory)}${formItem('amount','Presupuesto de este mes (RD$)',row.amount||0,'number','min="0" step="0.01" required')}${para('La edición rige desde el mes elegido y no reescribe períodos anteriores. Un límite global ya incluye sus subcategorías. Para retirar un límite, registra cero.')}`,'budgetForm')}
@@ -18355,7 +18636,16 @@ if(v.type==='loan_payment'){let l=loan(v.loanId),a=account(v.accountId);base.cur
  base.paymentChannel=normalizePaymentChannel(v.paymentChannel)||'presencial';base.paymentTaxable=taxable?'yes':'no';base.paymentTaxPct=pct;
  base.paymentTax=rnd(base.sourceAmount*pct/100);base.paymentFee=0;base.paymentFeeCurrency=a.currency;
  }
-if(v.type==='transfer'&&v.accountId===v.toAccountId)throw Error('No puedes transferir a la misma cuenta.');db.transactions.push(base);if(v.recurringId&&!previous){let recurring=db.recurring.find(x=>x.id===v.recurringId);if(recurring)recurring.nextDue=nextRecurringDate(recurring);}if(previous){db.txRevisions??=[];db.txRevisions.unshift({id:uuid(),transactionId:previous.id,at:new Date().toISOString(),before:{...previous},after:{...base}});db.txRevisions=db.txRevisions.slice(0,400);}if(document.getElementById('transactionForm')?.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==document.getElementById('transactionForm').dataset.pendingId);persist();closeModal();render();toast(previous?'Movimiento corregido; balances recalculados.':'Movimiento registrado y balances actualizados.');return base}catch(error){if(previous)db.transactions.splice(oldIndex,0,previous);throw error}}
+if(v.type==='transfer'&&v.accountId===v.toAccountId)throw Error('No puedes transferir a la misma cuenta.');
+if(v.recurringId||previous?.recurringId){
+ const linkedId=String(v.recurringId||previous?.recurringId||'');
+ const recurring=db.recurring.find(x=>x.id===linkedId);
+ if(!recurring)throw Error('La suscripción vinculada ya no existe. Selecciona un servicio vigente.');
+ base.recurringId=linkedId;
+ base.scheduleKey=previous?.scheduleKey||(editId?'':`recurring:${linkedId}:${recurring.nextDue}`);
+ if(!previous&&db.transactions.some(t=>t.scheduleKey&&t.scheduleKey===base.scheduleKey))throw Error('Este vencimiento ya está registrado como pagado. Actualiza Próximos pagos.');
+}
+db.transactions.push(base);if(v.recurringId&&!previous){let recurring=db.recurring.find(x=>x.id===v.recurringId);if(recurring)recurring.nextDue=nextRecurringDate(recurring);}if(previous){db.txRevisions??=[];db.txRevisions.unshift({id:uuid(),transactionId:previous.id,at:new Date().toISOString(),before:{...previous},after:{...base}});db.txRevisions=db.txRevisions.slice(0,400);}if(document.getElementById('transactionForm')?.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==document.getElementById('transactionForm').dataset.pendingId);persist();closeModal();render();toast(previous?'Movimiento corregido; balances recalculados.':'Movimiento registrado y balances actualizados.');return base}catch(error){if(previous)db.transactions.splice(oldIndex,0,previous);throw error}}
 function nextRecurringDate(r){return v96NextRecurringDate(r.nextDue,r.frequency,r.billingDay||dateObj(r.nextDue).getDate())}
 function payRecurring(id){let r=db.recurring.find(x=>x.id===id);if(!r||r.active===false)return;const [src,ref]=String(r.source||'').split(':');guidedTransactionForm({flowMode:'service',type:src==='card'?'card_charge':'expense',paymentSource:src==='card'?'card':'account',cardId:src==='card'?ref:db.cards[0]?.id,accountId:src==='account'?ref:db.accounts[0]?.id,amount:r.amount,currency:r.currency,category:r.category,subcategory:r.subcategory||'',servicePreset:'other',note:r.name,recurringId:r.id,paymentChannel:'internet_banking'});}
 function executeRecurringPayment(v){let r=db.recurring.find(a=>a.id===v.recurringId);if(!r||r.active===false)throw Error('La suscripción no está disponible.');let [type,ref]=String(r.source||'').split(':');let a=type==='account'?account(ref):null,c=type==='card'?card(ref):null;if(!a&&!c)throw Error('Edita la suscripción y selecciona una cuenta o tarjeta activa.');if(a&&a.currency!==r.currency)throw Error('La moneda del cargo debe coincidir con la cuenta.');let amount=num(v.amount),date=v.date||today();if(!(amount>0))throw Error('El importe de pago debe ser positivo.');if(date>today())throw Error('No registres un cargo futuro como confirmado.');db.transactions.push({id:uuid(),created:new Date().toISOString(),date,type:a?'expense':'card_charge',note:r.name+' · Pago recurrente',category:r.category,subcategory:r.subcategory||'',accountId:a?a.id:'',cardId:c?c.id:'',currency:r.currency,amount:rnd(amount),recurringId:r.id,scheduleKey:`recurring:${r.id}:${r.nextDue}`,postingOrigin:'manual'});r.nextDue=nextRecurringDate(r);}
@@ -18582,7 +18872,7 @@ case 'annualToggle':ui.annualDetails=!ui.annualDetails;render();break;
 case 'gotoSettings':ui.page='settings';render();break;
 case 'mobile':ui.mobile=!ui.mobile;render();break;
 case 'registrationGroup':ui.registrationGroup=['receive','pay','move'].includes(id)?id:'pay';render();break;
-case 'guidedFlow':guidedTransactionForm({type:({income:'income',spend:'expense',service:'card_charge',own:'transfer',outgoing:'expense',cardpay:'card_payment'})[el.dataset.mode]||'expense',flowMode:el.dataset.mode});break;
+case 'v145PayFilter':ui.v145PayFilter=['all','overdue','upcoming'].includes(id)?id:'all';render();break; case 'guidedFlow':guidedTransactionForm({type:({income:'income',spend:'expense',service:'card_charge',own:'transfer',outgoing:'expense',cardpay:'card_payment'})[el.dataset.mode]||'expense',flowMode:el.dataset.mode});break;
 case 'newTransaction':{const kind=el.dataset.type||'';if(isMobileViewport()&&!id&&(!kind||['income','expense','card_charge','transfer'].includes(kind))){openMobileQuickRegister(kind||'income');break;}if(!kind&&!id){flowPicker();break;}transactionForm({type:kind||'expense',cardId:id||db.cards[0]?.id});if(kind==='transfer')queueMicrotask(refreshTransferFee);break;}
 case 'otherRefund':if(!db.cards.length){toast('Registra una tarjeta para asociar una devolución.');break}transactionForm({type:'card_refund',cardId:db.cards[0].id});break;
 case 'otherAdjust':transactionForm({type:'adjustment'});break;
@@ -24390,5 +24680,182 @@ body.theme-dark .v144-section-head h3,body.theme-dark .v144-hero h2{color:#eef5f
 }
 </style>
 
+
+<style id="vive-v145-payment-center">
+/* V145 · Estilos exclusivamente para Centro de pagos; no afectan Resumen ni otras vistas. */
+.world-payments #page .v145-paycenter{color:#203456;display:grid;gap:18px;min-width:0;padding-bottom:24px}
+.world-payments #page .v145-paycenter *{box-sizing:border-box}
+.world-payments #page .v145-pay-hero{position:relative;overflow:hidden;padding:25px 28px 19px;border-radius:27px;border:1px solid rgba(255,255,255,.77);background:linear-gradient(120deg,rgba(248,250,255,.96),rgba(225,235,252,.84));box-shadow:0 18px 48px rgba(57,80,128,.08),inset 0 1px 0 rgba(255,255,255,.94)}
+.world-payments #page .v145-pay-hero:before{content:"";position:absolute;width:380px;height:380px;right:-150px;top:-220px;border-radius:50%;background:radial-gradient(circle,rgba(114,133,247,.19),transparent 68%);pointer-events:none}
+.world-payments #page .v145-pay-hero-head{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.world-payments #page .v145-eyebrow{display:inline-flex;align-items:center;gap:7px;color:#6b83a6;font-size:10px;font-weight:830;letter-spacing:.1em;text-transform:uppercase;line-height:1.5}
+.world-payments #page .v145-status-dot{width:7px;height:7px;background:#6275ee;box-shadow:0 0 0 4px rgba(98,117,238,.13);border-radius:50%}
+.world-payments #page .v145-pay-hero h2{font-size:clamp(27px,2.6vw,38px);letter-spacing:-.055em;line-height:1.05;margin:9px 0 7px;font-weight:850;color:#1c345c}
+.world-payments #page .v145-pay-hero p{font-size:12px;color:#7085a3;margin:0;line-height:1.5}
+.world-payments #page .v145-period-control{display:grid;gap:4px;align-items:center;margin:0!important;padding:9px 12px!important;border-radius:14px!important;background:rgba(255,255,255,.76);border:1px solid rgba(141,162,197,.2);min-width:165px}
+.world-payments #page .v145-period-control>span{font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:.07em;color:#7990af}
+.world-payments #page .v145-period-control input{font-size:12px;color:#314e75;max-width:170px;background:transparent;border:0;outline:0;min-height:23px;padding:0}
+.world-payments #page .v145-pay-hero-foot{position:relative;display:flex;align-items:center;justify-content:space-between;gap:11px;flex-wrap:wrap;padding-top:21px;margin-top:20px;border-top:1px solid rgba(163,183,214,.32)}
+.world-payments #page .v145-pay-period{font-size:13px;font-weight:800;color:#3e5376;text-transform:capitalize}
+.world-payments #page .v145-debt-indicator{min-height:37px;padding:8px 12px;display:inline-flex;align-items:center;gap:8px;max-width:100%;border-radius:999px;background:rgba(255,255,255,.85);color:#59749b;border:1px solid rgba(133,162,199,.34);font-size:11px;font-weight:790;cursor:pointer;box-shadow:0 4px 15px rgba(44,70,126,.05)}
+.world-payments #page .v145-debt-indicator svg{width:15px;height:15px;flex:none}
+.world-payments #page .v145-debt-indicator.is-over{color:#bb3349;background:rgba(255,244,245,.9);border-color:rgba(235,121,135,.34)}
+.world-payments #page .v145-debt-indicator.is-caution{color:#aa6d25;background:rgba(255,249,231,.88);border-color:rgba(216,167,78,.35)}
+.world-payments #page .v145-payment-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.world-payments #page .v145-payment-kpi{display:grid;align-content:center;gap:6px;min-width:0;min-height:122px;padding:17px 18px;border-radius:21px;background:rgba(245,249,255,.78);border:1px solid rgba(255,255,255,.8);box-shadow:0 12px 28px rgba(63,92,151,.035)}
+.world-payments #page .v145-payment-kpi small{font-size:10px;font-weight:720;color:#607899;line-height:1.35}
+.world-payments #page .v145-payment-kpi strong{font-size:clamp(19px,2vw,29px);line-height:1.12;letter-spacing:-.045em;font-weight:850;color:#1f3a66;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.world-payments #page .v145-payment-kpi span{font-size:10px;line-height:1.3;color:#8a9bb6}
+.world-payments #page .v145-payment-kpi.is-danger strong{color:#bd3d51}
+.world-payments #page .v145-pay-quick{display:flex;align-items:center;justify-content:space-between;gap:16px;min-width:0;padding:15px 18px;border:1px solid rgba(255,255,255,.8);border-radius:20px;background:rgba(250,251,255,.73)}
+.world-payments #page .v145-pay-quick-title{display:grid;gap:2px;min-width:130px}
+.world-payments #page .v145-pay-quick-title span{font-size:9px;font-weight:800;letter-spacing:.09em;color:#8195b3}
+.world-payments #page .v145-pay-quick-title strong{font-size:13px;color:#293e64}
+.world-payments #page .v145-quick-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;min-width:0}
+.world-payments #page .v145-quick-buttons button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(140,166,204,.24);border-radius:12px;background:rgba(232,239,254,.78);min-height:40px;padding:9px 13px;color:#385782;font-weight:770;font-size:11px;white-space:nowrap;cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s}
+.world-payments #page .v145-quick-buttons button:first-child{background:linear-gradient(120deg,#5361e5,#697cf5);border-color:transparent;color:white}
+.world-payments #page .v145-quick-buttons button:hover{transform:translateY(-2px);box-shadow:0 7px 16px rgba(72,101,167,.14)}
+.world-payments #page .v145-quick-buttons button svg{width:16px;height:16px;flex:none}
+.world-payments #page .v145-payment-section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:8px;flex-wrap:wrap}
+.world-payments #page .v145-payment-section-head h3,.world-payments #page .v145-pay-lower h3{margin:4px 0 4px;color:#20395f;font-size:21px;letter-spacing:-.04em;line-height:1.18;font-weight:820}
+.world-payments #page .v145-payment-section-head p,.world-payments #page .v145-pay-lower p{margin:0;font-size:11px;line-height:1.5;color:#748aa8}
+.world-payments #page .v145-section-meta{color:#6f83a7;font-size:10px;font-weight:800;padding:7px 10px;border-radius:999px;border:1px solid rgba(140,161,193,.18);background:rgba(255,255,255,.67)}
+/* Retenemos 4 tarjetas GRANDES. Sobreponemos solo las antiguas reglas de compactacion en world-payments. */
+.world-payments #page .v145-pay-cardgrid.v81-payments-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:17px!important;align-items:stretch!important;margin:0!important}
+.world-payments #page .v145-pay-cardgrid>.v145-pay-large-card.v71-commitment-card{height:418px!important;min-height:418px!important;max-height:418px!important;padding:22px!important;border-radius:25px!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;gap:0!important;background:rgba(249,251,255,.83)!important;border:1px solid rgba(255,255,255,.89)!important;box-shadow:0 12px 29px rgba(53,81,129,.048)!important}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card>.v71-commitment-head{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:13px!important;margin:0!important;padding:0 0 12px!important;min-height:119px!important;flex:none!important;border-bottom:1px solid rgba(169,188,219,.21)}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-identity{display:flex!important;flex-direction:row!important;align-items:center!important;gap:12px!important;width:100%!important;min-width:0!important}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-icon{display:grid!important;place-items:center!important;width:53px!important;height:53px!important;flex:0 0 53px!important;border-radius:16px!important;background:linear-gradient(140deg,#edf4ff,#e5eaff)!important}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-icon svg{width:26px!important;height:26px!important}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card h3{font-size:16px!important;line-height:1.2!important;letter-spacing:-.025em;color:#273f65}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v72-commitment-caption{display:block;color:#8194af;font-size:10px;font-weight:700;margin-top:4px}
+.world-payments #page .v145-card-number{display:flex;align-items:center;justify-content:space-between;gap:9px;min-width:0}
+.world-payments #page .v145-card-number small{color:#788ca9;font-size:10px;font-weight:730}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-amount{font-size:clamp(19px,2vw,25px)!important;font-weight:850!important;color:#253e67!important;text-align:right;white-space:normal!important;line-height:1.1;overflow-wrap:anywhere}
+.world-payments #page .v145-card-list-label{font-size:9px;font-weight:820;letter-spacing:.085em;color:#8a9bb6;margin-top:15px;margin-bottom:1px}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-list{display:block!important;flex:1 1 auto!important;overflow:auto!important;min-height:0!important;max-height:none!important;padding:0!important;margin:0!important;scrollbar-width:thin!important}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-list .mini-row{padding:12px 0!important;align-items:center;gap:9px!important;min-width:0;border-bottom:1px solid rgba(172,190,214,.17)}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-list .mini-row>div:first-child{min-width:0;flex:1 1 auto}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-list .hstack{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap;justify-content:flex-end}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-list .hstack strong{font-size:11px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-list .btn{white-space:nowrap!important;font-size:11px;padding:7px 10px;min-height:36px}
+.world-payments #page .v145-card-empty{padding:21px 0;color:#8191ad;font-size:11px;line-height:1.5}
+.world-payments #page .v145-card-foot{padding-top:10px;margin-top:9px;border-top:1px solid rgba(172,190,214,.18);color:#8c9db7;font-size:10px;flex:none}
+.world-payments #page .v145-pay-lower{display:grid;grid-template-columns:minmax(0,1.42fr) minmax(285px,.82fr);gap:17px;align-items:start}
+.world-payments #page .v145-pay-agenda,.world-payments #page .v145-pay-insights{min-width:0;background:rgba(248,251,255,.79);border:1px solid rgba(255,255,255,.82);border-radius:24px;padding:21px;box-shadow:0 12px 29px rgba(53,81,129,.045)}
+.world-payments #page .v145-agenda-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.world-payments #page .v145-pay-filters{display:flex;gap:6px;padding:4px;margin:17px 0 10px;background:rgba(227,235,248,.58);border-radius:12px;max-width:max-content;flex-wrap:wrap}
+.world-payments #page .v145-pay-filters button{display:flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:9px;font-size:10.5px;font-weight:750;color:#7285a5;min-height:33px;padding:7px 12px;cursor:pointer}
+.world-payments #page .v145-pay-filters button.active{background:white;color:#344f79;box-shadow:0 3px 12px rgba(66,93,147,.09)}
+.world-payments #page .v145-pay-filters button b{background:#fde7ec;color:#b8334b;border-radius:100px;padding:1px 5px;font-size:9px}
+.world-payments #page .v145-agenda-list{display:grid;gap:0;min-width:0}
+.world-payments #page .v145-agenda-row{display:flex;align-items:center;gap:11px;min-width:0;border-top:1px solid rgba(161,183,214,.22);padding:12px 0}
+.world-payments #page .v145-agenda-date{flex:0 0 42px;width:42px;min-height:47px;border-radius:12px;background:rgba(233,239,253,.85);display:grid;place-content:center;text-align:center;color:#37577c}
+.world-payments #page .v145-agenda-date b{font-size:17px;line-height:1.1}
+.world-payments #page .v145-agenda-date small{font-size:9px;text-transform:uppercase;color:#8297b2}
+.world-payments #page .v145-agenda-icon{width:31px;height:31px;display:grid;place-items:center;color:#5675a3;flex:none;border:1px solid rgba(153,179,218,.22);border-radius:10px}
+.world-payments #page .v145-agenda-icon svg{width:16px;height:16px}
+.world-payments #page .v145-agenda-description{display:grid;gap:5px;min-width:0;flex:1}
+.world-payments #page .v145-agenda-description strong{font-size:12px;color:#293f63;overflow-wrap:anywhere}
+.world-payments #page .v145-agenda-description small{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#8b9cb3;font-size:10px}
+.world-payments #page .v145-agenda-status{color:#6083ad;font-weight:750}
+.world-payments #page .v145-agenda-status.is-late{color:#b9455b}
+.world-payments #page .v145-agenda-payment{display:grid;gap:6px;text-align:right;justify-items:end;min-width:105px}
+.world-payments #page .v145-agenda-payment b{font-size:12px;color:#274168;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.world-payments #page .v145-agenda-payment button{font-size:10px;padding:6px 10px;display:inline-flex;gap:4px;align-items:center;white-space:nowrap}
+.world-payments #page .v145-agenda-payment svg{width:12px;height:12px}
+.world-payments #page .v145-agenda-empty{padding:30px 12px;text-align:center;font-size:11px;color:#8295b0}
+.world-payments #page .v145-agenda-overflow{margin-top:10px!important}
+.world-payments #page .v145-pay-insights{display:grid;gap:15px}
+.world-payments #page .v145-pay-insights h3{margin:0;font-size:20px}
+.world-payments #page .v145-insight-balance{display:grid;gap:6px;border-radius:17px;padding:16px;background:linear-gradient(145deg,rgba(235,242,254,.96),rgba(246,250,255,.9));border:1px solid rgba(206,221,243,.62)}
+.world-payments #page .v145-insight-balance small{font-size:10px;color:#6981a1}
+.world-payments #page .v145-insight-balance strong{font-size:clamp(19px,2vw,26px);letter-spacing:-.04em;color:#2b5c89;overflow-wrap:anywhere;line-height:1.2}
+.world-payments #page .v145-insight-balance strong.is-negative{color:#bb465b}
+.world-payments #page .v145-insight-balance span{font-size:9px;color:#879ab4}
+.world-payments #page .v145-capacity-line{display:grid;gap:9px}
+.world-payments #page .v145-capacity-line>div:first-child{display:flex;justify-content:space-between;gap:10px;font-size:10px;color:#7189a9;font-weight:760}
+.world-payments #page .v145-capacity-line b{font-size:13px;color:#324e79}
+.world-payments #page .v145-capacity-track{height:8px;border-radius:100px;background:#e3ebf8;overflow:hidden}
+.world-payments #page .v145-capacity-track i{display:block;height:100%;background:#5d73e9;border-radius:100px;min-width:0}
+.world-payments #page .v145-capacity-track i.is-over{background:#d26076}
+.world-payments #page .v145-capacity-track i.is-caution{background:#d0a04a}
+.world-payments #page .v145-next-due{display:grid;gap:8px;border-top:1px solid rgba(166,187,215,.23);border-bottom:1px solid rgba(166,187,215,.23);padding:16px 0}
+.world-payments #page .v145-next-due>span{font-size:9px;color:#8a9cba;font-weight:850;letter-spacing:.08em}
+.world-payments #page .v145-next-due strong{font-size:13px;color:#334d75}
+.world-payments #page .v145-next-due>div{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#748aaa}
+.world-payments #page .v145-next-due b{color:#274b79;font-size:13px}
+.world-payments #page .v145-insight-actions{display:grid;gap:8px}
+.world-payments #page .v145-insight-actions button{display:flex;align-items:center;justify-content:space-between;gap:9px;width:100%;min-height:39px;border:1px solid rgba(155,175,207,.22);background:rgba(236,241,250,.7);color:#3e5e86;padding:10px 12px;border-radius:12px;font-size:11px;font-weight:760;text-align:left;cursor:pointer}
+.world-payments #page .v145-insight-actions svg{width:15px;height:15px;flex:none}
+.world-payments #page .v145-pay-tax-note{font-size:10px!important;line-height:1.5!important}
+.world-payments #page .v145-pay-bottom-note{margin:0!important;padding:6px 4px;font-size:10px!important;color:#899bb2!important;line-height:1.5}
+@media(max-width:1150px){
+ .world-payments #page .v145-pay-quick{align-items:flex-start;flex-direction:column}
+ .world-payments #page .v145-quick-buttons{justify-content:flex-start}
+ .world-payments #page .v145-payment-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .world-payments #page .v145-pay-lower{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:790px){
+ .world-payments #page .v145-paycenter{gap:14px}
+ .world-payments #page .v145-pay-hero{padding:19px 17px 15px;border-radius:22px}
+ .world-payments #page .v145-pay-hero-head{flex-direction:column;gap:13px}
+ .world-payments #page .v145-pay-hero h2{font-size:27px}
+ .world-payments #page .v145-period-control{min-width:0;width:max-content;max-width:100%}
+ .world-payments #page .v145-pay-hero-foot{margin-top:13px;padding-top:12px}
+ .world-payments #page .v145-debt-indicator{font-size:10px;min-height:36px}
+ .world-payments #page .v145-payment-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .world-payments #page .v145-payment-kpi{min-height:111px;padding:13px;border-radius:17px}
+ .world-payments #page .v145-payment-kpi strong{font-size:clamp(17px,4.9vw,23px)}
+ .world-payments #page .v145-payment-kpi small{font-size:10px}
+ .world-payments #page .v145-payment-kpi span{font-size:9px}
+ .world-payments #page .v145-pay-quick{padding:14px;border-radius:18px}
+ .world-payments #page .v145-quick-buttons{display:grid;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .world-payments #page .v145-quick-buttons button{white-space:normal;text-align:center;padding:9px 7px;min-height:44px;line-height:1.25}
+ .world-payments #page .v145-pay-cardgrid.v81-payments-grid{grid-template-columns:minmax(0,1fr)!important;gap:13px!important}
+ .world-payments #page .v145-pay-cardgrid>.v145-pay-large-card.v71-commitment-card{height:342px!important;min-height:342px!important;max-height:342px!important;padding:17px!important;border-radius:22px!important}
+ .world-payments #page .v145-pay-cardgrid .v145-pay-large-card>.v71-commitment-head{min-height:106px!important;gap:9px!important;padding-bottom:11px!important}
+ .world-payments #page .v145-pay-cardgrid .v145-pay-large-card h3{font-size:14px!important}
+ .world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-icon{width:45px!important;height:45px!important;flex-basis:45px!important;border-radius:14px!important}
+ .world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-icon svg{width:23px!important;height:23px!important}
+ .world-payments #page .v145-pay-cardgrid .v145-pay-large-card .v71-commitment-amount{font-size:20px!important}
+ .world-payments #page .v145-pay-agenda,.world-payments #page .v145-pay-insights{padding:16px;border-radius:21px}
+ .world-payments #page .v145-pay-lower h3{font-size:18px}
+ .world-payments #page .v145-agenda-row{gap:7px}
+ .world-payments #page .v145-agenda-date{width:37px;flex-basis:37px;min-height:43px}
+ .world-payments #page .v145-agenda-icon{width:27px;height:27px}
+ .world-payments #page .v145-agenda-description strong{font-size:11px}
+ .world-payments #page .v145-agenda-payment{min-width:92px}
+ .world-payments #page .v145-agenda-payment b{font-size:11px}
+}
+@media(max-width:355px){
+ .world-payments #page .v145-pay-filters button{padding:6px 8px;font-size:10px}
+ .world-payments #page .v145-agenda-icon{display:none}
+ .world-payments #page .v145-agenda-payment{min-width:83px}
+ .world-payments #page .v145-quick-buttons button{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.world-payments #page .v145-quick-buttons button{transition:none!important}}
+</style>
+
+
+<script id="vive-v146-service-link">
+/* Selección de servicios desde el mismo motor de Próximos pagos.
+   Reutiliza payRecurring/guideTransactionForm, nunca crea operaciones paralelas. */
+function v146ServiceChooser(){
+ const due=v99PendingForPeriod(today().slice(0,7)).filter(x=>x.kind==='recurring');
+ const unique=new Map();
+ due.sort((a,b)=>a.date.localeCompare(b.date)).forEach(x=>{const r=db.recurring.find(r=>r.id===x.ref);if(r&&r.active!==false&&!unique.has(r.id))unique.set(r.id,{r,x})});
+ const entries=[...unique.values()].map(({r,x})=>`<button type="button" class="v146-service-choice" data-v146-pay-service="${sanitize(r.id)}"><span><strong>${sanitize(r.name)}</strong><small>${prettyDate(x.date)} · ${sanitize(r.category||'Servicio')} · Vencimiento registrado</small></span><b>${money(x.amount,x.currency,2)}</b></button>`).join('');
+ document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v146-service-modal" role="dialog" aria-modal="true" aria-label="Pagar servicio"><div class="modal-head"><div><h2>Pagar servicio</h2><p>Selecciona el compromiso que vas a liquidar.</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v146-service-picker"><p class="v146-service-picker-intro">Los vencimientos registrados en Próximos pagos se vinculan al movimiento. Después de pagar, se actualizará su siguiente fecha.</p>${entries||'<p class="v146-service-picker-intro">No tienes servicios pendientes registrados para este mes.</p>'}<button type="button" class="v146-service-choice v146-service-choice-occasional" data-v146-service-occasional="1"><span><strong>Servicio ocasional</strong><small>Registrar una factura o servicio no programado</small></span>${icon('arrow')}</button></div></section></div>`;
+}
+document.addEventListener('click',function(event){
+ const opening=event.target.closest?.('[data-act="guidedFlow"][data-mode="service"]');
+ if(opening){event.preventDefault();event.stopImmediatePropagation();v146ServiceChooser();return}
+ const paying=event.target.closest?.('[data-v146-pay-service]');
+ if(paying){event.preventDefault();event.stopImmediatePropagation();const id=paying.dataset.v146PayService;closeModal();payRecurring(id);return}
+ const occasional=event.target.closest?.('[data-v146-service-occasional]');
+ if(occasional){event.preventDefault();event.stopImmediatePropagation();closeModal();guidedTransactionForm({type:'expense',flowMode:'service',servicePreset:'other'});return}
+},true);
+</script>
 </body>
 </html>
