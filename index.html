@@ -23223,6 +23223,8 @@ v41ServicePicker=function(id){
  .replace('Buscar: Netflix, internet, iCloud…','Buscar entre '+V41_SERVICES.length+' íconos: apps, servicios, genéricos…');
 };
 const v149OldWireServicePicker=v41WireServicePicker;
+// Los conjuntos estáticos sustituyen búsquedas repetidas dentro de cada filtro de íconos.
+const v150AppIconIds=new Set([...V149_APP_ICONS.map(x=>x[0]),...V45_EXTRA_SERVICES.map(x=>x.id)]);
 v41WireServicePicker=function(form){
  v149OldWireServicePicker(form);
  const picker=form?.querySelector('.v41-icon-selector');if(!picker)return;
@@ -23232,7 +23234,7 @@ v41WireServicePicker=function(form){
   picker.querySelectorAll('.v41-service-choice').forEach(btn=>{
    const item=V41_SVC_BY_ID[btn.dataset.id]||{};
    const generic=String(item.id||'').startsWith('generic-');
-   const app=V149_APP_ICONS.some(x=>x[0]===item.id)||V45_EXTRA_SERVICES.some(x=>x.id===item.id);
+   const app=v150AppIconIds.has(item.id);
    const group=generic?'generic':app?'app':'service';
    const visible=(selected==='all'||selected===group)&&(!q||v71SearchNormalize(item.label+' '+item.id).includes(q));
    btn.hidden=!visible;if(visible)count++;
@@ -23271,6 +23273,8 @@ const V149_NAV=[
 const V149_SEARCH_LABELS={section:'Navegación',bank:'Instituciones',account:'Cuentas',card:'Tarjetas',loan:'Préstamos',certificate:'Certificados',recurring:'Suscripciones y servicios',transaction:'Movimientos',contact:'Entre personas',budget:'Presupuestos',incomeSchedule:'Ingresos recurrentes',benefit:'Beneficios',statement:'Cortes oficiales',category:'Categorías'};
 function v71SearchEntries(){
  const out=V149_NAV.map(([page,title,sub,ico])=>({kind:'section',page,title,sub,ico,group:'section'}));
+ // Índice efímero para cruzar referencias sin recorrer tarjetas por cada resultado.
+ const cardById=new Map((db.cards||[]).map(c=>[c.id,c]));
  const add=(kind,page,rows,build)=>{for(const o of rows||[]){if(!o)continue;try{const x=build(o);out.push({kind,page,group:kind,id:o.id,...x})}catch(_){}}};
  add('bank','banks',db.banks,b=>({title:b.name||'Institución',sub:'Banco / entidad · '+(b.kind||''),ico:'building'}));
  add('account','accounts',db.accounts,a=>({title:a.name||'Cuenta',sub:bankOf(a)+' · '+(a.currency||'DOP')+' · '+(a.kind||''),ico:'wallet',meta:a.currency||'DOP'}));
@@ -23282,19 +23286,19 @@ function v71SearchEntries(){
  add('contact','personal',db.personalContacts,p=>({title:[p.firstName||p.name||'',p.lastName||''].join(' ').trim()||'Contacto',sub:'Préstamos entre personas · '+(p.alias||''),ico:'wallet'}));
  add('budget','budget',db.budgets,b=>({title:b.name||b.category||'Presupuesto',sub:'Presupuesto · '+(b.period||b.month||''),ico:'chart'}));
  add('incomeSchedule','income',db.incomeSchedules,r=>({title:r.name||r.employer||r.source||'Ingreso programado',sub:'Ingreso recurrente · '+(r.frequency||''),ico:'up'}));
- add('benefit','benefits',db.perkUses,p=>({title:p.name||p.description||p.category||'Beneficio',sub:'Beneficio · '+(p.date||'')+' · '+(db.cards||[]).find(c=>c.id===p.cardId)?.name,ico:'analytics'}));
- add('statement','cards',db.statements,r=>({title:'Corte oficial · '+((db.cards||[]).find(c=>c.id===r.cardId)?.name||'Tarjeta'),sub:'Corte · '+(r.cutDate||r.date||''),ico:'receipt'}));
+ add('benefit','benefits',db.perkUses,p=>({title:p.name||p.description||p.category||'Beneficio',sub:'Beneficio · '+(p.date||'')+' · '+cardById.get(p.cardId)?.name,ico:'analytics'}));
+ add('statement','cards',db.statements,r=>({title:'Corte oficial · '+(cardById.get(r.cardId)?.name||'Tarjeta'),sub:'Corte · '+(r.cutDate||r.date||''),ico:'receipt'}));
  for(const kind of ['gasto','ingreso'])for(const cat of (kind==='gasto'?EXP:INC)||[]){out.push({kind:'category',page:'categories',id:cat,group:'category',title:cat,sub:'Categoría de '+(kind==='gasto'?'egresos':'ingresos'),ico:'chart'})}
  return out;
 }
-let v149SearchRecent=[],v149SearchSelected=0,v149SearchIndex=[];
+let v149SearchRecent=[],v149SearchSelected=0,v149SearchIndex=[],v150SearchReturnFocus=null;
 function v149SearchResultMarkup(x,i){
  return `<button type="button" id="v149-result-${i}" class="v71-search-result" role="option" aria-selected="${i===v149SearchSelected}" data-v71-search-pick="${i}"><span class="v71-search-ico">${icon(x.ico||'search')}</span><span class="v71-search-copy"><strong>${sanitize(x.title||'Registro')}</strong><small>${sanitize(x.sub||'')}</small></span>${x.meta?`<small class="v149-search-meta">${sanitize(x.meta)}</small>`:''}<span class="v71-search-arrow">›</span></button>`;
 }
 function v71SearchView(query){
  const target=document.getElementById('v71-search-results');if(!target)return;
  const q=v71SearchNormalize(query);const data=v149SearchIndex.length?v149SearchIndex:v71SearchEntries();let matches=[];
- if(q){const terms=q.split(/\s+/).filter(Boolean);matches=data.filter(x=>{const hay=v71SearchNormalize([x.title,x.sub,x.meta].join(' '));return terms.every(t=>hay.includes(t))}).sort((a,b)=>{const score=x=>(x.kind==='section'?5:0)+(v71SearchNormalize(x.title).startsWith(q)?9:0)+(v71SearchNormalize(x.title)===q?20:0);return score(b)-score(a)}).slice(0,80)}
+ if(q){const terms=q.split(/\s+/).filter(Boolean);matches=data.filter(x=>{const hay=x._v150Hay??v71SearchNormalize([x.title,x.sub,x.meta].join(' '));return terms.every(t=>hay.includes(t))}).sort((a,b)=>{const score=x=>(x.kind==='section'?5:0)+((x._v150Title??v71SearchNormalize(x.title)).startsWith(q)?9:0)+((x._v150Title??v71SearchNormalize(x.title))===q?20:0);return score(b)-score(a)}).slice(0,80)}
  else{
   const recent=v149SearchRecent.map(r=>data.find(x=>x.kind===r.kind&&x.id===r.id&&x.page===r.page)).filter(Boolean);
   const suggested=['overview','cards','payments','recurring','register','advanced','accounts','income'].map(page=>data.find(x=>x.kind==='section'&&x.page===page)).filter(Boolean);
@@ -23309,16 +23313,18 @@ function v71SearchView(query){
 function v71SearchOpen(){
  const existing=document.getElementById('v71-search-overlay');if(existing){existing.querySelector('input')?.focus();return}
  document.querySelectorAll('.v36-notifications[open]').forEach(x=>x.open=false);
- v149SearchIndex=v71SearchEntries();
+ // Se calcula una vez por apertura; no se normaliza todo el libro en cada tecla.
+ v149SearchIndex=v71SearchEntries().map(x=>({...x,_v150Hay:v71SearchNormalize([x.title,x.sub,x.meta].join(' ')),_v150Title:v71SearchNormalize(x.title)}));
+ v150SearchReturnFocus=document.activeElement;
  const overlay=document.createElement('div');overlay.id='v71-search-overlay';overlay.className='v71-search-overlay v149-spotlight';overlay.setAttribute('role','presentation');
- overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global Vive el Hoy"><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" aria-controls="v71-search-results" placeholder="Buscar en Vive el Hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v71-search-content" id="v71-search-results"></div><footer class="v149-spotlight-footer"><span>${v149SearchIndex.length} registros y accesos disponibles</span><span class="v149-desktop-hint"><kbd>↑</kbd> <kbd>↓</kbd> navegar · <kbd>Enter</kbd> abrir · <kbd>Esc</kbd> cerrar</span></footer></section>`;
+ overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global Vive el Hoy"><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="v71-search-results" placeholder="Buscar en Vive el Hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v71-search-content" id="v71-search-results"></div><footer class="v149-spotlight-footer"><span>${v149SearchIndex.length} registros y accesos disponibles</span><span class="v149-desktop-hint"><kbd>↑</kbd> <kbd>↓</kbd> navegar · <kbd>Enter</kbd> abrir · <kbd>Esc</kbd> cerrar</span></footer></section>`;
  document.body.appendChild(overlay);v71SearchView('');overlay.querySelector('input')?.focus({preventScroll:true});
 }
-function v71SearchClose(){document.getElementById('v71-search-overlay')?.remove();window.v71VisibleSearchResults=null;v149SearchIndex=[]}
+function v71SearchClose(restoreFocus=true){document.getElementById('v71-search-overlay')?.remove();window.v71VisibleSearchResults=null;v149SearchIndex=[];const focus=v150SearchReturnFocus;v150SearchReturnFocus=null;if(restoreFocus&&focus?.isConnected)focus.focus({preventScroll:true})}
 function v71SearchPick(entry){
  if(!entry)return;
  v149SearchRecent=[{kind:entry.kind,id:entry.id,page:entry.page},...v149SearchRecent.filter(x=>!(x.kind===entry.kind&&x.id===entry.id&&x.page===entry.page))].slice(0,5);
- v71SearchClose();
+ v71SearchClose(false);
  ui.page=entry.page;
  if(entry.kind==='bank')ui.bankId=entry.id;
  if(entry.kind==='account')ui.accountId=entry.id;
@@ -23354,13 +23360,14 @@ document.addEventListener('keydown',e=>{
   if(controls.length&&(e.shiftKey&&document.activeElement===controls[0]||!e.shiftKey&&document.activeElement===controls[controls.length-1])){e.preventDefault();(e.shiftKey?controls[controls.length-1]:controls[0]).focus()}
  }
 },true);
-document.addEventListener('pointermove',e=>{const btn=e.target.closest?.('#v71-search-overlay [data-v71-search-pick]');if(!btn)return;const i=Number(btn.dataset.v71SearchPick);if(i!==v149SearchSelected){v149SearchSelected=i;document.querySelectorAll('#v71-search-overlay [data-v71-search-pick]').forEach(b=>b.setAttribute('aria-selected',String(b===btn)))}});
+document.addEventListener('pointerover',e=>{const btn=e.target.closest?.('#v71-search-overlay [data-v71-search-pick]');if(!btn)return;const i=Number(btn.dataset.v71SearchPick);if(i!==v149SearchSelected){v149SearchSelected=i;document.querySelectorAll('#v71-search-overlay [data-v71-search-pick]').forEach(b=>b.setAttribute('aria-selected',String(b===btn)))}});
 // Service selector consumes one pending obligation model, and never invents a due.
 v146ServiceChooser=function(){
+ const recurringById=new Map((db.recurring||[]).map(r=>[r.id,r]));
  const pending=[...v99PendingForPeriod(ui.month),...upcoming()].filter(x=>x.kind==='recurring');
  const entriesMap=new Map();
  pending.sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(x=>{
-  const r=(db.recurring||[]).find(r=>r.id===x.ref);
+  const r=recurringById.get(x.ref);
   if(r&&r.active!==false&&!entriesMap.has(r.id))entriesMap.set(r.id,{r,x});
  });
  const entries=[...entriesMap.values()].map(({r,x})=>`<button type="button" class="v146-service-choice" data-v146-pay-service="${sanitize(r.id)}"><span>${v45SubIcon(r,'tiny')}<span><strong>${sanitize(r.name)}</strong><small>${prettyDate(x.date)} · ${sanitize(r.category||'Servicio')}${r.subcategory?' / '+sanitize(r.subcategory):''} · Pendiente</small></span></span><b>${money(x.amount,x.currency,2)}</b></button>`).join('');
