@@ -14269,6 +14269,217 @@ body.theme-dark .v159-tomorrow-intro h3,body.theme-dark .v159-outcome-money,body
 @media(max-width:790px){.v162-brand-dropdown{right:0;left:auto;min-width:240px}}
 </style>
 
+
+<style id="vive-v163-resumen-polish">
+/*
+ * V163: capa EXCLUSIVAMENTE estética del Resumen en escritorio.
+ * CONTRATO DE GEOMETRÍA: no define width, height, min/max dimensions,
+ * columns, row sizing, gap, padding, margin, position, order, overflow,
+ * font-size, line-height ni border-width de los elementos del dashboard.
+ * Sus seis paneles, sus gráficos y todos sus datos se renderizan como antes.
+ */
+@media (min-width: 791px) {
+  .world-overview {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .world-overview .top-title,
+  .world-overview .ff-panel-top h2,
+  .world-overview .ff-label,
+  .world-overview .ff-overview-pill {
+    color: #172d52 !important;
+    letter-spacing: -0.025em;
+  }
+  .world-overview .top-sub,
+  .world-overview .ff-panel-top p,
+  .world-overview .ff-balance-header p {
+    color: #7183a0 !important;
+  }
+  .world-overview .ff-dashboard-tools .ff-overline {
+    color: #607598 !important;
+  }
+  .world-overview .ff-dashboard-tools .ff-overline strong {
+    color: #314c75 !important;
+  }
+  .world-overview .universe-switch,
+  .world-overview .ff-overview-pill,
+  .world-overview .ff-month-filter {
+    backdrop-filter: blur(20px) saturate(125%);
+    -webkit-backdrop-filter: blur(20px) saturate(125%);
+  }
+  .world-overview .universe-switch button,
+  .world-overview .ff-overview-pill,
+  .world-overview .ff-dashboard-filters button {
+    transition: color .18s ease, background-color .18s ease,
+      box-shadow .18s ease, filter .18s ease, transform .18s ease;
+  }
+  .world-overview .universe-switch button:hover:not(.active),
+  .world-overview .ff-overview-pill:hover {
+    background-color: rgba(255,255,255,.44) !important;
+    color: #243f70 !important;
+  }
+  .world-overview .ff-tile {
+    background-clip: padding-box;
+    box-shadow: 0 11px 31px rgba(56,82,137,.06),
+      inset 0 1px 0 rgba(255,255,255,.76) !important;
+    transition: box-shadow .2s ease, filter .2s ease;
+  }
+  .world-overview .ff-tile:hover {
+    box-shadow: 0 14px 35px rgba(53,80,135,.095),
+      inset 0 1px 0 rgba(255,255,255,.8) !important;
+  }
+  .world-overview .v152-position-reference {
+    background: linear-gradient(136deg,
+      rgba(244,248,255,.73) 0%,rgba(229,237,252,.66) 56%,
+      rgba(250,252,255,.6) 100%) !important;
+  }
+  .world-overview .ff-pos-amount {
+    color: #18345f !important;
+    text-shadow: 0 1px 0 rgba(255,255,255,.6);
+    font-variant-numeric: tabular-nums;
+  }
+  .world-overview .ff-position-divider {
+    border-color: rgba(123,150,195,.17) !important;
+  }
+  .world-overview .ff-executive-bubbles .ff-bubble:not(.featured) {
+    background: linear-gradient(145deg,
+      rgba(255,255,255,.94),rgba(227,236,251,.83)) !important;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,.9),
+      inset 0 -4px 15px rgba(189,204,232,.13),
+      0 12px 28px rgba(80,101,156,.075) !important;
+  }
+  .world-overview .ff-executive-bubbles .ff-bubble.featured {
+    background: linear-gradient(147deg,#827afb 3%,#6256e9 57%,#596de9 100%) !important;
+    box-shadow: inset 0 2px 6px rgba(255,255,255,.46),
+      0 13px 31px rgba(92,85,224,.26),
+      0 0 20px rgba(123,115,239,.1) !important;
+  }
+  .world-overview .ff-executive-bubbles .ff-bubble {
+    transition: box-shadow .22s ease, filter .22s ease, transform .22s ease;
+    cursor: pointer;
+  }
+  .world-overview .ff-executive-bubbles .ff-bubble:hover {
+    filter: brightness(1.025);
+    transform: translateY(-2px);
+  }
+  .world-overview .ff-executive-bubbles .ff-bubble:focus-visible,
+  .world-overview button:focus-visible,
+  .world-overview input:focus-visible {
+    outline: 2px solid #577ce0 !important;
+    outline-offset: 2px;
+  }
+  .world-overview .ff-balance-actions button,
+  .world-overview .ff-black-btn,
+  .world-overview .ff-outline-pill {
+    transition: filter .18s ease, transform .18s ease, box-shadow .18s ease;
+  }
+  .world-overview .ff-balance-actions button:hover,
+  .world-overview .ff-black-btn:hover,
+  .world-overview .ff-outline-pill:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+  }
+  .world-overview .ff-obligation-total {
+    background: linear-gradient(138deg,
+      rgba(255,255,255,.5),rgba(234,243,255,.32)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.72),
+      0 7px 20px rgba(72,99,152,.045);
+  }
+  .world-overview .ff-obligation-total strong {
+    color: #183760 !important;
+    font-variant-numeric: tabular-nums;
+  }
+  .world-overview .ff-obligation-list > *,
+  .world-overview .ff-payment-list > * {
+    transition: background-color .18s ease, box-shadow .18s ease;
+  }
+  .world-overview .ff-obligation-list > *:hover,
+  .world-overview .ff-payment-list > *:hover {
+    background-color: rgba(255,255,255,.24);
+  }
+  .world-overview .ff-expense-card {
+    background: linear-gradient(135deg,
+      rgba(245,249,255,.72),rgba(233,241,253,.68)) !important;
+  }
+  .world-overview .ff-health-card {
+    background: linear-gradient(132deg,
+      #5c87f4 0%,#4e81ee 52%,#74a6f7 100%) !important;
+    box-shadow: 0 13px 34px rgba(74,121,231,.14),
+      inset 0 1px 0 rgba(255,255,255,.2) !important;
+  }
+  .world-overview .ff-health-card .ff-health-number,
+  .world-overview .ff-health-card .ff-health-foot strong {
+    color: #fff !important;
+    text-shadow: 0 1px 2px rgba(27,62,147,.08);
+    font-variant-numeric: tabular-nums;
+  }
+  .world-overview .ff-health-card .ff-panel-top p,
+  .world-overview .ff-health-card .ff-health-caption,
+  .world-overview .ff-health-card .ff-health-foot span {
+    color: rgba(255,255,255,.86) !important;
+  }
+  .world-overview .ff-upcoming,
+  .world-overview .ff-personal,
+  .world-overview .ff-obligations {
+    background: linear-gradient(145deg,
+      rgba(244,248,255,.68),rgba(229,239,252,.6)) !important;
+  }
+  .world-overview .ff-person-sums > div {
+    background: rgba(255,255,255,.34) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.66);
+  }
+}
+/* Respetar la paleta nocturna sin alterar ninguna dimensión. */
+@media (min-width: 791px) {
+  body.theme-dark .world-overview .ff-tile,
+  body.theme-dark .world-overview .v152-position-reference,
+  body.theme-dark .world-overview .ff-expense-card,
+  body.theme-dark .world-overview .ff-obligations,
+  body.theme-dark .world-overview .ff-upcoming,
+  body.theme-dark .world-overview .ff-personal {
+    background: linear-gradient(145deg,#1c2942,#263450) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.065),
+      0 12px 30px rgba(0,0,0,.16) !important;
+  }
+  body.theme-dark .world-overview .top-title,
+  body.theme-dark .world-overview .ff-panel-top h2,
+  body.theme-dark .world-overview .ff-label,
+  body.theme-dark .world-overview .ff-pos-amount,
+  body.theme-dark .world-overview .ff-obligation-total strong {
+    color: #eef3ff !important;
+  }
+  body.theme-dark .world-overview .top-sub,
+  body.theme-dark .world-overview .ff-panel-top p,
+  body.theme-dark .world-overview .ff-balance-header p {
+    color: #a7b7d3 !important;
+  }
+  body.theme-dark .world-overview .ff-obligation-total,
+  body.theme-dark .world-overview .ff-person-sums > div {
+    background: rgba(42,58,84,.74) !important;
+  }
+  body.theme-dark .world-overview .ff-health-card {
+    background: linear-gradient(132deg,#416cd0,#4d77d8 54%,#628ee8) !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-overview .ff-tile,
+  .world-overview .ff-executive-bubbles .ff-bubble,
+  .world-overview .ff-balance-actions button,
+  .world-overview .ff-black-btn,
+  .world-overview .ff-outline-pill,
+  .world-overview .universe-switch button,
+  .world-overview .ff-overview-pill {
+    transition: none !important;
+  }
+  .world-overview .ff-executive-bubbles .ff-bubble:hover,
+  .world-overview .ff-balance-actions button:hover,
+  .world-overview .ff-black-btn:hover,
+  .world-overview .ff-outline-pill:hover {
+    transform: none !important;
+  }
+}
+</style>
+
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
