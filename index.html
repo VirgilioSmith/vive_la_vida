@@ -13926,8 +13926,7 @@ function mobileTransactions(limit=5){
 function mobileMiniTrend(){
  const ref=dateObj(ui.month+'-01');const months=Array.from({length:5},(_,i)=>{let d=new Date(ref.getFullYear(),ref.getMonth()-(4-i),1),x=monthlyTotals(d.getFullYear(),d.getMonth()+1);return {m:d.toLocaleDateString('es-DO',{month:'short'}).replace('.',''),income:x.income,expense:x.expense}});
  const max=Math.max(1,...months.flatMap(m=>[m.income,m.expense]));
- const forecast=v82ForecastMonth();
- return `<div class="vive-mobile-mini-trend" role="img" aria-label="Ingresos y egresos de los últimos cinco meses">${months.map(m=>`<div class="vive-mobile-trend-group" title="${m.m}: Ingresos ${money(m.income)} · Egresos ${money(m.expense)}${m.m.toLowerCase()===dateObj(forecast.period+'-01').toLocaleDateString('es-DO',{month:'short'}).replace('.','').toLowerCase()?` · Proyección ingresos ${money(forecast.income)} · egresos ${money(forecast.expense)} · neto ${money(forecast.net)} (estimados)`: ''}"><div class="vive-mobile-trend-bars"><span class="vive-mobile-trend-in" style="height:${Math.max(5,m.income/max*100)}%"></span><span class="vive-mobile-trend-out" style="height:${Math.max(5,m.expense/max*100)}%"></span></div><small>${m.m}</small></div>`).join('')}</div>`;
+ return `<div class="vive-mobile-mini-trend" role="img" aria-label="Ingresos y egresos de los últimos cinco meses">${months.map(m=>`<div class="vive-mobile-trend-group" title="${m.m}: Ingresos ${money(m.income)} · Egresos ${money(m.expense)}"><div class="vive-mobile-trend-bars"><span class="vive-mobile-trend-in" style="height:${Math.max(5,m.income/max*100)}%"></span><span class="vive-mobile-trend-out" style="height:${Math.max(5,m.expense/max*100)}%"></span></div><small>${m.m}</small></div>`).join('')}</div>`;
 }
 
 /* V64 · Total de saldo por naturaleza: no confundir deuda íntegra con cuotas por vencer. */
@@ -14158,8 +14157,6 @@ function overview(){
  }).join('');
  const five=Array.from({length:5},(_,i)=>{const base=dateObj(ui.month+'-01');base.setMonth(base.getMonth()-4+i);let y=base.getFullYear(),mo=base.getMonth()+1;return {date:base,tot:monthlyTotals(y,mo)}});
  const high=Math.max(1,...five.flatMap(x=>[x.tot.income,x.tot.expense]));
- const v88Forecast=v82ForecastMonth();
- const v88ProjectionTip=`Proyección del cierre · ${v88Forecast.period}|Ingresos previstos: ${money(v88Forecast.income)}|Egresos previstos: ${money(v88Forecast.expense)}|Neto previsto: ${money(v88Forecast.net)}|Cobros pendientes previstos: ${money(v88Forecast.expectedIncome)}|Gastos pendientes previstos: ${money(v88Forecast.expectedExpense)}|Estimación, no movimientos confirmados`;
  const bars=five.map((x,i)=>{
    let inH=Math.max(4,100*Math.max(0,x.tot.income)/high),outH=Math.max(4,100*Math.max(0,x.tot.expense)/high),mn=x.date.toLocaleDateString('es-DO',{month:'short'}).replace('.','').toUpperCase();
    return `<div class="ff-bar-group" tabindex="0" data-chart-tip="${x.date.toLocaleDateString('es-DO',{month:'long',year:'numeric'})}|Ingresos: ${money(x.tot.income)}|Egresos: ${money(x.tot.expense)}|Neto: ${money(x.tot.net)}"><div class="ff-bar-cluster"><span class="ff-bar ff-bar-in" style="height:${inH}%"></span><span class="ff-bar ff-bar-out" style="height:${outH}%"></span></div><span class="ff-bar-label">${mn}</span></div>`;
@@ -15432,8 +15429,6 @@ function overview(){
  const high=Math.max(1,...five.flatMap(x=>[x.tot.income,x.tot.expense]));
  // Liquidez es saldo, no flujo. La barra verde lleva escala propia y su cifra exacta figura en el tooltip.
  const liquidityScale=Math.max(1,...liquidFive.filter(v=>v!==null).map(v=>Math.max(0,v)));
- const v88Forecast=v82ForecastMonth();
- const v88ProjectionTip=`Proyección del cierre · ${v88Forecast.period}|Ingresos previstos: ${money(v88Forecast.income)}|Egresos previstos: ${money(v88Forecast.expense)}|Neto previsto: ${money(v88Forecast.net)}|Cobros pendientes previstos: ${money(v88Forecast.expectedIncome)}|Gastos pendientes previstos: ${money(v88Forecast.expectedExpense)}|Estimación, no movimientos confirmados`;
  const bars=five.map((x,i)=>{
    const inH=Math.max(4,100*Math.max(0,x.tot.income)/high),outH=Math.max(4,100*Math.max(0,x.tot.expense)/high);
    const liquidH=liquidFive[i]===null?0:Math.max(4,100*Math.max(0,liquidFive[i])/liquidityScale);
@@ -15445,7 +15440,7 @@ function overview(){
    const prevRecorded=db.transactions.some(t=>t.date?.startsWith(prevPrefix)&&['income','expense','card_charge','card_refund','card_reward','bank_reward','loan_payment','personal_settlement'].includes(t.type));
    const priorText=prevRecorded?`Neto vs. ${prevYr}: ${money(prev.net)}|Diferencia neta: ${money(x.tot.net-prev.net)}${Math.abs(prev.net)>.005?`|Cambio neto: ${((x.tot.net-prev.net)/Math.abs(prev.net)*100).toFixed(1)}%`:''}`:`Sin resultado comparable de ${prevYr}`;
    const liquidText=hasLiquidity&&liquidFive[i]!==null?`Liquidez al cierre: ${money(liquidFive[i])}`:'Liquidez al cierre: sin saldo registrado';
-   return `<div class="ff-bar-group" tabindex="0" data-chart-tip="${name}|Ingresos: ${money(x.tot.income)}|Egresos: ${money(x.tot.expense)}|Neto: ${money(x.tot.net)}|${priorText}${x.date.getFullYear()===Number(v88Forecast.period.slice(0,4))&&x.date.getMonth()+1===Number(v88Forecast.period.slice(5,7))?`|${v88ProjectionTip}`:''}"><div class="ff-bar-cluster"><span class="ff-bar ff-bar-in" title="Ingresos: ${money(x.tot.income)}" style="height:${inH}%"></span><span class="ff-bar ff-bar-out" title="Egresos: ${money(x.tot.expense)}" style="height:${outH}%"></span></div><span class="ff-bar-label">${mn}</span></div>`;
+   return `<div class="ff-bar-group" tabindex="0" data-chart-tip="${name}|Ingresos: ${money(x.tot.income)}|Egresos: ${money(x.tot.expense)}|Neto: ${money(x.tot.net)}|${priorText}"><div class="ff-bar-cluster"><span class="ff-bar ff-bar-in" title="Ingresos: ${money(x.tot.income)}" style="height:${inH}%"></span><span class="ff-bar ff-bar-out" title="Egresos: ${money(x.tot.expense)}" style="height:${outH}%"></span></div><span class="ff-bar-label">${mn}</span></div>`;
  }).join('');
  const lastLiq=hasLiquidity?liquidFive[4]:null;
  const priorYear=Number(ui.month.slice(0,4))-1;
@@ -15454,7 +15449,7 @@ function overview(){
  const hasPreviousResult=db.transactions.some(t=>t.date?.startsWith(previousMonthId)&&['income','expense','card_charge','card_refund','card_reward','bank_reward','loan_payment','personal_settlement'].includes(t.type));
  const netDifference=m.net-previousMonth.net;
  const previousNetLabel=hasPreviousResult?`Neto ${priorYear}: ${money(previousMonth.net)}|Ingresos ${priorYear}: ${money(previousMonth.income)}|Egresos ${priorYear}: ${money(previousMonth.expense)}|Diferencia vs. ${priorYear}: ${money(netDifference)}${Math.abs(previousMonth.net)>.005?`|Variación: ${(netDifference/Math.abs(previousMonth.net)*100).toFixed(1)}%`:'|Variación porcentual: sin base'}`:`Sin resultado registrado en ${priorYear}`;
- const monthlyNetTip=`Neto del mes · ${period}|Ingresos: ${money(m.income)}|Egresos: ${money(m.expense)}|Resultado actual: ${money(m.net)}|${previousNetLabel}|${v88ProjectionTip}`;
+ const monthlyNetTip=`Neto del mes · ${period}|Ingresos: ${money(m.income)}|Egresos: ${money(m.expense)}|Resultado actual: ${money(m.net)}|${previousNetLabel}`;
  const series=Array.from({length:7},(_,i)=>{let d=dateObj(ui.month+'-01');d.setMonth(d.getMonth()-6+i);return monthlyTotals(d.getFullYear(),d.getMonth()+1).net});
  let hi=Math.max(...series,1),lo=Math.min(...series,0),range=Math.max(1,hi-lo);
  let points=series.map((v,i)=>[12+i*62,105-(v-lo)/range*78]);
