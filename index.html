@@ -14060,6 +14060,98 @@ body.theme-dark .cards-grid .v148-benefit-hero.is-negative strong{color:#ffafb4}
 @media (max-width:790px){.cards-grid .v148-benefit-hero{padding:10px}.cards-grid .v148-benefit-hero strong{font-size:19px}.cards-grid .v148-owed-part strong{font-size:16px}}
 @media (prefers-reduced-motion:reduce){.cards-grid .v148-benefit-hero button{transition:none!important}}
 </style>
+
+
+<style id="vive-v159-premium-search-strategic">
+/* V159 · Desktop: one primary search pill, one decision icon. All other tools live inside Spotlight. */
+@media(min-width:791px){
+ .ff-header-middle.v153-header-search{width:min(465px,38vw)!important;max-width:465px!important}
+ .v153-spotlight-dock{gap:10px!important}
+ .v153-search-launch{height:45px!important}
+ .v159-decision-icon{border-radius:50%!important;background:linear-gradient(155deg,rgba(255,255,255,.95),rgba(223,230,250,.84))!important}
+}
+@media(min-width:791px) and (max-width:1350px){.ff-header-middle.v153-header-search{width:min(370px,31vw)!important}}
+@media(min-width:791px) and (max-width:1080px){.ff-header-middle.v153-header-search{width:250px!important}}
+.v159-spotlight-identity{display:flex;gap:8px;align-items:center;padding:16px 25px 0;color:#5b6e95;font-size:12px;font-weight:780;letter-spacing:-.015em}
+.v159-brand-symbol{display:grid;place-items:center;font:700 18px/1 Georgia,serif;color:#314d87;width:25px;height:25px;border-radius:50%;background:rgba(231,238,255,.9);border:1px solid white;box-shadow:0 3px 10px rgba(64,75,126,.1)}
+.v159-spotlight-caption{margin-left:auto;font-size:9px;color:#91a1ba;font-weight:850;letter-spacing:.11em}
+@media(max-width:790px){.v159-spotlight-identity{padding:11px 14px 0;font-size:11px}.v159-spotlight-caption{font-size:8px}}
+/* Strategic decision surface: same glass identity, less density and progressive disclosure. */
+#modal-root .v119-modal{max-width:760px!important;background:linear-gradient(165deg,rgba(252,253,255,.98),rgba(234,242,255,.97))!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 25px 70px rgba(28,46,91,.23)!important}
+#modal-root .v119-modal .modal-head{border-bottom:1px solid rgba(134,155,192,.17)}
+#modal-root .v159-tomorrow{gap:15px!important}
+.v159-tomorrow-intro>span{font-size:9px;letter-spacing:.14em;font-weight:830;color:#607db1}
+.v159-tomorrow-intro h3{font-size:27px;letter-spacing:-.055em;color:#1f3355;margin:5px 0 1px}
+.v159-tomorrow-intro p{font-size:12px;color:#7184a2;line-height:1.55;margin:2px 0}
+.v159-tomorrow-mode{padding:4px;background:rgba(217,229,249,.68);border:1px solid rgba(255,255,255,.85);border-radius:18px;display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.v159-tomorrow-mode>button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:45px;border:0;border-radius:14px;background:transparent;color:#59708f;font-size:13px;font-weight:770;cursor:pointer;transition:background .2s,box-shadow .2s,transform .2s}
+.v159-tomorrow-mode>button svg{width:17px;height:17px}
+.v159-tomorrow-mode>button.active{background:rgba(255,255,255,.96);color:#2a436d;box-shadow:0 3px 13px rgba(63,87,132,.12)}
+.v159-tomorrow-mode>button.active[data-v159-kind="income"]{color:#08765e}
+.v159-tomorrow-mode>button:hover{transform:translateY(-1px)}
+.v159-decision-card{border:1px solid rgba(176,194,224,.3);border-radius:22px;background:rgba(255,255,255,.73);padding:18px;box-shadow:inset 0 1px rgba(255,255,255,.9)}
+.v159-decision-card .v119-field{flex-direction:row;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:12px;font-weight:780}
+.v159-unit{color:#788aaa;font-weight:830}
+.v159-money-input{width:100%;height:58px;box-sizing:border-box;border:1px solid rgba(159,185,226,.45);border-radius:15px;background:rgba(241,246,255,.85);color:#1a325a;padding:8px 16px;outline:none;font-size:clamp(23px,3.1vw,32px);font-weight:820;letter-spacing:-.045em;font-variant-numeric:tabular-nums;transition:border-color .16s,box-shadow .16s}
+.v159-money-input:focus{border-color:#6f98e8;box-shadow:0 0 0 3px rgba(83,128,224,.14)}
+.v159-timing-label{font-weight:760;font-size:12px;color:#4b6484;margin:15px 0 9px}
+.v159-timing-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.v159-timing-choices button{border:1px solid rgba(182,201,232,.65);border-radius:13px;background:#fff;min-height:40px;color:#5b7090;font-size:11px;font-weight:780;padding:5px 7px;cursor:pointer;transition:background .16s,border-color .16s}
+.v159-timing-choices button.active{border-color:#7b9dea;background:#eaf0ff;color:#325eb2}
+.v159-decision-horizon{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:15px;border-top:1px solid rgba(161,184,214,.2);padding-top:12px}
+.v159-decision-horizon>span{color:#788cab;font-size:11px;font-weight:760}
+.v159-decision-horizon .v119-switch{gap:5px}
+.v159-decision-horizon .v119-switch>button{font-size:11px;padding:7px 11px!important;min-height:32px;border-radius:10px}
+.v159-outcome{display:grid;gap:10px}
+.v159-outcome-hero{background:linear-gradient(115deg,#ebf0ff,#e5edff 68%,#d7e3ff);padding:18px 19px;border-radius:22px;border:1px solid rgba(255,255,255,.86);box-shadow:inset 0 1px white,0 9px 20px rgba(64,90,160,.09)}
+.v159-outcome-hero.is-income{background:linear-gradient(115deg,#e8f8f3,#e5f3fa 70%,#d9eae7)}
+.v159-outcome-hero.is-risk{background:linear-gradient(115deg,#fff2ed,#f9edf0 70%,#f2e6f0)}
+.v159-outcome-label{display:block;color:#657a9d;font-size:11px;font-weight:740}
+.v159-outcome-money{display:block;font-size:clamp(27px,4vw,40px);font-weight:870;color:#20375c;line-height:1.28;letter-spacing:-.045em;margin-top:4px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.v159-outcome-comparison{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;font-weight:750;color:#677ea1;font-size:11px}
+.v159-outcome-status{color:#3660aa;background:rgba(255,255,255,.7);padding:5px 9px;border-radius:999px;font-size:10px}
+.v159-outcome-hero.is-risk .v159-outcome-status{color:#b2404d}
+.v159-outcome-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.v159-outcome-metrics>div{padding:12px 9px;border:1px solid rgba(162,181,216,.23);border-radius:15px;background:rgba(255,255,255,.7);min-width:0}
+.v159-outcome-metrics small{display:block;color:#7889a6;font-size:10px;font-weight:710;margin-bottom:6px}
+.v159-outcome-metrics strong{display:block;color:#2e496f;font-size:clamp(12px,1.6vw,16px);font-weight:850;letter-spacing:-.035em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.v159-outcome-guidance{display:flex;gap:10px;align-items:center;border-radius:13px;padding:9px 11px;background:rgba(221,239,233,.6);border:1px solid rgba(161,214,191,.35)}
+.v159-outcome-guidance.is-risk{background:rgba(255,233,229,.8);border-color:rgba(235,166,153,.35)}
+.v159-outcome-guidance>span{flex:0 0 25px;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:rgba(2,135,96,.11);color:#078364;font-size:13px;font-weight:850}
+.v159-outcome-guidance.is-risk>span{background:rgba(189,56,66,.11);color:#b83b4c}
+.v159-outcome-guidance p{font-size:11px;color:#527061!important;line-height:1.4;margin:0!important}
+.v159-outcome-guidance.is-risk p{color:#825567!important}
+.v159-decision-meta{margin:0!important;color:#7c8ca7;font-size:10px!important}
+.v159-details{border:1px solid rgba(161,183,215,.24);border-radius:16px;padding:0 14px 12px;background:rgba(255,255,255,.53)}
+.v159-details>summary{cursor:pointer;display:flex;align-items:center;gap:9px;padding:12px 0;color:#3e5882;font-size:12px;font-weight:790;list-style:none}
+.v159-details>summary::-webkit-details-marker{display:none}
+.v159-details>summary svg{width:16px;height:16px}
+.v159-details>summary:after{content:'⌄';margin-left:auto;font-size:16px}
+.v159-details[open]>summary:after{content:'⌃'}
+.v159-baseline-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.v159-baseline-grid>div{border-radius:12px;background:rgba(233,241,251,.65);padding:10px}
+.v159-baseline-grid small{display:block;color:#7788a6;font-size:10px;margin-bottom:6px}
+.v159-baseline-grid strong{font-size:14px;font-weight:840;color:#314c73;overflow-wrap:anywhere}
+#modal-root .v159-details .v143-timeline-details,#modal-root .v159-details .v143-debt-breakdown{background:rgba(255,255,255,.6)}
+body.theme-dark .v159-tomorrow-intro h3,body.theme-dark .v159-outcome-money,body.theme-dark .v159-baseline-grid strong{color:#243b60}
+@media(max-width:790px){
+ #modal-root .v159-tomorrow{gap:11px!important}
+ .v159-tomorrow-intro h3{font-size:24px}
+ .v159-decision-card{padding:13px;border-radius:16px}
+ .v159-money-input{height:52px;font-size:28px}
+ .v159-timing-choices{gap:5px}
+ .v159-timing-choices button{font-size:10px;min-height:40px}
+ .v159-decision-horizon{flex-wrap:wrap}
+ .v159-decision-horizon .v119-switch{margin-left:auto}
+ .v159-outcome-hero{padding:15px;border-radius:17px}
+ .v159-outcome-money{font-size:clamp(24px,6.5vw,34px)}
+ .v159-outcome-metrics{gap:5px}
+ .v159-outcome-metrics>div{padding:9px 7px}
+ .v159-outcome-metrics small{font-size:9px}
+ .v159-outcome-metrics strong{font-size:clamp(11px,3vw,14px)}
+}
+@media(prefers-reduced-motion:reduce){.v159-tomorrow-mode button,.v159-money-input,.v159-timing-choices button{transition:none!important}}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -15129,10 +15221,7 @@ function main(){
   <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div><div class="ff-header-middle v153-header-search">
   <div class="v153-spotlight-dock" role="group" aria-label="Búsqueda global y accesos rápidos">
    <button type="button" class="v153-search-launch" data-v71-search-open="1" title="Buscar registros en toda la aplicación · Ctrl/⌘ K" aria-label="Abrir búsqueda global en Vive el Hoy" aria-keyshortcuts="Control+K Meta+K">${icon('search')}<span>Buscar en Vive el Hoy</span><kbd>${/Mac|iPhone|iPad/i.test(navigator.userAgentData?.platform||navigator.platform||'')?'⌘ K':'Ctrl K'}</kbd></button>
-   <button type="button" class="ff-master-card vive-top-home v153-dock-tool" data-v119-open="1" title="El costo de mañana" aria-label="El costo de mañana · Herramientas Vive el Hoy"><span class="v153-dock-mark">P</span></button>
-   <button type="button" class="v153-dock-tool" data-act="navigate" data-id="accounts" title="Cuentas y efectivo" aria-label="Abrir Cuentas y efectivo">${v153DockIcon('folder')}</button>
-   <button type="button" class="v153-dock-tool" data-act="navigate" data-id="cards" title="Tarjetas" aria-label="Abrir Tarjetas">${v153DockIcon('layers')}</button>
-   <button type="button" class="v153-dock-tool" data-act="navigate" data-id="register" title="Movimientos" aria-label="Abrir Movimientos">${v153DockIcon('files')}</button>
+   <button type="button" class="ff-master-card vive-top-home v153-dock-tool v159-decision-icon" data-v119-open="1" title="El costo de mañana · Simular ingreso o gasto" aria-label="Abrir El costo de mañana"><span class="v153-dock-mark">P</span></button>
   </div>
  </div><div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
  
@@ -16958,7 +17047,7 @@ function kpiStudio(){
     <div class="widget-card-top"><div><span class="widget-kicker">${isChart?'GRÁFICO INTERACTIVO':'INDICADOR FINANCIERO'}</span><h3>${sanitize(def[1])}</h3></div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size===2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size===2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
     ${id==='tomorrowCost'?v133TomorrowWidgetBody():isChart?widgetGraph(id):`<div class="widget-number">${m?.value||'—'}</div><p class="widget-foot">${sanitize(m?.foot||'')}</p>${v12WidgetHistory(id)}`}
     ${['burden','affordability','utilization'].includes(id)?`<button type="button" class="v85-widget-open" data-v85-action="capacity">Ver cálculo ${icon('arrow')}</button>`:''}
-    ${id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Abrir las 4 herramientas ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
+    ${id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Simular una decisión ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
    </article>`;
  };
  const catalogueTile=x=>{
@@ -18944,7 +19033,24 @@ case 'expenseRange':ui.expenseRange=id==='year'?'year':'month';render();break; c
 case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break;if(!v30SavePoint('Antes de descartar operación pendiente'))break;db.pendingOperations=db.pendingOperations.filter(q=>q.id!==id);persist();render();toast('Operación pendiente descartada; puedes recuperarla desde Configuración.');break;
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navGroupToggle':ui.navExpanded=ui.navExpanded===id?null:id;render();break;
-case 'navigate':ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id;if(id==='projection')ui.projectionMenu=false;ui.quickCommitment=null;ui.mobile=false;render();window.scrollTo(0,0);if(id==='mobilehub'&&isMobileViewport())document.getElementById('v154-mobile-search-input')?.focus({preventScroll:true});break;
+case 'navigate':{
+ ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id;
+ if(id==='projection')ui.projectionMenu=false;
+ ui.quickCommitment=null;ui.mobile=false;
+ if(ui.page!=='mobilesearch')document.body.classList.remove('v154-mobile-input-focused');
+ render();window.scrollTo(0,0);
+ // V158: Focus immediately while the real dock-click gesture is still active.
+ // Deferred focus (timeout / rAF) often fails to open the software keyboard in iOS Safari.
+ if(id==='mobilesearch'&&isMobileViewport()){
+   const field=document.getElementById('v154-mobile-search-input');
+   if(field){
+     try{field.focus({preventScroll:true})}catch(_){field.focus()}
+     document.body.classList.add('v154-mobile-input-focused');
+     v154SearchResultsUpdate();
+   }
+ }
+ break;
+}
 case 'navigateBankTransactions':ui.bankScope=id;ui.page='register';render();document.getElementById('ledger-world')?.scrollIntoView({behavior:'smooth',block:'start'});break;
 case 'addBank':bankForm();break;
  case 'goCertificate':ui.page='certificates';render();window.scrollTo(0,0);break;
@@ -22867,7 +22973,7 @@ function v119Recovery(result){
 }
 function v119SmallWidget(){
  const s=v119Baseline(30),free=Math.max(0,s.minimum),gap=Math.max(0,-s.minimum);
- return `<section class="v119-mini" aria-label="El costo de mañana"><div class="v119-mini-heading"><div><small>DECISIONES · PRÓXIMOS 30 DÍAS</small><h2>El costo de mañana</h2><p>Días críticos · Simulador · Recuperación · Dinero disponible.</p></div><button class="v119-mini-open" type="button" data-v119-open="1">Abrir las 4 herramientas ${icon('arrow')}</button></div><div class="v119-mini-metrics"><div><span>Dinero realmente disponible*</span><strong>${money(free)}</strong></div><div><span>${s.critical?'Primer día crítico':'Días críticos previstos'}</span><strong class="${s.critical?'v119-danger':''}">${s.critical?prettyDate(s.critical):'Ninguno'}</strong></div><div><span>${gap>0?'Faltante máximo estimado':'Saldo inicial líquido'}</span><strong class="${gap>0?'v119-danger':''}">${money(gap>0?gap:s.initial)}</strong></div></div><small class="v119-fine">*Mínimo proyectado en 30 días, antes de gastos no programados. Es una estimación, no dinero garantizado.</small></section>`;
+ return `<section class="v119-mini" aria-label="El costo de mañana"><div class="v119-mini-heading"><div><small>DECISIONES · PRÓXIMOS 30 DÍAS</small><h2>El costo de mañana</h2><p>Anticipa el impacto de un ingreso o gasto, sin registrarlo.</p></div><button class="v119-mini-open" type="button" data-v119-open="1">Abrir las 4 herramientas ${icon('arrow')}</button></div><div class="v119-mini-metrics"><div><span>Dinero realmente disponible*</span><strong>${money(free)}</strong></div><div><span>${s.critical?'Primer día crítico':'Días críticos previstos'}</span><strong class="${s.critical?'v119-danger':''}">${s.critical?prettyDate(s.critical):'Ninguno'}</strong></div><div><span>${gap>0?'Faltante máximo estimado':'Saldo inicial líquido'}</span><strong class="${gap>0?'v119-danger':''}">${money(gap>0?gap:s.initial)}</strong></div></div><small class="v119-fine">*Mínimo proyectado en 30 días, antes de gastos no programados. Es una estimación, no dinero garantizado.</small></section>`;
 }
 /* V143: transparencia para El costo de mañana. Las deudas totales son
    un stock informativo; solo los vencimientos previstos salen del saldo. */
@@ -22913,21 +23019,94 @@ function v143TomorrowTimeline(baseline){
    ${byDate.get(day.date).map(e=>`<div class="v143-timeline-event"><span><b>${e.type==='income'?'Ingreso · ':'Pago · '}${sanitize(e.name)}</b><small>${e.quality==='manual'?'Previsión manual':e.quality==='overdue'?'Vencido':e.quality==='estimated'?'Estimación por calendario':'Programado'}</small></span><strong class="${e.type==='income'?'v143-income-value':'v119-danger'}">${e.type==='income'?'+':'−'}${money(e.amount)}</strong></div>`).join('')}
   </div>`).join('')}</div>`;
 }
+/* V159 · Motor de escenarios no persistentes, basado en el calendario real.
+   La ruta de gasto utiliza v119Decision sin modificar su regla histórica.
+   El ingreso se agrega exactamente una vez a partir de la fecha elegida. */
+function v159SimulateDecision(amount,kind,scenario,horizon){
+ const value=Math.max(0,rnd(Number.isFinite(Number(amount))?Number(amount):0));
+ if(kind!=='income')return v119Decision(value,scenario,horizon);
+ const baseline=v119Baseline(horizon);
+ const offset=scenario==='week'?7:scenario==='fortnight'?15:0;
+ const date=v119DateAfter(offset);
+ let min=baseline.initial,ending=baseline.initial,critical=null,missingDays=0;
+ const points=[];
+ for(const day of baseline.dayByDay){
+  ending=rnd(day.balance+(day.date>=date?value:0));
+  if(ending<min)min=ending;
+  if(ending<0){missingDays++;if(!critical)critical=day.date}
+  points.push({...day,balance:ending,decision:day.date===date?value:0});
+ }
+ return {...baseline,valid:true,note:'',kind:'income',amount:value,scenario,scenarioDate:date,
+  projectedEnding:ending,projectedMinimum:rnd(min),projectedCritical:critical,
+  projectedMissingDays:missingDays,extraRisk:rnd(Math.max(0,-min)-Math.max(0,-baseline.minimum)),points};
+}
+function v159LiveSummary(result,kind){
+ const valid=result.valid;
+ const final=valid?result.projectedEnding:result.ending;
+ const minimum=valid?result.projectedMinimum:result.minimum;
+ const gap=Math.max(0,-minimum),baseGap=Math.max(0,-result.minimum);
+ const change=rnd(final-result.ending);
+ const critical=valid?result.projectedCritical:result.critical;
+ const label=gap>.005?`Faltante previsto de ${money(gap)}`:critical?'Saldo justo, conviene mantener reserva':'Sin faltante previsto';
+ const explain=!valid?result.note:kind==='income'?
+   gap<baseGap-.005?`Este ingreso reduce tu faltante previsto en ${money(baseGap-gap)}.`:
+   gap>.005?'El ingreso ayuda, pero no cubre todos los vencimientos.':'El ingreso mejora tu disponibilidad prevista.':
+   gap>baseGap+.005?`Este gasto aumenta el faltante previsto en ${money(gap-baseGap)}.`:
+   gap>.005?'Hay vencimientos sin cubrir; evita agregar otra salida.':'Este gasto cabe dentro del calendario registrado.';
+ return `<div class="v159-outcome-hero ${gap>.005?'is-risk':kind==='income'?'is-income':'is-spend'}">
+  <span class="v159-outcome-label">Saldo proyectado al final de ${result.horizon} días</span>
+  <strong class="v159-outcome-money ${final<0?'v119-danger':''}">${money(final)}</strong>
+  <div class="v159-outcome-comparison"><span>${valid?(change>=0?'+':'−')+money(Math.abs(change))+' frente al escenario base':'Escenario aún no calculable'}</span><span class="v159-outcome-status">${gap>.005?'Atención':'En control'}</span></div>
+ </div><div class="v159-outcome-metrics">
+  <div><small>Disponible prudente</small><strong class="${minimum<0?'v119-danger':''}">${money(Math.max(0,minimum))}</strong></div>
+  <div><small>${critical?'Primer día crítico':'Riesgo de déficit'}</small><strong class="${critical?'v119-danger':''}">${critical?prettyDate(critical):'Ninguno'}</strong></div>
+  <div><small>Impacto de la decisión</small><strong class="${change>0?'v143-income-value':change<0?'v119-danger':''}">${change>0?'+':change<0?'−':''}${money(Math.abs(change))}</strong></div>
+ </div><div class="v159-outcome-guidance ${gap>.005?'is-risk':''}"><span aria-hidden="true">${gap>.005?'!':'✓'}</span><p><strong>${label}.</strong> ${sanitize(explain)}</p></div>`;
+}
 function v119Markup(){
- const state=v119DecisionState,amount=Math.max(0,num(state.amount)),result=v119Decision(amount,state.scenario,state.horizon),recovery=v119Recovery(result);
- const baseline=result,valid=result.valid,
-   projectedMin=valid?result.projectedMinimum:baseline.minimum,
-   projectedFirst=valid?result.projectedCritical:baseline.critical,
-   end=valid?result.projectedEnding:baseline.ending;
-
- return `<div class="v119-content"><p class="v119-lead">Evalúa cómo una compra afectaría tus saldos y pagos durante los próximos días. No se registra ninguna operación.</p>
- <div class="v119-switch" role="group" aria-label="Horizonte de evaluación">${[30,60,90].map(n=>`<button type="button" data-v119-horizon="${n}" class="${state.horizon===n?'active':''}" aria-pressed="${state.horizon===n}">${n} días</button>`).join('')}</div>
- <section class="v119-section"><h3>1. Dinero verdaderamente disponible</h3><div class="v119-duo"><div><small>Saldo líquido hoy</small><strong>${money(baseline.initial)}</strong></div><div><small>Mínimo proyectado sin compra</small><strong class="${baseline.minimum<0?'v119-danger':''}">${money(baseline.minimum)}</strong></div></div><p class="v119-note">Disponible prudente: ${money(Math.max(0,baseline.minimum))}. Si el mínimo es negativo, existe un faltante previsto antes de compras adicionales.</p></section>
- ${v143TomorrowOverview(baseline)}
- <section class="v119-section"><h3>2. Simulador de decisiones</h3><label class="v119-field">Importe de la decisión (RD$)<input id="v119-amount" type="number" min="0" step="0.01" inputmode="decimal" value="${sanitize(state.amount)}" placeholder="0.00"></label><fieldset class="v119-choices"><legend>¿Cuándo lo pagarías?</legend><label><input type="radio" name="v119-choice" value="today" ${state.scenario==='today'?'checked':''}> Hoy</label><label><input type="radio" name="v119-choice" value="next" ${state.scenario==='next'?'checked':''}> Próximo ingreso</label><label><input type="radio" name="v119-choice" value="split" ${state.scenario==='split'?'checked':''}> En dos pagos</label></fieldset><button class="v119-evaluate" type="button" data-v119-evaluate="1">Evaluar impacto</button>${!valid?`<p class="v119-warning">${sanitize(result.note)}</p>`:''}</section>
- <section class="v119-section"><h3>3. Detector de días críticos</h3><div class="v119-duo"><div><small>Primera fecha crítica</small><strong class="${projectedFirst?'v119-danger':''}">${projectedFirst?prettyDate(projectedFirst):'Sin alertas'}</strong></div><div><small>Saldo previsto al final</small><strong class="${end<0?'v119-danger':''}">${money(end)}</strong></div></div><p class="v119-note">${valid?`La decisión cambia el saldo mínimo de ${money(baseline.minimum)} a ${money(projectedMin)}.`:'El escenario seleccionado no puede evaluarse sin un ingreso programado.'} No se anticipan gastos futuros no registrados.</p><details class="v143-timeline-details"><summary>Ver ingresos, vencimientos y saldo por fecha</summary>${v143TomorrowTimeline(baseline)}</details></section>
- <section class="v119-section"><h3>4. Plan de recuperación</h3>${recovery.gap>.005?`<p>Para evitar el faltante estimado necesitarías liberar al menos <b>${money(recovery.gap)}</b> antes del primer día crítico.</p><div class="v119-duo"><div><small>Referencia por semana</small><strong>${money(recovery.week)}</strong></div><div><small>Ingreso adicional equivalente</small><strong>${money(recovery.additionalIncome)}</strong></div></div><p class="v119-note">Opciones: reducir gastos no esenciales, aumentar ingresos o renegociar pagos donde esté permitido. El promedio semanal es una referencia; el dinero debe estar disponible antes del vencimiento.</p>`:'<p>No se identifica un faltante de liquidez bajo las condiciones actuales. Mantén una reserva para imprevistos.</p>'}</section>
- <p class="v119-disclaimer">Modelo orientativo en RD$. Supone saldos actuales y calendario de ingresos y obligaciones disponibles en el sistema; no predice compras futuras, comisiones desconocidas, variaciones cambiarias ni ingresos no programados. Las operaciones simuladas no afectan cuentas, registros ni Supabase.</p></div>`;
+ const state=v119DecisionState;
+ const kind=state.kind==='income'?'income':'expense';
+ const amount=Math.max(0,Number(state.amount)||0);
+ const incomeTiming=state.incomeTiming||'today';
+ const scenario=kind==='income'?incomeTiming:state.scenario;
+ const result=v159SimulateDecision(amount,kind,scenario,state.horizon);
+ const recovery=v119Recovery(result),baseline=v119Baseline(state.horizon);
+ const incomeflow=baseline.events.filter(e=>e.type==='income').length;
+ const expenseflow=baseline.events.filter(e=>e.type==='expense').length;
+ const dateText=kind==='income'?(scenario==='today'?'hoy':scenario==='week'?'en 7 días':'en 15 días'):
+ scenario==='today'?'hoy':scenario==='split'?'en dos pagos':'con el próximo ingreso';
+ const currentScenario=kind==='income'
+  ?[['today','Hoy'],['week','En 7 días'],['fortnight','En 15 días']]
+  :[['today','Hoy'],['next','Próximo ingreso'],['split','En dos pagos']];
+ return `<div class="v119-content v159-tomorrow">
+  <div class="v159-tomorrow-intro"><span>DECISIONES INTELIGENTES · SIN MOVIMIENTOS REALES</span><h3>¿Qué pasa si…?</h3><p>Prueba un ingreso o un gasto y anticipa cómo cambia tu dinero antes de decidir.</p></div>
+  <div class="v159-tomorrow-mode" role="group" aria-label="Tipo de simulación">
+   <button type="button" data-v159-kind="expense" class="${kind==='expense'?'active':''}" aria-pressed="${kind==='expense'}">${icon('down')} Simular gasto</button>
+   <button type="button" data-v159-kind="income" class="${kind==='income'?'active':''}" aria-pressed="${kind==='income'}">${icon('up')} Simular ingreso</button>
+  </div>
+  <div class="v159-decision-card">
+   <label class="v119-field" for="v119-amount">${kind==='income'?'¿Cuánto dinero recibirías?':'¿Cuánto dinero gastarías?'} <span class="v159-unit">RD$</span></label>
+   <input id="v119-amount" class="v159-money-input" type="number" min="0" step="0.01" inputmode="decimal" value="${sanitize(String(state.amount))}" placeholder="0.00" aria-describedby="v159-simulation-note">
+   <div class="v159-timing-label">${kind==='income'?'¿Cuándo recibirías el dinero?':'¿Cuándo harías el pago?'}</div>
+   <div class="v159-timing-choices" role="group" aria-label="Momento de la simulación">
+     ${currentScenario.map(([id,label])=>`<button type="button" data-v159-timing="${id}" class="${scenario===id?'active':''}" aria-pressed="${scenario===id}">${label}</button>`).join('')}
+   </div>
+   <div class="v159-decision-horizon"><span>Analizar los próximos</span><div class="v119-switch" role="group" aria-label="Horizonte de simulación">${[30,60,90].map(n=>`<button type="button" data-v119-horizon="${n}" class="${state.horizon===n?'active':''}" aria-pressed="${state.horizon===n}">${n} días</button>`).join('')}</div></div>
+  </div>
+  <div class="v159-outcome" id="v159-live" role="status" aria-live="polite">${v159LiveSummary(result,kind)}</div>
+  <p class="v159-decision-meta" id="v159-simulation-note">${kind==='income'?'Ingreso hipotético':'Gasto hipotético'} ${dateText}. No se registra ni se modifica el saldo real.</p>
+  <details class="v159-details"><summary>${icon('chart')} Cómo se calcula · ver entradas y compromisos</summary>
+   <div class="v159-baseline-grid"><div><small>Liquidez actual</small><strong>${money(baseline.initial)}</strong></div><div><small>Ingresos previstos (${incomeflow})</small><strong class="v143-income-value">+${money(baseline.incomes)}</strong></div><div><small>Pagos y vencimientos (${expenseflow})</small><strong class="v119-danger">−${money(baseline.dues)}</strong></div><div><small>Saldo sin simular</small><strong>${money(baseline.ending)}</strong></div></div>
+   <p class="v119-note">Se usan exclusivamente cuentas, ingresos programados, previsiones y pagos registrados. Las deudas completas no se descuentan dos veces.</p>
+   <details class="v143-timeline-details"><summary>Calendario de cobros, pagos y saldo</summary>${v143TomorrowTimeline(baseline)}</details>
+   <details class="v143-debt-breakdown"><summary>Desglose de todas mis deudas</summary>${(()=>{const d=v143TomorrowOutstanding();return `<div class="v143-debt-row"><span>Tarjetas</span><b>${money(d.cards)}</b></div><div class="v143-debt-row"><span>Préstamos</span><b>${money(d.loans)}</b></div><div class="v143-debt-row"><span>Entre personas</span><b>${money(d.people)}</b></div><div class="v143-debt-row total"><span>Deuda total registrada</span><b>${money(d.total)}</b></div>`})()}</details>
+  </details>
+  <details class="v159-details"><summary>${icon('wallet')} Plan de recuperación y días críticos</summary>
+   <div class="v119-duo"><div><small>Faltante máximo estimado</small><strong class="${recovery.gap>.005?'v119-danger':''}">${money(recovery.gap)}</strong></div><div><small>Ingreso adicional para cubrirlo</small><strong>${money(recovery.additionalIncome)}</strong></div></div>
+   <p class="v119-note">${recovery.gap>.005?`Para cubrir el déficit, habría que disponer de ${money(recovery.gap)} antes del primer vencimiento sin fondos. No basta cobrar después.`:'En este escenario no se detecta un faltante con las obligaciones registradas. Conviene mantener un fondo para imprevistos.'}</p>
+  </details>
+  <p class="v119-disclaimer">Simulación orientativa en RD$. No registra operaciones, no predice ingresos no programados y no garantiza saldos futuros. Considera exclusivamente la información disponible.</p>
+ </div>`;
 }
 function v119Open(){
  const root=document.getElementById('modal-root');if(!root)return;
@@ -22935,11 +23114,18 @@ function v119Open(){
 }
 function v119Refresh(){const node=document.getElementById('v119-results');if(node)node.innerHTML=v119Markup()}
 document.addEventListener('click',event=>{
- const open=event.target.closest?.('[data-v119-open]');if(open){event.preventDefault();v119Open();return}
- const horizon=event.target.closest?.('[data-v119-horizon]');if(horizon){v119DecisionState.horizon=Number(horizon.dataset.v119Horizon);v119Refresh();return}
- const go=event.target.closest?.('[data-v119-evaluate]');if(go){const input=document.getElementById('v119-amount');if(input)v119DecisionState.amount=input.value;v119Refresh()}
+ const open=event.target.closest?.('[data-v119-open]');if(open){event.preventDefault();if(document.getElementById('v71-search-overlay'))v71SearchClose(false);v119Open();return}
+ const kind=event.target.closest?.('[data-v159-kind]');if(kind){v119DecisionState.amount=document.getElementById('v119-amount')?.value??v119DecisionState.amount;v119DecisionState.kind=kind.dataset.v159Kind;v119Refresh();return}
+ const timing=event.target.closest?.('[data-v159-timing]');if(timing){v119DecisionState.amount=document.getElementById('v119-amount')?.value??v119DecisionState.amount;if(v119DecisionState.kind==='income')v119DecisionState.incomeTiming=timing.dataset.v159Timing;else v119DecisionState.scenario=timing.dataset.v159Timing;v119Refresh();return}
+ const horizon=event.target.closest?.('[data-v119-horizon]');if(horizon){v119DecisionState.amount=document.getElementById('v119-amount')?.value??v119DecisionState.amount;v119DecisionState.horizon=Number(horizon.dataset.v119Horizon);v119Refresh();return}
 });
-document.addEventListener('change',event=>{if(event.target.matches?.('input[name="v119-choice"]')){v119DecisionState.scenario=event.target.value;v119Refresh()}});
+document.addEventListener('input',event=>{
+ if(event.target.id!=='v119-amount')return;
+ v119DecisionState.amount=event.target.value;
+ const state=v119DecisionState,kind=state.kind==='income'?'income':'expense';
+ const result=v159SimulateDecision(Math.max(0,Number(state.amount)||0),kind,kind==='income'?(state.incomeTiming||'today'):state.scenario,state.horizon);
+ const live=document.getElementById('v159-live');if(live)live.innerHTML=v159LiveSummary(result,kind);
+});
 /* Reutiliza el Resumen existente, sin reestructurar las demás vistas. */
 /* V123 · Alertas de gasto por categoría, exclusivamente desde datos locales.
    Las tres referencias son meses completos anteriores al mes actual.
@@ -23373,12 +23559,13 @@ function v71SearchOpen(){
  v149SearchIndex=v71SearchEntries().map(x=>({...x,_v150Hay:v71SearchNormalize([x.title,x.sub,x.meta].join(' ')),_v150Title:v71SearchNormalize(x.title)}));
  v150SearchReturnFocus=document.activeElement;
  const overlay=document.createElement('div');overlay.id='v71-search-overlay';overlay.className='v71-search-overlay v149-spotlight';overlay.setAttribute('role','presentation');
- overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global Vive el Hoy"><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="v71-search-results" placeholder="Buscar en Vive el Hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v153-spotlight-shortcuts" aria-label="Accesos de Spotlight">
+ overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global Vive el Hoy"><div class="v159-spotlight-identity"><span class="v159-brand-symbol">P</span><span>vive el hoy</span><span class="v159-spotlight-caption">BÚSQUEDA GLOBAL</span></div><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="v71-search-results" placeholder="Buscar en Vive el Hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v153-spotlight-shortcuts" aria-label="Accesos de Spotlight">
   <span class="v153-spotlight-shortcuts-label">ACCESOS RÁPIDOS</span>
   <div class="v153-spotlight-shortcuts-items">
    <button type="button" data-v153-search-nav="accounts" title="Cuentas y efectivo" aria-label="Ir a Cuentas y efectivo">${v153DockIcon('folder')}<span>Cuentas</span></button>
    <button type="button" data-v153-search-nav="cards" title="Tarjetas" aria-label="Ir a Tarjetas">${v153DockIcon('layers')}<span>Tarjetas</span></button>
    <button type="button" data-v153-search-nav="register" title="Movimientos" aria-label="Ir a Movimientos">${v153DockIcon('files')}<span>Movimientos</span></button>
+   <button type="button" data-v119-open="1" data-v159-open-from-spotlight="1" title="Simula ingresos y gastos" aria-label="Abrir El costo de mañana">${icon('chart')}<span>El costo de mañana</span></button>
   </div>
  </div><div class="v71-search-content" id="v71-search-results"></div><footer class="v149-spotlight-footer"><span>${v149SearchIndex.length} registros y accesos disponibles</span><span class="v149-desktop-hint"><kbd>↑</kbd> <kbd>↓</kbd> navegar · <kbd>Enter</kbd> abrir · <kbd>Esc</kbd> cerrar</span></footer></section>`;
  document.body.appendChild(overlay);v71SearchView('');overlay.querySelector('input')?.focus({preventScroll:true});
@@ -23536,61 +23723,123 @@ document.addEventListener('focusout',e=>{
 
 
 
-/* V155 — bind Wallet's native horizontal scroll even before a card is tapped.
-   No financial data is mutated; only selection and derived read-only details change.
-   Listeners are attached to the current DOM rail and discarded with it on render. */
+/* V158 — Wallet: a single swipe selection drives every detail below the rail.
+   Updating only the lower wallet content avoids rebuilding the scrolling element
+   (which previously interrupted momentum / snap on mobile Safari). */
 (function(){
- const reduced=()=>!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
- function findNearest(rail){
-  const rect=rail.getBoundingClientRect(),mid=(rect.left+rect.right)/2;
-  let nearest=null,min=Infinity;
+ const reduce=()=>!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ function nearestCard(rail){
+  const box=rail.getBoundingClientRect(),center=box.left+box.width/2;
+  let nearest=null,distance=Infinity;
   for(const face of rail.querySelectorAll('.v68-wallet-face[data-id]')){
-   const b=face.getBoundingClientRect(),d=Math.abs((b.left+b.right)/2-mid);
-   if(d<min){nearest=face;min=d;}
+   const rect=face.getBoundingClientRect();
+   const gap=Math.abs(rect.left+rect.width/2-center);
+   if(gap<distance){distance=gap;nearest=face}
   }
   return nearest;
+ }
+ function setVisualCard(rail,face){
+  const id=face.dataset.id;
+  rail.querySelectorAll('.v68-wallet-face[data-id]').forEach(card=>{
+   const active=card===face;
+   card.classList.toggle('selected',active);
+   card.setAttribute('aria-pressed',String(active));
+  });
+  const wallet=rail.closest('.v144-wallet-shell');
+  wallet?.querySelectorAll('.v68-wallet-dots [data-id]').forEach(dot=>{
+   const selected=dot.dataset.id===id;
+   dot.classList.toggle('active',selected);
+   dot.setAttribute('aria-current',String(selected));
+  });
+ }
+ function syncDetails(rail,id){
+  if(!rail.isConnected||ui.page!=='wallet'||ui.v68WalletId===id)return;
+  const host=rail.closest('.v144-wallet-shell');
+  const current=host?.querySelector('.v68-wallet');
+  if(!current)return;
+  const oldActions=current.querySelector(':scope > .v68-wallet-actions');
+  if(!oldActions)return;
+  // Set only the selected view state. No database mutation and no persistence.
+  ui.v68WalletId=id;
+  ui.v144WalletExpanded=true;
+  const template=document.createElement('div');
+  template.innerHTML=v68Wallet();
+  const updated=template.querySelector('.v68-wallet');
+  const freshActions=updated?.querySelector(':scope > .v68-wallet-actions');
+  if(!freshActions)return;
+  const replacement=[];
+  let next=freshActions;
+  while(next){replacement.push(next);next=next.nextElementSibling}
+  let remove=oldActions;
+  while(remove){const after=remove.nextElementSibling;remove.remove();remove=after}
+  // A fragment reuses the existing gallery and its uninterrupted touch momentum.
+  const fragment=document.createDocumentFragment();
+  replacement.forEach(el=>fragment.appendChild(el));
+  current.appendChild(fragment);
+  const active=rail.querySelector('.v68-wallet-face.selected[data-id]');
+  const label=active?.getAttribute('aria-label')||active?.textContent?.trim().slice(0,70)||'Tarjeta seleccionada';
+  const status=host.querySelector('.v158-wallet-selection-status');
+  if(status)status.textContent=label;
+  if(!reduce())current.classList.remove('v158-wallet-motion-reset');
  }
  function install(){
   if(ui.page!=='wallet'||window.innerWidth>790)return;
   const rail=document.querySelector('.v144-wallet-shell .v68-wallet-gallery');
-  if(!rail||rail.dataset.v155SwipeBound)return;
-  rail.dataset.v155SwipeBound='true';
-  let timeout=0,frame=0,changed=false;
-  const preview=()=>{
+  if(!rail||rail.dataset.v158Bound)return;
+  rail.dataset.v158Bound='true';
+  const wallet=rail.closest('.v144-wallet-shell');
+  let status=wallet.querySelector('.v158-wallet-selection-status');
+  if(!status){
+   status=document.createElement('span');
+   status.className='v158-wallet-selection-status';
+   status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+   rail.insertAdjacentElement('afterend',status);
+  }
+  let frame=0,prevId=ui.v68WalletId;
+  function update(){
    if(!rail.isConnected)return;
-   const face=findNearest(rail);if(!face)return;
-   for(const item of rail.querySelectorAll('.v68-wallet-face[data-id]')){
-    const active=item===face;item.classList.toggle('selected',active);item.setAttribute('aria-pressed',String(active));
-   }
-   for(const dot of document.querySelectorAll('.v68-wallet-dots [data-id]')){
-    const active=dot.dataset.id===face.dataset.id;dot.classList.toggle('active',active);
-    dot.setAttribute('aria-current',active?'true':'false');
-   }
-  };
-  const settle=()=>{
-   clearTimeout(timeout);if(!rail.isConnected||ui.page!=='wallet')return;
-   const face=findNearest(rail);
-   if(face?.dataset.id && face.dataset.id!==ui.v68WalletId){
-    // Existing selector preserves the scroll position and updates debt, payments, movement list.
-    v139WalletChooseCard(face.dataset.id);
-   }else if(changed)preview();
-   changed=false;
-  };
-  const onScroll=()=>{
-   changed=true;
-   if(!frame)frame=requestAnimationFrame(()=>{frame=0;preview()});
-   clearTimeout(timeout);timeout=setTimeout(settle,160);
-  };
-  rail.addEventListener('scroll',onScroll,{passive:true});
-  rail.addEventListener('scrollend',()=>{clearTimeout(timeout);timeout=setTimeout(settle,60)},{passive:true});
-  // On browsers which do not fire scrollend, the trailing scroll timer is sufficient.
-  // Respect the existing click selection (v139) and reduced-motion preference.
-  if(!reduced())rail.style.scrollBehavior='smooth';
+   const face=nearestCard(rail);
+   if(!face)return;
+   setVisualCard(rail,face);
+   const id=face.dataset.id;
+   if(prevId!==id){prevId=id;syncDetails(rail,id)}
+  }
+  const schedule=()=>{if(frame||!rail.isConnected)return;frame=requestAnimationFrame(()=>{frame=0;update()})};
+  rail.addEventListener('scroll',schedule,{passive:true});
+  rail.addEventListener('scrollend',schedule,{passive:true});
+  // The browser may not dispatch scrollend; the regular scroll path is sufficient.
+  // Do not apply scroll-behavior:smooth during touch inertia: it can create snap loops.
+  const initial=rail.querySelector('.v68-wallet-face.selected[data-id]');
+  if(initial)status.textContent=initial.getAttribute('aria-label')||'Tarjeta seleccionada';
  }
- const previous=render;
- render=function(...args){const result=previous.apply(this,args);if(ui.page==='wallet')requestAnimationFrame(install);return result;};
+ const priorRender=render;
+ render=function(...args){
+  const result=priorRender.apply(this,args);
+  if(ui.page==='wallet')requestAnimationFrame(install);
+  return result;
+ };
  document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(install),{once:true});
  requestAnimationFrame(install);
+})();
+
+/* Keyboard-safe mobile search: keep field visible as the visual viewport changes. */
+(function(){
+ const vv=window.visualViewport;
+ if(!vv)return;
+ let frame=0;
+ function measure(){
+  frame=0;
+  if(ui.page!=='mobilesearch'||!isMobileViewport())return;
+  const keyboard=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);
+  const isKeyboard=keyboard>110;
+  document.body.classList.toggle('v158-keyboard-visible',isKeyboard&&document.activeElement?.id==='v154-mobile-search-input');
+  document.documentElement.style.setProperty('--v158-visual-height',Math.round(vv.height)+'px');
+ }
+ function schedule(){if(!frame)frame=requestAnimationFrame(measure)}
+ vv.addEventListener('resize',schedule,{passive:true});
+ vv.addEventListener('scroll',schedule,{passive:true});
+ document.addEventListener('focusin',event=>{if(event.target?.id==='v154-mobile-search-input')schedule()});
+ document.addEventListener('focusout',event=>{if(event.target?.id==='v154-mobile-search-input'){document.body.classList.remove('v158-keyboard-visible');schedule()}});
 })();
 
 f33Boot();
@@ -25836,5 +26085,231 @@ body.theme-dark .v156-feedback-caption{color:#bdcce2}
  window.v156TransactionFeedback=feedback;
 })();
 </script>
+<style id="vive-v157-resumen-responsive">
+/* V157 · Resumen adaptativo de escritorio: una pantalla sin recortar datos esenciales.
+   Conserva cálculos, HTML y paleta. En pantallas pequeñas se permite scroll vertical natural. */
+@media (min-width:1000px) and (min-height:680px){
+ body .main:has(.ff-dashboard.summary-space){
+  height:100dvh!important;max-height:100dvh!important;min-height:0!important;
+  overflow-x:hidden!important;overflow-y:hidden!important;
+ }
+ body .main:has(.ff-dashboard.summary-space) .world-overview{min-height:0!important;max-height:100dvh!important;overflow:hidden!important}
+ body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space{
+  min-height:0!important;max-height:none!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+  height:calc(100dvh - 205px)!important;max-height:calc(100dvh - 205px)!important;
+  min-height:0!important;
+  grid-template-rows:minmax(0,45fr) minmax(0,29fr) minmax(0,26fr)!important;
+  gap:clamp(7px,1.0dvh,11px)!important;grid-auto-rows:minmax(0,1fr)!important;
+  align-items:stretch!important;overflow:visible!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-balance,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-obligations,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-upcoming,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-personal,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-mid>.ff-tile{
+  min-height:0!important;max-height:100%!important;height:100%!important;
+ }
+ /* Límites de contenido: acceso íntegro a los registros desde sus enlaces Ver todo. */
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations{
+  overflow:hidden!important;min-height:0!important;
+  padding:clamp(2px,.5dvh,5px) 3px 0 clamp(8px,1vw,17px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations .ff-panel-top{gap:4px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total{
+  margin-top:clamp(4px,.7dvh,9px)!important;
+  padding:clamp(8px,1.1dvh,13px) clamp(9px,.8vw,14px)!important;
+  gap:2px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total strong{
+  font-size:clamp(22px,2.3vw,33px)!important;line-height:1.08!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total>span{
+  font-size:clamp(8px,.8vw,10px)!important;line-height:1.25!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-list{
+  min-height:0!important;margin-top:2px!important;justify-content:space-evenly!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-row{
+  min-height:0!important;padding:clamp(2px,.45dvh,6px) 2px!important;
+  gap:clamp(3px,.5vw,7px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title{gap:2px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title strong{font-size:clamp(9px,.82vw,11px)!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title small{font-size:clamp(8px,.72vw,9px)!important;line-height:1.1!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-row b{font-size:clamp(9px,.83vw,11px)!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-symbol{
+  width:clamp(23px,2.2dvh,31px)!important;height:clamp(23px,2.2dvh,31px)!important;border-radius:8px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations .ff-activity-foot{min-height:27px!important;font-size:9px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal{
+  overflow:hidden!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming .ff-payment-list,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal .ff-people-list{
+  min-height:0!important;overflow:hidden!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-mid>.ff-tile{
+  overflow:hidden!important;
+ }
+ /* La tarjeta principal se adapta al alto; el círculo central conserva el enfoque. */
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.v152-position-reference{
+  padding:clamp(11px,1.55dvh,26px) clamp(17px,2.2vw,34px) clamp(9px,1.2dvh,18px)!important;
+  grid-template-rows:clamp(72px,11dvh,117px) 1px minmax(0,1fr)!important;
+  gap:clamp(3px,.65dvh,9px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-label{
+  font-size:clamp(12px,1vw,15px)!important;margin-bottom:2px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-pos-amount{
+  font-size:clamp(32px,min(3.5vw,5dvh),55px)!important;
+  line-height:1.02!important;margin:2px 0 4px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-header p{
+  font-size:clamp(10px,.85vw,12.5px)!important;line-height:1.2!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles{
+  min-height:0!important;padding-bottom:0!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble{
+  width:clamp(103px,calc(20dvh - 41px),189px)!important;
+  height:clamp(103px,calc(20dvh - 41px),189px)!important;
+  flex:0 0 clamp(103px,calc(20dvh - 41px),189px)!important;
+  padding:clamp(7px,1dvh,15px) 6px!important;
+  gap:clamp(2px,.6dvh,8px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .bubble-amount{
+  font-size:clamp(16px,1.45vw,25px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .ff-yoy,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .ff-yoy-empty{
+  font-size:clamp(9px,.82vw,12px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble small{
+  font-size:clamp(10px,.9vw,13px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions{
+  right:clamp(12px,1.6vw,24px)!important;bottom:clamp(8px,1.3dvh,17px)!important;gap:7px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions button{
+  height:clamp(29px,4.2dvh,40px)!important;
+  min-height:clamp(29px,4.2dvh,40px)!important;
+  max-height:clamp(29px,4.2dvh,40px)!important;
+  padding:0 clamp(9px,.85vw,15px)!important;
+  font-size:clamp(9px,.75vw,11.5px)!important;
+ }
+ /* Los gráficos mantienen su legibilidad sin exigir una altura fija. */
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-mid .ff-panel-top h2,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming .ff-panel-top h2,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal .ff-panel-top h2,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations .ff-panel-top h2{
+  font-size:clamp(14px,1.15vw,20px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-health-number{
+  font-size:clamp(26px,3.0dvh,42px)!important;line-height:1.02!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-stat-footer,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-health-foot{
+  padding-top:clamp(2px,.4dvh,7px)!important;padding-bottom:clamp(1px,.35dvh,6px)!important;
+ }
+}
+/* En notebooks de poca altura priorizar legibilidad frente a recortes: scroll vertical único. */
+@media (max-height:679px) and (min-width:791px){
+ body .main:has(.ff-dashboard.summary-space){overflow-y:auto!important;max-height:none!important}
+}
+/* Móvil conserva sus estilos originales V156 sin overrides de V157. */
+
+/* Vista de baja altura: lectura ejecutiva sin líneas apiladas ni cifras cortadas. */
+@media (min-width:1000px) and (min-height:680px) and (max-height:820px){
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total{
+  padding:7px 10px!important;gap:1px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total .v82-total-top{gap:4px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total small{font-size:8px!important;letter-spacing:.025em!important;line-height:1.17!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total>span{font-size:8.5px!important;line-height:1.14!important;max-height:2.28em!important;overflow:hidden!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-list{justify-content:space-between!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-row{
+  grid-template-columns:24px minmax(0,1fr) auto 10px!important;
+  min-height:30px!important;max-height:36px!important;gap:5px!important;padding:2px 0!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title .v64-subdebt{display:none!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title small{line-height:1.1!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal{
+  padding:clamp(8px,1dvh,13px) clamp(11px,1vw,17px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming .ff-panel-top,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal .ff-panel-top{
+  margin-bottom:3px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-payment-list{margin-top:3px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-pay-row{
+  min-height:25px!important;max-height:27px!important;padding:2px 3px!important;
+  grid-template-columns:24px minmax(0,1fr) minmax(36px,auto) minmax(65px,auto) 11px!important;
+  gap:6px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-pay-name small{display:none!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-pay-name strong{font-size:clamp(9px,.82vw,11px)!important;line-height:1.2!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-pay-symbol{width:21px!important;height:21px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-person-sums{
+  margin:0!important;min-height:0!important;gap:5px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-person-sums>div{padding:6px 8px!important;min-height:0!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-person-cta{min-height:20px!important;height:20px!important;padding:2px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-health-number{margin-top:4px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-health-caption{
+  flex:0 0 auto!important;min-height:12px!important;max-height:none!important;
+  margin-top:2px!important;font-size:9px!important;line-height:1.15!important;overflow:visible!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble small{font-size:clamp(9px,.81vw,11px)!important}
+}
+
+/* Portátiles de ancho medio conservan seis módulos en tres filas (el Resumen únicamente). */
+@media (min-width:1000px) and (max-width:1099px) and (min-height:680px){
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+  display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.v152-position-reference{grid-column:1/10!important;grid-row:1!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;overflow:hidden!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-obligations{grid-column:10/-1!important;grid-row:1/3!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid{display:contents!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card{grid-column:1/6!important;grid-row:2!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card{grid-column:6/10!important;grid-row:2!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-upcoming{grid-column:1/10!important;grid-row:3!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-personal{grid-column:10/-1!important;grid-row:3!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles{display:flex!important;justify-content:center!important;height:100%!important;align-items:center!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-header{grid-column:1!important;grid-row:1!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-position-divider{grid-column:1!important;grid-row:2!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles{grid-column:1!important;grid-row:3!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions{position:absolute!important;bottom:9px!important;right:12px!important;width:auto!important;display:flex!important;}
+}
+</style>
+
+<style id="vive-v158-mobile-search-wallet">
+@media(max-width:790px){
+ /* Searches launch with an active text cursor and resize to the actual keyboard. */
+ .world-mobilesearch .v154-search-hub{min-height:0;padding-bottom:calc(105px + env(safe-area-inset-bottom))}
+ .world-mobilesearch .v154-search-box{position:sticky;top:8px;z-index:23;scroll-margin-top:12px;transition:min-height .18s ease,box-shadow .18s ease,border-color .18s ease,border-radius .18s ease}
+ /* The glass container is the focus indicator, not a blue rectangular input outline. */
+ .world-mobilesearch #v154-mobile-search-input:focus,.world-mobilesearch #v154-mobile-search-input:focus-visible{outline:none!important;border:0!important;box-shadow:none!important;-webkit-appearance:none}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-box{min-height:61px;border-radius:23px;background:rgba(255,255,255,.80);box-shadow:0 14px 34px rgba(64,88,158,.16),inset 0 1px rgba(255,255,255,.96),0 0 0 2px rgba(93,114,224,.13)}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-heading{margin-top:0;margin-bottom:12px}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-heading h1{font-size:clamp(29px,8vw,35px)}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-hub{padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+ body.v158-keyboard-visible .world-mobilesearch .v154-search-hub{min-height:min(100dvh,var(--v158-visual-height,100dvh))}
+ body.v158-keyboard-visible .world-mobilesearch .v154-section-header{margin-top:14px;margin-bottom:9px}
+ body.v158-keyboard-visible .world-mobilesearch .v154-category-tile{height:98px}
+ body.v158-keyboard-visible .world-mobilesearch .v154-shortcuts,body.v158-keyboard-visible .world-mobilesearch .v154-directory{display:none}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-results{padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+ .v158-wallet-selection-status{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
+ .v144-wallet-shell .v68-wallet-actions ~ *{will-change:auto}
+ .v144-wallet-shell .v68-wallet-section,.v144-wallet-shell .v130-wallet-cut,.v144-wallet-shell .v144-executive{animation:v158-wallet-details-enter .25s cubic-bezier(.22,.74,.22,1) both}
+ @keyframes v158-wallet-details-enter{from{opacity:.78;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+}
+@media(prefers-reduced-motion:reduce){
+ .v144-wallet-shell .v68-wallet-section,.v144-wallet-shell .v130-wallet-cut,.v144-wallet-shell .v144-executive{animation:none!important}
+}
+</style>
 </body>
 </html>
