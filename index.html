@@ -21903,5 +21903,377 @@ document.addEventListener('click',event=>{if(!event.target.closest('.v36-notific
 }
 
 </style>
+
+<style id="vive-v126-mobile-ui-fixes">
+@media screen and (max-width:790px){
+  /* V126 · Reconciliación visual móvil: gasto + pagar tarjeta + categorías. */
+  #modal-root .mqr-detail-form .form-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+    padding:10px 14px 18px!important;
+    align-items:start!important;
+  }
+  #modal-root .mqr-detail-form .form-grid>*{order:20}
+  #modal-root .mqr-detail-form .mqr-detail-amount{
+    order:1!important;
+    grid-column:1/-1!important;
+    min-height:84px!important;
+    padding:12px 14px!important;
+    border-radius:18px!important;
+    background:linear-gradient(135deg,#eef5ff 0%,#f7faff 100%)!important;
+    border:1px solid #dce8fb!important;
+    box-shadow:none!important;
+  }
+  #modal-root .mqr-detail-form .mqr-detail-amount span{
+    font-size:11px!important;
+    letter-spacing:.16em!important;
+    color:#6f89ae!important;
+  }
+  #modal-root .mqr-detail-form .mqr-detail-amount strong{
+    font-size:clamp(23px,7.4vw,33px)!important;
+    color:#2454af!important;
+    letter-spacing:-.05em!important;
+  }
+  #modal-root .mqr-detail-form .form-grid>label{
+    background:#fff!important;
+    border:1px solid #e2eaf5!important;
+    border-radius:18px!important;
+    padding:11px 12px!important;
+    box-shadow:0 6px 16px rgba(25,55,95,.04)!important;
+    min-height:88px!important;
+  }
+  #modal-root .mqr-detail-form .form-grid>label:has([name="date"]){order:2!important;grid-column:span 1!important}
+  #modal-root .mqr-detail-form .form-grid>label:has([name="amount"]){order:3!important;grid-column:span 1!important}
+  #modal-root .mqr-detail-form .v80-advisor-slot{order:4!important;grid-column:1/-1!important;margin:1px 0 0!important}
+  #modal-root .mqr-detail-form .form-grid>label:has([name="category"]){order:5!important;grid-column:span 1!important}
+  #modal-root .mqr-detail-form .form-grid>label:has([name="subcategory"]){order:6!important;grid-column:span 1!important}
+  #modal-root .mqr-detail-form .form-grid>label:has([name="paymentSource"]){order:7!important;grid-column:1/-1!important}
+  #modal-root .mqr-detail-form .form-grid>label:has([name="accountId"]),
+  #modal-root .mqr-detail-form .form-grid>label:has([name="cardId"]),
+  #modal-root .mqr-detail-form .form-grid>label:has([name="toAccountId"]){order:8!important;grid-column:1/-1!important}
+  #modal-root .mqr-detail-form .form-grid>label:has([name="paymentChannel"]){order:9!important;grid-column:1/-1!important}
+  #modal-root .mqr-detail-form .form-grid>label:has([name="note"]),
+  #modal-root .mqr-detail-form .form-grid>label:has([name="tags"]),
+  #modal-root .mqr-detail-form .form-grid>.flow-minor-details,
+  #modal-root .mqr-detail-form .form-grid>.flow-context,
+  #modal-root .mqr-detail-form .form-grid>.flow-payment-preview,
+  #modal-root .mqr-detail-form .form-grid>.flow-route,
+  #modal-root .mqr-detail-form .form-grid>details,
+  #modal-root .mqr-detail-form .form-grid>.confirm-status{order:12!important;grid-column:1/-1!important}
+  #modal-root .mqr-detail-form .form-grid>label .filter-label{
+    font-size:10px!important;
+    font-weight:800!important;
+    letter-spacing:.12em!important;
+    text-transform:uppercase!important;
+    color:#7087a8!important;
+    margin-bottom:8px!important;
+  }
+  #modal-root .mqr-detail-form .form-grid .field,
+  #modal-root .mqr-detail-form .form-grid select.field{
+    height:54px!important;
+    min-height:54px!important;
+    border-radius:15px!important;
+    border:1px solid #d7e3f2!important;
+    background:#fbfdff!important;
+    padding:13px 14px!important;
+    font-size:17px!important;
+    color:#35547b!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7)!important;
+  }
+  #modal-root .mqr-detail-form .form-grid>label:has([name="category"]) .field,
+  #modal-root .mqr-detail-form .form-grid>label:has([name="subcategory"]) .field{
+    font-size:16px!important;
+    font-weight:650!important;
+  }
+  #modal-root .mqr-detail-form .form-foot{
+    position:sticky!important;
+    bottom:0!important;
+    padding:12px 14px calc(env(safe-area-inset-bottom) + 14px)!important;
+    background:linear-gradient(180deg,rgba(244,247,251,0) 0%,rgba(244,247,251,.93) 18%,#f4f7fb 100%)!important;
+    gap:10px!important;
+  }
+  #modal-root .mqr-detail-form .form-foot .btn{
+    min-height:54px!important;
+    border-radius:18px!important;
+    font-size:14px!important;
+    font-weight:760!important;
+  }
+  #modal-root .mqr-detail-form .v107-capacity-pill{
+    border-radius:22px!important;
+    padding:13px 14px!important;
+    background:linear-gradient(135deg,#fff8f8 0%,#fffdfd 100%)!important;
+    border:1px solid #f0c7cd!important;
+  }
+  #modal-root .mqr-detail-form .v107-pill-heading{margin-bottom:8px!important}
+  #modal-root .mqr-detail-form .v107-pill-heading>span{font-size:11px!important;font-weight:780!important;color:#365279!important}
+  #modal-root .mqr-detail-form .v107-pill-metrics{grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr)!important;gap:8px!important}
+  #modal-root .mqr-detail-form .v107-pill-metric{padding:0!important}
+  #modal-root .mqr-detail-form .v107-pill-metric small{font-size:9px!important;letter-spacing:.12em!important;color:#8395ae!important}
+  #modal-root .mqr-detail-form .v107-pill-metric strong{font-size:clamp(19px,6vw,29px)!important;line-height:1!important}
+  #modal-root .mqr-detail-form .v107-pill-arrow{font-size:20px!important;align-self:center!important;color:#93a8c8!important}
+  #modal-root .mqr-detail-form .v107-pill-available{margin-top:9px!important;padding-top:10px!important;border-top:1px solid rgba(217,160,170,.24)!important}
+  #modal-root .mqr-detail-form .v107-pill-available span{font-size:11px!important;color:#bf4754!important}
+  #modal-root .mqr-detail-form .v107-pill-available strong{font-size:18px!important;color:#bf2437!important}
+
+  /* Pagar tarjeta · mismo lenguaje visual del resto del móvil */
+  #modal-root .studio-form[data-mode="cardpay"] .studio-shell{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail{
+    width:auto!important;
+    min-width:0!important;
+    border-radius:24px!important;
+    padding:14px!important;
+    background:linear-gradient(135deg,#eef5ff 0%,#f7faff 100%)!important;
+    border:1px solid #dce8fb!important;
+    color:#274467!important;
+    box-shadow:none!important;
+    display:grid!important;
+    gap:10px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-brand{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    color:#5a7392!important;
+    font-size:11px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-brand small{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail-icon,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail-desc,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail-foot{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail-name{
+    order:2!important;
+    font-size:20px!important;
+    line-height:1.08!important;
+    letter-spacing:-.04em!important;
+    color:#3b5a80!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail-name strong{color:#24438f!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-steps-nav{
+    order:3!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step{
+    min-width:0!important;
+    padding:10px 8px!important;
+    border-radius:18px!important;
+    border:1px solid #d7e4f6!important;
+    background:#fff!important;
+    color:#6780a3!important;
+    box-shadow:none!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step .studio-step-number{
+    width:28px!important;height:28px!important;border-radius:10px!important;
+    background:#edf3ff!important;color:#4368b1!important;font-size:12px!important;font-weight:800!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step>span:last-child{display:grid!important;gap:3px!important;min-width:0!important;text-align:left!important;font-size:12px!important;line-height:1.18!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step small{font-size:9px!important;color:#92a3bb!important;line-height:1.22!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step.current{background:#f1f6ff!important;border-color:#a9c4f3!important;color:#24438f!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step.done{background:#f8fbff!important;color:#375a8c!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-main{
+    padding:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-topline,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-active-title,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-active-subtitle{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-panels{display:grid!important;gap:10px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-step{background:transparent!important;padding:0!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>*{min-width:0!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>.flow-payment-preview,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>.flow-route,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>.confirm-status,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>[data-segment="cardPaymentMode"],
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>[data-flow-context],
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>details,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>#guidedReceipt{
+    background:#fff!important;
+    border:1px solid #e2eaf5!important;
+    border-radius:18px!important;
+    padding:12px!important;
+    box-shadow:0 6px 16px rgba(25,55,95,.04)!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label .filter-label,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields .filter-label{
+    font-size:10px!important;
+    font-weight:800!important;
+    letter-spacing:.12em!important;
+    text-transform:uppercase!important;
+    color:#7087a8!important;
+    margin-bottom:8px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields .field,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields select.field{
+    height:54px!important;
+    min-height:54px!important;
+    border-radius:15px!important;
+    border:1px solid #d7e3f2!important;
+    background:#fbfdff!important;
+    padding:13px 14px!important;
+    font-size:17px!important;
+    color:#35547b!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label:has([name="date"]),
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label:has([name="cardId"]),
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label:has([name="accountId"]),
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label:has([name="currency"]),
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>.flow-payment-preview,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>.flow-route,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>[data-segment="cardPaymentMode"],
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>[data-flow-context="conversion"],
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>[data-flow-context="account"],
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>[data-flow-context="card"],
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>[data-flow-context="transferSpeedSection"],
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>#guidedReceipt,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>.confirm-status,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>details{grid-column:1/-1!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment-surface{
+    min-height:78px!important;
+    border-radius:16px!important;
+    border:1px solid #dbe5f4!important;
+    background:#fbfdff!important;
+    padding:10px 8px!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment-option>input:checked+.flow-segment-surface{
+    background:#edf5ff!important;border-color:#9fc0f2!important;box-shadow:none!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .flow-payment-preview{
+    background:linear-gradient(135deg,#f7faff 0%,#eef5ff 100%)!important;
+    border-color:#dbe8fa!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .flow-payment-preview>strong{display:block!important;font-size:12px!important;color:#34527a!important;margin-bottom:10px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .v12-fee-breakdown{display:grid!important;gap:7px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .v12-fee-breakdown span{display:flex!important;justify-content:space-between!important;gap:10px!important;font-size:12px!important;color:#607a9d!important}
+  #modal-root .studio-form[data-mode="cardpay"] .v12-fee-breakdown b{color:#23498d!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-navigation{
+    position:sticky!important;
+    bottom:0!important;
+    z-index:7!important;
+    display:grid!important;
+    grid-template-columns:1fr 1.15fr!important;
+    gap:10px!important;
+    padding:12px 14px calc(env(safe-area-inset-bottom) + 10px)!important;
+    margin-top:2px!important;
+    background:linear-gradient(180deg,rgba(244,247,251,0) 0%,rgba(244,247,251,.93) 18%,#f4f7fb 100%)!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-navigation button{
+    min-height:54px!important;
+    border-radius:18px!important;
+    font-size:14px!important;
+    font-weight:760!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"] .studio-back{background:#fff!important;border:1px solid #dde6f1!important;color:#426085!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-next{background:linear-gradient(135deg,#3f8cff 0%,#6a63ff 100%)!important;color:#fff!important;border:0!important}
+  #modal-root .studio-form[data-mode="cardpay"] .form-foot{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"][data-studio-step="3"] .form-foot{
+    display:grid!important;
+    position:sticky!important;
+    bottom:0!important;
+    z-index:7!important;
+    grid-template-columns:1fr 1.15fr!important;
+    gap:10px!important;
+    padding:12px 14px calc(env(safe-area-inset-bottom) + 14px)!important;
+    background:linear-gradient(180deg,rgba(244,247,251,0) 0%,rgba(244,247,251,.93) 18%,#f4f7fb 100%)!important;
+    margin-top:0!important;
+  }
+  #modal-root .studio-form[data-mode="cardpay"][data-studio-step="3"] .form-foot .btn{
+    min-height:54px!important;
+    border-radius:18px!important;
+    font-size:14px!important;
+    font-weight:760!important;
+  }
+}
+@media screen and (max-width:360px){
+  #modal-root .mqr-detail-form .form-grid,
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields{grid-template-columns:1fr!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-steps-nav{grid-template-columns:1fr!important}
+  #modal-root .studio-form[data-mode="cardpay"] .flow-segment{grid-template-columns:1fr!important}
+}
+</style>
+<script id="vive-v126-mobile-ui-script">
+(function(){
+  function fmtAmt(value,currency){
+    try{return (currency==='USD'?'US$':'RD$') + Number(value||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+    catch(_){return (currency==='USD'?'US$':'RD$') + (Math.round((Number(value)||0)*100)/100).toFixed(2)}
+  }
+  function compactAccountLabel(a){
+    if(!a) return '';
+    var bal = (typeof getAccountBalance==='function') ? getAccountBalance(a) : (Number(a.opening)||0);
+    var name = (a.kind==='cash' ? 'Efectivo' : String(a.name||'Cuenta').trim()) || 'Cuenta';
+    return name + ' · ' + fmtAmt(bal,a.currency||'DOP');
+  }
+  function compactCardLabel(c){
+    if(!c) return '';
+    var bank = (typeof bankOf==='function') ? bankOf(c) : '';
+    return [String(c.name||'Tarjeta').trim(), bank, 'RD$ / US$'].filter(Boolean).join(' · ');
+  }
+  function patchOptions(scope){
+    if(window.innerWidth>790 || !scope) return;
+    scope.querySelectorAll('select[name="accountId"], select[name="toAccountId"], select[name="instrumentId"]').forEach(function(sel){
+      Array.from(sel.options).forEach(function(opt){
+        if(!opt.value) return;
+        if(!opt.dataset.originalLabel) opt.dataset.originalLabel = opt.textContent;
+        var a = (window.db && Array.isArray(db.accounts)) ? db.accounts.find(function(x){ return String(x.id)===String(opt.value); }) : null;
+        if(a) opt.textContent = compactAccountLabel(a);
+      });
+    });
+    scope.querySelectorAll('select[name="cardId"]').forEach(function(sel){
+      Array.from(sel.options).forEach(function(opt){
+        if(!opt.value) return;
+        if(!opt.dataset.originalLabel) opt.dataset.originalLabel = opt.textContent;
+        var c = (window.db && Array.isArray(db.cards)) ? db.cards.find(function(x){ return String(x.id)===String(opt.value); }) : null;
+        if(c) opt.textContent = compactCardLabel(c);
+      });
+    });
+  }
+  function patchCategoryLabels(scope){
+    if(window.innerWidth>790 || !scope) return;
+    scope.querySelectorAll('.mqr-detail-form label:has([name="category"]), .mqr-detail-form label:has([name="subcategory"])').forEach(function(label){
+      label.classList.add('v126-category-block');
+    });
+  }
+  function markForms(scope){
+    if(!scope) return;
+    scope.querySelectorAll('#transactionForm.studio-form').forEach(function(form){
+      form.classList.toggle('v126-cardpay-mobile', form.dataset.mode==='cardpay');
+    });
+  }
+  function runPatches(){
+    var root = document.getElementById('modal-root') || document;
+    patchOptions(root);
+    patchCategoryLabels(root);
+    markForms(root);
+  }
+  var boot = function(){
+    runPatches();
+    var root = document.getElementById('modal-root');
+    if(root && !root.__v126Observed){
+      root.__v126Observed = true;
+      new MutationObserver(function(){ window.requestAnimationFrame(runPatches); }).observe(root,{childList:true,subtree:true});
+    }
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot, {once:true});
+  else boot();
+  window.addEventListener('resize', function(){ window.requestAnimationFrame(runPatches); }, {passive:true});
+  document.addEventListener('change', function(e){ if(e.target && e.target.closest('#modal-root')) window.requestAnimationFrame(runPatches); }, true);
+  setTimeout(runPatches, 250);
+  setTimeout(runPatches, 900);
+})();
+</script>
+
 </body>
 </html>
