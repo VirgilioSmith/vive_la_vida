@@ -17272,12 +17272,9 @@ const SERVICE_PRESETS={
 /* V117 · Etiquetas coherentes de las cuentas en TODOS los selectores móviles.
    Nunca cambia los identificadores, la moneda, los saldos ni las opciones disponibles. */
 function v116AccountLabel(a){
- if(isMobileViewport()){
-  const currency=a.currency==='USD'?'US$':'RD$';
-  const name=a.kind==='cash'?'Efectivo':String(a.name||'Cuenta').trim();
-  return `${name} · ${currency} · ${money(getAccountBalance(a),a.currency,2)}`;
- }
- return `${a.name} · ${bankOf(a)} · ${a.currency} · ${money(getAccountBalance(a),a.currency,2)}`;
+ // Un formato único para web y móvil: sin banco, moneda ni nombre repetidos.
+ const name=a.kind==='cash'?'Efectivo':String(a.name||'Cuenta').trim();
+ return `${name} · ${money(getAccountBalance(a),a.currency,2)}`;
 }
 function sourceOptions(kind='account'){
  return kind==='card'?db.cards.filter(a=>!a.archived).map(a=>[a.id,`${a.name} · ${bankOf(a)} · RD$ / US$`]):db.accounts.filter(a=>!a.archived).map(a=>[a.id,v116AccountLabel(a)]);
@@ -17392,6 +17389,136 @@ function v129OrderStudioFields(mode,steps){
   group.dataset.v129Group=mode+'-'+(stepIndex+1);
  });
 }
+
+/* V134 · UX progresiva de registro: reutiliza los controles financieros originales.
+   No modifica las reglas de contabilidad, Supabase ni la validación de datos. */
+function v134NodeField(el){
+ if(!el||el.nodeType!==1)return '';
+ return el.getAttribute('name')||el.querySelector('[name]')?.getAttribute('name')||'';
+}
+function v134NodeForField(nodes,name){return nodes.find(el=>v134NodeField(el)===name)}
+function v134CreateGroup(title,subtitle,cls=''){
+ const section=document.createElement('section');section.className='v134-section '+cls;
+ section.innerHTML=`<header class="v134-section-heading"><strong>${title}</strong>${subtitle?`<small>${subtitle}</small>`:''}</header><div class="v134-group-fields"></div>`;
+ return section;
+}
+function v134CreateMore(title){
+ const details=document.createElement('details');details.className='v134-more';
+ details.innerHTML=`<summary><span>${title}</span><span class="v134-more-chevron" aria-hidden="true">⌄</span></summary><div class="v134-more-body"></div>`;
+ return details;
+}
+function v134ProgressiveMobileDetail(form,mode){
+ const grid=form.querySelector(':scope > .form-grid');
+ if(!grid||grid.classList.contains('v134-progressive-grid'))return;
+ const nodes=[...grid.children];const used=new Set();
+ const take=(predicate,dest)=>{
+  for(const el of nodes){if(!used.has(el)&&predicate(el)){used.add(el);dest.appendChild(el)}}
+ };
+ const matches=(...names)=>(el)=>names.includes(v134NodeField(el));
+ const block=(...keys)=>(el)=>keys.includes(el.dataset?.flowContext)||keys.includes(el.id)||keys.some(k=>el.classList?.contains(k));
+ const heading=(el)=>el.classList?.contains('flow-section-heading')||el.classList?.contains('flow-hero');
+ const hidden=(el)=>el.matches?.('input[type="hidden"]');
+ const core=document.createDocumentFragment();
+ const fields=document.createDocumentFragment();
+ const choice=v134CreateGroup(mode==='income'?'Clasificación del ingreso':mode==='spend'?'¿En qué gastaste?':'Origen y destino',mode==='income'||mode==='spend'?'Categoría y subcategoría':'Cuentas y beneficiario','v134-choices');
+ const source=v134CreateGroup(mode==='income'?'¿Dónde recibiste el dinero?':mode==='spend'?'¿Cómo pagaste?':'Movimiento entre cuentas',mode==='income'?'Elige tu cuenta de destino':mode==='spend'?'Selecciona cuenta o tarjeta':'Define de dónde sale y a dónde llega','v134-sources');
+ const summary=v134CreateGroup('Resumen del movimiento','Revísalo antes de confirmar','v134-receipt');
+ const more=v134CreateMore('Fecha, notas y opciones adicionales');
+ const moreBody=more.querySelector('.v134-more-body');
+ // Importe y, cuando corresponde, el indicador ya calculado de endeudamiento.
+ take(el=>el.classList.contains('mqr-detail-amount'),core);
+ take(el=>el.classList.contains('v80-advisor-slot'),core);
+ // Etiquetas de ingreso/gasto o beneficiario de transferencia.
+ if(mode==='income'||mode==='spend')take(matches('category','subcategory'),choice.querySelector('.v134-group-fields'));
+ else take(matches('accountId','toAccountId','payee'),choice.querySelector('.v134-group-fields'));
+ if(mode==='income')take(matches('accountId'),source.querySelector('.v134-group-fields'));
+ else if(mode==='spend'){
+  take(matches('paymentSource'),source.querySelector('.v134-group-fields'));
+  take(block('account','card'),source.querySelector('.v134-group-fields'));
+  take(matches('accountId','cardId','currency'),source.querySelector('.v134-group-fields'));
+ } else {
+  take(block('flowRoute'),source.querySelector('.v134-group-fields'));
+  take(matches('accountId','toAccountId'),source.querySelector('.v134-group-fields'));
+  take(block('transferSpeedSection'),source.querySelector('.v134-group-fields'));
+  take(block('conversion'),source.querySelector('.v134-group-fields'));
+ }
+ // Mantener los resúmenes vivos; ninguna cifra se recalcula aquí.
+ take(block('guidedReceipt','flow-payment-preview'),summary.querySelector('.v134-group-fields'));
+ // Fechas editables, canales, notas, impuestos y estado: opcionales, sin perder valores.
+ take(el=>hidden(el),moreBody);
+ take(el=>heading(el),moreBody);
+ take(el=>!used.has(el),moreBody);
+ grid.replaceChildren(...core.childNodes);
+ if(choice.querySelector('.v134-group-fields').childElementCount)grid.appendChild(choice);
+ if(source.querySelector('.v134-group-fields').childElementCount)grid.appendChild(source);
+ if(summary.querySelector('.v134-group-fields').childElementCount)grid.appendChild(summary);
+ // Si hay campos obligatorios sin valor en extras, mostrarlos antes de guardar.
+ if(moreBody.childElementCount)grid.appendChild(more);
+ grid.classList.add('v134-progressive-grid');
+ form.classList.add('v134-progressive-form');
+ form.addEventListener('submit',ev=>{
+  const invalid=[...form.elements].find(x=>x.willValidate&&!x.disabled&&!x.checkValidity());
+  if(invalid&&more.contains(invalid))more.open=true;
+ },true);
+ // No ocultar los campos reales: se conservan por completo en el formulario.
+}
+function v134RefineExpress(f,mode){
+ const grid=f.querySelector('.fastx-category-grid');const sec=f.querySelector('.fastx-category-section');
+ if(!grid||!sec||sec.classList.contains('v134-express'))return;
+ sec.classList.add('v134-express');
+ const buttons=[...grid.querySelectorAll('button[data-fast-category]')];
+ const extra=v134CreateMore('Todas las categorías');extra.classList.add('v134-category-more');
+ const extraBody=extra.querySelector('.v134-more-body');
+ buttons.slice(3).forEach(x=>extraBody.appendChild(x));
+ const controls=sec.querySelector('.fastx-category-controls');
+ const catLabel=controls?.querySelector('label:has([name="category"])');
+ if(catLabel)extraBody.appendChild(catLabel);
+ if(extraBody.childElementCount)grid.insertAdjacentElement('afterend',extra);
+ // Fecha y canal tienen valores iniciales: disponibles sin ocupar la pantalla principal.
+ const moreDetails=f.querySelector('.fastx-fold');
+ const dateChannel=f.querySelector('.fastx-date-and-channel');
+ const detailsBody=moreDetails?.querySelector('.fastx-fold-inner');
+ if(dateChannel&&detailsBody)detailsBody.insertBefore(dateChannel,detailsBody.firstChild);
+ const moreTitle=moreDetails?.querySelector('summary span:first-child');
+ if(moreTitle)moreTitle.textContent='Fecha, notas y opciones adicionales';
+ const selected=f.elements.category?.value;
+ // Resaltar la categoría inicial sin abrir un catálogo voluminoso.
+ const categoryTitle=extra.querySelector('summary span:first-child');
+ const updateTitle=()=>{const value=f.elements.category?.value||'';if(categoryTitle)categoryTitle.textContent=value&&!buttons.slice(0,3).some(b=>b.dataset.fastCategory===value)?'Categoría · '+value:'Todas las categorías';};
+ updateTitle();
+ f.elements.category?.addEventListener('change',updateTitle);
+ const amountInput=f.elements.amount;
+ if(amountInput&&!amountInput.placeholder)amountInput.placeholder='0.00';
+ // Mantener Subcategoría visible cuando el catálogo tenga opciones.
+ const sublabel=controls?.querySelector('label:has([name="subcategory"])');
+ if(sublabel&&controls)controls.appendChild(sublabel);
+}
+function v134RefineStudio(f,mode){
+ if(!f||f.dataset.v134Studio==='yes')return;
+ f.dataset.v134Studio='yes';f.classList.add('v134-studio-form');
+ for(const step of f.querySelectorAll('.studio-step')){
+  const container=step.querySelector('.studio-fields');if(!container)continue;
+  const n=Number(step.dataset.step);
+  const optional=[...container.children].filter(el=>{
+   const name=v134NodeField(el);
+   if(['date','note','tags','postingStatus','paymentChannel'].includes(name))return true;
+   if(el.classList.contains('flow-minor-details'))return true;
+   if(el.classList.contains('confirm-status'))return true;
+   return false;
+  });
+  if(!optional.length)continue;
+  const fold=v134CreateMore(n===3?'Detalles del registro':'Fecha y opciones adicionales');
+  fold.classList.add('v134-studio-more');const body=fold.querySelector('.v134-more-body');
+  optional.forEach(x=>body.appendChild(x));container.appendChild(fold);
+ }
+ f.addEventListener('submit',()=>{
+  for(const input of f.elements){
+   if(!input.willValidate||input.disabled||input.checkValidity())continue;
+   const details=input.closest('details.v134-more');if(details)details.open=true;
+  }
+ },true);
+}
+
 function mqrContinue(){
  const st=mqrState(),amount=Number(st.amount);
  if(!Number.isFinite(amount)||amount<=0){toast('Introduce un importe mayor que cero.');return;}
@@ -17424,6 +17551,7 @@ function mqrContinue(){
    const last=body.querySelector('label:has([name="subcategory"])')||body.querySelector('label:has([name="category"])');
    if(advisor&&last&&last.parentElement===body)last.after(advisor);
    v129ArrangeMobileDetails(body, st.mode==='transfer'?(st.transferKind==='outgoing'?'outgoing':'own'):st.mode);
+   v134ProgressiveMobileDetail(f,st.mode==='transfer'?(st.transferKind==='outgoing'?'outgoing':'own'):st.mode);
   }
  }
 }
@@ -17642,6 +17770,7 @@ function enhanceIncomeExpenseExpress(f,mode,editing=false){
  f.addEventListener('input',()=>queueMicrotask(()=>fastxSync(f)));
  f.addEventListener('change',()=>queueMicrotask(()=>fastxSync(f)));
  f.addEventListener('submit',ev=>{const invalid=Array.from(f.elements).find(el=>el.willValidate&&!el.disabled&&!el.checkValidity());if(invalid){ev.preventDefault();ev.stopImmediatePropagation();let folded=invalid.closest('details');if(folded)folded.open=true;invalid.focus();invalid.reportValidity()}},true);
+ v134RefineExpress(f,mode);
  fastxSync(f);
 }
 
@@ -17724,6 +17853,7 @@ function enhanceGuidedStudio(f,mode,editing=false){
    if(invalid){const containing=invalid.closest('.studio-step');studioShowStep(f,Number(containing?.dataset.step)||1,{force:true});invalid.focus();invalid.reportValidity()}
    else studioShowStep(f,3);return;}
  },true);
+ v134RefineStudio(f,mode);
  studioShowStep(f,1,{force:true});
 }
 function selectedFlowCurrency(f){const mode=f.dataset.mode,src=f.elements.paymentSource?.value||'account';return (mode==='cardpay'||(['spend','service'].includes(mode)&&src==='card'))?(f.elements.currency?.value||'DOP'):(account(f.elements.accountId?.value)?.currency||'DOP')}
@@ -22645,5 +22775,192 @@ document.addEventListener('click',event=>{if(!event.target.closest('.v36-notific
 }
 </style>
 
-</body>
+
+<style id="vive-v134-progressive-ui">
+/* Un solo diseño progresivo para los registros existentes. No toca reglas bancarias. */
+#modal-root .v134-progressive-form .v134-progressive-grid{display:flex!important;flex-direction:column!important;gap:12px!important;align-content:stretch!important;min-width:0!important}
+#modal-root .v134-progressive-grid>.mqr-detail-amount{flex:0 0 auto!important;order:0!important}
+#modal-root .v134-progressive-grid>.v80-advisor-slot{flex:0 0 auto!important;order:1!important}
+#modal-root .v134-section{order:2!important;min-width:0;background:rgba(255,255,255,.78);border:1px solid rgba(222,232,245,.90);border-radius:20px;padding:15px;box-shadow:0 5px 20px rgba(28,63,108,.035)}
+#modal-root .v134-section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+#modal-root .v134-section-heading strong{font-size:14px;font-weight:800;letter-spacing:-.025em;color:#2b456a}
+#modal-root .v134-section-heading small{font-size:11px;color:#899cb4;text-align:right}
+#modal-root .v134-group-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;align-items:start;min-width:0}
+#modal-root .v134-group-fields>*{min-width:0!important;max-width:100%!important}
+#modal-root .v134-group-fields>label{display:block;min-width:0!important;margin:0;padding:0;background:transparent;box-shadow:none;border:0}
+#modal-root .v134-group-fields>label:has([name="accountId"]),
+#modal-root .v134-group-fields>label:has([name="toAccountId"]),
+#modal-root .v134-group-fields>label:has([name="payee"]),
+#modal-root .v134-group-fields>label:has([name="paymentSource"]),
+#modal-root .v134-group-fields>[data-flow-context],
+#modal-root .v134-group-fields>.flow-route,
+#modal-root .v134-group-fields>.flow-receipt,
+#modal-root .v134-group-fields>.flow-payment-preview,
+#modal-root .v134-group-fields>.v80-advisor-slot{grid-column:1/-1!important}
+#modal-root .v134-group-fields .filter-label{display:block;margin-bottom:7px;color:#788ca7;font-size:11px;font-weight:740;letter-spacing:.02em;text-transform:none}
+#modal-root .v134-group-fields .field{box-sizing:border-box;width:100%!important;max-width:100%;min-width:0;min-height:46px;height:auto;border-radius:12px;background:#f8fbff;border:1px solid #dce7f5;padding:10px 11px;font-size:15px;box-shadow:none}
+#modal-root .v134-group-fields .flow-context[hidden],#modal-root .v134-group-fields [hidden]{display:none!important}
+#modal-root .v134-group-fields .flow-context{min-width:0}
+#modal-root .v134-group-fields .flow-context>label{margin-bottom:7px}
+#modal-root .v134-more{order:6!important;display:block;min-width:0!important;border:1px solid rgba(222,232,245,.95);border-radius:16px;background:rgba(249,251,255,.77);overflow:visible}
+#modal-root .v134-more>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;font-size:12px;font-weight:740;color:#637b9b;min-height:44px}
+#modal-root .v134-more>summary::-webkit-details-marker{display:none}
+#modal-root .v134-more[open]>summary{border-bottom:1px solid #e3eaf5;color:#345c91}
+#modal-root .v134-more-chevron{transition:transform .18s ease;color:#8a9eb8}
+#modal-root .v134-more[open] .v134-more-chevron{transform:rotate(180deg)}
+#modal-root .v134-more-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:13px;min-width:0}
+#modal-root .v134-more-body>*{min-width:0!important;max-width:100%!important}
+#modal-root .v134-more-body>label{display:block;padding:0!important;margin:0;background:transparent!important;border:0!important;box-shadow:none!important;min-height:0!important}
+#modal-root .v134-more-body>.flow-context,#modal-root .v134-more-body>.flow-minor-details,#modal-root .v134-more-body>.form-full,#modal-root .v134-more-body>details{grid-column:1/-1}
+#modal-root .v134-more-body .field{width:100%;font-size:15px;min-height:43px;height:auto;border-radius:12px}
+#modal-root .v134-more-body>input[type="hidden"],#modal-root .v134-more-body>.flow-hero,#modal-root .v134-more-body>.flow-section-heading{display:none!important}
+#modal-root .v134-receipt{background:linear-gradient(145deg,#f5f9ff,#fff);border-color:#dfe9f7}
+#modal-root .v134-receipt .flow-receipt-v4{margin:0!important;padding:9px!important;border-radius:12px!important;box-shadow:none!important}
+#modal-root .v134-receipt .flow-receipt-v4>*{max-width:100%}
+#modal-root .v134-progressive-form .form-foot{flex:0 0 auto;z-index:8}
+/* Web: formulario express menos alto, categorías por elección progresiva. */
+#modal-root .fastx-form .fastx-shell{max-width:100%;min-width:0}
+#modal-root .fastx-form .fastx-entry,#modal-root .fastx-form .fastx-right{min-width:0}
+#modal-root .fastx-form .fastx-body{gap:13px!important}
+#modal-root .fastx-form .fastx-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+#modal-root .fastx-form .fastx-category-grid .fastx-cat{min-height:52px!important;border-radius:13px!important;padding:7px 8px!important}
+#modal-root .fastx-form .v134-category-more{margin:9px 0 0}
+#modal-root .fastx-form .v134-category-more .v134-more-body{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#modal-root .fastx-form .v134-category-more .fastx-cat{min-height:46px;border:1px solid #e1eaf5;background:#fbfdff;border-radius:11px;font-size:11px}
+#modal-root .fastx-form .v134-category-more label{grid-column:1/-1!important}
+#modal-root .fastx-form .fastx-category-controls{margin-top:9px}
+#modal-root .fastx-form .fastx-section-title{margin-bottom:7px!important}
+#modal-root .fastx-form .fastx-date-and-channel{margin-top:0}
+#modal-root .fastx-form .fastx-fold{border-radius:15px!important}
+/* Registro guiado de transferencias y tarjetas: mostrar primero lo fundamental. */
+#modal-root .v134-studio-form .studio-rail-desc,#modal-root .v134-studio-form .studio-rail-foot{display:none}
+#modal-root .v134-studio-form .studio-fields{gap:11px!important;align-items:start}
+#modal-root .v134-studio-form .studio-fields>label,#modal-root .v134-studio-form .studio-fields>[data-flow-context]{min-width:0}
+#modal-root .v134-studio-form .studio-fields .field{min-width:0;max-width:100%;font-size:15px}
+#modal-root .v134-studio-form .studio-fields>.v134-more{grid-column:1/-1!important}
+#modal-root .v134-studio-form .v134-studio-more .v134-more-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+#modal-root .v134-studio-form .studio-fields .flow-segment{gap:8px!important}
+#modal-root .v134-studio-form .studio-fields .flow-segment-surface{min-height:65px!important;padding:9px!important;border-radius:14px!important}
+#modal-root .v134-studio-form .studio-next,#modal-root .v134-studio-form .studio-back{min-height:46px;border-radius:13px}
+#modal-root .v134-studio-form .studio-navigation button[hidden],
+#modal-root .v134-studio-form .form-foot[style*="none"]{display:none!important}
+@media(min-width:791px){
+ #modal-root .fastx-form .fastx-shell{width:min(1060px,100%);margin:auto;grid-template-columns:minmax(0,1.25fr) minmax(275px,.75fr)}
+ #modal-root .fastx-form .fastx-head{padding-bottom:8px!important}
+ #modal-root .fastx-form .fastx-title{font-size:clamp(23px,2vw,30px)!important}
+ #modal-root .fastx-form .fastx-body{padding:12px 25px 20px!important}
+ #modal-root .fastx-form .fastx-amount-zone{padding:10px 14px!important;border-radius:16px!important}
+ #modal-root .fastx-form .fastx-category-section,#modal-root .fastx-form .fastx-source-section{padding:0!important}
+ #modal-root .v134-studio-form .studio-shell{max-width:1080px;margin:0 auto;grid-template-columns:240px minmax(0,1fr)}
+ #modal-root .v134-studio-form .studio-main{padding:18px 24px!important}
+ #modal-root .v134-studio-form .studio-rail{padding:23px 17px!important}
+ #modal-root .v134-studio-form .studio-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #modal-root .v134-studio-form .studio-fields>label:has([name="accountId"]),
+ #modal-root .v134-studio-form .studio-fields>label:has([name="toAccountId"]),
+ #modal-root .v134-studio-form .studio-fields>label:has([name="cardId"]),
+ #modal-root .v134-studio-form .studio-fields>[data-flow-context],
+ #modal-root .v134-studio-form .studio-fields>.flow-payment-preview,
+ #modal-root .v134-studio-form .studio-fields>.flow-route,
+ #modal-root .v134-studio-form .studio-fields>[data-segment]{grid-column:1/-1}
+}
+@media(max-width:790px){
+ #modal-root .v134-progressive-form .form-grid{display:flex!important;flex-direction:column!important;gap:10px!important;overflow:auto!important;min-width:0;min-height:0;padding:10px 14px 18px!important}
+ #modal-root .v134-section{padding:12px!important;border-radius:16px!important}
+ #modal-root .v134-section-heading strong{font-size:13px}
+ #modal-root .v134-section-heading small{font-size:10px}
+ #modal-root .v134-group-fields{gap:9px}
+ #modal-root .v134-group-fields .field{font-size:16px!important;min-height:45px!important;height:45px!important;border-radius:11px!important;padding:9px 10px!important}
+ #modal-root .v134-more-body{padding:11px;gap:9px}
+ #modal-root .v134-more-body .field{font-size:16px;min-height:43px;height:43px}
+ #modal-root .v134-progressive-grid>.mqr-detail-amount{min-height:55px!important;margin:0!important;box-shadow:none!important}
+ #modal-root .v134-progressive-form .form-foot{padding:10px 14px calc(env(safe-area-inset-bottom) + 10px)!important}
+ #modal-root .v134-progressive-form .form-foot .btn{min-height:47px!important}
+ #modal-root .v134-studio-form .studio-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ #modal-root .v134-studio-form .studio-fields>.v134-more{grid-column:1/-1!important}
+ #modal-root .v134-studio-form .studio-main{padding-bottom:max(12px,env(safe-area-inset-bottom))!important}
+ #modal-root .v134-studio-form .studio-navigation{gap:9px!important}
+ #modal-root .v134-studio-form .studio-rail{padding:11px 12px!important}
+ #modal-root .v134-studio-form .studio-rail-name{font-size:17px!important}
+ #modal-root .v134-studio-form .studio-steps-nav{gap:6px!important}
+ #modal-root .v134-studio-form .studio-nav-step{min-height:40px!important;padding:6px 7px!important}
+ #modal-root .v134-studio-form .studio-next,#modal-root .v134-studio-form .studio-back{min-height:45px!important}
+}
+@media(max-width:360px){
+ #modal-root .v134-group-fields,#modal-root .v134-more-body{grid-template-columns:minmax(0,1fr)!important}
+ #modal-root .v134-studio-form .studio-fields{grid-template-columns:minmax(0,1fr)!important}
+ #modal-root .fastx-form .v134-category-more .v134-more-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){#modal-root .v134-more-chevron{transition:none}}
+</style>
+
+<style id="vive-v134-polish">
+@media(max-width:790px){
+ #modal-root .v134-progressive-form .v134-sources .v134-group-fields>[data-flow-context],
+ #modal-root .v134-progressive-form .v134-sources .v134-group-fields>[data-flow-context]>label,
+ #modal-root .v134-progressive-form .v134-sources .v134-group-fields>[data-flow-context]>.form-grid,
+ #modal-root .v134-progressive-form .v134-sources .v134-group-fields>[data-flow-context] .field{
+  display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;
+ }
+ #modal-root .v134-progressive-form .v134-sources .v134-group-fields>[data-flow-context][hidden]{display:none!important}
+ #modal-root .v134-progressive-form .v134-sources .v134-group-fields>[data-flow-context]>label{margin:0!important}
+ #modal-root .v134-progressive-form .v134-sources .v134-group-fields>label{width:100%!important}
+ #modal-root .v134-section-heading{gap:7px}
+ #modal-root .v134-section-heading small{max-width:46%;line-height:1.25}
+ #modal-root .v134-group-fields select{overflow:hidden;text-overflow:ellipsis}
+}
+@media(min-width:791px){
+ /* Registro guiado compacto: sustituye la enorme columna oscura por pasos horizontales. */
+ #modal-root .modal:has(.v134-studio-form){width:min(810px,96vw)!important;max-width:810px!important;border-radius:25px!important}
+ #modal-root .v134-studio-form{min-height:0!important;height:min(690px,calc(100vh - 45px))!important;max-height:calc(100vh - 45px)!important}
+ #modal-root .v134-studio-form .studio-shell{
+  display:flex!important;flex-direction:column!important;max-width:100%!important;width:100%!important;min-height:0!important;
+ }
+ #modal-root .v134-studio-form .studio-rail{
+  display:grid!important;grid-template-columns:minmax(0,1fr);gap:6px!important;flex:0 0 auto!important;
+  padding:13px 21px!important;min-height:0!important;background:linear-gradient(135deg,#f0f6ff,#f8fbff)!important;
+  border-bottom:1px solid #dce8f6!important;color:#365278!important;
+ }
+ #modal-root .v134-studio-form .studio-brand{color:#6a87aa!important;font-size:9px!important}
+ #modal-root .v134-studio-form .studio-brand>span{color:#5b84cf!important}
+ #modal-root .v134-studio-form .studio-brand small{display:none!important}
+ #modal-root .v134-studio-form .studio-rail-icon{display:none!important}
+ #modal-root .v134-studio-form .studio-rail-name{
+  display:block!important;margin:0!important;font-size:14px!important;line-height:1.2!important;color:#56759a!important;
+ }
+ #modal-root .v134-studio-form .studio-rail-name strong{color:#234569!important;font-size:20px!important}
+ #modal-root .v134-studio-form .studio-steps-nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;margin:8px 0 0!important}
+ #modal-root .v134-studio-form .studio-nav-step{
+  display:flex!important;min-width:0!important;width:100%!important;min-height:44px!important;padding:7px 9px!important;gap:7px!important;
+  border:1px solid #dce7f5!important;background:#fff!important;border-radius:12px!important;
+  color:#7d91ac!important;font-size:10px!important;line-height:1.2!important;
+ }
+ #modal-root .v134-studio-form .studio-nav-step.current{background:#eaf2ff!important;border-color:#a9c4ef!important;color:#28539b!important}
+ #modal-root .v134-studio-form .studio-nav-step.done{background:#f4f8ff!important;color:#42699a!important}
+ #modal-root .v134-studio-form .studio-step-number{width:25px!important;height:25px!important;border-radius:9px!important;border-color:#c8dbf4!important;color:#5275a5!important}
+ #modal-root .v134-studio-form .studio-nav-step.current .studio-step-number{background:#3b70ce!important;border-color:#3b70ce!important;color:#fff!important}
+ #modal-root .v134-studio-form .studio-nav-step small{display:none!important}
+ #modal-root .v134-studio-form .studio-main{flex:1 1 0!important;min-height:0!important;padding:15px 22px!important;overflow:auto!important}
+ #modal-root .v134-studio-form .studio-active-title{font-size:21px!important;margin:8px 0 4px!important;line-height:1.2!important}
+ #modal-root .v134-studio-form .studio-active-subtitle{margin:0 0 12px!important}
+ #modal-root .v134-studio-form .studio-fields{gap:10px 12px!important}
+ #modal-root .v134-studio-form .studio-fields .field{min-height:43px!important;height:43px!important}
+ #modal-root .v134-studio-form .studio-fields #flowAmount{min-height:52px!important;height:52px!important;font-size:23px!important}
+ #modal-root .v134-studio-form .studio-navigation{margin-top:10px!important;padding:12px 0 5px!important}
+ #modal-root .v134-studio-form .form-foot{padding:11px 0 5px!important}
+}
+</style>
+<style id="vive-v134-final-touches">
+@media(min-width:791px){
+ #modal-root .fastx-form .fastx-amount-zone #flowAmount{height:55px!important;min-height:55px!important;font-size:40px!important;line-height:1.05!important;letter-spacing:-.04em!important}
+ #modal-root .fastx-form .fastx-amount-zone #flowAmount::placeholder{color:#bac8ca!important;opacity:1!important;font-size:39px!important}
+ #modal-root .fastx-form .fastx-category-section{margin-bottom:2px!important}
+ #modal-root .fastx-form .fastx-source-section{margin-top:1px!important}
+ #modal-root .fastx-form .fastx-right{padding:21px 18px!important}
+ #modal-root .fastx-form .fastx-body{gap:10px!important}
+}
+@media(max-width:790px){
+ #modal-root .v134-progressive-form .v134-more-body .flow-section-heading{display:none!important}
+ #modal-root .v134-progressive-form .v134-more-body .flow-context[hidden]{display:none!important}
+}
+</style></body>
 </html>
