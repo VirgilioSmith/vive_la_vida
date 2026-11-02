@@ -14890,16 +14890,33 @@ const RAIL_DESTINATIONS=[
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
  ['payments','Compromiso','calendar','Pagos, suscripciones y préstamos personales']
 ];
+/* V153: distinctive stroke icons, scoped to the desktop navigation rail. */
+const V153_RAIL_ICONS={
+ home:'<path d="m3.4 10.1 8.6-7.2 8.6 7.2v9a1.9 1.9 0 0 1-1.9 1.9H5.3a1.9 1.9 0 0 1-1.9-1.9z"/><path d="M9.2 21v-7.5h5.6V21"/>',
+ building:'<rect x="4.5" y="3" width="15" height="18" rx="3.1"/><path d="M9 7.6h1.2m3.6 0H15M9 12h1.2m3.6 0H15M9.3 16.4h5.4" stroke-linecap="round"/>',
+ cycle:'<path d="M20 8v4h-4M4 16v-4h4"/><path d="M5.8 9a7 7 0 0 1 12.1-2l2.1 2M18.2 15A7 7 0 0 1 6 17l-2-2"/>',
+ calendar:'<rect x="3.5" y="5.2" width="17" height="15.7" rx="2.8"/><path d="M7.7 3.1v4.5m8.6-4.5v4.5M3.6 10h16.8"/>',
+ settings:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2m0 15v2M2.5 12h2m15 0h2M5.4 5.4l1.4 1.4m10.4 10.4 1.4 1.4m0-13.2-1.4 1.4M6.8 17.2l-1.4 1.4"/>',
+ moon:'<path d="M20 16.7A8.5 8.5 0 0 1 7.3 4 8.5 8.5 0 1 0 20 16.7Z"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.5 1.5m11.2 11.2 1.5 1.5M2 12h2m16 0h2M4.9 19.1l1.5-1.5M17.6 6.4l1.5-1.5"/>'
+};
+const v153RailIcon=(name)=>V153_RAIL_ICONS[name]?`<svg class="v153-rail-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${V153_RAIL_ICONS[name]}</svg>`:icon(name);
+const V153_DOCK_ICONS={
+ folder:'<path d="M3.1 7.5a2.4 2.4 0 0 1 2.4-2.4h4.1l2.2 2.2h6.7a2.4 2.4 0 0 1 2.4 2.4v8a2.4 2.4 0 0 1-2.4 2.4h-13a2.4 2.4 0 0 1-2.4-2.4Z"/><path d="M3.3 10h17.4"/>',
+ layers:'<path d="m12 3.2 9 5.1-9 5.1-9-5.1Z"/><path d="m3.1 12.2 8.9 5 8.9-5M3.1 16.6l8.9 5 8.9-5"/>',
+ files:'<rect x="8.2" y="3" width="10.7" height="15.1" rx="2"/><path d="M5 7.2H5a2 2 0 0 0-2 2v10.5a2 2 0 0 0 2 2h9.9"/><path d="M11.4 8h4.3m-4.3 4h4.3"/>'
+};
+const v153DockIcon=(name)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${V153_DOCK_ICONS[name]||''}</svg>`;
 function nav(){
- const one=([id,label,ic,description])=>{let active=id==='overview'?navFamilyForPage(ui.page)==='overview':navFamilyForPage(ui.page)===id;return `<button type="button" class="rail-action ${active?'active':''}" data-act="navigate" data-id="${id}" title="${label}" aria-label="${label}: ${description}" ${active?'aria-current="page"':''}><span class="rail-symbol">${icon(ic)}</span><span class="rail-tooltip" role="presentation"><strong>${label}</strong><small>${description}</small></span></button>`};
+ const one=([id,label,ic,description])=>{let active=id==='overview'?navFamilyForPage(ui.page)==='overview':navFamilyForPage(ui.page)===id;return `<button type="button" class="rail-action ${active?'active':''}" data-act="navigate" data-id="${id}" title="${label}" aria-label="${label}: ${description}" ${active?'aria-current="page"':''}><span class="rail-symbol">${v153RailIcon(ic)}</span><span class="rail-tooltip" role="presentation"><strong>${label}</strong><small>${description}</small></span></button>`};
  return `<aside class="sidebar rail-sidebar ${ui.mobile?'open':''}" aria-label="Navegación principal">
    <div class="rail-top"><button type="button" class="vive-p-brand" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="El costo de mañana">P</button></div>
    <div class="rail-main" role="navigation" aria-label="Módulos financieros">${RAIL_DESTINATIONS.map(one).join('')}</div>
    <div class="rail-bottom">
      <div class="rail-hairline"></div>
-     <button type="button" class="rail-action utility" data-act="toggleTheme" title="Cambiar a modo ${db.settings.theme==='dark'?'claro':'oscuro'}" aria-label="Cambiar a modo ${db.settings.theme==='dark'?'claro':'oscuro'}"><span class="rail-symbol">${db.settings.theme==='dark'?'☀':'☾'}</span><span class="rail-tooltip"><strong>${db.settings.theme==='dark'?'Modo claro':'Modo oscuro'}</strong><small>Apariencia de la aplicación</small></span></button>
+     <button type="button" class="rail-action utility" data-act="toggleTheme" title="Cambiar a modo ${db.settings.theme==='dark'?'claro':'oscuro'}" aria-label="Cambiar a modo ${db.settings.theme==='dark'?'claro':'oscuro'}"><span class="rail-symbol">${v153RailIcon(db.settings.theme==='dark'?'sun':'moon')}</span><span class="rail-tooltip"><strong>${db.settings.theme==='dark'?'Modo claro':'Modo oscuro'}</strong><small>Apariencia de la aplicación</small></span></button>
 
-     <button type="button" class="rail-action utility ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" title="Configuración" aria-label="Configuración"><span class="rail-symbol">${icon('settings')}</span><span class="rail-tooltip"><strong>Configuración</strong><small>Tasa, cargos, tema y menú</small></span></button>
+     <button type="button" class="rail-action utility ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" title="Configuración" aria-label="Configuración"><span class="rail-symbol">${v153RailIcon('settings')}</span><span class="rail-tooltip"><strong>Configuración</strong><small>Tasa, cargos, tema y menú</small></span></button>
    </div>
  </aside>`;
 }
@@ -14931,12 +14948,12 @@ function v36Bell(){
  return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Vencimientos y cambios en tus gastos</small></div>${spendingItems}${items}${!spendingItems&&!items?'<div class="v36-notice-empty">Sin vencimientos próximos ni cambios importantes en gastos con historial suficiente.</div>':''}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los avisos de gastos son internos y se actualizan con los movimientos registrados. Los recordatorios push de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
- const pageName={overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
- return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions"><button type="button" class="v71-search-button" data-v71-search-open="1" title="Buscar en toda la aplicación" aria-label="Buscar en toda la aplicación">${icon('search')}</button>${v36Bell()}<button type="button" class="v146-mobile-register" data-act="newTransaction" aria-label="Registrar operación" title="Registrar operación">${icon('plus')}<span>Registrar</span></button></div></header>`;
+ const pageName={overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
+ return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions">${v36Bell()}<button type="button" class="v146-mobile-register" data-act="newTransaction" aria-label="Registrar operación" title="Registrar operación">${icon('plus')}<span>Registrar</span></button></div></header>`;
 }
 function mobileBottomNavigation(){
- const current=ui.page==='overview'?'overview':ui.page==='wallet'?'wallet':ui.page==='banks'?'banks':'mobilehub';
- const items=[['overview','Inicio','home'],['wallet','Wallet','card'],['banks','Bancos','building'],['mobilehub','Explorar','grid']];
+ const current=['overview','wallet','banks','mobilehub','mobilesearch'].includes(ui.page)?ui.page:'mobilehub';
+ const items=[['overview','Inicio','home'],['wallet','Wallet','card'],['banks','Bancos','building'],['mobilehub','Explorar','grid'],['mobilesearch','Buscar','search']];
  return `<nav class="vive-mobile-dock" aria-label="Navegación móvil">${items.map(([id,label,ic])=>`<button type="button" class="vive-mobile-dock-item ${current===id?'active':''}" data-act="navigate" data-id="${id}" ${current===id?'aria-current="page"':''} aria-label="${label}" title="${label}"><span class="vive-mobile-dock-icon">${icon(ic)}</span><span class="vive-mobile-dock-label">${label}</span></button>`).join('')}</nav>`;
 }
 function mobileTransactions(limit=5){
@@ -15052,6 +15069,27 @@ function mobileHub(){
  return `<div class="vive-mobile-hub"><div class="vive-mobile-greeting"><span class="vive-mobile-eyebrow">TODOS TUS ESPACIOS</span><h1>Explorar</h1><p>Todo tu ciclo financiero, sin menús complicados.</p></div><button class="vive-mobile-hub-create" type="button" data-act="newTransaction">${icon('plus')} Registrar un movimiento <span>${icon('up')}</span></button>${areas.map((area,i)=>`<section class="vive-mobile-hub-area"><div class="vive-mobile-hub-heading"><h2>${area.title}</h2><p>${area.hint}</p></div><div class="vive-mobile-hub-links">${area.entries.map(([id,label,ic])=>`<button type="button" data-act="navigate" data-id="${id}"><span class="vive-mobile-hub-link-icon">${icon(ic)}</span><span>${label}</span><span class="vive-mobile-hub-chevron">${icon('up')}</span></button>`).join('')}</div></section>`).join('')}</div>`;
 }
 
+
+function v154MobileSearchPage(){
+ const areas=[
+  {title:'Bancos y productos',hint:'Tu dinero en cada institución',entries:[['banks','Instituciones','building'],['accounts','Cuentas y efectivo','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics'],['benefits','Beneficios','chart']]},
+  {title:'Movimiento de dinero',hint:'Registra y comprende cada operación',entries:[['register','Ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','grid']]},
+  {title:'Compromisos',hint:'Pagos, suscripciones y personas',entries:[['payments','Compromiso','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]},
+  {title:'Inteligencia financiera',hint:'Análisis, comparaciones y patrimonio',entries:[['advanced','Analítica avanzada','analytics'],['analytics','Resumen detallado','chart'],['kpis','Indicadores avanzados','analytics'],['patrimony','Patrimonio','wallet']]}
+ ];
+ v154PrepareMobileIndex();
+ const directory=areas.map((area)=>`<section class="vive-mobile-hub-area"><div class="vive-mobile-hub-heading"><h2>${area.title}</h2><p>${area.hint}</p></div><div class="vive-mobile-hub-links">${area.entries.map(([id,label,ic])=>`<button type="button" data-act="navigate" data-id="${id}"><span class="vive-mobile-hub-link-icon">${icon(ic)}</span><span>${label}</span><span class="vive-mobile-hub-chevron">${icon('up')}</span></button>`).join('')}</div></section>`).join('');
+ return `<div class="vive-mobile-hub v154-search-hub">
+  <div class="v154-search-heading"><div><span class="v154-search-eyebrow">TU CENTRO FINANCIERO</span><h1>Buscar</h1></div><span class="v154-search-heading-icon">${icon('search')}</span></div>
+  <div class="v154-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios y más" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button></div>
+  <div class="v154-search-discover" id="v154-mobile-discover"><div class="v154-section-header"><h2>Explorar tus finanzas</h2><p>Encuentra todo en un mismo lugar</p></div><div class="v154-category-grid">${V154_MOBILE_CATEGORIES.map(c=>`<button type="button" class="v154-category-tile v154-tone-${c.tone}" data-v154-category="${c.id}" aria-label="Explorar ${c.title}"><span class="v154-category-mark">${icon(c.ico)}</span><span class="v154-category-title">${c.title}</span><span class="v154-category-sub">${c.sub}</span></button>`).join('')}</div>
+   <div class="v154-shortcuts"><div class="v154-section-header"><h2>Accesos rápidos</h2></div><div class="v154-shortcut-row"><button type="button" data-act="navigate" data-id="payments">${icon('calendar')} <span>Próximos pagos</span></button><button type="button" data-act="navigate" data-id="recurring">${icon('cycle')} <span>Suscripciones</span></button><button type="button" data-act="navigate" data-id="register">${icon('chart')} <span>Movimientos</span></button></div></div>
+   <details class="v154-directory" id="v154-mobile-directory"><summary>${icon('grid')} <span>Ver todos los módulos</span><span class="v154-dir-chevron">⌄</span></summary><div class="v154-directory-inner">${directory}<button class="vive-mobile-hub-create" type="button" data-act="newTransaction">${icon('plus')} Registrar un movimiento <span>${icon('up')}</span></button></div></details>
+  </div>
+  <section class="v154-search-results" id="v154-mobile-search-results" aria-label="Resultados de búsqueda" aria-live="polite" hidden></section>
+ </div>`;
+}
+
 /* V68 — Wallet independiente y estrictamente visual. No genera movimientos por sí sola. */
 function v68Wallet(){
  const list=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
@@ -15085,13 +15123,21 @@ function mobileCardsIntro(){
 }
 
 function main(){
- const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y operaciones por confirmar'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
+ const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y operaciones por confirmar'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
-  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div><div class="ff-header-middle"><button type="button" class="ff-master-card vive-top-home" data-v119-open="1" title="El costo de mañana · Abrir las cuatro herramientas" aria-label="vive el hoy · Abrir El costo de mañana"><span>${APP_BRAND}</span></button></div><div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button type="button" class="v71-search-button v71-search-desktop" data-v71-search-open="1" title="Buscar en toda la aplicación · Ctrl/⌘ K" aria-label="Buscar en toda la aplicación" aria-keyshortcuts="Control+K Meta+K">${icon('search')}</button>${v36Bell()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
+  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div><div class="ff-header-middle v153-header-search">
+  <div class="v153-spotlight-dock" role="group" aria-label="Búsqueda global y accesos rápidos">
+   <button type="button" class="v153-search-launch" data-v71-search-open="1" title="Buscar registros en toda la aplicación · Ctrl/⌘ K" aria-label="Abrir búsqueda global en Vive el Hoy" aria-keyshortcuts="Control+K Meta+K">${icon('search')}<span>Buscar en Vive el Hoy</span><kbd>${/Mac|iPhone|iPad/i.test(navigator.userAgentData?.platform||navigator.platform||'')?'⌘ K':'Ctrl K'}</kbd></button>
+   <button type="button" class="ff-master-card vive-top-home v153-dock-tool" data-v119-open="1" title="El costo de mañana" aria-label="El costo de mañana · Herramientas Vive el Hoy"><span class="v153-dock-mark">P</span></button>
+   <button type="button" class="v153-dock-tool" data-act="navigate" data-id="accounts" title="Cuentas y efectivo" aria-label="Abrir Cuentas y efectivo">${v153DockIcon('folder')}</button>
+   <button type="button" class="v153-dock-tool" data-act="navigate" data-id="cards" title="Tarjetas" aria-label="Abrir Tarjetas">${v153DockIcon('layers')}</button>
+   <button type="button" class="v153-dock-tool" data-act="navigate" data-id="register" title="Movimientos" aria-label="Abrir Movimientos">${v153DockIcon('files')}</button>
+  </div>
+ </div><div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
  
  ${ui.page==='wallet'?'':['overview','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
- ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='wallet'?v68Wallet():ui.page==='payments'?payments():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
+ ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():ui.page==='payments'?payments():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
 }
 function shellKpi(title,v,foot,ico,tone=''){return `<div class="kpi"><div class="kpi-head">${sanitize(title)}<span class="kpi-icon">${icon(ico)}</span></div><div class="kpi-value ${tone}">${v}</div><div class="kpi-foot">${foot}</div></div>`}
 function paymentList(limit=6){let list=v99PendingForPeriod(ui.month).filter(o=>o.kind!=='personal_recv').slice(0,limit);return list.length?list.map(o=>`<div class="mini-row"><div style="min-width:0"><div class="mini-title">${sanitize(o.name)}</div><div class="mini-sub">${prettyDate(o.date)} · ${o.kind==='card'?'Tarjeta':o.kind==='loan'?'Préstamo':'Recurrente'}${o.kind==='loan'&&loan(o.ref)?.postingMode==='auto'?' · Auto al sincronizar':o.kind==='recurring'&&db.recurring.find(r=>r.id===o.ref)?.postingMode==='auto'?' · Auto al sincronizar':''}</div></div><div style="text-align:right"><div class="money" style="font-size:12px">${money(o.amount,o.currency)}</div><div style="margin-top:6px">${dueChip(o.date)}</div></div></div>`).join(''):`<div class="empty"><span class="empty-icon">✓</span>No hay pagos pendientes registrados.</div>`}
@@ -18693,7 +18739,7 @@ if(v.recurringId||previous?.recurringId){
  base.scheduleKey=previous?.scheduleKey||(editId?'':`recurring:${linkedId}:${recurring.nextDue}`);
  if(!previous&&db.transactions.some(t=>t.scheduleKey&&t.scheduleKey===base.scheduleKey))throw Error('Este vencimiento ya está registrado como pagado. Actualiza Próximos pagos.');
 }
-db.transactions.push(base);if(v.recurringId&&!previous){let recurring=db.recurring.find(x=>x.id===v.recurringId);if(recurring)recurring.nextDue=nextRecurringDate(recurring);}if(previous){db.txRevisions??=[];db.txRevisions.unshift({id:uuid(),transactionId:previous.id,at:new Date().toISOString(),before:{...previous},after:{...base}});db.txRevisions=db.txRevisions.slice(0,400);}if(document.getElementById('transactionForm')?.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==document.getElementById('transactionForm').dataset.pendingId);persist();closeModal();render();toast(previous?'Movimiento corregido; balances recalculados.':'Movimiento registrado y balances actualizados.');return base}catch(error){if(previous)db.transactions.splice(oldIndex,0,previous);throw error}}
+db.transactions.push(base);if(v.recurringId&&!previous){let recurring=db.recurring.find(x=>x.id===v.recurringId);if(recurring)recurring.nextDue=nextRecurringDate(recurring);}if(previous){db.txRevisions??=[];db.txRevisions.unshift({id:uuid(),transactionId:previous.id,at:new Date().toISOString(),before:{...previous},after:{...base}});db.txRevisions=db.txRevisions.slice(0,400);}if(document.getElementById('transactionForm')?.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==document.getElementById('transactionForm').dataset.pendingId);const v156Saved=persist();closeModal();render();toast(previous?'Movimiento corregido; balances recalculados.':'Movimiento registrado y balances actualizados.');if(!previous&&v156Saved)window.v156TransactionFeedback?.(base);return base}catch(error){if(previous)db.transactions.splice(oldIndex,0,previous);throw error}}
 function nextRecurringDate(r){return v96NextRecurringDate(r.nextDue,r.frequency,r.billingDay||dateObj(r.nextDue).getDate())}
 function payRecurring(id){let r=db.recurring.find(x=>x.id===id);if(!r||r.active===false)return;const [src,ref]=String(r.source||'').split(':');guidedTransactionForm({flowMode:'service',type:src==='card'?'card_charge':'expense',paymentSource:src==='card'?'card':'account',cardId:src==='card'?ref:db.cards[0]?.id,accountId:src==='account'?ref:db.accounts[0]?.id,amount:r.amount,currency:r.currency,category:r.category,subcategory:r.subcategory||'',servicePreset:'other',note:r.name,recurringId:r.id,paymentChannel:'internet_banking'});}
 function executeRecurringPayment(v){let r=db.recurring.find(a=>a.id===v.recurringId);if(!r||r.active===false)throw Error('La suscripción no está disponible.');let [type,ref]=String(r.source||'').split(':');let a=type==='account'?account(ref):null,c=type==='card'?card(ref):null;if(!a&&!c)throw Error('Edita la suscripción y selecciona una cuenta o tarjeta activa.');if(a&&a.currency!==r.currency)throw Error('La moneda del cargo debe coincidir con la cuenta.');let amount=num(v.amount),date=v.date||today();if(!(amount>0))throw Error('El importe de pago debe ser positivo.');if(date>today())throw Error('No registres un cargo futuro como confirmado.');db.transactions.push({id:uuid(),created:new Date().toISOString(),date,type:a?'expense':'card_charge',note:r.name+' · Pago recurrente',category:r.category,subcategory:r.subcategory||'',accountId:a?a.id:'',cardId:c?c.id:'',currency:r.currency,amount:rnd(amount),recurringId:r.id,scheduleKey:`recurring:${r.id}:${r.nextDue}`,postingOrigin:'manual'});r.nextDue=nextRecurringDate(r);}
@@ -18898,7 +18944,7 @@ case 'expenseRange':ui.expenseRange=id==='year'?'year':'month';render();break; c
 case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break;if(!v30SavePoint('Antes de descartar operación pendiente'))break;db.pendingOperations=db.pendingOperations.filter(q=>q.id!==id);persist();render();toast('Operación pendiente descartada; puedes recuperarla desde Configuración.');break;
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navGroupToggle':ui.navExpanded=ui.navExpanded===id?null:id;render();break;
-case 'navigate':ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id;if(id==='projection')ui.projectionMenu=false;ui.quickCommitment=null;ui.mobile=false;render();window.scrollTo(0,0);break;
+case 'navigate':ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id;if(id==='projection')ui.projectionMenu=false;ui.quickCommitment=null;ui.mobile=false;render();window.scrollTo(0,0);if(id==='mobilehub'&&isMobileViewport())document.getElementById('v154-mobile-search-input')?.focus({preventScroll:true});break;
 case 'navigateBankTransactions':ui.bankScope=id;ui.page='register';render();document.getElementById('ledger-world')?.scrollIntoView({behavior:'smooth',block:'start'});break;
 case 'addBank':bankForm();break;
  case 'goCertificate':ui.page='certificates';render();window.scrollTo(0,0);break;
@@ -19050,7 +19096,7 @@ document.addEventListener('change',async e=>{
 
 document.addEventListener('submit',e=>{let form=e.target;if(!['personalTxEditForm','bankForm','categoryForm','accountForm','cardForm','loanForm','recurringForm','budgetForm','statementForm','transactionForm','settingsForm','certificateForm','benefitRuleForm','annualFeeForm','rewardReceivedForm','perkUsageForm','personalForm','personalPaymentForm','benefitLedgerForm','recurringPaymentConfirmForm'].includes(form.id))return;e.preventDefault();let v=fromForm(form),id=form.dataset.id;
 try{
- if(form.id==='recurringPaymentConfirmForm'){executeRecurringPayment(v);if(form.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==form.dataset.pendingId);persist();closeModal();render();toast('Suscripción pagada y contabilizada.');return}
+ if(form.id==='recurringPaymentConfirmForm'){executeRecurringPayment(v);if(form.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==form.dataset.pendingId);const v156RecurringSaved=persist();closeModal();render();toast('Suscripción pagada y contabilizada.');if(v156RecurringSaved)window.v156TransactionFeedback?.({type:'expense',flowMode:'service',amount:v.amount,currency:db.recurring.find(r=>r.id===v.recurringId)?.currency||'DOP'});return}
  if(form.id==='personalTxEditForm'){savePersonalTransactionEdit(v,id);return}
  if(form.id==='benefitRuleForm'){let c=card(v.cardId),kind=v.kind,value=num(v.value),cap=num(v.monthlyCap);if(!c)throw Error('Tarjeta no encontrada.');if(!rewardKindName[kind])throw Error('Tipo de beneficio inválido.');if(value<0||cap<0||(['cashback','discount'].includes(kind)&&v.calc!=='fixed'&&value>100))throw Error('Verifica porcentaje, importe y tope.');if(v.calc==='fixed'&&kind!=='cashback')throw Error('Importe fijo únicamente para cashback.');if(v.category&&!categoryMap('gasto')[v.category])throw Error('Categoría inválida.');let rule={id:uuid(),name:v.name.trim(),kind,currency:v.currency||'ALL',category:v.category||'',subcategory:v.subcategory.trim(),merchant:v.merchant.trim(),calc:v.calc||'percent',value:rnd(value),monthlyCap:rnd(cap),validFrom:v.validFrom||today(),validUntil:v.validUntil||''};if(!rule.name)throw Error('Indica el nombre de la regla.');if(rule.validUntil&&rule.validUntil<rule.validFrom)throw Error('La vigencia final debe ser posterior al inicio.');c.benefitRules??=[];c.benefitRules.push(rule);persist();closeModal();render();toast('Regla guardada · solo afectará las estimaciones.');return}
  if(form.id==='annualFeeForm'){let c=card(v.cardId),value=num(v.amount);if(!c||!Number.isFinite(value)||value<=0||v.date>today()||!/^\d{4}-\d{2}-\d{2}$/.test(v.date))throw Error('Revisa tarjeta, importe y fecha.');if(db.transactions.some(t=>t.cardId===c.id&&t.chargeKind==='annual_fee'&&String(t.date).slice(0,4)===String(v.date).slice(0,4)))throw Error('Ya se registró una anualidad para esta tarjeta en ese año. No se cobra dos veces por sus dos monedas.');db.transactions.push({id:uuid(),created:new Date().toISOString(),type:'card_charge',cardId:c.id,currency:v.currency,date:v.date,amount:rnd(value),category:'Deudas e intereses',subcategory:'Anualidad / membresía',chargeKind:'annual_fee',note:'Membresía anual · '+c.name});persist();closeModal();render();toast('Anualidad contabilizada como gasto y deuda en tarjeta.');return}
@@ -23327,7 +23373,14 @@ function v71SearchOpen(){
  v149SearchIndex=v71SearchEntries().map(x=>({...x,_v150Hay:v71SearchNormalize([x.title,x.sub,x.meta].join(' ')),_v150Title:v71SearchNormalize(x.title)}));
  v150SearchReturnFocus=document.activeElement;
  const overlay=document.createElement('div');overlay.id='v71-search-overlay';overlay.className='v71-search-overlay v149-spotlight';overlay.setAttribute('role','presentation');
- overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global Vive el Hoy"><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="v71-search-results" placeholder="Buscar en Vive el Hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v71-search-content" id="v71-search-results"></div><footer class="v149-spotlight-footer"><span>${v149SearchIndex.length} registros y accesos disponibles</span><span class="v149-desktop-hint"><kbd>↑</kbd> <kbd>↓</kbd> navegar · <kbd>Enter</kbd> abrir · <kbd>Esc</kbd> cerrar</span></footer></section>`;
+ overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global Vive el Hoy"><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="v71-search-results" placeholder="Buscar en Vive el Hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v153-spotlight-shortcuts" aria-label="Accesos de Spotlight">
+  <span class="v153-spotlight-shortcuts-label">ACCESOS RÁPIDOS</span>
+  <div class="v153-spotlight-shortcuts-items">
+   <button type="button" data-v153-search-nav="accounts" title="Cuentas y efectivo" aria-label="Ir a Cuentas y efectivo">${v153DockIcon('folder')}<span>Cuentas</span></button>
+   <button type="button" data-v153-search-nav="cards" title="Tarjetas" aria-label="Ir a Tarjetas">${v153DockIcon('layers')}<span>Tarjetas</span></button>
+   <button type="button" data-v153-search-nav="register" title="Movimientos" aria-label="Ir a Movimientos">${v153DockIcon('files')}<span>Movimientos</span></button>
+  </div>
+ </div><div class="v71-search-content" id="v71-search-results"></div><footer class="v149-spotlight-footer"><span>${v149SearchIndex.length} registros y accesos disponibles</span><span class="v149-desktop-hint"><kbd>↑</kbd> <kbd>↓</kbd> navegar · <kbd>Enter</kbd> abrir · <kbd>Esc</kbd> cerrar</span></footer></section>`;
  document.body.appendChild(overlay);v71SearchView('');overlay.querySelector('input')?.focus({preventScroll:true});
 }
 function v71SearchClose(restoreFocus=true){document.getElementById('v71-search-overlay')?.remove();window.v71VisibleSearchResults=null;v149SearchIndex=[];const focus=v150SearchReturnFocus;v150SearchReturnFocus=null;if(restoreFocus&&focus?.isConnected)focus.focus({preventScroll:true})}
@@ -23354,6 +23407,15 @@ function v71SearchPick(entry){
   target?.scrollIntoView({block:'start',behavior:'smooth'});
  },110);
 }
+/* V153: Spotlight quick links share the exact same navigation as search results. */
+document.addEventListener('click',event=>{
+ const action=event.target.closest?.('#v71-search-overlay [data-v153-search-nav]');
+ if(!action)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const page=action.dataset.v153SearchNav;
+ if(!['accounts','cards','register'].includes(page))return;
+ v71SearchPick({kind:'section',page,id:page,title:page});
+},true);
 function v149SearchMove(delta){
  const list=window.v71VisibleSearchResults||[];if(!list.length)return;
  v149SearchSelected=(v149SearchSelected+delta+list.length)%list.length;
@@ -23366,7 +23428,7 @@ document.addEventListener('keydown',e=>{
  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();e.stopImmediatePropagation();v149SearchMove(e.key==='ArrowDown'?1:-1)}
  else if(e.key==='Enter'&&['v71-search-input'].includes(e.target?.id)){e.preventDefault();e.stopImmediatePropagation();v71SearchPick(window.v71VisibleSearchResults?.[v149SearchSelected]);}
  else if(e.key==='Tab'){
-  const controls=[overlay.querySelector('input'),overlay.querySelector('[data-v71-search-close]')].filter(Boolean);
+  const controls=[...overlay.querySelectorAll('input,button')].filter(el=>el.getClientRects().length>0);
   if(controls.length&&(e.shiftKey&&document.activeElement===controls[0]||!e.shiftKey&&document.activeElement===controls[controls.length-1])){e.preventDefault();(e.shiftKey?controls[controls.length-1]:controls[0]).focus()}
  }
 },true);
@@ -23385,6 +23447,151 @@ v146ServiceChooser=function(){
  root.innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v146-service-modal" role="dialog" aria-modal="true" aria-label="Pagar servicio"><div class="modal-head"><div><h2>Pagar un servicio</h2><p>Selecciona un vencimiento real, sin duplicar compromisos.</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v146-service-picker"><p class="v146-service-picker-intro">Esta lista usa los mismos vencimientos de Próximos pagos. Al registrar un pago se aplica al servicio seleccionado y se recalcula la agenda.</p>${entries||'<p class="v146-service-picker-intro">No hay servicios pendientes por pagar en la agenda.</p>'}<button type="button" class="v146-service-choice v146-service-choice-occasional" data-v146-service-occasional="1"><span><strong>Servicio ocasional</strong><small>Una factura puntual, sin crear una suscripción</small></span>${icon('arrow')}</button></div></section></div>`;
 };
 
+
+
+
+/* V154 — Buscar + Explorar: one native mobile screen, real data, zero financial state changes. */
+const V154_MOBILE_CATEGORIES=[
+ {id:'dinero',title:'Mi dinero',sub:'Bancos y cuentas',ico:'wallet',tone:'ocean',pages:['banks','accounts','certificates']},
+ {id:'tarjetas',title:'Tarjetas',sub:'Crédito y beneficios',ico:'card',tone:'violet',pages:['cards','benefits']},
+ {id:'pagos',title:'Pagos',sub:'Cuotas y vencimientos',ico:'calendar',tone:'coral',pages:['payments','loans','personal']},
+ {id:'servicios',title:'Servicios',sub:'Suscripciones',ico:'cycle',tone:'amber',pages:['recurring']},
+ {id:'movimientos',title:'Movimientos',sub:'Ingresos y egresos',ico:'chart',tone:'teal',pages:['register','income','expenses','categories']},
+ {id:'analitica',title:'Analítica',sub:'Indicadores y evolución',ico:'analytics',tone:'blue',pages:['advanced','kpis','patrimony','budget','analytics']}
+];
+let v154MobileSearchIndex=[],v154MobileSearchMatches=[],v154MobileCategory=null;
+function v154PrepareMobileIndex(){
+ v154MobileCategory=null;
+ ui.v154MobileSearchQuery='';
+ v154MobileSearchIndex=v71SearchEntries().map(x=>({...x,_v154Text:v71SearchNormalize([x.title,x.sub,x.meta].filter(Boolean).join(' ')),_v154Title:v71SearchNormalize(x.title)}));
+}
+function v154SearchResultsUpdate(){
+ const input=document.getElementById('v154-mobile-search-input');
+ const output=document.getElementById('v154-mobile-search-results');
+ const discover=document.getElementById('v154-mobile-discover');
+ if(!input||!output||!discover)return;
+ const raw=input.value||'';ui.v154MobileSearchQuery=raw;
+ const query=v71SearchNormalize(raw);const terms=query.split(/\s+/).filter(Boolean);
+ const category=V154_MOBILE_CATEGORIES.find(c=>c.id===v154MobileCategory);
+ const active=!!(terms.length||category);
+ discover.hidden=active;output.hidden=!active;
+ const clear=input.closest('.v154-search-box')?.querySelector('[data-v154-clear]');if(clear)clear.hidden=!active;
+ if(!active){v154MobileSearchMatches=[];output.replaceChildren();return}
+ let found=v154MobileSearchIndex.filter(x=>{
+  if(category&&!category.pages.includes(x.page))return false;
+  return terms.every(t=>x._v154Text.includes(t));
+ });
+ if(query)found.sort((a,b)=>{
+  const score=x=>(x.kind==='section'?4:0)+(x._v154Title===query?20:0)+(x._v154Title.startsWith(query)?10:0);
+  return score(b)-score(a);
+ });
+ v154MobileSearchMatches=found.slice(0,60);
+ const resultCount=found.length;
+ const label=category?category.title:'Resultados';
+ let html=`<div class="v154-results-heading"><div><span class="v154-search-eyebrow">${category?'EXPLORAR CATEGORÍA':'BÚSQUEDA GLOBAL'}</span><h2>${sanitize(label)}</h2><small>${resultCount} coincidencia${resultCount===1?'':'s'}${query?' · '+sanitize(raw):''}</small></div><button type="button" data-v154-clear="1">Ver todo</button></div>`;
+ if(category)html+=`<div class="v154-active-filter"><span>${icon(category.ico)} ${sanitize(category.title)}</span><button type="button" data-v154-clear-category="1" aria-label="Quitar filtro de ${sanitize(category.title)}">×</button></div>`;
+ if(!resultCount){html+=`<div class="v154-empty">${icon('search')}<strong>Sin resultados</strong><p>Prueba otro nombre o explora otra categoría.</p></div>`}
+ else {
+  const groups=new Map();v154MobileSearchMatches.forEach((x,i)=>{const key=x.kind==='section'?'section':x.group||x.kind;if(!groups.has(key))groups.set(key,[]);groups.get(key).push({x,i})});
+  for(const [key,entries] of groups){html+=`<div class="v154-result-group"><h3>${key==='section'?'Módulos':sanitize(V149_SEARCH_LABELS[key]||'Registros')}</h3>${entries.map(({x,i})=>`<button type="button" class="v154-result-item" data-v154-pick="${i}" aria-label="Abrir ${sanitize(x.title||'registro')}"><span class="v154-result-icon">${icon(x.ico||'search')}</span><span class="v154-result-text"><strong>${sanitize(x.title||'Registro')}</strong><small>${sanitize(x.sub||'')}</small></span><span class="v154-result-chevron">›</span></button>`).join('')}</div>`}
+  if(found.length>v154MobileSearchMatches.length)html+=`<p class="v154-more-hint">Mostrando los primeros ${v154MobileSearchMatches.length} resultados. Escribe más para precisar.</p>`;
+ }
+ output.innerHTML=html;
+}
+// Dedicated delegated listeners: render() replaces the app tree; these handlers do not multiply.
+document.addEventListener('input',e=>{
+ if(e.target?.id!=='v154-mobile-search-input')return;
+ v154SearchResultsUpdate();
+});
+document.addEventListener('keydown',e=>{
+ if(e.target?.id!=='v154-mobile-search-input')return;
+ if(e.key==='Enter'){
+  if(v154MobileSearchMatches.length){e.preventDefault();v71SearchPick(v154MobileSearchMatches[0]);}
+ }else if(e.key==='Escape'){
+  if(e.target.value||v154MobileCategory){e.preventDefault();e.target.value='';v154MobileCategory=null;v154SearchResultsUpdate()}
+  else e.target.blur();
+ }
+});
+document.addEventListener('click',e=>{
+ const tile=e.target.closest?.('[data-v154-category]');
+ const clear=e.target.closest?.('[data-v154-clear]');
+ const clearCategory=e.target.closest?.('[data-v154-clear-category]');
+ const result=e.target.closest?.('[data-v154-pick]');
+ if(!tile&&!clear&&!clearCategory&&!result)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(result){v71SearchPick(v154MobileSearchMatches[Number(result.dataset.v154Pick)]);return}
+ const input=document.getElementById('v154-mobile-search-input');if(!input)return;
+ if(tile){v154MobileCategory=tile.dataset.v154Category;input.value='';input.blur()}
+ else if(clear){v154MobileCategory=null;input.value='';input.blur()}
+ else if(clearCategory){v154MobileCategory=null}
+ v154SearchResultsUpdate();
+},true);
+document.addEventListener('focusin',e=>{
+ if(e.target?.id==='v154-mobile-search-input')document.body.classList.add('v154-mobile-input-focused');
+});
+document.addEventListener('focusout',e=>{
+ if(e.target?.id==='v154-mobile-search-input')document.body.classList.remove('v154-mobile-input-focused');
+});
+
+
+
+
+/* V155 — bind Wallet's native horizontal scroll even before a card is tapped.
+   No financial data is mutated; only selection and derived read-only details change.
+   Listeners are attached to the current DOM rail and discarded with it on render. */
+(function(){
+ const reduced=()=>!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ function findNearest(rail){
+  const rect=rail.getBoundingClientRect(),mid=(rect.left+rect.right)/2;
+  let nearest=null,min=Infinity;
+  for(const face of rail.querySelectorAll('.v68-wallet-face[data-id]')){
+   const b=face.getBoundingClientRect(),d=Math.abs((b.left+b.right)/2-mid);
+   if(d<min){nearest=face;min=d;}
+  }
+  return nearest;
+ }
+ function install(){
+  if(ui.page!=='wallet'||window.innerWidth>790)return;
+  const rail=document.querySelector('.v144-wallet-shell .v68-wallet-gallery');
+  if(!rail||rail.dataset.v155SwipeBound)return;
+  rail.dataset.v155SwipeBound='true';
+  let timeout=0,frame=0,changed=false;
+  const preview=()=>{
+   if(!rail.isConnected)return;
+   const face=findNearest(rail);if(!face)return;
+   for(const item of rail.querySelectorAll('.v68-wallet-face[data-id]')){
+    const active=item===face;item.classList.toggle('selected',active);item.setAttribute('aria-pressed',String(active));
+   }
+   for(const dot of document.querySelectorAll('.v68-wallet-dots [data-id]')){
+    const active=dot.dataset.id===face.dataset.id;dot.classList.toggle('active',active);
+    dot.setAttribute('aria-current',active?'true':'false');
+   }
+  };
+  const settle=()=>{
+   clearTimeout(timeout);if(!rail.isConnected||ui.page!=='wallet')return;
+   const face=findNearest(rail);
+   if(face?.dataset.id && face.dataset.id!==ui.v68WalletId){
+    // Existing selector preserves the scroll position and updates debt, payments, movement list.
+    v139WalletChooseCard(face.dataset.id);
+   }else if(changed)preview();
+   changed=false;
+  };
+  const onScroll=()=>{
+   changed=true;
+   if(!frame)frame=requestAnimationFrame(()=>{frame=0;preview()});
+   clearTimeout(timeout);timeout=setTimeout(settle,160);
+  };
+  rail.addEventListener('scroll',onScroll,{passive:true});
+  rail.addEventListener('scrollend',()=>{clearTimeout(timeout);timeout=setTimeout(settle,60)},{passive:true});
+  // On browsers which do not fire scrollend, the trailing scroll timer is sufficient.
+  // Respect the existing click selection (v139) and reduced-motion preference.
+  if(!reduced())rail.style.scrollBehavior='smooth';
+ }
+ const previous=render;
+ render=function(...args){const result=previous.apply(this,args);if(ui.page==='wallet')requestAnimationFrame(install);return result;};
+ document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(install),{once:true});
+ requestAnimationFrame(install);
+})();
 
 f33Boot();
 
@@ -25365,5 +25572,269 @@ body.theme-dark .v149-icon-tabs button{background:#263b5c;border-color:#476182;c
 @media(prefers-reduced-motion:reduce){.v152-position-reference .ff-bubble{transition:none!important}}
 </style>
 
+
+
+
+
+<style id="vive-v155-five-tab-wallet-motion">
+@media(max-width:790px){
+ .vive-mobile-dock{gap:2px!important;padding-left:5px!important;padding-right:5px!important}
+ .vive-mobile-dock-item{flex:1 1 20%;min-width:0;padding:6px 1px;transition:background-color .21s ease,transform .21s ease,box-shadow .21s ease}
+ .vive-mobile-dock-item:active{transform:scale(.95)}
+ .vive-mobile-dock-label{font-size:clamp(8px,2.3vw,10px);white-space:nowrap}
+ .vive-mobile-dock-item.active[data-id="mobilesearch"]{color:#415ac7;background:rgba(255,255,255,.62)!important;box-shadow:inset 0 1px rgba(255,255,255,.85),0 4px 14px rgba(90,105,202,.16)!important}
+ .v144-wallet-shell .v68-wallet-face{transition:transform .42s cubic-bezier(.22,.72,.2,1),opacity .38s ease,box-shadow .4s ease,filter .38s ease!important}
+ .v144-wallet-shell .v68-wallet-face.selected{transform:translate3d(0,-3px,14px) scale(1.018)!important}
+ .v144-wallet-shell .v68-wallet-face:not(.selected){transform:translate3d(0,4px,-9px) scale(.973)!important;opacity:.83}
+ .v68-wallet .v68-wallet-gallery{scroll-snap-type:x mandatory;scroll-padding-inline:10px;overscroll-behavior-x:contain}
+ .v68-wallet-dots button{transition:width .28s cubic-bezier(.25,.85,.2,1),background-color .25s ease}
+}
+@media(prefers-reduced-motion:reduce){
+ .v144-wallet-shell .v68-wallet-face,.vive-mobile-dock-item,.v68-wallet-dots button{animation:none!important;transition:none!important}
+ .v68-wallet .v68-wallet-gallery{scroll-behavior:auto!important}
+}
+</style>
+
+<style id="vive-v153-premium-rail-spotlight">
+/* V153 · Apple-inspired Spotlight composition, same business logic and navigation. */
+@media(min-width:791px){
+ body[data-menu-layout="rail"] .rail-sidebar .rail-action{width:51px!important;height:51px!important;min-width:51px!important;flex-basis:51px!important;border-radius:16px!important;border:1px solid transparent!important;background:transparent!important;box-shadow:none!important;transform:none!important;color:#354d77!important;transition:color .2s ease,background .2s ease,box-shadow .2s ease,transform .2s ease!important}
+ body[data-menu-layout="rail"] .rail-sidebar .rail-action .rail-symbol{display:grid!important;place-items:center!important;width:30px;height:30px;color:inherit!important;filter:drop-shadow(0 1px 1px rgba(16,38,77,.12))}
+ body[data-menu-layout="rail"] .rail-sidebar .rail-action .v153-rail-glyph{display:block;width:23px!important;height:23px!important;stroke-width:1.85!important;overflow:visible}
+ body[data-menu-layout="rail"] .rail-sidebar .rail-action:hover,body[data-menu-layout="rail"] .rail-sidebar .rail-action:focus-visible{color:#253f88!important;background:rgba(255,255,255,.30)!important;transform:translateY(-1px)!important;box-shadow:0 4px 15px rgba(42,68,130,.1)!important}
+ body[data-menu-layout="rail"] .rail-sidebar .rail-action.active{color:#3e50b6!important;background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(226,231,255,.59))!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:inset 0 1px 1px #fff,0 0 0 1px rgba(159,178,254,.18),0 9px 25px rgba(83,95,206,.20),0 0 19px rgba(135,119,255,.13)!important;backdrop-filter:blur(19px) saturate(160%);-webkit-backdrop-filter:blur(19px) saturate(160%)}
+ body[data-menu-layout="rail"] .rail-sidebar .rail-action.active .rail-symbol{filter:drop-shadow(0 2px 3px rgba(76,81,179,.25))}
+ body[data-menu-layout="rail"] .rail-sidebar .rail-action:focus-visible{outline:2px solid #5676ec!important;outline-offset:3px!important}
+ .ff-header-middle.v153-header-search{width:min(525px,43vw)!important;max-width:525px!important;top:0!important;align-items:center!important;pointer-events:auto!important}
+ .v153-spotlight-dock{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-width:0;pointer-events:auto}
+ .v153-search-launch{height:43px;flex:1;min-width:0;display:flex;align-items:center;gap:11px;border:1px solid rgba(255,255,255,.93);border-radius:999px;padding:0 14px;background:linear-gradient(105deg,rgba(255,244,230,.82),rgba(244,248,255,.7) 85%);box-shadow:inset 0 1px 1px rgba(255,255,255,.88),0 3px 14px rgba(55,65,107,.09),0 0 0 1px rgba(106,133,186,.08);backdrop-filter:blur(24px) saturate(155%);-webkit-backdrop-filter:blur(24px) saturate(155%);color:#42516c;text-align:left;cursor:text;transition:background .22s,box-shadow .22s,transform .22s}
+ .v153-search-launch>svg{flex:0 0 21px;width:21px;height:21px;stroke-width:1.9;color:#675b57}
+ .v153-search-launch>span{display:block;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;font-weight:580;color:#635c5e;letter-spacing:-.015em}
+ .v153-search-launch>kbd{flex:none;border:1px solid rgba(145,148,168,.21);border-radius:9px;background:rgba(255,255,255,.48);padding:3px 7px;color:#758098;font-size:10px;font-family:inherit;line-height:1.1}
+ .v153-search-launch:hover,.v153-search-launch:focus-visible{background:linear-gradient(105deg,rgba(255,247,237,.97),rgba(249,251,255,.9));box-shadow:inset 0 1px 1px white,0 7px 25px rgba(51,70,132,.16),0 0 0 2px rgba(117,140,223,.19);outline:none}
+ .v153-dock-tool,.ff-header-middle .ff-master-card.v153-dock-tool{height:42px!important;width:42px!important;min-width:42px!important;max-width:42px!important;flex:0 0 42px!important;margin:0!important;padding:0!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.85)!important;border-radius:50%!important;background:linear-gradient(150deg,rgba(255,251,248,.86),rgba(229,235,255,.68))!important;color:#555c71!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.95),0 5px 13px rgba(48,61,109,.10)!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);cursor:pointer;transition:transform .2s,box-shadow .2s,color .2s!important}
+ .v153-dock-tool svg{width:21px;height:21px;flex:none;stroke-width:1.8}
+ .v153-dock-tool:hover,.v153-dock-tool:focus-visible{transform:translateY(-2px)!important;outline:none!important;color:#4b54ae!important;box-shadow:inset 0 1px 2px white,0 8px 20px rgba(67,71,145,.21)!important}
+ .v153-dock-tool:focus-visible{outline:2px solid #6c79dc!important;outline-offset:2px!important}
+ .v153-dock-mark{display:block!important;font-family:Georgia,serif!important;font-size:21px!important;line-height:1!important;font-weight:700!important;color:#3b4c83!important}
+}
+/* Spotlight dialog: prominent floating search surface, softened background and clear navigation. */
+.v71-search-overlay.v149-spotlight{background:rgba(29,41,71,.36)!important;backdrop-filter:blur(17px) saturate(115%)!important;-webkit-backdrop-filter:blur(17px) saturate(115%)!important}
+.v149-spotlight .v71-search-dialog{background:linear-gradient(155deg,rgba(255,251,246,.96) 0%,rgba(243,248,255,.97) 38%,rgba(239,245,255,.95) 100%)!important;border:1px solid rgba(255,255,255,.85)!important;border-radius:28px!important;box-shadow:0 28px 85px rgba(25,39,76,.23),inset 0 1px 1px rgba(255,255,255,.9)!important;backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px)}
+.v149-spotlight .v71-search-top{margin:13px 14px 8px!important;padding:6px 11px 6px 14px!important;border:1px solid rgba(249,251,255,.99)!important;border-radius:999px!important;background:linear-gradient(105deg,rgba(255,239,223,.77),rgba(247,250,255,.9))!important;box-shadow:0 2px 14px rgba(93,78,80,.09),inset 0 1px 1px rgba(255,255,255,.95)!important}
+.v149-spotlight .v71-search-top>svg{width:22px!important;height:22px!important;stroke-width:1.8;color:#7b6f6b!important}
+.v149-spotlight .v71-search-field{font-size:17px!important;font-weight:550;letter-spacing:-.025em;min-height:39px!important;color:#253455!important;background:transparent!important;box-shadow:none!important;padding:0!important}
+.v149-spotlight .v71-search-field::placeholder{color:#837f83!important;opacity:1}
+.v149-spotlight .v71-search-close{background:rgba(231,234,247,.66)!important;border-radius:50%!important;width:33px!important;height:33px!important;color:#647393!important;cursor:pointer}
+.v153-spotlight-shortcuts{padding:2px 24px 12px;display:flex;align-items:center;gap:13px;border-bottom:1px solid rgba(144,167,202,.12)}
+.v153-spotlight-shortcuts-label{font-weight:840;font-size:9px;letter-spacing:.14em;color:#8490a7;white-space:nowrap}
+.v153-spotlight-shortcuts-items{display:flex;gap:9px;align-items:center;min-width:0}
+.v153-spotlight-shortcuts-items button{display:flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.55);border-radius:999px;padding:6px 10px 6px 7px;color:#506180;font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(55,74,124,.055);transition:background .15s,transform .15s}
+.v153-spotlight-shortcuts-items button svg{width:22px;height:22px;padding:4px;border-radius:50%;background:rgba(218,227,249,.63);color:#5260a4;flex:none}
+.v153-spotlight-shortcuts-items button:hover,.v153-spotlight-shortcuts-items button:focus-visible{background:rgba(228,237,255,.9);transform:translateY(-1px);outline:2px solid rgba(119,145,215,.42);outline-offset:1px}
+.v149-spotlight .v71-search-result[aria-selected="true"]{background:linear-gradient(98deg,rgba(217,229,255,.95),rgba(235,241,255,.55))!important;box-shadow:inset 2px 0 0 #7f8cdf}
+body.theme-dark .v71-search-overlay.v149-spotlight{background:rgba(5,11,25,.68)!important}
+body.theme-dark .v149-spotlight .v71-search-dialog{background:linear-gradient(145deg,rgba(33,44,65,.97),rgba(24,33,51,.97))!important;color:#edf3ff!important;border-color:rgba(190,203,240,.20)!important}
+body.theme-dark .v149-spotlight .v71-search-top{background:linear-gradient(105deg,rgba(63,58,64,.88),rgba(49,59,83,.88))!important;border-color:rgba(235,241,255,.18)!important}
+body.theme-dark .v149-spotlight .v71-search-field{color:#f6f8ff!important}
+body.theme-dark .v149-spotlight .v71-search-field::placeholder{color:#bec9e1!important}
+body.theme-dark .v153-spotlight-shortcuts-items button{background:rgba(72,84,113,.52);border-color:rgba(209,221,255,.19);color:#e0eaff}
+body.theme-dark .v153-spotlight-shortcuts-items button svg{background:rgba(96,112,160,.43);color:#d6ddff}
+body.theme-dark .v149-spotlight .v71-search-result[aria-selected="true"]{background:rgba(85,105,156,.4)!important}
+body.theme-dark .ff-header-middle .v153-search-launch{background:linear-gradient(105deg,rgba(60,62,80,.85),rgba(40,53,83,.85))!important;color:#f3f6ff!important;border-color:rgba(209,221,255,.27)!important}
+body.theme-dark .ff-header-middle .v153-search-launch span{color:#e5eafb!important}
+body.theme-dark .ff-header-middle .v153-dock-tool{background:linear-gradient(155deg,rgba(55,70,104,.94),rgba(32,44,71,.94))!important;color:#d7e7ff!important;border-color:rgba(207,224,255,.19)!important}
+@media(min-width:791px) and (max-width:1350px){
+ .ff-header-middle.v153-header-search{left:51%!important;width:min(395px,33vw)!important}
+ .v153-search-launch{gap:7px!important;padding:0 10px!important}
+ .v153-search-launch>span{font-size:11.5px!important}
+ .v153-dock-tool,.ff-header-middle .ff-master-card.v153-dock-tool{height:37px!important;width:37px!important;min-width:37px!important;max-width:37px!important;flex-basis:37px!important}
+ .v153-spotlight-dock{gap:5px}
+ .v153-spotlight-dock .v153-dock-tool:last-child{display:none!important}
+}
+@media(min-width:791px) and (max-width:1080px){
+ .ff-header-middle.v153-header-search{left:50%!important;width:245px!important}
+ .v153-spotlight-dock .v153-dock-tool:not(.vive-top-home){display:none!important}
+ .v153-search-launch>kbd{display:none}
+}
+@media(max-width:790px){
+ /* The original mobile header and navigation remain unchanged; the opened modal is touch-optimized. */
+ .ff-header-middle.v153-header-search{display:none!important}
+ .v149-spotlight .v71-search-dialog{border-radius:24px!important}
+ .v149-spotlight .v71-search-top{margin:5px 6px 9px!important;padding:3px 9px 3px 12px!important}
+ .v149-spotlight .v71-search-field{font-size:16px!important}
+ .v153-spotlight-shortcuts{padding:0 11px 10px;gap:9px;overflow-x:auto;scrollbar-width:none}
+ .v153-spotlight-shortcuts::-webkit-scrollbar{display:none}
+ .v153-spotlight-shortcuts-label{font-size:8px}
+ .v153-spotlight-shortcuts-items{gap:6px}
+ .v153-spotlight-shortcuts-items button{padding:5px 9px 5px 5px;font-size:10px;flex:none}
+ .v153-spotlight-shortcuts-items button svg{width:20px;height:20px}
+}
+@media(prefers-reduced-motion:reduce){.v153-search-launch,.v153-dock-tool,body[data-menu-layout="rail"] .rail-sidebar .rail-action,.v153-spotlight-shortcuts-items button{transition:none!important}}
+</style>
+
+<style id="vive-v154-mobile-buscar-explorar">
+
+/* V154 — Apple Music-inspired search/discover as ONE mobile tab, preserving the current color system */
+@media(max-width:790px){
+ .v154-search-hub{padding:2px 2px calc(130px + env(safe-area-inset-bottom));min-width:0;color:var(--mob-ink,#263a5b)}
+ .v154-search-heading{display:flex;align-items:end;justify-content:space-between;margin:10px 4px 19px;gap:12px}
+ .v154-search-eyebrow{font-size:9px;font-weight:840;letter-spacing:.15em;color:var(--mob-muted,#7386a4)}
+ .v154-search-heading h1{font-size:clamp(34px,10vw,43px);letter-spacing:-1.8px;line-height:1.05;margin:7px 0 0;font-weight:850;color:var(--mob-ink,#263a5b)}
+ .v154-search-heading-icon{display:grid;place-items:center;min-width:46px;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 9px 25px rgba(71,93,154,.09);color:#637db3}
+ .v154-search-heading-icon svg{width:22px;height:22px}
+ .v154-search-box{display:flex;align-items:center;gap:11px;min-height:56px;padding:0 16px;border-radius:21px;border:1px solid rgba(255,255,255,.88);background:rgba(255,255,255,.66);box-shadow:0 10px 28px rgba(44,75,139,.09),inset 0 1px 0 rgba(255,255,255,.8);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transition:border-color .16s,box-shadow .16s}
+ .v154-search-box:focus-within{border-color:rgba(94,117,226,.58);box-shadow:0 10px 32px rgba(83,110,192,.13),0 0 0 3px rgba(108,124,227,.10),inset 0 1px 0 rgba(255,255,255,.95)}
+ .v154-search-box>svg{width:22px;height:22px;flex:none;color:#6d7f9b}
+ .v154-search-box input{width:100%;min-width:0;flex:1;height:50px;font-size:16px;letter-spacing:-.26px;font-weight:520;color:var(--mob-ink,#273957);background:transparent;border:none;outline:none;box-shadow:none;padding:0}
+ .v154-search-box input::placeholder{color:#8593ac;opacity:1}
+ .v154-search-box input::-webkit-search-cancel-button{display:none}
+ .v154-search-clear{display:grid;place-items:center;width:27px;height:27px;border:0;border-radius:50%;background:rgba(120,140,190,.16);color:var(--mob-muted,#657594);font-size:23px;line-height:1;flex:none}
+ .v154-search-clear[hidden],.v154-search-discover[hidden],.v154-search-results[hidden]{display:none!important}
+ .v154-section-header{margin:26px 4px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+ .v154-section-header h2{font-size:20px;font-weight:810;letter-spacing:-.75px;margin:0;color:var(--mob-ink,#263a5b)}
+ .v154-section-header p{font-size:11px;color:var(--mob-muted,#6b7e9d);margin:0}
+ .v154-category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+ .v154-category-tile{position:relative;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;align-items:start;justify-content:end;text-align:left;width:100%;height:138px;padding:14px;border:1px solid rgba(255,255,255,.22);border-radius:19px;color:#fff;box-shadow:0 10px 22px rgba(58,74,137,.10);transition:transform .16s,filter .16s;-webkit-tap-highlight-color:transparent}
+ .v154-category-tile:active{transform:scale(.972);filter:brightness(.96)}
+ .v154-category-tile:focus-visible{outline:3px solid rgba(74,110,227,.68);outline-offset:2px}
+ .v154-category-tile:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(12,27,58,.26),transparent 65%);z-index:-1}
+ .v154-category-mark{position:absolute;right:-11px;top:-10px;opacity:.23;transform:rotate(-15deg)}
+ .v154-category-mark svg{width:96px;height:96px;stroke-width:1.2}
+ .v154-category-title{font-size:21px;font-weight:800;letter-spacing:-.65px;line-height:1.15;position:relative;z-index:1}
+ .v154-category-sub{font-size:10px;font-weight:620;letter-spacing:.06px;color:rgba(255,255,255,.86);margin-top:6px;position:relative;z-index:1}
+ .v154-tone-ocean{background:linear-gradient(125deg,#6c93dc,#3860b2)}
+ .v154-tone-violet{background:linear-gradient(125deg,#8d8eef,#595fca)}
+ .v154-tone-coral{background:linear-gradient(125deg,#e495a5,#b25a89)}
+ .v154-tone-amber{background:linear-gradient(125deg,#e7bb72,#b78055)}
+ .v154-tone-teal{background:linear-gradient(125deg,#71c0bd,#3b878f)}
+ .v154-tone-blue{background:linear-gradient(125deg,#6eaff1,#447bd2)}
+ .v154-shortcuts{margin-top:10px}
+ .v154-shortcut-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .v154-shortcut-row button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:85px;padding:10px 5px;border-radius:17px;background:rgba(255,255,255,.51);border:1px solid rgba(255,255,255,.78);box-shadow:0 5px 17px rgba(50,75,134,.06);color:var(--mob-ink,#2b4063);font-size:10px;font-weight:700;line-height:1.25;text-align:center}
+ .v154-shortcut-row svg{width:23px;height:23px;color:#627fbb}
+ .v154-directory{margin:17px 0 0}
+ .v154-directory>summary{display:flex;align-items:center;gap:11px;cursor:pointer;padding:15px 16px;border-radius:17px;background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.65);font-size:12px;font-weight:720;color:var(--mob-ink,#273853);list-style:none}
+ .v154-directory>summary::-webkit-details-marker{display:none}
+ .v154-directory>summary svg{width:18px;height:18px;color:#6682c0}
+ .v154-directory>summary span:nth-child(2){flex:1}
+ .v154-dir-chevron{font-size:22px;color:#7186ab;transition:transform .18s}
+ .v154-directory[open] .v154-dir-chevron{transform:rotate(180deg)}
+ .v154-directory-inner{padding-top:4px}
+ .v154-directory-inner .vive-mobile-hub-area{box-shadow:none;background:rgba(255,255,255,.38)}
+ .v154-directory-inner .vive-mobile-hub-create{margin-top:17px}
+ .v154-results-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:27px 4px 15px}
+ .v154-results-heading h2{font-size:25px;letter-spacing:-1px;line-height:1.2;margin:4px 0 3px}
+ .v154-results-heading small{font-size:11px;color:var(--mob-muted,#7082a3)}
+ .v154-results-heading>button{border:1px solid rgba(255,255,255,.8);background:rgba(255,255,255,.6);color:#5772b9;border-radius:999px;padding:9px 12px;font-size:11px;font-weight:750}
+ .v154-active-filter{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;margin:0 2px 16px;border-radius:13px;background:rgba(112,139,207,.11);color:var(--mob-ink,#273955);font-weight:750;font-size:12px}
+ .v154-active-filter>span{display:flex;align-items:center;gap:8px}
+ .v154-active-filter svg{width:16px;height:16px}
+ .v154-active-filter button{border:0;background:transparent;font-size:22px;color:inherit}
+ .v154-result-group{background:rgba(255,255,255,.54);border:1px solid rgba(255,255,255,.76);border-radius:22px;overflow:hidden;margin-bottom:13px;box-shadow:0 8px 22px rgba(47,78,126,.052)}
+ .v154-result-group h3{font-size:10px;text-transform:uppercase;letter-spacing:.11em;color:#6c82a8;margin:0;padding:15px 15px 9px}
+ .v154-result-item{width:100%;min-height:67px;display:flex;align-items:center;gap:10px;padding:10px 13px;border:0;border-top:1px solid rgba(156,179,219,.15);background:transparent;text-align:left;color:var(--mob-ink,#243958)}
+ .v154-result-item:active{background:rgba(108,143,206,.12)}
+ .v154-result-item:focus-visible{outline:2px solid #7187d7;outline-offset:-2px}
+ .v154-result-icon{display:grid;place-items:center;width:41px;height:41px;flex:none;border-radius:13px;background:rgba(101,139,210,.12);color:#5777b5}
+ .v154-result-icon svg{width:21px;height:21px}
+ .v154-result-text{display:grid;gap:4px;min-width:0;flex:1}
+ .v154-result-text strong{font-size:13px;font-weight:760;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .v154-result-text small{font-size:10px;color:var(--mob-muted,#7586a1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .v154-result-chevron{font-size:22px;color:#8299bd}
+ .v154-empty{display:grid;place-items:center;gap:9px;padding:48px 16px;text-align:center;color:var(--mob-muted,#7283a0)}
+ .v154-empty svg{width:35px;height:35px;color:#809ac6}
+ .v154-empty strong{font-size:16px;color:var(--mob-ink,#283d5a)}
+ .v154-empty p{margin:0;font-size:12px}
+ .v154-more-hint{padding:10px;font-size:11px;color:var(--mob-muted,#7085a5)}
+ /* Keep search results readable when the iPhone keyboard covers the lower viewport. */
+ body.v154-mobile-input-focused .vive-mobile-dock{visibility:hidden;pointer-events:none;opacity:0}
+ .v154-search-results{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+ body.theme-dark .v154-search-box,body.theme-dark .v154-result-group,body.theme-dark .v154-shortcut-row button,body.theme-dark .v154-directory>summary{background:rgba(37,51,78,.78);border-color:rgba(161,190,234,.20)}
+ body.theme-dark .v154-search-box input{color:#f3f6ff}
+ body.theme-dark .v154-result-group h3{color:#b0c3e5}
+ body.theme-dark .v154-results-heading>button{background:rgba(53,76,117,.72);color:#c2d4ff;border-color:rgba(147,183,245,.24)}
+}
+@media(max-width:355px){.v154-category-tile{height:123px;padding:12px}.v154-category-title{font-size:18px}.v154-shortcut-row button{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.v154-category-tile,.v154-search-box,.v154-dir-chevron{transition:none!important}}
+
+</style>
+<style id="vive-v156-wallet-confirmation-style">
+.v156-feedback-layer{position:fixed;inset:0;z-index:100009;display:grid;place-items:center;pointer-events:none;isolation:isolate;font-family:inherit;--v156-accent:#0eaa7a;--v156-shadow:rgba(31,136,103,.18)}
+.v156-feedback-layer[data-kind="expense"]{--v156-accent:#e05566;--v156-shadow:rgba(190,65,81,.16)}
+.v156-feedback-layer[data-kind="transfer"]{--v156-accent:#4d76df;--v156-shadow:rgba(58,96,190,.16)}
+.v156-feedback-veil{position:absolute;inset:0;background:rgba(19,31,57,.13);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:v156-veil-in .24s ease-out both}
+.v156-feedback-card{position:relative;min-width:min(310px,calc(100vw - 44px));width:min(360px,calc(100vw - 44px));max-width:calc(100vw - 32px);padding:27px 23px 25px;border-radius:34px;text-align:center;color:#1b2b44;background:linear-gradient(152deg,rgba(255,255,255,.98),rgba(237,245,255,.94));border:1px solid rgba(255,255,255,.96);box-shadow:0 24px 90px rgba(19,36,69,.21),0 7px 30px var(--v156-shadow),inset 0 1px rgba(255,255,255,.94);animation:v156-card-in .48s cubic-bezier(.17,.88,.26,1.12) both;overflow:hidden}
+.v156-feedback-card::before{content:"";position:absolute;top:-90px;left:50%;width:250px;height:210px;transform:translateX(-50%);background:radial-gradient(circle,color-mix(in srgb,var(--v156-accent) 17%,transparent),transparent 69%);opacity:.9;pointer-events:none}
+.v156-feedback-symbol{position:relative;display:grid;place-items:center;width:104px;height:104px;margin:0 auto 17px;border-radius:50%;background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.96),color-mix(in srgb,var(--v156-accent) 12%,#ffffff));border:1px solid color-mix(in srgb,var(--v156-accent) 25%,#ffffff);box-shadow:0 8px 30px var(--v156-shadow),inset 0 1px rgba(255,255,255,.94)}
+.v156-feedback-symbol::before,.v156-feedback-symbol::after{content:"";position:absolute;border-radius:50%;inset:0;border:1.5px solid var(--v156-accent);opacity:0;animation:v156-ripple 1.12s ease-out .24s both}
+.v156-feedback-symbol::after{animation-delay:.46s}
+.v156-feedback-symbol svg{width:54px;height:54px;stroke:var(--v156-accent);stroke-width:3.15;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 4px var(--v156-shadow))}
+.v156-feedback-symbol svg polyline,.v156-feedback-symbol svg path{stroke-dasharray:85;stroke-dashoffset:85;animation:v156-draw .54s cubic-bezier(.33,0,.2,1) .27s forwards}
+.v156-feedback-label{position:relative;font-size:12px;font-weight:850;letter-spacing:.12em;text-transform:uppercase;color:var(--v156-accent);margin-bottom:8px}
+.v156-feedback-amount{position:relative;font-size:clamp(26px,7.8vw,35px);line-height:1.15;letter-spacing:-.055em;font-weight:850;font-variant-numeric:tabular-nums;color:#172b4a;overflow-wrap:anywhere;margin:0 0 10px}
+.v156-feedback-caption{position:relative;font-size:12px;line-height:1.45;font-weight:540;color:#75839c}
+.v156-feedback-layer.v156-is-leaving .v156-feedback-veil{animation:v156-veil-out .34s ease-in both}
+.v156-feedback-layer.v156-is-leaving .v156-feedback-card{animation:v156-card-out .34s ease-in both}
+body.theme-dark .v156-feedback-card{background:linear-gradient(140deg,rgba(40,57,84,.98),rgba(25,40,65,.98));border-color:rgba(155,184,230,.28);color:#f7faff}
+body.theme-dark .v156-feedback-symbol{background:radial-gradient(circle at 30% 20%,#3a5278,#203656)}
+body.theme-dark .v156-feedback-amount{color:#f3f7ff}
+body.theme-dark .v156-feedback-caption{color:#bdcce2}
+@keyframes v156-card-in{from{opacity:0;transform:translate3d(0,32px,0) scale(.83);filter:blur(4px)}60%{opacity:1;filter:blur(0)}to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:none}}
+@keyframes v156-card-out{to{opacity:0;transform:translate3d(0,-18px,0) scale(.96)}}
+@keyframes v156-veil-in{from{opacity:0}to{opacity:1}}
+@keyframes v156-veil-out{to{opacity:0}}
+@keyframes v156-ripple{0%{transform:scale(.78);opacity:.52}80%,100%{transform:scale(1.62);opacity:0}}
+@keyframes v156-draw{to{stroke-dashoffset:0}}
+@media(max-width:790px){.v156-feedback-card{width:min(338px,calc(100vw - 48px));padding:29px 22px 26px;border-radius:33px}.v156-feedback-symbol{width:110px;height:110px}}
+@media(prefers-reduced-motion:reduce){.v156-feedback-layer *, .v156-feedback-layer *::before,.v156-feedback-layer *::after{animation:none!important;transition:none!important}.v156-feedback-symbol svg polyline,.v156-feedback-symbol svg path{stroke-dashoffset:0}}
+</style>
+<script id="vive-v156-wallet-confirmation-engine">
+/* V156: Feedback after a validated, booked transaction. Never mutates financial data.
+   navigator.vibrate is optional and absent in Safari for iPhone; no fake haptic promise. */
+(function(){
+ let clear=null,leave=null;
+ const symbols={
+  income:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 32l11 11 22-23"/></svg>',
+  expense:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 31l12 12 24-24"/></svg>',
+  transfer:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 23h39m-11-10 11 10-11 10M52 42H13m11-10L13 42l11 10"/></svg>'
+ };
+ const classify=tx=>{
+  const type=String(tx?.type||'');const flow=String(tx?.flowMode||'');
+  if(['own','outgoing'].includes(flow)||['transfer','fx_transfer','bank_transfer'].includes(type))return 'transfer';
+  if(['income'].includes(flow)||['income','bank_reward','card_reward'].includes(type))return 'income';
+  if(['spend','service','cardpay'].includes(flow)||['expense','card_charge','card_payment','loan_payment'].includes(type))return 'expense';
+  return null;
+ };
+ const label={income:'Ingreso registrado',expense:'Gasto registrado',transfer:'Transferencia registrada'};
+ const prefix={income:'+',expense:'−',transfer:'↔'};
+ const subtitle={income:'Importe añadido a tus movimientos',expense:'Movimiento contabilizado',transfer:'Movimiento entre cuentas contabilizado'};
+ function feedback(tx){
+  const kind=classify(tx);const value=Number(tx?.amount);if(!kind||!Number.isFinite(value)||value<=0)return;
+  // Replace a prior feedback rather than stacking overlays or timers.
+  clearTimeout(clear);clearTimeout(leave);
+  document.getElementById('v156-feedback-layer')?.remove();
+  const iso=String(tx?.currency||'DOP').toUpperCase();
+  const code=iso==='USD'?'US$':'RD$';
+  const formatted=new Intl.NumberFormat('es-DO',{minimumFractionDigits:2,maximumFractionDigits:2}).format(value);
+  const layer=document.createElement('div');layer.id='v156-feedback-layer';layer.className='v156-feedback-layer';layer.dataset.kind=kind;layer.setAttribute('role','status');layer.setAttribute('aria-live','polite');layer.setAttribute('aria-atomic','true');
+  const veil=document.createElement('div');veil.className='v156-feedback-veil';veil.setAttribute('aria-hidden','true');
+  const panel=document.createElement('div');panel.className='v156-feedback-card';
+  const glyph=document.createElement('div');glyph.className='v156-feedback-symbol';glyph.setAttribute('aria-hidden','true');glyph.innerHTML=symbols[kind];
+  const title=document.createElement('div');title.className='v156-feedback-label';title.textContent=label[kind];
+  const amount=document.createElement('div');amount.className='v156-feedback-amount';amount.textContent=prefix[kind]+' '+code+formatted;
+  const text=document.createElement('div');text.className='v156-feedback-caption';text.textContent=subtitle[kind];
+  panel.append(glyph,title,amount,text);layer.append(veil,panel);document.body.append(layer);
+  // La confirmación animada sustituye al toast de éxito generado por el mismo guardado.
+  const priorToast=document.getElementById('toast-root');if(priorToast?.querySelector('.toast'))priorToast.textContent='';
+  // Haptics: never block saving when unavailable or disabled by system/browser.
+  if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+   try{if(typeof navigator.vibrate==='function')navigator.vibrate(kind==='transfer'?[12,48,18]:kind==='income'?[14,38,20]:[18]);}catch(_){/* optional hardware capability */}
+  }
+  clear=setTimeout(()=>{layer.classList.add('v156-is-leaving');leave=setTimeout(()=>layer.remove(),350)},1550);
+ }
+ window.v156TransactionFeedback=feedback;
+})();
+</script>
 </body>
 </html>
