@@ -13759,7 +13759,19 @@ const totalLoanDebt=()=>db.loans.reduce((v,l)=>v+fx(loanStatus(l).balance,l.curr
   return {capital,days,gross,tax,net:rnd(gross-tax),expiry:diffDays(c.maturityDate,today()),collected:db.transactions.filter(t=>t.type==='income'&&t.certificateId===c.id).reduce((x,t)=>x+num(t.amount),0)};
  };
 function upcoming(){let all=[];for(let c of db.cards){for(let ccy of ['DOP','USD']){let st=cardStatus(c,ccy);for(let [due,amount] of Object.entries(st.dueMap)){if(amount>0.005)all.push({id:c.id+'-'+ccy+'-'+due,kind:'card',name:c.name+' · '+ccy,amount:rnd(amount),currency:ccy,date:due,action:'payCard',ref:c.id,ccy})}}}
-for(let l of db.loans){try{let s=loanStatus(l);if(!s.settled&&s.balance>.005){const contracted=Math.max(0,num(s.installment)||num(fullOriginalLoan(l).installment));const interest=Math.max(0,num(s.estimatedInterest));const quota=rnd(Math.min(s.balance+interest,Math.max(contracted,interest))+v49LoanPeriodInsurance(l,s.periods)+v49LoanPeriodFee(l,s.periods));all.push({id:l.id,kind:'loan',name:l.name,amount:quota,currency:l.currency,date:s.next||today(),action:'payLoan',ref:l.id})}}catch(err){console.warn('No fue posible calcular compromiso de préstamo',l.id,err)}}
+for(let l of db.loans){try{
+ const st=loanStatus(l);if(st.settled||st.balance<=.005)continue;
+ const periods=v49LoanPeriodsPerMonth(l),start=Math.max(0,st.periods),end=Math.min(v49LoanPeriodCount(l),start+Math.max(4,periods*3));
+ let balance=st.balance;
+ for(let i=start;i<end&&balance>.005;i++){
+  const due=v49LoanPeriodDate(l,i),interest=v49LoanPeriodInterest(l,balance,due);
+  const installment=Math.max(0,num(v86InstallmentForDate(l,due))||num(st.installment)||num(fullOriginalLoan(l).installment));
+  const capital=Math.min(balance,Math.max(0,installment-interest));
+  const quota=rnd(capital+interest+v49LoanPeriodInsurance(l,i)+v49LoanPeriodFee(l,i));
+  if(quota>.005)all.push({id:l.id+'-'+due,kind:'loan',name:l.name,amount:quota,currency:l.currency,date:due,action:'payLoan',ref:l.id});
+  balance=rnd(Math.max(0,balance-capital));
+ }
+ }catch(err){console.warn('No fue posible calcular compromiso de préstamo',l.id,err)}}
 for(let l of db.personalLoans){let balance=personalBalance(l);if(balance>0&&l.dueDate)all.push({id:l.id,kind:l.direction==='borrowed'?'personal':'personal_recv',name:l.person,amount:balance,currency:l.currency,date:l.dueDate,action:'payPersonal',ref:l.id})}
  for(let r of db.recurring){if(r.active!==false)all.push({id:r.id,kind:'recurring',name:r.name,amount:r.amount,currency:r.currency,date:r.nextDue,action:'payRecurring',ref:r.id})}
 return all.sort((a,b)=>a.date.localeCompare(b.date))}
@@ -19711,11 +19723,27 @@ function v80IncomeReference(){
  return {net:null,gross:null,source:'Sin ingreso neto mensual verificable',quality:'missing'};
 }
 function v80RecurringMonthly(){return (db.recurring||[]).filter(r=>r.active!==false).reduce((sum,r)=>sum+fx(Math.max(0,num(r.amount))*v80MonthlyFactor(r.frequency),r.currency||'DOP'),0)}
-function v80LoanMonthly(){return (db.loans||[]).reduce((sum,l)=>{
- try{const st=loanStatus(l);if(st.settled||st.balance<=0)return sum;
-  return sum+fx(Math.max(0,num(st.installment))*v49LoanPeriodsPerMonth(l)+Math.max(0,num(l.insuranceMonthly))+Math.max(0,num(l.monthlyFee)),l.currency||'DOP');}
- catch(_){return sum;}
- },0)}
+/* V95: única fuente de cuotas mensuales para resumen, compromisos y capacidad.
+   El importe de la cuota es POR VENCIMIENTO; 15 y 30 son DOS cuotas.
+   El saldo de principal nunca se suma como pago mensual. */
+function v95LoanMonthlyDetail(){
+ const items=[];let total=0;
+ for(const l of db.loans||[]){
+  try{
+   const ac=loanAccounting(l);
+   if(ac.settled||num(ac.balance)<=0)continue;
+   const periods=v49LoanPeriodsPerMonth(l);
+   const st=loanStatus(l);
+   const installment=Math.max(0,num(st.installment)||num(v86InstallmentForDate(l,ac.next)));
+   const monthly=fx(installment*periods+Math.max(0,num(l.insuranceMonthly))+Math.max(0,num(l.monthlyFee)),l.currency||'DOP');
+   if(!Number.isFinite(monthly)||monthly<0)continue;
+   items.push({id:l.id,name:l.name||l.bankName||'Préstamo',periods,installment,monthly});
+   total+=monthly;
+  }catch(err){console.warn('V95: préstamo no calculable',l.id,err);}
+ }
+ return {total:rnd(total),items};
+}
+function v80LoanMonthly(){return v95LoanMonthlyDetail().total;}
 function v80CardMinimumMonthly(){return (db.cards||[]).reduce((sum,c)=>{
   if(c.archived)return sum;
   for(const ccy of ['DOP','USD']){try{const st=cardStatus(c,ccy);if(st.debt>0)sum+=fx(Math.min(st.debt,Math.max(0,num(st.minimum))),ccy)}catch(_){}}
@@ -20005,7 +20033,7 @@ function v89DebtCapacity(){
 function v85Pct(n){return n===null||!Number.isFinite(n)?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(n)+'%'}
 function v89CapacityExplanation(d){
  const line=(name,value)=>`<div class="v89-debt-row"><span>${sanitize(name)}</span><strong>${money(value)}</strong></div>`;
- return `<div class="v89-debt-breakdown"><div class="v89-debt-row v89-income-row"><span>Ingresos proyectados · ${sanitize(d.f.period)}</span><strong>${money(d.income)}</strong></div>${line('Suscripciones y recurrentes',d.a.recurring)}${line('Cuotas de préstamos activos',d.a.loans)}${line('Mínimos de tarjetas, sin solapamientos',d.a.cards)}${line('Pagos exigibles entre personas',d.a.personal)}<div class="v89-debt-row v89-debt-total"><span>Total a pagar al mes</span><strong>${money(d.monthly)}</strong></div><div class="v89-debt-row"><span>${d.balance!==null&&d.balance<0?'Déficit previsto':'Disponible después de compromisos'}</span><strong>${d.balance===null?'—':money(Math.abs(d.balance))}</strong></div><p>Endeudamiento = compromisos mensuales ÷ ingresos proyectados × 100. El 100% indica que todos los ingresos se destinarían a pagos; por encima del 100% hay déficit. Este indicador mide carga mensual, no el saldo completo de las deudas. Se emplean cuotas mensuales equivalentes y obligaciones registradas; la proyección puede variar cuando se registran nuevos ingresos o pagos. Los gastos no comprometidos se analizan aparte.</p></div>`;
+ return `<div class="v89-debt-breakdown"><div class="v89-debt-row v89-income-row"><span>Ingresos proyectados · ${sanitize(d.f.period)}</span><strong>${money(d.income)}</strong></div>${line('Suscripciones y recurrentes',d.a.recurring)}${line('Cuotas de todos los préstamos activos (2 si son quincenales)',d.a.loans)}${line('Mínimos exigibles de tarjetas',d.a.cards)}${line('Pagos exigibles entre personas',d.a.personal)}<div class="v89-debt-row v89-debt-total"><span>Total a pagar al mes</span><strong>${money(d.monthly)}</strong></div><div class="v89-debt-row"><span>${d.balance!==null&&d.balance<0?'Déficit previsto':'Disponible después de compromisos'}</span><strong>${d.balance===null?'—':money(Math.abs(d.balance))}</strong></div><p>Endeudamiento = compromisos mensuales ÷ ingresos proyectados × 100. El 100% indica que todos los ingresos se destinarían a pagos; por encima del 100% hay déficit. Este indicador mide carga mensual, no el saldo completo de las deudas. Se emplean cuotas mensuales equivalentes y obligaciones registradas; la proyección puede variar cuando se registran nuevos ingresos o pagos. Los gastos no comprometidos se analizan aparte.</p></div>`;
 }
 function v85LoadChip(label='Endeudamiento'){
  const d=v89DebtCapacity();
@@ -20183,8 +20211,6 @@ loanForm=function(id,preBank){
  for(const p of panels)p.replaceChildren();
  const rateType=node('label','v87-field v87-rate-type',`<span class="filter-label">Modalidad de la tasa</span><select name="rateType" class="field" aria-label="Tipo de tasa"><option value="fixed">Tasa fija</option><option value="variable">Tasa variable</option></select>`);
  rateType.querySelector('select').value=previous?.rateType==='variable'?'variable':'fixed';
- const installmentStyle=node('label','v87-field',`<span class="filter-label">Tipo de cuota</span><select name="installmentStyle" class="field"><option value="fixed">Cuota de referencia fija</option><option value="variable">Cuota variable · confirmar cada pago</option></select>`);
- installmentStyle.querySelector('select').value=previous?.installmentStyle==='variable'?'variable':'fixed';
  const planned=node('label','v87-field v87-future-date',`<span class="filter-label">Nueva cuota válida desde</span><input name="installmentEffectiveFrom" type="date" class="field" value="${sanitize(hasPayments?firstEffective:(previous?.installmentEffectiveFrom||previous?.firstDue||today()))}" required/><small>Los pagos anteriores mantienen la cuota registrada.</small>`);
  const header=oldNav.cloneNode(false);oldNav.replaceWith(header);
  header.classList.add('v87-steps');header.innerHTML=[['01','Contrato'],['02','Capital y cuotas'],['03','Confirmar']].map(([n,l],i)=>`<button type="button" class="v83-form-step ${i===0?'selected':''}" data-v87-step="${i}" aria-current="${i===0?'step':'false'}"><small>${n}</small><span>${l}</span></button>`).join('');
@@ -20201,7 +20227,10 @@ loanForm=function(id,preBank){
  const interest=section('02','Tasa de interés','La tasa anual es parte fundamental del contrato.');
  if(rate?.querySelector('.filter-label'))rate.querySelector('.filter-label').textContent='Tasa anual pactada (%)';
  if(currentRate?.querySelector('.filter-label'))currentRate.querySelector('.filter-label').textContent='Tasa anual vigente (%)';
- append(interest,row(rateType,rate),row(currentRate,rateEffective));append(panels[0],interest);
+ // Una única tasa contractual visible; los campos heredados se mantienen ocultos para compatibilidad.
+ const rateLegacy=node('div','v94-hidden-legacy');rateLegacy.hidden=true;
+ append(rateLegacy,currentRate,rateEffective);
+ append(interest,row(rateType,rate),rateLegacy);append(panels[0],interest);
  const coverage=section('03','Seguro del préstamo','Primero confirma si el contrato incluye una cobertura.');
  if(!previous&&form.elements.insuranceKind){form.elements.insuranceKind.value='none';form.elements.insuranceMonthly.value='0'}
  const coverageCallout=node('div','v87-inline-note','El seguro y los cargos se añaden a cada pago según su periodicidad; no aumentan el capital original.');
@@ -20213,15 +20242,18 @@ loanForm=function(id,preBank){
  const balanceSection=section('04','Capital y estado del préstamo','Para préstamos ya iniciados: capital original y saldo actual, sin pagos ficticios.');
  if(principal?.querySelector('.filter-label'))principal.querySelector('.filter-label').textContent='Capital original del contrato';
  append(balanceSection,principal,opening);append(panels[1],balanceSection);
- const datesSection=section('05','Plazo y vencimientos','Quincenas, meses y fecha del primer pago pactado.');
- if(firstDue?.querySelector('.filter-label'))firstDue.querySelector('.filter-label').textContent='Primer vencimiento del contrato';
- append(datesSection,term,row(freq,firstDue),estimate);append(panels[1],datesSection);
- const paymentSection=section('06','Cuota y registro de pagos','Define el importe pactado y cuándo se descontarán los pagos en la aplicación.');
+ const datesSection=section('05','Plazo y vencimientos','La fecha histórica inicia el calendario; para un préstamo ya iniciado, el saldo y su fecha de corte determinan el avance. Los días 15 y 30 se conservan, ajustando febrero al último día.');
+ if(firstDue?.querySelector('.filter-label'))firstDue.querySelector('.filter-label').textContent='Primera cuota pactada (fecha histórica del contrato)';
+ if(installment?.querySelector('.filter-label'))installment.querySelector('.filter-label').textContent='Importe de cada cuota · capital + interés (0 = calcular)';
+ append(datesSection,term,row(freq,firstDue),estimate,row(installment),planned);append(panels[1],datesSection);
+ const paymentSection=section('06','Registro de pagos','Define cómo se registran los pagos en la aplicación.');
  if(installment?.querySelector('.filter-label'))installment.querySelector('.filter-label').textContent='Cuota de capital + interés (0 = calcular)';
  if(posting?.querySelector('.filter-label'))posting.querySelector('.filter-label').textContent='Cómo registrar cada pago';
  if(autoAccount?.querySelector('.filter-label'))autoAccount.querySelector('.filter-label').textContent='Cuenta prevista para pagar';
- append(paymentSection,row(installmentStyle,installment),planned,row(posting,autoAccount));
- const paymentNote=node('div','v87-inline-note','Automático crea el registro interno al vencer una cuota; no envía dinero al banco. Si las cuotas son variables, se registran manualmente.');
+ // Sin selector redundante de tipo de cuota; se conserva su valor previo en un input oculto.
+ const legacyStyle=document.createElement('input');legacyStyle.type='hidden';legacyStyle.name='installmentStyle';legacyStyle.value=previous?.installmentStyle==='variable'?'variable':'fixed';
+ append(paymentSection,legacyStyle,row(posting,autoAccount));
+ const paymentNote=node('div','v87-inline-note','Automático crea el registro interno al vencer una cuota; no envía dinero al banco.');
  append(paymentSection,paymentNote);append(panels[1],paymentSection);
  // 03 — Revisión sin duplicar campos; conciliación optativa.
  append(panels[2],stepIntro('03 / 03','VERIFICACIÓN','Revisa y confirma.','Comprueba los datos clave. Guardar no ejecuta una transferencia ni inventa pagos anteriores.'));
@@ -20241,8 +20273,8 @@ loanForm=function(id,preBank){
   const hasHistoricDifferentRate=previous&&Math.abs(num(previous.currentRate??previous.rate)-num(previous.rate))>.001;
   // For fixed-rate new contracts, never ask twice for the same annual rate.
   if(!variable&&!hasHistoricDifferentRate&&!currentRateEdited&&e.currentRate&&e.rate)e.currentRate.value=e.rate.value;
-  if(currentRate)currentRate.hidden=!variable&&!hasHistoricDifferentRate;
-  if(rateEffective)rateEffective.hidden=!variable&&!hasHistoricDifferentRate;
+  if(e.currentRate&&e.rate)e.currentRate.value=e.rate.value;
+  if(e.rateEffectiveFrom)e.rateEffectiveFrom.value=previous?.rateEffectiveFrom||today();
   const insured=e.insuranceKind?.value!=='none';
   if(insuranceMonthly){insuranceMonthly.hidden=!insured;if(!insured&&e.insuranceMonthly)e.insuranceMonthly.value='0'}
   if(e.insuranceKind?.closest('label'))setLabel(e.insuranceKind.closest('label'),'¿El préstamo incluye seguro?');
