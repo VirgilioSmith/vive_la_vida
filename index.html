@@ -20775,27 +20775,7 @@ loanForm=function(id,preBank){
  setStep(0);
 };
 
-f33Boot();
-
-})();
-
-
-/* V64 · El panel de notificaciones solo permanece abierto durante interacción explícita. */
-document.addEventListener('pointerdown',function(ev){
- const bell=document.querySelector('.v36-notifications[open]');
- if(bell&&!bell.contains(ev.target))bell.open=false;
-},true);
-document.addEventListener('keydown',function(ev){
- if(ev.key==='Escape'){const bell=document.querySelector('.v36-notifications[open]');if(bell){bell.open=false;bell.querySelector('summary')?.focus();}}
-},true);
-
-
-/* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
-window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
-document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
-
-
-
+/* V106 — V105 operates in the same closure as db, ui, render and v89DebtCapacity. */
 /* V105 — RESUMEN PERSONALIZABLE, PAGO CONTEXTUAL Y CAPACIDAD DE ENDEUDAMIENTO.
    Los datos salen del documento db ya cargado. No se añade ninguna consulta remota.
    La personalización persiste solo claves de presentación. */
@@ -20909,6 +20889,29 @@ document.addEventListener('keydown',ev=>{
 /* Apply after render; do not interfere with existing observers, event delegation or Supabase. */
 const v105OldRender=render;
 render=function(...args){const value=v105OldRender.apply(this,args);v105ApplyWidgetPreferences();return value;};
+
+f33Boot();
+
+})();
+
+
+/* V64 · El panel de notificaciones solo permanece abierto durante interacción explícita. */
+document.addEventListener('pointerdown',function(ev){
+ const bell=document.querySelector('.v36-notifications[open]');
+ if(bell&&!bell.contains(ev.target))bell.open=false;
+},true);
+document.addEventListener('keydown',function(ev){
+ if(ev.key==='Escape'){const bell=document.querySelector('.v36-notifications[open]');if(bell){bell.open=false;bell.querySelector('summary')?.focus();}}
+},true);
+
+
+/* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
+window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
+document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
+
+
+
+
 </script>
 <!-- V40: compromisos por modalidad, nómina recurrente, instituciones no bancarias y reglas fiscales versionadas. -->
 <!-- V30: control de calidad, recuperación local, validación conservadora de importación. No modifica cálculos financieros. -->
