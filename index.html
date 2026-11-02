@@ -14022,6 +14022,30 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){.v147-freq-btn,.v147-preset,.v147-icon-drawer>summary svg,.v147-rec-more>summary svg{transition:none!important}}
 .theme-dark #modal-root .v147-rec-hero{background:linear-gradient(135deg,#273653,#22334e);border-color:#334661}.theme-dark #modal-root .v147-hero-copy strong,.theme-dark #modal-root .v147-rec-section strong,.theme-dark #modal-root .v147-card-top strong,.theme-dark #modal-root .v147-price{color:#edf4ff}.theme-dark #modal-root .v147-rec-aside{background:linear-gradient(135deg,#223351,#263b59);border-color:#4b6082}.theme-dark #modal-root .v147-rec-section{background:#1e2a41;border-color:#455776}.theme-dark #modal-root .v147-rec-more{background:#213249;border-color:#455776}.theme-dark #modal-root .v147-frequencies{background:#26344c}.theme-dark #modal-root .v147-freq-btn[aria-pressed=true]{background:#364e79;color:#fff;border-color:#6684b0}.theme-dark #modal-root .v147-rec-form>.form-foot{background:#1d283b}.theme-dark #modal-root .v147-preview-pair strong{color:#dceaff}
 </style>
+<style id="vive-v160-subscripcion-catalogo">
+/* V160 · Cambio visual limitado al formulario de suscripciones. Todos los nombres y los contratos de datos se preservan. */
+#modal-root .v147-rec-form .v160-rec-taxonomy{margin:2px 0 15px;padding:14px 14px 1px;border:1px solid rgba(155,180,223,.28);border-radius:15px;background:linear-gradient(135deg,rgba(238,245,255,.75),rgba(251,253,255,.55));min-width:0}
+#modal-root .v147-rec-form .v160-rec-taxonomy-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 10px;margin:0 0 12px;color:#354f78}
+#modal-root .v147-rec-form .v160-rec-taxonomy-heading strong{font-size:12px;font-weight:780}
+#modal-root .v147-rec-form .v160-rec-taxonomy-heading small{font-size:10px;color:#7287a5}
+#modal-root .v147-rec-form .v160-taxonomy-fields{margin-bottom:13px!important}
+#modal-root .v147-rec-form .v160-rec-status{display:flex;align-items:center;justify-content:space-between;gap:15px;min-width:0;padding:13px 15px;border-radius:17px;border:1px solid rgba(167,188,219,.42);background:rgba(246,250,255,.86)}
+#modal-root .v147-rec-form .v160-rec-status-copy{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
+#modal-root .v147-rec-form .v160-rec-status-copy>span:last-child{min-width:0}
+#modal-root .v147-rec-form .v160-rec-status-copy strong{display:block;font-size:12px;color:#294263;font-weight:770}
+#modal-root .v147-rec-form .v160-rec-status-copy small{display:block;font-size:10px;line-height:1.45;color:#7990ad;margin-top:3px}
+#modal-root .v147-rec-form .v160-rec-status-icon{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:11px;background:#e8f2ff;color:#4d74bb}
+#modal-root .v147-rec-form .v160-rec-status-icon svg{width:17px;height:17px}
+#modal-root .v147-rec-form .v160-rec-status-select{width:146px;flex:0 0 146px;min-width:0}
+#modal-root .v147-rec-form .v160-rec-status-select label{margin:0!important}
+#modal-root .v147-rec-form .v160-rec-status-select .filter-label{font-size:10px}
+#modal-root .v147-rec-form .v160-rec-status-select select{width:100%;min-height:42px;border-radius:12px!important}
+@media(max-width:520px){#modal-root .v147-rec-form .v160-rec-status{align-items:flex-start;flex-direction:column;gap:11px}#modal-root .v147-rec-form .v160-rec-status-select{width:100%;flex-basis:auto}#modal-root .v147-rec-form .v160-rec-taxonomy-heading{align-items:flex-start;flex-direction:column;gap:3px}}
+.theme-dark #modal-root .v147-rec-form .v160-rec-taxonomy{background:linear-gradient(135deg,#273750,#22334b);border-color:#435a7c}
+.theme-dark #modal-root .v147-rec-form .v160-rec-status{background:#22344f;border-color:#435a7c}
+.theme-dark #modal-root .v147-rec-form .v160-rec-taxonomy-heading strong,.theme-dark #modal-root .v147-rec-form .v160-rec-status-copy strong{color:#e5eeff}
+.theme-dark #modal-root .v147-rec-form .v160-rec-status-icon{background:#31486a;color:#bad5ff}
+</style>
 <style id="vive-v148-card-benefit-compact">
 /* V148: SOLO fichas de tarjetas del portafolio. No toca Wallet móvil ni Resumen. */
 .cards-grid .bank-card:has(.v148-card-essentials){display:flex;flex-direction:column;gap:0;min-width:0}
@@ -17861,13 +17885,26 @@ function v147WireRecurring(form){
  if(!form)return;
  const update=()=>v147CostPreview(form);
  form.addEventListener('input',update);
- form.addEventListener('change',update);
+ form.addEventListener('change',event=>{
+  if(event.isTrusted&&(event.target.id==='recCategory'||event.target.id==='subCategory'))form.dataset.v160CategoryManual='1';
+  update();
+ });
  form.addEventListener('click',event=>{
   const freq=event.target.closest('[data-v147-frequency]');
   if(freq){event.preventDefault();form.elements.frequency.value=freq.dataset.v147Frequency;form.elements.frequency.dispatchEvent(new Event('change',{bubbles:true}));update();return}
   const preset=event.target.closest('[data-v147-preset]');
   if(preset){event.preventDefault();const k=preset.dataset.v147Preset;const names={netflix:'Netflix',spotify:'Spotify',internet:'Internet hogar',utilities:'Servicios básicos',gym:'Gimnasio',insurance:'Seguro'};
    if(!form.elements.name?.value?.trim())form.elements.name.value=names[k]||'';
+   // Un acceso rápido nuevo propone una clasificación válida del catálogo de Gastos.
+   // No reemplaza la clasificación histórica ni las elecciones manuales del usuario.
+   if(!form.dataset.id&&form.dataset.v160CategoryManual!=='1'){
+    const taxonomy={netflix:['Entretenimiento','Streaming'],spotify:['Suscripciones','Música'],internet:['Servicios básicos','Internet hogar'],utilities:['Servicios básicos','Otros servicios'],gym:['Salud','Gimnasio'],insurance:['Seguros','Pago de seguro']};
+    const pair=taxonomy[k];
+    if(pair&&subcategoryOptions('gasto',pair[0]).includes(pair[1])){
+     const category=form.querySelector('#recCategory'),sub=form.querySelector('#subCategory');
+     if(category&&sub){category.value=pair[0];category.dispatchEvent(new Event('change',{bubbles:true}));sub.value=pair[1];}
+    }
+   }
    v41SetServiceIcon(form,k);form.dataset.v41IconManual='1';update();return}
   if(event.target.closest('[data-act="v41PickServiceIcon"]'))requestAnimationFrame(update);
  });
@@ -17877,13 +17914,21 @@ function recurringForm(id){
  const r=db.recurring.find(r=>r.id===id)||{},o={name:'',category:'Servicios básicos',frequency:'monthly',amount:0,currency:'DOP',source:'',nextDue:today(),active:true,...r};
  const sources=[['','Selecciona la cuenta o tarjeta'],...db.accounts.map(a=>[`account:${a.id}`,`${a.name} · ${a.currency}`]),...db.cards.map(c=>[`card:${c.id}`,`${c.name} · RD$ / US$`])];
  const cycle=[['monthly','Mensual'],['weekly','Semanal'],['quarterly','Trimestral'],['annual','Anual']];
+ // La suscripción reutiliza el MISMO catálogo de Gastos (incluidas categorías personalizadas).
+ // Si una categoría histórica ya no existe en el catálogo, preservarla al editar.
+ const expenseCategories=categoryOptions('gasto');
+ if(o.category&&!expenseCategories.some(([key])=>key===o.category))expenseCategories.push([o.category,o.category+' · histórica']);
  const mark=v41ServiceIcon(o.iconId||v41GuessIcon(o.name));
  const body=`<div class="v147-rec-shell form-full">
   <div class="v147-rec-hero"><div class="v147-hero-copy"><span class="v147-eyebrow">VIVE EL HOY · COMPROMISOS</span><strong>${id?'Perfecciona tu pago':'Un pago menos que recordar.'}</strong><p>Configura el compromiso una vez. Tu agenda sabrá cuándo vuelve a vencer.</p></div><div class="v147-hero-stamp" aria-hidden="true">${icon('cycle')}</div></div>
   <div class="v147-rec-layout"><div class="v147-rec-editor">
-   <section class="v147-rec-section" aria-label="Identidad del pago"><div class="v147-sec-head"><span class="v147-step">01</span><div><strong>¿Qué vas a pagar?</strong><small>El nombre y el importe son suficientes para empezar.</small></div></div>
+   <section class="v147-rec-section" aria-label="Identidad del pago"><div class="v147-sec-head"><span class="v147-step">01</span><div><strong>¿Qué vas a pagar?</strong><small>Identifica el servicio y clasifícalo como cualquier gasto.</small></div></div>
     <div class="v147-form-duo">${formItem('name','Nombre del servicio',o.name,'text','required maxlength="90" placeholder="Ej. Internet hogar"')}
     ${formItem('amount','Importe por cobro',o.amount,'number','min="0.01" step="0.01" required')}</div>
+    <div class="v160-rec-taxonomy" role="group" aria-label="Clasificación del pago">
+      <div class="v160-rec-taxonomy-heading"><strong>Categoría y subcategoría</strong><small>Catálogo compartido con Gastos</small></div>
+      <div class="v147-form-duo v160-taxonomy-fields">${formSelect('category','Categoría',expenseCategories,o.category,'id="recCategory"')}${subSelect('gasto',o.category,o.subcategory||'')}</div>
+    </div>
     <div class="v147-popular-head">Accesos visuales rápidos <span>Opcional</span></div>
     <div class="v147-quick-icons">${[['netflix','Netflix'],['spotify','Spotify'],['internet','Internet'],['utilities','Servicios'],['gym','Gimnasio'],['insurance','Seguro']].map(([key,label])=>`<button type="button" class="v147-preset" data-v147-preset="${key}">${v41ServiceIcon(key,'tiny')}<span>${label}</span></button>`).join('')}</div>
     <details class="v147-icon-drawer"><summary>${icon('palette')} <span>Personalizar icono</span><small>Catálogo ampliado · buscar</small>${icon('chevron-down')}</summary><div class="v147-icon-content">${v41ServicePicker(o.iconId||v41GuessIcon(o.name))}</div></details>
@@ -17895,13 +17940,24 @@ function recurringForm(id){
     <div class="v147-form-duo">${formItem('nextDue','Próximo vencimiento',o.nextDue,'date','required')}${v40ModeField(o,'recurring')}</div>
     <p class="v147-fineprint">${icon('info')} El registro automático crea movimientos dentro de la app al procesar el vencimiento; no ejecuta cargos en el banco. Si prefieres revisar cada pago, elige confirmación manual.</p>
    </section>
-   <details class="v147-rec-more"><summary><span>${icon('sliders-horizontal')} Más opciones</span>${icon('chevron-down')}</summary><div class="v147-more-grid">${formSelect('category','Categoría del catálogo de Gastos',categoryOptions('gasto'),o.category,'id="recCategory"')}${subSelect('gasto',o.category,o.subcategory||'')}${formSelect('active','Estado del compromiso',[['true','Activa'],['false','Pausada']],String(o.active))}</div></details>
+   <section class="v160-rec-status" aria-label="Estado del compromiso">
+     <div class="v160-rec-status-copy"><span class="v160-rec-status-icon">${icon('check')}</span><span><strong>Estado del compromiso</strong><small>Activa para incluirlo en Próximos pagos; pausa para suspender vencimientos futuros.</small></span></div>
+     <div class="v160-rec-status-select">${formSelect('active','Estado',[['true','Activa'],['false','Pausada']],String(o.active))}</div>
+   </section>
   </div>
   <aside class="v147-rec-aside" aria-label="Vista previa del nuevo compromiso"><span class="v147-aside-label">VISTA PREVIA · PRÓXIMO COMPROMISO</span><div class="v147-card-top"><span data-v147-mark>${mark}</span><div><strong data-v147-name>${sanitize(o.name||'Tu próximo pago')}</strong><small data-v147-cycle>Recurrente</small></div></div><strong class="v147-price" data-v147-amount>RD$0.00</strong><div class="v147-price-caption">Importe por vencimiento</div><div class="v147-preview-rule"></div><div class="v147-preview-pair"><span>Próximo pago</span><strong data-v147-due>${sanitize(o.nextDue)}</strong></div><div class="v147-preview-pair"><span>Equivalente mensual*</span><strong data-v147-monthly>RD$0.00</strong></div><div class="v147-preview-pair"><span>Desde</span><strong data-v147-account>Elige una cuenta</strong></div><div class="v147-preview-note">${icon('calendar')} Aparecerá en Próximos pagos. Guardarlo no descuenta tu saldo.</div><small class="v147-preview-footnote">*Estimación de periodicidad para planificación; no es un gasto registrado.</small></aside>
   </div>
  </div>`;
  modal(id?'Editar pago recurrente':'Nuevo pago recurrente',body,'recurringForm',true);
- const f=document.getElementById('recurringForm');if(f){f.dataset.id=id||'';f.classList.add('smart-sub-form','v147-rec-form');v41WireServicePicker(f);v147WireRecurring(f)}
+ const f=document.getElementById('recurringForm');if(f){
+   f.dataset.id=id||'';f.classList.add('smart-sub-form','v147-rec-form');
+   // Evitar la pérdida silenciosa de una subcategoría histórica personalizada al editar.
+   const sub=f.querySelector('#subCategory');
+   if(sub&&o.subcategory&&!Array.from(sub.options).some(opt=>opt.value===o.subcategory)){
+     sub.add(new Option(o.subcategory+' · histórica',o.subcategory,true,true));
+   }
+   v41WireServicePicker(f);v147WireRecurring(f);
+ }
 }
 
 function budgetForm(cat,sub){let category=cat||EXP[0],subcategory=sub||'',row=budgetRowsAt(ui.month).find(b=>b.category===category&&(b.subcategory||'')===subcategory)||{};modal('Presupuesto por categoría y subcategoría',`${formItem('effectiveMonth','Mes de vigencia',ui.month,'month','required')}${formSelect('category','Categoría de gasto',categoryOptions('gasto'),category,'id="budgetCategory"')}${subSelect('gasto',category,subcategory)}${formItem('amount','Presupuesto de este mes (RD$)',row.amount||0,'number','min="0" step="0.01" required')}${para('La edición rige desde el mes elegido y no reescribe períodos anteriores. Un límite global ya incluye sus subcategorías. Para retirar un límite, registra cero.')}`,'budgetForm')}
