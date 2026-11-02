@@ -13366,6 +13366,52 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
  transition:none!important;animation:none!important}
 }
 </style>
+<style id="vive-v119-cost-of-tomorrow">
+.v119-mini,.v119-section{border:1px solid rgba(117,144,187,.18);background:rgba(255,255,255,.75);border-radius:22px;padding:20px;box-shadow:0 10px 32px rgba(42,71,121,.04)}
+.v119-mini{margin:0 0 20px}.v119-mini-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.v119-mini-heading small{color:#627fa6;font-size:10px;font-weight:800;letter-spacing:.11em}.v119-mini-heading h2{font-size:23px;letter-spacing:-.035em;margin:5px 0}.v119-mini-heading p{font-size:12px;color:#687d9a;margin:0}.v119-mini-open,.v119-evaluate{border:0;border-radius:14px;padding:12px 16px;background:linear-gradient(135deg,#3d7bfa,#2855ca);color:#fff;font-size:12px;font-weight:800;cursor:pointer}.v119-mini-metrics,.v119-duo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}.v119-mini-metrics>div,.v119-duo>div{min-width:0;background:rgba(232,239,250,.42);border-radius:14px;padding:12px}.v119-mini-metrics span,.v119-duo small{display:block;color:#667c98;font-size:10px;font-weight:700;margin-bottom:7px}.v119-mini-metrics strong,.v119-duo strong{font-size:clamp(15px,1.8vw,21px);letter-spacing:-.035em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.v119-fine,.v119-note,.v119-disclaimer{font-size:11px;line-height:1.55;color:#687f9a}.v119-fine{display:block;margin-top:10px}.v119-danger{color:#bf343e!important}
+.v119-modal{max-width:720px;max-height:90dvh;overflow:auto}.v119-content{padding:12px 22px 24px;display:flex;flex-direction:column;gap:14px}.v119-lead{font-size:13px;color:#667c98;margin:0}.v119-section{box-shadow:none;background:rgba(247,249,253,.77);padding:17px}.v119-section h3{margin:0 0 12px;font-size:15px}.v119-duo{grid-template-columns:repeat(2,minmax(0,1fr));margin:0}.v119-section p{font-size:12px;line-height:1.55;margin:10px 0 0}.v119-switch{display:flex;gap:8px}.v119-switch button{flex:1;padding:10px;border:1px solid #dbe4f2;background:#fff;border-radius:12px;color:#516581;font-size:12px;font-weight:750;cursor:pointer}.v119-switch button.active{background:#e6efff;border-color:#87a9ed;color:#2056b6}.v119-field{display:flex;flex-direction:column;gap:6px;color:#526784;font-size:11px;font-weight:750}.v119-field input{height:43px;border:1px solid #dce5f3;border-radius:12px;padding:10px 12px;background:white;color:#16324f;font-size:16px;min-width:0}.v119-choices{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;padding:0;border:0}.v119-choices legend{font-size:11px;color:#526784;font-weight:750;margin-bottom:9px}.v119-choices label{display:flex;align-items:center;gap:6px;font-size:12px;background:#fff;border:1px solid #e1e8f2;border-radius:12px;padding:9px;cursor:pointer}.v119-evaluate{width:100%}.v119-warning{color:#b45309!important}.v119-event{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #e3eaf3;padding:10px 0}.v119-event span{min-width:0}.v119-event b{font-size:12px}.v119-event small{display:block;color:#788ca4;font-size:10px;margin-top:3px}.v119-event strong{font-size:12px;white-space:nowrap}.v119-section summary{cursor:pointer;color:#315eac;font-size:12px;font-weight:800;margin-top:12px}.v119-disclaimer{margin:0 3px}
+@media(max-width:790px){.v119-mini{margin:8px 0 16px;padding:15px;border-radius:17px}.v119-mini-heading h2{font-size:19px}.v119-mini-heading{align-items:flex-start}.v119-mini-open{white-space:nowrap;font-size:10px;padding:10px}.v119-mini-metrics{gap:6px;margin-top:12px}.v119-mini-metrics>div{padding:9px 7px}.v119-mini-metrics span{font-size:9px}.v119-mini-metrics strong{font-size:clamp(12px,3.4vw,16px)}.v119-modal{max-height:calc(100dvh - env(safe-area-inset-top,0px));height:auto}.v119-content{padding:12px 14px calc(18px + env(safe-area-inset-bottom,0px))}.v119-section{padding:13px;border-radius:16px}.v119-duo{gap:7px}.v119-duo>div{padding:10px}.v119-duo strong{font-size:clamp(13px,3.8vw,17px)}}
+@media(max-width:360px){.v119-mini-heading{flex-wrap:wrap}.v119-mini-open{width:100%}.v119-mini-metrics{grid-template-columns:1fr}.v119-mini-metrics>div{display:flex;align-items:center;justify-content:space-between;gap:6px}.v119-mini-metrics span{margin:0}.v119-choices label{flex:1}}
+@media(prefers-reduced-motion:reduce){.v119-mini-open,.v119-evaluate,.v119-switch button{transition:none!important}}
+</style>
+
+
+<style id="vive-v121-mobile-step-2-layout">
+/* Un solo sistema de dimensiones para el segundo paso de Ingreso, Gasto y Transferencia.
+   Solo presentación móvil: no cambia el orden, el valor o el envío de los campos. */
+@media (max-width:790px){
+ #modal-root .modal:has(.mqr-detail-form){display:flex!important;flex-direction:column!important;min-width:0!important;max-width:100%!important;overflow:hidden!important}
+ #modal-root .modal:has(.mqr-detail-form)>.modal-head{flex:0 0 auto!important;min-height:56px!important;padding:calc(env(safe-area-inset-top) + 7px) 15px 9px!important;border-bottom:0!important}
+ #modal-root .modal:has(.mqr-detail-form)>.modal-head h2{font-size:16px!important;line-height:1.18!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ #modal-root .mqr-detail-form{display:flex!important;flex-direction:column!important;min-width:0!important;min-height:0!important;flex:1 1 auto!important;overflow:hidden!important}
+ #modal-root .mqr-detail-form .form-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-flow:row!important;align-content:start!important;align-items:start!important;gap:9px!important;padding:10px 14px 19px!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch}
+ #modal-root .mqr-detail-form .form-grid>*{box-sizing:border-box!important;min-width:0!important;max-width:100%!important}
+ #modal-root .mqr-detail-form .form-grid>:not(label){grid-column:1/-1!important}
+ #modal-root .mqr-detail-form .form-grid>label{grid-column:1/-1!important;display:block!important;min-height:0!important;height:auto!important;padding:10px 11px!important;margin:0!important;border-radius:14px!important;overflow:visible!important}
+ /* Solo pares cortos de campos, juntos como una unidad. */
+ #modal-root .mqr-detail-form .form-grid>label:has([name="date"]),
+ #modal-root .mqr-detail-form .form-grid>label:has([name="amount"]),
+ #modal-root .mqr-detail-form .form-grid>label:has([name="category"]),
+ #modal-root .mqr-detail-form .form-grid>label:has([name="subcategory"]){grid-column:span 1!important}
+ #modal-root .mqr-detail-form .form-grid>label .filter-label{display:block!important;min-height:0!important;margin-bottom:6px!important;font-size:10px!important;line-height:1.25!important;letter-spacing:0!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ #modal-root .mqr-detail-form .form-grid :is(input,select,textarea){box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;font-size:16px!important}
+ #modal-root .mqr-detail-form .form-grid :is(input.field,select.field){height:42px!important;min-height:42px!important;padding:8px 9px!important;border-radius:10px!important}
+ #modal-root .mqr-detail-form .form-grid select{overflow:hidden!important;text-overflow:ellipsis!important}
+ #modal-root .mqr-detail-amount{grid-column:1/-1!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;min-width:0!important;min-height:54px!important;padding:10px 12px!important;margin:0 0 2px!important;border-radius:15px!important}
+ #modal-root .mqr-detail-amount span{font-size:9px!important;line-height:1.3!important;letter-spacing:.075em!important;flex:1 1 auto!important;min-width:0!important}
+ #modal-root .mqr-detail-amount strong{font-size:clamp(19px,5.9vw,27px)!important;line-height:1.1!important;letter-spacing:-.045em!important;max-width:65%!important;min-width:0!important;overflow-wrap:anywhere!important;white-space:normal!important;text-align:right!important;font-variant-numeric:tabular-nums!important}
+ #modal-root .mqr-detail-form .form-grid .v80-advisor-slot{grid-column:1/-1!important;min-width:0!important;margin:0!important}
+ #modal-root .mqr-detail-form .form-grid :is(.flow-context,.flow-receipt,details,.flow-minor-details){min-width:0!important;max-width:100%!important}
+ #modal-root .mqr-detail-form .form-foot{flex:0 0 auto!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)!important;gap:9px!important;padding:11px 14px calc(env(safe-area-inset-bottom) + 11px)!important;border-top:1px solid rgba(143,163,189,.13)!important;background:rgba(249,251,254,.96)!important}
+ #modal-root .mqr-detail-form .form-foot .btn{width:100%!important;min-width:0!important;min-height:48px!important;white-space:normal!important;font-size:13px!important;line-height:1.2!important;border-radius:13px!important}
+}
+@media(max-width:365px){
+ #modal-root .mqr-detail-form .form-grid{gap:7px!important;padding:8px 10px 14px!important}
+ #modal-root .mqr-detail-form .form-grid>label{padding:9px 8px!important;border-radius:12px!important}
+ #modal-root .mqr-detail-form .form-grid>label .filter-label{font-size:9px!important}
+ #modal-root .mqr-detail-form .form-foot{padding-left:10px!important;padding-right:10px!important}
+}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -14112,14 +14158,15 @@ const totalLoanDebt=()=>db.loans.reduce((v,l)=>v+fx(loanStatus(l).balance,l.curr
   const gross=rnd(capitalDays*Math.max(0,num(c.rate))/36500),tax=rnd(gross*Math.max(0,num(c.taxPct))/100);
   return {capital,days,gross,tax,net:rnd(gross-tax),expiry:diffDays(c.maturityDate,today()),collected:db.transactions.filter(t=>t.type==='income'&&t.certificateId===c.id).reduce((x,t)=>x+num(t.amount),0)};
  };
-function v96NextRecurringDate(day,frequency){
+function v96NextRecurringDate(day,frequency,anchorDay){
  if(frequency==='weekly')return addDays(day,7);
  if(frequency==='semi_monthly'){
   const d=dateObj(day),year=d.getFullYear(),month=d.getMonth()+1;
   return d.getDate()<=15?monthDay(year,month,30):monthDay(year,month+1,15);
  }
  const advance={quarterly:3,semiannual:6,annual:12,yearly:12}[frequency]||1;
- return plusMonths(day,advance);
+ const d=dateObj(day),contractDay=Math.max(1,Math.min(31,Number(anchorDay)||d.getDate()));
+ return monthDay(d.getFullYear(),d.getMonth()+1+advance,contractDay);
 }
 function v102UpcomingRaw(){let all=[];for(let c of db.cards){for(let ccy of ['DOP','USD']){let st=cardStatus(c,ccy);for(let [due,amount] of Object.entries(st.dueMap)){if(amount>0.005)all.push({id:c.id+'-'+ccy+'-'+due,kind:'card',name:c.name+' · '+ccy,amount:rnd(amount),currency:ccy,date:due,action:'payCard',ref:c.id,ccy})}}}
 for(let l of db.loans){try{
@@ -14149,7 +14196,7 @@ for(let l of db.personalLoans){let balance=personalBalance(l);if(balance>0&&l.du
   let due=r.nextDue;
   for(let j=0;j<120&&due<=horizon;j++){
    all.push({id:r.id+'-'+due,kind:'recurring',name:r.name,amount:r.amount,currency:r.currency,date:due,action:'payRecurring',ref:r.id});
-   const next=v96NextRecurringDate(due,r.frequency);
+   const next=v96NextRecurringDate(due,r.frequency,r.billingDay||dateObj(r.nextDue).getDate());
    if(next<=due)break;due=next;
   }
  }
@@ -16358,7 +16405,7 @@ function refreshCardPaymentPreview(auto=false){
  if(f.elements.amount)f.elements.amount.readOnly=mode!=='custom';
  if(mode==='custom')amt=num(f.elements.amount?.value);
  const ac=account(f.elements.accountId?.value),rate=num(f.elements.paymentFxRate?.value||db.settings.fx);
- const debit=f.elements.sourceAmount?.value!==''?num(f.elements.sourceAmount.value):(ac&&(ccy!==ac.currency)?(ccy==='USD'?amt*rate:amt/rate):amt);
+ const debit=f.elements.actualDebitMode?.value==='manual'&&f.elements.sourceAmount?.value!==''?num(f.elements.sourceAmount.value):(ac&&rate>0?v120CardDebit(amt,ccy,ac.currency,rate):amt);
  node.innerHTML=`<strong>Deuda de la tarjeta · ${ccy}</strong><div class="v12-fee-breakdown"><span>Al corte <b>${money(billed,ccy,2)}</b></span><span>Saldo total <b>${money(total,ccy,2)}</b></span><span>Modalidad elegida <b>${money(amt,ccy,2)}</b></span>${ac?.currency!==ccy?`<span>Equivalente en ${ac?.currency||ccy} <b>${money(debit,ac?.currency||ccy,2)}</b></span>`:''}</div><small>${mode==='custom'?'Puedes introducir el abono específico que deseas realizar.':'Importe determinado por la modalidad de pago elegida.'}</small>`;
 }
 function refreshCardOverdraft(){const f=document.getElementById('cardForm'),node=document.getElementById('cardOverdraftPreview');if(!f||!node)return;
@@ -16647,7 +16694,7 @@ body+=formSelect('paymentKind','Tipo de pago',[['regular','Cuota ordinaria'],['e
 +formItem('fee','Otras comisiones o cargos',fee,'number','min="0" step="0.01" required id="loanFee"');
 body+=`<div class="form-full v49-payment-breakdown" id="v49PaymentBreakdown" aria-live="polite"></div>`+para('El desglose debe coincidir con tu comprobante: capital + interés + seguro + otros cargos = total de la cuota. El capital pagado no se registra como otro gasto.');
 }else body+=formItem('amount',type==='adjustment'?'Importe firmado (+ o −)':'Importe',o.amount,'number',type==='adjustment'?'step="0.01" required':'min="0.01" step="0.01" required');
-if(type==='card_payment')body+=formItem('paymentFxRate','Tasa aplicada RD$ / US$ (si hay cambio de moneda)',o.paymentFxRate||db.settings.fx,'number','min="0.0001" step="0.0001" id="paymentFxRate"');
+if(type==='card_payment')body+=formItem('paymentFxRate','¿A cuánto compraste US$1? · RD$ por US$1',o.paymentFxRate||db.settings.fx,'number','min="0.0001" step="0.0001" id="paymentFxRate"');
 if(type==='card_payment'||type==='loan_payment')body+=`<div class="form-full" id="legacyPaymentConversion">${formItem('sourceAmount','Importe debitado en la cuenta (solo si hay cambio de moneda)',o.sourceAmount,'number','min="0.01" step="0.01" placeholder="Vacío = conversión automática"')}${para('Este campo solo se necesita si la cuenta y la deuda utilizan distintas monedas.')}</div>`;
 if(type==='transfer')body+=`<div class="form-full fee-preview-live" id="transferLiveFee" aria-live="polite"><strong>Cargo estimado de esta transferencia</strong><span>Introduce el monto para calcularlo.</span></div>`;
 if(type==='transfer')body+=formItem('fxRate','Tasa real de esta operación · RD$ por US$ (editable)',o.fxRate||db.settings.fx,'number','min="0.0001" step="0.0001" id="transferFxRate"')+formItem('targetAmount','Monto recibido en cuenta de destino (opcional)',o.targetAmount,'number','min="0.01" step="0.01" placeholder="Vacío = tasa manual"')+para(`La transferencia de capital NO es un gasto. Impuesto y cargos bancarios según el comprobante. Pago al instante solo se utiliza cuando elijas esa modalidad. El cargo se descuenta adicionalmente de la cuenta origen y sí se reconoce como gasto. Si las monedas difieren, registra cuánto se recibió.`);
@@ -16887,7 +16934,7 @@ function guidedTransactionForm(partial={},editId=null){
   body+=flowSegment('cardPaymentMode',[['cut','Pago al corte','Facturado'],['total','Pago completo','Toda la deuda'],['custom','Monto específico','Indica el importe']],editing?'custom':o.cardPaymentMode||'cut');
   body+=flowAmountField('Importe del pago a la tarjeta',o.amount);
   body+=`<div class="form-full flow-payment-preview" id="cardPaymentPreview" aria-live="polite"></div>`;
-  body+=flowWrap('conversion',`<div class="flow-section-heading"><span>↔</span> Conversión RD$ / US$</div>${formItem('paymentFxRate','Tasa de conversión · RD$ por US$1',o.paymentFxRate||flowRates(),'number','min="0.0001" step="0.0001" id="paymentFxRate"')}${formSelect('actualDebitMode','Importe debitado en cuenta',[['auto','Calcular automáticamente según tasa'],['manual','Usar importe exacto del comprobante']],o.sourceAmount!==''?'manual':'auto','id="flowActualDebitMode"')}${flowWrap('actualDebit',formItem('sourceAmount','Importe exacto descontado de la cuenta de origen',o.sourceAmount,'number','min="0.01" step="0.01" id="flowSourceAmount"'))}`,'flow-context-wide');
+  body+=flowWrap('conversion',`<div class="flow-section-heading"><span>↔</span> Pagar una moneda desde otra</div>${formItem('paymentFxRate','¿A cuánto compraste US$1? · RD$ por US$1',o.paymentFxRate||flowRates(),'number','required min="0.0001" step="0.0001" id="paymentFxRate"')}${para('La tasa de este pago es editable. Se descuentan pesos de la cuenta y se reduce la deuda en dólares; no son dos gastos.')}${formSelect('actualDebitMode','¿Cómo calcular el débito?',[['auto','Automático según la tasa'],['manual','Importe exacto según comprobante']],o.sourceAmount!==''?'manual':'auto','id="flowActualDebitMode"')}${flowWrap('actualDebit',formItem('sourceAmount','RD$ descontados según comprobante',o.sourceAmount,'number','min="0.01" step="0.01" id="flowSourceAmount"'))}`,'flow-context-wide');
   body+=formSelect('paymentChannel','Canal de pago',PAYMENT_CHANNEL_OPTIONS,o.paymentChannel,'id="flowChannel"');
  }else if(isExpense){
   body+=flowAmountField('Importe del gasto',o.amount);
@@ -17099,6 +17146,14 @@ function selectedFlowCurrency(f){const mode=f.dataset.mode,src=f.elements.paymen
 function flowSetVisible(f,key,visible){f.querySelectorAll(`[data-flow-context="${key}"]`).forEach(el=>{el.hidden=!visible;el.querySelectorAll('input,select,textarea').forEach(i=>{i.disabled=!visible})})}
 function flowEnsureValidAccounts(f){if(!f.elements.toAccountId||!f.elements.accountId)return;const to=f.elements.toAccountId;for(const opt of to.options)opt.disabled=opt.value===f.elements.accountId.value;if(to.value===f.elements.accountId.value)to.value=Array.from(to.options).find(opt=>!opt.disabled)?.value||''}
 function flowConvert(amount,from,to,rate){return from===to?amount:from==='USD'?amount*rate:amount/rate}
+/* A card payment is recorded in the debt currency; only the debit is in the source-account currency.
+   In particular, US$100 at RD$65/US$ means RD$6,500 leave the DOP account and US$100 reduce the card. */
+function v120CardDebit(amount,debtCurrency,accountCurrency,rate){
+ const n=Number(amount),fx=Number(rate);
+ if(!Number.isFinite(n)||n<0)throw Error('El importe de la tarjeta no es válido.');
+ if(debtCurrency!==accountCurrency&&(!Number.isFinite(fx)||fx<=0))throw Error('Indica a cuánto compraste el dólar para este pago.');
+ return rnd(flowConvert(n,debtCurrency,accountCurrency,fx));
+}
 function refreshGuidedForm(form,opts={}){
  const f=form||document.querySelector('#transactionForm[data-guided="yes"]');if(!f)return;
  const mode=f.dataset.mode,src=f.elements.paymentSource?.value||'account',ch=normalizePaymentChannel(f.elements.paymentChannel?.value)||'presencial',a=account(f.elements.accountId?.value),dest=account(f.elements.toAccountId?.value),cardSelected=card(f.elements.cardId?.value);
@@ -17120,6 +17175,7 @@ function refreshGuidedForm(form,opts={}){
  if((isPay||isTransfer)&&f.elements.paymentChannel){for(const opt of f.elements.paymentChannel.options)opt.disabled=(a?.kind==='cash'||isOwn&&dest?.kind==='cash')&&opt.value==='internet_banking';if(f.elements.paymentChannel.selectedOptions[0]?.disabled)f.elements.paymentChannel.value='presencial'}
  const curr=selectedFlowCurrency(f),sourceCurrency=a?.currency||curr,destCurrency=dest?.currency||curr;
  const requiresFx=(isOwn&&curr!==destCurrency)||(isPay&&curr!==sourceCurrency);
+ if(isPay&&f.elements.paymentFxRate){const fxLabel=f.elements.paymentFxRate.closest('label')?.querySelector('.filter-label');if(fxLabel)fxLabel.textContent=curr==='USD'&&sourceCurrency==='DOP'?'¿A cuánto compraste US$1? · RD$ por US$1':'Tasa utilizada · RD$ por US$1';}
  flowSetVisible(f,'conversion',requiresFx);
  if(requiresFx){flowSetVisible(f,'received',f.elements.receiveMode?.value==='manual');flowSetVisible(f,'actualDebit',f.elements.actualDebitMode?.value==='manual')}
   if(isPay){
@@ -17146,7 +17202,7 @@ function refreshGuidedForm(form,opts={}){
  const amount=num(f.elements.amount?.value),displayAmount=money(amount,curr,2),hasValidRate=rate>0;
  const estimatedReceive=isOwn?(requiresFx&&hasValidRate?flowConvert(amount,curr,destCurrency,rate):amount):0;
  const actualReceive=(isOwn&&requiresFx&&f.elements.receiveMode?.value==='manual'&&f.elements.targetAmount?.value!=='')?num(f.elements.targetAmount.value):estimatedReceive;
- const estimatedDebit=isPay?(requiresFx&&hasValidRate?flowConvert(amount,curr,sourceCurrency,rate):amount):amount;
+ const estimatedDebit=isPay?(requiresFx&&hasValidRate?v120CardDebit(amount,curr,sourceCurrency,rate):amount):amount;
  const actualDebit=(isPay&&requiresFx&&f.elements.actualDebitMode?.value==='manual'&&f.elements.sourceAmount?.value!=='')?num(f.elements.sourceAmount.value):estimatedDebit;
  if(f.elements.sourceAmount&&!requiresFx)f.elements.sourceAmount.value='';
  if(f.elements.targetAmount&&!requiresFx)f.elements.targetAmount.value='';
@@ -17169,7 +17225,7 @@ function refreshGuidedForm(form,opts={}){
  if(receipt){
   let lines=`<span>Importe principal <b>${displayAmount}</b></span>`;
   if(isOwn)lines+=`<span>Recibe tu cuenta en ${destCurrency==='USD'?'dólares':'pesos'} <b>${money(actualReceive,destCurrency,2)}</b></span>`;
-  if(isPay){lines+=`<span>Deuda que se reduce <b>${displayAmount}</b></span>`;if(requiresFx)lines+=`<span>Conversión a moneda de origen <b>${money(actualDebit,sourceCurrency,2)}</b></span>`}
+  if(isPay){lines+=`<span>Deuda que se reduce <b>${displayAmount}</b></span>`;if(requiresFx){lines+=`<span>Tasa aplicada <b>RD$${rate.toFixed(4)} por US$1</b></span>`;lines+=`<span>Se descontarán de tu cuenta <b>${money(actualDebit,sourceCurrency,2)}</b></span>`}}
   if(isInstant)lines+=`<span>Pago al instante · RD$100 <b>${money(speedFee,sourceCurrency,2)}</b></span>`;
   if(taxable)lines+=`<span>Impuesto bancario (${pct.toFixed(3)}%) <b>${money(tax,isPay?sourceCurrency:curr,2)}</b></span>`;
   if(otherFee)lines+=`<span>Otro cargo bancario <b>${money(otherFee,isPay?sourceCurrency:curr,2)}</b></span>`;
@@ -17223,7 +17279,17 @@ function saveTx(v,editId=''){let oldIndex=editId?db.transactions.findIndex(x=>x.
  }
  if(v.flowMode==='spend'||v.flowMode==='service'){v.type=v.paymentSource==='card'?'card_charge':'expense';if(v.type==='expense')v.cardId='';else v.accountId=''}if(v.flowMode==='outgoing'){v.type='expense';v.paymentSource='account';v.cardId='';}validReferences(v,v.type);let amount=num(v.amount);if(v.type==='adjustment'){if(!amount)throw Error('El ajuste debe ser distinto de cero.')}else if(!(amount>0))throw Error('El monto debe ser mayor que cero.');let base={id:previous?.id||uuid(),created:previous?.created||new Date().toISOString(),...(previous?{editedAt:new Date().toISOString()}:{}),type:v.type,date:v.date,note:String(v.note||'').trim().slice(0,180),tags:String(v.tags||'').trim().slice(0,100),reviewed:previous?.reviewed===true&&!previous?.editedAt&&num(previous.amount)===num(v.amount)&&previous.date===v.date,amount:rnd(amount),category:v.category||'',subcategory:v.subcategory||'',accountId:v.accountId||'',toAccountId:v.toAccountId||'',cardId:v.cardId||'',loanId:v.loanId||'',currency:v.currency||'DOP',flowMode:v.flowMode||previous?.flowMode||'',paymentFlowMode:v.flowMode||previous?.paymentFlowMode||'',paymentChannel:normalizePaymentChannel(v.paymentChannel||previous?.paymentChannel)||'',paymentService:SERVICE_PRESETS[v.servicePreset]?.label||previous?.paymentService||'',servicePreset:v.servicePreset||'',payee:String(v.payee||previous?.payee||'').trim().slice(0,100),cardOnly:v.cardOnly||'no',transferSpeed:v.transferSpeed||'normal',paymentSpeed:v.flowMode==='outgoing'?(v.transferSpeed||'normal'):'normal',extraChargeMode:v.extraChargeMode||'none',extraBankFee:rnd(v.extraBankFee||0),fxRateSnapshot:num(previous?.fxRateSnapshot||db.settings.fx)};
 if(['income','bank_reward','expense','adjustment','certificate_funding','certificate_redemption'].includes(v.type))base.currency=account(v.accountId).currency;
-if(['expense','card_payment'].includes(v.type)){let taxable=v.paymentTaxable==='yes'&&isTaxableBankPayment(account(v.accountId),v.paymentChannel,false,false),pct=taxable?num(v.paymentTaxPct):0,fee=num(v.paymentFee),applicableCurrency=v.type==='card_payment'?account(v.accountId).currency:base.currency;if(pct<0||pct>100||fee<0||!Number.isFinite(fee))throw Error('Revisa los impuestos y cargos bancarios.');if(v.flowMode==='outgoing'){const expect=rnd((v.transferSpeed==='instant'?(applicableCurrency==='USD'?100/flowRates():100):0)+(v.extraChargeMode==='custom'?num(v.extraBankFee):0));if(Math.abs(fee-expect)>.015)throw Error('El costo del Pago al instante cambió. Revisa la operación.');}base.paymentTaxPct=pct;base.paymentTaxable=taxable?'yes':'no';base.paymentTax=rnd(amount*pct/100);base.paymentFee=rnd(fee);base.paymentFeeCurrency=applicableCurrency;if(v.type==='card_payment'&&account(v.accountId).currency!==base.currency&&taxable)base.paymentTax=rnd((v.sourceAmount!==''?num(v.sourceAmount):xconvert(amount,base.currency,applicableCurrency))*pct/100)}
+if(v.type==='card_payment'){
+ const a=account(v.accountId),rate=num(v.paymentFxRate||previous?.paymentFxRate||db.settings.fx);
+ const cross=base.currency!==a.currency;
+ if(cross&&!(rate>0))throw Error('Escribe la tasa a la que compraste US$1.');
+ base.cardPaymentMode=['cut','total','custom'].includes(v.cardPaymentMode)?v.cardPaymentMode:'custom';
+ base.paymentFxRate=cross?rate:null;
+ const manualDebit=cross&&v.sourceAmount!==''&&(v.actualDebitMode==='manual'||v.actualDebitMode===undefined);
+ base.sourceAmount=manualDebit?rnd(num(v.sourceAmount)):v120CardDebit(amount,base.currency,a.currency,rate);
+ if(!(base.sourceAmount>0)||!Number.isFinite(base.sourceAmount))throw Error('El importe debitado debe ser positivo.');
+}
+if(['expense','card_payment'].includes(v.type)){let taxable=v.paymentTaxable==='yes'&&isTaxableBankPayment(account(v.accountId),v.paymentChannel,false,false),pct=taxable?num(v.paymentTaxPct):0,fee=num(v.paymentFee),applicableCurrency=v.type==='card_payment'?account(v.accountId).currency:base.currency;if(pct<0||pct>100||fee<0||!Number.isFinite(fee))throw Error('Revisa los impuestos y cargos bancarios.');if(v.flowMode==='outgoing'){const expect=rnd((v.transferSpeed==='instant'?(applicableCurrency==='USD'?100/flowRates():100):0)+(v.extraChargeMode==='custom'?num(v.extraBankFee):0));if(Math.abs(fee-expect)>.015)throw Error('El costo del Pago al instante cambió. Revisa la operación.');}base.paymentTaxPct=pct;base.paymentTaxable=taxable?'yes':'no';base.paymentTax=rnd(amount*pct/100);base.paymentFee=rnd(fee);base.paymentFeeCurrency=applicableCurrency;if(v.type==='card_payment'&&taxable)base.paymentTax=rnd(base.sourceAmount*pct/100)}
 if(v.type==='card_charge'){base.paymentTax=0;base.paymentFee=0;}
 
  if(v.type==='income'&&v.certificateId)base.certificateId=v.certificateId;
@@ -17231,7 +17297,7 @@ if(v.type==='card_charge'){base.paymentTax=0;base.paymentFee=0;}
  if(['card_reward','bank_reward'].includes(v.type)){base.category='Beneficios bancarios';base.subcategory='Cashback acreditado';base.currency=v.type==='bank_reward'?account(v.accountId).currency:v.currency;base.cardId=v.cardId}
  if(['certificate_funding','certificate_redemption'].includes(v.type)){let cert=certificate(v.certificateId),acc=account(v.accountId);if(!cert||!acc||cert.currency!==acc.currency)throw Error('La cuenta y el certificado deben existir y tener la misma moneda.');base.certificateId=cert.id;if(v.type==='certificate_redemption'&&amount>certificateCapital(cert)+.01)throw Error('El rescate supera el capital del certificado.');if(v.type==='certificate_funding'){if(cert.capitalMode!=='pending')throw Error('Este certificado ya consta como constituido al iniciar. No descuentes otra vez el capital; cambia la opción solo si aún no se ha financiado.');let previous=db.transactions.filter(t=>t.type==='certificate_funding'&&t.certificateId===cert.id).reduce((a,t)=>a+num(t.amount),0);if(previous+amount>num(cert.principal)+.01)throw Error('Ya se registró el fondeo por el capital del certificado.')}}
 if(v.type==='transfer'){let a=account(v.accountId),b=account(v.toAccountId);base.currency=a.currency;if(v.flowMode==='own'&&(a.kind==='cash'||b.kind==='cash')&&v.transferSpeed==='instant')throw Error('Pago al instante solo está disponible entre cuentas bancarias.');let taxSelected=v.flowMode==='own'?false:v.transferTaxable!==undefined?v.transferTaxable==='yes':num(previous?.transferTaxPct??db.settings.transferTaxPct)>0;let pct=taxSelected?num(v.transferTaxPct??previous?.transferTaxPct??db.settings.transferTaxPct):0,fixed=v.transferFixedFee!==undefined?num(v.transferFixedFee):num(previous?.transferFixedFee??(a.currency==='USD'?db.settings.transferFeeUSD:db.settings.transferFeeDOP));if(v.flowMode==='own'&&(a.kind==='cash'||b.kind==='cash')){pct=0;fixed=0;taxSelected=false;}if(pct<0||pct>100||fixed<0||!Number.isFinite(fixed))throw Error('Revisa el impuesto y el cargo por transferencia.');if(v.flowMode==='own'){const expect=rnd((v.transferSpeed==='instant'?(a.currency==='USD'?100/(a.currency!==b.currency?num(v.fxRate)||flowRates():flowRates()):100):0)+(v.extraChargeMode==='custom'?num(v.extraBankFee):0));if(Math.abs(fixed-expect)>.015)throw Error('El costo del Pago al instante cambió. Revisa la operación.');}base.transferTaxable=taxSelected?'yes':'no';base.transferTaxPct=pct;base.transferFixedFee=fixed;base.transferTax=rnd(amount*pct/100);base.fxRate=a.currency===b.currency?null:num(v.fxRate||previous?.fxRate||db.settings.fx);if(a.currency!==b.currency&&!(base.fxRate>0))throw Error('Introduce una tasa de cambio válida.');base.transferFee=rnd(amount*pct/100+fixed);if(base.transferFee<0||!Number.isFinite(base.transferFee))throw Error('El cargo por transferencia no es válido.');base.targetAmount=rnd(a.currency===b.currency?amount:(v.receiveMode==='manual'&&v.targetAmount!==''?num(v.targetAmount):(a.currency==='USD'?amount*base.fxRate:amount/base.fxRate)));if(base.targetAmount<=0)throw Error('El importe recibido debe ser positivo.')}
-if(v.type==='card_payment'){let ac=account(v.accountId);base.cardPaymentMode=['cut','total','custom'].includes(v.cardPaymentMode)?v.cardPaymentMode:'custom';base.paymentFxRate=base.currency===ac.currency?null:num(v.paymentFxRate||previous?.paymentFxRate||db.settings.fx);if(base.currency!==ac.currency&&!(base.paymentFxRate>0))throw Error('La tasa de pago no es válida.');base.sourceAmount=rnd(base.currency===ac.currency?amount:(v.actualDebitMode==='manual'&&v.sourceAmount!==''?num(v.sourceAmount):(base.currency==='USD'?amount*base.paymentFxRate:amount/base.paymentFxRate)));if(base.sourceAmount<=0)throw Error('El importe debitado debe ser positivo.')}
+/* v120: the card payment conversion and actual bank debit have already been calculated before taxes. */
 if(v.type==='loan_payment'){let l=loan(v.loanId),a=account(v.accountId);base.currency=l.currency;base.principal=rnd(v.principal);base.interest=rnd(v.interest);base.fee=rnd(v.fee);base.insurance=rnd(v.insurance);base.paymentKind=v.paymentKind==='extra'?'extra':'regular';base.installmentPeriod=base.paymentKind==='regular'?String(v.installmentPeriod||v49LoanPeriodKey(l,v.date)):'';if(base.paymentKind==='regular'){const validPeriod=v49LoanPeriodsPerMonth(l)===2?/^\d{4}-\d{2}-\d{2}$/.test(base.installmentPeriod):/^\d{4}-\d{2}$/.test(base.installmentPeriod);if(!validPeriod)throw Error('Selecciona un vencimiento válido para este préstamo.');}if([base.principal,base.interest,base.fee,base.insurance].some(n=>n<0))throw Error('Capital, interés, seguro y comisiones no pueden ser negativos.');if(Math.abs(base.principal+base.interest+base.fee+base.insurance-amount)>.025)throw Error('Capital + interés + seguro + comisiones debe coincidir con el pago total.');if(base.principal>loanStatus(l).balance+.01)throw Error('El capital abonado excede el saldo pendiente del préstamo.');base.sourceAmount=rnd(v.sourceAmount!==''?num(v.sourceAmount):xconvert(amount,l.currency,a.currency));if(base.sourceAmount<=0)throw Error('El importe debitado debe ser positivo.');
  const eligible=isTaxableBankPayment(a,v.paymentChannel);
  const taxable=eligible&&v.paymentTaxable==='yes';
@@ -17241,9 +17307,9 @@ if(v.type==='loan_payment'){let l=loan(v.loanId),a=account(v.accountId);base.cur
  base.paymentTax=rnd(base.sourceAmount*pct/100);base.paymentFee=0;base.paymentFeeCurrency=a.currency;
  }
 if(v.type==='transfer'&&v.accountId===v.toAccountId)throw Error('No puedes transferir a la misma cuenta.');db.transactions.push(base);if(v.recurringId&&!previous){let recurring=db.recurring.find(x=>x.id===v.recurringId);if(recurring)recurring.nextDue=nextRecurringDate(recurring);}if(previous){db.txRevisions??=[];db.txRevisions.unshift({id:uuid(),transactionId:previous.id,at:new Date().toISOString(),before:{...previous},after:{...base}});db.txRevisions=db.txRevisions.slice(0,400);}if(document.getElementById('transactionForm')?.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==document.getElementById('transactionForm').dataset.pendingId);persist();closeModal();render();toast(previous?'Movimiento corregido; balances recalculados.':'Movimiento registrado y balances actualizados.');return base}catch(error){if(previous)db.transactions.splice(oldIndex,0,previous);throw error}}
-function nextRecurringDate(r){if(r.frequency==='weekly')return addDays(r.nextDue,7);if(r.frequency==='quarterly')return plusMonths(r.nextDue,3);if(r.frequency==='annual')return plusMonths(r.nextDue,12);return plusMonths(r.nextDue,1)}
+function nextRecurringDate(r){return v96NextRecurringDate(r.nextDue,r.frequency,r.billingDay||dateObj(r.nextDue).getDate())}
 function payRecurring(id){let r=db.recurring.find(x=>x.id===id);if(!r||r.active===false)return;const [src,ref]=String(r.source||'').split(':');guidedTransactionForm({flowMode:'service',type:src==='card'?'card_charge':'expense',paymentSource:src==='card'?'card':'account',cardId:src==='card'?ref:db.cards[0]?.id,accountId:src==='account'?ref:db.accounts[0]?.id,amount:r.amount,currency:r.currency,category:r.category,subcategory:r.subcategory||'',servicePreset:'other',note:r.name,recurringId:r.id,paymentChannel:'internet_banking'});}
-function executeRecurringPayment(v){let r=db.recurring.find(a=>a.id===v.recurringId);if(!r||r.active===false)throw Error('La suscripción no está disponible.');let [type,ref]=String(r.source||'').split(':');let a=type==='account'?account(ref):null,c=type==='card'?card(ref):null;if(!a&&!c)throw Error('Edita la suscripción y selecciona una cuenta o tarjeta activa.');if(a&&a.currency!==r.currency)throw Error('La moneda del cargo debe coincidir con la cuenta.');let amount=num(v.amount),date=v.date||today();if(!(amount>0))throw Error('El importe de pago debe ser positivo.');if(date>today())throw Error('No registres un cargo futuro como confirmado.');db.transactions.push({id:uuid(),created:new Date().toISOString(),date,type:a?'expense':'card_charge',note:r.name+' · Pago recurrente',category:r.category,subcategory:r.subcategory||'',accountId:a?a.id:'',cardId:c?c.id:'',currency:r.currency,amount:rnd(amount)});r.nextDue=nextRecurringDate(r);}
+function executeRecurringPayment(v){let r=db.recurring.find(a=>a.id===v.recurringId);if(!r||r.active===false)throw Error('La suscripción no está disponible.');let [type,ref]=String(r.source||'').split(':');let a=type==='account'?account(ref):null,c=type==='card'?card(ref):null;if(!a&&!c)throw Error('Edita la suscripción y selecciona una cuenta o tarjeta activa.');if(a&&a.currency!==r.currency)throw Error('La moneda del cargo debe coincidir con la cuenta.');let amount=num(v.amount),date=v.date||today();if(!(amount>0))throw Error('El importe de pago debe ser positivo.');if(date>today())throw Error('No registres un cargo futuro como confirmado.');db.transactions.push({id:uuid(),created:new Date().toISOString(),date,type:a?'expense':'card_charge',note:r.name+' · Pago recurrente',category:r.category,subcategory:r.subcategory||'',accountId:a?a.id:'',cardId:c?c.id:'',currency:r.currency,amount:rnd(amount),recurringId:r.id,scheduleKey:`recurring:${r.id}:${r.nextDue}`,postingOrigin:'manual'});r.nextDue=nextRecurringDate(r);}
 function download(text,file,type){let blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)}
 function exportJson(){download(JSON.stringify({...db,exportedAt:new Date().toISOString()},null,2),`vive-el-hoy-respaldo-${today()}.json`,'application/json')}
 function csv(){
@@ -17602,7 +17668,7 @@ if(amountChanged){
  }else entry.installmentEffectiveFrom=prev.installmentEffectiveFrom||entry.installmentEffectiveFrom;
  entry.installmentHistory=revisions;
  let changes=Array.isArray(prev.conditionHistory)?prev.conditionHistory:[];if(changed)changes.push({at:new Date().toISOString(),effectiveFrom:entry.rateEffectiveFrom,fromRate:num(prev.currentRate??prev.rate),toRate:entry.currentRate,fromInsurance:num(prev.insuranceMonthly),toInsurance:entry.insuranceMonthly,fromFee:num(prev.monthlyFee),toFee:entry.monthlyFee,fromInstallment:num(prev.currentInstallment),toInstallment:entry.currentInstallment,fromPostingMode:prev.postingMode||'confirm',toPostingMode:entry.postingMode,fromAccountId:prev.autoAccountId||'',toAccountId:entry.autoAccountId||''});Object.assign(prev,entry,{conditionHistory:changes})}else db.loans.push({...entry,installmentHistory:entry.currentInstallment>0?[{effectiveFrom:entry.installmentEffectiveFrom,amount:entry.currentInstallment,style:entry.installmentStyle,recordedAt:new Date().toISOString()}]:[],conditionHistory:[]});break}
-case 'recurringForm':{let [kind,src]=String(v.source).split(':'),a=kind==='account'?account(src):null,c=kind==='card'?card(src):null;if(!a&&!c)throw Error('Selecciona una cuenta o tarjeta de pago.');if(a&&a.currency!==v.currency)throw Error(`La cuenta ${a.name} trabaja en ${a.currency}. Selecciona esa moneda o cambia de fuente.`);let entry={id:id||uuid(),name:v.name.trim(),iconId:v41ValidIcon(v.serviceIcon),iconDataUrl:v45SafeIconData(v.serviceIconData||''),category:v.category,subcategory:v.subcategory||'',amount:rnd(v.amount),currency:v.currency,source:v.source,frequency:v.frequency,nextDue:v.nextDue,active:v.active==='true',postingMode:v.postingMode==='auto'?'auto':'confirm',autoFrom:(db.recurring.find(r=>r.id===id)?.postingMode==='auto'&&db.recurring.find(r=>r.id===id)?.autoFrom)?db.recurring.find(r=>r.id===id).autoFrom:today()};if(entry.amount<=0||!entry.name)throw Error('El nombre y el importe positivo son obligatorios.');if(id){let before=db.recurring.find(r=>r.id===id),versions=before?.conditionHistory||[];if(before&&['amount','currency','source','frequency','postingMode','category','subcategory','iconId','active'].some(k=>String(before[k]??'')!==String(entry[k]??'')))versions.push({at:new Date().toISOString(),effectiveFrom:today(),previous:{...before,conditionHistory:undefined},next:{...entry}});Object.assign(before,entry,{conditionHistory:versions});}else db.recurring.push({...entry,conditionHistory:[]});break}
+case 'recurringForm':{let [kind,src]=String(v.source).split(':'),a=kind==='account'?account(src):null,c=kind==='card'?card(src):null;if(!a&&!c)throw Error('Selecciona una cuenta o tarjeta de pago.');if(a&&a.currency!==v.currency)throw Error(`La cuenta ${a.name} trabaja en ${a.currency}. Selecciona esa moneda o cambia de fuente.`);let entry={id:id||uuid(),name:v.name.trim(),iconId:v41ValidIcon(v.serviceIcon),iconDataUrl:v45SafeIconData(v.serviceIconData||''),category:v.category,subcategory:v.subcategory||'',amount:rnd(v.amount),currency:v.currency,source:v.source,frequency:v.frequency,nextDue:v.nextDue,billingDay:(db.recurring.find(r=>r.id===id)&&db.recurring.find(r=>r.id===id).nextDue===v.nextDue&&db.recurring.find(r=>r.id===id).frequency===v.frequency)?(db.recurring.find(r=>r.id===id).billingDay||dateObj(v.nextDue).getDate()):dateObj(v.nextDue).getDate(),active:v.active==='true',postingMode:v.postingMode==='auto'?'auto':'confirm',autoFrom:(db.recurring.find(r=>r.id===id)?.postingMode==='auto'&&db.recurring.find(r=>r.id===id)?.autoFrom)?db.recurring.find(r=>r.id===id).autoFrom:today()};if(entry.amount<=0||!entry.name)throw Error('El nombre y el importe positivo son obligatorios.');if(id){let before=db.recurring.find(r=>r.id===id),versions=before?.conditionHistory||[];if(before&&['amount','currency','source','frequency','postingMode','category','subcategory','iconId','active'].some(k=>String(before[k]??'')!==String(entry[k]??'')))versions.push({at:new Date().toISOString(),effectiveFrom:today(),previous:{...before,conditionHistory:undefined},next:{...entry}});Object.assign(before,entry,{conditionHistory:versions});}else db.recurring.push({...entry,conditionHistory:[]});break}
 case 'budgetForm':{let amount=rnd(v.amount),effectiveFrom=String(v.effectiveMonth||ui.month);if(amount<0||!Number.isFinite(amount)||!/^\d{4}-(0[1-9]|1[0-2])$/.test(effectiveFrom))throw Error('Importe o mes de vigencia inválidos.');let versions=ensureBudgetVersions(),sub=v.subcategory||'',prior=versions.find(b=>b.category===v.category&&(b.subcategory||'')===sub&&b.effectiveFrom===effectiveFrom);let entry={id:prior?.id||uuid(),category:v.category,subcategory:sub,amount,effectiveFrom,createdAt:new Date().toISOString(),legacy:false};if(prior)Object.assign(prior,entry);else versions.push(entry);ui.month=effectiveFrom;break}
 case 'statementForm':{let entry={id:uuid(),cardId:v.cardId,currency:v.currency,cutDate:v.cutDate,amount:rnd(v.amount),minimum:rnd(v.minimum)};if(!card(entry.cardId))throw Error('La tarjeta no existe.');if(entry.amount<0||entry.minimum<0||entry.minimum>entry.amount)throw Error('Verifica el total y el mínimo del corte.');let old=db.statements.find(x=>x.cardId===entry.cardId&&x.currency===entry.currency&&x.cutDate===entry.cutDate);if(old)Object.assign(old,entry,{id:old.id});else db.statements.push(entry);break}
 case 'transactionForm':saveTx(v,id||'');return;
@@ -20275,7 +20341,7 @@ function v99RecurringMonth(period=ui.month){
    const dates=new Set();let due=String(r.nextDue||'');
    for(let n=0;n<650&&/^\d{4}-\d{2}-\d{2}$/.test(due)&&due<=end;n++){
     if(v99DueInPeriod(due,p))dates.add(due);
-    const next=v96NextRecurringDate(due,r.frequency);if(!next||next<=due)break;due=next;
+    const next=v96NextRecurringDate(due,r.frequency,r.billingDay||dateObj(r.nextDue).getDate());if(!next||next<=due)break;due=next;
    }
    // Conciliar un cargo registrado fuera de fecha con el vencimiento de la
    // misma mensualidad/quincena, sin duplicarlo como segunda obligación.
@@ -20662,11 +20728,11 @@ function v102ForecastMonthRaw(){
   if(r.active===false||!r.nextDue||!(num(r.amount)>0))continue;
   let day=r.nextDue,steps=0;
   while(day<=end&&steps++<80){
-   if(day>=current && !db.transactions.some(t=>t.recurringId===r.id&&t.date===day&&t.type==='expense')){
+   if(day>=current && !db.transactions.some(t=>t.recurringId===r.id&&['expense','card_charge'].includes(t.type)&&Math.abs(diffDays(t.date,day))<=4)){
     const value=fx(num(r.amount),r.currency||'DOP');expectedRecurring+=value;recurringEvents++;
     detail.recurring.push({name:r.name||'Suscripción',date:day,amount:value});
    }
-   let next=v96NextRecurringDate(day,r.frequency);
+   let next=v96NextRecurringDate(day,r.frequency,r.billingDay||dateObj(r.nextDue).getDate());
    if(!next||next<=day)break;day=next;
   }
  }
@@ -21191,6 +21257,144 @@ document.addEventListener('keydown',ev=>{
 const v105OldRender=render;
 render=function(...args){const value=v105OldRender.apply(this,args);v105ApplyWidgetPreferences();return value;};
 
+/* V119 · EL COSTO DE MAÑANA
+   Simulaciones en memoria: no crean transacciones ni realizan llamadas de red.
+   Se parte del saldo líquido confirmado hoy y se separan ingresos programados
+   de cargos pendientes con fecha. Nunca se infieren ingresos no programados. */
+const v119DecisionState={amount:'10000',scenario:'today',horizon:30};
+function v119DateAfter(n,from=today()){const d=dateObj(from);d.setDate(d.getDate()+n);return dateStr(d)}
+function v119ForecastEvents(horizon=90){
+ const start=today(),end=v119DateAfter(horizon),events=[],seen=new Set();
+ const add=(key,date,amount,type,name,quality='scheduled')=>{
+  if(!date||date<start||date>end||!(amount>.005)||seen.has(key))return;
+  seen.add(key);events.push({key,date,amount:rnd(amount),type,name,quality});
+ };
+ const linked=new Set((db.transactions||[]).map(t=>t.scheduleKey).filter(Boolean));
+ for(const s of db.incomeSchedules||[]){
+  if(s.active===false||num(s.grossMonthly)<=0||!s.nextDue)continue;
+  let d=String(s.nextDue),tries=0;
+  while(d<=end&&tries++<520){
+   if(d>=start&&!linked.has(`income:${s.id}:${d}`)){
+    try{add(`income:${s.id}:${d}`,d,fx(Math.max(0,v40Payroll(s,d).net),s.currency||'DOP'),'income',s.name||'Ingreso programado')}
+    catch(err){console.warn('V119: nómina sin cálculo disponible',s.id,err)}
+   }
+   const next=v40IncomeNext(d,s.frequency||'monthly');if(!next||next<=d)break;d=next;
+  }
+ }
+ // El motor mensual es la misma fuente utilizada por Compromisos, no una segunda tabla.
+ const periods=new Set();for(let offset=0;offset<=horizon;offset+=1){const p=v119DateAfter(offset).slice(0,7);periods.add(p)}
+ for(const period of periods){
+  let lines=[];try{lines=v99DebtMonth(period).lines||[]}catch(err){console.warn('V119: periodo no proyectable',period,err)}
+  for(const l of lines){
+   let date=l.date;
+   if(!date||date<start||date>end)continue;
+   // La cuota contractual histórica ya pagada no se convierte en salida futura.
+   if(l.kind==='loan'&&l.previous)continue;
+   // Evitar duplicar suscripciones pagadas, aunque se abonaron unos días antes.
+   if(l.kind==='recurring'&&(db.transactions||[]).some(t=>t.recurringId===l.id&&['expense','card_charge'].includes(t.type)&&Math.abs(diffDays(t.date,date))<=4))continue;
+   const identifier=[l.kind,l.id,l.currency||'DOP',date].join(':');
+   add('debt:'+identifier,date,fx(Math.max(0,num(l.amount)),l.currency||'DOP'),'expense',l.name||'Compromiso','estimated');
+  }
+ }
+ // Los vencidos aún pendientes se consideran obligación inmediata, sin contarlos dos veces.
+ try{for(const p of v99PendingForPeriod(start.slice(0,7))){
+   if(!p.date||p.date>=start||!['loan','card','recurring','personal'].includes(p.kind))continue;
+   add('overdue:'+p.kind+':'+p.ref+':'+p.date,start,fx(num(p.amount),p.currency||'DOP'),'expense','Vencido · '+(p.name||'Compromiso'),'overdue');
+ }}catch(err){console.warn('V119: vencidos incompletos',err)}
+ return events.sort((a,b)=>a.date.localeCompare(b.date)||(a.type==='expense'?-1:1));
+}
+function v119AvailableToday(){
+ let total=0;
+ for(const a of db.accounts||[]){
+  // Las cuentas archivadas conservan saldo real; no son límites de crédito.
+  try{total+=fx(getAccountBalance(a),a.currency||'DOP')}catch(err){console.warn('V119: saldo omitido',a.id,err)}
+ }
+ return rnd(total);
+}
+function v119BaselineRaw(horizon=30){
+ const events=v119ForecastEvents(horizon),initial=v119AvailableToday();
+ let balance=initial,minimum=initial,critical=null,dayByDay=[],missingDays=0;
+ let cursor=0;
+ for(let day=0;day<=horizon;day++){
+  const date=v119DateAfter(day);let incoming=0,outgoing=0;
+  while(cursor<events.length&&events[cursor].date===date){const x=events[cursor++];if(x.type==='income')incoming+=x.amount;else outgoing+=x.amount}
+  // Se presenta el fin del día tras todas las obligaciones, sin inferir el orden intradía.
+  balance=rnd(balance+incoming-outgoing);
+  if(balance<minimum)minimum=balance;
+  if(balance<0){missingDays++;if(!critical)critical=date}
+  dayByDay.push({date,balance,incoming:rnd(incoming),outgoing:rnd(outgoing)});
+ }
+ return {initial,ending:balance,minimum:rnd(minimum),critical,missingDays,events,dayByDay,horizon,
+  incomes:rnd(events.filter(e=>e.type==='income').reduce((a,e)=>a+e.amount,0)),
+  dues:rnd(events.filter(e=>e.type==='expense').reduce((a,e)=>a+e.amount,0))};
+}
+function v119Baseline(horizon=30){return v99Memo('v119:baseline:'+today()+':'+horizon,()=>v119BaselineRaw(horizon))}
+function v119Decision(amount,scenario,horizon=30){
+ const baseline=v119Baseline(horizon),value=Math.max(0,rnd(amount)),start=today();
+ const nextIncome=baseline.events.find(e=>e.type==='income'&&e.date>start)?.date||null;
+ let allocations=[],note='';
+ if(scenario==='next'){
+  if(nextIncome)allocations=[{date:nextIncome,amount:value}];
+  else note='No hay un próximo ingreso programado verificable; no se puede simular la espera.';
+ }else if(scenario==='split'){
+  if(nextIncome){const first=rnd(value/2);allocations=[{date:start,amount:first},{date:nextIncome,amount:rnd(value-first)}]}
+  else note='No hay próximo ingreso programado para dividir el pago.';
+ }else allocations=[{date:start,amount:value}];
+ if(note)return {...baseline,valid:false,note,nextIncome,amount:value,scenario};
+ const extra=new Map();for(const x of allocations)extra.set(x.date,rnd((extra.get(x.date)||0)+x.amount));
+ let minimum=baseline.initial,ending=baseline.initial,critical=null,missingDays=0;const points=[];
+ for(const p of baseline.dayByDay){ending=rnd(p.balance-allocations.filter(x=>x.date<=p.date).reduce((sum,x)=>sum+x.amount,0));
+  if(ending<minimum)minimum=ending;
+  if(ending<0){missingDays++;if(!critical)critical=p.date}
+  points.push({...p,balance:ending,decision:extra.get(p.date)||0});
+ }
+ const extraRisk=rnd(Math.max(0,-minimum)-Math.max(0,-baseline.minimum));
+ return {...baseline,valid:true,note:'',nextIncome,amount:value,scenario,
+   projectedEnding:ending,projectedMinimum:rnd(minimum),projectedCritical:critical,
+   projectedMissingDays:missingDays,extraRisk,points};
+}
+function v119Recovery(result){
+ // Interpreta la brecha de liquidez; no la confunde con saldo total de deuda.
+ const gap=Math.max(0,-(result.valid?result.projectedMinimum:result.minimum));
+ const days=Math.max(1,result.horizon),day=rnd(gap/days),week=rnd(gap/(days/7));
+ return {gap,day,week,additionalIncome:gap,postpone:gap};
+}
+function v119SmallWidget(){
+ const s=v119Baseline(30),free=Math.max(0,s.minimum),gap=Math.max(0,-s.minimum);
+ return `<section class="v119-mini" aria-label="El costo de mañana"><div class="v119-mini-heading"><div><small>DECISIONES · PRÓXIMOS 30 DÍAS</small><h2>El costo de mañana</h2><p>Tu dinero frente a los próximos vencimientos.</p></div><button class="v119-mini-open" type="button" data-v119-open="1">Evaluar decisión ${icon('arrow')}</button></div><div class="v119-mini-metrics"><div><span>Dinero realmente disponible*</span><strong>${money(free)}</strong></div><div><span>${s.critical?'Primer día crítico':'Días críticos previstos'}</span><strong class="${s.critical?'v119-danger':''}">${s.critical?prettyDate(s.critical):'Ninguno'}</strong></div><div><span>${gap>0?'Faltante máximo estimado':'Saldo inicial líquido'}</span><strong class="${gap>0?'v119-danger':''}">${money(gap>0?gap:s.initial)}</strong></div></div><small class="v119-fine">*Mínimo proyectado en 30 días, antes de gastos no programados. Es una estimación, no dinero garantizado.</small></section>`;
+}
+function v119Markup(){
+ const state=v119DecisionState,amount=Math.max(0,num(state.amount)),result=v119Decision(amount,state.scenario,state.horizon),recovery=v119Recovery(result);
+ const baseline=result,valid=result.valid,
+   projectedMin=valid?result.projectedMinimum:baseline.minimum,
+   projectedFirst=valid?result.projectedCritical:baseline.critical,
+   end=valid?result.projectedEnding:baseline.ending;
+ const rows=baseline.events.filter(e=>e.type==='expense').slice(0,8);
+ const detail=rows.map(e=>`<div class="v119-event"><span><b>${sanitize(e.name)}</b><small>${prettyDate(e.date)}</small></span><strong>−${money(e.amount)}</strong></div>`).join('');
+ return `<div class="v119-content"><p class="v119-lead">Evalúa cómo una compra afectaría tus saldos y pagos durante los próximos días. No se registra ninguna operación.</p>
+ <div class="v119-switch" role="group" aria-label="Horizonte de evaluación">${[30,60,90].map(n=>`<button type="button" data-v119-horizon="${n}" class="${state.horizon===n?'active':''}" aria-pressed="${state.horizon===n}">${n} días</button>`).join('')}</div>
+ <section class="v119-section"><h3>1. Dinero verdaderamente disponible</h3><div class="v119-duo"><div><small>Saldo líquido hoy</small><strong>${money(baseline.initial)}</strong></div><div><small>Mínimo proyectado sin compra</small><strong class="${baseline.minimum<0?'v119-danger':''}">${money(baseline.minimum)}</strong></div></div><p class="v119-note">Disponible prudente: ${money(Math.max(0,baseline.minimum))}. Si el mínimo es negativo, existe un faltante previsto antes de compras adicionales.</p></section>
+ <section class="v119-section"><h3>2. Simulador de decisiones</h3><label class="v119-field">Importe de la decisión (RD$)<input id="v119-amount" type="number" min="0" step="0.01" inputmode="decimal" value="${sanitize(state.amount)}" placeholder="0.00"></label><fieldset class="v119-choices"><legend>¿Cuándo lo pagarías?</legend><label><input type="radio" name="v119-choice" value="today" ${state.scenario==='today'?'checked':''}> Hoy</label><label><input type="radio" name="v119-choice" value="next" ${state.scenario==='next'?'checked':''}> Próximo ingreso</label><label><input type="radio" name="v119-choice" value="split" ${state.scenario==='split'?'checked':''}> En dos pagos</label></fieldset><button class="v119-evaluate" type="button" data-v119-evaluate="1">Evaluar impacto</button>${!valid?`<p class="v119-warning">${sanitize(result.note)}</p>`:''}</section>
+ <section class="v119-section"><h3>3. Detector de días críticos</h3><div class="v119-duo"><div><small>Primera fecha crítica</small><strong class="${projectedFirst?'v119-danger':''}">${projectedFirst?prettyDate(projectedFirst):'Sin alertas'}</strong></div><div><small>Saldo previsto al final</small><strong class="${end<0?'v119-danger':''}">${money(end)}</strong></div></div><p class="v119-note">${valid?`La decisión cambia el saldo mínimo de ${money(baseline.minimum)} a ${money(projectedMin)}.`:'El escenario seleccionado no puede evaluarse sin un ingreso programado.'} No se anticipan gastos futuros no registrados.</p><details><summary>Ver los próximos compromisos</summary>${detail||'<p>No hay vencimientos programados en el período.</p>'}</details></section>
+ <section class="v119-section"><h3>4. Plan de recuperación</h3>${recovery.gap>.005?`<p>Para evitar el faltante estimado necesitarías liberar al menos <b>${money(recovery.gap)}</b> antes del primer día crítico.</p><div class="v119-duo"><div><small>Referencia por semana</small><strong>${money(recovery.week)}</strong></div><div><small>Ingreso adicional equivalente</small><strong>${money(recovery.additionalIncome)}</strong></div></div><p class="v119-note">Opciones: reducir gastos no esenciales, aumentar ingresos o renegociar pagos donde esté permitido. El promedio semanal es una referencia; el dinero debe estar disponible antes del vencimiento.</p>`:'<p>No se identifica un faltante de liquidez bajo las condiciones actuales. Mantén una reserva para imprevistos.</p>'}</section>
+ <p class="v119-disclaimer">Modelo orientativo en RD$. Supone saldos actuales y calendario de ingresos y obligaciones disponibles en el sistema; no predice compras futuras, comisiones desconocidas, variaciones cambiarias ni ingresos no programados. Las operaciones simuladas no afectan cuentas, registros ni Supabase.</p></div>`;
+}
+function v119Open(){
+ const root=document.getElementById('modal-root');if(!root)return;
+ root.innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v119-modal" role="dialog" aria-modal="true" aria-label="El costo de mañana"><div class="modal-head"><h2>El costo de mañana</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div id="v119-results">${v119Markup()}</div></section></div>`;
+}
+function v119Refresh(){const node=document.getElementById('v119-results');if(node)node.innerHTML=v119Markup()}
+document.addEventListener('click',event=>{
+ const open=event.target.closest?.('[data-v119-open]');if(open){event.preventDefault();v119Open();return}
+ const horizon=event.target.closest?.('[data-v119-horizon]');if(horizon){v119DecisionState.horizon=Number(horizon.dataset.v119Horizon);v119Refresh();return}
+ const go=event.target.closest?.('[data-v119-evaluate]');if(go){const input=document.getElementById('v119-amount');if(input)v119DecisionState.amount=input.value;v119Refresh()}
+});
+document.addEventListener('change',event=>{if(event.target.matches?.('input[name="v119-choice"]')){v119DecisionState.scenario=event.target.value;v119Refresh()}});
+/* Reutiliza el Resumen existente, sin reestructurar las demás vistas. */
+const v119PreviousOverview=pages.overview;
+pages.overview=function(){return v119SmallWidget()+v119PreviousOverview()};
+
+
 f33Boot();
 
 })();
@@ -21209,6 +21413,7 @@ document.addEventListener('keydown',function(ev){
 /* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
 window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
 document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
+
 
 
 
