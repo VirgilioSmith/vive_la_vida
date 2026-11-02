@@ -2,7 +2,7 @@
 
 <html lang="es">
 <head>
-<link rel="manifest" href="./manifest.webmanifest?v=87"/>
+<link rel="manifest" href="./manifest.webmanifest?v=103"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v47.png"/>
 <link rel="icon" type="image/png" href="./favicon-v47.png"/>
 
@@ -13075,6 +13075,11 @@ body.theme-dark .v82-forecast-breakdown b{color:#d7e9ff}
 .world-payments #page .v71-commitment-list .mini-row{padding:11px 0!important}
 @media(max-width:690px){.world-payments #page .v71-commitment-card{padding:13px!important}.world-payments #page .v71-commitment-head{padding-bottom:4px!important}}
 </style>
+<style id="vive-v103-loan-dates">
+#loanForm .v103-last-payment-field small{display:block;margin-top:5px;font-size:11px;color:#64748b;line-height:1.35}
+#loanForm .v83-opening-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(max-width:520px){#loanForm .v83-opening-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#loanForm .v83-opening-fields input{max-width:100%;min-width:0;font-size:13px;padding:10px 7px}#loanForm .v83-opening-fields .filter-label{font-size:11px}}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -13736,12 +13741,12 @@ function personalMovementInstrument(l){
  return personalInstrumentLabel(first,l);
 }
 
-const personalBalance=l=>Math.max(0,rnd(num(l.principal)-db.transactions.filter(t=>t.type==='personal_settlement'&&t.personalLoanId===l.id).reduce((a,t)=>a+num(t.principal),0)-Math.max(0,num(l.forgiveness?.amount))));
+const v102PersonalBalanceRaw=l=>Math.max(0,rnd(num(l.principal)-(db.transactions||[]).filter(t=>t.type==='personal_settlement'&&t.personalLoanId===l.id&&t.date<=today()).reduce((a,t)=>a+Math.max(0,num(t.principal)),0)-(l.forgiveness?.date&&l.forgiveness.date<=today()?Math.max(0,num(l.forgiveness.amount)):0)));
 const personalTotals=()=>({receivable:db.personalLoans.filter(l=>l.direction==='lent').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0),payable:db.personalLoans.filter(l=>l.direction==='borrowed').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0)});
  const certificate=id=>db.certificates.find(x=>x.id===id);
 const dueChip=(date,complete=false)=>{if(complete)return '<span class="pill green">Pagado</span>';let n=diffDays(date,today());return `<span class="pill ${n<0?'red':n<=5?'orange':'blue'}">${n<0?`${Math.abs(n)} d vencidos`:n===0?'Vence hoy':`${n} días`}</span>`};
 const whenTxt=s=>{let n=diffDays(s,today());return n<0?`Vencido hace ${-n} día${n===-1?'':'s'}`:n===0?'Vence hoy':`Faltan ${n} días`};
-const getAccountBalance=(a,asOf=today())=>{let bal=a.opened<=asOf?num(a.opening):0;for(const t of db.transactions){if(t.date>asOf)continue;const amt=num(t.amount),src=num(t.sourceAmount||t.amount);if(['income','bank_reward'].includes(t.type)&&t.accountId===a.id)bal+=amt;
+const v102AccountBalanceRaw=(a,asOf=today())=>{let bal=a.opened<=asOf?num(a.opening):0;for(const t of db.transactions){if(t.date>asOf)continue;const amt=num(t.amount),src=num(t.sourceAmount||t.amount);if(['income','bank_reward'].includes(t.type)&&t.accountId===a.id)bal+=amt;
 if(t.type==='expense'&&t.accountId===a.id)bal-=amt+num(t.paymentTax)+num(t.paymentFee);
 if(t.type==='adjustment'&&t.accountId===a.id)bal+=amt;
  if(t.type==='certificate_funding'&&t.accountId===a.id)bal-=amt;
@@ -13758,7 +13763,7 @@ const lastCutAt=(s,day)=>{let d=dateObj(s),y=d.getFullYear(),m=d.getMonth()+1,c=
  const lastCut=day=>lastCutAt(today(),day);
 const nextCut=day=>{let c=lastCut(day);return monthDay(dateObj(c).getFullYear(),dateObj(c).getMonth()+2,day)};
 const cardDue=(cut,day)=>{let d=dateObj(cut),y=d.getFullYear(),m=d.getMonth()+1;let same=monthDay(y,m,day);return same>cut?same:monthDay(y,m+1,day)};
-function cardStatus(c,ccy){let events=[];let opening=ccy==='USD'?num(c.openingUSD):num(c.openingDOP);if(opening>0){let importedBilled=ccy==='USD'?c.openingBilledUSD:c.openingBilledDOP;let reference=c.opened||today();if(importedBilled===undefined||importedBilled===null){events.push({id:'opening',date:reference,type:'charge',amount:opening})}else{let billedOpening=Math.min(opening,Math.max(0,num(importedBilled)));if(billedOpening>0)events.push({id:'opening-billed',date:reference,cut:lastCutAt(reference,c.cutDay),type:'charge',amount:billedOpening});if(opening-billedOpening>0)events.push({id:'opening-unbilled',date:reference,cut:cutFor(addDays(lastCutAt(reference,c.cutDay),1),c.cutDay),type:'charge',amount:rnd(opening-billedOpening)})}}
+function v102CardStatusRaw(c,ccy){let events=[];let opening=ccy==='USD'?num(c.openingUSD):num(c.openingDOP);if(opening>0){let importedBilled=ccy==='USD'?c.openingBilledUSD:c.openingBilledDOP;let reference=c.opened||today();if(importedBilled===undefined||importedBilled===null){events.push({id:'opening',date:reference,type:'charge',amount:opening})}else{let billedOpening=Math.min(opening,Math.max(0,num(importedBilled)));if(billedOpening>0)events.push({id:'opening-billed',date:reference,cut:lastCutAt(reference,c.cutDay),type:'charge',amount:billedOpening});if(opening-billedOpening>0)events.push({id:'opening-unbilled',date:reference,cut:cutFor(addDays(lastCutAt(reference,c.cutDay),1),c.cutDay),type:'charge',amount:rnd(opening-billedOpening)})}}
 for(let t of db.transactions){if(t.cardId!==c.id||t.currency!==ccy)continue;
  if(t.type==='card_charge')events.push({id:t.id,date:t.date,type:'charge',amount:num(t.amount)});
  if(t.type==='card_payment'||t.type==='card_refund'||t.type==='card_reward')events.push({id:t.id,date:t.date,type:'credit',amount:num(t.amount)});
@@ -13768,13 +13773,13 @@ for(let t of db.transactions){if(t.cardId!==c.id||t.currency!==ccy)continue;
   events.push({id:t.id,date:t.date,type:incoming?'credit':'charge',amount:num(t.amount)});
  }
 }
-events.sort((a,b)=>a.date.localeCompare(b.date)||(a.type==='charge'?-1:1));let remaining=[],credit=0;let lc=lastCut(c.cutDay);let dueRecords=[];let statementAtCut=0;let running=0;
+events.sort((a,b)=>a.date.localeCompare(b.date)||(a.type===b.type?0:a.type==='charge'?-1:1));let remaining=[],credit=0;let lc=lastCut(c.cutDay);let dueRecords=[];let statementAtCut=0;let running=0;
 for(const e of events){if(e.date>today())continue;if(e.type==='charge'){let v=e.amount;running+=v;if(credit>0){let x=Math.min(v,credit);v-=x;credit-=x}if(v>0)remaining.push({date:e.date,cut:e.cut||cutFor(e.date,c.cutDay),rem:v})}else{let v=e.amount;running-=v;for(let item of remaining){if(!v)break;if(item.date>e.date)continue;let x=Math.min(item.rem,v);item.rem=rnd(item.rem-x);v=rnd(v-x)}if(v>0)credit+=v}}
 const asOf=events.filter(e=>e.date<=lc||(e.id==='opening-billed'&&e.cut<=lc)).reduce((s,e)=>s+(e.type==='charge'?e.amount:-e.amount),0);statementAtCut=Math.max(0,rnd(asOf));
 let billed=0,unbilled=0,overdue=0,dueMap={};for(const item of remaining){if(item.rem<=.001)continue;let due=cardDue(item.cut,c.dueDay);if(item.cut<=lc){billed+=item.rem;dueMap[due]=(dueMap[due]||0)+item.rem;if(due<today())overdue+=item.rem}else unbilled+=item.rem}
 const nextDue=Object.keys(dueMap).sort()[0]||null;let limit=ccy==='USD'?num(c.limitUSD):num(c.limitDOP),overdraft=ccy==='USD'?num(c.overdraftUSD):num(c.overdraftDOP),debt=Math.max(0,rnd(billed+unbilled-credit));let statements=db.statements.filter(s=>s.cardId===c.id&&s.currency===ccy).sort((a,b)=>b.cutDate.localeCompare(a.cutDate));let official=statements.find(s=>s.cutDate===lc)||null;let asOfOfficial=official?num(official.amount):null;let paidAfter=official?db.transactions.filter(t=>t.cardId===c.id&&t.currency===ccy&&t.date>lc&&t.date<=today()&&(['card_payment','card_reward'].includes(t.type)||((t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed')||(t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent')))).reduce((s,t)=>s+num(t.amount),0):0;
 return {debt,billed:rnd(Math.max(0,billed)),unbilled:rnd(Math.max(0,unbilled)),overdue:rnd(overdue),limit,overdraft,overdraftUsed:rnd(Math.min(overdraft,Math.max(0,debt-limit))),excess:rnd(Math.max(0,debt-limit-overdraft)),available:rnd(Math.max(0,limit-debt)),availableWithOverdraft:rnd(Math.max(0,limit+overdraft-debt)),util:limit?100*debt/limit:0,cut:lc,nextCut:nextCut(c.cutDay),nextDue,statementAtCut,official,officialAmount:asOfOfficial,officialRemaining:official?Math.max(0,rnd(asOfOfficial-paidAfter)):null,credit:rnd(credit),dueMap,minimum:official?num(official.minimum):Math.max(0,rnd(billed*num(c.minPct||5)/100))};}
-function monthlyTotals(year,month){const start=periodStart(year,month),end=periodEnd(year,month);let income=0,expense=0,incomeBy={},expenseBy={},incomeSubBy={},expenseSubBy={},cashIn=0,cashOut=0,cardPay=0,principal=0,interest=0;
+function v102MonthlyTotalsRaw(year,month){const start=periodStart(year,month),end=periodEnd(year,month);let income=0,expense=0,incomeBy={},expenseBy={},incomeSubBy={},expenseSubBy={},cashIn=0,cashOut=0,cardPay=0,principal=0,interest=0;
 for(const t of db.transactions){if(t.date<start||t.date>end)continue;const fx=(n,c)=>num(n)*(c==='USD'?num(t.fxRateSnapshot||db.settings.fx):1);let v=fx(t.amount,t.currency||'DOP');if(['expense','card_payment'].includes(t.type)){let fee=fx(num(t.paymentTax)+num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP');if(fee>0){expense+=fee;cashOut+=fee;expenseBy['Impuestos y comisiones']=(expenseBy['Impuestos y comisiones']||0)+fee;for(const [name,val] of [['Impuesto bancario',fx(num(t.paymentTax),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')],[t.paymentSpeed==='instant'?'Pago al instante':'Otros cargos bancarios',fx(num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')]])if(val>0)expenseSubBy['Impuestos y comisiones||'+name]=(expenseSubBy['Impuestos y comisiones||'+name]||0)+val;}}if(['income','card_reward','bank_reward'].includes(t.type)){income+=v;if(['income','bank_reward'].includes(t.type))cashIn+=v;incomeBy[t.category||'Otros ingresos']=(incomeBy[t.category||'Otros ingresos']||0)+v;if(t.subcategory){let key=(t.category||'Otros ingresos')+'||'+t.subcategory;incomeSubBy[key]=(incomeSubBy[key]||0)+v}}
 if(t.type==='expense'||t.type==='card_charge'||t.type==='card_refund'){let delta=t.type==='card_refund'?-v:v;expense+=delta;expenseBy[t.category||'Otros gastos']=(expenseBy[t.category||'Otros gastos']||0)+delta;if(t.subcategory){let key=(t.category||'Otros gastos')+'||'+t.subcategory;expenseSubBy[key]=(expenseSubBy[key]||0)+delta};if(t.type==='expense')cashOut+=delta}
 if(t.type==='loan_payment'){let amount=fx(t.interest||0,t.currency||'DOP')+fx(t.fee||0,t.currency||'DOP')+fx(t.insurance||0,t.currency||'DOP');expense+=amount;expenseBy['Deudas e intereses']=(expenseBy['Deudas e intereses']||0)+amount;interest+=amount;const ccy=t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency;const taxCost=fx(num(t.paymentTax)+num(t.paymentFee),ccy);if(taxCost){expense+=taxCost;expenseBy['Impuestos y comisiones']=(expenseBy['Impuestos y comisiones']||0)+taxCost;expenseSubBy['Impuestos y comisiones||Impuesto bancario']=(expenseSubBy['Impuestos y comisiones||Impuesto bancario']||0)+taxCost;}cashOut+=fx(t.sourceAmount||t.amount,account(t.accountId)?.currency||t.currency)+taxCost}
@@ -13827,7 +13832,7 @@ function v96NextRecurringDate(day,frequency){
  const advance={quarterly:3,semiannual:6,annual:12,yearly:12}[frequency]||1;
  return plusMonths(day,advance);
 }
-function upcoming(){let all=[];for(let c of db.cards){for(let ccy of ['DOP','USD']){let st=cardStatus(c,ccy);for(let [due,amount] of Object.entries(st.dueMap)){if(amount>0.005)all.push({id:c.id+'-'+ccy+'-'+due,kind:'card',name:c.name+' · '+ccy,amount:rnd(amount),currency:ccy,date:due,action:'payCard',ref:c.id,ccy})}}}
+function v102UpcomingRaw(){let all=[];for(let c of db.cards){for(let ccy of ['DOP','USD']){let st=cardStatus(c,ccy);for(let [due,amount] of Object.entries(st.dueMap)){if(amount>0.005)all.push({id:c.id+'-'+ccy+'-'+due,kind:'card',name:c.name+' · '+ccy,amount:rnd(amount),currency:ccy,date:due,action:'payCard',ref:c.id,ccy})}}}
 for(let l of db.loans){try{
  const st=loanStatus(l);if(st.settled||st.balance<=.005)continue;
  const periods=v49LoanPeriodsPerMonth(l),start=Math.max(0,st.periods),end=v49LoanPeriodCount(l);
@@ -13987,7 +13992,7 @@ function v64PositionComparison(){
  const prior=monthDay(lastDay.getFullYear(),lastDay.getMonth()+1,lastDay.getDate());
  const historical=[...(db.accounts||[]).map(a=>a.opened),...(db.cards||[]).map(c=>c.opened),...(db.loans||[]).map(l=>plusMonths(l.firstDue||today(),-1)),...(db.certificates||[]).map(c=>c.startDate),...(db.personalLoans||[]).map(l=>l.date),...(db.transactions||[]).map(t=>t.date)].filter(Boolean);
  const valid=historical.some(t=>t<=prior);
- return {prior,position:valid?historicalPosition(prior):null,valid,label:'mes anterior',short:'vs. mes anterior'};
+ return {prior,position:valid?historicalPosition(prior):null,valid,label:'mes anterior',short:'cambio mensual'};
 }
 function v64Variance(current,prior,comparison,risk=false){
  const label=comparison.short;
@@ -14628,7 +14633,7 @@ function v49SplitMonthlyCost(amount,l,index=0){const monthly=rnd(amount);if(v49L
 function v49LoanPeriodInsurance(l,index=0){return v49SplitMonthlyCost(num(l.insuranceMonthly),l,index);}
 function v49LoanPeriodFee(l,index=0){return v49SplitMonthlyCost(num(l.monthlyFee),l,index);}
 function v49LoanPeriodKey(l,due){return v49LoanPeriodsPerMonth(l)===2?due:due.slice(0,7);}
-function fullOriginalLoan(l){
+function v102FullOriginalLoanRaw(l){
   const principal=Math.max(0,num(l.principal)),r=Math.max(0,num(l.rate))/1200/v49LoanPeriodsPerMonth(l),months=Math.min(1200,v49LoanPeriodCount(l));
   const payment=r===0?principal/months:principal*r/(1-Math.pow(1+r,-months));
   let balance=principal,rows=[];
@@ -14649,12 +14654,15 @@ function v88LoanReconstruction(l){
  const hasSnapshot=l.openingMode==='existing'&&l.openingDebt!==null&&l.openingDebt!==undefined&&l.openingDebt!=='';
  const opening=hasSnapshot?Math.max(0,Math.min(principal,num(l.openingDebt))):principal;
  const snapshot=(l.openingBalanceDate||today()).slice(0,10);
+ // Si se proporcionó la última cuota pagada, solo reconstruir hasta ese vencimiento.
+ // El saldo actual sigue referido a la fecha de corte, sin atribuir pagos no confirmados.
+ const paidThrough=l.lastPaidDate||snapshot;
  const reduction=rnd(Math.max(0,principal-opening)),count=v49LoanPeriodCount(l);
  if(!hasSnapshot||!l.firstDue)return {rows:[],periods:0,interest:0,insurance:0,fees:0,opening,reduction,snapshot,modelBalance:principal,adjustment:0};
  let balance=principal,interest=0,insurance=0,fees=0,periods=0,rows=[];
  for(let i=0;i<count&&balance>.005;i++){
   const due=v49LoanPeriodDate(l,i);
-  if(!due||due>snapshot||due>today())break;
+  if(!due||due>paidThrough||due>snapshot||due>today())break;
   const before=balance;
   const it=v49LoanPeriodInterest(l,before,due);
   const installment=Math.max(0,num(v86InstallmentForDate(l,due)));
@@ -14670,7 +14678,7 @@ function v88LoanReconstruction(l){
  }
  return {rows,periods,interest:rnd(interest),insurance:rnd(insurance),fees:rnd(fees),opening,reduction,snapshot,modelBalance,adjustment};
 }
-function loanAccounting(l){
+function v102LoanAccountingRaw(l){
  const modeled=v88LoanReconstruction(l),historic=modeled.rows;
  let history=loanTransactions(l.id).filter(t=>t.date<=today()).sort((a,b)=>a.date.localeCompare(b.date)),opening=modeled.opening,running=opening,rows=[...historic],interest=0,insurance=0,fees=0,extras=0,periods=new Set();
  // Solo los registros hechos DESPUÉS del saldo de apertura reducen nuevamente ese capital.
@@ -14965,7 +14973,7 @@ function budget(){
  return `<div class="budget-world"><div class="section-title"><div><span class="summary-tag">ANALÍTICA DE PRESUPUESTO</span><h2>Asignar, cumplir y comparar.</h2><p>Versión mensual · ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}. Los cambios tienen vigencia desde el mes indicado.</p></div><button class="btn" data-act="addBudget">${icon('plus')} Definir presupuesto</button></div>
  <div class="grid kpis budget-head-kpis">${budgetMetric('Presupuesto asignado',money(current.total),'Distribución total del mes','receipt',current.total,lastYear.total,hasLastYear)}${`<article class="kpi v27-budget-compliance-kpi ${performance===null?'no-data':performance>100?'over':performance>=80?'near':'within'}"><div class="kpi-head">Cumplimiento presupuestario<span class="kpi-icon">${icon('chart')}</span></div><div class="kpi-value">${performance===null?'N/D':performance.toFixed(1)+'%'}</div><div class="kpi-foot">${performance===null?'Define al menos un límite':money(control)+' utilizados de '+money(current.total)}</div></article>`}${shellKpi('Margen restante',money(rest),'Asignado − gasto dentro de presupuesto','wallet',rest<0?'negative':'positive')}${budgetMetric('Gasto total',money(totals.expense),'Incluye gasto sin presupuesto','down',totals.expense,ly.expense,ly.expense!==0||db.transactions.some(t=>t.date.startsWith(priorYear)))}</div>
  ${budgetEvolutionChart(year,month)}
- <div class="budget-analytics-grid"><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">01 · ASIGNACIÓN</span><h3>¿A dónde va el presupuesto?</h3><p class="form-note">Peso porcentual y monto por categoría.</p></div><span class="pill">${active.length} categorías</span></div><div class="budget-allocation-list">${chart}</div></section><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">02 · COMPARACIÓN</span><h3>Variación absoluta e interanual</h3><p class="form-note">Mismo mes del año anterior · asignación y gasto real.</p></div></div><details class="budget-variance-disclosure"><summary>Consultar comparación mensual e interanual</summary><div class="budget-variance-grid">${valueComparison('PRESUPUESTO VS. AÑO ANTERIOR',current.total,lastYear.total,hasLastYear)}${valueComparison('PRESUPUESTO VS. MES ANTERIOR',current.total,lastMonth.total,lastMonth.rows.length>0)}${valueComparison('GASTO REAL VS. AÑO ANTERIOR',totals.expense,ly.expense,ly.expense!==0||db.transactions.some(t=>t.date.startsWith(priorYear)))}</div></details><div class="budget-coverage-note">El cumplimiento se calcula sobre el presupuesto asignado. Gastos sin límite se muestran por separado. ${hasLastYear&&lastYear.rows.every(x=>x.legacy)?'La asignación del año anterior procede de datos heredados sin fecha original y es solo orientativa.':''}</div></section></div>
+ <div class="budget-analytics-grid"><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">01 · ASIGNACIÓN</span><h3>¿A dónde va el presupuesto?</h3><p class="form-note">Peso porcentual y monto por categoría.</p></div><span class="pill">${active.length} categorías</span></div><div class="budget-allocation-list">${chart}</div></section><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">02 · COMPARACIÓN</span><h3>Variación absoluta e interanual</h3><p class="form-note">Mismo mes del año anterior · asignación y gasto real.</p></div></div><details class="budget-variance-disclosure"><summary>Consultar comparación mensual e interanual</summary><div class="budget-variance-grid">${valueComparison('PRESUPUESTO VS. AÑO ANTERIOR',current.total,lastYear.total,hasLastYear)}${valueComparison('PRESUPUESTO CAMBIO MENSUAL',current.total,lastMonth.total,lastMonth.rows.length>0)}${valueComparison('GASTO REAL VS. AÑO ANTERIOR',totals.expense,ly.expense,ly.expense!==0||db.transactions.some(t=>t.date.startsWith(priorYear)))}</div></details><div class="budget-coverage-note">El cumplimiento se calcula sobre el presupuesto asignado. Gastos sin límite se muestran por separado. ${hasLastYear&&lastYear.rows.every(x=>x.legacy)?'La asignación del año anterior procede de datos heredados sin fecha original y es solo orientativa.':''}</div></section></div>
  ${budgetCompliance(totals)}<section class="panel section"><div class="panel-head"><div><span class="summary-tag">03 · EDICIÓN POR CATEGORÍA</span><h3>Presupuesto de ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</h3><p class="form-note">Edita una categoría o subcategoría. Cada período mantiene su propia referencia.</p></div><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto" style="width:162px"/></div>${rows||'<div class="budget-empty-text">No se registran presupuestos ni gastos durante este mes.</div>'}<p class="footnote">Un límite de categoría incluye sus subcategorías. Los cambios afectan el mes seleccionado y los siguientes, salvo otra versión posterior; las versiones anteriores no se modifican. Si tus presupuestos proceden de una versión antigua, la app no puede recuperar sus importes históricos previos a esta actualización.</p></section></div>`;
 }
 
@@ -15240,7 +15248,7 @@ function expensesAnalysis(){
   const micro=(a,b)=>`<div class="expenses-mini"><small>${sanitize(a)}</small><strong>${b}</strong></div>`;
   return `<div class="expenses-world"><div class="world-intro expenses-heading"><span class="summary-tag">ANÁLISIS DE EGRESOS · ${sanitize(title)}</span><h2>¿A dónde se va tu dinero?</h2><p>Descubre qué consumes, cuáles categorías pesan más y cómo cambia tu gasto frente al año anterior.</p><div class="expenses-tools"><div class="expenses-range" aria-label="Período de análisis"><button type="button" class="${!yearMode?'active':''}" data-act="expenseRange" data-id="month">Mes</button><button type="button" class="${yearMode?'active':''}" data-act="expenseRange" data-id="year">Año</button></div><label>Período <input id="expenseMonthPicker" type="month" value="${picked}" aria-label="Seleccionar mes de análisis"/></label><button class="btn sm soft" type="button" data-act="newTransaction" data-type="expense">${icon('plus')} Registrar egreso</button></div></div>
   <div class="expenses-kpis">${layoutCard('Egresos registrados',money(total),'Compras y costos confirmados','down',vsYear(total,priorTotal))}${layoutCard('Tres mayores categorías',top3Share.toFixed(1)+'%','Participación del top 3','chart',`${top3Share.toFixed(1)}% de la distribución`)}${layoutCard('Presupuesto consumido',usedBudget===null?'Sin asignar':usedBudget.toFixed(1)+'%',bTotal>0?'Asignación '+money(bTotal):'Sin presupuesto asignado','wallet',bTotal>0?`<span class="expenses-budget-meter"><span style="width:${Math.min(100,Math.max(0,usedBudget))}%"></span></span>`:'Configúralo en Presupuestos')}${layoutCard('Categorías activas',String(entries.length),'Con gastos en el período','receipt',`${allOpIds.length} movimientos relacionados`)}</div>
-  <div class="expenses-microstats">${micro('CAMBIO VS. MES ANTERIOR',yearMode?'Consulta la evolución mensual':Math.abs(prevM)>.005?`${(total/Math.abs(prevM)-1)>=0?'+':''}${(total/Math.abs(prevM)-1)*100>=0?((total/Math.abs(prevM)-1)*100).toFixed(1)+'%':((total/Math.abs(prevM)-1)*100).toFixed(1)+'%'}`:'Sin base')}${micro('CATEGORÍA PRINCIPAL',entries.length?sanitize(entries[0].cat):'Sin datos')}${micro('PARA LLEGAR AL 80%',thresholdCount?`${thresholdCount} categoría${thresholdCount===1?'':'s'}`:'Sin datos')}</div>
+  <div class="expenses-microstats">${micro('CAMBIO CAMBIO MENSUAL',yearMode?'Consulta la evolución mensual':Math.abs(prevM)>.005?`${(total/Math.abs(prevM)-1)>=0?'+':''}${(total/Math.abs(prevM)-1)*100>=0?((total/Math.abs(prevM)-1)*100).toFixed(1)+'%':((total/Math.abs(prevM)-1)*100).toFixed(1)+'%'}`:'Sin base')}${micro('CATEGORÍA PRINCIPAL',entries.length?sanitize(entries[0].cat):'Sin datos')}${micro('PARA LLEGAR AL 80%',thresholdCount?`${thresholdCount} categoría${thresholdCount===1?'':'s'}`:'Sin datos')}</div>
   <div class="expenses-twocol section"><section class="panel expenses-distribution"><div class="panel-head"><div><h3>Composición del gasto</h3><p class="subtle">Peso de cada categoría · ${sanitize(title)}</p></div></div>${entries.length?`<div class="expenses-donut-layout"><div class="expenses-donut" style="background:conic-gradient(${segments})"><div><small>GASTO NETO</small><strong title="${money(total)}">${shorten(total)}</strong></div></div><div class="expenses-legend">${entries.slice(0,7).map((e,i)=>`<div tabindex="0" data-chart-tip="${sanitize(e.cat)}|Gasto: ${money(e.val)}|Peso: ${e.share.toFixed(1)}%"><span><i style="background:${palette[i%palette.length]}"></i>${sanitize(e.cat)}</span><b>${e.share.toFixed(1)}%</b></div>`).join('')}</div></div>`:'<div class="empty">Aquí aparecerá la composición al registrar gastos.</div>'}</section><section class="panel expenses-pareto"><div class="panel-head"><div><h3>Pareto · ¿qué se lleva el 80 %?</h3><p class="subtle">Ordenado del gasto más alto al más bajo</p></div><span class="expenses-eighty">80%</span></div>${pareto}</section></div>
   <section class="panel section expenses-trend"><div class="panel-head"><div><h3>Evolución de egresos · ${y} vs. ${y-1}</h3><p class="subtle">Comparación del mismo mes entre dos años, en RD$</p></div><div class="expenses-series-legend"><span><i class="current"></i>${y}</span><span><i class="previous"></i>${y-1}</span></div></div><div class="expenses-svg-container"><svg viewBox="0 0 ${chartWidth} ${chartH}" role="img" aria-label="Gráfico de barras comparativo de egresos mensuales de ${y} y ${y-1}">${ticks}${cols}</svg></div><p class="footnote">Solo los meses registrados del año actual se presentan como resultado; el año anterior sirve como referencia.</p></section>
   <div class="expenses-twocol section"><section class="panel"><div class="panel-head"><div><h3>Desglose por categoría</h3><p class="subtle">Pulsa una categoría para consultar las subcategorías</p></div></div><div class="expenses-categories">${rowList}</div></section><section class="panel"><div class="panel-head"><div><h3>¿Dónde y cómo gastas?</h3><p class="subtle">Conceptos e instrumentos de pago registrados</p></div></div><div class="expenses-source-title">Por instrumento o tipo de costo</div>${paymentEntries.map(([name,val])=>`<div class="expenses-method"><span>${sanitize(name)}</span><b>${money(val)}</b></div>`).join('')||'<div class="empty">Sin movimientos para clasificar.</div>'}<div class="expenses-source-title">Principales comercios o conceptos</div>${merchantRank.map(([name,val],i)=>`<div class="expenses-method"><span>${i+1}. ${sanitize(name)}</span><b>${money(val)}</b></div>`).join('')||'<div class="empty">No hay compras con concepto registrado.</div>'}</section></div>
@@ -15258,7 +15266,7 @@ function incomeAnalysis(){
  const interestPersonal=db.transactions.filter(t=>t.date.startsWith(month)&&t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent').reduce((a,t)=>a+fx(num(t.interest),t.currency),0);
  let trends=yearMonths.map(m=>recognized(m));let byMonth=trends.map(arr=>arr.reduce((a,{t,amount})=>a+fx(amount,t.currency),0));let max=Math.max(...byMonth,1);
  return `<div class="world-intro income-world-hero"><span class="summary-tag">INTELIGENCIA DE INGRESOS · ${sanitize(month)}</span><h2>¿De dónde viene tu dinero?</h2><p>Separa lo que ganas por tu trabajo, el joseo, los emprendimientos y los rendimientos. Los préstamos recibidos van aparte.</p></div>
- <div class="grid kpis">${shellKpi('Ingreso del mes',money(total),'Reconocido, no financiación','up','positive')}${shellKpi('Trabajo y nómina',money(earnings('Trabajo y nómina')),'Salarios y remuneración','wallet')}${shellKpi('Joseo y emprendimiento',money(earnings('Joseo e ingresos adicionales')+earnings('Negocios y emprendimientos')),'Ingresos adicionales y negocios','analytics')}${shellKpi('Beneficios recibidos',money(earnings('Beneficios y cashback')),'Cashback bancario confirmado','receipt')}</div><div class="income-microstats"><span><small>VS. MES ANTERIOR</small><b>${(()=>{const previous=plusMonths(month+'-01',-1).slice(0,7),v=recognized(previous).reduce((a,{t,amount})=>a+fx(amount,t.currency),0);return v?((total/v-1)*100).toFixed(1)+'%':'Sin base comparativa'})()}</b></span><span><small>ACUMULADO DEL AÑO</small><b>${money(trends.slice(0,Number(month.slice(5,7))).reduce((a,arr)=>a+arr.reduce((v,{t,amount})=>v+fx(amount,t.currency),0),0))}</b></span><span><small>ORÍGENES ACTIVOS</small><b>${groups.length}</b></span></div>
+ <div class="grid kpis">${shellKpi('Ingreso del mes',money(total),'Reconocido, no financiación','up','positive')}${shellKpi('Trabajo y nómina',money(earnings('Trabajo y nómina')),'Salarios y remuneración','wallet')}${shellKpi('Joseo y emprendimiento',money(earnings('Joseo e ingresos adicionales')+earnings('Negocios y emprendimientos')),'Ingresos adicionales y negocios','analytics')}${shellKpi('Beneficios recibidos',money(earnings('Beneficios y cashback')),'Cashback bancario confirmado','receipt')}</div><div class="income-microstats"><span><small>CAMBIO MENSUAL</small><b>${(()=>{const previous=plusMonths(month+'-01',-1).slice(0,7),v=recognized(previous).reduce((a,{t,amount})=>a+fx(amount,t.currency),0);return v?((total/v-1)*100).toFixed(1)+'%':'Sin base comparativa'})()}</b></span><span><small>ACUMULADO DEL AÑO</small><b>${money(trends.slice(0,Number(month.slice(5,7))).reduce((a,arr)=>a+arr.reduce((v,{t,amount})=>v+fx(amount,t.currency),0),0))}</b></span><span><small>ORÍGENES ACTIVOS</small><b>${groups.length}</b></span></div>
  <div class="grid columns equal section"><section class="panel income-distribution"><div class="panel-head"><div><h3>Composición por origen</h3><p class="subtle">Participación del ingreso reconocido · ${sanitize(month)}</p></div></div>${total>0?`<div class="income-donut-layout"><div class="income-donut" style="background:conic-gradient(${slices})"><div><small>INGRESOS</small><strong>${money(total)}</strong></div></div><div class="income-legend">${groups.map(([name,val],i)=>`<div><span><i style="background:${colors[i%colors.length]}"></i>${sanitize(name)}</span><strong>${(val/total*100).toFixed(1)}%</strong></div>`).join('')}</div></div>`:'<div class="empty">Registra ingresos para conocer su distribución.</div>'}</section><section class="panel income-details"><div class="panel-head"><div><h3>Ranking de fuentes</h3><p class="subtle">Más dinero aportado primero</p></div></div>${groups.map(([name,val],i)=>`<div class="income-ranked" tabindex="0" data-chart-tip="${sanitize(name)}|Ingreso: ${money(val)}|Participación: ${(total?val/total*100:0).toFixed(1)}%"><div><b>${i+1}. ${sanitize(name)}</b><strong>${money(val)}</strong></div><div class="income-bar"><span style="width:${total?val/total*100:0}%;background:${colors[i%colors.length]}"></span></div><small>${total?(val/total*100).toFixed(1):'0'}% del total</small></div>`).join('')||'<div class="empty">No hay ingresos en este mes.</div>'}</section></div>
  <section class="panel section"><div class="panel-head"><div><h3>Evolución de ingresos · ${y}</h3><p class="subtle">Ingresos reconocidos, mes a mes</p></div><button class="btn sm soft" data-act="newTransaction" data-type="income">+ Registrar ingreso</button></div><div class="income-monthly-bars">${yearMonths.map((m,i)=>`<div class="income-month-bar"><div class="income-column"><span style="height:${(byMonth[i]/max*100).toFixed(2)}%" data-chart-tip="${MON[i]} ${y}|Ingresos: ${money(byMonth[i])}" tabindex="0"></span></div><small>${sanitize(MON[i])}</small></div>`).join('')}</div></section>
  <div class="grid columns equal section"><section class="panel"><div class="panel-head"><h3>Categorías de ingreso</h3><span class="pill">${groups.length} fuentes</span></div>${Object.entries(byCategory).sort((a,b)=>b[1]-a[1]).map(([cat,v])=>{const ss=Object.entries(bySub).filter(([name])=>name.startsWith(cat+' / '));return `<details class="income-cat-details"><summary><span>${sanitize(cat)} <small>${ss.length?ss.length+' subcategoría(s)':''}</small></span><strong>${money(v)}</strong></summary><div class="income-cat-children">${ss.length?ss.map(([name,val])=>`<div><span>${sanitize(name.slice(cat.length+3))}</span><b>${money(val)}</b></div>`).join(''):'<p class="footnote">Sin subcategorías asignadas.</p>'}</div></details>`}).join('')||'<div class="empty">Sin categorías activas</div>'}<p class="footnote">Intereses cobrados a personas: ${money(interestPersonal)}</p></section><section class="panel"><div class="panel-head"><h3>Entradas que NO son ingresos</h3><span class="pill orange">Control contable</span></div><div class="mini-row"><span>Préstamos recibidos de personas, registrados este mes</span><strong>${money(borrowed)}</strong></div><div class="mini-row"><span>Préstamos bancarios</span><strong>Financiación, no ingreso</strong></div><p class="footnote">El dinero de un préstamo aumenta el efectivo y al mismo tiempo genera una deuda. No aumenta tu riqueza ni tu ingreso ganado. Tampoco se suman transferencias internas ni capital prestado que te devuelven.</p><button class="btn sm ghost" data-act="navigate" data-id="personal">Ver préstamos entre personas</button></section></div>
@@ -17256,7 +17264,7 @@ case 'categoryForm':{let kind=v.kind==='ingreso'?'ingreso':'gasto';let chosen=St
 case 'accountForm':{let prev=account(id),use=prev&&db.transactions.some(t=>t.accountId===id||t.toAccountId===id);if(use&&prev.currency!==v.currency)throw Error('No cambies la moneda de una cuenta con movimientos; crea otra cuenta para evitar distorsión histórica.');let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',kind:v.kind,currency:v.currency,opening:rnd(v.opening),opened:v.opened,last4:v.last4||'',annualRate:num(v.annualRate)};if(!entry.name||!bank(entry.bankId))throw Error('Indica el nombre y banco de la cuenta.');if(id)Object.assign(prev,entry);else db.accounts.push(entry);break}
 case 'cardForm':{let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',last4:v.last4||'',network:v.network||'other',tier:v.tier||'classic',cutDay:num(v.cutDay),dueDay:num(v.dueDay),limitDOP:rnd(v.limitDOP),limitUSD:rnd(v.limitUSD),openingDOP:rnd(v.openingDOP),openingUSD:rnd(v.openingUSD),openingBilledDOP:rnd(v.openingBilledDOP),openingBilledUSD:rnd(v.openingBilledUSD),overdraftDOP:rnd(num(v.limitDOP)*num(v.overdraftPctDOP)/100),overdraftUSD:rnd(num(v.limitUSD)*num(v.overdraftPctUSD)/100),overdraftPctDOP:num(v.overdraftPctDOP),overdraftPctUSD:num(v.overdraftPctUSD),cashbackPct:card(id)?.cashbackPct||0,annualFeeDOP:v.annualFeeCurrency==='DOP'?rnd(v.annualFeeAmount):0,annualFeeUSD:v.annualFeeCurrency==='USD'?rnd(v.annualFeeAmount):0,annualFeeAmount:rnd(v.annualFeeAmount),annualFeeCurrency:v.annualFeeCurrency,annualFeeRenewal:v.annualFeeRenewal||'',rewardsProgram:card(id)?.rewardsProgram||'cashback',rewardsName:card(id)?.rewardsName||'',benefitsDescription:card(id)?.benefitsDescription||'',benefitRules:card(id)?.benefitRules||[],opened:v.opened,minPct:num(v.minPct),aprDOP:num(v.aprDOP),aprUSD:num(v.aprUSD)};if(!entry.name||!bank(entry.bankId))throw Error('Indica el nombre y banco de la tarjeta.');if([entry.limitDOP,entry.limitUSD,entry.openingDOP,entry.openingUSD].some(x=>x<0))throw Error('Los límites y deudas iniciales no pueden ser negativos.');if([entry.openingBilledDOP,entry.openingBilledUSD,entry.overdraftDOP,entry.overdraftUSD,entry.annualFeeDOP,entry.annualFeeUSD].some(x=>x<0)||entry.overdraftPctDOP>1000||entry.overdraftPctUSD>1000||entry.openingBilledDOP>entry.openingDOP||entry.openingBilledUSD>entry.openingUSD)throw Error('La deuda al corte no puede superar la deuda inicial; los sobregiros no pueden ser negativos.');if(id)Object.assign(card(id),entry);else db.cards.push(entry);break}
 case 'certificateForm':{let entry={id:id||uuid(),name:String(v.name||'').trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',currency:v.currency,principal:rnd(v.principal),rate:num(v.rate),startDate:v.startDate,maturityDate:v.maturityDate,taxPct:num(v.taxPct),payoutFrequency:v.payoutFrequency,capitalMode:v.capitalMode==='pending'?'pending':'already',note:String(v.note||'').trim()};if(!entry.name||!bank(entry.bankId)||entry.principal<=0||entry.maturityDate<=entry.startDate)throw Error('Verifica banco, capital y fechas: vencimiento posterior al inicio.');let previous=certificate(id);if(previous&&db.transactions.some(t=>t.certificateId===id)&&(previous.currency!==entry.currency||previous.principal!==entry.principal||(previous.capitalMode||'already')!==entry.capitalMode))throw Error('No puedes cambiar moneda o principal después de registrar operaciones.');if(previous)Object.assign(previous,entry);else db.certificates.push(entry);break}
- case 'loanForm':{let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',currency:v.currency,openingMode:v.loanOpeningMode==='existing'?'existing':'new',openingBalanceDate:v.openingBalanceDate||today(),principal:rnd(v.principal),originationDate:v.originationDate||loan(id)?.originationDate||'',openingDebt:v.loanOpeningMode==='existing'?rnd(v.openingDebt):null,termUnit:v.termUnit||loan(id)?.termUnit||'months',termQuincenas:(v.termUnit||loan(id)?.termUnit)==='fortnights'?Math.floor(num(v.termCount)||num(loan(id)?.termQuincenas)):null,rate:num(v.rate),rateType:v.rateType==='variable'?'variable':'fixed',installmentStyle:v.installmentStyle==='variable'?'variable':'fixed',installmentEffectiveFrom:v.installmentEffectiveFrom||v.firstDue,months:num(v.months),paymentFrequency:v.termUnit==='fortnights'?'semi_monthly':v.paymentFrequency==='semi_monthly'?'semi_monthly':(loan(id)?.paymentFrequency||'monthly'),insuranceKind:v.insuranceKind||'none',firstDue:v.firstDue,insuranceMonthly:v.insuranceKind==='none'?0:rnd(v.insuranceMonthly),monthlyFee:rnd(v.monthlyFee),currentInstallment:rnd(v.currentInstallment),reportedBalance:v.reportedBalance===''?null:rnd(v.reportedBalance),balanceAsOf:v.balanceAsOf||today(),currentRate:num(v.currentRate),rateEffectiveFrom:v.rateEffectiveFrom||today(),postingMode:v.postingMode==='auto'?'auto':'confirm',autoAccountId:v.autoAccountId||'',autoFrom:(loan(id)?.postingMode==='auto'&&loan(id)?.autoFrom)?loan(id).autoFrom:today()};if(entry.installmentStyle==='variable'&&entry.postingMode==='auto')throw Error('Una cuota variable requiere confirmación manual antes de afectar tu saldo.');if(entry.currentInstallment<0)throw Error('La cuota de capital e interés no puede ser negativa.');if(entry.postingMode==='auto'&&(!account(entry.autoAccountId)||account(entry.autoAccountId).currency!==entry.currency))throw Error('Para un préstamo automático elige una cuenta de débito de la misma moneda.');if(!entry.name||!bank(entry.bankId)||entry.principal<=0)throw Error('El nombre, institución y capital original son obligatorios.');if(entry.openingMode==='existing'&&(entry.openingDebt===null||entry.openingDebt<0||entry.openingDebt>entry.principal))throw Error('El saldo actual debe estar entre cero y el capital original.');if(entry.openingMode==='existing'&&entry.originationDate&&entry.originationDate>entry.openingBalanceDate)throw Error('La fecha de inicio no puede ser posterior al saldo informado.');if(entry.termUnit==='fortnights'&&(!entry.termQuincenas||entry.termQuincenas>1200))throw Error('Indica una cantidad válida de quincenas.');let prev=loan(id);if(prev&&loanTransactions(id).length&&(prev.currency!==entry.currency||num(prev.principal)!==entry.principal||num(prev.rate)!==entry.rate||num(prev.months)!==entry.months||prev.firstDue!==entry.firstDue||v49LoanPeriodCount(prev)!==v49LoanPeriodCount(entry)||v49LoanPeriodsPerMonth(prev)!==v49LoanPeriodsPerMonth(entry)||String(prev.openingDebt??'')!==String(entry.openingDebt??'')))throw Error('El plan original está protegido cuando existen pagos. Solo puedes editar cuota vigente, seguros, cargos o conciliación.');if(id){let changed=['currentRate','insuranceKind','insuranceMonthly','monthlyFee','currentInstallment','postingMode','autoAccountId'].some(k=>['postingMode','autoAccountId'].includes(k)?String(prev[k]||'')!==String(entry[k]||''):num(prev[k]??(k==='currentRate'?prev.rate:0))!==num(entry[k]));let revisions=Array.isArray(prev.installmentHistory)?prev.installmentHistory.map(x=>({...x})):[];
+ case 'loanForm':{let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',currency:v.currency,openingMode:v.loanOpeningMode==='existing'?'existing':'new',openingBalanceDate:v.openingBalanceDate||today(),principal:rnd(v.principal),originationDate:v.originationDate||loan(id)?.originationDate||'',lastPaidDate:v.loanOpeningMode==='existing'?(v.lastPaidDate||loan(id)?.lastPaidDate||''):'',openingDebt:v.loanOpeningMode==='existing'?rnd(v.openingDebt):null,termUnit:v.termUnit||loan(id)?.termUnit||'months',termQuincenas:(v.termUnit||loan(id)?.termUnit)==='fortnights'?Math.floor(num(v.termCount)||num(loan(id)?.termQuincenas)):null,rate:num(v.rate),rateType:v.rateType==='variable'?'variable':'fixed',installmentStyle:v.installmentStyle==='variable'?'variable':'fixed',installmentEffectiveFrom:v.installmentEffectiveFrom||v.firstDue,months:num(v.months),paymentFrequency:v.termUnit==='fortnights'?'semi_monthly':v.paymentFrequency==='semi_monthly'?'semi_monthly':(loan(id)?.paymentFrequency||'monthly'),insuranceKind:v.insuranceKind||'none',firstDue:v.firstDue,insuranceMonthly:v.insuranceKind==='none'?0:rnd(v.insuranceMonthly),monthlyFee:rnd(v.monthlyFee),currentInstallment:rnd(v.currentInstallment),reportedBalance:v.reportedBalance===''?null:rnd(v.reportedBalance),balanceAsOf:v.balanceAsOf||today(),currentRate:num(v.currentRate),rateEffectiveFrom:v.rateEffectiveFrom||today(),postingMode:v.postingMode==='auto'?'auto':'confirm',autoAccountId:v.autoAccountId||'',autoFrom:(loan(id)?.postingMode==='auto'&&loan(id)?.autoFrom)?loan(id).autoFrom:today()};if(entry.installmentStyle==='variable'&&entry.postingMode==='auto')throw Error('Una cuota variable requiere confirmación manual antes de afectar tu saldo.');if(entry.currentInstallment<0)throw Error('La cuota de capital e interés no puede ser negativa.');if(entry.postingMode==='auto'&&(!account(entry.autoAccountId)||account(entry.autoAccountId).currency!==entry.currency))throw Error('Para un préstamo automático elige una cuenta de débito de la misma moneda.');if(!entry.name||!bank(entry.bankId)||entry.principal<=0)throw Error('El nombre, institución y capital original son obligatorios.');if(entry.openingMode==='existing'&&(entry.openingDebt===null||entry.openingDebt<0||entry.openingDebt>entry.principal))throw Error('El saldo actual debe estar entre cero y el capital original.');if(entry.openingMode==='existing'){if(!entry.originationDate||!entry.lastPaidDate)throw Error('Indica la primera y la última cuota pagada.');if(entry.originationDate>entry.lastPaidDate||entry.lastPaidDate>entry.openingBalanceDate||entry.lastPaidDate>today())throw Error('La última cuota pagada debe ser posterior o igual a la primera y no puede ser futura.');if(entry.firstDue!==entry.originationDate&&(!loan(id)||!loanTransactions(id).length))throw Error('La primera cuota pagada debe iniciar el calendario del préstamo.');}if(entry.termUnit==='fortnights'&&(!entry.termQuincenas||entry.termQuincenas>1200))throw Error('Indica una cantidad válida de quincenas.');let prev=loan(id);if(prev&&loanTransactions(id).length&&(prev.currency!==entry.currency||num(prev.principal)!==entry.principal||num(prev.rate)!==entry.rate||num(prev.months)!==entry.months||prev.firstDue!==entry.firstDue||v49LoanPeriodCount(prev)!==v49LoanPeriodCount(entry)||v49LoanPeriodsPerMonth(prev)!==v49LoanPeriodsPerMonth(entry)||String(prev.openingDebt??'')!==String(entry.openingDebt??'')))throw Error('El plan original está protegido cuando existen pagos. Solo puedes editar cuota vigente, seguros, cargos o conciliación.');if(id){let changed=['currentRate','insuranceKind','insuranceMonthly','monthlyFee','currentInstallment','postingMode','autoAccountId'].some(k=>['postingMode','autoAccountId'].includes(k)?String(prev[k]||'')!==String(entry[k]||''):num(prev[k]??(k==='currentRate'?prev.rate:0))!==num(entry[k]));let revisions=Array.isArray(prev.installmentHistory)?prev.installmentHistory.map(x=>({...x})):[];
 const amountChanged=Math.abs(num(prev.currentInstallment)-entry.currentInstallment)>.005 || (prev.installmentStyle||'fixed')!==entry.installmentStyle;
 if(amountChanged){
  if(loanTransactions(id).length&&entry.installmentEffectiveFrom<today())throw Error('La nueva cuota debe comenzar en una fecha futura; no se modifican pagos históricos.');
@@ -19093,8 +19101,8 @@ loanForm=function(id,preBank){
  const mode=loanItem.openingMode||'new';
  const start=form.querySelector('.smart-sub-intro');
  const block=document.createElement('section');block.className='v48-loan-opening form-full';
- block.innerHTML=`<div class="v48-section-title">¿Es un préstamo nuevo o ya lo tienes iniciado?</div><div class="v48-kind-pick"><button type="button" data-v48-loan-mode="new" class="v48-kind-card"><b>Nuevo / desde el origen</b><span>Registra el capital y plazo completos del contrato.</span></button><button type="button" data-v48-loan-mode="existing" class="v48-kind-card"><b>Ya iniciado</b><span>Indica capital original, saldo actual y cuándo comenzó.</span></button></div>
- <input type="hidden" name="loanOpeningMode" value="${mode}"><div class="v83-opening-fields"><label><span class="filter-label">¿Cuándo inició el préstamo?</span><input type="date" class="field" name="originationDate" max="${today()}" value="${loanItem.originationDate||''}"></label><label><span class="filter-label">Saldo de capital que debes hoy</span><input type="number" class="field" name="openingDebt" min="0" step="0.01" inputmode="decimal" value="${loanItem.openingDebt??loanItem.principal??''}"></label><label><span class="filter-label">Fecha del saldo informado</span><input type="date" class="field" name="openingBalanceDate" value="${loanItem.openingBalanceDate||today()}"></label></div><div class="v83-opening-preview" aria-live="polite"></div><p class="v48-loan-note">Coloca el <strong>capital original</strong> y el <strong>saldo de capital actual</strong>. Calcularemos la <strong>tabla de amortización</strong> con cada cuota y su interés según la tasa pactada. Si el saldo real difiere del plan, la diferencia figurará como conciliación, no como un pago realizado. No se descontará dinero de tus cuentas.</p>`;
+ block.innerHTML=`<div class="v48-section-title">¿Es un préstamo nuevo o ya lo tienes iniciado?</div><div class="v48-kind-pick"><button type="button" data-v48-loan-mode="new" class="v48-kind-card"><b>Nuevo / desde el origen</b><span>Registra el capital y plazo completos del contrato.</span></button><button type="button" data-v48-loan-mode="existing" class="v48-kind-card"><b>Ya iniciado</b><span>Indica capital original, saldo actual y las fechas de primera y última cuota pagada.</span></button></div>
+ <input type="hidden" name="loanOpeningMode" value="${mode}"><div class="v83-opening-fields"><label><span class="filter-label">Fecha de la primera cuota pagada</span><input type="date" class="field" name="originationDate" max="${today()}" value="${loanItem.originationDate||''}"></label><label class="v103-last-payment-field"><span class="filter-label">Fecha de la última cuota pagada</span><input type="date" class="field" name="lastPaidDate" max="${today()}" value="${loanItem.lastPaidDate||''}" required></label><label><span class="filter-label">Saldo de capital actual</span><input type="number" class="field" name="openingDebt" min="0" step="0.01" inputmode="decimal" value="${loanItem.openingDebt??loanItem.principal??''}"><small>Saldo restante que indica el banco.</small></label><input type="hidden" name="openingBalanceDate" value="${loanItem.openingBalanceDate||today()}"></div><div class="v83-opening-preview" aria-live="polite"></div><p class="v48-loan-note">Coloca el <strong>capital original</strong> y el <strong>saldo de capital actual</strong>. Calcularemos la <strong>tabla de amortización</strong> con cada cuota y su interés según la tasa pactada. Si el saldo real difiere del plan, la diferencia figurará como conciliación, no como un pago realizado. No se descontará dinero de tus cuentas.</p>`;
  if(start)start.insertAdjacentElement('afterend',block);
  const originalLabel=form.elements.principal?.closest('label');
  const monthsLabel=form.elements.months?.closest('label');
@@ -19104,7 +19112,7 @@ loanForm=function(id,preBank){
   block.querySelectorAll('[data-v48-loan-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.v48LoanMode===form.elements.loanOpeningMode.value));
   if(originalLabel?.querySelector('.filter-label'))originalLabel.querySelector('.filter-label').textContent='Capital original del contrato';
   if(monthsLabel?.querySelector('.filter-label'))monthsLabel.querySelector('.filter-label').textContent='Plazo total del contrato (meses, años o quincenas)';
-  if(dueLabel?.querySelector('.filter-label'))dueLabel.querySelector('.filter-label').textContent='Primera cuota histórica del contrato';
+  if(dueLabel?.querySelector('.filter-label'))dueLabel.querySelector('.filter-label').textContent='Fecha de la primera cuota pagada';
   block.querySelector('.v83-opening-fields').hidden=!existing;block.querySelector('.v83-opening-preview').hidden=!existing;
   block.querySelector('.v48-loan-note').hidden=!existing;
  }
@@ -19121,7 +19129,7 @@ document.addEventListener('click',function(ev){
  const isExisting=button.dataset.v48LoanMode==='existing';
  form.elements.principal.closest('label').querySelector('.filter-label').textContent='Capital original del contrato';
  {const termLabel=form.elements.termCount?.closest('label')?.querySelector('.filter-label')||form.elements.months.closest('label')?.querySelector('.filter-label');if(termLabel)termLabel.textContent='Duración del préstamo';}
- form.elements.firstDue.closest('label').querySelector('.filter-label').textContent='Primera cuota histórica del contrato';
+ if(form.elements.firstDue?.closest('label')?.querySelector('.filter-label'))form.elements.firstDue.closest('label').querySelector('.filter-label').textContent='Fecha de la primera cuota pagada';
  form.querySelector('.v83-opening-fields').hidden=!isExisting;form.querySelector('.v83-opening-preview').hidden=!isExisting;
  form.querySelector('.v48-loan-note').hidden=!isExisting;
  v83LoanOpeningRefresh(form);
@@ -19130,7 +19138,7 @@ document.addEventListener('submit',function(ev){
  const form=ev.target;if(form?.id!=='loanForm')return;
  if(form.elements.loanOpeningMode?.value==='existing'){
   const d=form.elements.openingBalanceDate?.value;
-  if(!d||d>today()||form.elements.firstDue.value>today()||form.elements.firstDue.value<form.elements.originationDate.value){ev.preventDefault();ev.stopImmediatePropagation();showError('Para un préstamo iniciado indica la primera cuota histórica, posterior al inicio y anterior al saldo informado.');}
+  if(!d||d>today()||form.elements.firstDue.value>today()||form.elements.firstDue.value<form.elements.originationDate.value){ev.preventDefault();ev.stopImmediatePropagation();showError('Indica la primera cuota pagada y la última cuota pagada; ambas deben estar entre el inicio y hoy.');}
  }
 },true);
 
@@ -19709,7 +19717,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   const comparison=last>.005?(spending-last)/Math.abs(last)*100:null;
   const vsMonth=lastMonth>.005?(monthSpend-lastMonth)/Math.abs(lastMonth)*100:null;
   const change=x=>x===null?'Sin base':(x>=0?'+':'')+pct(x);
-  return {kicker:`EGRESOS / ${annual?'ACUMULADO '+y:fmtMonth(selected).toUpperCase()}`,title:'Cada gasto importa,<br><em>y debe tener explicación.</em>',subtitle:'Visualiza los consumos y costos reconocidos, sin volver a contar los pagos de tarjetas como nuevos gastos.',main:metric(annual?'GASTO ACUMULADO DEL AÑO':'EGRESOS DEL MES',eq(spending),annual?`${months.length} meses consolidados`:`${fmtMonth(selected)} · gastos reconocidos`,details('Gastos por categoría',spending,ranked,'Compras, comisiones e intereses registrados. Pagar una tarjeta no duplica la compra.',{page:'expenses',tab:'category'})),cards:[metric('MAYOR CATEGORÍA',peak?eq(peak.amount):eq(0),peak?.name||'Sin gastos',details('Concentración de egresos',spending,ranked,'Valores consolidados por categoría y período.',{page:'expenses',tab:'category'})),metric('PESO SOBRE INGRESOS',pct(pctIncome),'Gasto reconocido / ingreso reconocido',details('Relación ingresos y egresos',null,[row('Ingresos reconocidos',income,'En el período'),row('Gastos reconocidos',spending,'En el período')],'No representa un flujo de caja ni incluye abonos de capital como gasto.',{page:'expenses',tab:'overview'})),metric('INTERANUAL',change(comparison),`Base ${eq(last)} · año previo`,details('Comparación interanual',null,[row('Período actual',spending,annual?'Acumulado anual':'Mes seleccionado'),row('Mismo período año anterior',last,'Período comparable')],'Variación calculada sobre el gasto reconocido del período anterior.',{page:'expenses',tab:'overview'})),metric('VAR. MES ANTERIOR',change(vsMonth),`Mes actual ${eq(monthSpend)}`,details('Variación respecto del mes previo',null,[row('Mes seleccionado',monthSpend,fmtMonth(selected)),row('Mes anterior',lastMonth,fmtMonth(monthBefore(selected)))],'La variación usa el mes seleccionado, aunque la vista principal sea anual.',{page:'expenses',tab:'overview'}))],footer:'Los pagos de capital no duplican egresos; sí pueden reconocerse sus intereses, impuestos y cargos.',actions:[['Categorías de gasto','expenses','category'],['Ver movimientos','expenses','activity']]};
+  return {kicker:`EGRESOS / ${annual?'ACUMULADO '+y:fmtMonth(selected).toUpperCase()}`,title:'Cada gasto importa,<br><em>y debe tener explicación.</em>',subtitle:'Visualiza los consumos y costos reconocidos, sin volver a contar los pagos de tarjetas como nuevos gastos.',main:metric(annual?'GASTO ACUMULADO DEL AÑO':'EGRESOS DEL MES',eq(spending),annual?`${months.length} meses consolidados`:`${fmtMonth(selected)} · gastos reconocidos`,details('Gastos por categoría',spending,ranked,'Compras, comisiones e intereses registrados. Pagar una tarjeta no duplica la compra.',{page:'expenses',tab:'category'})),cards:[metric('MAYOR CATEGORÍA',peak?eq(peak.amount):eq(0),peak?.name||'Sin gastos',details('Concentración de egresos',spending,ranked,'Valores consolidados por categoría y período.',{page:'expenses',tab:'category'})),metric('PESO SOBRE INGRESOS',pct(pctIncome),'Gasto reconocido / ingreso reconocido',details('Relación ingresos y egresos',null,[row('Ingresos reconocidos',income,'En el período'),row('Gastos reconocidos',spending,'En el período')],'No representa un flujo de caja ni incluye abonos de capital como gasto.',{page:'expenses',tab:'overview'})),metric('INTERANUAL',change(comparison),`Base ${eq(last)} · año previo`,details('Comparación interanual',null,[row('Período actual',spending,annual?'Acumulado anual':'Mes seleccionado'),row('Mismo período año anterior',last,'Período comparable')],'Variación calculada sobre el gasto reconocido del período anterior.',{page:'expenses',tab:'overview'})),metric('CAMBIO MENSUAL',change(vsMonth),`Mes actual ${eq(monthSpend)}`,details('Variación respecto del mes previo',null,[row('Mes seleccionado',monthSpend,fmtMonth(selected)),row('Mes anterior',lastMonth,fmtMonth(monthBefore(selected)))],'La variación usa el mes seleccionado, aunque la vista principal sea anual.',{page:'expenses',tab:'overview'}))],footer:'Los pagos de capital no duplican egresos; sí pueden reconocerse sus intereses, impuestos y cargos.',actions:[['Categorías de gasto','expenses','category'],['Ver movimientos','expenses','activity']]};
  }
  function buildRegister(){
   const pending=(db.pendingOperations||[]),bad=(db.transactions||[]).filter(t=>['income','expense','card_charge','card_refund'].includes(t.type)&&!String(t.category||'').trim());
@@ -19846,6 +19854,37 @@ document.addEventListener('keydown',event=>{
 let v99ModelCache=Object.create(null);
 function v99Invalidate(){v99ModelCache=Object.create(null)}
 function v99Memo(key,compute){if(Object.prototype.hasOwnProperty.call(v99ModelCache,key))return v99ModelCache[key];return v99ModelCache[key]=compute()}
+/* V102 · Una lectura remota del documento completo, cálculos puramente locales.
+   Compartir resultados dentro del ciclo de render y volverlos a calcular tras persistir,
+   al cargar otra sesión y al cambiar la información. Borradores nunca se cachean. */
+function v102Known(collection,item){return !!item?.id&&Array.isArray(collection)&&collection.some(x=>x===item)}
+function getAccountBalance(a,asOf=today()){
+ if(!v102Known(db.accounts,a))return v102AccountBalanceRaw(a,asOf);
+ return v99Memo('account:'+a.id+':'+asOf,()=>v102AccountBalanceRaw(a,asOf));
+}
+function cardStatus(c,ccy){
+ if(!v102Known(db.cards,c))return v102CardStatusRaw(c,ccy);
+ return v99Memo('card:'+c.id+':'+ccy+':'+today(),()=>v102CardStatusRaw(c,ccy));
+}
+function personalBalance(l){
+ if(!v102Known(db.personalLoans,l))return v102PersonalBalanceRaw(l);
+ return v99Memo('personal:'+l.id+':'+today(),()=>v102PersonalBalanceRaw(l));
+}
+function fullOriginalLoan(l){
+ if(!v102Known(db.loans,l))return v102FullOriginalLoanRaw(l);
+ return v99Memo('original:'+l.id,()=>v102FullOriginalLoanRaw(l));
+}
+function loanAccounting(l){
+ if(!v102Known(db.loans,l))return v102LoanAccountingRaw(l);
+ return v99Memo('loan:'+l.id+':'+today(),()=>v102LoanAccountingRaw(l));
+}
+function monthlyTotals(year,month){
+ const y=Number(year),m=Number(month);
+ if(!Number.isInteger(y)||!Number.isInteger(m)||m<1||m>12)return v102MonthlyTotalsRaw(year,month);
+ return v99Memo('monthly:'+y+'-'+m,()=>v102MonthlyTotalsRaw(y,m));
+}
+function upcoming(){return v99Memo('upcoming:'+today(),()=>v102UpcomingRaw())}
+function v82ForecastMonth(){return v99Memo('forecast:'+today(),()=>v102ForecastMonthRaw())}
 function v99Period(period=ui.month){return /^\d{4}-(0[1-9]|1[0-2])$/.test(String(period||''))?String(period):today().slice(0,7)}
 function v99End(period){const p=v99Period(period);return periodEnd(+p.slice(0,4),+p.slice(5,7))}
 function v99DueInPeriod(d,period){return String(d||'').slice(0,7)===v99Period(period)}
@@ -19892,8 +19931,16 @@ function v99RecurringMonth(period=ui.month){
     if(v99DueInPeriod(due,p))dates.add(due);
     const next=v96NextRecurringDate(due,r.frequency);if(!next||next<=due)break;due=next;
    }
-   // Una suscripción ya pagada puede tener nextDue en el mes siguiente.
-   for(const t of db.transactions||[])if(t.recurringId===r.id&&v99DueInPeriod(t.date,p)&&['expense','card_charge'].includes(t.type))dates.add(t.date);
+   // Conciliar un cargo registrado fuera de fecha con el vencimiento de la
+   // misma mensualidad/quincena, sin duplicarlo como segunda obligación.
+   const payments=(db.transactions||[]).filter(t=>t.recurringId===r.id&&v99DueInPeriod(t.date,p)&&['expense','card_charge'].includes(t.type)).sort((a,b)=>a.date.localeCompare(b.date));
+   const reconciled=new Set();
+   for(const t of payments){
+    const candidate=[...dates].filter(d=>!reconciled.has(d)&&Math.abs(diffDays(t.date,d))<=4)
+     .sort((a,b)=>Math.abs(diffDays(t.date,a))-Math.abs(diffDays(t.date,b)))[0];
+    if(candidate)reconciled.add(candidate);
+    else dates.add(t.date);
+   }
    for(const d of dates)items.push({kind:'recurring',id:r.id,name:r.name||'Suscripción',date:d,currency:r.currency||'DOP',amount:num(r.amount),estimated:true});
   }
   for(const x of items)total+=v99MoneyInDop(x.amount,x.currency);
@@ -20097,16 +20144,19 @@ function v85CardMinimumNet(){
  return {gross:rnd(gross),overlap:rnd(overlap),net:rnd(Math.max(0,gross-overlap))};
 }
 function v80Assessment(amount=0,currency='DOP',opts={}){
- const income=v80IncomeReference(),estimated=Math.max(0,num(amount)),cost=currency==='USD'?fx(estimated,'USD'):estimated;
- const recurring=v80RecurringMonthly(),loans=v80LoanMonthly(),cardMinimum=v85CardMinimumNet(),cards=cardMinimum.gross,personal=v80PersonalMonth(),spending=v85ExpensesThisMonth(),spent=Math.max(0,rnd(spending.spent-cardMinimum.overlap));
- const obligations=rnd(recurring+loans+cards+personal),base=rnd(obligations+spent),total=rnd(base+cost);
- const ratio=income.net>0?rnd(total/income.net*100):null;
- const prior=income.net>0?rnd(base/income.net*100):null;
- const obligationsRatio=income.net>0?rnd(obligations/income.net*100):null;
- const margin=income.net>0?rnd(income.net-total):null;
+ const period=v99Period(opts.period||today().slice(0,7)),capacity=v99DebtMonth(period);
+ const income={net:capacity.income,gross:null,source:capacity.source,quality:capacity.income>0?'projected':'missing'};
+ const estimated=Math.max(0,num(amount)),cost=currency==='USD'?fx(estimated,'USD'):estimated;
+ const recurring=capacity.a.recurring,loans=capacity.a.loans,cards=capacity.a.cards,personal=capacity.a.personal;
+ const cardMinimum=v85CardMinimumNet(),spending=v85ExpensesThisMonth(),spent=spending.spent;
+ const obligations=capacity.monthly,base=obligations,total=rnd(base+(opts.committed?0:cost));
+ const ratio=capacity.income>0?rnd(total/capacity.income*100):null;
+ const prior=capacity.ratio;
+ const obligationsRatio=capacity.ratio;
+ const margin=capacity.income>0?rnd(capacity.income-total):null;
  const cash=totalLiquid(),cashAfter=rnd(cash-(opts.paymentSource==='card'?0:cost));
  const risk=ratio===null?'missing':ratio>=100?'over':ratio>=80?'caution':'ok';
- const debtService=rnd(loans+cards+personal),debtRatio=income.gross>0?rnd(debtService/income.gross*100):null;
+ const debtService=rnd(loans+cards+personal),debtRatio=null;
  const debtRatioNet=income.net>0?rnd(debtService/income.net*100):null;
  const sourceType=opts.paymentSource==='card'?'card':'account';
  let selectedLimit=null,selectedBalance=null;
@@ -20116,7 +20166,7 @@ function v80Assessment(amount=0,currency='DOP',opts={}){
  if(opts.cardId&&sourceType==='card'){
   const c=card(opts.cardId);if(c){try{selectedLimit=cardStatus(c,currency).available;}catch(_){}}
  }
- return {income,cost,recurring,loans,cards,personal,spent,obligations,obligationsRatio,base,total,ratio,prior,margin,cash,cashAfter,risk,debtRatio,debtRatioNet,debtService,cardMinimum,spending,selectedLimit,selectedBalance,currency,sourceType,period:opts.period||today().slice(0,7),committed:!!opts.committed};
+ return {income,cost,recurring,loans,cards,personal,spent,obligations,obligationsRatio,base,total,ratio,prior,margin,cash,cashAfter,risk,debtRatio,debtRatioNet,debtService,cardMinimum,spending,selectedLimit,selectedBalance,currency,sourceType,period,committed:!!opts.committed};
 }
 function v80StatusLabel(s){return s==='over'?'Supera tus ingresos previstos':s==='caution'?'Margen ajustado':s==='ok'?'Dentro del margen estimado':'Falta una base mensual de ingresos'}
 /* V90 — La carga mensual real y el efecto de un gasto se comparan SIEMPRE
@@ -20233,7 +20283,7 @@ document.addEventListener('submit',event=>{
 });
 
 /* V82 — Estimación de cierre mensual: realizado + aún pendiente, SIN capital duplicado. */
-function v82ForecastMonth(){
+function v102ForecastMonthRaw(){
  const current=today(),period=current.slice(0,7),year=Number(period.slice(0,4)),month=Number(period.slice(5,7)),end=dateStr(new Date(year,month,0));
  const actual=monthlyTotals(year,month),detail={income:[],recurring:[],loanCosts:[]};
  const linked=new Set((db.transactions||[]).map(t=>t.scheduleKey).filter(Boolean));
@@ -20335,7 +20385,7 @@ function v83LoanOpeningRefresh(form){
  const existing=form.elements.loanOpeningMode?.value==='existing';
  const original=Number(form.elements.principal.value),current=Number(form.elements.openingDebt?.value);
  const active=existing&&Number.isFinite(original)&&original>0&&form.elements.openingDebt?.value.trim()!==''&&Number.isFinite(current)&&current>=0;
- if(form.elements.openingDebt)form.elements.openingDebt.required=!!existing;if(form.elements.originationDate)form.elements.originationDate.required=!!existing;
+ if(form.elements.openingDebt)form.elements.openingDebt.required=!!existing;if(form.elements.originationDate)form.elements.originationDate.required=!!existing;if(form.elements.lastPaidDate)form.elements.lastPaidDate.required=!!existing;
  const box=form.querySelector('.v83-opening-preview');if(!box)return;
  const valid=active&&current<=original;
  const reduction=valid?Math.max(0,original-current):0;
@@ -20500,6 +20550,12 @@ loanForm=function(id,preBank){
  const rateType=node('label','v87-field v87-rate-type',`<span class="filter-label">Modalidad de la tasa</span><select name="rateType" class="field" aria-label="Tipo de tasa"><option value="fixed">Tasa fija</option><option value="variable">Tasa variable</option></select>`);
  rateType.querySelector('select').value=previous?.rateType==='variable'?'variable':'fixed';
  const planned=node('div','v97-internal-contract-date',`<input name="installmentEffectiveFrom" type="hidden" value="${sanitize(hasPayments?firstEffective:(previous?.installmentEffectiveFrom||previous?.firstDue||today()))}">`);
+ // Fechas originales con pagos contables se protegen; la última cuota puede precisarse.
+ if(previous&&hasPayments&&previous.openingMode==='existing'&&form.elements.originationDate){
+  form.elements.originationDate.value=previous.firstDue||previous.originationDate||'';
+  form.elements.originationDate.readOnly=true;
+  form.elements.originationDate.title='La primera cuota está protegida porque existen pagos registrados';
+ }
  const firstDueControl=firstDue?.querySelector('[name="firstDue"]');
  if(firstDueControl){firstDueControl.type='hidden';firstDueControl.required=false;planned.appendChild(firstDueControl);}
 
@@ -20568,7 +20624,7 @@ loanForm=function(id,preBank){
   if(e.currentRate&&e.rate)e.currentRate.value=e.rate.value;
   if(e.rateEffectiveFrom)e.rateEffectiveFrom.value=previous?.rateEffectiveFrom||today();
   if(e.firstDue){
-   e.firstDue.value=previous?.firstDue||v100FirstDue(e.originationDate?.value||today(),e.paymentFrequency?.value||'monthly');
+   e.firstDue.value=previous&&hasPayments?previous.firstDue:(e.loanOpeningMode?.value==='existing'?(e.originationDate?.value||previous?.firstDue||today()):(previous?.firstDue||v100FirstDue(e.originationDate?.value||today(),e.paymentFrequency?.value||'monthly')));
   }
   const insured=e.insuranceKind?.value!=='none';
   if(insuranceMonthly){insuranceMonthly.hidden=!insured;if(!insured&&e.insuranceMonthly)e.insuranceMonthly.value='0'}
@@ -20576,6 +20632,7 @@ loanForm=function(id,preBank){
   if(insuranceMonthly)setLabel(insuranceMonthly,'Seguro mensual (importe)');
   if(autoAccount)autoAccount.hidden=e.postingMode?.value!=='auto';
   if(planned)planned.hidden=true;
+  if(e.lastPaidDate){e.lastPaidDate.required=e.loanOpeningMode?.value==='existing';e.lastPaidDate.max=today();if(e.originationDate?.value)e.lastPaidDate.min=e.originationDate.value;}
   if(e.postingMode?.value==='auto'&&e.installmentStyle?.value==='variable')e.postingMode.value='confirm';
   if(e.autoAccountId?.closest('label')&&e.postingMode?.value==='auto')setLabel(e.autoAccountId.closest('label'),'Cuenta de débito (misma moneda)');
   const next=e.loanOpeningMode?.value==='existing'?num(e.openingDebt?.value):num(e.principal?.value);
@@ -20595,7 +20652,8 @@ loanForm=function(id,preBank){
    ['Cuota capital + interés',inst>0?moneyOf(inst):'Se estima según contrato'],
    ['Cargos adicionales al mes',fee>0?moneyOf(fee):'Sin cargos'],
    ['Vencimientos',perMonth===2?'Días 15 y 30':'Mensual'],
-   ...(e.loanOpeningMode?.value==='existing'&&e.originationDate?.value&&e.firstDue?.value&&num(e.principal?.value)>num(e.openingDebt?.value)?(()=>{const tmp={principal:num(e.principal.value),openingMode:'existing',openingDebt:num(e.openingDebt.value),openingBalanceDate:e.openingBalanceDate?.value||today(),firstDue:e.firstDue.value,rate:num(e.rate?.value),currentRate:num(e.currentRate?.value),rateEffectiveFrom:e.rateEffectiveFrom?.value||today(),months:num(e.months?.value),paymentFrequency:e.paymentFrequency?.value,termQuincenas:e.termUnit?.value==='fortnights'?num(e.termCount?.value):null,insuranceMonthly:insurance,monthlyFee:fee,currentInstallment:inst,installmentEffectiveFrom:e.firstDue.value};const h=v88LoanReconstruction(tmp);return [['Cuotas anteriores estimadas',String(h.periods)],['Intereses anteriores calculados',moneyOf(h.interest)],['Saldo según amortización',moneyOf(h.modelBalance)],['Diferencia frente a saldo informado',moneyOf(Math.abs(h.adjustment))],['Capital reducido según banco',moneyOf(h.reduction)]]})():[]),
+   ...(e.loanOpeningMode?.value==='existing'?[['Primera cuota pagada',prettyDate(e.originationDate?.value)],['Última cuota pagada',prettyDate(e.lastPaidDate?.value)]]:[]),
+   ...(e.loanOpeningMode?.value==='existing'&&e.originationDate?.value&&e.firstDue?.value&&num(e.principal?.value)>num(e.openingDebt?.value)?(()=>{const tmp={principal:num(e.principal.value),openingMode:'existing',openingDebt:num(e.openingDebt.value),openingBalanceDate:e.openingBalanceDate?.value||today(),lastPaidDate:e.lastPaidDate?.value,firstDue:e.firstDue.value,rate:num(e.rate?.value),currentRate:num(e.currentRate?.value),rateEffectiveFrom:e.rateEffectiveFrom?.value||today(),months:num(e.months?.value),paymentFrequency:e.paymentFrequency?.value,termQuincenas:e.termUnit?.value==='fortnights'?num(e.termCount?.value):null,insuranceMonthly:insurance,monthlyFee:fee,currentInstallment:inst,installmentEffectiveFrom:e.firstDue.value};const h=v88LoanReconstruction(tmp);return [['Cuotas anteriores estimadas',String(h.periods)],['Intereses anteriores calculados',moneyOf(h.interest)],['Saldo según amortización',moneyOf(h.modelBalance)],['Diferencia frente a saldo informado',moneyOf(Math.abs(h.adjustment))],['Capital reducido según banco',moneyOf(h.reduction)]]})():[]),
    ['Registro de cuotas',e.postingMode?.value==='auto'?'Automático interno':'Confirmación manual']
   ];
   summaryGrid.innerHTML=rows.map(([label,value],i)=>`<div class="v87-review-row ${i===5||i===6?'v87-review-emphasis':''}"><span>${clean(label)}</span><strong>${clean(value)}</strong></div>`).join('');
@@ -20628,7 +20686,8 @@ loanForm=function(id,preBank){
   }
   if(which===1){
    if(e.loanOpeningMode?.value==='existing'){
-    if(!e.originationDate?.value||e.openingDebt?.value===''||num(e.openingDebt?.value)>num(e.principal?.value)||num(e.openingDebt?.value)<0)return error('Revisa la fecha de inicio, capital original y saldo actual.',e.openingDebt);
+    if(!e.originationDate?.value||!e.lastPaidDate?.value||e.openingDebt?.value===''||num(e.openingDebt?.value)>num(e.principal?.value)||num(e.openingDebt?.value)<0)return error('Indica primera y última cuota pagada, capital original y saldo actual.',e.lastPaidDate||e.openingDebt);
+    if(e.lastPaidDate.value<e.originationDate.value||e.lastPaidDate.value>today()||e.lastPaidDate.value>e.openingBalanceDate.value)return error('La última cuota pagada debe estar entre la primera cuota y hoy.',e.lastPaidDate);
     if(e.originationDate.value>e.openingBalanceDate?.value||e.originationDate.value>today())return error('La fecha inicial no puede ser posterior al saldo reportado.',e.originationDate);
    }
    if(e.postingMode?.value==='auto'){
@@ -20641,7 +20700,7 @@ loanForm=function(id,preBank){
  }
  header.addEventListener('click',ev=>{const button=ev.target.closest('[data-v87-step]');if(!button)return;const to=Number(button.dataset.v87Step);if(to<=active||validate(active))setStep(to)});
  footnav.addEventListener('click',ev=>{if(ev.target.closest('[data-v87-back]'))setStep(active-1);else if(ev.target.closest('[data-v87-next]')&&validate(active))setStep(active+1)});
- form.addEventListener('input',ev=>{if(ev.target.name==='currentRate')currentRateEdited=true;update()});
+ form.addEventListener('input',ev=>{if(ev.target.name==='currentRate')currentRateEdited=true;if(['openingDebt','lastPaidDate'].includes(ev.target.name)&&form.elements.openingBalanceDate)form.elements.openingBalanceDate.value=today();update()});
  form.addEventListener('change',ev=>{
   if(ev.target.name==='currency'){
    const select=form.elements.autoAccountId,before=select?.value||'';
