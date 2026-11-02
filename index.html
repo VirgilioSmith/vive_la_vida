@@ -14480,6 +14480,67 @@ body.theme-dark .v159-tomorrow-intro h3,body.theme-dark .v159-outcome-money,body
 }
 </style>
 
+
+<style id="vive-v164-header-minimal">
+/* V164: visual identity remains Liquid Glass; no wide search input, no P, no dropdown, no chevrons. */
+@media (min-width:791px){
+ .ff-header-middle.v164-header-dock{flex:0 0 auto!important;width:auto!important;max-width:none!important;min-width:0!important;display:flex;justify-content:center!important;align-items:center!important;z-index:50!important;pointer-events:auto!important}
+ .v164-header-cluster{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-width:0}
+ .v164-tomorrow-pill,.v164-search-button{appearance:none;-webkit-appearance:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;border:1px solid rgba(255,255,255,.94);background:linear-gradient(155deg,rgba(255,255,255,.85),rgba(237,243,255,.7));box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 9px 22px rgba(61,91,153,.085);color:#294467;transition:box-shadow .2s ease,background .2s ease,transform .2s ease}
+ .v164-tomorrow-pill{height:40px;min-width:120px;padding:0 19px;border-radius:999px;font-size:13px;font-weight:800;letter-spacing:-.025em;line-height:1;text-transform:none;white-space:nowrap}
+ .v164-search-button{height:42px;width:42px;border-radius:50%;padding:0}
+ .v164-search-button svg{width:19px;height:19px;stroke-width:2.05}
+ .v164-tomorrow-pill:hover,.v164-search-button:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 #fff,0 13px 26px rgba(61,91,153,.15)}
+ .v164-tomorrow-pill:focus-visible,.v164-search-button:focus-visible{outline:2px solid #4c84ef;outline-offset:3px}
+ .world-overview .ff-header-middle.v164-header-dock{width:auto!important;flex:none!important;justify-content:center!important}
+}
+@media (min-width:791px) and (max-width:1120px){
+ .v164-tomorrow-pill{height:38px;min-width:105px;padding:0 14px;font-size:12px}
+ .v164-search-button{width:40px;height:40px}
+}
+body.theme-dark .v164-tomorrow-pill,body.theme-dark .v164-search-button{background:linear-gradient(145deg,rgba(56,74,114,.88),rgba(39,57,91,.83));border-color:rgba(180,202,244,.22);color:#e5efff}
+@media (prefers-reduced-motion:reduce){.v164-tomorrow-pill,.v164-search-button{transition:none!important}}
+</style>
+
+<style id="vive-v165-header-notification-search">
+/* V165: píldora centrada y lupa agrupada con notificaciones, sin afectar la barra móvil. */
+@media (min-width:791px){
+ .main .topbar{position:relative;overflow:visible}
+ .main .topbar .v164-header-dock{justify-content:center!important;position:relative;z-index:3}
+ .main .topbar .v164-tomorrow-pill{font-size:13px;text-transform:none;letter-spacing:-.01em;font-weight:800;min-width:122px;min-height:42px;border-radius:999px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+ .main .topbar .top-actions{align-items:center;flex-wrap:nowrap!important;gap:9px!important;min-width:0}
+ .main .topbar .top-actions .v36-notifications{position:relative;flex:0 0 auto;z-index:15}
+ .main .topbar .top-actions .v36-notifications>summary,
+ .main .topbar .top-actions .v165-search-icon{box-sizing:border-box;flex:0 0 42px!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;border:1px solid rgba(255,255,255,.88)!important;border-radius:14px!important;background:linear-gradient(150deg,rgba(255,255,255,.62),rgba(234,241,254,.53))!important;color:#3f587f!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 18px rgba(46,77,125,.05)!important;display:grid!important;place-items:center!important;padding:0!important;transition:transform .19s ease,background .19s ease,box-shadow .19s ease}
+ .main .topbar .top-actions .v36-notifications>summary{cursor:pointer;list-style:none}
+ .main .topbar .top-actions .v36-notifications>summary::-webkit-details-marker{display:none}
+ .main .topbar .top-actions .v36-notifications>summary svg,
+ .main .topbar .top-actions .v165-search-icon svg{width:19px!important;height:19px!important;stroke-width:1.85}
+ .main .topbar .top-actions .v36-notifications>summary:hover,
+ .main .topbar .top-actions .v165-search-icon:hover{transform:translateY(-1px);background:rgba(255,255,255,.88)!important;box-shadow:0 9px 23px rgba(46,77,125,.1)!important}
+ .main .topbar .top-actions .v36-notifications>summary:focus-visible,
+ .main .topbar .top-actions .v165-search-icon:focus-visible,
+ .main .topbar .v164-tomorrow-pill:focus-visible{outline:2px solid #5387ed;outline-offset:3px}
+ .main .topbar .top-actions .v36-notifications .v36-notification-count{right:0;top:0}
+ .world-overview .ff-overview-top-actions{flex-wrap:nowrap!important}
+}
+@media (min-width:791px) and (max-width:1460px){
+ .world-overview .top-actions .v146-header-date{display:none!important}
+ .world-overview .topbar{column-gap:10px!important}
+}
+@media (min-width:791px) and (max-width:1130px){
+ .world-overview .topbar{display:flex!important;flex-wrap:wrap;justify-content:space-between;align-items:center}
+ .world-overview .topbar .ff-header-middle{order:2}
+ .world-overview .topbar .ff-overview-top-actions{order:3}
+ .world-overview .topbar .topbar-intro{flex:1 1 170px}
+ .world-overview .topbar .ff-overview-tool{width:37px!important;min-width:37px!important;height:38px!important;min-height:38px!important}
+ .world-overview .topbar .top-actions .v36-notifications>summary,
+ .world-overview .topbar .top-actions .v165-search-icon{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;flex-basis:38px!important}
+}
+body.theme-dark .main .topbar .top-actions .v36-notifications>summary,
+body.theme-dark .main .topbar .top-actions .v165-search-icon{background:linear-gradient(160deg,rgba(57,75,109,.75),rgba(37,53,87,.72))!important;color:#e9f0ff!important;border-color:rgba(188,205,243,.2)!important}
+@media (prefers-reduced-motion:reduce){.main .topbar .top-actions .v36-notifications>summary,.main .topbar .top-actions .v165-search-icon{transition:none!important}}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -15542,11 +15603,18 @@ function mobileCardsIntro(){
  return `<div class="vive-mobile-cards-intro"><span class="vive-mobile-eyebrow">PORTAFOLIO DE CRÉDITO</span><h1>Tarjetas</h1><p>Deudas separadas por moneda y detalle en cada producto.</p><div class="vive-mobile-cards-stats"><span><small>Deuda en pesos</small><b>${money(dop)}</b></span><span><small>Deuda en dólares</small><b>${money(usd,'USD')}</b></span></div></div>`;
 }
 
+/* V164: A single lowercase brand pill opens El costo de mañana directly; magnifier opens real Spotlight. */
+function v164HeaderDock(){
+ return `<div class="ff-header-middle v164-header-dock"><button type="button" class="v164-tomorrow-pill" data-v119-open="1" title="El costo de mañana · Simular ingresos y gastos" aria-label="Abrir El costo de mañana">vive el hoy</button></div>`;
+}
+function v165SearchAction(){
+ return `<button type="button" class="btn ghost v165-search-icon" data-v71-search-open="1" aria-label="Abrir búsqueda global" title="Buscar en Vive el Hoy · Ctrl/⌘ K" aria-keyshortcuts="Control+K Meta+K">${icon('search')}</button>`;
+}
 function main(){
  const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y operaciones por confirmar'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
-  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="ff-header-middle ff-overview-pill-wrap"><button type="button" class="ff-overview-pill" data-act="navigate" data-id="overview" aria-label="Ir al resumen Vive el hoy">Vive el hoy</button></div><div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="ff-header-middle v153-header-search v162-header-search"><div class="v162-search-cluster" role="group" aria-label="Búsqueda global y accesos rápidos"><button type="button" class="v162-search-field" data-v71-search-open="1" title="Buscar registros en toda la aplicación · Ctrl/⌘ K" aria-label="Abrir búsqueda global en Vive el Hoy" aria-keyshortcuts="Control+K Meta+K"><span class="v162-search-copy">Buscar en Vive el Hoy</span><kbd>${/Mac|iPhone|iPad/i.test(navigator.userAgentData?.platform||navigator.platform||'')?'⌘ K':'Ctrl K'}</kbd></button><details class="v162-brand-menu"><summary class="v162-brand-pill">Vive el hoy ${icon('down')}</summary><div class="v162-brand-dropdown"><button type="button" class="v162-dropdown-action" data-v119-open="1" title="Abrir El costo de mañana" aria-label="Abrir El costo de mañana"><span class="v162-dropdown-icon">${icon('analytics')}</span><span class="v162-dropdown-copy"><strong>El costo de mañana</strong><small>Simular ingresos y gastos</small></span>${icon('arrow')}</button></div></details><button type="button" class="v162-search-icon" data-v71-search-open="1" title="Buscar" aria-label="Buscar">${icon('search')}</button></div></div><div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
+  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
  
  ${ui.page==='wallet'?'':['overview','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
  ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():ui.page==='payments'?payments():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
