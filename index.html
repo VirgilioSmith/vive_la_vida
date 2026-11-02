@@ -16633,7 +16633,7 @@ function overview(){
  return `<div class="ff-dashboard summary-space">
   <div class="ff-dashboard-tools"><div class="ff-overline"><span class="ff-blue-dot"></span> TU PANORAMA FINANCIERO <span class="ff-tools-separator">/</span> <strong>${sanitize(period)}</strong></div><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
   <div class="ff-dashboard-grid v105-grid">
-   <section class="ff-balance ff-tile" aria-label="Balance y productos principales"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><div class="ff-pos-amount">${money(allNet,'DOP',2)}</div><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="navigate" data-id="accounts" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="navigate" data-id="cards" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="navigate" data-id="patrimony" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
+   <section class="ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><div class="ff-pos-amount">${money(allNet,'DOP',2)}</div><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="navigate" data-id="accounts" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="navigate" data-id="cards" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="navigate" data-id="patrimony" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
    <aside data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>COMPROMISOS MENSUALES · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong><span>Pendientes hasta fin de mes, incluidos vencidos: ${money(allDue)}. La carga mensual es distinta del saldo total de deuda.</span></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} registros por confirmar <span>${icon('arrow')}</span></button></aside>
    <div class="ff-mid">
     <section data-v105-widget="chart" class="ff-expense-card ff-tile"><div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses</p></div><div class="v82-chart-actions"><span class="ff-inline-pill">Mensual</span></div></div><div class="ff-bar-chart" role="group" aria-label="Gráfico de ingresos y egresos de los últimos cinco meses">${bars}</div><div class="ff-stat-footer"><span title="Ingresos reconocidos del mes"><i class="ff-legend-blue"></i>Ingresos <b>${bubbleMoney(m.income)}</b></span><span title="Gastos reconocidos del mes"><i class="ff-legend-white"></i>Egresos <b>${bubbleMoney(m.expense)}</b></span></div></section>
@@ -19669,6 +19669,8 @@ const F33_KEY = 'sb_publishable_bhei3BYBE_HH84SJjFOqhw_0dNcJy9L';
 let f33Api=null,f33User=null,f33Stamp=null,f33Dirty=false,f33Saving=false,f33Timeout=0;
 let f33Conflict=false,f33Phase='login',f33Active=false,f33LastError='';
 let f33PendingBackup=null,f33RemoteCandidate=null;
+// Token de generación: una respuesta anterior nunca reemplaza la sesión cargada después.
+let f151CloudLoadToken=0;
 /* V34: date-stamped reference USD/DOP. Frankfurter first, open.er-api fallback.
    Both are CORS-friendly, free and keyless. No Yahoo scraping/fragile proxy.
    A reference (mid-market/blended) is not necessarily your bank's buy/sell quote. */
@@ -19768,9 +19770,12 @@ function f33Prepare(doc){if(!doc||typeof doc!=='object'||!Array.isArray(doc.acco
  return migrateData({...init(),...doc,settings:{...init().settings,...(doc.settings||{})}});
 }
 async function f33LoadUser(user){
+ const loadToken=++f151CloudLoadToken;
  f33Phase='loading';f33User=user;f33Conflict=false;f33Active=false;f33Shell('Conectando tus finanzas…','Estamos consultando tus registros privados en Supabase.','<div class="f33-label">Verificando acceso y base de datos</div>');
  try{
-  let {data,error}=await f33Api.from('finanzas_estado').select('documento,actualizado_en').eq('user_id',user.id).maybeSingle();if(error)throw error;
+  let {data,error}=await f33Api.from('finanzas_estado').select('documento,actualizado_en').eq('user_id',user.id).maybeSingle();
+  if(loadToken!==f151CloudLoadToken||f33User?.id!==user.id)return;
+  if(error)throw error;
   if(data&&data.documento&&Object.keys(data.documento).length){
     let pending=null;try{pending=JSON.parse(localStorage.getItem(f33CloudKey())||'null')}catch(err){}
     if(pending?.pending&&pending.documento&&JSON.stringify(pending.documento)!==JSON.stringify(data.documento)){
@@ -19780,7 +19785,7 @@ async function f33LoadUser(user){
     db=f33Prepare(data.documento);f33Stamp=data.actualizado_en;f33Ready();return
   }
   f33Stamp=null;f33Welcome();
- }catch(err){f33Phase='failure';f33Shell('No pudimos cargar tus datos.','No se hicieron cambios en Supabase. Puedes reintentar sin perder tus registros.',
+ }catch(err){if(loadToken!==f151CloudLoadToken||f33User?.id!==user.id)return;f33Phase='failure';f33Shell('No pudimos cargar tus datos.','No se hicieron cambios en Supabase. Puedes reintentar sin perder tus registros.',
  '<div class="f33-error" role="alert">'+sanitize(err.message||String(err))+'</div><div class="f33-auth-actions"><button class="f33-primary" type="button" data-f33="load">Reintentar conexión</button><button class="f33-secondary" type="button" data-f33="logout">Volver a entrar</button></div>');}
 }
 function f33PendingScreen(){
@@ -19834,8 +19839,10 @@ async function f33Flush(){
  if(!f33Stamp){f33SetStatus('error','Falta revisión de nube');return}
  if(!navigator.onLine){f33SetStatus('error','Sin conexión · copia local');return}
  f33Saving=true;f33Dirty=false;f33SetStatus('saving','Guardando en Supabase…');
- const expected=f33Stamp,updated=new Date().toISOString(),snapshot=JSON.parse(JSON.stringify(db));
+ const expected=f33Stamp,updated=new Date().toISOString();
+ let f151SnapshotReady=false;
  try{
+  const snapshot=JSON.parse(JSON.stringify(db));f151SnapshotReady=true;
   const {data,error}=await f33Api.from('finanzas_estado')
    .update({documento:snapshot,actualizado_en:updated})
    .eq('user_id',f33User.id).eq('actualizado_en',expected)
@@ -19847,16 +19854,19 @@ async function f33Flush(){
   else{try{localStorage.setItem(f33CloudKey(),JSON.stringify({pending:true,baseStamp:f33Stamp,documento:db,savedAt:new Date().toISOString()}))}catch(err){}}
   f33SetStatus(f33Dirty?'saving':'ok',f33Dirty?'Guardando cambios siguientes…':'✓ Guardado en Supabase');
  }catch(err){f33Dirty=true;f33SetStatus('error','Error de nube · copia local');console.error('No se pudo sincronizar vive el hoy:',err)}
- finally{f33Saving=false;if(f33Dirty&&!f33Conflict&&navigator.onLine){clearTimeout(f33Timeout);f33Timeout=setTimeout(f33Flush,1300)}}
+ finally{f33Saving=false;if(f151SnapshotReady&&f33Dirty&&!f33Conflict&&navigator.onLine){clearTimeout(f33Timeout);f33Timeout=setTimeout(f33Flush,1300)}}
 }
 async function f33ReloadRemote(){
+ if(f33Saving){toast('Se está guardando en Supabase. Vuelve a consultar la nube cuando termine la sincronización.');return;}
  if(f33Dirty&&!confirm('Hay cambios locales que podrían no estar en Supabase. Descarga primero un respaldo JSON. ¿Quieres cargar la última versión de la nube?'))return;
  clearTimeout(f33Timeout);f33Dirty=false;f33Saving=false;f33Conflict=false;document.getElementById('app').innerHTML='';await f33LoadUser(f33User);
 }
 async function f33Logout(){
+ if(f33Saving){toast('Hay una sincronización en curso. Cierra sesión después de que termine.');return;}
  clearTimeout(f33Timeout);
  if(f33Dirty&&!f33Conflict){await f33Flush();}
  if(f33Dirty&&!confirm('Hay cambios que no están confirmados en la nube. Antes de salir, exporta una copia JSON. ¿Salir de todas formas?'))return;
+ ++f151CloudLoadToken; // invalida cargas remotas aún pendientes antes de cambiar de sesión
  try{if(f33Api)await f33Api.auth.signOut({scope:'local'})}catch(err){console.warn('No se pudo cerrar completamente la sesión:',err)}
  f33User=null;f33Stamp=null;f33Active=false;f33Dirty=false;f33Conflict=false;window.__f360CloudUid=null;window.__f360BaseStamp=null;window.__f360CloudPersist=null;
  db=init();document.getElementById('app').innerHTML='';const badge=document.getElementById('f33-cloud-badge');if(badge)badge.hidden=true;
@@ -23305,7 +23315,7 @@ function v71SearchView(query){
   matches=[...recent,...suggested.filter(x=>!recent.includes(x))].slice(0,12);
  }
  window.v71VisibleSearchResults=matches;v149SearchSelected=0;
- if(!matches.length){target.innerHTML=`<div class="v149-spotlight-empty">${icon('search')}<b>Sin resultados</b><span>Prueba por nombre de banco, categoría, servicio, tarjeta o movimiento.</span></div>`;return}
+ if(!matches.length){document.getElementById('v71-search-input')?.removeAttribute('aria-activedescendant');target.innerHTML=`<div class="v149-spotlight-empty">${icon('search')}<b>Sin resultados</b><span>Prueba por nombre de banco, categoría, servicio, tarjeta o movimiento.</span></div>`;return}
  const groups=new Map();matches.forEach((x,i)=>{const group=x.kind==='section'?'section':x.group||x.kind;if(!groups.has(group))groups.set(group,[]);groups.get(group).push({x,i})});
  let markup='';for(const [key,entries] of groups){markup+=`<div class="v71-search-section">${!q&&key==='section'?'Accesos recomendados':key==='section'?'Módulos':(V149_SEARCH_LABELS[key]||'Resultados')}</div><div role="listbox" aria-label="${V149_SEARCH_LABELS[key]||'Resultados'}">${entries.map(({x,i})=>v149SearchResultMarkup(x,i)).join('')}</div>`}
  target.innerHTML=markup;const input=document.getElementById('v71-search-input');if(input)input.setAttribute('aria-activedescendant','v149-result-0');
@@ -25184,6 +25194,175 @@ body.theme-dark .v149-rec-unified{background:#233653;border-color:#415775}body.t
 .v147-icon-content .v41-service-grid{max-height:300px!important}
 .v146-service-choice>span{display:flex!important;align-items:center;gap:10px}.v146-service-choice>span>span:last-child{display:grid;gap:3px}.v146-service-choice .v41-service-mark{flex:0 0 29px;width:29px;height:29px}
 body.theme-dark .v149-icon-tabs button{background:#263b5c;border-color:#476182;color:#d9e4fa}body.theme-dark .v149-icon-tabs button[aria-pressed=true]{background:#5069be;color:#fff}
+</style>
+
+
+<!-- V152 · Restauración visual REAL del resumen solicitado: sin cifras estáticas ni cambios financieros. -->
+<style id="vive-v152-posicion-referencia">
+/* Alcance exacto: Resumen de escritorio. El diseño de Wallet/iPhone permanece intacto. */
+@media (min-width:1100px) {
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid {
+    grid-template-columns:repeat(12,minmax(0,1fr))!important;
+    grid-template-rows:clamp(360px,28vw,420px) minmax(195px,auto) minmax(175px,auto)!important;
+    grid-auto-rows:auto!important;
+    gap:14px!important;
+    height:auto!important;min-height:0!important;max-height:none!important;
+    align-items:stretch!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.v152-position-reference {
+    grid-column:1/10!important;grid-row:1!important;
+    width:100%!important;height:100%!important;min-height:0!important;
+    border-radius:36px!important;
+    padding:26px 34px 20px!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:120px 1px minmax(0,1fr)!important;
+    gap:12px!important;
+    overflow:hidden!important;
+    isolation:isolate;
+    background:linear-gradient(125deg,rgba(230,238,254,.82),rgba(249,252,255,.73))!important;
+    border:1px solid rgba(255,255,255,.89)!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 17px 46px rgba(62,90,150,.065)!important;
+    backdrop-filter:blur(19px) saturate(135%);
+    -webkit-backdrop-filter:blur(19px) saturate(135%);
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-obligations {
+    grid-column:10/-1!important;grid-row:1/3!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card {
+    grid-column:1/6!important;grid-row:2!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card {
+    grid-column:6/10!important;grid-row:2!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-upcoming {
+    grid-column:1/10!important;grid-row:3!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-personal {
+    grid-column:10/-1!important;grid-row:3!important;
+  }
+  .ff-dashboard.summary-space .v152-position-reference .ff-executive-header {
+    grid-column:1!important;grid-row:1!important;
+    align-items:flex-start!important;min-height:0!important;
+    max-height:none!important;width:100%!important;
+  }
+  .ff-dashboard.summary-space .v152-position-reference .ff-label {
+    font-size:15px!important;font-weight:760!important;color:#253650!important;
+    margin:0 0 5px!important;line-height:1.25!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-header .ff-pos-amount {
+    font-size:clamp(39px,3.7vw,56px)!important;line-height:1.02!important;
+    font-weight:850!important;letter-spacing:-.056em!important;
+    margin:5px 0 8px!important;max-width:100%!important;
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+    color:#1b3358!important;
+  }
+  .ff-dashboard.summary-space .v152-position-reference .ff-executive-header p {
+    max-width:none!important;margin:0!important;line-height:1.38!important;
+    font-size:12.5px!important;color:#71809a!important;
+    white-space:normal!important;
+  }
+  .ff-dashboard.summary-space .v152-position-reference .ff-position-divider {
+    grid-column:1!important;grid-row:2!important;
+    width:100%!important;height:1px!important;
+    margin:0!important;background:rgba(99,128,178,.13)!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles {
+    grid-column:1!important;grid-row:3!important;
+    display:flex!important;justify-content:center!important;align-items:center!important;
+    width:100%!important;max-width:none!important;height:100%!important;
+    min-height:0!important;gap:0!important;
+    margin:0!important;padding:0 0 8px!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble {
+    width:clamp(151px,12.7vw,198px)!important;
+    height:clamp(151px,12.7vw,198px)!important;
+    flex:0 0 clamp(151px,12.7vw,198px)!important;
+    min-width:0!important;aspect-ratio:1!important;
+    margin:0 -6px!important;padding:16px 9px!important;
+    gap:9px!important;
+    background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(230,237,248,.86))!important;
+    border:1px solid rgba(255,255,255,.98)!important;
+    border-radius:50%!important;
+    box-shadow:inset 0 4px 13px rgba(255,255,255,.84),0 16px 34px rgba(48,71,125,.08)!important;
+    transition:transform .2s ease,box-shadow .2s ease;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured {
+    position:relative!important;z-index:2!important;
+    background:linear-gradient(145deg,#8581fb 0%,#615bf3 70%,#625bfb 100%)!important;
+    border-color:rgba(179,173,255,.90)!important;
+    box-shadow:inset 0 3px 9px rgba(255,255,255,.28),0 17px 38px rgba(99,84,222,.23)!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .bubble-amount {
+    font-size:clamp(19px,1.95vw,29px)!important;line-height:1.08!important;
+    font-weight:850!important;letter-spacing:-.054em!important;
+    color:#243652!important;max-width:100%!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured .bubble-amount {
+    color:white!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .ff-yoy,
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .ff-yoy-empty {
+    font-size:12px!important;line-height:1.2!important;
+    margin:0!important;padding:0!important;
+    color:#187a62!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured .ff-yoy,
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured .ff-yoy-empty {
+    color:white!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble small {
+    font-size:13px!important;line-height:1.2!important;font-weight:760!important;
+    color:#667891!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured small {
+    color:#f6f4ff!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions {
+    position:absolute!important;right:24px!important;bottom:19px!important;
+    z-index:4!important;width:auto!important;height:auto!important;
+    min-height:0!important;display:flex!important;align-items:center!important;
+    justify-content:flex-end!important;gap:9px!important;margin:0!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions button {
+    height:41px!important;min-height:41px!important;max-height:41px!important;
+    padding:0 16px!important;font-size:11.5px!important;font-weight:740!important;
+    border-radius:999px!important;
+  }
+  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions button svg {
+    width:15px!important;height:15px!important;
+  }
+  body.theme-dark .ff-dashboard.summary-space .v152-position-reference{
+    background:linear-gradient(145deg,rgba(36,53,83,.94),rgba(28,43,71,.92))!important;
+    border-color:rgba(162,183,223,.23)!important;
+  }
+  body.theme-dark .ff-dashboard.summary-space .v152-position-reference .ff-label,
+  body.theme-dark .ff-dashboard.summary-space .v152-position-reference .ff-pos-amount{color:#f0f6ff!important}
+  body.theme-dark .ff-dashboard.summary-space .v152-position-reference .ff-bubble:not(.featured){background:linear-gradient(145deg,#425577,#2d405e)!important;border-color:rgba(209,223,255,.23)!important}
+  body.theme-dark .ff-dashboard.summary-space .v152-position-reference .ff-bubble:not(.featured) .bubble-amount{color:#eff4ff!important}
+}
+/* Portátiles: el mismo diseño se ajusta a menor ancho sin sacrificar la composición. */
+@media (min-width:791px) and (max-width:1099px) {
+  body .ff-dashboard.summary-space .v105-grid>.v152-position-reference{grid-column:1/-1!important;grid-row:auto!important;min-height:350px!important;}
+  .ff-dashboard.summary-space .v152-position-reference{padding:23px 25px 65px!important;min-height:350px!important;}
+  .ff-dashboard.summary-space .v152-position-reference .ff-pos-amount{font-size:clamp(34px,4.6vw,48px)!important;}
+  .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles{max-width:none!important;}
+  .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble{width:clamp(128px,15vw,161px)!important;height:clamp(128px,15vw,161px)!important;flex:0 0 clamp(128px,15vw,161px)!important;}
+}
+/* Los módulos inferiores siguen disponibles aun cuando la tarjeta principal crece. */
+@media (min-width:1100px) {
+ body .main:has(.ff-dashboard.summary-space){overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior-y:contain;scrollbar-width:thin;}
+ /* Los colores de las variaciones conservan su significado (positivo/negativo/neutro). */
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-bubble:not(.featured) .ff-yoy.up{color:#167e62!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-bubble:not(.featured) .ff-yoy.down{color:#ac7226!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-bubble:not(.featured) .ff-yoy.flat,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-bubble:not(.featured) .ff-yoy-empty{color:#70839d!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-bubble.ff-bubble-negative{background:linear-gradient(145deg,#fff9fb,#f4eaf0)!important;}
+ body.theme-dark .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-header .ff-pos-amount{color:#f0f6ff!important;}
+ body.theme-dark .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble:not(.featured) .bubble-amount{color:#f0f6ff!important;}
+ body.theme-dark .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble:not(.featured) small{color:#c7d6ea!important;}
+}
+@media(prefers-reduced-motion:reduce){.v152-position-reference .ff-bubble{transition:none!important}}
 </style>
 
 </body>
