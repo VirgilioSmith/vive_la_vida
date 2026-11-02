@@ -15681,7 +15681,7 @@ function mobileCardsIntro(){
 
 /* V164: A single lowercase brand pill opens El costo de mañana directly; magnifier opens real Spotlight. */
 function v164HeaderDock(){
- return `<div class="ff-header-middle v164-header-dock"><button type="button" class="v164-tomorrow-pill" data-v119-open="1" title="El costo de mañana · Simular ingresos y gastos" aria-label="Abrir El costo de mañana">vive el hoy</button></div>`;
+ return `<div class="ff-header-middle v164-header-dock"><button type="button" class="v164-tomorrow-pill" data-v119-open="1" title="El costo de mañana · Simular ingresos y gastos" aria-label="Abrir El costo de mañana">Vive el hoy</button></div>`;
 }
 function v165SearchAction(){
  return `<button type="button" class="btn ghost v165-search-icon" data-v71-search-open="1" aria-label="Abrir búsqueda global" title="Buscar en Vive el Hoy · Ctrl/⌘ K" aria-keyshortcuts="Control+K Meta+K">${icon('search')}</button>`;
@@ -15690,7 +15690,7 @@ function main(){
  const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y operaciones por confirmar'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
-  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
+  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
  
  ${ui.page==='wallet'?'':['overview','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
  ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():ui.page==='payments'?payments():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
@@ -15817,7 +15817,7 @@ function overview(){
  const loans=(db.personalLoans||[]).filter(l=>personalBalance(l)>.005).slice().sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));
  let owed=loans.filter(l=>l.direction==='borrowed').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0),receivable=loans.filter(l=>l.direction==='lent').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0);
  const peopleRows=loans.slice(0,3).map(l=>`<div class="ff-person-row"><span class="ff-person-initial">${sanitize((l.person||'?').slice(0,1).toUpperCase())}</span><span class="ff-person-name"><strong>${sanitize(l.person)}</strong><small>${l.direction==='lent'?'Me deben':'Yo debo'} · ${prettyDate(l.dueDate)}</small></span><b>${money(personalBalance(l),l.currency,2)}</b></div>`).join('');
- const ratioText=ratio===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(ratio)+'%';
+ const ratioText=ratio===null?'—':`<span class="ff-number-core">${new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(ratio)}</span><span class="ff-percent-sign">%</span>`;
  return `<div class="ff-dashboard summary-space">
   <div class="ff-dashboard-tools"><div class="ff-overline"><span class="ff-blue-dot"></span> TU PANORAMA FINANCIERO <span class="ff-tools-separator">/</span> <strong>${sanitize(period)}</strong></div><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
   <div class="ff-dashboard-grid">
@@ -17231,7 +17231,7 @@ function overview(){
  const loans=(db.personalLoans||[]).filter(l=>personalBalance(l)>.005).slice().sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));
  let owed=loans.filter(l=>l.direction==='borrowed').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0),receivable=loans.filter(l=>l.direction==='lent').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0);
  const peopleRows=loans.slice(0,3).map(l=>`<div class="ff-person-row"><span class="ff-person-initial">${sanitize((l.person||'?').slice(0,1).toUpperCase())}</span><span class="ff-person-name"><strong>${sanitize(l.person)}</strong><small>${l.direction==='lent'?'Me deben':'Yo debo'} · ${prettyDate(l.dueDate)}</small></span><b>${money(personalBalance(l),l.currency,2)}</b></div>`).join('');
- const ratioText=ratio===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(ratio)+'%';
+ const ratioText=ratio===null?'—':`<span class="ff-number-core">${new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(ratio)}</span><span class="ff-percent-sign">%</span>`;
  return `<div class="ff-dashboard summary-space">
   <div class="ff-dashboard-tools"><div class="ff-overline"><span class="ff-blue-dot"></span> TU PANORAMA FINANCIERO <span class="ff-tools-separator">/</span> <strong>${sanitize(period)}</strong></div><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
   <div class="ff-dashboard-grid v105-grid">
@@ -27278,5 +27278,145 @@ document.addEventListener('click',e=>{document.querySelectorAll('.v162-brand-men
   }
 }
 </style>
+
+<style id="vive-v168-ajustes-resumen-referencia">
+@media (min-width:1100px) and (min-height:680px){
+  body .main.world-overview:has(.ff-dashboard.summary-space){
+    padding-left:20px!important;
+    padding-right:16px!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .topbar,
+  body .main.world-overview:has(.ff-dashboard.summary-space) .universe-switch-wrap,
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space{
+    max-width:min(1560px,calc(100vw - 112px))!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .topbar{
+    display:grid!important;
+    grid-template-columns:minmax(260px,1fr) auto auto!important;
+    align-items:center!important;
+    gap:18px!important;
+    margin-bottom:18px!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .topbar .top-title{
+    font-size:clamp(28px,2.3vw,33px)!important;
+    line-height:1.02!important;
+    letter-spacing:-.055em!important;
+    color:#1d3158!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .topbar .top-sub{
+    font-size:12px!important;
+    color:#7e8da6!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .v164-header-dock{
+    justify-self:center!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .v164-tomorrow-pill{
+    min-width:187px!important;
+    height:42px!important;
+    border-radius:999px!important;
+    padding:0 24px!important;
+    font-size:13px!important;
+    font-weight:760!important;
+    color:#33486c!important;
+    background:rgba(255,255,255,.62)!important;
+    border:1px solid rgba(255,255,255,.88)!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.92)!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-overview-top-actions{
+    justify-self:end!important;
+    gap:10px!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-overview-top-actions .date-chip{
+    background:transparent!important;
+    border-color:transparent!important;
+    box-shadow:none!important;
+    padding:0 4px!important;
+    min-height:40px!important;
+    color:#7f8ea6!important;
+    font-size:12px!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-overview-top-actions .ff-overview-tool,
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-overview-top-actions .ff-header-new{
+    height:42px!important;
+    min-height:42px!important;
+    border-radius:14px!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-overview-top-actions .ff-overview-tool{
+    width:42px!important;
+    min-width:42px!important;
+    padding:0!important;
+    color:#42587c!important;
+    background:rgba(255,255,255,.62)!important;
+    border:1px solid rgba(255,255,255,.88)!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-overview-top-actions .ff-header-new{
+    padding:0 20px!important;
+    background:#101726!important;
+    border-color:#101726!important;
+    color:#fff!important;
+    font-size:12px!important;
+    font-weight:760!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard-tools{
+    margin-bottom:12px!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-overline{
+    font-size:11px!important;
+    letter-spacing:.18em!important;
+    color:#7383a2!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-overline strong{
+    letter-spacing:.03em!important;
+    color:#3f4f72!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-health-number{
+    display:inline-flex!important;
+    align-items:flex-start!important;
+    gap:0!important;
+    font-size:clamp(43px,3.55vw,56px)!important;
+    letter-spacing:-.06em!important;
+    line-height:.96!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-health-number .ff-number-core{
+    display:inline-block!important;
+    line-height:1!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-health-number .ff-percent-sign{
+    display:inline-block!important;
+    line-height:1!important;
+    font-size:.90em!important;
+    transform:translateY(-0.08em)!important;
+    margin-left:1px!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-obligations .v82-total-top .v82-burden{
+    display:none!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-obligations .v64-subdebt{
+    display:none!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-obligations .ff-obligation-title small{
+    font-size:10px!important;
+    color:#8a98ae!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-obligations .ff-obligation-row{
+    grid-template-columns:28px minmax(0,1fr) auto 12px!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-obligations .ff-obligation-row b{
+    font-size:11px!important;
+    color:#30486f!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-obligations .ff-obligation-total>span{
+    font-size:10px!important;
+    line-height:1.42!important;
+    color:#7b8da7!important;
+  }
+  body .main.world-overview:has(.ff-dashboard.summary-space) .v152-position-reference .ff-executive-bubbles .ff-bubble .ff-yoy,
+  body .main.world-overview:has(.ff-dashboard.summary-space) .v152-position-reference .ff-executive-bubbles .ff-bubble .ff-yoy-empty{
+    font-size:10px!important;
+    line-height:1!important;
+  }
+}
+</style>
+
 </body>
 </html>
