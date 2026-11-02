@@ -15575,7 +15575,7 @@ function originalCards(){
  ${shellKpi('Deuda total · RD$',money(dop+fx(usd,'USD')),'RD$ + US$ convertidos al tipo configurado','wallet')}
  ${shellKpi('Anualidades contratadas',money(dueD+fx(dueU,'USD')),`Por año · ${money(dueD)} + ${money(dueU,'USD',2)} · no son cargos cobrados`,'calendar')}
  ${shellKpi('Cashback cobrado · acumulado',money(benefitD+fx(benefitU,'USD')),`Confirmado · retorno neto ${money(netD+fx(netU,'USD'))}`,'analytics',netD+fx(netU,'USD')>=0?'positive':'negative')}
- </div><div class="card-fx-note">${icon('shield')} Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</div><div class="grid cards-grid section">${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length?db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>{let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let closest=[{...a,ccy:'DOP'},{...b,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>0).sort((x,y)=>x.nextDue.localeCompare(y.nextDue))[0],z=v144CardStats(c);return `<div class="bank-card"><div class="card-visual v28-card-face tier-${cardTierKey(c)}"><div class="v28-card-top"><span class="v28-card-bank">${bankLogoInline(c.bankId)}<span>${sanitize(bankOf(c))}</span></span>${cardNetworkMark(c)}</div><div class="v28-card-middle"><strong>${sanitize(c.name)}</strong><span>${CARD_TIER_NAMES[cardTierKey(c)]}</span></div><div class="v28-card-bottom"><span class="chip" aria-hidden="true"></span><span class="last4">•••• ${sanitize(c.last4||'••••')}</span><small>CRÉDITO · RD$ / US$</small></div></div><section class="v148-card-essentials" aria-label="Deuda y beneficios de ${sanitize(c.name)}">
+ </div><div class="card-fx-note">${icon('shield')} Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</div><div class="grid cards-grid section">${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length?db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>{let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let closest=[{...a,ccy:'DOP'},{...b,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>0).sort((x,y)=>x.nextDue.localeCompare(y.nextDue))[0],z=v144CardStats(c);return `<div class="bank-card v149-card-shell"><details class="v149-card-disclosure"><summary class="v149-card-toggle" aria-label="Abrir detalles de ${sanitize(c.name)}"><div class="card-visual v28-card-face tier-${cardTierKey(c)}"><div class="v28-card-top"><span class="v28-card-bank">${bankLogoInline(c.bankId)}<span>${sanitize(bankOf(c))}</span></span>${cardNetworkMark(c)}</div><div class="v28-card-middle"><strong>${sanitize(c.name)}</strong><span>${CARD_TIER_NAMES[cardTierKey(c)]}</span></div><div class="v28-card-bottom"><span class="chip" aria-hidden="true"></span><span class="last4">•••• ${sanitize(c.last4||'••••')}</span><small>CRÉDITO · RD$ / US$</small></div></div><span class="v149-card-cue">${icon('arrow')} <span>Explorar tarjeta</span></span></summary><div class="v149-card-reveal"><section class="v148-card-essentials" aria-label="Deuda y beneficios de ${sanitize(c.name)}">
  <div class="v148-owed" aria-label="Deudas por moneda">
   <div class="v148-owed-part"><small>DEUDA EN PESOS</small><strong>${money(a.debt)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en pesos">Uso ${a.limit?a.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
   <div class="v148-owed-part"><small>DEUDA EN DÓLARES</small><strong>${money(b.debt,'USD',2)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en dólares">Uso ${b.limit?b.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
@@ -15584,7 +15584,7 @@ function originalCards(){
  <div class="v148-benefit-detail"><span>Cashback recibido <b>${money(z.realizedCashback,'DOP',2)}</b></span><span>Costo pagado <b>${money(z.paidAmount,'DOP',2)}</b></span></div>
  <div class="v148-meta"><span>Rentabilidad <strong>${v144RoiText(z.roi)}</strong></span>${z.billedAmount>0?`<span class="v148-pending">Por conciliar <strong>${money(z.billedAmount,'DOP',2)}</strong></span>`:''}</div>
  <div class="v148-card-due"><span>Corte: día ${c.cutDay} · Pago: día ${c.dueDay}</span>${closest?dueChip(closest.nextDue):'<span class="pill green">Sin pago facturado</span>'}</div>
- </section><div class="product-mini-actions">${productControls('card',c.id,c.archived)}</div><div class="card-footer"><button class="btn sm ghost" data-act="cardDetails" data-id="${c.id}">Estado y corte</button><button class="btn sm ghost" data-act="cardHistory" data-id="${c.id}">${icon('chart')} Histórico</button><button class="btn sm soft" data-act="payCard" data-id="${c.id}">Registrar pago</button></div></div>`}).join(''):`<div class="panel"><div class="empty"><span class="empty-icon">▣</span>No hay tarjetas registradas.<br/><button class="btn sm soft" data-act="addCard">Agregar tarjeta</button></div></div>`}</div>${ui.cardId&&card(ui.cardId)?cardDetail(card(ui.cardId)):''}<div class="notification section">Los importes <strong>calculados al corte</strong> dependen de los movimientos que hayas registrado. Registra el estado de cuenta del banco mediante “Registrar corte oficial” para comparar el importe confirmado y el pago mínimo.</div>`}
+ </section><div class="product-mini-actions">${productControls('card',c.id,c.archived)}</div><div class="card-footer"><button class="btn sm ghost" data-act="cardDetails" data-id="${c.id}">Estado y corte</button><button class="btn sm ghost" data-act="cardHistory" data-id="${c.id}">${icon('chart')} Histórico</button><button class="btn sm soft" data-act="payCard" data-id="${c.id}">Registrar pago</button></div><button class="v149-lifecycle-link" data-act="cardDetails" data-id="${c.id}">${icon('chart')} Explorar el ciclo de vida completo ${icon('arrow')}</button></div></details></div>`}).join(''):`<div class="panel"><div class="empty"><span class="empty-icon">▣</span>No hay tarjetas registradas.<br/><button class="btn sm soft" data-act="addCard">Agregar tarjeta</button></div></div>`}</div>${ui.cardId&&card(ui.cardId)?cardDetail(card(ui.cardId)):''}<div class="notification section">Los importes <strong>calculados al corte</strong> dependen de los movimientos que hayas registrado. Registra el estado de cuenta del banco mediante “Registrar corte oficial” para comparar el importe confirmado y el pago mínimo.</div>`}
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -15669,7 +15669,7 @@ function cardHistoricalView(c){
 }
 
 function cardDetail(c){if(ui.cardDetailTab==='history')return cardHistoricalView(c);let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let box=(s,ccy)=>`<div class="outline-box"><div class="split"><strong>Cuenta en ${ccy==='DOP'?'pesos dominicanos':'dólares'}</strong><span class="pill blue">${ccy}</span></div><div class="stats-inline" style="margin-top:14px;grid-template-columns:1fr 1fr"><div class="stat-box"><div class="small-label">DEUDA TOTAL</div><div class="val" style="font-size:19px">${money(s.debt,ccy,ccy==='USD'?2:0)}</div></div><div class="stat-box"><div class="small-label">PENDIENTE FACTURADO</div><div class="val" style="font-size:19px">${money(s.billed,ccy,ccy==='USD'?2:0)}</div></div><div class="stat-box"><div class="small-label">CONSUMO SIN CORTE</div><div class="val" style="font-size:19px">${money(s.unbilled,ccy,ccy==='USD'?2:0)}</div></div><div class="stat-box"><div class="small-label">IMPORTE AL ÚLTIMO CORTE (CALCULADO)</div><div class="val" style="font-size:19px">${money(s.statementAtCut,ccy,ccy==='USD'?2:0)}</div></div></div><div class="statement-detail"><div class="mini-row"><span>Deuda inicial importada</span><strong>${money(ccy==='DOP'?c.openingDOP:c.openingUSD,ccy,2)}</strong></div><div class="mini-row"><span>Facturado al iniciar</span><strong>${(ccy==='DOP'?c.openingBilledDOP:c.openingBilledUSD)==null?'Sin clasificar (versión anterior)':money(ccy==='DOP'?c.openingBilledDOP:c.openingBilledUSD,ccy,2)}</strong></div><div class="mini-row"><span>Sobregiro autorizado</span><strong>${money(s.overdraft,ccy,2)}</strong></div><div class="mini-row"><span>Sobregiro utilizado</span><strong>${money(s.overdraftUsed,ccy,2)}</strong></div><div class="mini-row"><span>Exceso no autorizado</span><strong class="${s.excess>0?'negative':''}">${money(s.excess,ccy,2)}</strong></div><div class="mini-row"><span>Disponible con sobregiro</span><strong>${money(s.availableWithOverdraft,ccy,2)}</strong></div><div class="mini-row"><span>Último corte calculado</span><strong>${prettyDate(s.cut)}</strong></div><div class="mini-row"><span>Próximo corte</span><strong>${prettyDate(s.nextCut)} · ${whenTxt(s.nextCut)}</strong></div><div class="mini-row"><span>Próxima fecha exigible</span><strong>${s.nextDue?prettyDate(s.nextDue):'Sin deuda facturada'}</strong></div><div class="mini-row"><span>Saldo vencido</span><strong class="${s.overdue?'negative':''}">${money(s.overdue,ccy,2)}</strong></div><div class="mini-row"><span>Interés mensual orientativo (tasa anual / 12)</span><strong>${money(s.billed*num(ccy==='DOP'?c.aprDOP:c.aprUSD)/1200,ccy,2)}</strong></div>${s.official?`<div class="mini-row"><span>Estado oficial registrado · ${prettyDate(s.official.cutDate)}</span><strong>${money(s.officialAmount,ccy,2)}</strong></div><div class="mini-row"><span>Mínimo según estado oficial</span><strong>${money(s.official.minimum,ccy,2)}</strong></div><div class="mini-row"><span>Pendiente del corte oficial (estimación por pagos)</span><strong>${money(s.officialRemaining,ccy,2)}</strong></div>`:`<div class="mini-row"><span>Mínimo orientativo (${num(c.minPct||5)}%)</span><strong>${money(s.minimum,ccy,2)}</strong></div>`}</div><div class="split"><span class="tiny muted">Utilización: ${s.util.toFixed(1)}% · Disponible ordinario: ${money(s.available,ccy)}</span><div class="hstack"><button class="btn sm ghost" data-act="rewardCard" data-id="${c.id}" data-ccy="${ccy}">Cashback</button><button class="btn sm soft" data-act="payCard" data-id="${c.id}" data-ccy="${ccy}">Pagar ${ccy}</button></div></div><p class="footnote">Las estimaciones de interés y pago mínimo no son montos contractuales. Intereses, comisiones e impuestos bancarios deben registrarse como cargos para reflejar la deuda exacta.</p></div>`;
-let tx=recentTx().filter(t=>t.cardId===c.id).slice(0,15);return `<div class="panel section card-detail"><div class="panel-head"><h3>Estado de cuenta · ${sanitize(c.name)}</h3><div class="hstack">${productControls('card',c.id,c.archived)}<button class="btn sm soft" data-act="cardHistory" data-id="${c.id}">${icon('chart')} Ver histórico</button><button class="btn sm soft" data-act="editCard" data-id="${c.id}">Editar tarjeta</button><button class="btn sm ghost" data-act="closeCardDetails">Cerrar</button></div></div><div class="grid columns equal">${box(a,'DOP')}${box(b,'USD')}</div>${cardBenefitsBlock(c)}<div class="section-title section"><h2>Últimos movimientos de la tarjeta</h2><button class="btn sm ghost" data-act="newTransaction" data-type="card_charge" data-id="${c.id}">${icon('plus')} Nuevo consumo</button></div>${smallTxTable(tx)}</div>`}
+let tx=recentTx().filter(t=>t.cardId===c.id).slice(0,15);return `<div class="panel section card-detail"><div class="panel-head"><h3>Estado de cuenta · ${sanitize(c.name)}</h3><div class="hstack">${productControls('card',c.id,c.archived)}<button class="btn sm soft" data-act="cardHistory" data-id="${c.id}">${icon('chart')} Ver histórico</button><button class="btn sm soft" data-act="editCard" data-id="${c.id}">Editar tarjeta</button><button class="btn sm ghost" data-act="closeCardDetails">Cerrar</button></div></div><div class="grid columns equal">${box(a,'DOP')}${box(b,'USD')}</div>${cardBenefitsBlock(c)}<div class="section-title section"><h2>Últimos movimientos de la tarjeta</h2><button class="btn sm ghost" data-act="newTransaction" data-type="card_charge" data-id="${c.id}">${icon('plus')} Nuevo consumo</button></div>${v149CardLifecycle(c)}${smallTxTable(tx)}</div>`}
 /* vive el hoy — CENTRO DE PRÉSTAMOS
  * Contrato original inmutable en presencia de pagos, libro real separado,
  * escenario futuro sin abonos, escenario hipotético de abonos y conciliación.
@@ -15997,7 +15997,7 @@ let by={};for(let r of val){let key=r.category||'Otros gastos';(by[key]??={label
 let cat=Object.values(by).sort((a,b)=>b.amount-a.amount);const max=val[0]?.monthly||1;let running=0;
 return `<section class="subscription-world section"><div class="subscription-hero"><div><span class="summary-tag">INTELIGENCIA DE SUSCRIPCIONES</span><h2>¿Dónde se va tu dinero recurrente?</h2><p>Composición anualizada, peso relativo y concentración 80/20 de tus servicios activos.</p></div><span class="sub-total-label">${money(total)}<small>equivalente mensual · RD$</small></span></div><div class="sub-analysis-stats"><div><small>GASTO ANUAL EQUIVALENTE</small><strong>${money(annual)}</strong></div><div><small>SUSCRIPCIONES ACTIVAS</small><strong>${val.length}</strong></div><div><small>CONCENTRACIÓN HASTA 80%</small><strong>${topCount} de ${val.length}</strong></div><div><small>MAYOR SUSCRIPCIÓN</small><strong>${val[0]?sanitize(val[0].name):'Sin datos'}</strong></div></div><div class="sub-analysis-layout"><section class="panel"><div class="panel-head"><h3>Ranking y Pareto</h3><span class="pill">Ordenadas por impacto</span></div>${val.length?`<div class="table-wrap"><table class="sub-pareto"><thead><tr><th>Suscripción</th><th>Grupo</th><th class="right">Mensual</th><th class="right">Peso</th><th class="right">Acumulado</th></tr></thead><tbody>${val.map(r=>{let share=total?r.monthly/total*100:0;running+=share;return `<tr tabindex="0" data-chart-tip="${sanitize(r.name)}|Mensual: ${money(r.monthly)}|Peso: ${share.toFixed(1)}%|Acumulado: ${Math.min(100,running).toFixed(1)}%"><td><span class="v41-ranking-name">${v45SubIcon(r,'tiny')}<strong>${sanitize(r.name)}</strong></span><div class="sub-bar"><span style="width:${Math.min(100,r.monthly/max*100)}%"></span></div></td><td>${sanitize(r.category)}</td><td class="right">${money(r.monthly)}</td><td class="right">${share.toFixed(1)}%</td><td class="right">${Math.min(100,running).toFixed(1)}%</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">Registra suscripciones para ver su ranking y peso porcentual.</div>'}<p class="footnote">80% de gasto equivale a las primeras ${topCount} suscripciones del ranking; el número puede ser mayor o menor que 20% del catálogo.</p></section><section class="panel"><div class="panel-head"><h3>Distribución por categoría</h3><span class="pill">${cat.length} grupos</span></div>${cat.length?cat.map(c=>`<div class="sub-composition" tabindex="0" data-chart-tip="${sanitize(c.label)}|Mensual: ${money(c.amount)}|Anual: ${money(c.amount*12)}|Participación: ${total?(c.amount/total*100).toFixed(1):0}%"><div class="split"><span>${sanitize(c.label)} <small>(${c.count})</small></span><strong>${total?(c.amount/total*100).toFixed(1):'0.0'}%</strong></div><div class="sub-bar wide"><span style="width:${total?c.amount/total*100:0}%"></span></div><small>${money(c.amount)} al mes · ${money(c.amount*12)} al año</small></div>`).join(''):'<div class="empty">Los grupos aparecerán al registrar suscripciones.</div>'}</section></div><p class="footnote">La equivalencia mensual se obtiene de la frecuencia contractual y de la tasa manual RD$/US$ configurada; no significa que el cargo se haya cobrado.</p></section>`}
 
-function recurring(){let active=db.recurring.filter(x=>x.active!==false),perMonth=active.reduce((s,r)=>s+fx(r.amount,r.currency)/(r.frequency==='annual'?12:r.frequency==='weekly'?7/30.4375:r.frequency==='quarterly'?3:1),0);let all=v99PendingForPeriod(ui.month),due=all.filter(x=>x.date<today());return `<div class="section-title"><div><h2>Suscripciones y compromisos</h2><p>Suscripciones, servicios, pagos de tarjetas y cuotas de préstamos.</p></div><button class="btn" data-act="addRecurring">${icon('plus')} Nueva suscripción o pago</button></div><div class="grid kpis">${shellKpi('Suscripciones activas',String(active.length),'Pagos automáticos y manuales','cycle')}${shellKpi('Costo mensual equivalente',money(perMonth),'Suscripciones, no cuotas de deuda','receipt')}${shellKpi('Compromisos vencidos',String(due.length),'Cuentas por atender','clock',due.length?'negative':'')}${shellKpi('Próximos 30 días',money(all.filter(a=>a.date>=today()&&a.date<=addDays(today(),30)).reduce((s,x)=>s+fx(x.amount,x.currency),0)),'Tarjetas, cuotas y suscripciones','calendar')}</div><div class="grid columns section"><div class="panel no-pad"><div style="padding:18px 19px 8px" class="panel-head"><h3>Centro de vencimientos</h3><span class="pill">${all.length} obligaciones</span></div><div class="table-wrap"><table><thead><tr><th>Concepto</th><th>Fecha límite</th><th>Estado</th><th class="right">Importe</th><th class="right">Acción</th></tr></thead><tbody>${all.length?all.map(a=>`<tr><td>${a.kind==='recurring'?`<span class="v41-ranking-name">${v41ServiceIcon(db.recurring.find(r=>r.id===a.ref)?.iconId||v41GuessIcon(a.name),'tiny')}<strong>${sanitize(a.name)}</strong></span>`:`<strong>${sanitize(a.name)}</strong>`}<div class="subtitle">${a.kind==='card'?'Corte tarjeta':a.kind==='loan'?'Préstamo':'Suscripción / pago'}</div></td><td>${prettyDate(a.date)}</td><td>${dueChip(a.date)}</td><td class="right money">${money(a.amount,a.currency,2)}</td><td class="right"><button class="btn sm soft" data-act="${a.action}" data-id="${a.ref}" ${a.ccy?`data-ccy="${a.ccy}"`:''}>Registrar pago</button></td></tr>`).join(''):'<tr><td colspan="5"><div class="empty">No hay vencimientos registrados.</div></td></tr>'}</tbody></table></div></div><div class="panel v46-subs-panel"><div class="panel-head v46-subs-head"><div><h3>Mis suscripciones y servicios</h3><p>Identidad visual, próximo cargo y control de cada servicio.</p></div><button class="btn sm soft" data-act="addRecurring">${icon('plus')} Añadir</button></div><div class="v46-subscriptions-grid">${db.recurring.length?db.recurring.map(r=>`<article class="v46-subscription-card ${r.active===false?'is-paused':''}"><div class="v46-sub-card-top">${v45SubIcon(r,'small')}<div class="v46-sub-card-title"><strong>${sanitize(r.name)}</strong><small>${sanitize(r.category||'Suscripción')}</small></div><span class="v46-sub-dot ${r.active===false?'paused':''}" title="${r.active===false?'Pausada':'Activa'}"></span></div><div class="v46-sub-card-cost">${money(r.amount,r.currency,2)}<small>${({monthly:'Mensual',weekly:'Semanal',annual:'Anual',quarterly:'Trimestral'})[r.frequency]||'Periódico'}</small></div><div class="v46-sub-card-next"><span>${icon('calendar')} ${r.active===false?'En pausa':'Próximo '+prettyDate(r.nextDue)}</span><span>${(r.postingMode||'confirm')==='auto'?'Registro automático':'Confirmación manual'}</span></div><div class="v46-sub-card-actions"><button class="btn sm ghost" data-act="editRecurring" data-id="${r.id}">${icon('edit')} Editar</button><button class="btn sm ${r.active===false?'soft':'ghost'}" data-act="toggleRecurring" data-id="${r.id}">${r.active===false?'Activar':'Pausar'}</button></div></article>`).join(''):'<div class="empty">Añade tus suscripciones y elige un ícono propio o del catálogo.</div>'}</div></div></div>${subscriptionAnalysis()}<div class="notification section">“Registrar pago” crea el movimiento efectivo (en cuenta o tarjeta) y adelanta el próximo vencimiento de la suscripción. Los cargos se registran automáticamente solo en los servicios configurados para ello y al abrir o sincronizar la aplicación. Los demás exigen confirmación.</div>`}
+function recurring(){let active=db.recurring.filter(x=>x.active!==false),perMonth=active.reduce((s,r)=>s+fx(r.amount,r.currency)/(r.frequency==='annual'?12:r.frequency==='weekly'?7/30.4375:r.frequency==='quarterly'?3:1),0);let all=v99PendingForPeriod(ui.month),due=all.filter(x=>x.date<today());return `<div class="section-title"><div><h2>Suscripciones y compromisos</h2><p>Suscripciones, servicios, pagos de tarjetas y cuotas de préstamos.</p></div><button class="btn" data-act="addRecurring">${icon('plus')} Nueva suscripción o pago</button></div><div class="grid kpis">${shellKpi('Suscripciones activas',String(active.length),'Pagos automáticos y manuales','cycle')}${shellKpi('Costo mensual equivalente',money(perMonth),'Suscripciones, no cuotas de deuda','receipt')}${shellKpi('Compromisos vencidos',String(due.length),'Cuentas por atender','clock',due.length?'negative':'')}${shellKpi('Próximos 30 días',money(all.filter(a=>a.date>=today()&&a.date<=addDays(today(),30)).reduce((s,x)=>s+fx(x.amount,x.currency),0)),'Tarjetas, cuotas y suscripciones','calendar')}</div><div class="v149-rec-unified"><div><strong>${icon('calendar')} Una sola agenda de pagos</strong><p>Los servicios y suscripciones guardados aparecen en Próximos pagos cuando corresponde. Cuando se registra su pago, se actualiza el compromiso sin duplicarlo.</p></div><button class="btn sm soft" data-act="navigate" data-id="payments">Abrir Próximos pagos ${icon('arrow')}</button></div><div class="grid columns section"><div class="panel v46-subs-panel"><div class="panel-head v46-subs-head"><div><h3>Mis suscripciones y servicios</h3><p>Identidad visual, próximo cargo y control de cada servicio.</p></div><button class="btn sm soft" data-act="addRecurring">${icon('plus')} Añadir</button></div><div class="v46-subscriptions-grid">${db.recurring.length?db.recurring.map(r=>`<article data-v149-rec-id="${sanitize(r.id)}" class="v46-subscription-card ${r.active===false?'is-paused':''}"><div class="v46-sub-card-top">${v45SubIcon(r,'small')}<div class="v46-sub-card-title"><strong>${sanitize(r.name)}</strong><small>${sanitize(r.category||'Suscripciones')}${r.subcategory?' · '+sanitize(r.subcategory):''}</small></div><span class="v46-sub-dot ${r.active===false?'paused':''}" title="${r.active===false?'Pausada':'Activa'}"></span></div><div class="v46-sub-card-cost">${money(r.amount,r.currency,2)}<small>${({monthly:'Mensual',weekly:'Semanal',annual:'Anual',quarterly:'Trimestral'})[r.frequency]||'Periódico'}</small></div><div class="v46-sub-card-next"><span>${icon('calendar')} ${r.active===false?'En pausa':'Próximo '+prettyDate(r.nextDue)}</span><span>${(r.postingMode||'confirm')==='auto'?'Registro automático':'Confirmación manual'}</span></div><div class="v46-sub-card-actions"><button class="btn sm ghost" data-act="editRecurring" data-id="${r.id}">${icon('edit')} Editar</button><button class="btn sm ${r.active===false?'soft':'ghost'}" data-act="toggleRecurring" data-id="${r.id}">${r.active===false?'Activar':'Pausar'}</button></div></article>`).join(''):'<div class="empty">Añade tus suscripciones y elige un ícono propio o del catálogo.</div>'}</div></div></div>${subscriptionAnalysis()}<div class="notification section">“Registrar pago” crea el movimiento efectivo (en cuenta o tarjeta) y adelanta el próximo vencimiento de la suscripción. Los cargos se registran automáticamente solo en los servicios configurados para ello y al abrir o sincronizar la aplicación. Los demás exigen confirmación.</div>`}
 
 function ensureBudgetVersions(){
  if(!Array.isArray(db.budgetVersions)) db.budgetVersions=(db.budgets||[]).map(b=>({id:uuid(),category:b.category,subcategory:b.subcategory||'',amount:num(b.amount),effectiveFrom:'0001-01',legacy:true,createdAt:b.createdAt||null}));
@@ -17751,7 +17751,7 @@ function recurringForm(id){
     ${formItem('amount','Importe por cobro',o.amount,'number','min="0.01" step="0.01" required')}</div>
     <div class="v147-popular-head">Accesos visuales rápidos <span>Opcional</span></div>
     <div class="v147-quick-icons">${[['netflix','Netflix'],['spotify','Spotify'],['internet','Internet'],['utilities','Servicios'],['gym','Gimnasio'],['insurance','Seguro']].map(([key,label])=>`<button type="button" class="v147-preset" data-v147-preset="${key}">${v41ServiceIcon(key,'tiny')}<span>${label}</span></button>`).join('')}</div>
-    <details class="v147-icon-drawer"><summary>${icon('palette')} <span>Personalizar icono</span><small>Más de 70 opciones · buscar</small>${icon('chevron-down')}</summary><div class="v147-icon-content">${v41ServicePicker(o.iconId||v41GuessIcon(o.name))}</div></details>
+    <details class="v147-icon-drawer"><summary>${icon('palette')} <span>Personalizar icono</span><small>Catálogo ampliado · buscar</small>${icon('chevron-down')}</summary><div class="v147-icon-content">${v41ServicePicker(o.iconId||v41GuessIcon(o.name))}</div></details>
    </section>
    <section class="v147-rec-section" aria-label="Pago y calendario"><div class="v147-sec-head"><span class="v147-step">02</span><div><strong>¿Cómo y cuándo se cobra?</strong><small>Define la cuenta, el ciclo y la fecha que verá Próximos pagos.</small></div></div>
     <div class="v147-form-duo">${formSelect('currency','Moneda',[['DOP','Pesos · RD$'],['USD','Dólares · US$']],o.currency)}${formSelect('source','Cuenta o tarjeta de pago',sources,o.source,'required')}</div>
@@ -20614,7 +20614,7 @@ recurringForm=function(id){
  const f=document.getElementById('recurringForm');if(!f)return;
  const r=db.recurring.find(x=>x.id===id)||{},selected=v45SafeIconData(r.iconDataUrl)||'';
  const picker=f.querySelector('.v41-icon-selector');if(picker){
-  const extra=V45_EXTRA_SERVICES.map(o=>`<button type="button" class="v41-service-choice" data-act="v41PickServiceIcon" data-id="${o.id}" data-icon-label="${sanitize(o.label.toLowerCase())}" aria-pressed="${o.id===r.iconId}">${v41ServiceIcon(o.id)}<span class="v41-choice-label">${sanitize(o.label)}</span></button>`).join('');
+  const extra=V45_EXTRA_SERVICES.filter(o=>!picker.querySelector(`.v41-service-choice[data-id="${o.id}"]`)).map(o=>`<button type="button" class="v41-service-choice" data-act="v41PickServiceIcon" data-id="${o.id}" data-icon-label="${sanitize(o.label.toLowerCase())}" aria-pressed="${o.id===r.iconId}">${v41ServiceIcon(o.id)}<span class="v41-choice-label">${sanitize(o.label)}</span></button>`).join('');
   picker.querySelector('.v41-service-grid')?.insertAdjacentHTML('beforeend',extra);
   picker.insertAdjacentHTML('beforeend',`<div class="v45-upload-panel"><label class="v45-upload-button"><span>＋ Subir mi propio ícono</span><input type="file" name="iconUpload" accept="image/png,image/webp,image/jpeg" /></label><input type="hidden" name="serviceIconData" value="${selected}"><span class="v45-upload-hint">PNG, JPG o WebP. Se optimiza a 128 × 128 y se guarda con la suscripción.</span><span class="v45-upload-preview">${selected?`<img alt="Ícono personalizado" src="${selected}" />`:''}</span><button type="button" class="btn sm ghost" data-v45-remove-icon ${selected?'':'hidden'}>Quitar imagen propia</button></div>`);
   if(selected)picker.querySelector('#v41IconPreview').innerHTML=v45SubIcon(r)+'<small>Personalizado</small>';
@@ -23177,6 +23177,198 @@ document.addEventListener('touchend',ev=>{if(!v144GestureStart||!ev.changedTouch
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&document.activeElement?.closest('.v144-wallet-shell .v68-wallet-gallery')){ui.v144WalletExpanded=false;render()}},true);
 
 
+
+/* Selección de servicios desde el mismo motor de Próximos pagos.
+   Reutiliza payRecurring/guideTransactionForm, nunca crea operaciones paralelas. */
+function v146ServiceChooser(){
+ const due=v99PendingForPeriod(today().slice(0,7)).filter(x=>x.kind==='recurring');
+ const unique=new Map();
+ due.sort((a,b)=>a.date.localeCompare(b.date)).forEach(x=>{const r=db.recurring.find(r=>r.id===x.ref);if(r&&r.active!==false&&!unique.has(r.id))unique.set(r.id,{r,x})});
+ const entries=[...unique.values()].map(({r,x})=>`<button type="button" class="v146-service-choice" data-v146-pay-service="${sanitize(r.id)}"><span><strong>${sanitize(r.name)}</strong><small>${prettyDate(x.date)} · ${sanitize(r.category||'Servicio')} · Vencimiento registrado</small></span><b>${money(x.amount,x.currency,2)}</b></button>`).join('');
+ document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v146-service-modal" role="dialog" aria-modal="true" aria-label="Pagar servicio"><div class="modal-head"><div><h2>Pagar servicio</h2><p>Selecciona el compromiso que vas a liquidar.</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v146-service-picker"><p class="v146-service-picker-intro">Los vencimientos registrados en Próximos pagos se vinculan al movimiento. Después de pagar, se actualizará su siguiente fecha.</p>${entries||'<p class="v146-service-picker-intro">No tienes servicios pendientes registrados para este mes.</p>'}<button type="button" class="v146-service-choice v146-service-choice-occasional" data-v146-service-occasional="1"><span><strong>Servicio ocasional</strong><small>Registrar una factura o servicio no programado</small></span>${icon('arrow')}</button></div></section></div>`;
+}
+document.addEventListener('click',function(event){
+ const opening=event.target.closest?.('[data-act="guidedFlow"][data-mode="service"]');
+ if(opening){event.preventDefault();event.stopImmediatePropagation();v146ServiceChooser();return}
+ const paying=event.target.closest?.('[data-v146-pay-service]');
+ if(paying){event.preventDefault();event.stopImmediatePropagation();const id=paying.dataset.v146PayService;closeModal();payRecurring(id);return}
+ const occasional=event.target.closest?.('[data-v146-service-occasional]');
+ if(occasional){event.preventDefault();event.stopImmediatePropagation();closeModal();guidedTransactionForm({type:'expense',flowMode:'service',servicePreset:'other'});return}
+},true);
+
+
+
+/* Expanded, offline-first icon catalog. Identifiers are stable across sync and export. */
+const V149_APP_ICONS=[
+ ['whatsapp','WhatsApp','W','#ddf9e9','#189858'],['telegram','Telegram','T','#e6f5ff','#2486c1'],['signal','Signal','S','#e8f0ff','#486fcb'],['discord','Discord','D','#e8e8ff','#5769db'],['reddit','Reddit','r','#fff0ea','#ff572b'],['instagram','Instagram','◎','#f8e7f4','#b13f9a'],['facebook','Facebook','f','#e7efff','#3164c8'],['tiktok','TikTok','♪','#15171b','#ffffff'],['snapchat','Snapchat','S','#fff9d0','#655a09'],['pinterest','Pinterest','P','#ffe5e5','#ca3540'],['x-twitter','X / Twitter','X','#171923','#ffffff'],['threads','Threads','@','#f4f4f4','#212121'],
+ ['apple-tv','Apple TV+','tv','#1e2532','#ffffff'],['apple-fitness','Apple Fitness+','F+','#edf8ec','#498c57'],['apple-arcade','Apple Arcade','A','#f1f0ff','#665cc9'],['appstore','App Store','A','#e5f3ff','#237ac8'],['googleplay','Google Play','▶','#e9f9e9','#427b6c'],['youtube-music','YouTube Music','▶','#ffe9ea','#dc3337'],['youtube-premium','YouTube Premium','▶','#fff0ed','#d63838'],['amazon-music','Amazon Music','am','#eaf4ff','#2573b4'],['audible','Audible','a','#fff0e3','#c47725'],['kindle','Kindle','K','#e8eefc','#4464a0'],['plex','Plex','P','#171923','#f6c645'],['peacock','Peacock','P','#272537','#fff'],['viki','Viki','V','#e5f8f7','#138784'],
+ ['google-workspace','Google Workspace','G','#e8efff','#4873c5'],['gmail','Gmail','M','#fff0ec','#c75046'],['outlook','Outlook','O','#e7f2ff','#2177bc'],['teams','Microsoft Teams','T','#efedff','#5955bd'],['meet','Google Meet','M','#e6faf0','#318b6a'],['onedrive-business','OneDrive empresa','1D','#edf4ff','#3e71bd'],['box','Box','B','#e8f0ff','#3872d7'],['mega','MEGA','M','#ffe8e9','#c64048'],['proton','Proton','P','#efebff','#6852ad'],['evernote','Evernote','E','#e9f9ed','#359457'],['obsidian','Obsidian','O','#eee9fa','#7352a3'],['todoist','Todoist','T','#fff0ec','#ca4e43'],['ticktick','TickTick','✓','#e9f1ff','#3a72c0'],['asana','Asana','A','#ffeef2','#ce6b83'],['monday','Monday','M','#fff1ed','#b95c51'],['clickup','ClickUp','C','#e9e9ff','#645bc5'],['airtable','Airtable','A','#fff4df','#ad8b35'],['linear','Linear','L','#e8e9f2','#515e89'],['jira','Jira','J','#e5efff','#3169c1'],['bitbucket','Bitbucket','B','#e8efff','#3766af'],['gitlab','GitLab','G','#fff2e7','#cf733b'],['vercel','Vercel','▲','#1d2330','#fff'],['netlify','Netlify','N','#e2faf7','#168e86'],['supabase','Supabase','S','#e6f9ef','#31976b'],['firebase','Firebase','F','#fff4e2','#dc8c21'],['cloudflare','Cloudflare','C','#fff0db','#cb812b'],['digitalocean','DigitalOcean','D','#e9f0ff','#3473d3'],['aws','Amazon AWS','aws','#fff2e1','#b77821'],['azure','Microsoft Azure','Az','#e7f3ff','#2576bb'],['openai-api','OpenAI API','✳','#e7f6f2','#267d70'],['claude','Claude','C','#fbede6','#a86b54'],['gemini','Gemini','✦','#eaf0ff','#596aca'],['perplexity','Perplexity','P','#e6f8f6','#318b86'],['midjourney','Midjourney','M','#e8ebf0','#424e66'],
+ ['uber-eats','Uber Eats','U','#e8f8ed','#298655'],['airbnb','Airbnb','A','#ffe9ee','#ce5268'],['booking','Booking','B','#e7edff','#22569e'],['expedia','Expedia','E','#e5eeff','#315dc7'],['tripadvisor','Tripadvisor','T','#eaf7ec','#267b46'],['waze','Waze','W','#e8f7ff','#2285ae'],['google-maps','Google Maps','M','#e9f5f0','#52876f'],['apple-maps','Apple Maps','M','#eff1ff','#637ab1'],['strava','Strava','S','#fff0e5','#d67737'],['fitbit','Fitbit','F','#e8f9f6','#288e80'],['myfitnesspal','MyFitnessPal','M','#e5f0ff','#3264ad'],['headspace','Headspace','H','#fff0db','#ce8640'],['calm','Calm','C','#e7f9ff','#3b91b9'],['masterclass','MasterClass','M','#242424','#fff'],['skillshare','Skillshare','S','#e9f9ed','#40834f'],['khanacademy','Khan Academy','K','#e6f5ed','#3d8f6a'],
+ ['paypal','PayPal','P','#e7f0ff','#2c6baa'],['wise','Wise','W','#ecfbdc','#4e8e27'],['revolut','Revolut','R','#252b36','#fff'],['stripe','Stripe','S','#eeedff','#6557c3'],['shopify','Shopify','S','#f0f9e7','#5c922f'],['mercadolibre','Mercado Libre','ML','#fff7d7','#a87d24'],['aliexpress','AliExpress','AE','#fff0e7','#d05c27'],['shein','SHEIN','S','#272727','#fff'],['temu','Temu','T','#fff0d8','#c16c21'],['alibaba','Alibaba','a','#fff0dd','#c97230'],['costco','Costco','C','#e8eeff','#b63b47'],
+ ['banreservas','Banreservas','BR','#e5f3ff','#1e669d'],['popular-rd','Banco Popular','P','#e6efff','#2460b0'],['bhd-rd','Banco BHD','BHD','#e6f5ea','#427d54'],['cibao-rd','Asociación Cibao','C','#e7e8ff','#2f42aa'],['qik','Qik','Q','#ecf3ff','#3272bc'],['paypal-business','PayPal Negocio','PB','#e6f0ff','#3574b6'],['dgii','DGII','DG','#e8f2ff','#537ba8'],['edenorte','Edenorte','E','#fff4dd','#ae8536'],['edesur','Edesur','E','#fff0df','#ae7735'],['edeeste','Edeeste','E','#fff0db','#ba8040'],['inapa','INAPA','I','#e4f6ff','#3786ad'],['caasd','CAASD','C','#e3f5ff','#367aa6'],['viva-rd','Viva','V','#eeedff','#6551a8']
+];
+const V149_GENERIC_ICONS=[
+ ['generic-star','Estrella','sparkle','#fff6df','#af8839'],['generic-bolt','Rayo','bolt','#fff2e3','#c08131'],['generic-heart','Corazón','heart','#ffebef','#be6072'],['generic-shield','Escudo','shield','#e5f6ef','#478d6c'],['generic-cloud','Nube','cloud','#e6f4ff','#4e8cb9'],['generic-home','Casa','home','#eef0ff','#6c72b8'],['generic-calendar','Calendario','calendar','#e8efff','#4b71bb'],['generic-music','Nota musical','music','#ffeff6','#ae658a'],['generic-book','Libro','book','#edf2ff','#5976af'],['generic-gift','Regalo','gift','#ffedf2','#be6384'],['generic-camera','Cámara','◎','#e8f0ff','#587eb9'],['generic-video','Video','play','#ede9ff','#7560bb'],['generic-tv','Televisión','tv','#e9ecff','#7075b5'],['generic-phone','Teléfono','phone','#e7f7f3','#398d7c'],['generic-wifi','Wi-Fi','wifi','#e6f1ff','#4b7cb8'],['generic-card','Tarjeta','card','#ecf1ff','#6380b4'],['generic-bank','Institución bancaria','bank','#e8f2ff','#4c77a5'],['generic-coins','Monedas','coins','#fff5dd','#a58a4a'],['generic-receipt','Factura','receipt','#f1efff','#756ba8'],['generic-bag','Bolsa','bag','#ffedf7','#b56a9c'],['generic-car','Automóvil','car','#e8f1ff','#5277b2'],['generic-fuel','Gasolina','pump','#fff1e5','#c38b47'],['generic-plane','Avión','plane','#e5f3ff','#4d8bad'],['generic-coffee','Café','cup','#f7efe8','#977653'],['generic-meal','Comida','fork','#fff0e9','#bc7960'],['generic-water','Agua','drop','#e7f8ff','#4c99c1'],['generic-fire','Fuego','flame','#fff1e6','#c67c49'],['generic-users','Personas','users','#f1efff','#8170a6'],['generic-pets','Mascota','paw','#fff2e7','#af8454'],['generic-sport','Deporte','ball','#e9f9ef','#538961'],['generic-tools','Herramientas','tool','#f0f2f6','#728397'],['generic-lock','Candado','lock','#ebf1f7','#667e9c'],['generic-globe','Internet / global','globe','#e5f7f7','#468a89'],['generic-spark','Destello','sparkle','#f8ecff','#a76dc0'],['generic-briefcase','Trabajo','briefcase','#e8eef8','#5875a5'],['generic-plus','Más','+','#e7f4ee','#548e71'],['generic-check','Confirmado','✓','#e7f8ec','#3a8b5d'],['generic-pause','En pausa','Ⅱ','#eef0f5','#75849b'],['generic-target','Objetivo','◎','#fff0e5','#c38b51'],['generic-lightbulb','Idea','✧','#fff7e1','#bc9b38'],['generic-flag','Bandera','⚑','#ffedf0','#bb6474'],['generic-crown','Premium','♛','#fff4e1','#bb8c42'],['generic-percent','Descuento','%','#e9f6ff','#5f88ac'],['generic-diamond','Diamante','◇','#e9f4ff','#5e85b6'],['generic-pie','Estadísticas','◔','#ecf0ff','#6575b1'],['generic-shopping','Mercado','bag','#fff0ee','#a76c78'],['generic-building','Edificio','bank','#ebf0f6','#597b9d'],['generic-child','Educación / familia','users','#e9f3ff','#5680a6'],['generic-paint','Creatividad','✦','#f2e8fa','#9b6eb0'],['generic-fitness','Fitness','gym','#eaf9ef','#589b72'],['generic-transfer','Transferencias','⇄','#e6f4ff','#5587af'],['generic-subscription','Suscripción','cycle','#f1eaff','#7e6cb5'],['generic-services','Servicios','tool','#f2f4fb','#7289ae'],['generic-other','Otro símbolo','dots','#eef2f8','#697a9c']
+];
+for(const [id,label,glyph,bg,fg] of [...V149_APP_ICONS,...V149_GENERIC_ICONS]){
+ if(V41_SVC_BY_ID[id])continue;
+ const obj={id,label,glyph,bg,fg,group:id.startsWith('generic-')?'generic':'app'};
+ V41_SERVICES.push(obj);V41_SVC_BY_ID[id]=obj;
+}
+// Keep one icon option per ID even when a historical wrapper injects presets.
+const v149ServicePickerPrev=v41ServicePicker;
+v41ServicePicker=function(id){
+ const body=v149ServicePickerPrev(id);
+ return body.replace('<div class="v41-service-grid"',`<nav class="v149-icon-tabs" aria-label="Tipos de íconos"><button type="button" data-v149-icon-tab="all" aria-pressed="true">Todos</button><button type="button" data-v149-icon-tab="app" aria-pressed="false">Apps</button><button type="button" data-v149-icon-tab="generic" aria-pressed="false">Genéricos</button><button type="button" data-v149-icon-tab="service" aria-pressed="false">Servicios</button></nav><div class="v41-service-grid"`)
+ .replace('Buscar: Netflix, internet, iCloud…','Buscar entre '+V41_SERVICES.length+' íconos: apps, servicios, genéricos…');
+};
+const v149OldWireServicePicker=v41WireServicePicker;
+v41WireServicePicker=function(form){
+ v149OldWireServicePicker(form);
+ const picker=form?.querySelector('.v41-icon-selector');if(!picker)return;
+ const refresh=()=>{
+  const selected=picker.querySelector('[data-v149-icon-tab][aria-pressed="true"]')?.dataset.v149IconTab||'all';
+  const q=v71SearchNormalize(picker.querySelector('#v41IconSearch')?.value||'');let count=0;
+  picker.querySelectorAll('.v41-service-choice').forEach(btn=>{
+   const item=V41_SVC_BY_ID[btn.dataset.id]||{};
+   const generic=String(item.id||'').startsWith('generic-');
+   const app=V149_APP_ICONS.some(x=>x[0]===item.id)||V45_EXTRA_SERVICES.some(x=>x.id===item.id);
+   const group=generic?'generic':app?'app':'service';
+   const visible=(selected==='all'||selected===group)&&(!q||v71SearchNormalize(item.label+' '+item.id).includes(q));
+   btn.hidden=!visible;if(visible)count++;
+  });
+  const empty=picker.querySelector('#v41IconEmpty');if(empty)empty.hidden=count>0;
+ };
+ picker.querySelectorAll('[data-v149-icon-tab]').forEach(tab=>tab.addEventListener('click',()=>{
+  picker.querySelectorAll('[data-v149-icon-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b===tab)));
+  refresh();
+ }));
+ picker.querySelector('#v41IconSearch')?.addEventListener('input',refresh);
+ refresh();
+};
+/* Card lifetime: derived read-only from the same credit, bank statement and transaction tables. */
+function v149CardLifecycle(c){
+ const a=cardStatus(c,'DOP'),b=cardStatus(c,'USD'),stats=v144CardStats(c),tx=(db.transactions||[]).filter(t=>t.cardId===c.id).slice().sort((x,y)=>String(y.date).localeCompare(String(x.date)));
+ const eventRows=[];
+ if(c.opened)eventRows.push({date:c.opened,title:'Alta / inicio registrado',value:'',note:'Fecha de origen del producto'});
+ for(const ccy of ['DOP','USD']){
+  const st=ccy==='DOP'?a:b;
+  if(st.cut)eventRows.push({date:st.cut,title:'Último corte calculado · '+ccy,value:money(st.statementAtCut||0,ccy,2),note:'No sustituye el estado oficial'});
+  if(st.official?.cutDate)eventRows.push({date:st.official.cutDate,title:'Estado oficial · '+ccy,value:money(st.officialAmount||0,ccy,2),note:'Importe confirmado en el registro'});
+  if(st.nextCut)eventRows.push({date:st.nextCut,title:'Próximo corte · '+ccy,value:'',note:'Estimado por día de corte'});
+  if(st.nextDue)eventRows.push({date:st.nextDue,title:'Fecha exigible · '+ccy,value:money(st.billed||0,ccy,2),note:'Según facturación registrada'});
+ }
+ for(const t of tx.slice(0,15))eventRows.push({date:t.date||'',title:transactionTitle(t)||'Movimiento de tarjeta',value:money(t.amount||0,t.currency||'DOP',2),note:'Registro en libro de movimientos'});
+ eventRows.sort((x,y)=>String(y.date).localeCompare(String(x.date)));
+ const feeDOP=num(c.annualFeeDOP),feeUSD=num(c.annualFeeUSD),annual=num(c.annualFeeAmount)>0?money(c.annualFeeAmount,c.annualFeeCurrency||'DOP',2):`${money(feeDOP,'DOP',2)} · ${money(feeUSD,'USD',2)}`;
+ const fields=[['Institución',bankOf(c)],['Red',c.network||c.brand||'—'],['Categoría',CARD_TIER_NAMES[cardTierKey(c)]||'—'],['Últimos dígitos','•••• '+(c.last4||'—')],['Apertura',c.opened?prettyDate(c.opened):'Sin fecha'],['Corte',`Día ${c.cutDay||'—'}`],['Pago límite',`Día ${c.dueDay||'—'}`],['Anualidad contratada',annual],['Tasa anual RD$',Number.isFinite(num(c.aprDOP))?num(c.aprDOP).toFixed(2)+'%':'—'],['Tasa anual US$',Number.isFinite(num(c.aprUSD))?num(c.aprUSD).toFixed(2)+'%':'—'],['Crédito RD$',money(a.limit||0,'DOP',2)],['Crédito US$',money(b.limit||0,'USD',2)],['Disponible RD$',money(a.availableWithOverdraft||0,'DOP',2)],['Disponible US$',money(b.availableWithOverdraft||0,'USD',2)],['Beneficio neto realizado',money(stats.net||0,'DOP',2)],['Cashback recibido',money(stats.realizedCashback||0,'DOP',2)],['Costo confirmado pagado',money(stats.paidAmount||0,'DOP',2)],['Rentabilidad',v144RoiText(stats.roi)],['Estado',c.archived?'Archivada':'Activa']];
+ return `<section class="v149-lifecycle" aria-label="Ciclo de vida de ${sanitize(c.name)}"><header><div><h3>Ciclo de vida completo</h3><p>Contrato, saldos, costos, beneficios, cortes, pagos y movimientos · información registrada, sin proyecciones inventadas.</p></div><button type="button" class="btn sm soft" data-act="editCard" data-id="${sanitize(c.id)}">${icon('edit')} Editar condiciones</button></header><div class="v149-life-grid">${fields.map(([name,value])=>`<div class="v149-life-stat"><small>${sanitize(name)}</small><strong>${sanitize(value)}</strong></div>`).join('')}</div><div><h3>Historial de eventos</h3><p class="subtle">Fechas de cortes calculados, estados oficiales y últimos movimientos reales. Los datos futuros son fechas estimadas.</p></div><div class="v149-life-ledger">${eventRows.length?eventRows.slice(0,24).map(e=>`<div class="v149-life-item"><span class="v149-life-dot"></span><div><strong>${sanitize(e.title)}</strong><span>${e.date?prettyDate(e.date):'Fecha sin registrar'} · ${sanitize(e.note)}</span></div><b>${sanitize(e.value)}</b></div>`).join(''):'<p class="subtle">Todavía no hay movimientos ni fechas registradas.</p>'}</div><button type="button" class="btn sm soft" data-act="cardHistory" data-id="${sanitize(c.id)}">${icon('chart')} Abrir historial financiero completo</button></section>`;
+}
+/* Spotlight — real local data, ranked and grouped. No network calls, no demo results. */
+const V149_NAV=[
+ ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['benefits','Beneficios','Cashback y anualidad','analytics'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Próximos pagos','Vencimientos y compromisos','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['kpis','Mis indicadores','KPIs y tendencias','chart'],['settings','Ajustes','Configuración y privacidad','settings']
+];
+const V149_SEARCH_LABELS={section:'Navegación',bank:'Instituciones',account:'Cuentas',card:'Tarjetas',loan:'Préstamos',certificate:'Certificados',recurring:'Suscripciones y servicios',transaction:'Movimientos',contact:'Entre personas',budget:'Presupuestos',incomeSchedule:'Ingresos recurrentes',benefit:'Beneficios',statement:'Cortes oficiales',category:'Categorías'};
+function v71SearchEntries(){
+ const out=V149_NAV.map(([page,title,sub,ico])=>({kind:'section',page,title,sub,ico,group:'section'}));
+ const add=(kind,page,rows,build)=>{for(const o of rows||[]){if(!o)continue;try{const x=build(o);out.push({kind,page,group:kind,id:o.id,...x})}catch(_){}}};
+ add('bank','banks',db.banks,b=>({title:b.name||'Institución',sub:'Banco / entidad · '+(b.kind||''),ico:'building'}));
+ add('account','accounts',db.accounts,a=>({title:a.name||'Cuenta',sub:bankOf(a)+' · '+(a.currency||'DOP')+' · '+(a.kind||''),ico:'wallet',meta:a.currency||'DOP'}));
+ add('card','cards',db.cards,c=>({title:c.name||'Tarjeta',sub:'Tarjeta '+(c.last4?'•••• '+c.last4:'')+' · '+bankOf(c),ico:'card',meta:'Corte '+(c.cutDay||'—')}));
+ add('loan','loans',db.loans,l=>({title:l.name||'Préstamo',sub:bankOf(l)+' · '+(l.currency||'DOP'),ico:'receipt'}));
+ add('certificate','certificates',db.certificates,c=>({title:c.name||c.title||'Certificado',sub:'Certificado · '+bankOf(c),ico:'building'}));
+ add('recurring','recurring',db.recurring,r=>({title:r.name||'Servicio',sub:(r.category||'Servicio')+' · '+(r.subcategory||'')+' · '+(r.active===false?'Pausado':'Activo'),ico:'calendar',meta:r.currency||'DOP'}));
+ add('transaction','register',(db.transactions||[]).slice().reverse(),t=>({title:transactionTitle(t)||'Movimiento',sub:[t.date,t.category,t.subcategory,t.note].filter(Boolean).join(' · '),ico:t.type==='income'?'up':'cycle',meta:t.currency||'DOP'}));
+ add('contact','personal',db.personalContacts,p=>({title:[p.firstName||p.name||'',p.lastName||''].join(' ').trim()||'Contacto',sub:'Préstamos entre personas · '+(p.alias||''),ico:'wallet'}));
+ add('budget','budget',db.budgets,b=>({title:b.name||b.category||'Presupuesto',sub:'Presupuesto · '+(b.period||b.month||''),ico:'chart'}));
+ add('incomeSchedule','income',db.incomeSchedules,r=>({title:r.name||r.employer||r.source||'Ingreso programado',sub:'Ingreso recurrente · '+(r.frequency||''),ico:'up'}));
+ add('benefit','benefits',db.perkUses,p=>({title:p.name||p.description||p.category||'Beneficio',sub:'Beneficio · '+(p.date||'')+' · '+(db.cards||[]).find(c=>c.id===p.cardId)?.name,ico:'analytics'}));
+ add('statement','cards',db.statements,r=>({title:'Corte oficial · '+((db.cards||[]).find(c=>c.id===r.cardId)?.name||'Tarjeta'),sub:'Corte · '+(r.cutDate||r.date||''),ico:'receipt'}));
+ for(const kind of ['gasto','ingreso'])for(const cat of (kind==='gasto'?EXP:INC)||[]){out.push({kind:'category',page:'categories',id:cat,group:'category',title:cat,sub:'Categoría de '+(kind==='gasto'?'egresos':'ingresos'),ico:'chart'})}
+ return out;
+}
+let v149SearchRecent=[],v149SearchSelected=0,v149SearchIndex=[];
+function v149SearchResultMarkup(x,i){
+ return `<button type="button" id="v149-result-${i}" class="v71-search-result" role="option" aria-selected="${i===v149SearchSelected}" data-v71-search-pick="${i}"><span class="v71-search-ico">${icon(x.ico||'search')}</span><span class="v71-search-copy"><strong>${sanitize(x.title||'Registro')}</strong><small>${sanitize(x.sub||'')}</small></span>${x.meta?`<small class="v149-search-meta">${sanitize(x.meta)}</small>`:''}<span class="v71-search-arrow">›</span></button>`;
+}
+function v71SearchView(query){
+ const target=document.getElementById('v71-search-results');if(!target)return;
+ const q=v71SearchNormalize(query);const data=v149SearchIndex.length?v149SearchIndex:v71SearchEntries();let matches=[];
+ if(q){const terms=q.split(/\s+/).filter(Boolean);matches=data.filter(x=>{const hay=v71SearchNormalize([x.title,x.sub,x.meta].join(' '));return terms.every(t=>hay.includes(t))}).sort((a,b)=>{const score=x=>(x.kind==='section'?5:0)+(v71SearchNormalize(x.title).startsWith(q)?9:0)+(v71SearchNormalize(x.title)===q?20:0);return score(b)-score(a)}).slice(0,80)}
+ else{
+  const recent=v149SearchRecent.map(r=>data.find(x=>x.kind===r.kind&&x.id===r.id&&x.page===r.page)).filter(Boolean);
+  const suggested=['overview','cards','payments','recurring','register','advanced','accounts','income'].map(page=>data.find(x=>x.kind==='section'&&x.page===page)).filter(Boolean);
+  matches=[...recent,...suggested.filter(x=>!recent.includes(x))].slice(0,12);
+ }
+ window.v71VisibleSearchResults=matches;v149SearchSelected=0;
+ if(!matches.length){target.innerHTML=`<div class="v149-spotlight-empty">${icon('search')}<b>Sin resultados</b><span>Prueba por nombre de banco, categoría, servicio, tarjeta o movimiento.</span></div>`;return}
+ const groups=new Map();matches.forEach((x,i)=>{const group=x.kind==='section'?'section':x.group||x.kind;if(!groups.has(group))groups.set(group,[]);groups.get(group).push({x,i})});
+ let markup='';for(const [key,entries] of groups){markup+=`<div class="v71-search-section">${!q&&key==='section'?'Accesos recomendados':key==='section'?'Módulos':(V149_SEARCH_LABELS[key]||'Resultados')}</div><div role="listbox" aria-label="${V149_SEARCH_LABELS[key]||'Resultados'}">${entries.map(({x,i})=>v149SearchResultMarkup(x,i)).join('')}</div>`}
+ target.innerHTML=markup;const input=document.getElementById('v71-search-input');if(input)input.setAttribute('aria-activedescendant','v149-result-0');
+}
+function v71SearchOpen(){
+ const existing=document.getElementById('v71-search-overlay');if(existing){existing.querySelector('input')?.focus();return}
+ document.querySelectorAll('.v36-notifications[open]').forEach(x=>x.open=false);
+ v149SearchIndex=v71SearchEntries();
+ const overlay=document.createElement('div');overlay.id='v71-search-overlay';overlay.className='v71-search-overlay v149-spotlight';overlay.setAttribute('role','presentation');
+ overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global Vive el Hoy"><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" aria-controls="v71-search-results" placeholder="Buscar en Vive el Hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v71-search-content" id="v71-search-results"></div><footer class="v149-spotlight-footer"><span>${v149SearchIndex.length} registros y accesos disponibles</span><span class="v149-desktop-hint"><kbd>↑</kbd> <kbd>↓</kbd> navegar · <kbd>Enter</kbd> abrir · <kbd>Esc</kbd> cerrar</span></footer></section>`;
+ document.body.appendChild(overlay);v71SearchView('');overlay.querySelector('input')?.focus({preventScroll:true});
+}
+function v71SearchClose(){document.getElementById('v71-search-overlay')?.remove();window.v71VisibleSearchResults=null;v149SearchIndex=[]}
+function v71SearchPick(entry){
+ if(!entry)return;
+ v149SearchRecent=[{kind:entry.kind,id:entry.id,page:entry.page},...v149SearchRecent.filter(x=>!(x.kind===entry.kind&&x.id===entry.id&&x.page===entry.page))].slice(0,5);
+ v71SearchClose();
+ ui.page=entry.page;
+ if(entry.kind==='bank')ui.bankId=entry.id;
+ if(entry.kind==='account')ui.accountId=entry.id;
+ if(entry.kind==='card')ui.cardId=entry.id;
+ if(entry.kind==='loan')ui.loanId=entry.id;
+ if(entry.kind==='transaction'){ui.movementTab='all';ui.txPeriod='all';ui.search=entry.title||'';ui.ledgerSearch=entry.title||'';}
+ render();window.scrollTo({top:0,behavior:'instant'});
+ if(entry.kind==='section')return;
+ setTimeout(()=>{
+  let target;
+  if(entry.kind==='recurring')target=[...document.querySelectorAll('[data-v149-rec-id]')].find(x=>x.dataset.v149RecId===entry.id);
+  else if(entry.kind==='card')target=document.querySelector('.card-detail')||document.querySelector('.cards-grid');
+  else if(entry.kind==='account')target=document.querySelector('.account-breakdown-panel')||document.querySelector('.panel.section');
+  else if(entry.kind==='loan')target=document.querySelector('.loan-detail')||document.querySelector('.loans-world');
+  else if(entry.kind==='transaction')target=document.querySelector('#ledger-world');
+  else target=document.querySelector('#page');
+  target?.scrollIntoView({block:'start',behavior:'smooth'});
+ },110);
+}
+function v149SearchMove(delta){
+ const list=window.v71VisibleSearchResults||[];if(!list.length)return;
+ v149SearchSelected=(v149SearchSelected+delta+list.length)%list.length;
+ document.querySelectorAll('[data-v71-search-pick]').forEach(btn=>btn.setAttribute('aria-selected',String(Number(btn.dataset.v71SearchPick)===v149SearchSelected)));
+ const selected=document.getElementById('v149-result-'+v149SearchSelected);selected?.scrollIntoView({block:'nearest'});
+ document.getElementById('v71-search-input')?.setAttribute('aria-activedescendant','v149-result-'+v149SearchSelected);
+}
+document.addEventListener('keydown',e=>{
+ const overlay=document.getElementById('v71-search-overlay');if(!overlay)return;
+ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();e.stopImmediatePropagation();v149SearchMove(e.key==='ArrowDown'?1:-1)}
+ else if(e.key==='Enter'&&['v71-search-input'].includes(e.target?.id)){e.preventDefault();e.stopImmediatePropagation();v71SearchPick(window.v71VisibleSearchResults?.[v149SearchSelected]);}
+ else if(e.key==='Tab'){
+  const controls=[overlay.querySelector('input'),overlay.querySelector('[data-v71-search-close]')].filter(Boolean);
+  if(controls.length&&(e.shiftKey&&document.activeElement===controls[0]||!e.shiftKey&&document.activeElement===controls[controls.length-1])){e.preventDefault();(e.shiftKey?controls[controls.length-1]:controls[0]).focus()}
+ }
+},true);
+document.addEventListener('pointermove',e=>{const btn=e.target.closest?.('#v71-search-overlay [data-v71-search-pick]');if(!btn)return;const i=Number(btn.dataset.v71SearchPick);if(i!==v149SearchSelected){v149SearchSelected=i;document.querySelectorAll('#v71-search-overlay [data-v71-search-pick]').forEach(b=>b.setAttribute('aria-selected',String(b===btn)))}});
+// Service selector consumes one pending obligation model, and never invents a due.
+v146ServiceChooser=function(){
+ const pending=[...v99PendingForPeriod(ui.month),...upcoming()].filter(x=>x.kind==='recurring');
+ const entriesMap=new Map();
+ pending.sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(x=>{
+  const r=(db.recurring||[]).find(r=>r.id===x.ref);
+  if(r&&r.active!==false&&!entriesMap.has(r.id))entriesMap.set(r.id,{r,x});
+ });
+ const entries=[...entriesMap.values()].map(({r,x})=>`<button type="button" class="v146-service-choice" data-v146-pay-service="${sanitize(r.id)}"><span>${v45SubIcon(r,'tiny')}<span><strong>${sanitize(r.name)}</strong><small>${prettyDate(x.date)} · ${sanitize(r.category||'Servicio')}${r.subcategory?' / '+sanitize(r.subcategory):''} · Pendiente</small></span></span><b>${money(x.amount,x.currency,2)}</b></button>`).join('');
+ const root=document.getElementById('modal-root');if(!root)return;
+ root.innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v146-service-modal" role="dialog" aria-modal="true" aria-label="Pagar servicio"><div class="modal-head"><div><h2>Pagar un servicio</h2><p>Selecciona un vencimiento real, sin duplicar compromisos.</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v146-service-picker"><p class="v146-service-picker-intro">Esta lista usa los mismos vencimientos de Próximos pagos. Al registrar un pago se aplica al servicio seleccionado y se recalcula la agenda.</p>${entries||'<p class="v146-service-picker-intro">No hay servicios pendientes por pagar en la agenda.</p>'}<button type="button" class="v146-service-choice v146-service-choice-occasional" data-v146-service-occasional="1"><span><strong>Servicio ocasional</strong><small>Una factura puntual, sin crear una suscripción</small></span>${icon('arrow')}</button></div></section></div>`;
+};
+
+
 f33Boot();
 
 })();
@@ -24886,24 +25078,106 @@ body.theme-dark .v144-section-head h3,body.theme-dark .v144-hero h2{color:#eef5f
 </style>
 
 
-<script id="vive-v146-service-link">
-/* Selección de servicios desde el mismo motor de Próximos pagos.
-   Reutiliza payRecurring/guideTransactionForm, nunca crea operaciones paralelas. */
-function v146ServiceChooser(){
- const due=v99PendingForPeriod(today().slice(0,7)).filter(x=>x.kind==='recurring');
- const unique=new Map();
- due.sort((a,b)=>a.date.localeCompare(b.date)).forEach(x=>{const r=db.recurring.find(r=>r.id===x.ref);if(r&&r.active!==false&&!unique.has(r.id))unique.set(r.id,{r,x})});
- const entries=[...unique.values()].map(({r,x})=>`<button type="button" class="v146-service-choice" data-v146-pay-service="${sanitize(r.id)}"><span><strong>${sanitize(r.name)}</strong><small>${prettyDate(x.date)} · ${sanitize(r.category||'Servicio')} · Vencimiento registrado</small></span><b>${money(x.amount,x.currency,2)}</b></button>`).join('');
- document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v146-service-modal" role="dialog" aria-modal="true" aria-label="Pagar servicio"><div class="modal-head"><div><h2>Pagar servicio</h2><p>Selecciona el compromiso que vas a liquidar.</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v146-service-picker"><p class="v146-service-picker-intro">Los vencimientos registrados en Próximos pagos se vinculan al movimiento. Después de pagar, se actualizará su siguiente fecha.</p>${entries||'<p class="v146-service-picker-intro">No tienes servicios pendientes registrados para este mes.</p>'}<button type="button" class="v146-service-choice v146-service-choice-occasional" data-v146-service-occasional="1"><span><strong>Servicio ocasional</strong><small>Registrar una factura o servicio no programado</small></span>${icon('arrow')}</button></div></section></div>`;
+
+<!-- V149 · Refinamiento visual fiel a la referencia, tarjetas contextuales y búsqueda global -->
+<style id="vive-v149-design">
+/* El Resumen de escritorio conserva los tres círculos y la jerarquía de la captura original. */
+@media(min-width:1050px){
+ body:not(.theme-dark) .ff-dashboard.summary-space{color:#1d355a}
+ body:not(.theme-dark) .ff-dashboard.summary-space .ff-tile{background-color:rgba(248,251,255,.5);border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 12px 40px rgba(68,99,164,.045),inset 0 1px rgba(255,255,255,.8)!important}
+ .ff-dashboard.summary-space .ff-dashboard-grid{grid-template-columns:minmax(0,1.7fr) minmax(290px,.83fr);gap:16px}
+ .ff-dashboard.summary-space .ff-balance{min-height:410px;padding:27px 34px 20px;border-radius:35px!important;background:linear-gradient(135deg,rgba(232,239,254,.76),rgba(247,251,255,.68))!important}
+ .ff-dashboard.summary-space .ff-balance-header p{font-size:12px;line-height:1.45;max-width:720px}
+ .ff-dashboard.summary-space .ff-bubble{width:clamp(135px,14vw,205px);height:clamp(135px,14vw,205px);gap:11px;margin:0 -7px;background:linear-gradient(155deg,rgba(255,255,255,.97),rgba(226,235,248,.8));border:1px solid rgba(255,255,255,.98);box-shadow:inset 0 4px 15px rgba(255,255,255,.87),0 15px 40px rgba(65,93,151,.085)}
+ .ff-dashboard.summary-space .ff-bubble.featured{background:linear-gradient(145deg,#8583fc 0%,#625aee 66%,#697bfa 100%);box-shadow:inset 0 2px 7px #fff6,0 16px 38px #5f5cdd38;border-color:#a9a5ff}
+ .ff-dashboard.summary-space .ff-bubble .bubble-amount{font-size:clamp(18px,2vw,27px);letter-spacing:-.058em}
+ .ff-dashboard.summary-space .ff-bubble small{font-size:12px;font-weight:720}
+ .ff-dashboard.summary-space .ff-balance-actions button{height:42px;padding:0 18px}
+ .ff-dashboard.summary-space .ff-obligations{border-radius:30px!important}
 }
-document.addEventListener('click',function(event){
- const opening=event.target.closest?.('[data-act="guidedFlow"][data-mode="service"]');
- if(opening){event.preventDefault();event.stopImmediatePropagation();v146ServiceChooser();return}
- const paying=event.target.closest?.('[data-v146-pay-service]');
- if(paying){event.preventDefault();event.stopImmediatePropagation();const id=paying.dataset.v146PayService;closeModal();payRecurring(id);return}
- const occasional=event.target.closest?.('[data-v146-service-occasional]');
- if(occasional){event.preventDefault();event.stopImmediatePropagation();closeModal();guidedTransactionForm({type:'expense',flowMode:'service',servicePreset:'other'});return}
-},true);
-</script>
+@media(min-width:1050px) and (max-width:1290px){.ff-dashboard.summary-space .ff-balance{min-height:360px}.ff-dashboard.summary-space .ff-bubble{width:clamp(126px,12.2vw,166px);height:clamp(126px,12.2vw,166px)}}
+@media(max-width:790px){.ff-dashboard.summary-space .ff-dashboard-grid{min-width:0}.ff-dashboard.summary-space .ff-balance{min-width:0}}
+/* Desktop physical credit cards: only the physical face is shown until expansion. */
+.cards-grid .v149-card-shell{padding:13px!important;align-self:start;min-width:0;overflow:hidden;transition:box-shadow .26s ease,transform .26s ease}
+.cards-grid .v149-card-shell:hover{box-shadow:0 22px 52px rgba(60,88,146,.13)}
+.cards-grid .v149-card-disclosure{width:100%;display:block;min-width:0}
+.cards-grid .v149-card-toggle{display:block;list-style:none;position:relative;cursor:pointer;border-radius:19px;outline-offset:4px}
+.cards-grid .v149-card-toggle::-webkit-details-marker{display:none}
+.cards-grid .v149-card-toggle .card-visual{width:100%;margin:0;transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .35s;pointer-events:none}
+.cards-grid .v149-card-toggle:hover .card-visual{transform:translateY(-3px);filter:brightness(1.06)}
+.cards-grid .v149-card-toggle:focus-visible{outline:3px solid #7c90ee}
+.cards-grid .v149-card-cue{position:absolute;right:13px;bottom:11px;display:flex;align-items:center;gap:6px;background:rgba(22,35,60,.61);color:white;font-weight:760;font-size:10px;padding:7px 11px;border:1px solid #fff3;border-radius:999px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);opacity:0;transform:translateY(4px);transition:opacity .24s,transform .24s;pointer-events:none}
+.cards-grid .v149-card-cue svg{width:13px;height:13px}
+.cards-grid .v149-card-shell:hover .v149-card-cue,.cards-grid .v149-card-toggle:focus-visible .v149-card-cue,.cards-grid .v149-card-disclosure[open] .v149-card-cue{opacity:1;transform:translateY(0)}
+.cards-grid .v149-card-disclosure[open] .v149-card-cue{background:rgba(44,70,134,.8)}
+.cards-grid .v149-card-reveal{padding:7px 2px 0;animation:v149-unfold .3s cubic-bezier(.2,.8,.2,1)}
+.cards-grid .v149-card-reveal .v148-card-essentials{margin-top:7px}
+.cards-grid .v149-card-reveal .card-footer{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding-top:9px}
+.cards-grid .v149-card-reveal .product-mini-actions{margin-top:6px}
+.cards-grid .v149-lifecycle-link{margin-top:12px;width:100%;min-height:39px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #d6e3fa;border-radius:13px;background:linear-gradient(130deg,#edf3ff,#f9fbff);color:#4167a2;font-size:11px;font-weight:800;cursor:pointer}
+.cards-grid .v149-lifecycle-link svg{width:15px;height:15px}
+@keyframes v149-unfold{from{opacity:0;transform:translateY(-9px)}to{opacity:1;transform:translateY(0)}}
+.v149-lifecycle{display:grid;gap:16px;margin:22px 0 18px;border-top:1px solid rgba(110,150,198,.2);padding-top:22px}
+.v149-lifecycle>header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.v149-lifecycle>header h3{margin:3px 0;font-size:20px;letter-spacing:-.05em}
+.v149-lifecycle>header p{font-size:11px;color:var(--muted,#6e809d);margin:0}
+.v149-life-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.v149-life-stat{display:grid;gap:6px;background:rgba(242,247,255,.65);border:1px solid rgba(172,190,223,.3);border-radius:15px;padding:14px;min-width:0}
+.v149-life-stat small{font-size:10px;font-weight:740;color:#7283a1}
+.v149-life-stat strong{font-size:clamp(12px,1.35vw,18px);overflow-wrap:anywhere;color:var(--text,#203658)}
+.v149-life-ledger{display:grid;gap:9px}.v149-life-item{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:10px;align-items:start;font-size:11px;color:#60728f}.v149-life-dot{width:9px;height:9px;border-radius:50%;margin-top:3px;background:#6182e7;box-shadow:0 0 0 4px rgba(94,128,232,.1)}.v149-life-item div{display:grid;gap:3px}.v149-life-item strong{color:#263b5d;font-size:12px}.v149-life-item b{color:#28456d;white-space:nowrap;font-size:12px}
+.v149-rec-unified{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:17px 19px;border-radius:20px;background:linear-gradient(115deg,rgba(236,243,255,.9),rgba(255,255,255,.66));border:1px solid rgba(195,210,236,.6);margin:16px 0}
+.v149-rec-unified strong{display:flex;align-items:center;gap:8px;font-size:14px;color:#2e507e}.v149-rec-unified strong svg{width:18px;height:18px}.v149-rec-unified p{font-size:11px;color:#7183a1;line-height:1.6;margin:6px 0 0;max-width:690px}
+.v149-rec-unified+.grid.columns>.v46-subs-panel{grid-column:1/-1}
+/* New Spotlight: deep glass, actual records, segmented result groups, keyboard UX. */
+.v71-search-overlay.v149-spotlight{padding:clamp(45px,12vh,122px) 20px 24px;align-items:flex-start;background:radial-gradient(ellipse at 45% 5%,rgba(112,144,219,.12),transparent 55%),rgba(17,30,57,.35);backdrop-filter:blur(26px) saturate(120%);-webkit-backdrop-filter:blur(26px) saturate(120%);animation:v149-fade .22s ease}
+.v149-spotlight .v71-search-dialog{position:relative;width:min(730px,100%);max-height:min(79dvh,760px);border-radius:29px;background:linear-gradient(132deg,rgba(255,255,255,.88),rgba(236,243,255,.82));border:1px solid rgba(255,255,255,.83);box-shadow:0 30px 100px #14264c3b,inset 0 1px #fff;backdrop-filter:blur(35px) saturate(155%);-webkit-backdrop-filter:blur(35px) saturate(155%);animation:v149-spot-in .35s cubic-bezier(.16,1,.3,1)}
+.v149-spotlight .v71-search-top{gap:13px;padding:21px 22px 19px;border-bottom:1px solid rgba(147,171,208,.25)}
+.v149-spotlight .v71-search-top>svg{width:23px;height:23px;color:#5978bd}
+.v149-spotlight .v71-search-field{font-size:18px;font-weight:500;letter-spacing:-.025em;box-shadow:none!important;outline:0!important;min-height:35px;appearance:none;-webkit-appearance:none}
+.v149-spotlight .v71-search-field::-webkit-search-cancel-button{display:none}
+.v149-spotlight .v71-search-close{width:31px;height:31px;border-radius:10px;font-size:16px;background:rgba(160,181,217,.16);color:#687a98}
+.v149-spotlight .v71-search-content{padding:11px 13px 12px;min-height:120px;scrollbar-width:thin;scrollbar-color:rgba(128,145,180,.3) transparent}
+.v149-spotlight .v71-search-section{font-size:10px;color:#7b8dac;padding:14px 13px 8px;letter-spacing:.15em}
+.v149-spotlight .v71-search-result{min-height:59px;padding:9px 12px;border:1px solid transparent;transition:background .16s,border-color .16s,transform .16s;border-radius:16px;cursor:pointer}
+.v149-spotlight .v71-search-result:hover,.v149-spotlight .v71-search-result[aria-selected="true"]{background:linear-gradient(110deg,rgba(221,231,254,.9),rgba(248,252,255,.7));border-color:rgba(162,184,232,.4);outline:none}
+.v149-spotlight .v71-search-ico{border-radius:13px;width:39px;height:39px;background:rgba(229,236,252,.8);color:#5377bc}
+.v149-spotlight .v71-search-copy strong{font-size:12.5px}.v149-spotlight .v71-search-copy small{font-size:10px;color:#7c8eaa}
+.v149-search-meta{color:#7c8fae;font-size:10px;white-space:nowrap;margin-right:7px;max-width:145px;overflow:hidden;text-overflow:ellipsis}
+.v149-spotlight-footer{padding:10px 22px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid rgba(148,173,214,.2);font-size:10px;color:#8593ae}
+.v149-spotlight-footer kbd{font-family:inherit;background:#ffffffb8;border:1px solid #dce5f6;border-radius:6px;padding:3px 6px;color:#6c7a93}
+.v149-spotlight-empty{padding:35px 20px;text-align:center;display:grid;gap:7px;color:#798ca8;font-size:12px}.v149-spotlight-empty b{font-size:14px;color:#3e577e}
+.v149-spotlight-suggestion{padding:8px 13px 4px;color:#7286a7;font-size:11px}
+@keyframes v149-fade{from{opacity:0}to{opacity:1}}@keyframes v149-spot-in{from{opacity:0;transform:translateY(-18px) scale(.97);filter:blur(5px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+body.theme-dark .v149-spotlight .v71-search-dialog{background:linear-gradient(145deg,rgba(27,42,68,.95),rgba(23,35,58,.94));border-color:#6584ad50;color:#eef3ff}
+body.theme-dark .v149-spotlight .v71-search-result:hover,body.theme-dark .v149-spotlight .v71-search-result[aria-selected=true]{background:#334c78;border-color:#6584af}
+body.theme-dark .v149-spotlight .v149-spotlight-footer kbd{background:#344562;color:#ecf3ff;border-color:#536a8c}
+body.theme-dark .v149-lifecycle .v149-life-stat{background:#223956;border-color:#45617a}body.theme-dark .v149-lifecycle .v149-life-item strong,body.theme-dark .v149-lifecycle .v149-life-item b{color:#dceaff}
+body.theme-dark .v149-rec-unified{background:#233653;border-color:#415775}body.theme-dark .v149-rec-unified strong{color:#e5f0ff}
+@media(max-width:790px){
+ .v71-search-overlay.v149-spotlight{padding:calc(env(safe-area-inset-top) + 9px) 9px calc(env(safe-area-inset-bottom) + 8px);align-items:flex-start;backdrop-filter:blur(16px)}
+ .v149-spotlight .v71-search-dialog{width:100%;height:min(86dvh,790px);max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 18px);border-radius:24px}
+ .v149-spotlight .v71-search-top{padding:15px 14px 13px}
+ .v149-spotlight .v71-search-field{font-size:16px}
+ .v149-spotlight .v71-search-content{flex:1;padding:8px 8px 12px;overscroll-behavior:contain}
+ .v149-search-meta{display:none}
+ .v149-spotlight-footer{padding:9px 13px calc(env(safe-area-inset-bottom) + 10px)}
+ .v149-spotlight-footer .v149-desktop-hint{display:none}
+ .v149-rec-unified{align-items:flex-start;flex-direction:column}
+ .v149-life-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cards-grid .v149-card-cue{opacity:1;transform:none}
+}
+@media(prefers-reduced-motion:reduce){.v149-spotlight,.v149-spotlight .v71-search-dialog,.cards-grid .v149-card-reveal{animation:none!important}.cards-grid .v149-card-toggle .card-visual,.cards-grid .v149-card-cue{transition:none!important}}
+</style>
+
+<style id="vive-v149-icon-selector">
+.v149-icon-tabs{display:flex;gap:5px;margin:0 0 11px;flex-wrap:wrap}
+.v149-icon-tabs button{border:1px solid #dce6f4;background:rgba(255,255,255,.6);color:#6b7e9b;padding:7px 11px;border-radius:999px;cursor:pointer;font-size:11px;font-weight:750}
+.v149-icon-tabs button[aria-pressed="true"]{background:#456dcc;border-color:#456dcc;color:#fff}
+.v147-icon-content .v41-service-grid{max-height:300px!important}
+.v146-service-choice>span{display:flex!important;align-items:center;gap:10px}.v146-service-choice>span>span:last-child{display:grid;gap:3px}.v146-service-choice .v41-service-mark{flex:0 0 29px;width:29px;height:29px}
+body.theme-dark .v149-icon-tabs button{background:#263b5c;border-color:#476182;color:#d9e4fa}body.theme-dark .v149-icon-tabs button[aria-pressed=true]{background:#5069be;color:#fff}
+</style>
+
 </body>
 </html>
