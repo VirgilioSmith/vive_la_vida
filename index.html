@@ -21086,5 +21086,136 @@ document.addEventListener('click',event=>{if(!event.target.closest('.v36-notific
  #modal-root .mqr-detail-form .v99-percent{font-size:20px!important}
 }
 </style>
+<style id="vive-v108-mobile-visual-only">
+/* V108 · Refinamiento exclusivamente visual para teléfonos.
+   No modifica HTML funcional, estados, Supabase, lógica financiera ni escritorio. */
+@media screen and (max-width: 790px) {
+  /* Jerarquía visual y adaptación al ancho real del dispositivo. */
+  #page, #page > *, #page .section-title, #page .panel,
+  #page .inner-view, #page .inner-view-card { min-width:0; }
+  #page .section-title { gap:10px; align-items:flex-start; }
+  #page .section-title h2 { font-size:clamp(18px,5.2vw,22px); line-height:1.2; letter-spacing:-.035em; }
+  #page .section-title p { font-size:11px; line-height:1.45; max-width:46ch; }
+  #page :is(.inner-view-card,.v100-summary-item,.v71-commitment-card) { overflow-wrap:break-word; }
+  #page .inner-menu { gap:8px; border-radius:17px; padding:11px 12px; }
+  #page .inner-menu-caption { gap:2px; }
+  #page .inner-menu-tabs { gap:5px; scroll-padding-inline:9px; }
+  #page .inner-menu-tab { min-height:40px; border-radius:11px; padding:9px 12px; }
+  #page .inner-menu-button { min-height:42px; border-radius:12px; }
+  #page .inner-view-header { gap:9px; align-items:flex-start; }
+  #page .inner-view-header h2 { font-size:18px; line-height:1.25; }
+  #page .inner-view-card { border-radius:17px; padding:15px; }
+  #page .inner-view-card .inner-number { font-size:clamp(20px,5.5vw,25px); line-height:1.18; overflow-wrap:anywhere; }
+  #page .inner-amount-summary { padding:12px 14px; gap:9px; border-radius:14px; }
+  #page .inner-category { border-radius:12px; }
+
+  /* Resumen: montos legibles y espacio consistente en los indicadores existentes. */
+  #page .v100-summary-grid { gap:9px; margin:12px 0 17px; }
+  #page .v100-summary-item { padding:13px 12px; border-radius:15px; gap:5px; }
+  #page .v100-summary-item small { font-size:10px; line-height:1.35; }
+  #page .v100-summary-item strong { font-size:clamp(18px,5.5vw,24px); line-height:1.18; font-variant-numeric:tabular-nums; }
+  #page .v100-summary-item span { line-height:1.35; }
+  #page .v71-commitment-card { border-radius:20px; }
+  #page .v71-commitment-card .v71-commitment-head { gap:9px; }
+  #page .v71-commitment-card .v71-commitment-amount { overflow-wrap:anywhere; line-height:1.15; }
+  #page .v71-commitment-list .mini-row { gap:9px; min-width:0; }
+  #page .v71-commitment-list .mini-row > div:first-child { min-width:0; flex:1 1 auto; }
+  #page .v71-commitment-list .mini-title { overflow-wrap:anywhere; }
+  #page .v71-commitment-list .hstack { flex:0 1 auto; min-width:0; gap:7px; }
+  #page .v71-commitment-list .hstack strong { font-size:11px; line-height:1.2; overflow-wrap:anywhere; }
+  #page .v71-commitment-list .btn { min-height:35px; border-radius:12px; }
+
+  /* Superficies modales: que el ancho y el scroll pertenezcan al formulario. */
+  #modal-root, #modal-root .modal-layer, #modal-root .modal { min-width:0; }
+  #modal-root .modal-head { gap:10px; }
+  #modal-root .modal-head h2 { min-width:0; overflow-wrap:anywhere; letter-spacing:-.035em; }
+  #modal-root :is(.modal,.mqr-modal) :is(input,select,textarea) {
+    box-sizing:border-box; max-width:100%; min-width:0;
+  }
+  #modal-root :is(.modal,.mqr-modal) :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]) { font-size:16px; }
+  #modal-root :is(.form-grid,.v87-field-grid,.v87-review-grid) > * { min-width:0; }
+  #modal-root .form-foot { gap:8px; }
+  #modal-root .form-foot .btn { min-width:0; touch-action:manipulation; }
+  #modal-root button:focus-visible, #page button:focus-visible { outline:2px solid #3977dc; outline-offset:3px; }
+
+  /* Pantalla de importe: el número protagonista sin desplazar el teclado ni la CTA. */
+  #modal-root .mqr-header { padding-left:16px!important; padding-right:16px!important; }
+  #modal-root .mqr-scroll { padding:8px 16px 11px; }
+  #modal-root .mqr-shell { gap:12px!important; }
+  #modal-root .mqr-step-caption { font-size:9px; letter-spacing:1.65px; }
+  #modal-root .mqr-segment { gap:7px!important; }
+  #modal-root .mqr-mode { min-height:66px!important; border-radius:17px!important; gap:4px!important; }
+  #modal-root .mqr-mode strong { font-size:11px!important; }
+  #modal-root .mqr-mode-icon svg { width:20px; height:20px; }
+  #modal-root .mqr-display { min-height:112px!important; padding:10px 5px 12px!important; gap:5px!important; }
+  #modal-root .mqr-display small { font-size:11px; line-height:1.3; }
+  #modal-root .mqr-display strong { font-size:clamp(35px,10.6vw,50px)!important; letter-spacing:-.045em!important; line-height:1.1!important; }
+  #modal-root .mqr-display span { line-height:1.3; }
+  #modal-root .mqr-chip { padding:7px 10px; border-radius:999px; }
+  #modal-root .mqr-keypad { gap:8px!important; }
+  #modal-root .mqr-key { min-height:clamp(49px,7.5dvh,62px)!important; border-radius:17px!important; font-size:25px!important; }
+  #modal-root .mqr-bottom { padding:10px 16px calc(env(safe-area-inset-bottom) + 12px)!important; }
+  #modal-root .mqr-primary { min-height:50px!important; border-radius:15px!important; font-size:15px!important; }
+
+  /* Pantalla de categorías: campos contenidos, sin tarjetas gigantes. */
+  #modal-root .mqr-detail-form .form-grid { padding:10px 13px 14px!important; gap:8px!important; }
+  #modal-root .mqr-detail-form .form-grid>label { border-radius:13px!important; padding:9px 10px!important; }
+  #modal-root .mqr-detail-form .form-grid .field { height:42px!important; min-height:42px!important; border-radius:10px!important; }
+  #modal-root .mqr-detail-amount { padding:10px 12px!important; border-radius:14px!important; }
+  #modal-root .mqr-detail-amount strong { font-size:clamp(19px,5.7vw,25px)!important; overflow-wrap:anywhere; }
+  #modal-root .mqr-detail-form .form-foot { gap:8px!important; padding:9px 13px calc(env(safe-area-inset-bottom) + 12px)!important; }
+  #modal-root .mqr-detail-form .form-foot .btn { min-height:45px!important; font-size:12px; }
+
+  /* Píldora: distribución limpia incluso con porcentajes de cuatro cifras. */
+  #modal-root .v107-capacity-pill { border-radius:14px!important; padding:9px 11px!important; }
+  #modal-root .v107-pill-heading { margin-bottom:6px!important; }
+  #modal-root .v107-pill-metrics { grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr)!important; gap:6px!important; }
+  #modal-root .v107-pill-metric { min-width:0; }
+  #modal-root .v107-pill-metric small { font-size:9px!important; line-height:1.3; }
+  #modal-root .v107-pill-metric strong { font-size:clamp(17px,4.9vw,21px)!important; letter-spacing:-.045em!important; overflow-wrap:anywhere; white-space:normal!important; }
+  #modal-root .v107-pill-available { padding-top:7px; gap:8px; }
+  #modal-root .v107-pill-available strong { font-size:12px; white-space:normal!important; text-align:right; }
+  #modal-root .v107-pill-note { font-size:10px; line-height:1.4; }
+
+  /* Préstamos: mismo lenguaje visual en todos los pasos, sin cambiar campos. */
+  #modal-root #loanForm.v87-loan-wizard { max-width:100%; }
+  #modal-root #loanForm.v87-loan-wizard .v87-steps { gap:5px!important; }
+  #modal-root #loanForm.v87-loan-wizard .v87-steps .v83-form-step { border-radius:11px!important; min-width:0; line-height:1.28; }
+  #modal-root #loanForm.v87-loan-wizard .v87-section { border-radius:14px!important; padding:11px!important; }
+  #modal-root #loanForm.v87-loan-wizard .v87-section-heading h4 { line-height:1.3!important; }
+  #modal-root #loanForm.v87-loan-wizard .v87-section-heading p { line-height:1.4!important; }
+  #modal-root #loanForm.v87-loan-wizard .v87-field-grid { gap:8px!important; }
+  #modal-root #loanForm.v87-loan-wizard .v87-section .field { font-size:16px!important; min-width:0; }
+  #modal-root #loanForm.v87-loan-wizard .v87-review-row { border-radius:11px!important; }
+  #modal-root #loanForm.v87-loan-wizard .v87-nav .btn { min-height:45px!important; border-radius:12px!important; }
+
+  /* Consistencia de formularios guiados y gestiones secundarias. */
+  #modal-root .fastx-head { padding:12px 15px!important; }
+  #modal-root .fastx-body { padding:11px 14px 14px!important; gap:10px!important; }
+  #modal-root .fastx-title { font-size:clamp(19px,5.6vw,24px)!important; line-height:1.18!important; }
+  #modal-root .fastx-cat { border-radius:12px!important; }
+  #modal-root .other-studio-header { padding:12px 14px!important; }
+  #modal-root .other-studio-content { padding:12px 14px!important; }
+  #modal-root .studio-form .studio-main { min-width:0; }
+  #modal-root .studio-form .studio-navigation .btn,
+  #modal-root .other-studio-form .form-foot .btn { min-height:44px; border-radius:12px; }
+}
+/* Pantallas pequeñas: preservar legibilidad sin tocar el comportamiento. */
+@media screen and (max-width: 360px) {
+  #page .v100-summary-item { padding:11px 9px; }
+  #page .v100-summary-item strong { font-size:18px; }
+  #modal-root .mqr-scroll { padding-left:11px; padding-right:11px; }
+  #modal-root .mqr-header { padding-left:12px!important; padding-right:12px!important; }
+  #modal-root .mqr-shell { gap:9px!important; }
+  #modal-root .mqr-mode { min-height:61px!important; }
+  #modal-root .mqr-display { min-height:100px!important; }
+  #modal-root .mqr-display strong { font-size:clamp(31px,10.2vw,37px)!important; }
+  #modal-root .mqr-key { min-height:48px!important; border-radius:15px!important; }
+  #modal-root .v107-pill-heading>span { font-size:10px!important; }
+  #modal-root .v107-pill-metric strong { font-size:17px!important; }
+  #modal-root .v107-pill-available strong { font-size:11px!important; }
+  #modal-root #loanForm.v87-loan-wizard .v87-review-grid { grid-template-columns:minmax(0,1fr)!important; }
+}
+</style>
 </body>
 </html>
