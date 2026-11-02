@@ -13200,6 +13200,18 @@ body.theme-dark .v105-custom-btn{background:rgba(44,61,83,.93);color:#f1f6fd;bor
  #modal-root #loanForm.v87-loan-wizard .v87-review-grid{grid-template-columns:minmax(0,1fr)!important}
 }
 </style>
+<style id="vive-v110-quick-capacity">
+@media(max-width:790px){
+ #modal-root .mqr-shell>#v80QuickAssessment{margin:10px 0 4px!important;width:100%;min-width:0}
+ #modal-root .v110-capacity-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;align-items:center;min-height:62px;padding:10px 7px;border:1px solid #dce6f2;border-radius:17px;background:rgba(255,255,255,.83);box-shadow:0 5px 18px rgba(30,56,100,.035)}
+ #modal-root .v110-capacity-summary>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;padding:0 5px}
+ #modal-root .v110-capacity-summary>div+div{border-left:1px solid #e3e9f2}
+ #modal-root .v110-capacity-summary small{font-size:9px!important;line-height:1.1;letter-spacing:.07em;color:#73829b;font-weight:800}
+ #modal-root .v110-capacity-summary strong{font-size:clamp(12px,3.7vw,16px)!important;line-height:1.15;letter-spacing:-.035em;color:#1d3454;max-width:100%;overflow-wrap:anywhere;text-align:center}
+ #modal-root .v110-capacity-summary.v110-over{border-color:#f0c7ca;background:#fff8f8}
+ #modal-root .v110-capacity-summary.v110-over strong{color:#b4232a}
+}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -16574,7 +16586,7 @@ function renderMobileQuickRegister(){
  const presetsHtml=presets.length?`<div class="mqr-presets">${presets.map(([k,t])=>`<button type="button" class="mqr-chip ${state.preset===k?'active':''}" data-mqr-act="preset" data-id="${k}">${t}</button>`).join('')}</div>`:'';
  const keypad=['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(n=>`<button class="mqr-key ${n==='⌫'||n==='.'?'soft':''}" type="button" data-mqr-act="key" data-id="${n}" aria-label="${n==='⌫'?'Borrar último dígito':n}">${n}</button>`).join('');
  document.querySelectorAll('.v36-notifications[open]').forEach(el=>el.open=false);
- document.getElementById('modal-root').innerHTML=`<div class="modal-layer mqr-layer" data-backdrop="true"><section class="modal mqr-modal" role="dialog" aria-modal="true" aria-label="Registrar un movimiento"><header class="modal-head mqr-header"><h2>Nuevo movimiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="mqr-scroll"><div class="mqr-shell"><div class="mqr-step-caption">PASO 1 DE 2 · IMPORTE</div><nav class="mqr-segment" aria-label="Qué deseas registrar">${kinds}</nav>${sub}<div class="mqr-display"><small>¿Cuánto ${state.mode==='income'?'recibiste':state.mode==='spend'?'gastaste':'vas a transferir'}?</small><strong id="mqrAmountValue" aria-live="polite">${mqrAmountText(state.amount)}</strong><span>Escribe el importe en el teclado</span>${state.mode==='spend'?'<div id="v80QuickAssessment" aria-live="polite"></div>':''}</div>${presetsHtml}<div class="mqr-keypad">${keypad}</div></div></div><footer class="mqr-bottom"><button class="mqr-primary" type="button" data-mqr-act="continue">Siguiente ${icon('arrow')}</button></footer></section></div>`;
+ document.getElementById('modal-root').innerHTML=`<div class="modal-layer mqr-layer" data-backdrop="true"><section class="modal mqr-modal" role="dialog" aria-modal="true" aria-label="Registrar un movimiento"><header class="modal-head mqr-header"><h2>Nuevo movimiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="mqr-scroll"><div class="mqr-shell"><div class="mqr-step-caption">PASO 1 DE 2 · IMPORTE</div><nav class="mqr-segment" aria-label="Qué deseas registrar">${kinds}</nav>${sub}<div class="mqr-display"><small>¿Cuánto ${state.mode==='income'?'recibiste':state.mode==='spend'?'gastaste':'vas a transferir'}?</small><strong id="mqrAmountValue" aria-live="polite">${mqrAmountText(state.amount)}</strong><span>Escribe el importe en el teclado</span></div>${presetsHtml}<div class="mqr-keypad">${keypad}</div>${state.mode==='spend'?'<div id="v80QuickAssessment" aria-live="polite"></div>':''}</div></div><footer class="mqr-bottom"><button class="mqr-primary" type="button" data-mqr-act="continue">Siguiente ${icon('arrow')}</button></footer></section></div>`;
  v80RefreshQuickAdvisor();
 }
 function mqrApplyKey(key){
@@ -20314,7 +20326,7 @@ function v90ExpenseStatus(z){
 }
 function v80SummaryMarkup(a,compact=false){
  const z=v90ExpenseImpact(a);
- return `<div class="v80-preview v80-${z.risk} v90-expense-mini ${compact?'v80-preview-mini':''}"><span class="v80-preview-copy"><small>CAPACIDAD ACTUAL ${v85Pct(z.before)}</small><strong>DESPUÉS DE ESTE PAGO ${v85Pct(z.after)}</strong><em>${z.remaining===null?'Sin ingresos para calcular':z.remaining<0?'Déficit '+money(Math.abs(z.remaining)):'Disponible '+money(z.remaining)}</em></span></div>`;
+ return `<div class="v110-capacity-summary v110-${z.risk}" aria-label="Capacidad de endeudamiento"><div><small>ANTES</small><strong>${v85Pct(z.before)}</strong></div><div><small>DESPUÉS</small><strong>${v85Pct(z.after)}</strong></div><div><small>${z.remaining!==null&&z.remaining<0?'DÉFICIT':'DISPONIBLE'}</small><strong>${z.remaining===null?'—':money(Math.abs(z.remaining))}</strong></div></div>`;
 }
 function v80DetailsMarkup(a){
  const z=v90ExpenseImpact(a),d=z.d, override=Number(db.settings?.purchaseMonthlyNetOverride)||0;
@@ -21216,6 +21228,66 @@ document.addEventListener('click',event=>{if(!event.target.closest('.v36-notific
   #modal-root .v107-pill-available strong { font-size:11px!important; }
   #modal-root #loanForm.v87-loan-wizard .v87-review-grid { grid-template-columns:minmax(0,1fr)!important; }
 }
+</style>
+<style id="vive-v109-mobile-continuity-only">
+/* V109 — Continuidad visual desde la parte superior, SOLO móvil.
+   Mantiene la navegación, jerarquías, tema y todo el JavaScript original. */
+@media screen and (max-width:790px) {
+  /* El área superior acompaña el fondo de la página: sin una barra
+     de otro color ni un borde horizontal que corte la composición. */
+  html { background-color:#dce9fa; }
+  .vive-mobile-top {
+    border:0!important;
+    border-top:0!important;
+    border-bottom:0!important;
+    outline:0!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  /* Continuidad real: el encabezado deja ver el mismo fondo
+     de la página, sin una banda de color independiente. */
+  body:not(.theme-dark):not(.vision-mode) .vive-mobile-top,
+  body.theme-dark:not(.vision-mode) .vive-mobile-top,
+  body.vision-mode .vive-mobile-top {
+    background:transparent!important;
+    background-color:transparent!important;
+  }
+  .main > .topbar,
+  #page > .topbar,
+  #page > .section-title {
+    border-top:0!important;
+    border-bottom:0!important;
+    box-shadow:none!important;
+  }
+  /* Los formularios móviles comparten el mismo fondo visual de su
+     contenido, sin rayas divisorias bajo la cabecera. */
+  #modal-root .modal-head,
+  #modal-root .mqr-header {
+    background:#f4f7fb!important;
+    border:0!important;
+    border-top:0!important;
+    border-bottom:0!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  #modal-root .fastx-head,
+  #modal-root .other-studio-header {
+    border-bottom:0!important;
+    box-shadow:none!important;
+  }
+  /* Adaptación a los dos modos oscuros existentes, sin forzar blanco. */
+  body.theme-dark:not(.vision-mode) #modal-root .modal-head,
+  body.theme-dark:not(.vision-mode) #modal-root .mqr-header {
+    background:#16243b!important;
+  }
+  body.vision-mode #modal-root .modal-head,
+  body.vision-mode #modal-root .mqr-header {
+    background:#15243a!important;
+  }
+}
+
 </style>
 </body>
 </html>
