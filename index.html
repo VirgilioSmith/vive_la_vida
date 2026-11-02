@@ -13132,6 +13132,74 @@ body.theme-dark .v105-config-row,body.theme-dark .v105-pay-choices button,body.t
 body.theme-dark .v105-config-row strong,body.theme-dark .v105-pay-choices strong{color:#eaf2fd}
 body.theme-dark .v105-custom-btn{background:rgba(44,61,83,.93);color:#f1f6fd;border-color:#536781}
 </style>
+<style id="vive-v107-responsive-pill">
+/* V107 — Capacidad financiera como píldora, sin alterar su cálculo ni el desglose. */
+#modal-root .v107-capacity-pill{display:block!important;min-width:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:10px 13px!important;margin:0!important;border-radius:17px!important;background:linear-gradient(125deg,#f7faff,#eef5ff)!important;border:1px solid #dce7f7!important;box-shadow:none!important;color:#24405f!important}
+#modal-root .v107-pill-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 7px}
+#modal-root .v107-pill-heading>span{display:flex;align-items:center;gap:7px;font-size:11px;line-height:1.3;font-weight:800;color:#3a5575;letter-spacing:0}
+#modal-root .v107-pill-heading svg{width:14px;height:14px;flex:0 0 auto}
+#modal-root .v107-pill-info{border:0;background:rgba(77,112,160,.08);display:grid;place-items:center;width:26px;height:26px;min-width:26px;padding:0;border-radius:50%;color:#50769e;cursor:pointer}
+#modal-root .v107-pill-info:focus-visible{outline:2px solid #427bd1;outline-offset:2px}
+#modal-root .v107-pill-metrics{display:grid;grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr) minmax(125px,1.2fr);gap:8px;align-items:center}
+#modal-root .v107-pill-metric{display:flex;flex-direction:column;min-width:0;gap:2px}
+#modal-root .v107-pill-metric small,#modal-root .v107-pill-available small{font-size:9px;line-height:1.2;color:#7286a0;font-weight:800;letter-spacing:.035em}
+#modal-root .v107-pill-metric strong{font-size:21px!important;line-height:1.08;font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:-.6px;white-space:nowrap}
+#modal-root .v107-pill-arrow{font-weight:800;color:#8c9db3;text-align:center;font-size:14px}
+#modal-root .v107-pill-available{border-left:1px solid #dbe5f3;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0;padding-left:11px}
+#modal-root .v107-pill-available strong{font-size:13px;line-height:1.3;font-weight:800;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:#23577a}
+#modal-root .v107-pill-negative strong,#modal-root .v107-pill-negative small{color:#bc343a}
+#modal-root .v107-pill-note{font-size:10px;line-height:1.3;color:#71849c;margin:6px 0 0!important}
+#modal-root .v107-pill-alert{color:#b45309}
+#modal-root .v107-capacity-pill.v107-risk-over{background:linear-gradient(115deg,#fff8f8,#fff1f1)!important;border-color:#f3c6c6!important}
+#modal-root .v107-capacity-pill.v107-risk-over .v107-pill-metric:nth-of-type(2) strong{color:#b4232a!important}
+/* Modales de registro: límites fluidos, contenidos visibles y scroll interior sin scroll horizontal. */
+@media(max-width:790px){
+ #modal-root .v107-capacity-pill{padding:9px 11px!important;border-radius:15px!important}
+ #modal-root .v107-pill-heading{margin-bottom:6px!important}
+ #modal-root .v107-pill-metrics{grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr);gap:7px}
+ #modal-root .v107-pill-metric strong{font-size:20px!important}
+ #modal-root .v107-pill-available{grid-column:1/-1;border-left:0;border-top:1px solid #dce6f5;padding:6px 0 0;flex-direction:row;justify-content:space-between;align-items:baseline;gap:8px}
+ #modal-root .v107-pill-available small{font-size:9px;letter-spacing:0}
+ #modal-root .v107-pill-available strong{font-size:12px;white-space:nowrap}
+ #modal-root .v80-advisor-slot{width:100%;min-width:0;max-width:100%;margin:3px 0!important}
+ #modal-root .modal{box-sizing:border-box;max-width:calc(100vw - 16px)!important;min-width:0;overflow-x:hidden}
+ #modal-root .modal-head{gap:10px;min-width:0}
+ #modal-root .modal-head h2{font-size:clamp(15px,4.4vw,19px)!important;line-height:1.2}
+ #modal-root .modal :is(input,select,textarea){max-width:100%;box-sizing:border-box;min-width:0}
+ #modal-root #loanForm.v87-loan-wizard{min-width:0;max-width:100%;overflow-x:hidden}
+ #modal-root #loanForm.v87-loan-wizard .v87-step-intro h3{font-size:20px!important;letter-spacing:-.55px!important;margin:3px 0 4px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-step-intro p{font-size:10px!important;line-height:1.4!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-steps{margin:1px 0 9px!important;gap:5px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-steps .v83-form-step{padding:7px 3px!important;min-height:43px!important;border-radius:11px!important;font-size:9px!important;overflow-wrap:break-word}
+ #modal-root #loanForm.v87-loan-wizard .v83-loan-form-panel{gap:8px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-section{padding:11px!important;border-radius:14px!important;gap:9px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-section-heading{gap:7px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-section-heading h4{font-size:12px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-section-heading p{font-size:10px!important;line-height:1.35!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-field-grid{gap:8px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-section .field{font-size:16px!important;min-height:42px!important;height:auto!important;padding:9px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-section .filter-label{font-size:10px!important;margin-bottom:4px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-review-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-review-row{padding:9px!important;border-radius:10px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-review-row strong{font-size:12px!important;overflow-wrap:anywhere}
+ #modal-root #loanForm.v87-loan-wizard .v87-nav{padding:7px 0 calc(env(safe-area-inset-bottom) + 7px)!important;gap:7px!important}
+ #modal-root #loanForm.v87-loan-wizard .v87-nav .btn,#modal-root #loanForm.v87-loan-wizard .form-foot .btn{min-height:43px!important;border-radius:12px!important;font-size:12px!important}
+ #modal-root .fastx-body{padding:10px 13px 13px!important;gap:9px!important}
+ #modal-root .fastx-amount-zone{padding:8px 11px 10px!important;border-radius:13px!important}
+ #modal-root .fastx-amount-zone #flowAmount{height:43px!important;min-height:43px!important;font-size:clamp(28px,8vw,36px)!important}
+ #modal-root .fastx-title{font-size:clamp(19px,6vw,24px)!important;line-height:1.1!important}
+ #modal-root .fastx-head{padding:11px 14px!important}
+ #modal-root .fastx-cat{min-height:40px!important;padding:6px!important}
+ #modal-root .mqr-detail-form .form-grid{gap:7px!important}
+ #modal-root .mqr-detail-form .v107-capacity-pill{margin:0!important}
+}
+@media(max-width:359px){
+ #modal-root .v107-pill-metric strong{font-size:18px!important}
+ #modal-root .v107-pill-metric small{font-size:8px!important}
+ #modal-root .v107-pill-available{flex-wrap:wrap}
+ #modal-root #loanForm.v87-loan-wizard .v87-review-grid{grid-template-columns:minmax(0,1fr)!important}
+}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -20266,8 +20334,20 @@ function v80DetailsMarkup(a){
 }
 function v80AdvisorMarkup(a){
  const z=v90ExpenseImpact(a),lowCash=a.selectedLimit!==null&&a.selectedLimit<z.cost-.01;
- const limitMessage=lowCash?(a.sourceType==='card'?'El límite disponible de esta tarjeta no cubre la compra.':'El saldo de la cuenta no cubre este gasto.') : '';
- return `<section class="v80-advisor v90-expense-advisor v99-simple-capacity" id="v80PurchaseAdvisor" aria-label="Capacidad de endeudamiento antes y después del gasto"><div class="v80-advisor-head"><span>${icon('shield')} Capacidad de endeudamiento</span><small>${sanitize(z.d.period)}</small></div><div class="v90-expense-compare"><div><small>CAPACIDAD ACTUAL</small><strong class="v99-percent v99-${z.d.risk}">${v85Pct(z.before)}</strong></div><div class="v90-after v90-${z.risk}"><small>DESPUÉS DE ESTE PAGO</small><strong class="v99-percent v99-${z.risk}">${v85Pct(z.after)}</strong></div></div><div class="v90-expense-balance ${z.remaining!==null&&z.remaining<0?'v90-negative':''}"><span>${z.remaining===null?'Sin ingresos del mes para evaluar':z.remaining<0?'Te faltaría después del pago':'Te quedaría disponible después del pago'}</span><strong>${z.remaining===null?'—':money(Math.abs(z.remaining))}</strong></div>${a.committed?'<small>Este pago corresponde a una obligación ya incluida y no se suma dos veces.</small>':''}${limitMessage?`<div class="v80-limit-alert">${icon('receipt')} ${limitMessage}</div>`:''}<button type="button" class="v99-capacity-info" data-v85-action="capacity">Ver cómo se calcula · ${money(z.d.monthly)} / ${money(z.d.income)}</button></section>`;
+ const limitMessage=lowCash?(a.sourceType==='card'?'El límite de la tarjeta no alcanza para este gasto.':'El saldo de la cuenta no alcanza para este gasto.') : '';
+ const cashLabel=z.remaining===null?'Sin ingresos suficientes':z.remaining<0?'Déficit previsto':'Disponible después del pago';
+ const cashValue=z.remaining===null?'—':money(Math.abs(z.remaining));
+ return `<section class="v80-advisor v90-expense-advisor v99-simple-capacity v107-capacity-pill v107-risk-${z.risk}" id="v80PurchaseAdvisor" aria-label="Capacidad de endeudamiento antes y después del gasto">
+ <div class="v107-pill-heading"><span>${icon('shield')} Capacidad de endeudamiento</span><button type="button" class="v107-pill-info" data-v85-action="capacity" aria-label="Ver desglose de capacidad de endeudamiento" title="Ver desglose">${icon('info')}</button></div>
+ <div class="v107-pill-metrics">
+   <div class="v107-pill-metric"><small>ACTUAL</small><strong class="v99-${z.d.risk}">${v85Pct(z.before)}</strong></div>
+   <span class="v107-pill-arrow" aria-hidden="true">→</span>
+   <div class="v107-pill-metric"><small>DESPUÉS DEL PAGO</small><strong class="v99-${z.risk}">${v85Pct(z.after)}</strong></div>
+   <div class="v107-pill-available ${z.remaining!==null&&z.remaining<0?'v107-pill-negative':''}"><small>${cashLabel}</small><strong>${cashValue}</strong></div>
+ </div>
+ ${a.committed?'<p class="v107-pill-note">Esta obligación ya está incluida: no se cuenta dos veces.</p>':''}
+ ${limitMessage?`<p class="v107-pill-note v107-pill-alert">${limitMessage}</p>`:''}
+ </section>`;
 }
 function v80AdvisorFromForm(f){
  let source=f.elements.paymentSource?.value||'account';if(!['account','card'].includes(source))source='account';
