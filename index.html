@@ -20718,7 +20718,7 @@ function v32Bars(page){
  const chosen=ui.v32Tools[page]||'';
  const cfg=V32_TOOLS[page]||[];
  const count=page==='accounts'?v31ReconcileSummary().pending:page==='register'?v31Ensure().docs.length:page==='settings'?v30Audit().issues.length:0;
- let note=count>0?`<span class="v32-inline-note">${count} ${page==='accounts'?'pendiente(s) por conciliar':page==='register'?'comprobantes guardados':'observaciones para revisar'}</span>`:'';
+ let note=count>0&&['accounts','register'].includes(page)?`<span class="v32-inline-note">${count} ${page==='accounts'?'pendiente(s) por conciliar':'comprobantes guardados'}</span>`:'';
  return `<div class="v32-tool-bar" aria-label="Opciones adicionales de ${V32_LABELS[page]}"><div class="v32-tool-head"><span class="v32-tool-mark"></span><strong>Más sobre ${V32_LABELS[page]}</strong>${note}</div><div class="v32-tool-actions">${cfg.map(([id,name,ico])=>`<button type="button" class="v32-tool-button ${chosen===id?'active':''}" data-act="v32Tool" data-page="${page}" data-id="${id}" aria-expanded="${chosen===id?'true':'false'}">${icon(ico)}${v31E(name)}${chosen===id?icon('check'):icon('arrow')}</button>`).join('')}</div></div>`;
 }
 function v32Render(page){switch(ui.v32Tools[page]){
@@ -28399,5 +28399,65 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
 @media(max-width:790px){.world-advanced .v142-advanced-stats .advanced-stat strong{font-size:clamp(23px,5.8vw,30px)!important}.v176-person-summary>div strong{font-size:clamp(16px,4.7vw,21px);}}
 </style>
 
+<style id="vive-v177-eliminar-observaciones-visuales">
+/* V177: Only navigation/toolbar placeholders. Never hide note fields or records. */
+#app :is(.v173-context-tabs,.universe-switch,.module-switch,.v32-tool-actions,.v176-settings-jump):empty{
+  display:none!important;
+  margin:0!important;
+  padding:0!important;
+  min-height:0!important;
+}
+</style>
+<script id="vive-v177-eliminar-observaciones-visuales">
+(function(){
+  'use strict';
+  /* Do not rewrite transaction notes, agreement concepts, or saved records. */
+  const EXACT=/^observaciones(?:\s*[·•]\s*\d+|\s*\(\d+\)|\s+\d+)?$/i;
+  const VISUAL_ITEMS='button,a,[role="tab"],[role="menuitem"]';
+  const TOP_CHROME='nav,[role="tablist"],.topbar,.universe-switch-wrap,.universe-switch,.module-switch,.module-tabs,.v173-context-tabs,.v32-tool-bar,.v32-tool-actions,.v176-settings-jump,.v173-space-bottom,.v173-space-main,.v173-actions,.ff-dashboard-tools,.tab-nav,.tabs-nav,.nav-tabs,.subnav,.sub-menu';
+  const TOP_ITEM_CLASSES='v173-tab,nav-btn,tab,tab-button,menu-item,submenu-item,subnav-item';
+  const PROTECTED='form,[role="dialog"],.modal-layer,.modal,.v56-loan-list,.v56-panel,.v31-table-scroll,.table-wrap,.v31-world';
+  const label=(el)=>String(el.textContent||'').replace(/[\u200b-\u200d\ufeff]/g,'').replace(/\s+/g,' ').replace(/[\s›»→↗]+$/g,'').trim();
+  const isObservations=(el)=>EXACT.test(label(el))||EXACT.test(String(el.getAttribute('aria-label')||'').trim());
+  function isTopItem(el){
+    if(!el.closest('#app')||el.closest(PROTECTED))return false;
+    if(el.closest(TOP_CHROME))return true;
+    if(el.matches('.'+TOP_ITEM_CLASSES.split(',').join(',.')))return true;
+    return false;
+  }
+  function pruneEmptyChrome(el){
+    if(!el||!el.isConnected)return;
+    if(!el.matches('nav,.v173-context-tabs,.v32-tool-actions,.universe-switch,.module-switch,.v176-settings-jump,.tab-nav,.tabs-nav,.nav-tabs,.subnav,.sub-menu'))return;
+    if(el.children.length===0&&!el.textContent.trim())el.remove();
+  }
+  function clean(root){
+    if(!root||!root.querySelectorAll)return;
+    const chrome=root.querySelectorAll(VISUAL_ITEMS);
+    for(const item of chrome){
+      if(!isObservations(item)||!isTopItem(item))continue;
+      const parent=item.parentElement;
+      item.remove();
+      pruneEmptyChrome(parent);
+    }
+    /* Entire top-level optional section, never a financial notes/records panel. */
+    for(const el of root.querySelectorAll('#page > [aria-label],.main > [aria-label]')){
+      if(!el.isConnected||!EXACT.test(String(el.getAttribute('aria-label')||'').trim()))continue;
+      if(!el.matches('nav,[role="navigation"],[role="tablist"]'))continue;
+      el.remove();
+    }
+  }
+  function boot(){
+    const root=document.getElementById('app');
+    if(!root)return;
+    let running=false;
+    const flush=()=>{running=false;clean(root);};
+    const observer=new MutationObserver(()=>{if(!running){running=true;queueMicrotask(flush);}});
+    observer.observe(root,{childList:true,subtree:true});
+    clean(root);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
+  else boot();
+})();
+</script>
 </body>
 </html>
