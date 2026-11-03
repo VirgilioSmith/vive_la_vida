@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <!-- Vive el Hoy V214 · GitHub Pages · Apple Pay / Atajos / Supabase. -->
-<meta name="vive-el-hoy-version" content="214-applepay-github-pages"/>
+<meta name="vive-el-hoy-version" content="216-financial-reports-applepay"/>
 <link rel="manifest" href="./manifest.webmanifest?v=214"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -16499,7 +16499,7 @@ function v36Bell(){
  }).join('');
  const spendingItems=spendAlerts.map(a=>`<article class="v36-notice v123-bell-alert"><span class="v36-notice-dot"></span><div><strong>${sanitize(a.category)} · ${a.kind==='trend'?'Tendencia al alza':'Gasto elevado'}</strong><small>${sanitize(v123AlertText(a))}</small></div></article>`).join('');
  const totalAlerts=urgent+spendAlerts.length;
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Vencimientos y cambios en tus gastos</small></div>${spendingItems}${items}${!spendingItems&&!items?'<div class="v36-notice-empty">Sin vencimientos próximos ni cambios importantes en gastos con historial suficiente.</div>':''}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los avisos de gastos son internos y se actualizan con los movimientos registrados. Los recordatorios push de vencimientos se configuran por separado.</p></div></details>`;
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Vencimientos y cambios en tus gastos</small></div>${v216BellItems()}${spendingItems}${items}${!spendingItems&&!items? '<div class="v36-notice-empty">Sin vencimientos próximos ni cambios importantes en gastos con historial suficiente.</div>':''}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los avisos de gastos son internos y se actualizan con los movimientos registrados. Los recordatorios push de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  const pageName={overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
@@ -26466,7 +26466,7 @@ document.addEventListener('keydown',function(ev){
 
 function v213ApplePayBadge(t){
  if(!t || !(t.applePaySource==='wallet-shortcuts' || t.applePayEventId || String(t.tags||'').split(',').includes('apple-pay')))return '';
- return `<span class="v213-apple-badge" title="Compra registrada por automatización Apple Wallet" aria-label="Origen Apple Pay">${icon('wallet')} Apple Pay</span>`;
+ return `<span class="v213-apple-badge v216-apple-pay-brand" title="Compra registrada por Apple Pay / Atajos" aria-label="Origen Apple Pay"><span class="v216-apple-mark" aria-hidden="true">${icon('apple')}</span><span>Pay</span></span>`;
 }
 const v212State={links:[],events:[],secret:'',webhook:'',selectedCard:'',currency:'DOP',busy:false,loaded:false,error:'',syncError:'',lastSync:''};
 let v212Busy=false;
@@ -26614,6 +26614,106 @@ document.addEventListener('keydown',function(ev){
 /* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
 window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
 document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
+
+/* V216 | Motor de informes financieros internos: corte horario 19:00 Santo Domingo.
+   Solo lectura. No altera db, no crea cargos ni persiste estados financieros. */
+const V216_TZ='America/Santo_Domingo', V216_CUTOFF=19;
+function v216NowParts(){
+ const map={};try{for(const p of new Intl.DateTimeFormat('en-CA',{timeZone:V216_TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date()))map[p.type]=p.value;}catch(e){const d=new Date();map.year=String(d.getFullYear());map.month=String(d.getMonth()+1).padStart(2,'0');map.day=String(d.getDate()).padStart(2,'0');map.hour=String(d.getHours());}
+ return {date:`${map.year}-${map.month}-${map.day}`,hour:Number(map.hour)};
+}
+function v216Shift(iso,n){const d=new Date(`${iso}T12:00:00Z`);d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
+function v216ClosedDay(){const n=v216NowParts();return n.hour>=V216_CUTOFF?n.date:v216Shift(n.date,-1)}
+function v216Currency(amount){return money(rnd(amount),'DOP',2)}
+function v216Period(kind,closed=v216ClosedDay()){
+ const y=+closed.slice(0,4),m=+closed.slice(5,7),day=+closed.slice(8,10),first=closed.slice(0,7)+'-01';
+ const wd=(new Date(closed+'T12:00:00Z').getUTCDay()+6)%7;
+ const startWeek=v216Shift(closed,-wd);
+ if(kind==='diario')return {title:'Resumen diario',start:closed,end:closed};
+ if(kind==='semanal')return {title:'Resumen semanal',start:startWeek,end:closed};
+ if(kind==='quincenal')return {title:day<=15?'Primera quincena':'Segunda quincena',start:day<=15?first:closed.slice(0,7)+'-16',end:closed};
+ if(kind==='mitad')return {title:'Corte de mitad de mes',start:first,end:closed.slice(0,7)+'-15'};
+ if(kind==='cierre')return {title:'Cierre mensual',start:first,end:closed};
+ if(kind==='corte')return {title:'Corte financiero · 7:00 p. m.',start:closed,end:closed};
+ return {title:'Acumulado mensual',start:first,end:closed};
+}
+function v216Types(closed=v216ClosedDay()){
+ const types=['diario','semanal','quincenal','acumulado','corte'];
+ const day=+closed.slice(8,10),last=+periodEnd(+closed.slice(0,4),+closed.slice(5,7)).slice(8,10);
+ if(day===15)types.push('mitad');
+ if(day===last)types.push('cierre');
+ return types;
+}
+function v216Amounts(start,end){
+ let income=0,expense=0,count=0,appleCount=0;const byCategory={};
+ const convert=(n,c,rate)=>num(n)*(c==='USD'?num(rate||db.settings.fx):1);
+ for(const t of db.transactions||[]){
+  if(!t.date||t.date<start||t.date>end)continue;
+  count++;if(t.applePayEventId||t.applePaySource==='wallet-shortcuts'||String(t.tags||'').split(',').includes('apple-pay'))appleCount++;
+  const value=convert(t.amount,t.currency||'DOP',t.fxRateSnapshot);
+  const feeCcy=t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP';
+  if(['income','card_reward','bank_reward'].includes(t.type))income+=value;
+  if(['expense','card_charge','card_refund'].includes(t.type)){
+   const v=t.type==='card_refund'?-value:value;expense+=v;
+   byCategory[t.category||'Otros gastos']=(byCategory[t.category||'Otros gastos']||0)+v;
+  }
+  if(['expense','card_payment'].includes(t.type))expense+=convert(num(t.paymentTax)+num(t.paymentFee),feeCcy,t.fxRateSnapshot);
+  if(t.type==='loan_payment')expense+=convert(num(t.interest)+num(t.fee)+num(t.insurance),t.currency,t.fxRateSnapshot)+convert(num(t.paymentTax)+num(t.paymentFee),feeCcy,t.fxRateSnapshot);
+  if(t.type==='transfer')expense+=convert(num(t.transferFee),account(t.accountId)?.currency||t.currency,t.fxRateSnapshot);
+  if(t.type==='personal_settlement'){
+   const l=personalLoan(t.personalLoanId),interest=convert(t.interest,t.currency,t.fxRateSnapshot);
+   if(l?.direction==='lent')income+=interest;
+   if(l?.direction==='borrowed')expense+=interest;
+  }
+ }
+ return {income:rnd(income),expense:rnd(expense),net:rnd(income-expense),count,appleCount,byCategory};
+}
+function v216Previous(p){const length=Math.max(1,Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1);const end=v216Shift(p.start,-1);return {start:v216Shift(end,1-length),end};}
+function v216Insights(a,p){
+ const list=[];
+ if(a.net<0)list.push({danger:true,text:`Los egresos superan los ingresos por ${v216Currency(-a.net)}. Prioriza pagos esenciales y revisa los gastos variables.`});
+ else if(a.income>0)list.push({text:`El período registra un saldo positivo de ${v216Currency(a.net)} entre ingresos y egresos. Considera reservar parte para próximos vencimientos.`});
+ const cats=Object.entries(a.byCategory).filter(([k,v])=>v>0).sort((x,y)=>y[1]-x[1]);
+ if(cats.length&&a.expense>0)list.push({text:`Mayor categoría de gastos: ${cats[0][0]} (${v216Currency(cats[0][1])}). Revisa su evolución antes de ajustar el presupuesto.`});
+ const due=upcoming().filter(x=>x.kind!=='personal_recv'&&num(x.amount)>0&&x.date>=p.end&&x.date<=v216Shift(p.end,7));
+ if(due.length)list.push({danger:true,text:`Hay ${due.length} compromiso(s) registrado(s) con vencimiento en los próximos 7 días. Verifica tu disponibilidad.`});
+ if(!a.count)list.push({text:'No hay movimientos registrados para este período. El análisis de ingresos y egresos aún no es representativo.'});
+ return list.slice(0,4);
+}
+function v216Modal(kind){
+ const closed=v216ClosedDay(),p=v216Period(kind,closed),a=v216Amounts(p.start,p.end),prev=v216Previous(p),b=v216Amounts(prev.start,prev.end),delta=a.net-b.net;
+ const due=upcoming().filter(o=>o.kind!=='personal_recv'&&num(o.amount)>0&&o.date>=closed&&o.date<=v216Shift(closed,30)).sort((x,y)=>x.date.localeCompare(y.date));
+ const due7=due.filter(o=>o.date<=v216Shift(closed,7));
+ const sumDue=due7.reduce((n,o)=>n+fx(num(o.amount),o.currency||'DOP'),0);
+ const debt=totalCardDebt()+totalLoanDebt();
+ const liquid=totalLiquid();const position=liquid+totalCertificates()-debt;
+ const pct=b.net!==0?`${delta>=0?'+':''}${(100*delta/Math.abs(b.net)).toFixed(1)}%`:'Sin base comparable';
+ const items=v216Insights(a,p).map(x=>`<li class="${x.danger?'v216-critical':''}">${sanitize(x.text)}</li>`).join('');
+ const rows=due.slice(0,7).map(o=>`<div class="v216-due"><span><strong>${sanitize(o.name||'Compromiso')}</strong><small>${prettyDate(o.date)}</small></span><b>${money(o.amount,o.currency,2)}</b></div>`).join('');
+ const chips=['diario','semanal','quincenal','mitad','corte','cierre','acumulado'].map(k=>`<button type="button" class="${k===kind?'current':''}" data-v216="report" data-kind="${k}">${sanitize(v216Period(k,closed).title)}</button>`).join('');
+ document.getElementById('v216-layer')?.remove();
+ const layer=document.createElement('div');layer.id='v216-layer';layer.className='v216-overlay';
+ layer.innerHTML=`<section class="v216-report" role="dialog" aria-modal="true" aria-labelledby="v216-title" tabindex="-1"><header class="v216-report-head"><div><div class="v216-eyebrow">VIVE EL HOY · INTELIGENCIA FINANCIERA</div><h2 id="v216-title">${sanitize(p.title)}</h2><p>${prettyDate(p.start)}${p.start===p.end?'':' – '+prettyDate(p.end)} · Corte diario 7:00 p. m. (RD)</p></div><button class="v216-close" type="button" data-v216="close" aria-label="Cerrar informe">×</button></header><nav class="v216-periods" aria-label="Seleccionar período">${chips}</nav><div class="v216-report-body"><div class="v216-metrics"><article><small>Ingresos</small><strong>${v216Currency(a.income)}</strong></article><article><small>Egresos</small><strong>${v216Currency(a.expense)}</strong></article><article><small>Balance del período</small><strong class="${a.net<0?'v216-negative':'v216-positive'}">${v216Currency(a.net)}</strong></article></div><div class="v216-metrics v216-secondary"><article><small>Posición neta estimada actual</small><strong>${v216Currency(position)}</strong></article><article><small>Deudas bancarias actuales</small><strong>${v216Currency(debt)}</strong></article><article><small>Vencimientos próximos 7 días</small><strong>${v216Currency(sumDue)}</strong></article></div><section class="v216-report-section"><h3>Evolución financiera</h3><div class="v216-compare"><div><small>Balance período anterior comparable</small><b>${v216Currency(b.net)}</b></div><div><small>Variación del balance</small><b class="${delta<0?'v216-negative':'v216-positive'}">${v216Currency(delta)} · ${pct}</b></div></div><p class="v216-note">Comparación con los ${Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1} días inmediatamente anteriores. Las cifras del libro respetan monedas y tipos de movimientos; no se cuentan transferencias internas como ingresos.</p></section><section class="v216-report-section"><h3>Alertas y recomendaciones</h3><ul class="v216-insights">${items}</ul></section><section class="v216-report-section"><h3>Compromisos y vencimientos</h3>${rows||'<p class="v216-note">Sin vencimientos pendientes registrados en los próximos 30 días.</p>'}<button type="button" class="v216-link" data-v216="payments">Abrir compromisos</button></section><footer class="v216-report-foot"><span>${a.count} movimiento(s) · ${a.appleCount} identificado(s) como Apple Pay</span><span>Actualizado al abrir · datos registrados en la app</span></footer></div></section>`;
+ document.body.append(layer);layer.querySelector('.v216-report')?.focus();document.body.classList.add('v216-modal-open');
+}
+function v216BellItems(){
+ const closed=v216ClosedDay(),types=v216Types(closed);
+ return `<div class="v216-notice-title">INFORMES FINANCIEROS · 7:00 P. M.</div>${types.map(k=>{const p=v216Period(k,closed);return `<button type="button" class="v216-notice" data-v216="report" data-kind="${k}"><span class="v216-notice-icon" aria-hidden="true">↗</span><span class="v216-notice-copy"><strong>${sanitize(p.title)}</strong><small>${prettyDate(p.start)}${p.start!==p.end?' – '+prettyDate(p.end):''} · Ver informe ejecutivo</small></span><span aria-hidden="true">›</span></button>`}).join('')}`;
+}
+document.addEventListener('click',e=>{
+ const action=e.target.closest?.('[data-v216]');
+ if(action){e.preventDefault();e.stopPropagation();const cmd=action.dataset.v216;
+ if(cmd==='report')v216Modal(action.dataset.kind||'diario');
+ if(cmd==='close'){document.getElementById('v216-layer')?.remove();document.body.classList.remove('v216-modal-open')}
+ if(cmd==='payments'){document.getElementById('v216-layer')?.remove();document.body.classList.remove('v216-modal-open');ui.page='payments';render()}
+ return;}
+ if(e.target.id==='v216-layer'){e.target.remove();document.body.classList.remove('v216-modal-open')}
+},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('v216-layer')){document.getElementById('v216-layer').remove();document.body.classList.remove('v216-modal-open')}});
+// Actualiza solo la campana mientras la sesión está abierta; no imita push remoto.
+let v216LastClosed=v216ClosedDay();
+setInterval(()=>{const c=v216ClosedDay();if(c!==v216LastClosed){v216LastClosed=c;if(document.getElementById('app')?.children.length&&!document.getElementById('v216-layer'))render();}},60000);
+
 
 
 
@@ -31629,6 +31729,72 @@ html body.theme-black .main:is(.world-accounts,.world-cards,.world-loans,.world-
 @media(max-width:767px){
  html body.theme-black .main:is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) #page .v57-product-hero{background:#181d26!important;background-image:none!important}
 }
+</style>
+<style id="v215-responsive-adaptive-layer">
+/* ============================================================================
+   V215 · CAPA DE ADAPTABILIDAD Y LEGIBILIDAD NO DESTRUCTIVA
+   Mantiene estilos, colores, jerarquías y comportamientos originales.
+   Solo corrige límites físicos de viewport, wrapping y mínimos intrínsecos.
+   ============================================================================ */
+@supports (width: min(100%, 1px)) {
+  html { max-width: 100%; }
+  body { max-width: 100%; }
+  /* Permite que los hijos de flex/grid reduzcan su ancho intrínseco. */
+  :is(.main, #page, .content, .page-content, .dashboard, .dashboard-content,
+      .summary-content, .resumen-content, .panel-content, .module-content) {
+    min-width: 0;
+  }
+  /* Multimedia nunca fuerza el desbordamiento del panel que la contiene. */
+  :is(.main, #page) :is(img, video, canvas, svg) { max-width: 100%; }
+  :is(.main, #page) :is(input, textarea, select) { max-width: 100%; }
+  :is(.main, #page) :is(h1, h2, h3, h4, p) { overflow-wrap: break-word; }
+}
+/* Los contenedores de tarjetas existentes pueden contraerse sin cambiar columnas. */
+@supports (container-type: inline-size) {
+  :is(.main, #page) :is(.card, .kpi-card, .metric-card, .glass-card) {
+    min-width: 0;
+  }
+}
+/* Ajustes para ventanas de escritorio compactas y zoom alto.
+   Se preservan explícitamente las rejillas y proporciones existentes. */
+@media (min-width: 768px) and (max-width: 1536px) {
+  :is(.main, #page) :is(.card, .kpi-card, .metric-card, .glass-card,
+      .panel, .widget) { min-width: 0; }
+  :is(.main, #page) :is(.card, .kpi-card, .metric-card, .glass-card)
+    :is(h1, h2, h3, h4, p, small, .title, .subtitle) { min-width: 0; }
+}
+@media (max-width: 767px) {
+  :is(.main, #page) :is(.card, .kpi-card, .metric-card, .glass-card,
+      .panel, .widget) { min-width: 0; }
+  :is(.main, #page) :is(button, a, input, select, textarea) {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+/* Accesibilidad de movimiento: no afecta a usuarios sin esta preferencia. */
+@media (prefers-reduced-motion: reduce) {
+  :is(.main, #page) { scroll-behavior: auto; }
+}
+</style>
+
+<style id="vive-v216-smart-reports-apple-pay">
+/* V216: informes contenidos en notificaciones; diseño original fuera del modal intacto. */
+.v216-notice-title{font-size:10px;letter-spacing:.09em;font-weight:800;opacity:.75;padding:13px 12px 6px}
+.v216-notice{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:13px;padding:11px 12px;background:rgba(110,140,185,.10);color:inherit;text-align:left;cursor:pointer;margin:4px 0;font:inherit;transition:background .15s ease,transform .15s ease}
+.v216-notice:hover,.v216-notice:focus-visible{background:rgba(110,140,185,.22);transform:translateY(-1px)}
+.v216-notice-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:11px;background:rgba(110,140,185,.15);font-weight:900;flex:none}
+.v216-notice-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.v216-notice-copy strong{font-size:12px;line-height:1.4}.v216-notice-copy small{font-size:10px;line-height:1.45;opacity:.7}
+.v216-modal-open{overflow:hidden!important}.v216-overlay{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:clamp(8px,2vw,24px);background:rgba(6,16,30,.56);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.v216-report{--v216-text:#1e3555;--v216-sub:#637a97;width:min(100%,900px);max-height:calc(100dvh - 22px);display:flex;flex-direction:column;color:var(--v216-text);border:1px solid rgba(255,255,255,.84);border-radius:26px;background:linear-gradient(145deg,rgba(248,252,255,.97),rgba(226,238,252,.94));box-shadow:0 28px 100px rgba(8,27,56,.3);overflow:hidden;outline:none}
+.v216-report-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding:clamp(17px,2vw,27px) clamp(18px,2.6vw,30px) 12px}.v216-eyebrow{font-size:10px;letter-spacing:.13em;font-weight:800;color:#547498}.v216-report-head h2{margin:7px 0;font-size:clamp(22px,3vw,32px);line-height:1.18;color:#1d395c}.v216-report-head p{font-size:12px;color:var(--v216-sub);margin:0}.v216-close{border:1px solid rgba(74,105,145,.17);width:35px;height:35px;flex:none;border-radius:50%;font-size:25px;color:#315478;background:rgba(255,255,255,.58);cursor:pointer}
+.v216-periods{display:flex;gap:6px;padding:9px clamp(18px,2.6vw,30px) 13px;overflow-x:auto;scrollbar-width:thin}.v216-periods button{white-space:nowrap;border:1px solid rgba(80,115,156,.16);background:rgba(255,255,255,.53);color:#426080;border-radius:99px;padding:8px 11px;font:inherit;font-size:11px;font-weight:700;cursor:pointer}.v216-periods button.current{background:#2e537c;color:white;border-color:#2e537c}
+.v216-report-body{overflow-y:auto;overscroll-behavior:contain;padding:0 clamp(18px,2.6vw,30px) 23px;min-height:0}.v216-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.v216-metrics article{padding:clamp(12px,2vw,18px);border:1px solid rgba(255,255,255,.92);border-radius:17px;background:rgba(255,255,255,.57);min-width:0}.v216-metrics small,.v216-compare small{display:block;color:var(--v216-sub);font-size:11px;line-height:1.4;margin-bottom:8px}.v216-metrics strong{font-weight:780;font-size:clamp(14px,1.7vw,21px);line-height:1.3;overflow-wrap:anywhere}.v216-secondary{margin-top:10px}.v216-secondary strong{font-size:clamp(13px,1.55vw,18px)}.v216-negative{color:#b76228!important}.v216-positive{color:#098762!important}.v216-report-section{margin-top:16px;padding:17px;border:1px solid rgba(255,255,255,.79);background:rgba(255,255,255,.36);border-radius:18px}.v216-report-section h3{font-size:14px;margin:0 0 12px;color:#264464}.v216-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v216-compare>div{min-width:0}.v216-compare b{font-size:15px;overflow-wrap:anywhere}.v216-note{font-size:11px;line-height:1.55;color:var(--v216-sub);margin:10px 0 0}.v216-insights{padding-left:19px;margin:0;display:grid;gap:11px}.v216-insights li{font-size:12px;line-height:1.55;color:#345674}.v216-insights li.v216-critical::marker{color:#cd792b}.v216-due{display:flex;gap:10px;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(70,110,160,.10)}.v216-due strong{font-size:12px;display:block}.v216-due small{font-size:10px;color:var(--v216-sub)}.v216-due b{font-size:12px;text-align:right}.v216-link{margin-top:14px;border:0;background:rgba(52,99,160,.1);padding:10px 14px;border-radius:12px;color:#29598e;font-weight:800;cursor:pointer}.v216-report-foot{margin-top:17px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:10px;color:var(--v216-sub)}
+/* Distintivo Apple Pay: sello negro e identificable en transacciones Apple Pay. */
+.v213-apple-badge.v216-apple-pay-brand{background:#050505!important;border-color:#050505!important;color:#fff!important;border-radius:8px!important;padding:3px 7px!important;font-size:11px!important;letter-spacing:-.2px!important;gap:4px!important;font-weight:800!important;box-shadow:0 1px 3px rgba(0,0,0,.16)}
+.v216-apple-mark{display:inline-flex;align-items:center;justify-content:center;color:#fff}.v216-apple-mark svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.3px}
+.v213-wallet-pay-icon{background:#050505!important;color:#fff!important;border:1px solid rgba(255,255,255,.2)!important}
+@media(max-width:620px){.v216-overlay{padding:0;place-items:end center}.v216-report{width:100%;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 10px);border-radius:23px 23px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}.v216-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.v216-metrics article:last-child:nth-child(odd){grid-column:1/-1}.v216-report-head{padding-top:20px}.v216-compare{grid-template-columns:1fr;gap:13px}}
+@media(prefers-reduced-motion:reduce){.v216-notice{transition:none}}
 </style>
 </body>
 </html>
