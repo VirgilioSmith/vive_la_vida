@@ -2,9 +2,9 @@
 
 <html lang="es">
 <head>
-<!-- Vive el Hoy V214 · GitHub Pages · Apple Pay / Atajos / Supabase. -->
+<!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
 <meta name="vive-el-hoy-version" content="217-financial-reports-applepay"/>
-<link rel="manifest" href="./manifest.webmanifest?v=214"/>
+<link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
 
@@ -16481,6 +16481,7 @@ function moduleSwitch(page){
 
 /* MOBILE FIRST EXPERIENCE: Same underlying finances, new responsive screens. */
 ICONS.grid='<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>';
+ICONS.apple='<path d="M12.4 6.2C10.1 4.9 7.8 5.5 6.3 7.5c-2.9 4-.5 11.7 2.2 12.9 1.4.6 2.3-.5 3.7-.5 1.6 0 2.5 1.1 3.9.5 1.4-.6 2.9-3.5 3.5-5.9-2.2-.5-3.3-2.2-3.1-4.3.1-1.8 1.3-3.2 2.5-4.1-1.7-1.7-3.2-2.1-5.6-1.1Z" fill="currentColor" stroke="none"/><path d="M12.2 5.9c.1-2.7 1.8-4.4 4.1-4.9-.1 2.1-1.2 4-4.1 4.9Z" fill="currentColor" stroke="none"/>';
 /* V36 · Notificaciones internas, basadas exclusivamente en vencimientos registrados. */
 function v36DueItems(){
  return upcoming().filter(o=>o.kind!=='personal_recv'&&Number(o.amount)>0&&/^\d{4}-\d{2}-\d{2}$/.test(String(o.date||'')));
@@ -26596,113 +26597,175 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&v212Enabl
 window.addEventListener('online',()=>{if(v212Enabled())v212Sync();});
 setInterval(()=>{if(!document.hidden&&v212Enabled())v212Sync();},45000);
 
-/* V216 | Motor de informes financieros internos: corte horario 19:00 Santo Domingo.
-   Solo lectura. No altera db, no crea cargos ni persiste estados financieros. */
+/* V219 | Informes internos de solo lectura. Los datos financieros no se mutan.
+   Cada período queda habilitado a las 19:00 de America/Santo_Domingo.
+   No confundir estos informes recalculables con snapshots ni push programado. */
 const V216_TZ='America/Santo_Domingo', V216_CUTOFF=19;
 function v216NowParts(){
- const map={};try{for(const p of new Intl.DateTimeFormat('en-CA',{timeZone:V216_TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date()))map[p.type]=p.value;}catch(e){const d=new Date();map.year=String(d.getFullYear());map.month=String(d.getMonth()+1).padStart(2,'0');map.day=String(d.getDate()).padStart(2,'0');map.hour=String(d.getHours());}
+ const map={};
+ try{
+  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:V216_TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+  for(const part of parts)map[part.type]=part.value;
+ }catch(err){
+  const date=new Date();map.year=String(date.getFullYear());map.month=String(date.getMonth()+1).padStart(2,'0');map.day=String(date.getDate()).padStart(2,'0');map.hour=String(date.getHours());
+ }
  return {date:`${map.year}-${map.month}-${map.day}`,hour:Number(map.hour)};
 }
-function v216Shift(iso,n){const d=new Date(`${iso}T12:00:00Z`);d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
+function v216Shift(iso,days){
+ const d=new Date(`${iso}T12:00:00Z`);
+ if(!Number.isFinite(d.getTime()))return iso;
+ d.setUTCDate(d.getUTCDate()+days);
+ return d.toISOString().slice(0,10);
+}
 function v216ClosedDay(){const n=v216NowParts();return n.hour>=V216_CUTOFF?n.date:v216Shift(n.date,-1)}
 function v216Currency(amount){return money(rnd(amount),'DOP',2)}
 function v216Period(kind,closed=v216ClosedDay()){
- const y=+closed.slice(0,4),m=+closed.slice(5,7),day=+closed.slice(8,10),first=closed.slice(0,7)+'-01';
+ const y=Number(closed.slice(0,4)),m=Number(closed.slice(5,7)),day=Number(closed.slice(8,10));
+ const first=closed.slice(0,7)+'-01';
  const wd=(new Date(closed+'T12:00:00Z').getUTCDay()+6)%7;
- const startWeek=v216Shift(closed,-wd);
  if(kind==='diario')return {title:'Resumen diario',start:closed,end:closed};
- if(kind==='semanal')return {title:'Resumen semanal',start:startWeek,end:closed};
+ if(kind==='semanal')return {title:'Resumen semanal',start:v216Shift(closed,-wd),end:closed};
  if(kind==='quincenal')return {title:day<=15?'Primera quincena':'Segunda quincena',start:day<=15?first:closed.slice(0,7)+'-16',end:closed};
  if(kind==='mitad'){
-  const completed=day>=15?first:v216Shift(first,-1).slice(0,7)+'-01';
-  return {title:'Corte de mitad de mes',start:completed,end:completed.slice(0,7)+'-15'};
+  const firstOfPeriod=day>=15?first:v216Shift(first,-1).slice(0,7)+'-01';
+  return {title:'Corte de mitad de mes',start:firstOfPeriod,end:firstOfPeriod.slice(0,7)+'-15'};
  }
  if(kind==='cierre'){
-  const endOfCurrent=periodEnd(y,m);
-  if(closed===endOfCurrent)return {title:'Cierre mensual',start:first,end:closed};
-  const previousEnd=v216Shift(first,-1);
-  return {title:'Cierre mensual anterior',start:previousEnd.slice(0,7)+'-01',end:previousEnd};
+  if(closed===periodEnd(y,m))return {title:'Cierre mensual',start:first,end:closed};
+  const prevEnd=v216Shift(first,-1);
+  return {title:'Cierre mensual anterior',start:prevEnd.slice(0,7)+'-01',end:prevEnd};
  }
  if(kind==='corte')return {title:'Corte financiero · 7:00 p. m.',start:closed,end:closed};
  return {title:'Acumulado mensual',start:first,end:closed};
 }
 function v216Types(closed=v216ClosedDay()){
  const types=['diario','semanal','quincenal','acumulado','corte'];
- const day=+closed.slice(8,10),last=+periodEnd(+closed.slice(0,4),+closed.slice(5,7)).slice(8,10);
+ const day=Number(closed.slice(8,10));
  if(day===15)types.push('mitad');
- if(day===last)types.push('cierre');
+ if(closed===periodEnd(Number(closed.slice(0,4)),Number(closed.slice(5,7))))types.push('cierre');
  return types;
 }
 function v216Amounts(start,end){
  let income=0,expense=0,count=0,appleCount=0;const byCategory={};
- const convert=(n,c,rate)=>num(n)*(c==='USD'?num(rate||db.settings.fx):1);
+ const convert=(v,c,rate)=>num(v)*(c==='USD'?num(rate)||num(db.settings.fx):1);
+ const addExpense=(v,cat)=>{expense+=v;byCategory[cat]=(byCategory[cat]||0)+v;};
  for(const t of db.transactions||[]){
-  if(!t.date||t.date<start||t.date>end)continue;
-  count++;if(t.applePayEventId||t.applePaySource==='wallet-shortcuts'||String(t.tags||'').split(',').includes('apple-pay'))appleCount++;
-  const value=convert(t.amount,t.currency||'DOP',t.fxRateSnapshot);
-  const feeCcy=t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP';
+  if(typeof t.date!=='string'||t.date<start||t.date>end)continue;
+  count++;
+  if(t.applePayEventId||t.applePaySource==='wallet-shortcuts'||String(t.tags||'').split(',').includes('apple-pay'))appleCount++;
+  const rate=t.fxRateSnapshot||db.settings.fx,ccy=t.currency||'DOP',value=convert(t.amount,ccy,rate);
+  const feeCcy=t.paymentFeeCurrency||account(t.accountId)?.currency||ccy;
   if(['income','card_reward','bank_reward'].includes(t.type))income+=value;
-  if(['expense','card_charge','card_refund'].includes(t.type)){
-   const v=t.type==='card_refund'?-value:value;expense+=v;
-   byCategory[t.category||'Otros gastos']=(byCategory[t.category||'Otros gastos']||0)+v;
+  if(['expense','card_charge','card_refund'].includes(t.type))addExpense(t.type==='card_refund'?-value:value,t.category||'Otros gastos');
+  if(['expense','card_payment'].includes(t.type)){
+   const cost=convert(num(t.paymentTax)+num(t.paymentFee),feeCcy,rate);
+   if(cost)addExpense(cost,'Impuestos y comisiones');
   }
-  if(['expense','card_payment'].includes(t.type))expense+=convert(num(t.paymentTax)+num(t.paymentFee),feeCcy,t.fxRateSnapshot);
-  if(t.type==='loan_payment')expense+=convert(num(t.interest)+num(t.fee)+num(t.insurance),t.currency,t.fxRateSnapshot)+convert(num(t.paymentTax)+num(t.paymentFee),feeCcy,t.fxRateSnapshot);
-  if(t.type==='transfer')expense+=convert(num(t.transferFee),account(t.accountId)?.currency||t.currency,t.fxRateSnapshot);
+  if(t.type==='loan_payment'){
+   const cost=convert(num(t.interest)+num(t.fee)+num(t.insurance),ccy,rate);
+   if(cost)addExpense(cost,'Deudas e intereses');
+   const tax=convert(num(t.paymentTax)+num(t.paymentFee),feeCcy,rate);
+   if(tax)addExpense(tax,'Impuestos y comisiones');
+  }
+  if(t.type==='transfer'){
+   const cost=convert(num(t.transferFee),account(t.accountId)?.currency||ccy,rate);
+   if(cost)addExpense(cost,'Impuestos y comisiones');
+  }
   if(t.type==='personal_settlement'){
-   const l=personalLoan(t.personalLoanId),interest=convert(t.interest,t.currency,t.fxRateSnapshot);
-   if(l?.direction==='lent')income+=interest;
-   if(l?.direction==='borrowed')expense+=interest;
+   const relation=personalLoan(t.personalLoanId);
+   const interest=convert(t.interest,ccy,rate);
+   if(relation?.direction==='lent')income+=interest;
+   else if(relation?.direction==='borrowed'&&interest)addExpense(interest,'Deudas e intereses');
   }
  }
  return {income:rnd(income),expense:rnd(expense),net:rnd(income-expense),count,appleCount,byCategory};
 }
-function v216Previous(p){const length=Math.max(1,Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1);const end=v216Shift(p.start,-1);return {start:v216Shift(end,1-length),end};}
-function v216Insights(a,p){
+function v216Previous(p){
+ const length=Math.max(1,Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1);
+ const end=v216Shift(p.start,-1);
+ return {start:v216Shift(end,1-length),end};
+}
+function v216Due(closed=v216ClosedDay()){
+ return upcoming().filter(o=>o.kind!=='personal_recv'&&num(o.amount)>0&&/^\d{4}-\d{2}-\d{2}$/.test(String(o.date||''))&&o.date<=v216Shift(closed,30)).sort((a,b)=>a.date.localeCompare(b.date));
+}
+function v216Insights(current,previous,closed,dues,liquid){
  const list=[];
- if(a.net<0)list.push({danger:true,text:`Los egresos superan los ingresos por ${v216Currency(-a.net)}. Prioriza pagos esenciales y revisa los gastos variables.`});
- else if(a.income>0)list.push({text:`El período registra un saldo positivo de ${v216Currency(a.net)} entre ingresos y egresos. Considera reservar parte para próximos vencimientos.`});
- const cats=Object.entries(a.byCategory).filter(([k,v])=>v>0).sort((x,y)=>y[1]-x[1]);
- if(cats.length&&a.expense>0)list.push({text:`Mayor categoría de gastos: ${cats[0][0]} (${v216Currency(cats[0][1])}). Revisa su evolución antes de ajustar el presupuesto.`});
- const due=upcoming().filter(x=>x.kind!=='personal_recv'&&num(x.amount)>0&&x.date>=p.end&&x.date<=v216Shift(p.end,7));
- if(due.length)list.push({danger:true,text:`Hay ${due.length} compromiso(s) registrado(s) con vencimiento en los próximos 7 días. Verifica tu disponibilidad.`});
- if(!a.count)list.push({text:'No hay movimientos registrados para este período. El análisis de ingresos y egresos aún no es representativo.'});
- return list.slice(0,4);
+ const dueSoon=dues.filter(o=>o.date>=closed&&o.date<=v216Shift(closed,7));
+ const overdue=dues.filter(o=>o.date<closed);
+ if(overdue.length)list.push({danger:true,text:`Hay ${overdue.length} vencimiento(s) atrasado(s). Revisa si ya fueron pagados y registra los abonos para actualizar las cifras.`});
+ if(current.net<0)list.push({danger:true,text:`Los egresos superan los ingresos por ${v216Currency(-current.net)}. Prioriza pagos esenciales y revisa los gastos variables.`});
+ else if(current.income>0)list.push({text:`El período registra un balance positivo de ${v216Currency(current.net)}. Considera reservar parte para próximos compromisos.`});
+ if(dueSoon.length){
+  const total=dueSoon.reduce((sum,o)=>sum+fx(num(o.amount),o.currency||'DOP'),0);
+  list.push({danger:liquid<total,text:`Vencen ${dueSoon.length} compromiso(s) en 7 días, por ${v216Currency(total)}${liquid<total?'; la liquidez actual no alcanza para cubrirlos.':'.'}`});
+ }
+ if(previous.expense>0&&current.expense>previous.expense*1.2){
+  const pct=(current.expense/previous.expense-1)*100;
+  list.push({danger:true,text:`Los egresos aumentaron ${pct.toFixed(1)}% respecto de un período anterior de igual duración. Identifica los cargos que explican la diferencia.`});
+ }
+ const biggest=Object.entries(current.byCategory).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1])[0];
+ if(biggest)list.push({text:`Principal categoría de gastos: ${biggest[0]} (${v216Currency(biggest[1])}). Evalúa si existe margen para reducir gastos sin afectar lo esencial.`});
+ if(!current.count)list.push({text:'Sin movimientos registrados en este período: las métricas pueden estar incompletas.'});
+ return list.slice(0,6);
 }
 function v216Modal(kind){
- const closed=v216ClosedDay(),p=v216Period(kind,closed),a=v216Amounts(p.start,p.end),prev=v216Previous(p),b=v216Amounts(prev.start,prev.end),delta=a.net-b.net;
- const due=upcoming().filter(o=>o.kind!=='personal_recv'&&num(o.amount)>0&&typeof o.date==='string'&&o.date>=closed&&o.date<=v216Shift(closed,30)).sort((x,y)=>x.date.localeCompare(y.date));
- const due7=due.filter(o=>o.date<=v216Shift(closed,7));
+ const closed=v216ClosedDay(),p=v216Period(kind,closed),a=v216Amounts(p.start,p.end);
+ const prev=v216Previous(p),b=v216Amounts(prev.start,prev.end),delta=a.net-b.net;
+ const dues=v216Due(closed),due7=dues.filter(o=>o.date>=closed&&o.date<=v216Shift(closed,7));
+ const overdue=dues.filter(o=>o.date<closed);
  const sumDue=due7.reduce((n,o)=>n+fx(num(o.amount),o.currency||'DOP'),0);
- const debt=totalCardDebt()+totalLoanDebt();
- const liquid=totalLiquid();const position=liquid+totalCertificates()-debt;
+ const personal=personalTotals();
+ const debt=rnd(totalCardDebt()+totalLoanDebt()+num(personal.payable));
+ const liquid=totalLiquid();
+ const position=rnd(liquid+totalCertificates()+num(personal.receivable)-debt);
  const pct=b.net!==0?`${delta>=0?'+':''}${(100*delta/Math.abs(b.net)).toFixed(1)}%`:'Sin base comparable';
- const items=v216Insights(a,p).map(x=>`<li class="${x.danger?'v216-critical':''}">${sanitize(x.text)}</li>`).join('');
- const rows=due.slice(0,7).map(o=>`<div class="v216-due"><span><strong>${sanitize(o.name||'Compromiso')}</strong><small>${prettyDate(o.date)}</small></span><b>${money(o.amount,o.currency,2)}</b></div>`).join('');
- const chips=['diario','semanal','quincenal','mitad','corte','cierre','acumulado'].map(k=>`<button type="button" class="${k===kind?'current':''}" data-v216="report" data-kind="${k}">${sanitize(v216Period(k,closed).title)}</button>`).join('');
+ const items=v216Insights(a,b,closed,dues,liquid).map(x=>`<li class="${x.danger?'v216-critical':''}">${sanitize(x.text)}</li>`).join('');
+ const shown=[...overdue.slice(0,3),...dues.filter(o=>o.date>=closed).slice(0,7)].slice(0,10);
+ const rows=shown.map(o=>`<div class="v216-due"><span><strong>${sanitize(o.name||'Compromiso')}</strong><small>${prettyDate(o.date)}${o.date<closed?' · Vencido':''}</small></span><b>${money(o.amount,o.currency,2)}</b></div>`).join('');
+ const chips=['diario','semanal','quincenal','mitad','corte','cierre','acumulado'].map(k=>`<button type="button" class="${k===kind?'current':''}" data-v216="report" data-kind="${k}" aria-pressed="${k===kind}">${sanitize(v216Period(k,closed).title)}</button>`).join('');
  document.getElementById('v216-layer')?.remove();
  const layer=document.createElement('div');layer.id='v216-layer';layer.className='v216-overlay';
- layer.innerHTML=`<section class="v216-report" role="dialog" aria-modal="true" aria-labelledby="v216-title" tabindex="-1"><header class="v216-report-head"><div><div class="v216-eyebrow">VIVE EL HOY · INTELIGENCIA FINANCIERA</div><h2 id="v216-title">${sanitize(p.title)}</h2><p>${prettyDate(p.start)}${p.start===p.end?'':' – '+prettyDate(p.end)} · Corte diario 7:00 p. m. (RD)</p></div><button class="v216-close" type="button" data-v216="close" aria-label="Cerrar informe">×</button></header><nav class="v216-periods" aria-label="Seleccionar período">${chips}</nav><div class="v216-report-body"><div class="v216-metrics"><article><small>Ingresos</small><strong>${v216Currency(a.income)}</strong></article><article><small>Egresos</small><strong>${v216Currency(a.expense)}</strong></article><article><small>Balance del período</small><strong class="${a.net<0?'v216-negative':'v216-positive'}">${v216Currency(a.net)}</strong></article></div><div class="v216-metrics v216-secondary"><article><small>Posición neta estimada actual</small><strong>${v216Currency(position)}</strong></article><article><small>Deudas bancarias actuales</small><strong>${v216Currency(debt)}</strong></article><article><small>Vencimientos próximos 7 días</small><strong>${v216Currency(sumDue)}</strong></article></div><section class="v216-report-section"><h3>Evolución financiera</h3><div class="v216-compare"><div><small>Balance período anterior comparable</small><b>${v216Currency(b.net)}</b></div><div><small>Variación del balance</small><b class="${delta<0?'v216-negative':'v216-positive'}">${v216Currency(delta)} · ${pct}</b></div></div><p class="v216-note">Comparación con los ${Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1} días inmediatamente anteriores. Las cifras del libro respetan monedas y tipos de movimientos; no se cuentan transferencias internas como ingresos.</p></section><section class="v216-report-section"><h3>Alertas y recomendaciones</h3><ul class="v216-insights">${items}</ul></section><section class="v216-report-section"><h3>Compromisos y vencimientos</h3>${rows||'<p class="v216-note">Sin vencimientos pendientes registrados en los próximos 30 días.</p>'}<button type="button" class="v216-link" data-v216="payments">Abrir compromisos</button></section><footer class="v216-report-foot"><span>${a.count} movimiento(s) · ${a.appleCount} identificado(s) como Apple Pay</span><span>Actualizado al abrir · datos registrados en la app</span></footer></div></section>`;
+ layer.innerHTML=`<section class="v216-report" role="dialog" aria-modal="true" aria-labelledby="v216-title" tabindex="-1"><header class="v216-report-head"><div><div class="v216-eyebrow">VIVE EL HOY · INTELIGENCIA FINANCIERA</div><h2 id="v216-title">${sanitize(p.title)}</h2><p>${prettyDate(p.start)}${p.start===p.end?'':' – '+prettyDate(p.end)} · Corte diario 7:00 p. m. (RD)</p></div><button class="v216-close" type="button" data-v216="close" aria-label="Cerrar informe">×</button></header><nav class="v216-periods" aria-label="Seleccionar período">${chips}</nav><div class="v216-report-body"><div class="v216-metrics"><article><small>Ingresos</small><strong>${v216Currency(a.income)}</strong></article><article><small>Egresos</small><strong>${v216Currency(a.expense)}</strong></article><article><small>Balance del período</small><strong class="${a.net<0?'v216-negative':'v216-positive'}">${v216Currency(a.net)}</strong></article></div><div class="v216-metrics v216-secondary"><article><small>Posición neta estimada actual</small><strong>${v216Currency(position)}</strong></article><article><small>Deudas totales actuales</small><strong>${v216Currency(debt)}</strong><small>Tarjetas, préstamos y deudas personales</small></article><article><small>Vencimientos próximos 7 días</small><strong>${v216Currency(sumDue)}</strong></article></div><section class="v216-report-section"><h3>Evolución financiera</h3><div class="v216-compare"><div><small>Balance del período anterior comparable</small><b>${v216Currency(b.net)}</b></div><div><small>Variación del balance</small><b class="${delta<0?'v216-negative':'v216-positive'}">${v216Currency(delta)} · ${pct}</b></div><div><small>Ingresos del período anterior</small><b>${v216Currency(b.income)}</b></div><div><small>Egresos del período anterior</small><b>${v216Currency(b.expense)}</b></div></div><p class="v216-note">Comparación con los ${Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1} días inmediatamente anteriores. No se contabilizan transferencias internas como ingresos ni pagos de capital como gasto adicional.</p></section><section class="v216-report-section"><h3>Alertas y recomendaciones</h3><ul class="v216-insights">${items}</ul></section><section class="v216-report-section"><h3>Compromisos y vencimientos</h3>${rows||'<p class="v216-note">No hay vencimientos pendientes registrados en los próximos 30 días ni atrasos vigentes.</p>'}<button type="button" class="v216-link" data-v216="payments">Abrir compromisos</button></section><footer class="v216-report-foot"><span>${a.count} movimiento(s) · ${a.appleCount} Apple Pay</span><span>Datos registrados al abrir · este informe se recalcula si editas movimientos</span></footer></div></section>`;
  document.body.append(layer);layer.querySelector('.v216-report')?.focus();document.body.classList.add('v216-modal-open');
 }
 function v216BellItems(){
- const closed=v216ClosedDay(),types=v216Types(closed);
- return `<div class="v216-notice-title" role="heading" aria-level="3">INFORMES FINANCIEROS · 7:00 P. M.</div>${types.map(k=>{const p=v216Period(k,closed);return `<button type="button" class="v216-notice" data-v216="report" data-kind="${k}"><span class="v216-notice-icon" aria-hidden="true">↗</span><span class="v216-notice-copy"><strong>${sanitize(p.title)}</strong><small>${prettyDate(p.start)}${p.start!==p.end?' – '+prettyDate(p.end):''} · Ver informe ejecutivo</small></span><span aria-hidden="true">›</span></button>`}).join('')}`;
+ const closed=v216ClosedDay();
+ return `<div class="v216-notice-title" role="heading" aria-level="3">INFORMES FINANCIEROS · 7:00 P. M.</div>${v216Types(closed).map(k=>{const p=v216Period(k,closed);return `<button type="button" class="v216-notice" data-v216="report" data-kind="${k}"><span class="v216-notice-icon" aria-hidden="true">↗</span><span class="v216-notice-copy"><strong>${sanitize(p.title)}</strong><small>${prettyDate(p.start)}${p.start!==p.end?' – '+prettyDate(p.end):''} · Ver informe ejecutivo</small></span><span aria-hidden="true">›</span></button>`}).join('')}`;
 }
+function v216Close(){document.getElementById('v216-layer')?.remove();document.body.classList.remove('v216-modal-open')}
 document.addEventListener('click',e=>{
- const action=e.target.closest?.('[data-v216]');
- if(action){e.preventDefault();e.stopPropagation();const cmd=action.dataset.v216;
- if(cmd==='report')v216Modal(action.dataset.kind||'diario');
- if(cmd==='close'){document.getElementById('v216-layer')?.remove();document.body.classList.remove('v216-modal-open')}
- if(cmd==='payments'){document.getElementById('v216-layer')?.remove();document.body.classList.remove('v216-modal-open');ui.page='payments';render()}
- return;}
- if(e.target.id==='v216-layer'){e.target.remove();document.body.classList.remove('v216-modal-open')}
+ const action=e.target?.closest?.('[data-v216]');
+ if(action){
+  e.preventDefault();e.stopPropagation();const command=action.dataset.v216;
+  if(command==='report')v216Modal(action.dataset.kind||'diario');
+  if(command==='close')v216Close();
+  if(command==='payments'){v216Close();ui.page='payments';render()}
+  return;
+ }
+ if(e.target.id==='v216-layer')v216Close();
 },true);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('v216-layer')){document.getElementById('v216-layer').remove();document.body.classList.remove('v216-modal-open')}});
-// Actualiza solo la campana mientras la sesión está abierta; no imita push remoto.
+document.addEventListener('keydown',e=>{
+ const modal=document.getElementById('v216-layer');if(!modal)return;
+ if(e.key==='Escape'){v216Close();return;}
+ if(e.key==='Tab'){
+  const focusables=[...modal.querySelectorAll('button:not([disabled]),[href],input:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>el.getClientRects().length);
+  if(!focusables.length)return;
+  const first=focusables[0],last=focusables[focusables.length-1];
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+ }
+});
+// Si la app permanece abierta, se actualiza al pasar el corte; no equivale a envío push.
 let v216LastClosed=v216ClosedDay();
-setInterval(()=>{const c=v216ClosedDay();if(c!==v216LastClosed){v216LastClosed=c;if(document.getElementById('app')?.children.length&&!document.getElementById('v216-layer'))render();}},60000);
-
+setInterval(()=>{
+ const next=v216ClosedDay();
+ if(next!==v216LastClosed){
+  v216LastClosed=next;
+  if(document.getElementById('app')?.children.length&&!document.getElementById('v216-layer')){
+   render();toast('Tu resumen financiero al corte de las 7:00 p. m. está disponible en Notificaciones.');
+  }
+ }
+},60000);
 
  f33Boot();
 
