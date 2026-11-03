@@ -2,13 +2,13 @@
 
 <html lang="es">
 <head>
-<link rel="manifest" href="./manifest.webmanifest?v=103"/>
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v47.png"/>
-<link rel="icon" type="image/png" href="./favicon-v47.png"/>
+<link rel="manifest" href="./manifest.webmanifest?v=201"/>
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
+<link rel="icon" type="image/png" href="./favicon-v201.png"/>
 
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
-<meta name="theme-color" content="#e5edfa"/>
+<meta name="theme-color" content="#000000"/>
 <!-- V79: recursos PWA y notificaciones con rutas relativas para GitHub Pages /repositorio/ y dominio raíz. -->
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -15104,17 +15104,268 @@ body.theme-black .v200-pay-tool.active{background:#303849!important;color:#fff!i
 body.theme-black .v197-chart-card :is(svg,text,.v197-legend){color:#eee!important}
 body.theme-black a:focus-visible,body.theme-black button:focus-visible{outline:2px solid #9abaff;outline-offset:2px}
 
-/* V200: ajuste de contraste del Centro de pagos, sin cambiar los importes. */
-body.theme-dark.theme-black .main.world-payments #page .v196-pay-category{background:#181818!important;background-image:none!important;border:1px solid #3b3b3b!important;color:#f4f4f5!important}
-body.theme-dark.theme-black .main.world-payments #page .v196-pay-category :is(strong,b,.v196-pay-category-name){color:#f5f5f7!important}
-body.theme-dark.theme-black .main.world-payments #page .v196-pay-category :is(small,.v196-pay-category-foot){color:#bfc4cc!important}
-body.theme-black #page :is(.v145-section-meta,.v145-agenda-date){background:#252525!important;color:#e3e5ec!important;border-color:#424242!important}
-body.theme-black #page .v145-paycenter .v145-agenda-payment b{color:#ecf0f9!important}
-body.theme-black #page .v145-paycenter .v145-quick-buttons button:not(:first-child){background:#252525!important;background-image:none!important;border:1px solid #474747!important;color:#f0f0f3!important}
-body.theme-black #page .v145-paycenter .v145-quick-buttons button:not(:first-child) svg{color:#d8dbe4!important}
-body.theme-black #page .v145-agenda-date :is(small,b){color:#edf1f7!important}
-@media(max-width:790px){html body.theme-black{background:#000!important;background-image:none!important}}
+</style>
 
+<style id="v202-mobile-banks-styles">
+@media(max-width:767px){
+  main.world-banks:has(.v202-mobile-banks)>.module-switch-shell{display:none!important}
+  main.world-banks:has(.v202-mobile-banks) .module-switch-swipe{display:none!important}
+  .v202-mobile-banks{--v202-bg:#fff;--v202-panel:#fff;--v202-ink:#213452;--v202-muted:#6b7e9b;--v202-line:#dbe5f4;--v202-blue:#3273da;max-width:100%;min-width:0;display:grid;gap:15px;padding:8px 2px calc(108px + env(safe-area-inset-bottom,0px));color:var(--v202-ink);box-sizing:border-box}
+  .v202-mobile-banks *{box-sizing:border-box}
+  .v202-banks-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 2px 0}
+  .v202-eyebrow{display:block;color:var(--v202-muted);font-size:10px;font-weight:850;letter-spacing:.14em;text-transform:uppercase}
+  .v202-banks-top h1{font-size:clamp(26px,8vw,33px);margin:3px 0 0;line-height:1.1;color:var(--v202-ink);letter-spacing:-.045em}
+  .v202-add{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--v202-line);border-radius:14px;background:var(--v202-panel);color:var(--v202-ink);flex:none;cursor:pointer}
+  .v202-add svg{width:19px;height:19px}
+  .v202-wealth{padding:21px 19px 16px;border-radius:26px;background:linear-gradient(125deg,#2768d1,#3e80e7);color:#fff;border:1px solid rgba(255,255,255,.15);box-shadow:0 12px 32px rgba(37,99,187,.17)}
+  .v202-wealth .v202-eyebrow{color:#d7e6ff}
+  .v202-wealth-value{display:block;font-size:clamp(26px,7.4vw,37px);margin:7px 0 20px;letter-spacing:-.055em;line-height:1.08;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;color:#fff}
+  .v202-wealth-bottom{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid rgba(255,255,255,.27);padding-top:13px}
+  .v202-wealth-bottom>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .v202-wealth-bottom>div+div{border-left:1px solid rgba(255,255,255,.25);padding-left:15px}
+  .v202-wealth-bottom small{font-size:11px;color:#d9e7ff}
+  .v202-wealth-bottom strong{font-size:clamp(14px,4.1vw,18px);letter-spacing:-.035em;color:#fff;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+  .v202-bank-profiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:#e8eff9;border:1px solid var(--v202-line);border-radius:17px;padding:5px;margin:0 1px}
+  .v202-profile{min-width:0;display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 5px;border-radius:12px;border:0;background:transparent;color:#697e9e;font-size:12px;font-weight:760;cursor:pointer;white-space:nowrap}
+  .v202-profile span{color:inherit;opacity:.75;font-size:11px}
+  .v202-profile.active{background:#fff;color:#245db1;box-shadow:0 2px 10px rgba(24,52,101,.09)}
+  .v202-bank-list{display:grid;gap:8px;min-width:0}
+  .v202-bank-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:3px 4px 5px}
+  .v202-bank-heading h2{color:var(--v202-ink);font-size:18px;font-weight:800;margin:0;letter-spacing:-.035em}
+  .v202-bank-heading span{font-size:11px;color:var(--v202-muted)}
+  .v202-bank-item{border:1px solid var(--v202-line);border-radius:19px;background:var(--v202-panel);overflow:hidden;min-width:0;box-shadow:0 4px 15px rgba(31,58,93,.045)}
+  .v202-bank-item.opened{border-color:#b8cfea}
+  .v202-bank-trigger{width:100%;border:0;background:none;display:flex;align-items:center;gap:10px;padding:13px 12px;text-align:left;color:var(--v202-ink);cursor:pointer;min-width:0}
+  .v202-bank-logo{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:#e8effa;overflow:hidden}
+  .v202-bank-logo .institution-logo{width:35px;height:35px;max-width:35px;max-height:35px}
+  .v202-bank-meta{flex:1;min-width:0;display:grid;gap:5px}
+  .v202-bank-meta strong{font-size:13px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--v202-ink)}
+  .v202-bank-meta small{font-size:10.5px;line-height:1.1;color:var(--v202-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .v202-bank-net{flex:none;display:grid;gap:4px;text-align:right;max-width:36%;min-width:0}
+  .v202-bank-net strong{font-size:12px;letter-spacing:-.02em;color:var(--v202-ink);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+  .v202-bank-net.negative strong{color:#c45a4f}
+  .v202-bank-net small{font-size:10px;color:var(--v202-muted)}
+  .v202-bank-chevron{display:grid;place-items:center;color:var(--v202-muted);flex:none}
+  .v202-bank-chevron svg{width:15px;height:15px;transform:rotate(90deg)}
+  .v202-bank-item.opened .v202-bank-chevron svg{transform:rotate(-90deg)}
+  .v202-bank-open{padding:0 12px 14px;border-top:1px solid var(--v202-line)}
+  .v202-bank-amounts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:11px 0}
+  .v202-bank-amounts>div{border-radius:12px;background:#eff4fb;padding:11px;display:grid;gap:4px;min-width:0}
+  .v202-bank-amounts small{font-size:10px;color:var(--v202-muted)}
+  .v202-bank-amounts strong{font-size:13px;color:var(--v202-ink);overflow-wrap:anywhere}
+  .v202-bank-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .v202-bank-actions button{display:grid;justify-items:center;align-content:center;gap:6px;padding:12px 3px;border-radius:12px;border:1px solid var(--v202-line);background:var(--v202-panel);color:var(--v202-ink);min-width:0;cursor:pointer}
+  .v202-bank-actions svg{width:19px;height:19px;color:var(--v202-blue)}
+  .v202-bank-actions strong{font-size:10px;font-weight:750;white-space:nowrap}
+  .v202-bank-actions small{font-size:10px;color:var(--v202-muted)}
+  .v202-bank-more{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:42px;margin-top:11px;border-radius:11px;border:1px solid var(--v202-line);background:#eff4fb;color:var(--v202-ink);font-size:12px;font-weight:760;cursor:pointer;text-align:center}
+  .v202-bank-more svg{width:15px;height:15px}
+  .v202-full-bank-detail{margin-top:16px;min-width:0;overflow-x:clip}
+  .v202-full-bank-detail .bank-workspace{min-width:0;max-width:100%}
+  .v202-full-bank-detail .bank-workspace .workspace-title{flex-wrap:wrap}
+  .v202-bank-empty{padding:25px 16px;border:1px solid var(--v202-line);border-radius:18px;text-align:center;background:var(--v202-panel);display:grid;gap:8px;justify-items:center}
+  .v202-bank-empty>div svg{width:24px;height:24px;color:var(--v202-blue)}
+  .v202-bank-empty strong{font-size:14px;color:var(--v202-ink)}
+  .v202-bank-empty p,.v202-bank-foot{font-size:11px;line-height:1.45;color:var(--v202-muted);margin:0}
+  .v202-bank-foot{padding:0 8px 3px}
+  body.theme-dark .v202-mobile-banks{--v202-bg:#111923;--v202-panel:#17202c;--v202-ink:#eff4fa;--v202-muted:#a5b3c9;--v202-line:#334154;--v202-blue:#8db4ff}
+  body.theme-dark .v202-bank-profiles{background:#17202c;border-color:#334154}
+  body.theme-dark .v202-profile{color:#afbbcf}
+  body.theme-dark .v202-profile.active{background:#29415f;color:#fff}
+  body.theme-dark .v202-bank-logo,body.theme-dark .v202-bank-amounts>div,body.theme-dark .v202-bank-more{background:#243348}
+  body.theme-black .v202-mobile-banks{--v202-bg:#000;--v202-panel:#111317;--v202-ink:#f7f9fe;--v202-muted:#b3bdce;--v202-line:#373d48;--v202-blue:#95bdff}
+  body.theme-black .v202-wealth{background:#121926!important;background-image:linear-gradient(120deg,#161c28,#11151e)!important;border-color:#3c4657!important;box-shadow:none!important}
+  body.theme-black .v202-wealth .v202-eyebrow{color:#a8c8ff}
+  body.theme-black .v202-bank-profiles{background:#0c0d10!important;border-color:#353a43!important}
+  body.theme-black .v202-profile{color:#b6bece!important;background:transparent!important}
+  body.theme-black .v202-profile.active{background:#283957!important;color:#fff!important}
+  body.theme-black .v202-bank-item,body.theme-black .v202-bank-actions button,body.theme-black .v202-bank-empty{background:#111317!important;border-color:#373d48!important}
+  body.theme-black .v202-bank-logo,body.theme-black .v202-bank-amounts>div,body.theme-black .v202-bank-more,body.theme-black .v202-add{background:#1e242e!important;border-color:#373d48!important;color:#f3f6ff!important}
+  body.theme-black .v202-bank-meta strong,body.theme-black .v202-bank-net strong,body.theme-black .v202-bank-amounts strong,body.theme-black .v202-bank-heading h2{color:#f6f8fc!important}
+  body.theme-black .v202-bank-meta small,body.theme-black .v202-bank-net small,body.theme-black .v202-bank-amounts small,body.theme-black .v202-bank-heading span{color:#b3bdce!important}
+  body.theme-black .v202-wealth-value,body.theme-black .v202-wealth-bottom strong{color:#fff!important}
+  @media(max-width:365px){.v202-bank-trigger{gap:7px;padding:11px 8px}.v202-bank-logo{width:35px;height:35px}.v202-bank-net strong{font-size:11px}.v202-bank-actions strong{font-size:9px}.v202-wealth{padding:18px 14px 14px}}
+}
+</style>
+<style id="v203-bancos-pocket">
+/* V203 | Bancos · experiencia móvil de cartera (no toca Buscar ni escritorio). */
+@media (max-width:767px){
+  main.world-banks:has(.v203-mobile-banks){min-width:0;overflow-x:clip}
+  main.world-banks:has(.v203-mobile-banks)>.module-switch-shell,
+  main.world-banks:has(.v203-mobile-banks) .module-switch-swipe{display:none!important}
+  .v203-mobile-banks{--b203-bg:var(--bg);--b203-surface:#fff;--b203-text:#23395b;--b203-sub:#778aa9;--b203-line:#dce7f6;--b203-wash:#eef4fc;--b203-accent:#3b6fce;--b203-shadow:0 14px 34px rgba(49,83,144,.075);display:flex;flex-direction:column;gap:18px;min-width:0;width:100%;padding:5px 0 calc(109px + env(safe-area-inset-bottom,0px));color:var(--b203-text);font-variant-numeric:tabular-nums;overflow:visible}
+  .v203-mobile-banks *{box-sizing:border-box}
+  .v203-mobile-banks :is(button,a){-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .v203-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:3px 4px 0}
+  .v203-kicker{font-size:10px;font-weight:830;letter-spacing:.17em;text-transform:uppercase;color:var(--b203-sub)}
+  .v203-header h1{font-size:clamp(30px,8.5vw,39px);line-height:1.04;letter-spacing:-.06em;margin:5px 0 0;color:var(--b203-text);font-weight:840}
+  .v203-header-action{width:44px;height:44px;flex:none;display:grid;place-items:center;border:1px solid var(--b203-line);border-radius:17px;background:var(--b203-surface);color:var(--b203-text);box-shadow:0 4px 12px rgba(24,51,92,.04)}
+  .v203-header-action{width:auto;min-width:89px;padding:0 11px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:770}
+  body.theme-black .v203-mobile-banks .v203-bank-figure strong.is-negative{color:#ffad87!important}
+  .v203-header-action svg{width:19px;height:19px}
+  .v203-hero{position:relative;isolation:isolate;overflow:hidden;padding:24px 21px 19px;min-height:210px;border-radius:30px;background:linear-gradient(137deg,#284d9b 0%,#3e74d8 59%,#7399ed 130%);color:#fff;box-shadow:0 19px 43px rgba(47,90,178,.19)}
+  .v203-hero::after{content:'';position:absolute;z-index:-1;width:260px;height:260px;border:1px solid rgba(255,255,255,.17);border-radius:50%;right:-112px;top:-121px;box-shadow:0 0 0 53px rgba(255,255,255,.035),0 0 0 109px rgba(255,255,255,.025);pointer-events:none}
+  .v203-hero-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .v203-hero-tag{font-weight:790;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#d9e7ff}
+  .v203-hero-mark{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16)}
+  .v203-hero-mark svg{width:18px;height:18px;color:#fff}
+  .v203-hero-value{display:block;font-size:clamp(29px,8vw,39px);font-weight:840;line-height:1.1;letter-spacing:-.058em;margin:12px 0 19px;color:#fff;overflow-wrap:anywhere}
+  .v203-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:1px solid rgba(255,255,255,.25);padding-top:15px;gap:12px}
+  .v203-hero-grid>div{display:grid;gap:5px;min-width:0}
+  .v203-hero-grid>div+div{padding-left:15px;border-left:1px solid rgba(255,255,255,.24)}
+  .v203-hero-grid small{font-size:11px;font-weight:540;color:#d8e6ff}
+  .v203-hero-grid strong{font-size:clamp(14px,4.25vw,19px);font-weight:760;letter-spacing:-.038em;color:#fff;overflow-wrap:anywhere}
+  .v203-profiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:5px;border:1px solid var(--b203-line);background:var(--b203-wash);border-radius:20px}
+  .v203-profile{border:0;border-radius:15px;background:transparent;color:var(--b203-sub);display:flex;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:46px;font-size:12px;font-weight:780;white-space:nowrap;padding:9px 3px}
+  .v203-profile em{font-style:normal;font-size:10px;font-weight:700;opacity:.8}
+  .v203-profile.active{background:var(--b203-surface);color:var(--b203-accent);box-shadow:0 3px 12px rgba(30,62,113,.1)}
+  .v203-list-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:0 4px}
+  .v203-list-head h2{font-size:21px;font-weight:840;letter-spacing:-.045em;margin:3px 0 0;color:var(--b203-text)}
+  .v203-list-head span:last-child{font-size:11px;color:var(--b203-sub);padding-bottom:3px;white-space:nowrap}
+  .v203-stack{display:flex;flex-direction:column;gap:12px;min-width:0}
+  .v203-institution.v202-bank-item{background:var(--b203-surface);border:1px solid var(--b203-line);border-radius:25px;box-shadow:var(--b203-shadow);overflow:hidden;scroll-margin-top:90px}
+  .v203-institution.opened{border-color:#95b5eb;box-shadow:0 12px 30px rgba(52,99,177,.12)}
+  .v203-bank-trigger.v202-bank-trigger{display:flex;gap:12px;width:100%;min-height:94px;padding:17px 14px;border:0;align-items:center;text-align:left;background:none;color:var(--b203-text)}
+  .v203-bank-logo{width:49px;height:49px;border-radius:17px;display:grid;place-items:center;flex:none;overflow:hidden;background:color-mix(in srgb,var(--institution-accent,#4777d8) 16%,var(--b203-surface));border:1px solid color-mix(in srgb,var(--institution-accent,#4777d8) 18%,transparent)}
+  .v203-bank-logo .institution-logo{width:37px;height:37px;max-width:37px;max-height:37px}
+  .v203-bank-name{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+  .v203-bank-name strong{font-size:14px;line-height:1.2;color:var(--b203-text);font-weight:820;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .v203-bank-name small{font-size:10.5px;color:var(--b203-sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .v203-bank-figure{flex:0 0 auto;min-width:0;max-width:38%;display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:right}
+  .v203-bank-figure strong{font-size:clamp(12px,3.4vw,15px);font-weight:790;color:var(--b203-text);letter-spacing:-.035em;overflow-wrap:anywhere}
+  .v203-bank-figure strong.is-negative{color:#c35e55}
+  .v203-bank-figure small{font-size:10px;color:var(--b203-sub)}
+  .v203-bank-caret{height:26px;width:26px;display:grid;place-items:center;border-radius:50%;background:var(--b203-wash);color:var(--b203-sub);flex:none}
+  .v203-bank-caret svg{width:15px;height:15px;transform:rotate(90deg);transition:transform .24s ease}
+  .v203-institution.opened .v203-bank-caret svg{transform:rotate(-90deg)}
+  .v203-balance-preview{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 17px 15px;color:var(--b203-sub)}
+  .v203-balance-preview>div{display:grid;gap:6px}
+  .v203-preview-head{display:flex;justify-content:space-between;gap:6px;font-size:9.5px;font-weight:680;letter-spacing:.02em}
+  .v203-preview-line{height:4px;border-radius:10px;background:var(--b203-wash);overflow:hidden}
+  .v203-preview-line span{display:block;height:100%;width:var(--pct,0%);border-radius:10px;background:#5a89df}
+  .v203-preview-line.debt span{background:#ecad92}
+  .v203-expanded{border-top:1px solid var(--b203-line);padding:17px 15px 16px;background:color-mix(in srgb,var(--b203-wash) 43%,var(--b203-surface))}
+  .v203-expanded-top{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+  .v203-expanded-top>div{min-width:0;background:var(--b203-surface);padding:13px 12px;border:1px solid var(--b203-line);border-radius:16px;display:grid;gap:6px}
+  .v203-expanded-top small{font-size:10px;color:var(--b203-sub)}
+  .v203-expanded-top strong{font-size:clamp(13px,4vw,18px);color:var(--b203-text);letter-spacing:-.04em;overflow-wrap:anywhere}
+  .v203-products-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .v203-products-title strong{font-size:13px;font-weight:810;color:var(--b203-text)}
+  .v203-products-title small{font-size:10px;color:var(--b203-sub)}
+  .v203-product-types{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .v203-product-type{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;min-height:69px;min-width:0;padding:8px 2px;border:1px solid var(--b203-line);border-radius:15px;background:var(--b203-surface);color:var(--b203-sub)}
+  .v203-product-type svg{height:19px;width:19px;color:var(--b203-accent)}
+  .v203-product-type span{font-size:10px;font-weight:760;white-space:nowrap}
+  .v203-product-type em{font-size:9px;font-weight:740;font-style:normal;line-height:1.1}
+  .v203-product-type.active{background:color-mix(in srgb,var(--b203-accent) 10%,var(--b203-surface));border-color:color-mix(in srgb,var(--b203-accent) 50%,var(--b203-line));color:var(--b203-text)}
+  .v203-items-list{border-radius:17px;background:var(--b203-surface);border:1px solid var(--b203-line);margin-top:12px;overflow:hidden}
+  .v203-item{width:100%;border:0;border-bottom:1px solid var(--b203-line);min-height:67px;padding:12px;display:flex;align-items:center;gap:10px;color:var(--b203-text);text-align:left;background:transparent}
+  .v203-item:last-child{border-bottom:0}
+  .v203-item-icon{width:34px;height:34px;border-radius:11px;background:var(--b203-wash);display:grid;place-items:center;color:var(--b203-accent);flex:none}
+  .v203-item-icon svg{width:17px;height:17px}
+  .v203-item-text{display:grid;gap:5px;min-width:0;flex:1}
+  .v203-item-text strong{font-size:11.5px;font-weight:760;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;color:var(--b203-text)}
+  .v203-item-text small{font-size:10px;color:var(--b203-sub)}
+  .v203-item-money{display:flex;flex-direction:column;gap:5px;align-items:flex-end;min-width:0;max-width:43%}
+  .v203-item-money strong{font-size:11.5px;overflow-wrap:anywhere;letter-spacing:-.025em;color:var(--b203-text)}
+  .v203-item-money small{font-size:9px;color:var(--b203-sub)}
+  .v203-empty-product{padding:20px 13px;text-align:center;font-size:11px;color:var(--b203-sub);line-height:1.5}
+  .v203-expand-actions{display:flex;gap:8px;margin-top:12px;align-items:center}
+  .v203-expand-actions button{border:1px solid var(--b203-line);border-radius:14px;min-height:44px;background:var(--b203-surface);color:var(--b203-text);font-size:11px;font-weight:760;display:flex;justify-content:center;align-items:center;gap:7px}
+  .v203-expand-actions button:first-child{flex:1}
+  .v203-expand-actions button:last-child{padding:0 14px}
+  .v203-expand-actions svg{height:15px;width:15px;color:var(--b203-accent)}
+  .v203-full-detail{padding-top:12px;min-width:0;overflow-x:clip}
+  .v203-full-detail .bank-workspace{min-width:0;max-width:100%;padding:12px}
+  .v203-full-detail .bank-workspace :is(.workspace-title,.hstack){flex-wrap:wrap}
+  .v203-empty-bank{background:var(--b203-surface);border:1px dashed var(--b203-line);border-radius:22px;display:grid;justify-items:center;gap:10px;text-align:center;padding:26px 18px}
+  .v203-empty-bank strong{font-size:15px;color:var(--b203-text)}
+  .v203-empty-bank p{margin:0;color:var(--b203-sub);font-size:12px;line-height:1.5}
+  .v203-empty-bank button{border:0;border-radius:13px;min-height:44px;padding:0 18px;background:var(--b203-accent);color:#fff;font-weight:750}
+  .v203-footnote{color:var(--b203-sub);font-size:10px;line-height:1.5;padding:0 5px}
+  .v203-institution.opened .v203-expanded{animation:v203Enter .23s ease-out both}
+  @keyframes v203Enter{from{opacity:.65;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+  body.theme-dark .v203-mobile-banks{--b203-surface:#1a2432;--b203-text:#eef3ff;--b203-sub:#aabbd2;--b203-line:#3b4b60;--b203-wash:#253345;--b203-accent:#9bbfff;--b203-shadow:none}
+  body.theme-dark .v203-hero{background:linear-gradient(135deg,#182d52,#2d4e84);box-shadow:none;border:1px solid #465877}
+  body.theme-black .v203-mobile-banks{--b203-surface:#111216;--b203-text:#f4f6fa;--b203-sub:#aeb8c8;--b203-line:#343943;--b203-wash:#20232a;--b203-accent:#adc9ff;--b203-shadow:none}
+  body.theme-black .v203-mobile-banks .v203-hero{background:#101115!important;background-image:radial-gradient(ellipse at top right,rgba(71,96,145,.2),transparent 58%)!important;border:1px solid #404955!important;box-shadow:none!important}
+  body.theme-black .v203-mobile-banks .v203-hero :is(.v203-hero-value,.v203-hero-grid strong){color:#fff!important}
+  body.theme-black .v203-mobile-banks .v203-profile.active{background:#2a3343!important;color:#fff!important;box-shadow:none!important}
+  body.theme-black .v203-mobile-banks .v203-institution.v202-bank-item{background:#111216!important;border-color:#343943!important}
+  body.theme-black .v203-mobile-banks .v203-bank-trigger.v202-bank-trigger{color:#f3f5fb!important;background:none!important}
+  body.theme-black .v203-mobile-banks .v203-expanded{background:#0e0f12!important}
+  body.theme-black .v203-mobile-banks :is(.v203-expanded-top>div,.v203-product-type,.v203-items-list,.v203-expand-actions button){background:#181b21!important;color:#f4f6fb!important;border-color:#343943!important}
+  body.theme-black .v203-mobile-banks .v203-product-type.active{background:#28354c!important;color:#fff!important;border-color:#6686ad!important}
+  body.theme-black .v203-mobile-banks :is(.v203-bank-name strong,.v203-bank-figure strong,.v203-expanded-top strong,.v203-list-head h2,.v203-item-text strong,.v203-item-money strong,.v203-products-title strong,.v203-header h1){color:#f4f6fb!important}
+  body.theme-black .v203-mobile-banks :is(.v203-bank-name small,.v203-bank-figure small,.v203-expanded-top small,.v203-item-text small,.v203-item-money small){color:#b4becf!important}
+  body.theme-black .v203-mobile-banks .v203-item{background:transparent!important;color:#f4f6fb!important}
+  body.theme-black .v203-mobile-banks .v203-hero-tag{color:#b8cbec!important}
+  .v203-mobile-banks button:focus-visible{outline:2px solid var(--b203-accent)!important;outline-offset:3px}
+  @media(max-width:365px){.v203-bank-trigger.v202-bank-trigger{padding:14px 10px;gap:7px}.v203-bank-logo{width:40px;height:40px}.v203-bank-figure strong{font-size:11px}.v203-hero{padding:21px 17px 17px}.v203-expanded{padding:12px 9px}.v203-product-types{gap:4px}.v203-product-type span{font-size:9px}}
+  @media(prefers-reduced-motion:reduce){.v203-institution.opened .v203-expanded{animation:none}.v203-bank-caret svg{transition:none}}
+  /* Inicio conserva exactamente sus indicadores: únicamente espacio y toque móvil. */
+  .world-overview .ff-dashboard :is(.ff-pay-btn,.ff-black-btn,.ff-outline-pill){min-height:40px}
+  .world-overview .ff-dashboard :is(.ff-balance,.ff-health-card,.ff-upcoming,.ff-personal){overflow-wrap:anywhere}
+}
+
+</style>
+<style id="vive-v205-mobile-explore-and-brand">
+/* V205 - navegación móvil centrada en tareas; no toca Buscar ni los indicadores de Inicio. */
+@media(min-width:791px){
+ body[data-menu-layout="rail"] .rail-top{min-height:72px!important;padding:0 0 13px!important}
+ body[data-menu-layout="rail"] .rail-top .vive-p-brand{height:56px!important;min-height:56px!important;line-height:.9!important;transform:translateY(-12px)!important;transform-origin:center center!important;letter-spacing:-.055em!important}
+ body[data-menu-layout="rail"] .rail-top .vive-p-brand:hover{transform:translateY(-12px) scale(1.04)!important}
+}
+@media(max-width:790px){
+ .world-mobilehub #page>.v205-explore,.world-mobilehub #page .v205-explore{display:block!important;max-width:100%;padding:0 0 calc(104px + env(safe-area-inset-bottom,0px))!important}
+ .v205-explore *{min-width:0}
+ .v205-explore-header{padding:8px 3px 18px}
+ .v205-explore-kicker{font-size:10px;letter-spacing:.16em;color:var(--mob-muted);font-weight:800}
+ .v205-explore-header h1{font-size:clamp(30px,9vw,38px)!important;letter-spacing:-.055em!important;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0!important}
+ .v205-explore-header p{font-size:13px;color:var(--mob-muted);margin:0}
+ .v205-explore-period{font-size:10px;font-weight:780;letter-spacing:0;white-space:nowrap;color:var(--mob-muted);background:var(--mob-panel);border:1px solid var(--mob-line);padding:7px 9px;border-radius:100px}
+ .v205-explore-actions{display:grid;grid-template-columns:minmax(0,1fr) 106px;gap:9px;margin:0 0 17px}
+ .v205-explore-actions button{min-height:58px;border-radius:19px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;font-weight:760;font-size:12px}
+ .v205-explore-actions svg{width:19px;height:19px;flex:none}
+ .v205-explore-register{color:#fff;background:linear-gradient(116deg,#346ef1,#5c69db);padding:0 12px;box-shadow:0 12px 24px rgba(65,94,204,.2);white-space:nowrap}
+ .v205-explore-action-arrow{margin-left:auto;font-size:18px;font-weight:500;opacity:.8}
+ .v205-explore-pay{background:var(--mob-panel);border-color:var(--mob-line)!important;color:var(--mob-ink);flex-direction:column;gap:2px!important;box-shadow:0 8px 24px rgba(44,80,131,.06)}
+ .v205-explore-pay svg{color:var(--mob-strong)}
+ .v205-explore-pulse{padding:16px;border-radius:24px;background:linear-gradient(133deg,#15294a,#264e76);color:#fff;border:1px solid rgba(255,255,255,.13);box-shadow:0 15px 35px rgba(22,44,79,.19);margin-bottom:18px}
+ .v205-explore-pulse-head{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:0 0 12px}
+ .v205-explore-pulse-head>span{font-size:10px;font-weight:800;letter-spacing:.17em;color:#c5daff}
+ .v205-explore-pulse-head small{font-size:10px;color:#afc8e9}
+ .v205-explore-pulse-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .v205-explore-pulse-grid button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:100px;padding:13px 11px 11px;border-radius:16px;background:rgba(255,255,255,.105);border:1px solid rgba(255,255,255,.14);color:#fff;overflow:hidden}
+ .v205-explore-pulse-grid button>span{display:flex;align-items:center;gap:5px;color:#c7ddf5;font-size:11px;font-weight:650}
+ .v205-explore-pulse-grid button>span svg{width:14px;height:14px}
+ .v205-explore-pulse-grid button strong{margin:10px 0 6px;font-size:clamp(16px,4.7vw,22px);line-height:1.05;letter-spacing:-.045em;max-width:100%;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+ .v205-explore-pulse-grid button small{color:#b3c9e6;font-size:10px}
+ .v205-explore-group{background:var(--mob-panel);border:1px solid var(--mob-line);border-radius:25px;padding:17px 14px 14px;margin-bottom:13px;box-shadow:var(--mob-shadow)}
+ .v205-explore-group-header{padding:2px 3px 13px}
+ .v205-explore-group-header>span{font-size:9px;font-weight:840;letter-spacing:.15em;color:var(--mob-strong)}
+ .v205-explore-group-header h2{font-size:20px;font-weight:780;letter-spacing:-.045em;margin:6px 0 3px;color:var(--mob-ink)}
+ .v205-explore-group-header p{font-size:11px;margin:0;color:var(--mob-muted);line-height:1.5}
+ .v205-explore-links{display:grid;grid-template-columns:1fr;gap:7px}
+ .v205-explore-link{display:flex;align-items:center;text-align:left;gap:11px;min-height:64px;padding:9px 10px;border:1px solid rgba(95,126,175,.12);background:rgba(133,158,207,.085);border-radius:17px;color:var(--mob-ink);width:100%}
+ .v205-explore-link-icon{flex:0 0 39px;width:39px;height:39px;display:grid;place-items:center;border-radius:13px;background:rgba(71,112,196,.12);color:var(--mob-strong)}
+ .v205-explore-link-icon svg{width:19px;height:19px}
+ .v205-explore-link-copy{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+ .v205-explore-link-copy strong{font-size:12.5px;font-weight:745;line-height:1.2}
+ .v205-explore-link-copy small{font-size:10px;color:var(--mob-muted);line-height:1.3}
+ .v205-explore-arrow{font-size:26px;line-height:1;font-weight:300;color:var(--mob-muted);padding:0 3px;flex:none}
+ .v205-explore-end{font-size:11px;line-height:1.5;text-align:center;color:var(--mob-muted);padding:5px 16px 2px}
+ body.theme-black .v205-explore-pulse{background:#15181d!important;border:1px solid #353c49!important;box-shadow:none!important}
+ body.theme-black .v205-explore-pulse-grid button{background:#21252d!important;border-color:#384253!important}
+ body.theme-black .v205-explore-group{background:#121418!important;border-color:#303743!important;box-shadow:none!important}
+ body.theme-black .v205-explore-link{background:#1d2027!important;border-color:#303743!important;color:#eef3fb!important}
+ body.theme-black .v205-explore-link-icon{background:#272f41!important;color:#b0c6ff!important}
+ body.theme-black .v205-explore-pay,body.theme-black .v205-explore-period{background:#22252c!important;border-color:#3d4451!important;color:#e9effa!important}
+ body.theme-dark:not(.theme-black) .v205-explore-group{background:#1a2942;border-color:#3d4b65}
+ body.theme-dark:not(.theme-black) .v205-explore-link{background:#23344d;border-color:#354b6a}
+ .v205-explore-link:focus-visible,.v205-explore-actions button:focus-visible,.v205-explore-pulse-grid button:focus-visible{outline:3px solid #6e9fff;outline-offset:2px}
+}
+@media(max-width:350px){.v205-explore-actions{grid-template-columns:minmax(0,1fr) 88px}.v205-explore-actions button{font-size:11px}.v205-explore-group{padding:14px 11px}.v205-explore-pulse{padding:13px}.v205-explore-pulse-grid button{padding:10px 8px}}
 </style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -16070,7 +16321,7 @@ const RAIL_DESTINATIONS=[
  ['overview','Resumen','home','Inicio, desempeño e indicadores'],
  ['banks','Bancos','building','Instituciones y productos bancarios'],
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
- ['payments','Compromisos','calendar','Pagos, suscripciones y préstamos personales']
+ ['payments','Compromiso','calendar','Pagos, suscripciones y préstamos personales']
 ];
 /* V153: distinctive stroke icons, scoped to the desktop navigation rail. */
 const V153_RAIL_ICONS={
@@ -16092,7 +16343,7 @@ const v153DockIcon=(name)=>`<svg viewBox="0 0 24 24" fill="none" stroke="current
 function nav(){
  const one=([id,label,ic,description])=>{let active=id==='overview'?navFamilyForPage(ui.page)==='overview':navFamilyForPage(ui.page)===id;return `<button type="button" class="rail-action ${active?'active':''}" data-act="navigate" data-id="${id}" title="${label}" aria-label="${label}: ${description}" ${active?'aria-current="page"':''}><span class="rail-symbol">${v153RailIcon(ic)}</span><span class="rail-tooltip" role="presentation"><strong>${label}</strong><small>${description}</small></span></button>`};
  return `<aside class="sidebar rail-sidebar ${ui.mobile?'open':''}" aria-label="Navegación principal">
-   <div class="rail-top"><button type="button" class="vive-p-brand" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="El costo de mañana">P</button></div>
+   <div class="rail-top"><button type="button" class="vive-p-brand" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="El costo de mañana">v</button></div>
    <div class="rail-main" role="navigation" aria-label="Módulos financieros">${RAIL_DESTINATIONS.map(one).join('')}</div>
    <div class="rail-bottom">
      <div class="rail-hairline"></div>
@@ -16244,15 +16495,28 @@ function mobileHome(){
   </div>`;
 }
 function mobileHub(){
- const areas=[
-  {title:'Movimiento de dinero',hint:'Registra y comprende cada operación',entries:[['register','Ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','grid']]},
-  {title:'Compromisos',hint:'Pagos, suscripciones y personas',entries:[['payments','Compromiso','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]},
-  {title:'Inteligencia financiera',hint:'Análisis, comparaciones y patrimonio',entries:[['advanced','Analítica avanzada','analytics'],['analytics','Resumen detallado','chart'],['kpis','Indicadores avanzados','analytics'],['patrimony','Patrimonio','wallet']]}
+ const period=ui.month||today().slice(0,7),stats=monthlyTotals(Number(period.slice(0,4)),Number(period.slice(5,7)));
+ const labelPeriod=new Intl.DateTimeFormat('es-DO',{month:'long',year:'numeric'}).format(new Date(Number(period.slice(0,4)),Number(period.slice(5,7))-1,1));
+ const groups=[
+  {eyebrow:'TU ACTIVIDAD',title:'Cada movimiento, en su lugar',subtitle:'Registros, análisis y planificación',entries:[
+   ['income','Ingresos','Lo que recibes','up'],['expenses','Egresos','Lo que utilizas','down'],
+   ['budget','Presupuesto','Límites y ejecución','chart'],['categories','Categorías','Organiza tus movimientos','grid']]},
+  {eyebrow:'LO QUE VIENE',title:'Compromisos',subtitle:'Un solo lugar para saber qué toca pagar',entries:[
+   ['payments','Centro de pagos','Vencimientos y pagos','calendar'],['recurring','Suscripciones','Cargos recurrentes','cycle'],
+   ['personal','Entre personas','Deudas y abonos','wallet']]},
+  {eyebrow:'MÁS PERSPECTIVA',title:'Tu inteligencia financiera',subtitle:'Información con profundidad, cuando la necesites',entries:[
+   ['kpis','Mis indicadores','Tu tablero personal','analytics'],['patrimony','Patrimonio','Activos y obligaciones','wallet'],
+   ['advanced','Analítica avanzada','Tendencias y decisiones','chart'],['analytics','Visión global','Análisis consolidado','grid']]}
  ];
- return `<div class="vive-mobile-hub"><div class="vive-mobile-greeting"><span class="vive-mobile-eyebrow">TODOS TUS ESPACIOS</span><h1>Explorar</h1><p>Todo tu ciclo financiero, sin menús complicados.</p></div><button class="vive-mobile-hub-create" type="button" data-act="newTransaction">${icon('plus')} Registrar un movimiento <span>${icon('up')}</span></button>
- ${areas.map((area,i)=>`<section class="vive-mobile-hub-area"><div class="vive-mobile-hub-heading"><h2>${area.title}</h2><p>${area.hint}</p></div><div class="vive-mobile-hub-links">${area.entries.map(([id,label,ic])=>`<button type="button" data-act="navigate" data-id="${id}"><span class="vive-mobile-hub-link-icon">${icon(ic)}</span><span>${label}</span><span class="vive-mobile-hub-chevron">${icon('up')}</span></button>`).join('')}</div></section>`).join('')}</div>`;
+ const link=([id,name,description,ic])=>`<button type="button" class="v205-explore-link" data-act="navigate" data-id="${id}" aria-label="Abrir ${name}"><span class="v205-explore-link-icon">${icon(ic)}</span><span class="v205-explore-link-copy"><strong>${name}</strong><small>${description}</small></span><span class="v205-explore-arrow" aria-hidden="true">›</span></button>`;
+ return `<div class="vive-mobile-hub v205-explore">
+   <header class="v205-explore-header"><span class="v205-explore-kicker">VIVE EL HOY · TU ESPACIO</span><h1>Explorar<span class="v205-explore-period">${labelPeriod}</span></h1><p>Todo lo importante, a un toque.</p></header>
+   <div class="v205-explore-actions"><button type="button" class="v205-explore-register" data-act="newTransaction">${icon('plus')}<span>Registrar movimiento</span><span class="v205-explore-action-arrow" aria-hidden="true">↗</span></button><button type="button" class="v205-explore-pay" data-act="navigate" data-id="payments" aria-label="Abrir Centro de pagos">${icon('calendar')}<span>Mis pagos</span></button></div>
+   <section class="v205-explore-pulse" aria-label="Actividad registrada del mes"><div class="v205-explore-pulse-head"><span>ESTE MES</span><small>Solo movimientos registrados</small></div><div class="v205-explore-pulse-grid"><button type="button" data-act="navigate" data-id="income"><span>${icon('up')} Ingresos</span><strong>${money(stats.income,'DOP',0)}</strong><small>Ver análisis ›</small></button><button type="button" data-act="navigate" data-id="expenses"><span>${icon('down')} Egresos</span><strong>${money(stats.expense,'DOP',0)}</strong><small>Ver análisis ›</small></button></div></section>
+   ${groups.map(g=>`<section class="v205-explore-group" aria-label="${g.title}"><div class="v205-explore-group-header"><span>${g.eyebrow}</span><h2>${g.title}</h2><p>${g.subtitle}</p></div><div class="v205-explore-links">${g.entries.map(link).join('')}</div></section>`).join('')}
+   <div class="v205-explore-end"><span>Tu información está organizada por decisiones, no por menús.</span></div>
+ </div>`;
 }
-
 
 function v154MobileSearchPage(){
  const areas=[
@@ -18931,7 +19195,7 @@ const pages={wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorl
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
-function modal(title,body,formid,wide=false){document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false);const support=['transactionForm','personalPaymentForm','annualFeeForm','rewardReceivedForm','benefitLedgerForm','recurringPaymentConfirmForm'].includes(formid);const mobileNative=['transactionForm','accountForm','cardForm','loanForm','certificateForm','personalLoanForm','personalPaymentForm','manualBenefitForm','benefitLedgerForm','benefitRuleForm','annualFeeForm','rewardReceivedForm','perkUsageForm','cashWalletForm'].includes(formid);const submitLabel=mobileNative&&isMobileViewport()?'Completar':'Guardar registro';const statusBlock=support?`<div class="form-full confirm-status"><label for="postingStatus">ESTADO DEL REGISTRO</label><select class="field" id="postingStatus" name="postingStatus"><option value="confirmed">Confirmado · contabilizar ahora</option><option value="pending">Pendiente de confirmar · no afectar saldos</option></select><small>Los pendientes permanecerán en Movimientos / Por confirmar. No reducen cuentas ni deudas hasta su confirmación.</small></div>`:'';document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><div class="modal ${wide?'wide':''} ${mobileNative?'mobile-native-modal':''}" role="dialog" aria-modal="true" aria-label="${sanitize(title)}"><div class="modal-head"><h2>${sanitize(title)}</h2><button class="close" data-act="closeModal" type="button" aria-label="Cerrar">×</button></div><form id="${formid}"><div class="form-grid">${body}${statusBlock}</div><div id="formError" class="input-error"></div><div class="form-foot"><button class="btn ghost" type="button" data-act="closeModal">Cancelar</button><button class="btn" type="submit">${icon('check')} ${submitLabel}</button></div></form></div></div>`}
+function modal(title,body,formid,wide=false){document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false);const support=['transactionForm','personalPaymentForm','annualFeeForm','rewardReceivedForm','benefitLedgerForm','recurringPaymentConfirmForm'].includes(formid);const mobileNative=['transactionForm','accountForm','cardForm','loanForm','certificateForm','personalLoanForm','personalPaymentForm','manualBenefitForm','benefitLedgerForm','benefitRuleForm','annualFeeForm','rewardReceivedForm','perkUsageForm','cashWalletForm'].includes(formid);const submitLabel=mobileNative&&isMobileViewport()?'Completar':'Guardar registro';const statusBlock=support?`<div class="form-full confirm-status"><label for="postingStatus">ESTADO DEL REGISTRO</label><select class="field" id="postingStatus" name="postingStatus"><option value="confirmed">Confirmado · contabilizar ahora</option><option value="pending">Pendiente de confirmar · no afectar saldos</option></select><small>Los pendientes permanecerán en Movimientos / Por confirmar. No reducen cuentas ni deudas hasta su confirmación.</small></div>`:'';document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><div class="modal v204-form-dialog ${wide?'wide':''} ${mobileNative?'mobile-native-modal':''}" data-v204-form="${sanitize(formid)}" role="dialog" aria-modal="true" aria-label="${sanitize(title)}"><div class="modal-head"><h2>${sanitize(title)}</h2><button class="close" data-act="closeModal" type="button" aria-label="Cerrar">×</button></div><form id="${formid}"><div class="form-grid">${body}${statusBlock}</div><div id="formError" class="input-error"></div><div class="form-foot"><button class="btn ghost" type="button" data-act="closeModal">Cancelar</button><button class="btn" type="submit">${icon('check')} ${submitLabel}</button></div></form></div></div>`}
 function accountForm(id,preBank){
  if(account(id)?.kind==='cash')return cashWalletForm();
  if(!ensureBanks())return;
@@ -20478,7 +20742,6 @@ case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navGroupToggle':ui.navExpanded=ui.navExpanded===id?null:id;render();break;
 case 'navigate':{
- if(id==='payments' && ui.page!=='payments')ui.v176PayView='agenda';
  ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id;
  if(ui.page==='income')ui.innerViews.income='overview';
  if(id==='projection')ui.projectionMenu=false;
@@ -20507,7 +20770,7 @@ case 'addBank':bankForm();break;
  case 'certificateInterest':{let c=certificate(id),a=db.accounts.find(a=>a.currency===c?.currency&&a.bankId===c?.bankId)||db.accounts.find(a=>a.currency===c?.currency);if(!a){toast('Crea una cuenta en la misma moneda para registrar el interés cobrado.');break}transactionForm({type:'income',date:today(),accountId:a.id,certificateId:id,category:'Beneficios bancarios',subcategory:'Intereses de certificados',amount:'',note:'Interés cobrado · '+c.name});break}
  case 'advancedCsv':advancedCsv();break;
 case 'editBank':bankForm(id);break;
-case 'bankDetails':ui.bankId=id;render();setTimeout(()=>document.querySelector('.bank-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),50);break;
+case 'bankDetails':ui.bankId=id;render();if(!window.matchMedia?.('(min-width: 791px)').matches){setTimeout(()=>document.querySelector('.bank-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),50);}break;
 case 'closeBank':ui.bankId=null;render();break;
 case 'goAccount':ui.accountId=id;ui.page='accounts';render();setTimeout(()=>document.querySelector('.panel.section')?.scrollIntoView({behavior:'smooth'}),50);break;
 case 'goCard':ui.cardId=id;ui.page='cards';render();setTimeout(()=>document.querySelector('.card-detail')?.scrollIntoView({behavior:'smooth'}),50);break;
@@ -21981,7 +22244,8 @@ banks=function(){
  const shown=scoped.filter(b=>v42InstitutionFilter==='all'||(v42InstitutionFilter==='financial'?v40IsFinancial(b):v42InstitutionFilter==='nonbank'?!v40IsFinancial(b):true));
  const filters=[['all',`Todas (${scoped.length})`],['financial',`Bancos (${scoped.filter(v40IsFinancial).length})`],['nonbank',`No bancarias (${scoped.filter(b=>!v40IsFinancial(b)).length})`]];
  const profile=v61ProfileSummary(scoped),liq=v61InstitutionProfile==='all'?totalLiquid():profile.liquid,cardDebt=v61InstitutionProfile==='all'?totalCardDebt():profile.credit,loanDebt=v61InstitutionProfile==='all'?totalLoanDebt():profile.loanDebt,invested=v61InstitutionProfile==='all'?totalCertificates():profile.invested,debt=cardDebt+loanDebt;
- const selectedVisible=selected&&scoped.some(b=>b.id===selected.id);
+ const selectedVisible=selected&&shown.some(b=>b.id===selected.id);
+  const activeBank=selectedVisible?selected:(shown[0]||null);
  const scopeTitle=v61InstitutionProfile==='negocio'?'PATRIMONIO / NEGOCIO':v61InstitutionProfile==='personal'?'PATRIMONIO / PERSONAL':'PATRIMONIO / INSTITUCIONES';
  const scopeHeadline=v61InstitutionProfile==='negocio'?'Tus instituciones de negocio,':v61InstitutionProfile==='personal'?'Tus instituciones personales,':'Todo tu ecosistema bancario,';
  const scopeDescription=v61InstitutionProfile==='all'?'La foto completa de tus fondos y obligaciones, con el detalle de cada banco y entidad vinculada.':'La información de las instituciones asignadas a este perfil, con sus productos vinculados y sin mezclar los otros perfiles.';
@@ -21990,10 +22254,10 @@ banks=function(){
  return `<div class="v42-institutions v46-institutions v61-institutions" data-profile="${v61InstitutionProfile}">
  <div class="bank-hero v46-bank-hero">
    <div class="v46-bank-intro">
-    <div class="hero-eyebrow">${scopeTitle}</div>
+    <div class="hero-eyebrow">TU CARTERA FINANCIERA</div>
     ${v61ProfileSwitch(all)}
-    <h2>${scopeHeadline}<br/><em>en un solo lugar.</em></h2>
-    <p>${scopeDescription}</p>
+    <h2>Bancos y productos</h2>
+    <p>Todo lo que tienes y debes, organizado por institución.</p>
     <div class="hero-actions"><button class="btn light" data-act="addBank">${icon('plus')} Agregar institución</button><button class="btn outline-light" data-act="navigate" data-id="overview">Ver resumen global ${icon('arrow')}</button></div>
     <div class="v46-hero-foot"><span>${scoped.length} instituciones</span><span>${scopeAcctCount} cuentas</span><span>${scopeCardCount} tarjetas</span></div>
    </div>
@@ -22003,12 +22267,14 @@ banks=function(){
     <div class="v46-global-note">*Fondos + certificados − deuda registrada. Excluye otros activos sin valorar. ${v61InstitutionProfile==='all'?'Vista global.':'Solo instituciones del perfil seleccionado; el efectivo sin institución queda fuera.'}</div>
    </div>
  </div>
- <section class="v42-bank-section v46-bank-list">
-  <div class="v42-bank-top"><div><h3>Tus instituciones</h3><p>Fondos y deudas individuales, sin perder el panorama global.</p></div><div class="v42-filters v46-bank-filters">${filters.map(([key,label])=>`<button type="button" data-v42-filter="${key}" class="${v42InstitutionFilter===key?'active':''}" aria-pressed="${v42InstitutionFilter===key}">${label}</button>`).join('')}</div></div>
+ <div class="v204-desktop-layout" aria-label="Instituciones y sus productos">
+  <aside class="v204-bank-sidebar" aria-label="Seleccionar institución">
+  <section class="v42-bank-section v46-bank-list">
+  <div class="v42-bank-top"><div><h3>Instituciones</h3><p>Elige un banco para ver sus productos.</p></div><div class="v42-filters v46-bank-filters">${filters.map(([key,label])=>`<button type="button" data-v42-filter="${key}" class="${v42InstitutionFilter===key?'active':''}" aria-pressed="${v42InstitutionFilter===key}">${label}</button>`).join('')}</div></div>
   <div class="v42-entities v46-bank-cards">${shown.length?shown.map(b=>{
      const f=bankFigures(b),ben=db.institutionBenefits.filter(x=>x.institutionId===b.id).length,inc=db.incomeSchedules.filter(x=>x.institutionId===b.id).length;
      const count=f.aa.length+f.cc.length+f.ll.length+f.certs.length;
-     return `<button class="v46-bank-card ${ui.bankId===b.id?'selected':''}" data-act="bankDetails" data-id="${b.id}">
+     return `<button class="v46-bank-card ${activeBank?.id===b.id?'selected':''}" data-act="bankDetails" data-id="${b.id}" aria-pressed="${activeBank?.id===b.id}">
        <span class="v46-bank-card-top">${bankLogoMark(b,'institution-logo')}<span class="v46-bank-arrow" aria-hidden="true">${icon('arrow')}</span></span>
        <strong class="v46-bank-card-name">${sanitize(b.name)}</strong>
        <span class="v46-bank-card-type">${sanitize(v42KindLabel(b))} · <span class="v61-scope-pill ${b.scope==='negocio'?'business':'personal'}">${v42ScopeLabel(b)}</span>${b.archived?' · Archivada':''}</span>
@@ -22016,12 +22282,186 @@ banks=function(){
        <span class="v46-bank-card-metrics"><span><small>Fondos</small><b>${money(f.liquidity)}</b></span><span><small>Deudas</small><b>${money(f.credit+f.loansDue)}</b></span></span>
      </button>`;
    }).join(''):`<div class="v42-empty">No hay instituciones para este filtro. Puedes cambiarlo o añadir una institución.</div>`}</div>
-  <p class="v42-help">Los beneficios no monetarios no aumentan los fondos bancarios y los movimientos anteriores conservan sus importes.</p>
+  <details class="v204-bank-context"><summary>Cómo se calculan los saldos</summary><p>Los beneficios no monetarios no aumentan los fondos bancarios. Los movimientos anteriores conservan sus importes.</p></details>
  </section>
- ${selectedVisible?bankDetail(selected):''}
- </div>`;
+  </aside>
+  <div class="v204-bank-detail" aria-label="Productos de la institución seleccionada">
+  ${activeBank?bankDetail(activeBank):`<section class="v204-bank-welcome"><span class="v204-welcome-symbol">${icon('building')}</span><h3>Tu próxima institución comienza aquí</h3><p>Agrega un banco para organizar sus cuentas, tarjetas, préstamos y certificados en un solo lugar.</p><button type="button" class="btn" data-act="addBank">${icon('plus')} Agregar institución</button></section>`}
+  </div>
+  </div>
+  </div>`;
 };
 pages.banks=banks;
+/* V202 · Bancos móvil: interfaz nativa, una tarea por pantalla.
+   No modifica la pantalla de escritorio ni los registros financieros. */
+let v202ShowBankDetail=false;
+const v202DesktopBanks=banks;
+function v202MobileBanks(){
+  v40Ensure();
+  const visible=db.banks.filter(b=>ui.showHidden||!b.archived);
+  const scoped=visible.filter(v61InstitutionMatches);
+  const summary=v61ProfileSummary(scoped);
+  const liquid=Number(summary.liquid)||0;
+  const invested=Number(summary.invested)||0;
+  const credit=Number(summary.credit)||0;
+  const loans=Number(summary.loanDebt)||0;
+  const debt=credit+loans;
+  const net=liquid+invested-debt;
+  const selected=scoped.find(b=>b.id===ui.bankId);
+  const totals={all:visible.length,personal:visible.filter(b=>b.scope!=='negocio').length,negocio:visible.filter(b=>b.scope==='negocio').length};
+  const profiles=[['all','Todas'],['personal','Personal'],['negocio','Negocio']];
+  const profileButtons=profiles.map(([key,label])=>`<button type="button" class="v202-profile ${v61InstitutionProfile===key?'active':''}" data-v61-profile="${key}" aria-pressed="${v61InstitutionProfile===key}">${label}<span>${totals[key]}</span></button>`).join('');
+  const banksList=scoped.map(b=>{
+    const f=bankFigures(b);
+    const products=f.aa.length+f.cc.length+f.ll.length+f.certs.length;
+    const opened=ui.bankId===b.id;
+    return `<article class="v202-bank-item ${opened?'opened':''}">
+      <button type="button" class="v202-bank-trigger" data-v202-bank="${sanitize(b.id)}" aria-expanded="${opened}" aria-label="${opened?'Cerrar':'Abrir'} ${sanitize(b.name)}">
+        <span class="v202-bank-logo">${bankLogoMark(b,'institution-logo')}</span>
+        <span class="v202-bank-meta"><strong>${sanitize(b.name)}</strong><small>${sanitize(v42KindLabel(b))} · ${products} producto${products===1?'':'s'}</small></span>
+        <span class="v202-bank-net ${f.net<0?'negative':''}"><strong>${money(f.net)}</strong><small>Posición neta</small></span>
+        <span class="v202-bank-chevron" aria-hidden="true">${icon('arrow')}</span>
+      </button>
+      ${opened?`<div class="v202-bank-open">
+        <div class="v202-bank-amounts"><div><small>Disponible</small><strong>${money(f.liquidity)}</strong></div><div><small>Deuda</small><strong>${money(f.credit+f.loansDue)}</strong></div></div>
+        <div class="v202-bank-actions" aria-label="Productos de ${sanitize(b.name)}">
+          <button type="button" data-act="navigate" data-id="accounts">${icon('wallet')}<strong>Cuentas</strong><small>${f.aa.length}</small></button>
+          <button type="button" data-act="navigate" data-id="cards">${icon('card')}<strong>Tarjetas</strong><small>${f.cc.length}</small></button>
+          <button type="button" data-act="navigate" data-id="loans">${icon('receipt')}<strong>Préstamos</strong><small>${f.ll.length}</small></button>
+          <button type="button" data-act="navigate" data-id="certificates">${icon('chart')}<strong>Certificados</strong><small>${f.certs.length}</small></button>
+        </div>
+        <button type="button" class="v202-bank-more" data-v202-expand="1" aria-expanded="${v202ShowBankDetail}">${v202ShowBankDetail?'Ocultar detalle':'Ver todos los detalles de esta institución'} ${icon('arrow')}</button>
+        ${v202ShowBankDetail?`<div class="v202-full-bank-detail">${bankDetail(b)}</div>`:''}
+      </div>`:''}
+    </article>`;
+  }).join('');
+  return `<div class="v202-mobile-banks" aria-label="Bancos, experiencia móvil">
+    <header class="v202-banks-top"><div><span class="v202-eyebrow">TU CENTRO BANCARIO</span><h1>Bancos</h1></div><button class="v202-add" type="button" data-act="addBank" aria-label="Agregar institución">${icon('plus')}</button></header>
+    <section class="v202-wealth" aria-label="Resumen bancario">
+      <span class="v202-eyebrow">Dinero disponible en instituciones</span><strong class="v202-wealth-value">${money(liquid)}</strong>
+      <div class="v202-wealth-bottom"><div><small>Deudas</small><strong>${money(debt)}</strong></div><div><small>Posición neta</small><strong class="${net<0?'negative':''}">${money(net)}</strong></div></div>
+    </section>
+    <nav class="v202-bank-profiles" aria-label="Perfil de instituciones">${profileButtons}</nav>
+    <section class="v202-bank-list" aria-label="Mis instituciones">
+      <div class="v202-bank-heading"><h2>Mis instituciones</h2><span>${scoped.length} ${scoped.length===1?'institución':'instituciones'}</span></div>
+      ${banksList||`<div class="v202-bank-empty"><div>${icon('building')}</div><strong>No hay instituciones en este perfil</strong><p>Agrega una institución o cambia de perfil para ver tus productos.</p><button type="button" class="v202-bank-more" data-act="addBank">Agregar institución ${icon('plus')}</button></div>`}
+    </section>
+    <p class="v202-bank-foot">Los montos muestran únicamente productos vinculados a las instituciones del perfil. El efectivo sin banco no se incluye.</p>
+  </div>`;
+}
+banks=function(){return window.matchMedia?.('(max-width: 767px)').matches?v202MobileBanks():v202DesktopBanks();};
+pages.banks=banks;
+document.addEventListener('click',e=>{
+ const pick=e.target.closest?.('[data-v202-bank]');
+ const more=e.target.closest?.('[data-v202-expand]');
+ if(!pick&&!more)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(pick){v203ProductExplicit=false;v203ProductFilter='accounts';const id=pick.dataset.v202Bank;
+   if(ui.bankId===id){ui.bankId=null;}else{ui.bankId=id;}v202ShowBankDetail=false;
+ }else{v202ShowBankDetail=!v202ShowBankDetail;}
+ render();
+ if(ui.bankId){requestAnimationFrame(()=>{
+  if(more){document.querySelector('.v203-full-detail')?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});return;}
+  const el=document.querySelector('.v202-bank-item.opened');
+  if(el&&el.getBoundingClientRect().top<65)el.scrollIntoView({behavior:'instant',block:'start'});
+ });}
+},true);
+/* V203 — Bancos de bolsillo. Sólo se activa bajo 768px; Buscar y escritorio intactos. */
+let v203ProductFilter='accounts',v203ProductExplicit=false;
+function v203MobileBanks(){
+  v40Ensure();
+  const visible=db.banks.filter(b=>ui.showHidden||!b.archived);
+  const scoped=visible.filter(v61InstitutionMatches);
+  const summary=v61ProfileSummary(scoped);
+  const liquid=Number(summary.liquid)||0;
+  const debt=(Number(summary.credit)||0)+(Number(summary.loanDebt)||0);
+  const net=liquid+(Number(summary.invested)||0)-debt;
+  const totals={all:visible.length,personal:visible.filter(b=>b.scope!=='negocio').length,negocio:visible.filter(b=>b.scope==='negocio').length};
+  const types=[['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certs','Certificados','chart']];
+  const profiles=[['all','Todas'],['personal','Personal'],['negocio','Negocio']].map(([key,label])=>
+    `<button type="button" class="v203-profile ${v61InstitutionProfile===key?'active':''}" data-v61-profile="${key}" aria-pressed="${v61InstitutionProfile===key}">${label}<em>${totals[key]}</em></button>`
+  ).join('');
+  const institutions=scoped.map(b=>{
+    // Coinciden con los importes de cartera: productos activos, sin sumar efectivo fuera del banco.
+    const f=v61ProfileSummary([b]);
+    const bankDebt=Number(f.credit||0)+Number(f.loanDebt||0);
+    const bankLiquid=Number(f.liquid||0);
+    const bankNet=bankLiquid+Number(f.invested||0)-bankDebt;
+    const count=f.accounts.length+f.cards.length+f.loans.length+f.certs.length;
+    const opened=ui.bankId===b.id;
+    const available={accounts:f.accounts,cards:f.cards,loans:f.loans,certs:f.certs};
+    const group=v203ProductExplicit?v203ProductFilter:(available[v203ProductFilter]?.length?v203ProductFilter:(types.find(([k])=>available[k].length)?.[0]||'accounts'));
+    const accent=/^#[0-9a-fA-F]{6}$/.test(String(b.color||''))?b.color:'#4777d8';
+    const scale=Math.max(1,Math.max(0,bankLiquid),Math.max(0,bankDebt));
+    const overviewBars=`<div class="v203-balance-preview" aria-label="Proporción de fondos y deudas de esta institución"><div><div class="v203-preview-head"><span>Fondos</span><span>${bankLiquid>0?'●':'—'}</span></div><div class="v203-preview-line"><span style="--pct:${Math.max(0,Math.min(100,bankLiquid/scale*100)).toFixed(1)}%"></span></div></div><div><div class="v203-preview-head"><span>Deuda</span><span>${bankDebt>0?'●':'—'}</span></div><div class="v203-preview-line debt"><span style="--pct:${Math.max(0,Math.min(100,bankDebt/scale*100)).toFixed(1)}%"></span></div></div></div>`;
+    const categoryButtons=types.map(([k,label,ico])=>`<button type="button" class="v203-product-type ${group===k?'active':''}" data-v203-category="${k}" aria-pressed="${group===k}" aria-label="Ver ${label.toLowerCase()} de ${sanitize(b.name)}, ${available[k].length} productos">${icon(ico)}<span>${label}</span><em>${available[k].length}</em></button>`).join('');
+    const items=(available[group]||[]).map(product=>{
+      let val=0,currency='DOP',detail='',name=product.name||'Producto',status='';
+      if(group==='accounts'){
+        currency=product.currency||'DOP';val=getAccountBalance(product);detail='Saldo disponible';status=String(product.kind||'').toLowerCase()==='savings'?'Ahorros':'Cuenta';
+      }else if(group==='cards'){
+        val=cardStatus(product,'DOP').debt+fx(cardStatus(product,'USD').debt,'USD');detail='Deuda · RD$ equivalente';status='Crédito';
+      }else if(group==='loans'){
+        currency=product.currency||'DOP';val=loanStatus(product).balance;detail='Capital pendiente';status='Préstamo';
+      }else{
+        currency=product.currency||'DOP';val=certificateCapital(product);detail='Capital registrado';status='Inversión';
+      }
+      const ico=types.find(([k])=>k===group)?.[2]||'wallet';
+      return `<button type="button" class="v203-item" data-v203-open-product="${group}" data-id="${sanitize(product.id)}" aria-label="Abrir detalle de ${sanitize(name)}"><span class="v203-item-icon">${icon(ico)}</span><span class="v203-item-text"><strong>${sanitize(name)}</strong><small>${sanitize(status)}</small></span><span class="v203-item-money"><strong>${money(val,currency)}</strong><small>${sanitize(detail)}</small></span></button>`;
+    }).join('');
+    const addKind={accounts:'addAccount',cards:'addCard',loans:'addLoan',certs:'addCertificate'}[group];
+    const groupLabel=types.find(([k])=>k===group)?.[1]||'Productos';
+    return `<article class="v202-bank-item v203-institution ${opened?'opened':''}" style="--institution-accent:${accent}">
+      <button type="button" class="v202-bank-trigger v203-bank-trigger" data-v202-bank="${sanitize(b.id)}" aria-expanded="${opened}" aria-controls="v203-content-${sanitize(b.id)}" aria-label="${opened?'Cerrar':'Abrir'} ${sanitize(b.name)}">
+        <span class="v203-bank-logo">${bankLogoMark(b,'institution-logo')}</span>
+        <span class="v203-bank-name"><strong>${sanitize(b.name)}</strong><small>${sanitize(v42KindLabel(b))} · ${count} producto${count===1?'':'s'}</small></span>
+        <span class="v203-bank-figure"><strong class="${bankNet<0?'is-negative':''}">${money(bankNet)}</strong><small>Posición neta</small></span>
+        <span class="v203-bank-caret" aria-hidden="true">${icon('arrow')}</span>
+      </button>
+      ${opened?'':overviewBars}
+      ${opened?`<div class="v203-expanded" id="v203-content-${sanitize(b.id)}">
+        <div class="v203-expanded-top"><div><small>Dinero disponible</small><strong>${money(bankLiquid)}</strong></div><div><small>Deuda registrada</small><strong>${money(bankDebt)}</strong></div></div>
+        <div class="v203-products-title"><strong>Mis productos</strong><small>Toca para explorar</small></div>
+        <nav class="v203-product-types" aria-label="Tipos de productos de ${sanitize(b.name)}">${categoryButtons}</nav>
+        <div class="v203-items-list" aria-live="polite">${items||`<div class="v203-empty-product">No tienes ${groupLabel.toLowerCase()} registrados en esta institución.</div>`}</div>
+        <div class="v203-expand-actions">
+          <button type="button" data-v202-expand="1" aria-expanded="${v202ShowBankDetail}">${icon('building')}${v202ShowBankDetail?'Ocultar expediente':'Expediente completo'}</button>
+          <button type="button" data-act="${addKind}" data-id="${sanitize(b.id)}" aria-label="Agregar ${groupLabel.toLowerCase()} en ${sanitize(b.name)}">${icon('plus')} Añadir</button>
+        </div>
+        ${v202ShowBankDetail?`<div class="v203-full-detail">${bankDetail(b)}</div>`:''}
+      </div>`:''}
+    </article>`;
+  }).join('');
+  return `<div class="v203-mobile-banks" aria-label="Bancos · cartera móvil">
+    <header class="v203-header"><div><span class="v203-kicker">Tu dinero, banco por banco</span><h1>Bancos</h1></div><button type="button" class="v203-header-action" data-act="addBank" aria-label="Añadir institución">${icon('plus')}<span>Añadir</span></button></header>
+    <section class="v203-hero" aria-label="Posición de los bancos seleccionados"><div class="v203-hero-top"><span class="v203-hero-tag">Disponible en instituciones</span><span class="v203-hero-mark" aria-hidden="true">${icon('wallet')}</span></div><strong class="v203-hero-value">${money(liquid)}</strong><div class="v203-hero-grid"><div><small>Deudas</small><strong>${money(debt)}</strong></div><div><small>Posición neta</small><strong>${money(net)}</strong></div></div></section>
+    <nav class="v203-profiles" aria-label="Filtrar instituciones por perfil">${profiles}</nav>
+    <div class="v203-list-head"><div><span class="v203-kicker">Tus relaciones financieras</span><h2>Mis instituciones</h2></div><span>${scoped.length} ${scoped.length===1?'institución':'instituciones'}</span></div>
+    <section class="v203-stack" aria-label="Instituciones disponibles">${institutions||`<div class="v203-empty-bank"><strong>Tu espacio bancario comienza aquí</strong><p>Añade una institución o cambia de perfil para ver los productos que ya registraste.</p><button type="button" data-act="addBank">Añadir institución</button></div>`}</section>
+    <small class="v203-footnote">Saldos por institución en pesos equivalentes. No incluye efectivo sin banco. Los productos archivados permanecen en su historial.</small>
+  </div>`;
+}
+// Exclusivamente en móvil; la página bancaria de escritorio mantiene el código anterior.
+banks=function(){return window.matchMedia?.('(max-width: 767px)').matches?v203MobileBanks():v202DesktopBanks();};
+pages.banks=banks;
+document.addEventListener('click',function(event){
+  const category=event.target.closest?.('[data-v203-category]');
+  const product=event.target.closest?.('[data-v203-open-product]');
+  if(!category&&!product)return;
+  event.preventDefault();event.stopImmediatePropagation();
+  if(category){v203ProductFilter=category.dataset.v203Category;v203ProductExplicit=true;render();return;}
+  const kind=product.dataset.v203OpenProduct,id=product.dataset.id;
+  if(!id)return;
+  const destinations={accounts:'accounts',cards:'cards',loans:'loans',certs:'certificates'};
+  if(!destinations[kind])return;
+  ui.page=destinations[kind];
+  if(kind==='accounts')ui.accountId=id;
+  if(kind==='cards'){ui.cardId=id;ui.cardDetailTab='status';}
+  if(kind==='loans'){ui.loanId=id;ui.innerViews=ui.innerViews||{};ui.innerViews.loans='overview';loanWorkspace.tab='vision';}
+  render();
+  requestAnimationFrame(()=>document.querySelector(kind==='accounts'?'.account-detail':kind==='cards'?'.card-detail':kind==='loans'?'#loan-workspace':'.cert-card')?.scrollIntoView({block:'nearest',behavior:'smooth'}));
+},true);
+
 const v42OrigBankForm=bankForm;
 bankForm=function(id){const b=bank(id)||{};const o={name:'',kind:'Banco',notes:'',color:'#376bea',scope:'personal',...b};if(!v40IsFinancial(o))o.kind='Entidad no bancaria';const logo=bankLogoSafe(o.logo);
 const upload=`<div class="form-full v28-bank-upload"><div id="bankLogoPreview">${bankLogoMark(o,'bank-logo-upload-preview')}</div><div class="v28-bank-upload-copy"><strong>Identidad visual de la institución</strong><small>Imagen opcional. El color que elijas también identifica la entidad en las listas.</small><div class="v28-upload-actions"><button type="button" class="btn sm soft" data-act="bankLogoChoose">${icon('plus')} ${logo?'Cambiar':'Subir'} logo</button><button type="button" class="btn sm ghost" data-act="bankLogoRemove" id="bankLogoRemove" ${logo?'':'hidden'}>Quitar logo</button></div></div><input id="bankLogoFile" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" hidden aria-label="Seleccionar logo"></div>`;
@@ -23195,11 +23635,21 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   const months=Array.from({length:m},(_,i)=>`${y}-${String(i+1).padStart(2,'0')}`),yearData=months.map(m=>({name:m,data:monthly(m)}));
   const ytd=yearData.reduce((s,x)=>s+x.data.income,0),month=monthly(selected),prior=monthly(`${y-1}-${selected.slice(5,7)}`);
   const earned=month.incomeBy||{},formal=Object.entries(earned).filter(([k])=>/sueldo|salario|n[oó]mina|trabajo formal/i.test(k)).reduce((s,[,v])=>s+num(v),0);
-  const informal=Object.entries(earned).filter(([k])=>/joseo|venta|negocio|emprend|servicio|informal|adicional/i.test(k)).reduce((s,[,v])=>s+num(v),0);
+  // V205: corte del mes para cobros informales efectivamente registrados. No impacta el acumulado anual (ytd).
+  const dateToday=today(),periodEndDay=new Date(y,m,0).getDate();
+  const cutDate=selected===dateToday.slice(0,7)?dateToday:(selected<dateToday.slice(0,7)?`${selected}-${String(periodEndDay).padStart(2,'0')}`:`${selected}-00`);
+  const informalTransactions=(db.transactions||[]).filter(t=>t.type==='income'&&String(t.date||'').slice(0,7)===selected&&t.date<=cutDate).filter(t=>{
+   const origin=(db.sources||[]).find(src=>src.id===t.sourceId);
+   return origin?.kind==='informal'||/joseo|venta|negocio|emprend|servicio|informal|adicional/i.test(`${t.category||''} ${t.subcategory||''}`);
+  });
+  const informalGroups={};
+  for(const t of informalTransactions){const group=t.category||'Ingresos informales',value=num(t.amount)*(t.currency==='USD'?num(t.fxRateSnapshot||db.settings.fx):1);informalGroups[group]=(informalGroups[group]||0)+value}
+  const informal=Object.values(informalGroups).reduce((sum,value)=>sum+value,0);
+  const informalDetail=detailRowsByCategory(informalGroups,'Cobros informales registrados hasta la fecha de corte');
   const yoy=prior.income>.005?(month.income-prior.income)/Math.abs(prior.income)*100:null;
   const formatDelta=yoy===null?'Sin base':(yoy>=0?'+':'')+pct(yoy);
   const bySource=(pred)=>detailRowsByCategory(Object.fromEntries(Object.entries(earned).filter(([k])=>pred(k))), 'Ingreso cobrado, agrupado por categoría');
-  return {kicker:`INGRESOS / ${y}`,title:'Lo que has generado,<br><em>con origen claro.</em>',subtitle:'El acumulado reconoce ingresos registrados, nunca el capital recibido en préstamos. Distingue formal, joseo y otras fuentes.',main:metric('INGRESOS ACUMULADOS DEL AÑO',eq(ytd),`Enero a ${fmtMonth(selected)} · recibidos y contabilizados`,details('Evolución acumulada por mes',ytd,yearData.map(x=>row(fmtMonth(x.name),x.data.income,`Resultado neto de ingreso reconocido: ${eq(x.data.income)}`)),'Incluye beneficios acreditados e intereses personales efectivamente cobrados; excluye capital de préstamos.',{page:'income',tab:'overview'})),cards:[metric('INGRESO DEL MES',eq(month.income),fmtMonth(selected),details('Ingresos del mes por categoría',month.income,detailRowsByCategory(earned,'Importes de movimientos confirmados'),'Distribución por categoría desde el libro de movimientos.',{page:'income',tab:'category'})),metric('TRABAJO FORMAL',eq(formal),'Cobros de salario / nómina en el mes',details('Ingresos formales del mes',formal,bySource(k=>/sueldo|salario|n[oó]mina|trabajo formal/i.test(k)),'Clasificación basada en las categorías de los cobros reales, no en el calendario de pagos estimados.',{page:'income',tab:'category'})),metric('JOSEO Y NEGOCIOS',eq(informal),'Ventas, servicios y trabajo informal',details('Ingresos informales del mes',informal,bySource(k=>/joseo|venta|negocio|emprend|servicio|informal|adicional/i.test(k)),'Clasificación de movimientos confirmados. Los cobros sin estas categorías permanecen en Otras fuentes.',{page:'income',tab:'category'})),metric('INTERANUAL DEL MES',formatDelta,`Base ${eq(prior.income)} · ${y-1}`,details('Comparación interanual',null,[row(`${fmtMonth(selected)} · año actual`,month.income,'Ingreso confirmado'),row(`${fmtMonth(selected).replace(String(y),String(y-1))} · año anterior`,prior.income,'Ingreso confirmado')],'La variación es porcentual y solo aparece si el año anterior tiene una base positiva.',{page:'income',tab:'overview'}))],footer:'Solo movimientos contabilizados. Los calendarios de nómina e ingresos informales estimados permanecen separados. '+fxFoot(),actions:[['Ver movimientos','income','activity']]};
+  return {kicker:`INGRESOS / ${y}`,title:'Lo que has generado,<br><em>con origen claro.</em>',subtitle:'El acumulado reconoce ingresos registrados, nunca el capital recibido en préstamos. Distingue formal, joseo y otras fuentes.',main:metric('INGRESOS ACUMULADOS DEL AÑO',eq(ytd),`Enero a ${fmtMonth(selected)} · recibidos y contabilizados`,details('Evolución acumulada por mes',ytd,yearData.map(x=>row(fmtMonth(x.name),x.data.income,`Resultado neto de ingreso reconocido: ${eq(x.data.income)}`)),'Incluye beneficios acreditados e intereses personales efectivamente cobrados; excluye capital de préstamos.',{page:'income',tab:'overview'})),cards:[metric('INGRESO DEL MES',eq(month.income),fmtMonth(selected),details('Ingresos del mes por categoría',month.income,detailRowsByCategory(earned,'Importes de movimientos confirmados'),'Distribución por categoría desde el libro de movimientos.',{page:'income',tab:'category'})),metric('TRABAJO FORMAL',eq(formal),'Cobros de salario / nómina en el mes',details('Ingresos formales del mes',formal,bySource(k=>/sueldo|salario|n[oó]mina|trabajo formal/i.test(k)),'Clasificación basada en las categorías de los cobros reales, no en el calendario de pagos estimados.',{page:'income',tab:'category'})),metric('JOSEO · AL CORTE DEL MES',eq(informal),`Recibido hasta ${cutDate.endsWith('-00')?'el inicio del período':prettyDate(cutDate)}`,details('Joseo y negocios al corte del mes',informal,informalDetail,'Solo cobros informales confirmados hasta la fecha de corte. No incluye ingresos futuros ni cambia el acumulado anual.',{page:'income',tab:'category'})),metric('INTERANUAL DEL MES',formatDelta,`Base ${eq(prior.income)} · ${y-1}`,details('Comparación interanual',null,[row(`${fmtMonth(selected)} · año actual`,month.income,'Ingreso confirmado'),row(`${fmtMonth(selected).replace(String(y),String(y-1))} · año anterior`,prior.income,'Ingreso confirmado')],'La variación es porcentual y solo aparece si el año anterior tiene una base positiva.',{page:'income',tab:'overview'}))],footer:'Solo movimientos contabilizados. Los calendarios de nómina e ingresos informales estimados permanecen separados. '+fxFoot(),actions:[['Ver movimientos','income','activity']]};
  }
  function buildExpenses(){
   const selected=ui.month||today().slice(0,7),y=Number(selected.slice(0,4)),m=Number(selected.slice(5,7)),annual=ui.expenseRange==='year';
@@ -25245,7 +25695,7 @@ function v71SearchOpen(){
  v149SearchIndex=v71SearchEntries().map(x=>({...x,_v150Hay:v71SearchNormalize([x.title,x.sub,x.meta].join(' ')),_v150Title:v71SearchNormalize(x.title)}));
  v150SearchReturnFocus=document.activeElement;
  const overlay=document.createElement('div');overlay.id='v71-search-overlay';overlay.className='v71-search-overlay v149-spotlight';overlay.setAttribute('role','presentation');
- overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global vive el hoy"><div class="v159-spotlight-identity"><span class="v159-brand-symbol">P</span><span>vive el hoy</span><span class="v159-spotlight-caption">BÚSQUEDA GLOBAL</span></div><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="v71-search-results" placeholder="Buscar en vive el hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v153-spotlight-shortcuts" aria-label="Accesos de Spotlight">
+ overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global vive el hoy"><div class="v159-spotlight-identity"><span class="v159-brand-symbol">v</span><span>vive el hoy</span><span class="v159-spotlight-caption">BÚSQUEDA GLOBAL</span></div><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="v71-search-results" placeholder="Buscar en vive el hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v153-spotlight-shortcuts" aria-label="Accesos de Spotlight">
   <span class="v153-spotlight-shortcuts-label">ACCESOS RÁPIDOS</span>
   <div class="v153-spotlight-shortcuts-items">
    <button type="button" data-v153-search-nav="accounts" title="Cuentas y efectivo" aria-label="Ir a Cuentas y efectivo">${v153DockIcon('folder')}<span>Cuentas</span></button>
@@ -30138,5 +30588,223 @@ body.theme-dark .world-advanced #page .v16-expense .v198-category-year-table tr.
 }
 </style>
 
+
+<style id="vive-v201-black-contrast">
+
+/* V201 | Noir refinement / icon visibility / rich UI states.
+   The pure-black theme is intentionally separate from the original dark theme.
+   Base surfaces are nearly neutral; financial semantic greens/ambers/reds remain differentiated. */
+html:has(body.theme-black),html:has(body.theme-black) body{background-color:#000!important;color-scheme:dark}
+body.theme-black{--bg:#000!important;--white:#131417!important;--panel:#131417!important;--surface:#101114!important;--card:#151619!important;--ink:#f4f6fb!important;--muted:#b0b9c9!important;--line:#30343c!important;--navy:#050506!important;--navy2:#111319!important;--blue2:#202b40!important;background-color:#000!important;color:#f4f6fb!important}
+body.theme-black .main,body.theme-black .shell,body.theme-black #app,body.theme-black #page{background-color:#000!important;color:#f4f6fb!important}
+body.theme-black .sidebar.rail-sidebar{background:#050507!important;border-color:#252934!important}
+/* Navigation: inactive icons were dark navy on black and nearly invisible. */
+body.theme-black .sidebar .rail-action{color:#b9c9e0!important;border:1px solid transparent!important;background:transparent!important;filter:none!important}
+body.theme-black .sidebar .rail-action :is(svg,.rail-symbol){color:inherit!important;stroke:currentColor!important;opacity:1!important}
+body.theme-black .sidebar .rail-action:hover,body.theme-black .sidebar .rail-action:focus-visible{background:#161d2b!important;border-color:#3e506a!important;color:#eef3ff!important}
+body.theme-black .sidebar .rail-action.active,body.theme-black .sidebar .rail-action[aria-current="page"]{background:#1a2030!important;border:1px solid #7294e0!important;box-shadow:0 0 0 2px rgba(78,120,220,.14),0 6px 16px rgba(0,0,0,.55)!important;color:#a7c2ff!important}
+body.theme-black .sidebar .rail-action.active :is(svg,.rail-symbol){color:#a7c2ff!important;stroke:currentColor!important}
+body.theme-black .sidebar .rail-hairline{background:#383b46!important}
+body.theme-black .sidebar .rail-top .vive-p-brand{font-family:Georgia,'Times New Roman',serif!important;font-size:56px!important;letter-spacing:-.06em!important;line-height:1!important;color:#fff!important;text-transform:none!important;transform:translateY(-3px)!important}
+body.theme-black .sidebar .rail-top .vive-p-brand:hover{color:#a9c3ff!important}
+/* Brand size adjusted in every mode after changing P to lowercase v. */
+.rail-top .vive-p-brand{font-family:Georgia,'Times New Roman',serif!important;font-size:56px!important;line-height:1!important;letter-spacing:-.06em!important;text-transform:none!important}
+.v159-brand-symbol{font-size:20px!important;line-height:1!important;text-transform:none!important}
+body.theme-black .v159-brand-symbol{color:#f8fbff!important;background:#1c2330!important;border-color:#4a5973!important}
+/* Top-level module navigation: eliminate blue text on black and white active pills. */
+body.theme-black :is(.topbar,.module-switch-shell,.module-switch-tabs,.v145-pay-filters,.v196-kind-filters,.settings-nav,.v61-profile-switch){background-color:#111317!important;border-color:#30343c!important;color:#f3f5fa!important}
+body.theme-black :is(.module-switch-tab,.tab,.settings-tab,.v199-profile-inline .v61-profile-option){background-color:#1e2128!important;border-color:#353a46!important;color:#dce5f3!important}
+body.theme-black :is(.module-switch-tab.active,.tab.active,.settings-tab.active,.v199-profile-inline .v61-profile-option.active){background-color:#29374f!important;border-color:#7298ef!important;color:#fff!important}
+/* Main executive surfaces: no pale gradients under white typography. */
+body.theme-black .ff-dashboard .ff-balance{background:#14161b!important;background-image:linear-gradient(133deg,#15171e,#1b2130)!important;border-color:#39404c!important;color:#f7f9ff!important}
+body.theme-black .ff-dashboard .ff-balance :is(.ff-balance-header,.ff-balance-header strong,.ff-balance-header b,.ff-balance-header small,.ff-executive-header,.ff-executive-header strong,.ff-executive-header b,.ff-executive-header small){color:#f3f6ff!important}
+body.theme-black .ff-dashboard .ff-balance .ff-balance-header :is(p,small,span:not(.money)){color:#bec9de!important}
+body.theme-black .ff-dashboard .ff-bubble:not(.featured){background:#222836!important;background-image:linear-gradient(145deg,#252c3d,#181d29)!important;border:1px solid #45526a!important;box-shadow:0 7px 20px rgba(0,0,0,.25)!important;color:#fff!important}
+body.theme-black .ff-dashboard .ff-bubble:not(.featured) :is(.bubble-amount,.ff-yoy,small,.bubble-label,span){color:#f2f7ff!important}
+body.theme-black .ff-dashboard .ff-bubble:not(.featured) .ff-yoy.down{color:#ffbf83!important}
+body.theme-black .ff-dashboard .ff-bubble:not(.featured) .ff-yoy.up{color:#8ee8c5!important}
+body.theme-black .ff-dashboard .ff-bubble.featured{background:linear-gradient(142deg,#5446b8,#463a98)!important;border:1px solid #7c70dc!important;color:#fff!important}
+body.theme-black .ff-dashboard :is(.ff-upcoming,.ff-personal,.ff-expense-card,.ff-health-card,.ff-activity,.ff-obligations){background:#14171c!important;background-image:linear-gradient(145deg,#161a21,#121419)!important;border:1px solid #323b4d!important;color:#f4f6fb!important}
+body.theme-black .ff-dashboard .ff-health-card{background-image:linear-gradient(135deg,#151e32,#172b48)!important;border-color:#365581!important}
+body.theme-black .ff-dashboard :is(.ff-upcoming,.ff-personal,.ff-expense-card,.ff-health-card,.ff-activity,.ff-obligations) :is(h2,h3,h4,strong,b,.money){color:#f3f7ff!important}
+body.theme-black .ff-dashboard :is(.ff-upcoming,.ff-personal,.ff-expense-card,.ff-health-card,.ff-activity,.ff-obligations) :is(small,.ff-subtitle,.ff-meta){color:#b7c3d8!important}
+body.theme-black .ff-dashboard .v82-burden{background:#242b38!important;color:#e7eafa!important;border:1px solid #485369!important}
+body.theme-black .ff-dashboard .v82-burden :is(span,b,strong){color:#e7eafa!important}
+/* Secondary panels in modules and cards: neutral black surfaces with subtle elevation. */
+body.theme-black :is(.bank-detail,.institution-tile,.loan-product,.loan-empty,.cert-card,.bank-card,.bank-workspace,.v46-bank-card,.v46-bank-hero,.v26-body,.v26-internal,.inner-view-card,.settings-hero,.settings-layout .panel,.settings-layout .theme-settings,.v145-pay-hero,.v145-payment-kpi,.v145-pay-quick,.v196-pay-category,.v145-pay-agenda,.v176-pay-services,.v186-service-calendar,.budget-row,.budget-analysis-panel,.budget-variance-card,.v194-subcategory-content,.v198-cat-card,.v197-chart-card,.widgets-heading,.ws-widget,.v58-exec,.v61-profile-switch,.v199-profile-inline,.v200-commitment-tools){background:#131519!important;background-image:none!important;border-color:#373d48!important;box-shadow:0 6px 18px rgba(0,0,0,.4)!important;color:#f2f5fa!important}
+body.theme-black :is(.v58-exec,.income-world-hero,.world-intro,.v145-pay-hero){background:#131a24!important;background-image:linear-gradient(126deg,#11161e,#192331)!important;border:1px solid #343f50!important}
+body.theme-black :is(.institution-tile,.loan-product,.cert-card,.loan-empty,.bank-detail) :is(h2,h3,h4,strong,b,.money,.loan-product-value,.cert-amount){color:#f4f7ff!important}
+body.theme-black :is(.institution-tile,.loan-product,.cert-card,.loan-empty,.bank-detail) :is(p,small,.subtle,.loan-product-small,.cert-bank){color:#b8c4d5!important}
+/* Buttons/badges that were pure-white in Black theme; accents stay purposeful. */
+body.theme-black :is(.btn.ghost,.btn.soft,.v58-action.primary,.v58-action.secondary,.institution-tile button,.v61-scope-pill.personal,.v61-scope-pill.business){background:#242a34!important;background-image:none!important;color:#e9f0ff!important;border:1px solid #506179!important;box-shadow:none!important}
+body.theme-black .v61-scope-pill.personal{background:#253e59!important;color:#c6e2ff!important;border-color:#42678b!important}
+body.theme-black .v61-scope-pill.business{background:#253b32!important;color:#b9f1d0!important;border-color:#3c7657!important}
+body.theme-black .v61-profile-option.selected,body.theme-black .v61-profile-option.active{background:#2a3a53!important;color:#fff!important;border-color:#829dd0!important}
+body.theme-black :is(.v61-profile-option,.v200-pay-tool,.v145-pay-tool,.v145-pay-filters button,.v196-kind-filters button){background:#20252d!important;color:#e6edf8!important;border-color:#3c485b!important}
+body.theme-black :is(.v200-pay-tool.active,.v145-pay-tool.active,.v145-pay-filters button.active,.v196-kind-filters button.active){background:#283a59!important;border-color:#819ce0!important;color:#fff!important}
+body.theme-black :is(input,textarea,select,.date-chip,.pill,.v145-agenda-row){background:#1c2028!important;background-image:none!important;color:#f5f7fc!important;border-color:#455065!important}
+body.theme-black :is(input,textarea,select)::placeholder{color:#b6c1cf!important}
+body.theme-black :is(.panel,.kpi,.ws-widget,.v197-chart-card) :is(h2,h3,h4,strong,.kpi-value){color:#f3f6fc!important}
+body.theme-black :is(.panel,.kpi,.ws-widget,.v197-chart-card) :is(small,.hint,.muted,.subtle){color:#bcc6d4!important}
+/* Existing charts rely on series/stroke colors. Keep their distinct traces; adjust only labels/axes. */
+body.theme-black :is(.v197-chart-card,.ws-widget) :is(.chart-label,.chart-axis,.chart-tick,.v197-caption,.v197-legend){color:#b9c4d2!important}
+body.theme-black :is(.v197-chart-card,.ws-widget) svg text{fill:#b9c4d2!important}
+body.theme-black :is(.v197-chart-card,.ws-widget) :is(.chart-grid,.chart-guide){stroke:#374151!important}
+/* Scrollers, hover, outlines, form focus: keep them visible without light flashes. */
+body.theme-black :is(button,a,[role="button"]):focus-visible{outline:2px solid #a7bcfa!important;outline-offset:2px!important}
+body.theme-black :is(button,a,[role="button"]):hover{filter:brightness(1.1)}
+body.theme-black :is(.table,.table-scroll,.matrix-scroll,.annual-matrix,.v198-matrix){scrollbar-color:#4d5c70 #13161b}
+body.theme-black :is(table thead,thead th,.table-head){background-color:#202630!important;color:#eaf0fa!important}
+body.theme-black :is(table tbody tr:hover,.table-row:hover){background-color:#222a36!important}
+body.theme-black :is(.positive,.success,.good,.v197-positive){color:#8ce7bb!important}
+body.theme-black :is(.negative,.danger,.bad,.v197-negative){color:#ffb17b!important}
+body.theme-black :is(.v159-spotlight-identity,.v159-spotlight-caption){color:#b6c5da!important}
+/* Make Black a genuinely black mobile experience too. */
+@media(max-width:790px){
+  body.theme-black :is(.vive-mobile-top,.vive-mobile-dock,.mobile-dock,.v153-rail){background:#090a0d!important;border-color:#2b3545!important}
+  body.theme-black :is(.vive-mobile-top,.vive-mobile-dock,.mobile-dock) :is(button,svg){color:#c7d7ec!important}
+  body.theme-black .ff-dashboard .ff-balance{background-image:linear-gradient(145deg,#141922,#161d2c)!important}
+  body.theme-black .ff-dashboard .ff-bubble:not(.featured){background:#222a3a!important}
+}
+@media(prefers-reduced-motion:reduce){body.theme-black :is(button,a){transition:none!important}}
+
+
+/* V204 | Bancos web: navegación contextual a la izquierda, productos a la derecha.
+   Sin afectar la vista nativa de Bancos en iPhone. */
+@media (min-width:791px){
+ .world-banks .v204-desktop-layout{display:grid;grid-template-columns:clamp(238px,23%,288px) minmax(0,1fr);gap:16px;margin-top:18px;align-items:start;min-width:0}
+ .world-banks .v204-bank-sidebar{min-width:0;position:sticky;top:14px;max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:1px 2px 2px 0}
+ .world-banks .v204-bank-sidebar .v42-bank-section{padding:15px!important;margin:0!important;border:1px solid var(--line)!important;border-radius:20px!important;background:var(--panel,#fff)!important;box-shadow:0 7px 26px #1c315309!important;min-width:0}
+ .world-banks .v204-bank-sidebar .v42-bank-top{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important;margin-bottom:13px!important}
+ .world-banks .v204-bank-sidebar .v42-bank-top h3{font-size:17px!important;letter-spacing:-.5px;margin:0}
+ .world-banks .v204-bank-sidebar .v42-bank-top p{font-size:11px!important;line-height:1.5!important;margin:4px 0 0!important}
+ .world-banks .v204-bank-sidebar .v42-filters{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:3px!important;width:100%!important;padding:3px!important;border-radius:12px!important;min-width:0}
+ .world-banks .v204-bank-sidebar .v42-filters button{padding:8px 3px!important;font-size:10px!important;min-width:0!important;white-space:normal!important;line-height:1.2!important;border-radius:9px!important}
+ .world-banks .v204-bank-sidebar .v42-entities{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important;padding:0!important;margin:0!important;min-width:0}
+ .world-banks .v204-bank-sidebar .v46-bank-card{width:100%!important;min-width:0!important;padding:12px 13px!important;border-radius:14px!important;display:grid!important;gap:5px!important;align-content:start!important;box-shadow:none!important;transform:none!important;text-align:left!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card.selected{border:1px solid #668bd8!important;box-shadow:inset 3px 0 0 #4e7fe2!important;background:var(--blue2,#eff5ff)!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-top{margin:0!important;display:flex!important;justify-content:space-between!important;align-items:center!important}
+ .world-banks .v204-bank-sidebar .institution-logo{width:32px!important;height:32px!important;min-width:32px!important;border-radius:10px!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-name{font-size:13px!important;line-height:1.25!important;letter-spacing:-.2px!important;margin:0!important;overflow-wrap:anywhere!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-type,.world-banks .v204-bank-sidebar .v46-bank-card-products{font-size:10px!important;line-height:1.4!important;margin:0!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-metrics{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin-top:4px!important;padding-top:8px!important;border-top:1px solid var(--line,#d8e1ef)!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-metrics>*{min-width:0!important;padding:0!important;overflow:hidden}
+ .world-banks .v204-bank-sidebar .v46-bank-card-metrics small{display:block;font-size:10px!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-metrics b{display:block!important;font-size:12px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+ .world-banks .v204-bank-context{margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.5}
+ .world-banks .v204-bank-context summary{cursor:pointer;font-weight:690}
+ .world-banks .v204-bank-context p{margin:7px 0 0}
+ .world-banks .v204-bank-detail{min-width:0;max-width:100%}
+ .world-banks .v204-bank-detail .bank-workspace{margin:0!important;padding:clamp(14px,1.8vw,24px)!important;scroll-margin-top:12px!important;max-width:100%;min-width:0}
+ .world-banks .v204-bank-detail .workspace-title{align-items:flex-start!important;flex-wrap:wrap!important;gap:12px!important}
+ .world-banks .v204-bank-detail .workspace-title h2{font-size:clamp(20px,2.1vw,26px)!important}
+ .world-banks .v204-bank-detail .workspace-title .hstack.v176-bank-actions{flex-wrap:wrap;justify-content:flex-start!important;gap:6px}
+ .world-banks .v204-bank-detail .grid.kpis{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+ .world-banks .v204-bank-detail .grid.kpis .kpi{padding:13px!important;min-width:0}
+ .world-banks .v204-bank-detail .grid.kpis .kpi-value{font-size:clamp(16px,1.6vw,24px)!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ .world-banks .v204-bank-detail .product-columns{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ .world-banks .v204-bank-detail .product-lane{min-width:0!important}
+ .world-banks .v204-bank-detail .product-item{min-width:0;gap:9px;white-space:normal;overflow-wrap:anywhere}
+ .world-banks .v204-bank-detail .section-title{align-items:flex-start!important;flex-wrap:wrap!important}
+ .world-banks .v204-bank-detail .section-title>.hstack{justify-content:flex-start;flex-wrap:wrap;gap:6px}
+ .world-banks .v204-bank-detail .columns.equal{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px}
+ .world-banks .v204-bank-welcome{min-height:330px;border:1px solid var(--line);border-radius:22px;background:var(--panel,#fff);display:flex;align-items:flex-start;justify-content:center;flex-direction:column;padding:clamp(24px,5vw,55px)}
+ .world-banks .v204-welcome-symbol{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:var(--blue2,#eaf1ff);color:var(--blue);margin-bottom:19px}
+ .world-banks .v204-bank-welcome h3{font-size:20px;margin:0 0 9px}
+ .world-banks .v204-bank-welcome p{max-width:390px;line-height:1.6;color:var(--muted);margin:0 0 22px}
+ .world-banks .v204-bank-welcome .btn{min-height:42px}
+ .world-banks .v204-institutions .bank-hero.v46-bank-hero,.world-banks .v204-desktop-layout~.bank-hero{margin-bottom:0}
+ .world-banks .v61-institutions:has(.v204-desktop-layout)>.bank-hero.v46-bank-hero{padding:23px 26px!important;gap:20px!important;border-radius:22px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-bank-intro h2{font-size:clamp(24px,2.6vw,35px)!important;line-height:1.12!important;margin:12px 0 6px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-bank-intro>p{font-size:12px!important;max-width:400px!important;margin:0 0 12px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-hero-foot{margin-top:10px!important}
+ /* Fichas de préstamos con origen izquierdo estable: no se estiran al haber pocos. */
+ .world-loans .loan-card-grid,.loans-world .loan-card-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),320px))!important;justify-content:start!important;justify-items:stretch!important;align-content:start!important;gap:14px!important}
+ .loans-world .loan-product{width:100%;max-width:320px;margin:0!important}
+ /* Sistema común de formularios: ritmo constante, dos columnas y guardado predecible. */
+ .v204-form-dialog{border-radius:22px!important;overflow:hidden;box-shadow:0 24px 90px rgba(16,28,50,.25)!important}
+ .v204-form-dialog .modal-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;padding:19px 24px!important;margin:0!important;border-bottom:1px solid var(--line)!important}
+ .v204-form-dialog .modal-head h2{font-size:20px!important;letter-spacing:-.5px!important;line-height:1.3!important;margin:0!important}
+ .v204-form-dialog form{display:flex;flex-direction:column;min-height:0;max-height:calc(92dvh - 76px)}
+ .v204-form-dialog .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;align-items:start;gap:14px 16px;padding:22px 24px;overflow-y:auto;overflow-x:hidden;min-height:0;min-width:0}
+ .v204-form-dialog .form-grid>*{min-width:0;max-width:100%}
+ .v204-form-dialog .form-grid>label{display:block;min-width:0}
+ .v204-form-dialog .form-grid .filter-label{display:block;font-size:11px!important;font-weight:740!important;letter-spacing:.02em;margin-bottom:7px!important}
+ .v204-form-dialog .form-grid .field{min-height:44px;border-radius:11px;padding:10px 12px;max-width:100%;font-size:13px}
+ .v204-form-dialog .form-grid :is(input,textarea,select):focus-visible{outline:2px solid var(--blue,#3568d4);outline-offset:1px}
+ .v204-form-dialog .form-grid :is(.smart-sub-intro,.smart-card-intro,.smart-form-section,.form-full){grid-column:1/-1}
+ .v204-form-dialog .form-grid :is(.smart-sub-intro,.smart-card-intro){margin-bottom:4px!important}
+ .v204-form-dialog .form-grid details.smart-fold{border-radius:15px;overflow:hidden}
+ .v204-form-dialog .form-grid details.smart-fold>summary{cursor:pointer}
+ .v204-form-dialog .form-foot{display:flex;justify-content:flex-end;gap:9px;margin:0!important;padding:15px 24px!important;background:var(--panel,#fff)!important;border-top:1px solid var(--line)!important;flex-shrink:0;position:sticky;bottom:0;z-index:2}
+ .v204-form-dialog .form-foot .btn{min-height:42px!important;border-radius:11px!important;min-width:116px}
+ .v204-form-dialog .input-error{padding:0 24px}
+}
+@media(min-width:791px) and (max-width:1180px){
+ .world-banks .v204-desktop-layout{grid-template-columns:240px minmax(0,1fr);gap:11px}
+ .world-banks .v204-bank-detail .grid.kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .world-banks .v204-bank-detail .product-columns{grid-template-columns:1fr!important}
+ .world-banks .v204-bank-detail .columns.equal{grid-template-columns:1fr!important}
+}
+@media(max-width:790px){
+ .loans-world .loan-card-grid{grid-template-columns:1fr!important;justify-content:stretch!important}
+ .loans-world .loan-card-grid .loan-product{max-width:none!important}
+}
+body.theme-dark .v204-bank-sidebar .v42-bank-section,body.theme-black .v204-bank-sidebar .v42-bank-section,
+body.theme-dark .v204-bank-welcome,body.theme-black .v204-bank-welcome{background:var(--panel,#1b2533)!important;color:var(--ink)!important;border-color:var(--line)!important}
+body.theme-black .v204-bank-sidebar .v46-bank-card.selected{background:#1d293c!important;border-color:#769acb!important}
+body.theme-black .v204-form-dialog .form-foot{background:#111216!important;color:#f4f5f8!important}
+
+/* V204 · Refinamiento de proporciones: el banco debe empezar a verse sin scroll inicial. */
+@media(min-width:1181px){
+ .world-banks .v61-institutions:has(.v204-desktop-layout)>.bank-hero.v46-bank-hero{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;min-height:0!important;padding:17px 24px!important;align-items:center!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-financials{padding:34px 0 2px 20px!important;gap:7px!important;justify-content:flex-start!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-main{gap:3px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-main>strong{font-size:clamp(28px,3vw,38px)!important;letter-spacing:-1.3px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-main>small{font-size:10px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary>div{padding:8px 7px!important;gap:5px!important;align-content:start!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary span{font-size:8px!important;letter-spacing:.2px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary strong{font-size:clamp(11px,1.08vw,16px)!important;letter-spacing:-.3px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-note{font-size:9px!important;line-height:1.35!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-hero-foot{margin-top:12px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-bank-intro .hero-actions{margin-top:12px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v199-profile-inline{top:10px!important;right:12px!important;padding:3px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v199-profile-inline .v61-profile-option{min-height:30px!important;padding:5px 8px!important;font-size:10px!important}
+}
+@media(min-width:791px) and (max-width:1180px){
+ .world-banks .v61-institutions:has(.v204-desktop-layout)>.bank-hero.v46-bank-hero{padding:16px 20px!important;gap:8px!important;min-height:0!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-financials{padding:12px 0 0!important;gap:8px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-main>strong{font-size:29px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary>div{padding:7px!important;gap:4px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary strong{font-size:13px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-hero-foot{margin-top:9px!important}
+ .world-banks .v61-institutions:has(.v204-desktop-layout) .v46-bank-intro .hero-actions{margin-top:9px!important}
+}
+@media(min-width:791px){
+ .world-banks .v204-bank-sidebar .v46-bank-card{grid-template-columns:minmax(0,1fr)!important;justify-items:stretch!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card>*{grid-column:1/-1;min-width:0!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-top{width:100%!important;justify-self:stretch!important;margin-bottom:2px!important}
+ .world-banks .v204-bank-sidebar .v46-bank-arrow{margin-left:auto!important;position:static!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-name{display:block!important;max-width:100%!important}
+}
+
+@media(min-width:791px){
+ .world-banks .v204-bank-sidebar .v46-bank-card-top{grid-row:1!important;order:0!important;display:flex!important;align-items:center!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-name{grid-row:2!important;order:1!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-type{grid-row:3!important;order:2!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-products{grid-row:4!important;order:3!important;min-height:0!important}
+ .world-banks .v204-bank-sidebar .v46-bank-card-metrics{grid-row:5!important;order:4!important}
+ .v204-form-dialog .smart-sub-intro>strong,.v204-form-dialog .smart-card-intro>h3{display:none!important}
+ .v204-form-dialog .smart-sub-intro,.v204-form-dialog .smart-card-intro{padding-bottom:9px!important}
+}
+body.theme-black .world-banks .v204-bank-sidebar .v42-filters button{background:#171b23!important;color:#dbe5f5!important;border:1px solid #384151!important}
+body.theme-black .world-banks .v204-bank-sidebar .v42-filters button.active{background:#263956!important;color:#fff!important;border-color:#6d8ebd!important}
+body.theme-black .world-banks .v204-bank-sidebar .v46-bank-card{background:#15171c!important;border:1px solid #363b47!important;color:#f1f5fc!important}
+body.theme-black .world-banks .v204-bank-sidebar .v46-bank-card.selected{background:#1d293b!important;border-color:#779bc9!important}
+body.theme-black .world-banks .v204-bank-sidebar :is(.v46-bank-card-name,.v46-bank-card-metrics b){color:#f1f5fc!important}
+body.theme-black .world-banks .v204-bank-sidebar :is(.v46-bank-card-type,.v46-bank-card-products,.v46-bank-card-metrics small){color:#aebcd2!important}
+
+</style>
 </body>
 </html>
