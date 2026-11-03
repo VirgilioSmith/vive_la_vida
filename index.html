@@ -14240,7 +14240,7 @@ body.theme-dark .v159-tomorrow-intro h3,body.theme-dark .v159-outcome-money,body
 
 
 <style id="vive-v162-header-pill-search">
-/* V162 · Píldora Vive el hoy + icono de búsqueda a la derecha */
+/* V162 · Píldora vive el hoy + icono de búsqueda a la derecha */
 @media(min-width:791px){
  .ff-header-middle.v162-header-search{width:min(620px,49vw)!important;max-width:620px!important}
  .v162-search-cluster{display:flex;align-items:center;gap:10px;width:100%}
@@ -16017,10 +16017,10 @@ function mobileCardsIntro(){
 
 /* V164: A single lowercase brand pill opens El costo de mañana directly; magnifier opens real Spotlight. */
 function v164HeaderDock(){
- return `<div class="ff-header-middle v164-header-dock"><button type="button" class="v164-tomorrow-pill" data-v119-open="1" title="El costo de mañana · Simular ingresos y gastos" aria-label="Abrir El costo de mañana">Vive el hoy</button></div>`;
+ return `<div class="ff-header-middle v164-header-dock"><button type="button" class="v164-tomorrow-pill" data-v119-open="1" title="El costo de mañana · Simular ingresos y gastos" aria-label="Abrir El costo de mañana">vive el hoy</button></div>`;
 }
 function v165SearchAction(){
- return `<button type="button" class="btn ghost v165-search-icon" data-v71-search-open="1" aria-label="Abrir búsqueda global" title="Buscar en Vive el Hoy · Ctrl/⌘ K" aria-keyshortcuts="Control+K Meta+K">${icon('search')}</button>`;
+ return `<button type="button" class="btn ghost v165-search-icon" data-v71-search-open="1" aria-label="Abrir búsqueda global" title="Buscar en vive el hoy · Ctrl/⌘ K" aria-keyshortcuts="Control+K Meta+K">${icon('search')}</button>`;
 }
 
 /* V173 — Centros especializados: cada módulo reutiliza los registros y acciones originales. */
@@ -18420,7 +18420,7 @@ function v134WealthWorld(){
    {name:'Escenario orientativo · 12 meses',color:'#6269e7',values:Array.from({length:13},(_,i)=>rnd(now.net+delta*i)),width:3.8,dash:true}
  ]):'';
  return `<div class="v134-patrimony v142-wealth-complete" id="v134Patrimony">
-  <header class="v134-top"><div><span class="v134-eyebrow">VIVE EL HOY · PATRIMONIO</span><h2>Tu patrimonio, de principio a fin.</h2><p>Activos, deudas y evolución histórica. Una misma vista, sin configurar ni añadir módulos.</p></div><div class="v137-wealth-top-tools">${periodPicker}</div></header>
+  <header class="v134-top"><div><span class="v134-eyebrow">vive el hoy · PATRIMONIO</span><h2>Tu patrimonio, de principio a fin.</h2><p>Activos, deudas y evolución histórica. Una misma vista, sin configurar ni añadir módulos.</p></div><div class="v137-wealth-top-tools">${periodPicker}</div></header>
   <section class="v134-hero" aria-label="Patrimonio neto del cierre seleccionado"><div class="v134-hero-top"><span>${dateLabel}</span>${estimated}</div>
    <p>PATRIMONIO NETO</p><strong class="v134-main-amount">${mainValue}</strong>
    <div class="v134-hero-bottom"><span>Frente al cierre del mes anterior</span><div class="v134-change-group">${change}</div></div>
@@ -18830,7 +18830,7 @@ function recurringForm(id){
  if(o.category&&!expenseCategories.some(([key])=>key===o.category))expenseCategories.push([o.category,o.category+' · histórica']);
  const mark=v41ServiceIcon(o.iconId||v41GuessIcon(o.name));
  const body=`<div class="v147-rec-shell form-full">
-  <div class="v147-rec-hero"><div class="v147-hero-copy"><span class="v147-eyebrow">VIVE EL HOY · COMPROMISOS</span><strong>${id?'Perfecciona tu pago':'Un pago menos que recordar.'}</strong><p>Configura el compromiso una vez. Tu agenda sabrá cuándo vuelve a vencer.</p></div><div class="v147-hero-stamp" aria-hidden="true">${icon('cycle')}</div></div>
+  <div class="v147-rec-hero"><div class="v147-hero-copy"><span class="v147-eyebrow">vive el hoy · COMPROMISOS</span><strong>${id?'Perfecciona tu pago':'Un pago menos que recordar.'}</strong><p>Configura el compromiso una vez. Tu agenda sabrá cuándo vuelve a vencer.</p></div><div class="v147-hero-stamp" aria-hidden="true">${icon('cycle')}</div></div>
   <div class="v147-rec-layout"><div class="v147-rec-editor">
    <section class="v147-rec-section" aria-label="Identidad del pago"><div class="v147-sec-head"><span class="v147-step">01</span><div><strong>¿Qué vas a pagar?</strong><small>Identifica el servicio y clasifícalo como cualquier gasto.</small></div></div>
     <div class="v147-form-duo">${formItem('name','Nombre del servicio',o.name,'text','required maxlength="90" placeholder="Ej. Internet hogar"')}
@@ -24087,29 +24087,48 @@ function v174CompactBreakdown(context){
   <p class="v174-explain">Deudas completas = saldos de tarjetas, préstamos y dinero por devolver. Compromisos = vencimientos registrados en el horizonte. No se descuenta de nuevo toda la deuda del saldo proyectado.</p>
  </details>`;
 }
+/* V178 · El costo de mañana: ingreso/gasto y cuatro KPIs compactos.
+   Se reutilizan los saldos de la aplicación sin crear ni guardar transacciones. */
+function v178Data(){
+ const kind=v119DecisionState.kind==='income'?'income':'expense';
+ const amount=Math.max(0,rnd(Number(v119DecisionState.amount)||0));
+ const impact=rnd((kind==='income'?1:-1)*amount);
+ const liquid=rnd(v119AvailableToday());
+ const debt=rnd(v143TomorrowOutstanding().total);
+ // Misma fuente de Compromisos → Total programado, mes vigente: nunca mezclar
+ // liquidez de hoy con obligaciones de un mes histórico filtrado.
+ const commitments=rnd(v89DebtCapacity(today().slice(0,7)).monthly);
+ const personal=personalTotals();
+ const net=rnd(liquid+totalCertificates()+Math.max(0,num(personal.receivable))-debt);
+ return {kind,amount,liquid,debt,commitments,net,liquidAfter:rnd(liquid+impact),debtAfter:debt,commitmentsAfter:commitments,netAfter:rnd(net+impact)};
+}
+function v178Kpi(label,before,after,className){
+ return `<article class="v178-kpi ${className}" aria-label="${sanitize(label)}: valor actual ${money(before)}, después ${money(after)}">
+  <span class="v178-kpi-name">${sanitize(label)}</span>
+  <span class="v178-kpi-current" title="Valor actual: ${money(before)}">${money(before)}</span>
+  <div class="v178-kpi-new"><small>Después</small><strong class="${after<0?'v178-value-negative':after>before?'v178-value-positive':''}">${money(after)}</strong></div>
+ </article>`;
+}
+function v178Kpis(){
+ const d=v178Data();
+ return `${v178Kpi('Liquidez',d.liquid,d.liquidAfter,'v178-liquid')}
+ ${v178Kpi('Deudas totales',d.debt,d.debtAfter,'v178-debt')}
+ ${v178Kpi('Compromisos',d.commitments,d.commitmentsAfter,'v178-commitments')}
+ ${v178Kpi('Posición financiera',d.net,d.netAfter,'v178-net')}`;
+}
 function v119Markup(){
- const state=v119DecisionState;
- const kind=state.kind==='income'?'income':'expense';
- const result=v159SimulateDecision(state.amount,kind,kind==='income'?(state.incomeTiming||'today'):(state.scenario||'today'),Number(state.horizon)||30);
- const choices=kind==='income'?[['today','Hoy'],['week','En 7 días'],['fortnight','En 15 días']]:[['today','Hoy'],['next','Próximo ingreso'],['split','En dos pagos']];
- const timing=kind==='income'?(state.incomeTiming||'today'):(state.scenario||'today');
- return `<div class="v119-content v159-tomorrow v169-simple-tomorrow v174-tomorrow">
-  <div class="v169-tomorrow-heading"><span>SIMULADOR DE DECISIONES</span><h3>¿Qué cambia mañana?</h3><p>Tu posición financiera antes y después, y el dinero que quedaría según tu calendario.</p></div>
-  <section class="v174-financial-section" aria-label="Situación financiera antes y después">
-   <div class="v174-section-caption"><div><span>01 / RADIOGRAFÍA FINANCIERA</span><h4>Así cambia tu situación</h4></div><span class="v174-scenario-chip">Antes → Después</span></div>
-   <div id="v174-snapshot">${v174FinancialSnapshot(result,kind)}</div>
-  </section>
-  <div class="v169-choice" role="group" aria-label="Tipo de operación">
-   <button type="button" data-v159-kind="expense" class="${kind==='expense'?'active is-expense':''}" aria-pressed="${kind==='expense'}">${icon('down')} Gasto</button>
-   <button type="button" data-v159-kind="income" class="${kind==='income'?'active is-income':''}" aria-pressed="${kind==='income'}">${icon('up')} Ingreso</button>
+ const kind=v119DecisionState.kind==='income'?'income':'expense';
+ return `<div class="v119-content v159-tomorrow v169-simple-tomorrow v178-tomorrow">
+  <div class="v178-input-first">
+   <div class="v169-choice" role="group" aria-label="Tipo de simulación">
+    <button type="button" data-v159-kind="expense" class="${kind==='expense'?'active is-expense':''}" aria-pressed="${kind==='expense'}">${icon('down')} Gasto</button>
+    <button type="button" data-v159-kind="income" class="${kind==='income'?'active is-income':''}" aria-pressed="${kind==='income'}">${icon('up')} Ingreso</button>
+   </div>
+   <label class="v169-amount v178-amount"><span>${kind==='income'?'¿Cuánto recibirías?':'¿Cuánto gastarías?'}</span>
+    <div><small>RD$</small><input id="v119-amount" type="number" inputmode="decimal" min="0" step="0.01" value="${sanitize(String(v119DecisionState.amount||''))}" placeholder="0.00" aria-label="Importe que ${kind==='income'?'recibirías':'gastarías'}"></div>
+   </label>
   </div>
-  <div class="v169-controls">
-   <label class="v169-amount"><span>${kind==='income'?'¿Cuánto recibirás?':'¿Cuánto gastarás?'}</span><div><small>RD$</small><input id="v119-amount" type="number" inputmode="decimal" min="0" step="0.01" value="${sanitize(String(state.amount||''))}" placeholder="0.00" aria-label="Importe de la simulación"></div></label>
-   <div class="v169-schedule"><span>¿Cuándo?</span><div class="v159-timing-choices" role="group" aria-label="Fecha del escenario">${choices.map(([id,title])=>`<button type="button" data-v159-timing="${id}" class="${timing===id?'active':''}" aria-pressed="${timing===id}">${title}</button>`).join('')}</div></div>
-   <div class="v169-horizon"><span>Ver resultado en</span><div class="v119-switch" role="group" aria-label="Días por simular">${[30,60,90].map(n=>`<button type="button" data-v119-horizon="${n}" class="${Number(state.horizon)===n?'active':''}" aria-pressed="${Number(state.horizon)===n}">${n} días</button>`).join('')}</div></div>
-  </div>
-  <section class="v174-forecast-section" aria-label="Resultado proyectado después de la decisión"><div class="v174-section-caption"><div><span>02 / PROYECCIÓN DE CAJA</span><h4>¿Con cuánto terminarías?</h4></div></div>
-  <div id="v159-live" class="v169-result" role="status" aria-live="polite">${v169SimpleResult(result,kind)}</div></section>
+  <div class="v178-kpi-grid" id="v178-kpis" role="group" aria-label="Situación financiera actual y resultado después de la decisión">${v178Kpis()}</div>
  </div>`;
 }
 function v174FinancialSnapshot(result,kind){
@@ -24142,6 +24161,7 @@ function v169SimpleResult(result,kind){
 }
 
 function v119Open(){
+ v119DecisionState.kind='expense';v119DecisionState.amount='';
  const root=document.getElementById('modal-root');if(!root)return;
  root.innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v119-modal" role="dialog" aria-modal="true" aria-label="El costo de mañana"><div class="modal-head"><h2>El costo de mañana</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div id="v119-results">${v119Markup()}</div></section></div>`;
 }
@@ -24162,10 +24182,8 @@ document.addEventListener('change',event=>{
 document.addEventListener('input',event=>{
  if(event.target.id!=='v119-amount')return;
  v119DecisionState.amount=event.target.value;
- const kind=v119DecisionState.kind==='income'?'income':'expense';
- const result=v159SimulateDecision(v119DecisionState.amount,kind,kind==='income'?(v119DecisionState.incomeTiming||'today'):(v119DecisionState.scenario||'today'),Number(v119DecisionState.horizon)||30);
- const snapshot=document.getElementById('v174-snapshot');if(snapshot){const wasOpen=Boolean(snapshot.querySelector('.v174-breakdown[open]'));snapshot.innerHTML=v174FinancialSnapshot(result,kind);if(wasOpen)snapshot.querySelector('.v174-breakdown')?.setAttribute('open','');}
- const live=document.getElementById('v159-live');if(live)live.innerHTML=v169SimpleResult(result,kind);
+ const grid=document.getElementById('v178-kpis');
+ if(grid)grid.innerHTML=v178Kpis();
 });
 /* Reutiliza el Resumen existente, sin reestructurar las demás vistas. */
 /* V123 · Alertas de gasto por categoría, exclusivamente desde datos locales.
@@ -24315,7 +24333,7 @@ function v144CostRows(c){v144Ready();const costs=v144AllCosts(c).filter(t=>v144P
 function v144BenefitsPage(){v144Ready();const cards=db.cards.filter(c=>ui.showHidden||!isHidden(c));if(!cards.length)return `<section class="v144-benefit-world"><div class="v144-hero"><small>BENEFICIOS Y COSTOS</small><h2>Tarjetas que se pagan solas</h2><p>Registra una tarjeta para comparar costos y recompensas reales.</p><button type="button" class="btn" data-act="addCard">Registrar tarjeta</button></div></section>`;
  const selected=ui.v144BenefitsCard||'all';const shown=cards.filter(c=>selected==='all'||c.id===selected);if(!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage()}
  const stats=shown.map(c=>v144CardStats(c));const sum=k=>rnd(stats.reduce((s,z)=>s+z[k],0));const gross=sum('gross'),paid=sum('paidAmount'),net=rnd(gross-paid),billed=sum('billedAmount'),expected=sum('expected'),planned=sum('plannedSum');const roi=paid>0?rnd(net/paid*100):null;
- return `<main class="v144-benefit-world" id="v144Benefits"><header class="v144-hero"><small>INTELIGENCIA DE TARJETAS · VIVE EL HOY</small><h2>Lo que tus tarjetas realmente te devuelven</h2><p>Beneficios acreditados menos costos pagados. Los cargos sin conciliar y recompensas pendientes permanecen separados.</p>${v144CardFilterUI()}</header>
+ return `<main class="v144-benefit-world" id="v144Benefits"><header class="v144-hero"><small>INTELIGENCIA DE TARJETAS · vive el hoy</small><h2>Lo que tus tarjetas realmente te devuelven</h2><p>Beneficios acreditados menos costos pagados. Los cargos sin conciliar y recompensas pendientes permanecen separados.</p>${v144CardFilterUI()}</header>
  <div class="v144-summary-grid"><article><small>Cashback y beneficios realizados</small><strong class="good">${v144Value(gross)}</strong><span>Cashback ${v144Value(sum('realizedCashback'))} · Otros ${v144Value(sum('realizedOther'))}</span></article><article><small>Costos efectivamente pagados</small><strong>${v144Value(paid)}</strong><span>Anualidades ${v144Value(sum('feePaid'))}</span></article><article><small>Beneficio neto</small><strong class="${net>=0?'good':'cost'}">${v144Value(net)}</strong><span>Solo dinero realizado y pagos conciliados</span></article><article><small>Rentabilidad sobre costos</small><strong>${v144RoiText(roi)}</strong><span>${paid>0?'(Beneficio neto ÷ costo pagado) × 100':'Sin costos pagados, no se calcula el porcentaje'}</span></article></div>
  <div class="v144-summary-note"><span><b>Costos cargados aún sin conciliar:</b> ${v144Value(billed)}</span><span><b>Recompensas pendientes:</b> ${v144Value(expected)}</span><span><b>Otros costos previstos:</b> ${v144Value(planned)}</span></div>
  <div class="v144-section-head"><div><small>RENDIMIENTO POR PRODUCTO</small><h3>¿Cuál tarjeta me conviene más?</h3></div><div class="v144-actions"><button type="button" data-v144-action="new-cashback" data-id="${sanitize(shown[0].id)}">${icon('plus')} Cashback</button><button type="button" data-v144-action="new-cost" data-id="${sanitize(shown[0].id)}">${icon('receipt')} Costo</button></div></div>
@@ -24600,7 +24618,7 @@ function v71SearchOpen(){
  v149SearchIndex=v71SearchEntries().map(x=>({...x,_v150Hay:v71SearchNormalize([x.title,x.sub,x.meta].join(' ')),_v150Title:v71SearchNormalize(x.title)}));
  v150SearchReturnFocus=document.activeElement;
  const overlay=document.createElement('div');overlay.id='v71-search-overlay';overlay.className='v71-search-overlay v149-spotlight';overlay.setAttribute('role','presentation');
- overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global Vive el Hoy"><div class="v159-spotlight-identity"><span class="v159-brand-symbol">P</span><span>vive el hoy</span><span class="v159-spotlight-caption">BÚSQUEDA GLOBAL</span></div><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="v71-search-results" placeholder="Buscar en Vive el Hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v153-spotlight-shortcuts" aria-label="Accesos de Spotlight">
+ overlay.innerHTML=`<section class="v71-search-dialog" role="dialog" aria-modal="true" aria-label="Buscador global vive el hoy"><div class="v159-spotlight-identity"><span class="v159-brand-symbol">P</span><span>vive el hoy</span><span class="v159-spotlight-caption">BÚSQUEDA GLOBAL</span></div><div class="v71-search-top">${icon('search')}<input type="search" class="v71-search-field" id="v71-search-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar registros y módulos" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="v71-search-results" placeholder="Buscar en vive el hoy…"><button type="button" class="v71-search-close" data-v71-search-close aria-label="Cerrar buscador">×</button></div><div class="v153-spotlight-shortcuts" aria-label="Accesos de Spotlight">
   <span class="v153-spotlight-shortcuts-label">ACCESOS RÁPIDOS</span>
   <div class="v153-spotlight-shortcuts-items">
    <button type="button" data-v153-search-nav="accounts" title="Cuentas y efectivo" aria-label="Ir a Cuentas y efectivo">${v153DockIcon('folder')}<span>Cuentas</span></button>
@@ -28459,5 +28477,56 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   else boot();
 })();
 </script>
+
+<style id="vive-v178-costomanana-cuatro-kpis">
+/* V178. Strictly restricted to El costo de mañana and the top brand pill. */
+#modal-root .v119-modal{width:min(775px,calc(100vw - 32px))!important;max-width:775px!important;max-height:min(92dvh,780px)!important;overflow:hidden!important;}
+#modal-root .v119-modal>.modal-head{padding:17px 21px 13px!important;min-height:0!important;}
+#modal-root .v119-modal>.modal-head h2{font-size:20px!important;letter-spacing:-.04em!important;}
+#modal-root .v119-modal>#v119-results{overflow-y:auto!important;min-height:0!important;max-height:100%!important;padding:2px 19px 22px!important;}
+#modal-root .v178-tomorrow{display:grid!important;gap:13px!important;padding:3px 0 4px!important;}
+#modal-root .v178-input-first{display:grid;gap:11px;min-width:0;}
+#modal-root .v178-tomorrow .v169-choice{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin:0!important;}
+#modal-root .v178-tomorrow .v169-choice>button{min-height:44px!important;border-radius:13px!important;font-size:12px!important;}
+#modal-root .v178-amount{display:block!important;padding:14px!important;border:1px solid rgba(207,222,246,.86)!important;background:rgba(246,249,255,.75)!important;border-radius:17px!important;}
+#modal-root .v178-amount>span{display:block;color:#5b7090;font-weight:750;font-size:11px;margin:0 0 7px;}
+#modal-root .v178-amount>div{background:rgba(255,255,255,.85)!important;border:1px solid rgba(211,223,244,.93)!important;border-radius:12px!important;padding:7px 12px!important;min-height:49px;}
+#modal-root .v178-amount input{font-size:23px!important;font-weight:850!important;line-height:1.2!important;width:100%!important;}
+#modal-root .v178-kpi-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;align-items:stretch!important;}
+#modal-root .v178-kpi{min-width:0;display:flex;flex-direction:column;gap:9px;padding:13px 12px;border:1px solid rgba(206,220,242,.85);border-radius:17px;background:linear-gradient(160deg,rgba(255,255,255,.98),rgba(234,242,253,.82));box-shadow:inset 0 1px 0 rgba(255,255,255,.96);}
+#modal-root .v178-kpi.is-net,#modal-root .v178-kpi.v178-net{background:linear-gradient(157deg,rgba(248,251,255,.98),rgba(226,236,254,.91));}
+#modal-root .v178-kpi-name{display:block;min-height:28px;font-size:11px;font-weight:850;line-height:1.25;color:#344d72;}
+#modal-root .v178-kpi-current{display:block;font-size:12px;line-height:1.25;font-weight:700;color:#8b9ab1;letter-spacing:-.025em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;}
+#modal-root .v178-kpi-new{display:flex;flex-direction:column;gap:5px;min-width:0;margin-top:auto;}
+#modal-root .v178-kpi-new small{color:#687e9d;font-size:10px;font-weight:750;letter-spacing:.01em;}
+#modal-root .v178-kpi-new strong{font-size:clamp(15px,1.35vw,22px);line-height:1.12;font-weight:870;letter-spacing:-.05em;color:#203858;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;}
+#modal-root .v178-kpi-new strong.v178-value-negative{color:#c27930;}
+#modal-root .v178-kpi-new strong.v178-value-positive{color:#0b8a6a;}
+/* Button dimensions are a consistent small size, overriding older overview-specific styles. */
+body .main .topbar .v164-tomorrow-pill,
+body .main.world-overview:has(.ff-dashboard.summary-space) .topbar .v164-tomorrow-pill{
+  min-width:0!important;width:auto!important;max-width:132px!important;
+  min-height:32px!important;height:32px!important;padding:0 13px!important;
+  font-size:11px!important;font-weight:750!important;letter-spacing:-.015em!important;
+  border-radius:999px!important;
+}
+@media(max-width:790px){
+ #modal-root .v119-modal{width:100%!important;max-width:100%!important;max-height:100dvh!important;min-height:0!important;}
+ #modal-root .v119-modal>.modal-head{padding:calc(env(safe-area-inset-top,0px) + 11px) 15px 12px!important;}
+ #modal-root .v119-modal>#v119-results{padding:7px 13px calc(env(safe-area-inset-bottom,0px) + 24px)!important;flex:1 1 auto!important;}
+ #modal-root .v178-tomorrow{gap:12px!important;}
+ #modal-root .v178-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;}
+ #modal-root .v178-kpi{padding:12px 10px;border-radius:15px;gap:9px;}
+ #modal-root .v178-kpi-name{min-height:0;font-size:11px;}
+ #modal-root .v178-kpi-current{font-size:11px;}
+ #modal-root .v178-kpi-new strong{font-size:clamp(14px,4.1vw,19px);letter-spacing:-.06em;}
+ #modal-root .v178-amount{padding:12px!important;}
+}
+@media(max-width:350px){
+ #modal-root .v178-kpi-grid{gap:7px!important;}
+ #modal-root .v178-kpi{padding:10px 9px;}
+ #modal-root .v178-kpi-new strong{font-size:13px;}
+}
+</style>
 </body>
 </html>
