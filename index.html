@@ -14773,6 +14773,71 @@ body.theme-dark .main .topbar .top-actions .v165-search-icon{background:linear-g
 }
 </style>
 
+
+<style id="vive-v189-personal-simple">
+/* V189 | Entre personas: un KPI protagonista + tabla y nada más en el índice. */
+.world-personal #page .v26-internal[data-module="personal"]>.v26-head,
+.world-personal #page .v26-internal[data-module="personal"]>.v26-nav{display:none!important}
+#page .v26-internal[data-module="personal"] .v26-body{min-width:0}
+.world-personal .v189-person-hero{min-height:218px;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);margin:0 0 14px;padding:clamp(23px,2.8vw,34px);gap:clamp(15px,3vw,40px)}
+.world-personal .v189-person-hero .v58-left h2{font-size:clamp(25px,3.3vw,44px)}
+.world-personal .v189-person-hero .v58-main-value{font-size:clamp(31px,4.3vw,61px);letter-spacing:-.065em}
+.world-personal .v189-person-hero .v58-right{gap:12px}
+.v189-payable-inline{display:inline-flex;align-items:center;gap:12px;align-self:flex-start;border:0;background:rgba(255,255,255,.10);border-radius:12px;padding:10px 13px;color:#fff;text-align:left;cursor:pointer;max-width:100%}
+.v189-payable-inline span{font-size:9px;letter-spacing:.13em;font-weight:820;color:#c5e6f0}
+.v189-payable-inline strong{font-size:clamp(14px,1.5vw,19px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.v189-payable-inline:hover{background:rgba(255,255,255,.2)}
+.v189-person-ledger{border:1px solid rgba(228,235,245,.95);background:rgba(255,255,255,.83);border-radius:22px;padding:20px 22px;box-shadow:0 11px 30px rgba(45,71,109,.055);max-width:100%;min-width:0}
+.v189-table-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:16px}
+.v189-table-head h3{font-size:clamp(19px,1.8vw,24px);color:#243e5e;margin:2px 0 3px;letter-spacing:-.045em}
+.v189-table-head p{font-size:11px;color:#8092aa;margin:0}
+.v189-table-head .v56-section-label{margin-bottom:5px}
+.v189-table-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.v189-table-scroll{max-width:100%;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.v189-table{width:100%;border-collapse:collapse;table-layout:auto;min-width:650px}
+.v189-table th{text-align:left;color:#8293ab;font-size:10px;font-weight:800;white-space:nowrap;padding:11px 10px;background:rgba(236,243,251,.8)}
+.v189-table th:first-child{border-radius:10px 0 0 10px}.v189-table th:last-child{border-radius:0 10px 10px 0}
+.v189-table td{border-bottom:1px solid #edf1f7;padding:12px 10px;color:#415872;font-size:12px;vertical-align:middle}
+.v189-table tr:last-child td{border-bottom:0}
+.v189-name{font-weight:820;color:#253d59;overflow-wrap:anywhere}
+.v189-concept{display:block;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v189-money{font-weight:850!important;white-space:nowrap;font-variant-numeric:tabular-nums;color:#223e59!important}
+.v189-state{font-size:10px;display:inline-block;border-radius:999px;padding:6px 9px;background:#fff3e6;color:#a46932;font-weight:790;white-space:nowrap}
+.v189-state.receivable{background:#e7f6ef;color:#168267}.v189-state.settled{background:#edf3f8;color:#6d8094}
+.v189-row-actions{white-space:nowrap;text-align:right}.v189-row-actions .v56-button{padding:8px 10px;font-size:10px;margin-left:5px}
+.v189-empty{text-align:center;color:#8294aa!important;padding:28px 10px!important}
+.world-personal .v189-person-hero :is(button):focus-visible,.v189-person-ledger button:focus-visible{outline:3px solid #8ac9ff;outline-offset:2px}
+body.theme-dark .v189-person-ledger{background:#23354d;border-color:#38506c}
+body.theme-dark .v189-table-head h3,body.theme-dark .v189-name,body.theme-dark .v189-money{color:#ecf4ff!important}
+body.theme-dark .v189-table th{background:#263e59;color:#b5c4da}body.theme-dark .v189-table td{border-color:#364b64;color:#d7e4f4}
+@media(max-width:960px){.world-personal .v189-person-hero{grid-template-columns:1fr;gap:14px;padding:22px}.world-personal .v189-person-hero .v58-right{border-left:0;border-top:1px solid rgba(255,255,255,.23);padding:15px 0 0}.world-personal .v189-person-hero .v58-left h2{font-size:clamp(25px,4vw,37px)}}
+@media(max-width:700px){
+ .v189-person-ledger{padding:16px 13px;border-radius:19px}
+ .v189-table-head{align-items:flex-start;flex-direction:column;gap:11px}
+ .v189-table-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}
+ .v189-table-actions button{min-height:43px}
+ .v189-table-scroll{overflow:visible}
+ .v189-table{display:block;min-width:0;width:100%}
+ .v189-table thead{display:none}.v189-table tbody{display:grid;gap:9px}
+ .v189-table tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 13px;padding:13px;border:1px solid #e6eef6;border-radius:15px;background:rgba(250,252,255,.94)}
+ .v189-table td{display:block;border:0!important;padding:0;min-width:0}
+ .v189-table td:first-child{grid-column:1;grid-row:1}.v189-table td:nth-child(2){grid-column:2;grid-row:1;text-align:right}
+ .v189-table td:nth-child(3){grid-column:1/-1;grid-row:2;color:#8192a8;font-size:11px}
+ .v189-table td:nth-child(4){grid-column:1;grid-row:3;font-size:17px}
+ .v189-table td:nth-child(5){grid-column:2;grid-row:3;text-align:right;font-size:10px;align-self:center}
+ .v189-table td:nth-child(6){grid-column:1/-1;grid-row:4;display:flex;justify-content:flex-end;border-top:1px solid #e7edf5!important;padding-top:9px}
+ .v189-table td:nth-child(3):before{content:'Concepto · ';color:#9cabc0}
+ .v189-table td:nth-child(4):before{content:'Pendiente';display:block;color:#93a4b9;font-size:9px;font-weight:700;margin-bottom:3px}
+ .v189-table td:nth-child(5):before{content:'Vence';display:block;color:#93a4b9;font-size:9px;font-weight:700;margin-bottom:3px}
+ .v189-concept{max-width:100%;white-space:normal}
+ .v189-table td.v189-empty{grid-column:1/-1;text-align:center;width:100%;max-width:100%;white-space:normal;overflow-wrap:anywhere;box-sizing:border-box;line-height:1.5}
+ .world-personal .v189-person-hero{padding:19px 17px;min-height:0}
+ .world-personal .v189-person-hero .v58-left h2{font-size:26px}
+ .world-personal .v189-person-hero .v58-main-value{font-size:clamp(30px,8.4vw,40px)}
+ .world-personal .v189-person-hero .v58-left p{font-size:11px}
+ body.theme-dark .v189-table tr{background:#293e58;border-color:#39526f}
+}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -15688,7 +15753,7 @@ const NAV_FAMILIES=[
 const NAV_SECTIONS={
  banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['benefits','Beneficios','wallet'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
  register:{title:'Movimientos',hint:'Registra primero; analiza los ingresos y presupuestos sin menús duplicados.',tabs:[['register','Registrar ingresos y egresos','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
- payments:{title:'Compromisos',hint:'Pagos, suscripciones y préstamos entre personas, siempre separados de las entidades.',tabs:[['payments','Compromiso','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
+ payments:{title:'Compromisos',hint:'Pagos, suscripciones y préstamos entre personas, siempre separados de las entidades.',tabs:[['payments','Agenda','calendar','agenda'],['payments','Servicios','receipt','services'],['payments','Calendario de servicios','calendar','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
 };
 function navFamilyForPage(page){if(['overview','analytics','kpis','advanced','patrimony','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
 /* Four clear navigation worlds; contextual horizontal switches remain unchanged. */
@@ -15730,7 +15795,7 @@ function nav(){
 }
 function moduleSwitch(page){
  const root=navFamilyForPage(page),section=NAV_SECTIONS[root];if(!section)return '';
- return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${section.title}</strong><small>${section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic])=>`<button type="button" class="module-switch-tab ${page===id?'active':''}" ${page===id?'aria-current="page"':''} data-act="navigate" data-id="${id}">${icon(ic)}<span>${name}</span></button>`).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
+ return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${section.title}</strong><small>${section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic,view])=>{const on=page===id&&(!view||(ui.v176PayView||'agenda')===view);return `<button type="button" class="module-switch-tab ${on?'active':''}" ${on?'aria-current="page"':''} data-act="navigate" data-id="${id}"${view?` data-v176-pay-view="${view}"`:''}>${icon(ic)}<span>${name}</span></button>`}).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
 }
 
 /* MOBILE FIRST EXPERIENCE: Same underlying finances, new responsive screens. */
@@ -15849,7 +15914,7 @@ function mobileHome(){
  const upcomingPayments=commitments.slice().sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3);
  const vis=db.settings.visualDesign==='vision';
  const v64Compare=v64PositionComparison();
- const balancePanel=vis?`<section class="vive-mobile-balance vive-mobile-net-balance" aria-label="Posición neta y evolución"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Tu posición financiera</span><span>${icon('wallet')}</span></div><strong class="vive-mobile-balance-amount" title="Posición neta exacta: ${money(net,'DOP',2)}">${money(net)}</strong><div class="vive-mobile-balance-sub">${v105BubblePercent(net,v64Compare.position?.net,v64Compare)}</div><div class="vive-mobile-balance-sub">Evolución de la posición neta registrada</div><div class="vive-mobile-vision-trend">${visionPositionHistory(5,net).graph}</div><div class="vive-mobile-balance-foot"><span><small>Liquidez</small><b title="${money(liquid,'DOP',2)}">${money(liquid)}</b></span><span><small>Deudas totales</small><b title="${money(debt,'DOP',2)}">${money(debt)}</b></span></div></section>`:`<section class="vive-mobile-balance" aria-label="Posición financiera"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Liquidez disponible</span><span>${icon('wallet')}</span></div><strong class="vive-mobile-balance-amount" title="${money(liquid)}">${money(liquid)}</strong><div class="vive-mobile-balance-sub">${v105BubblePercent(liquid,v64Compare.position?.liquid,v64Compare)}</div><div class="vive-mobile-balance-sub">Disponible registrado en pesos equivalentes</div><div class="vive-mobile-balance-divider"></div><div class="vive-mobile-balance-foot"><span><small>Deudas</small><b title="${money(debt)}">${money(debt)}</b></span><span><small>Posición neta</small><b title="${money(net)}">${money(net)}</b></span></div></section>`;
+ const balancePanel=vis?`<section class="vive-mobile-balance vive-mobile-net-balance" aria-label="Posición neta y evolución"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Tu posición financiera</span><span>${icon('wallet')}</span></div><button type="button" class="vive-mobile-balance-amount v186-mobile-amount" data-act="v186Deep" data-id="net" title="Ver composición de la posición neta · ${money(net,'DOP',2)}">${money(net)}</button><div class="vive-mobile-balance-sub">${v105BubblePercent(net,v64Compare.position?.net,v64Compare)}</div><div class="vive-mobile-balance-sub">Evolución de la posición neta registrada</div><div class="vive-mobile-vision-trend">${visionPositionHistory(5,net).graph}</div><div class="vive-mobile-balance-foot"><span><small>Liquidez</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="liquidity" title="Ver cuentas y efectivo · ${money(liquid,'DOP',2)}"><b>${money(liquid)}</b></button></span><span><small>Deudas totales</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="debt" title="Ver todas las deudas · ${money(debt,'DOP',2)}"><b>${money(debt)}</b></button></span></div></section>`:`<section class="vive-mobile-balance" aria-label="Posición financiera"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Liquidez disponible</span><span>${icon('wallet')}</span></div><button type="button" class="vive-mobile-balance-amount v186-mobile-amount" data-act="v186Deep" data-id="liquidity" title="Ver cuentas con saldo · ${money(liquid)}">${money(liquid)}</button><div class="vive-mobile-balance-sub">${v105BubblePercent(liquid,v64Compare.position?.liquid,v64Compare)}</div><div class="vive-mobile-balance-sub">Disponible registrado en pesos equivalentes</div><div class="vive-mobile-balance-divider"></div><div class="vive-mobile-balance-foot"><span><small>Deudas</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="debt" title="Ver detalle de deudas · ${money(debt)}"><b>${money(debt)}</b></button></span><span><small>Posición neta</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="net" title="Ver composición neta · ${money(net)}"><b>${money(net)}</b></button></span></div></section>`;
  const netRatio=m.income>0?100*m.net/m.income:null;
  const netLabel=netRatio===null?'Sin ingresos registrados':`${netRatio.toLocaleString('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1})}% del ingreso del mes`;
  const paymentsHtml=upcomingPayments.map(o=>{
@@ -15871,22 +15936,11 @@ function mobileHome(){
 }
 function mobileHub(){
  const areas=[
-  {title:'Bancos y productos',hint:'Tu dinero en cada institución',entries:[['banks','Instituciones','building'],['accounts','Cuentas y efectivo','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics'],['benefits','Beneficios','chart']]},
   {title:'Movimiento de dinero',hint:'Registra y comprende cada operación',entries:[['register','Ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','grid']]},
   {title:'Compromisos',hint:'Pagos, suscripciones y personas',entries:[['payments','Compromiso','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]},
   {title:'Inteligencia financiera',hint:'Análisis, comparaciones y patrimonio',entries:[['advanced','Analítica avanzada','analytics'],['analytics','Resumen detallado','chart'],['kpis','Indicadores avanzados','analytics'],['patrimony','Patrimonio','wallet']]}
  ];
  return `<div class="vive-mobile-hub"><div class="vive-mobile-greeting"><span class="vive-mobile-eyebrow">TODOS TUS ESPACIOS</span><h1>Explorar</h1><p>Todo tu ciclo financiero, sin menús complicados.</p></div><button class="vive-mobile-hub-create" type="button" data-act="newTransaction">${icon('plus')} Registrar un movimiento <span>${icon('up')}</span></button>
- <section class="v175-explore-bank" aria-label="Acceso directo a Bancos y productos">
-  <button type="button" class="v175-explore-bank-main" data-act="navigate" data-id="banks" aria-label="Abrir Bancos y productos">
-   <span class="v175-explore-bank-mark">${icon('building')}</span>
-   <span><small>TU CENTRO BANCARIO</small><strong>Bancos y productos</strong><em>Instituciones, cuentas, tarjetas, préstamos y certificados</em></span>
-   <span class="v175-explore-bank-next">${icon('arrow')}</span>
-  </button>
-  <div class="v175-explore-bank-shortcuts" aria-label="Ir directamente a un producto bancario">
-   ${[['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']].map(([id,name,ic])=>`<button type="button" data-act="navigate" data-id="${id}">${icon(ic)}<span>${name}</span></button>`).join('')}
-  </div>
- </section>
  ${areas.map((area,i)=>`<section class="vive-mobile-hub-area"><div class="vive-mobile-hub-heading"><h2>${area.title}</h2><p>${area.hint}</p></div><div class="vive-mobile-hub-links">${area.entries.map(([id,label,ic])=>`<button type="button" data-act="navigate" data-id="${id}"><span class="vive-mobile-hub-link-icon">${icon(ic)}</span><span>${label}</span><span class="vive-mobile-hub-chevron">${icon('up')}</span></button>`).join('')}</div></section>`).join('')}</div>`;
 }
 
@@ -15959,7 +16013,7 @@ function main(){
   <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
  
  ${ui.page==='wallet'?'':['overview','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
- ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():ui.page==='payments'?payments():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
+ ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
 }
 function shellKpi(title,v,foot,ico,tone=''){return `<div class="kpi"><div class="kpi-head">${sanitize(title)}<span class="kpi-icon">${icon(ico)}</span></div><div class="kpi-value ${tone}">${v}</div><div class="kpi-foot">${foot}</div></div>`}
 function paymentList(limit=6){let list=v99PendingForPeriod(ui.month).filter(o=>o.kind!=='personal_recv').slice(0,limit);return list.length?list.map(o=>`<div class="mini-row"><div style="min-width:0"><div class="mini-title">${sanitize(o.name)}</div><div class="mini-sub">${prettyDate(o.date)} · ${o.kind==='card'?'Tarjeta':o.kind==='loan'?'Préstamo':'Recurrente'}${o.kind==='loan'&&loan(o.ref)?.postingMode==='auto'?' · Auto al sincronizar':o.kind==='recurring'&&db.recurring.find(r=>r.id===o.ref)?.postingMode==='auto'?' · Auto al sincronizar':''}</div></div><div style="text-align:right"><div class="money" style="font-size:12px">${money(o.amount,o.currency)}</div><div style="margin-top:6px">${dueChip(o.date)}</div></div></div>`).join(''):`<div class="empty"><span class="empty-icon">✓</span>No hay pagos pendientes registrados.</div>`}
@@ -16041,7 +16095,7 @@ function visionOverview(){
  const categories=cats.length?cats.map(([name,value],i)=>`<button class="vision-cat-item" data-act="navigate" data-id="advanced" title="Abrir Analítica avanzada"><span class="vision-cat-bar"><i style="--bar-c:${catColors[i]};width:${Math.max(7,value/maxCat*100)}%"></i></span><span><strong>${sanitize(name)}</strong><small>${money(value)} · ${m.expense?Math.round(value/m.expense*100):0}% del gasto</small></span><span class="vision-cat-arrow">↗</span></button>`).join(''):`<p class="vision-empty">Registra gastos para ver sus categorías principales.</p>`;
  const next=v99PendingForPeriod(ui.month).filter(o=>o.kind!=='personal_recv').slice(0,3),nextList=next.map(o=>`<button class="vision-commit-row" data-act="navigate" data-id="payments"><span>${sanitize(o.name)}<small>${prettyDate(o.date)}</small></span><b>${money(o.amount,o.currency,0)}</b></button>`).join('')||'<div class="vision-empty">No hay pagos próximos registrados.</div>';
  return `<div class="vision-dashboard"><div class="vision-page-title"><div><span class="vision-eyebrow">TU CENTRO FINANCIERO</span><h2>Dashboard</h2><p>Todo lo que importa, en una vista más directa.</p></div><div class="vision-page-actions"><button class="vision-switch-button" data-act="navigate" data-id="kpis">${icon('settings')} Personalizar indicadores</button><button class="vision-switch-button secondary" data-act="navigate" data-id="register">${icon('plus')} Nueva operación</button></div></div>
- <div class="vision-home-grid"><section class="vision-chart-card vision-panel" aria-label="Posición neta y evolución patrimonial"><div class="vision-panel-heading vision-net-heading"><div><span class="vision-eyebrow">TU POSICIÓN FINANCIERA</span><h3>Posición neta</h3><p class="vision-hero-number" tabindex="0" data-chart-tip="POSICIÓN NETA ACTUAL|Activos menos todas las deudas: ${money(position,'DOP',2)}|Liquidez: ${money(totalCash,'DOP',2)}|Certificados y por cobrar: ${money(cert+personal.receivable,'DOP',2)}|Deudas totales: ${money(debtTotal,'DOP',2)}">${money(position)}</p></div><div class="vision-time-filter" aria-label="Rango histórico">${[12,6,3].map(n=>`<button class="${months===n?'active':''}" data-act="visionRange" data-id="${n}">${n===12?'1 año':n+' meses'}</button>`).join('')}</div></div><div class="vision-net-graph">${graph}</div><div class="vision-position-breakdown"><button type="button" data-act="navigate" data-id="accounts" data-chart-tip="LIQUIDEZ|Cuentas y efectivo registrados: ${money(totalCash,'DOP',2)}"><small>Liquidez</small><strong>${money(totalCash)}</strong></button><button type="button" data-act="navigate" data-id="cards" data-chart-tip="DEUDAS TOTALES|Tarjetas y préstamos bancarios: ${money(debts,'DOP',2)}|Préstamos entre personas por devolver: ${money(personal.payable,'DOP',2)}|Total: ${money(debtTotal,'DOP',2)}"><small>Deudas totales</small><strong>${money(debtTotal)}</strong></button></div></section>
+ <div class="vision-home-grid"><section class="vision-chart-card vision-panel" aria-label="Posición neta y evolución patrimonial"><div class="vision-panel-heading vision-net-heading"><div><span class="vision-eyebrow">TU POSICIÓN FINANCIERA</span><h3>Posición neta</h3><p class="vision-hero-number" tabindex="0" data-chart-tip="POSICIÓN NETA ACTUAL|Activos menos todas las deudas: ${money(position,'DOP',2)}|Liquidez: ${money(totalCash,'DOP',2)}|Certificados y por cobrar: ${money(cert+personal.receivable,'DOP',2)}|Deudas totales: ${money(debtTotal,'DOP',2)}">${money(position)}</p></div><div class="vision-time-filter" aria-label="Rango histórico">${[12,6,3].map(n=>`<button class="${months===n?'active':''}" data-act="visionRange" data-id="${n}">${n===12?'1 año':n+' meses'}</button>`).join('')}</div></div><div class="vision-net-graph">${graph}</div><div class="vision-position-breakdown"><button type="button" data-act="v186Deep" data-id="liquidity" data-chart-tip="LIQUIDEZ|Cuentas y efectivo registrados: ${money(totalCash,'DOP',2)}"><small>Liquidez</small><strong>${money(totalCash)}</strong></button><button type="button" data-act="v186Deep" data-id="debt" data-chart-tip="DEUDAS TOTALES|Tarjetas y préstamos bancarios: ${money(debts,'DOP',2)}|Préstamos entre personas por devolver: ${money(personal.payable,'DOP',2)}|Total: ${money(debtTotal,'DOP',2)}"><small>Deudas totales</small><strong>${money(debtTotal)}</strong></button></div></section>
  <section class="vision-cards-panel vision-panel"><div class="vision-panel-heading"><div><span class="vision-eyebrow">PRODUCTOS</span><h3>Tus tarjetas</h3></div><button class="vision-link" data-act="navigate" data-id="cards">Ver todas ↗</button></div><button type="button" class="vision-plastic-card" data-act="navigate" data-id="cards"><span class="vision-plastic-top"><span>${APP_BRAND}</span><span class="vision-plastic-orbit">◌</span></span><span class="vision-plastic-symbol">▦</span><span class="vision-plastic-bottom"><small>${sanitize(firstCard?(firstCard.name||'Tarjeta de crédito'):'Tus tarjetas')}</small><strong>${firstCard?money(firstDebt):'Sin tarjetas registradas'}</strong></span></button><div class="vision-product-stats"><div><small>Saldo líquido</small><b>${money(totalCash)}</b></div><div><small>Posición neta</small><b>${money(position)}</b></div></div></section>
  <section class="vision-transactions-panel vision-panel"><div class="vision-panel-heading"><div><span class="vision-eyebrow">ACTIVIDAD</span><h3>Movimientos recientes</h3></div><button class="vision-link" data-act="viewActivity">Ver todo ↗</button></div><div class="vision-ledger">${transactions}</div></section>
  <section class="vision-categories-panel vision-panel"><div class="vision-panel-heading"><div><span class="vision-eyebrow">DISTRIBUCIÓN</span><h3>Categorías</h3></div><button class="vision-link" data-act="navigate" data-id="advanced">Detalles ↗</button></div><div class="vision-cat-summary">Gastos del mes <strong>${money(m.expense)}</strong></div>${categories}</section>
@@ -16319,7 +16373,26 @@ function personalPaymentForm(id){let l=personalLoan(id);if(!l)return;
  ${para('Este abono debe estar vinculado a una cuenta o tarjeta en la moneda del préstamo. Si el abono se deposita en una tarjeta, reduce su deuda; si pagas a una persona con tarjeta, incrementa tu deuda de tarjeta. Las posibles comisiones por disposición de crédito se registran aparte. El capital nunca es ingreso ni gasto; los intereses pagados o cobrados sí lo son. Puedes guardar el registro pendiente de confirmar sin mover saldos.')}`,'personalPaymentForm',true);
 }
 function v97CurrentMonthEnd(){return v99End(ui.month)}
-document.addEventListener('click',ev=>{const button=ev.target.closest?.('[data-v176-pay-view]');if(!button)return;ev.preventDefault();ui.v176PayView=button.dataset.v176PayView;const root=document.getElementById('v145-payment-center');if(!root)return;root.querySelectorAll('[data-v176-pay-view]').forEach(b=>{const active=b.dataset.v176PayView===ui.v176PayView;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});const agenda=root.querySelector('.v145-pay-lower'),services=root.querySelector('.v176-pay-services');if(agenda)agenda.hidden=ui.v176PayView!=='agenda';if(services)services.hidden=ui.v176PayView!=='services';},true);
+document.addEventListener('click',ev=>{const button=ev.target.closest?.('[data-v176-pay-view]');if(!button)return;ev.preventDefault();ui.v176PayView=button.dataset.v176PayView;const root=document.getElementById('v145-payment-center');if(!root)return;document.querySelectorAll('[data-v176-pay-view]').forEach(b=>{const active=b.dataset.v176PayView===ui.v176PayView;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});const agenda=root.querySelector('.v145-pay-lower'),services=root.querySelector('.v176-pay-services'),calendar=root.querySelector('.v186-service-calendar');if(agenda)agenda.hidden=ui.v176PayView!=='agenda';if(services)services.hidden=ui.v176PayView!=='services';if(calendar)calendar.hidden=ui.v176PayView!=='calendar';},true);
+/* V186 — Calendario operativo real: solo servicios y suscripciones con vencimiento,
+   sin duplicar operaciones ni modificar saldos. Se alimenta de la agenda original. */
+function v186ServiceCalendar(period,pending){
+ const [year,month]=period.split('-').map(Number),first=new Date(year,month-1,1),days=new Date(year,month,0).getDate(),lead=(first.getDay()+6)%7;
+ const service=pending.filter(x=>x.kind==='recurring'),byDay=Object.create(null);
+ for(const item of service){const k=Number(String(item.date).slice(8,10));(byDay[k]??=[]).push(item);}
+ const cells=Array.from({length:Math.ceil((lead+days)/7)*7},(_,i)=>{
+   const d=i-lead+1;if(d<1||d>days)return '<div class="v186-cal-day is-outside" aria-hidden="true"></div>';
+   const arr=byDay[d]||[],day=String(d).padStart(2,'0'),isNow=period+'-'+day===today();
+   return `<div class="v186-cal-day ${isNow?'is-today':''} ${arr.length?'has-due':''}"><div class="v186-cal-num">${d}${isNow?'<small>Hoy</small>':''}</div>${arr.map(x=>`<button type="button" class="v186-cal-entry" data-act="${sanitize(x.action||'navigate')}" data-id="${sanitize(x.ref||'payments')}" title="${sanitize(x.name)} · ${money(x.amount,x.currency,2)}"><span>${sanitize(x.name)}</span><strong>${money(x.amount,x.currency,2)}</strong></button>`).join('')}</div>`;
+ }).join('');
+ const total=service.reduce((s,x)=>s+v99MoneyInDop(x.amount,x.currency),0);
+ return `<section class="v186-service-calendar" ${ui.v176PayView==='calendar'?'':'hidden'} aria-label="Calendario operativo de servicios">
+  <header class="v186-cal-head"><div><span class="v145-eyebrow">CALENDARIO OPERATIVO</span><h3>Agenda de vencimientos</h3><p>Pagos de servicios y suscripciones ordenados por fecha. Sin descontar saldos hasta registrar el pago.</p></div><div class="v186-cal-total"><strong>${money(total)}</strong><small>${service.length} vencimientos · RD$ equivalente</small></div></header>
+  <div class="v186-cal-scroll"><div class="v186-cal-week">${['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(x=>`<span>${x}</span>`).join('')}</div><div class="v186-cal-grid">${cells}</div></div>
+  ${service.length?'':`<p class="v186-calendar-empty">No hay servicios con vencimiento registrado para este mes. Puedes añadirlos en Suscripciones.</p>`}
+  <div class="v186-cal-footer"><button type="button" class="btn sm soft" data-act="navigate" data-id="recurring">Gestionar suscripciones ${icon('arrow')}</button><button type="button" class="btn sm" data-act="guidedFlow" data-mode="service">Pagar servicio ${icon('arrow')}</button></div>
+ </section>`;
+}
 function payments(){
   // V145 · Centro de pagos ejecutivo. Solo presentacion: reutiliza los
   // calculos originales de compromiso, pendientes, ingreso y FX.
@@ -16386,21 +16459,16 @@ function payments(){
        </div></section>
      <div class="v145-payment-section-head"><div><span class="v145-eyebrow">TUS CUATRO FRENTES</span><h3>Pagos por categoría</h3><p>Los cuatro grupos conservan sus acciones de pago.</p></div><span class="v145-section-meta">${(current?all:due).length} pagos por atender</span></div>
      <div class="grid columns equal section v81-payments-grid v145-pay-cardgrid">${blocks}</div>
-     <div class="v176-pay-mode" role="tablist" aria-label="Agenda o servicios"><button type="button" role="tab" aria-selected="${(ui.v176PayView||'agenda')==='agenda'}" data-v176-pay-view="agenda" class="${(ui.v176PayView||'agenda')==='agenda'?'active':''}">Agenda de vencimientos</button><button type="button" role="tab" aria-selected="${ui.v176PayView==='services'}" data-v176-pay-view="services" class="${ui.v176PayView==='services'?'active':''}">Pagar servicios</button></div>
+     
      <section class="v176-pay-services" ${ui.v176PayView==='services'?'':'hidden'}><div class="v176-pay-service-head"><div><h3>Servicios listos para pagar</h3><p>Vencimientos reales de servicios y suscripciones.</p></div><button type="button" class="btn" data-act="guidedFlow" data-mode="service">Pagar un servicio ${icon('arrow')}</button></div>${all.filter(x=>x.kind==='recurring').map(x=>`<div class="v176-service-row"><span><strong>${sanitize(x.name)}</strong><small>${prettyDate(x.date)} · ${sanitize(x.currency)}</small></span><b>${money(x.amount,x.currency,2)}</b><button type="button" class="btn sm soft" data-act="${x.action}" data-id="${sanitize(x.ref)}">Pagar</button></div>`).join('')||'<p class="v176-muted">No hay servicios pendientes registrados en este período.</p>'}</section>
-     <div class="v145-pay-lower" ${ui.v176PayView==='services'?'hidden':''}>
+     ${v186ServiceCalendar(period,all)}
+     <div class="v145-pay-lower" ${(!ui.v176PayView||ui.v176PayView==='agenda')?'':'hidden'}>
       <section class="v145-pay-agenda"><div class="v145-agenda-header"><div><span class="v145-eyebrow">CALENDARIO OPERATIVO</span><h3>Agenda de vencimientos</h3><p>Ordenada por fecha para anticipar los próximos pagos.</p></div><span class="v145-section-meta">${all.length} registros</span></div>
         <div class="v145-pay-filters" role="group" aria-label="Filtrar la agenda de pagos">${[['all','Todos'],['upcoming','Por vencer'],['overdue','Vencidos']].map(([id,label])=>`<button type="button" data-act="v145PayFilter" data-id="${id}" class="${filter===id?'active':''}" aria-pressed="${filter===id}">${label}${id==='overdue'&&overdue.length?` <b>${overdue.length}</b>`:''}</button>`).join('')}</div>
         <div class="v145-agenda-list">${agenda||`<div class="v145-agenda-empty">${filter==='overdue'?'No hay vencimientos atrasados en esta selección.':filter==='upcoming'?'No hay pagos próximos registrados.':'Sin pagos pendientes para mostrar.'}</div>`}</div>
         ${view.length>12?`<p class="v145-agenda-overflow">Mostrando los primeros 12 vencimientos de ${view.length}. Los demás permanecen en las cuatro categorías anteriores.</p>`:''}
       </section>
-      <aside class="v145-pay-insights"><span class="v145-eyebrow">CONTROL DEL MES</span><h3>Capacidad para cumplir</h3>
-       <div class="v145-insight-balance"><small>Ingresos menos compromisos</small><strong class="${balanceNegative?'is-negative':''}">${balance}</strong><span>${cap.income>0?'Diferencia del período, no saldo disponible de cuenta':'No se calcula una diferencia sin ingresos'}</span></div>
-       <div class="v145-capacity-line"><div><span>Ingresos comprometidos</span><b>${ratioText}</b></div><div class="v145-capacity-track"><i class="${risk}" style="width:${coverage}%"></i></div><p>Se compara el total mensual contratado con los ingresos considerados para ese mismo mes.</p></div>
-       ${next?`<div class="v145-next-due"><span>PRÓXIMO VENCIMIENTO</span><strong>${sanitize(next.name)}</strong><div><small>${prettyDate(next.date)}</small><b>${money(next.amount,next.currency,2)}</b></div></div>`:'<div class="v145-next-due"><span>PRÓXIMO VENCIMIENTO</span><strong>Sin fecha futura pendiente registrada</strong></div>'}
-       <div class="v145-insight-actions"><button type="button" data-v85-action="capacity">Detalle del endeudamiento ${icon('arrow')}</button><button type="button" data-act="navigate" data-id="register">Consultar movimientos ${icon('arrow')}</button></div>
-       <p class="v145-pay-tax-note">Las tasas, impuestos y cargos se determinan antes de confirmar el pago, según la cuenta, el canal y los Ajustes. Esta pantalla no descuenta saldos.</p>
-      </aside>
+
      </div>
      <p class="footnote v145-pay-bottom-note">Compromisos del mes y pendientes en agenda son métricas diferentes. La carga mensual incluye cuotas contractuales, aun si ya se pagaron; la agenda muestra vencimientos pendientes registrados. Para conciliación histórica, consulta Movimientos.</p>
     </div>`;
@@ -17547,7 +17615,7 @@ function overview(){
  return `<div class="ff-dashboard summary-space">
   <div class="ff-dashboard-tools"><div class="ff-overline"><span class="ff-blue-dot"></span> TU PANORAMA FINANCIERO <span class="ff-tools-separator">/</span> <strong>${sanitize(period)}</strong></div><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
   <div class="ff-dashboard-grid v105-grid">
-   <section class="ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><div class="ff-pos-amount ${allNet<-.005?'v176-net-negative':allNet>.005?'v176-net-positive':''}">${money(allNet,'DOP',2)}</div><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="navigate" data-id="accounts" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="navigate" data-id="cards" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="navigate" data-id="patrimony" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
+   <section class="ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${allNet<-.005?'v176-net-negative':allNet>.005?'v176-net-positive':''}">${money(allNet,'DOP',2)}</button><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="v186Deep" data-id="liquidity" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="v186Deep" data-id="debt" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="net" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
    <aside data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong><span>Pendientes hasta fin de mes, incluidos vencidos: ${money(allDue)}. La carga mensual es distinta del saldo total de deuda.</span></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} registros por confirmar <span>${icon('arrow')}</span></button></aside>
    <div class="ff-mid">
     <section data-v105-widget="chart" class="ff-expense-card ff-tile"><div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses</p></div><div class="v82-chart-actions"><span class="ff-inline-pill">Mensual</span></div></div><div class="ff-bar-chart" role="group" aria-label="Gráfico de ingresos y egresos de los últimos cinco meses">${bars}</div><div class="ff-stat-footer"><span title="Ingresos reconocidos del mes"><i class="ff-legend-blue"></i>Ingresos <b>${bubbleMoney(m.income)}</b></span><span title="Gastos reconocidos del mes"><i class="ff-legend-white"></i>Egresos <b>${bubbleMoney(m.expense)}</b></span></div></section>
@@ -17654,9 +17722,8 @@ const widgetCatalog=()=>[...WIDGET_METRICS,...db.accounts.map(a=>['account:'+a.i
 function widgetsState(){
  const saved=db.settings.widgetsBoard;
  const valid=new Set(widgetCatalog().map(x=>x[0]));
- const list=Array.isArray(saved)?saved.filter(id=>valid.has(id)):WIDGET_PRESET.slice();
- // Primera visita tras la actualización: aparece una vez, pero después puede quitarse.
- if(db.settings.v133TomorrowWidgetConfigured!==true&&!list.includes('tomorrowCost'))list.unshift('tomorrowCost');
+ const list=Array.isArray(saved)?saved.filter(id=>valid.has(id)):[];
+ // V186: tablero vacío por defecto. Conserva los widgets elegidos explícitamente.
  return list;
 }
 function saveWidgets(ids){
@@ -17821,11 +17888,11 @@ function v133TomorrowWidgetBody(){
  </div>`;
 }
 function kpiStudio(){
- const selected=widgetsState().filter(id=>!['burden','affordability','utilization'].includes(id)),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
+ const selected=widgetsState(),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
  const map=Object.fromEntries(all.map(x=>[x[0],x])),chartKeys=VIVE_CHART_KEYS;
  const libraryGroups=[['all','Todos'],['decisions','Decisiones'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
  const group=ui.widgetCatalogFilter||'all';
- const visible=all.filter(x=>!['burden','affordability','utilization'].includes(x[0])&&(group==='all'||x[3]===group));
+ const visible=all.filter(x=>group==='all'||x[3]===group);
  const tile=(id,i)=>{
    const def=map[id];if(!def)return '';const isChart=chartKeys.has(id),m=widgetPicture(id),size=widgetSize(id);
    const route=m?.route||({incomeVsExpense:'income',creditVisual:'cards',fundsVisual:'accounts',subscriptionVisual:'recurring',incomeYoYTrend:'advanced',expenseYoYTrend:'advanced',netYoYTrend:'advanced',incomeYtdYoY:'advanced',expenseYtdYoY:'advanced',netYtdYoY:'advanced',netTrendChart:'income',liquidityTrendChart:'accounts',incomeMixChart:'income',expenseMixChart:'advanced',subscriptionsParetoChart:'recurring',creditByCardChart:'cards',loanBalancesChart:'loans',assetMixChart:'patrimony'}[id])||'kpis';
@@ -17847,11 +17914,11 @@ function kpiStudio(){
   const part=visible.filter(x=>x[3]===key);if(!part.length)return '';
   return `<section class="ws-catalog-section"><div class="ws-catalog-heading"><strong>${label}</strong><small>${part.length} diseños disponibles</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
  }).join('');
- return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Un espacio hecho a tu medida.</h2><p>Elige los indicadores y los gráficos que te interesen. Puedes ampliar, reducir y mover cada widget sin cambiar tus registros.</p></div><div class="widgets-head-buttons"><button class="btn sm soft" data-act="widgetPreset">Restablecer</button><button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Añadir indicadores'}</button></div></div>
+ return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores, a mi manera.</h2><p>Comienza con un lienzo vacío. Añade solamente los gráficos, cifras y productos que tú elijas; ordénalos y ajusta sus tamaños.</p></div><div class="widgets-head-buttons">${selected.length?'<button class="btn sm soft" data-act="widgetPreset">Vaciar tablero</button>':''}<button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Añadir indicadores'}</button></div></div>
  ${editing?`<section class="ws-library" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">BIBLIOTECA DE DISEÑOS</span><h3>Elige viendo cómo queda.</h3><p>Explora las vistas previas, toca Añadir y personaliza el tamaño desde tu tablero.</p></div><span>${selected.length} seleccionados</span></header><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><p class="ws-gallery-help">Miniaturas con tus cifras del período. Los gráficos se actualizan con los registros confirmados.</p></section>`:''}
  <div class="ws-dashboard-label"><div><h3>Tablero activo</h3><p>Usa las flechas para ordenar · ⤢ para ampliar o reducir. También puedes arrastrar los widgets con el catálogo abierto.</p></div><strong>${selected.length} widgets</strong></div>
- <div class="v176-kpi-hierarchy">${v175KpiMacro()}${v176GroupedCash()}</div><div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu tablero está vacío. Explora los diseños y añade tu primer widget.</div>'}</div>
- ${widgetProductsOverview()}<div class="widgets-disclaimer">Las operaciones pendientes no afectan los saldos. Los importes en RD$ equivalentes de fondos US$ usan la tasa manual configurada. Los préstamos entre personas no se asignan a un banco.</div></div>`;
+ <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Pulsa «Añadir indicadores» y elige los gráficos o cifras que quieras mostrar.</div>'}</div>
+ <div class="widgets-disclaimer">Las operaciones pendientes no afectan los saldos. Los importes en RD$ equivalentes de fondos US$ usan la tasa manual configurada. Los préstamos entre personas no se asignan a un banco.</div></div>`;
 }
 
 
@@ -18229,63 +18296,92 @@ function v134WealthHistory(period){
   {name:String(selectedYear)+' · histórico',color:'#6366ef',values:data(selectedYear),width:3.7}
  ]);
 }
+/* V187: Patrimonio — un solo KPI principal y tres gráficos simultáneos. */
+function v187CompositionChart(items,total,variant){
+ const max=Math.max(1,...items.map(x=>Math.max(0,Number(x.value)||0)));
+ return `<div class="v187-composition" role="group" aria-label="${variant==='assets'?'Distribución de activos':'Distribución de obligaciones'}">${items.map((item,i)=>{
+  const pct=Math.max(0,Math.min(100,(Number(item.value)||0)/max*100));
+  const share=total>0?((Number(item.value)||0)/total*100):0;
+  return `<button type="button" class="v187-composition-item" data-act="v187WealthDetail" data-id="${sanitize(item.id)}" title="${sanitize(item.label)}: ${money(item.value,'DOP',2)}" aria-label="Ver composición de ${sanitize(item.label)}"><span class="v187-composition-top"><span class="v187-comp-number">0${i+1}</span><span class="v187-comp-label">${sanitize(item.label)}</span><b>${money(item.value)}</b></span><span class="v187-comp-track"><i style="width:${pct.toFixed(3)}%;--comp-color:${item.color}"></i></span><span class="v187-composition-foot"><span>${total>0?share.toFixed(1)+'%':'Sin participación'}</span><span aria-hidden="true">↗</span></span></button>`;
+ }).join('')}</div>`;
+}
 function v134WealthWorld(){
- /* V142: patrimonio completo, siempre visible y con cortes históricos reales.
-    Conserva el motor v134WealthSnapshot y los gráficos previos, sin selector de módulos. */
- const chosen=v134WealthMonth(ui.month),now=chosen.snapshot,cut=chosen.cut,p=chosen.period;
- const prior=periodEnd(+p.slice(0,4),+p.slice(5,7)-1);
- const old=prior&&v14HistoricalAvailable(prior)?v134WealthSnapshot(prior):null;
- const year=Number(p.slice(0,4)),previousYear=year-1;
- const periodPicker=`<label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label>`;
- const dateLabel=now?`Cifras al ${prettyDate(cut)}`:chosen.future?'Período futuro · todavía sin cierre':'Sin historial suficiente para ese corte';
- const estimated=now?.estimatedLoan?'<span class="v134-status">Préstamo histórico estimado</span>':'';
- const moneyOr=val=>now?money(val):'—';
- const mainValue=now?money(now.net):'—';
- const stat=(label,val,sub,modifier='')=>`<article class="v142-wealth-stat ${modifier}"><span>${label}</span><strong>${moneyOr(val)}</strong><small>${sub}</small></article>`;
- const metricCards=`<div class="v142-wealth-stat-grid">
-  ${stat('Activos',now?.assets,'Cuentas, inversiones y dinero por cobrar')}
-  ${stat('Obligaciones',now?.liabilities,'Tarjetas, préstamos y deudas por pagar')}
-  ${stat('Liquidez',now?.liquid,'Cuentas y efectivo disponible al cierre')}
-  ${stat('Invertido y por cobrar',now?now.certificates+now.receivable:0,'Certificados y préstamos personales por cobrar')}
- </div>`;
- const change=v134WealthChange(now,old);
- const available=Boolean(now);
- const colorBar=(val,total)=>Math.max(0,Math.min(100,100*num(val)/Math.max(1,total)));
- const totalMax=available?Math.max(1,now.assets,now.liabilities):1;
- const balance=available?`<div class="v142-balance-body">
-  <div class="v142-balance-line"><span>Activos</span><strong>${money(now.assets)}</strong></div><div class="v134-track"><i style="width:${colorBar(now.assets,totalMax)}%"></i></div>
-  <div class="v142-balance-line"><span>Pasivos</span><strong>${money(now.liabilities)}</strong></div><div class="v134-track debt"><i style="width:${colorBar(now.liabilities,totalMax)}%"></i></div>
-  <div class="v142-balance-net"><span>Patrimonio neto</span><strong>${money(now.net)}</strong></div>
- </div>`:'<p class="v142-empty-state">Aún no hay información suficiente para reconstruir este cierre.</p>';
- const rows=(items)=>items.map(item=>`<button type="button" class="v134-break-row" data-act="navigate" data-id="${item.id}"><span>${item.label}</span><strong>${moneyOr(item.value)}</strong>${icon('arrow')}</button>`).join('');
- const composition=available?`<div class="v134-break-columns">
-  <div><h4>Activos · ${money(now.assets)}</h4>${rows([{label:'Cuentas y efectivo',value:now.liquid,id:'accounts'},{label:'Certificados financieros',value:now.certificates,id:'certificates'},{label:'Préstamos por cobrar',value:now.receivable,id:'personal'}])}</div>
-  <div><h4>Pasivos · ${money(now.liabilities)}</h4>${rows([{label:'Tarjetas de crédito',value:now.cards,id:'cards'},{label:'Préstamos bancarios',value:now.loans,id:'loans'},{label:'Entre personas',value:now.payable,id:'personal'}])}</div>
- </div>`:'<p class="v142-empty-state">No hay productos que desglosar en el período seleccionado.</p>';
- const forecastModel=v14ForecastBasis();
- const canForecast=available&&p===today().slice(0,7)&&forecastModel.sampleCount>0;
- const delta=canForecast?v14MonthlyScenario(forecastModel,'base'):0;
- const projected=canForecast?rnd(now.net+delta*12):null;
- const forecastCurve=canForecast?v14ChartSvg(Array.from({length:13},(_,i)=>i?'+'+i+'m':'Hoy'),[
-   {name:'Escenario orientativo · 12 meses',color:'#6269e7',values:Array.from({length:13},(_,i)=>rnd(now.net+delta*i)),width:3.8,dash:true}
- ]):'';
- return `<div class="v134-patrimony v142-wealth-complete" id="v134Patrimony">
-  <header class="v134-top"><div><span class="v134-eyebrow">vive el hoy · PATRIMONIO</span><h2>Tu patrimonio, de principio a fin.</h2><p>Activos, deudas y evolución histórica. Una misma vista, sin configurar ni añadir módulos.</p></div><div class="v137-wealth-top-tools">${periodPicker}</div></header>
-  <section class="v134-hero" aria-label="Patrimonio neto del cierre seleccionado"><div class="v134-hero-top"><span>${dateLabel}</span>${estimated}</div>
-   <p>PATRIMONIO NETO</p><strong class="v134-main-amount">${mainValue}</strong>
-   <div class="v134-hero-bottom"><span>Frente al cierre del mes anterior</span><div class="v134-change-group">${change}</div></div>
+ const m=v134WealthMonth(ui.month),s=m.snapshot,cut=m.cut,p=m.period;
+ const pastEnd=new Date(Number(p.slice(0,4)),Number(p.slice(5,7))-1,0);
+ const prevPeriod=`${pastEnd.getFullYear()}-${String(pastEnd.getMonth()+1).padStart(2,'0')}`;
+ const previous=v134WealthMonth(prevPeriod).snapshot;
+ const year=Number(p.slice(0,4));
+ const val=x=>s?money(x,'DOP',2):'—';
+ const assets=[{label:'Cuentas y efectivo',value:s?.liquid||0,id:'liquidity',color:'#587ce6'},
+  {label:'Certificados',value:s?.certificates||0,id:'certificates',color:'#76a2e5'},
+  {label:'Por cobrar',value:s?.receivable||0,id:'receivable',color:'#6bbaab'}];
+ const debts=[{label:'Tarjetas',value:s?.cards||0,id:'cards',color:'#d3917b'},
+  {label:'Préstamos',value:s?.loans||0,id:'loans',color:'#a28adf'},
+  {label:'Entre personas',value:s?.payable||0,id:'payable',color:'#e1b37e'}];
+ const metric=(id,label,value,sub)=>`<button type="button" class="v187-wealth-part v187-wealth-${id}" data-act="v187WealthDetail" data-id="${id}" aria-label="Abrir desglose de ${label}"><span>${label}</span><strong>${val(value)}</strong><small>${sub}</small></button>`;
+ return `<div class="v134-patrimony v142-wealth-complete v187-patrimony" id="v134Patrimony">
+  <header class="v134-top v187-wealth-top"><div><span class="v134-eyebrow">vive el hoy · PATRIMONIO</span><h2>Lo que tienes. Lo que debes.<br><em>Lo que realmente es tuyo.</em></h2><p>Tu patrimonio al cierre y su evolución, sin sumar crédito disponible como activo.</p></div><div class="v137-wealth-top-tools"><label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></div></header>
+  <section class="v134-hero v187-wealth-hero" aria-label="Balance patrimonial principal">
+   <div class="v187-hero-layout"><button type="button" class="v187-hero-primary" data-act="v187WealthDetail" data-id="net" aria-label="Abrir desglose del patrimonio neto"><span class="v187-hero-eyebrow">PATRIMONIO NETO</span><strong>${val(s?.net)}</strong><span class="v187-hero-explain">Lo que realmente es tuyo, después de tus obligaciones</span><span class="v187-hero-change">${s?'Frente al mes anterior: '+(previous?v134WealthChange(s,previous):'sin comparación registrada'):'Sin historial suficiente para este cierre'}</span></button>
+   <div class="v187-hero-sides">${metric('assets','Activos',s?.assets,'Dinero en cuentas, certificados y por cobrar')}${metric('liabilities','Pasivos',s?.liabilities,'Tarjetas, préstamos y cuentas por pagar')}</div></div>
+   <div class="v187-hero-meta"><span>${s?'Cifras al '+prettyDate(cut):'Período sin corte confirmado'}${s?.estimatedLoan?' · Préstamo histórico parcialmente estimado':''}</span><span>RD$ equivalentes · Pulsa cada cifra para profundizar</span></div>
   </section>
-  ${metricCards}
-  <div class="v142-wealth-panels">
-   <section class="v134-panel v134-history v142-wealth-history"><header><div><span>01 / EVOLUCIÓN HISTÓRICA</span><h3>Cómo ha cambiado tu patrimonio</h3><p>${year} frente a ${previousYear} · saldo al cierre de cada mes</p></div><span class="v142-wealth-chip">RD$ equivalentes</span></header>${v134WealthHistory(p)}<p>Las líneas representan cierres calculados con el historial registrado, sin rellenar meses futuros.</p></section>
-   <section class="v134-panel v142-wealth-balance"><header><div><span>02 / BALANCE</span><h3>Lo que tienes frente a lo que debes</h3></div></header>${balance}</section>
-  </div>
-  <section class="v134-panel v142-wealth-composition"><header><div><span>03 / COMPOSICIÓN</span><h3>Tu patrimonio, producto por producto</h3><p>Importes agrupados por tipo; cada fila abre su módulo correspondiente.</p></div></header>${composition}</section>
-  <section class="v134-panel v142-wealth-projection"><header><div><span>04 / PROYECCIÓN</span><h3>Si continúa el ritmo actual</h3><p>Escenario ilustrativo a 12 meses, separado de los cierres históricos.</p></div>${canForecast?`<strong class="v134-forecast-number">${money(projected)}</strong>`:''}</header>
-   ${canForecast?`${forecastCurve}<p>Base: promedio de ingresos y egresos de los últimos tres meses cerrados. No representa dinero garantizado ni un saldo confirmado.</p>`:'<p class="v142-empty-state">La proyección solo se calcula para el mes actual cuando existen al menos algunos meses con actividad. Para cierres anteriores se muestra únicamente información histórica.</p>'}
+  <section class="v187-charts" aria-label="Tres gráficos del patrimonio">
+   <article class="v134-panel v187-chart-card v187-timeline"><header><div><span>01 / EVOLUCIÓN</span><h3>Tu patrimonio en el tiempo</h3><p>${year} frente a ${year-1} · cierres registrados</p></div><button type="button" class="v187-history-launch" data-act="v187History">${icon('chart')} Histórico ${icon('arrow')}</button></header><div class="v187-mini-chart">${v134WealthHistory(p)}</div><p class="v187-graph-foot">Sin valores futuros simulados</p></article>
+   <article class="v134-panel v187-chart-card v187-assets"><header><div><span>02 / ACTIVOS</span><h3>De dónde viene</h3><p>Composición al cierre elegido</p></div></header><div class="v187-chart-total">${val(s?.assets)}</div>${v187CompositionChart(assets,s?.assets||0,'assets')}</article>
+   <article class="v134-panel v187-chart-card v187-liabilities"><header><div><span>03 / PASIVOS</span><h3>Dónde están las deudas</h3><p>Distribución de obligaciones</p></div></header><div class="v187-chart-total">${val(s?.liabilities)}</div>${v187CompositionChart(debts,s?.liabilities||0,'liabilities')}</article>
   </section>
-  <p class="v134-disclaimer">El histórico utiliza fechas de apertura, movimientos y deudas registrados. Algunos préstamos históricos pueden incluir amortización estimada; las posiciones USD se convierten a la tasa configurada actualmente, no a una tasa de cierre histórica. Un mes sin datos no equivale a saldo cero.</p>
+  <p class="v134-disclaimer v187-footnote">Los datos proceden de productos y movimientos registrados. Los cierres anteriores pueden incorporar préstamos reconstruidos y conversiones de US$ usando la tasa configurada hoy; no representan consultas bancarias históricas en tiempo real.</p>
  </div>`;
+}
+function v187HistoricRange(range='60'){
+ const current=ui.month<=today().slice(0,7)?ui.month:today().slice(0,7);
+ const [ey,em]=current.split('-').map(Number),numMonths=range==='all'?240:Math.max(12,Number(range)||60);
+ const firstCandidates=[...db.accounts.map(x=>x.opened),...db.cards.map(x=>x.opened),...db.loans.map(x=>x.startDate||x.contractDate||x.firstDue),...db.certificates.map(x=>x.startDate),...db.personalLoans.map(x=>x.date),...db.transactions.map(x=>x.date)].filter(x=>/^\d{4}-\d{2}/.test(String(x))).sort();
+ const first=firstCandidates[0]||current;
+ const data=[];
+ for(let n=numMonths-1;n>=0;n--){const d=new Date(ey,em-1-n,1),p=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;if(p<first.slice(0,7))continue;
+  const snap=v134WealthMonth(p).snapshot;data.push({label:p,net:snap?.net??null,assets:snap?.assets??null,liabilities:snap?.liabilities??null});}
+ return data;
+}
+function v187HistorySvg(data){
+ const W=Math.max(840,data.length*55),H=345,L=95,R=24,T=24,B=58,values=data.flatMap(x=>[x.net,x.assets,x.liabilities]).filter(x=>Number.isFinite(x));
+ if(!values.length)return '<p class="v142-empty-state">No hay cierres suficientes para graficar el rango elegido.</p>';
+ const mn=Math.min(0,...values),mx=Math.max(0,...values),span=Math.max(1,mx-mn),x=i=>L+(W-L-R)*i/Math.max(1,data.length-1),y=n=>T+(H-T-B)*(mx-n)/span;
+ const guides=Array.from({length:5},(_,i)=>{const v=mn+span*i/4,Y=y(v);return `<line x1="${L}" x2="${W-R}" y1="${Y}" y2="${Y}" stroke="#d6e2f1" stroke-dasharray="4 7"/><text x="${L-10}" y="${Y+4}" text-anchor="end" fill="#6980a2" font-size="12">${(v/1000).toFixed(0)}K</text>`}).join('');
+ const series=[['net','#6664ea',3.7,'Patrimonio neto'],['assets','#368ab2',2.5,'Activos'],['liabilities','#dd936b',2.5,'Pasivos']];
+ const paths=series.map(([key,color,width,name])=>{
+  let d='',live=false;
+  const dots=data.map((m,i)=>{const v=m[key];if(v===null){live=false;return ''}d+=(live?' L':' M')+x(i).toFixed(1)+' '+y(v).toFixed(1);live=true;
+   return `<circle cx="${x(i)}" cy="${y(v)}" r="3.2" fill="${color}"><title>${name} · ${m.label}: ${money(v,'DOP',2)}</title></circle>`;}).join('');
+  return `<path d="${d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"/>${dots}`;
+ }).join('');
+ const labels=data.map((m,i)=>i%Math.max(1,Math.ceil(data.length/18))===0||i===data.length-1?`<text x="${x(i)}" y="${H-22}" text-anchor="middle" font-size="11" fill="#7388a4">${m.label.slice(2)}</text>`:'').join('');
+ return `<div class="v187-history-scroll" tabindex="0"><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Histórico real de patrimonio, activos y pasivos por mes">${guides}${paths}${labels}</svg></div><div class="v187-history-legend"><span><i style="background:#6664ea"></i> Patrimonio neto</span><span><i style="background:#368ab2"></i> Activos</span><span><i style="background:#dd936b"></i> Pasivos</span></div>`;
+}
+function v187OpenHistory(range='60'){
+ const data=v187HistoricRange(range),first=data[0]?.label||'—',last=data.at(-1)?.label||'—';
+ const buttons=[['24','2 años'],['60','5 años'],['120','10 años'],['all','Todo el historial']].map(([id,label])=>`<button type="button" class="${id===range?'selected':''}" data-act="v187HistoryRange" data-id="${id}" aria-pressed="${id===range}">${label}</button>`).join('');
+ document.getElementById('modal-root').innerHTML=`<div class="v187-modal-overlay"><section class="v187-history-dialog" role="dialog" aria-modal="true" aria-labelledby="v187HistoryTitle"><header><div><span>HISTÓRICO PATRIMONIAL</span><h2 id="v187HistoryTitle">Evolución registrada</h2><p>${first} → ${last} · ${data.filter(x=>x.net!==null).length} cierres con información</p></div><button type="button" data-act="closeModal" aria-label="Cerrar histórico" class="v187-modal-close">×</button></header><div class="v187-range-controls">${buttons}</div>${v187HistorySvg(data)}<p class="v187-history-caveat">Los meses sin información no se sustituyen por cero. Las cifras históricas son reconstrucciones de tus productos registrados con las tasas de cambio actuales.</p></section></div>`;
+ document.querySelector('.v187-modal-close')?.focus({preventScroll:true});
+}
+function v187WealthRows(cut,kind){
+ const items=[];const push=(name,route,amount,currency='DOP',detail='')=>items.push({name,route,amount:fx(amount,currency),original:money(amount,currency,2),detail});
+ if(kind==='net'||kind==='assets'||kind==='liquidity')db.accounts.forEach(a=>{if(a.opened&&a.opened>cut)return;push(a.name,'accounts',getAccountBalance(a,cut),a.currency,'Cuenta / efectivo')});
+ if(kind==='net'||kind==='assets'||kind==='certificates')db.certificates.forEach(c=>{if(c.startDate&&c.startDate>cut)return;const initial=c.capitalMode==='pending'?db.transactions.filter(t=>t.certificateId===c.id&&t.type==='certificate_funding'&&t.date<=cut).reduce((n,t)=>n+num(t.amount),0):num(c.principal);const redeemed=db.transactions.filter(t=>t.certificateId===c.id&&t.type==='certificate_redemption'&&t.date<=cut).reduce((n,t)=>n+num(t.amount),0);push(c.name,'certificates',Math.max(0,initial-redeemed),c.currency,'Certificado')});
+ if(kind==='net'||kind==='liabilities'||kind==='cards')db.cards.forEach(c=>{if(c.opened&&c.opened>cut)return;const rd=v12CardHistorical(c,'DOP',cut),us=v12CardHistorical(c,'USD',cut);push(c.name,'cards',fx(rd,'DOP')+fx(us,'USD'),'DOP',`Deuda RD$ ${money(rd,'DOP',2)} / US$ ${money(us,'USD',2)}`)});
+ if(kind==='net'||kind==='liabilities'||kind==='loans')db.loans.forEach(l=>{const v=v134WealthLoanAsOf(l,cut);if(v.balance>.005)push(l.name,'loans',v.balance,l.currency,v.estimated?'Saldo reconstruido':'Capital pendiente')});
+ if(['net','assets','liabilities','receivable','payable'].includes(kind))db.personalLoans.forEach(l=>{if(l.date&&l.date>cut)return;const settled=db.transactions.filter(t=>t.type==='personal_settlement'&&t.personalLoanId===l.id&&t.date<=cut).reduce((n,t)=>n+Math.max(0,num(t.principal)),0);const forgiven=l.forgiveness?.date&&l.forgiveness.date<=cut?num(l.forgiveness.amount):0;const remaining=Math.max(0,num(l.principal)-settled-forgiven);if(l.direction==='lent'&&['net','assets','receivable'].includes(kind)||l.direction==='borrowed'&&['net','liabilities','payable'].includes(kind))push(l.person||'Relación personal','personal',remaining,l.currency,l.direction==='lent'?'Por cobrar':'Por pagar')});
+ return items.filter(x=>Math.abs(x.amount)>.005).sort((a,b)=>Math.abs(b.amount)-Math.abs(a.amount));
+}
+function v187OpenWealthDetail(kind){
+ const selected=v134WealthMonth(ui.month),snap=selected.snapshot,cut=selected.cut;
+ const title=({net:'Patrimonio neto',assets:'Composición de activos',liabilities:'Composición de pasivos',liquidity:'Cuentas y efectivo',certificates:'Certificados financieros',receivable:'Préstamos por cobrar',cards:'Deuda de tarjetas',loans:'Préstamos bancarios',payable:'Deudas entre personas'})[kind]||'Patrimonio';
+ if(!snap||!cut)return toast('Este período todavía no tiene datos patrimoniales registrados.');
+ const main=({net:snap.net,assets:snap.assets,liabilities:snap.liabilities,liquidity:snap.liquid,certificates:snap.certificates,receivable:snap.receivable,cards:snap.cards,loans:snap.loans,payable:snap.payable})[kind];
+ const rows=v187WealthRows(cut,kind),body=rows.map(x=>`<button type="button" class="v187-detail-line" data-act="v187WealthGo" data-id="${sanitize(x.route)}"><span><strong>${sanitize(x.name)}</strong><small>${sanitize(x.detail)}${x.original?` · ${sanitize(x.original)}`:''}</small></span><b>${money(x.amount,'DOP',2)}</b>${icon('arrow')}</button>`).join('');
+ document.getElementById('modal-root').innerHTML=`<div class="v187-modal-overlay"><section class="v187-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="v187DetailTitle"><header><div><span>DESGLOSE PATRIMONIAL · ${sanitize(cut)}</span><h2 id="v187DetailTitle">${sanitize(title)}</h2><p>Saldo reconstruido al ${prettyDate(cut)}, expresado en RD$ equivalentes.</p></div><button type="button" data-act="closeModal" aria-label="Cerrar detalle" class="v187-modal-close">×</button></header><div class="v187-detail-big">${money(main,'DOP',2)}</div><div class="v187-detail-list">${body||'<p class="v187-detail-empty">No hay productos registrados en este desglose para el corte elegido.</p>'}</div><p class="v187-history-caveat">Abre un producto para ver su módulo actual. Los valores aquí reflejan el corte elegido; los del módulo pueden corresponder a otro período.</p></section></div>`;
+ document.querySelector('.v187-modal-close')?.focus({preventScroll:true});
 }
 
 // Selector de corte, exclusivo de Patrimonio; no modifica saldos ni movimientos.
@@ -20110,7 +20206,7 @@ if(['loanAmount','loanInterest','loanFee','loanInsurance'].includes(t.id)){let f
  widgetRemove:el=>{saveWidgets(widgetsState().filter(x=>x!==el.dataset.id));render()},
  widgetMoveUp:el=>{let list=widgetsState(),i=list.indexOf(el.dataset.id);if(i>0){[list[i-1],list[i]]=[list[i],list[i-1]];saveWidgets(list);render()}},
  widgetMoveDown:el=>{let list=widgetsState(),i=list.indexOf(el.dataset.id);if(i>=0&&i<list.length-1){[list[i+1],list[i]]=[list[i],list[i+1]];saveWidgets(list);render()}},
- widgetPreset:()=>{saveWidgets(WIDGET_PRESET);render()},
+ widgetPreset:()=>{if(widgetsState().length&& !confirm('¿Vaciar tu tablero personal? Tus registros financieros no se eliminarán.'))return;saveWidgets([]);render()},
  widgetCatalogFilter:el=>{ui.widgetCatalogFilter=el.dataset.id||'all';render()},
  widgetSize:el=>{db.settings.widgetSizes??={};let id=el.dataset.id;db.settings.widgetSizes[id]=widgetSize(id)===2?1:2;persist();render()}
  };
@@ -20585,7 +20681,7 @@ function v32Render(page){switch(ui.v32Tools[page]){
  case 'maturity':return v32Maturities();
  }return '';
 }
-function v32WithTools(page,raw){const active=ui.v32Tools[page];return `<div class="v32-integrated">${v32Bars(page)}${active?`<div class="v32-tool-body v31-world" id="v32-tool-${page}"><div class="v32-tool-heading"><span>HERRAMIENTAS DE ${v31E(V32_LABELS[page].toUpperCase())}</span><button type="button" class="v32-tool-close" data-act="v32Tool" data-page="${page}" data-id="${active}" aria-label="Cerrar herramienta">${icon('close')} Cerrar</button></div>${v32Render(page)}</div>`:''}</div>${raw}`}
+function v32WithTools(page,raw){const active=ui.v32Tools[page];return `<div class="v32-integrated">${raw}<details class="v186-tools-extra" ${active?'open':''}><summary><span>${icon('grid')} Herramientas adicionales</span><small>Funciones puntuales · ${v31E(V32_LABELS[page])}</small>${icon('arrow')}</summary>${v32Bars(page)}${active?`<div class="v32-tool-body v31-world" id="v32-tool-${page}"><div class="v32-tool-heading"><span>HERRAMIENTAS DE ${v31E(V32_LABELS[page].toUpperCase())}</span><button type="button" class="v32-tool-close" data-act="v32Tool" data-page="${page}" data-id="${active}" aria-label="Cerrar herramienta">${icon('close')} Cerrar</button></div>${v32Render(page)}</div>`:''}</details></div>`}
 function v32CardSimulator(){let cards=db.cards,selected=cards.find(c=>c.id===ui.v31CardId)||cards[0];if(selected)ui.v31CardId=selected.id;
  if(!selected)return v31Section('SIMULACIÓN','Escenarios de pago',v31Empty('Registra primero una tarjeta','El simulador utiliza los límites y las tasas anuales de tus tarjetas.','addCard','Nueva tarjeta'));
  let ccy=ui.v31CardCurrency,amt=Math.max(0,num(ui.v31CardAmount)),x=v31SimulateCredit(selected,ccy,amt);
@@ -22294,7 +22390,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  function activityView(arr){const activity=db.transactions.filter(t=>['personal_issue','personal_settlement'].includes(t.type)&&arr.some(l=>l.id===t.personalLoanId)).sort((a,b)=>String(b.date).localeCompare(String(a.date)));return `<section class="v56-panel"><div class="v56-section-label">REGISTRO AUDITABLE</div><h3>Entregas y devoluciones</h3><p>Solo operaciones reales asociadas a préstamos. El principal no se considera ingreso ni gasto.</p><div class="v56-activity">${activity.length?activity.slice(0,150).map(t=>{const l=personalLoan(t.personalLoanId),c=l&&contactFor(l);return `<div class="v56-activity-item"><span class="v56-act-icon">${icon(t.type==='personal_issue'?'wallet':'check')}</span><div><strong>${clean(c?fullName(c):l?.person||'Contacto')} · ${clean(loanCategory(l||{}))}</strong><small>${clean(t.type==='personal_issue'?'Entrega inicial':'Abono al capital')} · ${dateLabel(t.date)}</small>${t.note?`<p>${clean(t.note)}</p>`:''}</div><div class="v56-activity-value"><b>${moneyLocal(t.type==='personal_settlement'?num(t.principal):num(t.amount),t.currency)}</b>${num(t.interest)?`<small>Interés: ${moneyLocal(t.interest,t.currency)}</small>`:''}</div><button type="button" data-v56="loanDetail" data-id="${clean(l?.id)}" aria-label="Ver detalle">${icon('chevron-right')}</button></div>`}).join(''):empty('No hay operaciones registradas','Las entregas y los abonos aparecerán aquí automáticamente.')}</div></section>`;}
  function contactDetail(id){const c=contactById(id);if(!c){ui.v56ContactId='';return personDirectory()}const d=contactStatus(c),relations=d.rel.sort((a,b)=>String(b.date).localeCompare(String(a.date)));return `<div class="v56-profile"><div class="v56-profile-back">${tabButton('contactsBack','← Volver a contactos')}</div><header class="v56-profile-header"><div class="v56-avatar big">${clean(initials(c))}</div><div><span class="v56-section-label">CONTACTO REGISTRADO</span><h2>${clean(fullName(c))}</h2><p>${clean(c.alias||'Relación personal')} ${c.phone?' · '+clean(c.phone):''}${c.email?' · '+clean(c.email):''}</p>${c.notes?`<p class="v56-muted">${clean(c.notes)}</p>`:''}</div><div class="v56-profile-actions">${tabButton('editContact','Editar contacto',c.id)}${tabButton('loanNew','+ Nuevo concepto',c.id,'primary')}</div></header><div class="v56-person-summary"><div><span>Total por cobrar RD$</span><strong>${moneyLocal(d.rd)}</strong></div><div><span>Total por cobrar US$</span><strong>${moneyLocal(d.us,'USD')}</strong></div><div><span>Yo debo RD$</span><strong>${moneyLocal(d.payRd)}</strong></div><div><span>Acuerdos activos</span><strong>${d.active}</strong></div></div><div class="v56-profile-columns"><section class="v56-panel"><div class="v56-panel-heading"><div><div class="v56-section-label">CARTERA POR CONCEPTO</div><h3>${d.rel.length} acuerdos registrados</h3><p>Cada acuerdo conserva su motivo, observación, importe y vencimiento.</p></div></div><div class="v56-loan-list">${relations.length?relations.map(loanRow).join(''):empty('Este contacto no tiene deudas todavía','Puedes crear múltiples conceptos para esta misma persona.',tabButton('loanNew','Añadir acuerdo',c.id,'primary'))}</div></section><div>${groupVisual(relations)}<section class="v56-panel"><div class="v56-section-label">ÚLTIMOS ABONOS</div><h3>Movimientos del contacto</h3>${activityViewInner(relations)}</section></div></div></div>`;}
  function activityViewInner(arr){let tx=db.transactions.filter(t=>arr.some(l=>l.id===t.personalLoanId)&&t.type==='personal_settlement').sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,10);return tx.length?`<div class="v56-mini-activity">${tx.map(t=>`<div><span>${dateLabel(t.date)}<small>${clean(personalLoan(t.personalLoanId)?.concept||'Abono')} · ${clean(t.note||'Sin nota')}</small></span><strong>${moneyLocal(t.principal,t.currency)}</strong></div>`).join('')}</div>`:empty('Aún no hay abonos','Cuando recibas un pago quedará reflejado aquí.')}
- function loanDetail(id){const l=personalLoan(id);if(!l)return '';const c=contactFor(l),bal=personalBalance(l),history=settled(l),paid=num(l.principal)-bal;return `<div class="v56-profile"><div class="v56-profile-back">${tabButton('detailBack','← Volver a la persona',c?.id||'')}</div><section class="v56-panel v56-detail"><div class="v56-panel-heading"><div><div class="v56-section-label">DETALLE DEL ACUERDO · ${clean(l.currency)}</div><h2>${clean(loanCategory(l))}</h2><p>${clean(c?fullName(c):l.person)} · ${l.direction==='lent'?'Dinero que deben devolverte':'Dinero que debes devolver'}</p></div><div class="v56-profile-actions">${tabButton('editLoan','Editar acuerdo',l.id)}${unpaid(l)?tabButton('payment','+ Registrar abono',l.id,'primary'):''}</div></div><div class="v56-detail-amount"><span>SALDO CAPITAL PENDIENTE</span><strong>${moneyLocal(bal,l.currency)}</strong></div><div class="v56-detail-grid"><div><span>Capital inicial</span><b>${moneyLocal(l.principal,l.currency)}</b></div><div><span>Capital ya abonado</span><b>${moneyLocal(Math.max(0,paid),l.currency)}</b></div><div><span>Fecha de entrega</span><b>${dateLabel(l.date)}</b></div><div><span>Vencimiento</span><b>${dateLabel(l.dueDate)}</b></div><div><span>Tipo de acuerdo</span><b>${clean(agreementLabel(l))}</b></div><div><span>Estado</span><b>${bal<.005?'Liquidado':l.dueDate&&l.dueDate<today()?'Vencido':'Pendiente'}</b></div></div><div class="v56-observation"><span>CONCEPTO / CLASIFICACIÓN</span><h3>${clean(loanCategory(l))}</h3><span>OBSERVACIÓN DESCRIPTIVA</span><p>${clean(l.note||'Sin descripción adicional.')}</p></div><div class="v56-contract"><div><span class="v56-section-label">ACUERDO ENTRE LAS PARTES</span><h3>Condiciones que registraste</h3><p>${clean(l.agreementTerms||'Sin condiciones adicionales registradas.')}</p><small>${clean(agreementLabel(l))}. Este es un registro personal, no sustituye un contrato firmado ni acredita aceptación por la otra persona.</small></div>${tabButton('copyAgreement','Copiar resumen',l.id)}</div></section><section class="v56-panel"><div class="v56-section-label">TRAZABILIDAD</div><h3>Historial de capital y abonos</h3><div class="v56-ledger"><div class="v56-ledger-row"><span><strong>Capital registrado</strong><small>${dateLabel(l.date)}</small></span><b>${moneyLocal(l.principal,l.currency)}</b></div>${history.length?history.map(t=>`<div class="v56-ledger-row"><span><strong>Abono al capital</strong><small>${dateLabel(t.date)} · ${clean(t.note||'Sin referencia')}</small>${num(t.interest)?`<small>Interés efectivamente cobrado/pagado: ${moneyLocal(t.interest,l.currency)}</small>`:''}</span><b class="v56-positive">− ${moneyLocal(t.principal,l.currency)}</b></div>`).join(''):'<p class="v56-muted">Todavía no hay abonos registrados.</p>'}<div class="v56-ledger-total"><span>Pendiente por cobrar / pagar</span><strong>${moneyLocal(bal,l.currency)}</strong></div></div></section></div>`;}
+ function loanDetail(id){const l=personalLoan(id);if(!l)return '';const c=contactFor(l),bal=personalBalance(l),history=settled(l),paid=num(l.principal)-bal;return `<div class="v56-profile"><div class="v56-profile-back">${tabButton('detailBack','← Volver a la persona',c?.id||'')}</div><section class="v56-panel v56-detail"><div class="v56-panel-heading"><div><div class="v56-section-label">DETALLE DEL ACUERDO · ${clean(l.currency)}</div><h2>${clean(loanCategory(l))}</h2><p>${clean(c?fullName(c):l.person)} · ${l.direction==='lent'?'Dinero que deben devolverte':'Dinero que debes devolver'}</p></div><div class="v56-profile-actions">${tabButton('editLoan','Editar acuerdo',l.id)}${unpaid(l)?tabButton('payment','+ Registrar abono',l.id,'primary'):''}${l.direction==='lent'&&unpaid(l)?`<button type="button" class="v56-button" data-act="forgivePersonal" data-id="${clean(l.id)}">Perdonar deuda</button>`:''}</div></div><div class="v56-detail-amount"><span>SALDO CAPITAL PENDIENTE</span><strong>${moneyLocal(bal,l.currency)}</strong></div><div class="v56-detail-grid"><div><span>Capital inicial</span><b>${moneyLocal(l.principal,l.currency)}</b></div><div><span>Capital ya abonado</span><b>${moneyLocal(Math.max(0,paid),l.currency)}</b></div><div><span>Fecha de entrega</span><b>${dateLabel(l.date)}</b></div><div><span>Vencimiento</span><b>${dateLabel(l.dueDate)}</b></div><div><span>Tipo de acuerdo</span><b>${clean(agreementLabel(l))}</b></div><div><span>Estado</span><b>${bal<.005?'Liquidado':l.dueDate&&l.dueDate<today()?'Vencido':'Pendiente'}</b></div></div><div class="v56-observation"><span>CONCEPTO / CLASIFICACIÓN</span><h3>${clean(loanCategory(l))}</h3><span>OBSERVACIÓN DESCRIPTIVA</span><p>${clean(l.note||'Sin descripción adicional.')}</p></div><div class="v56-contract"><div><span class="v56-section-label">ACUERDO ENTRE LAS PARTES</span><h3>Condiciones que registraste</h3><p>${clean(l.agreementTerms||'Sin condiciones adicionales registradas.')}</p><small>${clean(agreementLabel(l))}. Este es un registro personal, no sustituye un contrato firmado ni acredita aceptación por la otra persona.</small></div>${tabButton('copyAgreement','Copiar resumen',l.id)}</div></section><section class="v56-panel"><div class="v56-section-label">TRAZABILIDAD</div><h3>Historial de capital y abonos</h3><div class="v56-ledger"><div class="v56-ledger-row"><span><strong>Capital registrado</strong><small>${dateLabel(l.date)}</small></span><b>${moneyLocal(l.principal,l.currency)}</b></div>${history.length?history.map(t=>`<div class="v56-ledger-row"><span><strong>Abono al capital</strong><small>${dateLabel(t.date)} · ${clean(t.note||'Sin referencia')}</small>${num(t.interest)?`<small>Interés efectivamente cobrado/pagado: ${moneyLocal(t.interest,l.currency)}</small>`:''}</span><b class="v56-positive">− ${moneyLocal(t.principal,l.currency)}</b></div>`).join(''):'<p class="v56-muted">Todavía no hay abonos registrados.</p>'}<div class="v56-ledger-total"><span>Pendiente por cobrar / pagar</span><strong>${moneyLocal(bal,l.currency)}</strong></div></div></section></div>`;}
  function v176PersonIndicators(records){
   const due=records.filter(l=>personalBalance(l)>.005&&l.dueDate&&l.dueDate<today()).reduce((sum,l)=>sum+fx(personalBalance(l),l.currency),0);
   const outstanding=records.reduce((sum,l)=>sum+fx(personalBalance(l),l.currency),0);
@@ -22308,7 +22404,12 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  if(ui.v56ContactId&&contactById(ui.v56ContactId))return contactDetail(ui.v56ContactId);
  if(view==='contacts')return `<div class="v56-space">${topCards(arr)}${personDirectory()}</div>`;
  if(view==='activity')return `<div class="v56-space">${topCards(arr)}${activityView(arr)}</div>`;
- return `<div class="v56-space"><div class="v56-intro"><div><span class="v56-section-label">CONTACTOS · PRÉSTAMOS · ACUERDOS</span><h2>${view==='receivable'?'Lo que tienen pendiente contigo.':view==='payable'?'Lo que debes devolver.':'Dinero entre personas, con claridad.'}</h2><p>Contactos individuales y todos sus conceptos. Controla el capital entregado, los abonos y el saldo exacto pendiente por moneda.</p></div><div class="v56-intro-actions">${tabButton('contactForm','Registrar nuevo contacto')}${tabButton('loanNew','+ Registrar préstamo','','primary')}</div></div>${v176PersonIndicators(filtered)}${topCards(filtered)}<div class="v56-main-grid"><div>${personDirectory(filter)}<section class="v56-panel"><div class="v56-panel-heading"><div><div class="v56-section-label">ACUERDOS INDIVIDUALES</div><h3>${filtered.length} conceptos registrados</h3><p>Selecciona cualquier concepto para ver observaciones y todas sus devoluciones.</p></div></div><div class="v56-loan-list">${filtered.length?filtered.sort((a,b)=>personalBalance(b)-personalBalance(a)).slice(0,30).map(loanRow).join(''):empty('No hay préstamos en esta vista','Al registrar un préstamo, aparecerá aquí con su estado de cuenta.')}</div></section></div><div>${groupVisual(filtered)}<section class="v56-panel"><div class="v56-section-label">CONTROL DEL DINERO</div><h3>Cómo se contabilizan los acuerdos</h3><p class="v56-help">El capital de un préstamo es una cuenta por cobrar o pagar. No se suma como venta ni salario. Cada abono actualiza el saldo, y solo los intereses realmente cobrados o pagados afectan ingresos o gastos.</p></section></div></div><details class="v176-people-history"><summary>Historial de entregas y abonos · Ver operaciones</summary>${activityView(filtered)}</details></div>`;
+ return `<section class="v189-person-ledger" aria-label="Tabla de préstamos entre personas">
+  <header class="v189-table-head"><div><span class="v56-section-label">RELACIONES PERSONALES</span><h3>Préstamos y devoluciones</h3><p>${filtered.length} acuerdo${filtered.length===1?'':'s'} registrado${filtered.length===1?'':'s'}</p></div><div class="v189-table-actions">${tabButton('contactForm','+ Contacto')}${tabButton('loanNew','+ Nueva relación','','primary')}</div></header>
+  <div class="v189-table-scroll"><table class="v189-table"><thead><tr><th>Persona</th><th>Relación</th><th>Concepto</th><th>Saldo pendiente</th><th>Vencimiento</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+   <tbody>${filtered.length?filtered.slice().sort((a,b)=>String(a.dueDate||'9999-12-31').localeCompare(String(b.dueDate||'9999-12-31'))).map(l=>{const balance=personalBalance(l),contact=contactFor(l),person=contact?fullName(contact):l.person||'Sin nombre',status=balance<=.005?'Liquidado':l.dueDate&&l.dueDate<today()?'Vencido':l.direction==='lent'?'Me deben':'Yo debo';return `<tr><td data-col="Persona"><strong class="v189-name">${clean(person)}</strong></td><td data-col="Relación"><span class="v189-state ${balance<=.005?'settled':l.direction==='lent'?'receivable':'payable'}">${clean(status)}</span></td><td data-col="Concepto"><span class="v189-concept" title="${clean(loanCategory(l))}">${clean(loanCategory(l))}</span></td><td data-col="Pendiente" class="v189-money">${moneyLocal(balance,l.currency)}</td><td data-col="Vencimiento">${dateLabel(l.dueDate)}</td><td class="v189-row-actions">${tabButton('loanDetail','Ver',l.id)}${unpaid(l)?tabButton('payment','Abonar',l.id,'primary'):''}</td></tr>`;}).join(''):'<tr><td colspan="6" class="v189-empty">Todavía no tienes préstamos entre personas. Registra tu primera relación.</td></tr>'}</tbody>
+  </table></div>
+ </section>`;
  }
  const prevInnerView=innerView;
  V26_META.personal.title='Entre personas';V26_META.personal.hint='Contactos, acuerdos, préstamos y abonos con un expediente para cada persona.';
@@ -22552,6 +22653,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  const detailButton=(page,key,name)=>`data-v58="detail" data-v58-page="${page}" data-v58-key="${key}" aria-label="Ver desglose de ${safe(name)}" title="Pulsar para ver el desglose"`;
  const button=(name,page,tab,primary=false)=>`<button type="button" class="v58-action ${primary?'primary':''}" data-v58="jump" data-v58-go="${page}" data-v58-tab="${tab}">${safe(name)} →</button>`;
  function panel(page){const info=current(page);if(!info)return '';
+  if(page==='personal')return `<section class="v58-exec v189-person-hero" data-v58-page="personal" aria-label="Saldo entre personas"><div class="v58-left"><div class="v58-kicker">ENTRE PERSONAS</div><h2>El dinero entre personas,<br><em>en claro.</em></h2><p>Préstamos pendientes y devoluciones, sin complicaciones.</p></div><div class="v58-right"><div class="v58-feature"><span class="v58-main-label">${safe(info.main.label)}</span><button type="button" class="v58-main-value" ${detailButton(page,'main',info.main.label)}>${safe(info.main.value)}</button><small>${safe(info.main.note)}</small></div><button type="button" class="v189-payable-inline" ${detailButton(page,'3','Yo debo')}><span>YO DEBO</span><strong>${safe(info.cards[3].value)}</strong></button></div></section>`;
   return `<section class="v58-exec ${info.compact?'v58-compact':''}" data-v58-page="${page}" aria-label="Resumen ejecutivo de ${page}"><div class="v58-left"><div class="v58-kicker">${safe(info.kicker)}</div><h2>${info.title}</h2><p>${safe(info.subtitle)}</p><div class="v58-actions">${info.actions.map(([name,to,tab],i)=>button(name,to,tab,i===0)).join('')}</div><div class="v58-meta">Selecciona cualquier cifra para consultar su composición.</div></div><div class="v58-right"><div class="v58-feature"><div class="v58-main-label">${safe(info.main.label)}</div><button class="v58-main-value" ${detailButton(page,'main',info.main.label)}>${safe(info.main.value)} ${icon('arrow')}</button><small>${safe(info.main.note)}</small></div><div class="v58-grid">${info.cards.map((c,i)=>`<button type="button" class="v58-metric" ${detailButton(page,String(i),c.label)}><span class="v58-card-label">${safe(c.label)}</span><strong>${safe(c.value)}</strong><small>${safe(c.note)}</small></button>`).join('')}</div><div class="v58-hint">${safe(info.footer)}</div></div></section>`;
  }
  /* V67: Control de calidad es una herramienta secundaria. No interrumpe el registro. */
@@ -24281,20 +24383,16 @@ function v144CostRows(c){v144Ready();const costs=v144AllCosts(c).filter(t=>v144P
  const arr=[...costs.map(t=>({id:t.id,date:v144CostPaid(t)?v144CostPaidDate(t):t.date,type:'posted',value:t.amount,currency:t.currency,name:t.note||t.subcategory||'Costo de tarjeta',paid:v144CostPaid(t),billed:t.type==='card_charge',raw:t})),...plans.map(p=>({id:p.id,date:p.date,type:'planned',value:p.amount,currency:p.currency,name:p.name||'Costo previsto',paid:false,billed:false}))].sort((a,b)=>b.date.localeCompare(a.date));
  return `<div class="v144-list">${arr.map(r=>`<div class="v144-line"><div><strong>${sanitize(r.name)}</strong><small>${prettyDate(r.date)} · ${r.type==='planned'?'Previsto · sin débito · '+({monthly:'Mensual',quarterly:'Trimestral',annual:'Anual',one_time:'Cargo único'})[db.v144ScheduledCosts.find(p=>p.id===r.id)?.frequency||'one_time']:r.paid?'Pagado y conciliado':'Cargado a tarjeta · sin conciliar'}</small></div><b class="${r.paid?'negative':'pending'}">${v144Value(r.value,r.currency)}</b><div class="v144-line-actions">${r.type==='planned'?`<button type="button" data-v144-action="edit-cost" data-id="${sanitize(c.id)}" data-ref="${sanitize(r.id)}">Editar</button><button type="button" data-v144-action="delete-cost-plan" data-ref="${sanitize(r.id)}">${icon('trash')}</button>`:r.billed&&!r.paid?`<button type="button" data-v144-action="settle-cost" data-id="${sanitize(c.id)}" data-ref="${sanitize(r.id)}">Conciliar pago</button><button type="button" data-act="editTransaction" data-id="${sanitize(r.id)}">Editar</button>`:`<button type="button" data-act="editTransaction" data-id="${sanitize(r.id)}">Editar</button>`}</div></div>`).join('')||'<p class="v144-empty">Sin costos registrados en este período.</p>'}</div>`;
 }
-function v144BenefitsPage(){v144Ready();const cards=db.cards.filter(c=>ui.showHidden||!isHidden(c));if(!cards.length)return `<section class="v144-benefit-world v180-benefits-empty">${typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():''}<div class="v144-benefit-panel"><p>Cuando registres una tarjeta, aquí aparecerán sus beneficios, costos e historial.</p><button type="button" class="btn sm" data-act="addCard">Registrar tarjeta</button></div></section>`;
- const selected=ui.v144BenefitsCard||'all';const shown=cards.filter(c=>selected==='all'||c.id===selected);if(!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage()}
- const stats=shown.map(c=>v144CardStats(c));const sum=k=>rnd(stats.reduce((s,z)=>s+z[k],0));const gross=sum('gross'),paid=sum('paidAmount'),net=rnd(gross-paid),billed=sum('billedAmount'),expected=sum('expected'),planned=sum('plannedSum');const roi=paid>0?rnd(net/paid*100):null;
- return `<main class="v144-benefit-world v180-benefits-clean" id="v144Benefits">${typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():''}<div class="v180-benefits-filterbar"><div class="v180-benefits-filter-label"><strong>Explorar beneficios</strong><small>Consulta el período y la tarjeta que te interesa.</small></div>${v144CardFilterUI()}</div>
-
- <div class="v144-section-head"><div><small>RENDIMIENTO POR PRODUCTO</small><h3>Comparación de valor por tarjeta</h3></div><div class="v144-actions"><button type="button" data-v144-action="new-cashback" data-id="${sanitize(shown[0].id)}">${icon('plus')} Cashback</button><button type="button" data-v144-action="new-cost" data-id="${sanitize(shown[0].id)}">${icon('receipt')} Costo</button></div></div>
- ${v144BenefitsTable(shown)}
- <div class="v144-benefit-layout v183-benefit-layout"><section class="v144-benefit-panel v183-chart-panel"><div class="v144-section-head"><div><small>EVOLUCIÓN ANUAL · ${sanitize(String(ui.v144BenefitYear||new Date().getFullYear()))}</small><h3>Beneficio acumulado · enero a diciembre</h3><p>Ingresos recibidos, costos pagados y ganancia neta, acumulados mes a mes.</p></div></div>${v144BenefitsEvolution(shown)}</section></div>
- ${shown.map(c=>{const z=v144CardStats(c),due=v144CardDue(c);return `<section class="v144-benefit-panel v144-card-section" id="v144-card-${sanitize(c.id)}"><div class="v144-section-head"><div><small>${sanitize(bankOf(c))}</small><h3>${sanitize(c.name)} · Costos y beneficios</h3><p>Deuda RD$ ${v144Value(cardStatus(c,'DOP').debt)} · Deuda US$ ${v144Value(cardStatus(c,'USD').debt,'USD')}</p></div><div class="v144-actions"><button type="button" data-v144-action="new-cashback" data-id="${sanitize(c.id)}">+ Beneficio</button><button type="button" data-v144-action="new-cost" data-id="${sanitize(c.id)}">+ Costo</button><button type="button" data-act="goCard" data-id="${sanitize(c.id)}">Ver tarjeta</button></div></div>
- <details class="v180-benefits-card-metrics"><summary>Ver cifras y anualidad de esta tarjeta</summary><div class="v144-card-detail-grid"><div><small>Cobrado en el período</small><strong>${v144Value(z.gross)}</strong></div><div><small>Costos pagados</small><strong>${v144Value(z.paidAmount)}</strong></div><div><small>Neto</small><strong class="${z.net>=0?'positive':'negative'}">${v144Value(z.net)}</strong></div><div><small>Anualidad contratada</small><strong>${due.amount?v144Value(due.amount,due.currency):'No registrada'}</strong><small>${due.date?'Próximo cobro: '+prettyDate(due.date):'Sin fecha configurada'}</small></div></div></details>
- <div class="v144-ledger-cols"><div><h4>Cashback y beneficios</h4>${v144CashbackRows(c)}</div><div><h4>Costo de la tarjeta</h4>${v144CostRows(c)}</div></div>
- </section>`}).join('')}
- <p class="v144-footnote">Rentabilidad = beneficio neto realizado ÷ costos pagados, si estos son superiores a cero. Los cargos cobrados a la tarjeta se reconocen como gastos en la contabilidad al registrarlos, pero solo cuentan como costos pagados en este indicador cuando se concilian con un pago registrado. No se emiten transacciones bancarias adicionales al conciliarlos.</p>
- </main>`;
+/* V187 — Beneficios solo con su KPI y la tabla principal; sin secciones redundantes. */
+function v144BenefitsPage(){
+ v144Ready();const cards=db.cards.filter(c=>ui.showHidden||!isHidden(c));
+ const selected=ui.v144BenefitsCard||'all',shown=cards.filter(c=>selected==='all'||c.id===selected);
+ if(cards.length&&!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage()}
+ const hero=typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():'';
+ return `<main class="v144-benefit-world v180-benefits-clean v187-benefits-only" id="v144Benefits">${hero}
+ <section class="v187-benefits-ledger" aria-label="Tabla de beneficios por tarjeta"><div class="v187-benefits-ledger-head"><div><span>RESULTADO POR TARJETA</span><h3>Beneficios y costos</h3><p>Solo beneficio acreditado y costo efectivamente pagado forman el resultado neto.</p></div>${cards.length?`<button type="button" class="v187-benefits-add" data-v144-action="new-cashback" data-id="${sanitize(shown[0]?.id||cards[0].id)}">${icon('plus')} Registrar beneficio</button>`:''}</div>
+ ${cards.length?`${v144CardFilterUI()}${v144BenefitsTable(shown)}`:'<div class="v187-benefits-empty">No tienes tarjetas registradas. <button type="button" data-act="addCard">Añadir tarjeta</button></div>'}
+ </section></main>`;
 }
 function v144FormCategories(){return ['Supermercado','Combustible','Restaurantes','Compras','Promociones','Servicios','Otros'];}
 function v144CashbackForm(cardId,ref='',source=''){v144Ready();const c=card(cardId);if(!c)return toast('Tarjeta no disponible.');const t=source==='posted'?db.transactions.find(x=>x.id===ref&&x.cardId===cardId&&['card_reward','bank_reward'].includes(x.type)):null;const p=source==='pending'?db.v144PendingBenefits.find(x=>x.id===ref&&x.cardId===cardId):null;const x=t||p||{};
@@ -24849,6 +24947,202 @@ document.addEventListener('focusout',e=>{
  vv.addEventListener('scroll',schedule,{passive:true});
  document.addEventListener('focusin',event=>{if(event.target?.id==='v154-mobile-search-input')schedule()});
  document.addEventListener('focusout',event=>{if(event.target?.id==='v154-mobile-search-input'){document.body.classList.remove('v158-keyboard-visible');schedule()}});
+})();
+
+/* V186 contextual view: same lexical scope as db, ui, onAction and render. */
+/* Vive el hoy · V186 — Explorador financiero contextual.
+   No añade movimientos ni consulta servicios externos. Solo muestra información ya registrada. */
+(function(){
+ 'use strict';
+ const cash=a=>Number(getAccountBalance(a))||0;
+ const dop=(amount,cur='DOP')=>Number(fx(Number(amount)||0,cur))||0;
+ const cardD=c=>Number(cardStatus(c,'DOP').debt)||0;
+ const cardU=c=>Number(cardStatus(c,'USD').debt)||0;
+ const cardTotal=c=>dop(cardD(c))+dop(cardU(c),'USD');
+ const bankLoan=l=>dop(loanStatus(l).balance,l.currency||'DOP');
+ const certValue=c=>dop(certificateCapital(c),c.currency||'DOP');
+ const balance=()=>db.accounts.reduce((s,a)=>s+dop(cash(a),a.currency||'DOP'),0);
+ const credit=()=>db.cards.reduce((s,c)=>s+cardTotal(c),0);
+ const loans=()=>db.loans.reduce((s,l)=>s+bankLoan(l),0);
+ const certificates=()=>db.certificates.reduce((s,c)=>s+certValue(c),0);
+ const owed=()=>db.personalLoans.filter(l=>l.direction==='borrowed').reduce((s,l)=>s+dop(personalBalance(l),l.currency||'DOP'),0);
+ const recv=()=>db.personalLoans.filter(l=>l.direction==='lent').reduce((s,l)=>s+dop(personalBalance(l),l.currency||'DOP'),0);
+ const net=()=>balance()+certificates()+recv()-credit()-loans()-owed();
+ const fmt=(n,cur='DOP')=>money(n,cur,2);
+ const fmtEq=n=>money(n,'DOP',2);
+ const period=()=>String(ui.month||today().slice(0,7));
+ const metric=(label,value)=>`<div><small>${sanitize(label)}</small><strong class="${Number(value)<0?'is-negative':''}">${typeof value==='number'?fmtEq(value):sanitize(String(value))}</strong></div>`;
+ const row=(title,subtitle,amount,action,id,cur='DOP')=>({title,subtitle,amount,action,id,cur});
+ const bankName=id=>db.banks.find(b=>b.id===id)?.name||'Sin institución';
+ const accountRows=(filter=()=>true)=>db.accounts.filter(filter).map(a=>row(a.name,`${a.kind==='cash'?'Efectivo':bankName(a.bankId)} · ${a.currency||'DOP'}${cash(a)<0?' · Saldo negativo':''}`,cash(a),'goAccount',a.id,a.currency||'DOP'));
+ const cardRows=(filter=()=>true)=>db.cards.filter(filter).map(c=>row(c.name,`${bankName(c.bankId)} · RD$ ${fmt(cardD(c))} · US$ ${fmt(cardU(c),'USD')}`,cardTotal(c),'goCard',c.id));
+ const loanRows=(filter=()=>true)=>db.loans.filter(filter).map(l=>row(l.name,`${bankName(l.bankId)} · ${l.currency||'DOP'} · Capital pendiente`,loanStatus(l).balance,'goLoan',l.id,l.currency||'DOP'));
+ const certRows=(filter=()=>true)=>db.certificates.filter(filter).map(c=>row(c.name,`${bankName(c.bankId)} · ${c.currency||'DOP'} · Inversión, no disponible`,certificateCapital(c),'goCertificate',c.id,c.currency||'DOP'));
+ const personalRows=(direction)=>db.personalLoans.filter(l=>l.direction===direction&&personalBalance(l)>.005).map(l=>row(l.person||'Relación personal',`${direction==='lent'?'Por cobrar':'Por pagar'} · ${l.currency||'DOP'}`,personalBalance(l),'navigate','personal',l.currency||'DOP'));
+ const cardAvailable=()=>db.cards.reduce((s,c)=>s+dop(Math.max(0,cardStatus(c,'DOP').availableWithOverdraft))+dop(Math.max(0,cardStatus(c,'USD').availableWithOverdraft),'USD'),0);
+ function totalBank(b){const accounts=db.accounts.filter(a=>a.bankId===b.id),cards=db.cards.filter(c=>c.bankId===b.id),loanArr=db.loans.filter(l=>l.bankId===b.id),certArr=db.certificates.filter(c=>c.bankId===b.id);
+  const f=accounts.reduce((s,a)=>s+dop(cash(a),a.currency),0),d=cards.reduce((s,c)=>s+cardTotal(c),0)+loanArr.reduce((s,l)=>s+bankLoan(l),0),invested=certArr.reduce((s,c)=>s+certValue(c),0);
+  return {funds:f,debt:d,invested,net:f+invested-d,products:accounts.length+cards.length+loanArr.length+certArr.length};
+ }
+ const scopeRows=(name,items)=>({name,items});
+ function view(kind){
+  const sums=[],groups=[],actions=[],note='Importes calculados a partir de tus registros. Los valores US$ se convierten al tipo de cambio configurado solo para los totales RD$ equivalentes. No son saldos consultados en tiempo real.';
+  let title='',hint='',memo=note;
+  const nav=(name,route)=>actions.push([name,route]);
+  const sum=(name,n)=>sums.push([name,n]);
+  const group=(name,items)=>groups.push(scopeRows(name,items));
+  if(kind.startsWith('bank:')){
+   const id=kind.slice(5),b=db.banks.find(b=>b.id===id);if(!b)return view('banks');const t=totalBank(b);
+   title=b.name;hint='Dónde está el dinero y dónde están las obligaciones de esta institución.';
+   sum('Fondos en cuentas',t.funds);sum('Deuda de productos',t.debt);sum('Posición con el banco',t.net);
+   group('Cuentas y disponibilidad',accountRows(a=>a.bankId===id));group('Tarjetas y utilización',cardRows(c=>c.bankId===id));group('Préstamos',loanRows(l=>l.bankId===id));group('Certificados',certRows(c=>c.bankId===id));
+   nav('Abrir la institución','banks');
+  }else if(kind==='liquidity'||kind==='accounts'){
+   title='Tu liquidez, cuenta por cuenta';hint='Ubica el dinero disponible y descubre cualquier saldo negativo sin confundirlo con crédito.';
+   sum('Liquidez neta registrada',balance());sum('Cuentas en RD$',db.accounts.filter(a=>a.currency==='DOP').reduce((s,a)=>s+cash(a),0));sum('Cuentas en US$',fmt(db.accounts.filter(a=>a.currency==='USD').reduce((s,a)=>s+cash(a),0),'USD'));
+   const ordered=[...db.accounts].sort((a,b)=>cash(a)-cash(b));
+   group('Dónde tienes saldos negativos',accountRows(a=>cash(a)<-.005));
+   group('Todas tus cuentas y efectivo',ordered.map(a=>row(a.name,`${a.kind==='cash'?'Efectivo':bankName(a.bankId)} · ${a.currency} · ${a.kind||'Cuenta'}`,cash(a),'goAccount',a.id,a.currency||'DOP')));
+   group('Fondos por institución',db.banks.map(b=>{const v=totalBank(b);return row(b.name,`${v.products} productos registrados · neto institucional ${fmtEq(v.net)}`,v.funds,'bankDetails',b.id)}));
+   nav('Ir a cuentas','accounts');
+  }else if(kind==='debt'){
+   title='Todas tus deudas';hint='Tarjetas, capital de préstamos y obligaciones personales, sin duplicar los compromisos mensuales.';
+   sum('Deuda total registrada',credit()+loans()+owed());sum('En tarjetas',credit());sum('Préstamos y personas',loans()+owed());
+   group('Tarjetas de crédito',cardRows());group('Préstamos bancarios',loanRows());group('Dinero que debes a personas',personalRows('borrowed'));
+   nav('Abrir tarjetas','cards');nav('Abrir préstamos','loans');
+  }else if(kind==='net'||kind==='patrimony'){
+   title='Cómo se forma tu posición neta';hint='De activos a pasivos: sigue cada partida hasta su producto de origen.';
+   sum('Activos registrados',balance()+certificates()+recv());sum('Deudas registradas',credit()+loans()+owed());sum('Posición neta',net());
+   group('Cuentas y efectivo',accountRows());group('Capital invertido',certRows());group('Por cobrar a personas',personalRows('lent'));
+   group('Deuda de tarjetas',cardRows());group('Préstamos bancarios',loanRows());group('Obligaciones personales',personalRows('borrowed'));
+   nav('Ver patrimonio','patrimony');
+  }else if(kind==='banks'){
+   title='Instituciones y productos';hint='De cada banco a sus fondos, préstamos, tarjetas, certificados y posición neta.';
+   sum('Instituciones',String(db.banks.length));sum('Fondos en cuentas',balance());sum('Deuda bancaria',credit()+loans());
+   group('Resultado por institución',db.banks.map(b=>{const v=totalBank(b);return row(b.name,`Fondos ${fmtEq(v.funds)} · Deuda ${fmtEq(v.debt)} · ${v.products} productos`,v.net,'v186Deep','bank:'+b.id)}));
+   group('Productos con saldo negativo',accountRows(a=>cash(a)<0));nav('Instituciones','banks');
+  }else if(kind==='cards'){
+   title='Tarjetas: deuda y crédito';hint='Deuda por tarjeta y moneda, con acceso a cortes, movimientos y beneficios.';
+   sum('Deuda actual',credit());sum('Crédito disponible',cardAvailable());sum('Tarjetas registradas',String(db.cards.length));
+   group('Tarjetas y saldos',cardRows());nav('Abrir mis tarjetas','cards');nav('Beneficios y costos','benefits');
+  }else if(kind.startsWith('card:')){
+   const c=db.cards.find(x=>x.id===kind.slice(5));if(!c)return view('cards');title=c.name;hint='Ciclo de vida y saldos por moneda de esta tarjeta.';
+   sum('Deuda RD$',cardD(c));sum('Deuda US$',fmt(cardU(c),'USD'));sum('Equivalente de deuda',cardTotal(c));
+   group('Producto',cardRows(x=>x.id===c.id));nav('Ver cortes y movimientos','cards');nav('Beneficios de tarjetas','benefits');
+  }else if(kind==='loans'){
+   title='Préstamos bancarios';hint='Capital pendiente por contrato y moneda.';
+   sum('Capital pendiente',loans());sum('Contratos',String(db.loans.length));sum('Próximo mes',v89DebtCapacity(period()).a.loans);
+   group('Préstamos registrados',loanRows());nav('Abrir préstamos','loans');
+  }else if(kind==='certificates'){
+   title='Certificados e inversiones';hint='Capital registrado que forma parte del patrimonio, pero no de la liquidez.';
+   sum('Capital invertido',certificates());sum('Certificados',String(db.certificates.length));sum('Liquidez independiente',balance());
+   group('Certificados registrados',certRows());nav('Abrir certificados','certificates');
+  }else if(kind==='payments'){
+   const items=v99PendingForPeriod(period()).filter(x=>x&&x.date).sort((a,b)=>a.date.localeCompare(b.date)),d=v89DebtCapacity(period());
+   title='Compromisos del período';hint=`Vencimientos de ${period()} y carga mensual: no son el saldo total de la deuda.`;
+   sum('Compromisos mensuales',d.monthly);sum('Pendiente en agenda',items.reduce((s,x)=>s+dop(x.amount,x.currency),0));sum('Ingresos considerados',d.income);
+   group('Vencimientos ordenados por fecha',items.map(x=>row(x.name,`${prettyDate(x.date)} · ${x.kind==='recurring'?'Servicio o suscripción':x.kind==='loan'?'Préstamo':x.kind==='card'?'Tarjeta':'Relación personal'}`,x.amount, 'navigate',({card:'cards',loan:'loans',recurring:'recurring',personal:'personal'})[x.kind]||'payments',x.currency)));
+   nav('Abrir calendario de pagos','payments');
+  }else if(kind==='recurring'){
+   title='Suscripciones y servicios';hint='Cuánto cuesta cada servicio, cuándo vence y cómo administrarlo.';
+   const active=db.recurring.filter(x=>x.active!==false),rate={weekly:52/12,monthly:1,quarterly:1/3,annual:1/12};
+   const monthly=active.reduce((s,x)=>s+dop(Number(x.amount||0)*(rate[x.frequency]||1),x.currency),0);
+   sum('Servicios activos',String(active.length));sum('Costo mensual equivalente',monthly);sum('Total registrados',String(db.recurring.length));
+   group('Mis suscripciones',db.recurring.map(x=>row(x.name,`${x.active===false?'Pausada':'Activa'} · ${x.frequency||'monthly'} · próximo ${x.nextDue||'sin fecha'}`,x.amount,'editRecurring',x.id,x.currency||'DOP')));
+   nav('Ir a suscripciones','recurring');nav('Centro de pagos','payments');
+  }else if(kind==='personal'){
+   title='Deudas y préstamos entre personas';hint='Lo que te deben y lo que debes; sin mezclar estas relaciones con bancos.';
+   sum('Por cobrar',recv());sum('Por pagar',owed());sum('Posición personal',recv()-owed());
+   group('Me deben',personalRows('lent'));group('Yo debo',personalRows('borrowed'));nav('Abrir entre personas','personal');
+  }else if(kind==='income'||kind==='expenses'){
+   const m=monthStats(),t=kind==='income'?'income':'expense',isIncome=t==='income',tx=db.transactions.filter(x=>String(x.date||'').startsWith(period())&&x.type===t);
+   title=isIncome?'Ingresos del período':'Egresos del período';hint='Abre cada registro para comprobar su origen y concepto. Los totales siguen la metodología del módulo.';
+   sum(isIncome?'Ingresos':'Egresos',isIncome?m.income:m.expense);sum('Movimientos directos',String(tx.length));sum('Resultado neto',m.net);
+   group('Operaciones registradas',tx.sort((a,b)=>b.date.localeCompare(a.date)).slice(0,35).map(x=>row(transactionTitle(x),`${prettyDate(x.date)} · ${x.category||'Sin categoría'}`,x.amount,'navigate','register',x.currency||'DOP')));
+   nav(isIncome?'Analizar ingresos':'Analizar egresos',isIncome?'income':'expenses');
+  }else if(kind==='benefits'){
+   title='Beneficios por tarjeta';hint='Cashback acreditado y cargos registrados por producto.';
+   const year=Number(period().slice(0,4));let received=0,cost=0;
+   const rows=db.cards.map(c=>{const x=benefitBreakdown(c,'DOP',year),y=benefitBreakdown(c,'USD',year),inD=dop(x.credited)+dop(y.credited,'USD'),outD=dop(x.costs)+dop(y.costs,'USD');received+=inD;cost+=outD;return row(c.name,`Cashback ${fmtEq(inD)} · costos cobrados ${fmtEq(outD)}`,inD-outD,'goCard',c.id)});
+   sum('Cashback acreditado',received);sum('Costos cobrados',cost);sum('Resultado neto',received-cost);
+   group('Beneficios por tarjeta',rows);nav('Abrir beneficios','benefits');
+  }else if(kind==='budget'||kind==='advanced'){
+   const m=monthStats();title=kind==='budget'?'Presupuesto y evolución':'Analítica y desempeño';hint='Analiza las cifras del período sin alterar tus registros.';
+   sum('Ingresos',m.income);sum('Egresos',m.expense);sum('Resultado',m.net);
+   group('Profundiza en la información',[row('Ingresos','Fuentes y tendencias',m.income,'navigate','income'),row('Egresos','Categorías y movimientos',m.expense,'navigate','expenses'),row('Deudas','Productos y saldos',credit()+loans()+owed(),'v186Deep','debt')]);
+   nav(kind==='budget'?'Abrir presupuestos':'Abrir analítica',kind);
+  }else return view('net');
+  return {title,hint,sums,groups,actions,memo};
+ }
+ function renderRows(items){return items.length?`<div class="v186-deep-rows">${items.map(x=>`<button type="button" class="v186-deep-row" data-act="v186Go" data-next="${sanitize(x.action||'navigate')}" data-id="${sanitize(String(x.id||''))}"><span><strong>${sanitize(x.title)}</strong><small>${sanitize(x.subtitle||'')}</small></span><b class="${Number(x.amount)<0?'is-negative':''}">${fmt(x.amount,x.cur)}</b>${icon('arrow')}</button>`).join('')}</div>`:'<p class="v186-deep-note">No hay productos o movimientos registrados en esta categoría.</p>'}
+ function open(kind){
+  const data=view(kind),holder=document.getElementById('modal-root');if(!holder)return;
+  document.querySelectorAll('.v36-notifications[open]').forEach(x=>x.open=false);
+  holder.innerHTML=`<div class="v186-deep-layer" role="presentation"><section class="v186-deep-dialog" role="dialog" aria-modal="true" aria-labelledby="v186-deep-title"><header class="v186-deep-head"><div><small>EXPLORADOR FINANCIERO · ${sanitize(ui.page||'Resumen')}</small><h2 id="v186-deep-title">${sanitize(data.title)}</h2><p>${sanitize(data.hint)}</p></div><button type="button" data-act="closeModal" class="v186-deep-close" aria-label="Cerrar desglose">×</button></header><div class="v186-deep-summary">${data.sums.map(([key,n])=>metric(key,n)).join('')}</div>${data.groups.map(g=>`<section class="v186-deep-section"><h3>${sanitize(g.name)} · ${g.items.length}</h3>${renderRows(g.items)}</section>`).join('')}<footer class="v186-deep-actions">${data.actions.map(([label,route])=>`<button type="button" data-act="v186Go" data-next="navigate" data-id="${sanitize(route)}" class="btn sm soft">${sanitize(label)} ${icon('arrow')}</button>`).join('')}</footer><p class="v186-deep-note">${sanitize(data.memo)}</p></section></div>`;
+  holder.querySelector('.v186-deep-close')?.focus({preventScroll:true});
+ }
+ // Click contextual for main bubbles and all other prominent KPI tiles.
+ const previousAction=onAction;
+ onAction=function(action,el){
+  if(action==='v186Deep'){open(String(el?.dataset.id||'net'));return;}
+  if(action==='v186Go'){const next=el?.dataset.next||'navigate',id=el?.dataset.id||'';closeModal();if(next==='v186Deep')return open(id);return previousAction(next,{dataset:{id}});}
+  return previousAction(action,el);
+ };
+ function interpret(title,page){
+  const x=String(title||'').toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if(/posicion neta|patrimonio|neto/.test(x))return 'net';
+  if(/deuda|sobregiro|pasivo/.test(x))return 'debt';
+  if(/liquid|disponible|fondos|efectivo|cuentas|saldo/.test(x))return 'liquidity';
+  if(/tarjeta|limite de consumo|credito/.test(x))return 'cards';
+  if(/prestamo|capital pendiente|cuota/.test(x))return 'loans';
+  if(/certificado|inversion/.test(x))return 'certificates';
+  if(/compromis|vencim|pendiente|pago/.test(x))return 'payments';
+  if(/ingreso/.test(x))return 'income';
+  if(/gasto|egreso/.test(x))return 'expenses';
+  if(/beneficio|cashback|recompensa/.test(x))return 'benefits';
+  return ({banks:'banks',accounts:'liquidity',cards:'cards',loans:'loans',certificates:'certificates',payments:'payments',recurring:'recurring',personal:'personal',benefits:'benefits',income:'income',expenses:'expenses',budget:'budget',patrimony:'net',advanced:'advanced',register:'income'})[page]||'net';
+ }
+ function decorate(){
+  const main=document.querySelector('#app .main'),page=document.getElementById('page');if(!main||!page)return;
+  const route=String(ui.page||'overview');
+  if(route==='overview')return; // The reference summary has its own three existing interactive circles.
+  page.querySelectorAll('.kpi,.v145-payment-kpi,.v46-global-main,.v46-global-secondary>div,.v176-card-kpi,.v57-product-hero .v46-global-main').forEach(tile=>{
+   if(tile.classList.contains('v187-interactive-kpi'))return;
+   if(tile.closest('button,[role="button"],.ws-gallery,.v186-deep-layer,.v186-tools-extra'))return;
+   const heading=tile.querySelector('.kpi-head,small,span,h3')?.textContent?.trim()||route;
+   let kind=interpret(heading,route);
+   if(route==='banks'&&tile.closest('.bank-workspace')&&ui.bankId)kind='bank:'+ui.bankId;
+   tile.dataset.act='v186Deep';tile.dataset.id=kind;
+   tile.classList.add('v187-interactive-kpi');
+   if(!tile.hasAttribute('tabindex'))tile.tabIndex=0;
+   if(!tile.hasAttribute('role'))tile.setAttribute('role','button');
+   tile.title='Consultar '+heading;
+   tile.setAttribute('aria-label',heading+'. Pulsar para ver su desglose contextual.');
+  });
+ }
+ const originalRender=render;
+ render=function(){originalRender();decorate()};
+ decorate();
+ // This listener is scoped to the explorer overlay. It does not interfere with existing modals.
+ document.addEventListener('click',ev=>{if(ev.target.classList?.contains('v186-deep-layer'))closeModal()},true);
+ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&document.querySelector('.v186-deep-layer')){ev.preventDefault();closeModal()}},true);
+})();
+
+/* V187 interaction — click on the existing KPI surface, with no new text or buttons. */
+(function(){
+ const prev=onAction;
+ onAction=function(action,el){
+  if(action==='v187WealthDetail'){v187OpenWealthDetail(el?.dataset.id||'net');return;}
+  if(action==='v187History'){v187OpenHistory('60');return;}
+  if(action==='v187HistoryRange'){v187OpenHistory(el?.dataset.id||'60');return;}
+  if(action==='v187WealthGo'){const id=el?.dataset.id||'patrimony';closeModal();return prev('navigate',{dataset:{id}})}
+  return prev(action,el);
+ };
+ document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target?.classList?.contains('v187-interactive-kpi')){e.preventDefault();onAction('v186Deep',e.target)}
+  if(e.key==='Escape'&&document.querySelector('.v187-modal-overlay')){e.preventDefault();closeModal()}
+ });
+ document.addEventListener('click',e=>{if(e.target?.classList?.contains('v187-modal-overlay'))closeModal()},true);
 })();
 
 f33Boot();
@@ -28178,23 +28472,7 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   .vive-mobile-dock-label{display:block!important;font-size:clamp(9px,2.4vw,10.5px)!important;line-height:1.1!important;font-weight:730!important;white-space:nowrap!important;}
   /* El teclado de Buscar conserva el comportamiento previo y oculta la barra. */
   body.v154-mobile-input-focused .vive-mobile-dock{visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
-  .v175-explore-bank{border-radius:25px;margin:12px 0 17px;padding:12px;background:linear-gradient(145deg,rgba(226,239,255,.83),rgba(255,255,255,.81));border:1px solid rgba(255,255,255,.94);box-shadow:0 12px 32px rgba(31,71,124,.08);}
-  .v175-explore-bank-main{display:grid;grid-template-columns:42px minmax(0,1fr) 26px;align-items:center;text-align:left;gap:11px;width:100%;padding:9px 5px 14px;background:transparent;border:0;color:#223955;}
-  .v175-explore-bank-mark{width:42px;height:42px;border-radius:15px;background:linear-gradient(145deg,#3564bd,#648be2);display:grid;place-items:center;color:white;box-shadow:0 8px 16px rgba(47,92,174,.17)}
-  .v175-explore-bank-mark svg{width:22px;height:22px}
-  .v175-explore-bank-main>span:nth-child(2){display:flex;flex-direction:column;gap:3px;min-width:0;}
-  .v175-explore-bank-main small{font-size:8.5px;letter-spacing:.13em;font-style:normal;color:#6582a8;font-weight:860;}
-  .v175-explore-bank-main strong{font-size:17px;font-weight:850;letter-spacing:-.035em;line-height:1.12;}
-  .v175-explore-bank-main em{font-size:10px;font-style:normal;color:#788ba6;line-height:1.35;}
-  .v175-explore-bank-next{color:#587cac;justify-self:center;}
-  .v175-explore-bank-next svg{width:17px;height:17px;}
-  .v175-explore-bank-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;}
-  .v175-explore-bank-shortcuts button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:58px;background:rgba(255,255,255,.81);border:1px solid #edf1f9;border-radius:15px;color:#446182;padding:7px 3px;font-size:10px;font-weight:760;}
-  .v175-explore-bank-shortcuts button svg{width:18px;height:18px;stroke-width:1.8;}
-  .v175-explore-bank-shortcuts button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
-  .v175-explore-bank :is(button):focus-visible{outline:2px solid #477cdb;outline-offset:2px;}
 }
-@media (max-width:345px){.v175-explore-bank-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));}.v175-explore-bank-shortcuts button{flex-direction:row;min-height:43px;}}
 /* V175 · Macro → micro en Mis indicadores y píldora de endeudamiento recuperada. */
 .v175-kpi-macro{border:1px solid rgba(210,225,247,.84);border-radius:25px;padding:clamp(15px,2vw,23px);background:linear-gradient(140deg,rgba(245,249,255,.95),rgba(232,241,255,.85));margin:13px 0 15px;box-shadow:0 13px 26px rgba(44,81,137,.06);}
 .v175-kpi-macro-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
@@ -28712,5 +28990,358 @@ body.theme-dark .world-benefits .v183-annual-totals b,body.theme-dark .v119-moda
  .v119-modal .v183-tomorrow-note{font-size:10.5px}
 }
 </style>
+<!-- V184 · Un dato, un lugar. Oculta (no elimina) los bloques de solo lectura que repiten un valor ya mostrado arriba en la misma pantalla. No toca botones, formularios, tablas ni acciones. -->
+<style id="vive-v184-sin-redundancias">
+.v184-dup{display:none!important}
+#page .v58-main-value,#page .kpi-value,#page .v58-metric{font-variant-numeric:tabular-nums}
+</style>
+<script id="vive-v184-sin-redundancias-js">
+(()=>{
+ const MONEY=/(?:RD\$|US\$)\s?\d[\d.,]*(?:\s?[KM])?/g;
+ const CARD='.v58-metric,.v145-payment-kpi,.kpi';
+ const HERO='.v58-main-value';
+ const ACT='button,a[href],input,select,textarea,summary,[data-act],[role="button"],[tabindex]';
+ const key=v=>v.replace(/\s+/g,'').toUpperCase();
+ const real=v=>(v.match(/\d/g)||[]).length>=3&&!/^(RD\$|US\$)0[.,0]*$/.test(v);
+ const open=e=>!e.closest('details:not([open])');
+ const moneyOf=e=>[...new Set((e.textContent.match(MONEY)||[]).map(key).filter(real))];
+ function tidy(){
+  const page=document.getElementById('page');if(!page)return;
+  page.querySelectorAll('.v184-dup').forEach(e=>e.classList.remove('v184-dup'));
+  const seen=new Set();
+  page.querySelectorAll(HERO).forEach(e=>{if(open(e))moneyOf(e).forEach(v=>seen.add(v))});
+  page.querySelectorAll(CARD).forEach(c=>{
+   if(!open(c)||c.closest('[class*="hero"]')||c.querySelector(HERO+','+ACT))return;
+   const v=moneyOf(c);if(v.length!==1)return;
+   if(seen.has(v[0]))c.classList.add('v184-dup');else seen.add(v[0]);
+  });
+  const agenda=[...page.querySelectorAll('.v145-agenda-row')].map(r=>r.textContent.replace(/\s+/g,' ').toLowerCase());
+  if(agenda.length)page.querySelectorAll('.mini-row').forEach(r=>{
+   if(!open(r)||r.querySelector(ACT))return;
+   const t=r.textContent.replace(/\s+/g,' ').toLowerCase(),m=moneyOf(r)[0],d=t.match(/(\d{1,2})\s+([a-záéíóú]{3})/),n=t.split('·')[0].trim();
+   if(m&&d&&n&&agenda.some(a=>a.includes(n)&&a.replace(/\s+/g,'').includes(m.toLowerCase())&&a.includes(d[1]+' '+d[2])))r.classList.add('v184-dup');
+  });
+ }
+ let t=0;const run=()=>{cancelAnimationFrame(t);t=requestAnimationFrame(()=>{try{tidy()}catch(e){}})};
+ const root=document.getElementById('app');
+ if(root&&typeof MutationObserver!=='undefined')new MutationObserver(run).observe(root,{childList:true,subtree:true});
+ document.addEventListener('toggle',run,true);
+ run();
+})();
+</script>
+<!-- V185 · Barra superior en una fila y Beneficios compacto: resumen y listado se ven juntos sin hacer scroll. Solo estilos y un auto-centrado de la pestaña activa; no cambia ninguna acción. -->
+<style id="vive-v185-orden-superior">
+.module-switch-tabs{scrollbar-width:none}
+.module-switch-tabs::-webkit-scrollbar{display:none}
+@media(max-width:760px){
+ body .main .module-switch-tabs{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:8px!important;-webkit-overflow-scrolling:touch}
+ body .main .module-switch-tab{flex:0 0 auto!important;white-space:nowrap!important}
+}
+.v144-benefit-world .v46-bank-intro>p{display:none!important}
+.v144-benefit-world .v57-product-hero{min-height:0!important;padding-block:20px!important;gap:20px!important}
+.v144-benefit-world .v46-bank-intro h2{font-size:clamp(24px,3vw,34px)!important;line-height:1.1!important;margin:6px 0 12px!important}
+.v144-benefit-world .v46-global-secondary{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+.v144-benefit-world .v46-global-secondary>div{min-height:0!important;padding:10px 12px!important}
+.v144-benefit-world .v46-global-note{font-size:11px!important;line-height:1.35!important;margin-top:8px!important}
+.v144-benefit-world .v180-benefits-filterbar{padding:12px 16px!important;gap:10px!important}
+.v144-benefit-world .v144-filter-row{flex-wrap:nowrap!important;gap:10px!important}
+@media(max-width:760px){
+ .v144-benefit-world .v57-product-hero{padding-block:16px!important;gap:12px!important}
+ .v144-benefit-world .v46-global-secondary{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .v144-benefit-world .v46-global-secondary>div{padding:8px 10px!important}
+ .v144-benefit-world .v46-global-main strong{font-size:30px!important}
+ .v144-benefit-world .v144-filter-row{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+ .v144-benefit-world .v144-filter-row>*:first-child{grid-column:1/-1}
+ .v144-benefit-world .v46-global-note{font-size:10.5px!important}
+ body .main .module-switch-tab{width:auto!important;min-width:max-content!important;max-width:none!important}
+}
+</style>
+<script id="vive-v185-orden-superior-js">
+(()=>{const root=document.getElementById('app');if(!root||typeof MutationObserver==='undefined')return;
+ let t=0;const center=()=>{cancelAnimationFrame(t);t=requestAnimationFrame(()=>{const a=document.querySelector('.module-switch-tab.active'),bar=a&&a.parentElement;
+  if(bar&&bar.scrollWidth>bar.clientWidth)bar.scrollLeft=a.offsetLeft-(bar.clientWidth-a.offsetWidth)/2})};
+ new MutationObserver(center).observe(root,{childList:true,subtree:true});center()})();
+</script>
+
+<style id="vive-v186-ux-final">
+/* A. Secondary tools belong after the real content, and stay opt-in. */
+.v32-integrated{display:contents!important}
+.v186-tools-extra{margin:clamp(19px,3vw,34px) 0 13px;border:1px solid rgba(174,193,223,.46);border-radius:19px;background:rgba(250,252,255,.42);min-width:0;overflow:hidden}
+.v186-tools-extra>summary{display:flex;align-items:center;gap:10px;min-height:57px;cursor:pointer;list-style:none;padding:12px 17px;color:#3e597e}
+.v186-tools-extra>summary::-webkit-details-marker{display:none}
+.v186-tools-extra>summary>span{font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:9px}
+.v186-tools-extra>summary>small{font-size:10px;color:#8090aa;flex:1}
+.v186-tools-extra>summary>svg:last-child{width:16px;transform:rotate(90deg);transition:transform .2s}
+.v186-tools-extra[open]>summary>svg:last-child{transform:rotate(-90deg)}
+.v186-tools-extra .v32-tool-bar{display:flex!important;flex-wrap:wrap!important;justify-content:space-between;gap:10px;box-shadow:none!important;background:transparent!important;border:0!important;padding:8px 15px 16px!important;margin:0!important}
+.v186-tools-extra .v32-tool-actions{display:flex;flex-wrap:wrap;min-width:0;gap:6px}
+.v186-tools-extra .v32-tool-button{font-size:11px}
+.v186-tools-extra .v32-tool-body{border-top:1px solid rgba(174,193,223,.35);margin:0!important;scroll-margin-top:22px}
+/* B. Blank personalized workspace: no inherited global vision or fixed product inventory. */
+.world-kpis #page .widgets-world{width:100%;min-width:0;max-width:none;margin:auto;padding:4px 0 30px}
+.world-kpis #page .widgets-heading{padding:clamp(16px,2.5vw,30px);border-radius:24px;background:rgba(252,254,255,.6);border:1px solid rgba(255,255,255,.8);align-items:center;gap:17px}
+.world-kpis #page .widgets-heading h2{font-size:clamp(23px,2.8vw,33px);line-height:1.12;letter-spacing:-.045em}
+.world-kpis #page .ws-board{min-width:0;margin-top:18px;grid-auto-flow:row}
+.world-kpis #page .widget-empty{min-height:clamp(250px,40dvh,490px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1.5px dashed rgba(126,152,204,.5);border-radius:25px;padding:30px;background:rgba(250,252,255,.32);font-size:13px;line-height:1.7;color:#71839f}
+.world-kpis #page .widgets-disclaimer{max-width:800px;margin:19px auto 0;text-align:center}
+/* C. Month-specific service calendar, no month-control sidebar. */
+.world-payments #page .v145-pay-lower{display:block!important;grid-template-columns:1fr!important}
+.world-payments #page .v145-pay-lower[hidden],.world-payments #page .v186-service-calendar[hidden],.world-payments #page .v176-pay-services[hidden]{display:none!important}
+.v186-service-calendar{min-width:0;margin-top:17px;background:rgba(250,253,255,.72);border:1px solid rgba(255,255,255,.88);padding:clamp(14px,2vw,22px);border-radius:25px}
+.v186-cal-head{display:flex;align-items:center;justify-content:space-between;gap:17px;margin-bottom:17px;flex-wrap:wrap}
+.v186-cal-head h3{font-size:21px;letter-spacing:-.04em;margin:5px 0 5px;color:#25446d}
+.v186-cal-head p{font-size:11px;color:#7184a2;margin:0}
+.v186-cal-total{text-align:right;display:grid;gap:2px}
+.v186-cal-total strong{font-size:clamp(17px,2vw,25px);font-weight:850;color:#2f5486}
+.v186-cal-total small{font-size:10px;color:#798fa9}
+.v186-cal-scroll{overflow-x:auto;border-radius:18px;border:1px solid rgba(173,198,229,.45)}
+.v186-cal-week,.v186-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));min-width:560px}
+.v186-cal-week{background:rgba(228,237,253,.72)}
+.v186-cal-week span{text-align:center;padding:12px 2px;font-size:11px;font-weight:800;color:#526d93}
+.v186-cal-day{min-width:0;min-height:108px;background:rgba(255,255,255,.7);border-top:1px solid rgba(183,202,229,.48);border-right:1px solid rgba(183,202,229,.48);padding:8px;overflow:hidden}
+.v186-cal-day.is-outside{background:rgba(221,230,244,.24)}
+.v186-cal-day.is-today{background:rgba(227,237,255,.81)}
+.v186-cal-num{font-size:12px;font-weight:800;color:#46618b;display:flex;align-items:center;gap:4px}
+.v186-cal-num small{font-size:8px;border-radius:999px;padding:2px 6px;background:#516ed0;color:white}
+.v186-cal-entry{display:grid;gap:3px;text-align:left;width:100%;border:0;border-radius:8px;padding:6px 7px;margin-top:6px;background:#edf3ff;color:#31537d;cursor:pointer;min-width:0}
+.v186-cal-entry span{font-size:10px;font-weight:750;overflow-wrap:anywhere}
+.v186-cal-entry strong{font-size:10px;font-weight:850}
+.v186-cal-entry:hover{background:#dce9fd}
+.v186-cal-footer{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:15px}
+.v186-calendar-empty{font-size:12px;color:#7587a3}
+/* D. Executive overview: use width intelligently, keep desktop legibility and
+   permit natural scrolling if viewport is too short instead of clipping content. */
+@media(min-width:1100px){
+ body .main.world-overview:has(.ff-dashboard.summary-space){overflow-y:auto!important;height:auto!important;min-height:100dvh!important;max-height:none!important;padding:12px clamp(13px,1.7vw,29px) 32px!important}
+ body .main.world-overview #page{height:auto!important;max-height:none!important;overflow:visible!important;min-height:0!important}
+ body .main.world-overview .ff-dashboard.summary-space{height:auto!important;min-height:0!important;overflow:visible!important}
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{height:auto!important;min-height:0!important;grid-template-columns:minmax(0,1.65fr) minmax(290px,1fr)!important;grid-template-rows:minmax(300px,auto) minmax(235px,auto) minmax(235px,auto)!important;gap:clamp(12px,1.1vw,19px)!important;align-content:start!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.v152-position-reference{height:auto!important;min-height:310px!important;grid-template-rows:auto 1px minmax(155px,1fr)!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-obligations{height:auto!important;min-height:0!important;overflow:visible!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid,.ff-dashboard.summary-space .v105-grid>.ff-upcoming,.ff-dashboard.summary-space .v105-grid>.ff-personal{height:auto!important;min-height:235px!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-tile{height:100%!important;min-height:235px!important}
+ body .main.world-overview .ff-dashboard.summary-space .ff-executive-bubbles{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;max-width:100%!important;overflow:visible!important;gap:clamp(4px,.8vw,15px)!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble{width:clamp(99px,9.8vw,144px)!important;height:clamp(99px,9.8vw,144px)!important;min-width:0!important;flex:0 1 auto!important;margin:0!important;padding:5px!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured{width:clamp(110px,10.8vw,158px)!important;height:clamp(110px,10.8vw,158px)!important}
+}
+.v186-position-trigger{display:block;max-width:100%;border:0;background:transparent;cursor:pointer;text-align:left;font-family:inherit;padding:0!important}
+.v186-position-trigger:hover{text-decoration:underline;text-decoration-thickness:1px;text-decoration-color:rgba(39,87,148,.3);text-underline-offset:5px}
+.v186-kpi-launch{display:inline-flex;align-items:center;gap:5px;margin-top:7px;min-height:27px;padding:4px 9px;border:1px solid rgba(131,164,207,.33);border-radius:999px;background:rgba(252,254,255,.75);font-size:10px;font-weight:760;color:#496b98;cursor:pointer}
+.v186-kpi-launch svg{width:13px;height:13px}
+.v186-kpi-launch:hover{border-color:#7f9dc8;background:#f7faff}
+/* E. Contextual layer with exact product records (no invented balances). */
+.v186-deep-layer{position:fixed;inset:0;z-index:9999;background:rgba(18,35,64,.45);backdrop-filter:blur(9px);display:flex;align-items:center;justify-content:center;padding:clamp(10px,2vw,25px)}
+.v186-deep-dialog{width:min(850px,100%);max-height:min(91dvh,970px);overflow-y:auto;background:linear-gradient(155deg,#f8fbff,#eaf1fe);border:1px solid rgba(255,255,255,.96);border-radius:28px;box-shadow:0 29px 100px rgba(21,47,86,.28);padding:clamp(16px,2vw,27px);color:#263e62}
+.v186-deep-head{display:flex;align-items:start;justify-content:space-between;gap:14px;padding-bottom:17px;border-bottom:1px solid #d9e5f4}
+.v186-deep-head small{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#7188a9;font-weight:840}
+.v186-deep-head h2{font-size:clamp(22px,3.5vw,31px);letter-spacing:-.045em;margin:5px 0;color:#243f67}
+.v186-deep-head p{font-size:11px;color:#7487a4;margin:3px 0 0;line-height:1.5}
+.v186-deep-close{width:39px;height:39px;border-radius:50%;background:rgba(220,231,249,.85);color:#4c6589;border:0;cursor:pointer;font-size:25px;flex:none}
+.v186-deep-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:17px 0}
+.v186-deep-summary>div{padding:13px;border:1px solid rgba(204,220,241,.9);border-radius:15px;background:rgba(255,255,255,.8);min-width:0}
+.v186-deep-summary small{display:block;font-size:9px;color:#7890ad}
+.v186-deep-summary strong{display:block;overflow-wrap:anywhere;font-size:clamp(13px,2vw,19px);letter-spacing:-.035em;margin-top:5px}
+.v186-deep-section{margin-top:21px}
+.v186-deep-section h3{font-size:14px;margin:0 0 9px;color:#365377}
+.v186-deep-rows{border:1px solid #d7e3f3;border-radius:15px;overflow:hidden;background:rgba(255,255,255,.65)}
+.v186-deep-row{border:0;border-bottom:1px solid rgba(207,220,238,.65);background:transparent;width:100%;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto 18px;align-items:center;text-align:left;gap:9px;color:#29466e}
+.v186-deep-row:last-child{border-bottom:0}.v186-deep-row:hover{background:#edf5ff}
+.v186-deep-row>span{min-width:0;display:grid;gap:3px}.v186-deep-row strong{font-size:12px;overflow-wrap:anywhere}.v186-deep-row small{font-size:10px;color:#7f91ab}
+.v186-deep-row>b{font-size:12px;white-space:nowrap}.v186-deep-row>b.is-negative{color:#c37536}
+.v186-deep-row>svg{width:15px;height:15px}
+.v186-deep-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.v186-deep-actions .btn{min-height:40px}
+.v186-deep-note{font-size:10px;color:#7b8ba2;line-height:1.55;margin:13px 1px 0}
+body.theme-dark .v186-tools-extra,body.theme-dark .v186-service-calendar{background:rgba(35,52,80,.89);border-color:#4a6382}
+body.theme-dark .v186-deep-dialog{background:linear-gradient(155deg,#273d5d,#1f314c);color:#dfeaff;border-color:#4c6588}
+body.theme-dark .v186-deep-head h2,body.theme-dark .v186-deep-section h3,body.theme-dark .v186-deep-row{color:#e7efff}
+body.theme-dark .v186-deep-rows,body.theme-dark .v186-deep-summary>div{background:#2a4365;border-color:#49617d}
+@media(max-width:790px){
+ .v186-tools-extra{margin:18px 0 calc(100px + env(safe-area-inset-bottom))}
+ .v186-tools-extra>summary{min-height:52px;flex-wrap:wrap}
+ .v186-tools-extra>summary>small{font-size:9px}
+ .world-kpis #page .widgets-heading{padding:15px;flex-direction:column;align-items:stretch}
+ .world-kpis #page .widgets-head-buttons{width:100%;display:flex;flex-wrap:wrap;gap:8px}
+ .world-kpis #page .widgets-head-buttons button{flex:1;min-height:43px}
+ .world-kpis #page .ws-board{grid-template-columns:1fr!important}
+ .world-kpis #page .ws-board .ws-wide{grid-column:1!important}
+ .v186-cal-head{align-items:flex-start}.v186-cal-total{text-align:left}
+ .v186-deep-dialog{border-radius:23px;padding:16px;max-height:92dvh}
+ .v186-deep-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .v186-deep-summary>div:last-child:nth-child(odd){grid-column:1/-1}
+ .v186-deep-row{grid-template-columns:minmax(0,1fr) auto 13px;padding:11px 9px}
+ .v186-deep-row>b{font-size:11px}
+}
+@media(min-width:791px) and (max-width:1099px){.world-overview #page .ff-dashboard.summary-space{width:100%;max-width:none;overflow:visible}}
+@media(prefers-reduced-motion:reduce){.v186-tools-extra>summary>svg:last-child{transition:none}}
+</style>
+
+<style id="vive-v186-mobile-drilldown">
+.vive-mobile-home .v186-mobile-amount{display:block!important;width:100%;max-width:100%;height:auto;background:none!important;border:0!important;padding:0!important;margin:0!important;text-align:left!important;font:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;color:inherit;cursor:pointer;overflow-wrap:anywhere}
+.vive-mobile-home .v186-mobile-amount:active,.vive-mobile-home .v186-mobile-foot-amount:active{opacity:.67}
+.vive-mobile-home .v186-mobile-foot-amount{border:0!important;background:transparent!important;color:inherit!important;padding:0!important;margin:0!important;cursor:pointer;display:inline-block;text-align:left;font:inherit;min-width:0}
+.vive-mobile-home .v186-mobile-foot-amount b{font:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;color:inherit}
+.vive-mobile-home .v186-mobile-amount:focus-visible,.vive-mobile-home .v186-mobile-foot-amount:focus-visible{outline:2px solid #6288c3;outline-offset:3px;border-radius:4px}
+@media(max-width:790px){.v186-mobile-amount{font-size:clamp(26px,8vw,40px)!important;font-weight:840!important;line-height:1.1!important}}
+</style>
+
+<style id="vive-v186-blank-studio-final">
+.world-kpis #page .widgets-grid.ws-board:has(>.widget-empty){display:flex!important;align-items:center;justify-content:center;min-height:235px;padding:12px 0!important}
+.world-kpis #page .widgets-grid.ws-board>.widget-empty{width:min(100%,520px)!important;max-width:520px!important;min-height:155px!important;padding:25px!important;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.12)!important;border:1px dashed rgba(120,157,204,.34)!important;border-radius:22px!important;color:#7088a9!important;font-size:12px;line-height:1.6;text-align:center}
+.world-kpis #page .widgets-disclaimer{display:none!important}
+@media(max-width:790px){.world-kpis #page .widgets-grid.ws-board:has(>.widget-empty){min-height:185px}.world-kpis #page .widgets-grid.ws-board>.widget-empty{min-height:145px!important}}
+</style>
+
+<style id="vive-v187-premium-ux">
+/* V187: hero patrimonial existente y profundidad invisible en cada KPI. */
+.v187-interactive-kpi{position:relative;cursor:pointer!important;transition:filter .2s ease,transform .2s ease,box-shadow .2s ease}
+.v187-interactive-kpi:hover{filter:brightness(1.018);transform:translateY(-2px)}
+.v187-interactive-kpi:focus-visible{outline:3px solid rgba(94,106,228,.55);outline-offset:3px}
+.v187-interactive-kpi button,.v187-interactive-kpi a{position:relative;z-index:2}
+.v187-patrimony{width:100%;min-width:0;max-width:100%;overflow:visible}
+.v187-patrimony .v187-wealth-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:8px 1px 18px}
+.v187-patrimony .v187-wealth-top h2{font-size:clamp(24px,2.3vw,35px);line-height:1.13;letter-spacing:-.05em;margin:6px 0 8px}
+.v187-patrimony .v187-wealth-top h2 em{font-style:normal;color:#6177c8}
+.v187-patrimony .v187-wealth-top p{max-width:700px}
+.v187-patrimony .v187-wealth-hero{margin:0 0 17px!important;padding:clamp(20px,2.4vw,32px)!important;min-height:237px!important;overflow:hidden!important;border-radius:28px!important;background:linear-gradient(117deg,#304d87,#4b6cc4 62%,#6885ec)!important;color:#fff!important;box-shadow:0 17px 46px rgba(61,86,150,.14)!important}
+.v187-hero-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:clamp(13px,2vw,30px);align-items:stretch}
+.v187-hero-primary{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-width:0;border:0;background:none!important;color:#fff!important;text-align:left;padding:4px 0!important;cursor:pointer}
+.v187-hero-eyebrow{font-size:10px!important;letter-spacing:.18em;font-weight:800;color:#d9e5ff!important}
+.v187-hero-primary>strong{display:block;max-width:100%;font-weight:860!important;font-size:clamp(34px,4.25vw,65px)!important;line-height:1.13!important;letter-spacing:-.062em!important;white-space:nowrap;overflow-wrap:normal;font-variant-numeric:tabular-nums;margin:9px 0 6px;color:#fff!important}
+.v187-hero-explain{color:rgba(246,249,255,.83)!important;font-size:12px!important;line-height:1.5}
+.v187-hero-change{display:block;margin-top:19px;font-size:11px!important;color:rgba(242,248,255,.88)!important}
+.v187-hero-change .v134-change,.v187-hero-change .v134-delta,.v187-hero-change .v134-muted{color:#fff!important;font-size:11px!important}
+.v187-hero-sides{display:grid;grid-template-columns:1fr 1fr;gap:11px;min-width:0}
+.v187-wealth-part{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;min-width:0;gap:9px;border:1px solid rgba(255,255,255,.22)!important;border-radius:20px!important;padding:15px!important;background:rgba(255,255,255,.13)!important;color:#fff!important;cursor:pointer;transition:background .2s ease,transform .2s ease}
+.v187-wealth-part:hover{background:rgba(255,255,255,.2)!important;transform:translateY(-2px)}
+.v187-wealth-part>span{font-size:12px!important;font-weight:750;color:#e4ecff!important}
+.v187-wealth-part>strong{font-size:clamp(16px,1.55vw,26px)!important;font-weight:830!important;letter-spacing:-.045em!important;line-height:1.1!important;overflow-wrap:anywhere;color:#fff!important}
+.v187-wealth-part>small{font-size:10px!important;line-height:1.45!important;color:#dfebff!important}
+.v187-hero-meta{border-top:1px solid rgba(255,255,255,.22);padding-top:12px;margin-top:17px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.v187-hero-meta span{font-size:10px!important;color:rgba(247,251,255,.83)!important}
+.v187-patrimony .v187-charts{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,.95fr) minmax(0,.95fr);gap:12px;align-items:stretch}
+.v187-patrimony .v187-chart-card{min-width:0;overflow:hidden!important;padding:clamp(15px,1.5vw,22px)!important;border-radius:22px!important;background:rgba(255,255,255,.7)!important;display:flex;flex-direction:column}
+.v187-patrimony .v187-chart-card>header{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;margin:0 0 10px!important;min-width:0}
+.v187-patrimony .v187-chart-card>header span{font-size:10px;color:#7d91af;letter-spacing:.13em;font-weight:800}
+.v187-patrimony .v187-chart-card>header h3{font-size:clamp(15px,1.3vw,19px);line-height:1.2;margin:5px 0 4px;color:#30466b!important}
+.v187-patrimony .v187-chart-card>header p{font-size:10px;line-height:1.4;color:#8091ae!important}
+.v187-history-launch{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;white-space:nowrap;border-radius:999px!important;border:1px solid #dbe5f5!important;background:rgba(246,249,255,.9)!important;color:#4b689f!important;font-size:11px!important;font-weight:800!important;cursor:pointer}
+.v187-history-launch svg{width:13px;height:13px}
+.v187-history-launch:hover{background:#e4edfe!important}
+.v187-mini-chart{min-height:0;flex:1;display:flex;flex-direction:column;justify-content:center}
+.v187-mini-chart .v14-chart-scroll{width:100%;min-width:0;overflow:hidden!important;max-height:270px}
+.v187-mini-chart svg{display:block;width:100%;height:auto;max-height:265px}
+.v187-mini-chart .v14-chart-legend{margin:10px 0 0!important;gap:7px;flex-wrap:wrap}
+.v187-mini-chart .v14-chart-legend span{font-size:9px!important}
+.v187-graph-foot{font-size:10px;color:#8192ae;margin-top:auto!important;padding-top:8px}
+.v187-chart-total{font-weight:840;font-size:clamp(20px,2vw,30px);letter-spacing:-.05em;color:#29486d;margin:6px 0 18px;overflow-wrap:anywhere}
+.v187-composition{display:grid;gap:13px;margin-top:auto}
+.v187-composition-item{width:100%;display:grid;gap:6px;text-align:left;padding:0;border:0;background:transparent;cursor:pointer;color:#466080}
+.v187-composition-top{display:grid;grid-template-columns:19px minmax(0,1fr) auto;gap:7px;align-items:center}
+.v187-comp-number{font-size:9px;color:#91a3bd;font-weight:800}
+.v187-comp-label{font-size:11px;line-height:1.2;color:#4b6486;font-weight:720;min-width:0}
+.v187-composition-top b{font-size:11px;color:#2e476d;font-weight:850;white-space:nowrap}
+.v187-comp-track{display:block;background:#e5edf8;border-radius:99px;height:9px;width:100%;overflow:hidden}
+.v187-comp-track i{display:block;height:100%;min-width:0;border-radius:99px;background:var(--comp-color);transition:width .25s ease}
+.v187-composition-foot{display:flex;align-items:center;justify-content:space-between;font-size:9px;color:#8fa0b7}
+.v187-composition-item:hover .v187-comp-label{color:#4665c7;text-decoration:underline;text-underline-offset:3px}
+.v187-patrimony .v187-footnote{margin:17px 0!important;padding-bottom:12px;color:#8293ab;font-size:10px;line-height:1.65}
+/* Benefits: one executive hero, one ledger. */
+.v187-benefits-only{display:grid;gap:15px}
+.v187-benefits-only .v187-benefits-ledger{background:rgba(255,255,255,.73);border:1px solid rgba(255,255,255,.94);border-radius:23px;padding:18px;min-width:0}
+.v187-benefits-ledger-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}
+.v187-benefits-ledger-head span{font-size:10px;letter-spacing:.11em;color:#7b92b3;font-weight:800}
+.v187-benefits-ledger-head h3{font-size:20px;letter-spacing:-.035em;color:#2a4266;margin:5px 0}
+.v187-benefits-ledger-head p{font-size:11px;color:#7a90aa;margin:0}
+.v187-benefits-add{border:1px solid #d7e2f2;background:rgba(248,250,255,.85);padding:10px 14px;border-radius:999px;color:#4e6da4;cursor:pointer;font-size:11px;font-weight:760;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.v187-benefits-add svg{width:14px;height:14px}
+.v187-benefits-ledger .v144-filter-row{margin:0 0 12px!important;padding:0!important;min-width:0}
+.v187-benefits-ledger .v144-table-wrap{margin:0!important}
+.v187-benefits-empty{font-size:13px;color:#667a98;padding:20px}
+.v187-benefits-empty button{color:#4d69c8;border:0;background:transparent;cursor:pointer;text-decoration:underline}
+/* Expanded historic and as-of detail views; keep the page unchanged on close. */
+.v187-modal-overlay{position:fixed;inset:0;background:rgba(21,35,65,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:clamp(12px,3vw,30px);backdrop-filter:blur(9px)}
+.v187-history-dialog,.v187-detail-dialog{width:min(1120px,100%);max-height:92dvh;overflow:auto;background:linear-gradient(142deg,#f9fcff,#eaf1ff);color:#2f486e;border:1px solid rgba(255,255,255,.9);border-radius:26px;box-shadow:0 29px 94px rgba(22,41,83,.28);padding:clamp(18px,2.8vw,30px)}
+.v187-detail-dialog{width:min(790px,100%)}
+.v187-history-dialog>header,.v187-detail-dialog>header{display:flex;justify-content:space-between;align-items:start;gap:15px;margin-bottom:16px}
+.v187-history-dialog header span,.v187-detail-dialog header span{font-size:10px;letter-spacing:.14em;font-weight:800;color:#7089b0}
+.v187-history-dialog h2,.v187-detail-dialog h2{margin:5px 0;font-size:clamp(24px,3vw,35px);letter-spacing:-.045em;color:#28466f}
+.v187-history-dialog header p,.v187-detail-dialog header p{font-size:12px;color:#7690b0}
+.v187-modal-close{width:40px;height:40px;flex:none;border:0;border-radius:50%;font-size:26px;background:#dce8fa;color:#35547d;cursor:pointer}
+.v187-range-controls{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 17px}
+.v187-range-controls button{padding:9px 13px;border:1px solid #d5e2f5;border-radius:999px;background:#f5f9ff;color:#56749e;font-size:11px;font-weight:800;cursor:pointer}
+.v187-range-controls button.selected{background:#516ed5;color:#fff;border-color:#516ed5}
+.v187-history-scroll{overflow-x:auto;max-width:100%;padding-bottom:5px}
+.v187-history-scroll svg{display:block;max-width:none}
+.v187-history-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#657e9e}
+.v187-history-legend>span{display:flex;align-items:center;gap:6px}
+.v187-history-legend i{display:inline-block;width:14px;height:4px;border-radius:4px}
+.v187-history-caveat{margin:15px 0 0;color:#8293aa;font-size:11px;line-height:1.55}
+.v187-detail-big{font-size:clamp(30px,4.4vw,50px);font-weight:860;letter-spacing:-.06em;color:#304f8c;padding:9px 0 20px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.v187-detail-list{border:1px solid #dbe5f5;border-radius:18px;overflow:hidden;background:#ffffffb8}
+.v187-detail-line{width:100%;border:0;border-bottom:1px solid #dfebf7;background:transparent;padding:13px 15px;display:grid;grid-template-columns:minmax(0,1fr) auto 17px;gap:11px;align-items:center;text-align:left;cursor:pointer;color:#335177}
+.v187-detail-line:last-child{border-bottom:0}
+.v187-detail-line:hover{background:#ebf3ff}
+.v187-detail-line>span{min-width:0;display:grid;gap:4px}
+.v187-detail-line strong{font-size:13px;font-weight:800}
+.v187-detail-line small{font-size:10px;color:#8a9bb2}
+.v187-detail-line b{font-size:12px;white-space:nowrap}
+.v187-detail-line svg{width:15px;height:15px}
+.v187-detail-empty{padding:15px;font-size:12px;color:#8494ae}
+/* Dashboard: remove old forced dimensions in favor of container-aware, strictly round bubbles. */
+@media(min-width:791px){
+ body .main.world-overview:has(.ff-dashboard.summary-space){box-sizing:border-box;min-width:0!important;overflow-y:auto!important;overflow-x:hidden!important}
+ body .main.world-overview .ff-dashboard.summary-space{min-width:0!important;box-sizing:border-box;max-width:100%!important}
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{box-sizing:border-box;min-width:0!important;max-width:100%!important;grid-template-rows:minmax(255px,1.35fr) minmax(170px,1fr) minmax(175px,1fr)!important;height:clamp(620px,calc(100dvh - 210px),850px)!important;max-height:none!important;gap:clamp(9px,.75vw,14px)!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.v152-position-reference{box-sizing:border-box;min-width:0!important;height:100%!important;min-height:0!important;grid-template-rows:auto 1px minmax(0,1fr)!important;gap:9px!important;padding:clamp(14px,1.45vw,22px)!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-header{min-height:0!important;max-height:none!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-header .ff-pos-amount{font-size:clamp(29px,3vw,43px)!important;line-height:1.04!important;margin:3px 0 4px!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-header p{font-size:10px!important;line-height:1.25!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:center!important;gap:clamp(3px,.75vw,12px)!important;min-height:0!important;overflow:visible!important;padding:0 0 9px!important;max-width:100%!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble,
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured{
+  box-sizing:border-box!important;position:relative!important;aspect-ratio:1/1!important;width:clamp(92px,min(10.25vw,17.8dvh),156px)!important;height:clamp(92px,min(10.25vw,17.8dvh),156px)!important;flex:0 0 clamp(92px,min(10.25vw,17.8dvh),156px)!important;max-width:none!important;min-width:0!important;margin:0!important;padding:9px 7px!important;border-radius:50%!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:5px!important;overflow:hidden!important;transform:none!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured{z-index:1!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .bubble-amount{font-size:clamp(15px,1.65vw,23px)!important;line-height:1.06!important;white-space:nowrap!important;letter-spacing:-.055em!important;overflow-wrap:normal!important;max-width:100%!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.ff-bubble-negative .bubble-amount{font-size:clamp(13px,1.35vw,19px)!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble small{font-size:clamp(9px,.9vw,12px)!important;line-height:1.1!important;text-align:center!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .v105-bubble-pct{font-size:10px!important;line-height:1.1!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions{bottom:8px!important;right:12px!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions button{min-height:31px!important;height:31px!important;padding:0 11px!important;font-size:10px!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-obligations{min-height:0!important;height:100%!important;overflow:auto!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid,.ff-dashboard.summary-space .v105-grid>.ff-upcoming,.ff-dashboard.summary-space .v105-grid>.ff-personal{height:100%!important;min-height:0!important;overflow:hidden!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-tile{min-height:0!important;max-height:100%!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming .ff-payment-list{max-height:calc(100% - 50px)!important;overflow-y:auto!important;min-height:0!important}
+}
+@media(min-width:791px) and (max-width:1170px){
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{height:auto!important;min-height:0!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.v152-position-reference,body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-obligations,body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid,body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming,body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-personal{grid-column:1/-1!important;grid-row:auto!important;height:auto!important;min-height:0!important;overflow:visible!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.v152-position-reference{min-height:300px!important}
+ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble,body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured{width:clamp(115px,15vw,153px)!important;height:clamp(115px,15vw,153px)!important;flex-basis:clamp(115px,15vw,153px)!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px}
+}
+@media(max-width:1100px){.v187-patrimony .v187-charts{grid-template-columns:repeat(2,minmax(0,1fr))}.v187-patrimony .v187-timeline{grid-column:1/-1}}
+@media(max-width:790px){
+ .v187-patrimony .v187-wealth-top{flex-direction:column!important;gap:8px!important}
+ .v187-patrimony .v187-wealth-hero{padding:20px!important;border-radius:23px!important}
+ .v187-patrimony .v187-hero-layout{grid-template-columns:1fr!important;gap:18px!important}
+ .v187-patrimony .v187-hero-primary>strong{font-size:clamp(35px,9vw,50px)!important}
+ .v187-hero-sides{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .v187-wealth-part{min-height:109px;padding:13px!important}
+ .v187-wealth-part strong{font-size:clamp(15px,4.5vw,21px)!important}
+ .v187-patrimony .v187-charts{grid-template-columns:1fr!important;gap:11px!important}
+ .v187-patrimony .v187-timeline{grid-column:auto!important}
+ .v187-patrimony .v187-chart-card{padding:17px!important}
+ .v187-chart-total{margin:2px 0 14px}
+ .v187-composition{gap:10px}
+ .v187-benefits-ledger-head{align-items:start;flex-direction:column}
+ .v187-detail-line{grid-template-columns:minmax(0,1fr) auto 13px;padding:12px 9px;gap:7px}
+ .v187-detail-line>b{font-size:11px}
+ .v187-history-dialog,.v187-detail-dialog{max-height:94dvh;border-radius:20px}
+ /* Mobile Resumen stays in its purpose-built layout; keep original bubbles untouched. */
+}
+@media(max-width:370px){.v187-hero-sides{grid-template-columns:1fr!important}.v187-wealth-part{min-height:80px}.v187-patrimony .v187-hero-primary>strong{font-size:32px!important}}
+@media(prefers-reduced-motion:reduce){.v187-interactive-kpi,.v187-wealth-part{transition:none!important;transform:none!important}}
+</style>
+
 </body>
 </html>
