@@ -16353,8 +16353,23 @@ function nav(){
    </div>
  </aside>`;
 }
+/* V206 · Switch contextual y continuo entre productos bancarios en móviles. */
+function v206BankSwitch(page){
+ const tabs=[
+  ['banks','Bancos','building'],
+  ['accounts','Cuentas','wallet'],
+  ['cards','Tarjetas','card'],
+  ['loans','Préstamos','receipt'],
+  ['certificates','Certificados','chart'],
+  ['benefits','Beneficios','analytics']
+ ];
+ return `<nav class="v206-banks-switch" aria-label="Cambiar entre bancos y productos" data-v206-switch="1">${tabs.map(([id,label,ico])=>`<button type="button" data-v206-tab="${id}" class="v206-banks-pill ${page===id?'active':''}" aria-pressed="${page===id}" ${page===id?'aria-current="page"':''}>${icon(ico)}<span>${label}</span></button>`).join('')}</nav>`;
+}
 function moduleSwitch(page){
  const root=navFamilyForPage(page),section=NAV_SECTIONS[root];if(!section)return '';
+ if(root==='banks'&&window.matchMedia?.('(max-width:767px)').matches){
+  return page==='banks'?'':v206BankSwitch(page);
+ }
  return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${section.title}</strong><small>${section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic,view])=>{const on=page===id&&(!view||(ui.v176PayView||'agenda')===view);return `<button type="button" class="module-switch-tab ${on?'active':''}" ${on?'aria-current="page"':''} data-act="navigate" data-id="${id}"${view?` data-v176-pay-view="${view}"`:''}>${icon(ic)}<span>${name}</span></button>`}).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
 }
 
@@ -16496,7 +16511,6 @@ function mobileHome(){
 }
 function mobileHub(){
  const period=ui.month||today().slice(0,7),stats=monthlyTotals(Number(period.slice(0,4)),Number(period.slice(5,7)));
- const labelPeriod=new Intl.DateTimeFormat('es-DO',{month:'long',year:'numeric'}).format(new Date(Number(period.slice(0,4)),Number(period.slice(5,7))-1,1));
  const groups=[
   {eyebrow:'TU ACTIVIDAD',title:'Cada movimiento, en su lugar',subtitle:'Registros, análisis y planificación',entries:[
    ['income','Ingresos','Lo que recibes','up'],['expenses','Egresos','Lo que utilizas','down'],
@@ -16510,7 +16524,7 @@ function mobileHub(){
  ];
  const link=([id,name,description,ic])=>`<button type="button" class="v205-explore-link" data-act="navigate" data-id="${id}" aria-label="Abrir ${name}"><span class="v205-explore-link-icon">${icon(ic)}</span><span class="v205-explore-link-copy"><strong>${name}</strong><small>${description}</small></span><span class="v205-explore-arrow" aria-hidden="true">›</span></button>`;
  return `<div class="vive-mobile-hub v205-explore">
-   <header class="v205-explore-header"><span class="v205-explore-kicker">VIVE EL HOY · TU ESPACIO</span><h1>Explorar<span class="v205-explore-period">${labelPeriod}</span></h1><p>Todo lo importante, a un toque.</p></header>
+   <header class="v205-explore-header"><span class="v205-explore-kicker">VIVE EL HOY · TU ESPACIO</span><h1>Explorar<span class="v205-explore-period">${fmtMonth(period)}</span></h1><p>Todo lo importante, a un toque.</p></header>
    <div class="v205-explore-actions"><button type="button" class="v205-explore-register" data-act="newTransaction">${icon('plus')}<span>Registrar movimiento</span><span class="v205-explore-action-arrow" aria-hidden="true">↗</span></button><button type="button" class="v205-explore-pay" data-act="navigate" data-id="payments" aria-label="Abrir Centro de pagos">${icon('calendar')}<span>Mis pagos</span></button></div>
    <section class="v205-explore-pulse" aria-label="Actividad registrada del mes"><div class="v205-explore-pulse-head"><span>ESTE MES</span><small>Solo movimientos registrados</small></div><div class="v205-explore-pulse-grid"><button type="button" data-act="navigate" data-id="income"><span>${icon('up')} Ingresos</span><strong>${money(stats.income,'DOP',0)}</strong><small>Ver análisis ›</small></button><button type="button" data-act="navigate" data-id="expenses"><span>${icon('down')} Egresos</span><strong>${money(stats.expense,'DOP',0)}</strong><small>Ver análisis ›</small></button></div></section>
    ${groups.map(g=>`<section class="v205-explore-group" aria-label="${g.title}"><div class="v205-explore-group-header"><span>${g.eyebrow}</span><h2>${g.title}</h2><p>${g.subtitle}</p></div><div class="v205-explore-links">${g.entries.map(link).join('')}</div></section>`).join('')}
@@ -17794,14 +17808,15 @@ function moneyRegister(){
  const op=(glyph,name,description,action,type='')=>`<button class="money-register-tile" data-act="${action}" ${action==='navigate'?`data-id="${type}"`:type?`data-type="${type}"`:''}><span class="money-register-icon">${icon(glyph)}</span><strong>${name}</strong><small>${description}</small><span class="register-tile-arrow">${icon('arrow')}</span></button>`;
  const pending=db.pendingOperations||[],active=ui.movementTab;
  const summary=`<div class="grid kpis movement-kpis">${shellKpi('Ingresos del mes',money(m.income),'Movimientos confirmados','up','positive')}${shellKpi('Egresos del mes',money(m.expense),'Compras y costos confirmados','down')}${shellKpi('Neto',money(m.net),'Ingreso menos gasto','wallet',m.net>=0?'positive':'negative')}${shellKpi('Operaciones',String(db.transactions.length),'Movimientos en tu historial','cycle')}</div>`;
- const selector=active==='register'?`<div class="vr-register-top-nav"><span>OPERACIONES / REGISTRO</span><nav class="movement-tabs" aria-label="Vistas del centro">${[['register','Registrar','plus'],['all','Actividad','cycle'],['pending','Por confirmar','clock'],['review','Revisión','shield']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`:`<div class="movement-tabs-shell"><div class="movement-title"><span class="summary-tag">REGISTRO Y CONTROL</span><h2>Centro de operaciones inteligente.</h2><p>Ingresos, gastos, tarjetas, transferencias, efectivo y pagos: cada flujo muestra solamente lo necesario.</p></div><nav class="movement-tabs" aria-label="Vistas del centro de movimientos">${[['register','Registrar','plus'],['all','Toda la actividad','cycle'],['pending','Por confirmar','clock'],['review','Revisión','shield']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`;
+ const selector=active==='register'?`<div class="vr-register-top-nav"><span>OPERACIONES / REGISTRO</span><nav class="movement-tabs" aria-label="Vistas del centro">${[['register','Registrar','plus'],['all','Actividad','cycle'],['pending','Por confirmar','clock']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`:`<div class="movement-tabs-shell"><div class="movement-title"><span class="summary-tag">REGISTRO Y CONTROL</span><h2>Centro de operaciones inteligente.</h2><p>Ingresos, gastos, tarjetas, transferencias, efectivo y pagos: cada flujo muestra solamente lo necesario.</p></div><nav class="movement-tabs" aria-label="Vistas del centro de movimientos">${[['register','Registrar','plus'],['all','Toda la actividad','cycle'],['pending','Por confirmar','clock']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`;
   const cashD=db.accounts.find(a=>a.kind==='cash'&&a.currency==='DOP'),cashU=db.accounts.find(a=>a.kind==='cash'&&a.currency==='USD');
   const cashDValue=cashD?getAccountBalance(cashD):0,cashUValue=cashU?getAccountBalance(cashU):0;
   const rg=ui.registrationGroup||'pay';
  const registerGroups={
   receive:{label:'Recibir',sub:'Ingresos que llegan a tus saldos',modes:['income'],sideTitle:'Cada ingreso, a su cuenta.',sideCopy:'Elige la cuenta de destino, la fuente del dinero y el importe. Tu efectivo en pesos y dólares también está disponible.',accent:'mint',symbol:'↙'},
   pay:{label:'Pagar',sub:'Compras, servicios y tarjetas',modes:['spend','service','cardpay'],sideTitle:'Registra una vez. Todo cuadra.',sideCopy:'Una compra con tarjeta se registra como gasto y deuda. Cuando pagas esa tarjeta, disminuye la deuda sin duplicar el gasto.',accent:'lilac',symbol:'↗'},
-  move:{label:'Mover',sub:'Transferencias y cambios de moneda',modes:['own','outgoing'],sideTitle:'De un saldo a otro.',sideCopy:'Las transferencias normales y Pago al instante son modalidades distintas. La tasa de cambio aparece solo al cruzar RD$ y US$.',accent:'sky',symbol:'⇄'}
+  move:{label:'Mover',sub:'Transferencias y cambios de moneda',modes:['own','outgoing'],sideTitle:'De un saldo a otro.',sideCopy:'Las transferencias normales y Pago al instante son modalidades distintas. La tasa de cambio aparece solo al cruzar RD$ y US$.',accent:'sky',symbol:'⇄'},
+  other:{label:'Otros',sub:'Devoluciones, ajustes y abonos',modes:[],sideTitle:'Gestiones que completan tu registro.',sideCopy:'Devuelve un consumo, concilia un saldo, registra un beneficio o abona a un préstamo. Cada operación abre su formulario específico.',accent:'amber',symbol:'✦'}
  };
  const group=registerGroups[rg]||registerGroups.pay;
  const operationIcon={income:'arrow-down-left',spend:'shopping-bag',service:'receipt',own:'repeat',outgoing:'send',cardpay:'credit-card'};
@@ -17810,17 +17825,13 @@ function moneyRegister(){
  const formTiles=`<div class="vr-register">
   <section class="vr-hero"><div class="vr-hero-content"><div class="vr-eyebrow"><span class="vr-star">✦</span> vive el hoy <span class="vr-hero-divider"></span> CENTRO DE REGISTRO</div><h2>Un movimiento.<br><em>Todo bajo control.</em></h2><p>Registra lo importante en pocos pasos. Sin formularios interminables, sin cargos escondidos y con cada saldo en su moneda.</p><div class="vr-hero-actions"><button type="button" class="vr-hero-primary" data-act="newTransaction">${icon('plus')} Nueva operación</button><span>Registro inteligente · RD$ y US$</span></div></div><div class="vr-hero-art"><span class="vr-orbit vr-orbit-1"></span><span class="vr-orbit vr-orbit-2"></span><div class="vr-art-card"><span>DISPONIBLE EN EFECTIVO</span><strong>${money(amountCashD,'DOP',2)}</strong><div class="vr-art-bottom"><span>También en US$</span><b>${money(amountCashU,'USD',2)}</b></div></div><div class="vr-art-chip">✓&nbsp; Registro organizado</div></div></section>
   <section class="vr-workspace"><header class="vr-workspace-head"><div><span class="vr-small-kicker">EMPEZAR</span><h3>¿Qué necesitas hacer?</h3><p>Selecciona una categoría y elige tu operación.</p></div><span class="vr-timehint">01 / 03 · ELIGE UNA ACCIÓN</span></header>
-   <nav class="vr-switcher" aria-label="Tipo de movimiento">${Object.entries(registerGroups).map(([key,g])=>`<button type="button" class="vr-switch ${rg===key?'selected':''}" data-act="registrationGroup" data-id="${key}" ${rg===key?'aria-current="true"':''}><span class="vr-switch-symbol">${g.symbol}</span><span><strong>${g.label}</strong><small>${g.sub}</small></span></button>`).join('')}</nav>
-   <div class="vr-content"><div class="vr-action-stack"><span class="vr-group-heading">${group.label.toUpperCase()} <span>${group.modes.length} OPCIONES</span></span>${group.modes.map(actionTile).join('')}${rg==='receive'?`<button class="vr-simple-link" data-act="otherBenefitPicker" type="button">${icon('gift')} Registrar cashback o beneficio recibido ${icon('arrow')}</button>`:''}${rg==='pay'?`<button class="vr-simple-link" data-act="otherLoanPicker" type="button">${icon('calendar')} Pagar cuota de préstamo ${icon('arrow')}</button>`:''}</div><aside class="vr-guidance ${group.accent}"><span class="vr-guidance-glyph">${group.symbol}</span><span class="vr-guidance-label">TU ASISTENTE</span><h4>${group.sideTitle}</h4><p>${group.sideCopy}</p><div class="vr-guidance-bottom"><span class="vr-dot"></span> Los saldos se actualizan al confirmar</div></aside></div>
-  </section>
-  <section class="v29-other-menu" id="otras-gestiones" aria-label="Otras gestiones financieras">
-   <header class="v29-other-header"><div><span class="v29-other-eyebrow">REGISTRO COMPLEMENTARIO</span><h3>Otras gestiones</h3><p>Correcciones, devoluciones y abonos. Cada operación lleva su propio formulario rápido.</p></div><span class="v29-other-count">4 operaciones</span></header>
-   <div class="v29-other-actions">
+   <nav class="vr-switcher" aria-label="Tipo de movimiento">${Object.entries(registerGroups).map(([key,g])=>`<button type="button" class="vr-switch ${rg===key?'selected':''}" data-group="${key}" data-act="registrationGroup" data-id="${key}" ${rg===key?'aria-current="true"':''}><span class="vr-switch-symbol">${g.symbol}</span><span><strong>${g.label}</strong><small>${g.sub}</small></span></button>`).join('')}</nav>
+   <div class="vr-content"><div class="vr-action-stack"><span class="vr-group-heading">${group.label.toUpperCase()} <span>${rg==='other'?4:group.modes.length} ${rg==='other'||group.modes.length!==1?'OPCIONES':'OPCIÓN'}</span></span>${rg==='other'?`<div class="vr-other-operations" role="group" aria-label="Otras gestiones">
     <button class="v29-other-action" type="button" data-act="otherRefund"><span class="v29-other-icon refund">${icon('repeat')}</span><span class="v29-other-copy"><strong>Devolución de compra</strong><small>Revertir un consumo de tarjeta</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
     <button class="v29-other-action" type="button" data-act="otherAdjust"><span class="v29-other-icon adjustment">${icon('wallet')}</span><span class="v29-other-copy"><strong>Ajustar saldo</strong><small>Conciliar una cuenta o efectivo</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
     <button class="v29-other-action" type="button" data-act="otherBenefitPicker"><span class="v29-other-icon benefit">${icon('gift')}</span><span class="v29-other-copy"><strong>Beneficios bancarios</strong><small>Cashback y beneficios recibidos</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
     <button class="v29-other-action" type="button" data-act="otherLoanPicker"><span class="v29-other-icon loan">${icon('calendar')}</span><span class="v29-other-copy"><strong>Abonar a un préstamo</strong><small>Cuota o pago adicional al capital</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
-   </div>
+</div>`:group.modes.map(actionTile).join('')}</div><aside class="vr-guidance ${group.accent}"><span class="vr-guidance-glyph">${group.symbol}</span><span class="vr-guidance-label">TU ASISTENTE</span><h4>${group.sideTitle}</h4><p>${group.sideCopy}</p><div class="vr-guidance-bottom"><span class="vr-dot"></span> Los saldos se actualizan al confirmar</div></aside></div>
   </section>
  </div>`;
  let content=active==='review'?v30ReviewContent(false):active==='all'?`${summary}${transactions(true)}`:active==='pending'?pendingOperationsView():`${formTiles}<section class="movement-recent panel"><div class="panel-head"><div><h3>Actividad reciente</h3><p class="subtle">Últimos movimientos confirmados</p></div><button class="btn sm soft v51-manage-movements" data-act="movementTab" data-id="all">Gestionar · Editar / Eliminar ${icon('arrow')}</button></div>${recentList(6)}</section>${pending.length?`<div class="movement-hint"><strong>${pending.length} operación${pending.length===1?'':'es'} por confirmar.</strong> No afecta${pending.length===1?'':'n'} saldos hasta que la confirmes. <button data-act="movementTab" data-id="pending">Revisar operaciones</button></div>`:''}`;
@@ -18337,6 +18348,21 @@ const WIDGET_METRICS=[
  ['loanBalancesChart','Capital por préstamo','chart','products'],
  ['assetMixChart','Composición de activos','chart','products']
 ];
+/* V208 · Referentes internacionales: Monarch, Copilot y dashboards de finanzas
+   personales. Selección editorial propia, NO un ranking global verificado.
+   Todos los widgets utilizan los cálculos existentes; jamás cifras de ejemplo. */
+const V208_GLOBAL_TOP10=[
+ ['netPosition','Patrimonio neto','Activos menos obligaciones; situación financiera consolidada.'],
+ ['referenceCashflow','Flujo de caja','Entradas y salidas reales para comprender tu ritmo de dinero.'],
+ ['incomeProjection','Proyección de ingresos','Separa cobros contabilizados de estimaciones y pagos previstos.'],
+ ['liquidity','Liquidez disponible','Efectivo y cuentas registrados, convertidos a RD$ con tu tasa.'],
+ ['expenseMixChart','Gastos por categoría','Dónde se concentra el gasto del mes seleccionado.'],
+ ['referenceCredit','Utilización del crédito','Límites contratados, deuda y porcentaje utilizado.'],
+ ['payments30d','Próximos vencimientos','Compromisos próximos a vencer en los siguientes treinta días.'],
+ ['savingRate','Tasa de ahorro','Resultado neto del período como proporción de sus ingresos.'],
+ ['commitmentMargin','Margen tras compromisos','Ingresos considerados menos obligaciones programadas.'],
+ ['incomeVsExpense','Ingresos frente a egresos','Contraste de entradas y salidas registradas en el período.']
+];
 const widgetCatalog=()=>[...WIDGET_METRICS,...db.accounts.map(a=>['account:'+a.id,a.name, 'wallet','products']),...db.cards.map(c=>['card:'+c.id,c.name,'card','products']),...db.loans.map(l=>['loan:'+l.id,l.name,'receipt','products']),...db.certificates.map(c=>['cert:'+c.id,c.name,'building','products'])];
 function widgetsState(){
  const saved=db.settings.widgetsBoard;
@@ -18688,9 +18714,9 @@ function v133TomorrowWidgetBody(){
 function kpiStudio(){
  const selected=widgetsState(),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
  const map=Object.fromEntries(all.map(x=>[x[0],x])),chartKeys=VIVE_CHART_KEYS;
- const libraryGroups=[['all','Todos'],['reference','Diseños de referencia'],['executive','Ejecutivos'],['projection','Proyecciones'],['decisions','Decisiones'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
+ const libraryGroups=[['all','Todos'],['global10','Top 10 global'],['reference','Diseños de referencia'],['executive','Ejecutivos'],['projection','Proyecciones'],['decisions','Decisiones'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
  const group=ui.widgetCatalogFilter||'all';
- const visible=all.filter(x=>group==='all'||x[3]===group);
+ const visible=all.filter(x=>group==='all'||(group==='global10'?V208_GLOBAL_TOP10.some(t=>t[0]===x[0]):x[3]===group));
  const tile=(id,i)=>{
    const def=map[id];if(!def)return '';const isChart=chartKeys.has(id),isReference=V197_REFERENCE_CHART_IDS.includes(id),m=widgetPicture(id),size=widgetSize(id);
    const route=m?.route||({referenceBalance:'advanced',referenceCredit:'cards',referenceCashflow:'income',referenceComparison:'advanced',incomeVsExpense:'income',creditVisual:'cards',fundsVisual:'accounts',subscriptionVisual:'recurring',incomeYoYTrend:'advanced',expenseYoYTrend:'advanced',netYoYTrend:'advanced',incomeYtdYoY:'advanced',expenseYtdYoY:'advanced',netYtdYoY:'advanced',netTrendChart:'income',liquidityTrendChart:'accounts',incomeMixChart:'income',expenseMixChart:'advanced',subscriptionsParetoChart:'recurring',creditByCardChart:'cards',loanBalancesChart:'loans',assetMixChart:'patrimony'}[id])||'kpis';
@@ -18702,18 +18728,18 @@ function kpiStudio(){
    </article>`;
  };
  const catalogueTile=x=>{
-   const [id,name,ic,grp]=x,active=selected.includes(id),graphic=chartKeys.has(id);
+   const [id,name,ic,grp]=x,active=selected.includes(id),graphic=chartKeys.has(id),globalInfo=V208_GLOBAL_TOP10.findIndex(t=>t[0]===id),ranking=globalInfo>=0?V208_GLOBAL_TOP10[globalInfo]:null;
    return `<article class="ws-gallery-card ${active?'ws-selected':''}" data-widget-preview="${sanitize(id)}">
-      <div class="ws-gallery-top"><span class="ws-gallery-type">${graphic?'Gráfico':'Indicador'} · ${sanitize(libraryGroups.find(x=>x[0]===grp)?.[1]||'Producto')}</span><span class="ws-gallery-status">${active?'✓ Añadido':'Disponible'}</span></div>
-      ${widgetPreview(id,x)}<div class="ws-gallery-footer"><strong title="${sanitize(name)}">${sanitize(name)}</strong><button type="button" data-act="widgetToggle" data-id="${sanitize(id)}" class="${active?'ws-remove':'ws-add'}">${active?'Quitar':'Añadir'} ${active?'−':'+'}</button></div>
+      <div class="ws-gallery-top"><span class="ws-gallery-type">${group==='global10'?`TOP ${String(globalInfo+1).padStart(2,'0')} · ${graphic?'Gráfico':'Indicador'}`:`${graphic?'Gráfico':'Indicador'} · ${sanitize(libraryGroups.find(x=>x[0]===grp)?.[1]||'Producto')}`}</span><span class="ws-gallery-status">${active?'✓ Añadido':'Disponible'}</span></div>
+      ${widgetPreview(id,x)}${group==='global10'&&ranking?`<p class="v208-global-note">${sanitize(ranking[2])}</p>`:''}<div class="ws-gallery-footer"><strong title="${sanitize(name)}">${sanitize(name)}</strong><button type="button" data-act="widgetToggle" data-id="${sanitize(id)}" class="${active?'ws-remove':'ws-add'}">${active?'Quitar':'Añadir'} ${active?'−':'+'}</button></div>
    </article>`;
  };
  const catalogue=(group==='all'?libraryGroups.slice(1):libraryGroups.filter(g=>g[0]===group)).map(([key,label])=>{
-  const part=visible.filter(x=>x[3]===key);if(!part.length)return '';
-  return `<section class="ws-catalog-section"><div class="ws-catalog-heading"><strong>${label}</strong><small>${part.length} diseños disponibles</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
+  const part=key==='global10'?V208_GLOBAL_TOP10.map(t=>visible.find(x=>x[0]===t[0])).filter(Boolean):visible.filter(x=>x[3]===key);if(!part.length)return '';
+  return `<section class="ws-catalog-section"><div class="ws-catalog-heading"><strong>${label}</strong><small>${key==='global10'?'Selección inspirada en referentes internacionales · 10 indicadores útiles':part.length+' diseños disponibles'}</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
  }).join('');
  return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores, a mi manera.</h2><p>Un tablero a tu medida. Puedes utilizar los cuatro gráficos de referencia y añadir o retirar cualquier indicador.</p></div><div class="widgets-head-buttons"><button class="btn sm soft" data-act="widgetReferencePreset" type="button">Diseño de 4 gráficos</button>${selected.length?'<button class="btn sm soft" data-act="widgetPreset">Vaciar tablero</button>':''}<button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Añadir indicadores'}</button></div></div>
- ${editing?`<section class="ws-library" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">BIBLIOTECA DE DISEÑOS</span><h3>Elige viendo cómo queda.</h3><p>Explora las vistas previas, toca Añadir y personaliza el tamaño desde tu tablero.</p></div><span>${selected.length} seleccionados</span></header><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><p class="ws-gallery-help">Miniaturas con tus cifras del período. Los gráficos se actualizan con los registros confirmados.</p></section>`:''}
+ ${editing?`<section class="ws-library" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">BIBLIOTECA DE DISEÑOS</span><h3>Elige viendo cómo queda.</h3><p>Elige entre los diseños financieros más útiles. En «Top 10 global» verás una selección editorial; solo se muestran cifras de tus registros.</p></div><span>${selected.length} seleccionados</span></header><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><p class="ws-gallery-help">Miniaturas con tus cifras del período. Los gráficos se actualizan con los registros confirmados.</p></section>`:''}
  <div class="ws-dashboard-label"><div><h3>Tablero activo</h3><p>Usa las flechas para ordenar · ⤢ para ampliar o reducir. También puedes arrastrar los widgets con el catálogo abierto.</p></div><strong>${selected.length} widgets</strong></div>
  <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Diseño de 4 gráficos» o «Añadir indicadores» para personalizarlo.</div>'}</div>
  <div class="widgets-disclaimer">Las operaciones pendientes no afectan los saldos. Los importes en RD$ equivalentes de fondos US$ usan la tasa manual configurada. Los préstamos entre personas no se asignan a un banco.</div></div>`;
@@ -20802,7 +20828,7 @@ case 'matrixCategory':{ui.matrixExpanded||={};const key=(el.dataset.kind||'expen
 case 'annualToggle':ui.annualDetails=!ui.annualDetails;render();break;
 case 'gotoSettings':ui.page='settings';render();break;
 case 'mobile':ui.mobile=!ui.mobile;render();break;
-case 'registrationGroup':ui.registrationGroup=['receive','pay','move'].includes(id)?id:'pay';render();break;
+case 'registrationGroup':ui.registrationGroup=['receive','pay','move','other'].includes(id)?id:'pay';render();break;
 case 'v196PayKind':ui.v196PayKind=['all','card','loan','recurring','personal'].includes(id)?id:'all';ui.v176PayView='agenda';render();break; case 'v145PayFilter':ui.v145PayFilter=['all','overdue','upcoming'].includes(id)?id:'all';render();break; case 'guidedFlow':guidedTransactionForm({type:({income:'income',spend:'expense',service:'card_charge',own:'transfer',outgoing:'expense',cardpay:'card_payment'})[el.dataset.mode]||'expense',flowMode:el.dataset.mode});break;
 case 'newTransaction':{const kind=el.dataset.type||'';if(isMobileViewport()&&!id&&(!kind||['income','expense','card_charge','transfer'].includes(kind))){openMobileQuickRegister(kind||'income');break;}if(!kind&&!id){flowPicker();break;}transactionForm({type:kind||'expense',cardId:id||db.cards[0]?.id});if(kind==='transfer')queueMicrotask(refreshTransferFee);break;}
 case 'otherRefund':if(!db.cards.length){toast('Registra una tarjeta para asociar una devolución.');break}transactionForm({type:'card_refund',cardId:db.cards[0].id});break;
@@ -22434,6 +22460,7 @@ function v203MobileBanks(){
   }).join('');
   return `<div class="v203-mobile-banks" aria-label="Bancos · cartera móvil">
     <header class="v203-header"><div><span class="v203-kicker">Tu dinero, banco por banco</span><h1>Bancos</h1></div><button type="button" class="v203-header-action" data-act="addBank" aria-label="Añadir institución">${icon('plus')}<span>Añadir</span></button></header>
+    ${v206BankSwitch('banks')}
     <section class="v203-hero" aria-label="Posición de los bancos seleccionados"><div class="v203-hero-top"><span class="v203-hero-tag">Disponible en instituciones</span><span class="v203-hero-mark" aria-hidden="true">${icon('wallet')}</span></div><strong class="v203-hero-value">${money(liquid)}</strong><div class="v203-hero-grid"><div><small>Deudas</small><strong>${money(debt)}</strong></div><div><small>Posición neta</small><strong>${money(net)}</strong></div></div></section>
     <nav class="v203-profiles" aria-label="Filtrar instituciones por perfil">${profiles}</nav>
     <div class="v203-list-head"><div><span class="v203-kicker">Tus relaciones financieras</span><h2>Mis instituciones</h2></div><span>${scoped.length} ${scoped.length===1?'institución':'instituciones'}</span></div>
@@ -22460,6 +22487,27 @@ document.addEventListener('click',function(event){
   if(kind==='loans'){ui.loanId=id;ui.innerViews=ui.innerViews||{};ui.innerViews.loans='overview';loanWorkspace.tab='vision';}
   render();
   requestAnimationFrame(()=>document.querySelector(kind==='accounts'?'.account-detail':kind==='cards'?'.card-detail':kind==='loans'?'#loan-workspace':'.cert-card')?.scrollIntoView({block:'nearest',behavior:'smooth'}));
+},true);
+
+/* Uses existing event delegation and app navigation, never touches bank balances. */
+document.addEventListener('click',function(event){
+ const tab=event.target.closest?.('[data-v206-tab]');
+ if(!tab)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const destination=tab.dataset.v206Tab;
+ if(!['banks','accounts','cards','loans','certificates','benefits'].includes(destination))return;
+ if(ui.page!==destination){
+  ui.page=destination;
+  ui.mobile=false;
+  render();
+  window.scrollTo({top:0,behavior:'instant'});
+ }
+ requestAnimationFrame(()=>{
+  const rail=document.querySelector('.v206-banks-switch'),selected=rail?.querySelector('.v206-banks-pill.active');
+  if(!rail||!selected)return;
+  const target=selected.offsetLeft-rail.offsetLeft-(rail.clientWidth-selected.offsetWidth)/2;
+  rail.scrollTo({left:Math.max(0,target),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ });
 },true);
 
 const v42OrigBankForm=bankForm;
@@ -30806,5 +30854,281 @@ body.theme-black .world-banks .v204-bank-sidebar :is(.v46-bank-card-name,.v46-ba
 body.theme-black .world-banks .v204-bank-sidebar :is(.v46-bank-card-type,.v46-bank-card-products,.v46-bank-card-metrics small){color:#aebcd2!important}
 
 </style>
-</body>
+<style id="v206-fluid-bank-navigation">
+/* V206: barra de navegación bancaria móvil: un solo toque para cambiar módulo.
+   Las cuatro pestañas dentro de una institución siguen siendo filtros LOCALES. */
+@media(max-width:767px){
+  .v206-banks-switch{
+    --v206-surface:rgba(255,255,255,.72); --v206-ink:#365477;
+    --v206-line:rgba(90,126,176,.17); --v206-current:#fff;
+    display:flex!important; align-items:center; gap:7px;
+    width:100%; min-width:0; max-width:100%; overflow-x:auto; overflow-y:hidden;
+    padding:6px; margin:2px 0 0; border:1px solid var(--v206-line); border-radius:22px;
+    background:var(--v206-surface); box-sizing:border-box;
+    overscroll-behavior-x:contain; scroll-snap-type:x proximity;
+    scroll-padding-inline:8px; -webkit-overflow-scrolling:touch;
+    scrollbar-width:none; -webkit-tap-highlight-color:transparent;
+  }
+  .v206-banks-switch::-webkit-scrollbar{display:none}
+  .v206-banks-pill{
+    flex:0 0 auto; min-width:max-content; min-height:43px; border:1px solid transparent;
+    border-radius:16px; padding:0 12px; display:inline-flex; gap:7px;
+    align-items:center; justify-content:center; background:transparent;
+    color:var(--v206-ink); font-size:12px; font-weight:760;
+    white-space:nowrap; scroll-snap-align:center; touch-action:manipulation;
+    transition:background-color .17s ease,color .17s ease,box-shadow .17s ease,transform .17s ease;
+  }
+  .v206-banks-pill svg{height:17px!important;width:17px!important;flex:none;stroke-width:1.85}
+  .v206-banks-pill.active{
+    background:var(--v206-current); color:#245b95;
+    border-color:rgba(107,153,207,.2); box-shadow:0 3px 12px rgba(44,73,121,.09)
+  }
+  .v206-banks-pill:active{transform:scale(.96)}
+  .v206-banks-pill:focus-visible{outline:2px solid #609afa;outline-offset:2px}
+  main.world-banks .v203-mobile-banks>.v206-banks-switch{margin-top:-3px;margin-bottom:0;}
+  main:not(.world-banks)>.v206-banks-switch{margin:0 0 15px}
+  body.theme-dark .v206-banks-switch{
+    --v206-surface:#1e2937;--v206-ink:#c9d7eb;
+    --v206-line:#465368;--v206-current:#324c6d
+  }
+  body.theme-dark .v206-banks-pill.active{color:#f6f9ff;border-color:#536f93;box-shadow:none}
+  body.theme-black .v206-banks-switch{
+    --v206-surface:#0e0f12;--v206-ink:#cbd3e1;
+    --v206-line:#343943;--v206-current:#242a34
+  }
+  body.theme-black .v206-banks-pill.active{color:#fff;border-color:#53637c;box-shadow:none}
+  body.theme-black .v206-banks-pill svg{color:currentColor!important}
+}
+@media(prefers-reduced-motion:reduce){.v206-banks-pill{transition:none!important}}
+</style>
+
+
+
+
+<style id="v207-registration-four-choices">
+/* V207 · Cuatro modos del centro de registro. El catálogo original de operaciones permanece intacto. */
+.world-register .vr-workspace .vr-switcher{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;padding:8px;align-items:stretch}
+.world-register .vr-workspace .vr-switch{min-width:0;display:flex;align-items:center;gap:10px;border-radius:15px;border:1px solid transparent;transition:background .16s,border-color .16s,box-shadow .16s,color .16s;}
+.world-register .vr-switch[data-group="receive"]{background:#e6f5f1;color:#1d7668;border-color:#ccebe3}
+.world-register .vr-switch[data-group="pay"]{background:#fff0e6;color:#995e2c;border-color:#f6dec9}
+.world-register .vr-switch[data-group="move"]{background:#e7effc;color:#325f9f;border-color:#d1e0fa}
+.world-register .vr-switch[data-group="other"]{background:#f2ecfb;color:#7551a3;border-color:#e4d9f7}
+.world-register .vr-switch .vr-switch-symbol{background:rgba(255,255,255,.62);color:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+.world-register .vr-switch.selected{box-shadow:0 7px 18px rgba(34,68,116,.12),inset 0 0 0 1px currentColor;filter:saturate(1.16)}
+.world-register .vr-switch:focus-visible{outline:3px solid #89b4f7;outline-offset:2px}
+.world-register .vr-switch:not(.selected):hover{filter:brightness(.985);box-shadow:0 5px 15px rgba(34,68,116,.08)}
+.world-register .vr-switch strong{color:inherit}
+.world-register .vr-switch small{color:inherit;opacity:.8}
+.world-register .vr-other-operations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.world-register .vr-other-operations .v29-other-action{margin:0;min-height:85px;background:rgba(255,255,255,.88);border:1px solid #e3eaf4;box-shadow:0 3px 12px rgba(34,55,99,.035)}
+.world-register .vr-other-operations .v29-other-action:hover{transform:translateY(-1px);border-color:#b9cae5}
+.world-register .vr-other-operations .v29-other-copy strong{font-size:12px;line-height:1.3}
+.world-register .vr-other-operations .v29-other-copy small{font-size:10px}
+.world-register .vr-guidance.amber{background:linear-gradient(147deg,#fff4e8,#f7eef9)}
+body.theme-dark .world-register .vr-workspace .vr-switcher,body.theme-black .world-register .vr-workspace .vr-switcher{background:#111821!important;border:1px solid #313c4d}
+body.theme-dark .world-register .vr-switch[data-group="receive"],body.theme-black .world-register .vr-switch[data-group="receive"]{background:#153b33!important;color:#a6f1d6!important;border-color:#326858!important}
+body.theme-dark .world-register .vr-switch[data-group="pay"],body.theme-black .world-register .vr-switch[data-group="pay"]{background:#493020!important;color:#ffd0a6!important;border-color:#805135!important}
+body.theme-dark .world-register .vr-switch[data-group="move"],body.theme-black .world-register .vr-switch[data-group="move"]{background:#1c3558!important;color:#bfdcff!important;border-color:#3e608d!important}
+body.theme-dark .world-register .vr-switch[data-group="other"],body.theme-black .world-register .vr-switch[data-group="other"]{background:#392b50!important;color:#dfc9ff!important;border-color:#705c92!important}
+body.theme-dark .world-register .vr-switch .vr-switch-symbol,body.theme-black .world-register .vr-switch .vr-switch-symbol{background:rgba(255,255,255,.08)!important;color:inherit!important}
+body.theme-dark .world-register .vr-other-operations .v29-other-action,body.theme-black .world-register .vr-other-operations .v29-other-action{background:#191f29!important;color:#f5f7ff!important;border:1px solid #364353!important;box-shadow:none!important}
+body.theme-dark .world-register .vr-other-operations .v29-other-copy strong,body.theme-black .world-register .vr-other-operations .v29-other-copy strong{color:#f2f5ff!important}
+body.theme-dark .world-register .vr-other-operations .v29-other-copy small,body.theme-black .world-register .vr-other-operations .v29-other-copy small{color:#b9c7d8!important}
+body.theme-dark .world-register .vr-guidance.amber,body.theme-black .world-register .vr-guidance.amber{background:#241d29!important;border:1px solid #4d3d56!important}
+body.theme-dark .world-register .vr-guidance.amber :is(h4,p),body.theme-black .world-register .vr-guidance.amber :is(h4,p){color:#f2e8fb!important}
+@media(max-width:850px){
+ .world-register .vr-workspace .vr-switcher{gap:5px;padding:5px}
+ .world-register .vr-workspace .vr-switch{padding:10px 6px;flex-direction:column;align-items:center;text-align:center;gap:5px}
+ .world-register .vr-switch-symbol{width:30px;height:30px;font-size:17px}
+ .world-register .vr-switch strong{font-size:11px;line-height:1.2}
+ .world-register .vr-switch small{display:none}
+ .world-register .vr-other-operations{grid-template-columns:1fr}
+}
+@media(max-width:359px){
+ .world-register .vr-workspace .vr-switcher{gap:3px}
+ .world-register .vr-switch strong{font-size:10px}
+ .world-register .vr-other-operations .v29-other-action{padding:11px;min-height:72px}
+}
+@media(prefers-reduced-motion:reduce){.world-register .vr-switch{transition:none}}
+</style>
+
+<style id="v208-mobile-product-experience-and-theme-audit">
+/* V208 · Vistas secundarias móviles del centro bancario. La portada de Bancos
+   conserva íntegramente el diseño V203/V206. */
+@media(max-width:767px){
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) #page{min-width:0!important;max-width:100%!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v206-banks-switch{margin-bottom:12px!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero{
+   min-height:0!important;height:auto!important;display:flex!important;flex-direction:column!important;
+   padding:18px 17px!important;gap:12px!important;margin-bottom:15px!important;
+   border-radius:25px!important;box-shadow:none!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-bank-intro{
+   width:100%!important;min-width:0!important;max-width:100%!important;padding:0!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-bank-intro h2{
+   font-size:clamp(21px,6.1vw,27px)!important;line-height:1.12!important;letter-spacing:-.05em!important;margin:6px 0!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-bank-intro>p{
+   font-size:11px!important;line-height:1.45!important;max-width:100%!important;margin:7px 0!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .hero-actions{
+   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important;margin:10px 0 0!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .hero-actions .btn{
+   width:100%!important;min-width:0!important;min-height:40px!important;margin:0!important;padding:9px 7px!important;
+   border-radius:13px!important;white-space:normal!important;font-size:10px!important;justify-content:center!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-global-financials{
+   width:100%!important;max-width:100%!important;min-width:0!important;display:block!important;
+   padding:12px 0 0!important;border-top:1px solid rgba(255,255,255,.22)!important;border-left:0!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-global-main{
+   padding:0!important;margin:0 0 9px!important;min-width:0!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-global-main>strong{
+   font-size:clamp(26px,7.5vw,33px)!important;line-height:1.16!important;letter-spacing:-.05em!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-global-secondary{
+   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-global-secondary>div{
+   min-width:0!important;min-height:58px!important;padding:10px 9px!important;border-radius:13px!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-global-secondary strong{
+   font-size:clamp(12px,3.7vw,15px)!important;letter-spacing:-.025em!important;overflow-wrap:anywhere!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-global-secondary span{
+   font-size:8px!important;line-height:1.3!important;letter-spacing:.07em!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero :is(.v46-hero-foot,.v46-global-note){font-size:9px!important;line-height:1.4!important;margin-top:5px!important}
+ /* Descubrimiento inmediato de productos y acciones sin gigantescos separadores. */
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .section-title{
+   padding:10px 2px 11px!important;margin:0 0 9px!important;gap:8px!important;
+ }
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .section-title h2{font-size:18px!important;letter-spacing:-.035em!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .section-title p{font-size:10px!important;line-height:1.4!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .section-title .btn{min-height:38px!important;border-radius:13px!important;font-size:11px!important}
+ :is(.world-accounts,.world-certificates) .grid.kpis{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin-bottom:12px!important}
+ :is(.world-accounts,.world-certificates) .grid.kpis .kpi{min-width:0!important;min-height:99px!important;padding:12px 10px!important;border-radius:17px!important}
+ :is(.world-accounts,.world-certificates) .grid.kpis .kpi-value{font-size:clamp(14px,4.5vw,20px)!important;overflow-wrap:anywhere!important}
+ :is(.world-accounts,.world-certificates) .grid.kpis .kpi-foot{font-size:9px!important}
+ .world-accounts .grid.cards-grid{grid-template-columns:1fr!important;gap:10px!important;margin-top:0!important}
+ .world-accounts .account-product-card{border-radius:21px!important;padding:17px!important;min-width:0!important}
+ .world-accounts .account-product-card .account-balance-link{font-size:clamp(23px,7vw,30px)!important;line-height:1.1!important;margin:10px 0!important}
+ .world-accounts .account-product-card .bottom{margin-top:10px!important}
+ .world-accounts .cash-dual-balances{gap:8px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .world-accounts .cash-dual-balances>div{padding:12px 9px!important;border-radius:14px!important;min-width:0!important}
+ .world-accounts .cash-dual-balances strong{font-size:clamp(14px,4.5vw,20px)!important;overflow-wrap:anywhere!important}
+ .world-cards .v182-cards-workspace .v57-product-hero{margin-bottom:14px!important}
+ .world-cards .v182-cards-workspace .grid.cards-grid{grid-template-columns:1fr!important;gap:12px!important;margin-top:5px!important}
+ .world-cards .v149-card-shell{width:100%!important;min-width:0!important;padding:12px!important;border-radius:24px!important}
+ .world-cards .v149-card-toggle{border-radius:17px!important;overflow:hidden!important}
+ .world-cards .v149-card-reveal{padding:13px 3px 7px!important}
+ .world-cards .card-footer{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+ .world-cards .card-footer .btn{width:100%!important;justify-content:center!important;min-width:0!important}
+ .world-loans .loan-workspace{min-width:0!important}
+ .world-loans .loan-card-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+ .world-loans .loan-product{padding:17px!important;border-radius:21px!important}
+ .world-loans .loan-product h4{margin:10px 0 4px!important;font-size:16px!important}
+ .world-loans .loan-product-value{font-size:clamp(23px,7vw,29px)!important;margin:6px 0 11px!important}
+ .world-loans .loan-product-footer{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+ .world-loans .loan-product-footer .btn{font-size:10px!important;padding:10px 6px!important;justify-content:center!important;min-width:0!important}
+ .world-loans .loan-overview-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ .world-loans .loan-stat{padding:12px!important;border-radius:16px!important;min-width:0!important}
+ .world-loans .loan-stat strong{font-size:clamp(17px,5.5vw,23px)!important;overflow-wrap:anywhere!important}
+ .world-certificates .certificate-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+ .world-certificates .cert-card{padding:17px!important;border-radius:21px!important}
+ .world-certificates .cert-amount{font-size:clamp(24px,7vw,31px)!important;margin:17px 0 13px!important}
+ .world-certificates .cert-metrics{gap:9px!important;padding-top:13px!important}
+ .world-certificates .cert-actions{margin-top:13px!important;padding-top:12px!important;gap:7px!important}
+ .world-certificates .cert-actions .btn{min-height:38px!important;border-radius:12px!important}
+ .world-benefits .v187-benefits-ledger{border-radius:22px!important;margin-top:12px!important;padding:15px!important}
+ .world-benefits .v144-table-wrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+ .world-benefits .v144-table-wrap table{min-width:560px!important}
+}
+/* Top 10 global: catálogo, no tablero prellenado. */
+.ws-catalog-section:has(.ws-gallery-card) .v208-global-note{font-size:10px;line-height:1.55;min-height:36px;margin:1px 13px 10px;color:var(--muted,#748198)}
+.ws-gallery-card:has(.v208-global-note){border-color:rgba(77,119,190,.32)!important}
+.ws-gallery-card:has(.v208-global-note) .ws-gallery-type{color:#3e70bb!important;font-weight:850!important}
+.ws-gallery-filters button[data-act="widgetCatalogFilter"][data-id="global10"]{font-weight:820!important;border-color:#8facdb!important}
+.ws-gallery-filters button.active[data-id="global10"]{background:#2b60b5!important;color:#fff!important;border-color:#2b60b5!important}
+body.theme-dark .ws-gallery-card:has(.v208-global-note) .ws-gallery-type{color:#b6d0ff!important}
+body.theme-black .ws-gallery-card:has(.v208-global-note){background:#14161c!important;border-color:#435979!important}
+body.theme-black .ws-gallery-card:has(.v208-global-note) .v208-global-note{color:#b9c6da!important}
+/* Auditoría transversal de colores. Evitar paneles blanco-transparente sobre
+   fondos oscuros, sin recolorear logos, tarjetas físicas ni gráficos de datos. */
+body.theme-dark:not(.theme-black) :is(.v187-benefits-ledger,.v144-table-wrap,.v144-table-wrap tbody tr,.vr-register-top-nav,.vr-workspace,.vr-operation,.v99-period-picker,.v145-debt-indicator,.v145-section-meta,.v89-debt-breakdown,.vive-mobile-commitments,.vive-mobile-view-all,.v82-burden,.v175-kpi-macro,.v175-kpi-macro-item){
+ background:#1b2b42!important;background-image:none!important;border-color:#415673!important;color:#ecf4ff!important;box-shadow:none!important;
+}
+body.theme-black :is(.v187-benefits-ledger,.v144-table-wrap,.v144-table-wrap tbody tr,.vr-register-top-nav,.vr-workspace,.vr-operation,.v99-period-picker,.v145-debt-indicator,.v145-section-meta,.v89-debt-breakdown,.vive-mobile-commitments,.vive-mobile-view-all,.v82-burden,.v175-kpi-macro,.v175-kpi-macro-item){
+ background:#15171c!important;background-image:none!important;border-color:#393e47!important;color:#f3f5fa!important;box-shadow:none!important;
+}
+body.theme-dark :is(.v187-benefits-ledger,.v144-table-wrap,.vr-workspace,.vr-operation,.v89-debt-breakdown,.vive-mobile-commitments,.v175-kpi-macro,.v175-kpi-macro-item) :is(h2,h3,h4,strong,th,td,label,.value,.val){color:#f0f5ff!important}
+body.theme-dark :is(.v187-benefits-ledger,.v144-table-wrap,.vr-workspace,.vr-operation,.v89-debt-breakdown,.vive-mobile-commitments,.v175-kpi-macro,.v175-kpi-macro-item) :is(p,small,.subtle,.muted){color:#b7c6dc!important}
+body.theme-dark :is(.v187-benefits-add,.vr-hero-primary,.v145-paycenter .v145-section-meta,.v196-kind-filters button,.v145-pay-filters button){background:#283c58!important;border-color:#536b8e!important;color:#f4f7ff!important}
+body.theme-black :is(.v187-benefits-add,.vr-hero-primary,.v145-paycenter .v145-section-meta,.v196-kind-filters button,.v145-pay-filters button){background:#252932!important;border-color:#4a5361!important;color:#f4f5f8!important}
+body.theme-dark :is(.v187-benefits-ledger,.v144-table-wrap) tbody tr:nth-child(even){background:#1c2d43!important}
+body.theme-black :is(.v187-benefits-ledger,.v144-table-wrap) tbody tr:nth-child(even){background:#1b1e24!important}
+body.theme-dark .v144-table-wrap table,body.theme-black .v144-table-wrap table{background:transparent!important}
+body.theme-dark .v187-benefits-ledger :is(.v144-table-wrap,.v187-benefits-add){border:1px solid #43516a!important}
+body.theme-black .v187-benefits-ledger :is(.v144-table-wrap,.v187-benefits-add){border:1px solid #454c58!important}
+body.theme-dark :is(.loan-progress,.loan-progress>span){opacity:1!important}
+body.theme-black :is(.ws-gallery-card,.ws-preview-body,.ws-library,.ws-dashboard-label){background-color:#15171c!important;border-color:#393f49!important}
+body.theme-dark :is(.ws-gallery-card,.ws-preview-body,.ws-library,.ws-dashboard-label){color:#f0f4fc!important}
+body.theme-black :is(.ws-gallery-card,.ws-preview-body,.ws-library,.ws-dashboard-label){color:#f5f6fa!important}
+@media(prefers-reduced-motion:reduce){.ws-gallery-card,.v208-global-note{transition:none!important}}
+</style>
+<style id="v208-contrast-corrections-audit">
+/* V208 · Segunda pasada: superficies residuales del tema Black y Oscuro,
+   detectadas visualmente en escritorio y móvil (sin tocar el tema Claro). */
+body.theme-dark:not(.theme-black) :is(.world-banks .product-lane,.world-banks .lane-head,.world-banks .v42-filters button,.vive-mobile-dues,.vive-mobile-net-card,.v145-quick-buttons button,.v144-link,.v32-tool-button,.vr-art-chip,.v15-bg-card,.v164-tomorrow-pill,.v58-action.primary){
+ background:#1d3049!important;background-image:none!important;border-color:#425c79!important;color:#eff5ff!important;box-shadow:none!important;
+}
+body.theme-black :is(.world-banks .product-lane,.world-banks .lane-head,.world-banks .v42-filters button,.vive-mobile-dues,.vive-mobile-net-card,.v145-quick-buttons button,.v144-link,.v32-tool-button,.vr-art-chip,.v15-bg-card,.v164-tomorrow-pill,.v58-action.primary){
+ background:#171a20!important;background-image:none!important;border-color:#3d434f!important;color:#f0f3f9!important;box-shadow:none!important;
+}
+body.theme-dark :is(.world-banks .product-lane,.world-banks .lane-head,.vive-mobile-dues,.vive-mobile-net-card,.v145-pay-quick,.v145-payment-kpi,.v144-link,.vr-art-chip) :is(h2,h3,h4,strong,b,.value,.money){color:#f3f7ff!important}
+body.theme-dark :is(.world-banks .product-lane,.world-banks .lane-head,.vive-mobile-dues,.vive-mobile-net-card,.v145-pay-quick,.v145-payment-kpi) :is(p,small,.subtle,span:not(.pill):not(.chip)){color:#bbcade!important}
+body.theme-dark :is(.world-banks .product-lane,.world-banks .lane-head,.v145-pay-quick,.v145-payment-kpi){border-color:#425770!important}
+body.theme-dark:not(.theme-black) :is(.v145-payment-kpi,.v145-pay-quick){background:#1d3049!important;background-image:none!important;color:#f5f8ff!important;box-shadow:none!important}
+body.theme-black :is(.v145-payment-kpi,.v145-pay-quick){background:#161920!important;background-image:none!important;color:#f5f7fb!important;border-color:#393f4d!important;box-shadow:none!important}
+body.theme-dark .world-banks .product-lane :is(.product-mini,.product-item,.product-row,.product-tile){background-color:transparent!important;color:#eef3fb!important;border-color:#3b4a5e!important}
+body.theme-dark .world-banks .product-lane :is(button,a){color:#d4e2fc!important}
+body.theme-dark .world-banks .v42-filters button.active{background:#344969!important;color:#fff!important;border-color:#7694bc!important}
+body.theme-black .world-banks .v42-filters button.active{background:#28354c!important;color:#fff!important;border-color:#7694bc!important}
+body.theme-dark :is(.v148-benefit-hero button,.v148-benefit-hero a){background:#29445f!important;color:#f0f7ff!important;border-color:#56738f!important}
+body.theme-black :is(.v148-benefit-hero button,.v148-benefit-hero a){background:#242c36!important;color:#f7f9ff!important;border-color:#4a596a!important}
+body.theme-dark :is(.vive-mobile-dues,.vive-mobile-net-card) :is(a,button){color:#cee0ff!important;border-color:#44566f!important}
+body.theme-dark .vr-art-chip{font-weight:750!important}
+body.theme-dark .v58-action.primary{color:#e9f4ff!important}
+body.theme-dark .v32-tool-button{color:#eaf2ff!important}
+body.theme-black :is(.v15-bg-card,.vr-art-chip){opacity:.78}
+/* Contraste de controles sin sacrificar retroalimentación de foco y estados. */
+body.theme-dark :is(.v145-quick-buttons button,.v144-link,.v32-tool-button,.v58-action.primary,.world-banks .v42-filters button):focus-visible{outline:2px solid #91bfff!important;outline-offset:3px!important}
+body.theme-black :is(.v145-quick-buttons button,.v144-link,.v32-tool-button,.v58-action.primary,.world-banks .v42-filters button):hover{background-color:#303848!important}
+@media(prefers-reduced-motion:reduce){body.theme-dark :is(.v145-quick-buttons button,.v144-link,.v58-action.primary){transition:none!important}}
+</style>
+<style id="v208-contrast-last-pass">
+body.theme-dark .main.world-overview .v164-tomorrow-pill,body.theme-dark .main.world-overview .v82-burden.v85-summary-burden{
+ background:#20334c!important;background-image:none!important;border:1px solid #52647c!important;color:#eaf2ff!important;box-shadow:none!important;
+}
+body.theme-black .main.world-overview .v164-tomorrow-pill,body.theme-black .main.world-overview .v82-burden.v85-summary-burden{
+ background:#20232a!important;background-image:none!important;border:1px solid #4c5059!important;color:#f5f6fc!important;box-shadow:none!important;
+}
+body.theme-dark .main.world-overview .v82-burden.v85-summary-burden :is(small,strong){color:#dbe8fc!important}
+body.theme-dark .v145-paycenter .v145-pay-agenda,body.theme-dark .v145-paycenter .v145-pay-filters{
+ background:#1b2c43!important;background-image:none!important;border-color:#405672!important;color:#f2f7ff!important;box-shadow:none!important;
+}
+body.theme-black .v145-paycenter .v145-pay-agenda,body.theme-black .v145-paycenter .v145-pay-filters{
+ background:#16191f!important;background-image:none!important;border-color:#363e4c!important;color:#f4f6fa!important;box-shadow:none!important;
+}
+body.theme-dark .v145-paycenter .v145-pay-agenda :is(h3,strong,small,p){color:#eef4ff!important}
+</style>
+<style id="v208-global-header-overlay-fix">
+body.theme-black #app .v164-tomorrow-pill{background:#20232a!important;background-image:none!important;border:1px solid #4b5260!important;color:#f4f5fa!important;box-shadow:none!important}
+body.theme-dark:not(.theme-black) #app .v164-tomorrow-pill{background:#20324a!important;background-image:none!important;border:1px solid #506780!important;color:#eef4ff!important;box-shadow:none!important}
+body.theme-dark:not(.theme-black) #app .v82-burden.v85-summary-burden{background:#24364e!important;background-image:none!important;border-color:#526784!important;color:#edf4ff!important}
+body.theme-dark:not(.theme-black) #app .v82-burden.v85-summary-burden :is(small,strong){color:#d8e7fa!important}
+</style></body>
 </html>
