@@ -16456,13 +16456,7 @@ function originalCards(){
  let benefitD=db.cards.reduce((v,c)=>v+benefitBreakdown(c,'DOP').credited,0),benefitU=db.cards.reduce((v,c)=>v+benefitBreakdown(c,'USD').credited,0);
  let netD=db.cards.reduce((v,c)=>v+v144CardStats(c,false).net,0),netU=0;
  let fxLabel=db.settings.fxAcknowledged?'Tipo de cambio configurado':'Tipo de cambio referencial · verificar';
- return `<div class="section-title"><div><h2>Tu portafolio de tarjetas</h2><p>Deuda por moneda, costo anual y lo que cada tarjeta realmente devuelve.</p></div><div class="hstack">${visibilityControl()}<button class="btn ghost" data-act="navigate" data-id="benefits">${icon('chart')} Comparar beneficios</button><button class="btn" data-act="addCard">${icon('plus')} Nueva tarjeta</button></div></div><div class="card-portfolio-kpis">
- ${v176CardKpi('Deuda en pesos · RD$',money(dop),'Saldo total pendiente en RD$','card')}
- ${v176CardKpi('Deuda en dólares · US$',money(usd,'USD',2),`Equivale a ${money(fx(usd,'USD'))} · ${fxLabel}`,'card')}
- ${v176CardKpi('Deuda total · RD$',money(dop+fx(usd,'USD')),'RD$ + US$ convertidos al tipo configurado','wallet')}
- ${v176CardKpi('Anualidades contratadas',money(dueD+fx(dueU,'USD')),`Por año · ${money(dueD)} + ${money(dueU,'USD',2)} · no son cargos cobrados`,'calendar')}
- ${v176CardKpi('Cashback cobrado · acumulado',money(benefitD+fx(benefitU,'USD')),`Confirmado · retorno neto ${money(netD+fx(netU,'USD'))}`,'analytics',netD+fx(netU,'USD')>=0?'positive':'negative')}
- </div><div class="card-fx-note">${icon('shield')} Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</div><div class="grid cards-grid section">${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length?db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>{let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let closest=[{...a,ccy:'DOP'},{...b,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>0).sort((x,y)=>x.nextDue.localeCompare(y.nextDue))[0],z=v144CardStats(c);return `<div class="bank-card v149-card-shell"><details class="v149-card-disclosure"><summary class="v149-card-toggle" aria-label="Abrir detalles de ${sanitize(c.name)}"><div class="card-visual v28-card-face tier-${cardTierKey(c)}"><div class="v28-card-top"><span class="v28-card-bank">${bankLogoInline(c.bankId)}<span>${sanitize(bankOf(c))}</span></span>${cardNetworkMark(c)}</div><div class="v28-card-middle"><strong>${sanitize(c.name)}</strong><span>${CARD_TIER_NAMES[cardTierKey(c)]}</span></div><div class="v28-card-bottom"><span class="chip" aria-hidden="true"></span><span class="last4">•••• ${sanitize(c.last4||'••••')}</span><small>CRÉDITO · RD$ / US$</small></div></div><span class="v149-card-cue">${icon('arrow')} <span>Explorar tarjeta</span></span></summary><div class="v149-card-reveal"><section class="v148-card-essentials" aria-label="Deuda y beneficios de ${sanitize(c.name)}">
+ return `<div class="section-title"><div><h2>Tu portafolio de tarjetas</h2><p>Deuda por moneda, costo anual y lo que cada tarjeta realmente devuelve.</p></div><div class="hstack">${visibilityControl()}<button type="button" class="btn ghost" data-v176-card-insight="1" title="Ver desglose por tarjeta y moneda">${icon('wallet')} Ver composición</button><button class="btn ghost" data-act="navigate" data-id="benefits">${icon('chart')} Comparar beneficios</button></div></div><div class="card-fx-note">${icon('shield')} Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</div><div class="grid cards-grid section">${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length?db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>{let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let closest=[{...a,ccy:'DOP'},{...b,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>0).sort((x,y)=>x.nextDue.localeCompare(y.nextDue))[0],z=v144CardStats(c);return `<div class="bank-card v149-card-shell"><details class="v149-card-disclosure"><summary class="v149-card-toggle" aria-label="Abrir detalles de ${sanitize(c.name)}"><div class="card-visual v28-card-face tier-${cardTierKey(c)}"><div class="v28-card-top"><span class="v28-card-bank">${bankLogoInline(c.bankId)}<span>${sanitize(bankOf(c))}</span></span>${cardNetworkMark(c)}</div><div class="v28-card-middle"><strong>${sanitize(c.name)}</strong><span>${CARD_TIER_NAMES[cardTierKey(c)]}</span></div><div class="v28-card-bottom"><span class="chip" aria-hidden="true"></span><span class="last4">•••• ${sanitize(c.last4||'••••')}</span><small>CRÉDITO · RD$ / US$</small></div></div><span class="v149-card-cue">${icon('arrow')} <span>Explorar tarjeta</span></span></summary><div class="v149-card-reveal"><section class="v148-card-essentials" aria-label="Deuda y beneficios de ${sanitize(c.name)}">
  <div class="v148-owed" aria-label="Deudas por moneda">
   <div class="v148-owed-part"><small>DEUDA EN PESOS</small><strong>${money(a.debt)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en pesos">Uso ${a.limit?a.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
   <div class="v148-owed-part"><small>DEUDA EN DÓLARES</small><strong>${money(b.debt,'USD',2)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en dólares">Uso ${b.limit?b.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
@@ -16915,7 +16909,7 @@ function budgetCompliance(totals){
  const groups=budgetPlan(ui.month).groups.map(g=>({...g,spent:g.global!==null?num(totals.expenseBy[g.category]):g.subs.reduce((s,b)=>s+num(totals.expenseSubBy[g.category+'||'+b.subcategory]),0)}));
  let uncontrolled=Math.max(0,num(totals.expense)-budgetCoveredSpend(totals));
  const overruns=groups.filter(x=>x.spent>x.amount+.005),warn=groups.filter(x=>x.spent>=x.amount*.8&&x.spent<=x.amount+.005);
- return `<section class="budget-compliance section"><div class="panel-head"><div><span class="summary-tag">EJECUCIÓN DEL PRESUPUESTO</span><h3>¿Dónde se está cumpliendo?</h3><p class="form-note">Los límites globales incluyen sus subcategorías; nunca se duplican.</p></div></div><div class="budget-compliance-grid"><div><small>GASTO CUBIERTO</small><strong>${money(budgetCoveredSpend(totals))}</strong></div><div><small>GASTO SIN LÍMITE</small><strong>${money(uncontrolled)}</strong></div><div><small>SOBREPASADOS</small><strong>${overruns.length}</strong></div><div><small>ATENCIÓN 80–100%</small><strong>${warn.length}</strong></div></div>${groups.sort((a,b)=>b.spent/b.amount-a.spent/a.amount).slice(0,7).map(g=>{let pct=g.amount?g.spent/g.amount*100:0;return `<div class="budget-compliance-row" tabindex="0" data-chart-tip="${sanitize(g.category)}|Asignado: ${money(g.amount)}|Consumido: ${money(g.spent)}|Utilización: ${pct.toFixed(1)}%"><div class="split"><strong>${sanitize(g.category)}</strong><span class="${pct>100?'negative':pct>=80?'budget-warn':'positive'}">${pct.toFixed(1)}% · ${money(g.spent)} / ${money(g.amount)}</span></div><div class="progress"><span class="${pct>100?'high':pct>=80?'warn':''}" style="width:${Math.min(100,pct)}%"></span></div></div>`}).join('')||'<p class="empty">Aún no hay presupuestos asignados a este mes.</p>'}</section>`;
+ return `<section class="budget-compliance section"><div class="panel-head"><div><span class="summary-tag">EJECUCIÓN DEL PRESUPUESTO</span><h3>¿Dónde se está cumpliendo?</h3><p class="form-note">Los límites globales incluyen sus subcategorías; nunca se duplican.</p></div></div><p class="v180-budget-status"><span>${overruns.length} categoría${overruns.length===1?'':'s'} sobrepasada${overruns.length===1?'':'s'}</span><span>${warn.length} en atención (80–100%)</span></p>${groups.sort((a,b)=>b.spent/b.amount-a.spent/a.amount).slice(0,7).map(g=>{let pct=g.amount?g.spent/g.amount*100:0;return `<div class="budget-compliance-row" tabindex="0" data-chart-tip="${sanitize(g.category)}|Asignado: ${money(g.amount)}|Consumido: ${money(g.spent)}|Utilización: ${pct.toFixed(1)}%"><div class="split"><strong>${sanitize(g.category)}</strong><span class="${pct>100?'negative':pct>=80?'budget-warn':'positive'}">${pct.toFixed(1)}% · ${money(g.spent)} / ${money(g.amount)}</span></div><div class="progress"><span class="${pct>100?'high':pct>=80?'warn':''}" style="width:${Math.min(100,pct)}%"></span></div></div>`}).join('')||'<p class="empty">Aún no hay presupuestos asignados a este mes.</p>'}</section>`;
 }
 function percentVariance(a,b){return Math.abs(b)<.005?'Sin referencia':(a>=b?'+':'')+((a-b)/Math.abs(b)*100).toFixed(1)+'%'}
 function budgetMetric(label,value,foot,ic,current,previous,hasReference){
@@ -16968,11 +16962,10 @@ function budget(){
   return `<div class="budget-row"><div class="split"><div class="mini-title">${sanitize(cat)}</div><div class="hstack"><span class="subtle">${money(spent)} / ${amount?money(amount):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="">${global?'Editar':'Definir'}</button></div></div>${amount?`<div class="progress" tabindex="0" data-chart-tip="${sanitize(cat)}|Gastado: ${money(spent)}|Asignado: ${money(amount)}|Ejecución: ${pct.toFixed(1)}%"><span class="${pct>100?'high':pct>=80?'warn':''}" style="width:${Math.min(100,pct)}%"></span></div>`:''}${subs.map(sub=>{const setting=current.rows.find(b=>b.category===cat&&b.subcategory===sub),limit=num(setting?.amount),expense=num(totals.expenseSubBy[cat+'||'+sub]);return `<div class="subbudget"><div class="split"><span>↳ ${sanitize(sub)}</span><div class="hstack"><span>${money(expense)} / ${limit?money(limit):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="${sanitize(sub)}">${setting?'Editar':'Definir'}</button></div></div>${limit?`<div class="progress"><span class="${expense>limit?'high':expense>=limit*.8?'warn':''}" style="width:${Math.min(100,expense/limit*100)}%"></span></div>`:''}</div>`}).join('')}</div>`;
  }).filter(Boolean).join('');
  const hasLastYear=lastYear.rows.length>0;
- return `<div class="budget-world"><div class="section-title"><div><span class="summary-tag">ANALÍTICA DE PRESUPUESTO</span><h2>Asignar, cumplir y comparar.</h2><p>Versión mensual · ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}. Los cambios tienen vigencia desde el mes indicado.</p></div><button class="btn" data-act="addBudget">${icon('plus')} Definir presupuesto</button></div>
- <div class="grid kpis budget-head-kpis">${budgetMetric('Presupuesto asignado',money(current.total),'Distribución total del mes','receipt',current.total,lastYear.total,hasLastYear)}${`<article class="kpi v27-budget-compliance-kpi ${performance===null?'no-data':performance>100?'over':performance>=80?'near':'within'}"><div class="kpi-head">Cumplimiento presupuestario<span class="kpi-icon">${icon('chart')}</span></div><div class="kpi-value">${performance===null?'N/D':performance.toFixed(1)+'%'}</div><div class="kpi-foot">${performance===null?'Define al menos un límite':money(control)+' utilizados de '+money(current.total)}</div></article>`}${shellKpi('Margen restante',money(rest),'Asignado − gasto dentro de presupuesto','wallet',rest<0?'negative':'positive')}${budgetMetric('Gasto total',money(totals.expense),'Incluye gasto sin presupuesto','down',totals.expense,ly.expense,ly.expense!==0||db.transactions.some(t=>t.date.startsWith(priorYear)))}</div>
+ return `<div class="budget-world v180-budget-clean">
  ${budgetEvolutionChart(year,month)}
  <div class="budget-analytics-grid"><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">01 · ASIGNACIÓN</span><h3>¿A dónde va el presupuesto?</h3><p class="form-note">Peso porcentual y monto por categoría.</p></div><span class="pill">${active.length} categorías</span></div><div class="budget-allocation-list">${chart}</div></section><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">02 · COMPARACIÓN</span><h3>Variación absoluta e interanual</h3><p class="form-note">Mismo mes del año anterior · asignación y gasto real.</p></div></div><details class="budget-variance-disclosure"><summary>Consultar comparación mensual e interanual</summary><div class="budget-variance-grid">${valueComparison('PRESUPUESTO VS. AÑO ANTERIOR',current.total,lastYear.total,hasLastYear)}${valueComparison('PRESUPUESTO CAMBIO MENSUAL',current.total,lastMonth.total,lastMonth.rows.length>0)}${valueComparison('GASTO REAL VS. AÑO ANTERIOR',totals.expense,ly.expense,ly.expense!==0||db.transactions.some(t=>t.date.startsWith(priorYear)))}</div></details><div class="budget-coverage-note">El cumplimiento se calcula sobre el presupuesto asignado. Gastos sin límite se muestran por separado. ${hasLastYear&&lastYear.rows.every(x=>x.legacy)?'La asignación del año anterior procede de datos heredados sin fecha original y es solo orientativa.':''}</div></section></div>
- ${budgetCompliance(totals)}<section class="panel section"><div class="panel-head"><div><span class="summary-tag">03 · EDICIÓN POR CATEGORÍA</span><h3>Presupuesto de ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</h3><p class="form-note">Edita una categoría o subcategoría. Cada período mantiene su propia referencia.</p></div><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto" style="width:162px"/></div>${rows||'<div class="budget-empty-text">No se registran presupuestos ni gastos durante este mes.</div>'}<p class="footnote">Un límite de categoría incluye sus subcategorías. Los cambios afectan el mes seleccionado y los siguientes, salvo otra versión posterior; las versiones anteriores no se modifican. Si tus presupuestos proceden de una versión antigua, la app no puede recuperar sus importes históricos previos a esta actualización.</p></section></div>`;
+ ${budgetCompliance(totals)}<section class="panel section"><div class="panel-head"><div><span class="summary-tag">03 · EDICIÓN POR CATEGORÍA</span><h3>Presupuesto de ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</h3><p class="form-note">Edita una categoría o subcategoría. Cada período mantiene su propia referencia.</p></div><div class="v180-budget-edit-actions"><button type="button" class="btn sm soft" data-act="addBudget">${icon('plus')} Definir presupuesto</button><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto" style="width:162px"/></div></div>${rows||'<div class="budget-empty-text">No se registran presupuestos ni gastos durante este mes.</div>'}<p class="footnote">Un límite de categoría incluye sus subcategorías. Los cambios afectan el mes seleccionado y los siguientes, salvo otra versión posterior; las versiones anteriores no se modifican. Si tus presupuestos proceden de una versión antigua, la app no puede recuperar sus importes históricos previos a esta actualización.</p></section></div>`;
 }
 
 const matrixAmount=(v)=>Math.abs(num(v))<0.005?'—':new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(Math.round(num(v)));
@@ -17615,10 +17608,17 @@ function accounts(){
  }
  return result;
 }
-function cards(){let result=originalCards();const limD=db.cards.reduce((s,c)=>s+num(c.limitDOP),0),limU=db.cards.reduce((s,c)=>s+num(c.limitUSD),0),debtD=db.cards.reduce((s,c)=>s+cardStatus(c,'DOP').debt,0),debtU=db.cards.reduce((s,c)=>s+cardStatus(c,'USD').debt,0),maxTotal=limD+fx(limU,'USD'),used=debtD+fx(debtU,'USD'),pct=maxTotal?used/maxTotal*100:null;
- const banner=`<section class="card-capital-bar" aria-label="Capacidad y utilización total de tarjetas"><div class="card-capital-label"><div><small>CAPITAL DE CRÉDITO · RD$ EQUIVALENTE</small><strong>${money(maxTotal)}</strong><span>Límites: ${money(limD)} + ${money(limU,'USD',2)}. Sin sumar el sobregiro autorizado.</span></div><div class="card-capital-util"><small>UTILIZACIÓN DEL CRÉDITO</small><strong>${pct===null?'Sin límite':pct.toFixed(1)+'%'}</strong><span>${money(used)} utilizados · ${money(Math.max(0,maxTotal-used))} disponibles</span></div></div><div class="card-util-track"><span style="width:${Math.max(0,Math.min(100,pct||0))}%" class="${pct>100?'over':pct>80?'warning':''}"></span></div><div class="card-capital-currencies"><span>RD$: ${limD?(debtD/limD*100).toFixed(1)+'%':'Sin límite'} utilizado</span><span>US$: ${limU?(debtU/limU*100).toFixed(1)+'%':'Sin límite'} utilizado</span><button type="button" data-act="navigate" data-id="kpis">Ver widgets de crédito ${icon('arrow')}</button></div></section>`;
- return result.replace('<div class="card-portfolio-kpis">',`<div class="v85-cards-burden" aria-label="Relación de compromisos e ingresos">${v85LoadChip('Compromisos / ingresos')}<span>Para valorar una compra, usa Registrar gasto y consulta el porcentaje con ese importe.</span></div><div class="card-portfolio-kpis">`);
+function cards(){
+ // V182: restore the actual executive portfolio hero, not a duplicate KPI strip.
+ // In V144 pages.cards was reassigned, bypassing the legacy innerWrap hook that
+ // previously inserted the V57 hero. Render it directly on the Cards overview.
+ // Every amount is derived afresh from real card statuses and limits.
+ const portfolio=originalCards();
+ const hero=typeof window.v182CardsExecutiveHero==='function'
+  ?window.v182CardsExecutiveHero():'';
+ return `<div class="v182-cards-workspace">${hero}${portfolio}</div>`;
 }
+
 
 const WIDGET_PRESET=['tomorrowCost','liquidity','cashDOP','cashUSD','totalDebt','netPosition','cardLimit','utilization','incomeVsExpense'];
 const WIDGET_METRICS=[
@@ -22385,13 +22385,17 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   return hero({page:'cards',kicker:'CRÉDITO / CARTERA DE TARJETAS',title:'Tus tarjetas.<br><em>Tu capacidad de consumo.</em>',subtitle:'Un vistazo al límite contractual conjunto, la utilización y lo que aún queda disponible, con RD$ y US$ siempre identificados.',mainTitle:'LÍMITE DE CONSUMO · RD$ EQUIVALENTES',main:currency(limit),mainNote:'Suma de límites en pesos y dólares · sin sobregiro autorizado',items:[['UTILIZACIÓN DEL LÍMITE',pct===null?'Sin límite':nf(pct)+'%'],['DEUDA UTILIZADA',currency(used)],['CRÉDITO DISPONIBLE',currency(available)],['LÍMITES POR MONEDA',currency(limitD)+' · '+currency(limitU,'USD')]],foot:`Utilización ordinaria: ${pct===null?'Sin límite configurado':nf(pct)+'%'}. Se excluye todo sobregiro autorizado; el disponible equivale a límite menos deuda registrada (mínimo cero). ${fxNote()}`,buttons:action('Nueva tarjeta','addCard','plus')+link('Ver indicadores','kpis'),mini:[`${list.length} tarjetas registradas`,`${pct===null?'Sin capacidad definida':nf(pct)+'% utilizado'}`]});
  }
  function benefitsHero(){
-  const cards=db.cards||[];const year=new Date().getFullYear();
-  const sum=(cur,key)=>cards.reduce((s,c)=>s+benefitBreakdown(c,cur,year)[key],0);
-  const d=sum('DOP','credited'),u=sum('USD','credited'),costD=sum('DOP','costs'),costU=sum('USD','costs');
-  const total=d+fx(u,'USD'),cost=costD+fx(costU,'USD');
-  const perks=(db.perkUses||[]).filter(p=>String(p.date||'').startsWith(String(year))).length;
-  const mainBtn=cards.length?`<button type="button" class="btn light" data-act="manualBenefit" data-id="${sanitize(cards[0].id)}">${icon('plus')} Nuevo beneficio</button>`:action('Añadir tarjeta','addCard');
-  return hero({page:'benefits',kicker:'BENEFICIOS / CASHBACK Y RECOMPENSAS',title:'Tus beneficios,<br><em>sin confundirlos con dinero.</em>',subtitle:'Controla cada acreditación de cashback, sus costos y los beneficios no monetarios de tus tarjetas.',mainTitle:`CASHBACK RECIBIDO EN ${year} · RD$ EQUIVALENTES`,main:currency(total),mainNote:'Solo acreditaciones confirmadas y realmente registradas',items:[['CASHBACK EN RD$',currency(d)],['CASHBACK EN US$',currency(u,'USD')],['RETORNO NETO',currency(total-cost)],['OTROS BENEFICIOS',nf(perks)+' usos']],foot:`Retorno neto = cashback cobrado − costos cargados a las tarjetas durante ${year}. Puntos, millas, seguros y beneficios cualitativos no aumentan tu liquidez. ${fxNote()}`,buttons:mainBtn+link('Explorar tarjetas','cards'),mini:[`${cards.length} tarjetas vinculadas`,`${perks} usos no monetarios en ${year}`]});
+  const cards=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
+  const year=Number(ui.v144BenefitYear)||new Date().getFullYear();
+  const y=v183YearBenefitMetrics(cards,year);
+  const fees=y.feeConfigured;
+  const mainBtn=cards.length?`<button type="button" class="btn light" data-v144-action="new-cashback" data-id="${sanitize(cards[0].id)}">${icon('plus')} Registrar beneficio</button>`:action('Añadir tarjeta','addCard');
+  return hero({page:'benefits',kicker:`BENEFICIOS / RESULTADO DEL AÑO ${year}`,title:'Lo que recibes.<br><em>Lo que te cuesta.</em>',subtitle:'Cada tarjeta tiene un rendimiento real: distingue cashback acreditado, anualidad y costos efectivamente pagados.',
+   mainTitle:`BENEFICIO NETO REALIZADO · ${year} · RD$`,main:currency(y.net),
+   mainNote:'Cashback + beneficios monetarios cobrados − costos efectivamente pagados',
+   items:[['BENEFICIOS RECIBIDOS',currency(y.earned)],['COSTO REAL PAGADO',currency(y.paid)],['ANUALIDAD CONFIGURADA',currency(fees)],['TARJETAS ANALIZADAS',String(cards.length)]],
+   foot:`La anualidad configurada es informativa, no un gasto realizado hasta que se registre y pague. Los cargos aún sin conciliar aparecen en la tabla sin duplicar pagos. ${fxNote()}`,
+   buttons:mainBtn+link('Explorar tarjetas','cards'),mini:[`${cards.length} tarjetas`,'Enero · diciembre']});
  }
  function loansHero(){
   const list=db.loans||[];const stat=list.map(l=>({l,a:loanAccounting(l)}));
@@ -22410,6 +22414,10 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   const next=maturities[0];
   return hero({page:'certificates',kicker:'INVERSIÓN / CERTIFICADOS FINANCIEROS',title:'Tu capital invertido,<br><em>con fecha y rendimiento.</em>',subtitle:'Distingue el dinero invertido, las ganancias estimadas y los intereses que ya recibiste de verdad.',mainTitle:'CAPITAL INVERTIDO · RD$ EQUIVALENTES',main:currency(current),mainNote:'Capital registrado en certificados financieros · fuera del efectivo líquido',items:[['INTERÉS BRUTO ESTIMADO',currency(gross)],['GANANCIA NETA ESTIMADA',currency(net)],['INTERESES COBRADOS',currency(interest)],['PRÓXIMO VENCIMIENTO',next?prettyDate(next.maturityDate):'Sin fecha']],foot:`Las proyecciones no se contabilizan como ingresos hasta cobrarse. ${fxNote()}`,buttons:action('Nuevo certificado','addCertificate','plus')+link('Ver patrimonio','patrimony'),mini:[`${list.length} certificados registrados`,next?'Vence '+prettyDate(next.maturityDate):'Sin vencimientos futuros']});
  }
+ // Reuse the same executive summary builder even if other versions replace
+ // pages.cards after the inner navigation wrappers have been installed.
+ window.v182CardsExecutiveHero = cardsHero;
+ window.v180BenefitsHero = benefitsHero;
  const builder={accounts:accountsHero,cards:cardsHero,benefits:benefitsHero,loans:loansHero,certificates:certificatesHero};
  const previousInnerWrap=innerWrap;
  innerWrap=function(page,view){
@@ -23966,6 +23974,17 @@ function v178Kpis(){
  ${v178Kpi('Compromisos',d.commitments,d.commitmentsAfter,'v178-commitments')}
  ${v178Kpi('Posición financiera',d.net,d.netAfter,'v178-net')}`;
 }
+function v183TomorrowInsight(){
+ const d=v178Data();
+ if(!(d.amount>0))return '<span>Escribe un importe para visualizar su efecto inmediato, sin registrar ninguna operación.</span>';
+ if(d.kind==='expense'){
+  if(d.liquid<d.amount)return `<span>Este gasto superaría tu liquidez actual por <b>${money(d.amount-d.liquid)}</b>. Deudas y compromisos permanecen iguales.</span>`;
+  const pct=d.liquid>0?d.amount/d.liquid*100:0;
+  return `<span>El gasto representa <b>${pct.toFixed(1)}%</b> de la liquidez actual y reduciría tu posición financiera en <b>${money(d.amount)}</b>.</span>`;
+ }
+ if(d.commitments>0)return `<span>Este ingreso equivaldría al <b>${(d.amount/d.commitments*100).toFixed(1)}%</b> de tus compromisos actuales. No se contabiliza como recibido.</span>`;
+ return `<span>El ingreso incrementaría tu liquidez en <b>${money(d.amount)}</b>, sin aumentar tus deudas ni compromisos.</span>`;
+}
 function v119Markup(){
  const kind=v119DecisionState.kind==='income'?'income':'expense';
  return `<div class="v119-content v159-tomorrow v169-simple-tomorrow v178-tomorrow">
@@ -23979,6 +23998,7 @@ function v119Markup(){
    </label>
   </div>
   <div class="v178-kpi-grid" id="v178-kpis" role="group" aria-label="Situación financiera actual y resultado después de la decisión">${v178Kpis()}</div>
+  <div class="v183-tomorrow-note" id="v183-tomorrow-note" aria-live="polite">${v183TomorrowInsight()}</div>
  </div>`;
 }
 function v174FinancialSnapshot(result,kind){
@@ -24034,6 +24054,8 @@ document.addEventListener('input',event=>{
  v119DecisionState.amount=event.target.value;
  const grid=document.getElementById('v178-kpis');
  if(grid)grid.innerHTML=v178Kpis();
+ const note=document.getElementById('v183-tomorrow-note');
+ if(note)note.innerHTML=v183TomorrowInsight();
 });
 /* Reutiliza el Resumen existente, sin reestructurar las demás vistas. */
 /* V123 · Alertas de gasto por categoría, exclusivamente desde datos locales.
@@ -24167,12 +24189,91 @@ function v144CardFilterUI(){const year=String(ui.v144BenefitYear||new Date().get
  const months=[['all','Año completo'],...['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((x,i)=>[String(i+1).padStart(2,'0'),x])];
  return `<div class="v144-filter-row"><label>Tarjeta<select data-v144-filter="card">${v144BenefitOptionsCards().map(([v,t])=>`<option value="${sanitize(v)}" ${selected===v?'selected':''}>${sanitize(t)}</option>`).join('')}</select></label><label>Año<select data-v144-filter="year">${Array.from({length:6},(_,i)=>new Date().getFullYear()+1-i).map(y=>`<option value="${y}" ${year===String(y)?'selected':''}>${y}</option>`).join('')}</select></label><label>Período<select data-v144-filter="month">${months.map(([v,t])=>`<option value="${v}" ${month===v?'selected':''}>${t}</option>`).join('')}</select></label></div>`;
 }
-function v144BenefitsTable(cards){return `<div class="v144-table-wrap"><table class="v144-profit-table"><thead><tr><th>Tarjeta</th><th>Beneficios acreditados</th><th>Costos pagados</th><th>Netos</th><th>Rentabilidad</th><th></th></tr></thead><tbody>${cards.map(c=>{const z=v144CardStats(c);return `<tr><td><strong>${sanitize(c.name)}</strong><small>${sanitize(bankOf(c))}</small></td><td>${v144Value(z.gross)}</td><td>${v144Value(z.paidAmount)}</td><td class="${z.net>=0?'positive':'negative'}">${v144Value(z.net)}</td><td>${v144RoiText(z.roi)}</td><td><button type="button" class="v144-link" data-v144-action="open-benefits" data-id="${sanitize(c.id)}">Ver detalles</button></td></tr>`}).join('')}</tbody></table></div>`}
-function v144BenefitsEvolution(cards){const year=String(ui.v144BenefitYear||new Date().getFullYear());const months=['E','F','M','A','M','J','J','A','S','O','N','D'];
- const v=months.map((name,i)=>{const period=`${year}-${String(i+1).padStart(2,'0')}`;
- const reward=db.transactions.filter(t=>cards.some(c=>c.id===t.cardId)&&['card_reward','bank_reward'].includes(t.type)&&t.date.slice(0,7)===period).reduce((s,t)=>s+v144CurrentFx(t),0);
- return {month:name,value:rnd(reward)};});const max=Math.max(1,...v.map(x=>x.value));
- return `<div class="v144-evolution" role="img" aria-label="Evolución mensual de cashback cobrado en ${year}">${v.map(x=>`<div class="v144-bar-col"><div class="v144-bar-track"><span style="height:${Math.max(x.value?5:0,Math.min(100,100*x.value/max))}%" title="${sanitize(x.month)}: ${v144Value(x.value)}"></span></div><small>${x.month}</small></div>`).join('')}</div><p class="v144-footnote">Importes realizados convertidos a RD$ con la tasa configurada hoy; las monedas originales se mantienen en Movimientos.</p>`}
+/* V183 · Consistencia anual: solo beneficios confirmados y costos pagados.
+   La anualidad configurada es informativa; no se mezcla con pagos reales. */
+function v183YearBenefitMetrics(cards,year){
+ const cardIds=new Set(cards.map(c=>c.id));
+ const months=Array.from({length:12},(_,i)=>({month:i+1,earned:0,paid:0}));
+ for(const t of db.transactions||[]){
+  if(!cardIds.has(t.cardId)||!['card_reward','bank_reward'].includes(t.type))continue;
+  const date=String(t.date||'');
+  if(!date.startsWith(String(year)))continue;
+  const m=Number(date.slice(5,7));if(m<1||m>12)continue;
+  months[m-1].earned+=v144CurrentFx(t);
+ }
+ for(const c of cards){
+  for(const t of v144AllCosts(c)){
+   if(!v144CostPaid(t))continue;
+   const date=String(v144CostPaidDate(t)||'');
+   if(!date.startsWith(String(year)))continue;
+   const m=Number(date.slice(5,7));if(m<1||m>12)continue;
+   months[m-1].paid+=v144CurrentFx(t);
+  }
+ }
+ let earn=0,paid=0;
+ for(const m of months){
+  m.earned=rnd(m.earned);m.paid=rnd(m.paid);
+  earn=rnd(earn+m.earned);paid=rnd(paid+m.paid);
+  m.accumulatedEarned=earn;
+  m.accumulatedPaid=paid;
+  m.accumulatedNet=rnd(earn-paid);
+ }
+ const feeConfigured=rnd(cards.reduce((sum,c)=>{
+  const fee=v144CardDue(c);return sum+(fee.amount>0?v144AmountDOP(fee.amount,fee.currency):0);
+ },0));
+ return {months,earned:earn,paid,net:rnd(earn-paid),feeConfigured};
+}
+function v183AnnualBenefitsEvolution(cards){
+ const year=Number(ui.v144BenefitYear)||new Date().getFullYear();
+ const data=v183YearBenefitMetrics(cards,year),vals=data.months;
+ const min=Math.min(0,...vals.map(m=>m.accumulatedNet));
+ const max=Math.max(0,...vals.flatMap(m=>[m.accumulatedEarned,m.accumulatedPaid,m.accumulatedNet]));
+ const span=Math.max(1,max-min);
+ const formats=[
+  {name:'Beneficios acumulados',key:'accumulatedEarned',color:'#527ee8'},
+  {name:'Costos pagados acumulados',key:'accumulatedPaid',color:'#d58b51'},
+  {name:'Beneficio neto acumulado',key:'accumulatedNet',color:'#059669'}
+ ];
+ const monthNames=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+ const compact=v=>Math.abs(v)>=1000000?(v/1000000).toFixed(1)+'M':Math.abs(v)>=1000?(v/1000).toFixed(1)+'K':Math.round(v).toString();
+ function graph(width,isCompact){
+  const left=isCompact?38:72,right=width-(isCompact?12:22),top=22,bottom=isCompact?215:230;
+  const x=i=>left+(right-left)*i/11;
+  const y=v=>bottom-((v-min)/span)*(bottom-top);
+  const paths=formats.map(series=>{
+   const coords=vals.map((m,i)=>`${i?'L':'M'} ${x(i).toFixed(1)} ${y(m[series.key]).toFixed(1)}`).join(' ');
+   const dots=vals.map((m,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(m[series.key]).toFixed(1)}" r="${isCompact?3.1:4}" fill="${series.color}" tabindex="0" aria-label="${series.name}, ${i+1}/${year}: ${v144Value(m[series.key])}"><title>${series.name} · ${i+1}/${year}: ${v144Value(m[series.key])}</title></circle>`).join('');
+   return `<path d="${coords}" fill="none" stroke="${series.color}" stroke-width="${isCompact?2.5:3.3}" stroke-linecap="round" stroke-linejoin="round"/>${dots}`;
+  }).join('');
+  const grid=[0,.25,.5,.75,1].map(t=>{let v=min+t*span,Y=y(v);return `<line x1="${left}" y1="${Y}" x2="${right}" y2="${Y}" stroke="#bed0e8" stroke-opacity=".45" stroke-dasharray="3 7"/><text x="${left-7}" y="${Y+3}" fill="#6982a4" text-anchor="end" font-size="${isCompact?10:12}">${compact(v)}</text>`}).join('');
+  const axis=monthNames.map((m,i)=>`<text x="${x(i)}" y="${isCompact?238:258}" text-anchor="middle" fill="#7189a6" font-size="${isCompact?9:11}">${m}</text>`).join('');
+  return `<svg class="v183-benefit-chart ${isCompact?'v183-chart-mobile':'v183-chart-desktop'}" viewBox="0 0 ${width} ${isCompact?255:278}" role="img" aria-label="Evolución acumulada de beneficios, costos pagados y resultado neto de enero a diciembre de ${year}">${grid}<line x1="${left}" y1="${y(0)}" x2="${right}" y2="${y(0)}" stroke="#849abd" stroke-width="1.2"/>${paths}${axis}</svg>`;
+ }
+ return `<div class="v183-annual-report">
+  <div class="v183-annual-totals" aria-label="Resultado anual realizado"><span>Beneficios cobrados <b>${v144Value(data.earned)}</b></span><span>Costos pagados <b>${v144Value(data.paid)}</b></span><span class="${data.net<0?'loss':'gain'}">Resultado neto <b>${v144Value(data.net)}</b></span></div>
+  <div class="v183-chart-scroll">${graph(990,false)}${graph(440,true)}</div>
+  <div class="v183-chart-legend">${formats.map(s=>`<span><i style="background:${s.color}"></i>${s.name}</span>`).join('')}</div>
+  <p class="v144-footnote">Acumulado anual completo de enero a diciembre de ${year}, aunque filtres un mes en la tabla. Solo registros confirmados y costos pagados; las anualidades configuradas y los cargos pendientes no se incluyen como gastos realizados. USD convertido con la tasa configurada.</p>
+  ${!data.earned&&!data.paid?'<p class="v183-empty-year">Sin movimientos de beneficios ni costos pagados registrados en este año.</p>':''}
+ </div>`;
+}
+function v144BenefitsTable(cards){
+ return `<div class="v144-table-wrap"><table class="v144-profit-table v183-profit-table"><thead><tr>
+  <th>Tarjeta</th><th>Beneficios cobrados</th><th>Costos pagados</th><th>Cargos por conciliar</th><th>Anualidad configurada</th><th>Resultado neto</th><th>Detalle</th>
+ </tr></thead><tbody>${cards.map(c=>{
+  const z=v144CardStats(c),fee=v144CardDue(c);
+  const feeText=fee.amount>0?v144Value(fee.amount,fee.currency):'Sin configurar';
+  return `<tr><td data-label="Tarjeta"><strong>${sanitize(c.name)}</strong><small>${sanitize(bankOf(c))}</small></td>
+   <td data-label="Beneficios cobrados">${v144Value(z.gross)}</td>
+   <td data-label="Costos pagados">${v144Value(z.paidAmount)}</td>
+   <td data-label="Cargos sin conciliar">${v144Value(z.billedAmount)}</td>
+   <td data-label="Anualidad configurada">${feeText}<small>No es un pago registrado</small></td>
+   <td data-label="Resultado neto" class="${z.net>=0?'positive':'negative'}">${v144Value(z.net)}</td>
+   <td data-label="Detalle"><button type="button" class="v144-link" data-v144-action="open-benefits" data-id="${sanitize(c.id)}">Ver detalles</button></td>
+  </tr>`;
+ }).join('')}</tbody></table></div>`;
+}
+function v144BenefitsEvolution(cards){return v183AnnualBenefitsEvolution(cards)}
 function v144CashbackRows(c){const rewards=db.transactions.filter(t=>t.cardId===c.id&&['card_reward','bank_reward'].includes(t.type)&&v144PeriodMatch(t.date));const pending=db.v144PendingBenefits.filter(p=>p.cardId===c.id&&v144PeriodMatch(p.date));
  const rows=[...rewards.map(t=>({id:t.id,type:'posted',date:t.date,title:t.v144OriginCategory||t.note||'Cashback acreditado',amount:t.amount,currency:t.currency,status:t.type==='card_reward'?'Acreditado a tarjeta':'Depositado en cuenta'})),...pending.map(t=>({id:t.id,type:'pending',date:t.date,title:t.originCategory||t.note||'Cashback por acreditar',amount:t.amount,currency:t.currency,status:'Pendiente · no contabilizado'}))].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
  return `<div class="v144-list">${rows.map(x=>`<div class="v144-line"><div><strong>${sanitize(x.title)}</strong><small>${prettyDate(x.date)} · ${sanitize(x.status)}</small></div><b class="${x.type==='pending'?'pending':'positive'}">${v144Value(x.amount,x.currency)}</b><div class="v144-line-actions"><button type="button" data-v144-action="edit-cashback" data-id="${sanitize(c.id)}" data-ref="${sanitize(x.id)}" data-source="${x.type}">Editar</button><button type="button" data-v144-action="delete-cashback" data-id="${sanitize(c.id)}" data-ref="${sanitize(x.id)}" data-source="${x.type}" aria-label="Eliminar ${sanitize(x.title)}">${icon('trash')}</button></div></div>`).join('')||'<p class="v144-empty">Sin cashback registrado en este período.</p>'}</div>`}
@@ -24180,17 +24281,16 @@ function v144CostRows(c){v144Ready();const costs=v144AllCosts(c).filter(t=>v144P
  const arr=[...costs.map(t=>({id:t.id,date:v144CostPaid(t)?v144CostPaidDate(t):t.date,type:'posted',value:t.amount,currency:t.currency,name:t.note||t.subcategory||'Costo de tarjeta',paid:v144CostPaid(t),billed:t.type==='card_charge',raw:t})),...plans.map(p=>({id:p.id,date:p.date,type:'planned',value:p.amount,currency:p.currency,name:p.name||'Costo previsto',paid:false,billed:false}))].sort((a,b)=>b.date.localeCompare(a.date));
  return `<div class="v144-list">${arr.map(r=>`<div class="v144-line"><div><strong>${sanitize(r.name)}</strong><small>${prettyDate(r.date)} · ${r.type==='planned'?'Previsto · sin débito · '+({monthly:'Mensual',quarterly:'Trimestral',annual:'Anual',one_time:'Cargo único'})[db.v144ScheduledCosts.find(p=>p.id===r.id)?.frequency||'one_time']:r.paid?'Pagado y conciliado':'Cargado a tarjeta · sin conciliar'}</small></div><b class="${r.paid?'negative':'pending'}">${v144Value(r.value,r.currency)}</b><div class="v144-line-actions">${r.type==='planned'?`<button type="button" data-v144-action="edit-cost" data-id="${sanitize(c.id)}" data-ref="${sanitize(r.id)}">Editar</button><button type="button" data-v144-action="delete-cost-plan" data-ref="${sanitize(r.id)}">${icon('trash')}</button>`:r.billed&&!r.paid?`<button type="button" data-v144-action="settle-cost" data-id="${sanitize(c.id)}" data-ref="${sanitize(r.id)}">Conciliar pago</button><button type="button" data-act="editTransaction" data-id="${sanitize(r.id)}">Editar</button>`:`<button type="button" data-act="editTransaction" data-id="${sanitize(r.id)}">Editar</button>`}</div></div>`).join('')||'<p class="v144-empty">Sin costos registrados en este período.</p>'}</div>`;
 }
-function v144BenefitsPage(){v144Ready();const cards=db.cards.filter(c=>ui.showHidden||!isHidden(c));if(!cards.length)return `<section class="v144-benefit-world"><div class="v144-hero"><small>BENEFICIOS Y COSTOS</small><h2>Tarjetas que se pagan solas</h2><p>Registra una tarjeta para comparar costos y recompensas reales.</p><button type="button" class="btn" data-act="addCard">Registrar tarjeta</button></div></section>`;
+function v144BenefitsPage(){v144Ready();const cards=db.cards.filter(c=>ui.showHidden||!isHidden(c));if(!cards.length)return `<section class="v144-benefit-world v180-benefits-empty">${typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():''}<div class="v144-benefit-panel"><p>Cuando registres una tarjeta, aquí aparecerán sus beneficios, costos e historial.</p><button type="button" class="btn sm" data-act="addCard">Registrar tarjeta</button></div></section>`;
  const selected=ui.v144BenefitsCard||'all';const shown=cards.filter(c=>selected==='all'||c.id===selected);if(!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage()}
  const stats=shown.map(c=>v144CardStats(c));const sum=k=>rnd(stats.reduce((s,z)=>s+z[k],0));const gross=sum('gross'),paid=sum('paidAmount'),net=rnd(gross-paid),billed=sum('billedAmount'),expected=sum('expected'),planned=sum('plannedSum');const roi=paid>0?rnd(net/paid*100):null;
- return `<main class="v144-benefit-world" id="v144Benefits"><header class="v144-hero"><small>INTELIGENCIA DE TARJETAS · vive el hoy</small><h2>Lo que tus tarjetas realmente te devuelven</h2><p>Beneficios acreditados menos costos pagados. Los cargos sin conciliar y recompensas pendientes permanecen separados.</p>${v144CardFilterUI()}</header>
- <div class="v144-summary-grid"><article><small>Cashback y beneficios realizados</small><strong class="good">${v144Value(gross)}</strong><span>Cashback ${v144Value(sum('realizedCashback'))} · Otros ${v144Value(sum('realizedOther'))}</span></article><article><small>Costos efectivamente pagados</small><strong>${v144Value(paid)}</strong><span>Anualidades ${v144Value(sum('feePaid'))}</span></article><article><small>Beneficio neto</small><strong class="${net>=0?'good':'cost'}">${v144Value(net)}</strong><span>Solo dinero realizado y pagos conciliados</span></article><article><small>Rentabilidad sobre costos</small><strong>${v144RoiText(roi)}</strong><span>${paid>0?'(Beneficio neto ÷ costo pagado) × 100':'Sin costos pagados, no se calcula el porcentaje'}</span></article></div>
- <div class="v144-summary-note"><span><b>Costos cargados aún sin conciliar:</b> ${v144Value(billed)}</span><span><b>Recompensas pendientes:</b> ${v144Value(expected)}</span><span><b>Otros costos previstos:</b> ${v144Value(planned)}</span></div>
- <div class="v144-section-head"><div><small>RENDIMIENTO POR PRODUCTO</small><h3>¿Cuál tarjeta me conviene más?</h3></div><div class="v144-actions"><button type="button" data-v144-action="new-cashback" data-id="${sanitize(shown[0].id)}">${icon('plus')} Cashback</button><button type="button" data-v144-action="new-cost" data-id="${sanitize(shown[0].id)}">${icon('receipt')} Costo</button></div></div>
+ return `<main class="v144-benefit-world v180-benefits-clean" id="v144Benefits">${typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():''}<div class="v180-benefits-filterbar"><div class="v180-benefits-filter-label"><strong>Explorar beneficios</strong><small>Consulta el período y la tarjeta que te interesa.</small></div>${v144CardFilterUI()}</div>
+
+ <div class="v144-section-head"><div><small>RENDIMIENTO POR PRODUCTO</small><h3>Comparación de valor por tarjeta</h3></div><div class="v144-actions"><button type="button" data-v144-action="new-cashback" data-id="${sanitize(shown[0].id)}">${icon('plus')} Cashback</button><button type="button" data-v144-action="new-cost" data-id="${sanitize(shown[0].id)}">${icon('receipt')} Costo</button></div></div>
  ${v144BenefitsTable(shown)}
- <div class="v144-benefit-layout"><section class="v144-benefit-panel"><div class="v144-section-head"><div><small>EVOLUCIÓN</small><h3>Cashback recibido por mes</h3></div></div>${v144BenefitsEvolution(shown)}</section><section class="v144-benefit-panel"><div class="v144-section-head"><div><small>LECTURA FINANCIERA</small><h3>Ganancias y compromisos</h3></div></div><div class="v144-guide"><p><b>Recibido:</b> cashback acreditado en cuenta o tarjeta. No se cuentan estimaciones.</p><p><b>Pagado:</b> costo debitado de una cuenta o conciliado contra un pago de tarjeta.</p><p><b>Pendiente:</b> anualidad programada, cashback esperado o cargo en tarjeta aún sin liquidar.</p><p><b>Conversión:</b> los importes en US$ se muestran también al tipo configurado; cada registro conserva su moneda.</p></div></section></div>
+ <div class="v144-benefit-layout v183-benefit-layout"><section class="v144-benefit-panel v183-chart-panel"><div class="v144-section-head"><div><small>EVOLUCIÓN ANUAL · ${sanitize(String(ui.v144BenefitYear||new Date().getFullYear()))}</small><h3>Beneficio acumulado · enero a diciembre</h3><p>Ingresos recibidos, costos pagados y ganancia neta, acumulados mes a mes.</p></div></div>${v144BenefitsEvolution(shown)}</section></div>
  ${shown.map(c=>{const z=v144CardStats(c),due=v144CardDue(c);return `<section class="v144-benefit-panel v144-card-section" id="v144-card-${sanitize(c.id)}"><div class="v144-section-head"><div><small>${sanitize(bankOf(c))}</small><h3>${sanitize(c.name)} · Costos y beneficios</h3><p>Deuda RD$ ${v144Value(cardStatus(c,'DOP').debt)} · Deuda US$ ${v144Value(cardStatus(c,'USD').debt,'USD')}</p></div><div class="v144-actions"><button type="button" data-v144-action="new-cashback" data-id="${sanitize(c.id)}">+ Beneficio</button><button type="button" data-v144-action="new-cost" data-id="${sanitize(c.id)}">+ Costo</button><button type="button" data-act="goCard" data-id="${sanitize(c.id)}">Ver tarjeta</button></div></div>
- <div class="v144-card-detail-grid"><div><small>Cobrado en el período</small><strong>${v144Value(z.gross)}</strong></div><div><small>Costos pagados</small><strong>${v144Value(z.paidAmount)}</strong></div><div><small>Neto</small><strong class="${z.net>=0?'positive':'negative'}">${v144Value(z.net)}</strong></div><div><small>Anualidad contratada</small><strong>${due.amount?v144Value(due.amount,due.currency):'No registrada'}</strong><small>${due.date?'Próximo cobro: '+prettyDate(due.date):'Sin fecha configurada'}</small></div></div>
+ <details class="v180-benefits-card-metrics"><summary>Ver cifras y anualidad de esta tarjeta</summary><div class="v144-card-detail-grid"><div><small>Cobrado en el período</small><strong>${v144Value(z.gross)}</strong></div><div><small>Costos pagados</small><strong>${v144Value(z.paidAmount)}</strong></div><div><small>Neto</small><strong class="${z.net>=0?'positive':'negative'}">${v144Value(z.net)}</strong></div><div><small>Anualidad contratada</small><strong>${due.amount?v144Value(due.amount,due.currency):'No registrada'}</strong><small>${due.date?'Próximo cobro: '+prettyDate(due.date):'Sin fecha configurada'}</small></div></div></details>
  <div class="v144-ledger-cols"><div><h4>Cashback y beneficios</h4>${v144CashbackRows(c)}</div><div><h4>Costo de la tarjeta</h4>${v144CostRows(c)}</div></div>
  </section>`}).join('')}
  <p class="v144-footnote">Rentabilidad = beneficio neto realizado ÷ costos pagados, si estos son superiores a cero. Los cargos cobrados a la tarjeta se reconocen como gastos en la contabilidad al registrarlos, pero solo cuentan como costos pagados en este indicador cuando se concilian con un pago registrado. No se emiten transacciones bancarias adicionales al conciliarlos.</p>
@@ -28376,6 +28476,240 @@ body .main.world-overview:has(.ff-dashboard.summary-space) .topbar .v164-tomorro
  #modal-root .v178-kpi-grid{gap:7px!important;}
  #modal-root .v178-kpi{padding:10px 9px;}
  #modal-root .v178-kpi-new strong{font-size:13px;}
+}
+</style>
+
+<style id="vive-v180-kpi-unico-modulos">
+/* V180 — One executive hero per module.  Remove duplicate KPI blocks only
+   from Presupuesto and Beneficios.  Keep detailed data and interactive actions. */
+.world-budget .budget-world.v180-budget-clean{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.world-budget .budget-world.v180-budget-clean > .v27-budget-trend{margin-top:0!important;}
+.world-budget .v180-budget-status{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:7px 0 14px;color:#637792;font-size:11px;font-weight:650;}
+.world-budget .v180-budget-status span{padding:6px 10px;background:rgba(243,247,255,.86);border:1px solid rgba(217,228,245,.88);border-radius:999px;}
+.world-budget .v180-budget-edit-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;min-width:0;}
+.world-budget .v180-budget-edit-actions button{white-space:nowrap;}
+.world-benefits .v180-benefits-clean{gap:13px;}
+.world-benefits .v180-benefits-filterbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:13px 16px;background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.95);border-radius:18px;box-shadow:0 7px 24px rgba(36,66,115,.045);min-width:0;}
+.world-benefits .v180-benefits-filter-label{display:flex;flex-direction:column;gap:3px;}
+.world-benefits .v180-benefits-filter-label strong{color:#264064;font-size:13px;}
+.world-benefits .v180-benefits-filter-label small{color:#798aa4;font-size:11px;}
+.world-benefits .v180-benefits-filterbar .v144-filter-row{margin:0!important;max-width:100%;}
+.world-benefits .v180-benefits-clean .v144-summary-note{margin-top:0!important;}
+.world-benefits .v180-benefits-card-metrics{border:1px solid rgba(216,227,243,.92);border-radius:15px;background:rgba(247,250,255,.82);margin:12px 0;overflow:hidden;}
+.world-benefits .v180-benefits-card-metrics>summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:12px 14px;color:#385477;font-size:12px;font-weight:760;list-style:none;}
+.world-benefits .v180-benefits-card-metrics>summary::-webkit-details-marker{display:none;}
+.world-benefits .v180-benefits-card-metrics>summary:after{content:'+';font-size:19px;line-height:1;color:#6783af;}
+.world-benefits .v180-benefits-card-metrics[open]>summary:after{content:'−';}
+.world-benefits .v180-benefits-card-metrics .v144-card-detail-grid{padding:0 12px 12px!important;}
+.world-benefits .v180-benefits-empty .v144-benefit-panel{padding:17px;}
+.world-benefits .v180-benefits-empty p{color:#6e829f;font-size:12px;line-height:1.5;margin-bottom:12px;}
+body.theme-dark .world-benefits .v180-benefits-filterbar,body.theme-dark .world-benefits .v180-benefits-card-metrics,body.theme-dark .world-budget .v180-budget-status span{background:rgba(35,51,78,.9);border-color:#49627f;}
+body.theme-dark .world-benefits .v180-benefits-filter-label strong,body.theme-dark .world-benefits .v180-benefits-card-metrics>summary{color:#e4edff;}
+@media(max-width:790px){
+ .world-budget .budget-world.v180-budget-clean{gap:10px;}
+ .world-budget .v180-budget-edit-actions{width:100%;justify-content:flex-start;}
+ .world-budget .v180-budget-edit-actions button,.world-budget .v180-budget-edit-actions input{min-height:42px;}
+ .world-budget .v180-budget-edit-actions input{flex:1;max-width:200px;}
+ .world-benefits .v180-benefits-filterbar{padding:12px;align-items:stretch;}
+ .world-benefits .v180-benefits-filter-label{width:100%;}
+ .world-benefits .v180-benefits-filterbar .v144-filter-row{width:100%;}
+ .world-benefits .v180-benefits-card-metrics .v144-card-detail-grid{padding:0 9px 10px!important;}
+}
+@media(prefers-reduced-motion:reduce){.world-benefits .v180-benefits-card-metrics{transition:none!important;}}
+</style>
+
+<style id="vive-v181-espaciado-resumen-pildora-kpis">
+/* V181 · Resumen: no comprimir tres niveles en el alto del navegador.
+   Restablece las separaciones sin cambiar los datos, las acciones ni el tema.
+   A diferencia de las reglas heredadas, en portátiles la página puede desplazarse. */
+@media(min-width:1100px){
+ body .main.world-overview:has(.ff-dashboard.summary-space){
+   height:auto!important;min-height:100dvh!important;max-height:none!important;
+   overflow-x:hidden!important;overflow-y:auto!important;
+   display:block!important;padding-bottom:24px!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) #page{
+   display:block!important;height:auto!important;min-height:0!important;
+   max-height:none!important;flex:none!important;overflow:visible!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space{
+   display:flex!important;flex-direction:column!important;
+   height:auto!important;min-height:0!important;max-height:none!important;
+   gap:0!important;overflow:visible!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .universe-switch-wrap{
+   margin-bottom:14px!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard-tools{
+   margin:0 0 13px!important;min-height:28px!important;gap:12px!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space)
+ .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+   display:grid!important;grid-template-columns:minmax(0,1.765fr) minmax(0,1fr)!important;
+   grid-template-rows:clamp(285px,31.5dvh,324px) clamp(206px,22.3dvh,236px) clamp(208px,22.3dvh,236px)!important;
+   grid-auto-rows:auto!important;grid-auto-flow:row!important;
+   width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
+   column-gap:clamp(13px,1.05vw,19px)!important;
+   row-gap:clamp(13px,1.3dvh,17px)!important;
+   align-items:stretch!important;overflow:visible!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.v152-position-reference{
+   grid-column:1!important;grid-row:1!important;min-height:0!important;height:100%!important;
+   display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+   grid-template-rows:clamp(78px,9.75dvh,100px) 1px minmax(0,1fr)!important;
+   gap:clamp(5px,.7dvh,9px)!important;
+   padding:clamp(14px,1.75dvh,19px) clamp(17px,1.55vw,25px) clamp(12px,1.4dvh,16px)!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.ff-obligations{
+   grid-column:2!important;grid-row:1/3!important;min-height:0!important;height:100%!important;
+   padding:4px 0 1px clamp(12px,1.1vw,20px)!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.ff-mid{
+   grid-column:1!important;grid-row:2!important;display:grid!important;
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:clamp(13px,1vw,18px)!important;
+   height:100%!important;min-height:0!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.ff-mid>.ff-tile{
+   grid-column:auto!important;grid-row:auto!important;min-height:0!important;height:100%!important;
+   padding:clamp(15px,1.65dvh,20px) clamp(16px,1.3vw,22px)!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.ff-upcoming{
+   grid-column:1!important;grid-row:3!important;min-height:0!important;height:100%!important;
+   padding:clamp(14px,1.5dvh,19px) clamp(16px,1.3vw,22px)!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.ff-personal{
+   grid-column:2!important;grid-row:3!important;min-height:0!important;height:100%!important;
+   padding:clamp(14px,1.5dvh,19px) clamp(16px,1.3vw,22px)!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-panel-top{
+   margin-bottom:9px!important;min-height:0!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-upcoming .ff-panel-top{
+   margin-bottom:7px!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-upcoming .ff-payment-list{
+   padding-top:2px!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-obligations .ff-obligation-list{
+   margin-top:9px!important;
+ }
+}
+/* Compact and quiet financial burden chip: only within the Total programado box. */
+body .main.world-overview .ff-dashboard.summary-space .ff-obligations
+.ff-obligation-total .v82-total-top .v82-burden.v85-summary-burden{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 auto!important;gap:4px!important;
+ min-height:21px!important;height:21px!important;max-height:21px!important;
+ width:auto!important;max-width:140px!important;box-sizing:border-box!important;
+ padding:2px 7px!important;margin:0!important;
+ border-radius:999px!important;background:rgba(247,249,253,.92)!important;
+ border:1px solid rgba(218,227,240,.92)!important;
+ box-shadow:none!important;font-size:10px!important;line-height:1!important;
+ white-space:nowrap!important;letter-spacing:0!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .ff-obligations
+.ff-obligation-total .v82-total-top .v82-burden.v85-summary-burden small{
+ font-size:8px!important;line-height:1!important;font-weight:720!important;
+ color:#7b879c!important;letter-spacing:0!important;text-transform:none!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .ff-obligations
+.ff-obligation-total .v82-total-top .v82-burden.v85-summary-burden strong{
+ font-size:10px!important;font-weight:850!important;line-height:1!important;
+ letter-spacing:-.025em!important;margin:0!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .ff-obligations .v82-total-top{
+ display:flex!important;justify-content:space-between!important;align-items:center!important;
+ gap:7px!important;min-width:0!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .ff-obligations .v82-total-top>small{
+ min-width:0!important;font-size:9px!important;line-height:1.15!important;
+}
+/* The debt chip stays usable on iPhone without overlapping its heading. */
+@media(max-width:420px){
+ body .main.world-overview .ff-dashboard.summary-space .ff-obligations .v82-total-top{flex-wrap:wrap!important;}
+}
+/* Tarjetas: single summary is the executive credit hero; preserve card-by-card benefits. */
+.world-cards .cards-grid.section{margin-top:15px!important;}
+.world-cards .card-fx-note{margin:10px 0 12px!important;}
+.world-cards .section-title .hstack{gap:7px!important;}
+.world-cards .section-title .hstack .btn{min-height:35px;}
+@media(max-width:790px){
+ .world-cards .section-title .hstack{flex-wrap:wrap!important;}
+ .world-cards .section-title .hstack .btn{min-height:41px;}
+}
+</style>
+
+<style id="vive-v182-resumen-ejecutivo-tarjetas">
+/* V182: A single complete, clearly prioritized credit portfolio summary.
+   Compatible with the existing V57 visual system and the original Wallet. */
+.world-cards #page .v182-cards-workspace{width:100%;min-width:0;display:flex;flex-direction:column;gap:0}
+.world-cards #page .v182-cards-workspace > .v57-product-hero.v57-cards{
+ width:100%;box-sizing:border-box;margin:0 0 18px!important;
+ background:linear-gradient(115deg,#17284e 0%,#334b90 58%,#506ab7 100%)!important;
+}
+.world-cards #page .v182-cards-workspace .section-title{
+ display:flex;justify-content:space-between;align-items:center;gap:14px;min-width:0;
+}
+.world-cards #page .v182-cards-workspace .v46-global-secondary{min-width:0}
+.world-cards #page .v182-cards-workspace .v46-global-secondary>div{min-width:0}
+.world-cards #page .v182-cards-workspace .v46-global-secondary>div strong{overflow-wrap:anywhere}
+@media(max-width:790px){
+ .world-cards #page .v182-cards-workspace > .v57-product-hero.v57-cards{
+  margin:0 0 13px!important;padding:18px 15px!important;border-radius:21px!important;
+ }
+ .world-cards #page .v182-cards-workspace .v46-global-secondary{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;
+ }
+ .world-cards #page .v182-cards-workspace .v46-global-main>strong{
+  font-size:clamp(28px,8.7vw,39px)!important;line-height:1.06!important;
+ }
+ .world-cards #page .v182-cards-workspace .section-title{align-items:flex-start;flex-wrap:wrap}
+ .world-cards #page .v182-cards-workspace .section-title .hstack{justify-content:flex-start;max-width:100%}
+}
+</style>
+
+<style id="vive-v183-beneficios-y-decisions">
+/* Un informe anual: un KPI ejecutivo, tabla consolidada y una gráfica acumulada.
+   No modifica el motor financiero ni los valores registrados. */
+.world-benefits .v57-benefits.v57-product-hero{background:linear-gradient(112deg,#172d50,#275577 68%,#32809b)!important}
+.world-benefits .v183-profit-table{min-width:980px;width:100%;table-layout:auto}
+.world-benefits .v183-profit-table td,.world-benefits .v183-profit-table th{padding:12px 13px!important;vertical-align:middle}
+.world-benefits .v183-profit-table td[data-label="Anualidad configurada"] small{font-size:9px;margin-top:4px;white-space:normal}
+.world-benefits .v183-profit-table td:nth-last-child(2){font-weight:800}
+.world-benefits .v183-benefit-layout{display:block!important}
+.world-benefits .v183-chart-panel{width:100%;min-width:0;padding:clamp(15px,1.65vw,25px)!important}
+.world-benefits .v183-chart-scroll{width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden}
+.world-benefits .v183-benefit-chart{display:block;max-width:100%;width:100%;height:auto}
+.world-benefits .v183-chart-mobile{display:none}
+.world-benefits .v183-annual-report{display:grid;gap:12px;min-width:0}
+.world-benefits .v183-annual-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.world-benefits .v183-annual-totals>span{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px 10px;padding:12px;background:rgba(243,248,255,.84);border:1px solid rgba(213,229,247,.94);border-radius:14px;color:#6880a1;font-size:11px;line-height:1.3}
+.world-benefits .v183-annual-totals b{font-size:clamp(13px,1.3vw,19px);color:#315b8b;font-variant-numeric:tabular-nums}
+.world-benefits .v183-annual-totals .gain b{color:#059669}
+.world-benefits .v183-annual-totals .loss b{color:#c16b35}
+.world-benefits .v183-chart-legend{display:flex;flex-wrap:wrap;gap:9px 19px;padding:0 2px;color:#627a9b;font-size:11px}
+.world-benefits .v183-chart-legend span{display:inline-flex;align-items:center;gap:7px}
+.world-benefits .v183-chart-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
+.world-benefits .v183-empty-year{padding:11px 13px;border:1px dashed #cad8ea;border-radius:12px;font-size:11px;color:#6f86a5}
+.v119-modal .v183-tomorrow-note{margin:10px 0 0;padding:10px 13px;border-radius:12px;background:rgba(239,246,255,.7);border:1px solid rgba(217,230,249,.8);color:#567293;font-size:11px;line-height:1.48}
+.v119-modal .v183-tomorrow-note b{color:#264974}
+body.theme-dark .world-benefits .v183-annual-totals>span,body.theme-dark .v119-modal .v183-tomorrow-note{background:rgba(41,65,97,.76);border-color:#4c6587;color:#c0cee3}
+body.theme-dark .world-benefits .v183-annual-totals b,body.theme-dark .v119-modal .v183-tomorrow-note b{color:#e2ecff}
+@media(max-width:790px){
+ .world-benefits .v183-annual-totals{grid-template-columns:1fr;gap:6px}
+ .world-benefits .v183-annual-totals>span{padding:10px 12px}
+ .world-benefits .v183-chart-scroll{overflow:hidden}
+ .world-benefits .v183-chart-desktop{display:none}
+ .world-benefits .v183-chart-mobile{display:block;width:100%;height:auto;min-width:0;max-width:100%}
+ .world-benefits .v183-profit-table{min-width:0!important;border-collapse:separate;border-spacing:0}
+ .world-benefits .v183-profit-table thead{display:none}
+ .world-benefits .v183-profit-table tbody{display:grid;gap:10px;padding:9px}
+ .world-benefits .v183-profit-table tbody tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:10px;background:rgba(247,250,255,.9);border:1px solid rgba(218,229,244,.92);border-radius:14px}
+ .world-benefits .v183-profit-table td{display:flex;flex-direction:column;min-width:0;gap:3px;padding:6px!important;white-space:normal!important;font-size:11px!important;overflow-wrap:anywhere}
+ .world-benefits .v183-profit-table td:first-child{grid-column:1/-1;padding-bottom:10px!important;border-bottom:1px solid #dce7f7}
+ .world-benefits .v183-profit-table td:last-child{grid-column:1/-1;padding-top:8px!important}
+ .world-benefits .v183-profit-table td:not(:first-child)::before{content:attr(data-label);font-size:9px;font-weight:750;letter-spacing:.01em;color:#8095b0}
+ .v119-modal .v183-tomorrow-note{font-size:10.5px}
 }
 </style>
 </body>
