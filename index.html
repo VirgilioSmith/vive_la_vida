@@ -954,6 +954,43 @@ body.theme-dark .v67-review-footer,body.theme-dark .v67-review-metric{background
 
 #loanForm.v87-loan-wizard .v87-nav[hidden]{display:none!important}
 #loanForm.v87-loan-wizard .form-foot .btn.ghost{background:#f2f6fc!important;color:#405e83!important;border-color:#e0e8f3!important}
+
+/* V199 · Selector de perfil discreto integrado en la cabecera de Instituciones.
+   Se elimina la tarjeta de texto redundante y se conservan los 3 filtros activos. */
+.v61-institutions .v199-profile-inline{
+  position:absolute;top:15px;right:20px;z-index:3;
+  width:max-content;max-width:calc(100% - 40px);
+  padding:4px;gap:4px;background:rgba(242,247,255,.94);
+  border:1px solid rgba(215,228,247,.85);border-radius:14px;
+  box-shadow:0 5px 16px rgba(4,18,37,.13);
+}
+.v61-institutions .v199-profile-inline .v61-profile-option{
+  padding:8px 11px;min-height:36px;border-radius:11px;font-size:12px;
+  color:#486483;
+}
+.v61-institutions .v199-profile-inline .v61-profile-option.active{color:#205898;background:#fff;}
+.v61-institutions .v46-bank-hero .v46-global-financials{padding-top:45px;}
+body.theme-dark .v61-institutions .v199-profile-inline,
+body.vision-mode .v61-institutions .v199-profile-inline{
+ background:#18283e!important;border-color:#344863!important;box-shadow:0 6px 20px rgba(0,0,0,.2);
+}
+body.theme-dark .v61-institutions .v199-profile-inline .v61-profile-option,
+body.vision-mode .v61-institutions .v199-profile-inline .v61-profile-option{color:#d3e1f8!important}
+body.theme-dark .v61-institutions .v199-profile-inline .v61-profile-option.active,
+body.vision-mode .v61-institutions .v199-profile-inline .v61-profile-option.active{
+  background:#365477!important;color:#fff!important;
+}
+@media(max-width:790px){
+  .v61-institutions .v199-profile-inline{
+    position:static!important;width:100%!important;max-width:100%;
+    margin:3px 0 10px!important;box-shadow:none;
+  }
+  .v61-institutions .v199-profile-inline .v61-profile-option{
+    flex:1;min-width:0;justify-content:center;padding:8px 4px;min-height:38px;font-size:11px;
+  }
+  .v61-institutions .v46-bank-hero .v46-global-financials{padding-top:17px;}
+}
+
 </style>
 <style id="benefits-studio-v6">
 /* Nexo ideas, enriched in vive el hoy. Independent benefits world, accessible inside each card. */
@@ -14968,6 +15005,117 @@ body.theme-dark .v195-projection-bar{background:#314761}
  .ws-gallery-card .v195-executive-visual{grid-template-columns:1fr 1fr}
 }
 </style>
+<style id="vive-v197-reference-financial-widgets">
+/* Tarjetas inspiradas en el ejemplo; en modo oscuro son carbón real, no tarjetas claras recoloreadas. */
+.widgets-grid.ws-board:has(>.ws-reference){grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.widgets-grid.ws-board .ws-tile.ws-reference.widget-chart,.widgets-grid.ws-board .ws-tile.ws-reference.widget-chart.ws-wide{grid-column:span 1;min-height:305px;border-radius:14px;padding:17px 18px 14px;box-shadow:none;}
+.ws-reference .widget-card-top{padding:0 0 10px;border-bottom:1px solid var(--ref-divider,#d8e1ee);align-items:center}
+.ws-reference .widget-card-top h3{font-size:clamp(13px,1.1vw,17px);font-weight:800;letter-spacing:-.025em;margin:0;color:var(--ref-text,#1a2840)}
+.ws-reference .widget-kicker{display:none}
+.ws-reference .widget-actions button[data-act="widgetMoveUp"],.ws-reference .widget-actions button[data-act="widgetMoveDown"]{display:none}
+.ws-reference .widget-actions button{background:var(--ref-control,#e8eef7)!important;color:var(--ref-text,#233c5a)!important;width:31px;height:30px;border-radius:8px;font-size:18px}
+.ws-reference .widget-actions button:hover{filter:brightness(.91)}
+.ws-reference .v197-reference-body{--ref-text:#1a2840;--ref-muted:#69809b;--ref-ring:#d9e2ef;--ref-divider:#d8e1ee;--ref-track:#e7edf6;flex:1;display:flex;flex-direction:column;gap:0;padding-top:13px;min-width:0}
+.ws-reference .v197-topline{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;color:var(--ref-muted);line-height:1.3}
+.ws-reference .v197-topline>b{font-size:12px}
+.ws-reference .v197-topline>span:last-child{display:flex;gap:7px;align-items:center;min-width:0}
+.ws-reference .v197-compare-pill{display:inline-flex;align-items:center;border-radius:22px;padding:4px 8px;font-weight:800;background:var(--ref-track);color:var(--ref-text);white-space:nowrap}
+.ws-reference .v197-total{font-size:clamp(19px,2vw,29px);margin-top:4px;font-weight:850;letter-spacing:-.045em;color:var(--ref-text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ws-reference .v197-chart-area{flex:1;display:flex;align-items:flex-end;min-height:130px;margin-top:9px}
+.ws-reference .v197-chart-svg{width:100%;height:auto;display:block;overflow:visible}
+.ws-reference .v197-gridline{stroke:var(--ref-divider);stroke-dasharray:5 6;opacity:.85;stroke-width:1}
+.ws-reference .v197-axis-label{fill:var(--ref-muted);font-size:10px;font-weight:560}
+.ws-reference .v197-credit-layout{display:grid;grid-template-columns:minmax(105px,.93fr) minmax(0,1.3fr);align-items:center;gap:16px;flex:1;padding:10px 4px}
+.ws-reference .v197-donut svg{width:100%;max-height:168px;aspect-ratio:1;display:block}
+.ws-reference .v197-credit-numbers{display:grid;gap:4px;align-content:center;min-width:0}
+.ws-reference .v197-credit-numbers small{font-size:10px;font-weight:760;color:var(--ref-muted);letter-spacing:.02em;margin-top:7px}
+.ws-reference .v197-credit-numbers strong{font-size:clamp(15px,1.6vw,24px);line-height:1.15;color:var(--ref-text);overflow-wrap:anywhere;letter-spacing:-.04em}
+.ws-reference .v197-more{border:0;background:transparent;color:#148550;font-weight:720;cursor:pointer;font-size:12px}
+.ws-reference .v197-cash-bars{display:flex;flex-direction:column;gap:22px;margin-top:18px}
+.ws-reference .v197-bar-caption{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--ref-text);margin-bottom:8px}
+.ws-reference .v197-bar-caption strong{font-weight:820;font-variant-numeric:tabular-nums;font-size:clamp(12px,1.1vw,16px)}
+.ws-reference .v197-bar{height:18px;background:var(--ref-track);border-radius:40px;overflow:hidden}
+.ws-reference .v197-bar>i{height:100%;display:block;border-radius:40px;min-width:0}
+.ws-reference .v197-compare-segments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;border-radius:8px;background:var(--ref-track);padding:4px}
+.ws-reference .v197-compare-segments button{min-width:0;border:0;border-radius:6px;font-weight:730;font-size:10px;padding:8px 3px;background:transparent;color:var(--ref-muted);cursor:pointer;line-height:1.3}
+.ws-reference .v197-compare-segments button.active{background:var(--ref-control,#fff);color:var(--ref-text);box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.ws-reference .v197-legend{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;font-size:9px;color:var(--ref-muted);margin-top:5px}
+.ws-reference .v197-legend span{display:flex;gap:5px;align-items:center}
+.ws-reference .v197-legend i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ws-gallery-card[data-widget-preview^="reference"] .ws-preview-body{height:155px;min-height:155px;padding:9px;overflow:hidden}
+.ws-gallery-card[data-widget-preview^="reference"] .v197-reference-body{--ref-text:#edf1f7;--ref-muted:#9da0a5;--ref-ring:#444;--ref-divider:#424242;--ref-track:#373737;--ref-control:#4b4b4b;display:flex;flex-direction:column;min-width:0;height:100%;background:#1d1d1d;border-radius:10px;padding:7px;color:#eee}
+.ws-gallery-card[data-widget-preview^="reference"] .v197-total{font-size:17px}.ws-gallery-card[data-widget-preview^="reference"] .v197-chart-area{min-height:40px;margin-top:4px}.ws-gallery-card[data-widget-preview^="reference"] .v197-cash-bars{gap:8px;margin-top:7px}.ws-gallery-card[data-widget-preview^="reference"] .v197-bar{height:9px}.ws-gallery-card[data-widget-preview^="reference"] .v197-credit-numbers strong{font-size:13px}.ws-gallery-card[data-widget-preview^="reference"] .v197-credit-numbers small{font-size:8px}.ws-gallery-card[data-widget-preview^="reference"] .v197-donut svg{max-height:93px}.ws-gallery-card[data-widget-preview^="reference"] .v197-compare-segments button{font-size:8px;padding:4px}.ws-gallery-card[data-widget-preview^="reference"] .v197-legend{font-size:7px;gap:5px}
+body.theme-dark .main.world-kpis{background:#0d0d0e!important}body.theme-dark .main.world-kpis .widgets-world{background:#0d0d0e!important}body.theme-dark .main.world-kpis .widgets-heading{background:#202020!important;border-color:#353535!important}body.theme-dark .main.world-kpis .ws-dashboard-label h3{color:#ededed!important}
+body.theme-dark .widgets-grid.ws-board .ws-tile.ws-reference.widget-chart{background:#1b1b1b!important;border:1px solid #262626!important;--ref-text:#e8e8e8;--ref-muted:#a6a6a6;--ref-ring:#444;--ref-divider:#363636;--ref-track:#3d3d3d;--ref-control:#404040}
+body.theme-dark .ws-reference .v197-reference-body{--ref-text:#e8e8e8;--ref-muted:#a6a6a6;--ref-ring:#444;--ref-divider:#363636;--ref-track:#3d3d3d}
+body.theme-dark .ws-reference .widget-card-top h3{color:#ededed!important}
+body.theme-dark .ws-reference .widget-actions button{background:#3b3b3b!important;color:#d9d9d9!important}
+body.theme-dark .ws-reference .v197-compare-segments button.active{background:#484848;color:#fff}
+body.theme-dark .ws-reference .v197-more{color:#40bf82}
+/* Ensure the other modules remain legible when dark theme is activated. */
+body.theme-dark .main.world-income .v58-exec,body.theme-dark .main.world-income .income-panel,body.theme-dark .main.world-income .v26-body{color:#edf3fc!important}
+body.theme-dark .main.world-income .v58-exec strong,body.theme-dark .main.world-income .v58-exec h2,body.theme-dark .main.world-income .v58-exec h3{color:#f7f9ff!important}
+body.theme-dark .main.world-income .v58-exec small,body.theme-dark .main.world-income .v58-exec p{color:#bac9df!important}
+body.theme-dark .main.world-budget .budget-row .mini-title{color:#ecf4ff!important}
+body.theme-dark .main.world-budget .v194-subcategory-drawer{color:#e8f2ff!important}
+.budget-row>.split .mini-title:has(+*){cursor:pointer}
+@media(min-width:1351px){.widgets-grid.ws-board:has(>.ws-reference){grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1150px){.widgets-grid.ws-board:has(>.ws-reference){grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:790px){.widgets-grid.ws-board:has(>.ws-reference){grid-template-columns:1fr}.widgets-grid.ws-board .ws-tile.ws-reference.widget-chart,.widgets-grid.ws-board .ws-tile.ws-reference.widget-chart.ws-wide{grid-column:1;min-height:315px}.ws-reference .v197-credit-layout{grid-template-columns:minmax(95px,1fr) minmax(0,1.2fr)}.ws-reference .v197-credit-numbers strong{font-size:clamp(18px,5vw,24px)}.ws-reference .v197-total{font-size:clamp(23px,7vw,30px)}}
+@media(max-width:360px){.ws-reference .v197-topline{font-size:9px}.ws-reference .v197-compare-segments button{font-size:9px}}
+</style>
+<style id="vive-v200-consolidated-black">
+
+/* V200: una única pestaña de Compromisos y vistas secundarias discretas. */
+#page .v200-commitment-tools{margin:14px 0 6px;padding:0;border:1px solid var(--line);border-radius:15px;background:var(--white);overflow:hidden}
+#page .v200-commitment-tools>summary{display:flex;align-items:center;gap:9px;padding:13px 16px;cursor:pointer;font-size:13px;font-weight:750;color:var(--ink);list-style:none}
+#page .v200-commitment-tools>summary::-webkit-details-marker{display:none}
+#page .v200-commitment-tools>summary svg{width:16px;height:16px;flex-shrink:0}
+#page .v200-commitment-tools>summary span{font-size:11px;color:var(--muted);font-weight:500;margin-left:auto}
+#page .v200-commitment-tools>summary svg:last-child{transition:transform .18s}
+#page .v200-commitment-tools[open]>summary svg:last-child{transform:rotate(90deg)}
+#page .v200-commitment-tools-options{display:flex;flex-wrap:wrap;gap:8px;padding:0 14px 13px}
+#page .v200-pay-tool{border:1px solid var(--line);padding:9px 12px;border-radius:11px;background:var(--bg);color:var(--ink);font-size:12px;font-weight:650}
+#page .v200-pay-tool.active{background:var(--blue2);color:var(--blue);border-color:var(--blue)}
+body.theme-dark #page .v200-commitment-tools{background:#18283e;border-color:#35465d}
+body.theme-dark #page .v200-pay-tool{background:#1c3049;color:#eaf2fc;border-color:#425472}
+body.theme-dark #page .v200-pay-tool.active{background:#354c70;color:#fff;border-color:#8ca8da}
+/* En ajustes, caben tres opciones sin recortar títulos en móvil. */
+.main.world-settings .theme-choice-row{grid-template-columns:repeat(3,minmax(0,1fr))!important;min-width:0}
+.main.world-settings .theme-choice{min-width:0!important;white-space:normal!important;padding:9px 6px!important;line-height:1.25;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.v200-black-mark{background:#000;color:#e6e6e6;border:1px solid #555;border-radius:50%;width:23px;height:23px;display:grid;place-items:center;font-size:7px}
+@media(max-width:470px){.main.world-settings .theme-choice-row{gap:5px!important}.main.world-settings .theme-choice{font-size:11px!important;min-height:68px!important}}
+/* BLACK: preferencia diferenciada, fondo negro real y superficies carbón.
+   Se mantienen los colores semánticos de datos y gráficos financieros. */
+html:has(body.theme-black){color-scheme:dark;background:#000!important}
+body.theme-black{color-scheme:dark!important;--bg:#000!important;--white:#121212!important;--ink:#f5f5f6!important;--muted:#afb2bc!important;--line:#333338!important;--panel:#121212!important;--card:#161616!important;--surface:#101010!important;--navy:#050505!important;--navy2:#101010!important;--blue2:#202b42!important;--shadow:0 6px 24px rgba(0,0,0,.45)!important;background:#000!important;background-image:none!important;color:#f4f4f7!important;--vive-bg-color:#000!important}
+body.theme-black::before,body.theme-black::after{background:none!important;background-image:none!important;box-shadow:none!important}
+body.theme-black #app,body.theme-black .shell,body.theme-black .main,body.theme-black main,body.theme-black .main.world-kpis,body.theme-black .widgets-world{background:#000!important;background-image:none!important;color:#f4f4f7!important}
+body.theme-black :is(.sidebar,.rail-sidebar,.vive-mobile-top,.vive-mobile-dock,.mobile-dock,.v153-rail){background:#080808!important;background-image:none!important;border-color:#292929!important}
+body.theme-black :is(.panel,.kpi,.bank-card,.bank-workspace,.v46-bank-card,.v46-bank-hero,.v26-body,.v26-internal,.inner-view-card,.settings-hero,.settings-layout .panel,.settings-layout .theme-settings,.summary-glass,.glass-surface,.world-intro,.income-world-hero,.module-switch-shell,.module-switch-tabs,.v145-pay-hero,.v145-payment-kpi,.v145-pay-quick,.v196-pay-category,.v145-pay-agenda,.v176-pay-services,.v186-service-calendar,.budget-row,.budget-analysis-panel,.budget-variance-card,.v194-subcategory-content,.v198-cat-card,.v197-chart-card,.widgets-heading,.ws-widget,.v61-profile-switch,.v199-profile-inline){background:#141414!important;background-image:none!important;border-color:#353535!important;box-shadow:0 7px 18px rgba(0,0,0,.34)!important;color:#f4f4f6!important}
+body.theme-black :is(.topbar,.top-title,.section-title h2,.world-intro h2,.v26-head h2,.settings-layout h2,.settings-layout h3,.settings-layout strong,.settings-layout label,.panel h3,.kpi-value,.money,.bank-card strong,.v145-paycenter strong,.v145-paycenter h2,.v145-paycenter h3){color:#f5f5f8!important}
+body.theme-black :is(.subtle,.top-sub,.kpi-foot,.mini-sub,.settings-layout p,.v145-paycenter small,.module-switch-title small,.v197-caption){color:#b7bac4!important}
+body.theme-black :is(.module-switch-tab,.theme-choice,.v145-pay-filters button,.v196-kind-filters button,.v199-profile-inline .v61-profile-option){background:#202020!important;border-color:#3b3b3b!important;color:#e4e4e8!important}
+body.theme-black :is(.module-switch-tab.active,.theme-choice.selected,.v145-pay-filters button.active,.v196-kind-filters button.active,.v199-profile-inline .v61-profile-option.active){background:#303646!important;border-color:#6484b4!important;color:#fff!important}
+body.theme-black :is(input,textarea,select,.date-chip,.theme-choice-row,.pill,.v200-commitment-tools,.v200-pay-tool,.v145-agenda-row){background:#191919!important;border-color:#3c3c3c!important;color:#f3f3f5!important}
+body.theme-black :is(input,textarea,select)::placeholder{color:#a2a3ad!important}
+body.theme-black .v200-commitment-tools{background:#131313!important;border-color:#353535!important}
+body.theme-black .v200-pay-tool.active{background:#303849!important;color:#fff!important}
+body.theme-black .v197-chart-card :is(svg,text,.v197-legend){color:#eee!important}
+body.theme-black a:focus-visible,body.theme-black button:focus-visible{outline:2px solid #9abaff;outline-offset:2px}
+
+/* V200: ajuste de contraste del Centro de pagos, sin cambiar los importes. */
+body.theme-dark.theme-black .main.world-payments #page .v196-pay-category{background:#181818!important;background-image:none!important;border:1px solid #3b3b3b!important;color:#f4f4f5!important}
+body.theme-dark.theme-black .main.world-payments #page .v196-pay-category :is(strong,b,.v196-pay-category-name){color:#f5f5f7!important}
+body.theme-dark.theme-black .main.world-payments #page .v196-pay-category :is(small,.v196-pay-category-foot){color:#bfc4cc!important}
+body.theme-black #page :is(.v145-section-meta,.v145-agenda-date){background:#252525!important;color:#e3e5ec!important;border-color:#424242!important}
+body.theme-black #page .v145-paycenter .v145-agenda-payment b{color:#ecf0f9!important}
+body.theme-black #page .v145-paycenter .v145-quick-buttons button:not(:first-child){background:#252525!important;background-image:none!important;border:1px solid #474747!important;color:#f0f0f3!important}
+body.theme-black #page .v145-paycenter .v145-quick-buttons button:not(:first-child) svg{color:#d8dbe4!important}
+body.theme-black #page .v145-agenda-date :is(small,b){color:#edf1f7!important}
+@media(max-width:790px){html body.theme-black{background:#000!important;background-image:none!important}}
+
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -15615,7 +15763,7 @@ function migrateData(d){d.banks=Array.isArray(d.banks)?d.banks:[];d.customCatego
   for(let b of d.budgets){b.category=normalizedCategory(b.category,'gasto');b.subcategory=b.subcategory||''}
   ensureDefaultCashAccounts(d);d.version=4;return d;
 }
-db=migrateData(db);try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}db.settings.visualDesign='claridad';db.pendingOperations=Array.isArray(db.pendingOperations)?db.pendingOperations:[];db.settings.theme=db.settings.theme==='dark'?'dark':'light';if(!db.settings.railIntroduced){db.settings.menuLayout='rail';db.settings.railIntroduced=true;try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+db=migrateData(db);try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}db.settings.visualDesign='claridad';db.pendingOperations=Array.isArray(db.pendingOperations)?db.pendingOperations:[];db.settings.theme=['light','dark','black'].includes(db.settings.theme)?db.settings.theme:'light';if(!db.settings.railIntroduced){db.settings.menuLayout='rail';db.settings.railIntroduced=true;try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
 const bank=id=>db.banks.find(b=>b.id===id);
 const bankOf=p=>p?.kind==='cash'?'Efectivo · independiente':bank(p?.bankId)?.name||p?.bank||'Sin institución asignada';
 const bankOpts=()=>[['','Selecciona una institución'],...db.banks.filter(b=>!b.archived).map(b=>[b.id,b.name])];
@@ -15914,7 +16062,7 @@ const NAV_FAMILIES=[
 const NAV_SECTIONS={
  banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['benefits','Beneficios','wallet'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
  register:{title:'Movimientos',hint:'Registra primero; analiza los ingresos y presupuestos sin menús duplicados.',tabs:[['register','Registrar ingresos y egresos','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
- payments:{title:'Compromisos',hint:'Pagos, suscripciones y préstamos entre personas, siempre separados de las entidades.',tabs:[['payments','Agenda','calendar','agenda'],['payments','Servicios','receipt','services'],['payments','Calendario de servicios','calendar','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
+ payments:{title:'Compromisos',hint:'Consulta y gestiona tus pagos, suscripciones y acuerdos personales.',tabs:[['payments','Compromisos','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
 };
 function navFamilyForPage(page){if(['overview','analytics','kpis','advanced','patrimony','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
 /* Four clear navigation worlds; contextual horizontal switches remain unchanged. */
@@ -15922,7 +16070,7 @@ const RAIL_DESTINATIONS=[
  ['overview','Resumen','home','Inicio, desempeño e indicadores'],
  ['banks','Bancos','building','Instituciones y productos bancarios'],
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
- ['payments','Compromiso','calendar','Pagos, suscripciones y préstamos personales']
+ ['payments','Compromisos','calendar','Pagos, suscripciones y préstamos personales']
 ];
 /* V153: distinctive stroke icons, scoped to the desktop navigation rail. */
 const V153_RAIL_ICONS={
@@ -15948,7 +16096,7 @@ function nav(){
    <div class="rail-main" role="navigation" aria-label="Módulos financieros">${RAIL_DESTINATIONS.map(one).join('')}</div>
    <div class="rail-bottom">
      <div class="rail-hairline"></div>
-     <button type="button" class="rail-action utility" data-act="toggleTheme" title="Cambiar a modo ${db.settings.theme==='dark'?'claro':'oscuro'}" aria-label="Cambiar a modo ${db.settings.theme==='dark'?'claro':'oscuro'}"><span class="rail-symbol">${v153RailIcon(db.settings.theme==='dark'?'sun':'moon')}</span><span class="rail-tooltip"><strong>${db.settings.theme==='dark'?'Modo claro':'Modo oscuro'}</strong><small>Apariencia de la aplicación</small></span></button>
+     <button type="button" class="rail-action utility" data-act="toggleTheme" title="Cambiar a modo ${['dark','black'].includes(db.settings.theme)?'claro':'oscuro'}" aria-label="Cambiar a modo ${['dark','black'].includes(db.settings.theme)?'claro':'oscuro'}"><span class="rail-symbol">${v153RailIcon(['dark','black'].includes(db.settings.theme)?'sun':'moon')}</span><span class="rail-tooltip"><strong>${['dark','black'].includes(db.settings.theme)?'Modo claro':'Modo oscuro'}</strong><small>Apariencia de la aplicación</small></span></button>
 
      <button type="button" class="rail-action utility ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" title="Configuración" aria-label="Configuración"><span class="rail-symbol">${v153RailIcon('settings')}</span><span class="rail-tooltip"><strong>Configuración</strong><small>Tasa, cargos, tema y menú</small></span></button>
    </div>
@@ -16638,6 +16786,10 @@ function payments(){
      <div class="v145-payment-section-head"><div><span class="v145-eyebrow">RESUMEN POR TIPO</span><h3>Compromisos por categoría</h3><p>Selecciona una tarjeta para filtrar la agenda, sin repetir los vencimientos.</p></div><span class="v145-section-meta">${(current?all:due).length} vencimientos únicos</span></div>
      <div class="grid columns equal section v81-payments-grid v145-pay-cardgrid">${blocks}</div>
      
+     <details class="v200-commitment-tools"><summary>${icon('calendar')} Más vistas de compromisos <span>Servicios y calendario</span>${icon('arrow')}</summary>
+      <div class="v200-commitment-tools-options" role="group" aria-label="Vistas adicionales de pagos">
+       ${[['agenda','Agenda'],['services','Servicios'],['calendar','Calendario de servicios']].map(([view,label])=>`<button type="button" class="v200-pay-tool ${(!ui.v176PayView&&view==='agenda')||ui.v176PayView===view?'active':''}" data-v176-pay-view="${view}" aria-pressed="${(!ui.v176PayView&&view==='agenda')||ui.v176PayView===view}">${label}</button>`).join('')}
+      </div></details>
      <section class="v176-pay-services" ${ui.v176PayView==='services'?'':'hidden'}><div class="v176-pay-service-head"><div><h3>Servicios listos para pagar</h3><p>Vencimientos reales de servicios y suscripciones.</p></div><button type="button" class="btn" data-act="guidedFlow" data-mode="service">Pagar un servicio ${icon('arrow')}</button></div>${all.filter(x=>x.kind==='recurring').map(x=>`<div class="v176-service-row"><span><strong>${sanitize(x.name)}</strong><small>${prettyDate(x.date)} · ${sanitize(x.currency)}</small></span><b>${money(x.amount,x.currency,2)}</b><button type="button" class="btn sm soft" data-act="${x.action}" data-id="${sanitize(x.ref)}">Pagar</button></div>`).join('')||'<p class="v176-muted">No hay servicios pendientes registrados en este período.</p>'}</section>
      ${v186ServiceCalendar(period,all)}
      <div class="v145-pay-lower" ${(!ui.v176PayView||ui.v176PayView==='agenda')?'':'hidden'}>
@@ -17250,7 +17402,7 @@ function annual(embedded=false){
  const yearIncome=numeric(monthly.map(x=>x.income)),yearExpense=numeric(monthly.map(x=>x.expense));
  return `<div class="matrix-report"><div class="section-title matrix-report-head"><div><span class="summary-tag">MATRIZ DE RESULTADOS / ${year}</span><h2>Ingresos y gastos, mes a mes</h2><p>Valores en <strong>RD$</strong> · Selecciona una categoría para consultar sus subcategorías</p></div><div class="hstack"><button class="btn sm ghost" data-act="prevYear" aria-label="Año anterior">←</button><span class="year-control">${year}</span><button class="btn sm ghost" data-act="nextYear" aria-label="Año siguiente">→</button><button class="btn sm soft" data-act="print">Imprimir / PDF</button></div></div>
  ${embedded?'':`<div class="grid kpis matrix-top-kpis">${shellKpi('Ingresos',money(yearIncome),'Acumulado anual','up','positive')}${shellKpi('Egresos',money(yearExpense),'Acumulado anual','down')}${shellKpi('Neto',money(yearIncome-yearExpense),'Ingreso menos gasto','wallet',yearIncome>=yearExpense?'positive':'negative')}${shellKpi('Último saldo',money(lastYear?monthly[lastYear-1].ending:0),'Saldo al cierre','building')}</div>`}
- <section class="panel matrix-report-panel"><div class="matrix-table-scroll" tabindex="0" aria-label="Matriz anual, desplazamiento horizontal solo cuando sea necesario"><table class="annual-table matrix-detail-table" aria-label="Desglose de ingresos y gastos en RD$"><colgroup><col class="matrix-name-col"/>${Array.from({length:12},()=>'<col/>').join('')}<col class="matrix-tail-col"/><col class="matrix-tail-col"/></colgroup><thead><tr><th>Concepto</th>${MON.map(m=>`<th>${m}</th>`).join('')}<th>Total</th><th>Prom.</th></tr></thead><tbody>
+ <section class="panel matrix-report-panel"><div class="matrix-table-scroll v198-auto-matrix-scroll" tabindex="0" aria-label="Matriz anual, desplázate horizontalmente para consultar los meses"><table class="annual-table matrix-detail-table" aria-label="Desglose de ingresos y gastos en RD$"><colgroup><col class="matrix-name-col"/>${Array.from({length:12},()=>'<col/>').join('')}<col class="matrix-tail-col"/><col class="matrix-tail-col"/></colgroup><thead><tr><th>Concepto</th>${MON.map(m=>`<th>${m}</th>`).join('')}<th>Total</th><th>Prom.</th></tr></thead><tbody>
  <tr class="matrix-group"><td colspan="15">INGRESOS <span>${incomes.length} categorías</span></td></tr>${categoryRows('income',incomes)}${totalRow('TOTAL INGRESOS','income')}
  <tr class="matrix-group"><td colspan="15">EGRESOS <span>${expenses.length} categorías</span></td></tr>${categoryRows('expense',expenses)}${totalRow('TOTAL EGRESOS','expense')}${totalRow('NETO','net')}${totalRow('SALDO FINAL','ending',true)}
  </tbody></table></div><p class="matrix-footnote">Las cifras no repiten el símbolo de pesos. Toca cualquier categoría con una flecha para abrir solo su detalle. Los meses sin movimiento muestran «—»; el promedio de ingresos y gastos divide entre los 12 meses.</p></section></div>`;
@@ -17349,10 +17501,10 @@ function v30RecoveryContent(){
 }
 
 function settings(){let s=db.settings;return `<div class="settings-layout">
-<section class="settings-hero"><div class="summary-tag">vive el hoy / PREFERENCIAS</div><h2>vive el hoy, a tu manera.</h2><p>Una navegación clara, dos temas y todas tus reglas financieras en un solo lugar. Tus datos se sincronizan con tu cuenta privada de Supabase.</p></section><nav class="v176-settings-jump" aria-label="Secciones de configuración"><a href="#v176-setting-00">Cuenta</a><a href="#v176-setting-01">Apariencia</a><a href="#v176-setting-02">Color</a><a href="#v176-setting-03">Fondo</a><a href="#v176-setting-04">Finanzas</a><a href="#v176-setting-05">Revisión</a><a href="#v176-setting-06">Privacidad</a></nav>
+<section class="settings-hero"><div class="summary-tag">vive el hoy / PREFERENCIAS</div><h2>vive el hoy, a tu manera.</h2><p>Una navegación clara, tres temas y todas tus reglas financieras en un solo lugar. Tus datos se sincronizan con tu cuenta privada de Supabase.</p></section><nav class="v176-settings-jump" aria-label="Secciones de configuración"><a href="#v176-setting-00">Cuenta</a><a href="#v176-setting-01">Apariencia</a><a href="#v176-setting-02">Color</a><a href="#v176-setting-03">Fondo</a><a href="#v176-setting-04">Finanzas</a><a href="#v176-setting-05">Revisión</a><a href="#v176-setting-06">Privacidad</a></nav>
 <div class="settings-group-title" id="v176-setting-00"><div><span class="summary-tag">00 / CONEXIÓN PRIVADA</span><h3>Cuenta y sincronización</h3></div></div>${f34CloudPanel()}
 <div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
-<div class="theme-settings panel"><div><strong>Aspecto de vive el hoy</strong><p>Elige tema claro u oscuro. Tus colores de acento y fondo se configuran por separado, sin modificar los datos.</p></div><div class="theme-choice-row"><button class="theme-choice ${s.theme!=='dark'?'selected':''}" data-act="setTheme" data-id="light" aria-pressed="${s.theme!=='dark'}"><span class="theme-sun">☀</span> Claro</button><button class="theme-choice ${s.theme==='dark'?'selected':''}" data-act="setTheme" data-id="dark" aria-pressed="${s.theme==='dark'}"><span class="theme-moon">☾</span> Oscuro</button></div></div>
+<div class="theme-settings panel"><div><strong>Aspecto de vive el hoy</strong><p>Elige Claro, Oscuro o Negro / Black. El negro usa un fondo negro auténtico y tarjetas carbón para mejorar la lectura; tus registros no cambian.</p></div><div class="theme-choice-row" role="group" aria-label="Elegir apariencia"><button class="theme-choice ${s.theme==='light'?'selected':''}" data-act="setTheme" data-id="light" aria-pressed="${s.theme==='light'}"><span class="theme-sun">☀</span> Claro</button><button class="theme-choice ${s.theme==='dark'?'selected':''}" data-act="setTheme" data-id="dark" aria-pressed="${s.theme==='dark'}"><span class="theme-moon">☾</span> Oscuro</button><button class="theme-choice v200-black-choice ${s.theme==='black'?'selected':''}" data-act="setTheme" data-id="black" aria-pressed="${s.theme==='black'}"><span class="v200-black-mark">●</span> Negro / Black</button></div></div>
 
 <div class="settings-group-title" id="v176-setting-02"><div><span class="summary-tag">02 / COLOR DE ACENTO</span><h3>Personaliza el color de tarjetas y botones</h3></div></div>
 <div class="panel vive-palettes-panel v15-color-settings"><div class="vive-palette-intro"><strong>Tres colores estrella</strong><p>El color predeterminado se mantiene intacto. El color de acento y el fondo se configuran por separado, sin alterar cifras ni movimientos.</p></div>
@@ -17877,6 +18029,10 @@ function cards(){
 
 const WIDGET_PRESET=['tomorrowCost','liquidity','cashDOP','cashUSD','totalDebt','netPosition','cardLimit','utilization','incomeVsExpense'];
 const WIDGET_METRICS=[
+ ['referenceBalance','Tendencia del balance','chart','reference'],
+ ['referenceCredit','Utilización de límites de crédito','chart','reference'],
+ ['referenceCashflow','Flujo de caja','chart','reference'],
+ ['referenceComparison','Comparación entre períodos','chart','reference'],
  ['executiveSnapshot','Pulso financiero','analytics','executive'],
  ['incomeProjection','Proyección de ingresos','up','projection'],
  ['incomeToReceive','Ingresos pendientes de recibir','calendar','projection'],
@@ -17921,7 +18077,7 @@ const widgetCatalog=()=>[...WIDGET_METRICS,...db.accounts.map(a=>['account:'+a.i
 function widgetsState(){
  const saved=db.settings.widgetsBoard;
  const valid=new Set(widgetCatalog().map(x=>x[0]));
- const list=Array.isArray(saved)?saved.filter(id=>valid.has(id)):[];
+ const list=Array.isArray(saved)?saved.filter(id=>valid.has(id)):['referenceBalance','referenceCredit','referenceCashflow','referenceComparison'];
  // V186: tablero vacío por defecto. Conserva los widgets elegidos explícitamente.
  return list;
 }
@@ -18148,7 +18304,7 @@ function widgetAdvancedGraph(id){
  return '';
 }
 
-function widgetGraph(id){if(VIVE_CHART_KEYS.has(id)&&!(['incomeVsExpense','creditVisual','fundsVisual','subscriptionVisual'].includes(id)))return widgetAdvancedGraph(id);const [year,month]=ui.month.split('-').map(Number);
+function widgetGraph(id){if(V197_REFERENCE_CHART_IDS.includes(id))return v197ReferenceChart(id);if(VIVE_CHART_KEYS.has(id)&&!(['incomeVsExpense','creditVisual','fundsVisual','subscriptionVisual'].includes(id)))return widgetAdvancedGraph(id);const [year,month]=ui.month.split('-').map(Number);
  if(id==='incomeVsExpense'){let data=Array.from({length:6},(_,i)=>{let d=dateObj(ui.month+'-01');d.setMonth(d.getMonth()-5+i);return {m:d.toLocaleDateString('es-DO',{month:'short'}),v:monthlyTotals(d.getFullYear(),d.getMonth()+1)};});let max=Math.max(1,...data.flatMap(x=>[x.v.income,x.v.expense]));return `<div class="widget-bars">${data.map(x=>`<div class="widget-bar-month" tabindex="0" data-chart-tip="${sanitize(x.m)}|Ingresos: ${money(x.v.income)}|Egresos: ${money(x.v.expense)}"><div class="widget-bar-duo"><i style="height:${Math.max(3,x.v.income/max*100)}%"></i><b style="height:${Math.max(3,x.v.expense/max*100)}%"></b></div><small>${sanitize(x.m)}</small></div>`).join('')}</div><div class="widget-hint">Azul: ingresos · Gris: egresos</div>`;}
  if(id==='creditVisual'){let debt=totalCardDebt(),limit=db.cards.reduce((s,c)=>s+num(c.limitDOP)+fx(c.limitUSD,'USD'),0),pct=limit?100*debt/limit:0;return `<div class="widget-gauge-label"><strong>${pct.toFixed(1)}%</strong><span>${money(debt)} utilizado<br/>sobre ${money(limit)} de límite</span></div><div class="widget-gauge"><span style="width:${Math.min(100,pct)}%"></span></div><p class="widget-hint">El límite no incluye sobregiros.</p>`;}
  if(id==='fundsVisual'){let dop=db.accounts.filter(a=>a.currency==='DOP').reduce((s,a)=>s+getAccountBalance(a),0),usd=db.accounts.filter(a=>a.currency==='USD').reduce((s,a)=>s+fx(getAccountBalance(a),'USD'),0),total=dop+usd,portion=total>0?100*dop/total:0;return `<div class="widget-gauge-label"><strong>${money(total)}</strong><span>Fondos consolidados</span></div><div class="widget-gauge split"><span style="width:${Math.max(0,Math.min(100,portion))}%"></span></div><div class="widget-hint">RD$: ${money(dop)} · US$ equivalente: ${money(usd)}</div>`;}
@@ -18169,7 +18325,85 @@ function widgetProductsOverview(){
  return `<section class="widget-inventory"><div class="widget-inventory-header"><div><span class="summary-tag">DESGLOSE POR PRODUCTO</span><h2>Cada cuenta. Cada deuda. Cada inversión.</h2><p>El tablero superior es configurable; aquí tienes los productos reales registrados, uno a uno, separados por moneda.</p></div><span>${db.accounts.length+db.cards.length+db.loans.length+db.certificates.length+db.personalLoans.length} productos / relaciones</span></div><div class="widget-inventory-grid">${boxes}</div></section>`;
 }
 
-const VIVE_CHART_KEYS=new Set(["incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
+
+/* V197 · Gráficos precisos de la referencia: origen 100 % datos financieros registrados. */
+const V197_REFERENCE_CHART_IDS=['referenceBalance','referenceCredit','referenceCashflow','referenceComparison'];
+function v197MonthlyDaily(period){
+ const [yr,mo]=v99Period(period).split('-').map(Number),days=new Date(yr,mo,0).getDate();
+ const inc=Array(days).fill(0),exp=Array(days).fill(0);
+ const current=today().slice(0,7),recordedLast=Math.max(0,...(db.transactions||[]).filter(t=>String(t.date||'').slice(0,7)===period).map(t=>+String(t.date).slice(8,10)||0)),last=period===current?Math.min(days,Math.max(+today().slice(8,10),recordedLast)):period<current?days:Math.min(days,recordedLast);
+ let count=0;
+ for(const t of db.transactions||[]){
+  if(String(t.date||'').slice(0,7)!==period)continue;
+  const day=+String(t.date||'').slice(8,10),k=day-1;if(k<0||k>=days)continue;
+  const rate=c=>c==='USD'?num(t.fxRateSnapshot||db.settings.fx)||1:1;
+  const val=(a,c=t.currency||'DOP')=>num(a)*rate(c);
+  const amount=val(t.amount),payCurrency=t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP';
+  let i=0,e=0;
+  if(['income','card_reward','bank_reward'].includes(t.type))i+=amount;
+  if(t.type==='expense'||t.type==='card_charge')e+=amount;
+  if(t.type==='card_refund')e-=amount;
+  if(['expense','card_payment'].includes(t.type))e+=val(num(t.paymentTax)+num(t.paymentFee),payCurrency);
+  if(t.type==='loan_payment')e+=val(num(t.interest)+num(t.fee)+num(t.insurance))+val(num(t.paymentTax)+num(t.paymentFee),payCurrency);
+  if(t.type==='personal_settlement'){
+   const relation=personalLoan(t.personalLoanId),int=val(t.interest);
+   if(relation?.direction==='lent')i+=int;
+   else if(relation?.direction==='borrowed')e+=int;
+  }
+  if(t.type==='transfer')e+=val(t.transferFee,account(t.accountId)?.currency||t.currency);
+  inc[k]+=i;exp[k]+=e;count++;
+ }
+ const cum=arr=>{let a=0;return arr.map(v=>(a+=v));};
+ const net=inc.map((v,i)=>v-exp[i]);
+ return {days,inc,exp,net,income:cum(inc),expense:cum(exp),balance:cum(net),last,count,year:yr,month:mo};
+}
+function v197SvgGraph(series,opts={}){
+ const W=520,H=166,L=43,R=12,T=12,B=29,plotW=W-L-R,plotH=H-T-B;
+ const values=series.flatMap(x=>x.values.filter(v=>v!==null&&Number.isFinite(v)));
+ const rawMin=Math.min(0,...values),rawMax=Math.max(0,...values),span=rawMax-rawMin||1;
+ const low=rawMin-span*.11,high=rawMax+span*.11;
+ const fmt=x=>{const a=Math.abs(x),sg=x<0?'−':'';return sg+(a>=1e6?(a/1e6).toFixed(1)+'M':a>=1e3?(a/1000).toFixed(0)+'K':Math.round(a).toString())};
+ const len=Math.max(1,...series.map(s=>s.values.length)),x=i=>L+i*plotW/Math.max(1,len-1),y=v=>T+plotH*(high-v)/(high-low);
+ const guides=Array.from({length:5},(_,j)=>{const value=high-(high-low)*j/4,py=y(value);return `<line x1="${L}" x2="${W-R}" y1="${py}" y2="${py}" class="v197-gridline"/><text x="${L-5}" y="${py+3}" text-anchor="end" class="v197-axis-label">${fmt(value)}</text>`}).join('');
+ const tracks=series.map(set=>{
+  let path='',started=false;
+  set.values.forEach((value,i)=>{if(value===null||!Number.isFinite(value)){started=false;return};path+=`${started?' L':'M'}${x(i).toFixed(1)} ${y(value).toFixed(1)}`;started=true});
+  const dots=set.values.map((v,i)=>v!==null&&Number.isFinite(v)&& (i%4===0||i===set.values.length-1)?`<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.1" fill="${set.color}"><title>Día ${i+1}: ${money(v)}</title></circle>`:'').join('');
+  return `<path d="${path}" fill="none" stroke="${set.color}" stroke-width="${set.width||2.3}" stroke-linecap="round" stroke-linejoin="round"/>${dots}`;
+ }).join('');
+ const marks=[1,4,7,10,13,16,19,22,25,28,31].filter(d=>d<=len).map(d=>`<text x="${x(d-1).toFixed(1)}" y="${H-5}" text-anchor="middle" class="v197-axis-label">${d} ${opts.monthLabel||''}</text>`).join('');
+ return `<svg class="v197-chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${sanitize(opts.label||'Evolución de valores financieros')}" preserveAspectRatio="xMidYMid meet">${guides}${tracks}${marks}</svg>`;
+}
+function v197Pct(value,base){return base>0?`${Math.round(value/base*100)}%`:'Sin base'}
+function v197Change(a,b){if(!Number.isFinite(b)||Math.abs(b)<.005)return 'Sin base';const p=100*(a-b)/Math.abs(b);return `${p>=0?'+':''}${p.toFixed(1)}%`}
+function v197ReferenceChart(id){
+ const period=v99Period(ui.month),[y,m]=period.split('-').map(Number),n=monthlyTotals(y,m),prevP=dateStr(new Date(y,m-2,1)).slice(0,7),prevParts=prevP.split('-').map(Number),prev=monthlyTotals(...prevParts),data=v197MonthlyDaily(period);
+ const sinceDay=arr=>arr.map((v,i)=>i<data.last?v:null),chart=(rows,label,month='')=>v197SvgGraph(rows,{label,monthLabel:month});
+ if(id==='referenceBalance'){
+  const series=sinceDay(data.balance),total=n.net;
+  return `<div class="v197-reference-body"><div class="v197-topline"><span>Este mes</span><span>vs. período anterior <b class="v197-compare-pill">${v197Change(total,prev.net)}</b></span></div><strong class="v197-total">${money(total)}</strong><div class="v197-chart-area">${chart([{values:series,color:'#38a6f4'}],'Tendencia del balance del mes')}</div></div>`;
+ }
+ if(id==='referenceCredit'){
+  const debt=Math.max(0,totalCardDebt()),limit=db.cards.reduce((a,c)=>a+num(c.limitDOP)+fx(num(c.limitUSD),'USD'),0),pct=limit>0?Math.max(0,Math.min(100,debt/limit*100)):0;
+  const r=49,circ=2*Math.PI*r,stroke=pct>=85?'#ff966e':pct>=70?'#f6c45a':'#37c76d';
+  return `<div class="v197-reference-body"><div class="v197-topline"><span>Este mes</span><button data-act="navigate" data-id="cards" class="v197-more" type="button">Mostrar más</button></div><div class="v197-credit-layout"><div class="v197-donut"><svg viewBox="0 0 120 120" role="img" aria-label="${limit?v197Pct(debt,limit):'Sin límite de crédito'} utilizado"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--ref-ring)" stroke-width="15"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="${stroke}" stroke-width="15" stroke-linecap="round" stroke-dasharray="${(circ*pct/100).toFixed(2)} ${circ.toFixed(2)}" transform="rotate(-90 60 60)"/><text x="60" y="66" fill="${stroke}" font-size="20" text-anchor="middle" font-weight="750">${limit?pct.toFixed(0)+'%':'—'}</text></svg></div><div class="v197-credit-numbers"><small>CRÉDITO UTILIZADO</small><strong>${money(debt)}</strong><small>LÍMITE DE CRÉDITO TOTAL</small><strong>${limit?money(limit):'Sin tarjetas'}</strong></div></div></div>`;
+ }
+ if(id==='referenceCashflow'){
+  const inc=Math.max(0,num(n.cashIn)),out=Math.max(0,num(n.cashOut)),max=Math.max(inc,out,1),cash=inc-out;
+  return `<div class="v197-reference-body"><div class="v197-topline"><span>Este mes</span><span>vs. período anterior <b class="v197-compare-pill">${v197Change(cash,num(prev.cashIn)-num(prev.cashOut))}</b></span></div><strong class="v197-total">${money(cash)}</strong><div class="v197-cash-bars"><div><div class="v197-bar-caption"><span>Entradas</span><strong>${money(inc)}</strong></div><div class="v197-bar"><i style="width:${(inc/max*100).toFixed(1)}%;background:#389ae6"></i></div></div><div><div class="v197-bar-caption"><span>Salidas</span><strong>${money(out)}</strong></div><div class="v197-bar"><i style="width:${(out/max*100).toFixed(1)}%;background:#e9965a"></i></div></div></div></div>`;
+ }
+ if(id==='referenceComparison'){
+  const mode=['net','expense','income'].includes(ui.v197CompareMode)?ui.v197CompareMode:'net',
+  priorYear=v197MonthlyDaily(`${y-1}-${String(m).padStart(2,'0')}`),priorMonth=v197MonthlyDaily(prevP),k=mode==='net'?'balance':mode,
+  current=sinceDay(data[k]),lastYear=priorYear.count?priorYear[k]:[],lastMonth=priorMonth.count?priorMonth[k]:[];
+  const compareSeries=[{values:current,color:'#289cf2'},{values:lastYear.length?lastYear:Array(data.days).fill(null),color:'#fe841f'},{values:lastMonth.length?lastMonth:Array(data.days).fill(null),color:'#ef4f8d'}];
+  const names={net:'Flujo neto',expense:'Egresos',income:'Ingresos'},legend=[['#289cf2','Período actual'],['#fe841f','Mismo período del año anterior'],['#ef4f8d','Período anterior']];
+  return `<div class="v197-reference-body v197-reference-comparison"><div class="v197-compare-segments" role="group" aria-label="Métrica para comparar">${Object.entries(names).map(([key,val])=>`<button type="button" data-act="v197CompareMode" data-id="${key}" class="${mode===key?'active':''}" aria-pressed="${mode===key}">${val}</button>`).join('')}</div><div class="v197-chart-area">${chart(compareSeries,'Comparación de '+names[mode].toLowerCase()+' entre tres períodos')}</div><div class="v197-legend">${legend.map(([color,label])=>`<span><i style="background:${color}"></i>${label}</span>`).join('')}</div></div>`;
+ }
+ return '';
+}
+
+const VIVE_CHART_KEYS=new Set(['referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
 function widgetPreview(id,definition){
  if(id==='tomorrowCost'){const b=v119Baseline(30);return `<div class="ws-preview-body ws-preview-number"><span class="ws-preview-orb">${icon('calendar')}</span><strong>${money(Math.max(0,b.minimum))}</strong><small>${b.critical?'Día crítico: '+prettyDate(b.critical):'Sin faltantes previstos en 30 días'}</small></div>`;}
  const isChart=VIVE_CHART_KEYS.has(id);
@@ -18190,17 +18424,17 @@ function v133TomorrowWidgetBody(){
 function kpiStudio(){
  const selected=widgetsState(),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
  const map=Object.fromEntries(all.map(x=>[x[0],x])),chartKeys=VIVE_CHART_KEYS;
- const libraryGroups=[['all','Todos'],['executive','Ejecutivos'],['projection','Proyecciones'],['decisions','Decisiones'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
+ const libraryGroups=[['all','Todos'],['reference','Diseños de referencia'],['executive','Ejecutivos'],['projection','Proyecciones'],['decisions','Decisiones'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
  const group=ui.widgetCatalogFilter||'all';
  const visible=all.filter(x=>group==='all'||x[3]===group);
  const tile=(id,i)=>{
-   const def=map[id];if(!def)return '';const isChart=chartKeys.has(id),m=widgetPicture(id),size=widgetSize(id);
-   const route=m?.route||({incomeVsExpense:'income',creditVisual:'cards',fundsVisual:'accounts',subscriptionVisual:'recurring',incomeYoYTrend:'advanced',expenseYoYTrend:'advanced',netYoYTrend:'advanced',incomeYtdYoY:'advanced',expenseYtdYoY:'advanced',netYtdYoY:'advanced',netTrendChart:'income',liquidityTrendChart:'accounts',incomeMixChart:'income',expenseMixChart:'advanced',subscriptionsParetoChart:'recurring',creditByCardChart:'cards',loanBalancesChart:'loans',assetMixChart:'patrimony'}[id])||'kpis';
-   return `<article class="widget-card ws-tile ${isChart?'widget-chart':''} ${size===2?'ws-wide':''}" data-widget="${sanitize(id)}" draggable="${editing?'true':'false'}" tabindex="0" aria-label="Widget ${sanitize(def[1])}">
+   const def=map[id];if(!def)return '';const isChart=chartKeys.has(id),isReference=V197_REFERENCE_CHART_IDS.includes(id),m=widgetPicture(id),size=widgetSize(id);
+   const route=m?.route||({referenceBalance:'advanced',referenceCredit:'cards',referenceCashflow:'income',referenceComparison:'advanced',incomeVsExpense:'income',creditVisual:'cards',fundsVisual:'accounts',subscriptionVisual:'recurring',incomeYoYTrend:'advanced',expenseYoYTrend:'advanced',netYoYTrend:'advanced',incomeYtdYoY:'advanced',expenseYtdYoY:'advanced',netYtdYoY:'advanced',netTrendChart:'income',liquidityTrendChart:'accounts',incomeMixChart:'income',expenseMixChart:'advanced',subscriptionsParetoChart:'recurring',creditByCardChart:'cards',loanBalancesChart:'loans',assetMixChart:'patrimony'}[id])||'kpis';
+   return `<article class="widget-card ws-tile ${isReference?'ws-reference ':''}${isChart?'widget-chart':''} ${size===2?'ws-wide':''}" data-widget="${sanitize(id)}" draggable="${editing?'true':'false'}" tabindex="0" aria-label="Widget ${sanitize(def[1])}">
     <div class="widget-card-top"><div><span class="widget-kicker">${isChart?'GRÁFICO INTERACTIVO':'INDICADOR FINANCIERO'}</span><h3>${sanitize(def[1])}</h3></div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size===2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size===2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
     ${id==='tomorrowCost'?v133TomorrowWidgetBody():['executiveSnapshot','incomeProjection'].includes(id)?v195Visual(id):isChart?widgetGraph(id):`<div class="widget-number ${m?.tone&&m.tone!=='neutral'?'v195-'+m.tone:''}">${m?.value||'—'}</div><p class="widget-foot">${sanitize(m?.foot||'')}</p>${v12WidgetHistory(id)}${['dailyIncomeAverage','incomeVsLastMonth','regularIncome','netProjection','savingRate','liquidityCoverage','payments30d'].includes(id)?v195Sparkline(['netProjection','savingRate'].includes(id)?'net':'income'):''}`}
     ${['burden','affordability','utilization'].includes(id)?`<button type="button" class="v85-widget-open" data-v85-action="capacity">Ver cálculo ${icon('arrow')}</button>`:''}
-    ${id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Simular una decisión ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
+    ${isReference?'':id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Simular una decisión ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
    </article>`;
  };
  const catalogueTile=x=>{
@@ -18214,10 +18448,10 @@ function kpiStudio(){
   const part=visible.filter(x=>x[3]===key);if(!part.length)return '';
   return `<section class="ws-catalog-section"><div class="ws-catalog-heading"><strong>${label}</strong><small>${part.length} diseños disponibles</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
  }).join('');
- return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores, a mi manera.</h2><p>Comienza con un lienzo vacío. Añade solamente los gráficos, cifras y productos que tú elijas; ordénalos y ajusta sus tamaños.</p></div><div class="widgets-head-buttons">${selected.length?'<button class="btn sm soft" data-act="widgetPreset">Vaciar tablero</button>':''}<button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Añadir indicadores'}</button></div></div>
+ return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores, a mi manera.</h2><p>Un tablero a tu medida. Puedes utilizar los cuatro gráficos de referencia y añadir o retirar cualquier indicador.</p></div><div class="widgets-head-buttons"><button class="btn sm soft" data-act="widgetReferencePreset" type="button">Diseño de 4 gráficos</button>${selected.length?'<button class="btn sm soft" data-act="widgetPreset">Vaciar tablero</button>':''}<button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Añadir indicadores'}</button></div></div>
  ${editing?`<section class="ws-library" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">BIBLIOTECA DE DISEÑOS</span><h3>Elige viendo cómo queda.</h3><p>Explora las vistas previas, toca Añadir y personaliza el tamaño desde tu tablero.</p></div><span>${selected.length} seleccionados</span></header><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><p class="ws-gallery-help">Miniaturas con tus cifras del período. Los gráficos se actualizan con los registros confirmados.</p></section>`:''}
  <div class="ws-dashboard-label"><div><h3>Tablero activo</h3><p>Usa las flechas para ordenar · ⤢ para ampliar o reducir. También puedes arrastrar los widgets con el catálogo abierto.</p></div><strong>${selected.length} widgets</strong></div>
- <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Pulsa «Añadir indicadores» y elige los gráficos o cifras que quieras mostrar.</div>'}</div>
+ <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Diseño de 4 gráficos» o «Añadir indicadores» para personalizarlo.</div>'}</div>
  <div class="widgets-disclaimer">Las operaciones pendientes no afectan los saldos. Los importes en RD$ equivalentes de fondos US$ usan la tasa manual configurada. Los préstamos entre personas no se asignan a un banco.</div></div>`;
 }
 
@@ -18431,7 +18665,7 @@ function annualSplitTables(){
    return row+(expanded?subs.map(sub=>`<tr class="v12-split-sub"><td class="v12-sticky">↳ ${sanitize(sub)}</td>${cells(data.map(m=>m[subKey]?.[cat+'||'+sub]||0))}</tr>`).join(''):'');
   }).join('');
   const label=kind==='income'?'Ingresos':'Egresos',iconName=kind==='income'?'up':'down',vals=data.map(m=>m[kind]);
-  return `<section class="panel v12-split-table v16-clean-table v16-${kind}"><div class="v12-split-head"><div><span class="summary-tag">${label.toUpperCase()} · ${y}</span><h3><span class="v19-table-trend v27-trend-${kind}" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round">${kind==='income'?'<path d="m3 17 7-7 4 3 7-9"/><path d="M16 4h5v5"/>':'<path d="m3 6 7 7 4-3 7 9"/><path d="M16 19h5v-5"/>'}</svg></span>${label} por categoría <span class="v20-table-currency" title="Valores en pesos dominicanos" aria-label="Pesos dominicanos">RD$</span></h3><p>Pulsa una categoría para ver sus subcategorías · Valores expresados en RD$</p></div><strong class="v27-category-total v27-${kind}-total">${money(vals.reduce((a,b)=>a+b,0))}</strong></div><div class="v12-table-scroller" tabindex="0"><table class="v12-year-table"><thead><tr><th class="v12-sticky">Categoría</th>${hdr.map(m=>`<th class="num">${m}</th>`).join('')}<th class="num">TOTAL</th><th class="num">PROM.</th></tr></thead><tbody>${rows||`<tr><td colspan="15" class="v14-empty-table">Sin ${label.toLowerCase()} registrados en ${y}.</td></tr>`}<tr class="v12-split-footer"><td class="v12-sticky">TOTAL ${label.toUpperCase()}</td>${cells(vals)}</tr></tbody></table></div></section>`;
+  return `<section class="panel v12-split-table v16-clean-table v16-${kind}"><div class="v12-split-head"><div><span class="summary-tag">${label.toUpperCase()} · ${y}</span><h3><span class="v19-table-trend v27-trend-${kind}" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round">${kind==='income'?'<path d="m3 17 7-7 4 3 7-9"/><path d="M16 4h5v5"/>':'<path d="m3 6 7 7 4-3 7 9"/><path d="M16 19h5v-5"/>'}</svg></span>${label} por categoría <span class="v20-table-currency" title="Valores en pesos dominicanos" aria-label="Pesos dominicanos">RD$</span></h3><p>Pulsa una categoría para ver sus subcategorías · Valores expresados en RD$</p></div><strong class="v27-category-total v27-${kind}-total">${money(vals.reduce((a,b)=>a+b,0))}</strong></div><div class="v12-table-scroller v198-auto-category-scroll" tabindex="0" role="region" aria-label="Tabla anual de ${label.toLowerCase()} por categoría; desliza horizontalmente para consultar los meses"><table class="v12-year-table v198-category-year-table"><colgroup><col class="v198-category-col"/>${hdr.map(()=>'<col class="v198-month-col"/>').join('')}<col class="v198-total-col"/><col class="v198-average-col"/></colgroup><thead><tr><th class="v12-sticky">Categoría</th>${hdr.map(m=>`<th class="num">${m}</th>`).join('')}<th class="num">TOTAL</th><th class="num">PROM.</th></tr></thead><tbody>${rows||`<tr><td colspan="15" class="v14-empty-table">Sin ${label.toLowerCase()} registrados en ${y}.</td></tr>`}<tr class="v12-split-footer"><td class="v12-sticky">TOTAL ${label.toUpperCase()}</td>${cells(vals)}</tr></tbody></table></div></section>`;
  };
  return `<div class="v12-year-sections v14-year-sections">${table('income')}${table('expense')}</div>`;
 }
@@ -20098,15 +20332,15 @@ let list=db[collection],p=list.find(x=>x.id===id);if(!p)return;
 if(kind==='account'&&p.kind==='cash'){toast('Efectivo es una cuenta del sistema permanente: no se elimina ni se archiva. Solo puedes configurar sus saldos iniciales.');return;}
 let label=p.name||'Este producto';
 if(cmd==='toggle'){
-  if(kind==='loan'){
-   if(!p.archived && !confirm(`¿Cancelar «${label}»? Se archivará sin eliminar cuotas, intereses ni movimientos. Podrás reactivarlo después.`))return;
+  if(kind==='loan'||kind==='card'){
+   if(!p.archived && !confirm(`¿Cancelar «${label}»? Se archivará sin eliminar movimientos, pagos ni historial. Podrás reactivarlo después.`))return;
    p.archived=!p.archived;
    p.cancelledAt=p.archived?new Date().toISOString():null;
-   v99Invalidate();persist();render();toast(p.archived?'Préstamo cancelado y archivado. Puedes reactivarlo.':'Préstamo reactivado con su historial intacto.');return;
+   v99Invalidate();persist();render();toast(p.archived?'Producto cancelado y archivado. Puedes reactivarlo.':'Producto reactivado con su historial intacto.');return;
   }
   p.archived=!p.archived;persist();render();toast(p.archived?'Archivado sin borrar el historial.':'Producto reactivado.');return;
  }
-  if(kind==='loan'&&cmd==='delete'){manageProduct('loan',id,'toggle');return;}
+  if((kind==='loan'||kind==='card')&&cmd==='delete'){manageProduct(kind,id,'toggle');return;}
 let related=kind==='bank'?[...db.accounts,...db.cards,...db.loans,...db.certificates].filter(x=>x.bankId===id).length:
  db.transactions.some(t=>(kind==='account'&&(t.accountId===id||t.toAccountId===id))||(kind==='card'&&t.cardId===id)||(kind==='loan'&&t.loanId===id)||(kind==='certificate'&&t.certificateId===id))||
  (kind==='card'&&((db.statements||[]).some(s=>s.cardId===id)||(db.rewardBalances||[]).some(x=>x.cardId===id)||(db.perkUses||[]).some(x=>x.cardId===id)))||
@@ -20116,7 +20350,7 @@ if(related||starting){toast('No se puede eliminar sin perder saldos o referencia
 if(!confirm(`¿Eliminar definitivamente «${label}»? Solo se permite porque no tiene movimientos, saldo inicial ni productos dependientes.`))return;
 if(!v30SavePoint('Antes de eliminar producto: '+label))return;db[collection]=list.filter(x=>x.id!==id);if(ui.bankId===id)ui.bankId=null;if(ui.cardId===id)ui.cardId=null;if(ui.accountId===id)ui.accountId=null;if(ui.loanId===id)ui.loanId=null;persist();render();toast('Registro sin historial eliminado.');
 }
-function productControls(kind,id,archived=false){if(kind==='account'&&account(id)?.kind==='cash')return '<span class="pill green">Permanente</span>';if(kind==='loan')return `<span class="product-controls"><button class="btn sm ghost" data-act="productArchive" data-kind="loan" data-id="${id}">${archived?'Reactivar':'Cancelar'}</button>${archived?'<span class="pill">Cancelado · archivado</span>':''}</span>`;return `<span class="product-controls"><button class="btn sm ghost" data-act="productArchive" data-kind="${kind}" data-id="${id}">${archived?'Reactivar':'Archivar'}</button><button class="btn sm ghost" data-act="productDelete" data-kind="${kind}" data-id="${id}">Eliminar sin historial</button></span>`}
+function productControls(kind,id,archived=false){if(kind==='account'&&account(id)?.kind==='cash')return '<span class="pill green">Permanente</span>';if(kind==='loan'||kind==='card')return `<span class="product-controls"><button class="btn sm ghost" data-act="productArchive" data-kind="${kind}" data-id="${id}">${archived?'Reactivar':'Cancelar'}</button>${archived?'<span class="pill">Cancelado · archivado</span>':''}</span>`;return `<span class="product-controls"><button class="btn sm ghost" data-act="productArchive" data-kind="${kind}" data-id="${id}">${archived?'Reactivar':'Archivar'}</button><button class="btn sm ghost" data-act="productDelete" data-kind="${kind}" data-id="${id}">Eliminar sin historial</button></span>`}
 function visibilityControl(){let hidden=[...db.banks,...db.accounts,...db.cards,...db.loans,...db.certificates].filter(x=>x.archived).length;return `<button class="btn sm ${ui.showHidden?'soft':'ghost'}" data-act="toggleHidden">${ui.showHidden?'Ocultar archivados':'Ver archivados'} · ${hidden}</button>`}
 
 let _chartTip=null;
@@ -20133,7 +20367,9 @@ document.addEventListener('input',event=>{if(event.target.id!=='visionQuickSearc
 function render(){
  v99Invalidate();
  db.settings.visualDesign='claridad';
- document.body.classList.toggle('theme-dark',db.settings.theme==='dark');
+ document.body.classList.toggle('theme-dark',['dark','black'].includes(db.settings.theme));
+  document.body.classList.toggle('theme-black',db.settings.theme==='black');
+  document.documentElement.style.colorScheme=db.settings.theme==='light'?'light':'dark';
  document.body.classList.remove('vision-mode');
  document.body.dataset.visualDesign='claridad';
  document.body.classList.toggle('privacy-finanzas',privacyMode);
@@ -20229,10 +20465,10 @@ case 'toggleHidden':ui.showHidden=!ui.showHidden;render();break;
 case 'productArchive':manageProduct(el.dataset.kind,id,'toggle');break;
 case 'productDelete':manageProduct(el.dataset.kind,id,'delete');break;
 case 'menuLayout':db.settings.menuLayout='rail';render();break;
-case 'toggleTheme':db.settings.theme=db.settings.theme==='dark'?'light':'dark';persist();render();break;
+case 'toggleTheme':db.settings.theme=['dark','black'].includes(db.settings.theme)?'light':'dark';persist();render();break;
 case 'visualDesign':db.settings.visualDesign='claridad';persist();render();break;
 case 'visionRange':ui.visionRange=[3,6,12].includes(Number(id))?Number(id):6;render();break;
-case 'setTheme':if(id==='light'||id==='dark'){db.settings.visualDesign='claridad';db.settings.theme=id;persist();render()}break;
+case 'setTheme':if(['light','dark','black'].includes(id)){db.settings.visualDesign='claridad';db.settings.theme=id;persist();render()}break;
 case 'paletteTheme':if(['original','emerald','coral'].includes(id)){db.settings.paletteChoice=id;persist();render();toast('Color de acento actualizado.');}break;
 case 'paletteCustom':{const c=document.getElementById('viveCustomColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.paletteHex=c;db.settings.paletteChoice='custom';persist();render();toast('Color de acento personalizado aplicado.')}break;}
 case 'backgroundTheme':if(['original','glacier','sunset'].includes(id)){db.settings.backgroundChoice=id;persist();render();toast('Fondo actualizado.');}break;
@@ -20242,6 +20478,7 @@ case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navGroupToggle':ui.navExpanded=ui.navExpanded===id?null:id;render();break;
 case 'navigate':{
+ if(id==='payments' && ui.page!=='payments')ui.v176PayView='agenda';
  ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id;
  if(ui.page==='income')ui.innerViews.income='overview';
  if(id==='projection')ui.projectionMenu=false;
@@ -20539,6 +20776,8 @@ if(['loanAmount','loanInterest','loanFee','loanInsurance'].includes(t.id)){let f
  const handlers={
  addCashWallet:el=>cashWalletForm(), editCashWallet:el=>cashWalletForm(),
  widgetEditor:()=>{ui.widgetEditor=!ui.widgetEditor;render()},
+  v197CompareMode:el=>{ui.v197CompareMode=el.dataset.id||'net';render()},
+  widgetReferencePreset:()=>{const refs=['referenceBalance','referenceCredit','referenceCashflow','referenceComparison'];const old=widgetsState();const rest=old.filter(x=>!refs.includes(x));saveWidgets([...refs,...rest]);toast('Cuatro gráficos incorporados a tu tablero.');render()},
  widgetToggle:el=>{let list=widgetsState(),id=el.dataset.id;if(list.includes(id))list=list.filter(x=>x!==id);else list.push(id);saveWidgets(list);render()},
  widgetRemove:el=>{saveWidgets(widgetsState().filter(x=>x!==el.dataset.id));render()},
  widgetMoveUp:el=>{let list=widgetsState(),i=list.indexOf(el.dataset.id);if(i>0){[list[i-1],list[i]]=[list[i],list[i-1]];saveWidgets(list);render()}},
@@ -21689,7 +21928,7 @@ function v61ProfileSummary(items){
 function v61ProfileSwitch(all){
  const personal=all.filter(b=>b.scope!=='negocio').length,negocio=all.filter(b=>b.scope==='negocio').length;
  const opt=(value,label,count)=>`<button type="button" class="v61-profile-option ${v61InstitutionProfile===value?'active':''}" data-v61-profile="${value}" role="radio" aria-checked="${v61InstitutionProfile===value}">${label}<span>${count}</span></button>`;
- return `<div class="v61-profile-bar"><div class="v61-profile-copy"><span class="v61-profile-eyebrow">PERFIL DE TUS INSTITUCIONES</span><strong>${v61InstitutionProfile==='negocio'?'Mi negocio':v61InstitutionProfile==='personal'?'Mis finanzas personales':'Todas mis instituciones'}</strong><small>Cambia de perfil sin duplicar saldos ni movimientos.</small></div><div class="v61-profile-switch" role="radiogroup" aria-label="Ver instituciones de uso personal, de negocio o todas">${opt('all','Todas',all.length)}${opt('personal','Personal',personal)}${opt('negocio','Negocio',negocio)}</div></div>`;
+ return `<div class="v61-profile-switch v199-profile-inline" role="radiogroup" aria-label="Filtrar instituciones: todas, personal o negocio">${opt('all','Todas',all.length)}${opt('personal','Personal',personal)}${opt('negocio','Negocio',negocio)}</div>`;
 }
 const v42TaxRule=(day)=>v40FiscalFor(day||today());
 function v42TaxInfo(rule){
@@ -21749,10 +21988,10 @@ banks=function(){
  const scopeAcctCount=v61InstitutionProfile==='all'?db.accounts.filter(a=>!a.archived&&a.kind!=='cash').length:profile.accounts.length;
  const scopeCardCount=v61InstitutionProfile==='all'?db.cards.filter(x=>!x.archived).length:profile.cards.length;
  return `<div class="v42-institutions v46-institutions v61-institutions" data-profile="${v61InstitutionProfile}">
- ${v61ProfileSwitch(all)}
  <div class="bank-hero v46-bank-hero">
    <div class="v46-bank-intro">
     <div class="hero-eyebrow">${scopeTitle}</div>
+    ${v61ProfileSwitch(all)}
     <h2>${scopeHeadline}<br/><em>en un solo lugar.</em></h2>
     <p>${scopeDescription}</p>
     <div class="hero-actions"><button class="btn light" data-act="addBank">${icon('plus')} Agregar institución</button><button class="btn outline-light" data-act="navigate" data-id="overview">Ver resumen global ${icon('arrow')}</button></div>
@@ -29799,5 +30038,105 @@ body.theme-dark .world-loans #page .v196-loan-interest :is(small,b),body.theme-d
 @media(max-width:1400px){.world-payments #page .v145-pay-cardgrid,.world-loans #page .v196-loan-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:680px){.world-payments #page .v145-pay-cardgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.world-payments #page .v196-pay-category{padding:12px!important;min-height:170px!important;border-radius:16px}.world-payments #page .v196-pay-category>strong{font-size:17px}.world-payments #page .v196-pay-category-name{font-size:11px}.world-payments #page .v196-pay-category>small{font-size:9px}.world-loans #page .v196-loan-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}.world-loans #page .v196-loan-summary-grid .loan-stat{padding:13px 10px}.world-loans #page .v196-loan-summary-grid .loan-stat strong{font-size:18px}}
 </style>
+<script id="vive-v197-budget-toggle">
+document.addEventListener('click',function(ev){
+ const label=ev.target.closest?.('.main.world-budget .budget-row>.split .mini-title,.main.world-budget .budget-row>.split .subtle');
+ if(!label)return;
+ const row=label.closest('.budget-row'),drawer=row?.querySelector('.v194-subcategory-drawer');
+ if(drawer && !ev.target.closest('button,a,input,select'))drawer.open=!drawer.open;
+});
+</script>
+
+<style id="vive-v198-categorias-altura-alineacion">
+/* V198: Las tablas por categoría crecen por el número real de categorías y subcategorías.
+   El desplazamiento horizontal queda dentro de cada tabla, no de toda la página. */
+.world-advanced #page .v12-year-sections,
+.world-advanced #page .v12-year-sections .v12-split-table,
+.world-annual #page .matrix-report-panel,
+.world-advanced #page .v16-clean-table.panel {
+  height:auto!important;min-height:0!important;max-height:none!important;
+  align-self:start!important;
+}
+.world-advanced #page .v16-clean-table .v198-auto-category-scroll,
+.world-advanced #page .v12-year-sections .v12-table-scroller,
+.world-annual #page .v198-auto-matrix-scroll,
+.matrix-report .v198-auto-matrix-scroll {
+  height:auto!important;min-height:0!important;max-height:none!important;
+  overflow-x:auto!important;overflow-y:visible!important;
+  max-width:100%!important;width:100%!important;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+}
+/* 15 columnas exactas: concepto, 12 meses, total, promedio.
+   Colgroup conserva las mismas anchuras en encabezado, filas, subcategorías y total. */
+.world-advanced #page .v16-clean-table table.v198-category-year-table {
+  table-layout:fixed!important;width:1640px!important;min-width:1640px!important;max-width:none!important;
+  border-spacing:0!important;border-collapse:separate!important;
+  font-variant-numeric:tabular-nums!important;
+}
+.world-advanced #page .v198-category-year-table col.v198-category-col{width:210px!important}
+.world-advanced #page .v198-category-year-table col.v198-month-col{width:100px!important}
+.world-advanced #page .v198-category-year-table col.v198-total-col{width:115px!important}
+.world-advanced #page .v198-category-year-table col.v198-average-col{width:115px!important}
+.world-advanced #page .v198-category-year-table :is(th,td) {
+  box-sizing:border-box!important;min-width:0!important;max-width:none!important;
+  white-space:nowrap!important;line-height:1.35!important;
+  font-variant-numeric:tabular-nums!important;text-align:right!important;
+  overflow:visible!important;text-overflow:clip!important;
+  vertical-align:middle!important;
+}
+.world-advanced #page .v198-category-year-table :is(th,td):first-child {
+  width:210px!important;min-width:210px!important;max-width:210px!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;text-align:left!important;
+}
+.world-advanced #page .v198-category-year-table .matrix-expand {min-width:0!important;width:100%!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.world-advanced #page .v198-category-year-table :is(th,td):nth-last-child(2) {
+  position:sticky!important;right:115px!important;z-index:3!important;
+  width:115px!important;min-width:115px!important;max-width:115px!important;
+  background:#eaf1fb!important;color:#24476b!important;font-weight:800!important;
+  box-shadow:-7px 0 12px -12px rgba(26,53,93,.45)!important;
+}
+.world-advanced #page .v198-category-year-table :is(th,td):last-child {
+  position:sticky!important;right:0!important;z-index:3!important;
+  width:115px!important;min-width:115px!important;max-width:115px!important;
+  background:#f2f6fc!important;color:#24476b!important;font-weight:800!important;
+}
+.world-advanced #page .v198-category-year-table thead th:nth-last-child(-n+2){z-index:5!important;background:#e0eaf8!important}
+.world-advanced #page .v198-category-year-table tr.v12-split-footer td:nth-last-child(-n+2){background:#e8f2ed!important;color:#176d5b!important}
+.world-advanced #page .v16-expense .v198-category-year-table tr.v12-split-footer td:nth-last-child(-n+2){background:#fff0ef!important;color:#a64e54!important}
+/* Matriz combinada principal: misma lógica de altura, unidades y columnas alineadas. */
+.matrix-report .matrix-detail-table {
+  min-width:1640px!important;width:1640px!important;table-layout:fixed!important;
+  border-spacing:0!important;font-variant-numeric:tabular-nums!important;
+}
+.matrix-report .matrix-detail-table col.matrix-name-col{width:210px!important}
+.matrix-report .matrix-detail-table col.matrix-tail-col{width:115px!important}
+.matrix-report .matrix-detail-table :is(td,th){white-space:nowrap!important;text-align:right!important;overflow:visible!important;text-overflow:clip!important}
+.matrix-report .matrix-detail-table :is(td,th):first-child{width:210px!important;min-width:210px!important;max-width:210px!important;text-align:left!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.matrix-report .matrix-detail-table :is(td,th):nth-last-child(2){position:sticky!important;right:115px!important;z-index:3!important;background:#eaf1fb!important;color:#24476b!important;font-weight:800!important}
+.matrix-report .matrix-detail-table :is(td,th):last-child{position:sticky!important;right:0!important;z-index:3!important;background:#f2f6fc!important;color:#24476b!important;font-weight:800!important}
+.matrix-report .matrix-detail-table thead th:nth-last-child(-n+2){z-index:5!important;background:#e0eaf8!important}
+.matrix-report .matrix-detail-table tr.matrix-total td:nth-last-child(-n+2){background:#e2edf9!important}
+/* Las listas propias de Ingresos y Egresos tampoco deben limitarse al crecer el catálogo. */
+.world-expenses #page .expenses-categories,
+.world-income #page .income-cat-details,
+.world-income #page .income-cat-children{height:auto!important;max-height:none!important;overflow-y:visible!important}
+/* Modo oscuro: ningún texto de total/promedio sobre fondo claro ni columnas pegadas sin contraste. */
+body.theme-dark .world-advanced #page .v198-category-year-table :is(td,th):nth-last-child(2),
+body.theme-dark .matrix-report .matrix-detail-table :is(td,th):nth-last-child(2){background:#243b56!important;color:#e5f2ff!important}
+body.theme-dark .world-advanced #page .v198-category-year-table :is(td,th):last-child,
+body.theme-dark .matrix-report .matrix-detail-table :is(td,th):last-child{background:#1f324b!important;color:#e5f2ff!important}
+body.theme-dark .world-advanced #page .v198-category-year-table tr.v12-split-footer td:nth-last-child(-n+2),
+body.theme-dark .matrix-report .matrix-detail-table tr.matrix-total td:nth-last-child(-n+2){background:#274b53!important;color:#caffec!important}
+body.theme-dark .world-advanced #page .v16-expense .v198-category-year-table tr.v12-split-footer td:nth-last-child(-n+2){background:#533c49!important;color:#ffd6d8!important}
+@media(max-width:790px){
+  /* En iPhone se recorre horizontalmente la matriz: no apilar columnas sobre el importe. */
+  .world-advanced #page .v198-category-year-table :is(th,td):nth-last-child(-n+2),
+  .matrix-report .matrix-detail-table :is(th,td):nth-last-child(-n+2){position:static!important;right:auto!important;box-shadow:none!important}
+  .world-advanced #page .v16-clean-table.panel{padding:14px 10px!important}
+  .world-advanced #page .v198-category-year-table :is(th,td):first-child,
+  .matrix-report .matrix-detail-table :is(th,td):first-child{position:sticky!important;left:0!important;z-index:4!important}
+}
+</style>
+
 </body>
 </html>
