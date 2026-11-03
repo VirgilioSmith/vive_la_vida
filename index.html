@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <!-- Vive el Hoy V214 · GitHub Pages · Apple Pay / Atajos / Supabase. -->
-<meta name="vive-el-hoy-version" content="216-financial-reports-applepay"/>
+<meta name="vive-el-hoy-version" content="217-financial-reports-applepay"/>
 <link rel="manifest" href="./manifest.webmanifest?v=214"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -16499,7 +16499,7 @@ function v36Bell(){
  }).join('');
  const spendingItems=spendAlerts.map(a=>`<article class="v36-notice v123-bell-alert"><span class="v36-notice-dot"></span><div><strong>${sanitize(a.category)} · ${a.kind==='trend'?'Tendencia al alza':'Gasto elevado'}</strong><small>${sanitize(v123AlertText(a))}</small></div></article>`).join('');
  const totalAlerts=urgent+spendAlerts.length;
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Vencimientos y cambios en tus gastos</small></div>${v216BellItems()}${spendingItems}${items}${!spendingItems&&!items? '<div class="v36-notice-empty">Sin vencimientos próximos ni cambios importantes en gastos con historial suficiente.</div>':''}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los avisos de gastos son internos y se actualizan con los movimientos registrados. Los recordatorios push de vencimientos se configuran por separado.</p></div></details>`;
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Informes al corte de las 7:00 p. m. · vencimientos y alertas</small></div>${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los avisos de gastos son internos y se actualizan con los movimientos registrados. Los recordatorios push de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  const pageName={overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
@@ -26596,25 +26596,6 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&v212Enabl
 window.addEventListener('online',()=>{if(v212Enabled())v212Sync();});
 setInterval(()=>{if(!document.hidden&&v212Enabled())v212Sync();},45000);
 
- f33Boot();
-
-})();
-
-
-/* V64 · El panel de notificaciones solo permanece abierto durante interacción explícita. */
-document.addEventListener('pointerdown',function(ev){
- const bell=document.querySelector('.v36-notifications[open]');
- if(bell&&!bell.contains(ev.target))bell.open=false;
-},true);
-document.addEventListener('keydown',function(ev){
- if(ev.key==='Escape'){const bell=document.querySelector('.v36-notifications[open]');if(bell){bell.open=false;bell.querySelector('summary')?.focus();}}
-},true);
-
-
-/* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
-window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
-document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
-
 /* V216 | Motor de informes financieros internos: corte horario 19:00 Santo Domingo.
    Solo lectura. No altera db, no crea cargos ni persiste estados financieros. */
 const V216_TZ='America/Santo_Domingo', V216_CUTOFF=19;
@@ -26632,8 +26613,16 @@ function v216Period(kind,closed=v216ClosedDay()){
  if(kind==='diario')return {title:'Resumen diario',start:closed,end:closed};
  if(kind==='semanal')return {title:'Resumen semanal',start:startWeek,end:closed};
  if(kind==='quincenal')return {title:day<=15?'Primera quincena':'Segunda quincena',start:day<=15?first:closed.slice(0,7)+'-16',end:closed};
- if(kind==='mitad')return {title:'Corte de mitad de mes',start:first,end:closed.slice(0,7)+'-15'};
- if(kind==='cierre')return {title:'Cierre mensual',start:first,end:closed};
+ if(kind==='mitad'){
+  const completed=day>=15?first:v216Shift(first,-1).slice(0,7)+'-01';
+  return {title:'Corte de mitad de mes',start:completed,end:completed.slice(0,7)+'-15'};
+ }
+ if(kind==='cierre'){
+  const endOfCurrent=periodEnd(y,m);
+  if(closed===endOfCurrent)return {title:'Cierre mensual',start:first,end:closed};
+  const previousEnd=v216Shift(first,-1);
+  return {title:'Cierre mensual anterior',start:previousEnd.slice(0,7)+'-01',end:previousEnd};
+ }
  if(kind==='corte')return {title:'Corte financiero · 7:00 p. m.',start:closed,end:closed};
  return {title:'Acumulado mensual',start:first,end:closed};
 }
@@ -26682,7 +26671,7 @@ function v216Insights(a,p){
 }
 function v216Modal(kind){
  const closed=v216ClosedDay(),p=v216Period(kind,closed),a=v216Amounts(p.start,p.end),prev=v216Previous(p),b=v216Amounts(prev.start,prev.end),delta=a.net-b.net;
- const due=upcoming().filter(o=>o.kind!=='personal_recv'&&num(o.amount)>0&&o.date>=closed&&o.date<=v216Shift(closed,30)).sort((x,y)=>x.date.localeCompare(y.date));
+ const due=upcoming().filter(o=>o.kind!=='personal_recv'&&num(o.amount)>0&&typeof o.date==='string'&&o.date>=closed&&o.date<=v216Shift(closed,30)).sort((x,y)=>x.date.localeCompare(y.date));
  const due7=due.filter(o=>o.date<=v216Shift(closed,7));
  const sumDue=due7.reduce((n,o)=>n+fx(num(o.amount),o.currency||'DOP'),0);
  const debt=totalCardDebt()+totalLoanDebt();
@@ -26698,7 +26687,7 @@ function v216Modal(kind){
 }
 function v216BellItems(){
  const closed=v216ClosedDay(),types=v216Types(closed);
- return `<div class="v216-notice-title">INFORMES FINANCIEROS · 7:00 P. M.</div>${types.map(k=>{const p=v216Period(k,closed);return `<button type="button" class="v216-notice" data-v216="report" data-kind="${k}"><span class="v216-notice-icon" aria-hidden="true">↗</span><span class="v216-notice-copy"><strong>${sanitize(p.title)}</strong><small>${prettyDate(p.start)}${p.start!==p.end?' – '+prettyDate(p.end):''} · Ver informe ejecutivo</small></span><span aria-hidden="true">›</span></button>`}).join('')}`;
+ return `<div class="v216-notice-title" role="heading" aria-level="3">INFORMES FINANCIEROS · 7:00 P. M.</div>${types.map(k=>{const p=v216Period(k,closed);return `<button type="button" class="v216-notice" data-v216="report" data-kind="${k}"><span class="v216-notice-icon" aria-hidden="true">↗</span><span class="v216-notice-copy"><strong>${sanitize(p.title)}</strong><small>${prettyDate(p.start)}${p.start!==p.end?' – '+prettyDate(p.end):''} · Ver informe ejecutivo</small></span><span aria-hidden="true">›</span></button>`}).join('')}`;
 }
 document.addEventListener('click',e=>{
  const action=e.target.closest?.('[data-v216]');
@@ -26713,6 +26702,27 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
 // Actualiza solo la campana mientras la sesión está abierta; no imita push remoto.
 let v216LastClosed=v216ClosedDay();
 setInterval(()=>{const c=v216ClosedDay();if(c!==v216LastClosed){v216LastClosed=c;if(document.getElementById('app')?.children.length&&!document.getElementById('v216-layer'))render();}},60000);
+
+
+ f33Boot();
+
+})();
+
+
+/* V64 · El panel de notificaciones solo permanece abierto durante interacción explícita. */
+document.addEventListener('pointerdown',function(ev){
+ const bell=document.querySelector('.v36-notifications[open]');
+ if(bell&&!bell.contains(ev.target))bell.open=false;
+},true);
+document.addEventListener('keydown',function(ev){
+ if(ev.key==='Escape'){const bell=document.querySelector('.v36-notifications[open]');if(bell){bell.open=false;bell.querySelector('summary')?.focus();}}
+},true);
+
+
+/* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
+window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
+document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
+
 
 
 
