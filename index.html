@@ -15367,6 +15367,79 @@ body.theme-black a:focus-visible,body.theme-black button:focus-visible{outline:2
 }
 @media(max-width:350px){.v205-explore-actions{grid-template-columns:minmax(0,1fr) 88px}.v205-explore-actions button{font-size:11px}.v205-explore-group{padding:14px 11px}.v205-explore-pulse{padding:13px}.v205-explore-pulse-grid button{padding:10px 8px}}
 </style>
+<style id="vive-v209-premium-controls">
+/* V209 · Biblioteca con catálogo visual y atajos de descubrimiento. */
+.ws-library .ws-gallery-card[hidden],.ws-library .ws-catalog-section[hidden]{display:none!important}
+.v209-widget-overlay{position:fixed;inset:0;background:rgba(10,23,45,.56);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:10940}
+.ws-library{position:fixed!important;z-index:10941!important;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1050px,calc(100vw - 36px));height:min(860px,calc(100dvh - 36px));max-height:none!important;overflow:hidden!important;display:flex;flex-direction:column;gap:0;margin:0!important;padding:22px 22px 16px!important;border-radius:28px!important;background:#f7faff!important;box-shadow:0 28px 120px rgba(13,34,70,.30);border:1px solid #d8e6f7}
+.ws-library .ws-library-heading{flex:0 0 auto;padding:2px 3px 14px;align-items:flex-start!important}
+.ws-library .ws-library-heading h3{font-size:24px;letter-spacing:-.04em;margin:4px 0}
+.ws-library .ws-library-heading p{font-size:12px;line-height:1.5;max-width:650px}
+.v209-library-close{border:1px solid #dce6f4;background:#edf3fc;color:#405a7d;font-size:23px;line-height:1;width:39px;height:39px;border-radius:13px;cursor:pointer;flex:0 0 auto}
+.v209-widget-searchbar{display:flex;gap:12px;align-items:center;border:1px solid #d6e4f5;background:#fff;padding:9px 13px;border-radius:15px;margin-bottom:12px;min-height:49px}
+.v209-widget-searchbar>span{width:19px;height:19px;color:#7890ad;flex:0 0 auto}
+.v209-widget-searchbar svg{width:18px;height:18px}
+.v209-widget-searchbar input{border:0;outline:0;background:transparent;color:#213957;flex:1;min-width:0;font-size:13px}
+.v209-widget-searchbar small{color:#59749c;background:#edf3fc;padding:6px 9px;border-radius:99px;font-weight:700;white-space:nowrap}
+.ws-library .ws-gallery-filters{flex:0 0 auto;display:flex;overflow-x:auto;flex-wrap:nowrap!important;scrollbar-width:thin;padding:2px 1px 12px;gap:7px}
+.ws-library .ws-gallery-filters button{white-space:nowrap;flex:0 0 auto;padding:9px 12px;border-radius:11px}
+.ws-library .ws-gallery-scroll{min-height:0;flex:1 1 auto;overflow:auto;max-height:none!important;padding:4px 5px 12px;scrollbar-width:thin}
+.ws-library .ws-gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ws-library .ws-gallery-card{min-height:222px;border-radius:19px}
+.v209-library-footer{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #dce7f5;padding:12px 2px 0;font-size:11px;color:#617897}
+.v209-library-footer button{border:0;border-radius:12px;padding:12px 20px;background:#2c63b6;color:#fff;font-weight:790;cursor:pointer;white-space:nowrap}
+/* Resize from corner: persistent, touch-aware, progressive enhancement of original 1/2-column controls. */
+.widgets-grid.ws-board .ws-tile{grid-column:span var(--ws-cols,1)!important;min-height:var(--ws-h,184px)!important;position:relative!important;padding-bottom:32px!important;transition:box-shadow .16s,border-color .16s}
+.widgets-grid.ws-board .ws-tile.v209-resizing{outline:2px solid #5394df;outline-offset:1px;z-index:2;box-shadow:0 14px 35px rgba(37,94,179,.15)}
+.v209-widget-resize{position:absolute;right:4px;bottom:4px;width:31px;height:31px;border-radius:11px;display:grid;place-items:center;color:#7188a7;background:rgba(224,234,249,.82);border:1px solid rgba(132,160,201,.24);cursor:nwse-resize;touch-action:none;user-select:none;z-index:4}
+.v209-widget-resize:hover,.v209-widget-resize:focus-visible{background:#cfe2ff;color:#205da7;outline:2px solid #83aeec;outline-offset:1px}
+.v209-widget-resize svg{pointer-events:none}
+/* Premium, curated icon selector with thematic shortcuts. */
+.v41-icon-selector{background:linear-gradient(135deg,#f8fbff,#ebf3ff)!important;border:1px solid #dce8f8!important;box-shadow:0 8px 25px rgba(30,70,126,.045)}
+.v41-icon-top strong{font-size:13px;color:#26446d}
+.v149-icon-tabs,.v209-icon-topics{display:flex;gap:6px;flex-wrap:nowrap;overflow:auto;scrollbar-width:none;padding:7px 0}
+.v209-icon-topics button{border:1px solid #d9e5f5;color:#607b9e;background:#fff;border-radius:99px;padding:7px 12px;white-space:nowrap;font-size:11px;font-weight:700;cursor:pointer}
+.v209-icon-topics button[aria-pressed="true"]{background:#2b66b2;color:white;border-color:#2b66b2}
+.v41-service-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;max-height:290px;overflow-y:auto;padding:3px}
+.v41-service-choice{min-height:86px;border-radius:14px!important;transition:transform .15s,border-color .15s,background .15s}
+.v41-service-choice:hover{transform:translateY(-2px);border-color:#93b7ef}
+.v41-service-choice[aria-pressed="true"]{outline:2px solid #4384d6;outline-offset:1px}
+.v41-service-choice[hidden]{display:none!important}
+.v41-choice-label{line-height:1.2;overflow-wrap:anywhere;text-align:center}
+/* Capacity summary: no artificial duplicated panels, the numerical story first. */
+.v85-capacity-modal{width:min(940px,calc(100vw - 24px));border-radius:27px!important;box-shadow:0 25px 100px rgba(16,43,88,.26)}
+.v85-capacity-modal .modal-head{padding:17px 23px 13px!important}
+.v85-capacity-modal .v85-capacity-body{padding:13px 23px 20px!important}
+.v85-capacity-modal .v85-lead{margin-bottom:10px!important}
+.v85-capacity-modal .v89-capacity-feature{padding:14px 19px!important;margin-bottom:10px!important}
+.v85-capacity-modal .v89-capacity-feature strong{font-size:clamp(36px,4vw,53px)!important;line-height:1.05!important}
+.v85-capacity-modal .v85-capacity-metrics{gap:9px!important;margin-bottom:9px!important}
+.v85-capacity-modal .v85-capacity-metrics>div{padding:12px 15px!important;border-radius:17px!important}
+.v85-capacity-modal .v85-mini>div{padding:10px 15px!important}
+.v85-capacity-modal .v89-debt-breakdown{padding:11px 14px!important;border-radius:18px!important}
+.v209-capacity-method{margin-top:9px;border-top:1px solid #dce6f5;color:#677b98;font-size:11px;line-height:1.55}
+.v209-capacity-method summary{padding:10px 0 3px;cursor:pointer;color:#486992;font-size:11px;font-weight:750}
+.v209-capacity-method>p{margin:7px 0!important}
+body.theme-dark .ws-library,body.theme-black .ws-library{background:#151e2b!important;border-color:#35475c!important;box-shadow:0 35px 100px rgba(0,0,0,.58)}
+body.theme-dark .v209-widget-searchbar,body.theme-black .v209-widget-searchbar{background:#25354a;border-color:#3b506d}
+body.theme-dark .v209-widget-searchbar input,body.theme-black .v209-widget-searchbar input{color:#e9f2ff}
+body.theme-dark .v209-widget-searchbar small,body.theme-black .v209-widget-searchbar small{background:#334863;color:#cbdcf5}
+body.theme-dark .v209-library-footer,body.theme-black .v209-library-footer{border-color:#31455e;color:#a9bed8}
+body.theme-dark .v209-library-close,body.theme-black .v209-library-close{background:#27394d;border-color:#425671;color:#eaf2fe}
+body.theme-dark .v41-icon-selector,body.theme-black .v41-icon-selector{background:#202d3f!important;border-color:#41536e!important;box-shadow:none}
+body.theme-dark .v41-icon-top strong,body.theme-black .v41-icon-top strong{color:#e4eeff}
+body.theme-dark .v209-icon-topics button,body.theme-black .v209-icon-topics button{background:#28394d;border-color:#3f5770;color:#cbdcf4}
+body.theme-dark .v209-icon-topics button[aria-pressed="true"],body.theme-black .v209-icon-topics button[aria-pressed="true"]{background:#396fc0;color:#fff;border-color:#396fc0}
+body.theme-dark .v209-widget-resize,body.theme-black .v209-widget-resize{background:rgba(47,66,90,.94);color:#bed1eb;border-color:#526581}
+body.theme-black .v85-capacity-modal{background:#121820!important}
+body.theme-dark .v209-capacity-method,body.theme-black .v209-capacity-method{border-color:#3e526d;color:#a8bad6}
+body.theme-dark .v209-capacity-method summary,body.theme-black .v209-capacity-method summary{color:#c4d7f2}
+@media(max-width:1120px){.ws-library .ws-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:790px){.ws-library{width:100vw!important;left:0!important;top:auto!important;bottom:0!important;transform:none!important;border-radius:26px 26px 0 0!important;height:min(90dvh,860px)!important;max-height:none!important;padding:17px 13px calc(14px + env(safe-area-inset-bottom))!important}.ws-library .ws-library-heading h3{font-size:20px}.ws-library .ws-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.ws-library .ws-gallery-card{min-height:199px}.v209-widget-searchbar small{display:none}.v209-library-footer{font-size:10px}.v209-library-footer button{padding:11px 13px}.v41-service-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-height:260px}.v85-capacity-modal .modal-head{padding:14px!important}.v85-capacity-modal .v85-capacity-body{padding:10px 14px 18px!important}}
+@media(max-width:550px){.ws-library .ws-library-heading{flex-direction:row!important;justify-content:space-between!important;align-items:flex-start!important;gap:10px}.ws-library .ws-gallery{grid-template-columns:1fr!important}.ws-library .ws-gallery-card{min-height:215px}.ws-library .ws-gallery-heading{gap:5px}.ws-library .ws-preview-body{min-height:139px}.v209-library-footer{font-size:9px}}
+@media(max-width:370px){.v41-service-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.v41-service-choice,.widgets-grid.ws-board .ws-tile{transition:none!important}}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -16597,7 +16670,7 @@ function main(){
  const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y operaciones por confirmar'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
-  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title">${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
+  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
  
  ${ui.page==='wallet'?'':['overview','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
  ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
@@ -17782,7 +17855,7 @@ function settings(){let s=db.settings;return `<div class="settings-layout">
 <section class="settings-hero"><div class="summary-tag">vive el hoy / PREFERENCIAS</div><h2>vive el hoy, a tu manera.</h2><p>Una navegación clara, tres temas y todas tus reglas financieras en un solo lugar. Tus datos se sincronizan con tu cuenta privada de Supabase.</p></section><nav class="v176-settings-jump" aria-label="Secciones de configuración"><a href="#v176-setting-00">Cuenta</a><a href="#v176-setting-01">Apariencia</a><a href="#v176-setting-02">Color</a><a href="#v176-setting-03">Fondo</a><a href="#v176-setting-04">Finanzas</a><a href="#v176-setting-05">Revisión</a><a href="#v176-setting-06">Privacidad</a></nav>
 <div class="settings-group-title" id="v176-setting-00"><div><span class="summary-tag">00 / CONEXIÓN PRIVADA</span><h3>Cuenta y sincronización</h3></div></div>${f34CloudPanel()}
 <div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
-<div class="theme-settings panel"><div><strong>Aspecto de vive el hoy</strong><p>Elige Claro, Oscuro o Negro / Black. El negro usa un fondo negro auténtico y tarjetas carbón para mejorar la lectura; tus registros no cambian.</p></div><div class="theme-choice-row" role="group" aria-label="Elegir apariencia"><button class="theme-choice ${s.theme==='light'?'selected':''}" data-act="setTheme" data-id="light" aria-pressed="${s.theme==='light'}"><span class="theme-sun">☀</span> Claro</button><button class="theme-choice ${s.theme==='dark'?'selected':''}" data-act="setTheme" data-id="dark" aria-pressed="${s.theme==='dark'}"><span class="theme-moon">☾</span> Oscuro</button><button class="theme-choice v200-black-choice ${s.theme==='black'?'selected':''}" data-act="setTheme" data-id="black" aria-pressed="${s.theme==='black'}"><span class="v200-black-mark">●</span> Negro / Black</button></div></div>
+<div class="theme-settings panel"><div><strong>Aspecto de vive el hoy</strong><p>Elige Claro o Black oscuro. El modo Black utiliza fondo negro y tarjetas carbón de alto contraste; tus registros no cambian.</p></div><div class="theme-choice-row" role="group" aria-label="Elegir apariencia"><button class="theme-choice ${s.theme==='light'?'selected':''}" data-act="setTheme" data-id="light" aria-pressed="${s.theme==='light'}"><span class="theme-sun">☀</span> Claro</button><button class="theme-choice v200-black-choice ${s.theme==='black'?'selected':''}" data-act="setTheme" data-id="black" aria-pressed="${s.theme==='black'}"><span class="v200-black-mark">●</span> Black oscuro</button></div></div>
 
 <div class="settings-group-title" id="v176-setting-02"><div><span class="summary-tag">02 / COLOR DE ACENTO</span><h3>Personaliza el color de tarjetas y botones</h3></div></div>
 <div class="panel vive-palettes-panel v15-color-settings"><div class="vive-palette-intro"><strong>Tres colores estrella</strong><p>El color predeterminado se mantiene intacto. El color de acento y el fondo se configuran por separado, sin alterar cifras ni movimientos.</p></div>
@@ -18352,22 +18425,35 @@ const WIDGET_METRICS=[
    personales. Selección editorial propia, NO un ranking global verificado.
    Todos los widgets utilizan los cálculos existentes; jamás cifras de ejemplo. */
 const V208_GLOBAL_TOP10=[
- ['netPosition','Patrimonio neto','Activos menos obligaciones; situación financiera consolidada.'],
- ['referenceCashflow','Flujo de caja','Entradas y salidas reales para comprender tu ritmo de dinero.'],
- ['incomeProjection','Proyección de ingresos','Separa cobros contabilizados de estimaciones y pagos previstos.'],
- ['liquidity','Liquidez disponible','Efectivo y cuentas registrados, convertidos a RD$ con tu tasa.'],
- ['expenseMixChart','Gastos por categoría','Dónde se concentra el gasto del mes seleccionado.'],
- ['referenceCredit','Utilización del crédito','Límites contratados, deuda y porcentaje utilizado.'],
- ['payments30d','Próximos vencimientos','Compromisos próximos a vencer en los siguientes treinta días.'],
- ['savingRate','Tasa de ahorro','Resultado neto del período como proporción de sus ingresos.'],
- ['commitmentMargin','Margen tras compromisos','Ingresos considerados menos obligaciones programadas.'],
- ['incomeVsExpense','Ingresos frente a egresos','Contraste de entradas y salidas registradas en el período.']
+ ['netPosition','Patrimonio neto','Activos registrados menos deudas: tu posición financiera total.'],
+ ['referenceCashflow','Flujo de caja real','Entradas y salidas del período: lo que ocurrió, no lo que esperas.'],
+ ['incomeProjection','Proyección de ingresos','Ingresos registrados y estimación hasta el cierre, claramente separados.'],
+ ['expenseMixChart','Mapa de gastos por categoría','Distribución de egresos: muestra dónde se concentra cada peso.'],
+ ['referenceCredit','Uso de límites de crédito','Límites, saldo utilizado y proporción comprometida de tus tarjetas.'],
+ ['payments30d','Vencimientos próximos','Obligaciones exigibles en los próximos 30 días, sin contar pagos dos veces.'],
+ ['liquidityTrendChart','Evolución de liquidez','Historia de fondos por cierre mensual según movimientos registrados.'],
+ ['loanBalancesChart','Capital pendiente por préstamo','Desglose del principal adeudado por cada contrato bancario.'],
+ ['subscriptionsParetoChart','Concentración de suscripciones','Suscripciones que más pesan en los compromisos recurrentes.'],
+ ['savingRate','Tasa de ahorro','Resultado del mes en proporción a los ingresos contabilizados.']
 ];
-const widgetCatalog=()=>[...WIDGET_METRICS,...db.accounts.map(a=>['account:'+a.id,a.name, 'wallet','products']),...db.cards.map(c=>['card:'+c.id,c.name,'card','products']),...db.loans.map(l=>['loan:'+l.id,l.name,'receipt','products']),...db.certificates.map(c=>['cert:'+c.id,c.name,'building','products'])];
+/* V210: una visualización por pregunta financiera; compatibilidad con IDs antiguos. */
+const V210_WIDGET_ALIASES={
+ incomeVsExpense:'referenceCashflow',creditVisual:'referenceCredit',netTrendChart:'referenceBalance',
+ subscriptionVisual:'subscriptionsParetoChart',incomeYoYTrend:'referenceComparison',
+ expenseYoYTrend:'referenceComparison',netYoYTrend:'referenceComparison'
+};
+const v210WidgetId=id=>V210_WIDGET_ALIASES[id]||id;
+const widgetCatalog=()=>[
+ ...WIDGET_METRICS.filter(([id])=>!Object.hasOwn(V210_WIDGET_ALIASES,id)),
+ ...db.accounts.map(a=>['account:'+a.id,a.name,'wallet','products']),
+ ...db.cards.map(c=>['card:'+c.id,c.name,'card','products']),
+ ...db.loans.map(l=>['loan:'+l.id,l.name,'receipt','products']),
+ ...db.certificates.map(c=>['cert:'+c.id,c.name,'building','products'])
+];
 function widgetsState(){
  const saved=db.settings.widgetsBoard;
  const valid=new Set(widgetCatalog().map(x=>x[0]));
- const list=Array.isArray(saved)?saved.filter(id=>valid.has(id)):['referenceBalance','referenceCredit','referenceCashflow','referenceComparison'];
+ const list=Array.isArray(saved)?[...new Set(saved.map(v210WidgetId).filter(id=>valid.has(id)))]:[];
  // V186: tablero vacío por defecto. Conserva los widgets elegidos explícitamente.
  return list;
 }
@@ -18702,7 +18788,8 @@ function widgetPreview(id,definition){
  const value=widgetPicture(id),fmt=value?.value||'—',foot=value?.foot||'Se calcula con tus registros';
  return `<div class="ws-preview-body ws-preview-number"><span class="ws-preview-orb">${icon(definition?.[2]||'wallet')}</span><strong>${fmt}</strong><small>${sanitize(foot)}</small></div>`;
 }
-function widgetSize(id){return (db.settings.widgetSizes||{})[id]===2?2:(['executiveSnapshot','incomeProjection'].includes(id)?2:1)}
+function widgetSize(id){const n=Number((db.settings.widgetSizes||{})[id]);return Number.isInteger(n)&&n>=1&&n<=4?n:(['executiveSnapshot','incomeProjection'].includes(id)?2:1)}
+function widgetHeight(id){const n=Number((db.settings.widgetHeights||{})[id]);return Number.isFinite(n)&&n>=165&&n<=600?n:(VIVE_CHART_KEYS.has(id)?252:194)}
 function v133TomorrowWidgetBody(){
  const b=v119Baseline(30),min=Math.max(0,b.minimum),gap=Math.max(0,-b.minimum);
  return `<div class="v133-tomorrow-body">
@@ -18714,17 +18801,19 @@ function v133TomorrowWidgetBody(){
 function kpiStudio(){
  const selected=widgetsState(),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
  const map=Object.fromEntries(all.map(x=>[x[0],x])),chartKeys=VIVE_CHART_KEYS;
- const libraryGroups=[['all','Todos'],['global10','Top 10 global'],['reference','Diseños de referencia'],['executive','Ejecutivos'],['projection','Proyecciones'],['decisions','Decisiones'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
- const group=ui.widgetCatalogFilter||'all';
- const visible=all.filter(x=>group==='all'||(group==='global10'?V208_GLOBAL_TOP10.some(t=>t[0]===x[0]):x[3]===group));
+ const libraryGroups=[['all','Todos'],['global10','Top 10 global · selección'],['reference','Diseños de referencia'],['executive','Ejecutivos'],['projection','Proyecciones'],['decisions','Decisiones'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
+ const group=ui.widgetCatalogFilter||'all',query=v71SearchNormalize(ui.widgetSearch||'');
+ const visible=all.filter(x=>(group==='all'||(group==='global10'?V208_GLOBAL_TOP10.some(t=>t[0]===x[0]):x[3]===group))&&(!query||v71SearchNormalize(x[1]+' '+x[0]+' '+(V208_GLOBAL_TOP10.find(y=>y[0]===x[0])?.[2]||'')).includes(query)));
  const tile=(id,i)=>{
    const def=map[id];if(!def)return '';const isChart=chartKeys.has(id),isReference=V197_REFERENCE_CHART_IDS.includes(id),m=widgetPicture(id),size=widgetSize(id);
+   const height=widgetHeight(id);
    const route=m?.route||({referenceBalance:'advanced',referenceCredit:'cards',referenceCashflow:'income',referenceComparison:'advanced',incomeVsExpense:'income',creditVisual:'cards',fundsVisual:'accounts',subscriptionVisual:'recurring',incomeYoYTrend:'advanced',expenseYoYTrend:'advanced',netYoYTrend:'advanced',incomeYtdYoY:'advanced',expenseYtdYoY:'advanced',netYtdYoY:'advanced',netTrendChart:'income',liquidityTrendChart:'accounts',incomeMixChart:'income',expenseMixChart:'advanced',subscriptionsParetoChart:'recurring',creditByCardChart:'cards',loanBalancesChart:'loans',assetMixChart:'patrimony'}[id])||'kpis';
-   return `<article class="widget-card ws-tile ${isReference?'ws-reference ':''}${isChart?'widget-chart':''} ${size===2?'ws-wide':''}" data-widget="${sanitize(id)}" draggable="${editing?'true':'false'}" tabindex="0" aria-label="Widget ${sanitize(def[1])}">
-    <div class="widget-card-top"><div><span class="widget-kicker">${isChart?'GRÁFICO INTERACTIVO':'INDICADOR FINANCIERO'}</span><h3>${sanitize(def[1])}</h3></div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size===2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size===2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
+   return `<article class="widget-card ws-tile ${isReference?'ws-reference ':''}${isChart?'widget-chart':''} ${size>=2?'ws-wide':''}" data-widget="${sanitize(id)}" data-ws-span="${size}" data-ws-height="${height}" style="--ws-cols:${size};--ws-h:${height}px" draggable="${editing?'true':'false'}" tabindex="0" aria-label="Widget ${sanitize(def[1])}">
+    <div class="widget-card-top"><div><span class="widget-kicker">${isChart?'GRÁFICO INTERACTIVO':'INDICADOR FINANCIERO'}</span><h3>${sanitize(def[1])}</h3></div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size>=2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size>=2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
     ${id==='tomorrowCost'?v133TomorrowWidgetBody():['executiveSnapshot','incomeProjection'].includes(id)?v195Visual(id):isChart?widgetGraph(id):`<div class="widget-number ${m?.tone&&m.tone!=='neutral'?'v195-'+m.tone:''}">${m?.value||'—'}</div><p class="widget-foot">${sanitize(m?.foot||'')}</p>${v12WidgetHistory(id)}${['dailyIncomeAverage','incomeVsLastMonth','regularIncome','netProjection','savingRate','liquidityCoverage','payments30d'].includes(id)?v195Sparkline(['netProjection','savingRate'].includes(id)?'net':'income'):''}`}
     ${['burden','affordability','utilization'].includes(id)?`<button type="button" class="v85-widget-open" data-v85-action="capacity">Ver cálculo ${icon('arrow')}</button>`:''}
     ${isReference?'':id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Simular una decisión ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
+    <span class="v209-widget-resize" role="button" tabindex="0" title="Arrastra la esquina para cambiar el tamaño" aria-label="Redimensionar ${sanitize(def[1])} desde la esquina" data-widget-resizer="${sanitize(id)}"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m7 17 10-10M12 17l5-5M17 17h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
    </article>`;
  };
  const catalogueTile=x=>{
@@ -18739,8 +18828,8 @@ function kpiStudio(){
   return `<section class="ws-catalog-section"><div class="ws-catalog-heading"><strong>${label}</strong><small>${key==='global10'?'Selección inspirada en referentes internacionales · 10 indicadores útiles':part.length+' diseños disponibles'}</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
  }).join('');
  return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores, a mi manera.</h2><p>Un tablero a tu medida. Puedes utilizar los cuatro gráficos de referencia y añadir o retirar cualquier indicador.</p></div><div class="widgets-head-buttons"><button class="btn sm soft" data-act="widgetReferencePreset" type="button">Diseño de 4 gráficos</button>${selected.length?'<button class="btn sm soft" data-act="widgetPreset">Vaciar tablero</button>':''}<button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Añadir indicadores'}</button></div></div>
- ${editing?`<section class="ws-library" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">BIBLIOTECA DE DISEÑOS</span><h3>Elige viendo cómo queda.</h3><p>Elige entre los diseños financieros más útiles. En «Top 10 global» verás una selección editorial; solo se muestran cifras de tus registros.</p></div><span>${selected.length} seleccionados</span></header><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><p class="ws-gallery-help">Miniaturas con tus cifras del período. Los gráficos se actualizan con los registros confirmados.</p></section>`:''}
- <div class="ws-dashboard-label"><div><h3>Tablero activo</h3><p>Usa las flechas para ordenar · ⤢ para ampliar o reducir. También puedes arrastrar los widgets con el catálogo abierto.</p></div><strong>${selected.length} widgets</strong></div>
+ ${editing?`<div class="v209-widget-overlay" data-act="widgetEditor" aria-hidden="true"></div><section class="ws-library" role="dialog" aria-modal="true" aria-label="Biblioteca de widgets" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">TU ESTUDIO DE WIDGETS</span><h3>Diseña tu tablero.</h3><p>Explora, compara y añade indicadores sin perder los que ya elegiste.</p></div><button type="button" class="v209-library-close" data-act="widgetEditor" aria-label="Cerrar biblioteca">×</button></header><div class="v209-widget-searchbar"><span>${icon('search')}</span><input id="v209WidgetSearch" type="search" placeholder="Busca por nombre o función: crédito, ingresos, ahorro…" autocomplete="off" aria-label="Buscar widgets" value="${sanitize(ui.widgetSearch||'')}"/><small>${selected.length} elegidos</small></div><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><footer class="v209-library-footer"><span>${selected.length} widget${selected.length===1?'':'s'} en tu tablero · Puedes redimensionarlos desde la esquina</span><button type="button" data-act="widgetEditor">Ver mi tablero →</button></footer></section>`:''}
+ <div class="ws-dashboard-label"><div><h3>Tablero activo</h3><p>Arrastra la esquina inferior derecha de cada indicador para cambiar ancho y alto. Usa las flechas para ordenar.</p></div><strong>${selected.length} widgets</strong></div>
  <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Diseño de 4 gráficos» o «Añadir indicadores» para personalizarlo.</div>'}</div>
  <div class="widgets-disclaimer">Las operaciones pendientes no afectan los saldos. Los importes en RD$ equivalentes de fondos US$ usan la tasa manual configurada. Los préstamos entre personas no se asignan a un banco.</div></div>`;
 }
@@ -19464,7 +19553,7 @@ const V41_SVC_BY_ID=Object.fromEntries(V41_SERVICES.map(x=>[x.id,x]));
 function v41ValidIcon(id){return Object.hasOwn(V41_SVC_BY_ID,String(id||''))?String(id):'general'}
 function v41GuessIcon(value){
  const name=String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
- const patterns=[[/max\b|hbo/,'hbo'],[/paramount/,'paramount'],[/crunchyroll/,'crunchyroll'],[/twitch/,'twitch'],[/hulu/,'hulu'],[/tidal/,'tidal'],[/deezer/,'deezer'],[/apple music/,'applemusic'],[/soundcloud/,'soundcloud'],[/dropbox/,'dropbox'],[/google one/,'google'],[/google drive/,'drive'],[/adobe/,'adobe'],[/figma/,'figma'],[/zoom/,'zoom'],[/slack/,'slack'],[/github/,'github'],[/linkedin/,'linkedin'],[/playstation/,'playstation'],[/nintendo/,'nintendo'],[/steam/,'steam'],[/duolingo/,'duolingo'],[/coursera/,'coursera'],[/udemy/,'udemy'],[/claro/,'claro'],[/altice/,'altice'],[/starlink/,'starlink'],[/agua|acueducto/,'water'],[/gas/,'gas'],[/combustible|gasolina/,'fuel'],[/alimento|supermercado/,'food'],[/farmacia|medicina/,'pharmacy'],[/mascota|veterinar/,'pet'],[/impuesto|dgii/,'tax'],[/mantenimiento/,'maintenance'],[/dominio|hosting/,'website'],[/netflix/,'netflix'],[/spotify/,'spotify'],[/youtube/,'youtube'],[/chatgpt|openai/,'chatgpt'],[/icloud/,'icloud'],[/apple|app store|apple one/,'apple'],[/disney/,'disney'],[/prime|amazon/,'prime'],[/notion/,'notion'],[/canva/,'canva'],[/microsoft|office|onedrive|xbox/,'microsoft'],[/wifi|internet|fibra|banda ancha/,'internet'],[/telefon|celular|movil|movistar|claro|altice/,'phone'],[/video|hbo|max|hulu|paramount|stream|cine/,'streaming'],[/musica|music|deezer|tidal/,'music'],[/gimnasio|gym|fitness/,'gym'],[/curso|educa|univers|escuela/,'education'],[/seguro|poliza|salud/,'insurance'],[/luz|agua|electric|energia/,'utilities'],[/alquiler|renta|vivienda|condominio/,'home']];
+ const patterns=[[/barber|barberia|barbershop|pelado de hombre/,'generic-barber'],[/peluqueria|estilista|salon de pelo/,'generic-hair'],[/dentista|odontolog/,'generic-dentist'],[/psicolog|terapia/,'generic-therapy'],[/consulta medica|medico|doctor|clinica/,'generic-doctor'],[/masaje/,'generic-massage'],[/manicura|pedicura|unas/,'generic-nails'],[/spa|bienestar/,'generic-spa'],[/lavanderia|lavado de ropa/,'generic-laundry'],[/limpieza|aseo/,'generic-cleaning'],[/jardin/,'generic-gardening'],[/veterinar/,'generic-veterinary'],[/laboratorio|analisis clinico/,'generic-laboratory'],[/nutricion|dietista/,'generic-nutrition'],[/guarderia/,'generic-daycare'],[/mantenimiento de piscina|piscina/,'generic-pool'],[/max\b|hbo/,'hbo'],[/paramount/,'paramount'],[/crunchyroll/,'crunchyroll'],[/twitch/,'twitch'],[/hulu/,'hulu'],[/tidal/,'tidal'],[/deezer/,'deezer'],[/apple music/,'applemusic'],[/soundcloud/,'soundcloud'],[/dropbox/,'dropbox'],[/google one/,'google'],[/google drive/,'drive'],[/adobe/,'adobe'],[/figma/,'figma'],[/zoom/,'zoom'],[/slack/,'slack'],[/github/,'github'],[/linkedin/,'linkedin'],[/playstation/,'playstation'],[/nintendo/,'nintendo'],[/steam/,'steam'],[/duolingo/,'duolingo'],[/coursera/,'coursera'],[/udemy/,'udemy'],[/claro/,'claro'],[/altice/,'altice'],[/starlink/,'starlink'],[/agua|acueducto/,'water'],[/gas/,'gas'],[/combustible|gasolina/,'fuel'],[/alimento|supermercado/,'food'],[/farmacia|medicina/,'pharmacy'],[/mascota|veterinar/,'pet'],[/impuesto|dgii/,'tax'],[/mantenimiento/,'maintenance'],[/dominio|hosting/,'website'],[/netflix/,'netflix'],[/spotify/,'spotify'],[/youtube/,'youtube'],[/chatgpt|openai/,'chatgpt'],[/icloud/,'icloud'],[/apple|app store|apple one/,'apple'],[/disney/,'disney'],[/prime|amazon/,'prime'],[/notion/,'notion'],[/canva/,'canva'],[/microsoft|office|onedrive|xbox/,'microsoft'],[/wifi|internet|fibra|banda ancha/,'internet'],[/telefon|celular|movil|movistar|claro|altice/,'phone'],[/video|hbo|max|hulu|paramount|stream|cine/,'streaming'],[/musica|music|deezer|tidal/,'music'],[/gimnasio|gym|fitness/,'gym'],[/curso|educa|univers|escuela/,'education'],[/seguro|poliza|salud/,'insurance'],[/luz|agua|electric|energia/,'utilities'],[/alquiler|renta|vivienda|condominio/,'home']];
  for(const [pattern,id] of patterns)if(pattern.test(name))return id;
  return 'general';
 }
@@ -19509,6 +19598,32 @@ function v41ServiceIcon(id,small=''){
  briefcase:'<rect x="2" y="7" width="20" height="15" rx="2"/><path d="M8 7V4h8v3M2 13h20"/>',
  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v5m10-5v5M3 10h18"/>',
  gift:'<rect x="3" y="10" width="18" height="11" rx="2"/><path d="M2 7h20v4H2zM12 7v14M12 7c-6 0-8-2-6-5 2-2 5 1 6 5m0 0c6 0 8-2 6-5-2-2-5 1-6 5"/>',
+ scissors:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="m8.5 8.5 12 12M8.5 15.5 20.5 3.5"/>',
+ hand:'<path d="M7 12V6a2 2 0 0 1 4 0v4-6a2 2 0 0 1 4 0v6-4a2 2 0 0 1 4 0v7l-1 5a5 5 0 0 1-5 4H9c-2 0-3-1-5-4l-2-3a2 2 0 0 1 3-2l2 2"/>',
+ flower:'<circle cx="12" cy="12" r="2"/><path d="M12 10C8 8 8 3 12 3s4 5 0 7Zm2 2c2-4 7-4 7 0s-5 4-7 0Zm-2 2c4 2 4 7 0 7s-4-5 0-7Zm-2-2c-2 4-7 4-7 0s5-4 7 0Z"/>',
+ stethoscope:'<path d="M5 3v7a5 5 0 0 0 10 0V3M3 3h4m6 0h4M10 15v1a5 5 0 0 0 10 0v-3"/><circle cx="20" cy="11" r="2"/>',
+ tooth:'<path d="M5 4c3-3 5 0 7 0s5-3 7 0c3 4-1 13-4 17-2 2-2-6-3-6s-1 8-3 6C6 17 2 8 5 4Z"/>',
+ brain:'<path d="M12 5a4 4 0 0 0-7 3 4 4 0 0 0-1 7c-1 4 2 6 5 5a4 4 0 0 0 3-3V5Zm0 0a4 4 0 0 1 7 3 4 4 0 0 1 1 7c1 4-2 6-5 5a4 4 0 0 1-3-3"/>',
+ glasses:'<path d="M3 10 5 8h5l2 2 2-2h5l2 2M3 10v4a4 4 0 0 0 8 0v-4m2 0v4a4 4 0 0 0 8 0v-4"/>',
+ flask:'<path d="M9 2h6m-5 0v8L4 20h16l-6-10V2M7 15h10"/>',
+ syringe:'<path d="m14 3 7 7M9 9l6 6M7 11l6 6M6 14 3 21l7-3 9-9-5-5-8 10ZM2 22l3-3"/>',
+ apple:'<path d="M12 7c-7-6-12 3-7 11 2 4 5 4 7 3 2 1 5 1 7-3 5-8 0-17-7-11Zm0 0c0-4 2-5 5-5"/>',
+ activity:'<path d="M2 12h5l3-7 4 14 3-7h5"/>',
+ broom:'<path d="m15 2-7 11m-4 2 6 4 8-5-5-4-9 5Zm2 3 4 3m2-9 5 4"/>',
+ washing:'<rect x="3" y="2" width="18" height="20" rx="2"/><circle cx="12" cy="13" r="6"/><path d="M6 5h2m3 0h2"/>',
+ shirt:'<path d="M8 3 3 6 1 11l5 2v8h12v-8l5-2-2-5-5-3-4 4-4-4Z"/>',
+ leaf:'<path d="M20 4C8 3 4 8 4 15c0 4 5 6 9 3s6-8 7-14ZM4 21c1-5 6-9 12-12"/>',
+ hammer:'<path d="m12 8 9 9-4 4-9-9M4 10l7-7h6l3 3-6 6-3-3-4 4-3-3Z"/>',
+ brush:'<path d="m14 3 7 7-8 8-7-7 8-8ZM4 15c-3 0-4 6-2 7 1 0 5-1 7-5"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/>',
+ bus:'<rect x="4" y="3" width="16" height="17" rx="3"/><path d="M4 12h16M7 20v2m10-2v2M7 7h10"/>',
+ box:'<path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm-9 5 9 5 9-5M12 12v10"/>',
+ bike:'<circle cx="5" cy="17" r="4"/><circle cx="19" cy="17" r="4"/><path d="m5 17 5-9 4 9h5l-5-9m-7 0h4"/>',
+ camera:'<rect x="2" y="6" width="20" height="15" rx="3"/><path d="m7 6 2-3h6l2 3"/><circle cx="12" cy="13" r="4"/>',
+ scale:'<path d="M12 3v18M4 7h16M5 7 2 14h6L5 7Zm14 0-3 7h6l-3-7ZM7 21h10"/>',
+ bread:'<path d="M7 21V9a5 5 0 0 1 2-9c2 0 3 1 3 2a5 5 0 0 1 7 7v12H7Z"/>',
+ basket:'<path d="m4 10 3-6m13 6-3-6M2 10h20l-2 11H4L2 10Zm5 4v4m5-4v4m5-4v4"/>',
+ waves:'<path d="M2 9c3-3 5 3 8 0s5-3 8 0 4 0 4 0M2 15c3-3 5 3 8 0s5-3 8 0 4 0 4 0"/>',
  circle:'<circle cx="12" cy="12" r="8"/>'
  };
  const child=paths[opt.glyph]?`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[opt.glyph]}</svg>`:sanitize(opt.glyph);
@@ -20656,6 +20771,7 @@ document.addEventListener('pointerleave',hideChartTip);
 document.addEventListener('input',event=>{if(event.target.id!=='visionQuickSearch')return;const value=event.target.value.toLocaleLowerCase('es').trim();document.querySelectorAll('.vision-ledger-row,.vision-cat-item').forEach(el=>{el.hidden=!!value&&!el.textContent.toLocaleLowerCase('es').includes(value)});});
 function render(){
  v99Invalidate();
+ if(!['light','black'].includes(db.settings.theme))db.settings.theme='black';
  db.settings.visualDesign='claridad';
  document.body.classList.toggle('theme-dark',['dark','black'].includes(db.settings.theme));
   document.body.classList.toggle('theme-black',db.settings.theme==='black');
@@ -20758,7 +20874,7 @@ case 'menuLayout':db.settings.menuLayout='rail';render();break;
 case 'toggleTheme':db.settings.theme=['dark','black'].includes(db.settings.theme)?'light':'dark';persist();render();break;
 case 'visualDesign':db.settings.visualDesign='claridad';persist();render();break;
 case 'visionRange':ui.visionRange=[3,6,12].includes(Number(id))?Number(id):6;render();break;
-case 'setTheme':if(['light','dark','black'].includes(id)){db.settings.visualDesign='claridad';db.settings.theme=id;persist();render()}break;
+case 'setTheme':if(['light','black'].includes(id)){db.settings.visualDesign='claridad';db.settings.theme=id;persist();render()}break;
 case 'paletteTheme':if(['original','emerald','coral'].includes(id)){db.settings.paletteChoice=id;persist();render();toast('Color de acento actualizado.');}break;
 case 'paletteCustom':{const c=document.getElementById('viveCustomColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.paletteHex=c;db.settings.paletteChoice='custom';persist();render();toast('Color de acento personalizado aplicado.')}break;}
 case 'backgroundTheme':if(['original','glacier','sunset'].includes(id)){db.settings.backgroundChoice=id;persist();render();toast('Fondo actualizado.');}break;
@@ -21064,7 +21180,7 @@ if(['loanAmount','loanInterest','loanFee','loanInsurance'].includes(t.id)){let f
 (function(){
  const handlers={
  addCashWallet:el=>cashWalletForm(), editCashWallet:el=>cashWalletForm(),
- widgetEditor:()=>{ui.widgetEditor=!ui.widgetEditor;render()},
+ widgetEditor:()=>{if(!ui.widgetEditor){ui.widgetCatalogFilter='global10';ui.widgetSearch=''}ui.widgetEditor=!ui.widgetEditor;render()},
   v197CompareMode:el=>{ui.v197CompareMode=el.dataset.id||'net';render()},
   widgetReferencePreset:()=>{const refs=['referenceBalance','referenceCredit','referenceCashflow','referenceComparison'];const old=widgetsState();const rest=old.filter(x=>!refs.includes(x));saveWidgets([...refs,...rest]);toast('Cuatro gráficos incorporados a tu tablero.');render()},
  widgetToggle:el=>{let list=widgetsState(),id=el.dataset.id;if(list.includes(id))list=list.filter(x=>x!==id);else list.push(id);saveWidgets(list);render()},
@@ -21073,7 +21189,7 @@ if(['loanAmount','loanInterest','loanFee','loanInsurance'].includes(t.id)){let f
  widgetMoveDown:el=>{let list=widgetsState(),i=list.indexOf(el.dataset.id);if(i>=0&&i<list.length-1){[list[i+1],list[i]]=[list[i],list[i+1]];saveWidgets(list);render()}},
  widgetPreset:()=>{if(widgetsState().length&& !confirm('¿Vaciar tu tablero personal? Tus registros financieros no se eliminarán.'))return;saveWidgets([]);render()},
  widgetCatalogFilter:el=>{ui.widgetCatalogFilter=el.dataset.id||'all';render()},
- widgetSize:el=>{db.settings.widgetSizes??={};let id=el.dataset.id;db.settings.widgetSizes[id]=widgetSize(id)===2?1:2;persist();render()}
+ widgetSize:el=>{db.settings.widgetSizes??={};let id=el.dataset.id;db.settings.widgetSizes[id]=widgetSize(id)>=2?1:2;persist();render()}
  };
  document.addEventListener('click',e=>{let b=e.target.closest?.('[data-act]');if(b&&handlers[b.dataset.act]){e.preventDefault();e.stopImmediatePropagation();handlers[b.dataset.act](b)}},true);
  let draggedWidget='';
@@ -24383,7 +24499,7 @@ function v89DebtCapacity(period=ui.month){return v99DebtMonth(period)}
 function v85Pct(n){return n===null||!Number.isFinite(n)?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(n)+'%'}
 function v89CapacityExplanation(d){
  const line=(name,value)=>`<div class="v89-debt-row"><span>${sanitize(name)}</span><strong>${money(value)}</strong></div>`;
- return `<div class="v89-debt-breakdown"><div class="v89-debt-row v89-income-row"><span>Ingresos del período · ${sanitize(d.f.period)}</span><strong>${money(d.income)}</strong></div>${line('Suscripciones y recurrentes',d.a.recurring)}${line('Cuotas con vencimiento en el mes (15 y 30 cuando corresponda)',d.a.loans)}${line('Tarjetas: estados al corte por pagar',d.a.cards)}${line('Pagos exigibles entre personas',d.a.personal)}${d.groups.loan.items.map(l=>`<div class="v89-debt-row v99-loan-line"><span>↳ ${sanitize(l.name)} · ${prettyDate(l.date)}</span><strong>${money(l.amount,l.currency,2)}</strong></div>`).join('')}<div class="v89-debt-row v89-debt-total"><span>Total a pagar al mes</span><strong>${money(d.monthly)}</strong></div><div class="v89-debt-row"><span>${d.balance!==null&&d.balance<0?'Déficit previsto':'Disponible después de compromisos'}</span><strong>${d.balance===null?'—':money(Math.abs(d.balance))}</strong></div><p>Base utilizada: ${sanitize(d.source)}. Endeudamiento = compromisos del mes seleccionado ÷ ingresos de ese mismo mes × 100. El 100% indica que todos los ingresos se destinarían a pagos; por encima del 100% hay déficit. Este indicador mide carga mensual, no el saldo completo de las deudas. Se emplean las cuotas con fecha dentro del mes y los estados de tarjetas con vencimiento en ese período. El saldo total de una tarjeta no cortada no se exige antes de su vencimiento. Si existen atrasos, también se muestran como pendientes; la proyección puede variar al registrar cobros y pagos. Los gastos no comprometidos se analizan aparte.</p></div>`;
+ return `<div class="v89-debt-breakdown"><div class="v89-debt-row v89-income-row"><span>Ingresos del período · ${sanitize(d.f.period)}</span><strong>${money(d.income)}</strong></div>${line('Suscripciones y recurrentes',d.a.recurring)}${line('Cuotas con vencimiento en el mes (15 y 30 cuando corresponda)',d.a.loans)}${line('Tarjetas: estados al corte por pagar',d.a.cards)}${line('Pagos exigibles entre personas',d.a.personal)}${d.groups.loan.items.map(l=>`<div class="v89-debt-row v99-loan-line"><span>↳ ${sanitize(l.name)} · ${prettyDate(l.date)}</span><strong>${money(l.amount,l.currency,2)}</strong></div>`).join('')}<div class="v89-debt-row v89-debt-total"><span>Total a pagar al mes</span><strong>${money(d.monthly)}</strong></div><div class="v89-debt-row"><span>${d.balance!==null&&d.balance<0?'Déficit previsto':'Disponible después de compromisos'}</span><strong>${d.balance===null?'—':money(Math.abs(d.balance))}</strong></div><details class="v209-capacity-method"><summary>Cómo se calcula este indicador</summary><p>Base utilizada: ${sanitize(d.source)}. Endeudamiento = compromisos del mes seleccionado ÷ ingresos de ese mismo mes × 100. El 100% indica que todos los ingresos se destinarían a pagos; por encima del 100% hay déficit. Este indicador mide carga mensual, no el saldo completo de las deudas. Se emplean las cuotas con fecha dentro del mes y los estados de tarjetas con vencimiento en ese período. El saldo total de una tarjeta no cortada no se exige antes de su vencimiento. Si existen atrasos, también se muestran como pendientes; la proyección puede variar al registrar cobros y pagos. Los gastos no comprometidos se analizan aparte.</p></details></div>`;
 }
 function v85LoadChip(label='Endeudamiento'){
  const d=v89DebtCapacity();
@@ -25634,7 +25750,8 @@ const V149_APP_ICONS=[
  ['banreservas','Banreservas','BR','#e5f3ff','#1e669d'],['popular-rd','Banco Popular','P','#e6efff','#2460b0'],['bhd-rd','Banco BHD','BHD','#e6f5ea','#427d54'],['cibao-rd','Asociación Cibao','C','#e7e8ff','#2f42aa'],['qik','Qik','Q','#ecf3ff','#3272bc'],['paypal-business','PayPal Negocio','PB','#e6f0ff','#3574b6'],['dgii','DGII','DG','#e8f2ff','#537ba8'],['edenorte','Edenorte','E','#fff4dd','#ae8536'],['edesur','Edesur','E','#fff0df','#ae7735'],['edeeste','Edeeste','E','#fff0db','#ba8040'],['inapa','INAPA','I','#e4f6ff','#3786ad'],['caasd','CAASD','C','#e3f5ff','#367aa6'],['viva-rd','Viva','V','#eeedff','#6551a8']
 ];
 const V149_GENERIC_ICONS=[
- ['generic-star','Estrella','sparkle','#fff6df','#af8839'],['generic-bolt','Rayo','bolt','#fff2e3','#c08131'],['generic-heart','Corazón','heart','#ffebef','#be6072'],['generic-shield','Escudo','shield','#e5f6ef','#478d6c'],['generic-cloud','Nube','cloud','#e6f4ff','#4e8cb9'],['generic-home','Casa','home','#eef0ff','#6c72b8'],['generic-calendar','Calendario','calendar','#e8efff','#4b71bb'],['generic-music','Nota musical','music','#ffeff6','#ae658a'],['generic-book','Libro','book','#edf2ff','#5976af'],['generic-gift','Regalo','gift','#ffedf2','#be6384'],['generic-camera','Cámara','◎','#e8f0ff','#587eb9'],['generic-video','Video','play','#ede9ff','#7560bb'],['generic-tv','Televisión','tv','#e9ecff','#7075b5'],['generic-phone','Teléfono','phone','#e7f7f3','#398d7c'],['generic-wifi','Wi-Fi','wifi','#e6f1ff','#4b7cb8'],['generic-card','Tarjeta','card','#ecf1ff','#6380b4'],['generic-bank','Institución bancaria','bank','#e8f2ff','#4c77a5'],['generic-coins','Monedas','coins','#fff5dd','#a58a4a'],['generic-receipt','Factura','receipt','#f1efff','#756ba8'],['generic-bag','Bolsa','bag','#ffedf7','#b56a9c'],['generic-car','Automóvil','car','#e8f1ff','#5277b2'],['generic-fuel','Gasolina','pump','#fff1e5','#c38b47'],['generic-plane','Avión','plane','#e5f3ff','#4d8bad'],['generic-coffee','Café','cup','#f7efe8','#977653'],['generic-meal','Comida','fork','#fff0e9','#bc7960'],['generic-water','Agua','drop','#e7f8ff','#4c99c1'],['generic-fire','Fuego','flame','#fff1e6','#c67c49'],['generic-users','Personas','users','#f1efff','#8170a6'],['generic-pets','Mascota','paw','#fff2e7','#af8454'],['generic-sport','Deporte','ball','#e9f9ef','#538961'],['generic-tools','Herramientas','tool','#f0f2f6','#728397'],['generic-lock','Candado','lock','#ebf1f7','#667e9c'],['generic-globe','Internet / global','globe','#e5f7f7','#468a89'],['generic-spark','Destello','sparkle','#f8ecff','#a76dc0'],['generic-briefcase','Trabajo','briefcase','#e8eef8','#5875a5'],['generic-plus','Más','+','#e7f4ee','#548e71'],['generic-check','Confirmado','✓','#e7f8ec','#3a8b5d'],['generic-pause','En pausa','Ⅱ','#eef0f5','#75849b'],['generic-target','Objetivo','◎','#fff0e5','#c38b51'],['generic-lightbulb','Idea','✧','#fff7e1','#bc9b38'],['generic-flag','Bandera','⚑','#ffedf0','#bb6474'],['generic-crown','Premium','♛','#fff4e1','#bb8c42'],['generic-percent','Descuento','%','#e9f6ff','#5f88ac'],['generic-diamond','Diamante','◇','#e9f4ff','#5e85b6'],['generic-pie','Estadísticas','◔','#ecf0ff','#6575b1'],['generic-shopping','Mercado','bag','#fff0ee','#a76c78'],['generic-building','Edificio','bank','#ebf0f6','#597b9d'],['generic-child','Educación / familia','users','#e9f3ff','#5680a6'],['generic-paint','Creatividad','✦','#f2e8fa','#9b6eb0'],['generic-fitness','Fitness','gym','#eaf9ef','#589b72'],['generic-transfer','Transferencias','⇄','#e6f4ff','#5587af'],['generic-subscription','Suscripción','cycle','#f1eaff','#7e6cb5'],['generic-services','Servicios','tool','#f2f4fb','#7289ae'],['generic-other','Otro símbolo','dots','#eef2f8','#697a9c']
+ ['generic-star','Estrella','sparkle','#fff6df','#af8839'],['generic-bolt','Rayo','bolt','#fff2e3','#c08131'],['generic-heart','Corazón','heart','#ffebef','#be6072'],['generic-shield','Escudo','shield','#e5f6ef','#478d6c'],['generic-cloud','Nube','cloud','#e6f4ff','#4e8cb9'],['generic-home','Casa','home','#eef0ff','#6c72b8'],['generic-calendar','Calendario','calendar','#e8efff','#4b71bb'],['generic-music','Nota musical','music','#ffeff6','#ae658a'],['generic-book','Libro','book','#edf2ff','#5976af'],['generic-gift','Regalo','gift','#ffedf2','#be6384'],['generic-camera','Cámara','◎','#e8f0ff','#587eb9'],['generic-video','Video','play','#ede9ff','#7560bb'],['generic-tv','Televisión','tv','#e9ecff','#7075b5'],['generic-phone','Teléfono','phone','#e7f7f3','#398d7c'],['generic-wifi','Wi-Fi','wifi','#e6f1ff','#4b7cb8'],['generic-card','Tarjeta','card','#ecf1ff','#6380b4'],['generic-bank','Institución bancaria','bank','#e8f2ff','#4c77a5'],['generic-coins','Monedas','coins','#fff5dd','#a58a4a'],['generic-receipt','Factura','receipt','#f1efff','#756ba8'],['generic-bag','Bolsa','bag','#ffedf7','#b56a9c'],['generic-car','Automóvil','car','#e8f1ff','#5277b2'],['generic-fuel','Gasolina','pump','#fff1e5','#c38b47'],['generic-plane','Avión','plane','#e5f3ff','#4d8bad'],['generic-coffee','Café','cup','#f7efe8','#977653'],['generic-meal','Comida','fork','#fff0e9','#bc7960'],['generic-water','Agua','drop','#e7f8ff','#4c99c1'],['generic-fire','Fuego','flame','#fff1e6','#c67c49'],['generic-users','Personas','users','#f1efff','#8170a6'],['generic-pets','Mascota','paw','#fff2e7','#af8454'],['generic-sport','Deporte','ball','#e9f9ef','#538961'],['generic-tools','Herramientas','tool','#f0f2f6','#728397'],['generic-lock','Candado','lock','#ebf1f7','#667e9c'],['generic-globe','Internet / global','globe','#e5f7f7','#468a89'],['generic-spark','Destello','sparkle','#f8ecff','#a76dc0'],['generic-briefcase','Trabajo','briefcase','#e8eef8','#5875a5'],['generic-plus','Más','+','#e7f4ee','#548e71'],['generic-check','Confirmado','✓','#e7f8ec','#3a8b5d'],['generic-pause','En pausa','Ⅱ','#eef0f5','#75849b'],['generic-target','Objetivo','◎','#fff0e5','#c38b51'],['generic-lightbulb','Idea','✧','#fff7e1','#bc9b38'],['generic-flag','Bandera','⚑','#ffedf0','#bb6474'],['generic-crown','Premium','♛','#fff4e1','#bb8c42'],['generic-percent','Descuento','%','#e9f6ff','#5f88ac'],['generic-diamond','Diamante','◇','#e9f4ff','#5e85b6'],['generic-pie','Estadísticas','◔','#ecf0ff','#6575b1'],['generic-shopping','Mercado','bag','#fff0ee','#a76c78'],['generic-building','Edificio','bank','#ebf0f6','#597b9d'],['generic-child','Educación / familia','users','#e9f3ff','#5680a6'],['generic-paint','Creatividad','✦','#f2e8fa','#9b6eb0'],['generic-fitness','Fitness','gym','#eaf9ef','#589b72'],['generic-transfer','Transferencias','⇄','#e6f4ff','#5587af'],['generic-subscription','Suscripción','cycle','#f1eaff','#7e6cb5'],['generic-services','Servicios','tool','#f2f4fb','#7289ae'],['generic-other','Otro símbolo','dots','#eef2f8','#697a9c'],
+ ['generic-barber','Barbería','scissors','#e9f5ff','#3b75b7'],['generic-hair','Peluquería','scissors','#fff0f6','#b76089'],['generic-salon','Salón de belleza','sparkle','#ffedf6','#b56891'],['generic-nails','Uñas y manicura','hand','#f5eafb','#9259a9'],['generic-spa','Spa y bienestar','flower','#e7f7f4','#388b7d'],['generic-massage','Masajes','hand','#f1efff','#7a6caf'],['generic-skincare','Cuidado de la piel','drop','#ffedf2','#be6d86'],['generic-cosmetics','Cosméticos','sparkle','#f9e8fa','#ac5ba5'],['generic-clinic','Clínica','cross','#e5f7f3','#398d7a'],['generic-doctor','Consulta médica','stethoscope','#eaf2ff','#4576aa'],['generic-dentist','Odontología','tooth','#e8f6fc','#4785ae'],['generic-therapy','Terapia','brain','#f2edff','#8066ac'],['generic-optician','Óptica','glasses','#e9efff','#5478a5'],['generic-laboratory','Laboratorio','flask','#e9f7f3','#468979'],['generic-vaccines','Vacunas','syringe','#eaf7ef','#488a6b'],['generic-nutrition','Nutrición','apple','#ecf8e9','#598d55'],['generic-physiotherapy','Fisioterapia','activity','#fff3e9','#bb814f'],['generic-hospital','Hospital','cross','#ffe9ef','#bb6176'],['generic-veterinary','Veterinaria','paw','#f7f0e7','#a47850'],['generic-petgrooming','Peluquería de mascotas','paw','#f5edf9','#9769a7'],['generic-cleaning','Limpieza del hogar','broom','#e7f6ff','#4c8cbb'],['generic-laundry','Lavandería','washing','#e9f2ff','#4a7fb6'],['generic-ironing','Planchado','shirt','#f0f1fc','#6b7cb6'],['generic-gardening','Jardinería','leaf','#e8f7e9','#548e5f'],['generic-plumber','Plomería','tool','#e9f3ff','#547fae'],['generic-electrician','Electricista','bolt','#fff1d9','#b58332'],['generic-carpenter','Carpintería','hammer','#f7efe6','#a77748'],['generic-painting','Pintura','brush','#f2e9fb','#976fbb'],['generic-repair','Reparaciones','tool','#eff2f7','#6a7b8f'],['generic-condominium','Condominio','home','#e8f1fb','#5276a2'],['generic-childcare','Cuidado infantil','users','#f5eeff','#8c6cae'],['generic-eldercare','Cuidado de mayores','heart','#ffeef3','#a75d75'],['generic-daycare','Guardería','sun','#fff4dd','#a9863b'],['generic-tutoring','Clases particulares','book','#eaf0ff','#5478aa'],['generic-schoolbus','Transporte escolar','bus','#fff3df','#a87932'],['generic-delivery','Mensajería','box','#ebf3ff','#5781ac'],['generic-courier','Delivery','bike','#eaf6fa','#538caf'],['generic-photography','Fotografía','camera','#f3ebfc','#8266ad'],['generic-events','Eventos','calendar','#f9edfa','#9b68ae'],['generic-coworking','Coworking','briefcase','#eaf3ff','#597caf'],['generic-accountant','Contabilidad','receipt','#edf2fa','#6381a5'],['generic-legal','Servicios legales','scale','#ecf0fb','#6a75a8'],['generic-bakery','Panadería','bread','#fff1e2','#aa7845'],['generic-restaurant','Restaurantes','fork','#fff0e9','#b47b58'],['generic-groceries','Supermercado','basket','#eaf7ed','#598d63'],['generic-subscriptionbox','Caja mensual','box','#f1effb','#8372ae'],['generic-pool','Piscina','waves','#e7f5fe','#448abd'],['generic-yoga','Yoga / meditación','flower','#eaf7f1','#559b84'],['generic-carwash','Lavado de auto','car','#ebf3ff','#5c7fb1'],['generic-parkingpass','Parqueo mensual','car','#e8eff9','#6c81ac'],['generic-securityguard','Vigilancia','shield','#eef0fa','#5d73a1'],['generic-donate','Aportes y ayudas','heart','#ffedf0','#b76882']
 ];
 for(const [id,label,glyph,bg,fg] of [...V149_APP_ICONS,...V149_GENERIC_ICONS]){
  if(V41_SVC_BY_ID[id])continue;
@@ -25645,24 +25762,30 @@ for(const [id,label,glyph,bg,fg] of [...V149_APP_ICONS,...V149_GENERIC_ICONS]){
 const v149ServicePickerPrev=v41ServicePicker;
 v41ServicePicker=function(id){
  const body=v149ServicePickerPrev(id);
- return body.replace('<div class="v41-service-grid"',`<nav class="v149-icon-tabs" aria-label="Tipos de íconos"><button type="button" data-v149-icon-tab="all" aria-pressed="true">Todos</button><button type="button" data-v149-icon-tab="app" aria-pressed="false">Apps</button><button type="button" data-v149-icon-tab="generic" aria-pressed="false">Genéricos</button><button type="button" data-v149-icon-tab="service" aria-pressed="false">Servicios</button></nav><div class="v41-service-grid"`)
+ return body.replace('<div class="v41-service-grid"',`<nav class="v149-icon-tabs" aria-label="Tipos de íconos"><button type="button" data-v149-icon-tab="all" aria-pressed="true">Todos</button><button type="button" data-v149-icon-tab="app" aria-pressed="false">Apps</button><button type="button" data-v149-icon-tab="generic" aria-pressed="false">Genéricos</button><button type="button" data-v149-icon-tab="service" aria-pressed="false">Servicios</button></nav><nav class="v209-icon-topics" aria-label="Áreas de servicios"><button type="button" data-v209-icon-topic="all" aria-pressed="true">Todos</button><button type="button" data-v209-icon-topic="salud" aria-pressed="false">Salud</button><button type="button" data-v209-icon-topic="cuidado" aria-pressed="false">Cuidado personal</button><button type="button" data-v209-icon-topic="hogar" aria-pressed="false">Hogar</button><button type="button" data-v209-icon-topic="vida" aria-pressed="false">Vida diaria</button></nav><div class="v41-service-grid"`)
  .replace('Buscar: Netflix, internet, iCloud…','Buscar entre '+V41_SERVICES.length+' íconos: apps, servicios, genéricos…');
 };
 const v149OldWireServicePicker=v41WireServicePicker;
 // Los conjuntos estáticos sustituyen búsquedas repetidas dentro de cada filtro de íconos.
+const V209_ICON_TOPICS={
+  salud:['doctor','clinic','dentist','therapy','optician','laboratory','vaccines','nutrition','physiotherapy','hospital','veterinary','eldercare'],
+  cuidado:['barber','hair','salon','nails','spa','massage','skincare','cosmetics','petgrooming','yoga'],
+  hogar:['cleaning','laundry','ironing','gardening','plumber','electrician','carpenter','painting','repair','condominium','securityguard','pool'],
+  vida:['childcare','daycare','tutoring','schoolbus','delivery','courier','photography','events','coworking','accountant','legal','bakery','restaurant','groceries','subscriptionbox','carwash','parkingpass','donate']
+};
 const v150AppIconIds=new Set([...V149_APP_ICONS.map(x=>x[0]),...V45_EXTRA_SERVICES.map(x=>x.id)]);
 v41WireServicePicker=function(form){
  v149OldWireServicePicker(form);
  const picker=form?.querySelector('.v41-icon-selector');if(!picker)return;
  const refresh=()=>{
   const selected=picker.querySelector('[data-v149-icon-tab][aria-pressed="true"]')?.dataset.v149IconTab||'all';
-  const q=v71SearchNormalize(picker.querySelector('#v41IconSearch')?.value||'');let count=0;
+  const q=v71SearchNormalize(picker.querySelector('#v41IconSearch')?.value||'');const topic=picker.querySelector('[data-v209-icon-topic][aria-pressed="true"]')?.dataset.v209IconTopic||'all';let count=0;
   picker.querySelectorAll('.v41-service-choice').forEach(btn=>{
    const item=V41_SVC_BY_ID[btn.dataset.id]||{};
    const generic=String(item.id||'').startsWith('generic-');
    const app=v150AppIconIds.has(item.id);
    const group=generic?'generic':app?'app':'service';
-   const visible=(selected==='all'||selected===group)&&(!q||v71SearchNormalize(item.label+' '+item.id).includes(q));
+   const matchesTopic=topic==='all'||(V209_ICON_TOPICS[topic]||[]).includes(String(item.id||'').replace(/^generic-/,''));const visible=(selected==='all'||selected===group)&&matchesTopic&&(!q||v71SearchNormalize(item.label+' '+item.id).includes(q));
    btn.hidden=!visible;if(visible)count++;
   });
   const empty=picker.querySelector('#v41IconEmpty');if(empty)empty.hidden=count>0;
@@ -25672,6 +25795,7 @@ v41WireServicePicker=function(form){
   refresh();
  }));
  picker.querySelector('#v41IconSearch')?.addEventListener('input',refresh);
+ picker.querySelectorAll('[data-v209-icon-topic]').forEach(button=>button.addEventListener('click',()=>{picker.querySelectorAll('[data-v209-icon-topic]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));if(button.dataset.v209IconTopic!=='all'){const gen=picker.querySelector('[data-v149-icon-tab="generic"]');picker.querySelectorAll('[data-v149-icon-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b===gen)));}refresh();}));
  refresh();
 };
 /* Card lifetime: derived read-only from the same credit, bank statement and transaction tables. */
@@ -26222,7 +26346,88 @@ document.addEventListener('focusout',e=>{
  document.addEventListener('click',e=>{if(e.target?.classList?.contains('v187-modal-overlay'))closeModal()},true);
 })();
 
-f33Boot();
+
+(function(){'use strict';
+// Search without dropping input focus; use the same global selector after re-render.
+document.addEventListener('input',function(ev){
+ if(ev.target?.id!=='v209WidgetSearch')return;
+ const raw=ev.target.value||'';
+ if(typeof ui!=='undefined')ui.widgetSearch=raw;
+ const norm=(v)=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ const q=norm(raw);
+ document.querySelectorAll('.ws-library .ws-catalog-section').forEach(section=>{
+  let count=0;
+  section.querySelectorAll('.ws-gallery-card').forEach(card=>{
+   const text=norm(card.querySelector('.ws-gallery-footer strong')?.textContent+' '+card.querySelector('.v208-global-note')?.textContent+' '+(card.getAttribute('data-widget-preview')||''));
+   card.hidden=!!q&&!text.includes(q);if(!card.hidden)count++;
+  });section.hidden=count===0;
+ });
+});
+let resize=null;
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
+function finish(ev,cancelled){
+ if(!resize||ev.pointerId!==resize.pointer)return;
+ const r=resize;resize=null;
+ try{r.handle.releasePointerCapture(ev.pointerId)}catch(_){ }
+ r.tile.classList.remove('v209-resizing');
+ if(cancelled){r.tile.style.setProperty('--ws-cols',r.span);r.tile.style.setProperty('--ws-h',r.height+'px');return;}
+ if(!r.moved)return;
+ if(typeof db!=='undefined'&&typeof persist==='function'){
+  db.settings.widgetSizes??={};db.settings.widgetHeights??={};
+  db.settings.widgetSizes[r.id]=r.newSpan;
+  db.settings.widgetHeights[r.id]=r.newHeight;
+  persist();if(typeof render==='function')render();
+ }
+}
+document.addEventListener('pointerdown',function(ev){
+ const handle=ev.target.closest?.('[data-widget-resizer]');if(!handle)return;
+ if(ev.pointerType==='mouse'&&ev.button!==0)return;
+ const tile=handle.closest('.ws-tile'),board=tile?.parentElement;
+ if(!tile||!board)return;
+ ev.preventDefault();ev.stopPropagation();
+ const grid=getComputedStyle(board),cols=grid.gridTemplateColumns.split(' ').filter(Boolean).length||2;
+ const gap=parseFloat(grid.columnGap)||12;
+ const colWidth=(board.getBoundingClientRect().width-gap*(cols-1))/cols;
+ const span=clamp(Number(tile.dataset.wsSpan)||1,1,cols);
+ const height=clamp(Number(tile.dataset.wsHeight)||194,165,600);
+ resize={pointer:ev.pointerId,handle,tile,id:tile.dataset.widget,cols,colWidth,gap,startX:ev.clientX,startY:ev.clientY,span,height,newSpan:span,newHeight:height,moved:false};
+ tile.classList.add('v209-resizing');
+ try{handle.setPointerCapture(ev.pointerId)}catch(_){ }
+},true);
+document.addEventListener('pointermove',function(ev){
+ const r=resize;if(!r||ev.pointerId!==r.pointer)return;
+ const dx=ev.clientX-r.startX,dy=ev.clientY-r.startY;
+ if(Math.abs(dx)+Math.abs(dy)<7&&!r.moved)return;
+ r.moved=true;
+ const cols=clamp(Math.round(r.span+dx/(r.colWidth+r.gap)),1,r.cols);
+ const height=clamp(Math.round((r.height+dy)/20)*20,165,600);
+ r.newSpan=cols;r.newHeight=height;
+ r.tile.style.setProperty('--ws-cols',cols);
+ r.tile.style.setProperty('--ws-h',height+'px');
+},true);
+document.addEventListener('pointerup',ev=>finish(ev,false),true);
+document.addEventListener('pointercancel',ev=>finish(ev,true),true);
+document.addEventListener('keydown',function(ev){
+ if(ev.key==='Escape'&&typeof ui!=='undefined'&&ui.widgetEditor){ui.widgetEditor=false;if(typeof render==='function')render();return;}
+ const handle=ev.target.closest?.('[data-widget-resizer]');if(!handle||!['ArrowRight','ArrowLeft','ArrowUp','ArrowDown'].includes(ev.key))return;
+ ev.preventDefault();
+ const id=handle.dataset.widgetResizer;
+ if(typeof db==='undefined'||!id)return;
+ db.settings.widgetSizes??={};db.settings.widgetHeights??={};
+ const board=handle.closest('.ws-board');
+ const cols=board?getComputedStyle(board).gridTemplateColumns.split(' ').filter(Boolean).length:2;
+ if(ev.key==='ArrowLeft'||ev.key==='ArrowRight'){
+  const now=typeof widgetSize==='function'?widgetSize(id):1;
+  db.settings.widgetSizes[id]=clamp(now+(ev.key==='ArrowRight'?1:-1),1,cols);
+ }else{
+  const now=typeof widgetHeight==='function'?widgetHeight(id):194;
+  db.settings.widgetHeights[id]=clamp(now+(ev.key==='ArrowDown'?40:-40),165,600);
+ }
+ if(typeof persist==='function')persist();if(typeof render==='function')render();
+},true);
+})();
+
+ f33Boot();
 
 })();
 
@@ -31047,7 +31252,7 @@ body.theme-dark .world-register .vr-guidance.amber :is(h4,p),body.theme-black .w
  .world-benefits .v144-table-wrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
  .world-benefits .v144-table-wrap table{min-width:560px!important}
 }
-/* Top 10 global: catálogo, no tablero prellenado. */
+/* Top 10 global: diez métricas distintas, selección editorial, no clasificación comercial. */
 .ws-catalog-section:has(.ws-gallery-card) .v208-global-note{font-size:10px;line-height:1.55;min-height:36px;margin:1px 13px 10px;color:var(--muted,#748198)}
 .ws-gallery-card:has(.v208-global-note){border-color:rgba(77,119,190,.32)!important}
 .ws-gallery-card:has(.v208-global-note) .ws-gallery-type{color:#3e70bb!important;font-weight:850!important}
@@ -31130,5 +31335,131 @@ body.theme-black #app .v164-tomorrow-pill{background:#20232a!important;backgroun
 body.theme-dark:not(.theme-black) #app .v164-tomorrow-pill{background:#20324a!important;background-image:none!important;border:1px solid #506780!important;color:#eef4ff!important;box-shadow:none!important}
 body.theme-dark:not(.theme-black) #app .v82-burden.v85-summary-burden{background:#24364e!important;background-image:none!important;border-color:#526784!important;color:#edf4ff!important}
 body.theme-dark:not(.theme-black) #app .v82-burden.v85-summary-burden :is(small,strong){color:#d8e7fa!important}
-</style></body>
+</style>
+<style id="v210-unified-black-and-mobile-product-system">
+/* V210 - único tema oscuro: negro profundo + superficies carbón.
+   Páginas y formularios mantienen su semántica; nunca se cambia un valor. */
+body.theme-black{
+ color-scheme:dark;
+ --bg:#060608;--white:#13151a;--ink:#f3f5f9;--muted:#abb6c6;
+ --line:#343943;--navy:#08090b;--navy2:#13161c;
+ --v210-panel:#13161b;--v210-raised:#1b2028;--v210-subtle:#aebbcf;--v210-edge:#353c48;
+ background:#050506!important;background-image:none!important;color:#f3f5f9!important;
+}
+body.theme-black::before,body.theme-black::after{background:none!important;background-image:none!important;filter:none!important}
+body.theme-black :is(#app,.main,#page,.page-shell,.world-shell,.app-body,.app-layout){color:#f3f5f9}
+body.theme-black .sidebar,body.theme-black .rail-sidebar,body.theme-black .mobile-bar{background:#090a0d!important;background-image:none!important;border-color:#252a32!important;color:#e9edf5!important}
+/* Base de paneles: paneles opacos y legibles, no vidrio blanco. */
+body.theme-black :is(.panel,.card,.kpi,.summary-glass,.glass-surface,.v57-product-hero,.v42-bank-section,.v42-entity,.v204-bank-sidebar,.v204-bank-detail,.bank-card,.bank-panel,.account-card,.loan-card,.certificate-card,.v145-paycenter,.v145-pay-agenda,.v145-payment-kpi,.v145-pay-quick,.movement-recent,.movement-tabs-shell,.module-switch-shell,.v55-panel,.v55-hero,.v55-metric,.v55-source-card,.v55-informal-card,.v55-section-lead,.v46-bank-card,.v46-product-card,.v82-burden,.v89-debt-breakdown,.v187-benefits-ledger,.v144-table-wrap,.vr-workspace,.vr-operation,.ws-gallery-card,.widget-card,.widget-library,.ws-library,.v208-product-compact,.income-world-hero,.world-intro,.world-benefits .v148-benefit-hero,.v200-settings-group){
+ background:#13161b!important;background-image:none!important;
+ border-color:#343a46!important;color:#eef2f8!important;
+ box-shadow:0 8px 24px rgba(0,0,0,.18)!important;
+}
+/* Mantener contraste jerárquico, sin forzar a blanco las cifras rojas/verdes. */
+body.theme-black :is(.panel,.card,.kpi,.v57-product-hero,.v42-bank-section,.v204-bank-detail,.v145-paycenter,.v55-panel,.v89-debt-breakdown,.vr-workspace,.v187-benefits-ledger,.world-overview,.world-banks,.world-loans,.world-register,.world-payments,.world-accounts,.world-cards,.world-certificates,.world-benefits) :is(h1,h2,h3,h4,h5,b,strong,label){color:#f3f5fa}
+body.theme-black :is(.world-overview,.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits,.world-register,.world-payments,.world-movements,.world-income,.world-settings,.world-advanced) :is(.subtle,.muted,.subtitle,.help,.caption,small,.metric-label,.v42-eyebrow,.v42-ent-meta,.widget-kicker){color:#b8c2d0}
+body.theme-black :is(.v57-product-hero,.v42-entity,.v42-summary,.v42-bank-section,.v204-bank-detail,.v204-bank-sidebar,.v46-bank-card,.v145-payment-kpi,.v145-pay-quick,.v89-debt-breakdown,.vr-workspace,.world-overview .summary-glass) :is(p,small,span:not(.positive):not(.negative)){color:inherit}
+/* Bloques secundarios y filtros. */
+body.theme-black :is(.v42-summary,.v42-module-nav,.v42-filters button,.v42-ent-pill,.v42-empty,.v42-form-kicker,.v42-color-field,.v42-scope-choices label,.v55-employment-grid>div,.v55-informal-stats>div,.v55-tax-panel .v42-payroll-taxdetails,.v55-salary-baseline,.v145-pay-filters,.v145-quick-buttons button,.v196-kind-filters button,.v200-commitment-tools,.v144-link,.v32-tool-button,.vr-other-operations .v29-other-action,.vr-register-top-nav,.vr-art-chip,.v99-period-picker,.v89-debt-breakdown details,.v187-benefits-add,.v175-kpi-macro-item,.v208-mobile-product-strip,.v206-banks-switch,.v206-banks-pill.active){
+ background:#1b2028!important;background-image:none!important;
+ border-color:#414957!important;color:#eef3f9!important;box-shadow:none!important;
+}
+body.theme-black :is(.v42-filters button.active,.v42-module-nav button.active,.v42-entity.selected,.v145-pay-filters button.active,.module-switch-tab.active,.v206-banks-pill.active,.theme-choice.selected,.v204-bank-sidebar .v46-bank-card.selected){
+ background:#253247!important;color:#f7f9ff!important;border-color:#769acb!important;
+}
+body.theme-black :is(.v42-ent-main>strong,.v42-ent-value,.v42-bank-top h3,.v42-summary strong,.v55-section-lead h2,.v55-metric strong,.v57-product-hero h2,.v57-product-hero .v46-global-financials strong){color:#f4f7ff!important}
+body.theme-black :is(.v42-ent-meta,.v42-help,.v42-bank-top p,.v42-summary small,.v57-product-hero .v46-bank-intro>p,.v55-informal-info){color:#b4c1d2!important}
+/* Formularios y tablas accesibles en Black. */
+body.theme-black :is(input,select,textarea,.field,.filter-select,.ledger-controls,.v99-period-picker){background:#0e1117!important;color:#f3f6fb!important;border-color:#424b59!important;box-shadow:none!important}
+body.theme-black :is(input,textarea)::placeholder{color:#9aa7ba!important;opacity:1}
+body.theme-black input[type=checkbox],body.theme-black input[type=radio]{accent-color:#83b3ff}
+body.theme-black :is(.table-wrap,.v144-table-wrap,table,tbody){background:#111419!important;color:#eef2f8!important;border-color:#343e4a!important}
+body.theme-black :is(thead,thead th,th){background:#1c232e!important;color:#dbe7f8!important;border-color:#394552!important}
+body.theme-black td{background:transparent!important;color:#edf1f8!important;border-color:#333c47!important}
+body.theme-black tr:nth-child(even){background:#161b22!important}
+body.theme-black :is(.modal,.settings-hero,.vr-guidance,.v145-pay-agenda,.v145-pay-filters,.v58-modal,.v46-dialog){background:#14181e!important;background-image:none!important;color:#f4f6fb!important;border-color:#363e49!important}
+body.theme-black :is(.btn.ghost,.btn.soft,.top-hint,.v58-action,.v32-tool-button,.v42-filters button){background:#202631!important;border-color:#424d5f!important;color:#ecf3ff!important}
+body.theme-black button:focus-visible,body.theme-black a:focus-visible{outline:2px solid #9ac5ff!important;outline-offset:2px!important}
+/* Mantener la distinción entre señales de estado. */
+body.theme-black .positive,body.theme-black .v195-positive{color:#6ee0ae!important}
+body.theme-black .negative,body.theme-black .v195-negative{color:#ff9ba9!important}
+body.theme-black .ws-preview-body{background:#111722!important;background-image:none!important}
+body.theme-black :is(.widget-chart,.ws-gallery-card,.ws-preview-body,.ws-library,.ws-dashboard-label){border-color:#373f4a!important;color:#f0f3fa!important}
+body.theme-black :is(.v197-chart-card,.v197-chart-card svg,.v197-legend,.vive-chart-wrap){color:#e5ebf5!important}
+body.theme-black .theme-choice-row{background:#101318!important;border-color:#353d48!important}
+body.theme-black .theme-choice{background:#1c2129!important;border-color:#3b4552!important;color:#e1e8f2!important}
+body.theme-black .theme-choice.selected{background:#2a3444!important;border-color:#84a9de!important}
+body.theme-black .v200-black-mark{color:#a9c8ff!important}
+/* Cuadrículas bancarias más ordenadas en móvil. No intervenir en portada Bancos. */
+@media(max-width:767px){
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) #page{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v206-banks-switch{position:sticky;top:calc(5px + env(safe-area-inset-top,0px));z-index:14;box-shadow:0 5px 18px rgba(0,0,0,.14);backdrop-filter:blur(18px)}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero{padding:16px!important;border-radius:22px!important;gap:10px!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero :is(.v46-bank-intro,.v46-global-financials){min-width:0!important;max-width:100%!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .hero-actions{gap:7px!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .hero-actions .btn{min-height:44px!important;border-radius:13px!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) :is(.v42-bank-section,.v55-panel,.panel,.loan-card,.certificate-card){border-radius:20px!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) :is(.v42-entities,.v42-overview,.v55-employment-grid){grid-template-columns:minmax(0,1fr)!important}
+ :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) :is(button,a){-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+ body.theme-black :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero{background:#151a22!important;background-image:none!important}
+ body.theme-black :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) :is(.v42-entity,.v42-summary,.v55-metric){background:#1c232d!important;color:#eff4fb!important;border-color:#414b59!important}
+ body.theme-black :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) :is(.v42-ent-main>strong,.v42-summary strong){color:#f4f8ff!important}
+}
+@media(prefers-reduced-motion:reduce){body.theme-black *{scroll-behavior:auto!important}}
+</style>
+<style id="v210-black-surface-precision-fixes">
+/* Corrige específicamente paneles cuyo fondo blanco estaba dentro de un gradiente. */
+body.theme-black .main.world-overview .ff-dashboard .ff-balance.ff-tile,
+body.theme-black .main.world-overview .ff-dashboard .v152-position-reference{
+ background:#171d27!important;background-image:none!important;
+ border-color:#3c4759!important;color:#f4f7ff!important;
+}
+body.theme-black .main.world-overview .ff-dashboard .ff-balance :is(h1,h2,h3,strong,.ff-balance-title,.ff-balance-main,.ff-balance-value){color:#f6f8ff!important}
+body.theme-black .main.world-overview .ff-dashboard .ff-balance :is(small,p,.ff-balance-copy,.ff-balance-kicker){color:#bfccdd!important}
+body.theme-black .main.world-overview .ff-dashboard .ff-bubble:not(.featured){background:#243046!important;background-image:none!important;color:#f1f5ff!important;border:1px solid #475774!important}
+body.theme-black .main.world-overview .ff-dashboard .ff-bubble:not(.featured) :is(strong,small,span){color:#e5efff!important}
+body.theme-black .main.world-overview .ff-dashboard .ff-bubble.featured{background:#394f9d!important;background-image:none!important;color:#fff!important;border:1px solid #6c88d9!important}
+body.theme-black .main.world-overview .ff-dashboard .ff-bubble.featured :is(strong,small,span){color:#fff!important}
+body.theme-black .main.world-overview .top-title,body.theme-black .top-title{color:#f4f6fa!important}
+body.theme-black .main.world-loans .v196-loan-summary .loan-stat,
+body.theme-black .world-loans #page .v196-loan-summary-grid .loan-stat{
+ background:#1b232f!important;background-image:none!important;
+ color:#f3f6fc!important;border:1px solid #3d4b5e!important;box-shadow:none!important;
+}
+body.theme-black .main.world-loans .v196-loan-summary :is(.loan-stat strong,.loan-stat b){color:#eef4ff!important}
+body.theme-black .main.world-loans .v196-loan-summary :is(.loan-stat small,.v196-loan-summary-head span){color:#b7c7de!important}
+body.theme-black .main.world-loans .v196-loan-summary{color:#edf4ff!important}
+body.theme-black .main.world-loans .v196-loan-summary-head{color:#ccdaee!important}
+@media(max-width:790px){
+ body.theme-black .main.world-overview .ff-dashboard .ff-balance.ff-tile{background:#171d27!important;background-image:none!important}
+ body.theme-black .main.world-overview .ff-dashboard .ff-bubble:not(.featured){background:#202a3b!important}
+}
+</style>
+<style id="v210-dark-final-specificity">
+/* Reglas originales de los círculos de Resumen tenían mayor especificidad. */
+html body.theme-black .main.world-overview .top-title,
+html body.theme-black .main.world-overview .topbar h1{color:#f4f7fe!important}
+html body.theme-black .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble:not(.featured),
+html body.theme-black .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.ff-bubble-negative:not(.featured){
+ background:#263247!important;background-image:none!important;
+ color:#f5f7fb!important;border:1px solid #4a5870!important;
+ box-shadow:inset 0 2px 8px #0b112133,0 5px 16px #00000029!important;
+}
+html body.theme-black .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble:not(.featured) :is(.bubble-amount,.bubble-label,small,.v105-bubble-pct,span){color:#e7efff!important}
+html body.theme-black .main.world-overview .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble.featured{
+ background:#3b4ca1!important;background-image:none!important;color:#fff!important;
+ border:1px solid #8198e7!important;box-shadow:inset 0 1px 7px #b8c4fa23!important;
+}
+/* Los héroes secundarios de productos no deben conservar azul translúcido en Black. */
+html body.theme-black .main:is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) #page .v57-product-hero{
+ background:#171b22!important;background-image:none!important;border:1px solid #3c4554!important;
+ box-shadow:none!important;color:#eff3fa!important;
+}
+html body.theme-black .main:is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) #page .v57-product-hero :is(h1,h2,strong){color:#f2f6ff!important}
+html body.theme-black .main:is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) #page .v57-product-hero :is(p,small){color:#b9c7d9!important}
+@media(max-width:767px){
+ html body.theme-black .main:is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) #page .v57-product-hero{background:#181d26!important;background-image:none!important}
+}
+</style>
+</body>
 </html>
