@@ -15440,6 +15440,31 @@ body.theme-dark .v209-capacity-method summary,body.theme-black .v209-capacity-me
 @media(max-width:370px){.v41-service-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){.v41-service-choice,.widgets-grid.ws-board .ws-tile{transition:none!important}}
 </style>
+<style id="v212-apple-pay">
+/* Vive el Hoy · Apple Pay: diseño accesible Claro / Black */
+.v212-panel{margin:18px 0 27px;padding:23px 25px;border:1px solid #d9e5f5;border-radius:24px;background:linear-gradient(120deg,#fff,#f0f5fc);box-shadow:0 12px 36px rgba(26,55,94,.07);color:#1d334b}
+.v212-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}
+.v212-head h3{margin:7px 0;font-size:21px;letter-spacing:-.6px}.v212-head p{font-size:12px;line-height:1.55;color:#647995;margin:0;max-width:600px}
+.v212-pill{padding:8px 11px;border-radius:100px;background:#e1ebfa;color:#34689d;font-size:11px;font-weight:800;white-space:nowrap}
+.v212-setup{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(100px,.6fr) auto;gap:12px;align-items:end;margin-bottom:16px}.v212-setup select{width:100%;min-width:0}
+.v212-linked,.v212-event{display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid #e2e9f4;padding:13px 0;min-width:0}
+.v212-linked>div,.v212-event>div{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}.v212-linked strong,.v212-event strong{font-size:12px}.v212-linked small,.v212-event small,.v212-muted{font-size:11px;color:#7489a3;line-height:1.5}.v212-event b{font-size:12px;white-space:nowrap}.v212-dot{width:7px;height:7px;background:#2bae85;border-radius:100%;flex-shrink:0}
+.v212-small{border:1px solid #ccdaeb;background:#eaf1fa;color:#315f95;padding:8px 10px;border-radius:11px;font-size:11px;font-weight:740;white-space:nowrap}
+.v212-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}.v212-title strong{font-size:13px}.v212-title span{font-size:11px;color:#8698ac}
+.v212-sections{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:17px}
+.v212-guide,.v212-secret{padding:14px 17px;border:1px solid #d8e4f4;border-radius:17px;background:#f5f9fe;margin:10px 0}.v212-guide summary{font-weight:800;font-size:12px;cursor:pointer}.v212-guide li,.v212-guide p,.v212-secret p{font-size:11px;line-height:1.7;color:#56718d}.v212-guide ol{padding-left:23px}.v212-guide code{font-size:11px}
+.v212-secret{background:#edf7f5;border-color:#9ccbbf}.v212-secret>strong{display:block;font-size:13px}.v212-secretline{display:flex;align-items:center;justify-content:space-between;margin:13px 0 6px;font-size:11px;font-weight:800}.v212-secret>code{display:block;white-space:normal;overflow-wrap:anywhere;font-size:11px;padding:9px;border-radius:9px;background:#fff}.v212-secret>input{width:100%;font-size:11px;padding:12px;color:#234}
+.v212-error{font-size:11px;color:#bd433b;margin:12px 0}.v212-panel button:focus-visible,.v212-panel select:focus-visible{outline:2px solid #548ad4;outline-offset:3px}
+body.theme-black .v212-panel{background:#12181f;background-image:none;border-color:#3d4858;color:#f4f7fe;box-shadow:none}
+body.theme-black .v212-head p,body.theme-black .v212-linked small,body.theme-black .v212-event small,body.theme-black .v212-muted,body.theme-black .v212-title span{color:#a8b8ce}
+body.theme-black .v212-pill{background:#1d2d3b;color:#b2d6ff}body.theme-black .v212-linked,body.theme-black .v212-event{border-color:#364253}
+body.theme-black .v212-small{background:#273241;border-color:#47576c;color:#e9f2ff}
+body.theme-black .v212-guide,body.theme-black .v212-secret{background:#19222d;border-color:#425368;color:#f5f8fc}
+body.theme-black .v212-guide :is(p,li),body.theme-black .v212-secret p{color:#b8c9dd}
+body.theme-black .v212-secret>code,body.theme-black .v212-secret>input{background:#0c1118;color:#f2f6ff;border-color:#506078}
+@media(max-width:700px){.v212-panel{padding:18px 15px;border-radius:21px}.v212-head{gap:8px;flex-wrap:wrap}.v212-setup{grid-template-columns:minmax(0,1fr) minmax(93px,.45fr)}.v212-setup>button{grid-column:1/-1;min-height:44px}.v212-sections{grid-template-columns:1fr;gap:17px}.v212-event{flex-wrap:wrap}.v212-event>div{flex-basis:60%}}
+
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -17853,7 +17878,7 @@ function v30RecoveryContent(){
 
 function settings(){let s=db.settings;return `<div class="settings-layout">
 <section class="settings-hero"><div class="summary-tag">vive el hoy / PREFERENCIAS</div><h2>vive el hoy, a tu manera.</h2><p>Una navegación clara, tres temas y todas tus reglas financieras en un solo lugar. Tus datos se sincronizan con tu cuenta privada de Supabase.</p></section><nav class="v176-settings-jump" aria-label="Secciones de configuración"><a href="#v176-setting-00">Cuenta</a><a href="#v176-setting-01">Apariencia</a><a href="#v176-setting-02">Color</a><a href="#v176-setting-03">Fondo</a><a href="#v176-setting-04">Finanzas</a><a href="#v176-setting-05">Revisión</a><a href="#v176-setting-06">Privacidad</a></nav>
-<div class="settings-group-title" id="v176-setting-00"><div><span class="summary-tag">00 / CONEXIÓN PRIVADA</span><h3>Cuenta y sincronización</h3></div></div>${f34CloudPanel()}
+<div class="settings-group-title" id="v176-setting-00"><div><span class="summary-tag">00 / CONEXIÓN PRIVADA</span><h3>Cuenta y sincronización</h3></div></div>${f34CloudPanel()}${v212SettingsPanel()}
 <div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
 <div class="theme-settings panel"><div><strong>Aspecto de vive el hoy</strong><p>Elige Claro o Black oscuro. El modo Black utiliza fondo negro y tarjetas carbón de alto contraste; tus registros no cambian.</p></div><div class="theme-choice-row" role="group" aria-label="Elegir apariencia"><button class="theme-choice ${s.theme==='light'?'selected':''}" data-act="setTheme" data-id="light" aria-pressed="${s.theme==='light'}"><span class="theme-sun">☀</span> Claro</button><button class="theme-choice v200-black-choice ${s.theme==='black'?'selected':''}" data-act="setTheme" data-id="black" aria-pressed="${s.theme==='black'}"><span class="v200-black-mark">●</span> Black oscuro</button></div></div>
 
@@ -21877,6 +21902,7 @@ function f33Ready(){
  f33Active=true;f33Phase='ready';f33Dirty=false;window.__f360BaseStamp=f33Stamp;
  const gate=document.getElementById('f33-gate');if(gate)gate.hidden=true;
  render();f33SetStatus('ok','✓ Guardado en Supabase');
+ setTimeout(()=>{v212Load().then(()=>v212Sync()).catch(err=>console.warn('Apple Pay:',err));},1600);
  // Consultar tasa externa de forma no bloqueante tras autenticar al usuario.
  Promise.resolve().then(()=>f34UpdateFx(false)).catch(err=>console.warn('Consulta de divisas:',err));
 }
@@ -26426,6 +26452,135 @@ document.addEventListener('keydown',function(ev){
  if(typeof persist==='function')persist();if(typeof render==='function')render();
 },true);
 })();
+
+/* V212: integración Apple Pay mediante Atajos y bandeja privada en Supabase.
+   El navegador no lee Wallet. Los tokens se emiten solo en el backend y no se persisten en el documento del usuario. */
+const v212State={links:[],events:[],secret:'',webhook:'',selectedCard:'',currency:'DOP',busy:false,loaded:false,error:'',lastSync:''};
+let v212Busy=false;
+const v212Enabled=()=>!!(f33Active&&f33Api&&f33User);
+function v212SettingsPanel(){
+ const cards=(db.cards||[]).filter(c=>!c.archived);
+ const linkRows=v212State.links.filter(x=>x.active).map(x=>{
+   const c=card(x.instrument_id);
+   return `<div class="v212-linked"><div><strong>${sanitize(c?.name||x.card_label||'Tarjeta')}</strong><small>${sanitize(bankOf(c))} · ${sanitize(x.currency)} · Enlace activo</small></div><button type="button" class="v212-small" data-v212="revoke" data-id="${sanitize(x.id)}">Desvincular</button></div>`;
+ }).join('');
+ const eventRows=v212State.events.filter(x=>['pending','review'].includes(x.status)).slice(0,12).map(x=>{
+   const c=card(x.instrument_id);
+   return `<div class="v212-event"><span class="v212-dot"></span><div><strong>${sanitize(x.merchant||'Comercio')}</strong><small>${sanitize(c?.name||'Tarjeta archivada')} · ${prettyDate(String(x.received_at||'').slice(0,10))} · ${x.status==='review'?'Revisar posible duplicado':'Por sincronizar'}</small></div><b>${money(x.amount,x.currency,2)}</b>${x.status==='review'?`<button class="v212-small" type="button" data-v212="force" data-id="${sanitize(x.id)}">Registrar</button><button class="v212-small" type="button" data-v212="ignore" data-id="${sanitize(x.id)}">Ignorar</button>`:''}</div>`;
+ }).join('');
+ return `<section class="v212-panel" aria-label="Apple Pay y Atajos"><div class="v212-head"><div><span class="summary-tag">INTEGRACIÓN · APPLE WALLET</span><h3>Apple Pay en tus movimientos</h3><p>Vincula cada tarjeta a su atajo. Los pagos compatibles llegan a Supabase y se clasifican en la tarjeta correcta, sin descontar una cuenta dos veces.</p></div><span class="v212-pill">${v212State.links.filter(x=>x.active).length} vinculadas</span></div>
+ <div class="v212-setup"><div><label class="filter-label" for="v212-card">Tarjeta en Vive el Hoy</label><select class="field" id="v212-card">${cards.length?cards.map(c=>`<option value="${sanitize(c.id)}" ${c.id===v212State.selectedCard?'selected':''}>${sanitize(c.name)} · ${sanitize(bankOf(c))}</option>`).join(''):'<option value="">Primero registra una tarjeta</option>'}</select></div><div><label class="filter-label" for="v212-currency">Moneda del atajo</label><select class="field" id="v212-currency"><option value="DOP" ${v212State.currency==='DOP'?'selected':''}>RD$</option><option value="USD" ${v212State.currency==='USD'?'selected':''}>US$</option></select></div><button type="button" class="btn primary" data-v212="pair" ${!cards.length||v212State.busy?'disabled':''}>${v212State.busy?'Conectando…':'Vincular tarjeta'}</button></div>
+ ${v212State.secret?`<div class="v212-secret"><strong>Conexión creada: guarda estos datos en tu Atajo</strong><p>La clave solo se muestra ahora. No la compartas ni la coloques en capturas.</p><div class="v212-secretline"><span>URL de recepción</span><button class="v212-small" data-v212="copy-url" type="button">Copiar URL</button></div><code>${sanitize(v212State.webhook)}</code><div class="v212-secretline"><span>Encabezado: X-Vive-Token</span><button class="v212-small" data-v212="copy-token" type="button">Copiar clave</button></div><input type="password" autocomplete="off" readonly aria-label="Clave del atajo" value="${sanitize(v212State.secret)}"/></div>`:''}
+ <details class="v212-guide"><summary>Cómo activar la automatización de Wallet en iPhone</summary><ol><li>Abre <b>Atajos → Automatización → Transacción / Wallet</b> y elige únicamente esta tarjeta.</li><li>Selecciona <b>Ejecutar inmediatamente</b> (en iOS 27: permitir ejecución al bloquear).</li><li>Agrega la acción <b>Generar UUID</b> para crear un identificador único por pago.</li><li>Agrega <b>Obtener contenido de URL</b>. Usa la URL copiada, método <b>POST</b> y encabezado <b>X-Vive-Token</b> con la clave.</li><li>En <b>Cuerpo de solicitud → JSON</b>, añade <code>event_id</code> = UUID, <code>amount</code> = Entrada del atajo → Importe, <code>merchant</code> = Entrada del atajo → Comercio. Elige la misma moneda que configuraste arriba.</li><li>Guarda y prueba con una compra pequeña real. La primera vez iOS puede solicitar permisos de red.</li></ol><p>Esta integración depende del activador de Wallet y la conexión del teléfono. No es una API bancaria, ni recupera automáticamente pagos antiguos.</p></details>
+ <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}</div><div><div class="v212-title"><strong>Recepción de Apple Pay</strong><span>${v212State.events.length} recientes</span></div>${eventRows||'<p class="v212-muted">No hay compras por procesar.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
+ ${v212State.error?`<p class="v212-error">${sanitize(v212State.error)}</p>`:''}<p class="v212-muted">Requiere la migración SQL y configurar las variables seguras de Netlify. No se solicita número de tarjeta, CVV ni contraseña bancaria.</p></section>`;
+}
+function v212Show(){const target=document.querySelector('.v212-panel');if(target)target.outerHTML=v212SettingsPanel();}
+async function v212SessionToken(){const {data,error}=await f33Api.auth.getSession();if(error||!data?.session?.access_token)throw Error('Vuelve a iniciar sesión.');return data.session.access_token;}
+async function v212Load(){
+ if(!v212Enabled())return;
+ try{
+  const [l,e]=await Promise.all([
+    f33Api.from('apple_pay_links').select('id,instrument_type,instrument_id,card_label,currency,active').eq('user_id',f33User.id).order('created_at',{ascending:false}).limit(100),
+    f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,status').eq('user_id',f33User.id).in('status',['pending','review']).order('received_at',{ascending:false}).limit(50)
+  ]);
+  if(l.error||e.error)throw(l.error||e.error);
+  v212State.links=l.data||[];v212State.events=e.data||[];v212State.error='';v212State.loaded=true;
+ }catch(e){v212State.error='Apple Pay aún no está configurado en Supabase (consulta la guía SQL incluida).';v212State.loaded=false;}
+ v212Show();
+}
+async function v212Pair(){
+ if(!v212Enabled())throw Error('Inicia sesión para conectar tarjetas');
+ const id=document.getElementById('v212-card')?.value||v212State.selectedCard||db.cards.find(c=>!c.archived)?.id;
+ const currency=document.getElementById('v212-currency')?.value||v212State.currency;
+ if(!card(id)||!['DOP','USD'].includes(currency))throw Error('Selecciona una tarjeta y su moneda');
+ v212State.selectedCard=id;v212State.currency=currency;v212State.busy=true;v212State.error='';v212Show();
+ try{
+  const res=await fetch('/.netlify/functions/apple-pay-link',{method:'POST',headers:{'Authorization':`Bearer ${await v212SessionToken()}`,'Content-Type':'application/json'},body:JSON.stringify({instrument_type:'card',instrument_id:id,currency})});
+  const payload=await res.json();if(!res.ok)throw Error(payload.error||`Error ${res.status}`);
+  v212State.secret=payload.token;v212State.webhook=payload.webhook_url;
+  await v212Load();toast('Tarjeta vinculada. Configura el atajo en Wallet.');
+ }catch(err){v212State.error=err.message||'No fue posible generar el enlace';}finally{v212State.busy=false;v212Show();}
+}
+async function v212Revoke(id){
+ if(!confirm('¿Desvincular esta automatización? Las compras ya registradas se conservan.'))return;
+ const token=await v212SessionToken();const response=await fetch('/.netlify/functions/apple-pay-link',{method:'DELETE',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({link_id:id})});
+ if(!response.ok){let error=await response.json().catch(()=>({}));throw Error(error.error||'No se pudo desvincular');}
+ v212State.secret='';await v212Load();toast('Enlace desactivado');
+}
+async function v212Mark(event,status,txId=''){
+ const {error}=await f33Api.from('apple_pay_events').update({status,local_tx_id:txId||null,imported_at:status==='imported'?new Date().toISOString():null}).eq('id',event.id).eq('user_id',f33User.id);
+ if(error)throw error;
+}
+function v212Date(iso){
+ const valid=new Date(iso||'');if(!Number.isFinite(+valid))return today();
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Santo_Domingo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(valid);
+ const f=k=>parts.find(p=>p.type===k)?.value||'';
+ const out=`${f('year')}-${f('month')}-${f('day')}`;
+ return out>today()?today():out;
+}
+function v212PossibleDuplicate(e,date){
+ const amount=Number(e.amount),merchant=String(e.merchant||'').toLocaleLowerCase('es').trim();
+ return db.transactions.some(t=>t.cardId===e.instrument_id&&t.type==='card_charge'&&t.date===date&&Math.abs(num(t.amount)-amount)<0.01&&(String(t.payee||'').toLocaleLowerCase('es').includes(merchant)||String(t.note||'').toLocaleLowerCase('es').includes(merchant)));
+}
+async function v212ImportEvent(e,forced=false){
+ if(!v212Enabled()||f33Dirty||f33Saving||f33Conflict)return false;
+ const existing=db.transactions.find(t=>t.applePayEventId===e.id);
+ if(existing){await v212Mark(e,'imported',existing.id);return true;}
+ const c=card(e.instrument_id),date=v212Date(e.received_at),amount=Number(e.amount);
+ if(!c||c.archived||!['DOP','USD'].includes(e.currency)||!Number.isFinite(amount)||amount<=0){
+  await v212Mark(e,'review');return false;
+ }
+ if(!forced&&v212PossibleDuplicate(e,date)){await v212Mark(e,'review');return false;}
+ const tx={id:uuid(),created:new Date().toISOString(),date,type:'card_charge',amount:rnd(amount),currency:e.currency,cardId:c.id,accountId:'',toAccountId:'',loanId:'',category:'Compras personales',subcategory:'',note:`Apple Pay · ${String(e.merchant||'Comercio').slice(0,100)}`,payee:String(e.merchant||'Comercio').slice(0,100),tags:'apple-pay',reviewed:false,flowMode:'spend',paymentFlowMode:'spend',paymentChannel:'presencial',paymentService:'',paymentSource:'card',cardOnly:'no',paymentTax:0,paymentFee:0,fxRateSnapshot:num(db.settings.fx),applePayEventId:e.id,applePaySource:'wallet-shortcuts',applePayReceivedAt:e.received_at};
+ db.transactions.push(tx);
+ if(!persist()){db.transactions=db.transactions.filter(t=>t.id!==tx.id);return false;}
+ await f33Flush();
+ if(f33Dirty||f33Saving||f33Conflict)return false;
+ await v212Mark(e,'imported',tx.id);
+ if(!document.querySelector('#modal-root .modal-layer'))render();
+ return true;
+}
+async function v212Sync(){
+ if(!v212Enabled()||f33Dirty||f33Saving||f33Conflict||v212Busy||!navigator.onLine)return;
+ v212Busy=true;
+ try{
+  const result=await f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,status').eq('user_id',f33User.id).eq('status','pending').order('received_at',{ascending:true}).limit(30);
+  if(result.error)throw result.error;
+  let added=0;
+  for(const e of result.data||[]){
+   if(f33Dirty||f33Saving||f33Conflict)break;
+   if(await v212ImportEvent(e))added++;
+  }
+  if(added)toast(`${added} compra${added===1?'':'s'} de Apple Pay registrada${added===1?'':'s'} en tus tarjetas.`);
+ }catch(err){console.warn('Sincronización Apple Pay:',err.message||err);}
+ finally{v212Busy=false;v212State.lastSync=new Date().toISOString();if(ui.page==='settings')await v212Load();}
+}
+// La interfaz utiliza un controlador propio, sin cambiar los flujos existentes.
+document.addEventListener('click',async ev=>{
+ const el=ev.target.closest('[data-v212]');if(!el)return;
+ ev.preventDefault();const act=el.dataset.v212;
+ try{
+  if(act==='pair')await v212Pair();
+  if(act==='revoke')await v212Revoke(el.dataset.id);
+  if(act==='refresh'){await v212Load();await v212Sync();}
+  if(act==='copy-url'||act==='copy-token'){
+   const value=act==='copy-url'?v212State.webhook:v212State.secret;
+   if(!value)throw Error('Primero conecta una tarjeta');
+   await navigator.clipboard.writeText(value);toast('Copiado. Pégalo en el atajo de Wallet.');
+  }
+  if(act==='ignore'||act==='force'){
+   const e=v212State.events.find(q=>q.id===el.dataset.id);if(!e)throw Error('Actualiza la bandeja.');
+   if(act==='ignore'){await v212Mark(e,'ignored');toast('Compra ignorada sin alterar saldos.');}
+   else if(!await v212ImportEvent(e,true))throw Error('No se pudo contabilizar. Comprueba la sincronización de Supabase.');
+   await v212Load();
+  }
+ }catch(err){v212State.error=err.message||'No se pudo completar la operación';v212Show();toast(v212State.error);}
+});
+document.addEventListener('change',ev=>{if(ev.target.id==='v212-card')v212State.selectedCard=ev.target.value;if(ev.target.id==='v212-currency')v212State.currency=ev.target.value;});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&v212Enabled()){v212Sync();}});
+window.addEventListener('online',()=>{if(v212Enabled())v212Sync();});
+setInterval(()=>{if(!document.hidden&&v212Enabled())v212Sync();},45000);
 
  f33Boot();
 
