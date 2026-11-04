@@ -26625,18 +26625,18 @@ function v212SettingsPanel(){
  const cards=(db.cards||[]).filter(c=>!c.archived);
  const linkRows=v212State.links.filter(x=>x.active).map(x=>{
    const c=card(x.instrument_id);
-   return `<div class="v212-linked"><div><strong>${sanitize(c?.name||x.card_label||'Tarjeta')}</strong><small>${sanitize(bankOf(c))} · ${sanitize(x.currency)} · Enlace activo</small></div><button type="button" class="v212-small" data-v212="revoke" data-id="${sanitize(x.id)}">Desvincular</button></div>`;
+   return `<div class="v212-linked"><div><strong>${sanitize(c?.name||x.card_label||'Tarjeta')}</strong><small>${sanitize(bankOf(c))} · ${sanitize(x.currency)} · Enlace activo</small></div><button type="button" class="v212-small" data-v212="revoke" data-id="${sanitize(x.id)}" ${v212State.busy?'disabled':''}>Desvincular</button></div>`;
  }).join('');
  const eventRows=v212State.events.filter(x=>['pending','review'].includes(x.status)).slice(0,12).map(x=>{
    const c=card(x.instrument_id);
    return `<div class="v212-event"><span class="v212-dot"></span><div><strong>${sanitize(x.merchant||'Comercio')}</strong><small>${sanitize(c?.name||'Tarjeta archivada')} · ${prettyDate(String(x.received_at||'').slice(0,10))} · ${x.status==='review'?'Revisar posible duplicado':'Por sincronizar'}</small></div><b>${money(x.amount,x.currency,2)}</b>${x.status==='review'?`<button class="v212-small" type="button" data-v212="force" data-id="${sanitize(x.id)}">Registrar</button><button class="v212-small" type="button" data-v212="ignore" data-id="${sanitize(x.id)}">Ignorar</button>`:''}</div>`;
  }).join('');
- return `<section class="v212-panel" aria-label="Apple Pay y Atajos"><div class="v212-head"><div><span class="summary-tag">INTEGRACIÓN · APPLE WALLET</span><h3>Apple Pay en tus movimientos</h3><p>Vincula cada tarjeta a su atajo. Los pagos compatibles llegan directamente a Supabase. Al sincronizar se registran en Movimientos y en la Wallet móvil de la tarjeta correcta, con un distintivo Apple Pay, sin descontar una cuenta dos veces.</p></div><span class="v212-pill">${v212State.links.filter(x=>x.active).length} vinculadas</span></div>
+ return `<section class="v212-panel" aria-label="Apple Pay y Atajos"><div class="v212-head"><div><span class="summary-tag">INTEGRACIÓN · APPLE WALLET</span><h3>Apple Pay en tus movimientos</h3><p>Vincula cada tarjeta a su atajo. Los pagos compatibles llegan directamente a Supabase. Al sincronizar se registran en Movimientos y en la Wallet móvil de la tarjeta correcta, con un distintivo Apple Pay, sin descontar una cuenta dos veces.</p></div><span class="v212-pill">${v212State.links.filter(x=>x.active).length} ${v212State.links.filter(x=>x.active).length===1?'vinculada':'vinculadas'}</span></div>
  <div class="v212-setup"><div><label class="filter-label" for="v212-card">Tarjeta en Vive el Hoy</label><select class="field" id="v212-card">${cards.length?cards.map(c=>`<option value="${sanitize(c.id)}" ${c.id===v212State.selectedCard?'selected':''}>${sanitize(c.name)} · ${sanitize(bankOf(c))}</option>`).join(''):'<option value="">Primero registra una tarjeta</option>'}</select></div><div><label class="filter-label" for="v212-currency">Moneda del atajo</label><select class="field" id="v212-currency"><option value="DOP" ${v212State.currency==='DOP'?'selected':''}>RD$</option><option value="USD" ${v212State.currency==='USD'?'selected':''}>US$</option></select></div><button type="button" class="btn primary" data-v212="pair" ${!cards.length||v212State.busy?'disabled':''}>${v212State.busy?'Conectando…':'Vincular tarjeta'}</button></div>
  ${v212State.secret?`<div class="v212-secret"><strong>Conexión creada: guarda estos datos en tu Atajo</strong><p>La clave solo se muestra ahora. No la compartas ni la coloques en capturas.</p><div class="v212-secretline"><span>URL de recepción</span><button class="v212-small" data-v212="copy-url" type="button">Copiar URL</button></div><code>${sanitize(v212State.webhook)}</code><div class="v212-secretline"><span>Encabezado: X-Vive-Token</span><button class="v212-small" data-v212="copy-token" type="button">Copiar clave</button></div><input type="password" autocomplete="off" readonly aria-label="Clave del atajo" value="${sanitize(v212State.secret)}"/></div>`:''}
- <details class="v212-guide"><summary>Cómo activar la automatización de Wallet en iPhone</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>Prepara un <b>event_id</b> único por compra (por ejemplo, fecha con milisegundos y un número aleatorio). Guárdalo en una variable y reutiliza ese mismo valor si reintentas enviar esa compra.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b>: <code>event_id</code> = identificador anterior; <code>amount</code> = importe de la transacción (Número); <code>merchant</code> = comercio de la transacción (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>. Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Para comprobar la conexión sin registrar compras, usa el JSON de prueba incluido en el paquete con <code>dry_run: true</code> (Booleano). Para compras reales, elimina ese campo.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. No recupera pagos antiguos automáticamente.</p></details>
+ <details class="v212-guide"><summary>Cómo activar la automatización de Wallet en iPhone</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>Prepara un <b>event_id</b> único por compra (por ejemplo, fecha con milisegundos y un número aleatorio). Guárdalo en una variable y reutiliza ese mismo valor si reintentas enviar esa compra.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b>: <code>event_id</code> = identificador anterior; <code>amount</code> = importe de la transacción (Número); <code>merchant</code> = comercio de la transacción (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>. Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Para comprobar la recepción sin registrar compras, usa el JSON de prueba del archivo <code>PRUEBA_APPLE_PAY.json</code> y envíalo únicamente a <code>apple-pay-ingest</code>. Para compras reales, elimina <code>dry_run</code>.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. No recupera pagos antiguos automáticamente.</p></details>
  <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}</div><div><div class="v212-title"><strong>Recepción de Apple Pay</strong><span>${v212State.events.length} recientes</span></div>${eventRows||'<p class="v212-muted">No hay compras por procesar.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
- ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}<p class="v212-muted">Requiere la migración SQL y publicar dos funciones seguras directamente en Supabase. No utiliza Netlify para recibir compras. No se solicita número de tarjeta, CVV ni contraseña bancaria.</p></section>`;
+ ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}<p class="v212-muted">Las tarjetas se administran con <code>apple-pay-link</code>; las compras se reciben mediante <code>apple-pay-ingest</code>. Son funciones distintas y deben publicarse por separado en Supabase. No se solicitan números de tarjeta, CVV ni contraseñas bancarias.</p></section>`;
 }
 function v212Show(){const target=document.querySelector('.v212-panel');if(target)target.outerHTML=v212SettingsPanel();}
 async function v212SessionToken(){const {data,error}=await f33Api.auth.getSession();if(error||!data?.session?.access_token)throw Error('Vuelve a iniciar sesión.');return data.session.access_token;}
@@ -26652,24 +26652,60 @@ async function v212Load(){
  }catch(e){v212State.error='No se pudo consultar Apple Pay: '+(e.message||'revisa tu conexión y permisos de Supabase')+(e.code?' ['+e.code+']':'');v212State.loaded=false;}
  v212Show();
 }
+function v212LinkError(payload, status, action){
+ const raw=String(payload?.error||payload?.message||'').trim();
+ if(/Falta X-Vive-Token|Vinculación inválida|Importe o comercio inválido/i.test(raw)){
+  return `El servicio apple-pay-link está respondiendo como receptor de compras (HTTP ${status}). Revisa que apple-pay-link tenga SU propio código, no el de apple-pay-ingest. No cambies el token de Wallet para solucionar esto.`;
+ }
+ if(status===401||status===403){
+  return `No se pudo ${action}: sesión no autorizada (HTTP ${status}). Cierra sesión y vuelve a entrar en Vive el Hoy.`;
+ }
+ if(status===404){
+  return 'No se encuentra apple-pay-link (HTTP 404). Publica la función apple-pay-link en el mismo proyecto Supabase.';
+ }
+ return raw||`No se pudo ${action} (HTTP ${status}). Revisa la función apple-pay-link en Supabase.`;
+}
+async function v212LinkCall(method, body){
+ const auth=await v212SessionToken();
+ let response;
+ try{
+  response=await fetch(`${F33_URL}/functions/v1/apple-pay-link`,{
+   method,
+   headers:{Authorization:`Bearer ${auth}`,apikey:F33_KEY,'Content-Type':'application/json'},
+   body:JSON.stringify(body)
+  });
+ }catch(err){throw Error('Sin conexión con apple-pay-link. Revisa Internet y la configuración de Supabase.');}
+ const payload=await response.json().catch(()=>({}));
+ if(!response.ok||payload?.ok===false)throw Error(v212LinkError(payload,response.status,method==='DELETE'?'desvincular':'vincular'));
+ return payload;
+}
 async function v212Pair(){
  if(!v212Enabled())throw Error('Inicia sesión para conectar tarjetas');
  const id=document.getElementById('v212-card')?.value||v212State.selectedCard||db.cards.find(c=>!c.archived)?.id;
  const currency=document.getElementById('v212-currency')?.value||v212State.currency;
  if(!card(id)||!['DOP','USD'].includes(currency))throw Error('Selecciona una tarjeta y su moneda');
- v212State.selectedCard=id;v212State.currency=currency;v212State.busy=true;v212State.error='';v212Show();
+ if(v212State.busy)return;
+ v212State.selectedCard=id;v212State.currency=currency;
+ v212State.busy=true;v212State.error='';v212Show();
  try{
-  const res=await fetch(`${F33_URL}/functions/v1/apple-pay-link`,{method:'POST',headers:{'Authorization':`Bearer ${await v212SessionToken()}`,'apikey':F33_KEY,'Content-Type':'application/json'},body:JSON.stringify({instrument_type:'card',instrument_id:id,currency})});
-  const payload=await res.json();if(!res.ok)throw Error(payload.error||`Error ${res.status}`);
+  const payload=await v212LinkCall('POST',{instrument_type:'card',instrument_id:id,currency,card_label:card(id)?.name||'Tarjeta'});
+  if(!payload?.token||!payload?.webhook_url)throw Error('apple-pay-link respondió sin token o URL. Revisa su despliegue.');
   v212State.secret=payload.token;v212State.webhook=payload.webhook_url;
-  await v212Load();toast('Tarjeta vinculada. Configura el atajo en Wallet.');
- }catch(err){v212State.error=err.message||'No fue posible generar el enlace';}finally{v212State.busy=false;v212Show();}
+  await v212Load();toast('Tarjeta vinculada. Copia la clave nueva en tu Atajo de Wallet.');
+ }catch(err){v212State.error=err.message||'No fue posible generar el enlace';}
+ finally{v212State.busy=false;v212Show();}
 }
 async function v212Revoke(id){
- if(!confirm('¿Desvincular esta automatización? Las compras ya registradas se conservan.'))return;
- const token=await v212SessionToken();const response=await fetch(`${F33_URL}/functions/v1/apple-pay-link`,{method:'DELETE',headers:{'Authorization':`Bearer ${token}`,'apikey':F33_KEY,'Content-Type':'application/json'},body:JSON.stringify({link_id:id})});
- if(!response.ok){let error=await response.json().catch(()=>({}));throw Error(error.error||'No se pudo desvincular');}
- v212State.secret='';await v212Load();toast('Enlace desactivado');
+ if(v212State.busy)return;
+ if(!v212State.links.some(x=>x.id===id&&x.active))throw Error('El enlace ya no está activo. Pulsa Actualizar.');
+ if(!confirm('¿Desvincular esta tarjeta de Apple Wallet? Las compras ya registradas se conservan.'))return;
+ v212State.busy=true;v212State.error='';v212Show();
+ try{
+  await v212LinkCall('DELETE',{link_id:id});
+  v212State.secret='';v212State.webhook='';
+  await v212Load();toast('Tarjeta desvinculada. Su token anterior queda desactivado.');
+ }catch(err){v212State.error=err.message||'No se pudo desvincular';}
+ finally{v212State.busy=false;v212Show();}
 }
 async function v212Mark(event,status,txId=''){
  const {error}=await f33Api.from('apple_pay_events').update({status,local_tx_id:txId||null,imported_at:status==='imported'?new Date().toISOString():null}).eq('id',event.id).eq('user_id',f33User.id).select('id').single();
