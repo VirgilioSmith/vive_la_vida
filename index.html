@@ -21067,7 +21067,11 @@ case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navGroupToggle':ui.navExpanded=ui.navExpanded===id?null:id;render();break;
 case 'navigate':{
- ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id;
+  ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id;
+  if(ui.page==='banks' && window.matchMedia?.('(min-width: 768px)').matches){
+    v225DesktopBankOpened=false;
+    ui.bankId=null;
+  }
  if(ui.page==='income')ui.innerViews.income='overview';
  if(id==='projection')ui.projectionMenu=false;
  ui.quickCommitment=null;ui.mobile=false;
@@ -21095,7 +21099,23 @@ case 'addBank':bankForm();break;
  case 'certificateInterest':{let c=certificate(id),a=db.accounts.find(a=>a.currency===c?.currency&&a.bankId===c?.bankId)||db.accounts.find(a=>a.currency===c?.currency);if(!a){toast('Crea una cuenta en la misma moneda para registrar el interés cobrado.');break}transactionForm({type:'income',date:today(),accountId:a.id,certificateId:id,category:'Beneficios bancarios',subcategory:'Intereses de certificados',amount:'',note:'Interés cobrado · '+c.name});break}
  case 'advancedCsv':advancedCsv();break;
 case 'editBank':bankForm(id);break;
-case 'bankDetails':if(window.matchMedia?.('(min-width: 768px)').matches)v225DesktopBankOpened=true;ui.bankId=id;render();if(!window.matchMedia?.('(min-width: 791px)').matches){setTimeout(()=>document.querySelector('.bank-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),50);}break;
+case 'bankDetails':{
+  const desktopBank=window.matchMedia?.('(min-width: 768px)').matches;
+  if(desktopBank){
+    // Un segundo clic sobre la misma institución cierra todo el detalle.
+    const alreadyOpen=v225DesktopBankOpened && String(ui.bankId)===String(id);
+    v225DesktopBankOpened=!alreadyOpen;
+    ui.bankId=alreadyOpen?null:id;
+  }else{
+    // Mantener sin cambios la selección propia de la vista móvil.
+    ui.bankId=id;
+  }
+  render();
+  if(!desktopBank && !window.matchMedia?.('(min-width: 791px)').matches){
+    setTimeout(()=>document.querySelector('.bank-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  }
+  break;
+}
 case 'closeBank':v225DesktopBankOpened=false;ui.bankId=null;render();break;
 case 'goAccount':ui.accountId=id;ui.page='accounts';render();setTimeout(()=>document.querySelector('.panel.section')?.scrollIntoView({behavior:'smooth'}),50);break;
 case 'goCard':ui.cardId=id;ui.page='cards';render();setTimeout(()=>document.querySelector('.card-detail')?.scrollIntoView({behavior:'smooth'}),50);break;
@@ -22599,7 +22619,7 @@ banks=function(){
   <aside class="v204-bank-sidebar" aria-label="Seleccionar institución">
   <section class="v42-bank-section v46-bank-list">
   <div class="v42-bank-top"><div><h3>Instituciones</h3><p>Elige un banco para ver sus productos.</p></div><div class="v42-filters v46-bank-filters">${filters.map(([key,label])=>`<button type="button" data-v42-filter="${key}" class="${v42InstitutionFilter===key?'active':''}" aria-pressed="${v42InstitutionFilter===key}">${label}</button>`).join('')}</div></div>
-  <div class="v42-entities v46-bank-cards v225-institution-cards">${shown.length?shown.map(b=>`<button type="button" class="v46-bank-card v225-institution-card ${activeBank?.id===b.id?'selected':''}" data-act="bankDetails" data-id="${b.id}" aria-pressed="${activeBank?.id===b.id}" aria-label="Ver información de ${sanitize(b.name)}">
+  <div class="v42-entities v46-bank-cards v225-institution-cards">${shown.length?shown.map(b=>`<button type="button" class="v46-bank-card v225-institution-card ${activeBank?.id===b.id?'selected':''}" data-act="bankDetails" data-id="${b.id}" aria-pressed="${activeBank?.id===b.id}" aria-expanded="${activeBank?.id===b.id}" aria-controls="v226-bank-expanded" aria-label="${activeBank?.id===b.id?'Ocultar información de':'Ver información de'} ${sanitize(b.name)}">
       ${bankLogoMark(b,'institution-logo')}
       <strong class="v46-bank-card-name">${sanitize(b.name)}</strong>
       <span class="v225-institution-chevron" aria-hidden="true">${icon('arrow')}</span>
@@ -22607,9 +22627,9 @@ banks=function(){
   <details class="v204-bank-context"><summary>Cómo se calculan los saldos</summary><p>Los beneficios no monetarios no aumentan los fondos bancarios. Los movimientos anteriores conservan sus importes.</p></details>
  </section>
   </aside>
-  <div class="v204-bank-detail" aria-label="Productos de la institución seleccionada">
-  ${activeBank?bankDetail(activeBank):''}
-  </div>
+  ${activeBank?`<div class="v204-bank-detail" id="v226-bank-expanded" aria-label="Productos de la institución seleccionada">
+    ${bankDetail(activeBank)}
+  </div>`:''}
   </div>
   </div>`;
 };
@@ -22814,14 +22834,23 @@ const colorField=`<div class="v42-color-field"><label for="v42ColorInput">Color 
 const scopeField=`<div class="v42-scope-field"><label>Perfil de uso de la institución</label><div class="v42-scope-choices"><label><input type="radio" name="scope" value="personal" ${o.scope!=='negocio'?'checked':''}> Personal · Finanzas propias</label><label><input type="radio" name="scope" value="negocio" ${o.scope==='negocio'?'checked':''}> Negocio · Emprendimiento</label></div><small>El perfil organiza la entidad y sus productos asociados. Puedes modificarlo después sin alterar sus movimientos.</small></div>`;
 modal(id?'Editar institución':'Añadir institución',`<div class="v42-form-kicker"><strong>Tipo, uso e identidad</strong><span>Registra bancos y entidades no bancarias en el mismo catálogo, sin crear instituciones duplicadas.</span></div>${upload}${formItem('name','Nombre de la institución',o.name,'text','required maxlength="80" placeholder="Ej. Claro Dominicana"')}${formSelect('kind','Tipo de institución',kinds,o.kind)}${scopeField}${colorField}${formItem('notes','Nota opcional',o.notes,'text','maxlength="120" placeholder="Ej. Beneficios laborales / negocio"')}`,'bankForm',true);
 const f=document.getElementById('bankForm');f.dataset.id=id||'';f.dataset.logo=logo;};
-document.addEventListener('click',e=>{const target=e.target.closest?.('[data-v42-filter], [data-v42-color]');if(!target)return;if(target.dataset.v42Filter){e.preventDefault();e.stopImmediatePropagation();v42InstitutionFilter=target.dataset.v42Filter;render();return;}if(target.dataset.v42Color){e.preventDefault();e.stopImmediatePropagation();const form=target.closest('form');if(!form)return;const i=form.querySelector('#v42ColorInput');if(i){i.value=target.dataset.v42Color;form.querySelectorAll('[data-v42-color]').forEach(b=>b.setAttribute('aria-pressed',String(b===target)));const preview=form.querySelector('.bank-photo-mark');if(preview)preview.style.setProperty('--bank-color',i.value);}}},true);
+document.addEventListener('click',e=>{const target=e.target.closest?.('[data-v42-filter], [data-v42-color]');if(!target)return;if(target.dataset.v42Filter){e.preventDefault();e.stopImmediatePropagation();v42InstitutionFilter=target.dataset.v42Filter;
+    if(window.matchMedia?.('(min-width: 768px)').matches){
+      v225DesktopBankOpened=false;
+      ui.bankId=null;
+    }
+    render();return;}if(target.dataset.v42Color){e.preventDefault();e.stopImmediatePropagation();const form=target.closest('form');if(!form)return;const i=form.querySelector('#v42ColorInput');if(i){i.value=target.dataset.v42Color;form.querySelectorAll('[data-v42-color]').forEach(b=>b.setAttribute('aria-pressed',String(b===target)));const preview=form.querySelector('.bank-photo-mark');if(preview)preview.style.setProperty('--bank-color',i.value);}}},true);
 document.addEventListener('input',e=>{if(e.target.id==='v42ColorInput'){const form=e.target.closest('form'),mark=form?.querySelector('.bank-photo-mark');if(mark)mark.style.setProperty('--bank-color',e.target.value);}},true);
 document.addEventListener('click',event=>{
  const option=event.target.closest?.('[data-v61-profile]');if(!option)return;
  event.preventDefault();event.stopImmediatePropagation();
  const next=option.dataset.v61Profile;if(!['all','personal','negocio'].includes(next))return;
  v61InstitutionProfile=next;v42InstitutionFilter='all';
- if(ui.bankId&&!db.banks.some(b=>b.id===ui.bankId&&v61InstitutionMatches(b)))ui.bankId='';
+  if(window.matchMedia?.('(min-width: 768px)').matches){
+    v225DesktopBankOpened=false;
+    ui.bankId=null;
+  }
+  if(ui.bankId&&!db.banks.some(b=>b.id===ui.bankId&&v61InstitutionMatches(b)))ui.bankId='';
  render();
 },true);
 const v42DecorateOld=v40Decorate;
@@ -32297,6 +32326,47 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
 .v230-benefits-header .v230-back{white-space:nowrap;flex-shrink:0}
 .v230-benefits-page .v144-benefit-world{min-width:0;width:100%}
 @media(max-width:767px){.v230-benefits-header{padding:16px;align-items:flex-start;flex-direction:column}.v230-benefits-header .v230-back{width:100%;justify-content:center}}
+</style>
+
+<style id="vive-v231-instituciones-web-toggle">
+/* V231 · Instituciones de escritorio. Sin cambios para la vista móvil ni KPI global. */
+@media (min-width:768px){
+  body .world-banks .v204-bank-sidebar .v42-entities.v225-institution-cards{
+    display:grid!important;
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,clamp(310px,22vw,380px)),1fr))!important;
+    column-gap:12px!important;
+    row-gap:11px!important;
+    align-items:stretch!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body .world-banks .v204-bank-sidebar .v225-institution-card{
+    width:100%!important;
+    min-width:0!important;
+    min-height:76px!important;
+    padding:13px 16px!important;
+    gap:13px!important;
+    justify-content:flex-start!important;
+    overflow:hidden!important;
+  }
+  body .world-banks .v204-bank-sidebar .v225-institution-card .v46-bank-card-name{
+    flex:1 1 auto!important;
+    min-width:0!important;
+    overflow-wrap:anywhere!important;
+    font-size:clamp(13px,1vw,15px)!important;
+  }
+  body .world-banks .v204-bank-sidebar .v225-institution-card .v225-institution-chevron{
+    margin-left:auto!important;
+    flex-shrink:0!important;
+  }
+  body .world-banks .v204-bank-detail{min-height:0!important;margin:0!important;}
+  body .world-banks .v225-institution-card:focus-visible{
+    outline:2px solid #4579d7!important;outline-offset:3px!important;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  body .world-banks .v225-institution-card{transition:none!important;transform:none!important;}
+}
 </style>
 </body>
 </html>
