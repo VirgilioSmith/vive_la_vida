@@ -16549,7 +16549,7 @@ const NAV_FAMILIES=[
   {id:'overview',name:'Resumen',ico:'home',children:[]}
  ]},
  {label:'GESTIÓN FINANCIERA',items:[
-  {id:'banks',name:'Bancos',ico:'building',children:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['benefits','Beneficios','wallet'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
+  {id:'banks',name:'Bancos',ico:'building',children:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
   {id:'register',name:'Movimientos',ico:'cycle',children:[['register','Registro de ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
   {id:'payments',name:'Compromisos',ico:'calendar',children:[['payments','Centro de pagos','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
  ]},
@@ -16558,7 +16558,7 @@ const NAV_FAMILIES=[
  ]}
 ];
 const NAV_SECTIONS={
- banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['benefits','Beneficios','wallet'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
+ banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
  register:{title:'Movimientos',hint:'Registra primero; analiza los ingresos y presupuestos sin menús duplicados.',tabs:[['register','Registrar','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
  payments:{title:'Compromisos',hint:'Consulta y gestiona tus pagos, suscripciones y acuerdos personales.',tabs:[['payments','Compromisos','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
 };
@@ -16608,7 +16608,6 @@ function v206BankSwitch(page){
   ['cards','Tarjetas','card'],
   ['loans','Préstamos','receipt'],
   ['certificates','Certificados','chart'],
-  ['benefits','Beneficios','analytics']
  ];
  return `<nav class="v206-banks-switch" aria-label="Cambiar entre bancos y productos" data-v206-switch="1">${tabs.map(([id,label,ico])=>`<button type="button" data-v206-tab="${id}" class="v206-banks-pill ${page===id?'active':''}" aria-pressed="${page===id}" ${page===id?'aria-current="page"':''}>${icon(ico)}<span>${label}</span></button>`).join('')}</nav>`;
 }
@@ -16782,7 +16781,7 @@ function mobileHub(){
 
 function v154MobileSearchPage(){
  const areas=[
-  {title:'Bancos y productos',hint:'Tu dinero en cada institución',entries:[['banks','Instituciones','building'],['accounts','Cuentas y efectivo','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics'],['benefits','Beneficios','chart']]},
+  {title:'Bancos y productos',hint:'Tu dinero en cada institución',entries:[['banks','Instituciones','building'],['accounts','Cuentas y efectivo','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
   {title:'Movimiento de dinero',hint:'Registra y comprende cada operación',entries:[['register','Ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','grid']]},
   {title:'Compromisos',hint:'Pagos, suscripciones y personas',entries:[['payments','Compromiso','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]},
   {title:'Inteligencia financiera',hint:'Análisis, comparaciones y patrimonio',entries:[['advanced','Analítica avanzada','analytics'],['analytics','Resumen detallado','chart'],['kpis','Indicadores avanzados','analytics'],['patrimony','Patrimonio','wallet']]}
@@ -17387,7 +17386,7 @@ function originalCards(){
  let benefitD=db.cards.reduce((v,c)=>v+benefitBreakdown(c,'DOP').credited,0),benefitU=db.cards.reduce((v,c)=>v+benefitBreakdown(c,'USD').credited,0);
  let netD=db.cards.reduce((v,c)=>v+v144CardStats(c,false).net,0),netU=0;
  let fxLabel=db.settings.fxAcknowledged?'Tipo de cambio configurado':'Tipo de cambio referencial · verificar';
- return `<div class="section-title"><div><h2>Tu portafolio de tarjetas</h2><p>Deuda por moneda, costo anual y lo que cada tarjeta realmente devuelve.</p></div><div class="hstack">${visibilityControl()}<button type="button" class="btn ghost" data-v176-card-insight="1" title="Ver desglose por tarjeta y moneda">${icon('wallet')} Ver composición</button><button class="btn ghost" data-act="navigate" data-id="benefits">${icon('chart')} Comparar beneficios</button></div></div><div class="card-fx-note">${icon('shield')} Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</div><div class="grid cards-grid section">${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length?db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>{let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let closest=[{...a,ccy:'DOP'},{...b,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>0).sort((x,y)=>x.nextDue.localeCompare(y.nextDue))[0],z=v144CardStats(c);return `<div class="bank-card v149-card-shell"><details class="v149-card-disclosure"><summary class="v149-card-toggle" aria-label="Abrir detalles de ${sanitize(c.name)}"><div class="card-visual v28-card-face tier-${cardTierKey(c)}"><div class="v28-card-top"><span class="v28-card-bank">${bankLogoInline(c.bankId)}<span>${sanitize(bankOf(c))}</span></span>${cardNetworkMark(c)}</div><div class="v28-card-middle"><strong>${sanitize(c.name)}</strong><span>${CARD_TIER_NAMES[cardTierKey(c)]}</span></div><div class="v28-card-bottom"><span class="chip" aria-hidden="true"></span><span class="last4">•••• ${sanitize(c.last4||'••••')}</span><small>CRÉDITO · RD$ / US$</small></div></div><span class="v149-card-cue">${icon('arrow')} <span>Explorar tarjeta</span></span></summary><div class="v149-card-reveal"><section class="v148-card-essentials" aria-label="Deuda y beneficios de ${sanitize(c.name)}">
+ return `<div class="section-title"><div><h2>Tu portafolio de tarjetas</h2><p>Deuda por moneda, costo anual y lo que cada tarjeta realmente devuelve.</p></div><div class="hstack">${visibilityControl()}<button type="button" class="btn ghost" data-v176-card-insight="1" title="Ver desglose por tarjeta y moneda">${icon('wallet')} Ver composición</button><button class="btn ghost" data-act="openBenefitComparison">${icon('chart')} Comparar beneficios</button></div></div><div class="card-fx-note">${icon('shield')} Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</div><div class="grid cards-grid section">${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length?db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>{let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let closest=[{...a,ccy:'DOP'},{...b,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>0).sort((x,y)=>x.nextDue.localeCompare(y.nextDue))[0],z=v144CardStats(c);return `<div class="bank-card v149-card-shell"><details class="v149-card-disclosure"><summary class="v149-card-toggle" aria-label="Abrir detalles de ${sanitize(c.name)}"><div class="card-visual v28-card-face tier-${cardTierKey(c)}"><div class="v28-card-top"><span class="v28-card-bank">${bankLogoInline(c.bankId)}<span>${sanitize(bankOf(c))}</span></span>${cardNetworkMark(c)}</div><div class="v28-card-middle"><strong>${sanitize(c.name)}</strong><span>${CARD_TIER_NAMES[cardTierKey(c)]}</span></div><div class="v28-card-bottom"><span class="chip" aria-hidden="true"></span><span class="last4">•••• ${sanitize(c.last4||'••••')}</span><small>CRÉDITO · RD$ / US$</small></div></div><span class="v149-card-cue">${icon('arrow')} <span>Explorar tarjeta</span></span></summary><div class="v149-card-reveal"><section class="v148-card-essentials" aria-label="Deuda y beneficios de ${sanitize(c.name)}">
  <div class="v148-owed" aria-label="Deudas por moneda">
   <div class="v148-owed-part"><small>DEUDA EN PESOS</small><strong>${money(a.debt)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en pesos">Uso ${a.limit?a.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
   <div class="v148-owed-part"><small>DEUDA EN DÓLARES</small><strong>${money(b.debt,'USD',2)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en dólares">Uso ${b.limit?b.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
@@ -24083,7 +24082,7 @@ function v71SearchEntries(){
  const sections=[
  ['overview','Inicio','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y productos personales o negocio','building'],
  ['accounts','Cuentas y efectivo','Saldos en pesos y dólares','wallet'],['cards','Tarjetas','Cortes límites y pagos','card'],['loans','Préstamos bancarios','Crédito y amortizaciones','receipt'],
- ['certificates','Certificados','Capital intereses y vencimiento','building'],['benefits','Beneficios','Cashback registrado','analytics'],['income','Ingresos','Nómina y joseo','up'],
+ ['certificates','Certificados','Capital intereses y vencimiento','building'],['income','Ingresos','Nómina y joseo','up'],
  ['expenses','Egresos','Gastos por categoría','down'],['register','Movimientos','Registro e historial','cycle'],['payments','Compromisos','Compromisos y vencimientos','calendar'],
  ['recurring','Suscripciones','Servicios recurrentes','calendar'],['personal','Entre personas','Deudas por cobrar y pagar','wallet'],['budget','Presupuestos','Límites y evolución','chart'],
  ['advanced','Analítica avanzada','Evolución y categorías','analytics'],['patrimony','Patrimonio','Historia y activos menos pasivos','wallet'],['categories','Categorías','Clasificación de movimientos','chart'],['kpis','Indicadores','KPIs y comparaciones','chart'],['settings','Ajustes','Preferencias y seguridad','settings']
@@ -25858,7 +25857,7 @@ function v144DeleteReward(c,ref,source){v144Ready();let records=source==='pendin
  persist();render();toast('Registro eliminado.');}
 function v144RunAction(act,el){v144Ready();const id=el.dataset.id,ref=el.dataset.ref,source=el.dataset.source;
  if(act==='select-card'){ui.v144CardSelected=id;const target=el.closest('.v144-card-center');if(target){target.querySelectorAll('.v144-card-face').forEach(x=>{const selected=x.dataset.id===id;x.classList.toggle('selected',selected);x.setAttribute('aria-pressed',String(selected))});const panel=target.querySelector('.v144-center-detail');if(panel){panel.innerHTML=v144CardExecutive(card(id));panel.classList.remove('v144-panel-enter');void panel.offsetWidth;panel.classList.add('v144-panel-enter');panel.dataset.v144CardDetail=id;}el.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest',inline:'center'});}return;}
- if(act==='open-benefits'){ui.v144BenefitsCard=id||'all';ui.page='benefits';render();window.scrollTo({top:0,behavior:'instant'});return;}
+ if(act==='open-benefits'){ui.v144BenefitsCard=id||'all';ui.v230BenefitComparison=true;ui.page='cards';render();window.scrollTo({top:0,behavior:'instant'});return;}
  if(act==='new-cashback')return v144CashbackForm(id);
  if(act==='edit-cashback')return v144CashbackForm(id,ref,source);
  if(act==='delete-cashback')return v144DeleteReward(card(id),ref,source);
@@ -25999,7 +25998,7 @@ function v149CardLifecycle(c){
 }
 /* Spotlight — real local data, ranked and grouped. No network calls, no demo results. */
 const V149_NAV=[
- ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['benefits','Beneficios','Cashback y anualidad','analytics'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Próximos pagos','Vencimientos y compromisos','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['kpis','Mis indicadores','KPIs y tendencias','chart'],['settings','Ajustes','Configuración y privacidad','settings']
+ ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Próximos pagos','Vencimientos y compromisos','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['kpis','Mis indicadores','KPIs y tendencias','chart'],['settings','Ajustes','Configuración y privacidad','settings']
 ];
 const V149_SEARCH_LABELS={section:'Navegación',bank:'Instituciones',account:'Cuentas',card:'Tarjetas',loan:'Préstamos',certificate:'Certificados',recurring:'Suscripciones y servicios',transaction:'Movimientos',contact:'Entre personas',budget:'Presupuestos',incomeSchedule:'Ingresos recurrentes',benefit:'Beneficios',statement:'Estados históricos',category:'Categorías'};
 function v71SearchEntries(){
@@ -26974,6 +26973,49 @@ document.addEventListener('click',event=>{if(!event.target.closest('.v36-notific
 
 
 
+
+/* V230 — Beneficios pertenece a Tarjetas como vista interna completa.
+   Reutiliza v144BenefitsPage, sin cambiar métricas, registros ni formularios. */
+const v230OriginalCardsPage = pages.cards;
+function v230BenefitsWorkspace(){
+  return `<div class="v230-benefits-page" aria-label="Tarjetas, comparar beneficios">
+    <header class="v230-benefits-header">
+      <div><span class="v230-benefits-eyebrow">TARJETAS / ANÁLISIS DE BENEFICIOS</span>
+        <h2>Comparar beneficios</h2>
+        <p>Cashback acreditado, anualidades y costos reales de tus tarjetas.</p></div>
+      <button type="button" class="btn soft v230-back" data-act="closeBenefitComparison">${icon('arrow')} Volver a Tarjetas</button>
+    </header>
+    ${v144BenefitsPage()}
+  </div>`;
+}
+pages.cards=function(){return ui.v230BenefitComparison?v230BenefitsWorkspace():v230OriginalCardsPage()};
+// Legacy deep links: do not present Beneficios as an independent destination.
+const v230OldBenefitsPage=pages.benefits;
+pages.benefits=function(){ui.v230BenefitComparison=true;return v230BenefitsWorkspace()};
+const v230OriginalMain=main;
+main=function(){
+  if(ui.page==='benefits'){ui.page='cards';ui.v230BenefitComparison=true;}
+  return v230OriginalMain();
+};
+// Capture only the navigation operations needed for this internal page.
+document.addEventListener('click',function(event){
+  const el=event.target.closest?.('[data-act]');if(!el)return;
+  const act=el.dataset.act,id=el.dataset.id;
+  if(act==='openBenefitComparison'||(act==='navigate'&&id==='benefits')){
+    event.preventDefault();event.stopImmediatePropagation();
+    ui.v230BenefitsFrom=ui.page;
+    ui.v230BenefitComparison=true;
+    ui.v144BenefitsCard='all';
+    ui.page='cards';render();window.scrollTo(0,0);return;
+  }
+  if(act==='closeBenefitComparison'){
+    event.preventDefault();event.stopImmediatePropagation();
+    ui.v230BenefitComparison=false;ui.page='cards';render();window.scrollTo(0,0);return;
+  }
+  if(ui.v230BenefitComparison && ((act==='navigate'&&id==='cards')||act==='goCard')){
+    ui.v230BenefitComparison=false;
+  }
+},true);
 </script>
 <!-- V40: compromisos por modalidad, nómina recurrente, instituciones no bancarias y reglas fiscales versionadas. -->
 <!-- V30: control de calidad, recuperación local, validación conservadora de importación. No modifica cálculos financieros. -->
@@ -32243,6 +32285,18 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
     grid-template-columns:repeat(4,minmax(0,1fr))!important;
   }
 }
+</style>
+
+<style id="vive-v230-comparar-beneficios-interno">
+/* El mismo estilo Liquid Glass del resto de la app; sin nueva navegación. */
+.v230-benefits-page{width:100%;min-width:0;display:grid;gap:14px;}
+.v230-benefits-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 24px;border-radius:22px;background:var(--panel,rgba(255,255,255,.65));border:1px solid var(--line,rgba(140,165,204,.25));color:var(--text,#1b365e)}
+.v230-benefits-header h2{font-size:clamp(21px,2vw,28px);line-height:1.12;margin:5px 0 7px;font-weight:800}
+.v230-benefits-header p{font-size:13px;opacity:.8;margin:0}
+.v230-benefits-eyebrow{font-size:10px;letter-spacing:.14em;font-weight:850;color:var(--accent,#557bc4)}
+.v230-benefits-header .v230-back{white-space:nowrap;flex-shrink:0}
+.v230-benefits-page .v144-benefit-world{min-width:0;width:100%}
+@media(max-width:767px){.v230-benefits-header{padding:16px;align-items:flex-start;flex-direction:column}.v230-benefits-header .v230-back{width:100%;justify-content:center}}
 </style>
 </body>
 </html>
