@@ -16855,7 +16855,7 @@ function mobileBottomNavigation(){
  const bankingPages=['banks','accounts','cards','loans','certificates','benefits'];
  const current=bankingPages.includes(ui.page)?'banks':(['overview','wallet','mobilehub','mobilesearch'].includes(ui.page)?ui.page:'mobilehub');
  const items=[['overview','Inicio','home'],['wallet','Wallet','card'],['banks','Bancos','building'],['mobilehub','Explorar','grid'],['mobilesearch','Buscar','search']];
- return `<nav class="vive-mobile-dock" aria-label="Navegación móvil">${items.map(([id,label,ic])=>`<button type="button" class="vive-mobile-dock-item ${current===id?'active':''}" data-act="navigate" data-id="${id}" ${current===id?'aria-current="page"':''} aria-label="${label}" title="${label}"><span class="vive-mobile-dock-icon">${icon(ic)}</span><span class="vive-mobile-dock-label">${label}</span></button>`).join('')}<button type="button" class="v247-register-action" data-act="newTransaction" aria-label="Registrar una operación" title="Registrar ingresos, egresos, transferencias y pagos">${icon('plus')}<span>Registrar</span></button></nav>`;
+ return `<nav class="vive-mobile-dock" aria-label="Navegación móvil">${items.map(([id,label,ic])=>`<button type="button" class="vive-mobile-dock-item ${current===id?'active':''}" data-act="navigate" data-id="${id}" ${current===id?'aria-current="page"':''} aria-label="${label}" title="${label}"><span class="vive-mobile-dock-icon">${icon(ic)}</span><span class="vive-mobile-dock-label">${label}</span></button>`).join('')}</nav><button type="button" class="v249-register-fab" data-act="newTransaction" aria-label="Registrar una operación" title="Registrar ingresos, egresos, transferencias y pagos"><span class="v249-fab-surface" aria-hidden="true">${icon('plus')}</span></button>`;
 }
 function mobileTransactions(limit=5){
  const all=[...db.transactions.map(t=>({kind:'posted',date:t.date,created:t.created||'',t})),...(db.pendingOperations||[]).map(q=>({kind:'pending',date:q.values?.date||String(q.created||today()).slice(0,10),created:q.created||'',q}))].filter(v=>v.date<=today()).sort((a,b)=>b.date.localeCompare(a.date)||b.created.localeCompare(a.created)).slice(0,limit);
@@ -16989,39 +16989,14 @@ function mobileHub(){
 }
 
 function v154MobileSearchPage(){
- // V247: display each destination once; the colored cards navigate directly.
- // The full search index remains available when the user types.
- const sections=[
-  {label:'TUS PRODUCTOS',title:'Dinero y bancos',hint:'Instituciones, cuentas y productos financieros',entries:[
-   ['banks','Instituciones','Bancos y entidades','building','ocean'],
-   ['accounts','Cuentas y efectivo','Tu dinero disponible','wallet','ocean'],
-   ['cards','Tarjetas','Crédito y beneficios','card','violet'],
-   ['loans','Préstamos','Cuotas y amortización','receipt','coral'],
-   ['certificates','Certificados','Inversiones y vencimientos','analytics','blue'],
-   ['benefits','Beneficios','Cashback y recompensas','wallet','violet']]},
-  {label:'TU ACTIVIDAD',title:'Movimientos',hint:'Registra, comprende y organiza tus operaciones',entries:[
-   ['register','Movimientos','Ingresos y egresos','cycle','teal'],
-   ['income','Ingresos','Lo que recibes','up','ocean'],
-   ['expenses','Egresos','Lo que utilizas','down','coral'],
-   ['budget','Presupuesto','Planificación y límites','chart','amber'],
-   ['categories','Categorías','Organiza tus registros','grid','teal']]},
-  {label:'LO QUE VIENE',title:'Compromisos',hint:'Fechas, pagos y obligaciones pendientes',entries:[
-   ['payments','Centro de pagos','Cuotas y vencimientos','calendar','coral'],
-   ['recurring','Suscripciones','Servicios recurrentes','cycle','amber'],
-   ['personal','Entre personas','Préstamos y abonos','wallet','violet']]},
-  {label:'MÁS PERSPECTIVA',title:'Análisis y patrimonio',hint:'Entiende la evolución de tus finanzas',entries:[
-   ['kpis','Indicadores','Métricas financieras','analytics','blue'],
-   ['patrimony','Patrimonio','Activos y deudas','wallet','ocean'],
-   ['analytics','Visión global','Análisis consolidado','chart','teal'],
-   ['advanced','Analítica avanzada','Tendencias y evolución','analytics','blue']]}
- ];
+ // V249: restaurar tarjetas de seis categorías de Buscar, sin accesos rápidos ni directorio.
+
  v154PrepareMobileIndex();
- const tile=([id,title,description,ico,tone])=>`<button type="button" class="v154-category-tile v154-tone-${tone} v247-module-tile" data-act="navigate" data-id="${id}" aria-label="Abrir ${title}"><span class="v154-category-mark">${icon(ico)}</span><span class="v154-category-title">${title}</span><span class="v154-category-sub">${description}</span></button>`;
- const directory=sections.map(group=>`<section class="v247-module-group" aria-label="${group.title}"><header class="v247-module-group-heading"><span>${group.label}</span><h2>${group.title}</h2><p>${group.hint}</p></header><div class="v247-module-grid">${group.entries.map(tile).join('')}</div></section>`).join('');
- return `<div class="vive-mobile-hub v154-search-hub v247-search-hub">
+ return `<div class="vive-mobile-hub v154-search-hub">
   <div class="v154-search-heading"><div><span class="v154-search-eyebrow">TU CENTRO FINANCIERO</span><h1>Buscar</h1></div><span class="v154-search-heading-icon">${icon('search')}</span></div>
   <div class="v154-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios y más" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button></div>
-  <div class="v154-search-discover v247-module-directory" id="v154-mobile-discover">${directory}</div>
+  <div class="v154-search-discover" id="v154-mobile-discover"><div class="v154-section-header"><h2>Explorar tus finanzas</h2><p>Encuentra todo en un mismo lugar</p></div><div class="v154-category-grid">${V154_MOBILE_CATEGORIES.map(c=>`<button type="button" class="v154-category-tile v154-tone-${c.tone}" data-v154-category="${c.id}" aria-label="Explorar ${c.title}"><span class="v154-category-mark">${icon(c.ico)}</span><span class="v154-category-title">${c.title}</span><span class="v154-category-sub">${c.sub}</span></button>`).join('')}</div>
+  </div>
   <section class="v154-search-results" id="v154-mobile-search-results" aria-label="Resultados de búsqueda" aria-live="polite" hidden></section>
  </div>`;
 }
@@ -21246,6 +21221,7 @@ function render(){
  document.body.dataset.viveBg=bgChoice;
  const backgrounds={original:'#d9e7fa',glacier:'#81cacc',sunset:'#e7a6b8'};
  document.body.style.setProperty('--vive-bg-color',bgChoice==='custom'&&hex.test(db.settings.backgroundHex||'')?db.settings.backgroundHex:(backgrounds[bgChoice]||backgrounds.original));
+ v250DockGlassApply(db.settings.mobileDockGlassLevel ?? 50);
  document.getElementById('app').innerHTML=main();
   v40Decorate();
   // Restore the currently selected filter button after a same-page redraw.
@@ -27522,6 +27498,58 @@ const V242_PANES=[
  ['security','Seguridad y privacidad','Revisión, recuperación y respaldos','shield','Privacidad'],
  ['about','Acerca de vive el hoy','Información y registros guardados','settings','Aplicación']
 ];
+
+/* V250 · Control exclusivo de intensidad Liquid Glass de la barra móvil.
+   No aplica opacidad a la interfaz entera, ni al botón Registrar. */
+function v250DockGlassValue(raw){
+ const n=Number(raw);
+ return Number.isFinite(n)?Math.min(100,Math.max(0,Math.round(n))):50;
+}
+function v250DockGlassApply(raw){
+ const n=v250DockGlassValue(raw), ratio=n/100, style=document.documentElement.style;
+ style.setProperty('--v250-dock-opacity',(0.12+0.50*ratio).toFixed(3));
+ style.setProperty('--v250-dock-dark-opacity',(0.28+0.57*ratio).toFixed(3));
+ style.setProperty('--v250-dock-blur',(12+40*ratio).toFixed(1)+'px');
+ style.setProperty('--v250-dock-saturation',Math.round(140+90*ratio)+'%');
+ style.setProperty('--v250-glass-meter',n+'%');
+ return n;
+}
+function v250DockGlassPanel(){
+ const value=v250DockGlassValue(db.settings.mobileDockGlassLevel ?? 50);
+ return `<section class="v250-dock-settings panel" aria-labelledby="v250-dock-title">
+  <div class="v250-dock-head"><div><span class="v250-dock-kicker">NAVEGACIÓN · SOLO MÓVIL</span><h3 id="v250-dock-title">Intensidad de Liquid Glass</h3><p>Regula cuánto se difumina el fondo detrás de la barra inferior. No cambia los demás paneles ni el botón Registrar.</p></div><output id="v250-dock-value" for="v250-dock-slider">${value}%</output></div>
+  <div class="v250-dock-preview" aria-hidden="true"><span class="v250-dock-preview-shape"></span><span class="v250-dock-preview-shape second"></span><div class="v250-dock-preview-bar"><span>${icon('home')}</span><span>${icon('card')}</span><span>${icon('building')}</span><span>${icon('grid')}</span><span>${icon('search')}</span></div></div>
+  <label class="v250-dock-range-label" for="v250-dock-slider">Nivel de efecto</label>
+  <input id="v250-dock-slider" type="range" min="0" max="100" step="1" value="${value}" aria-label="Intensidad Liquid Glass de la barra inferior" aria-valuetext="${value} por ciento" style="--v250-slider-progress:${value}%">
+  <div class="v250-dock-extremes"><span>Más transparente</span><span>Más esmerilado</span></div>
+  <p class="v250-dock-foot">El cambio se ve al instante y se guarda al soltar el control.</p>
+ </section>`;
+}
+document.addEventListener('input',event=>{
+ const slider=event.target;
+ if(slider?.id!=='v250-dock-slider')return;
+ const n=v250DockGlassApply(slider.value);
+ slider.style.setProperty('--v250-slider-progress',n+'%');
+ slider.setAttribute('aria-valuetext',n+' por ciento');
+ const output=document.getElementById('v250-dock-value');if(output)output.textContent=n+'%';
+});
+document.addEventListener('change',event=>{
+ const slider=event.target;
+ if(slider?.id!=='v250-dock-slider')return;
+ const prev=v250DockGlassValue(db.settings.mobileDockGlassLevel ?? 50);
+ const next=v250DockGlassValue(slider.value);
+ if(next===prev)return;
+ db.settings.mobileDockGlassLevel=next;
+ if(!persist()){
+  db.settings.mobileDockGlassLevel=prev;
+  slider.value=String(prev);slider.style.setProperty('--v250-slider-progress',prev+'%');
+  slider.setAttribute('aria-valuetext',prev+' por ciento');
+  const output=document.getElementById('v250-dock-value');if(output)output.textContent=prev+'%';
+  v250DockGlassApply(prev);
+  toast('No se pudo guardar la intensidad. Comprueba la sincronización.');
+ }
+});
+
 function v242SettingsPreview(){
  const chosen=db.settings.mobilePositionStyle==='circles'?'circles':'original';
  const liquid=totalLiquid(), debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
@@ -27535,7 +27563,7 @@ function v242Settings(){
  const tile=(entry)=>`<button class="v242-settings-row" type="button" data-v242-section="${entry[0]}"><span class="v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v242-settings-row-copy"><strong>${entry[1]}</strong><small>${entry[2]}</small></span><span class="v242-settings-chevron" aria-hidden="true">›</span></button>`;
  const content={
   profile:`${f34CloudPanel()}`,
-  appearance:`${v242SettingsPreview()}<div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
+  appearance:`${v242SettingsPreview()}${v250DockGlassPanel()}<div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
 <div class="theme-settings panel"><div><strong>Aspecto de vive el hoy</strong><p>Elige Claro o Black oscuro. El modo Black utiliza fondo negro y tarjetas carbón de alto contraste; tus registros no cambian.</p></div><div class="theme-choice-row" role="group" aria-label="Elegir apariencia"><button class="theme-choice ${s.theme==='light'?'selected':''}" data-act="setTheme" data-id="light" aria-pressed="${s.theme==='light'}"><span class="theme-sun">☀</span> Claro</button><button class="theme-choice v200-black-choice ${s.theme==='black'?'selected':''}" data-act="setTheme" data-id="black" aria-pressed="${s.theme==='black'}"><span class="v200-black-mark">●</span> Black oscuro</button></div></div>
 
 
@@ -27925,6 +27953,114 @@ function v245PolishOnRender(){
 }
 const v245PreviousRender=render;
 render=function(){v245PreviousRender();v245PolishOnRender();};
+
+/* V248 · LENGUAJE MÓVIL COHERENTE: Cuentas y efectivo como referencia.
+   Mover los KPI reales y sus eventos; nunca duplicar cálculos ni registros. */
+(function v248MobileFinancialWorlds(){
+ 'use strict';
+ const config={
+  income:{title:'Ingresos',kicker:'TUS INGRESOS',intro:'Cada ingreso, con su origen claro.',ico:'up'},
+  expenses:{title:'Egresos',kicker:'TUS EGRESOS',intro:'Cada gasto registrado, en su lugar.',ico:'down'},
+  budget:{title:'Presupuestos',kicker:'PLANIFICA TU DINERO',intro:'Tus límites y su ejecución, sin distracciones.',ico:'chart'}
+ };
+ function make(tag,className,html){const e=document.createElement(tag);e.className=className;if(html!==undefined)e.innerHTML=html;return e;}
+ function v248Financial(page){
+  const cfg=config[page];if(!cfg)return;
+  const executive=document.querySelector(`#page .v58-exec[data-v58-page="${page}"]`);
+  const inner=document.querySelector('#page .inner-menu');
+  if(inner){
+   inner.classList.add('v248-nav-only');
+   inner.querySelector('.inner-menu-caption')?.remove();
+  }
+  if(!executive)return; // Otras pestañas mantienen sus contenidos y navegación existentes.
+  const main=executive.querySelector('.v58-feature');
+  const stats=[...executive.querySelectorAll('.v58-grid > .v58-metric')];
+  if(!main||!stats.length)return;
+  const shell=make('section',`v248-finance v248-${page}`);
+  const head=make('header','v248-intro',`<div><span class="v248-eyebrow">${cfg.kicker}</span><h2>${cfg.title}</h2><p>${cfg.intro}</p></div><span class="v248-intro-symbol" aria-hidden="true">${icon(cfg.ico)}</span>`);
+  shell.append(head);
+  const nav=document.querySelector('#page .inner-menu.v248-nav-only');
+  if(nav){shell.append(nav.querySelector('.inner-menu-tabs'));nav.remove();}
+  const v26=page==='budget'?document.querySelector('#page .v26-internal'):null;
+  let addBudget=null;
+  if(v26){
+   const top=v26.querySelector('.v26-head');
+   const tabs=v26.querySelector('.v26-nav');
+   if(tabs){tabs.classList.add('v248-budget-tabs');shell.append(tabs);}
+   if(top){const add=top.querySelector('.v26-primary');if(add){add.classList.add('v248-budget-add');addBudget=add;}top.remove();}
+  }
+  const hero=make('section','v248-hero');
+  const heroTop=make('div','v248-hero-top',`<span>${cfg.kicker} · ${sanitize(ui.month||today().slice(0,7))}</span><span class="v248-hero-mark" aria-hidden="true">${icon(cfg.ico)}</span>`);
+  hero.append(heroTop);
+  main.classList.add('v248-feature');hero.append(main);
+  const primary=make('div','v248-metrics-primary');
+  const secondary=make('div','v248-metrics-secondary');
+  stats.forEach((s,i)=>{s.classList.add('v248-metric');(i<2?primary:secondary).append(s);});
+  hero.append(primary);shell.append(hero);if(addBudget)shell.append(addBudget);
+  if(secondary.children.length){
+    const facts=make('section','v248-insight-sheet',`<div class="v248-sheet-head"><div><span class="v248-eyebrow">MÁS INDICADORES</span><h3>Tu detalle financiero</h3></div></div>`);
+    facts.append(secondary);shell.append(facts);
+  }
+  const actions=executive.querySelector('.v58-actions');
+  if(actions&&actions.children.length){
+   const bar=make('div','v248-finance-actions');
+   [...actions.children].forEach(button=>{if(page==='budget'&&/definir/i.test(button.textContent||''))return;bar.append(button);});
+   if(bar.children.length)shell.append(bar);
+  }
+  const hint=executive.querySelector('.v58-hint');
+  if(hint){hint.classList.add('v248-hint');shell.append(hint);}
+  executive.replaceWith(shell);
+  const detail=page==='income'?document.querySelector('#page .inner-view'):page==='expenses'?document.querySelector('#page .inner-view'):document.querySelector('#page .v26-body');
+  if(detail)detail.classList.add('v248-rest');
+ }
+ function v248Register(){
+  const root=document.querySelector('#page .ledger-world');if(!root)return;
+  const title=root.querySelector(':scope > .section-title');
+  const ledger=root.querySelector('.ledger-card');if(!title||!ledger)return;
+  const header=make('header','v248-intro v248-register-title','<div><span class="v248-eyebrow">TU ACTIVIDAD</span><h2>Movimientos</h2><p>Historial, conciliación y borradores en un solo lugar.</p></div>');
+  const add=title.querySelector('button[data-act]');if(add){add.textContent='';add.innerHTML=`${icon('plus')} <span>Nuevo</span>`;add.classList.add('v248-new');header.append(add);}
+  title.replaceWith(header);
+  const total=(db.transactions||[]).length;
+  const drafts=(db.pendingOperations||[]).length;
+  const reviewed=(db.transactions||[]).filter(t=>t.reviewed===true).length;
+  const hero=make('section','v248-hero v248-register-hero',`<div class="v248-hero-top"><span>HISTORIAL DE OPERACIONES</span><span class="v248-hero-mark">${icon('cycle')}</span></div><div class="v248-moves-number"><small>MOVIMIENTOS REGISTRADOS</small><strong>${total}</strong></div><div class="v248-metrics-primary"><div class="v248-move-fact"><small>BORRADORES</small><strong>${drafts}</strong></div><div class="v248-move-fact"><small>CONCILIADOS</small><strong>${reviewed}</strong></div></div>`);
+  header.after(hero);
+  const controls=ledger.querySelector('.ledger-controls');
+  if(controls){
+   const advanced=make('details','v248-filter-details');
+   advanced.open=!!ui.v248FiltersOpen;
+   advanced.append(make('summary','v248-filter-summary',`${icon('analytics')} Filtros y exportación ${icon('arrow')}`));
+   const extra=make('div','v248-filter-body');
+   [...controls.children].forEach((child,i)=>{if(i>0)extra.append(child);});
+   advanced.append(extra);controls.append(advanced);
+  }
+  ledger.classList.add('v248-ledger');
+ }
+ function v248Categories(){
+  const root=document.querySelector('#page .v26-internal');if(!root)return;
+  const old=root.querySelector(':scope > .v26-head');if(!old)return;
+  const add=old.querySelector('.v26-primary');
+  const cost=Object.keys(categoryMap('gasto')||{}).length;
+  const income=Object.keys(categoryMap('ingreso')||{}).length;
+  const h=make('header','v248-intro v248-category-head','<div><span class="v248-eyebrow">ORGANIZA TUS REGISTROS</span><h2>Categorías</h2><p>Tu catálogo de ingresos y egresos.</p></div>');
+  if(add){add.textContent='';add.innerHTML=`${icon('plus')}<span>Nueva</span>`;add.classList.add('v248-new');h.append(add);}
+  const hero=make('section','v248-hero v248-categories-hero',`<div class="v248-hero-top"><span>TU CATÁLOGO</span><span class="v248-hero-mark">${icon('grid')}</span></div><div class="v248-moves-number"><small>CATEGORÍAS DISPONIBLES</small><strong>${cost+income}</strong></div><div class="v248-metrics-primary"><div class="v248-move-fact"><small>DE GASTOS</small><strong>${cost}</strong></div><div class="v248-move-fact"><small>DE INGRESOS</small><strong>${income}</strong></div></div>`);
+  old.replaceWith(h);h.after(hero);root.classList.add('v248-category-root');
+ }
+ function decorate(){
+  if(!isMobileViewport())return;
+  if(config[ui.page])v248Financial(ui.page);
+  else if(ui.page==='register')v248Register();
+  else if(ui.page==='categories')v248Categories();
+ }
+ const previous=render;
+ render=function(...args){const result=previous.apply(this,args);decorate();return result;};
+ document.addEventListener('toggle',event=>{
+  if(event.target?.matches('.v248-filter-details'))ui.v248FiltersOpen=event.target.open;
+ },true);
+ // render() executes after the application bootstraps; do not force a new render here.
+})();
+
 
 })();
 
@@ -34395,5 +34531,231 @@ body.theme-black .v247-register-action,body.theme-dark .v247-register-action{bac
 }
 @media(max-width:355px){.vive-mobile-dock>.v247-register-action{height:54px!important;gap:3px!important}}
 </style>
+<style id="vive-v248-finanzas-limpias">
+/* V248 · Financial mobile worlds: same mechanics, new account-style composition. */
+@media(max-width:790px){
+  #page .v248-finance,#page .v248-category-root,#page .ledger-world{min-width:0;max-width:100%;box-sizing:border-box}
+  #page .v248-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:1px 0 15px;padding:1px 2px 0;background:none;border:0;box-shadow:none}
+  #page .v248-intro>div{min-width:0;flex:1}
+  #page .v248-eyebrow{display:block;font-size:10.5px;letter-spacing:.17em;font-weight:820;color:#607fb0;margin:0 0 7px}
+  #page .v248-intro h2{font-size:clamp(30px,8.4vw,38px)!important;line-height:1.08!important;font-weight:840!important;letter-spacing:-.062em!important;color:#213c5e!important;margin:0!important}
+  #page .v248-intro p{font-size:12px!important;line-height:1.5!important;color:#69809e!important;margin:8px 0 0!important;max-width:290px!important}
+  #page .v248-intro-symbol{display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;border-radius:15px;color:#4770ba;background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.86);box-shadow:0 8px 24px rgba(41,73,119,.07)}
+  #page .v248-intro-symbol svg{width:20px;height:20px}
+  #page .v248-hero{background:linear-gradient(132deg,#2a5398 0%,#3d6bb6 61%,#547dc1 100%)!important;border:1px solid rgba(255,255,255,.27)!important;border-radius:28px!important;box-shadow:0 16px 36px rgba(38,82,154,.18),inset 0 1px 0 rgba(255,255,255,.24)!important;color:#fff!important;padding:clamp(19px,5.4vw,25px)!important;display:block!important;min-height:0!important;margin:0 0 13px!important;overflow:hidden!important;position:relative!important;isolation:isolate}
+  #page .v248-income .v248-hero{background:linear-gradient(132deg,#19596b 0%,#22798b 62%,#339a99 100%)!important}
+  #page .v248-expenses .v248-hero{background:linear-gradient(132deg,#424b78 0%,#5d568d 62%,#7b6c9c 100%)!important}
+  #page .v248-budget .v248-hero{background:linear-gradient(132deg,#234567 0%,#2e6895 63%,#458ca8 100%)!important}
+  #page .v248-hero::after{content:"";position:absolute;z-index:-1;width:280px;height:280px;border:1px solid rgba(255,255,255,.085);border-radius:50%;right:-170px;top:-160px;box-shadow:0 0 0 55px rgba(255,255,255,.018);pointer-events:none}
+  #page .v248-hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;color:rgba(255,255,255,.89);font-size:10.5px;letter-spacing:.16em;font-weight:820}
+  #page .v248-hero-mark{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:14px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.12)}
+  #page .v248-hero-mark svg{width:21px;height:21px}
+  #page .v248-hero .v248-feature{display:flex!important;flex-direction:column!important;min-width:0!important;border:0!important;border-radius:0!important;padding:0 0 17px!important;background:none!important;box-shadow:none!important;margin:0!important;gap:6px!important}
+  #page .v248-hero .v58-main-label,#page .v248-moves-number small{font-size:11px!important;letter-spacing:.13em!important;font-weight:800!important;color:rgba(255,255,255,.77)!important;line-height:1.35!important}
+  #page .v248-hero .v58-main-value{font-size:clamp(32px,10vw,53px)!important;line-height:1.06!important;font-weight:850!important;letter-spacing:-.07em!important;display:inline-flex!important;align-items:center!important;gap:9px!important;max-width:100%!important;min-width:0!important;padding:0!important;margin:2px 0!important;background:none!important;border:0!important;color:#fff!important;text-align:left!important;white-space:normal!important;overflow-wrap:anywhere!important;box-shadow:none!important}
+  #page .v248-hero .v58-main-value svg{width:22px!important;height:22px!important;flex:0 0 22px!important;opacity:.85}
+  #page .v248-hero .v248-feature>small{font-size:11px!important;line-height:1.45!important;color:rgba(255,255,255,.75)!important;margin:0!important}
+  #page .v248-metrics-primary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid rgba(255,255,255,.22);padding-top:15px;margin-top:4px;min-width:0}
+  #page .v248-metrics-primary>.v248-metric,#page .v248-metrics-primary>.v248-move-fact{display:flex!important;flex-direction:column!important;align-items:flex-start!important;text-align:left!important;gap:5px!important;min-width:0!important;min-height:0!important;padding:0 11px 0 0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;color:#fff!important}
+  #page .v248-metrics-primary>*+*{border-left:1px solid rgba(255,255,255,.20)!important;padding-left:14px!important;padding-right:0!important}
+  #page .v248-metrics-primary .v58-card-label,#page .v248-move-fact small{font-size:10px!important;letter-spacing:.12em!important;line-height:1.35!important;color:rgba(255,255,255,.73)!important;font-weight:780!important}
+  #page .v248-metrics-primary .v248-metric strong,#page .v248-move-fact strong{display:block!important;font-size:clamp(16px,5.4vw,25px)!important;line-height:1.12!important;letter-spacing:-.045em!important;font-weight:800!important;color:#fff!important;overflow-wrap:anywhere!important}
+  #page .v248-metrics-primary .v248-metric>small{display:block!important;font-size:10px!important;line-height:1.33!important;color:rgba(255,255,255,.7)!important;margin:0!important}
+  #page .v248-insight-sheet{background:linear-gradient(137deg,rgba(255,255,255,.82),rgba(234,242,255,.77));border:1px solid rgba(255,255,255,.92);border-radius:23px;padding:16px 17px;margin:0 0 12px;box-shadow:0 11px 27px rgba(40,73,118,.065)}
+  #page .v248-sheet-head h3{font-size:17px!important;letter-spacing:-.035em!important;color:#264162!important;margin:0 0 14px!important}
+  #page .v248-insight-sheet .v248-eyebrow{font-size:9px;margin-bottom:4px}
+  #page .v248-metrics-secondary{display:grid;gap:0}
+  #page .v248-metrics-secondary .v248-metric{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;text-align:left!important;gap:3px 10px!important;padding:14px 0!important;border:0!important;border-top:1px solid rgba(151,177,212,.2)!important;border-radius:0!important;background:none!important;box-shadow:none!important;min-height:0!important;color:#28486c!important}
+  #page .v248-metrics-secondary .v248-metric .v58-card-label{grid-column:1;font-size:11px!important;color:#7185a2!important;letter-spacing:.03em!important;font-weight:770!important}
+  #page .v248-metrics-secondary .v248-metric strong{grid-column:2;grid-row:1/3;font-size:clamp(15px,4.3vw,20px)!important;white-space:normal!important;max-width:155px!important;text-align:right!important;overflow-wrap:anywhere!important;color:#274364!important;line-height:1.18!important}
+  #page .v248-metrics-secondary .v248-metric small{grid-column:1;font-size:10px!important;line-height:1.35!important;color:#8393a7!important;margin:0!important}
+  #page .v248-finance-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 19px}
+  #page .v248-finance-actions:has(> :only-child){grid-template-columns:1fr}
+  #page .v248-finance-actions .v58-action,#page .v248-budget-add{display:flex!important;align-items:center!important;justify-content:center!important;min-height:52px!important;max-width:100%!important;font-size:12px!important;line-height:1.2!important;font-weight:770!important;border-radius:16px!important;border:1px solid rgba(202,218,238,.9)!important;background:rgba(255,255,255,.84)!important;color:#2d4d7b!important;box-shadow:0 7px 16px rgba(34,69,115,.065)!important;padding:12px 10px!important;white-space:normal!important}
+  #page .v248-finance-actions .v58-action.primary{background:#2e60aa!important;border-color:#2e60aa!important;color:#fff!important}
+  #page .v248-budget .v248-budget-add{width:100%;margin:-3px 0 12px;}
+  #page .v248-hint{font-size:11px!important;line-height:1.5!important;color:#73849d!important;margin:0 0 18px!important;padding:0 3px!important;opacity:1!important}
+  #page .v248-rest{min-width:0!important}
+  #page .v248-rest .world-intro.income-world-hero,#page .v248-rest .expenses-heading{display:none!important}
+  #page .v248-finance .inner-menu-tabs,#page .v248-budget .v26-nav,#page .inner-menu.v248-nav-only .inner-menu-tabs{display:flex!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;gap:8px!important;padding:1px 0 6px!important;margin:0 0 13px!important;border:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;max-width:100%!important}
+  #page .v248-finance .inner-menu-tabs::-webkit-scrollbar,#page .v248-budget .v26-nav::-webkit-scrollbar{display:none}
+  #page .v248-finance .inner-menu-tab,#page .v248-budget .v26-nav button{flex:0 0 auto!important;width:auto!important;min-width:0!important;min-height:41px!important;padding:10px 13px!important;border-radius:14px!important;border:1px solid rgba(206,222,242,.9)!important;background:rgba(255,255,255,.6)!important;color:#577395!important;font-size:12px!important;font-weight:730!important;box-shadow:none!important}
+  #page .v248-finance .inner-menu-tab.active,#page .v248-budget .v26-nav button[aria-selected="true"]{background:#fff!important;color:#2b60ac!important;border-color:#cfdef2!important;box-shadow:0 5px 12px rgba(39,80,150,.08)!important}
+  #page .v248-budget .v26-nav{order:0!important}
+  #page .v248-moves-number{padding:0 0 16px;display:flex;flex-direction:column;gap:5px}
+  #page .v248-moves-number strong{font-size:clamp(48px,14vw,70px);font-weight:840;letter-spacing:-.07em;line-height:1.04;color:#fff}
+  #page .v248-register-title .v248-new,#page .v248-category-head .v248-new{flex:0 0 auto;display:inline-flex!important;align-items:center;justify-content:center;gap:7px;min-height:45px;padding:11px 13px!important;border-radius:15px!important;background:rgba(255,255,255,.88)!important;color:#3966b0!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:0 6px 18px rgba(34,71,119,.08)!important;font-size:12px!important;font-weight:800!important}
+  #page .v248-new svg{height:18px;width:18px}
+  #page .v248-ledger{background:rgba(255,255,255,.69)!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:24px!important;padding:15px!important;margin:0 0 14px!important;box-shadow:0 10px 25px rgba(40,73,118,.065)!important;min-width:0!important}
+  #page .v248-ledger .ledger-controls{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:11px!important;background:transparent!important;padding:0!important;border:0!important;box-shadow:none!important}
+  #page .v248-ledger .ledger-controls>.ledger-control{width:100%!important;flex:1!important;padding:0!important;min-width:0!important}
+  #page .v248-ledger .ledger-controls>.ledger-control label{font-size:12px!important;color:#557293!important;font-weight:770!important}
+  #page .v248-ledger .ledger-controls #searchTx{width:100%!important;font-size:16px!important;min-height:50px!important;border-radius:15px!important;background:rgba(224,237,250,.65)!important;border:1px solid #e0ebfa!important;padding:11px 14px!important;box-sizing:border-box!important}
+  #page .v248-filter-details{border:1px solid rgba(212,225,242,.8);border-radius:16px;min-width:0;overflow:hidden}
+  #page .v248-filter-summary{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;font-size:12px;font-weight:760;color:#416ba3;list-style:none;background:rgba(233,243,254,.54)}
+  #page .v248-filter-summary::-webkit-details-marker{display:none}
+  #page .v248-filter-summary svg{width:17px;height:17px;flex:0 0 17px}
+  #page .v248-filter-summary svg:last-child{margin-left:auto;transition:transform .16s}
+  #page .v248-filter-details[open] .v248-filter-summary svg:last-child{transform:rotate(180deg)}
+  #page .v248-filter-body{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(247,250,255,.5)}
+  #page .v248-filter-body .ledger-control{min-width:0!important;width:100%!important}
+  #page .v248-filter-body :is(select,.filter-select){width:100%!important;min-height:45px!important;border-radius:13px!important;box-sizing:border-box!important}
+  #page .v248-filter-body .btn{border-radius:13px!important;min-height:45px!important;width:100%!important}
+  #page .v248-ledger .v51-mobile-ledger{margin:13px 0 0!important;min-width:0!important}
+  #page .v248-category-root>.v26-body{padding:0!important;background:none!important}
+  #page .v248-category-root .taxonomy-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important;margin:0!important}
+  #page .v248-category-root .taxonomy-grid :is(.panel,.taxonomy-card){border-radius:22px!important;background:rgba(255,255,255,.76)!important;border:1px solid rgba(255,255,255,.88)!important;box-shadow:0 9px 25px rgba(41,78,127,.06)!important;min-width:0!important}
+  #page .v248-category-root .taxonomy-grid :is(.taxonomy-row,.taxonomy-category,.taxonomy-item){min-height:48px}
+}
+@media(max-width:355px){
+ #page .v248-hero{padding:16px!important;border-radius:24px!important}
+ #page .v248-hero .v58-main-value{font-size:clamp(28px,9vw,35px)!important}
+ #page .v248-metrics-primary .v248-metric strong{font-size:16px!important}
+ #page .v248-intro h2{font-size:29px!important}
+}
+body.theme-black #page .v248-intro h2,body.theme-dark #page .v248-intro h2{color:#eef3ff!important}
+body.theme-black #page .v248-intro p,body.theme-dark #page .v248-intro p{color:#adbed5!important}
+body.theme-black #page :is(.v248-insight-sheet,.v248-ledger),body.theme-dark #page :is(.v248-insight-sheet,.v248-ledger){background:linear-gradient(135deg,#232f42,#1b2535)!important;border-color:#3a4d65!important;color:#edf4ff!important}
+body.theme-black #page .v248-sheet-head h3,body.theme-black #page .v248-metrics-secondary .v248-metric strong,body.theme-dark #page .v248-sheet-head h3,body.theme-dark #page .v248-metrics-secondary .v248-metric strong{color:#edf4ff!important}
+body.theme-black #page .v248-metrics-secondary .v248-metric .v58-card-label,body.theme-dark #page .v248-metrics-secondary .v248-metric .v58-card-label{color:#afbfda!important}
+body.theme-black #page .v248-filter-summary,body.theme-dark #page .v248-filter-summary{background:#26384b!important;color:#bcd3fa!important}
+body.theme-black #page .v248-filter-body,body.theme-dark #page .v248-filter-body{background:#192535!important}
+@media(prefers-reduced-motion:reduce){#page .v248-filter-summary svg{transition:none!important}}
+
+/* V248: Registro en el propio dock y pestañas de presupuesto en una sola fila. */
+@media(max-width:790px){
+ .vive-mobile-dock>.v247-register-action{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;inset:auto!important;display:flex!important;flex:1.12 1 0!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;min-width:0!important;max-width:none!important;width:auto!important;min-height:0!important;height:55px!important;margin:0!important;padding:6px 1px!important;border-radius:22px!important;white-space:nowrap!important;z-index:auto!important;font-size:clamp(9px,2.35vw,11px)!important}
+ .vive-mobile-dock>.v247-register-action svg{height:20px!important;width:20px!important;flex:0 0 auto!important}
+ #page .v248-budget-tabs{display:flex!important;flex-wrap:nowrap!important;grid-template-columns:none!important;width:100%!important;min-width:0!important;overflow-x:auto!important}
+ #page .v248-budget-tabs>button{width:auto!important;min-width:0!important;flex:0 0 auto!important;white-space:nowrap!important}
+ #page .v248-budget-add{margin:0 0 13px!important}
+}
+@media(max-width:790px){
+ /* 6 destinations must share the dock width; the legacy 5×20% flex basis made Registrar 4px wide. */
+ .vive-mobile-dock>.vive-mobile-dock-item{flex:1 1 0!important;width:0!important;min-width:0!important;max-width:none!important;padding-inline:0!important}
+ .vive-mobile-dock>.v247-register-action{flex:1.18 1 0!important;width:0!important;min-width:0!important;max-width:none!important;overflow:hidden!important}
+ .vive-mobile-dock>.v247-register-action span{display:block!important;font-size:clamp(8.8px,2.25vw,10px)!important;max-width:100%!important;line-height:1.2!important;overflow:hidden!important;white-space:nowrap!important;text-overflow:clip!important}
+ .vive-mobile-dock>.vive-mobile-dock-item .vive-mobile-dock-label{font-size:clamp(9px,2.5vw,11px)!important;white-space:nowrap!important}
+}
+
+</style>
+
+<style id="vive-v249-buscar-original-registrar-fab">
+/* Buscar vuelve a seis accesos visuales de categorías, sin accesos rápidos ni directorio. */
+@media (max-width:790px){
+  .world-mobilesearch #page .v154-search-hub{
+    padding-bottom:calc(180px + env(safe-area-inset-bottom,0px))!important;
+    min-height:0!important;
+  }
+  .world-mobilesearch #page .v154-category-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;}
+  .world-mobilesearch #page .v154-category-grid>.v154-category-tile{height:clamp(120px,31.5vw,151px)!important;border-radius:21px!important;padding:clamp(12px,3.7vw,18px)!important;min-width:0!important;}
+  .world-mobilesearch #page .v154-category-grid .v154-category-title{font-size:clamp(18px,5.1vw,23px)!important;line-height:1.11!important;}
+  .world-mobilesearch #page .v154-category-grid .v154-category-sub{font-size:clamp(10px,2.8vw,12px)!important;}
+  .world-mobilesearch #page .v154-search-discover>.v154-section-header{margin:25px 4px 13px!important;}
+  /* Cinco destinos idénticos, nunca Registrar como sexto tab. */
+  .vive-mobile-dock{gap:2px!important;padding:5px 6px!important;}
+  .vive-mobile-dock>.vive-mobile-dock-item{
+    flex:1 1 20%!important;width:auto!important;min-width:0!important;max-width:20%!important;
+    height:56px!important;padding:5px 1px!important;
+  }
+  /* Acceso estilo botón flotante de WhatsApp, adaptado a la identidad de vive el hoy. */
+  .v249-register-fab{
+    position:fixed!important;
+    bottom:calc(81px + env(safe-area-inset-bottom,0px))!important;
+    right:max(18px,calc((100vw - 460px)/2 + 13px))!important;
+    width:58px!important;height:58px!important;
+    border-radius:50%!important;
+    display:grid!important;place-items:center!important;
+    padding:3px!important;
+    border:1px solid rgba(255,255,255,.73)!important;
+    background:conic-gradient(from 210deg,#92b7fc,#668ae9,#8578d9,#78a7db,#92b7fc)!important;
+    box-shadow:0 12px 27px rgba(42,69,120,.26),inset 0 1px 2px rgba(255,255,255,.55)!important;
+    z-index:75!important;cursor:pointer!important;
+    transition:transform .18s ease,box-shadow .18s ease!important;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .v249-fab-surface{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;background:linear-gradient(148deg,#222d42,#111928);box-shadow:inset 0 1px 1px rgba(255,255,255,.19);color:#fff;}
+  .v249-register-fab svg{width:27px!important;height:27px!important;stroke-width:2.3!important;transform:none!important;color:#fff!important;}
+  .v249-register-fab:active{transform:scale(.94)!important;}
+  .v249-register-fab:focus-visible{outline:3px solid #568ee7!important;outline-offset:3px!important;}
+  body.v154-mobile-input-focused .v249-register-fab,
+  body.v158-keyboard-visible .v249-register-fab,
+  body.v216-modal-open .v249-register-fab,
+  body:has(#modal-root .modal-layer) .v249-register-fab,
+  body:has(#modal-root [role="dialog"]) .v249-register-fab{visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
+  .vive-mobile-top .v146-mobile-register{display:none!important;}
+}
+@media(max-width:355px){.v249-register-fab{width:53px!important;height:53px!important;right:15px!important;}}
+@media(min-width:791px){.v249-register-fab{display:none!important;}}
+@media print{.v249-register-fab{display:none!important;}}
+@media(prefers-reduced-motion:reduce){.v249-register-fab{transition:none!important;}}
+</style>
+
+<style id="vive-v250-sutil-registrar-liquid-glass-config">
+/* Registro: el mismo acabado traslúcido y bajo contraste que la barra. */
+@media(max-width:790px){
+ .v249-register-fab{
+  background:linear-gradient(140deg,rgba(255,255,255,.92),rgba(223,237,254,.77))!important;
+  border:1px solid rgba(255,255,255,.89)!important;
+  padding:3px!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.95),0 9px 24px rgba(46,80,136,.18)!important;
+  -webkit-backdrop-filter:blur(29px) saturate(170%)!important;
+  backdrop-filter:blur(29px) saturate(170%)!important;
+ }
+ .v249-fab-surface{
+  background:linear-gradient(145deg,rgba(238,247,255,.59),rgba(206,226,253,.42))!important;
+  border:1px solid rgba(255,255,255,.6)!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.86)!important;
+  color:#4d6c9c!important;
+ }
+ .v249-register-fab svg{color:#4d6c9c!important;stroke-width:2.1!important;}
+ .v249-register-fab:hover{box-shadow:inset 0 1px rgba(255,255,255,.95),0 12px 26px rgba(46,80,136,.23)!important;}
+ /* Solo la barra inferior responde al control de Ajustes. */
+ .vive-mobile-dock{
+  background:rgba(239,248,255,var(--v250-dock-opacity,.37))!important;
+  -webkit-backdrop-filter:blur(var(--v250-dock-blur,32px)) saturate(var(--v250-dock-saturation,185%))!important;
+  backdrop-filter:blur(var(--v250-dock-blur,32px)) saturate(var(--v250-dock-saturation,185%))!important;
+ }
+ body.theme-black .vive-mobile-dock,body.theme-dark .vive-mobile-dock{
+  background:rgba(18,25,38,var(--v250-dock-dark-opacity,.565))!important;
+  border-color:rgba(179,200,230,.34)!important;
+ }
+ body.theme-black .v249-register-fab,body.theme-dark .v249-register-fab{
+  background:linear-gradient(145deg,rgba(57,75,102,.87),rgba(35,52,77,.81))!important;
+  border-color:rgba(213,231,255,.4)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.16),0 9px 24px rgba(0,0,0,.23)!important;
+ }
+ body.theme-black .v249-fab-surface,body.theme-dark .v249-fab-surface{
+  background:linear-gradient(145deg,rgba(109,135,174,.29),rgba(39,59,86,.21))!important;
+  border-color:rgba(212,229,255,.13)!important;
+ }
+ body.theme-black .v249-register-fab svg,body.theme-dark .v249-register-fab svg{color:#d8e6fb!important;}
+}
+.v250-dock-settings{padding:clamp(18px,2vw,24px)!important;border-radius:22px!important;max-width:100%;min-width:0;}
+.v250-dock-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.v250-dock-head>div{min-width:0;flex:1;}
+.v250-dock-kicker{display:block;font-size:10px;letter-spacing:.12em;font-weight:850;color:#6883ae;margin-bottom:9px;}
+.v250-dock-head h3{font-size:19px;letter-spacing:-.038em;line-height:1.2;color:var(--text,#263e5d);margin:0 0 7px;}
+.v250-dock-head p{font-size:12px;line-height:1.55;color:var(--muted,#6d7d97);margin:0;max-width:520px;}
+.v250-dock-head output{font-size:13px;font-weight:800;color:#426bae;background:rgba(118,162,223,.1);border:1px solid rgba(125,162,217,.18);border-radius:999px;padding:8px 11px;white-space:nowrap;}
+.v250-dock-preview{position:relative;max-width:390px;height:118px;margin:19px auto 20px;display:grid;place-items:end center;overflow:hidden;border-radius:20px;background:linear-gradient(135deg,#bad5f6,#deebfa 55%,#a9cbed);padding:12px;box-sizing:border-box;isolation:isolate;}
+.v250-dock-preview-shape{position:absolute;width:110px;height:110px;background:#7195e3;border-radius:34px;transform:rotate(-22deg);top:-40px;left:17%;opacity:.65;}
+.v250-dock-preview-shape.second{width:86px;height:86px;background:#d49abb;border-radius:50%;top:32px;left:auto;right:17%;}
+.v250-dock-preview-bar{position:relative;display:flex;gap:3px;align-items:center;justify-content:space-around;width:100%;height:54px;padding:6px 9px;background:rgba(239,248,255,var(--v250-dock-opacity,.37));border:1px solid rgba(255,255,255,.85);border-radius:22px;box-shadow:0 7px 17px rgba(28,62,118,.13);backdrop-filter:blur(var(--v250-dock-blur,32px)) saturate(var(--v250-dock-saturation,185%));-webkit-backdrop-filter:blur(var(--v250-dock-blur,32px)) saturate(var(--v250-dock-saturation,185%));}
+.v250-dock-preview-bar span{width:40px;height:40px;display:grid;place-items:center;color:#4d6b9b;}
+.v250-dock-preview-bar svg{width:20px;height:20px;}
+.v250-dock-range-label{display:block;margin-bottom:12px;font-size:12px;font-weight:760;color:var(--text,#263e5d);}
+#v250-dock-slider{display:block;appearance:none;-webkit-appearance:none;width:100%;height:8px;border-radius:99px;background:linear-gradient(to right,#5c82d9 0%,#5c82d9 var(--v250-slider-progress,50%),rgba(112,150,198,.19) var(--v250-slider-progress,50%),rgba(112,150,198,.19) 100%);cursor:pointer;margin:0;touch-action:pan-x;}
+#v250-dock-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:white;border:3px solid #668cda;box-shadow:0 3px 10px rgba(35,71,139,.22);}
+#v250-dock-slider::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:#fff;border:3px solid #668cda;box-shadow:0 3px 10px rgba(35,71,139,.22);}
+#v250-dock-slider:focus-visible{outline:3px solid #679cf3;outline-offset:7px;}
+.v250-dock-extremes{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;font-size:11px;color:var(--muted,#6d7d97);}
+.v250-dock-foot{font-size:11px;line-height:1.5;color:var(--muted,#6d7d97);margin:18px 0 0;}
+body.theme-black .v250-dock-head :is(h3),body.theme-black .v250-dock-range-label,body.theme-dark .v250-dock-head h3,body.theme-dark .v250-dock-range-label{color:#edf3ff!important;}
+body.theme-black .v250-dock-head output,body.theme-dark .v250-dock-head output{background:rgba(139,166,216,.12);color:#d3e1ff;}
+@media(max-width:430px){.v250-dock-settings{padding:16px!important}.v250-dock-preview{height:103px}.v250-dock-head h3{font-size:17px}}
+@media(prefers-reduced-motion:reduce){.v249-register-fab{transition:none!important}}
+</style>
+
 </body>
 </html>
