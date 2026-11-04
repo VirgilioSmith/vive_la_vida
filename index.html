@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="243-explore-banks-cards-mobileheader-notification-reports"/>
+<meta name="vive-el-hoy-version" content="254-gastos-hormiga-inteligencia-recurrencias"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -992,6 +992,29 @@ body.vision-mode .v61-institutions .v199-profile-inline .v61-profile-option.acti
   }
   .v61-institutions .v46-bank-hero .v46-global-financials{padding-top:17px;}
 }
+
+
+/* V255 · iconografía de categorías y subcategorías */
+.v255-tax-badge{display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:6px 10px;border-radius:999px;border:1px solid rgba(113,137,176,.22);background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(239,245,255,.9));box-shadow:0 8px 18px rgba(84,112,163,.08);color:#334765;vertical-align:middle}
+.v255-tax-badge.compact{padding:3px 8px;gap:6px;border-radius:14px;box-shadow:none;background:rgba(237,243,253,.92)}
+.v255-tax-badge.sub{background:rgba(247,250,255,.95);border-style:dashed;color:#5f6f87}
+.v255-tax-badge .v255-tax-ico{width:18px;height:18px;display:inline-grid;place-items:center;color:#406fd3;flex:none}
+.v255-tax-badge.compact .v255-tax-ico{width:15px;height:15px}
+.v255-tax-badge.sub .v255-tax-ico{color:#6f82a6}
+.v255-tax-badge .v255-tax-ico svg{width:100%;height:100%;stroke-width:1.9}
+.v255-tax-badge .v255-tax-label{font-size:12px;font-weight:750;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v255-tax-badge.compact .v255-tax-label{font-size:11px;font-weight:700}
+.v255-tax-strong,.v255-tax-inline{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;max-width:100%}
+.v255-tax-inline{white-space:normal}
+.v255-tax-prefix,.v255-tax-sep{font-size:11px;color:#7c8aa0}
+.v255-tax-select-preview{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;min-height:20px}
+.v255-tax-select-preview:empty{display:none}
+.v255-tax-select-note{font-size:10px;font-weight:700;letter-spacing:.08em;color:#7e8da6;text-transform:uppercase}
+.v191-taxonomy-item summary strong.v255-tax-strong{font-weight:inherit}
+.v191-taxonomy-subitem .v255-tax-badge{max-width:100%}
+body.theme-dark .v255-tax-badge,body.theme-black .v255-tax-badge{background:rgba(23,34,52,.86)!important;border-color:rgba(100,123,165,.35)!important;color:#eaf1ff!important;box-shadow:none!important}
+body.theme-dark .v255-tax-badge.sub,body.theme-black .v255-tax-badge.sub{background:rgba(18,28,45,.92)!important;color:#cad8ef!important}
+body.theme-dark .v255-tax-badge .v255-tax-ico,body.theme-black .v255-tax-badge .v255-tax-ico{color:#8ab0ff!important}
 
 </style>
 <style id="benefits-studio-v6">
@@ -16399,20 +16422,33 @@ const categoryMap=kind=>{
  return out;
 };
 const categoryOptions=(kind,selected='')=>{
- const options=Object.keys(categoryMap(kind)).map(name=>[name,name]);
- if(selected&&!options.some(([name])=>name===selected))options.push([selected,selected+' · histórica']);
+ const options=Object.keys(categoryMap(kind)).map(name=>[name,v255TaxonomyOptionLabel(kind,name)]);
+ if(selected&&!options.some(([name])=>name===selected))options.push([selected,v255TaxonomyOptionLabel(kind,selected)+' · histórica']);
  return options;
 };
 const subcategoryOptions=(kind,category)=>categoryMap(kind)[category]||[];
 const subSelect=(kind,cat,value)=>{
- const opts=subcategoryOptions(kind,cat).map(x=>[x,x]);
- if(value&&!opts.some(([v])=>v===value))opts.push([value,value+' · histórica']);
+ const opts=subcategoryOptions(kind,cat).map(x=>[x,v255TaxonomyOptionLabel(kind,cat,x)]);
+ if(value&&!opts.some(([v])=>v===value))opts.push([value,v255TaxonomyOptionLabel(kind,cat,value)+' · histórica']);
  return `<label><span class="filter-label">Subcategoría</span><select class="field" id="subCategory" name="subcategory"><option value="">Sin subcategoría</option>${opts.map(([x,label])=>`<option value="${sanitize(x)}" ${value===x?'selected':''}>${sanitize(label)}</option>`).join('')}</select></label>`;
 };
 
 const TRANSL={personal_issue:'Entrega / recepción de préstamo personal',personal_settlement:'Abono de préstamo personal',bank_reward:'Cashback en cuenta',income:'Ingreso',expense:'Gasto',card_charge:'Consumo tarjeta',card_refund:'Devolución tarjeta',card_payment:'Pago tarjeta',transfer:'Transferencia',loan_payment:'Pago préstamo',adjustment:'Ajuste de saldo',card_reward:'Cashback de tarjeta',certificate_funding:'Constitución de certificado',certificate_redemption:'Rescate de capital'};
 const ICONS={search:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.8 4.8"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>',home:'<rect x="3" y="10" width="18" height="11" rx="2"/><path d="m2 11 10-8 10 8"/>',wallet:'<rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18"/><path d="M16 15h3"/>',card:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 16h6"/>',cycle:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 9a7 7 0 0 1 12-2l2 2M4 15l2 2a7 7 0 0 0 12-2"/>',analytics:'<path d="M3 19h18M5 16l4-5 4 3 6-9"/><path d="M16 5h3v3"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4 12H2m20 0h-2M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/>',plus:'<path d="M12 5v14M5 12h14"/>',download:'<path d="M12 3v13m-5-5 5 5 5-5M4 19v2h16v-2"/>',upload:'<path d="M12 21V8m-5 5 5-5 5 5M4 5V3h16v2"/>',check:'<path d="m4 12 5 5L20 6"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',up:'<path d="m4 14 6-6 4 4 6-6"/>',down:'<path d="m4 8 6 6 4-4 6 6"/>',shield:'<path d="m12 2 9 4v6c0 6-4 9-9 10-5-1-9-4-9-10V6l9-4Z"/>',receipt:'<path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z"/><path d="M8 8h8m-8 4h8"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',chart:'<path d="M4 20V12m6 8V5m6 15v-8m4 8V9"/>',trash:'<path d="M4 7h16m-14 0 1 14h10l1-14M9 7V4h6v3"/>'};
 const icon=(k)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]||ICONS.wallet}</svg>`;
+
+Object.assign(ICONS,{briefcase:'<rect x="4" y="7" width="16" height="11" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>',play:'<path d="M8 5v14l11-7-11-7Z"/>',map:'<path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20V6.5Z"/><path d="M9 4v13.5M15 6.5V20"/>',cpu:'<rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9 1v3m6-3v3M9 20v3m6-3v3M20 9h3m-3 6h3M1 9h3m-3 6h3"/>',headphones:'<path d="M4 13a8 8 0 1 1 16 0"/><rect x="4" y="13" width="3" height="6" rx="1.5"/><rect x="17" y="13" width="3" height="6" rx="1.5"/>',users:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M4 20v-1a5 5 0 0 1 10 0v1"/><path d="M14 20v-1a4 4 0 0 1 6 0v1"/>',star:'<path d="m12 3 2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.9 6.7 19.1l1-5.8L3.5 9.2l5.9-.9L12 3Z"/>'});
+Object.assign(ICONS,{cart:'<circle cx="9" cy="20" r="1.35"/><circle cx="18" cy="20" r="1.35"/><path d="M3 4h2l2.1 10.2A2 2 0 0 0 9 16h8.7a2 2 0 0 0 1.95-1.57L21 8H7.2"/>',utensils:'<path d="M4 3v8M7 3v8M4 7h3M12 3v18M17 3c0 4 3 4 3 8v10"/>',coffee:'<path d="M4 8h11v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Z"/><path d="M15 10h2a3 3 0 1 1 0 6h-2"/><path d="M8 4v2m3-2v2"/>',bag:'<path d="M6 8h12l1 11H5L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',home2:'<path d="m3 10 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',wrench:'<path d="M14 6a4 4 0 0 0 4.8 4.8l-8.7 8.7a2 2 0 1 1-2.8-2.8l8.7-8.7A4 4 0 0 0 14 6Z"/><path d="M15 5l4 4"/>',sofa:'<path d="M4 12a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v5H4v-5Z"/><path d="M6 9V7a2 2 0 0 1 2-2h1m6 0h1a2 2 0 0 1 2 2v2"/><path d="M4 17v3m16-3v3"/>',bolt2:'<path d="M13 2 6 13h5l-1 9 8-12h-5l0-8Z"/>',droplet2:'<path d="M12 3s-6 6.3-6 10.2A6 6 0 0 0 18 13.2C18 9.3 12 3 12 3Z"/>',wifi2:'<path d="M2 8a16 16 0 0 1 20 0"/><path d="M5 12a11 11 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="20" r="1.2"/>',smartphone:'<rect x="7" y="2.5" width="10" height="19" rx="2.3"/><path d="M10 5.5h4M11.5 18.2h1"/>',flame2:'<path d="M12 3c2.4 2.1 4 4.6 4 7.4A4 4 0 0 1 8 10c0-1.8.8-3.3 2.1-4.9.5 1.2 1.4 2.1 1.9 2.6C12.9 6.2 13 4.8 12 3Z"/><path d="M12 12c1.7 1.4 2.5 2.6 2.5 4.1A2.5 2.5 0 0 1 9.5 16c0-1.1.5-2 1.5-3 .2.7.7 1.1 1 1.4.7-.7.9-1.3 0-2.4Z"/>',car2:'<path d="M5 16l1.3-4a3 3 0 0 1 2.9-2h5.6a3 3 0 0 1 2.9 2L19 16"/><path d="M4 16h16v3H4z"/><circle cx="7.5" cy="18.5" r="1.4"/><circle cx="16.5" cy="18.5" r="1.4"/>',bus2:'<rect x="5" y="3.5" width="14" height="15" rx="3"/><path d="M5 9h14M8 13h2m4 0h2"/><circle cx="8" cy="19" r="1.2"/><circle cx="16" cy="19" r="1.2"/>',fuel:'<path d="M7 4h7v16H7z"/><path d="M14 7h2l2 2v7a2 2 0 0 0 4 0v-5l-2-2"/><path d="M9 8h3"/>',heart2:'<path d="M12 20s-7-4.7-7-10a4 4 0 0 1 7-2.4A4 4 0 0 1 19 10c0 5.3-7 10-7 10Z"/>',pills:'<path d="M9 3a4 4 0 0 1 5.7 0l2.3 2.3A4 4 0 0 1 11.3 11L9 8.7A4 4 0 0 1 9 3Z"/><path d="m13 5-6 6"/><rect x="4" y="13" width="10" height="6" rx="3"/>',microscope:'<path d="M10 3v5l4 4"/><path d="M8 13h6a4 4 0 0 1 0 8H6"/><path d="M6 21h12"/><path d="M13 8l3-3"/>',tooth:'<path d="M12 4c3.3-2 7 0 7 4 0 3-1.8 5-2.4 8-.3 1.5-.9 3-2.1 3-.9 0-1.5-.7-1.9-1.5l-.6-1.4-.6 1.4c-.4.8-1 1.5-1.9 1.5-1.2 0-1.8-1.5-2.1-3C6.8 13 5 11 5 8c0-4 3.7-6 7-4Z"/>',dumbbell:'<path d="M3 10v4m3-6v8m12-8v8m3-6v4"/><path d="M6 12h12"/>',book2:'<path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v18H7.5A2.5 2.5 0 0 0 5 22V4.5Z"/><path d="M5 4.5A2.5 2.5 0 0 1 7.5 7H19"/>',graduation:'<path d="m2 9 10-5 10 5-10 5-10-5Z"/><path d="M6 11v4c0 1.7 2.7 3 6 3s6-1.3 6-3v-4"/><path d="M22 10v5"/>',badge2:'<circle cx="12" cy="8" r="3"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/>',shirt:'<path d="m8 4 4 2 4-2 3 4-3 2v10H8V10L5 8l3-4Z"/>',gift2:'<rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/><path d="M7.5 8A2.5 2.5 0 1 1 10 5.5V8H7.5Zm9 0H14V5.5A2.5 2.5 0 1 1 16.5 8Z"/>',ticket:'<path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7Z"/><path d="M12 7v10"/>',gamepad:'<path d="M7 10h10a4 4 0 0 1 4 4v1a3 3 0 0 1-5.1 2.1L13 14H11l-2.9 3.1A3 3 0 0 1 3 15v-1a4 4 0 0 1 4-4Z"/><path d="M8 13h3m-1.5-1.5v3M16.5 12.5h.01M18.5 14.5h.01"/>',plane2:'<path d="m2 12 20-8-5 8 5 8-20-8h8Z"/>',bed2:'<path d="M3 10h18v7H3z"/><path d="M5 10V7a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3"/><path d="M3 17v3m18-3v3"/>',box2:'<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="M12 12 4 7.5m8 4.5 8-4.5M12 12v9"/>',monitor2:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',laptop2:'<path d="M4 6h16v10H4z"/><path d="M2 18h20"/>',cloud2:'<path d="M7 18a4 4 0 1 1 .8-7.9A5 5 0 0 1 18 11a3.5 3.5 0 1 1-.2 7H7Z"/>',shield3:'<path d="m12 2 7 3v6c0 5-3.4 8.3-7 10-3.6-1.7-7-5-7-10V5l7-3Z"/><path d="M9 12h6"/>',paw2:'<circle cx="7" cy="10" r="1.4"/><circle cx="11" cy="7.2" r="1.4"/><circle cx="16" cy="8" r="1.4"/><circle cx="18" cy="12" r="1.4"/><path d="M9 16c1.2-2 4.8-2 6 0 .6 1 .1 2.2-1.3 2.7-1 .4-2 .8-3 .8s-2-.4-3-.8C8.3 18.2 7.8 17 9 16Z"/>',handHeart:'<path d="M15.5 5.5A2.5 2.5 0 0 1 18 8c0 3-4 5.5-4 5.5S10 11 10 8a2.5 2.5 0 0 1 5.5-2.5Z"/><path d="M3 15h5l2 4h8a2 2 0 0 0 0-4h-5"/><path d="M3 11h4a2 2 0 0 1 2 2v6H3z"/>',refresh2:'<path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M6 9a7 7 0 0 1 11.4-2.3L20 9M4 15l2.6 2.3A7 7 0 0 0 18 15"/>',alert2:'<path d="m12 3 9 16H3L12 3Z"/><path d="M12 9v4m0 4h.01"/>',sparkles:'<path d="M12 3l1.3 3.7L17 8l-3.7 1.3L12 13l-1.3-3.7L7 8l3.7-1.3L12 3Z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14Zm-14 0 .8 2.2L8 17l-2.2.8L5 20l-.8-2.2L2 17l2.2-.8L5 14Z"/>',percent2:'<path d="M19 5 5 19"/><circle cx="7" cy="7" r="2"/><circle cx="17" cy="17" r="2"/>',megaphone2:'<path d="M4 11v2a2 2 0 0 0 2 2h2l3 4h2l-1-4h3l5-3V8l-5-3H6a2 2 0 0 0-2 2v4Z"/>',truck2:'<path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.4"/><circle cx="18" cy="18" r="1.4"/>',tools2:'<path d="m4 21 6-6"/><path d="m7 7 10 10"/><path d="M14 4 20 10l-2 2-6-6 2-2ZM4 14l6 6"/>',coins2:'<ellipse cx="12" cy="6" rx="6" ry="3"/><path d="M6 6v6c0 1.7 2.7 3 6 3s6-1.3 6-3V6"/><path d="M6 12v6c0 1.7 2.7 3 6 3s6-1.3 6-3v-6"/>',banknote2:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9h.01M17 15h.01"/>',trend2:'<path d="M3 17 9 11l4 4 8-8"/><path d="M15 7h6v6"/>',handshake2:'<path d="M8 12 5 9l3-3 3 3m2 2 3 3 3-3-3-3-3 3"/><path d="M10 10 7 13a2.5 2.5 0 0 0 3.5 3.5L14 13"/>',cup2:'<path d="M5 9h10v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V9Z"/><path d="M15 10h2a2.5 2.5 0 1 1 0 5h-2"/><path d="M7 5h6"/>',music2:'<path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/>',film2:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4m10 0h4M3 15h4m10 0h4"/>'});
+const V255_TAXONOMY={gasto:{categories:{'Alimentación':'utensils','Vivienda':'home2','Servicios básicos':'bolt2','Transporte':'car2','Salud':'heart2','Educación':'book2','Familia e hijos':'badge2','Entretenimiento':'ticket','Viajes':'plane2','Compras personales':'bag','Tecnología':'monitor2','Seguros':'shield3','Mascotas':'paw2','Regalos y donaciones':'gift2','Suscripciones':'refresh2','Deudas e intereses':'percent2','Impuestos y comisiones':'receipt','Negocio':'building','Otros gastos':'sparkles'},subcategories:{'Alimentación||Supermercado':'cart','Alimentación||Restaurantes':'utensils','Alimentación||Delivery':'truck2','Alimentación||Café y meriendas':'coffee','Alimentación||Comida en el trabajo':'briefcase','Alimentación||Otros alimentos':'cup2','Vivienda||Alquiler':'home2','Vivienda||Hipoteca (intereses)':'building','Vivienda||Mantenimiento':'wrench','Vivienda||Muebles':'sofa','Vivienda||Reparaciones':'tools2','Vivienda||Condominio':'building','Servicios básicos||Electricidad':'bolt2','Servicios básicos||Agua':'droplet2','Servicios básicos||Internet hogar':'wifi2','Servicios básicos||Teléfono móvil':'smartphone','Servicios básicos||Gas':'flame2','Servicios básicos||Otros servicios':'settings','Transporte||Combustible':'fuel','Transporte||Uber y taxi':'car2','Transporte||Pasajes':'bus2','Transporte||Mantenimiento vehículo':'wrench','Transporte||Parqueo y peajes':'receipt','Transporte||Repuestos':'tools2','Salud||Consultas médicas':'heart2','Salud||Farmacia':'pills','Salud||Laboratorios':'microscope','Salud||Odontología':'tooth','Salud||Gimnasio':'dumbbell','Salud||Otros cuidados':'heart2','Educación||Cursos':'book2','Educación||Universidad':'graduation','Educación||Libros':'book2','Educación||Certificaciones':'badge2','Educación||Materiales':'box2','Educación||Matrícula':'graduation','Familia e hijos||Colegio':'graduation','Familia e hijos||Manutención':'handHeart','Familia e hijos||Ropa infantil':'shirt','Familia e hijos||Actividades':'gamepad','Familia e hijos||Otros familiares':'users','Entretenimiento||Cine':'film2','Entretenimiento||Eventos':'ticket','Entretenimiento||Salidas':'sparkles','Entretenimiento||Videojuegos':'gamepad','Entretenimiento||Hobbies':'star','Entretenimiento||Streaming':'play','Viajes||Vuelos':'plane2','Viajes||Hospedaje':'bed2','Viajes||Excursiones':'map','Viajes||Comidas en viaje':'utensils','Viajes||Traslados':'bus2','Compras personales||Ropa':'shirt','Compras personales||Calzado':'bag','Compras personales||Cuidado personal':'sparkles','Compras personales||Accesorios':'gift2','Compras personales||Compras varias':'bag','Tecnología||Celulares':'smartphone','Tecnología||Computadoras':'laptop2','Tecnología||Software':'monitor2','Tecnología||Dispositivos':'cpu','Tecnología||Accesorios':'headphones','Tecnología||Software y aplicaciones':'cloud2','Seguros||Médico':'shield3','Seguros||Vehículo':'car2','Seguros||Vida':'heart2','Seguros||Hogar':'home2','Seguros||Otros seguros':'shield3','Seguros||Pago de seguro':'receipt','Mascotas||Alimento':'paw2','Mascotas||Veterinario':'heart2','Mascotas||Accesorios':'gift2','Regalos y donaciones||Regalos':'gift2','Regalos y donaciones||Donaciones':'handHeart','Regalos y donaciones||Celebraciones':'sparkles','Suscripciones||Streaming':'play','Suscripciones||Música':'music2','Suscripciones||Almacenamiento en nube':'cloud2','Suscripciones||Aplicaciones':'smartphone','Suscripciones||Membresías':'refresh2','Deudas e intereses||Intereses de préstamo':'percent2','Deudas e intereses||Intereses de tarjeta':'card','Deudas e intereses||Comisiones de deuda':'receipt','Deudas e intereses||Mora':'alert2','Impuestos y comisiones||Impuestos':'receipt','Impuestos y comisiones||Comisión bancaria':'building','Impuestos y comisiones||Cargos por servicio':'receipt','Impuestos y comisiones||Impuesto de tarjeta':'card','Negocio||Publicidad':'megaphone2','Negocio||Inventario':'box2','Negocio||Logística':'truck2','Negocio||Herramientas':'tools2','Negocio||Operaciones':'building','Otros gastos||Imprevistos':'alert2','Otros gastos||Misceláneos':'sparkles'}},ingreso:{categories:{'Salario y nómina':'briefcase','Joseo e ingresos adicionales':'sparkles','Negocios y ventas':'bag','Servicios profesionales':'handshake2','Inversiones':'trend2','Ingresos pasivos':'coins2','Reembolsos':'refresh2','Otros ingresos':'banknote2','Beneficios bancarios':'banknote2'},subcategories:{'Salario y nómina||Sueldo base':'briefcase','Salario y nómina||Bonos':'gift2','Salario y nómina||Comisiones':'percent2','Salario y nómina||Horas extras':'clock','Salario y nómina||Incentivos':'sparkles','Joseo e ingresos adicionales||Ventas ocasionales':'bag','Joseo e ingresos adicionales||Trabajos independientes':'handshake2','Joseo e ingresos adicionales||Ingresos por comisión':'percent2','Joseo e ingresos adicionales||Actividades extra':'sparkles','Negocios y ventas||Venta de productos':'box2','Negocios y ventas||Ventas por internet':'wifi2','Negocios y ventas||Servicios comerciales':'building','Negocios y ventas||Otros negocios':'bag','Servicios profesionales||Consultoría':'handshake2','Servicios profesionales||Freelance':'briefcase','Servicios profesionales||Proyectos':'tools2','Inversiones||Dividendos':'coins2','Inversiones||Intereses ganados':'percent2','Inversiones||Ganancias realizadas':'trend2','Ingresos pasivos||Alquiler recibido':'home2','Ingresos pasivos||Regalías':'star','Ingresos pasivos||Otros pasivos':'coins2','Reembolsos||Devolución de compra':'refresh2','Reembolsos||Reintegro laboral':'briefcase','Reembolsos||Otros reintegros':'refresh2','Otros ingresos||Regalos recibidos':'gift2','Otros ingresos||Otros':'banknote2','Beneficios bancarios||Cashback':'banknote2','Beneficios bancarios||Intereses de cuentas':'percent2','Beneficios bancarios||Intereses de certificados':'coins2','Beneficios bancarios||Recompensas':'gift2','Beneficios bancarios||Promociones':'sparkles','Beneficios bancarios||Cashback acreditado':'banknote2'}}};
+const V255_ICON_TEXT={cart:'⌂',utensils:'⌁',coffee:'◌',bag:'◈',home2:'⌂',wrench:'⌘',sofa:'◫',bolt2:'⌁',droplet2:'◍',wifi2:'◔',smartphone:'▣',flame2:'◇',car2:'▤',bus2:'▥',fuel:'▧',heart2:'♡',pills:'◍',microscope:'◔',tooth:'◌',dumbbell:'▭',book2:'▤',graduation:'◫',badge2:'◉',shirt:'◈',gift2:'✦',ticket:'◭',gamepad:'◪',plane2:'△',bed2:'▤',box2:'▣',monitor2:'▥',laptop2:'▦',cloud2:'◔',shield3:'⬒',paw2:'✣',handHeart:'♡',refresh2:'◌',alert2:'△',sparkles:'✦',percent2:'％',megaphone2:'◍',truck2:'▧',tools2:'⌘',coins2:'◎',banknote2:'▤',trend2:'↗',handshake2:'◈',cup2:'◌',music2:'♪',film2:'◫',briefcase:'▣',play:'▷',map:'◇',cpu:'▦',headphones:'◖'};
+function v255TaxonomyKindForCategory(name){if(name&&categoryMap('gasto')[name])return 'gasto';if(name&&categoryMap('ingreso')[name])return 'ingreso';return 'gasto'}
+function v255TaxonomyIconName(kind,category='',subcategory=''){const pack=V255_TAXONOMY[kind]||{};const key=`${category}||${subcategory}`;return (subcategory&&pack.subcategories&&pack.subcategories[key])||((pack.categories||{})[category])||(kind==='ingreso'?'banknote2':'receipt')}
+function v255TaxonomyOptionLabel(kind,category,subcategory=''){const iconName=v255TaxonomyIconName(kind,category,subcategory);const label=subcategory||category||'';return `${V255_ICON_TEXT[iconName]||'•'} ${label}`.trim()}
+function v255TaxonomyBadge(kind,category,subcategory='',opts={}){const label=(opts.subOnly&&subcategory)?subcategory:(subcategory||category||'Sin categoría');const iconName=v255TaxonomyIconName(kind,category,subcategory);const cls=`v255-tax-badge${subcategory?' sub':''}${opts.compact?' compact':''}`;const title=subcategory?`${category} / ${subcategory}`:category||label;return `<span class="${cls}" title="${sanitize(title)}"><span class="v255-tax-ico">${icon(iconName)}</span><span class="v255-tax-label">${sanitize(label)}</span></span>`}
+function v255TransactionCategoryCell(t){const kind=['income','bank_reward','card_reward'].includes(t.type)?'ingreso':'gasto';const cat=t.category||(['income','bank_reward','card_reward'].includes(t.type)?'Otros ingresos':'Otros gastos');return `${v255TaxonomyBadge(kind,cat,'',{compact:true})}${t.subcategory?`<div class="subtitle">${v255TaxonomyBadge(kind,cat,t.subcategory,{compact:true,subOnly:true})}</div>`:''}`}
+function v255TransactionMetaLine(t,prefix=''){const kind=['income','bank_reward','card_reward'].includes(t.type)?'ingreso':'gasto';const cat=t.category||(TRANSL[t.type]||(['income','bank_reward','card_reward'].includes(t.type)?'Otros ingresos':'Otros gastos'));const pre=prefix?`<span class="v255-tax-prefix">${sanitize(prefix)}</span><span class="v255-tax-sep">·</span>`:'';const sub=t.subcategory?`<span class="v255-tax-sep">/</span>${v255TaxonomyBadge(kind,cat,t.subcategory,{compact:true,subOnly:true})}`:'';return `<span class="v255-tax-inline">${pre}${v255TaxonomyBadge(kind,cat,'',{compact:true})}${sub}</span>`}
+function v255DecorateTaxonomyUI(){const root=document.getElementById('app');if(!root)return;root.querySelectorAll('label').forEach(label=>{const catSel=label.querySelector('select[name="category"]');if(catSel){const parentForm=catSel.form||label.closest('form');let preview=label.querySelector('.v255-tax-select-preview');if(!preview){preview=document.createElement('div');preview.className='v255-tax-select-preview';label.appendChild(preview)}const kind=()=>{if(catSel.id==='customParent')return document.getElementById('customKind')?.value||'gasto';if(catSel.id==='txCategory')return parentForm?.elements?.type?.value==='income'?'ingreso':'gasto';if(['recCategory','budgetCategory'].includes(catSel.id))return 'gasto';if(parentForm?.elements?.kind?.value==='ingreso')return 'ingreso';return v255TaxonomyKindForCategory(catSel.value)};const paint=()=>{preview.innerHTML=catSel.value?`<span class="v255-tax-select-note">Categoría</span>${v255TaxonomyBadge(kind(),catSel.value)}`:''};paint();catSel.addEventListener('change',paint)}const subSel=label.querySelector('select[name="subcategory"]');if(subSel){const parentForm=subSel.form||label.closest('form');const catSel=parentForm?.querySelector('select[name="category"]');let preview=label.querySelector('.v255-tax-select-preview');if(!preview){preview=document.createElement('div');preview.className='v255-tax-select-preview';label.appendChild(preview)}const kind=()=>{if(catSel?.id==='txCategory')return parentForm?.elements?.type?.value==='income'?'ingreso':'gasto';if(['recCategory','budgetCategory'].includes(catSel?.id))return 'gasto';if(parentForm?.elements?.kind?.value==='ingreso')return 'ingreso';return v255TaxonomyKindForCategory(catSel?.value)};const paint=()=>{preview.innerHTML=(subSel.value&&catSel?.value)?`<span class="v255-tax-select-note">Subcategoría</span>${v255TaxonomyBadge(kind(),catSel.value,subSel.value,{subOnly:true})}`:''};paint();subSel.addEventListener('change',paint);if(catSel)catSel.addEventListener('change',paint)}})}
+
 const today=()=>{const d=new Date();return dateStr(d)};
 const dateStr=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const dateObj=s=>{if(!s)return new Date(2000,0,1);let [y,m,d]=String(s).slice(0,10).split('-').map(Number);return new Date(y,m-1,d||1)};
@@ -17043,7 +17079,7 @@ function v165SearchAction(){
 
 
 function main(){
- const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
+ const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
   <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
@@ -17220,7 +17256,7 @@ return `<section class="bank-workspace v176-bank-workspace v220-bank-workspace">
 <div class="product-columns v220-product-columns"><div class="product-lane v220-product-lane"><div class="lane-head">${icon('wallet')} Cuentas <span>${f.aa.length}</span></div>${f.aa.length?f.aa.map(a=>`<button class="product-item" data-act="goAccount" data-id="${a.id}"><span><strong>${sanitize(a.name)}</strong><small>${a.kind==='savings'?'Ahorros':'Corriente'} · ${a.currency} · ${sanitize(bankOf(a))}</small></span><b>${money(getAccountBalance(a),a.currency,2)}</b></button>`).join(''):'<div class="lane-empty">Sin cuentas registradas</div>'}</div><div class="product-lane v220-product-lane"><div class="lane-head">${icon('card')} Tarjetas <span>${f.cc.length}</span></div>${f.cc.length?f.cc.map(c=>`<button class="product-item" data-act="goCard" data-id="${c.id}"><span><strong>${sanitize(c.name)}</strong><small>RD$ ${shorten(cardStatus(c,'DOP').debt)} · US$ ${shorten(cardStatus(c,'USD').debt)}</small></span><b>Ver corte ↗</b></button>`).join(''):'<div class="lane-empty">Sin tarjetas registradas</div>'}</div><div class="product-lane v220-product-lane"><div class="lane-head">${icon('building')} Préstamos <span>${f.ll.length}</span></div>${f.ll.length?f.ll.map(l=>`<button class="product-item" data-act="goLoan" data-id="${l.id}"><span><strong>${sanitize(l.name)}</strong><small>${num(loanStatus(l).progress)}% completado · ${l.currency}</small></span><b>${money(loanStatus(l).balance,l.currency)}</b></button>`).join(''):'<div class="lane-empty">Sin préstamos registrados</div>'}</div><div class="product-lane v220-product-lane"><div class="lane-head">${icon('analytics')} Certificados <span>${f.certs.length}</span></div>${f.certs.length?f.certs.map(c=>`<button class="product-item" data-act="goCertificate" data-id="${c.id}"><span><strong>${sanitize(c.name)}</strong><small>${num(c.rate)}% anual · ${c.currency}</small></span><b>${money(certificateCapital(c),c.currency)}</b></button>`).join(''):'<div class="lane-empty">Sin certificados registrados</div>'}</div></div>
 <div class="grid columns equal section v220-bank-insights"><div class="panel"><div class="panel-head"><h3>Vencimientos de esta institución</h3><span class="pill">${payments.length} pendiente${payments.length===1?'':'s'}</span></div>${payments.length?payments.slice(0,7).map(o=>`<div class="mini-row"><div><div class="mini-title">${sanitize(o.name)}</div><div class="mini-sub">${prettyDate(o.date)} · ${whenTxt(o.date)}</div></div><div class="money">${money(o.amount,o.currency,2)}</div></div>`).join(''):'<div class="empty">Sin compromisos asociados registrados.</div>'}</div><div class="panel"><div class="panel-head"><h3>Últimas operaciones asociadas</h3><button class="linkish" data-act="navigateBankTransactions" data-id="${b.id}">Ver libro →</button></div>${trans.length?recentListFor(trans):'<div class="empty">Aún no hay movimientos asociados.</div>'}</div></div></section>`}
 
-function recentListFor(trans){return trans.map(t=>`<div class="mini-row"><div><div class="mini-title">${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</div><div class="mini-sub">${prettyDate(t.date)} · ${sanitize(t.category||TRANSL[t.type])}${t.subcategory?' / '+sanitize(t.subcategory):''}</div></div><strong class="money">${txDisplay(t)}</strong></div>`).join('')}
+function recentListFor(trans){return trans.map(t=>`<div class="mini-row"><div><div class="mini-title">${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</div><div class="mini-sub">${v255TransactionMetaLine(t,prettyDate(t.date))}</div></div><strong class="money">${txDisplay(t)}</strong></div>`).join('')}
 
 /* V28 · Identidad visual: logos bancarios personales y tarjetas por categoría. */
 const bankLogoSafe=(logo)=> typeof logo==='string' && logo.length<240000 && /^data:image\/(?:webp|png|jpeg);base64,[a-z0-9+/=]+$/i.test(logo) ? logo : '';
@@ -17299,8 +17335,8 @@ function categories(){
  const collection=[['gasto','GASTOS'],['ingreso','INGRESOS']];
  const n=db.transactions.filter(t=>t.category).length;
  return ` <div class="taxonomy-grid section">${collection.map(([kind,label])=>`<div class="panel"><div class="panel-head"><h3>${label}</h3><span class="pill">${Object.keys(categoryMap(kind)).length} categorías</span></div>
- ${Object.entries(categoryMap(kind)).map(([cat,subs])=>`<details class="taxonomy-item v191-taxonomy-item"><summary><strong>${sanitize(cat)}</strong><span>${subs.length} subcategorías <b>⌄</b></span></summary>
- <div class="taxonomy-sub v191-taxonomy-sub">${subs.map(sub=>`<span class="v191-taxonomy-subitem"><span>${sanitize(sub)}</span><button type="button" class="v191-taxonomy-delete v191-sub-delete" data-act="v191DeleteSubcategory" data-kind="${kind}" data-cat="${sanitize(encodeURIComponent(cat))}" data-sub="${sanitize(encodeURIComponent(sub))}" aria-label="Eliminar subcategoría ${sanitize(sub)} de ${sanitize(cat)}" title="Eliminar esta subcategoría">${icon('trash')}</button></span>`).join('')||'<span>Sin subcategorías</span>'}</div>
+ ${Object.entries(categoryMap(kind)).map(([cat,subs])=>`<details class="taxonomy-item v191-taxonomy-item"><summary><strong class="v255-tax-strong">${v255TaxonomyBadge(kind,cat)}</strong><span>${subs.length} subcategorías <b>⌄</b></span></summary>
+ <div class="taxonomy-sub v191-taxonomy-sub">${subs.map(sub=>`<span class="v191-taxonomy-subitem"><span>${v255TaxonomyBadge(kind,cat,sub,{subOnly:true})}</span><button type="button" class="v191-taxonomy-delete v191-sub-delete" data-act="v191DeleteSubcategory" data-kind="${kind}" data-cat="${sanitize(encodeURIComponent(cat))}" data-sub="${sanitize(encodeURIComponent(sub))}" aria-label="Eliminar subcategoría ${sanitize(sub)} de ${sanitize(cat)}" title="Eliminar esta subcategoría">${icon('trash')}</button></span>`).join('')||'<span>Sin subcategorías</span>'}</div>
  <div class="v191-taxonomy-footer"><button type="button" class="v191-taxonomy-delete v191-category-delete" data-act="v191DeleteCategory" data-kind="${kind}" data-cat="${sanitize(encodeURIComponent(cat))}">${icon('trash')} Eliminar categoría</button></div>
  </details>`).join('')}</div>`).join('')}</div>`;
 }
@@ -18044,7 +18080,7 @@ let tools=`<div class="ledger-controls"><div class="ledger-control"><label for="
 const mobileCards=tr.slice(0,Math.max(12,ui.v51LedgerVisible||18)).map(t=>`<article class="v51-mobile-movement"><div class="v51-mobile-movement-icon">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':t.type==='loan_payment'?'receipt':'wallet')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small><span>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||'Movimiento registrado')}</span></div><div class="v51-mobile-movement-side"><b class="${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</b><div><button type="button" data-act="editTransaction" data-id="${t.id}">Editar</button><button type="button" class="v51-delete-trigger" data-act="deleteTransaction" data-id="${t.id}" aria-label="Eliminar ${sanitize(transactionTitle(t))}">${icon('trash')}</button></div></div></article>`+v143CostMobile(t)).join('');
 const v221DraftMobile=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<article class="v51-mobile-movement v221-draft-row"><div class="v51-mobile-movement-icon">${icon('clock')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(name)}</strong><small>${date?prettyDate(date):'Sin fecha'} · ${sanitize(TRANSL[v.type]||'Borrador')}</small><span class="v221-state draft">○ Sin contabilizar</span></div><div class="v51-mobile-movement-side"><b>${val>0?money(val,v.currency||'DOP',2):'Importe pendiente'}</b><div><button type="button" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button type="button" class="v51-delete-trigger" data-act="pendingRemove" data-id="${q.id}" aria-label="Descartar borrador">${icon('trash')}</button></div></div></article>`}).join('');
 const v221DraftRows=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<tr class="v221-draft-row"><td>${date?prettyDate(date):'—'}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">Borrador · sin efecto en saldos</div></td><td>${sanitize(TRANSL[v.type]||'Operación')}</td><td><span class="v221-state draft">○ Sin contabilizar</span></td><td>${sanitize(account(v.accountId)?.name||'—')}</td><td>${sanitize(v.category||'—')}</td><td class="right money">${val>0?money(val,v.currency||'DOP',2):'—'}</td><td class="right"><div class="tx-actions"><button class="btn sm soft" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar borrador">${icon('trash')}</button></div></td></tr>`}).join('');
-let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><strong>${sanitize(transactionTitle(t))}</strong>${t.note?`<div class="subtitle">${sanitize(t.note)}</div>`:''}${t.tags?`<span class="tx-label">${sanitize(t.tags)}</span>`:''}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||certificate(t.certificateId)?.name||'—')}</td><td>${sanitize(t.category||'—')}${t.subcategory?`<div class="subtitle">${sanitize(t.subcategory)}</div>`:''}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
+let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><strong>${sanitize(transactionTitle(t))}</strong>${t.note?`<div class="subtitle">${sanitize(t.note)}</div>`:''}${t.tags?`<span class="tx-label">${sanitize(t.tags)}</span>`:''}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||certificate(t.certificateId)?.name||'—')}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
 return `<section class="ledger-world section" id="ledger-world"><div class="section-title"><div><span class="summary-tag">HISTORIAL ÚNICO · ${tr.length} MOVIMIENTOS · ${v221Drafts.length} BORRADORES</span><h2>Movimientos y estados</h2><p>Revisa, concilia y completa borradores desde el mismo historial. Cada estado indica su efecto contable.</p></div><button class="btn" data-act="newTransaction">${icon('plus')} Registrar movimiento</button></div><div class="panel no-pad ledger-card">${tools}<div class="v51-mobile-ledger">${(v221DraftMobile+mobileCards)||'<div class="empty">No hay movimientos con estos filtros.</div>'}${tr.length>Math.max(12,ui.v51LedgerVisible||18)?`<button type="button" class="v51-ledger-more" data-act="v51LedgerMore">Ver más movimientos · ${Math.max(0,tr.length-Math.max(12,ui.v51LedgerVisible||18))} restantes</button>`:''}</div><div class="table-wrap ledger-scroll"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Operación</th><th>Estado</th><th>Producto / persona</th><th>Categoría</th><th class="right">Importe</th><th class="right">Gestión</th></tr></thead><tbody>${(v221DraftRows+rows)||'<tr><td colspan="8"><div class="empty">No hay movimientos con estos filtros.</div></td></tr>'}</tbody></table></div></div>${v51RemovedMovementsPanel()}<p class="footnote">Los renglones de impuestos y comisiones son desgloses vinculados a su operación; ya están incluidos en el débito de la cuenta y en el gasto. Para modificarlos, edita la operación principal. Las marcas de revisión no modifican importes; los borradores no afectan saldos hasta completar su registro. Los consumos con tarjetas se reconocen una sola vez; los pagos y transferencias no duplican gastos. Cuando corrijas una operación vinculada a un corte bancario, revisa la conciliación contra el estado oficial.</p></section>`}
 
 function subscriptionAnalysis(){let active=db.recurring.filter(r=>r.active!==false);const mon=r=>{let freq=r.frequency==='annual'?1/12:r.frequency==='quarterly'?1/3:r.frequency==='weekly'?365.25/7/12:1;return fx(r.amount,r.currency)*freq};
@@ -20692,10 +20728,7 @@ const FASTX_POPULAR={
  income:['Salario y nómina','Negocios y ventas','Joseo e ingresos adicionales','Servicios profesionales','Reembolsos','Inversiones'],
  spend:['Alimentación','Transporte','Vivienda','Servicios básicos','Compras personales','Tecnología']
 };
-const FASTX_ICONS={
- 'Salario y nómina':'💼','Negocios y ventas':'🛍','Joseo e ingresos adicionales':'⚡','Servicios profesionales':'🧩','Reembolsos':'↩','Inversiones':'📈',
- 'Alimentación':'🍽','Transporte':'🚗','Vivienda':'⌂','Servicios básicos':'⚡','Compras personales':'◈','Tecnología':'⌘'
-};
+const FASTX_ICONS=Object.fromEntries([...Object.keys(V255_TAXONOMY.gasto.categories),...Object.keys(V255_TAXONOMY.ingreso.categories)].map(name=>[name,V255_ICON_TEXT[v255TaxonomyIconName(v255TaxonomyKindForCategory(name),name)]||'•']));
 function fastxSync(f){
  if(!f||!f.classList.contains('fastx-form'))return;
  const mode=f.dataset.mode,usingCard=mode==='spend'&&f.elements.paymentSource?.value==='card';
@@ -21224,6 +21257,7 @@ function render(){
  v250DockGlassApply(db.settings.mobileDockGlassLevel ?? 50);
  document.getElementById('app').innerHTML=main();
   v40Decorate();
+  v255DecorateTaxonomyUI();
   // Restore the currently selected filter button after a same-page redraw.
   // Do not alter user input, scroll position, modal focus or navigation targets.
   if(v238OldPage===ui.page && v238Target.length && !document.querySelector('#modal-root .modal-layer,#modal-root [role="dialog"]')){
@@ -21641,7 +21675,7 @@ if(t.id==='txType'){let v=fromForm(t.form);transactionForm({type:v.type,date:v.d
 if(t.id==='loanPaymentKind'&&t.form?.id==='transactionForm'){let f=t.form;if(t.value==='extra'){for(let q of ['loanInterest','loanInsurance','loanFee']){let el=f.querySelector('#'+q);if(el)el.value='0';}let p=f.querySelector('#loanPrincipal');if(p)p.value=Math.max(0,num(f.querySelector('#loanAmount')?.value));}return}
  if(t.id==='txLoan'&&t.form?.id==='transactionForm'){let v=fromForm(t.form);transactionForm({...v,amount:'',principal:'',interest:'',fee:0});return}
 if(t.id==='txCard'&&t.form?.id==='transactionForm')return;
-if(t.id==='txCategory'||t.id==='recCategory'||t.id==='budgetCategory'){let kind=t.id==='txCategory'&&t.form.elements.type?.value==='income'?'ingreso':'gasto';let selector=t.form.querySelector('#subCategory');if(selector){selector.innerHTML='<option value="">Sin subcategoría</option>'+subcategoryOptions(kind,t.value).map(sub=>`<option value="${sanitize(sub)}">${sanitize(sub)}</option>`).join('')}return}
+if(t.id==='txCategory'||t.id==='recCategory'||t.id==='budgetCategory'){let kind=t.id==='txCategory'&&t.form.elements.type?.value==='income'?'ingreso':'gasto';let selector=t.form.querySelector('#subCategory');if(selector){selector.innerHTML='<option value="">Sin subcategoría</option>'+subcategoryOptions(kind,t.value).map(sub=>`<option value="${sanitize(sub)}">${sanitize(v255TaxonomyOptionLabel(kind,t.value,sub))}</option>`).join('')}return}
 if(t.id==='customKind'){let selector=t.form.querySelector('#customParent');if(selector){selector.innerHTML='<option value="">Crear categoría nueva</option>'+categoryOptions(t.value).map(([v,l])=>`<option value="${sanitize(v)}">${sanitize(l)}</option>`).join('')}return}
 if(t.id==='importFile'){let file=t.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{let imported=JSON.parse(reader.result);if(!imported||!Array.isArray(imported.accounts)||!Array.isArray(imported.cards)||!Array.isArray(imported.loans)||!Array.isArray(imported.transactions)||!Array.isArray(imported.recurring))throw Error('El archivo no contiene una copia de vive el hoy válido.');v30ValidateImport(imported);if(!confirm('¿Restaurar este respaldo? REEMPLAZARÁ todos tus datos actuales.'))return;if(!v30SavePoint('Antes de importar un respaldo JSON'))return;const beforeImport=db;try{db=migrateData({...init(),...imported,settings:{...init().settings,...(imported.settings||{})}});delete db.exportedAt;if(!persist())throw Error('No se pudo guardar el respaldo importado.');}catch(e){db=beforeImport;persist();throw e}ui.page='overview';ui.cardId=null;ui.loanId=null;ui.accountId=null;render();toast('Respaldo restaurado correctamente.')}catch(err){toast('Error al importar: '+(err.message||'archivo inválido'))}};reader.readAsText(file,'utf-8');t.value='';return}
 });
@@ -28235,6 +28269,236 @@ render=function(){v245PreviousRender();v245PolishOnRender();};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',decorate,{once:true});
   else decorate();
 })();
+
+
+/* V254 · GASTOS HORMIGA — vista analítica, no transaccional.
+   No crea categorías ni vuelve a registrar gastos. */
+const ANT_PREFS_KEY='vive_el_hoy_ant_preferences_v254';
+const ANT_DEFAULTS={maxUnitDop:1500,minRepetitions:3,excluded:[],forced:[]};
+const antUi={tab:'habits',sort:'frequency',selected:null,search:'',showRules:false};
+function antPrefs(){
+ if(!db.settings.antExpenses){
+  let local=null;
+  try{local=JSON.parse(localStorage.getItem(ANT_PREFS_KEY)||'null')}catch(_e){}
+  db.settings.antExpenses={...ANT_DEFAULTS,...(local&&typeof local==='object'?local:{})};
+ }
+ const p=db.settings.antExpenses;
+ p.excluded=Array.isArray(p.excluded)?p.excluded:[];
+ p.forced=Array.isArray(p.forced)?p.forced:[];
+ return p;
+}
+function antRemember(){
+ const p=antPrefs();
+ // Preserve preferences on this device when cloud session is temporarily missing.
+ try{localStorage.setItem(ANT_PREFS_KEY,JSON.stringify(p));}catch(_e){}
+ const ok=persist();
+ if(!ok)toast('Preferencia guardada en este dispositivo; pendiente de sincronización con tu cuenta.');
+}
+function antNormalize(v){
+ return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .toLocaleLowerCase('es').replace(/[^\p{L}\p{N}\s]/gu,' ')
+  .replace(/\b(\d{1,4}|rd|usd|dop|compra|pago|consumo|tarjeta|credito|debito|en|de|del|a|el|la|un|una|con|por|ref)\b/gu,' ')
+  .replace(/\s+/g,' ').trim().slice(0,90);
+}
+function antIdentity(t){
+ const merchant=String(t.merchant||'').trim();
+ const note=String(t.note||t.description||'').trim();
+ const sub=String(t.subcategory||'').trim();
+ const generic=/^(otro(s)?( gastos?)?|sin (categoria|concepto)|comercio|compra|gasto|pago|consumo|pos|terminal|tarjeta|visa|mastercard|otros alimentos?)$/i;
+ if(merchant && !generic.test(merchant) && antNormalize(merchant).length>=3){
+  return {key:'m:'+antNormalize(merchant),label:merchant,origin:'Comercio'};
+ }
+ if(note && !generic.test(note) && antNormalize(note).length>=3){
+  return {key:'n:'+antNormalize(note),label:note,origin:'Concepto'};
+ }
+ // Specific subcategories can signal an identifiable habit; never group
+ // everything into the general default category.
+ if(sub && /caf[eé]|meriendas|uber|taxi|delivery|snack|parqueo|pasajes|bebidas/i.test(sub)){
+  return {key:'s:'+antNormalize(sub),label:sub,origin:'Subcategoría'};
+ }
+ return null;
+}
+function antFx(t){
+ const rate=num(t.fxRateSnapshot)||num(db.settings.fx)||0;
+ return num(t.amount)*(t.currency==='USD'?rate:1);
+}
+function antAnalyzedPeriod(){
+ const key=/^\d{4}-(0[1-9]|1[0-2])$/.test(String(ui.month))?ui.month:today().slice(0,7);
+ const [y,m]=key.split('-').map(Number);
+ const start=periodStart(y,m),end=periodEnd(y,m),cutoff=end>today()?today():end;
+ const daysInMonth=dateObj(end).getDate();
+ return {key,y,m,start,end,cutoff,daysInMonth};
+}
+function antModel(){
+ const p=antPrefs(),period=antAnalyzedPeriod();
+ const firstDay=addDays(period.cutoff,-89),cutoff=period.cutoff;
+ const byKey=new Map();
+ const max=Math.max(1,Math.min(100000,Number(p.maxUnitDop)||1500));
+ for(const t of db.transactions||[]){
+  if(!['expense','card_charge','card_refund'].includes(t.type))continue;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(t.date||'')))continue;
+  if(t.date<firstDay||t.date>cutoff)continue;
+  const identity=antIdentity(t);if(!identity)continue;
+  const raw=antFx(t);
+  if(!Number.isFinite(raw)||raw<=0||raw>max)continue;
+  let entry=byKey.get(identity.key);
+  if(!entry){entry={...identity,items:[],refunds:[]};byKey.set(identity.key,entry)}
+  if(t.type==='card_refund')entry.refunds.push({...t,amountDop:raw});
+  else entry.items.push({...t,amountDop:raw});
+ }
+ const minCount=Math.max(2,Math.min(30,Math.trunc(num(p.minRepetitions)||3)));
+ const groups=[];
+ for(const g of byKey.values()){
+  const dates=[...new Set(g.items.map(t=>t.date))].sort();
+  if(!g.items.length)continue;
+  const forced=p.forced.includes(g.key);
+  if(!forced && (g.items.length<minCount || dates.length<2 || dates[dates.length-1]<addDays(cutoff,-30)))continue;
+  const daysObserved=Math.max(14,diffDays(cutoff,dates[0])+1);
+  const count=g.items.length;
+  const sumAll=g.items.reduce((s,t)=>s+t.amountDop,0)-g.refunds.reduce((s,t)=>s+t.amountDop,0);
+  const monthItems=g.items.filter(t=>t.date>=period.start&&t.date<=cutoff);
+  const monthRefunds=g.refunds.filter(t=>t.date>=period.start&&t.date<=cutoff);
+  const real=Math.max(0,rnd(monthItems.reduce((s,t)=>s+t.amountDop,0)-monthRefunds.reduce((s,t)=>s+t.amountDop,0)));
+  const gaps=dates.slice(1).map((d,i)=>diffDays(d,dates[i])).filter(x=>x>0).sort((a,b)=>a-b);
+  const gap=gaps.length?(gaps.length%2?gaps[(gaps.length-1)/2]:(gaps[gaps.length/2-1]+gaps[gaps.length/2])/2):null;
+  const pastCutoff=period.end<=today();
+  const expected=rnd(Math.max(0,sumAll)/daysObserved*period.daysInMonth);
+  const projected=pastCutoff?real:Math.max(real,expected);
+  const annual=rnd(projected*12);
+  const confidence=daysObserved>=45&&count>=6?'Alta':daysObserved>=21&&count>=4?'Media':'Inicial';
+  groups.push({...g,number:count,uniqueDays:dates.length,frequency:gap,real,projected,annual,confidence,firstDate:dates[0],lastDate:dates[dates.length-1],
+   monthItems,monthRefunds,allNet:Math.max(0,sumAll),average:count?Math.max(0,sumAll)/count:0,
+   ignored:p.excluded.includes(g.key),forced});
+ }
+ const expense=Math.max(0,monthlyTotals(period.y,period.m).expense);
+ for(const g of groups)g.share=expense>0?100*g.real/expense:null;
+ const active=groups.filter(g=>!g.ignored),ignored=groups.filter(g=>g.ignored);
+ const actual=active.reduce((s,g)=>s+g.real,0),projected=active.reduce((s,g)=>s+g.projected,0);
+ const annual=projected*12;
+ return {...period,expense,groups,active,ignored,actual,projected,annual,
+  participation:expense>0?100*actual/expense:null,empty:groups.length===0};
+}
+const antPct=v=>v===null?'Sin base':v.toLocaleString('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1})+'%';
+const antFreq=g=>g.frequency===null?'Aún sin ritmo':g.frequency<=1?'Cada día':`Cada ${g.frequency.toLocaleString('es-DO',{maximumFractionDigits:1})} días`;
+function antHighlights(model){
+ const active=model.active;
+ if(!active.length)return '<p class="ant-muted">Aún no hay hábitos confirmados en este período. Aparecerán tras varias compras identificables; puedes revisar el umbral en Reglas.</p>';
+ const byCount=active.slice().sort((a,b)=>b.number-a.number)[0];
+ const bySpend=active.slice().sort((a,b)=>b.real-a.real)[0];
+ const extras=[];
+ if(byCount)extras.push(`<strong>${sanitize(byCount.label)}</strong> es tu hábito más frecuente, con ${byCount.number} compras observadas (${antFreq(byCount).toLowerCase()}).`);
+ if(bySpend&&bySpend.key!==byCount?.key)extras.push(`<strong>${sanitize(bySpend.label)}</strong> concentra el mayor gasto reconocido del mes: ${money(bySpend.real,'DOP',2)}.`);
+ return extras.map(s=>`<p>${s}</p>`).join('');
+}
+function antWeeklyChart(m){
+ const bars=Array.from({length:8},(_,i)=>{
+  const end=addDays(m.cutoff,-7*(7-i)),start=addDays(end,-6);
+  const val=m.active.reduce((sum,g)=>{
+   const bought=g.items.filter(t=>t.date>=start&&t.date<=end).reduce((a,t)=>a+t.amountDop,0);
+   const refunded=g.refunds.filter(t=>t.date>=start&&t.date<=end).reduce((a,t)=>a+t.amountDop,0);
+   return sum+Math.max(0,bought-refunded);
+  },0);
+  return {start,end,val:rnd(val)};
+ });
+ const max=Math.max(1,...bars.map(b=>b.val));
+ return `<section class="ant-panel ant-weekly"><div class="ant-section-heading"><div><span class="ant-eyebrow">EVOLUCIÓN REAL</span><h3>Las últimas ocho semanas</h3><p>Importes reconocidos de los hábitos detectados, sin incluir pagos ni transferencias.</p></div><span class="ant-weekly-total">${money(bars.reduce((s,b)=>s+b.val,0))}</span></div><div class="ant-weekly-chart" role="img" aria-label="Gráfico de gasto hormiga real por semana">${bars.map(b=>`<div class="ant-week" title="${prettyDate(b.start)} a ${prettyDate(b.end)} · ${money(b.val,'DOP',2)}"><span class="ant-week-value">${b.val?money(b.val):'—'}</span><span class="ant-week-track"><i style="height:${b.val?Math.max(5,100*b.val/max):0}%"></i></span><small>${dateObj(b.end).toLocaleDateString('es-DO',{day:'2-digit',month:'short'})}</small></div>`).join('')}</div></section>`;
+}
+function antTableRows(groups,model){
+ const maxActual=Math.max(1,...groups.map(g=>g.real));
+ return groups.map((g,i)=>`<tr data-ant-search="${sanitize((g.label+' '+g.origin).toLocaleLowerCase('es'))}"><td class="ant-rank">${i+1}</td><td><strong>${sanitize(g.label)}</strong><small>${sanitize(g.origin)} · ${g.confidence==='Inicial'?'Pocos datos':'Ritmo '+g.confidence.toLowerCase()}</small></td><td class="ant-num">${g.number}</td><td>${antFreq(g)}</td><td class="ant-num">${money(g.real,'DOP',2)}<span class="ant-bar"><i style="width:${(100*g.real/maxActual).toFixed(1)}%"></i></span></td><td class="ant-num">${antPct(g.share)}</td><td class="ant-num">${money(g.projected)}</td><td class="ant-num">${money(g.annual)}</td><td><div class="ant-row-actions"><button type="button" data-ant="detail" data-key="${sanitize(g.key)}">Ver compras</button><button type="button" data-ant="${g.ignored?'restore':'ignore'}" data-key="${sanitize(g.key)}">${g.ignored?'Restaurar':'No es hormiga'}</button></div></td></tr>`).join('');
+}
+function antDetail(g,model){
+ const all=[...g.items.map(t=>({...t,_refund:false})),...g.refunds.map(t=>({...t,_refund:true}))]
+  .sort((a,b)=>b.date.localeCompare(a.date)||String(b.id||'').localeCompare(String(a.id||'')));
+ return `<section class="ant-panel ant-detail" id="ant-detail" aria-label="Detalle de ${sanitize(g.label)}"><div class="ant-section-heading"><div><span class="ant-eyebrow">DETALLE DEL HÁBITO</span><h3>${sanitize(g.label)}</h3><p>${g.number} compras en los últimos 90 días · ${antFreq(g).toLowerCase()} · ${g.confidence==='Inicial'?'Estimación con pocos datos':'Confianza '+g.confidence.toLowerCase()}</p></div><button type="button" class="ant-icon-close" data-ant="close" aria-label="Cerrar detalle">×</button></div><div class="ant-detail-metrics"><div><small>COMPRA PROMEDIO</small><b>${money(g.average,'DOP',2)}</b></div><div><small>ÚLTIMA COMPRA</small><b>${prettyDate(g.lastDate)}</b></div><div><small>REAL DEL MES</small><b>${money(g.real,'DOP',2)}</b></div></div><div class="ant-table-scroll"><table class="ant-table ant-activity"><thead><tr><th>Fecha</th><th>Comercio o concepto</th><th>Categoría original</th><th>Tipo</th><th class="ant-num">Importe RD$</th></tr></thead><tbody>${all.map(t=>`<tr><td>${prettyDate(t.date)}</td><td>${sanitize(t.merchant||t.note||t.description||g.label)}</td><td>${v255TransactionCategoryCell(t)}</td><td>${t._refund?'Devolución':'Compra'}</td><td class="ant-num">${t._refund?'−':''}${money(t.amountDop,'DOP',2)} <small>${sanitize(t.currency||'DOP')}</small></td></tr>`).join('')}</tbody></table></div><div class="ant-detail-footer"><button type="button" data-ant="${g.ignored?'restore':'ignore'}" data-key="${sanitize(g.key)}">${g.ignored?'Volver a mostrar este hábito':'No es un gasto hormiga'}</button><button type="button" data-act="navigate" data-id="register">Abrir Movimientos ${icon('arrow')}</button></div></section>`;
+}
+function antPage(){
+ const m=antModel();
+ const list=(antUi.tab==='ignored'?m.ignored:m.active).slice();
+ const compare=antUi.sort||'frequency';
+ list.sort((a,b)=>compare==='cost'?b.real-a.real:compare==='projection'?b.projected-a.projected:compare==='share'?num(b.share)-num(a.share):b.number-a.number);
+ const selected=m.groups.find(g=>g.key===antUi.selected);
+ const count=list.length;
+ const p=antPrefs();
+ const isOpen=m.end>today();
+ const top=list.slice(0,3);
+ const stats=[['RITMO MENSUAL',money(m.projected),'Según compras detectadas'],['EQUIVALENTE ANUAL',money(m.annual),'Si mantienes el mismo patrón'],['PESO EN EGRESOS',antPct(m.participation),'Sobre los gastos del período']];
+ return `<div class="ant-module ${window.matchMedia('(max-width:790px)').matches?'ant-mobile':''}" aria-label="Gastos hormiga">
+ <header class="ant-heading"><div><span class="ant-eyebrow">TU INTELIGENCIA FINANCIERA</span><h1>Gastos hormiga</h1><p>Descubre las compras que repites, cuánto representan realmente y su posible impacto futuro.</p></div><label class="ant-month-label">PERÍODO <input id="ant-month" type="month" value="${m.key}" max="${today().slice(0,7)}" aria-label="Mes de análisis"></label></header>
+ <section class="ant-hero"><div class="ant-hero-primary"><span class="ant-eyebrow">GASTO HORMIGA REAL · ${sanitize(dateObj(m.start).toLocaleDateString('es-DO',{month:'long',year:'numeric'}).toUpperCase())}</span><strong>${money(m.actual)}</strong><p>${m.active.length} hábitos detectados · ${m.active.reduce((s,g)=>s+g.monthItems.length,0)} compras este mes</p><button type="button" data-ant="rules">${icon('settings')} Ajustar detección</button></div><div class="ant-hero-stats">${stats.map(([label,value,desc])=>`<div><small>${label}</small><strong>${value}</strong><span>${desc}</span></div>`).join('')}</div></section>
+ <section class="ant-insight-panel"><div><span class="ant-eyebrow">LO QUE ESTÁS REPITIENDO</span><h2>Hábitos bajo la lupa</h2>${antHighlights(m)}</div><div class="ant-insight-side"><strong>${antPct(m.participation)}</strong><small>de tus egresos reconocidos este mes</small><span class="ant-total-progress"><i style="width:${Math.max(0,Math.min(100,m.participation||0))}%"></i></span></div></section>
+ ${antWeeklyChart(m)}
+ ${antUi.showRules?`<section class="ant-panel ant-rulepanel"><div class="ant-section-heading"><div><span class="ant-eyebrow">CONTROL DE DETECCIÓN</span><h3>Reglas de análisis</h3></div><button type="button" data-ant="rules">Cerrar</button></div><div class="ant-rulegrid"><label>Importe máximo por compra (RD$)<input type="number" id="ant-amount" min="1" max="100000" step="50" value="${p.maxUnitDop}"></label><label>Compras mínimas en 90 días<input type="number" id="ant-repeat" min="2" max="30" step="1" value="${p.minRepetitions}"></label></div><p>Estas reglas solo afectan la detección. No modifican categorías, presupuestos, saldos ni movimientos registrados.</p><button type="button" class="ant-primary-button" data-ant="save-rules">Aplicar reglas</button></section>`:''}
+ <section class="ant-panel ant-directory"><div class="ant-section-heading"><div><span class="ant-eyebrow">RECURRENCIAS</span><h3>Ranking de hábitos</h3><p>Compara frecuencia, gasto mensual real y proyección. Abre una fila para revisar todas las compras.</p></div><div class="ant-list-toolbar"><div class="ant-tabs" role="group" aria-label="Mostrar hábitos"><button type="button" data-ant="tab" data-value="habits" class="${antUi.tab==='habits'?'active':''}">Detectados <b>${m.active.length}</b></button><button type="button" data-ant="tab" data-value="ignored" class="${antUi.tab==='ignored'?'active':''}">Ignorados <b>${m.ignored.length}</b></button></div><button type="button" class="ant-export" data-ant="export">${icon('down')} CSV</button><label class="ant-sort-label">Ordenar por <select id="ant-sort"><option value="frequency" ${compare==='frequency'?'selected':''}>Frecuencia</option><option value="cost" ${compare==='cost'?'selected':''}>Gasto real</option><option value="projection" ${compare==='projection'?'selected':''}>Proyección</option><option value="share" ${compare==='share'?'selected':''}>Participación</option></select></label></div></div>
+ <label class="ant-search-label">${icon('search')}<input type="search" id="ant-search" value="${sanitize(antUi.search)}" placeholder="Buscar comercio o hábito" aria-label="Buscar hábitos"></label>
+ ${!count?`<div class="ant-empty"><span>${icon('chart')}</span><h4>${antUi.tab==='ignored'?'No has ignorado ningún hábito':'Todavía no se detectan hábitos recurrentes'}</h4><p>${antUi.tab==='ignored'?'Los hábitos excluidos aparecerán aquí y podrás restaurarlos.':'Registra varias compras identificables en diferentes días o revisa las reglas de detección. No se inventarán datos.'}</p></div>`:`<div class="ant-table-scroll ant-main-table"><table class="ant-table"><thead><tr><th>#</th><th>Hábito</th><th>Compras 90d</th><th>Frecuencia</th><th class="ant-num">Real del mes</th><th class="ant-num">Participación</th><th class="ant-num">Ritmo mensual</th><th class="ant-num">Anual estimado</th><th>Opciones</th></tr></thead><tbody>${antTableRows(list,m)}</tbody></table></div><div class="ant-mobile-list">${list.map((g,i)=>`<article class="ant-habit-card" data-ant-search="${sanitize((g.label+' '+g.origin).toLocaleLowerCase('es'))}"><div class="ant-habit-top"><span class="ant-habit-mark">${icon('chart')}</span><div><strong>${sanitize(g.label)}</strong><small>${g.number} compras · ${antFreq(g)}</small></div><span class="ant-habit-share">${antPct(g.share)}</span></div><div class="ant-habit-values"><div><small>REAL ESTE MES</small><b>${money(g.real)}</b></div><div><small>RITMO MENSUAL</small><b>${money(g.projected)}</b></div><div><small>ANUAL ESTIMADO</small><b>${money(g.annual)}</b></div></div><div class="ant-habit-actions"><button type="button" data-ant="detail" data-key="${sanitize(g.key)}">Ver compras</button><button type="button" data-ant="${g.ignored?'restore':'ignore'}" data-key="${sanitize(g.key)}">${g.ignored?'Restaurar':'No es hormiga'}</button></div></article>`).join('')}</div>`}
+ <p class="ant-table-note">Real = egresos contabilizados en el mes, netos de devoluciones identificables. El ritmo se estima con hasta 90 días de compras observadas y puede variar. El anual no es un cargo futuro ni una deuda.</p></section>
+ ${selected?antDetail(selected,m):''}
+ <section class="ant-footer-info"><span>${icon('shield')}</span><p>Solo se analizan compras y consumos con tarjeta. Los pagos de tarjeta, préstamos, transferencias y entradas de dinero no se suman nuevamente. Excluir un hábito nunca borra sus movimientos.</p></section>
+ </div>`;
+}
+pages.antExpenses=antPage;
+// Incorporate the new module without creating a new primary navigation tab.
+NAV_FAMILIES.find(g=>g.label==='GESTIÓN FINANCIERA')?.items.find(i=>i.id==='register')?.children.push(['antExpenses','Gastos hormiga','chart']);
+NAV_SECTIONS.register.tabs.push(['antExpenses','Gastos hormiga','chart']);
+V154_MOBILE_CATEGORIES.find(c=>c.id==='analitica')?.pages.push('antExpenses');
+const antOrigSearchEntries=v71SearchEntries;
+v71SearchEntries=function(){return [{kind:'section',page:'antExpenses',title:'Gastos hormiga',sub:'Hábitos, recurrencias, proyección mensual y anual',ico:'chart'},...antOrigSearchEntries()];};
+// Enable mobile Explore contextual return route.
+const antOrigExploreReturn=v243ExploreReturn;
+v243ExploreReturn=function(){return ui.page==='antExpenses'&&v243ExploreDestination==='antExpenses'?`<nav class="v243-explore-return"><button type="button" data-v243-explore-back="1">${icon('arrow')} Explorar</button><span>/</span><strong>Gastos hormiga</strong></nav>`:antOrigExploreReturn();};
+const antOrigMobileHub=mobileHub;
+mobileHub=function(){
+ const output=antOrigMobileHub();
+ const entry=`<button type="button" class="v205-explore-link" data-act="navigate" data-id="antExpenses" aria-label="Abrir Gastos hormiga"><span class="v205-explore-link-icon">${icon('chart')}</span><span class="v205-explore-link-copy"><strong>Gastos hormiga</strong><small>Hábitos y proyecciones</small></span><span class="v205-explore-arrow" aria-hidden="true">${icon('arrow')}</span></button>`;
+ const anchor='<div class="v205-explore-end">';
+ // Append as an additional item in the final intelligence section, before its closing tag.
+ const pos=output.lastIndexOf(anchor);
+ if(pos<0)return output;
+ const fragment=output.slice(0,pos),rest=output.slice(pos);
+ const close=fragment.lastIndexOf('</div></section>');
+ if(close<0)return output;
+ return fragment.slice(0,close)+entry+fragment.slice(close)+rest;
+};
+// User actions are delegated to a small scope and do not modify transaction logic.
+document.addEventListener('click',function(event){
+ const button=event.target.closest('[data-ant]');if(!button)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const action=button.dataset.ant,key=button.dataset.key;
+ if(action==='rules'){antUi.showRules=!antUi.showRules;render();return;}
+ if(action==='tab'){antUi.tab=button.dataset.value==='ignored'?'ignored':'habits';antUi.selected=null;render();return;}
+ if(action==='detail'){antUi.selected=antUi.selected===key?null:key;render();document.getElementById('ant-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}
+ if(action==='close'){antUi.selected=null;render();return;}
+ if(action==='export'){
+  const model=antModel();const groups=(antUi.tab==='ignored'?model.ignored:model.active).filter(g=>(g.label+' '+g.origin).toLocaleLowerCase('es').includes(antUi.search.toLocaleLowerCase('es')));
+  const fields=['Hábito','Origen','Compras en 90 días','Frecuencia en días','Real del mes RD$','Participación %','Ritmo mensual RD$','Estimación anual RD$','Fiabilidad','Estado'];
+  const rows=[fields,...groups.map(g=>[g.label,g.origin,g.number,g.frequency===null?'':g.frequency,g.real,g.share===null?'':g.share,g.projected,g.annual,g.confidence,g.ignored?'Ignorado':'Detectado'])];
+  const quote=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
+  download('\ufeff'+rows.map(row=>row.map(quote).join(',')).join('\r\n'),`gastos-hormiga-${model.key}.csv`,'text/csv;charset=utf-8');return;
+ }
+ if(action==='save-rules'){
+  const p=antPrefs(),maxUnitDop=Number(document.getElementById('ant-amount')?.value),minRepetitions=Number(document.getElementById('ant-repeat')?.value);
+  if(!Number.isFinite(maxUnitDop)||maxUnitDop<1||maxUnitDop>100000||!Number.isInteger(minRepetitions)||minRepetitions<2||minRepetitions>30){toast('Introduce valores válidos: importe 1–100,000 y repeticiones 2–30.');return;}
+  p.maxUnitDop=maxUnitDop;p.minRepetitions=minRepetitions;antRemember();render();return;
+ }
+ if(action==='ignore'||action==='restore'){
+  if(!key)return;
+  const p=antPrefs();p.excluded=action==='ignore'?[...new Set([...p.excluded,key])]:p.excluded.filter(x=>x!==key);
+  antUi.selected=null;antRemember();render();return;
+ }
+},true);
+document.addEventListener('change',function(event){
+ if(event.target?.id==='ant-month'){
+  const value=String(event.target.value||'');if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)||value>today().slice(0,7))return;
+  ui.month=value;ui.year=Number(value.slice(0,4));antUi.selected=null;render();
+ }
+ if(event.target?.id==='ant-sort'){antUi.sort=event.target.value;render();}
+});
+document.addEventListener('input',function(event){
+ if(event.target?.id!=='ant-search')return;
+ const query=String(event.target.value||'').trim().toLocaleLowerCase('es');antUi.search=event.target.value||'';
+ document.querySelectorAll('.ant-directory [data-ant-search]').forEach(el=>{el.hidden=!el.dataset.antSearch?.includes(query);});
+});
 
 
 })();
@@ -35177,6 +35441,136 @@ body.theme-black #page .v252-tabs button[aria-selected="true"],body.theme-dark #
  .world-personal .v253-person-metric strong{display:block;margin-top:7px;font-size:clamp(16px,1.35vw,25px);color:#fff;letter-spacing:-.05em;white-space:nowrap;}
  .world-personal .v253-person-note{font-size:11px;color:rgba(255,255,255,.8);margin:12px 0 0;}
 }
+</style>
+<style id="vive-v254-gastos-hormiga">
+/* V254 · GASTOS HORMIGA: same clean language as Cuentas y efectivo. */
+.ant-module{max-width:1380px;margin:0 auto;padding:clamp(4px,1vw,14px) 0 48px;display:grid;gap:18px;color:var(--text,#1e3555);font-family:inherit;min-width:0}
+.ant-module button,.ant-module input,.ant-module select{font:inherit}
+.ant-module button{cursor:pointer}
+.ant-eyebrow{font-size:10px;letter-spacing:.16em;color:#6d86af;font-weight:850}
+.ant-heading{display:flex;align-items:end;justify-content:space-between;gap:18px;padding:0 2px}
+.ant-heading h1{font-size:clamp(29px,3vw,43px);font-weight:830;letter-spacing:-.055em;margin:8px 0 7px;line-height:1.1}
+.ant-heading p{font-size:13px;color:var(--muted,#667d9e);line-height:1.5;margin:0;max-width:670px}
+.ant-month-label{display:grid;gap:6px;color:var(--muted,#60799d);font-weight:800;font-size:10px;letter-spacing:.08em;white-space:nowrap}
+.ant-month-label input{background:var(--white,#f9fbff);border:1px solid var(--line,#d5e2f2);border-radius:13px;padding:10px 13px;color:inherit;min-height:40px}
+.ant-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);border:1px solid rgba(223,233,255,.57);border-radius:28px;background:linear-gradient(125deg,#1c3154,#335a91);color:white;box-shadow:0 17px 36px rgba(35,65,114,.12);overflow:hidden}
+.ant-hero-primary{padding:clamp(22px,2.6vw,35px);display:flex;flex-direction:column;align-items:start;justify-content:center;gap:9px}
+.ant-hero .ant-eyebrow,.ant-hero small{color:#c0d5f3}
+.ant-hero-primary>strong{font-size:clamp(40px,4.4vw,67px);letter-spacing:-.065em;line-height:1.07;white-space:normal;overflow-wrap:anywhere}
+.ant-hero-primary p{font-size:12px;line-height:1.5;color:#dce7f6;margin:0}
+.ant-hero-primary button{border:1px solid rgba(255,255,255,.52);background:rgba(255,255,255,.09);border-radius:13px;color:white;padding:11px 14px;display:inline-flex;align-items:center;gap:8px;font-weight:750;font-size:12px;margin-top:11px}
+.ant-hero-primary button svg{height:16px;width:16px}
+.ant-hero-stats{border-left:1px solid rgba(255,255,255,.18);padding:clamp(17px,2vw,26px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,1fr);gap:12px;align-items:stretch}
+.ant-hero-stats>div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.17);border-radius:17px;padding:17px 16px;display:flex;flex-direction:column;gap:9px;justify-content:center;min-width:0}
+.ant-hero-stats>div:first-child{grid-column:span 2}
+.ant-hero-stats small{font-size:10px;letter-spacing:.12em;font-weight:850}
+.ant-hero-stats strong{font-size:clamp(20px,1.85vw,29px);line-height:1.1;letter-spacing:-.04em;color:#fff;overflow-wrap:anywhere}
+.ant-hero-stats span{font-size:11px;color:#cbdaf0}
+.ant-panel,.ant-insight-panel{border-radius:23px;border:1px solid var(--line,#dce6f4);background:var(--white,#fff);padding:clamp(17px,2vw,25px);box-shadow:0 11px 28px rgba(26,54,98,.055);min-width:0}
+.ant-insight-panel{display:grid;grid-template-columns:minmax(0,2fr) minmax(180px,1fr);gap:30px;align-items:center}
+.ant-insight-panel h2{font-size:19px;letter-spacing:-.04em;margin:7px 0 12px}
+.ant-insight-panel p{font-size:12px;color:var(--muted,#617995);line-height:1.65;margin:6px 0}
+.ant-insight-side{display:grid;gap:7px;text-align:right;border-left:1px solid var(--line,#dce6f4);padding-left:24px}
+.ant-insight-side>strong{font-size:30px;letter-spacing:-.06em}
+.ant-insight-side>small{font-size:11px;color:var(--muted,#617995);line-height:1.4}
+.ant-total-progress,.ant-bar{height:7px;background:rgba(99,127,179,.15);border-radius:99px;overflow:hidden;display:block}
+.ant-total-progress i,.ant-bar i{display:block;height:100%;background:#527bcf;border-radius:99px}
+.ant-section-heading{display:flex;justify-content:space-between;align-items:start;gap:15px;margin-bottom:16px}
+.ant-section-heading h3{font-size:20px;letter-spacing:-.04em;margin:5px 0 4px}
+.ant-section-heading p{margin:0;font-size:12px;color:var(--muted,#617995);line-height:1.5}
+.ant-list-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ant-tabs{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(95,130,195,.085);border:1px solid var(--line,#dde7f5)}
+.ant-tabs button{display:flex;align-items:center;gap:6px;border:0;border-radius:11px;padding:10px 12px;background:none;color:var(--muted,#6d809c);font-size:12px;font-weight:780;white-space:nowrap}
+.ant-tabs button.active{background:#fff;color:#345e9f;box-shadow:0 4px 10px rgba(25,56,109,.08)}
+.ant-tabs b{font-size:10px;opacity:.8}
+.ant-sort-label{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted,#617995)}
+.ant-sort-label select{max-width:128px;background:var(--white,#fff);color:inherit;border-radius:10px;padding:9px 10px;border:1px solid var(--line,#dce7f6)}
+.ant-search-label{display:flex;align-items:center;gap:10px;border-radius:13px;padding:11px 13px;margin:10px 0 16px;border:1px solid var(--line,#dce7f6);background:rgba(124,155,199,.075)}
+.ant-search-label svg{height:18px;width:18px;color:#6c87af;flex-shrink:0}
+.ant-search-label input{border:0;outline:none;background:transparent;width:100%;min-width:0;color:inherit;font-size:13px}
+.ant-table-scroll{overflow:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+.ant-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;white-space:nowrap}
+.ant-table th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted,#617995);font-weight:850;padding:12px 10px;background:rgba(114,142,189,.065);border-bottom:1px solid var(--line,#d9e4f5)}
+.ant-table td{padding:14px 10px;border-bottom:1px solid var(--line,#e1e9f3);vertical-align:middle}
+.ant-table td strong{display:block;font-size:13px;font-weight:800;max-width:230px;overflow:hidden;text-overflow:ellipsis}
+.ant-table td small{display:block;font-size:11px;color:var(--muted,#7a8ca5);margin-top:3px}
+.ant-table tr:last-child td{border-bottom:none}
+.ant-table .ant-num{text-align:right;font-variant-numeric:tabular-nums;font-weight:750}
+.ant-rank{color:#7188a8;font-weight:800}
+.ant-bar{width:100px;height:4px;margin-top:6px;margin-left:auto}
+.ant-row-actions{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.ant-row-actions button,.ant-detail-footer button,.ant-section-heading>button{background:rgba(88,132,214,.1);color:#3865b3;border:1px solid rgba(90,135,219,.14);padding:8px 10px;border-radius:9px;font-size:11px;font-weight:750;white-space:nowrap}
+.ant-table-note,.ant-rulepanel p{color:var(--muted,#6d809c);font-size:11px;line-height:1.6;margin:12px 0 0}
+.ant-empty{text-align:center;padding:38px 12px}
+.ant-empty span{width:46px;height:46px;background:rgba(83,130,207,.12);color:#547fc5;border-radius:15px;display:grid;place-items:center;margin:0 auto}
+.ant-empty svg{width:22px;height:22px}
+.ant-empty h4{font-size:17px;letter-spacing:-.025em;margin:14px 0 7px}
+.ant-empty p{color:var(--muted,#677f9d);font-size:13px;line-height:1.5;max-width:530px;margin:0 auto}
+.ant-rulegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ant-rulegrid label{display:grid;gap:8px;color:var(--muted,#617995);font-size:12px;font-weight:750}
+.ant-rulegrid input{width:100%;padding:12px;border:1px solid var(--line,#dce7f6);border-radius:12px;color:inherit;background:var(--white,#fff);min-width:0}
+.ant-primary-button{border:0;border-radius:11px;background:#4f77c5;color:#fff;padding:12px 18px;font-size:12px;font-weight:750;margin-top:14px}
+.ant-detail-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:15px}
+.ant-detail-metrics>div{border-radius:14px;background:rgba(93,132,201,.08);padding:14px;min-width:0}
+.ant-detail-metrics small{display:block;font-size:10px;letter-spacing:.08em;color:var(--muted,#6c83a3);font-weight:850}
+.ant-detail-metrics b{display:block;margin-top:8px;font-size:18px;overflow-wrap:anywhere}
+.ant-icon-close{font-size:22px!important;line-height:1!important}
+.ant-detail-footer{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.ant-detail-footer svg{height:13px;width:13px}
+.ant-footer-info{display:flex;gap:12px;padding:9px 2px;color:var(--muted,#70859e)}
+.ant-footer-info svg{height:20px;width:20px;flex-shrink:0}
+.ant-footer-info p{font-size:11px;line-height:1.6;margin:0}
+.ant-mobile-list{display:none}
+.ant-muted{font-size:12px;color:var(--muted,#71849b)}
+.ant-directory [hidden]{display:none!important}
+@media(max-width:790px){
+ .ant-module{gap:14px;padding:6px 0 calc(128px + env(safe-area-inset-bottom,0px));}
+ .ant-heading{flex-direction:column;align-items:stretch;gap:12px;padding:0 2px}
+ .ant-heading h1{font-size:33px}.ant-heading p{font-size:12px}
+ .ant-month-label{align-self:start}.ant-month-label input{min-height:38px}
+ .ant-hero{grid-template-columns:1fr;border-radius:26px}
+ .ant-hero-primary{padding:23px 20px 20px}.ant-hero-primary>strong{font-size:clamp(38px,11vw,54px)}
+ .ant-hero-stats{padding:15px;grid-template-columns:repeat(2,minmax(0,1fr));border:0;border-top:1px solid rgba(255,255,255,.16);gap:9px}
+ .ant-hero-stats>div{padding:14px 12px}.ant-hero-stats strong{font-size:clamp(17px,4.6vw,22px)}
+ .ant-hero-stats>div:first-child{grid-column:span 2}.ant-hero-stats small{font-size:9px}.ant-hero-stats span{font-size:10px}
+ .ant-insight-panel{grid-template-columns:1fr;gap:14px}.ant-insight-side{text-align:left;border:0;border-top:1px solid var(--line,#dae5f4);padding:13px 0 0}.ant-insight-side>strong{font-size:27px}
+ .ant-panel,.ant-insight-panel{padding:16px;border-radius:23px}
+ .ant-section-heading{display:block}.ant-list-toolbar{margin-top:15px;justify-content:space-between}
+ .ant-main-table{display:none}.ant-mobile-list{display:grid;gap:10px}
+ .ant-search-label{margin-bottom:14px}
+ .ant-habit-card{border:1px solid var(--line,#dde8f6);border-radius:18px;padding:15px;background:rgba(112,149,203,.06);display:grid;gap:14px;min-width:0}
+ .ant-habit-top{display:flex;align-items:center;gap:10px;min-width:0}
+ .ant-habit-mark{height:41px;width:41px;border-radius:13px;display:grid;place-items:center;background:rgba(86,124,205,.13);color:#476fb3;flex-shrink:0}
+ .ant-habit-mark svg{width:20px;height:20px}.ant-habit-top>div{flex:1;min-width:0;display:grid;gap:3px}
+ .ant-habit-top strong{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ant-habit-top small{font-size:11px;color:var(--muted,#657d9a)}
+ .ant-habit-share{font-size:12px;font-weight:800;color:#4975bc}
+ .ant-habit-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .ant-habit-values>div{display:grid;gap:6px;min-width:0}.ant-habit-values small{font-size:9px;font-weight:800;letter-spacing:.08em;color:var(--muted,#71849e)}
+ .ant-habit-values b{font-size:19px;letter-spacing:-.035em;overflow-wrap:anywhere}.ant-habit-values>div:last-child{grid-column:span 2}
+ .ant-habit-actions{display:flex;gap:8px}.ant-habit-actions button{flex:1;padding:11px 7px;font-size:11px;border:1px solid var(--line,#dbe6f4);background:rgba(255,255,255,.7);border-radius:12px;color:#4774b9;font-weight:760}
+ .ant-rulegrid{grid-template-columns:1fr}.ant-detail-metrics{grid-template-columns:1fr 1fr}.ant-detail-metrics>div:last-child{grid-column:span 2}
+}
+@media(max-width:380px){.ant-hero-primary>strong{font-size:clamp(33px,10vw,45px)}.ant-tabs button{padding:9px}.ant-list-toolbar{gap:7px}.ant-detail-metrics b{font-size:15px}}
+body.theme-black .ant-module,body.theme-dark .ant-module{color:#e6eeff}
+body.theme-black .ant-panel,body.theme-black .ant-insight-panel,body.theme-dark .ant-panel,body.theme-dark .ant-insight-panel{background:#161d28!important;border-color:#334257!important;color:#e6eeff!important}
+body.theme-black .ant-hero,body.theme-dark .ant-hero{background:linear-gradient(135deg,#142341,#25466b)!important}
+body.theme-black .ant-rulegrid input,body.theme-black .ant-search-label,body.theme-black .ant-sort-label select,body.theme-black .ant-month-label input,body.theme-dark .ant-rulegrid input,body.theme-dark .ant-search-label,body.theme-dark .ant-sort-label select,body.theme-dark .ant-month-label input{background:#222c3a!important;border-color:#36485d!important;color:#eef5ff!important}
+body.theme-black .ant-tabs button.active,body.theme-dark .ant-tabs button.active{background:#25354b!important;color:#e7eeff!important}
+body.theme-black .ant-habit-card,body.theme-dark .ant-habit-card{background:#202b3b!important;border-color:#334257!important}
+@media(prefers-reduced-motion:reduce){.ant-module *{scroll-behavior:auto!important;transition:none!important}}
+.ant-weekly-total{font-size:18px;font-weight:830;letter-spacing:-.05em;color:#355f9d}
+.ant-weekly-chart{height:185px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:clamp(4px,1vw,12px);padding:8px 3px 0;align-items:end}
+.ant-week{display:grid;grid-template-rows:21px 1fr 20px;align-items:center;text-align:center;min-width:0;gap:6px;height:100%}
+.ant-week-value{font-size:11px;color:var(--muted,#6d809c);font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ant-week-track{display:flex;align-items:flex-end;justify-content:center;height:100%;width:100%;border-radius:12px 12px 3px 3px;background:rgba(103,140,205,.08);overflow:hidden}
+.ant-week-track i{display:block;width:min(100%,64px);border-radius:9px 9px 0 0;background:linear-gradient(160deg,#8baee5,#4a76c9);min-height:0}
+.ant-week small{font-size:10px;color:var(--muted,#6e819b);white-space:nowrap}
+.ant-export{display:flex;align-items:center;gap:5px;border-radius:11px;border:1px solid var(--line,#dae5f4);background:rgba(111,147,202,.1);color:#3a64a6;padding:10px 11px;font-size:11px;font-weight:790}
+.ant-export svg{width:13px;height:13px}
+@media(max-width:790px){.ant-weekly-chart{height:160px;gap:4px}.ant-week-value{font-size:9px}.ant-week small{font-size:9px}.ant-list-toolbar{align-items:center}.ant-export{padding:10px}.ant-sort-label{font-size:10px}}
+body.theme-black .ant-weekly-total,body.theme-dark .ant-weekly-total{color:#b6d4ff}
+@media(min-width:791px){.ant-main-table{max-height:540px;overflow:auto}.ant-main-table thead th{position:sticky;top:0;z-index:1;box-shadow:0 1px 0 var(--line,#dce6f4)}}
+
 </style>
 </body>
 </html>
