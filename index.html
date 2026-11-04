@@ -22670,7 +22670,7 @@ banks=function(){
  const scopeDescription=v61InstitutionProfile==='all'?'La foto completa de tus fondos y obligaciones, con el detalle de cada banco y entidad vinculada.':'La información de las instituciones asignadas a este perfil, con sus productos vinculados y sin mezclar los otros perfiles.';
  const scopeAcctCount=v61InstitutionProfile==='all'?db.accounts.filter(a=>!a.archived&&a.kind!=='cash').length:profile.accounts.length;
  const scopeCardCount=v61InstitutionProfile==='all'?db.cards.filter(x=>!x.archived).length:profile.cards.length;
- return `<div class="v42-institutions v46-institutions v61-institutions" data-profile="${v61InstitutionProfile}">
+ return `<div class="v42-institutions v46-institutions v61-institutions v236-institution-view" data-profile="${v61InstitutionProfile}">
  <div class="bank-hero v46-bank-hero">
    <div class="v46-bank-intro">
     <div class="hero-eyebrow">TU CARTERA FINANCIERA</div>
@@ -22689,13 +22689,16 @@ banks=function(){
  <div class="v204-desktop-layout" aria-label="Instituciones y sus productos">
   <aside class="v204-bank-sidebar" aria-label="Seleccionar institución">
   <section class="v42-bank-section v46-bank-list">
-  <div class="v42-bank-top"><div><h3>Instituciones</h3><p>Elige un banco para ver sus productos.</p></div><div class="v42-filters v46-bank-filters">${filters.map(([key,label])=>`<button type="button" data-v42-filter="${key}" class="${v42InstitutionFilter===key?'active':''}" aria-pressed="${v42InstitutionFilter===key}">${label}</button>`).join('')}</div></div>
-  <div class="v42-entities v46-bank-cards v225-institution-cards">${shown.length?shown.map(b=>`<button type="button" class="v46-bank-card v225-institution-card ${activeBank?.id===b.id?'selected':''}" data-act="bankDetails" data-id="${b.id}" aria-pressed="${activeBank?.id===b.id}" aria-expanded="${activeBank?.id===b.id}" aria-controls="v226-bank-expanded" aria-label="${activeBank?.id===b.id?'Ocultar información de':'Ver información de'} ${sanitize(b.name)}">
-      ${bankLogoMark(b,'institution-logo')}
-      <strong class="v46-bank-card-name">${sanitize(b.name)}</strong>
-      <span class="v225-institution-chevron" aria-hidden="true">${icon('arrow')}</span>
-    </button>`).join(''):`<div class="v42-empty">No hay instituciones para este filtro. Puedes cambiarlo o añadir una institución.</div>`}</div>
-  <details class="v204-bank-context"><summary>Cómo se calculan los saldos</summary><p>Los beneficios no monetarios no aumentan los fondos bancarios. Los movimientos anteriores conservan sus importes.</p></details>
+  <div class="v42-bank-top v236-institution-heading"><div><h3>Tus instituciones</h3><p>Fondos y deudas individuales, sin perder el panorama global.</p></div><div class="v42-filters v46-bank-filters">${filters.map(([key,label])=>`<button type="button" data-v42-filter="${key}" class="${v42InstitutionFilter===key?'active':''}" aria-pressed="${v42InstitutionFilter===key}">${label}</button>`).join('')}</div></div>
+  <div class="v42-entities v46-bank-cards v225-institution-cards v236-institution-cards">${shown.length?shown.map(b=>{const f=bankFigures(b),products=f.aa.length+f.cc.length+f.ll.length+f.certs.length,nonBank=!v40IsFinancial(b),benefits=(db.institutionBenefits||[]).filter(x=>x.institutionId===b.id&&x.active!==false).length,incomes=(db.incomeSchedules||[]).filter(x=>x.institutionId===b.id&&x.active!==false).length,scope=v42ScopeLabel(b);return `<button type="button" class="v46-bank-card v225-institution-card v236-institution-card ${activeBank?.id===b.id?'selected':''}" data-act="bankDetails" data-id="${b.id}" aria-pressed="${activeBank?.id===b.id}" aria-expanded="${activeBank?.id===b.id}" aria-controls="v226-bank-expanded" aria-label="${activeBank?.id===b.id?'Ocultar información de':'Ver información de'} ${sanitize(b.name)}">
+      <span class="v236-card-top">
+        <span class="v236-bank-logo">${bankLogoMark(b,'institution-logo')}</span>
+        <span class="v236-card-identity"><strong class="v46-bank-card-name">${sanitize(b.name)}</strong><span class="v236-kind">${sanitize(v42KindLabel(b))} <span aria-hidden="true">·</span> <span class="v236-scope ${scope==='Negocio'?'is-business':'is-personal'}">${scope}</span></span><span class="v236-products">${products} producto${products===1?'':'s'}${nonBank?` · ${benefits} beneficio${benefits===1?'':'s'} · ${incomes} ingreso${incomes===1?'':'s'}`:''}${b.archived?' · ARCHIVADA':''}</span></span>
+        <span class="v225-institution-chevron" aria-hidden="true">${icon('arrow')}</span>
+      </span>
+      <span class="v236-card-metrics"><span><small>Fondos</small><strong>${money(f.liquidity)}</strong></span><span><small>Deudas</small><strong>${money(f.credit+f.loansDue)}</strong></span></span>
+    </button>`}).join(''):`<div class="v42-empty">No hay instituciones para este filtro. Puedes cambiarlo o añadir una institución.</div>`}</div>
+  <p class="v236-institution-note">Los beneficios no monetarios no aumentan los fondos bancarios y los movimientos anteriores conservan sus importes.</p>
  </section>
   </aside>
   ${activeBank?`<div class="v204-bank-detail" id="v226-bank-expanded" aria-label="Productos de la institución seleccionada">
@@ -32611,6 +32614,142 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
 #page .v26-internal[data-module="categories"] .v26-body{padding-top:0}
 #page .v26-internal[data-module="categories"] .taxonomy-grid{margin-top:14px}
 @media(max-width:640px){#page .v234-account-controls{justify-content:flex-start}}
+</style>
+
+<style id="vive-v236-instituciones-tarjetas-completas">
+/* V236 · Restaurar tarjetas institucionales de la referencia sin cambiar KPI ni contabilidad. */
+@media (min-width:768px){
+ .world-banks .v236-institution-view .v204-bank-sidebar .v42-bank-section.v46-bank-list{
+   padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+ }
+ .world-banks .v236-institution-view .v204-bank-sidebar .v42-bank-top.v236-institution-heading{
+   display:flex!important;justify-content:space-between!important;align-items:flex-start!important;
+   flex-wrap:wrap!important;gap:14px 24px!important;margin-bottom:22px!important;
+ }
+ .world-banks .v236-institution-view .v236-institution-heading h3{
+   font-size:clamp(23px,2.05vw,30px)!important;line-height:1.15!important;
+   color:var(--text,#1d304e)!important;font-weight:820!important;letter-spacing:-.045em!important;margin:0 0 8px!important;
+ }
+ .world-banks .v236-institution-view .v236-institution-heading p{
+   font-size:clamp(12px,1.12vw,15px)!important;color:var(--muted,#71819b)!important;margin:0!important;line-height:1.45!important;
+ }
+ .world-banks .v236-institution-view .v236-institution-heading .v42-filters{
+   display:flex!important;gap:10px!important;flex-wrap:wrap!important;width:auto!important;
+ }
+ .world-banks .v236-institution-view .v236-institution-heading .v42-filters button{
+   border-radius:999px!important;border:1px solid rgba(119,144,183,.12)!important;
+   background:var(--panel,#fff)!important;color:var(--text,#536782)!important;
+   font-size:clamp(12px,1.05vw,15px)!important;font-weight:750!important;
+   padding:12px clamp(14px,1.6vw,24px)!important;white-space:nowrap!important;
+   min-height:43px!important;box-shadow:0 2px 10px rgba(40,66,110,.035)!important;
+ }
+ .world-banks .v236-institution-view .v236-institution-heading .v42-filters button.active{
+   background:#233b5e!important;color:#fff!important;border-color:#233b5e!important;
+ }
+ .world-banks .v236-institution-view .v204-bank-sidebar .v42-entities.v225-institution-cards.v236-institution-cards{
+   display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+   gap:clamp(11px,1.35vw,20px)!important;align-items:stretch!important;width:100%!important;
+ }
+ .world-banks .v236-institution-view .v204-bank-sidebar .v225-institution-card.v236-institution-card{
+   display:flex!important;flex-direction:column!important;justify-content:space-between!important;align-items:stretch!important;
+   min-height:clamp(195px,15.6vw,238px)!important;height:auto!important;
+   padding:clamp(16px,1.65vw,24px)!important;gap:13px!important;
+   border-radius:clamp(19px,1.55vw,24px)!important;border:1px solid rgba(199,212,234,.64)!important;
+   background:rgba(255,255,255,.90)!important;color:var(--text,#21334f)!important;
+   box-shadow:0 8px 28px rgba(22,51,93,.055)!important;
+   transition:border-color .15s,box-shadow .15s!important;overflow:hidden!important;cursor:pointer!important;
+ }
+ .world-banks .v236-institution-view .v204-bank-sidebar .v225-institution-card.v236-institution-card:hover{
+   border-color:#9cb8e9!important;box-shadow:0 11px 27px rgba(26,67,126,.10)!important;
+ }
+ .world-banks .v236-institution-view .v204-bank-sidebar .v225-institution-card.v236-institution-card.selected{
+   border-color:#779ede!important;background:#f7faff!important;box-shadow:0 0 0 2px rgba(83,125,199,.09)!important;
+ }
+ .world-banks .v236-institution-view .v236-card-top{
+   display:flex!important;align-items:flex-start!important;gap:clamp(12px,1.25vw,17px)!important;
+   width:100%!important;flex:1 1 auto!important;min-width:0!important;
+ }
+ .world-banks .v236-institution-view .v236-bank-logo{display:flex!important;flex:0 0 60px!important;width:60px!important;min-width:60px!important;align-self:flex-start!important;}
+ .world-banks .v236-institution-view .v236-bank-logo .institution-logo,
+ .world-banks .v236-institution-view .v236-bank-logo .bank-photo-mark{
+   width:60px!important;height:60px!important;min-width:60px!important;flex:0 0 60px!important;
+   border-radius:19px!important;object-fit:contain!important;
+   background:rgba(255,255,255,.93)!important;border:1px solid rgba(216,225,239,.6)!important;
+ }
+ .world-banks .v236-institution-view .v236-card-identity{
+   display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:8px!important;
+   min-width:0!important;flex:1 1 auto!important;padding-top:5px!important;text-align:left!important;
+ }
+ .world-banks .v236-institution-view .v236-card-identity .v46-bank-card-name{
+   order:initial!important;font-size:clamp(17px,1.55vw,23px)!important;line-height:1.15!important;
+   font-weight:830!important;color:var(--text,#1c2e4b)!important;letter-spacing:-.035em!important;
+   overflow-wrap:anywhere!important;min-width:0!important;
+ }
+ .world-banks .v236-institution-view .v236-kind,
+ .world-banks .v236-institution-view .v236-products{font-size:clamp(11px,1vw,14px)!important;color:var(--muted,#75849b)!important;line-height:1.4!important;}
+ .world-banks .v236-institution-view .v236-scope{display:inline-block!important;vertical-align:baseline!important;padding:3px 10px!important;border-radius:999px!important;font-size:inherit!important;font-weight:780!important;white-space:nowrap!important;}
+ .world-banks .v236-institution-view .v236-scope.is-personal{background:#e8f0ff!important;color:#2d609e!important;}
+ .world-banks .v236-institution-view .v236-scope.is-business{background:#e1f6ee!important;color:#147e69!important;}
+ .world-banks .v236-institution-view .v236-card-top .v225-institution-chevron{
+   order:initial!important;margin-left:auto!important;display:flex!important;
+   width:39px!important;height:39px!important;flex:0 0 39px!important;
+   border-radius:13px!important;background:#f3f6fb!important;color:#778da9!important;
+ }
+ .world-banks .v236-institution-view .v236-card-top .v225-institution-chevron svg{width:21px!important;height:21px!important;}
+ .world-banks .v236-institution-view .v236-card-metrics{
+   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:10px!important;width:100%!important;
+   padding-top:14px!important;margin-top:auto!important;border-top:1px solid #dfe6f1!important;
+ }
+ .world-banks .v236-institution-view .v236-card-metrics>span{display:flex!important;flex-direction:column!important;align-items:flex-start!important;min-width:0!important;gap:5px!important;}
+ .world-banks .v236-institution-view .v236-card-metrics small{font-size:clamp(11px,.95vw,14px)!important;color:var(--muted,#77869b)!important;}
+ .world-banks .v236-institution-view .v236-card-metrics strong{
+   font-size:clamp(16px,1.45vw,21px)!important;line-height:1.14!important;color:var(--text,#273b57)!important;
+   font-weight:790!important;letter-spacing:-.035em!important;font-variant-numeric:tabular-nums!important;overflow-wrap:anywhere!important;
+ }
+ .world-banks .v236-institution-view .v236-institution-note{
+   font-size:clamp(12px,1.12vw,15px)!important;color:var(--muted,#7a8ca7)!important;
+   margin:10px 4px 4px!important;line-height:1.45!important;
+ }
+}
+@media (min-width:768px) and (max-width:1199px){
+ .world-banks .v236-institution-view .v204-bank-sidebar .v42-entities.v225-institution-cards.v236-institution-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+ .world-banks .v236-institution-view .v204-bank-sidebar .v225-institution-card.v236-institution-card{min-height:190px!important;}
+}
+@media (min-width:768px) and (max-width:880px){
+ .world-banks .v236-institution-view .v204-bank-sidebar .v42-entities.v225-institution-cards.v236-institution-cards{grid-template-columns:1fr!important;}
+}
+/* Overrides: en versiones anteriores el nombre tenia centrado y 15px forzados. */
+@media (min-width:768px){
+ body .world-banks .v236-institution-view .v204-bank-sidebar .v225-institution-card.v236-institution-card .v236-card-identity .v46-bank-card-name{
+   display:block!important;flex:0 0 auto!important;align-self:flex-start!important;justify-self:start!important;
+   width:auto!important;text-align:left!important;font-size:clamp(17px,1.55vw,23px)!important;
+   line-height:1.17!important;font-weight:830!important;margin:0!important;
+ }
+ body .world-banks .v236-institution-view .v236-bank-logo .bank-photo-mark:not(:has(img)){
+   background:var(--bank-color,#376bea)!important;color:white!important;
+ }
+ body .world-banks .v236-institution-view .v236-bank-logo .bank-photo-mark:not(:has(img)) .bank-photo-fallback{
+   color:white!important;
+ }
+}
+/* La experiencia de instituciones móvil existente se conserva; este bloque no la redefine. */
+@media (min-width:768px){
+ body.theme-dark .world-banks .v236-institution-view .v225-institution-card.v236-institution-card,
+ body.theme-black .world-banks .v236-institution-view .v225-institution-card.v236-institution-card{
+   background:var(--panel,#192534)!important;border-color:var(--line,#344154)!important;color:var(--text,#e6f0ff)!important;
+ }
+ body.theme-dark .world-banks .v236-institution-view .v225-institution-card.v236-institution-card.selected,
+ body.theme-black .world-banks .v236-institution-view .v225-institution-card.v236-institution-card.selected{background:#20334d!important;border-color:#769ee0!important;}
+ body.theme-dark .world-banks .v236-institution-view .v236-bank-logo .institution-logo,
+ body.theme-black .world-banks .v236-institution-view .v236-bank-logo .institution-logo{background:#f1f4fa!important;}
+ body.theme-dark .world-banks .v236-institution-view .v236-card-metrics,
+ body.theme-black .world-banks .v236-institution-view .v236-card-metrics{border-color:#394a65!important;}
+ body.theme-dark .world-banks .v236-institution-view .v236-card-top .v225-institution-chevron,
+ body.theme-black .world-banks .v236-institution-view .v236-card-top .v225-institution-chevron{background:#29364b!important;color:#adbfda!important;}
+ body.theme-dark .world-banks .v236-institution-view .v236-institution-heading .v42-filters button.active,
+ body.theme-black .world-banks .v236-institution-view .v236-institution-heading .v42-filters button.active{background:#456da5!important;color:#fff!important;border-color:#789acb!important;}
+}
 </style>
 </body>
 </html>
