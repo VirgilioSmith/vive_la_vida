@@ -22812,6 +22812,12 @@ document.addEventListener('click',function(event){
  event.preventDefault();event.stopImmediatePropagation();
  const destination=tab.dataset.v206Tab;
  if(!['banks','accounts','cards','loans','certificates','benefits'].includes(destination))return;
+ // V232: si Comparar beneficios está abierto, tocar Tarjetas regresa al
+ // portafolio y tocar otra pestaña no deja una vista interna obsoleta.
+ if(ui.v230BenefitComparison){
+   ui.v230BenefitComparison=false;
+   if(ui.page===destination){render();window.scrollTo({top:0,behavior:'instant'});}
+ }
  if(ui.page!==destination){
   ui.page=destination;
   ui.mobile=false;
@@ -26977,37 +26983,11 @@ setInterval(()=>{
  }
 },60000);
 
- f33Boot();
-
-})();
-
-
-/* V64 · El panel de notificaciones solo permanece abierto durante interacción explícita. */
-document.addEventListener('pointerdown',function(ev){
- const bell=document.querySelector('.v36-notifications[open]');
- if(bell&&!bell.contains(ev.target))bell.open=false;
-},true);
-document.addEventListener('keydown',function(ev){
- if(ev.key==='Escape'){const bell=document.querySelector('.v36-notifications[open]');if(bell){bell.open=false;bell.querySelector('summary')?.focus();}}
-},true);
-
-
-/* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
-window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
-document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
-
-
-
-
-
-
-
-
 /* V230 — Beneficios pertenece a Tarjetas como vista interna completa.
    Reutiliza v144BenefitsPage, sin cambiar métricas, registros ni formularios. */
 const v230OriginalCardsPage = pages.cards;
 function v230BenefitsWorkspace(){
-  return `<div class="v230-benefits-page" aria-label="Tarjetas, comparar beneficios">
+  return `<div class="v230-benefits-page" id="v230BenefitsWorkspace" aria-label="Tarjetas, comparar beneficios">
     <header class="v230-benefits-header">
       <div><span class="v230-benefits-eyebrow">TARJETAS / ANÁLISIS DE BENEFICIOS</span>
         <h2>Comparar beneficios</h2>
@@ -27035,16 +27015,44 @@ document.addEventListener('click',function(event){
     ui.v230BenefitsFrom=ui.page;
     ui.v230BenefitComparison=true;
     ui.v144BenefitsCard='all';
-    ui.page='cards';render();window.scrollTo(0,0);return;
+    ui.page='cards';render();window.scrollTo({top:0,behavior:'instant'});return;
   }
   if(act==='closeBenefitComparison'){
     event.preventDefault();event.stopImmediatePropagation();
     ui.v230BenefitComparison=false;ui.page='cards';render();window.scrollTo(0,0);return;
   }
-  if(ui.v230BenefitComparison && ((act==='navigate'&&id==='cards')||act==='goCard')){
+  if(ui.v230BenefitComparison && ((act==='navigate'&&id!=='benefits')||act==='goCard')){
     ui.v230BenefitComparison=false;
   }
 },true);
+
+
+ f33Boot();
+
+})();
+
+
+/* V64 · El panel de notificaciones solo permanece abierto durante interacción explícita. */
+document.addEventListener('pointerdown',function(ev){
+ const bell=document.querySelector('.v36-notifications[open]');
+ if(bell&&!bell.contains(ev.target))bell.open=false;
+},true);
+document.addEventListener('keydown',function(ev){
+ if(ev.key==='Escape'){const bell=document.querySelector('.v36-notifications[open]');if(bell){bell.open=false;bell.querySelector('summary')?.focus();}}
+},true);
+
+
+/* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
+window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
+document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
+
+
+
+
+
+
+
+
 </script>
 <!-- V40: compromisos por modalidad, nómina recurrente, instituciones no bancarias y reglas fiscales versionadas. -->
 <!-- V30: control de calidad, recuperación local, validación conservadora de importación. No modifica cálculos financieros. -->
@@ -32368,5 +32376,103 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   body .world-banks .v225-institution-card{transition:none!important;transform:none!important;}
 }
 </style>
+
+<style id="vive-v232-refinamiento-estable">
+/* V232 · Normalización no destructiva de anchuras, focus y componentes.
+   Se preserva explícitamente el KPI grande de Instituciones y el Resumen. */
+:root{--v232-space-xs:6px;--v232-space-sm:10px;--v232-space-md:14px;--v232-space-lg:18px}
+#app, .shell, .main, .main #page{min-width:0}
+.main #page{width:100%;max-width:100%}
+.main #page :is(.panel,.kpi,.bank-card,.product-lane,.v220-bank-focus,.v220-focus-card,.v144-benefit-world,.v187-benefits-ledger,.v230-benefits-page){min-width:0}
+/* Conservar el aspecto, pero impedir que botones/etiquetas ensanchen las páginas. */
+.main:not(.world-overview) .section-title,
+.main:not(.world-overview) .panel-head{min-width:0;column-gap:clamp(10px,1.2vw,18px)}
+.main:not(.world-overview) .section-title>div,
+.main:not(.world-overview) .panel-head>div{min-width:0}
+.main:not(.world-overview) .section-title>.hstack{flex-wrap:wrap;justify-content:flex-end;min-width:0}
+.main:not(.world-overview) .product-columns>*{min-width:0}
+.main:not(.world-overview) :is(.grid,.columns,.dual,.cards-grid)>*{min-width:0}
+/* Foco visible que respeta radios y no cambia estados ni colores originales. */
+.main :is(button,a,[role="button"]):focus-visible{outline:2px solid var(--blue,#547dd5);outline-offset:3px}
+/* Páginas internas: mismo ancho de lectura que el módulo padre. */
+.world-cards .v230-benefits-page{max-width:100%;min-width:0;width:100%}
+.world-cards .v230-benefits-page #v144Benefits,
+.world-cards .v230-benefits-page .v187-benefits-ledger{max-width:100%;min-width:0;width:100%}
+.world-cards .v230-benefits-page .v144-table-wrap{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
+/* La barra de botones de Beneficios se adapta a laptop sin recortar acciones. */
+@media (min-width:768px){
+  .world-cards .v230-benefits-header{flex-wrap:wrap;row-gap:12px}
+  .world-cards .v230-benefits-header>div{flex:1 1 360px;min-width:0}
+  .world-cards .v230-benefits-header .v230-back{flex:none;margin-left:auto}
+  .main:not(.world-overview) .section-title{flex-wrap:wrap}
+}
+/* Solo Instituciones WEB: mismo eje y ancho exterior que su gran KPI superior. */
+@media (min-width:768px){
+  .world-banks .v61-institutions,
+  .world-banks .v204-desktop-layout,
+  .world-banks .v204-bank-sidebar,
+  .world-banks .v204-bank-detail{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box}
+  .world-banks .v204-desktop-layout{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    margin:clamp(12px,1.2vw,18px) 0 0!important;
+    gap:clamp(11px,1.15vw,17px)!important;
+    align-items:start!important;
+  }
+  .world-banks .v204-bank-sidebar{position:static!important;overflow:visible!important;max-height:none!important;padding:0!important;margin:0!important}
+  .world-banks .v204-bank-sidebar .v42-bank-section{width:100%!important;min-width:0!important;max-width:none!important;margin:0!important;padding:clamp(13px,1.25vw,19px)!important}
+  .world-banks .v204-bank-sidebar .v42-bank-top{gap:10px!important;margin-bottom:14px!important}
+  .world-banks .v204-bank-sidebar .v42-filters{flex-shrink:0;max-width:100%;min-width:0}
+  .world-banks .v204-bank-sidebar .v42-entities.v225-institution-cards{
+    display:grid!important;
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))!important;
+    gap:clamp(9px,.9vw,13px)!important;
+    width:100%!important;padding:0!important;margin:0!important;
+  }
+  .world-banks .v204-bank-sidebar .v225-institution-card{
+    width:100%!important;min-width:0!important;max-width:none!important;
+    min-height:75px!important;height:auto!important;
+    padding:12px clamp(13px,1.1vw,17px)!important;
+    display:flex!important;align-items:center!important;gap:12px!important;
+    overflow:hidden!important;transform:none!important;
+  }
+  .world-banks .v204-bank-sidebar .v225-institution-card .institution-logo{flex:0 0 42px!important;width:42px!important;height:42px!important;min-width:42px!important}
+  .world-banks .v204-bank-sidebar .v225-institution-card .v46-bank-card-name{min-width:0!important;flex:1 1 auto!important;line-height:1.3!important;font-size:clamp(13px,.95vw,15px)!important;overflow-wrap:anywhere}
+  .world-banks .v204-bank-sidebar .v225-institution-card>.institution-logo,
+  .world-banks .v204-bank-sidebar .v225-institution-card>.bank-photo-mark{order:0!important}
+  .world-banks .v204-bank-sidebar .v225-institution-card>.v46-bank-card-name{order:1!important}
+  .world-banks .v204-bank-sidebar .v225-institution-card>.v225-institution-chevron{order:2!important}
+  .world-banks .v204-bank-sidebar .v225-institution-chevron{margin-left:auto!important;flex:0 0 27px!important}
+  .world-banks .v204-bank-detail{
+    margin:0!important;padding:0!important;min-height:0!important;
+    overflow:visible!important;contain:none!important;
+  }
+  .world-banks .v204-bank-detail .bank-workspace{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important}
+  /* Todos los detalles originales siguen presentes solo cuando existe selección. */
+  .world-banks .v204-desktop-layout:not(:has(.v204-bank-detail)){padding-bottom:0!important;min-height:0!important}
+  .world-banks .v204-bank-detail .v220-bank-overview{min-width:0;max-width:100%}
+  .world-banks .v204-bank-detail .v220-bank-overview>*{min-width:0}
+  .world-banks .v204-bank-detail .v220-products-head{flex-wrap:wrap;gap:12px}
+  .world-banks .v204-bank-detail .v220-products-head .hstack{flex-wrap:wrap;justify-content:flex-end}
+}
+/* En 768–1100 px, dos tarjetas por fila; en pantallas mayores, columnas fluidas. */
+@media (min-width:768px) and (max-width:1100px){
+  .world-banks .v204-bank-sidebar .v42-entities.v225-institution-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media (min-width:1101px) and (max-width:1250px){
+  .world-banks .v204-bank-sidebar .v42-entities.v225-institution-cards{grid-template-columns:repeat(auto-fill,minmax(min(100%,255px),1fr))!important}
+}
+/* Detalles y cambio de vista: entrada discreta que no altera su geometría final. */
+@media (prefers-reduced-motion:no-preference){
+  @keyframes v232-detail-arrive{from{opacity:.65;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+  .world-banks .v204-bank-detail,
+  .world-cards .v230-benefits-page{animation:v232-detail-arrive .16s ease-out both}
+}
+/* Las tablas grandes se desplazan en sí mismas, nunca ensanchan toda la app. */
+.main:not(.world-overview) :is(.table-wrap,.v144-table-wrap,.v144-table-scroll,.v144-table-shell){max-width:100%;min-width:0;overscroll-behavior-x:contain}
+@media (prefers-reduced-motion:reduce){
+  .main:not(.world-overview) :is(.v225-institution-card,.nav-btn,.btn){transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+
 </body>
 </html>
