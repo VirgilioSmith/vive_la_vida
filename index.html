@@ -17096,9 +17096,7 @@ function bankForm(id){
 function categories(){
  const collection=[['gasto','GASTOS'],['ingreso','INGRESOS']];
  const n=db.transactions.filter(t=>t.category).length;
- return `<div class="taxonomy-head"><div><div class="hero-eyebrow">CATÁLOGO INTELIGENTE</div><h2>De cada categoría<br/><em>hasta el último detalle.</em></h2><p>Conserva el catálogo predefinido y todas tus subcategorías. Elimina solo las que elijas, sin modificar movimientos históricos.</p></div><button class="btn light" data-act="addCategory">${icon('plus')} Personalizar catálogo</button></div>
- <div class="grid kpis section">${shellKpi('Categorías de gasto',String(Object.keys(categoryMap('gasto')).length),'Catálogo en español','receipt')}${shellKpi('Subcategorías de gasto',String(Object.values(categoryMap('gasto')).flat().length),'Nivel micro de clasificación','chart')}${shellKpi('Categorías de ingreso',String(Object.keys(categoryMap('ingreso')).length),'Fuentes de ingreso','up')}${shellKpi('Movimientos clasificados',String(n),'Historial con categoría','check')}</div>
- <div class="taxonomy-grid section">${collection.map(([kind,label])=>`<div class="panel"><div class="panel-head"><h3>${label}</h3><span class="pill">${Object.keys(categoryMap(kind)).length} categorías</span></div>
+ return ` <div class="taxonomy-grid section">${collection.map(([kind,label])=>`<div class="panel"><div class="panel-head"><h3>${label}</h3><span class="pill">${Object.keys(categoryMap(kind)).length} categorías</span></div>
  ${Object.entries(categoryMap(kind)).map(([cat,subs])=>`<details class="taxonomy-item v191-taxonomy-item"><summary><strong>${sanitize(cat)}</strong><span>${subs.length} subcategorías <b>⌄</b></span></summary>
  <div class="taxonomy-sub v191-taxonomy-sub">${subs.map(sub=>`<span class="v191-taxonomy-subitem"><span>${sanitize(sub)}</span><button type="button" class="v191-taxonomy-delete v191-sub-delete" data-act="v191DeleteSubcategory" data-kind="${kind}" data-cat="${sanitize(encodeURIComponent(cat))}" data-sub="${sanitize(encodeURIComponent(sub))}" aria-label="Eliminar subcategoría ${sanitize(sub)} de ${sanitize(cat)}" title="Eliminar esta subcategoría">${icon('trash')}</button></span>`).join('')||'<span>Sin subcategorías</span>'}</div>
  <div class="v191-taxonomy-footer"><button type="button" class="v191-taxonomy-delete v191-category-delete" data-act="v191DeleteCategory" data-kind="${kind}" data-cat="${sanitize(encodeURIComponent(cat))}">${icon('trash')} Eliminar categoría</button></div>
@@ -17114,9 +17112,7 @@ function originalAccounts(){
  const physicalU=db.accounts.find(a=>a.kind==='cash'&&a.currency==='USD');
  const cashCard=`<article class="bank-card account-product-card cash-dual-product"><div class="split"><div><div class="name">Efectivo · doble saldo permanente</div><div class="type">Billetera de efectivo · independiente de cualquier banco</div></div><span class="pill">RD$ / US$</span></div><div class="cash-dual-balances"><div><small>EFECTIVO EN PESOS</small><strong>${money(physicalD?getAccountBalance(physicalD):0,'DOP',2)}</strong>${physicalD?`<button class="btn sm ghost" data-act="accountDetails" data-id="${physicalD.id}">Histórico RD$ ↗</button>`:''}</div><div><small>EFECTIVO EN DÓLARES</small><strong>${money(physicalU?getAccountBalance(physicalU):0,'USD',2)}</strong>${physicalU?`<button class="btn sm ghost" data-act="accountDetails" data-id="${physicalU.id}">Histórico US$ ↗</button>`:''}</div></div><div class="bottom"><span class="subtle">Siempre disponible · nunca se borra ni se archiva</span><button class="btn sm soft" data-act="addCashWallet">Configurar saldos iniciales</button></div></article>`;
  const btn=(label,value,desc,view,iconName)=>`<button type="button" class="kpi account-drill-kpi ${ui.accountBreakdown===view?'is-active':''}" data-act="accountBreakdown" data-view="${view}" aria-label="Ver evolución de ${label}"><span class="kpi-head">${label}<span class="kpi-icon">${icon(iconName)}</span></span><span class="kpi-value">${value}</span><span class="kpi-foot">${desc} · Ver evolución ↗</span></button>`;
- return `<div class="section-title"><div><h2>Cuentas y liquidez</h2><p>Selecciona un saldo para consultar su evolución. También puedes abrir cada cuenta.</p></div><div class="hstack">${visibilityControl()}<button class="btn" data-act="addAccount">${icon('plus')} Nueva cuenta</button></div></div>
- <div class="grid kpis">${btn('Saldo en pesos',money(sums[0]),'Cuentas DOP','DOP','wallet')}${btn('Saldo en dólares',money(sums[1],'USD',2),'Cuentas USD','USD','wallet')}${btn('Ahorros',money(savings),'Convertido a RD$','savings','building')}${btn('Corrientes',money(checking),'Convertido a RD$','checking','building')}</div>
- ${ui.accountBreakdown?accountBreakdownPanel():''}
+ return `<div class="hstack v234-account-controls">${visibilityControl()}<button class="btn sm soft" data-act="addCashWallet">Configurar efectivo</button><button class="btn" data-act="addAccount">${icon('plus')} Nueva cuenta</button></div>
  <div class="grid cards-grid section">${cashCard}${all.length?all.map(a=>`<article class="bank-card account-product-card"><div class="split"><div><div class="name">${sanitize(a.name)}</div><div class="type v28-account-bankline">${bankLogoInline(a.bankId)}<span>${sanitize(bankOf(a))} · ${a.kind==='savings'?'Ahorros':a.kind==='checking'?'Corriente':'Efectivo'}</span></div></div><span class="pill">${a.currency}</span></div><button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver evolución de ${sanitize(a.name)}">${money(getAccountBalance(a),a.currency,2)} <span>↗</span></button><div class="product-mini-actions v176-account-actions">${productControls('account',a.id,a.archived)}<button class="btn sm ghost" data-act="accountDetails" data-id="${a.id}">Ver evolución</button></div><div class="bottom"><span class="subtle">${a.last4?'•••• '+sanitize(a.last4):'Sin terminación registrada'}</span></div></article>`).join(''):`<div class="panel"><div class="empty">No hay cuentas bancarias adicionales. El efectivo se gestiona desde la ficha anterior. <button class="btn sm soft" data-act="addAccount">Crear cuenta</button></div></div>`}</div>
  ${ui.accountId&&account(ui.accountId)?accountDetail(account(ui.accountId)):''}`;
 }
@@ -18580,7 +18576,7 @@ function accountBreakdownPanel(){
 }
 function accounts(){
  let result=originalAccounts();
- result=result.replace('<button class="btn" data-act="addAccount">',`<button class="btn sm soft" data-act="addCashWallet">Configurar efectivo</button><button class="btn" data-act="addAccount">`);
+ // V234: account actions are now available in the compact toolbar above the accounts.
  for(const a of db.accounts.filter(a=>a.kind==='cash')){
   result=result.replace(`data-act="editAccount" data-id="${a.id}"`,`data-act="editCashWallet" data-id="${a.id}"`);
  }
@@ -21637,9 +21633,9 @@ innerWrap=function(page,view){
  if(page==='payments')return view(); // V196: un solo centro, sin cabecera/filtros V26 duplicados
   if(page==='income'||page==='expenses')return v26OldInnerWrap(page,view);
  const cfg=V26_META[page];if(!cfg)return view();
- const selection=cfg.tabs.some(x=>x[0]===ui.innerViews[page])?ui.innerViews[page]:'overview';
+ const selection=page==='categories'?'overview':cfg.tabs.some(x=>x[0]===ui.innerViews[page])?ui.innerViews[page]:'overview';
  const metric=String(cfg.count());const base=selection==='overview'?view():innerView(page,selection);
- return `<div class="v26-internal" data-module="${page}"><div class="v26-head"><div><span class="v26-head-eyebrow">vive el hoy · ${sanitize(cfg.title.toUpperCase())}</span><h2>${cfg.title}</h2><p>${cfg.hint}</p></div><div class="v26-head-side"><div class="v26-overview-chip"><small>${cfg.metric}</small><strong>${sanitize(metric)}</strong></div><button class="v26-primary" type="button" data-act="${cfg.act}">${icon('plus')}${cfg.btn}</button></div></div><nav class="v26-nav" aria-label="Vistas de ${cfg.title}" role="tablist">${cfg.tabs.map(([id,name,ic])=>`<button type="button" role="tab" aria-selected="${selection===id}" ${selection===id?'aria-current="page"':''} data-act="innerView" data-page="${page}" data-view="${id}">${icon(ic)}<span>${name}</span></button>`).join('')}</nav><div class="v26-body" role="tabpanel">${base}</div></div>`;
+ return `<div class="v26-internal" data-module="${page}"><div class="v26-head"><div><span class="v26-head-eyebrow">vive el hoy · ${sanitize(cfg.title.toUpperCase())}</span><h2>${cfg.title}</h2><p>${cfg.hint}</p></div><div class="v26-head-side"><div class="v26-overview-chip"><small>${cfg.metric}</small><strong>${sanitize(metric)}</strong></div><button class="v26-primary" type="button" data-act="${cfg.act}">${icon('plus')}${cfg.btn}</button></div></div>${page==='categories'?'':`<nav class="v26-nav" aria-label="Vistas de ${cfg.title}" role="tablist">${cfg.tabs.map(([id,name,ic])=>`<button type="button" role="tab" aria-selected="${selection===id}" ${selection===id?'aria-current="page"':''} data-act="innerView" data-page="${page}" data-view="${id}">${icon(ic)}<span>${name}</span></button>`).join('')}</nav>`}<div class="v26-body" role="tabpanel">${base}</div></div>`;
 };
 const v26OldModal=modal;
 modal=function(title,body,formid,wide=false){v26OldModal(title,body,formid,wide);const focusForms=['bankForm','accountForm','cardForm','loanForm','certificateForm','recurringForm','personalForm','personalPaymentForm','budgetForm','categoryForm','annualFeeForm','benefitLedgerForm'];if(focusForms.includes(formid)){document.getElementById(formid)?.classList.add('v26-simple-form')}};
@@ -32588,6 +32584,12 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
 .v233-personal-tx-actions .v56-button{padding:6px 9px;font-size:10px}
 .v233-personal-tx-actions .v233-danger{color:#b84f58}
 @media(max-width:767px){.v56-activity-item .v233-personal-tx-actions{width:100%;justify-content:flex-start}.v56-ledger-row .v233-personal-tx-actions{grid-column:1/-1}}
+
+/* V234 · Remove redundant catalogue presentation and account liquidity summaries. */
+#page .v234-account-controls{justify-content:flex-end;flex-wrap:wrap;margin:0 0 14px;gap:8px}
+#page .v26-internal[data-module="categories"] .v26-body{padding-top:0}
+#page .v26-internal[data-module="categories"] .taxonomy-grid{margin-top:14px}
+@media(max-width:640px){#page .v234-account-controls{justify-content:flex-start}}
 </style>
 </body>
 </html>
