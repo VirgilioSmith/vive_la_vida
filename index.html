@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="217-financial-reports-applepay"/>
+<meta name="vive-el-hoy-version" content="243-explore-banks-cards-mobileheader-notification-reports"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -15628,6 +15628,196 @@ body.theme-dark .v221-state.cleared,body.theme-black .v221-state.cleared{backgro
 @media(max-width:700px){.v235-register-layer{padding:0!important;align-items:stretch!important}.v235-register-layer>.v235-register-dialog{width:100%!important;max-height:100dvh!important;border-radius:18px 18px 0 0!important;margin:auto 0 0!important}.v235-register-dialog .vr-register{padding:0 8px 10px!important}.v235-register-dialog .vr-content{grid-template-columns:1fr!important}}
 body.theme-black .v235-register-layer>.v235-register-dialog{background:#10141e!important}
 </style>
+
+<style id="vive-v243-explorar-tarjetas-cabecera-informes">
+/* V243 · Explicitly limited to Explore, Cards, mobile header and four notification reports. */
+@media(max-width:790px){
+  .vive-mobile-top{position:fixed!important;inset:0 0 auto 0!important;top:0!important;
+    height:calc(66px + env(safe-area-inset-top,0px))!important;
+    padding-top:env(safe-area-inset-top,0px)!important;
+    background:rgba(219,233,251,.94)!important;
+    backdrop-filter:blur(22px) saturate(155%)!important;-webkit-backdrop-filter:blur(22px) saturate(155%)!important;
+    transform:translate3d(0,0,0);opacity:1;visibility:visible;
+    transition:transform .25s cubic-bezier(.22,1,.36,1),opacity .19s ease,visibility .19s ease!important;
+    will-change:transform;contain:layout style;z-index:50!important;}
+  body.theme-dark .vive-mobile-top{background:rgba(18,29,46,.96)!important;}
+  body.theme-black .vive-mobile-top{background:rgba(9,10,13,.96)!important;}
+  body.v243-top-away .vive-mobile-top{transform:translate3d(0,calc(-100% - 2px),0)!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
+  .shell{padding-top:calc(66px + env(safe-area-inset-top,0px))!important;}
+  .main .topbar{display:none!important;}
+  .v243-explore .v205-explore-header{padding:3px 4px 17px;}
+  .v243-explore .v205-explore-header h1{font-size:clamp(31px,8vw,38px)!important;}
+  .v243-explore .v205-explore-period{letter-spacing:0!important;font-size:10px!important;}
+  .v243-explore .v205-explore-actions{gap:10px;}
+  .v243-explore .v205-explore-pulse{border-radius:25px;box-shadow:0 17px 32px rgba(16,43,81,.14);}
+  .v243-explore .v205-explore-group{border-radius:23px;padding:18px 13px 13px;margin-bottom:14px;box-shadow:0 10px 25px rgba(18,43,82,.055);}
+  .v243-explore .v205-explore-group-header{padding:0 6px 13px;}
+  .v243-explore .v205-explore-group-header h2{font-size:19px!important;letter-spacing:-.035em;}
+  .v243-explore .v205-explore-links{gap:8px;}
+  .v243-explore .v205-explore-link{min-height:69px;border-radius:17px;padding:10px 12px;gap:12px;border-color:var(--mob-line);background:rgba(124,156,203,.07);transition:transform .16s ease,background .16s ease;}
+  .v243-explore .v205-explore-link:active{transform:scale(.985);}
+  .v243-explore .v205-explore-link-icon{width:42px;height:42px;flex-basis:42px;border-radius:14px;background:rgba(62,119,205,.12);}
+  .v243-explore .v205-explore-link-icon svg{width:21px;height:21px;}
+  .v243-explore .v205-explore-link-copy strong{font-size:13.5px;font-weight:780;}
+  .v243-explore .v205-explore-link-copy small{font-size:11px;}
+  .v243-explore .v205-explore-arrow{font-size:13px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:rgba(104,135,181,.10);}
+  .v243-explore .v205-explore-arrow svg{width:15px;height:15px;transform:none;}
+}
+@media(min-width:791px){
+  .main.world-mobilehub #page .v243-explore{display:block!important;visibility:visible!important;max-width:1080px;margin:0 auto;padding:4px 0 32px;}
+  .v243-explore .v205-explore-header{padding:4px 4px 23px;}
+  .v243-explore .v205-explore-kicker{color:#5a7ebc;font-size:11px;letter-spacing:.14em;font-weight:800;}
+  .v243-explore .v205-explore-header h1{font-size:35px;letter-spacing:-.055em;display:flex;gap:15px;align-items:center;margin:8px 0;}
+  .v243-explore .v205-explore-header p{margin:0;color:var(--muted);}
+  .v243-explore .v205-explore-period{font-size:12px;background:var(--white);border-radius:999px;padding:6px 11px;color:var(--muted);border:1px solid var(--line);}
+  .v243-explore .v205-explore-actions{display:grid;grid-template-columns:1fr 210px;gap:12px;margin:0 0 18px;}
+  .v243-explore .v205-explore-actions button{border-radius:17px;min-height:57px;display:flex;justify-content:center;align-items:center;gap:9px;font-weight:750;border:1px solid var(--line);}
+  .v243-explore .v205-explore-actions svg{width:20px!important;height:20px!important;max-width:20px!important;flex:none!important;}
+  .v243-explore .v205-explore-pulse-grid svg{width:16px!important;height:16px!important;max-width:16px!important;flex:none!important;}
+  .v243-explore .v205-explore-link-icon svg{width:21px!important;height:21px!important;max-width:21px!important;}
+  .v243-explore .v205-explore-period{white-space:nowrap;letter-spacing:0!important;font-size:11px!important;min-width:130px;display:inline-flex;align-items:center;justify-content:center;}
+  .v243-explore .v205-explore-action-arrow{font-size:16px;line-height:1;}
+  .v243-explore .v205-explore-register{color:#fff;background:linear-gradient(120deg,#255bc5,#507eea);}
+  .v243-explore .v205-explore-pay{color:inherit;background:var(--white);}
+  .v243-explore .v205-explore-pulse{background:linear-gradient(125deg,#172d4d,#285886);color:#fff;border-radius:22px;padding:20px;box-shadow:0 14px 34px rgba(18,45,79,.13);margin-bottom:20px;}
+  .v243-explore .v205-explore-pulse-head{display:flex;justify-content:space-between;gap:10px;margin:0 0 13px;}
+  .v243-explore .v205-explore-pulse-head span{font-weight:800;font-size:11px;letter-spacing:.13em;}
+  .v243-explore .v205-explore-pulse-head small{opacity:.7;}
+  .v243-explore .v205-explore-pulse-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .v243-explore .v205-explore-pulse-grid button{min-height:105px;display:flex;flex-direction:column;align-items:start;gap:8px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);border-radius:17px;color:#fff;padding:15px;text-align:left;}
+  .v243-explore .v205-explore-pulse-grid button strong{font-size:23px;font-weight:790;}
+  .v243-explore .v205-explore-group{background:var(--white);border:1px solid var(--line);box-shadow:0 8px 28px rgba(22,48,85,.045);border-radius:23px;padding:20px;margin-bottom:16px;}
+  .v243-explore .v205-explore-group-header{margin:0 0 15px;}
+  .v243-explore .v205-explore-group-header>span{font-size:10px;letter-spacing:.13em;color:#5b79ba;font-weight:800;}
+  .v243-explore .v205-explore-group-header h2{font-size:21px;margin:6px 0;letter-spacing:-.03em;}
+  .v243-explore .v205-explore-group-header p{margin:0;color:var(--muted);font-size:12px;}
+  .v243-explore .v205-explore-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+  .v243-explore .v205-explore-link{display:flex;align-items:center;gap:12px;min-height:73px;padding:12px;background:rgba(232,241,252,.52);border:1px solid var(--line);border-radius:17px;text-align:left;color:inherit;}
+  .v243-explore .v205-explore-link-icon{width:44px;height:44px;display:grid;place-items:center;flex-shrink:0;color:#4e7ac8;border-radius:13px;background:rgba(77,127,213,.10);}
+  .v243-explore .v205-explore-link-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .v243-explore .v205-explore-link-copy strong{font-size:13px;}
+  .v243-explore .v205-explore-link-copy small{font-size:11px;color:var(--muted);}
+  .v243-explore .v205-explore-arrow svg{width:16px;height:16px;transform:none;}
+  .v243-explore .v205-explore-end{text-align:center;color:var(--muted);padding:10px;}
+}
+.v243-explore-return{display:flex;align-items:center;gap:9px;margin:0 0 14px;padding:0 2px;font-size:12px;min-width:0;color:var(--muted);}
+.v243-explore-return button{display:flex;align-items:center;gap:7px;padding:9px 12px;border-radius:12px;background:rgba(98,133,192,.11);color:inherit;border:1px solid rgba(103,136,193,.17);font-weight:760;}
+.v243-explore-return button svg{width:15px;height:15px;transform:rotate(180deg);}
+.v243-explore-return strong{color:var(--ink);font-weight:760;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+body.theme-black .v243-explore-return strong{color:#eaf0fa;}
+.v243-cards-workspace{max-width:1320px;margin:0 auto;}
+.v243-cards-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(150deg,rgba(255,255,255,.83),rgba(226,236,252,.61));border:1px solid rgba(130,165,210,.18);padding:20px 23px;border-radius:23px;margin:0 0 12px;}
+.v243-module-kicker{display:block;font-size:10px;font-weight:850;letter-spacing:.14em;color:#6786b5;margin-bottom:6px;}
+.v243-cards-heading h2{font-size:clamp(24px,2.3vw,31px);line-height:1.1;letter-spacing:-.045em;margin:0;}
+.v243-cards-heading p{font-size:12px;line-height:1.5;color:var(--muted);margin:6px 0 0;}
+.v243-cards-heading-actions{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.v243-cards-total{font-size:12px;font-weight:800;color:var(--muted);}
+.v243-cards-create{display:flex;align-items:center;justify-content:center;gap:7px;min-height:43px;padding:0 16px;border:0;border-radius:13px;color:#fff;background:linear-gradient(130deg,#2e64c1,#4d80da);font-weight:800;}
+.v243-cards-create svg{width:17px;height:17px;}
+.v243-bank-breadcrumb{display:flex;align-items:center;gap:9px;margin:0 0 18px;color:var(--muted);font-size:12px;padding-left:4px;}
+.v243-bank-breadcrumb button{display:inline-flex;align-items:center;gap:5px;padding:4px 2px;background:none;border:0;color:inherit;font-weight:760;}
+.v243-bank-breadcrumb button svg{width:13px;height:13px;transform:rotate(180deg);}
+.v243-bank-breadcrumb strong{color:var(--ink);}
+@media(min-width:791px){
+ .v243-cards-workspace .section-title{padding:15px 17px;margin:0 0 13px;background:rgba(255,255,255,.72);border-radius:20px;border:1px solid rgba(139,168,210,.18);}
+ .v243-cards-workspace .cards-grid{gap:15px;grid-template-columns:repeat(auto-fit,minmax(min(100%,325px),1fr));}
+ .v243-cards-workspace .v149-card-shell{border-radius:22px;overflow:hidden;border:1px solid rgba(132,163,204,.22);background:linear-gradient(155deg,rgba(255,255,255,.96),rgba(235,243,255,.74));box-shadow:0 10px 30px rgba(21,48,88,.08),inset 0 1px 0 rgba(255,255,255,.8);transition:transform .2s ease,box-shadow .2s ease;}
+ .v243-cards-workspace .v149-card-shell:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(21,48,88,.12);}
+ .v243-cards-workspace .v149-card-cue{padding-top:10px;}
+ .v243-cards-workspace .v149-card-reveal{border-top:1px solid rgba(128,163,210,.13);}
+}
+@media(max-width:790px){
+ .v243-cards-heading{padding:15px 14px;border-radius:20px;margin:0 0 10px;gap:8px;}
+ .v243-cards-heading h2{font-size:24px;}
+ .v243-cards-heading p{font-size:11px;max-width:230px;}
+ .v243-cards-heading-actions{flex-direction:column;gap:6px;align-items:flex-end;}
+ .v243-cards-total{font-size:10px;}
+ .v243-cards-create{min-height:39px;padding:0 12px;font-size:12px;}
+ .v243-bank-breadcrumb{margin:0 0 14px;}
+ .v243-cards-workspace .v149-card-shell{border-radius:21px;}
+}
+body.theme-black .v243-cards-heading{background:linear-gradient(150deg,#141920,#1b2330);border-color:#2c3746;}
+body.theme-black .v243-cards-heading h2,body.theme-black .v243-bank-breadcrumb strong{color:#edf2fc;}
+body.theme-black .v243-cards-workspace .section-title{background:#131922;border-color:#293447;}
+body.theme-black .v243-cards-workspace .v149-card-shell{background:#131923;border-color:#30394b;}
+/* Four notification reports — all styles scoped to their modal. */
+.v243-report{max-width:880px;border-radius:27px;background:#f1f6fd;color:#1b3453;border:1px solid rgba(255,255,255,.84);}
+.v243-report-head{position:relative;padding:22px 24px 19px;background:linear-gradient(130deg,#142a48,#255785);color:#fff;}
+.v243-report-brand{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:.16em;font-weight:850;color:#bad3f0;}
+.v243-report-brand svg{width:17px;height:17px;}
+.v243-report .v216-close{position:absolute;top:17px;right:18px;color:#fff;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.25);}
+.v243-report-head-copy{margin:22px 0 15px;max-width:690px;}
+.v243-report-head-copy>span{font-size:11px;font-weight:800;letter-spacing:.14em;color:#b7d2f0;}
+.v243-report-head h2{margin:7px 0 5px;font-size:clamp(25px,3vw,36px);letter-spacing:-.045em;line-height:1.1;color:#fff;}
+.v243-report-head-copy p{margin:0;font-size:12px;line-height:1.55;color:#d1e2f6;}
+.v243-report-dates{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px;color:#edf6ff;}
+.v243-report-dates>span{display:flex;align-items:center;gap:7px;font-weight:730;}
+.v243-report-dates svg{width:16px;height:16px;}
+.v243-report-dates small{color:#a9c7e8;font-size:10px;}
+.v243-report-tabs{padding:12px 23px;margin:0;background:rgba(225,236,252,.7);border-bottom:1px solid #dee7f2;gap:8px;}
+.v243-report-tabs button{flex:1;text-align:center;border-radius:12px;}
+.v243-report-tabs button.current{background:#255786;color:#fff;border-color:#255786;}
+.v243-report-content{padding:17px 23px 24px;}
+.v243-report-hero{border-radius:22px;padding:21px 22px;background:linear-gradient(132deg,#eaf2ff,#fff);border:1px solid #dce8f6;display:flex;flex-direction:column;gap:6px;}
+.v243-report-hero>span{font-size:10px;font-weight:840;letter-spacing:.13em;color:#627c9c;}
+.v243-report-hero>strong{font-size:clamp(28px,4vw,43px);line-height:1.08;letter-spacing:-.035em;font-weight:850;overflow-wrap:anywhere;}
+.v243-report-hero>p{font-size:11px;color:#7589a0;margin:0;}
+.v243-report-core{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:11px 0 15px;}
+.v243-report-stat{display:flex;flex-direction:column;gap:8px;min-width:0;padding:15px;border-radius:17px;background:rgba(255,255,255,.86);border:1px solid #dce7f4;}
+.v243-report-stat small{color:#6d82a0;font-weight:720;font-size:11px;}
+.v243-report-stat strong{font-size:clamp(15px,1.8vw,20px);color:#24466a;line-height:1.22;overflow-wrap:anywhere;}
+.v243-report-stat>span{font-size:10px;color:#7990ad;}
+.v243-report-block{background:rgba(255,255,255,.8);border:1px solid #dce7f4;border-radius:21px;padding:18px;margin-top:13px;}
+.v243-report-block-head{display:flex;gap:12px;align-items:center;margin:0 0 16px;}
+.v243-report-block-icon{display:grid;place-items:center;flex:0 0 39px;width:39px;height:39px;border-radius:13px;background:#e9f0fd;color:#37659d;}
+.v243-report-block-icon svg{width:19px;height:19px;}
+.v243-report-block h3{font-size:15px;margin:0 0 4px;color:#234769;letter-spacing:-.02em;}
+.v243-report-block-head p{font-size:11px;color:#798ca7;margin:0;}
+.v243-report-dual{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.v243-report-dual .v243-report-stat{padding:12px;}
+.v243-report-mini{background:#f2f6fd;border-radius:15px;padding:14px;display:flex;flex-direction:column;gap:5px;min-width:0;}
+.v243-report-mini span,.v243-report-mini small{font-size:10px;color:#697f9d;}
+.v243-report-mini strong{font-size:17px;overflow-wrap:anywhere;}
+.v243-report-categories{margin-top:17px;}
+.v243-report-categories h4{font-size:12px;color:#53708d;margin:0 0 11px;}
+.v243-cat-line{margin:11px 0;}
+.v243-cat-line>div{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;}
+.v243-cat-line strong{font-size:12px;font-weight:690;}
+.v243-cat-line b{font-size:12px;}
+.v243-cat-track{height:5px;background:#e5edf8;border-radius:99px;display:block;overflow:hidden;}
+.v243-cat-track i{display:block;height:100%;background:linear-gradient(90deg,#477cc1,#6ba2ec);border-radius:99px;}
+.v243-due-row{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #e6edf6;}
+.v243-due-row strong{display:block;font-size:12px;}
+.v243-due-row small{font-size:10px;color:#7d8fa8;}
+.v243-due-row b{font-size:12px;text-align:right;overflow-wrap:anywhere;}
+.v243-report-empty{font-size:12px;color:#7185a1;line-height:1.5;}
+.v243-report-block .v216-link{display:inline-flex;gap:7px;align-items:center;}
+.v243-report-block .v216-link svg{width:15px;height:15px;}
+.v243-report-advice .v216-insights{margin:0;}
+@media(max-width:620px){
+ .v243-report{border-radius:24px 24px 0 0;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 6px);}
+ .v243-report-head{padding:18px 16px 16px;}
+ .v243-report .v216-close{top:13px;right:12px;}
+ .v243-report-head-copy{margin-top:17px;max-width:calc(100% - 6px);}
+ .v243-report-head h2{font-size:clamp(24px,7vw,31px);}
+ .v243-report-tabs{padding:9px 12px;gap:6px;}
+ .v243-report-tabs button{padding:9px 8px;font-size:10px;}
+ .v243-report-content{padding:12px 13px 20px;}
+ .v243-report-hero{padding:17px 16px;}
+ .v243-report-hero strong{font-size:clamp(26px,8vw,35px);}
+ .v243-report-core{gap:7px;}
+ .v243-report-core .v243-report-stat{padding:11px 8px;gap:6px;}
+ .v243-report-core .v243-report-stat small{font-size:10px;}
+ .v243-report-core .v243-report-stat strong{font-size:clamp(12px,3.4vw,16px);}
+ .v243-report-block{padding:14px 12px;border-radius:18px;}
+ .v243-report-block-head{gap:9px;}
+ .v243-report-block-icon{width:35px;height:35px;flex-basis:35px;}
+ .v243-report-dual{gap:7px;}
+ .v243-report-dual .v243-report-stat{padding:10px 8px;}
+}
+@media(prefers-reduced-motion:reduce){.vive-mobile-top,.v243-explore .v205-explore-link,.v243-cards-workspace .v149-card-shell{transition:none!important;}}
+</style>
+
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -16258,7 +16448,7 @@ function ensureDefaultCashAccounts(data){
  }
  return data;
 }
-const init=()=>({version:4,settings:{fx:60,fxAcknowledged:false,menuLayout:'rail',theme:'light',transferTaxPct:0.20,transferFeeDOP:0,transferFeeUSD:0,paletteChoice:'original',paletteHex:'#6866f3'},banks:[],customCategories:[],hiddenTaxonomy:{categories:[],subcategories:[]},accounts:defaultCashAccounts(),cards:[],loans:[],transactions:[],recurring:[],statements:[],budgets:[],certificates:[],perkUses:[],personalLoans:[],personalContacts:[],txRevisions:[],pendingOperations:[],demo:false});
+const init=()=>({version:4,settings:{fx:60,fxAcknowledged:false,menuLayout:'rail',theme:'light',transferTaxPct:0.20,transferFeeDOP:0,transferFeeUSD:0,paletteChoice:'original',paletteHex:'#6866f3',mobilePositionStyle:'original'},banks:[],customCategories:[],hiddenTaxonomy:{categories:[],subcategories:[]},accounts:defaultCashAccounts(),cards:[],loans:[],transactions:[],recurring:[],statements:[],budgets:[],certificates:[],perkUses:[],personalLoans:[],personalContacts:[],txRevisions:[],pendingOperations:[],demo:false});
 let db=(()=>{try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.accounts)&&Array.isArray(x.transactions))return {...init(),...x,settings:{...init().settings,...(x.settings||{})}}}catch(e){}return init()})();
 let privacyMode=false;
 const ui={projectionMenu:false,movementTab:'all',navExpanded:null,showHidden:false,kpiBank:'',kpiEditing:false,page:'overview',expenseRange:'month',bankId:null,bankScope:'all',month:today().slice(0,7),year:new Date().getFullYear(),search:'',transType:'all',txPeriod:'all',reviewFilter:'all',cardId:null,cardDetailTab:'status',cardHistoryCurrency:'DOP',cardHistoryYear:new Date().getFullYear(),accountId:null,loanId:null,annualDetails:true,annualCurrency:'DOP',forecastScenario:'base',forecastHorizon:12,mobile:false};
@@ -16751,6 +16941,7 @@ function mobileHome(){
  const vis=db.settings.visualDesign==='vision';
  const v64Compare=v64PositionComparison();
  const balancePanel=vis?`<section class="vive-mobile-balance vive-mobile-net-balance" aria-label="Posición neta y evolución"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Tu posición financiera</span><span>${icon('wallet')}</span></div><button type="button" class="vive-mobile-balance-amount v186-mobile-amount" data-act="v186Deep" data-id="net" title="Ver composición de la posición neta · ${money(net,'DOP',2)}">${money(net)}</button><div class="vive-mobile-balance-sub">${v105BubblePercent(net,v64Compare.position?.net,v64Compare)}</div><div class="vive-mobile-balance-sub">Evolución de la posición neta registrada</div><div class="vive-mobile-vision-trend">${visionPositionHistory(5,net).graph}</div><div class="vive-mobile-balance-foot"><span><small>Liquidez</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="liquidity" title="Ver cuentas y efectivo · ${money(liquid,'DOP',2)}"><b>${money(liquid)}</b></button></span><span><small>Deudas totales</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="debt" title="Ver todas las deudas · ${money(debt,'DOP',2)}"><b>${money(debt)}</b></button></span></div></section>`:`<section class="vive-mobile-balance" aria-label="Posición financiera"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Liquidez disponible</span><span>${icon('wallet')}</span></div><button type="button" class="vive-mobile-balance-amount v186-mobile-amount" data-act="v186Deep" data-id="liquidity" title="Ver cuentas con saldo · ${money(liquid)}">${money(liquid)}</button><div class="vive-mobile-balance-sub">${v105BubblePercent(liquid,v64Compare.position?.liquid,v64Compare)}</div><div class="vive-mobile-balance-sub">Disponible registrado en pesos equivalentes</div><div class="vive-mobile-balance-divider"></div><div class="vive-mobile-balance-foot"><span><small>Deudas</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="debt" title="Ver detalle de deudas · ${money(debt)}"><b>${money(debt)}</b></button></span><span><small>Posición neta</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="net" title="Ver composición neta · ${money(net)}"><b>${money(net)}</b></button></span></div></section>`;
+ const v242BalancePanel=db.settings.mobilePositionStyle==='circles'?v242MobileCircles(liquid,debt,net,v64Compare):balancePanel;
  const netRatio=m.income>0?100*m.net/m.income:null;
  const netLabel=netRatio===null?'Sin ingresos registrados':`${netRatio.toLocaleString('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1})}% del ingreso del mes`;
  const paymentsHtml=upcomingPayments.map(o=>{
@@ -16760,7 +16951,7 @@ function mobileHome(){
  }).join('');
  return `<div class="vive-mobile-home vive-mobile-home-essential" data-mobile-experience="${vis?'vision':'claridad'}">
    <div class="vive-mobile-greeting v51-executive-greeting"><span class="vive-mobile-eyebrow">TU PANORAMA · ${new Date().toLocaleDateString('es-DO',{month:'long',year:'numeric'}).toUpperCase()}</span><h1>Resumen financiero</h1><p>Lo que tienes, lo que debes y lo que viene.</p><button class="v105-custom-btn v105-mobile-custom" type="button" data-v105-customize="1">${icon('grid')} Personalizar</button></div>
-   ${balancePanel}
+   ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
    ${v105CapacityWidget(true)}
    <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div><div class="v96-month-due-note">Pendiente hasta fin de mes, incluidos vencidos: <strong>${money(pendingTotal,'DOP',2)}</strong></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
@@ -16769,6 +16960,12 @@ function mobileHome(){
    <section data-v105-widget="chart" class="v105-mobile-extra" aria-label="Gráfico de ingresos y egresos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">EVOLUCIÓN</span><h2>Ingresos y egresos</h2></div></div>${mobileMiniTrend()}</section>
    <section data-v105-widget="people" class="v105-mobile-extra" aria-label="Compromisos entre personas"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RELACIONES</span><h2>Entre personas</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="personal">Ver relaciones ${icon('up')}</button></div><div class="v105-mobile-people"><span><small>Por cobrar</small><strong>${money(personalTotals().receivable)}</strong></span><span><small>Por devolver</small><strong>${money(personalTotals().payable)}</strong></span></div></section>
   </div>`;
+}
+/* V243 · Contextual return, only when a module was opened from Explorar. */
+let v243ExploreDestination=null;
+function v243ExploreReturn(){
+ if(!v243ExploreDestination || v243ExploreDestination!==ui.page || ui.page==='mobilehub')return '';
+ return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Centro de pagos','recurring':'Suscripciones','personal':'Entre personas','kpis':'Mis indicadores','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada'})[ui.page]||'Módulo')}</strong></nav>`;
 }
 function mobileHub(){
  const period=ui.month||today().slice(0,7),stats=monthlyTotals(Number(period.slice(0,4)),Number(period.slice(5,7)));
@@ -16783,12 +16980,12 @@ function mobileHub(){
    ['kpis','Mis indicadores','Tu tablero personal','analytics'],['patrimony','Patrimonio','Activos y obligaciones','wallet'],
    ['advanced','Analítica avanzada','Tendencias y decisiones','chart'],['analytics','Visión global','Análisis consolidado','grid']]}
  ];
- const link=([id,name,description,ic])=>`<button type="button" class="v205-explore-link" data-act="navigate" data-id="${id}" aria-label="Abrir ${name}"><span class="v205-explore-link-icon">${icon(ic)}</span><span class="v205-explore-link-copy"><strong>${name}</strong><small>${description}</small></span><span class="v205-explore-arrow" aria-hidden="true">›</span></button>`;
- return `<div class="vive-mobile-hub v205-explore">
-   <header class="v205-explore-header"><span class="v205-explore-kicker">VIVE EL HOY · TU ESPACIO</span><h1>Explorar<span class="v205-explore-period">${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</span></h1><p>Todo lo importante, a un toque.</p></header>
+ const link=([id,name,description,ic])=>`<button type="button" class="v205-explore-link" data-act="navigate" data-id="${id}" aria-label="Abrir ${name}"><span class="v205-explore-link-icon">${icon(ic)}</span><span class="v205-explore-link-copy"><strong>${name}</strong><small>${description}</small></span><span class="v205-explore-arrow" aria-hidden="true">${icon('arrow')}</span></button>`;
+ return `<div class="vive-mobile-hub v205-explore v243-explore">
+   <header class="v205-explore-header"><span class="v205-explore-kicker">VIVE EL HOY · TU ESPACIO</span><h1>Explorar<span class="v205-explore-period">${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</span></h1><p>Tu espacio financiero, organizado por lo que quieres hacer.</p></header>
    <div class="v205-explore-actions"><button type="button" class="v205-explore-register" data-act="newTransaction">${icon('plus')}<span>Registrar movimiento</span><span class="v205-explore-action-arrow" aria-hidden="true">↗</span></button><button type="button" class="v205-explore-pay" data-act="navigate" data-id="payments" aria-label="Abrir Centro de pagos">${icon('calendar')}<span>Mis pagos</span></button></div>
    <section class="v205-explore-pulse" aria-label="Actividad registrada del mes"><div class="v205-explore-pulse-head"><span>ESTE MES</span><small>Solo movimientos registrados</small></div><div class="v205-explore-pulse-grid"><button type="button" data-act="navigate" data-id="income"><span>${icon('up')} Ingresos</span><strong>${money(stats.income,'DOP',0)}</strong><small>Ver análisis ›</small></button><button type="button" data-act="navigate" data-id="expenses"><span>${icon('down')} Egresos</span><strong>${money(stats.expense,'DOP',0)}</strong><small>Ver análisis ›</small></button></div></section>
-   ${groups.map(g=>`<section class="v205-explore-group" aria-label="${g.title}"><div class="v205-explore-group-header"><span>${g.eyebrow}</span><h2>${g.title}</h2><p>${g.subtitle}</p></div><div class="v205-explore-links">${g.entries.map(link).join('')}</div></section>`).join('')}
+   ${groups.map(g=>`<section class="v205-explore-group" aria-label="${g.title}"><div class="v205-explore-group-header"><span>${g.eyebrow}</span><h2>${g.title}</h2><p>${g.subtitle}</p></div><div class="v205-explore-links">${g.entries.filter(e=>!(typeof window!=='undefined'&&window.matchMedia('(max-width:790px)').matches&&e[0]==='advanced')).map(link).join('')}</div></section>`).join('')}
    <div class="v205-explore-end"><span>Tu información está organizada por decisiones, no por menús.</span></div>
  </div>`;
 }
@@ -16861,7 +17058,7 @@ function main(){
   <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
  
  ${ui.page==='wallet'?'':['overview','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
- ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
+ ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${v243ExploreReturn()}${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
 }
 function shellKpi(title,v,foot,ico,tone=''){return `<div class="kpi"><div class="kpi-head">${sanitize(title)}<span class="kpi-icon">${icon(ico)}</span></div><div class="kpi-value ${tone}">${v}</div><div class="kpi-foot">${foot}</div></div>`}
 function paymentList(limit=6){let list=v99PendingForPeriod(ui.month).filter(o=>o.kind!=='personal_recv').slice(0,limit);return list.length?list.map(o=>`<div class="mini-row"><div style="min-width:0"><div class="mini-title">${sanitize(o.name)}</div><div class="mini-sub">${prettyDate(o.date)} · ${o.kind==='card'?'Tarjeta':o.kind==='loan'?'Préstamo':'Recurrente'}${o.kind==='loan'&&loan(o.ref)?.postingMode==='auto'?' · Auto al sincronizar':o.kind==='recurring'&&db.recurring.find(r=>r.id===o.ref)?.postingMode==='auto'?' · Auto al sincronizar':''}</div></div><div style="text-align:right"><div class="money" style="font-size:12px">${money(o.amount,o.currency)}</div><div style="margin-top:6px">${dueChip(o.date)}</div></div></div>`).join(''):`<div class="empty"><span class="empty-icon">✓</span>No hay pagos pendientes registrados.</div>`}
@@ -19236,7 +19433,7 @@ function v23PatrimonyActualComparison(year=ui.year){
  const previous=labels.map((_,i)=>observed(selected-1,i+1));
  const current=labels.map((_,i)=>observed(selected,i+1));
  return v14ChartSvg(labels,[
-  {name:String(selected-1)+' · año anterior',color:'#93a7c8',values:previous,width:3},
+  {name:String(selected-1)+' · año anterior',color:'#93a9c7',values:previous,width:3.1},
   {name:String(selected)+' · registrado',color:'#6366ef',values:current,width:3.8}
  ]);
 }
@@ -22472,7 +22669,7 @@ function v40AutomationSection(){return '';} function v40Decorate(){
  v40Ensure();
  try{
  if(ui.page==='income')pg.insertAdjacentHTML('afterbegin',v40IncomeSection());
- if(ui.page==='settings')pg.insertAdjacentHTML('beforeend',v40FiscalSection()+v40AutomationSection());
+ if(ui.page==='settings'){const group=pg.querySelector('[data-v242-settings="financial"] .v242-settings-inner');if(group)group.insertAdjacentHTML('beforeend',v40FiscalSection()+v40AutomationSection());else if(!pg.querySelector('.v242-ios-settings'))pg.insertAdjacentHTML('beforeend',v40FiscalSection()+v40AutomationSection());}
  if(ui.page==='banks')pg.insertAdjacentHTML('beforeend',v40BenefitsSection());
  if(ui.page==='loans'||ui.page==='recurring'||ui.page==='payments')pg.insertAdjacentHTML('beforeend',v40AutomationSection());
  }catch(e){console.warn('vive el hoy V40: sección adicional no disponible',e);}
@@ -26798,17 +26995,17 @@ function v212SettingsPanel(){
  const cards=(db.cards||[]).filter(c=>!c.archived);
  const linkRows=v212State.links.filter(x=>x.active).map(x=>{
    const c=card(x.instrument_id);
-   return `<div class="v212-linked"><div><strong>${sanitize(c?.name||x.card_label||'Tarjeta')}</strong><small>${sanitize(bankOf(c))} · ${sanitize(x.currency)} · Enlace activo</small></div><button type="button" class="v212-small" data-v212="revoke" data-id="${sanitize(x.id)}" ${v212State.busy?'disabled':''}>Desvincular</button></div>`;
+   return `<div class="v212-linked"><div><strong>${sanitize(c?.name||x.card_label||'Tarjeta')}</strong><small>${sanitize(bankOf(c))} · ${sanitize(x.currency)} · Conexión activa</small></div><button type="button" class="v212-small" data-v212="revoke" data-id="${sanitize(x.id)}" ${v212State.busy?'disabled':''}>Desvincular</button></div>`;
  }).join('');
- const eventRows=v212State.events.filter(x=>['pending','review'].includes(x.status)).slice(0,12).map(x=>{
+ const eventRows=v212State.events.filter(x=>['pending','review','imported'].includes(x.status)).slice(0,12).map(x=>{
    const c=card(x.instrument_id);
-   return `<div class="v212-event"><span class="v212-dot"></span><div><strong>${sanitize(x.merchant||'Comercio')}</strong><small>${sanitize(c?.name||'Tarjeta archivada')} · ${prettyDate(String(x.received_at||'').slice(0,10))} · ${x.status==='review'?'Revisar posible duplicado':'Por sincronizar'}</small></div><b>${money(x.amount,x.currency,2)}</b>${x.status==='review'?`<button class="v212-small" type="button" data-v212="force" data-id="${sanitize(x.id)}">Registrar</button><button class="v212-small" type="button" data-v212="ignore" data-id="${sanitize(x.id)}">Ignorar</button>`:''}</div>`;
+   return `<div class="v212-event"><span class="v212-dot"></span><div><strong>${sanitize(x.merchant||'Comercio')}</strong><small>${sanitize(c?.name||'Tarjeta archivada')} · ${prettyDate(String(x.received_at||'').slice(0,10))} · ${x.status==='review'?'Revisar posible duplicado':x.status==='imported'?'Registrada en Movimientos':'Por sincronizar'}</small></div><b>${money(x.amount,x.currency,2)}</b>${x.status==='review'?`<button class="v212-small" type="button" data-v212="force" data-id="${sanitize(x.id)}">Registrar</button><button class="v212-small" type="button" data-v212="ignore" data-id="${sanitize(x.id)}">Ignorar</button>`:''}</div>`;
  }).join('');
- return `<section class="v212-panel" aria-label="Apple Pay y Atajos"><div class="v212-head"><div><span class="summary-tag">INTEGRACIÓN · APPLE WALLET</span><h3>Apple Pay en tus movimientos</h3><p>Vincula cada tarjeta a su atajo. Los pagos compatibles llegan directamente a Supabase. Al sincronizar se registran en Movimientos y en la Wallet móvil de la tarjeta correcta, con un distintivo Apple Pay, sin descontar una cuenta dos veces.</p></div><span class="v212-pill">${v212State.links.filter(x=>x.active).length} ${v212State.links.filter(x=>x.active).length===1?'vinculada':'vinculadas'}</span></div>
+ return `<section class="v212-panel" aria-label="Apple Pay y Atajos"><div class="v212-head"><div><span class="summary-tag">ATAJOS · APPLE PAY</span><h3>Compras de Wallet, registradas con claridad</h3><p>Vincula cada tarjeta a su atajo. Los pagos compatibles llegan directamente a Supabase. Al sincronizar se registran en Movimientos y en la Wallet móvil de la tarjeta correcta, con un distintivo Apple Pay, sin descontar una cuenta dos veces. El estado muestra si el servidor recibió el evento, no si Wallet concedió acceso directo.</p></div><span class="v212-pill">${v212State.links.filter(x=>x.active).length} ${v212State.links.filter(x=>x.active).length===1?'vinculada':'vinculadas'}</span></div>
  <div class="v212-setup"><div><label class="filter-label" for="v212-card">Tarjeta en Vive el Hoy</label><select class="field" id="v212-card">${cards.length?cards.map(c=>`<option value="${sanitize(c.id)}" ${c.id===v212State.selectedCard?'selected':''}>${sanitize(c.name)} · ${sanitize(bankOf(c))}</option>`).join(''):'<option value="">Primero registra una tarjeta</option>'}</select></div><div><label class="filter-label" for="v212-currency">Moneda del atajo</label><select class="field" id="v212-currency"><option value="DOP" ${v212State.currency==='DOP'?'selected':''}>RD$</option><option value="USD" ${v212State.currency==='USD'?'selected':''}>US$</option></select></div><button type="button" class="btn primary" data-v212="pair" ${!cards.length||v212State.busy?'disabled':''}>${v212State.busy?'Conectando…':'Vincular tarjeta'}</button></div>
  ${v212State.secret?`<div class="v212-secret"><strong>Conexión creada: guarda estos datos en tu Atajo</strong><p>La clave solo se muestra ahora. No la compartas ni la coloques en capturas.</p><div class="v212-secretline"><span>URL de recepción</span><button class="v212-small" data-v212="copy-url" type="button">Copiar URL</button></div><code>${sanitize(v212State.webhook)}</code><div class="v212-secretline"><span>Encabezado: X-Vive-Token</span><button class="v212-small" data-v212="copy-token" type="button">Copiar clave</button></div><input type="password" autocomplete="off" readonly aria-label="Clave del atajo" value="${sanitize(v212State.secret)}"/></div>`:''}
- <details class="v212-guide"><summary>Cómo activar la automatización de Wallet en iPhone</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>Prepara un <b>event_id</b> único por compra (por ejemplo, fecha con milisegundos y un número aleatorio). Guárdalo en una variable y reutiliza ese mismo valor si reintentas enviar esa compra.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b>: <code>event_id</code> = identificador anterior; <code>amount</code> = importe de la transacción (Número); <code>merchant</code> = comercio de la transacción (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>. Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Para comprobar la recepción sin registrar compras, usa el JSON de prueba del archivo <code>PRUEBA_APPLE_PAY.json</code> y envíalo únicamente a <code>apple-pay-ingest</code>. Para compras reales, elimina <code>dry_run</code>.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. No recupera pagos antiguos automáticamente.</p></details>
- <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}</div><div><div class="v212-title"><strong>Recepción de Apple Pay</strong><span>${v212State.events.length} recientes</span></div>${eventRows||'<p class="v212-muted">No hay compras por procesar.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
+ <details class="v212-guide"><summary>Cómo activar la automatización de Wallet en iPhone</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>En la automatización utiliza únicamente los datos disponibles de la transacción. <b>No crees event_id</b>: Supabase lo generará al aceptar una compra.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b> envía solamente: <code>amount</code> = importe de la transacción (Número); <code>merchant</code> = comercio de la transacción (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>. Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Para comprobar la recepción sin registrar compras, usa el JSON de prueba del archivo <code>PRUEBA_APPLE_PAY.json</code> y envíalo únicamente a <code>apple-pay-ingest</code>. Para compras reales, elimina <code>dry_run</code>.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. El servidor evita reintentos idénticos próximos mediante una ventana de seguridad; dos compras legítimas iguales muy seguidas pueden requerir revisión. No recupera pagos antiguos automáticamente.</p></details>
+ <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}</div><div><div class="v212-title"><strong>Actividad reciente</strong><span>${v212State.events.length} evento${v212State.events.length===1?'':'s'}</span></div>${eventRows||'<p class="v212-muted">No hay compras recibidas recientemente.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
  ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}<p class="v212-muted">Las tarjetas se administran con <code>apple-pay-link</code>; las compras se reciben mediante <code>apple-pay-ingest</code>. Son funciones distintas y deben publicarse por separado en Supabase. No se solicitan números de tarjeta, CVV ni contraseñas bancarias.</p></section>`;
 }
 function v212Show(){const target=document.querySelector('.v212-panel');if(target)target.outerHTML=v212SettingsPanel();}
@@ -26818,7 +27015,7 @@ async function v212Load(){
  try{
   const [l,e]=await Promise.all([
     f33Api.from('apple_pay_links').select('id,instrument_type,instrument_id,card_label,currency,active').eq('user_id',f33User.id).order('created_at',{ascending:false}).limit(100),
-    f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,status').eq('user_id',f33User.id).in('status',['pending','review']).order('received_at',{ascending:false}).limit(50)
+    f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,status').eq('user_id',f33User.id).in('status',['pending','review','imported']).order('received_at',{ascending:false}).limit(50)
   ]);
   if(l.error||e.error)throw(l.error||e.error);
   v212State.links=l.data||[];v212State.events=e.data||[];v212State.error='';v212State.loaded=true;
@@ -27289,6 +27486,174 @@ document.addEventListener('click',function(event){
     render();
   },true);
 })();
+
+
+/* V242 · Ajustes de iPhone, Apple Pay y estilos existentes de Resumen.
+   El menú global, el modelo financiero y los controladores originales permanecen intactos. */
+let v242SettingsPane='home';
+const V242_PANES=[
+ ['profile','Perfil y sincronización','Conexión privada y estado de tu cuenta','wallet','Cuenta'],
+ ['appearance','Personalización y apariencia','Tema, acento, fondo y KPI móvil','sun','Preferencias'],
+ ['notifications','Notificaciones y recordatorios','Avisos y dispositivos autorizados','calendar','Avisos'],
+ ['integrations','Integraciones y automatizaciones','Apple Pay y Atajos de iPhone','card','Servicios'],
+ ['financial','Configuración financiera','Tasa de cambio, impuestos y cargos','chart','Finanzas'],
+ ['security','Seguridad y privacidad','Revisión, recuperación y respaldos','shield','Privacidad'],
+ ['about','Acerca de vive el hoy','Información y registros guardados','settings','Aplicación']
+];
+function v242SettingsPreview(){
+ const chosen=db.settings.mobilePositionStyle==='circles'?'circles':'original';
+ const liquid=totalLiquid(), debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
+ return `<section class="v242-appearance-picker" aria-label="Estilo del indicador principal en iPhone"><div class="v242-preference-title"><div><span class="summary-tag">RESUMEN · SOLO IPHONE</span><h3>Tu posición financiera</h3><p>Elige uno de los dos diseños existentes. El escritorio conserva su apariencia actual.</p></div><span class="v242-setting-kicker">Se sincroniza con tu cuenta</span></div><div class="v242-appearance-grid">
+ <button type="button" class="v242-style-option ${chosen==='original'?'selected':''}" data-v242-style="original" aria-pressed="${chosen==='original'}"><span class="v242-style-art v242-mini-original"><span class="v242-mini-label">Liquidez disponible</span><strong>${bubbleMoney(liquid)}</strong><span class="v242-mini-divider"></span><span class="v242-mini-foot"><i>Deudas <b>${bubbleMoney(debt)}</b></i><i>Posición neta <b>${bubbleMoney(net)}</b></i></span></span><span class="v242-style-description"><strong>Original móvil</strong><small>El diseño predeterminado</small><i aria-hidden="true">${chosen==='original'?'✓':'○'}</i></span></button>
+ <button type="button" class="v242-style-option ${chosen==='circles'?'selected':''}" data-v242-style="circles" aria-pressed="${chosen==='circles'}"><span class="v242-style-art v242-mini-circles"><span class="v242-mini-title">Tu posición financiera</span><strong>${bubbleMoney(net)}</strong><span class="v242-mini-orbs"><i><b>${bubbleMoney(liquid)}</b><small>Liquidez</small></i><i class="v242-featured"><b>${bubbleMoney(debt)}</b><small>Deudas</small></i><i><b>${bubbleMoney(net)}</b><small>Neto</small></i></span></span><span class="v242-style-description"><strong>Tres círculos</strong><small>Adaptación del diseño web</small><i aria-hidden="true">${chosen==='circles'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Ambos muestran los mismos saldos, sin modificar cálculos ni movimientos. El cambio se aplica al abrir Resumen.</p></section>`;
+}
+function v242Settings(){
+ const s=db.settings,pane=V242_PANES.some(x=>x[0]===v242SettingsPane)?v242SettingsPane:'home';
+ const paneInfo=V242_PANES.find(x=>x[0]===pane);
+ const tile=(entry)=>`<button class="v242-settings-row" type="button" data-v242-section="${entry[0]}"><span class="v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v242-settings-row-copy"><strong>${entry[1]}</strong><small>${entry[2]}</small></span><span class="v242-settings-chevron" aria-hidden="true">›</span></button>`;
+ const content={
+  profile:`${f34CloudPanel()}`,
+  appearance:`${v242SettingsPreview()}<div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
+<div class="theme-settings panel"><div><strong>Aspecto de vive el hoy</strong><p>Elige Claro o Black oscuro. El modo Black utiliza fondo negro y tarjetas carbón de alto contraste; tus registros no cambian.</p></div><div class="theme-choice-row" role="group" aria-label="Elegir apariencia"><button class="theme-choice ${s.theme==='light'?'selected':''}" data-act="setTheme" data-id="light" aria-pressed="${s.theme==='light'}"><span class="theme-sun">☀</span> Claro</button><button class="theme-choice v200-black-choice ${s.theme==='black'?'selected':''}" data-act="setTheme" data-id="black" aria-pressed="${s.theme==='black'}"><span class="v200-black-mark">●</span> Black oscuro</button></div></div>
+
+
+<div class="settings-group-title" id="v176-setting-02"><div><span class="summary-tag">02 / COLOR DE ACENTO</span><h3>Personaliza el color de tarjetas y botones</h3></div></div>
+<div class="panel vive-palettes-panel v15-color-settings"><div class="vive-palette-intro"><strong>Tres colores estrella</strong><p>El color predeterminado se mantiene intacto. El color de acento y el fondo se configuran por separado, sin alterar cifras ni movimientos.</p></div>
+<div class="vive-palettes-grid v15-three-choices">${[
+ ['original','Original','#6d69f1','#96abef','El violeta de vive el hoy'],['emerald','Esmeralda','#087f75','#63cfb3','Verde petróleo sofisticado'],['coral','Coral','#bd4f70','#f5a06c','Coral cálido y elegante']
+].map(([key,name,a,b,desc])=>`<button type="button" class="vive-palette-choice ${((s.paletteChoice||'original')===key)?'selected':''}" data-act="paletteTheme" data-id="${key}" aria-pressed="${(s.paletteChoice||'original')===key}"><span class="vive-palette-art" style="background:linear-gradient(135deg,${a},${b})"><i></i><i></i><i></i></span><strong>${name}</strong><small>${desc}</small></button>`).join('')}</div>
+<div class="vive-custom-palette"><div><strong>Color de acento personalizado</strong><small>Elige cualquier tono; los elementos destacados utilizarán un degradado armonizado.</small></div><label for="viveCustomColor">Color</label><input type="color" id="viveCustomColor" value="${/^#[0-9a-f]{6}$/i.test(s.paletteHex||'')?s.paletteHex:'#6866f3'}" aria-label="Color de acento personalizado"><button class="btn sm soft" type="button" data-act="paletteCustom">Aplicar acento</button></div></div>
+
+<div class="settings-group-title" id="v176-setting-03"><div><span class="summary-tag">03 / FONDO DE LA APLICACIÓN</span><h3>Elige el ambiente visual por separado</h3></div></div>
+<div class="panel vive-palettes-panel v15-color-settings"><div class="vive-palette-intro"><strong>Tres fondos estrella</strong><p>Puedes cambiar el fondo sin cambiar el color de los indicadores, gráficos, botones o tarjetas. También funcionan con el modo oscuro.</p></div>
+<div class="vive-palettes-grid v15-three-choices">${[
+ ['original','Nube original','#d9e7fa','#f4f6fd','La atmósfera original'],['glacier','Glaciar','#bceaf0','#dbf5e8','Azul hielo y agua marina'],['sunset','Atardecer','#f1cadd','#f8dec4','Rosa suave y arena']
+].map(([key,name,a,b,desc])=>`<button type="button" class="vive-palette-choice v15-bg-choice ${((s.backgroundChoice||'original')===key)?'selected':''}" data-act="backgroundTheme" data-id="${key}" aria-pressed="${(s.backgroundChoice||'original')===key}"><span class="v15-bg-art" style="background:linear-gradient(135deg,${a},${b})"><i class="v15-bg-rail"></i><i class="v15-bg-card"></i><i class="v15-bg-card small"></i></span><strong>${name}</strong><small>${desc}</small></button>`).join('')}</div>
+<div class="vive-custom-palette"><div><strong>Fondo personalizado</strong><small>Escoge el tono de la atmósfera; el sistema conservará el contraste y el degradado.</small></div><label for="viveBackgroundColor">Color</label><input type="color" id="viveBackgroundColor" value="${/^#[0-9a-f]{6}$/i.test(s.backgroundHex||'')?s.backgroundHex:'#9db8ef'}" aria-label="Color personalizado del fondo"><button class="btn sm soft" type="button" data-act="backgroundCustom">Aplicar fondo</button></div></div>
+
+`,
+  notifications:`${f37SettingsPanel()}`,
+  integrations:`${v212SettingsPanel()}`,
+  financial:`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / REGLAS FINANCIERAS</span><h3>Tasas, transferencias y cargos</h3></div></div>
+${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div class="form-grid">${formItem('fx','RD$ por cada US$1 · tasa de referencia',s.fx,'number','required min="0.001" step="0.0001"')}${formItem('transferTaxPct','Impuesto de transferencias y pagos bancarios (%)',num(s.transferTaxPct),'number','required min="0" max="100" step="0.001"')}</div><div class="settings-explain">El impuesto general a determinadas transferencias es <b>0.20% desde el 3 de julio de 2026</b> (era 0.15%); no todas las operaciones están gravadas. Las transferencias entre cuentas propias y los consumos con tarjeta pueden estar exentos. Para pagos de tarjeta desde cuenta bancaria, Internet Banking utiliza la tasa manual de este ajuste y Presencial no genera este impuesto en la aplicación; verifica posibles excepciones según el banco. No existe una comisión fija general. <b>Pago al instante</b> es una modalidad que puedes elegir en cada transferencia y agrega RD$100 solamente cuando la seleccionas. Ejemplo: una transferencia gravada de RD$10,000 con Pago al instante suma RD$20 de impuesto y RD$100 por esa modalidad, totalizando RD$10,120. La tasa USD/DOP se consulta automáticamente y solo se usa para valoración y nuevas conversiones. Los movimientos históricos conservan la tasa registrada en cada operación.</div><div class="form-foot"><button class="btn" type="submit">Guardar configuración financiera</button></div></form></div>
+`,
+  security:`<div class="settings-group-title" id="v176-setting-05"><div><span class="summary-tag">05 / CENTRO DE REVISIÓN</span><h3>Protección y coherencia financiera</h3></div></div>${v30ReviewContent(true)}${v30RecoveryContent()}
+<div class="settings-group-title" id="v176-setting-06"><div><span class="summary-tag">06 / HISTORIAL Y PRIVACIDAD</span><h3>Control de productos y registros</h3></div></div>
+<div class="grid columns equal"><div class="panel"><div class="panel-head"><h3>Productos archivados</h3></div><p class="form-note">Desactivar una relación financiera no debe eliminar sus transacciones. Los productos archivados permanecen en cálculos históricos, aunque se oculten de los listados habituales.</p>${visibilityControl()}<p class="form-note">Archivados: ${[...db.banks,...db.accounts,...db.cards,...db.loans,...db.certificates].filter(x=>x.archived).length}. La eliminación definitiva solo se permite cuando no hay operaciones ni saldos iniciales o dependencias.</p></div><div class="panel"><div class="panel-head"><h3>Protección y respaldo</h3></div><p class="form-note">Respalda tus datos JSON antes de modificar contratos o importar versiones nuevas. El respaldo local no está cifrado.</p><div class="hstack"><button class="btn soft" data-act="export" title="Descargar una copia de seguridad de todos tus registros en JSON">${icon('download')} Descargar respaldo JSON</button><button class="btn ghost" data-act="import">${icon('upload')} Importar JSON</button></div><div class="mini-divider"></div><div class="hstack"><button class="btn ghost" data-act="demo">Demostración</button><button class="btn danger" data-act="clear">Eliminar todos los datos</button></div><input id="importFile" type="file" accept="application/json,.json" class="hidden" /></div></div>
+`,
+  about:`<div class="panel section"><div class="panel-head"><h3>Información guardada</h3></div><div class="settings-counts">${[['Instituciones',db.banks.length],['Cuentas',db.accounts.length],['Tarjetas',db.cards.length],['Préstamos',db.loans.length],['Certificados',db.certificates.length],['Movimientos',db.transactions.length],['Suscripciones',db.recurring.length]].map(([l,n])=>`<div><span>${l}</span><strong>${n}</strong></div>`).join('')}</div><div class="notification warning">vive el hoy es local: no consulta bancos en tiempo real, no ejecuta pagos ni comprueba automáticamente impuestos. No guardes CVV, PIN, contraseñas ni números completos.</div></div>`
+ };
+ const title=paneInfo?.[1]||'Configuración';
+ return `<div class="settings-layout v242-ios-settings" data-v242-settings="${pane}">
+ ${pane==='home'?`<div class="v242-settings-home"><header class="v242-settings-intro"><span class="v242-settings-eyebrow">VIVE EL HOY · FINANZAS 360</span><h1>Configuración</h1><p>Todo a tu manera, con la claridad de Ajustes de iPhone.</p></header><section class="v242-settings-profile"><span class="v242-profile-avatar">${icon('wallet')}</span><span><strong>Tu espacio financiero</strong><small>Preferencias, conexión y protección</small></span><span class="v242-settings-chevron">›</span><button class="v242-profile-hit" type="button" data-v242-section="profile" aria-label="Abrir perfil y sincronización"></button></section><div class="v242-settings-section"><span class="v242-group-caption">PERSONALIZACIÓN</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['appearance','notifications'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">CONEXIONES Y FINANZAS</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['integrations','financial'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">PRIVACIDAD Y SOPORTE</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['security','about'].includes(x[0])).map(tile).join('')}</div></div><p class="v242-settings-footer">Tus registros y operaciones financieras se mantienen protegidos por las reglas actuales de la aplicación.</p></div>`:
+ `<div class="v242-settings-subpage"><header class="v242-settings-subhead"><button type="button" class="v242-settings-back" data-v242-back="1">‹ <span>Configuración</span></button><span class="v242-settings-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h1>${title}</h1><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner">${content[pane]||''}</div></div>`}
+ </div>`;
+}
+pages.settings=v242Settings;
+function v242MobileCircles(liquid,debt,net,comparison){
+ const circle=(id,label,value,prior,risk=false,featured=false)=>`<button type="button" class="ff-bubble ${featured?'featured':''} ${id==='net'&&value<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="${id}" data-chart-tip="${label}|Valor exacto: ${money(value,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(value)}</span>${v105BubblePercent(value,prior,comparison,risk)}<small>${label}</small></button>`;
+ return `<section class="v242-mobile-web-position ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera, diseño de tres círculos"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${net<-.005?'v176-net-negative':net>.005?'v176-net-positive':''}">${money(net,'DOP',2)}</button><p>Liquidez + certificados + por cobrar − deudas totales</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles">${circle('liquidity','Liquidez',liquid,comparison.position?.liquid)}${circle('debt','Deudas totales',debt,comparison.position?.debt,true,true)}${circle('net','Posición neta',net,comparison.position?.net)}</div></section>`;
+}
+document.addEventListener('click',event=>{
+ const sect=event.target.closest('[data-v242-section]'),back=event.target.closest('[data-v242-back]'),choice=event.target.closest('[data-v242-style]');
+ if(!sect&&!back&&!choice)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ if(sect){v242SettingsPane=sect.dataset.v242Section;render();window.scrollTo({top:0,behavior:'instant'});return;}
+ if(back){v242SettingsPane='home';render();window.scrollTo({top:0,behavior:'instant'});return;}
+ if(choice){const next=choice.dataset.v242Style;if(!['original','circles'].includes(next))return;
+  const previous=db.settings.mobilePositionStyle||'original';if(next===previous)return;
+  db.settings.mobilePositionStyle=next;
+  if(!persist()){db.settings.mobilePositionStyle=previous;toast('No se pudo guardar la preferencia. Comprueba tu sesión y la sincronización.');return;}
+  render();toast(next==='circles'?'Estilo de tres círculos activado para iPhone.':'Estilo original móvil restaurado.');
+ }
+},true);
+
+
+/* V243 · Uniform card workspace inspired by Bancos. The bank portfolio, card
+   details, controls and the standalone Wallet are rendered without mutation. */
+const v243CardsOriginal=pages.cards;
+pages.cards=function(){
+ const body=v243CardsOriginal();
+ if(ui.v230BenefitComparison)return body;
+ const visible=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c)).length;
+ return `<div class="v243-cards-workspace" aria-label="Bancos · Tarjetas">
+  <header class="v243-cards-heading"><div class="v243-cards-heading-main">
+   <span class="v243-module-kicker">BANCOS · TU PORTAFOLIO</span>
+   <h2>Tarjetas</h2>
+   <p>Crédito, cortes, pagos y beneficios en un solo lugar.</p>
+  </div><div class="v243-cards-heading-actions"><span class="v243-cards-total">${visible} ${visible===1?'tarjeta':'tarjetas'}</span></div></header>
+  <nav class="v243-bank-breadcrumb" aria-label="Navegación de productos bancarios"><button type="button" data-act="navigate" data-id="banks">${icon('arrow')} Bancos</button><span aria-hidden="true">/</span><strong>Tarjetas</strong></nav>
+  ${body}</div>`;
+};
+
+/* V243 · Restrict origin tracking to actual Explore links. Do not modify bottom
+   navigation or global route actions. */
+document.addEventListener('click',function(e){
+ const back=e.target.closest?.('[data-v243-explore-back]');
+ if(back){
+  e.preventDefault();e.stopImmediatePropagation();
+  v243ExploreDestination=null;ui.page='mobilehub';render();window.scrollTo(0,0);return;
+ }
+ const link=e.target.closest?.('.v243-explore [data-act="navigate"][data-id]');
+ if(link){v243ExploreDestination=link.dataset.id;return;}
+ // Clear the contextual breadcrumb only when choosing a primary destination.
+ if(e.target.closest?.('.vive-mobile-dock [data-act="navigate"],.sidebar [data-act="navigate"]'))v243ExploreDestination=null;
+},true);
+
+/* V243 · Top-bar visibility follows real document scroll, not component
+   re-renders. It remains hidden until the beginning of the viewport. */
+function v243SyncMobileTop(){
+ const mobile=window.matchMedia('(max-width:790px)').matches;
+ document.body.classList.toggle('v243-top-away',mobile&&window.scrollY>28);
+}
+window.addEventListener('scroll',v243SyncMobileTop,{passive:true});
+window.addEventListener('resize',v243SyncMobileTop,{passive:true});
+window.addEventListener('pageshow',v243SyncMobileTop,{passive:true});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',v243SyncMobileTop,{once:true});
+else v243SyncMobileTop();
+
+/* V243 · Four targeted notification report designs: all figures continue
+   coming from the read-only V216 calculations and the original cutoffs. */
+function v243NotificationReport(kind){
+ const closed=v216ClosedDay(),p=v216Period(kind,closed),a=v216Amounts(p.start,p.end);
+ const prev=v216Previous(p),b=v216Amounts(prev.start,prev.end),delta=a.net-b.net;
+ const dues=v216Due(closed),due7=dues.filter(x=>x.date>=closed&&x.date<=v216Shift(closed,7));
+ const overdue=dues.filter(x=>x.date<closed);
+ const dueSum=due7.reduce((n,x)=>n+fx(num(x.amount),x.currency||'DOP'),0);
+ const personal=personalTotals(),debt=rnd(totalCardDebt()+totalLoanDebt()+num(personal.payable));
+ const liquid=totalLiquid(),position=rnd(liquid+totalCertificates()+num(personal.receivable)-debt);
+ const classification={
+  diario:{label:'RESUMEN DIARIO',title:'Así cerró tu día',desc:'Tus movimientos registrados, balance y próximos compromisos.',icon:'calendar'},
+  corte:{label:'RESUMEN AL CORTE',title:'Tu corte financiero',desc:'Fotografía del día al horario de corte de las 7:00 p. m.',icon:'shield'},
+  mitad:{label:'MITAD DE MES',title:'Tu primera mitad del mes',desc:'Los primeros quince días, su comportamiento y lo que sigue.',icon:'chart'},
+  cierre:{label:'FIN DE MES',title:'Tu cierre mensual',desc:'Resultado mensual, comparación y compromisos por atender.',icon:'analytics'}
+ }[kind];
+ const dayCount=Math.max(1,Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1);
+ const pct=b.net!==0?`${delta>=0?'+':''}${(100*delta/Math.abs(b.net)).toFixed(1)}%`:'Sin base comparable';
+ const topCats=Object.entries(a.byCategory||{}).filter(([,v])=>v>0).sort((x,y)=>y[1]-x[1]).slice(0,4);
+ const catTotal=topCats.reduce((n,x)=>n+x[1],0);
+ const categories=topCats.length?topCats.map(([label,value])=>`<div class="v243-cat-line"><div><strong>${sanitize(label)}</strong><b>${v216Currency(value)}</b></div><span class="v243-cat-track"><i style="width:${Math.max(2,Math.min(100,100*value/Math.max(1,catTotal))).toFixed(1)}%"></i></span></div>`).join(''):'<p class="v243-report-empty">Sin egresos clasificados registrados en este período.</p>';
+ const compared=`<div class="v243-report-mini"><span>Balance anterior comparable</span><strong>${v216Currency(b.net)}</strong></div><div class="v243-report-mini"><span>Variación de balance</span><strong class="${delta<0?'v216-negative':'v216-positive'}">${v216Currency(delta)}</strong><small>${pct}</small></div>`;
+ const currentDue=dues.filter(x=>x.date>=closed);
+ const dueRows=[...overdue.slice(0,2),...currentDue.slice(0,5)].slice(0,7).map(o=>`<div class="v243-due-row"><span><strong>${sanitize(o.name||'Compromiso')}</strong><small>${prettyDate(o.date)}${o.date<closed?' · Vencido':''}</small></span><b>${money(o.amount,o.currency,2)}</b></div>`).join('');
+ const stat=(label,value,sub='')=>`<article class="v243-report-stat"><small>${label}</small><strong>${value}</strong>${sub?`<span>${sub}</span>`:''}</article>`;
+ let special='';
+ if(kind==='diario')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('chart')}</span><div><h3>En qué se movió tu dinero</h3><p>${a.count} operaciones registradas durante el día</p></div></div>${categories}</section>`;
+ if(kind==='corte')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('wallet')}</span><div><h3>Estado financiero actual</h3><p>Posición y obligaciones en el momento de consulta</p></div></div><div class="v243-report-dual">${stat('Fondos disponibles',v216Currency(liquid))}${stat('Deuda total',v216Currency(debt))}${stat('Posición neta estimada',v216Currency(position))}${stat('Próximos 7 días',v216Currency(dueSum))}</div></section>`;
+ if(kind==='mitad')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('chart')}</span><div><h3>Primera quincena en perspectiva</h3><p>${dayCount} días del período seleccionado</p></div></div><div class="v243-report-dual">${compared}</div><div class="v243-report-categories"><h4>Gastos principales</h4>${categories}</div></section>`;
+ if(kind==='cierre')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('analytics')}</span><div><h3>Cómo terminó el mes</h3><p>${dayCount} días contabilizados, según lo registrado</p></div></div><div class="v243-report-dual">${compared}</div><div class="v243-report-categories"><h4>Principales categorías</h4>${categories}</div></section>`;
+ const insights=v216Insights(a,b,closed,dues,liquid);
+ const tabs=['diario','corte','mitad','cierre'].map(k=>`<button type="button" data-v216="report" data-kind="${k}" class="${k===kind?'current':''}" aria-pressed="${k===kind}">${({diario:'Diario',corte:'Al corte',mitad:'Mitad de mes',cierre:'Fin de mes'})[k]}</button>`).join('');
+ document.getElementById('v216-layer')?.remove();
+ const layer=document.createElement('div');layer.id='v216-layer';layer.className='v216-overlay v243-report-overlay';
+ layer.innerHTML=`<section class="v216-report v243-report" role="dialog" aria-modal="true" aria-labelledby="v216-title" tabindex="-1"><header class="v243-report-head"><div class="v243-report-brand">${icon(classification.icon)}<span>VIVE EL HOY · INFORMES FINANCIEROS</span></div><button type="button" class="v216-close" data-v216="close" aria-label="Cerrar informe">×</button><div class="v243-report-head-copy"><span>${classification.label}</span><h2 id="v216-title">${classification.title}</h2><p>${classification.desc}</p></div><div class="v243-report-dates"><span>${icon('calendar')} ${prettyDate(p.start)}${p.start===p.end?'':' — '+prettyDate(p.end)}</span><small>Corte 7:00 p. m. · República Dominicana</small></div></header><nav class="v216-periods v243-report-tabs" aria-label="Tipo de informe">${tabs}</nav><div class="v216-report-body v243-report-content"><div class="v243-report-hero"><span>BALANCE DEL PERÍODO</span><strong class="${a.net<0?'v216-negative':'v216-positive'}">${v216Currency(a.net)}</strong><p>Ingresos registrados menos egresos del período</p></div><div class="v243-report-core">${stat('Ingresos',v216Currency(a.income))}${stat('Egresos',v216Currency(a.expense))}${stat('Movimientos',String(a.count),'Registrados')}</div>${special}<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('calendar')}</span><div><h3>Compromisos y fechas</h3><p>${overdue.length} vencidos · ${due7.length} próximos 7 días</p></div></div>${dueRows||'<p class="v243-report-empty">No hay vencimientos próximos registrados.</p>'}<button type="button" class="v216-link" data-v216="payments">Ver centro de pagos ${icon('arrow')}</button></section><section class="v243-report-block v243-report-advice"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('shield')}</span><div><h3>Lo que merece atención</h3><p>Observaciones calculadas con tus registros</p></div></div><ul class="v216-insights">${insights.map(x=>`<li class="${x.danger?'v216-critical':''}">${sanitize(x.text)}</li>`).join('')}</ul></section><footer class="v216-report-foot"><span>${a.appleCount} movimiento(s) Apple Pay · ${a.count} movimiento(s) totales</span><span>Vista dinámica: no modifica tus registros.</span></footer></div></section>`;
+ document.body.append(layer);layer.querySelector('.v216-report')?.focus();document.body.classList.add('v216-modal-open');
+}
+const v243PreviousReport=v216Modal;
+v216Modal=function(kind){
+ if(['diario','corte','mitad','cierre'].includes(kind))return v243NotificationReport(kind);
+ return v243PreviousReport(kind);
+};
 
  f33Boot();
 
@@ -33287,6 +33652,100 @@ body.theme-dark .main.world-overview .ff-dashboard.summary-space .ff-executive-b
   .v144-wallet-shell .v68-wallet-face:before,
   body .main.world-overview .ff-dashboard.summary-space :is(.ff-pay-row,.ff-obligation-row,.ff-person-row){transition:none!important;animation:none!important}
 }
+</style>
+<style id="vive-v242-ios-settings-apple-pay-patrimony">
+
+/* Actual Patrimonio web (V187): original three-chart grid and side readouts. */
+@media(min-width:791px){
+ .world-patrimony .v187-patrimony .v187-chart-card{border-color:rgba(199,215,236,.69)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.83),0 13px 28px rgba(48,83,139,.067)!important;transition:border-color .2s,box-shadow .2s}
+ .world-patrimony .v187-patrimony .v187-chart-card:hover{border-color:rgba(142,169,216,.65)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.88),0 17px 31px rgba(48,83,139,.1)!important}
+ .world-patrimony .v187-patrimony .v187-chart-card header h3{letter-spacing:-.04em;font-weight:825;line-height:1.2}
+ .world-patrimony .v187-patrimony .v187-timeline .v14-chart-scroll{max-width:100%;overflow:hidden}
+ .world-patrimony .v187-patrimony .v187-mini-chart .v14-timeline-svg{max-width:100%;height:auto;filter:drop-shadow(0 3px 6px rgba(66,88,155,.065))}
+ .world-patrimony .v187-patrimony .v187-mini-chart .v14-timeline-svg path{transition:filter .2s}.world-patrimony .v187-patrimony .v187-mini-chart .v14-timeline-svg path:hover{filter:drop-shadow(0 2px 4px rgba(75,92,181,.28))}
+ .world-patrimony .v187-patrimony .v187-mini-chart .v14-timeline-svg circle{cursor:help;transition:r .16s,stroke-width .16s}
+ .world-patrimony .v187-patrimony .v187-mini-chart .v14-timeline-svg circle:hover,.world-patrimony .v187-patrimony .v187-mini-chart .v14-timeline-svg circle:focus-visible{r:6;stroke-width:3;outline:none}
+ .world-patrimony .v187-patrimony .v14-chart-legend{display:flex;flex-wrap:wrap;align-items:center;gap:7px 14px;margin-top:9px;padding:7px 0;font-size:10px;font-weight:760}
+ .world-patrimony .v187-patrimony .v14-chart-legend i{width:16px;height:4px;border-radius:100px}
+ .world-patrimony .v187-patrimony .v187-composition-item{padding:5px 3px;border-radius:9px;transition:background-color .16s}.world-patrimony .v187-patrimony .v187-composition-item:hover{background:rgba(100,133,192,.055)}
+ .world-patrimony .v187-patrimony .v187-composition-top{align-items:baseline}.world-patrimony .v187-patrimony .v187-composition-top b{letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+ .world-patrimony .v187-patrimony .v187-comp-track{overflow:hidden;border-radius:999px}.world-patrimony .v187-patrimony .v187-comp-track i{border-radius:999px}
+}
+body.theme-black .world-patrimony .v187-patrimony .v187-chart-card{border-color:#343e4c!important;box-shadow:0 8px 22px rgba(0,0,0,.3)!important}
+
+/* V242: scope limited to Ajustes, Apple Pay, Patrimonio web and optional KPI mobile. */
+.v242-ios-settings{max-width:1050px!important;margin:0 auto!important;padding:clamp(10px,2.1vw,24px)!important;font-family:inherit}
+.v242-ios-settings .v242-settings-home{max-width:780px;margin:0 auto}
+.v242-settings-intro{margin:4px 2px 25px;padding:4px 2px 0}
+.v242-settings-eyebrow{display:block;font-size:10px;letter-spacing:.17em;font-weight:800;color:#6681a4}
+.v242-settings-intro h1,.v242-settings-subhead h1{font-size:clamp(30px,3.15vw,42px);letter-spacing:-.06em;line-height:1.12;font-weight:830;margin:10px 0 8px;color:var(--text,#183453)}
+.v242-settings-intro p,.v242-settings-subhead p{font-size:13px;line-height:1.55;color:var(--muted,#73839b);margin:0}
+.v242-settings-profile{display:flex;align-items:center;gap:15px;position:relative;border:1px solid rgba(255,255,255,.8);border-radius:25px;padding:20px;background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(221,235,253,.62));box-shadow:0 13px 32px rgba(41,75,126,.1),inset 0 1px 0 rgba(255,255,255,.85);overflow:hidden}
+.v242-settings-profile:before,.v242-settings-rows:before{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent);pointer-events:none}
+.v242-profile-avatar{width:59px;height:59px;display:grid;place-items:center;flex:0 0 auto;color:#fff;border-radius:19px;background:linear-gradient(145deg,#4d79c3,#6a55cc);box-shadow:0 9px 20px rgba(66,92,173,.2)}
+.v242-profile-avatar svg{width:29px;height:29px}.v242-settings-profile>span:nth-child(2){min-width:0;flex:1}
+.v242-settings-profile strong,.v242-settings-row-copy strong{display:block;letter-spacing:-.026em;color:var(--text,#1c324c);font-size:15px;font-weight:740}
+.v242-settings-profile small,.v242-settings-row-copy small{display:block;margin-top:4px;color:var(--muted,#72849d);font-size:11px;line-height:1.35}
+.v242-profile-hit{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.v242-settings-section{margin-top:21px}.v242-group-caption{display:block;font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--muted,#75879c);padding:0 14px 10px}
+.v242-settings-rows{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.8);border-radius:22px;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(240,246,255,.74));box-shadow:0 12px 28px rgba(43,74,121,.067),inset 0 1px 0 rgba(255,255,255,.85);backdrop-filter:blur(21px) saturate(145%);-webkit-backdrop-filter:blur(21px) saturate(145%)}
+.v242-settings-row{min-height:73px;padding:12px 19px;display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:none;border:0;cursor:pointer;position:relative}
+.v242-settings-row+.v242-settings-row:before{content:"";position:absolute;top:0;left:72px;right:16px;border-top:1px solid rgba(123,151,185,.16)}
+.v242-settings-row:hover{background:rgba(139,177,231,.085)}.v242-settings-row:focus-visible,.v242-settings-back:focus-visible,.v242-style-option:focus-visible{outline:3px solid #488fe5;outline-offset:2px}
+.v242-settings-symbol{width:40px;height:40px;display:grid;place-items:center;flex:0 0 40px;border-radius:12px;color:white;background:linear-gradient(135deg,#5d89d4,#6172bd);box-shadow:inset 0 1px 0 #ffffff77,0 4px 9px #4a78b720}
+.v242-settings-symbol svg{width:21px;height:21px}.v242-symbol-appearance{background:linear-gradient(135deg,#8b70e8,#586ed2)}.v242-symbol-notifications{background:linear-gradient(135deg,#e17e88,#cd566e)}.v242-symbol-integrations{background:linear-gradient(135deg,#6b81a7,#344668)}.v242-symbol-financial{background:linear-gradient(135deg,#54ae9d,#288c82)}.v242-symbol-security{background:linear-gradient(135deg,#729ac1,#5577a8)}.v242-symbol-about{background:linear-gradient(135deg,#959da9,#677687)}
+.v242-settings-row-copy{flex:1;min-width:0}.v242-settings-chevron{font-size:25px;font-weight:250;color:#91a3bb;line-height:1;flex:0 0 auto}
+.v242-settings-footer{font-size:11px;line-height:1.6;text-align:center;margin:19px 12px;color:var(--muted,#8c9aab)}
+.v242-settings-subpage{max-width:920px;margin:0 auto}.v242-settings-subhead{padding:3px 3px 24px}.v242-settings-back{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:650;color:#476ca5;background:transparent;border:0;margin:0 0 19px;padding:7px 0;cursor:pointer}.v242-settings-back:first-letter{font-size:23px}.v242-settings-inner{display:grid;gap:18px;min-width:0}
+.v242-settings-inner>.settings-group-title{padding:3px 5px 0;margin:4px 0 -5px!important}.v242-settings-inner>.settings-group-title .summary-tag{font-size:10px!important}.v242-settings-inner>.settings-group-title h3{font-size:17px!important;margin:5px 0 0}
+.v242-settings-inner :is(.panel,.theme-settings,.f34-private-status,.f37-push-panel,.f34-fx-panel,.v212-panel){min-width:0;max-width:100%;border-radius:21px!important}
+.v242-settings-inner .grid.columns.equal{gap:15px}.v242-settings-inner .settings-finance form{min-width:0}
+.v242-appearance-picker{background:linear-gradient(135deg,#ffffffdb,#e9f2ffbc);border:1px solid rgba(255,255,255,.89);border-radius:24px;padding:clamp(17px,2.5vw,26px);box-shadow:0 13px 31px rgba(46,81,139,.085)}
+.v242-preference-title{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:17px}.v242-preference-title h3{font-size:19px;letter-spacing:-.04em;margin:7px 0}.v242-preference-title p,.v242-picker-note{font-size:11px;line-height:1.5;color:#7587a1}.v242-setting-kicker{font-size:9px;font-weight:750;color:#6384b1;background:#e5efff;padding:6px 10px;border-radius:99px;white-space:nowrap}
+.v242-appearance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.v242-style-option{display:block;text-align:left;background:rgba(255,255,255,.65);border:1.5px solid #dde7f6;border-radius:19px;padding:10px;cursor:pointer;min-width:0;transition:border-color .16s,box-shadow .16s,transform .16s}.v242-style-option.selected{border-color:#628be5;box-shadow:0 0 0 3px #678eed20,0 9px 21px #6589c31a}.v242-style-option:hover{transform:translateY(-2px)}
+.v242-style-art{height:160px;border-radius:14px;display:flex;flex-direction:column;gap:6px;padding:15px;overflow:hidden;box-sizing:border-box}.v242-mini-original{color:#1c3555;background:linear-gradient(135deg,#e6f5ff,#b8d8f3);box-shadow:inset 0 1px 0 #fff}.v242-mini-original>.v242-mini-label{font-size:10px;color:#577494;font-weight:750}.v242-mini-original>strong{font-size:clamp(20px,2.3vw,28px);letter-spacing:-.06em;white-space:nowrap}.v242-mini-divider{height:1px;background:#85a5cb44;margin-top:auto}.v242-mini-foot{display:flex;justify-content:space-between;gap:6px}.v242-mini-foot i{display:flex;flex-direction:column;gap:2px;font-size:9px;font-style:normal;color:#597393}.v242-mini-foot b{font-size:12px;color:#294560}
+.v242-mini-circles{background:linear-gradient(135deg,#edf3ff,#d7e6f9);align-items:center;color:#2a4168;padding:10px}.v242-mini-title{font-size:9px;font-weight:850}.v242-mini-circles>strong{font-size:17px;letter-spacing:-.05em}.v242-mini-orbs{display:flex;align-items:center;gap:4px;margin-top:4px}.v242-mini-orbs i{width:clamp(53px,6.5vw,74px);height:clamp(53px,6.5vw,74px);border-radius:50%;background:linear-gradient(145deg,#fff,#deedff);display:flex;flex-direction:column;align-items:center;justify-content:center;font-style:normal;box-shadow:0 7px 12px #475f8d16}.v242-mini-orbs i.v242-featured{background:linear-gradient(135deg,#7c78e5,#555ed6);color:#fff}.v242-mini-orbs b{font-size:9px;font-weight:850}.v242-mini-orbs small{font-size:8px;line-height:1.1;text-align:center}
+.v242-style-description{display:grid;grid-template-columns:1fr 22px;grid-template-rows:auto auto;align-items:center;padding:12px 3px 3px;gap:3px}.v242-style-description strong{color:#223c5a;font-size:13px;letter-spacing:-.025em}.v242-style-description small{color:#7b8ba2;font-size:10px}.v242-style-description i{grid-column:2;grid-row:1/3;display:grid;place-items:center;width:20px;height:20px;color:#5b83c2;font-style:normal;font-weight:900}.v242-style-option.selected .v242-style-description i{border-radius:50%;color:#fff;background:#497ad5}
+/* Apple Pay: preserve each existing control, improve grouping and status messaging. */
+.v242-ios-settings .v212-panel{padding:clamp(17px,2.2vw,27px)!important;border:1px solid rgba(211,225,244,.85)!important;background:linear-gradient(135deg,#ffffffed,#ebf3ffdc)!important;box-shadow:0 18px 37px #3c65951b!important}
+.v242-ios-settings .v212-head{align-items:start;gap:12px}.v242-ios-settings .v212-head h3{letter-spacing:-.045em;font-size:clamp(19px,2vw,25px)}.v242-ios-settings .v212-head p{max-width:670px;line-height:1.55}.v242-ios-settings .v212-pill{font-weight:800;white-space:nowrap}
+.v242-ios-settings .v212-setup{margin-top:18px;padding:17px;border-radius:18px;background:rgba(228,238,254,.48);border:1px solid #dce8f6;gap:11px}
+.v242-ios-settings .v212-setup .field{min-width:0;width:100%;border-radius:12px}.v242-ios-settings .v212-secret{border-radius:17px;background:linear-gradient(135deg,#eff9f3,#e5f3ff)}.v242-ios-settings .v212-secret code{overflow-wrap:anywhere}.v242-ios-settings .v212-guide{border-radius:15px;background:rgba(255,255,255,.62)}.v242-ios-settings .v212-guide summary{font-size:12px;font-weight:800}.v242-ios-settings .v212-sections>div{min-width:0}.v242-ios-settings .v212-linked,.v242-ios-settings .v212-event{border-radius:13px;min-width:0}
+/* Patrimonio web — polish only: grids and panels stay in the same places. */
+@media(min-width:791px){
+ .world-patrimony .v22-wealth-chart,.world-patrimony .v22-wealth-balance{border-color:rgba(200,216,239,.68)!important;box-shadow:0 15px 34px rgba(43,76,130,.075),inset 0 1px 0 rgba(255,255,255,.75)!important}
+ .world-patrimony .v22-wealth-chart .panel-head h3,.world-patrimony .v22-wealth-balance .panel-head h3{letter-spacing:-.035em;font-weight:800}
+ .world-patrimony .v14-timeline-svg{filter:drop-shadow(0 4px 9px rgba(49,80,136,.065));width:100%;height:auto;max-width:100%;overflow:visible}
+ .world-patrimony .v14-timeline-svg path{transition:opacity .16s ease,filter .16s ease}.world-patrimony .v14-timeline-svg path:hover{filter:drop-shadow(0 1px 4px rgba(79,100,192,.3))}
+ .world-patrimony .v14-timeline-svg circle{cursor:help;transition:r .16s ease,stroke-width .16s ease}.world-patrimony .v14-timeline-svg circle:hover,.world-patrimony .v14-timeline-svg circle:focus-visible{r:6;stroke-width:3px;outline:none}
+ .world-patrimony .v14-chart-legend{display:flex;align-items:center;flex-wrap:wrap;gap:9px 17px;padding:13px 4px 3px;font-size:11px;font-weight:750}
+ .world-patrimony .v14-chart-legend span{display:inline-flex;align-items:center;gap:7px}.world-patrimony .v14-chart-legend i{border-radius:100px;width:17px;height:4px}
+ .world-patrimony .v22-wealth-balance .v12-patrimony-line{align-items:baseline;gap:12px}.world-patrimony .v22-wealth-balance .v12-patrimony-line strong{font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+ .world-patrimony .v22-wealth-balance .v12-patrimony-track{height:9px;border-radius:99px;overflow:hidden}.world-patrimony .v22-wealth-balance .v12-patrimony-track>span{border-radius:99px}
+}
+/* Selected web circles adapted to mobile without touching the desktop KPI. */
+@media(max-width:790px){
+ .vive-mobile-home .v242-mobile-web-position{display:flex!important;flex-direction:column!important;min-width:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:clamp(15px,4vw,22px)!important;gap:11px!important;min-height:0!important;border-radius:25px!important;overflow:hidden!important;position:relative;background:linear-gradient(130deg,rgba(238,245,255,.92),rgba(207,228,251,.86))!important;border:1px solid rgba(255,255,255,.86)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.98),0 13px 27px rgba(66,100,160,.12)!important}
+ .vive-mobile-home .v242-mobile-web-position .ff-balance-header{margin:0!important;display:block!important;min-width:0!important;max-height:none!important;padding:0!important}.vive-mobile-home .v242-mobile-web-position .ff-executive-header>div{width:100%}.vive-mobile-home .v242-mobile-web-position .ff-label{font-size:12px!important;font-weight:780!important;color:#586c91!important;margin:0 0 7px!important}
+ .vive-mobile-home .v242-mobile-web-position .ff-pos-amount{font-size:clamp(27px,7.5vw,39px)!important;font-weight:850!important;color:#27446b!important;line-height:1.1!important;white-space:normal!important;overflow-wrap:anywhere!important;text-align:left!important;letter-spacing:-.065em!important;margin:0!important;max-width:100%!important}.vive-mobile-home .v242-mobile-web-position .ff-balance-header p{margin:7px 0 0!important;font-size:10px!important;line-height:1.3!important;color:#6c809b!important;max-width:100%!important}
+ .vive-mobile-home .v242-mobile-web-position .ff-position-divider{display:block!important;width:100%!important;height:1px!important;margin:0!important;background:linear-gradient(90deg,transparent,#b4c7e1,transparent)!important}
+ .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:center!important;gap:clamp(3px,1.35vw,9px)!important;width:100%!important;min-height:0!important;max-width:100%!important;padding:3px 0 4px!important;margin:0!important;transform:none!important;overflow:visible!important}
+ .vive-mobile-home .v242-mobile-web-position .ff-bubble,.vive-mobile-home .v242-mobile-web-position .ff-bubble.featured{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;flex:0 1 auto!important;width:min(29vw,112px)!important;height:min(29vw,112px)!important;min-width:0!important;min-height:0!important;max-width:112px!important;max-height:112px!important;aspect-ratio:1!important;border-radius:50%!important;padding:clamp(4px,1.2vw,10px)!important;gap:3px!important;margin:0!important;transform:none!important;overflow:hidden!important;box-sizing:border-box!important;background:linear-gradient(140deg,#fff,#e2edff)!important;border:1px solid rgba(255,255,255,.88)!important;box-shadow:inset 0 2px 5px rgba(255,255,255,.95),0 8px 16px rgba(77,101,147,.13)!important}
+ .vive-mobile-home .v242-mobile-web-position .ff-bubble.featured{background:linear-gradient(140deg,#777be7,#5863d6)!important;box-shadow:0 10px 18px rgba(93,98,215,.24),inset 0 1px 1px rgba(255,255,255,.24)!important;color:#fff!important}
+ .vive-mobile-home .v242-mobile-web-position .ff-bubble .bubble-amount{font-size:clamp(11px,3.3vw,16px)!important;font-weight:850!important;letter-spacing:-.055em!important;line-height:1.05!important;max-width:100%!important;white-space:nowrap!important;color:#244260!important}.vive-mobile-home .v242-mobile-web-position .ff-bubble.featured .bubble-amount,.vive-mobile-home .v242-mobile-web-position .ff-bubble.featured small,.vive-mobile-home .v242-mobile-web-position .ff-bubble.featured .v105-bubble-pct{color:#fff!important}
+ .vive-mobile-home .v242-mobile-web-position .ff-bubble small{display:block!important;line-height:1.1!important;font-size:clamp(8px,2.1vw,10px)!important;font-weight:800!important;color:#5d7290!important;white-space:normal!important;text-align:center!important;max-width:95%!important}
+ .vive-mobile-home .v242-mobile-web-position .v105-bubble-pct{display:block!important;font-size:9px!important;font-weight:780!important;line-height:1.1!important;white-space:nowrap!important}.vive-mobile-home .v242-mobile-web-position .ff-bubble-negative:not(.featured) .bubble-amount{color:#cf6c4a!important}
+}
+@media(max-width:430px){.v242-ios-settings{padding:7px 2px!important}.v242-settings-row{padding:12px 13px}.v242-settings-intro{padding-left:9px}.v242-settings-profile{padding:16px}.v242-settings-row-copy strong{font-size:14px}.v242-settings-row-copy small{font-size:10px}.v242-settings-subhead{padding-left:10px;padding-right:10px}.v242-settings-inner>.settings-group-title{padding-left:8px}.v242-appearance-grid{gap:9px}.v242-style-art{height:145px;padding:11px}.v242-mini-orbs i{width:clamp(41px,11vw,54px);height:clamp(41px,11vw,54px)}.v242-mini-orbs i b{font-size:7px}.v242-mini-orbs i small{font-size:7px}.v242-preference-title{display:block}.v242-setting-kicker{display:inline-block;margin-top:5px}.v242-settings-inner .v212-head{flex-wrap:wrap}}
+body.theme-black .v242-ios-settings :is(.v242-settings-rows,.v242-settings-profile,.v242-appearance-picker,.v242-style-option,.v212-panel),body.theme-dark .v242-ios-settings :is(.v242-settings-rows,.v242-settings-profile,.v242-appearance-picker,.v242-style-option,.v212-panel){background:#181d27!important;background-image:linear-gradient(140deg,#242d3c,#171b24)!important;border-color:#343f50!important;color:#ecf3ff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 10px 24px rgba(0,0,0,.3)!important}
+body.theme-black .v242-ios-settings :is(.v242-settings-profile strong,.v242-settings-row-copy strong,.v242-settings-intro h1,.v242-settings-subhead h1,.v242-style-description strong,.v242-preference-title h3),body.theme-dark .v242-ios-settings :is(.v242-settings-profile strong,.v242-settings-row-copy strong,.v242-settings-intro h1,.v242-settings-subhead h1,.v242-style-description strong,.v242-preference-title h3){color:#f1f5fe!important}
+body.theme-black .v242-ios-settings :is(.v242-settings-row-copy small,.v242-style-description small,.v242-preference-title p,.v242-settings-subhead p),body.theme-dark .v242-ios-settings :is(.v242-settings-row-copy small,.v242-style-description small,.v242-preference-title p,.v242-settings-subhead p){color:#9facbf!important}
+body.theme-black .v242-ios-settings .v212-setup,body.theme-dark .v242-ios-settings .v212-setup{background:#202937!important;border-color:#39485e!important}
+body.theme-black .vive-mobile-home .v242-mobile-web-position,body.theme-dark .vive-mobile-home .v242-mobile-web-position{background:linear-gradient(140deg,#1c273b,#101827)!important;border-color:#37465f!important;box-shadow:0 12px 25px rgba(0,0,0,.3)!important}
+body.theme-black .vive-mobile-home .v242-mobile-web-position .ff-bubble:not(.featured),body.theme-dark .vive-mobile-home .v242-mobile-web-position .ff-bubble:not(.featured){background:linear-gradient(140deg,#32435d,#1d2b3e)!important;border-color:#3a526f!important}
+body.theme-black .vive-mobile-home .v242-mobile-web-position :is(.ff-label,.ff-balance-header p,.ff-pos-amount),body.theme-dark .vive-mobile-home .v242-mobile-web-position :is(.ff-label,.ff-balance-header p,.ff-pos-amount){color:#d6e3fa!important}
+body.theme-black .vive-mobile-home .v242-mobile-web-position .ff-bubble:not(.featured) :is(.bubble-amount,small),body.theme-dark .vive-mobile-home .v242-mobile-web-position .ff-bubble:not(.featured) :is(.bubble-amount,small){color:#e6edff!important}
+@media(prefers-reduced-motion:reduce){.v242-settings-row,.v242-style-option,.world-patrimony .v14-timeline-svg :is(path,circle){transition:none!important}}
 </style>
 </body>
 </html>
