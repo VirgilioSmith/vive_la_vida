@@ -16843,8 +16843,8 @@ function v36Bell(){
    return `<article class="v36-notice ${d<0?'v36-expired':d<=3?'v36-urgent':''}"><span class="v36-notice-dot"></span><div><strong>${sanitize(o.name)}</strong><small>${kind} · ${state} · ${prettyDate(o.date)}</small></div><b>${money(o.amount,o.currency,2)}</b></article>`;
  }).join('');
  const spendingItems=spendAlerts.map(a=>`<article class="v36-notice v123-bell-alert"><span class="v36-notice-dot"></span><div><strong>${sanitize(a.category)} · ${a.kind==='trend'?'Tendencia al alza':'Gasto elevado'}</strong><small>${sanitize(v123AlertText(a))}</small></div></article>`).join('');
- const totalAlerts=urgent+spendAlerts.length;
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Informes al corte de las 7:00 p. m. · vencimientos y alertas</small></div>${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los avisos de gastos son internos y se actualizan con los movimientos registrados. Los recordatorios push de vencimientos se configuran por separado.</p></div></details>`;
+ const totalAlerts=urgent+spendAlerts.length+v246UnreadReportCount();
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  const pageName={overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
@@ -16968,7 +16968,7 @@ function v243ExploreReturn(){
  return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Centro de pagos','recurring':'Suscripciones','personal':'Entre personas','kpis':'Mis indicadores','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada'})[ui.page]||'Módulo')}</strong></nav>`;
 }
 function mobileHub(){
- const period=ui.month||today().slice(0,7),stats=monthlyTotals(Number(period.slice(0,4)),Number(period.slice(5,7)));
+ const period=ui.month||today().slice(0,7);
  const groups=[
   {eyebrow:'TU ACTIVIDAD',title:'Cada movimiento, en su lugar',subtitle:'Registros, análisis y planificación',entries:[
    ['income','Ingresos','Lo que recibes','up'],['expenses','Egresos','Lo que utilizas','down'],
@@ -16984,7 +16984,6 @@ function mobileHub(){
  return `<div class="vive-mobile-hub v205-explore v243-explore">
    <header class="v205-explore-header"><span class="v205-explore-kicker">VIVE EL HOY · TU ESPACIO</span><h1>Explorar<span class="v205-explore-period">${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</span></h1><p>Tu espacio financiero, organizado por lo que quieres hacer.</p></header>
    <div class="v205-explore-actions"><button type="button" class="v205-explore-register" data-act="newTransaction">${icon('plus')}<span>Registrar movimiento</span><span class="v205-explore-action-arrow" aria-hidden="true">↗</span></button><button type="button" class="v205-explore-pay" data-act="navigate" data-id="payments" aria-label="Abrir Centro de pagos">${icon('calendar')}<span>Mis pagos</span></button></div>
-   <section class="v205-explore-pulse" aria-label="Actividad registrada del mes"><div class="v205-explore-pulse-head"><span>ESTE MES</span><small>Solo movimientos registrados</small></div><div class="v205-explore-pulse-grid"><button type="button" data-act="navigate" data-id="income"><span>${icon('up')} Ingresos</span><strong>${money(stats.income,'DOP',0)}</strong><small>Ver análisis ›</small></button><button type="button" data-act="navigate" data-id="expenses"><span>${icon('down')} Egresos</span><strong>${money(stats.expense,'DOP',0)}</strong><small>Ver análisis ›</small></button></div></section>
    ${groups.map(g=>`<section class="v205-explore-group" aria-label="${g.title}"><div class="v205-explore-group-header"><span>${g.eyebrow}</span><h2>${g.title}</h2><p>${g.subtitle}</p></div><div class="v205-explore-links">${g.entries.filter(e=>!(typeof window!=='undefined'&&window.matchMedia('(max-width:790px)').matches&&e[0]==='advanced')).map(link).join('')}</div></section>`).join('')}
    <div class="v205-explore-end"><span>Tu información está organizada por decisiones, no por menús.</span></div>
  </div>`;
@@ -27292,7 +27291,13 @@ document.addEventListener('click',e=>{
  const action=e.target?.closest?.('[data-v216]');
  if(action){
   e.preventDefault();e.stopPropagation();const command=action.dataset.v216;
-  if(command==='report')v216Modal(action.dataset.kind||'diario');
+  if(command==='report'){
+   const kind=action.dataset.kind||'corte',end=action.dataset.end||'';
+   if(end && !v246EligibleEvent(kind,end))return;
+   if(action.dataset.reportId)v246MarkReportRead(action.dataset.reportId);
+   document.querySelector('.v36-notifications[open]')?.removeAttribute('open');
+   v216Modal(kind,end);
+  }
   if(command==='close')v216Close();
   if(command==='payments'){v216Close();ui.page='payments';render()}
   return;
@@ -27614,11 +27619,15 @@ else v243SyncMobileTop();
 
 /* V243 · Four targeted notification report designs: all figures continue
    coming from the read-only V216 calculations and the original cutoffs. */
-function v243NotificationReport(kind){
- const closed=v216ClosedDay(),p=v216Period(kind,closed),a=v216Amounts(p.start,p.end);
+function v243NotificationReport(kind,reportEnd=''){
+ // The selected entry is tied to its actual release date, not to today's latest period.
+ const currentClosed=v216ClosedDay();
+ const closed=/^\d{4}-\d{2}-\d{2}$/.test(reportEnd)&&reportEnd<=currentClosed?reportEnd:currentClosed;
+ const p=v216Period(kind,closed),a=v216Amounts(p.start,p.end);
  const prev=v216Previous(p),b=v216Amounts(prev.start,prev.end),delta=a.net-b.net;
- const dues=v216Due(closed),due7=dues.filter(x=>x.date>=closed&&x.date<=v216Shift(closed,7));
- const overdue=dues.filter(x=>x.date<closed);
+ // Obligations and net position are current; historical income/expense keep their own dates.
+ const dues=v216Due(currentClosed),due7=dues.filter(x=>x.date>=currentClosed&&x.date<=v216Shift(currentClosed,7));
+ const overdue=dues.filter(x=>x.date<currentClosed);
  const dueSum=due7.reduce((n,x)=>n+fx(num(x.amount),x.currency||'DOP'),0);
  const personal=personalTotals(),debt=rnd(totalCardDebt()+totalLoanDebt()+num(personal.payable));
  const liquid=totalLiquid(),position=rnd(liquid+totalCertificates()+num(personal.receivable)-debt);
@@ -27626,7 +27635,8 @@ function v243NotificationReport(kind){
   diario:{label:'RESUMEN DIARIO',title:'Así cerró tu día',desc:'Tus movimientos registrados, balance y próximos compromisos.',icon:'calendar'},
   corte:{label:'RESUMEN AL CORTE',title:'Tu corte financiero',desc:'Fotografía del día al horario de corte de las 7:00 p. m.',icon:'shield'},
   mitad:{label:'MITAD DE MES',title:'Tu primera mitad del mes',desc:'Los primeros quince días, su comportamiento y lo que sigue.',icon:'chart'},
-  cierre:{label:'FIN DE MES',title:'Tu cierre mensual',desc:'Resultado mensual, comparación y compromisos por atender.',icon:'analytics'}
+  cierre:{label:'FIN DE MES',title:'Tu cierre mensual',desc:'Resultado mensual, comparación y compromisos por atender.',icon:'analytics'},
+  semanal:{label:'CIERRE SEMANAL',title:'Tu semana, en perspectiva',desc:'Siete días de movimientos y compromisos, del lunes al domingo.',icon:'calendar'}
  }[kind];
  const dayCount=Math.max(1,Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1);
  const pct=b.net!==0?`${delta>=0?'+':''}${(100*delta/Math.abs(b.net)).toFixed(1)}%`:'Sin base comparable';
@@ -27642,20 +27652,262 @@ function v243NotificationReport(kind){
  if(kind==='corte')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('wallet')}</span><div><h3>Estado financiero actual</h3><p>Posición y obligaciones en el momento de consulta</p></div></div><div class="v243-report-dual">${stat('Fondos disponibles',v216Currency(liquid))}${stat('Deuda total',v216Currency(debt))}${stat('Posición neta estimada',v216Currency(position))}${stat('Próximos 7 días',v216Currency(dueSum))}</div></section>`;
  if(kind==='mitad')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('chart')}</span><div><h3>Primera quincena en perspectiva</h3><p>${dayCount} días del período seleccionado</p></div></div><div class="v243-report-dual">${compared}</div><div class="v243-report-categories"><h4>Gastos principales</h4>${categories}</div></section>`;
  if(kind==='cierre')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('analytics')}</span><div><h3>Cómo terminó el mes</h3><p>${dayCount} días contabilizados, según lo registrado</p></div></div><div class="v243-report-dual">${compared}</div><div class="v243-report-categories"><h4>Principales categorías</h4>${categories}</div></section>`;
- const insights=v216Insights(a,b,closed,dues,liquid);
- const tabs=['diario','corte','mitad','cierre'].map(k=>`<button type="button" data-v216="report" data-kind="${k}" class="${k===kind?'current':''}" aria-pressed="${k===kind}">${({diario:'Diario',corte:'Al corte',mitad:'Mitad de mes',cierre:'Fin de mes'})[k]}</button>`).join('');
+ if(kind==='semanal')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('chart')}</span><div><h3>Así evolucionó tu semana</h3><p>Balance de lunes a domingo · ${dayCount} días</p></div></div><div class="v243-report-dual">${compared}</div><div class="v243-report-categories"><h4>En qué se concentraron los gastos</h4>${categories}</div></section>`;
+ const insights=v216Insights(a,b,currentClosed,dues,liquid);
+ const tabs='';
  document.getElementById('v216-layer')?.remove();
  const layer=document.createElement('div');layer.id='v216-layer';layer.className='v216-overlay v243-report-overlay';
- layer.innerHTML=`<section class="v216-report v243-report" role="dialog" aria-modal="true" aria-labelledby="v216-title" tabindex="-1"><header class="v243-report-head"><div class="v243-report-brand">${icon(classification.icon)}<span>VIVE EL HOY · INFORMES FINANCIEROS</span></div><button type="button" class="v216-close" data-v216="close" aria-label="Cerrar informe">×</button><div class="v243-report-head-copy"><span>${classification.label}</span><h2 id="v216-title">${classification.title}</h2><p>${classification.desc}</p></div><div class="v243-report-dates"><span>${icon('calendar')} ${prettyDate(p.start)}${p.start===p.end?'':' — '+prettyDate(p.end)}</span><small>Corte 7:00 p. m. · República Dominicana</small></div></header><nav class="v216-periods v243-report-tabs" aria-label="Tipo de informe">${tabs}</nav><div class="v216-report-body v243-report-content"><div class="v243-report-hero"><span>BALANCE DEL PERÍODO</span><strong class="${a.net<0?'v216-negative':'v216-positive'}">${v216Currency(a.net)}</strong><p>Ingresos registrados menos egresos del período</p></div><div class="v243-report-core">${stat('Ingresos',v216Currency(a.income))}${stat('Egresos',v216Currency(a.expense))}${stat('Movimientos',String(a.count),'Registrados')}</div>${special}<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('calendar')}</span><div><h3>Compromisos y fechas</h3><p>${overdue.length} vencidos · ${due7.length} próximos 7 días</p></div></div>${dueRows||'<p class="v243-report-empty">No hay vencimientos próximos registrados.</p>'}<button type="button" class="v216-link" data-v216="payments">Ver centro de pagos ${icon('arrow')}</button></section><section class="v243-report-block v243-report-advice"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('shield')}</span><div><h3>Lo que merece atención</h3><p>Observaciones calculadas con tus registros</p></div></div><ul class="v216-insights">${insights.map(x=>`<li class="${x.danger?'v216-critical':''}">${sanitize(x.text)}</li>`).join('')}</ul></section><footer class="v216-report-foot"><span>${a.appleCount} movimiento(s) Apple Pay · ${a.count} movimiento(s) totales</span><span>Vista dinámica: no modifica tus registros.</span></footer></div></section>`;
+ layer.innerHTML=`<section class="v216-report v243-report" role="dialog" aria-modal="true" aria-labelledby="v216-title" tabindex="-1"><header class="v243-report-head"><div class="v243-report-brand">${icon(classification.icon)}<span>VIVE EL HOY · INFORMES FINANCIEROS</span></div><button type="button" class="v216-close" data-v216="close" aria-label="Cerrar informe">×</button><div class="v243-report-head-copy"><span>${classification.label}</span><h2 id="v216-title">${classification.title}</h2><p>${classification.desc}</p></div><div class="v243-report-dates"><span>${icon('calendar')} ${prettyDate(p.start)}${p.start===p.end?'':' — '+prettyDate(p.end)}</span><small>Corte 7:00 p. m. · República Dominicana</small></div></header><div class="v246-report-context"><span>${icon('check')} Informe liberado el ${prettyDate(closed)} · 7:00 p. m.</span><small>Período cerrado · RD</small></div><div class="v216-report-body v243-report-content"><div class="v243-report-hero"><span>BALANCE DEL PERÍODO</span><strong class="${a.net<0?'v216-negative':'v216-positive'}">${v216Currency(a.net)}</strong><p>Ingresos registrados menos egresos del período</p></div><div class="v243-report-core">${stat('Ingresos',v216Currency(a.income))}${stat('Egresos',v216Currency(a.expense))}${stat('Movimientos',String(a.count),'Registrados')}</div>${special}<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('calendar')}</span><div><h3>Compromisos y fechas</h3><p>${overdue.length} vencidos · ${due7.length} próximos 7 días</p></div></div>${dueRows||'<p class="v243-report-empty">No hay vencimientos próximos registrados.</p>'}<button type="button" class="v216-link" data-v216="payments">Ver centro de pagos ${icon('arrow')}</button></section><section class="v243-report-block v243-report-advice"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('shield')}</span><div><h3>Lo que merece atención</h3><p>Observaciones calculadas con tus registros</p></div></div><ul class="v216-insights">${insights.map(x=>`<li class="${x.danger?'v216-critical':''}">${sanitize(x.text)}</li>`).join('')}</ul></section><footer class="v216-report-foot"><span>${a.appleCount} movimiento(s) Apple Pay · ${a.count} movimiento(s) totales</span><span>Vista dinámica: no modifica tus registros.</span></footer></div></section>`;
  document.body.append(layer);layer.querySelector('.v216-report')?.focus();document.body.classList.add('v216-modal-open');
 }
 const v243PreviousReport=v216Modal;
-v216Modal=function(kind){
- if(['diario','corte','mitad','cierre'].includes(kind))return v243NotificationReport(kind);
+v216Modal=function(kind,reportEnd=''){
+ if(['diario','corte','mitad','cierre','semanal'].includes(kind))return v243NotificationReport(kind,reportEnd);
  return v243PreviousReport(kind);
 };
 
+/* V246 · Informes que aparecen gradualmente (hora oficial República Dominicana).
+   No backfill: se empieza desde el primer uso de esta versión por perfil.
+   Interno y recalculable: no altera el motor de cifras ni programa push. */
+const V246_CATALOG={
+ corte:{title:'Corte del día',caption:'Tu balance al cierre de la noche',icon:'calendar',priority:4},
+ semanal:{title:'Cierre semanal',caption:'Lunes a domingo · semana concluida',icon:'chart',priority:2},
+ mitad:{title:'Mitad de mes',caption:'Del día 1 al 15 · primera quincena',icon:'analytics',priority:1},
+ cierre:{title:'Fin de mes',caption:'Resultado final del mes concluido',icon:'wallet',priority:0}
+};
+function v246ReportActivation(){
+ const setting=String(db.settings?.v246ReportFeedStart||'');
+ if(/^\d{4}-\d{2}-\d{2}$/.test(setting))return setting;
+ const todayRD=v216NowParts().date;
+ db.settings.v246ReportFeedStart=todayRD;
+ // Date is nonfinancial metadata, synchronized with the normal app preferences.
+ persist();
+ return todayRD;
+}
+function v246ReportEvents(n=v216NowParts(),start=v246ReportActivation()){
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(start))return [];
+ const closed=n.hour>=V216_CUTOFF?n.date:v216Shift(n.date,-1);
+ if(closed<start)return [];
+ const events=[];
+ for(let i=0;i<46;i++){
+  const day=v216Shift(closed,-i);if(day<start)break;
+  const dow=new Date(day+'T12:00:00Z').getUTCDay();
+  const d=Number(day.slice(-2)),y=Number(day.slice(0,4)),m=Number(day.slice(5,7));
+  const ready=['corte'];
+  if(dow===0)ready.push('semanal');     // Domingo, 7:00 p.m. RD
+  if(d===15)ready.push('mitad');         // Día 15, 7:00 p.m. RD
+  if(day===periodEnd(y,m))ready.push('cierre'); // Último día del mes, 7:00 p.m. RD
+  for(const kind of ready){const label=V246_CATALOG[kind];events.push({id:kind+'|'+day,kind,date:day,...label});}
+ }
+ return events.sort((a,b)=>b.date.localeCompare(a.date)||a.priority-b.priority);
+}
+function v246ReadIds(){return Array.isArray(db.settings?.v246ReadReportIds)?db.settings.v246ReadReportIds:[];}
+function v246UnreadReportCount(){
+ const closed=v216ClosedDay(),weekAgo=v216Shift(closed,-6),read=new Set(v246ReadIds());
+ return Math.min(9,v246ReportEvents().filter(r=>r.date>=weekAgo&&!read.has(r.id)).length);
+}
+function v246EligibleEvent(kind,end){return v246ReportEvents().some(e=>e.kind===kind&&e.date===end);}
+function v246MarkReportRead(id){
+ if(!id||v246ReadIds().includes(id))return;
+ db.settings.v246ReadReportIds=[id,...v246ReadIds()].slice(0,160);
+ persist();
+ const urgent=v36DueItems().filter(o=>diffDays(o.date,today())<=7).length;
+ const total=urgent+v123CategoryAlerts().length+v246UnreadReportCount();
+ document.querySelectorAll('.v36-notifications>summary').forEach(notif=>{
+  notif.setAttribute('aria-label',`Notificaciones: ${total} avisos`);
+  let badge=notif.querySelector('.v36-notification-count');
+  if(total){
+   if(!badge){badge=document.createElement('span');badge.className='v36-notification-count';notif.append(badge);}
+   badge.textContent=total>99?'99+':String(total);
+  }else badge?.remove();
+ });
+ document.querySelectorAll(`[data-report-id="${id}"]`).forEach(b=>{b.classList.remove('v246-unread');b.querySelector('.v246-new')?.remove();});
+}
+function v246BellItems(){
+ const events=v246ReportEvents(),recent=events.slice(0,3),older=events.slice(3),read=new Set(v246ReadIds());
+ const row=e=>`<button type="button" class="v216-notice v246-notice v246-${e.kind} ${read.has(e.id)?'':'v246-unread'}" data-v216="report" data-kind="${e.kind}" data-end="${e.date}" data-report-id="${e.id}" aria-label="${e.title} del ${prettyDate(e.date)}; abrir informe">
+ <span class="v246-notice-icon" aria-hidden="true">${icon(e.icon)}</span>
+ <span class="v216-notice-copy v246-notice-copy"><strong>${e.title}</strong><small>${prettyDate(e.date)} · ${e.caption}</small></span>
+ ${read.has(e.id)?'':`<span class="v246-new">Nuevo</span>`}<span class="v246-chevron" aria-hidden="true">${icon('arrow')}</span></button>`;
+ const label='<div class="v246-inbox-heading"><span>CIERRES FINANCIEROS</span><small>Se liberan a las 7:00 p. m. · RD</small></div>';
+ if(!events.length){
+  const n=v216NowParts();const next=n.hour<V216_CUTOFF?'Hoy':'Mañana';
+  return label+`<div class="v246-inbox-empty"><span class="v246-empty-icon">${icon('calendar')}</span><strong>Tu próximo corte está en camino</strong><p>${next} a las 7:00 p. m. aparecerá aquí el cierre diario. Los semanales y mensuales solo llegarán al terminar su período.</p></div>`;
+ }
+ return `${label}<div class="v246-current-feed">${recent.map(row).join('')}</div>${older.length?`<details class="v246-report-history"><summary>${icon('calendar')} Informes anteriores <b>${older.length}</b>${icon('arrow')}</summary><div class="v246-history-list">${older.map(row).join('')}</div></details>`:''}`;
+}
+v216BellItems=v246BellItems;
+
+// If a suspended app regains focus after a cutoff, refresh the internal inbox.
+let v246LastClosed=v216ClosedDay();
+function v246RefreshAfterResume(){
+ const now=v216ClosedDay();if(now===v246LastClosed||document.getElementById('v216-layer'))return;
+ v246LastClosed=now;
+ if(document.getElementById('app')?.children.length)render();
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)v246RefreshAfterResume();});
+window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
+
  f33Boot();
+
+/* V244 · Tarjetas móvil limpio + refinamiento transversal de módulos.
+   Objetivo: igualar la claridad de Cuentas y efectivo en iPhone sin tocar los cálculos. */
+(function(){
+  const v244DesktopCards = pages.cards;
+  function v244CardProduct(cardItem){
+    const dop = cardStatus(cardItem,'DOP');
+    const usd = cardStatus(cardItem,'USD');
+    const limit = num(cardItem.limitDOP) + fx(num(cardItem.limitUSD),'USD');
+    const debt = num(dop.debt) + fx(num(usd.debt),'USD');
+    const available = Math.max(0,num(dop.availableWithOverdraft)) + Math.max(0,fx(Math.max(0,num(usd.availableWithOverdraft)),'USD'));
+    const utilization = limit>0 ? (debt/limit)*100 : null;
+    const nexts = [
+      dop.nextDue ? {date:dop.nextDue, billed:dop.billed, ccy:'DOP'} : null,
+      usd.nextDue ? {date:usd.nextDue, billed:usd.billed, ccy:'USD'} : null
+    ].filter(Boolean).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+    const next = nexts[0] || null;
+    return `<article class="v244-product v244-card-item">
+      <div class="v244-product-top">
+        <span class="v244-logo">${icon('card')}</span>
+        <span class="v244-product-meta"><strong>${sanitize(cardItem.name)}</strong><small>${sanitize(bankOf(cardItem))} · ${sanitize(CARD_TIER_NAMES[cardTierKey(cardItem)] || 'Tarjeta')}</small></span>
+        <span class="v244-currency">•••• ${sanitize(cardItem.last4||'—')}</span>
+      </div>
+      <div class="v244-product-value"><small>LÍMITE TOTAL</small><strong>${money(limit)}</strong></div>
+      <div class="v244-inline-metrics">
+        <div><small>Deuda utilizada</small><b>${money(debt)}</b></div>
+        <div><small>Disponible</small><b>${money(Math.max(0,available))}</b></div>
+      </div>
+      <div class="v244-product-foot"><span>${utilization===null?'Sin límite definido':utilization.toFixed(1)+'% utilizado'}${next?' · Próximo pago '+prettyDate(next.date):''}</span><button type="button" data-act="cardDetails" data-id="${sanitize(cardItem.id)}">Ver tarjeta ${icon('arrow')}</button></div>
+    </article>`;
+  }
+  function v244CardsTx(tx){
+    return tx.length ? `<div class="v244-history">${tx.slice(0,10).map(t=>{
+      const incoming = ['card_payment','card_refund','card_reward'].includes(t.type);
+      return `<div class="v244-history-row"><span class="v244-history-mark ${incoming?'positive':''}">${icon(incoming?'up':'down')}</span><span class="v244-history-copy"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b class="${incoming?'positive':''}">${incoming?'+':'−'}${money(num(t.amount),t.currency,2)}</b></div>`;
+    }).join('')}</div>` : '<p class="v244-no-data">Aún no hay movimientos registrados en esta tarjeta.</p>';
+  }
+  function v244CardsMobile(){
+    const visible = (db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
+    const selected = ui.cardId ? card(ui.cardId) : null;
+    const totalLimit = visible.reduce((s,c)=>s + num(c.limitDOP) + fx(num(c.limitUSD),'USD'),0);
+    const totalDebt = visible.reduce((s,c)=>s + num(cardStatus(c,'DOP').debt) + fx(num(cardStatus(c,'USD').debt),'USD'),0);
+    const totalAvailable = Math.max(0,totalLimit-totalDebt);
+    const overallUtil = totalLimit>0 ? (totalDebt/totalLimit)*100 : null;
+    if(selected){
+      const dop = cardStatus(selected,'DOP');
+      const usd = cardStatus(selected,'USD');
+      const limit = num(selected.limitDOP) + fx(num(selected.limitUSD),'USD');
+      const debt = num(dop.debt) + fx(num(usd.debt),'USD');
+      const avail = Math.max(0,num(dop.availableWithOverdraft)) + Math.max(0,fx(Math.max(0,num(usd.availableWithOverdraft)),'USD'));
+      const utilization = limit>0 ? (debt/limit)*100 : null;
+      const tx = recentTx().filter(t=>t.cardId===selected.id);
+      const benefitD = benefitBreakdown(selected,'DOP');
+      const benefitU = benefitBreakdown(selected,'USD');
+      const upcomingCuts = [
+        {ccy:'RD$', cut:dop.cut, due:dop.nextDue, billed:dop.billed, debt:dop.debt},
+        {ccy:'US$', cut:usd.cut, due:usd.nextDue, billed:usd.billed, debt:usd.debt, currency:'USD'}
+      ].filter(x=>num(x.debt)||num(x.billed)||x.cut||x.due);
+      return `<div class="v244-mobile-root v244-cards v244-detail-mode">
+        <button class="v244-back" data-act="closeCardDetails">${icon('arrow')} Todas mis tarjetas</button>
+        <section class="v244-hero v244-detail-hero"><span class="v244-hero-label">CRÉDITO PERSONAL · ${sanitize(bankOf(selected))}</span><h2>${sanitize(selected.name)}</h2><p>${sanitize(CARD_TIER_NAMES[cardTierKey(selected)]||'Tarjeta')} · •••• ${sanitize(selected.last4||'—')}</p><small>DEUDA UTILIZADA</small><strong>${money(debt)}</strong><div class="v244-hero-bottom"><span>${utilization===null?'Sin límite definido':utilization.toFixed(1)+'% del límite'}</span><span>${selected.network?sanitize(selected.network):'Crédito registrado'}</span></div></section>
+        <div class="v244-actions"><button class="v244-action-primary" data-act="payCard" data-id="${sanitize(selected.id)}">${icon('card')} Registrar pago</button><button class="v244-action" data-act="cardHistory" data-id="${sanitize(selected.id)}">${icon('chart')} Ver histórico</button></div>
+        <section class="v244-sheet"><h3>Resumen de crédito</h3><div class="v244-facts">${['Límite total|'+money(limit),'Disponible|'+money(Math.max(0,avail)),'Deuda RD$|'+money(dop.debt,'DOP',2),'Deuda US$|'+money(usd.debt,'USD',2)].map(x=>{const p=x.split('|');return `<div class="v244-fact"><span>${p[0]}</span><strong>${p[1]}</strong></div>`;}).join('')}</div><p class="v244-disclaimer">La deuda utilizada se calcula con tus movimientos registrados. Los montos en US$ se convierten a RD$ según la tasa configurada.</p></section>
+        <section class="v244-sheet"><div class="v244-sheet-head"><h3>Cortes y próximos pagos</h3><span>${upcomingCuts.length}</span></div>${upcomingCuts.length?`<div class="v244-cut-list">${upcomingCuts.map(x=>`<article class="v244-cut-item"><strong>${x.ccy}</strong><div><small>Saldo actual</small><b>${money(x.debt,x.currency||'DOP',2)}</b></div><div><small>Facturado</small><b>${money(x.billed||0,x.currency||'DOP',2)}</b></div><div><small>Próximo pago</small><b>${x.due?prettyDate(x.due):'Sin fecha'}</b></div></article>`).join('')}</div>`:'<p class="v244-no-data">No hay cortes calculados todavía para esta tarjeta.</p>'}</section>
+        <section class="v244-sheet"><div class="v244-sheet-head"><h3>Beneficios acreditados</h3><span>${money(num(benefitD.credited)+fx(num(benefitU.credited),'USD'))}</span></div><div class="v244-facts"><div class="v244-fact"><span>Cashback en RD$</span><strong>${money(benefitD.credited,'DOP',2)}</strong></div><div class="v244-fact"><span>Cashback en US$</span><strong>${money(benefitU.credited,'USD',2)}</strong></div></div></section>
+        <section class="v244-sheet"><div class="v244-sheet-head"><h3>Actividad reciente</h3><span>${tx.length}</span></div>${v244CardsTx(tx)}</section>
+        <details class="v244-more"><summary>Administrar esta tarjeta ${icon('arrow')}</summary><div class="v244-more-body">${productControls('card',selected.id,selected.archived)}</div></details>
+      </div>`;
+    }
+    const scope = ui.v244Cards || 'all';
+    const shown = visible.filter(c=> scope==='all' ? true : scope==='used' ? (num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))>0.005 : (num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))<=0.005);
+    const visibility = db.cards.some(c=>c.archived) && typeof visibilityControl==='function' ? visibilityControl() : '';
+    return `<div class="v244-mobile-root v244-cards">
+      <header class="v244-intro"><div><span class="v244-eyebrow">TU CRÉDITO, MÁS CLARO</span><h2>Tarjetas</h2><p>Límites y deuda utilizada, sin ruido visual.</p></div><button class="v244-add" type="button" data-act="addCard" aria-label="Nueva tarjeta">${icon('plus')}<span>Nueva</span></button></header>
+      <section class="v244-hero" aria-label="Resumen de tarjetas"><div class="v244-hero-top"><span class="v244-hero-label">LÍMITE TOTAL · RD$ EQUIVALENTES</span><span class="v244-hero-icon">${icon('card')}</span></div><strong class="v244-hero-amount">${money(totalLimit)}</strong><div class="v244-hero-metrics"><div><small>DEUDA UTILIZADA</small><strong>${money(totalDebt)}</strong></div><div><small>CRÉDITO DISPONIBLE</small><strong>${money(totalAvailable)}</strong></div></div><p class="v244-hero-footnote">${overallUtil===null?'Sin límites suficientes para calcular uso.':overallUtil.toFixed(1)+'% del límite comprometido'} · ${visible.length} ${visible.length===1?'tarjeta registrada':'tarjetas registradas'}.</p></section>
+      <div class="v244-actions" aria-label="Acciones rápidas"><button class="v244-action-primary" data-act="guidedFlow" data-mode="cardpay">${icon('card')} Pagar</button><button class="v244-action" data-act="addCard">${icon('plus')} Nueva tarjeta</button></div>
+      <div class="v244-list-head"><div><span class="v244-eyebrow">MIS PRODUCTOS</span><h3>Mis tarjetas <small>${visible.length}</small></h3></div>${visibility}</div>
+      <div class="v244-segments" role="tablist" aria-label="Filtrar tarjetas"><button type="button" class="${scope==='all'?'selected':''}" data-v244-cards="all">Todas <small>${visible.length}</small></button><button type="button" class="${scope==='used'?'selected':''}" data-v244-cards="used">Con deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))>0.005).length}</small></button><button type="button" class="${scope==='free'?'selected':''}" data-v244-cards="free">Sin deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))<=0.005).length}</small></button></div>
+      <div class="v244-product-list">${shown.length?shown.map(v244CardProduct).join(''):'<section class="v244-empty"><span>'+icon('card')+'</span><h3>No hay tarjetas para este filtro</h3><p>Prueba otro filtro o registra una nueva tarjeta.</p><button class="btn" data-act="addCard">Crear tarjeta</button></section>'}</div>
+      <p class="v244-bottom-note">Wallet mantiene su experiencia visual propia. Esta vista está pensada para gestión rápida y lectura limpia dentro de Bancos.</p>
+    </div>`;
+  }
+  document.addEventListener('click',function(e){
+    const seg = e.target.closest('[data-v244-cards]');
+    if(!seg) return;
+    e.preventDefault();
+    ui.v244Cards = seg.dataset.v244Cards || 'all';
+    render();
+  },true);
+  pages.cards = () => isMobileViewport() ? v244CardsMobile() : v244DesktopCards();
+})();
+
+(function(){
+  const originalRender = render;
+  render = function(){
+    originalRender();
+    document.body.dataset.page = ui.page || '';
+  };
+})();
+
+/* V245 · Limpieza de Compromisos, Suscripciones y Entre personas.
+   Se reubican nodos ya calculados para conservar acciones y lógica. */
+function v245CreateNode(tag,className,html){
+ const el=document.createElement(tag);el.className=className;
+ if(html!==undefined)el.innerHTML=html;
+ return el;
+}
+function v245CleanPayments(){
+ const root=document.querySelector('#v145-payment-center');
+ if(!root||root.dataset.v245Ready)return;
+ root.dataset.v245Ready='1';
+ const headline=root.querySelector('.v145-pay-hero');
+ const tiles=root.querySelector('.v145-payment-kpis');
+ if(!headline||!tiles||tiles.children.length<4)return;
+ const main=tiles.children[0],pending=tiles.children[1],overdue=tiles.children[2];
+ const sub=v245CreateNode('div','v245-pay-summary');
+ sub.append(pending,overdue);
+ main.classList.add('v245-pay-amount');
+ headline.append(main,sub);
+ const detail=v245CreateNode('details','v245-pay-extra');
+ detail.append(v245CreateNode('summary','',`${icon('chart')} Ver ingresos considerados y más indicadores ${icon('arrow')}`),tiles);
+ const insertion=root.querySelector('.v145-pay-quick')||root.children[1];
+ root.insertBefore(detail,insertion);
+}
+function v245CleanRecurring(){
+ const parent=document.querySelector('.v26-internal[data-module="recurring"] .v26-body');
+ if(!parent||parent.dataset.v245Ready)return;
+ parent.dataset.v245Ready='1';
+ // Only the overview receives a new hero. V26 internal tabs keep their data.
+ const main=parent.querySelector('.v46-subs-panel');
+ if(!main)return;
+ const active=(db.recurring||[]).filter(x=>x.active!==false);
+ const sum=active.reduce((s,x)=>s+fx(num(x.amount),x.currency)/(x.frequency==='annual'?12:x.frequency==='quarterly'?3:x.frequency==='weekly'?7/30.4375:1),0);
+ const future=active.filter(x=>x.nextDue).slice().sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
+ const hero=v245CreateNode('section','v245-recurring-hero',
+  `<span class="v245-hero-kicker">SUSCRIPCIONES · COSTO RECURRENTE</span><strong class="v245-hero-total">${money(sum)}</strong><div class="v245-hero-sides"><span><small>SERVICIOS ACTIVOS</small><b>${active.length}</b></span><span><small>PRÓXIMO CARGO</small><b>${future?prettyDate(future.nextDue):'Sin fecha'}</b></span></div><p>Importe mensual equivalente, no deuda acumulada.</p>`);
+ parent.insertBefore(hero,parent.firstChild);
+ const extras=[...parent.children].filter(el=>el!==hero&&el!==main&&(el.matches('.section-title,.grid.kpis,.v149-rec-unified')));
+ if(extras.length){
+   const details=v245CreateNode('details','v245-recurring-extra');
+   details.append(v245CreateNode('summary','',`${icon('chart')} Ver indicadores y agenda de pagos ${icon('arrow')}`));
+   extras.forEach(el=>details.appendChild(el));
+   parent.insertBefore(details,hero.nextSibling);
+ }
+ const head=main.querySelector('.v46-subs-head');
+ if(head)head.querySelector('button[data-act="addRecurring"]')?.classList.add('v245-redundant-add');
+}
+function v245CleanPersonal(){
+ // Preserve the existing V189 interactive hero, contact files and agreement
+ // lifecycle. The V245 mobile layout is CSS-only to prevent a duplicate KPI.
+}
+function v245PolishOnRender(){
+ if(!isMobileViewport())return;
+ if(ui.page==='payments')v245CleanPayments();
+ if(ui.page==='recurring')v245CleanRecurring();
+ if(ui.page==='personal')v245CleanPersonal();
+}
+const v245PreviousRender=render;
+render=function(){v245PreviousRender();v245PolishOnRender();};
 
 })();
 
@@ -33746,6 +33998,320 @@ body.theme-black .vive-mobile-home .v242-mobile-web-position .ff-bubble:not(.fea
 body.theme-black .vive-mobile-home .v242-mobile-web-position :is(.ff-label,.ff-balance-header p,.ff-pos-amount),body.theme-dark .vive-mobile-home .v242-mobile-web-position :is(.ff-label,.ff-balance-header p,.ff-pos-amount){color:#d6e3fa!important}
 body.theme-black .vive-mobile-home .v242-mobile-web-position .ff-bubble:not(.featured) :is(.bubble-amount,small),body.theme-dark .vive-mobile-home .v242-mobile-web-position .ff-bubble:not(.featured) :is(.bubble-amount,small){color:#e6edff!important}
 @media(prefers-reduced-motion:reduce){.v242-settings-row,.v242-style-option,.world-patrimony .v14-timeline-svg :is(path,circle){transition:none!important}}
+
+</style>
+<style>
+/* V244 · Limpieza general inspirada por Cuentas y efectivo. */
+@media(max-width:790px){
+  .v244-mobile-root{display:block;max-width:100%;padding:0 0 calc(104px + env(safe-area-inset-bottom,0px));}
+  .v244-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:0 0 16px;padding:2px 2px 0;}
+  .v244-eyebrow{display:block;font-size:11px;letter-spacing:.16em;font-weight:800;color:#6b86b1;margin:0 0 6px;}
+  .v244-intro h2,.v244-list-head h3,.v244-sheet h3{margin:0;color:#203a5c;letter-spacing:-.05em;}
+  .v244-intro h2{font-size:clamp(28px,8vw,38px);line-height:1.02;}
+  .v244-intro p{margin:9px 0 0;color:var(--muted);font-size:12px;line-height:1.45;max-width:240px;}
+  .v244-add{display:inline-flex;align-items:center;gap:8px;padding:15px 18px;border-radius:18px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.88);box-shadow:0 7px 20px rgba(37,67,109,.08);font-weight:760;color:#476fc0;white-space:nowrap;}
+  .v244-add svg{width:18px;height:18px;}
+  .v244-hero,.v244-sheet,.v244-product,.v244-empty{background:linear-gradient(135deg,rgba(59,98,207,.96),rgba(84,120,221,.92));border:1px solid rgba(255,255,255,.16);border-radius:28px;color:#fff;box-shadow:0 14px 34px rgba(29,57,112,.14);padding:20px;overflow:hidden;position:relative;}
+  .v244-sheet,.v244-product,.v244-empty{background:linear-gradient(145deg,rgba(255,255,255,.83),rgba(240,247,255,.72));border:1px solid rgba(223,233,247,.95);box-shadow:0 10px 30px rgba(31,63,110,.06);color:#223b5b;padding:18px;}
+  .v244-hero-top,.v244-product-top,.v244-sheet-head,.v244-hero-bottom,.v244-product-foot,.v244-inline-metrics,.v244-facts,.v244-actions,.v244-cut-list,.v244-segments{display:flex;gap:12px;}
+  .v244-hero-top,.v244-product-top,.v244-sheet-head,.v244-hero-bottom,.v244-product-foot{justify-content:space-between;align-items:center;}
+  .v244-hero-label{font-size:12px;letter-spacing:.17em;font-weight:800;opacity:.9;}
+  .v244-hero-icon,.v244-logo{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;flex:0 0 46px;background:rgba(255,255,255,.13);backdrop-filter:blur(6px);}
+  .v244-logo{background:rgba(90,128,202,.11);color:#4a74c6;}
+  .v244-hero-icon svg,.v244-logo svg{width:22px;height:22px;}
+  .v244-hero-amount{display:block;font-size:clamp(35px,11vw,56px);line-height:1;letter-spacing:-.07em;font-weight:850;margin:18px 0;}
+  .v244-hero-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18);}
+  .v244-hero-metrics div,.v244-inline-metrics div,.v244-fact,.v244-cut-item{min-width:0;}
+  .v244-hero-metrics small,.v244-inline-metrics small,.v244-fact span,.v244-cut-item small{display:block;font-size:11px;letter-spacing:.12em;font-weight:780;text-transform:uppercase;opacity:.82;}
+  .v244-hero-metrics strong,.v244-inline-metrics b,.v244-fact strong,.v244-cut-item b{display:block;margin-top:6px;font-size:clamp(18px,5vw,28px);line-height:1.08;letter-spacing:-.04em;}
+  .v244-hero-footnote,.v244-disclaimer,.v244-bottom-note,.v244-no-data,.v244-empty p{margin:14px 0 0;font-size:11px;line-height:1.5;color:inherit;opacity:.86;}
+  .v244-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 18px;}
+  .v244-action,.v244-action-primary{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 16px;border-radius:18px;border:1px solid rgba(225,234,247,.95);background:#fff;color:#223b5c;font-weight:760;box-shadow:0 8px 18px rgba(37,67,109,.06);}
+  .v244-action-primary{background:linear-gradient(135deg,#416ae1,#5b81e6);color:#fff;border-color:transparent;box-shadow:0 14px 28px rgba(64,95,191,.22);}
+  .v244-list-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:3px 0 12px;}
+  .v244-list-head h3{font-size:18px;display:flex;gap:7px;align-items:baseline;}.v244-list-head h3 small{font-size:14px;color:#6b82a4;}
+  .v244-segments{gap:9px;overflow:auto;padding-bottom:4px;margin:0 0 14px;-ms-overflow-style:none;scrollbar-width:none;}.v244-segments::-webkit-scrollbar{display:none;}
+  .v244-segments button{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:12px 14px;border-radius:16px;border:1px solid rgba(220,231,246,.95);background:rgba(255,255,255,.68);font-weight:740;color:#566e91;box-shadow:0 6px 14px rgba(32,61,103,.04);} .v244-segments button.selected{background:#fff;color:#244a85;border-color:#d5e2f7;box-shadow:0 8px 16px rgba(32,61,103,.07);} .v244-segments small{font-size:11px;color:inherit;opacity:.84;}
+  .v244-product-list{display:grid;gap:12px;}
+  .v244-product-meta{display:flex;flex-direction:column;min-width:0;flex:1;}
+  .v244-product-meta strong{font-size:17px;line-height:1.15;letter-spacing:-.03em;color:#223c5d;}
+  .v244-product-meta small{font-size:11px;color:#72849d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .v244-currency{font-size:11px;font-weight:780;color:#6f84a4;background:rgba(103,133,183,.08);border:1px solid rgba(206,220,240,.8);padding:8px 10px;border-radius:999px;white-space:nowrap;}
+  .v244-product-value{margin:16px 0 14px;}.v244-product-value small{display:block;font-size:11px;letter-spacing:.13em;font-weight:780;color:#7086a6;}.v244-product-value strong{display:block;margin-top:6px;font-size:clamp(27px,7vw,42px);line-height:1;letter-spacing:-.06em;color:#264265;}
+  .v244-inline-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding-top:14px;border-top:1px solid rgba(214,224,241,.95);}
+  .v244-inline-metrics div{padding:0 0 2px;}
+  .v244-inline-metrics b{font-size:20px;color:#244260;}
+  .v244-product-foot{margin-top:14px;padding-top:14px;border-top:1px solid rgba(214,224,241,.95);align-items:flex-start;gap:10px;}
+  .v244-product-foot span{font-size:11px;line-height:1.45;color:#6f8098;flex:1;min-width:0;}
+  .v244-product-foot button,.v244-back{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;color:#3c67b4;font-weight:770;padding:0;}
+  .v244-back{margin:0 0 14px;font-size:13px;}
+  .v244-detail-hero h2{margin:8px 0 5px;font-size:30px;letter-spacing:-.055em;color:#fff;}
+  .v244-detail-hero p{margin:0;color:rgba(255,255,255,.83);font-size:12px;}
+  .v244-detail-hero small{display:block;margin-top:20px;font-size:11px;letter-spacing:.14em;font-weight:800;opacity:.82;}
+  .v244-detail-hero strong{display:block;margin-top:8px;font-size:44px;letter-spacing:-.07em;line-height:1;}
+  .v244-sheet{margin-top:12px;}.v244-sheet-head h3{font-size:18px;}.v244-sheet-head span{font-size:12px;color:#6c84a6;font-weight:760;}
+  .v244-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;}
+  .v244-fact{padding:14px;border-radius:18px;background:rgba(103,133,183,.06);border:1px solid rgba(214,224,241,.82);}
+  .v244-cut-list{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px;}.v244-cut-item{padding:14px;border-radius:18px;background:rgba(103,133,183,.06);border:1px solid rgba(214,224,241,.82);} .v244-cut-item strong{display:block;margin-bottom:10px;color:#27446b;letter-spacing:-.02em;}
+  .v244-history{display:grid;gap:9px;margin-top:14px;}
+  .v244-history-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:10px;padding:11px 12px;border-radius:16px;background:rgba(103,133,183,.06);border:1px solid rgba(214,224,241,.82);}
+  .v244-history-mark{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(73,116,194,.12);color:#4c76c4;}.v244-history-mark.positive{background:rgba(24,157,112,.14);color:#168b67;}
+  .v244-history-copy{min-width:0;display:flex;flex-direction:column;gap:2px;}.v244-history-copy strong{font-size:13px;color:#1f3856;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.v244-history-copy small{font-size:11px;color:#71849d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .v244-history-row b{font-size:13px;color:#223c5d;}.v244-history-row b.positive{color:#168b67;}
+  .v244-more{margin-top:12px;border-radius:20px;background:rgba(255,255,255,.72);border:1px solid rgba(223,233,247,.95);padding:4px 16px 14px;box-shadow:0 8px 24px rgba(31,63,110,.05);}
+  .v244-more summary{list-style:none;display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:14px 0;font-weight:760;color:#27446b;}
+  .v244-more summary::-webkit-details-marker{display:none;}
+  .v244-more-body{padding-top:4px;}
+  /* limpieza para submódulos abiertos desde Explorar */
+  .v26-internal[data-module="payments"],.v26-internal[data-module="recurring"],.v26-internal[data-module="personal"],.v26-internal[data-module="budget"],.v26-internal[data-module="categories"],.v26-internal[data-module="cards"],.v26-internal[data-module="accounts"]{background:transparent!important;}
+  .v26-internal .v26-head{padding:4px 2px 0!important;margin-bottom:14px!important;gap:14px!important;align-items:flex-start!important;}
+  .v26-internal .v26-head h2{font-size:clamp(27px,7.8vw,34px)!important;letter-spacing:-.055em!important;line-height:1.04!important;}
+  .v26-internal .v26-head p{font-size:12px!important;line-height:1.45!important;color:var(--muted)!important;max-width:250px!important;}
+  .v26-internal .v26-head-side{align-items:flex-end!important;gap:10px!important;}
+  .v26-internal .v26-overview-chip,.v26-internal .v26-primary{border-radius:18px!important;box-shadow:0 8px 18px rgba(37,67,109,.06)!important;}
+  .v26-internal .v26-nav{display:flex!important;gap:8px!important;overflow:auto!important;padding:0 0 4px!important;margin-bottom:14px!important;scrollbar-width:none;-ms-overflow-style:none;}
+  .v26-internal .v26-nav::-webkit-scrollbar{display:none;}
+  .v26-internal .v26-nav button{flex:0 0 auto!important;min-height:44px!important;padding:10px 13px!important;border-radius:16px!important;background:rgba(255,255,255,.7)!important;border:1px solid rgba(220,231,246,.95)!important;}
+  .v26-internal .inner-view-card{border-radius:22px!important;border:1px solid rgba(223,233,247,.95)!important;background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(240,247,255,.74))!important;box-shadow:0 9px 24px rgba(31,63,110,.05)!important;}
+  .v26-internal .inner-actions .btn,.v26-internal .inner-actions button{border-radius:14px!important;}
+  /* Cinta de pestañas de Bancos: evitar recortes laterales en iPhone */
+  .world-banks .v26-nav,.world-accounts .v26-nav,.world-cards .v26-nav,.world-loans .v26-nav,.world-certificates .v26-nav{padding-inline:2px!important;}
+}
+@media(min-width:791px){
+  .v26-internal .inner-view-card{border-radius:24px!important;box-shadow:0 10px 28px rgba(26,54,96,.05)!important;}
+  .v26-internal .v26-head h2{letter-spacing:-.045em!important;}
+}
+body.theme-black .v244-sheet,body.theme-black .v244-product,body.theme-black .v244-empty,body.theme-dark .v244-sheet,body.theme-dark .v244-product,body.theme-dark .v244-empty{background:linear-gradient(145deg,#222b39,#171d28)!important;border-color:#344151!important;color:#eaf1ff!important;box-shadow:0 10px 24px rgba(0,0,0,.28)!important;}
+body.theme-black .v244-hero,body.theme-dark .v244-hero{background:linear-gradient(145deg,#223660,#1b2d56)!important;border-color:#3d5180!important;}
+body.theme-black .v244-product-meta strong,body.theme-black .v244-sheet h3,body.theme-black .v244-list-head h3,body.theme-dark .v244-product-meta strong,body.theme-dark .v244-sheet h3,body.theme-dark .v244-list-head h3{color:#eef4ff!important;}
+body.theme-black .v244-product-meta small,body.theme-black .v244-product-foot span,body.theme-black .v244-history-copy small,body.theme-dark .v244-product-meta small,body.theme-dark .v244-product-foot span,body.theme-dark .v244-history-copy small{color:#a6b5c8!important;}
+body.theme-black .v244-product-value strong,body.theme-black .v244-inline-metrics b,body.theme-black .v244-fact strong,body.theme-black .v244-history-row b,body.theme-dark .v244-product-value strong,body.theme-dark .v244-inline-metrics b,body.theme-dark .v244-fact strong,body.theme-dark .v244-history-row b{color:#eef4ff!important;}
+body.theme-black .v244-fact,body.theme-black .v244-cut-item,body.theme-black .v244-history-row,body.theme-dark .v244-fact,body.theme-dark .v244-cut-item,body.theme-dark .v244-history-row{background:rgba(255,255,255,.04)!important;border-color:#344151!important;}
+</style>
+
+
+<style id="v245-refinamiento-explorar-modulos">
+/* Explorar vuelve a ser un directorio, sin panel doble de ingresos/egresos. */
+.v243-explore .v205-explore-actions{margin-bottom:18px!important;}
+.v243-explore .v205-explore-group:first-of-type{margin-top:0!important;}
+@media(max-width:790px){
+ .world-mobilehub .v243-explore .v205-explore-header{padding-bottom:15px!important;}
+ .world-mobilehub .v243-explore .v205-explore-actions{margin-bottom:14px!important;}
+ .world-mobilehub .v243-explore .v205-explore-group{padding:16px 12px 12px!important;box-shadow:0 8px 22px rgba(29,61,110,.05)!important;}
+ .world-mobilehub .v243-explore .v205-explore-link{background:rgba(226,236,250,.38)!important;min-height:69px!important;border-radius:17px!important;}
+ .world-mobilehub .v243-explore .v205-explore-link:focus-visible{outline:3px solid #3e77d8;outline-offset:2px;}
+ /* Cuentas y efectivo como patrón: un KPI principal + dos cifras subordinadas. */
+ .v245-recurring-hero,.v245-personal-hero{
+  padding:21px 20px 19px;overflow:hidden;min-width:0;
+  border-radius:26px;margin:0 0 16px;color:#fff;
+  background:linear-gradient(135deg,#294b92,#5577cd);
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 13px 31px rgba(34,68,126,.16);
+ }
+ .v245-hero-kicker{display:block;font-size:10px;letter-spacing:.155em;font-weight:820;color:rgba(255,255,255,.85);line-height:1.4;}
+ .v245-hero-total{display:block;margin:17px 0 19px;font-size:clamp(35px,10vw,51px);font-weight:850;letter-spacing:-.07em;line-height:1.05;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;}
+ .v245-hero-sides{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid rgba(255,255,255,.27);padding-top:16px;}
+ .v245-hero-sides>span{display:block;min-width:0;padding:0 10px 0 0;}
+ .v245-hero-sides>span+span{border-left:1px solid rgba(255,255,255,.25);padding:0 0 0 16px;}
+ .v245-hero-sides small{display:block;font-size:10px;letter-spacing:.13em;font-weight:780;color:rgba(255,255,255,.76);line-height:1.4;}
+ .v245-hero-sides b{display:block;margin-top:7px;font-size:clamp(16px,4.5vw,23px);line-height:1.2;letter-spacing:-.03em;font-weight:800;overflow-wrap:anywhere;}
+ .v245-recurring-hero>p,.v245-personal-hero>p{font-size:11px;line-height:1.5;color:rgba(255,255,255,.78);margin:14px 0 0;}
+ /* Compromisos: mantener el período original y todos los filtros/acciones. */
+ .v145-paycenter .v145-pay-hero{padding:20px!important;border-radius:26px!important;background:linear-gradient(135deg,#274b94,#5278c8)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;box-shadow:0 12px 30px rgba(35,67,123,.16)!important;}
+ .v145-paycenter .v145-pay-hero-heading h2{font-size:clamp(24px,7.3vw,31px)!important;letter-spacing:-.05em!important;color:#fff!important;line-height:1.1!important;}
+ .v145-paycenter .v145-pay-hero-heading p{max-width:260px;font-size:11px!important;line-height:1.45!important;color:rgba(255,255,255,.8)!important;margin:7px 0!important;}
+ .v145-paycenter .v145-pay-hero :is(.v145-eyebrow,.v145-pay-period,.v145-period-control>span){color:rgba(255,255,255,.84)!important;}
+ .v145-paycenter .v145-pay-hero .v145-period-control{max-width:100%;}
+ .v145-paycenter .v145-pay-hero .v145-pay-hero-head{gap:10px;align-items:flex-start;flex-wrap:wrap;}
+ .v145-paycenter .v145-pay-hero .v145-pay-hero-foot{margin-top:9px!important;gap:12px;flex-wrap:wrap;}
+ .v145-paycenter .v145-debt-indicator{background:rgba(255,255,255,.15)!important;border:1px solid rgba(255,255,255,.25)!important;color:#fff!important;border-radius:13px!important;}
+ .v145-paycenter .v145-pay-hero .v245-pay-amount{padding:16px 0 14px!important;margin-top:13px;border-top:1px solid rgba(255,255,255,.3);border-radius:0!important;background:transparent!important;border-inline:0!important;border-bottom:0!important;box-shadow:none!important;color:#fff!important;}
+ .v145-paycenter .v245-pay-amount small{font-size:11px!important;letter-spacing:.15em!important;color:rgba(255,255,255,.84)!important;text-transform:uppercase;}
+ .v145-paycenter .v245-pay-amount strong{display:block;font-size:clamp(35px,10vw,50px)!important;line-height:1.05!important;letter-spacing:-.07em!important;color:#fff!important;margin:8px 0!important;overflow-wrap:anywhere;}
+ .v145-paycenter .v245-pay-amount span{font-size:11px!important;color:rgba(255,255,255,.72)!important;}
+ .v145-paycenter .v245-pay-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid rgba(255,255,255,.25);gap:0;padding-top:15px;}
+ .v145-paycenter .v245-pay-summary>.v145-payment-kpi{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:0 9px 0 0!important;min-width:0;color:#fff!important;}
+ .v145-paycenter .v245-pay-summary>.v145-payment-kpi+div{padding-left:15px!important;border-left:1px solid rgba(255,255,255,.25)!important;}
+ .v145-paycenter .v245-pay-summary small{font-size:10px!important;letter-spacing:.1em!important;color:rgba(255,255,255,.76)!important;}
+ .v145-paycenter .v245-pay-summary strong{display:block;margin-top:8px;font-size:clamp(15px,4.6vw,22px)!important;letter-spacing:-.04em!important;color:#fff!important;overflow-wrap:anywhere;}
+ .v145-paycenter .v245-pay-summary span{display:block;margin-top:5px;font-size:10px!important;color:rgba(255,255,255,.75)!important;}
+ .v245-pay-extra,.v245-recurring-extra{border-radius:17px;border:1px solid rgba(206,223,246,.82);background:rgba(255,255,255,.5);padding:0 14px;margin:8px 0 15px;}
+ .v245-pay-extra>summary,.v245-recurring-extra>summary{min-height:46px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:760;color:#506eaa;cursor:pointer;list-style:none;}
+ .v245-pay-extra>summary::-webkit-details-marker,.v245-recurring-extra>summary::-webkit-details-marker{display:none;}
+ .v245-pay-extra .v145-payment-kpis{display:block!important;margin:0 0 13px!important;}
+ .v245-pay-extra .v145-payment-kpi{padding:13px!important;border-radius:15px!important;}
+ .v145-paycenter .v145-pay-quick{padding:15px!important;border-radius:21px!important;background:rgba(255,255,255,.75)!important;box-shadow:0 8px 20px rgba(34,67,117,.05)!important;}
+ .v145-paycenter .v145-payment-kpis:not(.v245-pay-extra .v145-payment-kpis){display:none!important;}
+ .v145-paycenter .v196-pay-category{border-radius:20px!important;box-shadow:0 8px 22px rgba(30,62,112,.045)!important;background:rgba(255,255,255,.75)!important;border-color:rgba(210,226,247,.85)!important;}
+ .v145-paycenter .v196-pay-category strong{font-size:clamp(21px,5.9vw,28px)!important;letter-spacing:-.04em!important;}
+ .v145-paycenter .v145-pay-agenda,.v145-paycenter .v176-pay-services,.v145-paycenter .v186-service-calendar{border-radius:22px!important;box-shadow:0 9px 23px rgba(29,61,110,.05)!important;}
+ .v145-paycenter .v145-agenda-row{border-radius:18px!important;}
+ /* Suscripciones: tarjetas y acciones al estilo Cuentas y efectivo. */
+ .world-recurring .v26-internal[data-module="recurring"] .v26-head{margin-bottom:9px!important;}
+ .world-recurring .v26-internal[data-module="recurring"] .v26-head .v26-overview-chip{display:none!important;}
+ .world-recurring .v46-subs-panel{border-radius:24px!important;background:rgba(255,255,255,.72)!important;border:1px solid rgba(218,231,247,.8)!important;box-shadow:0 9px 24px rgba(34,67,117,.06)!important;padding:16px!important;}
+ .world-recurring .v46-subs-head h3{font-size:20px!important;letter-spacing:-.04em!important;}
+ .world-recurring .v46-subs-head p{font-size:11px!important;}
+ .world-recurring .v46-subs-head .v245-redundant-add{display:none!important;}
+ .world-recurring .v46-subscriptions-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important;}
+ .world-recurring .v46-subscription-card{display:block!important;width:100%!important;min-width:0!important;background:rgba(236,243,254,.52)!important;border:1px solid rgba(214,229,247,.9)!important;box-shadow:none!important;border-radius:20px!important;padding:16px!important;}
+ .world-recurring .v46-sub-card-title strong{font-size:15px!important;line-height:1.25!important;}
+ .world-recurring .v46-sub-card-cost{font-size:clamp(23px,6.5vw,31px)!important;font-weight:800!important;letter-spacing:-.045em!important;line-height:1.15!important;}
+ .world-recurring .v46-sub-card-next{font-size:11px!important;gap:8px!important;flex-wrap:wrap!important;}
+ .world-recurring .v46-sub-card-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;}
+ .world-recurring .v46-sub-card-actions button{min-height:43px!important;border-radius:14px!important;}
+ .world-recurring .v149-rec-unified{margin:5px 0!important;}
+ .world-recurring .v245-recurring-extra .grid.kpis{grid-template-columns:1fr!important;gap:8px!important;}
+ /* Entre personas: tabla móvil se convierte en tarjetas de lectura vertical. */
+ .world-personal .v26-internal[data-module="personal"] .v26-head{margin-bottom:9px!important;}
+ .world-personal .v26-internal[data-module="personal"] .v26-overview-chip{display:none!important;}
+ .world-personal .v189-person-ledger{border:1px solid rgba(218,231,247,.85)!important;background:rgba(255,255,255,.71)!important;border-radius:23px!important;padding:16px 12px!important;box-shadow:0 10px 24px rgba(31,60,110,.05)!important;}
+ .world-personal .v189-table-head{padding:2px 3px 15px!important;gap:12px!important;}
+ .world-personal .v189-table-head h3{font-size:20px!important;letter-spacing:-.045em!important;}
+ .world-personal .v189-table-scroll{overflow:visible!important;max-width:100%!important;}
+ .world-personal .v189-table{width:100%!important;min-width:0!important;border-spacing:0!important;display:block!important;}
+ .world-personal .v189-table thead{display:none!important;}
+ .world-personal .v189-table tbody{display:grid!important;gap:12px!important;}
+ .world-personal .v189-table tbody tr{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important;min-width:0!important;padding:16px!important;border:1px solid rgba(213,228,247,.9)!important;border-radius:19px!important;background:rgba(234,242,254,.52)!important;box-shadow:none!important;}
+ .world-personal .v189-table tbody td{min-width:0!important;display:block!important;padding:0!important;border:0!important;white-space:normal!important;line-height:1.4!important;}
+ .world-personal .v189-table td:nth-child(1){grid-column:1;grid-row:1;}
+ .world-personal .v189-table td:nth-child(2){grid-column:2;grid-row:1;text-align:right;}
+ .world-personal .v189-table td:nth-child(3){grid-column:1/-1;font-size:11px!important;}
+ .world-personal .v189-table td:nth-child(4){grid-column:1/-1;font-size:clamp(22px,6vw,30px)!important;font-weight:800!important;letter-spacing:-.04em!important;}
+ .world-personal .v189-table td:nth-child(4):before{content:'SALDO PENDIENTE';display:block;font-size:10px;font-weight:780;letter-spacing:.11em;color:#7990b0;margin:6px 0;}
+ .world-personal .v189-table td:nth-child(5){grid-column:1/-1;font-size:11px!important;color:#7c8fa8!important;}
+ .world-personal .v189-table td:nth-child(6){grid-column:1/-1;display:flex!important;flex-wrap:wrap!important;gap:7px!important;align-items:center!important;padding-top:11px!important;border-top:1px solid rgba(213,228,247,.95)!important;}
+ .world-personal .v189-table td:nth-child(6) button{font-size:11px!important;border-radius:12px!important;min-height:39px!important;padding:8px 11px!important;}
+ .world-personal .v189-table .v189-empty{grid-column:1/-1!important;}
+ .world-personal .v56-person{border-radius:18px!important;border:1px solid rgba(213,228,247,.85)!important;box-shadow:none!important;}
+ .world-personal .v56-panel{border-radius:22px!important;box-shadow:0 8px 22px rgba(31,60,110,.05)!important;}
+ .world-personal .v56-loan{border-radius:18px!important;}
+}
+@media(max-width:390px){
+ .world-personal .v189-table-head .v189-table-actions{flex-wrap:wrap!important;gap:8px!important;}
+ .v145-paycenter .v145-pay-hero{padding:17px!important;}
+ .v245-hero-total{font-size:clamp(30px,9.5vw,43px);}
+}
+@media(min-width:791px){
+ .world-recurring .v46-subscription-card,.world-personal .v189-person-ledger,.world-payments .v196-pay-category{border-radius:22px;}
+ .world-recurring .v46-subscriptions-grid{gap:16px;}
+ .world-personal .v189-table-scroll{max-width:100%;}
+}
+body.theme-black :is(.v245-recurring-hero,.v245-personal-hero),body.theme-dark :is(.v245-recurring-hero,.v245-personal-hero){background:linear-gradient(135deg,#20375d,#172948)!important;border-color:#375176!important;}
+body.theme-black .v145-paycenter .v145-pay-hero,body.theme-dark .v145-paycenter .v145-pay-hero{background:linear-gradient(135deg,#20375d,#172948)!important;border-color:#375176!important;}
+body.theme-black :is(.v245-pay-extra,.v245-recurring-extra),body.theme-dark :is(.v245-pay-extra,.v245-recurring-extra){background:#1a2332!important;border-color:#39495e!important;color:#e5edfb!important;}
+body.theme-black .world-personal .v189-table tbody tr,body.theme-dark .world-personal .v189-table tbody tr,
+body.theme-black .world-recurring .v46-subscription-card,body.theme-dark .world-recurring .v46-subscription-card{background:#202a3a!important;border-color:#39495e!important;}
+@media(prefers-reduced-motion:reduce){.v243-explore .v205-explore-link{transition:none!important;}}
+
+/* V245 final: keep a single interactive hero in Entre personas. */
+@media(max-width:790px){
+ .world-personal .v189-person-hero{background:linear-gradient(135deg,#2b4e96,#5478cc)!important;border:1px solid rgba(255,255,255,.2)!important;border-radius:26px!important;box-shadow:0 13px 31px rgba(34,68,126,.16)!important;padding:21px 20px 19px!important;display:block!important;color:#fff!important;min-height:0!important;}
+ .world-personal .v189-person-hero .v58-left{display:none!important;}
+ .world-personal .v189-person-hero .v58-right{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:14px!important;width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;min-width:0!important;}
+ .world-personal .v189-person-hero .v58-feature{min-width:0!important;padding:0 0 14px!important;border-bottom:1px solid rgba(255,255,255,.26)!important;margin:0!important;}
+ .world-personal .v189-person-hero .v58-main-label{font-size:10px!important;font-weight:800!important;letter-spacing:.13em!important;color:rgba(255,255,255,.88)!important;}
+ .world-personal .v189-person-hero .v58-main-value{display:block!important;margin:16px 0 5px!important;font-size:clamp(34px,10vw,49px)!important;letter-spacing:-.07em!important;color:#fff!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important;text-align:left!important;}
+ .world-personal .v189-person-hero .v58-feature>small{color:rgba(255,255,255,.8)!important;font-size:11px!important;}
+ .world-personal .v189-person-hero .v189-payable-inline{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:12px!important;margin:0!important;padding:7px 0!important;background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;color:#fff!important;width:100%!important;max-width:100%!important;}
+ .world-personal .v189-person-hero .v189-payable-inline span{color:rgba(255,255,255,.83)!important;font-size:10px!important;font-weight:780!important;letter-spacing:.14em!important;}
+ .world-personal .v189-person-hero .v189-payable-inline strong{color:#fff!important;font-size:clamp(18px,5vw,25px)!important;font-weight:820!important;letter-spacing:-.035em!important;}
+ .v245-pay-extra>summary svg,.v245-recurring-extra>summary svg{width:17px!important;height:17px!important;max-width:17px!important;flex:0 0 17px!important;transform:none!important;}
+ .v244-mobile-root .v244-actions svg{width:19px!important;height:19px!important;max-width:19px!important;flex:0 0 19px!important;transform:none!important;}
+ .v245-pay-extra>summary,.v245-recurring-extra>summary{justify-content:flex-start!important;}
+ .v245-pay-extra>summary svg:last-child,.v245-recurring-extra>summary svg:last-child{margin-left:auto!important;}
+}
+body.theme-black .world-personal .v189-person-hero,body.theme-dark .world-personal .v189-person-hero{background:linear-gradient(135deg,#20375d,#172948)!important;border-color:#375176!important;}
+
+/* Contraste Black: que el modo oscuro no devuelva superficies gris claro. */
+@media(max-width:790px){
+ body.theme-black .v145-paycenter .v145-pay-hero .v245-pay-amount,
+ body.theme-dark .v145-paycenter .v145-pay-hero .v245-pay-amount,
+ body.theme-black .v145-paycenter .v145-pay-hero .v245-pay-summary>.v145-payment-kpi,
+ body.theme-dark .v145-paycenter .v145-pay-hero .v245-pay-summary>.v145-payment-kpi{
+  background:transparent!important;background-image:none!important;color:#fff!important;box-shadow:none!important;border-radius:0!important;border-color:transparent!important;
+ }
+ body.theme-black .world-recurring .v26-internal .v26-nav button,
+ body.theme-dark .world-recurring .v26-internal .v26-nav button,
+ body.theme-black .world-personal .v26-internal .v26-nav button,
+ body.theme-dark .world-personal .v26-internal .v26-nav button{
+  background:#202b3b!important;border:1px solid #354458!important;color:#c8d6e8!important;box-shadow:none!important;
+ }
+ body.theme-black .world-recurring .v26-internal .v26-nav button[aria-selected="true"],
+ body.theme-dark .world-recurring .v26-internal .v26-nav button[aria-selected="true"],
+ body.theme-black .world-personal .v26-internal .v26-nav button[aria-selected="true"],
+ body.theme-dark .world-personal .v26-internal .v26-nav button[aria-selected="true"]{
+  background:#2a476e!important;border-color:#7398c9!important;color:#fff!important;
+ }
+ body.theme-black .world-personal .v189-person-ledger,
+ body.theme-dark .world-personal .v189-person-ledger,
+ body.theme-black .world-personal .v56-panel,
+ body.theme-dark .world-personal .v56-panel,
+ body.theme-black .world-recurring .v46-subs-panel,
+ body.theme-dark .world-recurring .v46-subs-panel{
+  background:#182232!important;background-image:none!important;color:#eaf1fd!important;
+  border-color:#33465f!important;box-shadow:0 8px 24px rgba(0,0,0,.27)!important;
+ }
+ body.theme-black .world-personal .v189-person-ledger :is(h2,h3,strong),
+ body.theme-dark .world-personal .v189-person-ledger :is(h2,h3,strong),
+ body.theme-black .world-recurring .v46-subs-panel :is(h2,h3,strong),
+ body.theme-dark .world-recurring .v46-subs-panel :is(h2,h3,strong){color:#eaf1fd!important;}
+ body.theme-black .v245-recurring-extra>summary,body.theme-black .v245-pay-extra>summary,
+ body.theme-dark .v245-recurring-extra>summary,body.theme-dark .v245-pay-extra>summary{color:#d7e6ff!important;}
+ body.theme-black .v244-mobile-root .v244-segments button,
+ body.theme-dark .v244-mobile-root .v244-segments button{
+  background:#202b3b!important;border-color:#384a62!important;color:#c7d7eb!important;
+ }
+ body.theme-black .v244-mobile-root .v244-segments button.selected,
+ body.theme-dark .v244-mobile-root .v244-segments button.selected{
+  background:#2a476e!important;border-color:#7398c9!important;color:#fff!important;
+ }
+ body.theme-black .v244-mobile-root .v244-add,body.theme-dark .v244-mobile-root .v244-add{
+  background:#223149!important;border-color:#475d7c!important;color:#c8defe!important;
+ }
+}
+
+
+</style>
+
+<style id="vive-v246-reports-progressive">
+/* Progressive summaries inside bell — consistent on iPhone, laptop and desktop */
+.v36-notice-pop .v246-inbox-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 1px 10px;padding-top:12px;border-top:1px solid rgba(123,154,199,.16)}
+.v246-inbox-heading span{font-size:10px;letter-spacing:.135em;font-weight:850;color:#5074aa}
+.v246-inbox-heading small{font-size:9px;line-height:1.35;text-align:right;color:#8697ae}
+.v36-notice-pop .v246-current-feed{display:grid;gap:8px}
+.v36-notice-pop .v246-notice{min-height:71px;margin:0;padding:11px 12px;display:flex;gap:11px;align-items:center;border-radius:18px;border:1px solid rgba(209,224,245,.85);background:linear-gradient(140deg,rgba(239,246,255,.93),rgba(251,253,255,.95));box-shadow:0 6px 18px rgba(49,91,153,.05);transition:background .16s,transform .16s}
+.v36-notice-pop .v246-notice:hover{background:#e6f0ff;transform:translateY(-1px)}
+.v246-notice-icon{width:39px;height:39px;flex:0 0 39px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#e3efff,#d1e3fc);color:#416db2}
+.v246-notice-icon svg{width:20px;height:20px;max-width:20px;max-height:20px}
+.v246-semanal .v246-notice-icon{background:#dfeafc;color:#5178bd}.v246-mitad .v246-notice-icon{background:#e8e5fc;color:#7666bd}.v246-cierre .v246-notice-icon{background:#dff3ef;color:#218f78}
+.v246-notice-copy{min-width:0;flex:1;display:grid;gap:4px!important}.v246-notice-copy strong{font-size:12px!important;font-weight:780!important;color:#264466}.v246-notice-copy small{font-size:10px!important;color:#7188a4!important;line-height:1.4!important}
+.v246-new{border-radius:99px;padding:5px 7px;font-size:9px;font-weight:850;background:#dceaff;color:#456fb5;flex:0 0 auto}
+.v246-chevron{width:15px;flex:0 0 15px;opacity:.55;display:grid;place-items:center}.v246-chevron svg{width:14px;height:14px}
+.v36-notice-pop .v246-report-history{margin-top:9px;border:1px solid rgba(208,223,243,.8);border-radius:17px;overflow:hidden;background:rgba(241,246,255,.7)}
+.v246-report-history>summary{display:flex;align-items:center;gap:9px;list-style:none;cursor:pointer;padding:13px 12px;color:#48658a;font-size:11px;font-weight:780}
+.v246-report-history>summary::-webkit-details-marker{display:none}.v246-report-history>summary svg{width:16px;height:16px}.v246-report-history>summary svg:last-child{margin-left:auto;transition:transform .18s}.v246-report-history[open]>summary svg:last-child{transform:rotate(90deg)}
+.v246-report-history>summary b{background:#e4edfa;padding:3px 8px;border-radius:99px;color:#587ba9;font-size:10px}
+.v246-history-list{padding:3px 7px 9px;display:grid;gap:6px;max-height:280px;overflow-y:auto;overscroll-behavior:contain}
+.v36-notice-pop .v246-history-list .v246-notice{min-height:60px;border-radius:13px;padding:9px 10px;box-shadow:none;background:rgba(255,255,255,.72)}
+.v246-history-list .v246-notice-icon{width:31px;height:31px;flex-basis:31px;border-radius:10px}.v246-history-list .v246-notice-icon svg{width:16px;height:16px}
+.v246-history-list .v246-notice-copy small{font-size:9px!important}
+.v246-inbox-empty{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:19px 15px;border-radius:19px;border:1px dashed #bfd2eb;background:linear-gradient(135deg,#eef5ff,#f9fcff)}
+.v246-empty-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:#ddeafe;color:#4a76b4}.v246-empty-icon svg{width:19px;height:19px}
+.v246-inbox-empty strong{font-size:12px;letter-spacing:-.01em;color:#294a71}.v246-inbox-empty p{margin:0;font-size:11px;line-height:1.55;color:#7288a4}
+.v246-report-context{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 23px;background:#e3effe;border-bottom:1px solid #d5e4f7;color:#466eaa;font-size:11px;font-weight:750}
+.v246-report-context>span{display:flex;gap:7px;align-items:center}.v246-report-context svg{width:15px;height:15px}.v246-report-context small{font-size:10px;color:#7392b7;white-space:nowrap}
+@media(max-width:620px){.v246-report-context{padding:11px 14px;flex-wrap:wrap}.v246-report-context small{display:none}.v36-notice-pop .v246-notice{min-height:70px}.v246-notice-copy small{max-width:100%}}
+body.theme-black .v36-notice-pop .v246-notice,body.theme-dark .v36-notice-pop .v246-notice{background:linear-gradient(145deg,#253449,#1d293a)!important;border-color:#3a4a60!important;color:#ecf4ff!important}
+body.theme-black .v246-inbox-heading span,body.theme-dark .v246-inbox-heading span{color:#b3ceee!important}
+body.theme-black .v246-notice-copy strong,body.theme-dark .v246-notice-copy strong,body.theme-black .v246-inbox-empty strong,body.theme-dark .v246-inbox-empty strong{color:#eff6ff!important}
+body.theme-black .v246-notice-copy small,body.theme-dark .v246-notice-copy small,body.theme-black .v246-inbox-empty p,body.theme-dark .v246-inbox-empty p{color:#b0c4dd!important}
+body.theme-black .v246-report-history,body.theme-dark .v246-report-history,body.theme-black .v246-inbox-empty,body.theme-dark .v246-inbox-empty{background:#202d40!important;border-color:#3c506d!important}
+body.theme-black .v246-report-history>summary,body.theme-dark .v246-report-history>summary{color:#d6e4fb!important}
+body.theme-black .v246-report-history>summary b,body.theme-dark .v246-report-history>summary b{background:#31435e;color:#d9e8ff}
+.v36-notifications .v246-report-history>summary{display:flex!important;flex-direction:row!important;justify-content:flex-start!important;align-items:center!important;gap:9px!important;width:100%!important;min-height:44px!important;height:auto!important;padding:12px 13px!important;box-sizing:border-box!important;border:0!important;border-radius:0!important;background:none!important;text-align:left!important;grid-template-columns:none!important;position:static!important;box-shadow:none!important}
+.v36-notifications .v246-report-history>summary svg:last-child{margin-left:auto!important}
+@media(prefers-reduced-motion:reduce){.v36-notice-pop .v246-notice,.v246-report-history>summary svg:last-child{transition:none!important}}
 </style>
 </body>
 </html>
