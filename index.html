@@ -15614,6 +15614,20 @@ body.theme-dark .v221-state.cleared,body.theme-black .v221-state.cleared{backgro
 @media(prefers-reduced-motion:reduce){.v221-state{transition:none!important}}
 </style>
 
+<style id="v235-register-floating">
+/* V235 — Movimientos sin asistente empotrado; Registrar abre una ventana flotante. */
+.v235-register-layer{align-items:center!important;justify-content:center!important;padding:clamp(10px,2vw,26px)!important;overflow:auto!important}
+.v235-register-layer>.v235-register-dialog{width:min(1320px,100%)!important;max-width:1320px!important;max-height:calc(100dvh - 36px)!important;overflow:auto!important;padding:0!important;border-radius:24px!important;box-sizing:border-box!important;background:#f2f6fc!important}
+.v235-register-dialog .v235-register-close{display:flex;align-items:center;justify-content:space-between;padding:14px 22px 8px;gap:12px;color:#5074aa;font-size:11px;font-weight:800;letter-spacing:.12em}
+.v235-register-dialog .v235-register-close button{font-size:28px!important;width:38px;height:38px;display:grid;place-items:center}
+.v235-register-dialog .vr-register{padding:0 15px 15px!important;margin:0!important}
+.v235-register-dialog .vr-hero{display:none!important}
+.v235-register-dialog .vr-workspace{margin:0!important}
+.ledger-world>.section-title{align-items:flex-start!important;margin-top:0!important}
+.ledger-world>.section-title>.btn{align-self:flex-start!important}
+@media(max-width:700px){.v235-register-layer{padding:0!important;align-items:stretch!important}.v235-register-layer>.v235-register-dialog{width:100%!important;max-height:100dvh!important;border-radius:18px 18px 0 0!important;margin:auto 0 0!important}.v235-register-dialog .vr-register{padding:0 8px 10px!important}.v235-register-dialog .vr-content{grid-template-columns:1fr!important}}
+body.theme-black .v235-register-layer>.v235-register-dialog{background:#10141e!important}
+</style>
 </head>
 <body><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <style id="vhe-menu-interior-only">
@@ -18095,7 +18109,7 @@ ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div 
 <div class="settings-group-title" id="v176-setting-06"><div><span class="summary-tag">06 / HISTORIAL Y PRIVACIDAD</span><h3>Control de productos y registros</h3></div></div>
 <div class="grid columns equal"><div class="panel"><div class="panel-head"><h3>Productos archivados</h3></div><p class="form-note">Desactivar una relación financiera no debe eliminar sus transacciones. Los productos archivados permanecen en cálculos históricos, aunque se oculten de los listados habituales.</p>${visibilityControl()}<p class="form-note">Archivados: ${[...db.banks,...db.accounts,...db.cards,...db.loans,...db.certificates].filter(x=>x.archived).length}. La eliminación definitiva solo se permite cuando no hay operaciones ni saldos iniciales o dependencias.</p></div><div class="panel"><div class="panel-head"><h3>Protección y respaldo</h3></div><p class="form-note">Respalda tus datos JSON antes de modificar contratos o importar versiones nuevas. El respaldo local no está cifrado.</p><div class="hstack"><button class="btn soft" data-act="export" title="Descargar una copia de seguridad de todos tus registros en JSON">${icon('download')} Descargar respaldo JSON</button><button class="btn ghost" data-act="import">${icon('upload')} Importar JSON</button></div><div class="mini-divider"></div><div class="hstack"><button class="btn ghost" data-act="demo">Demostración</button><button class="btn danger" data-act="clear">Eliminar todos los datos</button></div><input id="importFile" type="file" accept="application/json,.json" class="hidden" /></div></div>
 <div class="panel section"><div class="panel-head"><h3>Información guardada</h3></div><div class="settings-counts">${[['Instituciones',db.banks.length],['Cuentas',db.accounts.length],['Tarjetas',db.cards.length],['Préstamos',db.loans.length],['Certificados',db.certificates.length],['Movimientos',db.transactions.length],['Suscripciones',db.recurring.length]].map(([l,n])=>`<div><span>${l}</span><strong>${n}</strong></div>`).join('')}</div><div class="notification warning">vive el hoy es local: no consulta bancos en tiempo real, no ejecuta pagos ni comprueba automáticamente impuestos. No guardes CVV, PIN, contraseñas ni números completos.</div></div></div>`}
-function moneyRegister(){
+function moneyRegister(mode="page"){
  const m=monthStats(),incomeOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['income','bank_reward','card_reward'].includes(t.type)),expenseOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['expense','card_charge','card_refund','loan_payment'].includes(t.type));
  const op=(glyph,name,description,action,type='')=>`<button class="money-register-tile" data-act="${action}" ${action==='navigate'?`data-id="${type}"`:type?`data-type="${type}"`:''}><span class="money-register-icon">${icon(glyph)}</span><strong>${name}</strong><small>${description}</small><span class="register-tile-arrow">${icon('arrow')}</span></button>`;
  const pending=db.pendingOperations||[],active=ui.movementTab==='pending'?'all':ui.movementTab;
@@ -18126,8 +18140,15 @@ function moneyRegister(){
 </div>`:group.modes.map(actionTile).join('')}</div><aside class="vr-guidance ${group.accent}"><span class="vr-guidance-glyph">${group.symbol}</span><span class="vr-guidance-label">TU ASISTENTE</span><h4>${group.sideTitle}</h4><p>${group.sideCopy}</p><div class="vr-guidance-bottom"><span class="vr-dot"></span> Los saldos se actualizan al confirmar</div></aside></div>
   </section>
  </div>`;
+ if(mode==='assistant')return formTiles;
+ if(mode==='page')return transactions(true);
  let content=active==='review'?v30ReviewContent(false):active==='all'?`${summary}${transactions(true)}`:active==='pending'?pendingOperationsView():`${formTiles}<section class="movement-recent panel"><div class="panel-head"><div><h3>Actividad reciente</h3><p class="subtle">Últimos movimientos confirmados</p></div><button class="btn sm soft v51-manage-movements" data-act="movementTab" data-id="all">Gestionar · Editar / Eliminar ${icon('arrow')}</button></div>${recentList(6)}</section>`;
  return `${active==='register'||active==='all'?'':`<div class="world-intro"><span class="summary-tag">vive el hoy</span><h2>Control total. Cada peso en su lugar.</h2><p>Centro financiero contextual para cuentas, efectivo, tarjetas y transferencias; mantiene separados el principal, los impuestos y los cargos.</p></div>`}${selector}${content}${duplicateAlerts()}<p class="footnote">Una operación pendiente no afecta saldos ni ingresos. Una operación confirmada puede quedar «por revisar» hasta que concilies el comprobante. Los pagos de tarjetas, préstamos y transferencias no duplican gastos.</p>`;
+}
+/* V235: Registrar es un asistente flotante, separado del libro de Movimientos. */
+function openRegisterAssistant(){
+ const root=document.getElementById('modal-root');if(!root)return;
+ root.innerHTML=`<div class="modal-layer v235-register-layer" data-backdrop="true"><section class="modal v235-register-dialog" role="dialog" aria-modal="true" aria-label="Registrar movimiento"><div class="v235-register-close"><span>REGISTRAR</span><button type="button" class="close" data-act="closeModal" aria-label="Cerrar asistente">×</button></div>${moneyRegister('assistant')}</section></div>`;
 }
 function pendingOperationsView(){let items=db.pendingOperations||[];
  const row=q=>{const type=q.values?.type||q.formId,kind=TRANSL[type]||({personalPaymentForm:'Abono entre personas',annualFeeForm:'Anualidad',rewardReceivedForm:'Beneficio recibido',benefitLedgerForm:'Beneficio o recompensa'})[q.formId]||'Operación',val=num(q.values?.amount||q.values?.principal||0),name=q.values?.note||q.values?.description||q.values?.merchant||kind;return `<tr><td>${sanitize(prettyDate(q.values?.date||q.created.slice(0,10)))}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">${sanitize(kind)}</div></td><td class="right">${val>0?money(val,q.values?.currency||'DOP',2):'A verificar'}</td><td><span class="pending-pill">Pendiente de confirmar</span></td><td class="right"><div class="tx-actions"><button class="btn sm" data-act="pendingConfirm" data-id="${q.id}">Revisar y confirmar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar registro">Descartar</button></div></td></tr>`};
@@ -21184,9 +21205,9 @@ case 'matrixCategory':{ui.matrixExpanded||={};const key=(el.dataset.kind||'expen
 case 'annualToggle':ui.annualDetails=!ui.annualDetails;render();break;
 case 'gotoSettings':ui.page='settings';render();break;
 case 'mobile':ui.mobile=!ui.mobile;render();break;
-case 'registrationGroup':ui.registrationGroup=['receive','pay','move','other'].includes(id)?id:'pay';render();break;
+case 'registrationGroup':ui.registrationGroup=['receive','pay','move','other'].includes(id)?id:'pay';if(document.querySelector('#modal-root .v235-register-dialog'))openRegisterAssistant();else render();break;
 case 'v196PayKind':ui.v196PayKind=['all','card','loan','recurring','personal'].includes(id)?id:'all';ui.v176PayView='agenda';render();break; case 'v145PayFilter':ui.v145PayFilter=['all','overdue','upcoming'].includes(id)?id:'all';render();break; case 'guidedFlow':guidedTransactionForm({type:({income:'income',spend:'expense',service:'card_charge',own:'transfer',outgoing:'expense',cardpay:'card_payment'})[el.dataset.mode]||'expense',flowMode:el.dataset.mode});break;
-case 'newTransaction':{const kind=el.dataset.type||'';if(!kind&&!id){ui.page='register';ui.movementTab='register';ui.registrationGroup=ui.registrationGroup||'pay';render();window.scrollTo(0,0);break;}if(isMobileViewport()&&!id&&['income','expense','card_charge','transfer'].includes(kind)){openMobileQuickRegister(kind);break;}transactionForm({type:kind||'expense',cardId:id||db.cards[0]?.id});if(kind==='transfer')queueMicrotask(refreshTransferFee);break;}
+case 'newTransaction':{const kind=el.dataset.type||'';if(!kind&&!id){ui.registrationGroup=ui.registrationGroup||'pay';openRegisterAssistant();break;}if(isMobileViewport()&&!id&&['income','expense','card_charge','transfer'].includes(kind)){openMobileQuickRegister(kind);break;}transactionForm({type:kind||'expense',cardId:id||db.cards[0]?.id});if(kind==='transfer')queueMicrotask(refreshTransferFee);break;}
 case 'otherRefund':if(!db.cards.length){toast('Registra una tarjeta para asociar una devolución.');break}transactionForm({type:'card_refund',cardId:db.cards[0].id});break;
 case 'otherAdjust':transactionForm({type:'adjustment'});break;
 case 'otherBenefitPicker':otherBenefitPicker();break;
