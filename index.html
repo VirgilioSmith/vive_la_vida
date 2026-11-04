@@ -17158,45 +17158,33 @@ function v154MobileSearchPage(){
 
 /* V68 — Wallet independiente y estrictamente visual. No genera movimientos por sí sola. */
 function v68Wallet(){
- const list=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
- if(!list.length)return `<section class="v68-wallet v263-wallet"><div class="v68-empty"><span>${icon('card')}</span><h2>Tu Wallet comienza aquí</h2><p>Agrega tus tarjetas para consultar saldos, cortes y movimientos.</p><button class="btn" data-act="navigate" data-id="cards">Agregar tarjeta</button></div></section>`;
- const active=list.find(c=>c.id===ui.v68WalletId)||list[0];
+ const cards=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
+ if(!cards.length)return `<section class="v266-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">TU CARTERA</span><h1>Mis tarjetas</h1></div><button class="v266-wallet-add" data-act="addCard" aria-label="Añadir tarjeta">${icon('plus')}</button></header><div class="v266-empty"><strong>Tu Wallet comienza aquí.</strong><p>Agrega una tarjeta para consultar crédito, cortes, pagos y actividad.</p><button class="btn" data-act="addCard">Añadir tarjeta</button></div></section>`;
+ const active=cards.find(c=>c.id===ui.v68WalletId)||cards[0];
  const dop=cardStatus(active,'DOP'),usd=cardStatus(active,'USD');
  const debt=dop.debt+fx(usd.debt,'USD');
- const limit=num(active.limitDOP)+fx(num(active.limitUSD),'USD');
- const available=Math.max(0,limit-debt);
- const ratio=limit>0?Math.min(100,Math.max(0,100*debt/limit)):0;
- const period=monthStats();
- const spending=period.expense||0;
- const activeBank=bankOf(active);
- const tx=recentTx().filter(t=>t.cardId===active.id).slice(0,7);
- const next=[{...dop,ccy:'DOP'},{...usd,ccy:'USD'}].filter(v=>v.nextDue&&num(v.billed)>0.005).sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
- const cardFace=c=>{
-   const selected=active.id===c.id;
-   const tier=cardTierKey(c);
-   return `<button type="button" class="v68-wallet-face ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v263-card-physical tier-${sanitize(tier)}"><span class="v263-card-top"><b>${sanitize(bankOf(c))}</b><span class="v263-card-chip" aria-hidden="true"></span></span><span class="v263-card-mid"><strong>${sanitize(c.name)}</strong><small>•••• ${sanitize(c.last4||'••••')}</small></span><span class="v263-card-bottom"><small>${sanitize(CARD_TIER_NAMES[tier]||'Crédito')}</small>${cardNetworkMark(c)}</span></span></button>`;
- };
- const status=(st,ccy)=>{
-   const due=Object.entries(st.dueMap||{}).filter(([,v])=>num(v)>.005).sort((a,b)=>a[0].localeCompare(b[0]));
-   const late=due.filter(([d])=>d<today()).reduce((sum,[,a])=>sum+num(a),0);
-   const amount=due.reduce((sum,[,a])=>sum+num(a),0);
-   const label=late>.005?'Vencido':amount>.005?'Pendiente':'Sin importe pendiente';
-   return `<div class="v263-statement-row"><span><strong>${ccy==='USD'?'Dólares · US$':'Pesos · RD$'}</strong><small>${label}${due.length?' · Próximo '+prettyDate(due[0][0]):''}</small></span><b>${money(late>.005?late:amount,ccy,2)}</b></div>`;
- };
- const recent=tx.length?tx.map(t=>{
-   const credit=['card_payment','card_reward','card_refund'].includes(t.type);
-   return `<div class="v263-activity-row"><span class="v263-activity-icon">${icon(t.applePaySource==='wallet-shortcuts'?'wallet':credit?'up':'cycle')}</span><span class="v263-activity-copy"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)}</small></span><b class="${credit?'positive':''}">${credit?'+':'−'}${money(num(t.amount),t.currency,2)}</b></div>`;
- }).join(''):'<p class="v263-activity-empty">Aún no hay movimientos registrados en esta tarjeta.</p>';
- return `<section class="v68-wallet v263-wallet" aria-label="Wallet móvil">
-   <header class="v263-wallet-heading"><div><span class="v263-eyebrow">TU WALLET</span><h1>Mis tarjetas</h1></div><span class="v263-wallet-count">${list.length} ${list.length===1?'tarjeta':'tarjetas'}</span></header>
-   <section class="v263-wallet-balance" aria-label="Resumen de tu dinero"><div class="v263-wallet-balance-main"><span>DINERO DISPONIBLE EN CUENTAS</span><strong>${money(totalLiquid())}</strong><small>Liquidez registrada · RD$ equivalentes</small></div><div class="v263-wallet-mini"><div><small>EGRESOS DEL MES</small><strong>${money(spending)}</strong></div><div><small>DEUDA DE ESTA TARJETA</small><strong>${money(debt)}</strong></div></div></section>
-   <section class="v263-wallet-card-section"><div class="v263-section-title"><h2>Mis tarjetas</h2><button data-act="navigate" data-id="cards">Ver todas ${icon('arrow')}</button></div><div class="v68-wallet-gallery" aria-label="Selecciona una tarjeta">${list.map(cardFace).join('')}</div><div class="v68-wallet-dots v263-wallet-dots" aria-label="Tarjeta seleccionada">${list.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></section>
-   <div class="v68-wallet-actions v263-wallet-actions" aria-label="Operaciones de Wallet"><button data-act="newTransaction" data-type="income"><i>${icon('plus')}</i><span>Recibir</span></button><button data-act="newTransaction" data-type="transfer"><i>${icon('wallet')}</i><span>Enviar</span></button><button data-act="payCard" data-id="${sanitize(active.id)}"><i>${icon('card')}</i><span>Pagar</span></button><button data-act="goCard" data-id="${sanitize(active.id)}"><i>${icon('settings')}</i><span>Detalles</span></button></div>
-   <section class="v263-wallet-credit"><div class="v263-section-title"><div><h2>${sanitize(active.name)}</h2><small>${sanitize(activeBank)} · •••• ${sanitize(active.last4||'••••')}</small></div><button data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Ver detalle de tarjeta">${icon('arrow')}</button></div><div class="v263-credit-metrics"><div><small>LÍMITE</small><strong>${money(limit)}</strong></div><div><small>DISPONIBLE</small><strong>${money(available)}</strong></div></div><button type="button" class="v263-credit-track-label" data-v85-action="card" data-id="${sanitize(active.id)}"><span>Uso del crédito</span><strong>${limit>0?ratio.toFixed(1)+'%':'Sin límite'} ${icon('arrow')}</strong></button><div class="v263-credit-track"><span style="width:${ratio}%"></span></div>${next?`<div class="v263-next-due"><span>${icon('calendar')} Próximo pago · ${prettyDate(next.nextDue)}</span><strong>${money(next.billed,next.ccy,2)}</strong></div>`:''}</section>
-   <details class="v263-wallet-disclosure"><summary><span>${icon('receipt')} Estado al corte <small>RD$ y US$</small></span>${icon('arrow')}</summary><div>${status(dop,'DOP')}${status(usd,'USD')}<p>Estimación basada en los movimientos y cortes registrados. Confirma los importes oficiales con tu banco.</p><button type="button" class="v263-statement-pay" data-act="payCard" data-id="${sanitize(active.id)}">${icon('card')} Registrar pago</button></div></details>
-   <section class="v263-wallet-activity"><div class="v263-section-title"><h2>Actividad reciente</h2><button data-act="navigate" data-id="cards">Gestionar ${icon('arrow')}</button></div>${recent}</section>
-   <p class="v263-wallet-legal">Wallet es una vista de consulta; no almacena tarjetas para pagos sin contacto ni realiza transferencias bancarias por sí sola.</p>
-  </section>`;
+ const totalLimit=num(active.limitDOP)+fx(num(active.limitUSD),'USD');
+ const available=Math.max(0,totalLimit-debt);
+ const usage=totalLimit>0?Math.min(100,Math.max(0,100*debt/totalLimit)):0;
+ const last4=c=>String(c.last4||c.number||'').replace(/\D/g,'').slice(-4);
+ const tierName=c=>CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
+ const due=[{...dop,ccy:'DOP'},{...usd,ccy:'USD'}].filter(s=>s.nextDue&&num(s.billed)>0.005).sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
+ const history=recentTx().filter(t=>t.cardId===active.id).slice(0,4);
+ const gallery=cards.map(c=>{
+  const selected=c.id===active.id,bankName=bankOf(c),tier=cardTierKey(c);
+  return `<button type="button" class="v68-wallet-face v266-wallet-face ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v266-physical-card tier-${sanitize(tier)}"><span class="v266-card-top"><strong>${sanitize(bankName||c.name)}</strong><span class="v266-card-nfc" aria-hidden="true">${icon('wifi')}</span></span><span class="v266-card-chip" aria-hidden="true"></span><span class="v266-card-number">•••• &nbsp; •••• &nbsp; •••• &nbsp; ${sanitize(last4(c)||'••••')}</span><span class="v266-card-foot"><span><small>${sanitize(tierName(c))}</small><b>${sanitize(c.name)}</b></span>${cardNetworkMark(c)}</span></span></button>`;
+ }).join('');
+ const rows=history.map(t=>`<div class="v266-activity-row"><span class="v266-activity-ico">${icon(['card_payment','card_refund','card_reward'].includes(t.type)?'up':'card')}</span><span class="v266-activity-info"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b></div>`).join('');
+ const metric=(label,value,sub='')=>`<div class="v266-metric"><small>${label}</small><strong>${value}</strong>${sub?`<span>${sub}</span>`:''}</div>`;
+ return `<section class="v68-wallet v266-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">VIVE EL HOY · WALLET</span><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
+ <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${cards.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
+ <div class="v266-selected-balance"><div><span>CRÉDITO DISPONIBLE</span><strong>${money(available)}</strong><small>RD$ equivalentes · tarjeta seleccionada</small></div><div class="v266-selected-debt"><small>DEUDA UTILIZADA</small><b>${money(debt)}</b></div></div>
+ <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" data-act="payCard" data-id="${sanitize(active.id)}"><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('card')}</span><b>Detalles</b></button><button type="button" data-act="editCard" data-id="${sanitize(active.id)}"><span>${icon('settings')}</span><b>Gestionar</b></button></div>
+ <section class="v266-wallet-panel"><div class="v266-panel-heading"><div><span class="v266-overline">CONTROL DE CRÉDITO</span><h2>Estado de tu tarjeta</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Abrir detalles">${icon('arrow')}</button></div>
+ <div class="v266-limits">${metric('Límite total',money(totalLimit))}${metric('Crédito disponible',money(available))}</div><div class="v266-credit-meter" role="meter" aria-label="Porcentaje utilizado del límite" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${usage.toFixed(1)}"><span style="width:${usage}%"></span></div><div class="v266-meter-foot"><span>Utilización del límite</span><b>${usage.toFixed(1)}%</b></div>${due?`<div class="v266-next-payment"><div><small>${due.nextDue<today()?'VENCIMIENTO ATRASADO':'PRÓXIMO VENCIMIENTO'}</small><strong>${prettyDate(due.nextDue)}</strong></div><b>${money(due.billed,due.ccy,2)}</b><button type="button" data-act="payCard" data-id="${sanitize(active.id)}" data-ccy="${due.ccy}">Pagar ${icon('arrow')}</button></div>`:''}</section>
+ <details class="v266-wallet-detail"><summary><span>${icon('receipt')} Cortes por moneda <small>Pesos y dólares</small></span>${icon('arrow')}</summary><div class="v266-currency-row"><span>Facturado · RD$</span><b>${money(dop.billed,'DOP',2)}</b></div><div class="v266-currency-row"><span>Facturado · US$</span><b>${money(usd.billed,'USD',2)}</b></div><p>Los importes son registros internos. Consulta el estado oficial de tu entidad para conciliar.</p></details>
+ <section class="v266-wallet-panel v266-activity"><div class="v266-panel-heading"><div><span class="v266-overline">TUS ÚLTIMOS CONSUMOS</span><h2>Actividad reciente</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Ver todos los movimientos">${icon('arrow')}</button></div>${rows||'<p class="v266-empty-activity">Sin movimientos recientes en esta tarjeta.</p>'}</section>
+ <p class="v266-wallet-note">Una compra con tarjeta aumenta tu deuda; pagarla reduce el saldo pendiente sin duplicar el gasto.</p></section>`;
 }
 
 function mobileCardsIntro(){
@@ -36457,128 +36445,6 @@ body.theme-black #modal-root .v261-service-dialog,body.theme-dark #modal-root .v
 </style>
 
 
-<style id="v263-compact-fintech-system">
-/* V263 — all mobile measurements are based on 4/8 px spacing; keep touches >=44 px. */
-:root{--v263-gap:12px;--v263-corner:22px;--v263-surface:rgba(255,255,255,.82);--v263-hairline:rgba(195,210,230,.43);--v263-shadow:0 9px 27px rgba(40,66,112,.055);--v263-ink:#1c2941;--v263-muted:#73849c}
-.v263-wallet{max-width:510px;min-width:0;width:100%;display:flex;flex-direction:column;gap:14px;color:var(--v263-ink);padding:3px 0 118px;box-sizing:border-box}
-.v263-wallet *{box-sizing:border-box;min-width:0}.v263-wallet h1,.v263-wallet h2,.v263-wallet p{margin:0}
-.v263-wallet-heading,.v263-section-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.v263-eyebrow{font-size:10px;letter-spacing:.16em;font-weight:750;color:#7183a4}.v263-wallet-heading h1{font-size:27px;letter-spacing:-.06em;font-weight:800;line-height:1.14;margin-top:3px}
-.v263-wallet-count{border-radius:999px;border:1px solid rgba(178,195,220,.4);background:rgba(255,255,255,.65);padding:8px 11px;font-size:11px;font-weight:750;color:#597196;white-space:nowrap}
-.v263-wallet-balance{padding:16px;border:1px solid rgba(255,255,255,.96);border-radius:24px;background:linear-gradient(130deg,rgba(255,255,255,.96),rgba(250,245,251,.81) 55%,rgba(237,246,255,.92));box-shadow:var(--v263-shadow)}
-.v263-wallet-balance-main span{display:block;color:#75849b;font-size:9px;font-weight:800;letter-spacing:.12em}.v263-wallet-balance-main strong{display:block;font-size:clamp(29px,8vw,37px);line-height:1.1;letter-spacing:-.075em;font-weight:810;color:#14243f;margin-top:5px;font-variant-numeric:tabular-nums}
-.v263-wallet-balance-main small{display:block;color:#7f90a6;font-size:10px;margin-top:2px}
-.v263-wallet-mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
-.v263-wallet-mini>div{min-height:62px;padding:11px 12px;border-radius:16px;background:rgba(255,255,255,.76);border:1px solid rgba(221,227,239,.7)}
-.v263-wallet-mini small{display:block;font-size:9px;font-weight:750;letter-spacing:.06em;color:#8794a9}
-.v263-wallet-mini strong{display:block;margin-top:6px;color:#1d3458;font-weight:790;font-size:clamp(16px,4.5vw,20px);letter-spacing:-.045em;font-variant-numeric:tabular-nums}
-.v263-wallet-card-section{display:flex;flex-direction:column;gap:9px}.v263-section-title h2{font-size:17px;letter-spacing:-.04em;font-weight:800;color:#21324f}.v263-section-title button{background:transparent;border:0;color:#5673a8;font-size:11px;font-weight:750;display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 3px}.v263-section-title button svg{width:15px;height:15px}
-.v263-wallet .v68-wallet-gallery{width:100%;display:flex;gap:12px;padding:2px 4px 9px;overflow-x:auto;scroll-padding:4px;scroll-snap-type:x mandatory;scrollbar-width:none;align-items:stretch}
-.v263-wallet .v68-wallet-gallery::-webkit-scrollbar{display:none}
-.v263-wallet .v68-wallet-face{display:block;flex:0 0 min(75%,275px);width:min(75%,275px);height:auto;scroll-snap-align:center;border:0!important;background:none!important;padding:0!important;text-align:left;box-shadow:none!important;transform:none!important;appearance:none}
-.v263-card-physical{display:flex;position:relative;flex-direction:column;justify-content:space-between;height:166px;width:100%;padding:16px 17px;border-radius:22px;color:#f9fbff;background:linear-gradient(136deg,#14233a,#121b29 65%,#0b4654);box-shadow:0 13px 23px rgba(30,45,76,.18);overflow:hidden}
-.v263-card-physical::after{content:'';position:absolute;width:180px;height:180px;top:-65px;right:-40px;border-radius:45%;border:1px solid rgba(255,255,255,.13);transform:rotate(26deg);pointer-events:none}
-.v263-card-physical.tier-platinum,.v263-card-physical.tier-world,.v263-card-physical.tier-worldelite{background:linear-gradient(135deg,#31435c,#526c90 65%,#8fa8c8)}
-.v263-card-physical.tier-gold{background:linear-gradient(135deg,#665137,#ae8a4e 65%,#d5b776)}
-.v263-card-physical.tier-classic{background:linear-gradient(135deg,#19344c,#16536a 65%,#0b8a88)}
-.v263-card-top,.v263-card-bottom,.v263-card-mid{display:flex;justify-content:space-between;align-items:center;gap:8px;position:relative;z-index:1}
-.v263-card-top b{font-size:12px;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.01em}
-.v263-card-chip{width:32px;height:23px;flex:none;border:1px solid #efd9a9;background:linear-gradient(125deg,#e8cc83,#b99b4f);border-radius:6px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
-.v263-card-mid{align-items:flex-start;flex-direction:column;gap:3px}.v263-card-mid strong{font-weight:750;font-size:16px;line-height:1.18;max-width:100%;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.v263-card-mid small{font-size:12px;letter-spacing:.17em;color:rgba(255,255,255,.78)}
-.v263-card-bottom small{font-weight:700;font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.77)}.v263-card-bottom .credit-network{transform:scale(.77);transform-origin:right center}
-.v263-wallet .v68-wallet-face:not(.selected) .v263-card-physical{opacity:.82;box-shadow:0 8px 18px rgba(26,42,70,.12)}
-.v263-wallet .v68-wallet-dots{display:flex;justify-content:center;gap:6px;margin:0!important;padding:1px 0 0!important}.v263-wallet .v68-wallet-dots button{display:block;flex:0 0 6px!important;width:6px!important;height:6px!important;border-radius:6px!important;border:0!important;padding:0!important;background:#bfd0e6!important;min-height:6px!important;box-shadow:none!important}
-.v263-wallet .v68-wallet-dots button.active{width:20px!important;flex-basis:20px!important;background:#2e5eaa!important}
-.v263-wallet .v68-wallet-actions.v263-wallet-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px!important;margin:1px 0 0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
-.v263-wallet .v263-wallet-actions button{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;min-width:0;width:100%;min-height:82px;border:0!important;background:none!important;padding:2px!important;color:#455874;font-size:11px;font-weight:710;box-shadow:none!important}
-.v263-wallet .v263-wallet-actions button i{display:grid!important;place-items:center!important;width:49px!important;height:49px!important;flex:none;border-radius:17px!important;background:linear-gradient(145deg,#fff,#f4f7fd)!important;color:#385d9d!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:0 8px 15px rgba(45,68,103,.09)!important;font-style:normal}
-.v263-wallet .v263-wallet-actions button i svg{width:19px;height:19px}.v263-wallet .v263-wallet-actions button span{line-height:1.25!important;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:100%}
-.v263-wallet-credit,.v263-wallet-activity,.v263-wallet-disclosure{background:linear-gradient(135deg,rgba(255,255,255,.91),rgba(245,248,255,.88));border:1px solid rgba(255,255,255,.95);border-radius:var(--v263-corner);padding:15px;box-shadow:var(--v263-shadow)}
-.v263-wallet-credit .v263-section-title{align-items:center}.v263-wallet-credit .v263-section-title h2{font-size:15px}.v263-wallet-credit .v263-section-title small{display:block;color:#8290a5;font-size:10px;line-height:1.5;margin-top:2px}
-.v263-credit-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
-.v263-credit-metrics>div{min-height:59px;border-radius:15px;background:rgba(225,236,250,.34);padding:11px}
-.v263-credit-metrics small{display:block;font-size:9px;color:#8592a4;letter-spacing:.08em;font-weight:750}
-.v263-credit-metrics strong{display:block;margin-top:5px;font-size:clamp(16px,4.6vw,22px);font-weight:800;color:#1e365c;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
-.v263-credit-track-label{display:flex;align-items:center;justify-content:space-between;min-height:32px;width:100%;margin-top:7px;padding:0;border:0;background:transparent;text-align:left;color:#708098;font-size:11px;font-weight:700}.v263-credit-track-label strong{display:flex;align-items:center;gap:4px;color:#5275b2}.v263-credit-track-label svg{width:14px;height:14px}
-.v263-credit-track{height:7px;border-radius:999px;background:#e2eaf7;overflow:hidden}.v263-credit-track>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#1eb0a7,#4b78d8)}
-.v263-next-due{margin-top:11px;padding:10px 0 0;border-top:1px solid rgba(183,199,222,.32);display:flex;align-items:center;justify-content:space-between;gap:10px;color:#687d9c;font-size:11px}.v263-next-due span{display:flex;align-items:center;gap:5px}.v263-next-due svg{height:14px;width:14px}.v263-next-due strong{font-size:12px;color:#20395f;white-space:nowrap}
-.v263-wallet-disclosure{padding:0 15px}.v263-wallet-disclosure summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;min-height:53px;font-size:12px;font-weight:780;color:#273c5f}.v263-wallet-disclosure summary::-webkit-details-marker{display:none}.v263-wallet-disclosure summary>span{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.v263-wallet-disclosure summary small{font-size:10px;color:#8090a6;font-weight:600}.v263-wallet-disclosure summary svg{width:18px;height:18px;color:#5176af}.v263-wallet-disclosure[open] summary>svg{transform:rotate(90deg)}
-.v263-wallet-disclosure>div{border-top:1px solid var(--v263-hairline);padding:6px 0 14px}.v263-statement-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid rgba(191,205,224,.32)}.v263-statement-row strong{display:block;font-size:12px}.v263-statement-row small{display:block;margin-top:4px;color:#8290a6;font-size:10px}.v263-statement-row b{font-size:13px}.v263-wallet-disclosure p{font-size:10px;color:#8b96a7;line-height:1.5;margin:10px 0}.v263-statement-pay{min-height:44px;width:100%;border-radius:14px;background:#edf3fd;color:#2b568e;border:1px solid rgba(210,225,245,.95);font-weight:770;display:flex;justify-content:center;align-items:center;gap:8px}.v263-statement-pay svg{width:17px;height:17px}
-.v263-wallet-activity .v263-section-title{margin-bottom:8px}.v263-activity-row{display:flex;align-items:center;gap:10px;min-height:53px;padding:9px 0;border-bottom:1px solid rgba(183,199,222,.3)}.v263-activity-row:last-child{border-bottom:0}.v263-activity-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:13px;background:#e9f0fd;color:#4c70b3}.v263-activity-icon svg{width:17px;height:17px}.v263-activity-copy{flex:1}.v263-activity-copy strong{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v263-activity-copy small{display:block;margin-top:3px;font-size:10px;color:#8092a6}.v263-activity-row b{white-space:nowrap;font-size:12px}.v263-activity-row b.positive{color:#108e78}.v263-activity-empty,.v263-wallet-legal{font-size:10px;color:#8b99ab;line-height:1.5}.v263-wallet-legal{padding:0 6px}
-body.theme-black .v263-wallet,body.theme-dark .v263-wallet{--v263-ink:#eaf1fb;--v263-muted:#b5c3d6;--v263-hairline:rgba(126,151,185,.22)}
-body.theme-black .v263-wallet :is(.v263-wallet-balance,.v263-wallet-credit,.v263-wallet-disclosure,.v263-wallet-activity),body.theme-dark .v263-wallet :is(.v263-wallet-balance,.v263-wallet-credit,.v263-wallet-disclosure,.v263-wallet-activity){background:linear-gradient(135deg,#1b2434,#212c3f)!important;border-color:#34435a!important;box-shadow:0 12px 24px rgba(0,0,0,.16)!important;color:#ebf2fc!important}
-body.theme-black .v263-wallet :is(h1,h2,.v263-credit-metrics strong,.v263-wallet-balance-main strong,.v263-wallet-mini strong,.v263-statement-row strong,.v263-statement-row b,.v263-activity-row strong,.v263-activity-row b),body.theme-dark .v263-wallet :is(h1,h2,.v263-credit-metrics strong,.v263-wallet-balance-main strong,.v263-wallet-mini strong,.v263-statement-row strong,.v263-statement-row b,.v263-activity-row strong,.v263-activity-row b){color:#edf4ff!important}
-body.theme-black .v263-wallet :is(.v263-wallet-mini>div,.v263-credit-metrics>div),body.theme-dark .v263-wallet :is(.v263-wallet-mini>div,.v263-credit-metrics>div){background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.06)}
-body.theme-black .v263-wallet .v263-wallet-actions button i,body.theme-dark .v263-wallet .v263-wallet-actions button i{background:#29364e!important;border-color:#3b4c68!important;color:#a7c7ff!important}
-body.theme-black .v263-wallet-count,body.theme-dark .v263-wallet-count{background:#25334a;color:#bad0ef;border-color:#374c66}
-/* Shared compact sizing for the existing mobile worlds: do not hide existing data. */
-@media(max-width:790px){
-  body .world-wallet .topbar,body .world-wallet .module-switch-shell{display:none!important}
-  body .world-wallet #page>.v263-wallet{display:flex!important;max-width:510px!important;margin:0 auto!important;padding:0 14px calc(112px + env(safe-area-inset-bottom,0px))!important}
-  body .world-wallet #page{padding-top:0!important}
-  body .v263-wallet .v68-wallet-gallery{display:flex!important}
-  body .main .v248-finance,body .main .v252-module-heading,body .main .v239-mobile-root,body .main .v244-mobile-root{--v263-component-radius:22px;min-width:0}
-  body .main .v248-intro{margin-bottom:10px!important;gap:8px!important}
-  body .main .v248-intro h2{font-size:clamp(24px,6.5vw,29px)!important;line-height:1.12!important;letter-spacing:-.045em!important}
-  body .main .v248-intro p{font-size:11px!important;line-height:1.4!important;margin-top:5px!important}
-  body .main .v248-hero{padding:16px!important;border-radius:22px!important;box-shadow:0 10px 24px rgba(23,48,94,.11)!important}
-  body .main .v248-hero :is(.v58-feature,.v248-moves-number){margin-block:10px!important}
-  body .main .v248-metrics-primary{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
-  body .main .v248-metric,body .main .v248-move-fact{min-width:0;border-radius:16px!important;padding:11px!important}
-  body .main .v248-metric :is(strong,b),body .main .v248-move-fact strong{font-size:clamp(15px,4.4vw,20px)!important;overflow-wrap:anywhere}
-  body .main .v248-insight-sheet{border-radius:21px!important;padding:14px!important;margin-top:12px!important}
-  body .main .v248-finance-actions{gap:9px!important}
-  body .main .v248-finance-actions button{border-radius:15px!important;min-height:44px!important}
-  body .main :is(.v239-hero,.v244-hero){padding:18px!important;border-radius:23px!important}
-  body .main :is(.v239-hero-amount,.v244-hero-amount){font-size:clamp(30px,8.5vw,42px)!important;letter-spacing:-.06em!important;margin-block:12px!important}
-  body .main :is(.v239-hero-metrics,.v244-hero-metrics){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
-  body .main :is(.v239-hero-metrics,.v244-hero-metrics) strong{font-size:clamp(15px,4.3vw,21px)!important}
-  body .main :is(.v239-hero,.v244-hero) small{line-height:1.4}
-  body .main :is(.v239-product,.v244-product,.v244-sheet){border-radius:20px!important;padding:14px!important;box-shadow:0 8px 22px rgba(31,63,111,.05)!important}
-  body .main :is(.v239-actions,.v244-actions){gap:9px!important;margin-block:12px!important}
-  body .main :is(.v239-action,.v244-action,.v239-action-primary,.v244-action-primary){min-height:46px!important;border-radius:15px!important}
-  body .main .v252-hero{border-radius:23px!important;padding:18px!important;box-shadow:0 10px 24px rgba(21,44,89,.11)!important}
-  body .main .v252-tabs{gap:8px!important}
-  body .main .v252-tabs button{min-height:44px!important;border-radius:15px!important}
-  body .world-mobilehub .v243-explore .v205-explore-group{border-radius:23px!important;padding:15px 12px 12px!important;box-shadow:0 9px 22px rgba(35,64,105,.045)!important}
-  body .world-mobilehub .v243-explore .v205-explore-group-header{margin-bottom:11px!important}
-  body .world-mobilehub .v243-explore .v205-explore-group-header h2{font-size:clamp(20px,5.8vw,25px)!important;letter-spacing:-.05em!important}
-  body .world-mobilehub .v243-explore .v205-explore-group-header p{font-size:11px!important}
-  body .world-mobilehub .v243-explore .v205-explore-links{display:grid!important;gap:8px!important}
-  body .world-mobilehub .v243-explore .v205-explore-link{min-height:64px!important;border-radius:17px!important;padding:10px 12px!important;gap:11px!important}
-  body .world-mobilehub .v243-explore .v205-explore-link-icon{width:42px!important;height:42px!important;flex:0 0 42px!important;border-radius:14px!important}
-  body .world-mobilehub .v243-explore .v205-explore-link-copy strong{font-size:14px!important}
-  body .world-mobilehub .v243-explore .v205-explore-link-copy small{font-size:11px!important}
-}
-@media(max-width:350px){body .world-wallet #page>.v263-wallet{padding-inline:11px!important}.v263-wallet-mini{gap:8px}.v263-wallet-mini>div{padding:10px}.v263-card-physical{height:154px}.v263-credit-metrics strong{font-size:15px!important}}
-
-/* Refresh de Inicio: proporciones coherentes con Wallet y los otros KPI móviles. */
-@media(max-width:790px){
- body .world-overview .vive-mobile-home{--v263-radius:22px;max-width:540px!important;margin:0 auto!important;padding-inline:14px!important;gap:12px!important}
- body .world-overview .vive-mobile-greeting{padding:4px 2px 8px!important;margin-bottom:4px!important}
- body .world-overview .vive-mobile-greeting h1{font-size:26px!important;letter-spacing:-.055em!important;line-height:1.12!important;margin-block:5px!important}
- body .world-overview .vive-mobile-greeting p{font-size:11px!important;line-height:1.4!important}
- body .world-overview :is(.vive-mobile-balance,.v242-circles,.vive-mobile-commitments,.vive-mobile-dues,.vive-mobile-net-card,.v105-mobile-extra){border-radius:22px!important;padding:15px!important;box-shadow:0 8px 24px rgba(34,59,108,.065)!important}
- body .world-overview .vive-mobile-balance-value{font-size:clamp(30px,8vw,41px)!important;line-height:1.06!important;letter-spacing:-.06em!important}
- body .world-overview .vive-mobile-quick-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;margin-block:8px!important}
- body .world-overview .vive-mobile-quick-actions button{min-height:56px!important;border-radius:17px!important;padding:8px!important;display:flex!important;justify-content:center!important;align-items:center!important;gap:7px!important;font-size:11px!important}
- body .world-overview .vive-mobile-quick-actions button svg{width:18px!important;height:18px!important}
- body .world-overview .vive-mobile-card-head{gap:8px!important;margin-bottom:11px!important}
- body .world-overview .vive-mobile-card-head h2{font-size:17px!important;letter-spacing:-.045em!important}
- body .world-overview .vive-mobile-card-head .vive-mobile-eyebrow{font-size:9px!important}
- body .world-overview .vive-mobile-commitment-value{font-size:clamp(26px,7vw,36px)!important;letter-spacing:-.055em!important;margin-block:8px!important}
- body .world-overview :is(.vive-mobile-commitment-list,.v36-commitment-list,.v105-mobile-people,.v36-month-columns){gap:9px!important}
- body .world-overview .v36-month-columns{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
- body .world-overview .v36-month-columns strong{font-size:clamp(16px,4.8vw,22px)!important}
- body .world-overview .v36-month-net strong{font-size:clamp(20px,6.3vw,27px)!important}
- body .world-overview .vive-mobile-due-row{min-height:58px!important;padding-block:9px!important;gap:9px!important}
-}
-
-@media(min-width:791px){.v263-wallet{display:none}}
-@media(prefers-reduced-motion:reduce){.v263-wallet *, .v263-wallet *::before,.v263-wallet *::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-</style>
-
-
 <style id="vive-v264-suscripciones-redesign">
 /* V264 · Suscripciones: KPI ejecutivo + servicios compactos + inteligencia ordenada */
 .v264-hide{display:none !important}
@@ -36694,5 +36560,160 @@ body.theme-dark .v264-intelligence-card .sub-analysis-stats>div,body.theme-black
 </style>
 
 
+
+<style id="vive-v266-mobile-restored-iphone">
+/* V266 · Reverse engineering of the reference's visual principles, not a copied screen.
+   Soft warm gray/pink/cream, restrained white surfaces, physical dark card, 4-8px rhythm.
+   Main Overview dimensions return to pre-V263 rules. */
+@media(max-width:790px){
+ body:not(.theme-black):not(.theme-dark){background:#f7f5f7!important;background-image:radial-gradient(ellipse 100% 68% at 0% 3%,rgba(244,214,222,.83),transparent 62%),radial-gradient(ellipse 78% 75% at 100% 12%,rgba(224,235,243,.88),transparent 73%),linear-gradient(130deg,#faf4f5 0%,#f8f7f7 56%,#edf3f3 100%)!important;background-attachment:fixed!important}
+ body:not(.theme-black):not(.theme-dark) .main{background:transparent!important;background-image:none!important}
+ body:not(.theme-black):not(.theme-dark) .world-overview .vive-mobile-home{background:transparent!important}
+ body .world-wallet #page>.v266-wallet{display:flex!important;flex-direction:column!important;margin:0 auto!important;max-width:520px!important;padding:8px 22px calc(120px + env(safe-area-inset-bottom,0px))!important;gap:15px!important}
+ body .world-wallet #page{padding-top:0!important;background:none!important}
+ body .world-wallet .topbar,body .world-wallet .module-switch-shell{display:none!important}
+ /* Bottom bar: visually slim, 5 accessible destinations. Keep the user-set glass intensity. */
+ .vive-mobile-dock{width:min(460px,calc(100vw - 34px))!important;max-width:calc(100vw - 34px)!important;height:58px!important;min-height:58px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;border-radius:29px!important;padding:4px 7px!important;gap:2px!important;box-shadow:0 10px 23px rgba(69,72,93,.12),inset 0 1px rgba(255,255,255,.84)!important}
+ body:not(.theme-black):not(.theme-dark) .vive-mobile-dock{background:rgba(255,255,255,var(--v250-dock-opacity,.38))!important;border:1px solid rgba(255,255,255,.86)!important;backdrop-filter:blur(var(--v250-dock-blur,32px)) saturate(var(--v250-dock-saturation,185%))!important;-webkit-backdrop-filter:blur(var(--v250-dock-blur,32px)) saturate(var(--v250-dock-saturation,185%))!important}
+ .vive-mobile-dock>.vive-mobile-dock-item{height:48px!important;min-height:48px!important;max-width:20%!important;border-radius:23px!important;gap:2px!important;padding:4px 1px!important}
+ .vive-mobile-dock-icon{height:21px!important}.vive-mobile-dock-icon svg{height:19px!important;width:19px!important}
+ .vive-mobile-dock-label{font-size:9px!important;line-height:1.15!important;font-weight:710!important;letter-spacing:-.015em!important}
+ body:not(.theme-black):not(.theme-dark) .vive-mobile-dock>.active{background:rgba(255,255,255,.83)!important;box-shadow:0 3px 9px rgba(42,45,57,.09)!important;color:#1b2939!important}
+ .v249-register-fab{width:53px!important;height:53px!important;bottom:calc(79px + env(safe-area-inset-bottom,0px))!important;right:max(16px,calc((100vw - 460px)/2 + 14px))!important;background:rgba(255,255,255,.8)!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 8px 20px rgba(59,65,86,.12)!important}
+ body:not(.theme-black):not(.theme-dark) .v249-fab-surface{background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(238,238,247,.74))!important;color:#2c3547!important}
+ body:not(.theme-black):not(.theme-dark) .v249-register-fab svg{color:#2c3547!important;width:23px!important;height:23px!important}
+ .v266-wallet{color:#212631;min-width:0;max-width:100%;font-family:inherit}.v266-wallet *{box-sizing:border-box;min-width:0}
+ .v266-wallet :is(h1,h2,p){margin:0}
+ .v266-wallet-header{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:7px 1px 4px}
+ .v266-overline{font-size:10px;font-weight:780;letter-spacing:.14em;color:#8c92a2;display:block;text-transform:uppercase}
+ .v266-wallet-header h1{font-size:30px;line-height:1.12;letter-spacing:-.06em;margin:5px 0 0;color:#1f2530;font-weight:820}
+ .v266-wallet-add{width:43px;min-width:43px;height:43px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.92);background:rgba(255,255,255,.77);box-shadow:0 5px 12px rgba(37,39,54,.065);color:#1c3039}
+ .v266-wallet-add svg{width:19px;height:19px}
+ .v266-gallery{display:grid;gap:10px}.v266-gallery-track.v68-wallet-gallery{display:flex!important;gap:14px!important;overflow-x:auto!important;scroll-snap-type:x mandatory!important;scrollbar-width:none!important;padding:4px 4px 10px!important;margin:0!important;max-width:100%}
+ .v266-gallery-track::-webkit-scrollbar{display:none!important}.v266-gallery-track .v266-wallet-face.v68-wallet-face{display:block!important;flex:0 0 min(100%,360px)!important;width:min(100%,360px)!important;padding:0!important;margin:0!important;scroll-snap-align:center!important;border:0!important;background:none!important;box-shadow:none!important;text-align:left!important;transform:none!important}
+ .v266-physical-card{display:flex;flex-direction:column;position:relative;isolation:isolate;justify-content:space-between;overflow:hidden;width:100%;height:clamp(175px,49vw,207px);min-height:0!important;border-radius:21px;background:linear-gradient(145deg,#262b30 0%,#14191d 53%,#090c10 100%);box-shadow:0 14px 26px rgba(12,15,22,.22);padding:20px 22px;color:white;transition:transform .18s ease,box-shadow .18s ease}
+ .v266-physical-card:before{content:'';position:absolute;inset:-44% 45% auto -24%;height:130%;transform:rotate(28deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);pointer-events:none}
+ .v266-card-top,.v266-card-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1}
+ .v266-card-top strong{font-size:12px;font-weight:760;letter-spacing:.05em;color:#d5d8dc}
+ .v266-card-nfc svg{width:19px;height:19px;opacity:.7;transform:rotate(90deg)}
+ .v266-card-chip{position:absolute;left:22px;top:57px;width:34px;height:25px;border-radius:7px;border:1px solid #b69645;background:linear-gradient(140deg,#ffdf8c,#c7a45c 55%,#f3d17a);box-shadow:inset 0 0 0 2px rgba(255,247,215,.36)}
+ .v266-card-number{font-size:13px;letter-spacing:.11em;font-weight:720;position:relative;z-index:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:30px}
+ .v266-card-foot{margin-top:0}.v266-card-foot small{display:block;color:rgba(246,247,251,.53);font-size:8px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:3px}.v266-card-foot b{display:block;color:white;font-size:13px;letter-spacing:.01em}.v266-card-foot .v-network,.v266-card-foot svg{max-width:54px;max-height:28px}
+ .v266-wallet-face:not(.selected) .v266-physical-card{opacity:.84;box-shadow:0 8px 17px rgba(12,15,22,.13)}
+ .v266-dots.v68-wallet-dots{display:flex;justify-content:center;gap:6px;margin:0!important;padding:0!important}.v266-dots button{width:7px!important;height:7px!important;min-width:7px!important;min-height:7px!important;padding:0!important;border:0!important;border-radius:50%!important;background:#c7c8ce!important;box-shadow:none!important}.v266-dots button.active{width:23px!important;background:#262b31!important;border-radius:8px!important}
+ .v266-selected-balance{display:flex;align-items:end;justify-content:space-between;gap:12px;padding:10px 2px 2px}.v266-selected-balance>div:first-child{flex:1}.v266-selected-balance>div:first-child>span{display:block;font-size:10px;font-weight:780;letter-spacing:.14em;color:#777f8e}.v266-selected-balance strong{display:block;font-size:clamp(31px,8vw,40px);line-height:1.14;color:#202733;letter-spacing:-.065em;font-weight:850;margin:6px 0 2px}.v266-selected-balance small,.v266-selected-debt small{display:block;color:#8d93a2;font-size:10px;line-height:1.45}.v266-selected-debt{text-align:right;padding-bottom:4px}.v266-selected-debt b{display:block;color:#283442;font-size:14px;white-space:nowrap;margin-top:4px}
+ .v266-wallet-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:0 2px 4px}.v266-wallet-actions button{min-height:77px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:2px;color:#364454}.v266-wallet-actions button>span{width:47px;height:47px;min-width:47px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.84);box-shadow:0 6px 13px rgba(40,39,56,.07);border-radius:50%}.v266-wallet-actions svg{width:18px;height:18px}.v266-wallet-actions b{font-size:11px;font-weight:710;white-space:nowrap}
+ .v266-wallet-panel,.v266-wallet-detail{border-radius:22px;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.78);box-shadow:0 9px 23px rgba(51,52,80,.045);padding:17px}
+ .v266-panel-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.v266-panel-heading h2{font-size:19px;line-height:1.2;letter-spacing:-.045em;margin-top:3px;color:#26303c}.v266-panel-heading button{width:35px;height:35px;border:0;border-radius:50%;display:grid;place-items:center;background:#f1f2f5;color:#434c59}.v266-panel-heading svg{width:16px;height:16px}
+ .v266-limits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.v266-metric{display:grid;gap:5px;padding:13px;border-radius:15px;background:rgba(246,247,250,.9);border:1px solid rgba(229,232,238,.85)}.v266-metric small{font-size:10px;color:#818998}.v266-metric strong{font-size:clamp(17px,4.5vw,21px);letter-spacing:-.04em;color:#2c3340}.v266-metric span{font-size:10px;color:#8a92a0}
+ .v266-credit-meter{height:7px;border-radius:30px;background:#e9eaee;margin-top:15px;overflow:hidden}.v266-credit-meter>span{display:block;height:100%;background:linear-gradient(90deg,#737c90,#303743);border-radius:20px}.v266-meter-foot{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#78818f;margin-top:7px}.v266-meter-foot b{color:#394252}
+ .v266-next-payment{display:flex;gap:10px;justify-content:space-between;align-items:center;padding-top:13px;margin-top:12px;border-top:1px solid #e7e9ed;flex-wrap:wrap}.v266-next-payment small{display:block;color:#9ca0ae;font-size:9px;font-weight:730}.v266-next-payment strong{font-size:12px;color:#38414d}.v266-next-payment>b{font-size:13px;color:#313b49}.v266-next-payment button{background:#28313b;color:#fff;border:0;border-radius:13px;padding:10px 12px;min-height:41px;font-size:11px;display:flex;align-items:center;gap:6px}
+ .v266-wallet-detail{padding:0 17px}.v266-wallet-detail summary{display:flex;justify-content:space-between;align-items:center;gap:10px;list-style:none;min-height:58px;font-size:12px;font-weight:760;color:#293646;cursor:pointer}.v266-wallet-detail summary::-webkit-details-marker{display:none}.v266-wallet-detail summary>span{display:flex;align-items:center;gap:8px}.v266-wallet-detail summary small{font-weight:500;font-size:10px;color:#9199a6}.v266-wallet-detail summary svg{width:17px;height:17px}.v266-wallet-detail[open] summary>svg{transform:rotate(90deg)}.v266-currency-row{padding:13px 0;display:flex;justify-content:space-between;gap:12px;border-top:1px solid #eff0f3;font-size:11px}.v266-wallet-detail p{font-size:10px;color:#8c95a5;line-height:1.5;padding:7px 0 15px}
+ .v266-activity-row{display:flex;gap:11px;align-items:center;padding:11px 0;border-bottom:1px solid #eff0f3}.v266-activity-row:last-child{border-bottom:0}.v266-activity-ico{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;border-radius:13px;background:#f1f2f6;color:#515b6b}.v266-activity-ico svg{width:17px;height:17px}.v266-activity-info{flex:1}.v266-activity-info strong{display:block;font-size:12px;font-weight:740;color:#293440;overflow-wrap:anywhere}.v266-activity-info small{display:block;font-size:10px;color:#8a92a0;margin-top:4px}.v266-activity-row>b{font-size:12px;white-space:nowrap;color:#2e3b48}.v266-empty-activity,.v266-wallet-note{font-size:11px;color:#8d95a1;line-height:1.55}.v266-wallet-note{padding:0 5px}
+ .v266-empty{padding:24px 18px;text-align:center;border-radius:24px;background:rgba(255,255,255,.77)}.v266-empty strong{display:block;font-size:18px}.v266-empty p{font-size:12px;margin:10px 0 14px;color:#8190a0}
+ /* REGISTER: safe-area header, scrollable content and always-visible exit. */
+ #modal-root .modal-layer.v235-register-layer{position:fixed!important;inset:0!important;padding:0!important;display:flex!important;align-items:flex-end!important;z-index:6100!important;background:rgba(27,31,42,.32)!important}
+ #modal-root .v235-register-layer>.v235-register-dialog{position:relative!important;width:100%!important;max-width:620px!important;height:calc(100dvh - max(64px, env(safe-area-inset-top,0px) + 10px))!important;max-height:calc(100dvh - max(64px, env(safe-area-inset-top,0px) + 10px))!important;min-height:0!important;padding:0!important;margin:0 auto!important;overflow:hidden!important;border-radius:26px 26px 0 0!important;background:linear-gradient(145deg,#fffafc,#f5f3f7 62%,#edf2f5)!important;border:1px solid rgba(255,255,255,.96)!important;border-bottom:0!important;box-shadow:0 -15px 45px rgba(20,22,33,.18)!important;display:flex!important;flex-direction:column!important}
+ #modal-root .v235-register-dialog .v235-register-close{position:sticky!important;top:0!important;z-index:25!important;flex:0 0 auto!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:12px 17px!important;background:rgba(255,255,255,.88)!important;box-shadow:0 1px 0 rgba(225,228,234,.75)!important;font-size:11px!important;color:#646c7c!important}
+ #modal-root .v235-register-dialog .v235-register-close::before{display:none!important}
+ #modal-root .v235-register-dialog .v235-register-close .close{width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;display:grid!important;place-items:center!important;border-radius:50%!important;border:1px solid #e2e5ec!important;background:white!important;color:#29333f!important;font-size:26px!important;padding:0!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+ #modal-root .v235-register-dialog .vr-register{padding:12px 16px 0!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+ #modal-root .v235-register-dialog .vr-workspace{flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+ #modal-root .v235-register-dialog .vr-workspace-head{flex:0 0 auto!important;margin:0 2px 11px!important}
+ #modal-root .v235-register-dialog .vr-workspace-head h3{font-size:22px!important;line-height:1.17!important;color:#26303a!important}
+ #modal-root .v235-register-dialog .vr-workspace-head p{display:block!important;color:#858c9c!important;font-size:11px!important}
+ #modal-root .v235-register-dialog .vr-switcher{flex:0 0 auto!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;padding:4px!important;border-radius:19px!important;background:#eceef3!important}
+ #modal-root .v235-register-dialog .vr-switch{min-height:66px!important;border-radius:15px!important;gap:3px!important;color:#6c7585!important}
+ #modal-root .v235-register-dialog .vr-switch.selected{color:#1d2837!important;background:white!important;border-color:white!important;box-shadow:0 5px 9px rgba(34,40,53,.08)!important}
+ #modal-root .v235-register-dialog .vr-switch .vr-switch-symbol{width:27px!important;height:27px!important;flex-basis:27px!important;border-radius:9px!important;background:rgba(255,255,255,.56)!important;color:#424c5f!important}
+ #modal-root .v235-register-dialog .vr-content{min-height:0!important;flex:1 1 auto!important;overflow-y:auto!important;overflow-x:hidden!important;padding:10px 2px calc(25px + env(safe-area-inset-bottom,0px))!important;margin-top:0!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important}
+ #modal-root .v235-register-dialog .vr-operation,#modal-root .v235-register-dialog .v29-other-action{background:rgba(255,255,255,.85)!important;border:1px solid #e7e9ee!important;border-radius:16px!important;min-height:69px!important;padding:12px!important;margin-bottom:9px!important;box-shadow:0 4px 10px rgba(40,42,60,.035)!important}
+ #modal-root .v235-register-dialog .vr-operation-icon{width:40px!important;height:40px!important;flex-basis:40px!important;border-radius:14px!important;background:#f0f1f5!important;color:#37485c!important}
+ #modal-root .v235-register-dialog .vr-operation-copy strong,#modal-root .v235-register-dialog .v29-other-copy strong{color:#273340!important;font-size:14px!important}
+ #modal-root .v235-register-dialog .vr-operation-copy small,#modal-root .v235-register-dialog .v29-other-copy small{font-size:11px!important;color:#7b8390!important}
+ #modal-root .v235-register-dialog .vr-guidance{background:rgba(255,255,255,.5)!important;border:1px solid rgba(225,229,236,.8)!important;border-radius:16px!important;padding:12px!important}
+ /* Shared form sheets (Recibir, Gasto, Servicio, Tarjeta, Mover, Otros) */
+ #modal-root .modal-layer:has(.studio-form),#modal-root .modal-layer:has(.fastx-form),#modal-root .modal-layer:has(.other-studio-form),#modal-root .modal-layer.mqr-layer{position:fixed!important;inset:0!important;padding:0!important;display:flex!important;align-items:flex-end!important;overflow:hidden!important;z-index:6200!important}
+ #modal-root .modal-layer:has(.studio-form)>.modal,#modal-root .modal-layer:has(.fastx-form)>.modal,#modal-root .modal-layer:has(.other-studio-form)>.modal,#modal-root .mqr-layer>.mqr-modal{height:calc(100dvh - max(64px, env(safe-area-inset-top,0px) + 10px))!important;max-height:calc(100dvh - max(64px, env(safe-area-inset-top,0px) + 10px))!important;min-height:0!important;width:100%!important;max-width:620px!important;margin:0 auto!important;padding:0!important;overflow:hidden!important;border-radius:25px 25px 0 0!important;background:linear-gradient(150deg,#faf8fa,#f2f4f7)!important;display:flex!important;flex-direction:column!important}
+ #modal-root .modal:has(.studio-shell)>.modal-head,#modal-root .modal:has(.fastx-shell)>.modal-head,#modal-root .modal:has(.other-studio-shell)>.modal-head,#modal-root .mqr-modal>.modal-head{position:relative!important;top:0!important;z-index:40!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:11px 16px!important;min-height:58px!important;background:rgba(255,255,255,.96)!important;box-shadow:0 1px 0 #e6e8ef!important;flex:0 0 auto!important}
+ #modal-root .modal:has(.studio-shell)>.modal-head .close,#modal-root .modal:has(.fastx-shell)>.modal-head .close,#modal-root .modal:has(.other-studio-shell)>.modal-head .close,#modal-root .mqr-modal>.modal-head .close{width:45px!important;height:45px!important;min-width:45px!important;border-radius:50%!important;background:#fff!important;color:#283541!important;border:1px solid #e4e7ef!important;display:grid!important;place-items:center!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+ #modal-root .modal:has(.studio-shell)>form,#modal-root .modal:has(.fastx-shell)>form,#modal-root .modal:has(.other-studio-shell)>form{height:auto!important;flex:1 1 auto!important;min-height:0!important;max-height:100%!important;overflow:hidden!important}
+ #modal-root .modal .studio-shell,#modal-root .modal .fastx-shell,#modal-root .modal .other-studio-shell{min-height:0!important;max-height:100%!important;overflow:hidden!important}
+ #modal-root .studio-form .studio-main{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important}
+ #modal-root .studio-form .studio-fields{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+ #modal-root .studio-form :is(select,input,textarea),#modal-root .fastx-form :is(select,input,textarea),#modal-root .other-studio-form :is(select,input,textarea){font-size:16px!important;max-width:100%!important}
+ #modal-root .studio-form .studio-navigation,#modal-root .studio-form .form-foot{position:sticky!important;bottom:0!important;z-index:32!important;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;background:rgba(251,250,252,.98)!important}
+ #modal-root .fastx-form .fastx-shell{display:flex!important;flex-direction:column!important;min-height:0!important}
+ #modal-root .fastx-form .fastx-entry{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important}
+ #modal-root .fastx-form .fastx-right{max-height:28dvh!important;flex:0 0 auto!important;overflow-y:auto!important}
+ #modal-root .other-studio-form .other-studio-left{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important}
+ #modal-root .other-studio-form .other-studio-right{max-height:29dvh!important;flex:0 0 auto!important;overflow-y:auto!important}
+ #modal-root .v261-service-layer{inset:0!important;padding:0!important;align-items:flex-end!important;z-index:6250!important}
+ #modal-root .v261-service-layer>.v261-service-dialog{height:calc(100dvh - max(64px, env(safe-area-inset-top,0px) + 10px))!important;max-height:calc(100dvh - max(64px, env(safe-area-inset-top,0px) + 10px))!important;margin:0 auto!important;max-width:620px!important;width:100%!important;border-radius:25px 25px 0 0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+ #modal-root .v261-dialog-header{position:relative!important;z-index:30!important;flex:0 0 auto!important;padding:11px 15px!important;background:rgba(255,255,255,.97)!important;min-height:60px!important}
+ #modal-root .v261-header-close,#modal-root .v261-header-back{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;border-radius:50%!important;display:grid!important;place-items:center!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+ #modal-root .v261-dialog-scroll{min-height:0!important;flex:1 1 auto!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important}
+ #modal-root .v261-dialog-footer{position:relative!important;flex:0 0 auto!important;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))!important}
+ /* Other legacy mobile forms: guarantee a visible top exit and scroll without modifying data. */
+ #modal-root .modal-layer:not(.v235-register-layer):not(.v261-service-layer):not(:has(.studio-form)):not(:has(.fastx-form)):not(:has(.other-studio-form)):not(.mqr-layer)>.modal{max-height:calc(100dvh - max(64px, env(safe-area-inset-top,0px) + 10px))!important;overflow-y:auto!important;overscroll-behavior:contain!important}
+ #modal-root .v204-form-dialog>.modal-head{position:sticky!important;top:0!important;z-index:33!important;background:rgba(255,255,255,.95)!important}
+ #modal-root .modal-head .close{min-width:44px!important;min-height:44px!important}
+}
+@media(max-width:350px){.v266-selected-debt b{font-size:12px}.v266-wallet-actions b{font-size:10px}.v266-physical-card{padding:16px}.v266-card-number{font-size:11px}.v266-metric strong{font-size:15px}}
+@media(min-width:791px){.v266-wallet{display:none!important}}
+body.theme-black .v266-wallet,body.theme-dark .v266-wallet{color:#eef0f6!important}
+body.theme-black .v266-wallet :is(.v266-wallet-panel,.v266-wallet-detail,.v266-empty),body.theme-dark .v266-wallet :is(.v266-wallet-panel,.v266-wallet-detail,.v266-empty){background:#1c232d!important;border-color:#3b4450!important;color:#edf1f8!important}
+body.theme-black .v266-wallet :is(.v266-wallet-header h1,.v266-selected-balance strong,.v266-panel-heading h2,.v266-metric strong,.v266-selected-debt b),body.theme-dark .v266-wallet :is(.v266-wallet-header h1,.v266-selected-balance strong,.v266-panel-heading h2,.v266-metric strong,.v266-selected-debt b){color:#eef2fc!important}
+body.theme-black .v266-wallet .v266-metric,body.theme-dark .v266-wallet .v266-metric{background:#2a3443!important;border-color:#344253!important}
+body.theme-black .v266-wallet .v266-wallet-actions button,body.theme-dark .v266-wallet .v266-wallet-actions button{color:#dfe7f4!important}
+body.theme-black .v266-wallet .v266-wallet-actions button>span,body.theme-dark .v266-wallet .v266-wallet-actions button>span{background:#303b4c!important;border-color:#435064!important;color:#eaf0ff!important}
+@media(prefers-reduced-motion:reduce){.v266-wallet *,#modal-root .v235-register-layer *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+
+<script id="v266-mobile-form-dismiss">
+(function(){
+ const root=document.getElementById('modal-root'); if(!root)return;
+ const decorate=()=>{
+  if(!window.matchMedia('(max-width:790px)').matches)return;
+  const modal=root.querySelector('[role="dialog"]');
+  if(!modal)return;
+  if(modal.querySelector('[data-act="closeModal"],.v261-header-close,.v235-register-close .close'))return;
+  if(modal.querySelector('.v266-fallback-close'))return;
+  const btn=document.createElement('button');btn.type='button';btn.className='v266-fallback-close';btn.textContent='×';
+  btn.setAttribute('aria-label','Cerrar formulario');btn.style.cssText='position:sticky;top:0;float:right;z-index:100;width:46px;height:46px;border-radius:50%;background:white;border:1px solid #e0e5ed;font-size:28px;color:#263443;';
+  btn.addEventListener('click',()=>{if(typeof closeModal==='function')closeModal();else root.innerHTML='';});modal.prepend(btn);
+ };
+ const watch=new MutationObserver(decorate);watch.observe(root,{childList:true,subtree:false});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&root.querySelector('[role="dialog"]')){event.preventDefault();if(typeof closeModal==='function')closeModal();else root.innerHTML='';}},true);
+ decorate();
+})();
+</script>
+
+<style id="vive-v266-iphone-modal-completion">
+@media(max-width:790px){
+ .v266-wallet .v266-dots.v68-wallet-dots{height:15px!important;max-height:15px!important;align-items:center!important;overflow:hidden!important}
+ .v266-wallet .v266-dots.v68-wallet-dots button,.v266-wallet .v266-dots.v68-wallet-dots button.active{height:7px!important;min-height:7px!important;max-height:7px!important;width:7px!important;min-width:7px!important;flex:0 0 7px!important;border-radius:100px!important;padding:0!important;background:#c4c7cf!important;box-shadow:none!important;transition:none!important}
+ .v266-wallet .v266-dots.v68-wallet-dots button.active{width:21px!important;min-width:21px!important;flex:0 0 21px!important;background:#242c35!important}
+ .v266-wallet .v266-dots.v68-wallet-dots button::after{display:none!important;content:none!important}
+ #modal-root .modal-layer:has(>.v204-form-dialog){position:fixed!important;inset:0!important;display:flex!important;align-items:flex-end!important;padding:0!important;overflow:hidden!important;z-index:6300!important}
+ #modal-root .modal-layer>.v204-form-dialog{position:relative!important;display:flex!important;flex-direction:column!important;width:100%!important;max-width:620px!important;height:calc(100dvh - max(64px, env(safe-area-inset-top,0px) + 10px))!important;max-height:calc(100dvh - max(64px, env(safe-area-inset-top,0px) + 10px))!important;min-height:0!important;margin:0 auto!important;padding:0!important;border-radius:25px 25px 0 0!important;overflow:hidden!important;background:linear-gradient(145deg,#fcf9fb,#f2f5f7)!important}
+ #modal-root .modal-layer>.v204-form-dialog>.modal-head{display:flex!important;position:sticky!important;top:0!important;flex:0 0 auto!important;z-index:60!important;align-items:center!important;justify-content:space-between!important;min-height:57px!important;padding:7px 15px!important;background:rgba(255,255,255,.96)!important;border-bottom:1px solid #e6e8ed!important}
+ #modal-root .modal-layer>.v204-form-dialog>.modal-head .close{display:grid!important;place-items:center!important;min-width:45px!important;width:45px!important;height:45px!important;border-radius:50%!important;border:1px solid #e2e5eb!important;background:white!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+ #modal-root .modal-layer>.v204-form-dialog>form{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important}
+ #modal-root .modal-layer>.v204-form-dialog>form .form-grid{max-width:100%!important;min-width:0!important}
+ #modal-root .modal-layer>.v204-form-dialog>form .form-foot{position:sticky!important;bottom:0!important;z-index:20!important;background:rgba(253,252,254,.98)!important;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))!important}
+}
+</style>
+
+<style id="vive-v266-native-form-fields">
+@media(max-width:790px){
+ #modal-root .v204-form-dialog:not(:has(.studio-form,.fastx-form,.other-studio-form)) .form-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;padding:14px 15px 20px!important;align-items:start!important}
+ #modal-root .v204-form-dialog:not(:has(.studio-form,.fastx-form,.other-studio-form)) .form-grid>label,#modal-root .v204-form-dialog:not(:has(.studio-form,.fastx-form,.other-studio-form)) .form-grid>.form-full,#modal-root .v204-form-dialog:not(:has(.studio-form,.fastx-form,.other-studio-form)) .form-grid>.field-group{grid-column:1/-1!important;max-width:100%!important;min-width:0!important}
+ #modal-root .v204-form-dialog .form-grid :is(input,select,textarea){min-width:0!important;max-width:100%!important;font-size:16px!important;box-sizing:border-box!important}
+ #modal-root .v204-form-dialog .form-grid :is(input,select){min-height:44px!important}
+ #modal-root .v204-form-dialog .form-grid textarea{min-height:72px!important}
+ #modal-root .v204-form-dialog .form-foot .btn{min-height:44px!important;border-radius:14px!important}
+}
+</style>
 </body>
 </html>
