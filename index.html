@@ -33304,7 +33304,7 @@ try {
   const current=cardTierKey(c);
   return `<button type="button" class="v203-item v240-bank-credit" data-v203-open-product="cards" data-id="${sanitize(c.id)}" aria-label="Abrir detalle y movimientos de ${sanitize(c.name)}">
    <span class="v240-credit-plastic tier-${sanitize(current)}"><span class="v240-credit-brand">${sanitize(bankOf(c))}</span><span class="v240-credit-network">${cardNetworkMark(c)}</span><span class="v240-credit-name">${sanitize(c.name)}</span><span class="v240-credit-digits">•••• ${sanitize(c.last4||'••••')}</span></span>
-   <span class="v240-credit-detail"><span class="v240-credit-type">TARJETA DE CRÉDITO</span><strong>${sanitize(c.name)}</strong><small>Deuda total · equivalente RD$</small><b>${money(debt,'DOP',2)}</b><span class="v240-credit-facts"><span><small>Disponible · RD$ equiv.</small><strong>${money(usable,'DOP',0)}</strong></span><span><small>${dop.officialRemaining!==null?'Al corte RD:'Facturado RD}</small><strong>${money(due,'DOP',0)}</strong></span></span><span class="v240-credit-enter">Ver tarjeta y movimientos ${icon('arrow')}</span></span>
+   <span class="v240-credit-detail"><span class="v240-credit-type">TARJETA DE CRÉDITO</span><strong>${sanitize(c.name)}</strong><small>Deuda total · equivalente RD$</small><b>${money(debt,'DOP',2)}</b><span class="v240-credit-facts"><span><small>Disponible · RD$ equiv.</small><strong>${money(usable,'DOP',0)}</strong></span><span><small>${dop.officialRemaining!==null?'Al corte RD$':'Facturado RD$'}</small><strong>${money(due,'DOP',0)}</strong></span></span><span class="v240-credit-enter">Ver tarjeta y movimientos ${icon('arrow')}</span></span>
   </button>`;
  });
 };
