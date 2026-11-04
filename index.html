@@ -1016,6 +1016,29 @@ body.theme-dark .v255-tax-badge,body.theme-black .v255-tax-badge{background:rgba
 body.theme-dark .v255-tax-badge.sub,body.theme-black .v255-tax-badge.sub{background:rgba(18,28,45,.92)!important;color:#cad8ef!important}
 body.theme-dark .v255-tax-badge .v255-tax-ico,body.theme-black .v255-tax-badge .v255-tax-ico{color:#8ab0ff!important}
 
+
+/* V258 — dos tarjetas de efectivo independientes en Cuentas y efectivo (escritorio). */
+@media(min-width:791px){
+ .world-accounts .v258-cash-product{
+  border:1px solid rgba(121,153,191,.23)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(242,248,255,.78))!important;
+  box-shadow:0 9px 26px rgba(42,74,116,.08)!important;
+ }
+ .world-accounts .v258-cash-product .name{color:#1d5878!important;}
+ .world-accounts .v258-cash-product .type{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
+ .world-accounts .v258-cash-product .type svg{height:13px;width:13px;flex:0 0 13px;}
+ .world-accounts .v258-cash-product .pill{background:rgba(90,149,188,.12);color:#2f7290;}
+ .world-accounts .v258-cash-product .account-balance-link{color:#254e7d!important;}
+ .world-accounts .v258-cash-product .bottom .subtle{font-size:10px;line-height:1.4;}
+ body.theme-dark .world-accounts .v258-cash-product,
+ body.theme-black .world-accounts .v258-cash-product{
+  background:#141414!important;border-color:#353535!important;box-shadow:none!important;
+ }
+ body.theme-dark .world-accounts .v258-cash-product .name,
+ body.theme-black .world-accounts .v258-cash-product .name,
+ body.theme-dark .world-accounts .v258-cash-product .account-balance-link,
+ body.theme-black .world-accounts .v258-cash-product .account-balance-link{color:#edf4ff!important;}
+}
 </style>
 <style id="benefits-studio-v6">
 /* Nexo ideas, enriched in vive el hoy. Independent benefits world, accessible inside each card. */
@@ -17348,7 +17371,18 @@ function originalAccounts(){
  const checking=db.accounts.filter(a=>a.kind==='checking').reduce((total,a)=>total+fx(getAccountBalance(a),a.currency),0);
  const physicalD=db.accounts.find(a=>a.kind==='cash'&&a.currency==='DOP');
  const physicalU=db.accounts.find(a=>a.kind==='cash'&&a.currency==='USD');
- const cashCard=`<article class="bank-card account-product-card cash-dual-product"><div class="split"><div><div class="name">Efectivo · doble saldo permanente</div><div class="type">Billetera de efectivo · independiente de cualquier banco</div></div><span class="pill">RD$ / US$</span></div><div class="cash-dual-balances"><div><small>EFECTIVO EN PESOS</small><strong>${money(physicalD?getAccountBalance(physicalD):0,'DOP',2)}</strong>${physicalD?`<button class="btn sm ghost" data-act="accountDetails" data-id="${physicalD.id}">Histórico RD$ ↗</button>`:''}</div><div><small>EFECTIVO EN DÓLARES</small><strong>${money(physicalU?getAccountBalance(physicalU):0,'USD',2)}</strong>${physicalU?`<button class="btn sm ghost" data-act="accountDetails" data-id="${physicalU.id}">Histórico US$ ↗</button>`:''}</div></div><div class="bottom"><span class="subtle">Siempre disponible · nunca se borra ni se archiva</span><button class="btn sm soft" data-act="addCashWallet">Configurar saldos iniciales</button></div></article>`;
+ const cashCard=[
+  {account:physicalD,title:'Efectivo · Pesos',currency:'DOP',label:'RD$',subtitle:'Efectivo personal en pesos'},
+  {account:physicalU,title:'Efectivo · Dólares',currency:'USD',label:'US$',subtitle:'Efectivo personal en dólares'}
+ ].map(({account:a,title,currency,label,subtitle})=>`<article class="bank-card account-product-card v258-cash-product" aria-label="${title}">
+   <div class="split"><div><div class="name">${title}</div><div class="type">${subtitle} · Sin banco</div></div><span class="pill">${label}</span></div>
+   ${a?`<button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver historial de ${title}">${money(getAccountBalance(a),currency,2)} <span>↗</span></button>`:`<div class="v258-cash-balance">${money(0,currency,2)}</div>`}
+   <div class="product-mini-actions v176-account-actions">
+     ${a?`<button class="btn sm ghost" type="button" data-act="accountDetails" data-id="${a.id}">Ver evolución</button>`:''}
+     <button class="btn sm ghost" type="button" data-act="addCashWallet">Configurar saldo inicial</button>
+   </div>
+   <div class="bottom"><span class="subtle">Cuenta permanente · no se archiva ni se elimina</span></div>
+ </article>`).join('');
  const btn=(label,value,desc,view,iconName)=>`<button type="button" class="kpi account-drill-kpi ${ui.accountBreakdown===view?'is-active':''}" data-act="accountBreakdown" data-view="${view}" aria-label="Ver evolución de ${label}"><span class="kpi-head">${label}<span class="kpi-icon">${icon(iconName)}</span></span><span class="kpi-value">${value}</span><span class="kpi-foot">${desc} · Ver evolución ↗</span></button>`;
  return `<div class="grid cards-grid section">${cashCard}${all.length?all.map(a=>`<article class="bank-card account-product-card"><div class="split"><div><div class="name">${sanitize(a.name)}</div><div class="type v28-account-bankline">${bankLogoInline(a.bankId)}<span>${sanitize(bankOf(a))} · ${a.kind==='savings'?'Ahorros':a.kind==='checking'?'Corriente':'Efectivo'}</span></div></div><span class="pill">${a.currency}</span></div><button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver evolución de ${sanitize(a.name)}">${money(getAccountBalance(a),a.currency,2)} <span>↗</span></button><div class="product-mini-actions v176-account-actions">${productControls('account',a.id,a.archived)}<button class="btn sm ghost" data-act="accountDetails" data-id="${a.id}">Ver evolución</button></div><div class="bottom"><span class="subtle">${a.last4?'•••• '+sanitize(a.last4):'Sin terminación registrada'}</span></div></article>`).join(''):`<div class="panel"><div class="empty">No hay cuentas bancarias adicionales. El efectivo se gestiona desde la ficha anterior. <button class="btn sm soft" data-act="addAccount">Crear cuenta</button></div></div>`}</div>
  ${ui.accountId&&account(ui.accountId)?accountDetail(account(ui.accountId)):''}`;
@@ -18341,7 +18375,7 @@ function moneyRegister(mode="page"){
  const formTiles=`<div class="vr-register">
   <section class="vr-hero"><div class="vr-hero-content"><div class="vr-eyebrow"><span class="vr-star">✦</span> vive el hoy <span class="vr-hero-divider"></span> CENTRO DE REGISTRO</div><h2>Un movimiento.<br><em>Todo bajo control.</em></h2><p>Registra lo importante en pocos pasos. Sin formularios interminables, sin cargos escondidos y con cada saldo en su moneda.</p><div class="vr-hero-actions"><button type="button" class="vr-hero-primary" data-act="newTransaction">${icon('plus')} Nueva operación</button><span>Registro inteligente · RD$ y US$</span></div></div><div class="vr-hero-art"><span class="vr-orbit vr-orbit-1"></span><span class="vr-orbit vr-orbit-2"></span><div class="vr-art-card"><span>DISPONIBLE EN EFECTIVO</span><strong>${money(amountCashD,'DOP',2)}</strong><div class="vr-art-bottom"><span>También en US$</span><b>${money(amountCashU,'USD',2)}</b></div></div><div class="vr-art-chip">✓&nbsp; Registro organizado</div></div></section>
   <section class="vr-workspace"><header class="vr-workspace-head"><div><span class="vr-small-kicker">EMPEZAR</span><h3>¿Qué necesitas hacer?</h3><p>Selecciona una categoría y elige tu operación.</p></div><span class="vr-timehint">01 / 03 · ELIGE UNA ACCIÓN</span></header>
-   <nav class="vr-switcher" aria-label="Tipo de movimiento">${Object.entries(registerGroups).map(([key,g])=>`<button type="button" class="vr-switch ${rg===key?'selected':''}" data-group="${key}" data-act="registrationGroup" data-id="${key}" ${rg===key?'aria-current="true"':''}><span class="vr-switch-symbol">${g.symbol}</span><span><strong>${g.label}</strong><small>${g.sub}</small></span></button>`).join('')}</nav>
+   <nav class="vr-switcher" aria-label="Tipo de movimiento">${Object.entries(registerGroups).map(([key,g])=>`<button type="button" class="vr-switch ${rg===key?'selected':''}" data-group="${key}" data-act="registrationGroup" data-id="${key}" aria-pressed="${rg===key}" ${rg===key?'aria-current="true"':''}><span class="vr-switch-symbol">${icon(({receive:'down',pay:'up',move:'cycle',other:'sparkles'})[key])}</span><span><strong>${g.label}</strong><small>${g.sub}</small></span></button>`).join('')}</nav>
    <div class="vr-content"><div class="vr-action-stack"><span class="vr-group-heading">${group.label.toUpperCase()} <span>${rg==='other'?4:group.modes.length} ${rg==='other'||group.modes.length!==1?'OPCIONES':'OPCIÓN'}</span></span>${rg==='other'?`<div class="vr-other-operations" role="group" aria-label="Otras gestiones">
     <button class="v29-other-action" type="button" data-act="otherRefund"><span class="v29-other-icon refund">${icon('repeat')}</span><span class="v29-other-copy"><strong>Devolución de compra</strong><small>Revertir un consumo de tarjeta</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
     <button class="v29-other-action" type="button" data-act="otherAdjust"><span class="v29-other-icon adjustment">${icon('wallet')}</span><span class="v29-other-copy"><strong>Ajustar saldo</strong><small>Conciliar una cuenta o efectivo</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
@@ -35635,6 +35669,179 @@ body.theme-black .ant-weekly-total,body.theme-dark .ant-weekly-total{color:#b6d4
 @media(min-width:791px) and (max-width:1100px){
  .main.world-loans #page .loans-world .loan-card-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),320px))!important;}
 }
+</style>
+
+
+<style id="vive-v259-registrar-mobile-cuatro-arriba">
+/* V259 · Registrar, mobile-only bottom sheet. All original operations and event handlers remain. */
+@media (max-width:790px){
+  body:has(.v235-register-layer){overflow:hidden!important;overscroll-behavior:none}
+  .modal-layer.v235-register-layer{
+    position:fixed!important;inset:0!important;z-index:2100!important;
+    display:flex!important;align-items:flex-end!important;justify-content:center!important;
+    margin:0!important;padding:0!important;overflow:hidden!important;
+    background:rgba(17,35,68,.32)!important;
+    -webkit-backdrop-filter:blur(10px)!important;backdrop-filter:blur(10px)!important;
+  }
+  .v235-register-layer>.v235-register-dialog{
+    display:flex!important;flex-direction:column!important;min-width:0!important;
+    width:100%!important;max-width:640px!important;
+    height:calc(100dvh - max(12px,env(safe-area-inset-top,0px)))!important;
+    max-height:calc(100dvh - max(12px,env(safe-area-inset-top,0px)))!important;
+    min-height:0!important;margin:0!important;padding:0!important;
+    overflow:hidden!important;border-radius:28px 28px 0 0!important;
+    background:linear-gradient(175deg,#f6f9ff,#ecf3fc)!important;
+    border:1px solid rgba(255,255,255,.9)!important;border-bottom:0!important;
+    box-shadow:0 -14px 45px rgba(15,40,80,.18)!important;
+  }
+  .v235-register-dialog .v235-register-close{
+    position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;
+    flex:0 0 auto!important;margin:0!important;padding:24px 19px 10px!important;
+    font-size:12px!important;letter-spacing:.14em!important;font-weight:850!important;color:#3d629c!important;
+    background:transparent!important;
+  }
+  .v235-register-dialog .v235-register-close::before{
+    content:'';position:absolute;left:50%;top:8px;transform:translateX(-50%);
+    width:43px;height:4px;border-radius:20px;background:rgba(115,140,172,.38)
+  }
+  .v235-register-dialog .v235-register-close button{
+    flex:0 0 40px!important;width:40px!important;height:40px!important;
+    border-radius:14px!important;font-size:24px!important;line-height:1!important;
+    border:1px solid rgba(126,150,187,.18)!important;
+    background:rgba(255,255,255,.78)!important;color:#4b6182!important;
+  }
+  .v235-register-dialog .vr-register{
+    display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+    min-height:0!important;max-width:100%!important;overflow:hidden!important;
+    margin:0!important;padding:0 15px!important;
+  }
+  .v235-register-dialog .vr-workspace{
+    display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+    min-height:0!important;overflow:hidden!important;
+    margin:0!important;padding:0!important;
+    background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+  }
+  .v235-register-dialog .vr-workspace-head{
+    display:flex!important;align-items:flex-end!important;gap:8px!important;
+    flex:0 0 auto!important;margin:0 3px 15px!important;padding:1px 0 0!important;
+  }
+  .v235-register-dialog .vr-workspace-head h3{
+    font-size:clamp(23px,6.6vw,30px)!important;line-height:1.08!important;
+    letter-spacing:-.055em!important;margin:3px 0 6px!important;color:#1f3756!important;
+  }
+  .v235-register-dialog .vr-workspace-head p{
+    font-size:12px!important;line-height:1.45!important;color:#7789a3!important;margin:0!important;
+  }
+  .v235-register-dialog .vr-small-kicker,.v235-register-dialog .vr-timehint{display:none!important}
+  .v235-register-dialog .vr-switcher{
+    display:grid!important;flex:0 0 auto!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:5px!important;margin:0!important;padding:5px!important;
+    background:rgba(213,228,247,.59)!important;
+    border:1px solid rgba(255,255,255,.84)!important;border-radius:21px!important;
+    box-shadow:0 7px 20px rgba(44,83,148,.06)!important;
+  }
+  .v235-register-dialog .vr-switch{
+    display:flex!important;flex-direction:column!important;justify-content:center!important;
+    align-items:center!important;min-width:0!important;min-height:74px!important;
+    gap:5px!important;padding:8px 2px!important;
+    border-radius:17px!important;text-align:center!important;
+    border:1px solid transparent!important;background:transparent!important;
+    box-shadow:none!important;color:#647a9b!important;
+    transition:background .16s ease,color .16s ease,box-shadow .16s ease!important;
+  }
+  .v235-register-dialog .vr-switch .vr-switch-symbol{
+    display:grid!important;place-items:center!important;width:29px!important;height:29px!important;
+    flex:0 0 29px!important;border-radius:10px!important;
+    background:rgba(255,255,255,.55)!important;color:#5579b5!important;
+    box-shadow:none!important;font-size:17px!important;
+  }
+  .v235-register-dialog .vr-switch .vr-switch-symbol svg{display:block!important;width:17px!important;height:17px!important}
+  .v235-register-dialog .vr-switch strong{font-size:11px!important;font-weight:780!important;line-height:1.25!important;color:inherit!important}
+  .v235-register-dialog .vr-switch small{display:none!important}
+  .v235-register-dialog .vr-switch.selected{
+    background:rgba(255,255,255,.94)!important;color:#2c5393!important;
+    border-color:rgba(210,225,248,.92)!important;
+    box-shadow:0 6px 17px rgba(41,83,145,.13)!important;
+  }
+  .v235-register-dialog .vr-switch.selected .vr-switch-symbol{background:#e3edff!important;color:#386cc2!important}
+  .v235-register-dialog .vr-switch:focus-visible{outline:3px solid #7aabf5!important;outline-offset:1px!important}
+  .v235-register-dialog .vr-content{
+    display:block!important;flex:1 1 auto!important;min-height:0!important;max-height:none!important;
+    margin-top:14px!important;padding:0 1px calc(18px + env(safe-area-inset-bottom,0px))!important;
+    overflow-y:auto!important;overflow-x:hidden!important;
+    overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
+    scrollbar-width:thin;
+  }
+  .v235-register-dialog .vr-action-stack{display:block!important;min-width:0!important;}
+  .v235-register-dialog .vr-group-heading{font-size:10px!important;letter-spacing:.12em!important;margin:3px 5px 12px!important;color:#6c82a3!important}
+  .v235-register-dialog .vr-operation{
+    display:flex!important;align-items:center!important;
+    min-height:75px!important;width:100%!important;min-width:0!important;
+    padding:13px 14px!important;margin-bottom:10px!important;gap:12px!important;
+    border-radius:20px!important;border:1px solid rgba(211,224,243,.92)!important;
+    background:rgba(255,255,255,.85)!important;
+    box-shadow:0 6px 17px rgba(44,81,133,.055)!important;
+  }
+  .v235-register-dialog .vr-operation-icon{
+    width:43px!important;height:43px!important;flex:0 0 43px!important;
+    border-radius:15px!important;background:#e9f1ff!important;color:#426eb7!important;
+  }
+  .v235-register-dialog .vr-operation-copy strong{font-size:15px!important;line-height:1.25!important;color:#244264!important}
+  .v235-register-dialog .vr-operation-copy small{display:block!important;font-size:11px!important;color:#7589a5!important;line-height:1.45!important;margin-top:4px!important}
+  .v235-register-dialog .vr-chevron svg{width:17px!important;height:17px!important}
+  .v235-register-dialog .vr-other-operations{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+  .v235-register-dialog .vr-other-operations .v29-other-action{
+    min-height:75px!important;padding:13px 14px!important;margin:0!important;
+    border-radius:20px!important;background:rgba(255,255,255,.85)!important;
+    border:1px solid rgba(211,224,243,.92)!important;box-shadow:0 6px 17px rgba(44,81,133,.055)!important;
+  }
+  .v235-register-dialog .vr-other-operations .v29-other-copy strong{font-size:14px!important;line-height:1.3!important}
+  .v235-register-dialog .vr-other-operations .v29-other-copy small{font-size:11px!important;line-height:1.4!important}
+  .v235-register-dialog .vr-guidance{
+    display:grid!important;grid-template-columns:1fr!important;gap:5px!important;
+    margin-top:10px!important;padding:13px 14px!important;min-height:0!important;
+    border-radius:17px!important;border:1px solid rgba(150,178,216,.19)!important;
+    background:rgba(219,233,249,.56)!important;box-shadow:none!important;
+  }
+  .v235-register-dialog .vr-guidance-glyph,.v235-register-dialog .vr-guidance-label,.v235-register-dialog .vr-guidance-bottom{display:none!important}
+  .v235-register-dialog .vr-guidance h4{font-size:12px!important;line-height:1.35!important;font-weight:790!important;margin:0!important;color:#31537e!important}
+  .v235-register-dialog .vr-guidance p{font-size:11px!important;line-height:1.5!important;margin:0!important;color:#6b819d!important}
+  body.theme-black .v235-register-layer>.v235-register-dialog,
+  body.theme-dark .v235-register-layer>.v235-register-dialog{
+    background:linear-gradient(170deg,#171e29,#111720)!important;border-color:#354253!important;
+  }
+  body.theme-black .v235-register-dialog .vr-workspace-head h3,body.theme-dark .v235-register-dialog .vr-workspace-head h3{color:#f1f5fd!important}
+  body.theme-black .v235-register-dialog .vr-workspace-head p,body.theme-dark .v235-register-dialog .vr-workspace-head p{color:#a7b5cc!important}
+  body.theme-black .v235-register-dialog .vr-switcher,body.theme-dark .v235-register-dialog .vr-switcher{background:#222d3c!important;border-color:#354253!important}
+  body.theme-black .v235-register-dialog .vr-switch,body.theme-dark .v235-register-dialog .vr-switch{color:#a8b8d1!important}
+  body.theme-black .v235-register-dialog .vr-switch.selected,body.theme-dark .v235-register-dialog .vr-switch.selected{background:#35465d!important;color:#f4f7ff!important;border-color:#546781!important}
+  body.theme-black .v235-register-dialog .vr-operation,body.theme-dark .v235-register-dialog .vr-operation,
+  body.theme-black .v235-register-dialog .v29-other-action,body.theme-dark .v235-register-dialog .v29-other-action{background:#222d3b!important;border-color:#37465a!important;color:#e9f0fa!important}
+  body.theme-black .v235-register-dialog .vr-operation-copy strong,body.theme-dark .v235-register-dialog .vr-operation-copy strong{color:#eef4ff!important}
+  body.theme-black .v235-register-dialog .vr-operation-copy small,body.theme-dark .v235-register-dialog .vr-operation-copy small{color:#b0c0d5!important}
+  body.theme-black .v235-register-dialog .vr-guidance,body.theme-dark .v235-register-dialog .vr-guidance{background:#202c3a!important;border-color:#344356!important}
+  body.theme-black .v235-register-dialog .vr-guidance h4,body.theme-dark .v235-register-dialog .vr-guidance h4{color:#d9e7fd!important}
+  body.theme-black .v235-register-dialog .vr-guidance p,body.theme-dark .v235-register-dialog .vr-guidance p{color:#b2bfd0!important}
+}
+@media(max-width:359px){
+ .v235-register-dialog .vr-register{padding-inline:10px!important}
+ .v235-register-dialog .vr-switcher{gap:3px!important;padding:4px!important}
+ .v235-register-dialog .vr-switch{min-height:67px!important;padding:7px 1px!important}
+ .v235-register-dialog .vr-switch strong{font-size:10px!important}
+ .v235-register-dialog .vr-switch .vr-switch-symbol{width:25px!important;height:25px!important;flex-basis:25px!important}
+ .v235-register-dialog .vr-workspace-head h3{font-size:23px!important}
+}
+@media(max-width:790px) and (max-height:650px){
+ .v235-register-dialog .v235-register-close{padding-top:18px!important;padding-bottom:5px!important}
+ .v235-register-dialog .vr-workspace-head{margin-bottom:8px!important}
+ .v235-register-dialog .vr-workspace-head h3{font-size:22px!important;margin-bottom:3px!important}
+ .v235-register-dialog .vr-workspace-head p{display:none!important}
+ .v235-register-dialog .vr-switch{min-height:60px!important;gap:2px!important}
+ .v235-register-dialog .vr-switch .vr-switch-symbol{width:25px!important;height:25px!important;flex-basis:25px!important}
+ .v235-register-dialog .vr-content{margin-top:8px!important}
+}
+@media(prefers-reduced-motion:reduce){.v235-register-dialog .vr-switch{transition:none!important}}
 </style>
 
 </body>
