@@ -33126,5 +33126,167 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
 }
 
 </style>
+
+<style id="vive-v241-wallet-resumen-polish">
+/* V241 · Refinamiento visual incremental. Sin cambios de geometría principal,
+   datos, navegación, cálculos, acciones ni motor de tarjetas. */
+@media screen and (max-width:790px){
+  /* Wallet: misma tarjeta física y misma paleta por categoría; más profundidad. */
+  .v144-wallet-shell .v68-wallet-gallery{
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    padding-bottom:24px;
+  }
+  .v144-wallet-shell .v68-wallet-face{
+    isolation:isolate;
+    border:1px solid rgba(255,255,255,.37);
+    border-radius:22px;
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,.31),
+      inset 0 -1px 0 rgba(10,23,40,.13),
+      0 10px 20px rgba(19,38,70,.17),
+      0 2px 5px rgba(12,28,52,.08);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .v144-wallet-shell .v68-wallet-face.selected{
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,.42),
+      inset 0 -1px 0 rgba(0,0,0,.12),
+      0 22px 38px rgba(21,43,78,.22),
+      0 6px 13px rgba(15,31,58,.14),
+      0 1px 0 rgba(255,255,255,.18)!important;
+    filter:saturate(1.045) contrast(1.015)!important;
+  }
+  .v144-wallet-shell .v68-wallet-face:not(.selected){
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.25),0 8px 17px rgba(21,43,78,.13);
+  }
+  .v144-wallet-shell .v68-wallet-face:before{
+    pointer-events:none;
+    border-color:rgba(255,255,255,.24);
+    box-shadow:0 0 0 34px rgba(255,255,255,.026);
+  }
+  .v144-wallet-shell .v68-wallet-face:after{
+    pointer-events:none;
+    opacity:.68;
+    filter:blur(1px);
+  }
+  .v144-wallet-shell .v68-wallet-top .bank-photo-mark{
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,.10));
+  }
+  .v144-wallet-shell .v68-wallet-top b,
+  .v144-wallet-shell .v68-wallet-name{
+    text-shadow:0 1px 3px rgba(10,22,44,.13);
+  }
+  .v144-wallet-shell .v68-wallet-number{
+    font-variant-numeric:tabular-nums;
+    text-shadow:0 1px 3px rgba(10,22,44,.17);
+  }
+  /* La información secundaria gana separación sin añadir tarjetas ni filas. */
+  .v144-wallet-shell .v68-wallet-section,
+  .v144-wallet-shell .v130-wallet-cut,
+  .v144-wallet-shell .v144-executive{
+    border-color:rgba(255,255,255,.82);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.84),
+      0 10px 27px rgba(37,67,105,.075),
+      0 2px 7px rgba(31,57,94,.035);
+    backdrop-filter:blur(13px) saturate(120%);
+    -webkit-backdrop-filter:blur(13px) saturate(120%);
+  }
+  .v144-wallet-shell .v68-wallet-actions i{
+    background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(231,242,250,.62));
+    border-color:rgba(255,255,255,.88);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 7px 16px rgba(39,74,112,.105);
+  }
+  .v144-wallet-shell .v144-wallet-retract button{
+    background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(244,249,255,.71));
+    border-color:rgba(177,197,224,.51);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 5px 12px rgba(39,70,106,.055);
+  }
+  .v144-wallet-shell .v68-wallet-dots button:focus-visible,
+  .v144-wallet-shell .v68-wallet-actions button:focus-visible,
+  .v144-wallet-shell .v68-wallet-face:focus-visible{outline:2px solid #467fce;outline-offset:3px}
+  /* Tema negro: mismo acabado, sin volver claras las superficies. */
+  body.theme-black .v144-wallet-shell :is(.v68-wallet-section,.v130-wallet-cut,.v144-executive),
+  body.theme-dark .v144-wallet-shell :is(.v68-wallet-section,.v130-wallet-cut,.v144-executive){
+    border-color:rgba(151,173,210,.2)!important;
+    box-shadow:inset 0 1px 0 rgba(220,233,255,.065),0 9px 25px rgba(0,0,0,.23)!important;
+  }
+  body.theme-black .v144-wallet-shell .v68-wallet-actions i,
+  body.theme-dark .v144-wallet-shell .v68-wallet-actions i{
+    background:linear-gradient(145deg,#222c3c,#17212f)!important;
+    border-color:#3a485f!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 7px 16px rgba(0,0,0,.2)!important;
+  }
+  body.theme-black .v144-wallet-shell .v144-wallet-retract button,
+  body.theme-dark .v144-wallet-shell .v144-wallet-retract button{
+    background:#1b2635!important;
+    border-color:#36465e!important;
+    color:#b8ccef!important;
+  }
+}
+/* Resumen: acabado ligeramente más definido. Tamaños y grid intactos para conservar
+   el ajuste sin scrolling de escritorio y la distribución original en móvil. */
+body .main.world-overview .ff-dashboard.summary-space :is(.ff-obligations,.ff-upcoming,.ff-personal,.ff-expense-card){
+  border-color:rgba(255,255,255,.75)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.78),
+    0 11px 26px rgba(49,82,134,.068),
+    0 3px 8px rgba(46,74,121,.025)!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .v152-position-reference{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    0 14px 32px rgba(58,94,151,.085),
+    0 3px 8px rgba(42,72,122,.033)!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .ff-health-card{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 12px 28px rgba(65,115,225,.145)!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble:not(.featured){
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.82),
+    inset 0 -3px 11px rgba(128,153,197,.085),
+    0 10px 23px rgba(54,81,133,.085)!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble.featured{
+  box-shadow:inset 0 2px 4px rgba(255,255,255,.34),
+    0 14px 29px rgba(92,85,224,.21),0 3px 7px rgba(92,85,224,.11)!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .ff-obligation-total{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 7px 18px rgba(53,87,134,.055)!important;
+}
+body .main.world-overview .ff-dashboard.summary-space .ff-panel-top h2{
+  letter-spacing:-.035em;
+}
+body .main.world-overview .ff-dashboard.summary-space :is(.ff-pay-row,.ff-obligation-row,.ff-person-row){
+  border-radius:10px;
+  transition:background-color .18s ease,box-shadow .18s ease;
+}
+body .main.world-overview .ff-dashboard.summary-space :is(.ff-pos-amount,.ff-obligation-total strong,.ff-health-number,.ff-person-sums strong){
+  font-variant-numeric:tabular-nums;
+}
+@media(hover:hover) and (pointer:fine){
+  body .main.world-overview .ff-dashboard.summary-space :is(.ff-pay-row,.ff-obligation-row,.ff-person-row):hover{
+    background-color:rgba(255,255,255,.22);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
+  }
+}
+/* La capa negra mantiene contrastes y profundidades coherentes con la app. */
+body.theme-black .main.world-overview .ff-dashboard.summary-space :is(.ff-obligations,.ff-upcoming,.ff-personal,.ff-expense-card,.v152-position-reference),
+body.theme-dark .main.world-overview .ff-dashboard.summary-space :is(.ff-obligations,.ff-upcoming,.ff-personal,.ff-expense-card,.v152-position-reference){
+  border-color:rgba(137,162,203,.16)!important;
+  box-shadow:inset 0 1px 0 rgba(205,222,255,.055),0 9px 25px rgba(0,0,0,.21)!important;
+}
+body.theme-black .main.world-overview .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble:not(.featured),
+body.theme-dark .main.world-overview .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble:not(.featured){
+  box-shadow:inset 0 1px 0 rgba(216,231,255,.09),0 10px 25px rgba(0,0,0,.23)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .v144-wallet-shell .v68-wallet-gallery{scroll-behavior:auto!important}
+  .v144-wallet-shell .v68-wallet-face,
+  .v144-wallet-shell .v68-wallet-face:before,
+  body .main.world-overview .ff-dashboard.summary-space :is(.ff-pay-row,.ff-obligation-row,.ff-person-row){transition:none!important;animation:none!important}
+}
+</style>
 </body>
 </html>
