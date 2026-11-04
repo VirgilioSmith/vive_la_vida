@@ -24048,8 +24048,8 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  const tabButton=(action,label,id='',style='')=>`<button type="button" class="v56-button ${style}" data-v56="${action}" ${id?`data-id="${clean(id)}"`:''}>${label}</button>`;
  const empty=(heading,caption,button='')=>`<div class="v56-empty"><div class="v56-empty-icon">${icon('wallet')}</div><h3>${clean(heading)}</h3><p>${clean(caption)}</p>${button}</div>`;
  const loanRow=l=>{
-  const balance=personalBalance(l), paid=Math.max(0,num(l.principal)-balance),progress=Math.max(0,Math.min(100,100*paid/(num(l.principal)||1))),late=unpaid(l)&&l.dueDate&&l.dueDate<today();
-  return `<article class="v56-loan" data-v56-loan="${clean(l.id)}"><div class="v56-loan-head"><div><span class="v56-legend">${l.direction==='lent'?'CUENTA POR COBRAR':'CUENTA POR PAGAR'}</span><h4>${clean(loanCategory(l))}</h4><small>${clean(l.note||'Sin observación descriptiva')}</small></div><span class="v56-tag ${balance<=.005?'paid':late?'late':l.direction==='lent'?'good':'owe'}">${balance<=.005?'Liquidado':late?'Vencido':l.direction==='lent'?'Me deben':'Yo debo'}</span></div><div class="v56-loan-numbers"><div><span>Capital original</span><strong>${moneyLocal(l.principal,l.currency)}</strong></div><div><span>Abonado</span><strong>${moneyLocal(paid,l.currency)}</strong></div><div><span>Pendiente</span><strong class="v56-primary-number">${moneyLocal(balance,l.currency)}</strong></div></div><div class="v56-meter"><span style="width:${progress}%"></span></div><div class="v56-loan-bottom"><span>Inicio: ${dateLabel(l.date)} · Devolución: ${dateLabel(l.dueDate)}</span><div>${tabButton('loanDetail','Ver desglose',l.id)}${unpaid(l)?tabButton('payment','Registrar abono',l.id,'primary'):''}</div></div></article>`;
+  const balance=personalBalance(l), paid=v233PersonalPaid(l), forgiven=v233PersonalForgiven(l),progress=Math.max(0,Math.min(100,100*paid/(num(l.principal)||1))),late=unpaid(l)&&l.dueDate&&l.dueDate<today();
+  return `<article class="v56-loan" data-v56-loan="${clean(l.id)}"><div class="v56-loan-head"><div><span class="v56-legend">${l.direction==='lent'?'CUENTA POR COBRAR':'CUENTA POR PAGAR'}</span><h4>${clean(loanCategory(l))}</h4><small>${clean(l.note||'Sin observación descriptiva')}</small></div><span class="v56-tag ${balance<=.005?'paid':late?'late':l.direction==='lent'?'good':'owe'}">${forgiven>.005&&balance<=.005?'Perdonado':balance<=.005?'Liquidado':late?'Vencido':l.direction==='lent'?'Me deben':'Yo debo'}</span></div><div class="v56-loan-numbers"><div><span>Capital original</span><strong>${moneyLocal(l.principal,l.currency)}</strong></div><div><span>Abonado</span><strong>${moneyLocal(paid,l.currency)}</strong></div>${forgiven>.005?`<div><span>Perdonado</span><strong>${moneyLocal(forgiven,l.currency)}</strong></div>`:''}<div><span>Pendiente</span><strong class="v56-primary-number">${moneyLocal(balance,l.currency)}</strong></div></div><div class="v56-meter"><span style="width:${progress}%"></span></div><div class="v56-loan-bottom"><span>Inicio: ${dateLabel(l.date)} · Devolución: ${dateLabel(l.dueDate)}</span><div>${tabButton('loanDetail','Ver desglose',l.id)}${unpaid(l)?tabButton('payment','Registrar abono',l.id,'primary'):''}</div></div></article>`;
  };
  const contactCard=c=>{const d=contactStatus(c);return `<button class="v56-person" type="button" data-v56="contactDetail" data-id="${clean(c.id)}" data-v56-search="${clean(fullName(c)+' '+(c.alias||''))}"><span class="v56-avatar">${clean(initials(c))}</span><span class="v56-person-main"><strong>${clean(fullName(c))}</strong><small>${clean(c.alias||c.phone||'Contacto guardado')} · ${d.rel.length} concepto${d.rel.length===1?'':'s'}</small><span class="v56-person-amount"><b>${moneyLocal(d.rd)} por cobrar</b>${d.us?`<em>+ ${moneyLocal(d.us,'USD')}</em>`:''}</span>${d.payRd||d.payUs?`<span class="v56-person-owed">Por pagar: ${moneyLocal(d.payRd)}${d.payUs?' · '+moneyLocal(d.payUs,'USD'):''}</span>`:''}</span><span class="v56-arrow">${icon('chevron-right')}</span></button>`;};
  function topCards(arr){const c=contacts(),active=arr.filter(unpaid);return `<section class="v56-stats"><div class="v56-stat featured"><span>Por cobrar · RD$</span><strong>${moneyLocal(totals(arr,'lent','DOP'))}</strong><small>Capital pendiente de devolución</small></div><div class="v56-stat"><span>Por cobrar · US$</span><strong>${moneyLocal(totals(arr,'lent','USD'),'USD')}</strong><small>Separado de pesos</small></div><div class="v56-stat"><span>Yo debo · RD$</span><strong>${moneyLocal(totals(arr,'borrowed','DOP'))}</strong><small>Obligaciones personales</small></div><div class="v56-stat"><span>Contactos / acuerdos</span><strong>${c.length} <span class="v56-stat-small">/ ${arr.length}</span></strong><small>${active.length} acuerdo${active.length===1?'':'s'} con saldo pendiente</small></div></section>`;}
@@ -24057,9 +24057,9 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  function groupVisual(arr){const groups=groupedBreakdown(arr),max=Math.max(1,...groups.map(g=>g.r+fx(g.u,'USD')));return `<section class="v56-panel"><div class="v56-section-label">COMPOSICIÓN DE LA CARTERA</div><h3>¿Por qué te deben dinero?</h3><p>Las observaciones utilizadas como concepto agrupan tus cuentas por cobrar. El texto descriptivo permanece en cada acuerdo.</p>${groups.length?`<div class="v56-categories">${groups.map(g=>`<div class="v56-cat"><div><strong>${clean(g.name)}</strong><span>${g.items} acuerdo${g.items===1?'':'s'}</span></div><div class="v56-cat-values">${g.r?moneyLocal(g.r):''}${g.u?` <small>${moneyLocal(g.u,'USD')}</small>`:''}</div><div class="v56-cat-bar"><span style="width:${Math.max(3,100*(g.r+fx(g.u,'USD'))/max)}%"></span></div></div>`).join('')}</div>`:empty('Sin conceptos pendientes','Registra un préstamo y asigna un concepto para visualizar aquí su composición.')}</section>`;}
  function personDirectory(filtered=false){const people=contacts().filter(c=>!filtered||loansFor(c.id).some(l=>l.direction===filtered)).sort((a,b)=>fullName(a).localeCompare(fullName(b),'es'));return `<section class="v56-panel"><div class="v56-panel-heading"><div><div class="v56-section-label">LIBRETA DE PERSONAS</div><h3>Contactos financieros</h3><p>Cada persona tiene una ficha con todos sus acuerdos, conceptos y abonos.</p></div>${tabButton('contactForm','+ Guardar contacto','','primary')}</div><label class="v56-search">${icon('search')}<input type="search" placeholder="Buscar por nombre, apellido o apodo..." class="v56-contact-search" aria-label="Buscar contactos"></label><div class="v56-person-grid">${people.length?people.map(contactCard).join(''):empty('Sin contactos registrados','Crea tu primer contacto y asocia cualquier cantidad de préstamos o deudas.',tabButton('contactForm','Crear contacto','','primary'))}</div></section>`;}
  function activityView(arr){const activity=db.transactions.filter(t=>['personal_issue','personal_settlement'].includes(t.type)&&arr.some(l=>l.id===t.personalLoanId)).sort((a,b)=>String(b.date).localeCompare(String(a.date)));return `<section class="v56-panel"><div class="v56-section-label">REGISTRO AUDITABLE</div><h3>Entregas y devoluciones</h3><p>Solo operaciones reales asociadas a préstamos. El principal no se considera ingreso ni gasto.</p><div class="v56-activity">${activity.length?activity.slice(0,150).map(t=>{const l=personalLoan(t.personalLoanId),c=l&&contactFor(l);return `<div class="v56-activity-item"><span class="v56-act-icon">${icon(t.type==='personal_issue'?'wallet':'check')}</span><div><strong>${clean(c?fullName(c):l?.person||'Contacto')} · ${clean(loanCategory(l||{}))}</strong><small>${clean(t.type==='personal_issue'?'Entrega inicial':'Abono al capital')} · ${dateLabel(t.date)}</small>${t.note?`<p>${clean(t.note)}</p>`:''}</div><div class="v56-activity-value"><b>${moneyLocal(t.type==='personal_settlement'?num(t.principal):num(t.amount),t.currency)}</b>${num(t.interest)?`<small>Interés: ${moneyLocal(t.interest,t.currency)}</small>`:''}</div><div class="v233-personal-tx-actions"><button type="button" class="v56-button" data-act="editTransaction" data-id="${clean(t.id)}" aria-label="Editar movimiento">Editar</button><button type="button" class="v56-button v233-danger" data-act="deleteTransaction" data-id="${clean(t.id)}" aria-label="Eliminar movimiento">Eliminar</button><button type="button" data-v56="loanDetail" data-id="${clean(l?.id)}" aria-label="Ver detalle">${icon('chevron-right')}</button></div></div>`}).join(''):empty('No hay operaciones registradas','Las entregas y los abonos aparecerán aquí automáticamente.')}</div></section>`;}
- function contactDetail(id){const c=contactById(id);if(!c){ui.v56ContactId='';return personDirectory()}const d=contactStatus(c),relations=d.rel.sort((a,b)=>String(b.date).localeCompare(String(a.date)));return `<div class="v56-profile"><div class="v56-profile-back">${tabButton('contactsBack','← Volver a contactos')}</div><header class="v56-profile-header"><div class="v56-avatar big">${clean(initials(c))}</div><div><span class="v56-section-label">CONTACTO REGISTRADO</span><h2>${clean(fullName(c))}</h2><p>${clean(c.alias||'Relación personal')} ${c.phone?' · '+clean(c.phone):''}${c.email?' · '+clean(c.email):''}</p>${c.notes?`<p class="v56-muted">${clean(c.notes)}</p>`:''}</div><div class="v56-profile-actions">${tabButton('editContact','Editar contacto',c.id)}${tabButton('loanNew','+ Nuevo concepto',c.id,'primary')}</div></header><div class="v56-person-summary"><div><span>Total por cobrar RD$</span><strong>${moneyLocal(d.rd)}</strong></div><div><span>Total por cobrar US$</span><strong>${moneyLocal(d.us,'USD')}</strong></div><div><span>Yo debo RD$</span><strong>${moneyLocal(d.payRd)}</strong></div><div><span>Acuerdos activos</span><strong>${d.active}</strong></div></div><div class="v56-profile-columns"><section class="v56-panel"><div class="v56-panel-heading"><div><div class="v56-section-label">CARTERA POR CONCEPTO</div><h3>${d.rel.length} acuerdos registrados</h3><p>Cada acuerdo conserva su motivo, observación, importe y vencimiento.</p></div></div><div class="v56-loan-list">${relations.length?relations.map(loanRow).join(''):empty('Este contacto no tiene deudas todavía','Puedes crear múltiples conceptos para esta misma persona.',tabButton('loanNew','Añadir acuerdo',c.id,'primary'))}</div></section><div>${groupVisual(relations)}<section class="v56-panel"><div class="v56-section-label">ÚLTIMOS ABONOS</div><h3>Movimientos del contacto</h3>${activityViewInner(relations)}</section></div></div></div>`;}
+ function contactDetail(id){const c=contactById(id);if(!c){ui.v56ContactId='';return personDirectory()}const d=contactStatus(c),relations=d.rel.sort((a,b)=>String(b.date).localeCompare(String(a.date)));return `<div class="v56-profile"><div class="v56-profile-back">${tabButton('contactsBack','← Volver a contactos')}</div><header class="v56-profile-header"><div class="v56-avatar big">${clean(initials(c))}</div><div><span class="v56-section-label">CONTACTO REGISTRADO</span><h2>${clean(fullName(c))}</h2><p>${clean(c.alias||'Relación personal')} ${c.phone?' · '+clean(c.phone):''}${c.email?' · '+clean(c.email):''}</p>${c.notes?`<p class="v56-muted">${clean(c.notes)}</p>`:''}</div><div class="v56-profile-actions">${tabButton('editContact','Editar contacto',c.id)}${tabButton('loanNew','+ Nuevo concepto',c.id,'primary')}</div></header><div class="v56-person-summary"><div><span>Total por cobrar RD$</span><strong>${moneyLocal(d.rd)}</strong></div><div><span>Total por cobrar US$</span><strong>${moneyLocal(d.us,'USD')}</strong></div><div><span>Yo debo RD$</span><strong>${moneyLocal(d.payRd)}</strong></div><div><span>Yo debo US$</span><strong>${moneyLocal(d.payUs,'USD')}</strong></div><div><span>Acuerdos activos</span><strong>${d.active}</strong></div></div><div class="v56-profile-columns"><section class="v56-panel"><div class="v56-panel-heading"><div><div class="v56-section-label">CARTERA POR CONCEPTO</div><h3>${d.rel.length} acuerdos registrados</h3><p>Cada acuerdo conserva su motivo, observación, importe y vencimiento.</p></div></div><div class="v56-loan-list">${relations.length?relations.map(loanRow).join(''):empty('Este contacto no tiene deudas todavía','Puedes crear múltiples conceptos para esta misma persona.',tabButton('loanNew','Añadir acuerdo',c.id,'primary'))}</div></section><div>${groupVisual(relations)}<section class="v56-panel"><div class="v56-section-label">ÚLTIMOS ABONOS</div><h3>Movimientos del contacto</h3>${activityViewInner(relations)}</section></div></div></div>`;}
  function activityViewInner(arr){let tx=db.transactions.filter(t=>arr.some(l=>l.id===t.personalLoanId)&&t.type==='personal_settlement').sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,10);return tx.length?`<div class="v56-mini-activity">${tx.map(t=>`<div><span>${dateLabel(t.date)}<small>${clean(personalLoan(t.personalLoanId)?.concept||'Abono')} · ${clean(t.note||'Sin nota')}</small></span><strong>${moneyLocal(t.principal,t.currency)}</strong></div>`).join('')}</div>`:empty('Aún no hay abonos','Cuando recibas un pago quedará reflejado aquí.')}
- function loanDetail(id){const l=personalLoan(id);if(!l)return '';const c=contactFor(l),bal=personalBalance(l),history=settled(l),paid=num(l.principal)-bal;return `<div class="v56-profile"><div class="v56-profile-back">${tabButton('detailBack','← Volver a la persona',c?.id||'')}</div><section class="v56-panel v56-detail"><div class="v56-panel-heading"><div><div class="v56-section-label">DETALLE DEL ACUERDO · ${clean(l.currency)}</div><h2>${clean(loanCategory(l))}</h2><p>${clean(c?fullName(c):l.person)} · ${l.direction==='lent'?'Dinero que deben devolverte':'Dinero que debes devolver'}</p></div><div class="v56-profile-actions">${tabButton('editLoan','Editar acuerdo',l.id)}${tabButton('deleteLoan','Eliminar acuerdo',l.id,'danger')}${unpaid(l)?tabButton('payment','+ Registrar abono',l.id,'primary'):''}${l.direction==='lent'&&unpaid(l)?`<button type="button" class="v56-button" data-act="forgivePersonal" data-id="${clean(l.id)}">Perdonar deuda</button>`:''}</div></div><div class="v56-detail-amount"><span>SALDO CAPITAL PENDIENTE</span><strong>${moneyLocal(bal,l.currency)}</strong></div><div class="v56-detail-grid"><div><span>Capital inicial</span><b>${moneyLocal(l.principal,l.currency)}</b></div><div><span>Capital ya abonado</span><b>${moneyLocal(Math.max(0,paid),l.currency)}</b></div><div><span>Fecha de entrega</span><b>${dateLabel(l.date)}</b></div><div><span>Vencimiento</span><b>${dateLabel(l.dueDate)}</b></div><div><span>Tipo de acuerdo</span><b>${clean(agreementLabel(l))}</b></div><div><span>Estado</span><b>${bal<.005?'Liquidado':l.dueDate&&l.dueDate<today()?'Vencido':'Pendiente'}</b></div></div><div class="v56-observation"><span>CONCEPTO / CLASIFICACIÓN</span><h3>${clean(loanCategory(l))}</h3><span>OBSERVACIÓN DESCRIPTIVA</span><p>${clean(l.note||'Sin descripción adicional.')}</p></div><div class="v56-contract"><div><span class="v56-section-label">ACUERDO ENTRE LAS PARTES</span><h3>Condiciones que registraste</h3><p>${clean(l.agreementTerms||'Sin condiciones adicionales registradas.')}</p><small>${clean(agreementLabel(l))}. Este es un registro personal, no sustituye un contrato firmado ni acredita aceptación por la otra persona.</small></div>${tabButton('copyAgreement','Copiar resumen',l.id)}</div></section><section class="v56-panel"><div class="v56-section-label">TRAZABILIDAD</div><h3>Historial de capital y abonos</h3><div class="v56-ledger"><div class="v56-ledger-row"><span><strong>Capital registrado</strong><small>${dateLabel(l.date)} · ${db.transactions.some(t=>t.type==='personal_issue'&&t.personalLoanId===l.id)?'Entrega contabilizada':'Incluido en saldo inicial, sin movimiento bancario'}</small></span><b>${moneyLocal(l.principal,l.currency)}</b>${db.transactions.filter(t=>t.type==='personal_issue'&&t.personalLoanId===l.id).map(t=>`<span class="v233-personal-tx-actions"><button type="button" class="v56-button" data-act="editTransaction" data-id="${clean(t.id)}">Editar entrega</button><button type="button" class="v56-button v233-danger" data-act="deleteTransaction" data-id="${clean(t.id)}">Eliminar entrega</button></span>`).join('')}</div>${history.length?history.map(t=>`<div class="v56-ledger-row"><span><strong>Abono al capital</strong><small>${dateLabel(t.date)} · ${clean(t.note||'Sin referencia')}</small>${num(t.interest)?`<small>Interés efectivamente cobrado/pagado: ${moneyLocal(t.interest,l.currency)}</small>`:''}</span><b class="v56-positive">− ${moneyLocal(t.principal,l.currency)}</b><span class="v233-personal-tx-actions"><button type="button" class="v56-button" data-act="editTransaction" data-id="${clean(t.id)}">Editar</button><button type="button" class="v56-button v233-danger" data-act="deleteTransaction" data-id="${clean(t.id)}">Eliminar</button></span></div>`).join(''):'<p class="v56-muted">Todavía no hay abonos registrados.</p>'}<div class="v56-ledger-total"><span>Pendiente por cobrar / pagar</span><strong>${moneyLocal(bal,l.currency)}</strong></div></div></section></div>`;}
+ function loanDetail(id){const l=personalLoan(id);if(!l)return '';const c=contactFor(l),bal=personalBalance(l),history=settled(l),paid=v233PersonalPaid(l),forgiven=v233PersonalForgiven(l);return `<div class="v56-profile"><div class="v56-profile-back">${tabButton('detailBack','← Volver a la persona',c?.id||'')}</div><section class="v56-panel v56-detail"><div class="v56-panel-heading"><div><div class="v56-section-label">DETALLE DEL ACUERDO · ${clean(l.currency)}</div><h2>${clean(loanCategory(l))}</h2><p>${clean(c?fullName(c):l.person)} · ${l.direction==='lent'?'Dinero que deben devolverte':'Dinero que debes devolver'}</p></div><div class="v56-profile-actions">${tabButton('editLoan','Editar acuerdo',l.id)}${tabButton('deleteLoan','Eliminar acuerdo',l.id,'danger')}${unpaid(l)?tabButton('payment','+ Registrar abono',l.id,'primary'):''}${l.direction==='lent'&&unpaid(l)?`<button type="button" class="v56-button" data-act="forgivePersonal" data-id="${clean(l.id)}">Perdonar deuda</button>`:''}</div></div><div class="v56-detail-amount"><span>SALDO CAPITAL PENDIENTE</span><strong>${moneyLocal(bal,l.currency)}</strong></div><div class="v56-detail-grid"><div><span>Capital inicial</span><b>${moneyLocal(l.principal,l.currency)}</b></div><div><span>Capital ya abonado</span><b>${moneyLocal(Math.max(0,paid),l.currency)}</b></div>${forgiven>.005?`<div><span>Capital perdonado</span><b>${moneyLocal(forgiven,l.currency)}</b></div>`:''}<div><span>Fecha de entrega</span><b>${dateLabel(l.date)}</b></div><div><span>Vencimiento</span><b>${dateLabel(l.dueDate)}</b></div><div><span>Tipo de acuerdo</span><b>${clean(agreementLabel(l))}</b></div><div><span>Estado</span><b>${forgiven>.005&&bal<.005?'Perdonado':bal<.005?'Liquidado':l.dueDate&&l.dueDate<today()?'Vencido':'Pendiente'}</b></div></div><div class="v56-observation"><span>CONCEPTO / CLASIFICACIÓN</span><h3>${clean(loanCategory(l))}</h3><span>OBSERVACIÓN DESCRIPTIVA</span><p>${clean(l.note||'Sin descripción adicional.')}</p></div><div class="v56-contract"><div><span class="v56-section-label">ACUERDO ENTRE LAS PARTES</span><h3>Condiciones que registraste</h3><p>${clean(l.agreementTerms||'Sin condiciones adicionales registradas.')}</p><small>${clean(agreementLabel(l))}. Este es un registro personal, no sustituye un contrato firmado ni acredita aceptación por la otra persona.</small></div>${tabButton('copyAgreement','Copiar resumen',l.id)}</div></section><section class="v56-panel"><div class="v56-section-label">TRAZABILIDAD</div><h3>Historial de capital y abonos</h3><div class="v56-ledger"><div class="v56-ledger-row"><span><strong>Capital registrado</strong><small>${dateLabel(l.date)} · ${db.transactions.some(t=>t.type==='personal_issue'&&t.personalLoanId===l.id)?'Entrega contabilizada':'Incluido en saldo inicial, sin movimiento bancario'}</small></span><b>${moneyLocal(l.principal,l.currency)}</b>${db.transactions.filter(t=>t.type==='personal_issue'&&t.personalLoanId===l.id).map(t=>`<span class="v233-personal-tx-actions"><button type="button" class="v56-button" data-act="editTransaction" data-id="${clean(t.id)}">Editar entrega</button><button type="button" class="v56-button v233-danger" data-act="deleteTransaction" data-id="${clean(t.id)}">Eliminar entrega</button></span>`).join('')}</div>${history.length?history.map(t=>`<div class="v56-ledger-row"><span><strong>Abono al capital</strong><small>${dateLabel(t.date)} · ${clean(t.note||'Sin referencia')}</small>${num(t.interest)?`<small>Interés efectivamente cobrado/pagado: ${moneyLocal(t.interest,l.currency)}</small>`:''}</span><b class="v56-positive">− ${moneyLocal(t.principal,l.currency)}</b><span class="v233-personal-tx-actions"><button type="button" class="v56-button" data-act="editTransaction" data-id="${clean(t.id)}">Editar</button><button type="button" class="v56-button v233-danger" data-act="deleteTransaction" data-id="${clean(t.id)}">Eliminar</button></span></div>`).join(''):'<p class="v56-muted">Todavía no hay abonos registrados.</p>'}${forgiven>.005?`<div class="v56-ledger-row v253-forgiven-entry"><span><strong>Capital perdonado · no es un pago</strong><small>${dateLabel(l.forgiveness?.date)} · ${clean(l.forgiveness?.note||'Condonación voluntaria sin movimiento bancario')}</small></span><b>− ${moneyLocal(forgiven,l.currency)}</b></div>`:''}<div class="v56-ledger-total"><span>Pendiente por cobrar / pagar</span><strong>${moneyLocal(bal,l.currency)}</strong></div></div></section></div>`;}
  function v176PersonIndicators(records){
   const due=records.filter(l=>personalBalance(l)>.005&&l.dueDate&&l.dueDate<today()).reduce((sum,l)=>sum+fx(personalBalance(l),l.currency),0);
   const outstanding=records.reduce((sum,l)=>sum+fx(personalBalance(l),l.currency),0);
@@ -24076,7 +24076,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  return `<section class="v189-person-ledger" aria-label="Tabla de préstamos entre personas">
   <header class="v189-table-head"><div><span class="v56-section-label">RELACIONES PERSONALES</span><h3>Préstamos y devoluciones</h3><p>${filtered.length} acuerdo${filtered.length===1?'':'s'} registrado${filtered.length===1?'':'s'}</p></div><div class="v189-table-actions">${tabButton('contactForm','+ Contacto')}${tabButton('loanNew','+ Nueva relación','','primary')}</div></header>
   <div class="v189-table-scroll"><table class="v189-table"><thead><tr><th>Persona</th><th>Relación</th><th>Concepto</th><th>Saldo pendiente</th><th>Vencimiento</th><th><span class="sr-only">Acciones</span></th></tr></thead>
-   <tbody>${filtered.length?filtered.slice().sort((a,b)=>String(a.dueDate||'9999-12-31').localeCompare(String(b.dueDate||'9999-12-31'))).map(l=>{const balance=personalBalance(l),contact=contactFor(l),person=contact?fullName(contact):l.person||'Sin nombre',status=balance<=.005?'Liquidado':l.dueDate&&l.dueDate<today()?'Vencido':l.direction==='lent'?'Me deben':'Yo debo';return `<tr><td data-col="Persona"><strong class="v189-name">${clean(person)}</strong></td><td data-col="Relación"><span class="v189-state ${balance<=.005?'settled':l.direction==='lent'?'receivable':'payable'}">${clean(status)}</span></td><td data-col="Concepto"><span class="v189-concept" title="${clean(loanCategory(l))}">${clean(loanCategory(l))}</span></td><td data-col="Pendiente" class="v189-money">${moneyLocal(balance,l.currency)}</td><td data-col="Vencimiento">${dateLabel(l.dueDate)}</td><td class="v189-row-actions">${tabButton('loanDetail','Ver',l.id)}${tabButton('editLoan','Editar',l.id)}${tabButton('deleteLoan','Eliminar',l.id,'danger')}${unpaid(l)?tabButton('payment','Abonar',l.id,'primary'):''}</td></tr>`;}).join(''):'<tr><td colspan="6" class="v189-empty">Todavía no tienes préstamos entre personas. Registra tu primera relación.</td></tr>'}</tbody>
+   <tbody>${filtered.length?filtered.slice().sort((a,b)=>String(a.dueDate||'9999-12-31').localeCompare(String(b.dueDate||'9999-12-31'))).map(l=>{const balance=personalBalance(l),contact=contactFor(l),person=contact?fullName(contact):l.person||'Sin nombre',status=l.forgiveness?.amount&&balance<=.005?'Perdonado':balance<=.005?'Liquidado':l.dueDate&&l.dueDate<today()?'Vencido':l.direction==='lent'?'Me deben':'Yo debo';return `<tr><td data-col="Persona"><strong class="v189-name">${clean(person)}</strong></td><td data-col="Relación"><span class="v189-state ${balance<=.005?'settled':l.direction==='lent'?'receivable':'payable'}">${clean(status)}</span></td><td data-col="Concepto"><span class="v189-concept" title="${clean(loanCategory(l))}">${clean(loanCategory(l))}</span></td><td data-col="Pendiente" class="v189-money">${moneyLocal(balance,l.currency)}</td><td data-col="Vencimiento">${dateLabel(l.dueDate)}</td><td class="v189-row-actions">${tabButton('loanDetail','Ver',l.id)}${tabButton('editLoan','Editar',l.id)}${tabButton('deleteLoan','Eliminar',l.id,'danger')}${unpaid(l)?tabButton('payment','Abonar',l.id,'primary'):''}</td></tr>`;}).join(''):'<tr><td colspan="6" class="v189-empty">Todavía no tienes préstamos entre personas. Registra tu primera relación.</td></tr>'}</tbody>
   </table></div>
  </section>`;
  }
@@ -24084,7 +24084,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  V26_META.personal.title='Entre personas';V26_META.personal.hint='Contactos, acuerdos, préstamos y abonos con un expediente para cada persona.';
  V26_META.personal.metric='Contactos';V26_META.personal.count=()=>contacts().length;
  V26_META.personal.btn='Nuevo préstamo';
- V26_META.personal.tabs=[['overview','Relaciones','wallet']];
+ V26_META.personal.tabs=[['overview','Relaciones','wallet'],['receivable','Me deben','up'],['payable','Debo','down'],['contacts','Contactos','users'],['activity','Actividad','cycle']];
  INNER_PAGES.personal.tabs=V26_META.personal.tabs.map(x=>x.slice(0,2));
  personal=function(){return dashboard('overview')};
  pages.personal=()=>innerWrap('personal',()=>dashboard('overview'));
@@ -28059,6 +28059,181 @@ render=function(){v245PreviousRender();v245PolishOnRender();};
   if(event.target?.matches('.v248-filter-details'))ui.v248FiltersOpen=event.target.open;
  },true);
  // render() executes after the application bootstraps; do not force a new render here.
+})();
+
+
+/* V252 · Compromisos: arquitectura visual coherente con Cuentas y efectivo.
+   Traslada controles DOM existentes y conserva sus data-act y eventos. */
+(function(){
+  'use strict';
+  function make(tag,cl,text){const e=document.createElement(tag);e.className=cl||'';if(text!==undefined)e.textContent=text;return e;}
+  function header(kicker,title,description){
+    const h=make('header','v252-module-heading');
+    const intro=make('div','v252-module-heading-copy');
+    intro.append(make('span','v252-kicker',kicker),make('h2','',title),make('p','',description));
+    h.append(intro);return h;
+  }
+  function heroStart(kicker,title){
+    const el=make('section','v252-hero');
+    el.setAttribute('aria-label',title);
+    el.append(make('span','v252-hero-kicker',kicker));
+    return el;
+  }
+  function polishPayments(){
+    const root=document.getElementById('v145-payment-center');
+    if(!root||root.dataset.v252Ready)return;
+    const old=root.querySelector(':scope > .v145-pay-hero');
+    const originalTiles=root.querySelector(':scope > .v145-payment-kpis');
+    const main=old?.querySelector('.v245-pay-amount')||originalTiles?.children[0];
+    let metrics=old?.querySelector('.v245-pay-summary');
+    if(!metrics&&originalTiles?.children.length>=4){
+      metrics=make('div','v245-pay-summary');
+      metrics.append(originalTiles.children[1],originalTiles.children[1]);
+    }
+    if(!old||!main||!metrics)return;
+    main.classList.add('v245-pay-amount');
+    if(originalTiles?.children.length){
+      const extra=make('details','v245-pay-extra');
+      extra.append(make('summary','','Ver ingresos considerados y demás indicadores'));
+      extra.append(originalTiles);root.insertBefore(extra,root.querySelector('.v145-pay-quick'));
+    }
+    const newHead=header('TUS COMPROMISOS','Centro de pagos','Vencimientos, cuotas y obligaciones en un solo lugar.');
+    const period=old.querySelector('.v145-period-control');
+    if(period){const wrap=make('div','v252-month-picker');wrap.append(period);newHead.append(wrap);}
+    const hero=heroStart('COMPROMISOS DEL MES','Compromisos del mes');
+    const title=make('h3','v252-hero-title','Tu agenda, bajo control.');
+    hero.append(title,main,metrics);
+    const cap=old.querySelector('.v145-debt-indicator');
+    if(cap){const badge=make('div','v252-capacity');badge.append(cap);hero.append(badge);}
+    old.replaceWith(newHead,hero);
+    root.classList.add('v252-center');
+    const actions=root.querySelector('.v145-pay-quick');
+    if(actions){actions.classList.add('v252-quick');const label=actions.querySelector('.v145-pay-quick-title');if(label){label.innerHTML='<span class="v252-kicker">ACCIONES</span><strong>Gestiona un pago</strong>';}}
+    const heading=root.querySelector('.v145-payment-section-head');
+    if(heading){heading.classList.add('v252-group-heading');const p=heading.querySelector('p');if(p)p.textContent='Selecciona una categoría para filtrar los vencimientos.';}
+    root.querySelector('.v145-pay-cardgrid')?.classList.add('v252-group-grid');
+    root.querySelector('.v145-pay-lower')?.classList.add('v252-schedule');
+    root.dataset.v252Ready='1';
+  }
+  function recurring(){
+    const root=document.querySelector('#page .v26-internal[data-module="recurring"]');
+    if(!root||root.dataset.v252Ready)return;
+    const body=root.querySelector(':scope > .v26-body');
+    if(!body)return;
+    const oldHead=root.querySelector(':scope > .v26-head');
+    const fresh=header('PAGOS RECURRENTES','Suscripciones','Servicios, próximos cargos y pagos registrados.');
+    const add=oldHead?.querySelector('button[data-act="addRecurring"]');
+    if(add){add.classList.add('v252-add');fresh.append(add);}
+    if(oldHead)oldHead.replaceWith(fresh);else root.insertBefore(fresh,root.firstChild);
+    const tabs=root.querySelector(':scope > .v26-nav');if(tabs)tabs.classList.add('v252-tabs');
+    // Las pestañas internas conservan su renderización y filtros propios.
+    const oldHero=body.querySelector(':scope > .v245-recurring-hero');
+    const duplicate=body.querySelector(':scope > .v58-exec');
+    if(oldHero){
+      const amount=oldHero.querySelector('.v245-hero-total');
+      const sides=oldHero.querySelector('.v245-hero-sides');
+      const hero=heroStart('COSTO RECURRENTE · EQUIVALENTE MENSUAL','Costo recurrente mensual');
+      hero.append(make('h3','v252-hero-title','Lo que mantienes activo.'));
+      if(amount){amount.classList.add('v252-hero-value');hero.append(amount);}
+      if(sides){sides.classList.add('v252-hero-sides');hero.append(sides);}
+      hero.append(make('p','v252-hero-note','Importe mensual equivalente; no representa deuda acumulada.'));
+      oldHero.replaceWith(hero);
+    } else if(duplicate){
+      // Escritorio: reutilizar el importe ya calculado en el KPI anterior.
+      const feature=duplicate.querySelector('.v58-feature');
+      const hero=heroStart('COSTO RECURRENTE · EQUIVALENTE MENSUAL','Costo recurrente mensual');
+      hero.append(make('h3','v252-hero-title','Lo que mantienes activo.'));
+      if(feature){feature.classList.add('v252-recurring-value');hero.append(feature);}
+      const active=(db.recurring||[]).filter(x=>x.active!==false);
+      const future=active.filter(x=>x.nextDue).slice().sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
+      const sides=make('div','v252-hero-sides');
+      const stat=(label,val)=>{const span=make('span','');span.append(make('small','',label),make('b','',String(val)));return span;};
+      sides.append(stat('SERVICIOS ACTIVOS',active.length),stat('PRÓXIMO CARGO',future?prettyDate(future.nextDue):'Sin fecha'));
+      hero.append(sides,make('p','v252-hero-note','Importe mensual equivalente; no representa deuda acumulada.'));
+      duplicate.before(hero);
+    }
+    if(duplicate){
+      const fold=make('details','v252-additional-metrics');
+      fold.append(make('summary','', 'Ver análisis y desglose del costo recurrente'));
+      duplicate.replaceWith(fold);fold.append(duplicate);
+    }
+    let extra=body.querySelector(':scope > .v245-recurring-extra');
+    if(!extra){
+      // Escritorio también tiene lectura complementaria; plegar las cifras
+      // repetidas sin perder acceso a botones ni a la agenda heredada.
+      const redundant=[...body.children].filter(x=>x.matches('.section-title,.grid.kpis,.v149-rec-unified'));
+      if(redundant.length){
+        extra=make('details','v245-recurring-extra');
+        extra.append(make('summary','','Más indicadores y agenda de pagos'));
+        redundant.forEach(x=>extra.append(x));
+        body.insertBefore(extra,body.querySelector('.v252-hero')?.nextSibling||body.firstChild);
+      }
+    }
+    extra?.classList.add('v252-additional-metrics');
+    const panel=body.querySelector('.v46-subs-panel');
+    if(panel){panel.classList.add('v252-product-panel');const title=panel.querySelector('.v46-subs-head h3');if(title)title.textContent='Tus servicios';const info=panel.querySelector('.v46-subs-head p');if(info)info.textContent='Importe, frecuencia y próximo cargo por servicio.';}
+    body.querySelector('.v46-subscriptions-grid')?.classList.add('v252-subscriptions');
+    root.classList.add('v252-recurring');root.dataset.v252Ready='1';
+  }
+  function persons(){
+    const root=document.querySelector('#page .v26-internal[data-module="personal"]');
+    if(!root||root.dataset.v252Ready)return;
+    const body=root.querySelector(':scope > .v26-body');if(!body)return;
+    const oldHead=root.querySelector(':scope > .v26-head');
+    const fresh=header('RELACIONES FINANCIERAS','Entre personas','Tus acuerdos, saldos pendientes y abonos.');
+    const add=oldHead?.querySelector('button[data-act="addPersonal"]');
+    if(add){add.classList.add('v252-add');add.innerHTML=icon('plus')+' Nueva relación';fresh.append(add);}
+    if(oldHead)oldHead.replaceWith(fresh);else root.insertBefore(fresh,root.firstChild);
+    root.querySelector(':scope > .v26-nav')?.classList.add('v252-tabs');
+    const oldHero=body.querySelector(':scope > .v189-person-hero');
+    if(oldHero){
+      const metric=oldHero.querySelector('.v58-feature');
+      const debt=oldHero.querySelector('.v189-payable-inline');
+      const hero=heroStart('DINERO ENTRE PERSONAS · RD$ EQUIVALENTES','Saldo entre personas');
+      hero.append(make('h3','v252-hero-title','Cada acuerdo, en su lugar.'));
+      if(metric){metric.classList.add('v252-person-receivable');hero.append(metric);}
+      // El balance neto no sustituye los importes separados: reutiliza los saldos de cada acuerdo.
+      const entries=(db.personalLoans||[]).filter(x=>ui.showHidden||!x.archived);
+      const receivable=entries.filter(x=>x.direction==='lent').reduce((sum,x)=>sum+fx(personalBalance(x),x.currency),0);
+      const payable=entries.filter(x=>x.direction==='borrowed').reduce((sum,x)=>sum+fx(personalBalance(x),x.currency),0);
+      const net=receivable-payable;
+      const featureLabel=metric?.querySelector('.v58-main-label');
+      const featureAmount=metric?.querySelector('.v58-main-value');
+      if(featureLabel)featureLabel.textContent='BALANCE NETO · RD$ EQUIVALENTES';
+      if(featureAmount)featureAmount.textContent=money(net,'DOP',2);
+      const month=String(ui.month||today().slice(0,7)).slice(0,7);
+      const monthPayments=(db.transactions||[]).filter(t=>t.type==='personal_settlement'&&String(t.date||'').startsWith(month));
+      const lookup=new Map(entries.map(x=>[String(x.id),x]));
+      const monthSum=direction=>monthPayments.reduce((sum,t)=>lookup.get(String(t.personalLoanId))?.direction===direction?sum+fx(Math.max(0,num(t.principal)),t.currency||lookup.get(String(t.personalLoanId)).currency):sum,0);
+      const lower=make('div','v252-person-metrics v253-person-metrics');
+      [['ME DEBEN',money(receivable)],['DEBO',money(payable)],['COBRADO · MES',money(monthSum('lent'))],['PAGADO · MES',money(monthSum('borrowed'))]].forEach(([label,value])=>{
+        const item=make('div','v253-person-metric');
+        item.append(make('span','',label),make('strong','',value));lower.append(item);
+      });
+      hero.append(lower);
+      const note=make('p','v253-person-note',`${entries.length} acuerdos · Importes en RD$ equivalentes. Abonos registrados del período ${month}; las deudas perdonadas no cuentan como cobros.`);
+      hero.append(note);
+      oldHero.replaceWith(hero);
+    }
+    const ledger=body.querySelector('.v189-person-ledger');
+    if(ledger){
+      ledger.classList.add('v252-person-ledger');
+      const h=ledger.querySelector('.v189-table-head h3');if(h)h.textContent='Tus relaciones';
+      // Nueva relación también está disponible en el encabezado; no duplicarla.
+      if(add){ledger.querySelector('.v189-table-head [data-act="addPersonal"]')?.remove();}
+    }
+    root.classList.add('v252-personal');root.dataset.v252Ready='1';
+  }
+  function decorate(){
+    if(!document.getElementById('app'))return;
+    if(ui.page==='payments')polishPayments();
+    if(ui.page==='recurring')recurring();
+    if(ui.page==='personal')persons();
+  }
+  const prev=render;
+  render=function(...args){const result=prev.apply(this,args);decorate();return result;};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',decorate,{once:true});
+  else decorate();
 })();
 
 
@@ -34757,5 +34932,251 @@ body.theme-black .v250-dock-head output,body.theme-dark .v250-dock-head output{b
 @media(prefers-reduced-motion:reduce){.v249-register-fab{transition:none!important}}
 </style>
 
+<style id="v251-banks-equal">
+/* V251 · Bancos web: misma escala y proporción que el KPI de Cuentas y efectivo.
+   Reutiliza las mismas clases base del hero, sin tocar saldos ni contenido. */
+@media (min-width:1121px) {
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) > .bank-hero.v46-bank-hero {
+    grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)!important;
+    gap:clamp(16px,3vw,42px)!important;
+    padding:28px 32px!important;
+    align-items:stretch!important;
+    min-width:0!important;
+    border-radius:26px!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-financials {
+    align-self:stretch!important;
+    justify-content:center!important;
+    padding:12px 0 5px 27px!important;
+    gap:17px!important;
+  }
+}
+@media (min-width:1121px) and (max-width:1640px) {
+ .world-banks #page .v61-institutions:has(.v204-desktop-layout) > .bank-hero.v46-bank-hero {min-height:400px!important;}
+}
+@media (min-width:791px) and (max-width:1120px) {
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) > .bank-hero.v46-bank-hero {
+    grid-template-columns:minmax(0,1fr)!important;
+    padding:32px 34px!important;
+    gap:28px!important;
+    min-height:0!important;
+    align-items:stretch!important;
+    border-radius:26px!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-bank-intro {min-height:258px!important;}
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-financials {
+    padding:16px 0 0!important;
+    border-left:0!important;
+    border-top:1px solid rgba(180,204,228,.24)!important;
+    gap:17px!important;
+    justify-content:center!important;
+  }
+}
+@media (min-width:791px) {
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-bank-intro,
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-financials {min-width:0!important;}
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-bank-intro h2 {
+    font-size:clamp(28px,3vw,38px)!important;
+    letter-spacing:-1.35px!important;
+    line-height:1.13!important;
+    margin:12px 0!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-bank-intro>p {
+    font-size:12.8px!important;
+    line-height:1.7!important;
+    margin:14px 0 18px!important;
+    max-width:540px!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-bank-intro .hero-actions {
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:9px!important;
+    margin-top:0!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-main {gap:7px!important;}
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-main>strong {
+    font-size:clamp(31px,4vw,55px)!important;
+    letter-spacing:-2.2px!important;
+    line-height:1.05!important;
+    overflow-wrap:anywhere!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-main>small {font-size:11px!important;}
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary {
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:12px!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary>div {
+    min-width:0!important;
+    min-height:74px!important;
+    padding:12px 12px 10px!important;
+    align-content:center!important;
+    gap:7px!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary span {
+    font-size:9px!important;
+    letter-spacing:1px!important;
+    line-height:1.3!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-secondary strong {
+    font-size:clamp(14px,1.55vw,20px)!important;
+    letter-spacing:-.4px!important;
+    overflow-wrap:anywhere!important;
+    font-variant-numeric:tabular-nums;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-global-note {
+    margin-top:5px!important;
+    font-size:9px!important;
+    line-height:1.45!important;
+  }
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v46-hero-foot {
+    margin-top:14px!important;
+  }
+  /* Conservar el selector de perfiles sin invadir el valor de deuda del KPI derecho. */
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v199-profile-inline {z-index:3!important;}
+}
+@media (min-width:1121px) {
+  .world-banks #page .v61-institutions:has(.v204-desktop-layout) .v199-profile-inline {
+    top:12px!important;left:32px!important;right:auto!important;max-width:calc(50% - 46px)!important;
+  }
+}
+
+</style>
+<style id="v252-compromisos-style">
+/* V252 · Sistema de Compromisos inspirado en Cuentas y efectivo */
+#page .v252-module-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:4px 2px 15px;min-width:0;flex-wrap:wrap}
+#page .v252-module-heading-copy{flex:1 1 210px;min-width:0}
+#page .v252-kicker{display:block;color:#5479aa;font-weight:800;font-size:10px;letter-spacing:.16em;line-height:1.45;text-transform:uppercase}
+#page .v252-module-heading h2{margin:6px 0;font-size:clamp(26px,3.1vw,37px);font-weight:850;letter-spacing:-.06em;line-height:1.07;color:var(--text,#1f3454)}
+#page .v252-module-heading p{margin:6px 0 0;line-height:1.5;color:var(--muted,#7585a0);font-size:12.5px}
+#page .v252-add{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 15px!important;min-height:45px!important;border-radius:16px!important;white-space:nowrap!important;box-shadow:0 7px 18px rgba(39,80,146,.12)!important}
+#page .v252-month-picker{display:flex;align-items:center;margin:0;min-width:160px}
+#page .v252-month-picker .v99-period-picker{width:100%;margin:0!important}
+#page .v252-hero{position:relative;overflow:hidden;border-radius:27px;padding:clamp(20px,2.5vw,30px);margin:0 0 16px;color:#fff;background:linear-gradient(120deg,#1e3a65 0%,#294e84 55%,#4477b2 100%);border:1px solid rgba(255,255,255,.13);box-shadow:0 15px 28px rgba(36,66,116,.14)}
+#page .v252-hero:before{content:"";position:absolute;width:280px;height:280px;border:1px solid rgba(255,255,255,.10);border-radius:50%;right:-116px;top:-122px;pointer-events:none;box-shadow:0 0 0 65px rgba(255,255,255,.025)}
+#page .v252-hero-kicker{display:block;font-size:10px;font-weight:800;line-height:1.35;letter-spacing:.16em;color:#d1e2fb}
+#page .v252-hero-title{position:relative;font-size:clamp(22px,2.6vw,31px);letter-spacing:-.045em;line-height:1.16;font-weight:850;margin:8px 0 18px;color:#fff}
+#page .v252-hero .v145-payment-kpi,#page .v252-hero .v58-feature{background:transparent!important;color:#fff!important;border:0!important;box-shadow:none!important;border-radius:0!important;min-width:0!important}
+#page .v252-hero .v245-pay-amount{position:relative;border:0!important;box-shadow:none!important;padding:0 0 17px!important;margin:0!important;background:transparent!important}
+#page .v252-hero .v245-pay-amount small,#page .v252-hero .v58-main-label{color:#d2e2f5!important;display:block;font-size:10px!important;letter-spacing:.14em!important;font-weight:820!important;line-height:1.4}
+#page .v252-hero .v245-pay-amount strong,#page .v252-hero .v252-hero-value,#page .v252-hero .v58-main-value{display:block;color:#fff!important;font-weight:850!important;font-size:clamp(35px,5.5vw,57px)!important;line-height:1.05!important;letter-spacing:-.07em!important;margin:9px 0 5px!important;max-width:100%;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;text-align:left}
+#page .v252-hero .v245-pay-amount span,#page .v252-hero .v58-feature>small{font-size:11px!important;line-height:1.5!important;color:#d3e0f3!important}
+#page .v252-hero .v245-pay-summary,#page .v252-hero .v252-hero-sides,#page .v252-person-metrics{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;border-top:1px solid rgba(255,255,255,.23);padding-top:15px;margin-top:4px;gap:12px;min-width:0}
+#page .v252-hero .v245-pay-summary>.v145-payment-kpi{padding:0!important;border:0!important;background:transparent!important;min-width:0!important}
+#page .v252-hero .v245-pay-summary>.v145-payment-kpi+div{padding-left:14px!important;border-left:1px solid rgba(255,255,255,.2)!important}
+#page .v252-hero .v245-pay-summary small,#page .v252-hero .v252-hero-sides small,#page .v252-person-metrics span{display:block;font-size:10px!important;line-height:1.35!important;letter-spacing:.11em!important;text-transform:uppercase;color:#cddff4!important;font-weight:750!important}
+#page .v252-hero .v245-pay-summary strong,#page .v252-hero .v252-hero-sides b,#page .v252-person-metrics strong{display:block;margin:7px 0 0!important;font-size:clamp(17px,2.35vw,25px)!important;line-height:1.1!important;letter-spacing:-.035em!important;color:#fff!important;font-weight:820!important;overflow-wrap:anywhere}
+#page .v252-hero .v245-pay-summary span{display:block;font-size:10px!important;line-height:1.4!important;color:#c9d8ed!important;margin-top:4px}
+#page .v252-capacity{margin-top:15px}
+#page .v252-capacity .v145-debt-indicator{display:inline-flex;align-items:center;gap:7px;margin:0!important;padding:10px 12px!important;border-radius:14px!important;color:#fff!important;background:rgba(255,255,255,.11)!important;border:1px solid rgba(255,255,255,.18)!important;box-shadow:none!important;max-width:100%;white-space:normal}
+#page .v252-hero-note{font-size:11px;line-height:1.5;color:#d2e0f3;margin:13px 0 0}
+#page .v252-person-receivable{border-bottom:0!important;padding:0 0 15px!important;margin:0!important}
+#page .v252-person-payable{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-start!important;text-align:left!important;gap:0!important;padding:0 10px 0 0!important;min-width:0!important;background:transparent!important;border:0!important;box-shadow:none!important;margin:0!important;color:#fff!important}
+#page .v252-person-payable strong{color:#fff!important}
+#page .v252-person-count{border-left:1px solid rgba(255,255,255,.20);padding:0 0 0 14px;min-width:0}
+#page .v252-quick{padding:18px!important;border:1px solid rgba(209,225,246,.78)!important;border-radius:23px!important;background:rgba(255,255,255,.64)!important;box-shadow:0 8px 22px rgba(35,66,108,.06)!important;margin:0 0 22px!important}
+#page .v252-quick .v145-pay-quick-title{margin:0 0 13px!important}
+#page .v252-quick .v145-pay-quick-title strong{font-size:17px;letter-spacing:-.03em}
+#page .v252-quick .v145-quick-buttons{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important}
+#page .v252-quick .v145-quick-buttons button{min-width:0!important;min-height:48px!important;border-radius:15px!important;padding:10px 8px!important;white-space:normal!important;line-height:1.3!important;text-align:center!important}
+#page .v252-group-heading{margin:16px 0 12px!important;gap:10px}
+#page .v252-group-heading h3{font-size:clamp(19px,2vw,25px)!important;letter-spacing:-.04em}
+#page .v252-group-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin:0 0 21px!important}
+#page .v252-group-grid .v196-pay-category{position:relative;display:flex!important;flex-direction:column!important;align-items:flex-start!important;text-align:left!important;gap:7px!important;padding:17px!important;min-width:0!important;width:100%!important;border-radius:21px!important;border:1px solid rgba(212,227,247,.95)!important;background:rgba(248,251,255,.78)!important;box-shadow:0 8px 20px rgba(35,66,108,.055)!important;color:#243a59!important;min-height:175px!important}
+#page .v252-group-grid .v196-pay-category.is-selected{border-color:#6796dd!important;box-shadow:0 0 0 2px #5b85c723!important}
+#page .v252-group-grid .v196-pay-category-icon{border-radius:13px!important;width:42px!important;height:42px!important;display:grid!important;place-items:center!important;background:#e5edfb!important;color:#476fb9!important;margin:0!important}
+#page .v252-group-grid .v196-pay-category-name{font-size:13px!important;line-height:1.3!important;color:#304565!important;font-weight:800!important}
+#page .v252-group-grid .v196-pay-category strong{font-size:clamp(19px,2.4vw,26px)!important;letter-spacing:-.04em!important;color:#20395a!important;max-width:100%;overflow-wrap:anywhere}
+#page .v252-group-grid .v196-pay-category small{line-height:1.4!important;font-size:10px!important;color:#7185a2!important}
+#page .v252-group-grid .v196-pay-category-foot{display:flex!important;justify-content:space-between!important;width:100%;align-items:center;gap:5px;font-size:10px!important;color:#4a73b7!important;margin-top:auto!important}
+#page .v252-schedule .v145-pay-agenda{background:rgba(255,255,255,.70);padding:clamp(16px,2vw,22px)!important;border-radius:24px!important;border:1px solid #dce7f6!important;box-shadow:0 10px 24px rgba(37,70,121,.065)!important}
+#page .v252-schedule .v145-agenda-row{border-radius:16px!important;min-width:0}
+#page .v252-tabs{display:flex!important;gap:8px!important;padding:2px 0 10px!important;margin:0 0 13px!important;overflow-x:auto!important;scrollbar-width:none!important}
+#page .v252-tabs::-webkit-scrollbar{display:none}
+#page .v252-tabs button{flex:0 0 auto!important;min-height:43px!important;border-radius:14px!important;padding:9px 12px!important;white-space:nowrap!important;border:1px solid rgba(210,226,246,.82)!important;background:rgba(255,255,255,.67)!important;color:#597293!important;font-size:12px!important;font-weight:750!important}
+#page .v252-tabs button[aria-selected="true"]{background:#fff!important;color:#3669bd!important;border-color:#c5d9f8!important;box-shadow:0 5px 15px #3869b017!important}
+#page .v252-additional-metrics{border-radius:19px!important;border:1px solid #d7e5f7!important;background:rgba(255,255,255,.68)!important;padding:0 15px!important;margin:12px 0 16px!important}
+#page .v252-additional-metrics>summary{font-size:12px;font-weight:780;color:#466aa6;padding:15px 0;cursor:pointer;list-style:none}
+#page .v252-additional-metrics>summary::-webkit-details-marker{display:none}
+#page .v252-product-panel{background:rgba(255,255,255,.7)!important;border:1px solid #d7e4f5!important;border-radius:24px!important;padding:clamp(15px,2vw,24px)!important;box-shadow:0 8px 24px rgba(35,66,108,.065)!important}
+#page .v252-product-panel .v46-subs-head{margin-bottom:15px!important}
+#page .v252-product-panel .v46-subs-head h3{font-size:clamp(18px,2vw,23px)!important;letter-spacing:-.04em}
+#page .v252-subscriptions{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))!important;gap:12px!important}
+#page .v252-subscriptions .v46-subscription-card{display:flex!important;flex-direction:column!important;padding:17px!important;border-radius:21px!important;background:rgba(234,242,254,.50)!important;border:1px solid #dbe7f7!important;box-shadow:none!important}
+#page .v252-subscriptions .v46-sub-card-cost{font-size:clamp(21px,2.3vw,28px)!important;letter-spacing:-.05em!important}
+#page .v252-subscriptions .v46-sub-card-actions{margin-top:auto;padding-top:13px;gap:9px}
+#page .v252-subscriptions .v46-sub-card-actions button{min-height:38px;border-radius:12px!important;flex:1}
+#page .v252-person-ledger{border:1px solid #d9e6f7!important;background:rgba(255,255,255,.72)!important;border-radius:24px!important;padding:clamp(16px,2vw,24px)!important;box-shadow:0 8px 26px rgba(35,66,108,.06)!important}
+#page .v252-person-ledger .v189-table-head h3{font-size:clamp(19px,2vw,24px)!important;letter-spacing:-.04em}
+#page .v252-person-ledger .v189-table{border-collapse:separate;border-spacing:0 9px}
+#page .v252-person-ledger .v189-table tbody tr{background:rgba(235,243,253,.55);border-radius:17px}
+#page .v252-person-ledger .v189-table td{border-color:#dde7f5}
+@media(max-width:790px){
+ #page .v252-module-heading{align-items:flex-start;padding:3px 2px 15px;gap:12px}
+ #page .v252-module-heading-copy{flex:1 1 185px}
+ #page .v252-module-heading h2{font-size:clamp(27px,7vw,34px)!important}
+ #page .v252-module-heading p{font-size:11.5px!important;max-width:235px}
+ #page .v252-add{font-size:11px!important;padding:10px 12px!important;min-height:43px!important}
+ #page .v252-hero{padding:21px 19px!important;border-radius:26px!important}
+ #page .v252-hero-title{font-size:24px!important}
+ #page .v252-hero .v245-pay-amount strong,#page .v252-hero .v252-hero-value,#page .v252-hero .v58-main-value{font-size:clamp(33px,9.5vw,48px)!important}
+ #page .v252-person-metrics{padding-top:15px!important}
+ #page .v252-group-grid{gap:10px!important}
+ #page .v252-group-grid .v196-pay-category{padding:13px!important;border-radius:18px!important;min-height:172px!important}
+ #page .v252-group-grid .v196-pay-category strong{font-size:clamp(17px,5vw,23px)!important}
+ #page .v252-schedule .v145-agenda-row{display:grid!important;grid-template-columns:36px 1fr!important;gap:8px!important}
+ #page .v252-schedule .v145-agenda-payment{grid-column:2!important;text-align:left!important}
+ #page .v252-recurring .v26-body,#page .v252-personal .v26-body{display:block!important;min-width:0}
+ #page .v252-person-ledger .v189-table tbody tr{background:rgba(235,243,253,.58)!important;border:1px solid #d6e5f8!important;border-radius:19px!important;box-shadow:none!important}
+ #page .v252-person-ledger .v189-table td:nth-child(4){color:#223f63!important;font-size:clamp(21px,6vw,29px)!important}
+ #page .v252-recurring .v26-head,#page .v252-personal .v26-head{display:none!important}
+ #page .v252-quick .v145-quick-buttons{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:340px){
+ #page .v252-module-heading h2{font-size:26px!important}
+ #page .v252-group-grid .v196-pay-category{padding:11px!important}
+ #page .v252-group-grid .v196-pay-category strong{font-size:16px!important}
+ #page .v252-person-metrics strong{font-size:16px!important}
+}
+/* Modo Black: superficies oscuras reales, sin duplicar los KPI. */
+body.theme-black #page :is(.v252-quick,.v252-product-panel,.v252-person-ledger,.v252-additional-metrics,.v252-schedule .v145-pay-agenda),body.theme-dark #page :is(.v252-quick,.v252-product-panel,.v252-person-ledger,.v252-additional-metrics,.v252-schedule .v145-pay-agenda){background:#191f2b!important;color:#eaf1ff!important;border-color:#394659!important;box-shadow:0 9px 24px rgba(0,0,0,.22)!important}
+body.theme-black #page :is(.v252-module-heading h2,.v252-group-heading h3,.v252-product-panel h3,.v252-person-ledger h3),body.theme-dark #page :is(.v252-module-heading h2,.v252-group-heading h3,.v252-product-panel h3,.v252-person-ledger h3){color:#f1f5ff!important}
+body.theme-black #page .v252-group-grid .v196-pay-category,body.theme-black #page .v252-subscriptions .v46-subscription-card,body.theme-dark #page .v252-group-grid .v196-pay-category,body.theme-dark #page .v252-subscriptions .v46-subscription-card{background:#222c3b!important;border-color:#384a62!important;box-shadow:none!important;color:#eef4ff!important}
+body.theme-black #page .v252-group-grid .v196-pay-category :is(strong,.v196-pay-category-name),body.theme-dark #page .v252-group-grid .v196-pay-category :is(strong,.v196-pay-category-name){color:#e6eeff!important}
+body.theme-black #page .v252-hero,body.theme-dark #page .v252-hero{background:linear-gradient(135deg,#1b2b46,#254267 70%,#2b5479)!important;border-color:#344d70!important}
+body.theme-black #page .v252-tabs button,body.theme-dark #page .v252-tabs button{background:#222b3a!important;color:#adbfda!important;border-color:#38495c!important}
+body.theme-black #page .v252-tabs button[aria-selected="true"],body.theme-dark #page .v252-tabs button[aria-selected="true"]{background:#304567!important;color:#fff!important;border-color:#5b77a1!important}
+@media(prefers-reduced-motion:reduce){#page .v252-group-grid .v196-pay-category{transition:none!important}}
+/* KPI heredado de escritorio reubicado; misma jerarquía en todas las pantallas. */
+#page .v252-recurring-value{padding:0 0 15px!important;margin:0!important;border:0!important;box-shadow:none!important;background:transparent!important}
+#page .v252-recurring-value .v58-main-label{color:#d6e5f8!important;font-size:11px!important;letter-spacing:.14em!important;font-weight:800!important}
+#page .v252-recurring-value .v58-main-value{color:#fff!important;font-size:clamp(34px,5vw,55px)!important;letter-spacing:-.07em!important;font-weight:850!important;line-height:1.1!important}
+#page .v252-recurring-value small{color:#d1e2f3!important;font-size:11px!important}
+
+</style>
+
+<style id="v253-personal-polish">
+@media (max-width:790px){
+ .world-personal .v252-personal .v252-tabs{overflow-x:auto!important;display:flex!important;gap:7px!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;}
+ .world-personal .v252-personal .v252-tabs button{flex:0 0 auto!important;min-width:max-content!important;padding:10px 13px!important;}
+ .world-personal .v252-personal .v253-person-metrics{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
+ .world-personal .v252-personal .v253-person-metric{border:1px solid rgba(255,255,255,.23);border-radius:15px;padding:11px 12px;min-width:0;background:rgba(255,255,255,.065);}
+ .world-personal .v252-personal .v253-person-metric span{display:block;font-size:9px;letter-spacing:.09em;font-weight:750;color:rgba(255,255,255,.82);}
+ .world-personal .v252-personal .v253-person-metric strong{display:block;margin-top:5px;font-size:clamp(16px,4.5vw,23px);line-height:1.13;letter-spacing:-.04em;overflow-wrap:anywhere;color:#fff;}
+ .world-personal .v252-personal .v253-person-note{font-size:10px;line-height:1.5;color:rgba(255,255,255,.78);margin:11px 0 0;}
+ .world-personal .v56-loan-numbers{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+ .world-personal .v56-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+ .world-personal .v56-loan .v56-loan-bottom{flex-wrap:wrap;gap:10px;}
+ .world-personal .v56-loan .v56-loan-bottom button{min-height:38px;}
+ .world-personal .v253-forgiven-entry{background:rgba(189,130,168,.09);border-radius:13px;padding:12px!important;}
+}
+@media(min-width:791px){
+ .world-personal .v253-person-metrics{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;}
+ .world-personal .v253-person-metric{border:1px solid rgba(255,255,255,.25);border-radius:15px;background:rgba(255,255,255,.07);padding:13px;min-width:0;}
+ .world-personal .v253-person-metric span{display:block;font-size:10px;letter-spacing:.09em;color:rgba(255,255,255,.8);font-weight:760;}
+ .world-personal .v253-person-metric strong{display:block;margin-top:7px;font-size:clamp(16px,1.35vw,25px);color:#fff;letter-spacing:-.05em;white-space:nowrap;}
+ .world-personal .v253-person-note{font-size:11px;color:rgba(255,255,255,.8);margin:12px 0 0;}
+}
+</style>
 </body>
 </html>
