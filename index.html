@@ -17619,7 +17619,7 @@ function originalCards(){
  let benefitD=db.cards.reduce((v,c)=>v+benefitBreakdown(c,'DOP').credited,0),benefitU=db.cards.reduce((v,c)=>v+benefitBreakdown(c,'USD').credited,0);
  let netD=db.cards.reduce((v,c)=>v+v144CardStats(c,false).net,0),netU=0;
  let fxLabel=db.settings.fxAcknowledged?'Tipo de cambio configurado':'Tipo de cambio referencial · verificar';
- return `<div class="section-title"><div><h2>Tu portafolio de tarjetas</h2><p>Deuda por moneda, costo anual y lo que cada tarjeta realmente devuelve.</p></div><div class="hstack">${visibilityControl()}<button type="button" class="btn ghost" data-v176-card-insight="1" title="Ver desglose por tarjeta y moneda">${icon('wallet')} Ver composición</button><button class="btn ghost" data-act="openBenefitComparison">${icon('chart')} Comparar beneficios</button></div></div><div class="card-fx-note">${icon('shield')} Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</div><div class="grid cards-grid section">${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length?db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>{let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let closest=[{...a,ccy:'DOP'},{...b,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>0).sort((x,y)=>x.nextDue.localeCompare(y.nextDue))[0],z=v144CardStats(c);return `<div class="bank-card v149-card-shell"><details class="v149-card-disclosure"><summary class="v149-card-toggle" aria-label="Abrir detalles de ${sanitize(c.name)}"><div class="card-visual v28-card-face tier-${cardTierKey(c)}"><div class="v28-card-top"><span class="v28-card-bank">${bankLogoInline(c.bankId)}<span>${sanitize(bankOf(c))}</span></span>${cardNetworkMark(c)}</div><div class="v28-card-middle"><strong>${sanitize(c.name)}</strong><span>${CARD_TIER_NAMES[cardTierKey(c)]}</span></div><div class="v28-card-bottom"><span class="chip" aria-hidden="true"></span><span class="last4">•••• ${sanitize(c.last4||'••••')}</span><small>CRÉDITO · RD$ / US$</small></div></div><span class="v149-card-cue">${icon('arrow')} <span>Explorar tarjeta</span></span></summary><div class="v149-card-reveal"><section class="v148-card-essentials" aria-label="Deuda y beneficios de ${sanitize(c.name)}">
+ return `<div class="v256-cards-list-head"><div><span class="v256-cards-kicker">TUS PRODUCTOS</span><h2>Mis tarjetas <small>${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length}</small></h2><p>Selecciona una tarjeta para consultar sus saldos, cortes, pagos y beneficios.</p></div></div><div class="grid cards-grid section v256-cards-grid">${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length?db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>{let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let closest=[{...a,ccy:'DOP'},{...b,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>0).sort((x,y)=>x.nextDue.localeCompare(y.nextDue))[0],z=v144CardStats(c);return `<div class="bank-card v149-card-shell"><details class="v149-card-disclosure"><summary class="v149-card-toggle" aria-label="Abrir detalles de ${sanitize(c.name)}"><div class="card-visual v28-card-face tier-${cardTierKey(c)}"><div class="v28-card-top"><span class="v28-card-bank">${bankLogoInline(c.bankId)}<span>${sanitize(bankOf(c))}</span></span>${cardNetworkMark(c)}</div><div class="v28-card-middle"><strong>${sanitize(c.name)}</strong><span>${CARD_TIER_NAMES[cardTierKey(c)]}</span></div><div class="v28-card-bottom"><span class="chip" aria-hidden="true"></span><span class="last4">•••• ${sanitize(c.last4||'••••')}</span><small>CRÉDITO · RD$ / US$</small></div></div><span class="v149-card-cue">${icon('arrow')} <span>Explorar tarjeta</span></span></summary><div class="v149-card-reveal"><section class="v148-card-essentials" aria-label="Deuda y beneficios de ${sanitize(c.name)}">
  <div class="v148-owed" aria-label="Deudas por moneda">
   <div class="v148-owed-part"><small>DEUDA EN PESOS</small><strong>${money(a.debt)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en pesos">Uso ${a.limit?a.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
   <div class="v148-owed-part"><small>DEUDA EN DÓLARES</small><strong>${money(b.debt,'USD',2)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en dólares">Uso ${b.limit?b.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
@@ -17628,7 +17628,7 @@ function originalCards(){
  <div class="v148-benefit-detail"><span>Cashback recibido <b>${money(z.realizedCashback,'DOP',2)}</b></span><span>Costo pagado <b>${money(z.paidAmount,'DOP',2)}</b></span></div>
  <div class="v148-meta"><span>Rentabilidad <strong>${v144RoiText(z.roi)}</strong></span>${z.billedAmount>0?`<span class="v148-pending">Por conciliar <strong>${money(z.billedAmount,'DOP',2)}</strong></span>`:''}</div>
  <div class="v148-card-due"><span>Corte: día ${c.cutDay} · Pago: día ${c.dueDay}</span>${closest?dueChip(closest.nextDue):'<span class="pill green">Sin pago facturado</span>'}</div>
- </section><div class="product-mini-actions">${productControls('card',c.id,c.archived)}</div><div class="card-footer"><button class="btn sm ghost" data-act="cardDetails" data-id="${c.id}">Estado y corte</button><button class="btn sm ghost" data-act="cardHistory" data-id="${c.id}">${icon('chart')} Histórico</button><button class="btn sm soft" data-act="payCard" data-id="${c.id}">Registrar pago</button></div><button class="v149-lifecycle-link" data-act="cardDetails" data-id="${c.id}">${icon('chart')} Explorar el ciclo de vida completo ${icon('arrow')}</button></div></details></div>`}).join(''):`<div class="panel"><div class="empty"><span class="empty-icon">▣</span>No hay tarjetas registradas.<br/><button class="btn sm soft" data-act="addCard">Agregar tarjeta</button></div></div>`}</div>${ui.cardId&&card(ui.cardId)?cardDetail(card(ui.cardId)):''}<div class="notification section">Los cortes se calculan automáticamente a partir de las fechas de cada tarjeta y sus movimientos. Los importes y mínimos son estimaciones del sistema y pueden diferir de los confirmados por el banco.</div>`}
+ </section><div class="product-mini-actions">${productControls('card',c.id,c.archived)}</div><div class="card-footer"><button class="btn sm ghost" data-act="cardDetails" data-id="${c.id}">Estado y corte</button><button class="btn sm ghost" data-act="cardHistory" data-id="${c.id}">${icon('chart')} Histórico</button><button class="btn sm soft" data-act="payCard" data-id="${c.id}">Registrar pago</button></div><button class="v149-lifecycle-link" data-act="cardDetails" data-id="${c.id}">${icon('chart')} Explorar el ciclo de vida completo ${icon('arrow')}</button></div></details></div>`}).join(''):`<div class="panel"><div class="empty"><span class="empty-icon">▣</span>No hay tarjetas registradas.<br/><button class="btn sm soft" data-act="addCard">Agregar tarjeta</button></div></div>`}</div>${ui.cardId&&card(ui.cardId)?cardDetail(card(ui.cardId)):''}<details class="v256-cards-methodology"><summary>${icon('shield')} Cómo se calculan las cifras y los beneficios <span aria-hidden="true">⌄</span></summary><p>Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</p><p>Los cortes se calculan a partir de las fechas de cada tarjeta y sus movimientos. Los importes y mínimos son estimaciones y pueden diferir de los confirmados por el banco.</p></details>`}
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -24241,10 +24241,13 @@ function deletePersonalLoan(id){
   return hero({page:'accounts',kicker:'CUENTAS / LIQUIDEZ Y EFECTIVO',title:'Tu dinero disponible,<br><em>saldo por saldo.</em>',subtitle:'Visualiza cuánto tienes entre cuentas bancarias y efectivo, manteniendo los pesos y los dólares en sus respectivos productos.',mainTitle:'SALDO TOTAL · RD$ EQUIVALENTES',main:currency(dop+fx(usd,'USD')),mainNote:'Cuentas + efectivo · pesos y dólares consolidados',items:[['CUENTAS EN PESOS',currency(bD)],['CUENTAS EN DÓLARES',currency(bU,'USD')],['EFECTIVO RD$',currency(cD)],['EFECTIVO US$',currency(cU,'USD')]],foot:fxNote()+' Los saldos no se convierten dentro de cada cuenta.',buttons:action('Nueva cuenta','addAccount','plus')+`<button type="button" class="btn outline-light" data-act="addCashWallet">${icon('wallet')} Configurar efectivo</button>`+archivedAction,mini:[`${bankAccounts.length} cuentas bancarias`,'2 monedas separadas']});
  }
  function cardsHero(){
-  const list=db.cards||[];const limitD=list.reduce((s,c)=>s+num(c.limitDOP),0),limitU=list.reduce((s,c)=>s+num(c.limitUSD),0);
+  const list=db.cards||[];
+  const archivedCards=list.filter(c=>c.archived).length;
+  const archiveButton=`<button type="button" class="btn outline-light v256-hero-archive" data-act="toggleHidden" aria-pressed="${!!ui.showHidden}">${icon('receipt')} ${ui.showHidden?'Ocultar archivados':'Archivados'} · ${archivedCards}</button>`;
+  const benefitsButton=`<button type="button" class="btn outline-light v256-hero-benefits" data-act="openBenefitComparison">${icon('chart')} Comparar beneficios</button>`;const limitD=list.reduce((s,c)=>s+num(c.limitDOP),0),limitU=list.reduce((s,c)=>s+num(c.limitUSD),0);
   const debtD=list.reduce((s,c)=>s+cardStatus(c,'DOP').debt,0),debtU=list.reduce((s,c)=>s+cardStatus(c,'USD').debt,0);
   const limit=limitD+fx(limitU,'USD'),used=debtD+fx(debtU,'USD'),available=Math.max(0,limit-used),pct=limit>0?used/limit*100:null;
-  return hero({page:'cards',kicker:'CRÉDITO / CARTERA DE TARJETAS',title:'Tus tarjetas.<br><em>Tu capacidad de consumo.</em>',subtitle:'Un vistazo al límite contractual conjunto, la utilización y lo que aún queda disponible, con RD$ y US$ siempre identificados.',mainTitle:'LÍMITE DE CONSUMO · RD$ EQUIVALENTES',main:currency(limit),mainNote:'Suma de límites en pesos y dólares · sin sobregiro autorizado',items:[['UTILIZACIÓN DEL LÍMITE',pct===null?'Sin límite':nf(pct)+'%'],['DEUDA UTILIZADA',currency(used)],['CRÉDITO DISPONIBLE',currency(available)],['LÍMITES POR MONEDA',currency(limitD)+' · '+currency(limitU,'USD')]],foot:`Utilización ordinaria: ${pct===null?'Sin límite configurado':nf(pct)+'%'}. Se excluye todo sobregiro autorizado; el disponible equivale a límite menos deuda registrada (mínimo cero). ${fxNote()}`,buttons:action('Nueva tarjeta','addCard','plus')+link('Ver indicadores','kpis'),mini:[`${list.length} tarjetas registradas`,`${pct===null?'Sin capacidad definida':nf(pct)+'% utilizado'}`]});
+  return hero({page:'cards',kicker:'CRÉDITO / CARTERA DE TARJETAS',title:'Tus tarjetas.<br><em>Tu capacidad de consumo.</em>',subtitle:'Un vistazo al límite contractual conjunto, la utilización y lo que aún queda disponible, con RD$ y US$ siempre identificados.',mainTitle:'LÍMITE DE CONSUMO · RD$ EQUIVALENTES',main:currency(limit),mainNote:'Suma de límites en pesos y dólares · sin sobregiro autorizado',items:[['UTILIZACIÓN DEL LÍMITE',pct===null?'Sin límite':nf(pct)+'%'],['DEUDA UTILIZADA',currency(used)],['CRÉDITO DISPONIBLE',currency(available)],['LÍMITES POR MONEDA',currency(limitD)+' · '+currency(limitU,'USD')]],foot:`Utilización ordinaria: ${pct===null?'Sin límite configurado':nf(pct)+'%'}. Se excluye todo sobregiro autorizado; el disponible equivale a límite menos deuda registrada (mínimo cero). ${fxNote()}`,buttons:action('Nueva tarjeta','addCard','plus')+archiveButton+benefitsButton,mini:[`${list.length} tarjetas registradas`,`${pct===null?'Sin capacidad definida':nf(pct)+'% utilizado'}`]});
  }
  function benefitsHero(){
   const cards=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
@@ -27659,6 +27662,7 @@ const v243CardsOriginal=pages.cards;
 pages.cards=function(){
  const body=v243CardsOriginal();
  if(ui.v230BenefitComparison)return body;
+ if(!isMobileViewport())return `<div class="v243-cards-workspace v256-desktop-cards" aria-label="Bancos · Tarjetas">${body}</div>`;
  const visible=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c)).length;
  return `<div class="v243-cards-workspace" aria-label="Bancos · Tarjetas">
   <header class="v243-cards-heading"><div class="v243-cards-heading-main">
@@ -35572,5 +35576,40 @@ body.theme-black .ant-weekly-total,body.theme-dark .ant-weekly-total{color:#b6d4
 @media(min-width:791px){.ant-main-table{max-height:540px;overflow:auto}.ant-main-table thead th{position:sticky;top:0;z-index:1;box-shadow:0 1px 0 var(--line,#dce6f4)}}
 
 </style>
+
+<style id="vive-v256-tarjetas-web-limpias">
+/* V256: desktop only; preserve Wallet and the dedicated mobile Cards view. */
+@media (min-width:791px){
+ .world-cards #page .v256-desktop-cards{width:100%;max-width:100%;margin-inline:auto;display:block;}
+ .world-cards #page .v256-desktop-cards .v182-cards-workspace>.v57-product-hero.v57-cards{margin-bottom:18px!important;min-height:390px;}
+ .world-cards #page .v256-desktop-cards .v57-product-hero .hero-actions{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:9px!important;}
+ .world-cards #page .v256-desktop-cards .v57-product-hero .hero-actions>button{min-height:41px!important;}
+ .world-cards #page .v256-desktop-cards .v256-hero-archive{opacity:.9;border-color:rgba(233,243,255,.35)!important;}
+ .world-cards #page .v256-desktop-cards .v256-hero-benefits{background:rgba(255,255,255,.11)!important;border-color:rgba(235,245,255,.48)!important;}
+ .world-cards #page .v256-cards-list-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:1px 0 14px;min-width:0;}
+ .world-cards #page .v256-cards-kicker{font-size:10px;font-weight:850;letter-spacing:.16em;color:#738daf;}
+ .world-cards #page .v256-cards-list-head h2{font-size:clamp(20px,1.8vw,27px);line-height:1.1;letter-spacing:-.04em;color:#2a466b;margin:5px 0 4px;display:flex;align-items:baseline;gap:9px;}
+ .world-cards #page .v256-cards-list-head h2 small{font-size:13px;color:#7e91ac;font-weight:750;}
+ .world-cards #page .v256-cards-list-head p{margin:0;font-size:12px;line-height:1.45;color:#7a8ca4;}
+ .world-cards #page .v256-cards-grid{margin-top:0!important;gap:15px!important;grid-template-columns:repeat(auto-fill,minmax(min(100%,310px),1fr))!important;}
+ .world-cards #page .v256-cards-grid>.v149-card-shell{min-width:0;overflow:hidden;border-radius:22px;}
+ .world-cards #page .v256-cards-grid .v149-card-toggle{display:block;max-width:100%;}
+ .world-cards #page .v256-cards-grid .v149-card-reveal{min-width:0;}
+ .world-cards #page .v256-cards-methodology{margin:18px 0 4px;padding:13px 17px;border-radius:17px;background:rgba(246,250,255,.7);border:1px solid rgba(139,164,202,.22);color:#607694;}
+ .world-cards #page .v256-cards-methodology summary{list-style:none;display:flex;align-items:center;gap:8px;font-weight:760;font-size:12px;cursor:pointer;}
+ .world-cards #page .v256-cards-methodology summary::-webkit-details-marker{display:none;}
+ .world-cards #page .v256-cards-methodology summary>span{margin-left:auto;}
+ .world-cards #page .v256-cards-methodology summary svg{width:16px;height:16px;}
+ .world-cards #page .v256-cards-methodology p{font-size:11px;line-height:1.65;margin:11px 0 0;max-width:100ch;}
+ .theme-black .world-cards #page .v256-cards-list-head h2,.theme-dark .world-cards #page .v256-cards-list-head h2{color:#edf3ff;}
+ .theme-black .world-cards #page .v256-cards-methodology,.theme-dark .world-cards #page .v256-cards-methodology{background:#161e29;border-color:#354052;color:#b5c6e1;}
+}
+@media(min-width:791px) and (max-width:1190px){
+ .world-cards #page .v256-desktop-cards .v182-cards-workspace>.v57-product-hero.v57-cards{min-height:0;}
+ .world-cards #page .v256-cards-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))!important;}
+}
+@media(max-width:790px){.world-cards #page .v256-cards-list-head{display:none}}
+</style>
+
 </body>
 </html>
