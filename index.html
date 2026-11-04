@@ -15867,6 +15867,98 @@ body.theme-black .v243-cards-workspace .v149-card-shell{background:#131923;borde
 
 
 
+
+<style id="v265-movimientos-balance-redesign">
+/* V265 · Tabla ejecutiva compacta; el importe y BALANCE son columnas separadas */
+#ledger-world .ledger-card{overflow:hidden!important;border:1px solid rgba(210,224,244,.85)!important;border-radius:22px!important}
+#ledger-world .ledger-controls{display:grid!important;grid-template-columns:minmax(210px,1.65fr) repeat(4,minmax(128px,1fr)) auto!important;gap:10px!important;padding:14px 16px!important;align-items:end!important;background:rgba(255,255,255,.5)!important}
+#ledger-world .ledger-controls .ledger-control{min-width:0!important;flex:none!important}
+#ledger-world .ledger-controls input,#ledger-world .ledger-controls select{height:40px!important;font-size:12px!important}
+#ledger-world .ledger-scroll{overflow-x:auto!important;max-height:620px!important}
+#ledger-world .ledger-scroll table{width:100%!important;table-layout:fixed!important;min-width:1080px!important;border-collapse:separate;border-spacing:0}
+#ledger-world .ledger-scroll th,#ledger-world .ledger-scroll td{padding:10px 9px!important;vertical-align:middle!important;font-size:11px!important;line-height:1.42;white-space:normal;word-break:normal;overflow-wrap:anywhere}
+#ledger-world .ledger-scroll th{font-size:10px!important;letter-spacing:.025em!important;text-transform:uppercase;color:#5f7698!important;border-bottom:1px solid rgba(203,218,240,.84)}
+#ledger-world .ledger-scroll tr td{border-bottom:1px solid rgba(214,225,239,.66)}
+#ledger-world .ledger-scroll th:nth-child(1),#ledger-world .ledger-scroll td:nth-child(1){width:9%}
+#ledger-world .ledger-scroll th:nth-child(2),#ledger-world .ledger-scroll td:nth-child(2){width:16%;min-width:0!important}
+#ledger-world .ledger-scroll th:nth-child(3),#ledger-world .ledger-scroll td:nth-child(3){width:10%}
+#ledger-world .ledger-scroll th:nth-child(4),#ledger-world .ledger-scroll td:nth-child(4){width:9%;min-width:0!important}
+#ledger-world .ledger-scroll th:nth-child(5),#ledger-world .ledger-scroll td:nth-child(5){width:10%}
+#ledger-world .ledger-scroll th:nth-child(6),#ledger-world .ledger-scroll td:nth-child(6){width:10%}
+#ledger-world .ledger-scroll th:nth-child(7),#ledger-world .ledger-scroll td:nth-child(7){width:10%}
+#ledger-world .ledger-scroll th:nth-child(8),#ledger-world .ledger-scroll td:nth-child(8){width:15%}
+#ledger-world .ledger-scroll th:nth-child(9),#ledger-world .ledger-scroll td:nth-child(9){width:11%}
+#ledger-world .ledger-scroll td:nth-child(7){font-variant-numeric:tabular-nums;white-space:nowrap!important;font-size:11px!important}
+#ledger-world .ledger-scroll td:nth-child(9) .tx-actions{flex-wrap:nowrap!important;gap:3px!important;justify-content:flex-end!important;white-space:nowrap!important}
+#ledger-world .ledger-scroll td:nth-child(9) .btn{padding:6px 8px!important;font-size:10px!important;min-height:29px!important;border-radius:9px!important}
+#ledger-world .v265-balance-cell{vertical-align:middle!important}
+.v265-balance-stack{display:grid;gap:6px;max-width:100%;min-width:0}
+.v265-balance-line{display:grid;gap:3px;min-width:0}
+.v265-balance-label{font-weight:650;color:#7388a3;font-size:9px;line-height:1.25;overflow-wrap:anywhere}
+.v265-balance-value{font-size:12px;font-weight:840;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap;color:#233c62!important}
+.v265-balance-secondary{border-top:1px solid rgba(147,169,199,.22);padding-top:5px}
+.v265-balance-secondary .v265-balance-value{font-size:11px}
+.v265-balance-caution{color:#ad7544;font-weight:650;font-size:9px;line-height:1.35;display:block}
+.v265-unverified{color:#9c653d!important}
+.v265-no-balance,.v265-no-balance-cell{color:#8291a6;font-weight:750}
+.v265-no-balance small,.v265-no-balance-cell small{font-weight:500;display:block;font-size:9px;line-height:1.4}
+.v265-linked-balance{color:#8797ab;font-size:10px;line-height:1.3}
+.v265-linked-balance small{display:block;max-width:18ch}
+.v265-mobile-balance{display:none}
+@media(max-width:1560px){#ledger-world .ledger-controls{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:1080px) and (min-width:791px){#ledger-world .ledger-controls{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:790px){
+ #ledger-world .ledger-card{border-radius:19px!important}
+ #ledger-world .ledger-controls{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:12px!important;gap:8px!important}
+ #ledger-world .ledger-controls .ledger-control:first-child{grid-column:1/-1}
+ #ledger-world .ledger-controls>.btn{grid-column:1/-1;min-height:40px}
+ #ledger-world .v51-mobile-movement{display:grid!important;grid-template-columns:36px minmax(0,1fr) minmax(115px,.53fr)!important;gap:9px!important;padding:12px 10px!important;min-height:0!important;align-items:start}
+ #ledger-world .v51-mobile-movement-icon{width:36px!important;height:36px!important}
+ #ledger-world .v51-mobile-movement-info{min-width:0!important}
+ #ledger-world .v51-mobile-movement-info strong{font-size:12px!important;line-height:1.35!important}
+ #ledger-world .v51-mobile-movement-side{min-width:0!important;display:grid!important;gap:9px!important;text-align:right}
+ #ledger-world .v51-mobile-movement-side>b{font-size:13px!important;line-height:1.3!important;word-break:normal;overflow-wrap:anywhere;white-space:normal}
+ #ledger-world .v265-mobile-balance{display:grid;gap:3px;text-align:right;padding:6px 0;border-block:1px solid rgba(143,162,189,.15)}
+ #ledger-world .v265-mobile-balance>span{font-size:9px;line-height:1.25;color:#778ba9;font-weight:750}
+ #ledger-world .v265-mobile-balance .v265-balance-label{font-size:9px}
+ #ledger-world .v265-mobile-balance .v265-balance-value{font-size:12px}
+ #ledger-world .v265-mobile-balance .v265-balance-caution{font-size:9px;white-space:normal}
+ #ledger-world .v265-mobile-balance .v265-balance-line{gap:2px}
+ #ledger-world .v265-mobile-balance .v265-balance-secondary{padding-top:4px}
+}
+@media(max-width:365px){
+ #ledger-world .ledger-controls{grid-template-columns:1fr!important}
+ #ledger-world .v51-mobile-movement{grid-template-columns:32px minmax(0,1fr) minmax(98px,.58fr)!important;gap:6px!important;padding:11px 7px!important}
+ #ledger-world .v265-mobile-balance .v265-balance-value{font-size:11px}
+}
+body.theme-black #ledger-world .ledger-card,body.theme-dark #ledger-world .ledger-card{border-color:rgba(76,93,125,.6)!important}
+body.theme-black #ledger-world .ledger-controls,body.theme-dark #ledger-world .ledger-controls{background:rgba(17,25,40,.8)!important}
+body.theme-black .v265-balance-value,body.theme-dark .v265-balance-value{color:#e4f0ff!important}
+body.theme-black .v265-balance-label,body.theme-dark .v265-balance-label{color:#a4b9d7}
+body.theme-black .v265-balance-caution,body.theme-dark .v265-balance-caution{color:#ffbc79}
+</style>
+
+
+<style id="v265-balance-followup">
+@media(max-width:790px){
+ #ledger-world .v265-mobile-balance{grid-column:2/-1;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:7px!important;text-align:left!important;margin-top:2px!important;padding:9px 0 0!important;border-top:1px solid rgba(132,153,183,.19)!important;border-bottom:0!important}
+ #ledger-world .v265-mobile-balance>span{flex:0 0 80px;font-size:10px!important}
+ #ledger-world .v265-mobile-balance .v265-balance-stack{flex:1;min-width:0;gap:7px;text-align:right!important}
+ #ledger-world .v265-mobile-balance .v265-balance-label{font-size:9px!important}
+ #ledger-world .v265-mobile-balance .v265-balance-line{align-items:end}
+}
+@media(max-width:365px){#ledger-world .v265-mobile-balance>span{flex-basis:67px!important}}
+@media(max-width:790px){
+ .world-register #page .v248-register-hero{display:grid!important;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;align-items:center!important;gap:9px 12px!important;min-height:0!important;padding:15px 17px!important;border-radius:21px!important}
+ .world-register #page .v248-register-hero .v248-hero-top{grid-column:1/-1!important;min-height:0!important;margin:0!important}
+ .world-register #page .v248-register-hero .v248-moves-number{grid-column:1!important;min-height:0!important;padding:0!important;margin:0!important;gap:3px!important}
+ .world-register #page .v248-register-hero .v248-moves-number strong{font-size:44px!important;line-height:1!important}
+ .world-register #page .v248-register-hero .v248-metrics-primary{grid-column:2!important;grid-template-columns:1fr!important;gap:9px!important;padding:0 0 0 13px!important;margin:0!important;border-top:0!important;border-left:1px solid rgba(255,255,255,.25)!important}
+ .world-register #page .v248-register-hero .v248-metrics-primary>.v248-move-fact{display:flex!important;flex-direction:row!important;align-items:baseline!important;justify-content:space-between!important;gap:8px!important;border:0!important;padding:0!important;margin:0!important}
+ .world-register #page .v248-register-hero .v248-metrics-primary>.v248-move-fact strong{font-size:22px!important}
+ .world-register #page .v248-register-hero .v248-metrics-primary>.v248-move-fact small{font-size:9px!important}
+}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -18113,21 +18205,174 @@ function v143CostMobile(t){
  </div>`;
 }
 function v143CostDesktop(t){
- return v143BankCostLines(t).map(x=>`<tr class="v143-cost-desktop-row"><td>${prettyDate(t.date)}</td><td><strong>↳ ${sanitize(x.title)}</strong>${x.percent>0?`<small>Tarifa aplicada: ${x.percent.toFixed(3)}%</small>`:''}<small>Vinculado a ${sanitize(transactionTitle(t))}</small></td><td>Costo bancario</td><td>${sanitize(account(t.accountId)?.name||'Cuenta origen')}</td><td>Impuestos y comisiones</td><td class="right money">−${money(x.amount,x.currency,2)}</td><td class="right"><span class="v143-cost-linked">Incluido en operación</span></td></tr>`).join('');
+ return v143BankCostLines(t).map(x=>`<tr class="v143-cost-desktop-row"><td>${prettyDate(t.date)}</td><td><strong>↳ ${sanitize(x.title)}</strong>${x.percent>0?`<small>Tarifa aplicada: ${x.percent.toFixed(3)}%</small>`:''}<small>Vinculado a ${sanitize(transactionTitle(t))}</small></td><td>Costo bancario</td><td class="v265-cost-status">Vinculado</td><td>${sanitize(account(t.accountId)?.name||'Cuenta origen')}</td><td>Impuestos y comisiones</td><td class="right money">−${money(x.amount,x.currency,2)}</td><td class="v265-linked-balance"><small>Incluido en balance del movimiento principal</small></td><td class="right"><span class="v143-cost-linked">Incluido en operación</span></td></tr>`).join('');
 }
 function v143CostSearch(t){return v143BankCostLines(t).map(x=>[x.title,x.category,x.subcategory,x.percent>0?x.percent.toFixed(3)+'%':''].join(' ')).join(' ')}
 function v143CostOnlyChannel(t){
  const type=t.paymentChannel==='internet_banking'?'Internet Banking':t.paymentChannel==='presencial'?'Presencial':'';
  return type?`<div class="tx-ledger-cost">Canal · ${type}</div>`:'';
 }
-function transactions(embedded=false){let tr=recentTx().filter(t=>(ui.bankScope==='all'||bankTx(t,ui.bankScope))&&(ui.transType==='all'||t.type===ui.transType)&&(!ui.search||`${transactionTitle(t)} ${t.type} ${t.category} ${t.subcategory||''} ${t.tags||''} ${v143CostSearch(t)}`.toLowerCase().includes(ui.search.toLowerCase()))&&(ui.reviewFilter==='all'||(ui.reviewFilter==='reviewed')===(t.reviewed===true))&&(ui.txPeriod!=='month'||t.date.startsWith(ui.month))&&ui.reviewFilter!=='drafts');
+
+/* V265 · SALDO POSTERIOR, por cuenta/moneda y crédito de cada tarjeta.
+   Motor de lectura exclusivamente: no registra movimientos, ni ajusta saldos.
+   Preserva el tratamiento de tipos, tasas y costos del libro original.
+   Ordena los movimientos completos ANTES de aplicar cualquier filtro de pantalla.
+*/
+
+function v265SortLedgerRecent(a,b){
+ const time=t=>{
+  const d=String(t.date||'');
+  for(const k of ['transactionTime','occurredAt','performedAt','dateTime','datetime','time']){
+   const v=String(t[k]||'');
+   if(/^\d{2}:\d{2}/.test(v))return d+'T'+v;
+   if(v.startsWith(d+'T')||v.startsWith(d+' '))return v.replace(' ','T');
+  }
+  return '';
+ };
+ const day=String(b.date||'').localeCompare(String(a.date||''));
+ if(day)return day;
+ const at=time(a),bt=time(b);
+ if(at&&bt)return bt.localeCompare(at);
+ return String(b.created||'').localeCompare(String(a.created||''));
+}
+
+function v265LedgerModel(){
+ const accountStates=new Map(),cardStates=new Map(),entries=new Map();
+ const dateOK=d=>/^\d{4}-\d{2}-\d{2}$/.test(String(d||''));
+ const n=x=>num(x);
+ const safeNumber=x=>x!==undefined&&x!==null&&x!==''&&Number.isFinite(Number(x));
+ const accounts=db.accounts||[],cards=db.cards||[],all=db.transactions||[];
+ const sourceKey=(kind,id,ccy)=>kind+':'+id+(ccy?'|'+ccy:'');
+ for(const a of accounts){
+  accountStates.set(a.id,{kind:'account',source:a,ccy:a.currency||'DOP',
+   balance:n(a.opening),known:safeNumber(a.opening)&&dateOK(a.opened),
+   issues:[],begins:a.opened||'',name:a.name||'Cuenta',usedBeforeOpening:false});
+ }
+ for(const c of cards)for(const ccy of ['DOP','USD']){
+  const start=ccy==='USD'?'openingUSD':'openingDOP',max=ccy==='USD'?'limitUSD':'limitDOP';
+  cardStates.set(c.id+'|'+ccy,{kind:'card',source:c,ccy,name:c.name||'Tarjeta',
+   debt:n(c[start]),limit:n(c[max]),known:safeNumber(c[start])&&safeNumber(c[max])&&dateOK(c.opened),
+   begins:c.opened||'',issues:[],usedBeforeOpening:false});
+ }
+ const trueTime=t=>{
+  const day=String(t.date||'');
+  for(const k of ['transactionTime','occurredAt','performedAt','dateTime','datetime','time']){
+   const v=String(t[k]||'');
+   if(/^\d{2}:\d{2}/.test(v))return day+'T'+v;
+   if(v.startsWith(day+'T')||v.startsWith(day+' '))return v.replace(' ','T');
+  }
+  return '';
+ };
+ const legs=t=>{
+  const r=[];
+  const src=accountStates.get(t.accountId),dst=accountStates.get(t.toAccountId),card=cardStates.get(t.cardId+'|'+(t.currency||'DOP'));
+  const amt=n(t.amount),srcAmt=n(t.sourceAmount||t.amount);
+  if(src){
+   let delta=0,affected=false;
+   if(['income','bank_reward'].includes(t.type)){delta=amt;affected=true;}
+   if(t.type==='expense'){delta=-(amt+n(t.paymentTax)+n(t.paymentFee));affected=true;}
+   if(t.type==='adjustment'){delta=amt;affected=true;}
+   if(t.type==='certificate_funding'){delta=-amt;affected=true;}
+   if(t.type==='certificate_redemption'){delta=amt;affected=true;}
+   if(t.type==='card_payment'||t.type==='loan_payment'){delta=-(srcAmt+n(t.paymentTax)+n(t.paymentFee));affected=true;}
+   if(t.type==='personal_issue'||t.type==='personal_settlement'){
+    const relation=personalLoan(t.personalLoanId);
+    if(relation){delta=(t.type==='personal_issue'?(relation.direction==='borrowed'?amt:-amt):(relation.direction==='lent'?amt:-amt));affected=true;}
+   }
+   if(t.type==='transfer'){delta=-(amt+n(t.transferFee));affected=true;}
+   if(affected)r.push({state:src,delta,kind:'account',role:'origen'});
+  }
+  if(dst&&t.type==='transfer')r.push({state:dst,delta:n(t.targetAmount||t.amount),kind:'account',role:'destino'});
+  if(card){
+   let delta=0,affected=false;
+   if(t.type==='card_charge'){delta=amt;affected=true;}
+   if(['card_payment','card_refund','card_reward'].includes(t.type)){delta=-amt;affected=true;}
+   if(t.type==='personal_issue'||t.type==='personal_settlement'){
+    const p=personalLoan(t.personalLoanId);
+    if(p){const incoming=(t.type==='personal_issue'&&p.direction==='borrowed')||(t.type==='personal_settlement'&&p.direction==='lent');delta=incoming?-amt:amt;affected=true;}
+   }
+   if(affected)r.push({state:card,delta,kind:'card',role:'tarjeta'});
+  }
+  return r;
+ };
+ const items=all.map((t,i)=>({t,i,trueAt:trueTime(t)}));
+ items.sort((a,b)=>String(a.t.date||'').localeCompare(String(b.t.date||''))||
+  (a.trueAt&&b.trueAt?a.trueAt.localeCompare(b.trueAt):0)||
+  String(a.t.created||'').localeCompare(String(b.t.created||''))||a.i-b.i);
+ // Ambiguity: several operations on one product on the same date without
+ // a full event timestamp. Never pretend their intermediate order is confirmed.
+ const sameDay=new Map();
+ for(const {t,trueAt} of items){
+  for(const leg of legs(t)){
+   const key=sourceKey(leg.kind,leg.state.source.id,leg.state.ccy)+'|'+String(t.date||'');
+   if(!sameDay.has(key))sameDay.set(key,[]);
+   sameDay.get(key).push({t,trueAt});
+  }
+ }
+ const ambiguous=new Set();
+ for(const group of sameDay.values())if(group.length>1&&group.some(v=>!v.trueAt))group.forEach(v=>ambiguous.add(v.t));
+ for(const {t,trueAt} of items){
+  const vlegs=legs(t),results=[];
+  if(!dateOK(t.date)||t.date>today()){
+   entries.set(t,{available:false,reason:t.date>today()?'Operación con fecha futura; aún no afecta el balance':'Movimiento sin fecha verificable',results:[]});
+   continue;
+  }
+  for(const leg of vlegs){
+   const state=leg.state;
+   if(t.date<state.begins)state.usedBeforeOpening=true;
+   if(state.kind==='account')state.balance=rnd(state.balance+leg.delta);
+   else state.debt=rnd(state.debt+leg.delta);
+   // For same-account transfers preserve both legs in order (fee remains a cost).
+   const balance=state.kind==='account'?state.balance:Math.max(0,rnd(state.limit-Math.max(0,state.debt)));
+   const openingInFuture=!dateOK(state.begins)||t.date<state.begins;
+   const currencyMismatch=state.kind==='account'&&t.type!=='transfer'&&t.type!=='card_payment'&&t.type!=='loan_payment'&&t.currency&&t.currency!==state.ccy;
+   const unsafe=!state.known||openingInFuture||state.usedBeforeOpening||currencyMismatch||ambiguous.has(t);
+   let reason='';
+   if(!state.known)reason='Falta saldo o fecha de apertura verificable';
+   else if(openingInFuture||state.usedBeforeOpening)reason='Hay movimientos anteriores a la apertura; revisa el saldo inicial';
+   else if(currencyMismatch)reason='La moneda del movimiento no coincide con la cuenta';
+   else if(ambiguous.has(t))reason='Orden intradía calculado por registro, sin hora real para todos los movimientos';
+   results.push({kind:state.kind,role:leg.role,ccy:state.ccy,name:state.name,
+    amount:balance,valid:!unsafe,hardUnknown:!state.known||openingInFuture||state.usedBeforeOpening||currencyMismatch,reason,sourceId:state.source.id});
+  }
+  // Transfer (same account) can carry 2 effects. Show final state once.
+  for(const r of results)if(r.kind==='account'&&results.filter(x=>x.sourceId===r.sourceId&&x.kind==='account').length>1){
+   const last=results.filter(x=>x.kind==='account'&&x.sourceId===r.sourceId).at(-1);
+   r.amount=last.amount;
+  }
+  entries.set(t,{available:!!results.length,reason:!results.length?'Este registro no tiene efecto líquido o fuente identificable':'',results});
+ }
+ return entries;
+}
+function v265BalanceHTML(tx,mode='desktop'){
+ const item=v265LedgerModelCached().get(tx);
+ if(!item||!item.available)return `<span class="v265-no-balance" title="${sanitize(item?.reason||'Saldo histórico no disponible')}">—<small>Sin balance verificable</small></span>`;
+ let results=item.results.slice();
+ if(tx.type==='transfer')results.sort((a,b)=>(a.role==='origen'?0:1)-(b.role==='origen'?0:1));
+ else if(tx.type==='card_payment')results.sort((a,b)=>(a.kind==='account'?0:1)-(b.kind==='account'?0:1));
+ else if(tx.type==='card_charge'||tx.type==='card_refund'||tx.type==='card_reward')results.sort((a,b)=>(a.kind==='card'?0:1)-(b.kind==='card'?0:1));
+ // When multiple ledger legs belong to the same account, only the final leg matters.
+ results=results.filter((x,i)=>results.findLastIndex(y=>x.sourceId===y.sourceId&&x.kind===y.kind)===i);
+ return `<div class="v265-balance-stack">${results.map((r,i)=>{
+  const tag=r.kind==='card'?'Crédito disponible':r.role==='destino'?'Destino':r.role==='origen'&&tx.type==='transfer'?'Origen':'Saldo disponible';
+  const brief=(r.kind==='card'?'Tarjeta · ':r.role==='destino'?'Destino · ':r.role==='origen'&&tx.type==='transfer'?'Origen · ':'')+r.name;
+  return `<div class="v265-balance-line ${i?'v265-secondary':'v265-primary'}" title="${sanitize(brief+(r.reason?' · '+r.reason:''))}">
+   <span class="v265-balance-label">${sanitize(brief)} · ${sanitize(tag)}</span>
+   <b class="v265-balance-value ${r.valid?'':'v265-unverified'}">${r.hardUnknown?'—':`${r.valid?'':'≈ '}${money(r.amount,r.ccy,2)}`}</b>
+   ${r.valid?'':`<small class="v265-balance-caution">${sanitize(r.reason)}</small>`}
+  </div>`;
+ }).join('')}</div>`;
+}
+function v265LedgerModelCached(){return v99Memo('v265:transaction:post-balance',v265LedgerModel)}
+
+function transactions(embedded=false){let tr=recentTx().filter(t=>(ui.bankScope==='all'||bankTx(t,ui.bankScope))&&(ui.transType==='all'||t.type===ui.transType)&&(!ui.search||`${transactionTitle(t)} ${t.type} ${t.category} ${t.subcategory||''} ${t.tags||''} ${v143CostSearch(t)}`.toLowerCase().includes(ui.search.toLowerCase()))&&(ui.reviewFilter==='all'||(ui.reviewFilter==='reviewed')===(t.reviewed===true))&&(ui.txPeriod!=='month'||t.date.startsWith(ui.month))&&ui.reviewFilter!=='drafts').sort(v265SortLedgerRecent);
 const v221Drafts=(db.pendingOperations||[]).filter(q=>{const vals=q.values||{};const date=String(vals.date||q.created||'').slice(0,10);const haystack=`${vals.note||''} ${vals.description||''} ${vals.merchant||''} ${vals.category||''} ${vals.name||''} ${vals.type||''}`.toLowerCase();return (ui.reviewFilter==='all'||ui.reviewFilter==='drafts')&&(!ui.search||haystack.includes(ui.search.toLowerCase()))&&(ui.txPeriod!=='month'||date.startsWith(ui.month))&&(ui.bankScope==='all'||vals.bankId===ui.bankScope||vals.accountId&&account(vals.accountId)?.bankId===ui.bankScope)&&(ui.transType==='all'||vals.type===ui.transType)});
 let tools=`<div class="ledger-controls"><div class="ledger-control"><label for="searchTx">Buscar movimiento</label><input type="search" class="field searchbox" id="searchTx" placeholder="Comercio, categoría, concepto…" value="${sanitize(ui.search)}"/></div><div class="ledger-control"><label for="bankFilter">Institución</label><select class="filter-select" id="bankFilter"><option value="all">Todas las instituciones</option>${db.banks.map(b=>`<option value="${b.id}" ${ui.bankScope===b.id?'selected':''}>${sanitize(b.name)}</option>`).join('')}</select></div><div class="ledger-control"><label for="typeFilter">Tipo</label><select class="filter-select" id="typeFilter"><option value="all">Todos los tipos</option>${Object.entries(TRANSL).map(([k,v])=>`<option value="${k}" ${ui.transType===k?'selected':''}>${sanitize(v)}</option>`).join('')}</select></div><div class="ledger-control"><label for="txPeriod">Período</label><select class="filter-select" id="txPeriod"><option value="all" ${ui.txPeriod!=='month'?'selected':''}>Todo el historial</option><option value="month" ${ui.txPeriod==='month'?'selected':''}>Un mes</option></select></div><div class="ledger-control"><label for="reviewFilter">Estado</label><select class="filter-select" id="reviewFilter"><option value="all" ${ui.reviewFilter==='all'?'selected':''}>Todos los estados</option><option value="drafts" ${ui.reviewFilter==='drafts'?'selected':''}>Borradores · sin registrar</option><option value="pending" ${ui.reviewFilter==='pending'?'selected':''}>Registrados · por revisar</option><option value="reviewed" ${ui.reviewFilter==='reviewed'?'selected':''}>Conciliados</option></select></div>${ui.txPeriod==='month'?`<div class="ledger-control"><label for="ledgerMonth">Mes</label><input type="month" class="filter-select" id="ledgerMonth" value="${ui.month}"></div>`:''}<button class="btn sm ghost" data-act="csv" title="Exportar movimientos filtrables a CSV">${icon('download')} CSV</button></div>`;
-const mobileCards=tr.slice(0,Math.max(12,ui.v51LedgerVisible||18)).map(t=>`<article class="v51-mobile-movement"><div class="v51-mobile-movement-icon">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':t.type==='loan_payment'?'receipt':'wallet')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small><span>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||'Movimiento registrado')}</span></div><div class="v51-mobile-movement-side"><b class="${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</b><div><button type="button" data-act="editTransaction" data-id="${t.id}">Editar</button><button type="button" class="v51-delete-trigger" data-act="deleteTransaction" data-id="${t.id}" aria-label="Eliminar ${sanitize(transactionTitle(t))}">${icon('trash')}</button></div></div></article>`+v143CostMobile(t)).join('');
+const mobileCards=tr.slice(0,Math.max(12,ui.v51LedgerVisible||18)).map(t=>`<article class="v51-mobile-movement"><div class="v51-mobile-movement-icon">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':t.type==='loan_payment'?'receipt':'wallet')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small><span>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||'Movimiento registrado')}</span></div><div class="v51-mobile-movement-side"><b class="${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</b><div><button type="button" data-act="editTransaction" data-id="${t.id}">Editar</button><button type="button" class="v51-delete-trigger" data-act="deleteTransaction" data-id="${t.id}" aria-label="Eliminar ${sanitize(transactionTitle(t))}">${icon('trash')}</button></div></div><div class="v265-mobile-balance"><span>Balance posterior</span>${v265BalanceHTML(t,'mobile')}</div></article>`+v143CostMobile(t)).join('');
 const v221DraftMobile=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<article class="v51-mobile-movement v221-draft-row"><div class="v51-mobile-movement-icon">${icon('clock')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(name)}</strong><small>${date?prettyDate(date):'Sin fecha'} · ${sanitize(TRANSL[v.type]||'Borrador')}</small><span class="v221-state draft">○ Sin contabilizar</span></div><div class="v51-mobile-movement-side"><b>${val>0?money(val,v.currency||'DOP',2):'Importe pendiente'}</b><div><button type="button" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button type="button" class="v51-delete-trigger" data-act="pendingRemove" data-id="${q.id}" aria-label="Descartar borrador">${icon('trash')}</button></div></div></article>`}).join('');
-const v221DraftRows=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<tr class="v221-draft-row"><td>${date?prettyDate(date):'—'}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">Borrador · sin efecto en saldos</div></td><td>${sanitize(TRANSL[v.type]||'Operación')}</td><td><span class="v221-state draft">○ Sin contabilizar</span></td><td>${sanitize(account(v.accountId)?.name||'—')}</td><td>${sanitize(v.category||'—')}</td><td class="right money">${val>0?money(val,v.currency||'DOP',2):'—'}</td><td class="right"><div class="tx-actions"><button class="btn sm soft" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar borrador">${icon('trash')}</button></div></td></tr>`}).join('');
-let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><strong>${sanitize(transactionTitle(t))}</strong>${t.note?`<div class="subtitle">${sanitize(t.note)}</div>`:''}${t.tags?`<span class="tx-label">${sanitize(t.tags)}</span>`:''}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||certificate(t.certificateId)?.name||'—')}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
-return `<section class="ledger-world section" id="ledger-world"><div class="section-title"><div><span class="summary-tag">HISTORIAL ÚNICO · ${tr.length} MOVIMIENTOS · ${v221Drafts.length} BORRADORES</span><h2>Movimientos y estados</h2><p>Revisa, concilia y completa borradores desde el mismo historial. Cada estado indica su efecto contable.</p></div><button class="btn" data-act="newTransaction">${icon('plus')} Registrar movimiento</button></div><div class="panel no-pad ledger-card">${tools}<div class="v51-mobile-ledger">${(v221DraftMobile+mobileCards)||'<div class="empty">No hay movimientos con estos filtros.</div>'}${tr.length>Math.max(12,ui.v51LedgerVisible||18)?`<button type="button" class="v51-ledger-more" data-act="v51LedgerMore">Ver más movimientos · ${Math.max(0,tr.length-Math.max(12,ui.v51LedgerVisible||18))} restantes</button>`:''}</div><div class="table-wrap ledger-scroll"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Operación</th><th>Estado</th><th>Producto / persona</th><th>Categoría</th><th class="right">Importe</th><th class="right">Gestión</th></tr></thead><tbody>${(v221DraftRows+rows)||'<tr><td colspan="8"><div class="empty">No hay movimientos con estos filtros.</div></td></tr>'}</tbody></table></div></div>${v51RemovedMovementsPanel()}<p class="footnote">Los renglones de impuestos y comisiones son desgloses vinculados a su operación; ya están incluidos en el débito de la cuenta y en el gasto. Para modificarlos, edita la operación principal. Las marcas de revisión no modifican importes; los borradores no afectan saldos hasta completar su registro. Los consumos con tarjetas se reconocen una sola vez; los pagos y transferencias no duplican gastos. Cuando corrijas una operación vinculada a un corte bancario, revisa la conciliación contra el estado oficial.</p></section>`}
+const v221DraftRows=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<tr class="v221-draft-row"><td>${date?prettyDate(date):'—'}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">Borrador · sin efecto en saldos</div></td><td>${sanitize(TRANSL[v.type]||'Operación')}</td><td><span class="v221-state draft">○ Sin contabilizar</span></td><td>${sanitize(account(v.accountId)?.name||'—')}</td><td>${sanitize(v.category||'—')}</td><td class="right money">${val>0?money(val,v.currency||'DOP',2):'—'}</td><td class="v265-no-balance-cell">—<small>Sin contabilizar</small></td><td class="right"><div class="tx-actions"><button class="btn sm soft" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar borrador">${icon('trash')}</button></div></td></tr>`}).join('');
+let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><strong>${sanitize(transactionTitle(t))}</strong>${t.note?`<div class="subtitle">${sanitize(t.note)}</div>`:''}${t.tags?`<span class="tx-label">${sanitize(t.tags)}</span>`:''}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||certificate(t.certificateId)?.name||'—')}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="v265-balance-cell">${v265BalanceHTML(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
+return `<section class="ledger-world section" id="ledger-world"><div class="section-title"><div><span class="summary-tag">HISTORIAL ÚNICO · ${tr.length} MOVIMIENTOS · ${v221Drafts.length} BORRADORES</span><h2>Movimientos y estados</h2><p>Revisa, concilia y completa borradores desde el mismo historial. Cada estado indica su efecto contable.</p></div><button class="btn" data-act="newTransaction">${icon('plus')} Registrar movimiento</button></div><div class="panel no-pad ledger-card">${tools}<div class="v51-mobile-ledger">${(v221DraftMobile+mobileCards)||'<div class="empty">No hay movimientos con estos filtros.</div>'}${tr.length>Math.max(12,ui.v51LedgerVisible||18)?`<button type="button" class="v51-ledger-more" data-act="v51LedgerMore">Ver más movimientos · ${Math.max(0,tr.length-Math.max(12,ui.v51LedgerVisible||18))} restantes</button>`:''}</div><div class="table-wrap ledger-scroll"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Operación</th><th>Estado</th><th>Producto / persona</th><th>Categoría</th><th class="right">Importe</th><th>Balance</th><th class="right">Gestión</th></tr></thead><tbody>${(v221DraftRows+rows)||'<tr><td colspan="9"><div class="empty">No hay movimientos con estos filtros.</div></td></tr>'}</tbody></table></div></div>${v51RemovedMovementsPanel()}<p class="footnote">Los renglones de impuestos y comisiones son desgloses vinculados a su operación; ya están incluidos en el débito de la cuenta y en el gasto. Para modificarlos, edita la operación principal. Las marcas de revisión no modifican importes; los borradores no afectan saldos hasta completar su registro. BALANCE muestra el saldo posterior por producto y moneda al reconstruir todos los movimientos disponibles desde su saldo de apertura. En tarjetas representa crédito disponible, no efectivo. Las cifras con ≈ son estimadas por falta de hora u otra referencia histórica; confirma contra el estado bancario. Los consumos con tarjetas se reconocen una sola vez; los pagos y transferencias no duplican gastos. Cuando corrijas una operación vinculada a un corte bancario, revisa la conciliación contra el estado oficial.</p></section>`}
 
 function subscriptionAnalysis(){let active=db.recurring.filter(r=>r.active!==false);const mon=r=>{let freq=r.frequency==='annual'?1/12:r.frequency==='quarterly'?1/3:r.frequency==='weekly'?365.25/7/12:1;return fx(r.amount,r.currency)*freq};
 const val=active.map(r=>({...r,monthly:mon(r)})).sort((a,b)=>b.monthly-a.monthly);let total=val.reduce((s,r)=>s+r.monthly,0),annual=total*12;let cumulative=0;
@@ -28677,6 +28922,87 @@ document.addEventListener('input',function(event){
 });
 
 
+/* V264 · La UI de Suscripciones debe compartir el ámbito de db/render */
+
+(function(){
+  'use strict';
+  function $make(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e;}
+  function factor(freq){return freq==='annual'?12:freq==='quarterly'?3:freq==='weekly'?(7/30.4375):1;}
+  function monthlyEq(r){return fx(num(r.amount),r.currency)/factor(r.frequency);}
+  function calc(){
+    const active=(db.recurring||[]).filter(r=>r&&r.active!==false);
+    const monthlyTotal=active.reduce((s,r)=>s+monthlyEq(r),0);
+    const yearTotal=monthlyTotal*12;
+    const next=active.filter(r=>r.nextDue&&r.nextDue>=today()&&r.nextDue<=addDays(today(),30)).slice().sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)));
+    const upcomingVal=next.reduce((s,r)=>s+fx(num(r.amount),r.currency),0);
+    const month=String(ui.month||today().slice(0,7)).slice(0,7);
+    const paid=(db.transactions||[]).filter(t=>t&&t.recurringId&&['expense','card_charge'].includes(t.type)&&String(t.date||'').startsWith(month));
+    const paidVal=paid.reduce((s,t)=>s+fx(num(t.amount),t.currency),0);
+    return {active,monthlyTotal,yearTotal,next,upcomingVal,paidVal};
+  }
+  function ensureKpi(root,body,data){
+    let kpi=body.querySelector(':scope > .v264-subs-kpi');
+    if(!kpi){kpi=$make('section','v264-subs-kpi');body.insertBefore(kpi,body.firstChild);}
+    kpi.innerHTML='';
+    const copy=$make('div','v264-kpi-copy');
+    copy.innerHTML=`<span class="v264-kicker">SUSCRIPCIONES / COSTO RECURRENTE</span><h3>Lo que mantienes activo,<br><em>tiene un costo.</em></h3><p>Vista ejecutiva del gasto recurrente: costo mensual equivalente, próximos cargos, pagos del período y servicios activos, sin perder la profundidad analítica.</p>`;
+    const actions=$make('div','v264-kpi-actions');
+    actions.innerHTML=`<button type="button" class="btn" data-act="navigate" data-id="recurring" data-tab="overview">Ver servicios ${icon('arrow')}</button><button type="button" class="btn soft" data-act="navigate" data-id="recurring" data-tab="next">Próximos cargos ${icon('arrow')}</button>`;
+    copy.append(actions,$make('div','v264-kpi-note','Distingue el costo mensual equivalente de los cargos reales del período. Las cifras se mantienen sincronizadas con tus servicios y con sus pagos registrados.'));
+    const grid=$make('div','v264-kpi-grid');
+    const cards=[
+      ['COSTO MENSUAL EQUIVALENTE',money(data.monthlyTotal),'Solo suscripciones activas'],
+      ['COMPROMISO ANUALIZADO',money(data.yearTotal),'12 meses de referencia'],
+      ['PRÓXIMOS 30 DÍAS',money(data.upcomingVal),`${data.next.length} renovaciones registradas`],
+      ['PAGADO EN EL MES',money(data.paidVal),(typeof fmtMonth==='function'?fmtMonth(String(ui.month||today().slice(0,7)).slice(0,7)):String(ui.month||today().slice(0,7)))],
+      ['SERVICIOS ACTIVOS',String(data.active.length),'Con cargo programado']
+    ];
+    const primary=cards.slice(1,5); // leave monthly total as headline? no, also in grid? user wants KPI with main plus 4 support.
+    primary.forEach(([label,val,sub])=>{const c=$make('article','v264-kpi-card',`<small>${label}</small><strong>${val}</strong><span>${sub}</span>`);grid.append(c);});
+    // Add monthly equivalent first, replacing first card if needed, move before annualized.
+    grid.prepend($make('article','v264-kpi-card',`<small>${cards[0][0]}</small><strong>${cards[0][1]}</strong><span>${cards[0][2]}</span>`));
+    // keep only first 4 cards in 2x2 layout, but we still need servicios activos; replace annualized? maintain 4 indicators main. We'll trim below.
+    while(grid.children.length>4)grid.removeChild(grid.lastElementChild);
+    copy.querySelector('.btn[data-tab="overview"]')?.setAttribute('data-v264-link','overview');
+    copy.querySelector('.btn[data-tab="next"]')?.setAttribute('data-v264-link','next');
+    kpi.append(copy,grid);
+  }
+  function block(headEyebrow,title,desc,extraClass){
+    const section=$make('section','v264-block '+(extraClass||''));
+    section.innerHTML=`<header class="v264-block-head"><div class="copy"><span class="eyebrow">${headEyebrow}</span><h3>${title}</h3><p>${desc}</p></div></header>`;
+    return section;
+  }
+  function build(){
+    if(ui.page!=='recurring')return;
+    const root=document.querySelector('#page .v26-internal[data-module="recurring"]');
+    if(!root)return;
+    const body=root.querySelector(':scope > .v26-body');
+    if(!body)return;
+    root.classList.add('v264-recurring');
+    const data=calc();
+    body.querySelectorAll(':scope > .v252-hero,:scope > .v252-additional-metrics,:scope > .section-title,:scope > .grid.kpis,:scope > .v149-rec-unified').forEach(el=>el.classList.add('v264-hide'));
+    ensureKpi(root,body,data);
+    const panel=body.querySelector('.v46-subs-panel');
+    if(panel){
+      let wrap=panel.closest('.v264-services-block');
+      if(!wrap){wrap=block('TUS SERVICIOS','Tus servicios','Nombre, importe, frecuencia, próximo cargo y acciones de cada suscripción, en una presentación compacta y uniforme.','v264-services-block v264-services-card');panel.parentNode.insertBefore(wrap,panel);wrap.append(panel);} 
+      const h=panel.querySelector('.v46-subs-head h3');if(h)h.textContent='Tus servicios';
+      const p=panel.querySelector('.v46-subs-head p');if(p)p.textContent='Importe, frecuencia y próximo cargo por servicio. El nombre, el monto y la próxima renovación se priorizan visualmente.';
+    }
+    const intel=body.querySelector('.subscription-world');
+    if(intel){
+      let wrap=intel.closest('.v264-intelligence-block');
+      if(!wrap){wrap=block('INTELIGENCIA DE SUSCRIPCIONES','Tu inteligencia de suscripciones','Indicadores, ranking Pareto y distribución por categoría con una lectura más ejecutiva, manteniendo todos los datos y cálculos dinámicos.','v264-intelligence-block v264-intelligence-card');intel.parentNode.insertBefore(wrap,intel);wrap.append(intel);} 
+      const foot=wrap.querySelector('.v264-block-head .copy p');if(foot)foot.textContent='Equivalente mensual, gasto anual, concentración 80/20, mayor suscripción, ranking y distribución por categoría, sin eliminar profundidad analítica.';
+    }
+  }
+  const previous=render;
+  render=function(){const result=previous.apply(this,arguments);requestAnimationFrame(build);return result;};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(build),{once:true});
+  else requestAnimationFrame(build);
+})();
+
+
 })();
 
 
@@ -36251,6 +36577,122 @@ body.theme-black .v263-wallet-count,body.theme-dark .v263-wallet-count{backgroun
 @media(min-width:791px){.v263-wallet{display:none}}
 @media(prefers-reduced-motion:reduce){.v263-wallet *, .v263-wallet *::before,.v263-wallet *::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
+
+
+<style id="vive-v264-suscripciones-redesign">
+/* V264 · Suscripciones: KPI ejecutivo + servicios compactos + inteligencia ordenada */
+.v264-hide{display:none !important}
+#page .v26-internal[data-module="recurring"].v264-recurring .v26-body{display:grid;gap:18px}
+#page .v26-internal[data-module="recurring"].v264-recurring .v264-subs-kpi{
+  display:grid;grid-template-columns:minmax(0,1.06fr) minmax(420px,.94fr);gap:18px;
+  padding:28px;border-radius:28px;
+  background:linear-gradient(135deg,#203861 0%,#335483 54%,#5676a8 100%);
+  border:1px solid rgba(196,215,244,.22);box-shadow:0 18px 45px rgba(29,55,99,.14);color:#fff;
+  position:relative;overflow:hidden;
+}
+#page .v26-internal[data-module="recurring"].v264-recurring .v264-subs-kpi::after{
+  content:"";position:absolute;inset:auto -70px -70px auto;width:280px;height:280px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.12);box-shadow:-55px -55px 0 0 rgba(255,255,255,.04),-110px -110px 0 0 rgba(255,255,255,.03);
+  pointer-events:none;
+}
+.v264-kpi-copy{display:grid;align-content:start;gap:14px;min-width:0}
+.v264-kpi-copy .v264-kicker{font-size:11px;letter-spacing:.16em;font-weight:800;color:#d8e8ff;text-transform:uppercase}
+.v264-kpi-copy h3{margin:0;font-size:clamp(34px,2.5vw,54px);line-height:.98;letter-spacing:-.06em;color:#fff;max-width:12ch}
+.v264-kpi-copy h3 em{font-style:normal;color:#a8c8ff}
+.v264-kpi-copy p{margin:0;max-width:58ch;font-size:14px;line-height:1.7;color:#dfebfb}
+.v264-kpi-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:2px}
+.v264-kpi-actions .btn{min-height:40px;border-radius:14px!important;padding:10px 14px!important;font-size:12px!important}
+.v264-kpi-actions .btn.soft,.v264-kpi-actions .btn.ghost{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.24)!important;color:#fff!important}
+.v264-kpi-actions .btn:not(.soft):not(.ghost){background:#fff!important;color:#23436d!important;border-color:#fff!important}
+.v264-kpi-note{font-size:11px;line-height:1.5;color:#d7e5fb}
+.v264-kpi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-content:start;min-width:0;padding-left:18px;border-left:1px solid rgba(255,255,255,.16)}
+.v264-kpi-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:14px 15px;display:grid;gap:7px;min-height:98px;backdrop-filter:blur(10px)}
+.v264-kpi-card small{font-size:10px;letter-spacing:.12em;font-weight:800;color:#d7e6fd;text-transform:uppercase}
+.v264-kpi-card strong{font-size:clamp(20px,1.7vw,30px);line-height:1;letter-spacing:-.04em;color:#fff;overflow-wrap:anywhere}
+.v264-kpi-card span{font-size:11px;line-height:1.45;color:#dfeafc}
+.v264-block{display:grid;gap:12px}
+.v264-block-head{display:flex;justify-content:space-between;align-items:end;gap:16px;padding-inline:2px}
+.v264-block-head .copy{display:grid;gap:4px}
+.v264-block-head .eyebrow{font-size:11px;letter-spacing:.15em;font-weight:800;text-transform:uppercase;color:#6782a8}
+.v264-block-head h3{margin:0;font-size:28px;letter-spacing:-.05em;color:#21324d}
+.v264-block-head p{margin:0;font-size:13px;line-height:1.6;color:#6f819b;max-width:74ch}
+.v264-services-card .v46-subs-panel,.v264-intelligence-card .subscription-world{margin:0!important;border-radius:24px!important;background:rgba(255,255,255,.74)!important;border:1px solid rgba(218,231,247,.9)!important;box-shadow:0 14px 34px rgba(35,68,116,.08)!important}
+.v264-services-card .v46-subs-panel{padding:18px!important}
+.v264-services-card .v46-subs-head{padding-bottom:8px;border-bottom:1px solid rgba(226,235,246,.9);margin-bottom:10px}
+.v264-services-card .v46-subs-head h3{font-size:22px!important;letter-spacing:-.04em}
+.v264-services-card .v46-subs-head p{font-size:12px!important;line-height:1.55!important;max-width:72ch}
+.v264-services-card .v46-subscriptions-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+.v264-services-card .v46-subscription-card{padding:14px 14px 13px!important;border-radius:19px!important;gap:10px!important;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(245,249,255,.9))!important;border:1px solid rgba(223,233,246,.95)!important;box-shadow:0 6px 16px rgba(28,54,95,.05)!important}
+.v264-services-card .v46-sub-card-title strong{font-size:15px!important;line-height:1.2!important}
+.v264-services-card .v46-sub-card-title small{font-size:11px!important}
+.v264-services-card .v46-sub-card-cost{font-size:26px!important;letter-spacing:-.055em!important}
+.v264-services-card .v46-sub-card-cost small{font-size:10px!important}
+.v264-services-card .v46-sub-card-next{font-size:11px!important;gap:4px!important}
+.v264-services-card .v46-sub-card-actions{padding-top:10px!important;gap:7px!important}
+.v264-services-card .v46-sub-card-actions .btn{border-radius:11px!important;font-size:11px!important;padding:8px 10px!important}
+.v264-intelligence-card .subscription-world{padding:18px!important}
+.v264-intelligence-card .subscription-world>.subscription-hero{margin-bottom:12px;padding:22px 24px!important;border-radius:22px!important;align-items:flex-start!important}
+.v264-intelligence-card .subscription-hero h2{font-size:30px!important;line-height:1.02!important;letter-spacing:-.05em!important;margin:9px 0 7px!important}
+.v264-intelligence-card .subscription-hero p{font-size:13px!important;line-height:1.6!important;max-width:54ch}
+.v264-intelligence-card .sub-total-label{font-size:38px!important;letter-spacing:-.05em!important;text-align:right}
+.v264-intelligence-card .sub-total-label small{font-size:11px!important;letter-spacing:.05em!important}
+.v264-intelligence-card .sub-analysis-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;margin:0 0 14px!important}
+.v264-intelligence-card .sub-analysis-stats>div{padding:16px 15px!important;border-radius:18px!important;background:rgba(255,255,255,.92)!important}
+.v264-intelligence-card .sub-analysis-stats small{font-size:10px!important}
+.v264-intelligence-card .sub-analysis-stats strong{font-size:20px!important;line-height:1.15!important;margin-top:8px!important}
+.v264-intelligence-card .sub-analysis-layout{grid-template-columns:minmax(0,1.3fr) minmax(290px,.92fr)!important;gap:14px!important}
+.v264-intelligence-card .sub-analysis-layout>.panel{padding:0!important;overflow:hidden}
+.v264-intelligence-card .sub-analysis-layout>.panel .panel-head{padding:17px 18px 10px!important}
+.v264-intelligence-card .sub-analysis-layout>.panel .panel-head h3{font-size:18px!important;letter-spacing:-.03em}
+.v264-intelligence-card .sub-analysis-layout>.panel .panel-head .pill{font-size:10px!important}
+.v264-intelligence-card .table-wrap{padding:0 10px 6px!important}
+.v264-intelligence-card .sub-pareto th,.v264-intelligence-card .sub-pareto td{padding:11px 8px!important;font-size:11px!important}
+.v264-intelligence-card .sub-composition{padding:0 18px 12px!important;margin-bottom:0!important}
+.v264-intelligence-card .footnote{font-size:11px!important;line-height:1.55!important;color:#7a8ca5!important;margin-top:10px!important}
+@media (max-width:1100px){
+ #page .v26-internal[data-module="recurring"].v264-recurring .v264-subs-kpi{grid-template-columns:1fr!important}
+ .v264-kpi-grid{padding-left:0!important;border-left:0!important;border-top:1px solid rgba(255,255,255,.14)!important;padding-top:14px!important}
+ .v264-services-card .v46-subscriptions-grid,.v264-intelligence-card .sub-analysis-layout{grid-template-columns:1fr!important}
+}
+@media (max-width:760px){
+ #page .v26-internal[data-module="recurring"].v264-recurring .v26-body{gap:14px!important}
+ #page .v26-internal[data-module="recurring"].v264-recurring .v264-subs-kpi{padding:18px!important;border-radius:24px!important}
+ .v264-kpi-copy h3{font-size:34px!important;max-width:100%}
+ .v264-kpi-copy p{font-size:12px!important}
+ .v264-kpi-grid{grid-template-columns:1fr 1fr!important;gap:10px!important}
+ .v264-kpi-card{padding:12px 12px 11px!important;min-height:86px!important;border-radius:16px!important}
+ .v264-kpi-card small{font-size:9px!important}
+ .v264-kpi-card strong{font-size:18px!important}
+ .v264-kpi-card span{font-size:10px!important}
+ .v264-block-head{align-items:flex-start!important;flex-direction:column!important;gap:8px!important}
+ .v264-block-head h3{font-size:23px!important}
+ .v264-block-head p{font-size:12px!important}
+ .v264-services-card .v46-subs-panel,.v264-intelligence-card .subscription-world{padding:14px!important;border-radius:20px!important}
+ .v264-services-card .v46-subscriptions-grid{grid-template-columns:1fr!important;gap:10px!important}
+ .v264-services-card .v46-subscription-card{padding:13px!important;border-radius:17px!important}
+ .v264-services-card .v46-sub-card-cost{font-size:22px!important}
+ .v264-intelligence-card .subscription-world>.subscription-hero{padding:16px!important;gap:12px!important;flex-direction:column!important}
+ .v264-intelligence-card .subscription-hero h2{font-size:24px!important}
+ .v264-intelligence-card .sub-total-label{text-align:left!important;font-size:30px!important}
+ .v264-intelligence-card .sub-analysis-stats{grid-template-columns:1fr 1fr!important;gap:10px!important}
+ .v264-intelligence-card .sub-analysis-layout>.panel .panel-head{padding:14px 14px 8px!important}
+ .v264-intelligence-card .sub-composition{padding:0 14px 11px!important}
+}
+@media (max-width:420px){
+ .v264-kpi-grid{grid-template-columns:1fr!important}
+ .v264-intelligence-card .sub-analysis-stats{grid-template-columns:1fr!important}
+}
+body.theme-dark .v264-block-head .eyebrow,body.theme-black .v264-block-head .eyebrow{color:#a8bfdc}
+body.theme-dark .v264-block-head h3,body.theme-black .v264-block-head h3{color:#edf4ff}
+body.theme-dark .v264-block-head p,body.theme-black .v264-block-head p{color:#b7c6da}
+body.theme-dark .v264-services-card .v46-subs-panel,body.theme-black .v264-services-card .v46-subs-panel,
+body.theme-dark .v264-intelligence-card .subscription-world,body.theme-black .v264-intelligence-card .subscription-world{
+ background:rgba(18,28,44,.82)!important;border-color:rgba(78,97,128,.55)!important;box-shadow:none!important}
+body.theme-dark .v264-services-card .v46-subscription-card,body.theme-black .v264-services-card .v46-subscription-card{
+ background:linear-gradient(180deg,rgba(20,30,48,.96),rgba(28,39,58,.94))!important;border-color:rgba(72,90,122,.58)!important;box-shadow:none!important}
+body.theme-dark .v264-intelligence-card .sub-analysis-stats>div,body.theme-black .v264-intelligence-card .sub-analysis-stats>div{background:rgba(17,27,41,.92)!important;border-color:rgba(72,90,122,.54)!important}
+</style>
+
 
 </body>
 </html>
