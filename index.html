@@ -27169,6 +27169,127 @@ document.addEventListener('click',function(event){
 },true);
 
 
+
+/* V239 · Tres experiencias bancarias móviles, sin cambios al motor contable ni a desktop. */
+(function v239MobileProductExperiences(){
+  const desktop={accounts:pages.accounts,loans:pages.loans,certificates:pages.certificates};
+  const mobile=()=>window.matchMedia('(max-width: 790px)').matches;
+  const fmt=(n,c='DOP')=>money(num(n),c,2);
+  const cash=a=>a.kind==='cash';
+  const currencyLabel=c=>c==='USD'?'US$':'RD$';
+  const validDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(String(d||''));
+  const cDate=d=>validDate(d)?prettyDate(d):'Sin fecha';
+  const action=(label,act,opts={})=>`<button type="button" class="v239-action ${opts.primary?'v239-action-primary':''}" data-act="${act}"${opts.id?` data-id="${sanitize(opts.id)}"`:''}${opts.mode?` data-mode="${opts.mode}"`:''}${opts.disabled?' disabled':''}>${opts.ico?icon(opts.ico):''}<span>${label}</span></button>`;
+  const tab=(section,id,label,count)=>`<button type="button" role="tab" aria-selected="${(ui['v239'+section]||(section==='Accounts'?'all':'active'))===id}" class="v239-segment ${(ui['v239'+section]||(section==='Accounts'?'all':'active'))===id?'selected':''}" data-v239-tab="${section}:${id}"><span>${label}</span>${count===undefined?'':`<small>${count}</small>`}</button>`;
+  const top=(eyebrow,title,desc,act,label)=>`<header class="v239-intro"><div><span class="v239-eyebrow">${eyebrow}</span><h2>${title}</h2><p>${desc}</p></div><button class="v239-add" type="button" data-act="${act}" aria-label="${label}">${icon('plus')}<span>${label}</span></button></header>`;
+  const empty=(ico,title,desc,act,label)=>`<section class="v239-empty">${icon(ico)}<h3>${title}</h3><p>${desc}</p>${action(label,act,{primary:true,ico:'plus'})}</section>`;
+  const row=(label,val)=>`<div class="v239-fact"><span>${label}</span><strong>${val}</strong></div>`;
+  const bankCaption=b=>sanitize(String(b||'Sin institución'));
+  const txList=(tx,currency)=>tx.length?`<div class="v239-history">${tx.slice(0,15).map(t=>`<div class="v239-history-row"><span class="v239-history-mark">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':'down')}</span><span class="v239-history-copy"><strong>${sanitize(transactionTitle(t))}</strong><small>${cDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b><button type="button" data-act="editTransaction" data-id="${t.id}" aria-label="Editar movimiento" class="v239-history-edit">${icon('receipt')}</button></div>`).join('')}</div>`:'<p class="v239-no-data">Aún no hay movimientos vinculados a este producto.</p>';
+
+  function accountsMobile(){
+    const selected=ui.accountId?account(ui.accountId):null;
+    const visible=db.accounts.filter(a=>ui.showHidden||!a.archived);
+    const cur=ui.v239Currency==='USD'?'USD':'DOP';
+    const inCur=visible.filter(a=>a.currency===cur), bankSum=inCur.filter(a=>!cash(a)).reduce((v,a)=>v+num(getAccountBalance(a)),0), cashSum=inCur.filter(cash).reduce((v,a)=>v+num(getAccountBalance(a)),0);
+    if(selected){
+      const tx=recentTx().filter(t=>t.accountId===selected.id||t.toAccountId===selected.id);
+      const isCash=cash(selected),balance=num(getAccountBalance(selected));
+      return `<div class="v239-mobile-root v239-accounts v239-detail-mode">
+        <button class="v239-back" data-act="closeAccountDetails">${icon('arrow')} Todas mis cuentas</button>
+        <section class="v239-hero v239-detail-hero"><span class="v239-hero-label">${isCash?'EFECTIVO PERSONAL':'CUENTA BANCARIA'} · ${selected.currency}</span><h2>${sanitize(selected.name)}</h2><p>${isCash?'Billetera permanente':bankCaption(bankOf(selected))}</p><small>SALDO DISPONIBLE</small><strong>${fmt(balance,selected.currency)}</strong><div class="v239-hero-bottom"><span>${isCash?'No depende de un banco':selected.kind==='savings'?'Ahorros':'Corriente'}</span><span>${selected.last4?'•••• '+sanitize(selected.last4):'Movimientos reales'}</span></div></section>
+        <div class="v239-actions">${action('Recibir','guidedFlow',{mode:'income',ico:'up',primary:true})}${action('Enviar','guidedFlow',{mode:'own',ico:'cycle'})}${action(isCash?'Configurar':'Editar',isCash?'addCashWallet':'editAccount',{id:selected.id,ico:'receipt'})}</div>
+        <section class="v239-sheet"><h3>Información de la cuenta</h3><div class="v239-facts">${row('Saldo inicial',fmt(selected.opening,selected.currency))}${row('Fecha de apertura',cDate(selected.opened))}${row('Interés mensual orientativo',fmt(Math.max(0,balance)*num(selected.annualRate)/1200,selected.currency))}${row('Movimientos registrados',String(tx.length))}</div><p class="v239-disclaimer">El interés es una estimación, no un ingreso contabilizado.</p></section>
+        <section class="v239-sheet"><div class="v239-sheet-head"><h3>Actividad reciente</h3><span>${tx.length}</span></div>${txList(tx,selected.currency)}</section>
+        ${isCash?'':`<details class="v239-more"><summary>Administrar esta cuenta ${icon('arrow')}</summary><div class="v239-more-body">${productControls('account',selected.id,selected.archived)}</div></details>`}
+      </div>`;
+    }
+    const filter=ui.v239Accounts||'all';
+    const shown=visible.filter(a=>filter==='all'||(filter==='cash'?cash(a):!cash(a))); 
+    const cards=shown.map(a=>{const c=cash(a);return `<article class="v239-product v239-account-item"><div class="v239-product-top"><span class="v239-logo ${c?'v239-logo-cash':''}">${icon(c?'wallet':'building')}</span><span class="v239-product-meta"><strong>${sanitize(a.name)}</strong><small>${c?'Efectivo personal':bankCaption(bankOf(a))} · ${a.currency}</small></span><span class="v239-currency">${currencyLabel(a.currency)}</span></div><div class="v239-product-value"><small>SALDO DISPONIBLE</small><strong>${fmt(getAccountBalance(a),a.currency)}</strong></div><div class="v239-product-foot"><span>${c?'Billetera permanente':a.kind==='savings'?'Cuenta de ahorros':'Cuenta corriente'}</span><button type="button" data-act="accountDetails" data-id="${a.id}" aria-label="Ver detalle de ${sanitize(a.name)}">Ver cuenta ${icon('arrow')}</button></div></article>`}).join('');
+    return `<div class="v239-mobile-root v239-accounts">
+      ${top('TU DINERO, BIEN ORGANIZADO','Cuentas y efectivo','Cada saldo en su moneda, sin duplicidades.','addAccount','Nueva')}
+      <section class="v239-hero" aria-label="Disponible por moneda"><div class="v239-hero-top"><span class="v239-hero-label">SALDO TOTAL · ${currencyLabel(cur)}</span><span class="v239-hero-icon">${icon('wallet')}</span></div><strong class="v239-hero-amount">${fmt(bankSum+cashSum,cur)}</strong><div class="v239-currency-tabs" role="group" aria-label="Moneda del resumen"><button type="button" data-v239-currency="DOP" aria-pressed="${cur==='DOP'}" class="${cur==='DOP'?'active':''}">RD$</button><button type="button" data-v239-currency="USD" aria-pressed="${cur==='USD'}" class="${cur==='USD'?'active':''}">US$</button></div><div class="v239-hero-metrics"><div><small>EN BANCOS</small><strong>${fmt(bankSum,cur)}</strong></div><div><small>EFECTIVO</small><strong>${fmt(cashSum,cur)}</strong></div></div></section>
+      <div class="v239-actions" aria-label="Acciones rápidas">${action('Recibir','guidedFlow',{mode:'income',ico:'up',primary:true})}${action('Transferir','guidedFlow',{mode:'own',ico:'cycle'})}${action('Pagar','guidedFlow',{mode:'spend',ico:'down'})}</div>
+      <div class="v239-list-head"><div><span class="v239-eyebrow">MIS PRODUCTOS</span><h3>Mis cuentas <small>${visible.length}</small></h3></div>${db.accounts.some(a=>a.archived)?visibilityControl():''}</div>
+      <div class="v239-segments" role="tablist" aria-label="Filtrar cuentas">${tab('Accounts','all','Todas',visible.length)}${tab('Accounts','bank','Bancarias',visible.filter(a=>!cash(a)).length)}${tab('Accounts','cash','Efectivo',visible.filter(cash).length)}</div>
+      <div class="v239-product-list">${cards||empty('wallet','Todavía no hay cuentas aquí','Puedes crear una cuenta bancaria o cambiar el filtro.','addAccount','Crear cuenta')}</div>
+      <p class="v239-bottom-note">Los fondos en RD$ y US$ se mantienen separados. El cambio de moneda del resumen no convierte ni mueve dinero.</p>
+    </div>`;
+  }
+
+  function loansMobile(){
+    const selected=ui.loanId?loan(ui.loanId):null;
+    if(selected)return `<div class="v239-mobile-root v239-loans v239-loan-deep">${loanDetail(selected)}</div>`;
+    const visible=db.loans.filter(l=>ui.showHidden||!l.archived);
+    const active=visible.filter(l=>!l.archived&&!loanAccounting(l).settled), settled=visible.filter(l=>loanAccounting(l).settled);
+    const outstanding=active.reduce((s,l)=>s+fx(Math.max(0,loanAccounting(l).balance),l.currency),0);
+    const dues=upcoming().filter(o=>o.kind==='loan'&&o.date>=today()&&!loan(o.ref)?.archived).sort((a,b)=>a.date.localeCompare(b.date));
+    const scope=ui.v239Loans||'active';
+    const shown=visible.filter(l=>scope==='all'||(scope==='active'?!l.archived&&!loanAccounting(l).settled:loanAccounting(l).settled));
+    return `<div class="v239-mobile-root v239-loans">
+      ${top('FINANCIAMIENTO','Mis préstamos','Control de capital, cuotas y avance real.','addLoan','Nuevo')}
+      <section class="v239-hero v239-loan-hero"><div class="v239-hero-top"><span class="v239-hero-label">CAPITAL PENDIENTE · EQUIVALENTE RD$</span><span class="v239-hero-icon">${icon('receipt')}</span></div><strong class="v239-hero-amount">${fmt(outstanding)}</strong><div class="v239-hero-metrics"><div><small>PRÉSTAMOS ACTIVOS</small><strong>${active.length}</strong></div><div><small>PRÓXIMA CUOTA</small><strong>${dues.length?cDate(dues[0].date):'Sin fecha'}</strong></div></div><p class="v239-hero-footnote">Saldo de capital; no suma intereses futuros. US$ al cambio configurado.</p></section>
+      <div class="v239-list-head"><div><span class="v239-eyebrow">CARTERA</span><h3>Tus compromisos</h3></div>${db.loans.some(l=>l.archived)?visibilityControl():''}</div>
+      <div class="v239-segments" role="tablist" aria-label="Filtrar préstamos">${tab('Loans','active','Activos',active.length)}${tab('Loans','all','Todos',visible.length)}${tab('Loans','closed','Liquidados',settled.length)}</div>
+      <div class="v239-product-list">${shown.length?shown.map(l=>{const a=loanAccounting(l),bal=Math.max(0,num(a.balance)),progress=Math.max(0,Math.min(100,num(l.principal)?num(a.paidPrincipal)/num(l.principal)*100:0)),sett=a.settled,inst=loanStatus(l).installment;return `<article class="v239-product v239-loan-item"><div class="v239-product-top"><span class="v239-logo">${icon('building')}</span><span class="v239-product-meta"><strong>${sanitize(l.name)}</strong><small>${bankCaption(bankOf(l))} · ${l.currency} · ${v49LoanPeriodsPerMonth(l)===2?'Quincenal':'Mensual'}</small></span><span class="v239-status ${sett?'is-paid':''}">${sett?'Liquidado':l.archived?'Cancelado':'Activo'}</span></div><div class="v239-product-value"><small>CAPITAL PENDIENTE</small><strong>${fmt(bal,l.currency)}</strong></div><div class="v239-progress" role="progressbar" aria-valuenow="${progress.toFixed(1)}" aria-valuemin="0" aria-valuemax="100" aria-label="Capital amortizado"><i style="width:${progress.toFixed(2)}%"></i></div><div class="v239-progress-foot"><span>${progress.toFixed(1)}% amortizado</span><span>${sett?'Completado':validDate(a.next)?'Próxima: '+cDate(a.next):'Sin fecha próxima'}</span></div><div class="v239-loan-addendum"><span><small>CUOTA DE REFERENCIA</small><strong>${fmt(inst,l.currency)}</strong></span><span><small>TASA VIGENTE</small><strong>${num(l.currentRate??l.rate).toFixed(2)}%</strong></span></div><div class="v239-card-actions">${action('Ver préstamo','loanDetails',{id:l.id,ico:'arrow',primary:true})}${action('Registrar pago','payLoan',{id:l.id,ico:'check',disabled:sett||l.archived})}</div></article>`}).join(''):empty('receipt',scope==='closed'?'Sin préstamos liquidados':'No hay préstamos en esta vista','Crea un préstamo o selecciona otro filtro para ver la cartera.','addLoan','Nuevo préstamo')}</div>
+      <p class="v239-bottom-note">Las proyecciones de intereses y seguros se consultan dentro de cada préstamo; nunca modifican tus pagos reales.</p>
+    </div>`;
+  }
+
+  function certificatesMobile(){
+    const visible=db.certificates.filter(c=>ui.showHidden||!c.archived),selected=ui.v239CertificateId?certificate(ui.v239CertificateId):null;
+    const invested=visible.filter(c=>!c.archived).reduce((s,c)=>s+fx(certificateCapital(c),c.currency),0);
+    const upcomingCerts=visible.filter(c=>certificateCapital(c)>0&&validDate(c.maturityDate)&&c.maturityDate>=today()).sort((a,b)=>a.maturityDate.localeCompare(b.maturityDate));
+    const accrued=visible.filter(c=>!c.archived).reduce((s,c)=>s+fx(certProjection(c).collected,c.currency),0);
+    if(selected){const p=certProjection(selected),capital=certificateCapital(selected),days=validDate(selected.maturityDate)?diffDays(selected.maturityDate,today()):null;return `<div class="v239-mobile-root v239-certificates v239-detail-mode"><button class="v239-back" type="button" data-v239-cert-close>${icon('arrow')} Mis certificados</button>
+      <section class="v239-hero v239-cert-hero v239-detail-hero"><span class="v239-hero-label">INVERSIÓN · ${selected.currency}</span><h2>${sanitize(selected.name)}</h2><p>${bankCaption(bankOf(selected))}</p><small>CAPITAL CONSTITUIDO</small><strong>${fmt(capital,selected.currency)}</strong><div class="v239-hero-bottom"><span>Tasa anual ${num(selected.rate).toFixed(2)}%</span><span>${days===null?'Sin vencimiento':days<0?'Vencido':days===0?'Vence hoy':'En '+days+' días'}</span></div></section>
+      <div class="v239-actions">${action('Cobrar interés','certificateInterest',{id:selected.id,ico:'up',primary:true})}${action('Rescatar','certificateRedeem',{id:selected.id,ico:'wallet'})}${action('Editar','editCertificate',{id:selected.id,ico:'receipt'})}</div>
+      ${selected.capitalMode==='pending'?`<div class="v239-pending-action">${action('Constituir capital pendiente','certificateFund',{id:selected.id,ico:'plus',primary:true})}</div>`:''}
+      <section class="v239-sheet"><h3>Rendimiento y vencimiento</h3><div class="v239-facts">${row('Tasa anual',num(selected.rate).toFixed(2)+'%')}${row('Vencimiento',cDate(selected.maturityDate))}${row('Ganancia neta estimada',fmt(p.net,selected.currency))}${row('Interés cobrado registrado',fmt(p.collected,selected.currency))}${row('Retención configurada',num(selected.taxPct).toFixed(2)+'%')}${row('Capital original',fmt(selected.principal,selected.currency))}</div><p class="v239-disclaimer">Las ganancias estimadas son informativas. Solo los intereses cobrados y registrados afectan ingresos.</p></section>
+      <section class="v239-sheet"><div class="v239-sheet-head"><h3>Movimientos del certificado</h3></div>${txList(recentTx().filter(t=>t.certificateId===selected.id),selected.currency)}</section>
+      <details class="v239-more"><summary>Administrar certificado ${icon('arrow')}</summary><div class="v239-more-body">${productControls('certificate',selected.id,selected.archived)}</div></details></div>`}
+    const scope=ui.v239Certificates||'active';
+    const shown=visible.filter(c=>scope==='all'||(scope==='soon'?validDate(c.maturityDate)&&c.maturityDate>=today()&&diffDays(c.maturityDate,today())<=90&&certificateCapital(c)>0:!c.archived));
+    const near=visible.filter(c=>!c.archived&&certificateCapital(c)>0&&validDate(c.maturityDate)&&c.maturityDate>=today()&&diffDays(c.maturityDate,today())<=90);
+    return `<div class="v239-mobile-root v239-certificates">
+      ${top('TUS INVERSIONES','Certificados','Capital, rendimientos y fechas importantes.','addCertificate','Nuevo')}
+      <section class="v239-hero v239-cert-hero"><div class="v239-hero-top"><span class="v239-hero-label">CAPITAL INVERTIDO · EQUIVALENTE RD$</span><span class="v239-hero-icon">${icon('chart')}</span></div><strong class="v239-hero-amount">${fmt(invested)}</strong><div class="v239-hero-metrics"><div><small>PRÓXIMO VENCIMIENTO</small><strong>${upcomingCerts.length?cDate(upcomingCerts[0].maturityDate):'Sin fecha'}</strong></div><div><small>INTERÉS COBRADO*</small><strong>${fmt(accrued)}</strong></div></div><p class="v239-hero-footnote">*Cobros registrados de los certificados visibles. No incluye rendimientos estimados.</p></section>
+      <div class="v239-list-head"><div><span class="v239-eyebrow">PORTAFOLIO</span><h3>Mis inversiones</h3></div>${db.certificates.some(c=>c.archived)?visibilityControl():''}</div>
+      <div class="v239-segments" role="tablist" aria-label="Filtrar certificados">${tab('Certificates','active','Vigentes')}${tab('Certificates','soon','Próximos 90 días',near.length)}${tab('Certificates','all','Todos',visible.length)}</div>
+      <div class="v239-product-list">${shown.length?shown.slice().sort((a,b)=>String(a.maturityDate).localeCompare(String(b.maturityDate))).map(c=>{const p=certProjection(c),capital=certificateCapital(c),days=validDate(c.maturityDate)?diffDays(c.maturityDate,today()):null;return `<article class="v239-product v239-certificate-item"><div class="v239-product-top"><span class="v239-logo v239-logo-cert">${icon('chart')}</span><span class="v239-product-meta"><strong>${sanitize(c.name)}</strong><small>${bankCaption(bankOf(c))} · ${c.currency}</small></span><span class="v239-status ${days!==null&&days<=30?'is-due':''}">${days===null?'Sin fecha':days<0?'Vencido':days===0?'Hoy':days+' días'}</span></div><div class="v239-product-value"><small>CAPITAL CONSTITUIDO</small><strong>${fmt(capital,c.currency)}</strong></div><div class="v239-cert-info"><div><small>TASA ANUAL</small><strong>${num(c.rate).toFixed(2)}%</strong></div><div><small>VENCIMIENTO</small><strong>${cDate(c.maturityDate)}</strong></div><div><small>INTERÉS COBRADO</small><strong>${fmt(p.collected,c.currency)}</strong></div></div><div class="v239-card-actions"><button type="button" class="v239-direct-open v239-action v239-action-primary" data-v239-cert-open="${sanitize(c.id)}" aria-label="Ver detalle de ${sanitize(c.name)}">Ver inversión ${icon('arrow')}</button>${action('Cobrar interés','certificateInterest',{id:c.id,ico:'up'})}</div></article>`}).join(''):empty('chart','Sin certificados en esta vista','Crea uno nuevo o consulta otro filtro.','addCertificate','Nuevo certificado')}</div>
+      <p class="v239-bottom-note">Un certificado no es efectivo disponible. Su capital se refleja aquí hasta que se registra un rescate.</p>
+    </div>`;
+  }
+
+  // Páginas de escritorio quedan intactas; solo se reemplaza su cuerpo móvil.
+  pages.accounts=()=>mobile()?accountsMobile():desktop.accounts();
+  pages.loans=()=>mobile()?loansMobile():desktop.loans();
+  pages.certificates=()=>mobile()?certificatesMobile():desktop.certificates();
+
+  const oldMain=main;
+  main=function(){if(mobile()&&ui.page==='advanced')ui.page='overview';if(ui.page!=='certificates')ui.v239CertificateId=null;return oldMain();};
+  // Los resultados del buscador móvil tampoco deben anunciar un destino oculto.
+  const previousMobileIndex=v154PrepareMobileIndex;
+  v154PrepareMobileIndex=function(){previousMobileIndex();if(mobile())v154MobileSearchIndex=v154MobileSearchIndex.filter(x=>x.page!=='advanced');};
+  document.addEventListener('click',function(e){
+    if(!mobile())return;
+    const tabBtn=e.target.closest?.('[data-v239-tab]');
+    const currencyBtn=e.target.closest?.('[data-v239-currency]');
+    const certOpen=e.target.closest?.('[data-v239-cert-open]');
+    const certClose=e.target.closest?.('[data-v239-cert-close]');
+    const mobileAdvanced=e.target.closest?.('[data-act="navigate"][data-id="advanced"]');
+    if(!tabBtn&&!currencyBtn&&!certOpen&&!certClose&&!mobileAdvanced)return;
+    e.preventDefault();e.stopImmediatePropagation();
+    if(mobileAdvanced){ui.page='overview';}
+    if(tabBtn){const [section,value]=tabBtn.dataset.v239Tab.split(':');if(['Accounts','Loans','Certificates'].includes(section))ui['v239'+section]=value;}
+    if(currencyBtn)ui.v239Currency=currencyBtn.dataset.v239Currency==='USD'?'USD':'DOP';
+    if(certOpen)ui.v239CertificateId=certOpen.dataset.v239CertOpen;
+    if(certClose)ui.v239CertificateId=null;
+    render();
+  },true);
+})();
+
  f33Boot();
 
 })();
@@ -32811,6 +32932,197 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
 }
 @media(prefers-reduced-motion:reduce){
  .main :is(.v145-agenda-row,.v236-institution-card,.v220-focus-card,.bank-card){animation:none!important;scroll-behavior:auto!important;}
+}
+
+</style>
+<style id="vive-v239-mobile-banking-redesign">
+/* V239 · Cuentas, préstamos y certificados: interfaz mobile-first, escritorio intacto. */
+@media(max-width:790px){
+  .main .v239-mobile-root{
+    --v239-surface:rgba(255,255,255,.88);--v239-surface-deep:rgba(246,249,255,.96);
+    --v239-line:rgba(104,127,173,.17);--v239-ink:#18243c;--v239-muted:#62738e;
+    --v239-blue:#4068ce;--v239-blue-soft:#e9eeff;--v239-green:#147c66;
+    width:100%;min-width:0;max-width:100%;padding:4px 0 calc(26px + env(safe-area-inset-bottom,0px));
+    color:var(--v239-ink);box-sizing:border-box;overflow-x:clip;
+    font-family:inherit;
+  }
+  .main .v239-mobile-root *{box-sizing:border-box;min-width:0}
+  .main .v239-mobile-root button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .main .v239-intro{display:flex;align-items:start;justify-content:space-between;gap:12px;margin:0 0 17px;padding:0 2px}
+  .main .v239-eyebrow{display:block;font-size:10px;font-weight:780;letter-spacing:.13em;color:#627eb8;margin-bottom:7px}
+  .main .v239-intro h2{font-size:clamp(24px,6.5vw,30px);line-height:1.08;letter-spacing:-.05em;font-weight:800;color:var(--v239-ink);margin:0}
+  .main .v239-intro p{font-size:12px;line-height:1.5;color:var(--v239-muted);margin:7px 0 0;max-width:260px}
+  .main .v239-add{display:flex;flex-shrink:0;gap:5px;align-items:center;justify-content:center;min-height:39px;border-radius:13px;border:1px solid var(--v239-line);background:var(--v239-surface);color:var(--v239-blue);font-size:12px;font-weight:760;padding:0 12px;box-shadow:0 5px 18px rgba(46,70,110,.04)}
+  .main .v239-add svg{height:15px;width:15px;stroke-width:2.3}
+  .main .v239-hero{position:relative;isolation:isolate;overflow:hidden;border-radius:25px;min-height:200px;padding:22px 20px 18px;color:#fff!important;background:linear-gradient(130deg,#213a75 0%,#3458a8 58%,#5679c3 100%);box-shadow:0 13px 30px rgba(33,67,132,.16);border:1px solid rgba(255,255,255,.16);margin-bottom:14px}
+  .main .v239-hero:after{position:absolute;right:-50px;top:-78px;width:200px;height:200px;border:1px solid rgba(255,255,255,.14);border-radius:50%;content:"";box-shadow:0 0 0 29px rgba(255,255,255,.032),0 0 0 58px rgba(255,255,255,.026);pointer-events:none;z-index:-1}
+  .main .v239-loan-hero{background:linear-gradient(135deg,#222d52 0%,#354d85 55%,#526dab 100%)}
+  .main .v239-cert-hero{background:linear-gradient(135deg,#174f53 0%,#276d6a 53%,#448d83 100%)}
+  .main .v239-hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .main .v239-hero-label{font-size:10px;line-height:1.4;font-weight:750;letter-spacing:.095em;color:rgba(241,248,255,.82)!important}
+  .main .v239-hero-icon{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.13);display:grid;place-items:center;flex-shrink:0}
+  .main .v239-hero-icon svg{width:18px;height:18px;stroke:#fff}
+  .main .v239-hero-amount{display:block;margin:21px 0 14px;font-variant-numeric:tabular-nums;font-size:clamp(31px,9vw,42px);line-height:1.06;letter-spacing:-.045em;font-weight:800;white-space:normal;overflow-wrap:anywhere;color:#fff!important}
+  .main .v239-currency-tabs{display:inline-flex;align-items:center;gap:3px;border-radius:11px;padding:4px;background:rgba(10,22,52,.22);margin:2px 0 12px}
+  .main .v239-currency-tabs button{padding:7px 17px;border:0;border-radius:8px;background:transparent;font-size:12px;font-weight:750;color:rgba(255,255,255,.8);min-height:32px}
+  .main .v239-currency-tabs button.active{background:#fff;color:#284c95;box-shadow:0 2px 8px rgba(14,30,71,.1)}
+  .main .v239-hero-metrics{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding-top:13px;margin-top:3px;border-top:1px solid rgba(255,255,255,.19)}
+  .main .v239-hero-metrics>div{min-width:0}
+  .main .v239-hero-metrics>div+div{padding-left:12px;border-left:1px solid rgba(255,255,255,.19)}
+  .main .v239-hero-metrics small{display:block;font-size:9px;font-weight:710;letter-spacing:.08em;color:rgba(235,244,255,.72)!important;margin-bottom:5px}
+  .main .v239-hero-metrics strong{display:block;font-size:clamp(13px,3.5vw,17px);line-height:1.25;letter-spacing:-.02em;font-weight:760;color:#fff!important;overflow-wrap:anywhere}
+  .main .v239-hero-footnote{font-size:10px;color:rgba(245,249,255,.7)!important;line-height:1.45;margin:11px 0 0}
+  .main .v239-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 23px}
+  .main .v239-action{display:flex;flex:1 1 0;align-items:center;justify-content:center;gap:6px;border:1px solid var(--v239-line);background:var(--v239-surface);color:var(--v239-ink);border-radius:14px;font-size:12px;font-weight:730;min-height:46px;padding:8px;line-height:1.18}
+  .main .v239-action svg{width:16px;height:16px;flex-shrink:0}
+  .main .v239-action-primary{border-color:transparent;background:var(--v239-blue);color:#fff!important;box-shadow:0 6px 16px rgba(49,82,161,.13)}
+  .main .v239-action:disabled{opacity:.43;cursor:not-allowed;box-shadow:none}
+  .main .v239-list-head{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:0 2px;margin:0 0 12px}
+  .main .v239-list-head .v239-eyebrow{margin-bottom:3px}
+  .main .v239-list-head h3{margin:0;color:var(--v239-ink);font-size:19px;font-weight:790;letter-spacing:-.035em}
+  .main .v239-list-head h3 small{margin-left:4px;font-weight:650;font-size:12px;color:var(--v239-muted)}
+  .main .v239-list-head>.btn{font-size:10px;min-height:32px;border-radius:10px;padding:5px 8px}
+  .main .v239-segments{display:flex;gap:5px;align-items:stretch;padding:5px;background:rgba(103,128,179,.09);border-radius:15px;margin-bottom:13px;width:100%;overflow-x:auto;scrollbar-width:none}
+  .main .v239-segments::-webkit-scrollbar{display:none}
+  .main .v239-segment{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:1px solid transparent;border-radius:11px;color:var(--v239-muted);background:transparent;min-height:38px;min-width:max-content;flex:1 1 0;padding:7px 9px;font-size:11px;font-weight:740;white-space:nowrap}
+  .main .v239-segment small{font-size:10px;opacity:.7;color:inherit}
+  .main .v239-segment.selected{background:var(--v239-surface);border-color:var(--v239-line);color:var(--v239-ink);box-shadow:0 3px 10px rgba(21,42,77,.045)}
+  .main .v239-product-list{display:grid;gap:11px;grid-template-columns:minmax(0,1fr)}
+  .main .v239-product{border-radius:21px;border:1px solid var(--v239-line);background:var(--v239-surface);padding:17px 16px 13px;box-shadow:0 4px 17px rgba(44,75,112,.045);color:var(--v239-ink)}
+  .main .v239-product-top{display:flex;align-items:center;gap:10px}
+  .main .v239-logo{width:42px;height:42px;flex:0 0 42px;border-radius:14px;background:#e8eeff;color:#345ba8;display:grid;place-items:center}
+  .main .v239-logo svg{width:20px;height:20px}
+  .main .v239-logo-cash{color:#237d68;background:#e7f7ee}
+  .main .v239-logo-cert{color:#1d8471;background:#e0f4ea}
+  .main .v239-product-meta{flex:1 1 auto;min-width:0}
+  .main .v239-product-meta strong{display:block;font-size:14px;font-weight:780;letter-spacing:-.02em;color:var(--v239-ink);line-height:1.28;overflow-wrap:anywhere}
+  .main .v239-product-meta small{display:block;font-size:11px;line-height:1.5;color:var(--v239-muted);margin-top:2px}
+  .main .v239-currency,.main .v239-status{border-radius:9px;border:1px solid var(--v239-line);background:var(--v239-surface-deep);padding:6px 7px;font-size:10px;font-weight:790;white-space:nowrap;color:var(--v239-muted)}
+  .main .v239-status.is-paid{color:#17836b;background:#e9f8ee}
+  .main .v239-status.is-due{color:#be6a1d;background:#fff2e2}
+  .main .v239-product-value{padding:18px 0 13px}
+  .main .v239-product-value small{display:block;color:var(--v239-muted);font-size:9px;letter-spacing:.09em;font-weight:740;margin-bottom:5px}
+  .main .v239-product-value strong{display:block;font-size:clamp(24px,7vw,30px);line-height:1.15;letter-spacing:-.04em;color:var(--v239-ink);font-weight:800;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+  .main .v239-product-foot{padding-top:12px;border-top:1px solid var(--v239-line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .main .v239-product-foot>span{font-size:10px;line-height:1.4;color:var(--v239-muted)}
+  .main .v239-product-foot button{display:inline-flex;align-items:center;gap:5px;color:var(--v239-blue);border:0;background:transparent;padding:5px 0 5px 7px;white-space:nowrap;font-size:11px;font-weight:770}
+  .main .v239-product-foot button svg{width:14px;height:14px}
+  .main .v239-bottom-note{font-size:11px;color:var(--v239-muted);line-height:1.55;margin:15px 5px}
+  .main .v239-empty{border:1px dashed var(--v239-line);border-radius:22px;padding:30px 18px;text-align:center;background:var(--v239-surface);display:grid;justify-items:center;gap:10px}
+  .main .v239-empty>svg{height:29px;width:29px;color:var(--v239-blue)}
+  .main .v239-empty h3{font-size:16px;color:var(--v239-ink);margin:0}
+  .main .v239-empty p{font-size:12px;color:var(--v239-muted);max-width:285px;margin:0 0 7px}
+  .main .v239-empty .v239-action{width:auto;padding:0 17px}
+  .main .v239-progress{height:6px;border-radius:7px;background:rgba(107,136,175,.17);overflow:hidden}
+  .main .v239-progress i{display:block;height:100%;background:#389987;border-radius:inherit}
+  .main .v239-progress-foot{display:flex;justify-content:space-between;gap:10px;color:var(--v239-muted);font-size:10px;margin:7px 0 14px}
+  .main .v239-loan-addendum{border-top:1px solid var(--v239-line);display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:13px}
+  .main .v239-loan-addendum>span+span{border-left:1px solid var(--v239-line);padding-left:12px}
+  .main .v239-loan-addendum small,.main .v239-cert-info small{display:block;color:var(--v239-muted);font-size:9px;font-weight:720;letter-spacing:.05em;margin-bottom:5px}
+  .main .v239-loan-addendum strong,.main .v239-cert-info strong{font-size:13px;line-height:1.3;color:var(--v239-ink);font-weight:790;overflow-wrap:anywhere}
+  .main .v239-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+  .main .v239-card-actions .v239-action{min-height:43px}
+  .main .v239-card-actions .v239-direct-open{display:flex;align-items:center;justify-content:center;gap:7px;border-radius:13px;min-height:43px;border:0;background:var(--v239-blue);color:#fff!important;font-size:12px;font-weight:750;box-shadow:none}
+  .main .v239-card-actions .v239-direct-open svg{height:16px;width:16px}
+  .main .v239-cert-info{display:grid;grid-template-columns:.7fr 1.1fr 1.2fr;border-top:1px solid var(--v239-line);gap:7px;padding-top:14px}
+  .main .v239-cert-info>div+div{border-left:1px solid var(--v239-line);padding-left:9px}
+  .main .v239-cert-info strong{font-size:11px}
+  .main .v239-back{display:inline-flex;align-items:center;gap:8px;min-height:40px;border:0;background:transparent;color:var(--v239-blue);font-size:12px;font-weight:730;padding:4px 3px;margin-bottom:8px}
+  .main .v239-back svg{width:18px;height:18px;transform:rotate(180deg)}
+  .main .v239-detail-hero{min-height:214px}
+  .main .v239-detail-hero h2{font-size:22px;font-weight:800;color:#fff!important;margin:11px 0 0;letter-spacing:-.025em}
+  .main .v239-detail-hero p{color:rgba(255,255,255,.75)!important;font-size:12px;margin:5px 0 21px}
+  .main .v239-detail-hero>small{display:block;font-size:9px;letter-spacing:.09em;color:rgba(255,255,255,.75)!important;font-weight:700}
+  .main .v239-detail-hero>strong{display:block;font-size:clamp(30px,8.5vw,39px);line-height:1.1;margin:5px 0 16px;color:#fff!important;overflow-wrap:anywhere}
+  .main .v239-hero-bottom{display:flex;justify-content:space-between;gap:10px;align-items:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.2);font-size:11px;color:rgba(255,255,255,.85)!important}
+  .main .v239-sheet{padding:17px 16px;margin-bottom:13px;background:var(--v239-surface);border:1px solid var(--v239-line);border-radius:21px}
+  .main .v239-sheet h3{margin:0 0 13px;font-size:15px;font-weight:780;color:var(--v239-ink)}
+  .main .v239-sheet-head{display:flex;justify-content:space-between;align-items:center}
+  .main .v239-sheet-head span{font-size:11px;color:var(--v239-muted);margin-bottom:13px}
+  .main .v239-facts{display:grid;gap:0}
+  .main .v239-fact{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px solid var(--v239-line)}
+  .main .v239-fact:last-child{border-bottom:none}
+  .main .v239-fact span{color:var(--v239-muted);font-size:12px;line-height:1.4;flex:0 1 55%}
+  .main .v239-fact strong{font-size:12px;text-align:right;color:var(--v239-ink);font-weight:760;flex:1 1 45%;overflow-wrap:anywhere}
+  .main .v239-disclaimer,.main .v239-no-data{font-size:11px;color:var(--v239-muted);line-height:1.5;margin:11px 0 0}
+  .main .v239-history{display:grid;gap:0}
+  .main .v239-history-row{display:flex;align-items:center;gap:9px;min-height:60px;padding:10px 0;border-bottom:1px solid var(--v239-line)}
+  .main .v239-history-row:last-child{border:0}
+  .main .v239-history-mark{display:grid;place-items:center;width:31px;height:31px;border-radius:10px;color:var(--v239-blue);background:var(--v239-blue-soft);flex:0 0 31px}
+  .main .v239-history-mark svg{height:15px;width:15px}
+  .main .v239-history-copy{flex:1 1 auto;min-width:0}
+  .main .v239-history-copy strong{display:block;font-size:11px;font-weight:750;color:var(--v239-ink);line-height:1.4;overflow-wrap:anywhere}
+  .main .v239-history-copy small{display:block;font-size:10px;color:var(--v239-muted);margin-top:3px}
+  .main .v239-history-row>b{font-size:11px;font-weight:750;color:var(--v239-ink);text-align:right;max-width:100px;overflow-wrap:anywhere}
+  .main .v239-history-edit{padding:5px;border:0;background:transparent;color:var(--v239-blue);flex:0 0 23px}
+  .main .v239-history-edit svg{width:16px;height:16px}
+  .main .v239-more{background:var(--v239-surface);border:1px solid var(--v239-line);border-radius:16px;overflow:hidden;margin-bottom:14px}
+  .main .v239-more summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:15px 16px;font-size:12px;font-weight:750;color:var(--v239-ink);list-style:none;cursor:pointer}
+  .main .v239-more summary::-webkit-details-marker{display:none}
+  .main .v239-more summary svg{height:16px;width:16px;transition:transform .16s}
+  .main .v239-more[open] summary svg{transform:rotate(90deg)}
+  .main .v239-more-body{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:5px 14px 14px}
+  .main .v239-more-body .product-controls{display:flex;flex-wrap:wrap;gap:8px}
+  .main .v239-more-body button{min-height:36px}
+  .main .v239-pending-action{margin-bottom:12px}
+  .main .v239-pending-action .v239-action{width:100%}
+  /* El detalle de amortización conserva TODAS sus pestañas, gráficas y acciones. */
+  .main .v239-loan-deep{padding-top:0}
+  .main .v239-loan-deep .loan-workspace{min-width:0;max-width:100%;width:100%;overflow-x:clip}
+  .main .v239-loan-deep :is(.loan-detail-top,.loan-compact-facts,.loan-detail-kpis,.loan-tab-content,.loan-compare,.loan-panel,.loan-product,.glass-loan){min-width:0;max-width:100%;box-sizing:border-box}
+  .main .v239-loan-deep .loan-detail-top{border-radius:22px;padding:17px 16px;background:var(--v239-surface);border:1px solid var(--v239-line)}
+  .main .v239-loan-deep .loan-detail-top h2{font-size:22px;line-height:1.17;overflow-wrap:anywhere;letter-spacing:-.035em}
+  .main .v239-loan-deep .loan-back{min-height:40px;max-width:100%;font-size:12px}
+  .main .v239-loan-deep .loan-detail-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .main .v239-loan-deep .loan-stat{padding:13px;min-width:0}
+  .main .v239-loan-deep .loan-stat strong{overflow-wrap:anywhere;font-size:clamp(16px,4.5vw,22px)}
+  .main .v239-loan-deep .loan-compact-facts{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;padding:14px 15px;border-radius:18px}
+  .main .v239-loan-deep .loan-tabs{display:flex;gap:7px;width:100%;max-width:100%;overflow-x:auto;scrollbar-width:none;white-space:nowrap;padding:5px 0 8px;overscroll-behavior-inline:contain}
+  .main .v239-loan-deep .loan-tabs::-webkit-scrollbar{display:none}
+  .main .v239-loan-deep .loan-tab{flex:0 0 auto;white-space:nowrap;min-height:43px;border-radius:12px;padding:8px 11px;font-size:11px}
+  .main .v239-loan-deep :is(.loan-compare-scroll,.loan-line-chart,.loan-amort-scroll,.table-wrap,.loan-tab-content table){max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+  /* Ocultar exclusivamente el acceso móvil a analítica avanzada. */
+  .main [data-act="navigate"][data-id="advanced"],
+  .main .universe-switch [data-id="advanced"],
+  .main .vive-mobile-hub [data-id="advanced"],
+  .main #page .v205-explore [data-id="advanced"]{display:none!important}
+}
+@media(max-width:365px){
+  .main .v239-intro h2{font-size:24px}
+  .main .v239-add{padding:0 9px}
+  .main .v239-hero{padding:19px 16px}
+  .main .v239-product{padding:15px 12px 12px}
+  .main .v239-segment{padding:7px 8px;font-size:10px}
+  .main .v239-cert-info strong{font-size:10px}
+}
+@media(max-width:790px){
+  body.theme-black .main .v239-mobile-root,body.theme-dark .main .v239-mobile-root{
+    --v239-surface:#171d27;--v239-surface-deep:#1d2733;--v239-line:rgba(160,180,210,.19);
+    --v239-ink:#f3f6fe;--v239-muted:#abb9ce;--v239-blue:#88a9f4;--v239-blue-soft:#28385c;
+    --v239-green:#7cd9b8;
+  }
+  body.theme-black .main .v239-intro h2,body.theme-black .main .v239-product,
+  body.theme-black .main .v239-product-value strong,body.theme-black .main .v239-product-meta strong,
+  body.theme-black .main .v239-list-head h3,body.theme-black .main .v239-sheet h3,
+  body.theme-black .main .v239-fact strong,body.theme-black .main .v239-history-copy strong,
+  body.theme-black .main .v239-history-row>b,body.theme-black .main .v239-more summary,
+  body.theme-black .main .v239-loan-addendum strong,body.theme-black .main .v239-cert-info strong{color:#f2f6ff!important}
+  body.theme-black .main .v239-add,body.theme-black .main .v239-segment.selected,body.theme-black .main .v239-product,
+  body.theme-black .main .v239-sheet,body.theme-black .main .v239-action:not(.v239-action-primary),
+  body.theme-black .main .v239-more{background:#171d27!important;border-color:#354156!important}
+  body.theme-black .main .v239-action-primary,body.theme-black .main .v239-direct-open{background:#466cc0!important;color:#fff!important}
+  body.theme-black .main .v239-logo{background:#243454;color:#9cbafa}
+  body.theme-black .main .v239-logo-cash,body.theme-black .main .v239-logo-cert{background:#1d453e;color:#8de1c9}
+  body.theme-black .main .v239-status.is-paid{background:#1e473b;color:#91e4be}
+  body.theme-black .main .v239-status.is-due{background:#503d2c;color:#ffd39b}
+  body.theme-black .main .v239-hero{background:linear-gradient(135deg,#1d3970,#31549d 68%,#5272ab)!important;border-color:rgba(168,195,243,.25)!important}
+  body.theme-black .main .v239-cert-hero{background:linear-gradient(135deg,#154c49,#22665f 68%,#428479)!important}
+  body.theme-black .main .v239-loan-hero{background:linear-gradient(135deg,#252e52,#384e84 68%,#526da4)!important}
+  body.theme-black .main .v239-hero :is(.v239-hero-amount,.v239-hero-metrics strong,.v239-hero-label,.v239-detail-hero h2,.v239-detail-hero>strong){color:#fff!important}
+  body.theme-black .main .v239-segments{background:#101722}
+}
+@media(max-width:790px) and (prefers-reduced-motion:reduce){
+  .main .v239-mobile-root *, .main .v239-mobile-root *:before,.main .v239-mobile-root *:after{transition:none!important;animation:none!important}
 }
 
 </style>
