@@ -5,7 +5,7 @@
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="288-analisis-restaurado-kpi-unico"/>
+<meta name="vive-el-hoy-version" content="289-apple-pay-completo"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -23429,6 +23429,79 @@ function v273OverviewExtraWidgets(){
  <section data-v105-widget="cardsDue" class="v105-mobile-extra v273-overview-widget" aria-label="Tarjetas por pagar">${head('CRÉDITO Y CORTES','Tarjetas por pagar','cards','Ver tarjetas')}<div class="v273-widget-total"><span>Facturado pendiente · RD$ equivalentes</span><strong>${money(billed)}</strong></div>${cardRows||'<p class="v273-widget-empty">No tienes tarjetas activas.</p>'}</section>`;
 }
 
+
+/* V290 — Panel ejecutivo de presupuesto: lectura exclusiva de datos existentes.
+   El porcentaje representa UTILIZACIÓN (gastado / límite), no una puntuación
+   de cumplimiento; más de 100% significa que se sobrepasó el límite. */
+function v290BudgetSnapshot(period=ui.month){
+ const month=/^\d{4}-(0[1-9]|1[0-2])$/.test(String(period||''))?String(period):today().slice(0,7);
+ const [year,mo]=month.split('-').map(Number),plan=budgetPlan(month),totals=monthlyTotals(year,mo);
+ const allocated=Math.max(0,num(plan.total));
+ const categories=plan.groups.map(g=>{
+   const spent=g.global!==null?num(totals.expenseBy[g.category]):g.subs.reduce((v,b)=>v+num(totals.expenseSubBy[g.category+'||'+b.subcategory]),0);
+   return {name:g.category,limit:Math.max(0,num(g.amount)),spent:Math.max(0,spent),percent:g.amount>0?100*spent/g.amount:0};
+ }).sort((a,b)=>b.spent-a.spent);
+ const spent=Math.max(0,budgetCoveredSpend(totals,month));
+ const expense=Math.max(0,num(totals.expense));
+ const uncovered=Math.max(0,expense-spent);
+ const remaining=allocated-spent;
+ const percent=allocated>0?100*spent/allocated:null;
+ const days=new Date(year,mo,0).getDate(),now=today().slice(0,7);
+ const elapsed=month<now?days:month===now?Math.min(days,Number(today().slice(8))):0;
+ const expected=allocated*elapsed/days;
+ const pace=allocated>0&&elapsed>0?spent-expected:null;
+ const over=categories.filter(c=>c.spent>c.limit+.005).length;
+ const state=percent===null?'Sin presupuesto':percent>100?'Límite superado':percent>=85?'Atención al límite':'Dentro del límite';
+ return {month,allocated,spent,expense,uncovered,remaining,percent,elapsed,days,expected,pace,over,categories,state};
+}
+function v290BudgetPct(value){return value===null?'—':new Intl.NumberFormat('es-DO',{minimumFractionDigits:1,maximumFractionDigits:1}).format(value)+'%'}
+function v290BudgetCategories(p,limit=2){
+ if(!p.categories.length)return '<div class="v290-no-categories">Define límites en Mi presupuesto para ver su ejecución por categoría.</div>';
+ return p.categories.slice(0,limit).map(g=>`<div class="v290-cat" tabindex="0" data-chart-tip="${sanitize(g.name)}|Presupuesto: ${money(g.limit,'DOP',2)}|Ejecutado: ${money(g.spent,'DOP',2)}|Utilización: ${v290BudgetPct(g.percent)}"><div class="v290-cat-head"><span>${sanitize(g.name)}</span><b>${v290BudgetPct(g.percent)}</b></div><div class="v290-meter"><i class="${g.percent>100?'over':g.percent>=85?'warn':''}" style="width:${Math.max(0,Math.min(100,g.percent))}%"></i></div></div>`).join('');
+}
+function v290BudgetRing(p){
+ const angle=p.percent===null?0:Math.max(0,Math.min(100,p.percent))*3.6;
+ return `<div class="v290-ring ${p.percent!==null&&p.percent>100?'v290-ring-over':p.percent!==null&&p.percent>=85?'v290-ring-warn':''}" style="--v290-angle:${angle}deg" role="img" aria-label="Utilización del presupuesto: ${v290BudgetPct(p.percent)}"><div><strong>${v290BudgetPct(p.percent)}</strong><small>${p.percent===null?'Sin asignación':'utilizado'}</small></div></div>`;
+}
+function v290BudgetWeb(){
+ const p=v290BudgetSnapshot();
+ return `<section class="v290-budget-web ff-tile" aria-label="Cumplimiento y gestión del presupuesto" data-v105-widget="budget">
+   <header class="v290-budget-head"><div><span class="v290-eyebrow">CONTROL DE GASTOS · ${sanitize(p.month)}</span><h2>Mi presupuesto</h2></div><button type="button" data-v290-budget-open="execution" aria-label="Abrir ejecución del presupuesto">Ver ejecución ${icon('arrow')}</button></header>
+   <div class="v290-budget-body"><div class="v290-budget-emphasis">${v290BudgetRing(p)}<div class="v290-budget-summary"><span class="v290-state ${p.percent!==null&&p.percent>100?'danger':''}">${p.state}</span><b>${money(p.allocated)}</b><small>Presupuesto del mes</small></div></div><div class="v290-budget-categories"><div class="v290-cat-caption">Categorías con mayor gasto</div>${v290BudgetCategories(p,2)}</div></div>
+   <footer class="v290-budget-facts"><div><small>Ejecutado</small><strong>${money(p.spent)}</strong></div><div><small>${p.remaining<0?'Exceso':'Disponible'}</small><strong class="${p.remaining<0?'v290-negative':''}">${money(Math.abs(p.remaining))}</strong></div><div><small>Sin límite</small><strong>${money(p.uncovered)}</strong></div></footer>
+ </section>`;
+}
+function v290BudgetMobile(){
+ const p=v290BudgetSnapshot(),cover=p.expense>0?100*p.spent/p.expense:0;
+ return `<section data-v105-widget="budget" class="v290-budget-mobile" aria-label="Cumplimiento del presupuesto mensual"><header class="v290-mobile-header"><div><span class="v290-eyebrow">PRESUPUESTO · ${sanitize(p.month)}</span><h2>Así va tu presupuesto</h2></div><button type="button" data-v290-budget-open="execution" aria-label="Abrir ejecución del presupuesto">${icon('arrow')}</button></header>
+  <div class="v290-mobile-top">${v290BudgetRing(p)}<div class="v290-budget-summary"><span class="v290-state ${p.percent!==null&&p.percent>100?'danger':''}">${p.state}</span><b>${money(p.remaining>=0?p.remaining:Math.abs(p.remaining))}</b><small>${p.remaining<0?'Exceso del límite':'Todavía disponible'}</small><div class="v290-pacing">${p.pace===null?'Sin ritmo comparable':p.pace>0?'Por encima del ritmo esperado':'Dentro del ritmo mensual'}</div></div></div>
+  <div class="v290-mobile-money"><div><small>Asignado</small><strong>${money(p.allocated)}</strong></div><div><small>Ejecutado</small><strong>${money(p.spent)}</strong></div></div>
+  <div class="v290-section-label">Categorías con mayor consumo</div>${v290BudgetCategories(p,3)}
+  <div class="v290-coverage"><div class="v290-cat-head"><span>Cobertura de tus gastos</span><b>${p.expense>0?v290BudgetPct(cover):'Sin gastos'}</b></div><div class="v290-coverage-track"><i style="width:${Math.max(0,Math.min(100,cover))}%"></i></div><div class="v290-coverage-legend"><span>Con límite: ${money(p.spent)}</span><span>Sin límite: ${money(p.uncovered)}</span></div></div>
+  <button class="v290-budget-open" type="button" data-v290-budget-open="execution">Gestionar mi presupuesto ${icon('arrow')}</button>
+ </section>`;
+}
+function v290BudgetHistory(){
+ const base=ui.month||today().slice(0,7);const months=[];
+ for(let i=5;i>=0;i--){const date=dateObj(base+'-01');date.setMonth(date.getMonth()-i);
+  const month=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0');const p=v290BudgetSnapshot(month);
+  months.push({month,p});
+ }
+ const any=months.some(x=>x.p.allocated>0),max=Math.max(100,...months.map(x=>x.p.percent||0));
+ const bars=months.map(x=>`<div class="v290-history-month" tabindex="0" data-chart-tip="${sanitize(x.month)}|Asignado: ${money(x.p.allocated)}|Ejecutado: ${money(x.p.spent)}|Utilización: ${v290BudgetPct(x.p.percent)}"><div class="v290-history-column"><i class="${x.p.percent!==null&&x.p.percent>100?'over':''}" style="height:${x.p.percent===null?0:Math.max(2,Math.min(100,x.p.percent/max*100))}%"></i><span class="v290-history-target" aria-hidden="true" style="bottom:${100/max*100}%"></span></div><small>${sanitize(x.month.slice(5))}</small></div>`).join('');
+ return `<section data-v105-widget="budgetTrend" class="v290-budget-trend" aria-label="Evolución histórica del presupuesto"><header class="v290-mobile-header"><div><span class="v290-eyebrow">PLANIFICACIÓN · HISTÓRICO</span><h2>Tu disciplina en seis meses</h2></div><button type="button" data-v290-budget-open="execution" aria-label="Abrir presupuesto">${icon('arrow')}</button></header>${any?`<div class="v290-history-chart" role="img" aria-label="Porcentaje de presupuesto utilizado en los últimos seis meses">${bars}</div><p class="v290-history-note">Cada barra es el porcentaje gastado respecto al límite de ese mes. La línea marca el 100%.</p>`:'<div class="v290-no-categories">Cuando definas un presupuesto, aquí verás cómo evoluciona mes a mes.</div>'}</section>`;
+}
+function v290MainPositionMobile(liquid,debt,net){
+ const p=v290BudgetSnapshot();const pct=p.percent===null?'Sin plan':v290BudgetPct(p.percent);
+ return `<section class="v290-position-all" aria-label="Posición financiera y presupuesto en un solo indicador"><div class="v290-pos-top"><span>POSICIÓN INTEGRAL · FINANZAS 360</span>${icon('wallet')}</div><div class="v290-pos-caption">Tu posición financiera</div><button type="button" class="v290-pos-net" data-act="v186Deep" data-id="net" aria-label="Ver composición de la posición neta">${money(net,'DOP',2)}</button><div class="v290-pos-trio"><button type="button" data-act="v186Deep" data-id="liquidity"><small>Liquidez</small><b>${bubbleMoney(liquid)}</b></button><button type="button" data-act="v186Deep" data-id="debt"><small>Deudas</small><b>${bubbleMoney(debt)}</b></button><div><small>Neto</small><b>${bubbleMoney(net)}</b></div></div><div class="v290-pos-rule"></div><div class="v290-pos-budget"><div><span>Presupuesto del mes</span><b>${pct}</b></div><div class="v290-pos-track" role="progressbar" aria-label="Presupuesto utilizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.max(0,Math.min(100,p.percent||0))}"><i style="width:${Math.max(0,Math.min(100,p.percent||0))}%"></i></div><div class="v290-pos-bottom"><span>Gastado ${money(p.spent)}</span><span>${p.remaining<0?'Exceso':'Disponible'} ${money(Math.abs(p.remaining))}</span></div></div><button type="button" class="v290-pos-link" data-v290-budget-open="execution">Ver presupuesto ${icon('arrow')}</button></section>`;
+}
+document.addEventListener('click',function(e){
+ const button=e.target.closest?.('[data-v290-budget-open]');if(!button)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ ui.innerViews=ui.innerViews||{};ui.innerViews.budget='status';ui.page='budget';
+ render();window.scrollTo({top:0,behavior:'instant'});
+},true);
+
 function mobileHome(){
  const m=monthStats(),liquid=totalLiquid(),debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
  // Exclusivamente obligaciones por pagar: nunca sumar préstamos por cobrar.
@@ -23460,7 +23533,7 @@ function mobileHome(){
  const vis=db.settings.visualDesign==='vision';
  const v64Compare=v64PositionComparison();
  const balancePanel=vis?`<section class="vive-mobile-balance vive-mobile-net-balance" aria-label="Posición neta y evolución"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Tu posición financiera</span><span>${icon('wallet')}</span></div><button type="button" class="vive-mobile-balance-amount v186-mobile-amount" data-act="v186Deep" data-id="net" title="Ver composición de la posición neta · ${money(net,'DOP',2)}">${money(net)}</button><div class="vive-mobile-balance-sub">${v105BubblePercent(net,v64Compare.position?.net,v64Compare)}</div><div class="vive-mobile-balance-sub">Evolución de la posición neta registrada</div><div class="vive-mobile-vision-trend">${visionPositionHistory(5,net).graph}</div><div class="vive-mobile-balance-foot"><span><small>Liquidez</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="liquidity" title="Ver cuentas y efectivo · ${money(liquid,'DOP',2)}"><b>${money(liquid)}</b></button></span><span><small>Deudas totales</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="debt" title="Ver todas las deudas · ${money(debt,'DOP',2)}"><b>${money(debt)}</b></button></span></div></section>`:`<section class="vive-mobile-balance" aria-label="Posición financiera"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Liquidez disponible</span><span>${icon('wallet')}</span></div><button type="button" class="vive-mobile-balance-amount v186-mobile-amount" data-act="v186Deep" data-id="liquidity" title="Ver cuentas con saldo · ${money(liquid)}">${money(liquid)}</button><div class="vive-mobile-balance-sub">${v105BubblePercent(liquid,v64Compare.position?.liquid,v64Compare)}</div><div class="vive-mobile-balance-sub">Disponible registrado en pesos equivalentes</div><div class="vive-mobile-balance-divider"></div><div class="vive-mobile-balance-foot"><span><small>Deudas</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="debt" title="Ver detalle de deudas · ${money(debt)}"><b>${money(debt)}</b></button></span><span><small>Posición neta</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="net" title="Ver composición neta · ${money(net)}"><b>${money(net)}</b></button></span></div></section>`;
- const v242BalancePanel=db.settings.mobilePositionStyle==='circles'?v242MobileCircles(liquid,debt,net,v64Compare):balancePanel;
+ const v242BalancePanel=db.settings.mobilePositionStyle==='integral'?v290MainPositionMobile(liquid,debt,net):db.settings.mobilePositionStyle==='circles'?v242MobileCircles(liquid,debt,net,v64Compare):balancePanel;
  const netRatio=m.income>0?100*m.net/m.income:null;
  const netLabel=netRatio===null?'Sin ingresos registrados':`${netRatio.toLocaleString('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1})}% del ingreso del mes`;
  const paymentsHtml=upcomingPayments.map(o=>{
@@ -23473,12 +23546,14 @@ function mobileHome(){
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
    ${v105CapacityWidget(true)}
+   ${v290BudgetMobile()}
    <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div><div class="v96-month-due-note">Pendiente hasta fin de mes, incluidos vencidos: <strong>${money(pendingTotal,'DOP',2)}</strong></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
    <section data-v105-widget="payments" class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
    <section data-v105-widget="net" class="vive-mobile-net-card v36-month-capsule" aria-label="Balance del mes"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RESUMEN MENSUAL</span><h2>Balance del mes</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="advanced">Ver análisis ${icon('up')}</button></div><div class="v36-month-columns"><span><small>Ingresos</small><strong class="v36-income">${money(m.income)}</strong></span><span><small>Egresos</small><strong class="v36-expense">${money(m.expense)}</strong></span></div><div class="v36-month-net"><span><small>Neto</small><strong class="vive-mobile-net-value ${m.net<0?'negative':''}" title="Ingresos menos egresos: ${money(m.net,'DOP',2)}">${money(m.net)}</strong></span><small>${netLabel}</small></div></section>
    <section data-v105-widget="chart" class="v105-mobile-extra" aria-label="Gráfico de ingresos y egresos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">EVOLUCIÓN</span><h2>Ingresos y egresos</h2></div></div>${mobileMiniTrend()}</section>
    <section data-v105-widget="people" class="v105-mobile-extra" aria-label="Compromisos entre personas"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RELACIONES</span><h2>Entre personas</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="personal">Ver relaciones ${icon('up')}</button></div><div class="v105-mobile-people"><span><small>Por cobrar</small><strong>${money(personalTotals().receivable)}</strong></span><span><small>Por devolver</small><strong>${money(personalTotals().payable)}</strong></span></div></section>
    ${v273OverviewExtraWidgets()}
+   ${v290BudgetHistory()}
   </div>`;
 }
 /* V243 · Contextual return, only when a module was opened from Explorar. */
@@ -25428,6 +25503,7 @@ function overview(){
   <div class="ff-dashboard-grid v105-grid">
    <section class="ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${allNet<-.005?'v176-net-negative':allNet>.005?'v176-net-positive':''}">${money(allNet,'DOP',2)}</button><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="v186Deep" data-id="liquidity" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="v186Deep" data-id="debt" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="net" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
    <aside data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong><span>Pendientes hasta fin de mes, incluidos vencidos: ${money(allDue)}. La carga mensual es distinta del saldo total de deuda.</span></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} pendientes de revisión <span>${icon('arrow')}</span></button></aside>
+   ${v290BudgetWeb()}
    <div class="ff-mid">
     <section data-v105-widget="chart" class="ff-expense-card ff-tile"><div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses</p></div><div class="v82-chart-actions"><span class="ff-inline-pill">Mensual</span></div></div><div class="ff-bar-chart" role="group" aria-label="Gráfico de ingresos y egresos de los últimos cinco meses">${bars}</div><div class="ff-stat-footer"><span title="Ingresos reconocidos del mes"><i class="ff-legend-blue"></i>Ingresos <b>${bubbleMoney(m.income)}</b></span><span title="Gastos reconocidos del mes"><i class="ff-legend-white"></i>Egresos <b>${bubbleMoney(m.expense)}</b></span></div></section>
     <section data-v105-widget="net" class="ff-health-card ff-tile"><div class="ff-panel-top"><div><h2>Neto del mes</h2><p>Ingresos − egresos</p></div></div><div class="ff-health-number ff-net-hover" tabindex="0" data-chart-tip="${monthlyNetTip}" aria-label="Porcentaje neto mensual. Consulta la comparación con el año anterior">${ratioText}</div><div class="ff-health-caption">${ratio===null?'Sin ingresos registrados':'Del ingreso que queda después de gastos'}</div>${spark}<div class="ff-health-foot"><span>Resultado neto</span><strong tabindex="0" data-chart-tip="${monthlyNetTip}">${money(m.net)}</strong></div></section>
@@ -32155,6 +32231,8 @@ loanForm=function(id,preBank){
    La personalización persiste solo claves de presentación. */
 const V105_WIDGETS=[
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
+ {id:'budget',title:'Cumplimiento de presupuesto',hint:'Límite, ejecutado, disponible y categorías'},
+ {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
  {id:'chart',title:'Ingresos y egresos',hint:'Evolución de cinco meses'},
  {id:'net',title:'Neto del mes',hint:'Ingresos menos egresos'},
@@ -32167,9 +32245,12 @@ const V105_WIDGETS=[
 function v105Config(){
  const raw=db.settings?.v105OverviewWidgets;
  const ids=V105_WIDGETS.map(w=>w.id);
- if(!raw||!Array.isArray(raw.order))return {order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue'].includes(x))};
+ if(!raw||!Array.isArray(raw.order))return {order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend'].includes(x))};
  const order=[...new Set(raw.order.filter(x=>ids.includes(x))),...ids.filter(x=>!raw.order.includes(x))];
- const visible=Array.isArray(raw.visible)?raw.visible.filter(x=>ids.includes(x)):ids.filter(x=>!['activity','subscriptions','cardsDue'].includes(x));
+ // New V290 modules should not disappear in older saved mobile layouts.
+ if(!raw.order.includes('budget')){const pos=order.indexOf('budget');if(pos>=0)order.splice(pos,1);order.splice(Math.max(0,order.indexOf('capacity')+1),0,'budget');}
+ const visible=Array.isArray(raw.visible)?raw.visible.filter(x=>ids.includes(x)):ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend'].includes(x));
+ if(!raw.order.includes('budget')&&!visible.includes('budget'))visible.push('budget');
  return {order,visible};
 }
 function v105BubblePercent(current,previous,comparison,risk=false){
@@ -32246,7 +32327,7 @@ document.addEventListener('click',ev=>{
  const move=ev.target.closest?.('[data-v105-move]');
  if(move){ev.preventDefault();ev.stopPropagation();const cfg=v105DraftConfig||v105Config(),i=cfg.order.indexOf(move.dataset.id),j=i+(move.dataset.v105Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]];v105DraftConfig=cfg;v105Customizer();return;}
  const reset=ev.target.closest?.('[data-v105-reset]');
- if(reset){ev.preventDefault();ev.stopPropagation();const ids=V105_WIDGETS.map(x=>x.id);v105DraftConfig={order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue'].includes(x))};v105Customizer();return;}
+ if(reset){ev.preventDefault();ev.stopPropagation();const ids=V105_WIDGETS.map(x=>x.id);v105DraftConfig={order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend'].includes(x))};v105Customizer();return;}
  const apply=ev.target.closest?.('[data-v105-apply]');
  if(apply){ev.preventDefault();ev.stopPropagation();if(v105DraftConfig)v105SaveConfig(v105DraftConfig);v105DraftConfig=null;closeModal();return;}
  const choice=ev.target.closest?.('[data-v105-pay-option]');
@@ -33870,9 +33951,9 @@ function v212SettingsPanel(){
  <div class="v212-setup"><div><label class="filter-label" for="v212-card">Tarjeta en Vive el Hoy</label><select class="field" id="v212-card">${cards.length?cards.map(c=>`<option value="${sanitize(c.id)}" ${c.id===v212State.selectedCard?'selected':''}>${sanitize(c.name)} · ${sanitize(bankOf(c))}</option>`).join(''):'<option value="">Primero registra una tarjeta</option>'}</select></div><div><label class="filter-label" for="v212-currency">Moneda del atajo</label><select class="field" id="v212-currency"><option value="DOP" ${v212State.currency==='DOP'?'selected':''}>RD$</option><option value="USD" ${v212State.currency==='USD'?'selected':''}>US$</option></select></div><button type="button" class="btn primary" data-v212="pair" ${!cards.length||v212State.busy?'disabled':''}>${v212State.busy?'Conectando…':'Vincular tarjeta'}</button></div>
  <div class="v274-apple-health ${v212State.health==='ok'?'ready':v212State.health==='error'?'fail':'neutral'}" role="status" aria-live="polite"><div><strong>${v212State.health==='ok'?'Receptor verificado · sin registrar gastos':v212State.health==='testing'?'Comprobando receptor…':v212State.health==='error'?'Receptor pendiente de reparar':'Vinculación y recepción se verifican por separado'}</strong><p>${sanitize(v212State.healthMessage||'')}</p></div>${v212State.secret?`<button type="button" class="v212-small" data-v212="test-ingest" ${v212State.health==='testing'?'disabled':''}>Probar conexión</button>`:''}</div>
  ${v212State.secret?`<div class="v212-secret"><strong>Conexión creada: guarda estos datos en tu Atajo</strong><p>La clave solo se muestra ahora. No la compartas ni la coloques en capturas.</p><div class="v212-secretline"><span>URL para Automatización de Atajos (V288)</span><button class="v212-small" data-v212="copy-url" type="button">Copiar URL</button></div><code>${sanitize(v288ShortcutUrl(v212State.webhook)||"Publica primero apple-pay-shortcuts")}</code><div class="v212-secretline"><span>Encabezado: X-Vive-Token</span><button class="v212-small" data-v212="copy-token" type="button">Copiar clave</button></div><input type="password" autocomplete="off" readonly aria-label="Clave del atajo" value="${sanitize(v212State.secret)}"/></div>`:''}
- <details class="v212-guide" open><summary>Configurar Atajos de iPhone · 3 pasos</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>En el editor del Atajo, utiliza las variables <b>Shortcut Input → Amount</b> y <b>Shortcut Input → Merchant</b> recibidas por el disparador. No escribas esos nombres como texto literal. <b>event_id</b> es recomendable (Fecha actual en ISO 8601) para evitar duplicados, pero el adaptador genera uno si falta. No uses un texto fijo como “prueba-1”.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b> envía: <code>amount</code> = variable Amount de la transacción (Número o texto numérico); <code>merchant</code> = variable Merchant (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>; y opcionalmente <code>event_id</code> = Fecha actual (ISO 8601). Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Al vincular, pulsa <b>Probar conexión</b>: comprobará el token, el receptor y el vínculo con <code>dry_run</code>, sin crear gastos. La prueba utiliza <code>apple-pay-shortcuts</code> y comprueba el receptor existente <code>apple-pay-ingest</code>. Si falla con 422, revisa los campos <code>missing</code>, <code>amount_type</code> y <code>merchant_type</code> en la respuesta, sin compartir la clave.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. Una prueba correcta de conexión no confirma que Atajos se haya ejecutado. El servidor evita reintentos idénticos próximos mediante una ventana de seguridad; dos compras legítimas iguales muy seguidas pueden requerir revisión. No recupera pagos antiguos automáticamente.</p></details>
+ <details class="v212-guide" open><summary>Configurar Atajos de iPhone · 7 pasos</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>En el editor del Atajo, utiliza las variables <b>Shortcut Input → Amount</b> y <b>Shortcut Input → Merchant</b> recibidas por el disparador. No escribas esos nombres como texto literal. <b>event_id</b> es recomendable (Fecha actual en ISO 8601) para evitar duplicados, pero el adaptador genera uno si falta. No uses un texto fijo como “prueba-1”.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b> envía: <code>amount</code> = variable Amount de la transacción (Número o texto numérico); <code>merchant</code> = variable Merchant (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>; y opcionalmente <code>event_id</code> = Fecha actual (ISO 8601). Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Al vincular, pulsa <b>Probar conexión</b>: comprobará el token, el receptor y el vínculo con <code>dry_run</code>, sin crear gastos. La prueba utiliza <code>apple-pay-shortcuts</code> y comprueba el receptor existente <code>apple-pay-ingest</code>. Si falla con 422, revisa los campos <code>missing</code>, <code>amount_type</code> y <code>merchant_type</code> en la respuesta, sin compartir la clave.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. Una prueba correcta de conexión no confirma que Atajos se haya ejecutado. El servidor evita reintentos idénticos próximos mediante una ventana de seguridad; dos compras legítimas iguales muy seguidas pueden requerir revisión. No recupera pagos antiguos automáticamente.</p></details>
  <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}</div><div><div class="v212-title"><strong>Actividad reciente</strong><span>${v212State.events.length} evento${v212State.events.length===1?'':'s'}</span></div>${eventRows||'<p class="v212-muted">No hay compras recibidas recientemente.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
- ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}<p class="v212-muted">Las tarjetas se administran con <code>apple-pay-link</code>; Atajos envía los datos a <code>apple-pay-shortcuts</code>, que los valida y reenvía a <code>apple-pay-ingest</code>. La validación de tu clave y el registro final siguen en el receptor existente. No se solicitan números de tarjeta, CVV ni contraseñas bancarias.</p></section>`;
+ ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}</section>`;
 }
 function v212Show(){const target=document.querySelector('.v212-panel');if(target)target.outerHTML=v212SettingsPanel();}
 async function v212SessionToken(){const {data,error}=await f33Api.auth.getSession();if(error||!data?.session?.access_token)throw Error('Vuelve a iniciar sesión.');return data.session.access_token;}
@@ -33890,30 +33971,37 @@ async function v212Load(){
 }
 function v212LinkError(payload, status, action){
  const raw=String(payload?.error||payload?.message||'').trim();
- if(/Falta X-Vive-Token|Vinculación inválida|Importe o comercio inválido/i.test(raw)){
-  return `El servicio apple-pay-link está respondiendo como receptor de compras (HTTP ${status}). Revisa que apple-pay-link tenga SU propio código, no el de apple-pay-ingest. No cambies el token de Wallet para solucionar esto.`;
- }
+ const code=String(payload?.code||'').trim();
  if(status===401||status===403){
-  return `No se pudo ${action}: sesión no autorizada (HTTP ${status}). Cierra sesión y vuelve a entrar en Vive el Hoy.`;
+   return `No se pudo ${action} (HTTP ${status}). ${raw||'Revisa que la sesión de Supabase esté activa y que apple-pay-link tenga Verify JWT habilitado.'}${code?' ['+code+']':''}`;
  }
- if(status===404){
-  return 'No se encuentra apple-pay-link (HTTP 404). Publica la función apple-pay-link en el mismo proyecto Supabase.';
- }
- return raw||`No se pudo ${action} (HTTP ${status}). Revisa la función apple-pay-link en Supabase.`;
+ if(status===404)return 'No se encontró apple-pay-link (404). Debes publicarla en este mismo proyecto de Supabase.';
+ if(status===500||status===503)return `${raw||'La función de vinculación no pudo consultar la base de datos.'}${code?' ['+code+']':''}`;
+ return `${raw||`No se pudo ${action} (HTTP ${status}).`}${code?' ['+code+']':''}`;
 }
 async function v212LinkCall(method, body){
- const auth=await v212SessionToken();
- let response;
- try{
-  response=await fetch(`${F33_URL}/functions/v1/apple-pay-link`,{
-   method,
-   headers:{Authorization:`Bearer ${auth}`,apikey:F33_KEY,'Content-Type':'application/json'},
-   body:JSON.stringify(body)
-  });
- }catch(err){throw Error('Sin conexión con apple-pay-link. Revisa Internet y la configuración de Supabase.');}
- const payload=await response.json().catch(()=>({}));
- if(!response.ok||payload?.ok===false)throw Error(v212LinkError(payload,response.status,method==='DELETE'?'desvincular':'vincular'));
- return payload;
+ let token=await v212SessionToken();
+ const endpoint=`${F33_URL}/functions/v1/apple-pay-link`;
+ for(let attempt=0;attempt<2;attempt++){
+   let response;
+   try{
+     response=await fetch(endpoint,{
+       method,
+       headers:{Authorization:`Bearer ${token}`,apikey:F33_KEY,'Content-Type':'application/json'},
+       body:JSON.stringify(body),cache:'no-store'
+     });
+   }catch(_){throw Error('No hay conexión con apple-pay-link. Verifica Supabase y tu conexión.');}
+   const payload=await response.json().catch(()=>({}));
+   // Retry only after a fresh authenticated Supabase session.
+   if(response.status===401&&attempt===0){
+     const refresh=await f33Api.auth.refreshSession().catch(()=>({data:null,error:true}));
+     const renewed=refresh?.data?.session?.access_token;
+     if(renewed&&renewed!==token){token=renewed;continue;}
+   }
+   if(!response.ok||payload?.ok===false)throw Error(v212LinkError(payload,response.status,method==='DELETE'?'desvincular':'vincular'));
+   return payload;
+ }
+ throw Error('No fue posible validar la sesión de Supabase.');
 }
 async function v212Pair(){
  if(!v212Enabled())throw Error('Inicia sesión para conectar tarjetas');
@@ -34478,11 +34566,11 @@ document.addEventListener('change',event=>{
 });
 
 function v242SettingsPreview(){
- const chosen=db.settings.mobilePositionStyle==='circles'?'circles':'original';
+ const chosen=['original','circles','integral'].includes(db.settings.mobilePositionStyle)?db.settings.mobilePositionStyle:'original';
  const liquid=totalLiquid(), debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
- return `<section class="v242-appearance-picker" aria-label="Estilo del indicador principal en iPhone"><div class="v242-preference-title"><div><span class="summary-tag">RESUMEN · SOLO IPHONE</span><h3>Tu posición financiera</h3><p>Elige uno de los dos diseños existentes. El escritorio conserva su apariencia actual.</p></div><span class="v242-setting-kicker">Se sincroniza con tu cuenta</span></div><div class="v242-appearance-grid">
+ return `<section class="v242-appearance-picker" aria-label="Estilo del indicador principal en iPhone"><div class="v242-preference-title"><div><span class="summary-tag">RESUMEN · SOLO IPHONE</span><h3>Tu posición financiera</h3><p>Elige entre tres estilos, incluido el resumen integral con presupuesto. El escritorio conserva su apariencia actual.</p></div><span class="v242-setting-kicker">Se sincroniza con tu cuenta</span></div><div class="v242-appearance-grid">
  <button type="button" class="v242-style-option ${chosen==='original'?'selected':''}" data-v242-style="original" aria-pressed="${chosen==='original'}"><span class="v242-style-art v242-mini-original"><span class="v242-mini-label">Liquidez disponible</span><strong>${bubbleMoney(liquid)}</strong><span class="v242-mini-divider"></span><span class="v242-mini-foot"><i>Deudas <b>${bubbleMoney(debt)}</b></i><i>Posición neta <b>${bubbleMoney(net)}</b></i></span></span><span class="v242-style-description"><strong>Original móvil</strong><small>El diseño predeterminado</small><i aria-hidden="true">${chosen==='original'?'✓':'○'}</i></span></button>
- <button type="button" class="v242-style-option ${chosen==='circles'?'selected':''}" data-v242-style="circles" aria-pressed="${chosen==='circles'}"><span class="v242-style-art v242-mini-circles"><span class="v242-mini-title">Tu posición financiera</span><strong>${bubbleMoney(net)}</strong><span class="v242-mini-orbs"><i><b>${bubbleMoney(liquid)}</b><small>Liquidez</small></i><i class="v242-featured"><b>${bubbleMoney(debt)}</b><small>Deudas</small></i><i><b>${bubbleMoney(net)}</b><small>Neto</small></i></span></span><span class="v242-style-description"><strong>Tres círculos</strong><small>Adaptación del diseño web</small><i aria-hidden="true">${chosen==='circles'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Ambos muestran los mismos saldos, sin modificar cálculos ni movimientos. El cambio se aplica al abrir Resumen.</p></section>`;
+ <button type="button" class="v242-style-option ${chosen==='circles'?'selected':''}" data-v242-style="circles" aria-pressed="${chosen==='circles'}"><span class="v242-style-art v242-mini-circles"><span class="v242-mini-title">Tu posición financiera</span><strong>${bubbleMoney(net)}</strong><span class="v242-mini-orbs"><i><b>${bubbleMoney(liquid)}</b><small>Liquidez</small></i><i class="v242-featured"><b>${bubbleMoney(debt)}</b><small>Deudas</small></i><i><b>${bubbleMoney(net)}</b><small>Neto</small></i></span></span><span class="v242-style-description"><strong>Tres círculos</strong><small>Adaptación del diseño web</small><i aria-hidden="true">${chosen==='circles'?'✓':'○'}</i></span></button><button type="button" class="v242-style-option v290-style-integral ${chosen==='integral'?'selected':''}" data-v242-style="integral" aria-pressed="${chosen==='integral'}"><span class="v242-style-art v290-mini-integral"><span class="v290-mini-head">POSICIÓN + PRESUPUESTO</span><strong>${bubbleMoney(net)}</strong><span class="v290-mini-metrics"><i>Liquidez <b>${bubbleMoney(liquid)}</b></i><i>Deudas <b>${bubbleMoney(debt)}</b></i></span><span class="v290-mini-budget"><span>Presupuesto</span><b>${v290BudgetPct(v290BudgetSnapshot().percent)}</b></span><span class="v290-mini-meter"><i style="width:${Math.max(0,Math.min(100,v290BudgetSnapshot().percent||0))}%"></i></span></span><span class="v242-style-description"><strong>Integral 360</strong><small>Posición y presupuesto en un solo KPI</small><i aria-hidden="true">${chosen==='integral'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Los tres estilos reutilizan las cifras registradas. El tercero añade la utilización del presupuesto, sin alterar saldos ni cálculos.</p></section>`;
 }
 
 function v273SettingsWidgetEditor(){
@@ -34550,7 +34638,7 @@ document.addEventListener('click',event=>{
  const cfg=v105Config();
  if(toggle){const id=toggle.dataset.v273Toggle;if(!cfg.order.includes(id))return;cfg.visible=cfg.visible.includes(id)?cfg.visible.filter(x=>x!==id):[...cfg.visible,id]}
  else if(move){const id=move.dataset.id,i=cfg.order.indexOf(id),j=i+(move.dataset.v273Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]]}
- else if(reset){const ids=V105_WIDGETS.map(x=>x.id);cfg.order=ids;cfg.visible=ids.filter(x=>!['activity','subscriptions','cardsDue'].includes(x))}
+ else if(reset){const ids=V105_WIDGETS.map(x=>x.id);cfg.order=ids;cfg.visible=ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend'].includes(x))}
  const old=db.settings.v105OverviewWidgets;
  db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};
  if(!persist()){db.settings.v105OverviewWidgets=old;toast('No se pudieron guardar los cambios de personalización.');return}
@@ -34568,11 +34656,11 @@ document.addEventListener('click',event=>{
  event.preventDefault();event.stopImmediatePropagation();
  if(sect){v242SettingsPane=sect.dataset.v242Section;render();window.scrollTo({top:0,behavior:'instant'});return;}
  if(back){v242SettingsPane='home';render();window.scrollTo({top:0,behavior:'instant'});return;}
- if(choice){const next=choice.dataset.v242Style;if(!['original','circles'].includes(next))return;
+ if(choice){const next=choice.dataset.v242Style;if(!['original','circles','integral'].includes(next))return;
   const previous=db.settings.mobilePositionStyle||'original';if(next===previous)return;
   db.settings.mobilePositionStyle=next;
   if(!persist()){db.settings.mobilePositionStyle=previous;toast('No se pudo guardar la preferencia. Comprueba tu sesión y la sincronización.');return;}
-  render();toast(next==='circles'?'Estilo de tres círculos activado para iPhone.':'Estilo original móvil restaurado.');
+  render();toast(next==='integral'?'KPI integral con presupuesto activado.':next==='circles'?'Estilo de tres círculos activado para iPhone.':'Estilo original móvil restaurado.');
  }
 },true);
 
@@ -39751,6 +39839,21 @@ body.theme-dark .v186-deep-rows,body.theme-dark .v186-deep-summary>div{backgroun
     board.style.removeProperty('height');
     board.style.removeProperty('min-height');
     board.style.removeProperty('overflow');
+    // V290: Budget adds useful content to desktop Overview. The old fullscreen
+    // fitter forced three short rows with inline !important and clipped the
+    // fourth payment item. Yield to the CSS grid's natural height for V290.
+    if(board.querySelector('.v290-budget-web')){
+      const summaryMain=board.closest('.main.world-overview');
+      if(summaryMain){
+        for(const p of ['height','min-height','overflow-y']) summaryMain.style.removeProperty(p);
+      }
+      const budgetGrid=board.querySelector('.ff-dashboard-grid.v105-grid');
+      if(budgetGrid){
+        for(const p of ['height','min-height','grid-template-rows','zoom','width']) budgetGrid.style.removeProperty(p);
+        for(const child of budgetGrid.children) child.style.removeProperty('min-height');
+      }
+      return; // Natural vertical scrolling prevents any hidden financial item.
+    }
     if(!wide)return; // readable natural scroll on tablet and mobile
     const top=board.getBoundingClientRect().top;
     if(top<0)return;
@@ -44805,6 +44908,112 @@ body.theme-black #page #v145-payment-center .v286-pay-tile-name,body.theme-dark 
  }
 }
 @media(max-width:350px){#page .v248-income .v248-metrics-primary>.v58-metric strong,#page .v248-expenses .v248-metrics-primary>.v58-metric strong{font-size:13px!important}}
+</style>
+<style id="vive-v290-budget-overview">
+
+/* V290 · Diseño ejecutivo de presupuesto. Scope: Resumen y Personalización. */
+.v290-budget-web,.v290-budget-mobile,.v290-budget-trend{--v290-ink:#213d61;--v290-muted:#7589a6;--v290-accent:#5a70dc;--v290-good:#0f957c;--v290-warning:#b78036;--v290-danger:#c65b5a;box-sizing:border-box;min-width:0}
+.v290-budget-web *,.v290-budget-mobile *,.v290-budget-trend *,.v290-position-all *{box-sizing:border-box}
+.v290-budget-web{display:flex;flex-direction:column;gap:7px;border-radius:24px;background:linear-gradient(132deg,#f4f7ff,#e7efff)!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 10px 26px rgba(75,100,165,.09)!important;padding:13px 16px!important;overflow:hidden}
+.v290-budget-head,.v290-mobile-header{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.v290-eyebrow{display:block;font-size:8px;line-height:1.3;letter-spacing:.11em;font-weight:800;color:#6c7fa3;text-transform:uppercase}
+.v290-budget-head h2,.v290-mobile-header h2{font-size:clamp(16px,1.5vw,20px);font-weight:820;letter-spacing:-.05em;margin:3px 0 0;color:#213d61;line-height:1.15}
+.v290-budget-head button,.v290-mobile-header button{border:0;background:rgba(255,255,255,.75);color:#506ca6;font-size:10px;font-weight:780;border-radius:10px;padding:7px 9px;display:flex;align-items:center;justify-content:center;gap:3px;flex-shrink:0}
+.v290-budget-head svg,.v290-mobile-header svg{width:14px;height:14px}
+.v290-budget-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:12px;min-height:0;align-items:center}
+.v290-budget-emphasis{display:flex;align-items:center;gap:10px;min-width:0}
+.v290-ring{--v290-angle:0deg;flex:0 0 auto;width:clamp(64px,6.3vw,85px);height:clamp(64px,6.3vw,85px);border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--v290-good) var(--v290-angle),rgba(111,142,189,.17) var(--v290-angle));box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);position:relative}
+.v290-ring.v290-ring-warn{background:conic-gradient(var(--v290-warning) var(--v290-angle),rgba(111,142,189,.17) var(--v290-angle))}.v290-ring.v290-ring-over{background:conic-gradient(var(--v290-danger) var(--v290-angle),rgba(111,142,189,.17) var(--v290-angle))}
+.v290-ring>div{width:78%;height:78%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;text-align:center;background:linear-gradient(145deg,#fff,#eff4ff)}
+.v290-ring strong{font-size:clamp(14px,1.7vw,20px);font-weight:860;line-height:1.1;letter-spacing:-.05em;color:#263e61;white-space:nowrap}
+.v290-ring small{font-size:8px;color:#7085a3;font-weight:730}
+.v290-budget-summary{min-width:0;display:flex;flex-direction:column;gap:3px}.v290-budget-summary>b{display:block;font-size:clamp(16px,1.5vw,22px);color:var(--v290-ink);letter-spacing:-.055em;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v290-budget-summary>small{font-size:9px;color:var(--v290-muted)}
+.v290-state{font-size:9px;font-weight:800;color:#168977;white-space:nowrap}.v290-state.danger{color:#be535e}
+.v290-budget-categories{min-width:0}.v290-cat-caption,.v290-section-label{font-size:9px;font-weight:760;color:#60789b;margin:0 0 5px}.v290-cat{margin:0 0 8px;min-width:0}.v290-cat-head{display:flex;justify-content:space-between;gap:6px;align-items:center;line-height:1.25;font-size:10px;color:#556e8b}.v290-cat-head span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.v290-cat-head b{flex-shrink:0;font-weight:830;color:#315680}
+.v290-meter{height:5px;overflow:hidden;background:#ccd9ed91;border-radius:99px;margin-top:4px}.v290-meter i{height:100%;background:#33a18f;display:block;border-radius:99px}.v290-meter i.warn{background:#e7ab50}.v290-meter i.over{background:#d1646e}
+.v290-no-categories{font-size:10px;color:#657b96;line-height:1.5;padding:8px 0}
+.v290-budget-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding-top:8px;margin-top:auto;border-top:1px solid #9dafca37}
+.v290-budget-facts>div{min-width:0}.v290-budget-facts small{font-size:9px;color:#6d84a1;display:block}.v290-budget-facts strong{font-size:clamp(11px,1.04vw,14px);font-weight:810;letter-spacing:-.04em;color:#263d60;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}.v290-negative{color:#bd4d59!important}
+/* Four rows in desktop summary are preserved: payments panel becomes more compact, not removed. */
+@media (min-width:1000px){
+ body .main.world-overview:has(.ff-dashboard.summary-space){height:auto!important;min-height:100dvh!important;max-height:none!important;overflow:visible!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) #page{height:auto!important;min-height:0!important;overflow:visible!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space{height:auto!important;max-height:none!important;overflow:visible!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+   display:grid!important;grid-template-columns:minmax(0,1.765fr) minmax(310px,1fr)!important;
+   grid-template-rows:minmax(300px,auto) minmax(214px,auto) minmax(200px,auto)!important;
+   height:auto!important;min-height:0!important;max-height:none!important;align-items:stretch!important;overflow:visible!important
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.v152-position-reference{grid-column:1!important;grid-row:1!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-obligations{grid-column:2!important;grid-row:1!important;min-height:0!important;max-height:340px!important;overflow:auto!important;scrollbar-width:thin!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.v290-budget-web{grid-column:2!important;grid-row:2!important;max-height:none!important;height:100%!important;min-height:214px!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-mid{grid-column:1!important;grid-row:2!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-upcoming{grid-column:1!important;grid-row:3!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-personal{grid-column:2!important;grid-row:3!important}
+}
+@media(min-width:1000px) and (max-width:1199px){.v290-budget-body{gap:6px}.v290-budget-web{padding:10px 11px!important}.v290-ring{width:62px;height:62px}.v290-budget-facts{gap:3px}}
+@media(min-width:791px) and (max-width:999px){
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard-grid.v105-grid{height:auto!important;min-height:0!important;max-height:none!important;grid-template-rows:auto!important;overflow:visible!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.v290-budget-web{grid-column:1/-1!important;grid-row:auto!important;min-height:230px!important}
+}
+/* Mobile budget: a single purposeful card, two charts inside, no additional redundant KPIs. */
+.v290-budget-mobile,.v290-budget-trend{background:linear-gradient(135deg,#f1f7ff,#e4efff);border-radius:25px;padding:18px 17px;border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 29px rgba(54,89,150,.065);min-width:0;display:flex;flex-direction:column;gap:13px}
+.v290-budget-mobile .v290-mobile-header h2,.v290-budget-trend .v290-mobile-header h2{font-size:19px}
+.v290-budget-mobile .v290-mobile-top{display:grid;grid-template-columns:118px minmax(0,1fr);gap:17px;align-items:center}
+.v290-budget-mobile .v290-ring{width:116px;height:116px}.v290-budget-mobile .v290-ring strong{font-size:27px}.v290-budget-mobile .v290-ring small{font-size:10px}
+.v290-budget-mobile .v290-budget-summary>b{font-size:clamp(22px,6.5vw,30px)}
+.v290-budget-mobile .v290-pacing{font-size:10px;line-height:1.4;color:#617c98;margin-top:5px}
+.v290-mobile-money{display:grid;grid-template-columns:1fr 1fr;gap:8px}.v290-mobile-money>div{min-width:0;border-top:1px solid #9cafd139;padding:12px 1px 1px}.v290-mobile-money small{font-size:10px;color:#6b829f;display:block}.v290-mobile-money strong{font-size:clamp(15px,4.4vw,20px);color:#2a4263;font-weight:820;letter-spacing:-.04em;display:block;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v290-budget-mobile .v290-cat{margin-bottom:3px}.v290-budget-mobile .v290-cat-head{font-size:12px}.v290-budget-mobile .v290-meter{height:7px}
+.v290-coverage{background:rgba(255,255,255,.55);border-radius:16px;padding:12px}.v290-coverage-track{height:8px;border-radius:90px;background:#bdccdf;margin:9px 0 6px;overflow:hidden}.v290-coverage-track i{display:block;height:100%;background:linear-gradient(90deg,#3879c8,#3ba990);border-radius:90px}.v290-coverage-legend{display:flex;justify-content:space-between;gap:6px;font-size:9px;color:#667e9d;flex-wrap:wrap}
+.v290-budget-open{height:40px;background:#dce8ff;border:1px solid #ccdff7;border-radius:13px;color:#365d96;font-size:12px;font-weight:790;display:flex;align-items:center;justify-content:center;gap:8px}
+.v290-budget-open svg{width:14px}
+.v290-budget-trend .v290-history-chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));height:130px;gap:10px;padding:5px 5px 0}
+.v290-history-month{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}.v290-history-column{position:relative;width:100%;height:106px;border-radius:8px;background:#afc6de32;display:flex;align-items:end;justify-content:center;overflow:hidden}
+.v290-history-column>i{width:60%;background:linear-gradient(180deg,#5e77db,#31a793);border-radius:7px 7px 2px 2px;min-height:0}.v290-history-column>i.over{background:linear-gradient(180deg,#d56a75,#bd885a)}
+.v290-history-target{position:absolute;left:0;right:0;border-top:1px dashed #6a8cb4;pointer-events:none}.v290-history-month>small{font-size:10px;color:#647d9c}.v290-history-note{color:#7790a9;font-size:10px;line-height:1.5;margin:0}
+/* Third iPhone KPI: same existing financial figures + budget execution. */
+.v290-position-all{min-width:0;display:flex;flex-direction:column;gap:12px;border-radius:28px;padding:21px;background:linear-gradient(145deg,#173d69 0%,#2c4a85 60%,#5e56a3 120%);color:white;box-shadow:0 16px 36px rgba(43,66,127,.18);overflow:hidden;position:relative}
+.v290-position-all:before{content:'';position:absolute;right:-70px;top:-85px;width:205px;height:205px;border-radius:50%;background:rgba(255,255,255,.04);box-shadow:0 0 0 40px rgba(255,255,255,.02);pointer-events:none}
+.v290-position-all>*,.v290-position-all button{position:relative;z-index:1}
+.v290-pos-top{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.14em;color:#b9d3fd;font-weight:780}.v290-pos-top svg{width:16px;height:16px}
+.v290-pos-caption{font-size:12px;color:#d5e3ff;font-weight:690;margin-bottom:-8px}.v290-pos-net{border:0;background:none;padding:0;margin:0;color:#fff;text-align:left;font-size:clamp(29px,7vw,38px);font-weight:840;letter-spacing:-.06em;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v290-pos-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.v290-pos-trio>button,.v290-pos-trio>div{border:1px solid rgba(255,255,255,.16);border-radius:14px;background:rgba(255,255,255,.10);padding:10px 7px;color:#fff;min-width:0;text-align:center}.v290-pos-trio small{display:block;color:#d1ddf9;font-size:9px}.v290-pos-trio b{display:block;font-size:clamp(12px,3.5vw,16px);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v290-pos-rule{height:1px;background:rgba(255,255,255,.18)}.v290-pos-budget>div:first-child,.v290-pos-bottom{display:flex;justify-content:space-between;align-items:center;gap:7px}.v290-pos-budget>div:first-child span{font-size:11px;color:#d0e4ff}.v290-pos-budget>div:first-child b{font-size:20px}.v290-pos-track{height:8px;margin-top:9px;border-radius:90px;background:rgba(255,255,255,.20);overflow:hidden}.v290-pos-track i{height:100%;background:linear-gradient(90deg,#69e2c6,#c8f5b1);display:block;border-radius:90px}.v290-pos-bottom{font-size:10px;color:#d4e4ff;margin-top:7px}.v290-pos-link{border:0;border-radius:12px;padding:11px 13px;background:#ffffff20;color:#fff;font-weight:770;font-size:11px;display:flex;justify-content:center;gap:8px;align-items:center}
+.v290-pos-link svg{width:14px;height:14px}
+.v242-appearance-grid:has(.v290-style-integral){grid-template-columns:repeat(3,minmax(0,1fr))}
+.v290-mini-integral{background:linear-gradient(135deg,#244d79,#625aa5);color:#fff!important;gap:8px}
+.v290-mini-head{font-size:8px;letter-spacing:.1em;white-space:nowrap;opacity:.75}.v290-mini-integral>strong{font-size:clamp(16px,2.1vw,24px);letter-spacing:-.045em}.v290-mini-metrics{display:flex;justify-content:space-between;font-size:8px;gap:6px}.v290-mini-metrics i{font-style:normal;color:#d6e4ff}.v290-mini-metrics b{display:block;font-size:10px;color:white}.v290-mini-budget{display:flex;justify-content:space-between;font-size:9px;margin-top:auto}.v290-mini-meter{height:5px;border-radius:12px;background:#ffffff37;overflow:hidden}.v290-mini-meter i{height:100%;background:#8de6c1;display:block;border-radius:12px}
+@media(max-width:700px){.v242-appearance-grid:has(.v290-style-integral){grid-template-columns:repeat(2,minmax(0,1fr))}.v242-appearance-grid .v290-style-integral{grid-column:1/-1}.v242-appearance-grid .v290-style-integral .v290-mini-integral{height:145px}}
+@media(max-width:360px){.v290-budget-mobile{padding:15px 13px}.v290-budget-mobile .v290-mobile-top{grid-template-columns:102px minmax(0,1fr);gap:12px}.v290-budget-mobile .v290-ring{width:100px;height:100px}.v290-budget-mobile .v290-ring strong{font-size:23px}.v290-position-all{padding:17px}.v290-pos-trio{gap:5px}.v290-pos-trio>button,.v290-pos-trio>div{padding:9px 5px}}
+body.theme-black .v290-budget-web,body.theme-black .v290-budget-mobile,body.theme-black .v290-budget-trend,body.theme-dark .v290-budget-web,body.theme-dark .v290-budget-mobile,body.theme-dark .v290-budget-trend{background:linear-gradient(130deg,#172234,#17283d)!important;border-color:#334155!important;box-shadow:0 8px 28px rgba(0,0,0,.28)!important;--v290-ink:#eaf1ff;--v290-muted:#afbfdb;--v290-accent:#a3b3fa}
+body.theme-black :is(.v290-budget-web,.v290-budget-mobile,.v290-budget-trend) :is(h2,.v290-budget-summary>b,.v290-budget-facts strong,.v290-mobile-money strong,.v290-cat-head b),body.theme-dark :is(.v290-budget-web,.v290-budget-mobile,.v290-budget-trend) :is(h2,.v290-budget-summary>b,.v290-budget-facts strong,.v290-mobile-money strong,.v290-cat-head b){color:#edf3ff!important}
+body.theme-black :is(.v290-budget-web,.v290-budget-mobile,.v290-budget-trend) :is(.v290-eyebrow,.v290-cat-caption,.v290-budget-summary>small,.v290-cat-head span),body.theme-dark :is(.v290-budget-web,.v290-budget-mobile,.v290-budget-trend) :is(.v290-eyebrow,.v290-cat-caption,.v290-budget-summary>small,.v290-cat-head span){color:#bdcbea!important}
+body.theme-black .v290-ring>div,body.theme-dark .v290-ring>div{background:#263448}body.theme-black .v290-ring>div>strong,body.theme-dark .v290-ring>div>strong{color:#fff}
+body.theme-black .v290-coverage,body.theme-dark .v290-coverage{background:#ffffff0f}body.theme-black .v290-pos-budget,body.theme-dark .v290-pos-budget{color:#f7fbff}
+@media(prefers-reduced-motion:reduce){.v290-position-all,.v290-budget-web,.v290-budget-mobile{transition:none!important}}
+
+
+/* V290.1 — Prevent stacked obligation labels from colliding when the web panel is compact. The full detail remains accessible through each row. */
+@media(min-width:1000px){
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-obligation-title small{display:none!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-obligation-list{display:flex!important;flex:0 0 auto!important;min-height:0!important;height:auto!important;gap:1px!important;justify-content:flex-start!important;margin-top:5px!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-obligation-row{height:30px!important;min-height:30px!important;max-height:30px!important;flex:none!important;display:grid!important;grid-template-columns:23px minmax(0,1fr) auto 12px!important;gap:6px!important;padding:3px 2px!important;align-items:center!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-obligation-title{gap:0!important;line-height:1!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-obligation-total{margin-top:4px!important;padding:9px 12px!important;gap:2px!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-obligation-total>span{font-size:9px!important;line-height:1.2!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-activity-foot{margin-top:2px!important;min-height:21px!important}
+}
+
+
+@media(min-width:1000px){
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-panel-top{display:flex!important;align-items:flex-start!important;min-height:35px!important;height:auto!important;margin-bottom:9px!important;position:relative!important;z-index:2!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-panel-top h2{line-height:1.15!important;margin:0!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-panel-top p{line-height:1.1!important;margin:3px 0 0!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-obligation-total{position:relative!important;margin-top:0!important}
+}
+
 </style>
 </body>
 </html>
