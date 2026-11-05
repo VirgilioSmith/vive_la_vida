@@ -5,7 +5,7 @@
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="284-mobile-buscar-operaciones-coherentes"/>
+<meta name="vive-el-hoy-version" content="285-simplificacion-financiera-web-movil"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -23309,6 +23309,7 @@ function v206BankSwitch(page){
 }
 function moduleSwitch(page){
  const root=navFamilyForPage(page),section=NAV_SECTIONS[root];if(!section)return '';
+ if(page==='income'||page==='expenses'||page==='budget')return ''; // V285: análisis directo y presupuesto de dos vistas
  if(root==='banks'&&window.matchMedia?.('(max-width:767px)').matches){
   return page==='banks'?'':v206BankSwitch(page);
  }
@@ -24036,7 +24037,7 @@ function payments(){
       </section>
 
      </div>
-     <p class="footnote v145-pay-bottom-note">Compromisos del mes y pendientes en agenda son métricas diferentes. La carga mensual incluye cuotas contractuales, aun si ya se pagaron; la agenda muestra vencimientos pendientes registrados. Para conciliación histórica, consulta Movimientos.</p>
+     
     </div>`;
 }
 function benefits(){
@@ -24783,10 +24784,19 @@ function budget(){
   return `<div class="budget-row"><div class="split"><div class="mini-title">${sanitize(cat)}</div><div class="hstack"><span class="subtle">${money(spent)} / ${amount?money(amount):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="">${global?'Editar':'Definir'}</button></div></div>${amount?`<div class="progress" tabindex="0" data-chart-tip="${sanitize(cat)}|Gastado: ${money(spent)}|Asignado: ${money(amount)}|Ejecución: ${pct.toFixed(1)}%"><span class="${pct>100?'high':pct>=80?'warn':''}" style="width:${Math.min(100,pct)}%"></span></div>`:''}${subs.length?`<details class="v194-subcategory-drawer"><summary><span>${subs.length} subcategoría${subs.length===1?'':'s'}</span><span class="v194-drawer-arrow">⌄</span></summary><div class="v194-subcategory-content">${subs.map(sub=>{const setting=current.rows.find(b=>b.category===cat&&b.subcategory===sub),limit=num(setting?.amount),expense=num(totals.expenseSubBy[cat+'||'+sub]);return `<div class="subbudget"><div class="split"><span>↳ ${sanitize(sub)}</span><div class="hstack"><span>${money(expense)} / ${limit?money(limit):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="${sanitize(sub)}">${setting?'Editar':'Definir'}</button></div></div>${limit?`<div class="progress"><span class="${expense>limit?'high':expense>=limit*.8?'warn':''}" style="width:${Math.min(100,expense/limit*100)}%"></span></div>`:''}</div>`}).join('')}</div></details>`:''}</div>`;
  }).filter(Boolean).join('');
  const hasLastYear=lastYear.rows.length>0;
- return `<div class="budget-world v180-budget-clean">
- ${budgetEvolutionChart(year,month)}
- <div class="budget-analytics-grid"><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">01 · ASIGNACIÓN</span><h3>¿A dónde va el presupuesto?</h3><p class="form-note">Peso porcentual y monto por categoría.</p></div><span class="pill">${active.length} categorías</span></div><div class="budget-allocation-list">${chart}</div></section><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">02 · COMPARACIÓN</span><h3>Variación absoluta e interanual</h3><p class="form-note">Mismo mes del año anterior · asignación y gasto real.</p></div></div><details class="budget-variance-disclosure"><summary>Consultar comparación mensual e interanual</summary><div class="budget-variance-grid">${valueComparison('PRESUPUESTO VS. AÑO ANTERIOR',current.total,lastYear.total,hasLastYear)}${valueComparison('PRESUPUESTO CAMBIO MENSUAL',current.total,lastMonth.total,lastMonth.rows.length>0)}${valueComparison('GASTO REAL VS. AÑO ANTERIOR',totals.expense,ly.expense,ly.expense!==0||db.transactions.some(t=>t.date.startsWith(priorYear)))}</div></details><div class="budget-coverage-note">El cumplimiento se calcula sobre el presupuesto asignado. Gastos sin límite se muestran por separado. ${hasLastYear&&lastYear.rows.every(x=>x.legacy)?'La asignación del año anterior procede de datos heredados sin fecha original y es solo orientativa.':''}</div></section></div>
- ${budgetCompliance(totals)}<section class="panel section"><div class="panel-head"><div><span class="summary-tag">03 · EDICIÓN POR CATEGORÍA</span><h3>Presupuesto de ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</h3><p class="form-note">Edita una categoría o subcategoría. Cada período mantiene su propia referencia.</p></div><div class="v180-budget-edit-actions"><button type="button" class="btn sm soft" data-act="addBudget">${icon('plus')} Definir presupuesto</button><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto" style="width:162px"/></div></div>${rows||'<div class="budget-empty-text">No se registran presupuestos ni gastos durante este mes.</div>'}<p class="footnote">Un límite de categoría incluye sus subcategorías. Los cambios afectan el mes seleccionado y los siguientes, salvo otra versión posterior; las versiones anteriores no se modifican. Si tus presupuestos proceden de una versión antigua, la app no puede recuperar sus importes históricos previos a esta actualización.</p></section></div>`;
+ return `<div class="budget-world v180-budget-clean v285-budget-plan">
+   <div class="v285-budget-plan-top"><div><h3>Planificación por categoría</h3><p>Define y ajusta los límites del mes seleccionado.</p></div><div class="v285-budget-plan-actions"><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto"><button type="button" class="btn sm soft" data-act="addBudget">${icon('plus')} Definir límite</button></div></div>
+   <section class="panel v285-budget-edit-list" aria-label="Categorías y límites vigentes">${rows||'<div class="budget-empty-text">No hay presupuestos definidos durante este mes.</div>'}</section>
+   <details class="v285-analysis-details v285-budget-allocation"><summary>Consultar distribución del presupuesto ${icon('arrow')}</summary><div class="v285-analysis-details-content budget-allocation-list">${chart}</div></details>
+   <p class="footnote">Los límites globales incluyen sus subcategorías. Una modificación rige desde el período seleccionado y no borra versiones anteriores.</p>
+ </div>`;
+}
+
+/* V285: Ejecución no es un tercer catálogo. Reutiliza los cálculos originales. */
+function v285BudgetExecution(){
+ const period=ui.month||today().slice(0,7),[y,m]=period.split('-').map(Number),plan=budgetPlan(period),totals=monthlyTotals(y,m),spent=budgetCoveredSpend(totals,period),available=rnd(plan.total-spent),percentage=plan.total?spent/plan.total*100:null;
+ const unbudgeted=Math.max(0,num(totals.expense)-num(spent));
+ return `<div class="v285-budget-execution"><section class="v285-execution-hero"><span class="v285-execution-overline">EJECUCIÓN · ${sanitize(period)}</span><strong>${percentage===null?'Sin presupuesto':percentage.toFixed(1)+'%'}</strong><div class="v285-execution-facts"><div><small>GASTADO EN EL PLAN</small><b>${money(spent)}</b></div><div><small>${available<0?'EXCESO':'POR UTILIZAR'}</small><b>${money(Math.abs(available))}</b></div><div><small>SIN LÍMITE ASIGNADO</small><b>${money(unbudgeted)}</b></div></div><div class="progress" aria-label="Porcentaje del presupuesto utilizado"><span class="${percentage!==null&&percentage>100?'high':percentage!==null&&percentage>=80?'warn':''}" style="width:${Math.min(100,Math.max(0,percentage||0))}%"></span></div></section>${budgetCompliance(totals)}<details class="v285-analysis-details"><summary>Ver evolución de la ejecución ${icon('arrow')}</summary><div class="v285-analysis-details-content">${budgetEvolutionChart(y,m)}</div></details></div>`;
 }
 
 const matrixAmount=(v)=>Math.abs(num(v))<0.005?'—':new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(Math.round(num(v)));
@@ -25062,13 +25072,16 @@ function expensesAnalysis(){
   const expenseTxs=allOpIds.map(id=>db.transactions.find(t=>t.id===id)).filter(Boolean).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,40);
   const paymentEntries=Object.entries(paymentMix).filter(([,v])=>v>.005).sort((a,b)=>b[1]-a[1]);
   const micro=(a,b)=>`<div class="expenses-mini"><small>${sanitize(a)}</small><strong>${b}</strong></div>`;
-  return `<div class="expenses-world"><div class="world-intro expenses-heading"><span class="summary-tag">ANÁLISIS DE EGRESOS · ${sanitize(title)}</span><h2>¿A dónde se va tu dinero?</h2><p>Descubre qué consumes, cuáles categorías pesan más y cómo cambia tu gasto frente al año anterior.</p><div class="expenses-tools"><div class="expenses-range" aria-label="Período de análisis"><button type="button" class="${!yearMode?'active':''}" data-act="expenseRange" data-id="month">Mes</button><button type="button" class="${yearMode?'active':''}" data-act="expenseRange" data-id="year">Año</button></div><label>Período <input id="expenseMonthPicker" type="month" value="${picked}" aria-label="Seleccionar mes de análisis"/></label><button class="btn sm soft" type="button" data-act="newTransaction" data-type="expense">${icon('plus')} Registrar egreso</button></div></div>
-  <div class="expenses-kpis">${layoutCard('Egresos registrados',money(total),'Compras y costos confirmados','down',vsYear(total,priorTotal))}${layoutCard('Tres mayores categorías',top3Share.toFixed(1)+'%','Participación del top 3','chart',`${top3Share.toFixed(1)}% de la distribución`)}${layoutCard('Presupuesto consumido',usedBudget===null?'Sin asignar':usedBudget.toFixed(1)+'%',bTotal>0?'Asignación '+money(bTotal):'Sin presupuesto asignado','wallet',bTotal>0?`<span class="expenses-budget-meter"><span style="width:${Math.min(100,Math.max(0,usedBudget))}%"></span></span>`:'Configúralo en Presupuestos')}${layoutCard('Categorías activas',String(entries.length),'Con gastos en el período','receipt',`${allOpIds.length} movimientos relacionados`)}</div>
-  <div class="expenses-microstats">${micro('CAMBIO MENSUAL',yearMode?'Consulta la evolución mensual':Math.abs(prevM)>.005?`${(total/Math.abs(prevM)-1)>=0?'+':''}${(total/Math.abs(prevM)-1)*100>=0?((total/Math.abs(prevM)-1)*100).toFixed(1)+'%':((total/Math.abs(prevM)-1)*100).toFixed(1)+'%'}`:'Sin base')}${micro('CATEGORÍA PRINCIPAL',entries.length?sanitize(entries[0].cat):'Sin datos')}${micro('PARA LLEGAR AL 80%',thresholdCount?`${thresholdCount} categoría${thresholdCount===1?'':'s'}`:'Sin datos')}</div>
-  <div class="expenses-twocol section"><section class="panel expenses-distribution"><div class="panel-head"><div><h3>Composición del gasto</h3><p class="subtle">Peso de cada categoría · ${sanitize(title)}</p></div></div>${entries.length?`<div class="expenses-donut-layout"><div class="expenses-donut" style="background:conic-gradient(${segments})"><div><small>GASTO NETO</small><strong title="${money(total)}">${shorten(total)}</strong></div></div><div class="expenses-legend">${entries.slice(0,7).map((e,i)=>`<div tabindex="0" data-chart-tip="${sanitize(e.cat)}|Gasto: ${money(e.val)}|Peso: ${e.share.toFixed(1)}%"><span><i style="background:${palette[i%palette.length]}"></i>${sanitize(e.cat)}</span><b>${e.share.toFixed(1)}%</b></div>`).join('')}</div></div>`:'<div class="empty">Aquí aparecerá la composición al registrar gastos.</div>'}</section><section class="panel expenses-pareto"><div class="panel-head"><div><h3>Pareto · ¿qué se lleva el 80 %?</h3><p class="subtle">Ordenado del gasto más alto al más bajo</p></div><span class="expenses-eighty">80%</span></div>${pareto}</section></div>
-  <section class="panel section expenses-trend"><div class="panel-head"><div><h3>Evolución de egresos · ${y} vs. ${y-1}</h3><p class="subtle">Comparación del mismo mes entre dos años, en RD$</p></div><div class="expenses-series-legend"><span><i class="current"></i>${y}</span><span><i class="previous"></i>${y-1}</span></div></div><div class="expenses-svg-container"><svg viewBox="0 0 ${chartWidth} ${chartH}" role="img" aria-label="Gráfico de barras comparativo de egresos mensuales de ${y} y ${y-1}">${ticks}${cols}</svg></div><p class="footnote">Solo los meses registrados del año actual se presentan como resultado; el año anterior sirve como referencia.</p></section>
-  <div class="expenses-twocol section"><section class="panel"><div class="panel-head"><div><h3>Desglose por categoría</h3><p class="subtle">Pulsa una categoría para consultar las subcategorías</p></div></div><div class="expenses-categories">${rowList}</div></section><section class="panel"><div class="panel-head"><div><h3>¿Dónde y cómo gastas?</h3><p class="subtle">Conceptos e instrumentos de pago registrados</p></div></div><div class="expenses-source-title">Por instrumento o tipo de costo</div>${paymentEntries.map(([name,val])=>`<div class="expenses-method"><span>${sanitize(name)}</span><b>${money(val)}</b></div>`).join('')||'<div class="empty">Sin movimientos para clasificar.</div>'}<div class="expenses-source-title">Principales comercios o conceptos</div>${merchantRank.map(([name,val],i)=>`<div class="expenses-method"><span>${i+1}. ${sanitize(name)}</span><b>${money(val)}</b></div>`).join('')||'<div class="empty">No hay compras con concepto registrado.</div>'}</section></div>
-  <section class="panel section"><div class="panel-head"><div><h3>Movimientos que forman tus egresos</h3><p class="subtle">Incluye gastos confirmados y costos financieros, no abonos de capital</p></div><button class="btn sm ghost" data-act="navigate" data-id="register">Libro y edición ${icon('arrow')}</button></div>${expenseTxs.length?smallTxTable(expenseTxs):'<div class="empty">No hay movimientos de egreso para el período seleccionado.</div>'}</section><p class="footnote expenses-policy-note">Los pagos de tarjetas y el capital de los préstamos no vuelven a sumarse como gastos. Los reembolsos reducen el gasto de su categoría; los intereses, seguros y comisiones sí se contabilizan. Las conversiones a RD$ usan la tasa configurada.</p></div>`;
+  return `<div class="expenses-world v285-analysis v285-expense-analysis" aria-label="Análisis de egresos">
+  <div class="v285-analysis-toolbar"><span>EGRESOS · ${sanitize(title)}</span><div class="expenses-tools"><div class="expenses-range" aria-label="Período de análisis"><button type="button" class="${!yearMode?'active':''}" data-act="expenseRange" data-id="month">Mes</button><button type="button" class="${yearMode?'active':''}" data-act="expenseRange" data-id="year">Año</button></div><label>Período <input id="expenseMonthPicker" type="month" value="${picked}" aria-label="Seleccionar mes de análisis"></label></div></div>
+  <div class="v285-analysis-grid">
+    <section class="panel expenses-distribution v285-chart-panel"><div class="panel-head"><div><h3>Composición del gasto</h3><p class="subtle">¿Qué categorías concentran el consumo?</p></div></div>
+      ${entries.length?`<div class="expenses-donut-layout"><div class="expenses-donut" style="background:conic-gradient(${segments})"><div><small>CATEGORÍAS</small><strong>${entries.length}</strong></div></div><div class="expenses-legend">${entries.slice(0,7).map((e,i)=>`<div><span><i style="background:${palette[i%palette.length]}"></i>${sanitize(e.cat)}</span><strong>${e.share.toFixed(1)}%</strong></div>`).join('')}</div></div>`:'<div class="empty">Sin egresos registrados para este período.</div>'}
+    </section>
+    <section class="panel v285-trend-panel"><div class="panel-head"><div><h3>Evolución de egresos · ${y}</h3><p class="subtle">Gasto reconocido por mes del año seleccionado</p></div></div><div class="expenses-chart-scroll"><svg class="expenses-chart" viewBox="0 0 ${chartWidth} ${chartH}" role="img" aria-label="Egresos registrados mensualmente durante ${y}">${ticks}${trend.map((d,i)=>{const step=inner/12,center=left+(i+.5)*step,w=Math.min(26,step*.5),height=Math.max(0,d.current)/ceiling*gridHeight;return `<g><rect x="${center-w/2}" y="${bottom-height}" width="${w}" height="${d.visible?height:0}" rx="5" fill="var(--exp-current)" data-chart-tip="${sanitize(d.month)} ${y}|Egresos: ${money(d.current)}" tabindex="0"/><text x="${center}" y="${bottom+22}" text-anchor="middle" class="expenses-axis">${d.month}</text></g>`}).join('')}</svg></div></section>
+  </div>
+  <details class="v285-analysis-details"><summary>Consultar gasto por categoría ${icon('arrow')}</summary><div class="v285-analysis-details-content"><div class="expenses-categories">${rowList}</div><p class="footnote">Incluye costos e intereses reconocidos; los pagos del capital de tarjetas y préstamos no duplican el gasto.</p></div></details>
+ </div>`;
 }
 
 function incomeAnalysis(){
@@ -25081,12 +25094,16 @@ function incomeAnalysis(){
  const borrowed=db.transactions.filter(t=>t.date.startsWith(month)&&t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed').reduce((a,t)=>a+fx(t.amount,t.currency),0);
  const interestPersonal=db.transactions.filter(t=>t.date.startsWith(month)&&t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent').reduce((a,t)=>a+fx(num(t.interest),t.currency),0);
  let trends=yearMonths.map(m=>recognized(m));let byMonth=trends.map(arr=>arr.reduce((a,{t,amount})=>a+fx(amount,t.currency),0));let max=Math.max(...byMonth,1);
- return `<div class="world-intro income-world-hero"><span class="summary-tag">INTELIGENCIA DE INGRESOS · ${sanitize(month)}</span><h2>¿De dónde viene tu dinero?</h2><p>Separa lo que ganas por tu trabajo, el joseo, los emprendimientos y los rendimientos. Los préstamos recibidos van aparte.</p></div>
- <div class="grid kpis">${shellKpi('Ingreso del mes',money(total),'Reconocido, no financiación','up','positive')}${shellKpi('Trabajo y nómina',money(earnings('Trabajo y nómina')),'Salarios y remuneración','wallet')}${shellKpi('Joseo y emprendimiento',money(earnings('Joseo e ingresos adicionales')+earnings('Negocios y emprendimientos')),'Ingresos adicionales y negocios','analytics')}${shellKpi('Beneficios recibidos',money(earnings('Beneficios y cashback')),'Cashback bancario confirmado','receipt')}</div><div class="income-microstats"><span><small>CAMBIO MENSUAL</small><b>${(()=>{const previous=plusMonths(month+'-01',-1).slice(0,7),v=recognized(previous).reduce((a,{t,amount})=>a+fx(amount,t.currency),0);return v?((total/v-1)*100).toFixed(1)+'%':'Sin base comparativa'})()}</b></span><span><small>ACUMULADO DEL AÑO</small><b>${money(trends.slice(0,Number(month.slice(5,7))).reduce((a,arr)=>a+arr.reduce((v,{t,amount})=>v+fx(amount,t.currency),0),0))}</b></span><span><small>ORÍGENES ACTIVOS</small><b>${groups.length}</b></span></div>
- <div class="grid columns equal section"><section class="panel income-distribution"><div class="panel-head"><div><h3>Composición por origen</h3><p class="subtle">Participación del ingreso reconocido · ${sanitize(month)}</p></div></div>${total>0?`<div class="income-donut-layout"><div class="income-donut" style="background:conic-gradient(${slices})"><div><small>INGRESOS</small><strong>${money(total)}</strong></div></div><div class="income-legend">${groups.map(([name,val],i)=>`<div><span><i style="background:${colors[i%colors.length]}"></i>${sanitize(name)}</span><strong>${(val/total*100).toFixed(1)}%</strong></div>`).join('')}</div></div>`:'<div class="empty">Registra ingresos para conocer su distribución.</div>'}</section><section class="panel income-details"><div class="panel-head"><div><h3>Ranking de fuentes</h3><p class="subtle">Más dinero aportado primero</p></div></div>${groups.map(([name,val],i)=>`<div class="income-ranked" tabindex="0" data-chart-tip="${sanitize(name)}|Ingreso: ${money(val)}|Participación: ${(total?val/total*100:0).toFixed(1)}%"><div><b>${i+1}. ${sanitize(name)}</b><strong>${money(val)}</strong></div><div class="income-bar"><span style="width:${total?val/total*100:0}%;background:${colors[i%colors.length]}"></span></div><small>${total?(val/total*100).toFixed(1):'0'}% del total</small></div>`).join('')||'<div class="empty">No hay ingresos en este mes.</div>'}</section></div>
- <section class="panel section"><div class="panel-head"><div><h3>Evolución de ingresos · ${y}</h3><p class="subtle">Ingresos reconocidos, mes a mes</p></div><button class="btn sm soft" data-act="newTransaction" data-type="income">+ Registrar ingreso</button></div><div class="income-monthly-bars">${yearMonths.map((m,i)=>`<div class="income-month-bar"><div class="income-column"><span style="height:${(byMonth[i]/max*100).toFixed(2)}%" data-chart-tip="${MON[i]} ${y}|Ingresos: ${money(byMonth[i])}" tabindex="0"></span></div><small>${sanitize(MON[i])}</small></div>`).join('')}</div></section>
- <div class="grid columns equal section"><section class="panel"><div class="panel-head"><h3>Categorías de ingreso</h3><span class="pill">${groups.length} fuentes</span></div>${Object.entries(byCategory).sort((a,b)=>b[1]-a[1]).map(([cat,v])=>{const ss=Object.entries(bySub).filter(([name])=>name.startsWith(cat+' / '));return `<details class="income-cat-details"><summary><span>${sanitize(cat)} <small>${ss.length?ss.length+' subcategoría(s)':''}</small></span><strong>${money(v)}</strong></summary><div class="income-cat-children">${ss.length?ss.map(([name,val])=>`<div><span>${sanitize(name.slice(cat.length+3))}</span><b>${money(val)}</b></div>`).join(''):'<p class="footnote">Sin subcategorías asignadas.</p>'}</div></details>`}).join('')||'<div class="empty">Sin categorías activas</div>'}<p class="footnote">Intereses cobrados a personas: ${money(interestPersonal)}</p></section><section class="panel"><div class="panel-head"><h3>Entradas que NO son ingresos</h3><span class="pill orange">Control contable</span></div><div class="mini-row"><span>Préstamos recibidos de personas, registrados este mes</span><strong>${money(borrowed)}</strong></div><div class="mini-row"><span>Préstamos bancarios</span><strong>Financiación, no ingreso</strong></div><p class="footnote">El dinero de un préstamo aumenta el efectivo y al mismo tiempo genera una deuda. No aumenta tu riqueza ni tu ingreso ganado. Tampoco se suman transferencias internas ni capital prestado que te devuelven.</p><button class="btn sm ghost" data-act="navigate" data-id="personal">Ver préstamos entre personas</button></section></div>
- <section class="panel section"><div class="panel-head"><h3>Actividad de ingresos</h3><button class="btn sm ghost" data-act="navigate" data-id="transactions">Libro completo</button></div>${smallTxTable(txs.map(x=>x.t).slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,30))}</section>`;
+ return `<div class="v285-analysis v285-income-analysis" aria-label="Análisis de ingresos">
+  <div class="v285-analysis-toolbar"><span>INGRESOS · ${sanitize(month)}</span><label>Mes <input type="month" id="monthFilter" value="${month}" aria-label="Mes de ingresos"></label></div>
+  <div class="v285-analysis-grid">
+   <section class="panel v285-chart-panel"><div class="panel-head"><div><h3>Origen de los ingresos</h3><p class="subtle">Distribución de lo recibido durante el mes</p></div></div>
+    ${total>0?`<div class="income-donut-layout"><div class="income-donut" style="background:conic-gradient(${slices})"><div><small>ORÍGENES</small><strong>${groups.length}</strong></div></div><div class="income-legend">${groups.map(([name,val],i)=>`<div><span><i style="background:${colors[i%colors.length]}"></i>${sanitize(name)}</span><strong>${(val/total*100).toFixed(1)}%</strong></div>`).join('')}</div></div>`:'<div class="empty">Registra un ingreso para visualizar sus fuentes.</div>'}
+   </section>
+   <section class="panel v285-trend-panel"><div class="panel-head"><div><h3>Evolución mensual · ${y}</h3><p class="subtle">Cobros reconocidos, no ingresos programados</p></div></div><div class="income-monthly-bars">${yearMonths.map((m,i)=>`<div class="income-month-bar"><div class="income-column"><span style="height:${(byMonth[i]/max*100).toFixed(2)}%" data-chart-tip="${MON[i]} ${y}|Ingresos: ${money(byMonth[i])}" tabindex="0"></span></div><small>${sanitize(MON[i])}</small></div>`).join('')}</div></section>
+  </div>
+  <details class="v285-analysis-details"><summary>Consultar categorías y subcategorías ${icon('arrow')}</summary><div class="v285-analysis-details-content">${Object.entries(byCategory).sort((a,b)=>b[1]-a[1]).map(([cat,v])=>{const ss=Object.entries(bySub).filter(([name])=>name.startsWith(cat+' / '));return `<details class="income-cat-details"><summary><span>${sanitize(cat)}</span><strong>${money(v)}</strong></summary><div class="income-cat-children">${ss.map(([name,val])=>`<div><span>${sanitize(name.slice(cat.length+3))}</span><b>${money(val)}</b></div>`).join('')||'<p class="footnote">Sin subcategorías</p>'}</div></details>`}).join('')||'<div class="empty">Sin ingresos clasificados.</div>'}<p class="footnote">Intereses personales cobrados: ${money(interestPersonal)}. El capital de préstamos recibidos (${money(borrowed)}) no se considera ingreso.</p></div></details>
+ </div>`;
 }
 
 
@@ -28469,7 +28486,7 @@ const V26_META={
  payments:{title:'Tus compromisos',hint:'Lo que vence, lo que debes atender y los pagos ya registrados.',metric:'Pendientes',count:()=>upcoming().filter(a=>a.kind!=='personal_recv').length,btn:'Registrar pago',act:'quickPay',tabs:[['overview','Todos','calendar'],['upcoming','Próximos 30 días','clock'],['activity','Pagados','check']]},
  recurring:{title:'Suscripciones y servicios',hint:'Importes, frecuencia, próximo vencimiento y pagos registrados.',metric:'Servicios',count:()=>db.recurring.length,btn:'Nuevo servicio',act:'addRecurring',tabs:[['overview','Servicios','cycle'],['next','Próximos cargos','calendar'],['activity','Historial','receipt']]},
  personal:{title:'Dinero entre personas',hint:'Préstamos personales y devoluciones separados de ingresos y gastos.',metric:'Relaciones',count:()=>db.personalLoans.length,btn:'Nueva relación',act:'addPersonal',tabs:[['overview','Relaciones','wallet'],['receivable','Por cobrar','up'],['payable','Por pagar','down'],['activity','Movimientos','cycle']]},
- budget:{title:'Presupuestos',hint:'Límites mensuales, ejecución y categorías sin duplicaciones.',metric:'Categorías',count:()=>budgetPlan(ui.month).groups.length,btn:'Definir límite',act:'addBudget',tabs:[['overview','Mi presupuesto','wallet'],['status','Ejecución','chart'],['category','Categorías','grid']]},
+ budget:{title:'Presupuestos',hint:'Límites mensuales, ejecución y categorías sin duplicaciones.',metric:'Categorías',count:()=>budgetPlan(ui.month).groups.length,btn:'Definir límite',act:'addBudget',tabs:[['overview','Mi presupuesto','wallet'],['status','Ejecución','chart']]},
  categories:{title:'Tu catálogo',hint:'Las categorías originales y las que añadas se conservan.',metric:'Categorías',count:()=>Object.keys(categoryMap('gasto')).length+Object.keys(categoryMap('ingreso')).length,btn:'Nueva categoría',act:'addCategory',tabs:[['overview','Catálogo completo','grid'],['category','Utilizadas','analytics'],['unclassified','Sin clasificar','receipt']]}
 };
 for(const [p,cfg] of Object.entries(V26_META))INNER_PAGES[p].tabs=cfg.tabs.map(x=>x.slice(0,2));
@@ -28515,8 +28532,12 @@ innerView=function(page,selection){
 };
 const v26OldInnerWrap=innerWrap;
 innerWrap=function(page,view){
- if(page==='payments')return view(); // V196: un solo centro, sin cabecera/filtros V26 duplicados
-  if(page==='income'||page==='expenses')return v26OldInnerWrap(page,view);
+ if(page==='payments'||page==='income'||page==='expenses')return view(); // V285: navegación directa
+ if(page==='budget'){
+   const mode=ui.innerViews?.budget==='status'?'status':'overview';
+   const tab=(id,name)=>`<button type="button" class="v285-budget-tab ${mode===id?'active':''}" data-act="innerView" data-page="budget" data-view="${id}" aria-current="${mode===id?'page':'false'}">${name}</button>`;
+   return `<section class="v285-budget-workspace" aria-label="Presupuesto"><nav class="v285-budget-nav" aria-label="Vistas del presupuesto">${tab('overview','Mi presupuesto')}${tab('status','Ejecución')}</nav><div class="v285-budget-body">${mode==='status'?v285BudgetExecution():view()}</div></section>`;
+ }
  const cfg=V26_META[page];if(!cfg)return view();
  const selection=page==='categories'?'overview':cfg.tabs.some(x=>x[0]===ui.innerViews[page])?ui.innerViews[page]:'overview';
  const metric=String(cfg.count());const base=selection==='overview'?view():innerView(page,selection);
@@ -31013,7 +31034,7 @@ function deletePersonalLoan(id){
   const restRows=groupLines.map(g=>row(g.name,g.allowed-g.spent,`${eq(g.allowed)} asignado · ${eq(g.spent)} gastado`));
   const spentRows=groupLines.map(g=>row(g.name,g.spent,`${eq(g.allowed)} asignado · ${g.allowed>0?pct(g.spent/g.allowed*100):'Sin límite'}`));
   const unbudgeted=Object.entries(monthData.expenseBy).filter(([name])=>!plan.groups.some(g=>g.category===name)).reduce((s,[,v])=>s+num(v),0);
-  return {kicker:`PRESUPUESTO / ${safe(fmtMonth(period).toUpperCase())}`,title:'Tu margen de gasto,<br><em>sin perder el rumbo.</em>',subtitle:'Distingue cuánto asignaste, lo que se ejecutó y la velocidad de gasto frente a los días transcurridos del mes.',main:metric(remaining<0?'EXCESO DE PRESUPUESTO':'MARGEN DISPONIBLE',eq(Math.abs(remaining)),plan.total>0?`Ejecución ${pct(consumed)} del presupuesto del mes`:'Todavía no has definido un presupuesto.',details('Saldo presupuestario por categoría',remaining,sortRows(restRows),'El margen representa límites presupuestarios menos gastos asociados; no es saldo bancario.',{page:'budget',tab:'status'})),cards:[metric('PRESUPUESTO ASIGNADO',eq(plan.total),`${plan.groups.length} categorías`,details('Asignación presupuestaria',plan.total,sortRows(groupLines.map(g=>row(g.name,g.allowed,'Límite vigente del período'))),'Los límites de subcategorías no duplican el límite global de una categoría.',{page:'budget',tab:'category'})),metric('GASTO PRESUPUESTADO',eq(spend),'Gastos dentro de las categorías cubiertas',details('Ejecución por categoría',spend,sortRows(spentRows),'Solo gastos asociados a los límites del plan seleccionado.',{page:'budget',tab:'status'})),metric('EJECUCIÓN',pct(consumed),`Avance del mes ${pct(elapsed)}`,details('Ritmo de ejecución',null,[row('Porcentaje de presupuesto ejecutado',null,pct(consumed)),row('Porcentaje del mes transcurrido',null,pct(elapsed))],'Las cuotas y pagos fijos pueden concentrarse al principio de mes; este ritmo no es por sí solo una anomalía.',{page:'budget',tab:'status'})),metric('GASTOS SIN LÍMITE',eq(unbudgeted),'Fuera de las categorías presupuestadas',details('Gastos de categorías sin límite',unbudgeted,detailRowsByCategory(Object.fromEntries(Object.entries(monthData.expenseBy).filter(([name])=>!plan.groups.some(g=>g.category===name)))),'Fuera del plan asignado para el período.',{page:'budget',tab:'category'}))],footer:'Presupuesto disponible no significa efectivo disponible. El ritmo es informativo.',actions:[['Ver ejecución','budget','status'],['Definir límites','budget','category']]};
+  return {kicker:`PRESUPUESTO / ${safe(fmtMonth(period).toUpperCase())}`,title:'Tu margen de gasto,<br><em>sin perder el rumbo.</em>',subtitle:'Distingue cuánto asignaste, lo que se ejecutó y la velocidad de gasto frente a los días transcurridos del mes.',main:metric(remaining<0?'EXCESO DE PRESUPUESTO':'MARGEN DISPONIBLE',eq(Math.abs(remaining)),plan.total>0?`Ejecución ${pct(consumed)} del presupuesto del mes`:'Todavía no has definido un presupuesto.',details('Saldo presupuestario por categoría',remaining,sortRows(restRows),'El margen representa límites presupuestarios menos gastos asociados; no es saldo bancario.',{page:'budget',tab:'status'})),cards:[metric('PRESUPUESTO ASIGNADO',eq(plan.total),`${plan.groups.length} categorías`,details('Asignación presupuestaria',plan.total,sortRows(groupLines.map(g=>row(g.name,g.allowed,'Límite vigente del período'))),'Los límites de subcategorías no duplican el límite global de una categoría.',{page:'budget',tab:'overview'})),metric('GASTO PRESUPUESTADO',eq(spend),'Gastos dentro de las categorías cubiertas',details('Ejecución por categoría',spend,sortRows(spentRows),'Solo gastos asociados a los límites del plan seleccionado.',{page:'budget',tab:'status'})),metric('EJECUCIÓN',pct(consumed),`Avance del mes ${pct(elapsed)}`,details('Ritmo de ejecución',null,[row('Porcentaje de presupuesto ejecutado',null,pct(consumed)),row('Porcentaje del mes transcurrido',null,pct(elapsed))],'Las cuotas y pagos fijos pueden concentrarse al principio de mes; este ritmo no es por sí solo una anomalía.',{page:'budget',tab:'status'})),metric('GASTOS SIN LÍMITE',eq(unbudgeted),'Fuera de las categorías presupuestadas',details('Gastos de categorías sin límite',unbudgeted,detailRowsByCategory(Object.fromEntries(Object.entries(monthData.expenseBy).filter(([name])=>!plan.groups.some(g=>g.category===name)))),'Fuera del plan asignado para el período.',{page:'budget',tab:'overview'}))],footer:'Presupuesto disponible no significa efectivo disponible. El ritmo es informativo.',actions:[['Ver ejecución','budget','status'],['Mi presupuesto','budget','overview']]};
  }
  function buildIncome(){
   const selected=ui.month||today().slice(0,7),y=Number(selected.slice(0,4)),m=Number(selected.slice(5,7));
@@ -31066,7 +31087,7 @@ function deletePersonalLoan(id){
  const button=(name,page,tab,primary=false)=>`<button type="button" class="v58-action ${primary?'primary':''}" data-v58="jump" data-v58-go="${page}" data-v58-tab="${tab}">${safe(name)} →</button>`;
  function panel(page){const info=current(page);if(!info)return '';
   if(page==='personal')return `<section class="v58-exec v189-person-hero" data-v58-page="personal" aria-label="Saldo entre personas"><div class="v58-left"><div class="v58-kicker">ENTRE PERSONAS</div><h2>El dinero entre personas,<br><em>en claro.</em></h2><p>Préstamos pendientes y devoluciones, sin complicaciones.</p></div><div class="v58-right"><div class="v58-feature"><span class="v58-main-label">${safe(info.main.label)}</span><button type="button" class="v58-main-value" ${detailButton(page,'main',info.main.label)}>${safe(info.main.value)}</button><small>${safe(info.main.note)}</small></div><button type="button" class="v189-payable-inline" ${detailButton(page,'3','Yo debo')}><span>YO DEBO</span><strong>${safe(info.cards[3].value)}</strong></button></div></section>`;
-  return `<section class="v58-exec ${info.compact?'v58-compact':''}" data-v58-page="${page}" aria-label="Resumen ejecutivo de ${page}"><div class="v58-left"><div class="v58-kicker">${safe(info.kicker)}</div><h2>${info.title}</h2><p>${safe(info.subtitle)}</p><div class="v58-actions">${info.actions.map(([name,to,tab],i)=>button(name,to,tab,i===0)).join('')}</div><div class="v58-meta">Selecciona cualquier cifra para consultar su composición.</div></div><div class="v58-right"><div class="v58-feature"><div class="v58-main-label">${safe(info.main.label)}</div><button class="v58-main-value" ${detailButton(page,'main',info.main.label)}>${safe(info.main.value)} ${icon('arrow')}</button><small>${safe(info.main.note)}</small></div><div class="v58-grid">${info.cards.map((c,i)=>`<button type="button" class="v58-metric" ${detailButton(page,String(i),c.label)}><span class="v58-card-label">${safe(c.label)}</span><strong>${safe(c.value)}</strong><small>${safe(c.note)}</small></button>`).join('')}</div><div class="v58-hint">${safe(info.footer)}</div></div></section>`;
+  return `<section class="v58-exec ${info.compact?'v58-compact':''}" data-v58-page="${page}" aria-label="Resumen ejecutivo de ${page}"><div class="v58-left"><div class="v58-kicker">${safe(info.kicker)}</div><h2>${info.title}</h2><p>${safe(info.subtitle)}</p><div class="v58-actions">${(['income','expenses','budget'].includes(page)?[]:info.actions).map(([name,to,tab],i)=>button(name,to,tab,i===0)).join('')}</div><div class="v58-meta">Selecciona cualquier cifra para consultar su composición.</div></div><div class="v58-right"><div class="v58-feature"><div class="v58-main-label">${safe(info.main.label)}</div><button class="v58-main-value" ${detailButton(page,'main',info.main.label)}>${safe(info.main.value)} ${icon('arrow')}</button><small>${safe(info.main.note)}</small></div><div class="v58-grid">${(page==='income'?info.cards.slice(0,3):page==='expenses'||page==='budget'?info.cards.slice(0,2):info.cards).map((c,i)=>`<button type="button" class="v58-metric" ${detailButton(page,String(i),c.label)}><span class="v58-card-label">${safe(c.label)}</span><strong>${safe(c.value)}</strong><small>${safe(c.note)}</small></button>`).join('')}</div><div class="v58-hint">${safe(info.footer)}</div></div></section>`;
  }
  /* V67: Control de calidad es una herramienta secundaria. No interrumpe el registro. */
  function reviewFooter(){
@@ -31078,7 +31099,7 @@ function deletePersonalLoan(id){
   </section>`;
  }
  function addPanel(page,html){
-  if(page==='payments')return html; // V196: el centro contiene su propio resumen
+  if(page==='payments'||page==='recurring')return html; // V285: evitar héroe duplicado en suscripciones
    if(page==='register')return ui.movementTab==='review'?html+reviewFooter():html;
   if(ui.innerViews?.[page]&&ui.innerViews[page]!=='overview')return html;
   const markup=panel(page);if(!markup)return html;
@@ -34872,7 +34893,7 @@ render=function(){v245PreviousRender();v245PolishOnRender();};
   main.classList.add('v248-feature');hero.append(main);
   const primary=make('div','v248-metrics-primary');
   const secondary=make('div','v248-metrics-secondary');
-  stats.forEach((s,i)=>{s.classList.add('v248-metric');(i<2?primary:secondary).append(s);});
+  stats.forEach((s,i)=>{s.classList.add('v248-metric');(page==='income'||page==='expenses'||page==='budget'||i<2?primary:secondary).append(s);});
   hero.append(primary);shell.append(hero);if(addBudget)shell.append(addBudget);
   if(secondary.children.length){
     const facts=make('section','v248-insight-sheet',`<div class="v248-sheet-head"><div><span class="v248-eyebrow">MÁS INDICADORES</span><h3>Tu detalle financiero</h3></div></div>`);
@@ -44543,5 +44564,102 @@ body.theme-dark #page #ledger-world .v265-balance-single .v265-unverified{
  body:is(.theme-black,.theme-dark) #modal-root .mqr-layer>.mqr-modal{background:linear-gradient(160deg,#1d2b41,#101c2b)!important}
 }
 </style>
+
+<style id="vive-v285-financial-simplification">
+/* V285 · Presentación solamente; no toca base de datos, cálculos o flujos. */
+#page .v285-analysis,#page .v285-budget-workspace {min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+#page .v285-analysis-toolbar {display:flex;justify-content:space-between;align-items:center;gap:14px;min-width:0;margin:0 0 16px;flex-wrap:wrap;color:#627894;font-weight:750;font-size:11px;letter-spacing:.06em}
+#page .v285-analysis-toolbar label {display:flex;align-items:center;gap:8px;color:#627894;font-weight:650;letter-spacing:0}
+#page .v285-analysis-toolbar input,#page .v285-budget-plan-actions input {min-height:38px;max-width:172px;min-width:0;padding:8px 10px;border-radius:12px;border:1px solid rgba(163,184,210,.45);background:rgba(255,255,255,.65);color:var(--ink)}
+#page .v285-analysis-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,1.7vw,20px);align-items:stretch}
+#page .v285-analysis-grid .panel {min-width:0;margin:0;padding:clamp(17px,2vw,25px);border-radius:24px}
+#page .v285-analysis-grid .panel-head {margin-bottom:18px}
+#page .v285-analysis-grid .panel-head h3 {font-size:17px;letter-spacing:-.35px}
+#page .v285-analysis-grid .income-donut-layout,#page .v285-analysis-grid .expenses-donut-layout {min-width:0;max-width:100%;width:100%}
+#page .v285-analysis-grid .income-legend,#page .v285-analysis-grid .expenses-legend {min-width:0}
+#page .v285-analysis-grid .income-legend>div,#page .v285-analysis-grid .expenses-legend>div {min-width:0;gap:8px}
+#page .v285-analysis-grid .income-legend>div span,#page .v285-analysis-grid .expenses-legend>div span {min-width:0;overflow-wrap:anywhere}
+#page .v285-analysis-grid .income-monthly-bars {width:100%;min-width:0}
+#page .v285-analysis-grid .expenses-chart-scroll {max-width:100%;overflow-x:auto}
+#page .v285-analysis-details {margin-top:16px;border:1px solid rgba(255,255,255,.79);border-radius:21px;background:rgba(255,255,255,.59);overflow:hidden;box-shadow:0 4px 18px rgba(51,79,121,.04)}
+#page .v285-analysis-details>summary {display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;list-style:none;padding:17px 20px;font-size:13px;font-weight:735;color:#345171}
+#page .v285-analysis-details>summary::-webkit-details-marker {display:none}
+#page .v285-analysis-details>summary svg{width:17px;height:17px;flex:none}
+#page .v285-analysis-details[open]>summary{border-bottom:1px solid #e4ebf3}
+#page .v285-analysis-details-content {padding:16px 20px;min-width:0}
+#page .v285-budget-nav {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:5px;margin:0 0 20px;border:1px solid rgba(255,255,255,.7);border-radius:17px;background:rgba(231,237,247,.75)}
+#page .v285-budget-tab {border:0;border-radius:13px;min-height:44px;padding:10px;color:#71829b;font-weight:750;background:transparent;cursor:pointer}
+#page .v285-budget-tab.active{background:rgba(255,255,255,.96);color:#284c81;box-shadow:0 3px 11px rgba(58,89,142,.09)}
+#page .v285-budget-plan-top {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 15px}
+#page .v285-budget-plan-top h3{margin:0;font-size:20px;letter-spacing:-.5px}
+#page .v285-budget-plan-top p{margin:5px 0 0;font-size:12px;color:var(--muted)}
+#page .v285-budget-plan-actions {display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#page .v285-budget-edit-list {min-width:0;padding:clamp(14px,2vw,25px)}
+#page .v285-budget-edit-list .budget-row {min-width:0}
+#page .v285-budget-execution .budget-compliance {min-width:0;max-width:100%}
+#page .v285-execution-hero {padding:clamp(20px,2.6vw,32px);border-radius:24px;background:linear-gradient(118deg,#1d416e,#386b9f);color:#fff;margin:0 0 18px}
+#page .v285-execution-overline{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;opacity:.8}
+#page .v285-execution-hero>strong{display:block;font-size:clamp(35px,5vw,56px);letter-spacing:-1.5px;margin:12px 0 18px;line-height:1}
+#page .v285-execution-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#page .v285-execution-facts>div{min-width:0;border-right:1px solid rgba(255,255,255,.19);padding-right:10px}
+#page .v285-execution-facts>div:last-child{border:0}
+#page .v285-execution-facts small{display:block;font-size:10px;font-weight:700;opacity:.78;line-height:1.3}
+#page .v285-execution-facts b{display:block;margin-top:8px;font-size:clamp(14px,2vw,22px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#page .v285-execution-hero .progress{background:rgba(255,255,255,.3);margin-top:20px;height:6px}
+#page .v285-execution-hero .progress>span{background:#b4e2da}
+/* Hide repeated captions; the KPI value and drill-down remain available. */
+#page .v58-exec:is([data-v58-page="income"],[data-v58-page="expenses"],[data-v58-page="budget"]) .v58-meta,
+#page .v58-exec:is([data-v58-page="income"],[data-v58-page="expenses"],[data-v58-page="budget"]) .v58-hint {display:none!important}
+/* Secondary metrics remain inside the large executive KPI, with no extra sheet. */
+#page .v58-exec[data-v58-page="income"] .v58-grid,
+#page .v58-exec[data-v58-page="expenses"] .v58-grid,
+#page .v58-exec[data-v58-page="budget"] .v58-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#page .v58-exec[data-v58-page="expenses"] .v58-grid,
+#page .v58-exec[data-v58-page="budget"] .v58-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+#page .v58-exec[data-v58-page="income"] .v58-metric,
+#page .v58-exec[data-v58-page="expenses"] .v58-metric,
+#page .v58-exec[data-v58-page="budget"] .v58-metric{min-width:0;max-width:100%;height:auto}
+/* Subscription sizing, not a redesign. */
+#page .v252-recurring .v26-body, #page .v252-recurring .v46-subs-panel, #page .v252-recurring .v46-subscriptions-grid{min-width:0;max-width:100%;box-sizing:border-box}
+#page .v252-recurring .v46-subscriptions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;align-items:stretch}
+#page .v252-recurring .v46-subscription-card{min-width:0;height:100%;box-sizing:border-box}
+#page .v252-recurring .v46-sub-card-title{min-width:0;overflow-wrap:anywhere}
+#page .v252-recurring .v46-sub-card-actions{display:flex;gap:8px;flex-wrap:wrap}
+#page #v145-payment-center .v145-agenda-list{min-width:0;max-width:100%}
+#page #v145-payment-center .v145-agenda-row{min-width:0}
+@media(max-width:790px){
+ #page .v285-analysis-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+ #page .v285-analysis-toolbar{margin:0 0 13px;align-items:center}
+ #page .v285-analysis-toolbar .expenses-tools{flex-wrap:wrap;min-width:0}
+ #page .v285-analysis-grid .panel{padding:18px 16px;border-radius:23px}
+ #page .v285-analysis-grid .income-donut-layout,#page .v285-analysis-grid .expenses-donut-layout{gap:14px}
+ #page .v285-analysis-details{margin-top:12px}
+ #page .v285-budget-nav{margin-bottom:14px}
+ #page .v285-budget-plan-top h3{font-size:18px}
+ #page .v285-budget-plan-actions{width:100%}
+ #page .v285-budget-plan-actions input{flex:1 1 125px}
+ #page .v285-budget-edit-list{padding:15px}
+ #page .v285-budget-edit-list .budget-row>.split{align-items:flex-start;flex-wrap:wrap;gap:10px}
+ #page .v285-budget-edit-list .budget-row .hstack{flex-wrap:wrap}
+ #page .v285-execution-facts{gap:7px}
+ #page .v285-execution-facts b{font-size:clamp(12px,3.5vw,16px)}
+ #page .v285-execution-facts small{font-size:9px}
+ #page .v252-recurring .v46-subscriptions-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+ #page .v58-exec[data-v58-page="income"] .v248-metrics-primary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ #page .v58-exec[data-v58-page="expenses"] .v248-metrics-primary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #page .v248-income .v248-metrics-primary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ #page .v248-expenses .v248-metrics-primary,#page .v248-budget .v248-metrics-primary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #page .v248-income .v248-metrics-primary .v58-metric,#page .v248-expenses .v248-metrics-primary .v58-metric{min-width:0;padding:10px 8px}
+ #page .v248-income .v248-metrics-primary .v58-metric strong,#page .v248-expenses .v248-metrics-primary .v58-metric strong{font-size:clamp(12px,3.6vw,18px);white-space:normal;overflow-wrap:anywhere}
+ #page .v248-income .v248-metrics-primary .v58-metric small,#page .v248-expenses .v248-metrics-primary .v58-metric small{font-size:9px}
+ #page .v248-finance .v248-insight-sheet{display:none}
+ #page .v248-income .v248-metrics-primary .v58-metric strong{font-size:clamp(11px,3.4vw,16px)!important;letter-spacing:-.45px!important;white-space:nowrap!important;word-break:normal!important;overflow:visible!important}
+ #page .v248-income .v248-metrics-primary .v58-metric{padding:10px 5px!important}
+ #page .v248-income .v248-metrics-primary .v58-metric .v58-card-label{font-size:9px!important;overflow-wrap:normal!important}
+ #page .v248-income .v248-hint,#page .v248-expenses .v248-hint,#page .v248-budget .v248-hint{display:none!important}
+}
+@media(max-width:350px){#page .v285-execution-facts{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#page .v285-execution-facts>div:last-child{grid-column:1/-1}}
+</style>
+
 </body>
 </html>
