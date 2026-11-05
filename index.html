@@ -5,7 +5,7 @@
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="280-wallet-geometria-corregida"/>
+<meta name="vive-el-hoy-version" content="282-wallet-carrusel-proporciones-validacion"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -43304,7 +43304,7 @@ body.theme-black .v266-wallet .v268-limit-row :is(span,strong),body.theme-dark .
    },{distance:Infinity,card:null}).card;
  }
  function init(){
-   const rail=document.querySelector('#page > .v279-wallet .v266-gallery-track');
+   const rail=document.querySelector('#page .v279-wallet .v266-gallery-track');
    if(!rail||rail===activeRail)return;
    activeRail=rail;
    guardUntil=performance.now()+400;
@@ -44126,59 +44126,69 @@ body.theme-dark #page :is(.v242-settings-row-copy small, .v46-sub-card-title sma
 
 
 <style id="vive-v279-wallet-mobile-geometry">
-/* V280 · Corrected single geometry for the Wallet mobile viewport, measured against reference.
+
+/* V282 · Consolidated Wallet mobile geometry, measured against reference.
    Does not change colors, financial values, card content or bottom navigation. */
 @media screen and (max-width:790px){
-  body:has(#page > section.v279-wallet) .main{padding-top:0!important;}
-  body:has(#page > section.v279-wallet) #page{margin-top:0!important;padding-top:0!important;}
-  #page > section.v279-wallet{margin-top:0!important;}
-  #page > section.v279-wallet.v68-wallet.v266-wallet{
-    --v279-gutter:clamp(12px,3.5vw,18px);
+  body:has(#page .v279-wallet) .main{padding-top:0!important;}
+  body:has(#page .v279-wallet) #page{margin-top:0!important;padding-top:0!important;}
+  /* V144 inserts an intermediate wrapper. Old direct-child selectors never
+     reached the real Wallet. This wrapper is normalized before its content. */
+  body:has(#page .v279-wallet) #page > .v144-wallet-shell{
+    display:block!important;box-sizing:border-box!important;
+    width:100vw!important;max-width:100vw!important;min-width:0!important;
+    margin:0 calc(50% - 50vw)!important;padding:0!important;
+    overflow:visible!important;transform:none!important;
+  }
+
+  #page .v279-wallet{margin-top:0!important;}
+  #page .v279-wallet.v68-wallet.v266-wallet{
+    --v279-gutter:clamp(12px,3.65vw,18px);
     --v279-card-width:min(76vw,430px);
     display:flex!important;flex-direction:column!important;
     box-sizing:border-box!important;width:100vw!important;max-width:100vw!important;
     min-width:0!important;min-height:0!important;
-    margin-inline:calc(50% - 50vw)!important;
+    margin-inline:0!important;
     margin-block:0!important;
     padding:0 var(--v279-gutter) calc(120px + env(safe-area-inset-bottom,0px))!important;
-    gap:12px!important;align-items:stretch!important;overflow:visible!important;
+    gap:18px!important;align-items:stretch!important;overflow:visible!important;
   }
-  #page > .v279-wallet .v266-wallet-header{
+  #page .v279-wallet .v266-wallet-header{
     display:flex!important;justify-content:space-between!important;align-items:center!important;
     box-sizing:border-box!important;flex:none!important;
     width:100%!important;min-height:0!important;
     margin:0!important;padding:0!important;
     transform:none!important;
   }
-  #page > .v279-wallet .v266-wallet-header h1{
+  #page .v279-wallet .v266-wallet-header h1{
     margin:4px 0 0!important;
     font-size:clamp(29px,8vw,36px)!important;
     line-height:1.06!important;
   }
-  #page > .v279-wallet .v266-wallet-add{
+  #page .v279-wallet .v266-wallet-add{
     flex:0 0 48px!important;width:48px!important;min-width:48px!important;
     height:48px!important;min-height:48px!important;
     margin:0!important;transform:none!important;
   }
-  #page > .v279-wallet .v266-gallery{
+  #page .v279-wallet .v266-gallery{
     position:relative!important;box-sizing:border-box!important;
     display:block!important;min-width:0!important;
     left:auto!important;right:auto!important;transform:none!important;
     width:calc(100% + 2 * var(--v279-gutter))!important;
     max-width:none!important;
-    margin:0 calc(-1 * var(--v279-gutter))!important;
+    margin:9px calc(-1 * var(--v279-gutter)) 0!important;
     padding:0!important;
     overflow:hidden!important;
     background:transparent!important;border:0!important;
     border-radius:0!important;box-shadow:none!important;
   }
-  #page > .v279-wallet .v266-gallery-track.v68-wallet-gallery{
+  #page .v279-wallet .v266-gallery-track.v68-wallet-gallery{
     display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
     justify-content:flex-start!important;align-items:flex-start!important;
     box-sizing:border-box!important;width:100%!important;max-width:100%!important;
     min-width:0!important;height:auto!important;min-height:0!important;
     margin:0!important;padding:3px var(--v279-gutter) 13px!important;
-    gap:11px!important;overflow-x:auto!important;overflow-y:hidden!important;
+    gap:10px!important;overflow-x:auto!important;overflow-y:hidden!important;
     scroll-snap-type:x mandatory!important;
     scroll-padding-inline:var(--v279-gutter)!important;
     overscroll-behavior-x:contain!important;
@@ -44186,15 +44196,15 @@ body.theme-dark #page :is(.v242-settings-row-copy small, .v46-sub-card-title sma
     background:none!important;border:0!important;box-shadow:none!important;
     grid-template-columns:none!important;grid-auto-columns:auto!important;
   }
-  #page > .v279-wallet .v266-gallery-track::-webkit-scrollbar{display:none!important}
-  #page > .v279-wallet .v266-gallery-track > button.v266-wallet-face.v68-wallet-face{
+  #page .v279-wallet .v266-gallery-track::-webkit-scrollbar{display:none!important}
+  #page .v279-wallet .v266-gallery-track > button.v266-wallet-face.v68-wallet-face{
     display:block!important;position:relative!important;
     box-sizing:border-box!important;
     flex:0 0 var(--v279-card-width)!important;flex-grow:0!important;flex-shrink:0!important;
     width:var(--v279-card-width)!important;min-width:var(--v279-card-width)!important;
     max-width:var(--v279-card-width)!important;
     height:auto!important;min-height:0!important;
-    aspect-ratio:1.67!important;
+    aspect-ratio:537/322!important;
     margin:0!important;padding:0!important;
     border:0!important;border-radius:0!important;
     transform:none!important;scale:1!important;
@@ -44202,39 +44212,139 @@ body.theme-dark #page :is(.v242-settings-row-copy small, .v46-sub-card-title sma
     overflow:visible!important;background:transparent!important;box-shadow:none!important;
     opacity:1!important;text-align:left!important;
   }
-  #page > .v279-wallet .v266-gallery-track > .v266-wallet-face > .v266-physical-card.v277-physical-card{
+  #page .v279-wallet .v266-gallery-track > .v266-wallet-face > .v266-physical-card.v277-physical-card{
     display:flex!important;flex-direction:column!important;justify-content:space-between!important;
     box-sizing:border-box!important;position:relative!important;
     width:100%!important;min-width:100%!important;max-width:100%!important;
     height:100%!important;min-height:0!important;
-    aspect-ratio:1.67!important;
+    aspect-ratio:537/322!important;
     margin:0!important;padding:clamp(14px,4vw,21px)!important;
     border:0!important;border-radius:clamp(18px,5.6vw,25px)!important;
     overflow:hidden!important;
     transform:none!important;scale:1!important;
     box-shadow:0 12px 26px rgba(27,49,80,.17)!important;
   }
-  #page > .v279-wallet .v266-gallery-track > .v266-wallet-face:not(.selected) > .v266-physical-card{
+  #page .v279-wallet .v266-gallery-track > .v266-wallet-face:not(.selected) > .v266-physical-card{
     opacity:.93!important;
   }
-  #page > .v279-wallet .v266-dots{
+  #page .v279-wallet .v266-dots{
     display:flex!important;justify-content:center!important;align-items:center!important;
     width:100%!important;margin:8px 0 0!important;padding:0!important;
     gap:7px!important;
   }
-  #page > .v279-wallet :is(.v266-selected-balance,.v266-wallet-actions,.v266-wallet-panel,.v266-wallet-detail,.v266-wallet-note){
+  #page .v279-wallet :is(.v266-selected-balance,.v266-wallet-actions,.v266-wallet-panel,.v266-wallet-detail,.v266-wallet-note){
     box-sizing:border-box!important;min-width:0!important;
     width:100%!important;max-width:100%!important;
   }
-  #page > .v279-wallet .v266-selected-balance{margin:0!important;padding:2px 0 4px!important}
-  /* Do not override nav/fab geometry, or the financial calculations and card styling. */
+
+  /* V281: the renderer outputs v277-card-* slots; the older styles never
+     positioned those slots. That made bank, tier and VISA visually collide. */
+  #page .v279-wallet .v266-gallery-track > .v266-wallet-face::before,
+  #page .v279-wallet .v266-gallery-track > .v266-wallet-face::after {
+    display:none!important;content:none!important;
+  }
+  #page .v279-wallet :is(.v277-card-head,.v277-card-title,.v277-card-number,.v277-card-footer){
+    position:relative!important;z-index:1!important;min-width:0!important;flex-shrink:0!important;
+  }
+  #page .v279-wallet .v277-card-head{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    gap:10px!important;width:100%!important;line-height:1.2!important;
+  }
+  #page .v279-wallet .v277-card-bank{
+    display:flex!important;flex:1 1 auto!important;min-width:0!important;
+    align-items:center!important;gap:8px!important;
+  }
+  #page .v279-wallet .v277-card-bank .bank-photo-mark{
+    display:grid!important;place-items:center!important;flex:0 0 28px!important;
+    width:28px!important;height:28px!important;min-width:28px!important;max-width:28px!important;
+    border-radius:8px!important;overflow:hidden!important;
+  }
+  #page .v279-wallet .v277-card-bank .bank-photo-mark img{
+    display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;
+  }
+  #page .v279-wallet .v277-card-bank b{
+    display:block!important;min-width:0!important;font-size:clamp(11px,3.25vw,13px)!important;
+    font-weight:760!important;line-height:1.2!important;overflow:hidden!important;
+    text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #page .v279-wallet .v277-card-head>small{
+    display:block!important;flex:0 0 auto!important;max-width:32%!important;
+    font-size:clamp(10px,2.95vw,12px)!important;font-weight:500!important;
+    opacity:.9!important;text-align:right!important;white-space:nowrap!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  #page .v279-wallet .v277-card-title{
+    display:block!important;font-size:clamp(15px,4.1vw,18px)!important;
+    font-weight:750!important;letter-spacing:-.025em!important;line-height:1.25!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #page .v279-wallet .v277-card-number{
+    display:block!important;font-size:clamp(14px,3.9vw,17px)!important;
+    font-weight:530!important;letter-spacing:.12em!important;line-height:1.2!important;
+    white-space:nowrap!important;
+  }
+  #page .v279-wallet .v277-card-footer .credit-network{
+    margin-left:auto!important;position:relative!important;z-index:1!important;
+    flex:0 0 auto!important;white-space:nowrap!important;
+  }
+  #page .v279-wallet .v277-card-footer{
+    display:flex!important;align-items:flex-end!important;justify-content:space-between!important;
+    width:100%!important;gap:8px!important;
+  }
+  #page .v279-wallet .v277-card-footer>small{
+    display:block!important;font-size:clamp(8px,2.25vw,10px)!important;
+    font-weight:500!important;letter-spacing:.055em!important;line-height:1.25!important;
+    opacity:.88!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  #page .v279-wallet .v277-card-footer>:is(svg,img,.credit-network,b){
+    display:block!important;flex:0 0 auto!important;max-width:56px!important;max-height:30px!important;
+  }
+  /* Information order unchanged: gallery → credit/debt → four actions →
+     control of credit → currency detail → recent transactions. */
+  #page .v279-wallet .v266-selected-balance{
+    gap:12px!important;align-items:flex-end!important;padding:0 2px!important;margin:1px 0 0!important;
+  }
+  #page .v279-wallet .v266-selected-balance>div:first-child{flex:1 1 auto!important;min-width:0!important}
+  #page .v279-wallet .v266-selected-balance strong{
+    font-size:clamp(25px,7.25vw,36px)!important;line-height:1.12!important;white-space:nowrap!important;
+  }
+  #page .v279-wallet .v266-selected-debt{flex:0 0 auto!important;max-width:39%!important;text-align:right!important}
+  #page .v279-wallet .v266-selected-debt b{
+    font-size:clamp(12px,3.65vw,16px)!important;white-space:nowrap!important;
+  }
+  #page .v279-wallet .v266-wallet-actions{
+    display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:8px!important;padding:0!important;margin:0!important;
+  }
+  #page .v279-wallet .v266-wallet-actions button{
+    display:flex!important;align-items:center!important;flex-direction:column!important;
+    gap:9px!important;min-width:0!important;min-height:90px!important;padding:0!important;
+  }
+  #page .v279-wallet .v266-wallet-actions button>span{
+    display:grid!important;place-items:center!important;width:52px!important;
+    height:52px!important;min-width:52px!important;
+  }
+  #page .v279-wallet .v266-wallet-actions b{
+    font-size:11px!important;line-height:1.25!important;text-align:center!important;
+  }
+  #page .v279-wallet .v266-wallet-panel{margin:0!important;padding:20px 18px!important}
+  #page .v279-wallet .v266-wallet-detail{margin:0!important}
+  #page .v279-wallet .v266-wallet-note{margin:0!important;padding-inline:4px!important}
+  /* No adjustments to global navigation, floating action button or money formulas. */
 }
 @media screen and (min-width:500px) and (max-width:790px){
-  #page > .v279-wallet.v266-wallet{--v279-card-width:min(76vw,430px)}
+  #page .v279-wallet.v266-wallet{--v279-card-width:min(76vw,430px)}
 }
 @media (prefers-reduced-motion:reduce){
-  #page > .v279-wallet .v266-gallery-track{scroll-behavior:auto!important}
+  #page .v279-wallet .v266-gallery-track{scroll-behavior:auto!important}
 }
+
+@media screen and (max-width:350px){
+  #page .v279-wallet .v266-wallet-actions button>span{width:47px!important;height:47px!important;min-width:47px!important}
+  #page .v279-wallet .v266-selected-balance strong{font-size:24px!important}
+  #page .v279-wallet .v266-selected-debt b{font-size:11px!important}
+}
+
 </style>
 </body>
 </html>
