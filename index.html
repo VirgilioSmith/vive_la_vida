@@ -23565,7 +23565,7 @@ function v68Wallet(){
  const history=recentTx().filter(t=>t.cardId===active.id).slice(0,4);
  const gallery=cards.map(c=>{
   const selected=c.id===active.id,bankName=bankOf(c),tier=cardTierKey(c);
-  return `<button type="button" class="v68-wallet-face v266-wallet-face ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v266-physical-card tier-${sanitize(tier)}"><span class="v266-card-top"><strong>${sanitize(bankName||c.name)}</strong><span class="v266-card-nfc" aria-hidden="true">${icon('wifi')}</span></span><span class="v266-card-chip" aria-hidden="true"></span><span class="v266-card-number">•••• &nbsp; •••• &nbsp; •••• &nbsp; ${sanitize(last4(c)||'••••')}</span><span class="v266-card-foot"><span><small>${sanitize(tierName(c))}</small><b>${sanitize(c.name)}</b></span>${cardNetworkMark(c)}</span></span></button>`;
+  return `<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v266-physical-card v277-physical-card tier-${sanitize(tier)}"><span class="v277-card-head"><span class="v277-card-bank">${bankLogoInline(c.bankId)}<b>${sanitize(bankName||c.name)}</b></span><small>${sanitize(tierName(c))}</small></span><strong class="v277-card-title">${sanitize(c.name)}</strong><span class="v277-card-number">•••• ${sanitize(last4(c)||'••••')}</span><span class="v277-card-footer"><small>CRÉDITO · ${num(c.limitDOP)>0?'RD$':''}${num(c.limitDOP)>0&&num(c.limitUSD)>0?' / ':''}${num(c.limitUSD)>0?'US$':''}${num(c.limitDOP)<=0&&num(c.limitUSD)<=0?'RD$ / US$':''}</small>${cardNetworkMark(c)}</span></span></button>`;
  }).join('');
  const rows=history.map(t=>`<div class="v266-activity-row"><span class="v266-activity-ico">${icon(['card_payment','card_refund','card_reward'].includes(t.type)?'up':'card')}</span><span class="v266-activity-info"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b></div>`).join('');
  const metric=(label,value,sub='')=>`<div class="v266-metric"><small>${label}</small><strong>${value}</strong>${sub?`<span>${sub}</span>`:''}</div>`;
@@ -43387,7 +43387,8 @@ body.theme-black .v266-wallet .v268-limit-row :is(span,strong),body.theme-dark .
  function center(rail,card){
   if(!rail?.isConnected||!card)return;
   const r=rail.getBoundingClientRect(),c=card.getBoundingClientRect();
-  const delta=(c.left+c.width/2)-(r.left+r.width/2);
+  const gutter=parseFloat(getComputedStyle(rail).paddingLeft)||0;
+  const delta=c.left-(r.left+gutter);
   const limit=Math.max(0,rail.scrollWidth-rail.clientWidth);
   const target=Math.max(0,Math.min(limit,rail.scrollLeft+delta));
   if(Math.abs(target-rail.scrollLeft)>2)rail.scrollLeft=target;
@@ -43401,9 +43402,9 @@ body.theme-black .v266-wallet .v268-limit-row :is(span,strong),body.theme-dark .
   requestAnimationFrame(()=>center(rail,faces().find(x=>x.classList.contains('selected'))||faces()[0]));
   const commit=()=>{
    if(!rail.isConnected||performance.now()<guardUntil)return;
-   const rr=rail.getBoundingClientRect(),mid=rr.left+rr.width/2;
+   const rr=rail.getBoundingClientRect(),anchor=rr.left+(parseFloat(getComputedStyle(rail).paddingLeft)||0);
    const nearest=faces().reduce((best,card)=>{
-    const b=card.getBoundingClientRect(),dist=Math.abs((b.left+b.width/2)-mid);
+    const b=card.getBoundingClientRect(),dist=Math.abs(b.left-anchor);
     return dist<best.dist?{dist,card}:best;
    },{dist:Infinity,card:null}).card;
    if(nearest&&!nearest.classList.contains('selected')){
@@ -44435,6 +44436,192 @@ body.theme-dark #page :is(.v242-settings-row-copy small, .v46-sub-card-title sma
 @media(prefers-reduced-motion:reduce){
   .v266-wallet .v266-gallery-track{scroll-behavior:auto!important}
 }
+</style>
+
+
+<style id="vive-v277-wallet-reference-engineering">
+/* Ingeniería inversa de IMG_6202: tarjeta 76–79% ancho, siguiente vista 15–18%,
+   jerarquía banco → producto → últimos 4 → divisa/red. Conserva métricas y operaciones. */
+@media (max-width:790px){
+  body.world-wallet #page>.v266-wallet,
+  body .world-wallet #page>.v266-wallet,
+  #page>.v266-wallet{
+    --v277-page-gutter:clamp(14px,3.55vw,25px);
+    --v277-card-width:min(78vw,500px);
+    max-width:600px!important;
+    width:100%!important;
+    margin:-13px auto 0!important;
+    padding-inline:var(--v277-page-gutter)!important;
+    gap:17px!important;
+    overflow:visible!important;
+  }
+  .v266-wallet .v266-wallet-header{
+    margin:0!important;
+    padding:2px 1px 9px!important;
+    min-height:76px!important;
+    align-items:center!important;
+  }
+  .v266-wallet .v266-gallery{
+    display:grid!important;
+    position:relative!important;
+    left:50%!important;
+    transform:translateX(-50%)!important;
+    width:100vw!important;
+    max-width:100vw!important;
+    min-width:0!important;
+    padding:0!important;
+    margin:0!important;
+    background:none!important;
+    border:0!important;
+    box-shadow:none!important;
+    overflow:hidden!important;
+    gap:11px!important;
+  }
+  .v266-wallet .v266-gallery-track.v68-wallet-gallery{
+    display:flex!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:5px max(var(--v277-page-gutter),calc(100vw - var(--v277-card-width) - var(--v277-page-gutter))) 12px var(--v277-page-gutter)!important;
+    gap:clamp(12px,2.8vw,19px)!important;
+    box-sizing:border-box!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    background:none!important;
+    border:0!important;
+    box-shadow:none!important;
+    scroll-snap-type:x mandatory!important;
+    scroll-padding-inline-start:var(--v277-page-gutter)!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+  }
+  .v266-wallet .v266-gallery-track::-webkit-scrollbar{display:none!important}
+  .v266-wallet .v266-gallery-track .v266-wallet-face.v68-wallet-face{
+    flex:0 0 var(--v277-card-width)!important;
+    width:var(--v277-card-width)!important;
+    max-width:var(--v277-card-width)!important;
+    min-width:0!important;
+    height:auto!important;
+    padding:0!important;
+    margin:0!important;
+    transform:none!important;
+    border:0!important;
+    outline:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    scroll-snap-align:start!important;
+    scroll-snap-stop:always!important;
+    text-align:left!important;
+  }
+  .v266-wallet .v266-wallet-face .v266-physical-card.v277-physical-card{
+    box-sizing:border-box!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:space-between!important;
+    position:relative!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:1.665!important;
+    padding:clamp(15px,4.1vw,25px)!important;
+    border:0!important;
+    border-radius:clamp(19px,5vw,27px)!important;
+    background-clip:padding-box!important;
+    box-shadow:0 13px 26px rgba(29,52,82,.18)!important;
+    opacity:1!important;
+    transform:none!important;
+  }
+  .v266-wallet .v266-wallet-face:not(.selected) .v277-physical-card{
+    opacity:.9!important;
+    transform:none!important;
+  }
+  .v277-physical-card::before{pointer-events:none!important}
+  .v277-card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    width:100%;
+    position:relative;
+    z-index:2;
+  }
+  .v277-card-bank{display:flex;align-items:center;gap:9px;min-width:0;max-width:72%}
+  .v277-card-bank b{font-size:clamp(11px,3.1vw,15px);font-weight:750;letter-spacing:0;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .v277-card-bank .bank-photo-mark{
+    display:grid!important;place-items:center!important;
+    position:relative!important;
+    flex:0 0 clamp(29px,7.2vw,39px)!important;
+    width:clamp(29px,7.2vw,39px)!important;
+    height:clamp(29px,7.2vw,39px)!important;
+    min-width:0!important;
+    border-radius:10px!important;
+    border:1px solid rgba(255,255,255,.85)!important;
+    background:#f8fafc!important;
+    box-shadow:none!important;
+    overflow:hidden!important;
+  }
+  .v277-card-bank .bank-photo-mark img{width:100%!important;height:100%!important;object-fit:contain!important}
+  .v277-card-bank .bank-photo-fallback{color:#223c5c!important;font-size:11px!important;font-weight:800!important}
+  .v277-card-head>small{display:block;color:rgba(255,255,255,.78)!important;font-size:clamp(10px,2.6vw,13px)!important;white-space:nowrap}
+  .v277-card-title{
+    display:block;
+    width:100%;
+    position:relative;
+    z-index:2;
+    margin:clamp(8px,2.4vw,16px) 0 0;
+    color:white!important;
+    font-size:clamp(17px,4.2vw,24px)!important;
+    line-height:1.12!important;
+    letter-spacing:-.025em!important;
+    font-weight:780!important;
+    text-shadow:0 1px 2px rgba(0,0,0,.06);
+    overflow-wrap:anywhere;
+  }
+  .v277-card-number{
+    display:block;
+    position:relative;
+    z-index:2;
+    color:#fff!important;
+    font-weight:550!important;
+    font-size:clamp(14px,3.6vw,20px)!important;
+    letter-spacing:.14em!important;
+    white-space:nowrap;
+    margin:0;
+  }
+  .v277-card-footer{
+    display:flex;
+    width:100%;
+    align-items:end;
+    justify-content:space-between;
+    gap:8px;
+    position:relative;
+    z-index:2;
+  }
+  .v277-card-footer>small{
+    color:rgba(255,255,255,.82)!important;
+    font-size:clamp(8px,2.05vw,11px)!important;
+    letter-spacing:.065em;
+    font-weight:550;
+    white-space:nowrap;
+  }
+  .v277-card-footer .credit-network{max-width:90px!important;flex:none!important}
+  .v277-card-footer .credit-network-visa{font-size:clamp(22px,6vw,34px)!important;font-style:italic;letter-spacing:-.07em!important;font-weight:900!important;color:#fff!important}
+  .v277-card-footer .credit-network-mastercard{transform:scale(.82);transform-origin:right bottom}
+  .v266-wallet .v266-dots{padding:1px 0 3px!important;margin:0!important;gap:7px!important}
+  .v266-wallet .v266-selected-balance{padding-top:8px!important;margin-top:1px!important}
+  /* Mantener el mismo carril horizontal que Inicio para lo que NO es carrusel. */
+  .v266-wallet :is(.v266-selected-balance,.v266-wallet-actions,.v266-wallet-panel,.v266-wallet-detail,.v266-activity,.v266-wallet-note){
+    width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+  }
+}
+@media(max-width:350px){
+  #page>.v266-wallet{--v277-card-width:79vw}
+  .v277-card-title{font-size:16px!important}
+  .v277-card-number{font-size:13px!important}
+}
+@media(min-width:791px){.v277-card-bank .bank-photo-mark{border-radius:10px}}
+@media(prefers-reduced-motion:reduce){.v266-wallet .v266-gallery-track{scroll-behavior:auto!important}}
 </style>
 
 </body>
