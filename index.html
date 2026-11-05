@@ -22310,6 +22310,21 @@ body.theme-black .v273-personalize-link,body.theme-dark .v273-personalize-link{b
 @media(max-width:390px){.v273-custom-row{padding:10px 9px;gap:7px}.v273-custom-controls{gap:4px}.v273-order{width:28px;height:28px}.v273-visibility{width:40px}}
 @media(prefers-reduced-motion:reduce){.v273-visibility span{transition:none}}
 </style>
+
+<style id="v274-applepay-connection-diagnostics">
+.v274-apple-health{margin:12px 0 14px;padding:14px 16px;border-radius:18px;border:1px solid rgba(122,154,193,.28);background:rgba(232,240,253,.72);display:flex;justify-content:space-between;gap:12px;align-items:center}
+.v274-apple-health strong{display:block;font-size:13px;color:#284763}
+.v274-apple-health p{margin:5px 0 0;font-size:11px;line-height:1.5;color:#5d7594}
+.v274-apple-health.ready{background:#e5f5ef;border-color:#a5d8c2}.v274-apple-health.ready strong{color:#16634d}
+.v274-apple-health.fail{background:#fff1eb;border-color:#f0c3b3}.v274-apple-health.fail strong{color:#a04733}
+.v274-apple-health .v212-small{flex:none;min-height:42px}
+body.theme-black .v274-apple-health,body.theme-dark .v274-apple-health{background:#1b2736;border-color:#34465e}
+body.theme-black .v274-apple-health strong,body.theme-dark .v274-apple-health strong{color:#e6f3ff}
+body.theme-black .v274-apple-health p,body.theme-dark .v274-apple-health p{color:#b4c6dd}
+body.theme-black .v274-apple-health.ready,body.theme-dark .v274-apple-health.ready{border-color:#377c69}
+body.theme-black .v274-apple-health.fail,body.theme-dark .v274-apple-health.fail{border-color:#a85b52}
+@media(max-width:650px){.v274-apple-health{align-items:stretch;flex-direction:column}.v274-apple-health .v212-small{width:100%}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -33804,7 +33819,7 @@ function v213ApplePayBadge(t){
  if(!t || !(t.applePaySource==='wallet-shortcuts' || t.applePayEventId || String(t.tags||'').split(',').includes('apple-pay')))return '';
  return `<span class="v213-apple-badge v216-apple-pay-brand" title="Compra registrada por Apple Pay / Atajos" aria-label="Origen Apple Pay"><span class="v216-apple-mark" aria-hidden="true">${icon('apple')}</span><span>Pay</span></span>`;
 }
-const v212State={links:[],events:[],secret:'',webhook:'',selectedCard:'',currency:'DOP',busy:false,loaded:false,error:'',syncError:'',lastSync:''};
+const v212State={links:[],events:[],secret:'',webhook:'',selectedCard:'',currency:'DOP',busy:false,loaded:false,error:'',syncError:'',lastSync:'',health:'unverified',healthMessage:'El vínculo y la recepción son pasos separados.'};
 let v212Busy=false;
 const v212Enabled=()=>!!(f33Active&&f33Api&&f33User);
 function v212SettingsPanel(){
@@ -33819,8 +33834,9 @@ function v212SettingsPanel(){
  }).join('');
  return `<section class="v212-panel" aria-label="Apple Pay y Atajos"><div class="v212-head"><div><span class="summary-tag">ATAJOS · APPLE PAY</span><h3>Compras de Wallet, registradas con claridad</h3><p>Vincula cada tarjeta a su atajo. Los pagos compatibles llegan directamente a Supabase. Al sincronizar se registran en Movimientos y en la Wallet móvil de la tarjeta correcta, con un distintivo Apple Pay, sin descontar una cuenta dos veces. El estado muestra si el servidor recibió el evento, no si Wallet concedió acceso directo.</p></div><span class="v212-pill">${v212State.links.filter(x=>x.active).length} ${v212State.links.filter(x=>x.active).length===1?'vinculada':'vinculadas'}</span></div>
  <div class="v212-setup"><div><label class="filter-label" for="v212-card">Tarjeta en Vive el Hoy</label><select class="field" id="v212-card">${cards.length?cards.map(c=>`<option value="${sanitize(c.id)}" ${c.id===v212State.selectedCard?'selected':''}>${sanitize(c.name)} · ${sanitize(bankOf(c))}</option>`).join(''):'<option value="">Primero registra una tarjeta</option>'}</select></div><div><label class="filter-label" for="v212-currency">Moneda del atajo</label><select class="field" id="v212-currency"><option value="DOP" ${v212State.currency==='DOP'?'selected':''}>RD$</option><option value="USD" ${v212State.currency==='USD'?'selected':''}>US$</option></select></div><button type="button" class="btn primary" data-v212="pair" ${!cards.length||v212State.busy?'disabled':''}>${v212State.busy?'Conectando…':'Vincular tarjeta'}</button></div>
+ <div class="v274-apple-health ${v212State.health==='ok'?'ready':v212State.health==='error'?'fail':'neutral'}" role="status" aria-live="polite"><div><strong>${v212State.health==='ok'?'Receptor verificado · sin registrar gastos':v212State.health==='testing'?'Comprobando receptor…':v212State.health==='error'?'Receptor pendiente de reparar':'Vinculación y recepción se verifican por separado'}</strong><p>${sanitize(v212State.healthMessage||'')}</p></div>${v212State.secret?`<button type="button" class="v212-small" data-v212="test-ingest" ${v212State.health==='testing'?'disabled':''}>Probar conexión</button>`:''}</div>
  ${v212State.secret?`<div class="v212-secret"><strong>Conexión creada: guarda estos datos en tu Atajo</strong><p>La clave solo se muestra ahora. No la compartas ni la coloques en capturas.</p><div class="v212-secretline"><span>URL de recepción</span><button class="v212-small" data-v212="copy-url" type="button">Copiar URL</button></div><code>${sanitize(v212State.webhook)}</code><div class="v212-secretline"><span>Encabezado: X-Vive-Token</span><button class="v212-small" data-v212="copy-token" type="button">Copiar clave</button></div><input type="password" autocomplete="off" readonly aria-label="Clave del atajo" value="${sanitize(v212State.secret)}"/></div>`:''}
- <details class="v212-guide"><summary>Cómo activar la automatización de Wallet en iPhone</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>En la automatización utiliza únicamente los datos disponibles de la transacción. <b>No crees event_id</b>: Supabase lo generará al aceptar una compra.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b> envía solamente: <code>amount</code> = importe de la transacción (Número); <code>merchant</code> = comercio de la transacción (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>. Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Para comprobar la recepción sin registrar compras, usa el JSON de prueba del archivo <code>PRUEBA_APPLE_PAY.json</code> y envíalo únicamente a <code>apple-pay-ingest</code>. Para compras reales, elimina <code>dry_run</code>.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. El servidor evita reintentos idénticos próximos mediante una ventana de seguridad; dos compras legítimas iguales muy seguidas pueden requerir revisión. No recupera pagos antiguos automáticamente.</p></details>
+ <details class="v212-guide" open><summary>Configurar Atajos de iPhone · 3 pasos</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>En el editor del Atajo, utiliza las variables <b>Shortcut Input → Amount</b> y <b>Shortcut Input → Merchant</b> recibidas por el disparador. No escribas esos nombres como texto literal. <b>No añadas event_id</b>.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b> envía solamente: <code>amount</code> = importe de la transacción (Número); <code>merchant</code> = comercio de la transacción (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>. Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Al vincular, pulsa <b>Probar conexión</b>: comprobará el token, el receptor y el vínculo con <code>dry_run</code>, sin crear gastos. Si no responde, revisa la publicación de las dos funciones y la migración SQL.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. Una prueba correcta de conexión no confirma que Atajos se haya ejecutado. El servidor evita reintentos idénticos próximos mediante una ventana de seguridad; dos compras legítimas iguales muy seguidas pueden requerir revisión. No recupera pagos antiguos automáticamente.</p></details>
  <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}</div><div><div class="v212-title"><strong>Actividad reciente</strong><span>${v212State.events.length} evento${v212State.events.length===1?'':'s'}</span></div>${eventRows||'<p class="v212-muted">No hay compras recibidas recientemente.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
  ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}<p class="v212-muted">Las tarjetas se administran con <code>apple-pay-link</code>; las compras se reciben mediante <code>apple-pay-ingest</code>. Son funciones distintas y deben publicarse por separado en Supabase. No se solicitan números de tarjeta, CVV ni contraseñas bancarias.</p></section>`;
 }
@@ -33831,7 +33847,7 @@ async function v212Load(){
  try{
   const [l,e]=await Promise.all([
     f33Api.from('apple_pay_links').select('id,instrument_type,instrument_id,card_label,currency,active').eq('user_id',f33User.id).order('created_at',{ascending:false}).limit(100),
-    f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,status').eq('user_id',f33User.id).in('status',['pending','review','imported']).order('received_at',{ascending:false}).limit(50)
+    f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,transaction_time,status').eq('user_id',f33User.id).in('status',['pending','review','imported']).order('received_at',{ascending:false}).limit(50)
   ]);
   if(l.error||e.error)throw(l.error||e.error);
   v212State.links=l.data||[];v212State.events=e.data||[];v212State.error='';v212State.loaded=true;
@@ -33877,9 +33893,42 @@ async function v212Pair(){
   const payload=await v212LinkCall('POST',{instrument_type:'card',instrument_id:id,currency,card_label:card(id)?.name||'Tarjeta'});
   if(!payload?.token||!payload?.webhook_url)throw Error('apple-pay-link respondió sin token o URL. Revisa su despliegue.');
   v212State.secret=payload.token;v212State.webhook=payload.webhook_url;
-  await v212Load();toast('Tarjeta vinculada. Copia la clave nueva en tu Atajo de Wallet.');
+  v212State.health='testing';v212State.healthMessage='Vínculo creado. Comprobando si el receptor está publicado…';
+  await v212Load();
+  await v274ProbeAppleIngest(true);
+  toast('Vínculo creado. Configura las variables Amount y Merchant en Atajos con la nueva clave.');
  }catch(err){v212State.error=err.message||'No fue posible generar el enlace';}
  finally{v212State.busy=false;v212Show();}
+}
+async function v274ProbeAppleIngest(silent=false){
+ if(!v212State.secret||!v212State.webhook)throw Error('Vincula una tarjeta para obtener una clave de prueba nueva.');
+ v212State.health='testing';v212State.healthMessage='Comprobando el endpoint sin guardar movimientos…';v212Show();
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),14000);
+ try{
+  const resp=await fetch(v212State.webhook,{
+   method:'POST',headers:{'Content-Type':'application/json','X-Vive-Token':v212State.secret},
+   body:JSON.stringify({amount:0.01,merchant:'PRUEBA CONEXION VIVE',currency:v212State.currency,dry_run:true}),
+   signal:controller.signal,cache:'no-store'
+  });
+  const payload=await resp.json().catch(()=>({}));
+  if(!resp.ok||payload?.ok!==true||payload?.dry_run!==true||payload?.linked!==true){
+   let message=String(payload?.error||'').trim()||('HTTP '+resp.status);
+   if(resp.status===404)message='No existe apple-pay-ingest en Supabase: publícala por separado de apple-pay-link.';
+   else if(resp.status===401&&!(payload&&payload.code))message='El gateway de Supabase bloquea el atajo (401). En apple-pay-ingest desactiva Verify JWT; la función valida X-Vive-Token.';
+   else if(payload?.code==='link_revoked')message='El token no coincide con el vínculo activo. Vuelve a vincular y actualiza Atajos.';
+   throw Error(message);
+  }
+  v212State.health='ok';v212State.healthMessage='Supabase validó la clave y el vínculo. No se guardó ningún gasto. La inserción en la tabla de eventos y el atajo de iPhone se comprueban con una compra real.';
+  if(!silent)toast('Receptor Apple Pay verificado. Prueba ahora un pago desde Atajos.');
+  return true;
+ }catch(err){
+  v212State.health='error';
+  v212State.healthMessage=err?.name==='AbortError'?'El receptor no respondió en 14 segundos. Revisa que apple-pay-ingest esté desplegada.':
+    err instanceof TypeError?'Falló la conexión con el receptor. Comprueba la URL, CORS y la red.':(err?.message||'Error de receptor no identificado');
+  if(!silent)toast(v212State.healthMessage);
+  return false;
+ }finally{clearTimeout(timeout);v212Show();}
 }
 async function v212Revoke(id){
  if(v212State.busy)return;
@@ -33888,7 +33937,7 @@ async function v212Revoke(id){
  v212State.busy=true;v212State.error='';v212Show();
  try{
   await v212LinkCall('DELETE',{link_id:id});
-  v212State.secret='';v212State.webhook='';
+  v212State.secret='';v212State.webhook='';v212State.health='unverified';v212State.healthMessage='Se revocó este vínculo; su token anterior ya no funcionará.';
   await v212Load();toast('Tarjeta desvinculada. Su token anterior queda desactivado.');
  }catch(err){v212State.error=err.message||'No se pudo desvincular';}
  finally{v212State.busy=false;v212Show();}
@@ -33908,16 +33957,33 @@ function v212PossibleDuplicate(e,date){
  const amount=Number(e.amount),merchant=String(e.merchant||'').toLocaleLowerCase('es').trim();
  return db.transactions.some(t=>t.cardId===e.instrument_id&&t.type==='card_charge'&&t.currency===e.currency&&t.date===date&&Math.abs(num(t.amount)-amount)<0.01&&(String(t.payee||'').toLocaleLowerCase('es').includes(merchant)||String(t.note||'').toLocaleLowerCase('es').includes(merchant)));
 }
+function v274GuessAppleCategory(e){
+ const normalize=v=>String(v||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+ const merchant=normalize(e.merchant);
+ if(!merchant)return null;
+ const examples=(db.transactions||[]).filter(t=>
+  t.type==='card_charge' && t.category && normalize(t.payee||t.note).includes(merchant) &&
+  !t.applePayEventId && !t.deleted
+ );
+ const votes=new Map();
+ for(const t of examples){const key=String(t.category)+'\u0000'+String(t.subcategory||'');votes.set(key,(votes.get(key)||0)+1)}
+ const sorted=[...votes].sort((a,b)=>b[1]-a[1]);
+ // Only reuse a category the user already selected consistently for this merchant.
+ if(!sorted.length||sorted[0][1]<2||(sorted[1]&&sorted[1][1]>=sorted[0][1]))return null;
+ const [category,subcategory]=sorted[0][0].split('\u0000');
+ return {category,subcategory};
+}
 async function v212ImportEvent(e,forced=false){
  if(!v212Enabled()||f33Dirty||f33Saving||f33Conflict)return false;
  const existing=db.transactions.find(t=>t.applePayEventId===e.id);
  if(existing){await v212Mark(e,'imported',existing.id);return true;}
- const c=card(e.instrument_id),date=v212Date(e.received_at),amount=Number(e.amount);
+ const c=card(e.instrument_id),date=v212Date(e.transaction_time||e.received_at),amount=Number(e.amount);
  if(!c||c.archived||!['DOP','USD'].includes(e.currency)||!Number.isFinite(amount)||amount<=0){
   await v212Mark(e,'review');return false;
  }
  if(!forced&&v212PossibleDuplicate(e,date)){await v212Mark(e,'review');return false;}
- const tx={id:e.id,created:new Date().toISOString(),date,type:'card_charge',amount:rnd(amount),currency:e.currency,cardId:c.id,accountId:'',toAccountId:'',loanId:'',category:'Compras personales',subcategory:'',note:`Apple Pay · ${String(e.merchant||'Comercio').slice(0,100)}`,payee:String(e.merchant||'Comercio').slice(0,100),tags:'apple-pay',reviewed:false,flowMode:'spend',paymentFlowMode:'spend',paymentChannel:'presencial',paymentService:'',paymentSource:'card',cardOnly:'no',paymentTax:0,paymentFee:0,fxRateSnapshot:num(db.settings.fx),applePayEventId:e.id,applePaySource:'wallet-shortcuts',applePayReceivedAt:e.received_at};
+ const suggested=v274GuessAppleCategory(e);
+ const tx={id:e.id,created:new Date().toISOString(),date,type:'card_charge',amount:rnd(amount),currency:e.currency,cardId:c.id,accountId:'',toAccountId:'',loanId:'',category:suggested?.category||'Compras personales',subcategory:suggested?.subcategory||'',note:`Apple Pay · ${String(e.merchant||'Comercio').slice(0,100)}`,payee:String(e.merchant||'Comercio').slice(0,100),tags:'apple-pay',reviewed:false,flowMode:'spend',paymentFlowMode:'spend',paymentChannel:'presencial',paymentService:'',paymentSource:'card',cardOnly:'no',paymentTax:0,paymentFee:0,fxRateSnapshot:num(db.settings.fx),applePayEventId:e.id,applePaySource:'wallet-shortcuts',applePayReceivedAt:e.received_at,applePayTransactionTime:e.transaction_time||null};
  db.transactions.push(tx);
  if(!persist()){db.transactions=db.transactions.filter(t=>t.id!==tx.id);return false;}
  await f33Flush();
@@ -33931,7 +33997,7 @@ async function v212Sync(){
  if(f33Dirty||f33Saving||f33Conflict||!navigator.onLine){v212State.syncError=f33Conflict?'Apple Pay en espera: resuelve el conflicto de sincronización de la app.':!navigator.onLine?'Apple Pay en espera: sin conexión.':'Apple Pay en espera: hay cambios de la app pendientes de guardar.';v212Show();return;}
  v212State.syncError='';v212Busy=true;
  try{
-  const result=await f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,status').eq('user_id',f33User.id).eq('status','pending').order('received_at',{ascending:true}).limit(30);
+  const result=await f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,transaction_time,status').eq('user_id',f33User.id).eq('status','pending').order('received_at',{ascending:true}).limit(30);
   if(result.error)throw result.error;
   let added=0;
   for(const e of result.data||[]){
@@ -33948,6 +34014,7 @@ document.addEventListener('click',async ev=>{
  ev.preventDefault();const act=el.dataset.v212;
  try{
   if(act==='pair')await v212Pair();
+  if(act==='test-ingest')await v274ProbeAppleIngest();
   if(act==='revoke')await v212Revoke(el.dataset.id);
   if(act==='refresh'){if(f33Dirty&&!f33Conflict)await f33Flush();await v212Load();await v212Sync();}
   if(act==='copy-url'||act==='copy-token'){
@@ -44150,5 +44217,86 @@ body.theme-dark #page :is(.v242-settings-row-copy small, .v46-sub-card-title sma
   }
 })();
 </script>
+
+<style id="v275-wallet-dimensiones-inicio">
+/* V275 · Mis tarjetas a la altura visual de Inicio. Sin alterar el motor financiero. */
+@media (max-width:790px) {
+  body.world-wallet #page,
+  body .world-wallet #page {
+    padding-top:0!important;
+  }
+  /* En V274 el contenedor heredaba separación excesiva respecto del encabezado.
+     Recuperamos la cadencia visual de Resumen sin invadir la Dynamic Island. */
+  body.world-wallet #page > .v266-wallet,
+  body .world-wallet #page > .v266-wallet,
+  #page > .v266-wallet {
+    box-sizing:border-box!important;
+    width:100%!important;
+    max-width:600px!important;
+    margin:-13px auto 0!important;
+    padding:0 clamp(14px,4vw,22px) calc(125px + env(safe-area-inset-bottom,0px))!important;
+    gap:18px!important;
+  }
+  .v266-wallet .v266-wallet-header {
+    min-height:76px!important;
+    padding:0 1px 4px!important;
+    margin:0!important;
+    align-items:center!important;
+    gap:12px!important;
+  }
+  .v266-wallet .v266-overline {font-size:10px!important;letter-spacing:.14em!important;line-height:1.3!important}
+  .v266-wallet .v266-wallet-header h1 {
+    font-size:clamp(29px,8vw,35px)!important;
+    line-height:1.08!important;
+    margin-top:5px!important;
+    letter-spacing:-.05em!important;
+  }
+  .v266-wallet .v266-wallet-add {
+    flex:0 0 48px!important;
+    width:48px!important;height:48px!important;
+    margin-right:2px!important;
+  }
+  /* Tarjeta casi completa: lados visibles como señal de deslizamiento. */
+  .v266-wallet .v266-gallery {width:100%!important;min-width:0!important;gap:8px!important;margin-top:0!important}
+  .v266-wallet .v266-gallery-track.v68-wallet-gallery {
+    --v275-card-width:min(468px,85vw);
+    display:flex!important;
+    width:calc(100% + 2 * clamp(14px,4vw,22px))!important;
+    max-width:none!important;
+    margin-inline:calc(-1 * clamp(14px,4vw,22px))!important;
+    padding:5px max(8px, calc((100% - var(--v275-card-width))/2)) 11px!important;
+    gap:12px!important;
+    scroll-padding-inline:max(8px,calc((100% - var(--v275-card-width))/2))!important;
+    overflow-x:auto!important;overflow-y:hidden!important;
+    scroll-snap-type:x mandatory!important;
+    scrollbar-width:none!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  .v266-wallet .v266-gallery-track .v266-wallet-face.v68-wallet-face {
+    flex:0 0 var(--v275-card-width)!important;
+    width:var(--v275-card-width)!important;
+    scroll-snap-align:center!important;
+    scroll-snap-stop:always!important;
+  }
+  .v266-wallet .v266-wallet-face .v266-physical-card {
+    aspect-ratio:1.65!important;
+    height:auto!important;min-height:0!important;
+    padding:clamp(17px,4.5vw,23px)!important;
+    border-radius:clamp(20px,5.5vw,26px)!important;
+  }
+  .v266-wallet .v266-gallery-track .v266-wallet-face:not(.selected) .v266-physical-card {opacity:.86!important;transform:scale(.975)!important}
+  .v266-wallet .v266-dots {margin:0!important;padding:2px 0!important}
+  .v266-wallet .v266-selected-balance {margin-top:1px!important}
+  /* Mantener la barra inferior en su zona segura, sin desplazarla hacia arriba. */
+  body .vive-mobile-dock {
+    bottom:max(7px,calc(env(safe-area-inset-bottom,0px) - 12px))!important;
+  }
+}
+@media(max-width:350px){
+  .v266-wallet .v266-gallery-track.v68-wallet-gallery{--v275-card-width:86vw}
+  .v266-wallet .v266-wallet-face .v266-physical-card{aspect-ratio:1.6!important}
+}
+</style>
+
 </body>
 </html>
