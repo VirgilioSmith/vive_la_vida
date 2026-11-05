@@ -2,10 +2,11 @@
 
 <html lang="es">
 <head>
+<meta name="vive-el-hoy-build-v294" content="vision-personalizacion-bancaria-20261105" />
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="289-apple-pay-completo"/>
+<meta name="vive-el-hoy-version" content="292-coherencia-operaciones-movil"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -23247,7 +23248,7 @@ const NAV_FAMILIES=[
  {label:'GESTIÓN FINANCIERA',items:[
   {id:'banks',name:'Bancos',ico:'building',children:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
   {id:'register',name:'Movimientos',ico:'cycle',children:[['register','Registro de ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
-  {id:'payments',name:'Compromisos',ico:'calendar',children:[['payments','Centro de pagos','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
+  {id:'payments',name:'Compromisos',ico:'calendar',children:[['payments','Compromisos','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
  ]},
  {label:'SISTEMA',items:[
   {id:'settings',name:'Configuración',ico:'settings',children:[]}
@@ -23258,13 +23259,13 @@ const NAV_SECTIONS={
  register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
  payments:{title:'Compromisos',hint:'Consulta y gestiona tus pagos, suscripciones y acuerdos personales.',tabs:[['payments','Compromisos','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
 };
-function navFamilyForPage(page){if(['overview','analytics','kpis','advanced','patrimony','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
+function navFamilyForPage(page){if(page==='vision')return 'vision';if(['overview','analytics','kpis','advanced','patrimony','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
 /* Four clear navigation worlds; contextual horizontal switches remain unchanged. */
 const RAIL_DESTINATIONS=[
  ['overview','Resumen','home','Inicio, desempeño e indicadores'],
  ['banks','Bancos','building','Instituciones y productos bancarios'],
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
- ['payments','Compromiso','calendar','Pagos, suscripciones y préstamos personales']
+ ['vision','Visión','analytics','Tu panorama financiero y evolución']
 ];
 /* V153: distinctive stroke icons, scoped to the desktop navigation rail. */
 const V153_RAIL_ICONS={
@@ -23426,7 +23427,7 @@ function v273OverviewExtraWidgets(){
  const head=(eyebrow,title,link,text)=>`<div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">${eyebrow}</span><h2>${title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${link}">${text} ${icon('arrow')}</button></div>`;
  return `<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver historial')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
  <section data-v105-widget="subscriptions" class="v105-mobile-extra v273-overview-widget" aria-label="Suscripciones activas">${head('CARGOS RECURRENTES','Suscripciones activas','recurring','Ver servicios')}<div class="v273-widget-total"><span>Equivalente mensual · ${subs.length} activas</span><strong>${money(subTotal)}</strong></div>${subRows||'<p class="v273-widget-empty">No tienes suscripciones activas.</p>'}</section>
- <section data-v105-widget="cardsDue" class="v105-mobile-extra v273-overview-widget" aria-label="Tarjetas por pagar">${head('CRÉDITO Y CORTES','Tarjetas por pagar','cards','Ver tarjetas')}<div class="v273-widget-total"><span>Facturado pendiente · RD$ equivalentes</span><strong>${money(billed)}</strong></div>${cardRows||'<p class="v273-widget-empty">No tienes tarjetas activas.</p>'}</section>`;
+ <section data-v105-widget="cardsDue" class="v105-mobile-extra v273-overview-widget" aria-label="Tarjetas por pagar">${head('CRÉDITO Y CORTES','Tarjetas por pagar','cards','Ver tarjetas')}<div class="v273-widget-total"><span>Facturado pendiente · RD$ equivalentes</span><strong>${money(billed)}</strong></div>${cardRows||'<p class="v273-widget-empty">No tienes tarjetas activas.</p>'}</section>${v294BankingWidgets()}`;
 }
 
 
@@ -23463,12 +23464,23 @@ function v290BudgetRing(p){
  const angle=p.percent===null?0:Math.max(0,Math.min(100,p.percent))*3.6;
  return `<div class="v290-ring ${p.percent!==null&&p.percent>100?'v290-ring-over':p.percent!==null&&p.percent>=85?'v290-ring-warn':''}" style="--v290-angle:${angle}deg" role="img" aria-label="Utilización del presupuesto: ${v290BudgetPct(p.percent)}"><div><strong>${v290BudgetPct(p.percent)}</strong><small>${p.percent===null?'Sin asignación':'utilizado'}</small></div></div>`;
 }
+/* V291 · Resumen web: presupuesto junto a Próximos pagos.
+   Cuatro datos, sin categorías. Las métricas provienen del mismo snapshot
+   que utiliza Ejecución, y no se modifica el Resumen móvil. */
 function v290BudgetWeb(){
  const p=v290BudgetSnapshot();
- return `<section class="v290-budget-web ff-tile" aria-label="Cumplimiento y gestión del presupuesto" data-v105-widget="budget">
-   <header class="v290-budget-head"><div><span class="v290-eyebrow">CONTROL DE GASTOS · ${sanitize(p.month)}</span><h2>Mi presupuesto</h2></div><button type="button" data-v290-budget-open="execution" aria-label="Abrir ejecución del presupuesto">Ver ejecución ${icon('arrow')}</button></header>
-   <div class="v290-budget-body"><div class="v290-budget-emphasis">${v290BudgetRing(p)}<div class="v290-budget-summary"><span class="v290-state ${p.percent!==null&&p.percent>100?'danger':''}">${p.state}</span><b>${money(p.allocated)}</b><small>Presupuesto del mes</small></div></div><div class="v290-budget-categories"><div class="v290-cat-caption">Categorías con mayor gasto</div>${v290BudgetCategories(p,2)}</div></div>
-   <footer class="v290-budget-facts"><div><small>Ejecutado</small><strong>${money(p.spent)}</strong></div><div><small>${p.remaining<0?'Exceso':'Disponible'}</small><strong class="${p.remaining<0?'v290-negative':''}">${money(Math.abs(p.remaining))}</strong></div><div><small>Sin límite</small><strong>${money(p.uncovered)}</strong></div></footer>
+ const remainingClass=p.remaining<-.005?'v290-negative':'';
+ const remainingHint=p.remaining<-.005?'Presupuesto excedido': 'Importe por gastar';
+ return `<section class="v290-budget-web v291-budget-compact ff-tile" aria-label="Presupuesto mensual: porcentaje utilizado, asignado, ejecutado y disponible" data-v105-widget="budget">
+    <header class="v290-budget-head"><div><span class="v290-eyebrow">PRESUPUESTO · ${sanitize(p.month)}</span><h2>Cumplimiento del presupuesto</h2></div><button type="button" data-v290-budget-open="execution" aria-label="Abrir ejecución del presupuesto">Ver ejecución ${icon('arrow')}</button></header>
+    <div class="v291-budget-content">
+      ${v290BudgetRing(p)}
+      <div class="v291-budget-metrics">
+        <div class="v291-budget-line"><span>Asignado</span><strong title="Presupuesto asignado: ${money(p.allocated,'DOP',2)}">${money(p.allocated)}</strong></div>
+        <div class="v291-budget-line"><span>Ejecutado</span><strong title="Gasto cubierto por presupuesto: ${money(p.spent,'DOP',2)}">${money(p.spent)}</strong></div>
+        <div class="v291-budget-line"><span>Disponible</span><strong class="${remainingClass}" title="${remainingHint}: ${money(p.remaining,'DOP',2)}">${money(p.remaining)}</strong></div>
+      </div>
+    </div>
  </section>`;
 }
 function v290BudgetMobile(){
@@ -23560,7 +23572,7 @@ function mobileHome(){
 let v243ExploreDestination=null;
 function v243ExploreReturn(){
  if(!v243ExploreDestination || v243ExploreDestination!==ui.page || ui.page==='mobilehub')return '';
- return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Centro de pagos','recurring':'Suscripciones','personal':'Entre personas','kpis':'Mis indicadores','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada'})[ui.page]||'Módulo')}</strong></nav>`;
+ return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Compromisos','vision':'Visión','recurring':'Suscripciones','personal':'Entre personas','kpis':'Mis indicadores','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada'})[ui.page]||'Módulo')}</strong></nav>`;
 }
 function mobileHub(){
  const period=ui.month||today().slice(0,7);
@@ -23569,11 +23581,11 @@ function mobileHub(){
    ['income','Ingresos','Lo que recibes','up'],['expenses','Egresos','Lo que utilizas','down'],
    ['budget','Presupuesto','Límites y ejecución','chart'],['categories','Categorías','Organiza tus movimientos','grid']]},
   {eyebrow:'LO QUE VIENE',title:'Compromisos',subtitle:'Un solo lugar para saber qué toca pagar',entries:[
-   ['payments','Centro de pagos','Vencimientos y pagos','calendar'],['recurring','Suscripciones','Cargos recurrentes','cycle'],
+   ['payments','Compromisos','Vencimientos y pagos','calendar'],['recurring','Suscripciones','Cargos recurrentes','cycle'],
    ['personal','Entre personas','Deudas y abonos','wallet']]},
   {eyebrow:'MÁS PERSPECTIVA',title:'Tu inteligencia financiera',subtitle:'Información con profundidad, cuando la necesites',entries:[
    ['kpis','Mis indicadores','Tu tablero personal','analytics'],['antExpenses','Gastos hormiga','Hábitos, compras repetidas y proyección de gastos','chart'],['patrimony','Patrimonio','Activos y obligaciones','wallet'],
-   ['advanced','Analítica avanzada','Tendencias y decisiones','chart'],['analytics','Visión global','Análisis consolidado','grid']]}
+   ['vision','Visión','Una mirada integral a tus finanzas','analytics'],['advanced','Analítica avanzada','Tendencias y decisiones','chart'],['analytics','Visión global','Análisis consolidado','grid']]}
  ];
  const link=([id,name,description,ic])=>`<button type="button" class="v205-explore-link" data-act="navigate" data-id="${id}" aria-label="Abrir ${name}"><span class="v205-explore-link-icon">${icon(ic)}</span><span class="v205-explore-link-copy"><strong>${name}</strong><small>${description}</small></span><span class="v205-explore-arrow" aria-hidden="true">${icon('arrow')}</span></button>`;
  return `<div class="vive-mobile-hub v205-explore v243-explore">
@@ -23642,7 +23654,7 @@ function v165SearchAction(){
 
 
 function main(){
- const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Centro de pagos','Compromisos y vencimientos'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
+ const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Compromisos','Compromisos y vencimientos'],vision:['Visión','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
   <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
@@ -24114,7 +24126,7 @@ function payments(){
   return `<div class="v145-paycenter" id="v145-payment-center">
     <header class="v145-pay-hero"><div class="v145-pay-hero-head"><div class="v145-pay-hero-heading">
        <span class="v145-eyebrow"><span class="v145-status-dot"></span> GESTIÓN FINANCIERA · PAGOS</span>
-       <h2>Centro de pagos</h2><p>Control de tus vencimientos, cuentas y obligaciones en un solo lugar.</p>
+       <h2>Compromisos</h2><p>Control de tus vencimientos, cuentas y obligaciones en un solo lugar.</p>
       </div><label class="v99-period-picker v145-period-control"><span>Período</span><input id="v99CommitmentMonth" type="month" value="${period}" aria-label="Seleccionar mes del centro de pagos"></label></div>
       <div class="v145-pay-hero-foot"><span class="v145-pay-period">${monthLabel}</span><button type="button" class="v145-debt-indicator ${risk}" data-v85-action="capacity" aria-label="Abrir detalle de capacidad de endeudamiento">${icon('receipt')} <span>${cap.ratio===null?'Sin referencia de ingreso':`Ingresos comprometidos · ${ratioText}`}</span>${icon('arrow')}</button></div>
      </header>
@@ -28698,6 +28710,12 @@ function otherStudioApply(kind){
  const error=f.querySelector(':scope > #formError');if(error)right.appendChild(error);
  const submit=footer.querySelector('[type="submit"]');if(submit)submit.innerHTML=`${icon('check')} ${f.dataset.id?'Guardar cambios':'Confirmar operación'}`;
  right.appendChild(footer);shell.append(left,right);grid.replaceWith(shell);
+ /* V292: one scroll surface + one stable action bar on mobile. Reparenting
+    does not clone or alter form controls, validation, or listeners. */
+ if(isMobileViewport()){
+  f.classList.add('v292-studio-mobile');
+  f.appendChild(footer);
+ }
  f.classList.add('other-studio-form');f.dataset.special=kind;
  const sync=()=>{if(!f.isConnected)return;
   if(kind==='benefit'){const isCash=f.elements.kind?.value==='cashback';const block=f.querySelector('.benefit-only-cash');if(block)block.hidden=!isCash;const dest=f.elements.destination?.value;const accLab=f.elements.accountId?.closest('label');if(accLab)accLab.hidden=!isCash||dest!=='account';}
@@ -31972,14 +31990,14 @@ function v83LoanPaymentSteps(f){
  left.insertBefore(header,body);
  const controls=document.createElement('div');controls.className='v83-loan-pay-controls';left.appendChild(controls);
  const amt=body.querySelector('.other-studio-amount'),intro=body.querySelector('.v49-payment-intro'),fold=body.querySelector('.other-studio-fold');
- const footerSubmit=right.querySelector('[type="submit"]');f.noValidate=true;
+ const footerSubmit=f.querySelector(':scope > .form-foot [type="submit"]')||right.querySelector('[type="submit"]');const footerBar=f.querySelector(':scope > .form-foot');f.noValidate=true;
  let active=0;
  const go=(idx)=>{active=Math.max(0,Math.min(2,Number(idx)));f.classList.toggle('v83-pay-step-2',active===2);body.hidden=active===2;header.querySelectorAll('button').forEach((b,i)=>{b.classList.toggle('selected',active===i);b.setAttribute('aria-current',active===i?'step':'false')});
   for(const n of [amt,intro,parts[0],blocks[0]])if(n)n.hidden=active!==0;
   for(const n of [parts[1],blocks[1],fold])if(n)n.hidden=active!==1;
-  right.hidden=active!==2;if(footerSubmit)footerSubmit.hidden=active!==2;
+  right.hidden=active!==2;if(footerSubmit)footerSubmit.hidden=active!==2;if(footerBar)footerBar.hidden=active!==2;
   controls.innerHTML=`${active>0?'<button type="button" class="btn ghost" data-v83-pay-back>← Anterior</button>':''}${active<2?'<button type="button" class="btn" data-v83-pay-next>Siguiente →</button>':''}`;
-  left.scrollIntoView?.({block:'start',behavior:'instant'});
+  left.scrollTop=0;body.scrollTop=0;right.scrollTop=0;
  };
  controls.addEventListener('click',e=>{if(e.target.closest('[data-v83-pay-back]'))go(active-1);if(e.target.closest('[data-v83-pay-next]'))go(active+1)});
  header.addEventListener('click',e=>{const b=e.target.closest('[data-v83-loan-pay-step]');if(b)go(b.dataset.v83LoanPayStep)});
@@ -32240,16 +32258,21 @@ const V105_WIDGETS=[
  {id:'people',title:'Entre personas',hint:'Por cobrar y por devolver'},
  {id:'activity',title:'Actividad reciente',hint:'Últimos movimientos y sus importes'},
  {id:'subscriptions',title:'Suscripciones activas',hint:'Servicios activos, costos y próximas renovaciones'},
- {id:'cardsDue',title:'Tarjetas por pagar',hint:'Monto facturado y próximos vencimientos por tarjeta'}
+ {id:'cardsDue',title:'Tarjetas por pagar',hint:'Monto facturado y próximos vencimientos por tarjeta'},
+ {id:'banks',title:'Bancos e instituciones',hint:'Bancos registrados y productos vinculados'},
+ {id:'accounts',title:'Cuentas y efectivo',hint:'Saldos disponibles por producto'},
+ {id:'cards',title:'Mis tarjetas',hint:'Deuda y detalle de tarjetas activas'},
+ {id:'loans',title:'Préstamos bancarios',hint:'Capital pendiente y contratos activos'},
+ {id:'certificates',title:'Certificados',hint:'Capital registrado y productos de ahorro'}
 ];
 function v105Config(){
  const raw=db.settings?.v105OverviewWidgets;
  const ids=V105_WIDGETS.map(w=>w.id);
- if(!raw||!Array.isArray(raw.order))return {order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend'].includes(x))};
+ if(!raw||!Array.isArray(raw.order))return {order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend','banks','accounts','cards','loans','certificates'].includes(x))};
  const order=[...new Set(raw.order.filter(x=>ids.includes(x))),...ids.filter(x=>!raw.order.includes(x))];
  // New V290 modules should not disappear in older saved mobile layouts.
  if(!raw.order.includes('budget')){const pos=order.indexOf('budget');if(pos>=0)order.splice(pos,1);order.splice(Math.max(0,order.indexOf('capacity')+1),0,'budget');}
- const visible=Array.isArray(raw.visible)?raw.visible.filter(x=>ids.includes(x)):ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend'].includes(x));
+ const visible=Array.isArray(raw.visible)?raw.visible.filter(x=>ids.includes(x)):ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend','banks','accounts','cards','loans','certificates'].includes(x));
  if(!raw.order.includes('budget')&&!visible.includes('budget'))visible.push('budget');
  return {order,visible};
 }
@@ -32327,7 +32350,7 @@ document.addEventListener('click',ev=>{
  const move=ev.target.closest?.('[data-v105-move]');
  if(move){ev.preventDefault();ev.stopPropagation();const cfg=v105DraftConfig||v105Config(),i=cfg.order.indexOf(move.dataset.id),j=i+(move.dataset.v105Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]];v105DraftConfig=cfg;v105Customizer();return;}
  const reset=ev.target.closest?.('[data-v105-reset]');
- if(reset){ev.preventDefault();ev.stopPropagation();const ids=V105_WIDGETS.map(x=>x.id);v105DraftConfig={order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend'].includes(x))};v105Customizer();return;}
+ if(reset){ev.preventDefault();ev.stopPropagation();const ids=V105_WIDGETS.map(x=>x.id);v105DraftConfig={order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend','banks','accounts','cards','loans','certificates'].includes(x))};v105Customizer();return;}
  const apply=ev.target.closest?.('[data-v105-apply]');
  if(apply){ev.preventDefault();ev.stopPropagation();if(v105DraftConfig)v105SaveConfig(v105DraftConfig);v105DraftConfig=null;closeModal();return;}
  const choice=ev.target.closest?.('[data-v105-pay-option]');
@@ -33740,7 +33763,7 @@ document.addEventListener('focusout',e=>{
    const monthly=active.reduce((s,x)=>s+dop(Number(x.amount||0)*(rate[x.frequency]||1),x.currency),0);
    sum('Servicios activos',String(active.length));sum('Costo mensual equivalente',monthly);sum('Total registrados',String(db.recurring.length));
    group('Mis suscripciones',db.recurring.map(x=>row(x.name,`${x.active===false?'Pausada':'Activa'} · ${x.frequency||'monthly'} · próximo ${x.nextDue||'sin fecha'}`,x.amount,'editRecurring',x.id,x.currency||'DOP')));
-   nav('Ir a suscripciones','recurring');nav('Centro de pagos','payments');
+   nav('Ir a suscripciones','recurring');nav('Compromisos','payments');
   }else if(kind==='personal'){
    title='Deudas y préstamos entre personas';hint='Lo que te deben y lo que debes; sin mezclar estas relaciones con bancos.';
    sum('Por cobrar',recv());sum('Por pagar',owed());sum('Posición personal',recv()-owed());
@@ -34638,12 +34661,53 @@ document.addEventListener('click',event=>{
  const cfg=v105Config();
  if(toggle){const id=toggle.dataset.v273Toggle;if(!cfg.order.includes(id))return;cfg.visible=cfg.visible.includes(id)?cfg.visible.filter(x=>x!==id):[...cfg.visible,id]}
  else if(move){const id=move.dataset.id,i=cfg.order.indexOf(id),j=i+(move.dataset.v273Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]]}
- else if(reset){const ids=V105_WIDGETS.map(x=>x.id);cfg.order=ids;cfg.visible=ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend'].includes(x))}
+ else if(reset){const ids=V105_WIDGETS.map(x=>x.id);cfg.order=ids;cfg.visible=ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend','banks','accounts','cards','loans','certificates'].includes(x))}
  const old=db.settings.v105OverviewWidgets;
  db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};
  if(!persist()){db.settings.v105OverviewWidgets=old;toast('No se pudieron guardar los cambios de personalización.');return}
  render();
 },true);
+
+
+/* V294 · PERSONALIZACIÓN FINANCIERA + DESTINO VISIÓN
+   Presentación y navegación solamente. No se modifica el almacén de movimientos,
+   contratos, saldos, fórmulas, Supabase ni los procesos de pago. */
+function v294BankingWidgets(){
+ const active=x=>Array.isArray(x)?x.filter(p=>p&&!p.archived&&!isHidden(p)):[];
+ const banks=active(db.banks),accounts=active(db.accounts),cards=active(db.cards),loans=active(db.loans),certificates=active(db.certificates);
+ const amount=a=>{try{return Number(getAccountBalance(a))||0}catch(_){return 0}};
+ const cardDebt=c=>{try{return Math.max(0,Number(cardStatus(c,'DOP').debt)||0)+Math.max(0,fx(Number(cardStatus(c,'USD').debt)||0,'USD'))}catch(_){return 0}};
+ const loanBalance=l=>{try{return Math.max(0,fx(Number(loanStatus(l).balance)||0,l.currency||'DOP'))}catch(_){return 0}};
+ const accountTotal=accounts.reduce((sum,a)=>sum+fx(amount(a),a.currency||'DOP'),0);
+ const cardTotal=cards.reduce((sum,c)=>sum+cardDebt(c),0);
+ const loanTotal=loans.reduce((sum,l)=>sum+loanBalance(l),0);
+ const certificateTotal=totalCertificates();
+ const linked=banks.reduce((sum,b)=>sum+accounts.filter(a=>a.bankId===b.id).length+cards.filter(c=>c.bankId===b.id).length+loans.filter(l=>l.bankId===b.id).length,0);
+ const layouts=[
+  {id:'banks',title:'Bancos e instituciones',eyebrow:'TU ECOSISTEMA',page:'banks',icon:'building',count:banks.length,amount:String(banks.length),unit:'instituciones activas',hint:`${linked} productos vinculados`,items:banks.slice(0,3).map(b=>({name:b.name||'Institución',value:'Institución'}))},
+  {id:'accounts',title:'Cuentas y efectivo',eyebrow:'DISPONIBILIDAD',page:'accounts',icon:'wallet',count:accounts.length,amount:money(accountTotal),unit:'saldo en RD$ equivalentes',hint:`${accounts.length} cuentas y efectivos`,items:accounts.slice(0,3).map(a=>({name:a.name||'Cuenta',value:money(amount(a),a.currency||'DOP')}))},
+  {id:'cards',title:'Mis tarjetas',eyebrow:'CRÉDITO',page:'cards',icon:'card',count:cards.length,amount:money(cardTotal),unit:'deuda utilizada',hint:`${cards.length} tarjetas registradas`,items:cards.slice(0,3).map(c=>({name:c.name||'Tarjeta',value:money(cardDebt(c))}))},
+  {id:'loans',title:'Préstamos bancarios',eyebrow:'FINANCIAMIENTO',page:'loans',icon:'receipt',count:loans.length,amount:money(loanTotal),unit:'saldo pendiente equivalente',hint:`${loans.length} contratos activos`,items:loans.slice(0,3).map(l=>({name:l.name||'Préstamo',value:money(loanBalance(l))}))},
+  {id:'certificates',title:'Certificados',eyebrow:'AHORRO E INVERSIÓN',page:'certificates',icon:'analytics',count:certificates.length,amount:money(certificateTotal),unit:'capital registrado equivalente',hint:`${certificates.length} certificados activos`,items:certificates.slice(0,3).map(c=>({name:c.name||'Certificado',value:'Activo'}))}
+ ];
+ return layouts.map(w=>`<section class="v105-mobile-extra v273-overview-widget v294-finance-widget" data-v105-widget="${w.id}" aria-label="${w.title}">
+  <div class="vive-mobile-card-head v294-widget-head"><div><span class="vive-mobile-eyebrow">${w.eyebrow}</span><h2>${w.title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${w.page}" aria-label="Abrir ${w.title}">${icon('arrow')}</button></div>
+  <div class="v294-widget-amount"><span class="v294-widget-ico">${icon(w.icon)}</span><div><strong>${w.amount}</strong><small>${w.unit}</small></div></div>
+  <span class="v294-widget-count">${w.hint}</span>
+  ${w.items.length?`<div class="v294-widget-list">${w.items.map(r=>`<div><span>${sanitize(r.name)}</span><b>${r.value}</b></div>`).join('')}</div>`:`<p class="v273-widget-empty">No hay productos activos de este tipo.</p>`}
+ </section>`).join('');
+}
+
+/* Visión is a real destination rather than another payment center. Reuse the
+   existing financial dashboard and monthly comparisons for identical numbers. */
+function v294VisionPage(){
+ const content=visionOverview()
+  .replace('<h2>Dashboard</h2>','<h2>Visión</h2>')
+  .replace('Todo lo que importa, en una vista más directa.','Todo lo que importa de tus finanzas, en una sola vista.')
+  .replace('data-act="navigate" data-id="kpis"','data-v273-open-personalization="1"');
+ return `<section class="v294-vision-route" aria-label="Visión financiera">${content}</section>`;
+}
+pages.vision=v294VisionPage;
 
 pages.settings=v242Settings;
 function v242MobileCircles(liquid,debt,net,comparison){
@@ -35139,7 +35203,7 @@ render=function(){v245PreviousRender();v245PolishOnRender();};
     // V283: no reintroducir los KPI secundarios como una caja adicional.
     originalTiles?.remove();
     root.querySelectorAll(':scope > .v245-pay-extra').forEach(el=>el.remove());
-    const newHead=header('TUS COMPROMISOS','Centro de pagos','Vencimientos, cuotas y obligaciones en un solo lugar.');
+    const newHead=header('TUS COMPROMISOS','Compromisos','Vencimientos, cuotas y obligaciones en un solo lugar.');
     const period=old.querySelector('.v145-period-control');
     if(period){const wrap=make('div','v252-month-picker');wrap.append(period);newHead.append(wrap);}
     const hero=heroStart('COMPROMISOS DEL MES','Compromisos del mes');
@@ -44942,15 +45006,15 @@ body.theme-black #page #v145-payment-center .v286-pay-tile-name,body.theme-dark 
  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space{height:auto!important;max-height:none!important;overflow:visible!important}
  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
    display:grid!important;grid-template-columns:minmax(0,1.765fr) minmax(310px,1fr)!important;
-   grid-template-rows:minmax(300px,auto) minmax(214px,auto) minmax(200px,auto)!important;
+   grid-template-rows:minmax(300px,auto) minmax(220px,auto) minmax(198px,auto)!important;
    height:auto!important;min-height:0!important;max-height:none!important;align-items:stretch!important;overflow:visible!important
  }
  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.v152-position-reference{grid-column:1!important;grid-row:1!important}
  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-obligations{grid-column:2!important;grid-row:1!important;min-height:0!important;max-height:340px!important;overflow:auto!important;scrollbar-width:thin!important}
- body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.v290-budget-web{grid-column:2!important;grid-row:2!important;max-height:none!important;height:100%!important;min-height:214px!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.v290-budget-web{grid-column:2!important;grid-row:3!important;max-height:none!important;height:100%!important;min-height:198px!important}
  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-mid{grid-column:1!important;grid-row:2!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-upcoming{grid-column:1!important;grid-row:3!important}
- body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-personal{grid-column:2!important;grid-row:3!important}
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-personal{grid-column:2!important;grid-row:2!important;min-height:0!important;max-height:none!important;height:100%!important}
 }
 @media(min-width:1000px) and (max-width:1199px){.v290-budget-body{gap:6px}.v290-budget-web{padding:10px 11px!important}.v290-ring{width:62px;height:62px}.v290-budget-facts{gap:3px}}
 @media(min-width:791px) and (max-width:999px){
@@ -45015,5 +45079,742 @@ body.theme-black .v290-coverage,body.theme-dark .v290-coverage{background:#fffff
 }
 
 </style>
+
+<style id="vive-v291-budget-web-adjacent-payments">
+/* Scope V291 to WEB Resumen only. The mobile widget remains V290. */
+@media (min-width:1000px){
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-upcoming,
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.v291-budget-compact{
+   height:100%!important;min-height:198px!important;max-height:none!important;
+   align-self:stretch!important;overflow:hidden!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-upcoming{
+   display:flex!important;flex-direction:column!important;gap:8px!important;
+   padding:clamp(13px,1.25vw,17px)!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-upcoming .ff-panel-top{
+   margin-bottom:0!important;min-height:0!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-upcoming .ff-payment-list{
+   display:flex!important;flex-direction:column!important;gap:3px!important;
+   flex:1 1 auto!important;justify-content:space-evenly!important;
+   min-height:0!important;overflow:visible!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-upcoming .ff-pay-row{
+   height:36px!important;min-height:36px!important;max-height:36px!important;
+   padding:3px 5px!important;flex:0 0 36px!important;
+   align-items:center!important;overflow:hidden!important;
+ }
+ body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-personal{
+   padding:clamp(13px,1.25vw,17px)!important;
+ }
+}
+.v291-budget-compact{display:flex;flex-direction:column;justify-content:flex-start;gap:12px!important;padding:clamp(13px,1.3vw,17px)!important;min-width:0!important}
+.v291-budget-compact .v290-budget-head h2{font-size:clamp(15px,1.5vw,19px)!important;letter-spacing:-.038em!important}
+.v291-budget-compact .v290-budget-head button{font-size:10px!important;white-space:nowrap!important}
+.v291-budget-content{display:grid;grid-template-columns:clamp(70px,6vw,88px) minmax(0,1fr);gap:clamp(11px,1.2vw,19px);align-items:center;min-width:0;flex:1}
+.v291-budget-compact .v290-ring{width:clamp(70px,6vw,88px)!important;height:clamp(70px,6vw,88px)!important}
+.v291-budget-compact .v290-ring strong{font-size:clamp(16px,1.7vw,20px)!important}
+.v291-budget-metrics{display:grid;grid-template-columns:1fr;min-width:0;gap:0}
+.v291-budget-line{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0;padding:7px 0;border-bottom:1px solid rgba(105,135,181,.18)}
+.v291-budget-line:last-child{border-bottom:0}
+.v291-budget-line span{font-size:clamp(10px,1vw,12px);color:#657d9e;font-weight:650;white-space:nowrap}
+.v291-budget-line strong{font-size:clamp(11px,1.18vw,15px);font-weight:820;color:#263e61;letter-spacing:-.04em;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;min-width:0}
+@media (min-width:1000px) and (max-width:1110px){
+ .v291-budget-content{grid-template-columns:65px minmax(0,1fr);gap:8px}
+ .v291-budget-compact .v290-ring{width:65px!important;height:65px!important}
+ .v291-budget-compact .v290-ring strong{font-size:15px!important}
+ .v291-budget-line strong{font-size:11px}
+ .v291-budget-compact .v290-budget-head h2{font-size:14px!important}
+}
+@media (min-width:791px) and (max-width:999px){
+ .v291-budget-compact{min-height:180px!important}
+ .v291-budget-content{grid-template-columns:86px minmax(0,1fr)}
+ .v291-budget-compact .v290-ring{width:86px!important;height:86px!important}
+}
+/* Distinct totals, no categories or extra KPI inside the web card. */
+body.theme-black .v291-budget-line span,body.theme-dark .v291-budget-line span{color:#b5c7e5!important}
+body.theme-black .v291-budget-line strong,body.theme-dark .v291-budget-line strong{color:#f2f7ff!important}
+body.theme-black .v291-budget-line strong.v290-negative,body.theme-dark .v291-budget-line strong.v290-negative{color:#ffabb2!important}
+body.theme-black .v291-budget-line,body.theme-dark .v291-budget-line{border-color:#ffffff25!important}
+</style>
+
+<style id="vive-v292-mobile-operation-coherence">
+/* V292 | Mobile operation sheets, Apple-like spacing and independent scrolling.
+   No changes to desktop, financial calculations, ledger state or Supabase. */
+@media screen and (max-width:790px){
+  /* Common header: one clear title, stable exit, no truncated left edge. */
+  #modal-root .modal-layer>.v204-form-dialog:has(form.v292-studio-mobile),
+  #modal-root .modal-layer>.v204-form-dialog:has(.other-studio-picker){
+    box-sizing:border-box!important;
+    max-width:min(100vw,520px)!important;
+    border-radius:24px 24px 0 0!important;
+    overflow:hidden!important;
+  }
+  #modal-root .modal-layer>.v204-form-dialog:has(form.v292-studio-mobile)>.modal-head,
+  #modal-root .modal-layer>.v204-form-dialog:has(.other-studio-picker)>.modal-head{
+    min-height:62px!important;padding:9px 17px!important;
+    background:rgba(255,255,255,.97)!important;
+    box-shadow:none!important;border-bottom:1px solid #e5eaf2!important;
+  }
+  #modal-root .modal-layer>.v204-form-dialog:has(form.v292-studio-mobile)>.modal-head h2,
+  #modal-root .modal-layer>.v204-form-dialog:has(.other-studio-picker)>.modal-head h2{
+    margin:0!important;min-width:0!important;flex:1 1 auto!important;
+    font-size:clamp(16px,4.25vw,19px)!important;line-height:1.22!important;
+    overflow-wrap:normal!important;letter-spacing:-.035em!important;
+  }
+  #modal-root .modal-layer>.v204-form-dialog:has(form.v292-studio-mobile)>.modal-head .close,
+  #modal-root .modal-layer>.v204-form-dialog:has(.other-studio-picker)>.modal-head .close{
+    flex:0 0 44px!important;width:44px!important;height:44px!important;
+  }
+  /* Refund, reconciliation, benefits and loan payment.
+     The shell owns scrolling; the action bar is not inside the summary. */
+  #modal-root .v204-form-dialog>form.v292-studio-mobile{
+    display:flex!important;flex-direction:column!important;flex:1 1 auto!important;
+    box-sizing:border-box!important;min-height:0!important;height:auto!important;
+    max-width:100%!important;overflow:hidden!important;padding:0!important;
+  }
+  #modal-root form.v292-studio-mobile>.other-studio-shell{
+    display:block!important;box-sizing:border-box!important;
+    width:100%!important;height:auto!important;max-height:none!important;
+    min-height:0!important;flex:1 1 auto!important;overflow-y:auto!important;
+    overflow-x:hidden!important;overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;grid-template-columns:none!important;
+    margin:0!important;padding:0!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-left{
+    display:block!important;box-sizing:border-box!important;
+    height:auto!important;min-height:0!important;max-height:none!important;
+    overflow:visible!important;flex:none!important;background:transparent!important;
+    padding:0!important;margin:0!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-header{
+    padding:15px 17px 13px!important;margin:0!important;
+    border-bottom:0!important;
+    background:linear-gradient(125deg,rgba(236,244,252,.6),rgba(255,255,255,.86))!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-top{min-height:0!important;gap:6px!important}
+  #modal-root form.v292-studio-mobile .other-studio-overline{
+    font-size:10px!important;letter-spacing:.105em!important;line-height:1.4!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-header h2{
+    margin:8px 0 6px!important;font-size:clamp(21px,5.5vw,26px)!important;
+    line-height:1.16!important;letter-spacing:-.047em!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-header p{
+    font-size:12px!important;line-height:1.45!important;max-width:100%!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-content{
+    display:grid!important;min-width:0!important;max-width:100%!important;
+    gap:13px!important;padding:15px 17px 18px!important;
+    overflow:visible!important;box-sizing:border-box!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-amount{
+    padding:13px 15px 12px!important;min-width:0!important;
+    border-radius:19px!important;box-shadow:none!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-amount input[name="amount"]{
+    min-height:55px!important;height:55px!important;
+    font-size:clamp(29px,8vw,37px)!important;line-height:1.13!important;
+    letter-spacing:-.045em!important;
+  }
+  #modal-root form.v292-studio-mobile :is(.other-studio-fields,.other-studio-breakdown){
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    gap:13px!important;min-width:0!important;
+  }
+  #modal-root form.v292-studio-mobile :is(.other-studio-fields,.other-studio-breakdown)>*{
+    min-width:0!important;max-width:100%!important;grid-column:1/-1!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-form .field,
+  #modal-root form.v292-studio-mobile .field{
+    min-width:0!important;width:100%!important;max-width:100%!important;
+    min-height:49px!important;font-size:16px!important;
+    text-overflow:ellipsis!important;box-sizing:border-box!important;
+  }
+  #modal-root form.v292-studio-mobile .filter-label{
+    font-size:10px!important;line-height:1.35!important;
+    letter-spacing:.07em!important;margin-bottom:7px!important;
+    overflow-wrap:break-word!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-section-title{margin:1px 0 -6px!important}
+  #modal-root form.v292-studio-mobile .other-studio-fold summary{
+    min-height:49px!important;font-size:12px!important;
+  }
+  /* Summary remains available but flows after the form, not over it. */
+  #modal-root form.v292-studio-mobile .other-studio-right{
+    display:block!important;box-sizing:border-box!important;
+    width:100%!important;height:auto!important;max-height:none!important;
+    flex:none!important;min-height:0!important;overflow:visible!important;
+    padding:14px 17px 18px!important;margin:0!important;
+    border-left:0!important;border-top:1px solid #e4ebf4!important;
+    background:linear-gradient(145deg,#eff5fb,#f8fafc)!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-right>h3{font-size:15px!important;margin:0 0 9px!important}
+  #modal-root form.v292-studio-mobile .other-studio-receipt{
+    padding:13px 14px!important;border-radius:17px!important;
+    box-shadow:none!important;min-width:0!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-receipt>strong{
+    font-size:clamp(21px,6vw,27px)!important;margin:7px 0 8px!important;
+  }
+  #modal-root form.v292-studio-mobile .other-studio-line{padding:8px 0 2px!important;gap:12px!important}
+  #modal-root form.v292-studio-mobile .other-studio-hint{margin:11px 0 0!important;gap:10px!important}
+  #modal-root form.v292-studio-mobile>.form-foot{
+    box-sizing:border-box!important;position:relative!important;bottom:auto!important;
+    display:grid!important;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)!important;
+    flex:0 0 auto!important;width:100%!important;
+    gap:10px!important;margin:0!important;
+    padding:11px 17px calc(13px + env(safe-area-inset-bottom,0px))!important;
+    border-top:1px solid #e5eaf2!important;border-radius:0!important;
+    background:rgba(250,251,254,.98)!important;
+    box-shadow:0 -8px 24px rgba(29,48,85,.035)!important;
+    z-index:11!important;
+  }
+  #modal-root form.v292-studio-mobile>.form-foot[hidden]{display:none!important}
+  #modal-root form.v292-studio-mobile>.form-foot>.btn{
+    display:flex!important;justify-content:center!important;align-items:center!important;
+    min-width:0!important;width:100%!important;min-height:48px!important;
+    padding:10px 9px!important;margin:0!important;
+    font-size:13px!important;line-height:1.2!important;
+    border-radius:15px!important;white-space:normal!important;text-align:center!important;
+  }
+  #modal-root form.v292-studio-mobile>.form-foot>.btn.ghost{
+    color:#486280!important;background:#edf2fa!important;border:1px solid #dde6f3!important;
+  }
+  #modal-root form.v292-studio-mobile>.form-foot>.btn[type="submit"]{
+    background:var(--os-accent,#3383e5)!important;color:white!important;
+  }
+  /* Loan wizard: exactly one scroll panel in each step and a fixed action. */
+  #modal-root form.v292-studio-mobile[data-special="loan"]>.other-studio-shell{
+    display:flex!important;flex-direction:column!important;overflow:hidden!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"] .other-studio-left{
+    display:flex!important;flex-direction:column!important;
+    min-height:0!important;flex:1 1 auto!important;overflow:hidden!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"] .v83-loan-pay-nav{
+    flex:0 0 auto!important;gap:7px!important;margin:10px 17px!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"] .v83-loan-pay-nav button{
+    min-width:0!important;min-height:54px!important;padding:9px 3px!important;
+    font-size:10px!important;line-height:1.25!important;border-radius:13px!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"] .other-studio-content{
+    flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;
+    overflow-x:hidden!important;overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"] .v83-loan-pay-controls{
+    position:relative!important;display:flex!important;flex:0 0 auto!important;
+    gap:9px!important;margin:0!important;padding:11px 17px!important;
+    background:rgba(247,250,254,.98)!important;border-top:1px solid #e5ebf4!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"] .v83-loan-pay-controls .btn{
+    flex:1!important;min-width:0!important;min-height:48px!important;border-radius:14px!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"] .other-studio-right[hidden],
+  #modal-root form.v292-studio-mobile[data-special="loan"] .other-studio-content[hidden]{display:none!important}
+  #modal-root form.v292-studio-mobile[data-special="loan"].v83-pay-step-2 .other-studio-left{
+    display:flex!important;flex:0 0 auto!important;overflow:visible!important;height:auto!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"].v83-pay-step-2 .other-studio-right{
+    display:block!important;flex:1 1 auto!important;min-height:0!important;
+    overflow-y:auto!important;overflow-x:hidden!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"] .v49-payment-intro{
+    margin:0!important;padding:14px 15px!important;border-radius:18px!important;
+  }
+  #modal-root form.v292-studio-mobile[data-special="loan"] .v49-payment-intro h3{
+    font-size:19px!important;line-height:1.25!important;
+  }
+  /* A chooser is not a form submission. Eliminate the inert Save button. */
+  #modal-root .modal-layer:has(.other-studio-picker){align-items:flex-end!important;padding:0!important}
+  #modal-root .modal-layer>.v204-form-dialog:has(.other-studio-picker){
+    height:auto!important;max-height:calc(100dvh - max(64px,env(safe-area-inset-top,0px) + 10px))!important;
+    min-height:0!important;margin:0 auto!important;
+  }
+  #modal-root .v204-form-dialog:has(.other-studio-picker)>form{
+    display:block!important;flex:none!important;height:auto!important;min-height:0!important;
+    max-height:calc(85dvh - 66px)!important;overflow-y:auto!important;
+  }
+  #modal-root .v204-form-dialog:has(.other-studio-picker) #v12Picker>.form-foot{display:none!important}
+  #modal-root .v204-form-dialog:has(.other-studio-picker) #v12Picker>.form-grid{
+    display:block!important;height:auto!important;max-height:none!important;
+    padding:15px 17px calc(20px + env(safe-area-inset-bottom,0px))!important;
+    overflow:visible!important;
+  }
+  #modal-root .v204-form-dialog .other-studio-picker{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;
+    height:auto!important;min-height:0!important;
+  }
+  #modal-root .v204-form-dialog .other-studio-picker>button{
+    display:grid!important;grid-template-columns:38px minmax(0,1fr) 18px!important;
+    grid-template-rows:auto auto!important;align-items:center!important;
+    gap:4px 11px!important;width:100%!important;height:auto!important;
+    min-height:74px!important;max-height:102px!important;
+    box-sizing:border-box!important;padding:12px 14px!important;
+    border-radius:18px!important;overflow:hidden!important;
+  }
+  #modal-root .v204-form-dialog .other-studio-picker>button>span:first-child{
+    grid-column:1!important;grid-row:1/span 2!important;
+    width:36px!important;height:36px!important;
+    display:grid!important;place-items:center!important;
+  }
+  #modal-root .v204-form-dialog .other-studio-picker>button>strong{
+    grid-column:2!important;grid-row:1!important;min-width:0!important;
+    font-size:13px!important;white-space:nowrap!important;text-overflow:ellipsis!important;
+    overflow:hidden!important;
+  }
+  #modal-root .v204-form-dialog .other-studio-picker>button>small{
+    grid-column:2!important;grid-row:2!important;min-width:0!important;
+    font-size:11px!important;color:#7e90ab!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #modal-root .v204-form-dialog .other-studio-picker>button>svg:last-child{
+    grid-column:3!important;grid-row:1/span 2!important;width:16px!important;height:16px!important;
+  }
+  /* Existing card-payment wizard: clearer spacing; same three steps / actions. */
+  #modal-root .studio-form .studio-main .studio-fields{
+    max-width:100%!important;min-width:0!important;gap:12px!important;
+  }
+  #modal-root .studio-form .studio-fields :is(input,select,textarea){
+    box-sizing:border-box!important;max-width:100%!important;min-width:0!important;
+    font-size:16px!important;
+  }
+  #modal-root .studio-form .studio-navigation .btn{
+    min-height:50px!important;border-radius:16px!important;
+  }
+}
+@media screen and (max-width:360px){
+  #modal-root form.v292-studio-mobile>.form-foot{gap:8px!important;padding-left:13px!important;padding-right:13px!important}
+  #modal-root form.v292-studio-mobile>.form-foot>.btn{font-size:12px!important}
+  #modal-root form.v292-studio-mobile[data-special="loan"] .v83-loan-pay-nav{margin-left:13px!important;margin-right:13px!important}
+}
+</style>
+
+<style id="vive-v293-coherencia-suscripciones-pagos">
+/* ================================================================================
+   V293 MOBILE | Subscriptions + commitments + recurring-form spatial coherence.
+   Presentation only. Existing data-act, reconciliation, financial computations,
+   Supabase integration and desktop presentation remain unchanged.
+   ================================================================================ */
+@media screen and (max-width:790px){
+  /* The recurring area uses the same horizontal rhythm as the mobile home. */
+  #page .v26-internal.v252-recurring{min-width:0!important;width:100%!important;max-width:100%!important;overflow:visible!important}
+  #page .v26-internal.v252-recurring .v252-module-heading{
+    display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+    gap:12px!important;padding:0 2px!important;margin:13px 0 15px!important;
+  }
+  #page .v26-internal.v252-recurring .v252-module-heading-copy{min-width:0!important;flex:1 1 auto!important}
+  #page .v26-internal.v252-recurring .v252-module-heading h2{font-size:clamp(24px,7vw,30px)!important;line-height:1.1!important;margin:5px 0!important}
+  #page .v26-internal.v252-recurring .v252-module-heading p{font-size:11px!important;line-height:1.45!important;margin:0!important}
+  #page .v26-internal.v252-recurring .v252-add{
+    flex:0 0 auto!important;width:auto!important;min-width:0!important;max-width:40%!important;
+    min-height:43px!important;padding:10px 12px!important;font-size:11px!important;
+    white-space:normal!important;text-align:center!important;border-radius:15px!important;
+  }
+  #page .v26-internal.v252-recurring .v252-add svg{width:15px!important;height:15px!important;flex-shrink:0!important}
+  /* Three tabs on one row, never a lonely third option on a second line. */
+  #page .v26-internal.v252-recurring nav.v252-tabs{
+    box-sizing:border-box!important;display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;width:100%!important;max-width:100%!important;
+    margin:0 0 14px!important;padding:5px!important;
+    overflow:visible!important;border-radius:20px!important;
+  }
+  #page .v26-internal.v252-recurring nav.v252-tabs button{
+    display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;
+    box-sizing:border-box!important;min-width:0!important;width:100%!important;max-width:100%!important;
+    min-height:58px!important;padding:6px 3px!important;gap:5px!important;
+    border-radius:15px!important;font-size:clamp(9px,2.8vw,11px)!important;line-height:1.15!important;
+    text-align:center!important;white-space:normal!important;overflow-wrap:normal!important;
+  }
+  #page .v26-internal.v252-recurring nav.v252-tabs button svg{width:17px!important;height:17px!important;flex:0 0 17px!important}
+  /* Keep the four real metrics; remove repeated editorial copy and two
+     redundant buttons (Services / Upcoming already have visible tabs). */
+  #page .v26-internal.v264-recurring .v264-subs-kpi{
+    box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+    gap:15px!important;min-width:0!important;width:100%!important;
+    padding:18px 16px!important;border-radius:25px!important;margin:0!important;
+  }
+  #page .v26-internal.v264-recurring .v264-kpi-copy{
+    display:block!important;min-width:0!important;margin:0!important;padding:0!important;
+  }
+  #page .v26-internal.v264-recurring .v264-kpi-copy .v264-kicker{
+    display:block!important;font-size:10px!important;letter-spacing:.11em!important;
+    line-height:1.35!important;margin:0!important;
+  }
+  #page .v26-internal.v264-recurring .v264-kpi-copy :is(h3,p,.v264-kpi-actions,.v264-kpi-note){display:none!important}
+  #page .v26-internal.v264-recurring .v264-kpi-grid{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    min-width:0!important;padding:0!important;margin:0!important;gap:9px!important;
+    border:0!important;align-items:stretch!important;
+  }
+  #page .v26-internal.v264-recurring .v264-kpi-card{
+    box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+    min-width:0!important;min-height:100px!important;gap:7px!important;
+    padding:14px 12px!important;border-radius:16px!important;
+  }
+  #page .v26-internal.v264-recurring .v264-kpi-card small{
+    font-size:9px!important;line-height:1.35!important;letter-spacing:.045em!important;
+  }
+  #page .v26-internal.v264-recurring .v264-kpi-card strong{
+    font-size:clamp(17px,5.5vw,24px)!important;line-height:1.08!important;
+    letter-spacing:-.045em!important;overflow-wrap:normal!important;word-break:normal!important;
+  }
+  #page .v26-internal.v264-recurring .v264-kpi-card span{
+    margin-top:auto!important;font-size:10px!important;line-height:1.35!important;
+  }
+  #page .v26-internal.v264-recurring .v264-kpi-card:first-child{
+    background:rgba(255,255,255,.13)!important;border-color:rgba(255,255,255,.3)!important;
+  }
+  /* Four commitment KPI: predictable tiles with readable actions. */
+  #page #v145-payment-center .v286-types-grid{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;min-width:0!important;
+  }
+  #page #v145-payment-center .v286-pay-tile{
+    box-sizing:border-box!important;min-width:0!important;gap:10px!important;
+    padding:14px 12px!important;border-radius:21px!important;
+  }
+  #page #v145-payment-center .v286-pay-tile-head{gap:7px!important;min-width:0!important}
+  #page #v145-payment-center .v286-pay-icon{
+    width:29px!important;height:29px!important;flex:0 0 29px!important;border-radius:10px!important;
+  }
+  #page #v145-payment-center .v286-pay-icon svg{width:16px!important;height:16px!important}
+  #page #v145-payment-center .v286-pay-tile-name{font-size:12px!important;line-height:1.2!important;overflow-wrap:normal!important}
+  #page #v145-payment-center .v286-pay-sum{font-size:clamp(16px,4.8vw,23px)!important;line-height:1.12!important;overflow-wrap:normal!important;word-break:normal!important}
+  #page #v145-payment-center .v286-pay-count{font-size:10px!important;line-height:1.38!important;min-height:0!important;overflow-wrap:normal!important}
+  #page #v145-payment-center .v286-pay-tile-actions{display:grid!important;grid-template-columns:1fr!important;gap:7px!important;min-width:0!important;width:100%!important}
+  #page #v145-payment-center .v286-pay-tile-actions button{
+    box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;min-width:0!important;min-height:36px!important;
+    padding:8px 6px!important;border-radius:12px!important;
+    font-size:11px!important;line-height:1.2!important;white-space:nowrap!important;
+  }
+  #page #v145-payment-center .v286-pay-tile-actions button svg{height:14px!important;width:14px!important;flex:0 0 14px!important}
+  /* Payment agenda: date + type + full name on first line, amount and
+     actionable button on second. No narrow text column or vertical letters. */
+  #page #v145-payment-center .v252-schedule .v145-agenda-list{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    gap:9px!important;min-width:0!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-row{
+    box-sizing:border-box!important;display:grid!important;
+    grid-template-columns:46px 28px minmax(0,1fr)!important;
+    grid-template-rows:minmax(42px,auto) auto!important;
+    gap:9px 9px!important;align-items:center!important;
+    min-width:0!important;width:100%!important;max-width:100%!important;
+    padding:12px 13px!important;margin:0!important;border-radius:18px!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-date{
+    grid-column:1!important;grid-row:1 / 3!important;
+    align-self:start!important;justify-self:stretch!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;
+    justify-content:center!important;width:46px!important;min-width:46px!important;
+    min-height:51px!important;padding:6px 2px!important;border-radius:14px!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-icon{
+    grid-column:2!important;grid-row:1!important;
+    justify-self:center!important;align-self:start!important;
+    width:28px!important;height:28px!important;margin:4px 0 0!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-icon svg{width:16px!important;height:16px!important}
+  #page #v145-payment-center .v252-schedule .v145-agenda-description{
+    box-sizing:border-box!important;grid-column:3!important;grid-row:1!important;
+    width:auto!important;min-width:0!important;max-width:none!important;
+    display:flex!important;flex-direction:column!important;gap:4px!important;
+    align-self:center!important;text-align:left!important;margin:0!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-description strong{
+    display:block!important;width:auto!important;max-width:100%!important;
+    font-size:13px!important;line-height:1.3!important;white-space:normal!important;
+    word-break:normal!important;overflow-wrap:break-word!important;hyphens:none!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-description small{
+    display:flex!important;flex-wrap:wrap!important;align-items:center!important;
+    gap:3px 7px!important;min-width:0!important;max-width:100%!important;
+    font-size:10px!important;line-height:1.3!important;
+    word-break:normal!important;overflow-wrap:break-word!important;hyphens:none!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-status{
+    display:inline-flex!important;white-space:nowrap!important;font-size:10px!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-payment{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    box-sizing:border-box!important;min-width:0!important;width:100%!important;
+    grid-column:2 / 4!important;grid-row:2!important;gap:8px!important;
+    text-align:left!important;margin:0!important;padding:0!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-payment b{
+    font-size:clamp(12px,3.6vw,15px)!important;line-height:1.15!important;
+    white-space:nowrap!important;min-width:0!important;overflow:hidden!important;
+    text-overflow:ellipsis!important;word-break:normal!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-payment button{
+    display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;
+    justify-content:center!important;min-width:73px!important;min-height:36px!important;
+    padding:7px 11px!important;border-radius:11px!important;font-size:11px!important;
+  }
+  #page #v145-payment-center .v252-schedule .v145-agenda-payment button svg{width:13px!important;height:13px!important}
+  #page #v145-payment-center .v252-schedule .v145-pay-agenda{
+    box-sizing:border-box!important;min-width:0!important;overflow:hidden!important;
+    padding:15px 12px 24px!important;border-radius:24px!important;
+  }
+  #page #v145-payment-center .v145-pay-lower{min-width:0!important}
+  /* Consistent compact recurring-payment modal with ONE scrolling surface.
+     Preserve all inputs and previews. Header and actions do not scroll. */
+  #modal-root .modal:has(form.v147-rec-form){
+    box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+    width:100%!important;max-width:min(100vw,520px)!important;
+    height:calc(100dvh - 62px)!important;max-height:calc(100dvh - 62px)!important;
+    min-height:0!important;margin:0!important;padding:0!important;
+    overflow:hidden!important;border-radius:23px 23px 0 0!important;
+  }
+  #modal-root .modal:has(form.v147-rec-form)>.modal-head{
+    box-sizing:border-box!important;display:flex!important;align-items:center!important;
+    flex:0 0 auto!important;min-height:62px!important;padding:9px 16px!important;
+    margin:0!important;gap:12px!important;position:relative!important;
+    border-bottom:1px solid rgba(209,221,236,.9)!important;
+  }
+  #modal-root .modal:has(form.v147-rec-form)>.modal-head h2{
+    min-width:0!important;flex:1 1 auto!important;margin:0!important;
+    font-size:clamp(17px,4.65vw,20px)!important;line-height:1.2!important;
+    letter-spacing:-.035em!important;
+  }
+  #modal-root .modal:has(form.v147-rec-form)>.modal-head .close{
+    flex:0 0 43px!important;width:43px!important;height:43px!important;margin:0!important;
+  }
+  #modal-root form.v147-rec-form{
+    box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+    min-width:0!important;width:100%!important;flex:1 1 auto!important;
+    min-height:0!important;max-height:none!important;overflow:hidden!important;padding:0!important;
+  }
+  #modal-root form.v147-rec-form>.form-grid{
+    box-sizing:border-box!important;display:block!important;flex:1 1 auto!important;
+    min-height:0!important;height:auto!important;width:100%!important;
+    padding:0!important;margin:0!important;overflow-y:auto!important;
+    overflow-x:hidden!important;overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  #modal-root form.v147-rec-form .v147-rec-shell{box-sizing:border-box!important;width:100%!important;min-width:0!important}
+  #modal-root form.v147-rec-form .v147-rec-hero{
+    box-sizing:border-box!important;min-height:0!important;padding:16px 18px!important;
+    gap:9px!important;border-radius:0!important;
+  }
+  #modal-root form.v147-rec-form .v147-rec-hero .v147-hero-copy>strong{
+    font-size:clamp(19px,5.2vw,23px)!important;line-height:1.14!important;
+    max-width:none!important;letter-spacing:-.045em!important;
+  }
+  #modal-root form.v147-rec-form .v147-rec-hero .v147-hero-copy p{
+    font-size:11px!important;line-height:1.4!important;margin:5px 0 0!important;
+  }
+  #modal-root form.v147-rec-form .v147-rec-hero .v147-eyebrow{
+    font-size:9px!important;line-height:1.3!important;margin:0 0 6px!important;
+  }
+  #modal-root form.v147-rec-form .v147-hero-stamp{display:none!important}
+  #modal-root form.v147-rec-form .v147-rec-layout{
+    box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+    gap:12px!important;width:100%!important;max-width:100%!important;
+    padding:14px 16px 28px!important;margin:0!important;
+  }
+  #modal-root form.v147-rec-form .v147-rec-editor{
+    width:100%!important;min-width:0!important;display:grid!important;gap:12px!important;
+  }
+  #modal-root form.v147-rec-form .v147-rec-section{
+    box-sizing:border-box!important;width:100%!important;min-width:0!important;
+    padding:17px 15px!important;border-radius:20px!important;
+  }
+  #modal-root form.v147-rec-form .v147-sec-head{
+    gap:10px!important;margin:0 0 15px!important;align-items:start!important;
+  }
+  #modal-root form.v147-rec-form .v147-sec-head strong{font-size:16px!important;line-height:1.25!important}
+  #modal-root form.v147-rec-form .v147-sec-head small{font-size:11px!important;line-height:1.45!important}
+  #modal-root form.v147-rec-form .v147-step{
+    flex:0 0 32px!important;width:32px!important;height:32px!important;
+  }
+  #modal-root form.v147-rec-form .v147-form-duo{
+    box-sizing:border-box!important;display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;gap:12px!important;
+    min-width:0!important;width:100%!important;margin:0 0 12px!important;
+  }
+  #modal-root form.v147-rec-form .v147-form-duo>*{
+    box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+    grid-column:1!important;width:100%!important;
+  }
+  #modal-root form.v147-rec-form .v147-form-duo :is(input,select,.field){
+    box-sizing:border-box!important;min-width:0!important;width:100%!important;
+    max-width:100%!important;height:49px!important;max-height:none!important;
+    border-radius:13px!important;font-size:16px!important;
+    text-overflow:ellipsis!important;
+  }
+  #modal-root form.v147-rec-form .v147-form-duo :is(label,.filter-label){
+    font-size:10px!important;line-height:1.4!important;letter-spacing:.06em!important;
+    white-space:normal!important;overflow-wrap:break-word!important;
+  }
+  #modal-root form.v147-rec-form .v160-rec-taxonomy{
+    box-sizing:border-box!important;padding:13px!important;min-width:0!important;
+    margin:0 0 12px!important;border-radius:16px!important;
+  }
+  #modal-root form.v147-rec-form .v147-quick-icons{
+    gap:7px!important;display:flex!important;flex-wrap:wrap!important;
+    min-width:0!important;
+  }
+  #modal-root form.v147-rec-form .v147-preset{
+    padding:7px 9px!important;font-size:11px!important;min-height:34px!important;
+  }
+  #modal-root form.v147-rec-form .v147-rec-aside{
+    box-sizing:border-box!important;width:100%!important;max-width:100%!important;
+    min-width:0!important;margin:0!important;padding:15px!important;
+    border-radius:19px!important;order:1!important;
+  }
+  #modal-root form.v147-rec-form>.form-foot{
+    box-sizing:border-box!important;position:relative!important;flex:0 0 auto!important;
+    bottom:auto!important;display:grid!important;
+    grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;
+    gap:9px!important;width:100%!important;min-width:0!important;
+    margin:0!important;padding:11px 16px calc(12px + env(safe-area-inset-bottom,0px))!important;
+    background:rgba(250,251,254,.98)!important;
+    border-top:1px solid #e1eaf3!important;box-shadow:0 -6px 23px rgba(31,50,86,.06)!important;
+    z-index:6!important;
+  }
+  #modal-root form.v147-rec-form>.form-foot :is(button,.btn){
+    box-sizing:border-box!important;display:flex!important;align-items:center!important;
+    justify-content:center!important;width:100%!important;max-width:100%!important;
+    min-width:0!important;min-height:48px!important;margin:0!important;
+    padding:10px 9px!important;border-radius:15px!important;
+    font-size:13px!important;line-height:1.2!important;text-align:center!important;
+    white-space:normal!important;
+  }
+  /* Light and dark layouts retain their established appearance. */
+}
+@media screen and (max-width:350px){
+ #page #v145-payment-center .v286-pay-tile{padding:11px 9px!important}
+ #page #v145-payment-center .v286-pay-sum{font-size:16px!important}
+ #page #v145-payment-center .v252-schedule .v145-agenda-row{padding:11px!important;column-gap:7px!important}
+ #page #v145-payment-center .v252-schedule .v145-agenda-payment button{min-width:66px!important}
+}
+@media screen and (max-width:790px){
+  body.theme-black #modal-root form.v147-rec-form .v147-rec-section,
+  body.theme-dark #modal-root form.v147-rec-form .v147-rec-section{
+    background:#1c2635!important;border-color:#394b61!important;color:#f0f4fa!important;
+  }
+  body.theme-black #modal-root form.v147-rec-form .v147-rec-hero,
+  body.theme-dark #modal-root form.v147-rec-form .v147-rec-hero{
+    background:linear-gradient(120deg,#202f48,#243a59)!important;border-color:#3a506e!important;
+  }
+  body.theme-black #modal-root form.v147-rec-form .v147-rec-hero :is(.v147-hero-copy>strong,p),
+  body.theme-dark #modal-root form.v147-rec-form .v147-rec-hero :is(.v147-hero-copy>strong,p){color:#e9f2ff!important;}
+  body.theme-black #modal-root form.v147-rec-form .v160-rec-taxonomy,
+  body.theme-dark #modal-root form.v147-rec-form .v160-rec-taxonomy{
+    background:#202c3c!important;border-color:#3e516c!important;
+  }
+  body.theme-black #modal-root form.v147-rec-form .v147-form-duo :is(input,select,.field),
+  body.theme-dark #modal-root form.v147-rec-form .v147-form-duo :is(input,select,.field){
+    background:#263347!important;color:#f4f7ff!important;border-color:#455978!important;
+  }
+  body.theme-black #modal-root form.v147-rec-form>.form-foot,
+  body.theme-dark #modal-root form.v147-rec-form>.form-foot{
+    background:#172235!important;border-color:#3a4c63!important;
+  }
+  body.theme-black #modal-root form.v147-rec-form>.form-foot .btn.ghost,
+  body.theme-dark #modal-root form.v147-rec-form>.form-foot .btn.ghost{
+    color:#e7f0ff!important;background:#293b55!important;border-color:#3b5272!important;
+  }
+}
+/* Explicit overflow-axis rules override the legacy V147/V204 independent scrollers. */
+@media screen and (max-width:790px){
+ #modal-root .modal-layer > .modal.v204-form-dialog:has(form#recurringForm.v147-rec-form){
+   overflow:hidden!important;overflow-x:hidden!important;overflow-y:hidden!important;
+ }
+ #modal-root .modal-layer > .modal.v204-form-dialog form#recurringForm.v147-rec-form{
+   overflow:hidden!important;overflow-x:hidden!important;overflow-y:hidden!important;
+ }
+ #modal-root .modal-layer > .modal.v204-form-dialog form#recurringForm.v147-rec-form > .form-grid{
+   overflow-x:hidden!important;overflow-y:auto!important;
+ }
+}
+@media (prefers-reduced-motion:reduce){
+ #page .v252-recurring nav.v252-tabs{scroll-behavior:auto!important}
+}
+</style>
+
+
+<style id="vive-v294-vision-personalizacion">
+/* V294 · Scoped visual additions; no changes to payments or calculations. */
+@media (max-width:790px){
+  .v294-finance-widget[hidden]{display:none!important}
+  .vive-mobile-home .v294-finance-widget{min-width:0;width:100%;padding:18px 16px;border-radius:24px;box-sizing:border-box}
+  .v294-widget-head{min-width:0;gap:8px;margin-bottom:13px}
+  .v294-widget-head h2{font-size:17px;line-height:1.22}
+  .v294-widget-head .vive-mobile-view-all{flex:0 0 35px;display:grid;place-items:center;width:35px;height:35px;padding:0;overflow:hidden;font-size:0}
+  .v294-widget-head .vive-mobile-view-all svg{width:17px;height:17px}
+  .v294-widget-amount{display:flex;align-items:center;gap:12px;min-width:0}
+  .v294-widget-ico{display:grid;place-items:center;flex:0 0 41px;width:41px;height:41px;border-radius:14px;background:#e9effb;color:#436aab}
+  .v294-widget-ico svg{width:22px;height:22px}
+  .v294-widget-amount>div{display:flex;flex-direction:column;min-width:0;gap:3px}
+  .v294-widget-amount strong{font-size:clamp(21px,5.75vw,29px);line-height:1.1;letter-spacing:-.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+  .v294-widget-amount small,.v294-widget-count{font-size:11px;color:#7588a1;line-height:1.4}
+  .v294-widget-count{display:block;margin:9px 0 0}
+  .v294-widget-list{display:flex;flex-direction:column;margin-top:12px;border-top:1px solid rgba(139,164,200,.2)}
+  .v294-widget-list>div{display:flex;justify-content:space-between;gap:10px;min-width:0;padding:10px 0;border-bottom:1px solid rgba(139,164,200,.14)}
+  .v294-widget-list>div:last-child{border:0;padding-bottom:0}
+  .v294-widget-list span{font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .v294-widget-list b{font-size:12px;font-weight:730;white-space:nowrap;flex:0 0 auto;font-variant-numeric:tabular-nums}
+}
+/* Vision reuses existing dark financial panels in either theme, without
+   switching the application's global appearance preference. */
+#page .v294-vision-route{width:100%;max-width:100%;min-width:0;padding:12px 0 60px;box-sizing:border-box}
+#page .v294-vision-route .vision-page-title h2{color:var(--ink,#243451)}
+#page .v294-vision-route .vision-page-title p{color:var(--muted,#76879e)}
+#page .v294-vision-route .vision-panel{min-width:0}
+#page .v294-vision-route .vision-home-grid{min-width:0}
+#page .v294-vision-route .vision-home-grid{grid-template-rows:auto!important;align-items:stretch!important}
+#page .v294-vision-route .vision-panel{height:auto!important;min-height:0!important}
+#page .v294-vision-route .vision-chart-card{min-height:360px!important}
+@media(min-width:791px){
+ #page .v294-vision-route .vision-page-title>div:first-child{display:none}
+ #page .v294-vision-route .vision-page-title{height:auto!important;justify-content:flex-end;margin:0 0 14px}
+}
+
+#page .v294-vision-route .vision-net-chart{display:block;width:100%;height:180px;max-width:100%}
+#page .v294-vision-route .vision-position-breakdown{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:8px}
+#page .v294-vision-route .vision-position-breakdown button{display:flex;align-items:center;justify-content:space-between;min-width:0;gap:7px;padding:9px 10px;border:1px solid #2d435d;border-radius:12px;background:#1c2d45;color:#edf7ff;text-align:left}
+#page .v294-vision-route .vision-position-breakdown small{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#9fb7d5;font-size:10px}
+#page .v294-vision-route .vision-position-breakdown strong{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#f2f7ff;font-size:clamp(10px,2.9vw,13px);font-variant-numeric:tabular-nums}
+#page .v294-vision-route .vision-position-breakdown button:focus-visible{outline:2px solid #97beff;outline-offset:2px}
+
+@media(max-width:790px){
+  #page .v294-vision-route{padding:1px 0 calc(126px + env(safe-area-inset-bottom,0px))}
+  #page .v294-vision-route .vision-dashboard{min-width:0;padding:0}
+  #page .v294-vision-route .vision-page-title{margin:3px 0 15px;gap:8px;height:auto}
+  #page .v294-vision-route .vision-page-title h2{font-size:clamp(26px,7vw,32px);line-height:1.1}
+  #page .v294-vision-route .vision-page-title p{display:block;font-size:12px}
+  #page .v294-vision-route .vision-page-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;min-width:0}
+  #page .v294-vision-route .vision-switch-button{min-width:0;min-height:43px;justify-content:center;text-align:center;padding:8px;font-size:10px;line-height:1.2;white-space:normal}
+  #page .v294-vision-route .vision-home-grid{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:'chart' 'cards' 'trans' 'cats' 'commit' 'insight';grid-template-rows:none;gap:12px}
+  #page .v294-vision-route .vision-panel{height:auto!important;min-height:0!important;border-radius:22px!important;padding:17px 15px!important}
+  #page .v294-vision-route .vision-page-title .vision-eyebrow{display:block}
+  #page .v294-vision-route .vision-net-chart{height:185px}
+  #page .v294-vision-route .vision-chart-card{min-height:0!important}
+  #page .v294-vision-route .vision-plastic-card{height:176px}
+  #page .v294-vision-route .vision-ledger-row{grid-template-columns:28px minmax(0,1fr) auto;column-gap:8px}
+  #page .v294-vision-route .vision-ledger-row>b{max-width:112px;overflow:hidden;text-overflow:ellipsis;font-size:11px}
+  #page .v294-vision-route .vision-insight-nums{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  #page .v294-vision-route .vision-insight-nums strong{font-size:clamp(10px,3vw,14px)}
+}
+@media(max-width:350px){
+  #page .v294-vision-route .vision-page-actions{grid-template-columns:1fr}
+  .v294-widget-amount strong{font-size:20px}
+}
+body.theme-black #page .v294-vision-route .vision-page-title h2,
+body.theme-dark #page .v294-vision-route .vision-page-title h2{color:#f4f6ff}
+body.theme-black .v294-finance-widget .v294-widget-ico,
+body.theme-dark .v294-finance-widget .v294-widget-ico{background:#293954;color:#c6daff}
+body.theme-black .v294-finance-widget :is(.v294-widget-amount small,.v294-widget-count),
+body.theme-dark .v294-finance-widget :is(.v294-widget-amount small,.v294-widget-count){color:#aabbd3}
+</style>
+
 </body>
 </html>
