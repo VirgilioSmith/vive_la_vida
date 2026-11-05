@@ -34123,7 +34123,7 @@ function v213ApplePayBadge(t){
  return `<span class="v213-apple-badge v216-apple-pay-brand" title="Compra registrada por Apple Pay / Atajos" aria-label="Origen Apple Pay"><span class="v216-apple-mark" aria-hidden="true">${icon('apple')}</span><span>Pay</span></span>`;
 }
 /* V313: Recepción (saved) y contabilización (imported) son estados distintos. */
-const v212State={links:[],events:[],secret:'',webhook:'',selectedCard:'',currency:'DOP',busy:false,loaded:false,error:'',syncError:'',lastSync:'',health:'unverified',healthMessage:'El vínculo y la recepción son pasos separados.'};
+const v212State={links:[],events:[],secret:'',webhook:'',lastLinkId:'',selectedCard:'',currency:'DOP',busy:false,loaded:false,error:'',syncError:'',lastSync:'',health:'unverified',healthMessage:'El vínculo y la recepción son pasos separados.'};
 let v212Busy=false;
 const v212Enabled=()=>!!(f33Active&&f33Api&&f33User);
 // V288 | Atajos sends variable values to this adapter; existing ingest retains authentication and storage.
@@ -34140,7 +34140,11 @@ function v212SettingsPanel(){
  const cards=(db.cards||[]).filter(c=>!c.archived);
  const linkRows=v212State.links.filter(x=>x.active).map(x=>{
    const c=card(x.instrument_id);
-   return `<div class="v212-linked"><div><strong>${sanitize(c?.name||x.card_label||'Tarjeta')}</strong><small>${sanitize(bankOf(c))} · ${sanitize(x.currency)} · Conexión activa</small></div><button type="button" class="v212-small" data-v212="revoke" data-id="${sanitize(x.id)}" ${v212State.busy?'disabled':''}>Desvincular</button></div>`;
+   return `<div class="v212-linked"><div><strong>${sanitize(c?.name||x.card_label||'Tarjeta')}</strong><small>${sanitize(bankOf(c))} · ${sanitize(x.currency)} · Conexión activa</small></div><button type="button" class="v212-small" data-v212="revoke" data-id="${sanitize(x.id)}" ${v212State.busy?'disabled':''}>Eliminar vínculo</button></div>`;
+ }).join('');
+ const oldRows=v212State.links.filter(x=>!x.active).map(x=>{
+   const c=card(x.instrument_id);
+   return `<div class="v212-linked"><div><strong>${sanitize(c?.name||x.card_label||'Tarjeta')}</strong><small>${sanitize(x.currency)} · Vínculo antiguo inactivo</small></div><button type="button" class="v212-small" data-v212="revoke" data-id="${sanitize(x.id)}" ${v212State.busy?'disabled':''}>Eliminar definitivamente</button></div>`;
  }).join('');
  const eventRows=v212State.events.filter(x=>['pending','review','imported'].includes(x.status)).slice(0,12).map(x=>{
    const c=card(x.instrument_id);
@@ -34151,7 +34155,7 @@ function v212SettingsPanel(){
  <div class="v274-apple-health ${v212State.health==='ok'?'ready':v212State.health==='error'?'fail':'neutral'}" role="status" aria-live="polite"><div><strong>${v212State.health==='ok'?'Receptor verificado · sin registrar gastos':v212State.health==='testing'?'Comprobando receptor…':v212State.health==='error'?'Receptor pendiente de reparar':'Vinculación y recepción se verifican por separado'}</strong><p>${sanitize(v212State.healthMessage||'')}</p></div>${v212State.secret?`<button type="button" class="v212-small" data-v212="test-ingest" ${v212State.health==='testing'?'disabled':''}>Probar conexión</button>`:''}</div>
  ${v212State.secret?`<div class="v212-secret"><strong>Conexión creada: guarda estos datos en tu Atajo</strong><p>La clave solo se muestra ahora. No la compartas ni la coloques en capturas.</p><div class="v212-secretline"><span>URL para Automatización de Atajos (V288)</span><button class="v212-small" data-v212="copy-url" type="button">Copiar URL</button></div><code>${sanitize(v288ShortcutUrl(v212State.webhook)||"Publica primero apple-pay-shortcuts")}</code><div class="v212-secretline"><span>Encabezado: X-Vive-Token</span><button class="v212-small" data-v212="copy-token" type="button">Copiar clave</button></div><input type="password" autocomplete="off" readonly aria-label="Clave del atajo" value="${sanitize(v212State.secret)}"/></div>`:''}
  <details class="v212-guide" open><summary>Configurar Atajos de iPhone · 7 pasos</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>En el editor del Atajo, utiliza las variables <b>Shortcut Input → Amount</b> y <b>Shortcut Input → Merchant</b> recibidas por el disparador. No escribas esos nombres como texto literal. <b>event_id</b> es obligatorio en compras reales; usa un ID estable de la transacción si está disponible o una fecha capturada una sola vez por ejecución (ISO 8601). No uses un texto fijo como “prueba-1”.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b> envía: <code>amount</code> = variable Amount de la transacción (Número o texto numérico); <code>merchant</code> = variable Merchant (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>; y <code>event_id</code> = identificador de la transacción o Fecha actual capturada una única vez por ejecución (ISO 8601). Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Al vincular, pulsa <b>Probar conexión</b>: comprobará el token, el receptor y el vínculo con <code>dry_run</code>, sin crear gastos. La prueba utiliza <code>apple-pay-shortcuts</code> y comprueba el receptor existente <code>apple-pay-ingest</code>. Si falla con 422, revisa los campos <code>missing</code>, <code>amount_type</code> y <code>merchant_type</code> en la respuesta, sin compartir la clave.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. Una prueba correcta de conexión no confirma que Atajos se haya ejecutado. El servidor evita reintentos idénticos próximos mediante una ventana de seguridad; dos compras legítimas iguales muy seguidas pueden requerir revisión. No recupera pagos antiguos automáticamente.</p></details>
- <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}</div><div><div class="v212-title"><strong>Actividad reciente</strong><span>${v212State.events.length} evento${v212State.events.length===1?'':'s'}</span></div>${eventRows||'<p class="v212-muted">No hay compras recibidas recientemente.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
+ <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}${oldRows?`<div class="v212-title" style="margin-top:12px"><strong>Vínculos anteriores</strong></div><p class="v212-muted">No están conectados. Puedes eliminarlos sin borrar las compras históricas.</p>${oldRows}`:''}</div><div><div class="v212-title"><strong>Actividad reciente</strong><span>${v212State.events.length} evento${v212State.events.length===1?'':'s'}</span></div>${eventRows||'<p class="v212-muted">No hay compras recibidas recientemente.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
  ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}</section>`;
 }
 function v212Show(){const target=document.querySelector('.v212-panel');if(target)target.outerHTML=v212SettingsPanel();}
@@ -34197,7 +34201,7 @@ async function v212LinkCall(method, body){
      const renewed=refresh?.data?.session?.access_token;
      if(renewed&&renewed!==token){token=renewed;continue;}
    }
-   if(!response.ok||payload?.ok===false)throw Error(v212LinkError(payload,response.status,method==='DELETE'?'desvincular':'vincular'));
+   if(!response.ok||payload?.ok===false)throw Error(v212LinkError(payload,response.status,method==='DELETE'?'eliminar el vínculo':'vincular'));
    return payload;
  }
  throw Error('No fue posible validar la sesión de Supabase.');
@@ -34213,7 +34217,7 @@ async function v212Pair(){
  try{
   const payload=await v212LinkCall('POST',{instrument_type:'card',instrument_id:id,currency,card_label:card(id)?.name||'Tarjeta'});
   if(!payload?.token||!payload?.webhook_url)throw Error('apple-pay-link respondió sin token o URL. Revisa su despliegue.');
-  v212State.secret=payload.token;v212State.webhook=payload.webhook_url;
+  v212State.secret=payload.token;v212State.webhook=payload.webhook_url;v212State.lastLinkId=payload.link_id||'';
   v212State.health='testing';v212State.healthMessage='Vínculo creado. Comprobando si el receptor está publicado…';
   await v212Load();
   const receptionReady=await v274ProbeAppleIngest(true);
@@ -34255,14 +34259,16 @@ async function v274ProbeAppleIngest(silent=false){
 }
 async function v212Revoke(id){
  if(v212State.busy)return;
- if(!v212State.links.some(x=>x.id===id&&x.active))throw Error('El enlace ya no está activo. Pulsa Actualizar.');
- if(!confirm('¿Desvincular esta tarjeta de Apple Wallet? Las compras ya registradas se conservan.'))return;
+ if(!v212State.links.some(x=>x.id===id))throw Error('Este vínculo ya no existe. Pulsa Actualizar.');
+ if(!confirm('¿Eliminar DEFINITIVAMENTE este vínculo de Apple Pay?\n\nSe elimina de apple_pay_links y el token deja de funcionar.\nLas compras anteriores permanecen en Movimientos y en apple_pay_events.\nLa tarjeta financiera NO se elimina.'))return;
  v212State.busy=true;v212State.error='';v212Show();
  try{
-  await v212LinkCall('DELETE',{link_id:id});
-  v212State.secret='';v212State.webhook='';v212State.health='unverified';v212State.healthMessage='Se revocó este vínculo; su token anterior ya no funcionará.';
-  await v212Load();toast('Tarjeta desvinculada. Su token anterior queda desactivado.');
- }catch(err){v212State.error=err.message||'No se pudo desvincular';}
+  const result=await v212LinkCall('DELETE',{link_id:id});
+  if(result?.deleted!==true)throw Error('El servidor no confirmó el borrado. Comprueba que esté desplegada la función V313.');
+  if(v212State.lastLinkId===id){v212State.secret='';v212State.webhook='';v212State.lastLinkId='';}
+  v212State.health='unverified';v212State.healthMessage='Vínculo eliminado. El token antiguo no funcionará. Las compras anteriores se conservaron.';
+  await v212Load();toast(`Vínculo eliminado. ${Number(result.retained_events||0)} eventos históricos conservados.`);
+ }catch(err){v212State.error=err.message||'No se pudo eliminar el vínculo';}
  finally{v212State.busy=false;v212Show();}
 }
 async function v212Mark(event,status,txId=''){
