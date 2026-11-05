@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta name="vive-el-hoy-build-v305" content="suscripciones-colores-sutiles-activos-detalle-historial"/>
-<meta name="vive-el-hoy-build-v302" content="resumen-web-compromisos-doble-altura-y-suscripciones-movil-referencia"/>
+<meta name="vive-el-hoy-build-v306" content="resumen-web-compromisos-doble-altura-y-suscripciones-movil-referencia"/>
 <meta name="vive-el-hoy-build-v301" content="restauracion-analisis-presupuesto-vision-web-suscripciones-movil"/>
 <meta name="vive-el-hoy-v297" content="centro-pagos-web-y-recuperacion-analisis"/>
 <meta name="vive-el-hoy-build-v296" content="personalizacion-independiente-auditoria-ux"/>
@@ -34932,23 +34932,14 @@ function v295GlobalVisionAndPayments(){
    No renombra el route móvil Vision ni altera sus datos; las otras dos
    secciones se navegan con NAV_SECTIONS.payments y sus páginas originales. */
 function v297DesktopPaymentCenter(){
- // V301: Single desktop Vision Global; the six original financial analytics
- // stay inside visionOverview(). Payment operations are accessible in the same
- // view, without creating another standalone Compromisos page.
- const vision=v294VisionPage().replace(/data-act="navigate" data-id="payments"/g,'data-v301-open-payments="1"');
- return `<div class="v301-vision-desktop" aria-label="Visión global web">
-   <div class="v301-vision-intro"><span class="v297-eyebrow">VIVE EL HOY · PERSPECTIVA FINANCIERA</span><h1>Visión global</h1><p>Patrimonio, flujo, indicadores de desempeño y próximos riesgos.</p></div>
-   <div class="v301-vision-financial">${vision}</div>
-   <details class="v301-vision-payments" id="v301-payment-operations"><summary>${icon('calendar')} <strong>Gestionar pagos y vencimientos</strong><span>Consultar obligaciones y registrar pagos</span>${icon('arrow')}</summary><div class="v301-vision-payment-body">${payments()}</div></details>
+ // V306: escritorio reutiliza el mismo panel analítico que la referencia móvil.
+ // Se elimina el acordeón de pagos responsable de los SVG gigantes.
+ // No se modifican cálculos, datos, ni los formularios de pago de otros módulos.
+ const globalContents=analytics();
+ return `<div class="v306-global-desktop" aria-label="Visión global web">
+   <div class="v306-global-content">${globalContents}</div>
  </div>`;
 }
-document.addEventListener('click',event=>{
- const action=event.target.closest?.('[data-v301-open-payments]');
- if(!action||!action.closest('#page .v301-vision-financial'))return;
- event.preventDefault();event.stopImmediatePropagation();
- const detail=document.getElementById('v301-payment-operations');
- if(detail){detail.open=true;detail.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});}
-},true);
 pages.payments=function(){
  // Visión global del iPhone conserva íntegra la estructura V295.
  return isMobileViewport()?v295GlobalVisionAndPayments():v297DesktopPaymentCenter();
@@ -46891,5 +46882,15 @@ body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-exec
 }
 </style>
 
+
+<style id="vive-v306-global-unico">
+/* Escritorio: versión ampliada del panel Visión global móvil, sin acordeón de pagos. */
+@media(min-width:791px){
+  #page .v306-global-desktop,#page .v306-global-content{width:100%;max-width:none;min-width:0;box-sizing:border-box}
+  #page .v306-global-content>.analytics-world{max-width:none;width:100%;min-width:0}
+  #page .v306-global-content .analytic-hero{min-width:0;overflow:hidden}
+  #page .v306-global-content .grid>*{min-width:0}
+}
+</style>
 </body>
 </html>
