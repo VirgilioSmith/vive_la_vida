@@ -23654,7 +23654,7 @@ function v165SearchAction(){
 
 
 function main(){
- const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Compromisos','Compromisos y vencimientos'],vision:['Visión','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
+ const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Visión global y pagos','Indicadores, compromisos y vencimientos'],vision:['Visión','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
   <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
@@ -34709,6 +34709,56 @@ function v294VisionPage(){
 }
 pages.vision=v294VisionPage;
 
+/* V295 · Visión global ocupa la entrada principal de Compromisos.
+ * Centro de pagos permanece DEBAJO, dentro de la misma vista.
+ * Se reutilizan analytics() y payments() sin cambiar sus cálculos.
+ * Suscripciones (recurring) y Entre personas (personal) siguen intactos.
+ */
+function v295GlobalVisionAndPayments(){
+  const globalContents=analytics().replace(
+    /data-act="navigate" data-id="payments"/g,
+    'data-v295-open-payment-center="1"'
+  );
+  return `<div class="v295-global-payments">
+    <section class="v295-global-overview" aria-label="Visión global de tus finanzas">
+      <div class="v295-global-top">
+        <div><span class="v295-eye">VIVE EL HOY · PANORAMA FINANCIERO</span>
+        <h2>Visión global</h2>
+        <p>Tus indicadores y análisis, en un solo lugar.</p></div>
+        <button type="button" data-v295-open-payment-center="1" class="v295-jump-payments">
+          ${icon('calendar')} Centro de pagos ${icon('arrow')}
+        </button>
+      </div>
+      ${globalContents}
+    </section>
+    <section class="v295-payments-below" id="v295-payments-below"
+      aria-label="Centro de pagos y compromisos">
+      <div class="v295-payment-section-title">
+        <div><span class="v295-eye">TUS OBLIGACIONES</span>
+          <h2>Centro de pagos</h2>
+          <p>Compromisos, vencimientos y acciones de pago.</p>
+        </div>
+        <button type="button" data-v295-scroll-up="1" class="v295-jump-top">
+          ${icon('arrow')} Volver a Visión global
+        </button>
+      </div>
+      ${payments()}
+    </section>
+  </div>`;
+}
+pages.payments=v295GlobalVisionAndPayments;
+
+document.addEventListener('click',function(event){
+  const down=event.target.closest('[data-v295-open-payment-center]');
+  const up=event.target.closest('[data-v295-scroll-up]');
+  if(!down&&!up)return;
+  if(!event.target.closest('#page .v295-global-payments'))return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const target=document.querySelector(down?'#v295-payments-below':'#page .v295-global-overview');
+  if(target)target.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+},true);
+
 pages.settings=v242Settings;
 function v242MobileCircles(liquid,debt,net,comparison){
  const circle=(id,label,value,prior,risk=false,featured=false)=>`<button type="button" class="ff-bubble ${featured?'featured':''} ${id==='net'&&value<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="${id}" data-chart-tip="${label}|Valor exacto: ${money(value,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(value)}</span>${v105BubblePercent(value,prior,comparison,risk)}<small>${label}</small></button>`;
@@ -35221,6 +35271,13 @@ render=function(){v245PreviousRender();v245PolishOnRender();};
       actions.classList.remove('v252-quick');
       actions.classList.add('v283-hero-payments');
       hero.append(actions);
+    }
+    // V295: place the four existing type KPIs inside the main hero, not
+    // in a second floating block. Original action handlers remain in place.
+    const typeKPIs=root.querySelector(':scope > .v286-payment-groups');
+    if(typeKPIs){
+      typeKPIs.classList.add('v295-types-inside-hero');
+      hero.append(typeKPIs);
     }
     root.querySelector('.v145-pay-lower')?.classList.add('v252-schedule');
     root.dataset.v252Ready='1';
@@ -45814,6 +45871,130 @@ body.theme-black .v294-finance-widget .v294-widget-ico,
 body.theme-dark .v294-finance-widget .v294-widget-ico{background:#293954;color:#c6daff}
 body.theme-black .v294-finance-widget :is(.v294-widget-amount small,.v294-widget-count),
 body.theme-dark .v294-finance-widget :is(.v294-widget-amount small,.v294-widget-count){color:#aabbd3}
+</style>
+
+
+<style id="vive-v295-global-finance-and-payments">
+/* Dedicated to the Compromisos destination. Existing financial panels and
+   payment forms are reused, not reimplemented. Other modules are unaffected. */
+#page .v295-global-payments{width:100%;min-width:0;max-width:100%;display:flex;flex-direction:column;gap:22px;padding-bottom:70px}
+#page .v295-global-overview,
+#page .v295-payments-below{min-width:0;max-width:100%;scroll-margin-top:14px}
+#page .v295-global-top,
+#page .v295-payment-section-title{
+ display:flex;justify-content:space-between;align-items:center;gap:18px;min-width:0;
+ margin:0 0 15px;padding:0 1px
+}
+#page .v295-eye{display:block;color:#6e86a6;font-size:10px;font-weight:820;letter-spacing:.12em;margin-bottom:7px}
+#page .v295-global-top h2,#page .v295-payment-section-title h2{
+ color:var(--ink,#243651);margin:0;font-size:clamp(23px,2.2vw,32px);line-height:1.12;letter-spacing:-.04em
+}
+#page .v295-global-top p,#page .v295-payment-section-title p{
+ color:var(--muted,#7b8ba1);font-size:12px;line-height:1.5;margin:6px 0 0
+}
+#page .v295-jump-payments,#page .v295-jump-top{
+ border:1px solid rgba(157,181,219,.55);background:rgba(255,255,255,.7);color:#2e5180;
+ padding:10px 13px;border-radius:13px;font-weight:730;font-size:12px;
+ display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:0 0 auto
+}
+#page .v295-jump-payments svg,#page .v295-jump-top svg{width:16px;height:16px}
+#page .v295-jump-payments:hover,#page .v295-jump-top:hover{background:#fff}
+#page .v295-global-overview>.analytics-world{min-width:0;max-width:100%}
+#page .v295-payments-below{
+ border-top:1px solid rgba(152,176,214,.4);
+ padding-top:22px
+}
+#page .v295-payments-below>.v145-paycenter{min-width:0;max-width:100%}
+#page .v295-payments-below .v286-types-grid{min-width:0}
+body.theme-black #page .v295-global-top h2,
+body.theme-black #page .v295-payment-section-title h2,
+body.theme-dark #page .v295-global-top h2,
+body.theme-dark #page .v295-payment-section-title h2{color:#f3f7ff}
+body.theme-black #page :is(.v295-jump-payments,.v295-jump-top),
+body.theme-dark #page :is(.v295-jump-payments,.v295-jump-top){
+ background:rgba(30,48,75,.9);color:#dceaff;border-color:rgba(137,157,197,.4)
+}
+@media(max-width:790px){
+ #page .v295-global-payments{gap:21px;padding-bottom:calc(122px + env(safe-area-inset-bottom,0px))}
+ #page .v295-global-top,#page .v295-payment-section-title{display:flex;flex-direction:column;align-items:stretch;gap:12px}
+ #page .v295-global-top h2,#page .v295-payment-section-title h2{font-size:clamp(25px,7vw,32px)}
+ #page .v295-jump-payments,#page .v295-jump-top{width:100%;min-height:42px}
+ #page .v295-payments-below{padding-top:20px}
+ #page .v295-global-overview .analytics-world{max-width:100%;min-width:0}
+ #page .v295-global-overview :is(.grid,.columns,.kpis,.analytics-world,.analytic-hero){
+  max-width:100%;min-width:0
+ }
+}
+</style>
+
+
+<style id="vive-v295-payment-kpis-inside-main">
+/* Four type indicators stay inside the main blue Compromisos hero.
+   Only the placement and visual geometry change; existing payment actions and
+   amounts are untouched. */
+#page #v145-payment-center.v252-center .v252-hero>.v295-types-inside-hero{
+ display:block!important;box-sizing:border-box!important;min-width:0!important;width:100%!important;
+ margin:20px 0 0!important;padding:17px 0 0!important;
+ border-top:1px solid rgba(238,244,255,.3)!important;
+ background:none!important;box-shadow:none!important
+}
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-groups-header{
+ display:none!important
+}
+@media(min-width:791px){
+ #page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-types-grid{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:11px!important
+ }
+}
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-tile{
+ min-width:0!important;max-width:none!important;box-sizing:border-box!important;
+ background:rgba(255,255,255,.095)!important;color:#f4f8ff!important;
+ border:1px solid rgba(235,245,255,.28)!important;
+ border-radius:17px!important;box-shadow:none!important;padding:13px 12px!important;
+ display:flex!important;flex-direction:column!important;gap:8px!important
+}
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero
+ :is(.v286-pay-tile-name,.v286-pay-sum,.v286-pay-count){
+ color:#f7faff!important
+}
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-count{
+ opacity:.76!important;font-size:10px!important;line-height:1.35!important
+}
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-sum{
+ font-size:clamp(17px,1.65vw,23px)!important;line-height:1.12!important;white-space:nowrap!important
+}
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-tile-actions{
+ display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;margin-top:auto!important
+}
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-tile-actions button{
+ min-width:0!important;width:100%!important;border-radius:10px!important;
+ min-height:33px!important;padding:6px 4px!important;font-size:10px!important;
+ white-space:nowrap!important;box-shadow:none!important
+}
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-icon{
+ background:rgba(255,255,255,.14)!important;color:#f4f8ff!important
+}
+@media(max-width:790px){
+ #page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-types-grid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important
+ }
+ #page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-tile{
+  padding:11px 9px!important;gap:7px!important;border-radius:14px!important
+ }
+ #page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-sum{font-size:clamp(15px,4.6vw,19px)!important}
+ #page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-tile-actions{
+  grid-template-columns:1fr!important
+ }
+}
+
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-show-payments{
+ color:#f7faff!important;background:rgba(255,255,255,.12)!important;
+ border:1px solid rgba(248,251,255,.6)!important
+}
+#page #v145-payment-center.v252-center .v252-hero .v295-types-inside-hero .v286-pay-now{
+ color:#20416e!important;background:#fff!important;border:1px solid #fff!important;
+ font-weight:810!important
+}
 </style>
 
 </body>
