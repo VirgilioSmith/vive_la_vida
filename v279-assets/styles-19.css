@@ -1,0 +1,603 @@
+
+/* V271 · UI coherente: configuración visible, Gastos hormiga, personalización en Ajustes y contraste oscuro. */
+@media(max-width:790px){
+  /* El nuevo control vive en el encabezado normal, junto a la campana.
+     No cubre la isla dinámica: hereda el espacio seguro del header. */
+  .vive-mobile-top>.v65-header-tools.v146-mobile-actions{display:flex!important;align-items:center!important;gap:8px!important;flex-shrink:0!important;min-width:max-content!important}
+  .vive-mobile-top .v271-settings-access{
+    display:grid!important;place-items:center!important;flex:none!important;
+    width:40px!important;height:40px!important;min-width:40px!important;
+    padding:0!important;border-radius:50%!important;
+    border:1px solid rgba(255,255,255,.9)!important;
+    background:linear-gradient(145deg,rgba(255,255,255,.73),rgba(242,247,255,.64))!important;
+    color:#526784!important;box-shadow:0 6px 18px rgba(40,64,100,.075)!important;
+    -webkit-backdrop-filter:blur(14px) saturate(130%);backdrop-filter:blur(14px) saturate(130%);
+  }
+  .vive-mobile-top .v271-settings-access svg{width:20px!important;height:20px!important;stroke-width:1.8!important}
+  .vive-mobile-top .v271-settings-access:focus-visible{outline:2px solid #547ad2!important;outline-offset:3px!important}
+  .vive-mobile-top .v271-settings-access.active{background:rgba(88,125,196,.18)!important;color:#385eae!important}
+  .v205-explore-links .v205-explore-link[data-id="antExpenses"] .v205-explore-link-icon{
+    color:#5d65bb!important;background:linear-gradient(140deg,rgba(202,211,250,.62),rgba(236,231,250,.72))!important;
+  }
+  .v205-explore-link[data-id="antExpenses"] .v205-explore-link-copy small{line-height:1.4!important}
+}
+/* Espaciado y jerarquía de las tres grandes áreas de Suscripciones y del catálogo.
+   No alterar cálculo de KPI, orden de Pareto ni campos de tablas. */
+.world-recurring .v264-block-head{row-gap:6px!important}
+.world-recurring .v264-block-head p{line-height:1.55!important}
+.v205-explore-link-copy strong,.v242-settings-row-copy strong{letter-spacing:-.016em}
+/* Black: los fondos neutros dejan de ser blancos, y los gráficos conservan color semántico. */
+body.theme-black,body.theme-dark{
+  --v271-surface:#161d29;--v271-surface2:#202a38;--v271-edge:rgba(125,147,182,.28);
+  --v271-text:#eef4ff;--v271-muted:#b3c1d5;
+}
+body.theme-black .vive-mobile-top .v271-settings-access,
+body.theme-dark .vive-mobile-top .v271-settings-access{
+  background:linear-gradient(140deg,rgba(42,52,70,.95),rgba(23,31,44,.94))!important;
+  color:#e0ebfd!important;border-color:rgba(140,163,201,.33)!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.2)!important;
+}
+body.theme-black .v205-explore-link[data-id="antExpenses"] .v205-explore-link-icon,
+body.theme-dark .v205-explore-link[data-id="antExpenses"] .v205-explore-link-icon{
+  background:#28364e!important;color:#becaff!important;
+}
+/* Wallet: superficies secundarias y balances sin blancos en Black; mantener acabado físico por categoría. */
+body.theme-black .v266-wallet :is(.v266-wallet-panel,.v266-wallet-detail,.v266-activity,.v266-wallet-actions button>span),
+body.theme-dark .v266-wallet :is(.v266-wallet-panel,.v266-wallet-detail,.v266-activity,.v266-wallet-actions button>span){
+ background-color:var(--v271-surface)!important;border-color:var(--v271-edge)!important;color:var(--v271-text)!important;
+ box-shadow:none!important;
+}
+body.theme-black .v266-wallet .v266-wallet-detail summary,
+body.theme-dark .v266-wallet .v266-wallet-detail summary{color:var(--v271-text)!important}
+body.theme-black .v266-wallet :is(.v266-wallet-note,.v266-activity-row small,.v266-wallet-detail summary small),
+body.theme-dark .v266-wallet :is(.v266-wallet-note,.v266-activity-row small,.v266-wallet-detail summary small){color:var(--v271-muted)!important}
+/* KPI original y alternativa de círculos: contraste, sin teñir los datos positivos/negativos. */
+body.theme-black .v242-mobile-web-position,
+body.theme-dark .v242-mobile-web-position{background:linear-gradient(140deg,#1a2538,#182235)!important;border-color:var(--v271-edge)!important}
+body.theme-black .v242-mobile-web-position .ff-bubble:not(.featured),
+body.theme-dark .v242-mobile-web-position .ff-bubble:not(.featured){background:linear-gradient(145deg,#2c3952,#222e42)!important;border:1px solid rgba(133,155,195,.3)!important}
+body.theme-black .v242-mobile-web-position .ff-bubble:not(.featured) :is(.bubble-amount,small),
+body.theme-dark .v242-mobile-web-position .ff-bubble:not(.featured) :is(.bubble-amount,small){color:#f1f5ff!important}
+/* Personalización: miniaturas, etiquetas, valores y selector del estilo. */
+body.theme-black .v242-ios-settings :is(.v242-appearance-picker,.v242-style-option,.v242-settings-rows,.v242-settings-row),
+body.theme-dark .v242-ios-settings :is(.v242-appearance-picker,.v242-style-option,.v242-settings-rows,.v242-settings-row){
+ color:var(--v271-text)!important;border-color:var(--v271-edge)!important;
+}
+body.theme-black .v242-ios-settings :is(.v242-preference-title p,.v242-style-description small,.v242-picker-note),
+body.theme-dark .v242-ios-settings :is(.v242-preference-title p,.v242-style-description small,.v242-picker-note){color:var(--v271-muted)!important}
+body.theme-black .v242-ios-settings .v242-style-art.v242-mini-original,
+body.theme-dark .v242-ios-settings .v242-style-art.v242-mini-original{background:linear-gradient(145deg,#29384e,#202b3e)!important;color:#ecf3ff!important}
+body.theme-black .v242-ios-settings .v242-mini-circles,
+body.theme-dark .v242-ios-settings .v242-mini-circles{background:linear-gradient(145deg,#293c57,#1b2c45)!important;color:#edf4ff!important}
+/* Suscripciones: las gráficas, porcentajes y tablas visibles no quedan blancas. */
+body.theme-black .world-recurring :is(.subscription-world,.v264-block,.sub-analysis-layout>.panel,.sub-analysis-stats>div,.v46-subscription-card),
+body.theme-dark .world-recurring :is(.subscription-world,.v264-block,.sub-analysis-layout>.panel,.sub-analysis-stats>div,.v46-subscription-card){
+ border-color:var(--v271-edge)!important;color:var(--v271-text)!important;
+}
+body.theme-black .world-recurring :is(.sub-pareto td,.sub-pareto th,.sub-composition,.v46-sub-card-title strong),
+body.theme-dark .world-recurring :is(.sub-pareto td,.sub-pareto th,.sub-composition,.v46-sub-card-title strong){color:var(--v271-text)!important;border-color:var(--v271-edge)!important}
+body.theme-black .world-recurring :is(.sub-composition small,.v46-sub-card-next,.v46-sub-card-title small,.sub-analysis-stats small),
+body.theme-dark .world-recurring :is(.sub-composition small,.v46-sub-card-next,.v46-sub-card-title small,.sub-analysis-stats small){color:var(--v271-muted)!important}
+body.theme-black .world-recurring :is(.sub-bar,.sub-bar.wide),
+body.theme-dark .world-recurring :is(.sub-bar,.sub-bar.wide){background:#344157!important}
+/* Movimientos, indicadores y Gastos hormiga: neutral sobre Black, montos por signo sin cambios. */
+body.theme-black .world-register :is(.ledger-card,.ledger-controls,.ledger-scroll),
+body.theme-dark .world-register :is(.ledger-card,.ledger-controls,.ledger-scroll){border-color:var(--v271-edge)!important}
+body.theme-black .world-register .ledger-scroll table,
+body.theme-dark .world-register .ledger-scroll table{color:var(--v271-text)!important}
+body.theme-black .world-register .ledger-scroll :is(thead,th),
+body.theme-dark .world-register .ledger-scroll :is(thead,th){background:#222e3f!important;color:#cbd9ec!important}
+body.theme-black .world-register .ledger-scroll td,
+body.theme-dark .world-register .ledger-scroll td{border-color:var(--v271-edge)!important}
+body.theme-black .world-register .v265-balance-value,
+body.theme-dark .world-register .v265-balance-value{color:var(--v271-text)!important}
+body.theme-black .ant-module :is(.ant-table,.ant-table th,.ant-table td,.ant-detail),
+body.theme-dark .ant-module :is(.ant-table,.ant-table th,.ant-table td,.ant-detail){border-color:var(--v271-edge)!important;color:var(--v271-text)!important}
+body.theme-black .ant-module :is(input,select,.ant-tabs button),
+body.theme-dark .ant-module :is(input,select,.ant-tabs button){color:var(--v271-text)!important;}
+/* Etiquetas de gráficos y leyendas: accesibilidad oscura sin cambiar series ni sus valores. */
+body.theme-black :is(.analytics-world,.kpi-studio,.subscription-world,.ant-module) svg text,
+body.theme-dark :is(.analytics-world,.kpi-studio,.subscription-world,.ant-module) svg text{fill:#d6e1f4!important}
+body.theme-black :is(.analytics-world,.kpi-studio,.subscription-world,.ant-module) :is(.chart-legend,.trend-legend,.footnote),
+body.theme-dark :is(.analytics-world,.kpi-studio,.subscription-world,.ant-module) :is(.chart-legend,.trend-legend,.footnote){color:var(--v271-muted)!important}
+/* Respetar el contraste de los semáforos financieros. */
+body.theme-black .positive,body.theme-dark .positive{color:#61d8a3!important}
+body.theme-black .negative,body.theme-dark .negative{color:#ff9c9e!important}
+
+
+/* Auditoría Black: contraste completo del KPI original de Resumen en iPhone.
+   La variante de tres círculos conserva el degradado y estilos ya establecidos. */
+body.theme-black .world-overview .vive-mobile-balance:not(.v242-mobile-web-position),
+body.theme-dark .world-overview .vive-mobile-balance:not(.v242-mobile-web-position){
+ background:linear-gradient(145deg,#233149 0%,#1c283b 55%,#151e30 100%)!important;
+ color:#f4f7ff!important;border:1px solid rgba(128,152,190,.32)!important;
+ box-shadow:0 14px 35px rgba(0,0,0,.18)!important;
+}
+body.theme-black .world-overview .vive-mobile-balance .vive-mobile-balance-light,
+body.theme-dark .world-overview .vive-mobile-balance .vive-mobile-balance-light{
+ opacity:.08!important;pointer-events:none!important;
+}
+body.theme-black .world-overview .vive-mobile-balance :is(.vive-mobile-balance-top,.vive-mobile-balance-sub,.vive-mobile-balance-foot small),
+body.theme-dark .world-overview .vive-mobile-balance :is(.vive-mobile-balance-top,.vive-mobile-balance-sub,.vive-mobile-balance-foot small){color:#bfcee4!important}
+body.theme-black .world-overview .vive-mobile-balance :is(.vive-mobile-balance-amount,.vive-mobile-balance-foot b,.v186-mobile-foot-amount),
+body.theme-dark .world-overview .vive-mobile-balance :is(.vive-mobile-balance-amount,.vive-mobile-balance-foot b,.v186-mobile-foot-amount){
+ color:#f5f8ff!important;text-shadow:none!important;
+}
+body.theme-black .world-overview .vive-mobile-balance .vive-mobile-balance-divider,
+body.theme-dark .world-overview .vive-mobile-balance .vive-mobile-balance-divider{background:rgba(170,191,220,.22)!important;border-color:rgba(170,191,220,.22)!important}
+body.theme-black .world-overview .vive-mobile-balance .vive-mobile-balance-foot span+span,
+body.theme-dark .world-overview .vive-mobile-balance .vive-mobile-balance-foot span+span{border-left-color:rgba(170,191,220,.22)!important}
+
+
+/* =============================================================================
+   V272 — SISTEMA DE EXPERIENCIA · VIVE EL HOY · FINANZAS 360
+   Propósito: coherencia entre módulos, legibilidad y ritmo de interacción.
+   No calcula dinero, no altera datos ni cambia el contrato de ninguna operación.
+   Los componentes financieros conservan la lógica y la identidad existentes.
+   ========================================================================== */
+:root {
+  --v272-space-1: 4px;
+  --v272-space-2: 8px;
+  --v272-space-3: 12px;
+  --v272-space-4: 16px;
+  --v272-space-5: 20px;
+  --v272-space-6: 24px;
+  --v272-space-8: 32px;
+  --v272-radius-control: 13px;
+  --v272-radius-tile: 20px;
+  --v272-radius-panel: 25px;
+  --v272-color-ink: #1c304e;
+  --v272-color-secondary: #61738e;
+  --v272-color-highlight: #456bd2;
+  --v272-outline: rgba(102, 134, 185, .26);
+  --v272-border: rgba(192, 206, 230, .66);
+  --v272-sheet: rgba(255, 255, 255, .88);
+  --v272-sheet-solid: #ffffff;
+  --v272-shadow: 0 12px 34px rgba(39, 65, 101, .075);
+  --v272-sticky-foreground: #ffffff;
+  --v272-mobile-inline: clamp(14px, 4vw, 24px);
+}
+body.theme-black,
+body.theme-dark {
+  color-scheme: dark;
+  --v272-color-ink: #eff4ff;
+  --v272-color-secondary: #bbcadf;
+  --v272-color-highlight: #a6bdfc;
+  --v272-outline: rgba(159, 183, 222, .44);
+  --v272-border: rgba(117, 145, 191, .32);
+  --v272-sheet: rgba(22, 31, 46, .94);
+  --v272-sheet-solid: #182439;
+  --v272-shadow: 0 14px 38px rgba(0, 0, 0, .22);
+  --v272-sticky-foreground: #182338;
+}
+
+/* A. LECTURA — SISTEMA UNIFICADO PARA ENCABEZADOS Y TEXTOS */
+#page :is(.section-title, .panel-head, .v26-head, .v264-block-head) {
+  min-width: 0;
+  column-gap: var(--v272-space-4);
+  row-gap: var(--v272-space-2);
+}
+#page :is(.section-title h2, .panel-head h3, .v264-block-head h3) {
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+#page :is(.section-title p, .panel-head p, .v26-head p, .v264-block-head p) {
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+#page :is(.panel, .kpi, .bank-card, .v46-subscription-card, .v205-explore-link, .v252-product-card) {
+  min-width: 0;
+}
+#page :is(.money, .kpi-value, [class*="-amount"], [class*="-balance"], [class*="-total"]) {
+  font-variant-numeric: tabular-nums;
+}
+#page :is(.mini-row, .v46-subscription-card, .v205-explore-link, .v46-institution-tile) {
+  scroll-margin-block: 20px;
+}
+#page :is(.mini-row > div, .v46-sub-card-title, .v205-explore-link-copy) {
+  min-width: 0;
+}
+
+/* B. ACCESIBILIDAD — RESPUESTA VISIBLE A TECLADO Y TACTO */
+:where(button, a, select, input, textarea, [role="button"], [role="tab"]):focus-visible {
+  outline: 3px solid var(--v272-color-highlight) !important;
+  outline-offset: 3px !important;
+}
+:where(button, a, [role="button"]):focus:not(:focus-visible) {
+  outline: none;
+}
+:where(button, a, [role="button"], [role="tab"])[disabled],
+:where(button, a, [role="button"], [role="tab"])[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+@media (hover: hover) and (pointer: fine) {
+  #page :is(.v205-explore-link, .v46-subscription-card, .v46-institution-tile, .v51-mobile-movement) {
+    transition: transform .17s ease, box-shadow .17s ease, border-color .17s ease;
+  }
+  #page :is(.v205-explore-link, .v46-subscription-card, .v46-institution-tile):hover {
+    transform: translateY(-2px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html, body, #page, #page *, #page *::before, #page *::after,
+  #modal-root, #modal-root *, #modal-root *::before, #modal-root *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* C. SUPERFICIES — UNA PROFUNDIDAD SUTIL SIN DUPLICAR EL RITMO DE LA APP */
+#page :is(.ledger-card, .v46-subs-panel, .sub-analysis-layout > .panel) {
+  border-radius: var(--v272-radius-panel);
+  overflow-wrap: anywhere;
+}
+#page :is(.v205-explore-link, .v46-subscription-card) {
+  border-radius: var(--v272-radius-tile);
+}
+#page :is(.btn, .v46-sub-card-actions button) {
+  -webkit-tap-highlight-color: transparent;
+}
+#page :is(.v46-sub-card-actions, .tx-actions, .v264-kpi-actions) {
+  flex-wrap: wrap;
+}
+#page .v46-sub-card-actions .btn {
+  min-height: 34px;
+}
+#page .v46-sub-card-title strong {
+  overflow-wrap: anywhere;
+}
+
+/* D. FORMULARIOS FINANCIEROS — MENOS FRICCIÓN Y MISMO TAMAÑO DE CONTROL */
+#modal-root :is(input, select, textarea, .field),
+#page :is(input.field, select.field, textarea.field, .ledger-controls input, .ledger-controls select) {
+  max-width: 100%;
+  min-width: 0;
+  font-size: max(16px, 1em);
+}
+#modal-root :is(label, .field-label, .v259-field-label),
+#page :is(.ledger-control > label, .filter-label) {
+  text-wrap: pretty;
+  line-height: 1.35;
+}
+#modal-root :is(.form-grid, .form-row, .form-full) {
+  min-width: 0;
+}
+#modal-root .modal-head {
+  min-width: 0;
+  gap: 12px;
+}
+#modal-root .modal-head :is(h2, p) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+#modal-root .modal-head .close,
+#modal-root button[data-act="closeModal"] {
+  flex: 0 0 auto;
+  min-width: 40px;
+  min-height: 40px;
+  display: inline-grid;
+  place-items: center;
+}
+#modal-root :is(.btn, button[type="submit"]) {
+  touch-action: manipulation;
+}
+
+/* E. MOVIMIENTOS — IMPORTE Y BALANCE SIN SALTOS DE COLUMNA */
+.world-ledger #page .ledger-controls,
+.world-transactions #page .ledger-controls,
+#page .ledger-card .ledger-controls {
+  align-items: end;
+  row-gap: 12px;
+}
+#page .ledger-card .ledger-control {
+  min-width: 0;
+}
+#page .ledger-card .ledger-control :is(input, select) {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+#page .ledger-card .ledger-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+#page .ledger-card .ledger-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#page .ledger-card .ledger-scroll th,
+#page .ledger-card .ledger-scroll td {
+  vertical-align: middle;
+}
+#page .ledger-card .ledger-scroll td.money,
+#page .ledger-card .ledger-scroll .v265-balance-cell {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+#page .ledger-card .ledger-scroll th:nth-last-child(-n+3) {
+  white-space: nowrap;
+}
+#page .ledger-card .ledger-scroll td:nth-last-child(3),
+#page .ledger-card .ledger-scroll td:nth-last-child(2) {
+  text-align: right;
+}
+#page .ledger-card .ledger-scroll .v265-balance-single {
+  display: flex;
+  justify-content: flex-end;
+}
+#page .ledger-card .ledger-scroll .tx-actions {
+  justify-content: flex-end;
+}
+
+/* F. SUSCRIPCIONES — TRES NIVELES SIN PÉRDIDA DE RANKING Y PARETO */
+.world-recurring #page .v264-subs-kpi {
+  gap: clamp(16px, 2vw, 28px);
+}
+.world-recurring #page .v264-block-head {
+  padding-inline: 3px;
+}
+.world-recurring #page .v264-services-card,
+.world-recurring #page .v264-intelligence-card {
+  min-width: 0;
+}
+.world-recurring #page .sub-pareto th,
+.world-recurring #page .sub-pareto td {
+  vertical-align: middle;
+}
+.world-recurring #page .sub-pareto th.right,
+.world-recurring #page .sub-pareto td.right {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.world-recurring #page .sub-composition .split {
+  gap: 12px;
+}
+.world-recurring #page .sub-analysis-layout > .panel {
+  min-width: 0;
+}
+
+/* G. COMPROMISOS, PERSONAS Y GASTOS HORMIGA */
+#page :is(.v252-payments, .v252-recurring, .v252-personal, .v254-ant-world) {
+  min-width: 0;
+}
+#page :is(.v252-payments, .v252-personal) :is(.v252-summary, .v252-card, .v252-item) {
+  min-width: 0;
+}
+#page :is(.v252-payments, .v252-personal) :is(strong, b, .money) {
+  overflow-wrap: anywhere;
+}
+#page :is(.v254-ant-world, .v254-ant-expenses) .table-wrap {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+#page :is(.v254-ant-world, .v254-ant-expenses) .money {
+  font-variant-numeric: tabular-nums;
+}
+
+/* H. AJUSTES Y ESTADOS — COHERENCIA ENTRE PERSONALIZACIÓN Y MODO BLACK */
+#page :is(.v242-settings-section, .v242-settings-group) {
+  min-width: 0;
+}
+#page .v242-settings-row {
+  min-width: 0;
+  gap: 12px;
+}
+#page .v242-settings-row-copy {
+  min-width: 0;
+}
+#page .v242-settings-row-copy :is(strong, small, p) {
+  overflow-wrap: anywhere;
+}
+body.theme-black #page :is(.v242-settings-row, .v46-subscription-card, .v205-explore-link),
+body.theme-dark #page :is(.v242-settings-row, .v46-subscription-card, .v205-explore-link) {
+  border-color: var(--v272-border);
+}
+body.theme-black #page :is(.v242-settings-row-copy, .v46-sub-card-title, .v205-explore-link-copy),
+body.theme-dark #page :is(.v242-settings-row-copy, .v46-sub-card-title, .v205-explore-link-copy) {
+  color: var(--v272-color-ink);
+}
+body.theme-black #page :is(.v242-settings-row-copy small, .v46-sub-card-title small, .v205-explore-link-copy small),
+body.theme-dark #page :is(.v242-settings-row-copy small, .v46-sub-card-title small, .v205-explore-link-copy small) {
+  color: var(--v272-color-secondary);
+}
+
+/* I. MOVIL — ISLA DINÁMICA, CARRUSEL Y CONTENIDO BAJO LA NAVEGACIÓN */
+@media (max-width: 790px) {
+  :root {
+    --v272-mobile-gap: 14px;
+    --v272-mobile-target: 44px;
+  }
+  html {
+    overflow-x: clip;
+  }
+  body {
+    min-width: 0;
+  }
+  #app, .shell, .main, #page {
+    min-width: 0;
+  }
+  body .main {
+    padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+  }
+  body #page :is(.panel, .kpi, .v46-subs-panel, .v252-card, .v205-explore-group) {
+    min-width: 0;
+  }
+  #page :is(.section-title, .panel-head) {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  #page :is(.section-title h2, .v264-block-head h3) {
+    font-size: clamp(21px, 5.8vw, 27px);
+    line-height: 1.12;
+  }
+  #page .kpi-value {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.06;
+  }
+  #page .v51-mobile-movement {
+    min-width: 0;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  #page .v51-mobile-movement-info {
+    min-width: 0;
+  }
+  #page .v51-mobile-movement-info strong {
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+  #page .v265-mobile-balance {
+    min-width: 0;
+  }
+  #page .v265-mobile-balance .v265-balance-value {
+    font-size: clamp(13px, 3.6vw, 16px);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Barras de opciones horizontales: scroll de sección, jamás de la página. */
+  #page :is(.v206-bank-tabs, .v207-operation-choice, .v245-inner-tabs) {
+    max-width: 100%;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* El usuario conserva la ubicación y el control de intensidad Liquid Glass. */
+  body .vive-mobile-dock {
+    width: min(460px, calc(100vw - 30px)) !important;
+    max-width: calc(100vw - 30px) !important;
+    bottom: max(7px, calc(env(safe-area-inset-bottom, 0px) - 12px)) !important;
+    margin: 0 !important;
+    padding-inline: 7px !important;
+    gap: 3px !important;
+    box-sizing: border-box !important;
+  }
+  body .vive-mobile-dock > .vive-mobile-dock-item {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+  body .vive-mobile-dock-label {
+    white-space: nowrap;
+  }
+  /* Wallet: tarjeta central y vista previa de la vecina; sin ocultar la paginación. */
+  body .v266-wallet .v266-gallery-track.v68-wallet-gallery {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  body .v266-wallet .v266-wallet-face.v68-wallet-face {
+    scroll-snap-align: center;
+  }
+  body .v266-wallet .v266-wallet-header {
+    row-gap: var(--v272-mobile-gap);
+  }
+  body .v266-wallet .v266-selected-balance {
+    min-width: 0;
+    column-gap: var(--v272-mobile-gap);
+  }
+  body .v266-wallet :is(.v266-wallet-panel, .v266-wallet-detail, .v266-activity-panel) {
+    min-width: 0;
+  }
+  body .v266-wallet .v266-wallet-actions > button {
+    touch-action: manipulation;
+  }
+  /* Las hojas flotantes quedan debajo de la zona segura de la Dynamic Island. */
+  body #modal-root .modal-layer {
+    padding-top: max(58px, calc(env(safe-area-inset-top, 0px) + 20px)) !important;
+    padding-bottom: calc(26px + env(safe-area-inset-bottom, 0px));
+    overscroll-behavior: contain;
+  }
+  body #modal-root .modal {
+    width: min(100%, 540px);
+    max-height: calc(100dvh - max(72px, calc(env(safe-area-inset-top, 0px) + 34px)) - env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  body #modal-root :is(.modal-head, .v259-register-top) {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+  }
+  body #modal-root .modal-head {
+    background: var(--v272-sheet-solid);
+    border-radius: 15px;
+  }
+  body #modal-root :is(button, [role="button"]) {
+    touch-action: manipulation;
+  }
+  body #modal-root .modal :is(.btn, .form-submit) {
+    min-height: 42px;
+  }
+  body #modal-root .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  }
+  body #modal-root :is(.field, input, select, textarea) {
+    min-width: 0;
+  }
+}
+
+/* J. MUY ESTRECHO — NO APILAR LA BARRA NI PERDER LECTURA */
+@media (max-width: 360px) {
+  .vive-mobile-dock-label {
+    font-size: 9px;
+  }
+  body .v266-wallet .v266-selected-balance strong {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+  #page :is(.v264-kpi-grid, .sub-analysis-stats) {
+    min-width: 0;
+  }
+  #modal-root .modal {
+    padding-inline: 12px;
+  }
+}
+
+/* K. ESCRITORIO — COLUMNAS FINANCIERAS EQUILIBRADAS */
+@media (min-width: 791px) {
+  #page .grid.columns {
+    gap: clamp(12px, 1.4vw, 24px);
+  }
+  #page .kpis {
+    gap: clamp(12px, 1.2vw, 20px);
+  }
+  #page .ledger-card .ledger-controls {
+    padding-inline: clamp(12px, 1.4vw, 22px);
+  }
+  #page .ledger-card .ledger-scroll th,
+  #page .ledger-card .ledger-scroll td {
+    padding-inline: clamp(8px, .75vw, 14px);
+  }
+  #page .v46-subscriptions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+  #page .v46-subs-panel,
+  #page .subscription-world {
+    min-width: 0;
+  }
+}
+
+/* L. PRINT — HISTORIALES LEGIBLES SIN ELEMENTOS FLOTANTES */
+@media print {
+  .vive-mobile-dock,
+  .v249-register-fab,
+  .sidebar,
+  #modal-root,
+  #toast,
+  [data-act="addCard"] {
+    display: none !important;
+  }
+  .main {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  #page .ledger-card .ledger-scroll {
+    overflow: visible !important;
+  }
+  #page .ledger-card .ledger-scroll table {
+    font-size: 10px;
+  }
+  #page .panel {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+}

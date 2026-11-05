@@ -1,0 +1,34 @@
+
+.world-payments #page .v145-pay-cardgrid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
+.world-payments #page .v196-pay-category{appearance:none;display:flex!important;flex-direction:column;align-items:flex-start;gap:9px;min-width:0;height:auto!important;min-height:172px!important;max-height:none!important;padding:18px!important;background:rgba(249,251,255,.88)!important;border:1px solid rgba(190,207,232,.65)!important;border-radius:22px;box-shadow:0 10px 28px rgba(53,81,129,.04);cursor:pointer;text-align:left;color:#273f65;transition:transform .2s,border-color .2s}
+.world-payments #page .v196-pay-category:hover,.world-payments #page .v196-pay-category.is-selected{border-color:#729af1!important;transform:translateY(-1px)}
+.world-payments #page .v196-pay-category-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:#eaf0ff;color:#416dd4}
+.world-payments #page .v196-pay-category-icon svg{width:19px;height:19px}
+.world-payments #page .v196-pay-category-name{font-size:12px;font-weight:800;line-height:1.3}
+.world-payments #page .v196-pay-category>strong{font-size:clamp(17px,1.7vw,24px);letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.world-payments #page .v196-pay-category>small{font-size:10px;color:#7589a7}
+.world-payments #page .v196-pay-category-foot{display:flex;gap:6px;align-items:center;justify-content:space-between;width:100%;margin-top:auto;font-size:10px;color:#557bb1}
+.world-payments #page .v196-pay-category-foot svg{width:14px;height:14px}
+.world-payments #page .v196-kind-filters{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.world-payments #page .v196-kind-filters button{border:1px solid rgba(140,166,204,.3);border-radius:999px;padding:8px 13px;background:rgba(232,239,254,.55);font-weight:750;font-size:11px;color:#4e6b91;cursor:pointer}
+.world-payments #page .v196-kind-filters button.active{background:#436be4;color:#fff;border-color:#436be4}
+.world-loans #page .v196-loan-summary{margin:15px 0 24px;min-width:0}
+.world-loans #page .v196-loan-summary-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;font-size:11px;font-weight:800;letter-spacing:.075em;color:#52709a}
+.world-loans #page .v196-loan-summary-head small{font-size:10px;font-weight:520;letter-spacing:0;color:#8493aa}
+.world-loans #page .v196-loan-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.world-loans #page .v196-loan-summary-grid .loan-stat{min-width:0;padding:17px 15px}
+.world-loans #page .v196-loan-summary-grid .loan-stat strong{font-variant-numeric:tabular-nums;overflow-wrap:anywhere;font-size:clamp(19px,1.8vw,27px)}
+.world-loans #page .v196-loan-summary-note{font-size:10.5px;line-height:1.55;color:#6b7e9b;margin:10px 2px 0}
+.world-loans #page .v196-loan-interest{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 15px}
+.world-loans #page .v196-loan-interest>span{display:grid;gap:4px;background:rgba(226,236,251,.58);border-radius:11px;padding:9px 10px;min-width:0}
+.world-loans #page .v196-loan-interest small{font-size:9px;color:#7286a3}
+.world-loans #page .v196-loan-interest b{font-size:12px;color:#2c4a73;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+body.theme-dark .world-payments #page .v196-pay-category{background:rgba(23,32,50,.91)!important;border-color:rgba(111,135,176,.28)!important;color:#e8efff!important}
+body.theme-dark .world-payments #page .v196-pay-category>small,body.theme-dark .world-payments #page .v196-pay-category-foot{color:#a3b7d8!important}
+body.theme-dark .world-payments #page .v196-pay-category-icon{background:#233858;color:#a6c3ff}
+body.theme-dark .world-payments #page .v196-kind-filters button{background:#243451;color:#b9cdec;border-color:#455778}
+body.theme-dark .world-payments #page .v196-kind-filters button.active{background:#5676dc;color:white}
+body.theme-dark .world-loans #page .v196-loan-interest>span,body.theme-dark .world-loans #page .v196-loan-interest>span{background:#22344e}
+body.theme-dark .world-loans #page .v196-loan-interest :is(small,b),body.theme-dark .world-loans #page .v196-loan-summary :is(.v196-loan-summary-head,.v196-loan-summary-head small,.v196-loan-summary-note){color:#c3d5ef}
+@media(max-width:1400px){.world-payments #page .v145-pay-cardgrid,.world-loans #page .v196-loan-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:680px){.world-payments #page .v145-pay-cardgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.world-payments #page .v196-pay-category{padding:12px!important;min-height:170px!important;border-radius:16px}.world-payments #page .v196-pay-category>strong{font-size:17px}.world-payments #page .v196-pay-category-name{font-size:11px}.world-payments #page .v196-pay-category>small{font-size:9px}.world-loans #page .v196-loan-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}.world-loans #page .v196-loan-summary-grid .loan-stat{padding:13px 10px}.world-loans #page .v196-loan-summary-grid .loan-stat strong{font-size:18px}}

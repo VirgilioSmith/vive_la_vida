@@ -1,0 +1,224 @@
+
+/* V157 · Resumen adaptativo de escritorio: una pantalla sin recortar datos esenciales.
+   Conserva cálculos, HTML y paleta. En pantallas pequeñas se permite scroll vertical natural. */
+@media (min-width:1000px) and (min-height:680px){
+ body .main:has(.ff-dashboard.summary-space){
+  height:100dvh!important;max-height:100dvh!important;min-height:0!important;
+  overflow-x:hidden!important;overflow-y:hidden!important;
+ }
+ body .main:has(.ff-dashboard.summary-space) .world-overview{min-height:0!important;max-height:100dvh!important;overflow:hidden!important}
+ body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space{
+  min-height:0!important;max-height:none!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+  height:calc(100dvh - 205px)!important;max-height:calc(100dvh - 205px)!important;
+  min-height:0!important;
+  grid-template-rows:minmax(0,45fr) minmax(0,29fr) minmax(0,26fr)!important;
+  gap:clamp(7px,1.0dvh,11px)!important;grid-auto-rows:minmax(0,1fr)!important;
+  align-items:stretch!important;overflow:visible!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-balance,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-obligations,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-upcoming,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-personal,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-mid>.ff-tile{
+  min-height:0!important;max-height:100%!important;height:100%!important;
+ }
+ /* Límites de contenido: acceso íntegro a los registros desde sus enlaces Ver todo. */
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations{
+  overflow:hidden!important;min-height:0!important;
+  padding:clamp(2px,.5dvh,5px) 3px 0 clamp(8px,1vw,17px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations .ff-panel-top{gap:4px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total{
+  margin-top:clamp(4px,.7dvh,9px)!important;
+  padding:clamp(8px,1.1dvh,13px) clamp(9px,.8vw,14px)!important;
+  gap:2px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total strong{
+  font-size:clamp(22px,2.3vw,33px)!important;line-height:1.08!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total>span{
+  font-size:clamp(8px,.8vw,10px)!important;line-height:1.25!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-list{
+  min-height:0!important;margin-top:2px!important;justify-content:space-evenly!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-row{
+  min-height:0!important;padding:clamp(2px,.45dvh,6px) 2px!important;
+  gap:clamp(3px,.5vw,7px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title{gap:2px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title strong{font-size:clamp(9px,.82vw,11px)!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title small{font-size:clamp(8px,.72vw,9px)!important;line-height:1.1!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-row b{font-size:clamp(9px,.83vw,11px)!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-symbol{
+  width:clamp(23px,2.2dvh,31px)!important;height:clamp(23px,2.2dvh,31px)!important;border-radius:8px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations .ff-activity-foot{min-height:27px!important;font-size:9px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal{
+  overflow:hidden!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming .ff-payment-list,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal .ff-people-list{
+  min-height:0!important;overflow:hidden!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-mid>.ff-tile{
+  overflow:hidden!important;
+ }
+ /* La tarjeta principal se adapta al alto; el círculo central conserva el enfoque. */
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.v152-position-reference{
+  padding:clamp(11px,1.55dvh,26px) clamp(17px,2.2vw,34px) clamp(9px,1.2dvh,18px)!important;
+  grid-template-rows:clamp(72px,11dvh,117px) 1px minmax(0,1fr)!important;
+  gap:clamp(3px,.65dvh,9px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-label{
+  font-size:clamp(12px,1vw,15px)!important;margin-bottom:2px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-pos-amount{
+  font-size:clamp(32px,min(3.5vw,5dvh),55px)!important;
+  line-height:1.02!important;margin:2px 0 4px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-header p{
+  font-size:clamp(10px,.85vw,12.5px)!important;line-height:1.2!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles{
+  min-height:0!important;padding-bottom:0!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble{
+  width:clamp(103px,calc(20dvh - 41px),189px)!important;
+  height:clamp(103px,calc(20dvh - 41px),189px)!important;
+  flex:0 0 clamp(103px,calc(20dvh - 41px),189px)!important;
+  padding:clamp(7px,1dvh,15px) 6px!important;
+  gap:clamp(2px,.6dvh,8px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .bubble-amount{
+  font-size:clamp(16px,1.45vw,25px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .ff-yoy,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble .ff-yoy-empty{
+  font-size:clamp(9px,.82vw,12px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles .ff-bubble small{
+  font-size:clamp(10px,.9vw,13px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions{
+  right:clamp(12px,1.6vw,24px)!important;bottom:clamp(8px,1.3dvh,17px)!important;gap:7px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions button{
+  height:clamp(29px,4.2dvh,40px)!important;
+  min-height:clamp(29px,4.2dvh,40px)!important;
+  max-height:clamp(29px,4.2dvh,40px)!important;
+  padding:0 clamp(9px,.85vw,15px)!important;
+  font-size:clamp(9px,.75vw,11.5px)!important;
+ }
+ /* Los gráficos mantienen su legibilidad sin exigir una altura fija. */
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-mid .ff-panel-top h2,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming .ff-panel-top h2,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal .ff-panel-top h2,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations .ff-panel-top h2{
+  font-size:clamp(14px,1.15vw,20px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-health-number{
+  font-size:clamp(26px,3.0dvh,42px)!important;line-height:1.02!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-stat-footer,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-health-foot{
+  padding-top:clamp(2px,.4dvh,7px)!important;padding-bottom:clamp(1px,.35dvh,6px)!important;
+ }
+}
+/* En notebooks de poca altura priorizar legibilidad frente a recortes: scroll vertical único. */
+@media (max-height:679px) and (min-width:791px){
+ body .main:has(.ff-dashboard.summary-space){overflow-y:auto!important;max-height:none!important}
+}
+/* Móvil conserva sus estilos originales V156 sin overrides de V157. */
+
+/* Vista de baja altura: lectura ejecutiva sin líneas apiladas ni cifras cortadas. */
+@media (min-width:1000px) and (min-height:680px) and (max-height:820px){
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total{
+  padding:7px 10px!important;gap:1px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total .v82-total-top{gap:4px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total small{font-size:8px!important;letter-spacing:.025em!important;line-height:1.17!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-total>span{font-size:8.5px!important;line-height:1.14!important;max-height:2.28em!important;overflow:hidden!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-list{justify-content:space-between!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-row{
+  grid-template-columns:24px minmax(0,1fr) auto 10px!important;
+  min-height:30px!important;max-height:36px!important;gap:5px!important;padding:2px 0!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title .v64-subdebt{display:none!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligation-title small{line-height:1.1!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal{
+  padding:clamp(8px,1dvh,13px) clamp(11px,1vw,17px)!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming .ff-panel-top,
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal .ff-panel-top{
+  margin-bottom:3px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-payment-list{margin-top:3px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-pay-row{
+  min-height:25px!important;max-height:27px!important;padding:2px 3px!important;
+  grid-template-columns:24px minmax(0,1fr) minmax(36px,auto) minmax(65px,auto) 11px!important;
+  gap:6px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-pay-name small{display:none!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-pay-name strong{font-size:clamp(9px,.82vw,11px)!important;line-height:1.2!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-pay-symbol{width:21px!important;height:21px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-person-sums{
+  margin:0!important;min-height:0!important;gap:5px!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-person-sums>div{padding:6px 8px!important;min-height:0!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-person-cta{min-height:20px!important;height:20px!important;padding:2px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-health-number{margin-top:4px!important}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-health-caption{
+  flex:0 0 auto!important;min-height:12px!important;max-height:none!important;
+  margin-top:2px!important;font-size:9px!important;line-height:1.15!important;overflow:visible!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble small{font-size:clamp(9px,.81vw,11px)!important}
+}
+
+/* Portátiles de ancho medio conservan seis módulos en tres filas (el Resumen únicamente). */
+@media (min-width:1000px) and (max-width:1099px) and (min-height:680px){
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+  display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;
+ }
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.v152-position-reference{grid-column:1/10!important;grid-row:1!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;overflow:hidden!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-obligations{grid-column:10/-1!important;grid-row:1/3!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid{display:contents!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card{grid-column:1/6!important;grid-row:2!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card{grid-column:6/10!important;grid-row:2!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-upcoming{grid-column:1/10!important;grid-row:3!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-personal{grid-column:10/-1!important;grid-row:3!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles{display:flex!important;justify-content:center!important;height:100%!important;align-items:center!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-header{grid-column:1!important;grid-row:1!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-position-divider{grid-column:1!important;grid-row:2!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles{grid-column:1!important;grid-row:3!important;}
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions{position:absolute!important;bottom:9px!important;right:12px!important;width:auto!important;display:flex!important;}
+}
+
+
+@media(max-width:790px){
+ /* Searches launch with an active text cursor and resize to the actual keyboard. */
+ .world-mobilesearch .v154-search-hub{min-height:0;padding-bottom:calc(105px + env(safe-area-inset-bottom))}
+ .world-mobilesearch .v154-search-box{position:sticky;top:8px;z-index:23;scroll-margin-top:12px;transition:min-height .18s ease,box-shadow .18s ease,border-color .18s ease,border-radius .18s ease}
+ /* The glass container is the focus indicator, not a blue rectangular input outline. */
+ .world-mobilesearch #v154-mobile-search-input:focus,.world-mobilesearch #v154-mobile-search-input:focus-visible{outline:none!important;border:0!important;box-shadow:none!important;-webkit-appearance:none}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-box{min-height:61px;border-radius:23px;background:rgba(255,255,255,.80);box-shadow:0 14px 34px rgba(64,88,158,.16),inset 0 1px rgba(255,255,255,.96),0 0 0 2px rgba(93,114,224,.13)}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-heading{margin-top:0;margin-bottom:12px}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-heading h1{font-size:clamp(29px,8vw,35px)}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-hub{padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+ body.v158-keyboard-visible .world-mobilesearch .v154-search-hub{min-height:min(100dvh,var(--v158-visual-height,100dvh))}
+ body.v158-keyboard-visible .world-mobilesearch .v154-section-header{margin-top:14px;margin-bottom:9px}
+ body.v158-keyboard-visible .world-mobilesearch .v154-category-tile{height:98px}
+ body.v158-keyboard-visible .world-mobilesearch .v154-shortcuts,body.v158-keyboard-visible .world-mobilesearch .v154-directory{display:none}
+ body.v154-mobile-input-focused .world-mobilesearch .v154-search-results{padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+ .v158-wallet-selection-status{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
+ .v144-wallet-shell .v68-wallet-actions ~ *{will-change:auto}
+ .v144-wallet-shell .v68-wallet-section,.v144-wallet-shell .v130-wallet-cut,.v144-wallet-shell .v144-executive{animation:v158-wallet-details-enter .25s cubic-bezier(.22,.74,.22,1) both}
+ @keyframes v158-wallet-details-enter{from{opacity:.78;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+}
+@media(prefers-reduced-motion:reduce){
+ .v144-wallet-shell .v68-wallet-section,.v144-wallet-shell .v130-wallet-cut,.v144-wallet-shell .v144-executive{animation:none!important}
+}
