@@ -47142,5 +47142,88 @@ body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-exec
 }
 </style>
 
+
+<style id="v311-black-profundo">
+/* V311 — Black profundo. Únicamente body.theme-black: nunca modifica Claro. */
+body.theme-black{
+  --bg:#000000!important;
+  --white:#0b0c0e!important;
+  --panel:#0b0c0e!important;
+  --card:#0e1013!important;
+  --surface:#08090b!important;
+  --navy:#000000!important;
+  --navy2:#0b0c0f!important;
+  --line:#272b32!important;
+  --ink:#f5f7fa!important;
+  --muted:#a0a9b7!important;
+  --v210-panel:#0d0f12!important;
+  --v210-raised:#15191e!important;
+  --v210-edge:#292f37!important;
+  --vive-bg-color:#000000!important;
+  color-scheme:dark!important;
+  background:#000000!important;
+  background-image:none!important;
+}
+body.theme-black::before,body.theme-black::after{
+  background:none!important; background-image:none!important;
+}
+body.theme-black :is(#app,.shell,.main,#page,.page-shell,.app-layout,.app-body){
+  background-color:transparent!important;
+  background-image:none!important;
+}
+body.theme-black :is(.topbar,.mobile-bar,.sidebar,.rail-sidebar,.vive-mobile-dock){
+  background:#070809!important;
+  background-image:none!important;
+  border-color:#242830!important;
+  box-shadow:none!important;
+}
+body.theme-black :is(.panel,.card,.kpi,.ff-tile,.summary-glass,.glass-surface,.module-switch-shell,
+  .movement-tabs-shell,.money-register-tile,.widget-card,.financial-card,.metric-card,
+  .settings-group,.settings-hero,.v204-bank-detail,.v204-bank-sidebar,.bank-card,
+  .account-card,.loan-card,.certificate-card,.v55-panel,.v55-hero,.v55-metric,
+  .v145-paycenter,.v145-payment-kpi,.v145-pay-quick,.v89-debt-breakdown,
+  .v197-chart-card,.v290-budget-web,.v290-budget-mobile,.v290-budget-trend){
+  background:#0e1013!important;
+  background-image:none!important;
+  border-color:#272b31!important;
+  box-shadow:0 3px 16px rgba(0,0,0,.22)!important;
+}
+body.theme-black :is(.top-actions,.date-chip,.module-switch-tabs,.universe-switch,
+  .theme-choice-row,.v42-module-nav,.v42-summary,.ledger-controls,.ledger-card,
+  .v99-period-picker,.v296-nav,.visual-top-switch){
+  background:#101216!important;
+  background-image:none!important;
+  border-color:#2c323a!important;
+}
+body.theme-black :is(.module-switch-tab.active,.universe-switch button.active,
+  .theme-choice.selected,.movement-tab.active){
+  background:#20252e!important;
+  color:#f2f6ff!important;
+  border-color:#3c4657!important;
+}
+body.theme-black :is(input,select,textarea,.field,.filter-select,
+  .table-wrap,thead,thead th,.ledger-controls input,.ledger-controls select){
+  background:#0a0c0f!important;
+  color:#f0f4fa!important;
+  border-color:#303640!important;
+}
+body.theme-black :is(.btn.ghost,.btn.soft,.top-hint,.v32-tool-button){
+  background:#181d24!important;
+  color:#e6eef9!important;
+  border-color:#343c48!important;
+}
+body.theme-black :is(.top-title,.top-sub,.section-title,.panel-head){
+  color:#f3f6fb!important;
+}
+body.theme-black :is(.subtle,.muted,.subtitle,.kpi-foot){
+  color:#aeb8c7!important;
+}
+/* Solo la apariencia: conservar colores semánticos, tarjetas bancarias,
+   porcentajes y gráficos cuyos colores transmiten datos. */
+@media (max-width:790px){
+  body.theme-black .vive-mobile-dock{background:rgba(10,12,15,.90)!important}
+}
+</style>
+
 </body>
 </html>
