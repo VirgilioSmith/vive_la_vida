@@ -5,7 +5,7 @@
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="282-wallet-carrusel-proporciones-validacion"/>
+<meta name="vive-el-hoy-version" content="283-movimientos-pagos-simplificados"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -23994,25 +23994,10 @@ function payments(){
   const ratioText=cap.ratio===null?'No disponible':v85Pct(cap.ratio);
   const monthLabel=sanitize(dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}));
   const kindInfo={card:['Tarjetas de crédito','card'],loan:['Préstamos bancarios','receipt'],recurring:['Suscripciones y servicios','calendar'],personal:['Entre personas','wallet']};
-  const groups=[['card','Tarjetas de crédito','card'],['loan','Préstamos bancarios','receipt'],['recurring','Suscripciones y servicios','calendar'],['personal','Entre personas','wallet']];
-  const totals={card:cap.a.cards,loan:cap.a.loans,recurring:cap.a.recurring,personal:cap.a.personal};
-  // Una única lista de vencimientos: la agenda. Las cuatro tarjetas son un
-  // resumen navegable, no una segunda copia de los mismos pagos.
-  const selectedKind=['all','card','loan','recurring','personal'].includes(ui.v196PayKind)?ui.v196PayKind:'all';
-  const blocks=groups.map(([kind,title,ico])=>{
-    const items=(current?all:due).filter(x=>x.kind===kind);
-    const nextItem=items.find(x=>x.date>=now)||items[0];
-    return `<button type="button" class="panel v196-pay-category ${selectedKind===kind?'is-selected':''}" data-act="v196PayKind" data-id="${kind}" aria-label="Ver pagos de ${title}" aria-pressed="${selectedKind===kind}">
-      <span class="v196-pay-category-icon">${icon(ico)}</span>
-      <span class="v196-pay-category-name">${title}</span>
-      <strong>${money(totals[kind])}</strong>
-      <small>Carga mensual · ${items.length} vencimiento${items.length===1?'':'s'}</small>
-      <span class="v196-pay-category-foot">${nextItem?'Próximo: '+prettyDate(nextItem.date):'Sin pagos por atender'} <span>${icon('arrow')}</span></span>
-    </button>`;
-  }).join('');
-  const filter=['all','overdue','upcoming'].includes(ui.v145PayFilter)?ui.v145PayFilter:'all';
-  const view=all.filter(x=>(selectedKind==='all'||x.kind===selectedKind)&&(filter==='all'||(filter==='overdue'?current&&x.date<now:x.date>=now)));
-  const agenda=view.slice(0,12).map(x=>{
+  // V283: los pagos pendientes ya vienen deduplicados en all.
+  // No crear tarjetas de categorías, calendarios paralelos ni filtros ocultos.
+  const view=all;
+  const agenda=view.map(x=>{
     const late=current&&x.date<now;
     const ico=kindInfo[x.kind]?.[1]||'wallet';
     const tag=late?'Vencido':x.estimated?'Previsto':'Por atender';
@@ -24038,28 +24023,16 @@ function payments(){
       <div class="v145-payment-kpi ${overdue.length?'is-danger':''}"><small>Vencidos a hoy</small><strong>${money(overdueValue)}</strong><span>${current?`${overdue.length} compromiso${overdue.length===1?'':'s'} atrasado${overdue.length===1?'':'s'}`:'Consulta el mes actual para ver atrasos'}</span></div>
       <div class="v145-payment-kpi"><small>Ingresos considerados</small><strong>${money(cap.income)}</strong><span>Del mismo período seleccionado</span></div>
      </div>
-     <section class="v145-pay-quick" aria-label="Acciones de pago"><div class="v145-pay-quick-title"><span>OPERAR</span><strong>¿Qué necesitas hacer?</strong></div>
+     <section class="v145-pay-quick" aria-label="Acciones de pago">
        <div class="v145-quick-buttons">
-       <button type="button" data-act="guidedFlow" data-mode="cardpay">${icon('card')} Pagar tarjeta</button>
-       <button type="button" data-act="guidedFlow" data-mode="service">${icon('receipt')} Pagar servicio</button>
-       <button type="button" data-act="guidedFlow" data-mode="own">${icon('cycle')} Transferir</button>
-       <button type="button" data-act="addRecurring">${icon('plus')} Nuevo compromiso</button>
-       </div></section>
-     <div class="v145-payment-section-head"><div><span class="v145-eyebrow">RESUMEN POR TIPO</span><h3>Compromisos por categoría</h3><p>Selecciona una tarjeta para filtrar la agenda, sin repetir los vencimientos.</p></div><span class="v145-section-meta">${(current?all:due).length} vencimientos únicos</span></div>
-     <div class="grid columns equal section v81-payments-grid v145-pay-cardgrid">${blocks}</div>
-     
-     <details class="v200-commitment-tools"><summary>${icon('calendar')} Más vistas de compromisos <span>Servicios y calendario</span>${icon('arrow')}</summary>
-      <div class="v200-commitment-tools-options" role="group" aria-label="Vistas adicionales de pagos">
-       ${[['agenda','Agenda'],['services','Servicios'],['calendar','Calendario de servicios']].map(([view,label])=>`<button type="button" class="v200-pay-tool ${(!ui.v176PayView&&view==='agenda')||ui.v176PayView===view?'active':''}" data-v176-pay-view="${view}" aria-pressed="${(!ui.v176PayView&&view==='agenda')||ui.v176PayView===view}">${label}</button>`).join('')}
-      </div></details>
-     <section class="v176-pay-services" ${ui.v176PayView==='services'?'':'hidden'}><div class="v176-pay-service-head"><div><h3>Servicios listos para pagar</h3><p>Vencimientos reales de servicios y suscripciones.</p></div><button type="button" class="btn" data-act="guidedFlow" data-mode="service">Pagar un servicio ${icon('arrow')}</button></div>${all.filter(x=>x.kind==='recurring').map(x=>`<div class="v176-service-row"><span><strong>${sanitize(x.name)}</strong><small>${prettyDate(x.date)} · ${sanitize(x.currency)}</small></span><b>${money(x.amount,x.currency,2)}</b><button type="button" class="btn sm soft" data-act="${x.action}" data-id="${sanitize(x.ref)}">Pagar</button></div>`).join('')||'<p class="v176-muted">No hay servicios pendientes registrados en este período.</p>'}</section>
-     ${v186ServiceCalendar(period,all)}
-     <div class="v145-pay-lower" ${(!ui.v176PayView||ui.v176PayView==='agenda')?'':'hidden'}>
-      <section class="v145-pay-agenda"><div class="v145-agenda-header"><div><span class="v145-eyebrow">CALENDARIO OPERATIVO</span><h3>Agenda de vencimientos</h3><p>Ordenada por fecha para anticipar los próximos pagos.</p></div><span class="v145-section-meta">${all.length} registros</span></div>
-        <div class="v196-kind-filters" role="group" aria-label="Mostrar vencimientos de una categoría">${[['all','Todos'],['card','Tarjetas'],['loan','Préstamos'],['recurring','Servicios'],['personal','Personas']].map(([id,label])=>`<button type="button" class="${selectedKind===id?'active':''}" data-act="v196PayKind" data-id="${id}" aria-pressed="${selectedKind===id}">${label}</button>`).join('')}</div>
-        <div class="v145-pay-filters" role="group" aria-label="Filtrar la agenda de pagos">${[['all','Todos'],['upcoming','Por vencer'],['overdue','Vencidos']].map(([id,label])=>`<button type="button" data-act="v145PayFilter" data-id="${id}" class="${filter===id?'active':''}" aria-pressed="${filter===id}">${label}${id==='overdue'&&overdue.length?` <b>${overdue.length}</b>`:''}</button>`).join('')}</div>
-        <div class="v145-agenda-list">${agenda||`<div class="v145-agenda-empty">${filter==='overdue'?'No hay vencimientos atrasados en esta selección.':filter==='upcoming'?'No hay pagos próximos registrados.':'Sin pagos pendientes para mostrar.'}</div>`}</div>
-        ${view.length>12?`<p class="v145-agenda-overflow">Mostrando los primeros 12 vencimientos de ${view.length}. Los demás permanecen en las cuatro categorías anteriores.</p>`:''}
+         <button type="button" data-act="guidedFlow" data-mode="cardpay">${icon('card')} Pagar tarjeta</button>
+         <button type="button" data-act="guidedFlow" data-mode="service">${icon('receipt')} Pagar servicio</button>
+       </div>
+     </section>
+     <div class="v145-pay-lower">
+      <section class="v145-pay-agenda"><div class="v145-agenda-header"><div><span class="v145-eyebrow">PAGOS PENDIENTES</span><h3>Por pagar</h3><p>Vencimientos registrados, con acceso directo a cada pago.</p></div><span class="v145-section-meta">${all.length} registros</span></div>
+        <div class="v145-agenda-list">${agenda||`<div class="v145-agenda-empty">Sin pagos pendientes para mostrar.</div>`}</div>
+
       </section>
 
      </div>
@@ -24706,8 +24679,10 @@ function v265BalanceHTML(tx,mode='desktop'){
  results=results.filter((x,i)=>results.findLastIndex(y=>x.sourceId===y.sourceId&&x.kind===y.kind)===i);
  const primary=results[0];
  if(!primary)return `<span class="v265-no-balance">—<small>Sin balance verificable</small></span>`;
- const titleText=(primary.kind==='card'?'Crédito disponible':'Balance disponible')+(primary.reason?` · ${primary.reason}`:'');
- return `<div class="v265-balance-single" title="${sanitize(titleText)}"><b class="v265-balance-value ${primary.valid?'':'v265-unverified'}">${primary.hardUnknown?'—':`${primary.valid?'':'≈ '}${money(primary.amount,primary.ccy,2)}`}</b>${primary.valid?'':`<small class="v265-balance-caution">${sanitize(primary.reason||'Balance estimado')}</small>`}</div>`;
+ // V283: no repetir un aviso largo dentro de cada celda de movimientos.
+ // El ≈ identifica un saldo estimado; la incertidumbre sigue en el modelo.
+ const titleText=(primary.kind==='card'?'Crédito disponible':'Balance disponible')+(primary.valid?'':' · Valor estimado');
+ return `<div class="v265-balance-single" title="${sanitize(titleText)}"><b class="v265-balance-value ${primary.valid?'':'v265-unverified'}">${primary.hardUnknown?'—':`${primary.valid?'':'≈ '}${money(primary.amount,primary.ccy,2)}`}</b></div>`;
 }
 function v265LedgerModelCached(){return v99Memo('v265:transaction:post-balance',v265LedgerModel)}
 
@@ -28815,7 +28790,7 @@ function v32Render(page){switch(ui.v32Tools[page]){
  case 'maturity':return v32Maturities();
  }return '';
 }
-function v32WithTools(page,raw){const active=ui.v32Tools[page];return `<div class="v32-integrated">${raw}<details class="v186-tools-extra" ${active?'open':''}><summary><span>${icon('grid')} Herramientas adicionales</span><small>Funciones puntuales · ${v31E(V32_LABELS[page])}</small>${icon('arrow')}</summary>${v32Bars(page)}${active?`<div class="v32-tool-body v31-world" id="v32-tool-${page}"><div class="v32-tool-heading"><span>HERRAMIENTAS DE ${v31E(V32_LABELS[page].toUpperCase())}</span><button type="button" class="v32-tool-close" data-act="v32Tool" data-page="${page}" data-id="${active}" aria-label="Cerrar herramienta">${icon('close')} Cerrar</button></div>${v32Render(page)}</div>`:''}</details></div>`}
+function v32WithTools(page,raw){if(page==='payments')return `<div class="v32-integrated">${raw}</div>`;const active=ui.v32Tools[page];return `<div class="v32-integrated">${raw}<details class="v186-tools-extra" ${active?'open':''}><summary><span>${icon('grid')} Herramientas adicionales</span><small>Funciones puntuales · ${v31E(V32_LABELS[page])}</small>${icon('arrow')}</summary>${v32Bars(page)}${active?`<div class="v32-tool-body v31-world" id="v32-tool-${page}"><div class="v32-tool-heading"><span>HERRAMIENTAS DE ${v31E(V32_LABELS[page].toUpperCase())}</span><button type="button" class="v32-tool-close" data-act="v32Tool" data-page="${page}" data-id="${active}" aria-label="Cerrar herramienta">${icon('close')} Cerrar</button></div>${v32Render(page)}</div>`:''}</details></div>`}
 function v32CardSimulator(){let cards=db.cards,selected=cards.find(c=>c.id===ui.v31CardId)||cards[0];if(selected)ui.v31CardId=selected.id;
  if(!selected)return v31Section('SIMULACIÓN','Escenarios de pago',v31Empty('Registra primero una tarjeta','El simulador utiliza los límites y las tasas anuales de tus tarjetas.','addCard','Nueva tarjeta'));
  let ccy=ui.v31CardCurrency,amt=Math.max(0,num(ui.v31CardAmount)),x=v31SimulateCredit(selected,ccy,amt);
@@ -34807,10 +34782,7 @@ function v245CleanPayments(){
  sub.append(pending,overdue);
  main.classList.add('v245-pay-amount');
  headline.append(main,sub);
- const detail=v245CreateNode('details','v245-pay-extra');
- detail.append(v245CreateNode('summary','',`${icon('chart')} Ver ingresos considerados y más indicadores ${icon('arrow')}`),tiles);
- const insertion=root.querySelector('.v145-pay-quick')||root.children[1];
- root.insertBefore(detail,insertion);
+ tiles.remove(); // V283: no crear otro bloque de vistas o KPIs redundantes.
 }
 function v245CleanRecurring(){
  const parent=document.querySelector('.v26-internal[data-module="recurring"] .v26-body');
@@ -34986,11 +34958,9 @@ render=function(){v245PreviousRender();v245PolishOnRender();};
     }
     if(!old||!main||!metrics)return;
     main.classList.add('v245-pay-amount');
-    if(originalTiles?.children.length){
-      const extra=make('details','v245-pay-extra');
-      extra.append(make('summary','','Ver ingresos considerados y demás indicadores'));
-      extra.append(originalTiles);root.insertBefore(extra,root.querySelector('.v145-pay-quick'));
-    }
+    // V283: no reintroducir los KPI secundarios como una caja adicional.
+    originalTiles?.remove();
+    root.querySelectorAll(':scope > .v245-pay-extra').forEach(el=>el.remove());
     const newHead=header('TUS COMPROMISOS','Centro de pagos','Vencimientos, cuotas y obligaciones en un solo lugar.');
     const period=old.querySelector('.v145-period-control');
     if(period){const wrap=make('div','v252-month-picker');wrap.append(period);newHead.append(wrap);}
@@ -35001,11 +34971,15 @@ render=function(){v245PreviousRender();v245PolishOnRender();};
     if(cap){const badge=make('div','v252-capacity');badge.append(cap);hero.append(badge);}
     old.replaceWith(newHead,hero);
     root.classList.add('v252-center');
+    // V283: integración funcional real de las dos acciones de pago
+    // en el KPI principal, sin crear otra tarjeta.
     const actions=root.querySelector('.v145-pay-quick');
-    if(actions){actions.classList.add('v252-quick');const label=actions.querySelector('.v145-pay-quick-title');if(label){label.innerHTML='<span class="v252-kicker">ACCIONES</span><strong>Gestiona un pago</strong>';}}
-    const heading=root.querySelector('.v145-payment-section-head');
-    if(heading){heading.classList.add('v252-group-heading');const p=heading.querySelector('p');if(p)p.textContent='Selecciona una categoría para filtrar los vencimientos.';}
-    root.querySelector('.v145-pay-cardgrid')?.classList.add('v252-group-grid');
+    if(actions){
+      actions.querySelector('.v145-pay-quick-title')?.remove();
+      actions.classList.remove('v252-quick');
+      actions.classList.add('v283-hero-payments');
+      hero.append(actions);
+    }
     root.querySelector('.v145-pay-lower')?.classList.add('v252-schedule');
     root.dataset.v252Ready='1';
   }
@@ -44345,6 +44319,60 @@ body.theme-dark #page :is(.v242-settings-row-copy small, .v46-sub-card-title sma
   #page .v279-wallet .v266-selected-debt b{font-size:11px!important}
 }
 
+
+/* V283 · Movimientos/Compromisos · Corrección estructural localizada.
+   No cambia ledger-model ni motor de pagos; solo presentación y duplicidades. */
+#page #ledger-world .v265-balance-single{
+  display:flex;align-items:center;min-width:0;max-width:100%;overflow:hidden;
+}
+#page #ledger-world .v265-balance-single .v265-balance-value{
+  display:block;min-width:0;max-width:100%;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;color:var(--ink)!important;
+  font-variant-numeric:tabular-nums;
+}
+#page #ledger-world .v265-balance-single .v265-unverified{
+  color:var(--muted)!important;font-weight:650!important;
+}
+#page #ledger-world .ledger-scroll .v265-balance-cell{
+  min-width:120px;width:145px;max-width:175px;overflow:hidden;
+}
+body.theme-black #page #ledger-world .v265-balance-single .v265-balance-value,
+body.theme-dark #page #ledger-world .v265-balance-single .v265-balance-value{
+  color:#e4f0ff!important;
+}
+body.theme-black #page #ledger-world .v265-balance-single .v265-unverified,
+body.theme-dark #page #ledger-world .v265-balance-single .v265-unverified{
+  color:#acbcd1!important;
+}
+/* Los botones mantienen su data-act original; ahora son parte del KPI grande. */
+#page .v252-center .v252-hero .v283-hero-payments{
+  margin:17px 0 0!important;padding:15px 0 0!important;
+  background:transparent!important;border:0!important;border-top:1px solid rgba(255,255,255,.25)!important;
+  border-radius:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+#page .v252-center .v252-hero .v283-hero-payments .v145-quick-buttons{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:11px!important;margin:0!important;padding:0!important;
+}
+#page .v252-center .v252-hero .v283-hero-payments .v145-quick-buttons button{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:8px!important;white-space:normal!important;min-width:0!important;
+  width:100%!important;min-height:45px!important;padding:11px 10px!important;
+  border-radius:13px!important;background:rgba(255,255,255,.96)!important;
+  border:1px solid rgba(255,255,255,.95)!important;
+  color:#274975!important;font-size:12px!important;font-weight:790!important;
+  text-align:center!important;line-height:1.25!important;box-shadow:none!important;
+}
+#page .v252-center .v252-hero .v283-hero-payments .v145-quick-buttons button svg{
+  display:block!important;width:17px!important;height:17px!important;flex:0 0 17px!important;
+}
+#page .v252-center .v252-schedule{margin-top:13px!important;}
+#page .v252-center .v252-schedule .v145-pay-agenda{padding:clamp(15px,2vw,22px)!important;}
+@media(max-width:350px){
+ #page .v252-center .v252-hero .v283-hero-payments .v145-quick-buttons{gap:7px!important;}
+ #page .v252-center .v252-hero .v283-hero-payments .v145-quick-buttons button{font-size:11px!important;padding:9px 5px!important;}
+}
 </style>
 </body>
 </html>
