@@ -2,6 +2,7 @@
 
 <html lang="es">
 <head>
+<meta name="vive-el-hoy-build-v305" content="suscripciones-colores-sutiles-activos-detalle-historial"/>
 <meta name="vive-el-hoy-build-v302" content="resumen-web-compromisos-doble-altura-y-suscripciones-movil-referencia"/>
 <meta name="vive-el-hoy-build-v301" content="restauracion-analisis-presupuesto-vision-web-suscripciones-movil"/>
 <meta name="vive-el-hoy-v297" content="centro-pagos-web-y-recuperacion-analisis"/>
@@ -22373,6 +22374,52 @@ main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categ
   }
 }
 </style>
+
+<style id="vive-v305-suscripciones-sutiles">
+/* V305 - paleta azul-gris desaturada; conserva geometría y lógica originales. */
+@media(max-width:790px){
+ #page .v302-cost-card,#page .v302-brands-card{
+   background:linear-gradient(145deg,#536780 0%,#394c65 70%,#34465d 100%)!important;
+   color:#f6f8ff!important;border:1px solid #71839a6b!important;
+   box-shadow:0 8px 20px #2c436025!important;
+ }
+ #page .v302-brands-card{background:linear-gradient(145deg,#607188,#465a74 78%,#3a4c65)!important;}
+ #page .v302-cost-title,#page .v302-cost-secondary,#page .v302-brands-bottom span{color:#e3e9f2!important;}
+ #page .v302-mini-icon{color:#d2e0f5!important;}
+ #page .v302-cost-rule{background:#eff4ff40!important;border-top:0!important;}
+ #page .v302-brands-bottom i{background:#b4d0eb!important;}
+ #page .v302-subs-add{background:#f2f5fa!important;color:#233750!important;border:1px solid #dce5f2!important;}
+ #page .v305-actives-card{appearance:none;text-align:left;cursor:pointer;width:100%;font:inherit;transition:filter .18s ease,box-shadow .18s ease;}
+ #page .v305-actives-card:focus-visible{outline:3px solid #86a3ca;outline-offset:3px;}
+ #page .v305-actives-card:active{filter:brightness(.96);}
+ #page .v305-actives-card .v302-brand-cluster{flex:1 1 auto;}
+ #page .v305-actives-card .v302-brands-bottom{width:100%;}
+ #page .v305-actives-card .v302-brands-bottom>svg{width:14px;height:14px;margin-left:5px;flex:none;transition:transform .2s ease;}
+ #page .v305-actives-card[aria-expanded=true] .v302-brands-bottom>svg{transform:rotate(180deg);}
+ #page .v305-actives-breakdown[hidden]{display:none!important;}
+ #page .v305-actives-breakdown{border:1px solid #cfdaea;background:#f5f8fcbb;border-radius:18px;padding:13px;min-width:0;}
+ #page .v305-actives-breakdown header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;color:#233a57;font-size:14px;}
+ #page .v305-actives-breakdown header span{color:#71829b;font-size:11px;}
+ #page .v305-active-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+ #page .v305-active-list .v302-service-summary{min-height:112px;}
+ #page .v305-history{margin-top:6px;min-width:0;}
+ #page .v305-history h2{font-size:clamp(19px,5.25vw,23px);line-height:1.2;letter-spacing:-.035em;margin:8px 0 12px;font-weight:830;color:var(--ink);}
+ #page .v305-history-list{display:flex;flex-direction:column;gap:7px;}
+ #page .v305-history-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:10px;padding:11px 12px;border-radius:16px;background:#f4f7fcee;border:1px solid #dee6f3;min-width:0;}
+ #page .v305-history-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#e6edf7;overflow:hidden;}
+ #page .v305-history-icon :is(img,.v45-sub-icon,.v41-service-icon){width:100%;height:100%;object-fit:contain;}
+ #page .v305-history-info{display:flex;flex-direction:column;gap:3px;min-width:0;}
+ #page .v305-history-info strong{font-size:12px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#263b58;}
+ #page .v305-history-info small{color:#7687a1;font-size:10px;line-height:1.3;}
+ #page .v305-history-row>b{font-size:12px;white-space:nowrap;color:#263c5c;font-variant-numeric:tabular-nums;}
+ body.theme-dark #page .v305-actives-breakdown,body.theme-black #page .v305-actives-breakdown{background:#1c293b;border-color:#41516b;}
+ body.theme-dark #page .v305-actives-breakdown header,body.theme-black #page .v305-actives-breakdown header{color:#edf4ff;}
+ body.theme-dark #page .v305-history-row,body.theme-black #page .v305-history-row{background:#1d2b3d;border-color:#354861;}
+ body.theme-dark #page .v305-history-row :is(strong,b),body.theme-black #page .v305-history-row :is(strong,b){color:#f0f5ff;}
+ body.theme-dark #page .v305-history-icon,body.theme-black #page .v305-history-icon{background:#293c56;}
+}
+@media(max-width:350px){#page .v305-active-list{gap:6px;}#page .v305-history-row{padding:9px 8px;gap:7px;}#page .v305-history-row>b{font-size:11px;}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -23648,7 +23695,7 @@ function mobileHome(){
 let v243ExploreDestination=null;
 function v243ExploreReturn(){
  if(!v243ExploreDestination || v243ExploreDestination!==ui.page || ui.page==='mobilehub')return '';
- return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Compromisos','vision':'Visión','recurring':'Suscripciones','personal':'Entre personas','kpis':'Mis indicadores','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada'})[ui.page]||'Módulo')}</strong></nav>`;
+ return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Compromisos','vision':'Visión global','recurring':'Suscripciones','personal':'Entre personas','kpis':'Mis indicadores','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada'})[ui.page]||'Módulo')}</strong></nav>`;
 }
 function mobileHub(){
  const period=ui.month||today().slice(0,7);
@@ -23661,7 +23708,7 @@ function mobileHub(){
    ['personal','Entre personas','Deudas y abonos','wallet']]},
   {eyebrow:'MÁS PERSPECTIVA',title:'Tu inteligencia financiera',subtitle:'Información con profundidad, cuando la necesites',entries:[
    ['kpis','Mis indicadores','Tu tablero personal','analytics'],['antExpenses','Gastos hormiga','Hábitos, compras repetidas y proyección de gastos','chart'],['patrimony','Patrimonio','Activos y obligaciones','wallet'],
-   ['vision','Visión','Una mirada integral a tus finanzas','analytics'],['advanced','Analítica avanzada','Tendencias y decisiones','chart'],['analytics','Visión global','Análisis consolidado','grid']]}
+   ['vision','Visión global','Una mirada integral a tus finanzas','analytics'],['advanced','Analítica avanzada','Tendencias y decisiones','chart'],['analytics','Visión global','Análisis consolidado','grid']]}
  ];
  const link=([id,name,description,ic])=>`<button type="button" class="v205-explore-link" data-act="navigate" data-id="${id}" aria-label="Abrir ${name}"><span class="v205-explore-link-icon">${icon(ic)}</span><span class="v205-explore-link-copy"><strong>${name}</strong><small>${description}</small></span><span class="v205-explore-arrow" aria-hidden="true">${icon('arrow')}</span></button>`;
  return `<div class="vive-mobile-hub v205-explore v243-explore">
@@ -23731,7 +23778,7 @@ function v165SearchAction(){
 
 function main(){
  if(ui.page==='personalize' && !isMobileViewport()){ui.page='settings';v242SettingsPane='home';}
- const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:[isMobileViewport()?'Centro de pagos':'Visión global','Visión global, suscripciones y entre personas'],vision:['Visión','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
+ const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:[isMobileViewport()?'Centro de pagos':'Visión global','Visión global, suscripciones y entre personas'],vision:['Visión global','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
   <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
@@ -34836,11 +34883,11 @@ function v294BankingWidgets(){
    existing financial dashboard and monthly comparisons for identical numbers. */
 function v294VisionPage(){
  const content=visionOverview()
-  .replace('<h2>Dashboard</h2>','<h2>Visión</h2>')
+  .replace('<h2>Dashboard</h2>','<h2>Visión global</h2>')
   .replace('Todo lo que importa, en una vista más directa.','Todo lo que importa de tus finanzas, en una sola vista.')
   .replace('data-act="navigate" data-id="kpis"','data-v273-open-personalization="1"')
   .replace(/<button class="vision-switch-button" data-v273-open-personalization="1">[\s\S]*?<\/button>/,match=>isMobileViewport()?match:'');
- return `<section class="v294-vision-route" aria-label="Visión financiera">${content}</section>`;
+ return `<section class="v294-vision-route" aria-label="Visión global">${content}</section>`;
 }
 pages.vision=v294VisionPage;
 
@@ -34936,6 +34983,11 @@ function v302MobileSubscriptions(){
  const freq=r=>({monthly:'Mensual',weekly:'Semanal',quarterly:'Trimestral',annual:'Anual'})[r.frequency]||'Periódico';
  const next=active.slice().sort((a,b)=>String(a.nextDue||'9999').localeCompare(String(b.nextDue||'9999')));
  const mosaic=active.slice(0,7).map((r,i)=>`<span class="v302-brand v302-brand-${i%7}" title="${sanitize(r.name)}" aria-hidden="true">${v45SubIcon(r,'tiny')}</span>`).join('');
+ const actualHistory=(db.transactions||[]).filter(t=>t&&t.recurringId&&['expense','card_charge'].includes(t.type)&&t.date).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+ const historyRows=actualHistory.slice(0,8).map(t=>{
+  const service=all.find(r=>String(r.id)===String(t.recurringId));
+  return `<div class="v305-history-row"><span class="v305-history-icon">${service?v45SubIcon(service,'small'):icon('receipt')}</span><span class="v305-history-info"><strong>${sanitize(service?.name||t.note||'Pago recurrente')}</strong><small>${prettyDate(t.date)} · ${t.reviewed===false?'Pendiente de revisión':'Registrado'}</small></span><b>${money(t.amount,t.currency||service?.currency||'DOP',2)}</b></div>`;
+ }).join('');
  const serviceCard=(r,pausedFlag=false)=>`<details class="v302-service" data-v302-service-id="${sanitize(r.id)}">
    <summary class="v302-service-summary"><span class="v302-service-icon">${v45SubIcon(r,'small')}</span><span class="v302-service-info"><strong>${sanitize(r.name)}</strong><small>${pausedFlag?'En pausa':prettyDate(r.nextDue)} · ${freq(r)}</small></span><b>${money(r.amount,r.currency,2)}</b>${icon('arrow')}</summary>
    <div class="v302-service-details"><div><span>Categoría</span><b>${sanitize(r.category||'Suscripciones')}</b></div><div><span>Próximo cargo</span><b>${pausedFlag?'Pausado':prettyDate(r.nextDue)}</b></div><div class="v302-service-actions"><button type="button" data-act="editRecurring" data-id="${sanitize(r.id)}">${icon('edit')} Editar</button><button type="button" data-act="toggleRecurring" data-id="${sanitize(r.id)}">${pausedFlag?'Reactivar':'Pausar'}</button>${!pausedFlag?`<button type="button" data-act="payRecurring" data-id="${sanitize(r.id)}">Registrar pago</button>`:''}</div></div>
@@ -34944,9 +34996,11 @@ function v302MobileSubscriptions(){
  return `<section class="v302-subs-app" aria-label="Resumen de suscripciones">
   <header class="v302-subs-head"><h1>Suscripciones</h1></header>
   <div class="v302-subs-stats"><article class="v302-cost-card"><div class="v302-cost-title"><span class="v302-mini-icon">${icon('calendar')}</span> Por pagar este mes</div><strong>${money(due)}</strong><div class="v302-cost-rule"></div><div class="v302-cost-secondary"><span>Equivalente anual</span><b>${money(year)}</b></div></article>
-  <article class="v302-brands-card"><div class="v302-brand-cluster">${mosaic||'<span class="v302-brand v302-brand-empty">+</span>'}</div><div class="v302-brands-bottom"><strong>${active.length}</strong><span>Activas</span><i></i></div></article></div>
+  <button type="button" class="v302-brands-card v305-actives-card" data-v305-actives-toggle="1" aria-expanded="false" aria-controls="v305-actives-breakdown" aria-label="Ver desglose de ${active.length} suscripciones activas"><span class="v302-brand-cluster">${mosaic||'<span class="v302-brand v302-brand-empty">+</span>'}</span><span class="v302-brands-bottom"><strong>${active.length}</strong><span>Activas</span><i></i>${icon('chevron-down')}</span></button></div>
+  <section id="v305-actives-breakdown" class="v305-actives-breakdown" hidden aria-label="Desglose de suscripciones activas"><header><strong>Servicios activos</strong><span>${active.length} ${active.length===1?'servicio':'servicios'}</span></header>${active.length?`<div class="v305-active-list">${active.map(r=>serviceCard(r)).join('')}</div>`:'<p class="v302-subs-empty">No tienes suscripciones activas.</p>'}</section>
   <button type="button" class="v302-subs-add" data-act="addRecurring">${icon('plus')} Añadir suscripción</button>
   <section class="v302-subs-upcoming"><h2>Próximos cobros</h2>${next.length?`<div class="v302-subs-list">${next.map(r=>serviceCard(r)).join('')}</div>`:'<p class="v302-subs-empty">Aún no hay servicios activos.</p>'}</section>
+  <section class="v305-history" aria-label="Historial de cobros"><h2>Historial de cobros</h2>${historyRows?`<div class="v305-history-list">${historyRows}</div>`:'<p class="v302-subs-empty">Todavía no hay cobros de suscripciones registrados.</p>'}</section>
   ${pausedPanel}
  </section>`;
 }
@@ -34955,8 +35009,19 @@ function v302MobileSubscriptions(){
 const v302HistoricalRecurringPage=pages.recurring;
 pages.recurring=function(){
  if(!isMobileViewport())return v302HistoricalRecurringPage();
- return `<div class="v302-subs-mobile">${v302MobileSubscriptions()}<details class="v302-subs-history"><summary>Historial y análisis ${icon('chevron-down')}</summary><div class="v301-recurring-original">${v302HistoricalRecurringPage()}</div></details></div>`;
+ return `<div class="v302-subs-mobile">${v302MobileSubscriptions()}<details class="v302-subs-history"><summary>Ver historial completo y análisis ${icon('chevron-down')}</summary><div class="v301-recurring-original">${v302HistoricalRecurringPage()}</div></details></div>`;
 };
+
+/* V305: El KPI Activas muestra el desglose bajo las tarjetas; no cambia datos ni rutas. */
+document.addEventListener('click',function(event){
+ const button=event.target.closest?.('[data-v305-actives-toggle]');
+ if(!button)return;
+ const panel=document.getElementById('v305-actives-breakdown');
+ if(!panel)return;
+ const expanded=button.getAttribute('aria-expanded')==='true';
+ button.setAttribute('aria-expanded',String(!expanded));
+ panel.hidden=expanded;
+},true);
 pages.settings=v242Settings;
 pages.personalize=v296PersonalizePage;
 document.addEventListener('click',event=>{
@@ -46803,5 +46868,28 @@ body.theme-black .v298-insight-symbol,body.theme-dark .v298-insight-symbol{backg
   .ff-obligation-total .v82-total-top .v82-burden.v85-summary-burden {margin-left:auto!important;}
 }
 </style>
+
+<style id="vive-v304-porcentajes-vision-global">
+/* V304 · Legibilidad mayor para los porcentajes comparativos (verde / naranja)
+   sin alterar los importes principales de los círculos. */
+body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble .ff-yoy,
+body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble .ff-yoy-empty{
+  min-height:18px!important;
+}
+body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble .ff-yoy .comparison-only-pct,
+.ff-dashboard .ff-executive-bubbles .ff-bubble .ff-yoy .comparison-only-pct{
+  font-size:15.75px!important;
+  line-height:1.02!important;
+  font-weight:900!important;
+  letter-spacing:-.01em!important;
+}
+@media(max-width:760px){
+  body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-executive-bubbles .ff-bubble .ff-yoy .comparison-only-pct,
+  .ff-dashboard .ff-executive-bubbles .ff-bubble .ff-yoy .comparison-only-pct{
+    font-size:13.5px!important;
+  }
+}
+</style>
+
 </body>
 </html>
