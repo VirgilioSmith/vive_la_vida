@@ -2,11 +2,15 @@
 
 <html lang="es">
 <head>
+<meta name="vive-el-hoy-build-v302" content="resumen-web-compromisos-doble-altura-y-suscripciones-movil-referencia"/>
+<meta name="vive-el-hoy-build-v301" content="restauracion-analisis-presupuesto-vision-web-suscripciones-movil"/>
+<meta name="vive-el-hoy-v297" content="centro-pagos-web-y-recuperacion-analisis"/>
+<meta name="vive-el-hoy-build-v296" content="personalizacion-independiente-auditoria-ux"/>
 <meta name="vive-el-hoy-build-v294" content="vision-personalizacion-bancaria-20261105" />
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="292-coherencia-operaciones-movil"/>
+<meta name="vive-el-hoy-version" content="v299-movimientos-navegacion-seis-vistas"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -22297,6 +22301,78 @@ body.theme-black .v274-apple-health.ready,body.theme-dark .v274-apple-health.rea
 body.theme-black .v274-apple-health.fail,body.theme-dark .v274-apple-health.fail{border-color:#a85b52}
 @media(max-width:650px){.v274-apple-health{align-items:stretch;flex-direction:column}.v274-apple-health .v212-small{width:100%}}
 </style>
+<style id="vive-v299-movimientos-six-tabs">
+/* V299 — Restore ONLY the existing six navigation tabs in Movimientos.
+   All original pages, datasets and click handlers are reused, unchanged. */
+main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell{
+  display:flex!important;
+  box-sizing:border-box;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell .module-switch-tabs{
+  min-width:0;
+  max-width:100%;
+  scrollbar-width:thin;
+  scroll-behavior:smooth;
+}
+main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell .module-switch-tab:focus-visible{
+  outline:2px solid #3a78dd;
+  outline-offset:2px;
+}
+@media screen and (max-width:790px){
+  main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell{
+    display:block!important;
+    width:100%;
+    padding:10px!important;
+    margin:0 0 14px!important;
+    border-radius:19px;
+  }
+  main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell .module-switch-title{
+    display:none!important;
+  }
+  main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell .module-switch-tabs{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:5px;
+    width:100%;
+    padding:5px;
+    overflow:visible!important;
+  }
+  main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell .module-switch-tab{
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    min-width:0!important;
+    width:100%;
+    min-height:51px;
+    padding:7px 3px!important;
+    font-size:clamp(9px,2.55vw,11px)!important;
+    line-height:1.2;
+    text-align:center;
+    white-space:normal;
+    overflow-wrap:normal;
+  }
+  main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell .module-switch-tab svg{
+    flex:0 0 auto;
+    width:17px;
+    height:17px;
+  }
+  main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell .module-switch-tab>span{
+    min-width:0;
+    width:100%;
+    overflow-wrap:normal;
+    word-break:normal;
+  }
+  main:is(.world-register,.world-income,.world-expenses,.world-budget,.world-categories,.world-antExpenses)>.module-switch-shell .module-switch-swipe{
+    display:none!important;
+  }
+}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -23257,7 +23333,7 @@ const NAV_FAMILIES=[
 const NAV_SECTIONS={
  banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
  register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
- payments:{title:'Compromisos',hint:'Consulta y gestiona tus pagos, suscripciones y acuerdos personales.',tabs:[['payments','Compromisos','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
+ payments:{title:'Centro de pagos',hint:'Visión global, suscripciones y relaciones personales.',tabs:[['payments','Compromisos','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
 };
 function navFamilyForPage(page){if(page==='vision')return 'vision';if(['overview','analytics','kpis','advanced','patrimony','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
 /* Four clear navigation worlds; contextual horizontal switches remain unchanged. */
@@ -23265,7 +23341,7 @@ const RAIL_DESTINATIONS=[
  ['overview','Resumen','home','Inicio, desempeño e indicadores'],
  ['banks','Bancos','building','Instituciones y productos bancarios'],
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
- ['vision','Visión','analytics','Tu panorama financiero y evolución']
+ ['payments','Visión global','calendar','Visión, suscripciones y entre personas']
 ];
 /* V153: distinctive stroke icons, scoped to the desktop navigation rail. */
 const V153_RAIL_ICONS={
@@ -23310,11 +23386,11 @@ function v206BankSwitch(page){
 }
 function moduleSwitch(page){
  const root=navFamilyForPage(page),section=NAV_SECTIONS[root];if(!section)return '';
- if(page==='income'||page==='expenses'||page==='budget')return ''; // V285: análisis directo y presupuesto de dos vistas
+ // V299: contextual navigation must stay available across all six Movimientos pages.
  if(root==='banks'&&window.matchMedia?.('(max-width:767px)').matches){
   return page==='banks'?'':v206BankSwitch(page);
  }
- return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${section.title}</strong><small>${section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic,view])=>{const on=page===id&&(!view||(ui.v176PayView||'agenda')===view);return `<button type="button" class="module-switch-tab ${on?'active':''}" ${on?'aria-current="page"':''} data-act="navigate" data-id="${id}"${view?` data-v176-pay-view="${view}"`:''}>${icon(ic)}<span>${name}</span></button>`}).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
+ return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${root==='payments'?(isMobileViewport()?'Compromisos':'Visión global'):section.title}</strong><small>${root==='payments'&&isMobileViewport()?'Consulta y gestiona tus pagos, suscripciones y acuerdos personales.':section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic,view])=>{const on=page===id&&(!view||(ui.v176PayView||'agenda')===view);return `<button type="button" class="module-switch-tab ${on?'active':''}" ${on?'aria-current="page"':''} data-act="navigate" data-id="${id}"${view?` data-v176-pay-view="${view}"`:''}>${icon(ic)}<span>${root==='payments'&&id==='payments'&&!isMobileViewport()?'Visión global':name}</span></button>`}).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
 }
 
 /* MOBILE FIRST EXPERIENCE: Same underlying finances, new responsive screens. */
@@ -23654,7 +23730,8 @@ function v165SearchAction(){
 
 
 function main(){
- const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Visión global y pagos','Indicadores, compromisos y vencimientos'],vision:['Visión','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Apariencia, privacidad y reglas']};
+ if(ui.page==='personalize' && !isMobileViewport()){ui.page='settings';v242SettingsPane='home';}
+ const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:[isMobileViewport()?'Centro de pagos':'Visión global','Visión global, suscripciones y entre personas'],vision:['Visión','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
   <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
@@ -23786,7 +23863,7 @@ function overview(){
  const peopleRows=loans.slice(0,3).map(l=>`<div class="ff-person-row"><span class="ff-person-initial">${sanitize((l.person||'?').slice(0,1).toUpperCase())}</span><span class="ff-person-name"><strong>${sanitize(l.person)}</strong><small>${l.direction==='lent'?'Me deben':'Yo debo'} · ${prettyDate(l.dueDate)}</small></span><b>${money(personalBalance(l),l.currency,2)}</b></div>`).join('');
  const ratioText=ratio===null?'—':`<span class="ff-number-core">${new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(ratio)}</span><span class="ff-percent-sign">%</span>`;
  return `<div class="ff-dashboard summary-space">
-  <div class="ff-dashboard-tools"><div class="ff-overline"><span class="ff-blue-dot"></span> TU PANORAMA FINANCIERO <span class="ff-tools-separator">/</span> <strong>${sanitize(period)}</strong></div><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
+  <div class="ff-dashboard-tools"><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
   <div class="ff-dashboard-grid">
    <section class="ff-balance ff-tile" aria-label="Balance y productos principales"><div class="ff-balance-header"><div><div class="ff-label">Balance en cuentas</div><div class="ff-balance-total">${money(totalFunds,'DOP',2)}</div><p>Efectivo consolidado · RD$ y US$ al cambio configurado${!db.settings.fxAcknowledged?' (referencial)':''}</p></div><div class="ff-currency-pills"><button class="chosen" data-act="navigate" data-id="accounts" title="Ver cuentas bancarias">RD$</button><button data-act="navigate" data-id="cards" title="Ver tarjetas en dólares">US$</button></div></div><div class="ff-bubbles"><div class="ff-bubble"><span>${money(fundsDOP,'DOP')}</span><small>Cuentas en RD$</small></div><div class="ff-bubble featured"><span>${money(fundsUSD,'USD',2)}</span><small>Cuentas en US$</small></div><div class="ff-bubble"><span>${money(cardDebtDOP+fx(cardDebtUSD,'USD'))}</span><small>Deuda en tarjetas</small></div></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
    <aside class="ff-activity"><div class="ff-panel-top"><div><h2>Movimientos</h2><p>Últimas operaciones y confirmaciones</p></div><button class="ff-black-btn" data-act="viewActivity">Ver todo ${icon('arrow')}</button></div><div class="ff-trans-list">${activity||'<div class="ff-empty-activity">Todavía no hay movimientos. Los registros aparecerán aquí.</div>'}</div><button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} por confirmar <span>${icon('arrow')}</span></button></aside>
@@ -24902,6 +24979,8 @@ function budgetEvolutionChart(year,selectedMonth){
  return `<section class="panel v27-budget-trend" aria-label="Evolución mensual del porcentaje de presupuesto utilizado"><div class="v27-budget-trend-head"><div><span class="summary-tag">EVOLUCIÓN DEL CUMPLIMIENTO</span><h3>Presupuesto utilizado · ${year}</h3><p class="form-note">Porcentaje de gasto sujeto a límites respecto al presupuesto asignado, mes a mes.</p></div><div class="v27-budget-last"><span>${current&&Number.isFinite(current.pct)?'MES SELECCIONADO':lastValid?'ÚLTIMO MES CON LÍMITE':'SIN LÍMITES'}</span><strong>${current&&Number.isFinite(current.pct)?current.pct.toFixed(1)+'%':lastValid?lastValid.pct.toFixed(1)+'%':'N/D'}</strong></div></div>${empty?'<div class="v27-budget-no-data">Define un presupuesto para visualizar la evolución porcentual de su utilización.</div>':`<div class="v27-budget-scroller" tabindex="0" aria-label="Gráfico desplazable horizontalmente en pantallas pequeñas"><svg class="v27-budget-svg" viewBox="0 0 900 255" role="img" aria-label="Evolución porcentual del presupuesto utilizado en ${year}">${grid}${target}${paths}${dots}${xlabels}</svg></div>`}<div class="v27-budget-trend-legend"><span><i class="v27-dot v27-dot-teal"></i> Menos del 80%</span><span><i class="v27-dot v27-dot-amber"></i> Entre 80% y 100%</span><span><i class="v27-dot v27-dot-red"></i> Más del 100%</span></div><p class="footnote">Los meses sin límite definido o aún futuros quedan sin punto. No se supone una ejecución de 0% cuando falta presupuesto. El 100% significa consumo completo del límite, no ahorro.</p></section>`;
 }
 
+/* V301: Restore complete, user-approved budget analysis from V284.
+   The financial functions and dataset remain sourced from current V300. */
 function budget(){
  const period=ui.month,priorYear=(Number(period.slice(0,4))-1)+period.slice(4),priorMonth=plusMonths(period+'-01',-1).slice(0,7);
  const current=budgetPlan(period),lastYear=budgetPlan(priorYear),lastMonth=budgetPlan(priorMonth),[year,month]=period.split('-').map(Number);
@@ -24918,12 +24997,10 @@ function budget(){
   return `<div class="budget-row"><div class="split"><div class="mini-title">${sanitize(cat)}</div><div class="hstack"><span class="subtle">${money(spent)} / ${amount?money(amount):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="">${global?'Editar':'Definir'}</button></div></div>${amount?`<div class="progress" tabindex="0" data-chart-tip="${sanitize(cat)}|Gastado: ${money(spent)}|Asignado: ${money(amount)}|Ejecución: ${pct.toFixed(1)}%"><span class="${pct>100?'high':pct>=80?'warn':''}" style="width:${Math.min(100,pct)}%"></span></div>`:''}${subs.length?`<details class="v194-subcategory-drawer"><summary><span>${subs.length} subcategoría${subs.length===1?'':'s'}</span><span class="v194-drawer-arrow">⌄</span></summary><div class="v194-subcategory-content">${subs.map(sub=>{const setting=current.rows.find(b=>b.category===cat&&b.subcategory===sub),limit=num(setting?.amount),expense=num(totals.expenseSubBy[cat+'||'+sub]);return `<div class="subbudget"><div class="split"><span>↳ ${sanitize(sub)}</span><div class="hstack"><span>${money(expense)} / ${limit?money(limit):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="${sanitize(sub)}">${setting?'Editar':'Definir'}</button></div></div>${limit?`<div class="progress"><span class="${expense>limit?'high':expense>=limit*.8?'warn':''}" style="width:${Math.min(100,expense/limit*100)}%"></span></div>`:''}</div>`}).join('')}</div></details>`:''}</div>`;
  }).filter(Boolean).join('');
  const hasLastYear=lastYear.rows.length>0;
- return `<div class="budget-world v180-budget-clean v285-budget-plan">
-   <div class="v285-budget-plan-top"><div><h3>Planificación por categoría</h3><p>Define y ajusta los límites del mes seleccionado.</p></div><div class="v285-budget-plan-actions"><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto"><button type="button" class="btn sm soft" data-act="addBudget">${icon('plus')} Definir límite</button></div></div>
-   <section class="panel v285-budget-edit-list" aria-label="Categorías y límites vigentes">${rows||'<div class="budget-empty-text">No hay presupuestos definidos durante este mes.</div>'}</section>
-   <details class="v285-analysis-details v285-budget-allocation"><summary>Consultar distribución del presupuesto ${icon('arrow')}</summary><div class="v285-analysis-details-content budget-allocation-list">${chart}</div></details>
-   <p class="footnote">Los límites globales incluyen sus subcategorías. Una modificación rige desde el período seleccionado y no borra versiones anteriores.</p>
- </div>`;
+ return `<div class="budget-world v180-budget-clean">
+ ${budgetEvolutionChart(year,month)}
+ <div class="budget-analytics-grid"><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">01 · ASIGNACIÓN</span><h3>¿A dónde va el presupuesto?</h3><p class="form-note">Peso porcentual y monto por categoría.</p></div><span class="pill">${active.length} categorías</span></div><div class="budget-allocation-list">${chart}</div></section><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">02 · COMPARACIÓN</span><h3>Variación absoluta e interanual</h3><p class="form-note">Mismo mes del año anterior · asignación y gasto real.</p></div></div><details class="budget-variance-disclosure"><summary>Consultar comparación mensual e interanual</summary><div class="budget-variance-grid">${valueComparison('PRESUPUESTO VS. AÑO ANTERIOR',current.total,lastYear.total,hasLastYear)}${valueComparison('PRESUPUESTO CAMBIO MENSUAL',current.total,lastMonth.total,lastMonth.rows.length>0)}${valueComparison('GASTO REAL VS. AÑO ANTERIOR',totals.expense,ly.expense,ly.expense!==0||db.transactions.some(t=>t.date.startsWith(priorYear)))}</div></details><div class="budget-coverage-note">El cumplimiento se calcula sobre el presupuesto asignado. Gastos sin límite se muestran por separado. ${hasLastYear&&lastYear.rows.every(x=>x.legacy)?'La asignación del año anterior procede de datos heredados sin fecha original y es solo orientativa.':''}</div></section></div>
+ ${budgetCompliance(totals)}<section class="panel section"><div class="panel-head"><div><span class="summary-tag">03 · EDICIÓN POR CATEGORÍA</span><h3>Presupuesto de ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</h3><p class="form-note">Edita una categoría o subcategoría. Cada período mantiene su propia referencia.</p></div><div class="v180-budget-edit-actions"><button type="button" class="btn sm soft" data-act="addBudget">${icon('plus')} Definir presupuesto</button><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto" style="width:162px"/></div></div>${rows||'<div class="budget-empty-text">No se registran presupuestos ni gastos durante este mes.</div>'}<p class="footnote">Un límite de categoría incluye sus subcategorías. Los cambios afectan el mes seleccionado y los siguientes, salvo otra versión posterior; las versiones anteriores no se modifican. Si tus presupuestos proceden de una versión antigua, la app no puede recuperar sus importes históricos previos a esta actualización.</p></section></div>`;
 }
 
 /* V285: Ejecución no es un tercer catálogo. Reutiliza los cálculos originales. */
@@ -25510,18 +25587,43 @@ function overview(){
  let owed=loans.filter(l=>l.direction==='borrowed').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0),receivable=loans.filter(l=>l.direction==='lent').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0);
  const peopleRows=loans.slice(0,3).map(l=>`<div class="ff-person-row"><span class="ff-person-initial">${sanitize((l.person||'?').slice(0,1).toUpperCase())}</span><span class="ff-person-name"><strong>${sanitize(l.person)}</strong><small>${l.direction==='lent'?'Me deben':'Yo debo'} · ${prettyDate(l.dueDate)}</small></span><b>${money(personalBalance(l),l.currency,2)}</b></div>`).join('');
  const ratioText=ratio===null?'—':`<span class="ff-number-core">${new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(ratio)}</span><span class="ff-percent-sign">%</span>`;
+ /* V297 · Vista de los cinco meses sin perder los datos usados por el
+    gráfico histórico. La escala es compartida para comparar los flujos. */
+ const v297FlowTile=(kind)=>{
+  const incomeMode=kind==='income',label=incomeMode?'Ingresos':'Egresos',route=incomeMode?'income':'expenses',value=incomeMode?m.income:m.expense;
+  const chart=five.map(x=>{
+   const amount=Math.max(0,num(x.tot[kind]));
+   const height=Math.max(3,Math.min(100,100*amount/high));
+   const name=x.date.toLocaleDateString('es-DO',{month:'short'}).replace('.','').toUpperCase();
+   const monthLabel=x.date.toLocaleDateString('es-DO',{month:'long',year:'numeric'});
+   return `<div class="v297-flow-column" tabindex="0" data-chart-tip="${sanitize(monthLabel)}|Ingresos: ${money(x.tot.income)}|Egresos: ${money(x.tot.expense)}|Neto: ${money(x.tot.net)}"><div class="v297-flow-track"><span style="height:${height}%"></span></div><small>${name}</small></div>`;
+  }).join('');
+  return `<section class="ff-tile v297-flow-card ${incomeMode?'v297-flow-income':'v297-flow-expense'}" aria-label="${label} del período" data-v105-widget="${kind}">
+    <header class="v297-flow-head"><div><span class="v297-eyebrow">FLUJO · ${sanitize(ui.month)}</span><h2>${label}</h2></div><button type="button" data-act="navigate" data-id="${route}" aria-label="Abrir análisis completo de ${label}">${icon('arrow')}</button></header>
+    <strong class="v297-flow-total" title="${money(value,'DOP',2)}">${money(value)}</strong>
+    <p>Registrados en el período · cinco meses de evolución</p>
+    <div class="v297-flow-chart" role="group" aria-label="${label} en los últimos cinco meses">${chart}</div>
+  </section>`;
+ };
+
  return `<div class="ff-dashboard summary-space">
-  <div class="ff-dashboard-tools"><div class="ff-overline"><span class="ff-blue-dot"></span> TU PANORAMA FINANCIERO <span class="ff-tools-separator">/</span> <strong>${sanitize(period)}</strong></div><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
+  <div class="ff-dashboard-tools"><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
   <div class="ff-dashboard-grid v105-grid">
    <section class="ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${allNet<-.005?'v176-net-negative':allNet>.005?'v176-net-positive':''}">${money(allNet,'DOP',2)}</button><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="v186Deep" data-id="liquidity" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="v186Deep" data-id="debt" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="net" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
    <aside data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong><span>Pendientes hasta fin de mes, incluidos vencidos: ${money(allDue)}. La carga mensual es distinta del saldo total de deuda.</span></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} pendientes de revisión <span>${icon('arrow')}</span></button></aside>
-   ${v290BudgetWeb()}
-   <div class="ff-mid">
-    <section data-v105-widget="chart" class="ff-expense-card ff-tile"><div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses</p></div><div class="v82-chart-actions"><span class="ff-inline-pill">Mensual</span></div></div><div class="ff-bar-chart" role="group" aria-label="Gráfico de ingresos y egresos de los últimos cinco meses">${bars}</div><div class="ff-stat-footer"><span title="Ingresos reconocidos del mes"><i class="ff-legend-blue"></i>Ingresos <b>${bubbleMoney(m.income)}</b></span><span title="Gastos reconocidos del mes"><i class="ff-legend-white"></i>Egresos <b>${bubbleMoney(m.expense)}</b></span></div></section>
+   <div class="v297-net-row" aria-label="Neto del mes y relaciones personales">
     <section data-v105-widget="net" class="ff-health-card ff-tile"><div class="ff-panel-top"><div><h2>Neto del mes</h2><p>Ingresos − egresos</p></div></div><div class="ff-health-number ff-net-hover" tabindex="0" data-chart-tip="${monthlyNetTip}" aria-label="Porcentaje neto mensual. Consulta la comparación con el año anterior">${ratioText}</div><div class="ff-health-caption">${ratio===null?'Sin ingresos registrados':'Del ingreso que queda después de gastos'}</div>${spark}<div class="ff-health-foot"><span>Resultado neto</span><strong tabindex="0" data-chart-tip="${monthlyNetTip}">${money(m.net)}</strong></div></section>
+   <section data-v105-widget="people" class="ff-personal ff-tile"><div class="ff-panel-top"><div><h2>Entre personas</h2><p>Dinero prestado y recibido</p></div><button class="ff-outline-pill" data-act="navigate" data-id="personal">Ver relaciones</button></div><div class="ff-person-sums"><div><small>Por cobrar</small><strong>${money(receivable)}</strong></div><div><small>Por devolver</small><strong>${money(owed)}</strong></div></div><div class="ff-people-list">${peopleRows||'<div class="ff-no-people">No hay préstamos personales activos.</div>'}</div><button class="ff-person-cta" data-act="addPersonal">${icon('plus')} Nueva relación</button></section>
+   </div>
+   <div class="v297-summary-trio" aria-label="Ingresos, egresos y cumplimiento de presupuesto">
+     <section data-v105-widget="incomeExpense" class="ff-expense-card ff-tile v298-flow-dual" aria-label="Ingresos y egresos del período">
+       <div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses</p></div><span class="ff-inline-pill">Mensual</span></div>
+       <div class="ff-bar-chart" role="group" aria-label="Comparativa de ingresos y egresos de cinco meses">${bars}</div>
+       <div class="ff-stat-footer"><button type="button" data-act="navigate" data-id="income" aria-label="Ver análisis de ingresos"><i class="ff-legend-blue"></i> Ingresos <b>${money(m.income)}</b></button><button type="button" data-act="navigate" data-id="expenses" aria-label="Ver análisis de egresos"><i class="ff-legend-white"></i> Egresos <b>${money(m.expense)}</b></button></div>
+     </section>
+     ${v290BudgetWeb()}
    </div>
    <section data-v105-widget="payments" class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
-   <section data-v105-widget="people" class="ff-personal ff-tile"><div class="ff-panel-top"><div><h2>Entre personas</h2><p>Dinero prestado y recibido</p></div><button class="ff-outline-pill" data-act="navigate" data-id="personal">Ver relaciones</button></div><div class="ff-person-sums"><div><small>Por cobrar</small><strong>${money(receivable)}</strong></div><div><small>Por devolver</small><strong>${money(owed)}</strong></div></div><div class="ff-people-list">${peopleRows||'<div class="ff-no-people">No hay préstamos personales activos.</div>'}</div><button class="ff-person-cta" data-act="addPersonal">${icon('plus')} Nueva relación</button></section>
   </div>
  </div>`;
 }
@@ -28119,7 +28221,7 @@ case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navGroupToggle':ui.navExpanded=ui.navExpanded===id?null:id;render();break;
 case 'navigate':{
-  ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id;
+  ui.page=id==='transactions'?'register':id==='projection'?'patrimony':(id==='vision'&&!isMobileViewport()?'payments':id);
   if(ui.page==='register')ui.movementTab='all'; // Movimientos conserva su historial; el botón Registrar abre el asistente.
   if(ui.page==='banks' && window.matchMedia?.('(min-width: 768px)').matches){
     v225DesktopBankOpened=false;
@@ -28655,9 +28757,13 @@ innerView=function(page,selection){
  }
  return v26InnerViewLegacy(page,selection);
 };
+// V301: This category exists in the parent navigation and inside the analysis charts.
+// Remove only the redundant internal tab, without losing the financial content.
+INNER_PAGES.expenses.tabs=INNER_PAGES.expenses.tabs.filter(([view])=>view!=='category');
 const v26OldInnerWrap=innerWrap;
 innerWrap=function(page,view){
- if(page==='payments'||page==='income'||page==='expenses')return view(); // V285: navegación directa
+ if(page==='payments')return view(); // V301: Visión global has no redundant inner navigator
+ if(page==='income'||page==='expenses')return v26OldInnerWrap(page,view); // Restore original analysis, recurring income and movement tabs
  if(page==='budget'){
    const mode=ui.innerViews?.budget==='status'?'status':'overview';
    const tab=(id,name)=>`<button type="button" class="v285-budget-tab ${mode===id?'active':''}" data-act="innerView" data-page="budget" data-view="${id}" aria-current="${mode===id?'page':'false'}">${name}</button>`;
@@ -34528,8 +34634,8 @@ document.addEventListener('click',function(event){
    El menú global, el modelo financiero y los controladores originales permanecen intactos. */
 let v242SettingsPane='home';
 const V242_PANES=[
+ ['appearance','Apariencia y colores','Temas Claro y Black oscuro, acentos y fondos','sun','Visual'],
  ['profile','Perfil y sincronización','Conexión privada y estado de tu cuenta','wallet','Cuenta'],
- ['appearance','Personalización y apariencia','Tema, acento, fondo y KPI móvil','sun','Preferencias'],
  ['notifications','Notificaciones y recordatorios','Avisos y dispositivos autorizados','calendar','Avisos'],
  ['integrations','Integraciones y automatizaciones','Apple Pay y Atajos de iPhone','card','Servicios'],
  ['financial','Configuración financiera','Tasa de cambio, impuestos y cargos','chart','Finanzas'],
@@ -34607,13 +34713,33 @@ function v273SettingsWidgetEditor(){
  return `<section class="v273-settings-customizer" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Organiza tu Resumen</h3><p>Elige las secciones que quieres ver y cambia su orden. Las preferencias se guardan automáticamente y no modifican tus movimientos.</p></header><div class="v273-custom-rows">${rows}</div><div class="v273-custom-footer"><span>Solo afecta a la vista móvil de Resumen.</span><button type="button" data-v273-reset="1">Restaurar orden y visibilidad</button></div></section>`;
 }
 
-function v242Settings(){
- const s=db.settings,pane=V242_PANES.some(x=>x[0]===v242SettingsPane)?v242SettingsPane:'home';
- const paneInfo=V242_PANES.find(x=>x[0]===pane);
- const tile=(entry)=>`<button class="v242-settings-row" type="button" data-v242-section="${entry[0]}"><span class="v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v242-settings-row-copy"><strong>${entry[1]}</strong><small>${entry[2]}</small></span><span class="v242-settings-chevron" aria-hidden="true">›</span></button>`;
- const content={
-  profile:`${f34CloudPanel()}`,
-  appearance:`${v242SettingsPreview()}${v273SettingsWidgetEditor()}${v250DockGlassPanel()}<div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
+
+/* V296 · Personalización desde Inicio, no desde Configuración.
+   Reutiliza los controles originales, sus atributos data-act y los ajustes
+   persistentes sin modificar lógica financiera. */
+function v296PersonalizePage(){
+ const s=db.settings;
+ const sections = `<section id="v296-kpi" class="v296-block" aria-label="Estilo del KPI principal">${v242SettingsPreview()}</section>
+ <section id="v296-widgets" class="v296-block" aria-label="Módulos y orden del Resumen">${v273SettingsWidgetEditor()}</section>
+ <section id="v296-glass" class="v296-block" aria-label="Liquid Glass móvil">${v250DockGlassPanel()}</section>
+`;
+ return `<div class="v296-personalize" aria-label="Personalización de vive el hoy">
+  <header class="v296-hero"><div class="v296-hero-top"><button type="button" data-v296-back="1" class="v296-back">${icon('arrow')} Inicio</button><span class="v296-hero-label">vive el hoy · tu espacio</span></div><span class="v296-eyebrow">DISEÑA TU EXPERIENCIA</span><h2>Personalización</h2><p>Organiza tu Resumen móvil y ajusta Liquid Glass. Los temas y colores están en Ajustes.</p></header>
+  <nav class="v296-nav" aria-label="Secciones de personalización">
+   <a href="#v296-kpi">${icon('wallet')} KPI principal</a>
+   <a href="#v296-widgets">${icon('grid')} Mi resumen</a>
+   <a href="#v296-glass">${icon('sun')} Liquid Glass</a>
+  </nav>
+  <div class="v296-settings-body">${sections}</div>
+  <footer class="v296-end"><span>Las preferencias visuales no modifican saldos, operaciones ni registros.</span><button type="button" data-v296-back="1">Volver a Inicio ${icon('arrow')}</button></footer>
+ </div>`;
+}
+
+/* V300 · One shared appearance controller for desktop and mobile. All fields
+   reuse the original persisted db.settings values and data-act events. */
+function v300AppearancePane(){
+ const s=db.settings;
+ return `<div class="v300-appearance-pane" aria-label="Apariencia y colores"><div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
 <div class="theme-settings panel"><div><strong>Aspecto de vive el hoy</strong><p>Elige Claro o Black oscuro. El modo Black utiliza fondo negro y tarjetas carbón de alto contraste; tus registros no cambian.</p></div><div class="theme-choice-row" role="group" aria-label="Elegir apariencia"><button class="theme-choice ${s.theme==='light'?'selected':''}" data-act="setTheme" data-id="light" aria-pressed="${s.theme==='light'}"><span class="theme-sun">☀</span> Claro</button><button class="theme-choice v200-black-choice ${s.theme==='black'?'selected':''}" data-act="setTheme" data-id="black" aria-pressed="${s.theme==='black'}"><span class="v200-black-mark">●</span> Black oscuro</button></div></div>
 
 
@@ -34630,8 +34756,16 @@ function v242Settings(){
  ['original','Nube original','#d9e7fa','#f4f6fd','La atmósfera original'],['glacier','Glaciar','#bceaf0','#dbf5e8','Azul hielo y agua marina'],['sunset','Atardecer','#f1cadd','#f8dec4','Rosa suave y arena']
 ].map(([key,name,a,b,desc])=>`<button type="button" class="vive-palette-choice v15-bg-choice ${((s.backgroundChoice||'original')===key)?'selected':''}" data-act="backgroundTheme" data-id="${key}" aria-pressed="${(s.backgroundChoice||'original')===key}"><span class="v15-bg-art" style="background:linear-gradient(135deg,${a},${b})"><i class="v15-bg-rail"></i><i class="v15-bg-card"></i><i class="v15-bg-card small"></i></span><strong>${name}</strong><small>${desc}</small></button>`).join('')}</div>
 <div class="vive-custom-palette"><div><strong>Fondo personalizado</strong><small>Escoge el tono de la atmósfera; el sistema conservará el contraste y el degradado.</small></div><label for="viveBackgroundColor">Color</label><input type="color" id="viveBackgroundColor" value="${/^#[0-9a-f]{6}$/i.test(s.backgroundHex||'')?s.backgroundHex:'#9db8ef'}" aria-label="Color personalizado del fondo"><button class="btn sm soft" type="button" data-act="backgroundCustom">Aplicar fondo</button></div></div>
+</div>`;
+}
 
-`,
+function v242Settings(){
+ const s=db.settings,pane=V242_PANES.some(x=>x[0]===v242SettingsPane)?v242SettingsPane:'home';
+ const paneInfo=V242_PANES.find(x=>x[0]===pane);
+ const tile=(entry)=>`<button class="v242-settings-row" type="button" data-v242-section="${entry[0]}"><span class="v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v242-settings-row-copy"><strong>${entry[1]}</strong><small>${entry[2]}</small></span><span class="v242-settings-chevron" aria-hidden="true">›</span></button>`;
+ const content={
+  appearance:`${v300AppearancePane()}`,
+  profile:`${f34CloudPanel()}`,
   notifications:`${f37SettingsPanel()}`,
   integrations:`${v212SettingsPanel()}`,
   financial:`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / REGLAS FINANCIERAS</span><h3>Tasas, transferencias y cargos</h3></div></div>
@@ -34645,7 +34779,7 @@ ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div 
  };
  const title=paneInfo?.[1]||'Configuración';
  return `<div class="settings-layout v242-ios-settings" data-v242-settings="${pane}">
- ${pane==='home'?`<div class="v242-settings-home"><header class="v242-settings-intro"><span class="v242-settings-eyebrow">VIVE EL HOY · FINANZAS 360</span><h1>Configuración</h1><p>Todo a tu manera, con la claridad de Ajustes de iPhone.</p></header><section class="v242-settings-profile"><span class="v242-profile-avatar">${icon('wallet')}</span><span><strong>Tu espacio financiero</strong><small>Preferencias, conexión y protección</small></span><span class="v242-settings-chevron">›</span><button class="v242-profile-hit" type="button" data-v242-section="profile" aria-label="Abrir perfil y sincronización"></button></section><div class="v242-settings-section"><span class="v242-group-caption">PERSONALIZACIÓN</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['appearance','notifications'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">CONEXIONES Y FINANZAS</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['integrations','financial'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">PRIVACIDAD Y SOPORTE</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['security','about'].includes(x[0])).map(tile).join('')}</div></div><p class="v242-settings-footer">Tus registros y operaciones financieras se mantienen protegidos por las reglas actuales de la aplicación.</p></div>`:
+ ${pane==='home'?`<div class="v242-settings-home"><header class="v242-settings-intro"><span class="v242-settings-eyebrow">VIVE EL HOY · FINANZAS 360</span><h1>Configuración</h1><p>Todo a tu manera, con la claridad de Ajustes de iPhone.</p></header><section class="v242-settings-profile"><span class="v242-profile-avatar">${icon('wallet')}</span><span><strong>Tu espacio financiero</strong><small>Preferencias, conexión y protección</small></span><span class="v242-settings-chevron">›</span><button class="v242-profile-hit" type="button" data-v242-section="profile" aria-label="Abrir perfil y sincronización"></button></section><div class="v242-settings-section"><span class="v242-group-caption">APARIENCIA</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='appearance').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">NOTIFICACIONES</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='notifications').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">CONEXIONES Y FINANZAS</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['integrations','financial'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">PRIVACIDAD Y SOPORTE</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['security','about'].includes(x[0])).map(tile).join('')}</div></div><p class="v242-settings-footer">Tus registros y operaciones financieras se mantienen protegidos por las reglas actuales de la aplicación.</p></div>`:
  `<div class="v242-settings-subpage"><header class="v242-settings-subhead"><button type="button" class="v242-settings-back" data-v242-back="1">‹ <span>Configuración</span></button><span class="v242-settings-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h1>${title}</h1><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner">${content[pane]||''}</div></div>`}
  </div>`;
 }
@@ -34657,7 +34791,7 @@ document.addEventListener('click',event=>{
  const reset=event.target.closest('[data-v273-reset]');
  if(!opener&&!toggle&&!move&&!reset)return;
  event.preventDefault();event.stopImmediatePropagation();
- if(opener){v242SettingsPane='appearance';ui.page='settings';render();window.scrollTo(0,0);return}
+ if(opener){ui.page=isMobileViewport()?'personalize':'settings';ui.mobile=false;if(!isMobileViewport())v242SettingsPane='appearance';render();window.scrollTo(0,0);return}
  const cfg=v105Config();
  if(toggle){const id=toggle.dataset.v273Toggle;if(!cfg.order.includes(id))return;cfg.visible=cfg.visible.includes(id)?cfg.visible.filter(x=>x!==id):[...cfg.visible,id]}
  else if(move){const id=move.dataset.id,i=cfg.order.indexOf(id),j=i+(move.dataset.v273Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]]}
@@ -34704,7 +34838,8 @@ function v294VisionPage(){
  const content=visionOverview()
   .replace('<h2>Dashboard</h2>','<h2>Visión</h2>')
   .replace('Todo lo que importa, en una vista más directa.','Todo lo que importa de tus finanzas, en una sola vista.')
-  .replace('data-act="navigate" data-id="kpis"','data-v273-open-personalization="1"');
+  .replace('data-act="navigate" data-id="kpis"','data-v273-open-personalization="1"')
+  .replace(/<button class="vision-switch-button" data-v273-open-personalization="1">[\s\S]*?<\/button>/,match=>isMobileViewport()?match:'');
  return `<section class="v294-vision-route" aria-label="Visión financiera">${content}</section>`;
 }
 pages.vision=v294VisionPage;
@@ -34746,7 +34881,37 @@ function v295GlobalVisionAndPayments(){
     </section>
   </div>`;
 }
-pages.payments=v295GlobalVisionAndPayments;
+/* V297: El Centro de pagos WEB reutiliza los componentes existentes.
+   No renombra el route móvil Vision ni altera sus datos; las otras dos
+   secciones se navegan con NAV_SECTIONS.payments y sus páginas originales. */
+function v297DesktopPaymentCenter(){
+ // V301: Single desktop Vision Global; the six original financial analytics
+ // stay inside visionOverview(). Payment operations are accessible in the same
+ // view, without creating another standalone Compromisos page.
+ const vision=v294VisionPage().replace(/data-act="navigate" data-id="payments"/g,'data-v301-open-payments="1"');
+ return `<div class="v301-vision-desktop" aria-label="Visión global web">
+   <div class="v301-vision-intro"><span class="v297-eyebrow">VIVE EL HOY · PERSPECTIVA FINANCIERA</span><h1>Visión global</h1><p>Patrimonio, flujo, indicadores de desempeño y próximos riesgos.</p></div>
+   <div class="v301-vision-financial">${vision}</div>
+   <details class="v301-vision-payments" id="v301-payment-operations"><summary>${icon('calendar')} <strong>Gestionar pagos y vencimientos</strong><span>Consultar obligaciones y registrar pagos</span>${icon('arrow')}</summary><div class="v301-vision-payment-body">${payments()}</div></details>
+ </div>`;
+}
+document.addEventListener('click',event=>{
+ const action=event.target.closest?.('[data-v301-open-payments]');
+ if(!action||!action.closest('#page .v301-vision-financial'))return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const detail=document.getElementById('v301-payment-operations');
+ if(detail){detail.open=true;detail.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});}
+},true);
+pages.payments=function(){
+ // Visión global del iPhone conserva íntegra la estructura V295.
+ return isMobileViewport()?v295GlobalVisionAndPayments():v297DesktopPaymentCenter();
+};
+document.addEventListener('click',function(ev){
+ const el=ev.target.closest?.('[data-v297-scroll-payments]');
+ if(!el||!el.closest('.v297-payment-center'))return;
+ ev.preventDefault();ev.stopImmediatePropagation();
+ document.getElementById('v297-payment-agenda')?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+},true);
 
 document.addEventListener('click',function(event){
   const down=event.target.closest('[data-v295-open-payment-center]');
@@ -34759,7 +34924,46 @@ document.addEventListener('click',function(event){
   if(target)target.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
 },true);
 
+/* V302 | Mobile Subscriptions, reference-grounded. Existing financial
+   functions and all editing/payment/history routes are deliberately reused. */
+function v302MobileSubscriptions(){
+ const all=(db.recurring||[]).slice();
+ const active=all.filter(r=>r.active!==false);
+ const paused=all.filter(r=>r.active===false);
+ const monthly=typeof v80RecurringMonthly==='function'?v80RecurringMonthly():active.reduce((n,r)=>n+fx(num(r.amount),r.currency||'DOP')*({weekly:52/12,monthly:1,quarterly:1/3,annual:1/12}[r.frequency]||1),0);
+ const year=monthly*12;
+ const due=v99PendingForPeriod(ui.month).filter(p=>p.kind==='recurring').reduce((total,p)=>total+fx(num(p.amount),p.currency||'DOP'),0);
+ const freq=r=>({monthly:'Mensual',weekly:'Semanal',quarterly:'Trimestral',annual:'Anual'})[r.frequency]||'Periódico';
+ const next=active.slice().sort((a,b)=>String(a.nextDue||'9999').localeCompare(String(b.nextDue||'9999')));
+ const mosaic=active.slice(0,7).map((r,i)=>`<span class="v302-brand v302-brand-${i%7}" title="${sanitize(r.name)}" aria-hidden="true">${v45SubIcon(r,'tiny')}</span>`).join('');
+ const serviceCard=(r,pausedFlag=false)=>`<details class="v302-service" data-v302-service-id="${sanitize(r.id)}">
+   <summary class="v302-service-summary"><span class="v302-service-icon">${v45SubIcon(r,'small')}</span><span class="v302-service-info"><strong>${sanitize(r.name)}</strong><small>${pausedFlag?'En pausa':prettyDate(r.nextDue)} · ${freq(r)}</small></span><b>${money(r.amount,r.currency,2)}</b>${icon('arrow')}</summary>
+   <div class="v302-service-details"><div><span>Categoría</span><b>${sanitize(r.category||'Suscripciones')}</b></div><div><span>Próximo cargo</span><b>${pausedFlag?'Pausado':prettyDate(r.nextDue)}</b></div><div class="v302-service-actions"><button type="button" data-act="editRecurring" data-id="${sanitize(r.id)}">${icon('edit')} Editar</button><button type="button" data-act="toggleRecurring" data-id="${sanitize(r.id)}">${pausedFlag?'Reactivar':'Pausar'}</button>${!pausedFlag?`<button type="button" data-act="payRecurring" data-id="${sanitize(r.id)}">Registrar pago</button>`:''}</div></div>
+  </details>`;
+ const pausedPanel=paused.length?`<details class="v302-paused"><summary>Servicios en pausa <span>${paused.length}</span>${icon('chevron-down')}</summary><div>${paused.map(r=>serviceCard(r,true)).join('')}</div></details>`:'';
+ return `<section class="v302-subs-app" aria-label="Resumen de suscripciones">
+  <header class="v302-subs-head"><h1>Suscripciones</h1></header>
+  <div class="v302-subs-stats"><article class="v302-cost-card"><div class="v302-cost-title"><span class="v302-mini-icon">${icon('calendar')}</span> Por pagar este mes</div><strong>${money(due)}</strong><div class="v302-cost-rule"></div><div class="v302-cost-secondary"><span>Equivalente anual</span><b>${money(year)}</b></div></article>
+  <article class="v302-brands-card"><div class="v302-brand-cluster">${mosaic||'<span class="v302-brand v302-brand-empty">+</span>'}</div><div class="v302-brands-bottom"><strong>${active.length}</strong><span>Activas</span><i></i></div></article></div>
+  <button type="button" class="v302-subs-add" data-act="addRecurring">${icon('plus')} Añadir suscripción</button>
+  <section class="v302-subs-upcoming"><h2>Próximos cobros</h2>${next.length?`<div class="v302-subs-list">${next.map(r=>serviceCard(r)).join('')}</div>`:'<p class="v302-subs-empty">Aún no hay servicios activos.</p>'}</section>
+  ${pausedPanel}
+ </section>`;
+}
+/* Preserve the original historical views and analysis in an optional disclosure.
+   Its actions, forms and financial calculations remain unchanged. */
+const v302HistoricalRecurringPage=pages.recurring;
+pages.recurring=function(){
+ if(!isMobileViewport())return v302HistoricalRecurringPage();
+ return `<div class="v302-subs-mobile">${v302MobileSubscriptions()}<details class="v302-subs-history"><summary>Historial y análisis ${icon('chevron-down')}</summary><div class="v301-recurring-original">${v302HistoricalRecurringPage()}</div></details></div>`;
+};
 pages.settings=v242Settings;
+pages.personalize=v296PersonalizePage;
+document.addEventListener('click',event=>{
+ const back=event.target.closest?.('[data-v296-back]');if(!back)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ ui.page='overview';ui.mobile=false;render();window.scrollTo(0,0);
+},true);
 function v242MobileCircles(liquid,debt,net,comparison){
  const circle=(id,label,value,prior,risk=false,featured=false)=>`<button type="button" class="ff-bubble ${featured?'featured':''} ${id==='net'&&value<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="${id}" data-chart-tip="${label}|Valor exacto: ${money(value,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(value)}</span>${v105BubblePercent(value,prior,comparison,risk)}<small>${label}</small></button>`;
  return `<section class="v242-mobile-web-position ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera, diseño de tres círculos"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${net<-.005?'v176-net-negative':net>.005?'v176-net-positive':''}">${money(net,'DOP',2)}</button><p>Liquidez + certificados + por cobrar − deudas totales</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles">${circle('liquidity','Liquidez',liquid,comparison.position?.liquid)}${circle('debt','Deudas totales',debt,comparison.position?.debt,true,true)}${circle('net','Posición neta',net,comparison.position?.net)}</div></section>`;
@@ -45997,5 +46201,607 @@ body.theme-dark #page :is(.v295-jump-payments,.v295-jump-top){
 }
 </style>
 
+
+<style id="vive-v296-personalizacion-independent">
+/* V296 · Personalización dedicada, reutiliza el estado y el registro previos. */
+.v296-overview-entry{display:flex;justify-content:flex-end;margin:0 0 14px;min-width:0}
+.v296-overview-entry button{display:flex;align-items:center;gap:9px;min-height:40px;border:1px solid rgba(187,204,230,.7);border-radius:99px;padding:9px 13px;background:rgba(255,255,255,.77);color:#274b79;box-shadow:0 5px 15px rgba(34,60,103,.06);font-weight:770;cursor:pointer}
+.v296-overview-entry button svg{width:16px;height:16px}
+.v296-overview-entry button span{font-size:11px;color:#6b82a4;font-weight:600;display:inline-flex;gap:5px;align-items:center}
+.v296-overview-entry button:hover{border-color:#87a9d9;background:#fff}
+.v296-personalize{width:100%;max-width:1200px;margin:0 auto;padding:0 0 55px;min-width:0;box-sizing:border-box}
+.v296-hero{position:relative;overflow:hidden;border-radius:27px;padding:clamp(20px,3.4vw,36px);background:linear-gradient(135deg,#1e3b66 0%,#2d5d97 66%,#537cb2 100%);color:white;box-shadow:0 16px 44px rgba(26,54,103,.16);isolation:isolate}
+.v296-hero:after{content:'';position:absolute;width:360px;height:360px;top:-230px;right:-100px;border-radius:50%;border:1px solid rgba(255,255,255,.23);box-shadow:0 0 0 60px rgba(255,255,255,.035);z-index:-1}
+.v296-hero-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.v296-back{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.42);color:white;border-radius:99px;padding:9px 13px;min-height:38px;cursor:pointer;font-size:12px;font-weight:750}
+.v296-back svg{width:15px;height:15px;transform:rotate(180deg)}
+.v296-hero-label{font-size:11px;letter-spacing:.12em;color:#b9d7fb;font-weight:740}
+.v296-eyebrow{display:block;margin-top:24px;font-size:10px;font-weight:850;letter-spacing:.22em;color:#c1dcff}
+.v296-hero h2{color:#fff!important;font-size:clamp(30px,5vw,49px);margin:7px 0 9px;line-height:1.12;letter-spacing:-.05em}
+.v296-hero p{margin:0;max-width:670px;font-size:clamp(12px,1.2vw,14px);line-height:1.65;color:#dfecff}
+.v296-nav{display:flex;gap:8px;flex-wrap:wrap;margin:17px 0 19px;min-width:0}
+.v296-nav a{display:inline-flex;align-items:center;gap:8px;min-height:39px;background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.94);border-radius:99px;padding:9px 14px;color:#39597f;font-size:12px;font-weight:750;text-decoration:none;box-shadow:0 3px 16px rgba(54,81,122,.04)}
+.v296-nav a svg{height:16px;width:16px}.v296-nav a:focus-visible,.v296-back:focus-visible,.v296-overview-entry button:focus-visible{outline:3px solid #80b1ff;outline-offset:3px}
+.v296-settings-body{display:grid;gap:18px;min-width:0}
+.v296-block{min-width:0;scroll-margin-top:18px}
+.v296-block .v242-appearance-picker,.v296-block .v273-settings-customizer,.v296-block .v250-dock-settings{margin:0;min-width:0}
+.v296-block .settings-group-title{margin-top:22px}
+.v296-block .settings-group-title:first-child{margin-top:0}
+.v296-end{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:23px;padding:15px 3px;color:#7186a1;font-size:11px}
+.v296-end button{display:flex;align-items:center;gap:8px;min-height:36px;border:1px solid #c7d7ec;background:#fff;border-radius:12px;padding:8px 13px;font-weight:750;color:#365e91;cursor:pointer}
+.v296-end button svg{width:16px;height:16px}
+body.theme-black .v296-nav a,body.theme-dark .v296-nav a,body.theme-black .v296-overview-entry button,body.theme-dark .v296-overview-entry button{background:#202938;border-color:#40516a;color:#edf2ff}
+body.theme-black .v296-overview-entry button span,body.theme-dark .v296-overview-entry button span{color:#b9c9e0}
+body.theme-black .v296-end button,body.theme-dark .v296-end button{background:#222b3c;border-color:#435573;color:#e4eeff}
+@media(max-width:790px){
+ .v296-overview-entry{display:none}
+ .v296-personalize{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))}
+ .v296-hero{border-radius:21px;padding:20px 17px 24px}
+ .v296-eyebrow{margin-top:21px}
+ .v296-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;gap:7px;margin:13px 0 16px;padding:0 1px 5px}
+ .v296-nav::-webkit-scrollbar{display:none}
+ .v296-nav a{flex:0 0 auto;white-space:nowrap;font-size:11px;padding:8px 10px;min-height:38px}
+ .v296-settings-body{gap:14px}
+ .v296-block .v242-appearance-picker,.v296-block .v273-settings-customizer{padding:15px 12px;border-radius:20px}
+ .v296-block .v242-appearance-grid{min-width:0}
+ .v296-block .v273-custom-row{min-width:0}
+ .v296-block .v273-custom-copy{flex:1 1 auto}
+ .v296-end{padding:12px 0}
+}
+@media(max-width:360px){.v296-hero-label{font-size:10px}.v296-nav a{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.v296-nav{scroll-behavior:auto!important}}
+</style>
+
+<style id="vive-v297-web-recovery-and-payment-center">
+/* V297 — authoritative, scoped to WEB. iPhone Vision global and mobile Home unchanged. */
+@media(min-width:1000px){
+ body .main.world-overview:has(.v297-summary-trio){height:auto!important;max-height:none!important;min-height:100dvh!important;overflow-y:auto!important;padding-bottom:30px!important}
+ html:has(.v297-summary-trio),body:has(.v297-summary-trio){height:auto!important;overflow-y:auto!important}
+ body .main.world-overview .ff-dashboard.summary-space{height:auto!important;min-height:0!important;overflow:visible!important;max-width:100%!important}
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+  display:grid!important;grid-template-columns:minmax(0,1.65fr) minmax(310px,1fr)!important;
+  grid-template-rows:auto auto auto auto!important;height:auto!important;min-height:0!important;max-height:none!important;
+  align-content:start!important;gap:clamp(12px,1.2vw,19px)!important;overflow:visible!important
+ }
+ body .main.world-overview .v105-grid>.v152-position-reference{grid-column:1!important;grid-row:1!important;min-height:320px!important;height:auto!important;max-height:none!important}
+ body .main.world-overview .v105-grid>.ff-obligations{grid-column:2!important;grid-row:1!important;height:auto!important;max-height:none!important;overflow:visible!important}
+ body .main.world-overview .v105-grid>.v297-net-row{grid-column:1/-1!important;grid-row:2!important;display:grid!important;grid-template-columns:minmax(0,1.65fr) minmax(310px,1fr)!important;gap:clamp(12px,1.2vw,19px)!important;min-width:0!important}
+ body .main.world-overview .v297-net-row>.ff-health-card,body .main.world-overview .v297-net-row>.ff-personal{min-height:215px!important;height:100%!important;max-height:none!important;overflow:hidden!important}
+ body .main.world-overview .v105-grid>.v297-summary-trio{grid-column:1/-1!important;grid-row:3!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:clamp(12px,1.2vw,19px)!important;min-width:0!important;min-height:215px!important;height:auto!important}
+ body .main.world-overview .v297-summary-trio>.v290-budget-web{grid-column:3!important;grid-row:1!important;height:100%!important;max-height:none!important;min-height:215px!important;overflow:visible!important;display:flex!important}
+ body .main.world-overview .v105-grid>.ff-upcoming{grid-column:1/-1!important;grid-row:4!important;min-height:190px!important;max-height:none!important;height:auto!important;overflow:visible!important}
+ body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming .ff-payment-list{max-height:none!important;overflow:visible!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+ body .main.world-overview .ff-dashboard.summary-space .ff-upcoming .ff-pay-row{max-height:none!important;height:auto!important;min-height:56px!important;flex:1 1 auto!important}
+}
+.v297-summary-trio{min-width:0}.v297-net-row{min-width:0}.v297-net-row>.ff-health-card{min-width:0}.v297-net-row>.ff-personal{min-width:0}
+.v297-flow-card{min-width:0;display:flex;flex-direction:column;gap:8px;padding:clamp(15px,1.55vw,22px)!important;border-radius:24px;overflow:hidden}
+.v297-flow-head{display:flex;align-items:center;justify-content:space-between;gap:9px;min-width:0}
+.v297-flow-head h2{font-size:clamp(16px,1.6vw,22px);line-height:1.18;letter-spacing:-.045em;margin:3px 0 0}
+.v297-flow-head button{display:grid;place-items:center;flex:none;width:34px;height:34px;border:1px solid #cbdaf0;border-radius:11px;background:#ffffffa8;color:#3b6395;cursor:pointer}
+.v297-flow-head button svg{width:16px;height:16px}
+.v297-eyebrow{display:block;font-size:9px;line-height:1.3;letter-spacing:.13em;font-weight:820;color:#6880a1}
+.v297-flow-total{font-weight:850;color:#193b65;font-size:clamp(23px,2.15vw,31px);letter-spacing:-.055em;line-height:1.05;white-space:nowrap;font-variant-numeric:tabular-nums}
+.v297-flow-card>p{font-size:10px;color:#7990ad;line-height:1.35;margin:0}
+.v297-flow-chart{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;gap:clamp(4px,.7vw,10px);height:94px;margin-top:auto;padding:3px 6px 0}
+.v297-flow-column{height:100%;display:flex;align-items:center;flex-direction:column;gap:5px;min-width:0;outline-offset:2px}
+.v297-flow-track{position:relative;flex:1;width:100%;max-width:33px;border-radius:7px 7px 3px 3px;background:#dce8fa80;overflow:hidden}
+.v297-flow-track span{position:absolute;left:0;right:0;bottom:0;border-radius:7px 7px 3px 3px;background:#5b88ed}
+.v297-flow-expense .v297-flow-track span{background:#97a9ce}
+.v297-flow-column small{font-size:9px;color:#6f88a8;font-weight:760}
+/* Three-column budget KPI must show percent / assigned / spent / remaining. */
+.v297-summary-trio>.v291-budget-compact{justify-content:space-between;padding:clamp(15px,1.55vw,22px)!important}
+.v297-summary-trio .v291-budget-content{display:grid;grid-template-columns:minmax(68px,85px) minmax(0,1fr);gap:clamp(8px,1vw,14px);min-width:0;align-items:center}
+.v297-summary-trio .v291-budget-line{padding:6px 0}.v297-summary-trio .v291-budget-line strong{font-size:clamp(11px,1.08vw,15px)}
+@media(min-width:791px) and (max-width:999px){
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;height:auto!important;overflow:visible!important}
+ body .main.world-overview .v105-grid>:is(.v152-position-reference,.ff-obligations,.ff-upcoming,.v297-net-row,.v297-summary-trio){grid-column:1/-1!important;grid-row:auto!important;max-height:none!important;height:auto!important}
+ body .main.world-overview .v105-grid>.v297-net-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px}
+ body .main.world-overview .v105-grid>.v297-summary-trio{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px}
+ .v297-summary-trio .v291-budget-content{grid-template-columns:1fr!important}
+}
+@media(max-width:790px){
+ body .main.world-overview .v105-grid>.v297-net-row,body .main.world-overview .v105-grid>.v297-summary-trio{grid-column:1/-1!important;grid-row:auto!important;display:grid!important;grid-template-columns:1fr!important;gap:12px!important;min-width:0}
+ body .main.world-overview .v297-summary-trio>.v291-budget-compact{grid-column:auto!important;grid-row:auto!important;height:auto!important;min-height:0!important}
+ .v297-flow-card{min-height:184px;padding:16px!important}
+ .v297-flow-chart{height:90px}
+}
+/* Desktop Center: the existing mobile Vision made spatially useful on web. */
+@media(min-width:768px){
+ .main.world-payments .v297-payment-center{max-width:1480px;margin-inline:auto;display:flex;flex-direction:column;gap:22px;min-width:0;padding-bottom:48px}
+ .main.world-payments .v297-pay-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-radius:24px;background:linear-gradient(110deg,#254976,#4874ad);padding:23px 27px;color:#fff}
+ .main.world-payments .v297-pay-head h2{font-size:clamp(26px,2.9vw,38px);letter-spacing:-.05em;line-height:1.13;margin:4px 0;color:white}
+ .main.world-payments .v297-pay-head p{margin:5px 0 0;color:#e0ebff;font-size:13px}
+ .main.world-payments .v297-pay-head .v297-eyebrow{color:#bcd9ff}
+ .main.world-payments .v297-jump-payments{display:flex;align-items:center;gap:8px;border:1px solid #fff8;background:#ffffff18;color:#fff;border-radius:14px;padding:12px 16px;font-weight:750}
+ .main.world-payments .v297-jump-payments svg{width:16px;height:16px}
+ .main.world-payments .v297-mobile-vision-adapted,.main.world-payments .v297-payments-original{min-width:0;max-width:100%}
+ .main.world-payments .v297-mobile-vision-adapted .v294-vision-route{width:100%;max-width:none;margin:0}
+ .main.world-payments .v297-mobile-vision-adapted :is(.vision-home-grid,.vision-dashboard-grid){max-width:100%;min-width:0}
+ .main.world-payments .v297-payments-original{border-top:1px solid #adc3df60;padding-top:15px;scroll-margin-top:18px}
+ .main.world-payments .v297-subhead{margin:0 0 15px}.main.world-payments .v297-subhead h3{margin:4px 0;font-size:23px;letter-spacing:-.05em}.main.world-payments .v297-subhead p{margin:0;color:#7590a7}
+ .main.world-payments .v297-payments-original .v145-pay-center{max-width:none}
+ .main.world-recurring .v26-internal>.v26-nav,.main.world-personal .v26-internal>.v26-nav{display:none!important}
+}
+@media(max-width:767px){.v297-payment-center{display:none}}
+/* V297: #page ID raises specificity above inherited old desktop grid rules. */
+@media(min-width:1000px){
+ #app .main.world-overview #page .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>section.ff-upcoming{grid-row:4!important;grid-column:1/-1!important;min-height:185px!important;max-height:none!important;align-self:stretch!important;width:100%!important}
+ #app .main.world-overview #page .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.v297-summary-trio{grid-row:3!important;grid-column:1/-1!important}
+}
+/* Reset legacy placement that was scoped to the previous dashboard's direct children. */
+@media(min-width:1000px){
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid .v297-net-row>.ff-personal{
+   grid-column:2!important;grid-row:1!important;align-self:stretch!important;height:100%!important;max-height:none!important;min-height:0!important;margin:0!important
+ }
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid .v297-net-row>.ff-health-card{
+   grid-column:1!important;grid-row:1!important;align-self:stretch!important;height:100%!important;min-height:0!important;margin:0!important
+ }
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-upcoming{
+   grid-column:1/-1!important;grid-row:4!important;justify-self:stretch!important;align-self:stretch!important;
+   width:100%!important;height:auto!important;min-height:185px!important;max-height:none!important;overflow:visible!important
+ }
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.v297-summary-trio{
+   grid-column:1/-1!important;grid-row:3!important;align-self:stretch!important;z-index:0
+ }
+}
+body.theme-black .v297-flow-total,body.theme-dark .v297-flow-total{color:#eef5ff}
+body.theme-black .v297-flow-card>p,body.theme-dark .v297-flow-card>p,body.theme-black .v297-flow-column small,body.theme-dark .v297-flow-column small{color:#bccbe4}
+body.theme-black .v297-flow-head button,body.theme-dark .v297-flow-head button{background:#263950;border-color:#3b5573;color:#d7e9ff}
+</style>
+
+<style id="vive-v298-resumen-web-alineado">
+/* V298 — Web dashboard geometry only; all original financial functions and
+   mobile views are preserved. One authoritative desktop layout after V297. */
+@media (min-width:1000px){
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-rows:minmax(300px,auto) minmax(216px,auto) minmax(218px,auto)!important;
+    grid-auto-rows:auto!important;
+    align-items:stretch!important;
+    align-content:start!important;
+    gap:clamp(11px,1.1vw,18px)!important;
+    height:auto!important;max-height:none!important;min-height:0!important;
+    overflow:visible!important;
+  }
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.v297-net-row,
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.v297-summary-trio{
+    display:contents!important;
+  }
+  #app .main.world-overview #page .v105-grid>.v152-position-reference{
+    grid-column:1/span 2!important;grid-row:1!important;
+    min-height:300px!important;height:100%!important;max-height:none!important;align-self:stretch!important;
+  }
+  #app .main.world-overview #page .v105-grid>.ff-obligations{
+    grid-column:3!important;grid-row:1!important;
+    min-height:300px!important;height:100%!important;max-height:none!important;align-self:stretch!important;
+  }
+  #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v298-flow-dual{
+    grid-column:1!important;grid-row:2!important;min-width:0!important;min-height:216px!important;
+    height:100%!important;max-height:none!important;align-self:stretch!important;
+  }
+  #app .main.world-overview #page .v105-grid>.v297-net-row>.ff-health-card{
+    grid-column:2!important;grid-row:2!important;min-width:0!important;
+    height:100%!important;max-height:none!important;min-height:216px!important;
+    align-self:stretch!important;margin:0!important;
+  }
+  #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v290-budget-web{
+    grid-column:3!important;grid-row:2!important;min-width:0!important;
+    height:100%!important;max-height:none!important;min-height:216px!important;
+    align-self:stretch!important;margin:0!important;
+  }
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>section.ff-upcoming{
+    grid-column:1!important;grid-row:3!important;width:100%!important;
+    height:100%!important;min-width:0!important;min-height:218px!important;
+    max-height:none!important;overflow:hidden!important;align-self:stretch!important;
+  }
+  #app .main.world-overview #page .v105-grid>.v298-month-glance{
+    grid-column:2!important;grid-row:3!important;width:100%!important;
+    height:100%!important;min-width:0!important;min-height:218px!important;
+    max-height:none!important;align-self:stretch!important;
+  }
+  #app .main.world-overview #page .v105-grid>.v297-net-row>.ff-personal{
+    grid-column:3!important;grid-row:3!important;min-width:0!important;
+    height:100%!important;min-height:218px!important;max-height:none!important;
+    align-self:stretch!important;margin:0!important;
+  }
+  #app .main.world-overview #page .ff-upcoming .ff-payment-list{
+    display:flex!important;flex-direction:column!important;gap:0!important;
+    grid-template-columns:none!important;max-height:none!important;overflow:visible!important;
+    min-width:0!important;
+  }
+  #app .main.world-overview #page .ff-upcoming .ff-pay-row{
+    display:flex!important;flex:0 0 auto!important;align-items:center!important;
+    height:auto!important;min-height:45px!important;max-height:none!important;
+    gap:7px!important;min-width:0!important;
+  }
+  #app .main.world-overview #page .ff-upcoming .ff-pay-name{min-width:0!important;flex:1 1 auto!important}
+  #app .main.world-overview #page .ff-upcoming .ff-pay-name strong,
+  #app .main.world-overview #page .ff-upcoming .ff-pay-name small{
+    display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #app .main.world-overview #page .ff-upcoming .ff-pay-row>b{white-space:nowrap!important;font-size:clamp(10px,.93vw,13px)!important;flex:0 0 auto!important}
+  #app .main.world-overview #page .v298-flow-dual .ff-stat-footer{
+    margin-top:auto!important;display:flex!important;justify-content:space-between!important;gap:7px!important;min-width:0!important;
+  }
+  #app .main.world-overview #page .v298-flow-dual .ff-stat-footer button{
+    min-width:0!important;border:0!important;padding:3px 1px!important;
+    color:inherit!important;background:transparent!important;display:inline-flex!important;
+    align-items:center!important;gap:5px!important;font-weight:650!important;cursor:pointer!important;
+    font-size:clamp(9px,.8vw,12px)!important;
+  }
+  #app .main.world-overview #page .v298-flow-dual .ff-stat-footer button b{font-size:inherit!important;white-space:nowrap!important}
+  #app .main.world-overview #page .v298-flow-dual .ff-bar-chart{min-height:86px!important;flex:1 1 auto!important;min-width:0!important}
+  #app .main.world-overview #page .v298-flow-dual .ff-panel-top{gap:8px!important}
+  #app .main.world-overview #page .v298-flow-dual{display:flex!important;flex-direction:column!important;gap:4px!important}
+  #app .main.world-overview #page .v290-budget-web .v291-budget-content{grid-template-columns:clamp(66px,6vw,88px) minmax(0,1fr)!important}
+}
+@media (min-width:1000px) and (max-width:1210px){
+  #app .main.world-overview #page .ff-upcoming .ff-due{display:none!important}
+  #app .main.world-overview #page .ff-upcoming .ff-pay-symbol{width:20px!important;min-width:20px!important}
+  #app .main.world-overview #page .ff-upcoming .ff-payment-list{gap:4px!important}
+  #app .main.world-overview #page .v291-budget-line span{font-size:10px!important}
+  #app .main.world-overview #page .v291-budget-line strong{font-size:12px!important}
+}
+/* Tablet retains all cards and financial data, without forced column spans. */
+@media (min-width:791px) and (max-width:999px){
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-template-rows:auto!important;gap:12px!important;display:grid!important;height:auto!important;
+  }
+  #app .main.world-overview #page .v105-grid>.v152-position-reference{grid-column:1/-1!important;grid-row:auto!important}
+  #app .main.world-overview #page .v105-grid>.ff-obligations{grid-column:1/-1!important;grid-row:auto!important}
+  #app .main.world-overview #page .v105-grid>.v297-net-row,
+  #app .main.world-overview #page .v105-grid>.v297-summary-trio{display:contents!important}
+  #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v298-flow-dual,
+  #app .main.world-overview #page .v105-grid>.v297-net-row>.ff-health-card,
+  #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v290-budget-web,
+  #app .main.world-overview #page .v105-grid>section.ff-upcoming,
+  #app .main.world-overview #page .v105-grid>.v298-month-glance,
+  #app .main.world-overview #page .v105-grid>.v297-net-row>.ff-personal{
+    grid-column:auto!important;grid-row:auto!important;min-height:210px!important;
+    height:auto!important;max-height:none!important;width:100%!important;margin:0!important;
+  }
+  #app .main.world-overview #page .ff-upcoming .ff-payment-list{display:flex!important;flex-direction:column!important;gap:5px!important;max-height:none!important}
+  #app .main.world-overview #page .ff-upcoming .ff-pay-row{min-height:43px!important;max-height:none!important}
+}
+/* Extra monthly card: interpretations only; never mutates records or totals. */
+.v298-month-glance{display:flex;flex-direction:column;gap:12px;padding:clamp(16px,1.45vw,23px)!important;border-radius:24px;min-width:0;overflow:hidden}
+.v298-month-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;min-width:0}
+.v298-month-head h2{font-size:clamp(17px,1.55vw,23px);letter-spacing:-.047em;line-height:1.15;margin:3px 0 2px;color:#1e385b}
+.v298-month-head p{margin:0;color:#7185a1;font-size:11px}
+.v298-month-head button{display:grid;place-items:center;width:33px;height:33px;flex:0 0 33px;border-radius:11px;border:1px solid #d3e0f1;background:#ffffffab;color:#3d6596}
+.v298-month-head button svg{width:15px;height:15px}
+.v298-month-insights{display:grid;grid-template-columns:1fr;gap:8px;margin-top:auto}
+.v298-insight{display:flex;align-items:flex-start;gap:9px;min-width:0;color:#405d81;font-size:clamp(10px,.85vw,12px);line-height:1.35;font-weight:600}
+.v298-insight-symbol{display:grid;place-items:center;flex:none;width:25px;height:25px;border-radius:9px;background:#e3edfc;color:#5480b7}
+.v298-insight-symbol svg{width:14px;height:14px}
+body.theme-black .v298-month-head h2,body.theme-dark .v298-month-head h2{color:#edf4ff}
+body.theme-black .v298-insight,body.theme-dark .v298-insight{color:#ccdaf1}
+body.theme-black .v298-month-head p,body.theme-dark .v298-month-head p{color:#adbedb}
+body.theme-black .v298-insight-symbol,body.theme-dark .v298-insight-symbol{background:#253a5b;color:#c7ddff}
+@media(max-width:790px){
+  /* Mobile's own overview implementation and geometry stay authoritative. */
+  .v298-month-glance{display:none!important}
+  .v297-summary-trio .v298-flow-dual{min-width:0}
+  .v298-flow-dual .ff-stat-footer{display:flex;gap:8px;justify-content:space-between}
+  .v298-flow-dual .ff-stat-footer button{background:transparent;border:0;color:inherit;display:inline-flex;gap:4px;align-items:center}
+}
+</style>
+
+<style id="vive-v300-platform-split-and-due-button">
+/* V300: appearance controls now live under Ajustes across both platforms.
+   KPI layout / widget order / Liquid Glass remain mobile-only under Personalización. */
+.v300-appearance-pane{min-width:0;display:grid;gap:12px}
+.v300-appearance-pane .settings-group-title{margin:8px 0 0}
+.v300-appearance-pane .panel{min-width:0}
+@media (min-width:791px){
+  /* No desktop personalization entry, even with an old cached nav fragment. */
+  [data-v273-open-personalization],.v296-overview-entry{display:none!important}
+  .v250-dock-settings{display:none!important}
+}
+@media (max-width:790px){
+  .v296-personalize .v296-settings-body{gap:14px}
+  .v300-appearance-pane .theme-choice-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .v300-appearance-pane .vive-palettes-grid{min-width:0}
+  /* ONLY the button in Wallet > Estado de tu tarjeta > Próximo vencimiento */
+  #page .v266-wallet .v266-next-payment{
+    display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;column-gap:10px!important;row-gap:9px!important;
+  }
+  #page .v266-wallet .v266-next-payment>div{min-width:0!important;grid-column:1!important;grid-row:1!important}
+  #page .v266-wallet .v266-next-payment>b{grid-column:2!important;grid-row:1!important;white-space:nowrap!important;text-align:right!important}
+  #page .v266-wallet .v266-next-payment>button[data-act="payCard"]{
+    grid-column:1/-1!important;grid-row:2!important;
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;
+    gap:7px!important;justify-self:end!important;align-self:center!important;
+    box-sizing:border-box!important;flex:0 0 auto!important;
+    width:auto!important;min-width:0!important;max-width:145px!important;
+    height:38px!important;min-height:38px!important;max-height:38px!important;
+    margin:0!important;padding:0 13px!important;
+    border-radius:12px!important;font-size:12px!important;font-weight:750!important;
+    line-height:1!important;letter-spacing:0!important;
+    transform:none!important;scale:1!important;
+  }
+  #page .v266-wallet .v266-next-payment>button[data-act="payCard"] svg,
+  #page .v266-wallet .v266-next-payment>button[data-act="payCard"] svg *{
+    transform:none!important;
+  }
+  #page .v266-wallet .v266-next-payment>button[data-act="payCard"] svg{
+    display:block!important;width:16px!important;min-width:16px!important;max-width:16px!important;
+    height:16px!important;min-height:16px!important;max-height:16px!important;
+    flex:0 0 16px!important;stroke-width:1.9!important;
+  }
+}
+@media (max-width:360px){
+ #page .v266-wallet .v266-next-payment>button[data-act="payCard"]{
+  max-width:125px!important;height:36px!important;min-height:36px!important;max-height:36px!important;
+ }
+}
+</style>
+<style id="vive-v301-integral-restoration">
+/* V301: fixes original navigation and restores full budget with no global CSS rewrites. */
+@media (min-width:791px){
+ #page .v301-vision-desktop{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;min-width:0;max-width:100%}
+ #page .v301-vision-intro{padding:4px 8px 0}
+ #page .v301-vision-intro h1{font-size:clamp(25px,2.5vw,38px);letter-spacing:-.04em;margin:6px 0}
+ #page .v301-vision-intro p{color:var(--muted);margin:0}
+ #page .v301-vision-financial{min-width:0}
+ #page .v301-vision-financial .v294-vision-route{width:100%;max-width:none;min-width:0}
+ #page .v301-vision-payments{min-width:0;border:1px solid rgba(128,155,199,.35);border-radius:22px;overflow:hidden;background:rgba(255,255,255,.55)}
+ #page .v301-vision-payments>summary{display:flex;gap:12px;align-items:center;cursor:pointer;padding:18px 22px;list-style:none;color:var(--ink)}
+ #page .v301-vision-payments>summary::-webkit-details-marker{display:none}
+ #page .v301-vision-payments>summary>span{font-size:12px;color:var(--muted);margin-left:auto}
+ #page .v301-vision-payments[open]>summary{border-bottom:1px solid rgba(128,155,199,.35)}
+ #page .v301-vision-payment-body{padding:16px;min-width:0}
+ #page .v301-vision-payment-body .section-title{display:none}
+}
+@media (max-width:790px){
+ #page .v301-mobile-recurring{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+ #page .v301-subscriptions-mobile{display:flex;flex-direction:column;gap:14px;min-width:0;padding:8px 0 18px}
+ #page .v301-subs-top{display:flex;flex-direction:column;gap:5px}
+ #page .v301-subs-eyebrow{font-size:10px;letter-spacing:.16em;font-weight:800;color:var(--muted)}
+ #page .v301-subs-top h1{font-size:clamp(28px,7.7vw,34px);line-height:1.05;letter-spacing:-.045em;margin:3px 0;color:var(--ink)}
+ #page .v301-subs-top p{font-size:12px;color:var(--muted);margin:0 0 4px}
+ #page .v301-subscription-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:0}
+ #page .v301-sub-metric{display:flex;flex-direction:column;justify-content:space-between;min-width:0;min-height:150px;border-radius:22px;background:linear-gradient(145deg,#3c2b26,#211a1a);color:#fff;padding:17px 14px;box-shadow:0 9px 22px rgba(14,11,18,.13)}
+ #page .v301-sub-metric>small{font-size:11px;color:#d1c2bd}
+ #page .v301-sub-metric>strong{font-size:clamp(19px,5.3vw,27px);letter-spacing:-.045em;overflow-wrap:anywhere;line-height:1.1}
+ #page .v301-sub-metric>span{font-size:10px;color:#c0b6b7}
+ #page .v301-sub-metric>b{font-size:clamp(13px,3.9vw,17px)}
+ #page .v301-sub-metric-brands{background:linear-gradient(145deg,#42312f,#271f21);align-items:flex-start}
+ #page .v301-sub-metric-brands>strong{margin-top:auto;font-size:32px}
+ #page .v301-brand-dots{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-height:51px}
+ #page .v301-brand-dots span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);overflow:hidden}
+ #page .v301-brand-dots img{max-width:100%;max-height:100%;object-fit:contain}
+ #page .v301-add-service{width:100%;border:0;border-radius:17px;min-height:50px;display:flex;align-items:center;justify-content:center;gap:8px;color:#1c1e21;background:#fff;font-weight:800;font-size:15px;box-shadow:0 7px 16px rgba(19,31,55,.06)}
+ #page .v301-add-service svg{width:18px;height:18px}
+ #page .v301-upcoming-services h2{font-size:18px;font-weight:850;margin:9px 0 13px;color:var(--ink)}
+ #page .v301-next-list{display:flex;flex-direction:column;gap:8px}
+ #page .v301-next-service{display:flex;align-items:center;text-align:left;gap:11px;width:100%;min-width:0;min-height:62px;border-radius:18px;padding:10px 12px;border:1px solid rgba(139,154,178,.18);background:rgba(255,255,255,.75);color:var(--ink)}
+ #page .v301-next-service-icon{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:12px;background:rgba(125,142,178,.09);overflow:hidden}
+ #page .v301-next-service-icon img{max-width:100%;max-height:100%;object-fit:contain}
+ #page .v301-next-service-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+ #page .v301-next-service-info strong{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ #page .v301-next-service-info small{color:var(--muted);font-size:10px}
+ #page .v301-next-service b{font-size:11px;white-space:nowrap}
+ #page .v301-next-service>svg{flex:0 0 16px;width:16px;height:16px}
+ #page .v301-recurring-original .v26-head{display:none!important}
+ #page .v301-recurring-original .v252-module-heading{display:none!important}
+ #page .v301-mobile-recurring .v301-recurring-original .v26-internal.v252-recurring .v252-module-heading{display:none!important}
+ #page .v301-recurring-original .v26-nav{margin:0 0 12px;padding:5px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;min-width:0}
+ #page .v301-recurring-original .v26-nav>button{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;white-space:normal;line-height:1.15;text-align:center;padding:9px 3px;font-size:10px}
+ #page .v301-recurring-original .v26-nav>button svg{width:15px;height:15px}
+ #page .v301-recurring-original :is(.v26-body,.v46-subs-panel,.v46-subscriptions-grid){min-width:0;max-width:100%;box-sizing:border-box}
+ #page .v301-recurring-original .v46-subscriptions-grid{grid-template-columns:minmax(0,1fr)}
+ #page .v301-recurring-original .v46-subscription-card{min-width:0}
+ #page .v301-recurring-original .subscription-hero{padding:15px!important}
+}
+</style>
+<style id="vive-v302-reference-layout">
+/* 302: authoritative desktop geometry, scoped strictly to Resumen web. */
+@media (min-width: 1000px){
+ #app .main.world-overview #page .ff-dashboard.summary-space>.ff-dashboard-grid.v105-grid{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:minmax(300px,auto) minmax(225px,auto) minmax(220px,auto)!important;
+  grid-auto-rows:auto!important;gap:clamp(12px,1.05vw,19px)!important;
+  height:auto!important;max-height:none!important;min-height:0!important;
+  align-items:stretch!important;overflow:visible!important;
+ }
+ #app .main.world-overview #page .v105-grid>.v297-net-row,
+ #app .main.world-overview #page .v105-grid>.v297-summary-trio{display:contents!important}
+ #app .main.world-overview #page .v105-grid>.v152-position-reference{
+  grid-column:1/span 2!important;grid-row:1!important;min-height:300px!important;
+  height:100%!important;max-height:none!important;align-self:stretch!important;
+ }
+ /* Full-height commitments spans both upper rows and retains each row's detail. */
+ #app .main.world-overview #page .v105-grid>.ff-obligations{
+  grid-column:3!important;grid-row:1/span 2!important;
+  min-width:0!important;min-height:540px!important;max-height:none!important;
+  height:100%!important;overflow:visible!important;align-self:stretch!important;
+  display:flex!important;flex-direction:column!important;
+ }
+ #app .main.world-overview #page .ff-obligations .ff-obligation-list{
+  display:flex!important;flex-direction:column!important;gap:4px!important;
+  min-height:0!important;height:auto!important;flex:1 1 auto!important;
+  justify-content:space-evenly!important;overflow:visible!important;margin-top:10px!important;
+ }
+ #app .main.world-overview #page .ff-obligations .ff-obligation-row{
+  flex:1 1 0!important;display:grid!important;height:auto!important;min-height:53px!important;
+  max-height:none!important;padding:8px 3px!important;gap:7px!important;
+  grid-template-columns:24px minmax(0,1fr) auto 12px!important;align-items:center!important;
+ }
+ #app .main.world-overview #page .ff-obligations .ff-obligation-title small{
+  display:block!important;font-size:clamp(9px,.68vw,11px)!important;line-height:1.25!important;
+ }
+ #app .main.world-overview #page .ff-obligations .ff-obligation-title strong{font-size:clamp(11px,.82vw,13px)!important;line-height:1.28!important}
+ #app .main.world-overview #page .ff-obligations .ff-obligation-total{
+  margin:7px 0 0!important;padding:clamp(14px,1.3vw,20px)!important;gap:6px!important;
+ }
+ #app .main.world-overview #page .ff-obligations .ff-activity-foot{margin-top:auto!important;padding:9px 0!important;min-height:35px!important}
+ #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v298-flow-dual{
+  grid-column:1!important;grid-row:2!important;height:100%!important;min-height:225px!important;
+  max-height:none!important;align-self:stretch!important;min-width:0!important;
+ }
+ #app .main.world-overview #page .v105-grid>.v297-net-row>.ff-health-card{
+  grid-column:2!important;grid-row:2!important;height:100%!important;min-height:225px!important;
+  max-height:none!important;align-self:stretch!important;min-width:0!important;margin:0!important;
+ }
+ #app .main.world-overview #page .v105-grid>section.ff-upcoming{
+  grid-column:1!important;grid-row:3!important;width:100%!important;height:100%!important;
+  min-height:220px!important;max-height:none!important;min-width:0!important;
+  overflow:hidden!important;align-self:stretch!important;
+ }
+ #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v290-budget-web{
+  grid-column:2!important;grid-row:3!important;height:100%!important;min-height:220px!important;
+  max-height:none!important;overflow:hidden!important;min-width:0!important;align-self:stretch!important;margin:0!important;
+ }
+ #app .main.world-overview #page .v105-grid>.v297-net-row>.ff-personal{
+  grid-column:3!important;grid-row:3!important;height:100%!important;min-height:220px!important;
+  max-height:none!important;min-width:0!important;align-self:stretch!important;margin:0!important;
+ }
+ #app .main.world-overview #page .v105-grid>.v298-month-glance{display:none!important}
+}
+/* Tablet: keep all panels, no clipping, reflow to two columns. */
+@media (min-width:791px) and (max-width:999px){
+ #app .main.world-overview #page .ff-dashboard.summary-space>.ff-dashboard-grid.v105-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:auto!important;height:auto!important;gap:12px!important}
+ #app .main.world-overview #page .v105-grid>.v297-net-row,
+ #app .main.world-overview #page .v105-grid>.v297-summary-trio{display:contents!important}
+ #app .main.world-overview #page .v105-grid>.v152-position-reference,
+ #app .main.world-overview #page .v105-grid>.ff-obligations{grid-column:1/-1!important;grid-row:auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important}
+ #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v298-flow-dual,
+ #app .main.world-overview #page .v105-grid>.v297-net-row>.ff-health-card,
+ #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v290-budget-web,
+ #app .main.world-overview #page .v105-grid>.ff-upcoming,
+ #app .main.world-overview #page .v105-grid>.v297-net-row>.ff-personal{grid-column:auto!important;grid-row:auto!important;min-height:205px!important;height:auto!important;max-height:none!important;margin:0!important}
+}
+/* V302 mobile Subscriptions: match visual rhythm of reference while keeping app theme. */
+@media (max-width:790px){
+ #page .v302-subs-mobile{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+ #page .v302-subs-app{display:flex;flex-direction:column;gap:13px;min-width:0;max-width:100%;padding:12px 0 8px;box-sizing:border-box}
+ #page .v302-subs-head{margin:0 0 4px}
+ #page .v302-subs-head h1{font-size:clamp(27px,8.1vw,36px);line-height:1.08;letter-spacing:-.05em;font-weight:830;margin:0;color:var(--ink)}
+ #page .v302-subs-stats{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.83fr);gap:11px;min-width:0}
+ #page .v302-cost-card,#page .v302-brands-card{
+  display:flex;flex-direction:column;min-width:0;height:174px;border-radius:22px;
+  background:linear-gradient(142deg,#48342f,#2c2423);color:#fff;padding:17px 15px;
+  box-shadow:0 10px 25px #1c1a1820;box-sizing:border-box;
+ }
+ #page .v302-cost-title{display:flex;align-items:center;gap:5px;color:#d3c8c3;white-space:normal;font-size:clamp(9px,2.4vw,11px);line-height:1.15}
+ #page .v302-mini-icon{color:#ee9856;display:flex}
+ #page .v302-mini-icon svg{width:14px;height:14px}
+ #page .v302-cost-card>strong{font-size:clamp(21px,5.2vw,31px);font-weight:830;letter-spacing:-.047em;line-height:1.08;white-space:nowrap;margin-top:12px}
+ #page .v302-cost-rule{height:1px;background:#0008;border-top:1px solid #ffffff15;margin:auto 0 10px}
+ #page .v302-cost-secondary{display:flex;flex-direction:column;gap:4px;font-size:11px;color:#c2b6b1}
+ #page .v302-cost-secondary b{font-size:clamp(13px,3.6vw,18px);color:#fff;white-space:nowrap;font-weight:720}
+ #page .v302-brands-card{align-items:flex-start;justify-content:space-between;background:linear-gradient(145deg,#44342f,#2b2423)}
+ #page .v302-brand-cluster{position:relative;width:100%;height:98px;min-height:98px;max-width:175px;align-self:center}
+ #page .v302-brand{position:absolute;display:grid;place-items:center;width:30px;height:30px;overflow:hidden;border-radius:50%;background:#252126;box-shadow:0 2px 5px #0005}
+ #page .v302-brand :is(.v41-service-icon,.v45-sub-icon){width:100%;height:100%;display:grid;place-items:center}
+ #page .v302-brand img{width:100%;height:100%;object-fit:contain}
+ #page .v302-brand-0{left:24%;top:32%;width:35px;height:35px;z-index:3}
+ #page .v302-brand-1{left:59%;top:18%;z-index:2}
+ #page .v302-brand-2{left:13%;top:5%;width:24px;height:24px}
+ #page .v302-brand-3{left:75%;top:45%;width:24px;height:24px}
+ #page .v302-brand-4{left:45%;top:66%;width:23px;height:23px}
+ #page .v302-brand-5{left:8%;top:61%;width:24px;height:24px}
+ #page .v302-brand-6{left:57%;top:0%;width:22px;height:22px}
+ #page .v302-brand-empty{left:calc(50% - 12px);top:31%;color:#fff;font-size:22px}
+ #page .v302-brands-bottom{display:flex;align-items:baseline;gap:7px}
+ #page .v302-brands-bottom strong{font-size:30px;line-height:1;font-weight:850}
+ #page .v302-brands-bottom span{color:#c8bdb8;font-size:12px}
+ #page .v302-brands-bottom i{display:block;background:#ee8f37;width:5px;height:5px;border-radius:50%;margin-left:auto}
+ #page .v302-subs-add{display:flex;width:100%;min-height:51px;align-items:center;justify-content:center;gap:9px;background:#f5f5f5!important;border:0!important;border-radius:17px!important;color:#171717!important;font-size:15px;font-weight:780;box-shadow:0 4px 11px #20202b0d;padding:9px 15px}
+ #page .v302-subs-add svg{width:19px;height:19px}
+ #page .v302-subs-upcoming{margin-top:3px;min-width:0}
+ #page .v302-subs-upcoming h2{font-size:clamp(19px,5.25vw,24px);font-weight:830;letter-spacing:-.035em;line-height:1.2;margin:8px 0 12px;color:var(--ink)}
+ #page .v302-subs-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+ #page .v302-service{min-width:0;border:1px solid #c7d4e533;border-radius:20px;background:linear-gradient(155deg,#ecf2fa,#ffffff);box-shadow:0 7px 18px #172c4d0b;overflow:hidden}
+ #page .v302-service-summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;align-items:start;gap:7px;padding:14px 12px;min-width:0;min-height:126px;color:var(--ink)}
+ #page .v302-service-summary::-webkit-details-marker{display:none}
+ #page .v302-service-summary .v302-service-icon{grid-row:1;grid-column:1;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#e4ebf6;overflow:hidden}
+ #page .v302-service-icon img{width:100%;height:100%;object-fit:contain}
+ #page .v302-service-summary .v302-service-info{grid-column:1/-1;grid-row:2;min-width:0;display:flex;flex-direction:column;gap:4px}
+ #page .v302-service-info strong{font-size:13px;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ #page .v302-service-info small{color:var(--muted);font-size:10px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ #page .v302-service-summary>b{grid-column:1;grid-row:3;white-space:nowrap;font-size:clamp(11px,3vw,14px);font-weight:820;letter-spacing:-.025em}
+ #page .v302-service-summary>svg{grid-column:2;grid-row:3;width:15px;height:15px}
+ #page .v302-service-details{padding:9px 12px 13px;border-top:1px solid #d5dfea;display:flex;flex-direction:column;gap:9px}
+ #page .v302-service-details>div:not(.v302-service-actions){display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--muted)}
+ #page .v302-service-details>div>b{font-weight:690;color:var(--ink);max-width:65%;text-align:right}
+ #page .v302-service-actions{display:flex;flex-wrap:wrap;gap:6px}
+ #page .v302-service-actions button{min-height:33px;padding:6px 9px;border-radius:10px;background:#e9f0fa;border:1px solid #c6d8f0;color:#345178;font-size:11px;font-weight:750;display:inline-flex;align-items:center;gap:4px}
+ #page .v302-service-actions button svg{width:12px;height:12px}
+ #page .v302-paused,#page .v302-subs-history{border:0;background:transparent;min-width:0;max-width:100%}
+ #page .v302-paused>summary,#page .v302-subs-history>summary{cursor:pointer;list-style:none;color:var(--muted);font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;padding:8px 3px}
+ #page .v302-paused>summary>svg,#page .v302-subs-history>summary>svg{width:13px;height:13px;margin-left:auto}
+ #page .v302-paused>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:7px 0}
+ #page .v302-subs-history{padding:3px 0 75px}
+ #page .v302-subs-history>.v301-recurring-original{padding-top:12px;min-width:0}
+ #page .v302-subs-empty{color:var(--muted);font-size:13px;padding:10px 2px}
+ body.theme-black #page .v302-subs-head h1,body.theme-dark #page .v302-subs-head h1{color:#fff}
+ body.theme-black #page .v302-service,body.theme-dark #page .v302-service{background:#23252b;border-color:#383e4b}
+ body.theme-black #page .v302-service-summary,body.theme-dark #page .v302-service-summary{color:#eef3ff}
+ body.theme-black #page .v302-subs-add,body.theme-dark #page .v302-subs-add{background:#f6f6f6!important;color:#171717!important}
+ body.theme-black #page .v302-service-details,body.theme-dark #page .v302-service-details{border-color:#3a4250}
+ body.theme-black #page .v302-service-details>div>b,body.theme-dark #page .v302-service-details>div>b{color:#eef3ff}
+}
+@media (max-width:350px){
+ #page .v302-subs-stats{gap:8px;grid-template-columns:minmax(0,1fr) minmax(0,.82fr)}
+ #page .v302-cost-card,#page .v302-brands-card{padding:13px 11px;height:163px;border-radius:19px}
+ #page .v302-cost-card>strong{font-size:19px}
+ #page .v302-service-summary{padding:11px 9px}
+}
+</style>
+
+<style id="vive-v303-overview-compact-header">
+/* V303: only desktop/tablet Resumen. Removes duplicate breadcrumb in HTML,
+   keeps monthFilter intact and gives its vertical space back to the dashboard. */
+@media (min-width:791px) {
+  body .main.world-overview:has(.ff-dashboard.summary-space) .universe-switch-wrap {
+    margin-bottom:5px!important;
+  }
+  #app .main.world-overview #page .ff-dashboard.summary-space>.ff-dashboard-tools {
+    display:flex!important;justify-content:flex-end!important;align-items:center!important;
+    margin:0 0 5px!important;padding:0!important;min-height:33px!important;
+    height:33px!important;gap:0!important;
+  }
+  #app .main.world-overview #page .ff-dashboard.summary-space>.ff-dashboard-tools .ff-dashboard-filters{
+    margin-left:auto!important;justify-content:flex-end!important;
+  }
+  /* Keep the exact configured debt ratio, enlarge its typography and touch area. */
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-obligations
+  .ff-obligation-total .v82-total-top .v82-burden.v85-summary-burden {
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;
+    width:auto!important;max-width:185px!important;
+    height:32px!important;min-height:32px!important;max-height:none!important;
+    padding:5px 10px!important;gap:6px!important;
+    font-size:14px!important;line-height:1.1!important;white-space:nowrap!important;
+  }
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-obligations
+  .ff-obligation-total .v82-total-top .v82-burden.v85-summary-burden small {
+    font-size:10px!important;line-height:1.1!important;font-weight:750!important;
+  }
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-obligations
+  .ff-obligation-total .v82-total-top .v82-burden.v85-summary-burden strong {
+    font-size:17px!important;line-height:1!important;font-weight:900!important;
+    font-variant-numeric:tabular-nums!important;letter-spacing:-.035em!important;
+  }
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-obligations
+  .ff-obligation-total .v82-total-top {
+    flex-wrap:nowrap!important;column-gap:6px!important;row-gap:6px!important;
+  }
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-obligations
+  .ff-obligation-total .v82-total-top>small {
+    flex:0 1 auto!important;max-width:51%!important;white-space:normal!important;
+  }
+}
+@media (min-width:791px) and (max-width:1240px){
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-obligations
+  .ff-obligation-total .v82-total-top {flex-wrap:wrap!important;}
+  #app .main.world-overview #page .ff-dashboard.summary-space .ff-obligations
+  .ff-obligation-total .v82-total-top .v82-burden.v85-summary-burden {margin-left:auto!important;}
+}
+</style>
 </body>
 </html>
