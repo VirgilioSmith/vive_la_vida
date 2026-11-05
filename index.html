@@ -5,7 +5,7 @@
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="287-analisis-restaurado-kpi-unico"/>
+<meta name="vive-el-hoy-version" content="288-analisis-restaurado-kpi-unico"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -33846,6 +33846,16 @@ function v213ApplePayBadge(t){
 const v212State={links:[],events:[],secret:'',webhook:'',selectedCard:'',currency:'DOP',busy:false,loaded:false,error:'',syncError:'',lastSync:'',health:'unverified',healthMessage:'El vínculo y la recepción son pasos separados.'};
 let v212Busy=false;
 const v212Enabled=()=>!!(f33Active&&f33Api&&f33User);
+// V288 | Atajos sends variable values to this adapter; existing ingest retains authentication and storage.
+function v288ShortcutUrl(original){
+ try {
+  const u=new URL(original), backend=new URL(F33_URL);
+  if(u.origin!==backend.origin || !/^\/functions\/v1\/apple-pay-ingest\/?$/.test(u.pathname))return '';
+  u.pathname='/functions/v1/apple-pay-shortcuts';u.search='';u.hash='';
+  return u.toString();
+ }catch(_){return ''}
+}
+
 function v212SettingsPanel(){
  const cards=(db.cards||[]).filter(c=>!c.archived);
  const linkRows=v212State.links.filter(x=>x.active).map(x=>{
@@ -33859,10 +33869,10 @@ function v212SettingsPanel(){
  return `<section class="v212-panel" aria-label="Apple Pay y Atajos"><div class="v212-head"><div><span class="summary-tag">ATAJOS · APPLE PAY</span><h3>Compras de Wallet, registradas con claridad</h3><p>Vincula cada tarjeta a su atajo. Los pagos compatibles llegan directamente a Supabase. Al sincronizar se registran en Movimientos y en la Wallet móvil de la tarjeta correcta, con un distintivo Apple Pay, sin descontar una cuenta dos veces. El estado muestra si el servidor recibió el evento, no si Wallet concedió acceso directo.</p></div><span class="v212-pill">${v212State.links.filter(x=>x.active).length} ${v212State.links.filter(x=>x.active).length===1?'vinculada':'vinculadas'}</span></div>
  <div class="v212-setup"><div><label class="filter-label" for="v212-card">Tarjeta en Vive el Hoy</label><select class="field" id="v212-card">${cards.length?cards.map(c=>`<option value="${sanitize(c.id)}" ${c.id===v212State.selectedCard?'selected':''}>${sanitize(c.name)} · ${sanitize(bankOf(c))}</option>`).join(''):'<option value="">Primero registra una tarjeta</option>'}</select></div><div><label class="filter-label" for="v212-currency">Moneda del atajo</label><select class="field" id="v212-currency"><option value="DOP" ${v212State.currency==='DOP'?'selected':''}>RD$</option><option value="USD" ${v212State.currency==='USD'?'selected':''}>US$</option></select></div><button type="button" class="btn primary" data-v212="pair" ${!cards.length||v212State.busy?'disabled':''}>${v212State.busy?'Conectando…':'Vincular tarjeta'}</button></div>
  <div class="v274-apple-health ${v212State.health==='ok'?'ready':v212State.health==='error'?'fail':'neutral'}" role="status" aria-live="polite"><div><strong>${v212State.health==='ok'?'Receptor verificado · sin registrar gastos':v212State.health==='testing'?'Comprobando receptor…':v212State.health==='error'?'Receptor pendiente de reparar':'Vinculación y recepción se verifican por separado'}</strong><p>${sanitize(v212State.healthMessage||'')}</p></div>${v212State.secret?`<button type="button" class="v212-small" data-v212="test-ingest" ${v212State.health==='testing'?'disabled':''}>Probar conexión</button>`:''}</div>
- ${v212State.secret?`<div class="v212-secret"><strong>Conexión creada: guarda estos datos en tu Atajo</strong><p>La clave solo se muestra ahora. No la compartas ni la coloques en capturas.</p><div class="v212-secretline"><span>URL de recepción</span><button class="v212-small" data-v212="copy-url" type="button">Copiar URL</button></div><code>${sanitize(v212State.webhook)}</code><div class="v212-secretline"><span>Encabezado: X-Vive-Token</span><button class="v212-small" data-v212="copy-token" type="button">Copiar clave</button></div><input type="password" autocomplete="off" readonly aria-label="Clave del atajo" value="${sanitize(v212State.secret)}"/></div>`:''}
- <details class="v212-guide" open><summary>Configurar Atajos de iPhone · 3 pasos</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>En el editor del Atajo, utiliza las variables <b>Shortcut Input → Amount</b> y <b>Shortcut Input → Merchant</b> recibidas por el disparador. No escribas esos nombres como texto literal. <b>No añadas event_id</b>.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b> envía solamente: <code>amount</code> = importe de la transacción (Número); <code>merchant</code> = comercio de la transacción (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>. Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Al vincular, pulsa <b>Probar conexión</b>: comprobará el token, el receptor y el vínculo con <code>dry_run</code>, sin crear gastos. Si no responde, revisa la publicación de las dos funciones y la migración SQL.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. Una prueba correcta de conexión no confirma que Atajos se haya ejecutado. El servidor evita reintentos idénticos próximos mediante una ventana de seguridad; dos compras legítimas iguales muy seguidas pueden requerir revisión. No recupera pagos antiguos automáticamente.</p></details>
+ ${v212State.secret?`<div class="v212-secret"><strong>Conexión creada: guarda estos datos en tu Atajo</strong><p>La clave solo se muestra ahora. No la compartas ni la coloques en capturas.</p><div class="v212-secretline"><span>URL para Automatización de Atajos (V288)</span><button class="v212-small" data-v212="copy-url" type="button">Copiar URL</button></div><code>${sanitize(v288ShortcutUrl(v212State.webhook)||"Publica primero apple-pay-shortcuts")}</code><div class="v212-secretline"><span>Encabezado: X-Vive-Token</span><button class="v212-small" data-v212="copy-token" type="button">Copiar clave</button></div><input type="password" autocomplete="off" readonly aria-label="Clave del atajo" value="${sanitize(v212State.secret)}"/></div>`:''}
+ <details class="v212-guide" open><summary>Configurar Atajos de iPhone · 3 pasos</summary><ol><li>Abre <b>Atajos → Automatización → Transacción</b> y elige esta tarjeta. Los nombres pueden variar según iOS.</li><li>Selecciona <b>Ejecutar inmediatamente</b>, si está disponible.</li><li>En el editor del Atajo, utiliza las variables <b>Shortcut Input → Amount</b> y <b>Shortcut Input → Merchant</b> recibidas por el disparador. No escribas esos nombres como texto literal. <b>event_id</b> es recomendable (Fecha actual en ISO 8601) para evitar duplicados, pero el adaptador genera uno si falta. No uses un texto fijo como “prueba-1”.</li><li>En <b>Obtener contenido de URL</b>, utiliza la URL de recepción, método <b>POST</b> y encabezados <b>X-Vive-Token</b> con tu clave y <b>Content-Type: application/json</b>.</li><li>En <b>Cuerpo de solicitud → JSON</b> envía: <code>amount</code> = variable Amount de la transacción (Número o texto numérico); <code>merchant</code> = variable Merchant (Texto); <code>currency</code> = <b>DOP</b> o <b>USD</b>; y opcionalmente <code>event_id</code> = Fecha actual (ISO 8601). Inserta las variables de la transacción, no las palabras “Importe” o “Comercio”.</li><li>Al vincular, pulsa <b>Probar conexión</b>: comprobará el token, el receptor y el vínculo con <code>dry_run</code>, sin crear gastos. La prueba utiliza <code>apple-pay-shortcuts</code> y comprueba el receptor existente <code>apple-pay-ingest</code>. Si falla con 422, revisa los campos <code>missing</code>, <code>amount_type</code> y <code>merchant_type</code> en la respuesta, sin compartir la clave.</li><li>Abre Vive el Hoy con sesión iniciada y pulsa <b>Actualizar</b> en esta sección. La importación también se ejecuta periódicamente mientras la app está visible.</li></ol><p>La recepción en Supabase puede ocurrir con la app cerrada; la contabilización requiere abrir y sincronizar Vive el Hoy. Una prueba correcta de conexión no confirma que Atajos se haya ejecutado. El servidor evita reintentos idénticos próximos mediante una ventana de seguridad; dos compras legítimas iguales muy seguidas pueden requerir revisión. No recupera pagos antiguos automáticamente.</p></details>
  <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}</div><div><div class="v212-title"><strong>Actividad reciente</strong><span>${v212State.events.length} evento${v212State.events.length===1?'':'s'}</span></div>${eventRows||'<p class="v212-muted">No hay compras recibidas recientemente.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
- ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}<p class="v212-muted">Las tarjetas se administran con <code>apple-pay-link</code>; las compras se reciben mediante <code>apple-pay-ingest</code>. Son funciones distintas y deben publicarse por separado en Supabase. No se solicitan números de tarjeta, CVV ni contraseñas bancarias.</p></section>`;
+ ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}<p class="v212-muted">Las tarjetas se administran con <code>apple-pay-link</code>; Atajos envía los datos a <code>apple-pay-shortcuts</code>, que los valida y reenvía a <code>apple-pay-ingest</code>. La validación de tu clave y el registro final siguen en el receptor existente. No se solicitan números de tarjeta, CVV ni contraseñas bancarias.</p></section>`;
 }
 function v212Show(){const target=document.querySelector('.v212-panel');if(target)target.outerHTML=v212SettingsPanel();}
 async function v212SessionToken(){const {data,error}=await f33Api.auth.getSession();if(error||!data?.session?.access_token)throw Error('Vuelve a iniciar sesión.');return data.session.access_token;}
@@ -33919,8 +33929,8 @@ async function v212Pair(){
   v212State.secret=payload.token;v212State.webhook=payload.webhook_url;
   v212State.health='testing';v212State.healthMessage='Vínculo creado. Comprobando si el receptor está publicado…';
   await v212Load();
-  await v274ProbeAppleIngest(true);
-  toast('Vínculo creado. Configura las variables Amount y Merchant en Atajos con la nueva clave.');
+  const receptionReady=await v274ProbeAppleIngest(true);
+  toast(receptionReady?'Vínculo creado y receptor V288 verificado. Configura Amount y Merchant en Atajos.':'Vínculo creado. Falta publicar o verificar apple-pay-shortcuts (V288).');
  }catch(err){v212State.error=err.message||'No fue posible generar el enlace';}
  finally{v212State.busy=false;v212Show();}
 }
@@ -33930,7 +33940,9 @@ async function v274ProbeAppleIngest(silent=false){
  const controller=new AbortController();
  const timeout=setTimeout(()=>controller.abort(),14000);
  try{
-  const resp=await fetch(v212State.webhook,{
+  const shortcutUrl=v288ShortcutUrl(v212State.webhook);
+  if(!shortcutUrl)throw Error('La URL del receptor no corresponde al proyecto Supabase activo.');
+  const resp=await fetch(shortcutUrl,{
    method:'POST',headers:{'Content-Type':'application/json','X-Vive-Token':v212State.secret},
    body:JSON.stringify({amount:0.01,merchant:'PRUEBA CONEXION VIVE',currency:v212State.currency,dry_run:true}),
    signal:controller.signal,cache:'no-store'
@@ -33938,7 +33950,7 @@ async function v274ProbeAppleIngest(silent=false){
   const payload=await resp.json().catch(()=>({}));
   if(!resp.ok||payload?.ok!==true||payload?.dry_run!==true||payload?.linked!==true){
    let message=String(payload?.error||'').trim()||('HTTP '+resp.status);
-   if(resp.status===404)message='No existe apple-pay-ingest en Supabase: publícala por separado de apple-pay-link.';
+   if(resp.status===404)message='No existe apple-pay-shortcuts en Supabase: despliega el nuevo adaptador V288 (conserva apple-pay-ingest).';
    else if(resp.status===401&&!(payload&&payload.code))message='El gateway de Supabase bloquea el atajo (401). En apple-pay-ingest desactiva Verify JWT; la función valida X-Vive-Token.';
    else if(payload?.code==='link_revoked')message='El token no coincide con el vínculo activo. Vuelve a vincular y actualiza Atajos.';
    throw Error(message);
@@ -34042,7 +34054,7 @@ document.addEventListener('click',async ev=>{
   if(act==='revoke')await v212Revoke(el.dataset.id);
   if(act==='refresh'){if(f33Dirty&&!f33Conflict)await f33Flush();await v212Load();await v212Sync();}
   if(act==='copy-url'||act==='copy-token'){
-   const value=act==='copy-url'?v212State.webhook:v212State.secret;
+   const value=act==='copy-url'?v288ShortcutUrl(v212State.webhook):v212State.secret;
    if(!value)throw Error('Primero conecta una tarjeta');
    await navigator.clipboard.writeText(value);toast('Copiado. Pégalo en el atajo de Wallet.');
   }
