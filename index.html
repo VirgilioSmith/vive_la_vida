@@ -22217,6 +22217,99 @@ body.theme-black .v265-balance-caution,body.theme-dark .v265-balance-caution{col
  .world-register #page .v248-register-hero .v248-metrics-primary>.v248-move-fact small{font-size:9px!important}
 }
 </style>
+<meta name="vive-el-hoy-build" content="V273-personalizacion-wallet" />
+
+<style id="vive-v273-personalizacion-wallet">
+/* V273 · A more generous, full-bleed card rail with neighbor peeks. */
+@media (max-width:790px){
+ .world-wallet #page>.v266-wallet,
+ #page>.v266-wallet{
+   width:100%!important;max-width:100%!important;
+   padding-inline:clamp(14px,4.25vw,21px)!important;
+   overflow:visible!important;
+ }
+ .v266-wallet .v266-gallery{
+   width:calc(100% + clamp(14px,4.25vw,21px) + clamp(14px,4.25vw,21px))!important;
+   max-width:none!important;
+   margin-left:calc(0px - clamp(14px,4.25vw,21px))!important;
+   margin-right:calc(0px - clamp(14px,4.25vw,21px))!important;
+   overflow:hidden!important;
+ }
+ .v266-wallet .v266-gallery-track.v68-wallet-gallery{
+   box-sizing:border-box!important;width:100%!important;max-width:100%!important;
+   gap:12px!important;
+   padding:5px max(12px,calc((100% - min(520px,82vw))/2)) 16px!important;
+   scroll-padding-inline:max(12px,calc((100% - min(520px,82vw))/2))!important;
+   scroll-snap-type:x mandatory!important;
+ }
+ .v266-wallet .v266-gallery-track .v266-wallet-face.v68-wallet-face{
+   flex:0 0 min(520px,82vw)!important;width:min(520px,82vw)!important;
+   scroll-snap-align:center!important;
+ }
+ .v266-wallet .v266-wallet-face .v266-physical-card{
+   width:100%!important;aspect-ratio:1.58!important;border-radius:23px!important;
+   padding:clamp(15px,4.5vw,24px)!important;
+ }
+ .v266-wallet .v266-wallet-header,.v266-wallet .v266-selected-balance,
+ .v266-wallet .v266-wallet-actions{width:100%!important}
+ .v273-personalize-link{
+   display:inline-flex;align-items:center;gap:8px;margin-top:13px;
+   border:1px solid rgba(160,178,206,.36);background:rgba(255,255,255,.74);
+   color:#34547c;border-radius:999px;padding:10px 14px;min-height:42px;
+   font-size:12px;font-weight:780;box-shadow:0 6px 17px rgba(34,61,110,.07);
+ }
+ .v273-personalize-link svg{width:17px;height:17px}
+}
+@media (min-width:791px){.v273-personalize-link{display:none}}
+.v273-overview-widget{display:grid;gap:12px;min-width:0}
+.v273-overview-widget[hidden]{display:none!important}
+.v273-widget-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(132,153,188,.13);min-width:0}
+.v273-widget-row:last-child{border-bottom:0}
+.v273-widget-symbol{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:13px;background:rgba(108,146,207,.10);color:#426cb2}
+.v273-widget-symbol svg{width:18px;height:18px}
+.v273-widget-copy{display:flex;flex:1;flex-direction:column;gap:3px;min-width:0}
+.v273-widget-copy strong{font-size:13px;color:#1e3254;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v273-widget-copy small{font-size:11px;color:#73849c}
+.v273-widget-row>b{font-size:13px;font-weight:790;text-align:right;white-space:nowrap;color:#233c65}
+.v273-widget-total{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;padding:12px 13px;border-radius:16px;background:rgba(123,162,217,.1)}
+.v273-widget-total span{font-size:11px;font-weight:700;color:#5d7497}
+.v273-widget-total strong{font-size:18px;font-weight:850;white-space:nowrap;color:#263f69}
+.v273-widget-empty{font-size:12px;color:#75869d;margin:7px 0}
+.v273-settings-customizer{border:1px solid rgba(207,222,242,.86);background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(238,244,255,.88));border-radius:23px;padding:19px;margin-top:16px;display:grid;gap:16px}
+.v273-settings-customizer header{display:grid;gap:6px}
+.v273-settings-customizer h3{font-size:22px;font-weight:850;letter-spacing:-.04em;margin:0;color:#243a5b}
+.v273-settings-customizer header p{font-size:12px;line-height:1.6;margin:0;color:#73849d}
+.v273-custom-rows{display:grid;gap:8px}
+.v273-custom-row{display:flex;align-items:center;gap:10px;padding:12px 13px;border:1px solid rgba(180,198,224,.35);border-radius:16px;background:rgba(255,255,255,.66)}
+.v273-custom-copy{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+.v273-custom-copy strong{font-size:13px;color:#2b4366}
+.v273-custom-copy small{font-size:11px;line-height:1.4;color:#7d8ea5}
+.v273-custom-controls{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.v273-visibility{display:flex;align-items:center;padding:3px;width:42px;height:26px;border-radius:999px;border:1px solid #c5d0e2;background:#c3cede;cursor:pointer}
+.v273-visibility span{display:block;width:18px;height:18px;border-radius:50%;background:white;box-shadow:0 1px 4px rgba(25,42,65,.16);transition:transform .16s ease}
+.v273-visibility.is-on{background:#4773c5;border-color:#4773c5}
+.v273-visibility.is-on span{transform:translateX(16px)}
+.v273-order{display:grid;place-items:center;width:31px;height:31px;border-radius:10px;border:1px solid rgba(170,189,218,.55);background:rgba(255,255,255,.65);color:#3e659c;cursor:pointer}
+.v273-order:disabled{opacity:.3;cursor:default}
+.v273-custom-footer{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.v273-custom-footer span{font-size:10px;color:#72839a;line-height:1.5}
+.v273-custom-footer button{border:1px solid rgba(163,185,213,.45);background:transparent;color:#3b629b;border-radius:12px;padding:9px 11px;font-size:11px;font-weight:750}
+body.theme-black .v273-settings-customizer,body.theme-dark .v273-settings-customizer{background:linear-gradient(135deg,#1e293b,#131b29)!important;border-color:#36465c!important;color:#edf3fc!important}
+body.theme-black .v273-custom-row,body.theme-dark .v273-custom-row{background:#222d3e!important;border-color:#3b4a63!important}
+body.theme-black .v273-settings-customizer h3,body.theme-dark .v273-settings-customizer h3,
+body.theme-black .v273-custom-copy strong,body.theme-dark .v273-custom-copy strong,
+body.theme-black .v273-widget-row>b,body.theme-dark .v273-widget-row>b,
+body.theme-black .v273-widget-copy strong,body.theme-dark .v273-widget-copy strong{color:#edf4ff!important}
+body.theme-black .v273-custom-copy small,body.theme-dark .v273-custom-copy small,
+body.theme-black .v273-widget-copy small,body.theme-dark .v273-widget-copy small{color:#b7c6db!important}
+body.theme-black .v273-widget-total,body.theme-dark .v273-widget-total{background:#243249!important}
+body.theme-black .v273-widget-total :is(strong,span),body.theme-dark .v273-widget-total :is(strong,span){color:#ecf4ff!important}
+body.theme-black .v273-widget-symbol,body.theme-dark .v273-widget-symbol{background:#24364d;color:#a9c8ff}
+body.theme-black .v273-order,body.theme-dark .v273-order{background:#28364a;color:#d0e2ff;border-color:#435873}
+body.theme-black .v273-personalize-link,body.theme-dark .v273-personalize-link{background:#263346!important;color:#e7efff!important;border-color:#435570!important}
+@media(max-width:390px){.v273-custom-row{padding:10px 9px;gap:7px}.v273-custom-controls{gap:4px}.v273-order{width:28px;height:28px}.v273-visibility{width:40px}}
+@media(prefers-reduced-motion:reduce){.v273-visibility span{transition:none}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -23323,6 +23416,32 @@ function v64Variance(current,prior,comparison,risk=false){
  return `<span class="ff-yoy ${tone} v64-compare" tabindex="0" title="${label}: ${pctText}" data-chart-tip="COMPARACIÓN ${label.toUpperCase()}|Actual: ${money(current,'DOP',2)}|Referencia (${comparison.prior}): ${money(prior,'DOP',2)}|Diferencia: ${money(delta,'DOP',2)}|Variación: ${pctText}"><span class="comparison-only-pct">${pctText}</span><small>${label}</small></span>`;
 }
 
+
+/* V273 · Optional Resumen sections. These are presentation-only and never
+   mutate financial data or create duplicate transactions. */
+function v273OverviewExtraWidgets(){
+ const recent=(recentTx()||[]).slice(0,4);
+ const activity=recent.map(t=>`<div class="v273-widget-row"><span class="v273-widget-symbol">${icon(['income','bank_reward','card_reward'].includes(t.type)?'up':'wallet')}</span><span class="v273-widget-copy"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b></div>`).join('');
+ const subs=(db.recurring||[]).filter(r=>r.active!==false);
+ const monthCost=r=>fx(num(r.amount),r.currency)/(r.frequency==='annual'?12:r.frequency==='quarterly'?3:r.frequency==='weekly'?7/30.4375:1);
+ const subTotal=subs.reduce((a,r)=>a+monthCost(r),0);
+ const subRows=subs.slice().sort((a,b)=>monthCost(b)-monthCost(a)).slice(0,4).map(r=>`<div class="v273-widget-row"><span class="v273-widget-symbol">${icon('cycle')}</span><span class="v273-widget-copy"><strong>${sanitize(r.name)}</strong><small>${r.nextDue?`Próximo ${prettyDate(r.nextDue)}`:'Sin próximo cargo registrado'}</small></span><b>${money(r.amount,r.currency,2)}</b></div>`).join('');
+ const cards=(db.cards||[]).filter(c=>!isHidden(c));
+ const dueCards=cards.map(c=>{
+  const dop=cardStatus(c,'DOP'),usd=cardStatus(c,'USD');
+  const billedDop=Math.max(0,num(dop.billed)),billedUsd=Math.max(0,num(usd.billed));
+  const total=fx(billedDop,'DOP')+fx(billedUsd,'USD');
+  const dates=[dop.nextDue,usd.nextDue].filter(Boolean).sort();
+  return {c,total,due:dates[0]||null};
+ }).sort((a,b)=>b.total-a.total);
+ const billed=dueCards.reduce((a,c)=>a+c.total,0);
+ const cardRows=dueCards.slice(0,4).map(x=>`<div class="v273-widget-row"><span class="v273-widget-symbol">${icon('card')}</span><span class="v273-widget-copy"><strong>${sanitize(x.c.name)}</strong><small>${x.due?`Vence ${prettyDate(x.due)}`:'Sin vencimiento pendiente registrado'}</small></span><b>${money(x.total)}</b></div>`).join('');
+ const head=(eyebrow,title,link,text)=>`<div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">${eyebrow}</span><h2>${title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${link}">${text} ${icon('arrow')}</button></div>`;
+ return `<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver historial')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
+ <section data-v105-widget="subscriptions" class="v105-mobile-extra v273-overview-widget" aria-label="Suscripciones activas">${head('CARGOS RECURRENTES','Suscripciones activas','recurring','Ver servicios')}<div class="v273-widget-total"><span>Equivalente mensual · ${subs.length} activas</span><strong>${money(subTotal)}</strong></div>${subRows||'<p class="v273-widget-empty">No tienes suscripciones activas.</p>'}</section>
+ <section data-v105-widget="cardsDue" class="v105-mobile-extra v273-overview-widget" aria-label="Tarjetas por pagar">${head('CRÉDITO Y CORTES','Tarjetas por pagar','cards','Ver tarjetas')}<div class="v273-widget-total"><span>Facturado pendiente · RD$ equivalentes</span><strong>${money(billed)}</strong></div>${cardRows||'<p class="v273-widget-empty">No tienes tarjetas activas.</p>'}</section>`;
+}
+
 function mobileHome(){
  const m=monthStats(),liquid=totalLiquid(),debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
  // Exclusivamente obligaciones por pagar: nunca sumar préstamos por cobrar.
@@ -23363,7 +23482,7 @@ function mobileHome(){
    return `<div class="vive-mobile-due-row v105-mobile-due"><div><strong title="${sanitize(o.name)}">${sanitize(o.name)}</strong><small>${overdue?'<span class="vive-mobile-late-label">Vencido</span> · ':''}${prettyDate(o.date)} · ${kindName}</small></div><b>${money(o.amount,o.currency)}</b><button type="button" class="v105-pay-mini" data-v105-pay-menu="1" data-kind="${o.kind}" data-ref="${sanitize(o.ref)}" data-ccy="${sanitize(o.ccy||o.currency||'DOP')}" data-due="${sanitize(o.date)}" data-amount="${Number(o.amount)||0}" aria-label="Opciones para pagar ${sanitize(o.name)}">Pagar</button></div>`;
  }).join('');
  return `<div class="vive-mobile-home vive-mobile-home-essential" data-mobile-experience="${vis?'vision':'claridad'}">
-   <div class="vive-mobile-greeting v51-executive-greeting"><span class="vive-mobile-eyebrow">TU PANORAMA · ${new Date().toLocaleDateString('es-DO',{month:'long',year:'numeric'}).toUpperCase()}</span><h1>Resumen financiero</h1><p>Lo que tienes, lo que debes y lo que viene.</p></div>
+   <div class="vive-mobile-greeting v51-executive-greeting"><span class="vive-mobile-eyebrow">TU PANORAMA · ${new Date().toLocaleDateString('es-DO',{month:'long',year:'numeric'}).toUpperCase()}</span><h1>Resumen financiero</h1><p>Lo que tienes, lo que debes y lo que viene.</p><button type="button" class="v273-personalize-link" data-v273-open-personalization="1" aria-label="Personalizar estilo y secciones del Resumen">${icon('settings')} Personalizar resumen</button></div>
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
    ${v105CapacityWidget(true)}
@@ -23372,6 +23491,7 @@ function mobileHome(){
    <section data-v105-widget="net" class="vive-mobile-net-card v36-month-capsule" aria-label="Balance del mes"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RESUMEN MENSUAL</span><h2>Balance del mes</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="advanced">Ver análisis ${icon('up')}</button></div><div class="v36-month-columns"><span><small>Ingresos</small><strong class="v36-income">${money(m.income)}</strong></span><span><small>Egresos</small><strong class="v36-expense">${money(m.expense)}</strong></span></div><div class="v36-month-net"><span><small>Neto</small><strong class="vive-mobile-net-value ${m.net<0?'negative':''}" title="Ingresos menos egresos: ${money(m.net,'DOP',2)}">${money(m.net)}</strong></span><small>${netLabel}</small></div></section>
    <section data-v105-widget="chart" class="v105-mobile-extra" aria-label="Gráfico de ingresos y egresos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">EVOLUCIÓN</span><h2>Ingresos y egresos</h2></div></div>${mobileMiniTrend()}</section>
    <section data-v105-widget="people" class="v105-mobile-extra" aria-label="Compromisos entre personas"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RELACIONES</span><h2>Entre personas</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="personal">Ver relaciones ${icon('up')}</button></div><div class="v105-mobile-people"><span><small>Por cobrar</small><strong>${money(personalTotals().receivable)}</strong></span><span><small>Por devolver</small><strong>${money(personalTotals().payable)}</strong></span></div></section>
+   ${v273OverviewExtraWidgets()}
   </div>`;
 }
 /* V243 · Contextual return, only when a module was opened from Explorar. */
@@ -32000,14 +32120,17 @@ const V105_WIDGETS=[
  {id:'chart',title:'Ingresos y egresos',hint:'Evolución de cinco meses'},
  {id:'net',title:'Neto del mes',hint:'Ingresos menos egresos'},
  {id:'payments',title:'Próximos pagos',hint:'Vencimientos y pago directo'},
- {id:'people',title:'Entre personas',hint:'Por cobrar y por devolver'}
+ {id:'people',title:'Entre personas',hint:'Por cobrar y por devolver'},
+ {id:'activity',title:'Actividad reciente',hint:'Últimos movimientos y sus importes'},
+ {id:'subscriptions',title:'Suscripciones activas',hint:'Servicios activos, costos y próximas renovaciones'},
+ {id:'cardsDue',title:'Tarjetas por pagar',hint:'Monto facturado y próximos vencimientos por tarjeta'}
 ];
 function v105Config(){
  const raw=db.settings?.v105OverviewWidgets;
  const ids=V105_WIDGETS.map(w=>w.id);
- if(!raw||!Array.isArray(raw.order))return {order:ids,visible:ids};
+ if(!raw||!Array.isArray(raw.order))return {order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue'].includes(x))};
  const order=[...new Set(raw.order.filter(x=>ids.includes(x))),...ids.filter(x=>!raw.order.includes(x))];
- const visible=Array.isArray(raw.visible)?raw.visible.filter(x=>ids.includes(x)):ids;
+ const visible=Array.isArray(raw.visible)?raw.visible.filter(x=>ids.includes(x)):ids.filter(x=>!['activity','subscriptions','cardsDue'].includes(x));
  return {order,visible};
 }
 function v105BubblePercent(current,previous,comparison,risk=false){
@@ -32084,7 +32207,7 @@ document.addEventListener('click',ev=>{
  const move=ev.target.closest?.('[data-v105-move]');
  if(move){ev.preventDefault();ev.stopPropagation();const cfg=v105DraftConfig||v105Config(),i=cfg.order.indexOf(move.dataset.id),j=i+(move.dataset.v105Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]];v105DraftConfig=cfg;v105Customizer();return;}
  const reset=ev.target.closest?.('[data-v105-reset]');
- if(reset){ev.preventDefault();ev.stopPropagation();const ids=V105_WIDGETS.map(x=>x.id);v105DraftConfig={order:ids,visible:ids};v105Customizer();return;}
+ if(reset){ev.preventDefault();ev.stopPropagation();const ids=V105_WIDGETS.map(x=>x.id);v105DraftConfig={order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue'].includes(x))};v105Customizer();return;}
  const apply=ev.target.closest?.('[data-v105-apply]');
  if(apply){ev.preventDefault();ev.stopPropagation();if(v105DraftConfig)v105SaveConfig(v105DraftConfig);v105DraftConfig=null;closeModal();return;}
  const choice=ev.target.closest?.('[data-v105-pay-option]');
@@ -34258,13 +34381,25 @@ function v242SettingsPreview(){
  <button type="button" class="v242-style-option ${chosen==='original'?'selected':''}" data-v242-style="original" aria-pressed="${chosen==='original'}"><span class="v242-style-art v242-mini-original"><span class="v242-mini-label">Liquidez disponible</span><strong>${bubbleMoney(liquid)}</strong><span class="v242-mini-divider"></span><span class="v242-mini-foot"><i>Deudas <b>${bubbleMoney(debt)}</b></i><i>Posición neta <b>${bubbleMoney(net)}</b></i></span></span><span class="v242-style-description"><strong>Original móvil</strong><small>El diseño predeterminado</small><i aria-hidden="true">${chosen==='original'?'✓':'○'}</i></span></button>
  <button type="button" class="v242-style-option ${chosen==='circles'?'selected':''}" data-v242-style="circles" aria-pressed="${chosen==='circles'}"><span class="v242-style-art v242-mini-circles"><span class="v242-mini-title">Tu posición financiera</span><strong>${bubbleMoney(net)}</strong><span class="v242-mini-orbs"><i><b>${bubbleMoney(liquid)}</b><small>Liquidez</small></i><i class="v242-featured"><b>${bubbleMoney(debt)}</b><small>Deudas</small></i><i><b>${bubbleMoney(net)}</b><small>Neto</small></i></span></span><span class="v242-style-description"><strong>Tres círculos</strong><small>Adaptación del diseño web</small><i aria-hidden="true">${chosen==='circles'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Ambos muestran los mismos saldos, sin modificar cálculos ni movimientos. El cambio se aplica al abrir Resumen.</p></section>`;
 }
+
+function v273SettingsWidgetEditor(){
+ const cfg=v105Config();
+ const visible=new Set(cfg.visible);
+ const rows=cfg.order.map((id,i)=>{
+  const w=V105_WIDGETS.find(x=>x.id===id);if(!w)return '';
+  const on=visible.has(id);
+  return `<div class="v273-custom-row"><span class="v273-custom-copy"><strong>${sanitize(w.title)}</strong><small>${sanitize(w.hint)}</small></span><div class="v273-custom-controls"><button type="button" class="v273-visibility ${on?'is-on':''}" data-v273-toggle="${id}" role="switch" aria-checked="${on}" aria-label="${on?'Ocultar':'Mostrar'} ${sanitize(w.title)}"><span></span></button><button type="button" class="v273-order" data-v273-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${sanitize(w.title)}">↑</button><button type="button" class="v273-order" data-v273-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${sanitize(w.title)}">↓</button></div></div>`;
+ }).join('');
+ return `<section class="v273-settings-customizer" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Organiza tu Resumen</h3><p>Elige las secciones que quieres ver y cambia su orden. Las preferencias se guardan automáticamente y no modifican tus movimientos.</p></header><div class="v273-custom-rows">${rows}</div><div class="v273-custom-footer"><span>Solo afecta a la vista móvil de Resumen.</span><button type="button" data-v273-reset="1">Restaurar orden y visibilidad</button></div></section>`;
+}
+
 function v242Settings(){
  const s=db.settings,pane=V242_PANES.some(x=>x[0]===v242SettingsPane)?v242SettingsPane:'home';
  const paneInfo=V242_PANES.find(x=>x[0]===pane);
  const tile=(entry)=>`<button class="v242-settings-row" type="button" data-v242-section="${entry[0]}"><span class="v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v242-settings-row-copy"><strong>${entry[1]}</strong><small>${entry[2]}</small></span><span class="v242-settings-chevron" aria-hidden="true">›</span></button>`;
  const content={
   profile:`${f34CloudPanel()}`,
-  appearance:`${v242SettingsPreview()}${v250DockGlassPanel()}<div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
+  appearance:`${v242SettingsPreview()}${v273SettingsWidgetEditor()}${v250DockGlassPanel()}<div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
 <div class="theme-settings panel"><div><strong>Aspecto de vive el hoy</strong><p>Elige Claro o Black oscuro. El modo Black utiliza fondo negro y tarjetas carbón de alto contraste; tus registros no cambian.</p></div><div class="theme-choice-row" role="group" aria-label="Elegir apariencia"><button class="theme-choice ${s.theme==='light'?'selected':''}" data-act="setTheme" data-id="light" aria-pressed="${s.theme==='light'}"><span class="theme-sun">☀</span> Claro</button><button class="theme-choice v200-black-choice ${s.theme==='black'?'selected':''}" data-act="setTheme" data-id="black" aria-pressed="${s.theme==='black'}"><span class="v200-black-mark">●</span> Black oscuro</button></div></div>
 
 
@@ -34300,6 +34435,25 @@ ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div 
  `<div class="v242-settings-subpage"><header class="v242-settings-subhead"><button type="button" class="v242-settings-back" data-v242-back="1">‹ <span>Configuración</span></button><span class="v242-settings-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h1>${title}</h1><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner">${content[pane]||''}</div></div>`}
  </div>`;
 }
+
+document.addEventListener('click',event=>{
+ const opener=event.target.closest('[data-v273-open-personalization]');
+ const toggle=event.target.closest('[data-v273-toggle]');
+ const move=event.target.closest('[data-v273-move]');
+ const reset=event.target.closest('[data-v273-reset]');
+ if(!opener&&!toggle&&!move&&!reset)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ if(opener){v242SettingsPane='appearance';ui.page='settings';render();window.scrollTo(0,0);return}
+ const cfg=v105Config();
+ if(toggle){const id=toggle.dataset.v273Toggle;if(!cfg.order.includes(id))return;cfg.visible=cfg.visible.includes(id)?cfg.visible.filter(x=>x!==id):[...cfg.visible,id]}
+ else if(move){const id=move.dataset.id,i=cfg.order.indexOf(id),j=i+(move.dataset.v273Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]]}
+ else if(reset){const ids=V105_WIDGETS.map(x=>x.id);cfg.order=ids;cfg.visible=ids.filter(x=>!['activity','subscriptions','cardsDue'].includes(x))}
+ const old=db.settings.v105OverviewWidgets;
+ db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};
+ if(!persist()){db.settings.v105OverviewWidgets=old;toast('No se pudieron guardar los cambios de personalización.');return}
+ render();
+},true);
+
 pages.settings=v242Settings;
 function v242MobileCircles(liquid,debt,net,comparison){
  const circle=(id,label,value,prior,risk=false,featured=false)=>`<button type="button" class="ff-bubble ${featured?'featured':''} ${id==='net'&&value<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="${id}" data-chart-tip="${label}|Valor exacto: ${money(value,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(value)}</span>${v105BubblePercent(value,prior,comparison,risk)}<small>${label}</small></button>`;
