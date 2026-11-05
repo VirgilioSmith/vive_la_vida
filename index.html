@@ -5,7 +5,7 @@
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="283-movimientos-pagos-simplificados"/>
+<meta name="vive-el-hoy-version" content="284-mobile-buscar-operaciones-coherentes"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -23512,7 +23512,7 @@ function v154MobileSearchPage(){
 
  v154PrepareMobileIndex();
  return `<div class="vive-mobile-hub v154-search-hub">
-  <div class="v154-search-heading"><div><span class="v154-search-eyebrow">TU CENTRO FINANCIERO</span><h1>Buscar</h1></div><span class="v154-search-heading-icon">${icon('search')}</span></div>
+  <div class="v154-search-heading"><div><span class="v154-search-eyebrow">TU CENTRO FINANCIERO</span><h1>Buscar</h1></div></div>
   <div class="v154-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios y más" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button></div>
   <div class="v154-search-discover" id="v154-mobile-discover"><div class="v154-section-header"><h2>Explorar tus finanzas</h2><p>Encuentra todo en un mismo lugar</p></div><div class="v154-category-grid">${V154_MOBILE_CATEGORIES.map(c=>`<button type="button" class="v154-category-tile v154-tone-${c.tone}" data-v154-category="${c.id}" aria-label="Explorar ${c.title}"><span class="v154-category-mark">${icon(c.ico)}</span><span class="v154-category-title">${c.title}</span><span class="v154-category-sub">${c.sub}</span></button>`).join('')}</div>
   </div>
@@ -28059,7 +28059,18 @@ case 'annualToggle':ui.annualDetails=!ui.annualDetails;render();break;
 case 'gotoSettings':ui.page='settings';render();break;
 case 'mobile':ui.mobile=!ui.mobile;render();break;
 case 'registrationGroup':ui.registrationGroup=['receive','pay','move','other'].includes(id)?id:'pay';if(document.querySelector('#modal-root .v235-register-dialog'))openRegisterAssistant();else render();break;
-case 'v196PayKind':ui.v196PayKind=['all','card','loan','recurring','personal'].includes(id)?id:'all';ui.v176PayView='agenda';render();break; case 'v145PayFilter':ui.v145PayFilter=['all','overdue','upcoming'].includes(id)?id:'all';render();break; case 'guidedFlow':guidedTransactionForm({type:({income:'income',spend:'expense',service:'card_charge',own:'transfer',outgoing:'expense',cardpay:'card_payment'})[el.dataset.mode]||'expense',flowMode:el.dataset.mode});break;
+case 'v196PayKind':ui.v196PayKind=['all','card','loan','recurring','personal'].includes(id)?id:'all';ui.v176PayView='agenda';render();break; case 'v145PayFilter':ui.v145PayFilter=['all','overdue','upcoming'].includes(id)?id:'all';render();break; case 'guidedFlow':{
+  const mode=el.dataset.mode;
+  const fromAssistant=Boolean(el.closest('.v235-register-dialog'));
+  if(isMobileViewport()&&fromAssistant&&['income','spend','own','outgoing'].includes(mode)){
+    /* Reuse the existing 2-step mobile income/spending/transfer UI. */
+    openMobileQuickRegister(mode==='own'?'transfer':mode);
+  }else{
+    /* Dedicated card, subscription and special-operation flows keep their logic. */
+    guidedTransactionForm({type:({income:'income',spend:'expense',service:'card_charge',own:'transfer',outgoing:'expense',cardpay:'card_payment'})[mode]||'expense',flowMode:mode});
+  }
+  break;
+ }
 case 'newTransaction':{const kind=el.dataset.type||'';if(!kind&&!id){ui.registrationGroup=ui.registrationGroup||'pay';openRegisterAssistant();break;}if(isMobileViewport()&&!id&&['income','expense','card_charge','transfer'].includes(kind)){openMobileQuickRegister(kind);break;}transactionForm({type:kind||'expense',cardId:id||db.cards[0]?.id});if(kind==='transfer')queueMicrotask(refreshTransferFee);break;}
 case 'otherRefund':if(!db.cards.length){toast('Registra una tarjeta para asociar una devolución.');break}transactionForm({type:'card_refund',cardId:db.cards[0].id});break;
 case 'otherAdjust':transactionForm({type:'adjustment'});break;
@@ -44372,6 +44383,164 @@ body.theme-dark #page #ledger-world .v265-balance-single .v265-unverified{
 @media(max-width:350px){
  #page .v252-center .v252-hero .v283-hero-payments .v145-quick-buttons{gap:7px!important;}
  #page .v252-center .v252-hero .v283-hero-payments .v145-quick-buttons button{font-size:11px!important;padding:9px 5px!important;}
+}
+</style>
+<style id="vive-v284-mobile-buscar-registro">
+/* V284 — Buscar y registro móvil: una jerarquía táctil coherente.
+   Alcance: encabezado Buscar y asistente Registrar. No cambia navegación,
+   saldos, impuestos, categorías, Supabase ni formularios de escritorio. */
+@media screen and (max-width:790px){
+  /* Buscar: sin botón decorativo de lupa a la derecha del título. */
+  #page .v154-search-heading-icon{display:none!important}
+  #page .v154-search-heading{min-height:0!important;align-items:flex-start!important}
+  #page .v154-search-heading>div{width:100%;min-width:0}
+  #modal-root .v235-register-layer>.v235-register-dialog{
+    box-sizing:border-box!important;background:linear-gradient(158deg,#f8f9fe 0%,#edf3fc 75%,#ebf2fb 100%)!important;
+    border-radius:27px 27px 0 0!important;border:1px solid rgba(255,255,255,.95)!important;
+    border-bottom:0!important;
+  }
+  #modal-root .v235-register-dialog .v235-register-close{
+    padding:13px 19px 9px!important;background:rgba(250,252,255,.93)!important;
+    color:#647994!important;border-bottom:1px solid #e4ebf5!important;
+  }
+  #modal-root .v235-register-dialog .vr-register{
+    box-sizing:border-box!important;padding:19px 17px 0!important;gap:0!important;
+    overflow:hidden!important;
+  }
+  #modal-root .v235-register-dialog .vr-workspace{
+    background:transparent!important;border:0!important;box-shadow:none!important;
+    min-width:0!important;
+  }
+  #modal-root .v235-register-dialog .vr-workspace-head{
+    margin:0 3px 17px!important;gap:5px!important;align-items:flex-start!important;
+  }
+  #modal-root .v235-register-dialog .vr-workspace-head h3{
+    font-size:clamp(23px,6vw,28px)!important;font-weight:800!important;
+    letter-spacing:-.045em!important;line-height:1.14!important;color:#243453!important;
+    margin:0 0 5px!important;
+  }
+  #modal-root .v235-register-dialog .vr-workspace-head p{
+    display:block!important;font-size:12px!important;line-height:1.48!important;
+    margin:0!important;color:#77869b!important;
+  }
+  #modal-root .v235-register-dialog .vr-switcher{
+    display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:5px!important;padding:5px!important;margin:0!important;
+    border-radius:22px!important;background:rgba(218,229,246,.62)!important;
+    border:1px solid rgba(255,255,255,.84)!important;
+  }
+  #modal-root .v235-register-dialog .vr-switch{
+    width:auto!important;min-width:0!important;min-height:71px!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    gap:6px!important;padding:9px 1px!important;border-radius:17px!important;
+    color:#60738e!important;background:transparent!important;
+  }
+  #modal-root .v235-register-dialog .vr-switch.selected{
+    color:#25446b!important;background:rgba(255,255,255,.97)!important;
+    box-shadow:0 4px 13px rgba(55,86,128,.09)!important;
+    border-color:rgba(255,255,255,.97)!important;
+  }
+  #modal-root .v235-register-dialog .vr-switch .vr-switch-symbol{
+    width:30px!important;height:30px!important;flex:0 0 30px!important;
+    background:rgba(255,255,255,.65)!important;border-radius:10px!important;
+  }
+  #modal-root .v235-register-dialog .vr-switch strong{
+    font-size:clamp(10px,2.9vw,12px)!important;line-height:1.2!important;
+    font-weight:750!important;color:inherit!important;
+  }
+  #modal-root .v235-register-dialog .vr-content{
+    margin-top:14px!important;padding:0 1px calc(22px + env(safe-area-inset-bottom,0px))!important;
+    overflow-y:auto!important;overflow-x:hidden!important;
+    flex:1 1 auto!important;min-height:0!important;
+  }
+  #modal-root .v235-register-dialog .vr-group-heading{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    padding:0 4px!important;margin:0 0 12px!important;
+    font-size:10px!important;letter-spacing:.13em!important;color:#778da9!important;
+  }
+  #modal-root .v235-register-dialog .vr-group-heading>span{
+    margin-left:auto!important;color:#94a7c1!important;
+  }
+  #modal-root .v235-register-dialog .vr-operation,
+  #modal-root .v235-register-dialog .v29-other-action{
+    display:flex!important;align-items:center!important;gap:13px!important;
+    box-sizing:border-box!important;min-height:79px!important;width:100%!important;
+    border-radius:21px!important;padding:14px!important;margin:0 0 10px!important;
+    background:rgba(255,255,255,.83)!important;
+    border:1px solid rgba(255,255,255,.96)!important;
+    box-shadow:0 8px 22px rgba(57,87,132,.062)!important;
+  }
+  #modal-root .v235-register-dialog .vr-operation-icon,
+  #modal-root .v235-register-dialog .v29-other-icon{
+    display:grid!important;place-items:center!important;flex:0 0 45px!important;
+    width:45px!important;height:45px!important;border-radius:15px!important;
+    background:#eef3fb!important;color:#486b9c!important;
+  }
+  #modal-root .v235-register-dialog .vr-operation-copy strong,
+  #modal-root .v235-register-dialog .v29-other-copy strong{
+    display:block!important;font-size:15px!important;font-weight:760!important;
+    line-height:1.2!important;color:#263b59!important;
+  }
+  #modal-root .v235-register-dialog .vr-operation-copy small,
+  #modal-root .v235-register-dialog .v29-other-copy small{
+    display:block!important;font-size:11px!important;color:#7b8fa9!important;
+    margin-top:5px!important;line-height:1.42!important;
+  }
+  #modal-root .v235-register-dialog .vr-guidance{
+    display:block!important;box-sizing:border-box!important;
+    margin-top:8px!important;padding:14px 15px!important;
+    border-radius:17px!important;background:rgba(255,255,255,.55)!important;
+    border:1px solid rgba(255,255,255,.82)!important;
+    box-shadow:none!important;
+  }
+  #modal-root .v235-register-dialog .vr-guidance h4{
+    font-size:12px!important;font-weight:780!important;line-height:1.35!important;
+    color:#3d5c83!important;margin:0 0 5px!important;
+  }
+  #modal-root .v235-register-dialog .vr-guidance p{
+    font-size:11px!important;line-height:1.5!important;margin:0!important;color:#7186a0!important;
+  }
+  /* Quick financial entry uses one existing 2-step modal for every common flow. */
+  #modal-root .mqr-layer>.mqr-modal{
+    background:linear-gradient(155deg,#fafbfe 0%,#edf3fb 100%)!important;
+  }
+  #modal-root .mqr-modal .mqr-display{
+    border-radius:23px!important;
+  }
+  #modal-root .mqr-modal .mqr-mode{min-width:0!important}
+  #modal-root .mqr-modal .mqr-bottom{
+    padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+  }
+  #modal-root :is(.studio-form,.fastx-form,.other-studio-form) :is(input,select,textarea){
+    font-size:16px!important;
+  }
+}
+@media screen and (max-width:350px){
+  #modal-root .v235-register-dialog .vr-register{padding-inline:12px!important}
+  #modal-root .v235-register-dialog .vr-switcher{gap:3px!important;padding:4px!important}
+  #modal-root .v235-register-dialog .vr-switch{min-height:64px!important;padding:6px 0!important}
+  #modal-root .v235-register-dialog .vr-switch strong{font-size:10px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  #modal-root .v235-register-dialog .vr-switch{transition:none!important}
+}
+
+/* Mantener la apariencia oscura elegida en Ajustes. */
+@media (max-width:790px){
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog{background:linear-gradient(155deg,#1e2a3d,#111b2a)!important;border-color:#3b4b64!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .v235-register-close{background:#1a2738!important;color:#b9cbe2!important;border-color:#354962!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-workspace-head h3{color:#edf5ff!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-workspace-head p{color:#aebfd5!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switcher{background:#26364c!important;border-color:#354a66!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switch{color:#b0c2d9!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switch.selected{background:#334b6b!important;color:#f3f7ff!important;border-color:#5878a3!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation,.v29-other-action){background:#223248!important;border-color:#374e6d!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation-copy,.v29-other-copy) strong{color:#eff5ff!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation-copy,.v29-other-copy) small{color:#adc1d9!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-guidance{background:#24374e!important;border-color:#38506e!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-guidance h4{color:#dfecff!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-guidance p{color:#b5c8dd!important}
+ body:is(.theme-black,.theme-dark) #modal-root .mqr-layer>.mqr-modal{background:linear-gradient(160deg,#1d2b41,#101c2b)!important}
 }
 </style>
 </body>
