@@ -22735,6 +22735,260 @@ body.theme-light .world-kpis #page .ws-tile,body.theme-light .ws-library .v332-p
 @keyframes v334-word-arrive{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.f33-gate.v329-splash .v329-wordmark{animation:none!important}}
 </style>
+
+<style id="v336-theme-audit-overrides">
+/* V336 auditoría final de color: Claro correcto y Black 100% negro, sin azules */
+
+/* 1) Claro: Personalizar resumen no debe quedar negro */
+body:not(.theme-black):not(.theme-dark) .main .vive-mobile-greeting .v273-personalize-link{
+  background:#ffffff!important;
+  color:#16233a!important;
+  border:1px solid #d9e2f0!important;
+  box-shadow:0 10px 24px rgba(19,31,54,.08)!important;
+}
+body:not(.theme-black):not(.theme-dark) .main .vive-mobile-greeting .v273-personalize-link .v309-personalize-symbol{
+  background:transparent!important;
+}
+body:not(.theme-black):not(.theme-dark) .main .vive-mobile-greeting .v273-personalize-link .v309-personalize-symbol svg{
+  stroke:#41577b!important;
+}
+body:not(.theme-black):not(.theme-dark) .main .vive-mobile-greeting .v273-personalize-link:focus-visible{
+  outline:2px solid #516f9b!important;
+}
+
+/* 2) Tema black absoluto */
+html:has(body.theme-black),html:has(body.theme-black) body{background:#000!important}
+body.theme-black,
+body.theme-black #app,
+body.theme-black .shell,
+body.theme-black .main,
+body.theme-black main,
+body.theme-black #page,
+body.theme-black .widgets-world,
+body.theme-black .world-kpis{background:#000!important;background-image:none!important;color:#f5f5f5!important}
+body.theme-black::before,body.theme-black::after,
+body.theme-black #app::before,body.theme-black #app::after,
+body.theme-black .main::before,body.theme-black .main::after{background:none!important;background-image:none!important;box-shadow:none!important}
+
+/* superficies */
+body.theme-black :is(.panel,.kpi,.summary-glass,.glass-surface,.world-intro,.income-world-hero,.settings-hero,.bank-card,.bank-workspace,.v46-bank-card,.v46-bank-hero,.v26-body,.v26-internal,.inner-view-card,.widgets-heading,.ws-widget,.v58-exec,.ff-dashboard .ff-balance,.ff-dashboard .ff-upcoming,.ff-dashboard .ff-personal,.ff-dashboard .ff-expense-card,.ff-dashboard .ff-health-card,.ff-dashboard .ff-activity,.ff-dashboard .ff-obligations,.ff-dashboard .ff-bubble:not(.featured),.v202-wealth,.v203-mobile-banks .v203-hero,.v203-mobile-banks .v203-institution.v202-bank-item,.v203-mobile-banks .v203-expanded,.money-register-tile,.summary-metric,.module-switch-shell,.module-switch-tabs,.movement-recent,.subscription-world,.settings-layout .panel,.settings-layout .theme-settings,.v145-pay-hero,.v145-payment-kpi,.v145-pay-quick,.v196-pay-category,.v145-pay-agenda,.v176-pay-services,.v186-service-calendar,.budget-row,.budget-analysis-panel,.budget-variance-card,.v194-subcategory-content,.v198-cat-card,.v197-chart-card,.credit-box,.ws-library,.v205-explore-pulse,.v205-explore-group,.v205-explore-link,.v205-explore-pay,.v205-explore-period,.v202-bank-profiles,.v202-bank-item,.v202-bank-actions button,.v202-bank-empty,.v202-bank-logo,.v202-bank-amounts>div,.v202-bank-more,.v202-add,.v145-agenda-row,.notification:not(.warning):not(.danger):not(.success),.empty-bank,.top-hint){
+  background:#0b0b0b!important;
+  background-image:none!important;
+  border-color:#232323!important;
+  color:#f5f5f5!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.42)!important;
+}
+
+/* hero/kpi principales sin azul */
+body.theme-black :is(.v58-exec,.income-world-hero,.world-intro,.v145-pay-hero,.ff-dashboard .ff-balance,.v202-wealth,.v203-mobile-banks .v203-hero,.credit-box){
+  background:#0d0d0d!important;
+  background-image:none!important;
+  border-color:#252525!important;
+}
+body.theme-black .ff-dashboard .ff-health-card,
+body.theme-black .v22-wealth .v22-forecast-kpi,
+body.theme-black .budget-row.negative,
+body.theme-black .summary-metric.net,
+body.theme-black .summary-metric.negative{
+  background:#101010!important;
+  background-image:none!important;
+  border-color:#2a2a2a!important;
+}
+
+/* elementos internos */
+body.theme-black :is(.topbar,.module-switch-shell,.module-switch-tabs,.v145-pay-filters,.v196-kind-filters,.settings-nav,.v61-profile-switch,.sidebar.rail-sidebar,.vive-mobile-top,.vive-mobile-dock,.mobile-dock,.v153-rail){
+  background:#050505!important;
+  background-image:none!important;
+  border-color:#222!important;
+  color:#f1f1f1!important;
+}
+body.theme-black :is(input,textarea,select,.field,.filter-select,.date-chip,.theme-choice-row,.pill,.v200-commitment-tools,.v200-pay-tool,.v145-pay-tool,.v145-agenda-row,.movement-tab,.module-switch-tab,.theme-choice,.layout-choice,.v61-profile-option,.v199-profile-inline .v61-profile-option,.btn.soft,.btn.ghost,.top-hint,.v273-personalize-link,.v205-explore-link,.v205-explore-pay,.v205-explore-period){
+  background:#111!important;
+  background-image:none!important;
+  border-color:#2c2c2c!important;
+  color:#efefef!important;
+  box-shadow:none!important;
+}
+body.theme-black :is(.movement-tab.active,.module-switch-tab.active,.theme-choice.selected,.layout-choice.selected,.v61-profile-option.active,.v61-profile-option.selected,.v199-profile-inline .v61-profile-option.active,.v200-pay-tool.active,.v145-pay-filters button.active,.v196-kind-filters button.active,.sidebar .rail-action.active,.sidebar .rail-action[aria-current="page"]){
+  background:#1a1a1a!important;
+  border-color:#3a3a3a!important;
+  color:#ffffff!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.05)!important;
+}
+body.theme-black .sidebar .rail-action,
+body.theme-black .sidebar .rail-action :is(svg,.rail-symbol),
+body.theme-black .v273-personalize-link .v309-personalize-symbol svg,
+body.theme-black .main .vive-mobile-greeting .v273-personalize-link .v309-personalize-symbol svg{
+  color:#e8e8e8!important;stroke:currentColor!important
+}
+
+/* texto */
+body.theme-black :is(h1,h2,h3,h4,strong,b,.money,.kpi-value,.summary-metric-value,.top-title,.section-title h2,.world-intro h2,.panel h3,.ff-dashboard .ff-balance :is(strong,b),.ff-dashboard :is(.ff-upcoming,.ff-personal,.ff-expense-card,.ff-health-card,.ff-activity,.ff-obligations) :is(h2,h3,h4,strong,b,.money),.v202-bank-meta strong,.v202-bank-net strong,.v202-bank-amounts strong,.v202-bank-heading h2,.v203-bank-name strong,.v203-bank-figure strong,.v203-expanded-top strong,.v203-list-head h2,.v203-item-text strong,.v203-item-money strong,.v203-products-title strong,.v203-header h1){
+  color:#f5f5f5!important;
+}
+body.theme-black :is(p,small,.subtle,.subtitle,.kpi-foot,.mini-sub,.ff-subtitle,.ff-meta,.v202-bank-meta small,.v202-bank-net small,.v202-bank-amounts small,.v202-bank-heading span,.v203-bank-name small,.v203-bank-figure small,.v203-expanded-top small,.v203-item-text small,.v203-item-money small,.loan-product-small,.cert-bank,.settings-layout p){
+  color:#a6a6a6!important;
+}
+body.theme-black .positive{color:#71d49e!important}
+body.theme-black .negative{color:#ff7f8f!important}
+body.theme-black .warning{color:#f2c26a!important}
+
+/* gráficas y widgets en negro */
+body.theme-black .widgets-world .widget-card,
+body.theme-black .world-kpis #page .ws-tile,
+body.theme-black .ws-library .v332-preview-card{background:#090909!important;border-color:#202020!important;color:#f4f4f4!important}
+body.theme-black .world-kpis #page .ws-tile .v326-stat,
+body.theme-black .ws-library .v332-mini-preview .ws-preview-body,
+body.theme-black .ws-preview-body,
+body.theme-black .v209-widget-searchbar{background:#111!important;border-color:#272727!important;color:#f0f0f0!important}
+body.theme-black .v209-widget-searchbar small,
+body.theme-black .ws-gallery-filters button,
+body.theme-black .v209-library-close{background:#151515!important;border-color:#2a2a2a!important;color:#eaeaea!important}
+body.theme-black .ws-gallery-filters button.active{background:#202020!important;color:#fff!important}
+
+/* iconos e indicadores para no verse azules */
+body.theme-black :is(.v202-bank-logo,.v202-bank-more,.v202-add,.v203-product-type.active,.v203-hero-tag,.v255-tax-badge .v255-tax-ico,.v205-explore-link-icon,.v309-personalize-symbol,.v242-mini-orbs i.v242-featured){
+  background:#171717!important;
+  color:#f0f0f0!important;
+  border-color:#2c2c2c!important;
+  box-shadow:none!important;
+}
+body.theme-black .v242-mini-orbs i{background:#131313!important;border-color:#232323!important}
+
+/* bienvenida y acceso */
+body.theme-black .f33-auth-card{background:#0b0b0b!important;border-color:#252525!important;box-shadow:0 16px 40px rgba(0,0,0,.45)!important;color:#f4f4f4!important}
+body.theme-black .f33-auth-card :is(h1,h2,h3,strong,label){color:#f5f5f5!important}
+body.theme-black .f33-auth-card :is(p,small,.f33-auth-note){color:#a8a8a8!important}
+body.theme-black .f33-auth-card input{background:#111!important;border-color:#292929!important;color:#fff!important}
+body.theme-black .f33-auth-card .btn,
+body.theme-black .f33-auth-card button[type="submit"]{background:#141414!important;color:#fff!important;border:1px solid #303030!important}
+
+/* quitar restos azulados en resumen */
+body.theme-black .v273-personalize-link{background:#0f0f0f!important;color:#f2f2f2!important;border:1px solid #272727!important}
+body.theme-black .v273-personalize-link .v309-personalize-symbol{background:transparent!important}
+body.theme-black .v273-personalize-link .v309-personalize-symbol svg{stroke:#efefef!important}
+</style>
+
+
+<style id="v337-final-theme-audit">
+/* V337 · legibilidad KPI + black 100% final */
+
+/* Safe areas and root background */
+html,body{min-height:100%;}
+html:has(body.theme-black),html:has(body.theme-dark){background:#000!important;}
+body.theme-black,body.theme-dark{background:#000!important;background-image:none!important;}
+body.theme-black #app,body.theme-dark #app,
+body.theme-black .shell,body.theme-dark .shell,
+body.theme-black .main,body.theme-dark .main,
+body.theme-black #page,body.theme-dark #page,
+body.theme-black .page-shell,body.theme-dark .page-shell,
+body.theme-black .vive-mobile-page,body.theme-dark .vive-mobile-page,
+body.theme-black .world-overview,body.theme-dark .world-overview{background:#000!important;background-image:none!important;}
+body.theme-black .main::before,body.theme-dark .main::before,
+body.theme-black .main::after,body.theme-dark .main::after,
+body.theme-black #page::before,body.theme-dark #page::before,
+body.theme-black #page::after,body.theme-dark #page::after{background:none!important;background-image:none!important;box-shadow:none!important;}
+
+/* iOS / top area feel */
+body.theme-black .vive-mobile-top,
+body.theme-dark .vive-mobile-top,
+body.theme-black .topbar,
+body.theme-dark .topbar,
+body.theme-black .vive-mobile-greeting,
+body.theme-dark .vive-mobile-greeting,
+body.theme-black .main .vive-mobile-greeting,
+body.theme-dark .main .vive-mobile-greeting{background:#000!important;background-image:none!important;border-color:transparent!important;box-shadow:none!important;}
+
+/* Force all main visual surfaces to dark black/carbon */
+body.theme-black :is(.panel,.card,.kpi,.ff-tile,.v273-overview-widget,.v294-finance-widget,.v315-chart-widget,.v316-chart-widget,.v317-chart-widget,.v264-block,.v46-subscription-card,.v200-settings-group,.settings-hero,.v242-settings-rows,.v242-settings-row,.v205-explore-link,.v145-payment-kpi,.v145-pay-agenda,.v145-paycenter,.v145-pay-quick,.v290-budget-web,.v290-budget-mobile,.v290-budget-trend,.v290-budget-orbit,.v295-global-top,.v295-payment-section,.v119-modal,.subscription-world,.bank-card,.account-card,.loan-card,.certificate-card,.v57-product-hero,.v55-panel,.v55-hero,.v55-metric,.v55-section-lead,.v266-wallet-panel,.v266-wallet-detail,.v266-activity,.modal,.modal-head,.v105-capacity-widget,.v82-burden,.v89-debt-breakdown,.v187-benefits-ledger,.vr-workspace,.ws-gallery-card,.v242-mobile-web-position,.v294-widget-amount,.v315-credit-hero>div,.credit-box,.summary-glass,.world-intro,.income-world-hero,.v58-exec,.v145-pay-hero,.ff-dashboard .ff-balance,.ff-dashboard .ff-upcoming,.ff-dashboard .ff-personal,.ff-dashboard .ff-expense-card,.ff-dashboard .ff-health-card,.ff-dashboard .ff-activity,.ff-dashboard .ff-obligations,.v202-wealth,.v203-mobile-banks .v203-hero,.v203-mobile-banks .v203-institution.v202-bank-item,.v203-mobile-banks .v203-expanded,.money-register-tile,.summary-metric,.movement-recent,.settings-layout .panel,.budget-row,.budget-analysis-panel,.budget-variance-card,.v194-subcategory-content,.v198-cat-card,.v197-chart-card,.ws-library,.v205-explore-pulse,.v205-explore-group,.v202-bank-profiles,.v202-bank-item,.v202-bank-actions button,.v202-bank-empty,.v202-bank-logo,.v202-bank-amounts>div,.v202-bank-more,.v202-add,.v145-agenda-row,.notification:not(.warning):not(.danger):not(.success),.empty-bank,.top-hint,.v296-hero,.v296-section,.v296-library-card,.v296-order-card,.v296-preview-card,.v332-preview-card){
+  background:#0a0a0a!important;
+  background-image:none!important;
+  border-color:#242424!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.44)!important;
+}
+body.theme-black :is(.v58-exec,.income-world-hero,.world-intro,.v145-pay-hero,.ff-dashboard .ff-balance,.v202-wealth,.v203-mobile-banks .v203-hero,.credit-box,.summary-glass){
+  background:#090909!important;
+  background-image:none!important;
+  border-color:#262626!important;
+}
+
+/* Capacity KPI legibility — all themes */
+.v105-capacity-widget{backdrop-filter:none!important}
+.v105-capacity-top small{font-size:10px!important;letter-spacing:.12em!important;font-weight:850!important}
+.v105-capacity-top h2{font-size:18px!important;line-height:1.18!important;font-weight:900!important;letter-spacing:-.03em!important}
+.v105-capacity-top p{font-size:12px!important;line-height:1.45!important}
+.v105-capacity-grid{gap:12px!important}
+.v105-capacity-grid>div{padding:15px 15px!important;gap:5px!important}
+.v105-capacity-grid small{font-size:10px!important;font-weight:820!important;letter-spacing:.01em!important}
+.v105-capacity-rate strong{font-size:clamp(32px,4vw,44px)!important;line-height:1.02!important;font-weight:900!important;letter-spacing:-.07em!important}
+.v105-capacity-rest strong{font-size:clamp(21px,2.3vw,30px)!important;line-height:1.08!important;font-weight:860!important;letter-spacing:-.04em!important}
+.v105-capacity-grid span{font-size:11px!important;line-height:1.42!important}
+.v105-capacity-meter{height:8px!important}
+.v105-capacity-details summary{font-size:12px!important;font-weight:800!important}
+@media(max-width:790px){
+  .v105-capacity-widget{padding:18px 16px 16px!important}
+  .v105-capacity-top h2{font-size:17px!important}
+  .v105-capacity-rate strong{font-size:clamp(28px,8vw,36px)!important}
+  .v105-capacity-rest strong{font-size:clamp(19px,5.7vw,27px)!important}
+  .v105-capacity-grid span{font-size:10px!important}
+}
+
+/* Light theme readability for capacity widget */
+body:not(.theme-black):not(.theme-dark) .v105-capacity-widget{background:linear-gradient(145deg,#eef4fb,#e6eef8)!important;border-color:#d9e3f0!important;box-shadow:0 18px 36px rgba(57,86,128,.09)!important}
+body:not(.theme-black):not(.theme-dark) .v105-capacity-grid>div{background:rgba(255,255,255,.88)!important;border-color:#d9e2ef!important}
+body:not(.theme-black):not(.theme-dark) .v105-capacity-top h2{color:#172b4d!important}
+body:not(.theme-black):not(.theme-dark) .v105-capacity-top p,
+body:not(.theme-black):not(.theme-dark) .v105-capacity-grid span{color:#60738d!important}
+body:not(.theme-black):not(.theme-dark) .v105-capacity-grid small{color:#556d89!important}
+body:not(.theme-black):not(.theme-dark) .v105-capacity-rate strong{color:#c73a4b!important}
+body:not(.theme-black):not(.theme-dark) .v105-capacity-rest strong{color:#1e3558!important}
+body:not(.theme-black):not(.theme-dark) .v105-capacity-over .v105-capacity-rate{background:#fde9ec!important;border-color:#efc0c9!important}
+body:not(.theme-black):not(.theme-dark) .v105-capacity-meter{background:#d7dfeb!important}
+body:not(.theme-black):not(.theme-dark) .v105-capacity-meter>span{background:#d94353!important}
+
+/* Black theme readability for capacity widget */
+body.theme-black .v105-capacity-widget{background:#090909!important;border-color:#262626!important;color:#f5f5f5!important;box-shadow:0 16px 34px rgba(0,0,0,.46)!important}
+body.theme-black .v105-capacity-top small{color:#8f8f8f!important}
+body.theme-black .v105-capacity-top h2{color:#f5f5f5!important}
+body.theme-black .v105-capacity-top p{color:#adadad!important}
+body.theme-black .v105-capacity-info{background:#151515!important;border-color:#2b2b2b!important;color:#f0f0f0!important}
+body.theme-black .v105-capacity-grid>div{background:#111111!important;border-color:#2a2a2a!important}
+body.theme-black .v105-capacity-grid small{color:#b3b3b3!important}
+body.theme-black .v105-capacity-grid span{color:#b9b9b9!important}
+body.theme-black .v105-capacity-rate strong{color:#ff6b7d!important;text-shadow:none!important}
+body.theme-black .v105-capacity-rest strong{color:#ffffff!important}
+body.theme-black .v105-capacity-over .v105-capacity-rate{background:#1a1012!important;border-color:#42242a!important}
+body.theme-black .v105-capacity-meter{background:#212121!important}
+body.theme-black .v105-capacity-meter>span{background:#ff5f73!important}
+body.theme-black .v105-capacity-details{border-top-color:#232323!important}
+body.theme-black .v105-capacity-details summary{color:#f1f1f1!important}
+body.theme-black .v105-capacity-details .v89-debt-breakdown{color:#cdcdcd!important}
+
+/* Dark theme parity */
+body.theme-dark .v105-capacity-widget{background:#0c0f14!important;border-color:#28303a!important}
+body.theme-dark .v105-capacity-grid>div{background:#141922!important;border-color:#2b3541!important}
+body.theme-dark .v105-capacity-rate strong{color:#ff7282!important}
+body.theme-dark .v105-capacity-rest strong{color:#f4f7ff!important}
+body.theme-dark .v105-capacity-grid span,body.theme-dark .v105-capacity-top p{color:#aeb6c3!important}
+
+/* Personalizar resumen and top controls in light remain light */
+body:not(.theme-black):not(.theme-dark) .v273-personalize-link{background:#ffffff!important;color:#16233a!important;border-color:#d9e2f0!important}
+body:not(.theme-black):not(.theme-dark) .v273-personalize-link .v309-personalize-symbol svg{stroke:#41577b!important}
+
+/* Strong black dock / nav */
+body.theme-black :is(.mobile-dock,.vive-mobile-dock,.sidebar.rail-sidebar,.module-switch-shell,.module-switch-tabs,.v176-settings-jump,.settings-nav,.theme-choice-row){background:#050505!important;background-image:none!important;border-color:#222!important}
+body.theme-black :is(.mobile-dock .dock-tab,.sidebar .rail-action,.theme-choice,.layout-choice,.module-switch-tab,.movement-tab,.v61-profile-option,.v199-profile-inline .v61-profile-option){background:transparent!important;color:#ececec!important;border-color:#2a2a2a!important}
+body.theme-black :is(.mobile-dock .dock-tab.active,.sidebar .rail-action.active,.sidebar .rail-action[aria-current="page"],.theme-choice.selected,.layout-choice.selected,.module-switch-tab.active,.movement-tab.active,.v61-profile-option.active,.v199-profile-inline .v61-profile-option.active){background:#151515!important;color:#fff!important;border-color:#383838!important}
+</style>
+
+<style id="v339-integrity-style">
+.v339-integrity{margin-top:12px;padding:13px 15px;border-radius:15px;border:1px solid var(--line,#d5dfeb);background:var(--panel,#fff)}
+.v339-integrity summary{cursor:pointer;font-size:12px;font-weight:800;line-height:1.5;color:var(--ink,#1d2b40)}
+.v339-integrity-body{padding-top:10px;font-size:11px;line-height:1.6;color:var(--muted,#607189)}
+.v339-integrity-body p{margin:5px 0 9px}.v339-integrity-body ul{padding-left:18px;margin:6px 0}
+body.theme-black .v339-integrity{background:#0b0b0b!important;border-color:#292929!important}
+body.theme-black .v339-integrity summary{color:#f0f0f0!important}body.theme-black .v339-integrity-body{color:#bcbcbc!important}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -23654,7 +23908,7 @@ for(let l of db.loans){try{
  }catch(err){console.warn('No fue posible calcular compromiso de préstamo',l.id,err)}}
 for(let l of db.personalLoans){let balance=personalBalance(l);if(balance>0&&l.dueDate)all.push({id:l.id,kind:l.direction==='borrowed'?'personal':'personal_recv',name:l.person,amount:balance,currency:l.currency,date:l.dueDate,action:'payPersonal',ref:l.id})}
  for(let r of db.recurring){
-  if(r.active===false||!r.nextDue||num(r.amount)<=0)continue;
+  if(r.active===false||r.archived||!r.nextDue||num(r.amount)<=0)continue;
   const iso=today(),y=Number(iso.slice(0,4)),m=Number(iso.slice(5,7));
   const horizon=periodEnd(m===12?y+1:y,m===12?1:m+1);
   let due=r.nextDue;
@@ -24845,6 +25099,13 @@ function loanForecast(l,ac,opt={}){
     const rel=(dateObj(date).getFullYear()-dateObj(start).getFullYear())*12*v49LoanPeriodsPerMonth(l)+(dateObj(date).getMonth()-dateObj(start).getMonth())*v49LoanPeriodsPerMonth(l)+(v49LoanPeriodsPerMonth(l)===2&&dateObj(date).getDate()>15?1:0);
     if(amnt>0&&date.slice(0,7)>=start.slice(0,7)&&(freq===0?rel===0:rel>=0&&rel%(freq*v49LoanPeriodsPerMonth(l))===0))extra=rnd(Math.min(Math.max(0,opening-principal),amnt));
     balance=rnd(Math.max(0,opening-principal-extra));
+    // Una diferencia de centavos por redondeo NO crea una cuota contractual adicional.
+    // Solo se corrige en el último período pactado y si el residuo es <= RD$1
+    // (en moneda del préstamo). Un faltante mayor no se oculta.
+    if(ac.periods+i+1===v49LoanPeriodCount(l)&&balance>.01&&balance<=1){
+      principal=rnd(principal+balance);
+      balance=0;
+    }
     const ins=v49LoanPeriodInsurance(l,ac.periods+i),fee=v49LoanPeriodFee(l,ac.periods+i);
     rows.push({period:ac.periods+i+1,date,opening,principal,interest,insurance:ins,fee,extra,payment:rnd(principal+interest+extra+ins+fee),balance,kind:'Proyectado'});
     totalInterest+=interest;totalInsurance+=ins;totalFees+=fee;extraPaid+=extra;
@@ -25238,14 +25499,14 @@ const v221DraftRows=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.descr
 let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><strong>${sanitize(transactionTitle(t))}</strong>${t.note?`<div class="subtitle">${sanitize(t.note)}</div>`:''}${t.tags?`<span class="tx-label">${sanitize(t.tags)}</span>`:''}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||certificate(t.certificateId)?.name||'—')}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="v265-balance-cell">${v265BalanceHTML(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
 return `<section class="ledger-world section" id="ledger-world"><div class="section-title"><div><span class="summary-tag">HISTORIAL ÚNICO · ${tr.length} MOVIMIENTOS · ${v221Drafts.length} BORRADORES</span><h2>Movimientos y estados</h2><p>Revisa, concilia y completa borradores desde el mismo historial. Cada estado indica su efecto contable.</p></div><button class="btn" data-act="newTransaction">${icon('plus')} Registrar movimiento</button></div><div class="panel no-pad ledger-card">${tools}<div class="v51-mobile-ledger">${(v221DraftMobile+mobileCards)||'<div class="empty">No hay movimientos con estos filtros.</div>'}${tr.length>Math.max(12,ui.v51LedgerVisible||18)?`<button type="button" class="v51-ledger-more" data-act="v51LedgerMore">Ver más movimientos · ${Math.max(0,tr.length-Math.max(12,ui.v51LedgerVisible||18))} restantes</button>`:''}</div><div class="table-wrap ledger-scroll"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Operación</th><th>Estado</th><th>Producto / persona</th><th>Categoría</th><th class="right">Importe</th><th>Balance</th><th class="right">Gestión</th></tr></thead><tbody>${(v221DraftRows+rows)||'<tr><td colspan="9"><div class="empty">No hay movimientos con estos filtros.</div></td></tr>'}</tbody></table></div></div>${v51RemovedMovementsPanel()}<p class="footnote">Los renglones de impuestos y comisiones son desgloses vinculados a su operación; ya están incluidos en el débito de la cuenta y en el gasto. Para modificarlos, edita la operación principal. Las marcas de revisión no modifican importes; los borradores no afectan saldos hasta completar su registro. BALANCE muestra únicamente el balance disponible posterior del producto principal asociado al movimiento, reconstruido con los movimientos disponibles desde su saldo de apertura. En tarjetas representa crédito disponible, no efectivo. Las cifras con ≈ son estimadas por falta de hora u otra referencia histórica; confirma contra el estado bancario. Los consumos con tarjetas se reconocen una sola vez; los pagos y transferencias no duplican gastos. Cuando corrijas una operación vinculada a un corte bancario, revisa la conciliación contra el estado oficial.</p></section>`}
 
-function subscriptionAnalysis(){let active=db.recurring.filter(r=>r.active!==false);const mon=r=>{let freq=r.frequency==='annual'?1/12:r.frequency==='quarterly'?1/3:r.frequency==='weekly'?365.25/7/12:1;return fx(r.amount,r.currency)*freq};
+function subscriptionAnalysis(){const active=v339ActiveRecurring();const mon=r=>v339MonthlyEquivalent(r.amount,r.currency,r.frequency);
 const val=active.map(r=>({...r,monthly:mon(r)})).sort((a,b)=>b.monthly-a.monthly);let total=val.reduce((s,r)=>s+r.monthly,0),annual=total*12;let cumulative=0;
 let topCount=0;for(let r of val){if(total>0&&cumulative/total<.8){cumulative+=r.monthly;topCount++}}
 let by={};for(let r of val){let key=r.category||'Otros gastos';(by[key]??={label:key,amount:0,count:0}).amount+=r.monthly;by[key].count++}
 let cat=Object.values(by).sort((a,b)=>b.amount-a.amount);const max=val[0]?.monthly||1;let running=0;
 return `<section class="subscription-world section"><div class="subscription-hero"><div><span class="summary-tag">INTELIGENCIA DE SUSCRIPCIONES</span><h2>¿Dónde se va tu dinero recurrente?</h2><p>Composición anualizada, peso relativo y concentración 80/20 de tus servicios activos.</p></div><span class="sub-total-label">${money(total)}<small>equivalente mensual · RD$</small></span></div><div class="sub-analysis-stats"><div><small>GASTO ANUAL EQUIVALENTE</small><strong>${money(annual)}</strong></div><div><small>CONCENTRACIÓN HASTA 80%</small><strong>${topCount} de ${val.length}</strong></div><div><small>MAYOR SUSCRIPCIÓN</small><strong>${val[0]?sanitize(val[0].name):'Sin datos'}</strong></div></div><div class="sub-analysis-layout"><section class="panel"><div class="panel-head"><h3>Ranking y Pareto</h3><span class="pill">Ordenadas por impacto</span></div>${val.length?`<div class="table-wrap"><table class="sub-pareto"><thead><tr><th>Suscripción</th><th>Grupo</th><th class="right">Mensual</th><th class="right">Peso</th><th class="right">Acumulado</th></tr></thead><tbody>${val.map(r=>{let share=total?r.monthly/total*100:0;running+=share;return `<tr tabindex="0" data-chart-tip="${sanitize(r.name)}|Mensual: ${money(r.monthly)}|Peso: ${share.toFixed(1)}%|Acumulado: ${Math.min(100,running).toFixed(1)}%"><td><span class="v41-ranking-name">${v45SubIcon(r,'tiny')}<strong>${sanitize(r.name)}</strong></span><div class="sub-bar"><span style="width:${Math.min(100,r.monthly/max*100)}%"></span></div></td><td>${sanitize(r.category)}</td><td class="right">${money(r.monthly)}</td><td class="right">${share.toFixed(1)}%</td><td class="right">${Math.min(100,running).toFixed(1)}%</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">Registra suscripciones para ver su ranking y peso porcentual.</div>'}<p class="footnote">80% de gasto equivale a las primeras ${topCount} suscripciones del ranking; el número puede ser mayor o menor que 20% del catálogo.</p></section><section class="panel"><div class="panel-head"><h3>Distribución por categoría</h3><span class="pill">${cat.length} grupos</span></div>${cat.length?cat.map(c=>`<div class="sub-composition" tabindex="0" data-chart-tip="${sanitize(c.label)}|Mensual: ${money(c.amount)}|Anual: ${money(c.amount*12)}|Participación: ${total?(c.amount/total*100).toFixed(1):0}%"><div class="split"><span>${sanitize(c.label)} <small>(${c.count})</small></span><strong>${total?(c.amount/total*100).toFixed(1):'0.0'}%</strong></div><div class="sub-bar wide"><span style="width:${total?c.amount/total*100:0}%"></span></div><small>${money(c.amount)} al mes · ${money(c.amount*12)} al año</small></div>`).join(''):'<div class="empty">Los grupos aparecerán al registrar suscripciones.</div>'}</section></div><p class="footnote">La equivalencia mensual se obtiene de la frecuencia contractual y de la tasa manual RD$/US$ configurada; no significa que el cargo se haya cobrado.</p></section>`}
 
-function recurring(){let active=db.recurring.filter(x=>x.active!==false),perMonth=active.reduce((s,r)=>s+fx(r.amount,r.currency)/(r.frequency==='annual'?12:r.frequency==='weekly'?7/30.4375:r.frequency==='quarterly'?3:1),0);let all=v99PendingForPeriod(ui.month),due=all.filter(x=>x.date<today());return `<div class="section-title"><div><h2>Suscripciones y compromisos</h2><p>Suscripciones, servicios, pagos de tarjetas y cuotas de préstamos.</p></div><button class="btn" data-act="addRecurring">${icon('plus')} Nueva suscripción o pago</button></div><div class="grid kpis">${shellKpi('Costo mensual equivalente',money(perMonth),'Suscripciones, no cuotas de deuda','receipt')}${shellKpi('Compromisos vencidos',String(due.length),'Cuentas por atender','clock',due.length?'negative':'')}${shellKpi('Próximos 30 días',money(all.filter(a=>a.date>=today()&&a.date<=addDays(today(),30)).reduce((s,x)=>s+fx(x.amount,x.currency),0)),'Tarjetas, cuotas y suscripciones','calendar')}</div><div class="v149-rec-unified"><div><strong>${icon('calendar')} Una sola agenda de pagos</strong><p>Los servicios y suscripciones guardados aparecen en Próximos pagos cuando corresponde. Cuando se registra su pago, se actualiza el compromiso sin duplicarlo.</p></div><button class="btn sm soft" data-act="navigate" data-id="payments">Abrir Próximos pagos ${icon('arrow')}</button></div><div class="grid columns section"><div class="panel v46-subs-panel"><div class="panel-head v46-subs-head"><div><h3>Mis suscripciones y servicios</h3><p>Identidad visual, próximo cargo y control de cada servicio.</p></div><button class="btn sm soft" data-act="addRecurring">${icon('plus')} Añadir</button></div><div class="v46-subscriptions-grid">${db.recurring.length?db.recurring.map(r=>`<article data-v149-rec-id="${sanitize(r.id)}" class="v46-subscription-card ${r.active===false?'is-paused':''}"><div class="v46-sub-card-top">${v45SubIcon(r,'small')}<div class="v46-sub-card-title"><strong>${sanitize(r.name)}</strong><small>${sanitize(r.category||'Suscripciones')}${r.subcategory?' · '+sanitize(r.subcategory):''}</small></div><span class="v46-sub-dot ${r.active===false?'paused':''}" title="${r.active===false?'Pausada':'Activa'}"></span></div><div class="v46-sub-card-cost">${money(r.amount,r.currency,2)}<small>${({monthly:'Mensual',weekly:'Semanal',annual:'Anual',quarterly:'Trimestral'})[r.frequency]||'Periódico'}</small></div><div class="v46-sub-card-next"><span>${icon('calendar')} ${r.active===false?'En pausa':'Próximo '+prettyDate(r.nextDue)}</span><span>${(r.postingMode||'confirm')==='auto'?'Registro automático':'Confirmación manual'}</span></div><div class="v46-sub-card-actions"><button class="btn sm ghost" data-act="editRecurring" data-id="${r.id}">${icon('edit')} Editar</button><button class="btn sm ${r.active===false?'soft':'ghost'}" data-act="toggleRecurring" data-id="${r.id}">${r.active===false?'Activar':'Pausar'}</button></div></article>`).join(''):'<div class="empty">Añade tus suscripciones y elige un ícono propio o del catálogo.</div>'}</div></div></div>${subscriptionAnalysis()}<div class="notification section">“Registrar pago” crea el movimiento efectivo (en cuenta o tarjeta) y adelanta el próximo vencimiento de la suscripción. Los cargos se registran automáticamente solo en los servicios configurados para ello y al abrir o sincronizar la aplicación. Los demás exigen confirmación.</div>`}
+function recurring(){const active=v339ActiveRecurring(),perMonth=v80RecurringMonthly();let all=v99PendingForPeriod(ui.month),due=all.filter(x=>x.date<today());return `<div class="section-title"><div><h2>Suscripciones y compromisos</h2><p>Suscripciones, servicios, pagos de tarjetas y cuotas de préstamos.</p></div><button class="btn" data-act="addRecurring">${icon('plus')} Nueva suscripción o pago</button></div><div class="grid kpis">${shellKpi('Costo mensual equivalente',money(perMonth),'Suscripciones, no cuotas de deuda','receipt')}${shellKpi('Compromisos vencidos',String(due.length),'Cuentas por atender','clock',due.length?'negative':'')}${shellKpi('Próximos 30 días',money(all.filter(a=>a.date>=today()&&a.date<=addDays(today(),30)).reduce((s,x)=>s+fx(x.amount,x.currency),0)),'Tarjetas, cuotas y suscripciones','calendar')}</div><div class="v149-rec-unified"><div><strong>${icon('calendar')} Una sola agenda de pagos</strong><p>Los servicios y suscripciones guardados aparecen en Próximos pagos cuando corresponde. Cuando se registra su pago, se actualiza el compromiso sin duplicarlo.</p></div><button class="btn sm soft" data-act="navigate" data-id="payments">Abrir Próximos pagos ${icon('arrow')}</button></div><div class="grid columns section"><div class="panel v46-subs-panel"><div class="panel-head v46-subs-head"><div><h3>Mis suscripciones y servicios</h3><p>Identidad visual, próximo cargo y control de cada servicio.</p></div><button class="btn sm soft" data-act="addRecurring">${icon('plus')} Añadir</button></div><div class="v46-subscriptions-grid">${db.recurring.length?db.recurring.map(r=>`<article data-v149-rec-id="${sanitize(r.id)}" class="v46-subscription-card ${r.active===false?'is-paused':''}"><div class="v46-sub-card-top">${v45SubIcon(r,'small')}<div class="v46-sub-card-title"><strong>${sanitize(r.name)}</strong><small>${sanitize(r.category||'Suscripciones')}${r.subcategory?' · '+sanitize(r.subcategory):''}</small></div><span class="v46-sub-dot ${r.active===false?'paused':''}" title="${r.active===false?'Pausada':'Activa'}"></span></div><div class="v46-sub-card-cost">${money(r.amount,r.currency,2)}<small>${({monthly:'Mensual',weekly:'Semanal',annual:'Anual',quarterly:'Trimestral'})[r.frequency]||'Periódico'}</small></div><div class="v46-sub-card-next"><span>${icon('calendar')} ${r.active===false?'En pausa':'Próximo '+prettyDate(r.nextDue)}</span><span>${(r.postingMode||'confirm')==='auto'?'Registro automático':'Confirmación manual'}</span></div><div class="v46-sub-card-actions"><button class="btn sm ghost" data-act="editRecurring" data-id="${r.id}">${icon('edit')} Editar</button><button class="btn sm ${r.active===false?'soft':'ghost'}" data-act="toggleRecurring" data-id="${r.id}">${r.active===false?'Activar':'Pausar'}</button></div></article>`).join(''):'<div class="empty">Añade tus suscripciones y elige un ícono propio o del catálogo.</div>'}</div></div></div>${subscriptionAnalysis()}<div class="notification section">“Registrar pago” crea el movimiento efectivo (en cuenta o tarjeta) y adelanta el próximo vencimiento de la suscripción. Los cargos se registran automáticamente solo en los servicios configurados para ello y al abrir o sincronizar la aplicación. Los demás exigen confirmación.</div>`}
 
 function ensureBudgetVersions(){
  if(!Array.isArray(db.budgetVersions)) db.budgetVersions=(db.budgets||[]).map(b=>({id:uuid(),category:b.category,subcategory:b.subcategory||'',amount:num(b.amount),effectiveFrom:'0001-01',legacy:true,createdAt:b.createdAt||null}));
@@ -25447,19 +25708,36 @@ function v30Audit(){
   if(limit>0){try{const debt=cardStatus(c,ccy).debt;if(debt>limit+Math.max(0,over)+.005)overLimit.push(c)}catch(e){}}
  }
  add('credit','alert',new Set(overLimit.map(c=>c.id)).size,'Tarjetas por encima del límite','Compara la deuda estimada, el sobregiro autorizado y el estado oficial.','cards');
- const overdue=(db.recurring||[]).filter(r=>r.active!==false&&typeof r.nextDue==='string'&&r.nextDue<today());
+ const overdue=v339ActiveRecurring().filter(r=>typeof r.nextDue==='string'&&r.nextDue<today());
  add('recurring','review',overdue.length,'Pagos recurrentes con fecha vencida','Confirma si se pagaron o actualiza su próximo vencimiento.','recurring');
  const usdUsed=(db.accounts||[]).some(x=>x.currency==='USD'&&(Number(x.opening||0)!==0||(db.transactions||[]).some(t=>t.accountId===x.id||t.toAccountId===x.id)))||(db.transactions||[]).some(x=>x.currency==='USD')||(db.cards||[]).some(c=>Number(c.limitUSD||0)>0||Number(c.openingUSD||0)!==0);
  if(usdUsed&&(!(Number(db.settings.fx)>0)||db.settings.fxAcknowledged!==true))add('fx','review',1,'Tasa de cambio por confirmar','La valoración en RD$ depende de la tasa manual configurada, no de una cotización bancaria en vivo.','settings');
  const alerts=issues.filter(x=>x.level==='alert').reduce((s,x)=>s+x.count,0);
  return {issues,alerts,unreconciled,pending:pending.length,negative,overLimit,dupe};
 }
+/* V339: chequeo informativo sin guardados ni mutación de registros. */
+function v339RecurringIntegrity(){
+ const active=v339ActiveRecurring(),supported=new Set(['weekly','semi_monthly','monthly','quarterly','semiannual','annual','yearly']);
+ const notices=[];
+ for(const r of active){
+  const name=String(r.name||'Servicio sin nombre');
+  if(!supported.has(r.frequency||'monthly'))notices.push(name+': periodicidad desconocida');
+  if(!(num(r.amount)>0))notices.push(name+': importe no positivo');
+  const d=String(r.nextDue||'');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!Number.isFinite(Date.parse(d+'T12:00:00'))||new Date(d+'T12:00:00').toISOString().slice(0,10)!==d)notices.push(name+': fecha de próximo cargo inválida');
+ }
+ return {active:active.length,archived:(db.recurring||[]).filter(r=>r?.archived).length,notices};
+}
+function v339IntegritySection(){
+ const model=v339RecurringIntegrity();
+ return `<details class="v30-control v339-integrity"><summary>Coherencia de suscripciones · ${model.notices.length?model.notices.length+' por revisar':'sin incidencias básicas'}</summary><div class="v339-integrity-body"><p>${model.active} servicios activos · ${model.archived} archivados excluidos de proyecciones. Todas las vistas comparten la misma equivalencia mensual (semanal = 52/12, quincenal = 2).</p>${model.notices.length?`<ul>${model.notices.map(item=>`<li>${sanitize(item)}</li>`).join('')}</ul><p>Comprueba los contratos antes de corregir fechas o importes.</p>`:'<p>Periodicidades, importes y próximas fechas activas con formato válido. Esto no acredita pagos bancarios.</p>'}</div></details>`;
+}
 function v30ReviewContent(embedded=false){
  const a=v30Audit();
  const iconFor={pending:'clock',unreviewed:'shield',references:'alert-triangle',duplicates:'copy',invalid:'alert-circle',category:'layers',negative:'wallet',credit:'credit-card',recurring:'calendar',fx:'repeat'};
  const buttons=a.issues.map(it=>`<article class="v30-issue"><span class="v30-dot ${it.level}"></span><div class="v30-issue-body"><strong>${sanitize(it.title)}</strong><p>${sanitize(it.description)}</p></div><span class="v30-issue-count">${it.count}</span><button class="v30-go" type="button" data-act="v30Go" data-page="${it.page}" data-tab="${it.tab}" data-issue="${it.id}">Revisar ${icon('arrow')}</button></article>`).join('');
  const summary=`<div class="v30-overview"><div><small>ALERTAS IMPORTANTES</small><strong class="${a.alerts?'v30-warn':''}">${a.alerts}</strong><span>Posibles inconsistencias</span></div><div><small>SIN CONCILIAR</small><strong>${a.unreconciled}</strong><span>Movimientos por verificar</span></div><div><small>OPERACIONES PENDIENTES</small><strong>${a.pending}</strong><span>No modifican los saldos</span></div></div>`;
- return `<section class="v30-control ${embedded?'v30-embedded':''}"><div class="v30-control-head"><div><span class="summary-tag">CONTROL DE CALIDAD · vive el hoy</span><h3>Todo claro, antes de avanzar.</h3><p>Una revisión automática de tus datos locales. Las alertas son indicios para comprobar, no errores confirmados.</p></div>${embedded?`<button type="button" class="btn sm soft" data-act="v30Go" data-page="register" data-tab="review">Abrir revisión ${icon('arrow')}</button>`:''}</div>${summary}<div class="v30-issues">${buttons||'<div class="v30-good">✓ No se detectaron observaciones con las reglas de control actuales.</div>'}</div></section>`;
+ return `<section class="v30-control ${embedded?'v30-embedded':''}"><div class="v30-control-head"><div><span class="summary-tag">CONTROL DE CALIDAD · vive el hoy</span><h3>Todo claro, antes de avanzar.</h3><p>Una revisión automática de tus datos locales. Las alertas son indicios para comprobar, no errores confirmados.</p></div>${embedded?`<button type="button" class="btn sm soft" data-act="v30Go" data-page="register" data-tab="review">Abrir revisión ${icon('arrow')}</button>`:''}</div>${summary}<div class="v30-issues">${buttons||'<div class="v30-good">✓ No se detectaron observaciones con las reglas de control actuales.</div>'}</div>${v339IntegritySection()}</section>`;
 }
 function v30RecoveryContent(){
  const snaps=v30Snapshots();
@@ -26324,7 +26602,7 @@ function widgetAdvancedGraph(id){
   return barList([{name:'Liquidez',value:funds},{name:'Certificados',value:certs},{name:'Préstamos por cobrar',value:claim}],'Composición de activos registrados','#3c9c91');
  }
  if(id==='subscriptionsParetoChart'){
-  const rows=db.recurring.filter(r=>r.active!==false).map(r=>{const v=fx(r.amount,r.currency)*(r.frequency==='annual'?1/12:r.frequency==='quarterly'?1/3:r.frequency==='weekly'?365.25/7/12:1);return {name:r.name,value:v}}).sort((a,b)=>b.value-a.value);
+  const rows=v339ActiveRecurring().map(r=>({name:r.name,value:v339MonthlyEquivalent(r.amount,r.currency,r.frequency)})).sort((a,b)=>b.value-a.value);
   const tot=rows.reduce((s,r)=>s+r.value,0);if(!tot)return '<div class="widget-hint">Registra suscripciones activas para ver el Pareto.</div>';
   let acum=0,count=0;const items=rows.slice(0,6).map(r=>{acum+=r.value;count++;const p=acum/tot*100;return `<div class="vive-rank-line" tabindex="0" data-chart-tip="${sanitize(r.name)}|Mensual: ${money(r.value)}|Acumulado Pareto: ${p.toFixed(1)}%"><span class="vive-rank-name">${sanitize(r.name)}</span><span class="vive-rank-track"><i style="width:${(r.value/rows[0].value*100).toFixed(1)}%;background:#7180da"></i></span><b>${p.toFixed(0)}%</b></div>`;}).join('');
   return `<div class="vive-bars-ranked">${items}</div><div class="widget-hint">Porcentaje acumulado por servicio · el objetivo Pareto es detectar los que concentran el 80% del costo.</div>`;
@@ -26336,7 +26614,7 @@ function widgetGraph(id){if(V318_GRAPH_IDS.has(id))return v318Graph(id);if(Objec
  if(id==='incomeVsExpense'){let data=Array.from({length:6},(_,i)=>{let d=dateObj(ui.month+'-01');d.setMonth(d.getMonth()-5+i);return {m:d.toLocaleDateString('es-DO',{month:'short'}),v:monthlyTotals(d.getFullYear(),d.getMonth()+1)};});let max=Math.max(1,...data.flatMap(x=>[x.v.income,x.v.expense]));return `<div class="widget-bars">${data.map(x=>`<div class="widget-bar-month" tabindex="0" data-chart-tip="${sanitize(x.m)}|Ingresos: ${money(x.v.income)}|Egresos: ${money(x.v.expense)}"><div class="widget-bar-duo"><i style="height:${Math.max(3,x.v.income/max*100)}%"></i><b style="height:${Math.max(3,x.v.expense/max*100)}%"></b></div><small>${sanitize(x.m)}</small></div>`).join('')}</div><div class="widget-hint">Azul: ingresos · Gris: egresos</div>`;}
  if(id==='creditVisual'){let debt=totalCardDebt(),limit=db.cards.reduce((s,c)=>s+num(c.limitDOP)+fx(c.limitUSD,'USD'),0),pct=limit?100*debt/limit:0;return `<div class="widget-gauge-label"><strong>${pct.toFixed(1)}%</strong><span>${money(debt)} utilizado<br/>sobre ${money(limit)} de límite</span></div><div class="widget-gauge"><span style="width:${Math.min(100,pct)}%"></span></div><p class="widget-hint">El límite no incluye sobregiros.</p>`;}
  if(id==='fundsVisual'){let dop=db.accounts.filter(a=>a.currency==='DOP').reduce((s,a)=>s+getAccountBalance(a),0),usd=db.accounts.filter(a=>a.currency==='USD').reduce((s,a)=>s+fx(getAccountBalance(a),'USD'),0),total=dop+usd,portion=total>0?100*dop/total:0;return `<div class="widget-gauge-label"><strong>${money(total)}</strong><span>Fondos consolidados</span></div><div class="widget-gauge split"><span style="width:${Math.max(0,Math.min(100,portion))}%"></span></div><div class="widget-hint">RD$: ${money(dop)} · US$ equivalente: ${money(usd)}</div>`;}
- if(id==='subscriptionVisual'){let o={};for(let r of db.recurring.filter(r=>r.active!==false)){let v=fx(r.amount,r.currency)/(r.frequency==='annual'?12:r.frequency==='quarterly'?3:r.frequency==='weekly'?7/30.4375:1);o[r.category||'Otros']=(o[r.category||'Otros']||0)+v}let items=Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,4),max=Math.max(1,...items.map(x=>x[1]));return items.length?`<div class="widget-category-bars">${items.map(([k,v])=>`<div tabindex="0" data-chart-tip="${sanitize(k)}|Costo mensual: ${money(v)}"><span>${sanitize(k)}</span><div><i style="width:${v/max*100}%"></i></div><strong>${money(v)}</strong></div>`).join('')}</div>`:'<div class="widget-hint">Agrega suscripciones para ver su distribución.</div>'}
+ if(id==='subscriptionVisual'){let o={};for(const r of v339ActiveRecurring()){const v=v339MonthlyEquivalent(r.amount,r.currency,r.frequency);o[r.category||'Otros']=(o[r.category||'Otros']||0)+v}let items=Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,4),max=Math.max(1,...items.map(x=>x[1]));return items.length?`<div class="widget-category-bars">${items.map(([k,v])=>`<div tabindex="0" data-chart-tip="${sanitize(k)}|Costo mensual: ${money(v)}"><span>${sanitize(k)}</span><div><i style="width:${v/max*100}%"></i></div><strong>${money(v)}</strong></div>`).join('')}</div>`:'<div class="widget-hint">Agrega suscripciones para ver su distribución.</div>'}
  return '';
 }
 
@@ -27355,7 +27633,7 @@ function v147CostPreview(form){
  const symbol=currency==='USD'?'US$':'RD$';
  const freq=form.elements.frequency?.value||'monthly';
  const labels={monthly:'Cada mes',weekly:'Cada semana',quarterly:'Cada 3 meses',annual:'Una vez al año'};
- const monthly=number*({monthly:1,weekly:52/12,quarterly:1/3,annual:1/12}[freq]||1);
+ const monthly=number*v80MonthlyFactor(freq);
  const fmt=n=>symbol+new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
  text('[data-v147-amount]',fmt(number));
  text('[data-v147-monthly]',fmt(monthly));
@@ -29475,7 +29753,7 @@ function v32AdvancedInsights(){let y=ui.year,mo=Array.from({length:12},(_,i)=>({
  return `<div class="v31-intro"><div><h3>Lectura del año</h3><p>Variaciones por mes, concentración del gasto y capacidad de ahorro.</p></div></div><div class="v31-kpi-grid">${v31Kpi('Ahorro sobre ingresos',totalI?(100*net/totalI).toFixed(1)+' %':'—','Neto / ingresos')}${v31Kpi('Meses observados',String(observed.length),'Año '+y)}${v31Kpi('Mayor categoría de gasto',primary?v31E(primary[0]):'—',primary?money(primary[1]):'Sin egresos')}${v31Kpi('Gasto / ingresos',totalI?(100*totalE/totalI).toFixed(1)+' %':'—','Egresos sobre ingresos')}</div>
  ${v31Section('COMPARACIÓN','Mes a mes contra el año anterior',`<div class="v31-table-scroll"><table class="v31-table"><thead><tr><th>Mes</th><th>Ingreso ${y}</th><th>Vs. ${y-1}</th><th>Egreso ${y}</th><th>Vs. ${y-1}</th><th>Neto ${y}</th></tr></thead><tbody>${observed.map(x=>{let ii=x.prev.income?100*(x.cur.income/x.prev.income-1):null,ee=x.prev.expense?100*(x.cur.expense/x.prev.expense-1):null;let name=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][x.m-1];return `<tr><td><strong>${name}</strong></td><td>${money(x.cur.income)}</td><td class="${ii!==null&&ii<0?'negative':'positive'}">${ii===null?'—':(ii>=0?'+':'')+ii.toFixed(1)+'%'}</td><td>${money(x.cur.expense)}</td><td class="${ee!==null&&ee>0?'negative':'positive'}">${ee===null?'—':(ee>=0?'+':'')+ee.toFixed(1)+'%'}</td><td>${money(x.cur.income-x.cur.expense)}</td></tr>`}).join('')||'<tr><td colspan="6">Aún no hay meses observados.</td></tr>'}</tbody></table></div><p class="v31-note">Sin base en el año anterior se muestra «—», no se inventa una tasa. No incluye los meses futuros.</p>`)}`;
 }
-function v32RecurringPlan(){let records=db.recurring.filter(r=>r.active!==false),monthly=(r)=>fx(num(r.amount),r.currency)*(r.frequency==='weekly'?52/12:r.frequency==='quarterly'?1/3:r.frequency==='annual'?1/12:1),sorted=records.map(r=>({...r,cost:monthly(r)})).sort((a,b)=>b.cost-a.cost),total=sorted.reduce((n,x)=>n+x.cost,0);
+function v32RecurringPlan(){let records=db.recurring.filter(r=>r.active!==false&&!r.archived),monthly=(r)=>fx(num(r.amount),r.currency)*v80MonthlyFactor(r.frequency),sorted=records.map(r=>({...r,cost:monthly(r)})).sort((a,b)=>b.cost-a.cost),total=sorted.reduce((n,x)=>n+x.cost,0);
  return `<div class="v31-intro"><div><h3>El costo real de las suscripciones</h3><p>El equivalente mensual incluye pagos semanales, trimestrales y anuales.</p></div></div><div class="v31-kpi-grid">${v31Kpi('Costo mensual estimado',money(total),'Equivalente RD$')}${v31Kpi('Costo anual estimado',money(total*12),'12 meses al mismo ritmo')}${v31Kpi('Servicios activos',String(records.length),'Sin archivados')}${v31Kpi('Mayor compromiso',sorted[0]?money(sorted[0].cost):'—',sorted[0]?v31E(sorted[0].name):'Sin servicios')}</div>${v31Section('DETALLE','Suscripciones activas',sorted.length?`<div class="v31-table-scroll"><table class="v31-table"><thead><tr><th>Servicio</th><th>Frecuencia</th><th>Pago real</th><th>Equivalente mensual</th></tr></thead><tbody>${sorted.map(r=>`<tr><td><strong>${v31E(r.name)}</strong></td><td>${v31E(r.frequency||'monthly')}</td><td>${v31Fmt(r.amount,r.currency)}</td><td>${money(r.cost)}</td></tr>`).join('')}</tbody></table></div>`:v31Empty('Sin suscripciones activas','Registra tus servicios y fechas de cobro para ver su costo real.'))}<p class="v31-note">Estimación con la tasa de cambio configurada y frecuencia registrada. No crea movimientos automáticamente.</p>`;
 }
 function v32Maturities(){const certs=db.certificates.slice().filter(c=>c.maturityDate).sort((a,b)=>a.maturityDate.localeCompare(b.maturityDate)),soon=certs.filter(c=>c.maturityDate>=today()&&c.maturityDate<=addDays(today(),90)),capital=soon.reduce((s,c)=>s+fx(certificateCapital(c),c.currency),0);
@@ -29684,8 +29962,8 @@ function f33Ready(){
  if(gate){
   if(gate.classList.contains('v329-splash')){
    const completedGate=gate;
-   const remaining=Math.max(0,3000-(Date.now()-(v335SplashSince||Date.now())));
-   // La marca permanece al menos 3 segundos; si los datos tardan más, no se retrasa adicionalmente.
+   const remaining=Math.max(0,940-(Date.now()-(v335SplashSince||Date.now())));
+   // Duración total ~1.5 s (0.94 s de marca + 0.56 s de salida); sin espera extra si la carga supera ese tiempo.
    setTimeout(()=>{
     if(!completedGate.isConnected||!completedGate.classList.contains('v329-splash')||f33Phase!=='ready')return;
     completedGate.classList.add('v329-fade-out');
@@ -29984,7 +30262,7 @@ function v40IncomeRow(s){let p;try{p=v40Payroll(s,s.nextDue)}catch(e){p={net:0,s
 function v40IncomeBreakdown(s){let p;try{p=v40Payroll(s,s.nextDue);}catch(e){return '';}const paid=db.transactions.filter(t=>t.incomeScheduleId===s.id).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);return `<details class="v40-breakdown"><summary>Desglose estimado · bruto, AFP, SFS, ISR y neto</summary><div class="v40-break-grid">${[['Bruto del período',p.gross],['AFP',p.afp],['SFS',p.sfs],['ISR / Retención',p.isr],['Otros descuentos',p.other],['Neto estimado',p.net]].map(([n,v])=>`<div><small>${n}</small><b>${money(v,s.currency,2)}</b></div>`).join('')}</div>${paid.length?`<div class="v40-past"><strong>Depósitos contabilizados</strong>${paid.map(t=>`<p>${prettyDate(t.date)} · ${money(t.amount,t.currency,2)} · ${sanitize(t.postingOrigin||'Registrado')} · ISR de ese recibo: ${money(t.payrollSnapshot?.isr||0,t.currency,2)}</p>`).join('')}</div>`:'<p class="v40-one">Todavía sin depósitos contabilizados.</p>'}</details>`;}
 function v40IncomeSection(){
  v40Ensure();const active=db.incomeSchedules.filter(x=>x.active!==false),formal=active.filter(x=>x.kind==='formal'),informal=active.filter(x=>x.kind!=='formal');
- let monthExpected=0;for(const s of active){try{let p=v40Payroll(s,today());let factor=s.frequency==='semi_monthly'?2:s.frequency==='weekly'?52/12:s.frequency==='quarterly'?1/3:s.frequency==='annual'?1/12:1;monthExpected+=fx(p.net*factor,s.currency);}catch(e){}}
+ let monthExpected=0;for(const s of active){try{const payroll=v40Payroll(s,today());monthExpected+=fx(payroll.net*v80MonthlyFactor(s.frequency),s.currency);}catch(e){}}
  return `<section class="v40-shell" id="v40-income-schedules"><div class="v40-head"><div><h3>Ingresos recurrentes y nómina</h3><p>Tu calendario real de cobros, impuestos estimados y depósitos confirmados.</p></div><button class="btn" data-v40-action="addIncome">+ Programar ingreso</button></div>
  <div class="v40-grid"><div class="v40-tile"><small>FUENTES ACTIVAS</small><strong>${active.length}</strong><p>${formal.length} empleos formales · ${informal.length} fuentes independientes</p></div><div class="v40-tile"><small>NETO MENSUAL ESTIMADO</small><strong>${money(monthExpected)}</strong><p>Proyección RD$ equivalente; no se suma al balance hasta registrar depósito.</p></div><div class="v40-tile"><small>PRÓXIMO INGRESO</small><strong>${active.length?prettyDate(active.slice().sort((a,b)=>a.nextDue.localeCompare(b.nextDue))[0].nextDue):'—'}</strong><p>Confirmación manual o asiento al sincronizar, según cada fuente.</p></div></div>
  <div class="v40-rows">${db.incomeSchedules.length?db.incomeSchedules.map(s=>v40IncomeRow(s)+v40IncomeBreakdown(s)).join(''):'<div class="v40-empty">Todavía no hay fuentes programadas. Agrega tu empleo o una actividad periódica para construir el calendario de ingresos.</div>'}</div><div class="v40-note">El modo automático registra un asiento contable previsto, no verifica un depósito bancario. Los cambios de salario o reglas fiscales solo afectan vencimientos futuros; cada ingreso generado conserva su desglose y tasa de cambio de registro.</div></section>`;
@@ -30175,7 +30453,7 @@ function v42TaxInfo(rule){
 }
 function v42PayrollCard(s,opts={}){
  let calc,rule;try{calc=v40Payroll(s,opts.day||s.nextDue||today());rule=s.kind==='formal'?v42TaxRule(opts.day||s.nextDue||today()):null;}catch(e){return `<div class="v42-payroll-panel"><p>${sanitize(String(e.message||e))}</p></div>`;}
- const f=s.frequency,fac=f==='semi_monthly'?2:f==='weekly'?52/12:f==='quarterly'?1/3:f==='annual'?1/12:1;
+ const f=s.frequency,fac=v80MonthlyFactor(f);
  const monthly=v40Payroll({...s,frequency:'monthly'},opts.day||s.nextDue||today());const grossM=monthly.gross,netM=monthly.net,afpM=monthly.afp,sfsM=monthly.sfs,isrM=monthly.isr,otherM=monthly.other;
  const deductions=afpM+sfsM+isrM+otherM,percent=grossM?deductions/grossM*100:0,ccy=s.currency||'DOP',generalOtherM=monthly.generalOther??otherM,companyM=monthly.companyItems||[];
  const periodic=f==='semi_monthly'?'Quincenal':f==='weekly'?'Semanal':f==='quarterly'?'Trimestral':f==='annual'?'Anual':'Mensual';
@@ -30567,7 +30845,7 @@ document.addEventListener('change',event=>{
 /* V45: Diseño responsivo y funciones de análisis financiero y programación.
    Se amplía la V44 sin modificar movimientos previos ni las credenciales de Supabase. */
 function v45FreqName(f){return ({semi_monthly:'Quincenal',monthly:'Mensual',annual:'Anual',weekly:'Semanal',quarterly:'Trimestral'})[f]||'Mensual';}
-function v45MonthFactor(f){return ({semi_monthly:2,monthly:1,annual:1/12,weekly:52/12,quarterly:1/3})[f]||1;}
+function v45MonthFactor(f){return v80MonthlyFactor(f);}
 function v45GrossMonthly(value,basis,f){const x=Math.max(0,Number(value)||0);return basis==='annual'?x/12:basis==='per_payment'?x*v45MonthFactor(f):x;}
 function v45MonthDay(y,m,day){const end=new Date(y,m,0).getDate(),safe=Math.max(1,Math.min(Number(day)||1,end));return `${y}-${String(m).padStart(2,'0')}-${String(safe).padStart(2,'0')}`;}
 function v45NextPayDate(due,s){
@@ -30904,7 +31182,7 @@ function v48RefreshSummary(form){
   const f=form.elements,frequency=f.frequency.value,kind=f.kind.value,basis=f.salaryBasis?.value||'monthly',gross=v45GrossMonthly(f.grossMonthly.value,basis,frequency);
   if(!(gross>0))throw Error('Escribe el ingreso bruto.');
   const schedule={kind,frequency,currency:f.currency.value,grossMonthly:gross,otherDeduction:Number(f.otherDeduction.value)||0,companyDeductions:JSON.parse(f.companyDeductionsJSON?.value||'[]'),nextDue:f.nextDue.value,withholdingPct:0};
-  const pay=v40Payroll(schedule,f.nextDue.value),factor=frequency==='semi_monthly'?2:frequency==='annual'?1/12:frequency==='weekly'?52/12:frequency==='quarterly'?1/3:1;
+  const pay=v40Payroll(schedule,f.nextDue.value),factor=v80MonthlyFactor(frequency);
   const monthNet=pay.net*factor, monthGross=pay.gross*factor;
   const line=(label,number,emph=false)=>`<div class="v48-review-line ${emph?'major':''}"><span>${label}</span><strong>${money(number,schedule.currency,2)}</strong></div>`;
   target.innerHTML=`<div class="v48-summary-hero"><small>${kind==='formal'?'Nómina formal · impuestos estimados':'Actividad independiente · descuentos generales'}</small><span>NETO POR COBRO</span><strong>${money(pay.net,schedule.currency,2)}</strong><p>Primer cobro: ${prettyDate(f.nextDue.value)} · ${v45FreqName(frequency)} · ${f.postingMode.value==='auto'?'Automático a partir del vencimiento':'Confirmación manual'}</p></div>
@@ -31195,7 +31473,7 @@ v48RefreshSummary=function(form){
   const e=form.elements,freq=e.frequency.value,base=v45GrossMonthly(e.grossMonthly.value,e.salaryBasis?.value||'monthly',freq),kind=e.kind.value;
   const p=v40Payroll({kind,frequency:freq,grossMonthly:base,currency:e.currency.value,otherDeduction:Number(e.otherDeduction.value)||0,companyDeductions:JSON.parse(e.companyDeductionsJSON?.value||'[]')},e.nextDue.value);
   const cc=e.currency.value;
-  const pays=freq==='semi_monthly'?2:freq==='weekly'?52/12:freq==='annual'?1/12:freq==='quarterly'?1/3:1;
+  const pays=v80MonthlyFactor(freq);
   const first=prettyDate(e.nextDue.value);
   const inst=e.institutionId?.value?bank(e.institutionId.value)?.name:'Sin institución vinculada';
   let content=`<div class="v50-review-note"><strong>${sanitize(e.name.value)}</strong> · ${kind==='formal'?'Trabajo formal':'Actividad independiente'}<br>Frecuencia: <strong>${sanitize(v45FreqName(freq))}</strong> · Comienza el <strong>${sanitize(first)}</strong> · Cuenta: <strong>${sanitize(account(e.accountId.value)?.name||'Pendiente')}</strong>${inst&&e.institutionId?.value?'<br>Institución: '+sanitize(inst):''}.<br>${freq==='semi_monthly'?'Dos cobros por mes: bruto mensual '+money(base,cc,2)+' → neto quincenal '+money(p.net,cc,2)+'.':'Bruto por período '+money(p.gross,cc,2)+' → neto '+money(p.net,cc,2)+'.'}</div>`;
@@ -31251,7 +31529,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  const fmtPct=n=>!Number.isFinite(n)?'Sin base':`${n>=0?'+':''}${n.toFixed(1)}%`;
  const monthNames=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
  const periodDescription=()=>ui.v55RecurringRange==='year'?`Enero – diciembre ${ym().slice(0,4)}`:ui.v55RecurringRange==='all'?'Desde el primer ingreso registrado':MONTHS_FULL[+ym().slice(5)-1]+' '+ym().slice(0,4);
- const payFactor=s=>({semi_monthly:2,monthly:1,weekly:52/12,quarterly:1/3,annual:1/12})[s.frequency]||1;
+ const payFactor=s=>v80MonthlyFactor(s.frequency);
  function sourceList(){
   v40Ensure();
   const ss=(db.incomeSchedules||[]).map(s=>({...s,_manual:false}));
@@ -31964,11 +32242,26 @@ function v99LoanMonth(period=ui.month){
   return {total:rnd(total),items};
  });
 }
+/* V339: índice local por servicio y mes, invalidado en cada persistencia/render.
+   No cambia el orden de pagos ni sus reglas de conciliación. */
+function v339RecurringPaymentsIndex(){return v99Memo('v339:paid-recurring-index',()=>{
+ const index=new Map();
+ for(const tx of db.transactions||[]){
+  if(!tx?.recurringId||!tx.date||!['expense','card_charge'].includes(tx.type))continue;
+  const key=String(tx.date).slice(0,7);
+  let periods=index.get(tx.recurringId);
+  if(!periods){periods=new Map();index.set(tx.recurringId,periods)}
+  if(!periods.has(key))periods.set(key,[]);
+  periods.get(key).push(tx);
+ }
+ for(const periods of index.values())for(const paid of periods.values())paid.sort((a,b)=>a.date.localeCompare(b.date));
+ return index;
+})}
 function v99RecurringMonth(period=ui.month){
  const p=v99Period(period),end=v99End(p);return v99Memo('recurring:'+p,()=>{
   const items=[];let total=0;
   for(const r of db.recurring||[]){
-   if(r.active===false||num(r.amount)<=0)continue;
+   if(r.active===false||r.archived||num(r.amount)<=0)continue;
    const dates=new Set();let due=String(r.nextDue||'');
    for(let n=0;n<650&&/^\d{4}-\d{2}-\d{2}$/.test(due)&&due<=end;n++){
     if(v99DueInPeriod(due,p))dates.add(due);
@@ -31976,7 +32269,7 @@ function v99RecurringMonth(period=ui.month){
    }
    // Conciliar un cargo registrado fuera de fecha con el vencimiento de la
    // misma mensualidad/quincena, sin duplicarlo como segunda obligación.
-   const payments=(db.transactions||[]).filter(t=>t.recurringId===r.id&&v99DueInPeriod(t.date,p)&&['expense','card_charge'].includes(t.type)).sort((a,b)=>a.date.localeCompare(b.date));
+   const payments=v339RecurringPaymentsIndex().get(r.id)?.get(p)||[];
    const reconciled=new Set();
    for(const t of payments){
     const candidate=[...dates].filter(d=>!reconciled.has(d)&&Math.abs(diffDays(t.date,d))<=4)
@@ -32075,7 +32368,11 @@ function v99PendingForPeriod(period=ui.month){
  return pending.sort((a,b)=>a.date.localeCompare(b.date));
 }
 function v80Money(n){return money(Number(n)||0,'DOP',2)}
-function v80MonthlyFactor(f){return f==='weekly'?52/12:f==='semi_monthly'?2:f==='quarterly'?1/3:f==='annual'?1/12:f==='semiannual'?1/6:1}
+/* V339: equivalencia mensual única, RD$ al cambio de referencia. No redondear
+   importes intermedios ni alterar las transacciones históricas. */
+function v80MonthlyFactor(f){return f==='weekly'?52/12:f==='semi_monthly'?2:f==='quarterly'?1/3:(f==='annual'||f==='yearly')?1/12:f==='semiannual'?1/6:1}
+function v339MonthlyEquivalent(amount,currency,frequency){return fx(Math.max(0,num(amount))*v80MonthlyFactor(frequency),currency||'DOP')}
+function v339ActiveRecurring(){return (db.recurring||[]).filter(r=>r&&r.active!==false&&!r.archived)}
 function v80IncomeReference(){
  const manual=Math.max(0,num(db.settings?.purchaseMonthlyNetOverride));
  if(manual>0)return {net:rnd(manual),gross:null,source:'Ingreso neto mensual configurado',quality:'manual'};
@@ -32098,7 +32395,7 @@ function v80IncomeReference(){
  if(monthsWithData)return {net:rnd(sum/3),gross:null,source:'Media conservadora de los últimos 3 meses cerrados',quality:monthsWithData<3?'partial':'historical'};
  return {net:null,gross:null,source:'Sin ingreso neto mensual verificable',quality:'missing'};
 }
-function v80RecurringMonthly(){return (db.recurring||[]).filter(r=>r.active!==false).reduce((sum,r)=>sum+fx(Math.max(0,num(r.amount))*v80MonthlyFactor(r.frequency),r.currency||'DOP'),0)}
+function v80RecurringMonthly(){return v99Memo('v339:recurring:monthly:'+num(db.settings?.fx),()=>v339ActiveRecurring().reduce((sum,r)=>sum+v339MonthlyEquivalent(r.amount,r.currency,r.frequency),0))}
 /* V95: única fuente de cuotas mensuales para resumen, compromisos y capacidad.
    El importe de la cuota es POR VENCIMIENTO; 15 y 30 son DOS cuotas.
    El saldo de principal nunca se suma como pago mensual. */
@@ -34353,8 +34650,8 @@ document.addEventListener('focusout',e=>{
    nav('Abrir calendario de pagos','payments');
   }else if(kind==='recurring'){
    title='Suscripciones y servicios';hint='Cuánto cuesta cada servicio, cuándo vence y cómo administrarlo.';
-   const active=db.recurring.filter(x=>x.active!==false),rate={weekly:52/12,monthly:1,quarterly:1/3,annual:1/12};
-   const monthly=active.reduce((s,x)=>s+dop(Number(x.amount||0)*(rate[x.frequency]||1),x.currency),0);
+   const active=v339ActiveRecurring();
+   const monthly=v80RecurringMonthly();
    sum('Servicios activos',String(active.length));sum('Costo mensual equivalente',monthly);sum('Total registrados',String(db.recurring.length));
    group('Mis suscripciones',db.recurring.map(x=>row(x.name,`${x.active===false?'Pausada':'Activa'} · ${x.frequency||'monthly'} · próximo ${x.nextDue||'sin fecha'}`,x.amount,'editRecurring',x.id,x.currency||'DOP')));
    nav('Ir a suscripciones','recurring');nav('Compromisos','payments');
@@ -35506,9 +35803,11 @@ function v318IsoMonth(offset){const d=dateObj(today());const t=new Date(d.getFul
 function v318MonthEnd(offset){const d=dateObj(today());const t=new Date(d.getFullYear(),d.getMonth()+offset+1,0);return dateStr(t)}
 function v318Context(){return v99Memo('v318:models:'+today(),()=>{
  const thirty=v119Baseline(30),year=v119Baseline(365),reference=v89DebtCapacity(today().slice(0,7));
- const recurring=Array.isArray(db.recurring)?db.recurring.filter(x=>x.active!==false&&!x.archived):[];
- const subTotal=recurring.reduce((s,r)=>s+fx(Math.max(0,num(r.amount))*(typeof v80MonthlyFactor==='function'?v80MonthlyFactor(r.frequency):1),r.currency||'DOP'),0);
- const monthly=Array.from({length:12},(_,i)=>{const period=v318IsoMonth(i),ev=year.events.filter(e=>e.date.slice(0,7)===period);return {period,label:new Date(+period.slice(0,4),+period.slice(5,7)-1,1).toLocaleDateString('es-DO',{month:'short'}).replace('.',''),income:ev.filter(x=>x.type==='income').reduce((s,x)=>s+x.amount,0),due:ev.filter(x=>x.type==='expense').reduce((s,x)=>s+x.amount,0)}});
+ const recurring=v339ActiveRecurring();
+ const subTotal=v80RecurringMonthly();
+ const monthly=Array.from({length:12},(_,i)=>{const period=v318IsoMonth(i);return {period,label:new Date(+period.slice(0,4),+period.slice(5,7)-1,1).toLocaleDateString('es-DO',{month:'short'}).replace('.',''),income:0,due:0}});
+ const monthLookup=new Map(monthly.map(row=>[row.period,row]));
+ for(const event of year.events||[]){const row=monthLookup.get(String(event.date||'').slice(0,7));if(!row)continue;if(event.type==='income')row.income+=event.amount;else if(event.type==='expense')row.due+=event.amount;}
  const contractual=[];
  for(const l of db.loans||[]){if(l.archived)continue;try{const a=loanAccounting(l);if(a.settled||!(a.balance>0))continue;const forecast=loanForecast(l,a,{amount:0});contractual.push({name:l.name||'Préstamo',currency:l.currency||'DOP',balance:fx(a.balance,l.currency||'DOP'),rows:forecast.rows||[],error:forecast.error||null})}catch(err){console.warn('V318: préstamo sin curva verificable',l.id,err)}}
  const otherDebt=Math.max(0,totalCardDebt()+num(personalTotals().payable));
@@ -35540,8 +35839,8 @@ function v318LoanRoadmap(c){const current=c.loans[0]+c.otherDebt;const last=c.lo
 function v318Graph(id){const c=v318Context(),t=c.thirty,Y=c.year;
 
  if(id==='futureCostKpi'){
-  const activeRecurring=(Array.isArray(db.recurring)?db.recurring:[]).filter(x=>x&&x.active!==false&&!x.archived);
-  const monthlyRecurring=activeRecurring.reduce((sum,r)=>sum+fx(Math.max(0,num(r.amount))*(typeof v80MonthlyFactor==='function'?v80MonthlyFactor(r.frequency):1),r.currency||'DOP'),0);
+  const activeRecurring=v339ActiveRecurring();
+  const monthlyRecurring=v80RecurringMonthly();
   const monthlyDue=c.monthly?.[0]?.due||0;
   const totalMonthly=Math.max(monthlyDue,monthlyRecurring);
   const pressure=Number.isFinite(c.reference?.ratio)?c.reference.ratio:null;
@@ -35760,8 +36059,8 @@ document.addEventListener('click',function(event){
    functions and all editing/payment/history routes are deliberately reused. */
 function v302MobileSubscriptions(){
  const all=(db.recurring||[]).slice();
- const active=all.filter(r=>r.active!==false);
- const paused=all.filter(r=>r.active===false);
+ const active=v339ActiveRecurring();
+ const paused=all.filter(r=>!r.archived&&r.active===false);
  const monthly=typeof v80RecurringMonthly==='function'?v80RecurringMonthly():active.reduce((n,r)=>n+fx(num(r.amount),r.currency||'DOP')*({weekly:52/12,monthly:1,quarterly:1/3,annual:1/12}[r.frequency]||1),0);
  const year=monthly*12;
  const due=v99PendingForPeriod(ui.month).filter(p=>p.kind==='recurring').reduce((total,p)=>total+fx(num(p.amount),p.currency||'DOP'),0);
@@ -45330,7 +45629,7 @@ body.theme-dark #page :is(.v242-settings-row-copy small, .v46-sub-card-title sma
     const black = document.body.classList.contains('theme-black') ||
       document.body.classList.contains('theme-dark');
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    const tone = black ? '#080d16' : '#f8f6fa';
+    const tone = black ? '#000000' : '#f8f6fa';
     if (themeMeta && themeMeta.getAttribute('content') !== tone) {
       themeMeta.setAttribute('content', tone);
     }
@@ -48377,5 +48676,52 @@ body:is(.theme-black,.theme-dark) #modal-root :is(.mqr-modal,.studio-form,.fastx
 .f33-gate.v329-splash.v331-splash-light .v329-wordmark,.f33-gate.v329-splash.v331-splash-light .v329-period{color:#000!important}
 @media(prefers-reduced-motion:reduce){.ws-library .v333-preview-head{animation:none!important}}
 </style>
+
+<style id="v338-final-neutral-black">
+/* Auditoría real: neutralizar reglas tardías que introducían tonos azules en Black. */
+html:has(body.theme-black),body.theme-black,body.theme-black #app,body.theme-black .main,
+body.theme-black .main.world-overview,body.theme-black #page{background-color:#000!important;background-image:none!important}
+body.theme-black .main.world-overview .ff-dashboard .ff-balance.ff-tile,
+body.theme-black .main .ff-dashboard .ff-balance.ff-tile,
+body.theme-black .main .ff-dashboard .ff-balance,
+body.theme-black .main .ff-dashboard .ff-bubble,
+body.theme-black .main .ff-dashboard .ff-bubble.featured,
+body.theme-black .main .ff-dashboard .ff-black-btn,
+body.theme-black .main .ff-dashboard .ff-obligation-total,
+body.theme-black .main .ff-dashboard .ff-obligation-symbol,
+body.theme-black .main .ff-dashboard .ff-outline-pill,
+body.theme-black .main .ff-dashboard .ff-inline-pill,
+body.theme-black .main .ff-dashboard .ff-month-filter,
+body.theme-black .main .v26-nav.v252-tabs,
+body.theme-black .main .v46-subs-panel.v252-product-panel,
+body.theme-black .main .v285-budget-nav,
+body.theme-black .main .v27-budget-trend.panel,
+body.theme-black .main .kpi-icon{
+  background:#111!important;
+  background-image:none!important;
+  border-color:#2d2d2d!important;
+  box-shadow:none!important;
+  color:#efefef!important;
+}
+body.theme-black .main .ff-dashboard .ff-balance.ff-tile{background:#0c0c0c!important;border-color:#292929!important}
+body.theme-black .main .ff-dashboard .ff-obligation-symbol,
+body.theme-black .main .kpi-icon{background:#1c1c1c!important;border-color:#323232!important}
+body.theme-black .main .ff-dashboard .ff-position-divider{background:rgba(255,255,255,.15)!important}
+body.theme-black .main .ff-dashboard .ff-bubble.featured :is(strong,b,span,small){color:#f3f3f3!important}
+body.theme-black .main .ff-dashboard .ff-bubble:not(.featured) :is(strong,b,span,small){color:#f3f3f3!important}
+/* En Claro no imponer el estilo oscuro a los controles de Personalización. */
+body:not(.theme-black):not(.theme-dark) .main .vive-mobile-greeting .v273-personalize-link{background:#fff!important;color:#19263a!important;border-color:#d7dfeb!important}
+/* Contextos web y móvil con reglas antiguas de mayor especificidad. */
+body.theme-black .main #page .ff-bubble,
+body.theme-black .main #page .ff-bubble.featured,
+body.theme-black .main #page .v46-subs-panel.v252-product-panel,
+body.theme-black .main #page .v27-budget-trend.panel,
+body.theme-black .main #page .v27-budget-trend,
+body.theme-black .world-kpis #page .ff-bubble,
+body.theme-black .world-kpis #page .ff-bubble.featured{
+  background:#111!important;background-image:none!important;border-color:#292929!important;box-shadow:none!important;color:#f5f5f5!important;
+}
+</style>
+
 </body>
 </html>
