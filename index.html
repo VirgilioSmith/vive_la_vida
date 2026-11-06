@@ -2,7 +2,7 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-build-v316" content="personalizacion-cuatro-graficos-esenciales" />
+<meta name="vive-el-hoy-build-v317" content="black-profundo-y-nuevos-graficos-reales" />
 <meta name="vive-el-hoy-build-v305" content="suscripciones-colores-sutiles-activos-detalle-historial"/>
 <meta name="vive-el-hoy-build-v306" content="resumen-web-compromisos-doble-altura-y-suscripciones-movil-referencia"/>
 <meta name="vive-el-hoy-audit-v312" content="vision-global-unica-y-eliminacion-conservadora-de-codigo-huerfano"/>
@@ -32434,12 +32434,16 @@ const V105_WIDGETS=[
  {id:'patrimonyTrend',title:'Tendencia de patrimonio',hint:'Evolución real de activos menos obligaciones por mes'},
  {id:'tomorrowInsight',title:'El costo de mañana',hint:'Liquidez hoy, proyección de 30 días y alertas de caja'},
  {id:'budgetPulse',title:'Cumplimiento de presupuesto · Pulso',hint:'Utilización, ritmo mensual, disponible y categorías'},
+ {id:'cashPressure',title:'Radar de vencimientos · 30 días',hint:'Distribución de compromisos futuros en tramos de 7, 15 y 30 días'},
+ {id:'spendingFingerprint',title:'Huella de gastos · 28 días',hint:'Calendario visual de importes registrados, sin contar pagos de tarjetas dos veces'},
 
 ];
 /* V316: cuatro gráficos financieros esenciales, compatibles con preferencias previas.
    Otros widgets funcionales siguen disponibles desde el editor. */
 const V316_ESSENTIAL_GRAPHS=['creditUtil','patrimonyTrend','tomorrowInsight','budgetPulse'];
-function v316OrderDefaults(ids){return [...V316_ESSENTIAL_GRAPHS,...ids.filter(id=>!V316_ESSENTIAL_GRAPHS.includes(id))]}
+const V317_NEW_GRAPHS=['cashPressure','spendingFingerprint'];
+const V317_FEATURE_GRAPHS=[...V316_ESSENTIAL_GRAPHS,...V317_NEW_GRAPHS];
+function v316OrderDefaults(ids){return [...V317_FEATURE_GRAPHS,...ids.filter(id=>!V317_FEATURE_GRAPHS.includes(id))]}
 function v316VisibleDefaults(ids){
  const hidden=new Set(['activity','subscriptions','cardsDue','budget','budgetTrend','chart','banks','accounts','cards','loans','certificates']);
  return ids.filter(id=>!hidden.has(id));
@@ -32451,6 +32455,10 @@ function v105Config(){
  const originalOrder=raw.order.filter(x=>ids.includes(x));
  const order=[...new Set(originalOrder),...ids.filter(x=>!originalOrder.includes(x))];
  const visible=Array.isArray(raw.visible)?[...new Set(raw.visible.filter(x=>ids.includes(x)))]:v316VisibleDefaults(ids);
+ // V317: migrar solo los dos gráficos nuevos; las selecciones anteriores quedan intactas.
+ if(!V317_NEW_GRAPHS.every(id=>originalOrder.includes(id))){
+  for(const id of V317_NEW_GRAPHS)if(!originalOrder.includes(id)&&!visible.includes(id))visible.push(id);
+ }
  // Única migración V316. No vuelve a encender gráficos si el usuario los desactiva.
  if(!originalOrder.includes('budgetPulse')){
   for(const id of V316_ESSENTIAL_GRAPHS)if(!visible.includes(id))visible.push(id);
@@ -32459,7 +32467,7 @@ function v105Config(){
    const i=visible.indexOf(oldId);if(i>=0)visible.splice(i,1);
   }
  }
- return {order:!originalOrder.includes('budgetPulse')?v316OrderDefaults(order):order,visible};
+ return {order:(!originalOrder.includes('budgetPulse')||!V317_NEW_GRAPHS.every(id=>originalOrder.includes(id)))?v316OrderDefaults(order):order,visible};
 }
 function v105BubblePercent(current,previous,comparison,risk=false){
  if(!comparison?.valid||!Number.isFinite(previous)||Math.abs(previous)<0.005)return '<span class="v105-bubble-pct v105-pct-empty">—</span>';
@@ -34812,10 +34820,13 @@ function v273SettingsWidgetEditor(){
   return `<div class="v273-custom-row v316-custom-row" data-v316-row="${id}"><span class="v273-custom-copy"><strong>${sanitize(w.title)}</strong><small>${sanitize(w.hint)}</small></span><div class="v273-custom-controls"><button type="button" class="v273-visibility ${on?'is-on':''}" data-v273-toggle="${id}" role="switch" aria-checked="${on}" aria-label="${on?'Ocultar':'Mostrar'} ${sanitize(w.title)}"><span></span></button><button type="button" class="v273-order" data-v273-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${sanitize(w.title)}">↑</button><button type="button" class="v273-order" data-v273-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${sanitize(w.title)}">↓</button></div></div>`;
  };
  const essentials=cfg.order.filter(x=>V316_ESSENTIAL_GRAPHS.includes(x));
- const secondary=cfg.order.filter(x=>!V316_ESSENTIAL_GRAPHS.includes(x));
- return `<section class="v273-settings-customizer v316-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Cuatro gráficos, lo esencial</h3><p>Controla los cuatro gráficos de tu Resumen. Cada uno usa tus registros y se puede mostrar u ocultar sin alterar los datos.</p></header>
+ const insights=cfg.order.filter(x=>V317_NEW_GRAPHS.includes(x));
+ const secondary=cfg.order.filter(x=>!V317_FEATURE_GRAPHS.includes(x));
+ return `<section class="v273-settings-customizer v316-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Lo esencial, con más inteligencia</h3><p>Cuatro gráficos esenciales y dos perspectivas nuevas. Tú decides cuáles se muestran, sin modificar los registros.</p></header>
  <div class="v316-essentials-head"><span>GRÁFICOS ESENCIALES</span><span>04 / 04</span></div>
  <div class="v273-custom-rows v316-essentials">${essentials.map(row).join('')}</div>
+ <div class="v316-essentials-head v317-insights-head"><span>NUEVAS PERSPECTIVAS</span><span>02 / 02</span></div>
+ <div class="v273-custom-rows v316-essentials v317-insights">${insights.map(row).join('')}</div>
  <details class="v316-more-widgets"><summary>Otras secciones de tu Resumen <span aria-hidden="true">⌄</span></summary><div class="v273-custom-rows">${secondary.map(row).join('')}</div></details>
  <div class="v273-custom-footer"><span>Solo afecta a Resumen móvil. Los cálculos permanecen intactos.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
 }
@@ -34971,7 +34982,7 @@ function v309ExtraCharts(){
      <div class="v315-credit-row-foot"><span>Usado ${displayMoney(c.used)}</span><span>Límite ${displayMoney(c.max)}</span></div>
     </div>`}).join('')}</div>`;
  const cardSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget" data-v105-widget="creditUtil" aria-label="Utilización total y por tarjeta">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">01 / 04 · CRÉDITO · LÍMITES</span><h2>Utilización por tarjeta</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="cards" aria-label="Ver detalles de tarjetas">Ver tarjetas ${icon('arrow')}</button></div>${creditHTML}
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">01 / 06 · CRÉDITO · LÍMITES</span><h2>Utilización por tarjeta</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="cards" aria-label="Ver detalles de tarjetas">Ver tarjetas ${icon('arrow')}</button></div>${creditHTML}
  </section>`;
  // Máximo 6 cierres recientes; un mes sin histórico real queda sin punto.
  const now=today();const [y,m]=now.slice(0,7).split('-').map(Number);
@@ -35001,7 +35012,7 @@ function v309ExtraCharts(){
   <div class="v315-wealth-chart" role="img" aria-label="Tendencia patrimonial de los últimos seis cierres disponibles. Último patrimonio ${displayMoney(last.snapshot.net)}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="14" x2="316" y1="111" y2="111" class="v315-wealth-axis"/><g class="v315-wealth-path">${path}</g><g class="v315-wealth-dots">${circles}</g></svg><div class="v315-wealth-labels">${months.map(x=>`<span>${x.label}</span>`).join('')}</div></div>
   <p class="v315-small-note">Cierres de activos menos obligaciones registrados; no incluye límites disponibles como patrimonio.${observed.some(x=>x.snapshot.estimatedLoan)?' Algún préstamo histórico es estimado.':''}</p>`;
  }
- const wealthSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget" data-v105-widget="patrimonyTrend" aria-label="Tendencia de patrimonio neto"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">02 / 04 · PATRIMONIO</span><h2>Tendencia de patrimonio</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="patrimony" aria-label="Abrir detalle del patrimonio">Ver detalle ${icon('arrow')}</button></div>${historyHTML}</section>`;
+ const wealthSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget" data-v105-widget="patrimonyTrend" aria-label="Tendencia de patrimonio neto"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">02 / 06 · PATRIMONIO</span><h2>Tendencia de patrimonio</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="patrimony" aria-label="Abrir detalle del patrimonio">Ver detalle ${icon('arrow')}</button></div>${historyHTML}</section>`;
  /* V316 · Gráfico 03/04 — El costo de mañana.
     No equivale a la deuda total: solamente cobros y vencimientos calendarizados. */
  const forecast=v119Baseline(30);
@@ -35020,7 +35031,7 @@ function v309ExtraCharts(){
  const fLast=fPoints.at(-1);
  const fTimeline=dayValues.length?`<div class="v316-cash-chart"><svg viewBox="0 0 ${FW} ${FH}" preserveAspectRatio="none" role="img" aria-label="Proyección de liquidez diaria a 30 días, desde ${displayMoney(fStart)} hasta ${displayMoney(fEnd)}"><line class="v316-cash-zero" x1="12" x2="320" y1="${zeroY}" y2="${zeroY}"/><polyline class="v316-cash-path ${fMin<0?'at-risk':''}" points="${cashLine}"/><circle class="v316-cash-point" cx="${fLast.x.toFixed(2)}" cy="${fLast.y.toFixed(2)}" r="4"/></svg><div class="v316-cash-axis"><span>Hoy</span><span>+15 días</span><span>+30 días</span></div></div>`:'';
  const tomorrowSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget v316-chart-widget v316-tomorrow" data-v105-widget="tomorrowInsight" aria-label="El costo de mañana: proyección de liquidez a 30 días">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">03 / 04 · PROYECCIÓN · 30 DÍAS</span><h2>El costo de mañana</h2></div><button type="button" class="vive-mobile-view-all" data-v119-open="1" aria-label="Abrir simulador del costo de mañana">Simular ${icon('arrow')}</button></div>
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">03 / 06 · PROYECCIÓN · 30 DÍAS</span><h2>El costo de mañana</h2></div><button type="button" class="vive-mobile-view-all" data-v119-open="1" aria-label="Abrir simulador del costo de mañana">Simular ${icon('arrow')}</button></div>
   <div class="v316-tomorrow-pair"><div><small>HOY · DISPONIBLE</small><strong>${displayMoney(fStart)}</strong></div><span class="v316-tomorrow-arrow" aria-hidden="true">→</span><div><small>EN 30 DÍAS · ESTIMADO</small><strong class="${fEnd<0?'v316-negative':''}">${displayMoney(fEnd)}</strong></div></div>
   ${fTimeline}
   <div class="v316-tomorrow-foot"><span>${fMinLabel} <b class="${fMin<0?'v316-negative':''}">${displayMoney(Math.abs(fMin))}</b></span><span>${fCritical?'Primer día crítico: '+prettyDate(fCritical):'Sin días críticos previstos'}</span></div>
@@ -35039,14 +35050,63 @@ function v309ExtraCharts(){
  const bTop=budget.categories.filter(c=>c.limit>0).slice(0,3);
  const bRows=bTop.map(c=>`<div class="v316-budget-category"><div><span>${sanitize(c.name)}</span><b class="${c.percent>100?'v316-negative':''}">${pctText(c.percent)}</b></div><div class="v316-budget-track"><i class="${c.percent>100?'is-over':''}" style="width:${fill(c.percent)}%"></i></div></div>`).join('');
  const budgetSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget v316-chart-widget v316-budget" data-v105-widget="budgetPulse" aria-label="Cumplimiento del presupuesto y distribución por categoría">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">04 / 04 · CONTROL · ${sanitize(budget.month)}</span><h2>Tu pulso presupuestario</h2></div><button type="button" class="vive-mobile-view-all" data-v290-budget-open="execution" aria-label="Ver ejecución del presupuesto">Detalles ${icon('arrow')}</button></div>
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">04 / 06 · CONTROL · ${sanitize(budget.month)}</span><h2>Tu pulso presupuestario</h2></div><button type="button" class="vive-mobile-view-all" data-v290-budget-open="execution" aria-label="Ver ejecución del presupuesto">Detalles ${icon('arrow')}</button></div>
   <div class="v316-budget-display"><div class="v316-budget-orbit ${bTone}" style="--v316-angle:${angle}deg" role="img" aria-label="Presupuesto utilizado: ${pctText(bPct)}"><div><small>UTILIZADO</small><strong>${pctText(bPct)}</strong><span>${budget.state}</span></div></div>
    <div class="v316-budget-money"><div><small>ASIGNADO</small><strong>${displayMoney(budget.allocated)}</strong></div><div><small>EJECUTADO</small><strong>${displayMoney(budget.spent)}</strong></div><div><small>${budget.remaining<0?'EXCESO':'DISPONIBLE'}</small><strong class="${budget.remaining<0?'v316-negative':''}">${displayMoney(Math.abs(budget.remaining))}</strong></div></div></div>
   <div class="v316-budget-pace"><span class="v316-pace-dot ${bTone}" aria-hidden="true"></span><span>${bPace}${budget.pace!==null?' · '+displayMoney(Math.abs(budget.pace))+' de diferencia':''}</span></div>
   ${bRows?`<div class="v316-budget-categories"><div class="v316-mini-eyebrow">CATEGORÍAS CON MAYOR CONSUMO</div>${bRows}</div>`:'<p class="v315-empty">Define un presupuesto para ver cómo se distribuye tu gasto.</p>'}
   <p class="v315-small-note">El porcentaje representa gasto / límite asignado. Los gastos sin presupuesto quedan fuera del porcentaje; no se duplican subcategorías.</p>
  </section>`;
- return cardSection+wealthSection+tomorrowSection+budgetSection;
+ /* V317 · NUEVOS GRÁFICOS: radar de vencimientos y huella de gasto registrado.
+    Se calculan en el dispositivo a partir de las mismas fuentes de la app. */
+ const v317DueEvents=(forecast.events||[]).filter(e=>e.type==='expense'&&e.amount>0);
+ const v317Limits=[7,15,30];
+ const v317Buckets=v317Limits.map((limit,i)=>{
+  const start=i? v317Limits[i-1]+1:0;
+  const end=v119DateAfter(limit),from=v119DateAfter(start);
+  const arr=v317DueEvents.filter(e=>e.date>=from&&e.date<=end);
+  return {label:i===0?'0–7 días':i===1?'8–15 días':'16–30 días',start,end,total:arr.reduce((sum,e)=>sum+e.amount,0),count:arr.length};
+ });
+ const v317DueTotal=v317Buckets.reduce((a,b)=>a+b.total,0);
+ const v317MaxDue=Math.max(1,...v317Buckets.map(x=>x.total));
+ const v317DueBars=v317Buckets.map((d,i)=>`<div class="v317-due-col"><div class="v317-due-value">${displayMoney(d.total)}</div><div class="v317-due-tower"><i style="height:${d.total>0?Math.max(5,100*d.total/v317MaxDue):0}%" class="${i===0?'is-urgent':''}"></i></div><b>${d.label}</b><span>${d.count} ${d.count===1?'cargo':'cargos'}</span></div>`).join('');
+ const v317Upcoming=v317DueEvents.slice(0,3).map(e=>`<div class="v317-next-pay"><span>${sanitize(prettyDate(e.date))} · ${sanitize(e.name||'Compromiso')}</span><strong>${displayMoney(e.amount)}</strong></div>`).join('');
+ const dueSection=`<section class="v105-mobile-extra v273-overview-widget v315-chart-widget v317-chart-widget" data-v105-widget="cashPressure" aria-label="Radar de compromisos con vencimiento en los próximos treinta días">
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">05 / 06 · TIEMPO · 30 DÍAS</span><h2>Radar de vencimientos</h2></div><button class="vive-mobile-view-all" type="button" data-act="navigate" data-id="payments" aria-label="Abrir compromisos">Ver pagos ${icon('arrow')}</button></div>
+  <div class="v317-due-overview"><span>COMPROMETIDO PRÓXIMOS 30 DÍAS</span><strong>${displayMoney(v317DueTotal)}</strong><small>Incluye únicamente cargos calendarizados y pendientes conocidos.</small></div>
+  <div class="v317-due-chart" role="img" aria-label="Vencimientos previstos por periodos: ${v317Buckets.map(d=>d.label+' '+displayMoney(d.total)).join(', ')}">${v317DueBars}</div>
+  ${v317Upcoming?`<div class="v317-next-pays"><span class="v316-mini-eyebrow">PRÓXIMOS VENCIMIENTOS</span>${v317Upcoming}</div>`:'<p class="v315-empty">No se han registrado obligaciones futuras en este periodo.</p>'}
+  <p class="v315-small-note">Montos por fecha de vencimiento; no equivale a deuda total. Pueden incluir estimaciones y no duplica pagos ya conciliados por el motor.</p>
+ </section>`;
+ const v317Today=today();
+ const v317Start=v119DateAfter(-27);
+ const v317DayTotals=new Map();
+ for(const t of db.transactions||[]){
+  if(!t||!t.date||t.date<v317Start||t.date>v317Today||!['expense','card_charge','card_refund'].includes(t.type))continue;
+  const base=num(t.amount)*(t.currency==='USD'?num(t.fxRateSnapshot||db.settings.fx):1);
+  if(!Number.isFinite(base)||base<=0)continue;
+  v317DayTotals.set(t.date,(v317DayTotals.get(t.date)||0)+(t.type==='card_refund'?-base:base));
+ }
+ const v317Days=Array.from({length:28},(_,i)=>v119DateAfter(i-27)).map(date=>({date,amount:Math.max(0,v317DayTotals.get(date)||0)}));
+ const v317Spent=v317Days.reduce((a,d)=>a+d.amount,0);
+ const v317MaxDay=Math.max(1,...v317Days.map(d=>d.amount));
+ const v317ActiveDays=v317Days.filter(d=>d.amount>.005).length;
+ const v317Peak=v317Days.reduce((best,d)=>d.amount>best.amount?d:best,v317Days[0]);
+ const v317Cells=v317Days.map(d=>{
+  const n=d.amount/v317MaxDay;
+  const level=d.amount<.005?0:n<=.25?1:n<=.50?2:n<=.75?3:4;
+  return `<div class="v317-heat-cell heat-${level}" role="img" title="${sanitize(prettyDate(d.date))}: ${displayMoney(d.amount)}" aria-label="${sanitize(prettyDate(d.date))}: ${displayMoney(d.amount)}"><span>${Number(d.date.slice(-2))}</span></div>`;
+ }).join('');
+ const fingerprintSection=`<section class="v105-mobile-extra v273-overview-widget v315-chart-widget v317-chart-widget" data-v105-widget="spendingFingerprint" aria-label="Huella del gasto registrado durante veintiocho días">
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">06 / 06 · PATRÓN · 28 DÍAS</span><h2>Huella de tus gastos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="register" aria-label="Ver movimientos">Movimientos ${icon('arrow')}</button></div>
+  <div class="v317-heat-summary"><div><small>TOTAL REGISTRADO · 28 DÍAS</small><strong>${displayMoney(v317Spent)}</strong></div><div><small>DÍAS CON GASTOS</small><strong>${v317ActiveDays} / 28</strong></div></div>
+  <div class="v317-heat-label"><span>${sanitize(prettyDate(v317Start))}</span><span>${sanitize(prettyDate(v317Today))}</span></div>
+  <div class="v317-heat-grid">${v317Cells}</div>
+  <div class="v317-heat-foot"><span>Sin gasto registrado</span><div class="v317-heat-legend"><i class="heat-0"></i><i class="heat-1"></i><i class="heat-2"></i><i class="heat-3"></i><i class="heat-4"></i></div><span>Mayor gasto</span></div>
+  ${v317ActiveDays?`<div class="v317-peak"><span>Día de mayor consumo · ${sanitize(prettyDate(v317Peak.date))}</span><strong>${displayMoney(v317Peak.amount)}</strong></div>`:''}
+  <p class="v315-small-note">Solo movimientos de gasto y compras registrados; reembolsos reducen el importe del día. Excluye transferencias y pagos de tarjeta para no contabilizar dos veces. No registra actividad nueva.</p>
+ </section>`;
+ return cardSection+wealthSection+tomorrowSection+budgetSection+dueSection+fingerprintSection;
 }
 
 /* V312: una única Visión global; compatibilidad para enlaces antiguos.
@@ -47426,5 +47486,133 @@ body.theme-black .v316-personalization .v316-essentials,body.theme-black .v316-m
 body.theme-black .v316-more-widgets>summary,body.theme-dark .v316-more-widgets>summary{color:#dce9fa!important}
 @media(prefers-reduced-motion:reduce){.v316-budget-track i,.v316-cash-path,.v316-budget-orbit{transition:none!important}}
 </style>
+
+<style id="vive-v317-black-absoluto-y-nuevos-graficos">
+/* V317 — UN SOLO SISTEMA BLACK ABSOLUTO. No afecta al modo Claro. */
+/* Esta regla móvil antigua tenía una especificidad mayor que body.theme-dark. */
+html:has(body.theme-dark),html:has(body.theme-black){background:#000!important;background-image:none!important}
+body.theme-dark:not(.vision-mode),body.theme-black:not(.vision-mode),
+body.theme-dark.vision-mode,body.theme-black.vision-mode{
+ background:#000!important;background-image:none!important;background-color:#000!important;
+}
+
+body.theme-dark,body.theme-black{
+  --bg:#000000!important; --white:#090909!important; --panel:#090909!important;
+  --card:#0d0d0e!important; --surface:#080809!important;
+  --navy:#000000!important; --navy2:#090909!important;
+  --line:#2b2b2d!important; --ink:#f7f8fa!important; --muted:#b6bbc4!important;
+  --v210-panel:#0b0b0d!important; --v210-raised:#141416!important;
+  --v210-edge:#303034!important; --v271-surface:#0b0b0d!important;
+  --v271-surface2:#141416!important; --v271-edge:#303034!important;
+  --v271-text:#f7f8fa!important; --v271-muted:#b6bbc4!important;
+  background:#000!important;background-image:none!important;color:#f7f8fa!important;
+  color-scheme:dark!important;
+}
+body.theme-dark::before,body.theme-dark::after,body.theme-black::before,body.theme-black::after{
+  background:none!important;background-image:none!important;box-shadow:none!important;filter:none!important;
+}
+body.theme-dark :is(#app,.shell,.main,#page,.page-shell,.app-layout,.app-body,.world-shell,.world-overview,.world-register,.world-payments,.world-recurring,.world-banks,.world-cards,.world-accounts,.world-loans,.world-certificates,.world-settings,.world-explore,.world-analytics,.v205-explore-grid,.ff-dashboard,.ff-dashboard.summary-space),
+body.theme-black :is(#app,.shell,.main,#page,.page-shell,.app-layout,.app-body,.world-shell){
+  background:#000!important;background-image:none!important;
+}
+/* Tarjetas: sin gradientes azulados, ni transparencias que revelen colores de fondo. */
+body.theme-dark :is(.panel,.card,.kpi,.ff-tile,.v273-overview-widget,.v294-finance-widget,.v315-chart-widget,.v316-chart-widget,.v317-chart-widget,.v264-block,.v46-subscription-card,.v200-settings-group,.settings-hero,.v242-settings-rows,.v242-settings-row,.v205-explore-link,.v145-payment-kpi,.v145-pay-agenda,.v145-paycenter,.v145-pay-quick,.v290-budget-web,.v290-budget-mobile,.v290-budget-trend,.v290-budget-orbit,.v295-global-top,.v295-payment-section,.v119-modal,.subscription-world,.bank-card,.account-card,.loan-card,.certificate-card,.v57-product-hero,.v55-panel,.v55-hero,.v55-metric,.v55-section-lead,.v266-wallet-panel,.v266-wallet-detail,.v266-activity,.modal,.modal-head,.v105-capacity-widget,.v82-burden,.v89-debt-breakdown,.v187-benefits-ledger,.vr-workspace,.ws-gallery-card,.v242-mobile-web-position,.v294-widget-amount,.v315-credit-hero>div){
+  background:#0b0b0d!important;background-image:none!important;
+  border-color:#2c2c30!important;color:#f4f5f7!important;
+  box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+body.theme-dark :is(.v315-credit-hero>div,.v316-tomorrow-pair,.v316-budget-pace,.v317-due-overview,.v317-heat-summary,.v317-peak,.v273-widget-total,.v294-widget-ico,.v316-budget-orbit::before,.v315-comparison,.v315-impact-details,.v178-kpi,.v178-amount,.v183-tomorrow-note,.v242-settings-row,.v145-pay-filters,.v145-payment-kpi,.v61-profile-option,.v42-summary,.v42-entity,.v42-product-panel,.v204-bank-detail,.v200-settings-row,.v273-custom-row,.v273-custom-rows,.v316-personalization,.v316-essentials,.v316-more-widgets){
+  background:#111113!important;background-image:none!important;
+  border-color:#303034!important;color:#f5f6fa!important;box-shadow:none!important;
+}
+body.theme-dark :is(.topbar,.sidebar,.rail-sidebar,.mobile-bar,.vive-mobile-dock,.v242-mobile-nav,.v205-mobile-nav,.v271-settings-access,.v266-wallet-actions button>span,.v99-period-picker,.date-chip,.module-switch-tabs,.universe-switch,.module-switch-shell,.movement-tabs-shell,.theme-choice-row,.v61-profile-switch,.v42-module-nav,.v42-filters,.ledger-controls,.ledger-card,.table-wrap,.v273-settings-customizer){
+  background:#080809!important;background-image:none!important;border-color:#28282b!important;
+  box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+body.theme-dark :is(.modal-layer,.v119-modal-layer){background:rgba(0,0,0,.88)!important;backdrop-filter:none!important}
+body.theme-dark :is(input,textarea,select,.field,.filter-select,.ledger-controls input,.ledger-controls select){
+  background:#101013!important;background-image:none!important;color:#f5f6fa!important;border-color:#343437!important;
+}
+body.theme-dark :is(.btn.ghost,.btn.soft,.top-hint,.v32-tool-button,.v242-style-option,.v205-explore-link-icon,.v294-widget-ico){
+  background:#151517!important;background-image:none!important;color:#e7e9ee!important;border-color:#343439!important;
+}
+body.theme-dark :is(.v273-overview-widget,.v294-finance-widget,.v315-chart-widget,.v316-chart-widget,.v317-chart-widget) :is(h2,h3,h4,strong,b){color:#f5f6f8}
+body.theme-dark :is(.v273-overview-widget,.v294-finance-widget,.v315-chart-widget,.v316-chart-widget,.v317-chart-widget) :is(p,small,.v315-small-note,.v315-credit-row-foot,.v315-wealth-labels,.v316-cash-axis,.v316-budget-money small,.v316-tomorrow-foot span,.v316-budget-pace){color:#b7bdc7!important}
+body.theme-dark :is(.v315-credit-track,.v316-budget-track,.v316-budget-orbit,.v317-due-tower,.v317-heat-cell.heat-0){background-color:#272729!important}
+body.theme-dark .v316-budget-orbit{background:conic-gradient(#71b0ff var(--v316-angle),#272729 0)!important}
+body.theme-dark .v316-budget-orbit.warn{background:conic-gradient(#ffbc75 var(--v316-angle),#272729 0)!important}
+body.theme-dark .v316-budget-orbit.over{background:conic-gradient(#ff9663 var(--v316-angle),#272729 0)!important}
+body.theme-dark .v316-budget-orbit::before{background:#080809!important}
+body.theme-dark .v316-cash-zero{stroke:#44454b!important}
+body.theme-dark .v315-wealth-axis{stroke:#3b3b40!important}
+body.theme-dark .v316-budget-orbit :is(strong,span,small){color:#f6f7fa!important}
+body.theme-dark :is(.v273-custom-copy strong,.v273-settings-customizer h3,.v316-more-widgets>summary,.v315-credit-hero strong,.v315-credit-row-head strong,.v315-wealth-summary strong,.v316-tomorrow-pair strong,.v316-budget-money strong,.v316-tomorrow-foot b){color:#f6f8fa!important}
+body.theme-dark .v316-tomorrow-pair{background:#111113!important}
+body.theme-dark .v316-budget-pace{background:#111113!important}
+body.theme-dark table{background:#080809!important;color:#f3f4f7!important}
+body.theme-dark thead,body.theme-dark thead th{background:#151517!important;color:#dce1e9!important}
+body.theme-dark tbody tr:nth-child(even){background:#101012!important}
+body.theme-dark tbody td{background:transparent!important;border-color:#2f2f32!important;color:#e6e8ed!important}
+/* Barra al borde seguro inferior, negros opacos y sin vidrio azul. */
+@media(max-width:790px){
+ body.theme-dark .vive-mobile-dock{background:rgba(7,7,8,.98)!important;border:1px solid #262629!important}
+ body.theme-dark .v316-chart-widget,body.theme-dark .v317-chart-widget{background:#0b0b0d!important}
+}
+/* Nuevos gráficos V317: fondo negro; el color se usa solo en datos. */
+@media(max-width:790px){
+ .v317-chart-widget{min-width:0;overflow:hidden}
+ .v317-due-overview{display:grid;gap:3px;padding:14px 15px;margin-top:12px;border:1px solid #dedfe7;border-radius:15px;background:#f7f9fd}
+ .v317-due-overview>span,.v317-heat-summary small{font-size:9px;font-weight:850;letter-spacing:.1em;color:#617695}
+ .v317-due-overview>strong{font-size:clamp(23px,7vw,33px);letter-spacing:-.04em;line-height:1.25;font-weight:900;color:#1c3150;font-variant-numeric:tabular-nums}
+ .v317-due-overview>small{font-size:10px;line-height:1.4;color:#60718d}
+ .v317-due-chart{margin:15px 0 14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;align-items:end;min-height:174px}
+ .v317-due-col{min-width:0;display:flex;align-items:center;flex-direction:column;gap:4px;font-variant-numeric:tabular-nums}
+ .v317-due-value{font-weight:800;color:#2e557d;font-size:clamp(9px,2.55vw,11px);white-space:nowrap;letter-spacing:-.025em}
+ .v317-due-tower{width:min(100%,60px);height:108px;display:flex;align-items:end;justify-content:center;border-radius:12px 12px 7px 7px;background:#eaf0fa;overflow:hidden}
+ .v317-due-tower i{display:block;width:100%;background:linear-gradient(0deg,#326fce,#7ab5ff);border-radius:8px 8px 0 0;min-height:0}
+ .v317-due-tower i.is-urgent{background:linear-gradient(0deg,#c98231,#ffc178)}
+ .v317-due-col>b{font-size:10.5px;color:#344e69;white-space:nowrap}
+ .v317-due-col>span{font-size:9px;color:#71849e}
+ .v317-next-pays{display:grid;gap:5px;padding-top:13px;border-top:1px solid #e3eaf4}
+ .v317-next-pay{display:flex;justify-content:space-between;align-items:start;gap:8px;font-size:10.5px;line-height:1.4;padding:5px 0}
+ .v317-next-pay span{color:#5d7393;overflow:hidden;text-overflow:ellipsis}
+ .v317-next-pay strong{color:#294a76;font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums}
+ .v317-heat-summary{display:grid;grid-template-columns:1fr auto;gap:8px;padding:14px;margin:12px 0 13px;border-radius:15px;background:#f7f9fd;border:1px solid #dfe8f2}
+ .v317-heat-summary>div{display:grid;align-content:center;gap:3px;min-width:0}
+ .v317-heat-summary strong{font-size:clamp(14px,4vw,22px);color:#20334f;font-weight:900;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+ .v317-heat-summary>div:last-child{text-align:right}
+ .v317-heat-label,.v317-heat-foot{display:flex;justify-content:space-between;gap:7px;color:#728198;font-size:9.5px;margin-bottom:8px}
+ .v317-heat-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;min-width:0}
+ .v317-heat-cell{aspect-ratio:1/1;min-width:0;min-height:0;display:grid;place-items:center;border-radius:9px;background:#e9eff8;border:1px solid rgba(0,0,0,.04)}
+ .v317-heat-cell span{font-size:10px;font-weight:750;color:#6e7891;font-variant-numeric:tabular-nums}
+ .v317-heat-cell.heat-1{background:#b7d4fa}.v317-heat-cell.heat-2{background:#86b9f6}.v317-heat-cell.heat-3{background:#4e91e7}.v317-heat-cell.heat-4{background:#1b5fc1}
+ .v317-heat-cell.heat-3 span,.v317-heat-cell.heat-4 span{color:white}
+ .v317-heat-foot{align-items:center;margin-top:9px;flex-wrap:wrap}
+ .v317-heat-legend{display:flex;gap:3px}.v317-heat-legend i{display:block;width:11px;height:11px;border-radius:3px;background:#e9eff8}.v317-heat-legend .heat-1{background:#b7d4fa}.v317-heat-legend .heat-2{background:#86b9f6}.v317-heat-legend .heat-3{background:#4e91e7}.v317-heat-legend .heat-4{background:#1b5fc1}
+ .v317-peak{display:flex;justify-content:space-between;gap:8px;align-items:baseline;padding:10px;border-radius:11px;background:#f5f8fc;font-size:10.5px}
+ .v317-peak span{color:#647995}.v317-peak strong{white-space:nowrap;color:#294a77;font-size:11px}
+ .v317-insights-head{margin-top:16px}
+ .v317-insights{border-color:#8daee0!important}
+ body.theme-dark .v317-due-overview,body.theme-dark .v317-heat-summary,body.theme-dark .v317-peak{background:#111113!important;border-color:#2e2e32!important}
+ body.theme-dark .v317-due-overview>span,body.theme-dark .v317-heat-summary small{color:#bdc8d8!important}
+ body.theme-dark .v317-due-overview>strong,body.theme-dark .v317-heat-summary strong,body.theme-dark .v317-peak strong{color:#f5f7fa!important}
+ body.theme-dark .v317-due-overview>small,body.theme-dark .v317-peak span,body.theme-dark .v317-heat-label,body.theme-dark .v317-heat-foot{color:#b4bfce!important}
+ body.theme-dark .v317-due-value,body.theme-dark .v317-due-col>b,body.theme-dark .v317-next-pay strong{color:#eef4ff!important}
+ body.theme-dark .v317-due-col>span,body.theme-dark .v317-next-pay span{color:#b9c6d8!important}
+ body.theme-dark .v317-due-tower{background:#222225!important}
+ body.theme-dark .v317-next-pays{border-color:#303034!important}
+ body.theme-dark .v317-heat-cell.heat-0,body.theme-dark .v317-heat-legend i.heat-0{background:#202024!important;border-color:#323239!important}
+ body.theme-dark .v317-heat-cell.heat-1,body.theme-dark .v317-heat-legend i.heat-1{background:#1e3552!important}
+ body.theme-dark .v317-heat-cell.heat-2,body.theme-dark .v317-heat-legend i.heat-2{background:#23528c!important}
+ body.theme-dark .v317-heat-cell.heat-3,body.theme-dark .v317-heat-legend i.heat-3{background:#3478d1!important}
+ body.theme-dark .v317-heat-cell.heat-4,body.theme-dark .v317-heat-legend i.heat-4{background:#74b3ff!important}
+ body.theme-dark .v317-heat-cell.heat-0 span{color:#9da3ad!important}
+ body.theme-dark .v317-heat-cell.heat-1 span,body.theme-dark .v317-heat-cell.heat-2 span,body.theme-dark .v317-heat-cell.heat-3 span{color:#f7faff!important}
+ body.theme-dark .v317-heat-cell.heat-4 span{color:#0b1523!important}
+ body.theme-dark .v317-insights{border-color:#37383e!important}
+}
+@media(prefers-reduced-motion:reduce){.v317-due-tower i,.v317-heat-cell{transition:none!important}}
+</style>
+
 </body>
 </html>
