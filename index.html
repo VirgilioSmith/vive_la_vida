@@ -22512,6 +22512,33 @@ body.theme-dark .ws-dashboard-label strong,body.theme-black .ws-dashboard-label 
 .v318-no-data{min-height:100px;align-items:center;justify-content:center}
 .v318-no-data .v318-empty-mark{display:inline-grid!important;flex:0 0 24px!important;place-items:center;width:24px!important;height:24px!important;border:1px solid #355176;border-radius:50%;color:#8bbffd;font-size:14px;font-weight:700}
 </style>
+<style id="v323-black-global-audit">
+/* V323 / Black absoluto: neutralización de superficies antiguas en TODAS las vistas.
+   Solo actúa cuando el tema está en Black; jamás altera Claro ni los datos. */
+html:has(body.theme-black),html:has(body.theme-dark){background:#000!important;color-scheme:dark}
+body.theme-black,body.theme-dark{background:#000!important;background-image:none!important;color:#f3f5fa!important;
+ --bg:#000!important;--surface:#09090b!important;--panel:#0a0a0c!important;
+ --card:#101012!important;--line:#292a2e!important;--ink:#f7f8fb!important;--muted:#b3b8c4!important}
+body.theme-black :is(.app,.main,.content,.content-wrap,.page-content,.page-body,.world-shell,.world-overview,.world-accounts,.world-banks,.world-cards,.world-loans,.world-recurring,.world-payments,.world-settings,.world-explore,.world-register,.world-patrimony,.world-income,.world-expenses,.world-budget,.world-certificates,.world-personal,.world-kpis,.world-analytics,.world-mobilehub,.v205-explore-grid,.v205-explore-shell,.v296-personalize,.v296-settings-body,.settings-layout,.v242-ios-settings,.v242-settings-home,.v242-settings-subpage,.v242-settings-inner,.v300-appearance-pane,.v295-global-payments,.v295-global-overview,.v295-payments-below){
+ background-color:#000!important;background-image:none!important}
+body.theme-black :is(.panel,.card,.ff-tile,.widget-card,.ws-gallery-card,.v273-overview-widget,.v294-finance-widget,.v315-chart-widget,.v316-chart-widget,.v317-chart-widget,.v318-mobile-card,.v205-explore-link,.v205-explore-card,.v205-explore-group,.v205-explore-item,.v242-settings-rows,.v242-settings-profile,.v242-settings-section,.v242-settings-row,.v242-settings-intro,.v242-settings-subhead,.v242-settings-inner .panel,.v296-block,.v296-hero,.v273-settings-customizer,.v273-custom-row,.v273-custom-rows,.v316-secondary-rows,.v290-budget-web,.v290-budget-mobile,.v295-global-top,.v295-payment-section,.v250-dock-settings){
+ background-color:#0b0b0d!important;background-image:none!important;border-color:#292a2e!important;color:#f4f5f8!important}
+body.theme-black :is(.topbar,.sidebar,.rail-sidebar,.app-bar,.v205-mobile-nav,.v242-mobile-nav,.v205-explore-header,.v296-nav,.v242-settings-rows,.v242-settings-home,.v242-settings-section){
+ background-color:#080809!important;background-image:none!important;border-color:#292a2e!important}
+body.theme-black :is(.v273-custom-controls,.v273-custom-footer,.v316-essentials-head,.v205-explore-header,.v296-hero-top,.v242-settings-back,.v242-group-caption){color:#d8e0ed!important}
+body.theme-black :is(input,textarea,select,.field,.filter-select,.v209-widget-searchbar,.v273-order,.v273-visibility,.v242-settings-row,.v296-nav a){
+ background-color:#141416!important;background-image:none!important;color:#f5f7fb!important;border-color:#34353a!important}
+body.theme-black :is(input,textarea,select)::placeholder{color:#969ead!important}
+body.theme-black .v322-cal-cell{background-color:#141720!important}
+body.theme-black .v322-cal-cell.level-1{background-color:#172945!important}
+body.theme-black .v322-cal-cell.level-2{background-color:#22416b!important}
+body.theme-black .v322-cal-cell.level-3{background-color:#315a93!important}
+body.theme-black .v322-cal-cell.level-4{background-color:#66aaff!important}
+/* Preservar gradiente de la tarjeta protagonista como acento ilustrativo. */
+body.theme-black .v322-kpi-hero{background:radial-gradient(circle at top right,rgba(54,108,205,.25),transparent 38%),linear-gradient(145deg,#0c1a31,#03060b)!important}
+body.theme-black .v322-kpi-icon{background:linear-gradient(145deg,#376aba,#183368)!important}
+@media(max-width:790px){body.theme-black :is(.v205-explore-grid,.v205-explore-shell,.v296-personalize,.v242-ios-settings){background:#000!important}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -25848,10 +25875,8 @@ const WIDGET_METRICS=[
  ['cashPressure','Radar de vencimientos','chart','tomorrow360'],
  ['spendingFingerprint','Huella de gastos · 28 días','chart','tomorrow360'],
  ['futureFlow','El río de tu dinero','chart','tomorrow360'],
- ['futureYear','Los próximos 12 meses','chart','tomorrow360'],
  ['futureWaterfall','¿Cuánto dinero ya tiene dueño?','chart','tomorrow360'],
  ['futureMap','Mapa de compromisos','chart','tomorrow360'],
- ['futureScenarios','Tres futuros posibles','chart','tomorrow360'],
  ['futureBubbles','Matriz de importes y urgencia','chart','tomorrow360'],
 ];
 /* V208 · Referentes internacionales: Monarch, Copilot y dashboards de finanzas
@@ -26206,7 +26231,7 @@ function v197ReferenceChart(id){
  return '';
 }
 
-const VIVE_CHART_KEYS=new Set(['creditUtil','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureYear','futureWaterfall','futureMap','futureScenarios','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
+const VIVE_CHART_KEYS=new Set(['creditUtil','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureWaterfall','futureMap','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
 function widgetPreview(id,definition){
  if(id==='tomorrowCost'){const b=v119Baseline(30);return `<div class="ws-preview-body ws-preview-number"><span class="ws-preview-orb">${icon('calendar')}</span><strong>${money(Math.max(0,b.minimum))}</strong><small>${b.critical?'Día crítico: '+prettyDate(b.critical):'Sin faltantes previstos en 30 días'}</small></div>`;}
  const isChart=VIVE_CHART_KEYS.has(id);
@@ -32484,11 +32509,11 @@ const V105_WIDGETS=[
  {id:'budgetPulse',title:'Cumplimiento de presupuesto · Pulso',hint:'Utilización, ritmo mensual, disponible y categorías'},
  {id:'cashPressure',title:'Radar de vencimientos · 30 días',hint:'Distribución de compromisos futuros en tramos de 7, 15 y 30 días'},
  {id:'spendingFingerprint',title:'Huella de gastos · 28 días',hint:'Calendario visual de importes registrados, sin contar pagos de tarjetas dos veces'},
+ {id:'futureCostKpi',title:'Costo del mañana',hint:'Compromisos del próximo mes, presión y carga futura'},
+ {id:'futureCalendar',title:'Calendario de presión financiera',hint:'Mapa de vencimientos diarios en los próximos 30 días'},
  {id:'futureFlow',title:'El río de tu dinero',hint:'Flujos de liquidez e ingresos hacia compromisos y saldo'},
- {id:'futureYear',title:'Los próximos 12 meses',hint:'Comparación mensual de cobros y vencimientos'},
  {id:'futureWaterfall',title:'¿Cuánto dinero ya tiene dueño?',hint:'Cascada de saldos, ingresos programados y pagos'},
  {id:'futureMap',title:'Mapa de compromisos',hint:'Peso mensual de tarjetas, préstamos y suscripciones'},
- {id:'futureScenarios',title:'Tres futuros posibles',hint:'Escenarios de sensibilidad y riesgo financiero'},
  {id:'futureBubbles',title:'Matriz de importes y urgencia',hint:'Cruce de importe y proximidad de vencimientos'},
 
 ];
@@ -32496,7 +32521,7 @@ const V105_WIDGETS=[
    Otros widgets funcionales siguen disponibles desde el editor. */
 const V316_ESSENTIAL_GRAPHS=['creditUtil','patrimonyTrend','budgetPulse'];
 const V317_NEW_GRAPHS=['cashPressure','spendingFingerprint'];
-const V318_NEW_GRAPHS=['futureFlow','futureYear','futureWaterfall','futureMap','futureScenarios','futureBubbles'];
+const V318_NEW_GRAPHS=['futureCostKpi','futureCalendar','futureFlow','futureWaterfall','futureMap','futureBubbles'];
 const V317_FEATURE_GRAPHS=[...V316_ESSENTIAL_GRAPHS,...V317_NEW_GRAPHS,...V318_NEW_GRAPHS];
 function v316OrderDefaults(ids){return [...V317_FEATURE_GRAPHS,...ids.filter(id=>!V317_FEATURE_GRAPHS.includes(id))]}
 function v316VisibleDefaults(ids){
@@ -34878,15 +34903,17 @@ function v273SettingsWidgetEditor(){
  const insights=cfg.order.filter(x=>V317_NEW_GRAPHS.includes(x));
  const tomorrow=cfg.order.filter(x=>V318_NEW_GRAPHS.includes(x));
  const secondary=cfg.order.filter(x=>!V317_FEATURE_GRAPHS.includes(x));
- return `<section class="v273-settings-customizer v316-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Lo esencial, con más inteligencia</h3><p>Los cinco gráficos esenciales y seis perspectivas nuevas. En la web, Mis indicadores reúne únicamente estos gráficos de Personalización.</p></header>
- <div class="v316-essentials-head"><span>GRÁFICOS ESENCIALES</span><span>03 / 03</span></div>
+ const ratio=(arr)=>String(arr.length).padStart(2,'0')+' / '+String(arr.length).padStart(2,'0');
+ return `<section class="v273-settings-customizer v316-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Lo esencial, con más inteligencia</h3><p>Tus gráficos de Personalización también viven en Mis indicadores web. Aquí organizas el Resumen móvil y decides exactamente qué quieres ver.</p></header>
+ <div class="v316-essentials-head"><span>GRÁFICOS ESENCIALES</span><span>${ratio(essentials)}</span></div>
  <div class="v273-custom-rows v316-essentials">${essentials.map(row).join('')}</div>
- <div class="v316-essentials-head v317-insights-head"><span>NUEVAS PERSPECTIVAS</span><span>02 / 02</span></div>
+ <div class="v316-essentials-head v317-insights-head"><span>NUEVAS PERSPECTIVAS</span><span>${ratio(insights)}</span></div>
  <div class="v273-custom-rows v316-essentials v317-insights">${insights.map(row).join('')}</div>
- <div class="v316-essentials-head v318-insights-head"><span>EL COSTO DE MAÑANA · 6 NUEVOS</span><span>06 / 06</span></div>
+ <div class="v316-essentials-head v318-insights-head"><span>EL COSTO DE MAÑANA</span><span>${ratio(tomorrow)}</span></div>
  <div class="v273-custom-rows v316-essentials v318-personalization-rows">${tomorrow.map(row).join('')}</div>
- <details class="v316-more-widgets"><summary>Otras secciones de tu Resumen <span aria-hidden="true">⌄</span></summary><div class="v273-custom-rows">${secondary.map(row).join('')}</div></details>
- <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. En web los 11 gráficos de Personalización están disponibles en Mis indicadores. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
+ <div class="v316-essentials-head v316-secondary-head"><span>OTRAS SECCIONES DEL RESUMEN</span><span>${ratio(secondary)}</span></div>
+ <div class="v273-custom-rows v316-secondary-rows">${secondary.map(row).join('')}</div>
+ <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. En web los ${V317_FEATURE_GRAPHS.length} gráficos de Personalización están disponibles en Mis indicadores. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
 }
 
 
@@ -34896,15 +34923,12 @@ function v273SettingsWidgetEditor(){
 function v296PersonalizePage(){
  const s=db.settings;
  const sections = `<section id="v296-kpi" class="v296-block" aria-label="Estilo del KPI principal">${v242SettingsPreview()}</section>
- <section id="v296-widgets" class="v296-block" aria-label="Módulos y orden del Resumen">${v273SettingsWidgetEditor()}</section>
- <section id="v296-glass" class="v296-block" aria-label="Liquid Glass móvil">${v250DockGlassPanel()}</section>
-`;
+ <section id="v296-widgets" class="v296-block" aria-label="Módulos y orden del Resumen">${v273SettingsWidgetEditor()}</section>`;
  return `<div class="v296-personalize" aria-label="Personalización de vive el hoy">
-  <header class="v296-hero"><div class="v296-hero-top"><button type="button" data-v296-back="1" class="v296-back">${icon('arrow')} Inicio</button><span class="v296-hero-label">vive el hoy · tu espacio</span></div><span class="v296-eyebrow">DISEÑA TU EXPERIENCIA</span><h2>Personalización</h2><p>Organiza tu Resumen móvil y ajusta Liquid Glass. Los temas y colores están en Ajustes.</p></header>
+  <header class="v296-hero"><div class="v296-hero-top"><button type="button" data-v296-back="1" class="v296-back">${icon('arrow')} Inicio</button><span class="v296-hero-label">vive el hoy · tu espacio</span></div><span class="v296-eyebrow">DISEÑA TU EXPERIENCIA</span><h2>Personalización</h2><p>Organiza tu Resumen móvil en negro profundo. Liquid Glass, temas y colores se ajustan desde Ajustes.</p></header>
   <nav class="v296-nav" aria-label="Secciones de personalización">
    <a href="#v296-kpi">${icon('wallet')} KPI principal</a>
    <a href="#v296-widgets">${icon('grid')} Mi resumen</a>
-   <a href="#v296-glass">${icon('sun')} Liquid Glass</a>
   </nav>
   <div class="v296-settings-body">${sections}</div>
   <footer class="v296-end"><span>Las preferencias visuales no modifican saldos, operaciones ni registros.</span><button type="button" data-v296-back="1">Volver a Inicio ${icon('arrow')}</button></footer>
@@ -34932,7 +34956,7 @@ function v300AppearancePane(){
  ['original','Nube original','#d9e7fa','#f4f6fd','La atmósfera original'],['glacier','Glaciar','#bceaf0','#dbf5e8','Azul hielo y agua marina'],['sunset','Atardecer','#f1cadd','#f8dec4','Rosa suave y arena']
 ].map(([key,name,a,b,desc])=>`<button type="button" class="vive-palette-choice v15-bg-choice ${((s.backgroundChoice||'original')===key)?'selected':''}" data-act="backgroundTheme" data-id="${key}" aria-pressed="${(s.backgroundChoice||'original')===key}"><span class="v15-bg-art" style="background:linear-gradient(135deg,${a},${b})"><i class="v15-bg-rail"></i><i class="v15-bg-card"></i><i class="v15-bg-card small"></i></span><strong>${name}</strong><small>${desc}</small></button>`).join('')}</div>
 <div class="vive-custom-palette"><div><strong>Fondo personalizado</strong><small>Escoge el tono de la atmósfera; el sistema conservará el contraste y el degradado.</small></div><label for="viveBackgroundColor">Color</label><input type="color" id="viveBackgroundColor" value="${/^#[0-9a-f]{6}$/i.test(s.backgroundHex||'')?s.backgroundHex:'#9db8ef'}" aria-label="Color personalizado del fondo"><button class="btn sm soft" type="button" data-act="backgroundCustom">Aplicar fondo</button></div></div>
-</div>`;
+<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / LIQUID GLASS</span><h3>Barra inferior móvil</h3></div></div>${v250DockGlassPanel()}</div>`;
 }
 
 function v242Settings(){
@@ -35164,22 +35188,22 @@ function v309ExtraCharts(){
   ${v317ActiveDays?`<div class="v317-peak"><span>Día de mayor consumo · ${sanitize(prettyDate(v317Peak.date))}</span><strong>${displayMoney(v317Peak.amount)}</strong></div>`:''}
   <p class="v315-small-note">Solo movimientos de gasto y compras registrados; reembolsos reducen el importe del día. Excluye transferencias y pagos de tarjeta para no contabilizar dos veces. No registra actividad nueva.</p>
  </section>`;
- return cardSection+wealthSection+budgetSection+dueSection+fingerprintSection;
+ return cardSection+wealthSection+tomorrowSection+budgetSection+dueSection+fingerprintSection;
 }
 
 /* V318 · El costo de mañana — 10 visualizaciones analíticas vinculadas al motor real.
    Solo presentación. Ningún gráfico registra gastos, ingresos, pagos ni modifica Supabase.
    La cartera contractual se proyecta únicamente donde existe amortización verificable. */
 const V318_GRAPH_META=[
+ ['futureCostKpi','Costo del mañana','Compromisos del próximo mes, presión y carga futura','decisions'],
+ ['futureCalendar','Calendario de presión financiera','Mapa de vencimientos diarios en los próximos 30 días','decisions'],
  ['futureFlow','El río de tu dinero','Origen, obligaciones y saldo previsto en 30 días','activity'],
- ['futureYear','Los próximos 12 meses','Cobros y vencimientos identificados por mes','projection'],
  ['futureWaterfall','¿Cuánto dinero ya tiene dueño?','Cascada de liquidez, ingresos y compromisos','decisions'],
  ['futureMap','Mapa de compromisos','Peso relativo por tipo de obligación mensual','breakdown'],
- ['futureScenarios','Tres futuros posibles','Escenarios de sensibilidad, no movimientos reales','projection'],
  ['futureBubbles','Matriz de importes y urgencia','Relación entre importe y días hasta vencer','decisions'],
 ];
 const V318_GRAPH_IDS=new Set(V318_GRAPH_META.map(x=>x[0]));
-const V318_LEGACY_MAP={creditUtil:'Utilización por tarjeta',patrimonyTrend:'Tendencia de patrimonio',budgetPulse:'Pulso presupuestario',cashPressure:'Radar de vencimientos',spendingFingerprint:'Huella de gastos · 28 días'};
+const V318_LEGACY_MAP={creditUtil:'Utilización por tarjeta',patrimonyTrend:'Tendencia de patrimonio',budgetPulse:'Pulso presupuestario',cashPressure:'Radar de vencimientos',spendingFingerprint:'Huella de gastos · 28 días',futureCostKpi:'Costo del mañana',futureCalendar:'Calendario de presión financiera'};
 const V318_ALL_CHART_IDS=[...Object.keys(V318_LEGACY_MAP),...V318_GRAPH_META.map(x=>x[0])];
 function v318CalendarMonth(offset){const d=dateObj(today());return new Date(d.getFullYear(),d.getMonth()+offset,1).toLocaleDateString('en-CA',{year:'numeric',month:'2-digit'}).replace(/\//g,'-')}
 function v318IsoMonth(offset){const d=dateObj(today());const t=new Date(d.getFullYear(),d.getMonth()+offset,1);return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')}
@@ -35218,30 +35242,32 @@ function v318LoanRoadmap(c){const current=c.loans[0]+c.otherDebt;const last=c.lo
  return {current,last,markup:`<svg class="v318-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Capital de préstamos previsto y deudas no amortizadas a 12 meses"><path d="${path}" class="v318-blue-stroke"/><path d="${capital}" class="v318-green-stroke"/>${markers}</svg><div class="v318-inline-legend"><span><i class="blue"></i> Deuda total de referencia*</span><span><i class="green"></i> Capital bancario previsto</span></div>`,hasLoan:c.contractual.length>0};
 }
 function v318Graph(id){const c=v318Context(),t=c.thirty,Y=c.year;
+
+ if(id==='futureCostKpi'){
+  const activeRecurring=(Array.isArray(db.recurring)?db.recurring:[]).filter(x=>x&&x.active!==false&&!x.archived);
+  const monthlyRecurring=activeRecurring.reduce((sum,r)=>sum+fx(Math.max(0,num(r.amount))*(typeof v80MonthlyFactor==='function'?v80MonthlyFactor(r.frequency):1),r.currency||'DOP'),0);
+  const monthlyDue=c.monthly?.[0]?.due||0;
+  const totalMonthly=Math.max(monthlyDue,monthlyRecurring);
+  const pressure=Number.isFinite(c.reference?.ratio)?c.reference.ratio:null;
+  const recurringCount=activeRecurring.length;
+  return v318ChartFrame(`<div class="v322-kpi-hero"><div class="v322-kpi-copy"><small>COSTO DEL MAÑANA</small><strong>${v318Money(totalMonthly)} <em>/ mes</em></strong><p>Lo que ya está comprometido para tu próximo mes (suscripciones, servicios y pagos de deuda).</p></div><div class="v322-kpi-icon" aria-hidden="true">${icon('calendar')}</div></div><div class="v322-kpi-metrics"><div><small>Compromisos recurrentes</small><strong>${recurringCount}</strong></div><div><small>Presión de deuda</small><strong>${pressure===null?'Sin datos':v318Pct(pressure)}</strong></div><div><small>Carga mensual futura</small><strong>${v318Money(monthlyDue||totalMonthly)}</strong></div></div>`,`Usa los compromisos con fecha y los servicios recurrentes activos. La presión se calcula contra tus ingresos registrados.`);
+ }
+ if(id==='futureCalendar'){
+  const start=dateObj(today());
+  const events=(c.thirty.events||[]).filter(x=>x.type==='expense'&&x.amount>.005);
+  const daily=new Map();
+  for(const ev of events)daily.set(ev.date,(daily.get(ev.date)||0)+ev.amount);
+  const days=Array.from({length:30},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);const iso=dateStr(d);return {date:iso,day:d.getDate(),amount:daily.get(iso)||0}});
+  const max=Math.max(1,...days.map(x=>x.amount));
+  const active=days.filter(x=>x.amount>0);
+  const total=active.reduce((s,x)=>s+x.amount,0);
+  const cells=days.map(d=>{const level=d.amount<=0?0:Math.max(1,Math.ceil(d.amount/max*4));return `<button type="button" class="v322-cal-cell level-${level}" ${v318Tip(prettyDate(d.date),'Obligaciones: '+v318Money(d.amount))}><span>${d.day}</span></button>`}).join('');
+  return v318ChartFrame(v318SmallStats([['Días con vencimientos',`${active.length} / 30`],['Obligaciones',v318Money(total)]])+`<div class="v322-cal-grid">${cells}</div><div class="v322-cal-legend"><span>Sin vencimientos</span><span>Menor presión → Mayor presión</span></div>`,`Cada cuadrícula corresponde a un día futuro. Se excluyen movimientos ya pagados según el motor de compromisos.`);
+ }
  if(id==='futureFlow'){
   const funds=v318N(t.initial),inc=v318N(t.incomes),dues=v318N(t.dues),net=t.ending,base=Math.max(1,funds+inc,dues),th=x=>Math.max(5,Math.min(41,40*x/base));
   const body=`<svg class="v318-svg" viewBox="0 0 620 190" role="img" aria-label="Flujo de liquidez inicial, ingresos calendarizados, vencimientos y saldo estimado"><path d="M116 49 C215 49 218 89 314 89" stroke="#60a5fa" stroke-width="${th(funds)}" fill="none" stroke-opacity=".74"/><path d="M116 139 C214 139 221 98 314 98" stroke="#3dd6bc" stroke-width="${th(inc)}" fill="none" stroke-opacity=".74"/><path d="M342 90 C430 90 436 50 498 50" stroke="#ffb16c" stroke-width="${th(dues)}" fill="none" stroke-opacity=".75"/><path d="M342 98 C430 98 438 143 498 143" stroke="#60a5fa" stroke-width="${th(v318N(net))}" fill="none" stroke-opacity=".75"/><rect x="6" y="24" width="114" height="54" rx="10"/><rect x="6" y="115" width="114" height="54" rx="10"/><rect x="287" y="67" width="67" height="55" rx="12"/><rect x="497" y="24" width="119" height="54" rx="10"/><rect x="497" y="115" width="119" height="54" rx="10"/><g class="v318-svg-caption"><text x="14" y="41">LIQUIDEZ HOY</text><text x="14" y="57">${sanitize(v318Money(funds))}</text><text x="14" y="132">COBROS PREVISTOS</text><text x="14" y="148">${sanitize(v318Money(inc))}</text><text x="297" y="90">30 DÍAS</text><text x="505" y="41">VENCIMIENTOS</text><text x="505" y="57">${sanitize(v318Money(dues))}</text><text x="505" y="132">SALDO PREVISTO</text><text x="505" y="148">${sanitize(v318Money(net))}</text></g></svg>`;
   return v318ChartFrame(body+v318SmallStats([['Disponible inicial',v318Money(funds)],['Déficit máximo',v318Money(Math.max(0,-t.minimum)),t.minimum<0?'v318-danger':'']]),'30 días · Solo cobros y obligaciones con fechas verificables. El ancho de cada flujo representa su magnitud relativa.');
- }
- if(id==='futureYear'){
-  const data=c.monthly,top=Math.max(1,...data.flatMap(m=>[m.income,m.due]));const has=data.some(m=>m.income||m.due);
-  if(!has)return v318Empty('No hay cobros o compromisos futuros calendarizados para este horizonte.');
-  return v318ChartFrame(`<div class="v318-year-scroll"><div class="v318-year-grid">${data.map(m=>`<div class="v318-year-col" ${v318Tip(m.period,'Cobros: '+v318Money(m.income),'Vencimientos: '+v318Money(m.due))}><div class="v318-year-bars"><i style="height:${(m.income/top*100).toFixed(2)}%"></i><b style="height:${(m.due/top*100).toFixed(2)}%"></b></div><span>${sanitize(m.label)}</span></div>`).join('')}</div></div><div class="v318-inline-legend"><span><i class="blue"></i>Cobros</span><span><i class="amber"></i>Vencimientos</span></div>`, '12 meses, desde el mes actual · No se infieren ingresos sin programación. Las fechas y cuotas futuras pueden cambiar.');
- }
- if(id==='futureHeat'){
-  const data=t.dayByDay.slice(1,31),byDay=new Map();for(const x of t.events.filter(x=>x.type==='expense'))byDay.set(x.date,(byDay.get(x.date)||0)+x.amount);
-  const max=Math.max(1,...data.map(r=>byDay.get(r.date)||0));const active=data.filter(r=>(byDay.get(r.date)||0)>0).length;
-  return v318ChartFrame(v318SmallStats([['Días con vencimientos',active+' / 30'],['Obligaciones',v318Money(t.dues)]])+`<div class="v318-heat-days">${data.map(row=>{const due=byDay.get(row.date)||0;const lv=due<=0?0:Math.max(1,Math.ceil(due/max*4));return `<span class="v318-heat-box level-${lv}" ${v318Tip(prettyDate(row.date),'Pendiente: '+v318Money(due))}>${Number(row.date.slice(-2))}</span>`}).join('')}</div><div class="v318-heat-footer"><span>Sin vencimientos</span><span>Menor presión → Mayor presión</span></div>`,'Cada cuadrícula corresponde a un día futuro. Se excluyen movimientos ya pagados según el motor de compromisos.');
- }
- if(id==='futureRadar'){
-  const ref=c.reference,monthly=ref.monthly||0,limit=db.cards.reduce((a,z)=>a+num(z.limitDOP)+fx(num(z.limitUSD),'USD'),0),use=totalCardDebt();
-  const nextWeek=t.events.filter(x=>x.type==='expense'&&x.date<=v119DateAfter(7)).reduce((s,x)=>s+x.amount,0);
-  const vals=[ref.ratio!==null?ref.ratio:null,limit>0?100*use/limit:null,monthly>0?100*c.subTotal/monthly:null,monthly>0?100-Math.min(100,100*v318N(t.initial)/monthly):null,t.dues>0?100*nextWeek/t.dues:0,t.initial+t.incomes>0?Math.max(0,-t.minimum)/(t.initial+t.incomes)*100:null];
-  const labels=['Cuotas / ingresos','Crédito utilizado','Peso recurrente','Falta de cobertura','Vence en 7 días','Déficit potencial'],names=['CUOTAS','CRÉDITO','RECURRENTE','COBERTURA','URGENCIA','DÉFICIT'];
-  const pts=vals.map((v,i)=>{const a=(-90+i*60)*Math.PI/180,rad=Number.isFinite(v)?Math.max(0,Math.min(100,v))/100*74:0;return [155+Math.cos(a)*rad,100+Math.sin(a)*rad]});
-  const poly=pts.map(p=>p.map(x=>x.toFixed(1)).join(',')).join(' ');
-  const grid=[.25,.5,.75,1].map(p=>'<polygon points="'+Array.from({length:6},(_,i)=>{const a=(-90+i*60)*Math.PI/180;return (155+Math.cos(a)*74*p).toFixed(1)+','+(100+Math.sin(a)*74*p).toFixed(1)}).join(' ')+'"/>').join('');
-  return v318ChartFrame(`<div class="v318-radar-layout"><svg viewBox="0 0 310 205" class="v318-radar-svg" role="img" aria-label="Radar de seis razones financieras; no es calificación crediticia"><g class="v318-radar-guides">${grid}</g><polygon class="v318-radar-shape" points="${poly}"/>${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.2"><title>${names[i]}: ${v318Pct(vals[i])}</title></circle>`).join('')}</svg><div class="v318-radar-metrics">${labels.map((label,i)=>`<div><span>${label}</span><strong>${v318Pct(vals[i])}</strong></div>`).join('')}</div></div>`,'Indicadores exploratorios relativos, no un score crediticio. Los ejes no disponibles se señalan como «Sin datos».');
  }
  if(id==='futureWaterfall'){
   const first=t.initial,after=t.initial+t.incomes,last=t.ending,low=Math.min(0,first,after,last),high=Math.max(1,first,after,last),span=high-low||1;
@@ -35258,13 +35284,6 @@ function v318Graph(id){const c=v318Context(),t=c.thirty,Y=c.year;
   const a=c.reference.a,types=[['Tarjetas',v318N(a.cards),'blue'],['Préstamos',v318N(a.loans),'cyan'],['Suscripciones',v318N(a.recurring),'amber'],['Entre personas',v318N(a.personal),'rose']];const total=types.reduce((s,x)=>s+x[1],0);
   if(!(total>0))return v318Empty('No hay compromisos cuantificados para el mes actual.');
   return v318ChartFrame(`<div class="v318-treemap">${types.filter(x=>x[1]>0).map(([name,amount,color])=>`<div class="v318-tree-cell ${color}" style="flex-grow:${Math.max(.04,amount/total).toFixed(4)}" ${v318Tip(name,'Cuota mensual: '+v318Money(amount),'Peso: '+v318Pct(amount/total*100))}><span>${sanitize(name)}</span><strong>${v318Pct(amount/total*100)}</strong><small>${v318Money(amount)}</small></div>`).join('')}</div>`+v318SmallStats([['Total mes',v318Money(total)],['Grupos activos',types.filter(x=>x[1]>0).length+'']]),'Cada bloque representa el peso relativo de una categoría en las obligaciones del mes. Se usan cuotas, no capital total.');
- }
- if(id==='futureScenarios'){
-  const pct=[5,10,20].includes(ui.v318ScenarioPct)?ui.v318ScenarioPct:10,rate=pct/100;
-  let base=t.initial,good=t.initial,bad=t.initial;const b=[],g=[],w=[];
-  for(const row of t.dayByDay){base+=row.incoming-row.outgoing;good+=row.incoming*(1+rate)-row.outgoing*(1-rate);bad+=row.incoming*(1-rate)-row.outgoing*(1+rate);b.push(base);g.push(good);w.push(bad)}
-  const low=Math.min(0,...b,...g,...w),high=Math.max(1,...b,...g,...w),r=[low,high];
-  return v318ChartFrame(`<div class="v318-scenarios-controls" role="group" aria-label="Sensibilidad de los escenarios">${[5,10,20].map(x=>`<button type="button" data-v318-scenario="${x}" aria-pressed="${pct===x}" class="${pct===x?'active':''}">±${x}%</button>`).join('')}</div><svg viewBox="0 0 600 180" class="v318-svg" role="img" aria-label="Comparación de saldo base, favorable y adverso a treinta días"><path d="${v318Curve(g,600,180,16,r)}" class="v318-green-stroke"/><path d="${v318Curve(b,600,180,16,r)}" class="v318-blue-stroke"/><path d="${v318Curve(w,600,180,16,r)}" class="v318-amber-stroke"/></svg><div class="v318-inline-legend"><span><i class="green"></i> Favorable</span><span><i class="blue"></i> Base</span><span><i class="amber"></i> Adverso</span></div>`+v318SmallStats([['Favorable',v318Money(g.at(-1))],['Base',v318Money(b.at(-1))],['Adverso',v318Money(w.at(-1))]]),'Hipótesis: los ingresos previstos varían ±'+pct+'% y los pagos previstos cambian ∓'+pct+'%, manteniendo el saldo inicial. No crea operaciones.');
  }
  if(id==='futureBubbles'){
   const first=new Map();for(const e of c.dueEvents){const name=e.name||'Compromiso';if(!first.has(name))first.set(name,e)}
@@ -35324,15 +35343,17 @@ function v318ExistingGraph(id){
 
 function v318MobileCharts(){
  const visible=new Set(v105Config().visible);
- return V318_GRAPH_META.filter(([id])=>visible.has(id)).map(([id,title,hint],i)=>`<section class="v105-mobile-extra v273-overview-widget v318-mobile-card" data-v105-widget="${id}" aria-label="${sanitize(title)}"><header class="v318-mobile-head"><span>${String(i+6).padStart(2,'0')} / 11 · EL COSTO DE MAÑANA</span><h2>${sanitize(title)}</h2><small>${sanitize(hint)}</small></header>${v318Graph(id)}</section>`).join('');
+ return V318_GRAPH_META.filter(([id])=>visible.has(id)).map(([id,title,hint],i)=>`<section class="v105-mobile-extra v273-overview-widget v318-mobile-card" data-v105-widget="${id}" aria-label="${sanitize(title)}"><header class="v318-mobile-head"><span>${String(i+6).padStart(2,'0')} / ${String(V317_FEATURE_GRAPHS.length).padStart(2,'0')} · EL COSTO DE MAÑANA</span><h2>${sanitize(title)}</h2><small>${sanitize(hint)}</small></header>${v318Graph(id)}</section>`).join('');
 }
 function v318InitializeDashboard(){
  if(isMobileViewport())return;
  const authorized=V317_FEATURE_GRAPHS;
  const current=Array.isArray(db.settings.widgetsBoard)?db.settings.widgetsBoard:[];
  // V320 migration: delete every old widget, including charts removed at user's request.
- if(!db.settings.v321PersonalizationOnly){
+ if(!db.settings.v323PersonalizationOnly){
   db.settings.widgetsBoard=[...authorized];
+  db.settings.v323PersonalizationOnly=true;
+  db.settings.v322PersonalizationOnly=true;
   db.settings.v321PersonalizationOnly=true;
   db.settings.v318BoardInitialized=true;
   persist();
@@ -47853,5 +47874,34 @@ body.theme-dark tbody td{background:transparent!important;border-color:#2f2f32!i
 </style>
 
 
+
+<script>
+(function(){
+ const css=`
+ .v322-kpi-hero{display:flex;align-items:stretch;justify-content:space-between;gap:14px;padding:16px 18px;border-radius:22px;background:radial-gradient(circle at top right,rgba(72,117,255,.26),transparent 34%),linear-gradient(145deg,#0a1631 0%,#06101f 52%,#04070d 100%);border:1px solid rgba(98,142,255,.22);box-shadow:0 20px 50px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.05)}
+ .v322-kpi-copy small{display:block;font-size:11px;letter-spacing:.18em;color:#a9c0ff;font-weight:800;margin-bottom:10px}
+ .v322-kpi-copy strong{display:block;font-size:clamp(28px,5vw,48px);line-height:1;color:#fff;font-weight:900}
+ .v322-kpi-copy strong em{font-style:normal;font-size:.45em;font-weight:700;color:#dfe9ff}
+ .v322-kpi-copy p{margin:10px 0 0;color:#d8e2ff;max-width:36ch;line-height:1.35}
+ .v322-kpi-icon{width:76px;height:76px;flex:0 0 76px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(180deg,rgba(96,148,255,.55),rgba(63,112,214,.35));border:1px solid rgba(176,210,255,.28);color:#eef4ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 10px 28px rgba(16,33,81,.34)}
+ .v322-kpi-icon svg{width:34px;height:34px}
+ .v322-kpi-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+ .v322-kpi-metrics>div{padding:14px 16px;border-radius:18px;background:linear-gradient(180deg,rgba(13,23,44,.92),rgba(7,12,24,.92));border:1px solid rgba(86,118,189,.22)}
+ .v322-kpi-metrics small{display:block;color:#9bb2e7;font-size:11px;line-height:1.25;margin-bottom:8px}.v322-kpi-metrics strong{color:#fff;font-size:22px;font-weight:800}
+ .v322-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-top:12px}
+ .v322-cal-cell{appearance:none;border:1px solid rgba(105,122,162,.24);background:#0d111a;border-radius:12px;min-height:48px;display:grid;place-items:center;color:#eef3ff;font-weight:700;box-shadow:none}
+ .v322-cal-cell.level-1{background:#16233b}.v322-cal-cell.level-2{background:#1f365d}.v322-cal-cell.level-3{background:#2a4a82}.v322-cal-cell.level-4{background:#5aa0ff;color:#08111f}
+ .v322-cal-cell span{font-size:15px;line-height:1}
+ .v322-cal-legend{display:flex;justify-content:space-between;gap:10px;color:#93a7d1;font-size:12px;margin-top:12px}
+ .v316-secondary-head{margin-top:16px}
+ .v316-secondary-rows{margin-top:10px}
+ body.theme-black :is(.v296-personalize,.v296-hero,.v296-settings-body,.v296-block,.v273-settings-customizer){background-color:#050608!important;color:#eef3ff}
+ body.theme-black :is(.v296-block,.v273-settings-customizer,.v250-dock-settings){border-color:rgba(118,138,181,.18)!important;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+ body.theme-black .v296-nav a{background:rgba(11,14,22,.9);border-color:rgba(115,134,176,.22);color:#eaf0ff}
+ body.theme-black :is(.v242-settings-home,.v242-settings-section,.v242-settings-profile,.v300-appearance-pane){background-color:transparent}
+ `;
+ const st=document.createElement('style');st.id='v322-overrides';st.textContent=css;document.head.appendChild(st);
+})();
+</script>
 </body>
 </html>
