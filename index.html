@@ -2,6 +2,7 @@
 
 <html lang="es">
 <head>
+<meta name="vive-el-hoy-build-v316" content="personalizacion-cuatro-graficos-esenciales" />
 <meta name="vive-el-hoy-build-v305" content="suscripciones-colores-sutiles-activos-detalle-historial"/>
 <meta name="vive-el-hoy-build-v306" content="resumen-web-compromisos-doble-altura-y-suscripciones-movil-referencia"/>
 <meta name="vive-el-hoy-audit-v312" content="vision-global-unica-y-eliminacion-conservadora-de-codigo-huerfano"/>
@@ -32431,24 +32432,34 @@ const V105_WIDGETS=[
  {id:'certificates',title:'Certificados',hint:'Capital registrado y productos de ahorro'},
  {id:'creditUtil',title:'Utilización por tarjeta',hint:'Límite total, deuda utilizada, disponible y porcentaje'},
  {id:'patrimonyTrend',title:'Tendencia de patrimonio',hint:'Evolución real de activos menos obligaciones por mes'},
+ {id:'tomorrowInsight',title:'El costo de mañana',hint:'Liquidez hoy, proyección de 30 días y alertas de caja'},
+ {id:'budgetPulse',title:'Cumplimiento de presupuesto · Pulso',hint:'Utilización, ritmo mensual, disponible y categorías'},
 
 ];
+/* V316: cuatro gráficos financieros esenciales, compatibles con preferencias previas.
+   Otros widgets funcionales siguen disponibles desde el editor. */
+const V316_ESSENTIAL_GRAPHS=['creditUtil','patrimonyTrend','tomorrowInsight','budgetPulse'];
+function v316OrderDefaults(ids){return [...V316_ESSENTIAL_GRAPHS,...ids.filter(id=>!V316_ESSENTIAL_GRAPHS.includes(id))]}
+function v316VisibleDefaults(ids){
+ const hidden=new Set(['activity','subscriptions','cardsDue','budget','budgetTrend','chart','banks','accounts','cards','loans','certificates']);
+ return ids.filter(id=>!hidden.has(id));
+}
 function v105Config(){
  const raw=db.settings?.v105OverviewWidgets;
  const ids=V105_WIDGETS.map(w=>w.id);
- if(!raw||!Array.isArray(raw.order))return {order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend','banks','accounts','cards','loans','certificates'].includes(x))};
- const order=[...new Set(raw.order.filter(x=>ids.includes(x))),...ids.filter(x=>!raw.order.includes(x))];
- // New V290 modules should not disappear in older saved mobile layouts.
- if(!raw.order.includes('budget')){const pos=order.indexOf('budget');if(pos>=0)order.splice(pos,1);order.splice(Math.max(0,order.indexOf('capacity')+1),0,'budget');}
- const visible=Array.isArray(raw.visible)?raw.visible.filter(x=>ids.includes(x)):ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend','banks','accounts','cards','loans','certificates'].includes(x));
- if(!raw.order.includes('budget')&&!visible.includes('budget'))visible.push('budget');
- // V315: añadir solo dos gráficos esenciales una vez a las preferencias antiguas.
- // Después de guardar, el usuario puede ocultarlos libremente.
- if(!raw.order.includes('patrimonyTrend')){
-  if(!visible.includes('creditUtil'))visible.push('creditUtil');
-  if(!visible.includes('patrimonyTrend'))visible.push('patrimonyTrend');
+ if(!raw||!Array.isArray(raw.order))return {order:v316OrderDefaults(ids),visible:v316VisibleDefaults(ids)};
+ const originalOrder=raw.order.filter(x=>ids.includes(x));
+ const order=[...new Set(originalOrder),...ids.filter(x=>!originalOrder.includes(x))];
+ const visible=Array.isArray(raw.visible)?[...new Set(raw.visible.filter(x=>ids.includes(x)))]:v316VisibleDefaults(ids);
+ // Única migración V316. No vuelve a encender gráficos si el usuario los desactiva.
+ if(!originalOrder.includes('budgetPulse')){
+  for(const id of V316_ESSENTIAL_GRAPHS)if(!visible.includes(id))visible.push(id);
+  // Evitar redundancia con el nuevo pulso, sin borrar los módulos históricos.
+  for(const oldId of ['budget','budgetTrend','chart']){
+   const i=visible.indexOf(oldId);if(i>=0)visible.splice(i,1);
+  }
  }
- return {order,visible};
+ return {order:!originalOrder.includes('budgetPulse')?v316OrderDefaults(order):order,visible};
 }
 function v105BubblePercent(current,previous,comparison,risk=false){
  if(!comparison?.valid||!Number.isFinite(previous)||Math.abs(previous)<0.005)return '<span class="v105-bubble-pct v105-pct-empty">—</span>';
@@ -32524,7 +32535,7 @@ document.addEventListener('click',ev=>{
  const move=ev.target.closest?.('[data-v105-move]');
  if(move){ev.preventDefault();ev.stopPropagation();const cfg=v105DraftConfig||v105Config(),i=cfg.order.indexOf(move.dataset.id),j=i+(move.dataset.v105Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]];v105DraftConfig=cfg;v105Customizer();return;}
  const reset=ev.target.closest?.('[data-v105-reset]');
- if(reset){ev.preventDefault();ev.stopPropagation();const ids=V105_WIDGETS.map(x=>x.id);v105DraftConfig={order:ids,visible:ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend','banks','accounts','cards','loans','certificates'].includes(x))};v105Customizer();return;}
+ if(reset){ev.preventDefault();ev.stopPropagation();const ids=V105_WIDGETS.map(x=>x.id);v105DraftConfig={order:v316OrderDefaults(ids),visible:v316VisibleDefaults(ids)};v105Customizer();return;}
  const apply=ev.target.closest?.('[data-v105-apply]');
  if(apply){ev.preventDefault();ev.stopPropagation();if(v105DraftConfig)v105SaveConfig(v105DraftConfig);v105DraftConfig=null;closeModal();return;}
  const choice=ev.target.closest?.('[data-v105-pay-option]');
@@ -34794,14 +34805,19 @@ function v242SettingsPreview(){
 }
 
 function v273SettingsWidgetEditor(){
- const cfg=v105Config();
- const visible=new Set(cfg.visible);
- const rows=cfg.order.map((id,i)=>{
-  const w=V105_WIDGETS.find(x=>x.id===id);if(!w)return '';
+ const cfg=v105Config(),visible=new Set(cfg.visible);
+ const row=(id)=>{
+  const i=cfg.order.indexOf(id),w=V105_WIDGETS.find(x=>x.id===id);if(!w)return '';
   const on=visible.has(id);
-  return `<div class="v273-custom-row"><span class="v273-custom-copy"><strong>${sanitize(w.title)}</strong><small>${sanitize(w.hint)}</small></span><div class="v273-custom-controls"><button type="button" class="v273-visibility ${on?'is-on':''}" data-v273-toggle="${id}" role="switch" aria-checked="${on}" aria-label="${on?'Ocultar':'Mostrar'} ${sanitize(w.title)}"><span></span></button><button type="button" class="v273-order" data-v273-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${sanitize(w.title)}">↑</button><button type="button" class="v273-order" data-v273-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${sanitize(w.title)}">↓</button></div></div>`;
- }).join('');
- return `<section class="v273-settings-customizer" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Organiza tu Resumen</h3><p>Elige las secciones que quieres ver y cambia su orden. Las preferencias se guardan automáticamente y no modifican tus movimientos.</p></header><div class="v273-custom-rows">${rows}</div><div class="v273-custom-footer"><span>Solo afecta a la vista móvil de Resumen.</span><button type="button" data-v273-reset="1">Restaurar orden y visibilidad</button></div></section>`;
+  return `<div class="v273-custom-row v316-custom-row" data-v316-row="${id}"><span class="v273-custom-copy"><strong>${sanitize(w.title)}</strong><small>${sanitize(w.hint)}</small></span><div class="v273-custom-controls"><button type="button" class="v273-visibility ${on?'is-on':''}" data-v273-toggle="${id}" role="switch" aria-checked="${on}" aria-label="${on?'Ocultar':'Mostrar'} ${sanitize(w.title)}"><span></span></button><button type="button" class="v273-order" data-v273-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${sanitize(w.title)}">↑</button><button type="button" class="v273-order" data-v273-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${sanitize(w.title)}">↓</button></div></div>`;
+ };
+ const essentials=cfg.order.filter(x=>V316_ESSENTIAL_GRAPHS.includes(x));
+ const secondary=cfg.order.filter(x=>!V316_ESSENTIAL_GRAPHS.includes(x));
+ return `<section class="v273-settings-customizer v316-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Cuatro gráficos, lo esencial</h3><p>Controla los cuatro gráficos de tu Resumen. Cada uno usa tus registros y se puede mostrar u ocultar sin alterar los datos.</p></header>
+ <div class="v316-essentials-head"><span>GRÁFICOS ESENCIALES</span><span>04 / 04</span></div>
+ <div class="v273-custom-rows v316-essentials">${essentials.map(row).join('')}</div>
+ <details class="v316-more-widgets"><summary>Otras secciones de tu Resumen <span aria-hidden="true">⌄</span></summary><div class="v273-custom-rows">${secondary.map(row).join('')}</div></details>
+ <div class="v273-custom-footer"><span>Solo afecta a Resumen móvil. Los cálculos permanecen intactos.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
 }
 
 
@@ -34886,7 +34902,7 @@ document.addEventListener('click',event=>{
  const cfg=v105Config();
  if(toggle){const id=toggle.dataset.v273Toggle;if(!cfg.order.includes(id))return;cfg.visible=cfg.visible.includes(id)?cfg.visible.filter(x=>x!==id):[...cfg.visible,id]}
  else if(move){const id=move.dataset.id,i=cfg.order.indexOf(id),j=i+(move.dataset.v273Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]]}
- else if(reset){const ids=V105_WIDGETS.map(x=>x.id);cfg.order=ids;cfg.visible=ids.filter(x=>!['activity','subscriptions','cardsDue','budgetTrend','banks','accounts','cards','loans','certificates'].includes(x))}
+ else if(reset){const ids=V105_WIDGETS.map(x=>x.id);cfg.order=ids;cfg.visible=v316VisibleDefaults(ids)}
  const old=db.settings.v105OverviewWidgets;
  db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};
  if(!persist()){db.settings.v105OverviewWidgets=old;toast('No se pudieron guardar los cambios de personalización.');return}
@@ -34955,7 +34971,7 @@ function v309ExtraCharts(){
      <div class="v315-credit-row-foot"><span>Usado ${displayMoney(c.used)}</span><span>Límite ${displayMoney(c.max)}</span></div>
     </div>`}).join('')}</div>`;
  const cardSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget" data-v105-widget="creditUtil" aria-label="Utilización total y por tarjeta">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">CRÉDITO · LÍMITES Y CONSUMO</span><h2>Utilización por tarjeta</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="cards" aria-label="Ver detalles de tarjetas">Ver tarjetas ${icon('arrow')}</button></div>${creditHTML}
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">01 / 04 · CRÉDITO · LÍMITES</span><h2>Utilización por tarjeta</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="cards" aria-label="Ver detalles de tarjetas">Ver tarjetas ${icon('arrow')}</button></div>${creditHTML}
  </section>`;
  // Máximo 6 cierres recientes; un mes sin histórico real queda sin punto.
  const now=today();const [y,m]=now.slice(0,7).split('-').map(Number);
@@ -34985,8 +35001,52 @@ function v309ExtraCharts(){
   <div class="v315-wealth-chart" role="img" aria-label="Tendencia patrimonial de los últimos seis cierres disponibles. Último patrimonio ${displayMoney(last.snapshot.net)}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="14" x2="316" y1="111" y2="111" class="v315-wealth-axis"/><g class="v315-wealth-path">${path}</g><g class="v315-wealth-dots">${circles}</g></svg><div class="v315-wealth-labels">${months.map(x=>`<span>${x.label}</span>`).join('')}</div></div>
   <p class="v315-small-note">Cierres de activos menos obligaciones registrados; no incluye límites disponibles como patrimonio.${observed.some(x=>x.snapshot.estimatedLoan)?' Algún préstamo histórico es estimado.':''}</p>`;
  }
- const wealthSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget" data-v105-widget="patrimonyTrend" aria-label="Tendencia de patrimonio neto"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">PATRIMONIO · EVOLUCIÓN</span><h2>Tendencia de patrimonio</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="patrimony" aria-label="Abrir detalle del patrimonio">Ver detalle ${icon('arrow')}</button></div>${historyHTML}</section>`;
- return cardSection+wealthSection;
+ const wealthSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget" data-v105-widget="patrimonyTrend" aria-label="Tendencia de patrimonio neto"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">02 / 04 · PATRIMONIO</span><h2>Tendencia de patrimonio</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="patrimony" aria-label="Abrir detalle del patrimonio">Ver detalle ${icon('arrow')}</button></div>${historyHTML}</section>`;
+ /* V316 · Gráfico 03/04 — El costo de mañana.
+    No equivale a la deuda total: solamente cobros y vencimientos calendarizados. */
+ const forecast=v119Baseline(30);
+ const fMin=Number.isFinite(forecast.minimum)?forecast.minimum:0;
+ const fEnd=Number.isFinite(forecast.ending)?forecast.ending:0;
+ const fStart=Number.isFinite(forecast.initial)?forecast.initial:0;
+ const fCritical=forecast.critical;
+ const fMinLabel=fMin<0?'Faltante máximo':'Mínimo previsto';
+ const dayValues=(forecast.dayByDay||[]).filter((r,i)=>i===0||i%3===0||i===forecast.dayByDay.length-1);
+ const values=[fStart,...dayValues.map(x=>x.balance)],vLo=Math.min(...values,0),vHi=Math.max(...values,0),vRange=Math.max(1,vHi-vLo);
+ const FW=332,FH=90,FP=12;
+ const fY=v=>FP+(vHi-v)/vRange*(FH-2*FP);
+ const fPoints=dayValues.map((d,i)=>({x:FP+i*(FW-2*FP)/Math.max(1,dayValues.length-1),y:fY(d.balance)}));
+ const cashLine=fPoints.map(p=>p.x.toFixed(2)+','+p.y.toFixed(2)).join(' ');
+ const zeroY=fY(0).toFixed(2);
+ const fLast=fPoints.at(-1);
+ const fTimeline=dayValues.length?`<div class="v316-cash-chart"><svg viewBox="0 0 ${FW} ${FH}" preserveAspectRatio="none" role="img" aria-label="Proyección de liquidez diaria a 30 días, desde ${displayMoney(fStart)} hasta ${displayMoney(fEnd)}"><line class="v316-cash-zero" x1="12" x2="320" y1="${zeroY}" y2="${zeroY}"/><polyline class="v316-cash-path ${fMin<0?'at-risk':''}" points="${cashLine}"/><circle class="v316-cash-point" cx="${fLast.x.toFixed(2)}" cy="${fLast.y.toFixed(2)}" r="4"/></svg><div class="v316-cash-axis"><span>Hoy</span><span>+15 días</span><span>+30 días</span></div></div>`:'';
+ const tomorrowSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget v316-chart-widget v316-tomorrow" data-v105-widget="tomorrowInsight" aria-label="El costo de mañana: proyección de liquidez a 30 días">
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">03 / 04 · PROYECCIÓN · 30 DÍAS</span><h2>El costo de mañana</h2></div><button type="button" class="vive-mobile-view-all" data-v119-open="1" aria-label="Abrir simulador del costo de mañana">Simular ${icon('arrow')}</button></div>
+  <div class="v316-tomorrow-pair"><div><small>HOY · DISPONIBLE</small><strong>${displayMoney(fStart)}</strong></div><span class="v316-tomorrow-arrow" aria-hidden="true">→</span><div><small>EN 30 DÍAS · ESTIMADO</small><strong class="${fEnd<0?'v316-negative':''}">${displayMoney(fEnd)}</strong></div></div>
+  ${fTimeline}
+  <div class="v316-tomorrow-foot"><span>${fMinLabel} <b class="${fMin<0?'v316-negative':''}">${displayMoney(Math.abs(fMin))}</b></span><span>${fCritical?'Primer día crítico: '+prettyDate(fCritical):'Sin días críticos previstos'}</span></div>
+  <p class="v315-small-note">Proyección, no saldo garantizado: solo incluye cobros y pagos con fecha registrada. Simular no crea movimientos.</p>
+ </section>`;
+
+ /* V316 · Gráfico 04/04 — Pulso de ejecución presupuestaria.
+    A diferencia de una puntuación, más de 100% indica límite superado. */
+ const budget=v290BudgetSnapshot();
+ const bPct=budget.percent;
+ const angle=bPct===null?0:Math.min(100,Math.max(0,bPct))*3.6;
+ const bOver=bPct!==null&&bPct>100;
+ const bWarn=bPct!==null&&bPct>=85;
+ const bTone=bOver?'over':bWarn?'warn':'calm';
+ const bPace=budget.pace===null?'Sin ritmo comparable':budget.pace>0?'Por encima del ritmo esperado':'Dentro del ritmo esperado';
+ const bTop=budget.categories.filter(c=>c.limit>0).slice(0,3);
+ const bRows=bTop.map(c=>`<div class="v316-budget-category"><div><span>${sanitize(c.name)}</span><b class="${c.percent>100?'v316-negative':''}">${pctText(c.percent)}</b></div><div class="v316-budget-track"><i class="${c.percent>100?'is-over':''}" style="width:${fill(c.percent)}%"></i></div></div>`).join('');
+ const budgetSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget v316-chart-widget v316-budget" data-v105-widget="budgetPulse" aria-label="Cumplimiento del presupuesto y distribución por categoría">
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">04 / 04 · CONTROL · ${sanitize(budget.month)}</span><h2>Tu pulso presupuestario</h2></div><button type="button" class="vive-mobile-view-all" data-v290-budget-open="execution" aria-label="Ver ejecución del presupuesto">Detalles ${icon('arrow')}</button></div>
+  <div class="v316-budget-display"><div class="v316-budget-orbit ${bTone}" style="--v316-angle:${angle}deg" role="img" aria-label="Presupuesto utilizado: ${pctText(bPct)}"><div><small>UTILIZADO</small><strong>${pctText(bPct)}</strong><span>${budget.state}</span></div></div>
+   <div class="v316-budget-money"><div><small>ASIGNADO</small><strong>${displayMoney(budget.allocated)}</strong></div><div><small>EJECUTADO</small><strong>${displayMoney(budget.spent)}</strong></div><div><small>${budget.remaining<0?'EXCESO':'DISPONIBLE'}</small><strong class="${budget.remaining<0?'v316-negative':''}">${displayMoney(Math.abs(budget.remaining))}</strong></div></div></div>
+  <div class="v316-budget-pace"><span class="v316-pace-dot ${bTone}" aria-hidden="true"></span><span>${bPace}${budget.pace!==null?' · '+displayMoney(Math.abs(budget.pace))+' de diferencia':''}</span></div>
+  ${bRows?`<div class="v316-budget-categories"><div class="v316-mini-eyebrow">CATEGORÍAS CON MAYOR CONSUMO</div>${bRows}</div>`:'<p class="v315-empty">Define un presupuesto para ver cómo se distribuye tu gasto.</p>'}
+  <p class="v315-small-note">El porcentaje representa gasto / límite asignado. Los gastos sin presupuesto quedan fuera del porcentaje; no se duplican subcategorías.</p>
+ </section>`;
+ return cardSection+wealthSection+tomorrowSection+budgetSection;
 }
 
 /* V312: una única Visión global; compatibilidad para enlaces antiguos.
@@ -47291,5 +47351,80 @@ body.theme-black #modal-root .v169-choice>button.active.is-income,body.theme-dar
 @media(prefers-reduced-motion:reduce){.v315-impact-details>summary span{transition:none!important}}
 </style>
 
+<style id="vive-v316-cuatro-graficos-esenciales">
+/* Cuatro gráficos financieros sin datos falsos ni consultas adicionales. */
+@media(max-width:790px){
+ .v316-chart-widget{min-width:0;isolation:isolate}
+ .v316-tomorrow-pair{display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);gap:7px;align-items:center;padding:13px 12px;border-radius:17px;background:rgba(78,134,207,.075);border:1px solid rgba(95,142,202,.17)}
+ .v316-tomorrow-pair>div{min-width:0}
+ .v316-tomorrow-pair small,.v316-budget-money small{display:block;font-size:9px;font-weight:850;letter-spacing:.065em;color:#607797;line-height:1.4}
+ .v316-tomorrow-pair strong{display:block;font-size:clamp(15px,4.35vw,23px);font-weight:850;line-height:1.25;letter-spacing:-.04em;color:#243b60;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+ .v316-tomorrow-arrow{font-size:20px;color:#5987c6;text-align:center}
+ .v316-cash-chart{margin-top:15px;min-width:0}
+ .v316-cash-chart svg{width:100%;height:104px;display:block;overflow:visible}
+ .v316-cash-zero{stroke:#d8e3f2;stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+ .v316-cash-path{fill:none;stroke:#427fda;stroke-width:3;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+ .v316-cash-path.at-risk{stroke:#d97706}
+ .v316-cash-point{fill:#75b1fc;stroke:#fff;stroke-width:2}
+ .v316-cash-axis{display:flex;justify-content:space-between;color:#7587a2;font-size:10px;margin-top:4px}
+ .v316-tomorrow-foot{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-top:13px;padding-top:12px;border-top:1px solid rgba(112,143,182,.18)}
+ .v316-tomorrow-foot span{font-size:10.5px;color:#536d8f}.v316-tomorrow-foot b{color:#264567;font-weight:850;font-variant-numeric:tabular-nums}
+ .v316-negative{color:#c46c28!important}
+ .v316-budget-display{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:center;margin:15px 0 8px}
+ .v316-budget-orbit{width:min(100%,177px);aspect-ratio:1;display:grid;place-items:center;padding:11px;margin:auto;border-radius:50%;background:conic-gradient(#4d91e9 var(--v316-angle),#dce7f5 0);position:relative}
+ .v316-budget-orbit.over{background:conic-gradient(#d97706 var(--v316-angle),#f4e3d4 0)}
+ .v316-budget-orbit.warn{background:conic-gradient(#b88539 var(--v316-angle),#eee2d2 0)}
+ .v316-budget-orbit::before{content:"";position:absolute;inset:10px;border-radius:50%;background:#f5f8fd}
+ .v316-budget-orbit>div{z-index:1;display:grid;text-align:center;justify-items:center;gap:2px;min-width:0}
+ .v316-budget-orbit small{font-size:9px;letter-spacing:.11em;font-weight:850;color:#6c8099}
+ .v316-budget-orbit strong{font-size:clamp(22px,6vw,32px);font-weight:900;letter-spacing:-.055em;color:#294a78;font-variant-numeric:tabular-nums}
+ .v316-budget-orbit span{font-size:9px;color:#55708d;max-width:105px;line-height:1.25}
+ .v316-budget-money{min-width:0;display:grid;gap:10px}
+ .v316-budget-money>div{padding-bottom:8px;border-bottom:1px solid rgba(95,135,180,.15);min-width:0}
+ .v316-budget-money strong{display:block;font-size:clamp(14px,3.8vw,19px);font-weight:850;color:#243b5c;letter-spacing:-.03em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+ .v316-budget-pace{display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px 11px;border:1px solid rgba(89,138,195,.2);border-radius:12px;font-size:10.5px;color:#557293;background:rgba(82,131,185,.065);line-height:1.4}
+ .v316-pace-dot{width:8px;height:8px;background:#4d98db;border-radius:50%;flex:none}.v316-pace-dot.over{background:#d97706}.v316-pace-dot.warn{background:#cb9a51}
+ .v316-budget-categories{margin-top:16px;display:grid;gap:11px}
+ .v316-mini-eyebrow{font-size:9px;font-weight:850;letter-spacing:.11em;color:#6b819e}
+ .v316-budget-category>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:6px;font-size:11px;color:#506a8c}
+ .v316-budget-category>div:first-child>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.v316-budget-category b{font-size:11px;color:#2e568a}
+ .v316-budget-track{height:7px;background:#dfe9f6;border-radius:7px;overflow:hidden}.v316-budget-track i{display:block;height:100%;background:#5699e5;border-radius:inherit}.v316-budget-track i.is-over{background:#d97706}
+ .v316-personalization .v316-essentials-head{display:flex;justify-content:space-between;gap:10px;padding:14px 10px 10px;color:#607b9f;font-size:10px;font-weight:850;letter-spacing:.12em}
+ .v316-personalization .v316-essentials{border:1px solid rgba(96,137,187,.2);border-radius:18px;overflow:hidden}
+ .v316-personalization .v316-custom-row{min-width:0}.v316-personalization .v316-essentials .v273-custom-row:last-child{border-bottom:0}
+ .v316-more-widgets{border:1px solid rgba(108,143,186,.17);border-radius:14px;margin-top:14px;overflow:hidden}
+ .v316-more-widgets>summary{list-style:none;cursor:pointer;padding:15px 13px;font-size:12px;font-weight:800;display:flex;justify-content:space-between;color:#466284}
+ .v316-more-widgets>summary::-webkit-details-marker{display:none}
+ .v316-more-widgets[open]>summary span{transform:rotate(180deg)}
+}
+body.theme-black .v316-chart-widget,body.theme-dark .v316-chart-widget{background:#0d1015!important;border-color:#2c3542!important;color:#f5f8fe!important}
+body.theme-black .v316-tomorrow-pair,body.theme-dark .v316-tomorrow-pair{background:#171d27!important;border-color:#344255!important}
+body.theme-black .v316-tomorrow-pair small,body.theme-black .v316-budget-money small,body.theme-dark .v316-tomorrow-pair small,body.theme-dark .v316-budget-money small{color:#b6c8df!important}
+body.theme-black .v316-tomorrow-pair strong,body.theme-black .v316-budget-money strong,body.theme-dark .v316-tomorrow-pair strong,body.theme-dark .v316-budget-money strong{color:#f6faff!important}
+body.theme-black .v316-tomorrow-arrow,body.theme-dark .v316-tomorrow-arrow{color:#a5cdff!important}
+body.theme-black .v316-cash-zero,body.theme-dark .v316-cash-zero{stroke:#48576a!important}
+body.theme-black .v316-cash-axis,body.theme-dark .v316-cash-axis{color:#b0c2db!important}
+body.theme-black .v316-tomorrow-foot,body.theme-dark .v316-tomorrow-foot{border-top-color:#334152!important}
+body.theme-black .v316-tomorrow-foot span,body.theme-dark .v316-tomorrow-foot span{color:#c3d2e5!important}
+body.theme-black .v316-tomorrow-foot b,body.theme-dark .v316-tomorrow-foot b{color:#eef6ff!important}
+body.theme-black .v316-negative,body.theme-dark .v316-negative{color:#ffb978!important}
+body.theme-black .v316-budget-orbit,body.theme-dark .v316-budget-orbit{background:conic-gradient(#65a9fb var(--v316-angle),#2a3645 0)!important}
+body.theme-black .v316-budget-orbit.over,body.theme-dark .v316-budget-orbit.over{background:conic-gradient(#ffb978 var(--v316-angle),#49372e 0)!important}
+body.theme-black .v316-budget-orbit.warn,body.theme-dark .v316-budget-orbit.warn{background:conic-gradient(#edbd73 var(--v316-angle),#463b31 0)!important}
+body.theme-black .v316-budget-orbit::before,body.theme-dark .v316-budget-orbit::before{background:#151b25!important}
+body.theme-black .v316-budget-orbit small,body.theme-dark .v316-budget-orbit small{color:#b0c3dd!important}
+body.theme-black .v316-budget-orbit strong,body.theme-dark .v316-budget-orbit strong{color:#f5f9ff!important}
+body.theme-black .v316-budget-orbit span,body.theme-dark .v316-budget-orbit span{color:#bfd0e3!important}
+body.theme-black .v316-budget-money>div,body.theme-dark .v316-budget-money>div{border-color:#334152!important}
+body.theme-black .v316-budget-pace,body.theme-dark .v316-budget-pace{background:#171f2a!important;border-color:#324254!important;color:#d1def0!important}
+body.theme-black .v316-mini-eyebrow,body.theme-dark .v316-mini-eyebrow{color:#b9c9dd!important}
+body.theme-black .v316-budget-category>div:first-child,body.theme-dark .v316-budget-category>div:first-child{color:#d0dded!important}
+body.theme-black .v316-budget-category b,body.theme-dark .v316-budget-category b{color:#e9f3ff!important}
+body.theme-black .v316-budget-track,body.theme-dark .v316-budget-track{background:#303b4a!important}
+body.theme-black .v316-personalization .v316-essentials-head,body.theme-dark .v316-personalization .v316-essentials-head{color:#bfd1e5!important}
+body.theme-black .v316-personalization .v316-essentials,body.theme-black .v316-more-widgets,body.theme-dark .v316-personalization .v316-essentials,body.theme-dark .v316-more-widgets{border-color:#354355!important}
+body.theme-black .v316-more-widgets>summary,body.theme-dark .v316-more-widgets>summary{color:#dce9fa!important}
+@media(prefers-reduced-motion:reduce){.v316-budget-track i,.v316-cash-path,.v316-budget-orbit{transition:none!important}}
+</style>
 </body>
 </html>
