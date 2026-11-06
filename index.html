@@ -22539,6 +22539,121 @@ body.theme-black .v322-kpi-hero{background:radial-gradient(circle at top right,r
 body.theme-black .v322-kpi-icon{background:linear-gradient(145deg,#376aba,#183368)!important}
 @media(max-width:790px){body.theme-black :is(.v205-explore-grid,.v205-explore-shell,.v296-personalize,.v242-ios-settings){background:#000!important}}
 </style>
+
+<style id="v325-hide-chart-kickers">
+/* No mostrar ordinales ni rótulos redundantes encima de las visualizaciones. */
+.v318-mobile-card .v318-mobile-head > span,
+.v318-mobile-card .v318-mobile-head > .v318-mobile-kicker,
+.v318-legacy-chart .vive-mobile-eyebrow,
+.v318-mobile-card .vive-mobile-eyebrow {display:none!important;}
+/* Mantener el título real (Calendario de presión financiera, etc.). */
+.v318-mobile-card .v318-mobile-head{gap:4px!important;}
+.v318-mobile-card.v324-cost-card .v318-mobile-head {display:none!important;}
+</style>
+<style id="v326-personalization-full">
+/* Contenido de los 24 elementos, accesible y sin depender de capturas. */
+.v326-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;padding:8px 0 12px}
+.v326-stat{background:#0b0f16;border:1px solid #253146;border-radius:14px;padding:13px;min-width:0}
+.v326-stat span{display:block;color:#b2bfd4;font-size:11px;line-height:1.3;margin-bottom:8px}
+.v326-stat strong{color:#f5f8ff;font-size:clamp(15px,1.3vw,22px);font-weight:800;overflow-wrap:anywhere}
+.v326-list{display:flex;flex-direction:column;gap:4px;padding:7px 0}
+.v326-list>div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #202937;padding:10px 2px;color:#d7e0ee;font-size:12px}
+.v326-list strong{text-align:right;color:#fff;font-variant-numeric:tabular-nums}
+.v326-list p{color:#b2bfd4}
+.v326-budget-history{display:flex;flex-direction:column;gap:11px;margin:13px 0}
+.v326-budget-history>div{display:grid;grid-template-columns:40px minmax(0,1fr) 55px;align-items:center;gap:9px;font-size:11px;color:#d1d9e7}
+.v326-meter{height:12px;border-radius:10px;background:#212a39;overflow:hidden}.v326-meter i{display:block;height:100%;border-radius:10px;background:#35b2ab}
+.v326-trend{display:grid;grid-template-columns:repeat(5,1fr);align-items:end;gap:12px;min-height:160px;margin-top:16px}
+.v326-trend>div{display:flex;flex-direction:column;align-items:center;gap:8px;color:#aebdd5}
+.v326-trend>div>div{display:flex;align-items:end;gap:5px;height:118px}.v326-trend i{width:12px;background:#4b9fff;border-radius:5px 5px 0 0}.v326-trend i+i{background:#f2a061}
+.v326-legend{font-size:11px;color:#b2bfd4;padding:10px 0}
+.v326-mini-preview{overflow:hidden;max-height:210px}.v326-mini-preview .v326-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.v326-mini-preview .v326-stat{padding:8px}.v326-mini-preview .v326-stat strong{font-size:14px}
+body.theme-black .widgets-world .v326-stat,body.theme-dark .widgets-world .v326-stat{background:#080b10!important}
+body.theme-black .widgets-world .widget-card,body.theme-dark .widgets-world .widget-card{background:#08090c!important;border-color:#202631!important}
+@media(max-width:680px){.v326-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+
+<style id="v327-overrides">
+body.theme-black .v296-personalize,
+body.theme-black .v296-settings-body,
+body.theme-black .v296-block,
+body.theme-black .v273-settings-customizer,
+body.theme-black .v242-appearance-picker,
+body.theme-black .v242-style-option,
+body.theme-black .v242-style-art,
+body.theme-black .v242-settings-inner,
+body.theme-black .v242-ios-settings,
+body.theme-black .v242-settings-home,
+body.theme-black .v242-settings-subpage,
+body.theme-dark .v296-personalize,
+body.theme-dark .v296-settings-body,
+body.theme-dark .v296-block,
+body.theme-dark .v273-settings-customizer,
+body.theme-dark .v242-appearance-picker,
+body.theme-dark .v242-style-option,
+body.theme-dark .v242-style-art,
+body.theme-dark .v242-settings-inner,
+body.theme-dark .v242-ios-settings,
+body.theme-dark .v242-settings-home,
+body.theme-dark .v242-settings-subpage{background-color:#000!important;color:#eef4ff!important;background-image:none!important}
+
+body.theme-black .v242-appearance-picker,
+body.theme-dark .v242-appearance-picker{border:1px solid rgba(78,95,129,.42)!important;box-shadow:0 16px 38px rgba(0,0,0,.46)!important}
+
+body.theme-black .v242-style-option,
+body.theme-dark .v242-style-option{background:linear-gradient(180deg,#090b11,#121725)!important;border-color:rgba(87,104,138,.48)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 12px 24px rgba(0,0,0,.38)!important}
+body.theme-black .v242-style-option.selected,
+body.theme-dark .v242-style-option.selected{border-color:#6fa0ff!important;box-shadow:0 0 0 2px rgba(92,146,255,.28),0 16px 28px rgba(13,31,69,.45)!important}
+body.theme-black .v242-style-description strong,
+body.theme-black .v242-preference-title h3,
+body.theme-dark .v242-style-description strong,
+body.theme-dark .v242-preference-title h3{color:#f2f6ff!important}
+body.theme-black .v242-style-description small,
+body.theme-black .v242-preference-title p,
+body.theme-dark .v242-style-description small,
+body.theme-dark .v242-preference-title p{color:#9fb0cc!important}
+
+body.theme-black .v242-mini-original,
+body.theme-black .v242-mini-circles,
+body.theme-black .v290-mini-integral,
+body.theme-dark .v242-mini-original,
+body.theme-dark .v242-mini-circles,
+body.theme-dark .v290-mini-integral{background:linear-gradient(145deg,#131c2d,#0a101a)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;color:#edf3ff!important}
+body.theme-black .v242-mini-original :is(.v242-mini-label,strong,.v242-mini-foot i,.v242-mini-foot b),
+body.theme-black .v242-mini-circles :is(.v242-mini-title,strong,b,small),
+body.theme-black .v290-mini-integral :is(.v290-mini-head,strong,i,b,span),
+body.theme-dark .v242-mini-original :is(.v242-mini-label,strong,.v242-mini-foot i,.v242-mini-foot b),
+body.theme-dark .v242-mini-circles :is(.v242-mini-title,strong,b,small),
+body.theme-dark .v290-mini-integral :is(.v290-mini-head,strong,i,b,span){color:#eaf1ff!important}
+body.theme-black .v242-mini-orbs i,
+body.theme-dark .v242-mini-orbs i{background:linear-gradient(145deg,#22314b,#111a2b)!important;border:1px solid rgba(101,125,171,.35);box-shadow:0 8px 18px rgba(0,0,0,.34)!important}
+body.theme-black .v242-mini-orbs i.v242-featured,
+body.theme-dark .v242-mini-orbs i.v242-featured{background:linear-gradient(145deg,#6f79f0,#4d59d1)!important}
+
+body.theme-black .v273-custom-row,
+body.theme-dark .v273-custom-row{transition:background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+body.theme-black .v273-custom-row.is-enabled,
+body.theme-dark .v273-custom-row.is-enabled{background:linear-gradient(180deg,rgba(18,30,52,.98),rgba(9,16,29,.98))!important;border-color:rgba(92,147,255,.42)!important;box-shadow:0 0 0 1px rgba(92,147,255,.10),0 12px 22px rgba(6,14,30,.35)!important}
+body.theme-black .v273-custom-row.is-enabled .v273-custom-copy strong,
+body.theme-dark .v273-custom-row.is-enabled .v273-custom-copy strong{color:#f4f8ff!important}
+body.theme-black .v273-custom-row.is-enabled .v273-custom-copy small,
+body.theme-dark .v273-custom-row.is-enabled .v273-custom-copy small{color:#9dc0ff!important}
+body.theme-black .v273-custom-row.is-disabled,
+body.theme-dark .v273-custom-row.is-disabled{opacity:.85}
+
+body.theme-black .v273-visibility,
+body.theme-dark .v273-visibility{background:#151a23!important;border-color:#39465a!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)!important}
+body.theme-black .v273-visibility span,
+body.theme-dark .v273-visibility span{background:linear-gradient(180deg,#fdfefe,#bcc7db)!important;box-shadow:0 2px 8px rgba(0,0,0,.34)!important}
+body.theme-black .v273-visibility.is-on,
+body.theme-dark .v273-visibility.is-on{background:linear-gradient(180deg,#5ea3ff,#356fdd)!important;border-color:#74abff!important;box-shadow:0 0 0 1px rgba(106,165,255,.24),0 0 16px rgba(78,137,255,.42)!important}
+
+body.theme-black .v296-nav a,
+body.theme-dark .v296-nav a{background:linear-gradient(180deg,#090b11,#141925)!important;border-color:rgba(76,93,128,.45)!important;color:#ebf2ff!important}
+body.theme-black .v296-nav a:hover,
+body.theme-dark .v296-nav a:hover{border-color:#6ea2ff!important;box-shadow:0 0 0 1px rgba(110,162,255,.18),0 10px 20px rgba(0,0,0,.28)!important}
+</style>
+
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -25901,7 +26016,8 @@ const V210_WIDGET_ALIASES={
  expenseYoYTrend:'referenceComparison',netYoYTrend:'referenceComparison'
 };
 const v210WidgetId=id=>V210_WIDGET_ALIASES[id]||id;
-const widgetCatalog=()=>WIDGET_METRICS.filter(([id])=>V317_FEATURE_GRAPHS.includes(id));
+/* V326: catálogo único y completo: exactamente todas las filas de Personalización. */
+const widgetCatalog=()=>V105_WIDGETS.map(w=>[w.id,w.title,V317_FEATURE_GRAPHS.includes(w.id)?'chart':'wallet',V317_FEATURE_GRAPHS.includes(w.id)?'main':'sections']);
 function widgetsState(){
  const saved=db.settings.widgetsBoard;
  const valid=new Set(widgetCatalog().map(x=>x[0]));
@@ -26231,8 +26347,47 @@ function v197ReferenceChart(id){
  return '';
 }
 
-const VIVE_CHART_KEYS=new Set(['creditUtil','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureWaterfall','futureMap','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
+const VIVE_CHART_KEYS=new Set(['futureCostKpi','futureCalendar','creditUtil','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureWaterfall','futureMap','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
+/* V326 · contenido de los doce módulos que Personalización ya ofrece,
+   sin crear métricas ficticias ni duplicar datos contables. */
+function v326PersonalizationWidget(id){
+ const m=monthStats(),p=personalTotals();
+ const active=x=>(Array.isArray(x)?x:[]).filter(r=>r&&!r.archived&&!isHidden(r));
+ const cards=active(db.cards),accounts=active(db.accounts),loans=active(db.loans),certs=active(db.certificates),banks=active(db.banks);
+ const financial=v89DebtCapacity(ui.month);
+ const piece=(label,value)=>`<div class="v326-stat"><span>${sanitize(label)}</span><strong>${value}</strong></div>`;
+ const wrap=(...a)=>`<div class="v326-stats">${a.join('')}</div>`;
+ const list=(items)=>`<div class="v326-list">${items.length?items.map(([name,value])=>`<div><span>${sanitize(name)}</span><strong>${value}</strong></div>`).join(''):'<p>No hay registros activos para mostrar.</p>'}</div>`;
+ if(id==='capacity')return wrap(piece('Ingresos del mes',money(financial.income||0)),piece('Cuotas / ingresos',Number.isFinite(financial.ratio)?financial.ratio.toFixed(1)+'%':'Sin base'),piece('Disponible después de obligaciones',Number.isFinite(financial.balance)?money(financial.balance):'Sin datos'));
+ if(id==='budgetTrend'){
+   const now=today(),[y,mo]=now.slice(0,7).split('-').map(Number);
+   const periods=Array.from({length:6},(_,i)=>{const d=new Date(y,mo-6+i,1),period=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const b=v290BudgetSnapshot(period);return {label:d.toLocaleDateString('es-DO',{month:'short'}),percent:b.percent}});
+   return `<div class="v326-budget-history">${periods.map(x=>`<div><span>${sanitize(x.label)}</span><div class="v326-meter"><i style="width:${Math.max(0,Math.min(100,x.percent||0))}%"></i></div><strong>${Number.isFinite(x.percent)?x.percent.toFixed(1)+'%':'—'}</strong></div>`).join('')}</div>`;
+ }
+ if(id==='commitments'){
+   const events=(v119Baseline(30).events||[]).filter(x=>x.type==='expense');
+   return wrap(piece('Vencimientos · 30 días',money(events.reduce((n,x)=>n+x.amount,0))),piece('Obligaciones programadas',events.length),piece('Préstamos activos',loans.length));
+ }
+ if(id==='chart'){
+   const [yy,mm]=ui.month.split('-').map(Number);const months=Array.from({length:5},(_,i)=>{const d=new Date(yy,mm-5+i,1),t=monthlyTotals(d.getFullYear(),d.getMonth()+1);return {label:d.toLocaleDateString('es-DO',{month:'short'}),income:t.income,expense:t.expense}});
+   const top=Math.max(1,...months.flatMap(x=>[x.income,x.expense]));
+   return `<div class="v326-trend">${months.map(x=>`<div><small>${sanitize(x.label)}</small><div><i style="height:${Math.max(2,100*x.income/top)}%"></i><i style="height:${Math.max(2,100*x.expense/top)}%"></i></div></div>`).join('')}</div><div class="v326-legend">Azul: ingresos · Naranja: egresos</div>`;
+ }
+ if(id==='net')return wrap(piece('Ingresos del mes',money(m.income)),piece('Egresos del mes',money(m.expense)),piece('Neto del mes',money(m.net)));
+ if(id==='payments'){
+   const events=(v119Baseline(30).events||[]).filter(x=>x.type==='expense'&&x.amount>0).sort((a,b)=>a.date.localeCompare(b.date));
+   return wrap(piece('Próximos 30 días',money(events.reduce((t,x)=>t+x.amount,0))),piece('Compromisos previstos',events.length))+list(events.slice(0,4).map(e=>[(e.name||'Compromiso')+' · '+e.date,money(e.amount)]));
+ }
+ if(id==='people')return wrap(piece('Me deben',money(p.receivable)),piece('Yo debo',money(p.payable)),piece('Balance entre personas',money(p.receivable-p.payable)));
+ if(id==='activity')return list((recentTx()||[]).slice(0,5).map(t=>[transactionTitle(t)+' · '+t.date,txDisplay(t)]));
+ if(id==='banks')return wrap(piece('Instituciones activas',banks.length),piece('Productos vinculados',accounts.length+cards.length+loans.length+certs.length))+list(banks.slice(0,5).map(b=>[b.name||'Institución',String(accounts.filter(a=>a.bankId===b.id).length+cards.filter(c=>c.bankId===b.id).length+loans.filter(l=>l.bankId===b.id).length)+' productos']));
+ if(id==='accounts')return wrap(piece('Liquidez registrada',money(totalLiquid())),piece('Cuentas activas',accounts.length))+list(accounts.slice(0,5).map(a=>[a.name||'Cuenta',money(getAccountBalance(a),a.currency||'DOP')]));
+ if(id==='loans')return wrap(piece('Deuda en préstamos',money(totalLoanDebt())),piece('Contratos activos',loans.length))+list(loans.slice(0,5).map(l=>[l.name||'Préstamo',money(loanStatus(l).balance,l.currency||'DOP')]));
+ if(id==='certificates')return wrap(piece('Capital en certificados',money(totalCertificates())),piece('Certificados activos',certs.length))+list(certs.slice(0,5).map(c=>[c.name||'Certificado',sanitize(c.currency||'DOP')]));
+ return `<div class="v318-no-data">Sin registros suficientes.</div>`;
+}
 function widgetPreview(id,definition){
+ if(!V317_FEATURE_GRAPHS.includes(id)&&V105_WIDGETS.some(w=>w.id===id))return `<div class="ws-preview-body v326-mini-preview">${v326PersonalizationWidget(id)}</div>`;
  if(id==='tomorrowCost'){const b=v119Baseline(30);return `<div class="ws-preview-body ws-preview-number"><span class="ws-preview-orb">${icon('calendar')}</span><strong>${money(Math.max(0,b.minimum))}</strong><small>${b.critical?'Día crítico: '+prettyDate(b.critical):'Sin faltantes previstos en 30 días'}</small></div>`;}
  const isChart=VIVE_CHART_KEYS.has(id);
  if(['executiveSnapshot','incomeProjection'].includes(id))return `<div class="ws-preview-body v195-preview-special">${v195Visual(id)}</div>`;
@@ -26241,7 +26396,7 @@ function widgetPreview(id,definition){
  return `<div class="ws-preview-body ws-preview-number"><span class="ws-preview-orb">${icon(definition?.[2]||'wallet')}</span><strong>${fmt}</strong><small>${sanitize(foot)}</small></div>`;
 }
 function widgetSize(id){const n=Number((db.settings.widgetSizes||{})[id]);return Number.isInteger(n)&&n>=1&&n<=4?n:(V318_ALL_CHART_IDS.includes(id)||['executiveSnapshot','incomeProjection'].includes(id)?2:1)}
-function widgetHeight(id){const n=Number((db.settings.widgetHeights||{})[id]);return Number.isFinite(n)&&n>=165&&n<=600?n:(V318_ALL_CHART_IDS.includes(id)?410:VIVE_CHART_KEYS.has(id)?252:194)}
+function widgetHeight(id){const n=Number((db.settings.widgetHeights||{})[id]);return Number.isFinite(n)&&n>=165&&n<=600?n:(V318_ALL_CHART_IDS.includes(id)?410:VIVE_CHART_KEYS.has(id)?252:V105_WIDGETS.some(w=>w.id===id)?315:194)}
 function v133TomorrowWidgetBody(){
  const b=v119Baseline(30),min=Math.max(0,b.minimum),gap=Math.max(0,-b.minimum);
  return `<div class="v133-tomorrow-body">
@@ -26254,16 +26409,16 @@ function kpiStudio(){
  v318InitializeDashboard();
  const selected=widgetsState(),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
  const map=Object.fromEntries(all.map(x=>[x[0],x])),chartKeys=VIVE_CHART_KEYS;
- const libraryGroups=[['all','Todos los gráficos de Personalización'],['tomorrow360','Personalización · 11 gráficos']];
- const group=['all','tomorrow360'].includes(ui.widgetCatalogFilter)?ui.widgetCatalogFilter:'all',query=v71SearchNormalize(ui.widgetSearch||'');
+ const libraryGroups=[['all','Todo Personalización'],['main','Gráficos · '+V317_FEATURE_GRAPHS.length],['sections','Secciones · '+(V105_WIDGETS.length-V317_FEATURE_GRAPHS.length)]];
+ const group=['all','main','sections'].includes(ui.widgetCatalogFilter)?ui.widgetCatalogFilter:'all',query=v71SearchNormalize(ui.widgetSearch||'');
  const visible=all.filter(x=>(group==='all'||(group==='global10'?V208_GLOBAL_TOP10.some(t=>t[0]===x[0]):x[3]===group))&&(!query||v71SearchNormalize(x[1]+' '+x[0]+' '+(V208_GLOBAL_TOP10.find(y=>y[0]===x[0])?.[2]||'')).includes(query)));
  const tile=(id,i)=>{
    const def=map[id];if(!def)return '';const isChart=chartKeys.has(id),isReference=V197_REFERENCE_CHART_IDS.includes(id),m=widgetPicture(id),size=widgetSize(id);
    const height=widgetHeight(id);
-   const route=m?.route||({referenceBalance:'advanced',referenceCredit:'cards',referenceCashflow:'income',referenceComparison:'advanced',incomeVsExpense:'income',creditVisual:'cards',fundsVisual:'accounts',subscriptionVisual:'recurring',incomeYoYTrend:'advanced',expenseYoYTrend:'advanced',netYoYTrend:'advanced',incomeYtdYoY:'advanced',expenseYtdYoY:'advanced',netYtdYoY:'advanced',netTrendChart:'income',liquidityTrendChart:'accounts',incomeMixChart:'income',expenseMixChart:'advanced',subscriptionsParetoChart:'recurring',creditByCardChart:'cards',loanBalancesChart:'loans',assetMixChart:'patrimony'}[id])||'kpis';
+   const route=m?.route||({capacity:'payments',budgetTrend:'budget',commitments:'payments',chart:'income',net:'income',payments:'payments',people:'personal',activity:'register',banks:'banks',accounts:'accounts',loans:'loans',certificates:'certificates',referenceBalance:'advanced',referenceCredit:'cards',referenceCashflow:'income',referenceComparison:'advanced',incomeVsExpense:'income',creditVisual:'cards',fundsVisual:'accounts',subscriptionVisual:'recurring',incomeYoYTrend:'advanced',expenseYoYTrend:'advanced',netYoYTrend:'advanced',incomeYtdYoY:'advanced',expenseYtdYoY:'advanced',netYtdYoY:'advanced',netTrendChart:'income',liquidityTrendChart:'accounts',incomeMixChart:'income',expenseMixChart:'advanced',subscriptionsParetoChart:'recurring',creditByCardChart:'cards',loanBalancesChart:'loans',assetMixChart:'patrimony'}[id])||'kpis';
    return `<article class="widget-card ws-tile ${isReference?'ws-reference ':''}${isChart?'widget-chart':''} ${size>=2?'ws-wide':''}" data-widget="${sanitize(id)}" data-ws-span="${size}" data-ws-height="${height}" style="--ws-cols:${size};--ws-h:${height}px" draggable="${editing?'true':'false'}" tabindex="0" aria-label="Widget ${sanitize(def[1])}">
-    <div class="widget-card-top"><div><span class="widget-kicker">${isChart?'GRÁFICO INTERACTIVO':'INDICADOR FINANCIERO'}</span><h3>${sanitize(def[1])}</h3></div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size>=2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size>=2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
-    ${id==='tomorrowCost'?v133TomorrowWidgetBody():['executiveSnapshot','incomeProjection'].includes(id)?v195Visual(id):isChart?widgetGraph(id):`<div class="widget-number ${m?.tone&&m.tone!=='neutral'?'v195-'+m.tone:''}">${m?.value||'—'}</div><p class="widget-foot">${sanitize(m?.foot||'')}</p>${v12WidgetHistory(id)}${['dailyIncomeAverage','incomeVsLastMonth','regularIncome','netProjection','savingRate','liquidityCoverage','payments30d'].includes(id)?v195Sparkline(['netProjection','savingRate'].includes(id)?'net':'income'):''}`}
+    <div class="widget-card-top"><div>${id==='futureCostKpi'?'':`<span class="widget-kicker">${isChart?'GRÁFICO INTERACTIVO':'INDICADOR FINANCIERO'}</span><h3>${sanitize(def[1])}</h3>`}</div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size>=2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size>=2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
+    ${id==='tomorrowCost'?v133TomorrowWidgetBody():['executiveSnapshot','incomeProjection'].includes(id)?v195Visual(id):isChart?widgetGraph(id):V105_WIDGETS.some(w=>w.id===id)?v326PersonalizationWidget(id):`<div class="widget-number ${m?.tone&&m.tone!=='neutral'?'v195-'+m.tone:''}">${m?.value||'—'}</div><p class="widget-foot">${sanitize(m?.foot||'')}</p>`}
     ${['burden','affordability','utilization'].includes(id)?`<button type="button" class="v85-widget-open" data-v85-action="capacity">Ver cálculo ${icon('arrow')}</button>`:''}
     ${isReference?'':id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Simular una decisión ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
     <span class="v209-widget-resize" role="button" tabindex="0" title="Arrastra la esquina para cambiar el tamaño" aria-label="Redimensionar ${sanitize(def[1])} desde la esquina" data-widget-resizer="${sanitize(id)}"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m7 17 10-10M12 17l5-5M17 17h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
@@ -26280,10 +26435,10 @@ function kpiStudio(){
   const part=key==='global10'?V208_GLOBAL_TOP10.map(t=>visible.find(x=>x[0]===t[0])).filter(Boolean):visible.filter(x=>x[3]===key);if(!part.length)return '';
   return `<section class="ws-catalog-section"><div class="ws-catalog-heading"><strong>${label}</strong><small>${key==='global10'?'Selección inspirada en referentes internacionales · 10 indicadores útiles':part.length+' diseños disponibles'}</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
  }).join('');
- return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores · tus gráficos de Personalización.</h2><p>Únicamente los 11 gráficos disponibles en Personalización, sin los indicadores antiguos. Puedes cambiar el tamaño, ordenar u ocultar gráficos de este conjunto.</p></div><div class="widgets-head-buttons"><button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Administrar gráficos'}</button></div></div>
- ${editing?`<div class="v209-widget-overlay" data-act="widgetEditor" aria-hidden="true"></div><section class="ws-library" role="dialog" aria-modal="true" aria-label="Biblioteca de widgets" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">TU ESTUDIO DE WIDGETS</span><h3>Diseña tu tablero.</h3><p>Solo se muestran los gráficos de Personalización; no se ofrecen KPIs antiguos.</p></div><button type="button" class="v209-library-close" data-act="widgetEditor" aria-label="Cerrar biblioteca">×</button></header><div class="v209-widget-searchbar"><span>${icon('search')}</span><input id="v209WidgetSearch" type="search" placeholder="Buscar gráfico de Personalización…" autocomplete="off" aria-label="Buscar widgets" value="${sanitize(ui.widgetSearch||'')}"/><small>${selected.length} elegidos</small></div><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><footer class="v209-library-footer"><span>${selected.length} widget${selected.length===1?'':'s'} en tu tablero · Puedes redimensionarlos desde la esquina</span><button type="button" data-act="widgetEditor">Ver mis gráficos →</button></footer></section>`:''}
+ return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores · toda tu Personalización.</h2><p>Disponibles los ${V105_WIDGETS.length} elementos de Personalización: gráficos esenciales, nuevas perspectivas, El costo de mañana y todas las otras secciones del Resumen. Ningún indicador externo al catálogo.</p></div><div class="widgets-head-buttons"><button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Administrar gráficos'}</button></div></div>
+ ${editing?`<div class="v209-widget-overlay" data-act="widgetEditor" aria-hidden="true"></div><section class="ws-library" role="dialog" aria-modal="true" aria-label="Biblioteca de widgets" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">TU ESTUDIO DE WIDGETS</span><h3>Diseña tu tablero.</h3><p>Solo se incluyen los elementos de Personalización, con sus gráficos y secciones completas.</p></div><button type="button" class="v209-library-close" data-act="widgetEditor" aria-label="Cerrar biblioteca">×</button></header><div class="v209-widget-searchbar"><span>${icon('search')}</span><input id="v209WidgetSearch" type="search" placeholder="Buscar en toda Personalización…" autocomplete="off" aria-label="Buscar widgets" value="${sanitize(ui.widgetSearch||'')}"/><small>${selected.length} elegidos</small></div><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><footer class="v209-library-footer"><span>${selected.length} widget${selected.length===1?'':'s'} en tu tablero · Puedes redimensionarlos desde la esquina</span><button type="button" data-act="widgetEditor">Ver mis gráficos →</button></footer></section>`:''}
  <div class="ws-dashboard-label"><div><h3>Tablero activo</h3><p>Arrastra la esquina inferior derecha de cada indicador para cambiar ancho y alto. Usa las flechas para ordenar.</p></div><strong>${selected.length} widgets</strong></div>
- <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Administrar gráficos» para volver a añadir los gráficos de Personalización.</div>'}</div>
+ <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Administrar gráficos» para volver a añadir los elementos de Personalización.</div>'}</div>
  <div class="widgets-disclaimer">Las operaciones pendientes no afectan los saldos. Los importes en RD$ equivalentes de fondos US$ usan la tasa manual configurada. Los préstamos entre personas no se asignan a un banco.</div></div>`;
 }
 
@@ -34897,7 +35052,7 @@ function v273SettingsWidgetEditor(){
  const row=(id)=>{
   const i=cfg.order.indexOf(id),w=V105_WIDGETS.find(x=>x.id===id);if(!w)return '';
   const on=visible.has(id);
-  return `<div class="v273-custom-row v316-custom-row" data-v316-row="${id}"><span class="v273-custom-copy"><strong>${sanitize(w.title)}</strong><small>${sanitize(w.hint)}</small></span><div class="v273-custom-controls"><button type="button" class="v273-visibility ${on?'is-on':''}" data-v273-toggle="${id}" role="switch" aria-checked="${on}" aria-label="${on?'Ocultar':'Mostrar'} ${sanitize(w.title)}"><span></span></button><button type="button" class="v273-order" data-v273-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${sanitize(w.title)}">↑</button><button type="button" class="v273-order" data-v273-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${sanitize(w.title)}">↓</button></div></div>`;
+  return `<div class="v273-custom-row v316-custom-row ${on?'is-enabled':'is-disabled'}" data-v316-row="${id}"><span class="v273-custom-copy"><strong>${sanitize(w.title)}</strong><small>${sanitize(w.hint)}</small></span><div class="v273-custom-controls"><button type="button" class="v273-visibility ${on?'is-on':''}" data-v273-toggle="${id}" role="switch" aria-checked="${on}" aria-label="${on?'Ocultar':'Mostrar'} ${sanitize(w.title)}"><span></span></button><button type="button" class="v273-order" data-v273-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${sanitize(w.title)}">↑</button><button type="button" class="v273-order" data-v273-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${sanitize(w.title)}">↓</button></div></div>`;
  };
  const essentials=cfg.order.filter(x=>V316_ESSENTIAL_GRAPHS.includes(x));
  const insights=cfg.order.filter(x=>V317_NEW_GRAPHS.includes(x));
@@ -34909,11 +35064,11 @@ function v273SettingsWidgetEditor(){
  <div class="v273-custom-rows v316-essentials">${essentials.map(row).join('')}</div>
  <div class="v316-essentials-head v317-insights-head"><span>NUEVAS PERSPECTIVAS</span><span>${ratio(insights)}</span></div>
  <div class="v273-custom-rows v316-essentials v317-insights">${insights.map(row).join('')}</div>
- <div class="v316-essentials-head v318-insights-head"><span>EL COSTO DE MAÑANA</span><span>${ratio(tomorrow)}</span></div>
+ <div class="v316-essentials-head v318-insights-head"><span>PROYECCIONES Y ALERTAS</span><span>${ratio(tomorrow)}</span></div>
  <div class="v273-custom-rows v316-essentials v318-personalization-rows">${tomorrow.map(row).join('')}</div>
  <div class="v316-essentials-head v316-secondary-head"><span>OTRAS SECCIONES DEL RESUMEN</span><span>${ratio(secondary)}</span></div>
  <div class="v273-custom-rows v316-secondary-rows">${secondary.map(row).join('')}</div>
- <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. En web los ${V317_FEATURE_GRAPHS.length} gráficos de Personalización están disponibles en Mis indicadores. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
+ <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. En web los ${V105_WIDGETS.length} elementos de Personalización están disponibles en Mis indicadores. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
 }
 
 
@@ -35250,7 +35405,7 @@ function v318Graph(id){const c=v318Context(),t=c.thirty,Y=c.year;
   const totalMonthly=Math.max(monthlyDue,monthlyRecurring);
   const pressure=Number.isFinite(c.reference?.ratio)?c.reference.ratio:null;
   const recurringCount=activeRecurring.length;
-  return v318ChartFrame(`<div class="v322-kpi-hero"><div class="v322-kpi-copy"><small>COSTO DEL MAÑANA</small><strong>${v318Money(totalMonthly)} <em>/ mes</em></strong><p>Lo que ya está comprometido para tu próximo mes (suscripciones, servicios y pagos de deuda).</p></div><div class="v322-kpi-icon" aria-hidden="true">${icon('calendar')}</div></div><div class="v322-kpi-metrics"><div><small>Compromisos recurrentes</small><strong>${recurringCount}</strong></div><div><small>Presión de deuda</small><strong>${pressure===null?'Sin datos':v318Pct(pressure)}</strong></div><div><small>Carga mensual futura</small><strong>${v318Money(monthlyDue||totalMonthly)}</strong></div></div>`,`Usa los compromisos con fecha y los servicios recurrentes activos. La presión se calcula contra tus ingresos registrados.`);
+  return `<div class="v324-cost-design"><div class="v324-cost-top"><div class="v324-cost-text"><span class="v324-cost-eyebrow">COSTO DEL MAÑANA</span><div class="v324-cost-price">${v318Money(totalMonthly)} <span>/ mes</span></div><p>Lo que ya está comprometido para tu próximo mes (suscripciones, servicios y pagos de deuda).</p></div><span class="v324-cost-calendar" aria-hidden="true">${icon('calendar')}</span></div><div class="v324-cost-three"><div class="v324-cost-metric"><span class="v324-cost-metric-icon">${icon('layers')}</span><div><strong>${recurringCount}</strong><small>Compromisos recurrentes</small></div></div><div class="v324-cost-metric"><span class="v324-cost-metric-icon">${icon('clock')}</span><div><strong>${pressure===null?'—':v318Pct(pressure)}</strong><small>Presión de deuda</small></div></div><div class="v324-cost-metric"><span class="v324-cost-metric-icon">${icon('calendar')}</span><div><strong>${v318Money(monthlyDue||totalMonthly)}</strong><small>Carga mensual futura</small></div></div></div></div>`;
  }
  if(id==='futureCalendar'){
   const start=dateObj(today());
@@ -35343,15 +35498,16 @@ function v318ExistingGraph(id){
 
 function v318MobileCharts(){
  const visible=new Set(v105Config().visible);
- return V318_GRAPH_META.filter(([id])=>visible.has(id)).map(([id,title,hint],i)=>`<section class="v105-mobile-extra v273-overview-widget v318-mobile-card" data-v105-widget="${id}" aria-label="${sanitize(title)}"><header class="v318-mobile-head"><span>${String(i+6).padStart(2,'0')} / ${String(V317_FEATURE_GRAPHS.length).padStart(2,'0')} · EL COSTO DE MAÑANA</span><h2>${sanitize(title)}</h2><small>${sanitize(hint)}</small></header>${v318Graph(id)}</section>`).join('');
+ return V318_GRAPH_META.filter(([id])=>visible.has(id)).map(([id,title,hint])=>`<section class="v105-mobile-extra v273-overview-widget v318-mobile-card ${id==='futureCostKpi'?'v324-cost-card':''}" data-v105-widget="${id}" aria-label="${sanitize(title)}">${id==='futureCostKpi'?'':`<header class="v318-mobile-head"><h2>${sanitize(title)}</h2><small>${sanitize(hint)}</small></header>`}${v318Graph(id)}</section>`).join('');
 }
 function v318InitializeDashboard(){
  if(isMobileViewport())return;
- const authorized=V317_FEATURE_GRAPHS;
+ const authorized=V105_WIDGETS.map(x=>x.id);
  const current=Array.isArray(db.settings.widgetsBoard)?db.settings.widgetsBoard:[];
  // V320 migration: delete every old widget, including charts removed at user's request.
- if(!db.settings.v323PersonalizationOnly){
+ if(!db.settings.v326PersonalizacionCompleta){
   db.settings.widgetsBoard=[...authorized];
+  db.settings.v326PersonalizacionCompleta=true;
   db.settings.v323PersonalizationOnly=true;
   db.settings.v322PersonalizationOnly=true;
   db.settings.v321PersonalizationOnly=true;
@@ -47903,5 +48059,25 @@ body.theme-dark tbody td{background:transparent!important;border-color:#2f2f32!i
  const st=document.createElement('style');st.id='v322-overrides';st.textContent=css;document.head.appendChild(st);
 })();
 </script>
+<style id="v324-cost-kpi-exact">
+/* El KPI es una tarjeta completa, sin panel adicional ni rótulo numerado. */
+.v318-mobile-card.v324-cost-card{padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important}
+.v324-cost-card .v318-mobile-head,.v324-cost-card .v318-chart-content{display:none!important}
+.v324-cost-design{position:relative;isolation:isolate;overflow:hidden;border-radius:21px;background:radial-gradient(ellipse 58% 92% at 91% -18%,#1d4e94 0%,#102b52 52%,transparent 80%),linear-gradient(130deg,#14253e 0%,#102038 55%,#071426 100%);border:1px solid #294b82;box-shadow:inset 0 1px rgba(255,255,255,.07),0 18px 34px rgba(0,0,0,.24);padding:20px 15px 13px;color:#f7faff;min-width:0;font-variant-numeric:tabular-nums}
+.v324-cost-design:before{content:"";position:absolute;z-index:-1;pointer-events:none;width:74%;height:150%;right:-11%;top:-100%;border-radius:0 0 65% 70%;background:linear-gradient(150deg,rgba(54,115,220,.4),rgba(6,15,32,.07));transform:rotate(18deg)}
+.v324-cost-top{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;margin:0 4px 15px}
+.v324-cost-text{min-width:0;flex:1}.v324-cost-eyebrow{display:block;color:#a9b9d5;font-weight:900;font-size:10px;letter-spacing:.17em;margin-bottom:6px}
+.v324-cost-price{font-size:clamp(25px,7vw,39px);line-height:1.05;font-weight:900;letter-spacing:-.035em;white-space:nowrap}.v324-cost-price span{font-size:.39em;font-weight:550;letter-spacing:normal;color:#e6edfa}
+.v324-cost-text p{font-size:12px;line-height:1.28;margin:7px 0 0;color:#c6d2e5;max-width:39ch}
+.v324-cost-calendar{display:grid;place-items:center;flex:0 0 55px;width:55px;height:55px;border-radius:19px;color:#dceaff;background:linear-gradient(150deg,#447dc5,#193c74);border:1px solid #4779bc;box-shadow:inset 0 1px 3px rgba(255,255,255,.22),0 5px 18px rgba(18,68,153,.24)}
+.v324-cost-calendar svg{width:29px;height:29px}
+.v324-cost-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.v324-cost-metric{display:flex;align-items:center;gap:7px;min-width:0;min-height:66px;padding:9px 7px;border-radius:12px;background:linear-gradient(160deg,rgba(32,57,93,.76),rgba(13,27,48,.85));border:1px solid rgba(109,153,219,.24);box-shadow:inset 0 1px rgba(255,255,255,.045)}
+.v324-cost-metric-icon{color:#75b7ff;flex:0 0 19px}.v324-cost-metric-icon svg{width:19px;height:19px}
+.v324-cost-metric>div{min-width:0}.v324-cost-metric strong{display:block;color:#f9fbff;font-size:clamp(11px,3.1vw,17px);font-weight:850;letter-spacing:-.025em;white-space:nowrap}.v324-cost-metric small{display:block;color:#c5cfe1;font-size:9px;line-height:1.23;margin-top:3px}
+@media(max-width:365px){.v324-cost-design{padding:17px 10px 11px}.v324-cost-calendar{width:47px;height:47px;flex-basis:47px}.v324-cost-metric{gap:3px;padding:7px 5px}.v324-cost-metric-icon{flex-basis:15px}.v324-cost-metric-icon svg{width:15px;height:15px}.v324-cost-metric strong{font-size:10px}.v324-cost-metric small{font-size:8px}}
+/* Desktop card also uses the same interior blue face. */
+.widget-card[data-widget="futureCostKpi"] .v324-cost-design{width:100%;margin:0}.widget-card[data-widget="futureCostKpi"]>.widget-card-top{min-height:0;padding-bottom:0}.widget-card[data-widget="futureCostKpi"] .widget-card-top>div:first-child{display:none}
+</style>
 </body>
 </html>
