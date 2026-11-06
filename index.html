@@ -48723,5 +48723,140 @@ body.theme-black .world-kpis #page .ff-bubble.featured{
 }
 </style>
 
+<style id="v340-fixed-mobile-navigation">
+/* V340 · Una única referencia de tamaño y área segura para navegación móvil.
+   Reemplaza la cascada contradictoria de alturas 58/68/70 px y bottom variables.
+   Solo presentación: no altera navegación, datos ni eventos de los botones. */
+@media screen and (max-width:790px){
+  body{
+    --v340-nav-inset: max(10px, calc(env(safe-area-inset-bottom, 0px) - 11px));
+    --v340-nav-height: 64px;
+  }
+  body .vive-mobile-dock{
+    position:fixed!important;
+    inset:auto auto var(--v340-nav-inset) 50%!important;
+    right:auto!important;
+    bottom:var(--v340-nav-inset)!important;
+    left:50%!important;
+    width:min(460px,calc(100vw - 30px))!important;
+    max-width:calc(100vw - 30px)!important;
+    height:var(--v340-nav-height)!important;
+    min-height:var(--v340-nav-height)!important;
+    max-height:var(--v340-nav-height)!important;
+    transform:translate3d(-50%,0,0)!important;
+    margin:0!important;
+    padding:6px!important;
+    box-sizing:border-box!important;
+    border-radius:32px!important;
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:3px!important;
+    z-index:71!important;
+    isolation:isolate;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    /* El fondo no debe desaparecer al desplazar tarjetas por debajo. */
+    box-shadow:0 10px 24px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.40)!important;
+  }
+  body .vive-mobile-dock>.vive-mobile-dock-item{
+    flex:1 1 0!important;
+    width:0!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:52px!important;
+    min-height:52px!important;
+    max-height:52px!important;
+    padding:5px 1px!important;
+    margin:0!important;
+    gap:3px!important;
+    border-radius:25px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    overflow:hidden!important;
+    transform:none!important;
+  }
+  body .vive-mobile-dock>.vive-mobile-dock-item:active{transform:scale(.97)!important;}
+  body .vive-mobile-dock .vive-mobile-dock-icon{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    height:23px!important;
+    min-height:23px!important;
+    width:100%!important;
+  }
+  body .vive-mobile-dock .vive-mobile-dock-icon svg{width:21px!important;height:21px!important;flex-shrink:0!important;}
+  body .vive-mobile-dock .vive-mobile-dock-label{
+    display:block!important;
+    max-width:100%!important;
+    font-size:clamp(9px,2.5vw,10px)!important;
+    font-weight:730!important;
+    line-height:1.15!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:clip!important;
+  }
+  /* Visibilidad y legibilidad de Liquid Glass mientras el contenido se desplaza. */
+  body:not(.theme-black):not(.theme-dark) .vive-mobile-dock{
+    background:rgba(255,255,255,calc(.72 + var(--v250-dock-opacity,.37) * .22))!important;
+    background-image:none!important;
+    border:1px solid rgba(255,255,255,.90)!important;
+    -webkit-backdrop-filter:blur(var(--v250-dock-blur,20px)) saturate(var(--v250-dock-saturation,150%))!important;
+    backdrop-filter:blur(var(--v250-dock-blur,20px)) saturate(var(--v250-dock-saturation,150%))!important;
+    color:#29384f!important;
+  }
+  body:not(.theme-black):not(.theme-dark) .vive-mobile-dock>.vive-mobile-dock-item.active{
+    background:#fff!important;
+    color:#182438!important;
+    box-shadow:0 2px 8px rgba(37,55,88,.11)!important;
+  }
+  body.theme-black .vive-mobile-dock,body.theme-dark .vive-mobile-dock{
+    background:#050505!important;
+    background-image:none!important;
+    border:1px solid #303030!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    color:#f5f5f5!important;
+    box-shadow:0 12px 27px rgba(0,0,0,.42)!important;
+  }
+  body.theme-black .vive-mobile-dock>.vive-mobile-dock-item,
+  body.theme-dark .vive-mobile-dock>.vive-mobile-dock-item{color:#d5d5d5!important;}
+  body.theme-black .vive-mobile-dock>.vive-mobile-dock-item.active,
+  body.theme-dark .vive-mobile-dock>.vive-mobile-dock-item.active{
+    background:#1b1b1b!important;
+    color:#fff!important;
+    box-shadow:none!important;
+  }
+  /* Registrar permanece separado del dock, sin solaparse al hacer scroll. */
+  body .v249-register-fab{
+    position:fixed!important;
+    bottom:calc(var(--v340-nav-inset) + var(--v340-nav-height) + 13px)!important;
+    z-index:75!important;
+  }
+  /* Que el final de cada hoja quede accesible, encima de la barra fija. */
+  html{scroll-padding-bottom:calc(var(--v340-nav-height,64px) + 65px)!important;}
+  body #app main.main{
+    padding-bottom:max(146px, calc(118px + env(safe-area-inset-bottom, 0px)))!important;
+  }
+  /* Mantener la conducta estable del teclado de búsqueda y los formularios. */
+  body.v154-mobile-input-focused .vive-mobile-dock,
+  body.v158-keyboard-visible .vive-mobile-dock,
+  body.v216-modal-open .vive-mobile-dock,
+  body:has(#modal-root .modal-layer) .vive-mobile-dock{
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+}
+@media screen and (max-width:355px){
+  body .vive-mobile-dock{width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;}
+}
+@media (prefers-reduced-motion:reduce){
+  body .vive-mobile-dock,body .vive-mobile-dock .vive-mobile-dock-item{transition:none!important;animation:none!important;}
+}
+</style>
 </body>
 </html>
