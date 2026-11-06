@@ -23624,26 +23624,14 @@ function v64Variance(current,prior,comparison,risk=false){
 /* V273 · Optional Resumen sections. These are presentation-only and never
    mutate financial data or create duplicate transactions. */
 function v273OverviewExtraWidgets(){
+ // V319: mobile only keeps Recent activity + remaining user-selected widgets.
+ // Subscriptions, cards-to-pay and credit-card summaries are still available
+ // in their own modules; financial records remain unchanged.
  const recent=(recentTx()||[]).slice(0,4);
  const activity=recent.map(t=>`<div class="v273-widget-row"><span class="v273-widget-symbol">${icon(['income','bank_reward','card_reward'].includes(t.type)?'up':'wallet')}</span><span class="v273-widget-copy"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b></div>`).join('');
- const subs=(db.recurring||[]).filter(r=>r.active!==false);
- const monthCost=r=>fx(num(r.amount),r.currency)/(r.frequency==='annual'?12:r.frequency==='quarterly'?3:r.frequency==='weekly'?7/30.4375:1);
- const subTotal=subs.reduce((a,r)=>a+monthCost(r),0);
- const subRows=subs.slice().sort((a,b)=>monthCost(b)-monthCost(a)).slice(0,4).map(r=>`<div class="v273-widget-row"><span class="v273-widget-symbol">${icon('cycle')}</span><span class="v273-widget-copy"><strong>${sanitize(r.name)}</strong><small>${r.nextDue?`Próximo ${prettyDate(r.nextDue)}`:'Sin próximo cargo registrado'}</small></span><b>${money(r.amount,r.currency,2)}</b></div>`).join('');
- const cards=(db.cards||[]).filter(c=>!isHidden(c));
- const dueCards=cards.map(c=>{
-  const dop=cardStatus(c,'DOP'),usd=cardStatus(c,'USD');
-  const billedDop=Math.max(0,num(dop.billed)),billedUsd=Math.max(0,num(usd.billed));
-  const total=fx(billedDop,'DOP')+fx(billedUsd,'USD');
-  const dates=[dop.nextDue,usd.nextDue].filter(Boolean).sort();
-  return {c,total,due:dates[0]||null};
- }).sort((a,b)=>b.total-a.total);
- const billed=dueCards.reduce((a,c)=>a+c.total,0);
- const cardRows=dueCards.slice(0,4).map(x=>`<div class="v273-widget-row"><span class="v273-widget-symbol">${icon('card')}</span><span class="v273-widget-copy"><strong>${sanitize(x.c.name)}</strong><small>${x.due?`Vence ${prettyDate(x.due)}`:'Sin vencimiento pendiente registrado'}</small></span><b>${money(x.total)}</b></div>`).join('');
  const head=(eyebrow,title,link,text)=>`<div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">${eyebrow}</span><h2>${title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${link}">${text} ${icon('arrow')}</button></div>`;
  return `<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver historial')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
- <section data-v105-widget="subscriptions" class="v105-mobile-extra v273-overview-widget" aria-label="Suscripciones activas">${head('CARGOS RECURRENTES','Suscripciones activas','recurring','Ver servicios')}<div class="v273-widget-total"><span>Equivalente mensual · ${subs.length} activas</span><strong>${money(subTotal)}</strong></div>${subRows||'<p class="v273-widget-empty">No tienes suscripciones activas.</p>'}</section>
- <section data-v105-widget="cardsDue" class="v105-mobile-extra v273-overview-widget" aria-label="Tarjetas por pagar">${head('CRÉDITO Y CORTES','Tarjetas por pagar','cards','Ver tarjetas')}<div class="v273-widget-total"><span>Facturado pendiente · RD$ equivalentes</span><strong>${money(billed)}</strong></div>${cardRows||'<p class="v273-widget-empty">No tienes tarjetas activas.</p>'}</section>${v294BankingWidgets()}${v309ExtraCharts()}`;
+${v294BankingWidgets()}${v309ExtraCharts()}`;
 }
 
 
@@ -23774,7 +23762,7 @@ function mobileHome(){
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
    ${v105CapacityWidget(true)}
-   ${v290BudgetMobile()}
+   <!-- V319: tarjeta resumen redundante eliminada; presupuesto sigue en su módulo. -->
    <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div><div class="v96-month-due-note">Pendiente hasta fin de mes, incluidos vencidos: <strong>${money(pendingTotal,'DOP',2)}</strong></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
    <section data-v105-widget="payments" class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
    <section data-v105-widget="net" class="vive-mobile-net-card v36-month-capsule" aria-label="Balance del mes"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RESUMEN MENSUAL</span><h2>Balance del mes</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="advanced">Ver análisis ${icon('up')}</button></div><div class="v36-month-columns"><span><small>Ingresos</small><strong class="v36-income">${money(m.income)}</strong></span><span><small>Egresos</small><strong class="v36-expense">${money(m.expense)}</strong></span></div><div class="v36-month-net"><span><small>Neto</small><strong class="vive-mobile-net-value ${m.net<0?'negative':''}" title="Ingresos menos egresos: ${money(m.net,'DOP',2)}">${money(m.net)}</strong></span><small>${netLabel}</small></div></section>
@@ -25856,20 +25844,15 @@ const WIDGET_METRICS=[
  ['assetMixChart','Composición de activos','chart','products'],
  ['creditUtil','Utilización por tarjeta','chart','tomorrow360'],
  ['patrimonyTrend','Tendencia de patrimonio','chart','tomorrow360'],
- ['tomorrowInsight','El costo de mañana · 30 días','chart','tomorrow360'],
  ['budgetPulse','Pulso presupuestario','chart','tomorrow360'],
  ['cashPressure','Radar de vencimientos','chart','tomorrow360'],
  ['spendingFingerprint','Huella de gastos · 28 días','chart','tomorrow360'],
  ['futureFlow','El río de tu dinero','chart','tomorrow360'],
  ['futureYear','Los próximos 12 meses','chart','tomorrow360'],
- ['futureHeat','Calendario de presión financiera','chart','tomorrow360'],
- ['futureRadar','Radar de presión financiera','chart','tomorrow360'],
  ['futureWaterfall','¿Cuánto dinero ya tiene dueño?','chart','tomorrow360'],
- ['futureDebt','La montaña de deuda','chart','tomorrow360'],
  ['futureMap','Mapa de compromisos','chart','tomorrow360'],
  ['futureScenarios','Tres futuros posibles','chart','tomorrow360'],
  ['futureBubbles','Matriz de importes y urgencia','chart','tomorrow360'],
- ['futureFreedom','Camino hacia tu libertad financiera','chart','tomorrow360'],
 ];
 /* V208 · Referentes internacionales: Monarch, Copilot y dashboards de finanzas
    personales. Selección editorial propia, NO un ranking global verificado.
@@ -25893,13 +25876,7 @@ const V210_WIDGET_ALIASES={
  expenseYoYTrend:'referenceComparison',netYoYTrend:'referenceComparison'
 };
 const v210WidgetId=id=>V210_WIDGET_ALIASES[id]||id;
-const widgetCatalog=()=>[
- ...WIDGET_METRICS.filter(([id])=>!Object.hasOwn(V210_WIDGET_ALIASES,id)),
- ...db.accounts.map(a=>['account:'+a.id,a.name,'wallet','products']),
- ...db.cards.map(c=>['card:'+c.id,c.name,'card','products']),
- ...db.loans.map(l=>['loan:'+l.id,l.name,'receipt','products']),
- ...db.certificates.map(c=>['cert:'+c.id,c.name,'building','products'])
-];
+const widgetCatalog=()=>WIDGET_METRICS.filter(([id])=>V317_FEATURE_GRAPHS.includes(id));
 function widgetsState(){
  const saved=db.settings.widgetsBoard;
  const valid=new Set(widgetCatalog().map(x=>x[0]));
@@ -26229,7 +26206,7 @@ function v197ReferenceChart(id){
  return '';
 }
 
-const VIVE_CHART_KEYS=new Set(['creditUtil','patrimonyTrend','tomorrowInsight','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureYear','futureHeat','futureRadar','futureWaterfall','futureDebt','futureMap','futureScenarios','futureBubbles','futureFreedom'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
+const VIVE_CHART_KEYS=new Set(['creditUtil','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureYear','futureWaterfall','futureMap','futureScenarios','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
 function widgetPreview(id,definition){
  if(id==='tomorrowCost'){const b=v119Baseline(30);return `<div class="ws-preview-body ws-preview-number"><span class="ws-preview-orb">${icon('calendar')}</span><strong>${money(Math.max(0,b.minimum))}</strong><small>${b.critical?'Día crítico: '+prettyDate(b.critical):'Sin faltantes previstos en 30 días'}</small></div>`;}
  const isChart=VIVE_CHART_KEYS.has(id);
@@ -26252,8 +26229,8 @@ function kpiStudio(){
  v318InitializeDashboard();
  const selected=widgetsState(),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
  const map=Object.fromEntries(all.map(x=>[x[0],x])),chartKeys=VIVE_CHART_KEYS;
- const libraryGroups=[['all','Todos'],['global10','Top 10 global · selección'],['tomorrow360','El costo de mañana · 16 gráficos'],['reference','Diseños de referencia'],['executive','Ejecutivos'],['projection','Proyecciones'],['decisions','Decisiones'],['yearly','Interanual'],['cumulative','Acumulados'],['trends','Tendencias'],['breakdown','Distribución'],['products','Productos'],['charts','Otros gráficos'],['assets','Fondos'],['liabilities','Deudas'],['credit','Crédito'],['wealth','Patrimonio'],['activity','Movimientos'],['people','Entre personas'],['benefits','Beneficios']];
- const group=ui.widgetCatalogFilter||'all',query=v71SearchNormalize(ui.widgetSearch||'');
+ const libraryGroups=[['all','Todos los gráficos de Personalización'],['tomorrow360','Personalización · 11 gráficos']];
+ const group=['all','tomorrow360'].includes(ui.widgetCatalogFilter)?ui.widgetCatalogFilter:'all',query=v71SearchNormalize(ui.widgetSearch||'');
  const visible=all.filter(x=>(group==='all'||(group==='global10'?V208_GLOBAL_TOP10.some(t=>t[0]===x[0]):x[3]===group))&&(!query||v71SearchNormalize(x[1]+' '+x[0]+' '+(V208_GLOBAL_TOP10.find(y=>y[0]===x[0])?.[2]||'')).includes(query)));
  const tile=(id,i)=>{
    const def=map[id];if(!def)return '';const isChart=chartKeys.has(id),isReference=V197_REFERENCE_CHART_IDS.includes(id),m=widgetPicture(id),size=widgetSize(id);
@@ -26278,10 +26255,10 @@ function kpiStudio(){
   const part=key==='global10'?V208_GLOBAL_TOP10.map(t=>visible.find(x=>x[0]===t[0])).filter(Boolean):visible.filter(x=>x[3]===key);if(!part.length)return '';
   return `<section class="ws-catalog-section"><div class="ws-catalog-heading"><strong>${label}</strong><small>${key==='global10'?'Selección inspirada en referentes internacionales · 10 indicadores útiles':part.length+' diseños disponibles'}</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
  }).join('');
- return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores · tu centro visual.</h2><p>Tus 16 gráficos de Personalización (seis existentes + diez nuevos) reunidos aquí, con datos reales y diseño adaptable. Puedes mover, ampliar y añadir más indicadores.</p></div><div class="widgets-head-buttons"><button class="btn sm soft" data-act="widgetReferencePreset" type="button">Diseño de 4 gráficos</button>${selected.length?'<button class="btn sm soft" data-act="widgetPreset">Vaciar tablero</button>':''}<button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Añadir indicadores'}</button></div></div>
- ${editing?`<div class="v209-widget-overlay" data-act="widgetEditor" aria-hidden="true"></div><section class="ws-library" role="dialog" aria-modal="true" aria-label="Biblioteca de widgets" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">TU ESTUDIO DE WIDGETS</span><h3>Diseña tu tablero.</h3><p>Explora, compara y añade indicadores sin perder los que ya elegiste.</p></div><button type="button" class="v209-library-close" data-act="widgetEditor" aria-label="Cerrar biblioteca">×</button></header><div class="v209-widget-searchbar"><span>${icon('search')}</span><input id="v209WidgetSearch" type="search" placeholder="Busca por nombre o función: crédito, ingresos, ahorro…" autocomplete="off" aria-label="Buscar widgets" value="${sanitize(ui.widgetSearch||'')}"/><small>${selected.length} elegidos</small></div><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><footer class="v209-library-footer"><span>${selected.length} widget${selected.length===1?'':'s'} en tu tablero · Puedes redimensionarlos desde la esquina</span><button type="button" data-act="widgetEditor">Ver mi tablero →</button></footer></section>`:''}
+ return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores · tus gráficos de Personalización.</h2><p>Únicamente los 11 gráficos disponibles en Personalización, sin los indicadores antiguos. Puedes cambiar el tamaño, ordenar u ocultar gráficos de este conjunto.</p></div><div class="widgets-head-buttons"><button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Administrar gráficos'}</button></div></div>
+ ${editing?`<div class="v209-widget-overlay" data-act="widgetEditor" aria-hidden="true"></div><section class="ws-library" role="dialog" aria-modal="true" aria-label="Biblioteca de widgets" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">TU ESTUDIO DE WIDGETS</span><h3>Diseña tu tablero.</h3><p>Solo se muestran los gráficos de Personalización; no se ofrecen KPIs antiguos.</p></div><button type="button" class="v209-library-close" data-act="widgetEditor" aria-label="Cerrar biblioteca">×</button></header><div class="v209-widget-searchbar"><span>${icon('search')}</span><input id="v209WidgetSearch" type="search" placeholder="Buscar gráfico de Personalización…" autocomplete="off" aria-label="Buscar widgets" value="${sanitize(ui.widgetSearch||'')}"/><small>${selected.length} elegidos</small></div><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><footer class="v209-library-footer"><span>${selected.length} widget${selected.length===1?'':'s'} en tu tablero · Puedes redimensionarlos desde la esquina</span><button type="button" data-act="widgetEditor">Ver mis gráficos →</button></footer></section>`:''}
  <div class="ws-dashboard-label"><div><h3>Tablero activo</h3><p>Arrastra la esquina inferior derecha de cada indicador para cambiar ancho y alto. Usa las flechas para ordenar.</p></div><strong>${selected.length} widgets</strong></div>
- <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Diseño de 4 gráficos» o «Añadir indicadores» para personalizarlo.</div>'}</div>
+ <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Administrar gráficos» para volver a añadir los gráficos de Personalización.</div>'}</div>
  <div class="widgets-disclaimer">Las operaciones pendientes no afectan los saldos. Los importes en RD$ equivalentes de fondos US$ usan la tasa manual configurada. Los préstamos entre personas no se asignan a un banco.</div></div>`;
 }
 
@@ -32491,7 +32468,6 @@ loanForm=function(id,preBank){
    La personalización persiste solo claves de presentación. */
 const V105_WIDGETS=[
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
- {id:'budget',title:'Cumplimiento de presupuesto',hint:'Límite, ejecutado, disponible y categorías'},
  {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
  {id:'chart',title:'Ingresos y egresos',hint:'Evolución de cinco meses'},
@@ -32499,36 +32475,28 @@ const V105_WIDGETS=[
  {id:'payments',title:'Próximos pagos',hint:'Vencimientos y pago directo'},
  {id:'people',title:'Entre personas',hint:'Por cobrar y por devolver'},
  {id:'activity',title:'Actividad reciente',hint:'Últimos movimientos y sus importes'},
- {id:'subscriptions',title:'Suscripciones activas',hint:'Servicios activos, costos y próximas renovaciones'},
- {id:'cardsDue',title:'Tarjetas por pagar',hint:'Monto facturado y próximos vencimientos por tarjeta'},
  {id:'banks',title:'Bancos e instituciones',hint:'Bancos registrados y productos vinculados'},
  {id:'accounts',title:'Cuentas y efectivo',hint:'Saldos disponibles por producto'},
- {id:'cards',title:'Mis tarjetas',hint:'Deuda y detalle de tarjetas activas'},
  {id:'loans',title:'Préstamos bancarios',hint:'Capital pendiente y contratos activos'},
  {id:'certificates',title:'Certificados',hint:'Capital registrado y productos de ahorro'},
  {id:'creditUtil',title:'Utilización por tarjeta',hint:'Límite total, deuda utilizada, disponible y porcentaje'},
  {id:'patrimonyTrend',title:'Tendencia de patrimonio',hint:'Evolución real de activos menos obligaciones por mes'},
- {id:'tomorrowInsight',title:'El costo de mañana',hint:'Liquidez hoy, proyección de 30 días y alertas de caja'},
  {id:'budgetPulse',title:'Cumplimiento de presupuesto · Pulso',hint:'Utilización, ritmo mensual, disponible y categorías'},
  {id:'cashPressure',title:'Radar de vencimientos · 30 días',hint:'Distribución de compromisos futuros en tramos de 7, 15 y 30 días'},
  {id:'spendingFingerprint',title:'Huella de gastos · 28 días',hint:'Calendario visual de importes registrados, sin contar pagos de tarjetas dos veces'},
  {id:'futureFlow',title:'El río de tu dinero',hint:'Flujos de liquidez e ingresos hacia compromisos y saldo'},
  {id:'futureYear',title:'Los próximos 12 meses',hint:'Comparación mensual de cobros y vencimientos'},
- {id:'futureHeat',title:'Calendario de presión financiera',hint:'Mapa de calor de vencimientos a treinta días'},
- {id:'futureRadar',title:'Radar de presión financiera',hint:'Seis relaciones de riesgo y cobertura de compromisos'},
  {id:'futureWaterfall',title:'¿Cuánto dinero ya tiene dueño?',hint:'Cascada de saldos, ingresos programados y pagos'},
- {id:'futureDebt',title:'La montaña de deuda',hint:'Saldo de deuda y amortización contractual a doce meses'},
  {id:'futureMap',title:'Mapa de compromisos',hint:'Peso mensual de tarjetas, préstamos y suscripciones'},
  {id:'futureScenarios',title:'Tres futuros posibles',hint:'Escenarios de sensibilidad y riesgo financiero'},
  {id:'futureBubbles',title:'Matriz de importes y urgencia',hint:'Cruce de importe y proximidad de vencimientos'},
- {id:'futureFreedom',title:'Camino hacia tu libertad financiera',hint:'Liquidez identificada frente a deuda futura'},
 
 ];
 /* V316: cuatro gráficos financieros esenciales, compatibles con preferencias previas.
    Otros widgets funcionales siguen disponibles desde el editor. */
-const V316_ESSENTIAL_GRAPHS=['creditUtil','patrimonyTrend','tomorrowInsight','budgetPulse'];
+const V316_ESSENTIAL_GRAPHS=['creditUtil','patrimonyTrend','budgetPulse'];
 const V317_NEW_GRAPHS=['cashPressure','spendingFingerprint'];
-const V318_NEW_GRAPHS=['futureFlow','futureYear','futureHeat','futureRadar','futureWaterfall','futureDebt','futureMap','futureScenarios','futureBubbles','futureFreedom'];
+const V318_NEW_GRAPHS=['futureFlow','futureYear','futureWaterfall','futureMap','futureScenarios','futureBubbles'];
 const V317_FEATURE_GRAPHS=[...V316_ESSENTIAL_GRAPHS,...V317_NEW_GRAPHS,...V318_NEW_GRAPHS];
 function v316OrderDefaults(ids){return [...V317_FEATURE_GRAPHS,...ids.filter(id=>!V317_FEATURE_GRAPHS.includes(id))]}
 function v316VisibleDefaults(ids){
@@ -34910,15 +34878,15 @@ function v273SettingsWidgetEditor(){
  const insights=cfg.order.filter(x=>V317_NEW_GRAPHS.includes(x));
  const tomorrow=cfg.order.filter(x=>V318_NEW_GRAPHS.includes(x));
  const secondary=cfg.order.filter(x=>!V317_FEATURE_GRAPHS.includes(x));
- return `<section class="v273-settings-customizer v316-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Lo esencial, con más inteligencia</h3><p>Los seis gráficos originales y diez nuevas relaciones sobre El costo de mañana. En móvil eliges cuáles mostrar; en web todos están en Mis indicadores.</p></header>
- <div class="v316-essentials-head"><span>GRÁFICOS ESENCIALES</span><span>04 / 04</span></div>
+ return `<section class="v273-settings-customizer v316-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Lo esencial, con más inteligencia</h3><p>Los cinco gráficos esenciales y seis perspectivas nuevas. En la web, Mis indicadores reúne únicamente estos gráficos de Personalización.</p></header>
+ <div class="v316-essentials-head"><span>GRÁFICOS ESENCIALES</span><span>03 / 03</span></div>
  <div class="v273-custom-rows v316-essentials">${essentials.map(row).join('')}</div>
  <div class="v316-essentials-head v317-insights-head"><span>NUEVAS PERSPECTIVAS</span><span>02 / 02</span></div>
  <div class="v273-custom-rows v316-essentials v317-insights">${insights.map(row).join('')}</div>
- <div class="v316-essentials-head v318-insights-head"><span>EL COSTO DE MAÑANA · 10 NUEVOS</span><span>10 / 10</span></div>
+ <div class="v316-essentials-head v318-insights-head"><span>EL COSTO DE MAÑANA · 6 NUEVOS</span><span>06 / 06</span></div>
  <div class="v273-custom-rows v316-essentials v318-personalization-rows">${tomorrow.map(row).join('')}</div>
  <details class="v316-more-widgets"><summary>Otras secciones de tu Resumen <span aria-hidden="true">⌄</span></summary><div class="v273-custom-rows">${secondary.map(row).join('')}</div></details>
- <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. En web los 16 gráficos están disponibles en Mis indicadores. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
+ <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. En web los 11 gráficos de Personalización están disponibles en Mis indicadores. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
 }
 
 
@@ -35032,7 +35000,7 @@ function v294BankingWidgets(){
   {id:'loans',title:'Préstamos bancarios',eyebrow:'FINANCIAMIENTO',page:'loans',icon:'receipt',count:loans.length,amount:money(loanTotal),unit:'saldo pendiente equivalente',hint:`${loans.length} contratos activos`,items:loans.slice(0,3).map(l=>({name:l.name||'Préstamo',value:money(loanBalance(l))}))},
   {id:'certificates',title:'Certificados',eyebrow:'AHORRO E INVERSIÓN',page:'certificates',icon:'analytics',count:certificates.length,amount:money(certificateTotal),unit:'capital registrado equivalente',hint:`${certificates.length} certificados activos`,items:certificates.slice(0,3).map(c=>({name:c.name||'Certificado',value:'Activo'}))}
  ];
- return layouts.map(w=>`<section class="v105-mobile-extra v273-overview-widget v294-finance-widget" data-v105-widget="${w.id}" aria-label="${w.title}">
+ return layouts.filter(w=>w.id!=='cards').map(w=>`<section class="v105-mobile-extra v273-overview-widget v294-finance-widget" data-v105-widget="${w.id}" aria-label="${w.title}">
   <div class="vive-mobile-card-head v294-widget-head"><div><span class="vive-mobile-eyebrow">${w.eyebrow}</span><h2>${w.title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${w.page}" aria-label="Abrir ${w.title}">${icon('arrow')}</button></div>
   <div class="v294-widget-amount"><span class="v294-widget-ico">${icon(w.icon)}</span><div><strong>${w.amount}</strong><small>${w.unit}</small></div></div>
   <span class="v294-widget-count">${w.hint}</span>
@@ -35196,7 +35164,7 @@ function v309ExtraCharts(){
   ${v317ActiveDays?`<div class="v317-peak"><span>Día de mayor consumo · ${sanitize(prettyDate(v317Peak.date))}</span><strong>${displayMoney(v317Peak.amount)}</strong></div>`:''}
   <p class="v315-small-note">Solo movimientos de gasto y compras registrados; reembolsos reducen el importe del día. Excluye transferencias y pagos de tarjeta para no contabilizar dos veces. No registra actividad nueva.</p>
  </section>`;
- return cardSection+wealthSection+tomorrowSection+budgetSection+dueSection+fingerprintSection;
+ return cardSection+wealthSection+budgetSection+dueSection+fingerprintSection;
 }
 
 /* V318 · El costo de mañana — 10 visualizaciones analíticas vinculadas al motor real.
@@ -35205,17 +35173,13 @@ function v309ExtraCharts(){
 const V318_GRAPH_META=[
  ['futureFlow','El río de tu dinero','Origen, obligaciones y saldo previsto en 30 días','activity'],
  ['futureYear','Los próximos 12 meses','Cobros y vencimientos identificados por mes','projection'],
- ['futureHeat','Calendario de presión financiera','Mapa de vencimientos diarios en los próximos 30 días','decisions'],
- ['futureRadar','Radar de presión financiera','Seis dimensiones de riesgo calculadas con datos registrados','liabilities'],
  ['futureWaterfall','¿Cuánto dinero ya tiene dueño?','Cascada de liquidez, ingresos y compromisos','decisions'],
- ['futureDebt','La montaña de deuda','Amortización contractual y deuda sin calendario estimado','liabilities'],
  ['futureMap','Mapa de compromisos','Peso relativo por tipo de obligación mensual','breakdown'],
  ['futureScenarios','Tres futuros posibles','Escenarios de sensibilidad, no movimientos reales','projection'],
  ['futureBubbles','Matriz de importes y urgencia','Relación entre importe y días hasta vencer','decisions'],
- ['futureFreedom','Camino hacia tu libertad financiera','Deuda estimada frente a liquidez calendarizada','projection']
 ];
 const V318_GRAPH_IDS=new Set(V318_GRAPH_META.map(x=>x[0]));
-const V318_LEGACY_MAP={creditUtil:'Utilización por tarjeta',patrimonyTrend:'Tendencia de patrimonio',tomorrowInsight:'El costo de mañana · liquidez 30 días',budgetPulse:'Pulso presupuestario',cashPressure:'Radar de vencimientos',spendingFingerprint:'Huella de gastos · 28 días'};
+const V318_LEGACY_MAP={creditUtil:'Utilización por tarjeta',patrimonyTrend:'Tendencia de patrimonio',budgetPulse:'Pulso presupuestario',cashPressure:'Radar de vencimientos',spendingFingerprint:'Huella de gastos · 28 días'};
 const V318_ALL_CHART_IDS=[...Object.keys(V318_LEGACY_MAP),...V318_GRAPH_META.map(x=>x[0])];
 function v318CalendarMonth(offset){const d=dateObj(today());return new Date(d.getFullYear(),d.getMonth()+offset,1).toLocaleDateString('en-CA',{year:'numeric',month:'2-digit'}).replace(/\//g,'-')}
 function v318IsoMonth(offset){const d=dateObj(today());const t=new Date(d.getFullYear(),d.getMonth()+offset,1);return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')}
@@ -35360,14 +35324,23 @@ function v318ExistingGraph(id){
 
 function v318MobileCharts(){
  const visible=new Set(v105Config().visible);
- return V318_GRAPH_META.filter(([id])=>visible.has(id)).map(([id,title,hint],i)=>`<section class="v105-mobile-extra v273-overview-widget v318-mobile-card" data-v105-widget="${id}" aria-label="${sanitize(title)}"><header class="v318-mobile-head"><span>${String(i+7).padStart(2,'0')} / 16 · EL COSTO DE MAÑANA</span><h2>${sanitize(title)}</h2><small>${sanitize(hint)}</small></header>${v318Graph(id)}</section>`).join('');
+ return V318_GRAPH_META.filter(([id])=>visible.has(id)).map(([id,title,hint],i)=>`<section class="v105-mobile-extra v273-overview-widget v318-mobile-card" data-v105-widget="${id}" aria-label="${sanitize(title)}"><header class="v318-mobile-head"><span>${String(i+6).padStart(2,'0')} / 11 · EL COSTO DE MAÑANA</span><h2>${sanitize(title)}</h2><small>${sanitize(hint)}</small></header>${v318Graph(id)}</section>`).join('');
 }
 function v318InitializeDashboard(){
- if(isMobileViewport()||db.settings?.v318BoardInitialized)return;
- const valid=new Set(widgetCatalog().map(x=>x[0]));const original=Array.isArray(db.settings.widgetsBoard)?db.settings.widgetsBoard:[];
- const merged=[...new Set([...V318_ALL_CHART_IDS,...original].filter(x=>valid.has(x)))];
- db.settings.widgetsBoard=merged.slice(0,90);db.settings.v318BoardInitialized=true;
- persist();
+ if(isMobileViewport())return;
+ const authorized=V317_FEATURE_GRAPHS;
+ const current=Array.isArray(db.settings.widgetsBoard)?db.settings.widgetsBoard:[];
+ // V320 migration: delete every old widget, including charts removed at user's request.
+ if(!db.settings.v321PersonalizationOnly){
+  db.settings.widgetsBoard=[...authorized];
+  db.settings.v321PersonalizationOnly=true;
+  db.settings.v318BoardInitialized=true;
+  persist();
+  return;
+ }
+ // Always prune obsolete keys from saved layouts, never restore retired widgets.
+ const next=[...new Set(current.filter(id=>authorized.includes(id)))];
+ if(next.length!==current.length){db.settings.widgetsBoard=next;persist()}
 }
 document.addEventListener('click',event=>{const ctl=event.target.closest?.('[data-v318-scenario]');if(!ctl)return;event.preventDefault();event.stopImmediatePropagation();const val=Number(ctl.dataset.v318Scenario);if(![5,10,20].includes(val))return;ui.v318ScenarioPct=val;render()},true);
 
