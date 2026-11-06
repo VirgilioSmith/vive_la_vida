@@ -22675,6 +22675,66 @@ body.theme-dark .v296-nav a:hover{border-color:#6ea2ff!important;box-shadow:0 0 
 .f33-gate.v329-splash.v331-splash-light .v329-period{color:#000000!important}
 .f33-gate.v329-splash.v331-splash-light .v329-splash-line{background:linear-gradient(90deg,transparent,#1c1c1c,transparent)!important}
 </style>
+
+<style id="v332-indicators-web">
+/* Tablero ejecutivo: mismo catálogo y jerarquía de Personalización móvil. */
+@media(min-width:791px){
+ .world-kpis #page .widgets-world{max-width:1700px;margin:0 auto;padding-inline:clamp(14px,2vw,38px);min-width:0}
+ .world-kpis #page .widgets-grid.ws-board,.world-kpis #page .widgets-grid.ws-board:has(>.ws-reference){display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-flow:row dense!important;gap:clamp(11px,1.25vw,19px)!important;align-items:start}
+ .world-kpis #page .widgets-grid.ws-board>.ws-tile,.world-kpis #page .widgets-grid.ws-board>.ws-tile.widget-chart,.world-kpis #page .widgets-grid.ws-board>.ws-tile.ws-reference{grid-column:span var(--ws-cols,2)!important;height:var(--ws-h,340px)!important;min-height:min(100%,var(--ws-h,340px))!important;max-width:100%!important;min-width:0!important;min-height:0!important;overflow:hidden!important;box-sizing:border-box!important;border-radius:20px!important;padding:17px 18px 34px!important}
+ .world-kpis #page .widgets-grid.ws-board>.ws-tile .v318-svg{max-width:100%!important;min-width:0!important;height:auto!important}
+ .world-kpis #page .widgets-grid.ws-board>.ws-tile .v326-list,.world-kpis #page .widgets-grid.ws-board>.ws-tile .v318-chart-content{min-height:0;max-height:100%;overflow:auto;overscroll-behavior:contain}
+ .world-kpis #page .widgets-grid.ws-board>.ws-tile .v326-stats{grid-template-columns:repeat(auto-fit,minmax(125px,1fr))!important}
+ .world-kpis #page .widgets-grid.ws-board>.ws-tile .widget-card-top{align-items:flex-start;flex-shrink:0;max-width:100%}
+ .world-kpis #page .widgets-grid.ws-board>.ws-tile .widget-card-top>div:first-child{min-width:0;overflow-wrap:anywhere}
+ .world-kpis #page .widgets-grid.ws-board>.ws-tile .widget-detail{flex-shrink:0}
+ .world-kpis #page .widgets-grid.ws-board>.ws-tile .v324-cost-price strong{font-size:clamp(25px,2.7vw,39px)!important;overflow-wrap:anywhere}
+ .world-kpis #page .widgets-grid.ws-board>.ws-tile .v324-cost-design{height:auto!important;min-height:0!important;max-width:100%!important;overflow:auto!important}
+}
+@media(min-width:791px) and (max-width:1150px){.world-kpis #page .widgets-grid.ws-board,.world-kpis #page .widgets-grid.ws-board:has(>.ws-reference){grid-template-columns:repeat(2,minmax(0,1fr))!important}.world-kpis #page .widgets-grid.ws-board>.ws-tile{grid-column:span 2!important}.world-kpis #page .widgets-grid.ws-board>.ws-tile[data-ws-span="1"]{grid-column:span 1!important}}
+@media(min-width:791px) and (max-width:910px){.world-kpis #page .widgets-grid.ws-board>.ws-tile{grid-column:span 2!important}}
+.ws-library .ws-catalog-section{margin-bottom:16px}
+.ws-library .ws-catalog-heading{display:flex;justify-content:space-between;gap:9px;align-items:center;padding:14px 7px 9px}
+.ws-library .ws-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+.ws-library .ws-gallery-card.v332-preview-card{min-height:0!important;border-radius:17px!important;overflow:hidden!important;transition:border-color .2s,transform .2s!important}
+.ws-library .v332-mini-preview{height:168px;padding:7px 12px;min-width:0;box-sizing:border-box;overflow:hidden;position:relative;pointer-events:none}
+.ws-library .v332-mini-preview>.ws-preview-body{width:100%!important;max-width:100%!important;min-height:0!important;max-height:154px!important;overflow:hidden!important;padding:8px!important;box-sizing:border-box!important;border-radius:12px!important}
+.ws-library .v332-mini-preview .v318-svg{width:100%;height:95px;max-width:100%}
+.ws-library .v332-mini-preview .v318-chart-content{padding:0!important;max-height:150px;overflow:hidden}
+.ws-library .v332-mini-preview .v326-stat{padding:7px!important}.ws-library .v332-mini-preview .v326-stat strong{font-size:12px!important}
+.ws-library .v332-mini-preview .v324-cost-design{transform-origin:top left;zoom:.68;max-width:145%}
+.ws-library .v332-preview-footer{align-items:flex-end!important;gap:12px!important}
+.ws-library .v332-preview-footer>div{flex:1;min-width:0}.ws-library .v332-preview-footer strong{display:block!important;color:inherit!important;font-size:12px!important;margin-bottom:5px}
+.ws-library .v332-preview-footer small{display:block;font-size:10px;line-height:1.35;opacity:.78;max-width:30ch}
+.ws-library .v332-preview-footer button{flex-shrink:0}
+.ws-library .v332-library-footer{gap:10px!important;flex-wrap:wrap!important}.ws-library .v332-library-commands{display:flex;gap:8px;flex-wrap:wrap}
+.ws-library .v332-library-commands>button{cursor:pointer;border-radius:11px;border:1px solid #384a61;background:#121c2b;color:#f2f6ff;padding:10px 12px;font-weight:750}
+.ws-library .v332-library-commands>button:last-child{background:#285da5;border-color:#285da5;color:#fff}
+.world-kpis #page .ws-tile .widget-card-top .widget-kicker{font-size:10px!important;letter-spacing:.11em;color:#8eacdb}
+body.theme-black .world-kpis #page .ws-tile,body.theme-black .ws-library .v332-preview-card{background:#08090d!important;border-color:#242733!important;color:#f3f6fe!important}
+body.theme-black .world-kpis #page .ws-tile .v326-stat,body.theme-black .ws-library .v332-mini-preview .ws-preview-body{background:#10141d!important;border-color:#283246!important;color:#eef3ff!important}
+body.theme-light .world-kpis #page .ws-tile,body.theme-light .ws-library .v332-preview-card{background:#fff!important;color:#18263d!important}
+@media(max-width:900px){.ws-library .ws-gallery{grid-template-columns:minmax(0,1fr)!important}.ws-library .v332-library-commands>button{flex:1}}
+@media(prefers-reduced-motion:reduce){.ws-library .ws-gallery-card.v332-preview-card{transition:none!important}}
+</style>
+
+<style id="v332-previews-refinement">
+/* Miniaturas que escalan el gráfico real sin recortar su bloque superior. */
+.ws-library .v332-mini-preview>.ws-preview-body.ws-preview-chart{zoom:.74;width:135%!important;max-width:135%!important;max-height:220px!important;overflow:hidden!important;transform-origin:top left}
+.ws-library .v332-mini-preview>.ws-preview-body.ws-preview-chart>.v318-chart-content{height:auto!important;max-height:none!important;min-height:0!important;overflow:hidden!important}
+.ws-library .v332-mini-preview>.ws-preview-body.ws-preview-chart .v318-stat-row{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+.ws-library .v332-mini-preview .v318-stat-row>div{padding:7px!important}
+.ws-library .v332-mini-preview .v318-stat-row strong{font-size:13px!important}
+.ws-library .v332-mini-preview .v318-stat-row small{font-size:9px!important}
+</style>
+
+<style id="v334-welcome-minimal">
+.f33-gate.v329-splash .v329-splash-content{gap:0!important;filter:none!important;text-shadow:none!important;box-shadow:none!important}
+.f33-gate.v329-splash .v329-wordmark{animation:v334-word-arrive .65s ease-out both!important;filter:none!important;text-shadow:none!important;box-shadow:none!important;background:none!important}
+.f33-gate.v329-splash .v329-splash-line,.f33-gate.v329-splash .v329-period{display:none!important}
+@keyframes v334-word-arrive{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.f33-gate.v329-splash .v329-wordmark{animation:none!important}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -26038,7 +26098,10 @@ const V210_WIDGET_ALIASES={
 };
 const v210WidgetId=id=>V210_WIDGET_ALIASES[id]||id;
 /* V326: catálogo único y completo: exactamente todas las filas de Personalización. */
-const widgetCatalog=()=>V105_WIDGETS.map(w=>[w.id,w.title,V317_FEATURE_GRAPHS.includes(w.id)?'chart':'wallet',V317_FEATURE_GRAPHS.includes(w.id)?'main':'sections']);
+const widgetCatalog=()=>v332PersonalizationGroups(v105Config()).flatMap(g=>g.ids.map(id=>{
+ const w=V105_WIDGETS.find(x=>x.id===id);
+ return [w.id,w.title,V317_FEATURE_GRAPHS.includes(id)?'chart':'wallet',g.key];
+}));
 function widgetsState(){
  const saved=db.settings.widgetsBoard;
  const valid=new Set(widgetCatalog().map(x=>x[0]));
@@ -26416,8 +26479,8 @@ function widgetPreview(id,definition){
  const value=widgetPicture(id),fmt=value?.value||'—',foot=value?.foot||'Se calcula con tus registros';
  return `<div class="ws-preview-body ws-preview-number"><span class="ws-preview-orb">${icon(definition?.[2]||'wallet')}</span><strong>${fmt}</strong><small>${sanitize(foot)}</small></div>`;
 }
-function widgetSize(id){const n=Number((db.settings.widgetSizes||{})[id]);return Number.isInteger(n)&&n>=1&&n<=4?n:(V318_ALL_CHART_IDS.includes(id)||['executiveSnapshot','incomeProjection'].includes(id)?2:1)}
-function widgetHeight(id){const n=Number((db.settings.widgetHeights||{})[id]);return Number.isFinite(n)&&n>=165&&n<=600?n:(V318_ALL_CHART_IDS.includes(id)?410:VIVE_CHART_KEYS.has(id)?252:V105_WIDGETS.some(w=>w.id===id)?315:194)}
+function widgetSize(id){const n=Number((db.settings.widgetSizes||{})[id]);return Number.isInteger(n)&&n>=1&&n<=4?n:(V317_FEATURE_GRAPHS.includes(id)?2:V105_WIDGETS.some(w=>w.id===id)?2:1)}
+function widgetHeight(id){const n=Number((db.settings.widgetHeights||{})[id]);return Number.isFinite(n)&&n>=220&&n<=800?n:(id==='futureCalendar'?530:id==='futureCostKpi'?445:V317_FEATURE_GRAPHS.includes(id)?465:V105_WIDGETS.some(w=>w.id===id)?365:310)}
 function v133TomorrowWidgetBody(){
  const b=v119Baseline(30),min=Math.max(0,b.minimum),gap=Math.max(0,-b.minimum);
  return `<div class="v133-tomorrow-body">
@@ -26430,15 +26493,15 @@ function kpiStudio(){
  v318InitializeDashboard();
  const selected=widgetsState(),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
  const map=Object.fromEntries(all.map(x=>[x[0],x])),chartKeys=VIVE_CHART_KEYS;
- const libraryGroups=[['all','Todo Personalización'],['main','Gráficos · '+V317_FEATURE_GRAPHS.length],['sections','Secciones · '+(V105_WIDGETS.length-V317_FEATURE_GRAPHS.length)]];
- const group=['all','main','sections'].includes(ui.widgetCatalogFilter)?ui.widgetCatalogFilter:'all',query=v71SearchNormalize(ui.widgetSearch||'');
- const visible=all.filter(x=>(group==='all'||(group==='global10'?V208_GLOBAL_TOP10.some(t=>t[0]===x[0]):x[3]===group))&&(!query||v71SearchNormalize(x[1]+' '+x[0]+' '+(V208_GLOBAL_TOP10.find(y=>y[0]===x[0])?.[2]||'')).includes(query)));
+ const libraryGroups=[['all','Todo Personalización'],...v332PersonalizationGroups(v105Config()).map(g=>[g.key,g.label])];
+ const group=libraryGroups.some(g=>g[0]===ui.widgetCatalogFilter)?ui.widgetCatalogFilter:'all',query=v71SearchNormalize(ui.widgetSearch||'');
+ const visible=all.filter(x=>(group==='all'||x[3]===group)&&(!query||v71SearchNormalize(x[1]+' '+x[0]+' '+(V105_WIDGETS.find(y=>y.id===x[0])?.hint||'')).includes(query)));
  const tile=(id,i)=>{
    const def=map[id];if(!def)return '';const isChart=chartKeys.has(id),isReference=V197_REFERENCE_CHART_IDS.includes(id),m=widgetPicture(id),size=widgetSize(id);
    const height=widgetHeight(id);
    const route=m?.route||({capacity:'payments',budgetTrend:'budget',commitments:'payments',chart:'income',net:'income',payments:'payments',people:'personal',activity:'register',banks:'banks',accounts:'accounts',loans:'loans',certificates:'certificates',referenceBalance:'advanced',referenceCredit:'cards',referenceCashflow:'income',referenceComparison:'advanced',incomeVsExpense:'income',creditVisual:'cards',fundsVisual:'accounts',subscriptionVisual:'recurring',incomeYoYTrend:'advanced',expenseYoYTrend:'advanced',netYoYTrend:'advanced',incomeYtdYoY:'advanced',expenseYtdYoY:'advanced',netYtdYoY:'advanced',netTrendChart:'income',liquidityTrendChart:'accounts',incomeMixChart:'income',expenseMixChart:'advanced',subscriptionsParetoChart:'recurring',creditByCardChart:'cards',loanBalancesChart:'loans',assetMixChart:'patrimony'}[id])||'kpis';
-   return `<article class="widget-card ws-tile ${isReference?'ws-reference ':''}${isChart?'widget-chart':''} ${size>=2?'ws-wide':''}" data-widget="${sanitize(id)}" data-ws-span="${size}" data-ws-height="${height}" style="--ws-cols:${size};--ws-h:${height}px" draggable="${editing?'true':'false'}" tabindex="0" aria-label="Widget ${sanitize(def[1])}">
-    <div class="widget-card-top"><div>${id==='futureCostKpi'?'':`<span class="widget-kicker">${isChart?'GRÁFICO INTERACTIVO':'INDICADOR FINANCIERO'}</span><h3>${sanitize(def[1])}</h3>`}</div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size>=2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size>=2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
+   return `<article class="widget-card ws-tile ${isReference?'ws-reference ':''}${isChart?'widget-chart':''} ${size>=2?'ws-wide':''}" data-widget="${sanitize(id)}" data-ws-span="${size}" data-ws-height="${height}" style="--ws-cols:${size};--ws-h:${height}px" draggable="true" tabindex="0" aria-label="Widget ${sanitize(def[1])}">
+    <div class="widget-card-top"><div>${id==='futureCostKpi'?'':`<span class="widget-kicker">${sanitize((typeof V328_CHART_KICKERS!=='undefined'&&V328_CHART_KICKERS[id])||v332GroupForId(id)?.label||'INDICADOR')}</span><h3>${sanitize(def[1])}</h3>`}</div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size>=2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size>=2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
     ${id==='tomorrowCost'?v133TomorrowWidgetBody():['executiveSnapshot','incomeProjection'].includes(id)?v195Visual(id):isChart?widgetGraph(id):V105_WIDGETS.some(w=>w.id===id)?v326PersonalizationWidget(id):`<div class="widget-number ${m?.tone&&m.tone!=='neutral'?'v195-'+m.tone:''}">${m?.value||'—'}</div><p class="widget-foot">${sanitize(m?.foot||'')}</p>`}
     ${['burden','affordability','utilization'].includes(id)?`<button type="button" class="v85-widget-open" data-v85-action="capacity">Ver cálculo ${icon('arrow')}</button>`:''}
     ${isReference?'':id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Simular una decisión ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
@@ -26446,19 +26509,22 @@ function kpiStudio(){
    </article>`;
  };
  const catalogueTile=x=>{
-   const [id,name,ic,grp]=x,active=selected.includes(id),graphic=chartKeys.has(id),globalInfo=V208_GLOBAL_TOP10.findIndex(t=>t[0]===id),ranking=globalInfo>=0?V208_GLOBAL_TOP10[globalInfo]:null;
-   return `<article class="ws-gallery-card ${active?'ws-selected':''}" data-widget-preview="${sanitize(id)}">
-      <div class="ws-gallery-top"><span class="ws-gallery-type">${group==='global10'?`TOP ${String(globalInfo+1).padStart(2,'0')} · ${graphic?'Gráfico':'Indicador'}`:`${graphic?'Gráfico':'Indicador'} · ${sanitize(libraryGroups.find(x=>x[0]===grp)?.[1]||'Producto')}`}</span><span class="ws-gallery-status">${active?'✓ Añadido':'Disponible'}</span></div>
-      ${widgetPreview(id,x)}${group==='global10'&&ranking?`<p class="v208-global-note">${sanitize(ranking[2])}</p>`:''}<div class="ws-gallery-footer"><strong title="${sanitize(name)}">${sanitize(name)}</strong><button type="button" data-act="widgetToggle" data-id="${sanitize(id)}" class="${active?'ws-remove':'ws-add'}">${active?'Quitar':'Añadir'} ${active?'−':'+'}</button></div>
+   const [id,name,ic,grp]=x,active=selected.includes(id),graphic=chartKeys.has(id),
+         item=V105_WIDGETS.find(w=>w.id===id),source=v332GroupForId(id);
+   return `<article class="ws-gallery-card v332-preview-card ${active?'ws-selected':''}" data-widget-preview="${sanitize(id)}">
+      <div class="ws-gallery-top"><span class="ws-gallery-type">${graphic?'GRÁFICO':'MÓDULO'} · ${sanitize(source?.label||'Personalización')}</span><span class="ws-gallery-status">${active?'✓ En tu tablero':'Disponible'}</span></div>
+      <div class="v332-mini-preview"><div class="v333-preview-head"><span>${sanitize((typeof V328_CHART_KICKERS!=='undefined'&&V328_CHART_KICKERS[id])||source?.label||'INDICADOR')}</span><strong>${sanitize(name)}</strong></div>${widgetPreview(id,x)}</div>
+      <div class="ws-gallery-footer v332-preview-footer"><div><strong title="${sanitize(name)}">${sanitize(name)}</strong><small>${sanitize(item?.hint||'Datos reales de tus finanzas')}</small></div><button type="button" data-act="widgetToggle" data-id="${sanitize(id)}" class="${active?'ws-remove':'ws-add'}" aria-label="${active?'Quitar':'Añadir'} ${sanitize(name)}">${active?'Quitar −':'Añadir +'}</button></div>
    </article>`;
  };
- const catalogue=(group==='all'?libraryGroups.slice(1):libraryGroups.filter(g=>g[0]===group)).map(([key,label])=>{
-  const part=key==='global10'?V208_GLOBAL_TOP10.map(t=>visible.find(x=>x[0]===t[0])).filter(Boolean):visible.filter(x=>x[3]===key);if(!part.length)return '';
-  return `<section class="ws-catalog-section"><div class="ws-catalog-heading"><strong>${label}</strong><small>${key==='global10'?'Selección inspirada en referentes internacionales · 10 indicadores útiles':part.length+' diseños disponibles'}</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
+ const catalogue=(group==='all'?v332PersonalizationGroups(v105Config()):v332PersonalizationGroups(v105Config()).filter(g=>g.key===group)).map(g=>{
+  const part=g.ids.map(id=>visible.find(x=>x[0]===id)).filter(Boolean);
+  if(!part.length)return '';
+  return `<section class="ws-catalog-section v332-catalog-section" data-v332-group="${g.key}"><div class="ws-catalog-heading"><strong>${sanitize(g.title)}</strong><small>${part.length} elementos · mismo orden de Personalización</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
  }).join('');
- return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores · toda tu Personalización.</h2><p>Disponibles los ${V105_WIDGETS.length} elementos de Personalización: gráficos esenciales, nuevas perspectivas, El costo de mañana y todas las otras secciones del Resumen. Ningún indicador externo al catálogo.</p></div><div class="widgets-head-buttons"><button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Administrar gráficos'}</button></div></div>
- ${editing?`<div class="v209-widget-overlay" data-act="widgetEditor" aria-hidden="true"></div><section class="ws-library" role="dialog" aria-modal="true" aria-label="Biblioteca de widgets" aria-label="Biblioteca visual de widgets"><header class="ws-library-heading"><div><span class="summary-tag">TU ESTUDIO DE WIDGETS</span><h3>Diseña tu tablero.</h3><p>Solo se incluyen los elementos de Personalización, con sus gráficos y secciones completas.</p></div><button type="button" class="v209-library-close" data-act="widgetEditor" aria-label="Cerrar biblioteca">×</button></header><div class="v209-widget-searchbar"><span>${icon('search')}</span><input id="v209WidgetSearch" type="search" placeholder="Buscar en toda Personalización…" autocomplete="off" aria-label="Buscar widgets" value="${sanitize(ui.widgetSearch||'')}"/><small>${selected.length} elegidos</small></div><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><footer class="v209-library-footer"><span>${selected.length} widget${selected.length===1?'':'s'} en tu tablero · Puedes redimensionarlos desde la esquina</span><button type="button" data-act="widgetEditor">Ver mis gráficos →</button></footer></section>`:''}
- <div class="ws-dashboard-label"><div><h3>Tablero activo</h3><p>Arrastra la esquina inferior derecha de cada indicador para cambiar ancho y alto. Usa las flechas para ordenar.</p></div><strong>${selected.length} widgets</strong></div>
+ return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores</h2><p>Tu Personalización móvil, en formato web. Los ${V105_WIDGETS.length} elementos se organizan por las mismas secciones; puedes redimensionar, ordenar y administrar cada uno.</p></div><div class="widgets-head-buttons"><button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Administrar gráficos'}</button></div></div>
+ ${editing?`<div class="v209-widget-overlay" data-act="widgetEditor" aria-hidden="true"></div><section class="ws-library" role="dialog" aria-modal="true" aria-label="Biblioteca visual de gráficos de Personalización"><header class="ws-library-heading"><div><span class="summary-tag">PERSONALIZACIÓN · VISTA WEB</span><h3>Administrar gráficos</h3><p>Vistas previas reales, agrupadas exactamente como en Personalización móvil.</p></div><button type="button" class="v209-library-close" data-act="widgetEditor" aria-label="Cerrar biblioteca">×</button></header><div class="v209-widget-searchbar"><span>${icon('search')}</span><input id="v209WidgetSearch" type="search" placeholder="Buscar en toda Personalización…" autocomplete="off" aria-label="Buscar widgets" value="${sanitize(ui.widgetSearch||'')}"/><small>${selected.length} elegidos</small></div><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><footer class="v209-library-footer v332-library-footer"><span>${selected.length} de ${V105_WIDGETS.length} elementos visibles · Misma organización que Personalización</span><div class="v332-library-commands"><button type="button" data-act="v332AddAll">Añadir todos</button><button type="button" data-act="v332SyncOrder">Orden de Personalización</button><button type="button" data-act="widgetEditor">Ver mi tablero →</button></div></footer></section>`:''}
+ <div class="ws-dashboard-label"><div><h3>Tu tablero web</h3><p>Arrastra las tarjetas para reordenarlas o su esquina para ajustar ancho y alto. Usa las flechas si prefieres moverlas paso a paso.</p></div><strong>${selected.length} de ${V105_WIDGETS.length}</strong></div>
  <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Administrar gráficos» para volver a añadir los elementos de Personalización.</div>'}</div>
  <div class="widgets-disclaimer">Las operaciones pendientes no afectan los saldos. Los importes en RD$ equivalentes de fondos US$ usan la tasa manual configurada. Los préstamos entre personas no se asignan a un banco.</div></div>`;
 }
@@ -28525,7 +28591,7 @@ case 'productDelete':manageProduct(el.dataset.kind,id,'delete');break;
 case 'menuLayout':db.settings.menuLayout='rail';render();break;
 case 'toggleTheme':db.settings.theme=['dark','black'].includes(db.settings.theme)?'light':'dark';persist();render();break;
 case 'visualDesign':db.settings.visualDesign='claridad';persist();render();break;
-case 'setTheme':if(['light','black'].includes(id)){db.settings.visualDesign='claridad';db.settings.theme=id;persist();render()}break;
+case 'setTheme':if(['light','black'].includes(id)){db.settings.visualDesign='claridad';db.settings.theme=id;v333RememberTheme();persist();render()}break;
 case 'paletteTheme':if(['original','emerald','coral'].includes(id)){db.settings.paletteChoice=id;persist();render();toast('Color de acento actualizado.');}break;
 case 'paletteCustom':{const c=document.getElementById('viveCustomColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.paletteHex=c;db.settings.paletteChoice='custom';persist();render();toast('Color de acento personalizado aplicado.')}break;}
 case 'backgroundTheme':if(['original','glacier','sunset'].includes(id)){db.settings.backgroundChoice=id;persist();render();toast('Fondo actualizado.');}break;
@@ -28876,7 +28942,7 @@ if(['loanAmount','loanInterest','loanFee','loanInsurance'].includes(t.id)){let f
 (function(){
  const handlers={
  addCashWallet:el=>cashWalletForm(), editCashWallet:el=>cashWalletForm(),
- widgetEditor:()=>{if(!ui.widgetEditor){ui.widgetCatalogFilter='global10';ui.widgetSearch=''}ui.widgetEditor=!ui.widgetEditor;render()},
+ widgetEditor:()=>{if(!ui.widgetEditor){ui.widgetCatalogFilter='all';ui.widgetSearch=''}ui.widgetEditor=!ui.widgetEditor;render()},
   v197CompareMode:el=>{ui.v197CompareMode=el.dataset.id||'net';render()},
   widgetReferencePreset:()=>{const refs=['referenceBalance','referenceCredit','referenceCashflow','referenceComparison'];const old=widgetsState();const rest=old.filter(x=>!refs.includes(x));saveWidgets([...refs,...rest]);toast('Cuatro gráficos incorporados a tu tablero.');render()},
  widgetToggle:el=>{let list=widgetsState(),id=el.dataset.id;if(list.includes(id))list=list.filter(x=>x!==id);else list.push(id);saveWidgets(list);render()},
@@ -28885,6 +28951,8 @@ if(['loanAmount','loanInterest','loanFee','loanInsurance'].includes(t.id)){let f
  widgetMoveDown:el=>{let list=widgetsState(),i=list.indexOf(el.dataset.id);if(i>=0&&i<list.length-1){[list[i+1],list[i]]=[list[i],list[i+1]];saveWidgets(list);render()}},
  widgetPreset:()=>{if(widgetsState().length&& !confirm('¿Vaciar tu tablero personal? Tus registros financieros no se eliminarán.'))return;saveWidgets([]);render()},
  widgetCatalogFilter:el=>{ui.widgetCatalogFilter=el.dataset.id||'all';render()},
+ v332AddAll:()=>{saveWidgets(widgetCatalog().map(x=>x[0]));toast('Todos los elementos de Personalización están en el tablero.');render()},
+ v332SyncOrder:()=>{const chosen=new Set(widgetsState());saveWidgets(widgetCatalog().map(x=>x[0]).filter(id=>chosen.has(id)));toast('Orden actualizado desde Personalización.');render()},
  widgetSize:el=>{db.settings.widgetSizes??={};let id=el.dataset.id;db.settings.widgetSizes[id]=widgetSize(id)>=2?1:2;persist();render()}
  };
  document.addEventListener('click',e=>{let b=e.target.closest?.('[data-act]');if(b&&handlers[b.dataset.act]){e.preventDefault();e.stopImmediatePropagation();handlers[b.dataset.act](b)}},true);
@@ -29511,16 +29579,27 @@ function f33Gate(){
  // La sincronización se consulta desde Configuración, no en un banner flotante.
 }
 function f33Message(message,isError=false){let n=document.querySelector('#f33-gate .f33-error');if(n){n.textContent=message||'';n.hidden=!message;n.classList.toggle('f33-good',!isError)}if(isError)f33LastError=message}
+function v333SplashTheme(){
+ try{const t=localStorage.getItem('vive.el.hoy.lastTheme');if(t==='black'||t==='light')return t;}catch(_){ }
+ return db.settings?.theme==='black'?'black':'light';
+}
+function v333RememberTheme(){
+ const t=db.settings?.theme==='black'?'black':'light';
+ try{localStorage.setItem('vive.el.hoy.lastTheme',t);}catch(_){ }
+}
+let v335SplashSince=0;
 function f33Shell(title,description,content){
  f33Gate();const el=document.getElementById('f33-gate');el.hidden=false;
  el.classList.remove('v329-fade-out');
  if(f33Phase==='loading'){
+  if(!v335SplashSince)v335SplashSince=Date.now();
   el.classList.add('v329-splash');
-  el.classList.toggle('v331-splash-light',db.settings?.theme==='light');
+  el.classList.toggle('v331-splash-light',v333SplashTheme()==='light');
   el.setAttribute('aria-label','Abriendo vive hoy');
-  el.innerHTML='<div class="v329-splash-content" role="status" aria-live="polite" aria-label="Abriendo vive el hoy"><div class="v329-wordmark">vive el hoy<span class="v329-period">.</span></div><span class="v329-splash-line" aria-hidden="true"></span></div>';
+  el.innerHTML='<div class="v329-splash-content" role="status" aria-live="polite" aria-label="Abriendo vive el hoy"><div class="v329-wordmark">vive el hoy</div></div>';
   return;
  }
+ v335SplashSince=0;
  el.classList.remove('v329-splash');
  el.setAttribute('aria-label','Acceso privado vive el hoy');
  el.innerHTML='<section class="f33-auth-card"><div class="f33-label"><span class="f33-dot"></span>'+APP_BRAND+'</div><h2>'+sanitize(title)+'</h2><p>'+sanitize(description)+'</p><div class="f33-error" hidden role="alert"></div>'+content+'<p class="f33-auth-note">Tu información se mantiene protegida y vinculada a tu cuenta.</p></section>';
@@ -29598,12 +29677,26 @@ function f33Ready(){
  if(!f33User||!f33Stamp)return;window.__f360CloudUid=f33User.id;
  window.__f360CloudPersist=()=>{f33Dirty=true;f33SetStatus('saving','Cambios pendientes de guardar');clearTimeout(f33Timeout);f33Timeout=setTimeout(()=>f33Flush(),650)};
  f33Active=true;f33Phase='ready';f33Dirty=false;window.__f360BaseStamp=f33Stamp;
+ v333RememberTheme();
+ const existingSplash=document.getElementById('f33-gate');
+ if(existingSplash?.classList.contains('v329-splash'))existingSplash.classList.toggle('v331-splash-light',db.settings?.theme==='light');
  const gate=document.getElementById('f33-gate');
  if(gate){
   if(gate.classList.contains('v329-splash')){
-   gate.classList.add('v329-fade-out');
    const completedGate=gate;
-   setTimeout(()=>{if(completedGate.classList.contains('v329-fade-out')){completedGate.hidden=true;completedGate.classList.remove('v329-splash','v329-fade-out')}},560);
+   const remaining=Math.max(0,3000-(Date.now()-(v335SplashSince||Date.now())));
+   // La marca permanece al menos 3 segundos; si los datos tardan más, no se retrasa adicionalmente.
+   setTimeout(()=>{
+    if(!completedGate.isConnected||!completedGate.classList.contains('v329-splash')||f33Phase!=='ready')return;
+    completedGate.classList.add('v329-fade-out');
+    setTimeout(()=>{
+     if(completedGate.classList.contains('v329-fade-out')){
+      completedGate.hidden=true;
+      completedGate.classList.remove('v329-splash','v329-fade-out');
+      v335SplashSince=0;
+     }
+    },560);
+   },remaining);
   }else gate.hidden=true;
  }
  render();f33SetStatus('ok','✓ Guardado en Supabase');
@@ -32717,6 +32810,24 @@ const V316_ESSENTIAL_GRAPHS=['creditUtil','patrimonyTrend','budgetPulse'];
 const V317_NEW_GRAPHS=['cashPressure','spendingFingerprint'];
 const V318_NEW_GRAPHS=['futureCostKpi','futureCalendar','futureFlow','futureWaterfall','futureMap','futureBubbles'];
 const V317_FEATURE_GRAPHS=[...V316_ESSENTIAL_GRAPHS,...V317_NEW_GRAPHS,...V318_NEW_GRAPHS];
+/* V332 · Una sola organización para Personalización móvil y Mis indicadores web.
+   Ambos consumen V105_WIDGETS y el orden persistido de v105Config(). */
+const V332_PERSONALIZATION_AREAS=[
+ {key:'position',title:'01 · TU POSICIÓN FINANCIERA',label:'Posición financiera',ids:['creditUtil','patrimonyTrend','capacity','net','accounts','banks','certificates']},
+ {key:'budget',title:'02 · INGRESOS Y PRESUPUESTO',label:'Ingresos y presupuesto',ids:['budgetPulse','spendingFingerprint','chart','budgetTrend','activity']},
+ {key:'future',title:'03 · COMPROMISOS Y PROYECCIONES',label:'Compromisos y proyecciones',ids:['futureCostKpi','futureCalendar','cashPressure','futureFlow','futureWaterfall','futureMap','futureBubbles','commitments','payments','loans']},
+ {key:'other',title:'04 · RELACIONES Y OTROS MÓDULOS',label:'Relaciones',ids:['people']}
+];
+function v332PersonalizationGroups(cfg){
+ const ids=(cfg?.order||V105_WIDGETS.map(x=>x.id)).filter(id=>V105_WIDGETS.some(w=>w.id===id));
+ const known=new Set(V332_PERSONALIZATION_AREAS.flatMap(g=>g.ids));
+ const sections=V332_PERSONALIZATION_AREAS.map(g=>({...g,ids:ids.filter(id=>g.ids.includes(id))})).filter(g=>g.ids.length);
+ const rest=ids.filter(id=>!known.has(id));
+ if(rest.length)sections.push({key:'more',title:'05 · MÁS HERRAMIENTAS',label:'Más herramientas',ids:rest});
+ return sections;
+}
+function v332GroupForId(id){return v332PersonalizationGroups(v105Config()).find(g=>g.ids.includes(id))}
+
 function v316OrderDefaults(ids){return [...V317_FEATURE_GRAPHS,...ids.filter(id=>!V317_FEATURE_GRAPHS.includes(id))]}
 function v316VisibleDefaults(ids){
  const hidden=new Set(['activity','subscriptions','cardsDue','budget','budgetTrend','chart','banks','accounts','cards','loans','certificates']);
@@ -34385,7 +34496,7 @@ document.addEventListener('pointerdown',function(ev){
  const gap=parseFloat(grid.columnGap)||12;
  const colWidth=(board.getBoundingClientRect().width-gap*(cols-1))/cols;
  const span=clamp(Number(tile.dataset.wsSpan)||1,1,cols);
- const height=clamp(Number(tile.dataset.wsHeight)||194,165,600);
+ const height=clamp(Number(tile.dataset.wsHeight)||340,220,800);
  resize={pointer:ev.pointerId,handle,tile,id:tile.dataset.widget,cols,colWidth,gap,startX:ev.clientX,startY:ev.clientY,span,height,newSpan:span,newHeight:height,moved:false};
  tile.classList.add('v209-resizing');
  try{handle.setPointerCapture(ev.pointerId)}catch(_){ }
@@ -34396,7 +34507,7 @@ document.addEventListener('pointermove',function(ev){
  if(Math.abs(dx)+Math.abs(dy)<7&&!r.moved)return;
  r.moved=true;
  const cols=clamp(Math.round(r.span+dx/(r.colWidth+r.gap)),1,r.cols);
- const height=clamp(Math.round((r.height+dy)/20)*20,165,600);
+ const height=clamp(Math.round((r.height+dy)/20)*20,220,800);
  r.newSpan=cols;r.newHeight=height;
  r.tile.style.setProperty('--ws-cols',cols);
  r.tile.style.setProperty('--ws-h',height+'px');
@@ -34417,7 +34528,7 @@ document.addEventListener('keydown',function(ev){
   db.settings.widgetSizes[id]=clamp(now+(ev.key==='ArrowRight'?1:-1),1,cols);
  }else{
   const now=typeof widgetHeight==='function'?widgetHeight(id):194;
-  db.settings.widgetHeights[id]=clamp(now+(ev.key==='ArrowDown'?40:-40),165,600);
+  db.settings.widgetHeights[id]=clamp(now+(ev.key==='ArrowDown'?40:-40),220,800);
  }
  if(typeof persist==='function')persist();if(typeof render==='function')render();
 },true);
@@ -35093,15 +35204,7 @@ function v273SettingsWidgetEditor(){
   const on=visible.has(id);
   return `<div class="v273-custom-row v316-custom-row ${on?'is-enabled':'is-disabled'}" data-v316-row="${id}"><span class="v273-custom-copy"><strong>${sanitize(w.title)}</strong><small>${sanitize(w.hint)}</small></span><div class="v273-custom-controls"><button type="button" class="v273-visibility ${on?'is-on':''}" data-v273-toggle="${id}" role="switch" aria-checked="${on}" aria-label="${on?'Ocultar':'Mostrar'} ${sanitize(w.title)}"><span></span></button><button type="button" class="v273-order" data-v273-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${sanitize(w.title)}">↑</button><button type="button" class="v273-order" data-v273-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${sanitize(w.title)}">↓</button></div></div>`;
  };
- const groups=[
-  {title:'01 · TU POSICIÓN FINANCIERA',ids:['creditUtil','patrimonyTrend','capacity','net','accounts','banks','certificates']},
-  {title:'02 · INGRESOS Y PRESUPUESTO',ids:['budgetPulse','spendingFingerprint','chart','budgetTrend','activity']},
-  {title:'03 · COMPROMISOS Y PROYECCIONES',ids:['futureCostKpi','futureCalendar','cashPressure','futureFlow','futureWaterfall','futureMap','futureBubbles','commitments','payments','loans']},
-  {title:'04 · RELACIONES Y OTROS MÓDULOS',ids:['people']}
- ];
- const grouped=new Set(groups.flatMap(g=>g.ids));
- const other=cfg.order.filter(id=>!grouped.has(id));
- if(other.length)groups.push({title:'05 · MÁS HERRAMIENTAS',ids:other});
+ const groups=v332PersonalizationGroups(cfg);
  const ratio=ids=>String(ids.length).padStart(2,'0');
  const sections=groups.map(g=>{const ids=g.ids.filter(id=>cfg.order.includes(id));return `<div class="v316-essentials-head v328-group-heading"><span>${g.title}</span><span>${ratio(ids)}</span></div><div class="v273-custom-rows v328-section-rows">${ids.map(row).join('')}</div>`}).join('');
  return `<section class="v273-settings-customizer v316-personalization v328-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Tu espacio, a tu manera</h3><p>Todo organizado por áreas financieras. Activa tus secciones y cambia el orden con las flechas. Mis indicadores web conserva el catálogo completo.</p></header>
@@ -35553,23 +35656,32 @@ function v318MobileCharts(){
 }
 function v318InitializeDashboard(){
  if(isMobileViewport())return;
- const authorized=V105_WIDGETS.map(x=>x.id);
- const current=Array.isArray(db.settings.widgetsBoard)?db.settings.widgetsBoard:[];
- // V320 migration: delete every old widget, including charts removed at user's request.
- if(!db.settings.v326PersonalizacionCompleta){
-  db.settings.widgetsBoard=[...authorized];
+ const ids=widgetCatalog().map(x=>x[0]);
+ const valid=new Set(ids);
+ const signature=ids.join('|');
+ const previous=db.settings.v332PersonalizationSignature||'';
+ const stored=Array.isArray(db.settings.widgetsBoard)?db.settings.widgetsBoard:[];
+ if(!db.settings.v332DashboardReady){
+  // First entry: show ALL current Personalización elements, in the same section order.
+  db.settings.widgetsBoard=ids.slice();
+  db.settings.v332DashboardReady=true;
+  db.settings.v332PersonalizationSignature=signature;
   db.settings.v326PersonalizacionCompleta=true;
-  db.settings.v323PersonalizationOnly=true;
-  db.settings.v322PersonalizationOnly=true;
-  db.settings.v321PersonalizationOnly=true;
-  db.settings.v318BoardInitialized=true;
-  persist();
-  return;
+  persist();return;
  }
- // Always prune obsolete keys from saved layouts, never restore retired widgets.
- const next=[...new Set(current.filter(id=>authorized.includes(id)))];
- if(next.length!==current.length){db.settings.widgetsBoard=next;persist()}
+ const active=new Set(stored.filter(id=>valid.has(id)));
+ if(previous!==signature){
+  // New mobile graphs are automatically available. A manually removed old widget stays removed.
+  const oldIds=new Set(previous.split('|').filter(Boolean));
+  for(const id of ids)if(!oldIds.has(id))active.add(id);
+  db.settings.widgetsBoard=ids.filter(id=>active.has(id));
+  db.settings.v332PersonalizationSignature=signature;
+  persist();return;
+ }
+ const clean=[...new Set(stored.filter(id=>valid.has(id)))];
+ if(clean.length!==stored.length){db.settings.widgetsBoard=clean;persist()}
 }
+
 document.addEventListener('click',event=>{const ctl=event.target.closest?.('[data-v318-scenario]');if(!ctl)return;event.preventDefault();event.stopImmediatePropagation();const val=Number(ctl.dataset.v318Scenario);if(![5,10,20].includes(val))return;ui.v318ScenarioPct=val;render()},true);
 
 const v318LegacyExtraCharts=v309ExtraCharts;
@@ -48163,6 +48275,107 @@ body .main .vive-mobile-greeting .v273-personalize-link:focus-visible{outline:2p
 .v328-personalization .v328-section-rows{display:grid;gap:8px}
 body.theme-black .v328-personalization .v273-custom-row{background:#080b10!important;border:1px solid #222b38!important;border-radius:15px!important}
 body.theme-black .v328-personalization .v273-custom-row.is-enabled{border-color:rgba(91,149,237,.6)!important;background:linear-gradient(110deg,#101d32,#0b111c)!important}
+</style>
+<style id="v333-global-theme-and-register-audit">
+/* Unified color tokens for new visualizations: applied after legacy rules. */
+body:not(.theme-black):not(.theme-dark) .v318-mobile-card:not(.v324-cost-card),
+body:not(.theme-black):not(.theme-dark) .ws-board .ws-tile,
+body:not(.theme-black):not(.theme-dark) .ws-library .ws-gallery-card{background:#fff!important;color:#19283f!important;border-color:#dce5f2!important}
+body:not(.theme-black):not(.theme-dark) .v318-chart-content,
+body:not(.theme-black):not(.theme-dark) .ws-tile .v318-chart-content,
+body:not(.theme-black):not(.theme-dark) .ws-library .v332-mini-preview .ws-preview-body,
+body:not(.theme-black):not(.theme-dark) .v326-mini-preview{background:#f7faff!important;color:#19283f!important;border-color:#dbe5f3!important}
+body:not(.theme-black):not(.theme-dark) .v318-mobile-head h2,
+body:not(.theme-black):not(.theme-dark) .ws-tile .widget-card-top h3,
+body:not(.theme-black):not(.theme-dark) .v318-chart-content :is(.v318-stat-row strong,.v318-bar-item strong,.v318-vertical-bars strong,.v318-radar-metrics strong,.v318-stat-row>div strong),
+body:not(.theme-black):not(.theme-dark) .v326-stat strong,
+body:not(.theme-black):not(.theme-dark) .v326-list strong,
+body:not(.theme-black):not(.theme-dark) .ws-gallery-footer strong{color:#15283f!important}
+body:not(.theme-black):not(.theme-dark) .v318-mobile-head small,
+body:not(.theme-black):not(.theme-dark) .v318-chart-note,
+body:not(.theme-black):not(.theme-dark) .v318-inline-legend,
+body:not(.theme-black):not(.theme-dark) .v318-mini-months,
+body:not(.theme-black):not(.theme-dark) .v318-bar-item>div:first-child,
+body:not(.theme-black):not(.theme-dark) .v318-radar-metrics span,
+body:not(.theme-black):not(.theme-dark) .v326-stat span,
+body:not(.theme-black):not(.theme-dark) .v326-list>div,
+body:not(.theme-black):not(.theme-dark) .v318-stat-row small,
+body:not(.theme-black):not(.theme-dark) .v318-vertical-bars small{color:#62748b!important}
+body:not(.theme-black):not(.theme-dark) .v318-stat-row>div,
+body:not(.theme-black):not(.theme-dark) .v326-stat,
+body:not(.theme-black):not(.theme-dark) .v318-no-data{background:#fff!important;border:1px solid #dce5f2!important;color:#35465c!important}
+body:not(.theme-black):not(.theme-dark) .v326-list>div,
+body:not(.theme-black):not(.theme-dark) .v318-radar-metrics>div{border-color:#d9e2ee!important;color:#24364e!important}
+body:not(.theme-black):not(.theme-dark) .v318-bar-track,
+body:not(.theme-black):not(.theme-dark) .v318-vertical-rail{background:#e4ebf5!important}
+body:not(.theme-black):not(.theme-dark) .v318-heat-box,
+body:not(.theme-black):not(.theme-dark) .v322-cal-cell.level-0{background:#edf2f9!important;color:#27415f!important;border-color:#d9e4f0!important}
+body:not(.theme-black):not(.theme-dark) .v322-cal-cell.level-1{background:#dceafb!important;color:#25476a!important}
+body:not(.theme-black):not(.theme-dark) .v322-cal-cell.level-2{background:#b5d4fa!important;color:#14385e!important}
+body:not(.theme-black):not(.theme-dark) .v322-cal-cell.level-3{background:#80b3f2!important;color:#102944!important}
+body:not(.theme-black):not(.theme-dark) .v322-cal-cell.level-4{background:#367bd1!important;color:#fff!important}
+body:not(.theme-black):not(.theme-dark) .v318-radar-guides polygon{stroke:#c8d4e4!important}
+body:not(.theme-black):not(.theme-dark) .v318-svg>rect{fill:#f0f5fc!important;stroke:#b6cbe3!important}
+body:not(.theme-black):not(.theme-dark) .v318-svg-caption{fill:#18304b!important}
+body:not(.theme-black):not(.theme-dark) .v318-waterfall-labels{fill:#4a6280!important}
+body:not(.theme-black):not(.theme-dark) .v318-treemap .v318-tree-cell{filter:saturate(.75) brightness(1.34)}
+body:not(.theme-black):not(.theme-dark) .v318-treemap .v318-tree-cell :is(span,strong,small){color:#fff!important}
+/* The featured cost card adapts to Claro rather than staying dark blue. */
+body:not(.theme-black):not(.theme-dark) .v324-cost-design{background:radial-gradient(ellipse at 95% 0%,#b6d8ff,transparent 65%),linear-gradient(130deg,#e6f2ff,#cfe3fa)!important;border-color:#b0cbed!important;box-shadow:0 12px 25px rgba(54,93,142,.14)!important;color:#142b4c!important}
+body:not(.theme-black):not(.theme-dark) .v324-cost-design::before{opacity:.15!important}
+body:not(.theme-black):not(.theme-dark) .v324-cost-eyebrow,
+body:not(.theme-black):not(.theme-dark) .v324-cost-price>strong,
+body:not(.theme-black):not(.theme-dark) .v324-cost-price>span{color:#142c4f!important}
+body:not(.theme-black):not(.theme-dark) .v324-cost-text p{color:#3e597e!important}
+body:not(.theme-black):not(.theme-dark) .v324-cost-metric{background:rgba(255,255,255,.80)!important;border-color:#bcd1eb!important}
+body:not(.theme-black):not(.theme-dark) .v324-cost-metric strong{color:#183454!important}
+body:not(.theme-black):not(.theme-dark) .v324-cost-metric small{color:#516b8c!important}
+body:not(.theme-black):not(.theme-dark) .v324-cost-calendar{background:linear-gradient(145deg,#5289db,#2762b0)!important;color:#fff!important}
+/* Chart headings must always be visible and have a descriptive eyebrow + real name. */
+.v318-mobile-card:not(.v324-cost-card) .v318-mobile-head>.v328-chart-kicker{display:block!important;opacity:1!important;visibility:visible!important;font-size:10px!important;line-height:1.3!important;letter-spacing:.1em!important;color:#6696d6!important}
+body.theme-black .v318-mobile-card:not(.v324-cost-card) .v318-mobile-head>.v328-chart-kicker{color:#8bbcff!important}
+.v318-mobile-card:not(.v324-cost-card) .v318-mobile-head h2{display:block!important;line-height:1.2!important}
+.ws-library .v332-mini-preview{height:186px!important;display:flex;flex-direction:column;gap:6px}
+.ws-library .v333-preview-head{flex:0 0 auto;display:grid;gap:2px;min-width:0}
+.ws-library .v333-preview-head span{font-size:9px;letter-spacing:.11em;color:#6483a9;font-weight:850}
+.ws-library .v333-preview-head strong{font-size:12px;color:inherit;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ws-library .v332-mini-preview>.ws-preview-body{flex:1 1 auto;min-height:0!important;max-height:135px!important}
+body.theme-black .ws-library .v333-preview-head span{color:#9ebdef!important}
+/* Register/recibir/pagar/mover/otros: strict dark overrides even on mobile modal. */
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-layer{background:rgba(0,0,0,.68)!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-layer>.v235-register-dialog{background:#050506!important;background-image:none!important;border:1px solid #292d36!important;border-bottom:0!important;color:#f4f7ff!important;box-shadow:0 -22px 52px rgba(0,0,0,.72)!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .v235-register-close{background:#08090b!important;color:#c5d1e6!important;border-color:#2a303c!important;box-shadow:none!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .v235-register-close .close{background:#151820!important;border-color:#343e4f!important;color:#f6f9ff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-register,
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-workspace,
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-content{background:#050506!important;color:#f3f6ff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-workspace-head h3{color:#f4f7ff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-workspace-head p{color:#a7b6cc!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switcher{background:#10131a!important;border-color:#262d3a!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switch{background:transparent!important;color:#aab7c9!important;border-color:transparent!important;box-shadow:none!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switch.selected{background:#28374e!important;color:#f7faff!important;border-color:#4a6891!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 12px rgba(0,0,0,.3)!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switch .vr-switch-symbol{background:#1e2633!important;color:#bcd2f0!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switch.selected .vr-switch-symbol{background:#354b6b!important;color:#fff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-group-heading,
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-group-heading>span{color:#95a9c5!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation,.v29-other-action){background:#12161f!important;border-color:#2e3745!important;box-shadow:none!important;color:#f0f4fb!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation,.v29-other-action):active{background:#22314a!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation-icon,.v29-other-icon){background:#242f3f!important;color:#adcaf0!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation-copy,.v29-other-copy) strong{color:#f5f7fd!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation-copy,.v29-other-copy) small{color:#a8bbd5!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-chevron,.v29-other-arrow){color:#a3bad8!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-guidance{background:#10151e!important;border-color:#2c3442!important;box-shadow:none!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-guidance h4{color:#edf3ff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-guidance p{color:#a8b9d0!important}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-guidance :is(.vr-guidance-label,.vr-guidance-bottom){color:#9fbbd9!important}
+/* Explicitly theme the modal's other detail flows too. */
+body:is(.theme-black,.theme-dark) #modal-root :is(.mqr-modal,.studio-form,.fastx-form,.other-studio-form){color:#eef3ff}
+/* Exact splash theme: never inherit the wrong background from #app or body. */
+.f33-gate.v329-splash:not(.v331-splash-light){background:#000!important;color:#fff!important;color-scheme:dark!important}
+.f33-gate.v329-splash:not(.v331-splash-light) .v329-wordmark,.f33-gate.v329-splash:not(.v331-splash-light) .v329-period{color:#fff!important}
+.f33-gate.v329-splash.v331-splash-light{background:#fff!important;color:#000!important;color-scheme:light!important}
+.f33-gate.v329-splash.v331-splash-light .v329-wordmark,.f33-gate.v329-splash.v331-splash-light .v329-period{color:#000!important}
+@media(prefers-reduced-motion:reduce){.ws-library .v333-preview-head{animation:none!important}}
 </style>
 </body>
 </html>
