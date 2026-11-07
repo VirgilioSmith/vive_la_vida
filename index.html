@@ -22989,6 +22989,7 @@ body.theme-black :is(.mobile-dock .dock-tab.active,.sidebar .rail-action.active,
 body.theme-black .v339-integrity{background:#0b0b0b!important;border-color:#292929!important}
 body.theme-black .v339-integrity summary{color:#f0f0f0!important}body.theme-black .v339-integrity-body{color:#bcbcbc!important}
 </style>
+
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -48856,6 +48857,100 @@ body.theme-black .world-kpis #page .ff-bubble.featured{
 }
 @media (prefers-reduced-motion:reduce){
   body .vive-mobile-dock,body .vive-mobile-dock .vive-mobile-dock-item{transition:none!important;animation:none!important;}
+}
+</style>
+<style id="v341-mobile-black-and-forms">
+/* V341 Mobile visual system. Layout and accounting business logic are unchanged. */
+@media (max-width:790px){
+  /* Strict black backgrounds with monochrome surfaces and no blue gradients. */
+  html:has(body.theme-black),html:has(body.theme-dark){background:#000!important;color-scheme:dark}
+  body:is(.theme-black,.theme-dark),
+  body:is(.theme-black,.theme-dark) :is(#app,#page,.main,.shell,.world-overview,.world-explore,.world-income,.world-expenses,.world-payments,.world-register,.v205-explore-shell,.v205-explore-grid,.vive-mobile-home,.ff-dashboard,.ff-dashboard-grid,.v105-grid){background:#000!important;background-image:none!important}
+  body:is(.theme-black,.theme-dark) :is(.v205-explore-pulse,.v205-explore-group,.v205-explore-link,.v205-explore-pay,.v205-explore-period,.v205-explore-link-icon,
+    .ff-dashboard .ff-balance,.ff-dashboard .ff-obligations,.ff-dashboard .ff-expense-card,.ff-dashboard .ff-health-card,.ff-dashboard .ff-upcoming,.ff-dashboard .ff-personal,
+    .v105-capacity-widget,.v105-capacity-grid>div,.v82-capacity-widget,.v82-burden,.v89-debt-breakdown,.v295-global-top,.v295-payment-section,
+    .v145-paycenter,.v145-payment-kpi,.v145-pay-quick,.v145-pay-agenda,.v196-pay-category,.v176-pay-services,.v200-settings-group,
+    .income-world-hero,.expenses-world,.expenses-stat,.expenses-mini,.expenses-cat,.expenses-range,.v55-panel,.v55-hero,.v55-metric,.v55-section-lead,
+    .v105-mobile-extra,.v273-overview-widget,.v294-finance-widget,.v315-chart-widget,.v316-chart-widget,.v317-chart-widget,.v318-mobile-card,.v322-kpi-hero,.v322-kpi-metrics>div,
+    .v298-flow-dual,.ff-bubble,.v290-budget-mobile,.v290-budget-web,.v290-budget-trend,.v290-budget-orbit,.v290-mini-integral,.v242-mobile-web-position,
+    .v294-widget-amount,.v294-widget-list,.v292-widget-panel,.v205-explore-section){
+    background:#0c0c0c!important;background-image:none!important;border-color:#272727!important;box-shadow:none!important;color:#f4f4f4!important;
+  }
+  body:is(.theme-black,.theme-dark) :is(.ff-dashboard .ff-balance,.v242-mobile-web-position,.v322-kpi-hero,.v290-mini-integral){background:#0a0a0a!important;background-image:none!important}
+  body:is(.theme-black,.theme-dark) :is(.ff-dashboard .ff-bubble,.v242-mobile-web-position .ff-bubble,.v105-capacity-grid>div,.v322-kpi-metrics>div,.v205-explore-link-icon){background:#171717!important;background-image:none!important;border-color:#333!important}
+  body:is(.theme-black,.theme-dark) :is(.ff-dashboard,.v205-explore-shell,.v205-explore-grid,.v105-mobile-extra,.v273-overview-widget,.v298-flow-dual) :is(h1,h2,h3,h4,strong,b){color:#f4f4f4!important}
+  body:is(.theme-black,.theme-dark) :is(.ff-dashboard,.v205-explore-shell,.v205-explore-grid,.v105-mobile-extra,.v273-overview-widget,.v298-flow-dual) :is(p,small,.subtle,.ff-label,.ff-stat-footer){color:#b9b9b9!important}
+  body:is(.theme-black,.theme-dark) :is(.v205-explore-link,.v205-explore-pay,.v205-explore-period,.v205-explore-pulse-grid button){background:#141414!important;border-color:#303030!important;color:#f0f0f0!important}
+  body:is(.theme-black,.theme-dark) .v205-explore-link-icon{color:#ededed!important}
+  body:is(.theme-black,.theme-dark) .ff-dashboard .ff-bubble.featured{background:#1b1b1b!important;background-image:none!important;border-color:#353535!important;color:#f5f5f5!important}
+  /* Restore complete 5-month income/expense graph legend on mobile. */
+  #app .main.world-overview #page .v298-flow-dual{height:auto!important;min-height:220px!important;overflow:visible!important;display:flex!important;flex-direction:column!important;gap:11px!important}
+  #app .main.world-overview #page .v298-flow-dual .ff-bar-chart{min-height:105px!important;height:125px!important;flex:1 0 105px!important;display:flex!important;visibility:visible!important;opacity:1!important;overflow:visible!important}
+  #app .main.world-overview #page .v298-flow-dual .ff-stat-footer{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;position:static!important;min-height:38px!important;height:auto!important;max-height:none!important;overflow:visible!important;visibility:visible!important;opacity:1!important;padding:9px 0 2px!important}
+  #app .main.world-overview #page .v298-flow-dual .ff-stat-footer button{display:inline-flex!important;flex:1 1 125px!important;align-items:center!important;justify-content:flex-start!important;gap:5px!important;min-width:0!important;padding:7px 5px!important;white-space:normal!important;font-size:11px!important;color:inherit!important}
+  #app .main.world-overview #page .v298-flow-dual .ff-stat-footer button b{font-size:11px!important;white-space:normal!important;overflow-wrap:anywhere!important;margin-left:auto!important}
+  #app .main.world-overview #page .v298-flow-dual .ff-stat-footer :is(.ff-legend-blue,.ff-legend-white){display:inline-block!important;width:9px!important;height:9px!important;min-width:9px!important;border-radius:50%!important}
+  body:is(.theme-black,.theme-dark) #app .main.world-overview #page .v298-flow-dual .ff-legend-blue{background:#73d5ae!important}
+  body:is(.theme-black,.theme-dark) #app .main.world-overview #page .v298-flow-dual .ff-legend-white{background:#f2a77e!important;border-color:#f2a77e!important}
+  body:is(.theme-black,.theme-dark) #app .main.world-overview #page .v298-flow-dual .ff-bar-in{background:#73d5ae!important}
+  body:is(.theme-black,.theme-dark) #app .main.world-overview #page .v298-flow-dual .ff-bar-out{background:#f2a77e!important;border-color:transparent!important}
+
+  /* Registry full-screen shell, menu and all detail workflows. */
+  body:is(.theme-black,.theme-dark) #modal-root :is(.modal-layer,.v235-register-layer,.mqr-layer){background:rgba(0,0,0,.91)!important;background-image:none!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.v235-register-dialog,.mqr-modal,.modal:has(.studio-form),.modal:has(.fastx-form),.modal:has(.other-studio-form),.modal:has(.other-studio-picker)){
+    background:#050505!important;background-image:none!important;color:#f4f4f4!important;border-color:#292929!important;box-shadow:0 18px 52px rgba(0,0,0,.7)!important;
+  }
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.v235-register-close,.vr-register,.vr-workspace,.vr-content){background:#050505!important;background-image:none!important;border-color:#292929!important;color:#f3f3f3!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .v235-register-close .close{background:#181818!important;border-color:#353535!important;color:#f8f8f8!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switcher{background:#111!important;border:1px solid #2c2c2c!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switch{background:transparent!important;color:#bdbdbd!important;border-color:transparent!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switch.selected{background:#272727!important;color:#fff!important;border-color:#454545!important;box-shadow:inset 0 1px 0 #ffffff12!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-switch .vr-switch-symbol{background:#1e1e1e!important;color:#ededed!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation,.v29-other-action){background:#111!important;background-image:none!important;border:1px solid #303030!important;border-radius:18px!important;box-shadow:none!important;color:#f4f4f4!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation-icon,.v29-other-icon){background:#212121!important;color:#f0f0f0!important;border-radius:14px!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation-copy,.v29-other-copy) strong,
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-workspace-head h3{color:#f5f5f5!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog :is(.vr-operation-copy,.v29-other-copy) small,
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-workspace-head p{color:#ababab!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-guidance{background:#111!important;border-color:#303030!important}
+  body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog .vr-guidance :is(h4,p){color:#cfcfcf!important}
+
+  /* All registered forms share predictable surfaces, fields, stepper and footer. */
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-form,.fastx-form,.other-studio-form,.mqr-modal){--os-accent:#e5e5e5;--os-soft:#181818;--os-glow:#0e0e0e;--fx-soft:#181818;--fx-tint:#0d0d0d;--fx-accent:#d9d9d9;--fx-label:#c3c3c3;color:#f4f4f4!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-shell,.studio-rail,.studio-main,.studio-panels,.studio-fields,.studio-navigation,.studio-main .form-foot,
+    .fastx-shell,.fastx-entry,.fastx-head,.fastx-body,.fastx-right,.fastx-value-card,.fastx-amount-zone,.fastx-category-zone,.fastx-receipt-details,
+    .other-studio-shell,.other-studio-left,.other-studio-right,.other-studio-header,.other-studio-content,.other-studio-amount,.other-studio-receipt,.other-studio-fold-body,
+    .mqr-head,.mqr-body,.mqr-bottom,.mqr-display,.mqr-steps){background:#080808!important;background-image:none!important;border-color:#2b2b2b!important;box-shadow:none!important;color:#f3f3f3!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-rail,.fastx-head,.other-studio-header){background:#0d0d0d!important;border-bottom:1px solid #2e2e2e!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-main,.fastx-body,.other-studio-content,.mqr-body){background:#050505!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-fields,.fastx-body,.other-studio-content,.other-studio-right,.mqr-body) :is(label,.filter-label,small,p){color:#b8b8b8!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-form,.fastx-form,.other-studio-form,.mqr-modal) :is(h1,h2,h3,h4,.studio-active-title,.fastx-title,.other-studio-header h2,strong,b){color:#f5f5f5!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-form,.fastx-form,.other-studio-form,.mqr-modal) :is(input,select,textarea,.field){background:#171717!important;background-image:none!important;color:#fff!important;border:1px solid #393939!important;box-shadow:none!important;min-width:0!important;max-width:100%!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-form,.fastx-form,.other-studio-form,.mqr-modal) :is(input,textarea)::placeholder{color:#929292!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-form,.fastx-form,.other-studio-form,.mqr-modal) :is(input,select,textarea,.field):focus{border-color:#dedede!important;outline:2px solid #999!important;outline-offset:1px!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-nav-step,.fastx-mode-tabs button,.fastx-cat,.fastx-category-controls button,.other-studio-picker>button,.mqr-mode,.flow-segment-option .flow-segment-surface){background:#171717!important;background-image:none!important;color:#dedede!important;border:1px solid #353535!important;box-shadow:none!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-nav-step.current,.fastx-mode-tabs button.active,.fastx-cat.selected,.other-studio-picker>button:active,.mqr-mode.selected,.flow-segment-option.selected .flow-segment-surface){background:#292929!important;border-color:#6a6a6a!important;color:#fff!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.other-studio-amount,.other-studio-receipt,.fastx-value-card,.fastx-amount-zone,.studio-fields .flow-payment-preview,.v49-payment-intro,.v49-payment-breakdown,.fastx-receipt-details){background:#151515!important;background-image:none!important;border:1px solid #323232!important;border-radius:17px!important}
+  body:is(.theme-black,.theme-dark) #modal-root .other-studio-amount input[name="amount"]{background:transparent!important;border:0!important;outline:0!important;box-shadow:none!important;color:#fff!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-form,.fastx-form,.other-studio-form,.mqr-modal) :is(button[type="submit"],.btn[type="submit"],.f33-primary){background:#ededed!important;color:#090909!important;border:1px solid #ededed!important;font-weight:850!important;box-shadow:none!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.studio-form,.fastx-form,.other-studio-form,.mqr-modal) :is(.btn.ghost,.btn.soft,.studio-navigation button:not([type="submit"])){background:#1a1a1a!important;color:#f1f1f1!important;border:1px solid #383838!important;box-shadow:none!important}
+  body:is(.theme-black,.theme-dark) #modal-root .other-studio-line{border-top-color:#313131!important}
+  body:is(.theme-black,.theme-dark) #modal-root .other-studio-line :is(span,b){color:#e0e0e0!important}
+  body:is(.theme-black,.theme-dark) #modal-root :is(.other-studio-hint,.fastx-notice,.studio-active-subtitle,.other-studio-header p){color:#aeaeae!important}
+  /* Relevant action forms: responsive sizing and readable hierarchy, no field removed. */
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields{grid-template-columns:minmax(0,1fr)!important;gap:11px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields .field{min-height:48px!important;font-size:16px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-active-title{font-size:clamp(22px,6vw,28px)!important;line-height:1.13!important}
+  #modal-root .other-studio-form[data-special="refund"] .other-studio-header h2,
+  #modal-root .other-studio-form[data-special="adjustment"] .other-studio-header h2,
+  #modal-root .other-studio-form[data-special="benefit"] .other-studio-header h2,
+  #modal-root .other-studio-form[data-special="loan"] .other-studio-header h2{font-size:clamp(22px,6.2vw,28px)!important;line-height:1.15!important;letter-spacing:-.045em!important}
+  #modal-root .other-studio-form .other-studio-fields{grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+  #modal-root .other-studio-form .other-studio-right{padding:16px!important;border-top:1px solid #2a2a2a!important}
+  #modal-root .other-studio-form .other-studio-right .form-foot{padding-bottom:max(12px,env(safe-area-inset-bottom,0px))!important}
+  #modal-root .other-studio-form .other-studio-right .form-foot .btn[type="submit"]{min-height:49px!important;border-radius:15px!important}
+  #modal-root .other-studio-form .other-studio-amount{padding:14px 16px!important}
+  #modal-root .other-studio-form .other-studio-amount input[name="amount"]{font-size:clamp(30px,9vw,43px)!important;line-height:1.1!important}
 }
 </style>
 </body>
