@@ -25192,6 +25192,103 @@ body:is(.theme-black,.theme-dark) .main .v244-detail-mode .v373-card-manage summ
 @media(prefers-reduced-motion:reduce){.main .v244-detail-mode .v373-manage-chevron{transition:none!important;}}
 </style>
 
+<style id="v374-mobile-cards-luxury">
+/* V374 · Wallet, edición y pago de tarjetas · ajuste visual móvil exclusivamente. */
+@media(max-width:790px){
+  /* Wallet: la tarjeta física mantiene marca, categoría, moneda y tonos naturales */
+  #page .v266-wallet{width:100%!important;max-width:100%!important;overflow:visible!important;padding-inline:0!important}
+  #page .v266-wallet-header{padding:8px 2px 10px!important;gap:12px!important;align-items:center!important}
+  #page .v266-wallet-header h1{font-size:clamp(26px,7vw,32px)!important;line-height:1.1!important;letter-spacing:-.045em!important}
+  #page .v266-wallet-add{height:46px!important;width:46px!important;min-width:46px!important;flex:none!important;border-radius:50%!important}
+  #page .v266-gallery{min-width:0!important;overflow:hidden!important;gap:5px!important}
+  #page .v266-gallery-track.v68-wallet-gallery{box-sizing:border-box!important;max-width:100%!important;min-width:0!important;gap:12px!important;padding:4px 1px 9px!important;scroll-padding-inline:1px!important;-webkit-overflow-scrolling:touch}
+  #page .v266-gallery-track .v266-wallet-face.v68-wallet-face{box-sizing:border-box!important;flex:0 0 min(82vw,340px)!important;width:min(82vw,340px)!important;max-width:calc(100vw - 32px)!important;scroll-snap-align:start!important}
+  #page .v266-physical-card{height:clamp(164px,46vw,195px)!important;border-radius:22px!important;padding:clamp(16px,4.3vw,21px)!important}
+  #page .v266-dots{margin-top:3px!important;margin-bottom:8px!important;min-height:13px!important}
+  #page .v266-selected-balance{min-width:0!important;gap:10px!important;align-items:end!important;padding:11px 2px 17px!important}
+  #page .v266-selected-balance>div:first-child{min-width:0!important;flex:1 1 auto!important}
+  #page .v266-selected-balance>div:first-child>strong{font-size:clamp(30px,8.8vw,43px)!important;line-height:1.06!important;letter-spacing:-.055em!important;overflow-wrap:anywhere}
+  #page .v266-selected-debt{flex:0 1 39%!important;min-width:0!important;text-align:right!important}
+  #page .v266-selected-debt b{font-size:clamp(16px,4.6vw,22px)!important;overflow-wrap:anywhere}
+  #page .v266-wallet-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:clamp(5px,2vw,11px)!important;padding:0 0 17px!important}
+  #page .v266-wallet-actions button{min-width:0!important;max-width:100%!important;display:flex!important;align-items:center!important;flex-direction:column!important;gap:7px!important;padding:5px 1px!important;font-size:clamp(10px,2.9vw,12px)!important;line-height:1.2!important}
+  #page .v266-wallet-actions button>span{width:clamp(45px,13vw,58px)!important;height:clamp(45px,13vw,58px)!important;min-height:0!important;flex:none!important;border-radius:50%!important;display:grid!important;place-items:center!important}
+  #page .v266-wallet-actions button svg{width:21px!important;height:21px!important}
+  #page .v266-wallet-panel,#page .v266-wallet-detail{max-width:100%!important;min-width:0!important;border-radius:24px!important}
+  #page .v266-panel-heading{gap:12px!important;align-items:center!important}
+  #page .v266-panel-heading h2{font-size:clamp(19px,5vw,24px)!important;letter-spacing:-.035em!important;line-height:1.18!important}
+  #page .v266-wallet-panel .v266-activity-row{min-width:0!important;gap:10px!important}
+  #page .v266-activity-info{min-width:0!important;overflow:hidden!important}
+  #page .v266-activity-info>strong{display:block!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  #page .v266-activity-row>b{flex:none!important;font-variant-numeric:tabular-nums!important;max-width:37%!important;overflow-wrap:anywhere!important;text-align:right!important}
+  #page .v371-card-return .v371-return-values{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  /* Tarjeta: misma lectura que las fichas de Cuentas; no tocar importes ni handlers. */
+  #modal-root .modal-layer:has(#cardForm){box-sizing:border-box!important;padding:env(safe-area-inset-top,0px) 0 0!important;align-items:flex-end!important;justify-content:center!important;overflow:hidden!important}
+  #modal-root .modal:has(#cardForm){box-sizing:border-box!important;display:flex!important;flex-direction:column!important;width:100vw!important;max-width:520px!important;min-width:0!important;height:calc(100dvh - env(safe-area-inset-top,0px))!important;max-height:100dvh!important;margin:0 auto!important;padding:0!important;gap:0!important;border-radius:24px 24px 0 0!important;overflow:hidden!important;transform:none!important}
+  #modal-root .modal:has(#cardForm)>.modal-head{flex:0 0 auto!important;min-height:66px!important;margin:0!important;padding:12px 18px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;border-bottom-width:1px!important}
+  #modal-root .modal:has(#cardForm)>.modal-head h2{font-size:clamp(20px,5.4vw,25px)!important;line-height:1.2!important;letter-spacing:-.035em!important;font-weight:820!important}
+  #modal-root .modal:has(#cardForm)>.modal-head .close{flex:none!important;width:40px!important;height:40px!important;min-width:40px!important;border-radius:50%!important}
+  #modal-root #cardForm{flex:1 1 auto!important;display:flex!important;flex-direction:column!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;gap:0!important;padding:0 16px!important;box-sizing:border-box!important}
+  #modal-root #cardForm>.form-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:11px!important;align-content:start!important;flex:0 0 auto!important;padding:17px 1px 22px!important;min-width:0!important;width:100%!important}
+  #modal-root #cardForm>.form-grid>*,#modal-root #cardForm .v28-card-identifiers,#modal-root #cardForm .smart-interest{grid-column:1/-1!important;min-width:0!important;width:100%!important;max-width:100%!important}
+  #modal-root #cardForm .v28-card-identifiers{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:11px!important}
+  #modal-root #cardForm .smart-card-intro{border:1px solid rgba(98,143,207,.17)!important;border-radius:21px!important;margin:0 0 3px!important;padding:18px!important;background:linear-gradient(130deg,#f5f9ff,#fff)!important}
+  #modal-root #cardForm .smart-card-intro h3{font-size:clamp(23px,6.3vw,28px)!important;line-height:1.12!important;letter-spacing:-.045em!important;font-weight:820!important}
+  #modal-root #cardForm .smart-card-intro p{font-size:12px!important;line-height:1.45!important;margin:7px 0 0!important}
+  #modal-root #cardForm .smart-kicker,#modal-root #cardForm .filter-label{font-weight:780!important;font-size:11px!important;letter-spacing:.1em!important;line-height:1.4!important}
+  #modal-root #cardForm .field{box-sizing:border-box!important;height:52px!important;min-height:52px!important;max-width:100%!important;width:100%!important;font-size:16px!important;line-height:1.3!important;border-radius:15px!important;padding-inline:15px!important;opacity:1!important}
+  #modal-root #cardForm .form-grid>label,#modal-root #cardForm .v28-card-identifiers>label,#modal-root #cardForm .smart-interest>label{display:block!important;padding:12px!important;border:1px solid #e0e8f2!important;background:#fff!important;border-radius:18px!important;box-sizing:border-box!important}
+  #modal-root #cardForm .smart-form-section{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:9px!important;padding:16px 3px 4px!important;margin:2px 0 0!important;border-top:1px solid #e3ebf5!important}
+  #modal-root #cardForm .smart-form-section strong{font-size:15px!important;letter-spacing:-.015em!important}
+  #modal-root #cardForm .smart-form-section small{margin-left:0!important;flex-basis:100%!important;font-size:11px!important}
+  #modal-root #cardForm .smart-fold{border-radius:18px!important;overflow:hidden!important}
+  #modal-root #cardForm .smart-fold>summary{min-height:66px!important;padding:13px!important}
+  #modal-root #cardForm .smart-fold-grid{grid-template-columns:minmax(0,1fr)!important;padding:13px!important;gap:10px!important}
+  #modal-root #cardForm>.form-foot{position:sticky!important;bottom:0!important;z-index:20!important;flex:0 0 auto!important;display:grid!important;grid-template-columns:1fr 1.25fr!important;gap:10px!important;margin:auto -16px 0!important;min-height:74px!important;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))!important;background:#f6f9fc!important;border-top:1px solid #dfe8f2!important;box-sizing:border-box!important}
+  #modal-root #cardForm>.form-foot button{min-width:0!important;min-height:49px!important;border-radius:15px!important;font-size:14px!important;font-weight:790!important}
+  /* Pago de tarjetas: steps claros, selección amplia y pie sin elementos sobrepuestos. */
+  #modal-root .modal-layer:has(.studio-form[data-mode="cardpay"]){box-sizing:border-box!important;padding:env(safe-area-inset-top,0px) 0 0!important;align-items:flex-end!important;justify-content:center!important;overflow:hidden!important}
+  #modal-root .modal:has(.studio-form[data-mode="cardpay"]){box-sizing:border-box!important;display:flex!important;flex-direction:column!important;width:100vw!important;max-width:520px!important;height:calc(100dvh - env(safe-area-inset-top,0px))!important;max-height:100dvh!important;margin:0 auto!important;padding:0!important;gap:0!important;border-radius:24px 24px 0 0!important;overflow:hidden!important}
+  #modal-root .modal:has(.studio-form[data-mode="cardpay"])>.modal-head{flex:0 0 auto!important;min-height:61px!important;display:flex!important;align-items:center!important;padding:12px 17px!important;gap:10px!important;margin:0!important;border-bottom:1px solid #dfe8f4!important}
+  #modal-root .modal:has(.studio-form[data-mode="cardpay"])>.modal-head h2{font-size:clamp(19px,5.2vw,24px)!important;font-weight:820!important;letter-spacing:-.035em!important}
+  #modal-root .studio-form[data-mode="cardpay"]{display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;gap:0!important;padding:0!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-shell{display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;gap:0!important;padding:0!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-rail{flex:none!important;width:auto!important;margin:12px 14px 8px!important;border-radius:22px!important;gap:9px!important;padding:13px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-steps-nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step{min-width:0!important;border-radius:13px!important;min-height:52px!important;padding:8px 5px!important;gap:5px!important;justify-content:center!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step .studio-step-number{flex:none!important;width:25px!important;height:25px!important;border-radius:9px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step>span:last-child{font-size:11px!important;min-width:0!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-main{flex:1 1 auto!important;display:flex!important;flex-direction:column!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;padding:0 14px!important;overscroll-behavior:contain!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-topline{display:none!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-active-title,#modal-root .studio-form[data-mode="cardpay"] .studio-active-subtitle{margin:0!important;height:0!important;overflow:hidden!important;visibility:hidden!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-panels{flex:0 0 auto!important;min-width:0!important;overflow:visible!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;min-width:0!important;padding-bottom:12px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label{min-width:0!important;max-width:100%!important;width:100%!important;box-sizing:border-box!important;border-radius:17px!important;padding:11px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-fields .field{min-width:0!important;max-width:100%!important;width:100%!important;box-sizing:border-box!important;min-height:50px!important;font-size:16px!important;border-radius:13px!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-navigation{position:sticky!important;bottom:0!important;z-index:15!important;min-height:72px!important;flex:0 0 auto!important;display:grid!important;grid-template-columns:1fr 1.4fr!important;gap:10px!important;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px))!important;margin-top:auto!important}
+  #modal-root .studio-form[data-mode="cardpay"] .studio-navigation button{min-width:0!important;min-height:50px!important;border-radius:15px!important;font-size:14px!important;font-weight:780!important}
+  #modal-root .studio-form[data-mode="cardpay"][data-studio-step="1"] .studio-navigation{grid-template-columns:1fr!important}
+  #modal-root .studio-form[data-mode="cardpay"] .form-foot{position:sticky!important;bottom:0!important;z-index:16!important;margin-top:auto!important}
+  /* Black verdadero para los tres componentes, sin alterar tarjetas físicas Platinum/Gold/etc. */
+  body:is(.theme-black,.theme-dark) #modal-root .modal:has(#cardForm),body:is(.theme-black,.theme-dark) #modal-root .modal:has(.studio-form[data-mode="cardpay"]){background:#000!important;color:#f5f5f5!important;border-color:#252525!important}
+  body:is(.theme-black,.theme-dark) #modal-root .modal:has(#cardForm)>.modal-head,body:is(.theme-black,.theme-dark) #modal-root .modal:has(.studio-form[data-mode="cardpay"])>.modal-head{background:#050505!important;color:#fff!important;border-color:#272727!important}
+  body:is(.theme-black,.theme-dark) #modal-root #cardForm .smart-card-intro,body:is(.theme-black,.theme-dark) #modal-root #cardForm .form-grid>label,body:is(.theme-black,.theme-dark) #modal-root #cardForm .v28-card-identifiers>label,body:is(.theme-black,.theme-dark) #modal-root #cardForm .smart-interest>label,body:is(.theme-black,.theme-dark) #modal-root #cardForm .smart-fold{background:#101010!important;background-image:none!important;color:#fff!important;border-color:#2b2b2b!important;box-shadow:none!important}
+  body:is(.theme-black,.theme-dark) #modal-root #cardForm .smart-card-intro h3,body:is(.theme-black,.theme-dark) #modal-root #cardForm .smart-form-section strong{color:#fff!important}
+  body:is(.theme-black,.theme-dark) #modal-root #cardForm .field,body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .studio-fields .field{background:#181818!important;color:#fff!important;border-color:#393939!important;color-scheme:dark!important;opacity:1!important}
+  body:is(.theme-black,.theme-dark) #modal-root #cardForm>.form-foot{background:#050505!important;border-color:#292929!important}
+  body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .studio-rail,body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .studio-fields>label{background:#101010!important;background-image:none!important;color:#eee!important;border-color:#303030!important}
+  body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .studio-navigation{background:#000!important}
+  body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step{background:#181818!important;color:#ddd!important;border-color:#333!important}
+  body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .studio-nav-step.current{background:#292929!important;color:#fff!important;border-color:#626262!important}
+}
+@media(max-width:365px){
+ #page .v266-gallery-track .v266-wallet-face.v68-wallet-face{flex-basis:79vw!important;width:79vw!important}
+ #page .v266-wallet-actions{gap:4px!important}
+ #modal-root #cardForm>.form-grid{gap:9px!important}
+}
+@media(prefers-reduced-motion:reduce){#modal-root #cardForm *,#modal-root .studio-form[data-mode="cardpay"] *{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
