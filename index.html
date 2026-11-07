@@ -28910,7 +28910,35 @@ function v342CreativePositionMobile(liquid,debt,net){
   <button type="button" class="v344-tomorrow" data-act="navigate" data-id="payments" aria-label="Abrir Visión global y consultar pagos próximos"><span class="v344-tomorrow-symbol" aria-hidden="true">◷</span><span><small>EL COSTO DEL MAÑANA</small><strong>${money(nextDue)}</strong><em>Compromisos del próximo mes · estimación</em></span><span class="v344-tomorrow-arrow" aria-hidden="true">↗</span></button>
  </section>`;
 }
+/* V368 — Inicio en una sola pantalla, reutilizando exactamente las cifras del motor financiero.
+   No se guardan datos y no se eliminan widgets/configuraciones existentes del catálogo. */
+function v368HomeDashboard(mode='mobile'){
+ const m=monthStats();
+ const liquid=totalLiquid();
+ const pt=personalTotals();
+ const debt=totalCardDebt()+totalLoanDebt()+pt.payable;
+ const net=liquid+totalCertificates()+pt.receivable-debt;
+ const cap=v89DebtCapacity(ui.month);
+ const obligations=v99PendingForPeriod(ui.month).filter(o=>Number(o.amount)>0&&/^\d{4}-\d{2}-\d{2}$/.test(String(o.date||'')));
+ const unpaid=obligations.reduce((total,o)=>total+fx(o.amount,o.currency),0);
+ const budget=v290BudgetSnapshot();
+ const pct=Number.isFinite(budget.percent)?budget.percent:null;
+ const currentMonth=dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'});
+ const metric=(name,value,id,kind='')=>`<button class="v368-circle ${kind}" type="button" data-act="v186Deep" data-id="${id}" title="Abrir detalle de ${name}"><b title="${money(value,'DOP',2)}">${bubbleMoney(value)}</b><span>${name}</span></button>`;
+ const ratio=cap.ratio===null||!Number.isFinite(cap.ratio)?'—':v85Pct(cap.ratio);
+ const remaining=cap.balance===null?'Sin referencia':(cap.balance<0?'Déficit':'Disponible');
+ const moneyRemaining=cap.balance===null?'—':money(Math.abs(cap.balance));
+ const budgetText=pct===null?'Sin definir':v85Pct(pct);
+ return `<div class="v368-home ${mode==='desktop'?'v368-desktop':'vive-mobile-home v368-mobile'}" aria-label="Inicio, resumen financiero sin desplazamiento">
+   <header class="v368-head"><div><span class="v368-overline">TU PANORAMA · ${sanitize(currentMonth.toUpperCase())}</span><h1>Resumen financiero</h1><p>Lo que tienes, lo que debes y lo que viene.</p></div><button type="button" class="v368-personalize" data-v273-open-personalization="1" aria-label="Personalizar el Resumen" title="Personalizar la pantalla">${icon('grid')}<span>Personalizar</span></button></header>
+   ${mode==='desktop'?`<nav class="v368-shortcuts" aria-label="Secciones de Inicio"><button type="button" class="active" aria-current="page" data-act="navigate" data-id="overview">${icon('home')}<span>Inicio</span></button><button type="button" data-act="navigate" data-id="recurring">${icon('cycle')}<span>Suscripciones</span></button><button type="button" data-act="navigate" data-id="personal">${icon('wallet')}<span>Entre personas</span></button></nav>`:''}
+   <section class="v368-position" aria-label="Tu posición financiera"><div class="v368-pos-top"><div><span>Tu posición financiera</span><button type="button" data-act="v186Deep" data-id="net" class="v368-pos-amount" title="Abrir el detalle de la posición financiera · ${money(net,'DOP',2)}">${money(net,'DOP',2)}</button></div><button class="v368-open" type="button" data-act="navigate" data-id="patrimony" aria-label="Abrir Patrimonio">${icon('arrow')}</button></div><div class="v368-circles">${metric('Liquidez',liquid,'liquidity')}${metric('Deudas',debt,'debt','v368-debt')}${metric('Neto',net,'net',net<0?'v368-negative':'')}</div><div class="v368-pos-footer"><span>Liquidez + certificados + por cobrar − deudas</span><button type="button" data-act="navigate" data-id="patrimony">Ver detalle ${icon('arrow')}</button></div></section>
+   <div class="v368-actions" aria-label="Acciones rápidas"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
+   <div class="v368-insights"><button type="button" class="v368-capacity" data-v85-action="capacity" aria-label="Ver desglose de capacidad de endeudamiento"><span class="v368-tile-label">CAPACIDAD DE ENDEUDAMIENTO</span><strong class="${cap.ratio>100?'v368-risk':''}">${ratio}</strong><small>${remaining} · ${moneyRemaining}</small><span class="v368-meter"><i style="width:${Number.isFinite(cap.ratio)?Math.max(0,Math.min(100,cap.ratio)):0}%"></i></span></button><button type="button" class="v368-commitments" data-act="navigate" data-id="payments" aria-label="Abrir Visión global y pagos pendientes"><span class="v368-tile-label">PRÓXIMOS PAGOS</span><strong>${money(unpaid)}</strong><small>${obligations.length} pago${obligations.length===1?'':'s'} en agenda</small><span class="v368-open-inline">Ver visión global ${icon('arrow')}</span></button><button type="button" class="v368-month" data-act="navigate" data-id="advanced" aria-label="Ver detalle del balance del mes"><span class="v368-tile-label">BALANCE DEL MES</span><strong class="${m.net<0?'v368-risk':''}">${money(m.net)}</strong><small>Ingresos ${bubbleMoney(m.income)} · Egresos ${bubbleMoney(m.expense)}</small></button><button type="button" class="v368-budget" data-v290-budget-open="execution" aria-label="Abrir presupuesto del mes"><span class="v368-tile-label">PRESUPUESTO UTILIZADO</span><strong>${budgetText}</strong><small>${pct===null?'Define tu presupuesto':'Consulta la ejecución del mes'}</small></button></div>
+ </div>`;
+}
 function mobileHome(){
+ if(isMobileViewport())return v368HomeDashboard('mobile');
  const m=monthStats(),liquid=totalLiquid(),debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
  // Exclusivamente obligaciones por pagar: nunca sumar préstamos por cobrar.
  const monthEnd=v99End(ui.month);
@@ -30864,7 +30892,9 @@ function varianceLabel(current,prior,valid,risk=false){
 
 function overview(){
  
- const m=monthStats(),period=dateObj(ui.month+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'});
+ 
+ if(!isMobileViewport())return v368HomeDashboard('desktop');
+const m=monthStats(),period=dateObj(ui.month+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'});
  const fundsDOP=db.accounts.filter(a=>a.currency==='DOP').reduce((s,a)=>s+getAccountBalance(a),0);
  const fundsUSD=db.accounts.filter(a=>a.currency==='USD').reduce((s,a)=>s+getAccountBalance(a),0);
  const cardDebtDOP=db.cards.reduce((s,c)=>s+cardStatus(c,'DOP').debt,0);
@@ -31109,7 +31139,7 @@ const WIDGET_METRICS=[
  ['cashPressure','Radar de vencimientos','chart','tomorrow360'],
  ['spendingFingerprint','Huella de gastos · 28 días','chart','tomorrow360'],
  ['futureFlow','El río de tu dinero','chart','tomorrow360'],
- ['futureWaterfall','¿Cuánto dinero ya tiene dueño?','chart','tomorrow360'],
+ ['futureWaterfall','Dinero comprometido · 30 días','chart','tomorrow360'],
  ['futureMap','Mapa de compromisos','chart','tomorrow360'],
  ['futureBubbles','Matriz de importes y urgencia','chart','tomorrow360'],
 ];
@@ -33621,7 +33651,7 @@ function render(){
  document.body.style.setProperty('--vive-bg-color',bgChoice==='custom'&&hex.test(db.settings.backgroundHex||'')?db.settings.backgroundHex:(backgrounds[bgChoice]||backgrounds.original));
  v250DockGlassApply(db.settings.mobileDockGlassLevel ?? 50);
  document.getElementById('app').innerHTML=main();
- if(ui.page==='overview'){const overviewMain=document.querySelector('#app main.main');if(overviewMain&&!overviewMain.querySelector('.v360-home-links'))overviewMain.insertAdjacentHTML('afterbegin',v360HomeLinks());}
+ if(ui.page==='overview' && !isMobileViewport() && !document.querySelector('#app .v368-home')){const overviewMain=document.querySelector('#app main.main');if(overviewMain&&!overviewMain.querySelector('.v360-home-links'))overviewMain.insertAdjacentHTML('afterbegin',v360HomeLinks());}
 
  if(f33Active)setTimeout(v360SaveUI,120);
   v40Decorate();
@@ -38065,7 +38095,7 @@ const V105_WIDGETS=[
  {id:'futureCostKpi',title:'Costo del mañana',hint:'Compromisos del próximo mes, presión y carga futura'},
  {id:'futureCalendar',title:'Calendario de presión financiera',hint:'Mapa de vencimientos diarios en los próximos 30 días'},
  {id:'futureFlow',title:'El río de tu dinero',hint:'Flujos de liquidez e ingresos hacia compromisos y saldo'},
- {id:'futureWaterfall',title:'¿Cuánto dinero ya tiene dueño?',hint:'Cascada de saldos, ingresos programados y pagos'},
+ {id:'futureWaterfall',title:'Dinero comprometido · 30 días',hint:'Cascada de saldos, ingresos programados y pagos'},
  {id:'futureMap',title:'Mapa de compromisos',hint:'Peso mensual de tarjetas, préstamos y suscripciones'},
  {id:'futureBubbles',title:'Matriz de importes y urgencia',hint:'Cruce de importe y proximidad de vencimientos'},
 
@@ -40757,7 +40787,7 @@ const V318_GRAPH_META=[
  ['futureCostKpi','Costo del mañana','Compromisos del próximo mes, presión y carga futura','decisions'],
  ['futureCalendar','Calendario de presión financiera','Mapa de vencimientos diarios en los próximos 30 días','decisions'],
  ['futureFlow','El río de tu dinero','Origen, obligaciones y saldo previsto en 30 días','activity'],
- ['futureWaterfall','¿Cuánto dinero ya tiene dueño?','Cascada de liquidez, ingresos y compromisos','decisions'],
+ ['futureWaterfall','Dinero comprometido · 30 días','Cascada de liquidez, ingresos y compromisos','decisions'],
  ['futureMap','Mapa de compromisos','Peso relativo por tipo de obligación mensual','breakdown'],
  ['futureBubbles','Matriz de importes y urgencia','Relación entre importe y días hasta vencer','decisions'],
 ];
@@ -66661,6 +66691,247 @@ body:not(.theme-black):not(.theme-dark) #modal-root .v359-review-disclaimer{colo
   html body #app main.main > .universe-switch-wrap{max-width:100%!important;}
   html body #app main.main > .universe-switch-wrap > .universe-switch{max-width:100%!important;}
   html body #app main.main > .universe-switch-wrap .universe-switch button{white-space:nowrap!important;}
+}
+</style>
+
+<style id="v367-mobile-dock-visibility-and-light-contrast">
+/* V367: Dock native-like, no functional or data changes. Replaces only visual overrides. */
+@media screen and (max-width:790px){
+  html body{
+    --v367-dock-bottom:max(5px,calc(env(safe-area-inset-bottom,0px) - 20px));
+    --v367-dock-height:62px;
+  }
+  html body .vive-mobile-dock{
+    position:fixed!important;
+    inset:auto auto var(--v367-dock-bottom) 50%!important;
+    top:auto!important;right:auto!important;
+    bottom:var(--v367-dock-bottom)!important;
+    left:50%!important;
+    width:min(460px,calc(100dvw - 22px))!important;
+    max-width:calc(100dvw - 22px)!important;
+    height:var(--v367-dock-height)!important;
+    min-height:var(--v367-dock-height)!important;
+    max-height:var(--v367-dock-height)!important;
+    padding:5px!important;
+    margin:0!important;
+    gap:3px!important;
+    border-radius:31px!important;
+    transform:translate3d(-50%,0,0)!important;
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:center!important;
+    justify-content:space-around!important;
+    box-sizing:border-box!important;
+    z-index:71!important;
+  }
+  html body .vive-mobile-dock>.vive-mobile-dock-item{
+    flex:1 1 0!important;
+    min-width:0!important;
+    max-width:none!important;
+    width:0!important;
+    height:50px!important;
+    min-height:50px!important;
+    max-height:50px!important;
+    padding:4px 1px!important;
+    margin:0!important;
+    gap:3px!important;
+    border-radius:25px!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  html body .vive-mobile-dock .vive-mobile-dock-label{
+    font-size:clamp(9px,2.48vw,10.5px)!important;
+    line-height:1.18!important;
+    font-weight:740!important;
+    text-align:center!important;
+  }
+  /* Registrar always clears the dock, no overlapping touch areas. */
+  html body .v249-register-fab{
+    position:fixed!important;
+    bottom:calc(var(--v367-dock-bottom) + var(--v367-dock-height) + 10px)!important;
+    width:54px!important;height:54px!important;
+    right:max(13px,calc((100dvw - 460px)/2 + 14px))!important;
+    z-index:73!important;
+  }
+  /* Last widget must scroll above the dock instead of disappearing behind it. */
+  html{scroll-padding-bottom:calc(var(--v367-dock-height) + var(--v367-dock-bottom) + 72px)!important;}
+  html body #app main.main{
+    padding-bottom:max(166px,calc(142px + env(safe-area-inset-bottom,0px)))!important;
+  }
+  html body #app :is(.v105-capacity-widget,.ff-upcoming,.ff-obligations,.v315-chart-widget,.v318-mobile-card,.v242-mobile-web-position){
+    scroll-margin-bottom:calc(var(--v367-dock-height) + var(--v367-dock-bottom) + 56px);
+  }
+  /* Do not steal touches from an open dialog or mobile keyboard. */
+  html body:is(.v154-mobile-input-focused,.v158-keyboard-visible,.v216-modal-open) .vive-mobile-dock,
+  html body:has(#modal-root .modal-layer) .vive-mobile-dock,
+  html body:has(#modal-root .modal-layer) .v249-register-fab{
+    visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+  }
+}
+/* Light-mode legibility only. Keep the user's pure black styling unchanged. */
+@media(max-width:790px){
+  html body:not(.theme-black):not(.theme-dark) .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .ff-bubble:not(.featured){
+    background:linear-gradient(145deg,#f4fbff,#deeefa)!important;
+    border:1px solid #a4c5e0!important;
+    color:#1a3553!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 6px 17px rgba(31,69,110,.09)!important;
+  }
+  html body:not(.theme-black):not(.theme-dark) .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .ff-bubble:not(.featured) :is(.bubble-amount,small,.v105-bubble-pct,span){
+    color:#183a5c!important;
+    -webkit-text-fill-color:#183a5c!important;
+    text-shadow:none!important;
+  }
+  html body:not(.theme-black):not(.theme-dark) .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .ff-bubble.ff-bubble-negative:not(.featured){
+    background:linear-gradient(145deg,#fff5f6,#f8dfe4)!important;
+    border-color:#e2b1bb!important;
+  }
+  html body:not(.theme-black):not(.theme-dark) .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .ff-bubble.ff-bubble-negative:not(.featured) :is(.bubble-amount,.v105-bubble-pct,span){
+    color:#8e3146!important;-webkit-text-fill-color:#8e3146!important;
+  }
+  html body:not(.theme-black):not(.theme-dark) .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .ff-bubble.featured{
+    background:linear-gradient(145deg,#117c79,#248e93)!important;
+    background-image:linear-gradient(145deg,#117c79,#248e93)!important;
+    border:1px solid #52b1ad!important;
+    box-shadow:0 8px 22px rgba(14,94,96,.20)!important;
+    color:#ffffff!important;
+  }
+  html body:not(.theme-black):not(.theme-dark) .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .ff-bubble.featured :is(.bubble-amount,small,.v105-bubble-pct,span){
+    color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:none!important;
+  }
+  html body:not(.theme-black):not(.theme-dark) .v105-capacity-widget :is(h2,h3,strong),
+  html body:not(.theme-black):not(.theme-dark) .v315-chart-widget :is(h2,h3,strong){color:#203750!important;}
+  html body:not(.theme-black):not(.theme-dark) .v105-capacity-widget :is(p,small),
+  html body:not(.theme-black):not(.theme-dark) .v315-chart-widget :is(p,small){color:#526680!important;}
+  html body:not(.theme-black):not(.theme-dark) .v315-chart-widget .v315-credit-overall strong,
+  html body:not(.theme-black):not(.theme-dark) .v315-chart-widget .v315-wealth-delta.v315-negative{
+    color:#a84336!important;
+  }
+  html body:not(.theme-black):not(.theme-dark) .v318-waterfall .v318-waterfall-labels,
+  html body:not(.theme-black):not(.theme-dark) .v318-chart-content .v318-waterfall-labels{fill:#364e6d!important;}
+  html body:not(.theme-black):not(.theme-dark) .v318-chart-content .v318-chart-note{color:#516783!important;}
+}
+@media(max-width:355px){
+  html body .vive-mobile-dock{width:calc(100dvw - 14px)!important;max-width:calc(100dvw - 14px)!important;}
+  html body .v249-register-fab{width:50px!important;height:50px!important;right:11px!important;}
+}
+@media(prefers-reduced-motion:reduce){html body .vive-mobile-dock,html body .v249-register-fab{transition:none!important;}}
+</style>
+
+
+<style id="v368-single-screen-overview">
+/* A fixed, deliberately concise dashboard. Other pages keep their scrolling.
+   Detailed widgets stay available in their original modules and Personalización. */
+body:has(.world-overview .v368-home){overflow:hidden!important;height:100dvh!important;max-height:100dvh!important}
+body:has(.world-overview .v368-home) #app{height:100dvh!important;max-height:100dvh!important;overflow:hidden!important}
+body:has(.world-overview .v368-home) .world-overview{overflow:hidden!important;min-height:0!important}
+.world-overview .v368-home{--v368-surface:#f7f9fd;--v368-card:#fff;--v368-ink:#1e3048;--v368-muted:#637894;--v368-border:#d8e1ee;--v368-accent:#237b79;--v368-red:#b63747;box-sizing:border-box!important;max-width:100%;min-width:0;color:var(--v368-ink);font-family:inherit;}
+body:is(.theme-black,.theme-dark) .world-overview .v368-home{--v368-surface:#080808;--v368-card:#121212;--v368-ink:#f7f7f7;--v368-muted:#ababab;--v368-border:#303030;--v368-accent:#3bd5bb;--v368-red:#ff5868}
+.world-overview .v368-home *, .world-overview .v368-home *::before,.world-overview .v368-home *::after{box-sizing:border-box}
+.world-overview .v368-home button{cursor:pointer;font-family:inherit;min-width:0;touch-action:manipulation}
+.world-overview .v368-home button:focus-visible{outline:2px solid #5b9df1;outline-offset:2px}
+.world-overview .v368-home .v368-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;flex-shrink:0}
+.world-overview .v368-home .v368-head>div{min-width:0}
+.world-overview .v368-home .v368-overline,.world-overview .v368-home .v368-tile-label{color:var(--v368-muted);font-size:10px;font-weight:800;letter-spacing:.09em}
+.world-overview .v368-home .v368-head h1{color:var(--v368-ink)!important;margin:3px 0 0!important;font-size:clamp(19px,3.5vw,28px)!important;font-weight:850;letter-spacing:-.04em;line-height:1.08}
+.world-overview .v368-home .v368-head p{color:var(--v368-muted);font-size:11px;margin:4px 0 0!important;line-height:1.3}
+.world-overview .v368-home .v368-personalize{background:var(--v368-card)!important;color:var(--v368-ink)!important;border:1px solid var(--v368-border)!important;border-radius:14px;display:flex;align-items:center;gap:7px;padding:8px 10px;font-weight:740;font-size:11px;flex-shrink:0}
+.world-overview .v368-home .v368-personalize svg{width:17px;height:17px}
+.world-overview .v368-home .v368-shortcuts,.world-overview .v368-home .v368-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;min-width:0;}
+.world-overview .v368-home .v368-shortcuts button,.world-overview .v368-home .v368-actions button{display:flex;flex-flow:row nowrap;align-items:center;justify-content:center;gap:5px;border-radius:13px;background:var(--v368-card)!important;color:var(--v368-ink)!important;border:1px solid var(--v368-border)!important;font-weight:750;font-size:11px;white-space:nowrap;padding:7px 3px;min-height:35px}
+.world-overview .v368-home .v368-shortcuts button.active{border-color:var(--v368-accent)!important}
+.world-overview .v368-home .v368-shortcuts svg,.world-overview .v368-home .v368-actions svg{width:16px;height:16px;flex-shrink:0}
+.world-overview .v368-home .v368-position{min-height:0;min-width:0;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:8px;border:1px solid var(--v368-border);border-radius:23px;background:var(--v368-surface);padding:clamp(12px,2.7vh,18px);overflow:hidden}
+.world-overview .v368-home .v368-pos-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;min-width:0}
+.world-overview .v368-home .v368-pos-top>div{min-width:0}
+.world-overview .v368-home .v368-pos-top span{display:block;color:var(--v368-muted);font-size:12px;font-weight:700}
+.world-overview .v368-home .v368-pos-amount{background:none!important;border:0!important;padding:0!important;text-align:left;white-space:nowrap;max-width:100%;color:var(--v368-ink)!important;letter-spacing:-.055em;font-weight:860;font-size:clamp(22px,5.7vw,43px);font-variant-numeric:tabular-nums;line-height:1.2}
+.world-overview .v368-home .v368-open{background:var(--v368-card);color:var(--v368-ink);border:1px solid var(--v368-border);width:32px;height:32px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.world-overview .v368-home .v368-circles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(4px,2vw,12px);align-items:center;justify-items:center;min-height:0;flex:1}
+.world-overview .v368-home .v368-circle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;aspect-ratio:1;max-height:100%;width:min(100%,115px);border-radius:50%;border:1px solid var(--v368-border);color:var(--v368-ink);background:var(--v368-card);padding:5px;overflow:hidden}
+.world-overview .v368-home .v368-circle.v368-debt{border-color:rgba(16,153,130,.6);background:color-mix(in srgb,var(--v368-accent) 23%,var(--v368-card));}
+.world-overview .v368-home .v368-circle.v368-negative b{color:var(--v368-red)}
+.world-overview .v368-home .v368-circle b{font-size:clamp(11px,3.2vw,18px);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.03em}
+.world-overview .v368-home .v368-circle span{font-size:clamp(9px,2.3vw,12px);font-weight:700;color:var(--v368-muted);text-align:center}
+.world-overview .v368-home .v368-pos-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;color:var(--v368-muted);font-size:10px}
+.world-overview .v368-home .v368-pos-footer>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.world-overview .v368-home .v368-pos-footer button{background:transparent;border:none;color:var(--v368-accent);display:flex;align-items:center;gap:2px;font-size:10px;white-space:nowrap;font-weight:740}
+.world-overview .v368-home .v368-pos-footer svg{width:12px;height:12px}
+.world-overview .v368-home .v368-insights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:7px;min-height:0}
+.world-overview .v368-home .v368-insights>button{min-height:0;min-width:0;display:flex!important;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;text-align:left;padding:9px 12px;border:1px solid var(--v368-border);border-radius:17px;background:var(--v368-card);color:var(--v368-ink);overflow:hidden}
+.world-overview .v368-home .v368-insights strong{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:clamp(16px,4.1vw,23px);line-height:1.12;letter-spacing:-.035em;color:var(--v368-ink)}
+.world-overview .v368-home .v368-insights .v368-risk{color:var(--v368-red)}
+.world-overview .v368-home .v368-insights small{color:var(--v368-muted);font-size:10px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.world-overview .v368-home .v368-meter{height:4px;width:100%;border-radius:9px;background:var(--v368-border);overflow:hidden;margin-top:2px}
+.world-overview .v368-home .v368-meter>i{display:block;height:100%;border-radius:inherit;background:#df5367}
+.world-overview .v368-home .v368-open-inline{color:var(--v368-accent);display:flex;align-items:center;gap:2px;font-size:10px}
+.world-overview .v368-home .v368-open-inline svg{width:12px;height:12px}
+@media(max-width:790px){
+ html:has(.world-overview .v368-mobile){height:100dvh!important;overflow:hidden!important}
+ body:has(.world-overview .v368-mobile) .shell{height:calc(100dvh - 66px)!important;max-height:calc(100dvh - 66px)!important;min-height:0!important;overflow:hidden!important}
+ body:has(.world-overview .v368-mobile) #app main.world-overview{height:100%!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:7px 11px calc(11px + var(--v367-dock-height,62px) + var(--v367-dock-bottom,5px))!important;max-width:100%!important}
+ .world-overview .v368-mobile{flex:1;min-height:0;max-height:100%;height:100%;display:grid!important;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto minmax(0,auto);gap:7px;margin:0!important;padding:0!important;width:100%}
+ .world-overview .v368-mobile .v368-position{max-height:none;}
+ .world-overview .v368-mobile .v368-insights{height:clamp(118px,21dvh,172px)}
+ .world-overview .v368-mobile .v368-pos-footer{display:none}
+ .world-overview .v368-mobile .v368-position{gap:5px}
+ .world-overview .v368-mobile .v368-circle{width:min(100%,clamp(64px,17dvh,102px))}
+ .world-overview .v368-mobile .v368-head p{display:none}
+ .world-overview .v368-mobile .v368-actions button{min-height:39px}
+ .world-overview .v368-mobile .v368-head .v368-overline{font-size:9px}
+ .world-overview .v368-mobile .v368-head h1{font-size:clamp(19px,5.4vw,24px)!important}
+ .world-overview .v368-mobile .v368-insights .v368-tile-label{font-size:8.5px}
+}
+@media(max-width:790px) and (max-height:690px){
+ body:has(.world-overview .v368-mobile) #app main.world-overview{padding-top:3px!important;padding-bottom:calc(6px + var(--v367-dock-height,62px) + var(--v367-dock-bottom,5px))!important}
+ .world-overview .v368-mobile{gap:4px!important}
+ .world-overview .v368-mobile .v368-position{border-radius:16px;padding:8px 11px!important;gap:2px}
+ .world-overview .v368-mobile .v368-head h1{font-size:19px!important;margin-top:1px!important}
+ .world-overview .v368-mobile .v368-personalize{padding:5px 7px;font-size:10px}
+ .world-overview .v368-mobile .v368-shortcuts button,.world-overview .v368-mobile .v368-actions button{padding:4px 2px;min-height:31px;font-size:10px}
+ .world-overview .v368-mobile .v368-actions button{min-height:33px}
+ .world-overview .v368-mobile .v368-circle{width:min(100%,clamp(46px,13dvh,82px));gap:2px}
+ .world-overview .v368-mobile .v368-pos-amount{font-size:clamp(18px,5vw,29px)}
+ .world-overview .v368-mobile .v368-insights{height:clamp(98px,21dvh,132px)}
+ .world-overview .v368-mobile .v368-insights>button{padding:5px 8px;gap:1px;border-radius:10px}
+ .world-overview .v368-mobile .v368-insights strong{font-size:clamp(13px,3.5vw,18px)}
+ .world-overview .v368-mobile .v368-insights small{font-size:9px}
+}
+@media(max-width:790px) and (max-height:570px){
+ .world-overview .v368-mobile .v368-head .v368-overline{display:none}
+ .world-overview .v368-mobile .v368-pos-top>div>span{display:none}
+ .world-overview .v368-mobile .v368-circle{width:min(100%,42px)}
+ .world-overview .v368-mobile .v368-circle b{font-size:10px}
+ .world-overview .v368-mobile .v368-circle span{font-size:8px}
+ .world-overview .v368-mobile .v368-insights{height:90px}
+ .world-overview .v368-mobile .v368-insights small,.world-overview .v368-mobile .v368-meter,.world-overview .v368-mobile .v368-open-inline{display:none}
+}
+@media(min-width:791px){
+ body:has(.world-overview .v368-desktop) #app .shell{height:100dvh!important;max-height:100dvh!important;min-height:0!important;overflow:hidden!important}
+ body:has(.world-overview .v368-desktop) #app .main.world-overview{height:100dvh!important;min-height:0!important;overflow:hidden!important;display:flex;flex-direction:column;padding-bottom:14px!important}
+ body:has(.world-overview .v368-desktop) #app .main.world-overview #page{flex:1!important;min-height:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+ .world-overview .v368-desktop{flex:1;min-height:0;max-width:1150px;width:100%;margin:auto!important;display:grid!important;grid-template-columns:1fr 1fr;grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:'head head' 'links links' 'position insights' 'actions insights';gap:12px}
+ .v368-desktop .v368-head{grid-area:head}.v368-desktop .v368-shortcuts{grid-area:links}.v368-desktop .v368-position{grid-area:position}.v368-desktop .v368-actions{grid-area:actions}.v368-desktop .v368-insights{grid-area:insights}
+ .v368-desktop .v368-insights{grid-template-rows:repeat(2,minmax(0,1fr))}
+ .v368-desktop .v368-position{justify-content:center;gap:20px;padding:20px}
+ .v368-desktop .v368-circle{width:min(10vw,120px)}
+ .v368-desktop .v368-head{padding:0 4px}
+ .v368-desktop .v368-insights>button{padding:20px}
+}
+@media(min-width:791px) and (max-height:720px){
+ .v368-desktop .v368-position{gap:7px;padding:12px}
+ .v368-desktop .v368-circle{width:min(8vw,85px)}
+ .v368-desktop .v368-insights>button{padding:12px}
+}
+</style>
+
+
+<style id="v369-home-shortcuts-desktop-only">
+/* Navigation Inicio / Suscripciones / Entre personas is exclusively desktop.
+   Mobile Inicio is the one-screen dashboard, with no extra shortcut row. */
+@media (max-width:790px){
+  body #app main.main .v360-home-links,
+  body #app .world-overview .v368-mobile .v368-shortcuts{display:none!important;}
+  body #app .world-overview .v368-mobile{grid-template-rows:auto minmax(0,1fr) auto minmax(0,auto)!important;}
 }
 </style>
 </body>
