@@ -24960,6 +24960,63 @@ body:not(.theme-black):not(.theme-dark) .v356-person-detail>div span,body:not(.t
 body:not(.theme-black):not(.theme-dark) .v356-person-detail>div b{color:#18263d}
 @media(max-width:390px){.v356-person-detail>div{font-size:11px}}
 </style>
+<style id="v361-calendar-filters-and-navigation">
+/* Calendario — portada compacta, usa el gráfico original de 30 días. */
+.v361-pressure-compact{padding:clamp(5px,1.15vw,15px)!important;max-width:1600px!important}
+.v361-pressure-compact .v360-pressure-header{margin:0 0 10px!important}
+.v361-pressure-compact .v360-pressure-header h1{font-size:clamp(22px,2.5vw,32px)!important;margin:4px 0 0!important}
+.v361-pressure-compact .v360-pressure-calendar{margin:0!important;padding:clamp(9px,1.5vw,20px)!important;min-width:0}
+.v361-pressure-compact .v322-cal-grid{margin:8px 0 10px!important;gap:clamp(4px,.7vw,10px)!important}
+.v361-pressure-compact .v322-cal-cell{min-height:clamp(48px,6.5vw,86px)!important}
+.v361-pressure-open{overflow:hidden!important}
+.v361-pressure-overlay{position:fixed;inset:0;z-index:2147481000;display:grid;place-items:center;padding:12px;box-sizing:border-box}
+.v361-pressure-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.76);backdrop-filter:blur(7px)}
+.v361-pressure-sheet{position:relative;width:min(94vw,540px);max-height:min(84dvh,750px);display:flex;flex-direction:column;overflow:hidden;border:1px solid #cbd5e1;border-radius:24px;background:#fff;color:#17253e;box-shadow:0 24px 80px #0007;box-sizing:border-box}
+.v361-pressure-sheet header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:19px 18px 12px;border-bottom:1px solid #dce4ee}
+.v361-pressure-sheet header small{font-weight:800;font-size:10px;letter-spacing:.13em;opacity:.7}
+.v361-pressure-sheet header h2{margin:4px 0;font-size:clamp(19px,4.4vw,27px)}
+.v361-pressure-sheet header button{width:38px;height:38px;border-radius:50%;font-size:26px;flex-shrink:0;border:1px solid #cbd5e1;background:#f1f5f9;color:inherit;cursor:pointer}
+.v361-pressure-main{padding:18px;display:grid;gap:5px}
+.v361-pressure-main>span,.v361-pressure-main>small{font-size:12px;opacity:.77}
+.v361-pressure-main>strong{font-size:clamp(30px,6.8vw,42px);font-variant-numeric:tabular-nums;letter-spacing:-.035em;overflow-wrap:anywhere}
+.v361-pressure-list{padding:0 18px 12px;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.v361-pressure-item{display:flex;align-items:center;justify-content:space-between;gap:14px;border-top:1px solid #dce4ee;padding:14px 1px}
+.v361-pressure-item>div{display:grid;gap:5px;min-width:0}.v361-pressure-item strong{font-size:14px;overflow-wrap:anywhere}.v361-pressure-item span{font-size:12px;opacity:.65}.v361-pressure-item>b{white-space:nowrap;font-size:14px}
+.v361-pressure-sheet footer{padding:12px 18px calc(13px + env(safe-area-inset-bottom,0px));border-top:1px solid #dce4ee}
+.v361-pressure-sheet footer button{width:100%;min-height:47px;border:0;border-radius:13px;background:#1c2941;color:#fff;font-weight:750;cursor:pointer}
+body.theme-black .v361-pressure-sheet,body.theme-dark .v361-pressure-sheet{background:#080808!important;border-color:#333!important;color:#f4f4f4!important}
+body:is(.theme-black,.theme-dark) .v361-pressure-sheet :is(header,.v361-pressure-item,footer){border-color:#292929!important}
+body:is(.theme-black,.theme-dark) .v361-pressure-sheet header button{background:#191919!important;color:#fff!important;border-color:#303030!important}
+body:is(.theme-black,.theme-dark) .v361-pressure-sheet footer button{background:#222!important;color:#fff!important;border:1px solid #3a3a3a!important}
+@media(max-width:790px){
+ .v361-pressure-compact{padding:4px 0 12px!important}
+ .v361-pressure-compact .v360-pressure-calendar{padding:10px 8px!important;border-radius:19px!important}
+ .v361-pressure-compact .v322-cal-cell{min-height:46px!important;font-size:15px!important}
+ .v361-pressure-sheet{width:100%;max-height:88dvh;border-radius:23px}
+ /* Persistencia de la navegación de sección en Ingresos, Egresos, Presupuesto y Movimientos */
+ main.main:is(.world-income,.world-expenses,.world-budget,.world-register) > .module-switch-shell{display:block!important;position:sticky!important;top:var(--v361-nav-top,0px);z-index:120!important;background:#fff!important;margin:4px 0 10px!important}
+ body.theme-black main.main:is(.world-income,.world-expenses,.world-budget,.world-register) > .module-switch-shell{background:#000!important}
+ main.main:is(.world-income,.world-expenses,.world-budget,.world-register) > .module-switch-shell .module-switch-tabs{display:flex!important;overflow-x:auto!important;scrollbar-width:none;flex-wrap:nowrap!important}
+ main.main:is(.world-income,.world-expenses,.world-budget,.world-register) > .module-switch-shell .module-switch-tabs::-webkit-scrollbar{display:none}
+}
+@media(min-width:791px){
+ main.main:is(.world-income,.world-expenses,.world-budget,.world-register) > .module-switch-shell{display:block!important;position:sticky!important;top:0!important;z-index:130!important}
+ /* Inicio, relaciones y suscripciones recuperan accesos visibles también en web. */
+ .v360-home-links{display:flex!important;flex-wrap:wrap!important;gap:10px;margin:4px 0 14px}
+ .v360-home-links button{display:flex;align-items:center;gap:8px;padding:10px 15px;border-radius:14px;cursor:pointer;background:var(--card,#fff);color:var(--text,#17243a);border:1px solid var(--border,#d8e1ed);font-weight:750}
+ .v360-home-links button svg{width:18px;height:18px}
+ body.theme-black .v360-home-links button{background:#111!important;color:#fff!important;border-color:#303030!important}
+}
+/* Balance compacto: mantiene visible el valor, sin explicaciones debajo. */
+@media(min-width:791px){
+ #ledger-world .ledger-scroll th:nth-child(8),#ledger-world .ledger-scroll td:nth-child(8){width:8%!important;min-width:0!important;padding-inline:4px!important}
+ #ledger-world .ledger-scroll th:nth-child(9),#ledger-world .ledger-scroll td:nth-child(9){width:17%!important}
+ #ledger-world .ledger-scroll th:nth-child(2),#ledger-world .ledger-scroll td:nth-child(2){width:17%!important}
+ #ledger-world .v265-balance-cell :is(strong,b){font-size:clamp(9px,.73vw,11px)!important;white-space:nowrap!important;letter-spacing:-.02em!important}
+ #ledger-world .ledger-controls{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:790px){#ledger-world .ledger-controls{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -28156,7 +28213,7 @@ function ensureDefaultCashAccounts(data){
 const init=()=>({version:4,settings:{fx:60,fxAcknowledged:false,menuLayout:'rail',theme:'light',transferTaxPct:0.20,transferFeeDOP:0,transferFeeUSD:0,paletteChoice:'original',paletteHex:'#6866f3',mobilePositionStyle:'original'},banks:[],customCategories:[],hiddenTaxonomy:{categories:[],subcategories:[]},accounts:defaultCashAccounts(),cards:[],loans:[],transactions:[],recurring:[],statements:[],budgets:[],certificates:[],perkUses:[],personalLoans:[],personalContacts:[],txRevisions:[],pendingOperations:[],demo:false});
 let db=(()=>{try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.accounts)&&Array.isArray(x.transactions))return {...init(),...x,settings:{...init().settings,...(x.settings||{})}}}catch(e){}return init()})();
 let privacyMode=false;
-const ui={projectionMenu:false,movementTab:'all',navExpanded:null,showHidden:false,kpiBank:'',kpiEditing:false,page:'overview',expenseRange:'month',bankId:null,bankScope:'all',month:today().slice(0,7),year:new Date().getFullYear(),search:'',transType:'all',txPeriod:'all',reviewFilter:'all',cardId:null,cardDetailTab:'status',cardHistoryCurrency:'DOP',cardHistoryYear:new Date().getFullYear(),accountId:null,loanId:null,annualDetails:true,annualCurrency:'DOP',forecastScenario:'base',forecastHorizon:12,mobile:false};
+const ui={projectionMenu:false,movementTab:'all',navExpanded:null,showHidden:false,kpiBank:'',kpiEditing:false,page:'overview',expenseRange:'month',bankId:null,bankScope:'all',month:today().slice(0,7),year:new Date().getFullYear(),search:'',transType:'all',txPeriod:'all',reviewFilter:'all',v361Category:'all',cardId:null,cardDetailTab:'status',cardHistoryCurrency:'DOP',cardHistoryYear:new Date().getFullYear(),accountId:null,loanId:null,annualDetails:true,annualCurrency:'DOP',forecastScenario:'base',forecastHorizon:12,mobile:false};
 function migrateData(d){d.banks=Array.isArray(d.banks)?d.banks:[];d.customCategories=Array.isArray(d.customCategories)?d.customCategories:[];
   d.hiddenTaxonomy=(d.hiddenTaxonomy&&typeof d.hiddenTaxonomy==='object'&&!Array.isArray(d.hiddenTaxonomy))?d.hiddenTaxonomy:{};
   d.hiddenTaxonomy.categories=Array.isArray(d.hiddenTaxonomy.categories)?d.hiddenTaxonomy.categories:[];
@@ -28476,10 +28533,10 @@ function navFamilyForPage(page){if(['recurring','personal'].includes(page))retur
 /* Four clear navigation worlds; contextual horizontal switches remain unchanged. */
 const RAIL_DESTINATIONS=[
  ['overview','Resumen','home','Inicio, suscripciones y entre personas'],
- ['pressure','Presión financiera','calendar','Calendario de 30 días y detalle de vencimientos'],
  ['banks','Bancos','building','Instituciones y productos bancarios'],
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
- ['payments','Visión global','eye','Visión integral de tus obligaciones']
+ ['payments','Visión global','eye','Visión integral de tus obligaciones'],
+ ['pressure','Presión financiera','calendar','Calendario de 30 días y detalle de vencimientos']
 ];
 /* V153: distinctive stroke icons, scoped to the desktop navigation rail. */
 const V153_RAIL_ICONS={
@@ -28823,10 +28880,11 @@ function mobileHub(){
    ['income','Ingresos','Lo que recibes','up'],['expenses','Egresos','Lo que utilizas','down'],
    ['budget','Presupuesto','Límites y ejecución','chart'],['categories','Categorías','Organiza tus movimientos','grid']]},
   {eyebrow:'TU VISIÓN',title:'Visión global',subtitle:'Tu panorama integral sin menús duplicados',entries:[
-   ['payments','Visión global','Vencimientos y pagos','eye'],['pressure','Presión financiera','Calendario de tus próximos 30 días','calendar']]},
+   ['payments','Visión global','Vencimientos y pagos','eye']]},
   {eyebrow:'MÁS PERSPECTIVA',title:'Tu inteligencia financiera',subtitle:'Información con profundidad, cuando la necesites',entries:[
    ['patrimony','Patrimonio','Activos y obligaciones','wallet'],
-   ['advanced','Analítica avanzada','Tendencias y decisiones','chart']]}
+   ['advanced','Analítica avanzada','Tendencias y decisiones','chart']]},
+  {eyebrow:'TU CALENDARIO',title:'Presión financiera',subtitle:'Tus próximos 30 días de un vistazo',entries:[['pressure','Presión financiera','Consultar calendario completo','calendar']]} 
  ];
  const link=([id,name,description,ic])=>`<button type="button" class="v205-explore-link" data-act="navigate" data-id="${id}" aria-label="Abrir ${name}"><span class="v205-explore-link-icon">${icon(ic)}</span><span class="v205-explore-link-copy"><strong>${name}</strong><small>${description}</small></span><span class="v205-explore-arrow" aria-hidden="true">${icon('arrow')}</span></button>`;
  return `<div class="vive-mobile-hub v205-explore v243-explore">
@@ -30070,9 +30128,10 @@ function v265BalanceHTML(tx,mode='desktop'){
 }
 function v265LedgerModelCached(){return v99Memo('v265:transaction:post-balance',v265LedgerModel)}
 
-function transactions(embedded=false){let tr=recentTx().filter(t=>(ui.bankScope==='all'||bankTx(t,ui.bankScope))&&(ui.transType==='all'||t.type===ui.transType)&&(!ui.search||`${transactionTitle(t)} ${t.type} ${t.category} ${t.subcategory||''} ${t.tags||''} ${v143CostSearch(t)}`.toLowerCase().includes(ui.search.toLowerCase()))&&(ui.reviewFilter==='all'||(ui.reviewFilter==='reviewed')===(t.reviewed===true))&&(ui.txPeriod!=='month'||t.date.startsWith(ui.month))&&ui.reviewFilter!=='drafts').sort(v265SortLedgerRecent);
-const v221Drafts=(db.pendingOperations||[]).filter(q=>{const vals=q.values||{};const date=String(vals.date||q.created||'').slice(0,10);const haystack=`${vals.note||''} ${vals.description||''} ${vals.merchant||''} ${vals.category||''} ${vals.name||''} ${vals.type||''}`.toLowerCase();return (ui.reviewFilter==='all'||ui.reviewFilter==='drafts')&&(!ui.search||haystack.includes(ui.search.toLowerCase()))&&(ui.txPeriod!=='month'||date.startsWith(ui.month))&&(ui.bankScope==='all'||vals.bankId===ui.bankScope||vals.accountId&&account(vals.accountId)?.bankId===ui.bankScope)&&(ui.transType==='all'||vals.type===ui.transType)});
-let tools=`<div class="ledger-controls"><div class="ledger-control"><label for="searchTx">Buscar movimiento</label><input type="search" class="field searchbox" id="searchTx" placeholder="Comercio, categoría, concepto…" value="${sanitize(ui.search)}"/></div><div class="ledger-control"><label for="bankFilter">Institución</label><select class="filter-select" id="bankFilter"><option value="all">Todas las instituciones</option>${db.banks.map(b=>`<option value="${b.id}" ${ui.bankScope===b.id?'selected':''}>${sanitize(b.name)}</option>`).join('')}</select></div><div class="ledger-control"><label for="typeFilter">Tipo</label><select class="filter-select" id="typeFilter"><option value="all">Todos los tipos</option>${Object.entries(TRANSL).map(([k,v])=>`<option value="${k}" ${ui.transType===k?'selected':''}>${sanitize(v)}</option>`).join('')}</select></div><div class="ledger-control"><label for="txPeriod">Período</label><select class="filter-select" id="txPeriod"><option value="all" ${ui.txPeriod!=='month'?'selected':''}>Todo el historial</option><option value="month" ${ui.txPeriod==='month'?'selected':''}>Un mes</option></select></div><div class="ledger-control"><label for="reviewFilter">Estado</label><select class="filter-select" id="reviewFilter"><option value="all" ${ui.reviewFilter==='all'?'selected':''}>Todos los estados</option><option value="drafts" ${ui.reviewFilter==='drafts'?'selected':''}>Borradores · sin registrar</option><option value="pending" ${ui.reviewFilter==='pending'?'selected':''}>Registrados · por revisar</option><option value="reviewed" ${ui.reviewFilter==='reviewed'?'selected':''}>Conciliados</option></select></div>${ui.txPeriod==='month'?`<div class="ledger-control"><label for="ledgerMonth">Mes</label><input type="month" class="filter-select" id="ledgerMonth" value="${ui.month}"></div>`:''}<button class="btn sm ghost" data-act="csv" title="Exportar movimientos filtrables a CSV">${icon('download')} CSV</button></div>`;
+function transactions(embedded=false){let tr=recentTx().filter(t=>(ui.bankScope==='all'||bankTx(t,ui.bankScope))&&(ui.transType==='all'||t.type===ui.transType)&&(!ui.search||`${transactionTitle(t)} ${t.type} ${t.category} ${t.subcategory||''} ${t.tags||''} ${v143CostSearch(t)}`.toLowerCase().includes(ui.search.toLowerCase()))&&(ui.reviewFilter==='all'||(ui.reviewFilter==='reviewed')===(t.reviewed===true))&&(ui.txPeriod!=='month'||t.date.startsWith(ui.month))&&ui.reviewFilter!=='drafts'&&(ui.v361Category==='all'||String(t.category||'').trim()===ui.v361Category)).sort(v265SortLedgerRecent);
+const v221Drafts=(db.pendingOperations||[]).filter(q=>{const vals=q.values||{};const date=String(vals.date||q.created||'').slice(0,10);const haystack=`${vals.note||''} ${vals.description||''} ${vals.merchant||''} ${vals.category||''} ${vals.name||''} ${vals.type||''}`.toLowerCase();return (ui.reviewFilter==='all'||ui.reviewFilter==='drafts')&&(!ui.search||haystack.includes(ui.search.toLowerCase()))&&(ui.txPeriod!=='month'||date.startsWith(ui.month))&&(ui.bankScope==='all'||vals.bankId===ui.bankScope||vals.accountId&&account(vals.accountId)?.bankId===ui.bankScope)&&(ui.transType==='all'||vals.type===ui.transType)&&(ui.v361Category==='all'||String(vals.category||'').trim()===ui.v361Category)});
+const v361Cats=[...new Set([...(db.transactions||[]).map(t=>t.category),...(db.pendingOperations||[]).map(q=>q.values?.category)].map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+let tools=`<div class="ledger-controls"><div class="ledger-control"><label for="searchTx">Buscar movimiento</label><input type="search" class="field searchbox" id="searchTx" placeholder="Comercio, categoría, concepto…" value="${sanitize(ui.search)}"/></div><div class="ledger-control"><label for="bankFilter">Institución</label><select class="filter-select" id="bankFilter"><option value="all">Todas las instituciones</option>${db.banks.map(b=>`<option value="${b.id}" ${ui.bankScope===b.id?'selected':''}>${sanitize(b.name)}</option>`).join('')}</select></div><div class="ledger-control"><label for="v361CategoryFilter">Categoría</label><select class="filter-select" id="v361CategoryFilter"><option value="all">Todas las categorías</option>${v361Cats.map(cat=>`<option value="${sanitize(cat)}" ${ui.v361Category===cat?'selected':''}>${sanitize(cat)}</option>`).join('')}</select></div><div class="ledger-control"><label for="typeFilter">Tipo</label><select class="filter-select" id="typeFilter"><option value="all">Todos los tipos</option>${Object.entries(TRANSL).map(([k,v])=>`<option value="${k}" ${ui.transType===k?'selected':''}>${sanitize(v)}</option>`).join('')}</select></div><div class="ledger-control"><label for="txPeriod">Período</label><select class="filter-select" id="txPeriod"><option value="all" ${ui.txPeriod!=='month'?'selected':''}>Todo el historial</option><option value="month" ${ui.txPeriod==='month'?'selected':''}>Un mes</option></select></div><div class="ledger-control"><label for="reviewFilter">Estado</label><select class="filter-select" id="reviewFilter"><option value="all" ${ui.reviewFilter==='all'?'selected':''}>Todos los estados</option><option value="drafts" ${ui.reviewFilter==='drafts'?'selected':''}>Borradores · sin registrar</option><option value="pending" ${ui.reviewFilter==='pending'?'selected':''}>Registrados · por revisar</option><option value="reviewed" ${ui.reviewFilter==='reviewed'?'selected':''}>Conciliados</option></select></div>${ui.txPeriod==='month'?`<div class="ledger-control"><label for="ledgerMonth">Mes</label><input type="month" class="filter-select" id="ledgerMonth" value="${ui.month}"></div>`:''}<button class="btn sm ghost" data-act="csv" title="Exportar movimientos filtrables a CSV">${icon('download')} CSV</button></div>`;
 const mobileCards=tr.slice(0,Math.max(12,ui.v51LedgerVisible||18)).map(t=>`<article class="v51-mobile-movement"><div class="v51-mobile-movement-icon">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':t.type==='loan_payment'?'receipt':'wallet')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small><span>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||'Movimiento registrado')}</span></div><div class="v51-mobile-movement-side"><b class="${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</b><div><button type="button" data-act="editTransaction" data-id="${t.id}">Editar</button><button type="button" class="v51-delete-trigger" data-act="deleteTransaction" data-id="${t.id}" aria-label="Eliminar ${sanitize(transactionTitle(t))}">${icon('trash')}</button></div></div><div class="v265-mobile-balance"><span>Balance</span>${v265BalanceHTML(t,'mobile')}</div></article>`+v143CostMobile(t)).join('');
 const v221DraftMobile=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<article class="v51-mobile-movement v221-draft-row"><div class="v51-mobile-movement-icon">${icon('clock')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(name)}</strong><small>${date?prettyDate(date):'Sin fecha'} · ${sanitize(TRANSL[v.type]||'Borrador')}</small><span class="v221-state draft">○ Sin contabilizar</span></div><div class="v51-mobile-movement-side"><b>${val>0?money(val,v.currency||'DOP',2):'Importe pendiente'}</b><div><button type="button" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button type="button" class="v51-delete-trigger" data-act="pendingRemove" data-id="${q.id}" aria-label="Descartar borrador">${icon('trash')}</button></div></div></article>`}).join('');
 const v221DraftRows=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<tr class="v221-draft-row"><td>${date?prettyDate(date):'—'}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">Borrador · sin efecto en saldos</div></td><td>${sanitize(TRANSL[v.type]||'Operación')}</td><td><span class="v221-state draft">○ Sin contabilizar</span></td><td>${sanitize(account(v.accountId)?.name||'—')}</td><td>${sanitize(v.category||'—')}</td><td class="right money">${val>0?money(val,v.currency||'DOP',2):'—'}</td><td class="v265-no-balance-cell" title="Borrador sin registrar">—</td><td class="right"><div class="tx-actions"><button class="btn sm soft" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar borrador">${icon('trash')}</button></div></td></tr>`}).join('');
@@ -33892,6 +33951,7 @@ if(t.id==='reviewFilter'){ui.reviewFilter=t.value;render();return}
 if(t.id==='txPeriod'){ui.txPeriod=t.value;render();return}
 if(t.id==='ledgerMonth'){ui.month=t.value||ui.month;render();return}
 if(t.id==='monthFilter'||t.id==='v99CommitmentMonth'){if(/^\d{4}-(0[1-9]|1[0-2])$/.test(t.value)){ui.month=t.value;ui.year=Number(ui.month.slice(0,4));render();}return}
+if(t.id==='v361CategoryFilter'){ui.v361Category=t.value;render();return}
 if(t.id==='typeFilter'){ui.transType=t.value;render();return}
 if(t.id==='bankFilter'){ui.bankScope=t.value;render();return}
 if(t.id==='txType'){let v=fromForm(t.form);transactionForm({type:v.type,date:v.date,accountId:v.accountId||db.accounts[0]?.id,cardId:v.cardId||db.cards[0]?.id,loanId:v.loanId||db.loans[0]?.id,currency:v.currency||'DOP',category:v.category||'',subcategory:v.subcategory||'',note:v.note||'',tags:v.tags||''});return}
@@ -40638,17 +40698,26 @@ function v360PressurePage(){
   const day=new Date(first); day.setDate(first.getDate()+index++);
   return opening+` data-v360-pressure-day="${dateStr(day)}" aria-label="Ver compromisos del ${prettyDate(dateStr(day))}"`+'>';
  });
- const all=(v318Context().thirty.events||[]).filter(e=>e.type==='expense'&&num(e.amount)>0);
- const selected=ui.v360PressureDate||today(),entries=all.filter(e=>e.date===selected);
- const total=entries.reduce((a,e)=>a+num(e.amount),0);
- const items=entries.map(e=>`<div class="v360-pressure-entry"><div><strong>${sanitize(e.name||'Compromiso')}</strong><small>${sanitize(e.kind||e.type||'Obligación')} · ${prettyDate(e.date)}</small></div><b>${v318Money(num(e.amount))}</b></div>`).join('');
- return `<div class="v360-pressure-page" aria-label="Calendario de presión financiera completo"><header class="v360-pressure-header"><span>PRESIÓN FINANCIERA · PRÓXIMOS 30 DÍAS</span><h1>Tu calendario, sin perder detalle.</h1><p>Selecciona un día para ver los compromisos que identifica el mismo motor de Inicio.</p></header><section class="v360-pressure-calendar" aria-label="Calendario ampliado de 30 días">${interactive}</section><section class="v360-pressure-details" aria-live="polite"><div class="v360-pressure-details-head"><div><small>DETALLE DEL DÍA SELECCIONADO</small><h2>${prettyDate(selected)}</h2></div><strong>${v318Money(total)}</strong></div>${items||'<p class="v360-pressure-empty">No hay obligaciones registradas para esta fecha.</p>'}</section></div>`;
+ return `<div class="v360-pressure-page v361-pressure-compact" aria-label="Calendario de presión financiera completo"><header class="v360-pressure-header"><span>PRESIÓN FINANCIERA · PRÓXIMOS 30 DÍAS</span><h1>Presión financiera</h1></header><section class="v360-pressure-calendar" aria-label="Calendario ampliado de 30 días">${interactive}</section></div>`;
+}
+/* V361: la selección abre el detalle en una vista superpuesta, sin reducir el calendario. */
+let v361PressureLastFocus=null;
+function v361ClosePressureDay(){const el=document.getElementById('v361-pressure-day-dialog');if(el)el.remove();document.body.classList.remove('v361-pressure-open');v361PressureLastFocus?.focus?.();v361PressureLastFocus=null;}
+function v361OpenPressureDay(date){
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||'')))return;
+ document.getElementById('v361-pressure-day-dialog')?.remove();
+ const events=(v318Context().thirty.events||[]).filter(e=>e.date===date&&e.type==='expense'&&num(e.amount)>0);
+ const total=events.reduce((sum,e)=>sum+num(e.amount),0);
+ const rows=events.map(e=>`<article class="v361-pressure-item"><div><strong>${sanitize(e.name||'Compromiso')}</strong><span>${sanitize(e.kind||e.type||'Obligación')}</span></div><b>${v318Money(num(e.amount))}</b></article>`).join('');
+ const dialog=document.createElement('div');dialog.id='v361-pressure-day-dialog';dialog.className='v361-pressure-overlay';dialog.innerHTML=`<div class="v361-pressure-backdrop" data-v361-pressure-close="1"></div><section role="dialog" aria-modal="true" aria-labelledby="v361-pressure-title" class="v361-pressure-sheet"><header><div><small>PRESIÓN FINANCIERA · DETALLE DEL DÍA</small><h2 id="v361-pressure-title">${prettyDate(date)}</h2></div><button type="button" data-v361-pressure-close="1" aria-label="Cerrar detalle del día">×</button></header><div class="v361-pressure-main"><span>Compromisos previstos</span><strong>${v318Money(total)}</strong><small>${events.length} ${events.length===1?'compromiso':'compromisos'} en esta fecha</small></div><div class="v361-pressure-list">${rows||'<p class="v360-pressure-empty">No hay obligaciones registradas para esta fecha.</p>'}</div><footer><button type="button" data-v361-pressure-close="1">Volver al calendario</button></footer></section>`;
+ document.body.appendChild(dialog);document.body.classList.add('v361-pressure-open');dialog.querySelector('.v361-pressure-sheet header button')?.focus();
 }
 document.addEventListener('click',e=>{
- const b=e.target.closest('[data-v360-pressure-day]'); if(!b)return;
- e.preventDefault(); ui.v360PressureDate=b.dataset.v360PressureDay;render();
- const t=document.querySelector('.v360-pressure-details');if(t)t.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+ const close=e.target.closest('[data-v361-pressure-close]');if(close){e.preventDefault();v361ClosePressureDay();return}
+ const b=e.target.closest('[data-v360-pressure-day]');if(!b)return;
+ e.preventDefault();v361PressureLastFocus=b;v361OpenPressureDay(b.dataset.v360PressureDay);
 });
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('v361-pressure-day-dialog')){e.preventDefault();v361ClosePressureDay();}});
 
 function v318ChartFrame(body,foot=''){return `<div class="v318-chart-content">${body}${foot?`<p class="v318-chart-note">${foot}</p>`:''}</div>`}
 function v318Curve(values,width=600,height=175,pad=16,range=null){
