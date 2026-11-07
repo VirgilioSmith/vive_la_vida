@@ -16,7 +16,7 @@
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="v360-guardado-automatico-presion-financiera-nav"/>
+<meta name="vive-el-hoy-version" content="v378-registros-individuales-y-coherencia-movil"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -28461,7 +28461,7 @@ const num=v=>Number.isFinite(+v)?+v:0;const rnd=v=>Math.round((num(v)+Number.EPS
 const sanitize=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const v115NumberFormats=new Map();
 function v115Formatter(digits=0){const d=Math.max(0,Math.min(12,Number(digits)||0));if(!v115NumberFormats.has(d))v115NumberFormats.set(d,new Intl.NumberFormat('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}));return v115NumberFormats.get(d)}
-const money=(v,c='DOP',digits=0)=>`${c==='USD'?'US$':'RD$'}${v115Formatter(digits).format(num(v))}`;
+const money=(v,c='DOP',digits=0)=>{const value=num(v);const prefix=c==='USD'?'US$':'RD$';const abs=v115Formatter(digits).format(Math.abs(value));return `${value<0?'-':''}${prefix}${abs}`;};
 const shorten=v=>Math.abs(num(v))>=1e6?`${(v/1e6).toFixed(1)}M`:Math.abs(num(v))>=1000?`${(v/1000).toFixed(1)}K`:new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(num(v));
 function bubbleMoney(value){
  const v=num(value),a=Math.abs(v),minus=v<0?'−':'';
@@ -65545,6 +65545,131 @@ body:is(.theme-black,.theme-dark) #modal-root .v261-payment-item{background:#111
 body:is(.theme-black,.theme-dark) #modal-root .v261-service-tile>span{background:#1a2924!important;color:#7fe3c8!important}
 body:is(.theme-black,.theme-dark) #modal-root .v261-dialog-footer{background:#050505!important;background-image:none!important;border-top:1px solid #282828!important}
 </style>
+<script id="v381-transfer-controller">
+(function(){
+ 'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ const read=(form,key)=>{const x=form.elements.namedItem(key);return x&&typeof x.value==='string'?x.value:''};
+ const val=x=>{const v=Number(x);return Number.isFinite(v)?v:NaN};
+ const cash=(n,c)=>{if(!Number.isFinite(n))return '—';return (n<0?'-':'')+(c==='USD'?'US$':'RD$')+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+ const accountOf=id=>typeof account==='function'?account(id):null;
+ const currentDate=()=>typeof today==='function'?today():'';
+ const fmt=(n)=>Math.round((Number(n)||0)*100)/100;
+ const safeDate=(f)=>!read(f,'date')||read(f,'date')===currentDate();
+ const currentBalance=a=>{try{return typeof getAccountBalance==='function'?Number(getAccountBalance(a)):NaN}catch(_){return NaN}};
+ function detect(f){const mode=f.dataset.mode||read(f,'flowMode');return mode==='own'||mode==='outgoing'?mode:null;}
+ function render(f,box){
+  if(!f.isConnected||!box.isConnected)return;
+  const mode=detect(f),own=mode==='own';if(!mode)return;
+  const a=accountOf(read(f,'accountId')),b=own?accountOf(read(f,'toAccountId')):null;
+  const ac=a?.currency||'DOP',bc=b?.currency||ac;
+  const amount=val(read(f,'amount')),positive=Number.isFinite(amount)&&amount>0;
+  const rate=val(read(f,'fxRate'));
+  const fx=own&&a&&b&&ac!==bc;
+  const manual=fx&&read(f,'receiveMode')==='manual';
+  const validRate=Number.isFinite(rate)&&rate>0;
+  const expected=fx?(validRate&&positive?(ac==='USD'?amount*rate:amount/rate):NaN):amount;
+  const receive=manual?val(read(f,'targetAmount')):expected;
+  const fixed=own?val(read(f,'transferFixedFee')):val(read(f,'paymentFee'));
+  const pct=own?0:(read(f,'paymentTaxable')==='yes'?val(read(f,'paymentTaxPct')):0);
+  const tax=own?0:(Number.isFinite(pct)&&positive?fmt(amount*pct/100):NaN);
+  const charges=Number.isFinite(fixed)&&Number.isFinite(tax)?fmt(fixed+tax):NaN;
+  const total=positive&&Number.isFinite(charges)?fmt(amount+charges):NaN;
+  const edit=!!f.dataset.id;
+  const safe=!edit&&safeDate(f);
+  const escape=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const line=(l,r)=>'<div><span>'+escape(l)+'</span><strong>'+escape(r)+'</strong></div>';
+  const original=(!a||!b&&own)?'':a?.name||'';
+  let warnings=[];
+  if(!a||a.archived)warnings.push('Selecciona una cuenta de origen activa.');
+  if(own&&(!b||b.archived))warnings.push('Selecciona una cuenta de destino activa.');
+  if(own&&a&&b&&a.id===b.id)warnings.push('El origen y el destino no pueden ser la misma cuenta.');
+  if(!positive)warnings.push('Introduce un importe mayor que cero.');
+  if(fx&&!validRate)warnings.push('La tasa de conversión debe ser positiva.');
+  if(manual&&!(receive>0&&Number.isFinite(receive)))warnings.push('Indica el importe recibido válido según el comprobante.');
+  if(mode==='outgoing'&&!read(f,'payee').trim())warnings.push('Indica quién recibe la transferencia a terceros.');
+  if(Number.isFinite(pct)&&(pct<0||pct>100))warnings.push('Revisa el porcentaje del impuesto.');
+  if(!Number.isFinite(charges)||charges<0)warnings.push('Revisa impuestos y otros cargos de la operación.');
+  const before=a?currentBalance(a):NaN;
+  const destBefore=b?currentBalance(b):NaN;
+  const canBalances=safe&&Number.isFinite(before)&&Number.isFinite(total)&&positive&&!warnings.length;
+  let html='<header><strong>'+ (own?'Transferencia entre tus cuentas':'Transferencia a terceros') +'</strong><small>VISTA PREVIA</small></header>';
+  html+='<div class="v381-transfer-kind">'+(own?'No es un ingreso ni un gasto. Solo los cargos reales se clasifican como egreso.':'El dinero sale hacia un tercero; este flujo registra un gasto clasificado, no un movimiento entre dos cuentas propias.')+'</div>';
+  html+='<div class="v381-transfer-route"><div><small>ORIGEN</small><strong>'+escape(a?.name||'Selecciona cuenta')+'</strong><span>'+escape(ac)+'</span></div><div class="v381-transfer-arrow">→</div><div><small>'+(own?'DESTINO':'BENEFICIARIO')+'</small><strong>'+escape(own?(b?.name||'Selecciona cuenta'):(read(f,'payee')||'Indica beneficiario'))+'</strong><span>'+escape(own?bc:'Externo')+'</span></div></div>';
+  html+='<div class="v381-transfer-numbers"><div><small>Sale del origen</small><strong>'+cash(total,ac)+'</strong></div><div class="v381-receive"><small>'+(own?'Recibe el destino':'Importe transferido')+'</small><strong>'+cash(own?receive:amount,own?bc:ac)+'</strong></div></div>';
+  html+='<div class="v381-transfer-rows">';
+  html+=line('Capital enviado',cash(amount,ac));
+  if(fx)html+=line('Tasa aplicada',validRate?'RD$'+rate.toFixed(4)+' / US$1':'Pendiente');
+  if(own&&fx)html+=line(manual?'Importe recibido indicado':'Recibido calculado',cash(receive,bc));
+  html+=line('Cargos e impuestos',cash(charges,ac));
+  if(canBalances)html+=line('Saldo origen actual → estimado',cash(before,ac)+' → '+cash(before-total,ac));
+  if(canBalances&&own&&Number.isFinite(destBefore)&&Number.isFinite(receive))html+=line('Saldo destino actual → estimado',cash(destBefore,bc)+' → '+cash(destBefore+receive,bc));
+  html+='</div>';
+  if(warnings.length)html+='<div class="v381-warning" role="status">'+escape(warnings[0])+'</div>';
+  if(edit)html+='<p class="v381-transfer-note">Estás editando una operación anterior. Los saldos se recalcularán al guardar, sin crear una segunda transferencia.</p>';
+  else if(!safeDate(f))html+='<p class="v381-transfer-note">Fecha histórica: no se muestra un saldo final porque hay que recalcular los movimientos posteriores.</p>';
+  else html+='<p class="v381-transfer-note">Saldos mostrados únicamente como simulación. No se modifica ninguna cuenta hasta confirmar el registro.</p>';
+  box.innerHTML=html;
+  f.dataset.v381Error=warnings[0]||'';
+ }
+ function attach(f){
+  const mode=detect(f);if(!mode||f.dataset.v381Attached==='1')return;
+  f.dataset.v381Attached='1';f.dataset.v381Transfer=mode;
+  const pane=document.createElement('section');pane.className='v381-transfer-preview';pane.setAttribute('aria-label','Vista previa de transferencia y sus efectos');pane.setAttribute('aria-live','polite');
+  const target=f.querySelector('#guidedReceipt')||f.querySelector('.flow-receipt')||f.querySelector('.form-grid');
+  if(target&&target!==f.querySelector('.form-grid'))target.insertAdjacentElement('afterend',pane);
+  else(f.querySelector('.form-grid')||f).appendChild(pane);
+  const update=()=>render(f,pane);
+  f.addEventListener('input',()=>queueMicrotask(update));
+  f.addEventListener('change',()=>queueMicrotask(update));
+  // Preflight at capture: preserve native save handler and the review layer on valid input.
+  f.addEventListener('submit',e=>{
+    update();const error=f.dataset.v381Error;
+    if(!error)return;
+    e.preventDefault();e.stopImmediatePropagation();
+    if(typeof toast==='function')toast(error);
+    let field='amount';
+    if(/origen/.test(error))field='accountId';
+    else if(/destino|misma cuenta/.test(error))field='toAccountId';
+    else if(/tasa/.test(error))field='fxRate';
+    else if(/recibido/.test(error))field='targetAmount';
+    else if(/quién|beneficiario/.test(error))field='payee';
+    // Old assistants can hide inactive steps. Don't forcibly manipulate their state.
+    f.elements.namedItem(field)?.focus?.();
+  },true);
+  update();
+ }
+ function enhanceReview(){
+  const review=root.querySelector('.v349-review-screen');if(!review||review.dataset.v381TransferReview==='yes')return;
+  const source=root.querySelector('form#transactionForm[data-v381-transfer]');if(!source)return;
+  const info=source.querySelector('.v381-transfer-preview');if(!info)return;
+  const route=info.querySelector('.v381-transfer-route');const numbers=info.querySelector('.v381-transfer-numbers');
+  const where=review.querySelector('.v353-breakdowns');if(!where)return;
+  const result=document.createElement('section');result.className='v381-review-card';
+  const title=document.createElement('strong');title.textContent='Origen, destino e impacto';
+  const desc=document.createElement('p');desc.textContent=(route?.innerText||route?.textContent||'').replace(/\s+/g,' ').trim();
+  const amounts=document.createElement('p');amounts.textContent=(numbers?.innerText||numbers?.textContent||'').replace(/\s+/g,' ').trim();
+  const caveat=document.createElement('p');caveat.textContent=source.dataset.v381Transfer==='own'?'Mover fondos propios no constituye ingreso ni gasto; únicamente los cargos reales se contabilizan como egreso.':'Este envío a terceros es un gasto, no una transferencia entre cuentas propias.';
+  result.append(title,desc,amounts,caveat);where.prepend(result);
+  review.dataset.v381TransferReview='yes';
+ }
+ let scheduled=false;function scan(){if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;root.querySelectorAll('form#transactionForm').forEach(attach);enhanceReview();});}
+ // Registered before the universal review listener: invalid transfer forms cannot reach review.
+ window.addEventListener('submit',e=>{
+   const f=e.target;if(!f||f.id!=='transactionForm'||!detect(f))return;
+   const pane=f.querySelector('.v381-transfer-preview');if(!pane)return;
+   render(f,pane);
+   const error=f.dataset.v381Error;
+   if(!error)return;
+   e.preventDefault();e.stopImmediatePropagation();
+   if(typeof toast==='function')toast(error);
+   const field=/origen/.test(error)?'accountId':/destino|misma cuenta/.test(error)?'toAccountId':/tasa/.test(error)?'fxRate':/recibido/.test(error)?'targetAmount':/quién|beneficiario/.test(error)?'payee':'amount';
+   f.elements.namedItem(field)?.focus?.();
+ },true);
+ new MutationObserver(scan).observe(root,{subtree:true,childList:true});scan();
+})();
+</script>
+
 <script id="v349-register-experience-script">
 (()=>{'use strict';
   /* Only presentation and confirmation review. Never write data here. */
@@ -67054,6 +67179,868 @@ body:not(.theme-black):not(.theme-dark) #modal-root .v359-review-disclaimer{colo
  html body:is(.theme-black,.theme-dark) .v375-cards-bank .v244-segments button.selected{background:#202020!important;}
  html body .v375-cards-bank button:focus-visible{outline:2px solid #5488dc;outline-offset:3px;}
 }
+</style>
+
+
+<style id="v377-mobile-coherence">
+/* V377 — rediseño transversal para coherencia móvil, formularios y vistas analíticas.
+   Mantiene cálculos y handlers existentes; solo unifica visual, spacing y legibilidad. */
+@media(max-width:790px){
+  html body{
+    --v377-ink:#213553;
+    --v377-muted:#70829c;
+    --v377-line:#dbe5f2;
+    --v377-soft:#edf3fb;
+    --v377-page-space:calc(132px + env(safe-area-inset-bottom,0px));
+  }
+  html body .main{padding-bottom:var(--v377-page-space)!important}
+  html body .main > :last-child,
+  html body .main #page > :last-child,
+  html body .v248-finance,
+  html body .v375-cards-bank,
+  html body .v360-pressure-page,
+  html body .v187-wealth-page,
+  html body .v187-wealth-shell,
+  html body .v318-mobile-analytics{margin-bottom:0!important}
+  html body .main :is(.panel,.section,.kpi,.bank-card,.inner-view-card,.module-switch-shell,.v58m-shell,.v58m-card-showcase,.ff-tile,.v360-pressure-calendar,.v360-pressure-details,.v187-wealth-hero,.v187-chart-card){scroll-margin-top:10px}
+
+  /* Dock + FAB: siempre dejar respirar el contenido. */
+  html body .vive-mobile-dock{box-shadow:0 16px 40px rgba(31,61,109,.12)!important}
+  html body .v249-register-fab{box-shadow:0 14px 34px rgba(37,63,109,.16)!important}
+
+  /* Shell superior de módulos: más consistente y con mejor scrolling horizontal. */
+  html body .module-switch-shell{
+    padding:10px!important;
+    gap:10px!important;
+    margin:0 0 14px!important;
+    border-radius:20px!important;
+    background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(241,247,255,.92))!important;
+    border:1px solid rgba(220,230,243,.95)!important;
+    box-shadow:0 10px 30px rgba(39,73,123,.06)!important;
+    overflow:hidden!important;
+  }
+  html body .module-switch-title{max-width:none!important}
+  html body .module-switch-title strong{font-size:14px!important;letter-spacing:-.02em}
+  html body .module-switch-title small{font-size:11px!important;line-height:1.45!important}
+  html body :is(.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs){
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    overflow-x:auto!important;
+    gap:6px!important;
+    padding:4px!important;
+    border-radius:18px!important;
+    background:var(--v377-soft)!important;
+    border:1px solid #e3ecf7!important;
+    scrollbar-width:none!important;
+    scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;
+  }
+  html body :is(.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs)::-webkit-scrollbar{display:none!important}
+  html body :is(.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs)>*{flex:0 0 auto!important;min-width:max-content!important;scroll-snap-align:start}
+  html body :is(.module-switch-tab,.inner-menu-tab,.module-switch-tabs button,.inner-menu-tabs button,.v248-budget-tabs button){
+    min-height:48px!important;
+    padding:0 16px!important;
+    border-radius:15px!important;
+    font-size:13px!important;
+    font-weight:780!important;
+    white-space:nowrap!important;
+    letter-spacing:-.01em!important;
+  }
+  html body :is(.module-switch-tab.active,.inner-menu-tab.active,.module-switch-tabs button.active,.inner-menu-tabs button.active,.v248-budget-tabs button.selected){
+    box-shadow:0 8px 18px rgba(41,76,129,.08)!important;
+  }
+
+  /* Encabezados de módulos de Explorar */
+  html body .v248-intro{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:10px!important;align-items:start!important;margin:2px 0 12px!important}
+  html body .v248-eyebrow{font-size:11px!important;letter-spacing:.16em!important;color:#6c81a0!important}
+  html body .v248-intro h2{font-size:clamp(40px,10.8vw,58px)!important;line-height:.93!important;letter-spacing:-.06em!important;margin:7px 0 9px!important;color:var(--v377-ink)!important}
+  html body .v248-intro p{font-size:13px!important;line-height:1.52!important;color:var(--v377-muted)!important;max-width:26ch!important}
+  html body .v248-intro-symbol{width:62px!important;height:62px!important;border-radius:18px!important;background:#fff!important;border:1px solid var(--v377-line)!important;box-shadow:0 8px 22px rgba(44,77,125,.06)!important}
+  html body .v248-hero,
+  html body .v203-hero,
+  html body .v187-wealth-hero,
+  html body .v360-pressure-calendar,
+  html body .v360-pressure-details{border-radius:26px!important;box-shadow:0 16px 36px rgba(31,62,108,.07)!important}
+  html body .v248-hero{overflow:hidden!important}
+  html body .v248-hero-top{padding-bottom:11px!important}
+  html body .v248-hero-top span:first-child{font-size:11px!important;letter-spacing:.16em!important;font-weight:800!important}
+  html body .v248-feature :is(h3,strong,.v58-main-value,.v58-kpi-value){overflow-wrap:anywhere!important}
+  html body .v248-metrics-primary,
+  html body .v248-metrics-secondary{gap:12px!important}
+  html body .v248-metric,
+  html body .v58-metric{border-radius:20px!important;min-height:112px!important}
+  html body .v248-metric strong,
+  html body .v58-metric strong{font-size:clamp(24px,8vw,36px)!important;line-height:1.02!important;overflow-wrap:anywhere!important}
+
+  /* Movimientos: buscador, filtro y tarjeta con más aire. */
+  html body .v248-register-list,
+  html body .v248-movements,
+  html body .ledger-shell{gap:14px!important}
+  html body .v248-register-search,
+  html body .v248-filter-launch,
+  html body .ledger-search,
+  html body .ledger-filter-launch{min-height:52px!important;border-radius:17px!important}
+  html body .transaction-card,
+  html body .v265-ledger-card,
+  html body .ledger-card{border-radius:22px!important;overflow:hidden!important}
+
+  /* Formularios y modales: coherencia visual y footer fijo real. */
+  html body #modal-root .modal-layer{align-items:flex-end!important;background:rgba(10,22,39,.18)!important;backdrop-filter:blur(10px)!important}
+  html body #modal-root .modal{
+    width:min(100%, 740px)!important;
+    max-height:calc(100dvh - 8px)!important;
+    border-radius:28px 28px 0 0!important;
+    overflow:hidden!important;
+    box-shadow:0 -4px 28px rgba(17,36,67,.12),0 20px 48px rgba(17,36,67,.16)!important;
+  }
+  html body #modal-root .modal-head{
+    position:sticky!important;
+    top:0!important;
+    z-index:8!important;
+    padding:18px 16px 14px!important;
+    background:linear-gradient(180deg,#f6f9fd 0%,#f6f9fd 82%,rgba(246,249,253,.86) 100%)!important;
+    border-bottom:1px solid var(--v377-line)!important;
+  }
+  html body #modal-root .modal-head h2{font-size:clamp(17px,5vw,24px)!important;letter-spacing:-.04em!important;color:var(--v377-ink)!important}
+  html body #modal-root .modal .close{width:48px!important;height:48px!important;border-radius:50%!important;border:1px solid var(--v377-line)!important;background:#fff!important;box-shadow:0 8px 22px rgba(42,70,116,.08)!important}
+  html body #modal-root .modal .form-grid{gap:12px!important;padding:16px!important}
+  html body #modal-root .modal .form-grid>label,
+  html body #modal-root .modal .form-full,
+  html body #modal-root .modal .v87-section,
+  html body #modal-root .modal .v42-color-field,
+  html body #modal-root .modal .v42-scope-field{border-radius:19px!important}
+  html body #modal-root .modal .filter-label{font-size:10px!important;letter-spacing:.16em!important;font-weight:830!important;color:#71839d!important}
+  html body #modal-root .modal .field,
+  html body #modal-root .modal select,
+  html body #modal-root .modal input,
+  html body #modal-root .modal textarea{min-height:50px!important;border-radius:16px!important;font-size:16px!important}
+  html body #modal-root .modal textarea{min-height:104px!important}
+  html body #modal-root .modal .v42-form-kicker,
+  html body #modal-root .modal .smart-sub-intro,
+  html body #modal-root .modal .v87-step-intro{padding:15px 16px!important;border-radius:20px!important;background:linear-gradient(135deg,#f4f8ff,#eef4fb)!important;border:1px solid var(--v377-line)!important}
+  html body #modal-root .modal .v42-form-kicker strong,
+  html body #modal-root .modal .smart-sub-intro strong{font-size:15px!important;line-height:1.25!important;color:var(--v377-ink)!important}
+  html body #modal-root .modal .v42-form-kicker span,
+  html body #modal-root .modal .smart-sub-intro p,
+  html body #modal-root .modal .v87-step-intro p{font-size:11px!important;line-height:1.5!important;color:var(--v377-muted)!important}
+  html body #modal-root .modal .v42-scope-choices{grid-template-columns:1fr 1fr!important;gap:10px!important}
+  html body #modal-root .modal .v42-scope-choices label{min-height:94px!important;align-items:flex-start!important;padding:14px!important;border-radius:17px!important}
+  html body #modal-root .modal .v42-scope-choices label input{margin-top:4px!important}
+  html body #modal-root .modal .v42-color-field .v42-color-choices{gap:10px!important}
+  html body #modal-root .modal .v42-color-field .v42-color-choices button{height:34px!important;width:34px!important}
+  html body #modal-root .modal .form-foot{
+    position:sticky!important;
+    bottom:0!important;
+    z-index:8!important;
+    display:grid!important;
+    grid-template-columns:1fr 1.25fr!important;
+    gap:12px!important;
+    margin:0!important;
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px))!important;
+    background:linear-gradient(180deg,rgba(246,249,253,0) 0%,rgba(246,249,253,.88) 18%,#f6f9fd 100%)!important;
+    border-top:1px solid rgba(219,229,242,.92)!important;
+  }
+  html body #modal-root .modal .form-foot .btn{min-height:52px!important;border-radius:17px!important;font-size:15px!important;font-weight:800!important}
+  html body #modal-root .modal .form-foot .btn.ghost{background:#eef3fb!important;color:#3f5679!important;border-color:#dde6f2!important}
+
+  /* Revisión final: dos columnas que no se rompen y mejores wraps. */
+  html body #modal-root .v349-review-panel{width:min(100%,560px)!important;border-radius:28px!important}
+  html body #modal-root .v353-title-line{align-items:flex-start!important}
+  html body #modal-root .v353-title-line h2{font-size:clamp(24px,7vw,30px)!important}
+  html body #modal-root .v353-amount-card{grid-template-columns:minmax(0,1fr)!important;gap:8px!important;align-items:flex-start!important}
+  html body #modal-root .v353-amount-card .v349-review-amount{text-align:left!important}
+  html body #modal-root .v353-amount-card .v349-review-amount strong{white-space:normal!important;overflow-wrap:anywhere!important}
+  html body #modal-root .v353-section-head{align-items:flex-start!important}
+  html body #modal-root :is(.v353-review-main,.v353-breakdowns) .v349-review-row{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)!important;gap:10px!important}
+  html body #modal-root :is(.v353-review-main,.v353-breakdowns) .v349-review-row>strong{text-align:left!important}
+  html body #modal-root .v349-review-actions{padding-top:4px!important}
+  html body #modal-root .v353-review-buttons{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
+  html body #modal-root .v353-review-buttons button{min-height:50px!important;border-radius:16px!important}
+
+  /* Patrimonio: hero compacto y componentes más alineados. */
+  html body .v187-wealth-top{display:grid!important;gap:12px!important;margin-bottom:14px!important}
+  html body .v137-wealth-top-control,
+  html body .v137-wealth-month-control{width:100%!important}
+  html body .v137-wealth-month-control input{min-height:54px!important;border-radius:18px!important;text-align:center!important;font-size:18px!important}
+  html body .v187-wealth-hero{padding:18px!important}
+  html body .v187-hero-layout{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}
+  html body .v187-hero-primary{padding:0!important;gap:10px!important;text-align:left!important}
+  html body .v187-hero-primary strong{font-size:clamp(40px,11vw,62px)!important;line-height:.98!important;letter-spacing:-.06em!important;overflow-wrap:anywhere!important}
+  html body .v187-hero-change{display:flex!important;flex-wrap:wrap!important;gap:8px!important;align-items:center!important;line-height:1.45!important}
+  html body .v187-hero-sides{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important}
+  html body .v187-hero-sides>button,
+  html body .v187-hero-sides>article,
+  html body .v187-hero-sides>div{border-radius:18px!important;padding:16px!important;min-height:122px!important;background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.24)!important}
+  html body .v187-hero-sides strong{font-size:clamp(24px,6.6vw,34px)!important;overflow-wrap:anywhere!important}
+  html body .v187-hero-meta{display:grid!important;gap:5px!important;font-size:11px!important;line-height:1.45!important;padding-top:12px!important}
+  html body .v187-charts{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}
+  html body .v187-chart-card{border-radius:23px!important}
+
+  /* Presión financiera: lectura más clara del calendario y jerarquía de cabecera. */
+  html body .v362-pressure-toolbar{gap:10px 14px!important;margin-bottom:7px!important}
+  html body .v362-pressure-heading h1{font-size:clamp(19px,7vw,30px)!important;letter-spacing:-.03em!important}
+  html body .v362-pressure-summary{justify-content:space-between!important;gap:8px!important}
+  html body .v362-pressure-month-nav strong{font-size:clamp(15px,4.8vw,20px)!important;min-width:auto!important;flex:1!important}
+  html body .v362-pressure-month-nav button{width:46px!important;height:46px!important;border-radius:14px!important;font-size:30px!important;box-shadow:0 8px 18px rgba(38,67,110,.05)!important}
+  html body .v362-pressure-grid{gap:6px!important}
+  html body .v362-pressure-grid .v322-cal-cell{min-height:56px!important;font-size:17px!important;border-radius:14px!important}
+  html body .v362-pressure-grid .v322-cal-cell[data-v360-pressure-day='selected']{box-shadow:0 10px 22px rgba(41,103,204,.24)!important}
+  html body .v322-cal-legend{font-size:11px!important;line-height:1.4!important}
+  html body .v362-pressure-disclaimer{font-size:11px!important;line-height:1.5!important}
+
+  /* Coherencia de tarjetas de bancos, préstamos y certificados. */
+  html body .v375-cards-bank .v244-product,
+  html body .v244-product,
+  html body .loan-mobile-card,
+  html body .certificate-mobile-card{border-radius:25px!important;overflow:hidden!important}
+  html body .v375-cards-bank .v244-product-actions,
+  html body .loan-mobile-actions,
+  html body .certificate-mobile-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  html body .v375-cards-bank .v244-product-actions button,
+  html body .loan-mobile-actions button,
+  html body .certificate-mobile-actions button{min-height:48px!important;border-radius:16px!important;white-space:normal!important}
+
+  /* Dark / Black mode coherente en la nueva capa. */
+  html body:is(.theme-black,.theme-dark){--v377-ink:#f4f6fb;--v377-muted:#adb8c8;--v377-line:#2d3747;--v377-soft:#111922}
+  html body:is(.theme-black,.theme-dark) .module-switch-shell{background:linear-gradient(145deg,#0b1016,#0f1620)!important;border-color:#253244!important;box-shadow:none!important}
+  html body:is(.theme-black,.theme-dark) :is(.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs){background:#0f1721!important;border-color:#253244!important}
+  html body:is(.theme-black,.theme-dark) .v248-intro-symbol{background:#0f1721!important;border-color:#253244!important;box-shadow:none!important}
+  html body:is(.theme-black,.theme-dark) :is(.v248-hero,.v203-hero,.v187-wealth-hero,.v360-pressure-calendar,.v360-pressure-details,.v187-chart-card){box-shadow:none!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .modal{background:#06080c!important;border:1px solid #222d3b!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .modal-head{background:linear-gradient(180deg,#090d13 0%,#090d13 82%,rgba(9,13,19,.9) 100%)!important;border-bottom-color:#202938!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .modal .close{background:#10161e!important;border-color:#243142!important;box-shadow:none!important;color:#edf2fa!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .modal :is(.field,select,input,textarea){background:#0f1721!important;border-color:#243142!important;color:#f4f7fb!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .modal .v42-form-kicker,
+  html body:is(.theme-black,.theme-dark) #modal-root .modal .smart-sub-intro,
+  html body:is(.theme-black,.theme-dark) #modal-root .modal .v87-step-intro{background:linear-gradient(145deg,#0f1822,#111d29)!important;border-color:#243142!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .modal .form-foot{background:linear-gradient(180deg,rgba(6,8,12,0) 0%,rgba(6,8,12,.9) 18%,#06080c 100%)!important;border-top-color:#202938!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .modal .form-foot .btn.ghost{background:#121a24!important;color:#dce7f6!important;border-color:#243142!important}
+  html body:is(.theme-black,.theme-dark) .v187-hero-sides>button,
+  html body:is(.theme-black,.theme-dark) .v187-hero-sides>article,
+  html body:is(.theme-black,.theme-dark) .v187-hero-sides>div{background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.08)!important}
+}
+@media(max-width:390px){
+  html body #modal-root .modal .v42-scope-choices{grid-template-columns:1fr!important}
+  html body #modal-root .modal .form-foot{grid-template-columns:1fr!important}
+  html body #modal-root .v353-review-buttons{grid-template-columns:1fr!important}
+  html body .v187-hero-sides{grid-template-columns:1fr!important}
+}
+</style>
+
+<script id="v377-runtime-polish">
+(function v377RuntimePolish(){
+  'use strict';
+  const moneyPattern=/^(RD\$|US\$)-(\d[\d,.]*)$/;
+  const selectors=[
+    'strong','b','.kpi-value','.v58-main-value','.v58-kpi-value','.v244-product-value strong',
+    '.v187-hero-primary strong','.v187-hero-sides strong','.v360-pressure-details-head>strong',
+    '.v349-review-amount strong','.v349-review-row strong','.v12-patrimony-line strong','.v12-patrimony-net strong'
+  ].join(',');
+  function normalizeMoney(root){
+    (root.querySelectorAll?root.querySelectorAll(selectors):[]).forEach(el=>{
+      if(!el || el.children.length) return;
+      const txt=(el.textContent||'').trim();
+      const m=txt.match(moneyPattern);
+      if(m) el.textContent='-'+m[1]+m[2];
+    });
+  }
+  function applyPageHints(){
+    const main=document.querySelector('main.main');
+    if(!main) return;
+    document.body.classList.toggle('v377-mobile-world', window.innerWidth<=790);
+    const hasDock=!!document.querySelector('.vive-mobile-dock');
+    document.body.classList.toggle('v377-has-dock', hasDock);
+    const switchTabs=document.querySelectorAll('.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs');
+    switchTabs.forEach(tab=>tab.setAttribute('data-v377-scroll','1'));
+  }
+  function patch(root=document){
+    normalizeMoney(root);
+    applyPageHints();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>patch(document),{once:true});
+  else patch(document);
+  const root=document.getElementById('app')||document.body;
+  const modalRoot=document.getElementById('modal-root')||document.body;
+  const obs=new MutationObserver(muts=>{
+    const touched=[];
+    muts.forEach(m=>{m.addedNodes && m.addedNodes.forEach(n=>{if(n.nodeType===1) touched.push(n);});});
+    if(!touched.length){patch(document);return;}
+    touched.forEach(n=>patch(n));
+    patch(document);
+  });
+  obs.observe(root,{childList:true,subtree:true});
+  if(modalRoot!==root) obs.observe(modalRoot,{childList:true,subtree:true});
+  window.addEventListener('resize',()=>patch(document),{passive:true});
+})();
+</script>
+
+
+<style id="v378-individual-registration-system">
+/* V378 · Módulos de registro tratados individualmente. No altera datos, APIs ni pagos. */
+@media(max-width:790px){
+  html body #modal-root .modal input[type="hidden"],
+  html body #modal-root .modal [hidden],
+  html body #modal-root .modal .form-foot[hidden],
+  html body #modal-root .modal .v87-nav[hidden],
+  html body #modal-root .modal .v83-loan-pay-nav[hidden],
+  html body #modal-root .modal .other-studio-right[hidden],
+  html body #modal-root .modal .other-studio-content[hidden],
+  html body #modal-root .modal .v56-inline-new[hidden],
+  html body #modal-root .modal details:not([open]) > :not(summary){display:none!important}
+  html body #modal-root .modal:has(#loanForm.v86-loan-wizard:not(.v86-final-step)) .form-foot{display:none!important}
+  html body #modal-root .modal:has(#loanForm.v87-loan-wizard:not(.v87-final-step)) .form-foot{display:none!important}
+  html body #modal-root :is(.modal,.v349-review-panel,.mqr-shell,.fastx-shell,.other-studio-shell){min-width:0!important;max-width:100vw;overflow-wrap:break-word}
+  html body #modal-root :is(.field,input,select,textarea){box-sizing:border-box;min-width:0;max-width:100%}
+  html body #modal-root .modal .form-grid>label{min-width:0!important}
+  html body #modal-root .modal .form-grid{padding-bottom:20px!important}
+  html body #modal-root .v378-form-identity{display:flex;align-items:center;gap:11px;border-radius:19px;padding:13px 15px;border:1px solid var(--v378-accent-line,#dbe6f3);background:var(--v378-accent-bg,#f2f6fd);grid-column:1/-1;min-width:0}
+  html body #modal-root .v378-form-symbol{width:44px;height:44px;flex:0 0 44px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--v378-accent,#376ab8);font-size:23px;font-weight:750;border:1px solid var(--v378-accent-line,#dbe6f3)}
+  html body #modal-root .v378-form-identity>div{min-width:0;display:grid;gap:3px}
+  html body #modal-root .v378-form-identity strong{color:var(--v377-ink,#213553);font-size:15px;line-height:1.22;letter-spacing:-.025em}
+  html body #modal-root .v378-form-identity small{font-size:11px;line-height:1.4;color:var(--v377-muted,#6a7f9b)}
+  html body #modal-root .v378-form-identity~.v42-form-kicker{margin-top:0!important}
+  html body #modal-root .modal.v378-group-banks{--v378-accent:#356bc8;--v378-accent-bg:#f2f6fd;--v378-accent-line:#dce7f6}
+  html body #modal-root .modal.v378-group-cards{--v378-accent:#466dcb;--v378-accent-bg:#f1f5ff;--v378-accent-line:#dce3fa}
+  html body #modal-root .modal.v378-group-loans{--v378-accent:#966b56;--v378-accent-bg:#fff7f2;--v378-accent-line:#f1dfd5}
+  html body #modal-root .modal.v378-group-investments{--v378-accent:#168a79;--v378-accent-bg:#effaf7;--v378-accent-line:#d4ece6}
+  html body #modal-root .modal.v378-group-relations{--v378-accent:#7257a4;--v378-accent-bg:#f6f2fc;--v378-accent-line:#e5dcf2}
+  html body #modal-root .modal.v378-group-benefits{--v378-accent:#8c65a5;--v378-accent-bg:#f9f3fc;--v378-accent-line:#eadff1}
+  html body #modal-root .modal.v378-group-adjustments{--v378-accent:#5f799d;--v378-accent-bg:#f1f5fa;--v378-accent-line:#dae4ef}
+  html body #modal-root .modal.v378-group-recurring{--v378-accent:#0b8a83;--v378-accent-bg:#eff9f8;--v378-accent-line:#d4ebe9}
+  html body #modal-root .modal.v378-group-operations{--v378-accent:#276bb9;--v378-accent-bg:#f1f6fd;--v378-accent-line:#dae5f6}
+  html body #modal-root .modal.v378-group-catalog{--v378-accent:#436e9c;--v378-accent-bg:#f3f7fb;--v378-accent-line:#dce7f2}
+
+  /* 01 Instituciones: identidad + nombre + tipo + uso */
+  html body #modal-root .v378-form-bank .v42-form-kicker{padding:12px 14px!important}
+  html body #modal-root .v378-form-bank .v42-scope-choices label{min-height:70px!important;padding:12px!important;align-items:center!important}
+  html body #modal-root .v378-form-bank .v42-color-field{padding:12px!important}
+  /* 02 Cuentas: saldo arriba, opcionales progresivos */
+  html body #modal-root .v378-form-account .smart-sub-intro{margin:0!important}
+  html body #modal-root .v378-form-account label:has([name="opening"]){background:linear-gradient(135deg,#f0f7ff,#f9fcff)!important;border-color:#d3e2f5!important}
+  html body #modal-root .v378-form-account input[name="opening"]{font-weight:800!important;font-variant-numeric:tabular-nums}
+  /* 03 Tarjetas: monedas y ciclos separados, tarjetas de crédito nunca se registran como efectivo */
+  html body #modal-root .v378-form-card :is(.smart-form-section,.smart-card-intro){border-radius:18px!important;padding:14px!important}
+  html body #modal-root .v378-form-card .v28-card-identifiers{min-width:0;gap:9px!important}
+  html body #modal-root .v378-form-card .smart-interest{min-width:0}
+  html body #modal-root .v378-form-card label:has([name="limitDOP"]),
+  html body #modal-root .v378-form-card label:has([name="limitUSD"]){background:#f4f7ff!important;border-color:#dce6fb!important}
+  html body #modal-root .v378-form-card .smart-overdraft{border-radius:15px!important}
+  /* 04 Préstamo: no mostrar controles de pasos futuros, cuota e interés independientes */
+  html body #modal-root .v378-form-loan .v87-steps{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+  html body #modal-root .v378-form-loan .v83-form-step{min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important}
+  html body #modal-root .v378-form-loan .v87-section{border:1px solid #e5e9ef!important}
+  html body #modal-root .v378-form-loan .v87-section-heading{align-items:flex-start!important}
+  html body #modal-root .v378-form-loan .v87-section-heading p{line-height:1.4!important}
+  html body #modal-root .v378-form-loan .v87-nav{position:sticky!important;bottom:0!important;z-index:9!important;background:var(--v377-soft,#f1f5fa)!important;padding:12px 13px calc(12px + env(safe-area-inset-bottom,0px))!important;border-top:1px solid var(--v377-line,#dbe5f2)!important}
+  html body #modal-root .v378-form-loan .v87-nav button{min-height:49px!important;border-radius:16px!important}
+  /* 05 Certificado: títulos con datos contractuales agrupados, no tratar principal como ingreso */
+  html body #modal-root .v378-form-certificate label:has([name="principal"]),
+  html body #modal-root .v378-form-certificate label:has([name="rate"]){background:#f1f9f6!important;border-color:#d7ebe3!important}
+  html body #modal-root .v378-form-certificate :is(input[name="principal"],input[name="rate"]){font-variant-numeric:tabular-nums;font-weight:780!important}
+  /* 06 Beneficios, cashback, anualidades: importe, moneda, destino legibles */
+  html body #modal-root .v378-group-benefits label:has([name="amount"]),
+  html body #modal-root .v378-group-benefits label:has([name="value"]){border-color:#e4d7ed!important;background:#faf6fd!important}
+  html body #modal-root .v378-group-benefits :is(input[name="amount"],input[name="value"]){font-variant-numeric:tabular-nums;font-weight:780!important}
+  /* 07 Entre personas: acuerdos y documentos en bloque; no mover saldo si ya está reflejado */
+  html body #modal-root .v378-group-relations :is(.v56-form-note,.v56-field){min-width:0;border-radius:18px!important}
+  html body #modal-root .v378-group-relations label:has([name="openingMode"]){border-color:#e0d5ef!important}
+  /* 08 Catálogo/Presupuestos: densidad y buen ancho de etiquetas */
+  html body #modal-root .v378-group-catalog .form-note{line-height:1.5!important}
+  html body #modal-root .v378-group-catalog label:has([name="category"]){min-width:0!important}
+  /* 09 Movimientos: gasto/ingreso/transferencia y su revisión conservan motor existente */
+  html body #modal-root :is(.fastx-form,.mqr-detail-form,.studio-form) :is(input:not([type="hidden"]),select,textarea){min-width:0!important;max-width:100%!important;font-size:16px!important}
+  html body #modal-root .mqr-detail-form :is(.flow-segment-surface,.flow-receipt-v4){border-radius:17px!important}
+  html body #modal-root .fastx-form .fastx-amount-zone{border-radius:21px!important}
+  html body #modal-root .other-studio-form .other-studio-content{overscroll-behavior:contain}
+  html body #modal-root .other-studio-form .other-studio-header{position:sticky;top:0;z-index:4}
+  html body #modal-root .other-studio-form .other-studio-right .form-foot{display:flex!important;flex-direction:column-reverse!important}
+  html body #modal-root :is(.other-studio-form,.fastx-form,.mqr-detail-form,.studio-form) [hidden]{display:none!important}
+  /* All: never lose a field behind the mobile keyboard or footer */
+  html body #modal-root .modal form{min-height:0;overflow-y:auto;overscroll-behavior:contain;scroll-padding-bottom:130px}
+  html body #modal-root .modal :is(button,select,input,textarea):focus-visible{outline:3px solid #75a6ed!important;outline-offset:2px!important}
+  html body #modal-root .v378-form-identity .v378-form-symbol{user-select:none}
+  html body #modal-root .v378-form-identity + .smart-sub-intro,
+  html body #modal-root .v378-form-identity + .smart-card-intro{margin-top:0!important}
+  /* 10 Revisión: monto, cuenta y condiciones de pago siempre legibles. */
+  html body #modal-root .v349-review-screen .v353-review-body{scroll-padding-bottom:115px!important}
+  html body #modal-root .v349-review-screen .v349-review-row{grid-template-columns:minmax(0,45%) minmax(0,55%)!important;gap:10px!important}
+  html body #modal-root .v349-review-screen .v349-review-row strong{min-width:0;overflow-wrap:anywhere!important;word-break:normal!important}
+  html body #modal-root .v349-review-screen .v349-review-amount strong{font-variant-numeric:tabular-nums!important}
+  /* 11 Black oscuro: negro profundo, no paneles grises/blancos residuales. */
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-form-identity{background:#101010!important;border-color:#303030!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-form-symbol{background:#1d1d1d!important;color:#eee!important;border-color:#353535!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-form-identity :is(strong,small){color:#f1f1f1!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-group-cards label:has([name="limitDOP"]),
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-group-cards label:has([name="limitUSD"]),
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-group-investments label:has([name="principal"]),
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-group-investments label:has([name="rate"]),
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-group-benefits label:has([name="amount"]),
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-group-benefits label:has([name="value"]),
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-group-banks label:has([name="opening"]){background:#111!important;border-color:#333!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-form-loan .v87-section{background:#080808!important;border-color:#303030!important}
+  html body:is(.theme-black,.theme-dark) #modal-root .v378-form-loan .v87-nav{background:#050505!important;border-color:#303030!important}
+}
+@media(max-width:380px){
+  html body #modal-root .v378-form-loan .v87-steps{gap:4px!important}
+  html body #modal-root .v378-form-loan .v83-form-step{font-size:10px!important;padding:7px 4px!important}
+  html body #modal-root .v349-review-screen .v349-review-row{grid-template-columns:minmax(0,40%) minmax(0,60%)!important}
+}
+</style>
+<script id="v378-register-personalization">
+(()=>{'use strict';
+  // Specific visual onboarding for each existing registered form. Inputs and submit handlers are untouched.
+  const specs={
+    bankForm:['banks','Institución','Identifica una entidad y su perfil sin duplicarla.','⌂'],
+    accountForm:['banks','Cuenta y efectivo','Banco, moneda y saldo inicial; detalles avanzados opcionales.','▣'],
+    cashWalletForm:['banks','Efectivo','Dinero físico en RD$ o US$, separado de las cuentas bancarias.','▣'],
+    cardForm:['cards','Tarjeta de crédito','Límites, ciclo y deuda separados por moneda.','▤'],
+    loanForm:['loans','Contrato de préstamo','Condiciones, cuotas y verificación antes del registro.','≋'],
+    certificateForm:['investments','Certificado financiero','Capital, tasa, vencimiento y tratamiento contable.','◈'],
+    categoryForm:['catalog','Catálogo','Clasifica ingresos y gastos sin alterar movimientos previos.','▦'],
+    budgetForm:['catalog','Presupuesto','Límite por categoría y período.','▥'],
+    personalLoanForm:['relations','Acuerdo entre personas','Una sola obligación con historial de abonos.','⇄'],
+    personalPaymentForm:['relations','Abono entre personas','Reduce el saldo del acuerdo sin duplicar ingresos o egresos.','⇄'],
+    v56ContactForm:['relations','Contacto','Persona para acuerdos y obligaciones.','♧'],
+    v56LoanForm:['relations','Acuerdo entre personas','Registra si el dinero ya está contabilizado.','⇄'],
+    v40BenefitForm:['benefits','Beneficio','Beneficios informativos, separados del efectivo.','✧'],
+    manualBenefitForm:['benefits','Beneficio recibido','Cashback confirmado o beneficio no monetario.','✧'],
+    benefitLedgerForm:['benefits','Recompensas','Puntos y millas sin impacto automático en efectivo.','✧'],
+    benefitRuleForm:['benefits','Regla de beneficio','Define elegibilidad sin inventar acreditaciones.','✧'],
+    annualFeeForm:['benefits','Anualidad real','Solo registra el cargo cuando efectivamente se cobra.','✧'],
+    rewardReceivedForm:['benefits','Cashback acreditado','Distingue abono en tarjeta de depósito en cuenta.','✧'],
+    perkUsageForm:['benefits','Beneficio utilizado','Valor informativo que no aumenta tu efectivo.','✧'],
+    v144CashbackForm:['benefits','Cashback','Acreditación real o pendiente de confirmar.','✧'],
+    v144CostForm:['benefits','Costo de tarjeta','Evita registrar un costo o una anualidad dos veces.','✧'],
+    v144SettleForm:['adjustments','Conciliación de costo','Vincula un pago ya realizado sin otra salida.','✓'],
+    recurringPaymentConfirmForm:['recurring','Servicio recurrente','Confirma fecha, fuente de pago y estado.','◷'],
+    transactionForm:['operations','Movimiento','Revisa categoría, origen, destino y saldo afectado.','↔'],
+    v56ContactEditForm:['relations','Contacto','Mantén la información de la persona vinculada.','♧']
+  };
+  const specialSpecs={refund:['adjustments','Devolución de compra','El reintegro reduce deuda o devuelve fondos; no es ingreso nuevo.','↶'],adjustment:['adjustments','Conciliar saldo','Ajuste documentado, sin crear ingresos o gastos ficticios.','≒'],benefit:['benefits','Beneficio recibido','Elige la tarjeta y el tipo de acreditación.','✧'],loan:['loans','Pago de préstamo','Cuota, capital e intereses se distinguen al revisar.','≋']};
+  const escapeText=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function decorate(){
+    const root=document.getElementById('modal-root');if(!root)return;
+    for(const dialog of root.querySelectorAll('.modal')){
+      const form=dialog.querySelector('form');if(!form)continue;
+      const conf=specs[form.id] || specialSpecs[form.dataset.special] || null;
+      if(!conf)continue;
+      const [group,title,desc,symbol]=conf;
+      dialog.classList.add('v378-group-'+group,'v378-form-'+(form.id||form.dataset.special));
+      if(form.dataset.v378Decorated==='1')continue;
+      form.dataset.v378Decorated='1';
+      // Do not add section to guided wizards; they have their own step header.
+      if(form.classList.contains('v87-loan-wizard')||form.classList.contains('v86-loan-wizard')||form.classList.contains('fastx-form')||form.classList.contains('mqr-detail-form')||form.classList.contains('other-studio-form'))continue;
+      const grid=form.querySelector(':scope > .form-grid');if(!grid)continue;
+      const card=document.createElement('div');card.className='v378-form-identity';card.setAttribute('role','note');
+      card.innerHTML='<span class="v378-form-symbol" aria-hidden="true">'+escapeText(symbol)+'</span><div><strong>'+escapeText(title)+'</strong><small>'+escapeText(desc)+'</small></div>';
+      grid.prepend(card);
+    }
+  }
+  function boot(){const root=document.getElementById('modal-root');if(!root)return;decorate();let queued=false;
+    const obs=new MutationObserver(()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorate()})});
+    obs.observe(root,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+<style id="v379-income-experience">
+/* V379 · INGRESOS: operación recibida, fuente recurrente y confirmación de nómina.
+   Los saldos mostrados son vistas previas; no ejecutamos persistencia ni mutaciones. */
+@media(max-width:790px){
+ html body #modal-root .modal:has(form[data-v379-income]){--v379-accent:#0d806d;--v379-line:#d8e8e6;--v379-ink:#183b39;--v379-soft:#eff8f5}
+ html body #modal-root form[data-v379-income] .v379-income-preview{margin:12px 0 0!important}
+ html body #modal-root form[data-v379-income] .fastx-amount-zone{border-radius:23px!important;padding:18px!important;background:linear-gradient(145deg,#f0fbf6,#e8f5f3)!important;border-color:#cde7df!important}
+ html body #modal-root form[data-v379-income] .fastx-amount-zone input{color:#126b5e!important}
+ html body #modal-root form[data-v379-income] .fastx-category-section,
+ html body #modal-root form[data-v379-income] .fastx-source-section{border-radius:20px!important;padding:14px!important;border:1px solid #dbe9e8!important;background:#fff!important}
+ html body #modal-root form[data-v379-income] .fastx-section-title{margin-bottom:10px!important}
+ html body #modal-root form[data-v379-income] .fastx-category-grid{gap:7px!important}
+ html body #modal-root form[data-v379-income] .fastx-cat{min-height:54px!important;border-radius:14px!important}
+ html body #modal-root form[data-v379-income] .fastx-cat.selected{border-color:#62b9a6!important;background:#ebf8f3!important;color:#145b51!important}
+ html body #modal-root form[data-v379-income] .fastx-right{border-radius:22px!important}
+ html body #modal-root form[data-v379-income] .fastx-value-card{border-radius:21px!important}
+ html body #modal-root .mqr-detail-form[data-v379-income] .v134-choices,
+ html body #modal-root .mqr-detail-form[data-v379-income] .v134-sources,
+ html body #modal-root .mqr-detail-form[data-v379-income] .v134-receipt{border-radius:20px!important}
+ html body #modal-root form[data-v379-income] .v379-income-preview{padding:14px!important}
+ html body #modal-root form[data-v379-income] :is(.form-foot,.mqr-bottom) button[type=submit]{font-size:15px!important}
+ html body #modal-root #v40IncomeForm[data-v379-income] .v42-income-preview{border-radius:20px!important}
+}
+#modal-root .v379-income-preview{display:grid;gap:11px;background:linear-gradient(130deg,#f3fbf8,#ebf6f4);border:1px solid #cfe6dc;border-radius:19px;padding:16px;min-width:0;box-sizing:border-box;color:#163b35}
+#modal-root .v379-income-preview header{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+#modal-root .v379-income-preview header strong{font-size:13px;font-weight:850;letter-spacing:-.02em;color:#144a40}
+#modal-root .v379-income-preview header span{font-size:10px;letter-spacing:.09em;font-weight:850;color:#277d68}
+#modal-root .v379-income-preview .v379-income-route{font-size:12px;line-height:1.5;color:#42685f;overflow-wrap:anywhere}
+#modal-root .v379-income-preview .v379-income-figures{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#modal-root .v379-income-preview .v379-income-figures>div{min-width:0;padding:12px 10px;background:rgba(255,255,255,.84);border:1px solid #ddede6;border-radius:14px}
+#modal-root .v379-income-preview .v379-income-figures small{display:block;margin-bottom:5px;font-size:10px;color:#577a72;line-height:1.3}
+#modal-root .v379-income-preview .v379-income-figures strong{display:block;font-size:clamp(16px,4.5vw,22px);line-height:1.17;letter-spacing:-.035em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:#185346}
+#modal-root .v379-income-preview .v379-income-figures .v379-after strong{color:#087b5f}
+#modal-root .v379-income-preview p{margin:0;font-size:11px;color:#4e7268;line-height:1.52}
+#modal-root .v379-income-preview .v379-income-warning{color:#a55535!important;font-weight:700}
+#modal-root .v379-income-preview .v379-income-placeholder{color:#627d75;font-size:12px;line-height:1.6}
+#modal-root .v379-income-preview .v379-income-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#227d69;font-weight:730}
+#modal-root .v379-income-preview .v379-income-status:before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#238e70}
+#modal-root #v40IncomeForm .v379-income-preview{grid-column:1/-1}
+#modal-root #v40IncomeConfirmForm .v379-income-preview{grid-column:1/-1}
+#modal-root #v40IncomeForm .v379-income-preview .v379-income-figures{grid-template-columns:repeat(2,minmax(0,1fr))}
+body:is(.theme-black,.theme-dark) #modal-root .v379-income-preview{background:#050b09!important;border-color:#244238!important;color:#eaf8f3!important}
+body:is(.theme-black,.theme-dark) #modal-root .v379-income-preview :is(header strong,.v379-income-route,.v379-income-placeholder,.v379-income-status,p){color:#b8d4c7!important}
+body:is(.theme-black,.theme-dark) #modal-root .v379-income-preview .v379-income-figures>div{background:#0e1713!important;border-color:#29443a!important}
+body:is(.theme-black,.theme-dark) #modal-root .v379-income-preview .v379-income-figures :is(strong,small){color:#d9f4e7!important}
+body:is(.theme-black,.theme-dark) #modal-root form[data-v379-income] .fastx-amount-zone{background:#080d0b!important;border-color:#243f35!important}
+body:is(.theme-black,.theme-dark) #modal-root form[data-v379-income] :is(.fastx-category-section,.fastx-source-section){background:#050908!important;border-color:#26382f!important}
+body:is(.theme-black,.theme-dark) #modal-root form[data-v379-income] .fastx-cat.selected{background:#162b22!important;color:#e0ffef!important;border-color:#386e54!important}
+@media(max-width:365px){#modal-root .v379-income-preview .v379-income-figures{grid-template-columns:1fr}}
+</style>
+<script id="v379-income-controller">
+(function(){
+ 'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ const moneySafe=(n,ccy)=>{
+   const v=Number(n);const p=ccy==='USD'?'US$':'RD$';
+   return Number.isFinite(v)?(v<0?'-':'')+p+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+ };
+ const text=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const template=()=>'<header><strong>Impacto del ingreso</strong><span>VISTA PREVIA</span></header><div class="v379-income-route" data-v379-route></div><div class="v379-income-figures" data-v379-figures></div><p data-v379-note></p>';
+ const lookupAccount=id=>typeof account==='function'?account(id):null;
+ const currentBalance=a=>{try{return typeof getAccountBalance==='function'?Number(getAccountBalance(a)):NaN}catch{return NaN}};
+ function attachPreview(form,anchor){
+  let preview=form.querySelector('.v379-income-preview');if(preview)return preview;
+  preview=document.createElement('section');preview.className='v379-income-preview';preview.setAttribute('aria-label','Vista previa del ingreso');preview.setAttribute('aria-live','polite');preview.innerHTML=template();
+  if(anchor&&anchor.parentElement)anchor.insertAdjacentElement('afterend',preview);
+  else (form.querySelector('.form-grid')||form.querySelector('.fastx-entry')||form).append(preview);
+  return preview;
+ }
+ function renderPreview(preview,{route='',before=null,after=null,ccy='DOP',note='',future=false}){
+  const r=preview.querySelector('[data-v379-route]'),fig=preview.querySelector('[data-v379-figures]'),n=preview.querySelector('[data-v379-note]');
+  r.textContent=route;
+  fig.innerHTML=Number.isFinite(before)&&Number.isFinite(after)
+   ?'<div><small>Saldo registrado hoy</small><strong>'+moneySafe(before,ccy)+'</strong></div><div class="v379-after"><small>'+(future?'Estimado, no acreditado':'Saldo después, simulado')+'</small><strong>'+moneySafe(after,ccy)+'</strong></div>'
+   :'<div style="grid-column:1/-1" class="v379-income-placeholder">'+text(note||'Selecciona una cuenta y escribe un importe para ver el efecto.')+'</div>';
+  n.textContent=(Number.isFinite(before)&&Number.isFinite(after))?note:'';
+ }
+ function isIncomeForm(form){return form.id==='transactionForm' && (form.dataset.mode==='income'||form.dataset.mqrMode==='income'||form.elements.flowMode?.value==='income'||form.elements.type?.value==='income')}
+ function installTransaction(form){
+  if(form.dataset.v379Income==='1')return;
+  form.dataset.v379Income='1';form.classList.add('v379-income-transaction');
+  const anchor=form.querySelector('.fastx-source-section')||form.querySelector('.v134-sources')||form.querySelector('.flow-receipt')||form.querySelector('.form-grid .flow-section-heading');
+  const preview=attachPreview(form,anchor);
+  const update=()=>{
+   const selected=lookupAccount(form.elements.accountId?.value);
+   const amount=Number(form.elements.amount?.value);
+   const editing=!!(form.dataset.editId||form.dataset.id||form.dataset.editing==='yes'||form.querySelector('.fastx-title')?.textContent.includes('Editar'));
+   const when=form.elements.date?.value||'';
+   if(!selected||selected.archived){
+    renderPreview(preview,{route:'Cuenta receptora no seleccionada',note:'Selecciona una cuenta activa para recibir el ingreso.'});return;
+   }
+   const ccy=selected.currency||'DOP';const before=currentBalance(selected);
+   if(!Number.isFinite(amount)||amount<=0){renderPreview(preview,{route:selected.name+' · '+ccy,note:'Escribe cuánto dinero recibiste.',ccy});return;}
+   const safe=!editing && Number.isFinite(before) && (!when || (typeof today==='function'&&when===today()));
+   renderPreview(preview,{route:'↗ '+moneySafe(amount,ccy)+' hacia '+selected.name,
+    before:safe?before:null,after:safe?before+amount:null,ccy,
+    note:editing?'Edición: el saldo definitivo se recalculará sustituyendo el asiento anterior, no sumándolo dos veces.':when&&typeof today==='function'&&when<today()?'Ingreso retroactivo: el saldo de hoy se recalcula con el historial. No se muestra una proyección engañosa.':'Es una simulación. No se acredita ningún importe hasta confirmar.',future:false});
+  };
+  form.addEventListener('input',update);form.addEventListener('change',update);
+  form.addEventListener('submit',e=>{
+   const selected=lookupAccount(form.elements.accountId?.value);const amount=Number(form.elements.amount?.value);
+   if(!selected||selected.archived){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('Selecciona una cuenta activa para registrar el ingreso.');form.elements.accountId?.focus();return;}
+   if(!(Number.isFinite(amount)&&amount>0)){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('El ingreso debe ser mayor que cero.');form.elements.amount?.focus();return;}
+  },true);
+  update();
+ }
+ function installRecurring(form){
+  if(form.dataset.v379Income==='1')return;
+  form.dataset.v379Income='1';
+  const anchor=form.querySelector('.v42-income-preview')||form.querySelector('.smart-sub-intro');
+  const preview=attachPreview(form,anchor);
+  const update=()=>{
+   const selected=lookupAccount(form.elements.accountId?.value);
+   const ccy=form.elements.currency?.value||'DOP';
+   const name=form.elements.name?.value||'Fuente recurrente';
+   const valid=selected&&!selected.archived&&selected.currency===ccy;
+   const raw=Number(form.elements.grossMonthly?.value);
+   renderPreview(preview,{route:'Programación · '+name+' · '+ccy,
+     note:!valid?'Selecciona una cuenta activa de la misma moneda. Programar no acredita dinero.':!(raw>0)?'Indica el bruto mensual para calcular tu programación.':'Fuente: '+selected.name+'. El neto se calcula en el desglose existente. No se acredita dinero hasta el asiento de cobro.',
+     ccy,future:true});
+  };
+  form.addEventListener('change',update);form.addEventListener('input',update);
+  form.addEventListener('submit',e=>{
+   const selected=lookupAccount(form.elements.accountId?.value),ccy=form.elements.currency?.value;
+   if(!selected||selected.archived||selected.currency!==ccy){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('La cuenta de destino debe estar activa y tener la misma moneda.');form.elements.accountId?.focus();}
+  },true);
+  update();
+ }
+ function installConfirm(form){
+  if(form.dataset.v379Income==='1')return;
+  form.dataset.v379Income='1';
+  const preview=attachPreview(form,form.querySelector('.smart-sub-intro'));
+  const update=()=>{
+   const schedule=(typeof db!=='undefined'&&Array.isArray(db.incomeSchedules))?db.incomeSchedules.find(x=>x.id===form.dataset.id):null;
+   const a=schedule?lookupAccount(schedule.accountId):null;
+   const amount=Number(form.elements.actualNet?.value);
+   const day=form.elements.date?.value||'';
+   const valid=Boolean(a&&!a.archived&&a.currency===schedule.currency);
+   const before=valid?currentBalance(a):NaN;
+   const safe=valid&&Number.isFinite(before)&&amount>0&&day===((typeof today==='function')?today():null);
+   renderPreview(preview,{route:valid?'↗ '+moneySafe(amount,schedule.currency)+' hacia '+a.name:'Cuenta de nómina no disponible',before:safe?before:null,after:safe?before+amount:null,ccy:schedule?.currency||'DOP',
+    note:!valid?'Corrige la cuenta configurada en el ingreso recurrente antes de acreditar.':day&&typeof today==='function'&&day<today()?'Depósito histórico: el saldo se recalcula por fecha, no se presenta un saldo de hoy ficticio.':'El depósito se acredita una sola vez al confirmar; no se suma al registrar la programación.'});
+  };
+  form.addEventListener('input',update);form.addEventListener('change',update);
+  form.addEventListener('submit',e=>{const schedule=db.incomeSchedules?.find(x=>x.id===form.dataset.id),a=schedule?lookupAccount(schedule.accountId):null;if(!a||a.archived||a.currency!==schedule.currency){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('La cuenta vinculada al ingreso no es válida. Corrígela antes de confirmar.');}},true);
+  update();
+ }
+ function decorate(){
+  for(const form of root.querySelectorAll('form')){
+   if(isIncomeForm(form))installTransaction(form);
+   else if(form.id==='v40IncomeForm')installRecurring(form);
+   else if(form.id==='v40IncomeConfirmForm')installConfirm(form);
+  }
+ }
+ let queued=false;
+ const obs=new MutationObserver(()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorate();});});
+ obs.observe(root,{childList:true,subtree:true});decorate();
+})();
+</script>
+
+
+<style id="v380-expense-design">
+/* V380 · EGRESOS: la UX discrimina pago desde cuenta y compra financiada. */
+#modal-root form[data-v380-expense] {
+ --v380-exp-accent:#ac6553;
+ --v380-exp-ink:#4a2c2b;
+ --v380-exp-line:#eddad5;
+ --v380-exp-wash:#fff5f1;
+}
+#modal-root form[data-v380-expense] .fastx-amount-zone{
+ background:linear-gradient(150deg,#fff9f6,#fceee8)!important;
+ border:1px solid #efd8ce!important;
+ border-radius:22px!important;
+}
+#modal-root form[data-v380-expense] .fastx-amount-zone input{color:#8b3c32!important}
+#modal-root form[data-v380-expense] .fastx-category-section,
+#modal-root form[data-v380-expense] .fastx-source-section{
+ background:#fff!important;border:1px solid #e7e3e0!important;
+ border-radius:21px!important;padding:14px!important;
+}
+#modal-root form[data-v380-expense] .fastx-methods{display:grid!important;grid-template-columns:1fr 1fr!important;gap:9px!important}
+#modal-root form[data-v380-expense] .fastx-method{
+ min-height:64px!important;padding:11px!important;border-radius:17px!important;
+ display:flex!important;flex-direction:column!important;justify-content:center!important;
+ gap:7px!important;white-space:normal!important;line-height:1.2!important;
+}
+#modal-root form[data-v380-expense] .fastx-method.active{
+ background:#fff2ed!important;color:#8a4138!important;
+ border-color:#ce9281!important;box-shadow:0 0 0 2px rgba(183,104,83,.08)!important;
+}
+#modal-root form[data-v380-expense] .fastx-cat{min-height:54px!important;border-radius:15px!important;overflow-wrap:anywhere!important}
+#modal-root form[data-v380-expense] .fastx-cat.selected{background:#fff0ea!important;border-color:#d0a397!important;color:#854438!important}
+#modal-root form[data-v380-expense] .fastx-receipt-title{letter-spacing:-.025em!important}
+#modal-root form[data-v380-expense] .v380-expense-preview{margin-top:12px}
+#modal-root .v380-expense-preview{
+ display:grid;gap:12px;padding:16px;box-sizing:border-box;min-width:0;
+ border:1px solid var(--v380-exp-line,#eddad5);border-radius:20px;
+ background:linear-gradient(135deg,#fff8f5,#fff2ec);color:#503d3a;
+}
+#modal-root .v380-expense-preview header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+#modal-root .v380-expense-preview header strong{font-size:14px;letter-spacing:-.025em;color:#653d35;font-weight:850}
+#modal-root .v380-expense-preview .v380-exp-badge{font-size:10px;letter-spacing:.12em;font-weight:800;color:#9a5345}
+#modal-root .v380-expense-preview .v380-exp-route{font-size:12px;font-weight:700;color:#76554c;overflow-wrap:anywhere;line-height:1.45}
+#modal-root .v380-expense-preview .v380-exp-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#modal-root .v380-expense-preview .v380-exp-figures>div{padding:12px;background:rgba(255,255,255,.86);border:1px solid #f0e3dd;border-radius:16px;min-width:0}
+#modal-root .v380-expense-preview .v380-exp-figures small{display:block;margin-bottom:5px;font-size:10px;color:#836e68;line-height:1.4}
+#modal-root .v380-expense-preview .v380-exp-figures strong{display:block;font-size:clamp(17px,5vw,24px);font-weight:850;letter-spacing:-.04em;color:#633c34;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;line-height:1.18}
+#modal-root .v380-expense-preview .v380-exp-figures .v380-exp-after strong{color:#a24337}
+#modal-root .v380-expense-preview p{margin:0;font-size:11px;line-height:1.6;color:#785e56}
+#modal-root .v380-expense-preview .v380-exp-alert{font-weight:740;color:#a64b37}
+#modal-root .v380-expense-preview .v380-exp-status{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:750;color:#996247}
+#modal-root .v380-expense-preview .v380-exp-status:before{content:'';width:7px;height:7px;border-radius:50%;background:#bf8064}
+#modal-root form[data-v380-expense] .flow-receipt-total{font-weight:800!important}
+body:is(.theme-black,.theme-dark) #modal-root form[data-v380-expense]{--v380-exp-line:#3c302c;--v380-exp-ink:#f6e7df}
+body:is(.theme-black,.theme-dark) #modal-root form[data-v380-expense] .fastx-amount-zone,
+body:is(.theme-black,.theme-dark) #modal-root form[data-v380-expense] :is(.fastx-category-section,.fastx-source-section){background:#090909!important;border-color:#333!important}
+body:is(.theme-black,.theme-dark) #modal-root form[data-v380-expense] .fastx-amount-zone input{color:#ffb09b!important}
+body:is(.theme-black,.theme-dark) #modal-root form[data-v380-expense] .fastx-method.active,
+body:is(.theme-black,.theme-dark) #modal-root form[data-v380-expense] .fastx-cat.selected{background:#26201d!important;border-color:#886354!important;color:#ffcfba!important}
+body:is(.theme-black,.theme-dark) #modal-root .v380-expense-preview{background:#090909!important;border-color:#35302d!important;color:#f6eee9!important}
+body:is(.theme-black,.theme-dark) #modal-root .v380-expense-preview .v380-exp-figures>div{background:#121212!important;border-color:#35302d!important}
+body:is(.theme-black,.theme-dark) #modal-root .v380-expense-preview :is(header strong,.v380-exp-route,.v380-exp-badge,.v380-exp-status,p,.v380-exp-figures small){color:#d6c2b8!important}
+body:is(.theme-black,.theme-dark) #modal-root .v380-expense-preview .v380-exp-figures strong{color:#f9e9df!important}
+body:is(.theme-black,.theme-dark) #modal-root .v380-expense-preview .v380-exp-figures .v380-exp-after strong{color:#ffc1ae!important}
+@media(max-width:390px){
+ #modal-root .v380-expense-preview .v380-exp-figures{grid-template-columns:1fr}
+ #modal-root form[data-v380-expense] .fastx-method{font-size:11px!important;padding:9px!important}
+}
+@media(max-width:790px){
+ #modal-root form[data-v380-expense] .fastx-amount-zone{padding:16px!important}
+ #modal-root form[data-v380-expense] .fastx-sources{min-width:0!important}
+ #modal-root form[data-v380-expense] .fastx-right{min-width:0!important}
+ #modal-root form[data-v380-expense] :is(.fastx-right>.form-foot button,.fastx-form .btn){min-height:48px!important}
+}
+</style>
+<script id="v380-expense-controller">
+(function(){
+ 'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const amount=(n,c='DOP')=>{
+  const v=Number(n);if(!Number.isFinite(v))return '—';
+  return (v<0?'-':'')+(c==='USD'?'US$':'RD$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ };
+ const read=(f,key)=>f.elements.namedItem(key)?.value??'';
+ const editing=f=>Boolean(f.dataset.id||f.dataset.editId||f.dataset.editing==='yes'||f.querySelector('.fastx-title')?.textContent.includes('Editar'));
+ const liveToday=()=>typeof today==='function'?today():null;
+ const findAccount=id=>typeof account==='function'?account(id):null;
+ const findCard=id=>typeof card==='function'?card(id):null;
+ const head='<header><strong>Impacto del egreso</strong><span class="v380-exp-badge">VISTA PREVIA</span></header><div class="v380-exp-route" data-v380-route></div><div class="v380-exp-figures" data-v380-values></div><p data-v380-note></p>';
+ function attach(form){
+  if(form.dataset.v380Expense==='1')return;
+  form.dataset.v380Expense='1';
+  const preview=document.createElement('section');preview.className='v380-expense-preview';
+  preview.setAttribute('aria-label','Impacto financiero del egreso');preview.setAttribute('aria-live','polite');preview.innerHTML=head;
+  const target=form.querySelector('.fastx-source-section')||form.querySelector('.v134-sources')||form.querySelector('#guidedReceipt')||form.querySelector('.flow-receipt');
+  if(target)target.insertAdjacentElement('afterend',preview);
+  else (form.querySelector('.fastx-body')||form.querySelector('.form-grid')||form).appendChild(preview);
+  const show=(route,figures,note)=>{
+   preview.querySelector('[data-v380-route]').textContent=route;
+   preview.querySelector('[data-v380-values]').innerHTML=figures;
+   preview.querySelector('[data-v380-note]').textContent=note;
+  };
+  const figure=(label,value,after)=>'<div'+(after?' class="v380-exp-after"':'')+'><small>'+esc(label)+'</small><strong>'+esc(value)+'</strong></div>';
+  const isEnabled=c=>!!c&&!c.archived;
+  function update(){
+   if(!form.isConnected)return;
+   const type=read(form,'paymentSource')||'account',cardPay=type==='card';
+   const sum=Number(read(form,'amount')),day=read(form,'date'),historical=!!day&&liveToday()&&day!==liveToday();
+   const safe=!editing(form)&&!historical;
+   const cat=read(form,'category');
+   const channel=read(form,'paymentChannel');
+   if(cardPay){
+    const c=findCard(read(form,'cardId')),currency=read(form,'currency')||'DOP';
+    if(!isEnabled(c)){show('Tarjeta de crédito sin seleccionar','', 'Selecciona una tarjeta activa antes de continuar.');return;}
+    if(!(sum>0)&&Number.isFinite(sum)){show(c.name+' · '+currency,'','Introduce un importe positivo.');return;}
+    let status=null;try{status=typeof cardStatus==='function'?cardStatus(c,currency):null}catch(_){}
+    const before=Number(status?.debt),limit=Number(status?.limit);
+    const canShow=safe&&sum>0&&Number.isFinite(before)&&Number.isFinite(limit);
+    const figures=canShow?figure('Deuda registrada',amount(before,currency),false)+figure('Deuda estimada',amount(before+sum,currency),true)
+      :figure('Compra que se registrará',sum>0?amount(sum,currency):'—',false)+figure('Medio de pago','Crédito',true);
+    let note='La compra se registra como gasto y aumenta la deuda de la tarjeta. Cuando pagues esta deuda, el principal no volverá a contarse como gasto.';
+    if(historical)note='Compra con fecha distinta de hoy: la deuda se recalculará en el historial. No se simula un saldo final sin considerar los movimientos posteriores. '+note;
+    if(editing(form))note='Edición: se sustituirá el registro original, sin duplicar la compra. '+note;
+    if(Number.isFinite(limit)&&sum>0&&Number.isFinite(before)&&before+sum>limit+.01)note+=' Atención: el saldo resultante puede superar el límite ordinario; revisa los sobregiros autorizados de esta tarjeta.';
+    show('Tarjeta · '+c.name+' · '+currency,figures,note);
+   }else{
+    const a=findAccount(read(form,'accountId'));
+    if(!isEnabled(a)){show('Cuenta o efectivo sin seleccionar','', 'Selecciona una cuenta activa antes de continuar.');return;}
+    const currency=a.currency||'DOP';let before=NaN;try{before=typeof getAccountBalance==='function'?Number(getAccountBalance(a)):NaN}catch(_){}
+    const pct=read(form,'paymentTaxable')==='yes'?Number(read(form,'paymentTaxPct')):0;
+    const fee=Number(read(form,'paymentFee')||0);
+    const hasComplexFees=(Number.isFinite(pct)&&pct>0)||(Number.isFinite(fee)&&fee>0);
+    const canShow=safe&&Number.isFinite(before)&&sum>0&&!hasComplexFees;
+    const figs=canShow?figure('Saldo registrado',amount(before,currency),false)+figure('Saldo después (simulado)',amount(before-sum,currency),true)
+      :figure('Gasto principal',sum>0?amount(sum,currency):'—',false)+figure('Origen',a.kind==='cash'?'Efectivo':'Cuenta bancaria',true);
+    const note=editing(form)?'Edición: el movimiento anterior será sustituido; el saldo final dependerá del historial completo.':
+      historical?'Gasto histórico: no se muestra un saldo proyectado porque existen movimientos posteriores.':
+      hasComplexFees?'El cargo final puede incluir impuestos o comisiones. Consulta el comprobante en vivo para conocer el débito completo.':
+      'Saldo estimado antes de confirmar. No modifica tus fondos hasta registrar la operación.';
+    show('Sale de '+a.name+' · '+currency,figs,note);
+   }
+   preview.dataset.source=cardPay?'card':'account';
+   preview.dataset.category=cat;
+   preview.dataset.channel=channel;
+  }
+  form.addEventListener('input',()=>queueMicrotask(update));
+  form.addEventListener('change',()=>queueMicrotask(update));
+  form.addEventListener('click',e=>{if(e.target.closest('[data-fast-source],[data-fast-category]'))queueMicrotask(update)});
+  form.addEventListener('submit',e=>{
+   const v=Number(read(form,'amount'));
+   const useCard=read(form,'paymentSource')==='card';
+   const ref=useCard?findCard(read(form,'cardId')):findAccount(read(form,'accountId'));
+   const currency=read(form,'currency')||'DOP';
+   let error='';
+   if(!Number.isFinite(v)||v<=0)error='Introduce un importe de egreso mayor que cero.';
+   else if(!isEnabled(ref))error=useCard?'Selecciona una tarjeta activa.':'Selecciona una cuenta activa.';
+   else if(useCard&&!['DOP','USD'].includes(currency))error='Selecciona una moneda válida para la tarjeta.';
+   if(error){e.preventDefault();e.stopImmediatePropagation();
+    if(typeof toast==='function')toast(error);
+    const el=form.elements.namedItem(error.includes('importe')?'amount':useCard?'cardId':'accountId');el?.focus?.();
+   }
+  },true);
+  update();
+ }
+ function decorate(){root.querySelectorAll('form#transactionForm').forEach(form=>{
+  if(form.dataset.mode==='spend'||read(form,'flowMode')==='spend')attach(form);
+ });}
+ let queued=false;const observer=new MutationObserver(()=>{
+  if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorate()});
+ });observer.observe(root,{childList:true,subtree:true});decorate();
+})();
+</script>
+
+<style id="v381-transfer-design">
+/* V381 — Transferencias: tratamiento propio de movimientos entre cuentas y a terceros.
+   La vista previa NO escribe ni reemplaza cálculos del motor contable. */
+#modal-root form[data-v381-transfer="own"],
+#modal-root form[data-v381-transfer="outgoing"]{--v381-ink:#213d58;--v381-line:#d8e9e5;--v381-soft:#edf8f5;--v381-accent:#127f72}
+#modal-root form[data-v381-transfer] .flow-hero,
+#modal-root form[data-v381-transfer] .mqr-detail-amount{background:linear-gradient(135deg,#e9f7f4,#f6faff)!important;border-color:#cfe9e3!important;border-radius:22px!important}
+#modal-root form[data-v381-transfer] .flow-route{display:flex;align-items:stretch;gap:9px;padding:11px;border:1px solid #d8e9e5;border-radius:20px;background:#f3faf8;min-width:0}
+#modal-root form[data-v381-transfer] .flow-route-end{min-width:0;flex:1}
+#modal-root form[data-v381-transfer] .flow-route-end strong{overflow-wrap:anywhere}
+#modal-root form[data-v381-transfer] .flow-route-arrow{align-self:center;flex:none;color:#168574}
+#modal-root form[data-v381-transfer] .flow-receipt{border-radius:20px!important}
+#modal-root .v381-transfer-preview{display:grid;gap:13px;min-width:0;margin:12px 0;padding:17px;border-radius:23px;border:1px solid var(--v381-line,#d8e9e5);background:linear-gradient(155deg,#f2faf8,#f9fcfe);color:var(--v381-ink,#213d58);box-shadow:0 10px 26px rgba(39,95,98,.055)}
+#modal-root .v381-transfer-preview header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#modal-root .v381-transfer-preview header strong{font-size:15px;font-weight:850;letter-spacing:-.035em}
+#modal-root .v381-transfer-preview header small{font-size:10px;letter-spacing:.11em;font-weight:800;color:#288272}
+#modal-root .v381-transfer-kind{font-size:11px;line-height:1.5;color:#668078}
+#modal-root .v381-transfer-route{display:grid;grid-template-columns:minmax(0,1fr) 27px minmax(0,1fr);align-items:center;gap:8px}
+#modal-root .v381-transfer-route>div{background:#fff;border:1px solid #dcebe7;padding:12px;border-radius:17px;min-width:0}
+#modal-root .v381-transfer-route small{display:block;color:#6c8883;font-size:10px;font-weight:780;letter-spacing:.08em;margin-bottom:4px}
+#modal-root .v381-transfer-route strong{display:block;font-size:13px;line-height:1.28;overflow-wrap:anywhere}
+#modal-root .v381-transfer-route span{display:block;font-size:11px;color:#668078;margin-top:4px}
+#modal-root .v381-transfer-arrow{font-size:23px;text-align:center;color:#288875}
+#modal-root .v381-transfer-numbers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#modal-root .v381-transfer-numbers>div{padding:13px;border-radius:17px;border:1px solid #dcebe7;background:#fff;min-width:0}
+#modal-root .v381-transfer-numbers small{display:block;font-size:10px;line-height:1.35;color:#697f79;margin-bottom:5px}
+#modal-root .v381-transfer-numbers strong{display:block;font-size:clamp(19px,5.5vw,27px);line-height:1.12;letter-spacing:-.04em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#modal-root .v381-transfer-numbers .v381-receive strong{color:#087c69}
+#modal-root .v381-transfer-rows{display:grid;gap:0;border-top:1px solid #dbe8e5;border-bottom:1px solid #dbe8e5}
+#modal-root .v381-transfer-rows>div{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:9px 0;font-size:12px;line-height:1.4}
+#modal-root .v381-transfer-rows>div+div{border-top:1px solid #e3efeb}
+#modal-root .v381-transfer-rows span{color:#6d817d}
+#modal-root .v381-transfer-rows strong{text-align:right;font-weight:800;overflow-wrap:anywhere}
+#modal-root .v381-transfer-note{margin:0;font-size:11px;color:#5b7972;line-height:1.6}
+#modal-root .v381-transfer-note[data-warning="true"]{color:#a45d2d;font-weight:700}
+#modal-root .v381-transfer-preview .v381-warning{border-radius:13px;padding:10px 12px;background:#fff4e9;border:1px solid #edccab;color:#875326;font-size:11px;line-height:1.5;font-weight:720}
+#modal-root .v381-review-card{padding:13px 14px;border:1px solid #cfe4df;border-radius:18px;background:#f2faf8;display:grid;gap:7px;margin:10px 0}
+#modal-root .v381-review-card strong{font-size:13px;color:#175d55}
+#modal-root .v381-review-card p{margin:0;color:#54756c;font-size:11px;line-height:1.5}
+@media(max-width:790px){
+ #modal-root form[data-v381-transfer] .studio-fields{gap:11px!important}
+ #modal-root .v381-transfer-preview{padding:14px!important;border-radius:20px!important}
+ #modal-root .v381-transfer-route{grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr);gap:5px}
+ #modal-root .v381-transfer-route>div{padding:10px}
+ #modal-root .v381-transfer-route strong{font-size:12px}
+ #modal-root .v381-transfer-numbers strong{font-size:clamp(18px,5vw,24px)}
+ #modal-root form[data-v381-transfer] .flow-route{padding:8px}
+}
+@media(max-width:360px){#modal-root .v381-transfer-numbers{grid-template-columns:1fr}}
+body:is(.theme-black,.theme-dark) #modal-root form[data-v381-transfer]{--v381-ink:#f5f5f5;--v381-line:#333;--v381-soft:#0d0d0d}
+body:is(.theme-black,.theme-dark) #modal-root form[data-v381-transfer] :is(.flow-hero,.mqr-detail-amount,.flow-route){background:#090909!important;background-image:none!important;border-color:#303030!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-transfer-preview{background:#080808!important;background-image:none!important;color:#f5f5f5!important;border-color:#303030!important;box-shadow:none!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-transfer-route>div,
+body:is(.theme-black,.theme-dark) #modal-root .v381-transfer-numbers>div{background:#121212!important;border-color:#323232!important;color:#f5f5f5!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-transfer-preview :is(.v381-transfer-kind,.v381-transfer-route small,.v381-transfer-route span,.v381-transfer-rows span,.v381-transfer-note,.v381-transfer-numbers small){color:#b6b6b6!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-transfer-numbers .v381-receive strong{color:#8cddc9!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-transfer-rows{border-color:#303030!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-transfer-rows>div+div{border-color:#262626!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-transfer-preview .v381-warning{background:#24190f!important;border-color:#60452b!important;color:#ffd0a2!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-review-card{background:#111!important;border-color:#333!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-review-card strong{color:#b3f0df!important}
+body:is(.theme-black,.theme-dark) #modal-root .v381-review-card p{color:#bbb!important}
 </style>
 
 </body>
