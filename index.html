@@ -64565,7 +64565,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v261-dialog-footer{background:#05
     const mode=raw(form,'flowMode');return ({income:'Ingreso',spend:'Gasto',service:'Pago de servicio',cardpay:'Pago de tarjeta',own:'Transferencia entre cuentas',outgoing:'Transferencia a terceros'})[mode]||title||'Movimiento'}
   function rowsFor(form){const def=[['cardId','Tarjeta'],['loanId','Préstamo'],['accountId',raw(form,'flowMode')==='income'?'Cuenta de destino':raw(form,'flowMode')==='spend'?'Cuenta de pago':'Cuenta de origen'],['toAccountId','Cuenta receptora'],['payee','Beneficiario'],['destination','Destino del beneficio'],['paymentSource','Medio de pago'],['currency','Moneda'],['servicePreset','Servicio'],['category','Categoría'],['subcategory','Subcategoría'],['paymentChannel','Canal'],['date','Fecha'],['postingStatus','Estado']];return def.map(([name,title])=>({name,title,value:val(form,name)})).filter(x=>x.value).slice(0,9)}
   function dismiss(restore=true){const node=document.querySelector('#modal-root .v349-review-screen');node?.remove();if(pendingReview){const original=pendingReview.form.closest('.modal');original?.removeAttribute('aria-hidden');if(restore&&pendingReview.submitter?.isConnected)pendingReview.submitter.focus();pendingReview=null}}
-  function showReview(form,submitter){dismiss(false);const root=document.getElementById('modal-root');if(!root)return;const page=document.createElement('section');page.className='v349-review-screen';page.setAttribute('role','dialog');page.setAttribute('aria-modal','true');page.setAttribute('aria-label','Revisar antes de guardar');const panel=document.createElement('div');panel.className='v349-review-panel';panel.innerHTML=`<span class="v349-review-eyebrow">VIVE EL HOY · REVISIÓN FINAL</span><h2>Antes de guardar</h2><p>Revisa lo que vas a registrar. Nada se guardará hasta que lo confirmes.</p><div class="v349-review-amount"><small>Importe de la operación</small><strong></strong></div><div class="v349-review-grid"></div><div class="v349-review-note">Puedes volver y corregir cualquier dato antes de confirmar.</div><div class="v349-review-actions"><button type="button" class="v349-edit">Volver a editar</button><button type="button" class="v349-confirm">✓ Confirmar y guardar</button></div>`;
+  function showReview(form,submitter){dismiss(false);const root=document.getElementById('modal-root');if(!root)return;const page=document.createElement('section');page.className='v349-review-screen';page.setAttribute('role','dialog');page.setAttribute('aria-modal','true');page.setAttribute('aria-label','Revisar antes de guardar');const panel=document.createElement('div');panel.className='v349-review-panel';panel.innerHTML=`<div class="v352-review-header"><span class="v349-review-eyebrow">VIVE EL HOY · FINANZAS 360</span><h2>Revisar y confirmar</h2><p>Comprueba tu operación antes de guardarla.</p></div><div class="v352-review-stage"><div><span>PASO 3 DE 3 · REVISIÓN</span><div class="v352-review-progress" aria-hidden="true"><i></i><i></i><i></i></div></div><div class="v349-review-amount"><small>Importe</small><strong></strong></div></div><div class="v352-review-section-title">Resumen de la operación</div><div class="v349-review-grid"></div><div class="v349-review-note">La operación no se registra hasta que pulses Confirmar y guardar.</div><div class="v349-review-actions"><button type="button" class="v349-edit">Volver a editar</button><button type="button" class="v349-confirm">✓ Confirmar y guardar</button></div>`;
     panel.querySelector('.v349-review-amount strong').textContent=amountDisplay(form);
     const grid=panel.querySelector('.v349-review-grid');
     // Reuse existing accounting-engine receipt, including fees, taxes and net impact.
@@ -64628,7 +64628,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v261-dialog-footer{background:#05
         const original=footer.textContent.trim();
         footer.dataset.v349Label=original;
         // The action opens review. The final confirmation still uses the original handler.
-        if(!form.classList.contains('studio-form'))footer.textContent='Continuar y revisar  →';
+        if(!form.classList.contains('studio-form'))footer.textContent='Continuar a revisión  →';
       }
     }
   }
@@ -64849,5 +64849,68 @@ body:is(.theme-black,.theme-dark) #modal-root .v349-register-dialog
 })();
 </script>
 
+
+<style id="v352-review-only-separate-flow">
+/* V352: La captura NO contiene comprobantes. El motor original los mantiene en DOM
+   para reutilizar sus cifras y su desglose exclusivamente en la revisión final. */
+@media (max-width: 790px) {
+  #modal-root .v349-register-dialog>form :is(
+    #guidedReceipt,.flow-receipt-v4,.flow-payment-preview,
+    .other-studio-receipt,.fastx-receipt,.v134-receipt,
+    .v49-payment-breakdown,.v83-loan-payment-summary
+  ) { display:none!important; }
+  #modal-root .v349-register-dialog.v351-structured>form {
+    background:#000!important;
+    padding-bottom:calc(98px + env(safe-area-inset-bottom,0px))!important;
+  }
+  #modal-root .v349-review-screen{background:#000!important;align-items:stretch!important;}
+  #modal-root .v349-review-panel {
+    width:min(100vw,540px)!important;
+    height:100dvh!important;
+    max-height:100dvh!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    padding:calc(21px + env(safe-area-inset-top,0px)) clamp(17px,5vw,24px) calc(12px + env(safe-area-inset-bottom,0px))!important;
+    background:#000!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+  }
+}
+#modal-root .v352-review-header{display:flex;flex-direction:column;gap:8px;padding:3px 0 3px}
+#modal-root .v352-review-header h2{font-size:clamp(26px,7vw,36px)!important;line-height:1.08!important;color:#fff!important}
+#modal-root .v352-review-header p{font-size:13px!important;color:#a9a9a9!important;margin:0!important}
+#modal-root .v352-review-stage{
+  padding:16px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+  gap:9px!important;align-items:center!important;background:#10151c!important;
+  background-image:none!important;border:1px solid #2b3644!important;border-radius:18px!important;
+}
+#modal-root .v352-review-stage>div:first-child>span{
+  font-size:10px!important;letter-spacing:.095em!important;font-weight:800!important;color:#8bc8ff!important;
+}
+#modal-root .v352-review-progress{display:flex;gap:5px;margin-top:10px}
+#modal-root .v352-review-progress i{display:block;width:30px;height:5px;border-radius:4px;background:#2388f5!important}
+#modal-root .v352-review-stage .v349-review-amount{
+  min-width:0!important;text-align:right!important;padding:0!important;background:transparent!important;border:0!important;
+}
+#modal-root .v352-review-stage .v349-review-amount small{margin:0 0 2px!important;color:#b8cadb!important}
+#modal-root .v352-review-stage .v349-review-amount strong{font-size:clamp(21px,6vw,29px)!important;white-space:nowrap!important}
+#modal-root .v352-review-section-title{font-size:17px!important;font-weight:850!important;color:#f8f8f8!important;letter-spacing:-.03em!important;margin-bottom:-7px}
+#modal-root .v349-review-grid{background:#101010!important;border-color:#2e2e2e!important;}
+#modal-root .v349-review-actions{margin-top:auto!important;background:#000!important;box-shadow:0 -16px 25px #000!important;padding:16px 0 8px!important;}
+#modal-root .v349-review-actions button{min-height:52px!important;}
+#modal-root .v349-review-actions button.v349-confirm{background:#1765bb!important;border-color:#4196e7!important;color:#fff!important;}
+#modal-root .v349-review-screen :focus-visible{outline:2px solid #8bc8ff!important;outline-offset:3px!important}
+/* Asegurar modo Claro legible y coherente */
+body:not(.theme-black):not(.theme-dark) #modal-root .v349-review-screen,
+body:not(.theme-black):not(.theme-dark) #modal-root .v349-review-panel{background:#f5f7fa!important;color:#1c2d44!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v352-review-header h2,
+body:not(.theme-black):not(.theme-dark) #modal-root .v352-review-section-title{color:#17243b!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v352-review-header p{color:#5b6b82!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v352-review-stage{background:#eaf1fb!important;border-color:#c5d7ea!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v352-review-stage .v349-review-amount strong{color:#17243b!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v349-review-grid{background:#fff!important;border-color:#d9e2ee!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v349-review-actions{background:#f5f7fa!important;box-shadow:0 -16px 24px #f5f7fa!important}
+</style>
 </body>
 </html>
