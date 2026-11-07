@@ -24198,19 +24198,40 @@ document.addEventListener('click',function(e){
 
 /* V342 · Cuarto KPI. Usa exclusivamente fuentes de cálculo existentes. */
 function v342CreativePositionMobile(liquid,debt,net){
- const p=v290BudgetSnapshot();
- const ratio=Number.isFinite(Number(p.percent))?Math.max(0,Number(p.percent)):0;
- const progress=Math.min(100,ratio);
- const tone=ratio>100?'over':ratio>=85?'near':'normal';
- const circle=(title,value,kind)=>`<div class="v342-creative-orb v342-creative-${kind}"><small>${title}</small><strong title="${money(value,'DOP',2)}">${bubbleMoney(value)}</strong></div>`;
- return `<section class="v342-creative-position" aria-label="Tu posición financiera, estilo Creativo">
-  <div class="v342-creative-heading"><div><small>POSICIÓN · EN PERSPECTIVA</small><h2>Tu dinero, de un vistazo</h2></div><span aria-hidden="true">✳</span></div>
-  <button type="button" class="v342-creative-net" data-act="v186Deep" data-id="net" aria-label="Ver posición neta"><small>POSICIÓN NETA</small><strong>${money(net,'DOP',2)}</strong></button>
-  <div class="v342-creative-orbs">${circle('Liquidez',liquid,'liquid')}${circle('Deudas',debt,'debt')}${circle('Neto',net,'net')}</div>
-  <button type="button" class="v342-creative-budget" data-v290-budget-open="execution" aria-label="Abrir presupuesto"><div class="v342-budget-ring ${tone}" style="--v342-progress:${progress}%"><div><strong>${v290BudgetPct(p.percent)}</strong><small>utilizado</small></div></div><div class="v342-budget-copy"><small>PRESUPUESTO DEL MES</small><strong>${money(p.remaining)}</strong><span>${p.remaining<0?'Por encima del límite':'Disponible para usar'}</span><div class="v342-budget-meter"><i style="width:${progress}%"></i></div></div><span class="v342-budget-arrow">↗</span></button>
+ // V344 — tablero de lectura rápida: reutiliza los mismos cálculos del resto de la aplicación.
+ const p=v290BudgetSnapshot(),capacity=v89DebtCapacity(),m=monthStats();
+ const pct=Number.isFinite(p.percent)?p.percent:null;
+ const debtRatio=Number.isFinite(capacity.ratio)?capacity.ratio:null;
+ const todayMonth=ui.month||today().slice(0,7);
+ const nextDate=dateObj(todayMonth+'-01');nextDate.setMonth(nextDate.getMonth()+1);
+ const nextMonth=dateStr(nextDate).slice(0,7);
+ const nextDue=v99DebtMonth(nextMonth).monthly;
+ const pctLabel=n=>n===null?'—':v85Pct(n);
+ const clamp=n=>n===null?0:Math.max(0,Math.min(100,n));
+ const budgetFlag=pct===null?'unplanned':pct>100?'urgent':pct>=85?'watch':'stable';
+ const debtFlag=debtRatio===null?'unplanned':debtRatio>100?'urgent':debtRatio>=80?'watch':'stable';
+ const netFlag=net<-.005?'urgent':net>=0?'stable':'watch';
+ // Los estados reflejan únicamente los indicadores calculados, no una calificación crediticia.
+ const headline=net<0?'Tus deudas superan tus activos':debtRatio!==null&&debtRatio>100?'Tus pagos superan tus ingresos previstos':pct!==null&&pct>100?'Tu presupuesto superó el límite':debtRatio===null&&pct===null?'Tu panorama financiero, sin suposiciones':debtRatio!==null&&debtRatio>=80?'Tus ingresos están muy comprometidos':pct!==null&&pct>=85?'Tu presupuesto necesita atención':'Tu panorama de hoy, de un vistazo';
+ const subline=net<0?'Revisa tu deuda y tu liquidez.':debtRatio!==null&&debtRatio>100?'Revisa los pagos exigibles del mes.':pct!==null&&pct>100?'Ya has superado el presupuesto asignado.':'Los datos salen de tus registros y compromisos.';
+ const ring=(title,value,caption,flag,percent,action,aria)=>`<button type="button" class="v344-ring-tile v344-${flag}" ${action} aria-label="${aria}"><span class="v344-ring" style="--v344-ring-pct:${clamp(percent)}%"><span class="v344-ring-core"><strong>${pctLabel(value)}</strong></span></span><span class="v344-ring-label">${title}</span><small>${caption}</small></button>`;
+ return `<section class="v344-creative v342-creative-position" aria-label="Panel Creativo de situación financiera">
+  <div class="v344-top"><span class="v344-kicker"><span class="v344-live-dot" aria-hidden="true"></span> TU MAPA FINANCIERO</span><span class="v344-mini-date">${sanitize(todayMonth)}</span></div>
+  <div class="v344-headline"><span class="v344-status v344-${netFlag}" aria-hidden="true">✦</span><div><h2>${headline}</h2><p>${subline}</p></div></div>
+  <button type="button" class="v344-hero" data-act="v186Deep" data-id="net" aria-label="Explorar la composición de tu posición neta"><span>POSICIÓN NETA <span aria-hidden="true">↗</span></span><strong>${money(net,'DOP',2)}</strong><small>Activos menos deudas · equivalente RD$</small></button>
+  <div class="v344-duo" aria-label="Presupuesto y capacidad de endeudamiento">
+   ${ring('Presupuesto',pct,pct===null?'Sin presupuesto':pct>100?'Límite superado':'Del límite utilizado',budgetFlag,pct,'data-v290-budget-open="execution"','Abrir presupuesto mensual')}
+   ${ring('Endeudamiento',debtRatio,debtRatio===null?'Sin ingresos de referencia':debtRatio>100?'Supera ingresos':'De ingresos comprometidos',debtFlag,debtRatio,'data-v85-action="capacity"','Abrir capacidad de endeudamiento')}
+  </div>
+  <div class="v344-facts" aria-label="Indicadores financieros esenciales">
+   <button type="button" data-act="v186Deep" data-id="liquidity"><span>LIQUIDEZ</span><strong>${bubbleMoney(liquid)}</strong><small>Disponible en cuentas</small></button>
+   <button type="button" data-act="v186Deep" data-id="debt"><span>DEUDAS</span><strong>${bubbleMoney(debt)}</strong><small>Saldo pendiente total</small></button>
+   <button type="button" data-v290-budget-open="execution"><span>PRESUPUESTO LIBRE</span><strong>${p.percent===null?'Sin definir':bubbleMoney(p.remaining)}</strong><small>Después del gasto cubierto</small></button>
+   <button type="button" data-act="navigate" data-id="advanced"><span>BALANCE DEL MES</span><strong>${bubbleMoney(m.net)}</strong><small>Ingresos − egresos</small></button>
+  </div>
+  <button type="button" class="v344-tomorrow" data-act="navigate" data-id="payments" aria-label="Abrir Visión global y consultar pagos próximos"><span class="v344-tomorrow-symbol" aria-hidden="true">◷</span><span><small>EL COSTO DEL MAÑANA</small><strong>${money(nextDue)}</strong><em>Compromisos del próximo mes · estimación</em></span><span class="v344-tomorrow-arrow" aria-hidden="true">↗</span></button>
  </section>`;
 }
-
 function mobileHome(){
  const m=monthStats(),liquid=totalLiquid(),debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
  // Exclusivamente obligaciones por pagar: nunca sumar préstamos por cobrar.
@@ -24251,12 +24272,12 @@ function mobileHome(){
    return `<div class="vive-mobile-due-row v105-mobile-due"><div><strong title="${sanitize(o.name)}">${sanitize(o.name)}</strong><small>${overdue?'<span class="vive-mobile-late-label">Vencido</span> · ':''}${prettyDate(o.date)} · ${kindName}</small></div><b>${money(o.amount,o.currency)}</b><button type="button" class="v105-pay-mini" data-v105-pay-menu="1" data-kind="${o.kind}" data-ref="${sanitize(o.ref)}" data-ccy="${sanitize(o.ccy||o.currency||'DOP')}" data-due="${sanitize(o.date)}" data-amount="${Number(o.amount)||0}" aria-label="Opciones para pagar ${sanitize(o.name)}">Pagar</button></div>`;
  }).join('');
  return `<div class="vive-mobile-home vive-mobile-home-essential" data-mobile-experience="${vis?'vision':'claridad'}">
-   <div class="vive-mobile-greeting v51-executive-greeting"><span class="vive-mobile-eyebrow">TU PANORAMA · ${new Date().toLocaleDateString('es-DO',{month:'long',year:'numeric'}).toUpperCase()}</span><h1>Resumen financiero</h1><p>Lo que tienes, lo que debes y lo que viene.</p><button type="button" class="v273-personalize-link" data-v273-open-personalization="1" aria-label="Personalizar estilo y secciones del Resumen"><span class="v309-personalize-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/><path d="M6 11v2m7-8h2m-2 11h2"/></svg></span>Personalizar</button></div>
+   <div class="vive-mobile-greeting v51-executive-greeting"><span class="vive-mobile-eyebrow">TU PANORAMA · ${new Date().toLocaleDateString('es-DO',{month:'long',year:'numeric'}).toUpperCase()}</span><h1>Resumen financiero</h1><p>Lo que tienes, lo que debes y lo que viene.</p><button type="button" class="v273-personalize-link" data-v273-open-personalization="1" aria-label="Personalizar estilo y secciones del Resumen"><span class="v309-personalize-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="8" height="8" rx="2"/><rect x="13.5" y="2.5" width="8" height="5.5" rx="1.6"/><rect x="2.5" y="13.5" width="8" height="8" rx="2"/><rect x="13.5" y="10.5" width="8" height="11" rx="2"/></svg></span>Personalizar</button></div>
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
    ${v105CapacityWidget(true)}
    <!-- V319: tarjeta resumen redundante eliminada; presupuesto sigue en su módulo. -->
-   <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Visión global</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div><div class="v96-month-due-note">Pendiente hasta fin de mes, incluidos vencidos: <strong>${money(pendingTotal,'DOP',2)}</strong></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
+   <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div><div class="v96-month-due-note">Pendiente hasta fin de mes, incluidos vencidos: <strong>${money(pendingTotal,'DOP',2)}</strong></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
    <section data-v105-widget="payments" class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
    <section data-v105-widget="net" class="vive-mobile-net-card v36-month-capsule" aria-label="Balance del mes"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RESUMEN MENSUAL</span><h2>Balance del mes</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="advanced">Ver análisis ${icon('up')}</button></div><div class="v36-month-columns"><span><small>Ingresos</small><strong class="v36-income">${money(m.income)}</strong></span><span><small>Egresos</small><strong class="v36-expense">${money(m.expense)}</strong></span></div><div class="v36-month-net"><span><small>Neto</small><strong class="vive-mobile-net-value ${m.net<0?'negative':''}" title="Ingresos menos egresos: ${money(m.net,'DOP',2)}">${money(m.net)}</strong></span><small>${netLabel}</small></div></section>
    <section data-v105-widget="chart" class="v105-mobile-extra" aria-label="Gráfico de ingresos y egresos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">EVOLUCIÓN</span><h2>Ingresos y egresos</h2></div></div>${mobileMiniTrend()}</section>
@@ -33270,7 +33291,7 @@ document.addEventListener('keydown',ev=>{
 const v105OldRender=render;
 render=function(...args){const value=v105OldRender.apply(this,args);v105ApplyWidgetPreferences();return value;};
 
-/* V119 · EL COSTO DE MAÑANA
+/* V119 · EL COSTO DEL MAÑANA
    Simulaciones en memoria: no crean transacciones ni realizan llamadas de red.
    Se parte del saldo líquido confirmado hoy y se separan ingresos programados
    de cargos pendientes con fecha. Nunca se infieren ingresos no programados. */
@@ -35511,9 +35532,9 @@ document.addEventListener('change',event=>{
 function v242SettingsPreview(){
  const chosen=['original','circles','integral','creative'].includes(db.settings.mobilePositionStyle)?db.settings.mobilePositionStyle:'original';
  const liquid=totalLiquid(), debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
- return `<section class="v242-appearance-picker" aria-label="Estilo del indicador principal en iPhone"><div class="v242-preference-title"><div><span class="summary-tag">RESUMEN · SOLO IPHONE</span><h3>Tu posición financiera</h3><p>Elige entre tres estilos, incluido el resumen integral con presupuesto. El escritorio conserva su apariencia actual.</p></div><span class="v242-setting-kicker">Se sincroniza con tu cuenta</span></div><div class="v242-appearance-grid">
+ return `<section class="v242-appearance-picker" aria-label="Estilo del indicador principal en iPhone"><div class="v242-preference-title"><div><span class="summary-tag">RESUMEN · SOLO IPHONE</span><h3>Tu posición financiera</h3><p>Elige uno de cuatro estilos: Creativo reúne posición, presupuesto, deuda y próximos compromisos. El escritorio conserva su apariencia actual.</p></div><span class="v242-setting-kicker">Se sincroniza con tu cuenta</span></div><div class="v242-appearance-grid">
  <button type="button" class="v242-style-option ${chosen==='original'?'selected':''}" data-v242-style="original" aria-pressed="${chosen==='original'}"><span class="v242-style-art v242-mini-original"><span class="v242-mini-label">Liquidez disponible</span><strong>${bubbleMoney(liquid)}</strong><span class="v242-mini-divider"></span><span class="v242-mini-foot"><i>Deudas <b>${bubbleMoney(debt)}</b></i><i>Posición neta <b>${bubbleMoney(net)}</b></i></span></span><span class="v242-style-description"><strong>Original móvil</strong><small>El diseño predeterminado</small><i aria-hidden="true">${chosen==='original'?'✓':'○'}</i></span></button>
- <button type="button" class="v242-style-option ${chosen==='circles'?'selected':''}" data-v242-style="circles" aria-pressed="${chosen==='circles'}"><span class="v242-style-art v242-mini-circles"><span class="v242-mini-title">Tu posición financiera</span><strong>${bubbleMoney(net)}</strong><span class="v242-mini-orbs"><i><b>${bubbleMoney(liquid)}</b><small>Liquidez</small></i><i class="v242-featured"><b>${bubbleMoney(debt)}</b><small>Deudas</small></i><i><b>${bubbleMoney(net)}</b><small>Neto</small></i></span></span><span class="v242-style-description"><strong>Tres círculos</strong><small>Adaptación del diseño web</small><i aria-hidden="true">${chosen==='circles'?'✓':'○'}</i></span></button><button type="button" class="v242-style-option v290-style-integral ${chosen==='integral'?'selected':''}" data-v242-style="integral" aria-pressed="${chosen==='integral'}"><span class="v242-style-art v290-mini-integral"><span class="v290-mini-head">POSICIÓN + PRESUPUESTO</span><strong>${bubbleMoney(net)}</strong><span class="v290-mini-metrics"><i>Liquidez <b>${bubbleMoney(liquid)}</b></i><i>Deudas <b>${bubbleMoney(debt)}</b></i></span><span class="v290-mini-budget"><span>Presupuesto</span><b>${v290BudgetPct(v290BudgetSnapshot().percent)}</b></span><span class="v290-mini-meter"><i style="width:${Math.max(0,Math.min(100,v290BudgetSnapshot().percent||0))}%"></i></span></span><span class="v242-style-description"><strong>Integral 360</strong><small>Posición y presupuesto en un solo KPI</small><i aria-hidden="true">${chosen==='integral'?'✓':'○'}</i></span></button><button type="button" class="v242-style-option v342-style-creative ${chosen==='creative'?'selected':''}" data-v242-style="creative" aria-pressed="${chosen==='creative'}"><span class="v242-style-art v342-mini-creative"><span class="v342-preview-kicker">TU POSICIÓN · CREATIVO</span><strong>${bubbleMoney(net)}</strong><span class="v342-mini-circles"><i>${bubbleMoney(liquid)}</i><i>${bubbleMoney(debt)}</i><i>${bubbleMoney(net)}</i></span><span class="v342-mini-progress"><b style="width:${Math.max(0,Math.min(100,v290BudgetSnapshot().percent||0))}%"></b></span><small>Presupuesto · ${v290BudgetPct(v290BudgetSnapshot().percent)}</small></span><span class="v242-style-description"><strong>Creativo</strong><small>Círculos y presupuesto integrado</small><i aria-hidden="true">${chosen==='creative'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Los cuatro estilos reutilizan tus cifras reales; el escritorio conserva su diseño. Cambiar el estilo no modifica registros.</p></section>`;
+ <button type="button" class="v242-style-option ${chosen==='circles'?'selected':''}" data-v242-style="circles" aria-pressed="${chosen==='circles'}"><span class="v242-style-art v242-mini-circles"><span class="v242-mini-title">Tu posición financiera</span><strong>${bubbleMoney(net)}</strong><span class="v242-mini-orbs"><i><b>${bubbleMoney(liquid)}</b><small>Liquidez</small></i><i class="v242-featured"><b>${bubbleMoney(debt)}</b><small>Deudas</small></i><i><b>${bubbleMoney(net)}</b><small>Neto</small></i></span></span><span class="v242-style-description"><strong>Tres círculos</strong><small>Adaptación del diseño web</small><i aria-hidden="true">${chosen==='circles'?'✓':'○'}</i></span></button><button type="button" class="v242-style-option v290-style-integral ${chosen==='integral'?'selected':''}" data-v242-style="integral" aria-pressed="${chosen==='integral'}"><span class="v242-style-art v290-mini-integral"><span class="v290-mini-head">POSICIÓN + PRESUPUESTO</span><strong>${bubbleMoney(net)}</strong><span class="v290-mini-metrics"><i>Liquidez <b>${bubbleMoney(liquid)}</b></i><i>Deudas <b>${bubbleMoney(debt)}</b></i></span><span class="v290-mini-budget"><span>Presupuesto</span><b>${v290BudgetPct(v290BudgetSnapshot().percent)}</b></span><span class="v290-mini-meter"><i style="width:${Math.max(0,Math.min(100,v290BudgetSnapshot().percent||0))}%"></i></span></span><span class="v242-style-description"><strong>Integral 360</strong><small>Posición y presupuesto en un solo KPI</small><i aria-hidden="true">${chosen==='integral'?'✓':'○'}</i></span></button><button type="button" class="v242-style-option v342-style-creative ${chosen==='creative'?'selected':''}" data-v242-style="creative" aria-pressed="${chosen==='creative'}"><span class="v242-style-art v342-mini-creative"><span class="v342-preview-kicker">TU MAPA FINANCIERO</span><strong>${bubbleMoney(net)}</strong><span class="v342-mini-circles"><i>${bubbleMoney(liquid)}</i><i>${bubbleMoney(debt)}</i><i>${bubbleMoney(net)}</i></span><span class="v342-mini-progress"><b style="width:${Math.max(0,Math.min(100,v290BudgetSnapshot().percent||0))}%"></b></span><small>Presupuesto · ${v290BudgetPct(v290BudgetSnapshot().percent)} · Deuda mensual</small></span><span class="v242-style-description"><strong>Creativo</strong><small>Tu situación completa en un vistazo</small><i aria-hidden="true">${chosen==='creative'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Los cuatro estilos reutilizan tus cifras reales; el escritorio conserva su diseño. Cambiar el estilo no modifica registros.</p></section>`;
 }
 
 function v273SettingsWidgetEditor(){
@@ -35523,9 +35544,7 @@ function v273SettingsWidgetEditor(){
   const on=visible.has(id);
   return `<div class="v273-custom-row v316-custom-row ${on?'is-enabled':'is-disabled'}" data-v316-row="${id}"><button type="button" class="v342-drag-handle" data-v342-drag="${id}" aria-label="Mantener presionado para mover ${sanitize(w.title)}" title="Mantén presionado para mover">⠿</button><span class="v273-custom-copy"><strong>${sanitize(w.title)}</strong><small>${sanitize(w.hint)}</small></span><div class="v273-custom-controls"><button type="button" class="v273-visibility ${on?'is-on':''}" data-v273-toggle="${id}" role="switch" aria-checked="${on}" aria-label="${on?'Ocultar':'Mostrar'} ${sanitize(w.title)}"><span></span></button><button type="button" class="v273-order" data-v273-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${sanitize(w.title)}">↑</button><button type="button" class="v273-order" data-v273-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${sanitize(w.title)}">↓</button></div></div>`;
  };
- const groups=v332PersonalizationGroups(cfg);
- const ratio=ids=>String(ids.length).padStart(2,'0');
- const sections=groups.map(g=>{const ids=g.ids.filter(id=>cfg.order.includes(id));return `<div class="v316-essentials-head v328-group-heading"><span>${g.title}</span><span>${ratio(ids)}</span></div><div class="v273-custom-rows v328-section-rows">${ids.map(row).join('')}</div>`}).join('');
+ const sections=`<div class="v273-custom-rows v328-section-rows v344-order-free">${cfg.order.map(row).join('')}</div>`;
  return `<section class="v273-settings-customizer v316-personalization v328-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Tu espacio, a tu manera</h3><p>Mantén presionado el control de bloques para mover cualquier indicador, incluso entre áreas. También puedes usar las flechas. El mismo orden se refleja en Mis indicadores web.</p></header>
  ${sections}
  <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. En web los ${V105_WIDGETS.length} elementos siguen disponibles en Mis indicadores. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
@@ -35541,10 +35560,6 @@ function v296PersonalizePage(){
  <section id="v296-widgets" class="v296-block" aria-label="Módulos y orden del Resumen">${v273SettingsWidgetEditor()}</section>`;
  return `<div class="v296-personalize" aria-label="Personalización de vive el hoy">
   <header class="v296-hero"><div class="v296-hero-top"><button type="button" data-v296-back="1" class="v296-back">${icon('arrow')} Inicio</button><span class="v296-hero-label">vive el hoy · tu espacio</span></div><span class="v296-eyebrow">DISEÑA TU EXPERIENCIA</span><h2>Personalización</h2><p>Organiza tu Resumen móvil en negro profundo. Liquid Glass, temas y colores se ajustan desde Ajustes.</p></header>
-  <nav class="v296-nav" aria-label="Secciones de personalización">
-   <a href="#v296-kpi">${icon('wallet')} KPI principal</a>
-   <a href="#v296-widgets">${icon('grid')} Mi resumen</a>
-  </nav>
   <div class="v296-settings-body">${sections}</div>
   <footer class="v296-end"><span>Las preferencias visuales no modifican saldos, operaciones ni registros.</span><button type="button" data-v296-back="1">Volver a Inicio ${icon('arrow')}</button></footer>
  </div>`;
@@ -49129,5 +49144,161 @@ body:not(.theme-black) .v343-coverage,body:not(.theme-black) .v343-buffer,body:n
 /* Remove only old Gastos hormiga navigation entries; preserve history and accounting. */
 [data-act="navigate"][data-id="antExpenses"],.module-switch-tab[data-id="antExpenses"],.v205-explore-link[data-id="antExpenses"]{display:none!important}
 </style>
+
+<style id="v344-creative-register-oled">
+/* V344: interfaz creativa — 100% presentation. Reuses existing financial data and actions. */
+.v344-creative{--v344-green:#69dca6;--v344-orange:#ffa86c;--v344-red:#ff8493;display:grid;gap:13px;padding:18px!important;border-radius:27px!important;min-width:0;overflow:hidden;}
+.v344-creative *{box-sizing:border-box}.v344-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.v344-kicker{font-size:10px;letter-spacing:.12em;font-weight:850;display:inline-flex;align-items:center;gap:7px}.v344-live-dot{width:7px;height:7px;border-radius:100%;background:var(--v344-green);box-shadow:0 0 0 4px rgba(57,188,119,.10)}.v344-mini-date{font-size:10px;letter-spacing:.08em;color:#838d9a}.v344-headline{display:flex;gap:10px;align-items:start;min-width:0}.v344-headline h2{font-size:clamp(17px,4.8vw,22px)!important;line-height:1.16;margin:0!important;font-weight:830;letter-spacing:-.035em}.v344-headline p{font-size:11px!important;line-height:1.4;margin:5px 0 0!important}.v344-status{display:grid;place-items:center;width:29px;height:29px;flex:none;border:1px solid currentColor;border-radius:12px;font-size:17px}.v344-status.v344-stable{color:#258956}.v344-status.v344-urgent{color:#bd364b}.v344-hero{border:1px solid #ccd4df;background:#fff;text-align:left;border-radius:21px;padding:16px 15px;display:flex;flex-direction:column;gap:5px;color:#243247;min-width:0;width:100%}.v344-hero>span{display:flex;justify-content:space-between;font-size:10px;font-weight:850;letter-spacing:.11em}.v344-hero strong{font-size:clamp(27px,8.3vw,43px);line-height:1.06;font-weight:900;letter-spacing:-.065em;overflow-wrap:anywhere}.v344-hero small{font-size:10px;color:#708093}.v344-duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.v344-ring-tile{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;background:#fff;color:#263246;border:1px solid #dce2ec;border-radius:20px;padding:14px 8px 13px}.v344-ring{width:clamp(93px,28vw,130px);height:clamp(93px,28vw,130px);border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--v344-green) var(--v344-ring-pct),#e9edf2 0);padding:9px;flex:none}.v344-ring-tile.v344-watch .v344-ring{background:conic-gradient(var(--v344-orange) var(--v344-ring-pct),#e9edf2 0)}.v344-ring-tile.v344-urgent .v344-ring{background:conic-gradient(var(--v344-red) var(--v344-ring-pct),#e9edf2 0)}.v344-ring-tile.v344-unplanned .v344-ring{background:conic-gradient(#a2a8b0 0,#e9edf2 0)}.v344-ring-core{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;background:#fff;min-width:0}.v344-ring-core strong{font-size:clamp(20px,5.4vw,30px);font-weight:880;letter-spacing:-.05em;white-space:nowrap}.v344-ring-label{font-size:12px;font-weight:850}.v344-ring-tile small{font-size:10px;line-height:1.3;text-align:center;color:#768395;min-height:26px}.v344-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.v344-facts button{background:#f7f8fb;border:1px solid #e0e4eb;border-radius:16px;padding:12px 11px;display:flex;flex-direction:column;min-width:0;gap:5px;text-align:left;color:#253246}.v344-facts button>span{font-size:9px;letter-spacing:.09em;font-weight:800;color:#718095}.v344-facts strong{font-size:clamp(17px,5vw,24px);font-weight:880;letter-spacing:-.045em;overflow-wrap:anywhere}.v344-facts small{font-size:10px;line-height:1.3;color:#778596}.v344-tomorrow{display:flex;gap:11px;align-items:center;text-align:left;background:#141414;border:1px solid #292929;border-radius:18px;padding:13px;color:#fff;min-width:0}.v344-tomorrow-symbol{width:43px;height:43px;border-radius:14px;background:#292929;flex:none;display:grid;place-items:center;font-size:25px;color:#f1f1f1}.v344-tomorrow>span:nth-child(2){display:grid;gap:3px;min-width:0;flex:1}.v344-tomorrow small{color:#b9b9b9;font-size:9px;letter-spacing:.12em;font-weight:850}.v344-tomorrow strong{font-size:21px;letter-spacing:-.04em;overflow-wrap:anywhere}.v344-tomorrow em{font-size:10px;font-style:normal;color:#aaa}.v344-tomorrow-arrow{font-size:21px;color:#eee}
+body.theme-black .v344-creative{background:#000!important;background-image:none!important;border:1px solid #222!important;color:#f6f6f6!important;box-shadow:none!important}
+body.theme-black .v344-kicker{color:#bcbcbc!important}body.theme-black .v344-mini-date{color:#999!important}body.theme-black .v344-headline h2{color:#f8f8f8!important}body.theme-black .v344-headline p{color:#acacac!important}
+body.theme-black .v344-hero,body.theme-black .v344-ring-tile,body.theme-black .v344-facts button,body.theme-black .v344-tomorrow{background:#0e0e0e!important;background-image:none!important;color:#f5f5f5!important;border:1px solid #272727!important;box-shadow:none!important}
+body.theme-black .v344-ring-core{background:#0e0e0e!important;color:#fff!important}
+body.theme-black .v344-ring{background:conic-gradient(var(--v344-green) var(--v344-ring-pct),#303030 0)!important}
+body.theme-black .v344-watch .v344-ring{background:conic-gradient(var(--v344-orange) var(--v344-ring-pct),#303030 0)!important}
+body.theme-black .v344-urgent .v344-ring{background:conic-gradient(var(--v344-red) var(--v344-ring-pct),#303030 0)!important}
+body.theme-black .v344-unplanned .v344-ring{background:#292929!important}
+body.theme-black .v344-hero :is(small,span),body.theme-black .v344-ring-tile small,body.theme-black .v344-facts :is(span,small),body.theme-black .v344-tomorrow :is(small,em){color:#aaa!important}
+body.theme-black .v344-hero strong,body.theme-black .v344-ring-core strong,body.theme-black .v344-facts strong,body.theme-black .v344-tomorrow strong{color:#fff!important}
+body.theme-black .v344-tomorrow-symbol{background:#212121!important;color:#fff!important}
+/* Important: restore non-Black styling even when earlier generic theme selectors are present. */
+body:not(.theme-black):not(.theme-dark) .v344-creative{background:linear-gradient(155deg,#f5f8fc,#e8eef6)!important;color:#1d2b42!important}
+/* No divider headings inside customization; true cross-section order. */
+.v344-order-free{display:grid;gap:8px}.v344-order-free .v273-custom-row{margin:0!important;min-width:0}.v296-personalize .v296-nav{display:none!important}
+/* Strict OLED surface system for the floating registration assistant AND its child forms. */
+body.theme-black #modal-root :is(.modal-layer,.v235-register-layer,.mqr-layer){background:rgba(0,0,0,.93)!important;background-image:none!important}
+body.theme-black #modal-root :is(.v235-register-dialog,.modal,.mqr-modal,.studio-form,.fastx-form,.other-studio-form,.other-studio-picker,.vr-register,.vr-workspace,.vr-content,.vr-panel,.vr-detail,.vr-form,.vr-operation-body,.vr-step,.vr-group,.v29-other-content,.v235-register-close){background:#050505!important;background-image:none!important;color:#f3f3f3!important;border-color:#272727!important;box-shadow:none!important}
+body.theme-black #modal-root :is(.vr-switcher,.vr-operation,.v29-other-action,.vr-guidance,.vr-operation-icon,.v29-other-icon,.vr-switch,.vr-step-item,.vr-card,.vr-form-section,.form-grid,.form-section,.modal-form,.vr-pick-card,.vr-field,.vr-fieldset,.vr-information,.vr-amount-panel,.vr-choice,.vr-card-item,.v29-other-row,.v29-other-card){background:#101010!important;background-image:none!important;border-color:#2b2b2b!important;color:#ededed!important;box-shadow:none!important}
+body.theme-black #modal-root :is(.vr-switch.selected,.vr-operation.selected,.vr-choice.selected,.v29-other-action.selected,.vr-step-item.active){background:#202020!important;background-image:none!important;border-color:#555!important;color:#fff!important;box-shadow:none!important}
+body.theme-black #modal-root :is(input,select,textarea,.field,.filter-select,[contenteditable="true"]){background:#161616!important;background-image:none!important;color:#f6f6f6!important;border:1px solid #3b3b3b!important;box-shadow:none!important;color-scheme:dark!important}
+body.theme-black #modal-root :is(input,textarea)::placeholder{color:#929292!important}
+body.theme-black #modal-root :is(h1,h2,h3,h4,h5,strong,b,label,.vr-operation-copy,.v29-other-copy,.vr-form-title){color:#f5f5f5!important}
+body.theme-black #modal-root :is(small,p,.subtle,.helper-text,.vr-workspace-head p,.vr-group-heading,.vr-guidance p,.v29-other-copy small){color:#aeaeae!important}
+body.theme-black #modal-root :is(.btn,.btn.primary,.f33-primary,.vr-primary,.vr-confirm,.vr-continue,.vr-submit,button[type="submit"]){background:#202020!important;background-image:none!important;border:1px solid #4b4b4b!important;color:#fff!important;box-shadow:none!important}
+body.theme-black #modal-root :is(.btn.soft,.btn.ghost,.vr-secondary,.v235-register-close .close){background:#141414!important;border-color:#333!important;color:#eaeaea!important}
+body.theme-black #modal-root :is(.vr-operation-icon,.v29-other-icon,.vr-switch-symbol){background:#222!important;color:#eee!important}
+body.theme-black #modal-root :is(.vr-switch:hover,.vr-operation:hover,.v29-other-action:hover,.btn:hover){filter:brightness(1.18)}
+/* Home: black in every major card, quick-action buttons, payment and monthly balance. */
+body.theme-black .vive-mobile-home :is(.vive-mobile-quick-actions button,.vive-mobile-commitments,.vive-mobile-dues,.vive-mobile-net-card,.v36-month-capsule,.v36-commitment-group,.v36-commitment-items,.v105-capacity-widget,.v105-mobile-extra,.v273-overview-widget,.v324-cost-card,.v324-cost-design){background:#090909!important;background-image:none!important;border-color:#262626!important;color:#f5f5f5!important;box-shadow:none!important}
+body.theme-black .vive-mobile-home :is(.vive-mobile-quick-actions button,.v105-pay-mini,.v36-commitment-detail button,.vive-mobile-view-all){background:#151515!important;background-image:none!important;color:#f4f4f4!important;border-color:#313131!important}
+body.theme-black .vive-mobile-home :is(.vive-mobile-card-head h2,.vive-mobile-commitment-value,.v36-month-net strong,.vive-mobile-dues strong){color:#f7f7f7!important}
+body.theme-black .vive-mobile-home :is(.vive-mobile-eyebrow,.vive-mobile-commitment-foot,.v36-month-columns small,.v36-month-net small,.vive-mobile-due-row small){color:#aeaeae!important}
+/* Leave OLED intact in colorful data visualizations: color signals remain only for status/progress. */
+@media(max-width:375px){.v344-creative{padding:13px!important;gap:9px}.v344-duo{gap:7px}.v344-ring-tile{padding:10px 3px}.v344-ring{width:93px;height:93px}.v344-facts{gap:7px}.v344-facts button{padding:10px 8px}.v344-tomorrow{padding:10px 9px}}
+
+/* V344 · final OLED containment for deeply nested payment forms. */
+body.theme-black .v242-mini-creative,body.theme-black .v342-mini-creative,body.theme-black .v342-mini-circles i{background:#111!important;background-image:none!important;border-color:#2a2a2a!important;color:#f3f3f3!important}
+body.theme-black #modal-root .v235-register-layer .vr-switcher .vr-switch.selected{background:#232323!important;background-image:none!important;border:1px solid #444!important;color:#fff!important;box-shadow:none!important}
+body.theme-black #modal-root .v235-register-layer :is(.vr-switch-symbol,.vr-operation-icon,.v29-other-icon){background:#222!important;background-image:none!important;color:#f3f3f3!important}
+body.theme-black #modal-root .modal:has(form) :is(form,fieldset,.panel,.card,.section,.form-section,.form-grid,.form-column,.form-group,.form-row,.form-field,.input-group,.studio-step,.studio-card,.studio-panel,.studio-body,.modal-body,.other-studio-body,.other-studio-step,.mqr-body,.mqr-card,.mqr-section){background:#0b0b0b!important;background-image:none!important;border-color:#2c2c2c!important;color:#eee!important}
+body.theme-black #modal-root .modal:has(form) :is(input,select,textarea){background:#161616!important;background-image:none!important;border:1px solid #383838!important;color:#f5f5f5!important;color-scheme:dark!important}
+body.theme-black #modal-root .modal:has(form) :is(option,optgroup){background:#151515!important;color:#eee!important}
+</style>
+
+
+<style id="v345-register-numbers-oled-fix">
+/* V345: CSS preciso para los controles que permanecían blancos en Registrar.
+   Mantiene intactos los handlers y la contabilidad. Aplica solo a Black. */
+body.theme-black #modal-root .mqr-layer,
+body.theme-black #modal-root .mqr-modal,
+body.theme-black #modal-root .mqr-scroll,
+body.theme-black #modal-root .mqr-shell,
+body.theme-black #modal-root .mqr-modal>.mqr-header,
+body.theme-black #modal-root .mqr-modal>.mqr-bottom,
+body.theme-black #modal-root .mqr-modal .mqr-keypad,
+body.theme-black #modal-root .mqr-modal .mqr-segment,
+body.theme-black #modal-root .mqr-modal .mqr-presets,
+body.theme-black #modal-root .mqr-modal .mqr-display,
+body.theme-black #modal-root .mqr-modal .mqr-transfer-kinds,
+body.theme-black #modal-root .mqr-modal .mqr-extra-categories{
+  background:#050505!important;background-image:none!important;
+  color:#f5f5f5!important;border-color:#252525!important;box-shadow:none!important;
+}
+body.theme-black #modal-root .mqr-modal .mqr-header :is(h2, .close){color:#f5f5f5!important}
+body.theme-black #modal-root .mqr-modal .mqr-header .close{
+  background:#171717!important;border:1px solid #303030!important;box-shadow:none!important;
+}
+body.theme-black #modal-root .mqr-modal .mqr-display>strong,
+body.theme-black #modal-root .mqr-modal #mqrAmountValue{
+  color:#fff!important;background:none!important;text-shadow:none!important;
+  font-variant-numeric:tabular-nums!important;
+}
+body.theme-black #modal-root .mqr-modal .mqr-display>small,
+body.theme-black #modal-root .mqr-modal .mqr-display>span,
+body.theme-black #modal-root .mqr-modal .mqr-step-caption{
+  color:#b9b9b9!important;
+}
+/* El fallo concreto: el teclado numérico estaba fijado en #fff con !important. */
+body.theme-black #modal-root .mqr-modal .mqr-keypad .mqr-key,
+body.theme-black #modal-root .mqr-modal .mqr-keypad .mqr-key.soft{
+  background:#141414!important;background-image:none!important;
+  color:#f8f8f8!important;border:1px solid #303030!important;
+  box-shadow:none!important;text-shadow:none!important;
+}
+body.theme-black #modal-root .mqr-modal .mqr-keypad .mqr-key.soft{background:#101010!important;color:#c8c8c8!important}
+body.theme-black #modal-root .mqr-modal .mqr-keypad .mqr-key:active{background:#292929!important;transform:scale(.97)}
+/* Pestañas y etiquetas de ingreso / gasto / transferencia */
+body.theme-black #modal-root .mqr-modal .mqr-segment .mqr-mode,
+body.theme-black #modal-root .mqr-modal .mqr-presets .mqr-chip,
+body.theme-black #modal-root .mqr-modal .mqr-transfer-kinds button,
+body.theme-black #modal-root .mqr-modal .mqr-extra-categories button,
+body.theme-black #modal-root .mqr-modal .v141-quick-operations summary,
+body.theme-black #modal-root .mqr-modal .v141-quick-operations-menu button{
+  background:#131313!important;background-image:none!important;
+  color:#e8e8e8!important;border:1px solid #303030!important;box-shadow:none!important;
+}
+body.theme-black #modal-root .mqr-modal .mqr-segment .mqr-mode.active,
+body.theme-black #modal-root .mqr-modal .mqr-presets .mqr-chip.active,
+body.theme-black #modal-root .mqr-modal .mqr-transfer-kinds button.selected,
+body.theme-black #modal-root .mqr-modal .mqr-extra-categories button.active{
+  background:#262626!important;background-image:none!important;
+  color:#fff!important;border-color:#737373!important;box-shadow:none!important;
+}
+body.theme-black #modal-root .mqr-modal .mqr-mode :is(strong,small,svg),
+body.theme-black #modal-root .mqr-modal .mqr-chip,
+body.theme-black #modal-root .mqr-modal .mqr-transfer-kinds button,
+body.theme-black #modal-root .mqr-modal .v141-quick-operations-menu :is(strong,small,svg){color:inherit!important;stroke:currentColor!important}
+body.theme-black #modal-root .mqr-modal .mqr-mode-icon{
+  background:#1b1b1b!important;background-image:none!important;color:#eee!important;border-color:#303030!important
+}
+body.theme-black #modal-root .mqr-modal .mqr-bottom .mqr-primary,
+body.theme-black #modal-root .mqr-modal .mqr-bottom .mqr-secondary{
+  background:#222!important;background-image:none!important;
+  border:1px solid #484848!important;color:#fff!important;box-shadow:none!important;
+}
+/* Segunda etapa y flujos especializados: formularios, rótulos y números */
+body.theme-black #modal-root .modal-layer :is(.studio-form,.fastx-form,.other-studio-form,.mqr-modal) :is(.studio-shell,.fastx-shell,.other-studio-shell,.studio-main,.fastx-entry,.fastx-body,.other-studio-content,.other-studio-left,.other-studio-right,.studio-fields,.fastx-value-card,.fastx-amount-zone,.other-studio-amount,.other-studio-receipt,.studio-step,.fastx-category-zone,.form-grid,.form-row,.form-group,.form-section,.field-group){
+  background:#0b0b0b!important;background-image:none!important;color:#efefef!important;border-color:#292929!important;
+}
+body.theme-black #modal-root .modal:has(:is(.studio-form,.fastx-form,.other-studio-form))>.modal-head{
+  background:#080808!important;background-image:none!important;border-color:#292929!important;box-shadow:none!important;color:#eee!important;
+}
+body.theme-black #modal-root .modal:has(:is(.studio-form,.fastx-form,.other-studio-form))>.modal-head .close{
+  background:#1b1b1b!important;color:#fff!important;border:1px solid #353535!important;
+}
+body.theme-black #modal-root :is(.studio-form,.fastx-form,.other-studio-form) :is(input,select,textarea,.field,input[type=number],input[inputmode=decimal],input[inputmode=numeric]){
+  background:#161616!important;background-image:none!important;color:#fff!important;
+  -webkit-text-fill-color:#fff!important;border:1px solid #3d3d3d!important;
+  box-shadow:none!important;color-scheme:dark!important;
+}
+body.theme-black #modal-root :is(.studio-form,.fastx-form,.other-studio-form) :is(input,textarea)::placeholder{
+  color:#9c9c9c!important;-webkit-text-fill-color:#9c9c9c!important;opacity:1!important;
+}
+body.theme-black #modal-root :is(.studio-form,.fastx-form,.other-studio-form) :is(label,.filter-label,.form-label,.studio-label,.fastx-label,.other-studio-label,small){color:#bcbcbc!important}
+body.theme-black #modal-root :is(.studio-form,.fastx-form,.other-studio-form) :is(.fastx-amount-zone #flowAmount,.other-studio-amount input[name="amount"],.studio-amount,.amount-value){
+  color:#fff!important;-webkit-text-fill-color:#fff!important;background:#161616!important;text-shadow:none!important;
+}
+body.theme-black #modal-root :is(.studio-form,.fastx-form,.other-studio-form) :is(.flow-segment-surface,.fastx-cat,.fastx-mode-tabs button,.studio-nav-step,.other-studio-picker>button){
+  background:#161616!important;background-image:none!important;border:1px solid #353535!important;color:#ececec!important;box-shadow:none!important;
+}
+body.theme-black #modal-root :is(.studio-form,.fastx-form,.other-studio-form) :is(.flow-segment-option.selected .flow-segment-surface,.fastx-cat.selected,.fastx-mode-tabs button.active,.studio-nav-step.current){
+  background:#272727!important;color:#fff!important;border-color:#666!important;
+}
+/* Normal HTML inputs use dark system controls on iOS rather than white browser controls. */
+body.theme-black #modal-root{color-scheme:dark!important}
+body.theme-black #modal-root select option{background:#161616!important;color:#fff!important}
+body.theme-black #modal-root input[type="number"]::-webkit-inner-spin-button,
+body.theme-black #modal-root input[type="number"]::-webkit-outer-spin-button{opacity:.65}
+</style>
+
 </body>
 </html>
