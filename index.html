@@ -2,6 +2,7 @@
 
 <html lang="es">
 <head>
+<meta name="vive-el-hoy-build-v358" content="presupuesto-categorias-costodelmanana-navegacion-simplificada"/>
 <meta name="vive-el-hoy-build-v318" content="16-graficos-costo-manana-tablero-web-movil-oculto" />
 <meta name="vive-el-hoy-build-v317" content="black-profundo-y-nuevos-graficos-reales" />
 <meta name="vive-el-hoy-build-v305" content="suscripciones-colores-sutiles-activos-detalle-historial"/>
@@ -15,7 +16,7 @@
 <meta name="vive-el-hoy-build" content="V272-20261104-Integral-UX-Audit-44k" />
 <!-- V269: Reconstruido desde paquete V268 íntegro. Conserva V264 Suscripciones, V265-V267 balance y V266-V268 Wallet y Registrar. -->
 <!-- Vive el Hoy V219 · Auditoría conservadora · Informes 7 PM / Supabase / Apple Pay. -->
-<meta name="vive-el-hoy-version" content="v299-movimientos-navegacion-seis-vistas"/>
+<meta name="vive-el-hoy-version" content="v360-guardado-automatico-presion-financiera-nav"/>
 <link rel="manifest" href="./manifest.webmanifest?v=219"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v201.png"/>
 <link rel="icon" type="image/png" href="./favicon-v201.png"/>
@@ -27961,6 +27962,70 @@ body:has(.modal-layer) .v36-notifications {
 }
 </style>
 
+
+<style id="v360-accessibility-navigation-and-pressure">
+/* Ajustes V360: solo presentación; cálculos de Presión y Personalización no se modifican. */
+@media(max-width:790px){
+ .vive-mobile-dock{bottom:calc(3px + env(safe-area-inset-bottom,0px))!important;left:calc(10px + env(safe-area-inset-left,0px))!important;right:calc(10px + env(safe-area-inset-right,0px))!important;max-width:540px;margin:0 auto;box-sizing:border-box;min-height:67px;display:flex;align-items:center;justify-content:space-around;padding:4px 5px!important}
+ .vive-mobile-dock .vive-mobile-dock-item{min-width:0!important;flex:1 1 0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;min-height:56px;padding:5px 2px!important}
+ .vive-mobile-dock-icon,.vive-mobile-dock-label{flex-shrink:0}
+ .vive-mobile-dock-label{font-size:11px;line-height:1.2;text-align:center;white-space:nowrap}
+ .v360-home-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0 0 12px}
+ .v360-home-links button{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:11px 4px;border-radius:15px;border:1px solid #8b9bb037;background:var(--card, #f8fafc);color:var(--text,#14253b);font-weight:730;font-size:11px;line-height:1.16}
+ .v360-home-links button svg{width:17px;height:17px}
+ .v360-home-links button.active{border-color:currentColor}
+ .v105-mobile-due{display:grid!important;grid-template-columns:31px minmax(0,1fr) auto auto;gap:7px!important;align-items:center!important}
+ .v105-mobile-due>.v360-due-symbol{display:grid;place-items:center;width:29px;height:29px;border:1px solid currentColor;border-radius:11px;opacity:.78}
+ .v105-mobile-due>.v360-due-symbol svg{width:15px;height:15px}
+ .v105-mobile-due>div{min-width:0!important}
+ .v105-mobile-due>div strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+}
+@media(min-width:791px){
+ .v360-home-links{display:none}
+ /* Tres círculos desktop: mantener valores y comportamiento, corregir legibilidad. */
+ .v152-position-reference .ff-bubbles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.25vw,17px);align-items:stretch}
+ .v152-position-reference .ff-bubble{min-width:0;min-height:116px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:clamp(10px,1.5vw,19px);border:1px solid var(--border,#cbd5e1);background:var(--card,#fff);border-radius:21px;color:var(--text,#17243a);overflow-wrap:anywhere}
+ .v152-position-reference .ff-bubble>*{max-width:100%;color:inherit!important;line-height:1.25!important}
+ .v152-position-reference .ff-bubble strong,.v152-position-reference .ff-bubble .bubble-amount{font-weight:800;font-size:clamp(14px,1.5vw,22px)}
+ .theme-black .v152-position-reference .ff-bubble,.theme-dark .v152-position-reference .ff-bubble{background:#151515!important;border-color:#373737!important;color:#f3f4f6!important}
+}
+/* Vista Presión financiera: exactamente los mismos niveles y valores del widget original. */
+.v360-pressure-page{max-width:1500px;width:100%;margin:0 auto;padding:clamp(11px,2vw,28px);box-sizing:border-box;color:var(--text,#14253b)}
+.v360-pressure-header{margin-bottom:20px}
+.v360-pressure-header>span,.v360-pressure-details-head small{display:block;font-size:11px;letter-spacing:.13em;font-weight:800;color:var(--muted,#60748e)}
+.v360-pressure-header h1{font-size:clamp(25px,3vw,38px);margin:9px 0;letter-spacing:-.035em}
+.v360-pressure-header p{font-size:14px;line-height:1.6;color:var(--muted,#64748b)}
+.v360-pressure-calendar,.v360-pressure-details{background:var(--card,#fff);border:1px solid var(--border,#d6e1ec);border-radius:25px;padding:clamp(13px,2vw,28px);margin-bottom:18px;min-width:0}
+.v360-pressure-page .v318-stat-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:4px 0 21px}
+.v360-pressure-page .v322-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:clamp(5px,1vw,14px);width:100%;margin:14px 0 16px}
+.v360-pressure-page .v322-cal-cell{min-width:0!important;min-height:clamp(57px,7vw,105px)!important;border-radius:clamp(10px,1.3vw,19px);display:flex;align-items:center;justify-content:center;position:relative;font-size:clamp(15px,2vw,26px);font-weight:780;cursor:pointer}
+.v360-pressure-page .v322-cal-cell[data-v360-pressure-day]:focus-visible{outline:3px solid #7baeff;outline-offset:2px}
+.v360-pressure-page .v322-cal-cell[data-v360-pressure-day] span{color:inherit;max-width:100%;line-height:1.2}
+.v360-pressure-page .v322-cal-legend{display:flex;justify-content:space-between;gap:12px;font-size:12px}
+.v360-pressure-details-head{display:flex;justify-content:space-between;align-items:center;gap:15px;padding-bottom:13px;border-bottom:1px solid var(--border,#d6e1ec)}
+.v360-pressure-details-head h2{margin:6px 0;font-size:clamp(17px,2.2vw,27px)}
+.v360-pressure-details-head>strong{font-size:clamp(17px,2.1vw,26px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;text-align:right}
+.v360-pressure-entry{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:15px 3px;border-bottom:1px solid var(--border,#d6e1ec)}
+.v360-pressure-entry>div{min-width:0;display:flex;flex-direction:column;gap:4px}
+.v360-pressure-entry strong{font-size:14px;overflow-wrap:anywhere}
+.v360-pressure-entry small{font-size:12px;color:var(--muted,#64748b)}
+.v360-pressure-entry b{flex-shrink:0;font-size:14px;font-variant-numeric:tabular-nums}
+.v360-pressure-empty{padding:12px 0;color:var(--muted,#64748b)}
+.theme-black .v360-pressure-page,.theme-dark .v360-pressure-page{color:#f7f7f7!important}
+.theme-black :is(.v360-pressure-calendar,.v360-pressure-details),.theme-dark :is(.v360-pressure-calendar,.v360-pressure-details){background:#0c0c0c!important;border-color:#333!important;color:#f7f7f7!important}
+.theme-black .v360-home-links button,.theme-dark .v360-home-links button{background:#101010!important;border-color:#333!important;color:#f1f1f1!important}
+/* Acciones de exportación/revisión manual fuera de la interfaz, sin destruir las copias locales. */
+[data-f34="backup"],[data-f34="reloadCloud"],[data-f34="retryCloud"],
+[data-f33="recover"],[data-f33="exportPending"],[data-f33="discardPending"],
+[data-act="export"],[data-f33="export"],.v30-recovery-items{display:none!important}
+/* Contraste de modo Claro móvil sin alterar color semántico de los importes. */
+@media(max-width:790px){
+ body:not(.theme-black):not(.theme-dark) .vive-mobile-balance :is(.vive-mobile-balance-top,.vive-mobile-balance-amount,.vive-mobile-balance-foot b),
+ body:not(.theme-black):not(.theme-dark) .v290-position-all :is(.v290-pos-caption,.v290-pos-net,.v290-pos-stat strong){color:#172946!important;text-shadow:none!important}
+}
+@media(max-width:410px){.v360-pressure-page .v322-cal-cell{min-height:46px!important;font-size:16px}}
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 (()=>{'use strict';
@@ -28118,10 +28183,11 @@ const persist=()=>{
   if(typeof v31BeforePersist==='function')v31BeforePersist();
   if(!window.__f360CloudUid){return false;}
   let saved=false;
-  try{localStorage.setItem('finanzas360.cloud.'+window.__f360CloudUid,JSON.stringify({pending:true,baseStamp:window.__f360BaseStamp||null,documento:db,savedAt:new Date().toISOString()}));saved=true;}catch(e){console.warn('El respaldo temporal local no pudo guardarse.',e);}
+  saved=v360WritePending();
+  if(!saved){f33SetStatus('error','Sin almacenamiento local seguro');return false;}
   if(typeof window.__f360CloudPersist==='function')window.__f360CloudPersist();
   return true;
- }catch(e){console.error('Error preparando registro',e);toast('No se pudo guardar. Descarga tu respaldo JSON.');return false;}
+ }catch(e){console.error('Error preparando registro',e);toast('No se pudo preparar el registro; los datos locales permanecen sin alterar.');return false;}
 };
 const fx=(v,c)=>num(v)*(c==='USD'?num(db.settings.fx)||0:1);
 const xconvert=(v,from,to)=>from===to?num(v):to==='DOP'?fx(v,from):num(v)/(num(db.settings.fx)||1);
@@ -28390,12 +28456,12 @@ function txDisplay(t){if(['personal_issue','personal_settlement'].includes(t.typ
 /* vive el hoy · Menú por mundos: seis destinos principales, no diecisiete accesos simultáneos. */
 const NAV_FAMILIES=[
  {label:'vive el hoy',items:[
-  {id:'overview',name:'Resumen',ico:'home',children:[]}
+  {id:'overview',name:'Resumen',ico:'home',children:[['overview','Inicio','home'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
  ]},
  {label:'GESTIÓN FINANCIERA',items:[
   {id:'banks',name:'Bancos',ico:'building',children:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
   {id:'register',name:'Movimientos',ico:'cycle',children:[['register','Registro de ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
-  {id:'payments',name:'Compromisos',ico:'calendar',children:[['payments','Compromisos','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
+  {id:'payments',name:'Visión global',ico:'eye',children:[['payments','Visión global','eye']]}
  ]},
  {label:'SISTEMA',items:[
   {id:'settings',name:'Configuración',ico:'settings',children:[]}
@@ -28404,15 +28470,16 @@ const NAV_FAMILIES=[
 const NAV_SECTIONS={
  banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','building'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
  register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
- payments:{title:'Visión global',hint:'Obligaciones, suscripciones y relaciones personales.',tabs:[['payments','Visión global','calendar'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']]}
+ payments:{title:'Visión global',hint:'Tus obligaciones y situación financiera.',tabs:[['payments','Visión global','eye']]}
 };
-function navFamilyForPage(page){if(page==='vision')return 'payments';if(['overview','analytics','kpis','advanced','patrimony','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
+function navFamilyForPage(page){if(['recurring','personal'].includes(page))return 'overview';if(page==='vision')return 'payments';if(['overview','analytics','kpis','advanced','patrimony','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
 /* Four clear navigation worlds; contextual horizontal switches remain unchanged. */
 const RAIL_DESTINATIONS=[
- ['overview','Resumen','home','Inicio, desempeño e indicadores'],
+ ['overview','Resumen','home','Inicio, suscripciones y entre personas'],
+ ['pressure','Presión financiera','calendar','Calendario de 30 días y detalle de vencimientos'],
  ['banks','Bancos','building','Instituciones y productos bancarios'],
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
- ['payments','Visión global','calendar','Visión, suscripciones y entre personas']
+ ['payments','Visión global','eye','Visión integral de tus obligaciones']
 ];
 /* V153: distinctive stroke icons, scoped to the desktop navigation rail. */
 const V153_RAIL_ICONS={
@@ -28420,6 +28487,7 @@ const V153_RAIL_ICONS={
  building:'<rect x="4.5" y="3" width="15" height="18" rx="3.1"/><path d="M9 7.6h1.2m3.6 0H15M9 12h1.2m3.6 0H15M9.3 16.4h5.4" stroke-linecap="round"/>',
  cycle:'<path d="M20 8v4h-4M4 16v-4h4"/><path d="M5.8 9a7 7 0 0 1 12.1-2l2.1 2M18.2 15A7 7 0 0 1 6 17l-2-2"/>',
  calendar:'<rect x="3.5" y="5.2" width="17" height="15.7" rx="2.8"/><path d="M7.7 3.1v4.5m8.6-4.5v4.5M3.6 10h16.8"/>',
+ eye:'<circle cx="12" cy="12" r="2.7"/><path d="M2.2 12s3.8-6 9.8-6 9.8 6 9.8 6-3.8 6-9.8 6-9.8-6-9.8-6Z"/>',
  settings:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2m0 15v2M2.5 12h2m15 0h2M5.4 5.4l1.4 1.4m10.4 10.4 1.4 1.4m0-13.2-1.4 1.4M6.8 17.2l-1.4 1.4"/>',
  moon:'<path d="M20 16.7A8.5 8.5 0 0 1 7.3 4 8.5 8.5 0 1 0 20 16.7Z"/>',
  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.5 1.5m11.2 11.2 1.5 1.5M2 12h2m16 0h2M4.9 19.1l1.5-1.5M17.6 6.4l1.5-1.5"/>'
@@ -28456,7 +28524,7 @@ function v206BankSwitch(page){
  return `<nav class="v206-banks-switch" aria-label="Cambiar entre bancos y productos" data-v206-switch="1">${tabs.map(([id,label,ico])=>`<button type="button" data-v206-tab="${id}" class="v206-banks-pill ${page===id?'active':''}" aria-pressed="${page===id}" ${page===id?'aria-current="page"':''}>${icon(ico)}<span>${label}</span></button>`).join('')}</nav>`;
 }
 function moduleSwitch(page){
- const root=navFamilyForPage(page),section=NAV_SECTIONS[root];if(!section)return '';
+ const root=navFamilyForPage(page),section=NAV_SECTIONS[root];if(!section||root==='payments')return '';
  // V299: contextual navigation must stay available across all six Movimientos pages.
  if(root==='banks'&&window.matchMedia?.('(max-width:767px)').matches){
   return v206BankSwitch(page);
@@ -28488,13 +28556,13 @@ function v36Bell(){
  return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
- const pageName={overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
+ const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
  return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions">${v36Bell()}<button type="button" class="v65-settings-button v271-settings-access ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración">${icon('settings')}</button></div></header>`;
 }
 function mobileBottomNavigation(){
  // Cada producto bancario pertenece al espacio Bancos; no debe marcar Explorar por error.
  const bankingPages=['banks','accounts','cards','loans','certificates','benefits'];
- const current=bankingPages.includes(ui.page)?'banks':(['overview','wallet','mobilehub','mobilesearch'].includes(ui.page)?ui.page:'mobilehub');
+ const current=bankingPages.includes(ui.page)?'banks':(['recurring','personal'].includes(ui.page)?'overview':(['overview','wallet','mobilehub','mobilesearch'].includes(ui.page)?ui.page:'mobilehub'));
  const items=[['overview','Inicio','home'],['wallet','Wallet','card'],['banks','Bancos','building'],['mobilehub','Explorar','grid'],['mobilesearch','Buscar','search']];
  return `<nav class="vive-mobile-dock" aria-label="Navegación móvil">${items.map(([id,label,ic])=>`<button type="button" class="vive-mobile-dock-item ${current===id?'active':''}" data-act="navigate" data-id="${id}" ${current===id?'aria-current="page"':''} aria-label="${label}" title="${label}"><span class="vive-mobile-dock-icon">${icon(ic)}</span><span class="vive-mobile-dock-label">${label}</span></button>`).join('')}</nav><button type="button" class="v249-register-fab" data-act="newTransaction" aria-label="Registrar una operación" title="Registrar ingresos, egresos, transferencias y pagos"><span class="v249-fab-surface" aria-hidden="true">${icon('plus')}</span></button>`;
 }
@@ -28724,10 +28792,11 @@ function mobileHome(){
  const paymentsHtml=upcomingPayments.map(o=>{
    const overdue=o.date<today();
    const kindName=o.kind==='card'?'Tarjeta':o.kind==='loan'?'Préstamo':o.kind==='personal'?'Entre personas':'Suscripción';
-   return `<div class="vive-mobile-due-row v105-mobile-due"><div><strong title="${sanitize(o.name)}">${sanitize(o.name)}</strong><small>${overdue?'<span class="vive-mobile-late-label">Vencido</span> · ':''}${prettyDate(o.date)} · ${kindName}</small></div><b>${money(o.amount,o.currency)}</b><button type="button" class="v105-pay-mini" data-v105-pay-menu="1" data-kind="${o.kind}" data-ref="${sanitize(o.ref)}" data-ccy="${sanitize(o.ccy||o.currency||'DOP')}" data-due="${sanitize(o.date)}" data-amount="${Number(o.amount)||0}" aria-label="Opciones para pagar ${sanitize(o.name)}">Pagar</button></div>`;
+   return `<div class="vive-mobile-due-row v105-mobile-due"><span class="v360-due-symbol" aria-hidden="true">${icon(o.kind==='card'?'card':o.kind==='loan'?'receipt':o.kind==='personal'?'wallet':'cycle')}</span><div><strong title="${sanitize(o.name)}">${sanitize(o.name)}</strong><small>${overdue?'<span class="vive-mobile-late-label">Vencido</span> · ':''}${prettyDate(o.date)} · ${kindName}</small></div><b>${money(o.amount,o.currency)}</b><button type="button" class="v105-pay-mini" data-v105-pay-menu="1" data-kind="${o.kind}" data-ref="${sanitize(o.ref)}" data-ccy="${sanitize(o.ccy||o.currency||'DOP')}" data-due="${sanitize(o.date)}" data-amount="${Number(o.amount)||0}" aria-label="Opciones para pagar ${sanitize(o.name)}">Pagar</button></div>`;
  }).join('');
  return `<div class="vive-mobile-home vive-mobile-home-essential" data-mobile-experience="${vis?'vision':'claridad'}">
    <div class="vive-mobile-greeting v51-executive-greeting"><span class="vive-mobile-eyebrow">TU PANORAMA · ${new Date().toLocaleDateString('es-DO',{month:'long',year:'numeric'}).toUpperCase()}</span><h1>Resumen financiero</h1><p>Lo que tienes, lo que debes y lo que viene.</p><button type="button" class="v273-personalize-link" data-v273-open-personalization="1" aria-label="Personalizar estilo y secciones del Resumen"><span class="v309-personalize-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="8" height="8" rx="2"/><rect x="13.5" y="2.5" width="8" height="5.5" rx="1.6"/><rect x="2.5" y="13.5" width="8" height="8" rx="2"/><rect x="13.5" y="10.5" width="8" height="11" rx="2"/></svg></span>Personalizar</button></div>
+   ${v360HomeLinks()}
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
    ${v105CapacityWidget(true)}
@@ -28745,7 +28814,7 @@ function mobileHome(){
 let v243ExploreDestination=null;
 function v243ExploreReturn(){
  if(!v243ExploreDestination || v243ExploreDestination!==ui.page || ui.page==='mobilehub')return '';
- return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Visión global','vision':'Visión global','recurring':'Suscripciones','personal':'Entre personas','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada'})[ui.page]||'Módulo')}</strong></nav>`;
+ return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Visión global','vision':'Visión global','recurring':'Suscripciones','personal':'Entre personas','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada','pressure':'Presión financiera'})[ui.page]||'Módulo')}</strong></nav>`;
 }
 function mobileHub(){
  const period=ui.month||today().slice(0,7);
@@ -28753,9 +28822,8 @@ function mobileHub(){
   {eyebrow:'TU ACTIVIDAD',title:'Cada movimiento, en su lugar',subtitle:'Registros, análisis y planificación',entries:[
    ['income','Ingresos','Lo que recibes','up'],['expenses','Egresos','Lo que utilizas','down'],
    ['budget','Presupuesto','Límites y ejecución','chart'],['categories','Categorías','Organiza tus movimientos','grid']]},
-  {eyebrow:'TU VISIÓN',title:'Visión global',subtitle:'Todo lo que debes gestionar y lo que viene',entries:[
-   ['payments','Visión global','Vencimientos y pagos','calendar'],['recurring','Suscripciones','Cargos recurrentes','cycle'],
-   ['personal','Entre personas','Deudas y abonos','wallet']]},
+  {eyebrow:'TU VISIÓN',title:'Visión global',subtitle:'Tu panorama integral sin menús duplicados',entries:[
+   ['payments','Visión global','Vencimientos y pagos','eye'],['pressure','Presión financiera','Calendario de tus próximos 30 días','calendar']]},
   {eyebrow:'MÁS PERSPECTIVA',title:'Tu inteligencia financiera',subtitle:'Información con profundidad, cuando la necesites',entries:[
    ['patrimony','Patrimonio','Activos y obligaciones','wallet'],
    ['advanced','Analítica avanzada','Tendencias y decisiones','chart']]}
@@ -28829,12 +28897,12 @@ function v165SearchAction(){
 function main(){
  if(isMobileViewport()&&ui.page==='kpis')ui.page='overview';
  if(ui.page==='personalize' && !isMobileViewport()){ui.page='settings';v242SettingsPane='home';}
- const heads={wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Visión global','Obligaciones, suscripciones y entre personas'],vision:['Visión global','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
+ const heads={pressure:['Presión financiera','El mismo calendario de Inicio, ampliado'],wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Visión global','Obligaciones, suscripciones y entre personas'],vision:['Visión global','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
  let h=heads[ui.page]||heads.overview;
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
   <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
  
- ${ui.page==='wallet'?'':['overview','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
+ ${ui.page==='wallet'||ui.page==='pressure'?'':['overview','recurring','personal','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
  ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${v243ExploreReturn()}${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
 }
 function shellKpi(title,v,foot,ico,tone=''){return `<div class="kpi"><div class="kpi-head">${sanitize(title)}<span class="kpi-icon">${icon(ico)}</span></div><div class="kpi-value ${tone}">${v}</div><div class="kpi-foot">${foot}</div></div>`}
@@ -29571,11 +29639,23 @@ function v88LoanReconstruction(l){
 }
 function v102LoanAccountingRaw(l){
  const modeled=v88LoanReconstruction(l),historic=modeled.rows;
- let history=loanTransactions(l.id).filter(t=>t.date<=today()).sort((a,b)=>a.date.localeCompare(b.date)),opening=modeled.opening,running=opening,rows=[...historic],interest=0,insurance=0,fees=0,extras=0,periods=new Set();
+ let history=loanTransactions(l.id).filter(t=>t.date<=today()).sort((a,b)=>a.date.localeCompare(b.date)),opening=modeled.opening,running=opening,rows=[...historic],interest=0,insurance=0,fees=0,extras=0,bankAdjustments=0,paidFromRecords=0,periods=new Set();
  // Solo los registros hechos DESPUÉS del saldo de apertura reducen nuevamente ese capital.
- if(l.openingMode==='existing')history=history.filter(t=>t.date>modeled.snapshot);
+ if(l.openingMode==='existing')history=history.filter(t=>t.date>modeled.snapshot||(t.date===modeled.snapshot&&(t.loanPaymentMode==='bank'||String(l.lastPaidDate||'')<modeled.snapshot)));
  history.forEach((t,i)=>{
+  // A confirmed bank CAPITAL before payment is a nonmonetary reconciliation.
+  // It is never income, an expense, interest or a second payment.
+  if(t.loanPaymentMode==='bank'&&t.bankBalanceBefore!==null&&t.bankBalanceBefore!==undefined&&t.bankBalanceBefore!==''&&Number.isFinite(Number(t.bankBalanceBefore))){
+   const bankOpening=rnd(Math.max(0,Math.min(num(l.principal),num(t.bankBalanceBefore))));
+   const adjustment=rnd(running-bankOpening);
+   if(Math.abs(adjustment)>.009){
+    rows.push({period:modeled.periods+i,date:t.date,opening:running,principal:0,interest:0,insurance:0,fee:0,extra:0,payment:0,balance:bankOpening,adjustment,kind:'Conciliación capital bancario (sin pago)',isReconciliation:true,sourceTxId:t.id});
+    bankAdjustments=rnd(bankAdjustments+adjustment);
+   }
+   running=bankOpening;
+  }
   const capital=rnd(Math.min(running,Math.max(0,num(t.principal)))),isExtra=t.paymentKind==='extra';
+  paidFromRecords=rnd(paidFromRecords+capital);
   const old=running;running=rnd(Math.max(0,running-capital));
   interest+=num(t.interest);insurance+=num(t.insurance);fees+=num(t.fee);
   if(isExtra)extras+=capital;
@@ -29583,7 +29663,7 @@ function v102LoanAccountingRaw(l){
   rows.push({period:modeled.periods+i+1,date:t.date,opening:old,principal:capital,interest:num(t.interest),insurance:num(t.insurance),fee:num(t.fee),extra:isExtra?capital:0,payment:num(t.amount),balance:running,kind:isExtra?'Abono real':'Cuota real',txId:t.id});
  });
  const elapsed=Math.min(v49LoanPeriodCount(l),modeled.periods+periods.size),first=v49LoanPeriodDate(l,elapsed);
- return {balance:rnd(running),paidPrincipal:rnd(num(l.principal)-running),openingPrincipal:rnd(opening),historicReduction:modeled.reduction,recordedPrincipal:rnd(opening-running),interest:rnd(interest),insurance:rnd(insurance),fees:rnd(fees),estimatedHistoricInterest:modeled.interest,estimatedHistoricInsurance:modeled.insurance,estimatedHistoricFees:modeled.fees,historicModelBalance:rnd(modeled.modelBalance),historicAdjustment:rnd(modeled.adjustment),historicPeriods:modeled.periods,recordedPeriods:periods.size,extras:rnd(extras),periods:elapsed,rows,next:first,settled:running<.01};
+ return {balance:rnd(running),paidPrincipal:rnd(num(l.principal)-running),openingPrincipal:rnd(opening),historicReduction:modeled.reduction,recordedPrincipal:rnd(paidFromRecords),interest:rnd(interest),insurance:rnd(insurance),fees:rnd(fees),estimatedHistoricInterest:modeled.interest,estimatedHistoricInsurance:modeled.insurance,estimatedHistoricFees:modeled.fees,historicModelBalance:rnd(modeled.modelBalance),historicAdjustment:rnd(modeled.adjustment),bankAdjustments:rnd(bankAdjustments),historicPeriods:modeled.periods,recordedPeriods:periods.size,extras:rnd(extras),periods:elapsed,rows,next:first,settled:running<.01};
 }
 function loanForecast(l,ac,opt={}){
   const origRate=Math.max(0,num(l.rate))/1200/v49LoanPeriodsPerMonth(l),latestRate=Math.max(0,num(l.currentRate??l.rate))/1200/v49LoanPeriodsPerMonth(l),original=fullOriginalLoan(l);
@@ -30068,7 +30148,11 @@ function budgetEvolutionChart(year,selectedMonth){
  const dots=row.map((p,i)=>p.y===null?'':`<g tabindex="0" role="img" class="v27-budget-point" data-chart-tip="${MONTHS_FULL[i]} ${year}|Presupuesto: ${money(p.limit)}|Gasto con límite: ${money(p.spent)}|Utilizado: ${p.pct.toFixed(1)}%" aria-label="${MONTHS_FULL[i]}: ${p.pct.toFixed(1)}% del presupuesto utilizado"><circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.key===year+'-'+String(selectedMonth).padStart(2,'0')?7:5}" fill="${p.pct>100?'#cd6673':p.pct>=80?'#d29b4e':'#24978b'}" stroke="white" stroke-width="2.5"/><title>${MONTHS_FULL[i]} ${year}: ${p.pct.toFixed(1)}% utilizado; ${money(p.spent)} de ${money(p.limit)}</title></g>`).join('');
  const xlabels=row.map(p=>`<text x="${p.x.toFixed(1)}" y="239" text-anchor="middle" class="v27-budget-xlabel ${p.key===year+'-'+String(selectedMonth).padStart(2,'0')?'is-selected':''}">${p.name}</text>`).join('');
  const current=points[selectedMonth-1],lastValid=valid.at(-1),empty=!valid.length;
- return `<section class="panel v27-budget-trend" aria-label="Evolución mensual del porcentaje de presupuesto utilizado"><div class="v27-budget-trend-head"><div><span class="summary-tag">EVOLUCIÓN DEL CUMPLIMIENTO</span><h3>Presupuesto utilizado · ${year}</h3><p class="form-note">Porcentaje de gasto sujeto a límites respecto al presupuesto asignado, mes a mes.</p></div><div class="v27-budget-last"><span>${current&&Number.isFinite(current.pct)?'MES SELECCIONADO':lastValid?'ÚLTIMO MES CON LÍMITE':'SIN LÍMITES'}</span><strong>${current&&Number.isFinite(current.pct)?current.pct.toFixed(1)+'%':lastValid?lastValid.pct.toFixed(1)+'%':'N/D'}</strong></div></div>${empty?'<div class="v27-budget-no-data">Define un presupuesto para visualizar la evolución porcentual de su utilización.</div>':`<div class="v27-budget-scroller" tabindex="0" aria-label="Gráfico desplazable horizontalmente en pantallas pequeñas"><svg class="v27-budget-svg" viewBox="0 0 900 255" role="img" aria-label="Evolución porcentual del presupuesto utilizado en ${year}">${grid}${target}${paths}${dots}${xlabels}</svg></div>`}<div class="v27-budget-trend-legend"><span><i class="v27-dot v27-dot-teal"></i> Menos del 80%</span><span><i class="v27-dot v27-dot-amber"></i> Entre 80% y 100%</span><span><i class="v27-dot v27-dot-red"></i> Más del 100%</span></div><p class="footnote">Los meses sin límite definido o aún futuros quedan sin punto. No se supone una ejecución de 0% cuando falta presupuesto. El 100% significa consumo completo del límite, no ahorro.</p></section>`;
+ const past=selectedMonth>1?points[selectedMonth-2]:null;
+ const comparable=current&&past&&Number.isFinite(current.pct)&&Number.isFinite(past.pct);
+ const pp=comparable?current.pct-past.pct:null;
+ const comparison=comparable?`${pp>0?'+':''}${pp.toFixed(1)} puntos vs. mes anterior`:'Sin referencia comparable del mes anterior';
+ return `<section class="panel v27-budget-trend" aria-label="Evolución mensual del porcentaje de presupuesto utilizado"><div class="v27-budget-trend-head"><div><span class="summary-tag">EVOLUCIÓN DEL CUMPLIMIENTO</span><h3>Presupuesto utilizado · ${year}</h3><p class="form-note">Porcentaje de gasto sujeto a límites respecto al presupuesto asignado, mes a mes.</p></div><div class="v27-budget-last"><span>${current&&Number.isFinite(current.pct)?'MES SELECCIONADO':lastValid?'ÚLTIMO MES CON LÍMITE':'SIN LÍMITES'}</span><strong>${current&&Number.isFinite(current.pct)?current.pct.toFixed(1)+'%':lastValid?lastValid.pct.toFixed(1)+'%':'N/D'}</strong><small class="v358-budget-vs-last">${comparison}</small></div></div>${empty?'<div class="v27-budget-no-data">Define un presupuesto para visualizar la evolución porcentual de su utilización.</div>':`<div class="v27-budget-scroller" tabindex="0" aria-label="Gráfico desplazable horizontalmente en pantallas pequeñas"><svg class="v27-budget-svg" viewBox="0 0 900 255" role="img" aria-label="Evolución porcentual del presupuesto utilizado en ${year}">${grid}${target}${paths}${dots}${xlabels}</svg></div>`}<div class="v27-budget-trend-legend"><span><i class="v27-dot v27-dot-teal"></i> Menos del 80%</span><span><i class="v27-dot v27-dot-amber"></i> Entre 80% y 100%</span><span><i class="v27-dot v27-dot-red"></i> Más del 100%</span></div><p class="footnote">Los meses sin límite definido o aún futuros quedan sin punto. No se supone una ejecución de 0% cuando falta presupuesto. El 100% significa consumo completo del límite, no ahorro.</p></section>`;
 }
 
 /* V301: Restore complete, user-approved budget analysis from V284.
@@ -30081,18 +30165,34 @@ function budget(){
  const valueComparison=(label,a,b,hasPrior)=>`<div class="budget-variance-card"><small>${label}</small><strong>${hasPrior?money(a-b):'—'}</strong><span class="${a>b?'budget-warn':a<b?'positive':''}">${hasPrior?percentVariance(a,b):'Sin referencia histórica'}</span><p>Actual ${money(a)} · Anterior ${hasPrior?money(b):'sin registro'}</p></div>`;
  const chart=active.length?active.map(g=>`<div class="budget-allocation-row" tabindex="0" data-chart-tip="${sanitize(g.category)}|Asignación: ${money(g.amount)}|Peso: ${(g.amount/current.total*100).toFixed(1)}%"><div class="budget-allocation-label"><strong>${sanitize(g.category)}</strong><span>${(g.amount/current.total*100).toFixed(1)}%</span></div><div class="budget-allocation-track"><i style="width:${g.amount/peak*100}%"></i></div><b>${money(g.amount)}</b></div>`).join(''):'<p class="budget-empty-text">Define límites para ver cómo distribuyes tu presupuesto.</p>';
  const categories=new Set([...EXP,...active.map(x=>x.category),...Object.keys(totals.expenseBy)]);
+ const lastPeriodTotals=monthlyTotals(Number(priorMonth.slice(0,4)),Number(priorMonth.slice(5,7)));
  const rows=[...categories].map(cat=>{
   const g=active.find(x=>x.category===cat),amount=g?.amount||0,spent=num(totals.expenseBy[cat]),pct=amount?spent/amount*100:0;
   const subs=[...new Set([...current.rows.filter(b=>b.category===cat&&b.subcategory).map(b=>b.subcategory),...Object.keys(totals.expenseSubBy).filter(k=>k.startsWith(cat+'||')).map(k=>k.split('||')[1])])];
   if(!g&&!spent&&!subs.length)return '';
   let global=current.rows.find(b=>b.category===cat&&!b.subcategory);
-  return `<div class="budget-row"><div class="split"><div class="mini-title">${sanitize(cat)}</div><div class="hstack"><span class="subtle">${money(spent)} / ${amount?money(amount):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="">${global?'Editar':'Definir'}</button></div></div>${amount?`<div class="progress" tabindex="0" data-chart-tip="${sanitize(cat)}|Gastado: ${money(spent)}|Asignado: ${money(amount)}|Ejecución: ${pct.toFixed(1)}%"><span class="${pct>100?'high':pct>=80?'warn':''}" style="width:${Math.min(100,pct)}%"></span></div>`:''}${subs.length?`<details class="v194-subcategory-drawer"><summary><span>${subs.length} subcategoría${subs.length===1?'':'s'}</span><span class="v194-drawer-arrow">⌄</span></summary><div class="v194-subcategory-content">${subs.map(sub=>{const setting=current.rows.find(b=>b.category===cat&&b.subcategory===sub),limit=num(setting?.amount),expense=num(totals.expenseSubBy[cat+'||'+sub]);return `<div class="subbudget"><div class="split"><span>↳ ${sanitize(sub)}</span><div class="hstack"><span>${money(expense)} / ${limit?money(limit):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="${sanitize(sub)}">${setting?'Editar':'Definir'}</button></div></div>${limit?`<div class="progress"><span class="${expense>limit?'high':expense>=limit*.8?'warn':''}" style="width:${Math.min(100,expense/limit*100)}%"></span></div>`:''}</div>`}).join('')}</div></details>`:''}</div>`;
+  const before=num(lastPeriodTotals.expenseBy[cat]);
+  const hasBefore=before>.005;
+  const delta=hasBefore?((spent-before)/before*100):null;
+  const deltaCaption=delta===null?'Sin gasto anterior comparable':`${delta>0?'+':''}${delta.toFixed(1)}% vs. mes anterior`;
+  const status=amount===0?'Sin límite':pct>100?'Límite superado':pct>=80?'En atención':'Dentro del límite';
+  const statusClass=amount===0?'is-free':pct>100?'is-over':pct>=80?'is-near':'is-good';
+  return `<article class="budget-row v358-budget-row ${statusClass}">
+    <div class="v358-budget-row-main">
+     <div class="v358-budget-name"><strong>${sanitize(cat)}</strong><span class="v358-budget-status ${statusClass}">${status}</span></div>
+     <button type="button" class="btn sm ghost v358-budget-edit" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="" aria-label="${global?'Editar':'Definir'} presupuesto de ${sanitize(cat)}">${global?'Editar':'Definir'} ${icon('arrow')}</button>
+    </div>
+    <div class="v358-budget-amounts"><div><small>GASTADO</small><strong>${money(spent)}</strong></div><div><small>${amount?'LÍMITE ASIGNADO':'PRESUPUESTO'}</small><strong>${amount?money(amount):'Sin límite'}</strong></div></div>
+    <div class="v358-budget-meta"><span>${amount?pct.toFixed(1)+'% utilizado':'Sin porcentaje: no hay límite'}</span><span class="${delta!==null&&delta>0?'v358-up':''}">${deltaCaption}</span></div>
+    ${amount?`<div class="progress v358-budget-track" role="progressbar" aria-label="${sanitize(cat)} · porcentaje utilizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.min(100,Math.max(0,pct)).toFixed(1)}" data-chart-tip="${sanitize(cat)}|Gastado: ${money(spent)}|Asignado: ${money(amount)}|Ejecución: ${pct.toFixed(1)}%"><span class="${pct>100?'high':pct>=80?'warn':''}" style="width:${Math.min(100,pct)}%"></span></div>`:''}
+    ${subs.length?`<details class="v194-subcategory-drawer v358-budget-subcats"><summary><span>Subcategorías · ${subs.length}</span><span class="v194-drawer-arrow">⌄</span></summary><div class="v194-subcategory-content">${subs.map(sub=>{const setting=current.rows.find(b=>b.category===cat&&b.subcategory===sub),limit=num(setting?.amount),expense=num(totals.expenseSubBy[cat+'||'+sub]);return `<div class="subbudget"><div class="split"><span>↳ ${sanitize(sub)}</span><div class="hstack"><span>${money(expense)} / ${limit?money(limit):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="${sanitize(sub)}">${setting?'Editar':'Definir'}</button></div></div>${limit?`<div class="progress"><span class="${expense>limit?'high':expense>=limit*.8?'warn':''}" style="width:${Math.min(100,expense/limit*100)}%"></span></div>`:''}</div>`}).join('')}</div></details>`:''}
+   </article>`;
  }).filter(Boolean).join('');
  const hasLastYear=lastYear.rows.length>0;
  return `<div class="budget-world v180-budget-clean">
  ${budgetEvolutionChart(year,month)}
  <div class="budget-analytics-grid"><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">01 · ASIGNACIÓN</span><h3>¿A dónde va el presupuesto?</h3><p class="form-note">Peso porcentual y monto por categoría.</p></div><span class="pill">${active.length} categorías</span></div><div class="budget-allocation-list">${chart}</div></section><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">02 · COMPARACIÓN</span><h3>Variación absoluta e interanual</h3><p class="form-note">Mismo mes del año anterior · asignación y gasto real.</p></div></div><details class="budget-variance-disclosure"><summary>Consultar comparación mensual e interanual</summary><div class="budget-variance-grid">${valueComparison('PRESUPUESTO VS. AÑO ANTERIOR',current.total,lastYear.total,hasLastYear)}${valueComparison('PRESUPUESTO CAMBIO MENSUAL',current.total,lastMonth.total,lastMonth.rows.length>0)}${valueComparison('GASTO REAL VS. AÑO ANTERIOR',totals.expense,ly.expense,ly.expense!==0||db.transactions.some(t=>t.date.startsWith(priorYear)))}</div></details><div class="budget-coverage-note">El cumplimiento se calcula sobre el presupuesto asignado. Gastos sin límite se muestran por separado. ${hasLastYear&&lastYear.rows.every(x=>x.legacy)?'La asignación del año anterior procede de datos heredados sin fecha original y es solo orientativa.':''}</div></section></div>
- ${budgetCompliance(totals)}<section class="panel section"><div class="panel-head"><div><span class="summary-tag">03 · EDICIÓN POR CATEGORÍA</span><h3>Presupuesto de ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</h3><p class="form-note">Edita una categoría o subcategoría. Cada período mantiene su propia referencia.</p></div><div class="v180-budget-edit-actions"><button type="button" class="btn sm soft" data-act="addBudget">${icon('plus')} Definir presupuesto</button><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto" style="width:162px"/></div></div>${rows||'<div class="budget-empty-text">No se registran presupuestos ni gastos durante este mes.</div>'}<p class="footnote">Un límite de categoría incluye sus subcategorías. Los cambios afectan el mes seleccionado y los siguientes, salvo otra versión posterior; las versiones anteriores no se modifican. Si tus presupuestos proceden de una versión antigua, la app no puede recuperar sus importes históricos previos a esta actualización.</p></section></div>`;
+ ${budgetCompliance(totals)}<section class="panel section v358-budget-editor"><div class="panel-head"><div><span class="summary-tag">03 · EDICIÓN POR CATEGORÍA</span><h3>Presupuesto de ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</h3><p class="form-note">Edita una categoría o subcategoría. Cada período mantiene su propia referencia.</p></div><div class="v180-budget-edit-actions"><button type="button" class="btn sm soft" data-act="addBudget">${icon('plus')} Definir presupuesto</button><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto" style="width:162px"/></div></div><div class="v358-budget-grid">${rows||'<div class="budget-empty-text">No se registran presupuestos ni gastos durante este mes.</div>'}</div><p class="footnote">Un límite de categoría incluye sus subcategorías. Los cambios afectan el mes seleccionado y los siguientes, salvo otra versión posterior; las versiones anteriores no se modifican. Si tus presupuestos proceden de una versión antigua, la app no puede recuperar sus importes históricos previos a esta actualización.</p></section></div>`;
 }
 
 /* V285: Ejecución no es un tercer catálogo. Reutiliza los cálculos originales. */
@@ -30446,7 +30546,7 @@ function dashboardConfig(){const c=db.settings.kpiDashboard||{};let order=Array.
 return {mode:['all','essential','custom'].includes(c.mode)?c.mode:'all',selected:Array.isArray(c.selected)?c.selected.filter(x=>KPI_IDS.includes(x)):KPI_ESSENTIAL.slice(),groupOrder:order};}
 function saveDashboardConfig(c){db.settings.kpiDashboard={mode:c.mode,selected:[...new Set(c.selected)],groupOrder:c.groupOrder.slice()};persist();}
 function dashboardEnabled(c){return new Set(c.mode==='all'?KPI_IDS:c.mode==='essential'?KPI_ESSENTIAL:c.selected)}
-function universeSwitch(active){let tabs=[['overview','Resumen','home'],['analytics','Resumen detallado','analytics'],['advanced','Analítica avanzada','analytics']];return `<div class="universe-switch-wrap"><nav class="universe-switch" aria-label="Cambiar entre vistas financieras">${tabs.map(([id,label,ico])=>`<button type="button" class="${active===id?'active':''}" ${active===id?'aria-current="page"':''} data-act="navigate" data-id="${id}">${icon(ico)}${label}</button>`).join('')}</nav><span class="universe-context">Tres perspectivas de tus finanzas: resumen · detalle · análisis anual.</span></div>`}
+function universeSwitch(active){let tabs=[['overview','Inicio','home'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet'],['analytics','Resumen detallado','analytics'],['advanced','Analítica avanzada','analytics']];return `<div class="universe-switch-wrap"><nav class="universe-switch" aria-label="Cambiar entre vistas financieras">${tabs.map(([id,label,ico])=>`<button type="button" class="${active===id?'active':''}" ${active===id?'aria-current="page"':''} data-act="navigate" data-id="${id}">${icon(ico)}${label}</button>`).join('')}</nav><span class="universe-context">Tres perspectivas de tus finanzas: resumen · detalle · análisis anual.</span></div>`}
 function kpiProductsModel(scope){const inScope=p=>!scope||p.bankId===scope;const accounts=db.accounts.filter(inScope),cards=db.cards.filter(inScope),loans=db.loans.filter(inScope),certs=db.certificates.filter(inScope),banks=db.banks.filter(b=>!scope||b.id===scope),year=new Date().getFullYear(),monthly=monthStats();
 const balanceFor=cur=>accounts.filter(a=>a.currency===cur).reduce((s,a)=>s+getAccountBalance(a),0);
 const liquidDOP=balanceFor('DOP'),liquidUSD=balanceFor('USD'),liquid=liquidDOP+fx(liquidUSD,'USD');
@@ -31779,7 +31879,7 @@ document.addEventListener('change', event=>{
  ui.month=p;ui.year=Number(p.slice(0,4));render();
 });
 
-const pages={wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,categories,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,recurring,budget,annual,analytics,settings};
+const pages={pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,categories,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,recurring,budget,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -32250,6 +32350,9 @@ if(type==='card_reward')body+=para('Cashback acreditado al saldo de la tarjeta: 
  if(type==='income'&&db.certificates.length)body+=formSelect('certificateId','Certificado relacionado (opcional)',[['','Ninguno'],...db.certificates.map(c=>[c.id,c.name+' · '+bankOf(c)])],o.certificateId||'');
  if(['certificate_funding','certificate_redemption'].includes(type)){body+=formSelect('certificateId','Certificado',db.certificates.map(c=>[c.id,`${c.name} · ${c.currency}`]),o.certificateId||db.certificates[0]?.id||'','required');body+=para('Traslado patrimonial entre cuenta y certificado. No es ingreso ni gasto; los intereses cobrados se registran por separado.')}
  if(type==='loan_payment'){let l=loan(o.loanId);let status=l?loanStatus(l):{installment:0,estimatedInterest:0,balance:0,next:today()},isExtra=o.paymentKind==='extra';let amount=o.amount!==''?num(o.amount):(isExtra?0:status.installment+v49LoanPeriodInsurance(l,status.periods)+v49LoanPeriodFee(l,status.periods)),interest=o.interest!==''?num(o.interest):(isExtra?0:status.estimatedInterest),insurance=o.insurance!==''?num(o.insurance):(isExtra?0:v49LoanPeriodInsurance(l,status.periods)),fee=o.fee!==''?num(o.fee):(isExtra?0:v49LoanPeriodFee(l,status.periods)),principal=o.principal!==''?num(o.principal):Math.max(0,Math.min(status.balance,amount-interest-insurance-fee));
+const bankMode=o.loanPaymentMode==='bank'?'bank':'normal';
+body+=`<div class="form-full v359-mode-picker" role="group" aria-label="Modalidad de registro de cuota"><span class="v359-mode-title">¿Cómo quieres registrar tu cuota?</span><div class="v359-mode-options"><button type="button" class="v359-mode-btn ${bankMode==='normal'?'selected':''}" data-v359-mode="normal" aria-pressed="${bankMode==='normal'}"><strong>01 · Cuota normal</strong><small>Usar el cálculo de la app</small></button><button type="button" class="v359-mode-btn ${bankMode==='bank'?'selected':''}" data-v359-mode="bank" aria-pressed="${bankMode==='bank'}"><strong>02 · Conciliar capital</strong><small>Saldo real antes de pagar</small></button></div><input type="hidden" name="loanPaymentMode" id="v359LoanMode" value="${bankMode}"></div>`;
+body+=`<div class="form-full v359-bank-reconcile" id="v359BankRecon" ${bankMode!=='bank'?'hidden':''}><span class="v359-bank-tag">SALDO DEL BANCO · ANTES DEL PAGO</span>${formItem('bankBalanceBefore','Capital pendiente real antes de esta cuota',o.bankBalanceBefore??'','number','min="0" step="0.01" id="v359BankBefore"')}<div class="v359-bank-note">Este importe es capital, sin intereses futuros. Si difiere del cálculo de la app, la diferencia se concilia sin registrar dinero ni gastos ficticios.</div>${formSelect('interestCalcBasis','Base para estimar interés diario',[['365','365 días'],['360','360 días']],String(o.interestCalcBasis||'365'),'id="v359Basis"')}${formSelect('interestSource','Interés de la cuota',[['estimated_or_entered','Orientativo · pendiente de verificar'],['bank_confirmed','Confirmado en mi comprobante bancario']],o.interestSource||'estimated_or_entered','id="v359InterestSource"')}<div class="v359-bank-preview" id="v359BankPreview" aria-live="polite"></div></div>`;
 body+=formSelect('paymentKind','Tipo de pago',[['regular','Cuota ordinaria'],['extra','Abono extraordinario al capital']],o.paymentKind,'id="loanPaymentKind"')
 +(v49LoanPeriodsPerMonth(l)===2?formItem('installmentPeriod','Vencimiento quincenal que estás pagando',/^\d{4}-\d{2}-\d{2}$/.test(o.installmentPeriod)?o.installmentPeriod:status.next,'date','id="v49PaymentPeriod"'):formItem('installmentPeriod','Mes de la cuota',o.installmentPeriod||status.next.slice(0,7),'month','id="v49PaymentPeriod"'))
 +formItem('amount',`Total desembolsado (${l?.currency||'DOP'})`,amount,'number','min="0.01" step="0.01" required id="loanAmount"')
@@ -32274,8 +32377,82 @@ if(editId){body+=para('Corrección de un registro existente: se conserva el iden
    El impuesto (configurable) y el cargo bancario son componentes separados.
    Tarjetas RD$/US$: consumo aumenta deuda, pago reduce deuda sin duplicar gasto.
    ======================================================================== */
+/* V359 · Conciliación inteligente: capital bancario ANTES del pago.
+   Guarda únicamente la cuota original y una referencia de capital;
+   la corrección de saldo no se considera movimiento financiero. */
+function v359DailyInterest(l,balance,onDate,basis=365,form=null){
+ if(!l||!(balance>=0))return {days:0,value:0,from:''};
+ const id=form?.dataset?.id||'';
+ const history=loanTransactions(l.id).filter(t=>t.id!==id&&t.date<onDate&&t.date<=today()).sort((a,b)=>b.date.localeCompare(a.date));
+ const prev=history[0]?.date||l.lastPaidDate||l.openingBalanceDate||l.originationDate||'';
+ const start=/^\d{4}-\d{2}-\d{2}$/.test(prev)?prev:onDate;
+ const ms=Date.parse(onDate+'T12:00:00Z')-Date.parse(start+'T12:00:00Z');
+ const days=Number.isFinite(ms)?Math.max(0,Math.round(ms/86400000)):0;
+ const annual=Math.max(0,num(l.currentRate??l.rate));
+ return {from:start,days,value:rnd(balance*annual/100*days/(basis===360?360:365))};
+}
+function v359LoanRefresh(form,changed=''){
+ if(!form||form.elements.type?.value!=='loan_payment')return;
+ const mode=form.elements.loanPaymentMode?.value==='bank'?'bank':'normal';
+ const l=loan(form.elements.loanId?.value),block=form.querySelector('#v359BankRecon');
+ if(block){block.hidden=mode!=='bank';block.querySelectorAll('input,select').forEach(el=>{el.disabled=mode!=='bank';});}
+ const picker=form.querySelector('.v359-mode-picker');
+ if(picker)picker.querySelectorAll('[data-v359-mode]').forEach(b=>{const chosen=b.dataset.v359Mode===mode;b.classList.toggle('selected',chosen);b.setAttribute('aria-pressed',chosen?'true':'false')});
+ if(form.elements.bankBalanceBefore)form.elements.bankBalanceBefore.required=mode==='bank';
+ const isExtra=form.elements.paymentKind?.value==='extra';
+ if(isExtra&&mode==='bank'){
+  form.elements.loanPaymentMode.value='normal';return v359LoanRefresh(form,'paymentKind');
+ }
+ const pre=form.elements.bankBalanceBefore?.value||'';
+ const bal=pre!==''?Number(pre):NaN;
+ const overview=form.querySelector('#v359BankPreview');
+ if(mode!=='bank'||!l||!overview)return;
+ const simulated=loanAccounting(l).balance;
+ const rateBasis=form.elements.interestCalcBasis?.value==='360'?360:365;
+ const result=Number.isFinite(bal)&&bal>=0?v359DailyInterest(l,bal,form.elements.date?.value||today(),rateBasis,form):null;
+ if(result){
+  // Auto-complete estimate on switching mode/bank amount/date, but NEVER overwrite
+  // interest or principal manually edited by the user.
+  const intField=form.elements.interest,prinField=form.elements.principal;
+  if(intField&&!form.dataset.v359EditedInterest&&form.elements.interestSource?.value!=='bank_confirmed'&&['mode','bankBalanceBefore','interestCalcBasis','date','loanId'].includes(changed))intField.value=result.value.toFixed(2);
+  const amount=num(form.elements.amount?.value),interest=num(intField?.value),extras=num(form.elements.insurance?.value)+num(form.elements.fee?.value);
+  if(prinField&&!form.dataset.v359EditedPrincipal&&['mode','amount','bankBalanceBefore','interestCalcBasis','date','loanId','interest','insurance','fee'].includes(changed))prinField.value=Math.max(0,rnd(amount-interest-extras)).toFixed(2);
+  if(intField&&changed==='principal'&&!form.dataset.v359EditedInterest)intField.value=Math.max(0,rnd(amount-num(prinField?.value)-extras)).toFixed(2);
+ }
+ const delta=Number.isFinite(bal)?rnd(bal-simulated):0;
+ overview.innerHTML=Number.isFinite(bal)&&bal>=0?`<div class="v359-preview-row"><span>Saldo estimado por la app</span><strong>${money(simulated,l.currency,2)}</strong></div><div class="v359-preview-row"><span>Capital informado por el banco</span><strong>${money(bal,l.currency,2)}</strong></div><div class="v359-preview-row"><span>Diferencia de conciliación</span><strong>${money(delta,l.currency,2)}</strong></div><div class="v359-preview-row"><span>Interés diario orientativo (${result.days} días, base ${rateBasis})</span><strong>${money(result.value,l.currency,2)}</strong></div><small>Interés orientativo, no acreditado por el banco. Ajusta el desglose según tu comprobante; el saldo no genera un segundo pago.</small>`:'<small>Escribe el saldo de capital ANTES de pagar para comparar con la aplicación.</small>';
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest?.('[data-v359-mode]');if(!b)return;
+ const f=b.closest('form');if(!f||f.id!=='transactionForm')return;
+ e.preventDefault();const input=f.elements.loanPaymentMode;if(!input)return;
+ const previousMode=input.value;
+ input.value=b.dataset.v359Mode;delete f.dataset.v359EditedInterest;delete f.dataset.v359EditedPrincipal;
+ if(previousMode==='bank'&&input.value==='normal'){
+  // Restore the contractual app estimate; don't keep the bank-mode daily estimate
+  // in a normal payment after changing the choice.
+  const l=loan(f.elements.loanId?.value),st=l?loanStatus(l):null;
+  if(st&&f.elements.interest){f.elements.interest.value=Math.max(0,st.estimatedInterest).toFixed(2);
+   const amt=num(f.elements.amount?.value),over=num(f.elements.insurance?.value)+num(f.elements.fee?.value);
+   if(f.elements.principal)f.elements.principal.value=Math.max(0,rnd(amt-num(f.elements.interest.value)-over)).toFixed(2);
+  }
+ }
+ v359LoanRefresh(f,'mode');refreshLegacyLoanPayment();
+});
+document.addEventListener('input',e=>{
+ const f=e.target.form;if(f?.id!=='transactionForm'||f.elements.type?.value!=='loan_payment')return;
+ if(e.target.name==='interest')f.dataset.v359EditedInterest='1';
+ if(e.target.name==='principal')f.dataset.v359EditedPrincipal='1';
+ v359LoanRefresh(f,e.target.name||'');
+},true);
+document.addEventListener('change',e=>{
+ const f=e.target.form;if(f?.id!=='transactionForm'||f.elements.type?.value!=='loan_payment')return;
+ if(e.target.name==='loanId'){delete f.dataset.v359EditedInterest;delete f.dataset.v359EditedPrincipal;}if(e.target.name==='interestSource'&&e.target.value==='bank_confirmed')f.dataset.v359EditedInterest='1';
+ v359LoanRefresh(f,e.target.name||'');
+},true);
 function refreshLegacyLoanPayment(){
  const f=document.getElementById('transactionForm');if(!f||f.dataset.guided==='yes'||f.elements.type?.value!=='loan_payment')return;
+ v359LoanRefresh(f,'');
  const acc=account(f.elements.accountId?.value),loanSelected=loan(f.elements.loanId?.value);
  const channel=normalizePaymentChannel(f.elements.paymentChannel?.value)||'presencial';
  if(f.elements.paymentChannel){for(const opt of f.elements.paymentChannel.options)opt.disabled=acc?.kind==='cash'&&opt.value==='internet_banking';if(f.elements.paymentChannel.selectedOptions[0]?.disabled)f.elements.paymentChannel.value='presencial'}
@@ -33132,7 +33309,18 @@ if(v.type==='card_charge'){base.paymentTax=0;base.paymentFee=0;}
  if(['certificate_funding','certificate_redemption'].includes(v.type)){let cert=certificate(v.certificateId),acc=account(v.accountId);if(!cert||!acc||cert.currency!==acc.currency)throw Error('La cuenta y el certificado deben existir y tener la misma moneda.');base.certificateId=cert.id;if(v.type==='certificate_redemption'&&amount>certificateCapital(cert)+.01)throw Error('El rescate supera el capital del certificado.');if(v.type==='certificate_funding'){if(cert.capitalMode!=='pending')throw Error('Este certificado ya consta como constituido al iniciar. No descuentes otra vez el capital; cambia la opción solo si aún no se ha financiado.');let previous=db.transactions.filter(t=>t.type==='certificate_funding'&&t.certificateId===cert.id).reduce((a,t)=>a+num(t.amount),0);if(previous+amount>num(cert.principal)+.01)throw Error('Ya se registró el fondeo por el capital del certificado.')}}
 if(v.type==='transfer'){let a=account(v.accountId),b=account(v.toAccountId);base.currency=a.currency;if(v.flowMode==='own'&&(a.kind==='cash'||b.kind==='cash')&&v.transferSpeed==='instant')throw Error('Pago al instante solo está disponible entre cuentas bancarias.');let taxSelected=v.flowMode==='own'?false:v.transferTaxable!==undefined?v.transferTaxable==='yes':num(previous?.transferTaxPct??db.settings.transferTaxPct)>0;let pct=taxSelected?num(v.transferTaxPct??previous?.transferTaxPct??db.settings.transferTaxPct):0,fixed=v.transferFixedFee!==undefined?num(v.transferFixedFee):num(previous?.transferFixedFee??(a.currency==='USD'?db.settings.transferFeeUSD:db.settings.transferFeeDOP));if(v.flowMode==='own'&&(a.kind==='cash'||b.kind==='cash')){pct=0;fixed=0;taxSelected=false;}if(pct<0||pct>100||fixed<0||!Number.isFinite(fixed))throw Error('Revisa el impuesto y el cargo por transferencia.');if(v.flowMode==='own'){const expect=rnd((v.transferSpeed==='instant'?(a.currency==='USD'?100/(a.currency!==b.currency?num(v.fxRate)||flowRates():flowRates()):100):0)+(v.extraChargeMode==='custom'?num(v.extraBankFee):0));if(Math.abs(fixed-expect)>.015)throw Error('El costo del Pago al instante cambió. Revisa la operación.');}base.transferTaxable=taxSelected?'yes':'no';base.transferTaxPct=pct;base.transferFixedFee=fixed;base.transferTax=rnd(amount*pct/100);base.fxRate=a.currency===b.currency?null:num(v.fxRate||previous?.fxRate||db.settings.fx);if(a.currency!==b.currency&&!(base.fxRate>0))throw Error('Introduce una tasa de cambio válida.');base.transferFee=rnd(amount*pct/100+fixed);if(base.transferFee<0||!Number.isFinite(base.transferFee))throw Error('El cargo por transferencia no es válido.');base.targetAmount=rnd(a.currency===b.currency?amount:(v.receiveMode==='manual'&&v.targetAmount!==''?num(v.targetAmount):(a.currency==='USD'?amount*base.fxRate:amount/base.fxRate)));if(base.targetAmount<=0)throw Error('El importe recibido debe ser positivo.')}
 /* v120: the card payment conversion and actual bank debit have already been calculated before taxes. */
-if(v.type==='loan_payment'){let l=loan(v.loanId),a=account(v.accountId);base.currency=l.currency;base.principal=rnd(v.principal);base.interest=rnd(v.interest);base.fee=rnd(v.fee);base.insurance=rnd(v.insurance);base.paymentKind=v.paymentKind==='extra'?'extra':'regular';base.installmentPeriod=base.paymentKind==='regular'?String(v.installmentPeriod||v49LoanPeriodKey(l,v.date)):'';if(base.paymentKind==='regular'){const validPeriod=v49LoanPeriodsPerMonth(l)===2?/^\d{4}-\d{2}-\d{2}$/.test(base.installmentPeriod):/^\d{4}-\d{2}$/.test(base.installmentPeriod);if(!validPeriod)throw Error('Selecciona un vencimiento válido para este préstamo.');}if([base.principal,base.interest,base.fee,base.insurance].some(n=>n<0))throw Error('Capital, interés, seguro y comisiones no pueden ser negativos.');if(Math.abs(base.principal+base.interest+base.fee+base.insurance-amount)>.025)throw Error('Capital + interés + seguro + comisiones debe coincidir con el pago total.');if(base.principal>loanStatus(l).balance+.01)throw Error('El capital abonado excede el saldo pendiente del préstamo.');base.sourceAmount=rnd(v.sourceAmount!==''?num(v.sourceAmount):xconvert(amount,l.currency,a.currency));if(base.sourceAmount<=0)throw Error('El importe debitado debe ser positivo.');
+if(v.type==='loan_payment'){let l=loan(v.loanId),a=account(v.accountId);base.currency=l.currency;base.principal=rnd(v.principal);base.interest=rnd(v.interest);base.fee=rnd(v.fee);base.insurance=rnd(v.insurance);base.paymentKind=v.paymentKind==='extra'?'extra':'regular';base.installmentPeriod=base.paymentKind==='regular'?String(v.installmentPeriod||v49LoanPeriodKey(l,v.date)):'';if(base.paymentKind==='regular'){const validPeriod=v49LoanPeriodsPerMonth(l)===2?/^\d{4}-\d{2}-\d{2}$/.test(base.installmentPeriod):/^\d{4}-\d{2}$/.test(base.installmentPeriod);if(!validPeriod)throw Error('Selecciona un vencimiento válido para este préstamo.');}if([base.principal,base.interest,base.fee,base.insurance].some(n=>n<0))throw Error('Capital, interés, seguro y comisiones no pueden ser negativos.');if(Math.abs(base.principal+base.interest+base.fee+base.insurance-amount)>.025)throw Error('Capital + interés + seguro + comisiones debe coincidir con el pago total.');base.loanPaymentMode=v.loanPaymentMode==='bank'?'bank':'normal';
+ if(base.loanPaymentMode==='bank'){
+  if(base.paymentKind!=='regular')throw Error('La conciliación de capital corresponde a una cuota ordinaria.');
+  if(v.bankBalanceBefore===''||v.bankBalanceBefore===undefined||!Number.isFinite(Number(v.bankBalanceBefore)))throw Error('Introduce el saldo de capital que muestra el banco ANTES del pago.');
+  base.bankBalanceBefore=rnd(Number(v.bankBalanceBefore));
+  if(base.bankBalanceBefore<0||base.bankBalanceBefore>num(l.principal)+.01)throw Error('El capital del banco debe estar entre cero y el capital original. Revisa si el banco agregó cargos o intereses al saldo.');
+  if(l.openingMode==='existing'&&v.date<(l.openingBalanceDate||today()))throw Error('La conciliación no puede ser anterior a la apertura del préstamo.');
+  base.interestCalcBasis=String(v.interestCalcBasis)==='360'?'360':'365';
+  base.interestSource=v.interestSource==='bank_confirmed'?'bank_confirmed':'estimated_or_entered';
+ }else{base.bankBalanceBefore=null;base.interestCalcBasis=null;base.interestSource=null;}
+ const availableCapital=base.loanPaymentMode==='bank'?base.bankBalanceBefore:loanStatus(l).balance;
+ if(base.principal>availableCapital+.01)throw Error('El capital abonado excede el saldo disponible antes del pago.');base.sourceAmount=rnd(v.sourceAmount!==''?num(v.sourceAmount):xconvert(amount,l.currency,a.currency));if(base.sourceAmount<=0)throw Error('El importe debitado debe ser positivo.');
  const eligible=isTaxableBankPayment(a,v.paymentChannel);
  const taxable=eligible&&v.paymentTaxable==='yes';
  const pct=taxable?num(v.paymentTaxPct??recommendedTax(v.date)):0;
@@ -33201,7 +33389,7 @@ for(let mm=1;mm<=12;mm++){
 d.budgetVersions=[{id:uuid(),category:'Alimentación',subcategory:'',effectiveMonth:`${demoReferenceYear}-01`,amount:10800},{id:uuid(),category:'Vivienda',subcategory:'',effectiveMonth:`${demoReferenceYear}-01`,amount:20000}];
 return migrateData(d)}
 function toast(message){let el=document.getElementById('toast-root');el.innerHTML=`<div class="toast">${sanitize(message)}</div>`;clearTimeout(toast.timer);toast.timer=setTimeout(()=>{el.innerHTML=''},3300);window.v192HapticSuccess?.(message,true)}
-function closeModal(){document.getElementById('v54-delete-layer')?.remove();document.getElementById('modal-root').innerHTML=''}
+function closeModal(){v360LastUiDraft=null;document.getElementById('v54-delete-layer')?.remove();document.getElementById('modal-root').innerHTML='';if(f33Active){try{const x=JSON.parse(localStorage.getItem(v360ResumeKey())||'null');if(x){x.draft=null;localStorage.setItem(v360ResumeKey(),JSON.stringify(x))}}catch(_){}}}
 function isHidden(x){return !!(x?.archived||bank(x?.bankId)?.archived)}
 function manageProduct(kind,id,cmd){let collection={bank:'banks',account:'accounts',card:'cards',loan:'loans',certificate:'certificates'}[kind];if(!collection)return;
 let list=db[collection],p=list.find(x=>x.id===id);if(!p)return;
@@ -33273,6 +33461,7 @@ function render(){
  document.body.style.setProperty('--vive-bg-color',bgChoice==='custom'&&hex.test(db.settings.backgroundHex||'')?db.settings.backgroundHex:(backgrounds[bgChoice]||backgrounds.original));
  v250DockGlassApply(db.settings.mobileDockGlassLevel ?? 50);
  document.getElementById('app').innerHTML=main();
+ if(f33Active)setTimeout(v360SaveUI,120);
   v40Decorate();
   v255DecorateTaxonomyUI();
   // Restore the currently selected filter button after a same-page redraw.
@@ -33295,7 +33484,7 @@ function render(){
   btn.addEventListener('click',()=>{if(typeof closeModal==='function')closeModal();else root.innerHTML='';});
   layer.appendChild(btn);
  };
- new MutationObserver(sync).observe(root,{childList:true});sync();
+ new MutationObserver(()=>{sync();const form=root.querySelector('form');if(form&&v360LastUiDraft)setTimeout(()=>v360RestoreDraft(form),0)}).observe(root,{childList:true});sync();
 })();
 
 
@@ -33791,11 +33980,11 @@ const INNER_PAGES={
  accounts:{label:'Dentro de Cuentas',tabs:[['overview','Resumen'],['bank','Bancarias'],['cash','Efectivo RD$ / US$'],['activity','Movimientos']],action:['Nueva cuenta','addAccount']},
  loans:{label:'Dentro de Préstamos',tabs:[['overview','Cartera'],['active','Activos'],['closed','Liquidados'],['due','Vencimientos']],action:['Nuevo préstamo','addLoan']},
  income:{label:'Dentro de Ingresos',tabs:[['overview','Análisis de ingresos'],['activity','Movimientos']],action:['Registrar ingreso','guidedFlow','income']},
- expenses:{label:'Dentro de Egresos',tabs:[['overview','Análisis'],['activity','Movimientos'],['category','Categorías']],action:['Registrar egreso','guidedFlow','spend']},
+ expenses:{label:'Dentro de Egresos',tabs:[['overview','Egresos'],['activity','Movimientos'],['category','Categorías']],action:['Registrar egreso','guidedFlow','spend']},
  banks:{label:'Dentro de Bancos',tabs:[['overview','Instituciones'],['products','Productos'],['activity','Movimientos']],action:['Agregar banco','addBank']},
  cards:{label:'Dentro de Tarjetas',tabs:[['overview','Mis tarjetas'],['balances','Saldos RD$ / US$'],['activity','Movimientos']],action:['Nueva tarjeta','addCard']},
  payments:{label:'Dentro de Compromisos',tabs:[['overview','Pendientes'],['activity','Pagos realizados']],action:['Registrar pago','quickPay']},
- recurring:{label:'Dentro de Suscripciones',tabs:[['overview','Suscripciones'],['activity','Historial de cargos']],action:['Nuevo servicio','addRecurring']},
+ recurring:{label:'Dentro de Suscripciones',tabs:[['overview','Servicios'],['next','Próximos pagos'],['activity','Historial']],action:['Nuevo servicio','addRecurring']},
  budget:{label:'Dentro de Presupuestos',tabs:[['overview','Presupuestos'],['category','Egresos por categoría']],action:['Definir límite','addBudget']},
  certificates:{label:'Dentro de Certificados',tabs:[['overview','Mis certificados'],['activity','Movimientos']],action:['Nuevo certificado','addCertificate']},
  benefits:{label:'Dentro de Beneficios',tabs:[['overview','Beneficios'],['activity','Cashback registrado']],action:[]},
@@ -33872,7 +34061,7 @@ const V26_META={
  certificates:{title:'Tus certificados',hint:'Capital invertido, tasas, cobros reales y vencimientos.',metric:'Certificados',count:()=>db.certificates.length,btn:'Nuevo certificado',act:'addCertificate',tabs:[['overview','Posiciones','building'],['due','Vencimientos','calendar'],['activity','Movimientos','cycle']]},
  benefits:{title:'Beneficios y recompensas',hint:'Cashback realmente acreditado, puntos y beneficios por tarjeta.',metric:'Tarjetas',count:()=>db.cards.length,btn:'Registrar beneficio',act:'quickBenefit',tabs:[['overview','Resumen','wallet'],['bycard','Por tarjeta','card'],['activity','Acreditados','cycle']]},
  payments:{title:'Tus compromisos',hint:'Lo que vence, lo que debes atender y los pagos ya registrados.',metric:'Pendientes',count:()=>upcoming().filter(a=>a.kind!=='personal_recv').length,btn:'Registrar pago',act:'quickPay',tabs:[['overview','Todos','calendar'],['upcoming','Próximos 30 días','clock'],['activity','Pagados','check']]},
- recurring:{title:'Suscripciones y servicios',hint:'Importes, frecuencia, próximo vencimiento y pagos registrados.',metric:'Servicios',count:()=>db.recurring.length,btn:'Nuevo servicio',act:'addRecurring',tabs:[['overview','Servicios','cycle'],['next','Próximos cargos','calendar'],['activity','Historial','receipt']]},
+ recurring:{title:'Suscripciones y servicios',hint:'Importes, frecuencia, próximo vencimiento y pagos registrados.',metric:'Servicios',count:()=>db.recurring.length,btn:'Nuevo servicio',act:'addRecurring',tabs:[['overview','Servicios','cycle'],['next','Próximos pagos','calendar'],['activity','Historial','receipt']]},
  personal:{title:'Dinero entre personas',hint:'Préstamos personales y devoluciones separados de ingresos y gastos.',metric:'Relaciones',count:()=>db.personalLoans.length,btn:'Nueva relación',act:'addPersonal',tabs:[['overview','Relaciones','wallet'],['receivable','Por cobrar','up'],['payable','Por pagar','down'],['activity','Movimientos','cycle']]},
  budget:{title:'Presupuestos',hint:'Límites mensuales, ejecución y categorías sin duplicaciones.',metric:'Categorías',count:()=>budgetPlan(ui.month).groups.length,btn:'Definir límite',act:'addBudget',tabs:[['overview','Mi presupuesto','wallet'],['status','Ejecución','chart']]},
  categories:{title:'Tu catálogo',hint:'Las categorías originales y las que añadas se conservan.',metric:'Categorías',count:()=>Object.keys(categoryMap('gasto')).length+Object.keys(categoryMap('ingreso')).length,btn:'Nueva categoría',act:'addCategory',tabs:[['overview','Catálogo completo','grid'],['category','Utilizadas','analytics'],['unclassified','Sin clasificar','receipt']]}
@@ -33898,7 +34087,7 @@ innerView=function(page,selection){
  }
  if(page==='recurring'&&selection==='next'){
   const active=db.recurring.filter(r=>r.active!==false).slice().sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)));
-  return v26Cards('Próximos cargos','Servicios activos con sus montos y fechas previstas.',active.map(r=>v26RecCard({kicker:prettyDate(r.nextDue)+' · '+sanitize(r.currency),title:r.name,value:money(r.amount,r.currency,2),rows:[v26M('Frecuencia',({monthly:'Mensual',weekly:'Semanal',quarterly:'Trimestral',annual:'Anual'})[r.frequency]||r.frequency),v26M('Categoría',sanitize(r.category||'Sin asignar')),v26M('Estado',whenTxt(r.nextDue))],actions:v26Act('Registrar pago','payRecurring',r.id)+v26Act('Editar servicio','editRecurring',r.id)})));
+  return v26Cards('Próximos pagos','Servicios activos con sus montos y fechas previstas.',active.map(r=>v26RecCard({kicker:prettyDate(r.nextDue)+' · '+sanitize(r.currency),title:r.name,value:money(r.amount,r.currency,2),rows:[v26M('Frecuencia',({monthly:'Mensual',weekly:'Semanal',quarterly:'Trimestral',annual:'Anual'})[r.frequency]||r.frequency),v26M('Categoría',sanitize(r.category||'Sin asignar')),v26M('Estado',whenTxt(r.nextDue))],actions:v26Act('Registrar pago','payRecurring',r.id)+v26Act('Editar servicio','editRecurring',r.id)})));
  }
  if(page==='certificates'&&selection==='due'){
   const arr=db.certificates.slice().sort((a,b)=>String(a.maturityDate).localeCompare(String(b.maturityDate)));
@@ -33928,7 +34117,7 @@ innerWrap=function(page,view){
  if(page==='budget'){
    const mode=ui.innerViews?.budget==='status'?'status':'overview';
    const tab=(id,name)=>`<button type="button" class="v285-budget-tab ${mode===id?'active':''}" data-act="innerView" data-page="budget" data-view="${id}" aria-current="${mode===id?'page':'false'}">${name}</button>`;
-   return `<section class="v285-budget-workspace" aria-label="Presupuesto"><nav class="v285-budget-nav" aria-label="Vistas del presupuesto">${tab('overview','Mi presupuesto')}${tab('status','Ejecución')}</nav><div class="v285-budget-body">${mode==='status'?v285BudgetExecution():view()}</div></section>`;
+   return `<section class="v285-budget-workspace" aria-label="Presupuesto"><nav class="v285-budget-nav" aria-label="Vistas del presupuesto">${tab('overview','Presupuesto')}${tab('status','Ejecución')}</nav><div class="v285-budget-body">${mode==='status'?v285BudgetExecution():view()}</div></section>`;
  }
  const cfg=V26_META[page];if(!cfg)return view();
  const selection=page==='categories'?'overview':cfg.tabs.some(x=>x[0]===ui.innerViews[page])?ui.innerViews[page]:'overview';
@@ -33967,7 +34156,7 @@ function otherStudioApply(kind){
  if(kind==='refund'){['cardId','currency','category','subcategory','date'].forEach(k=>pull(k,core))}
  if(kind==='adjustment'){['accountId','date'].forEach(k=>pull(k,core))}
  if(kind==='benefit'){['kind','name','currency','date'].forEach(k=>pull(k,core));pullElement('.benefit-only-cash',core)}
- if(kind==='loan'){['loanId','accountId','paymentKind','paymentChannel','date','installmentPeriod'].forEach(k=>pull(k,core));const b=section('DESGLOSE DEL PAGO');b.classList.add('other-studio-breakdown');['principal','interest','insurance','fee'].forEach(k=>pull(k,b));}
+ if(kind==='loan'){pullElement('.v359-mode-picker',core);['loanId','accountId','paymentKind','paymentChannel','date','installmentPeriod'].forEach(k=>pull(k,core));pullElement('#v359BankRecon',core);const b=section('DESGLOSE DEL PAGO');b.classList.add('other-studio-breakdown');['principal','interest','insurance','fee'].forEach(k=>pull(k,b));}
  const fold=document.createElement('details');fold.className='other-studio-fold';fold.innerHTML='<summary>Más detalles y estado <span>⌄</span></summary>';const foldBody=document.createElement('div');foldBody.className='other-studio-fold-body';fold.appendChild(foldBody);body.appendChild(fold);
  if(kind==='loan'){pullElement('#loanBankTaxBlock',foldBody);pullElement('#legacyPaymentConversion',foldBody)}
  ['tags','note','postingStatus'].forEach(k=>pull(k,foldBody));
@@ -34285,7 +34474,8 @@ let f34FxBusy=false,f34FxError='',f34FxAttempted=0;
 const F34_REFRESH_MS=6*60*60*1000;
 function f34CloudPanel(){
  const state=f34SyncState,txt=f34SyncLabel;
- return `<section class="f34-private-status" aria-label="Estado de la nube"><div class="f34-private-top"><strong><span class="f34-private-indicator ${sanitize(state)}"></span>Sincronización privada</strong><span class="pill ${state==='ok'?'green':state==='error'?'red':state==='conflict'?'orange':'blue'}">${sanitize(txt)}</span></div><p>Los datos se sincronizan con Supabase después de iniciar sesión. Si falla la conexión, comprueba tus cambios pendientes antes de cerrar sesión.</p><div class="f34-private-actions"><button class="btn sm soft" type="button" data-f34="retryCloud">Reintentar</button><button class="btn sm ghost" type="button" data-f34="backup">Descargar respaldo</button><button class="btn sm ghost" type="button" data-f34="reloadCloud">Consultar nube</button><button class="btn sm ghost" type="button" data-f34="logout">Cerrar sesión</button></div></section>`;
+  // La sincronización es silenciosa; la única acción manual que permanece es cerrar sesión.
+  return `<section class="f34-private-status v360-private-simple" aria-label="Protección de datos"><strong>Información privada</strong><p>Guardado automático y recuperación local protegida. ${state==='conflict'?'Hay dos cambios simultáneos conservados: la sincronización de este dispositivo se ha pausado para no sobrescribir ninguno.':''}</p><button class="btn sm ghost" type="button" data-f34="logout">Cerrar sesión</button></section>`;
 }
 function f34RateAge(date){const t=Date.parse(date||'');return Number.isFinite(t)?(Date.now()-t):Infinity}
 function f34FxPanel(){
@@ -34351,6 +34541,109 @@ document.addEventListener('click',async e=>{
  }
 });
 
+
+/* V360: guardado automático con control de versiones sin resolver conflictos a ciegas. */
+let v360BaseDoc=null, v360BaseUserId=null, v360ResumeScroll=null, v360LastUiDraft=null;
+const v360BaselineKey=()=>'finanzas360.baseline.'+(f33User?.id||'');
+const v360ResumeKey=()=>'finanzas360.resume.'+(f33User?.id||'');
+function v360RememberBase(doc,stamp){
+ v360BaseDoc=JSON.parse(JSON.stringify(doc));v360BaseUserId=f33User?.id||null;
+ try{localStorage.setItem(v360BaselineKey(),JSON.stringify({documento:doc,stamp:stamp||f33Stamp,at:Date.now()}))}catch(e){console.warn('No se pudo copiar la versión base local.',e)}
+}
+function v360BaseFromStorage(){
+ if(v360BaseDoc&&v360BaseUserId===f33User?.id)return v360BaseDoc;
+ try{return JSON.parse(localStorage.getItem(v360BaselineKey())||'null')?.documento||null}catch(e){return null}
+}
+function v360ThreeWayMerge(base,local,remote){
+ if(!base||!local||!remote)return null;
+ const eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+ const merge=(b,l,r,path='')=>{
+  if(eq(l,r))return l;
+  if(eq(l,b))return r;
+  if(eq(r,b))return l;
+  if(Array.isArray(b)&&Array.isArray(l)&&Array.isArray(r)){
+   const hasIds=arr=>arr.every(v=>v&&typeof v==='object'&&!Array.isArray(v)&&typeof v.id==='string');
+   if(!hasIds(b)||!hasIds(l)||!hasIds(r))throw Error('Colección no fusionable: '+path);
+   const bm=new Map(b.map(x=>[x.id,x])),lm=new Map(l.map(x=>[x.id,x])),rm=new Map(r.map(x=>[x.id,x]));
+   return [...new Set([...b,...r,...l].map(x=>x.id))].flatMap(id=>{
+    const bv=bm.get(id),lv=lm.get(id),rv=rm.get(id);
+    if(eq(lv,rv))return lv===undefined?[]:[lv];
+    if(eq(lv,bv))return rv===undefined?[]:[rv];
+    if(eq(rv,bv))return lv===undefined?[]:[lv];
+    // Un mismo registro financiero fue cambiado en dos dispositivos: detenerse.
+    throw Error('Conflicto simultáneo en '+path+' / '+id);
+   });
+  }
+  const plain=x=>x&&typeof x==='object'&&!Array.isArray(x);
+  if(plain(b)&&plain(l)&&plain(r)){
+   const out={};
+   for(const key of new Set([...Object.keys(b),...Object.keys(l),...Object.keys(r)])){
+    const v=merge(b[key],l[key],r[key],path+'.'+key);
+    if(v!==undefined)out[key]=v;
+   }
+   return out;
+  }
+  throw Error('Conflicto simultáneo en '+path);
+ };
+ try{return merge(base,local,remote,'finanzas')}catch(e){console.warn('Se conservan las dos versiones sin sobrescribir:',e.message);return null}
+}
+function v360WritePending(){
+ if(!f33User||!window.__f360CloudUid)return false;
+ try{
+  const old=JSON.parse(localStorage.getItem(f33CloudKey())||'null');
+  const baseStamp=f33Conflict?(old?.baseStamp||f33PendingBackup?.baseStamp):(window.__f360BaseStamp||null);
+  localStorage.setItem(f33CloudKey(),JSON.stringify({pending:true,baseStamp,documento:db,savedAt:new Date().toISOString()}));
+  return true;
+ }catch(e){console.warn('No se pudo conservar el documento pendiente de forma local:',e);return false}
+}
+function v360SaveUI(){
+ if(!f33Active||!f33User)return;
+ try{
+  const fields=[];const form=document.querySelector('#modal-root form');
+  if(form)form.querySelectorAll('input,select,textarea').forEach((el,i)=>{
+   if(el.type==='password'||el.type==='file')return;
+   fields.push({key:el.name||el.id||String(i),value:el.value,checked:!!el.checked,type:el.type});
+  });
+  const previous=JSON.parse(localStorage.getItem(v360ResumeKey())||'null');
+  const draft=form?{formId:form.id,formTitle:form.closest('[role=dialog]')?.getAttribute('aria-label')||'',kind:form.querySelector('[name=type]')?.value||'',fields}:previous?.draft||null;
+  localStorage.setItem(v360ResumeKey(),JSON.stringify({page:ui.page,month:ui.month,year:ui.year,innerViews:ui.innerViews||{},selectedPressure:ui.v360PressureDate||null,scroll:window.scrollY||0,draft,at:Date.now()}));
+ }catch(e){console.warn('No se pudo conservar la navegación:',e)}
+}
+function v360RestoreUI(){
+ try{
+  const r=JSON.parse(localStorage.getItem(v360ResumeKey())||'null');
+  if(!r||Date.now()-r.at>30*86400000)return;
+  const allowed=['overview','recurring','personal','pressure','banks','accounts','cards','loans','certificates','budget','expenses','income','register','payments','wallet','mobilehub','mobilesearch','advanced','patrimony','categories','settings','analytics'];
+  if(allowed.includes(r.page))ui.page=r.page;
+  if(/^\d{4}-\d{2}$/.test(r.month||''))ui.month=r.month;
+  if(Number.isInteger(r.year)&&r.year>=2000&&r.year<=2100)ui.year=r.year;
+  if(r.selectedPressure&&/^\d{4}-\d{2}-\d{2}$/.test(r.selectedPressure))ui.v360PressureDate=r.selectedPressure;
+  if(r.innerViews&&typeof r.innerViews==='object'&&ui.innerViews)Object.assign(ui.innerViews,r.innerViews);
+  v360LastUiDraft=r.draft||null;v360ResumeScroll=Number(r.scroll)||0;
+ }catch(e){console.warn('No se pudo restaurar la navegación:',e)}
+}
+function v360RestoreDraft(form){
+ if(!v360LastUiDraft||!form||v360LastUiDraft.formId!==form.id)return;
+ if(v360LastUiDraft.formTitle&&v360LastUiDraft.formTitle!==(form.closest('[role=dialog]')?.getAttribute('aria-label')||''))return;
+ if(v360LastUiDraft.kind&&v360LastUiDraft.kind!==(form.querySelector('[name=type]')?.value||''))return;
+ try{
+  const restoring=v360LastUiDraft;v360LastUiDraft=null;
+  form.querySelectorAll('input,select,textarea').forEach((el,i)=>{
+   const key=el.name||el.id||String(i);
+   const old=restoring.fields.find(x=>x.key===key);
+   if(!old||el.type==='password'||el.type==='file')return;
+   if(el.type==='checkbox'||el.type==='radio')el.checked=!!old.checked;
+   else el.value=old.value;
+   el.dispatchEvent(new Event('input',{bubbles:true}));
+   el.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+ }catch(e){console.warn('No se pudo reponer el borrador:',e)}
+}
+window.addEventListener('pagehide',()=>{v360SaveUI();if(f33Dirty)v360WritePending()});
+window.addEventListener('scroll',()=>{clearTimeout(window.__v360UIScrollTimer);window.__v360UIScrollTimer=setTimeout(v360SaveUI,550)},{passive:true});
+document.addEventListener('input',()=>{clearTimeout(window.__v360UIDraftTimer);window.__v360UIDraftTimer=setTimeout(v360SaveUI,300)},true);
+document.addEventListener('change',()=>{clearTimeout(window.__v360UIDraftTimer);window.__v360UIDraftTimer=setTimeout(v360SaveUI,100)},true);
+
 const f33CloudKey=()=>'finanzas360.cloud.'+(f33User?.id||'');
 function f33Gate(){
  if(document.getElementById('f33-gate'))return;
@@ -34406,31 +34699,27 @@ async function f33LoadUser(user){
   if(data&&data.documento&&Object.keys(data.documento).length){
     let pending=null;try{pending=JSON.parse(localStorage.getItem(f33CloudKey())||'null')}catch(err){}
     if(pending?.pending&&pending.documento&&JSON.stringify(pending.documento)!==JSON.stringify(data.documento)){
-      f33PendingBackup=pending;f33RemoteCandidate=data;f33PendingScreen();return;
+      f33PendingBackup=pending;f33RemoteCandidate=data;
+      const base=v360BaseFromStorage();
+      const recovered=pending.baseStamp===data.actualizado_en?pending.documento:v360ThreeWayMerge(base,pending.documento,data.documento);
+      db=f33Prepare(recovered||pending.documento);f33Stamp=data.actualizado_en;
+      v360RememberBase(data.documento,data.actualizado_en);
+      f33Ready();f33Dirty=true;
+      if(recovered){v360WritePending();f33Flush();}
+      else{f33Conflict=true;f33SetStatus('conflict','Dos versiones conservadas; sin sobrescritura');}
+      return;
     }
     if(pending?.pending){try{localStorage.removeItem(f33CloudKey())}catch(err){}}
-    db=f33Prepare(data.documento);f33Stamp=data.actualizado_en;f33Ready();return
+    db=f33Prepare(data.documento);f33Stamp=data.actualizado_en;v360RememberBase(data.documento,data.actualizado_en);f33Ready();return
   }
-  f33Stamp=null;f33Welcome();
+  f33Stamp=null;
+  let legacy=null;try{legacy=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}
+  const hasData=legacy&&['transactions','loans','cards','recurring','certificates','personalLoans','budgets'].some(k=>Array.isArray(legacy[k])&&legacy[k].length>0);
+  if(!hasData){f33Phase='welcome';await f33FirstStart(false);return;}
+  // Una copia local anterior sin identidad no debe importarse a otra cuenta silenciosamente.
+  f33Welcome();
  }catch(err){if(loadToken!==f151CloudLoadToken||f33User?.id!==user.id)return;f33Phase='failure';f33Shell('No pudimos cargar tus datos.','No se hicieron cambios en Supabase. Puedes reintentar sin perder tus registros.',
  '<div class="f33-error" role="alert">'+sanitize(err.message||String(err))+'</div><div class="f33-auth-actions"><button class="f33-primary" type="button" data-f33="load">Reintentar conexión</button><button class="f33-secondary" type="button" data-f33="logout">Volver a entrar</button></div>');}
-}
-function f33PendingScreen(){
- f33Phase='recover';
- let safe=f33PendingBackup?.baseStamp===f33RemoteCandidate?.actualizado_en;
- f33Shell('Hay cambios sin sincronizar.','Encontramos un respaldo temporal en este navegador que no coincide con la nube. No se ha sobrescrito ninguno de los dos.',
- '<div class="f33-choice">'+(safe?'<button class="f33-primary" data-f33="recover">Reintentar guardar mis cambios</button>':'<div class="f33-error">También cambió la nube desde la copia local. Descarga el respaldo y revisa ambas versiones antes de decidir.</div>')+
- '<button class="f33-secondary" data-f33="exportPending">Descargar mis cambios pendientes (JSON)</button><button class="f33-secondary" data-f33="discardPending">Usar la versión de Supabase</button></div>');
-}
-function f33UsePending(){
- if(!f33PendingBackup||!f33RemoteCandidate||f33PendingBackup.baseStamp!==f33RemoteCandidate.actualizado_en)return;
- db=f33Prepare(f33PendingBackup.documento);f33Stamp=f33RemoteCandidate.actualizado_en;f33Ready();f33Dirty=true;f33SetStatus('saving','Recuperando cambios pendientes…');f33Flush();
-}
-function f33DiscardPending(){
- if(!f33RemoteCandidate)return;
- if(!confirm('¿Usar la versión de Supabase? Los cambios pendientes de este navegador se descartarán. Descárgalos antes si los necesitas.'))return;
- try{localStorage.removeItem(f33CloudKey())}catch(err){}
- db=f33Prepare(f33RemoteCandidate.documento);f33Stamp=f33RemoteCandidate.actualizado_en;f33PendingBackup=null;f33RemoteCandidate=null;f33Ready();
 }
 function f33Welcome(){
  f33Phase='welcome';let legacy=null;
@@ -34454,7 +34743,7 @@ async function f33FirstStart(importLocal){
 function f33Ready(){
  v99Invalidate();
  if(!f33User||!f33Stamp)return;window.__f360CloudUid=f33User.id;
- window.__f360CloudPersist=()=>{f33Dirty=true;f33SetStatus('saving','Cambios pendientes de guardar');clearTimeout(f33Timeout);f33Timeout=setTimeout(()=>f33Flush(),650)};
+ window.__f360CloudPersist=()=>{f33Dirty=true;if(f33Conflict){f33SetStatus('conflict','Versiones simultáneas protegidas');return;}f33SetStatus('saving','Guardado automático');clearTimeout(f33Timeout);f33Timeout=setTimeout(()=>f33Flush(),650)};
  f33Active=true;f33Phase='ready';f33Dirty=false;window.__f360BaseStamp=f33Stamp;
  v333RememberTheme();
  const existingSplash=document.getElementById('f33-gate');
@@ -34478,7 +34767,7 @@ function f33Ready(){
    },remaining);
   }else gate.hidden=true;
  }
- render();f33SetStatus('ok','✓ Guardado en Supabase');
+ v360RestoreUI();render();if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
  setTimeout(()=>{v212Load().then(()=>v212Sync()).catch(err=>console.warn('Apple Pay:',err));},1600);
  // Consultar tasa externa de forma no bloqueante tras autenticar al usuario.
  Promise.resolve().then(()=>f34UpdateFx(false)).catch(err=>console.warn('Consulta de divisas:',err));
@@ -34497,8 +34786,8 @@ async function f33Flush(){
    .eq('user_id',f33User.id).eq('actualizado_en',expected)
    .select('actualizado_en').maybeSingle();
   if(error)throw error;
-  if(!data){f33Conflict=true;f33Dirty=true;f33SetStatus('conflict','Cambios simultáneos: revisa');return;}
-  f33Stamp=data.actualizado_en;window.__f360BaseStamp=f33Stamp;
+  if(!data){f33Dirty=true;v360WritePending();f33SetStatus('saving','Comprobando cambios simultáneos');setTimeout(()=>{if(f33User)f33LoadUser(f33User)},80);return;}
+  f33Stamp=data.actualizado_en;window.__f360BaseStamp=f33Stamp;v360RememberBase(snapshot,f33Stamp);
   if(!f33Dirty){try{localStorage.removeItem(f33CloudKey())}catch(err){}}
   else{try{localStorage.setItem(f33CloudKey(),JSON.stringify({pending:true,baseStamp:f33Stamp,documento:db,savedAt:new Date().toISOString()}))}catch(err){}}
   f33SetStatus(f33Dirty?'saving':'ok',f33Dirty?'Guardando cambios siguientes…':'✓ Guardado en Supabase');
@@ -34514,10 +34803,14 @@ async function f33Logout(){
  if(f33Saving){toast('Hay una sincronización en curso. Cierra sesión después de que termine.');return;}
  clearTimeout(f33Timeout);
  if(f33Dirty&&!f33Conflict){await f33Flush();}
- if(f33Dirty&&!confirm('Hay cambios que no están confirmados en la nube. Antes de salir, exporta una copia JSON. ¿Salir de todas formas?'))return;
+ if(f33Dirty||f33Conflict){
+  v360WritePending();
+  toast('Tus cambios están protegidos localmente. Cerrar sesión se habilitará al sincronizarse.');
+  return;
+ }
  ++f151CloudLoadToken; // invalida cargas remotas aún pendientes antes de cambiar de sesión
  try{if(f33Api)await f33Api.auth.signOut({scope:'local'})}catch(err){console.warn('No se pudo cerrar completamente la sesión:',err)}
- f33User=null;f33Stamp=null;f33Active=false;f33Dirty=false;f33Conflict=false;window.__f360CloudUid=null;window.__f360BaseStamp=null;window.__f360CloudPersist=null;
+ f33User=null;v360BaseDoc=null;v360BaseUserId=null;f33Stamp=null;f33Active=false;f33Dirty=false;f33Conflict=false;window.__f360CloudUid=null;window.__f360BaseStamp=null;window.__f360CloudPersist=null;
  db=init();document.getElementById('app').innerHTML='';const badge=document.getElementById('f33-cloud-badge');if(badge)badge.hidden=true;
  f33LoginScreen();
 }
@@ -34529,15 +34822,12 @@ document.addEventListener('click',async e=>{
  else if(act==='retry'){await f33Flush();}
  else if(act==='export'){exportJson();}
  else if(act==='reload'){await f33ReloadRemote();}
- else if(act==='recover'){f33UsePending();}
- else if(act==='exportPending'&&f33PendingBackup){download(JSON.stringify(f33PendingBackup.documento,null,2),'finanzas360-cambios-pendientes.json','application/json');}
- else if(act==='discardPending'){f33DiscardPending();}
  else if(act==='logout'){await f33Logout();}
 });
-window.addEventListener('online',()=>{if(f33Dirty&&!f33Conflict)f33Flush();f34UpdateFx(false)});
+window.addEventListener('online',()=>{if(f33Conflict&&f33User)f33LoadUser(f33User);else if(f33Dirty)f33Flush();f34UpdateFx(false)});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&f33Active)f34UpdateFx(false)});
 setInterval(()=>{if(f33Active&&!document.hidden)f34UpdateFx(false)},60*60*1000);
-window.addEventListener('beforeunload',e=>{if(f33Dirty||f33Saving){e.preventDefault();e.returnValue=''}});
+window.addEventListener('beforeunload',()=>{v360SaveUI();if(f33Dirty)v360WritePending()});
 window.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&f33Dirty&&!f33Saving)f33Flush()});
 async function f33Boot(){
  f33Phase='loading';
@@ -34545,8 +34835,24 @@ async function f33Boot(){
  if(!window.supabase?.createClient){f33LoginScreen();f33Message('No pudo cargarse la biblioteca de Supabase. Debes tener conexión a Internet y permitir cdn.jsdelivr.net.',true);return;}
  try{
   f33Api=window.supabase.createClient(F33_URL,F33_KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
-  const {data,error}=await f33Api.auth.getUser();if(error||!data.user){f33LoginScreen();return;}
-  await f33LoadUser(data.user);
+  const {data,error}=await f33Api.auth.getUser();
+   if(error||!data.user){
+    if(!navigator.onLine){
+     const {data:session}=await f33Api.auth.getSession();const u=session?.session?.user;
+     if(u?.id){
+      f33User=u;const p=JSON.parse(localStorage.getItem(f33CloudKey())||'null');
+      const base=JSON.parse(localStorage.getItem(v360BaselineKey())||'null');
+      const local=p?.documento||base?.documento;
+      if(local&&(p?.baseStamp||base?.stamp)){
+       db=f33Prepare(local);f33Stamp=p?.baseStamp||base?.stamp;
+       v360BaseDoc=base?.documento||null;v360BaseUserId=u.id;f33Ready();f33Dirty=!!p?.pending;
+       return;
+      }
+     }
+    }
+    f33LoginScreen();return;
+   }
+   await f33LoadUser(data.user);
  }catch(err){f33LoginScreen();f33Message('No se pudo comprobar tu sesión: '+(err.message||err),true)}
 }
 window.__f360Test={phase:()=>f33Phase,ready:()=>f33Active,cloudUser:()=>f33User?.id||null,state:()=>db,dirty:()=>f33Dirty,flush:f33Flush,load:f33LoadUser};
@@ -36009,7 +36315,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  });
  const info=INNER_PAGES.income;
  info.label='Dentro de Ingresos';
- info.tabs=[['overview','Análisis de ingresos'],['recurring','Ingresos recurrentes'],['activity','Movimientos']];
+ info.tabs=[['overview','Ingresos'],['recurring','Ingresos recurrentes'],['activity','Movimientos']];
  if(!ui.innerViews.income)ui.innerViews.income='overview';
  ui.v55RecurringTab=ui.v55RecurringTab||'general';
  ui.v55RecurringRange=ui.v55RecurringRange||'month';
@@ -38077,7 +38383,7 @@ function v119Markup(){
    </label>
   </div>
   <div id="v315-impact" aria-live="polite">${v315DecisionComparison()}</div>
-  <div class="v183-tomorrow-note" id="v183-tomorrow-note" aria-live="polite">${v183TomorrowInsight()}</div>
+  <div class="v183-tomorrow-note v358-tomorrow-card" id="v183-tomorrow-note" aria-live="polite"><span class="v358-tomorrow-small-label">LECTURA DEL CAMBIO</span>${v183TomorrowInsight()}</div>
   <details class="v315-impact-details"><summary>Ver impacto completo <span aria-hidden="true">⌄</span></summary>
     <div class="v178-kpi-grid" id="v178-kpis" role="group" aria-label="Liquidez, deudas, compromisos y posición financiera antes y después">${v178Kpis()}</div>
   </details>
@@ -40319,6 +40625,31 @@ function v318Money(n){return money(Number.isFinite(n)?n:0,'DOP',0)}
 function v318N(n){return Math.max(0,Number.isFinite(n)?n:0)}
 function v318Pct(n){return Number.isFinite(n)?new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(n)+'%':'Sin datos'}
 function v318Tip(name,...facts){return `data-chart-tip="${sanitize([name,...facts].join('|'))}" tabindex="0"`}
+
+/* V360 — Inicio: enlaces de acceso directo sin alterar Visión global. */
+function v360HomeLinks(){
+ return `<nav class="v360-home-links" aria-label="Inicio: accesos directos"><button type="button" class="active" aria-current="page" data-act="navigate" data-id="overview">${icon('home')}Inicio</button><button type="button" data-act="navigate" data-id="recurring">${icon('cycle')}Suscripciones</button><button type="button" data-act="navigate" data-id="personal">${icon('wallet')}Entre personas</button></nav>`;
+}
+function v360PressurePage(){
+ // Utiliza la salida exacta del widget original (mismos importes, escala, paleta y 30 fechas).
+ const chart=v318Graph('futureCalendar');
+ let index=0,first=dateObj(today());
+ const interactive=chart.replace(/(<button\b[^>]*class="v322-cal-cell[^\"]*"[^>]*)>/g,(match,opening)=>{
+  const day=new Date(first); day.setDate(first.getDate()+index++);
+  return opening+` data-v360-pressure-day="${dateStr(day)}" aria-label="Ver compromisos del ${prettyDate(dateStr(day))}"`+'>';
+ });
+ const all=(v318Context().thirty.events||[]).filter(e=>e.type==='expense'&&num(e.amount)>0);
+ const selected=ui.v360PressureDate||today(),entries=all.filter(e=>e.date===selected);
+ const total=entries.reduce((a,e)=>a+num(e.amount),0);
+ const items=entries.map(e=>`<div class="v360-pressure-entry"><div><strong>${sanitize(e.name||'Compromiso')}</strong><small>${sanitize(e.kind||e.type||'Obligación')} · ${prettyDate(e.date)}</small></div><b>${v318Money(num(e.amount))}</b></div>`).join('');
+ return `<div class="v360-pressure-page" aria-label="Calendario de presión financiera completo"><header class="v360-pressure-header"><span>PRESIÓN FINANCIERA · PRÓXIMOS 30 DÍAS</span><h1>Tu calendario, sin perder detalle.</h1><p>Selecciona un día para ver los compromisos que identifica el mismo motor de Inicio.</p></header><section class="v360-pressure-calendar" aria-label="Calendario ampliado de 30 días">${interactive}</section><section class="v360-pressure-details" aria-live="polite"><div class="v360-pressure-details-head"><div><small>DETALLE DEL DÍA SELECCIONADO</small><h2>${prettyDate(selected)}</h2></div><strong>${v318Money(total)}</strong></div>${items||'<p class="v360-pressure-empty">No hay obligaciones registradas para esta fecha.</p>'}</section></div>`;
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-v360-pressure-day]'); if(!b)return;
+ e.preventDefault(); ui.v360PressureDate=b.dataset.v360PressureDay;render();
+ const t=document.querySelector('.v360-pressure-details');if(t)t.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+});
+
 function v318ChartFrame(body,foot=''){return `<div class="v318-chart-content">${body}${foot?`<p class="v318-chart-note">${foot}</p>`:''}</div>`}
 function v318Curve(values,width=600,height=175,pad=16,range=null){
  const finite=values.map(x=>Number.isFinite(x)?x:null);const known=finite.filter(x=>x!==null);
@@ -64826,6 +65157,32 @@ body:is(.theme-black,.theme-dark) #modal-root .v261-dialog-footer{background:#05
     const primaryFields=fields.slice(0,4),secondaryFields=fields.slice(4);
     const makeRow=(r)=>{const row=document.createElement('div');row.className='v349-review-row';const a=document.createElement('span');a.textContent=r.title;const b=document.createElement('strong');b.textContent=r.value;row.append(a,b);return row};
     primaryFields.forEach(r=>grid.appendChild(makeRow(r)));
+    if(raw(form,'type')==='loan_payment'){
+      // The review layer is independent of the accounting closure: read only
+      // the form's already-calculated values, and never create a new charge.
+      const chosenMode=raw(form,'loanPaymentMode')==='bank'?'bank':'normal';
+      const currencyHint=val(form,'loanId');
+      const symbol=/\bUSD\b|\bUS\$/i.test(currencyHint)?'US$':'RD$';
+      const amount=n=>symbol+new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.max(0,Number(n)||0));
+      const principal=Number(raw(form,'principal'))||0,interest=Number(raw(form,'interest'))||0;
+      const ins=Number(raw(form,'insurance'))||0,fee=Number(raw(form,'fee'))||0;
+      const bankBefore=Number(raw(form,'bankBalanceBefore'))||0;
+      const preview=form.querySelectorAll('#v359BankPreview .v359-preview-row strong');
+      const detail=[
+        ['Modalidad',chosenMode==='bank'?'Cuota y conciliación bancaria':'Cuota normal'],
+        ...(chosenMode==='bank'?[['Capital real ANTES del pago',amount(bankBefore)],['Diferencia app / banco (no monetaria)',preview[2]?.textContent?.trim()||'—']]:[]),
+        ['Capital que reduce deuda',amount(principal)],
+        ['Interés de la cuota',amount(interest)],
+        ['Seguro y otros cargos',amount(ins+fee)],
+        ...(chosenMode==='bank'?[['Capital estimado DESPUÉS',amount(Math.max(0,bankBefore-principal))],['Interés según',raw(form,'interestSource')==='bank_confirmed'?'Comprobante bancario confirmado':'Estimación editable']]:[])
+      ];
+      const card=document.createElement('section');card.className='v359-review-loan v349-review-breakdown';
+      const h=document.createElement('h3');h.textContent='Capital e intereses de la cuota';card.appendChild(h);
+      detail.forEach(([title,value])=>card.appendChild(makeRow({title,value})));
+      const caption=document.createElement('p');caption.className='v359-review-disclaimer';
+      caption.textContent='La conciliación del capital no mueve dinero; solo la cuota confirmada reduce la cuenta y el préstamo.';
+      card.appendChild(caption);panel.querySelector('.v353-breakdowns').prepend(card);
+    }
     const more=panel.querySelector('.v353-extra'),extraRows=more.querySelector('.v353-extra-rows');
     if(secondaryFields.length){secondaryFields.forEach(r=>extraRows.appendChild(makeRow(r)));more.querySelector('.v353-extra-count').textContent='('+secondaryFields.length+')'}else more.remove();
     panel.querySelector('.v349-edit').addEventListener('click',()=>dismiss());
@@ -65811,5 +66168,154 @@ body:is(.theme-black,.theme-dark) #modal-root .other-studio-form .other-studio-r
  }
 }
 </style>
+
+<style id="vive-v358-cierre-finanzas-ux">
+/* V358: un solo navegador contextual por módulo en web, conservando sus destinos */
+@media (min-width:791px){
+ .main:is(.world-income,.world-expenses,.world-budget,.world-recurring) .module-switch-shell{display:none!important}
+ .main:is(.world-income,.world-expenses,.world-budget,.world-recurring) #page{padding-top:clamp(8px,1.2vw,18px)}
+}
+/* Los botones internos son el punto único de navegación y no se cortan. */
+#page :is(.inner-menu-tabs,.v285-budget-nav,.v26-nav.v252-tabs){max-width:100%;min-width:0;box-sizing:border-box}
+#page .inner-menu-tabs{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))!important;gap:9px!important;overflow:visible!important;padding:5px!important;background:transparent!important}
+#page .inner-menu-tabs .inner-menu-tab{min-width:0!important;width:100%!important;white-space:normal!important;min-height:51px!important;padding:11px!important;border-radius:16px!important;font-weight:770!important;font-size:clamp(12px,.9vw,14px)!important;text-align:center!important}
+#page .v285-budget-nav{grid-template-columns:repeat(2,minmax(0,1fr))!important;overflow:visible!important}
+#page .v285-budget-tab{min-width:0!important;min-height:52px!important;font-size:clamp(12px,.9vw,14px)!important;border-radius:14px!important}
+/* La antigua regla global escondía la navegación útil de Servicios. */
+.main.world-recurring #page .v26-internal>.v26-nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;margin:0 0 14px!important;padding:6px!important;overflow:visible!important}
+.main.world-recurring #page .v26-internal>.v26-nav>button{min-height:54px!important;min-width:0!important;max-width:none!important;padding:8px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;font-size:12px!important;white-space:normal!important;border-radius:14px!important}
+/* Quitar duplicaciones en el resumen de Suscripciones cuando el menú ya contiene Servicios. */
+.main.world-recurring #page .v26-body .section-title:has(+ .grid.kpis){display:none!important}
+/* Edición por categoría: los controles originales permanecen operativos. */
+#page .v358-budget-editor{min-width:0;overflow:visible}
+#page .v358-budget-editor > .panel-head{display:flex!important;gap:16px!important;flex-wrap:wrap!important;align-items:flex-start!important;justify-content:space-between!important;margin-bottom:17px!important}
+#page .v358-budget-editor > .panel-head > div:first-child{min-width:min(100%,260px);flex:1}
+#page .v358-budget-editor .v180-budget-edit-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#page .v358-budget-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;min-width:0}
+#page .v358-budget-row{padding:18px!important;margin:0!important;border-radius:18px!important;border:1px solid #dbe4ef!important;background:#fff!important;box-shadow:0 6px 16px #20385d09!important;min-width:0;display:flex;flex-direction:column;gap:11px}
+#page .v358-budget-row:last-child{border-bottom:1px solid #dbe4ef!important}
+#page .v358-budget-row-main{display:flex;justify-content:space-between;gap:10px;align-items:center;min-width:0}
+#page .v358-budget-name{display:flex;align-items:flex-start;flex-wrap:wrap;gap:7px;min-width:0;flex:1}
+#page .v358-budget-name>strong{color:#20314e;font-size:clamp(14px,1.06vw,17px);font-weight:800;letter-spacing:-.025em;line-height:1.3;overflow-wrap:anywhere}
+#page .v358-budget-status{display:inline-flex;padding:5px 9px;border-radius:999px;white-space:nowrap;font-size:10px;font-weight:800;background:#eaf5f1;color:#147d63}
+#page .v358-budget-status.is-free{background:#edf1f5;color:#697d96}
+#page .v358-budget-status.is-near{background:#fff2da;color:#9a6521}
+#page .v358-budget-status.is-over{background:#ffe8eb;color:#a92e43}
+#page .v358-budget-edit{flex:none;min-height:35px!important;padding:8px 10px!important;font-weight:790!important;white-space:nowrap!important}
+#page .v358-budget-edit svg{width:13px;height:13px}
+#page .v358-budget-amounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#page .v358-budget-amounts>div{background:#f3f6fa;padding:12px;border:1px solid #e8edf5;border-radius:13px;min-width:0}
+#page .v358-budget-amounts small{display:block;font-size:9px;letter-spacing:.1em;font-weight:800;color:#6c8098;margin-bottom:6px}
+#page .v358-budget-amounts strong{font-size:clamp(15px,1.5vw,21px);color:#243954;letter-spacing:-.03em;font-weight:820;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#page .v358-budget-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;color:#7388a2;font-size:11px;font-weight:730}
+#page .v358-budget-meta span:first-child{color:#385776}
+#page .v358-budget-meta .v358-up{color:#ba6c27}
+#page .v358-budget-track{height:7px!important;margin:0!important;background:#e4e9f1!important;border-radius:999px;overflow:hidden}
+#page .v358-budget-subcats{border-top:1px solid #e3ebf3;margin-top:2px;padding-top:7px}
+#page .v358-budget-subcats>summary{font-size:12px;font-weight:750;color:#456482}
+#page .v358-budget-editor>.footnote{margin-top:18px}
+@media (max-width:1080px){#page .v358-budget-grid{grid-template-columns:1fr}}
+@media (max-width:790px){
+ #page .v358-budget-editor{padding:15px!important}
+ #page .v358-budget-row{padding:14px!important}
+ #page .v358-budget-name>strong{font-size:15px}
+ #page .v358-budget-amounts strong{font-size:17px}
+ #page .inner-menu-tabs{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
+ #page .inner-menu-tabs .inner-menu-tab{font-size:11px!important;padding:9px 5px!important;min-height:45px!important}
+ .main.world-recurring #page .v26-internal>.v26-nav>button{font-size:10px!important;gap:3px!important;flex-direction:column}
+}
+body:is(.theme-dark,.theme-black) #page .v358-budget-row{background:#0b0b0b!important;border-color:#292929!important;box-shadow:none!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-name>strong{color:#fafafa!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-amounts>div{background:#151515!important;border-color:#303030!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-amounts small{color:#b2b2b2!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-amounts strong{color:#f7f7f7!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-meta{color:#ababab!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-meta span:first-child{color:#eee!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-track{background:#292929!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-subcats{border-color:#2a2a2a!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-subcats>summary{color:#ddd!important}
+body:is(.theme-dark,.theme-black) #page .v358-budget-status.is-free{background:#252525;color:#dadada}
+body:is(.theme-dark,.theme-black) #page .v358-budget-status.is-good{background:#143329;color:#9ef0d0}
+body:is(.theme-dark,.theme-black) #page .v358-budget-status.is-near{background:#352a17;color:#ffd391}
+body:is(.theme-dark,.theme-black) #page .v358-budget-status.is-over{background:#431c22;color:#ffb5bf}
+/* Señales de estado: no usar rellenos azules que parezcan una tarjeta activa. */
+body:is(.theme-black,.theme-dark) #page .v31-insight{background:#101010!important;border-color:#292929!important;color:#f5f5f5!important}
+body:is(.theme-black,.theme-dark) #page .v31-insight p{color:#b6b6b6!important}
+/* Costo del mañana: el cuadro que explica el cambio, debajo del antes/después. */
+.v119-modal .v358-tomorrow-card{margin:0!important;padding:13px 15px!important;display:flex!important;flex-direction:column;gap:5px;border:1px solid #d6e3ef!important;border-radius:15px!important;background:#f5f9ff!important;color:#385575!important}
+.v119-modal .v358-tomorrow-small-label{font-size:9px;font-weight:850;letter-spacing:.12em;color:#7192b2}
+.v119-modal .v358-tomorrow-card span:not(.v358-tomorrow-small-label){color:inherit!important}
+body:is(.theme-black,.theme-dark) .v119-modal .v358-tomorrow-card{background:#101010!important;border-color:#303030!important;color:#ddd!important}
+body:is(.theme-black,.theme-dark) .v119-modal .v358-tomorrow-small-label{color:#91b6de!important}
+/* Tarjetas: colores propios por nivel; sólo el plástico recibe color, el lienzo sigue negro. */
+.world-cards #page .bank-card .v28-card-face.tier-platinum{background:linear-gradient(130deg,#30343c,#7b8188 57%,#b6bac1 100%)!important}
+.world-cards #page .bank-card .v28-card-face.tier-black{background:linear-gradient(135deg,#030405,#17191d 57%,#2e333a)!important}
+.world-cards #page .bank-card .v28-card-face.tier-titanium{background:linear-gradient(130deg,#252a30,#586269 60%,#99a3a8)!important}
+.world-cards #page .bank-card .v28-card-face.tier-gold{background:linear-gradient(130deg,#433017,#9d773a 58%,#d2ae70)!important}
+.world-cards #page .bank-card .v28-card-face.tier-infinite{background:linear-gradient(125deg,#151932,#373756 67%,#65638a)!important}
+.world-cards #page .bank-card .v28-card-face{border:1px solid #ffffff32!important;box-shadow:0 14px 30px #0006!important}
+/* Certificados: contraste, estatus y profundidad en los productos web. */
+.world-certificates #page .cert-card{border-radius:20px!important;border:1px solid #d5e5df!important;background:#fff!important;box-shadow:0 8px 24px #254b3a0b!important;min-width:0!important;overflow:hidden}
+.world-certificates #page .cert-card .cert-emblem{background:#e3f2ec!important;color:#16816a!important}
+.world-certificates #page .cert-card .cert-amount{color:#176d59!important;overflow-wrap:anywhere}
+.world-certificates #page .cert-card .cert-metrics{border-color:#dbe9e4!important}
+body:is(.theme-dark,.theme-black) .world-certificates #page .cert-card{background:#0c0c0c!important;border-color:#28352f!important;box-shadow:none!important}
+body:is(.theme-dark,.theme-black) .world-certificates #page .cert-card .cert-emblem{background:#162b24!important;color:#87d9b8!important}
+body:is(.theme-dark,.theme-black) .world-certificates #page .cert-card .cert-bank{color:#8fd3b4!important}
+body:is(.theme-dark,.theme-black) .world-certificates #page .cert-card .cert-top h3{color:#f8f8f8!important}
+body:is(.theme-dark,.theme-black) .world-certificates #page .cert-card .cert-amount{color:#c6f3dc!important}
+body:is(.theme-dark,.theme-black) .world-certificates #page .cert-card .cert-metrics{border-color:#24332b!important}
+body:is(.theme-dark,.theme-black) .world-certificates #page .cert-card .cert-metrics span{color:#b4bcb7!important}
+body:is(.theme-dark,.theme-black) .world-certificates #page .cert-card .cert-metrics strong{color:#efefef!important}
+body:is(.theme-dark,.theme-black) .world-certificates #page .cert-card .cert-actions{border-color:#29312d!important}
+@media(max-width:790px){body .main.world-recurring #page .v26-internal>.v26-nav{display:none!important}}
+html body.theme-black #modal-root .v119-modal .v183-tomorrow-note.v358-tomorrow-card,
+html body.theme-dark #modal-root .v119-modal .v183-tomorrow-note.v358-tomorrow-card{background:#101010!important;background-image:none!important;border-color:#303030!important;color:#eee!important}
+.v27-budget-last .v358-budget-vs-last{display:block;margin-top:7px;font-size:10px!important;line-height:1.35;color:#748ba4;max-width:185px}
+body:is(.theme-black,.theme-dark) .v27-budget-last .v358-budget-vs-last{color:#c1c1c1!important}
+</style>
+
+
+<style id="v359-loan-reconciliation">
+#modal-root .v359-mode-picker{display:block;min-width:0;grid-column:1/-1;margin:0 0 12px}
+#modal-root .v359-mode-title{display:block;font-weight:800;font-size:14px;margin:0 0 10px}
+#modal-root .v359-mode-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#modal-root .v359-mode-btn{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;min-height:84px;border-radius:16px;padding:14px;text-align:left;cursor:pointer;background:#f7f9fc;border:1px solid #cbd5e1;color:#142037}
+#modal-root .v359-mode-btn strong{font-size:13px;line-height:1.3;font-weight:850;white-space:normal}
+#modal-root .v359-mode-btn small{font-size:11px;line-height:1.4;opacity:.78;white-space:normal}
+#modal-root .v359-mode-btn.selected{outline:2px solid #3b82f6;outline-offset:0}
+#modal-root .v359-bank-reconcile{display:block;min-width:0;background:#f7f9fc;border:1px solid #d5dfed;border-radius:18px;padding:16px;grid-column:1/-1}
+#modal-root .v359-bank-reconcile[hidden]{display:none!important}
+#modal-root .v359-bank-tag{display:block;color:#5278a4;font-size:10px;letter-spacing:.13em;font-weight:850;margin-bottom:10px}
+#modal-root .v359-bank-note{font-size:12px;line-height:1.55;margin:8px 0 12px;color:#5b6880}
+#modal-root .v359-bank-preview{margin-top:12px;padding:12px;border-radius:14px;background:#eef3f9;border:1px solid #d9e1ed}
+#modal-root .v359-preview-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 0;border-bottom:1px solid #d6e0ec;font-size:12px;align-items:center}
+#modal-root .v359-preview-row strong{text-align:right;font-variant-numeric:tabular-nums}
+#modal-root .v359-preview-row:last-of-type{border:0}
+#modal-root .v359-bank-preview small{display:block;margin-top:10px;font-size:11px;line-height:1.4}
+body:is(.theme-black,.theme-dark) #modal-root :is(.v359-mode-picker,.v359-bank-reconcile){color:#f5f5f5}
+body:is(.theme-black,.theme-dark) #modal-root .v359-mode-btn{background:#111!important;color:#fff!important;border-color:#323232!important}
+body:is(.theme-black,.theme-dark) #modal-root .v359-mode-btn.selected{background:#181818!important;border-color:#777!important;outline-color:#b0b0b0!important}
+body:is(.theme-black,.theme-dark) #modal-root .v359-bank-reconcile{background:#0e0e0e!important;border-color:#303030!important}
+body:is(.theme-black,.theme-dark) #modal-root .v359-bank-preview{background:#171717!important;border-color:#373737!important}
+body:is(.theme-black,.theme-dark) #modal-root .v359-bank-note{color:#b9b9b9!important}
+body:is(.theme-black,.theme-dark) #modal-root .v359-preview-row{border-color:#333!important}
+body:is(.theme-black,.theme-dark) #modal-root .v359-bank-tag{color:#c6c6c6!important}
+#modal-root .v359-review-loan{display:block!important;margin:12px 0!important;border-radius:16px!important;padding:14px!important;background:#121212!important;border:1px solid #343434!important}
+#modal-root .v359-review-loan h3{font-size:14px!important;line-height:1.3!important;margin:0 0 6px!important;font-weight:850!important}
+#modal-root .v359-review-loan .v349-review-row{padding:8px 0!important;min-width:0!important}
+#modal-root .v359-review-disclaimer{font-size:11px!important;color:#a0a0a0!important;line-height:1.5!important;margin:12px 0 0!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v359-review-loan{background:#f7f9fd!important;border-color:#d6e0ed!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v359-review-loan h3{color:#1a2e45!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v359-review-disclaimer{color:#627287!important}
+@media(max-width:390px){#modal-root .v359-mode-options{gap:7px}#modal-root .v359-mode-btn{padding:10px;min-height:82px}#modal-root .v359-mode-btn strong{font-size:12px}}
+@media(min-width:800px){#modal-root .v359-mode-picker,#modal-root .v359-bank-reconcile{max-width:100%}}
+/* Preserve the wizard's separate steps: a hidden submit footer must never
+   intercept clicks on the Next button. */
+#modal-root form.v292-studio-mobile.other-studio-form>.form-foot[hidden],
+#modal-root form.other-studio-form>.form-foot[hidden]{display:none!important;visibility:hidden!important;pointer-events:none!important;position:static!important}
+#modal-root form.v292-studio-mobile .v83-loan-pay-controls{position:relative!important;z-index:10!important}
+</style>
+
 </body>
 </html>
