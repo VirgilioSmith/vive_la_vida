@@ -25145,6 +25145,53 @@ body .main.world-recurring #page .v26-internal > .v26-body {
 @media(min-width:791px){#page .v266-wallet .v371-card-return{display:none}}
 </style>
 
+
+<style id="v373-card-details-cohesion">
+/* V373: coherencia Tarjetas / Cuentas en móvil. No altera datos o funciones. */
+@media (max-width:790px){
+ .main .v244-mobile-root.v244-detail-mode {min-width:0;max-width:100%;overflow:visible;padding-inline:0;}
+ .main .v244-detail-mode .v244-back {display:inline-flex;gap:9px;align-items:center;justify-content:flex-start;max-width:100%;margin:0 0 13px;padding:8px 2px!important;min-height:40px;font-size:13px;font-weight:760;line-height:1.3;text-decoration:none;white-space:normal;}
+ .main .v244-detail-mode .v244-back .v373-back-glyph{display:grid;place-items:center;transform:rotate(180deg);width:18px;height:18px;flex:none;}
+ .main .v244-detail-mode .v244-back svg,.main .v244-detail-mode .v244-back svg * {max-width:18px;max-height:18px;}
+ .main .v244-detail-mode .v244-hero{border-radius:24px;padding:19px 18px;min-width:0;}
+ .main .v244-detail-mode .v244-detail-hero h2{font-size:clamp(24px,7.2vw,32px);line-height:1.12;overflow-wrap:anywhere;}
+ .main .v244-detail-mode .v244-detail-hero>strong{font-size:clamp(32px,9vw,43px);overflow-wrap:anywhere;}
+ .main .v244-detail-mode .v244-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:12px 0 13px;}
+ .main .v244-detail-mode .v244-actions button{min-width:0;min-height:48px;padding:9px 10px;border-radius:15px;white-space:normal;font-size:12px;line-height:1.25;}
+ .main .v244-detail-mode .v244-actions button svg{width:17px;height:17px;flex:none;}
+ .main .v244-detail-mode .v244-sheet{margin-top:11px;border-radius:22px;padding:17px 16px;overflow:hidden;min-width:0;}
+ .main .v244-detail-mode .v244-sheet-head{display:flex;align-items:center;justify-content:space-between;min-width:0;gap:8px;}
+ .main .v244-detail-mode .v244-sheet-head h3,.main .v244-detail-mode .v244-sheet>h3{font-size:17px;letter-spacing:-.035em;line-height:1.25;margin:0;}
+ .main .v244-detail-mode .v244-sheet-head>span{flex:none;font-size:11px;white-space:nowrap;}
+ .main .v244-detail-mode .v373-section-symbol{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:rgba(96,136,194,.12);}
+ .main .v244-detail-mode .v373-section-symbol svg{width:17px;height:17px;}
+ .main .v244-detail-mode .v244-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px;}
+ .main .v244-detail-mode .v244-fact{min-width:0;padding:12px;border-radius:14px;}
+ .main .v244-detail-mode .v244-fact span{font-size:10px;letter-spacing:.05em;line-height:1.35;}
+ .main .v244-detail-mode .v244-fact strong{font-size:clamp(12px,3.7vw,16px);line-height:1.3;letter-spacing:-.025em;overflow-wrap:anywhere;word-break:normal;}
+ .main .v244-detail-mode .v244-history{gap:8px;margin-top:12px;}
+ .main .v244-detail-mode .v244-history-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:10px;border-radius:14px;max-width:100%;}
+ .main .v244-detail-mode .v244-history-mark{width:32px;height:32px;min-width:32px;border-radius:11px;}
+ .main .v244-detail-mode .v244-history-mark svg{width:16px;height:16px;}
+ .main .v244-detail-mode .v244-history-copy strong{font-size:12px;}
+ .main .v244-detail-mode .v244-history-copy small{font-size:10px;}
+ .main .v244-detail-mode .v244-history-row b{font-size:11px;white-space:nowrap;max-width:104px;text-align:right;overflow:hidden;text-overflow:ellipsis;}
+ .main .v244-detail-mode .v373-card-manage{display:block;min-height:0!important;margin:11px 0 0!important;padding:0 15px!important;max-width:100%;border-radius:19px;overflow:hidden;}
+ .main .v244-detail-mode .v373-card-manage>summary{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;min-height:55px!important;height:auto!important;margin:0!important;padding:12px 0!important;border:0!important;line-height:1.3!important;font-size:13px!important;font-weight:750!important;cursor:pointer;list-style:none;}
+ .main .v244-detail-mode .v373-card-manage>summary::-webkit-details-marker{display:none;}
+ .main .v244-detail-mode .v373-card-manage .v373-manage-mark{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:11px;background:rgba(98,128,179,.12);}
+ .main .v244-detail-mode .v373-card-manage .v373-manage-chevron{display:grid;place-items:center;flex:none;margin-left:auto;transition:transform .2s ease;transform:rotate(90deg);}
+ .main .v244-detail-mode .v373-card-manage[open] .v373-manage-chevron{transform:rotate(270deg);}
+ .main .v244-detail-mode .v373-card-manage>summary svg{display:block!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;max-width:18px!important;max-height:18px!important;flex:none!important;transform:none!important;position:static!important;}
+ .main .v244-detail-mode .v373-card-manage .v244-more-body{padding:5px 0 14px;min-width:0;overflow-wrap:anywhere;}
+ .main .v244-detail-mode .v373-card-manage:not([open]) .v244-more-body{display:none;}
+}
+body:is(.theme-black,.theme-dark) .main .v244-detail-mode :is(.v244-sheet,.v373-card-manage){background:#0b0b0b!important;background-image:none!important;color:#f1f1f1!important;border-color:#2c2c2c!important;}
+body:is(.theme-black,.theme-dark) .main .v244-detail-mode :is(.v244-fact,.v244-history-row){background:#141414!important;background-image:none!important;border-color:#2d2d2d!important;}
+body:is(.theme-black,.theme-dark) .main .v244-detail-mode .v373-card-manage summary{color:#f1f1f1!important;}
+@media(prefers-reduced-motion:reduce){.main .v244-detail-mode .v373-manage-chevron{transition:none!important;}}
+</style>
+
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -41478,14 +41525,23 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
         {ccy:'US$', cut:usd.cut, due:usd.nextDue, billed:usd.billed, debt:usd.debt, currency:'USD'}
       ].filter(x=>num(x.debt)||num(x.billed)||x.cut||x.due);
       return `<div class="v244-mobile-root v244-cards v244-detail-mode">
-        <button class="v244-back" data-act="closeCardDetails">${icon('arrow')} Todas mis tarjetas</button>
+        <button class="v244-back" data-act="closeCardDetails" aria-label="Volver a todas mis tarjetas"><span class="v373-back-glyph">${icon('arrow')}</span><span>Todas mis tarjetas</span></button>
         <section class="v244-hero v244-detail-hero"><span class="v244-hero-label">CRÉDITO PERSONAL · ${sanitize(bankOf(selected))}</span><h2>${sanitize(selected.name)}</h2><p>${sanitize(CARD_TIER_NAMES[cardTierKey(selected)]||'Tarjeta')} · •••• ${sanitize(selected.last4||'—')}</p><small>DEUDA UTILIZADA</small><strong>${money(debt)}</strong><div class="v244-hero-bottom"><span>${utilization===null?'Sin límite definido':utilization.toFixed(1)+'% del límite'}</span><span>${selected.network?sanitize(selected.network):'Crédito registrado'}</span></div></section>
         <div class="v244-actions"><button class="v244-action-primary" data-act="payCard" data-id="${sanitize(selected.id)}">${icon('card')} Registrar pago</button><button class="v244-action" data-act="cardHistory" data-id="${sanitize(selected.id)}">${icon('chart')} Ver histórico</button></div>
         <section class="v244-sheet"><h3>Resumen de crédito</h3><div class="v244-facts">${['Límite total|'+money(limit),'Disponible|'+money(Math.max(0,avail)),'Deuda RD$|'+money(dop.debt,'DOP',2),'Deuda US$|'+money(usd.debt,'USD',2)].map(x=>{const p=x.split('|');return `<div class="v244-fact"><span>${p[0]}</span><strong>${p[1]}</strong></div>`;}).join('')}</div><p class="v244-disclaimer">La deuda utilizada se calcula con tus movimientos registrados. Los montos en US$ se convierten a RD$ según la tasa configurada.</p></section>
         <section class="v244-sheet"><div class="v244-sheet-head"><h3>Cortes y próximos pagos</h3><span>${upcomingCuts.length}</span></div>${upcomingCuts.length?`<div class="v244-cut-list">${upcomingCuts.map(x=>`<article class="v244-cut-item"><strong>${x.ccy}</strong><div><small>Saldo actual</small><b>${money(x.debt,x.currency||'DOP',2)}</b></div><div><small>Facturado</small><b>${money(x.billed||0,x.currency||'DOP',2)}</b></div><div><small>Próximo pago</small><b>${x.due?prettyDate(x.due):'Sin fecha'}</b></div></article>`).join('')}</div>`:'<p class="v244-no-data">No hay cortes calculados todavía para esta tarjeta.</p>'}</section>
         <section class="v244-sheet"><div class="v244-sheet-head"><h3>Beneficios acreditados</h3><span>${money(num(benefitD.credited)+fx(num(benefitU.credited),'USD'))}</span></div><div class="v244-facts"><div class="v244-fact"><span>Cashback en RD$</span><strong>${money(benefitD.credited,'DOP',2)}</strong></div><div class="v244-fact"><span>Cashback en US$</span><strong>${money(benefitU.credited,'USD',2)}</strong></div></div></section>
-        <section class="v244-sheet"><div class="v244-sheet-head"><h3>Actividad reciente</h3><span>${tx.length}</span></div>${v244CardsTx(tx)}</section>
-        <details class="v244-more"><summary>Administrar esta tarjeta ${icon('arrow')}</summary><div class="v244-more-body">${productControls('card',selected.id,selected.archived)}</div></details>
+        <section class="v244-sheet v373-card-information" aria-label="Información de la tarjeta">
+          <div class="v244-sheet-head"><h3>Información de la tarjeta</h3><span class="v373-section-symbol">${icon('card')}</span></div>
+          <div class="v244-facts v373-info-facts">
+            <div class="v244-fact"><span>Institución</span><strong>${sanitize(bankOf(selected))}</strong></div>
+            <div class="v244-fact"><span>Categoría</span><strong>${sanitize(CARD_TIER_NAMES[cardTierKey(selected)]||'Tarjeta')}</strong></div>
+            <div class="v244-fact"><span>Terminación</span><strong>•••• ${sanitize(selected.last4||'—')}</strong></div>
+            <div class="v244-fact"><span>Red</span><strong>${selected.network?sanitize(selected.network):'No especificada'}</strong></div>
+          </div>
+        </section>
+        <section class="v244-sheet v373-card-activity"><div class="v244-sheet-head"><h3>Actividad reciente</h3><span>${tx.length} ${tx.length===1?'movimiento':'movimientos'}</span></div>${v244CardsTx(tx)}</section>
+        <details class="v244-more v373-card-manage"><summary><span class="v373-manage-mark">${icon('settings')}</span><span>Administrar esta tarjeta</span><span class="v373-manage-chevron">${icon('arrow')}</span></summary><div class="v244-more-body">${productControls('card',selected.id,selected.archived)}</div></details>
       </div>`;
     }
     const scope = ui.v244Cards || 'all';
