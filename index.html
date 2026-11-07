@@ -41644,14 +41644,15 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
     const scope = ui.v244Cards || 'all';
     const shown = visible.filter(c=> scope==='all' ? true : scope==='used' ? (num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))>0.005 : (num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))<=0.005);
     const visibility = db.cards.some(c=>c.archived) && typeof visibilityControl==='function' ? visibilityControl() : '';
-    return `<div class="v244-mobile-root v244-cards">
-      <header class="v244-intro"><div><span class="v244-eyebrow">TU CRÉDITO, MÁS CLARO</span><h2>Tarjetas</h2><p>Límites y deuda utilizada, sin ruido visual.</p></div><button class="v244-add" type="button" data-act="addCard" aria-label="Nueva tarjeta">${icon('plus')}<span>Nueva</span></button></header>
-      <section class="v244-hero" aria-label="Resumen de tarjetas"><div class="v244-hero-top"><span class="v244-hero-label">LÍMITE TOTAL · RD$ EQUIVALENTES</span><span class="v244-hero-icon">${icon('card')}</span></div><strong class="v244-hero-amount">${money(totalLimit)}</strong><div class="v244-hero-metrics"><div><small>DEUDA UTILIZADA</small><strong>${money(totalDebt)}</strong></div><div><small>CRÉDITO DISPONIBLE</small><strong>${money(totalAvailable)}</strong></div></div><p class="v244-hero-footnote">${overallUtil===null?'Sin límites suficientes para calcular uso.':overallUtil.toFixed(1)+'% del límite comprometido'} · ${visible.length} ${visible.length===1?'tarjeta registrada':'tarjetas registradas'}.</p></section>
-      <div class="v244-actions" aria-label="Acciones rápidas"><button class="v244-action-primary" data-act="guidedFlow" data-mode="cardpay">${icon('card')} Pagar</button><button class="v244-action" data-act="addCard">${icon('plus')} Nueva tarjeta</button></div>
-      <div class="v244-list-head"><div><span class="v244-eyebrow">MIS PRODUCTOS</span><h3>Mis tarjetas <small>${visible.length}</small></h3></div>${visibility}</div>
+    return `<div class="v244-mobile-root v244-cards v375-cards-bank">
+      <header class="v203-header"><div><span class="v203-kicker">TU CRÉDITO, MÁS CLARO</span><h1>Tarjetas</h1></div><button class="v203-header-action" type="button" data-act="addCard" aria-label="Nueva tarjeta">${icon('plus')}<span>Nueva</span></button></header>
+      <section class="v203-hero" aria-label="Resumen de tarjetas"><div class="v203-hero-top"><span class="v203-hero-tag">LÍMITE TOTAL · RD$ EQUIVALENTES</span><span class="v203-hero-mark">${icon('card')}</span></div><strong class="v203-hero-value">${money(totalLimit)}</strong><div class="v203-hero-grid"><div><small>Deuda utilizada</small><strong>${money(totalDebt)}</strong></div><div><small>Crédito disponible</small><strong>${money(totalAvailable)}</strong></div></div><p class="v244-hero-footnote">${overallUtil===null?'Sin límites suficientes para calcular uso.':overallUtil.toFixed(1)+'% del límite comprometido'} · ${visible.length} ${visible.length===1?'tarjeta registrada':'tarjetas registradas'}.</p></section>
+
+
       <div class="v244-segments" role="tablist" aria-label="Filtrar tarjetas"><button type="button" class="${scope==='all'?'selected':''}" data-v244-cards="all">Todas <small>${visible.length}</small></button><button type="button" class="${scope==='used'?'selected':''}" data-v244-cards="used">Con deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))>0.005).length}</small></button><button type="button" class="${scope==='free'?'selected':''}" data-v244-cards="free">Sin deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))<=0.005).length}</small></button></div>
+      <div class="v244-list-head"><div><span class="v203-kicker">MIS PRODUCTOS</span><h3>Mis tarjetas <small>${visible.length}</small></h3></div>${visibility}<button type="button" class="v375-pay" data-act="guidedFlow" data-mode="cardpay">${icon('card')} Pagar</button></div>
       <div class="v244-product-list">${shown.length?shown.map(v244CardProduct).join(''):'<section class="v244-empty"><span>'+icon('card')+'</span><h3>No hay tarjetas para este filtro</h3><p>Prueba otro filtro o registra una nueva tarjeta.</p><button class="btn" data-act="addCard">Crear tarjeta</button></section>'}</div>
-      <p class="v244-bottom-note">Wallet mantiene su experiencia visual propia. Esta vista está pensada para gestión rápida y lectura limpia dentro de Bancos.</p>
+
     </div>`;
   }
   document.addEventListener('click',function(e){
@@ -67013,6 +67014,46 @@ body:not(.theme-black):not(.theme-dark) #modal-root .v359-review-disclaimer{colo
   html body .v249-register-fab{width:50px!important;height:50px!important;right:11px!important;}
 }
 @media(prefers-reduced-motion:reduce){html body .vive-mobile-dock,html body .v249-register-fab{transition:none!important;}}
+</style>
+
+
+<style id="v375-banks-design">
+/* V375: shared Banks proportions for the mobile card overview only. */
+@media(max-width:790px){
+ html body .v375-cards-bank{--b203-surface:#fff;--b203-text:#23395b;--b203-sub:#778aa9;--b203-line:#dce7f6;--b203-wash:#eef4fc;--b203-accent:#3b6fce;--b203-shadow:0 14px 34px rgba(49,83,144,.075);display:flex;flex-direction:column;gap:18px!important;min-width:0;width:100%;padding:5px 0 calc(109px + env(safe-area-inset-bottom,0px));color:var(--b203-text);font-variant-numeric:tabular-nums;}
+ html body .v375-cards-bank *{box-sizing:border-box;}
+ html body:is(.theme-black,.theme-dark) .v375-cards-bank .v203-hero{background:#000!important;border:1px solid #292929;box-shadow:none;}
+ html body:is(.theme-black,.theme-dark) .v375-cards-bank .v203-hero::after{display:none;}
+ html body:is(.theme-black,.theme-dark) .v375-cards-bank .v203-hero :is(small,.v203-hero-tag){color:#bbb!important;}
+ html body .v375-cards-bank .v203-hero{min-height:210px;}
+ html body .v375-cards-bank .v244-hero-footnote{font-size:10px;margin:12px 0 0;line-height:1.45;color:inherit;}
+ html body .v375-cards-bank .v244-list-head{margin:3px 4px 0;align-items:center;}
+ html body .v375-cards-bank .v244-list-head h3{margin-top:5px;font-size:21px;}
+ html body .v375-cards-bank .v244-segments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:5px;margin:0;border:1px solid var(--b203-line);border-radius:20px;background:var(--b203-wash);overflow:visible;}
+ html body .v375-cards-bank .v244-segments button{justify-content:center;min-width:0;min-height:46px;padding:9px 3px;gap:5px;border:0;border-radius:15px;background:transparent;box-shadow:none;color:var(--b203-sub);font-size:12px;}
+ html body .v375-cards-bank .v244-segments button.selected{background:var(--b203-surface);color:var(--b203-accent);box-shadow:0 4px 12px #18335c0a;}
+ html body .v375-cards-bank .v244-segments small{font-size:10px;}
+ html body .v375-cards-bank .v375-pay{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 12px;border-radius:15px;border:1px solid var(--b203-line);background:var(--b203-surface);color:var(--b203-text);font-size:12px;font-weight:750;}
+ html body .v375-cards-bank .v375-pay svg{width:16px;height:16px;}
+ html body .v375-cards-bank .v244-product{border-radius:26px;background:var(--b203-surface);border-color:var(--b203-line);box-shadow:var(--b203-shadow);}
+ html body .v375-cards-bank .v244-product-meta strong{font-size:16px;}
+ html body .v375-cards-bank .v244-product-value strong{font-size:28px;}
+ html body .v375-cards-bank .v244-inline-metrics b{font-size:17px;}
+ /* Compact luxury forms: existing fields, validation and submit handlers retained. */
+ html body #modal-root .modal:is([data-v204-form="accountForm"],[data-v204-form="bankForm"]){border-radius:28px 28px 0 0!important;}
+ html body #modal-root :is(#accountForm,#bankForm) .form-grid{gap:10px!important;padding:18px 16px!important;}
+ html body #modal-root :is(#accountForm,#bankForm) .form-grid>label{padding:10px 12px!important;border-radius:18px!important;box-shadow:0 4px 16px #18335c05!important;}
+ html body #modal-root :is(#accountForm,#bankForm) .filter-label{font-size:10px!important;letter-spacing:.13em!important;margin-bottom:7px!important;}
+ html body #modal-root :is(#accountForm,#bankForm) .field{min-height:44px!important;border-radius:12px!important;font-size:16px!important;}
+ html body #modal-root :is(#accountForm,#bankForm) :is(.smart-sub-intro,.v42-form-kicker){padding:14px 16px!important;margin:0!important;border-radius:18px!important;}
+ html body #modal-root #accountForm .smart-sub-intro strong{font-size:21px!important;}
+ html body #modal-root :is(#accountForm,#bankForm) .form-foot{padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))!important;border-top:1px solid #dce7f6!important;}
+ html body #modal-root :is(#accountForm,#bankForm) .form-foot .btn{min-height:44px!important;border-radius:15px!important;}
+ html body:is(.theme-black,.theme-dark) #modal-root :is(#accountForm,#bankForm) .form-foot{background:#000!important;border-color:#262626!important;}
+ html body:is(.theme-black,.theme-dark) .v375-cards-bank{--b203-surface:#000;--b203-text:#f5f5f5;--b203-sub:#aaa;--b203-line:#292929;--b203-wash:#000;--b203-accent:#fff;--b203-shadow:none;}
+ html body:is(.theme-black,.theme-dark) .v375-cards-bank .v244-segments button.selected{background:#202020!important;}
+ html body .v375-cards-bank button:focus-visible{outline:2px solid #5488dc;outline-offset:3px;}
+}
 </style>
 
 </body>
