@@ -28745,7 +28745,7 @@ function mobileHome(){
 let v243ExploreDestination=null;
 function v243ExploreReturn(){
  if(!v243ExploreDestination || v243ExploreDestination!==ui.page || ui.page==='mobilehub')return '';
- return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Visión global','vision':'Visión global','recurring':'Suscripciones','personal':'Entre personas','kpis':'Mis indicadores','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada'})[ui.page]||'Módulo')}</strong></nav>`;
+ return `<nav class="v243-explore-return" aria-label="Volver a Explorar"><button type="button" data-v243-explore-back="1" aria-label="Volver a Explorar">${icon('arrow')}<span>Explorar</span></button><span aria-hidden="true">/</span><strong>${sanitize(({'income':'Ingresos','expenses':'Egresos','budget':'Presupuestos','categories':'Categorías','payments':'Visión global','vision':'Visión global','recurring':'Suscripciones','personal':'Entre personas','patrimony':'Patrimonio','analytics':'Visión global','advanced':'Analítica avanzada'})[ui.page]||'Módulo')}</strong></nav>`;
 }
 function mobileHub(){
  const period=ui.month||today().slice(0,7);
@@ -28847,13 +28847,21 @@ function glassTrend(year){const data=Array.from({length:12},(_,i)=>monthlyTotals
 function summaryKpi(name,value,info,symbol,theme){return `<article class="summary-kpi ${theme}"><div class="summary-kpi-top"><span>${name}</span><span class="summary-kpi-sym">${symbol}</span></div><div class="summary-kpi-value">${money(value)}</div><div class="summary-kpi-foot">${info}</div></article>`}
 function summaryPaylist(limit=5){let all=v99PendingForPeriod(ui.month).filter(x=>x.kind!=='personal'&&x.kind!=='personal_recv'),visible=[],used=new Set();for(const kind of ['card','loan','recurring']){let match=all.find(a=>a.kind===kind);if(match){visible.push(match);used.add(match.id)}}for(const item of all){if(visible.length>=limit)break;if(!used.has(item.id)){visible.push(item);used.add(item.id)}}visible.sort((a,b)=>a.date.localeCompare(b.date));if(!visible.length)return `<div class="summary-pay-empty"><span class="pay-empty-icon">${icon('check')}</span><strong>Todo al día.</strong><p>No hay pagos pendientes registrados. Cuando agregues tarjetas, préstamos o suscripciones, aparecerán aquí.</p><button class="text-action" data-act="navigate" data-id="recurring">Gestionar compromisos ${icon('arrow')}</button></div>`;return `<div class="pay-stack">${visible.map(a=>{let d=diffDays(a.date,today());let tag=d<0?`Hace ${Math.abs(d)} días`:d===0?'Hoy':d===1?'Mañana':`En ${d} días`,kind=a.kind==='card'?'Tarjeta':a.kind==='loan'?'Préstamo':'Suscripción',ic=a.kind==='card'?'card':a.kind==='loan'?'building':'cycle',bankName=a.kind==='card'?bankOf(card(a.ref)):a.kind==='loan'?bankOf(loan(a.ref)):'';return `<div class="summary-payment ${d<0?'payment-late':''}"><div class="payment-icon payment-${a.kind}">${icon(ic)}</div><div class="payment-copy"><div class="payment-name">${sanitize(a.name)}</div><div class="payment-meta">${sanitize(kind)}${bankName?' · '+sanitize(bankName):''} · ${prettyDate(a.date)}</div><div class="payment-status ${d<0?'late':d<=3?'soon':''}">${sanitize(tag)}</div></div><div class="payment-right"><strong>${money(a.amount,a.currency,2)}</strong><button class="payment-pay" data-act="${a.action}" data-id="${a.ref}" ${a.ccy?`data-ccy="${a.ccy}"`:''} aria-label="Registrar pago de ${sanitize(a.name)}">Registrar ${icon('arrow')}</button></div></div>`}).join('')}</div>${all.length>6?`<button class="text-action view-all" data-act="navigate" data-id="recurring">Ver los ${all.length} compromisos ${icon('arrow')}</button>`:''}<p class="summary-disclaimer">Los importes pueden ser estimados hasta que registres cortes y pagos reales.</p>`}
 
+/* V357 · Sólo presentación de tablas de Analítica. No modifica datos ni sumas. */
+function v357AdvancedNumber(value){
+ const n=Number(value)||0, a=Math.abs(n), fmt=(x,d)=>new Intl.NumberFormat('es-DO',{maximumFractionDigits:d,minimumFractionDigits:0}).format(x);
+ let short=a>=1e9?fmt(a/1e9,1)+'B':a>=1e6?fmt(a/1e6,1)+'M':a>=1e3?fmt(a/1e3,1)+'K':fmt(a,a<100?2:0);
+ if(n<0&&a>0)short='−'+short;
+ const full=money(n,'DOP',2);
+ return `<span class="v357-compact-num" title="${sanitize(full)}" aria-label="${sanitize(full)}">${short}</span>`;
+}
 function compactAnnualSummary(opts={}){
  const data=Array.from({length:12},(_,i)=>monthlyTotals(ui.year,i+1));
  const limit=ui.year===new Date().getFullYear()?new Date().getMonth()+1:ui.year<new Date().getFullYear()?12:0;
  const rows=[['Ingresos','income'],['Egresos','expense'],['Neto','net'],['Saldo final','ending']];
- const cell=(key,i)=>i>=limit?'<span class="quiet">—</span>':`<span title="${MON[i]} ${ui.year} · ${money(data[i][key])}">${opts.inAdvanced?matrixMoneyValue(data[i][key]):matrixAmount(data[i][key])}</span>`;
+ const cell=(key,i)=>i>=limit?'<span class="quiet">—</span>':`<span title="${MON[i]} ${ui.year} · ${money(data[i][key])}">${opts.inAdvanced?v357AdvancedNumber(data[i][key]):matrixAmount(data[i][key])}</span>`;
  return `<section class="summary-glass compact-balance refined-balance matrix-fit ${opts.inAdvanced?'v19-flat-summary':''}"><div class="summary-panel-header"><div><span class="summary-tag">BALANCE ANUAL · ${ui.year}</span><h2><span class="v20-table-currency" title="Valores en pesos dominicanos" aria-label="Pesos dominicanos">RD$</span> Un año, cuatro cifras.</h2><p>Lectura mensual · valores en <b>RD$</b>; símbolo discreto junto a cada importe</p></div><div class="hstack"><button class="year-btn" data-act="prevYear" aria-label="Año anterior">‹</button><strong class="year-label">${ui.year}</strong><button class="year-btn" data-act="nextYear" aria-label="Año siguiente">›</button>${!opts.inAdvanced?`<button class="section-arrow" data-act="navigate" data-id="advanced" title="Desglose avanzado">${icon('arrow')}</button>`:''}</div></div>
- <div class="table-wrap matrix-scroll refined-table-wrap"><table class="annual-table compact-grid matrix-numeric" aria-label="Resumen mensual en RD$"><colgroup><col class="matrix-name-col"/>${Array.from({length:12},()=>'<col/>').join('')}<col class="matrix-tail-col"/><col class="matrix-tail-col"/></colgroup><thead><tr><th>Concepto</th>${MON.map(m=>`<th>${m}</th>`).join('')}<th>Total</th><th>Prom.</th></tr></thead><tbody>${rows.map(([label,key])=>{const values=data.slice(0,limit).map(r=>r[key]);const total=values.reduce((a,b)=>a+b,0);const average=values.length?total/values.length:0;return `<tr class="v27-balance-${key} ${key==='net'?'sum':key==='ending'?'ending':''}"><td>${label}</td>${data.map((_,i)=>`<td class="matrix-num">${cell(key,i)}</td>`).join('')}<td class="matrix-num">${key==='ending'?'—':(opts.inAdvanced?matrixMoneyValue(total):matrixAmount(total))}</td><td class="matrix-num">${opts.inAdvanced?matrixMoneyValue(average):matrixAmount(average)}</td></tr>`}).join('')}</tbody></table></div><p class="matrix-footnote">Promedio sobre los meses observados; el saldo final no se suma. En pantallas estrechas, se desplaza solo la tabla.</p></section>`;
+ <div class="table-wrap matrix-scroll refined-table-wrap"><table class="annual-table compact-grid matrix-numeric" aria-label="Resumen mensual en RD$"><colgroup><col class="matrix-name-col"/>${Array.from({length:12},()=>'<col/>').join('')}<col class="matrix-tail-col"/><col class="matrix-tail-col"/></colgroup><thead><tr><th>Concepto</th>${MON.map(m=>`<th>${m}</th>`).join('')}<th>Total</th><th>Prom.</th></tr></thead><tbody>${rows.map(([label,key])=>{const values=data.slice(0,limit).map(r=>r[key]);const total=values.reduce((a,b)=>a+b,0);const average=values.length?total/values.length:0;return `<tr class="v27-balance-${key} ${key==='net'?'sum':key==='ending'?'ending':''}"><td>${label}</td>${data.map((_,i)=>`<td class="matrix-num">${cell(key,i)}</td>`).join('')}<td class="matrix-num">${key==='ending'?'—':(opts.inAdvanced?v357AdvancedNumber(total):matrixAmount(total))}</td><td class="matrix-num">${opts.inAdvanced?v357AdvancedNumber(average):matrixAmount(average)}</td></tr>`}).join('')}</tbody></table></div><p class="matrix-footnote">Cifras compactas: K = miles, M = millones. Pasa el cursor o enfoca cada cifra para ver el importe completo; las sumas y los promedios no cambian.</p></section>`;
 }
 function summaryPersonalPanel(){
  const loans=(db.personalLoans||[]).filter(l=>personalBalance(l)>.005).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));
@@ -30438,7 +30446,7 @@ function dashboardConfig(){const c=db.settings.kpiDashboard||{};let order=Array.
 return {mode:['all','essential','custom'].includes(c.mode)?c.mode:'all',selected:Array.isArray(c.selected)?c.selected.filter(x=>KPI_IDS.includes(x)):KPI_ESSENTIAL.slice(),groupOrder:order};}
 function saveDashboardConfig(c){db.settings.kpiDashboard={mode:c.mode,selected:[...new Set(c.selected)],groupOrder:c.groupOrder.slice()};persist();}
 function dashboardEnabled(c){return new Set(c.mode==='all'?KPI_IDS:c.mode==='essential'?KPI_ESSENTIAL:c.selected)}
-function universeSwitch(active){let tabs=[['overview','Resumen','home'],['analytics','Resumen detallado','analytics'],['kpis','Indicadores avanzados','chart'],['advanced','Analítica avanzada','analytics']];return `<div class="universe-switch-wrap"><nav class="universe-switch" aria-label="Cambiar entre vistas financieras">${tabs.map(([id,label,ico])=>`<button type="button" class="${active===id?'active':''}" ${active===id?'aria-current="page"':''} data-act="navigate" data-id="${id}">${icon(ico)}${label}</button>`).join('')}</nav><span class="universe-context">Cuatro perspectivas del mismo dinero: claridad · desempeño · productos · análisis anual.</span></div>`}
+function universeSwitch(active){let tabs=[['overview','Resumen','home'],['analytics','Resumen detallado','analytics'],['advanced','Analítica avanzada','analytics']];return `<div class="universe-switch-wrap"><nav class="universe-switch" aria-label="Cambiar entre vistas financieras">${tabs.map(([id,label,ico])=>`<button type="button" class="${active===id?'active':''}" ${active===id?'aria-current="page"':''} data-act="navigate" data-id="${id}">${icon(ico)}${label}</button>`).join('')}</nav><span class="universe-context">Tres perspectivas de tus finanzas: resumen · detalle · análisis anual.</span></div>`}
 function kpiProductsModel(scope){const inScope=p=>!scope||p.bankId===scope;const accounts=db.accounts.filter(inScope),cards=db.cards.filter(inScope),loans=db.loans.filter(inScope),certs=db.certificates.filter(inScope),banks=db.banks.filter(b=>!scope||b.id===scope),year=new Date().getFullYear(),monthly=monthStats();
 const balanceFor=cur=>accounts.filter(a=>a.currency===cur).reduce((s,a)=>s+getAccountBalance(a),0);
 const liquidDOP=balanceFor('DOP'),liquidUSD=balanceFor('USD'),liquid=liquidDOP+fx(liquidUSD,'USD');
@@ -30729,7 +30737,7 @@ function overview(){
  </div>`;
 }
 function universeSwitch(active){
- const tabs=[['overview','Resumen','home'],['kpis','Mis indicadores','grid'],['advanced','Analítica avanzada','analytics'],['patrimony','Patrimonio','wallet']].filter(([id])=>!(isMobileViewport()&&id==='kpis'));
+ const tabs=[['overview','Resumen','home'],['advanced','Analítica avanzada','analytics'],['patrimony','Patrimonio','wallet']];
  return `<div class="universe-switch-wrap"><div class="universe-switch" role="tablist" aria-label="Vistas del resumen">${tabs.map(([id,label,ic])=>`<button type="button" role="tab" aria-selected="${active===id}" class="${active===id?'active':''}" data-act="navigate" data-id="${id}">${icon(ic)}<span>${label}</span></button>`).join('')}</div></div>`;
 }
 function accountDetail(a){
@@ -30992,7 +31000,7 @@ function widgetPicture(id){
  liquidity:give(money(liq),'Cuentas y efectivo físico · RD$','accounts'),cashDOP:give(money(fundD),'Todos los fondos en pesos','accounts'),cashUSD:give(money(fundU,'USD',2),`RD$ equivalente: ${money(fx(fundU,'USD'))}`,'accounts'),
  physicalDOP:give(money(db.accounts.filter(a=>a.kind==='cash'&&a.currency==='DOP').reduce((s,a)=>s+getAccountBalance(a),0)),'Sin banco · efectivo','accounts'),
  physicalUSD:give(money(db.accounts.filter(a=>a.kind==='cash'&&a.currency==='USD').reduce((s,a)=>s+getAccountBalance(a),0),'USD'),'Sin banco · efectivo','accounts'),
- totalDebt:give(money(debt),'Tarjetas + bancarios + personales','cards'),netPosition:give(money(liq+totalCertificates()+p.receivable-debt),'Activos registrados menos deudas','kpis'),
+ totalDebt:give(money(debt),'Tarjetas + bancarios + personales','cards'),netPosition:give(money(liq+totalCertificates()+p.receivable-debt),'Activos registrados menos deudas','patrimony'),
  cardLimit:give(money(limit),`RD$ ${money(limitD)} · US$ ${money(limitU,'USD',2)}`,'cards'),utilization:give(limit?creditRatio.toFixed(1)+'%':'Sin límite',`${money(debtC)} de ${money(limit)} disponibles`,'cards'),burden:give(v85Pct(v89DebtCapacity().ratio),'Compromisos del mes / ingresos del mismo mes · Pulsa para el desglose','payments'),affordability:give(v85Pct(v80Assessment(0).ratio),'Compromisos y egresos / ingreso neto mensual','payments'),
  cardDebt:give(money(debtC),'Crédito utilizado · ambas monedas','cards'),cardDebtDOP:give(money(db.cards.reduce((s,c)=>s+cardStatus(c,'DOP').debt,0)),'Tarjetas en RD$','cards'),
  cardDebtUSD:give(money(db.cards.reduce((s,c)=>s+cardStatus(c,'USD').debt,0),'USD',2),`Equivale a ${money(fx(db.cards.reduce((s,c)=>s+cardStatus(c,'USD').debt,0),'USD'))}`,'cards'),
@@ -31492,13 +31500,13 @@ function patrimonyWorld(){
   </div>
   <div class="v14-patrimony-main v22-wealth-main"><section class="panel v14-wealth-first v22-wealth-chart"><div class="panel-head"><div><h3>Evolución del patrimonio · ${ui.year} vs. ${lastYear}</h3><p>Patrimonio al cierre de cada mes · comparación entre ambos años</p></div><span class="pill">Valores en RD$</span></div>${v23PatrimonyActualComparison(ui.year)}<p class="footnote">La línea de ${lastYear} muestra los meses con historial disponible; la de ${ui.year} refleja solamente los cierres registrados. Sin valores futuros simulados.</p></section>
   <section class="panel v14-wealth-second v22-wealth-balance"><div class="panel-head"><h3>Balance de situación</h3><span class="pill">RD$ equivalente</span></div><div class="v12-balance-stack"><div class="v12-patrimony-line"><span>Activos</span><strong>${money(assets)}</strong></div><div class="v12-patrimony-track"><span style="width:${100*assets/totalAll}%"></span></div><div class="v12-patrimony-line"><span>Pasivos</span><strong>${money(liabilities)}</strong></div><div class="v12-patrimony-track debt"><span style="width:${100*liabilities/totalAll}%"></span></div><div class="v12-patrimony-net"><span>Patrimonio neto</span><strong>${money(net)}</strong></div></div><p class="footnote">Incluye los productos financieros registrados. No incluye bienes externos sin registrar.</p></section></div>
-  <section class="v176-patrimony-readout" aria-label="Lectura estratégica del patrimonio"><div><small>POSICIÓN FINANCIERA REGISTRADA</small><h3>${net>=0?'Los activos registrados superan tus deudas':'Las obligaciones registradas superan tus activos'}</h3><p>${net>=0?'El saldo patrimonial neto es positivo.':'El saldo patrimonial neto es negativo.'} La liquidez en cuentas, los certificados y el dinero por cobrar se distinguen del capital adeudado. Los límites de crédito no se consideran activos.</p></div><button type="button" class="btn sm soft" data-act="navigate" data-id="kpis">Explorar cada producto ${icon('arrow')}</button></section>
+  <section class="v176-patrimony-readout" aria-label="Lectura estratégica del patrimonio"><div><small>POSICIÓN FINANCIERA REGISTRADA</small><h3>${net>=0?'Los activos registrados superan tus deudas':'Las obligaciones registradas superan tus activos'}</h3><p>${net>=0?'El saldo patrimonial neto es positivo.':'El saldo patrimonial neto es negativo.'} La liquidez en cuentas, los certificados y el dinero por cobrar se distinguen del capital adeudado. Los límites de crédito no se consideran activos.</p></div><button type="button" class="btn sm soft" data-act="navigate" data-id="banks">Explorar cada producto ${icon('arrow')}</button></section>
   <div class="grid columns equal section v14-patrimony-details">${listed(groups,'Composición de activos')}${listed(owed,'Composición de obligaciones')}</div>
  </div>`;
 }
 function annualSplitTables(){
  const y=ui.year,data=Array.from({length:12},(_,i)=>monthlyTotals(y,i+1)),hdr=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
- const cells=(values)=>{let total=values.reduce((a,b)=>a+num(b),0);return `${values.map(v=>`<td class="num" title="${money(num(v))}">${matrixMoneyValue(v)}</td>`).join('')}<td class="num v12-total" title="${money(total)}">${matrixMoneyValue(total)}</td><td class="num" title="${money(total/12)}">${matrixMoneyValue(total/12)}</td>`};
+ const cells=(values)=>{let total=values.reduce((a,b)=>a+num(b),0);return `${values.map(v=>`<td class="num" title="${money(num(v))}">${v357AdvancedNumber(v)}</td>`).join('')}<td class="num v12-total" title="${money(total)}">${v357AdvancedNumber(total)}</td><td class="num" title="${money(total/12)}">${v357AdvancedNumber(total/12)}</td>`};
  const table=(kind)=>{
   const key=kind==='income'?'incomeBy':'expenseBy',subKey=kind==='income'?'incomeSubBy':'expenseSubBy';
   const names=[...new Set(data.flatMap(m=>Object.keys(m[key]||{})))].filter(cat=>data.some(m=>num(m[key]?.[cat])!==0)).sort((a,b)=>data.reduce((s,m)=>s+num(m[key]?.[b]),0)-data.reduce((s,m)=>s+num(m[key]?.[a]),0));
@@ -31509,7 +31517,7 @@ function annualSplitTables(){
    return row+(expanded?subs.map(sub=>`<tr class="v12-split-sub"><td class="v12-sticky">↳ ${sanitize(sub)}</td>${cells(data.map(m=>m[subKey]?.[cat+'||'+sub]||0))}</tr>`).join(''):'');
   }).join('');
   const label=kind==='income'?'Ingresos':'Egresos',iconName=kind==='income'?'up':'down',vals=data.map(m=>m[kind]);
-  return `<section class="panel v12-split-table v16-clean-table v16-${kind}"><div class="v12-split-head"><div><span class="summary-tag">${label.toUpperCase()} · ${y}</span><h3><span class="v19-table-trend v27-trend-${kind}" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round">${kind==='income'?'<path d="m3 17 7-7 4 3 7-9"/><path d="M16 4h5v5"/>':'<path d="m3 6 7 7 4-3 7 9"/><path d="M16 19h5v-5"/>'}</svg></span>${label} por categoría <span class="v20-table-currency" title="Valores en pesos dominicanos" aria-label="Pesos dominicanos">RD$</span></h3><p>Pulsa una categoría para ver sus subcategorías · Valores expresados en RD$</p></div><strong class="v27-category-total v27-${kind}-total">${money(vals.reduce((a,b)=>a+b,0))}</strong></div><div class="v12-table-scroller v198-auto-category-scroll" tabindex="0" role="region" aria-label="Tabla anual de ${label.toLowerCase()} por categoría; desliza horizontalmente para consultar los meses"><table class="v12-year-table v198-category-year-table"><colgroup><col class="v198-category-col"/>${hdr.map(()=>'<col class="v198-month-col"/>').join('')}<col class="v198-total-col"/><col class="v198-average-col"/></colgroup><thead><tr><th class="v12-sticky">Categoría</th>${hdr.map(m=>`<th class="num">${m}</th>`).join('')}<th class="num">TOTAL</th><th class="num">PROM.</th></tr></thead><tbody>${rows||`<tr><td colspan="15" class="v14-empty-table">Sin ${label.toLowerCase()} registrados en ${y}.</td></tr>`}<tr class="v12-split-footer"><td class="v12-sticky">TOTAL ${label.toUpperCase()}</td>${cells(vals)}</tr></tbody></table></div></section>`;
+  return `<section class="panel v12-split-table v16-clean-table v16-${kind}"><div class="v12-split-head"><div><span class="summary-tag">${label.toUpperCase()} · ${y}</span><h3><span class="v19-table-trend v27-trend-${kind}" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round">${kind==='income'?'<path d="m3 17 7-7 4 3 7-9"/><path d="M16 4h5v5"/>':'<path d="m3 6 7 7 4-3 7 9"/><path d="M16 19h5v-5"/>'}</svg></span>${label} por categoría <span class="v20-table-currency" title="Valores en pesos dominicanos" aria-label="Pesos dominicanos">RD$</span></h3><p>Pulsa una categoría para ver sus subcategorías · Valores expresados en RD$</p></div><strong class="v27-category-total v27-${kind}-total">${money(vals.reduce((a,b)=>a+b,0))}</strong></div><div class="v12-table-scroller v198-auto-category-scroll" tabindex="0" role="region" aria-label="Tabla anual de ${label.toLowerCase()} por categoría, valores compactos en K y M; selecciona cada cifra para conocer su importe completo"><table class="v12-year-table v198-category-year-table"><colgroup><col class="v198-category-col"/>${hdr.map(()=>'<col class="v198-month-col"/>').join('')}<col class="v198-total-col"/><col class="v198-average-col"/></colgroup><thead><tr><th class="v12-sticky">Categoría</th>${hdr.map(m=>`<th class="num">${m}</th>`).join('')}<th class="num">TOTAL</th><th class="num">PROM.</th></tr></thead><tbody>${rows||`<tr><td colspan="15" class="v14-empty-table">Sin ${label.toLowerCase()} registrados en ${y}.</td></tr>`}<tr class="v12-split-footer"><td class="v12-sticky">TOTAL ${label.toUpperCase()}</td>${cells(vals)}</tr></tbody></table></div></section>`;
  };
  return `<div class="v12-year-sections v14-year-sections">${table('income')}${table('expense')}</div>`;
 }
@@ -31771,7 +31779,7 @@ document.addEventListener('change', event=>{
  ui.month=p;ui.year=Number(p.slice(0,4));render();
 });
 
-const pages={wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,kpis:kpiStudio,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,categories,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,recurring,budget,annual,analytics,settings};
+const pages={wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,categories,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,recurring,budget,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -31884,7 +31892,7 @@ function advanced(){
   <div class="advanced-quick advanced-gaps v14-advanced-three v142-advanced-stats">${indicator('Ingresos del año',income,priorIncome,true,'v14-income')}${indicator('Egresos del año',expense,priorExpense,false,'v14-expense')}${indicator('Neto del año',net,priorNet,true,'v14-net')}</div>
   <div class="v142-advanced-section-title v142-advanced-table-heading"><div><span>01 / BALANCE ANUAL</span><h3>Cuatro cifras. Una lectura del año completo.</h3></div></div>
   ${compactAnnualSummary({inAdvanced:true})}
-  <div class="v142-advanced-section-title v142-advanced-table-heading"><div><span>02 / DETALLE POR CATEGORÍA</span><h3>De dónde viene y adónde va el dinero</h3><p>Matriz mensual con categorías y subcategorías, totalmente disponible.</p></div></div>
+  <div class="v142-advanced-section-title v142-advanced-table-heading"><div><span>02 / DETALLE POR CATEGORÍA</span><h3>De dónde viene y adónde va el dinero</h3><p>12 meses visibles en escritorio · K = miles, M = millones · cifra exacta al señalar una celda.</p></div></div>
   ${annualSplitTables()}
   ${annualExpenseInsight(valid)}
   <p class="footnote v14-comparison-foot">Comparación: ${period.toLowerCase()} de ${y} frente al mismo período de ${y-1}. El pago de capital no vuelve a contabilizarse como gasto. Si ${y-1} no tiene datos registrados, se indica «Sin base».</p>
@@ -33233,6 +33241,7 @@ document.addEventListener('pointerleave',hideChartTip);
 
 document.addEventListener('input',event=>{if(event.target.id!=='visionQuickSearch')return;const value=event.target.value.toLocaleLowerCase('es').trim();document.querySelectorAll('.vision-ledger-row,.vision-cat-item').forEach(el=>{el.hidden=!!value&&!el.textContent.toLocaleLowerCase('es').includes(value)});});
 function render(){
+ if(ui.page==='kpis')ui.page='overview'; // V357: vista retirada sin borrar los datos del catálogo
  // V238: remember the interactive control before replacing the rendered page.
  // Only filters/actions in the SAME module can reclaim focus: page transitions
  // and modal dialogs retain their own established focus management.
@@ -33371,7 +33380,7 @@ case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navGroupToggle':ui.navExpanded=ui.navExpanded===id?null:id;render();break;
 case 'navigate':{
-  ui.page=id==='transactions'?'register':id==='projection'?'patrimony':id==='vision'?'payments':id;
+  ui.page=id==='kpis'?'overview':id==='transactions'?'register':id==='projection'?'patrimony':id==='vision'?'payments':id;
   if(ui.page==='register')ui.movementTab='all'; // Movimientos conserva su historial; el botón Registrar abre el asistente.
   if(ui.page==='banks' && window.matchMedia?.('(min-width: 768px)').matches){
     v225DesktopBankOpened=false;
@@ -36587,7 +36596,7 @@ function v71SearchEntries(){
  ['certificates','Certificados','Capital intereses y vencimiento','building'],['income','Ingresos','Nómina y joseo','up'],
  ['expenses','Egresos','Gastos por categoría','down'],['register','Movimientos','Registro e historial','cycle'],['payments','Compromisos','Compromisos y vencimientos','calendar'],
  ['recurring','Suscripciones','Servicios recurrentes','calendar'],['personal','Entre personas','Deudas por cobrar y pagar','wallet'],['budget','Presupuestos','Límites y evolución','chart'],
- ['advanced','Analítica avanzada','Evolución y categorías','analytics'],['patrimony','Patrimonio','Historia y activos menos pasivos','wallet'],['categories','Categorías','Clasificación de movimientos','chart'],['kpis','Indicadores','KPIs y comparaciones','chart'],['settings','Ajustes','Preferencias y seguridad','settings']
+ ['advanced','Analítica avanzada','Evolución y categorías','analytics'],['patrimony','Patrimonio','Historia y activos menos pasivos','wallet'],['categories','Categorías','Clasificación de movimientos','chart'],['settings','Ajustes','Preferencias y seguridad','settings']
  ];
  const result=sections.map(([page,title,sub,ico])=>({kind:'section',page,title,sub,ico}));
  for(const b of db.banks||[])result.push({kind:'bank',id:b.id,page:'banks',title:b.name,sub:'Institución · '+(b.profile||b.scope||'Personal'),ico:'building'});
@@ -38598,7 +38607,7 @@ function v149CardLifecycle(c){
 }
 /* Spotlight — real local data, ranked and grouped. No network calls, no demo results. */
 const V149_NAV=[
- ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Visión global','Vencimientos y obligaciones','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['kpis','Mis indicadores','KPIs y tendencias','chart'],['settings','Ajustes','Configuración y privacidad','settings']
+ ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Visión global','Vencimientos y obligaciones','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['settings','Ajustes','Configuración y privacidad','settings']
 ];
 const V149_SEARCH_LABELS={section:'Navegación',bank:'Instituciones',account:'Cuentas',card:'Tarjetas',loan:'Préstamos',certificate:'Certificados',recurring:'Suscripciones y servicios',transaction:'Movimientos',contact:'Entre personas',budget:'Presupuestos',incomeSchedule:'Ingresos recurrentes',benefit:'Beneficios',statement:'Estados históricos',category:'Categorías'};
 function v71SearchEntries(){
@@ -38850,7 +38859,7 @@ const V154_MOBILE_CATEGORIES=[
  {id:'pagos',title:'Pagos',sub:'Cuotas y vencimientos',ico:'calendar',tone:'coral',pages:['payments','loans','personal']},
  {id:'servicios',title:'Servicios',sub:'Suscripciones',ico:'cycle',tone:'amber',pages:['recurring']},
  {id:'movimientos',title:'Movimientos',sub:'Ingresos y egresos',ico:'chart',tone:'teal',pages:['register','income','expenses','categories']},
- {id:'analitica',title:'Analítica',sub:'Indicadores y evolución',ico:'analytics',tone:'blue',pages:['advanced','kpis','patrimony','budget','analytics']}
+ {id:'analitica',title:'Analítica',sub:'Indicadores y evolución',ico:'analytics',tone:'blue',pages:['advanced','patrimony','budget','analytics']}
 ];
 let v154MobileSearchIndex=[],v154MobileSearchMatches=[],v154MobileCategory=null;
 function v154PrepareMobileIndex(){
@@ -39996,9 +40005,9 @@ function v273SettingsWidgetEditor(){
   return `<div class="v273-custom-row v316-custom-row ${on?'is-enabled':'is-disabled'}" data-v316-row="${id}"><button type="button" class="v342-drag-handle" data-v342-drag="${id}" aria-label="Mantener presionado para mover ${sanitize(w.title)}" title="Mantén presionado para mover">⠿</button><span class="v273-custom-copy"><strong>${sanitize(w.title)}</strong><small>${sanitize(w.hint)}</small></span><div class="v273-custom-controls"><button type="button" class="v273-visibility ${on?'is-on':''}" data-v273-toggle="${id}" role="switch" aria-checked="${on}" aria-label="${on?'Ocultar':'Mostrar'} ${sanitize(w.title)}"><span></span></button><button type="button" class="v273-order" data-v273-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${sanitize(w.title)}">↑</button><button type="button" class="v273-order" data-v273-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${sanitize(w.title)}">↓</button></div></div>`;
  };
  const sections=`<div class="v273-custom-rows v328-section-rows v344-order-free">${cfg.order.map(row).join('')}</div>`;
- return `<section class="v273-settings-customizer v316-personalization v328-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Tu espacio, a tu manera</h3><p>Mantén presionado el control de bloques para mover cualquier indicador, incluso entre áreas. También puedes usar las flechas. El mismo orden se refleja en Mis indicadores web.</p></header>
+ return `<section class="v273-settings-customizer v316-personalization v328-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Tu espacio, a tu manera</h3><p>Mantén presionado el control de bloques para mover cualquier indicador, incluso entre áreas. También puedes usar las flechas. Tu orden se conserva en este Resumen.</p></header>
  ${sections}
- <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. En web los ${V105_WIDGETS.length} elementos siguen disponibles en Mis indicadores. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
+ <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. Los ${V105_WIDGETS.length} elementos conservan sus cálculos y configuraciones. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
 }
 
 
@@ -63193,7 +63202,7 @@ body.theme-black .world-kpis #page .ff-bubble.featured{
  function clear(){if(timer)clearTimeout(timer);timer=null;if(active){active.node?.classList.remove('v342-dragging');document.querySelectorAll('.v342-drop-target').forEach(x=>x.classList.remove('v342-drop-target'));active=null}}
  function saveMove(from,to){if(!from||!to||from===to)return;const cfg=v105Config();const a=cfg.order.indexOf(from),b=cfg.order.indexOf(to);if(a<0||b<0)return;
   const old=db.settings.v105OverviewWidgets;cfg.order.splice(a,1);cfg.order.splice(b,0,from);db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};
-  if(!persist()){db.settings.v105OverviewWidgets=old;toast('No se pudo guardar el orden.');return}render();toast('Orden actualizado en Personalización y Mis indicadores.');}
+  if(!persist()){db.settings.v105OverviewWidgets=old;toast('No se pudo guardar el orden.');return}render();toast('Orden actualizado en Personalización.');}
  document.addEventListener('pointerdown',e=>{const handle=e.target.closest('[data-v342-drag]');if(!handle||e.button>0)return;clear();const node=handle.closest('[data-v316-row]');if(!node)return;
   active={id:handle.dataset.v342Drag,node,ready:false,pointer:e.pointerId,x:e.clientX,y:e.clientY,target:null};
   timer=setTimeout(()=>{if(active){active.ready=true;active.node.classList.add('v342-dragging');}},420);
@@ -65436,5 +65445,371 @@ html body #modal-root .modal-layer.v354-layer > .modal.v354-dialog{position:rela
 @media(max-width:790px){html body #modal-root .modal-layer.v354-layer > .modal.v354-dialog{width:100vw!important;max-width:none!important;border-radius:0!important;}}
 </style>
 
+
+<style id="v357-advanced-responsive-desktop">
+/* V357 · La matriz se adapta al ancho REAL de la zona de lectura.
+   No se trunca ni se modifica ningún importe en base de datos. */
+@media (min-width: 1050px) {
+ body:not(.vision-mode) .world-advanced #page .v142-advanced,
+ body:not(.vision-mode) .world-advanced #page .v142-advanced > *,
+ body:not(.vision-mode) .world-advanced #page .v12-year-sections,
+ body:not(.vision-mode) .world-advanced #page :is(.v19-flat-summary,.v16-clean-table.panel){
+  width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;
+ }
+ body:not(.vision-mode) .world-advanced #page :is(.v19-flat-summary .refined-table-wrap,.v16-clean-table .v12-table-scroller){
+  width:100%!important;max-width:100%!important;min-width:0!important;overflow:visible!important;overflow-x:visible!important;
+  scrollbar-width:none!important;padding:0!important;
+ }
+ body:not(.vision-mode) .world-advanced #page :is(.v19-flat-summary .annual-table,.v16-clean-table .v12-year-table){
+  min-width:0!important;max-width:100%!important;width:100%!important;table-layout:fixed!important;
+  border-collapse:separate!important;border-spacing:0!important;
+ }
+ body:not(.vision-mode) .world-advanced #page :is(.v19-flat-summary .annual-table,.v16-clean-table .v12-year-table) col:first-child{
+  width:clamp(138px,13.5vw,195px)!important;
+ }
+ body:not(.vision-mode) .world-advanced #page :is(.v19-flat-summary .annual-table,.v16-clean-table .v12-year-table) col:nth-last-child(-n+2){width:clamp(57px,5.1vw,86px)!important}
+ body:not(.vision-mode) .world-advanced #page :is(.v19-flat-summary .annual-table,.v16-clean-table .v12-year-table) :is(th,td){
+  padding:11px 4px!important;min-width:0!important;max-width:none!important;box-sizing:border-box!important;
+  font-size:clamp(9px,.72vw,11px)!important;white-space:nowrap!important;
+  overflow:hidden!important;text-overflow:clip!important;
+ }
+ body:not(.vision-mode) .world-advanced #page :is(.v19-flat-summary .annual-table,.v16-clean-table .v12-year-table) :is(th:first-child,td:first-child){
+  position:static!important;min-width:0!important;width:auto!important;max-width:none!important;
+  padding-left:8px!important;padding-right:5px!important;text-align:left!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.3!important;
+ }
+ body:not(.vision-mode) .world-advanced #page .v16-clean-table .v12-year-table :is(th.v12-sticky,td.v12-sticky){
+  min-width:0!important;width:auto!important;max-width:none!important;
+ }
+ body:not(.vision-mode) .world-advanced #page .v16-clean-table .matrix-expand{
+  max-width:100%!important;min-width:0!important;width:100%!important;white-space:normal!important;
+  text-align:left!important;overflow-wrap:anywhere!important;line-height:1.3!important;
+ }
+ body:not(.vision-mode) .world-advanced #page .v16-clean-table .v12-split-head{
+  display:flex!important;justify-content:space-between!important;align-items:center!important;flex-wrap:wrap!important;gap:10px!important;
+ }
+ body:not(.vision-mode) .world-advanced #page .v357-compact-num{
+  display:inline-block!important;max-width:100%!important;font-weight:670!important;
+  font-variant-numeric:tabular-nums!important;white-space:nowrap!important;
+ }
+}
+/* Tablets / phones retain a contained, accessible horizontal matrix because 15
+   columns cannot fit legibly at 390px. No scrolling on the whole page. */
+@media (max-width: 1049px){
+ .world-advanced #page :is(.v19-flat-summary,.v16-clean-table.panel){max-width:100%!important;min-width:0!important;overflow:hidden!important}
+ .world-advanced #page :is(.v19-flat-summary .refined-table-wrap,.v16-clean-table .v12-table-scroller){
+  width:100%!important;max-width:100%!important;overflow-x:auto!important;overscroll-behavior-x:contain;
+ }
+}
+</style>
+
+<style id="v357-web-final-layout-audit">
+/* V357 — Fin de los anchos 100px/columna heredados de la matriz anual.
+   Cada tabla usa el espacio REAL disponible. Importes exactos en title y CSV. */
+@media (min-width: 920px) {
+ html body .world-advanced #page #v142Advanced,
+ html body .world-advanced #page #v142Advanced :is(.v19-flat-summary,.v16-clean-table,.v12-year-sections){min-width:0!important;max-width:100%!important;width:100%!important;box-sizing:border-box!important}
+ html body .world-advanced #page :is(.v19-flat-summary .refined-table-wrap,.v16-clean-table .v12-table-scroller){overflow-x:visible!important;max-width:100%!important;min-width:0!important;width:100%!important;}
+ html body .world-advanced #page :is(.v19-flat-summary .annual-table,.v16-clean-table .v12-year-table){
+  table-layout:fixed!important;width:100%!important;max-width:100%!important;min-width:0!important;word-break:normal!important;
+ }
+ html body .world-advanced #page .v198-category-year-table col.v198-category-col,
+ html body .world-advanced #page .annual-table col.matrix-name-col{width:clamp(125px,12.7vw,190px)!important;min-width:0!important}
+ html body .world-advanced #page .v198-category-year-table col.v198-month-col,
+ html body .world-advanced #page .annual-table col:not([class]){width:auto!important;min-width:0!important;max-width:none!important}
+ html body .world-advanced #page .v198-category-year-table col.v198-total-col,
+ html body .world-advanced #page .v198-category-year-table col.v198-average-col,
+ html body .world-advanced #page .annual-table col.matrix-tail-col{width:clamp(54px,4.7vw,78px)!important;min-width:0!important}
+ html body .world-advanced #page :is(.annual-table,.v12-year-table) :is(td,th){
+  min-width:0!important;max-width:none!important;width:auto!important;padding:10px 3px!important;white-space:nowrap!important;
+  font-size:clamp(9px,.72vw,11px)!important;overflow:hidden!important;text-overflow:clip!important;
+ }
+ html body .world-advanced #page :is(.annual-table,.v12-year-table) :is(td:first-child,th:first-child){
+  padding-left:8px!important;padding-right:5px!important;white-space:normal!important;overflow-wrap:anywhere!important;
+ }
+ html body .world-advanced #page .v12-year-table .matrix-expand{min-width:0!important;width:100%!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important;}
+ html body .world-advanced #page .v357-compact-num{white-space:nowrap!important;font-variant-numeric:tabular-nums!important;letter-spacing:-.02em!important}
+}
+/* Al llegar a formato tableta hay 15 columnas: mantener scroll SOLO de la tabla
+   y nunca de la pagina. A 920px y más, desaparecen las barras horizontales. */
+@media (max-width: 919px){
+ html body .world-advanced #page :is(.v19-flat-summary,.v16-clean-table){min-width:0!important;max-width:100%!important}
+ html body .world-advanced #page :is(.refined-table-wrap,.v12-table-scroller){overflow-x:auto!important;max-width:100%!important;overscroll-behavior-x:contain!important}
+}
+/* Vista de escritorio / tablet: todos los paneles respetan el ancho de su celda. */
+@media (min-width: 791px){
+ html body #app :is(.main,#page,.vr-workspace,.vr-register,.vr-hero,.vr-workspace-body,.vr-operation,.panel,.card,.glass-surface,
+ .module-switch-shell,.module-switch-tabs,.v203-mobile-banks,.v202-bank-profiles,.settings-layout,
+ .v142-advanced,.v14-advanced-three,.v12-year-sections,.advanced-quick,.movement-tabs-shell){min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+ html body #app .vr-workspace :is(.vr-group-nav,.vr-operation-grid,.vr-register-categories,.vr-workspace-body,.vr-register-columns){min-width:0!important;max-width:100%!important}
+ html body #app :is(.v243-explore-return,.universe-switch-wrap,.v61-profile-switch,.movement-tabs-shell,.module-switch-shell){max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+ html body #app .vr-workspace :is(button,a,select,input){min-width:0;box-sizing:border-box}
+}
+@media (min-width:791px) and (max-width:1160px){
+ html body #app .vr-hero{grid-template-columns:minmax(0,1fr)!important}
+ html body #app .vr-register-columns,
+ html body #app .vr-workspace-body{grid-template-columns:minmax(0,1fr)!important}
+ html body #app .vr-hero-art{display:none!important}
+ html body #app .vr-workspace{padding:clamp(12px,2vw,22px)!important}
+ html body #app .vr-operation-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+/* Web / modal: una sola zona de desplazamiento, sin barras anidadas y sin
+   componentes blancos en Black. Los botones siguen en el flujo de registro. */
+@media (min-width:791px){
+ html body #modal-root .modal-layer{box-sizing:border-box!important;max-width:100vw!important;overflow-x:hidden!important;padding:clamp(10px,1.6vw,20px)!important}
+ html body #modal-root .modal{box-sizing:border-box!important;min-width:0!important;max-width:min(1040px,calc(100vw - 30px))!important}
+ html body #modal-root .modal:has(.fastx-shell){
+  width:min(1040px,calc(100vw - 30px))!important;max-width:min(1040px,calc(100vw - 30px))!important;
+  height:min(850px,calc(100dvh - 30px))!important;max-height:calc(100dvh - 30px)!important;
+  display:flex!important;flex-direction:column!important;overflow:hidden!important;
+ }
+ html body #modal-root .modal:has(.fastx-shell)>.modal-head{display:none!important}
+ html body #modal-root .fastx-form{height:100%!important;max-height:100%!important;flex:1!important;min-height:0!important;overflow:hidden!important;}
+ html body #modal-root .fastx-shell{height:100%!important;max-height:100%!important;min-height:0!important;
+  grid-template-columns:minmax(0,1.45fr) minmax(268px,.92fr)!important;overflow-y:auto!important;overflow-x:hidden!important;
+  scrollbar-width:thin!important;overscroll-behavior-y:contain!important;align-items:start!important;
+ }
+ html body #modal-root .fastx-entry{overflow:visible!important;min-height:0!important;max-height:none!important;}
+ html body #modal-root .fastx-right{overflow:visible!important;min-height:0!important;max-height:none!important;align-self:start!important;position:sticky!important;top:0!important;}
+ html body #modal-root .fastx-body{padding:clamp(14px,1.8vw,24px)!important;gap:clamp(12px,1.5vw,20px)!important}
+ html body #modal-root .fastx-head{padding:clamp(15px,1.8vw,24px)!important}
+ html body #modal-root .fastx-right{padding:clamp(14px,1.8vw,24px)!important}
+ html body #modal-root .fastx-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ html body #modal-root .fastx-form :is(.fastx-accounts-grid,.fastx-category-controls){min-width:0!important}
+ html body #modal-root .fastx-form :is(.field,input,select,textarea){max-width:100%!important;box-sizing:border-box!important}
+ html body #modal-root .modal.v204-form-dialog:not(:has(.fastx-shell)){
+  max-height:calc(100dvh - 30px)!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;
+ }
+ html body #modal-root .modal.v204-form-dialog:not(:has(.fastx-shell))>form{
+  flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin!important;
+ }
+ html body #modal-root .modal.v204-form-dialog:not(:has(.fastx-shell)) .form-grid{
+  min-width:0!important;max-width:100%!important;
+ }
+}
+@media (min-width:791px) and (max-width:1080px){
+ html body #modal-root .fastx-shell{grid-template-columns:minmax(0,1.3fr) minmax(230px,.75fr)!important}
+ html body #modal-root .fastx-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html body #modal-root .fastx-mode-tabs button{min-width:0!important;flex:1 1 auto!important}
+ html body #modal-root .fastx-mode-tabs{display:flex!important;max-width:100%!important}
+ html body #modal-root .fastx-accounts-grid{grid-template-columns:minmax(0,1fr)!important}
+ html body #modal-root .fastx-category-controls{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+/* Black: remover cabeceras claras en Registrar web y opciones de pago,
+   con máximo contraste y manteniendo las señales funcionales. */
+@media (min-width:791px){
+ body:is(.theme-black,.theme-dark) #modal-root .modal:has(.fastx-shell){background:#050505!important;border:1px solid #303030!important;box-shadow:0 28px 110px #000a!important}
+ body:is(.theme-black,.theme-dark) #modal-root .fastx-form{--fx-soft:#1c1c1c!important;--fx-tint:#101010!important;--fx-label:#c4c4c4!important}
+ body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-entry,.fastx-head,.fastx-right,.fastx-form[data-mode="spend"] .fastx-head,.fastx-form[data-mode="spend"] .fastx-right){background:#080808!important;background-image:none!important;color:#f7f7f7!important;border-color:#292929!important}
+ body:is(.theme-black,.theme-dark) #modal-root .fastx-entry{background:#090909!important}
+ body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-title,.fastx-receipt-title,.fastx-section-title strong){color:#f6f6f6!important}
+ body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-brand,.fastx-description,.fastx-section-title small,.fastx-receipt-sub,.fastx-receipt-head){color:#a9a9a9!important}
+ body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-amount-zone,.fastx-value-card,.fastx-method,.fastx-cat,.fastx-fold-inner .flow-minor-details,.fastx-fold-inner .confirm-status,.fastx-receipt-details .flow-receipt-v4,.fastx-form .field){background:#151515!important;background-image:none!important;color:#f5f5f5!important;border:1px solid #353535!important;box-shadow:none!important}
+ body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-mode-tabs,.fastx-close,.fastx-currency-badge,.fastx-cat .fastx-cat-ico){background:#202020!important;background-image:none!important;border-color:#363636!important;color:#eee!important}
+ body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-mode-tabs button,.fastx-mode-tabs button.active){color:#f6f6f6!important}
+ body:is(.theme-black,.theme-dark) #modal-root .fastx-mode-tabs button.active{background:#373737!important;box-shadow:none!important}
+ body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-method.active,.fastx-cat.selected){background:#292929!important;border-color:#666!important;color:#fff!important;box-shadow:none!important}
+ body:is(.theme-black,.theme-dark) #modal-root .fastx-amount-zone #flowAmount{color:#fff!important}
+ body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-form .filter-label,.fastx-section-title strong,.fastx-fold>summary){color:#d7d7d7!important}
+ body:is(.theme-black,.theme-dark) #modal-root .fastx-form .form-foot :is(button,.btn){background:#242424!important;border-color:#3d3d3d!important;color:#fff!important}
+}
+/* Formulario genérico y edición: ancho fluido, labels sin choque. */
+@media(min-width:791px){
+ html body #modal-root .modal.v204-form-dialog:not(:has(.fastx-shell)) :is(label,.form-grid>div,.form-full){min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+ html body #modal-root .modal.v204-form-dialog:not(:has(.fastx-shell)) :is(select,input:not([type=checkbox]):not([type=radio]),textarea){max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+ html body #modal-root .modal.v204-form-dialog:not(:has(.fastx-shell)) :is(.form-foot,.studio-navigation){max-width:100%!important;min-width:0!important}
+}
+@media(prefers-reduced-motion:reduce){html body #modal-root .fastx-form *,html body #app .vr-workspace *{transition-duration:.01ms!important}}
+</style>
+<style id="v357-compact-laptop-matrix">
+/* 920–1049px: sobreescribe la media query histórica que fija 1240/1340px. */
+@media (min-width:920px) and (max-width:1049px){
+ html body #app main.world-advanced #page #v142Advanced .v19-flat-summary .annual-table,
+ html body #app main.world-advanced #page #v142Advanced .v16-clean-table .v12-year-table{
+  min-width:0!important;max-width:100%!important;width:100%!important;table-layout:fixed!important;
+ }
+ html body #app main.world-advanced #page #v142Advanced .v19-flat-summary .refined-table-wrap,
+ html body #app main.world-advanced #page #v142Advanced .v16-clean-table .v12-table-scroller{
+  min-width:0!important;width:100%!important;max-width:100%!important;overflow-x:visible!important;
+ }
+ html body #app main.world-advanced #page #v142Advanced .v198-category-year-table col.v198-category-col{width:138px!important;}
+ html body #app main.world-advanced #page #v142Advanced .v198-category-year-table col.v198-month-col{width:auto!important;min-width:0!important;}
+ html body #app main.world-advanced #page #v142Advanced .v198-category-year-table col.v198-total-col,
+ html body #app main.world-advanced #page #v142Advanced .v198-category-year-table col.v198-average-col{width:55px!important;}
+ html body #app main.world-advanced #page #v142Advanced :is(.v198-category-year-table,.annual-table) :is(th,td){font-size:9px!important;padding:8px 2px!important;min-width:0!important;width:auto!important;max-width:none!important;}
+}
+</style>
+<style id="v357-web-register-single-column">
+/* Web: captura y revisión son pantallas independientes, sin recibo duplicado.
+   La zona de captura tiene UN scroll vertical; el pie de acciones no se mueve. */
+@media (min-width:791px){
+ html body #modal-root .modal:has(.fastx-shell){width:min(790px,calc(100vw - 32px))!important;max-width:min(790px,calc(100vw - 32px))!important;height:min(820px,calc(100dvh - 32px))!important;}
+ html body #modal-root .fastx-form{height:100%!important;max-height:100%!important;min-height:0!important;display:block!important;overflow:hidden!important;}
+ html body #modal-root .fastx-shell{height:100%!important;max-height:100%!important;min-height:0!important;
+   display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr) auto!important;
+   gap:0!important;overflow:hidden!important;align-items:stretch!important;}
+ html body #modal-root .fastx-entry{height:auto!important;max-height:100%!important;min-height:0!important;
+   overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin!important;}
+ html body #modal-root .fastx-right{height:auto!important;max-height:none!important;min-height:0!important;
+   position:relative!important;top:auto!important;overflow:visible!important;align-self:stretch!important;
+   border:0!important;border-top:1px solid #303030!important;padding:0!important;background:#080808!important;}
+ html body #modal-root .fastx-right>:not(.form-foot):not(#formError){display:none!important;}
+ html body #modal-root .fastx-right>.form-foot{position:relative!important;width:100%!important;margin:0!important;
+   display:grid!important;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr)!important;
+   flex-direction:row!important;gap:12px!important;padding:12px 19px!important;box-sizing:border-box!important;
+   background:#080808!important;border:0!important;box-shadow:none!important;}
+ html body #modal-root .fastx-right>.form-foot>button{order:initial!important;min-width:0!important;
+   width:100%!important;min-height:49px!important;height:auto!important;border-radius:13px!important;
+   padding:10px 14px!important;white-space:normal!important;box-sizing:border-box!important;}
+ html body #modal-root .fastx-right>#formError:not(:empty){padding:9px 20px!important;color:#ff8d9c!important;font-weight:750!important;}
+ html body #modal-root .fastx-head{padding:15px clamp(16px,3vw,25px)!important;}
+ html body #modal-root .fastx-body{padding:16px clamp(16px,3vw,25px) 25px!important;gap:14px!important;}
+ html body #modal-root .fastx-form .fastx-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+ html body #modal-root .fastx-form .fastx-accounts-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+ html body #modal-root .fastx-form .fastx-title{margin:10px 0 4px!important;}
+}
+@media (min-width:791px) and (max-width:920px){
+ html body #modal-root .fastx-form .fastx-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+ html body #modal-root .fastx-form .fastx-accounts-grid{grid-template-columns:1fr!important;}
+}
+@media (min-width:791px){
+ body:not(.theme-black):not(.theme-dark) #modal-root .fastx-right,
+ body:not(.theme-black):not(.theme-dark) #modal-root .fastx-right>.form-foot{background:#f7f9fc!important;border-color:#d7e0ee!important;}
+}
+</style>
+<style id="v357-web-form-contrast-fixes">
+/* Componentes reales del formulario de tarjetas, servicios y editores web. */
+@media(min-width:791px){
+ body:is(.theme-black,.theme-dark) #modal-root .studio-rail{
+  background:#0b0b0b!important;background-image:none!important;border-color:#272727!important;color:#f2f2f2!important;
+ }
+ body:is(.theme-black,.theme-dark) #modal-root .studio-rail-name{color:#bcbcbc!important}
+ body:is(.theme-black,.theme-dark) #modal-root .studio-rail-name strong{color:#f9f9f9!important}
+ body:is(.theme-black,.theme-dark) #modal-root .studio-rail-icon{background:#1c1c1c!important;border-color:#323232!important;color:#f0f0f0!important}
+ body:is(.theme-black,.theme-dark) #modal-root .studio-top-pill{background:#1b1b1b!important;color:#d9d9d9!important;border:1px solid #303030!important}
+ body:is(.theme-black,.theme-dark) #modal-root .studio-steps-nav{background:#101010!important;border-color:#282828!important}
+ body:is(.theme-black,.theme-dark) #modal-root .studio-form :is(.studio-nav-step,.studio-step-number){box-shadow:none!important}
+ body:is(.theme-black,.theme-dark) #modal-root .studio-main .studio-active-title{color:#f9f9f9!important}
+ body:is(.theme-black,.theme-dark) #modal-root .studio-main .studio-active-subtitle{color:#aaa!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v204-form-dialog form :is(.form-grid>label,.v28-card-identifiers>label,.smart-fold-grid>label),
+ body:is(.theme-black,.theme-dark) #modal-root .v204-form-dialog form label:has(> .field){
+   background:#111!important;background-image:none!important;border-color:#2c2c2c!important;color:#d8d8d8!important;box-shadow:none!important;
+ }
+ body:is(.theme-black,.theme-dark) #modal-root .v204-form-dialog form label .filter-label{color:#b8b8b8!important}
+ body:is(.theme-black,.theme-dark) #modal-root .v204-form-dialog form :is(.field,input:not([type=checkbox]):not([type=radio]),select,textarea){
+   background-color:#1a1a1a!important;background-image:none!important;border-color:#343434!important;color:#fafafa!important;
+ }
+ body:is(.theme-black,.theme-dark) #modal-root .v204-form-dialog .modal-head :is(.close,button){
+  background:#1d1d1d!important;border-color:#333!important;color:#fff!important;
+ }
+}
+</style>
+
+<style id="v357-overlay-interaction-polish">
+/* Cualquier modal abierto tiene prioridad sobre la pill global del encabezado. */
+body:has(#modal-root .modal-layer) .ff-header-middle,
+body:has(#modal-root .modal-layer) .v164-header-dock {visibility:hidden!important;pointer-events:none!important;}
+/* Un solo botón de cerrar en Pagar tarjeta web. */
+@media (min-width:791px){
+ #modal-root .v204-form-dialog:has(.studio-shell) .studio-close{display:none!important;}
+ /* Fondo sólido también cuando el título interno de Pagar tarjeta aparece sobre el encabezado. */
+ body:is(.theme-black,.theme-dark) #modal-root .modal:has(.studio-shell) :is(.studio-rail,.studio-topline,.studio-active-title){background-image:none!important;}
+ body:is(.theme-black,.theme-dark) #modal-root .studio-rail{background:#0b0b0b!important;}
+}
+</style>
+
+<style id="v357-web-other-actions-responsive">
+/* Todas las gestiones web comparten captura en una columna y revisión separada.
+   Se conservan los inputs originales, los validadores y el submit real. */
+@media(min-width:791px){
+ html body #modal-root .modal:has(.other-studio-shell){
+  width:min(820px,calc(100vw - 32px))!important;max-width:min(820px,calc(100vw - 32px))!important;
+  height:min(820px,calc(100dvh - 32px))!important;max-height:calc(100dvh - 32px)!important;
+  padding:0!important;border-radius:23px!important;overflow:hidden!important;
+ }
+ html body #modal-root .other-studio-form{height:100%!important;max-height:100%!important;min-height:0!important;overflow:hidden!important;}
+ html body #modal-root .other-studio-shell{
+  height:100%!important;max-height:100%!important;min-height:0!important;overflow:hidden!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,1fr) auto!important;gap:0!important;
+ }
+ html body #modal-root .other-studio-left{
+  min-width:0!important;min-height:0!important;max-height:100%!important;
+  overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin!important;
+ }
+ html body #modal-root .other-studio-right{
+  min-width:0!important;min-height:0!important;max-height:none!important;
+  padding:0!important;overflow:visible!important;border:0!important;
+  border-top:1px solid #303030!important;display:flex!important;flex-direction:column!important;
+ }
+ html body #modal-root .other-studio-right>:not(.form-foot):not(#formError){display:none!important}
+ html body #modal-root .other-studio-right .form-foot{
+  margin:0!important;width:100%!important;box-sizing:border-box!important;
+  padding:12px clamp(16px,3vw,27px)!important;
+  display:grid!important;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr)!important;
+  flex-direction:row!important;gap:12px!important;align-items:stretch!important;
+ }
+ html body #modal-root .other-studio-right .form-foot>button{
+  width:100%!important;min-width:0!important;min-height:49px!important;height:auto!important;
+  border-radius:13px!important;padding:10px!important;white-space:normal!important;
+ }
+ html body #modal-root .other-studio-right #formError:not(:empty){padding:8px 20px!important;}
+ html body #modal-root .other-studio-fields,
+ html body #modal-root .other-studio-breakdown{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html body #modal-root .other-studio-content{padding:19px clamp(16px,3vw,27px) 25px!important;gap:14px!important;}
+}
+@media(min-width:791px) and (max-width:1024px){
+ html body #modal-root .other-studio-fields,
+ html body #modal-root .other-studio-breakdown{grid-template-columns:1fr!important}
+}
+body:is(.theme-black,.theme-dark) #modal-root :is(.other-studio-left,.other-studio-right,.other-studio-header,.other-studio-receipt){
+ background:#090909!important;background-image:none!important;color:#f5f5f5!important;border-color:#272727!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .other-studio-form :is(.other-studio-fields>label,.other-studio-breakdown>label,.other-studio-fold-body>label){
+ background:#101010!important;background-image:none!important;border-color:#2a2a2a!important;min-width:0!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .other-studio-form :is(.other-studio-header h2,.other-studio-right h3){color:#f6f6f6!important}
+body:is(.theme-black,.theme-dark) #modal-root .other-studio-form :is(.other-studio-header p,.other-studio-section-title,.other-studio-form .filter-label){color:#b4b4b4!important}
+body:is(.theme-black,.theme-dark) #modal-root .other-studio-form .other-studio-right .form-foot{background:#090909!important;border-color:#272727!important}
+body:is(.theme-black,.theme-dark) #modal-root .other-studio-form .other-studio-right .form-foot .btn.ghost{
+ background:#1b1b1b!important;border:1px solid #3a3a3a!important;color:#f1f1f1!important;min-height:49px!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .other-studio-form .other-studio-right .form-foot .btn:not(.ghost){
+ background:#292929!important;border:1px solid #454545!important;color:#fff!important;
+}
+</style>
+<style id="v357-web-black-confirmation-control">
+@media(min-width:791px){
+ body:is(.theme-black,.theme-dark) #modal-root .v204-form-dialog :is(.confirm-status,.v134-section,.v49-payment-intro){
+  background:#111!important;background-image:none!important;border-color:#303030!important;color:#eee!important;
+ }
+ body:is(.theme-black,.theme-dark) #modal-root .v204-form-dialog .confirm-status :is(label,small){color:#c4c4c4!important}
+}
+</style>
+<style id="v357-studio-inputs-black-finish">
+@media(min-width:791px){
+ html body.theme-black #modal-root .modal.v204-form-dialog .studio-form :is(input.field,input[type="number"],input[type="text"],input[type="date"],select.field,textarea.field),
+ html body.theme-dark #modal-root .modal.v204-form-dialog .studio-form :is(input.field,input[type="number"],input[type="text"],input[type="date"],select.field,textarea.field){
+  background:#1b1b1b!important;background-color:#1b1b1b!important;background-image:none!important;
+  color:#fafafa!important;border:1px solid #353535!important;box-shadow:none!important;
+ }
+ html body.theme-black #modal-root .modal.v204-form-dialog .studio-form input::placeholder,
+ html body.theme-dark #modal-root .modal.v204-form-dialog .studio-form input::placeholder{color:#868686!important;opacity:1!important}
+}
+</style>
+<style id="v357-web-transfer-amount-black">
+@media(min-width:791px){
+ html body.theme-black #modal-root #transactionForm[data-guided="yes"][data-mode="own"] .studio-fields #flowAmount,
+ html body.theme-black #modal-root #transactionForm[data-guided="yes"][data-mode="outgoing"] .studio-fields #flowAmount,
+ html body.theme-dark #modal-root #transactionForm[data-guided="yes"][data-mode="own"] .studio-fields #flowAmount,
+ html body.theme-dark #modal-root #transactionForm[data-guided="yes"][data-mode="outgoing"] .studio-fields #flowAmount{
+  background:#1b1b1b!important;background-image:none!important;color:#fff!important;border-color:#343434!important;
+ }
+ html body.theme-black #modal-root #transactionForm[data-guided="yes"] .studio-fields .flow-route,
+ html body.theme-dark #modal-root #transactionForm[data-guided="yes"] .studio-fields .flow-route{
+  background:#111!important;background-image:none!important;color:#f4f4f4!important;border-color:#292929!important;
+ }
+}
+</style>
 </body>
 </html>
