@@ -65670,6 +65670,185 @@ body:is(.theme-black,.theme-dark) #modal-root .v261-dialog-footer{background:#05
 })();
 </script>
 
+<style id="v382-card-payment-design">
+/* V382: pago de tarjeta, flujo propio: cuenta -> deuda. No afecta formularios vecinos. */
+#modal-root #transactionForm[data-mode="cardpay"]{--v382-ink:#243653;--v382-muted:#647892;--v382-border:#d8e5f3;--v382-tint:#eef5ff;--v382-panel:#fff;--v382-accent:#315fb7}
+#modal-root #transactionForm[data-mode="cardpay"] .flow-payment-preview{border:1px solid var(--v382-border)!important;border-radius:19px!important;background:var(--v382-panel)!important;padding:15px!important;color:var(--v382-ink)!important}
+#modal-root #transactionForm[data-mode="cardpay"] .flow-payment-preview>.v12-fee-breakdown{display:grid!important;gap:10px!important;margin-top:12px!important}
+#modal-root #transactionForm[data-mode="cardpay"] .flow-payment-preview .v12-fee-breakdown span{display:flex!important;justify-content:space-between!important;gap:10px!important;font-size:12px!important;line-height:1.4!important}
+#modal-root #transactionForm[data-mode="cardpay"] .flow-payment-preview .v12-fee-breakdown b{font-variant-numeric:tabular-nums!important;overflow-wrap:anywhere!important;text-align:right!important}
+#modal-root .v382-card-payment-preview{display:grid;gap:14px;border-radius:22px;padding:17px;margin:13px 0;border:1px solid #ccdff0;background:linear-gradient(148deg,#f1f6ff,#fff);color:#233a58;min-width:0;box-shadow:0 12px 28px rgba(24,66,112,.045)}
+#modal-root .v382-card-payment-preview *{box-sizing:border-box;min-width:0}
+#modal-root .v382-pay-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#modal-root .v382-pay-head h3{margin:0;font-size:16px;letter-spacing:-.035em;font-weight:850}
+#modal-root .v382-pay-head span{font-size:9px;font-weight:850;letter-spacing:.12em;color:#386ca6}
+#modal-root .v382-pay-route{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:8px;align-items:center}
+#modal-root .v382-pay-route>div:not(.v382-pay-arrow){padding:12px;background:rgba(255,255,255,.8);border:1px solid #dae5f3;border-radius:15px;min-height:76px}
+#modal-root .v382-pay-route small{display:block;font-size:9px;font-weight:800;letter-spacing:.13em;color:#7388a5;margin-bottom:6px}
+#modal-root .v382-pay-route strong{font-size:12px;line-height:1.3;overflow-wrap:anywhere}
+#modal-root .v382-pay-route em{display:block;font-size:10px;font-style:normal;color:#69809e;margin-top:5px}
+#modal-root .v382-pay-arrow{text-align:center;font-size:22px;color:#477eb5}
+#modal-root .v382-pay-numbers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#modal-root .v382-pay-numbers>div{border-radius:16px;padding:13px;border:1px solid #dbe5f0;background:#fff}
+#modal-root .v382-pay-numbers small{display:block;font-size:10px;line-height:1.4;color:#73839b;margin-bottom:6px}
+#modal-root .v382-pay-numbers strong{display:block;font-variant-numeric:tabular-nums;font-weight:850;font-size:clamp(18px,5.2vw,24px);line-height:1.15;overflow-wrap:anywhere}
+#modal-root .v382-pay-numbers .v382-pay-positive strong{color:#13816a}
+#modal-root .v382-pay-breakdown{display:grid;gap:9px;border-top:1px solid #dce6f2;padding-top:12px}
+#modal-root .v382-pay-breakdown>div{display:flex;align-items:start;justify-content:space-between;gap:12px;font-size:12px;line-height:1.35}
+#modal-root .v382-pay-breakdown>div span{color:#60758e;flex:1}
+#modal-root .v382-pay-breakdown>div strong{text-align:right;font-variant-numeric:tabular-nums;font-weight:800;overflow-wrap:anywhere}
+#modal-root .v382-pay-warning{background:#fff0e6;border:1px solid #edd0b8;border-radius:14px;padding:11px 12px;color:#8d4b2c;font-size:12px;line-height:1.5;font-weight:700}
+#modal-root .v382-pay-note{margin:0;font-size:11px;line-height:1.5;color:#627b97}
+#modal-root .v382-review-card{margin:9px 0;padding:14px 15px;border-radius:18px;background:#f0f6ff;border:1px solid #d7e4f5;display:grid;gap:8px;color:#263d5a}
+#modal-root .v382-review-card strong{font-size:14px;letter-spacing:-.02em}
+#modal-root .v382-review-card p{margin:0;font-size:11px;line-height:1.5;color:#5a6f88;overflow-wrap:anywhere}
+#modal-root .v382-review-card .v382-review-highlight{font-size:13px;font-weight:800;color:#206f67}
+@media(max-width:790px){
+  #modal-root #transactionForm[data-mode="cardpay"] .studio-shell{min-width:0!important}
+  #modal-root #transactionForm[data-mode="cardpay"] .studio-main{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))!important;scroll-padding-bottom:110px}
+  #modal-root #transactionForm[data-mode="cardpay"] .studio-fields{gap:12px!important}
+  #modal-root #transactionForm[data-mode="cardpay"] .flow-segment{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+  #modal-root #transactionForm[data-mode="cardpay"] .flow-segment-option{min-width:0!important}
+  #modal-root #transactionForm[data-mode="cardpay"] .flow-segment-surface{height:100%!important;min-height:73px!important;border-radius:16px!important;padding:11px 6px!important;text-align:center!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:6px!important}
+  #modal-root #transactionForm[data-mode="cardpay"] .flow-segment-surface strong{font-size:12px!important}
+  #modal-root #transactionForm[data-mode="cardpay"] .flow-segment-surface small{font-size:10px!important;line-height:1.25!important}
+  #modal-root #transactionForm[data-mode="cardpay"] .studio-navigation button{min-height:49px!important;border-radius:16px!important}
+}
+@media(max-width:350px){#modal-root .v382-pay-numbers{grid-template-columns:1fr}#modal-root .v382-pay-route{grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr)}}
+body:is(.theme-black,.theme-dark) #modal-root #transactionForm[data-mode="cardpay"]{--v382-ink:#f6f6f6;--v382-muted:#b0b0b0;--v382-border:#313131;--v382-tint:#101010;--v382-panel:#090909;--v382-accent:#e8e8e8}
+body:is(.theme-black,.theme-dark) #modal-root :is(.v382-card-payment-preview,.v382-review-card){background:#080808!important;background-image:none!important;border-color:#303030!important;color:#f5f5f5!important;box-shadow:none!important}
+body:is(.theme-black,.theme-dark) #modal-root .v382-pay-route>div:not(.v382-pay-arrow),body:is(.theme-black,.theme-dark) #modal-root .v382-pay-numbers>div{background:#131313!important;border-color:#303030!important;color:#f5f5f5!important}
+body:is(.theme-black,.theme-dark) #modal-root .v382-pay-head span,body:is(.theme-black,.theme-dark) #modal-root .v382-pay-arrow{color:#c5daf5!important}
+body:is(.theme-black,.theme-dark) #modal-root .v382-pay-breakdown{border-color:#303030!important}
+body:is(.theme-black,.theme-dark) #modal-root .v382-pay-breakdown span,body:is(.theme-black,.theme-dark) #modal-root :is(.v382-pay-note,.v382-review-card p,.v382-pay-route small,.v382-pay-numbers small){color:#b5b5b5!important}
+body:is(.theme-black,.theme-dark) #modal-root .v382-pay-numbers .v382-pay-positive strong,body:is(.theme-black,.theme-dark) #modal-root .v382-review-card .v382-review-highlight{color:#8fe3c5!important}
+body:is(.theme-black,.theme-dark) #modal-root .v382-pay-warning{background:#24170e!important;border-color:#62412a!important;color:#ffca9d!important}
+</style>
+<script id="v382-card-payment-controller">
+(function(){
+ 'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ const read=(f,k)=>{const el=f.elements.namedItem(k);return el&&typeof el.value==='string'?el.value:''};
+ const numeric=v=>{if(v===''||v==null)return NaN;const n=Number(v);return Number.isFinite(n)?n:NaN};
+ const rounded=v=>Math.round((v+Number.EPSILON)*100)/100;
+ const currency=(n,c)=>Number.isFinite(n)?(n<0?'-':'')+(c==='USD'?'US$':'RD$')+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+ const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ const isCardPay=f=>f?.id==='transactionForm'&&(f.dataset.mode==='cardpay'||read(f,'flowMode')==='cardpay');
+ const currentDate=()=>typeof today==='function'?today():'';
+ function model(f){
+   const c=typeof card==='function'?card(read(f,'cardId')):null;
+   const a=typeof account==='function'?account(read(f,'accountId')):null;
+   const debtCurrency=read(f,'currency')||'DOP',sourceCurrency=a?.currency||'DOP';
+   const st=c&&typeof cardStatus==='function'?cardStatus(c,debtCurrency):null;
+   const debt=st?Number(st.debt):NaN, billed=st?Number(st.billed):NaN;
+   const amount=numeric(read(f,'amount'));
+   const mode=read(f,'cardPaymentMode')||'cut';
+   const fx=sourceCurrency!==debtCurrency;
+   const rate=numeric(read(f,'paymentFxRate'));
+   const manual=fx&&read(f,'actualDebitMode')==='manual';
+   const expected=Number.isFinite(amount)&&(!fx||(Number.isFinite(rate)&&rate>0))?
+       rounded(fx?(debtCurrency==='USD'?amount*rate:amount/rate):amount):NaN;
+   const debit=manual?numeric(read(f,'sourceAmount')):expected;
+   const ch=read(f,'paymentChannel')||'presencial';
+   const eligible=a&&typeof isTaxableBankPayment==='function'?isTaxableBankPayment(a,ch,false,false):false;
+   const taxable=eligible&&read(f,'paymentTaxable')==='yes';
+   const pct=taxable?(typeof cardPaymentSettingsTaxPct==='function'?cardPaymentSettingsTaxPct():numeric(read(f,'paymentTaxPct'))):0;
+   const tax=Number.isFinite(debit)&&Number.isFinite(pct)?rounded(debit*pct/100):NaN;
+   const fee=numeric(read(f,'paymentFee'));
+   const charges=Number.isFinite(tax)&&Number.isFinite(fee)?rounded(tax+fee):NaN;
+   const debitTotal=Number.isFinite(debit)&&Number.isFinite(charges)?rounded(debit+charges):NaN;
+   const editing=!!f.dataset.id;
+   const todayRecord=!editing&&read(f,'date')===currentDate();
+   const sourceBalance=a&&typeof getAccountBalance==='function'?Number(getAccountBalance(a)):NaN;
+   const reasons=[];
+   if(!c||c.archived)reasons.push('Selecciona una tarjeta activa.');
+   if(!a||a.archived)reasons.push('Selecciona una cuenta de pago activa.');
+   if(!['DOP','USD'].includes(debtCurrency))reasons.push('Selecciona RD$ o US$ para el saldo de tarjeta.');
+   if(!(Number.isFinite(amount)&&amount>0))reasons.push('El importe del pago debe ser mayor que cero.');
+   if(!['cut','total','custom'].includes(mode))reasons.push('Selecciona una modalidad de pago válida.');
+   if(fx&&!(Number.isFinite(rate)&&rate>0))reasons.push('Indica una tasa de cambio positiva.');
+   if(manual&&!(Number.isFinite(debit)&&debit>0))reasons.push('Indica el débito exacto positivo del comprobante.');
+   if(a?.kind==='cash'&&ch==='internet_banking')reasons.push('No puedes utilizar Internet Banking desde efectivo.');
+   if(taxable&&!(Number.isFinite(pct)&&pct>=0&&pct<=100))reasons.push('Revisa el porcentaje del impuesto.');
+   if(!(Number.isFinite(fee)&&fee>=0))reasons.push('Revisa las comisiones del pago.');
+   if(!(Number.isFinite(debitTotal)&&debitTotal>0))reasons.push('El débito total debe ser positivo y estar calculado.');
+   // Avoid silently generating card credit balances. A bank credit in excess of debt
+   // is a separate adjustment operation, not a normal payment from this assistant.
+   if(!editing&&Number.isFinite(debt)&&Number.isFinite(amount)&&amount>debt+.01)reasons.push('El abono supera la deuda registrada. Revisa el importe o concilia el saldo bancario.');
+   if(!editing&&Number.isFinite(debt)&&debt<=.005)reasons.push('Esta moneda no tiene deuda registrada para pagar.');
+   if(!editing&&mode==='cut'&&Number.isFinite(billed)&&billed<=.005)reasons.push('No hay saldo facturado al corte. Selecciona pago total o un monto específico.');
+   return {c,a,st,debt,billed,amount,mode,fx,rate,manual,debit,fee,tax,charges,debitTotal,pct,taxable,sourceCurrency,debtCurrency,editing,todayRecord,sourceBalance,reasons};
+ }
+ function render(f,pane){
+   if(!pane.isConnected)return;
+   const x=model(f),line=(k,v)=>'<div><span>'+esc(k)+'</span><strong>'+esc(v)+'</strong></div>';
+   const canEstimate=x.todayRecord&&!x.reasons.length&&Number.isFinite(x.sourceBalance)&&Number.isFinite(x.debt);
+   let html='<header class="v382-pay-head"><h3>Pago de tarjeta</h3><span>IMPACTO ANTES DE GUARDAR</span></header>';
+   html+='<div class="v382-pay-route"><div><small>SALE DE</small><strong>'+esc(x.a?.name||'Cuenta por seleccionar')+'</strong><em>'+esc(x.sourceCurrency)+'</em></div><div class="v382-pay-arrow">→</div><div><small>SE ABONA A</small><strong>'+esc(x.c?.name||'Tarjeta por seleccionar')+'</strong><em>'+esc(x.debtCurrency)+'</em></div></div>';
+   html+='<div class="v382-pay-numbers"><div><small>Reduce deuda de tarjeta</small><strong>'+currency(x.amount,x.debtCurrency)+'</strong></div><div class="v382-pay-positive"><small>Sale de la cuenta (con cargos)</small><strong>'+currency(x.debitTotal,x.sourceCurrency)+'</strong></div></div>';
+   html+='<div class="v382-pay-breakdown">';
+   html+=line('Deuda registrada',currency(x.debt,x.debtCurrency));
+   html+=line('Saldo facturado al corte',currency(x.billed,x.debtCurrency));
+   html+=line('Tipo de pago',({cut:'Al corte',total:'Total',custom:'Monto específico'})[x.mode]||'—');
+   if(x.fx)html+=line('Tipo de cambio',Number.isFinite(x.rate)&&x.rate>0?'RD$ '+x.rate.toFixed(4)+' por US$1':'Pendiente');
+   if(x.fx)html+=line(x.manual?'Débito exacto declarado':'Débito equivalente',currency(x.debit,x.sourceCurrency));
+   html+=line('Impuesto bancario',currency(x.tax,x.sourceCurrency));
+   html+=line('Otros cargos',currency(x.fee,x.sourceCurrency));
+   if(canEstimate){
+    html+=line('Deuda después del pago',currency(Math.max(0,rounded(x.debt-x.amount)),x.debtCurrency));
+    html+=line('Cuenta: antes → estimado',currency(x.sourceBalance,x.sourceCurrency)+' → '+currency(rounded(x.sourceBalance-x.debitTotal),x.sourceCurrency));
+   }
+   html+='</div>';
+   if(x.reasons.length)html+='<div class="v382-pay-warning" role="status">'+esc(x.reasons[0])+'</div>';
+   if(x.editing)html+='<p class="v382-pay-note">Edición: los saldos deben recalcularse con los movimientos posteriores. No se simula un nuevo pago ni se crea otro registro.</p>';
+   else if(!x.todayRecord)html+='<p class="v382-pay-note">Pago con fecha histórica: se recalculará el historial. No se anticipan saldos de hoy.</p>';
+   else html+='<p class="v382-pay-note">Este pago reduce una deuda existente; solo los impuestos y las comisiones reales cuentan como gasto. Vista previa informativa: nada cambia hasta confirmar.</p>';
+   pane.innerHTML=html;
+   f.dataset.v382PaymentError=x.reasons[0]||'';
+ }
+ function attach(f){
+   if(!isCardPay(f)||f.dataset.v382PayAttached==='yes')return;
+   f.dataset.v382PayAttached='yes';
+   const pane=document.createElement('section');pane.className='v382-card-payment-preview';pane.setAttribute('aria-label','Impacto del pago en cuenta y tarjeta');pane.setAttribute('aria-live','polite');
+   const receipt=f.querySelector('#guidedReceipt');
+   if(receipt)receipt.insertAdjacentElement('afterend',pane);
+   else (f.querySelector('.studio-fields')||f.querySelector('.form-grid')||f).appendChild(pane);
+   const update=()=>render(f,pane);
+   f.addEventListener('input',()=>queueMicrotask(update));
+   f.addEventListener('change',()=>queueMicrotask(update));
+   update();
+ }
+ function review(){
+   const page=root.querySelector('.v349-review-screen:not([data-v382-pay-review])');if(!page)return;
+   const form=root.querySelector('form#transactionForm[data-v382-pay-attached="yes"]');if(!form||!isCardPay(form))return;
+   const x=model(form),where=page.querySelector('.v353-breakdowns');if(!where)return;
+   const card=document.createElement('section');card.className='v382-review-card';
+   const title=document.createElement('strong');title.textContent='Efecto financiero de este pago';
+   const route=document.createElement('p');route.textContent=(x.a?.name||'Cuenta')+' → '+(x.c?.name||'Tarjeta')+' · '+x.debtCurrency;
+   const amount=document.createElement('p');amount.className='v382-review-highlight';amount.textContent='Deuda que se reduce: '+currency(x.amount,x.debtCurrency)+' · Débito total: '+currency(x.debitTotal,x.sourceCurrency);
+   const note=document.createElement('p');note.textContent='El principal pagado no es un gasto nuevo. Los cargos bancarios sí se registran como gasto. Valida estos valores antes de guardar.';
+   card.append(title,route,amount,note);where.prepend(card);page.dataset.v382PayReview='yes';
+ }
+ let scheduled=false;
+ function scan(){if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;root.querySelectorAll('form#transactionForm').forEach(attach);review();});}
+ // Attach before the universal review listener: reject invalid payments at capture phase.
+ window.addEventListener('submit',e=>{
+   const f=e.target;if(!isCardPay(f))return;
+   const pane=f.querySelector('.v382-card-payment-preview');if(!pane)return;
+   render(f,pane);
+   const err=f.dataset.v382PaymentError;if(!err)return;
+   e.preventDefault();e.stopImmediatePropagation();
+   if(typeof toast==='function')toast(err);
+   if(f.classList.contains('studio-form')&&typeof studioShowStep==='function'){
+     studioShowStep(f,1,{force:true});
+   }
+   const fld=/tarjeta|deuda/.test(err)?'cardId':/cuenta|efectivo/.test(err)?'accountId':/tasa/.test(err)?'paymentFxRate':/débito/.test(err)?'sourceAmount':'amount';
+   f.elements.namedItem(fld)?.focus?.();
+ },true);
+ new MutationObserver(scan).observe(root,{subtree:true,childList:true});scan();
+})();
+</script>
+
 <script id="v349-register-experience-script">
 (()=>{'use strict';
   /* Only presentation and confirmation review. Never write data here. */
@@ -68042,6 +68221,185 @@ body:is(.theme-black,.theme-dark) #modal-root .v381-review-card{background:#111!
 body:is(.theme-black,.theme-dark) #modal-root .v381-review-card strong{color:#b3f0df!important}
 body:is(.theme-black,.theme-dark) #modal-root .v381-review-card p{color:#bbb!important}
 </style>
+
+
+<style id="v383-loan-workflow-design">
+/* V383 – Préstamos: una vista propia para pago de cuotas y una ficha de contrato coherente.
+   No altera balances, tasas, cuotas ni la contabilización: todos los importes se leen del modelo. */
+#modal-root .v383-loan-impact{--l383-card:#fff;--l383-text:#213851;--l383-muted:#6e8199;--l383-line:#d9e5f2;--l383-hero:#f0f6fe;--l383-good:#107861;display:grid;gap:13px;padding:16px;border-radius:23px;border:1px solid var(--l383-line);background:linear-gradient(140deg,var(--l383-hero),var(--l383-card));color:var(--l383-text);box-shadow:0 12px 28px rgba(35,72,115,.065);margin:13px 0;min-width:0}
+#modal-root .v383-loan-impact *{box-sizing:border-box;min-width:0}
+#modal-root .v383-loan-impact header{display:flex;align-items:start;justify-content:space-between;gap:10px}
+#modal-root .v383-loan-impact header>div{display:grid;gap:4px}
+#modal-root .v383-loan-impact header small{font-size:10px;letter-spacing:.11em;color:var(--l383-muted);font-weight:800;text-transform:uppercase}
+#modal-root .v383-loan-impact header h3{font-size:19px;line-height:1.2;font-weight:850;letter-spacing:-.04em;margin:0;color:var(--l383-text)}
+#modal-root .v383-loan-mode{display:inline-flex;align-self:start;font-size:10px;font-weight:800;color:#426b9c;padding:7px 10px;border-radius:999px;background:rgba(55,103,174,.09);white-space:normal;text-align:right}
+#modal-root .v383-loan-intro{margin:0;font-size:12px;line-height:1.5;color:var(--l383-muted)}
+#modal-root .v383-loan-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#modal-root .v383-loan-figures>div{border:1px solid var(--l383-line);background:var(--l383-card);padding:13px;border-radius:17px;display:grid;gap:6px}
+#modal-root .v383-loan-figures small{font-size:10px;line-height:1.4;color:var(--l383-muted)}
+#modal-root .v383-loan-figures strong{font-size:clamp(18px,5.5vw,26px);line-height:1.12;font-weight:850;letter-spacing:-.035em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:var(--l383-text)}
+#modal-root .v383-loan-figures .v383-loan-future strong{color:var(--l383-good)}
+#modal-root .v383-loan-lines{border-top:1px solid var(--l383-line);padding-top:8px;display:grid;gap:0}
+#modal-root .v383-loan-line{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--l383-line);font-size:12px;line-height:1.45}
+#modal-root .v383-loan-line:last-child{border:0}
+#modal-root .v383-loan-line span{color:var(--l383-muted)}
+#modal-root .v383-loan-line strong{font-size:12px;overflow-wrap:anywhere;text-align:right;font-variant-numeric:tabular-nums;color:var(--l383-text)}
+#modal-root .v383-loan-notice{margin:0;padding:10px 12px;border-radius:14px;background:#fff4e8;border:1px solid #efd7b9;color:#8d5428;font-size:11px;line-height:1.55}
+#modal-root .v383-loan-notice.ok{background:#eaf7f2;border-color:#c7e5d8;color:#176a55}
+#modal-root .v383-loan-quick{display:flex;gap:7px;flex-wrap:wrap;margin:4px 0}
+#modal-root .v383-loan-quick button{border:1px solid #d9e3ef;background:#fff;border-radius:13px;padding:10px 13px;min-height:42px;color:#335a87;font-size:12px;font-weight:800;cursor:pointer}
+#modal-root .v383-loan-quick button:focus-visible{outline:3px solid #7aa6db;outline-offset:2px}
+#modal-root #loanForm.v87-loan-wizard .v87-step-intro{border-radius:19px!important}
+#modal-root #loanForm.v87-loan-wizard .v87-review-row{overflow-wrap:anywhere}
+#modal-root form[data-special="loan"] :is(.other-studio-amount,.v49-payment-breakdown,.v359-mode-picker,.v359-bank-reconcile){border-radius:18px!important}
+#modal-root form[data-special="loan"] .other-studio-section-title{letter-spacing:.11em;font-weight:850}
+#modal-root .v383-loan-review{padding:12px 14px;margin:10px 0;display:grid;gap:7px;border:1px solid #d9e5f2;background:#eef5ff;border-radius:16px;color:#294568}
+#modal-root .v383-loan-review strong{font-size:14px;line-height:1.35}
+#modal-root .v383-loan-review p{font-size:11px;line-height:1.5;margin:0;color:#56718e}
+body:is(.theme-black,.theme-dark) #modal-root .v383-loan-impact{--l383-card:#111;--l383-text:#f4f5f7;--l383-muted:#bababa;--l383-line:#303030;--l383-hero:#090909;--l383-good:#8fe1bf;background:#090909;box-shadow:none}
+body:is(.theme-black,.theme-dark) #modal-root .v383-loan-mode{background:#202020;color:#ddd}
+body:is(.theme-black,.theme-dark) #modal-root .v383-loan-notice{background:#231a11;border-color:#574026;color:#ffd4a7}
+body:is(.theme-black,.theme-dark) #modal-root .v383-loan-notice.ok{background:#0d2119;border-color:#275544;color:#b8f0d5}
+body:is(.theme-black,.theme-dark) #modal-root .v383-loan-quick button{background:#141414;border-color:#333;color:#f1f1f1}
+body:is(.theme-black,.theme-dark) #modal-root .v383-loan-review{background:#111;border-color:#303030;color:#f6f6f6}
+body:is(.theme-black,.theme-dark) #modal-root .v383-loan-review p{color:#b6b6b6}
+@media(max-width:790px){
+ #modal-root .v383-loan-impact{padding:13px;margin:10px 0 16px;border-radius:20px}
+ #modal-root .v383-loan-figures{gap:8px}
+ #modal-root .v383-loan-figures>div{padding:12px 10px;border-radius:15px}
+ #modal-root .v383-loan-impact header h3{font-size:18px}
+ #modal-root form[data-special="loan"] .other-studio-amount input[name="amount"]{font-size:clamp(31px,9vw,43px)!important}
+ #modal-root form[data-special="loan"] .v83-loan-pay-nav button{min-height:52px!important}
+ #modal-root form[data-special="loan"] .v83-loan-pay-controls button{min-height:48px!important;border-radius:15px!important}
+}
+@media(max-width:355px){#modal-root .v383-loan-line{grid-template-columns:1fr}.v383-loan-line strong{text-align:left!important}}
+</style>
+<script id="v383-loan-controller">
+(function(){
+ 'use strict';
+ const currency=(n,c)=> (c==='USD'?'US$':'RD$')+new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.abs(Number(n)||0));
+ const escape=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+ const numValue=(f,name)=>{const field=f.elements.namedItem(name);return field&&field.value.trim()!==''?Number(field.value):NaN};
+ const str=(f,name)=>String(f.elements.namedItem(name)?.value||'');
+ const round=n=>Math.round((Number(n)+Number.EPSILON)*100)/100;
+ function inspect(f){
+  const l=typeof loan==='function'?loan(str(f,'loanId')):null;
+  const a=typeof account==='function'?account(str(f,'accountId')):null;
+  const mode=str(f,'loanPaymentMode')==='bank'?'bank':'normal';
+  const kind=str(f,'paymentKind')==='extra'?'extra':'regular';
+  const total=numValue(f,'amount'), principal=numValue(f,'principal'), interest=numValue(f,'interest'), insurance=numValue(f,'insurance'), fee=numValue(f,'fee');
+  const beforeApp=l&&typeof loanAccounting==='function'?Number(loanAccounting(l).balance):NaN;
+  const beforeBank=numValue(f,'bankBalanceBefore');
+  const before=mode==='bank'?beforeBank:beforeApp;
+  const sourceNum=numValue(f,'sourceAmount');
+  const sameCurrency=!!a&&!!l&&a.currency===l.currency;
+  // The app engine computes fallback FX. Show it only if available from the existing function.
+  let debit=Number.isFinite(sourceNum)&&sourceNum>0?sourceNum:NaN;
+  if(sameCurrency)debit=total;
+  else if(l&&a&&Number.isFinite(total)&&typeof xconvert==='function'){
+   try{if(!(debit>0))debit=xconvert(total,l.currency,a.currency)}catch(_){debit=NaN}
+  }
+  const percentage=str(f,'paymentTaxable')==='yes'?numValue(f,'paymentTaxPct'):0;
+  const taxApplies=!!a&&typeof isTaxableBankPayment==='function'&&isTaxableBankPayment(a,str(f,'paymentChannel'))&&str(f,'paymentTaxable')==='yes';
+  const tax=taxApplies&&Number.isFinite(debit)&&Number.isFinite(percentage)?round(debit*percentage/100):0;
+  const hasDate=str(f,'date');
+  const current=typeof today==='function'?today():new Date().toISOString().slice(0,10);
+  const editing=!!f.dataset.id;
+  const newToday=!editing&&hasDate===current;
+  const errors=[];
+  if(!l||l.archived)errors.push('Selecciona un préstamo activo.');
+  if(!a||a.archived)errors.push('Selecciona una cuenta de pago activa.');
+  if(!(total>0)||!Number.isFinite(total))errors.push('Introduce cuánto vas a pagar.');
+  const parts=[principal,interest,insurance,fee];
+  if(parts.some(v=>!Number.isFinite(v)||v<0))errors.push('Revisa capital, interés, seguro y comisiones: deben ser valores válidos no negativos.');
+  else if(Number.isFinite(total)&&Math.abs(round(parts.reduce((s,v)=>s+v,0))-total)>.025)errors.push('El desglose debe sumar exactamente el total que vas a pagar.');
+  if(kind==='extra'&&mode==='bank')errors.push('El abono extraordinario debe utilizar la modalidad normal; la conciliación es para cuotas ordinarias.');
+  if(mode==='bank'&&(!Number.isFinite(beforeBank)||beforeBank<0||l&&beforeBank>Number(l.principal)+.01))errors.push('Indica el saldo de capital del banco antes del pago, sin intereses futuros.');
+  if(Number.isFinite(before)&&Number.isFinite(principal)&&principal>before+.01)errors.push('El capital abonado supera el capital pendiente del préstamo.');
+  if(a&&l&&!sameCurrency&&!(debit>0&&Number.isFinite(debit)))errors.push('Verifica el importe de la cuenta de origen y la conversión de moneda.');
+  if(Number.isFinite(percentage)&&(percentage<0||percentage>100))errors.push('La tasa de impuesto debe estar entre 0 y 100 %.');
+  if(kind==='regular'&&!str(f,'installmentPeriod'))errors.push('Selecciona el vencimiento de la cuota.');
+  return {l,a,mode,kind,total,principal,interest,insurance,fee,beforeApp,beforeBank,before,after:round(Math.max(0,before-(Number.isFinite(principal)?principal:0))),debit,tax,percentage,hasDate,newToday,editing,errors};
+ }
+ function line(k,v){return '<div class="v383-loan-line"><span>'+escape(k)+'</span><strong>'+escape(v)+'</strong></div>'}
+ function preview(x){
+  const c=x.l?.currency||'DOP',ac=x.a?.currency||c;
+  let html='<header><div><small>Vive el hoy · préstamo</small><h3>Tu pago, antes de confirmar</h3></div><span class="v383-loan-mode">'+(x.kind==='extra'?'Abono al capital':x.mode==='bank'?'Conciliación bancaria':'Cuota ordinaria')+'</span></header>';
+  html+='<p class="v383-loan-intro">'+escape(x.l?.name||'Selecciona un préstamo')+' · '+escape(x.a?.name||'Elige la cuenta de origen')+'</p>';
+  html+='<div class="v383-loan-figures"><div><small>Capital pendiente antes</small><strong>'+ (Number.isFinite(x.before)?currency(x.before,c):'Por confirmar')+'</strong></div><div class="v383-loan-future"><small>Capital después del abono</small><strong>'+(x.errors.length||!Number.isFinite(x.after)?'Por confirmar':currency(x.after,c))+'</strong></div></div>';
+  html+='<div class="v383-loan-lines">';
+  html+=line('Total del pago',currency(x.total,c));
+  html+=line('A capital',currency(x.principal,c));
+  html+=line('Intereses',currency(x.interest,c));
+  html+=line('Seguro',currency(x.insurance,c));
+  html+=line('Comisiones',currency(x.fee,c));
+  if(x.mode==='bank'&&Number.isFinite(x.beforeBank)&&Number.isFinite(x.beforeApp))html+=line('Diferencia de capital con la app',currency(Math.abs(x.beforeBank-x.beforeApp),c)+(x.beforeBank>=x.beforeApp?' · banco mayor':' · banco menor'));
+  if(x.a&&x.l&&ac!==c)html+=line('Débito estimado en '+ac,Number.isFinite(x.debit)?currency(x.debit,ac):'Pendiente de conversión');
+  if(x.tax>0)html+=line('Impuesto bancario',currency(x.tax,ac));
+  html+=line('Total que sale de la cuenta',Number.isFinite(x.debit)?currency(x.debit+x.tax,ac):'Pendiente');
+  html+='</div>';
+  if(x.errors.length)html+='<p class="v383-loan-notice" role="status">'+escape(x.errors[0])+'</p>';
+  else if(x.editing)html+='<p class="v383-loan-notice ok">Estás corrigiendo un pago existente: se recalculará su historial, sin crear otra cuota.</p>';
+  else if(!x.newToday)html+='<p class="v383-loan-notice ok">Fecha histórica: estos importes no representan un saldo actual definitivo. Se recalculará la deuda al registrar.</p>';
+  else html+='<p class="v383-loan-notice ok">El capital reduce deuda; solo intereses, seguro, comisiones e impuestos son costos. No se genera un segundo gasto por pagar capital.</p>';
+  return html;
+ }
+ function render(f){
+  const box=f.querySelector('.v383-loan-impact');if(!box)return;
+  const x=inspect(f);box.innerHTML=preview(x);f.dataset.v383Error=x.errors[0]||'';
+ }
+ function install(f){
+  if(!f||f.dataset.v383LoanAttached==='1'||str(f,'type')!=='loan_payment')return;
+  f.dataset.v383LoanAttached='1';
+  const box=document.createElement('section');box.className='v383-loan-impact';box.setAttribute('aria-label','Resumen del pago de préstamo');box.setAttribute('aria-live','polite');
+  const right=f.querySelector('.other-studio-right');const breakDown=f.querySelector('#v49PaymentBreakdown');
+  const body=f.querySelector('.other-studio-content');
+  if(body){const fold=body.querySelector('.other-studio-fold');if(fold)fold.insertAdjacentElement('beforebegin',box);else body.appendChild(box)}
+  else if(right){if(breakDown&&breakDown.parentElement===right)breakDown.insertAdjacentElement('beforebegin',box);else right.prepend(box)}
+  else(f.querySelector('#v49PaymentBreakdown')||f.querySelector('.form-grid')||f).insertAdjacentElement('beforebegin',box);
+  const modes=f.querySelector('.v359-mode-picker');
+  if(modes){const quick=document.createElement('div');quick.className='v383-loan-quick';quick.innerHTML='<button type="button" data-v383-action="regular">Cuota ordinaria</button><button type="button" data-v383-action="extra">Abonar al capital</button>';modes.insertAdjacentElement('afterend',quick);
+    quick.addEventListener('click',e=>{
+      const btn=e.target.closest('[data-v383-action]');if(!btn)return;
+      const k=btn.dataset.v383Action==='extra'?'extra':'regular';const field=f.elements.namedItem('paymentKind');if(!field)return;
+      if(k==='extra'&&f.elements.namedItem('loanPaymentMode')){f.elements.loanPaymentMode.value='normal';if(typeof v359LoanRefresh==='function')v359LoanRefresh(f,'mode')}
+      field.value=k;field.dispatchEvent(new Event('change',{bubbles:true}));
+      if(k==='extra')for(const name of ['interest','insurance','fee']){const el=f.elements.namedItem(name);if(el){el.value='0';el.dispatchEvent(new Event('input',{bubbles:true}))}}
+      queueMicrotask(()=>render(f));
+    });
+  }
+  const sync=()=>queueMicrotask(()=>render(f));f.addEventListener('input',sync);f.addEventListener('change',sync);
+  render(f);
+ }
+ function active(){const f=document.querySelector('#modal-root #transactionForm');if(f&&str(f,'type')==='loan_payment')install(f)}
+ // Existing modal implementation may reparent fields after opening. Install after those wrappers settle.
+ const root=document.getElementById('modal-root');if(root){new MutationObserver(()=>queueMicrotask(active)).observe(root,{childList:true,subtree:false});queueMicrotask(active)}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',active,{once:true});
+ // This capture handler runs before buttons advance to the final step; review only opens for valid operations.
+ window.addEventListener('click',e=>{
+  const button=e.target.closest?.('button');if(!button)return;
+  const f=document.querySelector('#modal-root #transactionForm[data-v383-loan-attached="yes"]');if(!f)return;
+  if(!button.closest('#modal-root'))return;
+  const next=button.matches('[data-v83-pay-next]');
+  const submit=button.matches('button[type="submit"],.v349-confirm');
+  if(!next&&!submit)return;
+  // The navigation from data step to breakdown is always permitted; check before final confirmation.
+  const selected=f.querySelector('.v83-loan-pay-nav button.selected');
+  if(next && (!selected||selected.dataset.v83LoanPayStep!=='1'))return;
+  render(f);const warning=f.dataset.v383Error;
+  if(!warning)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  if(typeof toast==='function')toast(warning);
+  const panel=f.querySelector('.v383-loan-impact');panel?.scrollIntoView({block:'nearest',behavior:'smooth'});
+ },true);
+ // If a save is triggered programmatically, stop it in the capture phase before the accounting handler.
+ window.addEventListener('submit',e=>{
+  const f=e.target;if(f.id!=='transactionForm'||f.dataset.v383LoanAttached!=='1')return;
+  render(f);const warning=f.dataset.v383Error;
+  if(warning){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast(warning)}
+ },true);
+})();
+</script>
 
 </body>
 </html>
