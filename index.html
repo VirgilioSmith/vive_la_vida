@@ -28680,7 +28680,7 @@ events.sort((a,b)=>a.date.localeCompare(b.date)||(a.type===b.type?0:a.type==='ch
 for(const e of events){if(e.date>today())continue;if(e.type==='charge'){let v=e.amount;running+=v;if(credit>0){let x=Math.min(v,credit);v-=x;credit-=x}if(v>0)remaining.push({date:e.date,cut:e.cut||cutFor(e.date,c.cutDay),rem:v})}else{let v=e.amount;running-=v;for(let item of remaining){if(!v)break;if(item.date>e.date)continue;let x=Math.min(item.rem,v);item.rem=rnd(item.rem-x);v=rnd(v-x)}if(v>0)credit+=v}}
 const asOf=events.filter(e=>e.date<=lc||(e.id==='opening-billed'&&e.cut<=lc)).reduce((s,e)=>s+(e.type==='charge'?e.amount:-e.amount),0);statementAtCut=Math.max(0,rnd(asOf));
 let billed=0,unbilled=0,overdue=0,dueMap={};for(const item of remaining){if(item.rem<=.001)continue;let due=cardDue(item.cut,c.dueDay);if(item.cut<=lc){billed+=item.rem;dueMap[due]=(dueMap[due]||0)+item.rem;if(due<today())overdue+=item.rem}else unbilled+=item.rem}
-const nextDue=Object.keys(dueMap).sort()[0]||null;let limit=ccy==='USD'?num(c.limitUSD):num(c.limitDOP),overdraft=ccy==='USD'?num(c.overdraftUSD):num(c.overdraftDOP),debt=Math.max(0,rnd(billed+unbilled-credit));let statements=db.statements.filter(s=>s.cardId===c.id&&s.currency===ccy).sort((a,b)=>b.cutDate.localeCompare(a.cutDate));let official=statements.find(s=>s.cutDate===lc)||null;let asOfOfficial=official?num(official.amount):null;let paidAfter=official?v115CardTransactions(c.id,ccy).filter(t=>t.date>lc&&t.date<=today()&&(['card_payment','card_reward'].includes(t.type)||((t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed')||(t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent')))).reduce((s,t)=>s+num(t.amount),0):0;
+const nextDue=Object.keys(dueMap).sort()[0]||null;let limit=ccy==='USD'?num(c.limitUSD):num(c.limitDOP),overdraft=ccy==='USD'?num(c.overdraftUSD):num(c.overdraftDOP),debt=Math.max(0,rnd(billed+unbilled-credit));let statements=db.statements.filter(s=>s.cardId===c.id&&s.currency===ccy).sort((a,b)=>b.cutDate.localeCompare(a.cutDate));let official=statements.find(s=>s.cutDate===lc)||null;let asOfOfficial=official?num(official.amount):null;let paidAfter=official?v115CardTransactions(c.id,ccy).filter(t=>t.date>lc&&t.date<=today()&&(['card_payment','card_reward','card_refund'].includes(t.type)||((t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed')||(t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent')))).reduce((s,t)=>s+num(t.amount),0):0;
 return {debt,billed:rnd(Math.max(0,billed)),unbilled:rnd(Math.max(0,unbilled)),overdue:rnd(overdue),limit,overdraft,overdraftUsed:rnd(Math.min(overdraft,Math.max(0,debt-limit))),excess:rnd(Math.max(0,debt-limit-overdraft)),available:rnd(Math.max(0,limit-debt)),availableWithOverdraft:rnd(Math.max(0,limit+overdraft-debt)),util:limit?100*debt/limit:0,cut:lc,nextCut:nextCut(c.cutDay),nextDue,statementAtCut,official,officialAmount:asOfOfficial,officialRemaining:official?Math.max(0,rnd(asOfOfficial-paidAfter)):null,credit:rnd(credit),dueMap,minimum:Math.max(0,rnd(billed*num(c.minPct||5)/100)),automatic:true,cycleLedger:v169CardCycleLedger(c,ccy)};}
 function v102MonthlyTotalsRaw(year,month){const start=periodStart(year,month),end=periodEnd(year,month);let income=0,expense=0,incomeBy={},expenseBy={},incomeSubBy={},expenseSubBy={},cashIn=0,cashOut=0,cardPay=0,principal=0,interest=0;
 for(const t of db.transactions){if(t.date<start||t.date>end)continue;const fx=(n,c)=>num(n)*(c==='USD'?num(t.fxRateSnapshot||db.settings.fx):1);let v=fx(t.amount,t.currency||'DOP');if(['expense','card_payment'].includes(t.type)){let fee=fx(num(t.paymentTax)+num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP');if(fee>0){expense+=fee;cashOut+=fee;expenseBy['Impuestos y comisiones']=(expenseBy['Impuestos y comisiones']||0)+fee;for(const [name,val] of [['Impuesto bancario',fx(num(t.paymentTax),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')],[t.paymentSpeed==='instant'?'Pago al instante':'Otros cargos bancarios',fx(num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')]])if(val>0)expenseSubBy['Impuestos y comisiones||'+name]=(expenseSubBy['Impuestos y comisiones||'+name]||0)+val;}}if(['income','card_reward','bank_reward'].includes(t.type)){income+=v;if(['income','bank_reward'].includes(t.type))cashIn+=v;incomeBy[t.category||'Otros ingresos']=(incomeBy[t.category||'Otros ingresos']||0)+v;if(t.subcategory){let key=(t.category||'Otros ingresos')+'||'+t.subcategory;incomeSubBy[key]=(incomeSubBy[key]||0)+v}}
@@ -30757,7 +30757,7 @@ function v392IntegritySection(){
 }
 function v339IntegritySection(){
  const model=v339RecurringIntegrity();
- return `<details class="v30-control v339-integrity"><summary>Coherencia de suscripciones · ${model.notices.length?model.notices.length+' por revisar':'sin incidencias básicas'}</summary><div class="v339-integrity-body"><p>${model.active} servicios activos · ${model.archived} archivados excluidos de proyecciones. Todas las vistas comparten la misma equivalencia mensual (semanal = 52/12, quincenal = 2).</p>${model.notices.length?`<ul>${model.notices.map(item=>`<li>${sanitize(item)}</li>`).join('')}</ul><p>Comprueba los contratos antes de corregir fechas o importes.</p>`:'<p>Periodicidades, importes y próximas fechas activas con formato válido. Esto no acredita pagos bancarios.</p>'}</div></details>`+v392IntegritySection();
+ return `<details class="v30-control v339-integrity"><summary>Coherencia de suscripciones · ${model.notices.length?model.notices.length+' por revisar':'sin incidencias básicas'}</summary><div class="v339-integrity-body"><p>${model.active} servicios activos · ${model.archived} archivados excluidos de proyecciones. Todas las vistas comparten la misma equivalencia mensual (semanal = 52/12, quincenal = 2).</p>${model.notices.length?`<ul>${model.notices.map(item=>`<li>${sanitize(item)}</li>`).join('')}</ul><p>Comprueba los contratos antes de corregir fechas o importes.</p>`:'<p>Periodicidades, importes y próximas fechas activas con formato válido. Esto no acredita pagos bancarios.</p>'}</div></details>`+v392IntegritySection()+v401FinancialLogicSection();
 }
 function v30ReviewContent(embedded=false){
  const a=v30Audit();
@@ -69959,5 +69959,59 @@ body:is(.theme-black,.theme-dark) #modal-root .v349-review-screen .v400-review-k
 })();
 </script>
 
+<script id="v401-financial-logic">
+
+/* V401 — Auditoría financiera extendida: informativa, sin escritura ni modificación de balances.
+   Casos críticos: tasa USD, divisas de transferencia, abonos personales, prestaciones de crédito.
+   La ausencia de alertas no representa conciliación bancaria ni verificación remota. */
+function v401FinancialLogicAudit(){
+ const findings=[];const put=(name,reason,id)=>{if(findings.length<150)findings.push({name,reason,id:String(id||'')})};
+ const currentFx=Number(db?.settings?.fx);
+ const hasUSD=(db.accounts||[]).some(a=>a.currency==='USD')||(db.cards||[]).some(c=>Number(c.limitUSD)>0)||(db.transactions||[]).some(t=>t.currency==='USD');
+ if(hasUSD&&(!Number.isFinite(currentFx)||currentFx<=0))put('Tipo de cambio inválido','La tasa DOP por USD debe ser mayor que cero; las conversiones podrían quedar en cero.','');
+ const byPerson=new Map();for(const t of db.transactions||[]){
+  if(!t||!t.type)continue;
+  const amt=Number(t.amount),src=Number(t.sourceAmount),tax=Number(t.paymentTax||0),fee=Number(t.paymentFee||0);
+  if(['card_payment','loan_payment'].includes(t.type)){
+   if(!Number.isFinite(src)||src<=0)put('Débito bancario inválido','El pago necesita un importe de origen válido.',t.id);
+   if(!Number.isFinite(tax)||!Number.isFinite(fee)||tax<0||fee<0)put('Cargo o impuesto inválido','Los cargos asociados a un pago no pueden ser negativos ni indefinidos.',t.id);
+   const a=account(t.accountId);if(a&&a.currency!==t.currency&&!Number.isFinite(Number(t.fxRateSnapshot))&&!Number.isFinite(Number(t.paymentFxRate)))put('Tipo de cambio no documentado','El pago usa monedas distintas; verifica el importe efectivamente debitado y la tasa utilizada.',t.id);
+  }
+  if(t.type==='transfer'){
+   const a=account(t.accountId),b=account(t.toAccountId),target=Number(t.targetAmount);
+   if(a&&b){
+    if(a.currency===b.currency&&Number.isFinite(amt)&&Number.isFinite(target)&&Math.abs(amt-target)>.02)put('Transferencia de misma moneda','Los importes enviado y recibido son distintos. Revisa si corresponde una comisión o ajuste explícito.',t.id);
+    if(a.currency!==b.currency&&(!Number.isFinite(target)||target<=0))put('Conversión incompleta','La cuenta receptora necesita un importe positivo en su propia moneda.',t.id);
+   }
+   if(!Number.isFinite(Number(t.transferFee||0))||Number(t.transferFee||0)<0)put('Comisión de transferencia inválida','La comisión debe ser un importe válido no negativo.',t.id);
+  }
+  if(['card_charge','card_refund','card_reward'].includes(t.type)){
+   const c=card(t.cardId);if(c&&!['DOP','USD'].includes(t.currency))put('Moneda de tarjeta inválida','El movimiento de tarjeta debe estar en DOP o USD.',t.id);
+  }
+  if(['personal_issue','personal_settlement'].includes(t.type)){
+   if(!personalLoan(t.personalLoanId))put('Acuerdo personal inexistente','El movimiento referencia un acuerdo entre personas que ya no existe.',t.id);
+   if(t.type==='personal_settlement'){
+    const capital=Number(t.principal),interest=Number(t.interest||0);
+    if(!Number.isFinite(capital)||capital<0||!Number.isFinite(interest)||interest<0)put('Abono personal inválido','Capital e intereses deben ser importes válidos no negativos.',t.id);
+    const l=personalLoan(t.personalLoanId);if(l&&t.currency!==l.currency)put('Moneda de deuda inconsistente','El abono y el acuerdo personal deben utilizar la misma moneda.',t.id);
+    if(l&&t.date<l.date)put('Abono anterior al acuerdo','Comprueba la fecha del abono respecto a la fecha de entrega.',t.id);
+    if(l&&t.date<=today()){const key=l.id;byPerson.set(key,(byPerson.get(key)||0)+(Number.isFinite(capital)?Math.max(0,capital):0));}
+   }
+  }
+ }
+ for(const l of db.personalLoans||[]){
+  const principal=Number(l.principal),forgiven=l.forgiveness?.date&&l.forgiveness.date<=today()?Number(l.forgiveness.amount||0):0;
+  if(!Number.isFinite(principal)||principal<=0)put('Capital personal inválido','El capital inicial del acuerdo debe ser positivo.',l.id);
+  if(!Number.isFinite(forgiven)||forgiven<0)put('Condonación inválida','El capital perdonado debe ser válido y no negativo.',l.id);
+  if(Number.isFinite(principal)&&Number.isFinite(forgiven)&&(byPerson.get(l.id)||0)+forgiven>principal+.02)put('Capital personal excedido','Los abonos más el importe perdonado exceden el capital pactado.',l.id);
+ }
+ return {count:(db.transactions||[]).length,findings,total:findings.length,limited:findings.length>=150};
+}
+function v401FinancialLogicSection(){
+ const result=v401FinancialLogicAudit(),shown=result.findings.slice(0,25);
+ return `<details class="v30-control v401-financial-logic"><summary>Lógica financiera · ${result.total?`${result.total} alerta(s) por revisar`:'sin alertas adicionales'}</summary><div class="v339-integrity-body"><p>Diagnóstico informativo de tipos de cambio, monedas, cargos, préstamos personales y movimientos. No modifica saldos ni valida estados bancarios reales.</p>${shown.length?`<ul>${shown.map(x=>`<li><b>${sanitize(x.name)}</b> · ${sanitize(x.reason)} ${x.id?`<code>${sanitize(x.id.slice(0,12))}</code>`:''}</li>`).join('')}</ul>${result.total>shown.length?'<p>Hay más observaciones; se muestran las primeras 25.</p>':''}`:'<p>Sin alertas adicionales según las reglas V401. Debes seguir conciliando contra estados de cuenta reales.</p>'}</div></details>`;
+}
+
+</script>
 </body>
 </html>
