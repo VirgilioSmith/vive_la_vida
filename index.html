@@ -75529,5 +75529,104 @@ body.theme-black :is(.positive,.is-positive,.v318-good,.pill.green,.notification
 }
 </style>
 
+
+<style id="v711-wallet-debt-alignment-repair">
+/* Ajuste quirúrgico: el importe de deuda y sus monedas forman UN bloque unido
+   a la derecha, sin separación forzada ni fondos. No modifica valores. */
+@media screen and (max-width:790px){
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v565-secondary{
+   display:flex!important; flex-direction:column!important;align-items:flex-end!important;
+   justify-content:flex-start!important;text-align:right!important;min-width:0!important;
+   background:transparent!important; background-image:none!important;border:0!important;
+   box-shadow:none!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v565-secondary>small,
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v565-secondary>b{
+   display:block!important;align-self:flex-end!important;width:max-content!important;
+   max-width:100%!important;text-align:right!important;white-space:nowrap!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary .v550-currency-breakdown{
+   display:flex!important;flex-direction:column!important;align-items:flex-end!important;
+   width:max-content!important;max-width:100%!important;min-width:0!important;
+   margin:12px 0 0 auto!important;padding:0!important;gap:6px!important;
+   background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary .v550-currency-breakdown>span{
+   display:inline-flex!important;flex-direction:row!important;align-items:baseline!important;
+   justify-content:flex-end!important;column-gap:6px!important;row-gap:0!important;
+   width:max-content!important;max-width:100%!important;min-width:0!important;
+   margin:0!important;padding:0!important;
+   text-align:right!important;white-space:nowrap!important;
+   background:transparent!important;border:0!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary .v550-currency-breakdown>span>i,
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary .v550-currency-breakdown>span>b{
+   display:inline!important;position:static!important;flex:0 0 auto!important;
+   width:auto!important;min-width:0!important;margin:0!important;padding:0!important;
+   white-space:nowrap!important;line-height:1.3!important;text-align:right!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary .v550-currency-breakdown>span>i{
+   font-size:clamp(9px,2.5vw,11px)!important;font-weight:650!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary .v550-currency-breakdown>span>b{
+   font-size:clamp(10px,2.75vw,12px)!important;font-weight:740!important;
+   font-variant-numeric:tabular-nums!important;
+ }
+}
+</style>
+
+
+<style id="v590-wallet-black-activity-fix">
+/* Black auténtico exclusivamente para Actividad reciente de Wallet móvil.
+   Sin alterar el contenido, los importes ni los disparadores de los movimientos. */
+@media (max-width:790px){
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-wallet-panel.v266-activity,
+  html body.theme-dark #app #page .v266-wallet.v279-wallet .v266-wallet-panel.v266-activity{
+    background:#000!important;background-image:none!important;
+    color:#f9fafb!important;
+    border:1px solid #20232a!important;
+    box-shadow:none!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-activity-row.v6-wallet-tx-trigger,
+  html body.theme-dark #app #page .v266-wallet.v279-wallet .v266-activity-row.v6-wallet-tx-trigger{
+    background:#000!important;background-image:none!important;
+    color:#f7f7f8!important;box-shadow:none!important;
+    border:0!important;border-bottom:1px solid rgba(255,255,255,.095)!important;
+    border-radius:0!important;margin:0!important;
+    padding:13px 0!important;min-height:64px!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-activity-row.v6-wallet-tx-trigger:last-child,
+  html body.theme-dark #app #page .v266-wallet.v279-wallet .v266-activity-row.v6-wallet-tx-trigger:last-child{
+    border-bottom:0!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-activity-row .v266-activity-ico,
+  html body.theme-dark #app #page .v266-wallet.v279-wallet .v266-activity-row .v266-activity-ico{
+    background:#0a0b0d!important;background-image:none!important;
+    color:#eef2f7!important;border:1px solid #262a30!important;
+    box-shadow:none!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-activity-row .v266-activity-info strong,
+  html body.theme-dark #app #page .v266-wallet.v279-wallet .v266-activity-row .v266-activity-info strong,
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-activity-row>b,
+  html body.theme-dark #app #page .v266-wallet.v279-wallet .v266-activity-row>b{
+    color:#f7f8fa!important;-webkit-text-fill-color:#f7f8fa!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-activity-row .v266-activity-info small,
+  html body.theme-dark #app #page .v266-wallet.v279-wallet .v266-activity-row .v266-activity-info small{
+    color:#a4acb7!important;-webkit-text-fill-color:#a4acb7!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-activity .v266-panel-heading h2,
+  html body.theme-dark #app #page .v266-wallet.v279-wallet .v266-activity .v266-panel-heading h2{
+    color:#fff!important;-webkit-text-fill-color:#fff!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-activity .v266-panel-heading>button,
+  html body.theme-dark #app #page .v266-wallet.v279-wallet .v266-activity .v266-panel-heading>button{
+    background:#101114!important;background-image:none!important;
+    color:#f7f8fa!important;border:0!important;box-shadow:none!important;
+  }
+}
+</style>
+
 </body>
 </html>
