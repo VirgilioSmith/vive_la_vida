@@ -41957,7 +41957,9 @@ function v300AppearancePane(){
 
 function v242Settings(){
  const s=db.settings,pane=V242_PANES.some(x=>x[0]===v242SettingsPane)?v242SettingsPane:'home';
- const paneInfo=V242_PANES.find(x=>x[0]===pane);
+ const desktopSettings=!isMobileViewport();
+ const activeDesktopPane=desktopSettings&&pane==='home'?'appearance':pane;
+ const paneInfo=V242_PANES.find(x=>x[0]===activeDesktopPane);
  const tile=(entry)=>`<button class="v242-settings-row" type="button" data-v242-section="${entry[0]}"><span class="v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v242-settings-row-copy"><strong>${entry[1]}</strong><small>${entry[2]}</small></span><span class="v242-settings-chevron" aria-hidden="true">›</span></button>`;
  const content={
   appearance:()=>`${v300AppearancePane()}`,
@@ -41974,12 +41976,21 @@ ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div 
   about:()=>`<div class="panel section"><div class="panel-head"><h3>Información guardada</h3></div><div class="settings-counts">${[['Instituciones',db.banks.length],['Cuentas',db.accounts.length],['Tarjetas',db.cards.length],['Préstamos',db.loans.length],['Certificados',db.certificates.length],['Movimientos',db.transactions.length],['Suscripciones',db.recurring.length]].map(([l,n])=>`<div><span>${l}</span><strong>${n}</strong></div>`).join('')}</div><div class="notification warning">vive el hoy es local: no consulta bancos en tiempo real, no ejecuta pagos ni comprueba automáticamente impuestos. No guardes CVV, PIN, contraseñas ni números completos.</div></div>`
  };
  let sectionBody='';
- try{ sectionBody=(content[pane]||(()=>''))(); }
+ try{ sectionBody=(content[activeDesktopPane]||(()=>''))(); }
  catch(error){
   console.error('Error al mostrar la sección de Configuración:',pane,error);
   sectionBody='<section class="panel section v3-settings-recovery" role="alert"><h3>No fue posible cargar esta sección</h3><p>Las demás opciones siguen disponibles. Vuelve al menú de Configuración e intenta nuevamente.</p><button type="button" class="btn soft" data-v242-back="1">Volver a Configuración</button></section>';
  }
  const title=paneInfo?.[1]||'Configuración';
+ if(desktopSettings){
+  const desktopTile=(entry)=>`<button type="button" class="v439-mac-item ${activeDesktopPane===entry[0]?'is-active':''}" data-v242-section="${entry[0]}" aria-current="${activeDesktopPane===entry[0]?'page':'false'}"><span class="v439-mac-item-icon v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v439-mac-item-copy"><strong>${entry[1]}</strong><small>${entry[4]}</small></span><span class="v439-mac-item-arrow" aria-hidden="true">›</span></button>`;
+  const groups=[['CUENTA',['profile']],['PERSONALIZACIÓN',['appearance','notifications']],['SERVICIOS',['integrations','financial']],['PRIVACIDAD Y AYUDA',['security','about']]];
+  return `<div class="settings-layout v242-ios-settings v439-macos-settings" data-v242-settings="${activeDesktopPane}">
+    <header class="v439-mac-top"><div><span class="v439-mac-eyebrow">VIVE EL HOY · FINANZAS 360</span><h1>Configuración</h1><p>Tus preferencias, organizadas en un solo lugar.</p></div></header>
+    <div class="v439-mac-workspace"><aside class="v439-mac-sidebar" aria-label="Secciones de Configuración"><div class="v439-mac-sidehead"><span class="v439-mac-avatar">${icon('wallet')}</span><span><strong>Tu espacio financiero</strong><small>Ajustes y preferencias</small></span></div><nav aria-label="Categorías de Configuración">${groups.map(([label,ids])=>`<div class="v439-mac-group"><p>${label}</p>${V242_PANES.filter(x=>ids.includes(x[0])).map(desktopTile).join('')}</div>`).join('')}</nav><div class="v439-mac-sidefoot">${icon('shield')} Datos vinculados a tu sesión</div></aside>
+    <main class="v439-mac-detail" id="v439-settings-detail" tabindex="-1" aria-label="${title}"><header class="v439-mac-detail-head"><span class="v439-mac-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h2>${title}</h2><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner v439-mac-detail-body">${sectionBody}</div></main></div>
+  </div>`;
+ }
  return `<div class="settings-layout v242-ios-settings" data-v242-settings="${pane}">
  ${pane==='home'?`<div class="v242-settings-home"><header class="v242-settings-intro"><span class="v242-settings-eyebrow">VIVE EL HOY · FINANZAS 360</span><h1>Configuración</h1><p>Todo a tu manera, con la claridad de Ajustes de iPhone.</p></header><section class="v242-settings-profile"><span class="v242-profile-avatar">${icon('wallet')}</span><span><strong>Tu espacio financiero</strong><small>Preferencias, conexión y protección</small></span><span class="v242-settings-chevron">›</span><button class="v242-profile-hit" type="button" data-v242-section="profile" aria-label="Abrir perfil y sincronización"></button></section><div class="v242-settings-section"><span class="v242-group-caption">APARIENCIA</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='appearance').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">NOTIFICACIONES</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='notifications').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">CONEXIONES Y FINANZAS</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['integrations','financial'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">PRIVACIDAD Y SOPORTE</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['security','about'].includes(x[0])).map(tile).join('')}</div></div><p class="v242-settings-footer">Tus registros y operaciones financieras se mantienen protegidos por las reglas actuales de la aplicación.</p></div>`:
  `<div class="v242-settings-subpage"><header class="v242-settings-subhead"><button type="button" class="v242-settings-back" data-v242-back="1">‹ <span>Configuración</span></button><span class="v242-settings-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h1>${title}</h1><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner">${sectionBody}</div></div>`}
@@ -42601,7 +42612,7 @@ document.addEventListener('click',event=>{
  const sect=event.target.closest('[data-v242-section]'),back=event.target.closest('[data-v242-back]'),choice=event.target.closest('[data-v242-style]');
  if(!sect&&!back&&!choice)return;
  event.preventDefault();event.stopImmediatePropagation();
- if(sect){v242SettingsPane=sect.dataset.v242Section;render();window.scrollTo({top:0,behavior:'instant'});return;}
+ if(sect){v242SettingsPane=sect.dataset.v242Section;render();if(isMobileViewport())window.scrollTo({top:0,behavior:'instant'});return;}
  if(back){v242SettingsPane='home';render();window.scrollTo({top:0,behavior:'instant'});return;}
  if(choice){const next=choice.dataset.v242Style;if(!['original','circles','integral','creative'].includes(next))return;
   const previous=db.settings.mobilePositionStyle||'original';if(next===previous)return;
@@ -43846,7 +43857,7 @@ document.addEventListener('input',function(event){
 })();
 /* V411 render activation test: explicit lifecycle and nonintrusive build marker. */
 try {
-  document.body.dataset.f360Build='V437';
+  document.body.dataset.f360Build='V441';
   const appRoot=document.getElementById('app');
   if(appRoot?.querySelector('main.main')) render();
 } catch(err){ console.error('[V435] Falló la activación de vistas',err); }
@@ -72466,6 +72477,382 @@ body.theme-black #app .v431-explore .v431-tile-featured .v431-tile-description{c
 body.theme-black #app .v431-explore .v431-personal .v431-tile-stat,
 body.theme-black #app .v431-explore .v431-personal .v431-value{
  color:#f4f7ff!important;background:transparent!important;border:0!important;
+}
+</style>
+
+<style id="v438-adaptive-large-kpis">
+/* V438: una sola paleta para los KPI grandes. Solo presentación, nunca datos.
+   Se usan gradientes de intensidad distintos: fuerte, medio y suave. */
+body{
+ --v438-base:var(--v424-accent-strong,var(--vive-theme-color,#486bc9));
+ --v438-deep:color-mix(in srgb,var(--v438-base) 63%,#132345 37%);
+ --v438-mid:color-mix(in srgb,var(--v438-base) 87%,#244778 13%);
+ --v438-bright:color-mix(in srgb,var(--v438-base) 76%,#c0d8ff 24%);
+ --v438-soft:color-mix(in srgb,var(--v438-base) 57%,#e0eaff 43%);
+ --v438-glow:color-mix(in srgb,var(--v438-base) 20%,transparent);
+}
+/* 1. Net del mes: máximo énfasis, contraste sin depender del acento elegido. */
+html body #app .main.world-overview .ff-dashboard .ff-health-card{
+ background:radial-gradient(ellipse at 105% -20%,rgba(255,255,255,.25),transparent 54%),
+  linear-gradient(121deg,var(--v438-deep) 0%,var(--v438-mid) 54%,var(--v438-bright) 110%)!important;
+ background-image:radial-gradient(ellipse at 105% -20%,rgba(255,255,255,.25),transparent 54%),
+  linear-gradient(121deg,var(--v438-deep) 0%,var(--v438-mid) 54%,var(--v438-bright) 110%)!important;
+ border:1px solid rgba(255,255,255,.30)!important;
+ box-shadow:0 16px 33px var(--v438-glow)!important;
+ color:#fff!important;
+}
+html body #app .main.world-overview .ff-dashboard .ff-health-card
+ :is(h2,p,.ff-health-number,.ff-health-caption,.ff-health-foot,.ff-health-foot strong,.ff-panel-top h2,.ff-panel-top p){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:1!important;
+}
+/* 2. Patrimonio: base profunda y extremo brillante, mientras los activos/pasivos
+   usan superficies translúcidas más suaves. */
+html body #app .v187-patrimony .v187-wealth-hero{
+ background:linear-gradient(115deg,var(--v438-deep) 0%,var(--v438-mid) 57%,var(--v438-bright) 110%)!important;
+ background-image:linear-gradient(115deg,var(--v438-deep) 0%,var(--v438-mid) 57%,var(--v438-bright) 110%)!important;
+ border:1px solid rgba(255,255,255,.3)!important;
+ box-shadow:0 18px 42px var(--v438-glow)!important;
+}
+html body #app .v187-patrimony .v187-wealth-hero :is(.v187-hero-primary,.v187-hero-primary strong,.v187-hero-eyebrow,.v187-hero-explain,.v187-hero-change,.v187-hero-meta,.v187-wealth-part,.v187-wealth-part span,.v187-wealth-part strong,.v187-wealth-part small){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+html body #app .v187-patrimony .v187-wealth-part{
+ background:rgba(255,255,255,.12)!important;
+ border-color:rgba(255,255,255,.2)!important;
+}
+/* 3. Other large accent heroes retain their own shapes and interactions. */
+html body #app .main.world-income .v58-exec,
+html body #app .v145-paycenter>.v145-pay-hero{
+ background:linear-gradient(127deg,var(--v438-deep),var(--v438-mid) 68%,var(--v438-bright))!important;
+ background-image:linear-gradient(127deg,var(--v438-deep),var(--v438-mid) 68%,var(--v438-bright))!important;
+ color:#fff!important;border-color:rgba(255,255,255,.25)!important;
+ box-shadow:0 14px 32px var(--v438-glow)!important;
+}
+html body #app .main.world-income .v58-exec :is(.v58-left h2,.v58-main-value,.v58-main-label),
+html body #app .v145-paycenter>.v145-pay-hero :is(h2,.v145-eyebrow,.v145-pay-period){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+/* 4. Resumen móvil: exclusivamente las superficies coloreadas, nunca los círculos laterales blancos. */
+html body #app .vive-mobile-home .v290-position-all{
+ background:linear-gradient(137deg,var(--v438-deep),var(--v438-mid) 70%,var(--v438-bright))!important;
+ background-image:linear-gradient(137deg,var(--v438-deep),var(--v438-mid) 70%,var(--v438-bright))!important;
+ border-color:rgba(255,255,255,.26)!important;color:#fff!important;
+}
+html body #app .vive-mobile-home .v421-creative-compact{
+ background:linear-gradient(145deg,var(--v438-deep),var(--v438-mid) 62%,var(--v438-bright))!important;
+ background-image:linear-gradient(145deg,var(--v438-deep),var(--v438-mid) 62%,var(--v438-bright))!important;
+ border-color:rgba(255,255,255,.25)!important;color:#fff!important;
+}
+html body #app .vive-mobile-home .v290-position-all :is(.v290-pos-main,.v290-pos-balance,.v290-pos-value,.v290-pos-bottom,.v290-pos-head),
+html body #app .vive-mobile-home .v421-creative-compact :is(.v421-net strong,.v421-core-metrics strong,.v421-meter-top strong,.v421-mini-card strong){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+/* 5. Una tarjeta de acción/estado destacada y un KPI de escenario de acento medio. */
+html body #app .v431-explore .v431-tile-featured{
+ background:linear-gradient(135deg,var(--v438-deep),var(--v438-mid) 68%,var(--v438-bright))!important;
+ color:#fff!important;
+ box-shadow:0 12px 26px var(--v438-glow)!important;
+}
+html body #app .v14-projection-metrics>.featured{
+ background:linear-gradient(125deg,var(--v438-deep),var(--v438-mid),var(--v438-soft))!important;
+ border-color:rgba(255,255,255,.27)!important;color:#fff!important;
+}
+html body #app .v14-projection-metrics>.featured :is(strong,span,small){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+/* 6. Indicators with semantic risk retain green/amber/red states. Other cards
+   deliberately remain pale/neutral, preserving hierarchy and budget readability. */
+html body.theme-black #app .main.world-overview .ff-dashboard .ff-health-card,
+html body.theme-black #app .v187-patrimony .v187-wealth-hero,
+html body.theme-black #app .main.world-income .v58-exec,
+html body.theme-black #app .v145-paycenter>.v145-pay-hero,
+html body.theme-black #app .vive-mobile-home .v290-position-all,
+html body.theme-black #app .vive-mobile-home .v421-creative-compact,
+html body.theme-black #app .v431-explore .v431-tile-featured{
+ background:linear-gradient(132deg,color-mix(in srgb,var(--v438-base) 30%,#05080d),
+  color-mix(in srgb,var(--v438-base) 55%,#151b2c),color-mix(in srgb,var(--v438-base) 68%,#343658))!important;
+ background-image:linear-gradient(132deg,color-mix(in srgb,var(--v438-base) 30%,#05080d),
+  color-mix(in srgb,var(--v438-base) 55%,#151b2c),color-mix(in srgb,var(--v438-base) 68%,#343658))!important;
+ border-color:color-mix(in srgb,var(--v438-base) 27%,#30333a)!important;
+ color:#fff!important;
+}
+</style>
+
+<style id="v439-macos-config-layout">
+@media(min-width:791px){
+ #app .v439-macos-settings{max-width:1500px!important;margin:0 auto!important;padding:clamp(14px,2vw,28px)!important;display:block!important;min-width:0!important}
+ #app .v439-mac-top{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:0 0 23px;padding:0 4px}
+ #app .v439-mac-top h1{font-size:clamp(30px,2.7vw,42px);font-weight:790;line-height:1.05;letter-spacing:-.055em;margin:7px 0 8px;color:#1b2d4b}
+ #app .v439-mac-top p{font-size:13px;line-height:1.4;color:#6c7e99;margin:0}
+ #app .v439-mac-eyebrow{font-weight:850;letter-spacing:.16em;font-size:10px;color:var(--accent,#476ba3)}
+ #app .v439-mac-top-icon{display:grid;place-items:center;width:49px;height:49px;border-radius:17px;background:rgba(255,255,255,.54);border:1px solid rgba(255,255,255,.86);color:#56739a}
+ #app .v439-mac-workspace{display:grid;grid-template-columns:minmax(230px,286px) minmax(0,1fr);align-items:start;gap:18px;min-width:0}
+ #app .v439-mac-sidebar{border-radius:25px;background:rgba(255,255,255,.67);border:1px solid rgba(255,255,255,.87);box-shadow:0 13px 34px rgba(36,70,126,.08);padding:15px 12px;position:sticky;top:20px;max-height:calc(100vh - 45px);overflow-y:auto;scrollbar-width:thin;min-width:0}
+ #app .v439-mac-sidehead{display:flex;align-items:center;gap:11px;padding:9px 10px 15px;border-bottom:1px solid #dee5f2}
+ #app .v439-mac-avatar{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent,#4a73b1) 82%,#17345c),color-mix(in srgb,var(--accent,#4a73b1) 68%,#d7e1f7));color:white}
+ #app .v439-mac-sidehead strong{display:block;color:#192f50;font-size:13px;line-height:1.2}
+ #app .v439-mac-sidehead small{display:block;color:#7586a0;font-size:11px;margin-top:3px}
+ #app .v439-mac-group{margin:16px 0 0}
+ #app .v439-mac-group>p{font-size:10px;letter-spacing:.1em;font-weight:800;color:#7385a1;margin:0 0 7px 13px}
+ #app .v439-mac-item{width:100%;min-height:45px;display:grid;grid-template-columns:29px minmax(0,1fr) 11px;align-items:center;gap:9px;text-align:left;border:0;border-radius:12px;background:transparent;color:#1c3456;padding:9px 10px;cursor:pointer;transition:background .18s ease,transform .18s ease}
+ #app .v439-mac-item:hover{background:rgba(89,121,190,.09)}
+ #app .v439-mac-item:focus-visible{outline:2px solid var(--accent,#476ba3);outline-offset:2px}
+ #app .v439-mac-item.is-active{background:color-mix(in srgb,var(--accent,#5075bb) 17%,white);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,#5075bb) 22%,transparent)}
+ #app .v439-mac-item-icon{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;color:color-mix(in srgb,var(--accent,#5075bb) 82%,#1e355d);background:color-mix(in srgb,var(--accent,#5075bb) 11%,white)}
+ #app .v439-mac-item-icon svg{height:17px;width:17px}
+ #app .v439-mac-item-copy{min-width:0}
+ #app .v439-mac-item-copy strong{font-size:12px;color:#1d3554;font-weight:680;display:block;line-height:1.2}
+ #app .v439-mac-item-copy small{font-size:10px;color:#7387a5;display:block;margin-top:2px}
+ #app .v439-mac-item-arrow{font-size:17px;font-weight:450;color:#8396ad}
+ #app .v439-mac-sidefoot{margin:18px 5px 0;display:flex;gap:7px;align-items:center;border-top:1px solid #dee6f3;padding:13px 8px 2px;font-size:10px;color:#7a8caa}
+ #app .v439-mac-sidefoot svg{height:15px;width:15px}
+ #app .v439-mac-detail{background:rgba(255,255,255,.70);border:1px solid rgba(255,255,255,.9);box-shadow:0 13px 34px rgba(36,70,126,.08);border-radius:25px;min-width:0;padding:clamp(16px,2.1vw,30px);min-height:580px;overflow:visible}
+ #app .v439-mac-detail-head{border-bottom:1px solid #e1e7f1;padding-bottom:18px;margin-bottom:21px}
+ #app .v439-mac-detail-head h2{font-size:clamp(23px,2vw,30px);color:#193251;letter-spacing:-.035em;font-weight:760;margin:6px 0}
+ #app .v439-mac-detail-head p{color:#71829c;margin:0;font-size:12px;line-height:1.45}
+ #app .v439-mac-detail-body{min-width:0;max-width:100%;overflow:visible;padding:0!important}
+ #app .v439-mac-detail-body :is(.panel,.v242-appearance-picker,.v300-appearance-pane){max-width:100%}
+ #app .v439-mac-detail-body :is(input,select,textarea){max-width:100%}
+}
+@media(min-width:791px) and (max-width:1050px){
+ #app .v439-mac-workspace{grid-template-columns:minmax(200px,230px) minmax(0,1fr);gap:12px}
+ #app .v439-mac-detail{padding:16px}
+}
+@media(max-width:790px){#app .v439-macos-settings,#app .v439-mac-workspace,#app .v439-mac-sidebar,#app .v439-mac-detail{display:none!important}}
+body.theme-black #app .v439-mac-top h1,body.theme-black #app .v439-mac-sidehead strong,body.theme-black #app .v439-mac-item-copy strong,body.theme-black #app .v439-mac-detail-head h2{color:#f5f7fb!important}
+body.theme-black #app .v439-mac-top p,body.theme-black #app .v439-mac-item-copy small,body.theme-black #app .v439-mac-sidehead small,body.theme-black #app .v439-mac-detail-head p{color:#b7c4d9!important}
+body.theme-black #app .v439-mac-sidebar,body.theme-black #app .v439-mac-detail{background:#111318!important;border-color:#2c3441!important;box-shadow:0 15px 45px rgba(0,0,0,.35)!important;color:#f5f7fb!important}
+body.theme-black #app .v439-mac-item{color:#f5f7fb!important}
+body.theme-black #app .v439-mac-item:hover{background:#242938!important}
+body.theme-black #app .v439-mac-item.is-active{background:color-mix(in srgb,var(--accent,#5075bb) 27%,#151923)!important;border-color:transparent!important}
+body.theme-black #app .v439-mac-item-icon{background:#252c3d!important;color:#d4e1ff!important}
+body.theme-black #app .v439-mac-sidefoot,body.theme-black #app .v439-mac-group>p{color:#9fabbd!important}
+body.theme-black #app .v439-mac-sidehead,body.theme-black #app .v439-mac-detail-head,body.theme-black #app .v439-mac-sidefoot{border-color:#303642!important}
+@media(prefers-reduced-motion:reduce){#app .v439-mac-item{transition:none!important}}
+</style>
+
+<style id="v440-universal-accent-depth">
+/* FINANZAS 360 · V440 · Todo el mapa de paneles ejecutivos comparte el acento.
+   Sin cambios en datos, cálculos, handlers, fuentes o persistencia. */
+body{
+ --v440-accent:var(--vive-theme-color,#5975c9);
+ --v440-ink:color-mix(in srgb,var(--v440-accent) 42%,#0d1933 58%);
+ --v440-deep:color-mix(in srgb,var(--v440-accent) 62%,#162d57 38%);
+ --v440-base:color-mix(in srgb,var(--v440-accent) 83%,#365d96 17%);
+ --v440-glow:color-mix(in srgb,var(--v440-accent) 77%,#a7baff 23%);
+ --v440-light:color-mix(in srgb,var(--v440-accent) 46%,#ccdfff 54%);
+ --v440-shadow:color-mix(in srgb,var(--v440-accent) 18%,transparent);
+ --v440-matte:color-mix(in srgb,var(--v440-accent) 13%,white 87%);
+ --v440-sheen:linear-gradient(113deg,transparent 0%,rgba(255,255,255,.06) 47%,rgba(255,255,255,.14) 49%,transparent 62%);
+}
+/* Variante A: profundidad suave con resplandor arriba a la derecha. */
+html body #app :is(
+ .v252-personal .v252-hero,
+ .v187-patrimony .v187-wealth-hero,
+ .v61-institutions .v46-bank-hero,
+ .v203-hero
+){
+ background:radial-gradient(ellipse at 108% -12%,rgba(255,255,255,.20),transparent 42%),
+ linear-gradient(115deg,var(--v440-ink) 0%,var(--v440-deep) 46%,var(--v440-glow) 120%)!important;
+ background-image:radial-gradient(ellipse at 108% -12%,rgba(255,255,255,.20),transparent 42%),
+ linear-gradient(115deg,var(--v440-ink) 0%,var(--v440-deep) 46%,var(--v440-glow) 120%)!important;
+ color:#fff!important;border-color:rgba(255,255,255,.24)!important;
+ box-shadow:0 18px 38px var(--v440-shadow)!important;
+}
+/* Variante B: bandas muy finas de cristal para compromisos y préstamos. */
+html body #app :is(
+ .v252-payments .v252-hero,
+ .v57-product-hero.v57-loans,
+ .v57-product-hero.v57-cards,
+ .v145-paycenter>.v145-pay-hero,
+ .v295-global-top
+){
+ background:repeating-linear-gradient(137deg,transparent 0px,transparent 31px,rgba(255,255,255,.025) 32px,transparent 33px),
+ radial-gradient(circle at 86% -18%,rgba(255,255,255,.18),transparent 48%),
+ linear-gradient(118deg,var(--v440-deep),var(--v440-base) 63%,var(--v440-light) 125%)!important;
+ background-image:repeating-linear-gradient(137deg,transparent 0px,transparent 31px,rgba(255,255,255,.025) 32px,transparent 33px),
+ radial-gradient(circle at 86% -18%,rgba(255,255,255,.18),transparent 48%),
+ linear-gradient(118deg,var(--v440-deep),var(--v440-base) 63%,var(--v440-light) 125%)!important;
+ color:#fff!important;border-color:rgba(255,255,255,.24)!important;
+ box-shadow:0 17px 35px var(--v440-shadow)!important;
+}
+/* Variante C: degradado medio, distinto del KPI del patrimonio. */
+html body #app :is(
+ .v252-recurring .v252-hero,
+ .v58-exec,
+ .income-world-hero,
+ .advanced-hero,
+ .v14-projection-hero,
+ .v248-hero,
+ .v322-kpi-hero,
+ .v239-hero.v239-detail-hero
+){
+ background:var(--v440-sheen),radial-gradient(circle at 97% 8%,rgba(255,255,255,.16),transparent 41%),
+ linear-gradient(125deg,var(--v440-ink),var(--v440-base) 72%,var(--v440-glow) 135%)!important;
+ background-image:var(--v440-sheen),radial-gradient(circle at 97% 8%,rgba(255,255,255,.16),transparent 41%),
+ linear-gradient(125deg,var(--v440-ink),var(--v440-base) 72%,var(--v440-glow) 135%)!important;
+ color:#fff!important;border-color:rgba(255,255,255,.22)!important;
+ box-shadow:0 16px 34px var(--v440-shadow)!important;
+}
+/* Variante D: tarjetas principales de ingresos, presupuesto y suscripciones. */
+html body #app :is(
+ .v252-hero,
+ .v12-wealth-metric.hero,
+ .v296-hero,
+ .v239-mobile-root>.v239-hero
+){border-color:color-mix(in srgb,var(--v440-accent) 28%,rgba(255,255,255,.55))!important}
+/* Textos sobre héroes con fondo intenso. No se aplica a contenidos normales. */
+html body #app :is(
+ .v252-hero,.v46-bank-hero,.v57-product-hero,.v203-hero,
+ .v58-exec,.income-world-hero,.advanced-hero,.v14-projection-hero,
+ .v248-hero,.v322-kpi-hero,.v239-detail-hero,.v295-global-top
+) :is(h1,h2,h3,strong,b,.v58-main-value,.v46-global-main>strong,.v203-hero-value,.v252-hero-title){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+html body #app :is(
+ .v252-hero,.v46-bank-hero,.v57-product-hero,.v203-hero,
+ .v58-exec,.income-world-hero,.advanced-hero,.v14-projection-hero,
+ .v248-hero,.v322-kpi-hero,.v239-detail-hero,.v295-global-top
+) :is(p,small,.v252-hero-note,.v46-global-main>small,.v252-person-note){
+ color:rgba(255,255,255,.88)!important;-webkit-text-fill-color:rgba(255,255,255,.88)!important;
+}
+/* Entre personas: 4 superficies visualmente diferentes pero con el mismo acento.
+   Etiquetas e importes blancos, nunca se confunden con colores de riesgo. */
+html body #app .v252-personal .v253-person-metrics{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px!important;
+}
+html body #app .v252-personal .v253-person-metrics .v253-person-metric{
+ min-width:0;border:1px solid rgba(255,255,255,.25)!important;
+ background:rgba(255,255,255,.11)!important;border-radius:16px;
+ box-shadow:inset 0 1px rgba(255,255,255,.12);
+}
+html body #app .v252-personal .v253-person-metric:nth-child(1){background:linear-gradient(120deg,rgba(255,255,255,.15),rgba(255,255,255,.08))!important}
+html body #app .v252-personal .v253-person-metric:nth-child(2){background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.21))!important}
+html body #app .v252-personal .v253-person-metric:nth-child(3){background:repeating-linear-gradient(140deg,rgba(255,255,255,.025) 0px,rgba(255,255,255,.025) 3px,transparent 3px,transparent 18px),rgba(255,255,255,.11)!important}
+html body #app .v252-personal .v253-person-metric:nth-child(4){background:linear-gradient(116deg,rgba(255,255,255,.20),rgba(255,255,255,.07))!important}
+html body #app .v252-personal .v253-person-metric :is(span,strong){color:#fff!important;-webkit-text-fill-color:#fff!important}
+/* Las tarjetas secundarias son pálidas: el acento se siente sin monopolizar la pantalla. */
+html body #app :is(.v410-substat:first-child,.v410-insight,.v22-forecast-kpi,.v14-projection-metrics>.featured){
+ border-color:color-mix(in srgb,var(--v440-accent) 23%,transparent)!important;
+ box-shadow:0 9px 25px color-mix(in srgb,var(--v440-accent) 10%,transparent)!important;
+}
+html body #app .v431-explore .v431-tile-featured{
+ background:radial-gradient(circle at 102% 5%,rgba(255,255,255,.17),transparent 47%),
+ linear-gradient(135deg,var(--v440-ink),var(--v440-base) 72%,var(--v440-glow))!important;
+ color:#fff!important;box-shadow:0 12px 28px var(--v440-shadow)!important;
+}
+/* Black oscuro: tonos negros con presencia controlada del acento. */
+html body.theme-black #app :is(
+ .v252-personal .v252-hero,.v252-recurring .v252-hero,.v252-payments .v252-hero,
+ .v187-patrimony .v187-wealth-hero,.v61-institutions .v46-bank-hero,
+ .v203-hero,.v57-product-hero,.v58-exec,.income-world-hero,.advanced-hero,
+ .v14-projection-hero,.v248-hero,.v322-kpi-hero,.v239-detail-hero,.v295-global-top
+){
+ background:radial-gradient(circle at 99% -12%,color-mix(in srgb,var(--v440-accent) 30%,transparent),transparent 54%),
+ repeating-linear-gradient(136deg,transparent 0px,transparent 45px,rgba(255,255,255,.018) 46px,transparent 47px),
+ linear-gradient(118deg,#05070d,color-mix(in srgb,var(--v440-accent) 33%,#111521),color-mix(in srgb,var(--v440-accent) 47%,#242a3b))!important;
+ background-image:radial-gradient(circle at 99% -12%,color-mix(in srgb,var(--v440-accent) 30%,transparent),transparent 54%),
+ repeating-linear-gradient(136deg,transparent 0px,transparent 45px,rgba(255,255,255,.018) 46px,transparent 47px),
+ linear-gradient(118deg,#05070d,color-mix(in srgb,var(--v440-accent) 33%,#111521),color-mix(in srgb,var(--v440-accent) 47%,#242a3b))!important;
+ border-color:color-mix(in srgb,var(--v440-accent) 27%,#343434)!important;
+ box-shadow:0 18px 38px rgba(0,0,0,.35)!important;color:#fff!important;
+}
+html body.theme-black #app .v252-personal .v253-person-metric{border-color:rgba(255,255,255,.16)!important}
+@media(prefers-reduced-motion:no-preference){
+ html body #app :is(.v252-hero,.v46-bank-hero,.v57-product-hero,.v203-hero,.v187-wealth-hero,.v58-exec,.v239-detail-hero,.v431-tile-featured){
+ transition:background-color .22s ease,border-color .22s ease,box-shadow .22s ease;
+ }
+}
+</style>
+
+
+<style id="v441-macos-27-icon-parity">
+/* macOS 27-inspired desktop experience. All navigation icons reuse the exact
+   same icons and per-section color families as the existing mobile settings. */
+@media(min-width:791px){
+  #app .v439-macos-settings .v439-mac-top{
+    display:block!important; margin-bottom:17px!important;
+    padding:0 2px!important;
+  }
+  #app .v439-macos-settings .v439-mac-top-icon{display:none!important}
+  #app .v439-macos-settings .v439-mac-workspace{
+    gap:14px!important;
+  }
+  #app .v439-macos-settings .v439-mac-sidebar{
+    background:color-mix(in srgb,white 73%,transparent)!important;
+    -webkit-backdrop-filter:blur(22px) saturate(1.18);
+    backdrop-filter:blur(22px) saturate(1.18);
+  }
+  #app .v439-macos-settings .v439-mac-detail{
+    background:color-mix(in srgb,white 81%,transparent)!important;
+    -webkit-backdrop-filter:blur(24px) saturate(1.15);
+    backdrop-filter:blur(24px) saturate(1.15);
+  }
+  #app .v439-macos-settings .v439-mac-item{
+    grid-template-columns:37px minmax(0,1fr) 13px!important;
+    padding:8px 10px!important;gap:10px!important;min-height:52px!important;
+    border-radius:14px!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-icon.v242-settings-symbol{
+    width:36px!important;height:36px!important;min-width:36px!important;
+    flex:0 0 36px!important;display:grid!important;place-items:center!important;
+    padding:0!important;border-radius:11px!important;
+    color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 3px 8px rgba(35,56,102,.12)!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-icon.v242-settings-symbol svg{
+    width:19px!important;height:19px!important;min-width:19px!important;
+    max-width:19px!important;max-height:19px!important;display:block!important;
+    stroke:currentColor!important;fill:none!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-icon.v242-symbol-appearance{
+    background:linear-gradient(135deg,#8b70e8,#586ed2)!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-icon.v242-symbol-profile{
+    background:linear-gradient(135deg,#5d89d4,#6172bd)!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-icon.v242-symbol-notifications{
+    background:linear-gradient(135deg,#e17e88,#cd566e)!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-icon.v242-symbol-integrations{
+    background:linear-gradient(135deg,#6b81a7,#344668)!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-icon.v242-symbol-financial{
+    background:linear-gradient(135deg,#54ae9d,#288c82)!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-icon.v242-symbol-security{
+    background:linear-gradient(135deg,#729ac1,#5577a8)!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-icon.v242-symbol-about{
+    background:linear-gradient(135deg,#959da9,#677687)!important;
+  }
+  #app .v439-macos-settings .v439-mac-item.is-active{
+    background:color-mix(in srgb,var(--vive-theme-color,#5876c5) 13%,white)!important;
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--vive-theme-color,#5876c5) 17%,transparent)!important;
+  }
+  #app .v439-macos-settings .v439-mac-item-copy strong{
+    font-weight:660!important;font-size:12px!important;
+  }
+  /* Guard against global icon sizing rules: theme symbol cannot fill a panel. */
+  #app .v439-macos-settings .theme-choice .theme-sun{
+    font-size:18px!important;line-height:1!important;display:inline!important;
+    width:auto!important;height:auto!important;position:static!important;
+    background:none!important;box-shadow:none!important;
+  }
+  #app .v439-macos-settings .v439-mac-avatar svg,
+  #app .v439-macos-settings .v439-mac-sidefoot svg{
+    width:19px!important;height:19px!important;max-width:19px!important;max-height:19px!important;
+  }
+}
+/* Mobile settings are intentionally untouched. */
+@media(min-width:791px){
+ body.theme-black #app .v439-macos-settings .v439-mac-sidebar,
+ body.theme-black #app .v439-macos-settings .v439-mac-detail{
+    background:rgba(16,18,23,.95)!important;
+    border-color:#323843!important;
+ }
+ body.theme-black #app .v439-macos-settings .v439-mac-item.is-active{
+    background:color-mix(in srgb,var(--vive-theme-color,#5876c5) 25%,#141821)!important;
+ }
 }
 </style>
 </body>
