@@ -34312,7 +34312,8 @@ function render(){
  document.body.dataset.viveBg=bgChoice;
  const backgrounds={original:'#d9e7fa',glacier:'#81cacc',sunset:'#e7a6b8'};
  document.body.style.setProperty('--vive-bg-color',bgChoice==='custom'&&hex.test(db.settings.backgroundHex||'')?db.settings.backgroundHex:(backgrounds[bgChoice]||backgrounds.original));
- v250DockGlassApply(db.settings.mobileDockGlassLevel ?? 50);
+ if(isMobileViewport())v250DockGlassApply(db.settings.mobileDockGlassLevel ?? 50);
+ else v443NavApply(db.settings.webNavGlassLevel ?? 0);
  document.getElementById('app').innerHTML=main();
  v402Paint();
  v394DecorateNavigation();
@@ -41894,6 +41895,83 @@ document.addEventListener('change',event=>{
  }
 });
 
+/* V443 · Control separado para intensidad de barras de navegación web. */
+function v443NavLevel(raw){
+ const n=Number(raw);
+ return Number.isFinite(n)?Math.min(100,Math.max(0,Math.round(n))):18;
+}
+function v443NavTone(n){
+ if(n<=8)return 'apagada';
+ if(n<=28)return 'suave';
+ if(n<=58)return 'media';
+ if(n<=82)return 'marcada';
+ return 'alta';
+}
+function v443NavApply(raw){
+ const n=v443NavLevel(raw),ratio=n/100,style=document.documentElement.style;
+ style.setProperty('--v443-nav-shell-alpha',(0.40*ratio).toFixed(3));
+ style.setProperty('--v443-nav-shell-border-alpha',(0.75*ratio).toFixed(3));
+ style.setProperty('--v443-nav-shell-inner-alpha',(0.68*ratio).toFixed(3));
+ style.setProperty('--v443-nav-shell-shadow-alpha',(0.09*ratio).toFixed(3));
+ style.setProperty('--v443-nav-shell-blur',(26*ratio).toFixed(1)+'px');
+ style.setProperty('--v444-dark-alpha',(0.50*ratio).toFixed(3));
+ style.setProperty('--v444-dark-border',(0.28*ratio).toFixed(3));
+ style.setProperty('--v443-nav-shell-sat',Math.round(104+76*ratio)+'%');
+ style.setProperty('--v443-nav-idle-hover-alpha',(0.08+0.58*ratio).toFixed(3));
+ style.setProperty('--v443-nav-active-alpha',(0.86+0.11*ratio).toFixed(3));
+ style.setProperty('--v443-nav-active-shadow-alpha',(0.05+0.10*ratio).toFixed(3));
+ document.documentElement.style.setProperty('--v443-nav-meter',`"${v443NavTone(n)}"`);
+ return n;
+}
+function v443NavPanel(){
+ const value=v443NavLevel(db.settings.webNavGlassLevel ?? 0), tone=v443NavTone(value);
+ return `<section class="v443-nav-settings panel" aria-labelledby="v443-nav-title">
+  <div class="v443-nav-head"><div><span class="v443-nav-kicker">NAVEGACIÓN WEB</span><h3 id="v443-nav-title">Intensidad de barras superiores</h3><p>Controla por separado la presencia visual de las cápsulas horizontales. En bajo nivel casi desaparece la barra y destaca sobre todo el botón activo.</p></div><output id="v443-nav-value" for="v443-nav-slider" class="v443-nav-meter">${tone}</output></div>
+  <div class="v443-nav-preview" aria-hidden="true"><div class="v443-nav-preview-bar"><span class="v443-nav-pill active">${icon('home')} Resumen</span><span class="v443-nav-pill">${icon('chart')} Analítica avanzada</span><span class="v443-nav-pill">${icon('card')} Patrimonio</span><span class="v443-nav-pill">${icon('calendar')} Suscripciones</span></div></div>
+  <label class="v443-nav-range-label" for="v443-nav-slider"><span>Solo resalta el activo</span><span>Barra más visible</span></label>
+  <input id="v443-nav-slider" type="range" min="0" max="100" step="1" value="${value}" aria-label="Intensidad de barras de navegación web" aria-valuetext="${tone}" style="--v443-slider-progress:${value}%">
+  <div class="v443-nav-extremes"><span>0% · casi apagada</span><span>100% · presencia alta</span></div>
+  <div class="v443-nav-presets" role="group" aria-label="Niveles sugeridos"><button type="button" data-v443-nav-preset="0">Apagada</button><button type="button" data-v443-nav-preset="18">Suave</button><button type="button" data-v443-nav-preset="45">Media</button><button type="button" data-v443-nav-preset="72">Marcada</button></div>
+ </section>`;
+}
+document.addEventListener('input',event=>{
+ const slider=event.target;
+ if(slider?.id!=='v443-nav-slider')return;
+ const n=v443NavApply(slider.value), tone=v443NavTone(n);
+ slider.style.setProperty('--v443-slider-progress',n+'%');
+ slider.setAttribute('aria-valuetext',tone);
+ const output=document.getElementById('v443-nav-value'); if(output) output.textContent=tone;
+});
+document.addEventListener('click',event=>{
+ const btn=event.target.closest('[data-v443-nav-preset]');
+ if(!btn)return;
+ const slider=document.getElementById('v443-nav-slider'); if(!slider)return;
+ slider.value=btn.dataset.v443NavPreset;
+ const n=v443NavApply(slider.value), tone=v443NavTone(n);
+ slider.style.setProperty('--v443-slider-progress',n+'%');
+ slider.setAttribute('aria-valuetext',tone);
+ const output=document.getElementById('v443-nav-value'); if(output) output.textContent=tone;
+ const prev=v443NavLevel(db.settings.webNavGlassLevel ?? 0);
+ if(n!==prev){db.settings.webNavGlassLevel=n; if(!persist()){db.settings.webNavGlassLevel=prev; v443NavApply(prev); slider.value=String(prev); slider.style.setProperty('--v443-slider-progress',prev+'%'); if(output)output.textContent=v443NavTone(prev); toast('No se pudo guardar la intensidad de navegación.');}}
+});
+document.addEventListener('change',event=>{
+ const slider=event.target;
+ if(slider?.id!=='v443-nav-slider')return;
+ const prev=v443NavLevel(db.settings.webNavGlassLevel ?? 0);
+ const next=v443NavLevel(slider.value);
+ if(next===prev)return;
+ db.settings.webNavGlassLevel=next;
+ if(!persist()){
+  db.settings.webNavGlassLevel=prev;
+  slider.value=String(prev); slider.style.setProperty('--v443-slider-progress',prev+'%');
+  slider.setAttribute('aria-valuetext',v443NavTone(prev));
+  const output=document.getElementById('v443-nav-value'); if(output) output.textContent=v443NavTone(prev);
+  v443NavApply(prev);
+  toast('No se pudo guardar la intensidad de navegación.');
+ }
+});
+
+
 function v242SettingsPreview(){
  const chosen=['original','circles','integral','creative'].includes(db.settings.mobilePositionStyle)?db.settings.mobilePositionStyle:'original';
  const liquid=totalLiquid(), debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
@@ -41952,7 +42030,7 @@ function v300AppearancePane(){
  ['original','Nube original','#d9e7fa','#f4f6fd','La atmósfera original'],['glacier','Glaciar','#bceaf0','#dbf5e8','Azul hielo y agua marina'],['sunset','Atardecer','#f1cadd','#f8dec4','Rosa suave y arena']
 ].map(([key,name,a,b,desc])=>`<button type="button" class="vive-palette-choice v15-bg-choice ${((s.backgroundChoice||'original')===key)?'selected':''}" data-act="backgroundTheme" data-id="${key}" aria-pressed="${(s.backgroundChoice||'original')===key}"><span class="v15-bg-art" style="background:linear-gradient(135deg,${a},${b})"><i class="v15-bg-rail"></i><i class="v15-bg-card"></i><i class="v15-bg-card small"></i></span><strong>${name}</strong><small>${desc}</small></button>`).join('')}</div>
 <div class="vive-custom-palette"><div><strong>Fondo personalizado</strong><small>Escoge el tono de la atmósfera; el sistema conservará el contraste y el degradado.</small></div><label for="viveBackgroundColor">Color</label><input type="color" id="viveBackgroundColor" value="${/^#[0-9a-f]{6}$/i.test(s.backgroundHex||'')?s.backgroundHex:'#9db8ef'}" aria-label="Color personalizado del fondo"><button class="btn sm soft" type="button" data-act="backgroundCustom">Aplicar fondo</button></div></div>
-<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / LIQUID GLASS</span><h3>Barra inferior móvil</h3></div></div>${v250DockGlassPanel()}</div>`;
+${isMobileViewport()?`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN MÓVIL</span><h3>Liquid Glass · barra inferior</h3></div></div>${v250DockGlassPanel()}`:`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN WEB</span><h3>Intensidad de las barras superiores</h3></div></div>${v443NavPanel()}`}</div>`;
 }
 
 function v242Settings(){
@@ -43857,10 +43935,10 @@ document.addEventListener('input',function(event){
 })();
 /* V411 render activation test: explicit lifecycle and nonintrusive build marker. */
 try {
-  document.body.dataset.f360Build='V441';
+  document.body.dataset.f360Build='V444';
   const appRoot=document.getElementById('app');
   if(appRoot?.querySelector('main.main')) render();
-} catch(err){ console.error('[V435] Falló la activación de vistas',err); }
+} catch(err){ console.error('[V443] Falló la activación de vistas',err); }
 
 })();
 
@@ -72853,6 +72931,204 @@ html body.theme-black #app .v252-personal .v253-person-metric{border-color:rgba(
  body.theme-black #app .v439-macos-settings .v439-mac-item.is-active{
     background:color-mix(in srgb,var(--vive-theme-color,#5876c5) 25%,#141821)!important;
  }
+}
+</style>
+
+<style id="v443-web-nav-intensity">
+/* V443 · Intensidad independiente para barras de navegación web/horizontales */
+:root{
+ --v443-nav-shell-alpha:.18;
+ --v443-nav-shell-border-alpha:.72;
+ --v443-nav-shell-inner-alpha:.62;
+ --v443-nav-shell-shadow-alpha:.055;
+ --v443-nav-shell-blur:18px;
+ --v443-nav-shell-sat:150%;
+ --v443-nav-idle-hover-alpha:.60;
+ --v443-nav-active-alpha:.94;
+ --v443-nav-active-shadow-alpha:.10;
+ --v443-nav-meter:'suave';
+}
+body:not(.theme-black):not(.theme-dark) :is(
+ .universe-switch,
+ .module-switch-shell,
+ .segmented-hist,
+ .product-tabs,
+ .top-tabs,
+ .bank-tabs,
+ .v206-bank-tabs,
+ .v207-operation-choice,
+ .v245-inner-tabs
+){
+ background:rgba(255,255,255,var(--v443-nav-shell-alpha))!important;
+ border-color:rgba(255,255,255,var(--v443-nav-shell-border-alpha))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,var(--v443-nav-shell-inner-alpha)),0 8px 26px rgba(57,91,147,var(--v443-nav-shell-shadow-alpha))!important;
+ backdrop-filter:blur(var(--v443-nav-shell-blur)) saturate(var(--v443-nav-shell-sat))!important;
+ -webkit-backdrop-filter:blur(var(--v443-nav-shell-blur)) saturate(var(--v443-nav-shell-sat))!important;
+}
+body:not(.theme-black):not(.theme-dark) :is(
+ .universe-switch button:hover,
+ .module-switch-tab:hover,
+ .segmented-hist button:hover,
+ .product-tabs .tab:hover,
+ .top-tabs .tab:hover,
+ .bank-tabs .tab:hover,
+ .v206-bank-tabs button:hover,
+ .v207-operation-choice button:hover,
+ .v245-inner-tabs button:hover
+){
+ background:rgba(255,255,255,var(--v443-nav-idle-hover-alpha))!important;
+}
+body:not(.theme-black):not(.theme-dark) :is(
+ .universe-switch button.active,
+ .module-switch-tab.active,
+ .segmented-hist button.active,
+ .product-tabs .tab.active,
+ .top-tabs .tab.active,
+ .bank-tabs .tab.active,
+ .v206-bank-tabs button.active,
+ .v207-operation-choice button.active,
+ .v245-inner-tabs button.active,
+ .v206-bank-tabs .active,
+ .v207-operation-choice .active,
+ .v245-inner-tabs .active
+){
+ background:rgba(255,255,255,var(--v443-nav-active-alpha))!important;
+ box-shadow:0 4px 14px rgba(57,91,147,var(--v443-nav-active-shadow-alpha)),inset 0 1px 0 rgba(255,255,255,.96)!important;
+}
+body.theme-black :is(
+ .universe-switch,
+ .module-switch-shell,
+ .segmented-hist,
+ .product-tabs,
+ .top-tabs,
+ .bank-tabs,
+ .v206-bank-tabs,
+ .v207-operation-choice,
+ .v245-inner-tabs
+),
+body.theme-dark :is(
+ .universe-switch,
+ .module-switch-shell,
+ .segmented-hist,
+ .product-tabs,
+ .top-tabs,
+ .bank-tabs,
+ .v206-bank-tabs,
+ .v207-operation-choice,
+ .v245-inner-tabs
+){
+ background:rgba(29,41,60,calc(.34 + var(--v443-nav-shell-alpha) * .54))!important;
+ border-color:rgba(120,146,190,calc(.16 + var(--v443-nav-shell-border-alpha) * .16))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 10px 28px rgba(0,0,0,.18)!important;
+ backdrop-filter:blur(calc(var(--v443-nav-shell-blur) * .85)) saturate(calc(var(--v443-nav-shell-sat) * .92))!important;
+ -webkit-backdrop-filter:blur(calc(var(--v443-nav-shell-blur) * .85)) saturate(calc(var(--v443-nav-shell-sat) * .92))!important;
+}
+body.theme-black :is(
+ .universe-switch button.active,
+ .module-switch-tab.active,
+ .segmented-hist button.active,
+ .product-tabs .tab.active,
+ .top-tabs .tab.active,
+ .bank-tabs .tab.active,
+ .v206-bank-tabs button.active,
+ .v207-operation-choice button.active,
+ .v245-inner-tabs button.active,
+ .v206-bank-tabs .active,
+ .v207-operation-choice .active,
+ .v245-inner-tabs .active
+),
+body.theme-dark :is(
+ .universe-switch button.active,
+ .module-switch-tab.active,
+ .segmented-hist button.active,
+ .product-tabs .tab.active,
+ .top-tabs .tab.active,
+ .bank-tabs .tab.active,
+ .v206-bank-tabs button.active,
+ .v207-operation-choice button.active,
+ .v245-inner-tabs button.active,
+ .v206-bank-tabs .active,
+ .v207-operation-choice .active,
+ .v245-inner-tabs .active
+){
+ background:rgba(249,252,255,.14)!important;
+ box-shadow:0 5px 16px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+.v443-nav-settings{padding:22px;border-radius:23px;background:linear-gradient(140deg,rgba(255,255,255,.84),rgba(244,248,255,.72));border:1px solid rgba(255,255,255,.92);box-shadow:0 10px 30px rgba(40,67,116,.05);margin-top:14px}
+.v443-nav-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.v443-nav-kicker{font-size:10px;letter-spacing:.14em;font-weight:800;color:#7b8faa;display:block;margin-bottom:8px}
+.v443-nav-head h3{margin:0 0 7px;font-size:18px;letter-spacing:-.03em;color:#203652}
+.v443-nav-head p{margin:0;color:#7588a3;font-size:12px;line-height:1.6;max-width:690px}
+.v443-nav-meter{display:inline-flex;align-items:center;justify-content:center;min-width:72px;padding:10px 12px;border-radius:14px;background:#edf4ff;border:1px solid #dbe7f7;font-size:11px;font-weight:800;color:#35567f;text-transform:capitalize}
+.v443-nav-preview{margin:17px 0 14px;padding:15px;border-radius:20px;background:linear-gradient(135deg,rgba(223,233,248,.55),rgba(241,245,252,.9));border:1px solid rgba(221,232,245,.92)}
+.v443-nav-preview-bar{display:flex;gap:8px;align-items:center;padding:7px;border-radius:18px;max-width:fit-content;background:rgba(255,255,255,var(--v443-nav-shell-alpha));border:1px solid rgba(255,255,255,var(--v443-nav-shell-border-alpha));backdrop-filter:blur(var(--v443-nav-shell-blur)) saturate(var(--v443-nav-shell-sat));-webkit-backdrop-filter:blur(var(--v443-nav-shell-blur)) saturate(var(--v443-nav-shell-sat));box-shadow:inset 0 1px 0 rgba(255,255,255,var(--v443-nav-shell-inner-alpha)),0 8px 26px rgba(57,91,147,var(--v443-nav-shell-shadow-alpha))}
+.v443-nav-pill{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border-radius:14px;color:#5d7695;font-size:12px;font-weight:760;white-space:nowrap}
+.v443-nav-pill svg{width:16px;height:16px}
+.v443-nav-pill.active{background:rgba(255,255,255,var(--v443-nav-active-alpha));box-shadow:0 4px 14px rgba(57,91,147,var(--v443-nav-active-shadow-alpha)),inset 0 1px 0 rgba(255,255,255,.96);color:#274e8a}
+.v443-nav-range-label{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:#7488a2;margin:0 0 9px}
+#v443-nav-slider{width:100%;appearance:none;height:8px;border-radius:999px;background:linear-gradient(90deg,#5976ca 0%,#7e8ef0 var(--v443-slider-progress,18%),#d8e4f5 var(--v443-slider-progress,18%),#d8e4f5 100%);outline:none}
+#v443-nav-slider::-webkit-slider-thumb{appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:1px solid #d8e4f5;box-shadow:0 6px 14px rgba(37,69,118,.16)}
+#v443-nav-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:1px solid #d8e4f5;box-shadow:0 6px 14px rgba(37,69,118,.16)}
+.v443-nav-extremes,.v443-nav-presets{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.v443-nav-extremes{font-size:10px;color:#8a9ab0;margin-top:8px}
+.v443-nav-presets{margin-top:14px}
+.v443-nav-presets button{border:1px solid #dbe6f5;background:#fff;border-radius:12px;padding:9px 12px;font-size:11px;font-weight:760;color:#46627f;box-shadow:none}
+.v443-nav-presets button:hover{background:#f4f8ff}
+@media(max-width:790px){.v443-nav-head{flex-direction:column}.v443-nav-preview-bar{max-width:100%;overflow:auto}.v443-nav-pill{padding:11px 13px;font-size:11px}}
+</style>
+
+<style id="v444-native-separated-navigation">
+/* Exclusivo de escritorio: a 0 no existe carcasa, borde ni desenfoque.
+   La selección sigue visible y usa el color de acento actual. */
+@media(min-width:791px){
+ body:not(.theme-black):not(.theme-dark) #app :is(
+   .universe-switch,.module-switch-shell,.segmented-hist,
+   .product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs
+ ){
+  background:rgba(255,255,255,var(--v443-nav-shell-alpha,0))!important;
+  background-image:none!important;
+  border:1px solid rgba(255,255,255,var(--v443-nav-shell-border-alpha,0))!important;
+  box-shadow:0 7px 22px rgba(40,60,100,var(--v443-nav-shell-shadow-alpha,0))!important;
+  backdrop-filter:blur(var(--v443-nav-shell-blur,0px))!important;
+  -webkit-backdrop-filter:blur(var(--v443-nav-shell-blur,0px))!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app :is(
+  .universe-switch button.active,.module-switch-tab.active,
+  .segmented-hist button.active,.product-tabs .tab.active,.top-tabs .tab.active,.bank-tabs .tab.active,
+  .v206-bank-tabs .active,.v207-operation-choice .active,.v245-inner-tabs .active
+ ){
+  background:var(--v424-accent-strong,var(--vive-theme-color,#665fe7))!important;
+  background-image:none!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:transparent!important;
+  box-shadow:0 5px 15px color-mix(in srgb,var(--vive-theme-color,#665fe7) 18%,transparent)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app :is(
+  .universe-switch button.active,.module-switch-tab.active,.segmented-hist button.active,
+  .product-tabs .tab.active,.top-tabs .tab.active,.bank-tabs .tab.active,
+  .v206-bank-tabs .active,.v207-operation-choice .active,.v245-inner-tabs .active
+ ) svg{color:#fff!important;stroke:#fff!important}
+ body.theme-black #app :is(.universe-switch,.module-switch-shell,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs),
+ body.theme-dark #app :is(.universe-switch,.module-switch-shell,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs){
+   background:rgba(24,30,41,var(--v444-dark-alpha,.3))!important;
+   border-color:rgba(115,130,160,var(--v444-dark-border,.17))!important;
+   box-shadow:0 8px 22px rgba(0,0,0,var(--v443-nav-shell-shadow-alpha,0))!important;
+   backdrop-filter:blur(var(--v443-nav-shell-blur,0px))!important;
+   -webkit-backdrop-filter:blur(var(--v443-nav-shell-blur,0px))!important;
+ }
+ body.theme-black #app :is(.universe-switch button.active,.module-switch-tab.active,.segmented-hist button.active,.product-tabs .tab.active,.top-tabs .tab.active,.bank-tabs .tab.active),
+ body.theme-dark #app :is(.universe-switch button.active,.module-switch-tab.active,.segmented-hist button.active,.product-tabs .tab.active,.top-tabs .tab.active,.bank-tabs .tab.active){
+  background:var(--v424-accent-strong,var(--vive-theme-color,#665fe7))!important;
+  color:#fff!important;
+ }
+}
+/* The native iOS dock is independent, and web navigation slider never styles it. */
+@media(max-width:790px){
+ #app .v443-nav-settings{display:none!important}
+}
+@media(min-width:791px){
+ #app .v250-dock-settings{display:none!important}
 }
 </style>
 </body>
