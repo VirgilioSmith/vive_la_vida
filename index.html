@@ -25276,6 +25276,20 @@ body:is(.theme-black,.theme-dark) .main .v244-detail-mode .v373-card-manage summ
 @media(prefers-reduced-motion:reduce){#modal-root #cardForm *,#modal-root .studio-form[data-mode="cardpay"] *{scroll-behavior:auto!important;transition:none!important}}
 </style>
 
+
+<style id="v3-desktop-navigation-settings-fix">
+/* Version 3 — context below the header, touch-safe settings and desktop hierarchy. */
+#app main.main > .v394-routebar{box-sizing:border-box!important;min-height:46px!important;margin:7px 0 19px!important;padding:6px 12px!important;gap:14px!important;max-width:100%!important;overflow:visible!important;font-size:13px!important;letter-spacing:0!important;border-radius:13px!important;background:rgba(127,140,160,.065)!important;border:1px solid rgba(124,140,160,.13)!important;}
+#app main.main > .v394-routebar .v394-routepath{display:flex!important;align-items:center!important;gap:10px!important;font-size:13px!important;white-space:nowrap;min-width:0!important;overflow:hidden!important;}
+#app main.main > .v394-routebar .v394-routepath strong{font-size:13px!important;line-height:1.35!important;min-width:0!important;text-overflow:ellipsis!important;}
+#app main.main > .v394-routebar [data-v394-back]{min-height:35px!important;padding:8px 12px!important;font-size:12px!important;font-weight:750!important;border-radius:9px!important;white-space:nowrap!important;}
+#app main.main > .v394-routebar [data-v394-back] svg{width:15px!important;height:15px!important;}
+#app .v242-settings-row{cursor:pointer!important;}
+#app .v242-settings-row:focus-visible,#app .v242-settings-back:focus-visible{outline:2px solid #738ce3!important;outline-offset:3px!important;}
+#app .v3-settings-recovery{padding:20px!important;}
+body.theme-black #app main.main > .v394-routebar{background:#0b0b0b!important;border-color:#292929!important;}
+@media(max-width:790px){#app main.main > .v394-routebar{min-height:40px!important;padding:5px 9px!important;margin:4px 0 12px!important;gap:8px!important;font-size:11px!important;}#app main.main > .v394-routebar .v394-routepath,#app main.main > .v394-routebar .v394-routepath strong{font-size:11px!important;}#app main.main > .v394-routebar [data-v394-back]{min-height:34px!important;padding:6px 9px!important;font-size:11px!important;}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -33888,11 +33902,12 @@ function v394DecorateNavigation(){
  const family=navFamilyForPage(page);
  const familyNames={overview:'Resumen',banks:'Bancos',register:'Movimientos',payments:'Visión global'};
  const section=familyNames[family]||'Explorar';
+ const rootRoute=['banks','register','payments','settings','overview'].includes(page);
  const strip=document.createElement('nav');strip.className='v394-routebar';strip.setAttribute('aria-label','Ubicación y regreso');
  // Fixed, trusted vocabulary: no data strings in this output.
- strip.innerHTML=`${previous?`<button type="button" data-v394-back aria-label="Volver a ${V394_TITLES[previous]||previous}" title="Volver a ${V394_TITLES[previous]||previous}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Volver</span></button>`:''}<span class="v394-routepath"><span>${section}</span><span class="v394-sep" aria-hidden="true">/</span><strong aria-current="page">${currentName}</strong></span>`;
+ strip.innerHTML=`${previous?`<button type="button" data-v394-back aria-label="Volver a ${V394_TITLES[previous]||previous}" title="Volver a ${V394_TITLES[previous]||previous}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Volver</span></button>`:''}<span class="v394-routepath">${rootRoute?'':`<span>${section}</span><span class="v394-sep" aria-hidden="true">/</span>`}<strong aria-current="page">${currentName}</strong></span>`;
  const header=main.querySelector(':scope > .topbar');
- if(header)header.insertAdjacentElement('beforebegin',strip);else main.prepend(strip);
+ if(header)header.insertAdjacentElement('afterend',strip);else main.prepend(strip);
  // Existing rail and contextual switches remain the real navigation controls.
  for(const el of document.querySelectorAll('.sidebar [data-act="navigate"],.module-switch-tabs [data-act="navigate"]')){
   if(el.classList.contains('active'))el.setAttribute('aria-current','page');
@@ -34044,6 +34059,7 @@ case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navGroupToggle':ui.navExpanded=ui.navExpanded===id?null:id;render();break;
 case 'navigate':{
+  if(id==='settings' && ui.page!=='settings')v242SettingsPane='home';
   ui.page=id==='kpis'?'overview':id==='transactions'?'register':id==='projection'?'patrimony':id==='vision'?'payments':id;
   if(ui.page==='register')ui.movementTab='all'; // Movimientos conserva su historial; el botón Registrar abre el asistente.
   if(ui.page==='banks' && window.matchMedia?.('(min-width: 768px)').matches){
@@ -40880,23 +40896,29 @@ function v242Settings(){
  const paneInfo=V242_PANES.find(x=>x[0]===pane);
  const tile=(entry)=>`<button class="v242-settings-row" type="button" data-v242-section="${entry[0]}"><span class="v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v242-settings-row-copy"><strong>${entry[1]}</strong><small>${entry[2]}</small></span><span class="v242-settings-chevron" aria-hidden="true">›</span></button>`;
  const content={
-  appearance:`${v300AppearancePane()}`,
-  profile:`${f34CloudPanel()}`,
-  notifications:`${f37SettingsPanel()}`,
-  integrations:`${v212SettingsPanel()}`,
-  financial:`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / REGLAS FINANCIERAS</span><h3>Tasas, transferencias y cargos</h3></div></div>
+  appearance:()=>`${v300AppearancePane()}`,
+  profile:()=>`${f34CloudPanel()}`,
+  notifications:()=>`${f37SettingsPanel()}`,
+  integrations:()=>`${v212SettingsPanel()}`,
+  financial:()=>`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / REGLAS FINANCIERAS</span><h3>Tasas, transferencias y cargos</h3></div></div>
 ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div class="form-grid">${formItem('fx','RD$ por cada US$1 · tasa de referencia',s.fx,'number','required min="0.001" step="0.0001"')}${formItem('transferTaxPct','Impuesto de transferencias y pagos bancarios (%)',num(s.transferTaxPct),'number','required min="0" max="100" step="0.001"')}</div><div class="settings-explain">El impuesto general a determinadas transferencias es <b>0.20% desde el 3 de julio de 2026</b> (era 0.15%); no todas las operaciones están gravadas. Las transferencias entre cuentas propias y los consumos con tarjeta pueden estar exentos. Para pagos de tarjeta desde cuenta bancaria, Internet Banking utiliza la tasa manual de este ajuste y Presencial no genera este impuesto en la aplicación; verifica posibles excepciones según el banco. No existe una comisión fija general. <b>Pago al instante</b> es una modalidad que puedes elegir en cada transferencia y agrega RD$100 solamente cuando la seleccionas. Ejemplo: una transferencia gravada de RD$10,000 con Pago al instante suma RD$20 de impuesto y RD$100 por esa modalidad, totalizando RD$10,120. La tasa USD/DOP se consulta automáticamente y solo se usa para valoración y nuevas conversiones. Los movimientos históricos conservan la tasa registrada en cada operación.</div><div class="form-foot"><button class="btn" type="submit">Guardar configuración financiera</button></div></form></div>
 `,
-  security:`<div class="settings-group-title" id="v176-setting-05"><div><span class="summary-tag">05 / CENTRO DE REVISIÓN</span><h3>Protección y coherencia financiera</h3></div></div>${v30ReviewContent(true)}${v30RecoveryContent()}
+  security:()=>`<div class="settings-group-title" id="v176-setting-05"><div><span class="summary-tag">05 / CENTRO DE REVISIÓN</span><h3>Protección y coherencia financiera</h3></div></div>${v30ReviewContent(true)}${v30RecoveryContent()}
 <div class="settings-group-title" id="v176-setting-06"><div><span class="summary-tag">06 / HISTORIAL Y PRIVACIDAD</span><h3>Control de productos y registros</h3></div></div>
 <div class="grid columns equal"><div class="panel"><div class="panel-head"><h3>Productos archivados</h3></div><p class="form-note">Desactivar una relación financiera no debe eliminar sus transacciones. Los productos archivados permanecen en cálculos históricos, aunque se oculten de los listados habituales.</p>${visibilityControl()}<p class="form-note">Archivados: ${[...db.banks,...db.accounts,...db.cards,...db.loans,...db.certificates].filter(x=>x.archived).length}. La eliminación definitiva solo se permite cuando no hay operaciones ni saldos iniciales o dependencias.</p></div><div class="panel"><div class="panel-head"><h3>Protección y respaldo</h3></div><p class="form-note">Respalda tus datos JSON antes de modificar contratos o importar versiones nuevas. El respaldo local no está cifrado.</p><div class="hstack"><button class="btn soft" data-act="export" title="Descargar una copia de seguridad de todos tus registros en JSON">${icon('download')} Descargar respaldo JSON</button><button class="btn ghost" data-act="import">${icon('upload')} Importar JSON</button></div><div class="mini-divider"></div><div class="hstack"><button class="btn ghost" data-act="demo">Demostración</button><button class="btn danger" data-act="clear">Eliminar todos los datos</button></div><input id="importFile" type="file" accept="application/json,.json" class="hidden" /></div></div>
 `,
-  about:`<div class="panel section"><div class="panel-head"><h3>Información guardada</h3></div><div class="settings-counts">${[['Instituciones',db.banks.length],['Cuentas',db.accounts.length],['Tarjetas',db.cards.length],['Préstamos',db.loans.length],['Certificados',db.certificates.length],['Movimientos',db.transactions.length],['Suscripciones',db.recurring.length]].map(([l,n])=>`<div><span>${l}</span><strong>${n}</strong></div>`).join('')}</div><div class="notification warning">vive el hoy es local: no consulta bancos en tiempo real, no ejecuta pagos ni comprueba automáticamente impuestos. No guardes CVV, PIN, contraseñas ni números completos.</div></div>`
+  about:()=>`<div class="panel section"><div class="panel-head"><h3>Información guardada</h3></div><div class="settings-counts">${[['Instituciones',db.banks.length],['Cuentas',db.accounts.length],['Tarjetas',db.cards.length],['Préstamos',db.loans.length],['Certificados',db.certificates.length],['Movimientos',db.transactions.length],['Suscripciones',db.recurring.length]].map(([l,n])=>`<div><span>${l}</span><strong>${n}</strong></div>`).join('')}</div><div class="notification warning">vive el hoy es local: no consulta bancos en tiempo real, no ejecuta pagos ni comprueba automáticamente impuestos. No guardes CVV, PIN, contraseñas ni números completos.</div></div>`
  };
+ let sectionBody='';
+ try{ sectionBody=(content[pane]||(()=>''))(); }
+ catch(error){
+  console.error('Error al mostrar la sección de Configuración:',pane,error);
+  sectionBody='<section class="panel section v3-settings-recovery" role="alert"><h3>No fue posible cargar esta sección</h3><p>Las demás opciones siguen disponibles. Vuelve al menú de Configuración e intenta nuevamente.</p><button type="button" class="btn soft" data-v242-back="1">Volver a Configuración</button></section>';
+ }
  const title=paneInfo?.[1]||'Configuración';
  return `<div class="settings-layout v242-ios-settings" data-v242-settings="${pane}">
  ${pane==='home'?`<div class="v242-settings-home"><header class="v242-settings-intro"><span class="v242-settings-eyebrow">VIVE EL HOY · FINANZAS 360</span><h1>Configuración</h1><p>Todo a tu manera, con la claridad de Ajustes de iPhone.</p></header><section class="v242-settings-profile"><span class="v242-profile-avatar">${icon('wallet')}</span><span><strong>Tu espacio financiero</strong><small>Preferencias, conexión y protección</small></span><span class="v242-settings-chevron">›</span><button class="v242-profile-hit" type="button" data-v242-section="profile" aria-label="Abrir perfil y sincronización"></button></section><div class="v242-settings-section"><span class="v242-group-caption">APARIENCIA</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='appearance').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">NOTIFICACIONES</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='notifications').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">CONEXIONES Y FINANZAS</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['integrations','financial'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">PRIVACIDAD Y SOPORTE</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['security','about'].includes(x[0])).map(tile).join('')}</div></div><p class="v242-settings-footer">Tus registros y operaciones financieras se mantienen protegidos por las reglas actuales de la aplicación.</p></div>`:
- `<div class="v242-settings-subpage"><header class="v242-settings-subhead"><button type="button" class="v242-settings-back" data-v242-back="1">‹ <span>Configuración</span></button><span class="v242-settings-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h1>${title}</h1><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner">${content[pane]||''}</div></div>`}
+ `<div class="v242-settings-subpage"><header class="v242-settings-subhead"><button type="button" class="v242-settings-back" data-v242-back="1">‹ <span>Configuración</span></button><span class="v242-settings-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h1>${title}</h1><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner">${sectionBody}</div></div>`}
  </div>`;
 }
 
