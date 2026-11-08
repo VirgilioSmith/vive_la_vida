@@ -1,11 +1,9 @@
-# Vive el hoy · Finanzas 360 — Versión 9
+# Vive el hoy · Finanzas 360 — Versión 4
 
-Mejora focalizada de Apple Pay y actividad reciente:
-- Personalización móvil: módulo destacado con activar/desactivar y abrir pendientes.
-- Inicio móvil: el widget sigue la preferencia de visibilidad.
-- Wallet y detalle de movimientos: «Categorizar compra» cuando la categoría temporal es Apple Pay.
-- Notificación del navegador: abre el clasificador específico.
-- Historial web: pulsar el título de un movimiento abre su detalle.
-- Una compra sale de pendientes tras confirmar la categoría; el distintivo Apple Pay permanece.
+Corrección de navegación web: eliminada la barra automática redundante «Volver / Resumen / Ruta» introducida anteriormente en múltiples vistas.
 
-Sin cambios en Edge Functions, importación, tokens, importes o saldos. Verificar en Safari y con Supabase real antes de publicar.
+- Se suprime la creación de `.v394-routebar` desde el controlador de renderización.
+- Se retira el controlador de clic específico de esa barra.
+- Se mantienen la barra lateral, el menú principal, el dock móvil y la navegación propia de cada módulo.
+- No se modifican cálculos financieros, datos de Supabase ni las funciones Apple Pay.
+- ZIP limpio: únicamente archivos de la aplicación y recursos de instalación.
