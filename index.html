@@ -28703,7 +28703,7 @@ const subSelect=(kind,cat,value)=>{
 };
 
 const TRANSL={personal_issue:'Entrega / recepción de préstamo personal',personal_settlement:'Abono de préstamo personal',bank_reward:'Cashback en cuenta',income:'Ingreso',expense:'Gasto',card_charge:'Consumo tarjeta',card_refund:'Devolución tarjeta',card_payment:'Pago tarjeta',transfer:'Transferencia',loan_payment:'Pago préstamo',adjustment:'Ajuste de saldo',card_reward:'Cashback de tarjeta',certificate_funding:'Constitución de certificado',certificate_redemption:'Rescate de capital'};
-const ICONS={search:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.8 4.8"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>',home:'<rect x="3" y="10" width="18" height="11" rx="2"/><path d="m2 11 10-8 10 8"/>',wallet:'<rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18"/><path d="M16 15h3"/>',card:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 16h6"/>',cycle:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 9a7 7 0 0 1 12-2l2 2M4 15l2 2a7 7 0 0 0 12-2"/>',analytics:'<path d="M3 19h18M5 16l4-5 4 3 6-9"/><path d="M16 5h3v3"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4 12H2m20 0h-2M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/>',plus:'<path d="M12 5v14M5 12h14"/>',download:'<path d="M12 3v13m-5-5 5 5 5-5M4 19v2h16v-2"/>',upload:'<path d="M12 21V8m-5 5 5-5 5 5M4 5V3h16v2"/>',check:'<path d="m4 12 5 5L20 6"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',up:'<path d="m4 14 6-6 4 4 6-6"/>',down:'<path d="m4 8 6 6 4-4 6 6"/>',shield:'<path d="m12 2 9 4v6c0 6-4 9-9 10-5-1-9-4-9-10V6l9-4Z"/>',receipt:'<path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z"/><path d="M8 8h8m-8 4h8"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',chart:'<path d="M4 20V12m6 8V5m6 15v-8m4 8V9"/>',trash:'<path d="M4 7h16m-14 0 1 14h10l1-14M9 7V4h6v3"/>'};
+const ICONS={search:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.8 4.8"/>',money:'<rect x="3" y="6" width="18" height="12" rx="2.8"/><circle cx="12" cy="12" r="2.4"/><path d="M6 9.5h.01M18 14.5h.01"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>',home:'<rect x="3" y="10" width="18" height="11" rx="2"/><path d="m2 11 10-8 10 8"/>',wallet:'<rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18"/><path d="M16 15h3"/>',card:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 16h6"/>',cycle:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 9a7 7 0 0 1 12-2l2 2M4 15l2 2a7 7 0 0 0 12-2"/>',analytics:'<path d="M3 19h18M5 16l4-5 4 3 6-9"/><path d="M16 5h3v3"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4 12H2m20 0h-2M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/>',plus:'<path d="M12 5v14M5 12h14"/>',download:'<path d="M12 3v13m-5-5 5 5 5-5M4 19v2h16v-2"/>',upload:'<path d="M12 21V8m-5 5 5-5 5 5M4 5V3h16v2"/>',check:'<path d="m4 12 5 5L20 6"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',up:'<path d="m4 14 6-6 4 4 6-6"/>',down:'<path d="m4 8 6 6 4-4 6 6"/>',shield:'<path d="m12 2 9 4v6c0 6-4 9-9 10-5-1-9-4-9-10V6l9-4Z"/>',receipt:'<path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z"/><path d="M8 8h8m-8 4h8"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',chart:'<path d="M4 20V12m6 8V5m6 15v-8m4 8V9"/>',trash:'<path d="M4 7h16m-14 0 1 14h10l1-14M9 7V4h6v3"/>'};
 ICONS.puzzle='<path d="M9 3h3a2 2 0 0 0 4 0h3v6h-2a2 2 0 0 0 0 4h2v6h-6v-2a2 2 0 0 0-4 0v2H3v-6h2a2 2 0 0 0 0-4H3V3h6Z"/>';
 const icon=(k)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]||ICONS.wallet}</svg>`;
 
@@ -40626,7 +40626,7 @@ document.addEventListener('click',function(e){const q=e.target.closest('[data-v2
 
 /* V154 — Buscar + Explorar: one native mobile screen, real data, zero financial state changes. */
 const V154_MOBILE_CATEGORIES=[
- {id:'dinero',title:'Mi dinero',sub:'Bancos y cuentas',ico:'wallet',tone:'ocean',pages:['banks','accounts','certificates']},
+ {id:'dinero',title:'Mi dinero',sub:'Bancos y cuentas',ico:'money',tone:'ocean',pages:['banks','accounts','certificates']},
  {id:'tarjetas',title:'Tarjetas',sub:'Crédito y beneficios',ico:'card',tone:'violet',pages:['cards','benefits']},
  {id:'pagos',title:'Pagos',sub:'Cuotas y vencimientos',ico:'calendar',tone:'coral',pages:['payments','loans','personal']},
  {id:'servicios',title:'Servicios',sub:'Suscripciones',ico:'cycle',tone:'amber',pages:['recurring']},
@@ -43935,7 +43935,7 @@ document.addEventListener('input',function(event){
 })();
 /* V411 render activation test: explicit lifecycle and nonintrusive build marker. */
 try {
-  document.body.dataset.f360Build='V444';
+  document.body.dataset.f360Build='V446';
   const appRoot=document.getElementById('app');
   if(appRoot?.querySelector('main.main')) render();
 } catch(err){ console.error('[V443] Falló la activación de vistas',err); }
@@ -67401,25 +67401,43 @@ body:is(.theme-black,.theme-dark) #modal-root .v349-review-screen .v349-review-n
       confirmButton.setAttribute('aria-busy','true');
       confirmButton.textContent='Guardando…';
       const target=cur.submitter?.isConnected?cur.submitter:null;
-      // Use the legacy submit and transaction engine; the review layer never writes finances.
-      dismiss(false);
-      original.dataset.v349Confirmed='1';
+      // V445: validate before closing. An unsuccessful preflight must never look saved.
+      const fail=(message)=>{
+        const note=panel.querySelector('.v349-review-note');
+        if(note){note.textContent=message;note.setAttribute('role','alert');}
+        confirmButton.removeAttribute('aria-busy');
+        confirmButton.disabled=false;
+        confirmButton.textContent='✓ Confirmar y guardar';
+        confirmationBusy=false;
+      };
       try{
+        if(typeof window.v388Preflight==='function' && original.id==='transactionForm' && window.v388Preflight(original)!==true){
+          fail('No se pudo confirmar: revisa los datos de la operación, los importes y su origen. Pulsa «Volver a editar» para corregirlos.');
+          return;
+        }
+        const blocking=original.dataset.v382PaymentError;
+        if(blocking){fail(blocking);return;}
+        // Preserve the existing accounting engine. Only this exact confirmed submission skips review.
+        original.dataset.v349Confirmed='1';
+        let dispatched=false;
+        const observe=(e)=>{if(e.target===original){dispatched=true;if(e.defaultPrevented){queueMicrotask(()=>{if(document.contains(panel))fail('La operación fue rechazada por una validación. Revisa los datos y vuelve a intentar.');});}}};
+        original.addEventListener('submit',observe,{once:true});
         if(typeof original.requestSubmit==='function')target?original.requestSubmit(target):original.requestSubmit();
         else if(target)target.click();
         else throw Error('Este navegador no admite la confirmación de este formulario.');
+        if(!dispatched){
+          original.removeEventListener('submit',observe);
+          fail('Hay un dato requerido o inválido. Vuelve a editar y verifica los campos antes de guardar.');
+          return;
+        }
+        // The original engine owns actual writes and sync. The review closes only after dispatch.
+        dismiss(false);
       }catch(error){
-        if(typeof toast==='function')toast(error?.message||'No se confirmó la operación.');
+        fail(error?.message||'No se pudo confirmar la operación.');
         console.error('Confirmación de operación:',error);
       }finally{
         delete original.dataset.v349Confirmed;
         confirmationBusy=false;
-        if(original.isConnected){
-          // The transaction was not completed or a validation failed: preserve user input.
-          confirmButton.removeAttribute('aria-busy');
-          confirmButton.disabled=false;
-          confirmButton.textContent='✓ Confirmar y guardar';
-        }
       }
     });
     page.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();dismiss()}else if(event.key==='Tab'){const focusable=[...page.querySelectorAll('button:not([disabled])')];const idx=focusable.indexOf(document.activeElement);if(event.shiftKey&&idx===0){event.preventDefault();focusable[focusable.length-1].focus()}else if(!event.shiftKey&&idx===focusable.length-1){event.preventDefault();focusable[0].focus()}}});
@@ -67427,7 +67445,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v349-review-screen .v349-review-n
   }
   // Window capture precedes the older document submit handlers, ensuring no transaction is saved during review.
   window.addEventListener('submit',event=>{
-    const form=event.target;if(typeof window.v388Preflight==='function'&&form?.id==='transactionForm'&&window.v388Preflight(form)!==true){event.preventDefault();event.stopImmediatePropagation();return;}if(!isRelevant(form)||form.dataset.v349Confirmed==='1'||document.querySelector('#modal-root .v349-review-screen'))return;
+    const form=event.target;if(!isRelevant(form)||form.dataset.v349Confirmed==='1'||document.querySelector('#modal-root .v349-review-screen'))return;if(typeof window.v388Preflight==='function'&&form?.id==='transactionForm'&&window.v388Preflight(form)!==true){event.preventDefault();event.stopImmediatePropagation();return;}
     // Preserve native and legacy validation rules. Invalid controls still use the original form's error handling.
     const invalid=[...form.elements].find(x=>x.willValidate&&!x.disabled&&!x.checkValidity()&&x.getClientRects().length);
     if(invalid){const fold=invalid.closest('details');if(fold)fold.open=true;event.preventDefault();event.stopImmediatePropagation();invalid.focus();invalid.reportValidity();return}
@@ -69596,7 +69614,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v380-expense-preview .v380-exp-fi
    const channel=read(form,'paymentChannel');
    if(cardPay){
     const c=findCard(read(form,'cardId')),currency=read(form,'currency')||'DOP';
-    if(!isEnabled(c)){show('Tarjeta de crédito sin seleccionar','', 'Selecciona una tarjeta activa antes de continuar.');return;}
+    if(!isEnabled(c)){show('Impacto pendiente de calcular','', 'La vista previa no encuentra la tarjeta. El registro comprobará los datos al confirmar.');return;}
     if(!(sum>0)&&Number.isFinite(sum)){show(c.name+' · '+currency,'','Introduce un importe positivo.');return;}
     let status=null;try{status=typeof cardStatus==='function'?cardStatus(c,currency):null}catch(_){}
     const before=Number(status?.debt),limit=Number(status?.limit);
@@ -69610,7 +69628,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v380-expense-preview .v380-exp-fi
     show('Tarjeta · '+c.name+' · '+currency,figures,note);
    }else{
     const a=findAccount(read(form,'accountId'));
-    if(!isEnabled(a)){show('Cuenta o efectivo sin seleccionar','', 'Selecciona una cuenta activa antes de continuar.');return;}
+    if(!isEnabled(a)){show('Impacto pendiente de calcular','', 'La vista previa no encuentra la cuenta. El registro comprobará los datos al confirmar.');return;}
     const currency=a.currency||'DOP';let before=NaN;try{before=typeof getAccountBalance==='function'?Number(getAccountBalance(a)):NaN}catch(_){}
     const pct=read(form,'paymentTaxable')==='yes'?Number(read(form,'paymentTaxPct')):0;
     const fee=Number(read(form,'paymentFee')||0);
@@ -69631,20 +69649,10 @@ body:is(.theme-black,.theme-dark) #modal-root .v380-expense-preview .v380-exp-fi
   form.addEventListener('input',()=>queueMicrotask(update));
   form.addEventListener('change',()=>queueMicrotask(update));
   form.addEventListener('click',e=>{if(e.target.closest('[data-fast-source],[data-fast-category]'))queueMicrotask(update)});
-  form.addEventListener('submit',e=>{
-   const v=Number(read(form,'amount'));
-   const useCard=read(form,'paymentSource')==='card';
-   const ref=useCard?findCard(read(form,'cardId')):findAccount(read(form,'accountId'));
-   const currency=read(form,'currency')||'DOP';
-   let error='';
-   if(!Number.isFinite(v)||v<=0)error='Introduce un importe de egreso mayor que cero.';
-   else if(!isEnabled(ref))error=useCard?'Selecciona una tarjeta activa.':'Selecciona una cuenta activa.';
-   else if(useCard&&!['DOP','USD'].includes(currency))error='Selecciona una moneda válida para la tarjeta.';
-   if(error){e.preventDefault();e.stopImmediatePropagation();
-    if(typeof toast==='function')toast(error);
-    const el=form.elements.namedItem(error.includes('importe')?'amount':useCard?'cardId':'accountId');el?.focus?.();
-   }
-  },true);
+  // V446: la tarjeta/cuenta se valida una única vez en el motor contable.
+  // Este panel es una vista previa informativa, NO un segundo guard de submit.
+  // El control anterior bloqueaba un registro ya revisado con un falso
+  // «tarjeta sin seleccionar» por discrepancias entre pasos del formulario.
   update();
  }
  function decorate(){root.querySelectorAll('form#transactionForm').forEach(form=>{
@@ -73131,5 +73139,155 @@ body.theme-dark :is(
  #app .v250-dock-settings{display:none!important}
 }
 </style>
+<style id="v445-review-compact-fix">
+/* Single outer frame, scroll only content when necessary. Footer always reachable. */
+#modal-root .v349-review-screen{padding:16px!important;background:rgba(15,29,49,.42)!important;backdrop-filter:blur(8px)!important}
+#modal-root .v349-review-screen .v349-review-panel{
+ width:min(94vw,620px)!important;max-height:min(90dvh,790px)!important;
+ padding:0!important;gap:0!important;overflow:hidden!important;
+ display:flex!important;flex-direction:column!important;
+ border-radius:25px!important;
+}
+#modal-root .v349-review-screen .v353-review-header{
+ flex:0 0 auto!important;padding:19px 24px 14px!important;margin:0!important;
+}
+#modal-root .v349-review-screen .v353-review-body{
+ flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;
+ padding:12px 24px 18px!important;scrollbar-gutter:auto!important;
+}
+#modal-root .v349-review-screen .v353-amount-card{padding:12px 14px!important;margin:0 0 12px!important;min-height:0!important}
+#modal-root .v349-review-screen .v353-review-main{padding:13px 14px!important;margin:0 0 10px!important;min-height:0!important}
+#modal-root .v349-review-screen .v349-review-row{min-height:35px!important;padding:8px 0!important}
+#modal-root .v349-review-screen .v400-review-clarity{padding:10px 12px!important;margin:9px 0 0!important}
+#modal-root .v349-review-screen .v400-review-indicators{margin-top:6px!important}
+#modal-root .v349-review-screen .v349-review-actions{
+ flex:0 0 auto!important;position:relative!important;bottom:auto!important;
+ padding:12px 24px 17px!important;margin:0!important;
+ background:var(--v400-surface,#f8fbff)!important;border-top:1px solid var(--v400-edge,#dce5f2)!important;
+}
+#modal-root .v349-review-screen .v349-review-note[role="alert"]{font-weight:760!important;color:#b42338!important}
+@media(max-width:600px){
+ #modal-root .v349-review-screen{padding:8px!important;align-items:center!important}
+ #modal-root .v349-review-screen .v349-review-panel{width:min(98vw,440px)!important;max-height:calc(100dvh - 24px)!important}
+ #modal-root .v349-review-screen .v353-review-header{padding:14px 16px 10px!important}
+ #modal-root .v349-review-screen .v353-review-body{padding:9px 15px 12px!important}
+ #modal-root .v349-review-screen .v349-review-actions{padding:10px 14px 12px!important}
+ #modal-root .v349-review-screen .v353-review-buttons>button{min-height:42px!important}
+}
+body.theme-black #modal-root .v349-review-screen .v349-review-actions{background:#090909!important}
+</style>
+
+<style id="vive-v447-mobile-premium-adjustments">
+/* V447 · Ajustes focales solicitados por el usuario.
+   Alcance: Suscripciones móvil, Buscar móvil y Visión global móvil.
+   No toca cálculos, rutas ni registros; solo identidad visual e iconografía. */
+@media (max-width:790px){
+  /* Buscar · tarjetas más premium y coherentes */
+  .world-mobilesearch #page .v154-search-hub{padding-bottom:calc(132px + env(safe-area-inset-bottom));}
+  .world-mobilesearch #page .v154-category-grid{gap:12px!important;}
+  .world-mobilesearch #page .v154-category-tile{
+    border:1px solid rgba(255,255,255,.24)!important;
+    box-shadow:0 16px 34px rgba(41,58,112,.12), inset 0 1px 0 rgba(255,255,255,.18)!important;
+  }
+  .world-mobilesearch #page .v154-category-tile::before{
+    content:"";position:absolute;left:-12%;top:-14%;width:62%;height:62%;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.20),transparent 72%);
+    z-index:-1;pointer-events:none;
+  }
+  .world-mobilesearch #page .v154-category-tile::after{
+    background:
+      linear-gradient(0deg,rgba(10,21,48,.30),rgba(10,21,48,0) 58%),
+      linear-gradient(135deg,rgba(255,255,255,.08),transparent 35%,rgba(255,255,255,.03) 36%,transparent 60%)!important;
+  }
+  .world-mobilesearch #page .v154-category-mark{right:-8px;top:-8px;opacity:.16;transform:rotate(-13deg)!important;}
+  .world-mobilesearch #page .v154-category-mark svg{width:96px;height:96px;stroke-width:1.45;}
+  .world-mobilesearch #page .v154-category-title{font-size:20px!important;letter-spacing:-.7px!important;}
+  .world-mobilesearch #page .v154-category-sub{font-size:11px!important;font-weight:650!important;letter-spacing:.01em!important;color:rgba(255,255,255,.88)!important;}
+  .world-mobilesearch #page .v154-tone-ocean{background:linear-gradient(135deg,#6c8fd9 0%,#4066be 58%,#304e96 100%)!important;}
+  .world-mobilesearch #page .v154-tone-violet{background:linear-gradient(135deg,#8a88eb 0%,#6660d6 54%,#5345bf 100%)!important;}
+  .world-mobilesearch #page .v154-tone-coral{background:linear-gradient(135deg,#de97b2 0%,#c77298 54%,#a7527d 100%)!important;}
+  .world-mobilesearch #page .v154-tone-amber{background:linear-gradient(135deg,#d9b16e 0%,#c0904e 52%,#a8743c 100%)!important;}
+  .world-mobilesearch #page .v154-tone-teal{background:linear-gradient(135deg,#75c1bc 0%,#4b9ea4 54%,#367f89 100%)!important;}
+  .world-mobilesearch #page .v154-tone-blue{background:linear-gradient(135deg,#76a8ea 0%,#5c88dc 52%,#486fc6 100%)!important;}
+
+  /* Suscripciones · devolver presencia visual a los KPI superiores */
+  .world-recurring #page .v302-subs-app{gap:18px!important;}
+  .world-recurring #page .v302-subs-stats{gap:12px!important;}
+  .world-recurring #page .v302-cost-card,
+  .world-recurring #page .v302-brands-card{
+    position:relative;overflow:hidden;isolation:isolate;
+    background:linear-gradient(145deg,#4b648f 0%,#526f9d 52%,#435d88 100%)!important;
+    border:1px solid rgba(255,255,255,.11)!important;
+    box-shadow:0 18px 36px rgba(39,58,99,.18), inset 0 1px 0 rgba(255,255,255,.10)!important;
+    color:#fff!important;
+  }
+  .world-recurring #page .v302-cost-card::before,
+  .world-recurring #page .v302-brands-card::before{
+    content:"";position:absolute;right:-20%;bottom:-36%;width:82%;height:82%;border-radius:50%;
+    background:radial-gradient(circle,rgba(139,174,231,.26),transparent 62%);
+    z-index:0;pointer-events:none;
+  }
+  .world-recurring #page .v302-cost-card::after,
+  .world-recurring #page .v302-brands-card::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.08),transparent 32%,rgba(255,255,255,.035) 33%,transparent 58%);
+    z-index:0;pointer-events:none;
+  }
+  .world-recurring #page .v302-cost-card > *,
+  .world-recurring #page .v302-brands-card > *{position:relative;z-index:1;}
+  .world-recurring #page .v302-cost-title,
+  .world-recurring #page .v302-cost-secondary span,
+  .world-recurring #page .v302-brands-bottom span,
+  .world-recurring #page .v302-brands-bottom i,
+  .world-recurring #page .v302-subs-head h1{color:rgba(255,255,255,.94)!important;}
+  .world-recurring #page .v302-cost-rule{background:rgba(255,255,255,.16)!important;}
+  .world-recurring #page .v302-mini-icon{
+    background:rgba(255,255,255,.13)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;
+  }
+  .world-recurring #page .v302-brands-bottom strong{font-size:clamp(38px,10vw,50px)!important;line-height:.92!important;}
+  .world-recurring #page .v302-brands-bottom svg,
+  .world-recurring #page .v302-brands-bottom .icon{color:rgba(255,255,255,.92)!important;}
+
+  /* Visión global · hero controlado, con mejor profundidad y sin roturas visuales */
+  .world-payments #page .v295-global-payments{gap:18px!important;}
+  .world-payments #page .v295-global-top{margin-bottom:10px!important;}
+  .world-payments #page .v295-global-overview>.analytics-world{min-width:0;max-width:100%;overflow:hidden;}
+  .world-payments #page .analytics-world .analytic-hero{
+    position:relative;overflow:hidden;border-radius:30px!important;
+    padding:28px 22px 24px!important;
+    background:linear-gradient(138deg,#213d72 0%,#2a538e 55%,#5b8fd4 100%)!important;
+    box-shadow:0 18px 38px rgba(35,63,118,.16), inset 0 1px 0 rgba(255,255,255,.08)!important;
+  }
+  .world-payments #page .analytics-world .analytic-hero::before{
+    content:"";position:absolute;right:-28%;top:-18%;width:88%;height:88%;border-radius:50%;
+    border:1px solid rgba(255,255,255,.14);box-shadow:-34px 20px 0 0 rgba(255,255,255,.06), -76px 48px 0 0 rgba(255,255,255,.035);
+    pointer-events:none;
+  }
+  .world-payments #page .analytics-world .analytic-hero::after{
+    background:linear-gradient(135deg,rgba(255,255,255,.07),transparent 36%,rgba(255,255,255,.03) 37%,transparent 60%)!important;
+    opacity:1!important;
+  }
+  .world-payments #page .analytics-world .analytic-hero-top{gap:18px!important;align-items:flex-start!important;}
+  .world-payments #page .analytics-world .analytic-hero h2{font-size:clamp(28px,8vw,40px)!important;letter-spacing:-.045em!important;line-height:1.06!important;}
+  .world-payments #page .analytics-world .analytic-hero h2 em{color:#cfe1ff!important;}
+  .world-payments #page .analytics-world .analytic-hero p,
+  .world-payments #page .analytics-world .analyst-label,
+  .world-payments #page .analytics-world .hero-explainer,
+  .world-payments #page .analytics-world .analytic-hero-strip small{color:rgba(239,245,255,.80)!important;}
+  .world-payments #page .analytics-world .analytic-hero :is(h2,strong,b){color:#fff!important;}
+  .world-payments #page .analytics-world .analytic-hero .year-switcher.contrast{
+    align-self:flex-start!important;background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.16)!important;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 20px rgba(17,34,70,.14)!important;
+  }
+  .world-payments #page .analytics-world .analytic-hero .year-switcher.contrast :is(.year-btn,span){color:#fff!important;}
+  .world-payments #page .analytics-world .analytic-hero-strip{
+    margin-top:18px!important;padding-top:18px!important;gap:14px!important;
+    border-top:1px solid rgba(255,255,255,.16)!important;
+  }
+  .world-payments #page .analytics-world .analytics-label-row{align-items:center!important;gap:12px!important;}
+}
+</style>
+
 </body>
 </html>
