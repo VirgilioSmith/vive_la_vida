@@ -43746,7 +43746,7 @@ document.addEventListener('input',function(event){
     const expenseChange=variation(totals.expense,prevTotals.expense);
     const pendingPersonal=Math.max(0,people.payable)+Math.max(0,people.receivable);
     const fmtShort=n=>{const x=Number(n)||0;return Math.abs(x)<10000?fmt(x):'RD$'+new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(x/1000)+'K';};
-    const personalLabel=pendingPersonal<=.005?'Sin pendientes':fmt(pendingPersonal)+' pendiente';
+    const personalLabel=pendingPersonal<=.005?'Sin pendientes':fmtShort(pendingPersonal)+' pendiente';
     const personalDescription=pendingPersonal<=.005?'Sin deudas entre personas':
       people.payable>.005&&people.receivable>.005?'Por cobrar y por devolver':
       people.payable>.005?'Tienes dinero por devolver':'Tienes dinero por cobrar';
@@ -43759,17 +43759,17 @@ document.addEventListener('input',function(event){
        ['expenses','Egresos','Lo que utilizas','down','rose',fmt(totals.expense),false,expenseChange],
        ['budget','Presupuesto','Límites y ejecución','chart','blue',kpiBudget],
        ['categories','Categorías','Organiza tus movimientos','grid','violet',cats.size+' categorías'],
-       ['recurring','Suscripciones','Servicios y pagos recurrentes','calendar','blue',subs.length+' activas · '+fmtShort(v80RecurringMonthly())+'/mes'],
+       ['recurring','Suscripciones','Servicios y pagos recurrentes','calendar','blue',subs.length+' activas · '+fmtShort(v80RecurringMonthly())],
        ['personal','Entre personas',personalDescription,'users','violet',personalLabel]
       ]},
       {tag:'TU VISIÓN',heading:'Planifica y mantén el control integral',desc:'Una mirada completa de tus finanzas, compromisos y próximos pasos.',items:[
        ['payments','Visión global','Tu panorama financiero completo','eye','blue','',true],
-       ['pressure','Compromisos','Vencimientos y pagos programados','calendar','violet',pressureState+' · '+fmtShort(v89DebtCapacity(monthKey()).monthly)],
+       ['pressure','Compromisos','Vencimientos y pagos programados','calendar','violet',fmtShort(v89DebtCapacity(monthKey()).monthly)+' · '+pressureState.replace('Presión ','')],
        ['cards','Tarjetas','Límites, consumos y pagos','card','blue',cards.filter(c=>num(cardStatus(c,'DOP').debt)>0.005||num(cardStatus(c,'USD').debt)>0.005).length+' de '+cards.length+' con balance'],
        ['projection','Planificación','Metas, proyecciones y escenarios','analytics','violet','']
       ]}
     ];
-    const tile=([id,name,desc,ic,tone,val,featured,change])=>`<button type="button" class="v410-tile v422-reference-tile" data-act="navigate" data-id="${esc(id)}" data-tone="${esc(tone)}" data-feature="${featured?'true':'false'}" aria-label="Abrir ${esc(name)}. ${esc(desc)}${val?'. '+esc(val):''}${change?', variación '+esc(change.pct)+' respecto al mes anterior':''}"><span class="v410-tile-icon">${icon(ic)}</span><span class="v410-tile-content"><strong>${esc(name)}</strong><small class="v422-subtitle">${esc(desc)}</small><span class="v422-bottom">${val?`<b>${esc(val)}</b>`:''}${change?`<em class="v422-variation ${change.dir}" aria-label="Variación ${esc(change.pct)}">${esc(change.pct)}</em>`:''}</span>${id==='budget'&&Number.isFinite(plan.percent)?`<span class="v426-mini-track" role="progressbar" aria-label="Porcentaje del presupuesto utilizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.max(0,Math.min(100,plan.percent))}"><i style="width:${Math.max(0,Math.min(100,plan.percent))}%"></i></span>`:''}</span><span class="v410-tile-arrow" aria-hidden="true">${icon('arrow')}</span></button>`;
+    const tile=([id,name,desc,ic,tone,val,featured,change])=>`<button type="button" class="v410-tile v422-reference-tile" data-act="navigate" data-id="${esc(id)}" data-tone="${esc(tone)}" data-feature="${featured?'true':'false'}" aria-label="Abrir ${esc(name)}. ${esc(desc)}${val?'. '+esc(val):''}${change?', variación '+esc(change.pct)+' respecto al mes anterior':''}"><span class="v410-tile-icon">${icon(ic)}</span><span class="v410-tile-content"><strong>${esc(name)}</strong><small class="v422-subtitle">${esc(desc)}</small><span class="v422-bottom">${val?`<span class="v427-value">${esc(val)}</span>`:''}</span>${['income','expenses'].includes(id)?(change?`<span class="v427-trend ${change.dir}" aria-label="Variación frente al mes anterior de ${esc(change.pct)}"><span class="v427-trend-mark">${change.dir==='up'?'↗':change.dir==='down'?'↘':'→'} ${esc(change.pct)}</span><span>vs. mes anterior</span></span>`:`<span class="v427-trend no-base">Sin base comparable</span>`):''}${id==='budget'&&Number.isFinite(plan.percent)?`<span class="v426-mini-track" role="progressbar" aria-label="Porcentaje del presupuesto utilizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.max(0,Math.min(100,plan.percent))}"><i style="width:${Math.max(0,Math.min(100,plan.percent))}%"></i></span>`:''}</span><span class="v410-tile-arrow" aria-hidden="true">${icon('arrow')}</span></button>`;
     return `<div class="v410-explore" aria-label="Explorar módulos financieros"><header class="v410-explore-head"><div><span class="v410-kicker">VIVE EL HOY · TU ESPACIO</span><h1>Explorar</h1><p>Organiza y potencia tu espacio financiero.</p></div><span class="v410-date">${esc(monthText())}</span></header>${sections.map(s=>`<section class="v410-explore-sec"><header><span class="v410-kicker">${s.tag}</span><h2>${s.heading}</h2><p>${s.desc}</p></header><div class="v410-explore-grid">${s.items.map(tile).join('')}</div></section>`).join('')}</div>`;
   };
 
@@ -43830,7 +43830,7 @@ document.addEventListener('input',function(event){
 })();
 /* V411 render activation test: explicit lifecycle and nonintrusive build marker. */
 try {
-  document.body.dataset.f360Build='V426';
+  document.body.dataset.f360Build='V428';
   const appRoot=document.getElementById('app');
   if(appRoot?.querySelector('main.main')) render();
 } catch(err){ console.error('[V421] Falló la activación de vistas',err); }
@@ -71923,6 +71923,202 @@ body.theme-black #app .v410-explore-sec{background:#111!important;border-color:#
 body.theme-black #app .v410-tile.v422-reference-tile:not([data-feature="true"]){background:#191919!important;border-color:#303030!important;box-shadow:none!important}
 body.theme-black #app .v410-tile.v422-reference-tile .v422-subtitle{color:#b9c6d8!important}
 body.theme-black #app .v410-tile.v422-reference-tile .v422-bottom>b{color:#f0f5ff!important}
+</style>
+
+<style id="v427-kpi-fiel-mobile">
+/* Sólo Explorar: KPI como la referencia, sin recortar los valores ni apilar sus palabras. */
+#app .v410-explore .v422-reference-tile .v410-tile-content>strong{
+ font-weight:760!important;
+}
+#app .v410-explore .v422-reference-tile .v422-bottom .v427-value{
+ display:block!important;white-space:nowrap!important;overflow:visible!important;
+ text-overflow:clip!important;overflow-wrap:normal!important;word-break:normal!important;
+ color:#1c2b4d!important;font-weight:650!important;line-height:1.15!important;
+ font-variant-numeric:tabular-nums;
+}
+#app .v410-explore .v422-reference-tile .v427-trend{
+ display:flex!important;align-items:center!important;gap:5px!important;
+ min-width:0!important;white-space:nowrap!important;line-height:1.14!important;
+ font-size:clamp(10px,.9vw,12px)!important;color:#6f81a0!important;font-weight:440!important;
+}
+#app .v410-explore .v422-reference-tile .v427-trend-mark{
+ display:inline-flex!important;align-items:center!important;gap:2px!important;
+ padding:3px 6px!important;border-radius:99px!important;
+ font-weight:780!important;white-space:nowrap!important;
+}
+#app .v410-explore .v422-reference-tile .v427-trend.up .v427-trend-mark{
+ color:#08734e!important;background:#dbf7e9!important
+}
+#app .v410-explore .v422-reference-tile .v427-trend.down .v427-trend-mark{
+ color:#a63755!important;background:#ffe1e8!important
+}
+#app .v410-explore .v422-reference-tile .v427-trend.flat .v427-trend-mark{
+ color:#566c8c!important;background:#e8eff8!important
+}
+#app .v410-explore .v422-reference-tile[data-feature="true"] .v427-value{color:white!important}
+@media(max-width:790px){
+ #app .v410-explore .v410-explore-grid{gap:10px!important}
+ #app .v410-explore .v422-reference-tile{
+  display:grid!important;
+  grid-template-columns:29px minmax(0,1fr) 17px!important;
+  grid-template-rows:auto auto!important;
+  align-content:center!important;column-gap:6px!important;row-gap:5px!important;
+  min-height:116px!important;padding:10px 9px!important;
+ }
+ #app .v410-explore .v422-reference-tile .v410-tile-icon{
+  grid-column:1!important;grid-row:1!important;
+  width:29px!important;height:29px!important;flex:none!important;align-self:center!important
+ }
+ #app .v410-explore .v422-reference-tile .v410-tile-arrow{
+  grid-column:3!important;grid-row:1!important;
+  width:17px!important;height:17px!important;align-self:center!important;justify-self:end!important
+ }
+ #app .v410-explore .v422-reference-tile .v410-tile-content{display:contents!important}
+ #app .v410-explore .v422-reference-tile .v410-tile-content>strong{
+  grid-column:2!important;grid-row:1!important;align-self:center!important;
+  font-size:clamp(11px,3vw,14px)!important;line-height:1.12!important;
+  font-weight:760!important;letter-spacing:-.3px!important;white-space:nowrap!important
+ }
+ #app .v410-explore .v422-reference-tile .v422-subtitle{
+  grid-column:1/-1!important;grid-row:2!important;
+  margin-top:1px!important;font-size:clamp(9px,2.55vw,11px)!important;
+  line-height:1.15!important;color:#657b9b!important;
+ }
+ #app .v410-explore .v422-reference-tile .v422-bottom{
+  grid-column:1/-1!important;grid-row:3!important;display:block!important;
+  margin:0!important;min-width:0!important;white-space:nowrap!important
+ }
+ #app .v410-explore .v422-reference-tile .v422-bottom .v427-value{
+  font-size:clamp(10px,2.8vw,13px)!important;letter-spacing:-.24px!important;
+  font-weight:650!important;white-space:nowrap!important
+ }
+ #app .v410-explore .v422-reference-tile .v427-trend{
+  grid-column:1/-1!important;grid-row:4!important;
+  font-size:clamp(8px,2.45vw,10px)!important;gap:4px!important
+ }
+ #app .v410-explore .v422-reference-tile .v427-trend-mark{padding:3px 5px!important}
+ #app .v410-explore .v422-reference-tile .v426-mini-track{
+  grid-column:1/-1!important;grid-row:4!important;margin-top:3px!important
+ }
+}
+@media(min-width:791px){
+ #app .v410-explore .v422-reference-tile .v427-trend{margin-top:4px!important}
+}
+body.theme-black #app .v410-explore .v422-reference-tile .v427-value{color:#eff4ff!important}
+body.theme-black #app .v410-explore .v422-reference-tile .v427-trend{color:#b7c8e4!important}
+</style>
+
+<style id="v428-explorar-alineacion-final">
+/* Referencia aprobada: elementos agrupados, 2 columnas, sin líneas partidas en KPIs. */
+html body #app .v410-explore .v410-explore-grid{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important
+}
+html body #app .v410-explore .v410-tile.v422-reference-tile{
+ display:grid!important;position:relative!important;
+ grid-template-columns:38px minmax(0,1fr)!important;grid-template-rows:auto!important;
+ gap:9px!important;align-items:center!important;align-content:center!important;
+ min-height:112px!important;padding:13px 16px 13px 12px!important;
+ border-radius:19px!important;overflow:hidden!important;
+}
+html body #app .v410-explore .v422-reference-tile .v410-tile-icon{
+ width:38px!important;height:38px!important;flex:none!important;
+ grid-column:1!important;grid-row:1!important;align-self:center!important;
+ border-radius:13px!important
+}
+html body #app .v410-explore .v422-reference-tile .v410-tile-content{
+ display:flex!important;flex-direction:column!important;gap:3px!important;
+ grid-column:2!important;grid-row:1!important;min-width:0!important;
+ align-items:flex-start!important;justify-content:center!important;
+}
+html body #app .v410-explore .v422-reference-tile .v410-tile-content>strong{
+ font-size:clamp(12px,1.1vw,16px)!important;line-height:1.13!important;
+ white-space:nowrap!important;letter-spacing:-.025em!important;
+ font-weight:750!important;overflow:visible!important;text-overflow:clip!important;
+}
+html body #app .v410-explore .v422-reference-tile .v422-subtitle{
+ font-size:clamp(10px,.9vw,12px)!important;line-height:1.17!important;
+ color:#69809f!important;max-width:100%!important;
+ display:block!important;margin:0!important;grid-area:auto!important;
+}
+html body #app .v410-explore .v422-reference-tile .v422-bottom{
+ display:block!important;grid-area:auto!important;margin:3px 0 0!important;
+ min-width:0!important;width:100%!important;
+}
+html body #app .v410-explore .v422-reference-tile .v427-value{
+ display:block!important;font-size:clamp(11px,.95vw,14px)!important;
+ white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;
+ line-height:1.1!important;font-weight:670!important;letter-spacing:-.025em!important;
+}
+html body #app .v410-explore .v422-reference-tile .v427-trend{
+ display:flex!important;flex-wrap:wrap!important;gap:4px!important;
+ grid-area:auto!important;margin:3px 0 0!important;
+ font-size:10px!important;line-height:1.12!important;
+ color:#6e819d!important;
+}
+html body #app .v410-explore .v422-reference-tile .v427-trend.no-base{
+ font-size:9px!important;opacity:.75!important
+}
+html body #app .v410-explore .v422-reference-tile .v410-tile-arrow{
+ position:absolute!important;right:8px!important;top:12px!important;
+ transform:none!important;width:19px!important;height:19px!important;
+}
+html body #app .v410-explore .v422-reference-tile .v426-mini-track{
+ display:block!important;grid-area:auto!important;position:static!important;
+ width:95%!important;margin-top:4px!important;height:4px!important
+}
+@media(max-width:790px){
+ html body #app .v410-explore .v410-explore-sec{padding:13px 10px!important;margin-bottom:11px!important}
+ html body #app .v410-explore .v410-explore-grid{gap:7px!important;margin-top:10px!important}
+ html body #app .v410-explore .v410-tile.v422-reference-tile{
+  grid-template-columns:27px minmax(0,1fr)!important;grid-template-rows:auto!important;
+  min-height:88px!important;gap:5px!important;padding:9px 8px!important;
+  border-radius:15px!important;align-items:center!important;overflow:hidden!important;
+ }
+ html body #app .v410-explore .v422-reference-tile .v410-tile-icon{
+  width:27px!important;height:27px!important;flex-basis:27px!important;border-radius:9px!important
+ }
+ html body #app .v410-explore .v422-reference-tile .v410-tile-icon svg{width:15px!important;height:15px!important}
+ html body #app .v410-explore .v422-reference-tile .v410-tile-content{
+  grid-column:2!important;grid-row:1!important;display:flex!important;
+  gap:2px!important;width:100%!important;min-width:0!important;
+ }
+ html body #app .v410-explore .v422-reference-tile .v410-tile-content>strong{
+  font-size:clamp(10px,2.8vw,12px)!important;line-height:1.1!important;
+  white-space:nowrap!important;font-weight:740!important;padding-right:9px!important
+ }
+ html body #app .v410-explore .v422-reference-tile .v422-subtitle{
+  font-size:clamp(8px,2.3vw,10px)!important;line-height:1.08!important;
+  max-width:100%!important
+ }
+ html body #app .v410-explore .v422-reference-tile .v422-bottom{
+  margin-top:3px!important;white-space:nowrap!important
+ }
+ html body #app .v410-explore .v422-reference-tile .v427-value{
+  font-size:clamp(9px,2.65vw,11px)!important;line-height:1.12!important;
+  white-space:nowrap!important;letter-spacing:-.04em!important;
+ }
+ html body #app .v410-explore .v422-reference-tile .v427-trend{
+  grid-area:auto!important;display:flex!important;flex-wrap:nowrap!important;
+  margin-top:3px!important;font-size:clamp(7px,2.05vw,9px)!important;gap:3px!important;
+ }
+ html body #app .v410-explore .v422-reference-tile .v427-trend-mark{
+  font-size:inherit!important;padding:2px 4px!important
+ }
+ html body #app .v410-explore .v422-reference-tile .v410-tile-arrow{
+  width:13px!important;height:13px!important;right:5px!important;top:9px!important
+ }
+ html body #app .v410-explore .v422-reference-tile .v426-mini-track{width:90%!important}
+}
+@media(max-width:355px){
+ html body #app .v410-explore .v410-tile.v422-reference-tile{
+  grid-template-columns:22px minmax(0,1fr)!important;gap:4px!important;padding:8px 6px!important
+ }
+ html body #app .v410-explore .v422-reference-tile .v410-tile-icon{width:22px!important;height:22px!important}
+ html body #app .v410-explore .v422-reference-tile .v410-tile-content>strong{font-size:9px!important}
+ html body #app .v410-explore .v422-reference-tile .v427-value{font-size:8.5px!important}
+}
+body.theme-black #app .v410-explore .v422-reference-tile .v427-value{color:#fff!important}
+body.theme-black #app .v410-explore .v422-reference-tile .v422-subtitle{color:#c0cee2!important}
 </style>
 </body>
 </html>
