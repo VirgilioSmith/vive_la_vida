@@ -33893,22 +33893,10 @@ function v394TrackPage(){
  v394SkipNext=false;
 }
 function v394DecorateNavigation(){
- const main=document.querySelector('#app main.main');if(!main)return;
- const page=String(ui.page||'overview');
- // No second navigation header on Inicio/Explorar, and do not obstruct registration modals.
- if(['overview','mobilehub','mobilesearch','wallet'].includes(page))return;
- const previous=v394Stack[v394Stack.length-1];
- const currentName=V394_TITLES[page]||page;
- const family=navFamilyForPage(page);
- const familyNames={overview:'Resumen',banks:'Bancos',register:'Movimientos',payments:'Visión global'};
- const section=familyNames[family]||'Explorar';
- const rootRoute=['banks','register','payments','settings','overview'].includes(page);
- const strip=document.createElement('nav');strip.className='v394-routebar';strip.setAttribute('aria-label','Ubicación y regreso');
- // Fixed, trusted vocabulary: no data strings in this output.
- strip.innerHTML=`${previous?`<button type="button" data-v394-back aria-label="Volver a ${V394_TITLES[previous]||previous}" title="Volver a ${V394_TITLES[previous]||previous}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Volver</span></button>`:''}<span class="v394-routepath">${rootRoute?'':`<span>${section}</span><span class="v394-sep" aria-hidden="true">/</span>`}<strong aria-current="page">${currentName}</strong></span>`;
- const header=main.querySelector(':scope > .topbar');
- if(header)header.insertAdjacentElement('afterend',strip);else main.prepend(strip);
- // Existing rail and contextual switches remain the real navigation controls.
+ // V4: removed the redundant automatic "Volver / Resumen / ..." breadcrumb.
+ // The existing sidebar, tabs, page-level back controls and mobile dock
+ // remain the sole navigation controls, without duplicate route bars.
+ document.querySelectorAll('#app .v394-routebar').forEach(el => el.remove());
  for(const el of document.querySelectorAll('.sidebar [data-act="navigate"],.module-switch-tabs [data-act="navigate"]')){
   if(el.classList.contains('active'))el.setAttribute('aria-current','page');
   else if(el.getAttribute('aria-current')==='page')el.removeAttribute('aria-current');
@@ -69486,45 +69474,8 @@ body:is(.theme-black,.theme-dark) #modal-root .modal.v391-form-shell #formError:
  let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorate();})});observer.observe(root,{childList:true,subtree:true});
 })();
 </script>
-<style id="v394-navigation-polish">
-/* V394: clear route context without duplicating the application's primary navigation. */
-#app .v394-routebar{display:flex;align-items:center;gap:10px;min-height:34px;margin:0 0 11px;padding:0 3px;color:#62748d;font-size:11px;font-weight:650;white-space:nowrap;max-width:100%;overflow:hidden}
-#app .v394-routebar .v394-routepath{display:inline-flex;align-items:center;gap:9px;min-width:0;overflow:hidden;text-overflow:ellipsis}
-#app .v394-routebar .v394-routepath strong{color:#263650;overflow:hidden;text-overflow:ellipsis;font-size:11px;font-weight:800}
-#app .v394-routebar .v394-sep{opacity:.55}
-#app .v394-routebar [data-v394-back]{background:transparent;border:1px solid #dce4ed;border-radius:10px;padding:7px 10px;display:inline-flex;align-items:center;gap:5px;color:inherit;font:inherit;font-weight:750;cursor:pointer;flex:none;min-height:33px}
-#app .v394-routebar [data-v394-back] svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-#app .v394-routebar [data-v394-back]:hover{background:#ecf1fa;color:#1e3c69}
-#app .v394-routebar [data-v394-back]:focus-visible{outline:2px solid #6388df;outline-offset:2px}
-body.theme-black #app .v394-routebar,body.theme-dark #app .v394-routebar{color:#a2a2a2}
-body.theme-black #app .v394-routebar .v394-routepath strong,body.theme-dark #app .v394-routebar .v394-routepath strong{color:#f2f2f2}
-body.theme-black #app .v394-routebar [data-v394-back],body.theme-dark #app .v394-routebar [data-v394-back]{background:#080808;border-color:#343434;color:#e3e3e3}
-body.theme-black #app .v394-routebar [data-v394-back]:hover,body.theme-dark #app .v394-routebar [data-v394-back]:hover{background:#171717}
-@media(max-width:790px){#app .v394-routebar{margin:2px 0 8px;min-height:30px;font-size:10px;gap:7px}#app .v394-routebar [data-v394-back]{padding:6px 9px;min-height:30px}#app .v394-routebar .v394-routepath{gap:6px}#app .v394-routebar .v394-routepath strong{font-size:10px}}
-@media(prefers-reduced-motion:reduce){#app .v394-routebar *{transition:none!important}}
-</style>
-<script id="v394-navigation-controller">
-(()=>{'use strict';
- document.addEventListener('click',event=>{
-  const back=event.target.closest?.('[data-v394-back]');if(!back)return;
-  event.preventDefault();event.stopImmediatePropagation();
-  if(document.querySelector('#modal-root .modal-layer,#modal-root [role="dialog"]'))return;
-  while(v394Stack.length){
-   const target=v394Stack.pop();if(!V394_TITLES[target]||target===ui.page)continue;
-   v394SkipNext=true;ui.page=target;ui.mobile=false;
-   if(target!=='mobilesearch')document.body.classList.remove('v154-mobile-input-focused');
-   render();window.scrollTo({top:0,behavior:'auto'});
-   try{if(typeof v360SaveUI==='function')v360SaveUI()}catch(_){ }
-   break;
-  }
- },true);
- document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&document.querySelector('.sidebar.open')&&!document.querySelector('#modal-root .modal-layer,#modal-root [role="dialog"]')){
-   document.querySelectorAll('.sidebar.open').forEach(x=>x.classList.remove('open'));
-  }
- },true);
-})();
-</script>
+
+
 <style id="v395-black-oled-unified">
 /* V395 — Black oscuro unificado. Presentación solamente; sin cambios financieros. */
 html:has(body.theme-black), body.theme-black {
