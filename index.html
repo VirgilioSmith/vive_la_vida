@@ -28978,7 +28978,7 @@ function v36Bell(){
 }
 function mobileHeader(){
  const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
- return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions">${v36Bell()}<button type="button" class="v65-settings-button v271-settings-access ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración">${icon('settings')}</button></div></header>`;
+ return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions">${v402SyncButton()}${v36Bell()}<button type="button" class="v65-settings-button v271-settings-access ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración">${icon('settings')}</button></div></header>`;
 }
 function mobileBottomNavigation(){
  // Cada producto bancario pertenece al espacio Bancos; no debe marcar Explorar por error.
@@ -29395,7 +29395,7 @@ function main(){
  // V363: marca unificada en la segunda línea del encabezado de cada sección.
  h=[h[0],'vive el hoy'];
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
-  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<div class="v363-vision-identity"><span class="v363-vision-brand">vive el hoy</span><label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label></div>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span><button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
+  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<div class="v363-vision-identity"><span class="v363-vision-brand">vive el hoy</span><label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label></div>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v402SyncButton()}<button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v402SyncButton()}${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
  
  ${ui.page==='wallet'||ui.page==='pressure'?'':['overview','recurring','personal','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
  ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${v243ExploreReturn()}${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
@@ -34054,6 +34054,7 @@ function render(){
  document.body.style.setProperty('--vive-bg-color',bgChoice==='custom'&&hex.test(db.settings.backgroundHex||'')?db.settings.backgroundHex:(backgrounds[bgChoice]||backgrounds.original));
  v250DockGlassApply(db.settings.mobileDockGlassLevel ?? 50);
  document.getElementById('app').innerHTML=main();
+ v402Paint();
  v394DecorateNavigation();
  if(ui.page==='overview'){const overviewMain=document.querySelector('#app main.main');if(overviewMain&&!overviewMain.querySelector('.v360-home-links'))overviewMain.insertAdjacentHTML('afterbegin',v360HomeLinks());}
 
@@ -35063,6 +35064,99 @@ const v32OriginalOnAction=onAction;
 onAction=function(action,el){if(action==='v32Tool'){let page=el?.dataset?.page,id=el?.dataset?.id;if(!V32_TOOLS[page]?.some(t=>t[0]===id))return;ui.v32Tools[page]=ui.v32Tools[page]===id?'':id;render();if(ui.v32Tools[page])document.getElementById('v32-tool-'+page)?.scrollIntoView({behavior:'smooth',block:'start'});return;}return v32OriginalOnAction(action,el)};
 
 
+
+/* V402 · Estado de sincronización discreto, conectado al motor V10/V11/V33 existente. */
+let v402Mode='pending',v402Message='Verificando Supabase…',v402LastVerified=null;
+let v402Busy=false,v402Realtime=false,v402Open=false;
+const V402_ICON='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7a8 8 0 0 0-14-2"/><path d="M4 4v5h5"/><path d="M4 17a8 8 0 0 0 14 2"/><path d="M20 20v-5h-5"/></svg>';
+function v402SyncButton(){
+ return `<button type="button" class="v402-sync" data-v402-sync="1" data-status="${v402Mode}" title="Actualizar desde Supabase" aria-label="Actualizar desde Supabase">${V402_ICON}<i aria-hidden="true"></i></button>`;
+}
+function v402RealtimeStatus(status){
+ v402Realtime=status==='SUBSCRIBED';
+ if(v402Realtime && f33Active && !f33Dirty && !f33Saving && !f33Conflict && navigator.onLine) v402AutoConfirmed();
+ if(!v402Realtime&&f33Active&&!v402Busy){v402Mode='pending';v402Message='Tiempo real desconectado; toca para verificar los datos.';}
+ v402Paint();
+}
+function v402AutoConfirmed(){
+ if(!f33Active||!v402Realtime||f33Dirty||f33Saving||f33Conflict||v402Busy||!navigator.onLine)return;
+ v402Mode='synced';v402Message='Supabase confirmó el estado financiero.';v402LastVerified=new Date();v402Paint();
+}
+function v402Paint(){
+ if(typeof document==='undefined')return;
+ let mode=v402Mode;
+ if(typeof f33Active==='undefined'||!f33Active){mode='pending';}
+ else if(!navigator.onLine){mode='error';}
+ else if(f33Conflict||v10ManualConflict){mode='error';}
+ else if(f33Dirty||f33Saving){mode=f33Saving?'syncing':'pending';}
+ else if(v402Busy){mode='syncing';}
+ else if(f34SyncState==='error'){mode='error';}
+ else if(f34SyncState==='saving'){mode='syncing';}
+ if(mode==='synced'&&!v402Realtime)mode='pending';
+ document.querySelectorAll('[data-v402-sync]').forEach(el=>{
+  el.dataset.status=mode;
+  const label=mode==='synced'?'Sincronizado con Supabase':mode==='syncing'?'Sincronizando con Supabase':mode==='error'?'No se pudo sincronizar':'Comprobar sincronización';
+  el.title=label+' · tocar para actualizar';el.setAttribute('aria-label',label+', tocar para actualizar');
+  el.setAttribute('aria-busy',String(mode==='syncing'));
+ });
+ const pop=document.getElementById('v402-popover');
+ if(pop){
+  pop.hidden=!v402Open;
+  const label=mode==='synced'?'Todo sincronizado':mode==='syncing'?'Sincronizando':mode==='error'?'Sincronización no confirmada':'Sincronización pendiente';
+  pop.querySelector('strong').textContent=label;
+  const date=v402LastVerified?(' · Verificado '+v402LastVerified.toLocaleTimeString('es-DO',{hour:'2-digit',minute:'2-digit'})) : '';
+  pop.querySelector('small').textContent=(mode==='synced'?'Supabase confirmó la última lectura.':v402Message)+date;
+ }
+}
+async function v402Refresh(){
+ if(v402Busy||!f33Active||!f33User||!f33Api)return;
+ v402Busy=true;v402Mode='syncing';v402Message='Consultando el servidor…';v402Open=true;v402Paint();
+ try{
+  if(!navigator.onLine)throw Error('Sin conexión a Internet.');
+  if(f33Conflict||v10ManualConflict)throw Error('Hay un conflicto protegido. No se reemplazarán datos locales.');
+  // Save first; never pull cloud state over uncommitted local changes.
+  if(f33Dirty&&!f33Saving)await f33Flush();
+  if(f33Saving&&window.__f360LastPersistPromise)await window.__f360LastPersistPromise;
+  if(f33Dirty||f33Saving||f33Conflict)throw Error('Existen cambios locales sin confirmar. Revisa el guardado antes de actualizar.');
+  // Use the existing verified pull, without creating another client/channel.
+  await v10PullRemote();
+  const uid=f33User.id;
+  const check=await f33Api.from('finanzas_estado').select('actualizado_en').eq('user_id',uid).maybeSingle();
+  if(check.error)throw check.error;
+  if(!check.data?.actualizado_en)throw Error('La nube no devolvió el estado financiero.');
+  if(check.data.actualizado_en!==f33Stamp){
+   await v10PullRemote();
+   if(check.data.actualizado_en!==f33Stamp)throw Error('Se detectó una versión más reciente que aún no se pudo aplicar.');
+  }
+  // Apple Pay imports run through the existing pipeline and its verified write path.
+  if(typeof v212Sync==='function'&&typeof v212Enabled==='function'&&v212Enabled()){
+   if(v212Busy)throw Error('Apple Pay sigue procesando compras. Reintenta la comprobación.');
+   await v212Sync();
+   if(v212State?.syncError)throw Error(v212State.syncError);
+  }
+  if(f33Dirty||f33Saving||f33Conflict)throw Error('Quedan movimientos pendientes de confirmación en Supabase.');
+  if(!v402Realtime)throw Error('Lectura verificada, pero el canal Realtime aún no está conectado.');
+  v402LastVerified=new Date();v402Mode='synced';v402Message='Datos actualizados y guardados en Supabase.';
+  f33SetStatus('ok','✓ Actualizado desde Supabase');
+ }catch(err){v402Mode=navigator.onLine?'error':'pending';v402Message=err?.message||String(err);console.warn('[V402] Actualización manual:',err);}
+ finally{v402Busy=false;v402Paint();}
+}
+document.addEventListener('click',event=>{
+ const btn=event.target.closest?.('[data-v402-sync]');
+ if(btn){event.preventDefault();event.stopPropagation();void v402Refresh();return;}
+ if(v402Open&&!event.target.closest?.('#v402-popover')){v402Open=false;v402Paint();}
+},true);
+document.addEventListener('DOMContentLoaded',()=>{
+ if(!document.getElementById('v402-popover')){
+  const pop=document.createElement('div');pop.id='v402-popover';pop.hidden=true;pop.setAttribute('role','status');pop.setAttribute('aria-live','polite');
+  pop.innerHTML='<strong>Sincronización pendiente</strong><small>Verificando Supabase…</small>';
+  document.body.appendChild(pop);
+ }
+ v402Paint();
+});
+window.addEventListener('offline',()=>{v402Mode='error';v402Message='Sin conexión a Internet.';v402Paint();});
+window.addEventListener('online',()=>{v402Mode='pending';v402Message='Reconectando…';v402Paint();});
+
 /* V33: Supabase Auth + estado JSON sincronizado en public.finanzas_estado.
    RLS del paso 2 aísla el usuario. Ninguna clave secreta en el navegador.
    No se insertan automáticamente movimientos de importaciones ni se sustituyen datos sin elegirlo.
@@ -35101,6 +35195,7 @@ function v10Protect(state,message){
 function v10LiveStop(){
  clearTimeout(v10PullScheduled);clearInterval(v10ProbeTimer);clearTimeout(v11LiveRetryTimer);clearTimeout(v11AppleSyncTimer);
  v10PullScheduled=0;v10ProbeTimer=0;v11LiveRetryTimer=0;v11AppleSyncTimer=0;v11AppleSyncRetries=0;
+ v402RealtimeStatus("CLOSED");
  const c=v10Channel;v10Channel=null;v10WatchedUser='';v10RemoteQueued=false;
  if(c&&f33Api)try{f33Api.removeChannel(c)}catch(err){console.warn('Supabase realtime remove:',err)}
 }
@@ -35151,7 +35246,7 @@ async function v10PullRemote(){
    v10Protect('error','No existe un documento confirmado para esta cuenta. El estado anterior no se considera vigente.');
    return;
   }
-  if(check.data.actualizado_en===f33Stamp||!f33Active||f33User?.id!==userId)return;
+  if(check.data.actualizado_en===f33Stamp||!f33Active||f33User?.id!==userId){if(check.data.actualizado_en===f33Stamp)v402AutoConfirmed();return;}
   const full=await f33Api.from('finanzas_estado').select('documento,actualizado_en').eq('user_id',userId).maybeSingle();
   if(full.error)throw full.error;
   if(!full.data?.documento||!f33Active||f33User?.id!==userId)return;
@@ -35161,6 +35256,7 @@ async function v10PullRemote(){
   window.__f360BaseStamp=f33Stamp;
   v99Invalidate();render();
   f33SetStatus('ok','✓ Actualizado desde Supabase');
+  v402AutoConfirmed();
  }catch(err){console.warn('Realtime: no se pudo cargar el estado remoto',err);f33SetStatus('error','No se pudieron comprobar cambios remotos');}
  finally{v10Pulling=false;v10LastPull=Date.now();if(v10RemoteQueued&&!f33Dirty&&!f33Saving){v10RemoteQueued=false;v10SchedulePull(0);}}
 }
@@ -35177,6 +35273,7 @@ function v10LiveStart(){
      if(payload.new?.status==='pending')v11ScheduleAppleSync(40);
    })
    .subscribe(status=>{
+    v402RealtimeStatus(status);
     if(!f33Active||f33User?.id!==uid)return;
     if(status==='SUBSCRIBED'){
      clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=0;
@@ -35424,6 +35521,7 @@ function f33LoginScreen(){
 }
 function f33SetStatus(state,label){
  f34SyncState=state;f34SyncLabel=label;f34PanelUpdate();
+ if(state==='ok')v402AutoConfirmed();else v402Paint();
  if(f33Active){
   if(state==='saving')v10Protect('saving',label);
   else if(state==='conflict')v10Protect('conflict',label);
@@ -70392,5 +70490,15 @@ function v401FinancialLogicSection(){
 }
 
 </script>
+<style id="v402-sync-styles">
+.v402-sync{position:relative!important;flex:0 0 35px!important;width:35px!important;height:35px!important;min-width:35px!important;min-height:35px!important;padding:0!important;display:inline-grid!important;place-items:center!important;border-radius:12px!important;border:1px solid rgba(140,150,165,.17)!important;background:transparent!important;color:#8e9aaa!important;box-shadow:none!important;cursor:pointer!important;transition:color .18s,background .18s!important}
+.v402-sync:hover{background:rgba(127,127,127,.11)!important}.v402-sync svg{width:19px!important;height:19px!important;stroke:currentColor!important}.v402-sync i{position:absolute;right:5px;bottom:5px;width:6px;height:6px;border-radius:50%;background:currentColor;border:1px solid var(--bg,#fff);pointer-events:none}
+.v402-sync[data-status="synced"]{color:#10b981!important}.v402-sync[data-status="syncing"]{color:#60a5fa!important}.v402-sync[data-status="syncing"] svg{animation:v402-rotate .9s linear infinite}.v402-sync[data-status="error"]{color:#ef6464!important}.v402-sync[data-status="pending"]{color:#d3a45d!important}
+body.theme-black .v402-sync,body.theme-dark .v402-sync{background:#080808!important;border-color:#242424!important}body.theme-black .v402-sync:hover{background:#181818!important}
+.vive-mobile-top .v402-sync{flex:0 0 32px!important;width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important}
+#v402-popover{position:fixed;right:15px;top:75px;z-index:99990;padding:13px 15px;max-width:min(300px,calc(100vw - 30px));border-radius:14px;background:#fff;color:#28354c;border:1px solid #dae2ef;box-shadow:0 12px 35px #0002;font-size:12px}#v402-popover[hidden]{display:none!important}#v402-popover strong,#v402-popover small{display:block}#v402-popover small{opacity:.72;line-height:1.5;margin-top:5px}
+body.theme-black #v402-popover,body.theme-dark #v402-popover{background:#101010;color:#fafafa;border-color:#303030}
+@keyframes v402-rotate{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.v402-sync svg{animation:none!important}}
+</style>
 </body>
 </html>
