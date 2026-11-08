@@ -25356,6 +25356,12 @@ body:has(#modal-root .modal-layer) #v8-apple-dock{display:none!important}
 body.theme-black .v9-apple-personalization{background:#080808;border-color:#292929}
 @media(max-width:790px){.v9-apple-personalization{padding:15px}.v9-apple-personalization-actions{width:100%}.v9-apple-personalization-actions button{flex:1}}
 </style>
+<style id="v11-direct-realtime-ui">
+/* An empty Apple Pay inbox disappears completely, releasing its place in Flex/Grid. */
+.v8-apple-feature[hidden],.v9-apple-personalization[hidden],
+[data-v105-widget="applePayInbox"][hidden]{display:none!important}
+#v8-apple-dock{display:none!important}
+</style>
 <style id="v10-cloud-integrity">
 /* V10: Supabase is authoritative. Hide provisional financial state until the server confirms it. */
 #v10-sync-veil{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;background:#08090c;color:#fff;padding:24px;text-align:center;font-family:inherit}
@@ -28594,10 +28600,13 @@ const persist=()=>{
   if(typeof v31BeforePersist==='function')v31BeforePersist();
   if(!window.__f360CloudUid){return false;}
   let saved=false;
-  saved=v360WritePending();
-  if(!saved){f33SetStatus('error','Sin almacenamiento local seguro');v10Protect('error','No hay espacio para respaldar este cambio. No cierres esta sesión.');return false;}
-  if(typeof window.__f360CloudPersist==='function')window.__f360CloudPersist();
-  return true;
+   saved=v360WritePending();
+   if(!saved){
+    if(!navigator.onLine){f33SetStatus('error','Sin conexión ni respaldo local');v10Protect('error','No hay red ni espacio de recuperación. Reconecta antes de continuar.');return false;}
+    console.warn('Copia de recuperación local no disponible; se confirmará el cambio directamente contra Supabase.');
+   }
+   if(typeof window.__f360CloudPersist==='function'){window.__f360CloudPersist();return true;}
+   f33SetStatus('error','La sesión de Supabase no está lista');return false;
  }catch(e){console.error('Error preparando registro',e);toast('No se pudo preparar el registro; los datos locales permanecen sin alterar.');return false;}
 };
 const fx=(v,c)=>num(v)*(c==='USD'?num(db.settings.fx)||0:1);
@@ -29211,7 +29220,7 @@ function mobileHome(){
    ${v360HomeLinks()}
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
-   ${v105Config().visible.includes('applePayInbox')?v7ApplePayMobileWidget():''}
+   ${v105Config().visible.includes('applePayInbox')&&v5ApplePayPending().length?v7ApplePayMobileWidget():''}
    ${v105CapacityWidget(true)}
    <!-- V319: tarjeta resumen redundante eliminada; presupuesto sigue en su módulo. -->
    <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div><div class="v96-month-due-note">Pendiente hasta fin de mes, incluidos vencidos: <strong>${money(pendingTotal,'DOP',2)}</strong></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
@@ -31904,11 +31913,11 @@ function v133TomorrowWidgetBody(){
 }
 function kpiStudio(){
  v318InitializeDashboard();
- const selected=widgetsState(),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
+ const selected=widgetsState().filter(id=>id!=='applePayInbox'||v5ApplePayPending().length),all=widgetCatalog(),editing=Boolean(ui.widgetEditor);
  const map=Object.fromEntries(all.map(x=>[x[0],x])),chartKeys=VIVE_CHART_KEYS;
  const libraryGroups=[['all','Todo Personalización'],...v332PersonalizationGroups(v105Config()).map(g=>[g.key,g.label])];
  const group=libraryGroups.some(g=>g[0]===ui.widgetCatalogFilter)?ui.widgetCatalogFilter:'all',query=v71SearchNormalize(ui.widgetSearch||'');
- const visible=all.filter(x=>(group==='all'||x[3]===group)&&(!query||v71SearchNormalize(x[1]+' '+x[0]+' '+(V105_WIDGETS.find(y=>y.id===x[0])?.hint||'')).includes(query)));
+ const visible=all.filter(x=>(x[0]!=='applePayInbox'||v5ApplePayPending().length)&&(group==='all'||x[3]===group)&&(!query||v71SearchNormalize(x[1]+' '+x[0]+' '+(V105_WIDGETS.find(y=>y.id===x[0])?.hint||'')).includes(query)));
  const tile=(id,i)=>{
    const def=map[id];if(!def)return '';const isChart=chartKeys.has(id),isReference=V197_REFERENCE_CHART_IDS.includes(id),m=widgetPicture(id),size=widgetSize(id);
    const height=widgetHeight(id);
@@ -31936,7 +31945,7 @@ function kpiStudio(){
   return `<section class="ws-catalog-section v332-catalog-section" data-v332-group="${g.key}"><div class="ws-catalog-heading"><strong>${sanitize(g.title)}</strong><small>${part.length} elementos · mismo orden de Personalización</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
  }).join('');
  return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores</h2><p>Tu Personalización móvil, en formato web. Los ${V105_WIDGETS.length} elementos se organizan por las mismas secciones; puedes redimensionar, ordenar y administrar cada uno.</p></div><div class="widgets-head-buttons"><button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Administrar gráficos'}</button></div></div>
- <section class="v8-apple-feature" aria-label="Apple Pay por clasificar en Personalización"><div class="v8-apple-feature-copy"><span class="v8-apple-feature-kicker">APPLE PAY · PERSONALIZACIÓN</span><strong>Por clasificar <em>${v5ApplePayPending().length} pendiente(s)</em></strong><p>Coloca este módulo en tu tablero: abre cada compra, selecciona categoría y subcategoría y confírmala. El movimiento permanece registrado.</p></div><div class="v8-apple-feature-actions"><button type="button" class="btn" data-act="widgetToggle" data-id="applePayInbox">${selected.includes('applePayInbox')?'Quitar del tablero':'Añadir a mi tablero'}</button><button type="button" class="btn soft" data-v8-apple-open="1">Ver compras</button></div></section>
+ <section class="v8-apple-feature" ${!v5ApplePayPending().length?'hidden':''} aria-label="Apple Pay por clasificar en Personalización"><div class="v8-apple-feature-copy"><span class="v8-apple-feature-kicker">APPLE PAY · PERSONALIZACIÓN</span><strong>Por clasificar <em>${v5ApplePayPending().length} pendiente(s)</em></strong><p>Coloca este módulo en tu tablero: abre cada compra, selecciona categoría y subcategoría y confírmala. El movimiento permanece registrado.</p></div><div class="v8-apple-feature-actions"><button type="button" class="btn" data-act="widgetToggle" data-id="applePayInbox">${selected.includes('applePayInbox')?'Quitar del tablero':'Añadir a mi tablero'}</button><button type="button" class="btn soft" data-v8-apple-open="1">Ver compras</button></div></section>
  ${editing?`<div class="v209-widget-overlay" data-act="widgetEditor" aria-hidden="true"></div><section class="ws-library" role="dialog" aria-modal="true" aria-label="Biblioteca visual de gráficos de Personalización"><header class="ws-library-heading"><div><span class="summary-tag">PERSONALIZACIÓN · VISTA WEB</span><h3>Administrar gráficos</h3><p>Vistas previas conectadas a Personalización. Arrastra o usa las flechas del tablero para ajustar cada indicador.</p></div><button type="button" class="v209-library-close" data-act="widgetEditor" aria-label="Cerrar biblioteca">×</button></header><div class="v209-widget-searchbar"><span>${icon('search')}</span><input id="v209WidgetSearch" type="search" placeholder="Buscar en toda Personalización…" autocomplete="off" aria-label="Buscar widgets" value="${sanitize(ui.widgetSearch||'')}"/><small>${selected.length} elegidos</small></div><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><footer class="v209-library-footer v332-library-footer"><span>${selected.length} de ${V105_WIDGETS.length} elementos visibles · Misma organización que Personalización</span><div class="v332-library-commands"><button type="button" data-act="v332AddAll">Añadir todos</button><button type="button" data-act="v332SyncOrder">Orden de Personalización</button><button type="button" data-act="widgetEditor">Ver mi tablero →</button></div></footer></section>`:''}
  <div class="ws-dashboard-label"><div><h3>Tu tablero web</h3><p>Arrastra las tarjetas para reordenarlas o su esquina para ajustar ancho y alto. Usa las flechas si prefieres moverlas paso a paso.</p></div><strong>${selected.length} de ${V105_WIDGETS.length}</strong></div>
  <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Administrar gráficos» para volver a añadir los elementos de Personalización.</div>'}</div>
@@ -35068,6 +35077,7 @@ let f33PendingBackup=null,f33RemoteCandidate=null;
 /* V10 — sincronización remota de todo el documento. No se finge un guardado. */
 let v10Channel=null,v10WatchedUser='',v10Pulling=false,v10PullScheduled=0,v10RemoteQueued=false;
 let v10ProbeTimer=0,v10LastPull=0,v10Protection='',v10ManualConflict=false;
+let v11LiveRetryTimer=0,v11AppleSyncTimer=0,v11AppleSyncRetries=0;
 function v10Protect(state,message){
  const panel=document.getElementById('v10-sync-veil')||(()=>{
   const root=document.createElement('section');root.id='v10-sync-veil';root.setAttribute('role','status');root.setAttribute('aria-live','polite');
@@ -35089,13 +35099,29 @@ function v10Protect(state,message){
  panel.querySelector('.v10-description').textContent=message||(state==='conflict'?'Se han conservado las versiones sin sobrescribir. No se mostrará un estado no confirmado.':state==='error'?'Los cambios siguen protegidos en este dispositivo. Reintenta cuando haya conexión.':'Los movimientos se mostrarán cuando el servidor confirme los cambios.');
 }
 function v10LiveStop(){
- clearTimeout(v10PullScheduled);clearInterval(v10ProbeTimer);v10PullScheduled=0;v10ProbeTimer=0;
+ clearTimeout(v10PullScheduled);clearInterval(v10ProbeTimer);clearTimeout(v11LiveRetryTimer);clearTimeout(v11AppleSyncTimer);
+ v10PullScheduled=0;v10ProbeTimer=0;v11LiveRetryTimer=0;v11AppleSyncTimer=0;v11AppleSyncRetries=0;
  const c=v10Channel;v10Channel=null;v10WatchedUser='';v10RemoteQueued=false;
  if(c&&f33Api)try{f33Api.removeChannel(c)}catch(err){console.warn('Supabase realtime remove:',err)}
 }
-function v10SchedulePull(delay=150){
- if(!f33Active||!f33User||v10PullScheduled)return;
- v10PullScheduled=setTimeout(()=>{v10PullScheduled=0;v10PullRemote()},delay);
+function v10SchedulePull(delay=30){
+ if(!f33Active||!f33User)return;
+ if(v10PullScheduled)clearTimeout(v10PullScheduled);
+ v10PullScheduled=setTimeout(()=>{v10PullScheduled=0;void v10PullRemote()},delay);
+}
+function v11ScheduleAppleSync(delay=80){
+ if(!f33Active||!f33User||!f33Api||!navigator.onLine)return;
+ clearTimeout(v11AppleSyncTimer);
+ v11AppleSyncTimer=setTimeout(()=>{
+  v11AppleSyncTimer=0;
+  if(!f33Active||!f33User||!navigator.onLine)return;
+  if(f33Dirty||f33Saving||f33Conflict||v212Busy){
+   if(v11AppleSyncRetries++<20)v11ScheduleAppleSync(700);
+   return;
+  }
+  v11AppleSyncRetries=0;
+  void v212Sync();
+ },delay);
 }
 async function v10ResolveConflict(){
  if(!f33User||!f33Active||!f33Api)return false;
@@ -35112,7 +35138,8 @@ async function v10ResolveConflict(){
  return true;
 }
 async function v10PullRemote(){
- if(v10Pulling||!f33Active||!f33User||!f33Api||!navigator.onLine)return;
+ if(v10Pulling){v10RemoteQueued=true;return;}
+ if(!f33Active||!f33User||!f33Api||!navigator.onLine)return;
  if(f33Saving){v10RemoteQueued=true;return;}
  if(f33Dirty){v10RemoteQueued=true;if(!f33Conflict)f33Flush();return;}
  if(f33Conflict)return;
@@ -35120,7 +35147,11 @@ async function v10PullRemote(){
  try{
   const check=await f33Api.from('finanzas_estado').select('actualizado_en').eq('user_id',userId).maybeSingle();
   if(check.error)throw check.error;
-  if(!check.data||check.data.actualizado_en===f33Stamp||!f33Active||f33User?.id!==userId)return;
+  if(!check.data){
+   v10Protect('error','No existe un documento confirmado para esta cuenta. El estado anterior no se considera vigente.');
+   return;
+  }
+  if(check.data.actualizado_en===f33Stamp||!f33Active||f33User?.id!==userId)return;
   const full=await f33Api.from('finanzas_estado').select('documento,actualizado_en').eq('user_id',userId).maybeSingle();
   if(full.error)throw full.error;
   if(!full.data?.documento||!f33Active||f33User?.id!==userId)return;
@@ -35131,24 +35162,46 @@ async function v10PullRemote(){
   v99Invalidate();render();
   f33SetStatus('ok','✓ Actualizado desde Supabase');
  }catch(err){console.warn('Realtime: no se pudo cargar el estado remoto',err);f33SetStatus('error','No se pudieron comprobar cambios remotos');}
- finally{v10Pulling=false;v10LastPull=Date.now();}
+ finally{v10Pulling=false;v10LastPull=Date.now();if(v10RemoteQueued&&!f33Dirty&&!f33Saving){v10RemoteQueued=false;v10SchedulePull(0);}}
 }
 function v10LiveStart(){
  if(!f33Active||!f33Api||!f33User)return;
- if(v10WatchedUser===f33User.id)return;
+ if(v10WatchedUser===f33User.id&&v10Channel)return;
  v10LiveStop();v10WatchedUser=f33User.id;
+ const uid=f33User.id;
  try{
-  v10Channel=f33Api.channel('finanzas360-estado-'+f33User.id)
-   .on('postgres_changes',{event:'UPDATE',schema:'public',table:'finanzas_estado',filter:'user_id=eq.'+f33User.id},()=>v10SchedulePull(150))
-   .subscribe(status=>{if(status==='SUBSCRIBED')v10SchedulePull(100)});
+  v10Channel=f33Api.channel('finanzas360-direct-'+uid)
+   .on('postgres_changes',{event:'*',schema:'public',table:'finanzas_estado',filter:'user_id=eq.'+uid},()=>v10SchedulePull(0))
+   .on('postgres_changes',{event:'INSERT',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},()=>v11ScheduleAppleSync(40))
+   .on('postgres_changes',{event:'UPDATE',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},payload=>{
+     if(payload.new?.status==='pending')v11ScheduleAppleSync(40);
+   })
+   .subscribe(status=>{
+    if(!f33Active||f33User?.id!==uid)return;
+    if(status==='SUBSCRIBED'){
+     clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=0;
+     v10SchedulePull(0);v11ScheduleAppleSync(100);
+    }else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)){
+     // WebSocket reconnection failure must never be mistaken for synchronized data.
+     v11LiveRetryTimer=setTimeout(()=>{
+      v11LiveRetryTimer=0;
+      if(f33Active&&f33User?.id===uid&&navigator.onLine)v10LiveStartForce();
+     },2500);
+    }
+   });
  }catch(err){console.warn('Realtime: se usará comprobación periódica',err)}
- // 20s fallback: comprobación ligera del sello, descarga completa solo si cambió.
- v10ProbeTimer=setInterval(()=>{if(f33Active&&!document.hidden)v10SchedulePull(0)},20000);
- v10SchedulePull(100);
+ // Realtime + a lightweight 10s server revision check (also recovers from missed events).
+ v10ProbeTimer=setInterval(()=>{if(f33Active&&!document.hidden)v10SchedulePull(0)},10000);
+ v10SchedulePull(0);
 }
-window.addEventListener('focus',()=>v10SchedulePull(100));
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)v10SchedulePull(100)});
-window.addEventListener('online',()=>{if(f33Dirty&&!f33Conflict)f33Flush();else v10SchedulePull(50)});
+function v10LiveStartForce(){
+ if(!f33Active||!f33User)return;
+ // Reset socket/channel, keep server-state validation and polling active.
+ v10WatchedUser='';v10LiveStart();
+}
+window.addEventListener('focus',()=>{v10SchedulePull(0);v11ScheduleAppleSync(100);});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){v10SchedulePull(0);v11ScheduleAppleSync(100);}});
+window.addEventListener('online',()=>{if(f33Dirty&&!f33Conflict)f33Flush();else v10SchedulePull(0);v10LiveStartForce();v11ScheduleAppleSync(200);});
 
 // Token de generación: una respuesta anterior nunca reemplaza la sesión cargada después.
 let f151CloudLoadToken=0;
@@ -35436,7 +35489,7 @@ async function f33FirstStart(importLocal){
 function f33Ready(){
  v99Invalidate();
  if(!f33User||!f33Stamp)return;window.__f360CloudUid=f33User.id;
- window.__f360CloudPersist=()=>{f33Dirty=true;if(f33Conflict){f33SetStatus('conflict','Versiones simultáneas protegidas');return;}f33SetStatus('saving','Sincronizando con Supabase…');clearTimeout(f33Timeout);f33Timeout=setTimeout(()=>f33Flush(),120)};
+ window.__f360CloudPersist=()=>{f33Dirty=true;if(f33Conflict){f33SetStatus('conflict','Versiones simultáneas protegidas');return;}f33SetStatus('saving','Confirmando directamente en Supabase…');clearTimeout(f33Timeout);if(!f33Saving)window.__f360LastPersistPromise=f33Flush();};
  f33Active=true;f33Phase='ready';f33Dirty=false;window.__f360BaseStamp=f33Stamp;
  v333RememberTheme();
  const existingSplash=document.getElementById('f33-gate');
@@ -35499,14 +35552,15 @@ async function f33Flush(){
   f33Stamp=data.actualizado_en;window.__f360BaseStamp=f33Stamp;v360RememberBase(snapshot,f33Stamp);
   if(!f33Dirty){try{localStorage.removeItem(f33CloudKey())}catch(err){}}
   else{try{localStorage.setItem(f33CloudKey(),JSON.stringify({pending:true,baseStamp:f33Stamp,documento:db,savedAt:new Date().toISOString()}))}catch(err){}}
-  f33SetStatus(f33Dirty?'saving':'ok',f33Dirty?'Guardando cambios siguientes…':'✓ Guardado en Supabase');
+  f33SetStatus(f33Dirty?'saving':'ok',f33Dirty?'Confirmando cambios siguientes…':'✓ Confirmado en Supabase');
+  if(!f33Dirty)v11ScheduleAppleSync(100);
  }catch(err){f33Dirty=true;f33SetStatus('error','Error de nube · copia local');console.error('No se pudo sincronizar vive el hoy:',err)}
  finally{
   f33Saving=false;
   if(f33Conflict&&f33Dirty&&navigator.onLine&&!v10ManualConflict){
-   Promise.resolve().then(()=>v10ResolveConflict()).then(ok=>{if(ok){clearTimeout(f33Timeout);f33Timeout=setTimeout(f33Flush,150)}})
+   Promise.resolve().then(()=>v10ResolveConflict()).then(ok=>{if(ok){clearTimeout(f33Timeout);f33Timeout=setTimeout(f33Flush,0)}})
     .catch(err=>{console.warn('Conciliación:',err);v10Protect('conflict',err.message)});
-  }else if(f151SnapshotReady&&f33Dirty&&!f33Conflict&&navigator.onLine){clearTimeout(f33Timeout);f33Timeout=setTimeout(f33Flush,600)}
+  }else if(f151SnapshotReady&&f33Dirty&&!f33Conflict&&navigator.onLine){clearTimeout(f33Timeout);f33Timeout=setTimeout(f33Flush,0)}
   else if(v10RemoteQueued){v10RemoteQueued=false;v10SchedulePull(100)}
   if(!f33Dirty&&!f33Saving&&!f33Conflict){v10Protect('ok');}
   else if(f33Conflict){v10Protect('conflict','El servidor no aceptó un cambio. Se conservó tu copia sin modificar Supabase.');}
@@ -35529,7 +35583,7 @@ async function f33Logout(){
  v10LiveStop();v10ManualConflict=false;v10Protect('ok');
  ++f151CloudLoadToken; // invalida cargas remotas aún pendientes antes de cambiar de sesión
  try{if(f33Api)await f33Api.auth.signOut({scope:'local'})}catch(err){console.warn('No se pudo cerrar completamente la sesión:',err)}
- f33User=null;v360BaseDoc=null;v360BaseUserId=null;f33Stamp=null;f33Active=false;f33Dirty=false;f33Conflict=false;window.__f360CloudUid=null;window.__f360BaseStamp=null;window.__f360CloudPersist=null;
+ f33User=null;v360BaseDoc=null;v360BaseUserId=null;window.__f360LastPersistPromise=null;f33Stamp=null;f33Active=false;f33Dirty=false;f33Conflict=false;window.__f360CloudUid=null;window.__f360BaseStamp=null;window.__f360CloudPersist=null;
  db=init();document.getElementById('app').innerHTML='';const badge=document.getElementById('f33-cloud-badge');if(badge)badge.hidden=true;
  f33LoginScreen();
 }
@@ -38711,7 +38765,7 @@ function v105ApplyWidgetPreferences(){
  for(const el of document.querySelectorAll('[data-v105-widget]')){
   const id=el.dataset.v105Widget;
   // Las preferencias son exclusivas del Resumen móvil; escritorio es fijo.
-  el.hidden=mobile?!cfg.visible.includes(id):false;
+  el.hidden=(id==='applePayInbox'&&!v5ApplePayPending().length)||(mobile&&!cfg.visible.includes(id));
   el.style.order=mobile?String(cfg.order.indexOf(id)+1):'';
  }
 }
@@ -40598,6 +40652,7 @@ function v7ApplePayInboxBody(){
  ${pending.length>30?`<p class="v7-apple-overflow">Mostrando 30 de ${pending.length} compras pendientes.</p>`:''}`;
 }
 function v7ApplePayMobileWidget(){
+ if(!v5ApplePayPending().length)return '';
  return `<section data-v105-widget="applePayInbox" class="v105-mobile-extra v273-overview-widget v7-apple-widget" aria-label="Apple Pay, compras por clasificar"><header class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">APPLE PAY · CONTROL DE COMPRAS</span><h2>Por clasificar</h2></div><span class="v7-apple-counter">${v5ApplePayPending().length}</span></header>${v7ApplePayInboxBody()}</section>`;
 }
 function v7OpenAppleClassifier(id){
@@ -40654,12 +40709,8 @@ document.addEventListener('submit',async e=>{
 
 /* V8 · Bandeja siempre accesible: las compras sin clasificar no dependen de un toast efímero. */
 function v8AppleDock(){
- const count=v5ApplePayPending().length;
- let dock=document.getElementById('v8-apple-dock');
- if(!count){if(dock)dock.remove();return;}
- if(!dock){dock=document.createElement('button');dock.type='button';dock.id='v8-apple-dock';dock.className='v8-apple-dock';dock.setAttribute('data-v8-apple-open','1');document.body.appendChild(dock);}
- dock.innerHTML=`${icon('apple')} <span>Apple Pay</span> <b>${count}</b>`;
- dock.setAttribute('aria-label',`${count} compras Apple Pay por clasificar. Abrir bandeja.`);
+  // V11: no floating pill on mobile or desktop. Inbox stays embedded in the page.
+  document.getElementById('v8-apple-dock')?.remove();
 }
 function v8AppleInboxModal(){
  const pending=v5ApplePayPending();
@@ -40679,7 +40730,7 @@ window.addEventListener('load',()=>{v8AppleDock();}, {once:true});
 /* Vive el hoy V5: Apple Pay — clasificación consciente y aviso contextual.
    No modifica importes, tarjetas, envíos ni sincronización remota. */
 function v5IsApplePay(t){return !!(t&&(t.applePaySource==='wallet-shortcuts'||t.applePayEventId||String(t.tags||'').split(',').includes('apple-pay')));}
-function v5NeedsAppleCategory(t){return v5IsApplePay(t)&&String(t.category||'').trim()==='Apple Pay';}
+function v5NeedsAppleCategory(t){return !t?.deleted&&v5IsApplePay(t)&&String(t.category||'').trim()==='Apple Pay';}
 function v5ApplePayPending(){return (db?.transactions||[]).filter(v5NeedsAppleCategory).sort((a,b)=>String(b.created||b.date||'').localeCompare(String(a.created||a.date||'')));}
 let v5AppleNoticeTimer=0;
 function v5ApplePayNotice(t,arrival=false){
@@ -40731,7 +40782,7 @@ async function v212ImportEvent(e,forced=false){
  const tx={id:e.id,created:new Date().toISOString(),date,type:'card_charge',amount:rnd(amount),currency:e.currency,cardId:c.id,accountId:'',toAccountId:'',loanId:'',category:'Apple Pay',subcategory:'',note:`Apple Pay · ${String(e.merchant||'Comercio').slice(0,100)}`,payee:String(e.merchant||'Comercio').slice(0,100),tags:'apple-pay',reviewed:false,flowMode:'spend',paymentFlowMode:'spend',paymentChannel:'presencial',paymentService:'',paymentSource:'card',cardOnly:'no',paymentTax:0,paymentFee:0,fxRateSnapshot:num(db.settings.fx),applePayEventId:e.id,applePaySource:'wallet-shortcuts',applePayReceivedAt:e.received_at,applePayTransactionTime:e.transaction_time||null};
  db.transactions.push(tx);
  if(!persist()){db.transactions=db.transactions.filter(t=>t.id!==tx.id);return false;}
- await f33Flush();
+ await (window.__f360LastPersistPromise||f33Flush());
  if(f33Dirty||f33Saving||f33Conflict)throw Error('La compra está pendiente de confirmar en la nube. Resuelve la sincronización; no la registres manualmente de nuevo.');
  await v212Mark(e,'imported',tx.id);
  if(!document.querySelector('#modal-root .modal-layer'))render();
@@ -41204,7 +41255,7 @@ function v273SettingsWidgetEditor(){
  };
  const sections=`<div class="v273-custom-rows v328-section-rows v344-order-free">${cfg.order.map(row).join('')}</div>`;
  return `<section class="v273-settings-customizer v316-personalization v328-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Tu espacio, a tu manera</h3><p>Mantén presionado el control de bloques para mover cualquier indicador, incluso entre áreas. También puedes usar las flechas. Tu orden se conserva en este Resumen.</p></header>
- <aside class="v9-apple-personalization" aria-label="Apple Pay por clasificar"><span class="v9-apple-eyebrow">APPLE PAY · EN TU INICIO</span><div class="v9-apple-personalization-main"><div><strong>Por clasificar <span>${v5ApplePayPending().length}</span></strong><p>Agrega este módulo a Inicio y categoriza cada compra sin alterar los saldos.</p></div><div class="v9-apple-personalization-actions"><button type="button" class="btn" data-v273-toggle="applePayInbox">${visible.has('applePayInbox')?'Ocultar de Inicio':'Mostrar en Inicio'}</button><button type="button" class="btn soft" data-v8-apple-open="1">Ver pendientes</button></div></div></aside>
+ <aside class="v9-apple-personalization" ${!v5ApplePayPending().length?'hidden':''} aria-label="Apple Pay por clasificar"><span class="v9-apple-eyebrow">APPLE PAY · EN TU INICIO</span><div class="v9-apple-personalization-main"><div><strong>Por clasificar <span>${v5ApplePayPending().length}</span></strong><p>Agrega este módulo a Inicio y categoriza cada compra sin alterar los saldos.</p></div><div class="v9-apple-personalization-actions"><button type="button" class="btn" data-v273-toggle="applePayInbox">${visible.has('applePayInbox')?'Ocultar de Inicio':'Mostrar en Inicio'}</button><button type="button" class="btn soft" data-v8-apple-open="1">Ver pendientes</button></div></div></aside>
  ${sections}
  <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. Los ${V105_WIDGETS.length} elementos conservan sus cálculos y configuraciones. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
 }
