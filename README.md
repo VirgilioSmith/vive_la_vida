@@ -1,15 +1,11 @@
-# Vive el hoy · Finanzas 360 — Versión 5
+# Vive el hoy · Finanzas 360 — Versión 9
 
-## Apple Pay · Categoría provisional y recordatorio
-- Todo **nuevo** evento importado de Wallet se registra con categoría **Apple Pay** y subcategoría vacía.
-- La categoría personalizada se crea automáticamente si no existía; el usuario puede modificarla desde Movimientos.
-- Al finalizar la sincronización, aparece un aviso dentro de la app con botón **Cambiar categoría**, que abre el editor original sin duplicar registros.
-- Si el navegador ya autorizó notificaciones, también aparece un aviso del sistema cuando la web está abierta y visible. No se solicita permiso automáticamente ni se envían Web Push en segundo plano.
-- Al reabrir la app se recuerda una compra que siga sin categorizar.
-- Se muestra el distintivo Apple Pay en el historial web y móvil, reutilizando la marca ya presente en otras vistas.
-- No se alteran los importes, métodos de contabilización, vínculos de tarjetas, funciones Supabase ni el esquema de datos.
+Mejora focalizada de Apple Pay y actividad reciente:
+- Personalización móvil: módulo destacado con activar/desactivar y abrir pendientes.
+- Inicio móvil: el widget sigue la preferencia de visibilidad.
+- Wallet y detalle de movimientos: «Categorizar compra» cuando la categoría temporal es Apple Pay.
+- Notificación del navegador: abre el clasificador específico.
+- Historial web: pulsar el título de un movimiento abre su detalle.
+- Una compra sale de pendientes tras confirmar la categoría; el distintivo Apple Pay permanece.
 
-## Alcance
-La notificación del sistema requiere permiso previamente concedido y la web abierta; recibir notificaciones **con la app cerrada** necesita una integración Web Push adicional en el servidor.
-
-Recomendación: probar una compra de prueba real y verificar su categoría, su distintivo, el cambio manual de categoría y la sincronización.
+Sin cambios en Edge Functions, importación, tokens, importes o saldos. Verificar en Safari y con Supabase real antes de publicar.

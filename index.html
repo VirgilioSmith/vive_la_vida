@@ -25298,6 +25298,64 @@ body.theme-black .v5-apple-tray,body.theme-dark .v5-apple-tray{background:#111;c
 @keyframes v5AppleIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.v5-apple-tray{animation:none}}
 </style>
+<style id="v6-wallet-transaction-detail">
+/* Scope exclusively to Wallet mobile recent activity. */
+#page .v266-wallet .v266-activity-row.v6-wallet-tx-trigger{display:flex;width:100%;align-items:center;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line,rgba(128,128,128,.16));border-radius:0;color:inherit;font:inherit;cursor:pointer;min-height:64px;padding:12px 0;gap:10px;box-sizing:border-box;}
+#page .v266-wallet .v266-activity-row.v6-wallet-tx-trigger:last-child{border-bottom:0;}
+#page .v266-wallet .v6-wallet-tx-trigger .v266-activity-info{min-width:0;flex:1;}
+#page .v266-wallet .v6-wallet-tx-trigger .v266-activity-info strong{overflow-wrap:anywhere;}
+#page .v266-wallet .v6-wallet-tx-trigger>b{flex-shrink:0;white-space:nowrap;}
+#page .v266-wallet .v6-wallet-tx-chevron{opacity:.48;display:inline-flex;flex-shrink:0;transform:scale(.8);}
+#page .v266-wallet .v6-wallet-tx-trigger:active{opacity:.7;}
+#page .v266-wallet .v6-wallet-tx-trigger:focus-visible{outline:2px solid var(--accent,#64748b);outline-offset:3px;border-radius:10px;}
+.v6-wallet-detail-modal{width:min(94vw,480px);max-height:min(88dvh,720px);overflow:auto;}
+.v6-wallet-detail-content{padding:18px 22px 0;}
+.v6-wallet-detail-amount{display:flex;flex-direction:column;gap:8px;padding:6px 0 22px;border-bottom:1px solid var(--line,rgba(128,128,128,.15));}
+.v6-wallet-detail-amount small{font-size:12px;color:var(--muted,#929292);display:flex;align-items:center;gap:6px;}
+.v6-wallet-detail-amount>strong{font-size:clamp(28px,7vw,38px);letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1.12;}
+.v6-wallet-detail-amount>span{font-weight:650;overflow-wrap:anywhere;}
+.v6-wallet-detail-lines{display:grid;gap:0;padding:8px 0;}
+.v6-wallet-detail-line{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:12px 0;font-size:14px;border-bottom:1px solid var(--line,rgba(128,128,128,.1));}
+.v6-wallet-detail-line>span{color:var(--muted,#929292);}
+.v6-wallet-detail-line>strong{text-align:right;max-width:65%;overflow-wrap:anywhere;font-size:14px;}
+.v6-wallet-detail-hint{font-size:12px;color:var(--muted,#929292);line-height:1.5;margin:12px 0 16px;}
+.v6-wallet-detail-actions{display:flex;gap:10px;padding:14px 22px max(18px,env(safe-area-inset-bottom));}
+.v6-wallet-detail-actions button{min-height:44px;flex:1;}
+@media(max-width:540px){.v6-wallet-detail-layer{align-items:flex-end!important}.v6-wallet-detail-modal{width:100%;max-width:100%;border-radius:24px 24px 0 0;max-height:90dvh;}.v6-wallet-detail-actions{position:sticky;bottom:0;background:var(--panel,var(--surface,#fff));}}
+body.theme-black .v6-wallet-detail-modal{background:#080808;color:#f5f5f5;border-color:#252525;}
+body.theme-black .v6-wallet-detail-actions{background:#080808;}
+</style>
+
+<style id="v7-apple-inbox-ui">
+.v7-apple-widget{min-width:0}.v7-apple-counter{display:inline-flex;min-width:28px;height:28px;padding:0 9px;border-radius:99px;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:var(--surface-2,#202020);border:1px solid var(--border,#444)}
+.v7-apple-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 2px 12px;font-weight:750;font-size:13px}.v7-apple-summary small{font-weight:500;opacity:.65}.v7-apple-queue{display:grid;gap:8px}.v7-apple-item{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,rgba(125,125,125,.22));border-radius:15px;padding:13px 14px;text-align:left;background:var(--card,#191919);color:inherit;cursor:pointer;min-height:70px}.v7-apple-item:hover,.v7-apple-item:focus-visible{border-color:var(--accent,#8c8c8c);outline-offset:2px}.v7-apple-copy,.v7-apple-value{min-width:0;display:grid;gap:5px}.v7-apple-copy strong{font-size:13px;line-height:1.4;overflow-wrap:anywhere}.v7-apple-copy small,.v7-apple-value small{font-size:11px;opacity:.66}.v7-apple-value{text-align:right;flex:0 0 auto;font-weight:800;white-space:nowrap}.v7-apple-value small{font-weight:500;display:flex;align-items:center;justify-content:flex-end;gap:4px}.v7-apple-value svg{width:12px;height:12px}.v7-apple-empty{text-align:center;display:grid;justify-items:center;gap:7px;padding:24px 14px}.v7-apple-empty strong{font-size:15px}.v7-apple-empty p{max-width:290px;font-size:12px;opacity:.7;margin:0}.v7-apple-emblem{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;border:1px solid currentColor;opacity:.65}.v7-apple-overflow{font-size:11px;opacity:.6}
+.v7-apple-modal{max-width:470px;width:min(94vw,470px)}.v7-apple-modal-eyebrow{font-size:11px;display:inline-flex;align-items:center;gap:6px}.v7-apple-purchase{display:grid;gap:7px;padding:16px;border:1px solid var(--line,rgba(125,125,125,.22));border-radius:16px;margin-bottom:18px}.v7-apple-purchase strong{font-size:17px}.v7-apple-purchase b{font-size:25px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.v7-apple-purchase small{opacity:.6;font-size:12px}.v7-apple-field{display:grid;gap:7px;margin-bottom:14px;font-size:13px;font-weight:650}.v7-apple-field select{min-height:46px;max-width:100%}.v7-apple-privacy{font-size:12px;line-height:1.5;opacity:.68}.v7-apple-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.v7-apple-actions button{min-height:44px}.v7-apple-submit:disabled{opacity:.65;cursor:wait}
+body.theme-black .v7-apple-item,body.theme-black .v7-apple-purchase{background:#0c0c0c;border-color:#303030}body.theme-black .v7-apple-counter{background:#161616;border-color:#333}
+@media(max-width:790px){.v7-apple-summary{flex-wrap:wrap}.v7-apple-item{padding:12px;gap:8px}.v7-apple-copy strong{font-size:12px}.v7-apple-value{font-size:12px}.v7-apple-modal{max-height:calc(100dvh - 36px);overflow:auto}.v7-apple-actions{display:grid;grid-template-columns:1fr 1fr}}
+</style>
+<style id="v8-apple-usability">
+.v8-activity-button{appearance:none;border:0;background:transparent;width:100%;font:inherit;color:inherit;text-align:left;cursor:pointer;display:flex;align-items:center;min-height:58px;padding:8px 2px}.v8-activity-button:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:10px}.v8-row-arrow{opacity:.45;flex-shrink:0}.v8-row-arrow svg{width:15px;height:15px}
+.v8-apple-feature{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:19px 22px;margin:14px 0 20px;background:var(--panel,var(--surface,#f8f8f8));border:1px solid var(--line,rgba(128,128,128,.2));border-radius:20px}.v8-apple-feature-copy{flex:1 1 280px}.v8-apple-feature-kicker{font-size:10px;letter-spacing:.14em;font-weight:800;color:var(--muted,#777)}.v8-apple-feature-copy>strong{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:20px;letter-spacing:-.035em;margin-top:5px}.v8-apple-feature-copy em{font-style:normal;border-radius:99px;padding:4px 9px;font-size:11px;background:var(--surface-2,rgba(128,128,128,.12))}.v8-apple-feature-copy p{font-size:12px;color:var(--muted,#777);line-height:1.5;margin:6px 0 0}.v8-apple-feature-actions{display:flex;gap:8px;flex-wrap:wrap}.v8-apple-feature-actions button{min-height:40px}
+.v8-apple-dock{position:fixed;right:18px;bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:9990;display:flex;align-items:center;gap:7px;background:#171717;color:white;border:1px solid #454545;box-shadow:0 10px 36px rgba(0,0,0,.28);border-radius:999px;padding:10px 12px;font:700 12px/1.2 inherit;cursor:pointer}.v8-apple-dock svg{width:16px;height:16px}.v8-apple-dock b{min-width:23px;min-height:23px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#111;font-size:11px}.v8-apple-dock:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.v8-inbox-modal{width:min(94vw,560px);max-height:85dvh;overflow:auto}.v8-inbox-list{padding:4px 20px 23px}.v8-inbox-list .v7-apple-item{min-height:62px}
+@media(max-width:790px){.v8-apple-dock{right:12px;bottom:calc(87px + env(safe-area-inset-bottom,0px));padding:9px 11px}.v8-apple-feature{padding:15px}.v8-apple-feature-actions{width:100%}.v8-apple-feature-actions button{flex:1}.v8-activity-button{padding:8px 0}.v8-inbox-list{padding:4px 14px 20px}}
+body.theme-black .v8-apple-feature{background:#080808;border-color:#282828}body.theme-black .v8-apple-feature-copy em{background:#202020;color:#fafafa}
+</style>
+<style id="v9-apple-polish">
+.v9-apple-personalization{padding:18px;margin:14px 0 18px;border:1px solid var(--line,rgba(120,120,120,.22));border-radius:20px;background:var(--panel,#f8f8f8)}
+.v9-apple-eyebrow{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;opacity:.65;margin-bottom:9px}
+.v9-apple-personalization-main{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.v9-apple-personalization-main>div:first-child{flex:1 1 230px}
+.v9-apple-personalization-main strong{font-size:19px;letter-spacing:-.035em}
+.v9-apple-personalization-main strong span{display:inline-grid;place-items:center;min-width:23px;height:23px;padding:0 5px;border-radius:99px;font-size:12px;color:#fff;background:#1b1b1b}
+.v9-apple-personalization-main p{font-size:12px;line-height:1.5;opacity:.7;margin:6px 0 0}
+.v9-apple-personalization-actions{display:flex;gap:8px;flex-wrap:wrap}.v9-apple-personalization-actions button{min-height:43px}
+.v9-ledger-detail{border:0;background:none;padding:0;cursor:pointer;text-align:left;font:inherit;color:inherit}.v9-ledger-detail:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:5px}
+.v6-wallet-detail-actions .v9-apple-classify{min-height:46px}
+body:has(#modal-root .modal-layer) #v8-apple-dock{display:none!important}
+body.theme-black .v9-apple-personalization{background:#080808;border-color:#292929}
+@media(max-width:790px){.v9-apple-personalization{padding:15px}.v9-apple-personalization-actions{width:100%}.v9-apple-personalization-actions button{flex:1}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -28968,7 +29026,7 @@ function v273OverviewExtraWidgets(){
  // Subscriptions, cards-to-pay and credit-card summaries are still available
  // in their own modules; financial records remain unchanged.
  const recent=(recentTx()||[]).slice(0,4);
- const activity=recent.map(t=>`<div class="v273-widget-row"><span class="v273-widget-symbol">${icon(['income','bank_reward','card_reward'].includes(t.type)?'up':'wallet')}</span><span class="v273-widget-copy"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b></div>`).join('');
+ const activity=recent.map(t=>`<button type="button" class="v273-widget-row v8-activity-button" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Abrir movimiento de ${sanitize(transactionTitle(t))}"><span class="v273-widget-symbol">${icon(['income','bank_reward','card_reward'].includes(t.type)?'up':'wallet')}</span><span class="v273-widget-copy"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b><span aria-hidden="true" class="v8-row-arrow">${icon('arrow')}</span></button>`).join('');
  const head=(eyebrow,title,link,text)=>`<div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">${eyebrow}</span><h2>${title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${link}">${text} ${icon('arrow')}</button></div>`;
  return `<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver historial')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
 ${v294BankingWidgets()}${v309ExtraCharts()}`;
@@ -29138,6 +29196,7 @@ function mobileHome(){
    ${v360HomeLinks()}
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
+   ${v105Config().visible.includes('applePayInbox')?v7ApplePayMobileWidget():''}
    ${v105CapacityWidget(true)}
    <!-- V319: tarjeta resumen redundante eliminada; presupuesto sigue en su módulo. -->
    <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div><div class="v96-month-due-note">Pendiente hasta fin de mes, incluidos vencidos: <strong>${money(pendingTotal,'DOP',2)}</strong></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
@@ -29232,6 +29291,31 @@ function v371CardReturnWidget(c){
  </section>`;
 }
 
+/* V6 · Wallet móvil: ficha de transacción solo lectura, edición mediante el editor financiero existente. */
+function v6WalletTransactionDetail(id){
+ const t=(db.transactions||[]).find(row=>String(row.id)===String(id));
+ if(!t){toast('Este movimiento ya no está disponible.');return;}
+ const c=t.cardId?card(t.cardId):null;
+ const item=(label,value)=>`<div class="v6-wallet-detail-line"><span>${label}</span><strong>${value}</strong></div>`;
+ const title=sanitize(transactionTitle(t));
+ const category=sanitize(t.category||'Sin categoría');
+ const subcategory=t.subcategory?` · ${sanitize(t.subcategory)}`:'';
+ const editable=TRANSACTION_EDITABLE.has(t.type)||['personal_issue','personal_settlement'].includes(t.type);
+ const content=`<div class="v6-wallet-detail-amount"><small>${sanitize(TRANSL[t.type]||t.type)} ${v213ApplePayBadge(t)}</small><strong>${txDisplay(t)}</strong><span>${title}</span></div>
+ <div class="v6-wallet-detail-lines">
+ ${item('Fecha',sanitize(prettyDate(t.date)))}
+ ${item('Tarjeta',sanitize(c?.name||'Tarjeta no disponible'))}
+ ${item('Moneda',sanitize(t.currency||'DOP'))}
+ ${item('Categoría',category+subcategory)}
+ ${item('Estado',t.reviewed===true?'Revisado':'Por revisar')}${v5NeedsAppleCategory(t)?item('Apple Pay','Pendiente de clasificar'):''}
+ ${t.paymentChannel?item('Canal',sanitize(String(t.paymentChannel))):''}
+ </div><p class="v6-wallet-detail-hint">La consulta no cambia importes ni saldos. Al editar se utilizará el formulario de Movimientos.</p>`;
+ document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false);
+ const root=document.getElementById('modal-root');
+ if(!root)return;
+ root.innerHTML=`<div class="modal-layer v6-wallet-detail-layer" data-backdrop="true"><section class="modal v6-wallet-detail-modal" role="dialog" aria-modal="true" aria-label="Detalle del movimiento"><header class="modal-head"><h2>Detalle del movimiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="v6-wallet-detail-content">${content}</div><footer class="v6-wallet-detail-actions"><button type="button" class="btn ghost" data-act="closeModal">Cerrar</button>${v5NeedsAppleCategory(t)?`<button type="button" class="btn v9-apple-classify" data-v7-apple-id="${sanitize(String(t.id))}">${icon('check')} Categorizar compra</button>`:''}${editable?`<button type="button" class="btn soft" data-act="v6WalletEditTransaction" data-id="${sanitize(String(t.id))}">${icon('edit')} Editar movimiento</button>`:''}</footer></section></div>`;
+ root.querySelector('.v6-wallet-detail-modal .close')?.focus({preventScroll:true});
+}
 /* V68 — Wallet independiente y estrictamente visual. No genera movimientos por sí sola. */
 function v68Wallet(){
  const cards=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
@@ -29250,7 +29334,7 @@ function v68Wallet(){
   const selected=c.id===active.id,bankName=bankOf(c),tier=cardTierKey(c);
   return `<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v266-physical-card v277-physical-card tier-${sanitize(tier)}"><span class="v277-card-head"><span class="v277-card-bank">${bankLogoInline(c.bankId)}<b>${sanitize(bankName||c.name)}</b></span><small>${sanitize(tierName(c))}</small></span><strong class="v277-card-title">${sanitize(c.name)}</strong><span class="v277-card-number">•••• ${sanitize(last4(c)||'••••')}</span><span class="v277-card-footer"><small>CRÉDITO · ${num(c.limitDOP)>0?'RD$':''}${num(c.limitDOP)>0&&num(c.limitUSD)>0?' / ':''}${num(c.limitUSD)>0?'US$':''}${num(c.limitDOP)<=0&&num(c.limitUSD)<=0?'RD$ / US$':''}</small>${cardNetworkMark(c)}</span></span></button>`;
  }).join('');
- const rows=history.map(t=>`<div class="v266-activity-row"><span class="v266-activity-ico">${icon(['card_payment','card_refund','card_reward'].includes(t.type)?'up':'card')}</span><span class="v266-activity-info"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b></div>`).join('');
+ const rows=history.map(t=>`<button type="button" class="v266-activity-row v6-wallet-tx-trigger" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalles de ${sanitize(transactionTitle(t))}, ${sanitize(String(txDisplay(t)).replace(/<[^>]*>/g,''))}"><span class="v266-activity-ico">${icon(['card_payment','card_refund','card_reward'].includes(t.type)?'up':'card')}</span><span class="v266-activity-info"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b><span class="v6-wallet-tx-chevron" aria-hidden="true">${icon('arrow')}</span></button>`).join('');
  const metric=(label,value,sub='')=>`<div class="v266-metric"><small>${label}</small><strong>${value}</strong>${sub?`<span>${sub}</span>`:''}</div>`;
  return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">VIVE EL HOY · WALLET</span><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
  <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${cards.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
@@ -30472,10 +30556,10 @@ function transactions(embedded=false){let tr=recentTx().filter(t=>(ui.bankScope=
 const v221Drafts=(db.pendingOperations||[]).filter(q=>{const vals=q.values||{};const date=String(vals.date||q.created||'').slice(0,10);const haystack=`${vals.note||''} ${vals.description||''} ${vals.merchant||''} ${vals.category||''} ${vals.name||''} ${vals.type||''}`.toLowerCase();return (ui.reviewFilter==='all'||ui.reviewFilter==='drafts')&&(!ui.search||haystack.includes(ui.search.toLowerCase()))&&(ui.txPeriod!=='month'||date.startsWith(ui.month))&&(ui.bankScope==='all'||vals.bankId===ui.bankScope||vals.accountId&&account(vals.accountId)?.bankId===ui.bankScope)&&(ui.transType==='all'||vals.type===ui.transType)&&(ui.v361Category==='all'||String(vals.category||'').trim()===ui.v361Category)});
 const v361Cats=[...new Set([...(db.transactions||[]).map(t=>t.category),...(db.pendingOperations||[]).map(q=>q.values?.category)].map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
 let tools=`<div class="ledger-controls"><div class="ledger-control"><label for="searchTx">Buscar movimiento</label><input type="search" class="field searchbox" id="searchTx" placeholder="Comercio, categoría, concepto…" value="${sanitize(ui.search)}"/></div><div class="ledger-control"><label for="bankFilter">Institución</label><select class="filter-select" id="bankFilter"><option value="all">Todas las instituciones</option>${db.banks.map(b=>`<option value="${b.id}" ${ui.bankScope===b.id?'selected':''}>${sanitize(b.name)}</option>`).join('')}</select></div><div class="ledger-control"><label for="v361CategoryFilter">Categoría</label><select class="filter-select" id="v361CategoryFilter"><option value="all">Todas las categorías</option>${v361Cats.map(cat=>`<option value="${sanitize(cat)}" ${ui.v361Category===cat?'selected':''}>${sanitize(cat)}</option>`).join('')}</select></div><div class="ledger-control"><label for="typeFilter">Tipo</label><select class="filter-select" id="typeFilter"><option value="all">Todos los tipos</option>${Object.entries(TRANSL).map(([k,v])=>`<option value="${k}" ${ui.transType===k?'selected':''}>${sanitize(v)}</option>`).join('')}</select></div><div class="ledger-control"><label for="txPeriod">Período</label><select class="filter-select" id="txPeriod"><option value="all" ${ui.txPeriod!=='month'?'selected':''}>Todo el historial</option><option value="month" ${ui.txPeriod==='month'?'selected':''}>Un mes</option></select></div><div class="ledger-control"><label for="reviewFilter">Estado</label><select class="filter-select" id="reviewFilter"><option value="all" ${ui.reviewFilter==='all'?'selected':''}>Todos los estados</option><option value="drafts" ${ui.reviewFilter==='drafts'?'selected':''}>Borradores · sin registrar</option><option value="pending" ${ui.reviewFilter==='pending'?'selected':''}>Registrados · por revisar</option><option value="reviewed" ${ui.reviewFilter==='reviewed'?'selected':''}>Conciliados</option></select></div>${ui.txPeriod==='month'?`<div class="ledger-control"><label for="ledgerMonth">Mes</label><input type="month" class="filter-select" id="ledgerMonth" value="${ui.month}"></div>`:''}<button class="btn sm ghost" data-act="csv" title="Exportar movimientos filtrables a CSV">${icon('download')} CSV</button></div>`;
-const mobileCards=tr.slice(0,Math.max(12,ui.v51LedgerVisible||18)).map(t=>`<article class="v51-mobile-movement"><div class="v51-mobile-movement-icon">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':t.type==='loan_payment'?'receipt':'wallet')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small><span>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||'Movimiento registrado')}</span></div><div class="v51-mobile-movement-side"><b class="${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</b><div><button type="button" data-act="editTransaction" data-id="${t.id}">Editar</button><button type="button" class="v51-delete-trigger" data-act="deleteTransaction" data-id="${t.id}" aria-label="Eliminar ${sanitize(transactionTitle(t))}">${icon('trash')}</button></div></div><div class="v265-mobile-balance"><span>Balance</span>${v265BalanceHTML(t,'mobile')}</div></article>`+v143CostMobile(t)).join('');
+const mobileCards=tr.slice(0,Math.max(12,ui.v51LedgerVisible||18)).map(t=>`<article class="v51-mobile-movement"><div class="v51-mobile-movement-icon">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':t.type==='loan_payment'?'receipt':'wallet')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small><span>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||'Movimiento registrado')}</span></div><div class="v51-mobile-movement-side"><b class="${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</b><div><button type="button" data-act="editTransaction" data-id="${t.id}">Editar</button><button type="button" class="v51-delete-trigger" data-act="deleteTransaction" data-id="${t.id}" aria-label="Eliminar ${sanitize(transactionTitle(t))}">${icon('trash')}</button></div></div><div class="v265-mobile-balance"><span>Balance</span>${v265BalanceHTML(t,'mobile')}</div></article>`+v143CostMobile(t)).join('');
 const v221DraftMobile=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<article class="v51-mobile-movement v221-draft-row"><div class="v51-mobile-movement-icon">${icon('clock')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(name)}</strong><small>${date?prettyDate(date):'Sin fecha'} · ${sanitize(TRANSL[v.type]||'Borrador')}</small><span class="v221-state draft">○ Sin contabilizar</span></div><div class="v51-mobile-movement-side"><b>${val>0?money(val,v.currency||'DOP',2):'Importe pendiente'}</b><div><button type="button" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button type="button" class="v51-delete-trigger" data-act="pendingRemove" data-id="${q.id}" aria-label="Descartar borrador">${icon('trash')}</button></div></div></article>`}).join('');
 const v221DraftRows=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<tr class="v221-draft-row"><td>${date?prettyDate(date):'—'}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">Borrador · sin efecto en saldos</div></td><td>${sanitize(TRANSL[v.type]||'Operación')}</td><td><span class="v221-state draft">○ Sin contabilizar</span></td><td>${sanitize(account(v.accountId)?.name||'—')}</td><td>${sanitize(v.category||'—')}</td><td class="right money">${val>0?money(val,v.currency||'DOP',2):'—'}</td><td class="v265-no-balance-cell" title="Borrador sin registrar">—</td><td class="right"><div class="tx-actions"><button class="btn sm soft" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar borrador">${icon('trash')}</button></div></td></tr>`}).join('');
-let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong>${t.note?`<div class="subtitle">${sanitize(t.note)}</div>`:''}${t.tags?`<span class="tx-label">${sanitize(t.tags)}</span>`:''}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||certificate(t.certificateId)?.name||'—')}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="v265-balance-cell">${v265BalanceHTML(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
+let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><button type="button" class="v9-ledger-detail" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalle de ${sanitize(transactionTitle(t))}"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong></button>${t.note?`<div class="subtitle">${sanitize(t.note)}</div>`:''}${t.tags?`<span class="tx-label">${sanitize(t.tags)}</span>`:''}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||certificate(t.certificateId)?.name||'—')}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="v265-balance-cell">${v265BalanceHTML(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
 return `<section class="ledger-world section" id="ledger-world"><div class="section-title"><div><span class="summary-tag">HISTORIAL ÚNICO · ${tr.length} MOVIMIENTOS · ${v221Drafts.length} BORRADORES</span><h2>Movimientos y estados</h2><p>Revisa, concilia y completa borradores desde el mismo historial. Cada estado indica su efecto contable.</p></div><button class="btn" data-act="newTransaction">${icon('plus')} Registrar movimiento</button></div><div class="panel no-pad ledger-card">${tools}<div class="v51-mobile-ledger">${(v221DraftMobile+mobileCards)||'<div class="empty">No hay movimientos con estos filtros.</div>'}${tr.length>Math.max(12,ui.v51LedgerVisible||18)?`<button type="button" class="v51-ledger-more" data-act="v51LedgerMore">Ver más movimientos · ${Math.max(0,tr.length-Math.max(12,ui.v51LedgerVisible||18))} restantes</button>`:''}</div><div class="table-wrap ledger-scroll"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Operación</th><th>Estado</th><th>Producto / persona</th><th>Categoría</th><th class="right">Importe</th><th>Balance</th><th class="right">Gestión</th></tr></thead><tbody>${(v221DraftRows+rows)||'<tr><td colspan="9"><div class="empty">No hay movimientos con estos filtros.</div></td></tr>'}</tbody></table></div></div>${v51RemovedMovementsPanel()}<p class="footnote">Los renglones de impuestos y comisiones son desgloses vinculados a su operación; ya están incluidos en el débito de la cuenta y en el gasto. Para modificarlos, edita la operación principal. Las marcas de revisión no modifican importes; los borradores no afectan saldos hasta completar su registro. Los consumos con tarjetas se reconocen una sola vez; los pagos y transferencias no duplican gastos. Cuando corrijas una operación vinculada a un corte bancario, revisa la conciliación contra el estado oficial.</p></section>`}
 
 function subscriptionAnalysis(){const active=v339ActiveRecurring();const mon=r=>v339MonthlyEquivalent(r.amount,r.currency,r.frequency);
@@ -31748,6 +31832,7 @@ const VIVE_CHART_KEYS=new Set(['futureCostKpi','futureCalendar','creditUtil','pa
 /* V326 · contenido de los doce módulos que Personalización ya ofrece,
    sin crear métricas ficticias ni duplicar datos contables. */
 function v326PersonalizationWidget(id){
+ if(id==='applePayInbox')return v7ApplePayInboxBody();
  const m=monthStats(),p=personalTotals();
  const active=x=>(Array.isArray(x)?x:[]).filter(r=>r&&!r.archived&&!isHidden(r));
  const cards=active(db.cards),accounts=active(db.accounts),loans=active(db.loans),certs=active(db.certificates),banks=active(db.banks);
@@ -31817,7 +31902,7 @@ function kpiStudio(){
     <div class="widget-card-top"><div>${id==='futureCostKpi'?'':`<span class="widget-kicker">${sanitize((typeof V328_CHART_KICKERS!=='undefined'&&V328_CHART_KICKERS[id])||v332GroupForId(id)?.label||'INDICADOR')}</span><h3>${sanitize(def[1])}</h3>`}</div><div class="widget-actions"><button data-act="widgetMoveUp" data-id="${sanitize(id)}" aria-label="Mover antes" title="Mover antes" ${i===0?'disabled':''}>←</button><button data-act="widgetMoveDown" data-id="${sanitize(id)}" aria-label="Mover después" title="Mover después" ${i===selected.length-1?'disabled':''}>→</button><button data-act="widgetSize" data-id="${sanitize(id)}" title="${size>=2?'Reducir a una columna':'Ampliar a dos columnas'}" aria-label="Cambiar tamaño">${size>=2?'½':'⤢'}</button><button data-act="widgetRemove" data-id="${sanitize(id)}" title="Quitar widget" aria-label="Quitar widget">×</button></div></div>
     ${id==='tomorrowCost'?v133TomorrowWidgetBody():['executiveSnapshot','incomeProjection'].includes(id)?v195Visual(id):isChart?widgetGraph(id):V105_WIDGETS.some(w=>w.id===id)?v326PersonalizationWidget(id):`<div class="widget-number ${m?.tone&&m.tone!=='neutral'?'v195-'+m.tone:''}">${m?.value||'—'}</div><p class="widget-foot">${sanitize(m?.foot||'')}</p>`}
     ${['burden','affordability','utilization'].includes(id)?`<button type="button" class="v85-widget-open" data-v85-action="capacity">Ver cálculo ${icon('arrow')}</button>`:''}
-    ${isReference?'':id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Simular una decisión ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
+    ${id==='applePayInbox'?'':isReference?'':id==='tomorrowCost'?`<button type="button" class="widget-detail v133-tomorrow-open" data-v119-open="1">Simular una decisión ${icon('arrow')}</button>`:`<button class="widget-detail" data-act="navigate" data-id="${route}">Ver detalle ${icon('arrow')}</button>`}
     <span class="v209-widget-resize" role="button" tabindex="0" title="Arrastra la esquina para cambiar el tamaño" aria-label="Redimensionar ${sanitize(def[1])} desde la esquina" data-widget-resizer="${sanitize(id)}"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m7 17 10-10M12 17l5-5M17 17h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
    </article>`;
  };
@@ -31836,6 +31921,7 @@ function kpiStudio(){
   return `<section class="ws-catalog-section v332-catalog-section" data-v332-group="${g.key}"><div class="ws-catalog-heading"><strong>${sanitize(g.title)}</strong><small>${part.length} elementos · mismo orden de Personalización</small></div><div class="ws-gallery">${part.map(catalogueTile).join('')}</div></section>`;
  }).join('');
  return `<div class="widgets-world"><div class="widgets-heading"><div><span class="summary-tag">TU TABLERO PERSONALIZADO</span><h2>Mis indicadores</h2><p>Tu Personalización móvil, en formato web. Los ${V105_WIDGETS.length} elementos se organizan por las mismas secciones; puedes redimensionar, ordenar y administrar cada uno.</p></div><div class="widgets-head-buttons"><button class="btn" data-act="widgetEditor">${icon(editing?'check':'plus')} ${editing?'Cerrar catálogo':'Administrar gráficos'}</button></div></div>
+ <section class="v8-apple-feature" aria-label="Apple Pay por clasificar en Personalización"><div class="v8-apple-feature-copy"><span class="v8-apple-feature-kicker">APPLE PAY · PERSONALIZACIÓN</span><strong>Por clasificar <em>${v5ApplePayPending().length} pendiente(s)</em></strong><p>Coloca este módulo en tu tablero: abre cada compra, selecciona categoría y subcategoría y confírmala. El movimiento permanece registrado.</p></div><div class="v8-apple-feature-actions"><button type="button" class="btn" data-act="widgetToggle" data-id="applePayInbox">${selected.includes('applePayInbox')?'Quitar del tablero':'Añadir a mi tablero'}</button><button type="button" class="btn soft" data-v8-apple-open="1">Ver compras</button></div></section>
  ${editing?`<div class="v209-widget-overlay" data-act="widgetEditor" aria-hidden="true"></div><section class="ws-library" role="dialog" aria-modal="true" aria-label="Biblioteca visual de gráficos de Personalización"><header class="ws-library-heading"><div><span class="summary-tag">PERSONALIZACIÓN · VISTA WEB</span><h3>Administrar gráficos</h3><p>Vistas previas conectadas a Personalización. Arrastra o usa las flechas del tablero para ajustar cada indicador.</p></div><button type="button" class="v209-library-close" data-act="widgetEditor" aria-label="Cerrar biblioteca">×</button></header><div class="v209-widget-searchbar"><span>${icon('search')}</span><input id="v209WidgetSearch" type="search" placeholder="Buscar en toda Personalización…" autocomplete="off" aria-label="Buscar widgets" value="${sanitize(ui.widgetSearch||'')}"/><small>${selected.length} elegidos</small></div><nav class="ws-gallery-filters" aria-label="Filtrar diseños">${libraryGroups.map(([k,v])=>`<button type="button" data-act="widgetCatalogFilter" data-id="${k}" class="${group===k?'active':''}">${v}</button>`).join('')}</nav><div class="ws-gallery-scroll">${catalogue||'<p class="widget-hint">No hay widgets para esta sección todavía.</p>'}</div><footer class="v209-library-footer v332-library-footer"><span>${selected.length} de ${V105_WIDGETS.length} elementos visibles · Misma organización que Personalización</span><div class="v332-library-commands"><button type="button" data-act="v332AddAll">Añadir todos</button><button type="button" data-act="v332SyncOrder">Orden de Personalización</button><button type="button" data-act="widgetEditor">Ver mi tablero →</button></div></footer></section>`:''}
  <div class="ws-dashboard-label"><div><h3>Tu tablero web</h3><p>Arrastra las tarjetas para reordenarlas o su esquina para ajustar ancho y alto. Usa las flechas si prefieres moverlas paso a paso.</p></div><strong>${selected.length} de ${V105_WIDGETS.length}</strong></div>
  <div class="widgets-grid ws-board">${selected.map(tile).join('')||'<div class="widget-empty">Tu espacio es completamente tuyo. Usa «Administrar gráficos» para volver a añadir los elementos de Personalización.</div>'}</div>
@@ -34163,6 +34249,8 @@ case 'quickPaySpecific':quickPaySpecific(el.dataset.kind,id);break;
 case 'quickOnline':quickOnlinePicker();break;
 case 'quickOnlineCard':closeModal();transactionForm({type:'card_charge',cardId:id||db.cards[0]?.id,paymentChannel:'internet_banking',paymentSource:'card',note:'Compra por internet'});break;
 case 'quickOnlineAccount':closeModal();transactionForm({type:'expense',accountId:id||db.accounts[0]?.id,paymentChannel:'internet_banking',paymentSource:'account',note:'Compra por internet'});break;
+case 'v6WalletTransactionDetail':v6WalletTransactionDetail(id);break;
+case 'v6WalletEditTransaction':closeModal();openTransactionEditor(id);break;
 case 'editTransaction':openTransactionEditor(id);break;
 case 'toggleReview':{let t=db.transactions.find(x=>x.id===id);if(t){t.reviewed=!t.reviewed;persist();render();toast(t.reviewed?'Movimiento marcado como revisado.':'Movimiento pendiente de revisión.')}break}
 case 'viewLedger':ui.page='register';render();document.getElementById('ledger-world')?.scrollIntoView({behavior:'smooth',block:'start'});break;
@@ -38381,6 +38469,7 @@ loanForm=function(id,preBank){
    Los datos salen del documento db ya cargado. No se añade ninguna consulta remota.
    La personalización persiste solo claves de presentación. */
 const V105_WIDGETS=[
+ {id:'applePayInbox',title:'Apple Pay · Por clasificar',hint:'Compras Wallet pendientes: asigna categoría y subcategoría desde Inicio'},
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
  {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
@@ -38415,7 +38504,7 @@ const V317_FEATURE_GRAPHS=[...V316_ESSENTIAL_GRAPHS,...V317_NEW_GRAPHS,...V318_N
 /* V332 · Una sola organización para Personalización móvil y Mis indicadores web.
    Ambos consumen V105_WIDGETS y el orden persistido de v105Config(). */
 const V332_PERSONALIZATION_AREAS=[
- {key:'position',title:'01 · TU POSICIÓN FINANCIERA',label:'Posición financiera',ids:['creditUtil','patrimonyTrend','capacity','net','accounts','banks','certificates']},
+ {key:'position',title:'01 · TU POSICIÓN FINANCIERA',label:'Posición financiera',ids:['applePayInbox','creditUtil','patrimonyTrend','capacity','net','accounts','banks','certificates']},
  {key:'budget',title:'02 · INGRESOS Y PRESUPUESTO',label:'Ingresos y presupuesto',ids:['budgetPulse','spendingFingerprint','chart','budgetTrend','activity']},
  {key:'future',title:'03 · COMPROMISOS Y PROYECCIONES',label:'Compromisos y proyecciones',ids:['futureCostKpi','futureCalendar','cashPressure','futureFlow','futureWaterfall','futureMap','futureBubbles','commitments','payments','loans']},
  {key:'other',title:'04 · RELACIONES Y OTROS MÓDULOS',label:'Relaciones',ids:['people']}
@@ -38441,10 +38530,13 @@ function v316VisibleDefaults(ids){
 function v105Config(){
  const raw=db.settings?.v105OverviewWidgets;
  const ids=V105_WIDGETS.map(w=>w.id);
- if(!raw||!Array.isArray(raw.order))return {order:v316OrderDefaults(ids),visible:v316VisibleDefaults(ids)};
+ if(!raw||!Array.isArray(raw.order))return {order:['applePayInbox',...v316OrderDefaults(ids).filter(x=>x!=='applePayInbox')],visible:v316VisibleDefaults(ids)};
  const originalOrder=raw.order.filter(x=>ids.includes(x));
  const order=[...new Set(originalOrder),...ids.filter(x=>!originalOrder.includes(x))];
+ // Nuevo módulo una sola vez, sin volver a habilitarlo si luego se desactiva.
+ if(!originalOrder.includes('applePayInbox')){const i=order.indexOf('applePayInbox');if(i>=0)order.splice(i,1);order.unshift('applePayInbox');}
  const visible=Array.isArray(raw.visible)?[...new Set(raw.visible.filter(x=>ids.includes(x)))]:v316VisibleDefaults(ids);
+ if(!originalOrder.includes('applePayInbox')&&!visible.includes('applePayInbox'))visible.push('applePayInbox');
  // V317: migrar solo los dos gráficos nuevos; las selecciones anteriores quedan intactas.
  if(!V317_NEW_GRAPHS.every(id=>originalOrder.includes(id))){
   for(const id of V317_NEW_GRAPHS)if(!originalOrder.includes(id)&&!visible.includes(id))visible.push(id);
@@ -38457,7 +38549,8 @@ function v105Config(){
    const i=visible.indexOf(oldId);if(i>=0)visible.splice(i,1);
   }
  }
- return {order:(!originalOrder.includes('budgetPulse')||!V317_NEW_GRAPHS.every(id=>originalOrder.includes(id)))?v316OrderDefaults(order):order,visible};
+ const effectiveOrder=(!originalOrder.includes('budgetPulse')||!V317_NEW_GRAPHS.every(id=>originalOrder.includes(id)))?v316OrderDefaults(order):order;
+ return {order:originalOrder.includes('applePayInbox')?effectiveOrder:['applePayInbox',...effectiveOrder.filter(x=>x!=='applePayInbox')],visible};
 }
 function v105BubblePercent(current,previous,comparison,risk=false){
  if(!comparison?.valid||!Number.isFinite(previous)||Math.abs(previous)<0.005)return '<span class="v105-bubble-pct v105-pct-empty">—</span>';
@@ -40359,6 +40452,96 @@ function v274GuessAppleCategory(e){
  const [category,subcategory]=sorted[0][0].split('\u0000');
  return {category,subcategory};
 }
+
+/* V7 · Apple Pay · Por clasificar. Reutiliza el movimiento ya importado;
+   ni cambia el importe ni envía nuevas compras a apple-pay-ingest. */
+function v7ApplePayInboxBody(){
+ const pending=v5ApplePayPending();
+ if(!pending.length)return `<div class="v7-apple-empty"><span class="v7-apple-emblem">${icon('check')}</span><strong>Todo clasificado</strong><p>Las próximas compras con Apple Pay aparecerán aquí hasta que les asignes una categoría.</p></div>`;
+ return `<div class="v7-apple-summary"><span>${pending.length} ${pending.length===1?'compra pendiente':'compras pendientes'}</span><small>Toca una para clasificarla</small></div>
+ <div class="v7-apple-queue">${pending.slice(0,30).map(t=>`<button type="button" class="v7-apple-item" data-v7-apple-id="${sanitize(String(t.id))}" aria-label="Clasificar ${sanitize(transactionTitle(t))}">
+ <span class="v7-apple-copy"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)} · Categoría provisional</small></span><span class="v7-apple-value">${txDisplay(t)}<small>Categorizar ${icon('arrow')}</small></span></button>`).join('')}</div>
+ ${pending.length>30?`<p class="v7-apple-overflow">Mostrando 30 de ${pending.length} compras pendientes.</p>`:''}`;
+}
+function v7ApplePayMobileWidget(){
+ return `<section data-v105-widget="applePayInbox" class="v105-mobile-extra v273-overview-widget v7-apple-widget" aria-label="Apple Pay, compras por clasificar"><header class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">APPLE PAY · CONTROL DE COMPRAS</span><h2>Por clasificar</h2></div><span class="v7-apple-counter">${v5ApplePayPending().length}</span></header>${v7ApplePayInboxBody()}</section>`;
+}
+function v7OpenAppleClassifier(id){
+ const t=(db.transactions||[]).find(x=>String(x.id)===String(id));
+ if(!t||!v5NeedsAppleCategory(t)){toast('La compra ya fue clasificada o no está disponible.');render();return;}
+ const categories=categoryOptions('gasto').filter(([v])=>v!=='Apple Pay');
+ if(!categories.length){toast('Primero crea una categoría de gastos.');return;}
+ const root=document.getElementById('modal-root');if(!root)return;
+ root.innerHTML=`<div class="modal-layer v7-apple-layer" data-backdrop="true"><section class="modal v7-apple-modal" role="dialog" aria-modal="true" aria-label="Clasificar compra Apple Pay">
+ <header class="modal-head"><div><span class="v7-apple-modal-eyebrow">${v213ApplePayBadge(t)} · PENDIENTE</span><h2>Clasificar compra</h2></div><button type="button" class="close" data-v7-apple-close="1" aria-label="Cerrar">×</button></header>
+ <div class="v7-apple-purchase"><strong>${sanitize(transactionTitle(t))}</strong><b>${txDisplay(t)}</b><small>${prettyDate(t.date)} · Ya registrada; no se cobrará nuevamente.</small></div>
+ <form id="v7-apple-category-form" data-tx="${sanitize(String(t.id))}"><label class="v7-apple-field"><span>Categoría</span><select class="field" id="v7-apple-category" name="category" required><option value="">Selecciona una categoría</option>${categories.map(([v,label])=>`<option value="${sanitize(v)}">${sanitize(label)}</option>`).join('')}</select></label>
+ <label class="v7-apple-field"><span>Subcategoría</span><select class="field" id="v7-apple-subcategory" name="subcategory"><option value="">Sin subcategoría</option></select></label>
+ <p class="v7-apple-privacy">Solo se actualizará la clasificación. El importe, la tarjeta, el comercio y el distintivo Apple Pay se mantienen.</p>
+ <div class="v7-apple-actions"><button type="button" class="btn soft" data-v7-apple-close="1">Después</button><button type="submit" class="btn v7-apple-submit">Confirmar categoría</button></div></form></section></div>`;
+ root.querySelector('#v7-apple-category')?.focus({preventScroll:true});
+}
+function v7FillAppleSubcategory(category){
+ const select=document.getElementById('v7-apple-subcategory');if(!select)return;
+ select.innerHTML='<option value="">Sin subcategoría</option>'+subcategoryOptions('gasto',category).map(s=>`<option value="${sanitize(s)}">${sanitize(v255TaxonomyOptionLabel('gasto',category,s))}</option>`).join('');
+}
+document.addEventListener('click',e=>{
+ const opener=e.target.closest('[data-v7-apple-id]');
+ if(opener){e.preventDefault();e.stopPropagation();v7OpenAppleClassifier(opener.dataset.v7AppleId);return;}
+ const close=e.target.closest('[data-v7-apple-close]');
+ if(close){e.preventDefault();const root=document.getElementById('modal-root');if(root)root.innerHTML='';v8AppleDock();}
+},true);
+document.addEventListener('change',e=>{
+ if(e.target?.id==='v7-apple-category')v7FillAppleSubcategory(e.target.value);
+},true);
+document.addEventListener('submit',async e=>{
+ const form=e.target;if(form?.id!=='v7-apple-category-form')return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(f33Conflict||f33Saving||f33Dirty){toast('Sincroniza los cambios pendientes antes de clasificar esta compra.');return;}
+ const t=(db.transactions||[]).find(x=>String(x.id)===String(form.dataset.tx));
+ if(!t||!v5NeedsAppleCategory(t)){toast('Esta compra ya no está pendiente.');document.getElementById('modal-root').innerHTML='';render();return;}
+ const category=form.elements.category.value,subcategory=form.elements.subcategory.value;
+ if(!category||category==='Apple Pay'||!categoryMap('gasto')[category]){toast('Selecciona una categoría válida.');return;}
+ if(subcategory&&!subcategoryOptions('gasto',category).includes(subcategory)){toast('Selecciona una subcategoría válida.');return;}
+ const submit=form.querySelector('button[type="submit"]');if(submit){submit.disabled=true;submit.textContent='Guardando…';}
+ const before={category:t.category,subcategory:t.subcategory,editedAt:t.editedAt,reviewed:t.reviewed};
+ t.category=category;t.subcategory=subcategory;t.editedAt=new Date().toISOString();
+ // No marcar reviewed= true: clasificar y conciliar son operaciones independientes.
+ if(!persist()){
+  Object.assign(t,before);if(submit){submit.disabled=false;submit.textContent='Confirmar categoría';}
+  toast('No se pudieron guardar los cambios. Vuelve a intentarlo.');return;
+ }
+ document.getElementById('modal-root').innerHTML='';render();
+ v8AppleDock();
+ toast('Compra Apple Pay clasificada en '+category+'.');
+ // La cola deja de mostrarla inmediatamente; f33Flush mantiene la sincronización remota.
+ if(typeof f33Flush==='function')Promise.resolve(f33Flush()).catch(err=>console.error('Clasificación Apple Pay pendiente de sincronización',err));
+},true);
+
+/* V8 · Bandeja siempre accesible: las compras sin clasificar no dependen de un toast efímero. */
+function v8AppleDock(){
+ const count=v5ApplePayPending().length;
+ let dock=document.getElementById('v8-apple-dock');
+ if(!count){if(dock)dock.remove();return;}
+ if(!dock){dock=document.createElement('button');dock.type='button';dock.id='v8-apple-dock';dock.className='v8-apple-dock';dock.setAttribute('data-v8-apple-open','1');document.body.appendChild(dock);}
+ dock.innerHTML=`${icon('apple')} <span>Apple Pay</span> <b>${count}</b>`;
+ dock.setAttribute('aria-label',`${count} compras Apple Pay por clasificar. Abrir bandeja.`);
+}
+function v8AppleInboxModal(){
+ const pending=v5ApplePayPending();
+ if(!pending.length){toast('No tienes compras Apple Pay pendientes de clasificar.');v8AppleDock();return;}
+ const root=document.getElementById('modal-root');if(!root)return;
+ root.innerHTML=`<div class="modal-layer v8-inbox-layer" data-backdrop="true"><section class="modal v8-inbox-modal" role="dialog" aria-modal="true" aria-label="Compras Apple Pay por clasificar"><header class="modal-head"><div><small>APPLE PAY</small><h2>Por clasificar · ${pending.length}</h2></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="v8-inbox-list">${v7ApplePayInboxBody()}</div></section></div>`;
+}
+document.addEventListener('click',event=>{
+ const el=event.target.closest?.('[data-v8-apple-open]');if(!el)return;
+ event.preventDefault();event.stopPropagation();v8AppleInboxModal();
+},true);
+// Hooks visuales únicamente: no cambian sincronización, cuentas ni eventos de Supabase.
+const v8AppleRender=render;
+render=function(...args){const result=v8AppleRender.apply(this,args);v8AppleDock();return result;};
+window.addEventListener('load',()=>{v8AppleDock();}, {once:true});
+
 /* Vive el hoy V5: Apple Pay — clasificación consciente y aviso contextual.
    No modifica importes, tarjetas, envíos ni sincronización remota. */
 function v5IsApplePay(t){return !!(t&&(t.applePaySource==='wallet-shortcuts'||t.applePayEventId||String(t.tags||'').split(',').includes('apple-pay')));}
@@ -40375,10 +40558,10 @@ function v5ApplePayNotice(t,arrival=false){
  tray.hidden=false;
  clearTimeout(v5AppleNoticeTimer);
  if(arrival&&typeof Notification!=='undefined'&&Notification.permission==='granted'&&document.visibilityState==='visible'){
-  try {const notification=new Notification('Apple Pay · Clasifica tu compra',{body:title+' · Pendiente de categoría',tag:'vive-apple-category-'+String(t.id)});notification.onclick=()=>{window.focus();v5ApplePayEdit(String(t.id));notification.close();};}catch(_){/* aviso en la página siempre disponible */}
+  try {const notification=new Notification('Apple Pay · Clasifica tu compra',{body:title+' · Pendiente de categoría',tag:'vive-apple-category-'+String(t.id)});notification.onclick=()=>{window.focus();v7OpenAppleClassifier(String(t.id));notification.close();};}catch(_){/* aviso en la página siempre disponible */}
  }
 }
-function v5ApplePayArrival(t){v5ApplePayNotice(t,true);}
+function v5ApplePayArrival(t){v5ApplePayNotice(t,true);v8AppleDock();}
 function v5ApplePayEdit(id){
  const t=(db?.transactions||[]).find(x=>String(x.id)===String(id));
  if(!t||!v5IsApplePay(t))return;
@@ -40389,7 +40572,7 @@ function v5ApplePayEdit(id){
 document.addEventListener('click',ev=>{
  const btn=ev.target.closest('[data-v5-apple]');if(!btn)return;
  const action=btn.dataset.v5Apple;
- if(action==='categorize')v5ApplePayEdit(btn.dataset.id);
+ if(action==='categorize')v7OpenAppleClassifier(btn.dataset.id);
  if(action==='dismiss'){const tray=document.getElementById('v5-apple-tray');if(tray)tray.hidden=true;}
 });
 // Al reabrir la app, ofrece recordar UNA compra que continúe en categoría temporal.
@@ -40887,6 +41070,7 @@ function v273SettingsWidgetEditor(){
  };
  const sections=`<div class="v273-custom-rows v328-section-rows v344-order-free">${cfg.order.map(row).join('')}</div>`;
  return `<section class="v273-settings-customizer v316-personalization v328-personalization" aria-label="Personalizar secciones de Resumen"><header><span class="summary-tag">TU INICIO · PERSONALIZACIÓN</span><h3>Tu espacio, a tu manera</h3><p>Mantén presionado el control de bloques para mover cualquier indicador, incluso entre áreas. También puedes usar las flechas. Tu orden se conserva en este Resumen.</p></header>
+ <aside class="v9-apple-personalization" aria-label="Apple Pay por clasificar"><span class="v9-apple-eyebrow">APPLE PAY · EN TU INICIO</span><div class="v9-apple-personalization-main"><div><strong>Por clasificar <span>${v5ApplePayPending().length}</span></strong><p>Agrega este módulo a Inicio y categoriza cada compra sin alterar los saldos.</p></div><div class="v9-apple-personalization-actions"><button type="button" class="btn" data-v273-toggle="applePayInbox">${visible.has('applePayInbox')?'Ocultar de Inicio':'Mostrar en Inicio'}</button><button type="button" class="btn soft" data-v8-apple-open="1">Ver pendientes</button></div></div></aside>
  ${sections}
  <div class="v273-custom-footer"><span>Los interruptores afectan a Resumen móvil. Los ${V105_WIDGETS.length} elementos conservan sus cálculos y configuraciones. Nada altera tu contabilidad.</span><button type="button" data-v273-reset="1">Restaurar diseño esencial</button></div></section>`;
 }
