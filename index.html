@@ -35782,7 +35782,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&f33Active
 setInterval(()=>{if(f33Active&&!document.hidden)f34UpdateFx(false)},60*60*1000);
 window.addEventListener('beforeunload',()=>{v360SaveUI();if(f33Dirty)v360WritePending()});
 window.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&f33Dirty&&!f33Saving)f33Flush()});
-/* V406 — Supabase relacional. Solo filas tipadas en la base.
+/* V408 — Supabase oficial. Base relacional única.
    finance_items: identidad y orden; finance_values: campos tipados;
    finance_revision: cambio atómico/realtime; RPC: escritura transaccional.
 */
@@ -35966,13 +35966,6 @@ f33Flush=async function(){
   else if(v10RemoteQueued&&!f33Dirty){v10RemoteQueued=false;v10SchedulePull(10);}
   if(!f33Dirty&&!f33Conflict){v10Protect('ok');v402AutoConfirmed();}
  }
-};
-window.v406ExportRecovery=function(){
- const raw=localStorage.getItem(f33CloudKey());
- if(!raw)throw Error('No hay una copia local pendiente.');
- const blob=new Blob([raw],{type:'application/json'}),url=URL.createObjectURL(blob);
- const a=document.createElement('a');a.href=url;a.download='recuperacion-local-no-sincronizada.json';a.click();
- setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
 v10ResolveConflict=async function(){return await v405Reconcile()};
 v10PullRemote=async function(){
@@ -70803,76 +70796,141 @@ body.theme-black .v402-sync,body.theme-dark .v402-sync{background:#080808!import
 body.theme-black #v402-popover,body.theme-dark #v402-popover{background:#101010;color:#fafafa;border-color:#303030}
 @keyframes v402-rotate{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.v402-sync svg{animation:none!important}}
 </style>
-<style id="v407-recovery-style">
-.v407-launch{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:8px 11px;border-radius:12px;border:1px solid rgba(130,130,130,.25);color:inherit;background:rgba(128,128,128,.09);font:inherit;font-size:11px;font-weight:720;white-space:nowrap;cursor:pointer;min-height:35px}.v407-launch svg{width:16px;height:16px}.v407-launch:hover{border-color:#8d8fef}.v407-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.86);backdrop-filter:blur(15px);color:#f4f4f5;display:flex;justify-content:center;align-items:center;padding:clamp(8px,2vw,25px)}.v407-overlay[hidden]{display:none!important}.v407-panel{background:#09090b;border:1px solid #303035;border-radius:24px;width:min(1200px,100%);height:min(92dvh,970px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 120px #000}.v407-head{padding:20px 22px 12px;display:flex;gap:13px;justify-content:space-between;align-items:flex-start}.v407-head h2{font-size:22px;margin:0 0 4px;font-weight:750;letter-spacing:-.7px;color:#fff}.v407-head p{font-size:12px;color:#a1a1aa;margin:0;line-height:1.6}.v407-close{background:#19191c;border:1px solid #333;border-radius:11px;color:white;padding:9px 12px;cursor:pointer}.v407-stats{display:flex;flex-wrap:wrap;gap:9px;padding:8px 22px 14px}.v407-stat{border:1px solid #303034;background:#161619;border-radius:12px;padding:10px 13px;font-size:11px;color:#aaa}.v407-stat strong{display:block;color:#fff;font-size:19px;margin-bottom:3px}.v407-controls{display:flex;flex-wrap:wrap;gap:9px;padding:0 22px 13px}.v407-controls input,.v407-controls select{background:#17171a;color:white;border:1px solid #34343b;border-radius:11px;padding:11px 12px;min-height:42px;flex:1;min-width:160px;max-width:100%;font:inherit}.v407-controls button{border-radius:11px;background:#202024;border:1px solid #39393d;color:#fff;padding:9px 13px;font-weight:700;cursor:pointer}.v407-message{color:#b6b6be;padding:5px 22px 12px;font-size:12px;line-height:1.55}.v407-tablewrap{flex:1;overflow:auto;border-top:1px solid #2d2d31}.v407-table{width:100%;border-collapse:collapse;white-space:normal;min-width:680px}.v407-table th{position:sticky;top:0;background:#151519;color:#a1a1aa;text-align:left;font-size:10px;z-index:1}.v407-table td,.v407-table th{padding:12px 15px;border-bottom:1px solid #242429;vertical-align:top}.v407-table td{font-size:12px;color:#e5e5e5}.v407-table .v407-sub{font-size:10px;color:#8e8e99;overflow-wrap:anywhere;margin-top:5px}.v407-table .v407-amount{font-variant-numeric:tabular-nums;font-weight:760;white-space:nowrap}.v407-table button{background:#1b1b20;border:1px solid #383841;color:#fafafa;padding:8px 10px;border-radius:9px;font-size:11px;cursor:pointer;margin:2px}.v407-table button.v407-delete{color:#fca5a5}.v407-table button:disabled{opacity:.4;cursor:not-allowed}.v407-foot{border-top:1px solid #29292d;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#aaa;font-size:11px}.v407-foot button{background:#222228;color:white;border:1px solid #3b3b40;border-radius:9px;padding:9px 13px;cursor:pointer}.v407-detail{background:#121216;border:1px solid #303037;border-radius:12px;color:#ddd;padding:12px;margin:10px 0;max-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:11px}.v407-tag{display:inline-block;border:1px solid #393940;border-radius:7px;padding:4px 7px;font-size:10px;color:#b5b5c4}.v407-warning{color:#ffce87}.v407-error{color:#fca5a5}.v407-ok{color:#86efac}@media(max-width:700px){.v407-overlay{padding:0}.v407-panel{width:100%;height:100dvh;border-radius:0}.v407-head{padding:17px 14px 12px}.v407-head h2{font-size:18px}.v407-stats{padding:5px 14px 12px}.v407-controls{padding:0 14px 11px}.v407-message{padding:4px 14px 12px}.v407-table td,.v407-table th{padding:10px 11px}.v407-foot{padding:10px 14px}.mobile-bar .v407-launch{margin-left:auto;background:#25252a;color:#fff;border-color:#45454c;font-size:10px;padding:7px}.mobile-bar .v407-launch svg{width:15px}}
+
+<style id="v409-premium-web-design">
+/* V409: presentational redesign. All data and actions continue to use existing app state. */
+#page .v409-explore{width:100%;max-width:1240px;margin-inline:auto;padding-bottom:30px}
+#page .v409-explore-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:4px 0 22px}
+#page .v409-kicker{display:block;font-size:10px;letter-spacing:2.4px;text-transform:uppercase;font-weight:850;color:#59729c}
+#page .v409-explore-head h1{font-size:clamp(29px,4.3vw,46px);line-height:1.08;letter-spacing:-1.7px;margin:10px 0 8px;color:var(--ink,#172748)}
+#page .v409-explore-head p,.v409-sec-head p{font-size:13px;color:var(--muted,#7c8da5);line-height:1.55;margin:0}
+#page .v409-period{padding:12px 16px;border:1px solid rgba(255,255,255,.8);border-radius:99px;background:rgba(255,255,255,.75);color:#566e93;font-weight:750;font-size:12px;white-space:nowrap}
+#page .v409-explore-section{background:rgba(255,255,255,.76);border:1px solid rgba(255,255,255,.92);border-radius:27px;padding:clamp(16px,2.5vw,27px);margin:0 0 19px;box-shadow:0 14px 39px rgba(43,71,119,.06)}
+#page .v409-sec-head{margin-bottom:18px}
+#page .v409-sec-head h2{margin:7px 0 5px;font-size:clamp(18px,2.5vw,26px);letter-spacing:-.8px;color:var(--ink,#14233c)}
+#page .v409-explore-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+#page .v409-explore-tile{appearance:none;border:1px solid rgba(206,218,239,.72);border-radius:21px;background:linear-gradient(155deg,#fff,#f3f6fc);padding:17px;text-align:left;display:flex;align-items:flex-start;gap:12px;min-width:0;min-height:119px;color:#162642;box-shadow:0 5px 18px rgba(54,80,124,.045);transition:transform .18s,box-shadow .18s,border-color .18s}
+#page .v409-explore-tile:hover{transform:translateY(-2px);border-color:#a7bff0;box-shadow:0 14px 29px rgba(54,80,124,.11)}
+#page .v409-explore-tile:focus-visible{outline:3px solid #85b4ff;outline-offset:2px}
+#page .v409-tile-icon{height:43px;width:43px;min-width:43px;border-radius:15px;display:grid;place-items:center;background:#e6edfc;color:#385eaa}
+#page .v409-tile-icon svg{width:21px;height:21px}
+#page .v409-explore-tile[data-tone="green"] .v409-tile-icon{background:#ddf6eb;color:#08966b}
+#page .v409-explore-tile[data-tone="red"] .v409-tile-icon{background:#ffe5eb;color:#cf496c}
+#page .v409-explore-tile[data-tone="purple"] .v409-tile-icon{background:#ebe5ff;color:#7157ce}
+#page .v409-explore-tile[data-tone="amber"] .v409-tile-icon{background:#fff0d9;color:#b67e28}
+#page .v409-tile-body{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+#page .v409-tile-body strong{font-size:14px;font-weight:790;letter-spacing:-.2px}
+#page .v409-tile-body small{font-size:11px;color:#71819b;line-height:1.45}
+#page .v409-tile-body b{font-size:12px;color:#213657;margin-top:3px;font-weight:800;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#page .v409-tile-arrow{font-size:20px;color:#90a1bc;margin-left:auto;align-self:flex-start}
+#page .v409-explore-tile[data-feature="true"]{background:linear-gradient(135deg,#15375d,#234e92 72%,#4c51ab);border-color:#2d568f;color:#fff}
+#page .v409-explore-tile[data-feature="true"] :is(.v409-tile-body small,.v409-tile-body b,.v409-tile-arrow){color:#d3def2}
+#page .v409-sub-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 20px}
+#page .v409-sub-head h1{font-size:clamp(24px,3vw,38px);letter-spacing:-1px;margin:6px 0}
+#page .v409-sub-head p{margin:0;color:var(--muted)}
+#page .v409-sub-actions{display:flex;gap:8px;flex-wrap:wrap}
+#page .v409-sub-actions button{border:0;border-radius:13px;background:#15335d;color:white;padding:12px 15px;font-size:12px;font-weight:750}
+#page .v409-sub-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:15px}
+#page .v409-sub-kpi{border:1px solid #e1e7f3;border-radius:21px;padding:19px;background:rgba(255,255,255,.86);min-width:0;box-shadow:0 6px 22px #22417c0b}
+#page .v409-sub-kpi:first-child{background:linear-gradient(135deg,#163d6b,#3157a5 75%,#654bc0);border-color:transparent;color:#fff}
+#page .v409-sub-kpi small{display:block;font-size:11px;opacity:.78;margin-bottom:10px}
+#page .v409-sub-kpi strong{display:block;font-size:clamp(17px,2vw,26px);letter-spacing:-.7px;overflow-wrap:anywhere}
+#page .v409-sub-kpi span{display:block;font-size:10px;opacity:.72;margin-top:9px}
+#page .v409-sub-filterbar{display:flex;gap:8px;overflow:auto;padding:4px 1px 13px;scrollbar-width:thin}
+#page .v409-sub-filterbar button{background:#fff;border:1px solid #dbe3f1;border-radius:99px;padding:10px 15px;color:#4e6485;font-weight:700;font-size:11px;white-space:nowrap}
+#page .v409-sub-filterbar button[aria-pressed="true"]{background:#1b3a69;color:#fff;border-color:#1b3a69}
+#page .v409-sub-category{background:rgba(255,255,255,.84);border:1px solid #e3eafa;border-radius:22px;margin:0 0 13px;overflow:hidden;box-shadow:0 7px 23px rgba(54,80,124,.045)}
+#page .v409-sub-category>summary{list-style:none;display:flex;align-items:center;gap:12px;padding:17px 19px;cursor:pointer}
+#page .v409-sub-category>summary::-webkit-details-marker{display:none}
+#page .v409-sub-category>summary strong{font-size:15px}
+#page .v409-sub-category>summary span{margin-left:auto;color:#587399;font-size:11px;font-weight:760}
+#page .v409-sub-table{width:100%;overflow-x:auto}
+#page .v409-sub-table table{min-width:690px}
+#page .v409-sub-table th{font-size:10px;padding:12px 15px}
+#page .v409-sub-table td{padding:15px;font-size:11px}
+#page .v409-sub-table td:first-child strong{font-size:12px}
+#page .v409-sub-status{color:#067a55;background:#dff7ed;border-radius:99px;padding:5px 8px;display:inline-block;font-size:10px;font-weight:750}
+#page .v409-sub-status.paused{color:#99591c;background:#fff1df}
+#page .v409-sub-rowactions{display:flex;gap:5px;justify-content:flex-end}
+#page .v409-sub-rowactions button{padding:7px 9px;font-size:10px;border-radius:9px;background:#f0f4fd;color:#334f84;border:1px solid #dfe7f7}
+#page .v409-original-toolbox{margin-top:18px;background:rgba(255,255,255,.7);border:1px solid #e0e8f3;border-radius:19px;padding:16px}
+#page .v409-original-toolbox>summary{cursor:pointer;font-weight:780;font-size:12px;color:#3d5879}
+#page .v409-original-toolbox>div{margin-top:18px}
+#page .v409-home-pulse{margin:0 0 18px;padding:22px;border-radius:24px;background:linear-gradient(120deg,#102b51,#24518a 73%,#493a91);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:15px;box-shadow:0 12px 31px #18387229}
+#page .v409-home-pulse h2{font-size:clamp(22px,3vw,34px);letter-spacing:-.8px;margin:8px 0 5px;color:#fff}
+#page .v409-home-pulse p{font-size:12px;color:#d1dff0;margin:0;line-height:1.5}
+#page .v409-home-pulse-stat{min-width:155px;text-align:right}
+#page .v409-home-pulse-stat strong{display:block;font-size:clamp(21px,3vw,35px);letter-spacing:-.8px}
+#page .v409-home-pulse-stat small{font-size:10px;color:#c8d8ee}
+/* Preserve high-contrast legibility in light financial map and dark hero. */
+#page .v295-global-overview :is(.v46-global-main,.v46-global-secondary,.v295-global-top){color:#162744}
+#page .v295-global-overview :is(.v46-global-main,.v46-global-secondary) :is(h2,h3,strong,b){color:inherit}
+#page .ff-balance :is(.ff-label,.ff-pos-amount,.bubble-amount){opacity:1!important}
+#page .ff-balance :is(.ff-pos-amount,.bubble-amount){text-shadow:none!important}
+body.theme-black #page :is(.v409-explore-section,.v409-explore-tile,.v409-sub-kpi:not(:first-child),.v409-sub-category,.v409-original-toolbox){background:#141414!important;color:#f3f3f3!important;border-color:#303030!important}
+body.theme-black #page :is(.v409-explore-head h1,.v409-sec-head h2,.v409-tile-body strong,.v409-tile-body b,.v409-sub-head h1){color:#f5f5f5!important}
+body.theme-black #page .v409-period,body.theme-black #page .v409-sub-filterbar button{background:#202020;color:#f0f0f0;border-color:#343434}
+@media(max-width:900px){#page .v409-explore-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#page .v409-sub-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#page .v409-explore-head{align-items:start;flex-direction:column;gap:9px}#page .v409-period{padding:8px 12px}#page .v409-explore-section{padding:15px 12px;border-radius:24px}#page .v409-explore-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#page .v409-explore-tile{padding:12px 10px;gap:8px;min-height:132px;flex-direction:column;border-radius:18px}#page .v409-tile-icon{width:38px;height:38px;min-width:38px;border-radius:12px}#page .v409-tile-body strong{font-size:13px}#page .v409-tile-body b{font-size:11px}#page .v409-tile-arrow{position:absolute;right:12px;top:17px}#page .v409-explore-tile{position:relative}#page .v409-sub-kpis{gap:8px}#page .v409-sub-kpi{padding:14px;border-radius:18px}#page .v409-home-pulse{padding:17px;align-items:flex-start;flex-direction:column}#page .v409-home-pulse-stat{text-align:left}}
 </style>
-<script id="v407-recovery-explorer">
-(()=>{'use strict';
-// Explorer reads the user's authenticated Supabase rows, never an exported browser cache.
-const TABLES=['movimientos','bancos','cuentas','tarjetas','prestamos','prestamos_personales','suscripciones','presupuestos','categorias','beneficios','certificados','estados_cuenta','conciliaciones','documentos','operaciones_pendientes','revisiones_movimientos','previsiones','auditoria'];
-const state={rows:[],errors:[],origin:'all',query:'',page:0,open:false,busy:false,stamp:null};
-const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const buttonMarkup='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8.5" ry="3.5"/><path d="M3.5 5v14c0 2 17 2 17 0V5M3.5 12c0 2 17 2 17 0"/></svg><span>Datos Supabase</span>';
-function inject(){for(const parent of document.querySelectorAll('.topbar .top-actions,.mobile-bar')){if(parent.querySelector('.v407-launch'))continue;const b=document.createElement('button');b.type='button';b.className='v407-launch';b.innerHTML=buttonMarkup;b.title='Ver todos mis registros en Supabase';b.addEventListener('click',open);parent.prepend(b);}}
-let injecting=false;new MutationObserver(()=>{if(injecting)return;injecting=true;queueMicrotask(()=>{injecting=false;inject()})}).observe(document.documentElement,{subtree:true,childList:true});
-function api(){if(!window.f33Api && (typeof f33Api==='undefined'||!f33Api))throw Error('Supabase todavía no está conectado');return window.f33Api||(typeof f33Api!=='undefined'?f33Api:null)}
-function user(){const u=typeof f33User!=='undefined'?f33User:null;if(!u?.id)throw Error('Inicia sesión para consultar tus datos.');return u.id}
-async function list(table,fields,uid){const out=[];for(let n=0;n<200;n++){const {data,error}=await api().from(table).select(fields).eq('user_id',uid).range(n*500,n*500+499);if(error)throw error;out.push(...(data||[]));if((data||[]).length<500)return out;}throw Error('Se alcanzó el límite de paginación de '+table)}
-function title(row){const d=row.data||{};return d.payee||d.merchant||d.name||d.title||d.bank||d.label||d.note||d.category||d.type||row.id}
-function amount(row){const d=row.data||{};const v=d.amount??d.balance??d.principal??d.limit??null;return v===null?'—':(d.currency||'')+' '+String(v)}
-function add(origin,source,id,data,deleteType,extra={}){state.rows.push({origin,source,id:String(id),data,deleteType,...extra});}
-async function reload(){if(state.busy)return;state.busy=true;state.rows=[];state.errors=[];state.page=0;setMessage('Consultando todas las fuentes disponibles en Supabase…');paint();try{
- const uid=user();
- // Relational records: all collection rows in finance_items/finance_values (decoded by V405).
- try{const result=await v405Read(uid);state.revision=result.revision;const snapshot=v405SnapshotMap(result.documento||{});for(const r of snapshot.values())add('Vigente · relacional',r.collection,r.id,r.data,'relational');}catch(e){state.errors.push('Tablas relacionales: '+e.message)}
- // Historical document is a separate archive; never auto-merged into active balances.
- try{const d=await api().from('finanzas_estado').select('documento,actualizado_en').eq('user_id',uid).maybeSingle();if(d.error)throw d.error;if(d.data?.documento){const doc=d.data.documento;for(const [collection,value] of Object.entries(doc)){if(Array.isArray(value)){value.forEach((item,i)=>add('Histórico · respaldo',collection,item&&typeof item==='object'&&item.id!=null?item.id:'__index_'+i,item,'legacy'));}else add('Histórico · respaldo',collection,'__root__',value,'none');}}}catch(e){state.errors.push('Respaldo histórico: '+e.message)}
- // Apple Pay — real events including imported, ignored, pending; no token/secret values.
- try{for(const r of await list('apple_pay_events','id,event_id,merchant,amount,currency,status,local_tx_id,received_at,imported_at,instrument_id',uid))add('Apple Pay','apple_pay_events',r.id,{...r},'apple', {eventId:r.event_id});}catch(e){state.errors.push('Apple Pay: '+e.message)}
- // Original separate tables, including older rows never promoted to the active model.
- await Promise.all(TABLES.map(async t=>{try{const arr=await list(t,'id,identificador_original,datos,creado_en,actualizado_en',uid);for(const r of arr)add('Tabla independiente',t,r.id,r.datos||{},'table',{rowId:r.id,originalId:r.identificador_original});}catch(e){state.errors.push(t+': '+e.message)}}));
- state.stamp=new Date();setMessage(state.errors.length?'Lectura parcial: '+state.errors.length+' fuentes inaccesibles. Revisa los avisos.':'Lectura completada directamente desde Supabase. Los registros históricos se muestran separados; no se reintegran automáticamente.');
- }catch(e){setMessage('Error de conexión: '+e.message)}finally{state.busy=false;paint()}}
-function shell(){if(document.getElementById('v407-overlay'))return;const d=document.createElement('div');d.id='v407-overlay';d.className='v407-overlay';d.hidden=true;d.innerHTML=`<div class="v407-panel" role="dialog" aria-modal="true" aria-labelledby="v407-title"><div class="v407-head"><div><h2 id="v407-title">Todos mis datos en Supabase</h2><p>Explorador de recuperación · registros vigentes, históricos, Apple Pay y tablas independientes.<br>Solo tu cuenta autenticada; ningún respaldo local se usa como fuente.</p></div><button class="v407-close" id="v407-close" type="button">Cerrar ×</button></div><div class="v407-stats" id="v407-stats"></div><div class="v407-controls"><input id="v407-search" type="search" placeholder="Buscar comercio, importe, fecha, ID, categoría…" aria-label="Buscar datos"><select id="v407-origin" aria-label="Origen"><option value="all">Todos los orígenes</option></select><button id="v407-refresh" type="button">↻ Consultar Supabase</button></div><div class="v407-message" id="v407-message"></div><div class="v407-tablewrap"><table class="v407-table"><thead><tr><th>Origen / tabla</th><th>Registro</th><th>Valor</th><th>Acciones</th></tr></thead><tbody id="v407-body"></tbody></table></div><div class="v407-foot"><span id="v407-count">Sin cargar</span><div><button id="v407-prev">Anterior</button> <button id="v407-next">Siguiente</button></div></div></div>`;document.body.append(d);
- document.getElementById('v407-close').onclick=close;document.getElementById('v407-refresh').onclick=reload;
- document.getElementById('v407-search').oninput=e=>{state.query=e.target.value.toLowerCase();state.page=0;paint()};
- document.getElementById('v407-origin').onchange=e=>{state.origin=e.target.value;state.page=0;paint()};
- document.getElementById('v407-prev').onclick=()=>{state.page=Math.max(0,state.page-1);paint()};
- document.getElementById('v407-next').onclick=()=>{state.page++;paint()};
- d.addEventListener('click',e=>{if(e.target===d)close();const b=e.target.closest('[data-v407-action]');if(!b)return;const idx=Number(b.dataset.idx);const r=state.rows[idx];if(!r)return;if(b.dataset.v407Action==='detail')showDetail(r,b);if(b.dataset.v407Action==='delete')deleteRow(r)});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.open)close()});}
-function open(){shell();state.open=true;document.getElementById('v407-overlay').hidden=false;document.body.style.overflow='hidden';reload()}
-function close(){state.open=false;document.getElementById('v407-overlay').hidden=true;document.body.style.overflow=''}
-function setMessage(s){const el=document.getElementById('v407-message');if(el)el.textContent=s;}
-function showDetail(r,b){const old=b.closest('td').querySelector('.v407-detail');if(old){old.remove();return;}const pre=document.createElement('pre');pre.className='v407-detail';pre.textContent=JSON.stringify(r.data,null,2);b.closest('td').append(pre)}
-function paint(){if(!state.open)return;const stats=document.getElementById('v407-stats'),origin=document.getElementById('v407-origin');const groups=new Map();for(const r of state.rows)groups.set(r.origin,(groups.get(r.origin)||0)+1);stats.innerHTML=[...groups].map(([name,count])=>`<div class="v407-stat"><strong>${count}</strong>${esc(name)}</div>`).join('')+`<div class="v407-stat"><strong>${state.errors.length}</strong>Fuentes con avisos</div>`;
- const prev=state.origin;origin.innerHTML='<option value="all">Todos los orígenes</option>'+[...new Set(state.rows.map(r=>r.origin+' / '+r.source))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');origin.value=[...origin.options].some(o=>o.value===prev)?prev:'all';state.origin=origin.value;
- const matching=state.rows.map((r,i)=>({...r,idx:i})).filter(r=>{const filter=r.origin+' / '+r.source;if(state.origin!=='all'&&filter!==state.origin)return false;if(!state.query)return true;return (filter+' '+r.id+' '+JSON.stringify(r.data)).toLowerCase().includes(state.query)});
- const pages=Math.max(1,Math.ceil(matching.length/150));state.page=Math.min(state.page,pages-1);const visible=matching.slice(state.page*150,(state.page+1)*150);
- document.getElementById('v407-body').innerHTML=visible.map(r=>`<tr><td><span class="v407-tag">${esc(r.origin)}</span><div class="v407-sub">${esc(r.source)}</div></td><td><strong>${esc(String(title(r)).slice(0,100))}</strong><div class="v407-sub">${esc(r.id)}</div>${r.data?.date?`<div class="v407-sub">${esc(r.data.date)}</div>`:''}</td><td class="v407-amount">${esc(amount(r))}</td><td><button data-v407-action="detail" data-idx="${r.idx}">Ver detalles</button>${r.deleteType!=='none'?`<button class="v407-delete" data-v407-action="delete" data-idx="${r.idx}">Eliminar</button>`:''}</td></tr>`).join('')||'<tr><td colspan="4">No se encontraron registros con este filtro.</td></tr>';
- document.getElementById('v407-count').textContent=`${matching.length} registros coincidentes · página ${state.page+1}/${pages} · ${state.rows.length} cargados${state.stamp?' · '+state.stamp.toLocaleTimeString('es-DO'):''}`;
- document.getElementById('v407-prev').disabled=state.page===0;document.getElementById('v407-next').disabled=state.page>=pages-1;
- if(state.errors.length)setMessage('Fuentes con acceso no confirmado: '+state.errors.join(' | ').slice(0,450));}
-async function deleteRow(r){if(state.busy){alert('Hay una consulta en curso.');return;}const uid=user();const label=String(title(r)).slice(0,100);
- if(!confirm(`¿Eliminar DEFINITIVAMENTE este registro de Supabase?\n\n${r.origin} · ${r.source}\n${label}\nID: ${r.id}\n\nNo se restaurará automáticamente desde el respaldo.`))return;
- state.busy=true;setMessage('Eliminando el registro seleccionado y verificando el resultado…');try{
- if(r.deleteType==='relational'){
-  if(f33Dirty||f33Saving||f33Conflict)throw Error('Hay cambios locales pendientes. Sincronízalos antes de eliminar registros desde el explorador.');
-  const latest=await v405Read(uid);const map=v405SnapshotMap(latest.documento||{});if(!map.has(r.source+'\u0000'+r.id))throw Error('El registro ya no existe en la base.');
-  await v405Commit(latest.revision,[{action:'delete',collection:r.source,id:r.id}]);
-  // Force the main UI to read the new revision; do not accidentally rewrite the stale model.
-  await v10PullRemote();
- }else if(r.deleteType==='legacy'){
-  const {data,error}=await api().rpc('finance_legacy_delete',{p_collection:r.source,p_record_id:r.id});if(error)throw error;if(data!==true)throw Error('No se encontró el registro histórico.');
- }else if(r.deleteType==='apple'){
-  const {data,error}=await api().from('apple_pay_events').delete().eq('user_id',uid).eq('id',r.id).select('id');if(error)throw error;if(!data?.length)throw Error('El servidor no confirmó la eliminación.');
- }else if(r.deleteType==='table'){
-  const {data,error}=await api().from(r.source).delete().eq('user_id',uid).eq('id',r.rowId).select('id');if(error)throw error;if(!data?.length)throw Error('No hay permiso de eliminación o el registro ya no existe.');
- }
- setMessage('Eliminación confirmada en Supabase. Volviendo a cargar todos los datos…');
- }catch(e){alert('No se pudo eliminar: '+e.message)}finally{state.busy=false;await reload()}}
-window.v407ExploreSupabase=open;
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject,{once:true});else inject();
+<script id="v409-design-integration">
+(function(){
+'use strict';
+// 100% presentational: no persisted demo amounts, no extra Supabase client and no mutations.
+const uiMoney=(v)=>{try{return money(v,'DOP',0)}catch(e){return '—'}};
+const safe=(v)=>sanitize(String(v??''));
+const recurFactor=(r)=>({weekly:52/12,monthly:1,quarterly:1/3,annual:1/12})[r.frequency]||1;
+const recurMonthly=(r)=>{try{return fx(num(r.amount),r.currency||'DOP')*recurFactor(r)}catch(e){return 0}};
+const baseExplore=mobileHub;
+mobileHub=function(){
+ const date=String(ui.month||today().slice(0,7));
+ const totals=monthStats();
+ const subs=v339ActiveRecurring();
+ const personal=typeof personalTotals==='function'?personalTotals():{receivable:0,payable:0};
+ const rows=[
+  [{id:'income',name:'Ingresos',desc:'Lo que recibes',ico:'up',tone:'green',val:uiMoney(totals.income)},
+   {id:'expenses',name:'Egresos',desc:'Lo que utilizas',ico:'down',tone:'red',val:uiMoney(totals.expense)},
+   {id:'budget',name:'Presupuesto',desc:'Límites y ejecución',ico:'chart',tone:'blue',val:'Abrir presupuesto'},
+   {id:'categories',name:'Categorías',desc:'Organiza tus movimientos',ico:'grid',tone:'purple',val:db.customCategories?.length+' categorías personalizadas'},
+   {id:'recurring',name:'Suscripciones',desc:'Servicios y pagos periódicos',ico:'calendar',tone:'purple',val:subs.length+' activas · '+uiMoney(v80RecurringMonthly())+' /mes'},
+   {id:'personal',name:'Entre personas',desc:'Deudas por cobrar y por pagar',ico:'users',tone:'amber',val:'Por cobrar '+uiMoney(personal.receivable)+' · Por pagar '+uiMoney(personal.payable)}],
+  [{id:'payments',name:'Visión global',desc:'Tu panorama financiero',ico:'eye',tone:'blue',feature:true},
+   {id:'cards',name:'Tarjetas',desc:'Crédito, cortes y beneficios',ico:'card',tone:'purple',val:db.cards.length+' tarjetas'},
+   {id:'pressure',name:'Presión financiera',desc:'Calendario y próximos vencimientos',ico:'calendar',tone:'red'},
+   {id:'patrimony',name:'Patrimonio',desc:'Activos y obligaciones',ico:'wallet',tone:'green'},
+   {id:'loans',name:'Préstamos',desc:'Contratos y amortizaciones',ico:'receipt',tone:'amber'},
+   {id:'advanced',name:'Analítica',desc:'Tendencias y evolución',ico:'chart',tone:'blue'}]
+ ];
+ const tile=(x)=>`<button type="button" class="v409-explore-tile" data-act="navigate" data-id="${x.id}" data-tone="${x.tone||'blue'}" data-feature="${x.feature?'true':'false'}"><span class="v409-tile-icon">${icon(x.ico)}</span><span class="v409-tile-body"><strong>${safe(x.name)}</strong><small>${safe(x.desc)}</small>${x.val?`<b>${safe(x.val)}</b>`:''}</span><span class="v409-tile-arrow" aria-hidden="true">›</span></button>`;
+ const group=(idx,tag,heading,subtitle)=>`<section class="v409-explore-section"><header class="v409-sec-head"><span class="v409-kicker">${tag}</span><h2>${heading}</h2><p>${subtitle}</p></header><div class="v409-explore-grid">${rows[idx].filter(x=>!(x.id==='advanced'&&typeof isMobileViewport==='function'&&isMobileViewport())).map(tile).join('')}</div></section>`;
+ return `<div class="v409-explore"><header class="v409-explore-head"><div><span class="v409-kicker">VIVE EL HOY · TU ESPACIO</span><h1>Explorar</h1><p>Tu espacio financiero, organizado en un solo lugar.</p></div><span class="v409-period">${safe(dateObj(date+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}))}</span></header>${group(0,'TU ACTIVIDAD','Gestiona los movimientos de tu dinero','Registra, analiza y controla tu día a día financiero.')}${group(1,'TU VISIÓN','Planifica con una mirada integral','Tus compromisos, productos y próximos pasos.')}</div>`;
+};
+const oldRecurring=pages.recurring;
+let activeCategory='Todas';
+pages.recurring=function(){
+ if(isMobileViewport())return oldRecurring();
+ const records=(db.recurring||[]).filter(Boolean);
+ const active=records.filter(r=>r.active!==false&&!r.archived);
+ const monthly=active.reduce((a,r)=>a+recurMonthly(r),0);
+ const next7=active.filter(r=>r.nextDue&&r.nextDue>=today()&&r.nextDue<=addDays(today(),7));
+ const categories=[...new Set(records.map(r=>String(r.category||'Sin categoría').trim()||'Sin categoría'))].sort((a,b)=>a.localeCompare(b,'es'));
+ if(activeCategory!=='Todas'&&!categories.includes(activeCategory))activeCategory='Todas';
+ const groups=categories.filter(c=>activeCategory==='Todas'||activeCategory===c);
+ const freq=r=>({monthly:'Mensual',weekly:'Semanal',quarterly:'Trimestral',annual:'Anual'})[r.frequency]||safe(r.frequency||'Periódico');
+ const row=r=>`<tr><td><strong>${safe(r.name||'Servicio')}</strong></td><td>${safe(r.category||'Sin categoría')}</td><td>${r.nextDue?safe(prettyDate(r.nextDue)):'—'}</td><td><b>${money(r.amount,r.currency||'DOP',2)}</b></td><td>${freq(r)}</td><td><span class="v409-sub-status ${r.active===false?'paused':''}">${r.archived?'Archivada':r.active===false?'Pausada':'Activa'}</span></td><td>${safe(r.paymentMethod||r.cardId||r.accountId||'—')}</td><td><div class="v409-sub-rowactions"><button type="button" data-act="editRecurring" data-id="${safe(r.id)}">Editar</button><button type="button" data-act="toggleRecurring" data-id="${safe(r.id)}">${r.active===false?'Reactivar':'Pausar'}</button>${r.active!==false?`<button type="button" data-act="payRecurring" data-id="${safe(r.id)}">Pagar</button>`:''}</div></td></tr>`;
+ const card=(cat)=>{const list=records.filter(r=>(r.category||'Sin categoría')===cat);const subtotal=list.filter(r=>r.active!==false&&!r.archived).reduce((a,r)=>a+recurMonthly(r),0);return `<details class="v409-sub-category" open><summary><strong>${safe(cat)} <small>(${list.length})</small></strong><span>${uiMoney(subtotal)} / mes ▾</span></summary><div class="v409-sub-table"><table><thead><tr><th>Servicio</th><th>Categoría</th><th>Próximo pago</th><th>Monto</th><th>Ciclo</th><th>Estado</th><th>Fuente de pago</th><th>Acciones</th></tr></thead><tbody>${list.map(row).join('')}</tbody></table></div></details>`;};
+ return `<div class="v409-subscriptions"><header class="v409-sub-head"><div><span class="v409-kicker">VIVE EL HOY · SERVICIOS</span><h1>Suscripciones</h1><p>Gestiona tus servicios recurrentes y pagos periódicos por categoría.</p></div><div class="v409-sub-actions"><button type="button" data-act="addRecurring">＋ Añadir suscripción</button></div></header><div class="v409-sub-kpis"><article class="v409-sub-kpi"><small>Costo mensual equivalente</small><strong>${uiMoney(monthly)}</strong><span>Solo servicios activos</span></article><article class="v409-sub-kpi"><small>Suscripciones activas</small><strong>${active.length}</strong><span>${records.length} registradas</span></article><article class="v409-sub-kpi"><small>Próximas renovaciones</small><strong>${next7.length}</strong><span>En los próximos siete días</span></article><article class="v409-sub-kpi"><small>Promedio mensual por servicio</small><strong>${uiMoney(active.length?monthly/active.length:0)}</strong><span>Equivalente mensual</span></article></div><div class="v409-sub-filterbar" aria-label="Filtrar suscripciones por categoría">${['Todas',...categories].map(c=>`<button type="button" data-v409-sub-filter="${safe(c)}" aria-pressed="${activeCategory===c}">${safe(c)} (${c==='Todas'?records.length:records.filter(r=>(r.category||'Sin categoría')===c).length})</button>`).join('')}</div><div>${groups.length?groups.map(card).join(''):'<div class="panel empty">No hay suscripciones registradas.</div>'}</div><details class="v409-original-toolbox"><summary>Ver análisis, historial y herramientas completas</summary><div>${oldRecurring()}</div></details></div>`;
+};
+document.addEventListener('click',function(ev){const button=ev.target.closest('[data-v409-sub-filter]');if(!button)return;ev.preventDefault();ev.stopImmediatePropagation();activeCategory=button.dataset.v409SubFilter||'Todas';render();},true);
+const originalOverview=pages.overview;
+pages.overview=function(){
+ const d=v89DebtCapacity(String(ui.month||today().slice(0,7)));
+ const monthly=Number(d.monthly)||0, income=Number(d.income)||0;
+ const coverage=income>0?income/monthly:null;
+ const label=monthly<=0?'Sin obligaciones exigibles':coverage===null?'Sin base de ingresos':coverage>=1?'Ingresos cubren compromisos':'Compromisos superan ingresos';
+ const value=monthly<=0?'—':coverage===null?'—':(coverage*100).toLocaleString('es-DO',{maximumFractionDigits:1})+'%';
+ return `<section class="v409-home-pulse" aria-label="Indicador principal de cobertura financiera"><div><span class="v409-kicker" style="color:#b9d2f2">PULSO FINANCIERO · COBERTURA DEL MES</span><h2>${safe(label)}</h2><p>Compromisos ${uiMoney(monthly)} · Ingresos considerados ${uiMoney(income)}. Relación entre ingresos y compromisos del período seleccionado.</p></div><div class="v409-home-pulse-stat"><strong>${safe(value)}</strong><small>Cobertura de compromisos</small></div></section>`+originalOverview();
+};
 })();
 </script>
 </body>
