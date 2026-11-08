@@ -29348,7 +29348,7 @@ function v342CreativePositionMobile(liquid,debt,net){
  const freeBudget=p.percent===null?'Sin definir':money(Math.abs(p.remaining));
  const meter=(title,kpi,caption,tone,action,aria,progress,foot)=>`<button type="button" class="v421-meter ${tone}" ${action} aria-label="${aria}"><span class="v421-meter-top"><small>${title}</small><strong>${kpi}</strong></span><p>${caption}</p><span class="v421-meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${clamp(progress)}"><i style="width:${clamp(progress)}%"></i></span><em>${foot}</em></button>`;
  return `<section class="v344-creative v342-creative-position v421-creative-compact" aria-label="Panel creativo compacto de situación financiera">
-   <div class="v421-head"><span class="v421-kicker">CREATIVO · TODO DE UN VISTAZO</span><span class="v421-pressure ${pressure.tone}">${pressure.label}</span></div>
+   <div class="v421-head"><span class="v421-kicker">PANORAMA FINANCIERO</span></div>
    <button type="button" class="v421-net" data-act="v186Deep" data-id="net" aria-label="Abrir el detalle de tu posición neta"><small>TU POSICIÓN FINANCIERA</small><strong>${money(net,'DOP',2)}</strong><span>Activos menos deudas · equivalente RD$</span></button>
    <div class="v421-core-metrics" aria-label="Indicadores principales"><button type="button" data-act="v186Deep" data-id="liquidity"><small>Liquidez</small><strong>${bubbleMoney(liquid)}</strong></button><button type="button" data-act="v186Deep" data-id="debt"><small>Deudas</small><strong>${bubbleMoney(debt)}</strong></button><button type="button" data-v290-budget-open="execution"><small>Presupuesto libre</small><strong>${p.percent===null?'—':bubbleMoney(p.remaining)}</strong></button></div>
    <div class="v421-meter-grid" aria-label="Presupuesto y compromisos del mes">
@@ -29389,7 +29389,7 @@ function mobileHome(){
  const vis=db.settings.visualDesign==='vision';
  const v64Compare=v64PositionComparison();
  const balancePanel=vis?`<section class="vive-mobile-balance vive-mobile-net-balance" aria-label="Posición neta y evolución"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Tu posición financiera</span><span>${icon('wallet')}</span></div><button type="button" class="vive-mobile-balance-amount v186-mobile-amount" data-act="v186Deep" data-id="net" title="Ver composición de la posición neta · ${money(net,'DOP',2)}">${money(net)}</button><div class="vive-mobile-balance-sub">${v105BubblePercent(net,v64Compare.position?.net,v64Compare)}</div><div class="vive-mobile-balance-sub">Evolución de la posición neta registrada</div><div class="vive-mobile-vision-trend">${visionPositionHistory(5,net).graph}</div><div class="vive-mobile-balance-foot"><span><small>Liquidez</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="liquidity" title="Ver cuentas y efectivo · ${money(liquid,'DOP',2)}"><b>${money(liquid)}</b></button></span><span><small>Deudas totales</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="debt" title="Ver todas las deudas · ${money(debt,'DOP',2)}"><b>${money(debt)}</b></button></span></div></section>`:`<section class="vive-mobile-balance" aria-label="Posición financiera"><div class="vive-mobile-balance-light"></div><div class="vive-mobile-balance-top"><span>Liquidez disponible</span><span>${icon('wallet')}</span></div><button type="button" class="vive-mobile-balance-amount v186-mobile-amount" data-act="v186Deep" data-id="liquidity" title="Ver cuentas con saldo · ${money(liquid)}">${money(liquid)}</button><div class="vive-mobile-balance-sub">${v105BubblePercent(liquid,v64Compare.position?.liquid,v64Compare)}</div><div class="vive-mobile-balance-sub">Disponible registrado en pesos equivalentes</div><div class="vive-mobile-balance-divider"></div><div class="vive-mobile-balance-foot"><span><small>Deudas</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="debt" title="Ver detalle de deudas · ${money(debt)}"><b>${money(debt)}</b></button></span><span><small>Posición neta</small><button type="button" class="v186-mobile-foot-amount" data-act="v186Deep" data-id="net" title="Ver composición neta · ${money(net)}"><b>${money(net)}</b></button></span></div></section>`;
- const v242BalancePanel=db.settings.mobilePositionStyle==='creative'?v342CreativePositionMobile(liquid,debt,net):db.settings.mobilePositionStyle==='integral'?v290MainPositionMobile(liquid,debt,net):db.settings.mobilePositionStyle==='circles'?v242MobileCircles(liquid,debt,net,v64Compare):balancePanel;
+ const v242BalancePanel=db.settings.mobilePositionStyle==='creative'?v342CreativePositionMobile(liquid,debt,net):db.settings.mobilePositionStyle==='integral'?v342CreativePositionMobile(liquid,debt,net):db.settings.mobilePositionStyle==='circles'?v242MobileCircles(liquid,debt,net,v64Compare):balancePanel;
  const netRatio=m.income>0?100*m.net/m.income:null;
  const netLabel=netRatio===null?'Sin ingresos registrados':`${netRatio.toLocaleString('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1})}% del ingreso del mes`;
  const paymentsHtml=upcomingPayments.map(o=>{
@@ -29532,6 +29532,8 @@ function v68Wallet(){
  const debt=dop.debt+fx(usd.debt,'USD');
  const totalLimit=num(active.limitDOP)+fx(num(active.limitUSD),'USD');
  const available=Math.max(0,totalLimit-debt);
+ const availableDOP=Math.max(0,num(active.limitDOP)-num(dop.debt));
+ const availableUSD=Math.max(0,num(active.limitUSD)-num(usd.debt));
  const usage=totalLimit>0?Math.min(100,Math.max(0,100*debt/totalLimit)):0;
  const last4=c=>String(c.last4||c.number||'').replace(/\D/g,'').slice(-4);
  const tierName=c=>CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
@@ -29545,10 +29547,17 @@ function v68Wallet(){
  const metric=(label,value,sub='')=>`<div class="v266-metric"><small>${label}</small><strong>${value}</strong>${sub?`<span>${sub}</span>`:''}</div>`;
  return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">VIVE EL HOY · WALLET</span><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
  <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${cards.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
- <div class="v266-selected-balance"><div><span>CRÉDITO DISPONIBLE</span><strong>${money(available)}</strong><small>RD$ equivalentes · tarjeta seleccionada</small></div><div class="v266-selected-debt"><small>DEUDA UTILIZADA</small><b>${money(debt)}</b></div></div>
+ <div class="v266-selected-balance v550-currency-balance v565-credit-dashboard" aria-label="Resumen de crédito por moneda de la tarjeta seleccionada">
+   <div class="v550-balance-column v565-primary"><span>CRÉDITO DISPONIBLE</span><strong>${money(available)}</strong><small>RD$ equivalentes</small>
+    <div class="v550-currency-breakdown" aria-label="Disponible en pesos y dólares"><span><i>RD$</i><b>${num(availableDOP).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span><span><i>US$</i><b>${num(availableUSD).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span></div>
+   </div>
+   <div class="v266-selected-debt v550-balance-column v565-secondary"><small>DEUDA UTILIZADA</small><b>${money(debt)}</b><small>RD$ equivalentes</small>
+    <div class="v550-currency-breakdown" aria-label="Deuda en pesos y dólares"><span><i>RD$</i><b>${num(dop.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span><span><i>US$</i><b>${num(usd.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span></div>
+   </div>
+  </div>
  <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" data-act="payCard" data-id="${sanitize(active.id)}"><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('card')}</span><b>Detalles</b></button><button type="button" data-act="editCard" data-id="${sanitize(active.id)}"><span>${icon('settings')}</span><b>Gestionar</b></button></div>
  <section class="v266-wallet-panel"><div class="v266-panel-heading"><div><span class="v266-overline">CONTROL DE CRÉDITO</span><h2>Estado de tu tarjeta</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Abrir detalles">${icon('arrow')}</button></div>
- <div class="v268-limit-row"><span>Límite total</span><strong>${money(totalLimit)}</strong></div><div class="v266-credit-meter" role="meter" aria-label="Porcentaje utilizado del límite" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${usage.toFixed(1)}"><span style="width:${usage}%"></span></div><div class="v266-meter-foot"><span>Utilización del límite</span><b>${usage.toFixed(1)}%</b></div>${due?`<div class="v266-next-payment"><div><small>${due.nextDue<today()?'VENCIMIENTO ATRASADO':'PRÓXIMO VENCIMIENTO'}</small><strong>${prettyDate(due.nextDue)}</strong></div><b>${money(due.billed,due.ccy,2)}</b><button type="button" data-act="payCard" data-id="${sanitize(active.id)}" data-ccy="${due.ccy}">Pagar ${icon('arrow')}</button></div>`:''}</section>
+ <div class="v268-limit-row v565-limit-header"><span>Límite total</span><strong>${money(totalLimit)}</strong></div><div class="v565-limit-currencies" aria-label="Límites originales por moneda"><div><span>EN PESOS</span><strong>${money(num(active.limitDOP),'DOP',2)}</strong></div><div><span>EN DÓLARES</span><strong>${money(num(active.limitUSD),'USD',2)}</strong></div></div><div class="v266-credit-meter" role="meter" aria-label="Porcentaje utilizado del límite" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${usage.toFixed(1)}"><span style="width:${usage}%"></span></div><div class="v266-meter-foot"><span>Utilización del límite</span><b>${usage.toFixed(1)}%</b></div>${due?`<div class="v266-next-payment"><div><small>${due.nextDue<today()?'VENCIMIENTO ATRASADO':'PRÓXIMO VENCIMIENTO'}</small><strong>${prettyDate(due.nextDue)}</strong></div><b>${money(due.billed,due.ccy,2)}</b><button type="button" data-act="payCard" data-id="${sanitize(active.id)}" data-ccy="${due.ccy}">Pagar ${icon('arrow')}</button></div>`:''}</section>
  ${v371CardReturnWidget(active)}
  <details class="v266-wallet-detail"><summary><span>${icon('receipt')} Cortes por moneda <small>Pesos y dólares</small></span>${icon('arrow')}</summary><div class="v266-currency-row"><span>Facturado · RD$</span><b>${money(dop.billed,'DOP',2)}</b></div><div class="v266-currency-row"><span>Facturado · US$</span><b>${money(usd.billed,'USD',2)}</b></div><p>Los importes son registros internos. Consulta el estado oficial de tu entidad para conciliar.</p></details>
  <section class="v266-wallet-panel v266-activity"><div class="v266-panel-heading"><div><span class="v266-overline">TUS ÚLTIMOS CONSUMOS</span><h2>Actividad reciente</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Ver todos los movimientos">${icon('arrow')}</button></div>${rows||'<p class="v266-empty-activity">Sin movimientos recientes en esta tarjeta.</p>'}</section>
@@ -32042,6 +32051,132 @@ function v197ReferenceChart(id){
 const VIVE_CHART_KEYS=new Set(['futureCostKpi','futureCalendar','creditUtil','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureWaterfall','futureMap','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
 /* V326 · contenido de los doce módulos que Personalización ya ofrece,
    sin crear métricas ficticias ni duplicar datos contables. */
+/* V560 · Conciliación de compromisos contra el libro real.
+ * No crea ni modifica transacciones. La unidad de asignación es el vencimiento
+ * identificado, no el mes en que por casualidad se registró el pago.
+ */
+function v560ReconcileCommitments(period=ui.month){
+ const month=v99Period(period),end=v99End(month),cutoff=today();
+ const validDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(String(d||''));
+ const amount=v=>Math.max(0,num(v));
+ const safe=x=>String(x||'');
+ const txs=(db.transactions||[]).filter(t=>t&&validDate(t.date)&&t.date<=cutoff&&t.postingStatus!=='pending'&&t.postingOrigin!=='automático estimado'&&t.scheduleSnapshot?.postingMode!=='auto')
+ .sort((a,b)=>a.date.localeCompare(b.date)||safe(a.created).localeCompare(safe(b.created)));
+ const entries=[];const warnings=[];
+ const add=(kind,id,ccy,due,scheduled,name,source='programado')=>{
+  if(!validDate(due)||amount(scheduled)<.005)return;
+  entries.push({kind,id:safe(id),ccy:ccy||'DOP',due,scheduled:amount(scheduled),paid:0,name:name||kind,source});
+ };
+ const apply=(rows,value)=>{let left=amount(value);for(const row of rows){if(left<=.005)break;const free=Math.max(0,row.scheduled-row.paid);const used=Math.min(left,free);row.paid+=used;left-=used;}return left;};
+ const fifo=(rows)=>rows.sort((a,b)=>a.due.localeCompare(b.due));
+ // TARJETAS: reconstruir saldos por corte desde transacciones, sin usar el
+ // dueMap de hoy, porque éste ya tiene descontados los pagos de todo el pasado.
+ for(const card of db.cards||[]){
+  for(const ccy of ['DOP','USD']){
+   const rows=[];
+   const opened=validDate(card.opened)?card.opened:cutoff;
+   const opening=amount(ccy==='USD'?card.openingUSD:card.openingDOP);
+   const billed=ccy==='USD'?card.openingBilledUSD:card.openingBilledDOP;
+   // Si el saldo inicial carece de clasificación de corte, se asigna al ciclo
+   // de apertura; el reporte lo declara como estimación.
+   if(opening>.005){
+    // Apertura sin corte oficial: señalada como reconstrucción orientativa.
+    const oldBilled=billed==null?0:Math.min(opening,amount(billed));
+    if(oldBilled>.005)add('card',card.id,ccy,cardDue(lastCutAt(opened,card.cutDay),card.dueDay),oldBilled,card.name,'saldo inicial facturado');
+    if(opening-oldBilled>.005)add('card',card.id,ccy,cardDue(cutFor(opened,card.cutDay),card.dueDay),opening-oldBilled,card.name,billed==null?'apertura sin corte oficial':'saldo inicial sin facturar');
+   }
+   for(const t of txs){
+    if(safe(t.cardId)!==safe(card.id)||safe(t.currency||'DOP')!==ccy)continue;
+    if(t.type==='card_charge'||t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='lent'){
+     add('card',card.id,ccy,cardDue(cutFor(t.date,card.cutDay),card.dueDay),t.amount,card.name,'consumo');
+    }
+   }
+   const set=entries.filter(e=>e.kind==='card'&&e.id===safe(card.id)&&e.ccy===ccy);
+   fifo(set);
+   // Devoluciones/recompensas reducen la obligación, pero no son pagos realizados:
+   // no cuentan en 'pagado confirmado'. Se descuentan del importe programado.
+   for(const t of txs){
+    if(safe(t.cardId)!==safe(card.id)||safe(t.currency||'DOP')!==ccy)continue;
+    const settlement=t.type==='card_refund'||t.type==='card_reward';
+    const cardCredit=t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent';
+    if(settlement){let remaining=amount(t.amount);for(const row of set){if(remaining<=.005)break;const eligible=Math.max(0,row.scheduled-row.paid);const credit=Math.min(eligible,remaining);row.scheduled-=credit;remaining-=credit;}continue;}
+    if(t.type!=='card_payment'&&!cardCredit)continue;
+    // Una transacción sólo se utiliza aquí, una vez y en una moneda.
+    apply(set, t.amount);
+   }
+  }
+ }
+ // PRÉSTAMOS: cuotas pactadas según su calendario, aunque ya se hayan pagado.
+ // Cuando el pago tiene installmentPeriod se aplica estrictamente a ese ciclo.
+ for(const l of db.loans||[]){
+  const rows=[];
+  for(let i=0,limit=Math.min(1200,v49LoanPeriodCount(l));i<limit;i++){
+   const d=v49LoanPeriodDate(l,i);if(!validDate(d)||d>v99End(month))break;
+   const base=amount(v86InstallmentForDate(l,d));
+   const q=rnd(base+amount(v49LoanPeriodInsurance(l,i))+amount(v49LoanPeriodFee(l,i)));
+   if(q>.005){add('loan',l.id,l.currency||'DOP',d,q,l.name);rows.push(entries[entries.length-1]);}
+  }
+  fifo(rows);
+  for(const t of txs){
+   if(t.type!=='loan_payment'||safe(t.loanId)!==safe(l.id)||t.paymentKind==='extra')continue;
+   const tag=safe(t.installmentPeriod);
+   let candidates=[];
+   if(tag){candidates=rows.filter(r=>v49LoanPeriodKey(l,r.due)===tag);if(!candidates.length)continue;}
+   else candidates=rows.filter(r=>r.due<=t.date).sort((a,b)=>a.due.localeCompare(b.due));
+   apply(candidates,t.amount);
+  }
+ }
+ // SUSCRIPCIONES: reconciliar el scheduleKey (fecha de obligación), no sólo
+ // la fecha del débito; reconstruir los pagos históricos registrados.
+ for(const r of db.recurring||[]){
+  const rows=[];const dates=new Set();
+  let due=safe(r.nextDue);
+  if(validDate(due)){
+   // Retroceder desde próximo vencimiento hasta una ventana histórica acotada.
+   // Los servicios históricos sin fecha inicial se basan además en movimientos.
+   let scan=due;
+   for(let i=0;i<180&&validDate(scan)&&scan>=month+'-01';i++){
+    if(scan.slice(0,7)===month)dates.add(scan);
+    const prior=dateObj(scan);const d=prior.getDate();
+    if(r.frequency==='weekly')prior.setDate(d-7);
+    else if(r.frequency==='quarterly')prior.setMonth(prior.getMonth()-3);
+    else if(r.frequency==='annual')prior.setFullYear(prior.getFullYear()-1);
+    else prior.setMonth(prior.getMonth()-1);
+    const nxt=dateStr(prior);if(nxt>=scan)break;scan=nxt;
+   }
+   scan=due;for(let i=0;i<180&&validDate(scan)&&scan<=end;i++){
+    if(scan.slice(0,7)===month)dates.add(scan);
+    const nxt=v96NextRecurringDate(scan,r.frequency,r.billingDay||dateObj(due).getDate());if(!nxt||nxt<=scan)break;scan=nxt;
+   }
+  }
+  const payments=txs.filter(t=>safe(t.recurringId)===safe(r.id)&&['expense','card_charge'].includes(t.type));
+  for(const t of payments){const match=/^recurring:[^:]+:(\d{4}-\d{2}-\d{2})$/.exec(safe(t.scheduleKey));if(match&&match[1].slice(0,7)===month)dates.add(match[1]);else if(t.date.slice(0,7)===month&&!dates.size)dates.add(t.date);}
+  for(const d of [...dates].sort()){add('recurring',r.id,r.currency||'DOP',d,r.amount,r.name);rows.push(entries[entries.length-1]);}
+  for(const t of payments){
+   const match=/^recurring:[^:]+:(\d{4}-\d{2}-\d{2})$/.exec(safe(t.scheduleKey));
+   const dated=match?rows.filter(row=>row.due===match[1]):[];
+   const candidates=dated.length?dated:rows.filter(row=>row.due.slice(0,7)===t.date.slice(0,7));
+   if(candidates.length)apply(fifo(candidates),t.amount);
+  }
+ }
+ // ENTRE PERSONAS: solo lo que debo; pagos parciales por ID de relación.
+ for(const l of db.personalLoans||[]){
+  if(l.direction!=='borrowed'||!validDate(l.dueDate))continue;
+  const payments=txs.filter(t=>t.type==='personal_settlement'&&safe(t.personalLoanId)===safe(l.id));
+  const principal=amount(l.principal),scheduled=Math.max(0,principal);
+  add('personal',l.id,l.currency||'DOP',l.dueDate,scheduled,l.person||'Entre personas');
+  const row=entries[entries.length-1];if(row?.kind==='personal'&&row.id===safe(l.id))apply([row],payments.reduce((v,t)=>v+amount(t.principal??t.amount),0));
+ }
+ const inMonth=entries.filter(e=>e.due.slice(0,7)===month);
+ const kinds=['card','loan','recurring','personal'];
+ const groups=kinds.map(kind=>{
+  const list=inMonth.filter(e=>e.kind===kind);
+  return {kind,count:list.length,scheduled:rnd(list.reduce((n,e)=>n+v99MoneyInDop(e.scheduled,e.ccy),0)),paid:rnd(list.reduce((n,e)=>n+v99MoneyInDop(Math.min(e.scheduled,e.paid),e.ccy),0)),list};
+ });
+ const total=rnd(groups.reduce((n,g)=>n+g.scheduled,0));
+ const paid=rnd(Math.min(total,groups.reduce((n,g)=>n+g.paid,0)));
+ return {month,total,paid,pending:rnd(Math.max(0,total-paid)),groups,rows:inMonth,warnings};
+}
 /* V412 · Dos tarjetas opcionales. Únicamente UI: se alimentan de los cálculos existentes. */
 function v412PremiumWidget(id){
  const isCredit=id==='premiumCredit';
@@ -32053,48 +32188,26 @@ function v412PremiumWidget(id){
    c=a>0?Math.max(0,a-b):0;
    percent=a>0?b/a*100:null;
  }else{
-   // V419: primero el COMPROMISO DEL MES; después los pagos reales reducen el pendiente.
-   // A diferencia del cálculo anterior, "Programado" no se construye sumando Pagado + Pendiente.
    const month=v99Period(ui.month);
-   const plan=v99DebtMonth(month);
-   a=Math.max(0,num(plan.monthly));
-   const hasCommitment=(kind,id)=> (plan.lines||[]).some(o=>o.kind===kind&&String(o.id)===String(id));
-   const paid=(db.transactions||[]).filter(t=>{
-     if(!t || !String(t.date||'').startsWith(month))return false;
-     // Ni una proyección ni un cargo por conciliar son pagos confirmados.
-     if(t.postingOrigin==='automático estimado'||t.scheduleSnapshot?.postingMode==='auto')return false;
-     if(!(t.reviewed===true || t.postingOrigin==='confirmado' || t.postingOrigin==='manual'))return false;
-     if(t.type==='card_payment')return Boolean(t.cardId)&&hasCommitment('card',t.cardId);
-     if(t.type==='loan_payment')return Boolean(t.loanId)&&hasCommitment('loan',t.loanId);
-     if(t.type==='personal_settlement')return Boolean(t.personalLoanId)&&hasCommitment('personal',t.personalLoanId);
-     if(!['expense','card_charge'].includes(t.type)||!t.recurringId)return false;
-     return hasCommitment('recurring',t.recurringId);
-   });
-   const seenPaid=new Set();
-   const realPaid=paid.reduce((sum,t)=>{
-     const key=String(t.id||t.scheduleKey||'');
-     if(!key||seenPaid.has(key))return sum;
-     seenPaid.add(key);
-     return sum+Math.max(0,fx(num(t.amount),t.currency||'DOP'));
-   },0);
-   b=Math.min(a,realPaid);
-   c=Math.max(0,a-b);
-   percent=a>0?b/a*100:null;
-
+   const reconciliation=v560ReconcileCommitments(month);
+   a=reconciliation.total;b=reconciliation.paid;c=reconciliation.pending;
+   percent=a>0?100*b/a:null;
  }
  const width=Math.max(0,Math.min(100,percent||0));
  const pct=percent===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(percent)+'%';
  const title=isCredit?'Utilización por tarjeta':'Compromisos del mes';
  const subtitle=isCredit?'Controla límites, consumos y disponibilidad.':'Programado del mes menos pagos efectivamente registrados.';
- const fields=isCredit?['LÍMITE TOTAL','UTILIZADO','DISPONIBLE']:['PROGRAMADO','PAGADO CONFIRMADO','PENDIENTE'];
+ const fields=isCredit?['LÍMITE TOTAL','UTILIZADO','DISPONIBLE']:['PROGRAMADO','PAGADO','PENDIENTE'];
  const route=isCredit?'cards':'payments';
- const note=isCredit?'Consolidado en RD$ según la tasa de referencia configurada.':'Programado = cuotas y vencimientos del mes. Pagado = abonos reales vinculados. Pendiente = programado − pagado. Los cargos por conciliar no cuentan como pagos.';
+ const note=isCredit?'Consolidado en RD$ según la tasa de referencia configurada.':'Conciliación reconstruida según vencimiento, moneda e historial disponible. Los pagos no vinculados o cortes bancarios sin registro oficial pueden requerir revisión.';
+ const detail=!isCredit?(()=>{const groups=v560ReconcileCommitments(v99Period(ui.month)).groups;const labels={card:'Tarjetas',loan:'Préstamos',recurring:'Suscripciones',personal:'Entre personas'};
+ return `<details class="v560-commitment-detail"><summary>Ver conciliación por compromiso ${icon('chevron-down')}</summary><div class="v560-commitment-groups">${groups.map(g=>`<section class="v560-commitment-group"><h3>${labels[g.kind]} <small>${g.count}</small></h3><div class="v560-commitment-totals"><span>Programado <b>${money(g.scheduled)}</b></span><span>Abonado <b>${money(g.paid)}</b></span><span>Pendiente <b>${money(Math.max(0,g.scheduled-g.paid))}</b></span></div>${g.list.map(r=>`<div class="v560-commitment-row"><span>${sanitize(r.name)} · ${prettyDate(r.due)} · ${r.ccy==='USD'?'US$':'RD$'}</span><small>${money(r.paid,r.ccy,2)} / ${money(r.scheduled,r.ccy,2)}</small></div>`).join('')}</section>`).join('')}</div></details>`;})():'';
  return `<div class="v412-premium v410-credit-widget ${isCredit?'v412-premium-credit':'v412-premium-commitments'}" aria-label="${title}">
   <header class="v410-credit-head"><div><span class="v410-kicker">${isCredit?'CRÉDITO · LÍMITES':'PAGOS · MES'}</span><h2>${title}</h2><p>${subtitle}</p></div><button type="button" data-act="navigate" data-id="${route}">${isCredit?'Ver tarjetas':'Ver pagos'} ${icon('arrow')}</button></header>
   <div class="v410-credit-kpis"><div><small>${fields[0]}</small><strong>${money(a)}</strong></div><div><small>${fields[1]}</small><strong>${money(b)}</strong></div><div><small>${fields[2]}</small><strong>${money(c)}</strong></div></div>
   <div class="v410-credit-bar-row"><span>${isCredit?'Utilización total':'Compromisos cubiertos'}</span><strong>${pct}</strong></div>
   <div class="v410-credit-track" role="progressbar" aria-label="${title}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${width.toFixed(1)}"><i style="width:${width.toFixed(2)}%"></i></div>
-  <p class="v410-credit-note">${note}</p>
+  <p class="v410-credit-note">${note}</p>${detail}
  </div>`;
 }
 function v412PremiumMobileWidgets(){
@@ -33751,9 +33864,9 @@ function enhanceIncomeExpenseExpress(f,mode,editing=false){
  const amountZone=document.createElement('section');amountZone.className='fastx-amount-zone';amountZone.innerHTML=`<div class="fastx-amount-cap"><span>${mode==='income'?'IMPORTE RECIBIDO':'IMPORTE DEL GASTO'}</span><span class="fastx-currency-badge" data-fast-currency>RD$ · Pesos</span></div>`;
  append(amountZone,take('amount'));amountZone.insertAdjacentHTML('beforeend','<span class="fastx-amount-hint">Importe del movimiento, sin duplicar operaciones posteriores.</span>');body.appendChild(amountZone);
  // Shortcuts for six popular categories with exact names from the real catalog.
- const kind=mode==='income'?'ingreso':'gasto';const all=Object.keys(categoryMap(kind));const popular=FASTX_POPULAR[mode].filter(x=>all.includes(x));
+ const kind=mode==='income'?'ingreso':'gasto';const all=Object.keys(categoryMap(kind));const popular=FASTX_POPULAR[mode].filter(x=>all.includes(x)).slice(0,2);
  const cat=document.createElement('section');cat.className='fastx-category-section';
- cat.innerHTML=`<div class="fastx-section-title"><strong>${mode==='income'?'¿De dónde viene?':'¿En qué gastaste?'}</strong><small>Elige una categoría</small></div><div class="fastx-category-grid">${popular.map(name=>`<button type="button" class="fastx-cat" data-fast-category="${sanitize(name)}"><span class="fastx-cat-ico">${FASTX_ICONS[name]||'•'}</span><span>${sanitize(name)}</span></button>`).join('')}</div>`;
+ cat.innerHTML=`<div class="fastx-section-title"><strong>${mode==='income'?'¿De dónde viene?':'¿En qué gastaste?'}</strong><small>Elige una categoría</small></div><div class="fastx-category-grid">${popular.map(name=>`<button type="button" class="fastx-cat" data-fast-category="${sanitize(name)}"><span class="fastx-cat-ico">${FASTX_ICONS[name]||'•'}</span><span>${sanitize(name)}</span></button>`).join('')}<button type="button" class="fastx-cat fastx-cat-other" data-fast-other="1"><span class="fastx-cat-ico">＋</span><span>Otra categoría</span></button></div>`;
  const catControls=document.createElement('div');catControls.className='fastx-category-controls';append(catControls,take('category'));append(catControls,take('subcategory'));cat.appendChild(catControls);body.appendChild(cat);
  // Payment source: distinct modes for income and spending.
  const source=document.createElement('section');source.className='fastx-source-section';
@@ -33768,16 +33881,18 @@ function enhanceIncomeExpenseExpress(f,mode,editing=false){
  if(mode==='spend'){const currencyNode=takeId('flowCurrency');append(sourceRow,currencyNode)}
  source.appendChild(sourceRow);body.appendChild(source);
  // Date and channel: only when relevant. The channel is kept visible for outgoing spending.
- const when=document.createElement('section');when.className='fastx-date-and-channel';append(when,take('date'));if(mode==='spend')append(when,take('paymentChannel'));body.appendChild(when);
+ const when=document.createElement('section');when.className='fastx-date-and-channel';append(when,take('date'));if(mode==='spend')append(when,take('paymentChannel'));append(when,take('note'));body.appendChild(when);
+ // Los impuestos, comisiones y controles operativos siguen visibles: no se ocultan datos financieros.
+ const extrasVisible=document.createElement('section');extrasVisible.className='fastx-operational';append(extrasVisible,takeId('flowFeeDetails'));body.appendChild(extrasVisible);
  // Optional fields are collapsed by default, not discarded.
- const fold=document.createElement('details');fold.className='fastx-fold';fold.innerHTML='<summary><span>Más detalles · nota, estado y cargos</span><span>⌄</span></summary>';
+ const fold=document.createElement('details');fold.className='fastx-fold';fold.innerHTML='<summary><span>Opciones adicionales · etiquetas y estado</span><span>⌄</span></summary>';
  const foldInner=document.createElement('div');foldInner.className='fastx-fold-inner';fold.appendChild(foldInner);
- append(foldInner,take('note'));append(foldInner,takeId('flowFeeDetails'));
  append(foldInner,take('tags'));append(foldInner,take('postingStatus'));
  const liveReceipt=takeId('guidedReceipt');
  // Preserve any original fields added by future modules.
- for(const n of roots){if(used.has(n))continue;if(n.matches('.flow-hero,.flow-section-heading')){used.add(n);n.remove();continue}used.add(n);foldInner.appendChild(n)}
- body.appendChild(fold);
+ for(const n of roots){if(used.has(n))continue;if(n.matches('.flow-hero,.flow-section-heading')){used.add(n);n.remove();continue}used.add(n);if(n.matches('input[type="hidden"]'))hidden.appendChild(n);else extrasVisible.appendChild(n)}
+ if(!extrasVisible.children.length)extrasVisible.remove();
+ if(foldInner.children.length)body.appendChild(fold);
  // Real receipt generated by the accounting engine; not a mock value.
  right.innerHTML=`<span class="fastx-receipt-head">COMPROBANTE EN VIVO</span><div class="fastx-receipt-mark">${icon(mode==='income'?'up':'down')}</div><h3 class="fastx-receipt-title">${mode==='income'?'Así entra tu dinero':'Así se registra tu gasto'}</h3><p class="fastx-receipt-sub">El resumen se actualiza al cambiar la cuenta, la tarjeta o el importe.</p><div class="fastx-value-card"><small>${mode==='income'?'Acreditación estimada':'Valor del movimiento'}</small><strong data-fast-value>RD$ 0.00</strong><span data-fast-target></span></div><div class="fastx-receipt-details" id="fastxReceiptDetails"></div><div class="fastx-right-spacer"></div><div class="fastx-notice">${icon('shield')} <span>${mode==='income'?'Solo los fondos recibidos se reconocen como ingreso; las transferencias propias van en Mover.':'La compra con tarjeta cuenta como gasto al comprar, no de nuevo cuando pagas la tarjeta.'}</span></div>`;
  append(right.querySelector('#fastxReceiptDetails'),liveReceipt);
@@ -33788,6 +33903,7 @@ function enhanceIncomeExpenseExpress(f,mode,editing=false){
  f.classList.add('fastx-form','v129-express-organized');f.classList.remove('studio-form');f.noValidate=true;
  f.addEventListener('click',ev=>{
   const categoryButton=ev.target.closest('[data-fast-category]');if(categoryButton){ev.preventDefault();const x=f.elements.category;if(x){x.value=categoryButton.dataset.fastCategory;x.dispatchEvent(new Event('change',{bubbles:true}))}queueMicrotask(()=>fastxSync(f));return}
+  const otherButton=ev.target.closest('[data-fast-other]');if(otherButton){ev.preventDefault();const select=f.elements.category;if(select){select.focus({preventScroll:true});select.scrollIntoView({block:'nearest',behavior:'smooth'});}return}
   const sourceButton=ev.target.closest('[data-fast-source]');if(sourceButton){ev.preventDefault();const x=f.elements.paymentSource;if(x){x.value=sourceButton.dataset.fastSource;x.dispatchEvent(new Event('change',{bubbles:true}))}queueMicrotask(()=>fastxSync(f));return}
   const switchButton=ev.target.closest('[data-fast-mode]');if(switchButton&&!editing&&switchButton.dataset.fastMode!==mode){ev.preventDefault();const v=fromForm(f);guidedTransactionForm({flowMode:switchButton.dataset.fastMode,type:switchButton.dataset.fastMode==='income'?'income':'expense',amount:v.amount,date:v.date,note:v.note,accountId:v.accountId||db.accounts[0]?.id,cardId:v.cardId||db.cards[0]?.id});return}
  });
@@ -34143,7 +34259,7 @@ if(v.recurringId||previous?.recurringId){
  base.scheduleKey=previous?.scheduleKey||(editId?'':`recurring:${linkedId}:${recurring.nextDue}`);
  if(!previous&&db.transactions.some(t=>t.scheduleKey&&t.scheduleKey===base.scheduleKey))throw Error('Este vencimiento ya está registrado como pagado. Actualiza Próximos pagos.');
 }
-db.transactions.push(base);if(v.recurringId&&!previous){let recurring=db.recurring.find(x=>x.id===v.recurringId);if(recurring)recurring.nextDue=nextRecurringDate(recurring);}if(previous){db.txRevisions??=[];db.txRevisions.unshift({id:uuid(),transactionId:previous.id,at:new Date().toISOString(),before:{...previous},after:{...base}});db.txRevisions=db.txRevisions.slice(0,400);}if(document.getElementById('transactionForm')?.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==document.getElementById('transactionForm').dataset.pendingId);const v156Saved=persist();if(!v156Saved)throw Error('No se pudo preparar el guardado seguro. El movimiento no se confirmó. Verifica tu sesión y almacenamiento antes de reintentarlo.');closeModal();render();toast(previous?'Movimiento corregido; balances recalculados.':'Movimiento registrado y balances actualizados.');if(!previous)window.v156TransactionFeedback?.(base);return base}catch(error){db.transactions=v392Before.transactions;db.txRevisions=v392Before.txRevisions;db.pendingOperations=v392Before.pendingOperations;for(const state of v392Before.recurring){const r=(db.recurring||[]).find(x=>x.id===state.id);if(r)r.nextDue=state.nextDue;}v99Invalidate();throw error}}
+db.transactions.push(base);if(v.recurringId&&!previous){let recurring=db.recurring.find(x=>x.id===v.recurringId);if(recurring)recurring.nextDue=nextRecurringDate(recurring);}if(previous){db.txRevisions??=[];db.txRevisions.unshift({id:uuid(),transactionId:previous.id,at:new Date().toISOString(),before:{...previous},after:{...base}});db.txRevisions=db.txRevisions.slice(0,400);}if(document.getElementById('transactionForm')?.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==document.getElementById('transactionForm').dataset.pendingId);const v156Saved=persist();if(!v156Saved)throw Error('No se pudo preparar el guardado seguro. El movimiento no se confirmó. Verifica tu sesión y almacenamiento antes de reintentarlo.');closeModal();render();toast(previous?'Movimiento corregido; balances recalculados.':'Movimiento registrado y balances actualizados.');if(!previous){setTimeout(()=>window.v156TransactionFeedback?.(base),90);}return base}catch(error){db.transactions=v392Before.transactions;db.txRevisions=v392Before.txRevisions;db.pendingOperations=v392Before.pendingOperations;for(const state of v392Before.recurring){const r=(db.recurring||[]).find(x=>x.id===state.id);if(r)r.nextDue=state.nextDue;}v99Invalidate();throw error}}
 function nextRecurringDate(r){return v96NextRecurringDate(r.nextDue,r.frequency,r.billingDay||dateObj(r.nextDue).getDate())}
 function payRecurring(id){
  let r=db.recurring.find(x=>x.id===id);if(!r||r.active===false||r.archived){toast('El servicio no está activo.');return;}
@@ -34668,7 +34784,7 @@ document.addEventListener('change',async e=>{
 
 document.addEventListener('submit',e=>{let form=e.target;if(!['personalTxEditForm','bankForm','categoryForm','accountForm','cardForm','loanForm','recurringForm','budgetForm','transactionForm','settingsForm','certificateForm','benefitRuleForm','annualFeeForm','rewardReceivedForm','perkUsageForm','personalForm','personalPaymentForm','benefitLedgerForm','recurringPaymentConfirmForm'].includes(form.id))return;e.preventDefault();let v=fromForm(form),id=form.dataset.id;
 try{
- if(form.id==='recurringPaymentConfirmForm'){executeRecurringPayment(v);if(form.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==form.dataset.pendingId);const v156RecurringSaved=persist();closeModal();render();toast('Suscripción pagada y contabilizada.');if(v156RecurringSaved)window.v156TransactionFeedback?.({type:'expense',flowMode:'service',amount:v.amount,currency:db.recurring.find(r=>r.id===v.recurringId)?.currency||'DOP'});return}
+ if(form.id==='recurringPaymentConfirmForm'){executeRecurringPayment(v);if(form.dataset.pendingId)db.pendingOperations=db.pendingOperations.filter(p=>p.id!==form.dataset.pendingId);const v156RecurringSaved=persist();closeModal();render();toast('Suscripción pagada y contabilizada.');if(v156RecurringSaved){setTimeout(()=>window.v156TransactionFeedback?.({type:'expense',flowMode:'service',amount:v.amount,currency:db.recurring.find(r=>r.id===v.recurringId)?.currency||'DOP'}),90);}return}
  if(form.id==='personalTxEditForm'){savePersonalTransactionEdit(v,id);return}
  if(form.id==='benefitRuleForm'){let c=card(v.cardId),kind=v.kind,value=num(v.value),cap=num(v.monthlyCap);if(!c)throw Error('Tarjeta no encontrada.');if(!rewardKindName[kind])throw Error('Tipo de beneficio inválido.');if(value<0||cap<0||(['cashback','discount'].includes(kind)&&v.calc!=='fixed'&&value>100))throw Error('Verifica porcentaje, importe y tope.');if(v.calc==='fixed'&&kind!=='cashback')throw Error('Importe fijo únicamente para cashback.');if(v.category&&!categoryMap('gasto')[v.category])throw Error('Categoría inválida.');let rule={id:uuid(),name:v.name.trim(),kind,currency:v.currency||'ALL',category:v.category||'',subcategory:v.subcategory.trim(),merchant:v.merchant.trim(),calc:v.calc||'percent',value:rnd(value),monthlyCap:rnd(cap),validFrom:v.validFrom||today(),validUntil:v.validUntil||''};if(!rule.name)throw Error('Indica el nombre de la regla.');if(rule.validUntil&&rule.validUntil<rule.validFrom)throw Error('La vigencia final debe ser posterior al inicio.');c.benefitRules??=[];c.benefitRules.push(rule);persist();closeModal();render();toast('Regla guardada · solo afectará las estimaciones.');return}
  if(form.id==='annualFeeForm'){let c=card(v.cardId),value=num(v.amount);if(!c||!Number.isFinite(value)||value<=0||v.date>today()||!/^\d{4}-\d{2}-\d{2}$/.test(v.date))throw Error('Revisa tarjeta, importe y fecha.');if(db.transactions.some(t=>t.cardId===c.id&&t.chargeKind==='annual_fee'&&String(t.date).slice(0,4)===String(v.date).slice(0,4)))throw Error('Ya se registró una anualidad para esta tarjeta en ese año. No se cobra dos veces por sus dos monedas.');db.transactions.push({id:uuid(),created:new Date().toISOString(),type:'card_charge',cardId:c.id,currency:v.currency,date:v.date,amount:rnd(value),category:'Deudas e intereses',subcategory:'Anualidad / membresía',chargeKind:'annual_fee',note:'Membresía anual · '+c.name});persist();closeModal();render();toast('Anualidad contabilizada como gasto y deuda en tarjeta.');return}
@@ -35926,25 +36042,8 @@ function f33Ready(){
  const existingSplash=document.getElementById('f33-gate');
  if(existingSplash?.classList.contains('v329-splash'))existingSplash.classList.toggle('v331-splash-light',db.settings?.theme==='light');
  const gate=document.getElementById('f33-gate');
- if(gate){
-  if(gate.classList.contains('v329-splash')){
-   const completedGate=gate;
-   const remaining=Math.max(0,940-(Date.now()-(v335SplashSince||Date.now())));
-   // Duración total ~1.5 s (0.94 s de marca + 0.56 s de salida); sin espera extra si la carga supera ese tiempo.
-   setTimeout(()=>{
-    if(!completedGate.isConnected||!completedGate.classList.contains('v329-splash')||f33Phase!=='ready')return;
-    completedGate.classList.add('v329-fade-out');
-    setTimeout(()=>{
-     if(completedGate.classList.contains('v329-fade-out')){
-      completedGate.hidden=true;
-      completedGate.classList.remove('v329-splash','v329-fade-out');
-      v335SplashSince=0;
-     }
-    },560);
-   },remaining);
-  }else gate.hidden=true;
- }
- v360RestoreUI();render();if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
+ // Render first; dismiss splash immediately when the authenticated data is ready.
+ v360RestoreUI();render();if(gate){gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out');v335SplashSince=0;}if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
  v10LiveStart();
  setTimeout(()=>{v212Load().then(()=>v212Sync()).catch(err=>console.warn('Apple Pay:',err));},1600);
  // Consultar tasa externa de forma no bloqueante tras autenticar al usuario.
@@ -37217,7 +37316,7 @@ recurringForm=function(id){
  const picker=f.querySelector('.v41-icon-selector');if(picker){
   const extra=V45_EXTRA_SERVICES.filter(o=>!picker.querySelector(`.v41-service-choice[data-id="${o.id}"]`)).map(o=>`<button type="button" class="v41-service-choice" data-act="v41PickServiceIcon" data-id="${o.id}" data-icon-label="${sanitize(o.label.toLowerCase())}" aria-pressed="${o.id===r.iconId}">${v41ServiceIcon(o.id)}<span class="v41-choice-label">${sanitize(o.label)}</span></button>`).join('');
   picker.querySelector('.v41-service-grid')?.insertAdjacentHTML('beforeend',extra);
-  picker.insertAdjacentHTML('beforeend',`<div class="v45-upload-panel"><label class="v45-upload-button"><span>＋ Subir mi propio ícono</span><input type="file" name="iconUpload" accept="image/png,image/webp,image/jpeg" /></label><input type="hidden" name="serviceIconData" value="${selected}"><span class="v45-upload-hint">PNG, JPG o WebP. Se optimiza a 128 × 128 y se guarda con la suscripción.</span><span class="v45-upload-preview">${selected?`<img alt="Ícono personalizado" src="${selected}" />`:''}</span><button type="button" class="btn sm ghost" data-v45-remove-icon ${selected?'':'hidden'}>Quitar imagen propia</button></div>`);
+  picker.insertAdjacentHTML('beforeend',`<div class="v45-upload-panel"><label class="v45-upload-button"><span>＋ Subir mi propio ícono</span><input type="file" name="iconUpload" accept="image/png,image/webp,image/jpeg" /></label><input type="hidden" name="serviceIconData" value="${selected}"><span class="v45-upload-hint">PNG, JPG o WebP. Ideal: imagen cuadrada 1:1 (512 × 512 o más). Se recorta al centro en 128 × 128 y se guarda con la suscripción.</span><span class="v45-upload-preview">${selected?`<img alt="Ícono personalizado" src="${selected}" />`:''}</span><button type="button" class="btn sm ghost" data-v45-remove-icon ${selected?'':'hidden'}>Quitar imagen propia</button></div>`);
   if(selected)picker.querySelector('#v41IconPreview').innerHTML=v45SubIcon(r)+'<small>Personalizado</small>';
  }
  const frequent=f.elements.frequency;
@@ -37248,8 +37347,8 @@ document.addEventListener('change',event=>{
  if(!blob.type.match(/^image\/(png|jpeg|webp)$/)||blob.size>5*1024*1024){toast('Usa PNG, JPG o WebP de hasta 5 MB.');file.value='';return;}
  const img=new Image(),url=URL.createObjectURL(blob);
  img.onload=()=>{
-  try{const canvas=document.createElement('canvas');canvas.width=128;canvas.height=128;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,128,128);
-   const z=Math.min(128/img.width,128/img.height);ctx.drawImage(img,(128-img.width*z)/2,(128-img.height*z)/2,img.width*z,img.height*z);
+  try{const canvas=document.createElement('canvas');canvas.width=128;canvas.height=128;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,128,128);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+   const scale=Math.max(128/img.width,128/img.height);const drawW=img.width*scale,drawH=img.height*scale;const dx=(128-drawW)/2,dy=(128-drawH)/2;ctx.drawImage(img,dx,dy,drawW,drawH);
    let data=canvas.toDataURL('image/webp',.78);if(!v45SafeIconData(data))data=canvas.toDataURL('image/png');if(!v45SafeIconData(data))throw Error('Ícono demasiado grande: utiliza una imagen simple.');
    if(!document.contains(f))return;f.elements.serviceIconData.value=data;
    f.querySelector('.v45-upload-preview').innerHTML=`<img alt="Vista previa de ícono" src="${data}">`;
@@ -38806,7 +38905,10 @@ function v80InstallAdvisor(f){
  const amount=f.elements.amount;if(!amount)return;
  const node=document.createElement('div');node.className='v80-advisor-slot';node.dataset.v80Slot='yes';
  const fast=f.querySelector('.fastx-amount-zone');
- if(fast)fast.insertAdjacentElement('afterend',node);
+ if(fast){
+  const wrap=document.createElement('div');wrap.className='fastx-top-grid';
+  fast.parentNode.insertBefore(wrap,fast);wrap.appendChild(fast);wrap.appendChild(node);
+ }
  else{
   const main=f.querySelector('.studio-step[data-step="1"]')||f.querySelector('.form-grid');
   const target=amount.closest('label')||amount.closest('.form-full');
@@ -41909,6 +42011,10 @@ function v443NavTone(n){
 }
 function v443NavApply(raw){
  const n=v443NavLevel(raw),ratio=n/100,style=document.documentElement.style;
+ style.setProperty('--v443-nav-level',String(n));
+ style.setProperty('--v443-nav-preview-alpha',(0.09+0.32*ratio).toFixed(3));
+ style.setProperty('--v443-nav-preview-border-alpha',(0.04+0.70*ratio).toFixed(3));
+ style.setProperty('--v443-nav-pill-idle-alpha',(0.02+0.16*ratio).toFixed(3));
  style.setProperty('--v443-nav-shell-alpha',(0.40*ratio).toFixed(3));
  style.setProperty('--v443-nav-shell-border-alpha',(0.75*ratio).toFixed(3));
  style.setProperty('--v443-nav-shell-inner-alpha',(0.68*ratio).toFixed(3));
@@ -41973,11 +42079,11 @@ document.addEventListener('change',event=>{
 
 
 function v242SettingsPreview(){
- const chosen=['original','circles','integral','creative'].includes(db.settings.mobilePositionStyle)?db.settings.mobilePositionStyle:'original';
+ const chosen=db.settings.mobilePositionStyle==='integral'?'creative':(['original','circles','creative'].includes(db.settings.mobilePositionStyle)?db.settings.mobilePositionStyle:'creative');
  const liquid=totalLiquid(), debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable,net=liquid+totalCertificates()+personalTotals().receivable-debt;
- return `<section class="v242-appearance-picker" aria-label="Estilo del indicador principal en iPhone"><div class="v242-preference-title"><div><span class="summary-tag">RESUMEN · SOLO IPHONE</span><h3>Tu posición financiera</h3><p>Elige uno de cuatro estilos. Las miniaturas usan tus cifras reales y muestran la composición de cada tarjeta. El escritorio conserva su apariencia actual.</p></div><span class="v242-setting-kicker">Se sincroniza con tu cuenta</span></div><div class="v242-appearance-grid">
+ return `<section class="v242-appearance-picker" aria-label="Estilo del indicador principal en iPhone"><div class="v242-preference-title"><div><span class="summary-tag">RESUMEN · SOLO IPHONE</span><h3>Tu posición financiera</h3><p>Elige uno de tres estilos. Las miniaturas usan tus cifras reales y muestran la composición de cada tarjeta. El escritorio conserva su apariencia actual.</p></div><span class="v242-setting-kicker">Se sincroniza con tu cuenta</span></div><div class="v242-appearance-grid">
  <button type="button" class="v242-style-option ${chosen==='original'?'selected':''}" data-v242-style="original" aria-pressed="${chosen==='original'}"><span class="v242-style-art v242-mini-original"><span class="v242-mini-label">Liquidez disponible</span><strong>${bubbleMoney(liquid)}</strong><span class="v242-mini-divider"></span><span class="v242-mini-foot"><i>Deudas <b>${bubbleMoney(debt)}</b></i><i>Posición neta <b>${bubbleMoney(net)}</b></i></span></span><span class="v242-style-description"><strong>Original móvil</strong><small>El diseño predeterminado</small><i aria-hidden="true">${chosen==='original'?'✓':'○'}</i></span></button>
- <button type="button" class="v242-style-option ${chosen==='circles'?'selected':''}" data-v242-style="circles" aria-pressed="${chosen==='circles'}"><span class="v242-style-art v242-mini-circles"><span class="v242-mini-title">Tu posición financiera</span><strong>${bubbleMoney(net)}</strong><span class="v242-mini-orbs"><i><b>${bubbleMoney(liquid)}</b><small>Liquidez</small></i><i class="v242-featured"><b>${bubbleMoney(debt)}</b><small>Deudas</small></i><i><b>${bubbleMoney(net)}</b><small>Neto</small></i></span></span><span class="v242-style-description"><strong>Tres círculos</strong><small>Adaptación del diseño web</small><i aria-hidden="true">${chosen==='circles'?'✓':'○'}</i></span></button><button type="button" class="v242-style-option v290-style-integral ${chosen==='integral'?'selected':''}" data-v242-style="integral" aria-pressed="${chosen==='integral'}"><span class="v242-style-art v290-mini-integral"><span class="v290-mini-head">POSICIÓN + PRESUPUESTO</span><strong>${bubbleMoney(net)}</strong><span class="v290-mini-metrics"><i>Liquidez <b>${bubbleMoney(liquid)}</b></i><i>Deudas <b>${bubbleMoney(debt)}</b></i></span><span class="v290-mini-budget"><span>Presupuesto utilizado</span><b>${v290BudgetPct(v290BudgetSnapshot().percent)}</b></span><span class="v290-mini-meter"><i style="width:${Math.max(0,Math.min(100,v290BudgetSnapshot().percent||0))}%"></i></span></span><span class="v242-style-description"><strong>Integral 360</strong><small>Posición y presupuesto en un solo KPI</small><i aria-hidden="true">${chosen==='integral'?'✓':'○'}</i></span></button><button type="button" class="v242-style-option v342-style-creative ${chosen==='creative'?'selected':''}" data-v242-style="creative" aria-pressed="${chosen==='creative'}"><span class="v242-style-art v342-mini-creative v421-mini-creative"><span class="v342-preview-kicker">CREATIVO · TODO DE UN VISTAZO</span><strong>${bubbleMoney(net)}</strong><span class="v421-mini-split"><i><small>Liquidez</small><b>${bubbleMoney(liquid)}</b></i><i><small>Deudas</small><b>${bubbleMoney(debt)}</b></i></span><span class="v342-mini-progress"><b style="width:${Math.max(0,Math.min(100,v290BudgetSnapshot().percent||0))}%"></b></span><small>${v290BudgetPct(v290BudgetSnapshot().percent)} · ${v290BudgetSnapshot().remaining<0?'Exceso':'Libre'} ${bubbleMoney(Math.abs(v290BudgetSnapshot().remaining||0))}</small></span><span class="v242-style-description"><strong>Creativo</strong><small>Todo el presupuesto en un solo vistazo</small><i aria-hidden="true">${chosen==='creative'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Los cuatro estilos reutilizan tus cifras reales; el escritorio conserva su diseño. Cambiar el estilo no modifica registros.</p></section>`;
+ <button type="button" class="v242-style-option ${chosen==='circles'?'selected':''}" data-v242-style="circles" aria-pressed="${chosen==='circles'}"><span class="v242-style-art v242-mini-circles"><span class="v242-mini-title">Tu posición financiera</span><strong>${bubbleMoney(net)}</strong><span class="v242-mini-orbs"><i><b>${bubbleMoney(liquid)}</b><small>Liquidez</small></i><i class="v242-featured"><b>${bubbleMoney(debt)}</b><small>Deudas</small></i><i><b>${bubbleMoney(net)}</b><small>Neto</small></i></span></span><span class="v242-style-description"><strong>Tres círculos</strong><small>Adaptación del diseño web</small><i aria-hidden="true">${chosen==='circles'?'✓':'○'}</i></span></button><button type="button" class="v242-style-option v342-style-creative ${chosen==='creative'?'selected':''}" data-v242-style="creative" aria-pressed="${chosen==='creative'}"><span class="v242-style-art v342-mini-creative v421-mini-creative"><span class="v342-preview-kicker">PANORAMA FINANCIERO</span><strong>${bubbleMoney(net)}</strong><span class="v421-mini-split"><i><small>Liquidez</small><b>${bubbleMoney(liquid)}</b></i><i><small>Deudas</small><b>${bubbleMoney(debt)}</b></i></span><span class="v342-mini-progress"><b style="width:${Math.max(0,Math.min(100,v290BudgetSnapshot().percent||0))}%"></b></span><small>${v290BudgetPct(v290BudgetSnapshot().percent)} · ${v290BudgetSnapshot().remaining<0?'Exceso':'Libre'} ${bubbleMoney(Math.abs(v290BudgetSnapshot().remaining||0))}</small></span><span class="v242-style-description"><strong>Creativo</strong><small>Todo el presupuesto en un solo vistazo</small><i aria-hidden="true">${chosen==='creative'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Los tres estilos reutilizan tus cifras reales; el escritorio conserva su diseño. Cambiar el estilo no modifica registros.</p></section>`;
 }
 
 function v273SettingsWidgetEditor(){
@@ -42692,7 +42798,7 @@ document.addEventListener('click',event=>{
  event.preventDefault();event.stopImmediatePropagation();
  if(sect){v242SettingsPane=sect.dataset.v242Section;render();if(isMobileViewport())window.scrollTo({top:0,behavior:'instant'});return;}
  if(back){v242SettingsPane='home';render();window.scrollTo({top:0,behavior:'instant'});return;}
- if(choice){const next=choice.dataset.v242Style;if(!['original','circles','integral','creative'].includes(next))return;
+ if(choice){const next=choice.dataset.v242Style;if(!['original','circles','creative'].includes(next))return;
   const previous=db.settings.mobilePositionStyle||'original';if(next===previous)return;
   db.settings.mobilePositionStyle=next;
   if(!persist()){db.settings.mobilePositionStyle=previous;toast('No se pudo guardar la preferencia. Comprueba tu sesión y la sincronización.');return;}
@@ -69405,8 +69511,8 @@ body:is(.theme-black,.theme-dark) #modal-root form[data-v379-income] .fastx-cat.
  function attachPreview(form,anchor){
   let preview=form.querySelector('.v379-income-preview');if(preview)return preview;
   preview=document.createElement('section');preview.className='v379-income-preview';preview.setAttribute('aria-label','Vista previa del ingreso');preview.setAttribute('aria-live','polite');preview.innerHTML=template();
-  if(anchor&&anchor.parentElement)anchor.insertAdjacentElement('afterend',preview);
-  else (form.querySelector('.form-grid')||form.querySelector('.fastx-entry')||form).append(preview);
+  // La vista previa de impacto fue retirada de la interfaz a solicitud del usuario.
+  // Mantener el nodo desconectado conserva las validaciones y cálculos preexistentes.
   return preview;
  }
  function renderPreview(preview,{route='',before=null,after=null,ccy='DOP',note='',future=false}){
@@ -71775,8 +71881,8 @@ html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v242-mobile
    Restaurar una sola superficie oscura, controles contrastados y módulos breves. */
 html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v410-financial-map.v421-creative-compact,
 html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact{
- background:linear-gradient(135deg,#10294c 0%,#184779 56%,#4652ae 100%)!important;
- background-image:linear-gradient(135deg,#10294c 0%,#184779 56%,#4652ae 100%)!important;
+ background:linear-gradient(135deg,color-mix(in srgb,var(--v424-accent-strong,var(--vive-theme-color,#6d69f1)) 68%,#102035) 0%,color-mix(in srgb,var(--v424-accent-strong,var(--vive-theme-color,#6d69f1)) 83%,#1d324a) 56%,color-mix(in srgb,var(--vive-theme-color,#6d69f1) 86%,#cad2ec) 100%)!important;
+ background-image:linear-gradient(135deg,color-mix(in srgb,var(--v424-accent-strong,var(--vive-theme-color,#6d69f1)) 68%,#102035) 0%,color-mix(in srgb,var(--v424-accent-strong,var(--vive-theme-color,#6d69f1)) 83%,#1d324a) 56%,color-mix(in srgb,var(--vive-theme-color,#6d69f1) 86%,#cad2ec) 100%)!important;
  color:#fff!important;border:1px solid rgba(255,255,255,.23)!important;
  border-radius:25px!important;padding:14px!important;gap:9px!important;
  box-shadow:0 15px 35px rgba(12,40,90,.20)!important;
@@ -73342,6 +73448,2084 @@ html body:is(.theme-black,.theme-dark) #app :is(
 }
 @media (prefers-reduced-motion:no-preference){
  html body #app :is(.analytics-world>.analytic-hero,.v57-product-hero.v57-accounts,.v57-product-hero.v57-cards){transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
+}
+</style>
+
+
+<style id="v448-web-navigation-intensity-functional">
+/* Intensidad efectiva: una sola escala para todas las barras horizontales de escritorio.
+   0 = carcasa invisible, 100 = vidrio visible; nunca afecta a la barra móvil. */
+@media(min-width:791px){
+ html body #app main.main :is(
+  .universe-switch,.module-switch-shell,.module-switch-tabs,.inner-menu-tabs,
+  .v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,
+  .v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs
+ ){
+  background:rgba(255,255,255,var(--v443-nav-shell-alpha,0))!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,var(--v443-nav-shell-border-alpha,0))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,var(--v443-nav-shell-inner-alpha,0)),0 8px 26px rgba(55,85,135,var(--v443-nav-shell-shadow-alpha,0))!important;
+  backdrop-filter:blur(var(--v443-nav-shell-blur,0px)) saturate(var(--v443-nav-shell-sat,100%))!important;
+  -webkit-backdrop-filter:blur(var(--v443-nav-shell-blur,0px)) saturate(var(--v443-nav-shell-sat,100%))!important;
+  transition:background .15s,border-color .15s,box-shadow .15s,backdrop-filter .15s!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app main.main :is(
+  .universe-switch,.module-switch-shell,.module-switch-tabs,.inner-menu-tabs,
+  .v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,
+  .v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs
+ ){
+  background:rgba(32,39,52,var(--v443-nav-shell-alpha,0))!important;
+  background-image:none!important;
+  border-color:rgba(125,146,182,var(--v443-nav-shell-border-alpha,0))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,var(--v443-nav-shell-inner-alpha,0)),0 8px 28px rgba(0,0,0,var(--v443-nav-shell-shadow-alpha,0))!important;
+ }
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):not(.active):not([aria-selected="true"]):not([aria-current="page"]){
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+ }
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):is(.active,[aria-selected="true"],[aria-current="page"]){
+  background:var(--v424-accent-strong,var(--vive-theme-color,#665fe7))!important;
+  background-image:none!important;
+  color:white!important;
+  -webkit-text-fill-color:white!important;
+  box-shadow:0 5px 15px color-mix(in srgb,var(--vive-theme-color,#665fe7) 19%,transparent)!important;
+ }
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):is(.active,[aria-selected="true"],[aria-current="page"]) :is(svg,span,i){color:white!important;stroke:currentColor!important;-webkit-text-fill-color:white!important}
+}
+/* La vista previa representa realmente la intensidad, sin banda opaca residual al 0%. */
+html body .v443-nav-settings .v443-nav-preview{
+ background:rgba(220,232,249,var(--v443-nav-preview-alpha,.09))!important;
+ background-image:none!important;
+ border-color:rgba(185,205,233,var(--v443-nav-preview-border-alpha,.04))!important;
+ transition:background .15s,border-color .15s!important;
+}
+html body .v443-nav-settings .v443-nav-preview-bar{
+ background:rgba(255,255,255,var(--v443-nav-shell-alpha,0))!important;
+ background-image:none!important;
+ border-color:rgba(255,255,255,var(--v443-nav-shell-border-alpha,0))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,var(--v443-nav-shell-inner-alpha,0)),0 8px 26px rgba(57,91,147,var(--v443-nav-shell-shadow-alpha,0))!important;
+}
+html body .v443-nav-settings .v443-nav-pill:not(.active){background:rgba(255,255,255,var(--v443-nav-pill-idle-alpha,.02))!important}
+html body .v443-nav-settings .v443-nav-pill.active{
+ background:var(--v424-accent-strong,var(--vive-theme-color,#665fe7))!important;
+ color:white!important;
+ box-shadow:0 5px 15px color-mix(in srgb,var(--vive-theme-color,#665fe7) 20%,transparent)!important;
+}
+html body .v443-nav-settings .v443-nav-pill.active svg{color:white!important;stroke:currentColor!important}
+html body .v443-nav-settings #v443-nav-slider{accent-color:var(--vive-theme-color,#665fe7)}
+html body .v443-nav-settings .v443-nav-presets button:focus-visible{outline:2px solid var(--vive-theme-color,#665fe7);outline-offset:2px}
+</style>
+
+
+<style id="v500-confirm-review-polish">
+/* V500 · refinamiento visual del paso Revisar y confirmar + limpieza del preview de pago */
+#modal-root .v349-review-screen{
+  background:radial-gradient(ellipse at top,rgba(94,134,197,.12),transparent 56%),rgba(238,243,250,.74)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+  backdrop-filter:blur(12px)!important;
+}
+#modal-root .v349-review-panel{
+  --v353-bg:#f5f8fc;
+  --v353-ink:#182b47;
+  --v353-muted:#70829c;
+  --v353-surface:#ffffff;
+  --v353-border:#d9e3f0;
+  --v353-accent:var(--vive-theme-color,#2f6fda);
+  background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(248,251,255,.97))!important;
+  border:1px solid rgba(224,232,243,.95)!important;
+  border-radius:28px!important;
+  box-shadow:0 30px 90px rgba(31,57,101,.18),0 8px 28px rgba(31,57,101,.08)!important;
+  overflow:hidden!important;
+}
+#modal-root .v353-review-header{
+  padding:20px 22px 10px!important;
+  background:linear-gradient(180deg,rgba(247,250,255,.98),rgba(245,248,252,.92))!important;
+  border-bottom:1px solid rgba(219,229,241,.82)!important;
+}
+#modal-root .v353-step-caption{
+  padding:6px 10px!important;border-radius:999px!important;
+  background:rgba(47,111,218,.08)!important;color:var(--v353-accent)!important;
+  font-size:10px!important;letter-spacing:.14em!important;
+}
+#modal-root .v353-title-line h2{font-size:clamp(25px,2.8vw,34px)!important;font-weight:820!important;letter-spacing:-.05em!important}
+#modal-root .v353-title-line p{font-size:13px!important;line-height:1.45!important;color:#70829c!important}
+#modal-root .v353-review-shield{
+  width:40px!important;height:40px!important;flex-basis:40px!important;
+  border-color:rgba(66,118,204,.20)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(233,241,255,.86))!important;
+  color:var(--v353-accent)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.98),0 10px 20px rgba(47,111,218,.08)!important;
+}
+#modal-root .v353-review-body{padding:16px 22px!important;gap:16px!important;background:transparent!important}
+#modal-root .v353-amount-card{
+  border-radius:20px!important;
+  padding:15px 16px!important;
+  border:1px solid rgba(213,224,239,.95)!important;
+  background:linear-gradient(180deg,#ffffff 0%,#f6f9fd 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 12px 26px rgba(40,74,128,.06)!important;
+}
+#modal-root .v353-amount-card .v353-eyebrow{color:var(--v353-accent)!important}
+#modal-root .v353-progress i{
+  width:25px!important;height:6px!important;border-radius:999px!important;
+  background:linear-gradient(90deg,var(--v353-accent),color-mix(in srgb,var(--v353-accent) 58%,#ffffff))!important;
+  box-shadow:0 4px 10px color-mix(in srgb,var(--v353-accent) 20%,transparent)!important;
+}
+#modal-root .v353-amount-card .v349-review-amount small{text-transform:uppercase!important;letter-spacing:.06em!important}
+#modal-root .v353-amount-card .v349-review-amount strong{font-size:clamp(28px,3.4vw,42px)!important;color:#13294a!important}
+#modal-root .v353-review-main,
+#modal-root .v353-breakdown-fold{
+  border-radius:20px!important;
+  border:1px solid rgba(216,227,240,.95)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(248,251,255,.98))!important;
+  box-shadow:0 10px 24px rgba(41,71,121,.05)!important;
+}
+#modal-root .v353-review-main{padding:15px 16px!important}
+#modal-root .v353-section-head{margin-bottom:10px!important}
+#modal-root .v353-section-head h3{font-size:16px!important}
+#modal-root .v353-verified{
+  padding:5px 10px!important;border-radius:999px!important;
+  background:rgba(47,111,218,.08)!important;color:var(--v353-accent)!important;
+  font-size:10px!important;font-weight:780!important;letter-spacing:.08em!important;text-transform:uppercase!important;
+}
+#modal-root .v353-review-main .v349-review-row,
+#modal-root .v353-review-main .v353-extra-rows .v349-review-row,
+#modal-root .v353-breakdowns .v349-review-row{padding:12px 0!important;border-color:#e7eef7!important}
+#modal-root .v353-review-main .v349-review-row>span,
+#modal-root .v353-breakdowns .v349-review-row>span{font-size:11px!important;color:#72839b!important;font-weight:650!important}
+#modal-root .v353-review-main .v349-review-row>strong,
+#modal-root .v353-breakdowns .v349-review-row>strong{font-size:12.5px!important;color:#1b3050!important;font-weight:780!important}
+#modal-root .v353-extra{margin-top:10px!important}
+#modal-root .v353-extra summary,
+#modal-root .v353-breakdown-fold summary{
+  min-height:42px!important;padding:3px 0!important;color:var(--v353-accent)!important;
+}
+#modal-root .v353-breakdown-fold{padding:6px 15px!important}
+#modal-root .v349-review-actions{
+  padding:14px 22px 18px!important;
+  background:linear-gradient(180deg,rgba(245,248,252,.88),rgba(241,246,252,.98))!important;
+  border-top:1px solid rgba(219,229,241,.86)!important;
+}
+#modal-root .v349-review-note{
+  margin:0!important;padding:10px 12px!important;border-radius:14px!important;
+  background:rgba(47,111,218,.07)!important;color:#4d678a!important;text-align:left!important;
+  font-size:11px!important;line-height:1.5!important;
+}
+#modal-root .v353-review-buttons{grid-template-columns:minmax(0,.92fr) minmax(0,1.18fr)!important;gap:12px!important}
+#modal-root .v353-review-buttons button{
+  min-height:54px!important;height:54px!important;border-radius:16px!important;
+  font-size:13px!important;font-weight:780!important;padding:0 16px!important;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important;
+}
+#modal-root .v353-review-buttons button:hover{transform:translateY(-1px)!important}
+#modal-root .v353-review-buttons button.v349-edit{
+  background:#fff!important;color:#173152!important;border:1px solid #d0dceb!important;
+  box-shadow:0 10px 22px rgba(40,74,128,.06)!important;
+}
+#modal-root .v353-review-buttons button.v349-confirm{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--v353-accent) 92%,#ffffff),color-mix(in srgb,var(--v353-accent) 74%,#0f356b))!important;
+  color:#fff!important;border:1px solid color-mix(in srgb,var(--v353-accent) 72%,#ffffff)!important;
+  box-shadow:0 16px 30px color-mix(in srgb,var(--v353-accent) 26%,transparent)!important;
+}
+#modal-root .v353-review-buttons button.v349-confirm[aria-busy="true"]{filter:saturate(.92)!important;opacity:.92!important}
+#modal-root .v382-card-payment-preview,
+#modal-root .v382-review-card{display:none!important}
+#v156-feedback-layer{z-index:2147483646!important}
+body:is(.theme-black,.theme-dark) #modal-root .v349-review-screen{background:rgba(0,0,0,.82)!important}
+body:is(.theme-black,.theme-dark) #modal-root .v349-review-panel{
+  --v353-bg:#0b0e14;--v353-ink:#f4f7fb;--v353-muted:#a1afc4;--v353-surface:#101722;--v353-border:#263241;--v353-accent:var(--vive-theme-color,#80a9ff);
+  background:linear-gradient(180deg,rgba(13,18,28,.98),rgba(10,15,24,.98))!important;
+  border-color:#29374a!important;box-shadow:0 28px 90px rgba(0,0,0,.56)!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v353-review-header{background:linear-gradient(180deg,rgba(14,20,31,.98),rgba(10,15,24,.94))!important;border-bottom-color:#202b39!important}
+body:is(.theme-black,.theme-dark) #modal-root .v353-amount-card,
+body:is(.theme-black,.theme-dark) #modal-root .v353-review-main,
+body:is(.theme-black,.theme-dark) #modal-root .v353-breakdown-fold{background:linear-gradient(180deg,#111925,#0f1722)!important;border-color:#273242!important;box-shadow:none!important}
+body:is(.theme-black,.theme-dark) #modal-root .v349-review-note{background:rgba(128,169,255,.10)!important;color:#c6d5eb!important}
+body:is(.theme-black,.theme-dark) #modal-root .v353-review-buttons button.v349-edit{background:#111925!important;color:#eef4ff!important;border-color:#2d3b4d!important;box-shadow:none!important}
+@media(max-width:790px){
+  #modal-root .v349-review-panel{width:min(100vw,560px)!important;max-height:100dvh!important;border-radius:26px 26px 0 0!important;margin-top:auto!important}
+  #modal-root .v353-review-header{padding:18px 18px 10px!important}
+  #modal-root .v353-review-body{padding:14px 18px 12px!important;max-height:none!important;flex:1 1 auto!important}
+  #modal-root .v349-review-actions{padding:12px 18px calc(16px + env(safe-area-inset-bottom,0px))!important}
+  #modal-root .v353-amount-card{grid-template-columns:1fr!important;align-items:flex-start!important}
+  #modal-root .v353-amount-card .v349-review-amount{text-align:left!important}
+  #modal-root .v353-review-buttons{grid-template-columns:1fr!important}
+}
+</style>
+<script id="v500-confirm-review-polish-script">
+(function(){
+  'use strict';
+  function stripLegacyPaymentPreview(scope){
+    (scope||document).querySelectorAll('.v382-card-payment-preview,.v382-review-card').forEach(el=>el.remove());
+  }
+  function wrapFeedback(){
+    const original=window.v156TransactionFeedback;
+    if(typeof original!=='function' || original.__v500Wrapped)return;
+    const wrapped=function(tx){
+      window.setTimeout(()=>{
+        try{original(tx);}catch(error){console.error('Animación de confirmación:',error);}
+      },80);
+    };
+    wrapped.__v500Wrapped=true;
+    window.v156TransactionFeedback=wrapped;
+  }
+  function boot(){
+    wrapFeedback();
+    stripLegacyPaymentPreview(document);
+    const modalRoot=document.getElementById('modal-root');
+    if(modalRoot && !modalRoot.__v500Observer){
+      const mo=new MutationObserver(()=>stripLegacyPaymentPreview(modalRoot));
+      mo.observe(modalRoot,{childList:true,subtree:true});
+      modalRoot.__v500Observer=mo;
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
+  else boot();
+})();
+</script>
+
+
+<style id="v501-hide-income-impact-preview">
+#modal-root .v379-income-preview{display:none!important}
+</style>
+
+<style id="v510-express-compact-layout">
+/* V510: distribución compacta real sobre los controles nativos de ingresos y egresos */
+html body #modal-root .fastx-form .fastx-body{
+  display:flex!important;flex-direction:column!important;gap:10px!important;
+  padding:12px clamp(13px,2.5vw,23px) 18px!important;
+}
+html body #modal-root .fastx-form .fastx-head{
+  padding-top:10px!important;padding-bottom:8px!important;
+}
+html body #modal-root .fastx-form .fastx-title{font-size:clamp(22px,2.8vw,30px)!important;line-height:1.12!important;margin:4px 0!important}
+html body #modal-root .fastx-form .fastx-description{font-size:11px!important;margin:0!important;line-height:1.35!important}
+html body #modal-root .fastx-form .fastx-top-grid{
+  display:grid!important;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr)!important;
+  align-items:stretch!important;gap:9px!important;min-width:0!important;
+}
+html body #modal-root .fastx-form .fastx-top-grid>.fastx-amount-zone{
+  min-width:0!important;min-height:105px!important;margin:0!important;
+  padding:11px 13px!important;border-radius:17px!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;
+}
+html body #modal-root .fastx-form .fastx-amount-zone #flowAmount{
+  font-size:clamp(26px,3.4vw,36px)!important;min-height:38px!important;height:42px!important;
+  line-height:1!important;padding:2px 0!important;
+}
+html body #modal-root .fastx-form .fastx-amount-cap{gap:4px!important;flex-wrap:wrap!important;font-size:9px!important}
+html body #modal-root .fastx-form .fastx-amount-hint{display:none!important}
+html body #modal-root .fastx-form .fastx-top-grid>.v80-advisor-slot{
+  display:flex!important;align-items:stretch!important;margin:0!important;min-width:0!important;
+}
+html body #modal-root .fastx-form .fastx-top-grid .v80-advisor{
+  width:100%!important;margin:0!important;min-height:105px!important;
+  padding:9px 10px!important;border-radius:17px!important;display:flex!important;
+  flex-direction:column!important;justify-content:center!important;gap:5px!important;
+}
+html body #modal-root .fastx-form .v107-pill-heading{margin:0!important;font-size:10px!important}
+html body #modal-root .fastx-form .v107-pill-heading svg{width:12px!important;height:12px!important}
+html body #modal-root .fastx-form .v107-pill-metrics{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) minmax(0,1.14fr)!important;
+  align-items:center!important;gap:5px!important;
+}
+html body #modal-root .fastx-form .v107-pill-metric{min-width:0!important}
+html body #modal-root .fastx-form .v107-pill-metric small,
+html body #modal-root .fastx-form .v107-pill-available small{
+  display:block!important;font-size:8px!important;letter-spacing:0!important;line-height:1.2!important;
+}
+html body #modal-root .fastx-form .v107-pill-metric strong{font-size:clamp(14px,1.8vw,21px)!important;line-height:1.2!important}
+html body #modal-root .fastx-form .v107-pill-available strong{font-size:clamp(11px,1.4vw,17px)!important;line-height:1.2!important}
+html body #modal-root .fastx-form .v107-pill-note{font-size:9px!important;margin:0!important;line-height:1.22!important}
+html body #modal-root .fastx-form .fastx-category-section{
+  margin:0!important;display:grid!important;gap:6px!important;min-width:0!important;
+}
+html body #modal-root .fastx-form .fastx-section-title{
+  margin:0!important;min-height:20px!important;align-items:center!important;
+}
+html body #modal-root .fastx-form .fastx-category-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;
+}
+html body #modal-root .fastx-form .fastx-category-grid .fastx-cat{
+  min-height:35px!important;height:35px!important;display:flex!important;align-items:center!important;
+  gap:6px!important;padding:4px 8px!important;border-radius:11px!important;font-size:10px!important;
+}
+html body #modal-root .fastx-form .fastx-cat-ico{
+  width:23px!important;height:23px!important;min-width:23px!important;
+  font-size:11px!important;border-radius:7px!important;
+}
+html body #modal-root .fastx-form .fastx-category-controls{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:7px!important;min-width:0!important;margin:0!important;
+}
+html body #modal-root .fastx-form .fastx-category-controls>label{min-width:0!important}
+html body #modal-root .fastx-form .fastx-category-controls .field,
+html body #modal-root .fastx-form .fastx-category-controls select{min-height:34px!important;padding:5px 9px!important;font-size:11px!important}
+html body #modal-root .fastx-form .fastx-source-section{
+  margin:0!important;padding:7px 0!important;display:grid!important;gap:6px!important;
+}
+html body #modal-root .fastx-form .fastx-methods{gap:7px!important}
+html body #modal-root .fastx-form .fastx-method{min-height:34px!important;padding:5px 9px!important;font-size:11px!important}
+html body #modal-root .fastx-form .fastx-sources{gap:7px!important}
+html body #modal-root .fastx-form .fastx-date-and-channel{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;min-width:0!important;align-items:start!important;
+}
+html body #modal-root .fastx-form .fastx-date-and-channel>label{
+  min-width:0!important;max-width:100%!important;
+}
+html body #modal-root .fastx-form .fastx-date-and-channel :is(input,select,textarea){
+  min-height:36px!important;max-width:100%!important;font-size:11px!important;
+}
+html body #modal-root .fastx-form .fastx-operational:empty{display:none!important}
+html body #modal-root .fastx-form .fastx-operational{min-width:0!important}
+html body #modal-root .fastx-form .fastx-fold{margin:0!important;border-radius:13px!important}
+html body #modal-root .fastx-form .fastx-fold>summary{min-height:34px!important;padding:7px 12px!important;font-size:11px!important}
+html body #modal-root .fastx-form .fastx-fold-inner{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+@media(min-width:791px){
+ html body #modal-root .modal:has(.fastx-shell){
+  width:min(1080px,calc(100vw - 36px))!important;
+  max-width:min(1080px,calc(100vw - 36px))!important;
+  height:min(860px,calc(100dvh - 30px))!important;
+ }
+ html body #modal-root .fastx-shell{grid-template-columns:minmax(0,1.35fr) minmax(265px,.65fr)!important}
+}
+@media(max-width:790px){
+ html body #modal-root .fastx-form .fastx-body{padding:10px 12px 15px!important;gap:9px!important}
+ html body #modal-root .fastx-form .fastx-top-grid{grid-template-columns:minmax(0,1fr)!important;gap:7px!important}
+ html body #modal-root .fastx-form .fastx-top-grid>.fastx-amount-zone{min-height:76px!important}
+ html body #modal-root .fastx-form .fastx-top-grid .v80-advisor{min-height:81px!important}
+ html body #modal-root .fastx-form .fastx-date-and-channel{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:370px){
+ html body #modal-root .fastx-form .fastx-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ html body #modal-root .fastx-form .fastx-category-grid .fastx-cat{font-size:9px!important;padding:4px!important}
+ html body #modal-root .fastx-form .fastx-date-and-channel{grid-template-columns:1fr!important}
+}
+</style>
+
+<style id="v520-wallet-mobile-typography-unification">
+/* Wallet mobile: misma escala tipográfica que Bancos y las páginas nativas.
+   Solo tipografía; no altera tamaños de las tarjetas, cifras ni lógica. */
+@media screen and (max-width:790px){
+  html body #page .v279-wallet.v266-wallet {
+    font-family:var(--v397-font,-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,"Segoe UI",Arial,sans-serif)!important;
+    font-kerning:normal!important;
+    text-rendering:optimizeLegibility!important;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:-.012em!important;
+  }
+  html body #page .v279-wallet :is(button,input,select,textarea) {
+    font-family:inherit!important;
+  }
+  /* El título coincide con el encabezado de Bancos, con la misma densidad visual. */
+  html body #page .v279-wallet .v266-wallet-header h1{
+    font-family:inherit!important;
+    font-size:clamp(27px,7.1vw,32px)!important;
+    font-weight:820!important;
+    line-height:1.08!important;
+    letter-spacing:-.052em!important;
+    text-wrap:balance;
+  }
+  html body #page .v279-wallet :is(.v266-overline,.v266-wallet-kicker,.v266-wallet-label,.v266-selected-balance small,.v266-selected-debt small,.v266-wallet-panel small,.v266-wallet-panel .label,.v266-wallet-detail small){
+    font-family:inherit!important;
+    font-size:10px!important;
+    font-weight:760!important;
+    letter-spacing:.12em!important;
+    line-height:1.35!important;
+  }
+  html body #page .v279-wallet :is(.v266-wallet-panel h2,.v266-wallet-panel h3,.v266-wallet-section h2,.v144-executive h2,.v130-wallet-cut h2){
+    font-family:inherit!important;
+    font-size:clamp(17px,4.9vw,20px)!important;
+    font-weight:790!important;
+    letter-spacing:-.04em!important;
+    line-height:1.18!important;
+  }
+  html body #page .v279-wallet .v266-selected-balance strong{
+    font-family:inherit!important;
+    font-weight:830!important;
+    letter-spacing:-.055em!important;
+    font-variant-numeric:tabular-nums lining-nums!important;
+  }
+  html body #page .v279-wallet .v266-selected-debt b{
+    font-family:inherit!important;
+    font-weight:785!important;
+    letter-spacing:-.035em!important;
+    font-variant-numeric:tabular-nums lining-nums!important;
+  }
+  html body #page .v279-wallet .v266-wallet-actions b{
+    font-family:inherit!important;
+    font-size:10.5px!important;
+    font-weight:720!important;
+    line-height:1.25!important;
+    letter-spacing:-.015em!important;
+  }
+  html body #page .v279-wallet :is(.v266-wallet-panel,.v266-wallet-detail,.v144-executive,.v130-wallet-cut) :is(p,span,small){
+    font-family:inherit!important;
+  }
+  html body #page .v279-wallet :is(.v266-wallet-panel,.v266-wallet-detail,.v144-executive,.v130-wallet-cut) :is(strong,b){
+    font-family:inherit!important;
+    font-variant-numeric:tabular-nums lining-nums;
+    letter-spacing:-.025em;
+  }
+  /* Texto de tarjeta real, no se cambia el distintivo de Visa/Mastercard ni logos bancarios. */
+  html body #page .v279-wallet :is(.v277-card-bank b,.v277-card-title,.v277-card-head>small,.v277-card-number,.v277-card-footer>small){
+    font-family:inherit!important;
+    -webkit-font-smoothing:antialiased;
+  }
+  html body #page .v279-wallet .v277-card-title{
+    font-weight:740!important;
+    letter-spacing:-.025em!important;
+  }
+  html body #page .v279-wallet .v277-card-number{
+    font-weight:580!important;
+    font-variant-numeric:tabular-nums lining-nums!important;
+  }
+}
+</style>
+
+
+<style id="v530-overview-nav-balance">
+/* Barra de navegación de Resumen: altura y peso equilibrados, sin color gris fijo.
+   Mantiene los tokens de intensidad de Apariencia y el acento configurable. */
+@media (min-width:791px){
+ html body #app main.main.world-overview>.universe-switch-wrap{
+  display:inline-flex!important;vertical-align:top!important;
+  width:fit-content!important;max-width:100%!important;min-height:0!important;
+  padding:4px!important;margin:0 0 19px!important;border-radius:20px!important;
+  overflow:hidden!important;box-sizing:border-box!important;
+  background:rgba(255,255,255,var(--v443-nav-shell-alpha,.13))!important;
+  border:1px solid rgba(255,255,255,var(--v443-nav-shell-border-alpha,.3))!important;
+  box-shadow:0 8px 24px rgba(57,83,135,var(--v443-nav-shell-shadow-alpha,.055)),inset 0 1px 0 rgba(255,255,255,var(--v443-nav-shell-inner-alpha,.3))!important;
+  backdrop-filter:blur(var(--v443-nav-shell-blur,12px)) saturate(var(--v443-nav-shell-sat,130%))!important;
+  -webkit-backdrop-filter:blur(var(--v443-nav-shell-blur,12px)) saturate(var(--v443-nav-shell-sat,130%))!important;
+ }
+ html body #app main.main.world-overview>.universe-switch-wrap>.universe-switch{
+  display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+  gap:3px!important;padding:0!important;margin:0!important;background:transparent!important;
+  border:0!important;border-radius:16px!important;box-shadow:none!important;
+  width:auto!important;max-width:100%!important;min-width:0!important;
+  overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;
+ }
+ html body #app main.main.world-overview>.universe-switch-wrap>.universe-switch::-webkit-scrollbar{display:none!important}
+ html body #app main.main.world-overview>.universe-switch-wrap>.universe-switch>button{
+  display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;
+  min-height:42px!important;height:42px!important;width:auto!important;
+  padding:0 clamp(11px,1.2vw,17px)!important;margin:0!important;gap:8px!important;
+  border:1px solid transparent!important;border-radius:14px!important;
+  background:transparent!important;background-image:none!important;
+  box-shadow:none!important;color:var(--ink,#506b91)!important;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,'Segoe UI',Arial,sans-serif!important;
+  font-size:clamp(11px,.81vw,13px)!important;line-height:1.1!important;font-weight:680!important;
+  letter-spacing:-.018em!important;white-space:nowrap!important;
+  transition:background .18s ease,box-shadow .18s ease,color .18s ease!important;
+ }
+ html body #app main.main.world-overview>.universe-switch-wrap>.universe-switch>button svg{
+  width:16px!important;height:16px!important;flex:0 0 16px!important;
+  color:inherit!important;stroke:currentColor!important;
+ }
+ html body #app main.main.world-overview>.universe-switch-wrap>.universe-switch>button:not(.active):hover{
+  background:rgba(255,255,255,.23)!important;color:var(--vive-theme-color,#3666ed)!important;
+ }
+ html body #app main.main.world-overview>.universe-switch-wrap>.universe-switch>button.active{
+  background:var(--v424-accent-strong,var(--vive-theme-color,#3666ed))!important;
+  background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+  font-weight:770!important;border-color:rgba(255,255,255,.18)!important;
+  box-shadow:0 4px 12px color-mix(in srgb,var(--vive-theme-color,#3666ed) 22%,transparent)!important;
+ }
+ html body #app main.main.world-overview>.universe-switch-wrap>.universe-switch>button.active :is(svg,span){color:#fff!important;-webkit-text-fill-color:#fff!important;stroke:currentColor!important}
+ html body:is(.theme-black,.theme-dark) #app main.main.world-overview>.universe-switch-wrap{
+  background:rgba(22,26,32,var(--v443-nav-shell-alpha,.13))!important;
+  border-color:rgba(130,150,178,var(--v443-nav-shell-border-alpha,.24))!important;
+  box-shadow:0 8px 24px rgba(0,0,0,var(--v443-nav-shell-shadow-alpha,.08))!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app main.main.world-overview>.universe-switch-wrap>.universe-switch>button:not(.active){color:#d4dbe7!important}
+}
+@media (max-width:790px){
+ html body #app main.main.world-overview>.universe-switch-wrap{max-width:100%!important;overflow:hidden!important}
+ html body #app main.main.world-overview>.universe-switch-wrap>.universe-switch{width:100%!important;overflow-x:auto!important;scrollbar-width:none!important}
+ html body #app main.main.world-overview>.universe-switch-wrap>.universe-switch>button{white-space:nowrap!important;flex:0 0 auto!important}
+}
+</style>
+
+<style id="v530-creative-clarity">
+/* V530: misma información, una sola superficie y jerarquía. Solo la tarjeta creativa móvil. */
+@media(max-width:790px){
+ html body #app .vive-mobile-home .v421-creative-compact{
+  display:flex!important;flex-direction:column!important;gap:0!important;
+  padding:17px 16px 13px!important;min-width:0!important;
+  border-radius:24px!important;
+  background:linear-gradient(142deg,#102a50 0%,#234a78 64%,#375b9b 100%)!important;
+  background-image:linear-gradient(142deg,#102a50 0%,#234a78 64%,#375b9b 100%)!important;
+  box-shadow:0 12px 34px rgba(18,49,91,.15)!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-head{
+  display:flex!important;gap:6px!important;margin:0 0 13px!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-kicker{
+  font-size:9px!important;font-weight:750!important;letter-spacing:.095em!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-pressure{
+  font-size:9px!important;line-height:1!important;padding:6px 8px!important;
+  border-radius:10px!important;
+ }
+ /* Hero sin una segunda tarjeta interior: evita cajas anidadas */
+ html body #app .vive-mobile-home .v421-creative-compact .v421-net{
+  display:flex!important;flex-direction:column!important;gap:3px!important;
+  padding:0 1px 15px!important;margin:0!important;border:0!important;
+  background:transparent!important;background-image:none!important;border-radius:0!important;
+  box-shadow:none!important;min-height:0!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-net small{
+  font-size:9px!important;letter-spacing:.10em!important;opacity:.80!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-net strong{
+  font-size:clamp(26px,7.4vw,38px)!important;font-weight:780!important;
+  letter-spacing:-.055em!important;line-height:1.1!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-net span{
+  font-size:10px!important;line-height:1.3!important;opacity:.86!important;
+ }
+ /* 3 pequeñas columnas tipográficas en lugar de 3 tarjetas */
+ html body #app .vive-mobile-home .v421-creative-compact .v421-core-metrics{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:0!important;margin:0!important;padding:13px 0!important;
+  border-top:1px solid rgba(255,255,255,.24)!important;
+  border-bottom:1px solid rgba(255,255,255,.24)!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-core-metrics button{
+  display:flex!important;flex-direction:column!important;gap:4px!important;min-width:0!important;
+  padding:0 9px!important;margin:0!important;border:0!important;
+  border-right:1px solid rgba(255,255,255,.2)!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-core-metrics button:first-child{padding-left:1px!important}
+ html body #app .vive-mobile-home .v421-creative-compact .v421-core-metrics button:last-child{border-right:0!important;padding-right:0!important}
+ html body #app .vive-mobile-home .v421-creative-compact .v421-core-metrics small{
+  font-size:9px!important;font-weight:580!important;letter-spacing:0!important;line-height:1.2!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-core-metrics strong{
+  font-size:clamp(13px,3.7vw,19px)!important;font-weight:770!important;letter-spacing:-.035em!important;
+  line-height:1.15!important;overflow-wrap:anywhere!important;
+ }
+ /* Presupuesto y compromisos siguen siendo accesibles como filas, no bloques */
+ html body #app .vive-mobile-home .v421-creative-compact .v421-meter-grid{
+  display:flex!important;flex-direction:column!important;gap:0!important;margin:0!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-meter{
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr)!important;
+  align-items:center!important;column-gap:12px!important;row-gap:5px!important;
+  padding:13px 0!important;min-height:0!important;margin:0!important;
+  border:0!important;border-bottom:1px solid rgba(255,255,255,.19)!important;
+  border-radius:0!important;background:transparent!important;background-image:none!important;
+  box-shadow:none!important;text-align:left!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-meter-top{
+  grid-column:1!important;grid-row:1 / span 2!important;
+  display:flex!important;flex-direction:column!important;gap:5px!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-meter-top small{
+  font-size:9px!important;font-weight:650!important;letter-spacing:.05em!important;line-height:1.25!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-meter-top strong{
+  font-size:clamp(19px,5vw,24px)!important;letter-spacing:-.03em!important;font-weight:760!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-meter p{display:none!important}
+ html body #app .vive-mobile-home .v421-creative-compact .v421-meter-track{
+  grid-column:2!important;grid-row:1!important;width:100%!important;height:6px!important;
+  align-self:end!important;max-width:100%!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-meter em{
+  grid-column:2!important;grid-row:2!important;
+  font-size:9px!important;line-height:1.35!important;font-weight:530!important;
+ }
+ /* Coste mañana y balance: breve par de acciones, sin tarjeta repetida */
+ html body #app .vive-mobile-home .v421-creative-compact .v421-bottom-strip{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:0!important;margin:0!important;padding-top:13px!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-mini-card{
+  display:flex!important;flex-direction:column!important;gap:3px!important;
+  padding:0 9px!important;margin:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-mini-card:first-child{
+  padding-left:1px!important;border-right:1px solid rgba(255,255,255,.20)!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-mini-card:last-child{padding-right:0!important}
+ html body #app .vive-mobile-home .v421-creative-compact .v421-mini-card small{
+  font-size:9px!important;letter-spacing:0!important;font-weight:590!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-mini-card strong{
+  font-size:clamp(15px,4.25vw,21px)!important;line-height:1.17!important;font-weight:750!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-mini-card span{
+  font-size:9px!important;line-height:1.2!important;opacity:.78!important;
+ }
+ /* Mantener colores de alerta y accesibilidad de controles */
+ html body #app .vive-mobile-home .v421-creative-compact button:focus-visible{
+  outline:2px solid rgba(255,255,255,.9)!important;outline-offset:3px!important;
+ }
+ body.theme-black #app .vive-mobile-home .v421-creative-compact,
+ body.theme-dark #app .vive-mobile-home .v421-creative-compact{
+  background:linear-gradient(142deg,#080a10,#111c30 60%,#1e294b)!important;
+  background-image:linear-gradient(142deg,#080a10,#111c30 60%,#1e294b)!important;
+ }
+}
+</style>
+
+
+<style id="v530-wallet-typography-identity-final">
+/* La Wallet usa la misma familia y jerarquía que Bancos, Inicio y Explorar.
+   Selectores de los componentes reales del template v266/v277, no clases hipotéticas. */
+@media screen and (max-width: 790px) {
+ html body #app #page .v266-wallet.v279-wallet,
+ html body #app #page .v266-wallet.v279-wallet :is(h1,h2,h3,h4,p,small,span,div,b,strong,button,summary,label) {
+   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,"Segoe UI",Arial,sans-serif!important;
+   font-synthesis:none;
+   font-kerning:normal;
+   text-rendering:optimizeLegibility;
+   -webkit-font-smoothing:antialiased;
+ }
+ html body #app #page .v266-wallet.v279-wallet{
+   letter-spacing:-.012em!important;
+   font-size:12px!important;
+   font-weight:450!important;
+   font-variant-numeric:tabular-nums lining-nums!important;
+ }
+ /* Mis tarjetas == Bancos */
+ html body #app #page .v266-wallet.v279-wallet .v266-wallet-header h1{
+   font-size:clamp(30px,8.5vw,39px)!important;
+   line-height:1.04!important;
+   font-weight:840!important;
+   letter-spacing:-.06em!important;
+   color:var(--ink,#23395b)!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v266-overline{
+   font-size:10px!important;
+   font-weight:830!important;
+   line-height:1.4!important;
+   letter-spacing:.17em!important;
+   text-transform:uppercase!important;
+   color:var(--muted,#778aa9)!important;
+ }
+ /* Valor protagonista: misma densidad que KPIs de bancos */
+ html body #app #page .v266-wallet.v279-wallet .v266-selected-balance>div:first-child>span,
+ html body #app #page .v266-wallet.v279-wallet .v266-selected-debt>small{
+   font-size:10px!important;font-weight:760!important;letter-spacing:.12em!important;
+   line-height:1.35!important;text-transform:uppercase!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v266-selected-balance>div:first-child>strong{
+   font-size:clamp(29px,8.25vw,38px)!important;
+   font-weight:825!important;letter-spacing:-.055em!important;
+   line-height:1.06!important;margin:6px 0 3px!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v266-selected-balance>div:first-child>small{
+   font-size:10.5px!important;font-weight:470!important;letter-spacing:0!important;line-height:1.4!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v266-selected-debt b{
+   font-size:clamp(12px,3.6vw,15px)!important;font-weight:780!important;
+   letter-spacing:-.025em!important;line-height:1.2!important;
+ }
+ /* Estado de tu tarjeta / Actividad: igual que Mis instituciones */
+ html body #app #page .v266-wallet.v279-wallet .v266-panel-heading h2{
+   font-size:clamp(19px,5.1vw,22px)!important;
+   font-weight:805!important;
+   letter-spacing:-.045em!important;
+   line-height:1.14!important;
+   color:var(--ink,#23395b)!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet :is(.v268-limit-row,.v266-metric,.v266-next-payment,.v266-currency-row,.v266-activity-row) :is(span,small,p){
+   font-size:11px!important;font-weight:520!important;
+   letter-spacing:0!important;line-height:1.4!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet :is(.v268-limit-row,.v266-metric,.v266-next-payment,.v266-currency-row,.v266-activity-row) :is(strong,b){
+   font-weight:790!important;letter-spacing:-.035em!important;
+   font-variant-numeric:tabular-nums lining-nums!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v268-limit-row strong{
+   font-size:clamp(17px,5vw,21px)!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v266-wallet-actions button b{
+   font-size:11px!important;font-weight:710!important;
+   letter-spacing:-.015em!important;line-height:1.25!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet :is(.v266-meter-foot,.v266-wallet-note,.v266-wallet-detail p){
+   font-size:10.5px!important;font-weight:475!important;
+   line-height:1.45!important;letter-spacing:0!important;
+ }
+ /* Banco, nombre y numeración impresos en la tarjeta: texto coherente.
+    Excluimos expresamente el SVG y logo VISA/Mastercard. */
+ html body #app #page .v266-wallet.v279-wallet .v277-card-bank b{
+   font-size:12.5px!important;font-weight:765!important;
+   letter-spacing:-.025em!important;line-height:1.2!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v277-card-head>small{
+   font-size:10px!important;font-weight:660!important;
+   letter-spacing:0!important;line-height:1.25!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v277-card-title{
+   font-size:clamp(13px,3.8vw,16px)!important;
+   font-weight:755!important;letter-spacing:-.03em!important;
+   line-height:1.25!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v277-card-number{
+   font-size:13px!important;font-weight:690!important;
+   letter-spacing:.11em!important;line-height:1.3!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v277-card-footer>small{
+   font-size:9px!important;font-weight:700!important;
+   letter-spacing:.045em!important;line-height:1.25!important;
+ }
+ /* Textos auxiliares del retorno y sus detalles */
+ html body #app #page .v266-wallet.v279-wallet .v371-card-return :is(h2,h3){
+   font-size:clamp(17px,4.8vw,21px)!important;
+   font-weight:790!important;letter-spacing:-.04em!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v371-card-return :is(p,span,small){
+   letter-spacing:0!important;line-height:1.4!important;
+ }
+}
+</style>
+
+
+<style id="v540-global-accent-kpi-wallet">
+/* V540 · Acento de Apariencia como origen único. Valores semánticos de alerta
+   (rojo/ámbar/verde) y marcas de bancos conservan su significado. */
+:root{
+  --v540-accent:var(--v424-accent-strong,var(--vive-theme-color,var(--blue,#3666ed)));
+  --v540-accent-glow:color-mix(in srgb,var(--v540-accent) 22%,transparent);
+  --v540-accent-light:color-mix(in srgb,var(--v540-accent) 12%,white);
+}
+html body #app .vive-mobile-home .v421-creative-compact{
+  background:linear-gradient(130deg,
+    color-mix(in srgb,var(--v540-accent) 54%,#091b2d) 0%,
+    color-mix(in srgb,var(--v540-accent) 73%,#193858) 55%,
+    color-mix(in srgb,var(--v540-accent) 78%,#5f7b9d) 100%)!important;
+  background-image:linear-gradient(130deg,
+    color-mix(in srgb,var(--v540-accent) 54%,#091b2d),
+    color-mix(in srgb,var(--v540-accent) 73%,#193858) 55%,
+    color-mix(in srgb,var(--v540-accent) 78%,#5f7b9d))!important;
+  border-color:color-mix(in srgb,var(--v540-accent) 30%,white)!important;
+  box-shadow:0 17px 38px var(--v540-accent-glow)!important;
+}
+html body #app .vive-mobile-home .v421-creative-compact .v421-net strong{
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  text-shadow:0 2px 15px rgba(0,0,0,.13)!important;
+}
+html body #app .vive-mobile-home .v421-creative-compact .v421-meter-track{
+  background:rgba(255,255,255,.23)!important;
+}
+html body #app .vive-mobile-home .v421-creative-compact .v421-meter:not(.urgent):not(.watch) .v421-meter-track i{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--v540-accent) 42%,white),color-mix(in srgb,var(--v540-accent) 20%,white))!important;
+}
+/* Vista previa del selector Creativo */
+html body #app .v421-mini-creative{
+  background:linear-gradient(135deg,
+   color-mix(in srgb,var(--v540-accent) 55%,#0c223e),
+   color-mix(in srgb,var(--v540-accent) 80%,#35567a))!important;
+}
+/* KPI protagonistas, no todos los valores (evitar gráficos multicolor y estados). */
+html body #app :is(.v421-net,.v242-mobile-web-position,.v105-capacity-widget,.v290-budget-mobile) :is(.primary-value,.kpi-main,.v105-capacity-value){
+ color:var(--v540-accent)!important;
+}
+html body #app .vive-mobile-home :is(.v105-bubble-pct,.v105-position-value){
+ color:var(--v540-accent);
+}
+/* Black debe seguir siendo black: acento se utiliza en bordes y puntos de énfasis,
+   no sustituye el fondo negro por una tarjeta saturada. */
+html body.theme-black #app .vive-mobile-home .v421-creative-compact{
+ background:linear-gradient(135deg,#07090e 0%,color-mix(in srgb,var(--v540-accent) 18%,#080b11) 100%)!important;
+ background-image:linear-gradient(135deg,#07090e,color-mix(in srgb,var(--v540-accent) 18%,#080b11))!important;
+ border-color:color-mix(in srgb,var(--v540-accent) 28%,#252525)!important;
+}
+@media(prefers-reduced-motion:no-preference){
+ html body #app .vive-mobile-home .v421-creative-compact{
+  transition:background .22s ease,border-color .22s ease,box-shadow .22s ease!important;
+ }
+}
+</style>
+
+<style id="v550-wallet-card-identity-currency-breakdown">
+/* La tarjeta física conserva su estilo individual (tier/emisor); no hereda acento global.
+   El acento de Apariencia queda en los KPI y controles de la interfaz. */
+@media(max-width:790px){
+ html body #app #page .v266-wallet.v279-wallet .v266-selected-balance.v550-currency-balance{
+   display:grid!important;grid-template-columns:minmax(0,1.38fr) minmax(0,1fr)!important;
+   align-items:start!important;gap:12px!important;min-width:0!important;
+   padding:8px 2px 3px!important;margin:0!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v550-balance-column{min-width:0!important;max-width:none!important;flex:none!important;text-align:left!important}
+ html body #app #page .v266-wallet.v279-wallet .v550-balance-column>small,
+ html body #app #page .v266-wallet.v279-wallet .v550-balance-column>span{
+   display:block!important;font-size:9px!important;font-weight:730!important;
+   letter-spacing:.09em!important;line-height:1.35!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v550-balance-column>strong{
+   display:block!important;font-size:clamp(24px,7vw,33px)!important;
+   line-height:1.08!important;letter-spacing:-.05em!important;
+   white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v550-balance-column.v266-selected-debt>b{
+   display:block!important;font-size:clamp(15px,4.15vw,19px)!important;
+   margin:8px 0 3px!important;white-space:nowrap!important;
+   overflow:hidden!important;text-overflow:ellipsis!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v550-currency-breakdown{
+   display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:3px!important;
+   margin-top:9px!important;padding-top:7px!important;
+   border-top:1px solid color-mix(in srgb,var(--vive-theme-color,#7089aa) 18%,transparent)!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v550-currency-breakdown>span{
+   display:flex!important;align-items:baseline!important;justify-content:space-between!important;
+   min-width:0!important;gap:4px!important;padding:2px 0!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v550-currency-breakdown i{
+   font-size:9px!important;font-weight:750!important;font-style:normal!important;
+   color:var(--muted,#7386a1)!important;letter-spacing:0!important;white-space:nowrap!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v550-currency-breakdown b{
+   font-size:clamp(10px,2.8vw,12px)!important;font-weight:770!important;
+   letter-spacing:-.02em!important;color:var(--ink,#213957)!important;
+   white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v550-balance-column:first-child>.v550-currency-breakdown b{
+   color:color-mix(in srgb,var(--v424-accent-strong,var(--vive-theme-color,#3666ed)) 58%,var(--ink,#213957))!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v550-currency-breakdown b{color:#eef3fc!important}
+}
+</style>
+
+<style id="v560-mobile-accent-audit">
+/* V560: el acento real de Apariencia es la única fuente cromática de KPI.
+   No se altera el color individual de las tarjetas de crédito ni semáforos de riesgo. */
+@media(max-width:790px){
+  html body #app .vive-mobile-home,
+  html body #app .v431-explore,
+  html body #app .v266-wallet,
+  html body #app .v290-position-all{
+    --v560-accent:var(--v424-accent-strong,var(--vive-theme-color,#4b70cc));
+    --v560-soft:color-mix(in srgb,var(--v560-accent) 12%,transparent);
+    --v560-border:color-mix(in srgb,var(--v560-accent) 25%,transparent);
+    --v560-highlight:color-mix(in srgb,var(--v560-accent) 35%,white);
+  }
+  /* Tarjeta principal de Inicio: hereda un acento, no conserva azul fijo. */
+  html body #app .vive-mobile-home .v421-creative-compact{
+    background:linear-gradient(140deg,
+      color-mix(in srgb,var(--v560-accent) 50%,#0b1728) 0%,
+      color-mix(in srgb,var(--v560-accent) 77%,#243a55) 67%,
+      color-mix(in srgb,var(--v560-accent) 67%,#8193af) 100%)!important;
+    background-image:linear-gradient(140deg,
+      color-mix(in srgb,var(--v560-accent) 50%,#0b1728),
+      color-mix(in srgb,var(--v560-accent) 77%,#243a55) 67%,
+      color-mix(in srgb,var(--v560-accent) 67%,#8193af))!important;
+    border:1px solid color-mix(in srgb,var(--v560-accent) 45%,rgba(255,255,255,.4))!important;
+    box-shadow:0 13px 33px color-mix(in srgb,var(--v560-accent) 21%,transparent)!important;
+  }
+  /* KPI principales: grandes importes acentuados, acompañados de contraste.
+     Las etiquetas auxiliares permanecen legibles y no compiten con las cifras. */
+  html body #app .vive-mobile-home .v421-creative-compact .v421-net strong,
+  html body #app .vive-mobile-home .v421-creative-compact .v421-core-metrics strong,
+  html body #app .vive-mobile-home .v421-creative-compact .v421-meter-top strong,
+  html body #app .vive-mobile-home .v421-creative-compact .v421-mini-card strong{
+    color:var(--v560-highlight)!important;
+    -webkit-text-fill-color:var(--v560-highlight)!important;
+    text-shadow:0 1px 12px rgba(0,0,0,.16)!important;
+  }
+  /* Un énfasis claro en la posición neta y separadores relacionados con el acento. */
+  html body #app .vive-mobile-home .v421-creative-compact .v421-net{
+    border-left:3px solid var(--v560-highlight)!important;
+    padding-left:10px!important;
+  }
+  html body #app .vive-mobile-home .v421-creative-compact .v421-core-metrics{
+    border-color:color-mix(in srgb,var(--v560-accent) 33%,rgba(255,255,255,.25))!important;
+  }
+  html body #app .vive-mobile-home .v421-creative-compact :is(.v421-core-metrics button,.v421-meter,.v421-mini-card){
+    background:color-mix(in srgb,var(--v560-accent) 14%,rgba(255,255,255,.13))!important;
+    border-color:color-mix(in srgb,var(--v560-accent) 23%,rgba(255,255,255,.16))!important;
+  }
+  html body #app .vive-mobile-home .v421-creative-compact .v421-meter:not(.urgent):not(.watch) .v421-meter-track i{
+    background:linear-gradient(90deg,var(--v560-highlight),color-mix(in srgb,var(--v560-accent) 50%,white))!important;
+  }
+  /* Personalizar: sin cápsula externa ni icono en caja; integrado al fondo. */
+  html body #app .main .vive-mobile-greeting .v273-personalize-link{
+    width:max-content!important;max-width:100%!important;min-height:36px!important;
+    margin:10px 0 0!important;padding:5px 3px!important;
+    gap:7px!important;border:0!important;border-radius:0!important;
+    background:transparent!important;background-image:none!important;
+    box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+    color:var(--v560-accent,var(--vive-theme-color,#496bb7))!important;
+    -webkit-text-fill-color:currentColor!important;
+    font-size:12px!important;font-weight:720!important;
+  }
+  html body #app .main .vive-mobile-greeting .v273-personalize-link .v309-personalize-symbol{
+    width:21px!important;height:21px!important;flex:0 0 21px!important;
+    border:0!important;border-radius:0!important;background:transparent!important;
+    box-shadow:none!important;color:inherit!important;
+  }
+  html body #app .main .vive-mobile-greeting .v273-personalize-link svg{
+    width:19px!important;height:19px!important;stroke:currentColor!important;
+    color:inherit!important;
+  }
+  html body #app .main .vive-mobile-greeting .v273-personalize-link:is(:hover,:focus-visible){
+    color:var(--v560-accent,var(--vive-theme-color,#496bb7))!important;
+    text-decoration:underline;text-underline-offset:4px;
+  }
+  /* KPI claros y navegación móvil: acento local sin alterar avisos de riesgo. */
+  html body #app .vive-mobile-home .v290-position-all{
+    border-color:var(--v560-border)!important;
+    box-shadow:0 10px 30px color-mix(in srgb,var(--v560-accent) 14%,transparent)!important;
+  }
+  html body #app .v431-explore .v431-tile-featured{
+    border-color:var(--v560-border)!important;
+    box-shadow:0 8px 28px color-mix(in srgb,var(--v560-accent) 17%,transparent)!important;
+  }
+  html body #app .vive-mobile-home :is(.v309-chart-track i:not(.v309-negative),.v309-paired-track i),
+  html body #app .v431-explore .v431-progress>i{
+    background:var(--v560-accent)!important;
+  }
+  html body.theme-black #app .vive-mobile-home .v421-creative-compact{
+    background:linear-gradient(140deg,#06080d 0%,color-mix(in srgb,var(--v560-accent) 24%,#0a1019) 100%)!important;
+    background-image:linear-gradient(140deg,#06080d,color-mix(in srgb,var(--v560-accent) 24%,#0a1019))!important;
+    border-color:color-mix(in srgb,var(--v560-accent) 30%,#222)!important;
+  }
+  html body.theme-black #app .main .vive-mobile-greeting .v273-personalize-link{
+    color:color-mix(in srgb,var(--v560-accent) 65%,white)!important;
+  }
+}
+</style>
+
+<style id="v560-subscriptions-products-distinct-mobile">
+/* V560 · Suscripciones + héroes móviles con identidades propias. */
+@media screen and (max-width:790px){
+  html body #app :is(.v302-subs-mobile,.v239-mobile-root) :is(.v302-cost-card,.v305-actives-card,.v239-hero,.v239-product){
+    position:relative!important;overflow:hidden!important;isolation:isolate!important;
+  }
+
+  /* Iconos personalizados de suscripciones: recorte limpio y centrado. */
+  html body #app .v41-service-mark.v45-custom-mark,
+  html body #app .v302-service-icon .v41-service-mark,
+  html body #app .v302-brand .v41-service-mark,
+  html body #app .v305-history-icon .v41-service-mark{
+    overflow:hidden!important;border-radius:15px!important;
+    display:grid!important;place-items:center!important;
+    background:rgba(255,255,255,.16)!important;
+    box-shadow:0 6px 14px rgba(13,25,44,.12)!important;
+  }
+  html body #app .v41-service-mark.v45-custom-mark img,
+  html body #app .v302-service-icon .v41-service-mark img,
+  html body #app .v302-brand .v41-service-mark img,
+  html body #app .v305-history-icon .v41-service-mark img,
+  html body #app .v45-upload-preview img{
+    width:100%!important;height:100%!important;display:block!important;
+    object-fit:cover!important;object-position:center center!important;
+  }
+  html body #app .v45-upload-preview{
+    width:76px!important;height:76px!important;border-radius:20px!important;
+    overflow:hidden!important;border:1px solid rgba(203,218,238,.9)!important;
+    background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(241,246,252,.98))!important;
+    box-shadow:0 10px 22px rgba(30,59,104,.08)!important;
+  }
+
+  /* SUSCRIPCIONES · par de tarjetas con carácter propio */
+  html body #app .v302-subs-app .v302-subs-stats{gap:12px!important;}
+  html body #app .v302-subs-app .v302-cost-card{
+    background:
+      linear-gradient(136deg,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 72%,#314b86) 0%,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 28%,#7da0ea) 100%)!important;
+    border:1px solid color-mix(in srgb,var(--vive-theme-color,#5f7cff) 32%,rgba(255,255,255,.82))!important;
+    box-shadow:0 16px 34px color-mix(in srgb,var(--vive-theme-color,#5f7cff) 18%,transparent)!important;
+  }
+  html body #app .v302-subs-app .v302-cost-card::before{
+    content:"";position:absolute;inset:auto -38px 18px 26px;height:68px;
+    background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,0));
+    clip-path:polygon(0 100%,72% 0,100% 0,28% 100%);opacity:.9;pointer-events:none;
+  }
+  html body #app .v302-subs-app .v305-actives-card{
+    background:radial-gradient(circle at 26% 22%,rgba(255,255,255,.24),transparent 20%),linear-gradient(145deg,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 54%,#4567a3) 0%,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 20%,#88a6db) 100%)!important;
+    border:1px solid color-mix(in srgb,var(--vive-theme-color,#5f7cff) 24%,rgba(255,255,255,.78))!important;
+    box-shadow:0 16px 34px color-mix(in srgb,var(--vive-theme-color,#5f7cff) 14%,transparent)!important;
+  }
+  html body #app .v302-subs-app .v305-actives-card::after{
+    content:"";position:absolute;right:-26px;top:-12px;width:110px;height:110px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.14);box-shadow:0 0 0 16px rgba(255,255,255,.05),0 0 0 34px rgba(255,255,255,.04);
+    opacity:.9;pointer-events:none;
+  }
+
+  /* CUENTAS · más liso, limpio y luminoso */
+  html body #app .v239-accounts .v239-hero{
+    background:linear-gradient(135deg,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 68%,#3550a0) 0%,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 34%,#8eb0ef) 100%)!important;
+    border:1px solid rgba(255,255,255,.16)!important;
+    box-shadow:0 16px 30px color-mix(in srgb,var(--vive-theme-color,#5f7cff) 14%,transparent)!important;
+  }
+  html body #app .v239-accounts .v239-hero::before{
+    content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,0) 58%);pointer-events:none;
+  }
+
+  /* PRÉSTAMOS · con diseño geométrico / arcos */
+  html body #app .v239-loans .v239-hero{
+    background:linear-gradient(135deg,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 58%,#243e84) 0%,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 32%,#6b89dc) 100%)!important;
+    border:1px solid rgba(255,255,255,.12)!important;
+    box-shadow:0 16px 32px color-mix(in srgb,var(--vive-theme-color,#5f7cff) 13%,transparent)!important;
+  }
+  html body #app .v239-loans .v239-hero::before{
+    content:"";position:absolute;inset:-24px -12px auto auto;width:170px;height:170px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.12);box-shadow:0 0 0 18px rgba(255,255,255,.05),0 0 0 40px rgba(255,255,255,.035);pointer-events:none;
+  }
+  html body #app .v239-loans .v239-hero::after{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:44%;background:linear-gradient(90deg,rgba(255,255,255,.035),transparent);pointer-events:none;
+  }
+
+  /* CERTIFICADOS · rayado elegante */
+  html body #app .v239-certificates .v239-cert-hero{
+    background:linear-gradient(135deg,color-mix(in srgb,var(--vive-theme-color,#2ea798) 34%,#196f69) 0%,color-mix(in srgb,var(--vive-theme-color,#2ea798) 18%,#3f9589) 100%)!important;
+    border:1px solid rgba(255,255,255,.10)!important;
+    box-shadow:0 16px 30px color-mix(in srgb,var(--vive-theme-color,#2ea798) 16%,transparent)!important;
+  }
+  html body #app .v239-certificates .v239-cert-hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.34;
+    background:repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 1px,transparent 1px 22px);
+  }
+  html body #app .v239-certificates .v239-cert-hero::after{
+    content:"";position:absolute;right:-34px;top:-24px;width:180px;height:180px;border-radius:50%;
+    box-shadow:0 0 0 1px rgba(255,255,255,.10),0 0 0 18px rgba(255,255,255,.05),0 0 0 36px rgba(255,255,255,.03);pointer-events:none;
+  }
+
+  /* Ajuste común del contraste / jerarquía en héroes */
+  html body #app :is(.v302-cost-card,.v305-actives-card,.v239-hero) :is(.v239-hero-label,.v302-cost-title,small,span,p,b,strong,h2){
+    position:relative;z-index:1;
+  }
+  html body #app :is(.v302-cost-card,.v305-actives-card,.v239-hero) .v239-hero-amount,
+  html body #app :is(.v302-cost-card,.v305-actives-card) strong{
+    text-shadow:0 2px 10px rgba(0,0,0,.09)!important;
+  }
+}
+</style>
+
+<style id="v570-creative-accent-definitive">
+/* El último diseño Integral 360 se retira de la selección y el creativo queda como reemplazo.
+   Acento de usuario desde el estilo computado de body; no hardcodear azul. */
+@media(max-width:790px){
+ html body #app .vive-mobile-home .v421-creative-compact{
+   --v570-accent:var(--vive-theme-color,#6866f3);
+   --v570-light:color-mix(in srgb,var(--v570-accent) 48%,white);
+   background:linear-gradient(136deg,
+       color-mix(in srgb,var(--v570-accent) 42%,#0c1a30) 0%,
+       color-mix(in srgb,var(--v570-accent) 72%,#1a3150) 62%,
+       color-mix(in srgb,var(--v570-accent) 78%,#6d8aac) 100%)!important;
+   background-image:linear-gradient(136deg,
+       color-mix(in srgb,var(--v570-accent) 42%,#0c1a30),
+       color-mix(in srgb,var(--v570-accent) 72%,#1a3150) 62%,
+       color-mix(in srgb,var(--v570-accent) 78%,#6d8aac))!important;
+   border:1px solid color-mix(in srgb,var(--v570-accent) 50%,white)!important;
+   box-shadow:0 15px 35px color-mix(in srgb,var(--v570-accent) 27%,transparent)!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-net{
+   border:0!important;border-radius:0!important;padding-left:1px!important;
+   background:transparent!important;box-shadow:none!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-net strong{
+   color:var(--v570-light)!important;
+   -webkit-text-fill-color:var(--v570-light)!important;
+   text-shadow:0 1px 12px rgba(0,0,0,.25)!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact :is(.v421-core-metrics strong,.v421-meter-top strong,.v421-mini-card strong){
+   color:color-mix(in srgb,var(--v570-accent) 34%,white)!important;
+   -webkit-text-fill-color:color-mix(in srgb,var(--v570-accent) 34%,white)!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-core-metrics{
+   border-top-color:color-mix(in srgb,var(--v570-accent) 34%,rgba(255,255,255,.35))!important;
+   border-bottom-color:color-mix(in srgb,var(--v570-accent) 34%,rgba(255,255,255,.35))!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact :is(.v421-core-metrics button,.v421-meter,.v421-mini-card){
+   border-color:color-mix(in srgb,var(--v570-accent) 27%,rgba(255,255,255,.23))!important;
+   background:color-mix(in srgb,var(--v570-accent) 16%,rgba(255,255,255,.15))!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-meter:not(.urgent):not(.watch) .v421-meter-track i{
+   background:linear-gradient(90deg,var(--v570-light),color-mix(in srgb,var(--v570-accent) 30%,white))!important;
+ }
+ html body #app .vive-mobile-home .v421-creative-compact .v421-mini-card{box-shadow:none!important;}
+ html body.theme-black #app .vive-mobile-home .v421-creative-compact{
+   background:linear-gradient(135deg,#06080e,color-mix(in srgb,var(--v570-accent) 28%,#090d16))!important;
+   background-image:linear-gradient(135deg,#06080e,color-mix(in srgb,var(--v570-accent) 28%,#090d16))!important;
+ }
+}
+</style>
+
+
+<style id="v580-creative-accent-working-fix">
+/* V580 — estilo definitivo basado en la variable que realmente establece render().
+   Reutiliza los selectores de V421/V410 para superar las reglas fijas anteriores. */
+@media screen and (max-width:790px){
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v410-financial-map.v421-creative-compact,
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact{
+  --creative-accent:var(--v424-accent-strong,var(--vive-theme-color,#6d69f1));
+  background:linear-gradient(132deg,
+    color-mix(in srgb,var(--creative-accent) 72%,#0e263e) 0%,
+    color-mix(in srgb,var(--creative-accent) 88%,#25344f) 58%,
+    color-mix(in srgb,var(--vive-theme-color,#6d69f1) 76%,#e0e5f9) 100%)!important;
+  background-image:linear-gradient(132deg,
+    color-mix(in srgb,var(--creative-accent) 72%,#0e263e),
+    color-mix(in srgb,var(--creative-accent) 88%,#25344f) 58%,
+    color-mix(in srgb,var(--vive-theme-color,#6d69f1) 76%,#e0e5f9))!important;
+  border-color:color-mix(in srgb,var(--creative-accent) 48%,white)!important;
+  box-shadow:0 16px 40px color-mix(in srgb,var(--creative-accent) 25%,transparent)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v421-creative-compact .v421-net{
+  background:color-mix(in srgb,var(--creative-accent,var(--v424-accent-strong)) 30%,rgba(255,255,255,.14))!important;
+  border:1px solid color-mix(in srgb,var(--creative-accent,var(--v424-accent-strong)) 40%,rgba(255,255,255,.18))!important;
+  border-radius:16px!important;padding:12px!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v421-creative-compact :is(.v421-net strong,.v421-core-metrics strong,.v421-meter-top strong,.v421-mini-card strong){
+  color:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 32%,white)!important;
+  -webkit-text-fill-color:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 32%,white)!important;
+  text-shadow:0 1px 6px rgba(0,0,0,.14)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v421-creative-compact :is(.v421-core-metrics button,.v421-meter,.v421-mini-card){
+  background:color-mix(in srgb,var(--creative-accent,var(--v424-accent-strong)) 30%,rgba(255,255,255,.16))!important;
+  border-color:color-mix(in srgb,var(--creative-accent,var(--v424-accent-strong)) 28%,rgba(255,255,255,.26))!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v421-creative-compact .v421-meter:not(.urgent):not(.watch) .v421-meter-track i{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--vive-theme-color,#6d69f1) 30%,white),color-mix(in srgb,var(--vive-theme-color,#6d69f1) 60%,white))!important;
+}
+html body.theme-black #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact,
+html body.theme-dark #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact{
+  background:linear-gradient(130deg,#06080b 0%,color-mix(in srgb,var(--v424-accent-strong,var(--vive-theme-color,#6d69f1)) 24%,#080d14) 100%)!important;
+  background-image:linear-gradient(130deg,#06080b,color-mix(in srgb,var(--v424-accent-strong,var(--vive-theme-color,#6d69f1)) 24%,#080d14))!important;
+}
+}
+</style>
+
+<style id="v565-wallet-financial-type-layout">
+/* V565: tres grupos financieros por moneda, sin sumar cantidades de divisas
+   distintas excepto en el equivalente RD$ calculado por el motor existente. */
+@media(max-width:790px){
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard{
+  display:grid!important;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important;
+  gap:10px!important;align-items:stretch!important;margin:0!important;
+  padding:8px 0 5px!important;box-sizing:border-box!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v550-balance-column{
+  margin:0!important;padding:10px 10px 9px!important;min-width:0!important;
+  max-width:none!important;text-align:left!important;
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  border:1px solid color-mix(in srgb,var(--vive-theme-color,#577fe5) 17%,rgba(140,160,190,.16))!important;
+  background:color-mix(in srgb,var(--vive-theme-color,#577fe5) 4%,rgba(255,255,255,.64))!important;
+  border-radius:17px!important;box-shadow:none!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-primary>strong{
+  font-size:clamp(20px,6.25vw,29px)!important;letter-spacing:-.055em!important;
+  overflow-wrap:anywhere!important;white-space:normal!important;text-overflow:clip!important;
+  margin:5px 0 1px!important;line-height:1.03!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary>b{
+  font-size:clamp(18px,5.1vw,23px)!important;letter-spacing:-.047em!important;
+  overflow-wrap:anywhere!important;white-space:normal!important;text-overflow:clip!important;
+  margin:8px 0 1px!important;line-height:1.04!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>small,
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>span{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,"Segoe UI",Arial,sans-serif!important;
+  font-size:9px!important;font-weight:650!important;line-height:1.3!important;
+  letter-spacing:.045em!important;white-space:normal!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>small{
+  color:var(--muted,#70829c)!important;letter-spacing:0!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown{
+  display:grid!important;grid-template-columns:1fr!important;gap:0!important;
+  margin-top:auto!important;padding-top:8px!important;border-top:0!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span{
+  display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;
+  align-items:center!important;gap:5px!important;padding:5px 0!important;
+  border-top:1px solid color-mix(in srgb,var(--vive-theme-color,#577fe5) 12%,rgba(120,140,170,.13))!important;
+  min-width:0!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown i{
+  font-size:9px!important;line-height:1.25!important;letter-spacing:0!important;
+  font-weight:680!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown b{
+  display:block!important;text-align:right!important;font-size:clamp(10px,2.65vw,12px)!important;
+  font-weight:740!important;line-height:1.2!important;min-width:0!important;
+  letter-spacing:-.025em!important;white-space:normal!important;
+  overflow-wrap:anywhere!important;overflow:visible!important;text-overflow:clip!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-header{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:8px!important;margin-bottom:8px!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-header>span{font-size:11px!important;font-weight:690!important;min-width:0!important}
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-header>span>small{
+  display:block!important;margin-top:2px!important;font-size:9px!important;font-weight:500!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-header>strong{
+  font-size:clamp(16px,4.5vw,20px)!important;letter-spacing:-.035em!important;
+  min-width:0!important;text-align:right!important;overflow-wrap:anywhere!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;margin:0 0 12px!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies>div{
+  min-width:0!important;border-radius:12px!important;padding:9px 10px!important;
+  background:color-mix(in srgb,var(--vive-theme-color,#577fe5) 5%,rgba(241,246,252,.86))!important;
+  border:1px solid color-mix(in srgb,var(--vive-theme-color,#577fe5) 15%,rgba(205,216,232,.72))!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies span{
+  display:block!important;font-size:9px!important;letter-spacing:.07em!important;font-weight:730!important;
+  color:var(--muted,#75869f)!important;margin-bottom:5px!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies strong{
+  display:block!important;font-size:clamp(12px,3.6vw,16px)!important;font-weight:780!important;
+  line-height:1.25!important;letter-spacing:-.03em!important;overflow-wrap:anywhere!important;
+  font-variant-numeric:tabular-nums!important;
+ }
+ /* Beneficios: mismo sistema de tipografía que Bancos/Inicio y mejor espaciado. */
+ html body #app #page .v266-wallet.v279-wallet .v371-card-return{
+  padding:17px 16px!important;border-radius:22px!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v371-return-heading{
+  margin:0 0 13px!important;align-items:center!important;gap:12px!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v371-return-heading h2{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,"Segoe UI",Arial,sans-serif!important;
+  font-weight:790!important;font-size:clamp(18px,5vw,21px)!important;
+  letter-spacing:-.04em!important;line-height:1.17!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v371-return-values{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v371-return-tile{
+  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+  min-width:0!important;padding:12px 10px!important;gap:6px!important;
+  border:1px solid color-mix(in srgb,var(--vive-theme-color,#577fe5) 13%,rgba(200,215,234,.72))!important;
+  border-radius:14px!important;
+  background:color-mix(in srgb,var(--vive-theme-color,#577fe5) 3%,rgba(246,249,253,.83))!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v371-return-tile:nth-child(even){border-left:1px solid color-mix(in srgb,var(--vive-theme-color,#577fe5) 13%,rgba(200,215,234,.72))!important}
+ html body #app #page .v266-wallet.v279-wallet .v371-return-tile small{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,"Segoe UI",Arial,sans-serif!important;
+  color:var(--muted,#72819b)!important;font-size:10px!important;font-weight:640!important;
+  letter-spacing:0!important;line-height:1.25!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v371-return-tile strong{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,"Segoe UI",Arial,sans-serif!important;
+  font-size:clamp(15px,4.35vw,20px)!important;font-weight:790!important;
+  line-height:1.15!important;letter-spacing:-.04em!important;
+  font-variant-numeric:tabular-nums!important;overflow-wrap:anywhere!important;
+  color:var(--ink,#21314b)!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v371-return-tile.negative strong{color:var(--red,#c63c51)!important}
+ html body #app #page .v266-wallet.v279-wallet .v371-return-tile.positive strong{color:var(--green,#138c70)!important}
+ html body #app #page .v266-wallet.v279-wallet .v371-return-note{
+  font-size:10.5px!important;line-height:1.5!important;margin:12px 2px 0!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v371-return-action{
+  color:var(--vive-theme-color,#5f7cff)!important;
+  background:color-mix(in srgb,var(--vive-theme-color,#577fe5) 8%,rgba(244,247,252,.92))!important;
+ }
+}
+/* Black wallet monetary breakdown: no tile fill, bank cards retain their personal appearance. */
+body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet :is(.v565-credit-dashboard>.v550-balance-column,.v565-limit-currencies>div){
+ background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
+}
+body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v371-return-tile:not(.negative):not(.positive) strong{color:#f5f5f5!important}
+</style>
+
+
+<style id="v570-executive-creative-heading">
+@media(max-width:790px){
+ html body #app .v421-creative-compact .v421-head{display:flex!important;align-items:center!important;justify-content:flex-start!important;min-height:23px!important;margin-bottom:10px!important}
+ html body #app .v421-creative-compact .v421-kicker{font-size:11px!important;letter-spacing:.115em!important;font-weight:790!important;line-height:1.35!important;color:rgba(255,255,255,.92)!important}
+ html body #app .v421-creative-compact .v421-pressure{display:none!important}
+}
+</style>
+
+<style id="v600-wallet-flat-financial-alignment">
+/* Wallet móvil: restaurar lenguaje editorial original, sin tarjetas dentro
+   del resumen. Todas las cifras y etiquetas se leen desde la izquierda. */
+@media screen and (max-width:790px){
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard{
+   display:grid!important;
+   grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important;
+   align-items:start!important;gap:16px!important;
+   padding:10px 2px 11px!important;margin:0!important;
+   background:none!important;border:0!important;box-shadow:none!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v550-balance-column{
+   background:transparent!important;background-image:none!important;
+   border:0!important;border-radius:0!important;box-shadow:none!important;
+   padding:0!important;margin:0!important;
+   display:flex!important;flex-direction:column!important;
+   align-items:flex-start!important;justify-content:flex-start!important;
+   text-align:left!important;gap:0!important;min-width:0!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-primary>strong{
+   font-size:clamp(22px,6.9vw,32px)!important;
+   white-space:normal!important;line-height:1.05!important;
+   margin:6px 0 2px!important;text-align:left!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary>b{
+   font-size:clamp(17px,4.9vw,22px)!important;
+   white-space:normal!important;line-height:1.1!important;
+   margin:11px 0 2px!important;text-align:left!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>small{
+   font-size:9px!important;line-height:1.4!important;text-align:left!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown{
+   display:flex!important;flex-direction:column!important;gap:0!important;
+   width:100%!important;margin-top:10px!important;padding:6px 0 0!important;
+   border:0!important;border-top:1px solid color-mix(in srgb,var(--ink,#263b53) 11%,transparent)!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span{
+   display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+   gap:2px!important;width:100%!important;
+   border:0!important;border-top:0!important;
+   padding:5px 0 6px!important;background:transparent!important;
+   text-align:left!important;box-shadow:none!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown i{
+   display:block!important;font-size:9px!important;font-weight:720!important;
+   color:var(--muted,#71839a)!important;line-height:1.2!important;
+   font-style:normal!important;text-align:left!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown b{
+   display:block!important;width:100%!important;font-size:clamp(11px,3vw,13px)!important;
+   line-height:1.22!important;font-weight:770!important;text-align:left!important;
+   white-space:normal!important;overflow-wrap:anywhere!important;
+   color:var(--ink,#213957)!important;
+ }
+ /* Los límites mantienen los valores pero ya no aparecen en cuadritos. */
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies{
+   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:14px!important;margin:10px 0 14px!important;
+   border-top:1px solid color-mix(in srgb,var(--ink,#213957) 10%,transparent)!important;
+   padding-top:10px!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies>div{
+   border:0!important;border-radius:0!important;background:transparent!important;
+   box-shadow:none!important;padding:0!important;text-align:left!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies :is(span,strong){text-align:left!important}
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies span{
+   font-size:9px!important;font-weight:700!important;margin:0 0 5px!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies strong{
+   font-size:clamp(12px,3.5vw,16px)!important;line-height:1.2!important;
+ }
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown b,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown b{
+   color:#f2f5fc!important;
+ }
+}
+</style>
+
+
+<style id="v560-commitments-breakdown-style">
+.v560-commitment-detail{margin-top:13px;border-top:1px solid var(--line,rgba(180,199,228,.45));padding-top:12px}
+.v560-commitment-detail>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;font-size:12px;font-weight:750;color:var(--vive-theme-color,#4c71c4)}
+.v560-commitment-detail>summary::-webkit-details-marker{display:none}
+.v560-commitment-detail>summary svg{width:16px;height:16px}
+.v560-commitment-groups{display:grid;gap:13px;padding-top:12px}
+.v560-commitment-group{min-width:0;padding:10px 0;border-bottom:1px solid rgba(155,177,209,.20)}
+.v560-commitment-group h3{font-size:12px;margin:0 0 8px;color:inherit}
+.v560-commitment-group h3 small{opacity:.6;font-size:10px}
+.v560-commitment-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.v560-commitment-totals span{display:flex;flex-direction:column;gap:4px;font-size:10px;opacity:.85;min-width:0}
+.v560-commitment-totals b{font-size:12px;opacity:1;overflow-wrap:anywhere}
+.v560-commitment-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;color:inherit;font-size:10px;border-top:1px solid rgba(155,177,209,.15)}
+.v560-commitment-row small{text-align:right;white-space:nowrap;font-size:10px}
+@media(max-width:420px){.v560-commitment-row{flex-wrap:wrap}.v560-commitment-row small{text-align:left}}
+</style>
+
+<style id="v580-wallet-currency-perfect-grid">
+/* V580: una sola composición de dos columnas, sin tarjetas ni recuadros.
+   Preserva el marcado, los cálculos, los colores y los controles existentes. */
+@media screen and (max-width:790px){
+  html body #app #page .v266-wallet.v279-wallet .v266-selected-balance.v550-currency-balance.v565-credit-dashboard{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    grid-template-rows:auto auto auto auto!important;
+    align-items:stretch!important;
+    column-gap:clamp(12px,4vw,22px)!important;
+    row-gap:0!important;
+    padding:10px 0 8px!important;
+    margin:0!important;
+    min-width:0!important;
+    border:0!important;
+    background:none!important;
+    box-shadow:none!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v550-balance-column{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:subgrid!important;
+    grid-row:1 / span 4!important;
+    min-width:0!important;
+    width:100%!important;
+    max-width:none!important;
+    padding:0!important;
+    margin:0!important;
+    gap:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    background-image:none!important;
+    box-shadow:none!important;
+    text-align:left!important;
+    align-items:stretch!important;
+    justify-items:stretch!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v565-primary{grid-column:1!important;}
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v565-secondary{grid-column:2!important;}
+  /* Mismas cuatro filas: rótulo, cifra, equivalente y desglose. */
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>:first-child{
+    grid-row:1!important;
+    display:block!important;
+    min-height:17px!important;
+    padding:0!important;
+    margin:0!important;
+    font-family:inherit!important;
+    font-size:clamp(8px,2.25vw,10px)!important;
+    font-weight:750!important;
+    line-height:1.35!important;
+    letter-spacing:.09em!important;
+    text-align:left!important;
+    white-space:nowrap!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>strong,
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column.v266-selected-debt>b{
+    grid-row:2!important;
+    display:block!important;
+    align-self:end!important;
+    width:100%!important;
+    min-width:0!important;
+    padding:2px 0 0!important;
+    margin:0!important;
+    font-family:inherit!important;
+    font-size:clamp(17px,5.25vw,25px)!important;
+    font-weight:810!important;
+    line-height:1.16!important;
+    letter-spacing:-.055em!important;
+    font-variant-numeric:tabular-nums lining-nums!important;
+    text-align:left!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    overflow-wrap:normal!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>small{
+    grid-row:3!important;
+    display:block!important;
+    align-self:start!important;
+    min-height:20px!important;
+    padding:3px 0 0!important;
+    margin:0!important;
+    font-size:clamp(8px,2.15vw,9px)!important;
+    font-weight:550!important;
+    line-height:1.35!important;
+    letter-spacing:.015em!important;
+    text-transform:none!important;
+    text-align:left!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown{
+    grid-row:4!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:repeat(2,minmax(39px,auto))!important;
+    align-self:start!important;
+    min-width:0!important;
+    gap:0!important;
+    padding:7px 0 0!important;
+    margin:5px 0 0!important;
+    border:0!important;
+    border-top:1px solid color-mix(in srgb,var(--vive-theme-color,#7089aa) 16%,transparent)!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    justify-content:flex-start!important;
+    gap:2px!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0 0 7px!important;
+    text-align:left!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown i{
+    display:block!important;
+    font-style:normal!important;
+    font-family:inherit!important;
+    font-size:9px!important;
+    font-weight:700!important;
+    line-height:1.25!important;
+    color:var(--muted,#7386a1)!important;
+    text-align:left!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown b{
+    display:block!important;
+    max-width:100%!important;
+    min-width:0!important;
+    padding:0!important;
+    margin:0!important;
+    font-family:inherit!important;
+    font-size:clamp(11px,3vw,13px)!important;
+    font-weight:750!important;
+    line-height:1.25!important;
+    letter-spacing:-.035em!important;
+    font-variant-numeric:tabular-nums lining-nums!important;
+    text-align:left!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard + .v266-wallet-actions{
+    margin-top:14px!important;
+    clear:both!important;
+  }
+}
+@media screen and (max-width:360px){
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard{column-gap:10px!important;}
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>strong,
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column.v266-selected-debt>b{font-size:clamp(16px,5vw,19px)!important;}
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown b{font-size:10.5px!important;}
+}
+</style>
+
+
+<style id="v625-wallet-true-black-editorial">
+@media screen and (max-width:790px){
+ /* No opaque blocks: restore Wallet's original black editorial treatment. */
+ html body.theme-black #app #page .v266-wallet.v279-wallet,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet{
+  background:transparent!important;background-image:none!important;
+  color:#f5f5f5!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v266-selected-balance.v550-currency-balance.v565-credit-dashboard,
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v550-balance-column,
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v550-currency-breakdown,
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v550-currency-breakdown>span,
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v565-limit-currencies>div{
+  background:transparent!important;background-image:none!important;
+  border-radius:0!important;box-shadow:none!important;
+  outline:0!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v550-currency-breakdown{
+  border:0!important;border-top:1px solid rgba(255,255,255,.17)!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v550-balance-column,
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v550-currency-breakdown>span{
+  border:0!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v565-credit-dashboard :is(strong,b){color:#f3f5f9!important;-webkit-text-fill-color:currentColor!important}
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v565-credit-dashboard :is(small,i,span:not(.v550-currency-breakdown)){color:#a5aab6!important}
+ /* The original floating round action glyphs, not rectangular backgrounds. */
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v266-wallet-actions{
+  background:transparent!important;box-shadow:none!important;gap:8px!important;padding:8px 0 5px!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v266-wallet-actions>button{
+  background:transparent!important;background-image:none!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  padding:2px!important;min-width:0!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v266-wallet-actions>button>span{
+  background:#101114!important;border:1px solid #303238!important;
+  border-radius:50%!important;width:49px!important;height:49px!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.16)!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app #page .v266-wallet.v279-wallet .v266-wallet-actions>button>b{
+  font-weight:650!important;color:#dfe3ea!important;
+ }
+ /* Remove undesired large rectangular dark fills, keep panel border / depth subtle. */
+ html body.theme-black #app #page .v266-wallet.v279-wallet :is(.v266-wallet-panel,.v266-wallet-detail){
+  background:#090a0d!important;background-image:none!important;
+  border:1px solid #272a31!important;box-shadow:none!important;
+ }
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v268-limit-row{
+  background:#101114!important;border-color:#292c32!important;
+ }
+ /* Match the prior typographic hierarchy without cramming the larger number. */
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>strong,
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column.v266-selected-debt>b{
+  font-size:clamp(17px,5vw,27px)!important;
+  line-height:1.13!important;letter-spacing:-.04em!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown b{
+  font-size:clamp(11px,3vw,13px)!important;overflow-wrap:anywhere!important;
+ }
+}
+</style>
+
+<style id="v640-wallet-editorial-spaced-final">
+/* Vista editorial original: el disponible domina a la izquierda, la deuda
+   acompaña a la derecha. Sin líneas, tarjetas ni fondos alrededor de importes. */
+@media screen and (max-width:790px){
+ html body #app #page .v266-wallet.v279-wallet .v266-selected-balance.v550-currency-balance.v565-credit-dashboard{
+   display:grid!important;
+   grid-template-columns:minmax(0,1.45fr) minmax(0,.85fr)!important;
+   grid-template-rows:auto!important;
+   align-items:start!important;
+   justify-content:space-between!important;
+   column-gap:clamp(18px,5vw,36px)!important;
+   padding:14px 3px 9px!important;
+   margin:0!important;
+   background:transparent!important;
+   background-image:none!important;
+   border:0!important;
+   box-shadow:none!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v550-balance-column{
+   display:flex!important;
+   flex-direction:column!important;
+   grid-row:auto!important;
+   grid-template-rows:none!important;
+   align-items:flex-start!important;
+   justify-content:flex-start!important;
+   width:auto!important;
+   min-width:0!important;
+   max-width:100%!important;
+   padding:0!important;
+   margin:0!important;
+   gap:0!important;
+   background:transparent!important;
+   background-image:none!important;
+   border:0!important;
+   border-radius:0!important;
+   box-shadow:none!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v565-primary{
+   grid-column:1!important;text-align:left!important;justify-self:start!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v565-secondary{
+   grid-column:2!important;text-align:right!important;
+   align-items:flex-end!important;justify-self:end!important;
+   padding-top:clamp(19px,5.4vw,25px)!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>:first-child{
+   display:block!important;grid-row:auto!important;min-height:0!important;
+   font-size:clamp(8px,2.1vw,10px)!important;
+   font-weight:740!important;line-height:1.4!important;
+   letter-spacing:.09em!important;
+   margin:0 0 5px!important;padding:0!important;
+   white-space:nowrap!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-primary>strong{
+   display:block!important;grid-row:auto!important;
+   font-size:clamp(25px,7.5vw,35px)!important;
+   font-weight:820!important;line-height:1.08!important;
+   letter-spacing:-.055em!important;
+   white-space:nowrap!important;width:auto!important;
+   margin:0!important;padding:0!important;
+   text-align:left!important;font-variant-numeric:tabular-nums!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary>b{
+   display:block!important;grid-row:auto!important;
+   width:auto!important;font-size:clamp(13px,3.8vw,17px)!important;
+   font-weight:770!important;line-height:1.15!important;
+   letter-spacing:-.04em!important;
+   white-space:nowrap!important;margin:0!important;padding:0!important;
+   text-align:right!important;font-variant-numeric:tabular-nums!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>small{
+   display:block!important;grid-row:auto!important;min-height:0!important;
+   margin:4px 0 0!important;padding:0!important;
+   font-size:clamp(8px,2.15vw,10px)!important;line-height:1.3!important;
+   font-weight:520!important;text-transform:none!important;letter-spacing:0!important;
+   white-space:nowrap!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary>small{text-align:right!important;}
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown{
+   display:flex!important;grid-row:auto!important;grid-template-columns:none!important;grid-template-rows:none!important;
+   flex-direction:column!important;align-items:flex-start!important;
+   min-width:0!important;width:100%!important;
+   gap:6px!important;margin:12px 0 0!important;padding:0!important;
+   background:transparent!important;background-image:none!important;
+   border:0!important;border-top:0!important;border-bottom:0!important;
+   box-shadow:none!important;border-radius:0!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary .v550-currency-breakdown{
+   align-items:flex-end!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span{
+   display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+   min-height:0!important;gap:1px!important;padding:0!important;margin:0!important;
+   border:0!important;background:transparent!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary .v550-currency-breakdown>span{align-items:flex-end!important;text-align:right!important;}
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown i{
+   font-size:9px!important;font-style:normal!important;font-weight:650!important;line-height:1.2!important;
+   text-align:inherit!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown b{
+   font-size:clamp(10px,2.7vw,12px)!important;font-weight:710!important;
+   line-height:1.25!important;white-space:nowrap!important;text-align:inherit!important;
+   font-variant-numeric:tabular-nums!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard + .v266-wallet-actions{margin-top:16px!important;}
+}
+@media screen and (max-width:360px){
+ html body #app #page .v266-wallet.v279-wallet .v266-selected-balance.v565-credit-dashboard{column-gap:12px!important;grid-template-columns:minmax(0,1.35fr) minmax(0,.85fr)!important;}
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-primary>strong{font-size:clamp(22px,7.1vw,27px)!important;}
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary>b{font-size:clamp(12px,3.6vw,14px)!important;}
+}
+</style>
+
+
+<style id="v566-wallet-inline-currencies">
+/* Solo presentación: símbolo e importe comparten una fila, sin cajas ni divisores. */
+@media screen and (max-width:790px){
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown{gap:6px!important;}
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span{
+   display:flex!important;flex-direction:row!important;align-items:baseline!important;
+   justify-content:flex-start!important;gap:5px!important;width:100%!important;
+   min-width:0!important;white-space:nowrap!important;text-align:left!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary .v550-currency-breakdown>span{
+   justify-content:flex-end!important;text-align:right!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span i,
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span b{
+   display:inline!important;flex:none!important;margin:0!important;padding:0!important;
+   line-height:1.35!important;white-space:nowrap!important;
+ }
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span i{font-size:9px!important;}
+ html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span b{font-size:clamp(9px,2.65vw,12px)!important;}
+}
+</style>
+
+<style id="v620-wallet-true-black-benefits">
+/* Wallet Black auténtico: elimina por completo los tiles grises en Beneficios. */
+@media screen and (max-width:790px){
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v371-card-return,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet .v371-card-return{
+   background:#000!important;background-image:none!important;
+   border:1px solid #242424!important;box-shadow:none!important;color:#fff!important;
+ }
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v371-return-tile,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet .v371-return-tile{
+   background:#000!important;background-image:none!important;
+   border:1px solid #232323!important;box-shadow:none!important;color:#fff!important;
+ }
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v371-return-tile small,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet .v371-return-tile small{
+   color:#a9a9af!important;
+ }
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v371-return-tile strong,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet .v371-return-tile strong{
+   color:#fafafa!important;-webkit-text-fill-color:currentColor!important;
+ }
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v371-return-tile.negative strong,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet .v371-return-tile.negative strong{color:#ff707e!important}
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v371-return-tile.positive strong,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet .v371-return-tile.positive strong{color:#73dcb3!important}
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v371-return-note,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet .v371-return-note{color:#aaa!important}
+ html body.theme-black #app #page .v266-wallet.v279-wallet .v371-return-action,
+ html body.theme-dark #app #page .v266-wallet.v279-wallet .v371-return-action{
+   background:#111!important;background-image:none!important;
+   border:1px solid #242424!important;color:#fff!important;
+ }
+}
+</style>
+
+<style id="v570-fast-splash">
+/* Splash vivo mientras Supabase lee, sin prolongar la espera cuando está listo. */
+.f33-gate.v329-splash{transition:opacity .22s ease-out,visibility .22s ease-out!important;}
+.f33-gate.v329-splash .v329-wordmark{
+ animation:v570-logo-in .38s cubic-bezier(.16,1,.3,1) both,v570-logo-breathe 1.75s ease-in-out .38s infinite!important;
+ transform-origin:center center;will-change:opacity,transform;
+}
+.f33-gate.v329-splash .v329-splash-content::after{
+ content:"";display:block;width:42px;height:2px;border-radius:9px;
+ margin:18px auto 0;background:currentColor;opacity:.38;
+ animation:v570-loader 1.35s ease-in-out infinite;transform-origin:center;
+}
+@keyframes v570-logo-in{from{opacity:0;transform:translateY(7px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes v570-logo-breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.82;transform:scale(1.008)}}
+@keyframes v570-loader{0%,100%{opacity:.16;transform:scaleX(.55)}50%{opacity:.65;transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){
+ .f33-gate.v329-splash,.f33-gate.v329-splash .v329-wordmark,.f33-gate.v329-splash .v329-splash-content::after{animation:none!important;transition:none!important}
+}
+</style>
+<style id="v700-wallet-approved-reference-and-zero-wait">
+/* Exact structural direction from the approved reference; dynamic values/events retained. */
+@media screen and (max-width:790px){
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard.v266-selected-balance{
+    display:grid!important;grid-template-columns:minmax(0,1.4fr) minmax(0,.95fr)!important;
+    column-gap:clamp(14px,5vw,29px)!important;align-items:start!important;
+    background:none!important;border:0!important;box-shadow:none!important;
+    padding:13px 3px 12px!important;margin:0!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v565-primary{
+    grid-column:1!important;align-items:flex-start!important;text-align:left!important;padding:0!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard>.v565-secondary{
+    grid-column:2!important;align-items:flex-end!important;text-align:right!important;
+    padding:clamp(17px,5vw,25px) 0 0!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-primary>strong{
+    font-size:clamp(27px,8.15vw,37px)!important;letter-spacing:-.06em!important;
+    line-height:1.07!important;white-space:nowrap!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-secondary>b{
+    font-size:clamp(15px,4.4vw,20px)!important;letter-spacing:-.045em!important;
+    white-space:nowrap!important;line-height:1.18!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown{
+    display:flex!important;flex-direction:column!important;gap:6px!important;
+    padding:0!important;margin-top:14px!important;border:0!important;background:none!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-currency-breakdown>span{
+    display:flex!important;flex-direction:row!important;align-items:baseline!important;
+    justify-content:flex-start!important;gap:5px!important;white-space:nowrap!important;
+    padding:0!important;margin:0!important;background:none!important;border:0!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-secondary .v550-currency-breakdown>span{
+    justify-content:flex-end!important;text-align:right!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v550-currency-breakdown>span :is(i,b){
+    display:inline!important;white-space:nowrap!important;line-height:1.3!important;
+    font-size:clamp(9px,2.7vw,12px)!important;font-variant-numeric:tabular-nums!important;
+    margin:0!important;padding:0!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v550-currency-breakdown>span i{font-style:normal!important;font-weight:650!important;}
+  html body #app #page .v266-wallet.v279-wallet .v550-currency-breakdown>span b{font-weight:770!important;}
+  html body #app #page .v266-wallet.v279-wallet .v266-wallet-actions{
+    display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:8px!important;margin:19px 0 24px!important;padding:0!important;
+    background:none!important;border:0!important;box-shadow:none!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-wallet-actions button{
+    display:flex!important;flex-direction:column!important;align-items:center!important;
+    gap:9px!important;background:none!important;border:0!important;box-shadow:none!important;
+    padding:3px 0!important;min-width:0!important;font-size:11px!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-wallet-actions button>span{
+    display:grid!important;place-items:center!important;width:clamp(47px,13vw,57px)!important;
+    height:clamp(47px,13vw,57px)!important;border-radius:50%!important;
+    background:rgba(100,105,120,.12)!important;border:1px solid rgba(160,167,181,.18)!important;
+    box-shadow:none!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-wallet-actions button>b{
+    font-size:11px!important;font-weight:720!important;letter-spacing:-.01em!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-wallet-panel:not(.v371-card-return):not(.v266-activity){
+    border-radius:25px!important;padding:20px 17px!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-panel-heading{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    gap:12px!important;margin-bottom:18px!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-panel-heading h2{
+    font-size:clamp(18px,5.3vw,22px)!important;font-weight:800!important;
+    letter-spacing:-.04em!important;line-height:1.16!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v268-limit-row.v565-limit-header{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    gap:12px!important;min-height:63px!important;padding:14px 13px!important;
+    border-radius:15px!important;margin-bottom:17px!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v268-limit-row.v565-limit-header>span{
+    font-size:13px!important;font-weight:690!important;white-space:nowrap!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v268-limit-row.v565-limit-header>strong{
+    font-size:clamp(16px,5vw,21px)!important;font-weight:800!important;
+    white-space:nowrap!important;letter-spacing:-.04em!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies{
+    display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    align-items:start!important;gap:13px!important;margin:0 0 20px!important;
+    padding:0 2px!important;border:0!important;background:none!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies>div{
+    display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+    gap:6px!important;padding:0!important;background:none!important;border:0!important;
+    border-radius:0!important;box-shadow:none!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies>div>span{
+    font-size:10px!important;letter-spacing:.09em!important;font-weight:760!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-limit-currencies>div>strong{
+    font-size:clamp(13px,4vw,17px)!important;font-weight:800!important;
+    letter-spacing:-.035em!important;white-space:nowrap!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-credit-meter{
+    margin-top:12px!important;height:7px!important;border-radius:99px!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-meter-foot{
+    display:flex!important;justify-content:space-between!important;align-items:center!important;
+    gap:8px!important;padding:9px 0 14px!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-next-payment{
+    display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+    gap:12px!important;align-items:start!important;margin-top:10px!important;
+    padding:17px 0 0!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-next-payment>div{grid-column:1!important;grid-row:1!important;}
+  html body #app #page .v266-wallet.v279-wallet .v266-next-payment>b{
+    grid-column:2!important;grid-row:1!important;align-self:center!important;
+    white-space:nowrap!important;font-size:clamp(13px,4vw,17px)!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v266-next-payment>button{
+    grid-column:2!important;grid-row:2!important;justify-self:end!important;
+    border-radius:13px!important;padding:11px 15px!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet :is(.v266-selected-balance,.v266-wallet-actions){
+    background:#000!important;background-image:none!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-wallet-panel:not(.v371-card-return):not(.v266-activity){
+    background:#050505!important;background-image:none!important;border:1px solid #292b30!important;
+    box-shadow:none!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v268-limit-row.v565-limit-header{
+    background:#0e0e10!important;border:1px solid #2d2e33!important;box-shadow:none!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v565-limit-currencies>div{
+    background:none!important;border:0!important;
+  }
+  html body.theme-black #app #page .v266-wallet.v279-wallet .v266-wallet-actions button>span{
+    background:#101114!important;border-color:#303137!important;
+  }
+}
+@media screen and (max-width:360px){
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard.v266-selected-balance{
+    grid-template-columns:minmax(0,1.4fr) minmax(0,.9fr)!important;column-gap:10px!important;
+  }
+  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v565-primary>strong{font-size:clamp(23px,7.3vw,27px)!important;}
+}
+/* A successful authenticated render dismisses welcome immediately; no fade delay. */
+.f33-gate.v329-splash.v329-fade-out{transition:none!important;}
+</style>
+
+<style id="v580-auditoria-black-autentico-global">
+/* V580: tema Black auténtico, aplica solo si el usuario eligió Black.
+   Mantiene separaciones funcionales, foco accesible, estados semánticos
+   y el color individual configurado de las tarjetas bancarias. */
+body.theme-black{
+ --v580-black:#000;--v580-surface:#050505;--v580-overlay:#090909;
+ --v580-copy:#f6f6f6;--v580-muted:#a6a6a9;
+ background:#000!important;background-image:none!important;color:var(--v580-copy)!important;
+}
+body.theme-black :is(html,#app,.shell,main,.main,#page,.mobile-bar,.world-overview,.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates,.world-recurring,.world-payments,.world-register,.world-personal,.world-settings,.world-budget,.world-analytics,.world-mobilehub,.v239-mobile-root,.v205-explore,.v242-ios-settings){
+ background-color:#000!important;background-image:none!important;
+}
+/* Bloques de contenido: no superficies grisáceas ni contornos ornamentales. */
+body.theme-black #app :is(
+ .panel,.kpi,.ff-tile,.ff-dashboard .ff-balance,.v105-mobile-net-card,
+ .v273-overview-widget,.v318-mobile-card,.v318-chart-content,
+ .v205-explore-group,.v205-explore-pulse,.v205-explore-link,
+ .v239-sheet,.v239-product,.v239-account-item,.v239-certificate-item,
+ .v239-facts,.v239-hero-bottom,.v239-more,.v239-empty,
+ .v242-settings-rows,.v242-settings-profile,.v242-settings-row,
+ .v46-subscription-card,.v302-service,.v302-paused,.v305-history,
+ .v305-actives-breakdown,.v51-ledger-item,.v51-mobile-card,
+ .v200-pay-tool,.v145-pay-agenda,.v145-payment-kpi,
+ .v290-budget-mobile,.v291-budget-card,.v326-stat,
+ .v302-subs-add,.v239-currency-tabs,.v239-segments,
+ .v265-mobile-balance,.v273-settings-customizer,
+ .v349-review-panel,.v353-review-main,.v353-amount-card,.v353-breakdown-fold
+ ){
+ background:#050505!important;background-image:none!important;
+ border-color:transparent!important;box-shadow:none!important;
+ color:#f6f6f6!important;
+}
+/* Secciones internas alineadas a la misma superficie sin efecto “cuadritos grises”. */
+body.theme-black #app :is(
+ .v239-product-value,.v239-cert-info,.v239-actions,.v239-card-actions,
+ .v239-segment,.v239-segments button,.v239-fact,
+ .v302-service-details,.v302-service-summary,.v302-subs-add,
+ .v242-settings-row,.v242-settings-row-copy,.v205-explore-link-icon,
+ .v51-mobile-tx,.v318-stat-row>div,.v326-stat,
+ .v105-capacity-grid>div,.v265-balance-cell,
+ .v389-benefit-kpis>div,.v246-report-history
+ ){
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;border-color:transparent!important;
+}
+/* Listas: separación por espacios o líneas discretas únicamente donde ayudan. */
+body.theme-black #app :is(.v302-service,.v239-product,.v51-ledger-item,.v242-settings-row,.v205-explore-link){
+ border-bottom-color:rgba(255,255,255,.055)!important;
+}
+/* Pestañas / barras y chips no seleccionados. Resaltar únicamente activo mediante acento. */
+body.theme-black #app :is(
+ .module-switch-shell,.module-switch-tabs,.module-switch-tab,
+ .v239-segments,.v239-segment,.v242-settings-rows,
+ .v302-subs-add,.top-tabs,.inner-menu-tabs,.v243-bank-breadcrumb
+ ){
+ box-shadow:none!important;border-color:transparent!important;
+}
+body.theme-black #app :is(.module-switch-tab.active,.module-switch-tab[aria-current="page"],.v239-segment.selected,.v239-segment[aria-selected="true"],.v239-currency-tabs button.active){
+ background:color-mix(in srgb,var(--vive-theme-color,#6a95fc) 21%,#050505)!important;
+ color:#fff!important;border-color:transparent!important;
+}
+/* Preservar las cabeceras KPI con acento personalizado si ya están configuradas. */
+body.theme-black #app :is(.v239-hero,.v239-cert-hero,.v302-cost-card,.v305-actives-card,.v421-creative-compact){
+ border-color:transparent!important;box-shadow:none!important;
+}
+/* Notificaciones: negro real, sin tarjetas azules ni grises. */
+body.theme-black .v36-notifications .v36-notice-pop{
+ background:#050505!important;background-image:none!important;
+ border:0!important;color:#f6f6f6!important;
+ box-shadow:0 24px 64px rgba(0,0,0,.76)!important;
+}
+body.theme-black .v36-notice-pop :is(
+ .v36-notice,.v246-notice,.v246-current-feed,.v246-report-history,
+ .v246-history-list,.v246-report-history>summary,.v36-notice-footer,
+ .v246-inbox-heading,.v36-notice-head
+ ){
+ background:transparent!important;background-image:none!important;
+ border-color:transparent!important;box-shadow:none!important;color:#f5f5f5!important;
+}
+body.theme-black .v36-notice-pop :is(.v246-notice,.v36-notice){
+ border-bottom:1px solid rgba(255,255,255,.08)!important;border-radius:0!important;
+}
+body.theme-black .v36-notice-pop :is(small,.v36-notice-disclaimer,.v246-notice-copy small){color:#a6a6a9!important;}
+body.theme-black .v36-notice-pop .v36-notice-footer{
+ background:color-mix(in srgb,var(--vive-theme-color,#6a95fc) 16%,#050505)!important;
+ color:#fff!important;border-radius:12px!important;
+}
+/* Ajustes, entradas y modales: oscuros, accesibles y sin falsas tarjetas grises. */
+body.theme-black :is(.modal,.modal-layer .modal,.v349-review-panel,.mqr-modal,.v235-register-dialog,.v36-notice-pop){
+ background-color:#050505!important;background-image:none!important;
+}
+body.theme-black :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea,.field,.filter-select){
+ background:#090909!important;color:#f6f6f6!important;border:1px solid rgba(255,255,255,.13)!important;
+ box-shadow:none!important;
+}
+body.theme-black :is(input,select,textarea,button,a,[role="tab"]):focus-visible{
+ outline:2px solid var(--vive-theme-color,#83a6ff)!important;outline-offset:2px!important;
+}
+/* No neutralizar los colores de tarjetas bancarias, gráficas de riesgo, indicadores
+   de éxito/error, iconos de marca ni botones principales. */
+body.theme-black :is(.negative,.is-negative,.v318-danger,.pill.red,.notification.danger){color:#ff8c98!important;}
+body.theme-black :is(.positive,.is-positive,.v318-good,.pill.green,.notification.success){color:#85ddac!important;}
+@media(max-width:790px){
+ body.theme-black :is(.vive-mobile-top,.vive-mobile-dock,.v36-notifications>summary){
+  box-shadow:none!important;
+ }
+ body.theme-black .v36-notifications .v36-notice-pop{
+  max-height:min(72dvh,620px)!important;border-radius:20px!important;
+ }
 }
 </style>
 
