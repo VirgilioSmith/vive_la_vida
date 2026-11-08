@@ -1,9 +1,11 @@
-# Vive el hoy · Finanzas 360 — Versión 4
+# Vive el hoy · Finanzas 360 — V10 (Supabase en vivo)
 
-Corrección de navegación web: eliminada la barra automática redundante «Volver / Resumen / Ruta» introducida anteriormente en múltiples vistas.
+- Fuente de datos: public.finanzas_estado (documento completo con control de versión), filtrado por usuario autenticado.
+- Recepción de actualizaciones de otros dispositivos: Supabase Realtime por user_id, con comprobación del sello remoto cada 20 segundos y al volver a enfocar la app.
+- Si la red está caída o el documento financiero no ha sido confirmado por Supabase, se bloquea la vista provisional y se ofrece reintento; el borrador permanece localmente protegido.
+- Escrituras con control optimista mediante actualizado_en y conciliación de tres vías para preservar registros. Conflictos irreconciliables: se conservan ambos estados y NO se sobrescribe el servidor.
+- Borrados y otras operaciones son parte del mismo documento financiero, sin una segunda tabla ni una deducción adicional.
+- La integridad de la sincronización depende también de que todos los dispositivos utilicen una versión compatible; no instalar versiones anteriores en paralelo.
+- Sin cambiar Apple Pay Edge Functions o los secretos de los tokens.
 
-- Se suprime la creación de `.v394-routebar` desde el controlador de renderización.
-- Se retira el controlador de clic específico de esa barra.
-- Se mantienen la barra lateral, el menú principal, el dock móvil y la navegación propia de cada módulo.
-- No se modifican cálculos financieros, datos de Supabase ni las funciones Apple Pay.
-- ZIP limpio: únicamente archivos de la aplicación y recursos de instalación.
+IMPORTANTE: Esta entrega contiene la app completa. Subir todo el contenido de esta carpeta al sitio; no se ha desplegado automáticamente en Netlify ni GitHub.
