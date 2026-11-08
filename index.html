@@ -2,7 +2,7 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="2"/>
+<meta name="vive-el-hoy-version" content="403"/>
 
 
 <script id="v386-early-submit-guard">document.addEventListener('submit',function(e){if(e.target?.id==='recurringForm'&&typeof window.v386ValidateRecurringForm==='function')window.v386ValidateRecurringForm(e);},true);</script>
@@ -30338,7 +30338,11 @@ function v233PersonalMutation(reason,mutation){
  const before=JSON.stringify(db);
  if(!v30SavePoint('Entre personas · '+reason))throw Error('No pudo crearse el respaldo previo a la modificación.');
  try{
-  mutation();v99Invalidate();
+  const beforeTxIds=new Set((JSON.parse(before).transactions||[]).map(t=>String(t.id)));
+  mutation();
+  const afterTxIds=new Set((db.transactions||[]).map(t=>String(t.id)));
+  v403RegisterDeletedTransactions([...beforeTxIds].filter(id=>!afterTxIds.has(id)).map(id=>({id})));
+  v99Invalidate();
   if(!persist())throw Error('No se pudo preparar el guardado seguro. La operación se revirtió.');
  }catch(err){db=JSON.parse(before);v99Invalidate();throw err;}
 }
@@ -34325,8 +34329,8 @@ case 'export':exportJson();break;
 case 'csv':csv();break;
 case 'import':document.getElementById('importFile')?.click();break;
 case 'print':window.print();break;
-case 'demo':if(confirm('¿Cargar una demostración con datos totalmente ficticios? REEMPLAZARÁ tus datos actuales. Exporta un respaldo antes de continuar.')){if(!v30SavePoint('Antes de cargar demostración'))break;db=seedDemo();ui.page='banks';ui.bankId=null;ui.cardId=null;ui.accountId=null;ui.loanId=null;persist();render();toast('Demostración ficticia cargada.')}break;
-case 'clear':if(confirm('¿Eliminar todos los registros financieros guardados en este navegador? Esta acción es irreversible sin un respaldo JSON.')){if(confirm('Confirmación final: ¿borrar todos los datos?')){if(!v30SavePoint('Antes de eliminar todos los datos'))break;db=init();ui.page='overview';ui.accountId=null;ui.cardId=null;ui.loanId=null;persist();render();toast('Datos locales vaciados.')}}break;
+case 'demo':if(confirm('¿Cargar una demostración con datos totalmente ficticios? REEMPLAZARÁ tus datos actuales. Exporta un respaldo antes de continuar.')){if(!v30SavePoint('Antes de cargar demostración'))break;v403RegisterDeletedTransactions(db.transactions);db=seedDemo();ui.page='banks';ui.bankId=null;ui.cardId=null;ui.accountId=null;ui.loanId=null;persist();render();toast('Demostración ficticia cargada.')}break;
+case 'clear':if(confirm('¿Eliminar todos los registros financieros de tu cuenta en Supabase y en todos tus dispositivos? Exporta un respaldo JSON antes de continuar.')){if(confirm('Confirmación final: ¿borrar todos los datos?')){if(!v30SavePoint('Antes de eliminar todos los datos'))break;v403RegisterDeletedTransactions(db.transactions);db=init();ui.page='overview';ui.accountId=null;ui.cardId=null;ui.loanId=null;persist();render();toast('Datos locales vaciados.')}}break;
 case 'deleteTransaction':{const tx=db.transactions.find(t=>t.id===id);if(tx)v51DeleteMovementPrompt(tx);else toast('El movimiento ya no existe.');break}
 case 'v51ConfirmDelete':{
  const pos=db.transactions.findIndex(t=>t.id===id);if(pos<0){closeModal();toast('El movimiento ya no existe.');break;}
@@ -34335,7 +34339,8 @@ case 'v51ConfirmDelete':{
  db.deletedMovements=Array.isArray(db.deletedMovements)?db.deletedMovements:[];
  db.deletedMovements.push({id:t.id,at:new Date().toISOString(),tx:JSON.parse(JSON.stringify(t))});
  if(db.deletedMovements.length>150)db.deletedMovements=db.deletedMovements.slice(-150);
-  db.transactions.splice(pos,1);
+  v403RegisterDeletedTransactions([t]);
+ db.transactions.splice(pos,1);
   if(t.type==='personal_issue'){const relation=personalLoan(t.personalLoanId);if(relation)relation.openingMode='existing';}
   persist();closeModal();render();toast('Eliminación enviada a Supabase; se confirmará al guardar.');break;
 }
@@ -34345,6 +34350,7 @@ case 'v54ConfirmPermanent':{
  if(!confirm('Confirmación final: ¿eliminar definitivamente este movimiento y recalcular sus saldos? Esta acción no se podrá restaurar desde Papelera.'))break;
  const deleted=db.transactions[pos],isPersonal=['personal_issue','personal_settlement'].includes(deleted.type);
  const removeEntry=()=>{
+  v403RegisterDeletedTransactions([deleted]);
   db.transactions.splice(pos,1);
   if(deleted.type==='personal_issue'){const relation=personalLoan(deleted.personalLoanId);if(relation)relation.openingMode='existing';}
   if(Array.isArray(db.deletedMovements))db.deletedMovements=db.deletedMovements.filter(x=>x.id!==id);
@@ -35092,7 +35098,7 @@ function v402Paint(){
  else if(v402Busy){mode='syncing';}
  else if(f34SyncState==='error'){mode='error';}
  else if(f34SyncState==='saving'){mode='syncing';}
- if(mode==='synced'&&!v402Realtime)mode='pending';
+ if(mode==='synced'&&(!v402Realtime||v403GetAppleQueue().length))mode='pending';
  document.querySelectorAll('[data-v402-sync]').forEach(el=>{
   el.dataset.status=mode;
   const label=mode==='synced'?'Sincronizado con Supabase':mode==='syncing'?'Sincronizando con Supabase':mode==='error'?'No se pudo sincronizar':'Comprobar sincronización';
@@ -35134,6 +35140,8 @@ async function v402Refresh(){
    await v212Sync();
    if(v212State?.syncError)throw Error(v212State.syncError);
   }
+  await v403DeleteAppleEvents();
+  if(v403GetAppleQueue().length)throw Error('Hay eliminaciones de Apple Pay todavía pendientes.');
   if(f33Dirty||f33Saving||f33Conflict)throw Error('Quedan movimientos pendientes de confirmación en Supabase.');
   if(!v402Realtime)throw Error('Lectura verificada, pero el canal Realtime aún no está conectado.');
   v402LastVerified=new Date();v402Mode='synced';v402Message='Datos actualizados y guardados en Supabase.';
@@ -35167,6 +35175,71 @@ const F33_KEY = 'sb_publishable_bhei3BYBE_HH84SJjFOqhw_0dNcJy9L';
 let f33Api=null,f33User=null,f33Stamp=null,f33Dirty=false,f33Saving=false,f33Timeout=0;
 let f33Conflict=false,f33Phase='login',f33Active=false,f33LastError='';
 let f33PendingBackup=null,f33RemoteCandidate=null;
+
+/* V403 · La nube es la fuente de verdad. El almacenamiento local sólo conserva
+   recuperación ante caída de red, nunca se usa como base autorizada. */
+const v403ExplicitDeletes=new Set();
+const v403ApprovedKey=()=> 'finanzas360.confirmedDeletes.'+(f33User?.id||'');
+function v403RestoreApproved(){
+ try{for(const id of JSON.parse(localStorage.getItem(v403ApprovedKey())||'[]'))v403ExplicitDeletes.add(String(id))}catch(_){}
+}
+function v403SaveApproved(){
+ try{localStorage.setItem(v403ApprovedKey(),JSON.stringify([...v403ExplicitDeletes]))}catch(_){}
+}
+let v403AppleDeleteBusy=false;
+function v403RegisterDeletedTransactions(transactions){
+ for(const t of transactions||[])if(t&&t.id)v403ExplicitDeletes.add(String(t.id));
+ v403SaveApproved();
+}
+const v403AppleQueueKey=()=> 'finanzas360.appleDeletion.'+(f33User?.id||'');
+function v403GetAppleQueue(){
+ try{const raw=JSON.parse(localStorage.getItem(v403AppleQueueKey())||'[]');return Array.isArray(raw)?raw:[]}catch(_){return []}
+}
+function v403QueueAppleDeletes(previous,current){
+ const ids=new Set((current||[]).map(t=>String(t.id)));
+ const queue=v403GetAppleQueue();
+ for(const t of previous||[]){
+  if(!t?.id||ids.has(String(t.id)))continue;
+  // Deliberately DO NOT delete unrelated Apple Pay history: only a transaction
+  // with a confirmed link to a corresponding Apple Pay event is eligible.
+  if(!t.applePayEventId && !String(t.tags||'').includes('apple-pay'))continue;
+  const item={transactionId:String(t.id),eventId:String(t.applePayEventId||'')};
+  if(!queue.some(q=>q.transactionId===item.transactionId))queue.push(item);
+ }
+ try{localStorage.setItem(v403AppleQueueKey(),JSON.stringify(queue))}catch(e){console.warn('Apple Pay deletion recovery unavailable',e)}
+}
+async function v403DeleteAppleEvents(){
+ if(v403AppleDeleteBusy||!f33Active||!f33User||!f33Api||!navigator.onLine)return;
+ let queue=v403GetAppleQueue();if(!queue.length)return;
+ v403AppleDeleteBusy=true;
+ try{
+  for(const item of [...queue]){
+   // Delete only this user's exact linked event, never all historic events.
+   const matches=[];
+   const byTx=await f33Api.from('apple_pay_events').select('id').eq('user_id',f33User.id).eq('local_tx_id',item.transactionId);
+   if(byTx.error)throw byTx.error;
+   matches.push(...(byTx.data||[]).map(r=>r.id));
+   if(item.eventId&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.eventId)){
+    const byId=await f33Api.from('apple_pay_events').select('id').eq('user_id',f33User.id).eq('id',item.eventId);
+    if(byId.error)throw byId.error;
+    matches.push(...(byId.data||[]).map(r=>r.id));
+   }
+   for(const id of new Set(matches)){
+    const result=await f33Api.from('apple_pay_events').delete().eq('user_id',f33User.id).eq('id',id).select('id');
+    if(result.error)throw result.error;
+    if(!result.data?.some(r=>r.id===id))throw Error('Supabase no confirmó la eliminación del evento Apple Pay '+id);
+   }
+   queue=queue.filter(q=>q.transactionId!==item.transactionId);
+   localStorage.setItem(v403AppleQueueKey(),JSON.stringify(queue));
+  }
+  if(typeof v212Load==='function'&&typeof v212Enabled==='function'&&v212Enabled())void v212Load();
+ }catch(err){
+  console.error('[V403] Eliminación de Apple Pay pendiente',err);
+  v402Mode='pending';v402Message='Hay eliminaciones de Apple Pay pendientes: '+(err.message||err);
+  v402Paint();
+ }finally{v403AppleDeleteBusy=false}
+}
+
 
 /* V10 — sincronización remota de todo el documento. No se finge un guardado. */
 let v10Channel=null,v10WatchedUser='',v10Pulling=false,v10PullScheduled=0,v10RemoteQueued=false;
@@ -35268,16 +35341,17 @@ function v10LiveStart(){
  try{
   v10Channel=f33Api.channel('finanzas360-direct-'+uid)
    .on('postgres_changes',{event:'*',schema:'public',table:'finanzas_estado',filter:'user_id=eq.'+uid},()=>v10SchedulePull(0))
-   .on('postgres_changes',{event:'INSERT',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},()=>v11ScheduleAppleSync(40))
-   .on('postgres_changes',{event:'UPDATE',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},payload=>{
-     if(payload.new?.status==='pending')v11ScheduleAppleSync(40);
+   .on('postgres_changes',{event:'*',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},payload=>{
+     // INSERT/UPDATE/DELETE refresh the visible Apple Pay state on every device.
+     if(typeof v212Load==='function'&&typeof v212Enabled==='function'&&v212Enabled())void v212Load();
+     if(payload.eventType==='INSERT'||payload.new?.status==='pending')v11ScheduleAppleSync(40);
    })
    .subscribe(status=>{
     v402RealtimeStatus(status);
     if(!f33Active||f33User?.id!==uid)return;
     if(status==='SUBSCRIBED'){
      clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=0;
-     v10SchedulePull(0);v11ScheduleAppleSync(100);
+     v10SchedulePull(0);v11ScheduleAppleSync(100);void v403DeleteAppleEvents();
     }else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)){
      // WebSocket reconnection failure must never be mistaken for synchronized data.
      v11LiveRetryTimer=setTimeout(()=>{
@@ -35298,7 +35372,7 @@ function v10LiveStartForce(){
 }
 window.addEventListener('focus',()=>{v10SchedulePull(0);v11ScheduleAppleSync(100);});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){v10SchedulePull(0);v11ScheduleAppleSync(100);}});
-window.addEventListener('online',()=>{if(f33Dirty&&!f33Conflict)f33Flush();else v10SchedulePull(0);v10LiveStartForce();v11ScheduleAppleSync(200);});
+window.addEventListener('online',()=>{if(f33Dirty&&!f33Conflict)f33Flush();else v10SchedulePull(0);v10LiveStartForce();v11ScheduleAppleSync(200);void v403DeleteAppleEvents();});
 
 // Token de generación: una respuesta anterior nunca reemplaza la sesión cargada después.
 let f151CloudLoadToken=0;
@@ -35533,6 +35607,7 @@ function f33Prepare(doc){if(!doc||typeof doc!=='object'||!Array.isArray(doc.acco
  return migrateData({...init(),...doc,settings:{...init().settings,...(doc.settings||{})}});
 }
 async function f33LoadUser(user){
+ v403RestoreApproved();
  const loadToken=++f151CloudLoadToken;
  v10LiveStop();
  f33Phase='loading';f33User=user;f33Conflict=false;f33Active=false;f33Shell('Conectando tus finanzas…','Estamos consultando tus registros privados en Supabase.','<div class="f33-label">Verificando acceso y base de datos</div>');
@@ -35631,9 +35706,10 @@ async function f33Flush(){
   if(Array.isArray(baseline?.transactions)&&Array.isArray(snapshot.transactions)){
    const currentIds=new Set(snapshot.transactions.map(t=>String(t.id)));
    const missing=baseline.transactions.filter(t=>t?.id&&!currentIds.has(String(t.id)));
-   if(missing.length>1){
+   const unapproved=missing.filter(t=>!v403ExplicitDeletes.has(String(t.id)));
+   if(unapproved.length){
     f33Dirty=true;f33Conflict=true;v10ManualConflict=true;v360WritePending();
-    v10Protect('conflict','Protección de integridad: se detectaron '+missing.length+' movimientos que desaparecerían. No se escribió en Supabase.');
+    v10Protect('conflict','Protección de integridad: '+unapproved.length+' movimientos desaparecerían sin una eliminación confirmada. No se escribió en Supabase.');
     return;
    }
   }
@@ -35647,11 +35723,15 @@ async function f33Flush(){
    // No recargar la app sobre la copia local: preservar las transacciones pendientes.
    f33Conflict=true;return;
   }
-  f33Stamp=data.actualizado_en;window.__f360BaseStamp=f33Stamp;v360RememberBase(snapshot,f33Stamp);
+  f33Stamp=data.actualizado_en;window.__f360BaseStamp=f33Stamp;
+  v403QueueAppleDeletes(baseline?.transactions||[],snapshot.transactions||[]);
+  v360RememberBase(snapshot,f33Stamp);
+  for(const t of (baseline?.transactions||[]))if(!(snapshot.transactions||[]).some(x=>String(x.id)===String(t.id)))v403ExplicitDeletes.delete(String(t.id));
+  v403SaveApproved();
   if(!f33Dirty){try{localStorage.removeItem(f33CloudKey())}catch(err){}}
   else{try{localStorage.setItem(f33CloudKey(),JSON.stringify({pending:true,baseStamp:f33Stamp,documento:db,savedAt:new Date().toISOString()}))}catch(err){}}
-  f33SetStatus(f33Dirty?'saving':'ok',f33Dirty?'Confirmando cambios siguientes…':'✓ Confirmado en Supabase');
-  if(!f33Dirty)v11ScheduleAppleSync(100);
+  f33SetStatus(f33Dirty?'saving':v403GetAppleQueue().length?'saving':'ok',f33Dirty?'Confirmando cambios siguientes…':v403GetAppleQueue().length?'Confirmando eliminación Apple Pay…':'✓ Confirmado en Supabase');
+  if(!f33Dirty){v11ScheduleAppleSync(100);void v403DeleteAppleEvents();}
  }catch(err){f33Dirty=true;f33SetStatus('error','Error de nube · copia local');console.error('No se pudo sincronizar vive el hoy:',err)}
  finally{
   f33Saving=false;
@@ -37424,6 +37504,7 @@ function deletePersonalLoan(id){
  if(!confirm(question))return;
  try{
   v233PersonalMutation('Eliminar acuerdo · '+loanCategory(l),()=>{
+   v403RegisterDeletedTransactions(related);
    db.personalLoans=db.personalLoans.filter(x=>x.id!==id);
    db.transactions=db.transactions.filter(t=>!(t.personalLoanId===id&&['personal_issue','personal_settlement'].includes(t.type)));
    db.pendingOperations=(db.pendingOperations||[]).filter(o=>o.values?.personalLoanId!==id);
