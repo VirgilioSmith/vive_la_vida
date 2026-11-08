@@ -2,7 +2,7 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="403"/>
+<meta name="vive-el-hoy-version" content="404"/>
 
 
 <script id="v386-early-submit-guard">document.addEventListener('submit',function(e){if(e.target?.id==='recurringForm'&&typeof window.v386ValidateRecurringForm==='function')window.v386ValidateRecurringForm(e);},true);</script>
@@ -35080,12 +35080,12 @@ function v402SyncButton(){
 }
 function v402RealtimeStatus(status){
  v402Realtime=status==='SUBSCRIBED';
- if(v402Realtime && f33Active && !f33Dirty && !f33Saving && !f33Conflict && navigator.onLine) v402AutoConfirmed();
+ if(v402Realtime && f33Active && !f33Dirty && !f33Saving && !f33Conflict && navigator.onLine){v402Mode='pending';v402Message='Canal conectado; validando los datos actuales…';v10SchedulePull(0);}
  if(!v402Realtime&&f33Active&&!v402Busy){v402Mode='pending';v402Message='Tiempo real desconectado; toca para verificar los datos.';}
  v402Paint();
 }
 function v402AutoConfirmed(){
- if(!f33Active||!v402Realtime||f33Dirty||f33Saving||f33Conflict||v402Busy||!navigator.onLine)return;
+ if(!f33Active||!v402Realtime||f33Dirty||f33Saving||f33Conflict||v402Busy||v403GetAppleQueue().length||!navigator.onLine)return;
  v402Mode='synced';v402Message='Supabase confirmó el estado financiero.';v402LastVerified=new Date();v402Paint();
 }
 function v402Paint(){
@@ -35096,7 +35096,7 @@ function v402Paint(){
  else if(f33Conflict||v10ManualConflict){mode='error';}
  else if(f33Dirty||f33Saving){mode=f33Saving?'syncing':'pending';}
  else if(v402Busy){mode='syncing';}
- else if(f34SyncState==='error'){mode='error';}
+ else if(f34SyncState==='error'&&f33Dirty){mode='error';}
  else if(f34SyncState==='saving'){mode='syncing';}
  if(mode==='synced'&&(!v402Realtime||v403GetAppleQueue().length))mode='pending';
  document.querySelectorAll('[data-v402-sync]').forEach(el=>{
@@ -35127,12 +35127,12 @@ async function v402Refresh(){
   // Use the existing verified pull, without creating another client/channel.
   await v10PullRemote();
   const uid=f33User.id;
-  const check=await f33Api.from('finanzas_estado').select('actualizado_en').eq('user_id',uid).maybeSingle();
+  const check=await f33Api.from('finance_revision').select('revision').eq('user_id',uid).maybeSingle();
   if(check.error)throw check.error;
-  if(!check.data?.actualizado_en)throw Error('La nube no devolvió el estado financiero.');
-  if(check.data.actualizado_en!==f33Stamp){
+  if(check.data?.revision==null)throw Error('La nube no devolvió el estado financiero.');
+  if(String(check.data.revision)!==f33Stamp){
    await v10PullRemote();
-   if(check.data.actualizado_en!==f33Stamp)throw Error('Se detectó una versión más reciente que aún no se pudo aplicar.');
+   if(String(check.data.revision)!==f33Stamp)throw Error('Se detectó una versión más reciente que aún no se pudo aplicar.');
   }
   // Apple Pay imports run through the existing pipeline and its verified write path.
   if(typeof v212Sync==='function'&&typeof v212Enabled==='function'&&v212Enabled()){
@@ -35142,6 +35142,7 @@ async function v402Refresh(){
   }
   await v403DeleteAppleEvents();
   if(v403GetAppleQueue().length)throw Error('Hay eliminaciones de Apple Pay todavía pendientes.');
+  if(typeof v212Load==='function'&&typeof v212Enabled==='function'&&v212Enabled())await v212Load();
   if(f33Dirty||f33Saving||f33Conflict)throw Error('Quedan movimientos pendientes de confirmación en Supabase.');
   if(!v402Realtime)throw Error('Lectura verificada, pero el canal Realtime aún no está conectado.');
   v402LastVerified=new Date();v402Mode='synced';v402Message='Datos actualizados y guardados en Supabase.';
@@ -35233,6 +35234,7 @@ async function v403DeleteAppleEvents(){
    localStorage.setItem(v403AppleQueueKey(),JSON.stringify(queue));
   }
   if(typeof v212Load==='function'&&typeof v212Enabled==='function'&&v212Enabled())void v212Load();
+  if(typeof v402Paint==='function')v402Paint();
  }catch(err){
   console.error('[V403] Eliminación de Apple Pay pendiente',err);
   v402Mode='pending';v402Message='Hay eliminaciones de Apple Pay pendientes: '+(err.message||err);
@@ -35370,8 +35372,8 @@ function v10LiveStartForce(){
  // Reset socket/channel, keep server-state validation and polling active.
  v10WatchedUser='';v10LiveStart();
 }
-window.addEventListener('focus',()=>{v10SchedulePull(0);v11ScheduleAppleSync(100);});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){v10SchedulePull(0);v11ScheduleAppleSync(100);}});
+window.addEventListener('focus',()=>{v10SchedulePull(0);v11ScheduleAppleSync(100);void v403DeleteAppleEvents();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){v10SchedulePull(0);v11ScheduleAppleSync(100);void v403DeleteAppleEvents();}});
 window.addEventListener('online',()=>{if(f33Dirty&&!f33Conflict)f33Flush();else v10SchedulePull(0);v10LiveStartForce();v11ScheduleAppleSync(200);void v403DeleteAppleEvents();});
 
 // Token de generación: una respuesta anterior nunca reemplaza la sesión cargada después.
@@ -35607,10 +35609,9 @@ function f33Prepare(doc){if(!doc||typeof doc!=='object'||!Array.isArray(doc.acco
  return migrateData({...init(),...doc,settings:{...init().settings,...(doc.settings||{})}});
 }
 async function f33LoadUser(user){
- v403RestoreApproved();
  const loadToken=++f151CloudLoadToken;
  v10LiveStop();
- f33Phase='loading';f33User=user;f33Conflict=false;f33Active=false;f33Shell('Conectando tus finanzas…','Estamos consultando tus registros privados en Supabase.','<div class="f33-label">Verificando acceso y base de datos</div>');
+ f33Phase='loading';f33User=user;v403ExplicitDeletes.clear();v403RestoreApproved();f33Conflict=false;f33Active=false;f33Shell('Conectando tus finanzas…','Estamos consultando tus registros privados en Supabase.','<div class="f33-label">Verificando acceso y base de datos</div>');
  try{
   let {data,error}=await f33Api.from('finanzas_estado').select('documento,actualizado_en').eq('user_id',user.id).maybeSingle();
   if(loadToken!==f151CloudLoadToken||f33User?.id!==user.id)return;
@@ -35703,7 +35704,8 @@ async function f33Flush(){
   const snapshot=JSON.parse(JSON.stringify(db));f151SnapshotReady=true;
   // Fail closed if an old browser version attempts to erase multiple records at once.
   const baseline=v360BaseFromStorage();
-  if(Array.isArray(baseline?.transactions)&&Array.isArray(snapshot.transactions)){
+  if(!baseline||!Array.isArray(baseline.transactions)){throw Error('Sin copia base de Supabase: no se permite reemplazar movimientos hasta recargar el estado remoto.');}
+  if(Array.isArray(snapshot.transactions)){
    const currentIds=new Set(snapshot.transactions.map(t=>String(t.id)));
    const missing=baseline.transactions.filter(t=>t?.id&&!currentIds.has(String(t.id)));
    const unapproved=missing.filter(t=>!v403ExplicitDeletes.has(String(t.id)));
@@ -35780,6 +35782,239 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&f33Active
 setInterval(()=>{if(f33Active&&!document.hidden)f34UpdateFx(false)},60*60*1000);
 window.addEventListener('beforeunload',()=>{v360SaveUI();if(f33Dirty)v360WritePending()});
 window.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&f33Dirty&&!f33Saving)f33Flush()});
+/* V406 — Supabase relacional. Solo filas tipadas en la base.
+   finance_items: identidad y orden; finance_values: campos tipados;
+   finance_revision: cambio atómico/realtime; RPC: escritura transaccional.
+*/
+const v405ArrayCollections=new Set([
+ 'banks','accounts','cards','loans','transactions','recurring','statements','budgets',
+ 'certificates','perkUses','personalLoans','personalContacts','txRevisions',
+ 'pendingOperations','rewardBalances','customCategories','automationEvents',
+ 'budgetVersions','fiscalRulesVersions','incomeSchedules','institutionBenefits',
+ 'v144PendingBenefits','v144ScheduledCosts'
+]);
+let v405Base={},v405Revision=0,v405Loaded=false;
+const v405Clone=v=>JSON.parse(JSON.stringify(v));
+const v405Equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const v405Id=(value,i)=>value&&typeof value==='object'&&!Array.isArray(value)&&value.id!=null&&String(value.id)!==''?String(value.id):'__index_'+i;
+function v405SnapshotMap(doc){
+ const result=new Map();
+ for(const [collection,data] of Object.entries(doc||{})){
+  if(Array.isArray(data)){
+   data.forEach((value,i)=>result.set(collection+'\u0000'+v405Id(value,i),{collection,id:v405Id(value,i),position:i,data:value}));
+  }else result.set(collection+'\u0000__root__',{collection,id:'__root__',position:0,data});
+ }
+ return result;
+}
+function v405Changes(oldDoc,newDoc){
+ const before=v405SnapshotMap(oldDoc),after=v405SnapshotMap(newDoc),changes=[];
+ for(const [key,previous] of before)if(!after.has(key))changes.push({action:'delete',collection:previous.collection,id:previous.id});
+ for(const [key,current] of after){
+  const earlier=before.get(key);
+  if(!earlier||earlier.position!==current.position||!v405Equal(earlier.data,current.data))changes.push({action:'upsert',...current});
+ }
+ return changes;
+}
+function v405Decode(path){return path.slice(1).split('/').map(s=>s.replace(/~1/g,'/').replace(/~0/g,'~'));}
+function v405Unflatten(values){
+ let root;
+ const ordered=values.slice().sort((a,b)=>a.path.length-b.path.length||a.path.localeCompare(b.path));
+ for(const row of ordered){
+  let value;
+  switch(row.kind){
+   case 'object':value={};break;
+   case 'array':value=[];break;
+   case 'string':value=row.text_value??'';break;
+   case 'number':value=Number(row.number_value);break;
+   case 'boolean':value=row.boolean_value===true;break;
+   default:value=null;
+  }
+  if(row.path===''){root=value;continue;}
+  const seg=v405Decode(row.path);let target=root;
+  for(let i=0;i<seg.length-1;i++)target=target[seg[i]];
+  target[seg[seg.length-1]]=value;
+ }
+ return root;
+}
+async function v405All(table,columns,userId,ordering){
+ const records=[];let from=0;
+ for(let page=0;page<300;page++){
+  let query=f33Api.from(table).select(columns).eq('user_id',userId).range(from,from+499);
+  if(ordering)query=query.order(ordering).order('record_id');
+  if(table==='finance_values')query=query.order('path');
+  const {data,error}=await query;
+  if(error)throw error;
+  records.push(...(data||[]));
+  if(!data||data.length<500)return records;
+  from+=500;
+ }
+ throw Error('Demasiados registros: paginación de Supabase excedida.');
+}
+async function v405Read(userId){
+ for(let attempt=0;attempt<3;attempt++){
+  const start=await f33Api.from('finance_revision').select('revision').eq('user_id',userId).maybeSingle();
+  if(start.error)throw start.error;
+  if(!start.data)return {revision:null,documento:null};
+  const [items,fields]=await Promise.all([
+   v405All('finance_items','collection,record_id,position',userId,'collection'),
+   v405All('finance_values','collection,record_id,path,kind,text_value,number_value,boolean_value',userId,'collection')
+  ]);
+  const end=await f33Api.from('finance_revision').select('revision').eq('user_id',userId).single();
+  if(end.error)throw end.error;
+  if(Number(start.data.revision)!==Number(end.data.revision))continue;
+  const grouped=new Map();
+  for(const field of fields){const key=field.collection+'\u0000'+field.record_id;
+   if(!grouped.has(key))grouped.set(key,[]);grouped.get(key).push(field);
+  }
+  const result={};
+  for(const item of items){
+   const value=v405Unflatten(grouped.get(item.collection+'\u0000'+item.record_id)||[]);
+   if(v405ArrayCollections.has(item.collection)){
+    (result[item.collection]??=[]).push({position:item.position,value});
+   }else if(item.record_id==='__root__')result[item.collection]=value;
+  }
+  for(const key of v405ArrayCollections)if(Array.isArray(result[key]))result[key]=result[key].sort((a,b)=>a.position-b.position).map(x=>x.value);
+  return {revision:Number(end.data.revision),documento:result};
+ }
+ throw Error('El servidor cambió mientras se cargaban los datos. Reintenta.');
+}
+async function v405Commit(expected,changes){
+ const {data,error}=await f33Api.rpc('finance_apply_changes',{p_expected_revision:Number(expected),p_changes:changes});
+ if(error)throw error;
+ if(!Number.isFinite(Number(data)))throw Error('Supabase no devolvió una revisión válida.');
+ return Number(data);
+}
+async function v405Reconcile(){
+ const latest=await v405Read(f33User.id);
+ if(!latest.documento)throw Error('No se encontró la base relacional de esta cuenta.');
+ const merged=v360ThreeWayMerge(v405Base,db,latest.documento);
+ if(!merged){f33Conflict=true;f33Dirty=true;v360WritePending();f33SetStatus('conflict','Conflicto entre dispositivos; los datos locales están protegidos.');return false;}
+ db=f33Prepare(merged);v405Base=v405Clone(latest.documento);v405Revision=latest.revision;
+ f33Stamp=String(latest.revision);v360RememberBase(latest.documento,f33Stamp);
+ f33Conflict=false;f33Dirty=true;v360WritePending();return true;
+}
+// Sustituir las funciones cloud antiguas; la UI y la lógica financiera siguen intactas.
+f33LoadUser=async function(user){
+ const token=++f151CloudLoadToken;
+ v10LiveStop();f33User=user;f33Active=false;f33Conflict=false;v403ExplicitDeletes.clear();v403RestoreApproved();
+ f33Phase='loading';f33Shell('Conectando tus finanzas…','Leyendo tablas de Supabase en tiempo real.','');
+ try{
+  let remote=await v405Read(user.id);
+  if(token!==f151CloudLoadToken||f33User?.id!==user.id)return;
+  if(!remote.documento){
+   const initial=migrateData(init());
+   // Una cuenta nueva crea filas en la base, no un documento JSON.
+   const next=await v405Commit(0,v405Changes({},initial));
+   remote={revision:next,documento:initial};
+  }
+  // V406: Supabase is authoritative. Never auto-replay stale browser copies.
+  // A previous device cache may contain transactions that were deleted elsewhere.
+  // Preserve uncommitted work only as a manually exportable recovery file.
+  let pending=null;
+  try{pending=JSON.parse(localStorage.getItem(f33CloudKey())||'null')}catch(_){ }
+  if(pending?.pending){
+   window.__f360LegacyRecoveryPending={userId:user.id,savedAt:pending.savedAt||null};
+   console.warn('[V406] Unconfirmed local recovery retained but NOT loaded: server is source of truth.');
+  }
+  db=f33Prepare(remote.documento);
+  v405Base=v405Clone(remote.documento);v405Revision=remote.revision;v405Loaded=true;
+  f33Stamp=String(remote.revision);v360RememberBase(remote.documento,f33Stamp);
+  f33Ready();
+ }catch(err){if(token!==f151CloudLoadToken)return;f33Phase='failure';f33Active=false;
+  f33Shell('No pudimos cargar tus datos.','La base no se modificó. Puedes reintentar.',
+   '<div class="f33-error" role="alert">'+sanitize(err.message||String(err))+'</div><button class="f33-primary" data-f33="load">Reintentar</button>');
+ }
+};
+f33FirstStart=async function(){if(f33User)await f33LoadUser(f33User)};
+f33Flush=async function(){
+ if(!f33Active||!f33User||!f33Dirty||f33Saving||f33Conflict)return;
+ if(!navigator.onLine){f33SetStatus('error','Sin conexión: el cambio no está confirmado.');return;}
+ f33Saving=true;f33Dirty=false;f33SetStatus('saving','Guardando filas en Supabase…');
+ let snapshot;
+ try{
+  snapshot=v405Clone(db);
+  const changes=v405Changes(v405Base,snapshot);
+  if(!changes.length){f33Stamp=String(v405Revision);if(!f33Dirty)try{localStorage.removeItem(f33CloudKey())}catch(_){};return;}
+  const removed=(v405Base.transactions||[]).filter(t=>!(snapshot.transactions||[]).some(x=>String(x.id)===String(t.id)));
+  if(removed.length>1&&removed.some(t=>!v403ExplicitDeletes.has(String(t.id)))){
+   f33Dirty=true;f33Conflict=true;v10ManualConflict=true;
+   v360WritePending();throw Error('Eliminación masiva sin confirmación explícita. Se protegieron los registros.');
+  }
+  let newRevision;
+  try{newRevision=await v405Commit(v405Revision,changes)}
+  catch(err){
+   if(err.code==='40001'||/CONFLICT|revision|simultáneo/i.test(err.message||'')){
+    f33Dirty=true;
+    const reconciled=await v405Reconcile();
+    if(!reconciled)return;
+    return;
+   }
+   throw err;
+  }
+  v403QueueAppleDeletes(v405Base.transactions||[],snapshot.transactions||[]);
+  v405Revision=newRevision;f33Stamp=String(newRevision);window.__f360BaseStamp=f33Stamp;
+  v405Base=v405Clone(snapshot);v360RememberBase(snapshot,f33Stamp);
+  for(const t of removed)v403ExplicitDeletes.delete(String(t.id));v403SaveApproved();
+  if(!f33Dirty){try{localStorage.removeItem(f33CloudKey())}catch(_){}}
+  else v360WritePending();
+  f33SetStatus(f33Dirty?'saving':'ok',f33Dirty?'Guardando siguiente cambio…':'✓ Confirmado en tablas Supabase');
+  if(!f33Dirty){v11ScheduleAppleSync(80);void v403DeleteAppleEvents();}
+ }catch(err){f33Dirty=true;v360WritePending();f33SetStatus('error','No se confirmó el guardado: '+(err.message||err));console.error('[V406] escritura relacional:',err)}
+ finally{
+  f33Saving=false;
+  if(f33Dirty&&!f33Conflict&&navigator.onLine){clearTimeout(f33Timeout);f33Timeout=setTimeout(()=>{window.__f360LastPersistPromise=f33Flush()},150);}
+  else if(v10RemoteQueued&&!f33Dirty){v10RemoteQueued=false;v10SchedulePull(10);}
+  if(!f33Dirty&&!f33Conflict){v10Protect('ok');v402AutoConfirmed();}
+ }
+};
+window.v406ExportRecovery=function(){
+ const raw=localStorage.getItem(f33CloudKey());
+ if(!raw)throw Error('No hay una copia local pendiente.');
+ const blob=new Blob([raw],{type:'application/json'}),url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download='recuperacion-local-no-sincronizada.json';a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+v10ResolveConflict=async function(){return await v405Reconcile()};
+v10PullRemote=async function(){
+ if(v10Pulling){v10RemoteQueued=true;return;}
+ if(!f33Active||!f33Api||!f33User||!navigator.onLine)return;
+ if(f33Saving){v10RemoteQueued=true;return;}
+ if(f33Dirty){v10RemoteQueued=true;if(!f33Conflict)window.__f360LastPersistPromise=f33Flush();return;}
+ if(f33Conflict)return;
+ v10Pulling=true;const uid=f33User.id;
+ try{
+  const {data,error}=await f33Api.from('finance_revision').select('revision').eq('user_id',uid).maybeSingle();
+  if(error)throw error;
+  if(data&&Number(data.revision)!==v405Revision){
+   const latest=await v405Read(uid);
+   if(f33Dirty||f33Saving||!f33Active||f33User?.id!==uid){v10RemoteQueued=true;return;}
+   db=f33Prepare(latest.documento);v405Base=v405Clone(latest.documento);v405Revision=latest.revision;
+   f33Stamp=String(latest.revision);v360RememberBase(latest.documento,f33Stamp);v99Invalidate();render();
+  }
+  if(!f33Dirty&&!f33Saving){f33SetStatus('ok','✓ Estado verificado en Supabase');v402AutoConfirmed();}
+ }catch(err){console.error('[V405] lectura remota:',err);f33SetStatus('error','No se pudo verificar el servidor');v402Mode='error';v402Message=err.message;v402Paint();}
+ finally{v10Pulling=false;v10LastPull=Date.now();if(v10RemoteQueued&&!f33Dirty&&!f33Saving){v10RemoteQueued=false;v10SchedulePull(20);}}
+};
+v10LiveStart=function(){
+ if(!f33Active||!f33Api||!f33User)return;
+ if(v10WatchedUser===f33User.id&&v10Channel)return;
+ v10LiveStop();const uid=f33User.id;v10WatchedUser=uid;
+ v10Channel=f33Api.channel('finanzas360-relational-'+uid)
+  .on('postgres_changes',{event:'UPDATE',schema:'public',table:'finance_revision',filter:'user_id=eq.'+uid},()=>v10SchedulePull(0))
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},()=>v11ScheduleAppleSync(50))
+  .on('postgres_changes',{event:'UPDATE',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},payload=>{if(payload.new?.status==='pending')v11ScheduleAppleSync(50);})
+  .on('postgres_changes',{event:'DELETE',schema:'public',table:'apple_pay_events'},()=>{if(typeof v212Load==='function'&&v212Enabled())void v212Load();})
+  .subscribe(status=>{
+   v402RealtimeStatus(status);
+   if(status==='SUBSCRIBED'){clearTimeout(v11LiveRetryTimer);v10SchedulePull(0);v11ScheduleAppleSync(100);}
+   else if(['TIMED_OUT','CHANNEL_ERROR','CLOSED'].includes(status)){
+    clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=setTimeout(()=>{if(f33Active&&navigator.onLine)v10LiveStartForce()},3000);
+   }
+  });
+ v10ProbeTimer=setInterval(()=>{if(f33Active&&!document.hidden)v10SchedulePull(0)},10000);
+ v10SchedulePull(0);
+};
+
 async function f33Boot(){
  f33Phase='loading';
  f33Gate();f33Shell('','', '');
@@ -35788,19 +36023,6 @@ async function f33Boot(){
   f33Api=window.supabase.createClient(F33_URL,F33_KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
   const {data,error}=await f33Api.auth.getUser();
    if(error||!data.user){
-    if(!navigator.onLine){
-     const {data:session}=await f33Api.auth.getSession();const u=session?.session?.user;
-     if(u?.id){
-      f33User=u;const p=JSON.parse(localStorage.getItem(f33CloudKey())||'null');
-      const base=JSON.parse(localStorage.getItem(v360BaselineKey())||'null');
-      const local=p?.documento||base?.documento;
-      if(local&&(p?.baseStamp||base?.stamp)){
-       db=f33Prepare(local);f33Stamp=p?.baseStamp||base?.stamp;
-       v360BaseDoc=base?.documento||null;v360BaseUserId=u.id;f33Ready();f33Dirty=!!p?.pending;
-       return;
-      }
-     }
-    }
     f33LoginScreen();return;
    }
    await f33LoadUser(data.user);
