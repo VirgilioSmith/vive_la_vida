@@ -73289,5 +73289,61 @@ body.theme-black #modal-root .v349-review-screen .v349-review-actions{background
 }
 </style>
 
+
+<style id="v446-acento-cabeceras-ejecutivas">
+/* V446: acento reactivo. No altera HTML, datos, cálculos, almacenamiento ni eventos. */
+html body #app {
+ --v446-accent:var(--v424-accent-strong,var(--vive-theme-color,#5575cf));
+ --v446-deep:color-mix(in srgb,var(--v446-accent) 35%,#101d35 65%);
+ --v446-middle:color-mix(in srgb,var(--v446-accent) 67%,#1a3154 33%);
+ --v446-bright:color-mix(in srgb,var(--v446-accent) 83%,#a2c5f3 17%);
+ --v446-soft:color-mix(in srgb,var(--v446-accent) 23%,#fff 77%);
+}
+/* Las tres cabeceras utilizan la MISMA configuración de Apariencia. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .analytics-world>.analytic-hero,
+ .world-payments #page .analytics-world .analytic-hero,
+ .world-accounts #page .v57-product-hero.v57-accounts,
+ .world-cards #page .v57-product-hero.v57-cards
+){
+ background:radial-gradient(circle at 105% -25%,rgba(255,255,255,.21),transparent 42%),
+ linear-gradient(112deg,var(--v446-deep) 0%,var(--v446-middle) 55%,var(--v446-bright) 115%)!important;
+ background-image:radial-gradient(circle at 105% -25%,rgba(255,255,255,.21),transparent 42%),
+ linear-gradient(112deg,var(--v446-deep) 0%,var(--v446-middle) 55%,var(--v446-bright) 115%)!important;
+ border-color:color-mix(in srgb,var(--v446-accent) 34%,white 66%)!important;
+ box-shadow:0 16px 35px color-mix(in srgb,var(--v446-accent) 18%,transparent)!important;
+ color:white!important;
+}
+/* Respetar jerarquía de lectura: blanco principal, matiz del acento solo en subtítulos destacados. */
+html body #app :is(.analytics-world .analytic-hero,.v57-product-hero.v57-accounts,.v57-product-hero.v57-cards) :is(h2,strong,.v46-global-main>strong,.v46-global-secondary strong){color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body #app :is(.analytics-world .analytic-hero,.v57-product-hero.v57-accounts,.v57-product-hero.v57-cards) h2 em{
+ color:var(--v446-soft)!important;-webkit-text-fill-color:var(--v446-soft)!important;
+}
+html body #app :is(.analytics-world .analytic-hero,.v57-product-hero.v57-accounts,.v57-product-hero.v57-cards) :is(p,small,.hero-eyebrow,.analyst-label,.hero-explainer,.v46-global-note,.v46-hero-foot){color:rgba(255,255,255,.83)!important}
+html body #app :is(.v57-product-hero.v57-accounts,.v57-product-hero.v57-cards) .v46-global-secondary>div{
+ background:rgba(255,255,255,.095)!important;border-color:rgba(255,255,255,.18)!important;
+}
+html body #app :is(.v57-product-hero.v57-accounts,.v57-product-hero.v57-cards) .btn.outline-light{
+ border-color:rgba(255,255,255,.42)!important;color:#fff!important;background:rgba(255,255,255,.055)!important;
+}
+/* Modo Black: superficies oscuras y un tinte ligero, nunca un fondo luminoso que arruine el contraste. */
+html body:is(.theme-black,.theme-dark) #app :is(
+ .analytics-world>.analytic-hero,
+ .world-payments #page .analytics-world .analytic-hero,
+ .world-accounts #page .v57-product-hero.v57-accounts,
+ .world-cards #page .v57-product-hero.v57-cards
+){
+ background:radial-gradient(circle at 100% -20%,color-mix(in srgb,var(--v446-accent) 24%,transparent),transparent 52%),
+ linear-gradient(115deg,#050609 0%,color-mix(in srgb,var(--v446-accent) 17%,#101216 83%) 58%,#1c202a 115%)!important;
+ background-image:radial-gradient(circle at 100% -20%,color-mix(in srgb,var(--v446-accent) 24%,transparent),transparent 52%),
+ linear-gradient(115deg,#050609 0%,color-mix(in srgb,var(--v446-accent) 17%,#101216 83%) 58%,#1c202a 115%)!important;
+ border-color:color-mix(in srgb,var(--v446-accent) 24%,#373737)!important;
+ box-shadow:0 18px 38px rgba(0,0,0,.33)!important;color:#fff!important;
+}
+@media (prefers-reduced-motion:no-preference){
+ html body #app :is(.analytics-world>.analytic-hero,.v57-product-hero.v57-accounts,.v57-product-hero.v57-cards){transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
+}
+</style>
+
 </body>
 </html>
