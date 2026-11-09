@@ -2,7 +2,8 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="404"/>
+<meta name="vive-el-hoy-version" content="706"/>
+<meta name="vive-el-hoy-ui-patch" content="v705-interactive-calendar-banks"/>
 
 
 <script id="v386-early-submit-guard">document.addEventListener('submit',function(e){if(e.target?.id==='recurringForm'&&typeof window.v386ValidateRecurringForm==='function')window.v386ValidateRecurringForm(e);},true);</script>
@@ -34424,6 +34425,18 @@ function render(){
  document.body.style.setProperty('--v424-accent-soft',v424Mix(v424RGB(v424Strength),[255,255,255],.64));
  document.body.style.setProperty('--v424-accent-contrast','#ffffff');
  document.body.style.setProperty('--v424-accent-shadow',v424Mix(v424RGB(v424Strength),[11,26,54],.34));
+ // Contraste del acento configurado: controles oscuros siguen legibles para colores arbitrarios.
+ //  --vive-theme-color se mantiene: no se cambia el valor guardado ni el estilo elegido.
+ let v706Readable=v424Base;
+ if(db.settings.theme==='black'){
+  for(let i=0;i<9 && v424Luminance(v706Readable)<.45;i++)
+   v706Readable=v706Readable.map(c=>Math.round(c*.76+255*.24));
+ }else{
+  for(let i=0;i<9 && v424Luminance(v706Readable)>.15;i++)
+   v706Readable=v706Readable.map(c=>Math.round(c*.78));
+ }
+ document.body.style.setProperty('--f360-accent-readable','#'+v706Readable.map(x=>x.toString(16).padStart(2,'0')).join(''));
+
  const bgChoice=db.settings.backgroundChoice||'original';
  document.body.dataset.viveBg=bgChoice;
  const backgrounds={original:'#d9e7fa',glacier:'#81cacc',sunset:'#e7a6b8'};
@@ -42384,13 +42397,13 @@ function v309ExtraCharts(){
  const v317Cells=v317Days.map(d=>{
   const n=d.amount/v317MaxDay;
   const level=d.amount<.005?0:n<=.25?1:n<=.50?2:n<=.75?3:4;
-  return `<div class="v317-heat-cell heat-${level}" role="img" title="${sanitize(prettyDate(d.date))}: ${displayMoney(d.amount)}" aria-label="${sanitize(prettyDate(d.date))}: ${displayMoney(d.amount)}"><span>${Number(d.date.slice(-2))}</span></div>`;
+  return `<button type="button" class="v317-heat-cell heat-${level}" data-v705-spend-day="${d.date}" ${v318Tip(prettyDate(d.date),'Gasto neto: '+money(d.amount,'DOP',2),'Tocar para ver cada movimiento')} aria-label="Ver movimientos del ${sanitize(prettyDate(d.date))}; gasto neto ${money(d.amount,'DOP',2)}"><span>${Number(d.date.slice(-2))}</span></button>`;
  }).join('');
  const fingerprintSection=`<section class="v105-mobile-extra v273-overview-widget v315-chart-widget v317-chart-widget" data-v105-widget="spendingFingerprint" aria-label="Huella del gasto registrado durante veintiocho días">
   <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">06 / 06 · PATRÓN · 28 DÍAS</span><h2>Huella de tus gastos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="register" aria-label="Ver movimientos">Movimientos ${icon('arrow')}</button></div>
   <div class="v317-heat-summary"><div><small>TOTAL REGISTRADO · 28 DÍAS</small><strong>${displayMoney(v317Spent)}</strong></div><div><small>DÍAS CON GASTOS</small><strong>${v317ActiveDays} / 28</strong></div></div>
   <div class="v317-heat-label"><span>${sanitize(prettyDate(v317Start))}</span><span>${sanitize(prettyDate(v317Today))}</span></div>
-  <div class="v317-heat-grid">${v317Cells}</div>
+  <div class="v317-heat-grid" aria-label="Gastos diarios. Toca un día para ver los movimientos">${v317Cells}</div>
   <div class="v317-heat-foot"><span>Sin gasto registrado</span><div class="v317-heat-legend"><i class="heat-0"></i><i class="heat-1"></i><i class="heat-2"></i><i class="heat-3"></i><i class="heat-4"></i></div><span>Mayor gasto</span></div>
   ${v317ActiveDays?`<div class="v317-peak"><span>Día de mayor consumo · ${sanitize(prettyDate(v317Peak.date))}</span><strong>${displayMoney(v317Peak.amount)}</strong></div>`:''}
   <p class="v315-small-note">Solo movimientos de gasto y compras registrados; reembolsos reducen el importe del día. Excluye transferencias y pagos de tarjeta para no contabilizar dos veces. No registra actividad nueva.</p>
@@ -42474,7 +42487,7 @@ function v360PressurePage(){
  }
  const total=Array.from(daily.values()).reduce((a,b)=>a+b,0);
  const label=first.toLocaleDateString('es-DO',{month:'long',year:'numeric'});
- return `<div class="v360-pressure-page v361-pressure-compact v362-pressure-month" aria-label="Calendario de presión financiera completo"><section class="v360-pressure-calendar" aria-label="Calendario ampliado de ${sanitize(label)}"><header class="v362-pressure-toolbar"><div class="v362-pressure-heading"><small>PRESIÓN FINANCIERA</small><h1>Presión financiera</h1></div><nav aria-label="Cambiar mes" class="v362-pressure-month-nav"><button type="button" data-v362-month="-1" aria-label="Mes anterior" ${offset===0?'disabled':''}>‹</button><strong aria-live="polite">${sanitize(label)}</strong><button type="button" data-v362-month="1" aria-label="Mes siguiente" ${offset===11?'disabled':''}>›</button></nav></header><div class="v362-pressure-summary"><span><b>${Array.from(daily.values()).filter(x=>x>0).length}</b> días con compromisos</span><span><b>${v318Money(total)}</b> previstos en el mes</span></div><div class="v362-pressure-grid" role="group" aria-label="Días del mes">${weekdays}${cells}</div><div class="v322-cal-legend"><span>Sin vencimientos</span><span>Menor presión → Mayor presión</span></div><p class="v362-pressure-disclaimer">${offset===0?'Este mes: compromisos previstos desde la fecha actual.':'Proyección de compromisos registrados; no incluye gastos futuros sin programar.'}</p></section></div>`;
+ return `<div class="v360-pressure-page v361-pressure-compact v362-pressure-month" aria-label="Calendario de presión financiera completo"><section class="v360-pressure-calendar" aria-label="Calendario ampliado de ${sanitize(label)}"><header class="v362-pressure-toolbar"><div class="v362-pressure-heading"><small>PRESIÓN FINANCIERA</small><h1>Presión financiera</h1></div><nav aria-label="Cambiar mes" class="v362-pressure-month-nav"><button type="button" data-v362-month="-1" aria-label="Mes anterior" ${offset===0?'disabled':''}>‹</button><strong aria-live="polite">${sanitize(label)}</strong><button type="button" data-v362-month="1" aria-label="Mes siguiente" ${offset===11?'disabled':''}>›</button></nav></header><div class="v362-pressure-summary"><span><b>${Array.from(daily.values()).filter(x=>x>0).length}</b> días con compromisos</span><span><b>${v318Money(total)}</b> previstos en el mes</span></div><div class="v362-pressure-grid" role="group" aria-label="Días del mes">${weekdays}${cells}</div>${v705ScaleLegend(total>0?max:0)}<p class="v362-pressure-disclaimer">${offset===0?'Este mes: compromisos previstos desde la fecha actual.':'Proyección de compromisos registrados; no incluye gastos futuros sin programar.'}</p></section></div>`;
 }
 /* V361: la selección abre el detalle en una vista superpuesta, sin reducir el calendario. */
 let v361PressureLastFocus=null;
@@ -42552,8 +42565,8 @@ function v318Graph(id){const c=v318Context(),t=c.thirty,Y=c.year;
   const max=Math.max(1,...days.map(x=>x.amount));
   const active=days.filter(x=>x.amount>0);
   const total=active.reduce((s,x)=>s+x.amount,0);
-  const cells=days.map(d=>{const level=d.amount<=0?0:Math.max(1,Math.ceil(d.amount/max*4));return `<button type="button" class="v322-cal-cell level-${level}" ${v318Tip(prettyDate(d.date),'Obligaciones: '+v318Money(d.amount))}><span>${d.day}</span></button>`}).join('');
-  return v318ChartFrame(v318SmallStats([['Días con vencimientos',`${active.length} / 30`],['Obligaciones',v318Money(total)]])+`<div class="v322-cal-grid">${cells}</div><div class="v322-cal-legend"><span>Sin vencimientos</span><span>Menor presión → Mayor presión</span></div>`,`Cada cuadrícula corresponde a un día futuro. Se excluyen movimientos ya pagados según el motor de compromisos.`);
+  const cells=days.map(d=>{const level=d.amount<=0?0:Math.max(1,Math.ceil(d.amount/max*4));return `<button type="button" class="v322-cal-cell level-${level}" data-v705-due-day="${d.date}" ${v318Tip(prettyDate(d.date),'Compromisos: '+money(d.amount,'DOP',2),'Tocar para ver obligaciones del día')} aria-label="Ver compromisos del ${sanitize(prettyDate(d.date))}; ${money(d.amount,'DOP',2)}"><span>${d.day}</span></button>`}).join('');
+  return v318ChartFrame(v318SmallStats([['Días con vencimientos',`${active.length} / 30`],['Obligaciones',v318Money(total)]])+`<div class="v322-cal-grid">${cells}</div>${v705ScaleLegend(total>0?max:0)}`,`Cada cuadrícula corresponde a un día futuro. Se excluyen movimientos ya pagados según el motor de compromisos.`);
  }
  if(id==='futureFlow'){
   const funds=v318N(t.initial),inc=v318N(t.incomes),dues=v318N(t.dues),net=t.ending,base=Math.max(1,funds+inc,dues),th=x=>Math.max(5,Math.min(41,40*x/base));
@@ -44053,8 +44066,98 @@ document.addEventListener('input',function(event){
 try {
   document.body.dataset.f360Build='V446';
   const appRoot=document.getElementById('app');
-  if(appRoot?.querySelector('main.main')) render();
+  if(appRoot?.querySelector('main.main')) document.body.dataset.f360RenderReady='1';
 } catch(err){ console.error('[V443] Falló la activación de vistas',err); }
+
+
+/* V705 | Calendarios interactivos: una misma contabilidad, sin datos duplicados. */
+function v705ScaleLegend(max){
+ const ceiling=Math.max(0,Number(max)||0);
+ const levels=[0,.25,.5,.75,1];
+ return `<div class="v705-scale" role="group" aria-label="Escala de presión: sin vencimientos, baja, media, alta y máxima">
+  <div class="v705-scale-endpoints"><span>Sin vencimientos</span><span>Mayor presión</span></div>
+  <div class="v705-scale-ramp" aria-hidden="true">${levels.map((_,i)=>`<i class="level-${i}"></i>`).join('')}</div>
+  <div class="v705-scale-values"><span>RD$0</span><span>Máximo del período: ${money(ceiling,'DOP',2)}</span></div>
+ </div>`;
+}
+let v705PreviousFocus=null;
+function v705CloseSpent(){
+ document.getElementById('v705-spent-dialog')?.remove();
+ document.body.classList.remove('v705-detail-open');
+ const previous=v705PreviousFocus;v705PreviousFocus=null;
+ if(previous?.isConnected)previous.focus({preventScroll:true});
+ hideChartTip();
+}
+function v705SpendingRows(date){
+ const allowed=new Set(['expense','card_charge','card_refund']);
+ return (db.transactions||[]).filter(t=>t&&t.date===date&&allowed.has(t.type)&&num(t.amount)>0).map(t=>{
+  const original=num(t.amount),fxSnapshot=t.currency==='USD'?num(t.fxRateSnapshot||db.settings?.fx):1;
+  const converted=original*fxSnapshot;
+  if(!Number.isFinite(converted)||converted<=0)return null;
+  const refund=t.type==='card_refund';
+  const linked=t.cardId?card(t.cardId)?.name:t.accountId?account(t.accountId)?.name:null;
+  return {record:t,amount:refund?-converted:converted,refund,linked:linked||'',currency:t.currency||'DOP'};
+ }).filter(Boolean);
+}
+function v705OpenSpent(date){
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||'')))return;
+ document.getElementById('v705-spent-dialog')?.remove();
+ const rows=v705SpendingRows(date);
+ // Coincide exactamente con el cálculo de la huella: compras + gastos - reembolsos.
+ const total=Math.max(0,rows.reduce((sum,r)=>sum+r.amount,0));
+ const spent=rows.filter(r=>!r.refund).reduce((sum,r)=>sum+r.amount,0);
+ const refunded=-rows.filter(r=>r.refund).reduce((sum,r)=>sum+r.amount,0);
+ const categories=new Map();
+ for(const r of rows){const category=String(r.record.category||'Sin categoría');categories.set(category,(categories.get(category)||0)+r.amount)}
+ const categoryMarkup=[...categories.entries()].sort((a,b)=>b[1]-a[1]).map(([category,n])=>`<div class="v705-breakdown-row"><span>${sanitize(category)}</span><strong>${money(n,'DOP',2)}</strong></div>`).join('');
+ const transactionMarkup=rows.map(r=>{
+  const t=r.record;
+  const title=transactionTitle(t)||t.note||'Movimiento';
+  const label=[t.category,t.subcategory].filter(Boolean).join(' · ')||'Sin categoría';
+  const amount=r.refund?'−'+money(Math.abs(r.amount),'DOP',2):money(r.amount,'DOP',2);
+  const original=r.currency==='USD'?`<small>Original: ${money(num(t.amount),'USD',2)}</small>`:'';
+  return `<article class="v705-detail-row"><div><strong>${sanitize(title)}</strong><span>${sanitize(label)}</span>${r.linked?`<small>${sanitize(r.linked)}</small>`:''}${original}</div><b class="${r.refund?'is-refund':''}">${amount}</b></article>`;
+ }).join('');
+ const overlay=document.createElement('div');overlay.id='v705-spent-dialog';overlay.className='v705-detail-overlay';
+ overlay.innerHTML=`<div class="v705-detail-backdrop" data-v705-close="1"></div><section class="v705-detail-sheet" role="dialog" aria-modal="true" aria-labelledby="v705-detail-title" tabindex="-1">
+ <header><div><small>HUELLA DE TUS GASTOS · DETALLE DEL DÍA</small><h2 id="v705-detail-title">${sanitize(prettyDate(date))}</h2></div><button type="button" data-v705-close="1" aria-label="Cerrar detalle">×</button></header>
+ <div class="v705-detail-total"><span>Gasto neto registrado</span><strong>${money(total,'DOP',2)}</strong><small>${rows.length} ${rows.length===1?'movimiento':'movimientos'} · RD$ equivalentes</small></div>
+ ${rows.length?`<div class="v705-detail-totals"><span>Compras y gastos <b>${money(spent,'DOP',2)}</b></span><span>Reembolsos <b>−${money(refunded,'DOP',2)}</b></span></div>
+ <div class="v705-detail-section"><h3>Por categoría</h3>${categoryMarkup}</div><div class="v705-detail-section"><h3>Movimientos del día</h3>${transactionMarkup}</div>`:'<p class="v705-detail-empty">No hay gastos ni compras registrados en esta fecha.</p>'}
+ <footer><button type="button" data-v705-close="1">Volver al calendario</button></footer></section>`;
+ document.body.append(overlay);document.body.classList.add('v705-detail-open');
+ overlay.querySelector('header button')?.focus({preventScroll:true});
+}
+document.addEventListener('click',function(event){
+ const close=event.target.closest?.('[data-v705-close]');
+ if(close){event.preventDefault();event.stopImmediatePropagation();v705CloseSpent();return}
+ const cell=event.target.closest?.('[data-v705-spend-day],[data-v705-due-day]');
+ if(!cell)return;
+ event.preventDefault();event.stopImmediatePropagation();hideChartTip();
+ if(cell.dataset.v705SpendDay){v705PreviousFocus=cell;v705OpenSpent(cell.dataset.v705SpendDay);return;}
+ if(cell.dataset.v705DueDay){v361PressureLastFocus=cell;v361OpenPressureDay(cell.dataset.v705DueDay);}
+},true);
+document.addEventListener('keydown',function(event){
+ if(event.key==='Escape'&&document.getElementById('v705-spent-dialog')){event.preventDefault();v705CloseSpent()}
+ if(event.key==='Tab'){
+  const overlay=document.getElementById('v705-spent-dialog');if(!overlay)return;
+  const buttons=[...overlay.querySelectorAll('button:not([disabled])')];if(!buttons.length)return;
+  const first=buttons[0],last=buttons.at(-1);
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+ }
+});
+
+
+/* V706 · Adapter para mejoras de formularios implementadas en scripts separados.
+   Se exponen solo los métodos ya existentes, no credenciales ni escrituras. */
+window.__f360RecurringVisualAdapter={
+ account,card,bank,prettyDate,today,
+ readState:()=>db,
+ wrapRenderer(wrapper){if(typeof wrapper==='function')recurringForm=wrapper(recurringForm);},
+ currentPage:()=>ui.page,
+ wrapMainRenderer(wrapper){if(typeof wrapper==='function')render=wrapper(render);}
+};
 
 })();
 
@@ -70368,13 +70471,16 @@ body:is(.theme-black,.theme-dark) #modal-root #recurringForm .v386-rec-note[data
 <script id="v386-recurring-controller">
 (function(){
  'use strict';
+ const hooks=window.__f360RecurringVisualAdapter;
+ const {account,card,bank,prettyDate,today}=hooks||{};
  const moneyText=(n,c)=>`${c==='USD'?'US$':'RD$'}${Math.max(0,Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
  const read=(f,key)=>String(f.elements.namedItem(key)?.value??'');
  const safe=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
  const validDay=s=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T12:00:00Z'));
  const sourceOf=(value)=>{const [k,id]=String(value).split(':');return k==='account'?account(id):k==='card'?card(id):null;};
  function inspect(f){
-  const id=f.dataset.id||'',old=id?db.recurring.find(x=>x.id===id):null;
+  const current=hooks?.readState();
+  const id=f.dataset.id||'',old=id?current?.recurring?.find(x=>x.id===id):null;
   const name=read(f,'name').trim(),amount=Number(read(f,'amount')),
    currency=read(f,'currency'),source=read(f,'source'),cycle=read(f,'frequency'),nextDue=read(f,'nextDue'),mode=read(f,'postingMode'),active=read(f,'active');
   const [kind]=source.split(':'),s=sourceOf(source),errors=[];
@@ -70388,9 +70494,9 @@ body:is(.theme-black,.theme-dark) #modal-root #recurringForm .v386-rec-note[data
   if(mode==='auto'&&validDay(nextDue)&&nextDue<today())errors.push('El próximo vencimiento automático no puede estar en el pasado.');
   const ratio={weekly:52/12,monthly:1,quarterly:1/3,annual:1/12}[cycle]||1;
   const monthly=Number.isFinite(amount)?amount*ratio:0;
-  const already=id?db.transactions.filter(t=>t.recurringId===id&&['expense','card_charge'].includes(t.type)):[];
+  const already=id?(current?.transactions||[]).filter(t=>t.recurringId===id&&['expense','card_charge'].includes(t.type)):[];
   const paid=already.length,latest=already.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0];
-  const duplicate=id&&db.transactions.some(t=>t.scheduleKey===`recurring:${id}:${nextDue}`);
+  const duplicate=id&&(current?.transactions||[]).some(t=>t.scheduleKey===`recurring:${id}:${nextDue}`);
   const warning=duplicate?'El vencimiento seleccionado ya tiene un movimiento asociado. Revisa la agenda antes de confirmar otro cobro.':mode==='auto'?'El modo automático registra un asiento estimado al procesar el vencimiento dentro de la app; no paga al proveedor.':'El registro manual solo crea una obligación prevista. No descuenta dinero hasta registrar el pago.';
   return {id,old,name,amount,currency,source,cycle,nextDue,mode,active,kind,s,monthly,paid,latest,warning,errors};
  }
@@ -70418,8 +70524,7 @@ body:is(.theme-black,.theme-dark) #modal-root #recurringForm .v386-rec-note[data
   f.addEventListener('click',ev=>{if(ev.target.closest('[data-v147-frequency],[data-v45-payfreq],[data-v147-preset]'))queueMicrotask(update);});
   update();
  }
- const prior=recurringForm;
- recurringForm=function(id){prior(id);queueMicrotask(setup);};
+ hooks?.wrapRenderer(prior=>function(id){prior(id);queueMicrotask(setup);});
  window.v386ValidateRecurringForm=function(ev){
   const f=ev.target;if(f?.id!=='recurringForm')return;
   const x=inspect(f);
@@ -70511,6 +70616,7 @@ body:is(.theme-black,.theme-dark) #modal-root #recurringForm .v386-rec-note[data
 /* Scoped desktop redesign; reuses original service cards/actions and dynamic values. */
 (function(){
  'use strict';
+ const hooks=window.__f360RecurringVisualAdapter;
  const state={category:'all',search:'',status:'all',frequency:'all',sort:'next'};
  let raf=0;
  const esc=(value)=>String(value??'').toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -70521,18 +70627,18 @@ body:is(.theme-black,.theme-dark) #modal-root #recurringForm .v386-rec-note[data
   const parts=src.split(':');
   if(parts.length!==2)return 'Método configurado';
   if(parts[0]==='account'){
-   const a=(db.accounts||[]).find(x=>String(x.id)===parts[1]);
+   const a=(hooks.readState().accounts||[]).find(x=>String(x.id)===parts[1]);
    return a?'Cuenta · '+safeString(a.name):'Cuenta no disponible';
   }
   if(parts[0]==='card'){
-   const c=(db.cards||[]).find(x=>String(x.id)===parts[1]);
+   const c=(hooks.readState().cards||[]).find(x=>String(x.id)===parts[1]);
    return c?'Tarjeta · '+safeString(c.name):'Tarjeta no disponible';
   }
   return 'Método configurado';
  }
  const $=(tag,cls,content)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(content!==undefined)el.textContent=content;return el};
  function reconcile(){
-  if(window.innerWidth<791||typeof ui==='undefined'||ui.page!=='recurring')return;
+  if(window.innerWidth<791||hooks?.currentPage()!=='recurring')return;
   const root=document.querySelector('#page .v26-internal[data-module="recurring"]');
   if(!root)return;
   const kpi=root.querySelector('.v264-subs-kpi'), grid=root.querySelector('.v46-subscriptions-grid'),panel=root.querySelector('.v46-subs-panel');
@@ -70540,12 +70646,12 @@ body:is(.theme-black,.theme-dark) #modal-root #recurringForm .v386-rec-note[data
   root.classList.add('v387-services-web');
   const kpiGrid=kpi.querySelector('.v264-kpi-grid');
   if(kpiGrid&&!kpiGrid.querySelector('.v387-active-kpi')){
-   const active=(db.recurring||[]).filter(r=>r&&!r.archived&&r.active!==false).length;
+   const active=(hooks.readState().recurring||[]).filter(r=>r&&!r.archived&&r.active!==false).length;
    const k=$('article','v264-kpi-card v387-active-kpi');
    k.append($('small','', 'SERVICIOS ACTIVOS'),$('strong','',String(active)),$('span','','Programados'));
    kpiGrid.append(k);
   }
-  const all=(db.recurring||[]).filter(r=>r);
+  const all=(hooks.readState().recurring||[]).filter(r=>r);
   const cards=new Map([...grid.querySelectorAll('.v46-subscription-card[data-v149-rec-id]')].map(el=>[el.getAttribute('data-v149-rec-id'),el]));
   const head=panel.querySelector('.v46-subs-head');
   if(head){const h=head.querySelector('h3');if(h)h.textContent='Servicios y suscripciones';}
@@ -70609,8 +70715,7 @@ body:is(.theme-black,.theme-dark) #modal-root #recurringForm .v386-rec-note[data
   draw();
  }
  function schedule(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;try{reconcile()}catch(err){console.warn('Servicios V387:',err)}})}
- const originalRender=render;
- render=function(){const result=originalRender.apply(this,arguments);schedule();return result};
+ hooks?.wrapMainRenderer(original=>function(...args){const result=original.apply(this,args);schedule();return result});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
  window.addEventListener('resize',schedule,{passive:true});
 })();
@@ -76341,6 +76446,186 @@ html body:is(.theme-black,.theme-dark) #modal-root form.v700-express .fastx-rece
  background:#000!important;background-image:none!important;color:#f4f4f4!important;border-color:#242424!important;box-shadow:none!important;
 }
 html body:is(.theme-black,.theme-dark) #modal-root form.v700-express .fastx-category-section .v134-more-body{background:#000!important;background-image:none!important;border-color:#252525!important}
+</style>
+
+
+<style id="v705-calendars-credits-and-black-consistency">
+/* V705 · Escala real y navegación por día, iPhone y escritorio. */
+.v705-scale{display:grid!important;gap:7px!important;margin-top:17px!important;width:100%;max-width:100%;color:var(--muted,#9baac4);font-size:11px;line-height:1.45}
+.v705-scale-endpoints,.v705-scale-values{display:flex;justify-content:space-between;align-items:center;gap:12px;min-width:0}
+.v705-scale-endpoints>span:last-child,.v705-scale-values>span:last-child{text-align:right}
+.v705-scale-ramp{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;height:13px}
+.v705-scale-ramp i{display:block;min-width:0;border-radius:5px;border:1px solid rgba(119,146,183,.22)}
+.v705-scale-ramp .level-0{background:#141720}.v705-scale-ramp .level-1{background:#172945}.v705-scale-ramp .level-2{background:#22416b}.v705-scale-ramp .level-3{background:#315a93}.v705-scale-ramp .level-4{background:#66aaff}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-0{background:#edf2f9}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-1{background:#dceafb}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-2{background:#b5d4fa}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-3{background:#80b3f2}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-4{background:#367bd1}
+.v317-heat-grid button.v317-heat-cell{appearance:none;padding:0;font-family:inherit;cursor:pointer;touch-action:manipulation;position:relative;transition:transform .15s,border-color .15s}
+.v317-heat-grid button.v317-heat-cell:hover,.v322-cal-grid button.v322-cal-cell:hover,.v362-pressure-grid button[data-v360-pressure-day]:hover{transform:translateY(-1px);border-color:#7da8ee!important}
+.v317-heat-grid button.v317-heat-cell:focus-visible,.v322-cal-grid button[data-v705-due-day]:focus-visible{outline:3px solid #8eb9ff!important;outline-offset:2px}
+.v317-heat-grid button.v317-heat-cell:active,.v322-cal-grid button[data-v705-due-day]:active{transform:scale(.97)}
+.v317-heat-grid button.v317-heat-cell span{pointer-events:none}
+.v322-cal-grid button[data-v705-due-day]{touch-action:manipulation;cursor:pointer}
+@media(max-width:790px){
+ .v705-scale{font-size:10px!important;margin-top:13px!important;gap:5px!important}
+ .v705-scale-ramp{height:12px!important;gap:4px}
+ .v362-pressure-month .v360-pressure-calendar{padding-bottom:16px!important}
+ .v317-heat-grid button.v317-heat-cell{min-height:40px}
+}
+/* V705 · Desglose de gasto: lectura clara sin encimar el calendario. */
+body.v705-detail-open{overflow:hidden!important}
+.v705-detail-overlay{position:fixed;inset:0;z-index:2147482000;display:grid;place-items:center;padding:clamp(12px,2vw,26px)}
+.v705-detail-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.73);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.v705-detail-sheet{position:relative;z-index:1;width:min(540px,100%);max-height:min(85dvh,820px);min-width:0;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;border-radius:27px;padding:22px;background:#101216;color:#f6f7fb;border:1px solid #383b42;box-shadow:0 24px 90px #0008}
+.v705-detail-sheet>header{display:flex;align-items:start;justify-content:space-between;gap:12px;padding-bottom:15px;border-bottom:1px solid #30343b}
+.v705-detail-sheet>header small{font-size:10px;color:#8fb7f1;letter-spacing:.12em;font-weight:800}
+.v705-detail-sheet h2{font-size:clamp(19px,5vw,25px);line-height:1.2;margin:6px 0 0;color:inherit}
+.v705-detail-sheet header button{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;font-size:26px;border-radius:13px;background:#22252b;border:1px solid #363a41;color:#fff;cursor:pointer}
+.v705-detail-total{display:grid;gap:5px;margin-top:15px;padding:17px;border:1px solid #343c4a;background:#151c28;border-radius:18px}
+.v705-detail-total span,.v705-detail-total small{font-size:11px;color:#aebcd3}
+.v705-detail-total strong{font-size:clamp(27px,7vw,35px);font-variant-numeric:tabular-nums;letter-spacing:-.045em;overflow-wrap:anywhere}
+.v705-detail-totals{display:flex;justify-content:space-between;gap:12px;margin:14px 0 4px;flex-wrap:wrap}
+.v705-detail-totals span{display:flex;flex-direction:column;gap:4px;color:#aab7c9;font-size:11px}
+.v705-detail-totals b{color:#f3f6ff;font-size:14px}
+.v705-detail-section{margin-top:20px}.v705-detail-section h3{font-size:13px;letter-spacing:.03em;color:#b7c7e1;margin:0 0 10px}
+.v705-breakdown-row,.v705-detail-row{display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid #30343e;padding:11px 0;min-width:0;align-items:start}
+.v705-breakdown-row span,.v705-detail-row>div{min-width:0;overflow-wrap:anywhere}
+.v705-breakdown-row strong,.v705-detail-row b{font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.v705-detail-row>div{display:grid;gap:4px}.v705-detail-row strong{font-size:12px}.v705-detail-row span,.v705-detail-row small{font-size:10px;color:#a2acc0}
+.v705-detail-row b.is-refund{color:#82d8ae}
+.v705-detail-empty{padding:18px 3px;color:#abb7ca;font-size:12px;line-height:1.5}
+.v705-detail-sheet footer{padding-top:15px}.v705-detail-sheet footer button{width:100%;min-height:45px;background:#202b3e;color:#e7f1ff;border:1px solid #485c7b;border-radius:14px;font-weight:750;cursor:pointer}
+@media(max-width:790px){.v705-detail-overlay{align-items:end;padding:0}.v705-detail-sheet{width:100%;max-height:88dvh;border-radius:27px 27px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom,0px));border-bottom:0}}
+/* Entre personas: corregir montos recortados y fechas invadiendo el balance. */
+@media(max-width:790px){
+ html body #app .world-personal .v189-table tbody tr{min-width:0!important;grid-template-columns:minmax(0,1fr) auto!important;gap:10px 10px!important;padding:16px!important;overflow:visible!important}
+ html body #app .world-personal .v189-table tbody td:nth-child(4){grid-row:auto!important;grid-column:1/-1!important;min-height:78px!important;align-self:stretch!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:flex-start!important;font-size:clamp(22px,6vw,30px)!important;line-height:1.25!important;letter-spacing:-.04em!important;overflow:visible!important;clip:auto!important;max-height:none!important;transform:none!important;white-space:normal!important}
+ html body #app .world-personal .v189-table tbody td:nth-child(4)::before{position:static!important;display:block!important;line-height:1.35!important;white-space:normal!important;margin:4px 0 8px!important}
+ html body #app .world-personal .v189-table tbody td:nth-child(4) strong{display:block!important;position:static!important;overflow:visible!important;max-height:none!important;line-height:1.28!important;white-space:normal!important;overflow-wrap:anywhere!important;transform:none!important;clip:auto!important}
+ html body #app .world-personal .v189-table tbody td:nth-child(5){grid-column:1/-1!important;grid-row:auto!important;position:static!important;margin:0!important;padding:1px 0 7px!important;display:flex!important;justify-content:space-between!important;gap:10px!important;align-items:center!important;text-align:left!important;min-height:30px!important}
+ html body #app .world-personal .v189-table tbody td:nth-child(6){grid-column:1/-1!important;grid-row:auto!important;justify-content:flex-start!important;gap:7px!important}
+ html body #app .world-personal .v189-table tbody td:nth-child(6) .v189-row-actions{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:7px!important;white-space:normal!important;max-width:100%!important}
+ html body #app .world-personal .v189-table tbody td:nth-child(6) button{min-width:0!important;flex:0 1 auto!important;min-height:38px!important;padding:8px 10px!important}
+}
+/* Tarjetas de crédito: densidad pareja con cuentas móviles, sin ocultar métricas. */
+@media(max-width:790px){
+ html body #app .v244-mobile-root.v244-cards .v244-product-list{gap:10px!important}
+ html body #app .v244-mobile-root.v244-cards .v244-product.v244-card-item{min-height:0!important;height:auto!important;padding:16px!important;border-radius:21px!important;display:block!important;overflow:visible!important}
+ html body #app .v244-mobile-root.v244-cards .v244-product-top{gap:10px!important;align-items:center!important}
+ html body #app .v244-mobile-root.v244-cards .v244-logo{width:40px!important;height:40px!important;flex:0 0 40px!important}
+ html body #app .v244-mobile-root.v244-cards .v244-product-meta strong{font-size:15px!important;line-height:1.25!important;overflow-wrap:anywhere!important}
+ html body #app .v244-mobile-root.v244-cards .v244-currency{font-size:10px!important;white-space:nowrap!important}
+ html body #app .v244-mobile-root.v244-cards .v244-product-value{margin:13px 0 12px!important;padding:0!important}
+ html body #app .v244-mobile-root.v244-cards .v244-product-value small{font-size:10px!important;letter-spacing:.095em!important}
+ html body #app .v244-mobile-root.v244-cards .v244-product-value strong{font-size:clamp(25px,7vw,31px)!important;line-height:1.18!important;letter-spacing:-.045em!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ html body #app .v244-mobile-root.v244-cards .v244-inline-metrics{gap:9px!important;padding-top:12px!important}
+ html body #app .v244-mobile-root.v244-cards .v244-inline-metrics div{min-width:0!important}
+ html body #app .v244-mobile-root.v244-cards .v244-inline-metrics small{font-size:9px!important;letter-spacing:.065em!important}
+ html body #app .v244-mobile-root.v244-cards .v244-inline-metrics b{font-size:clamp(14px,4.2vw,18px)!important;line-height:1.3!important;overflow-wrap:anywhere!important;white-space:normal!important}
+ html body #app .v244-mobile-root.v244-cards .v244-product-foot{margin-top:10px!important;padding-top:11px!important;align-items:center!important;gap:8px!important}
+ html body #app .v244-mobile-root.v244-cards .v244-product-foot span{font-size:10px!important;line-height:1.4!important}
+ html body #app .v244-mobile-root.v244-cards .v244-product-foot button{font-size:11px!important;white-space:nowrap!important}
+}
+/* Negro OLED: superficie y contraste coherentes en TODO el grupo Bancos y sus productos. */
+html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates){background:#000!important;background-image:none!important}
+html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates) #page{background:#000!important;background-image:none!important;color:#f5f5f7!important}
+html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates) :is(.v239-product,.v244-product,.v244-sheet,.v239-sheet,.v203-bank-item,.v236-institution-card,.account-card,.loan-card,.certificate-card){background:#0a0a0a!important;background-image:none!important;border:1px solid #303030!important;box-shadow:none!important;color:#f5f5f7!important}
+html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates) :is(.v239-product,.v244-product,.v244-sheet,.v239-sheet,.v203-bank-item,.v236-institution-card) :is(strong,b,h2,h3){color:#f4f4f6!important;-webkit-text-fill-color:currentColor!important}
+html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates) :is(.v239-product,.v244-product,.v239-sheet,.v244-sheet) :is(small,p,.v239-product-foot>span,.v244-product-foot>span){color:#aab1be!important}
+html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates) :is(.v239-product-foot,.v244-product-foot,.v244-inline-metrics,.v239-loan-addendum){border-color:#303030!important}
+html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates) :is(.v239-segments,.v244-segments){background:#101010!important;border-color:#2b2b2b!important}
+html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates) :is(.v239-segment.selected,.v244-segments button[aria-selected="true"]){background:#212121!important;color:#f6f6f7!important;border-color:#454545!important}
+html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates) :is(.v239-product-foot button,.v244-product-foot button){background:transparent!important;color:#bad1ff!important;-webkit-text-fill-color:#bad1ff!important}
+@media(prefers-reduced-motion:reduce){.v317-heat-grid button.v317-heat-cell{transition:none!important}}
+</style>
+
+
+<style id="v706-auditoria-360-visual">
+/* Tokens semánticos de interfaz: sobre las clases reales del render de V705. */
+body.theme-black{
+ --f360-surface-base:#000000;--f360-surface-raised:#0a0a0a;
+ --f360-surface-overlay:#0e0e10;--f360-surface-interactive:#151518;
+ --f360-text-primary:#f5f5f7;--f360-text-secondary:#b0b0b9;
+ --f360-border-subtle:#29292e;--f360-overlay-scrim:rgba(0,0,0,.79);
+ --f360-field:#08080a;--f360-shadow:rgba(0,0,0,.7);
+}
+body:not(.theme-black){
+ --f360-surface-base:#f7f9fd;--f360-surface-raised:#fff;
+ --f360-surface-overlay:#fff;--f360-surface-interactive:#f3f6fb;
+ --f360-text-primary:#18243b;--f360-text-secondary:#63748c;
+ --f360-border-subtle:#dbe4f2;--f360-overlay-scrim:rgba(15,23,42,.4);
+ --f360-field:#fff;--f360-shadow:rgba(24,42,75,.17);
+}
+/* Explorar: capas sutiles, sin convertir Black en mosaico de paneles grises. */
+html body.theme-black #app .main.world-mobilehub :is(.v205-explore-group,.v410-explore-sec,.v431-tile,.v410-tile){
+ background:var(--f360-surface-raised)!important;background-image:none!important;
+ border-color:var(--f360-border-subtle)!important;box-shadow:none!important;
+}
+html body.theme-black #app .main.world-mobilehub :is(.v205-explore-link,.v410-explore-grid button,.v431-explore-grid button){
+ border-color:var(--f360-border-subtle)!important;
+}
+html body.theme-black #app .main.world-mobilehub :is(.v205-explore-link,.v410-tile,.v431-tile):is(:hover,:focus-visible){
+ border-color:var(--f360-accent-readable,#a4b9ff)!important;
+}
+/* Selector de movimientos: color de texto claro contra fondo realmente oscuro. */
+html body.theme-black #app .main.world-register #searchTx,
+html body.theme-black #app .main.world-transactions #searchTx{
+ background:var(--f360-field)!important;background-image:none!important;
+ border-color:var(--f360-border-subtle)!important;
+ color:var(--f360-text-primary)!important;
+ -webkit-text-fill-color:var(--f360-text-primary)!important;
+}
+/* Panel de notificaciones, avisos de permisos y controles abiertos en Black. */
+html body.theme-black :is(.v36-notice-pop,#v402-popover){
+ background:var(--f360-surface-overlay)!important;color:var(--f360-text-primary)!important;
+ border-color:var(--f360-border-subtle)!important;
+}
+html body.theme-black :is(.v36-notice-pop,#v402-popover) :is(.v36-notice-disclaimer,.v36-notice-head small,.v36-notice small){color:var(--f360-text-secondary)!important}
+html body.theme-black :is(.v36-notice-pop,#v402-popover) :is(button,.v36-notice-footer):focus-visible{outline:2px solid var(--f360-accent-readable,#a5bbff)!important;outline-offset:2px}
+html body.theme-black .f37-help{
+ background:#18130d!important;border:1px solid #483a26!important;
+ color:#f2d0a2!important;box-shadow:none!important;
+}
+html body.theme-black .v250-dock-preview-bar{background:rgba(20,22,27,.62)!important;border-color:#383a44!important}
+/* La vista dinámica de desglose respeta Claro y Black, incluso si ya está abierta. */
+.v705-detail-sheet{
+ background:var(--f360-surface-overlay)!important;
+ border-color:var(--f360-border-subtle)!important;
+ color:var(--f360-text-primary)!important;
+}
+.v705-detail-backdrop{background:var(--f360-overlay-scrim)!important}
+.v705-detail-sheet>header,.v705-breakdown-row,.v705-detail-row{border-color:var(--f360-border-subtle)!important}
+.v705-detail-total{
+ background:var(--f360-surface-interactive)!important;
+ border-color:var(--f360-border-subtle)!important;
+}
+.v705-detail-sheet header button,.v705-detail-sheet footer button{
+ background:var(--f360-surface-interactive)!important;
+ border-color:var(--f360-border-subtle)!important;
+ color:var(--f360-text-primary)!important;
+}
+.v705-detail-sheet :is(.v705-detail-totals span,.v705-detail-total span,.v705-detail-total small,.v705-detail-section h3,.v705-detail-row span,.v705-detail-row small,.v705-detail-empty){color:var(--f360-text-secondary)!important}
+.v705-detail-sheet :is(.v705-detail-totals b,.v705-detail-total strong,.v705-breakdown-row strong,.v705-detail-row b){color:var(--f360-text-primary)!important}
+.v705-detail-sheet .v705-detail-row b.is-refund{color:#278455!important}
+body.theme-black .v705-detail-sheet .v705-detail-row b.is-refund{color:#82d8ae!important}
+.v705-detail-sheet :is(button):focus-visible{outline:2px solid var(--f360-accent-readable,#719df2)!important;outline-offset:3px}
+/* La selección no depende solo del color: se mantiene borde/foco visibles. */
+html body.theme-black #app :is(.theme-choice.selected,.v205-explore-link:focus-visible,.v242-settings-row:focus-visible){outline-color:var(--f360-accent-readable,#a4b9ff)!important}
+/* Precedencia sobre el antiguo reset de #page; capas de Explorar equilibradas. */
+html body.theme-black #app .main.world-mobilehub #page .v431-explore .v431-tile:not(.v431-tile-featured){
+ background:#111114!important;background-color:#111114!important;
+ background-image:none!important;border-color:#29292d!important;
+}
+/* Evitar que mensajes de ayuda y chips rompan la anchura a 320 px. */
+@media(max-width:430px){
+ html body #app .main :is(.v205-explore-group,.v410-explore-sec,.v242-settings-section,.v239-product,.v244-product,.v705-scale){min-width:0!important;max-width:100%!important}
+ .v705-detail-sheet .v705-detail-row{flex-wrap:wrap}
+ .v705-detail-sheet .v705-detail-row>div{flex:1 1 180px}
+ .v705-detail-sheet .v705-detail-row>b{overflow-wrap:anywhere;white-space:normal;max-width:100%;text-align:right;margin-left:auto}
+}
+@media(prefers-reduced-motion:reduce){.v705-detail-sheet,.v205-explore-link{transition:none!important}}
 </style>
 
 </body>
