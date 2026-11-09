@@ -28778,7 +28778,36 @@ body:has(.modal-layer) .v36-notifications {
 @media(max-width:410px){.v360-pressure-page .v322-cal-cell{min-height:46px!important;font-size:16px}}
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script id="v712-supabase-loader">
+/* CDNs are read-only distribution mirrors of the official Supabase browser SDK.
+   Never store credentials in this loader or silently replace the user's database. */
+(function(){
+ const urls=[
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+  'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js',
+  'https://fastly.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js'
+ ];
+ const attempts=[];
+ window.__viveSupabaseLoader=(async function(){
+  if(window.supabase&&typeof window.supabase.createClient==='function')return true;
+  for(const url of urls){
+   const status=await new Promise(resolve=>{
+    const s=document.createElement('script');let finished=false;
+    const settle=(ok)=>{if(finished)return;finished=true;clearTimeout(watch);s.onload=null;s.onerror=null;if(!ok)s.remove();resolve(ok)};
+    s.async=true;s.src=url;s.crossOrigin='anonymous';
+    const watch=setTimeout(()=>settle(false),5500);
+    s.onload=()=>settle(!!window.supabase?.createClient);
+    s.onerror=()=>settle(false);
+    document.head.appendChild(s);
+   });
+   attempts.push({url:url.split('/')[2],ok:status});
+   if(status)return true;
+  }
+  return false;
+ })();
+ window.__viveSupabaseLoadStatus=()=>attempts.slice();
+})();
+</script>
 <script>
 (()=>{'use strict';
 const KEY='finanzas360.v1'; // Mismo almacenamiento para conservar los registros anteriores
@@ -29593,14 +29622,67 @@ function mobileHub(){
  </div>`;
 }
 
+function v711SearchProfileName(){
+ const picks=[db?.settings?.profileName,db?.settings?.displayName,db?.settings?.userName,db?.settings?.ownerName,db?.settings?.fullName,db?.profile?.name];
+ const found=picks.find(v=>typeof v==='string'&&v.trim());
+ return (found||'Tu espacio financiero').trim();
+}
+function v711SearchInitials(name){
+ return String(name||'VF').trim().split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase()||'VF';
+}
+function v711SearchBankTotal(b){
+ const f=bankFigures(b);
+ return {products:f.aa.length+f.cc.length+f.ll.length+f.certs.length,net:f.net};
+}
+function v711SearchLinkedBanks(){
+ return (db.banks||[]).filter(b=>!b.archived&&v711SearchBankTotal(b).products>0);
+}
+function v711SearchBankRows(){
+ const banks=v711SearchLinkedBanks().map((b,idx)=>({bank:b,tot:v711SearchBankTotal(b),spark:['is-green','is-pink','is-violet','is-blue'][idx%4]})).sort((a,b)=>Math.abs(b.tot.net)-Math.abs(a.tot.net)).slice(0,3);
+ if(!banks.length)return `<div class="v711-bank-empty"><strong>Todavía no tienes bancos vinculados.</strong><p>Agrega una institución para ver aquí tu posición neta y tus cuentas relacionadas.</p><button type="button" class="btn soft" data-act="addBank">${icon('plus')} Añadir institución</button></div>`;
+ return banks.map(({bank:b,tot:t,spark})=>`<button type="button" class="v711-bank-row" data-act="bankDetails" data-id="${sanitize(b.id)}" aria-label="Abrir ${sanitize(b.name)}"><span class="v711-bank-logo">${bankLogoInline(b.id)||icon('building')}</span><span class="v711-bank-copy"><strong>${sanitize(b.name)}</strong><small>${t.products} producto${t.products===1?'':'s'} vinculados</small></span><span class="v711-bank-spark ${spark}" aria-hidden="true"><i></i></span><span class="v711-bank-value"><b>${money(t.net)}</b><small>Posición neta</small></span><span class="v711-bank-chevron">${icon('arrow')}</span></button>`).join('');
+}
+function v711SearchRecentTerms(){
+ const terms=[]; const seen=new Set();
+ const push=v=>{v=String(v||'').trim(); const key=v.toLowerCase(); if(!v||seen.has(key))return; seen.add(key); terms.push(v);};
+ recentTx().forEach(t=>{ if(terms.length>=5)return; if(t.applePay||String(t.paymentChannel||'').toLowerCase()==='apple pay')push('Apple Pay'); push(transactionTitle(t)); });
+ if((db.cards||[]).length)push('Tarjetas');
+ if((db.banks||[]).length)push('Bancos');
+ return terms.slice(0,5);
+}
 function v154MobileSearchPage(){
- // V249: restaurar tarjetas de seis categorías de Buscar, sin accesos rápidos ni directorio.
-
  v154PrepareMobileIndex();
- return `<div class="vive-mobile-hub v154-search-hub">
-  <div class="v154-search-heading"><div><span class="v154-search-eyebrow">TU CENTRO FINANCIERO</span><h1>Buscar</h1></div></div>
-  <div class="v154-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios y más" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button></div>
-  <div class="v154-search-discover" id="v154-mobile-discover"><div class="v154-section-header"><h2>Explorar tus finanzas</h2><p>Encuentra todo en un mismo lugar</p></div><div class="v154-category-grid">${V154_MOBILE_CATEGORIES.map(c=>`<button type="button" class="v154-category-tile v154-tone-${c.tone}" data-v154-category="${c.id}" aria-label="Explorar ${c.title}"><span class="v154-category-mark">${icon(c.ico)}</span><span class="v154-category-title">${c.title}</span><span class="v154-category-sub">${c.sub}</span></button>`).join('')}</div>
+ const profileName=v711SearchProfileName();
+ const initials=v711SearchInitials(profileName);
+ const banksCount=v711SearchLinkedBanks().length;
+ const productsCount=(db.accounts||[]).filter(a=>!isHidden(a)).length+(db.cards||[]).filter(c=>!isHidden(c)).length+(db.loans||[]).filter(l=>!isHidden(l)).length+(db.certificates||[]).filter(c=>!isHidden(c)).length;
+ const monthKey=ui.month||today().slice(0,7);
+ const monthMovements=(db.transactions||[]).filter(t=>String(t.date||'').startsWith(monthKey)).length;
+ const chips=[['Todo','clear'],['Tarjetas','tarjetas'],['Bancos','dinero'],['Servicios','servicios'],['Movimientos','movimientos']];
+ const recents=v711SearchRecentTerms();
+ return `<div class="vive-mobile-hub v154-search-hub v711-search-shell">
+  <div class="v154-search-heading v711-search-heading"><div><span class="v154-search-eyebrow">EXPLORA, ENCUENTRA Y GESTIONA</span><h1>Buscar</h1><p>Accede rápido a tus finanzas, movimientos y más.</p></div></div>
+  <section class="v711-search-profile" aria-label="Perfil de búsqueda">
+    <div class="v711-profile-top">
+      <span class="v711-profile-avatar">${sanitize(initials)}</span>
+      <div class="v711-profile-copy"><strong>${sanitize(profileName)}</strong><small>Mi perfil · búsqueda financiera</small><span class="v711-profile-badge">Finanzas 360</span></div>
+      <button type="button" class="v711-profile-action" data-act="navigate" data-id="settings" aria-label="Abrir perfil y ajustes">${icon('edit')}</button>
+    </div>
+    <div class="v711-profile-stats"><div><span>Bancos</span><b>${banksCount}</b></div><div><span>Productos</span><b>${productsCount}</b></div><div><span>Movimientos</span><b>${monthMovements}</b></div></div>
+  </section>
+  <div class="v154-search-box v711-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios, movimientos..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button></div>
+  <nav class="v711-search-pills" aria-label="Filtros rápidos">${chips.map(([label,key],i)=>key==='clear'?`<button type="button" class="${i===0?'active':''}" data-v154-clear="1">${label}</button>`:`<button type="button" data-v154-category="${key}">${label}</button>`).join('')}</nav>
+  <div class="v154-search-discover" id="v154-mobile-discover">
+    <div class="v154-section-header v711-section-header"><h2>Explora tus finanzas</h2><p>Encuentra lo que necesitas sin salir de esta vista</p></div>
+    <div class="v154-category-grid v711-category-grid">${V154_MOBILE_CATEGORIES.map(c=>`<button type="button" class="v154-category-tile v154-tone-${c.tone}" data-v154-category="${c.id}" aria-label="Explorar ${c.title}"><span class="v154-category-mark">${icon(c.ico)}</span><span class="v154-category-title">${c.title}</span><span class="v154-category-sub">${c.sub}</span><span class="v711-category-arrow">${icon('arrow')}</span></button>`).join('')}</div>
+    <section class="v711-bank-widget" aria-label="Mis bancos y mis cuentas">
+      <div class="v711-widget-head"><div><span>MIS BANCOS Y MIS CUENTAS</span><h3>Mis bancos y mis cuentas</h3></div><button type="button" data-act="navigate" data-id="banks">Ver todos ${icon('arrow')}</button></div>
+      <div class="v711-bank-list">${v711SearchBankRows()}</div>
+    </section>
+    <section class="v711-recent-widget" aria-label="Búsquedas recientes">
+      <div class="v711-widget-head"><div><span>ACCESO RÁPIDO</span><h3>Búsquedas recientes</h3></div><button type="button" data-v154-clear="1">Ver todo</button></div>
+      <div class="v711-recent-row">${recents.length?recents.map(term=>`<button type="button" class="v711-recent-pill" data-v711-search-term="${sanitize(term)}">${sanitize(term)}</button>`).join(''):`<span class="v711-empty-inline">Tus búsquedas recientes aparecerán aquí.</span>`}</div>
+    </section>
   </div>
   <section class="v154-search-results" id="v154-mobile-search-results" aria-label="Resultados de búsqueda" aria-live="polite" hidden></section>
  </div>`;
@@ -36573,7 +36655,14 @@ v10LiveStart=function(){
 async function f33Boot(){
  f33Phase='loading';
  f33Gate();f33Shell('','', '');
- if(!window.supabase?.createClient){f33LoginScreen();f33Message('No pudo cargarse la biblioteca de Supabase. Debes tener conexión a Internet y permitir cdn.jsdelivr.net.',true);return;}
+ const sdkReady=window.supabase?.createClient?true:await (window.__viveSupabaseLoader||Promise.resolve(false));
+ if(!sdkReady||!window.supabase?.createClient){
+  f33LoginScreen();
+  f33Message('No se pudo cargar la conexión de Supabase desde los proveedores disponibles. Comprueba Internet o las restricciones de red y toca Reintentar.',true);
+  const form=document.getElementById('f33-login-form');
+  if(form){const retry=document.createElement('button');retry.type='button';retry.className='f33-secondary';retry.textContent='Reintentar cargar Supabase';retry.addEventListener('click',()=>location.reload());form.after(retry);}
+  return;
+ }
  try{
   f33Api=window.supabase.createClient(F33_URL,F33_KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
   const {data,error}=await f33Api.auth.getUser();
@@ -44358,7 +44447,7 @@ window.__f360RecurringVisualAdapter={
 (function(){
   'use strict';
   ICONS.list='<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>';
-  const state={view:'list',previous:'list',query:'',flow:'all',category:'all',product:'all',period:'month',month:null,openFilters:false,selected:null,productType:'cards',limit:35};
+  const state={view:'list',previous:'list',query:'',flow:'all',category:'all',otherCategories:[],product:'all',period:'month',month:null,openFilters:false,selected:null,productType:'cards',limit:35};
   const INCOMING=new Set(['income','card_refund','card_reward','bank_reward','certificate_interest','certificate_redemption']);
   const OUTGOING=new Set(['expense','card_charge','card_payment','loan_payment','personal_issue','certificate_funding']);
   const SHOW_TABS=[['list','Historial','list'],['search','Buscar','search'],['summary','Resumen','chart'],['categories','Categorías','grid'],['products','Tarjetas y bancos','card'],['reconcile','Conciliar','check'],['apple','Apple Pay','apple']];
@@ -44395,7 +44484,7 @@ window.__f360RecurringVisualAdapter={
     return all().filter(t=>{
       if(!periodPass(t))return false;
       if(state.flow==='in'&&direction(t)!==1||state.flow==='out'&&direction(t)!==-1||state.flow==='apple'&&!isApple(t))return false;
-      if(state.category!=='all'&&String(t.category||'Sin categoría')!==state.category)return false;
+      if(state.category==='__v710_otros__'){if(!state.otherCategories.includes(String(t.category||'Sin categoría')))return false;}else if(state.category!=='all'&&String(t.category||'Sin categoría')!==state.category)return false;
       if(state.product!=='all'&&productId(t)!==state.product)return false;
       if(needle&&!searchText(t).includes(needle))return false;
       return !opts.applePending||v5NeedsAppleCategory(t);
@@ -44410,7 +44499,7 @@ window.__f360RecurringVisualAdapter={
   function selectItems(items,selected){return items.map(([value,label])=>`<option value="${safe(value)}" ${String(selected)===String(value)?'selected':''}>${safe(label)}</option>`).join('');}
   function filterPanel(){
     if(!state.openFilters)return '';
-    const categories=[...new Set(all().map(t=>t.category||'Sin categoría'))].sort((a,b)=>a.localeCompare(b,'es')).map(x=>[x,x]);
+    const categories=[...new Set(all().map(t=>t.category||'Sin categoría'))].sort((a,b)=>a.localeCompare(b,'es')).map(x=>[x,x]);if(state.category==='__v710_otros__')categories.push(['__v710_otros__','Otros (categorías agrupadas)']);
     const products=[...db.cards.map(c=>[c.id,`Tarjeta · ${c.name}`]),...db.accounts.map(a=>[a.id,`Cuenta · ${a.name}`]),...db.loans.map(l=>[l.id,`Préstamo · ${l.name}`])];
     return `<section class="v708-filters" aria-label="Filtros de movimientos"><div class="v708-panel-head"><strong>Filtrar historial</strong><button type="button" data-v708="reset" aria-label="Restablecer filtros">Restablecer</button></div><div class="v708-filter-grid"><label><span>Período</span><select id="v708-filter-period">${selectItems([['month','Este mes'],['30','Últimos 30 días'],['all','Todo el historial']],state.period)}</select></label>${state.period==='month'?`<label><span>Mes</span><input type="month" id="v708-filter-month" value="${safe(month())}"/></label>`:''}<label><span>Producto</span><select id="v708-filter-product">${selectItems([['all','Todas las tarjetas y cuentas'],...products],state.product)}</select></label><label><span>Categoría</span><select id="v708-filter-category">${selectItems([['all','Todas las categorías'],...categories],state.category)}</select></label></div><button type="button" class="v708-apply" data-v708="filters">Listo ${icon('check')}</button></section>`;
   }
@@ -44453,13 +44542,41 @@ window.__f360RecurringVisualAdapter={
       <p class="v708-footnote">Los totales excluyen transferencias internas y ajustes neutrales para evitar duplicar el flujo. Los importes en USD se convierten usando la tasa configurada.</p>`;
   }
   function categoriesView(){
-    const data=base().filter(t=>direction(t)<0&&t.type!=='card_payment');const amounts=new Map();for(const t of data){const k=String(t.category||'Sin categoría');amounts.set(k,(amounts.get(k)||0)+amountDOP(t));}
-    const entries=[...amounts.entries()].sort((a,b)=>b[1]-a[1]),sum=entries.reduce((s,x)=>s+x[1],0),colors=['#8175e8','#579be5','#38ad92','#f6b45b','#c66b9a','#7d9bb4'];
-    let a=0;const conic=entries.map(([_,val],i)=>{const st=a;a+=sum?val/sum*100:0;return `${colors[i%colors.length]} ${st.toFixed(2)}% ${a.toFixed(2)}%`;}).join(',')||'#dbe4ef 0% 100%';
-    const legend=entries.map(([key,value],i)=>`<button type="button" class="v708-legend-row" data-v708="category" data-value="${safe(key)}"><span class="v708-legend-dot" style="background:${colors[i%colors.length]}"></span><span class="v708-legend-label">${safe(key)}</span><b>${sum?(100*value/sum).toFixed(1):'0.0'}%</b>${icon('arrow')}</button>`).join('');
-    return `${header('Por categoría','Distribución de salidas, sin duplicar pagos a tarjetas.')}
+    // V710: dona compacta + 3 categorías principales y agrupación real de todas las restantes.
+    // Reutiliza las mismas transacciones y la misma tasa de conversión que la versión V709.
+    const data=base().filter(t=>direction(t)<0&&t.type!=='card_payment');
+    const amounts=new Map();
+    for(const t of data){const k=String(t.category||'Sin categoría');amounts.set(k,(amounts.get(k)||0)+amountDOP(t));}
+    const sorted=[...amounts.entries()].sort((a,b)=>b[1]-a[1]);
+    const genericCategory=k=>/^otr(?:o|a)s?(?:\s+gastos)?$/i.test(String(k).trim());
+    const firstThree=sorted.filter(([key])=>!genericCategory(key)).slice(0,3);
+    const chosen=new Set(firstThree.map(([key])=>key));
+    const remaining=sorted.filter(([key])=>!chosen.has(key));
+    const otherValue=remaining.reduce((total,[,value])=>total+value,0);
+    state.otherCategories=remaining.map(([key])=>key);
+    const entries=[...firstThree];
+    if(remaining.length)entries.push(['Otros',otherValue]);
+    const sum=sorted.reduce((total,[,value])=>total+value,0);
+    const colors=['#8175f6','#519af6','#f4ad51','#2ab28f'];
+    let start=0;
+    const segments=entries.map(([key,value],i)=>{
+      const end=start+(sum?100*value/sum:0);
+      const segment=`${colors[i]} ${start.toFixed(3)}% ${end.toFixed(3)}%`;
+      start=end;
+      return segment;
+    });
+    const conic=segments.join(',')||'#dbe4ef 0% 100%';
+    const legend=entries.map(([key,value],i)=>{
+      const other=key==='Otros'&&i===entries.length-1&&remaining.length>0;
+      const displayPct=sum?Math.round(value/sum*100):0;
+      return `<button type="button" class="v708-legend-row" data-v708="category" data-value="${other?'__v710_otros__':safe(key)}" title="${other?remaining.length+' categorías agrupadas':safe(key)}" aria-label="Ver movimientos de ${safe(key)}: ${displayPct}%"><span class="v708-legend-dot" style="background:${colors[i]}"></span><span class="v708-legend-label">${safe(key)}</span><b>${displayPct}%</b></button>`;
+    }).join('');
+    return `${header('Por categoría','Gastos distribuidos por categoría.')}
       <div class="v708-period">${safe(state.period==='month'?month():state.period==='30'?'Últimos 30 días':'Historial completo')} · ${data.length} movimientos</div>
-      <section class="v708-category-card"><div class="v708-donut" role="img" aria-label="Gastos por categoría" style="background:conic-gradient(${conic})"><div><strong>${moneyDOP(sum)}</strong><small>Salidas categorizadas</small></div></div><div class="v708-legend">${legend||'<p class="v708-footnote">No hay salidas categorizadas en este período.</p>'}</div></section>
+      <section class="v708-category-card" aria-label="Distribución de gastos: tres categorías principales y otros">
+        <div class="v708-donut" role="img" aria-label="Total de gastos: ${safe(moneyDOP(sum))}" style="background:conic-gradient(${conic})"><div><strong>${moneyDOP(sum)}</strong><small>Total gastos</small></div></div>
+        <div class="v708-legend">${legend||'<p class="v708-footnote">Sin gastos en este período.</p>'}</div>
+      </section>
       <div class="v708-subheading"><strong>Movimientos recientes</strong><button type="button" data-v708="view" data-value="list">Ver todos ${icon('arrow')}</button></div>${rows(data.slice(0,8),{max:8})}`;
   }
   function productView(){
@@ -44558,7 +44675,7 @@ window.__f360RecurringVisualAdapter={
       case 'calendar':if(!['list','search'].includes(state.view)){state.view='list';state.selected=null;state.openFilters=true;redraw();}else{state.openFilters=!state.openFilters;redraw({keepScroll:true});}break;
       case 'filters':state.openFilters=!state.openFilters;redraw({keepScroll:true});break;
       case 'flow':state.flow=value;state.limit=35;redraw({keepScroll:true});break;
-      case 'reset':Object.assign(state,{query:'',flow:'all',category:'all',product:'all',period:'month',month:null,limit:35,openFilters:false});redraw();break;
+      case 'reset':Object.assign(state,{query:'',flow:'all',category:'all',otherCategories:[],product:'all',period:'month',month:null,limit:35,openFilters:false});redraw();break;
       case 'more':if(state.view==='detail')moreOptions();else{state.limit+=35;redraw({keepScroll:true})}break;
       case 'category':state.category=value;state.product='all';state.flow='all';state.view='list';state.query='';redraw();break;
       case 'productType':state.productType=value;redraw({keepScroll:true});break;
@@ -78034,6 +78151,123 @@ html body.theme-black #modal-root .v85-capacity-modal .v85-capacity-metrics stro
  .v708-draft-row button svg{width:12px;height:12px}
 }
 
+
+/* V710 · Por categoría: dona + leyenda en una sola fila y máximo 3 categorías + Otros. */
+@media(max-width:790px){
+  html body .v708-movements .v708-category-card{
+    display:grid!important;grid-template-columns:minmax(0,40%) minmax(0,1fr)!important;
+    flex-direction:row!important;justify-content:space-between!important;align-items:center!important;
+    gap:12px!important;padding:16px 13px!important;border-radius:21px!important;
+    width:100%!important;min-width:0!important;
+  }
+  html body .v708-movements .v708-donut{
+    width:min(36vw,155px)!important;height:min(36vw,155px)!important;
+    max-width:100%!important;min-width:0!important;aspect-ratio:1/1!important;
+    padding:clamp(11px,3.6vw,16px)!important;margin:0 auto!important;
+  }
+  html body .v708-movements .v708-donut>div{min-width:0!important;gap:3px!important;}
+  html body .v708-movements .v708-donut strong{
+    font-size:clamp(11px,3.1vw,16px)!important;letter-spacing:-.7px!important;
+    line-height:1.15!important;white-space:nowrap!important;
+  }
+  html body .v708-movements .v708-donut small{font-size:clamp(8px,2.1vw,10px)!important;line-height:1.2!important}
+  html body .v708-movements .v708-legend{display:grid!important;gap:0!important;min-width:0!important;width:100%!important;align-self:center!important}
+  html body .v708-movements .v708-legend-row{
+    display:grid!important;grid-template-columns:9px minmax(0,1fr) auto!important;
+    gap:7px!important;align-items:center!important;padding:8px 0!important;
+    min-width:0!important;width:100%!important;min-height:31px!important;
+    border:0!important;background:transparent!important;
+  }
+  html body .v708-movements .v708-legend-row+.v708-legend-row{border-top:0!important}
+  html body .v708-movements .v708-legend-dot{height:8px!important;width:8px!important}
+  html body .v708-movements .v708-legend-label{font-size:clamp(10px,2.8vw,12px)!important;line-height:1.2!important;white-space:nowrap!important;}
+  html body .v708-movements .v708-legend-row b{font-size:clamp(10px,2.8vw,12px)!important;font-weight:800!important;white-space:nowrap!important;font-variant-numeric:tabular-nums;}
+  html body .v708-movements .v708-legend-row:focus-visible{outline:2px solid var(--v708-accent)!important;outline-offset:2px!important;border-radius:6px!important}
+}
+@media(max-width:355px){
+  html body .v708-movements .v708-category-card{grid-template-columns:minmax(0,39%) minmax(0,1fr)!important;gap:7px!important;padding:14px 9px!important;}
+  html body .v708-movements .v708-donut{width:min(35vw,125px)!important;height:min(35vw,125px)!important;padding:11px!important;}
+  html body .v708-movements .v708-legend-row{gap:5px!important;padding:7px 0!important;}
+}
+@media(min-width:791px){
+  html body .v708-movements .v708-category-card{flex-direction:row!important;gap:24px!important;justify-content:center!important;}
+  html body .v708-movements .v708-legend{width:min(280px,45%)!important}
+  html body .v708-movements .v708-legend-row{border-top:0!important;padding:12px 4px!important}
+}
+
 </style>
+
+<style id="v711-search-redesign">
+.world-mobilesearch #page .v711-search-shell{padding-bottom:calc(128px + env(safe-area-inset-bottom));}
+.world-mobilesearch #page .v711-search-heading{margin:6px 4px 14px!important;align-items:flex-start!important}
+.world-mobilesearch #page .v711-search-heading p{margin:7px 0 0;color:var(--mob-muted,#7283a2);font-size:15px;letter-spacing:-.02em;line-height:1.35}
+.world-mobilesearch #page .v711-search-profile{display:grid;gap:14px;padding:18px 17px;border-radius:28px;border:1px solid rgba(255,255,255,.78);background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(241,235,255,.58) 52%,rgba(228,244,255,.62));box-shadow:0 16px 34px rgba(54,76,131,.10),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);margin-bottom:14px}
+.world-mobilesearch #page .v711-profile-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:13px}
+.world-mobilesearch #page .v711-profile-avatar{width:72px;height:72px;border-radius:24px;display:grid;place-items:center;font-size:27px;font-weight:850;color:#163562;background:linear-gradient(145deg,#faf2ff,#dfe8ff);border:1px solid rgba(255,255,255,.86);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 12px 24px rgba(82,91,181,.14)}
+.world-mobilesearch #page .v711-profile-copy{min-width:0;display:grid;gap:2px}
+.world-mobilesearch #page .v711-profile-copy strong{font-size:18px;letter-spacing:-.04em;color:#1c2f53}
+.world-mobilesearch #page .v711-profile-copy small{font-size:13px;color:#6e7e9b}
+.world-mobilesearch #page .v711-profile-badge{justify-self:start;margin-top:6px;padding:7px 12px;border-radius:999px;background:rgba(168,115,255,.14);border:1px solid rgba(192,156,255,.22);color:#7d4fe1;font-size:12px;font-weight:780}
+.world-mobilesearch #page .v711-profile-action{width:48px;height:48px;border-radius:16px;border:1px solid rgba(255,255,255,.8);background:rgba(255,255,255,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.92),0 10px 18px rgba(70,89,140,.10);display:grid;place-items:center;color:#5c6f98}
+.world-mobilesearch #page .v711-profile-action svg{width:22px;height:22px}
+.world-mobilesearch #page .v711-profile-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid rgba(133,152,190,.16)}
+.world-mobilesearch #page .v711-profile-stats>div{padding-top:14px;display:grid;gap:4px}
+.world-mobilesearch #page .v711-profile-stats>div:not(:first-child){padding-left:12px;border-left:1px solid rgba(133,152,190,.14)}
+.world-mobilesearch #page .v711-profile-stats span{font-size:12px;color:#7283a2}
+.world-mobilesearch #page .v711-profile-stats b{font-size:24px;line-height:1;color:#172c4c;letter-spacing:-.05em}
+.world-mobilesearch #page .v711-search-box{margin-bottom:12px}
+.world-mobilesearch #page .v711-search-pills{display:flex;gap:10px;overflow:auto hidden;padding:2px 2px 4px;scrollbar-width:none;margin-bottom:16px}
+.world-mobilesearch #page .v711-search-pills::-webkit-scrollbar{display:none}
+.world-mobilesearch #page .v711-search-pills button{flex:none;min-height:38px;padding:0 18px;border-radius:999px;border:1px solid rgba(255,255,255,.78);background:rgba(255,255,255,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 7px 18px rgba(63,87,144,.08);font-size:14px;font-weight:710;color:#23385b}
+.world-mobilesearch #page .v711-search-pills button.active{background:linear-gradient(135deg,#2f78ff,#5b88ff);border-color:rgba(61,111,255,.75);color:#fff;box-shadow:0 12px 24px rgba(52,110,245,.24)}
+.world-mobilesearch #page .v711-section-header{margin:2px 4px 13px!important}
+.world-mobilesearch #page .v711-category-grid{gap:12px!important}
+.world-mobilesearch #page .v711-category-grid .v154-category-tile{position:relative;height:154px!important;border-radius:24px!important;padding:16px!important;box-shadow:0 18px 30px rgba(62,80,132,.12)!important}
+.world-mobilesearch #page .v711-category-grid .v154-category-tile:before{content:"";position:absolute;inset:auto -5% -28% auto;width:78%;height:56%;border-radius:999px;background:rgba(255,255,255,.16);filter:blur(.4px)}
+.world-mobilesearch #page .v711-category-grid .v154-category-title{font-size:21px!important}
+.world-mobilesearch #page .v711-category-grid .v154-category-sub{max-width:78%;font-size:11px!important}
+.world-mobilesearch #page .v711-category-arrow{position:absolute;left:14px;bottom:14px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.88);color:#506a9f;box-shadow:0 8px 20px rgba(32,46,94,.16)}
+.world-mobilesearch #page .v711-category-arrow svg{width:18px;height:18px}
+.world-mobilesearch #page .v711-bank-widget,.world-mobilesearch #page .v711-recent-widget{margin-top:18px;padding:18px 16px;border-radius:26px;border:1px solid rgba(255,255,255,.82);background:rgba(255,255,255,.72);box-shadow:0 16px 34px rgba(58,78,129,.08),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.world-mobilesearch #page .v711-widget-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.world-mobilesearch #page .v711-widget-head span{display:block;font-size:10px;font-weight:820;letter-spacing:.18em;color:#7e8db0}
+.world-mobilesearch #page .v711-widget-head h3{margin:6px 0 0;font-size:28px;letter-spacing:-.05em;line-height:1.02;color:#1d3155}
+.world-mobilesearch #page .v711-widget-head button{flex:none;border:0;background:none;color:#376ee8;font-weight:760;font-size:14px;display:inline-flex;align-items:center;gap:6px;padding:6px 0}
+.world-mobilesearch #page .v711-bank-list{display:grid;gap:11px}
+.world-mobilesearch #page .v711-bank-row{display:grid;grid-template-columns:auto minmax(0,1fr) 64px auto auto;align-items:center;gap:12px;padding:14px 12px;border-radius:19px;border:1px solid rgba(221,228,243,.88);background:rgba(255,255,255,.78);box-shadow:0 10px 22px rgba(73,92,148,.06);text-align:left;color:#223959}
+.world-mobilesearch #page .v711-bank-logo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(180deg,rgba(245,248,255,.98),rgba(232,238,251,.94));border:1px solid rgba(225,231,245,.95);color:#5273bf;overflow:hidden}
+.world-mobilesearch #page .v711-bank-logo :is(svg,img){max-width:26px;max-height:26px}
+.world-mobilesearch #page .v711-bank-copy{min-width:0;display:grid}
+.world-mobilesearch #page .v711-bank-copy strong{font-size:17px;letter-spacing:-.03em;color:#1b3154}
+.world-mobilesearch #page .v711-bank-copy small{font-size:12px;color:#7887a5}
+.world-mobilesearch #page .v711-bank-spark{position:relative;height:22px;border-radius:999px;background:rgba(218,226,244,.42);overflow:hidden}
+.world-mobilesearch #page .v711-bank-spark i{position:absolute;inset:9px 6px auto 6px;height:2px;border-radius:999px;background:currentColor}
+.world-mobilesearch #page .v711-bank-spark.is-green{color:#24b57a}.world-mobilesearch #page .v711-bank-spark.is-green i{clip-path:path('M0,8 C12,0 22,15 34,7 C42,2 49,0 58,8');}
+.world-mobilesearch #page .v711-bank-spark.is-pink{color:#de6c98}.world-mobilesearch #page .v711-bank-spark.is-pink i{clip-path:path('M0,8 C8,15 16,2 28,7 C38,11 46,1 58,8');}
+.world-mobilesearch #page .v711-bank-spark.is-violet{color:#9a77ff}.world-mobilesearch #page .v711-bank-spark.is-violet i{clip-path:path('M0,8 C10,4 18,13 28,9 C38,4 46,3 58,8');}
+.world-mobilesearch #page .v711-bank-spark.is-blue{color:#5f90ff}.world-mobilesearch #page .v711-bank-spark.is-blue i{clip-path:path('M0,9 C12,1 20,7 30,5 C40,3 48,12 58,8');}
+.world-mobilesearch #page .v711-bank-value{text-align:right;display:grid;gap:2px}
+.world-mobilesearch #page .v711-bank-value b{font-size:17px;letter-spacing:-.04em;color:#182d4c}
+.world-mobilesearch #page .v711-bank-value small{font-size:11px;color:#7a8aa7}
+.world-mobilesearch #page .v711-bank-chevron{color:#6a7b9b;display:grid;place-items:center}
+.world-mobilesearch #page .v711-bank-empty{padding:10px 2px 2px;display:grid;gap:10px;color:#6e809d}
+.world-mobilesearch #page .v711-bank-empty strong{font-size:16px;color:#203555}
+.world-mobilesearch #page .v711-recent-row{display:flex;flex-wrap:wrap;gap:10px}
+.world-mobilesearch #page .v711-recent-pill{min-height:40px;padding:0 16px;border-radius:999px;border:1px solid rgba(220,228,244,.95);background:rgba(249,251,255,.96);color:#24406a;font-size:14px;font-weight:690;box-shadow:0 8px 16px rgba(67,89,139,.05)}
+.world-mobilesearch #page .v711-empty-inline{font-size:13px;color:#7b8aa6}
+@media(max-width:370px){
+  .world-mobilesearch #page .v711-profile-avatar{width:64px;height:64px;font-size:24px}
+  .world-mobilesearch #page .v711-profile-copy strong{font-size:17px}
+  .world-mobilesearch #page .v711-profile-stats b{font-size:21px}
+  .world-mobilesearch #page .v711-bank-row{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:'logo copy chevron' 'logo value value';}
+  .world-mobilesearch #page .v711-bank-logo{grid-area:logo}.world-mobilesearch #page .v711-bank-copy{grid-area:copy}.world-mobilesearch #page .v711-bank-value{grid-area:value;text-align:left;padding-left:56px}.world-mobilesearch #page .v711-bank-chevron{grid-area:chevron}.world-mobilesearch #page .v711-bank-spark{display:none}
+}
+body.theme-black .world-mobilesearch #page :is(.v711-search-profile,.v711-bank-widget,.v711-recent-widget,.v711-bank-row,.v711-search-pills button,.v711-profile-action,.v711-profile-avatar,.v711-recent-pill,.v154-search-box.v711-search-box){background:rgba(14,14,14,.88)!important;border-color:rgba(64,64,64,.95)!important;box-shadow:0 10px 24px rgba(0,0,0,.44)!important;color:#f4f4f4!important}
+body.theme-black .world-mobilesearch #page .v711-search-heading p,body.theme-black .world-mobilesearch #page .v711-profile-copy small,body.theme-black .world-mobilesearch #page .v711-profile-stats span,body.theme-black .world-mobilesearch #page .v711-bank-copy small,body.theme-black .world-mobilesearch #page .v711-bank-value small,body.theme-black .world-mobilesearch #page .v711-empty-inline{color:#b4b4b4!important}
+body.theme-black .world-mobilesearch #page :is(.v711-profile-copy strong,.v711-profile-stats b,.v711-widget-head h3,.v711-bank-copy strong,.v711-bank-value b){color:#ffffff!important}
+body.theme-black .world-mobilesearch #page .v711-profile-badge{background:rgba(144,108,255,.18)!important;border-color:rgba(173,144,255,.24)!important;color:#d8ccff!important}
+body.theme-black .world-mobilesearch #page .v711-search-pills button.active{background:linear-gradient(135deg,#1e56d6,#4578ff)!important;border-color:#4578ff!important;color:#fff!important}
+</style>
+
 </body>
 </html>
