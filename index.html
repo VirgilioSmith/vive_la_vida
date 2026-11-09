@@ -28778,36 +28778,7 @@ body:has(.modal-layer) .v36-notifications {
 @media(max-width:410px){.v360-pressure-page .v322-cal-cell{min-height:46px!important;font-size:16px}}
 </style>
 
-<script id="v712-supabase-loader">
-/* CDNs are read-only distribution mirrors of the official Supabase browser SDK.
-   Never store credentials in this loader or silently replace the user's database. */
-(function(){
- const urls=[
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
-  'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js',
-  'https://fastly.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js'
- ];
- const attempts=[];
- window.__viveSupabaseLoader=(async function(){
-  if(window.supabase&&typeof window.supabase.createClient==='function')return true;
-  for(const url of urls){
-   const status=await new Promise(resolve=>{
-    const s=document.createElement('script');let finished=false;
-    const settle=(ok)=>{if(finished)return;finished=true;clearTimeout(watch);s.onload=null;s.onerror=null;if(!ok)s.remove();resolve(ok)};
-    s.async=true;s.src=url;s.crossOrigin='anonymous';
-    const watch=setTimeout(()=>settle(false),5500);
-    s.onload=()=>settle(!!window.supabase?.createClient);
-    s.onerror=()=>settle(false);
-    document.head.appendChild(s);
-   });
-   attempts.push({url:url.split('/')[2],ok:status});
-   if(status)return true;
-  }
-  return false;
- })();
- window.__viveSupabaseLoadStatus=()=>attempts.slice();
-})();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 (()=>{'use strict';
 const KEY='finanzas360.v1'; // Mismo almacenamiento para conservar los registros anteriores
@@ -36655,14 +36626,7 @@ v10LiveStart=function(){
 async function f33Boot(){
  f33Phase='loading';
  f33Gate();f33Shell('','', '');
- const sdkReady=window.supabase?.createClient?true:await (window.__viveSupabaseLoader||Promise.resolve(false));
- if(!sdkReady||!window.supabase?.createClient){
-  f33LoginScreen();
-  f33Message('No se pudo cargar la conexión de Supabase desde los proveedores disponibles. Comprueba Internet o las restricciones de red y toca Reintentar.',true);
-  const form=document.getElementById('f33-login-form');
-  if(form){const retry=document.createElement('button');retry.type='button';retry.className='f33-secondary';retry.textContent='Reintentar cargar Supabase';retry.addEventListener('click',()=>location.reload());form.after(retry);}
-  return;
- }
+ if(!window.supabase?.createClient){f33LoginScreen();f33Message('No pudo cargarse la biblioteca de Supabase. Debes tener conexión a Internet y permitir cdn.jsdelivr.net.',true);return;}
  try{
   f33Api=window.supabase.createClient(F33_URL,F33_KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
   const {data,error}=await f33Api.auth.getUser();
