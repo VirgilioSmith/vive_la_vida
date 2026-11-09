@@ -2,8 +2,8 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="707"/>
-<meta name="vive-el-hoy-ui-patch" content="v705-interactive-calendar-banks"/>
+<meta name="vive-el-hoy-version" content="708"/>
+<meta name="vive-el-hoy-ui-patch" content="v708-movimientos-premium"/>
 
 
 <script id="v386-early-submit-guard">document.addEventListener('submit',function(e){if(e.target?.id==='recurringForm'&&typeof window.v386ValidateRecurringForm==='function')window.v386ValidateRecurringForm(e);},true);</script>
@@ -44354,6 +44354,245 @@ window.__f360RecurringVisualAdapter={
  wrapMainRenderer(wrapper){if(typeof wrapper==='function')render=wrapper(render);}
 };
 
+/* V708 · Movimientos premium. Capa de presentación sobre la base real de transacciones. */
+(function(){
+  'use strict';
+  ICONS.list='<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>';
+  const state={view:'list',previous:'list',query:'',flow:'all',category:'all',product:'all',period:'month',month:null,openFilters:false,selected:null,productType:'cards',limit:35};
+  const INCOMING=new Set(['income','card_refund','card_reward','bank_reward','certificate_interest','certificate_redemption']);
+  const OUTGOING=new Set(['expense','card_charge','card_payment','loan_payment','personal_issue','certificate_funding']);
+  const SHOW_TABS=[['list','Historial','list'],['search','Buscar','search'],['summary','Resumen','chart'],['categories','Categorías','grid'],['products','Tarjetas y bancos','card'],['reconcile','Conciliar','check'],['apple','Apple Pay','apple']];
+  const safe=x=>sanitize(String(x??''));
+  const number=n=>Number.isFinite(Number(n))?Number(n):0;
+  const month=()=>state.month||today().slice(0,7);
+  const movement=t=>!!t&&!t.deleted;
+  const isApple=t=>typeof v5IsApplePay==='function'&&v5IsApplePay(t);
+  const incoming=t=>{
+    if(t.type==='personal_settlement')return personalLoan(t.personalLoanId)?.direction==='lent';
+    return INCOMING.has(t.type);
+  };
+  const direction=t=>{
+    if(incoming(t))return 1;
+    if(t.type==='personal_settlement')return -1;
+    return OUTGOING.has(t.type)?-1:0;
+  };
+  const periodPass=t=>state.period==='all'||(state.period==='month'?String(t.date||'').startsWith(month()):String(t.date||'')>=addDays(today(),-29));
+  const productId=t=>String(t.cardId||t.accountId||t.loanId||'');
+  const fullName=t=>String(transactionTitle(t)||'Movimiento');
+  const searchText=t=>[fullName(t),TRANSL[t.type]||t.type,t.category,t.subcategory,t.note,t.payee,t.tags,card(t.cardId)?.name,account(t.accountId)?.name,loan(t.loanId)?.name,bankName(t)].filter(Boolean).join(' ').toLocaleLowerCase('es');
+  function bankName(t){const p=card(t.cardId)||account(t.accountId)||loan(t.loanId);return db.banks?.find(b=>b.id===p?.bankId)?.name||'';}
+  const amountDOP=t=>Math.abs(number(fx(t.amount,t.currency||'DOP')));
+  const moneyDOP=n=>money(n,'DOP',2);
+  const typedAmount=t=>txDisplay(t);
+  const friendlyDate=d=>{try{return dateObj(d).toLocaleDateString('es-DO',{day:'2-digit',month:'long',year:'numeric'});}catch(_){return safe(d)}};
+  const createdTime=t=>{const s=t.created||t.timestamp||'';if(!s||!String(s).includes('T'))return '';const d=new Date(s);return !Number.isNaN(d.getTime())?d.toLocaleTimeString('es-DO',{hour:'numeric',minute:'2-digit'}):'';};
+  const sourceName=t=>card(t.cardId)?.name||account(t.accountId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||'Movimiento registrado';
+  const labelChip=(label,sel,act,extra='')=>`<button type="button" class="v708-chip ${sel?'is-selected':''}" data-v708="${act}" ${extra} aria-pressed="${sel}">${safe(label)}</button>`;
+  const iconMark=t=>isApple(t)?`<span class="v708-brand-apple">${icon('apple')}<small>Pay</small></span>`:t.cardId?icon('card'):t.loanId?icon('building'):direction(t)===1?icon('up'):t.type==='transfer'?icon('cycle'):icon('wallet');
+  function all(){return (db.transactions||[]).filter(movement).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.created||'').localeCompare(String(a.created||'')));}
+  function filtered(opts={}){
+    const needle=state.query.trim().toLocaleLowerCase('es');
+    return all().filter(t=>{
+      if(!periodPass(t))return false;
+      if(state.flow==='in'&&direction(t)!==1||state.flow==='out'&&direction(t)!==-1||state.flow==='apple'&&!isApple(t))return false;
+      if(state.category!=='all'&&String(t.category||'Sin categoría')!==state.category)return false;
+      if(state.product!=='all'&&productId(t)!==state.product)return false;
+      if(needle&&!searchText(t).includes(needle))return false;
+      return !opts.applePending||v5NeedsAppleCategory(t);
+    });
+  }
+  function base(){return all().filter(periodPass);}
+  function totals(data){let plus=0,minus=0;for(const t of data){const d=direction(t),v=amountDOP(t);if(d>0)plus+=v;else if(d<0)minus+=v;}return {plus,minus,net:plus-minus,count:data.length};}
+  function header(title='Movimientos',subtitle='Consulta, filtra y gestiona tus transacciones.',back=false){return `<header class="v708-head"><div class="v708-heading">${back?`<button type="button" class="v708-back" data-v708="back" aria-label="Volver">${icon('arrow')}</button>`:''}<div><small>VIVE EL HOY · ACTIVIDAD</small><h1>${safe(title)}</h1><p>${safe(subtitle)}</p></div></div><button class="v708-head-icon" type="button" data-v708="calendar" aria-label="Seleccionar período" title="Período">${icon('calendar')}</button></header>`}
+  function tabs(){return `<nav class="v708-tabstrip" aria-label="Vistas de movimientos">${SHOW_TABS.map(([id,label,ic])=>`<button type="button" class="v708-tab ${state.view===id?'active':''}" data-v708="view" data-value="${id}" aria-pressed="${state.view===id}">${icon(ic)}<span>${safe(label)}</span></button>`).join('')}</nav>`;}
+  function searchBar(){return `<label class="v708-search"><span>${icon('search')}</span><input id="v708-search-input" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Comercio, tarjeta, categoría o monto…" value="${safe(state.query)}" aria-label="Buscar movimientos"/><button type="button" data-v708="filters" class="v708-search-filter" title="Filtros" aria-label="Abrir filtros">${icon('settings')}</button></label>`;}
+  function quickFilters(){return `<div class="v708-chips">${labelChip('Todos',state.flow==='all','flow','data-value="all"')}${labelChip('Entradas',state.flow==='in','flow','data-value="in"')}${labelChip('Salidas',state.flow==='out','flow','data-value="out"')}${labelChip('Apple Pay',state.flow==='apple','flow','data-value="apple"')}</div>`;}
+  function selectItems(items,selected){return items.map(([value,label])=>`<option value="${safe(value)}" ${String(selected)===String(value)?'selected':''}>${safe(label)}</option>`).join('');}
+  function filterPanel(){
+    if(!state.openFilters)return '';
+    const categories=[...new Set(all().map(t=>t.category||'Sin categoría'))].sort((a,b)=>a.localeCompare(b,'es')).map(x=>[x,x]);
+    const products=[...db.cards.map(c=>[c.id,`Tarjeta · ${c.name}`]),...db.accounts.map(a=>[a.id,`Cuenta · ${a.name}`]),...db.loans.map(l=>[l.id,`Préstamo · ${l.name}`])];
+    return `<section class="v708-filters" aria-label="Filtros de movimientos"><div class="v708-panel-head"><strong>Filtrar historial</strong><button type="button" data-v708="reset" aria-label="Restablecer filtros">Restablecer</button></div><div class="v708-filter-grid"><label><span>Período</span><select id="v708-filter-period">${selectItems([['month','Este mes'],['30','Últimos 30 días'],['all','Todo el historial']],state.period)}</select></label>${state.period==='month'?`<label><span>Mes</span><input type="month" id="v708-filter-month" value="${safe(month())}"/></label>`:''}<label><span>Producto</span><select id="v708-filter-product">${selectItems([['all','Todas las tarjetas y cuentas'],...products],state.product)}</select></label><label><span>Categoría</span><select id="v708-filter-category">${selectItems([['all','Todas las categorías'],...categories],state.category)}</select></label></div><button type="button" class="v708-apply" data-v708="filters">Listo ${icon('check')}</button></section>`;
+  }
+  function row(t){
+    const title=fullName(t),positive=direction(t)>0,apple=isApple(t),pending=typeof v5NeedsAppleCategory==='function'&&v5NeedsAppleCategory(t);
+    return `<button class="v708-row" type="button" data-v708="detail" data-id="${safe(t.id)}" aria-label="Ver movimiento ${safe(title)}"><span class="v708-row-icon ${apple?'apple':positive?'in':''}">${iconMark(t)}</span><span class="v708-row-desc"><strong>${safe(title)}</strong><small>${safe(sourceName(t))}${createdTime(t)?' · '+safe(createdTime(t)):''}</small>${pending?'<em>Apple Pay · Sin categoría</em>':''}</span><span class="v708-row-right"><b class="${positive?'positive':''}">${safe(typedAmount(t))}</b>${t.reviewed===true?'<small>Conciliado</small>':''}</span><span class="v708-chevron">${icon('arrow')}</span></button>`;
+  }
+  function rows(arr,{max=35}={}){
+    if(!arr.length)return `<div class="v708-empty">${icon('search')}<strong>No hay movimientos con estos filtros</strong><p>Prueba otro período o categoría. Aquí solo aparecen registros reales.</p><button type="button" data-v708="reset">Restablecer filtros</button></div>`;
+    const output=[],groups=new Map();for(const t of arr.slice(0,max)){const key=String(t.date||'Sin fecha');if(!groups.has(key))groups.set(key,[]);groups.get(key).push(t);}
+    for(const [date,tx] of groups){output.push(`<section class="v708-date-group"><div class="v708-date-title"><strong>${safe(date==='Sin fecha'?date:friendlyDate(date))}</strong><small>${tx.length} movimiento${tx.length===1?'':'s'}</small></div><div class="v708-row-stack">${tx.map(row).join('')}</div></section>`);}
+    if(arr.length>max)output.push(`<button type="button" class="v708-more" data-v708="more">Ver ${Math.min(35,arr.length-max)} movimientos más ${icon('arrow')}</button>`);
+    return output.join('');
+  }
+  function draftsView(){
+    const terms=state.query.trim().toLocaleLowerCase('es');
+    const candidates=(db.pendingOperations||[]).filter(q=>{
+      const v=q.values||{};const date=String(v.date||q.created||'').slice(0,10);
+      if(state.period==='month'&&!date.startsWith(month()))return false;
+      if(state.period==='30'&&date<addDays(today(),-29))return false;
+      if(state.flow!=='all'||state.product!=='all'||state.category!=='all')return false;
+      return !terms||[v.note,v.description,v.category,v.merchant,v.name].filter(Boolean).join(' ').toLocaleLowerCase('es').includes(terms);
+    });
+    if(!candidates.length)return '';
+    return `<section class="v708-drafts"><div class="v708-subheading"><strong>Borradores sin contabilizar</strong><small>${candidates.length}</small></div><div class="v708-row-stack">${candidates.slice(0,20).map(q=>{const v=q.values||{};return `<div class="v708-draft-row"><span class="v708-row-icon">${icon('clock')}</span><span><strong>${safe(v.note||v.description||v.merchant||v.category||'Operación pendiente')}</strong><small>Sin registrar · no afecta tus saldos</small></span><button type="button" data-act="pendingConfirm" data-id="${safe(q.id)}">Completar ${icon('arrow')}</button></div>`}).join('')}</div></section>`;
+  }
+  function listView(searchMode=false){
+    const data=filtered(),prefix=searchMode?'Buscar movimientos':'Movimientos';
+    const title=searchMode?'Encuentra cualquier operación': 'Consulta, filtra y gestiona tus transacciones.';
+    return `${header(prefix,title,searchMode)}${searchBar()}${quickFilters()}${filterPanel()}<div class="v708-list-top"><strong>${data.length} resultado${data.length===1?'':'s'}</strong><button type="button" data-v708="view" data-value="summary">Ver resumen ${icon('arrow')}</button></div>${rows(data,{max:state.limit})}${draftsView()}`;
+  }
+  function summaryView(){
+    const data=base(),t=totals(data);
+    const recent=all().filter(periodPass).slice(0,8);
+    return `${header('Resumen de movimientos','Una lectura clara de tu actividad registrada.')}
+      <div class="v708-period">${safe(state.period==='month'?month():state.period==='30'?'Últimos 30 días':'Historial completo')} · RD$ equivalentes</div>
+      <div class="v708-summary-tiles"><div class="v708-summary-tile outgoing">${icon('down')}<span><small>Salidas</small><b>${moneyDOP(t.minus)}</b></span></div><div class="v708-summary-tile incoming">${icon('up')}<span><small>Entradas</small><b>${moneyDOP(t.plus)}</b></span></div></div>
+      <section class="v708-net"><div><span>Balance neto de movimientos</span><strong>${moneyDOP(t.net)}</strong><small>Entradas menos salidas registradas. No es el saldo bancario.</small></div>${icon('chart')}</section>
+      <div class="v708-subheading"><strong>Actividad reciente</strong><button type="button" data-v708="view" data-value="list">Ver todo ${icon('arrow')}</button></div>${rows(recent,{max:8})}
+      <p class="v708-footnote">Los totales excluyen transferencias internas y ajustes neutrales para evitar duplicar el flujo. Los importes en USD se convierten usando la tasa configurada.</p>`;
+  }
+  function categoriesView(){
+    const data=base().filter(t=>direction(t)<0&&t.type!=='card_payment');const amounts=new Map();for(const t of data){const k=String(t.category||'Sin categoría');amounts.set(k,(amounts.get(k)||0)+amountDOP(t));}
+    const entries=[...amounts.entries()].sort((a,b)=>b[1]-a[1]),sum=entries.reduce((s,x)=>s+x[1],0),colors=['#8175e8','#579be5','#38ad92','#f6b45b','#c66b9a','#7d9bb4'];
+    let a=0;const conic=entries.map(([_,val],i)=>{const st=a;a+=sum?val/sum*100:0;return `${colors[i%colors.length]} ${st.toFixed(2)}% ${a.toFixed(2)}%`;}).join(',')||'#dbe4ef 0% 100%';
+    const legend=entries.map(([key,value],i)=>`<button type="button" class="v708-legend-row" data-v708="category" data-value="${safe(key)}"><span class="v708-legend-dot" style="background:${colors[i%colors.length]}"></span><span class="v708-legend-label">${safe(key)}</span><b>${sum?(100*value/sum).toFixed(1):'0.0'}%</b>${icon('arrow')}</button>`).join('');
+    return `${header('Por categoría','Distribución de salidas, sin duplicar pagos a tarjetas.')}
+      <div class="v708-period">${safe(state.period==='month'?month():state.period==='30'?'Últimos 30 días':'Historial completo')} · ${data.length} movimientos</div>
+      <section class="v708-category-card"><div class="v708-donut" role="img" aria-label="Gastos por categoría" style="background:conic-gradient(${conic})"><div><strong>${moneyDOP(sum)}</strong><small>Salidas categorizadas</small></div></div><div class="v708-legend">${legend||'<p class="v708-footnote">No hay salidas categorizadas en este período.</p>'}</div></section>
+      <div class="v708-subheading"><strong>Movimientos recientes</strong><button type="button" data-v708="view" data-value="list">Ver todos ${icon('arrow')}</button></div>${rows(data.slice(0,8),{max:8})}`;
+  }
+  function productView(){
+    const type=state.productType;const data=base();
+    const items=type==='cards'?db.cards:type==='accounts'?db.accounts:db.loans;
+    const group=(items||[]).filter(x=>!x.archived).map(x=>{
+      const linked=data.filter(t=>String(type==='cards'?t.cardId:type==='accounts'?t.accountId:t.loanId)===String(x.id));
+      const n=totals(linked);return `<button class="v708-product-card" type="button" data-v708="product" data-value="${safe(x.id)}"><span class="v708-product-top"><span class="v708-product-badge">${icon(type==='cards'?'card':type==='loans'?'building':'wallet')}</span><span><strong>${safe(x.name)}</strong><small>${safe(db.banks?.find(b=>b.id===x.bankId)?.name||'Producto financiero')}</small></span>${icon('arrow')}</span><span class="v708-product-bottom"><span><small>Movimientos del período</small><b>${linked.length}</b></span><span><small>Salidas registradas</small><b>${moneyDOP(n.minus)}</b></span></span></button>`;
+    }).join('');
+    return `${header('Por tarjeta / banco','Actividad por producto financiero, con tus datos reales.')}<div class="v708-chip-set">${labelChip('Tarjetas',type==='cards','productType','data-value="cards"')}${labelChip('Cuentas',type==='accounts','productType','data-value="accounts"')}${labelChip('Préstamos',type==='loans','productType','data-value="loans"')}</div><div class="v708-product-stack">${group||'<div class="v708-empty"><strong>Sin productos registrados</strong><p>Los productos que agregues en Bancos aparecerán aquí.</p></div>'}</div>`;
+  }
+  function reconcileView(){
+    const data=base();const reviewed=data.filter(t=>t.reviewed===true),pending=data.filter(t=>!t.reviewed),drafts=(db.pendingOperations||[]).length;
+    return `${header('Conciliación y saldo','Revisa tus operaciones sin alterar sus importes.')}
+      <section class="v708-recon-hero"><span>CONTROL DE MOVIMIENTOS</span><strong>${reviewed.length} de ${data.length}</strong><small>movimientos conciliados · ${state.period==='month'?safe(month()):'período seleccionado'}</small><div class="v708-progress"><i style="width:${data.length?reviewed.length/data.length*100:0}%"></i></div></section>
+      <div class="v708-summary-tiles"><div class="v708-summary-tile incoming"><span><small>Conciliados</small><b>${reviewed.length}</b></span>${icon('check')}</div><div class="v708-summary-tile outgoing"><span><small>Por revisar</small><b>${pending.length}</b></span>${icon('clock')}</div></div>
+      ${drafts?`<p class="v708-footnote">${drafts} borrador(es) sin contabilizar se gestionan desde el historial de escritorio.</p>`:''}
+      <div class="v708-subheading"><strong>Operaciones por revisar</strong><small>${pending.length} pendientes</small></div>
+      ${pending.length?pending.slice(0,50).map(t=>`<div class="v708-review-item">${row(t)}<button type="button" class="v708-review-action" data-v708="review" data-id="${safe(t.id)}">${icon('check')} Marcar revisado</button></div>`).join(''):'<div class="v708-empty"><strong>Conciliación al día</strong><p>No quedan movimientos por revisar en este período.</p></div>'}`;
+  }
+  function appleView(){
+    const pending=(db.transactions||[]).filter(t=>movement(t)&&v5NeedsAppleCategory(t));
+    const allApple=base().filter(isApple);
+    return `${header('Apple Pay · Por clasificar','Organiza tus compras importadas desde Wallet.')}
+      <div class="v708-chip-set">${labelChip('Por clasificar ('+pending.length+')',true,'noop')}${labelChip('Ver Apple Pay',false,'appleAll')}</div>
+      ${pending.length?`<section class="v708-apple-hint">${icon('apple')} <div><strong>${pending.length} compra${pending.length===1?'':'s'} por clasificar</strong><small>Ya registrada${pending.length===1?'':'s'}; asignar una categoría no genera otro cargo.</small></div></section>`:''}
+      <div class="v708-apple-stack">${pending.length?pending.map(t=>`<article class="v708-apple-row"><div>${row(t)}<span class="v708-uncat">Sin categoría</span></div><button class="v708-classify" type="button" data-v7-apple-id="${safe(t.id)}">${icon('check')} Clasificar</button></article>`).join(''):'<div class="v708-empty">'+icon('check')+'<strong>Apple Pay al día</strong><p>En este momento no hay compras pendientes de clasificación.</p></div>'}</div>
+      ${allApple.length?`<p class="v708-footnote">${allApple.length} movimiento(s) Apple Pay registrados en el período seleccionado.</p>`:''}`;
+  }
+  function detailView(){
+    const t=(db.transactions||[]).find(t=>String(t.id)===String(state.selected)&&movement(t));
+    if(!t){state.view='list';state.selected=null;return listView();}
+    const positive=direction(t)>0,apple=isApple(t),source=sourceName(t),c=card(t.cardId),pending=v5NeedsAppleCategory(t);
+    const lines=[['Fecha',safe(friendlyDate(t.date))+(createdTime(t)?' · '+safe(createdTime(t)):'')],['Producto',safe(source)],['Categoría',safe(t.category||'Sin categoría')+(t.subcategory?' · '+safe(t.subcategory):'')],['Estado',t.reviewed===true?'Conciliado':'Por revisar'],['Moneda',safe(t.currency||'DOP')],['Balance después',v265BalanceHTML(t,'mobile')]].filter(x=>x[1]);
+    const reference=t.reference||t.applePayEventId||t.eventId;
+    if(reference)lines.push(['Referencia',safe(String(reference))]);
+    const editable=typeof TRANSACTION_EDITABLE!=='undefined'&&(TRANSACTION_EDITABLE.has(t.type)||['personal_issue','personal_settlement'].includes(t.type));
+    return `<div class="v708-detail">
+      <div class="v708-detail-hero"><div class="v708-detail-bar"><button type="button" data-v708="back" aria-label="Volver al historial">${icon('arrow')}</button><span>${apple?'Apple Pay':'Movimiento'}</span><button type="button" data-v708="more" aria-label="Más opciones">${icon('settings')}</button></div><div class="v708-detail-merchant"><span class="v708-detail-logo">${iconMark(t)}</span><strong>${safe(fullName(t))}</strong><small>${safe(TRANSL[t.type]||'Transacción')}</small></div><b class="v708-detail-value ${positive?'plus':''}">${safe(typedAmount(t))}</b><div class="v708-detail-when">${safe(friendlyDate(t.date))}<span class="v708-status">${pending?'Sin clasificar':t.reviewed?'Conciliado':'Registrado'}</span></div></div>
+      <div class="v708-detail-actions">${editable?`<button type="button" data-v708="edit" data-id="${safe(t.id)}">${icon('edit')}<span>Editar</span></button>`:''}<button type="button" data-v708="categorize" data-id="${safe(t.id)}">${icon('grid')}<span>Categoría</span></button><button type="button" data-v708="review" data-id="${safe(t.id)}">${icon('check')}<span>${t.reviewed?'Reabrir':'Conciliar'}</span></button><button type="button" data-v708="more" data-id="${safe(t.id)}">${icon('settings')}<span>Más</span></button></div>
+      <section class="v708-detail-lines">${lines.map(([label,value])=>`<div><span>${label}</span><strong>${value}</strong>${icon('arrow')}</div>`).join('')}</section>
+      ${pending?`<button type="button" class="v708-classify big" data-v7-apple-id="${safe(t.id)}">Clasificar compra de Apple Pay ${icon('arrow')}</button>`:''}
+      ${apple?'<p class="v708-footnote">Origen: compra importada de Apple Pay. Consultar o clasificar no genera nuevos cargos.</p>':''}
+    </div>`;
+  }
+  function view(){
+    if(state.view==='detail')return detailView();
+    const content=state.view==='list'?listView():state.view==='search'?listView(true):state.view==='summary'?summaryView():state.view==='categories'?categoriesView():state.view==='products'?productView():state.view==='reconcile'?reconcileView():appleView();
+    return `${tabs()}${content}`;
+  }
+  function moreOptions(){
+    const t=(db.transactions||[]).find(x=>String(x.id)===String(state.selected));if(!t)return;
+    const p=productId(t);
+    const root=document.getElementById('modal-root');if(!root)return;
+    root.innerHTML=`<div class="modal-layer v708-more-layer" data-backdrop="true"><section class="modal v708-more-dialog" role="dialog" aria-modal="true" aria-label="Opciones del movimiento"><header class="modal-head"><h2>Opciones del movimiento</h2><button class="close" type="button" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="v708-more-options"><button type="button" data-act="editTransaction" data-id="${safe(t.id)}">${icon('edit')} Editar movimiento ${icon('arrow')}</button><button type="button" data-act="toggleReview" data-id="${safe(t.id)}">${icon('check')} ${t.reviewed?'Volver a revisar':'Marcar como conciliado'} ${icon('arrow')}</button>${p?`<button type="button" data-v708="product" data-value="${safe(p)}">${icon('card')} Ver otros movimientos del producto ${icon('arrow')}</button>`:''}</div><p class="v708-footnote">Cambiar el estado de conciliación no modifica el importe ni el saldo.</p></section></div>`;
+  }
+  function v708Movements(){return `<div class="v708-movements" data-v708-screen="${safe(state.view)}">${view()}</div>`;}
+  function redraw({focus=false,keepScroll=false}={}){
+    const pos=window.scrollY;
+    render();
+    if(keepScroll)window.scrollTo(0,pos);
+    else window.scrollTo(0,0);
+    if(focus){const field=document.getElementById('v708-search-input');if(field)try{field.focus({preventScroll:true})}catch(_){field.focus()}}
+  }
+  function openMovements(section='list',needle=''){
+    state.view=SHOW_TABS.some(x=>x[0]===section)?section:'list';state.previous='list';state.selected=null;
+    state.query=String(needle||'');state.openFilters=false;state.limit=35;
+    ui.page='register';ui.movementTab='all';
+    redraw({focus:section==='search'});
+  }
+  window.v708OpenMovements=openMovements;
+  const oldRegister=pages.register;
+  pages.register=function(...args){return isMobileViewport()?v708Movements():oldRegister.apply(this,args);};
+  // Mantener intacta la navegación de cinco pestañas; insertar solo un botón auxiliar encima del +.
+  const oldDock=mobileBottomNavigation;
+  mobileBottomNavigation=function(...args){
+    const html=oldDock.apply(this,args);
+    const small=`<button type="button" class="v708-movements-fab" data-v708="open" data-value="list" title="Ver movimientos" aria-label="Abrir movimientos"><span aria-hidden="true">${icon('list')}</span><span class="v708-fab-tooltip">Movimientos</span></button>`;
+    return html.replace('<button type="button" class="v249-register-fab"',small+'<button type="button" class="v249-register-fab"');
+  };
+  // Buscar ya contiene la categoría Movimientos; añadir un acceso directo al mismo módulo.
+  const oldSearch=v154MobileSearchPage;
+  v154MobileSearchPage=function(...args){
+    return oldSearch.apply(this,args).replace('<div class="v154-search-discover"',
+      `<button type="button" class="v708-search-shortcut" data-v708="open" data-value="list"><span>${icon('list')}</span><span><strong>Movimientos</strong><small>Consulta todas tus transacciones y filtros</small></span>${icon('arrow')}</button><div class="v154-search-discover"`);
+  };
+  document.addEventListener('click',e=>{
+    const button=e.target.closest?.('[data-v708]');if(!button)return;
+    e.preventDefault();e.stopImmediatePropagation();
+    const op=button.dataset.v708,value=button.dataset.value||'',id=button.dataset.id||'';
+    switch(op){
+      case 'open':openMovements(value||'list');break;
+      case 'view':state.view=value;state.selected=null;state.limit=35;state.openFilters=false;redraw({focus:value==='search'});break;
+      case 'back':if(state.view==='detail'){state.view=state.previous||'list';state.selected=null;}else {state.view='list';state.query='';}redraw();break;
+      case 'detail':state.previous=state.view;state.view='detail';state.selected=id;redraw();break;
+      case 'calendar':if(!['list','search'].includes(state.view)){state.view='list';state.selected=null;state.openFilters=true;redraw();}else{state.openFilters=!state.openFilters;redraw({keepScroll:true});}break;
+      case 'filters':state.openFilters=!state.openFilters;redraw({keepScroll:true});break;
+      case 'flow':state.flow=value;state.limit=35;redraw({keepScroll:true});break;
+      case 'reset':Object.assign(state,{query:'',flow:'all',category:'all',product:'all',period:'month',month:null,limit:35,openFilters:false});redraw();break;
+      case 'more':if(state.view==='detail')moreOptions();else{state.limit+=35;redraw({keepScroll:true})}break;
+      case 'category':state.category=value;state.product='all';state.flow='all';state.view='list';state.query='';redraw();break;
+      case 'productType':state.productType=value;redraw({keepScroll:true});break;
+      case 'product':if(document.getElementById('modal-root')?.querySelector('.v708-more-dialog'))closeModal();state.product=value;state.category='all';state.flow='all';state.view='list';state.query='';redraw();break;
+      case 'review':{const t=db.transactions.find(t=>String(t.id)===String(id));if(!t)return;onAction('toggleReview',{dataset:{id}});break;}
+      case 'edit':openTransactionEditor(id);break;
+      case 'categorize':{const t=db.transactions.find(t=>String(t.id)===String(id));if(!t)return;if(v5NeedsAppleCategory(t))v7OpenAppleClassifier(id);else openTransactionEditor(id);break;}
+      case 'appleAll':state.flow='apple';state.view='list';state.period='all';redraw();break;
+      case 'noop':break;
+      default:break;
+    }
+  },true);
+  document.addEventListener('input',e=>{
+    if(e.target?.id!=='v708-search-input')return;
+    // Actualizar la lista sin destruir el foco o el teclado de iOS.
+    state.query=e.target.value;
+    const root=document.querySelector('.v708-movements');if(!root)return;
+    const data=filtered();const header=root.querySelector('.v708-list-top');if(header)header.querySelector('strong').textContent=`${data.length} resultado${data.length===1?'':'s'}`;
+    const oldGroups=[...root.querySelectorAll('.v708-date-group,.v708-empty,.v708-more')];oldGroups.forEach(el=>el.remove());
+    const last=root.querySelector('.v708-list-top');if(last)last.insertAdjacentHTML('afterend',rows(data,{max:state.limit}));
+  },true);
+  document.addEventListener('change',e=>{
+    const id=e.target?.id;if(!id||!id.startsWith('v708-filter-'))return;
+    if(id==='v708-filter-period')state.period=e.target.value;
+    if(id==='v708-filter-month'&&/^\d{4}-\d{2}$/.test(e.target.value))state.month=e.target.value;
+    if(id==='v708-filter-product')state.product=e.target.value;
+    if(id==='v708-filter-category')state.category=e.target.value;
+    redraw({keepScroll:true});
+  },true);
+  // Evita historial de búsqueda externo: solo se consulta la copia reactiva ya cargada desde Supabase.
+  window.v708MovementState=state;
+  if(document.querySelector('#app .shell')){try{render()}catch(err){console.warn('Movimientos V708: redibujado inicial aplazado',err)}}
+})();
+
 })();
 
 
@@ -77526,5 +77765,242 @@ html body.theme-black #modal-root .v85-capacity-modal .v85-capacity-metrics stro
 }
 </style>
 
+<style id="vive-v708-movimientos-premium">
+/* V708 · Movimientos premium — respeta la apariencia, el acento y el dock existentes. */
+@media(max-width:790px){
+  .world-register>.topbar,.world-register>.module-switch-shell,
+  .world-register #page>.v243-explore-return{display:none!important}
+  .world-register #page{background:transparent!important;border:0!important;padding:0!important;max-width:100%!important}
+  .world-register{padding-top:7px!important;}
+  .v708-movements{
+    --v708-ink:#1d304e;--v708-muted:#7185a2;--v708-line:rgba(161,186,218,.30);
+    --v708-card:rgba(255,255,255,.57);--v708-card-strong:rgba(255,255,255,.79);
+    --v708-glow:rgba(91,120,178,.12);--v708-accent:var(--v424-accent-strong,var(--vive-theme-color,#526bdd));
+    --v708-soft:color-mix(in srgb,var(--v708-accent) 13%,white);
+    color:var(--v708-ink)!important;width:100%;max-width:700px;margin:0 auto;padding:12px 2px 36px;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,sans-serif;
+    animation:v708-enter .24s ease both;
+  }
+  @keyframes v708-enter{from{opacity:.3;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+  .v708-movements *{box-sizing:border-box}
+  .v708-movements button,.v708-movements select,.v708-movements input{font:inherit}
+  .v708-movements button{color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .v708-movements button:focus-visible,.v708-movements input:focus-visible,.v708-movements select:focus-visible{outline:2px solid var(--v708-accent);outline-offset:3px}
+  .v708-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:4px 1px 21px}
+  .v708-heading{display:flex;align-items:flex-start;gap:12px;min-width:0}
+  .v708-heading>div{min-width:0}
+  .v708-heading small{display:block;font-size:10px;letter-spacing:2.1px;font-weight:850;color:var(--v708-muted);margin:0 0 8px}
+  .v708-heading h1{font-size:clamp(25px,7vw,33px)!important;line-height:1.08!important;letter-spacing:-1.2px!important;margin:0!important;font-weight:825!important;color:var(--v708-ink)!important}
+  .v708-heading p{font-size:12px;line-height:1.45;color:var(--v708-muted);margin:7px 0 0}
+  .v708-head-icon,.v708-back{width:39px;height:39px;border-radius:13px;border:1px solid var(--v708-line);background:var(--v708-card-strong);display:grid;place-items:center;flex-shrink:0;box-shadow:0 4px 14px var(--v708-glow)}
+  .v708-head-icon svg,.v708-back svg{width:18px;height:18px}
+  .v708-tabstrip{display:flex;gap:7px;align-items:center;overflow-x:auto;scrollbar-width:none;margin:0 -15px 19px;padding:0 15px 7px;scroll-snap-type:x proximity}
+  .v708-tabstrip::-webkit-scrollbar,.v708-chips::-webkit-scrollbar{display:none}
+  .v708-tab{display:flex;align-items:center;justify-content:center;gap:6px;flex:0 0 auto;padding:10px 13px;white-space:nowrap;min-height:38px;border:1px solid var(--v708-line);background:var(--v708-card);color:var(--v708-muted)!important;border-radius:99px;font-size:11px!important;font-weight:725;scroll-snap-align:start;backdrop-filter:blur(16px)}
+  .v708-tab svg{width:14px;height:14px}
+  .v708-tab.active{background:var(--v708-ink)!important;border-color:transparent!important;color:white!important;box-shadow:0 5px 12px var(--v708-glow)}
+  .v708-search{display:flex;align-items:center;gap:9px;min-height:50px;padding:5px 7px 5px 15px;border:1px solid rgba(255,255,255,.74);background:var(--v708-card-strong);border-radius:17px;box-shadow:0 6px 21px var(--v708-glow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+  .v708-search>span{color:var(--v708-muted)}
+  .v708-search>span svg{width:17px;height:17px}
+  .v708-search input{flex:1;min-width:0!important;width:100%;height:37px;padding:0!important;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;color:var(--v708-ink)!important;font-size:12.4px!important}
+  .v708-search input::placeholder{color:var(--v708-muted);opacity:.95}
+  .v708-search-filter{height:37px;width:37px;border-radius:13px;border:1px solid var(--v708-line);background:var(--v708-card);display:grid;place-items:center;flex-shrink:0}
+  .v708-search-filter svg{width:18px;height:18px}
+  .v708-chips,.v708-chip-set{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;align-items:center;padding:12px 0 10px}
+  .v708-chip{flex:0 0 auto;white-space:nowrap;padding:8px 11px;border:1px solid var(--v708-line);background:var(--v708-card);border-radius:99px;color:var(--v708-ink)!important;font-weight:700;font-size:11px!important;line-height:1.15;min-height:35px;box-shadow:0 2px 7px rgba(61,96,154,.04)}
+  .v708-chip.is-selected{background:#1c2d4b!important;color:#fff!important;border-color:#1c2d4b!important}
+  .v708-filters{margin:8px 0 16px;padding:17px;border:1px solid var(--v708-line);border-radius:20px;background:var(--v708-card-strong);box-shadow:0 8px 20px var(--v708-glow)}
+  .v708-panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+  .v708-panel-head strong{font-size:13px}
+  .v708-panel-head button{border:0;background:transparent;color:var(--v708-accent)!important;font-size:11px!important;font-weight:750}
+  .v708-filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .v708-filter-grid label{min-width:0;display:flex;flex-direction:column;gap:6px;color:var(--v708-muted);font-size:10px;font-weight:770}
+  .v708-filter-grid select,.v708-filter-grid input{width:100%;min-width:0;height:41px;border-radius:12px;border:1px solid var(--v708-line);background:var(--v708-card-strong);padding:0 10px;color:var(--v708-ink)!important;font-size:11px!important}
+  .v708-apply{margin-top:13px;min-height:41px;width:100%;border:0;border-radius:12px;background:var(--v708-accent);color:white!important;font-size:12px!important;font-weight:750;display:flex;gap:5px;align-items:center;justify-content:center}
+  .v708-apply svg{width:15px;height:15px}
+  .v708-list-top,.v708-subheading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:19px 1px 11px}
+  .v708-list-top strong,.v708-subheading strong{font-size:15px;font-weight:800;letter-spacing:-.3px}
+  .v708-list-top button,.v708-subheading button{border:0;background:none;color:var(--v708-accent)!important;display:flex;align-items:center;gap:4px;font-size:11px!important;font-weight:800;padding:5px 0}
+  .v708-list-top button svg,.v708-subheading button svg{width:15px;height:15px}
+  .v708-subheading small{font-size:11px;color:var(--v708-muted)}
+  .v708-date-group{margin:17px 0 21px;min-width:0}
+  .v708-date-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 4px 9px}
+  .v708-date-title strong{font-size:12.5px;font-weight:800;text-transform:lowercase}
+  .v708-date-title strong:first-letter{text-transform:uppercase}
+  .v708-date-title small{font-size:10.5px;color:var(--v708-muted)}
+  .v708-row-stack{background:var(--v708-card);border:1px solid rgba(255,255,255,.73);border-radius:20px;box-shadow:0 7px 22px var(--v708-glow);overflow:hidden;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+  .v708-row{width:100%;display:flex;align-items:center;gap:10px;padding:13px 11px 13px 12px;min-height:65px;border:0!important;background:transparent!important;text-align:left;color:var(--v708-ink)!important;min-width:0}
+  .v708-row+.v708-row{border-top:1px solid var(--v708-line)!important}
+  .v708-row:active{background:var(--v708-soft)!important}
+  .v708-row-icon{width:38px;height:38px;border-radius:13px;flex:0 0 38px;background:color-mix(in srgb,var(--v708-accent) 10%,white);display:flex;align-items:center;justify-content:center;color:var(--v708-accent)}
+  .v708-row-icon svg{width:19px;height:19px}
+  .v708-row-icon.apple{background:rgba(255,255,255,.72);color:#18253c}
+  .v708-row-icon.in{background:rgba(54,165,123,.14);color:#0e8f6d}
+  .v708-brand-apple{display:flex;align-items:center;justify-content:center;gap:1px;font-weight:900}
+  .v708-brand-apple svg{width:16px;height:16px}
+  .v708-brand-apple small{font-size:8px!important;letter-spacing:-.5px}
+  .v708-row-desc{display:flex;flex:1 1 auto;min-width:0;flex-direction:column;gap:4px}
+  .v708-row-desc strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.4px!important;line-height:1.23;font-weight:800}
+  .v708-row-desc small{font-size:10px!important;color:var(--v708-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .v708-row-desc em{font-style:normal;font-size:9px;font-weight:800;color:#bd6875}
+  .v708-row-right{display:flex;flex:0 0 auto;flex-direction:column;align-items:flex-end;justify-content:center;gap:3px;max-width:43%}
+  .v708-row-right b{font-size:11.3px!important;font-weight:850;white-space:nowrap;letter-spacing:-.35px}
+  .v708-row-right b.positive{color:#169e71!important}
+  .v708-row-right small{font-size:9px;color:#218b73}
+  .v708-chevron{flex:0 0 12px;color:var(--v708-muted);opacity:.9}
+  .v708-chevron svg{width:13px;height:13px}
+  .v708-empty{min-height:178px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:9px;padding:24px;border-radius:20px;border:1px dashed var(--v708-line);background:var(--v708-card);color:var(--v708-ink)}
+  .v708-empty>svg{width:25px;height:25px;color:var(--v708-muted)}
+  .v708-empty strong{font-size:14px}
+  .v708-empty p{font-size:11px;color:var(--v708-muted);line-height:1.5;margin:0}
+  .v708-empty button,.v708-more{border:0;background:var(--v708-soft);color:var(--v708-accent)!important;border-radius:14px;padding:11px;font-size:11px!important;font-weight:750}
+  .v708-more{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:15px auto}
+  .v708-more svg{width:14px;height:14px}
+  .v708-period{color:var(--v708-muted);margin:0 2px 17px;font-size:11px}
+  .v708-summary-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 14px}
+  .v708-summary-tile{display:flex;align-items:center;justify-content:space-between;gap:9px;min-height:85px;padding:16px 12px;border:1px solid var(--v708-line);border-radius:20px}
+  .v708-summary-tile.outgoing{background:rgba(245,184,192,.24)}
+  .v708-summary-tile.incoming{background:rgba(132,218,179,.22)}
+  .v708-summary-tile>svg{height:21px;width:21px;flex-shrink:0}
+  .v708-summary-tile>span{display:flex;flex-direction:column;gap:7px;min-width:0}
+  .v708-summary-tile small{font-size:10.5px;color:var(--v708-muted);font-weight:750}
+  .v708-summary-tile b{font-size:clamp(13px,3.7vw,19px);letter-spacing:-.5px;white-space:nowrap}
+  .v708-net,.v708-recon-hero{border-radius:23px;padding:22px;background:linear-gradient(120deg,#283e66,#152943);color:#f6f9ff;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 11px 24px rgba(30,50,86,.18)}
+  .v708-net>div{display:flex;flex-direction:column;min-width:0;gap:8px}
+  .v708-net span,.v708-recon-hero span{font-size:10px;font-weight:760;letter-spacing:.45px;color:#c4d6f4}
+  .v708-net strong{font-size:clamp(21px,5.9vw,28px);letter-spacing:-.9px}
+  .v708-net small,.v708-recon-hero small{font-size:10px;line-height:1.4;color:#a8bcd8}
+  .v708-net>svg{height:28px;width:28px;opacity:.45}
+  .v708-footnote{font-size:10.5px;line-height:1.6;color:var(--v708-muted);margin:18px 5px}
+  .v708-category-card{background:var(--v708-card);border:1px solid rgba(255,255,255,.76);border-radius:24px;padding:22px 16px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;box-shadow:0 10px 25px var(--v708-glow)}
+  .v708-donut{width:min(65vw,224px);height:min(65vw,224px);border-radius:50%;padding:20px;flex-shrink:0;display:grid;place-items:center}
+  .v708-donut>div{background:var(--v708-card-strong);height:100%;width:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:7px;text-align:center;backdrop-filter:blur(18px)}
+  .v708-donut strong{font-size:clamp(18px,5.5vw,25px);letter-spacing:-.8px;color:var(--v708-ink)}
+  .v708-donut small{font-size:10px;color:var(--v708-muted)}
+  .v708-legend{width:100%}
+  .v708-legend-row{display:flex;align-items:center;gap:10px;padding:12px 4px;border:0;background:transparent;width:100%;text-align:left}
+  .v708-legend-row+.v708-legend-row{border-top:1px solid var(--v708-line)}
+  .v708-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .v708-legend-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:12px;font-weight:700}
+  .v708-legend-row b{font-size:12px;font-weight:800}
+  .v708-legend-row svg{width:13px;height:13px;color:var(--v708-muted)}
+  .v708-product-stack{display:grid;gap:12px;margin-top:11px}
+  .v708-product-card{display:flex;flex-direction:column;gap:15px;width:100%;padding:16px;border:1px solid rgba(255,255,255,.75);background:var(--v708-card);border-radius:20px;text-align:left;box-shadow:0 8px 19px var(--v708-glow)}
+  .v708-product-top{display:flex;align-items:center;gap:12px}
+  .v708-product-top>span:nth-child(2){min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+  .v708-product-top strong{font-size:13px;font-weight:800}
+  .v708-product-top small{font-size:10px;color:var(--v708-muted)}
+  .v708-product-top>svg{height:15px;width:15px;color:var(--v708-muted)}
+  .v708-product-badge{width:44px;height:34px;display:grid;place-items:center;border-radius:9px;background:linear-gradient(135deg,#1d304f,#536a8e);color:white}
+  .v708-product-badge svg{width:20px;height:20px}
+  .v708-product-bottom{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--v708-line);padding-top:13px}
+  .v708-product-bottom>span{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .v708-product-bottom small{font-size:10px;color:var(--v708-muted)}
+  .v708-product-bottom b{font-size:14px;letter-spacing:-.3px}
+  .v708-recon-hero{align-items:stretch;flex-direction:column;gap:11px;margin-bottom:12px}
+  .v708-recon-hero strong{font-size:29px;letter-spacing:-1px}
+  .v708-progress{height:7px;border-radius:999px;background:rgba(255,255,255,.19);overflow:hidden;margin-top:8px}
+  .v708-progress i{display:block;height:100%;background:#76e1b9;border-radius:inherit}
+  .v708-review-item{border-radius:20px;padding:0 0 10px;border:1px solid var(--v708-line);background:var(--v708-card);margin-bottom:10px;overflow:hidden}
+  .v708-review-action{border:1px solid var(--v708-line);border-radius:12px;padding:9px 12px;margin-left:59px;background:var(--v708-soft);color:var(--v708-accent)!important;display:inline-flex;align-items:center;gap:7px;font-size:10.5px!important;font-weight:780}
+  .v708-review-action svg{height:14px;width:14px}
+  .v708-apple-hint{display:flex;align-items:center;gap:13px;padding:16px;background:linear-gradient(120deg,rgba(242,202,150,.26),rgba(240,183,196,.18));border:1px solid var(--v708-line);border-radius:18px;margin:3px 0 15px}
+  .v708-apple-hint>svg{height:23px;width:23px;color:#c79439}
+  .v708-apple-hint>div{display:flex;flex-direction:column;gap:5px}
+  .v708-apple-hint strong{font-size:12px}
+  .v708-apple-hint small{font-size:10.5px;color:var(--v708-muted);line-height:1.45}
+  .v708-apple-stack{display:grid;gap:11px}
+  .v708-apple-row{background:var(--v708-card);border:1px solid var(--v708-line);border-radius:19px;overflow:hidden;padding-bottom:11px}
+  .v708-apple-row>div{position:relative}
+  .v708-apple-row .v708-row{padding-right:104px;min-height:71px}
+  .v708-apple-row .v708-row-right{max-width:37%}
+  .v708-uncat{position:absolute;right:11px;bottom:8px;border-radius:20px;background:#fce3e9;color:#b25973;padding:4px 7px;font-size:9px;font-weight:780}
+  .v708-classify{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:13px;background:var(--v708-accent);color:white!important;padding:10px 14px;font-size:11px!important;font-weight:800;margin:1px 11px}
+  .v708-classify svg{width:14px;height:14px}
+  .v708-classify.big{width:100%;margin:16px 0;min-height:48px}
+  .v708-detail-hero{background:linear-gradient(160deg,#314b76 0%,#1d2e4a 58%,#172437 100%);border-radius:25px 25px 16px 16px;padding:17px 16px 24px;min-height:308px;color:white;box-shadow:0 14px 27px rgba(31,48,83,.21)}
+  .v708-detail-bar{display:flex;justify-content:space-between;align-items:center;color:#d5e2f9;font-size:11px;font-weight:800}
+  .v708-detail-bar button{height:34px;width:34px;border-radius:50%;border:0;background:rgba(255,255,255,.11);display:grid;place-items:center;color:white!important}
+  .v708-detail-bar svg{width:19px;height:19px}
+  .v708-detail-merchant{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;padding:15px 0 11px}
+  .v708-detail-logo{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.95);color:#24374d}
+  .v708-detail-logo svg{width:25px;height:25px}
+  .v708-detail-logo .v708-brand-apple small{font-size:10px!important}
+  .v708-detail-merchant>strong{font-size:13px;max-width:96%;text-align:center;line-height:1.3}
+  .v708-detail-merchant>small{font-size:10.5px;color:#d2dff6}
+  .v708-detail-value{display:block;text-align:center;font-size:clamp(28px,9vw,39px);letter-spacing:-1.7px;line-height:1.2;font-weight:850}
+  .v708-detail-value.plus{color:#99f1cd}
+  .v708-detail-when{display:flex;align-items:center;justify-content:center;gap:11px;margin-top:14px;color:#d6e3f9;font-size:10px;flex-wrap:wrap}
+  .v708-status{display:inline-block;background:#40b888;color:white;padding:4px 8px;border-radius:100px;font-size:9px;font-weight:800}
+  .v708-detail-actions{display:flex;justify-content:space-around;gap:7px;padding:13px 7px 16px;margin:-10px 6px 12px;background:var(--v708-card-strong);border:1px solid rgba(255,255,255,.78);border-radius:22px;position:relative;box-shadow:0 8px 18px var(--v708-glow);backdrop-filter:blur(18px)}
+  .v708-detail-actions button{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;flex:1;min-width:0;min-height:57px;background:none;border:0;font-size:10px!important;font-weight:750}
+  .v708-detail-actions button svg{width:19px;height:19px;color:var(--v708-accent)}
+  .v708-detail-lines{border:1px solid rgba(255,255,255,.76);background:var(--v708-card);border-radius:22px;padding:5px 16px;box-shadow:0 7px 20px var(--v708-glow)}
+  .v708-detail-lines>div{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:48px;padding:10px 0}
+  .v708-detail-lines>div+div{border-top:1px solid var(--v708-line)}
+  .v708-detail-lines span{color:var(--v708-muted);font-size:11px}
+  .v708-detail-lines strong{font-size:11px;line-height:1.35;text-align:right;max-width:63%;overflow-wrap:anywhere}
+  .v708-detail-lines svg{width:13px;height:13px;color:var(--v708-muted);flex-shrink:0}
+  /* Segundo icono: inmediatamente encima del + existente; no modifica la posición del botón Registrar. */
+  body .v708-movements-fab{position:fixed!important;right:max(18px,calc((100vw - 460px)/2 + 13px))!important;bottom:calc(var(--v340-nav-inset,0px) + var(--v340-nav-height,64px) + 85px)!important;z-index:74!important;width:51px!important;height:51px!important;border-radius:50%!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.9)!important;background:rgba(238,247,255,.82)!important;box-shadow:0 8px 22px rgba(51,77,123,.18),inset 0 1px rgba(255,255,255,.95)!important;color:#42658d!important;backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);cursor:pointer!important;padding:0!important;transition:transform .2s ease!important}
+  .v708-movements-fab>span:first-child svg{width:23px;height:23px;stroke-width:2}
+  .v708-movements-fab:active{transform:scale(.94)}
+  .v708-fab-tooltip{position:absolute;right:58px;top:50%;transform:translateY(-50%);padding:7px 10px;background:rgba(24,42,72,.88);border-radius:99px;color:#fff;font-size:10px;font-weight:720;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s}
+  .v708-movements-fab:focus-visible .v708-fab-tooltip,.v708-movements-fab:hover .v708-fab-tooltip{opacity:1}
+  body.v154-mobile-input-focused .v708-movements-fab,body.v158-keyboard-visible .v708-movements-fab,body.v216-modal-open .v708-movements-fab,body:has(#modal-root .modal-layer) .v708-movements-fab,body:has(#modal-root [role="dialog"]) .v708-movements-fab{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+  .v708-search-shortcut{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:15px;border-radius:19px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.61);box-shadow:0 8px 20px rgba(64,87,135,.07);margin:13px 0;color:#263b58}
+  .v708-search-shortcut>span:first-child{width:40px;height:40px;border-radius:13px;background:rgba(84,135,190,.11);display:grid;place-items:center;color:#447cae}
+  .v708-search-shortcut>span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+  .v708-search-shortcut strong{font-size:13px;font-weight:800}
+  .v708-search-shortcut small{color:#7185a1;font-size:10px}
+  .v708-search-shortcut>svg{width:17px;height:17px;color:#7185a1}
+  /* Negro auténtico, sin alterar la selección personal de color de acento. */
+  body:is(.theme-black,.theme-dark) .v708-movements{
+    --v708-ink:#f1f5ff;--v708-muted:#a6b6ca;--v708-line:rgba(179,200,224,.17);
+    --v708-card:rgba(20,22,27,.94);--v708-card-strong:rgba(25,28,34,.96);--v708-glow:rgba(0,0,0,.25);
+    --v708-accent:var(--f360-accent-readable,#a3b5ef);--v708-soft:rgba(154,179,225,.15);
+  }
+  body:is(.theme-black,.theme-dark) .v708-chip.is-selected,body:is(.theme-black,.theme-dark) .v708-tab.active{background:#edf2ff!important;color:#131824!important;border-color:#edf2ff!important}
+  body:is(.theme-black,.theme-dark) .v708-row-icon{background:#2d3440;color:var(--v708-accent)}
+  body:is(.theme-black,.theme-dark) .v708-row-icon.apple{background:#f4f6ff;color:#111827}
+  body:is(.theme-black,.theme-dark) .v708-row-icon.in{background:#102f2a;color:#68d6b8}
+  body:is(.theme-black,.theme-dark) .v708-donut>div{background:#1b1d22}
+  body:is(.theme-black,.theme-dark) .v708-net,body:is(.theme-black,.theme-dark) .v708-recon-hero{background:#181b22;border:1px solid #343a46;box-shadow:none}
+  body:is(.theme-black,.theme-dark) .v708-summary-tile.outgoing{background:#2b1b21}
+  body:is(.theme-black,.theme-dark) .v708-summary-tile.incoming{background:#142a25}
+  body:is(.theme-black,.theme-dark) .v708-detail-hero{background:linear-gradient(145deg,#212936,#07080a)}
+  body:is(.theme-black,.theme-dark) .v708-detail-merchant>strong{color:white}
+  body:is(.theme-black,.theme-dark) .v708-movements-fab{background:rgba(39,48,65,.91)!important;border-color:rgba(198,213,235,.29)!important;color:#dfeafe!important}
+  body:is(.theme-black,.theme-dark) .v708-search-shortcut{background:#15171d;border-color:#313844;color:#fff}
+  body:is(.theme-black,.theme-dark) .v708-search-shortcut small,body:is(.theme-black,.theme-dark) .v708-search-shortcut>svg{color:#a8b5ca}
+  body:is(.theme-black,.theme-dark) .v708-uncat{background:#4f2c3a;color:#f9c4ce}
+}
+@media(max-width:355px){.v708-filter-grid{grid-template-columns:1fr!important}.v708-row-right b{font-size:10px!important}body .v708-movements-fab{right:15px!important;width:47px!important;height:47px!important}}
+@media(min-width:791px){.v708-movements-fab{display:none!important}}
+@media print{.v708-movements-fab{display:none!important}}
+@media(prefers-reduced-motion:reduce){.v708-movements,.v708-movements-fab{animation:none!important;transition:none!important}}
+@media(max-width:790px){
+  #modal-root .v708-more-dialog{border-radius:23px!important;max-width:420px;padding:22px!important}
+  #modal-root .v708-more-dialog h2{font-size:17px}
+  #modal-root .v708-more-options{display:flex;flex-direction:column;gap:8px}
+  #modal-root .v708-more-options button{display:flex;align-items:center;gap:10px;width:100%;border-radius:13px;border:1px solid rgba(160,183,210,.23);background:rgba(140,162,207,.08);color:var(--ink,#243451);padding:14px;text-align:left;font-size:12px;font-weight:750}
+  #modal-root .v708-more-options button svg{height:17px;width:17px;flex-shrink:0}
+  #modal-root .v708-more-options button svg:last-child{margin-left:auto;width:14px;height:14px}
+  body:is(.theme-black,.theme-dark) #modal-root .v708-more-options button{background:#252932;color:#f1f5ff}
+}
+
+@media(max-width:790px){
+ .v708-detail-bar button:first-child svg,.v708-back svg{transform:rotate(180deg)}
+ .v708-drafts{margin-top:21px}
+ .v708-draft-row{display:flex;align-items:center;gap:11px;padding:13px 12px}
+ .v708-draft-row+.v708-draft-row{border-top:1px solid var(--v708-line)}
+ .v708-draft-row>span:nth-child(2){min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+ .v708-draft-row strong{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .v708-draft-row small{font-size:10px;color:var(--v708-muted)}
+ .v708-draft-row button{display:inline-flex;align-items:center;gap:5px;background:var(--v708-soft);border:0;border-radius:10px;color:var(--v708-accent)!important;font-size:10px!important;font-weight:800;padding:8px}
+ .v708-draft-row button svg{width:12px;height:12px}
+}
+
+</style>
 </body>
 </html>
