@@ -36508,10 +36508,34 @@ async function v405Reconcile(){
 }
 // V714: control del ritmo de sincronización ante saturación de Supabase.
 let v714WriteRetryCount=0,v714NextWriteAt=0,v714ReadFailureCount=0,v714NextReadAt=0;
+
+// V719: una pausa de infraestructura compartida entre pestañas del mismo origen.
+// Solo guarda marca temporal de indisponibilidad; nunca guarda ni altera datos financieros.
+const v719BusyStorageKey='vive.el.hoy.supabase.busy.until';
+let v719BusyMemoryUntil=0;
+function v719BusyUntil(){
+ let shared=0;
+ try{shared=Number(localStorage.getItem(v719BusyStorageKey))||0;}catch(_){ }
+ return Math.max(v719BusyMemoryUntil,shared);
+}
+function v719IsServerBusy(err){
+ const status=Number(err?.status||err?.code||0);
+ return status===503||status===504||/connection pool|acquiring connection|service unavailable|gateway timeout|temporarily unavailable|timed out acquiring connection/i.test(String(err?.message||''));
+}
+function v719MarkBusy(err){
+ if(!v719IsServerBusy(err))return;
+ const wait=180000+Math.floor(Math.random()*60000);
+ const until=Math.max(v719BusyUntil(),Date.now()+wait);
+ v719BusyMemoryUntil=until;
+ try{localStorage.setItem(v719BusyStorageKey,String(until));}catch(_){ }
+ v714NextReadAt=Math.max(v714NextReadAt,until);
+ v714NextWriteAt=Math.max(v714NextWriteAt,until);
+}
+
 function v714Backoff(attempt,base=2000,cap=120000){return Math.min(cap,base*Math.pow(2,Math.min(6,Math.max(0,attempt-1))));}
 function v714ScheduleWriteRetry(){
  if(!f33Active||!f33Dirty||f33Conflict||!navigator.onLine)return;
- const delay=Math.max(1500,v714NextWriteAt-Date.now());
+ const delay=Math.max(1500,v714NextWriteAt-Date.now(),v719BusyUntil()-Date.now());
  clearTimeout(f33Timeout);
  f33Timeout=setTimeout(()=>{if(f33Active&&f33Dirty&&!f33Saving&&!f33Conflict)window.__f360LastPersistPromise=f33Flush();},delay);
 }
@@ -36543,7 +36567,7 @@ f33LoadUser=async function(user){
   v405Base=v405Clone(remote.documento);v405Revision=remote.revision;v405Loaded=true;
   f33Stamp=String(remote.revision);v360RememberBase(remote.documento,f33Stamp);
   f33Ready();
- }catch(err){if(token!==f151CloudLoadToken)return;f33Phase='failure';f33Active=false;
+ }catch(err){if(token!==f151CloudLoadToken)return;v719MarkBusy(err);f33Phase='failure';f33Active=false;
   f33Shell('No pudimos cargar tus datos.','La base no se modificó. Puedes reintentar.',
    '<div class="f33-error" role="alert">'+sanitize(err.message||String(err))+'</div><button class="f33-primary" data-f33="load">Reintentar</button>');
  }
@@ -36552,7 +36576,7 @@ f33FirstStart=async function(){if(f33User)await f33LoadUser(f33User)};
 f33Flush=async function(){
  if(!f33Active||!f33User||!f33Dirty||f33Saving||f33Conflict)return;
  if(!navigator.onLine){f33SetStatus('error','Sin conexión: el cambio no está confirmado.');return;}
- if(Date.now()<v714NextWriteAt){v714ScheduleWriteRetry();return;}
+ if(Date.now()<Math.max(v714NextWriteAt,v719BusyUntil())){v714ScheduleWriteRetry();return;}
  f33Saving=true;f33Dirty=false;f33SetStatus('saving','Guardando filas en Supabase…');
  let snapshot;
  try{
@@ -36587,7 +36611,8 @@ f33Flush=async function(){
  }catch(err){
   f33Dirty=true;v360WritePending();
   v714WriteRetryCount++;
-  v714NextWriteAt=Date.now()+v714Backoff(v714WriteRetryCount,15000,300000);
+  v719MarkBusy(err);
+  v714NextWriteAt=Math.max(v719BusyUntil(),Date.now()+v714Backoff(v714WriteRetryCount,15000,300000));
   f33SetStatus('error','Guardado pendiente; reintentaremos de forma gradual. '+(err.message||err));
   console.error('[V714] Escritura pendiente protegida:',err);
  }
@@ -36608,7 +36633,7 @@ v10PullRemote=async function(){
  if(v10Pulling){return;}
  if(!f33Active||!f33Api||!f33User||!navigator.onLine)return;
  // Agrupar eventos Realtime repetidos: evitar consultas a la misma revisión cada pocos ms.
- if(Date.now()<v714NextReadAt||Date.now()-v715LastRevisionCheck<4000)return;
+ if(Date.now()<Math.max(v714NextReadAt,v719BusyUntil())||Date.now()-v715LastRevisionCheck<4000)return;
  v715LastRevisionCheck=Date.now();
  if(f33Saving){v10RemoteQueued=true;return;}
  if(f33Dirty){v10RemoteQueued=true;if(!f33Conflict)window.__f360LastPersistPromise=f33Flush();return;}
@@ -36627,9 +36652,10 @@ v10PullRemote=async function(){
   if(!f33Dirty&&!f33Saving){f33SetStatus('ok','✓ Estado verificado en Supabase');v402AutoConfirmed();}
  }catch(err){
   v714ReadFailureCount++;
-  // 503/504 suelen indicar saturación del pool: no insistir cada pocos segundos.
+  v719MarkBusy(err);
+  // 503/504 suelen indicar saturación del pool: compartir pausa con las demás pestañas.
   const serverBusy=[503,504].includes(Number(err?.status||err?.code))||/connection pool|acquiring connection|service unavailable|timeout/i.test(String(err?.message||''));
-  v714NextReadAt=Date.now()+v714Backoff(v714ReadFailureCount,serverBusy?30000:5000,serverBusy?300000:120000);
+  v714NextReadAt=Math.max(v719BusyUntil(),Date.now()+v714Backoff(v714ReadFailureCount,serverBusy?30000:5000,serverBusy?300000:120000));
   console.error('[V716] Lectura temporalmente pausada; sin cambios en los datos:',err);
   f33SetStatus('error','Servidor temporalmente saturado; datos locales protegidos');v402Mode='error';v402Message=err.message;v402Paint();
  }
