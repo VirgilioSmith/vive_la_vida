@@ -2,7 +2,7 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="716"/>
+<meta name="vive-el-hoy-version" content="717"/>
 <meta name="vive-el-hoy-ui-patch" content="v714-supabase-stabilization"/>
 
 
@@ -36669,129 +36669,19 @@ async function f33Boot(){
  }catch(err){f33LoginScreen();f33Message('No se pudo comprobar tu sesión: '+(err.message||err),true)}
 }
 window.__f360Test={phase:()=>f33Phase,ready:()=>f33Active,cloudUser:()=>f33User?.id||null,state:()=>db,dirty:()=>f33Dirty,flush:f33Flush,load:f33LoadUser};
-/* V37 · Web Push por dispositivo (iPhone PWA / laptop).
-   Usa la campanita V36 sin modificarla. Guardado sincronizado en Supabase.
-   Ninguna clave privada en el navegador. */
-const F37_VAPID_PUBLIC = 'BPYdcoUZvXaDH3AYwtmrAN8RKX2Z3TfKO--h_A3VQLfJW-C1bdjyOb2rYQgcNiXrJ1HbxegRj3l5qoqo5HXW--M';
-let f37Prefs=null,f37Devices=[],f37Loaded=false,f37Busy=false,f37Message='',f37SchemaReady=false;
-let f37SyncBusy=false,f37SyncAgain=false,f37SyncError='';
-let v715LastPushPayload='',v715LastPushAt=0;
-const F37_DEFAULTS={enabled:false,timezone:'America/Santo_Domingo',notify_at:'09:00:00',days_before:[7,3,1,0],overdue_enabled:true,private_preview:true};
-const f37CanPush=()=>window.isSecureContext&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
-const f37Standalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-const f37IsIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent);
-const f37Escape=x=>sanitize(String(x??''));
-function f37DeviceLabel(){const ua=navigator.userAgent;return /iPhone/i.test(ua)?'iPhone · vive el hoy':/iPad/i.test(ua)?'iPad · vive el hoy':/Macintosh/i.test(ua)?'Mac · Navegador':/Windows/i.test(ua)?'Laptop Windows': 'Navegador web';}
-async function f37Worker(){return await navigator.serviceWorker.register('./sw.js',{scope:'./'});}
+/* V717 — Sin notificaciones push automáticas: conservar solo campanita local V36.
+   La tarea cron y la Edge Function push-reminders están desactivadas en Supabase.
+   No consultar push_preferences, push_devices ni push_obligations; no crear suscripciones.
+*/
 function f37SettingsPanel(){
- const state=f37Busy?'Guardando…':!f37Loaded?'Cargando dispositivos…':!f37SchemaReady?'Requiere activar las tablas de notificaciones':f37Message||'Configura las alertas del dispositivo';
- const checked=d=>Array.isArray(f37Prefs?.days_before)&&f37Prefs.days_before.includes(d)?'checked':'';
- const allowed=f37CanPush()&&(!f37IsIOS()||f37Standalone());
- const canText=!window.isSecureContext?'Abre la página HTTPS de Netlify para activar avisos.':!f37CanPush()?'Este navegador no admite Web Push.':'Para recibir notificaciones en iPhone, abre Safari → Compartir → Añadir a pantalla de inicio y entra desde el icono.';
- const choices=[['7','7 días antes'],['3','3 días antes'],['1','1 día antes'],['0','El día del vencimiento']].map(([n,label])=>`<label class="f37-toggle"><input type="checkbox" data-v37-option="${n}" ${checked(Number(n))}><span>${label}</span></label>`).join('');
- const local=f37Devices.length?`<span class="f37-active-dot"></span> Activo en ${f37Devices.length} dispositivo${f37Devices.length===1?'':'s'}`:'Sin dispositivos autorizados';
- return `<section class="f37-push-panel" aria-label="Avisos de pagos y suscripciones"><div class="f37-panel-head"><span class="f37-panel-icon">${icon('bell')}</span><div><h3>Recordatorios de pagos</h3><p>Tarjetas, préstamos, suscripciones y compromisos · avisos push reales.</p></div></div>
- <div class="f37-meta"><span><strong>09:00 a. m.</strong> · República Dominicana</span><span>${local}</span></div>
- <div class="f37-options">${choices}<label class="f37-toggle"><input type="checkbox" data-v37-option="overdue" ${f37Prefs?.overdue_enabled?'checked':''}><span>Pagos vencidos</span></label></div>
- <label class="f37-private"><input type="checkbox" data-v37-option="private" ${f37Prefs?.private_preview?'checked':''}> Ocultar importes en pantalla bloqueada</label>
- ${!allowed?`<div class="f37-help">${f37Escape(canText)}</div>`:''}
- <div class="f37-buttons"><button type="button" class="btn soft" data-v37="enable" ${f37Busy||!f37SchemaReady||!allowed?'disabled':''}>Activar en este dispositivo</button><button type="button" class="btn ghost" data-v37="test" ${f37Busy||!f37SchemaReady||!f37Devices.length?'disabled':''}>Enviar una prueba</button><button type="button" class="btn ghost" data-v37="disable" ${f37Busy||!f37Devices.length?'disabled':''}>Desactivar aquí</button></div>
- <div class="f37-status" role="status" aria-live="polite">${f37Escape(state)}</div>
- <p class="f37-note">Los avisos requieren autorización en cada dispositivo y el envío programado de Supabase. Los pagos se actualizan cuando vive el hoy sincroniza tus cambios. Los atrasados se recuerdan diariamente durante 7 días y después semanalmente, hasta que se registre el pago.</p></section>`;
+ return `<section class="f37-push-panel" aria-label="Notificaciones internas"><div class="f37-panel-head"><span class="f37-panel-icon">${icon('bell')}</span><div><h3>Notificaciones dentro de la aplicación</h3><p>Consulta los avisos desde la campanita. No se envían recordatorios automáticos ni notificaciones push externas.</p></div></div><p class="f37-note">Los pagos, vencimientos y movimientos siguen disponibles al abrir vive el hoy.</p></section>`;
 }
 const f37SettingsOrig=pages.settings;
 pages.settings=()=>f37SettingsOrig()+f37SettingsPanel();
-function f37PanelUpdate(){if(f33Active&&ui.page==='settings'){const found=document.querySelector('.f37-push-panel');if(found)found.outerHTML=f37SettingsPanel()}}
-async function f37Hydrate(){
- if(!f33Active||!f33User||!f33Api)return;
- try {
-  const [pr,dev]=await Promise.all([
-   f33Api.from('push_preferences').select('*').eq('user_id',f33User.id).maybeSingle(),
-   f33Api.from('push_devices').select('id,endpoint,device_label,enabled').eq('user_id',f33User.id).eq('enabled',true)
-  ]);
-  if(pr.error||dev.error)throw pr.error||dev.error;
-  f37Prefs={...F37_DEFAULTS,...(pr.data||{})};f37Devices=dev.data||[];f37SchemaReady=true;f37Loaded=true;
-  if(f37CanPush())f37Worker().catch(()=>{}); // registro pasivo; no solicita permiso
-  f37Message='La campanita permanece activa dentro de vive el hoy.';
- }catch(e){f37Prefs={...F37_DEFAULTS};f37SchemaReady=false;f37Loaded=true;f37Message='Primero ejecuta el SQL de Web Push en Supabase. '+(e.message||'');}
- f37PanelUpdate();
-}
-function f37Payload(){const values=v36DueItems();return values.filter(o=>['card','loan','recurring','personal'].includes(o.kind)&&Number(o.amount)>0).filter(o=>/^\d{4}-\d{2}-\d{2}$/.test(o.date||'')).slice(0,250).map(o=>({key:String(o.kind+'|'+o.id).slice(0,200),kind:o.kind,title:String(o.name||'Compromiso').slice(0,100),date:o.date,amount:Math.max(0,Number(o.amount)||0),currency:o.currency==='USD'?'USD':'DOP'}));}
-async function f37SyncObligations(){
- if(!f33Active||!f33Api||!f33User||!f37SchemaReady||!navigator.onLine)return;
- // Solo escribir obligaciones si cambió su contenido; una sesión no debe repetir el mismo RPC.
- const items=f37Payload();
- const fingerprint=JSON.stringify([f33User.id,items]);
- if(fingerprint===v715LastPushPayload)return;
- if(f37SyncBusy){f37SyncAgain=true;return;}
- f37SyncBusy=true;
- try {
-  const {error}=await f33Api.rpc('push_sync_obligations',{items});
-  if(error)throw error;
-  v715LastPushPayload=fingerprint;v715LastPushAt=Date.now();f37SyncError='';
- }catch(e){f37SyncError=e.message||String(e);console.warn('Sincronización de compromisos para notificaciones:',e);}
- finally{f37SyncBusy=false;if(f37SyncAgain){f37SyncAgain=false;void f37SyncObligations();}}
-}
-async function f37SavePrefs(update){
- if(!f33Active||!f37SchemaReady)throw Error('Primero prepara las tablas de Supabase');
- const next={...F37_DEFAULTS,...f37Prefs,...update,user_id:f33User.id,updated_at:new Date().toISOString()};
- const {error}=await f33Api.from('push_preferences').upsert(next,{onConflict:'user_id'});
- if(error)throw error;f37Prefs=next;return next;
-}
-async function f37Enable(){
- if(!f37CanPush())throw Error('Este navegador no permite notificaciones push');
- if(f37IsIOS()&&!f37Standalone())throw Error('En iPhone, primero añade la web a la pantalla de inicio');
- // Solicitar permiso como consecuencia inmediata del toque o clic del usuario.
- const permissionPromise=Notification.permission==='granted'?Promise.resolve('granted'):Notification.requestPermission();
- const permission=await permissionPromise;
- if(permission!=='granted')throw Error('Debes permitir las notificaciones del navegador para continuar');
- const reg=await f37Worker();
- const current=await reg.pushManager.getSubscription();
- const sub=current||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:F37_VAPID_PUBLIC});
- const data=sub.toJSON();if(!data.endpoint||!data.keys?.auth||!data.keys?.p256dh)throw Error('El navegador no devolvió la suscripción completa');
- const {error}=await f33Api.from('push_devices').upsert({user_id:f33User.id,endpoint:data.endpoint,p256dh:data.keys.p256dh,auth:data.keys.auth,device_label:f37DeviceLabel(),last_seen:new Date().toISOString(),enabled:true},{onConflict:'endpoint'});
- if(error)throw error;
- await f37SavePrefs({enabled:true});await f37SyncObligations();await f37Hydrate();
- f37Message='Activado. Recibirás avisos programados después de configurar la función y el cron de Supabase.';
-}
-async function f37Disable(){
- if(!f37CanPush())throw Error('No hay suscripción disponible');
- const reg=await f37Worker();const sub=await reg.pushManager.getSubscription();
- if(sub){const {error}=await f33Api.from('push_devices').delete().eq('user_id',f33User.id).eq('endpoint',sub.endpoint);if(error)throw error;await sub.unsubscribe();}
- await f37Hydrate();f37Message='Notificaciones desactivadas en este dispositivo.';
-}
-async function f37Test(){
- if(!f33Active)throw Error('Inicia sesión primero');
- const {data,error}=await f33Api.functions.invoke('push-reminders',{body:{action:'test'}});
- if(error)throw Error(error.message||'No se pudo enviar');
- if(!data?.ok)throw Error(data?.error||'La prueba no se entregó');
- f37Message='Prueba enviada a '+data.delivered+' dispositivo(s). Verifica tus notificaciones.';
-}
-document.addEventListener('click',async event=>{
- const el=event.target.closest('[data-v37]');if(!el)return;
- const command=el.dataset.v37;if(f37Busy)return;f37Busy=true;f37Message='';f37PanelUpdate();
- try{if(command==='enable')await f37Enable();else if(command==='disable')await f37Disable();else if(command==='test')await f37Test();}
- catch(e){f37Message='No se completó: '+(e.message||String(e));console.warn('Notificaciones:',e);}
- finally{f37Busy=false;f37PanelUpdate();}
-});
-document.addEventListener('change',async event=>{
- const el=event.target.closest('[data-v37-option]');if(!el||!f37SchemaReady||f37Busy)return;
- const opt=el.dataset.v37Option;f37Busy=true;f37PanelUpdate();
- try{
-  if(opt==='private')await f37SavePrefs({private_preview:el.checked});
-  else if(opt==='overdue')await f37SavePrefs({overdue_enabled:el.checked});
-  else {const set=new Set(f37Prefs.days_before);if(el.checked)set.add(Number(opt));else set.delete(Number(opt));await f37SavePrefs({days_before:[...set].sort((a,b)=>b-a)});}
-  f37Message='Preferencias guardadas en Supabase.';
- }catch(e){f37Message='No se pudo guardar: '+(e.message||'');await f37Hydrate();}
- finally{f37Busy=false;f37PanelUpdate();}
-});
 const f37OldReady=f33Ready;
 f33Ready=function(){f37OldReady();
  if(new URLSearchParams(location.search).get('open')==='payments'){ui.page='payments';render();}
- Promise.resolve().then(async()=>{await f37Hydrate();await f37SyncObligations();}).catch(e=>console.warn('Web Push:',e));
 };
-const f37OldFlush=f33Flush;
-f33Flush=async function(){await f37OldFlush();if(f33Active&&!f33Dirty&&!f33Conflict)await f37SyncObligations();};
 
 /* V40 · Contratos recurrentes, instituciones multiformato y fiscalidad versionada.
    Los asientos automáticos son registros internos, NO órdenes a bancos o empleadores.
