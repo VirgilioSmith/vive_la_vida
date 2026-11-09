@@ -2,7 +2,7 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="706"/>
+<meta name="vive-el-hoy-version" content="707"/>
 <meta name="vive-el-hoy-ui-patch" content="v705-interactive-calendar-banks"/>
 
 
@@ -25562,6 +25562,39 @@ body.theme-black #app .v416-tile-second :is(b,small){color:#d5e3f7!important}
 #app .v410-subs .v410-legacy-tools{display:none!important}
 body.theme-black #app .v417-subscriptions-analytics .subscription-world{background:#111!important;border-color:#333!important}
 </style>
+<style id="v707-conservative-visual-corrections">
+/* V707 | Refinamiento conservador: colores efectivos en calendario, campo de búsqueda. */
+/* Un mismo conjunto de cinco niveles para el calendario completo y la leyenda. */
+html body.theme-black .v362-pressure-grid button.v322-cal-cell.level-0,
+html body.theme-dark .v362-pressure-grid button.v322-cal-cell.level-0{background:#141720!important;background-image:none!important;color:#d9e1ee!important}
+html body.theme-black .v362-pressure-grid button.v322-cal-cell.level-1,
+html body.theme-dark .v362-pressure-grid button.v322-cal-cell.level-1{background:#172945!important;background-image:none!important;color:#eef4ff!important}
+html body.theme-black .v362-pressure-grid button.v322-cal-cell.level-2,
+html body.theme-dark .v362-pressure-grid button.v322-cal-cell.level-2{background:#22416b!important;background-image:none!important;color:#f4f8ff!important}
+html body.theme-black .v362-pressure-grid button.v322-cal-cell.level-3,
+html body.theme-dark .v362-pressure-grid button.v322-cal-cell.level-3{background:#315a93!important;background-image:none!important;color:#fff!important}
+html body.theme-black .v362-pressure-grid button.v322-cal-cell.level-4,
+html body.theme-dark .v362-pressure-grid button.v322-cal-cell.level-4{background:#66aaff!important;background-image:none!important;color:#061323!important}
+html body:not(.theme-black):not(.theme-dark) .v362-pressure-grid button.v322-cal-cell.level-0{background:#edf2f9!important;background-image:none!important;color:#27415f!important}
+html body:not(.theme-black):not(.theme-dark) .v362-pressure-grid button.v322-cal-cell.level-1{background:#dceafb!important;background-image:none!important;color:#25476a!important}
+html body:not(.theme-black):not(.theme-dark) .v362-pressure-grid button.v322-cal-cell.level-2{background:#b5d4fa!important;background-image:none!important;color:#153352!important}
+html body:not(.theme-black):not(.theme-dark) .v362-pressure-grid button.v322-cal-cell.level-3{background:#80b3f2!important;background-image:none!important;color:#102944!important}
+html body:not(.theme-black):not(.theme-dark) .v362-pressure-grid button.v322-cal-cell.level-4{background:#367bd1!important;background-image:none!important;color:#fff!important}
+/* Históricos se distinguen por opacidad, sin perder su intensidad registrada. */
+html body .v362-pressure-grid button.v362-pressure-past{opacity:.44!important}
+/* El input comparte el vidrio redondeado del buscador: no crea otro rectángulo interior. */
+html body .world-mobilesearch .v154-search-box input#v154-mobile-search-input,
+html body .v154-search-box input#v154-mobile-search-input{background:transparent!important;background-image:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;outline:0!important;min-width:0!important;width:100%!important;flex:1 1 auto!important;appearance:none!important;-webkit-appearance:none!important;padding:0!important}
+html body.theme-black .v154-search-box input#v154-mobile-search-input,
+html body.theme-dark .v154-search-box input#v154-mobile-search-input{color:#f3f6ff!important;-webkit-text-fill-color:#f3f6ff!important}
+html body.theme-black .v154-search-box input#v154-mobile-search-input::placeholder,
+html body.theme-dark .v154-search-box input#v154-mobile-search-input::placeholder{color:#a1acc1!important;opacity:1!important}
+html body .v154-search-box:focus-within{outline:2px solid rgba(120,165,255,.55)!important;outline-offset:2px!important}
+@media(max-width:430px){
+ html body .v154-search-box{min-width:0!important;max-width:100%!important}
+ html body .v154-search-box input#v154-mobile-search-input{font-size:16px!important}
+}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -29546,7 +29579,7 @@ function v68Wallet(){
  }).join('');
  const rows=history.map(t=>`<button type="button" class="v266-activity-row v6-wallet-tx-trigger" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalles de ${sanitize(transactionTitle(t))}, ${sanitize(String(txDisplay(t)).replace(/<[^>]*>/g,''))}"><span class="v266-activity-ico">${icon(['card_payment','card_refund','card_reward'].includes(t.type)?'up':'card')}</span><span class="v266-activity-info"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b><span class="v6-wallet-tx-chevron" aria-hidden="true">${icon('arrow')}</span></button>`).join('');
  const metric=(label,value,sub='')=>`<div class="v266-metric"><small>${label}</small><strong>${value}</strong>${sub?`<span>${sub}</span>`:''}</div>`;
- return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">VIVE EL HOY · WALLET</span><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
+ return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
  <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${cards.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
  <div class="v266-selected-balance v550-currency-balance v565-credit-dashboard" aria-label="Resumen de crédito por moneda de la tarjeta seleccionada">
    <div class="v550-balance-column v565-primary"><span>CRÉDITO DISPONIBLE</span><strong>${money(available)}</strong><small>RD$ equivalentes</small>
@@ -42578,7 +42611,7 @@ function v318Graph(id){const c=v318Context(),t=c.thirty,Y=c.year;
   const y=n=>164-(n-low)/span*142;
   const rect=(x,a,b,cls)=>{const y1=y(a),y2=y(b);return `<rect class="${cls}" x="${x}" y="${Math.min(y1,y2)}" width="74" height="${Math.max(2,Math.abs(y1-y2))}" rx="6"/>`};
   const svg=`<svg viewBox="0 0 540 205" class="v318-svg v318-waterfall" role="img" aria-label="Cascada del saldo de hoy a los cobros, compromisos y saldo previsto"><line x1="20" y1="${y(0)}" x2="523" y2="${y(0)}" stroke="#5c6682" stroke-dasharray="4 5"/>${rect(26,0,first,'v318-blue-fill')}${rect(158,first,after,'v318-green-fill')}${rect(290,after,last,'v318-amber-fill')}${rect(422,0,last,last<0?'v318-red-fill':'v318-blue-fill')}<path d="M100 ${y(first)} H158 M232 ${y(after)} H290 M364 ${y(last)} H422" fill="none" stroke="#7b8ca8" stroke-dasharray="4 4"/><g class="v318-waterfall-labels"><text x="63" y="191">AHORA</text><text x="195" y="191">+ INGRESOS</text><text x="327" y="191">− PAGOS</text><text x="459" y="191">FINAL</text></g></svg>`;
-  return v318ChartFrame(svg+v318SmallStats([['Cobros previstos','+'+v318Money(t.incomes),'v318-good'],['Compromisos','−'+v318Money(t.dues),'v318-danger'],['Saldo estimado',v318Money(last),last<0?'v318-danger':'']]),'Cascada de 30 días: el saldo final no es dinero garantizado. Se omiten gastos que todavía no están programados.');
+  const detailStats=`<div class="v318-stat-row v362-detail-stats">   <button type="button" class="v362-detail-stat" data-v362-flow-detail="1" data-stage="ahora" data-title="Ahora" data-value="${sanitize(v318Money(first))}" data-summary="Liquidez identificada al iniciar el escenario de 30 días." data-line1="Saldo base" data-value1="${sanitize(v318Money(first))}" data-line2="Interpretación" data-value2="Punto de partida de la cascada"><small>Ahora</small><strong>${v318Money(first)}</strong></button>   <button type="button" class="v362-detail-stat" data-v362-flow-detail="1" data-stage="ingresos" data-title="Cobros previstos" data-value="${sanitize('+'+v318Money(t.incomes))}" data-summary="Ingresos calendarizados que el motor identifica para los próximos 30 días." data-line1="Cobros previstos" data-value1="${sanitize(v318Money(t.incomes))}" data-line2="Después de sumar" data-value2="${sanitize(v318Money(after))}"><small>Cobros previstos</small><strong class="v318-good">+${v318Money(t.incomes)}</strong></button>   <button type="button" class="v362-detail-stat" data-v362-flow-detail="1" data-stage="pagos" data-title="Compromisos" data-value="${sanitize('−'+v318Money(t.dues))}" data-summary="Pagos y obligaciones futuras registradas dentro de la ventana de 30 días." data-line1="Compromisos" data-value1="${sanitize(v318Money(t.dues))}" data-line2="Salida estimada" data-value2="${sanitize(v318Money(last-after))}"><small>Compromisos</small><strong class="v318-danger">−${v318Money(t.dues)}</strong></button>   <button type="button" class="v362-detail-stat" data-v362-flow-detail="1" data-stage="final" data-title="Saldo estimado" data-value="${sanitize(v318Money(last))}" data-summary="Resultado estimado al terminar el horizonte, después de cobros y compromisos identificados." data-line1="Saldo final" data-value1="${sanitize(v318Money(last))}" data-line2="Lectura" data-value2="${sanitize(last<0?'Déficit estimado':'Liquidez estimada')}"><small>Saldo estimado</small><strong class="${last<0?'v318-danger':''}">${v318Money(last)}</strong></button>  </div>`;  return v318ChartFrame(svg+detailStats,'Cascada de 30 días: el saldo final no es dinero garantizado. Se omiten gastos que todavía no están programados.');
  }
  if(id==='futureDebt'){
   const road=v318LoanRoadmap(c);if(!road.hasLoan&&!c.otherDebt)return v318Empty('Agrega tarjetas, deudas personales o préstamos para analizar tu saldo pendiente.');
@@ -76626,6 +76659,151 @@ html body.theme-black #app .main.world-mobilehub #page .v431-explore .v431-tile:
  .v705-detail-sheet .v705-detail-row>b{overflow-wrap:anywhere;white-space:normal;max-width:100%;text-align:right;margin-left:auto}
 }
 @media(prefers-reduced-motion:reduce){.v705-detail-sheet,.v205-explore-link{transition:none!important}}
+</style>
+
+
+<style id="v709-recurring-black-and-flow-details">
+/* V709 · refinamiento conservador de superficies negras y detalle por clic */
+body.theme-black #app #page .v302-subs-mobile :is(.v302-cost-card,.v302-brands-card,.v302-service-summary,.v302-service-details,.v302-paused,.v302-subs-history>summary,.v301-recurring-original,.v305-actives-breakdown,.v305-history-row){
+  background:#090909!important;
+  background-image:none!important;
+  border-color:#2b2b2b!important;
+  color:#f5f5f5!important;
+  box-shadow:none!important;
+}
+body.theme-black #app #page .v302-subs-mobile .v305-history-icon,
+body.theme-black #app #page .v302-subs-mobile .v302-service-icon{
+  background:#141414!important;
+  border-color:#262626!important;
+}
+body.theme-black #app #page .v302-subs-mobile :is(.v305-history-info strong,.v305-history-row>b,.v302-service-info strong,.v302-service-details b,.v302-subs-head h1,.v302-subs-upcoming h2,.v305-history h2){color:#f5f5f5!important}
+body.theme-black #app #page .v302-subs-mobile :is(.v305-history-info small,.v302-service-info small,.v302-service-details span,.v302-subs-empty){color:#b8b8b8!important}
+body.theme-black #app #page .v302-subs-mobile .v302-subs-add{background:#131313!important;color:#fff!important;border-color:#303030!important}
+body.theme-black #app #page .v302-subs-mobile .v305-history,
+body.theme-black #app #page .v302-subs-mobile .v302-subs-upcoming{background:transparent!important}
+
+body.theme-black #app #page .v318-mobile-card[data-v105-widget="futureWaterfall"],
+body.theme-black #app #page .v318-mobile-card[data-v105-widget="futureWaterfall"] .v318-chart-content,
+body.theme-black #app #page .v318-mobile-card[data-v105-widget="futureWaterfall"] .v318-chart-note,
+body.theme-black #app #page .v318-mobile-card[data-v105-widget="futureWaterfall"] .v318-stat-row>button,
+body.theme-black #app #page .v318-mobile-card[data-v105-widget="futureWaterfall"] .v318-stat-row>div{
+  background:#090909!important;
+  background-image:none!important;
+  border-color:#2b2b2b!important;
+  color:#f5f5f5!important;
+  box-shadow:none!important;
+}
+body.theme-black #app #page .v318-mobile-card[data-v105-widget="futureWaterfall"] .v318-mobile-head small,
+body.theme-black #app #page .v318-mobile-card[data-v105-widget="futureWaterfall"] .v318-chart-note{color:#b8b8b8!important}
+body.theme-black #app #page .v318-mobile-card[data-v105-widget="futureWaterfall"] .v318-chart-note{padding:10px 12px;border:1px solid #202020;border-radius:12px}
+
+.v362-detail-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.v362-detail-stat{appearance:none;border:1px solid #222b39;background:#10131a;color:#f7faff;border-radius:12px;padding:10px;min-width:0;display:grid;gap:5px;text-align:left;cursor:pointer;transition:transform .18s ease,border-color .18s ease,background .18s ease}
+.v362-detail-stat:hover{transform:translateY(-1px);border-color:#5a79a7}
+.v362-detail-stat:focus-visible{outline:2px solid #7baeff;outline-offset:3px}
+.v362-detail-stat small{font-size:9px!important;line-height:1.3!important;color:#abbacf!important}
+.v362-detail-stat strong{font-size:clamp(13px,1.7vw,17px)!important;font-weight:850;overflow-wrap:anywhere}
+body.theme-black .v362-detail-stat{background:#090909!important;border-color:#2b2b2b!important;color:#f5f5f5!important}
+body.theme-black .v362-detail-stat small{color:#b8b8b8!important}
+
+.v362-flow-overlay{position:fixed;inset:0;z-index:2147481100;display:grid;place-items:center;padding:12px;box-sizing:border-box}
+.v362-flow-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.76);backdrop-filter:blur(7px)}
+.v362-flow-sheet{position:relative;width:min(94vw,540px);max-height:min(84dvh,760px);display:flex;flex-direction:column;overflow:hidden;border:1px solid #cbd5e1;border-radius:24px;background:#fff;color:#17253e;box-shadow:0 24px 80px #0007;box-sizing:border-box}
+.v362-flow-sheet header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:19px 18px 12px;border-bottom:1px solid #dce4ee}
+.v362-flow-sheet header small{font-weight:800;font-size:10px;letter-spacing:.13em;opacity:.7}
+.v362-flow-sheet header h2{margin:4px 0;font-size:clamp(19px,4.4vw,27px)}
+.v362-flow-sheet header button{width:38px;height:38px;border-radius:50%;font-size:26px;flex-shrink:0;border:1px solid #cbd5e1;background:#f1f5f9;color:inherit;cursor:pointer}
+.v362-flow-main{display:grid;gap:4px;padding:16px 18px 10px;border-bottom:1px solid #dce4ee}
+.v362-flow-main span{font-size:11px;letter-spacing:.11em;font-weight:800;opacity:.72}
+.v362-flow-main strong{font-size:clamp(28px,8vw,42px);line-height:1;font-weight:900;letter-spacing:-.05em}
+.v362-flow-main p{margin:0;color:#52627b;font-size:13px;line-height:1.45}
+.v362-flow-list{padding:14px 18px 18px;display:grid;gap:12px;overflow:auto}
+.v362-flow-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;border:1px solid #dce4ee;background:#f8fafc}
+.v362-flow-row span{font-size:12px;color:#5a6a84}
+.v362-flow-row b{font-size:14px;color:#17253e;text-align:right}
+.v362-flow-sheet footer{padding:12px 18px calc(13px + env(safe-area-inset-bottom,0px));border-top:1px solid #dce4ee}
+.v362-flow-sheet footer button{width:100%;min-height:47px;border:0;border-radius:13px;background:#1c2941;color:#fff;font-weight:750;cursor:pointer}
+body.theme-black .v362-flow-sheet,body.theme-dark .v362-flow-sheet{background:#080808!important;border-color:#333!important;color:#f4f4f4!important}
+body:is(.theme-black,.theme-dark) .v362-flow-sheet :is(header,.v362-flow-main,.v362-flow-row,footer){border-color:#292929!important}
+body:is(.theme-black,.theme-dark) .v362-flow-sheet header button{background:#191919!important;color:#fff!important;border-color:#303030!important}
+body:is(.theme-black,.theme-dark) .v362-flow-sheet footer button{background:#222!important;color:#fff!important;border:1px solid #3a3a3a!important}
+body:is(.theme-black,.theme-dark) .v362-flow-main p,body:is(.theme-black,.theme-dark) .v362-flow-row span{color:#b8b8b8!important}
+body:is(.theme-black,.theme-dark) .v362-flow-row{background:#101010!important}
+body:is(.theme-black,.theme-dark) .v362-flow-row b{color:#f4f4f4!important}
+@media(max-width:430px){.v362-detail-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.v362-flow-sheet{width:100%;max-height:88dvh;border-radius:23px}}
+</style>
+<script id="v709-recurring-black-and-flow-details-script">
+(function(){
+  function closeDetail(){
+    const dialog=document.getElementById('v362-flow-detail-dialog');
+    if(dialog) dialog.remove();
+    document.body.classList.remove('v362-flow-open');
+  }
+  function openDetail(btn){
+    closeDetail();
+    const title=btn.getAttribute('data-title')||'Detalle';
+    const value=btn.getAttribute('data-value')||'—';
+    const summary=btn.getAttribute('data-summary')||'';
+    const line1=btn.getAttribute('data-line1')||'';
+    const value1=btn.getAttribute('data-value1')||'';
+    const line2=btn.getAttribute('data-line2')||'';
+    const value2=btn.getAttribute('data-value2')||'';
+    const dialog=document.createElement('div');
+    dialog.id='v362-flow-detail-dialog';
+    dialog.className='v362-flow-overlay';
+    dialog.innerHTML=`<div class="v362-flow-backdrop" data-v362-flow-close="1"></div><section role="dialog" aria-modal="true" aria-labelledby="v362-flow-title" class="v362-flow-sheet"><header><div><small>DINERO COMPROMETIDO · DETALLE</small><h2 id="v362-flow-title">${title}</h2></div><button type="button" data-v362-flow-close="1" aria-label="Cerrar detalle">×</button></header><div class="v362-flow-main"><span>Valor del escenario</span><strong>${value}</strong><p>${summary}</p></div><div class="v362-flow-list"><div class="v362-flow-row"><span>${line1}</span><b>${value1}</b></div><div class="v362-flow-row"><span>${line2}</span><b>${value2}</b></div></div><footer><button type="button" data-v362-flow-close="1">Volver al gráfico</button></footer></section>`;
+    document.body.appendChild(dialog);
+    document.body.classList.add('v362-flow-open');
+    dialog.querySelector('.v362-flow-sheet header button')?.focus();
+  }
+  document.addEventListener('click',function(event){
+    const close=event.target.closest('[data-v362-flow-close]');
+    if(close){ event.preventDefault(); closeDetail(); return; }
+    const btn=event.target.closest('[data-v362-flow-detail]');
+    if(btn){ event.preventDefault(); openDetail(btn); }
+  },true);
+  document.addEventListener('keydown',function(event){ if(event.key==='Escape' && document.getElementById('v362-flow-detail-dialog')) closeDetail(); },true);
+})();
+</script>
+
+
+<style id="v710-black-map-preview-correction">
+/* V710 · Black auténtico: preservar el lenguaje visual de la app y restaurar la semántica cromática. */
+html body.theme-black #app #page .v318-treemap{background:transparent!important;background-image:none!important;border-color:transparent!important}
+html body.theme-black #app #page .v318-treemap .v318-tree-cell{
+  border:1px solid rgba(156,183,221,.22)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+  background-size:cover!important;
+  opacity:1!important;
+  color:#f5f7ff!important;
+}
+html body.theme-black #app #page .v318-treemap .v318-tree-cell.blue{background:linear-gradient(145deg,#0c182b,#214875)!important}
+html body.theme-black #app #page .v318-treemap .v318-tree-cell.cyan{background:linear-gradient(145deg,#0b1e25,#135b68)!important}
+html body.theme-black #app #page .v318-treemap .v318-tree-cell.amber{background:linear-gradient(145deg,#24190f,#77502a)!important}
+html body.theme-black #app #page .v318-treemap .v318-tree-cell.rose{background:linear-gradient(145deg,#241422,#713b5c)!important}
+html body.theme-black #app #page .v318-treemap .v318-tree-cell :is(span,strong,small){color:#f5f7ff!important;-webkit-text-fill-color:#f5f7ff!important}
+html body.theme-black #app #page .v318-treemap .v318-tree-cell small{color:#cfdbeb!important;-webkit-text-fill-color:#cfdbeb!important}
+
+/* Miniaturas de estilos: reflejan Black, no la paleta pastel del tema Claro. */
+html body.theme-black #app #page .v242-appearance-picker .v242-style-option,
+html body.theme-black #app #page .v242-style-option{background:#111114!important;background-image:none!important;border-color:#35353b!important;color:#f5f5f5!important}
+html body.theme-black #app #page .v242-style-option.selected{border-color:var(--f360-accent-readable,#78a5ff)!important;box-shadow:0 0 0 2px rgba(113,165,255,.21)!important}
+html body.theme-black #app #page .v242-style-art.v242-mini-original{background:linear-gradient(140deg,#090c11,#1b2735)!important;background-image:linear-gradient(140deg,#090c11,#1b2735)!important;color:#f5f7ff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
+html body.theme-black #app #page .v242-style-art.v242-mini-circles{background:linear-gradient(140deg,#080b12,#152237)!important;background-image:linear-gradient(140deg,#080b12,#152237)!important;color:#f5f7ff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
+html body.theme-black #app #page .v242-style-art.v342-mini-creative{background:linear-gradient(145deg,#0b1225,#202448)!important;background-image:linear-gradient(145deg,#0b1225,#202448)!important;color:#f7f8ff!important}
+html body.theme-black #app #page .v242-mini-original :is(.v242-mini-label,.v242-mini-foot i){color:#b9cce5!important;-webkit-text-fill-color:#b9cce5!important}
+html body.theme-black #app #page .v242-mini-original :is(strong,b),
+html body.theme-black #app #page .v242-mini-circles :is(.v242-mini-title,strong),
+html body.theme-black #app #page .v342-mini-creative :is(strong,small,.v342-preview-kicker){color:#f7f9ff!important;-webkit-text-fill-color:#f7f9ff!important}
+html body.theme-black #app #page .v242-mini-divider{background:rgba(214,231,255,.23)!important}
+html body.theme-black #app #page .v242-mini-circles .v242-mini-orbs i:not(.v242-featured){background:#1b2637!important;background-image:none!important;border:1px solid #3a4d67!important;box-shadow:none!important;color:#eef5ff!important}
+html body.theme-black #app #page .v242-mini-circles .v242-mini-orbs i:not(.v242-featured) :is(b,small){color:#eef5ff!important;-webkit-text-fill-color:#eef5ff!important}
+html body.theme-black #app #page .v242-mini-circles .v242-mini-orbs i.v242-featured{background:var(--v424-accent-strong,#375f9e)!important;border:1px solid rgba(209,230,255,.44)!important;box-shadow:none!important;color:#fff!important}
+html body.theme-black #app #page .v242-mini-circles .v242-mini-orbs i.v242-featured :is(b,small){color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body.theme-black #app #page .v242-style-description :is(strong,small){color:#f0f2f6!important;-webkit-text-fill-color:#f0f2f6!important}
+html body.theme-black #app #page .v242-style-description small{color:#b7bfcb!important;-webkit-text-fill-color:#b7bfcb!important}
+html body.theme-black #app #page .v242-picker-note{color:#b6bfca!important}
+@media(max-width:430px){html body.theme-black #app #page .v318-treemap{min-width:0!important;max-width:100%!important}html body.theme-black #app #page .v318-treemap .v318-tree-cell{min-width:0!important;flex-basis:80px!important}}
 </style>
 
 </body>
