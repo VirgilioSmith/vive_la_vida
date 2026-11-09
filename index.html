@@ -2,7 +2,7 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="715"/>
+<meta name="vive-el-hoy-version" content="716"/>
 <meta name="vive-el-hoy-ui-patch" content="v714-supabase-stabilization"/>
 
 
@@ -16,6 +16,7 @@
 <meta name="theme-color" content="#000000"/>
 <!-- V79: recursos PWA y notificaciones con rutas relativas para GitHub Pages /repositorio/ y dominio raíz. -->
 <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="vive el hoy"/>
 <meta content="light" name="color-scheme"/>
@@ -35758,14 +35759,9 @@ async function v402Refresh(){
   if(f33Dirty||f33Saving||f33Conflict)throw Error('Existen cambios locales sin confirmar. Revisa el guardado antes de actualizar.');
   // Use the existing verified pull, without creating another client/channel.
   await v10PullRemote();
-  const uid=f33User.id;
-  const check=await f33Api.from('finance_revision').select('revision').eq('user_id',uid).maybeSingle();
-  if(check.error)throw check.error;
-  if(check.data?.revision==null)throw Error('La nube no devolvió el estado financiero.');
-  if(String(check.data.revision)!==f33Stamp){
-   await v10PullRemote();
-   if(String(check.data.revision)!==f33Stamp)throw Error('Se detectó una versión más reciente que aún no se pudo aplicar.');
-  }
+  // La comprobación remota está centralizada en v10PullRemote: no duplicar
+  // una petición a finance_revision desde el mismo botón de sincronización.
+  if(v714NextReadAt>Date.now())throw Error('Supabase está respondiendo con errores temporales. La siguiente verificación se hará después de la pausa de protección.');
   // Apple Pay imports run through the existing pipeline and its verified write path.
   if(typeof v212Sync==='function'&&typeof v212Enabled==='function'&&v212Enabled()){
    if(v212Busy)throw Error('Apple Pay sigue procesando compras. Reintenta la comprobación.');
@@ -35907,9 +35903,11 @@ function v10LiveStop(){
  if(c&&f33Api)try{f33Api.removeChannel(c)}catch(err){console.warn('Supabase realtime remove:',err)}
 }
 function v10SchedulePull(delay=30){
- if(!f33Active||!f33User)return;
- if(v10PullScheduled)clearTimeout(v10PullScheduled);
- v10PullScheduled=setTimeout(()=>{v10PullScheduled=0;void v10PullRemote()},delay);
+ if(!f33Active||!f33User||!navigator.onLine)return;
+ // Debounce sin reiniciar constantemente por cada evento repetido.
+ if(v10PullScheduled)return;
+ const cooloff=Math.max(0,v714NextReadAt-Date.now());
+ v10PullScheduled=setTimeout(()=>{v10PullScheduled=0;void v10PullRemote()},Math.max(1500,delay,cooloff));
 }
 function v11ScheduleAppleSync(delay=80){
  if(!f33Active||!f33User||!f33Api||!navigator.onLine)return;
@@ -36589,7 +36587,7 @@ f33Flush=async function(){
  }catch(err){
   f33Dirty=true;v360WritePending();
   v714WriteRetryCount++;
-  v714NextWriteAt=Date.now()+v714Backoff(v714WriteRetryCount,3000,120000);
+  v714NextWriteAt=Date.now()+v714Backoff(v714WriteRetryCount,15000,300000);
   f33SetStatus('error','Guardado pendiente; reintentaremos de forma gradual. '+(err.message||err));
   console.error('[V714] Escritura pendiente protegida:',err);
  }
@@ -36629,8 +36627,10 @@ v10PullRemote=async function(){
   if(!f33Dirty&&!f33Saving){f33SetStatus('ok','✓ Estado verificado en Supabase');v402AutoConfirmed();}
  }catch(err){
   v714ReadFailureCount++;
-  v714NextReadAt=Date.now()+v714Backoff(v714ReadFailureCount,4000,120000);
-  console.error('[V714] Verificación remota retrasada:',err);
+  // 503/504 suelen indicar saturación del pool: no insistir cada pocos segundos.
+  const serverBusy=[503,504].includes(Number(err?.status||err?.code))||/connection pool|acquiring connection|service unavailable|timeout/i.test(String(err?.message||''));
+  v714NextReadAt=Date.now()+v714Backoff(v714ReadFailureCount,serverBusy?30000:5000,serverBusy?300000:120000);
+  console.error('[V716] Lectura temporalmente pausada; sin cambios en los datos:',err);
   f33SetStatus('error','Servidor temporalmente saturado; datos locales protegidos');v402Mode='error';v402Message=err.message;v402Paint();
  }
  finally{v10Pulling=false;v10LastPull=Date.now();v10RemoteQueued=false;}
@@ -36651,7 +36651,7 @@ v10LiveStart=function(){
     clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=setTimeout(()=>{if(f33Active&&navigator.onLine)v10LiveStartForce()},3000);
    }
   });
- v10ProbeTimer=setInterval(()=>{if(f33Active&&navigator.onLine&&!document.hidden&&!f33Saving&&!f33Dirty&&Date.now()>=v714NextReadAt)v10SchedulePull(0)},90000);
+ v10ProbeTimer=setInterval(()=>{if(f33Active&&navigator.onLine&&!document.hidden&&!f33Saving&&!f33Dirty&&Date.now()>=v714NextReadAt)v10SchedulePull(0)},180000);
  v10SchedulePull(0);
 };
 
