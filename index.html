@@ -2,8 +2,8 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="708"/>
-<meta name="vive-el-hoy-ui-patch" content="v708-movimientos-premium"/>
+<meta name="vive-el-hoy-version" content="715"/>
+<meta name="vive-el-hoy-ui-patch" content="v714-supabase-stabilization"/>
 
 
 <script id="v386-early-submit-guard">document.addEventListener('submit',function(e){if(e.target?.id==='recurringForm'&&typeof window.v386ValidateRecurringForm==='function')window.v386ValidateRecurringForm(e);},true);</script>
@@ -36454,14 +36454,14 @@ function v405Unflatten(values){
 async function v405All(table,columns,userId,ordering){
  const records=[];let from=0;
  for(let page=0;page<300;page++){
-  let query=f33Api.from(table).select(columns).eq('user_id',userId).range(from,from+499);
+  let query=f33Api.from(table).select(columns).eq('user_id',userId).range(from,from+999);
   if(ordering)query=query.order(ordering).order('record_id');
   if(table==='finance_values')query=query.order('path');
   const {data,error}=await query;
   if(error)throw error;
   records.push(...(data||[]));
-  if(!data||data.length<500)return records;
-  from+=500;
+  if(!data||data.length<1000)return records;
+  from+=1000;
  }
  throw Error('Demasiados registros: paginación de Supabase excedida.');
 }
@@ -36508,6 +36508,15 @@ async function v405Reconcile(){
  f33Stamp=String(latest.revision);v360RememberBase(latest.documento,f33Stamp);
  f33Conflict=false;f33Dirty=true;v360WritePending();return true;
 }
+// V714: control del ritmo de sincronización ante saturación de Supabase.
+let v714WriteRetryCount=0,v714NextWriteAt=0,v714ReadFailureCount=0,v714NextReadAt=0;
+function v714Backoff(attempt,base=2000,cap=120000){return Math.min(cap,base*Math.pow(2,Math.min(6,Math.max(0,attempt-1))));}
+function v714ScheduleWriteRetry(){
+ if(!f33Active||!f33Dirty||f33Conflict||!navigator.onLine)return;
+ const delay=Math.max(1500,v714NextWriteAt-Date.now());
+ clearTimeout(f33Timeout);
+ f33Timeout=setTimeout(()=>{if(f33Active&&f33Dirty&&!f33Saving&&!f33Conflict)window.__f360LastPersistPromise=f33Flush();},delay);
+}
 // Sustituir las funciones cloud antiguas; la UI y la lógica financiera siguen intactas.
 f33LoadUser=async function(user){
  const token=++f151CloudLoadToken;
@@ -36532,6 +36541,7 @@ f33LoadUser=async function(user){
    console.warn('[V406] Unconfirmed local recovery retained but NOT loaded: server is source of truth.');
   }
   db=f33Prepare(remote.documento);
+  v714ReadFailureCount=0;v714NextReadAt=0;v714WriteRetryCount=0;v714NextWriteAt=0;
   v405Base=v405Clone(remote.documento);v405Revision=remote.revision;v405Loaded=true;
   f33Stamp=String(remote.revision);v360RememberBase(remote.documento,f33Stamp);
   f33Ready();
@@ -36544,6 +36554,7 @@ f33FirstStart=async function(){if(f33User)await f33LoadUser(f33User)};
 f33Flush=async function(){
  if(!f33Active||!f33User||!f33Dirty||f33Saving||f33Conflict)return;
  if(!navigator.onLine){f33SetStatus('error','Sin conexión: el cambio no está confirmado.');return;}
+ if(Date.now()<v714NextWriteAt){v714ScheduleWriteRetry();return;}
  f33Saving=true;f33Dirty=false;f33SetStatus('saving','Guardando filas en Supabase…');
  let snapshot;
  try{
@@ -36567,6 +36578,7 @@ f33Flush=async function(){
    throw err;
   }
   v403QueueAppleDeletes(v405Base.transactions||[],snapshot.transactions||[]);
+  v714WriteRetryCount=0;v714NextWriteAt=0;
   v405Revision=newRevision;f33Stamp=String(newRevision);window.__f360BaseStamp=f33Stamp;
   v405Base=v405Clone(snapshot);v360RememberBase(snapshot,f33Stamp);
   for(const t of removed)v403ExplicitDeletes.delete(String(t.id));v403SaveApproved();
@@ -36574,18 +36586,32 @@ f33Flush=async function(){
   else v360WritePending();
   f33SetStatus(f33Dirty?'saving':'ok',f33Dirty?'Guardando siguiente cambio…':'✓ Confirmado en tablas Supabase');
   if(!f33Dirty){v11ScheduleAppleSync(80);void v403DeleteAppleEvents();}
- }catch(err){f33Dirty=true;v360WritePending();f33SetStatus('error','No se confirmó el guardado: '+(err.message||err));console.error('[V406] escritura relacional:',err)}
+ }catch(err){
+  f33Dirty=true;v360WritePending();
+  v714WriteRetryCount++;
+  v714NextWriteAt=Date.now()+v714Backoff(v714WriteRetryCount,3000,120000);
+  f33SetStatus('error','Guardado pendiente; reintentaremos de forma gradual. '+(err.message||err));
+  console.error('[V714] Escritura pendiente protegida:',err);
+ }
  finally{
   f33Saving=false;
-  if(f33Dirty&&!f33Conflict&&navigator.onLine){clearTimeout(f33Timeout);f33Timeout=setTimeout(()=>{window.__f360LastPersistPromise=f33Flush()},150);}
-  else if(v10RemoteQueued&&!f33Dirty){v10RemoteQueued=false;v10SchedulePull(10);}
+  if(f33Dirty&&!f33Conflict&&navigator.onLine){
+   // Evita el bucle anterior de escrituras cada 150 ms cuando hay HTTP 504.
+   if(v714WriteRetryCount===0)v714NextWriteAt=Date.now()+150;
+   v714ScheduleWriteRetry();
+  }
+  else if(v10RemoteQueued&&!f33Dirty){v10RemoteQueued=false;v10SchedulePull(1500);} 
   if(!f33Dirty&&!f33Conflict){v10Protect('ok');v402AutoConfirmed();}
  }
 };
 v10ResolveConflict=async function(){return await v405Reconcile()};
+let v715LastRevisionCheck=0;
 v10PullRemote=async function(){
- if(v10Pulling){v10RemoteQueued=true;return;}
+ if(v10Pulling){return;}
  if(!f33Active||!f33Api||!f33User||!navigator.onLine)return;
+ // Agrupar eventos Realtime repetidos: evitar consultas a la misma revisión cada pocos ms.
+ if(Date.now()<v714NextReadAt||Date.now()-v715LastRevisionCheck<4000)return;
+ v715LastRevisionCheck=Date.now();
  if(f33Saving){v10RemoteQueued=true;return;}
  if(f33Dirty){v10RemoteQueued=true;if(!f33Conflict)window.__f360LastPersistPromise=f33Flush();return;}
  if(f33Conflict)return;
@@ -36599,9 +36625,15 @@ v10PullRemote=async function(){
    db=f33Prepare(latest.documento);v405Base=v405Clone(latest.documento);v405Revision=latest.revision;
    f33Stamp=String(latest.revision);v360RememberBase(latest.documento,f33Stamp);v99Invalidate();render();
   }
+  v714ReadFailureCount=0;v714NextReadAt=0;
   if(!f33Dirty&&!f33Saving){f33SetStatus('ok','✓ Estado verificado en Supabase');v402AutoConfirmed();}
- }catch(err){console.error('[V405] lectura remota:',err);f33SetStatus('error','No se pudo verificar el servidor');v402Mode='error';v402Message=err.message;v402Paint();}
- finally{v10Pulling=false;v10LastPull=Date.now();if(v10RemoteQueued&&!f33Dirty&&!f33Saving){v10RemoteQueued=false;v10SchedulePull(20);}}
+ }catch(err){
+  v714ReadFailureCount++;
+  v714NextReadAt=Date.now()+v714Backoff(v714ReadFailureCount,4000,120000);
+  console.error('[V714] Verificación remota retrasada:',err);
+  f33SetStatus('error','Servidor temporalmente saturado; datos locales protegidos');v402Mode='error';v402Message=err.message;v402Paint();
+ }
+ finally{v10Pulling=false;v10LastPull=Date.now();v10RemoteQueued=false;}
 };
 v10LiveStart=function(){
  if(!f33Active||!f33Api||!f33User)return;
@@ -36619,7 +36651,7 @@ v10LiveStart=function(){
     clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=setTimeout(()=>{if(f33Active&&navigator.onLine)v10LiveStartForce()},3000);
    }
   });
- v10ProbeTimer=setInterval(()=>{if(f33Active&&!document.hidden)v10SchedulePull(0)},10000);
+ v10ProbeTimer=setInterval(()=>{if(f33Active&&navigator.onLine&&!document.hidden&&!f33Saving&&!f33Dirty&&Date.now()>=v714NextReadAt)v10SchedulePull(0)},90000);
  v10SchedulePull(0);
 };
 
@@ -36643,6 +36675,7 @@ window.__f360Test={phase:()=>f33Phase,ready:()=>f33Active,cloudUser:()=>f33User?
 const F37_VAPID_PUBLIC = 'BPYdcoUZvXaDH3AYwtmrAN8RKX2Z3TfKO--h_A3VQLfJW-C1bdjyOb2rYQgcNiXrJ1HbxegRj3l5qoqo5HXW--M';
 let f37Prefs=null,f37Devices=[],f37Loaded=false,f37Busy=false,f37Message='',f37SchemaReady=false;
 let f37SyncBusy=false,f37SyncAgain=false,f37SyncError='';
+let v715LastPushPayload='',v715LastPushAt=0;
 const F37_DEFAULTS={enabled:false,timezone:'America/Santo_Domingo',notify_at:'09:00:00',days_before:[7,3,1,0],overdue_enabled:true,private_preview:true};
 const f37CanPush=()=>window.isSecureContext&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
 const f37Standalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
@@ -36685,12 +36718,19 @@ async function f37Hydrate(){
 }
 function f37Payload(){const values=v36DueItems();return values.filter(o=>['card','loan','recurring','personal'].includes(o.kind)&&Number(o.amount)>0).filter(o=>/^\d{4}-\d{2}-\d{2}$/.test(o.date||'')).slice(0,250).map(o=>({key:String(o.kind+'|'+o.id).slice(0,200),kind:o.kind,title:String(o.name||'Compromiso').slice(0,100),date:o.date,amount:Math.max(0,Number(o.amount)||0),currency:o.currency==='USD'?'USD':'DOP'}));}
 async function f37SyncObligations(){
- if(!f33Active||!f33Api||!f33User||!f37SchemaReady)return;
+ if(!f33Active||!f33Api||!f33User||!f37SchemaReady||!navigator.onLine)return;
+ // Solo escribir obligaciones si cambió su contenido; una sesión no debe repetir el mismo RPC.
+ const items=f37Payload();
+ const fingerprint=JSON.stringify([f33User.id,items]);
+ if(fingerprint===v715LastPushPayload)return;
  if(f37SyncBusy){f37SyncAgain=true;return;}
  f37SyncBusy=true;
- try {const {data,error}=await f33Api.rpc('push_sync_obligations',{items:f37Payload()});if(error)throw error;f37SyncError='';}
- catch(e){f37SyncError=e.message||String(e);console.warn('Sincronización de compromisos para notificaciones:',e);}
- finally{f37SyncBusy=false;if(f37SyncAgain){f37SyncAgain=false;f37SyncObligations();}}
+ try {
+  const {error}=await f33Api.rpc('push_sync_obligations',{items});
+  if(error)throw error;
+  v715LastPushPayload=fingerprint;v715LastPushAt=Date.now();f37SyncError='';
+ }catch(e){f37SyncError=e.message||String(e);console.warn('Sincronización de compromisos para notificaciones:',e);}
+ finally{f37SyncBusy=false;if(f37SyncAgain){f37SyncAgain=false;void f37SyncObligations();}}
 }
 async function f37SavePrefs(update){
  if(!f33Active||!f37SchemaReady)throw Error('Primero prepara las tablas de Supabase');
