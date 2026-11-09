@@ -8,4 +8,4 @@
 - La integridad de la sincronización depende también de que todos los dispositivos utilicen una versión compatible; no instalar versiones anteriores en paralelo.
 - Sin cambiar Apple Pay Edge Functions o los secretos de los tokens.
 
-IMPORTANTE: Esta entrega contiene la app completa. Subir todo el contenido de esta carpeta al sitio; no se ha desplegado automáticamente en Netlify ni GitHub.
+IMPORTANTE: Esta entrega contiene la app completa. Subir todo el contenido de esta carpeta al sitio; no se ha desplegado automáticamente en GitHub.
