@@ -44491,7 +44491,7 @@ window.__f360RecurringVisualAdapter={
   }
   function detailView(){
     const t=(db.transactions||[]).find(t=>String(t.id)===String(state.selected)&&movement(t));
-    if(!t){state.view='list';state.selected=null;return listView();}
+    if(!t){state.view='list';state.selected=null;return `${tabs()}${listView()}`;}
     const positive=direction(t)>0,apple=isApple(t),source=sourceName(t),c=card(t.cardId),pending=v5NeedsAppleCategory(t);
     const lines=[['Fecha',safe(friendlyDate(t.date))+(createdTime(t)?' · '+safe(createdTime(t)):'')],['Producto',safe(source)],['Categoría',safe(t.category||'Sin categoría')+(t.subcategory?' · '+safe(t.subcategory):'')],['Estado',t.reviewed===true?'Conciliado':'Por revisar'],['Moneda',safe(t.currency||'DOP')],['Balance después',v265BalanceHTML(t,'mobile')]].filter(x=>x[1]);
     const reference=t.reference||t.applePayEventId||t.eventId;
@@ -44499,7 +44499,7 @@ window.__f360RecurringVisualAdapter={
     const editable=typeof TRANSACTION_EDITABLE!=='undefined'&&(TRANSACTION_EDITABLE.has(t.type)||['personal_issue','personal_settlement'].includes(t.type));
     return `<div class="v708-detail">
       <div class="v708-detail-hero"><div class="v708-detail-bar"><button type="button" data-v708="back" aria-label="Volver al historial">${icon('arrow')}</button><span>${apple?'Apple Pay':'Movimiento'}</span><button type="button" data-v708="more" aria-label="Más opciones">${icon('settings')}</button></div><div class="v708-detail-merchant"><span class="v708-detail-logo">${iconMark(t)}</span><strong>${safe(fullName(t))}</strong><small>${safe(TRANSL[t.type]||'Transacción')}</small></div><b class="v708-detail-value ${positive?'plus':''}">${safe(typedAmount(t))}</b><div class="v708-detail-when">${safe(friendlyDate(t.date))}<span class="v708-status">${pending?'Sin clasificar':t.reviewed?'Conciliado':'Registrado'}</span></div></div>
-      <div class="v708-detail-actions">${editable?`<button type="button" data-v708="edit" data-id="${safe(t.id)}">${icon('edit')}<span>Editar</span></button>`:''}<button type="button" data-v708="categorize" data-id="${safe(t.id)}">${icon('grid')}<span>Categoría</span></button><button type="button" data-v708="review" data-id="${safe(t.id)}">${icon('check')}<span>${t.reviewed?'Reabrir':'Conciliar'}</span></button><button type="button" data-v708="more" data-id="${safe(t.id)}">${icon('settings')}<span>Más</span></button></div>
+      <div class="v708-detail-actions">${editable?`<button type="button" data-v708="edit" data-id="${safe(t.id)}">${icon('edit')}<span>Editar</span></button>`:''}<button type="button" class="v709-delete-action" data-act="deleteTransaction" data-id="${safe(t.id)}" title="Eliminar este movimiento definitivamente">${icon('trash')}<span>Eliminar</span></button><button type="button" data-v708="categorize" data-id="${safe(t.id)}">${icon('grid')}<span>Categoría</span></button><button type="button" data-v708="review" data-id="${safe(t.id)}">${icon('check')}<span>${t.reviewed?'Reabrir':'Conciliar'}</span></button><button type="button" data-v708="more" data-id="${safe(t.id)}">${icon('settings')}<span>Más</span></button></div>
       <section class="v708-detail-lines">${lines.map(([label,value])=>`<div><span>${label}</span><strong>${value}</strong>${icon('arrow')}</div>`).join('')}</section>
       ${pending?`<button type="button" class="v708-classify big" data-v7-apple-id="${safe(t.id)}">Clasificar compra de Apple Pay ${icon('arrow')}</button>`:''}
       ${apple?'<p class="v708-footnote">Origen: compra importada de Apple Pay. Consultar o clasificar no genera nuevos cargos.</p>':''}
@@ -44514,7 +44514,7 @@ window.__f360RecurringVisualAdapter={
     const t=(db.transactions||[]).find(x=>String(x.id)===String(state.selected));if(!t)return;
     const p=productId(t);
     const root=document.getElementById('modal-root');if(!root)return;
-    root.innerHTML=`<div class="modal-layer v708-more-layer" data-backdrop="true"><section class="modal v708-more-dialog" role="dialog" aria-modal="true" aria-label="Opciones del movimiento"><header class="modal-head"><h2>Opciones del movimiento</h2><button class="close" type="button" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="v708-more-options"><button type="button" data-act="editTransaction" data-id="${safe(t.id)}">${icon('edit')} Editar movimiento ${icon('arrow')}</button><button type="button" data-act="toggleReview" data-id="${safe(t.id)}">${icon('check')} ${t.reviewed?'Volver a revisar':'Marcar como conciliado'} ${icon('arrow')}</button>${p?`<button type="button" data-v708="product" data-value="${safe(p)}">${icon('card')} Ver otros movimientos del producto ${icon('arrow')}</button>`:''}</div><p class="v708-footnote">Cambiar el estado de conciliación no modifica el importe ni el saldo.</p></section></div>`;
+    root.innerHTML=`<div class="modal-layer v708-more-layer" data-backdrop="true"><section class="modal v708-more-dialog" role="dialog" aria-modal="true" aria-label="Opciones del movimiento"><header class="modal-head"><h2>Opciones del movimiento</h2><button class="close" type="button" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="v708-more-options"><button type="button" data-act="editTransaction" data-id="${safe(t.id)}">${icon('edit')} Editar movimiento ${icon('arrow')}</button><button type="button" data-act="toggleReview" data-id="${safe(t.id)}">${icon('check')} ${t.reviewed?'Volver a revisar':'Marcar como conciliado'} ${icon('arrow')}</button>${p?`<button type="button" data-v708="product" data-value="${safe(p)}">${icon('card')} Ver otros movimientos del producto ${icon('arrow')}</button>`:''}<button type="button" class="v709-delete-option" data-act="deleteTransaction" data-id="${safe(t.id)}">${icon('trash')} Eliminar movimiento ${icon('arrow')}</button></div><p class="v708-footnote">Cambiar el estado de conciliación no modifica el importe ni el saldo.</p></section></div>`;
   }
   function v708Movements(){return `<div class="v708-movements" data-v708-screen="${safe(state.view)}">${view()}</div>`;}
   function redraw({focus=false,keepScroll=false}={}){
@@ -77979,6 +77979,39 @@ html body.theme-black #modal-root .v85-capacity-modal .v85-capacity-metrics stro
 @media(min-width:791px){.v708-movements-fab{display:none!important}}
 @media print{.v708-movements-fab{display:none!important}}
 @media(prefers-reduced-motion:reduce){.v708-movements,.v708-movements-fab{animation:none!important;transition:none!important}}
+/* V709 · El acceso Movimientos es un icono libre y discreto al lado de Registrar. */
+@media(max-width:790px){
+  html body .v708-movements-fab{
+    right:calc(max(13px,calc((100dvw - 460px)/2 + 14px)) + 62px)!important;
+    bottom:calc(var(--v398-dock-bottom,max(9px,env(safe-area-inset-bottom,0px))) + var(--v398-dock-height,66px) + 19px)!important;
+    width:40px!important;height:42px!important;min-width:40px!important;min-height:42px!important;
+    border:0!important;border-radius:0!important;background:transparent!important;
+    box-shadow:none!important;outline-offset:2px!important;
+    color:var(--v424-accent-strong,var(--vive-theme-color,#315d8a))!important;
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+    padding:0!important;display:grid!important;place-items:center!important;
+    transform:none!important;
+  }
+  html body .v708-movements-fab>span:first-child{display:grid;place-items:center;line-height:1;}
+  html body .v708-movements-fab>span:first-child svg{width:20px!important;height:20px!important;stroke-width:2.05!important;}
+  html body .v708-movements-fab:hover,html body .v708-movements-fab:active{
+    border:0!important;background:transparent!important;box-shadow:none!important;
+  }
+  html body.theme-black .v708-movements-fab,
+  html body.theme-dark .v708-movements-fab{
+    background:transparent!important;border:0!important;box-shadow:none!important;
+    color:var(--f360-accent-readable,#dce8fb)!important;
+  }
+  .v708-detail-actions{gap:2px!important;padding-inline:6px!important;}
+  .v708-detail-actions button{gap:7px!important;padding:6px 1px!important;font-size:9.5px!important;}
+  .v708-detail-actions button svg{width:18px!important;height:18px!important;}
+  .v708-detail-actions .v709-delete-action svg,
+  .v708-detail-actions .v709-delete-action span{color:#ce5269!important;}
+}
+#modal-root .v708-more-options .v709-delete-option{color:#c7485e!important;}
+#modal-root .v708-more-options .v709-delete-option svg{color:inherit!important;}
+@media(max-width:355px){html body .v708-movements-fab{right:calc(15px + 62px)!important;}}
+
 @media(max-width:790px){
   #modal-root .v708-more-dialog{border-radius:23px!important;max-width:420px;padding:22px!important}
   #modal-root .v708-more-dialog h2{font-size:17px}
