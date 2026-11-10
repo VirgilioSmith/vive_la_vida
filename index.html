@@ -45505,6 +45505,610 @@ window.__f360RecurringVisualAdapter={
   if(document.querySelector('#app .shell')){try{render()}catch(err){console.warn('Movimientos V708: redibujado inicial aplazado',err)}}
 })();
 
+/* v768: route-specific controllers now share the existing accounting scope. */
+
+(function(){
+ 'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ const moneySafe=(n,ccy)=>{
+   const v=Number(n);const p=ccy==='USD'?'US$':'RD$';
+   return Number.isFinite(v)?(v<0?'-':'')+p+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+ };
+ const text=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const template=()=>'<header><strong>Impacto del ingreso</strong><span>VISTA PREVIA</span></header><div class="v379-income-route" data-v379-route></div><div class="v379-income-figures" data-v379-figures></div><p data-v379-note></p>';
+ const lookupAccount=id=>typeof account==='function'?account(id):null;
+ const currentBalance=a=>{try{return typeof getAccountBalance==='function'?Number(getAccountBalance(a)):NaN}catch{return NaN}};
+ function attachPreview(form,anchor){
+  let preview=form.querySelector('.v379-income-preview');if(preview)return preview;
+  preview=document.createElement('section');preview.className='v379-income-preview';preview.setAttribute('aria-label','Vista previa del ingreso');preview.setAttribute('aria-live','polite');preview.innerHTML=template();
+  // La vista previa de impacto fue retirada de la interfaz a solicitud del usuario.
+  // Mantener el nodo desconectado conserva las validaciones y cálculos preexistentes.
+  return preview;
+ }
+ function renderPreview(preview,{route='',before=null,after=null,ccy='DOP',note='',future=false}){
+  const r=preview.querySelector('[data-v379-route]'),fig=preview.querySelector('[data-v379-figures]'),n=preview.querySelector('[data-v379-note]');
+  r.textContent=route;
+  fig.innerHTML=Number.isFinite(before)&&Number.isFinite(after)
+   ?'<div><small>Saldo registrado hoy</small><strong>'+moneySafe(before,ccy)+'</strong></div><div class="v379-after"><small>'+(future?'Estimado, no acreditado':'Saldo después, simulado')+'</small><strong>'+moneySafe(after,ccy)+'</strong></div>'
+   :'<div style="grid-column:1/-1" class="v379-income-placeholder">'+text(note||'Selecciona una cuenta y escribe un importe para ver el efecto.')+'</div>';
+  n.textContent=(Number.isFinite(before)&&Number.isFinite(after))?note:'';
+ }
+ function isIncomeForm(form){return form.id==='transactionForm' && (form.dataset.mode==='income'||form.dataset.mqrMode==='income'||form.elements.flowMode?.value==='income'||form.elements.type?.value==='income')}
+ function installTransaction(form){
+  if(form.dataset.v379Income==='1')return;
+  form.dataset.v379Income='1';form.classList.add('v379-income-transaction');
+  const anchor=form.querySelector('.fastx-source-section')||form.querySelector('.v134-sources')||form.querySelector('.flow-receipt')||form.querySelector('.form-grid .flow-section-heading');
+  const preview=attachPreview(form,anchor);
+  const update=()=>{
+   const selected=lookupAccount(form.elements.accountId?.value);
+   const amount=Number(form.elements.amount?.value);
+   const editing=!!(form.dataset.editId||form.dataset.id||form.dataset.editing==='yes'||form.querySelector('.fastx-title')?.textContent.includes('Editar'));
+   const when=form.elements.date?.value||'';
+   if(!selected||selected.archived){
+    renderPreview(preview,{route:'Cuenta receptora no seleccionada',note:'Selecciona una cuenta activa para recibir el ingreso.'});return;
+   }
+   const ccy=selected.currency||'DOP';const before=currentBalance(selected);
+   if(!Number.isFinite(amount)||amount<=0){renderPreview(preview,{route:selected.name+' · '+ccy,note:'Escribe cuánto dinero recibiste.',ccy});return;}
+   const safe=!editing && Number.isFinite(before) && (!when || (typeof today==='function'&&when===today()));
+   renderPreview(preview,{route:'↗ '+moneySafe(amount,ccy)+' hacia '+selected.name,
+    before:safe?before:null,after:safe?before+amount:null,ccy,
+    note:editing?'Edición: el saldo definitivo se recalculará sustituyendo el asiento anterior, no sumándolo dos veces.':when&&typeof today==='function'&&when<today()?'Ingreso retroactivo: el saldo de hoy se recalcula con el historial. No se muestra una proyección engañosa.':'Es una simulación. No se acredita ningún importe hasta confirmar.',future:false});
+  };
+  form.addEventListener('input',update);form.addEventListener('change',update);
+  form.addEventListener('submit',e=>{
+   const selected=lookupAccount(form.elements.accountId?.value);const amount=Number(form.elements.amount?.value);
+   if(!selected||selected.archived){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('Selecciona una cuenta activa para registrar el ingreso.');form.elements.accountId?.focus();return;}
+   if(!(Number.isFinite(amount)&&amount>0)){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('El ingreso debe ser mayor que cero.');form.elements.amount?.focus();return;}
+  },true);
+  update();
+ }
+ function installRecurring(form){
+  if(form.dataset.v379Income==='1')return;
+  form.dataset.v379Income='1';
+  const anchor=form.querySelector('.v42-income-preview')||form.querySelector('.smart-sub-intro');
+  const preview=attachPreview(form,anchor);
+  const update=()=>{
+   const selected=lookupAccount(form.elements.accountId?.value);
+   const ccy=form.elements.currency?.value||'DOP';
+   const name=form.elements.name?.value||'Fuente recurrente';
+   const valid=selected&&!selected.archived&&selected.currency===ccy;
+   const raw=Number(form.elements.grossMonthly?.value);
+   renderPreview(preview,{route:'Programación · '+name+' · '+ccy,
+     note:!valid?'Selecciona una cuenta activa de la misma moneda. Programar no acredita dinero.':!(raw>0)?'Indica el bruto mensual para calcular tu programación.':'Fuente: '+selected.name+'. El neto se calcula en el desglose existente. No se acredita dinero hasta el asiento de cobro.',
+     ccy,future:true});
+  };
+  form.addEventListener('change',update);form.addEventListener('input',update);
+  form.addEventListener('submit',e=>{
+   const selected=lookupAccount(form.elements.accountId?.value),ccy=form.elements.currency?.value;
+   if(!selected||selected.archived||selected.currency!==ccy){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('La cuenta de destino debe estar activa y tener la misma moneda.');form.elements.accountId?.focus();}
+  },true);
+  update();
+ }
+ function installConfirm(form){
+  if(form.dataset.v379Income==='1')return;
+  form.dataset.v379Income='1';
+  const preview=attachPreview(form,form.querySelector('.smart-sub-intro'));
+  const update=()=>{
+   const schedule=(typeof db!=='undefined'&&Array.isArray(db.incomeSchedules))?db.incomeSchedules.find(x=>x.id===form.dataset.id):null;
+   const a=schedule?lookupAccount(schedule.accountId):null;
+   const amount=Number(form.elements.actualNet?.value);
+   const day=form.elements.date?.value||'';
+   const valid=Boolean(a&&!a.archived&&a.currency===schedule.currency);
+   const before=valid?currentBalance(a):NaN;
+   const safe=valid&&Number.isFinite(before)&&amount>0&&day===((typeof today==='function')?today():null);
+   renderPreview(preview,{route:valid?'↗ '+moneySafe(amount,schedule.currency)+' hacia '+a.name:'Cuenta de nómina no disponible',before:safe?before:null,after:safe?before+amount:null,ccy:schedule?.currency||'DOP',
+    note:!valid?'Corrige la cuenta configurada en el ingreso recurrente antes de acreditar.':day&&typeof today==='function'&&day<today()?'Depósito histórico: el saldo se recalcula por fecha, no se presenta un saldo de hoy ficticio.':'El depósito se acredita una sola vez al confirmar; no se suma al registrar la programación.'});
+  };
+  form.addEventListener('input',update);form.addEventListener('change',update);
+  form.addEventListener('submit',e=>{const schedule=db.incomeSchedules?.find(x=>x.id===form.dataset.id),a=schedule?lookupAccount(schedule.accountId):null;if(!a||a.archived||a.currency!==schedule.currency){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('La cuenta vinculada al ingreso no es válida. Corrígela antes de confirmar.');}},true);
+  update();
+ }
+ function decorate(){
+  for(const form of root.querySelectorAll('form')){
+   if(isIncomeForm(form))installTransaction(form);
+   else if(form.id==='v40IncomeForm')installRecurring(form);
+   else if(form.id==='v40IncomeConfirmForm')installConfirm(form);
+  }
+ }
+ let queued=false;
+ const obs=new MutationObserver(()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorate();});});
+ obs.observe(root,{childList:true,subtree:true});decorate();
+})();
+
+
+(function(){
+ 'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const amount=(n,c='DOP')=>{
+  const v=Number(n);if(!Number.isFinite(v))return '—';
+  return (v<0?'-':'')+(c==='USD'?'US$':'RD$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ };
+ const read=(f,key)=>f.elements.namedItem(key)?.value??'';
+ const editing=f=>Boolean(f.dataset.id||f.dataset.editId||f.dataset.editing==='yes'||f.querySelector('.fastx-title')?.textContent.includes('Editar'));
+ const liveToday=()=>typeof today==='function'?today():null;
+ const findAccount=id=>typeof account==='function'?account(id):null;
+ const findCard=id=>typeof card==='function'?card(id):null;
+ const head='<header><strong>Impacto del egreso</strong><span class="v380-exp-badge">VISTA PREVIA</span></header><div class="v380-exp-route" data-v380-route></div><div class="v380-exp-figures" data-v380-values></div><p data-v380-note></p>';
+ function attach(form){
+  if(form.dataset.v380Expense==='1')return;
+  form.dataset.v380Expense='1';
+  const preview=document.createElement('section');preview.className='v380-expense-preview';
+  preview.setAttribute('aria-label','Impacto financiero del egreso');preview.setAttribute('aria-live','polite');preview.innerHTML=head;
+  const target=form.querySelector('.fastx-source-section')||form.querySelector('.v134-sources')||form.querySelector('#guidedReceipt')||form.querySelector('.flow-receipt');
+  if(target)target.insertAdjacentElement('afterend',preview);
+  else (form.querySelector('.fastx-body')||form.querySelector('.form-grid')||form).appendChild(preview);
+  const show=(route,figures,note)=>{
+   preview.querySelector('[data-v380-route]').textContent=route;
+   preview.querySelector('[data-v380-values]').innerHTML=figures;
+   preview.querySelector('[data-v380-note]').textContent=note;
+  };
+  const figure=(label,value,after)=>'<div'+(after?' class="v380-exp-after"':'')+'><small>'+esc(label)+'</small><strong>'+esc(value)+'</strong></div>';
+  const isEnabled=c=>!!c&&!c.archived;
+  function update(){
+   if(!form.isConnected)return;
+   const type=read(form,'paymentSource')||'account',cardPay=type==='card';
+   const sum=Number(read(form,'amount')),day=read(form,'date'),historical=!!day&&liveToday()&&day!==liveToday();
+   const safe=!editing(form)&&!historical;
+   const cat=read(form,'category');
+   const channel=read(form,'paymentChannel');
+   if(cardPay){
+    const c=findCard(read(form,'cardId')),currency=read(form,'currency')||'DOP';
+    if(!isEnabled(c)){show('Impacto pendiente de calcular','', 'La vista previa no encuentra la tarjeta. El registro comprobará los datos al confirmar.');return;}
+    if(!(sum>0)&&Number.isFinite(sum)){show(c.name+' · '+currency,'','Introduce un importe positivo.');return;}
+    let status=null;try{status=typeof cardStatus==='function'?cardStatus(c,currency):null}catch(_){}
+    const before=Number(status?.debt),limit=Number(status?.limit);
+    const canShow=safe&&sum>0&&Number.isFinite(before)&&Number.isFinite(limit);
+    const figures=canShow?figure('Deuda registrada',amount(before,currency),false)+figure('Deuda estimada',amount(before+sum,currency),true)
+      :figure('Compra que se registrará',sum>0?amount(sum,currency):'—',false)+figure('Medio de pago','Crédito',true);
+    let note='La compra se registra como gasto y aumenta la deuda de la tarjeta. Cuando pagues esta deuda, el principal no volverá a contarse como gasto.';
+    if(historical)note='Compra con fecha distinta de hoy: la deuda se recalculará en el historial. No se simula un saldo final sin considerar los movimientos posteriores. '+note;
+    if(editing(form))note='Edición: se sustituirá el registro original, sin duplicar la compra. '+note;
+    if(Number.isFinite(limit)&&sum>0&&Number.isFinite(before)&&before+sum>limit+.01)note+=' Atención: el saldo resultante puede superar el límite ordinario; revisa los sobregiros autorizados de esta tarjeta.';
+    show('Tarjeta · '+c.name+' · '+currency,figures,note);
+   }else{
+    const a=findAccount(read(form,'accountId'));
+    if(!isEnabled(a)){show('Impacto pendiente de calcular','', 'La vista previa no encuentra la cuenta. El registro comprobará los datos al confirmar.');return;}
+    const currency=a.currency||'DOP';let before=NaN;try{before=typeof getAccountBalance==='function'?Number(getAccountBalance(a)):NaN}catch(_){}
+    const pct=read(form,'paymentTaxable')==='yes'?Number(read(form,'paymentTaxPct')):0;
+    const fee=Number(read(form,'paymentFee')||0);
+    const hasComplexFees=(Number.isFinite(pct)&&pct>0)||(Number.isFinite(fee)&&fee>0);
+    const canShow=safe&&Number.isFinite(before)&&sum>0&&!hasComplexFees;
+    const figs=canShow?figure('Saldo registrado',amount(before,currency),false)+figure('Saldo después (simulado)',amount(before-sum,currency),true)
+      :figure('Gasto principal',sum>0?amount(sum,currency):'—',false)+figure('Origen',a.kind==='cash'?'Efectivo':'Cuenta bancaria',true);
+    const note=editing(form)?'Edición: el movimiento anterior será sustituido; el saldo final dependerá del historial completo.':
+      historical?'Gasto histórico: no se muestra un saldo proyectado porque existen movimientos posteriores.':
+      hasComplexFees?'El cargo final puede incluir impuestos o comisiones. Consulta el comprobante en vivo para conocer el débito completo.':
+      'Saldo estimado antes de confirmar. No modifica tus fondos hasta registrar la operación.';
+    show('Sale de '+a.name+' · '+currency,figs,note);
+   }
+   preview.dataset.source=cardPay?'card':'account';
+   preview.dataset.category=cat;
+   preview.dataset.channel=channel;
+  }
+  form.addEventListener('input',()=>queueMicrotask(update));
+  form.addEventListener('change',()=>queueMicrotask(update));
+  form.addEventListener('click',e=>{if(e.target.closest('[data-fast-source],[data-fast-category]'))queueMicrotask(update)});
+  // V446: la tarjeta/cuenta se valida una única vez en el motor contable.
+  // Este panel es una vista previa informativa, NO un segundo guard de submit.
+  // El control anterior bloqueaba un registro ya revisado con un falso
+  // «tarjeta sin seleccionar» por discrepancias entre pasos del formulario.
+  update();
+ }
+ function decorate(){root.querySelectorAll('form#transactionForm').forEach(form=>{
+  if(form.dataset.mode==='spend'||read(form,'flowMode')==='spend')attach(form);
+ });}
+ let queued=false;const observer=new MutationObserver(()=>{
+  if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorate()});
+ });observer.observe(root,{childList:true,subtree:true});decorate();
+})();
+
+
+(()=>{'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const field=(f,n)=>f.elements.namedItem(n);
+ const raw=(f,n)=>String(field(f,n)?.value??'');
+ const number=(f,n)=>Number(raw(f,n));
+ const currency=(n,c)=>Number.isFinite(n)?(c==='USD'?'US$':'RD$')+new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n):'—';
+ const getType=f=>raw(f,'type')||'';
+ const txs=()=>Array.isArray(db?.transactions)?db.transactions:[];
+ function purchases(f){
+   const cardId=raw(f,'cardId'),ccy=raw(f,'currency'),date=raw(f,'date'),current=f.dataset.id||'';
+   return txs().filter(t=>t.type==='card_charge'&&t.cardId===cardId&&t.currency===ccy&&(!date||t.date<=date)).map(t=>{
+     const returned=txs().filter(r=>r.type==='card_refund'&&r.originalPurchaseId===t.id&&r.id!==current).reduce((s,r)=>s+Number(r.amount||0),0);
+     return {t,available:Math.max(0,Number(t.amount||0)-returned)};
+   }).filter(x=>x.available>.005).sort((a,b)=>(b.t.date||'').localeCompare(a.t.date||''));
+ }
+ function model(f){
+  const kind=getType(f),isRefund=kind==='card_refund';if(!['card_refund','adjustment'].includes(kind))return null;
+  const value=number(f,'amount'),date=raw(f,'date'),note=raw(f,'note').trim(),editing=!!f.dataset.id;
+  const errors=[];
+  if(!date||date>today())errors.push('Selecciona una fecha válida que no sea futura.');
+  if(!Number.isFinite(value)||(isRefund?value<=0:Math.abs(value)<.005))errors.push(isRefund?'Indica un importe devuelto mayor que cero.':'El ajuste debe ser distinto de cero.');
+  let asset=null,ccy='DOP',current=NaN,after=NaN,purchase=null,linked='';
+  if(isRefund){
+   asset=card(raw(f,'cardId'));ccy=raw(f,'currency')||'DOP';
+   if(!asset||asset.archived||bank(asset.bankId)?.archived)errors.push('Selecciona una tarjeta activa para recibir el reintegro.');
+   if(!['DOP','USD'].includes(ccy))errors.push('Selecciona una moneda válida.');
+   linked=raw(f,'originalPurchaseId');
+   if(linked){
+    const match=purchases(f).find(x=>x.t.id===linked);purchase=match?.t;
+    if(!match)errors.push('La compra vinculada ya no está disponible o fue reintegrada por completo.');
+    else if(value>match.available+.011)errors.push('El reintegro excede lo pendiente de devolver de la compra seleccionada.');
+   }
+   const stat=asset?cardStatus(asset,ccy):null;
+   current=Number(stat?.debt??stat?.balance??NaN);
+   after=current-value;
+  }else{
+   asset=account(raw(f,'accountId'));ccy=asset?.currency||'DOP';
+   if(!asset||asset.archived||asset.bankId&&bank(asset.bankId)?.archived)errors.push('Selecciona una cuenta o efectivo activos.');
+   if(note.length<6)errors.push('Describe el motivo de la conciliación (mínimo 6 caracteres).');
+   current=asset?Number(getAccountBalance(asset)):NaN;
+   after=current+value;
+  }
+  return {kind,isRefund,value,date,note,editing,errors,asset,ccy,current,after,purchase,linked};
+ }
+ function fillPurchases(f){
+  const sel=f.querySelector('#v388Purchase');if(!sel)return;
+  const previous=sel.value,requested=sel.dataset.initial||previous;
+  const opts=purchases(f);
+  sel.replaceChildren(new Option('Sin vincular · reintegro independiente',''));
+  for(const {t,available} of opts)sel.add(new Option((t.date||'')+' · '+(t.note||t.category||'Compra')+' · '+currency(available,t.currency)+' disponible',t.id));
+  if(opts.some(x=>x.t.id===requested))sel.value=requested;
+  else sel.value='';
+  sel.dataset.initial='';
+  const h=field(f,'originalPurchaseId');if(h)h.value=sel.value;
+ }
+ function setLinkedCategory(f){
+   const link=raw(f,'originalPurchaseId');if(!link)return;
+   const original=txs().find(t=>t.id===link&&t.type==='card_charge');if(!original)return;
+   const cat=field(f,'category');if(cat&&original.category){cat.value=original.category;cat.dispatchEvent(new Event('change',{bubbles:true}));}
+   const sub=field(f,'subcategory');if(sub&&original.subcategory){if(![...sub.options].some(x=>x.value===original.subcategory))sub.add(new Option(original.subcategory,original.subcategory));sub.value=original.subcategory;}
+ }
+ function render(f){
+  const x=model(f),panel=f.querySelector('.v388-panel');if(!x||!panel)return;
+  const rows=panel.querySelector('.v388-rows'),hero=panel.querySelector('.v388-hero'),notice=panel.querySelector('.v388-note'),err=panel.querySelector('.v388-error');
+  const line=(label,val)=>'<div class="v388-line"><span>'+esc(label)+'</span><strong>'+esc(val)+'</strong></div>';
+  if(x.isRefund){
+   rows.innerHTML=line('Tarjeta',x.asset?.name||'Selecciona una tarjeta')+line('Moneda',x.ccy)+line('Operación',x.linked?'Devolución de compra vinculada':'Reintegro sin compra vinculada')+(x.purchase?line('Compra original',x.purchase.date+' · '+(x.purchase.note||x.purchase.category||'Compra')):'');
+   hero.innerHTML='<small>DEUDA QUE SE REDUCE</small><strong>'+currency(x.value,x.ccy)+'</strong>';
+   notice.textContent=x.editing?'Al editar este reintegro, los saldos se recalculan; no se crea un segundo movimiento.':x.date!==today()?'Reintegro histórico: los saldos posteriores se recalcularán al confirmar.':'No se genera un ingreso nuevo. El reintegro reduce la deuda y corrige el gasto de la categoría correspondiente.';
+   if(x.asset&&x.date===today()&&!x.editing&&Number.isFinite(x.current))rows.innerHTML+=line('Deuda actual → estimada',currency(x.current,x.ccy)+' → '+currency(x.after,x.ccy));
+  }else{
+   rows.innerHTML=line('Cuenta / efectivo',x.asset?.name||'Selecciona una cuenta')+line('Moneda',x.ccy)+line('Naturaleza',x.value>0?'Aumento por conciliación':'Disminución por conciliación');
+   hero.innerHTML='<small>AJUSTE CALCULADO · NO ES INGRESO/GASTO</small><strong>'+(x.value>0?'+':'')+currency(x.value,x.ccy)+'</strong>';
+   if(x.asset&&x.date===today()&&!x.editing&&Number.isFinite(x.current))rows.innerHTML+=line('Saldo actual → estimado',currency(x.current,x.ccy)+' → '+currency(x.after,x.ccy));
+   notice.textContent=x.editing?'Edición de ajuste: se recalculará el historial existente.':x.date===today()?'Solo se registra la diferencia entre el saldo de la app y el del banco. No es ingreso ni gasto.':'Fecha histórica: se recalcularán los movimientos posteriores; el saldo final no se puede representar como definitivo.';
+   const target=f.querySelector('#v388TargetBalance');if(target&&f.dataset.v388Mode==='target'&&document.activeElement!==target){const a=Number(getAccountBalance(x.asset));if(Number.isFinite(a))target.placeholder='Saldo bancario (actual app: '+currency(a,x.ccy)+')';}
+  }
+  err.hidden=!x.errors.length;err.textContent=x.errors[0]||'';f.dataset.v388Error=x.errors[0]||'';
+ }
+ function attach(f){
+  if(!['card_refund','adjustment'].includes(getType(f))||f.dataset.v388Attached==='1')return;
+  f.dataset.v388Attached='1';const isRefund=getType(f)==='card_refund';f.dataset.v388Kind=isRefund?'refund':'adjustment';
+  const target=f.querySelector('.other-studio-content')||f.querySelector('.form-grid')||f;
+  const panel=document.createElement('section');panel.className='v388-panel';panel.setAttribute('aria-live','polite');
+  panel.innerHTML='<div class="v388-panel-head"><strong>'+(isRefund?'Devolución y compra original':'Conciliación del saldo')+'</strong><span>ANTES DE CONFIRMAR</span></div>'+(isRefund?'<label class="v388-field">Compra que estás devolviendo (opcional)<select id="v388Purchase"></select></label><p class="v388-note">Asocia la compra si aparece en el historial. Así conservas su categoría y limitas el reintegro al importe pendiente.</p>':'<div class="v388-toggles"><button type="button" data-v388-mode="delta" aria-pressed="true">Indicar diferencia</button><button type="button" data-v388-mode="target" aria-pressed="false">Saldo que muestra el banco</button></div><label class="v388-field" id="v388TargetWrap" hidden>Saldo real informado por el banco<input id="v388TargetBalance" type="number" step="0.01" placeholder="0.00" inputmode="decimal"></label>')+'<div class="v388-rows"></div><div class="v388-hero"></div><p class="v388-note"></p><div class="v388-error" hidden></div>';
+  target.appendChild(panel);
+  if(isRefund){
+   const original=txs().find(t=>t.id===f.dataset.id);
+   const h=document.createElement('input');h.type='hidden';h.name='originalPurchaseId';h.value=original?.originalPurchaseId||'';panel.appendChild(h);
+   const sel=panel.querySelector('#v388Purchase');sel.dataset.initial=h.value;
+   const onChange=()=>{fillPurchases(f);render(f)};
+   field(f,'cardId')?.addEventListener('change',onChange);field(f,'currency')?.addEventListener('change',onChange);field(f,'date')?.addEventListener('change',onChange);
+   sel.addEventListener('change',()=>{h.value=sel.value;setLinkedCategory(f);render(f)});
+   fillPurchases(f);
+  }else{
+   f.dataset.v388Mode='delta';const targetInput=panel.querySelector('#v388TargetBalance');const delta=field(f,'amount');
+   for(const btn of panel.querySelectorAll('[data-v388-mode]'))btn.addEventListener('click',()=>{
+    f.dataset.v388Mode=btn.dataset.v388Mode;for(const b of panel.querySelectorAll('[data-v388-mode]'))b.setAttribute('aria-pressed',String(b===btn));
+    panel.querySelector('#v388TargetWrap').hidden=btn.dataset.v388Mode!=='target';
+    if(btn.dataset.v388Mode==='target'){
+     const acct=account(raw(f,'accountId'));const current=acct?Number(getAccountBalance(acct)):NaN;
+     if(Number.isFinite(current)&&Number.isFinite(Number(delta.value)))targetInput.value=(current+Number(delta.value)).toFixed(2);
+     targetInput.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+    render(f);
+   });
+   const recalc=()=>{if(f.dataset.v388Mode!=='target')return;const acct=account(raw(f,'accountId'));if(!acct||targetInput.value==='')return;const current=Number(getAccountBalance(acct));if(Number.isFinite(current)){delta.value=(Number(targetInput.value)-current).toFixed(2);delta.dispatchEvent(new Event('change',{bubbles:true}));}};
+   targetInput.addEventListener('input',recalc);field(f,'accountId')?.addEventListener('change',recalc);
+  }
+  f.addEventListener('input',()=>queueMicrotask(()=>render(f)));f.addEventListener('change',()=>queueMicrotask(()=>render(f)));render(f);
+ }
+ window.v388Preflight=function(f){const x=model(f);if(!x)return true;render(f);if(!x.errors.length)return true;if(typeof toast==='function')toast(x.errors[0]);f.querySelector('.v388-error')?.scrollIntoView({block:'nearest'});return false;};
+ function review(){const page=root.querySelector('.v349-review-screen:not([data-v388-review])');if(!page)return;const f=root.querySelector('form#transactionForm[data-v388-attached="1"]');if(!f)return;const where=page.querySelector('.v353-breakdowns');if(!where)return;const x=model(f);if(!x)return;const section=document.createElement('section');section.className='v388-review';const title=document.createElement('strong');title.textContent=x.isRefund?'Revisión de devolución':'Revisión de conciliación';const amount=document.createElement('p');amount.textContent=(x.isRefund?'Deuda que se reduce: ':'Ajuste que se aplicará: ')+(x.value>0&&!x.isRefund?'+':'')+currency(x.value,x.ccy);const text=document.createElement('p');text.textContent=x.isRefund?(x.purchase?'Compra vinculada: '+(x.purchase.note||x.purchase.category)+' · '+x.purchase.date:'Reintegro sin compra vinculada; verifica la categoría y el comprobante.'):'El ajuste no se clasificará como ingreso ni gasto. Motivo: '+x.note;section.append(title,amount,text);where.prepend(section);page.dataset.v388Review='1';}
+ let queued=false;function scan(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;root.querySelectorAll('form#transactionForm').forEach(attach);review();})}
+ new MutationObserver(scan).observe(root,{childList:true,subtree:true});scan();
+})();
+
+
+(()=>{'use strict';
+// Presentation state is ephemeral only. Finance remains in db + existing Supabase engine.
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ccy=(n,c='DOP')=>(c==='USD'?'US$':'RD$')+new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);
+const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const pict=label=>{const q=normalize(label);const cues=[[/supermerc|mercado|compras de alimento/,'🛒'],[/restaurant|comida|aliment|delivery|cafe|merienda/,'🍽️'],[/transporte|taxi|gasolina|combust|vehicul/,'🚗'],[/vivienda|alquiler|hogar|hipoteca/,'🏡'],[/salud|farmacia|medic|odont/,'🩺'],[/educacion|universidad|curso|colegio/,'🎓'],[/compras|tienda|ropa|calzado/,'🛍️'],[/servicio|internet|electric|telefono|agua/,'📶'],[/nomina|salario|sueldo|ingreso/,'💵'],[/entreten|cine|musica|videojuego/,'🎬'],[/viaje|vuelo|hosped/,'✈️'],[/negocio|venta|trabajo/,'💼'],[/transfer|traspas|mover/,'⇄'],[/prestamo|deuda/,'🏦']];return cues.find(([re])=>re.test(q))?.[1]||'✦'};
+const realCategories=mode=>Object.keys(categoryMap(mode==='income'?'ingreso':'gasto'));
+const subcategories=(mode,cat)=>categoryMap(mode==='income'?'ingreso':'gasto')[cat]||[];
+const state=()=>{const s=mqrState();s.v749Source||='account';s.v749Currency||='DOP';s.v749Date||=today();s.v749Note??='';s.v749Subcategory??='';s.v749Payee??='';s.v749Account||=db.accounts.find(a=>!a.archived)?.id||'';s.v749Card||=db.cards.find(c=>!c.archived)?.id||'';s.v749ToAccount||=db.accounts.find(a=>!a.archived&&a.id!==s.v749Account)?.id||'';if((s.mode==='income'||s.mode==='spend')&&!realCategories(s.mode).includes(s.preset))s.preset=realCategories(s.mode)[0]||'';return s};
+const acc=(id)=>db.accounts.find(a=>a.id===id);const cardRef=id=>db.cards.find(c=>c.id===id);
+const displaySource=s=>s.mode==='transfer'?(acc(s.v749Account)?.name||'Seleccionar origen'):s.mode==='income'?(acc(s.v749Account)?.name||'Seleccionar cuenta'):s.v749Source==='card'?(cardRef(s.v749Card)?.name||'Seleccionar tarjeta'):(acc(s.v749Account)?.name||'Seleccionar cuenta');
+const cur=s=>s.v749Source==='card'&&s.mode==='spend'?s.v749Currency:(acc(s.v749Account)?.currency||'DOP');
+const snapshot=s=>{let d=null;try{d=v89DebtCapacity(String(s.v749Date||today()).slice(0,7))}catch(_){/* missing reference */};const before=Number.isFinite(d?.ratio)?d.ratio:null;const deficit=d?.income>0?Math.max(0,Number(d.monthly||0)-Number(d.income||0)):null;
+// A cash expense or own transfer does not create a contractual debt payment.
+// A card purchase's future minimum cannot be assumed before billing/cut.
+const after=before;
+const note=s.mode==='transfer'?'Mover fondos propios no crea ingresos ni deuda nueva.':s.mode==='income'?'Este ingreso no modifica por sí solo las cuotas registradas.':s.v749Source==='card'?'El mínimo de tarjeta puede cambiar al facturarse; no se inventa una cuota.':'El gasto reduce fondos, pero no crea automáticamente una cuota de deuda.';
+return {before,after,deficit,note}};
+const percent=x=>x===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1}).format(x)+'%';
+const impact=s=>{const x=snapshot(s),ratio=Math.min(100,Math.max(0,x.after??0));return `<section class="v749-impact" aria-label="Capacidad de endeudamiento"><div class="v749-impact-head"><span>◈ Impacto en tu perfil financiero</span><span>ⓘ</span></div><div class="v749-impact-grid"><span><small>ANTES</small><strong>${percent(x.before)}</strong></span><b class="v749-mid">→</b><span><small>DESPUÉS</small><strong>${percent(x.after)}</strong></span><span class="v749-deficit"><small>DÉFICIT</small><strong>${x.deficit===null?'—':ccy(x.deficit)}</strong></span></div><div class="v749-impact-track"><i style="width:${ratio}%"></i></div><p class="v749-impact-note">${esc(x.note)}</p></section>`};
+const modeLabel=s=>s.mode==='income'?'Ingreso':s.mode==='transfer'?'Transferencia':'Gasto';
+const quick=s=>{if(s.mode==='transfer')return '';const list=realCategories(s.mode);const top=(s.mode==='income'?['Salario y nómina','Negocios y ventas','Joseo e ingresos adicionales','Servicios profesionales']:['Alimentación','Compras personales','Transporte','Servicios básicos']).filter(x=>list.includes(x));if(s.preset&&!top.includes(s.preset))top.splice(Math.min(3,top.length),0,s.preset);const labels=top.slice(0,4);return `<div class="v749-quick" role="group" aria-label="Categorías rápidas">${labels.map(c=>`<button type="button" data-v749="quick" data-value="${esc(c)}" aria-pressed="${s.preset===c}"><span style="font-size:23px">${pict(c)}</span><span>${esc(c.replace(' personales','').replace(' básicos',''))}</span></button>`).join('')}<button type="button" data-v749="category"><span style="font-size:23px">•••</span><span>Más</span></button></div>`};
+const entry=()=>{const s=state(),label=s.mode==='income'?'recibiste':s.mode==='transfer'?'vas a transferir':'gastaste';const curr=cur(s),names=[['spend','↗ Gasto'],['income','↘ Ingreso'],['transfer','⇄ Transferencia']];const nativeAmount=String(s.amount||'');return `<section class="v749-layer" data-v749-stage="entry"><div class="v749-screen" role="dialog" aria-modal="true" aria-label="Nuevo movimiento"><header class="v749-head"><span class="v749-brand"><i></i> Vive el Hoy · Finanzas 360</span><button type="button" class="v749-close" data-v749="close" aria-label="Cerrar">×</button></header><h2 class="v749-title">Nuevo movimiento</h2><p class="v749-subtitle">Registra con precisión y revisa el impacto antes de guardar.</p><div class="v749-scroll"><nav class="v749-segment" aria-label="Tipo de movimiento">${names.map(([k,v])=>`<button type="button" data-v749="mode" data-value="${k}" aria-pressed="${k===s.mode}">${v}</button>`).join('')}</nav><section class="v749-amount"><label for="v749Amount">¿Cuánto ${label}?</label><input id="v749Amount" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="Importe del movimiento" value="${esc(nativeAmount)}"><small>Importe en ${curr==='USD'?'US$':'RD$'} · usa el teclado integrado</small></section>${impact(s)}${quick(s)}<div class="v749-fieldline"><b>${s.mode==='transfer'?'Origen':s.mode==='income'?'Cuenta de ingreso':'Cuenta / Tarjeta'}</b><button type="button" data-v749="source">${esc(displaySource(s))} ›</button></div>${s.mode==='spend'&&s.v749Source==='card'?`<div class="v749-fieldline"><b>Moneda de la tarjeta</b><button type="button" data-v749="currency">${s.v749Currency==='USD'?'US$ (cambiar a RD$)':'RD$ (cambiar a US$)'}</button></div>`:''}${s.mode==='transfer'?`<div class="v749-fieldline"><b>Tipo de transferencia</b><button type="button" data-v749="transferKind">${s.transferKind==='outgoing'?'A terceros':'Entre mis cuentas'} ›</button></div>${s.transferKind==='outgoing'?`<div class="v749-fieldline"><b>Beneficiario</b><input id="v749Payee" maxlength="100" placeholder="Nombre" value="${esc(s.v749Payee)}"></div>`:`<div class="v749-fieldline"><b>Destino</b><button type="button" data-v749="destination">${esc(acc(s.v749ToAccount)?.name||'Seleccionar destino')} ›</button></div>`}`:`<div class="v749-fieldline"><b>Categoría</b><button type="button" data-v749="category">${esc(s.preset||'Seleccionar')} ›</button></div><div class="v749-fieldline"><b>Subcategoría</b><button type="button" data-v749="subcategory">${esc(s.v749Subcategory||'Seleccionar')} ›</button></div>`}<div class="v749-fieldline"><b>Fecha</b><input id="v749Date" type="date" max="${today()}" value="${esc(s.v749Date)}"></div><div class="v749-keypad" aria-label="Teclado numérico">${['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k=>`<button type="button" data-v749="key" data-value="${k}" aria-label="${k==='⌫'?'Borrar':k}">${k}</button>`).join('')}</div></div><footer class="v749-foot"><div class="v749-error" id="v749EntryError" role="alert"></div><button type="button" class="v749-primary" data-v749="continue">Continuar →</button></footer></div><div class="v749-sheet" id="v749Sheet" hidden></div></section>`};
+function renderEntry(){const root=document.getElementById('modal-root');if(!root)return;root.innerHTML=entry();
+ // The keypad is the primary mobile interaction; secondary details follow it.
+ const scroll=root.querySelector('.v749-scroll'),keypad=scroll?.querySelector('.v749-keypad'),quick=scroll?.querySelector('.v749-quick');
+ if(!scroll||!keypad)return;
+ const first=scroll.querySelector('.v749-fieldline');
+ if(quick)quick.after(keypad);
+ if(first)keypad.before(first); // source remains directly accessible above the keypad
+ const extra=[...scroll.querySelectorAll(':scope > .v749-fieldline')].filter(x=>x!==first);
+ if(extra.length){const more=document.createElement('details');more.className='v749-more';more.innerHTML='<summary>Más detalles · categoría, fecha y opciones</summary>';extra.forEach(x=>more.appendChild(x));scroll.appendChild(more);}
+ }
+const setError=(message,review=false)=>{const el=document.getElementById(review?'v749ReviewError':'v749EntryError');if(el)el.textContent=message||''};
+const freshEntry=()=>{renderEntry();const el=document.getElementById('v749Amount');if(el)el.scrollIntoView({block:'nearest'})};
+const applyKey=(key)=>{const s=state(),current=String(s.amount||'');if(key==='⌫')s.amount=current.slice(0,-1);else if(key==='.'&&!current.includes('.'))s.amount=(current||'0')+'.';else if(/^\d$/.test(key)){const pts=current.split('.');if((pts.length===1||pts[1].length<2)&&current.replace(/\D/g,'').length<11)s.amount=current==='0'?key:current+key}const input=document.getElementById('v749Amount');if(input)input.value=s.amount;setError('')};
+const changeMode=mode=>{const s=state();s.mode=mode;s.v749Subcategory='';s.preset=realCategories(mode)[0]||'';if(mode==='transfer')s.transferKind='own';if(mode==='income')s.v749Source='account';renderEntry()};
+const chooseCategory=(cat)=>{const s=state();s.preset=cat;s.v749Subcategory='';freshEntry()};
+const sheetContainer=()=>document.querySelector('#modal-root .v749-sheet');
+const closeSheet=()=>{const host=sheetContainer();if(host){host.hidden=true;host.replaceChildren()}};
+function sheet(type){const s=state(),host=sheetContainer();if(!host)return;host.hidden=false;let title='',html='';if(type==='category'){title='Selecciona una categoría';html=`<input class="v749-sheet-search" id="v749CategorySearch" placeholder="Buscar categoría…" aria-label="Buscar categoría"><div class="v749-choice-grid" id="v749CategoryGrid">${realCategories(s.mode).map(cat=>`<button type="button" class="${s.preset===cat?'is-selected':''}" data-v749="pickCategory" data-value="${esc(cat)}"><span class="v749-choice-icon">${pict(cat)}</span><span class="v749-choice-name">${esc(cat)}</span></button>`).join('')}</div>` }else if(type==='subcategory'){
+ title='Selecciona una subcategoría';
+ html=`<input class="v749-sheet-search" id="v749SubcategorySearch" type="search" placeholder="Buscar subcategoría…" aria-label="Buscar subcategoría">
+ <div class="v749-sublist v768-sublist" id="v749SubcategoryGrid"><button type="button" data-v749="pickSub" data-value="" class="${!s.v749Subcategory?'is-selected':''}"><span class="v768-subicon">◈</span><span>Sin subcategoría</span></button>${subcategories(s.mode,s.preset).map(sub=>`<button type="button" data-v749="pickSub" data-value="${esc(sub)}" class="${sub===s.v749Subcategory?'is-selected':''}"><span class="v768-subicon">${pict(sub+' '+s.preset)}</span><span>${esc(sub)}</span></button>`).join('')}</div>`;
+ }else if(['source','destination'].includes(type)){
+ title=type==='destination'?'Cuenta de destino':'Selecciona una cuenta o tarjeta';
+ const accounts=db.accounts.filter(a=>!a.archived);
+ const cards=db.cards.filter(c=>!c.archived);
+ const candidates=type==='destination'?accounts.filter(a=>a.id!==s.v749Account).map(a=>['account',a]):accounts.map(a=>['account',a]).concat(s.mode==='spend'?cards.map(c=>['card',c]):[]);
+ html=`<input class="v749-sheet-search" id="v768SourceSearch" type="search" placeholder="Buscar producto…" aria-label="Buscar cuenta o tarjeta">
+ <div class="v749-source-list v768-source-list" id="v768SourceList">${candidates.map(([kind,o])=>{
+ const current=type==='destination'?s.v749ToAccount===o.id:kind==='card'?(s.v749Source==='card'&&s.v749Card===o.id):(s.v749Source==='account'&&s.v749Account===o.id);
+ const last4=String(o.last4||'').replace(/\D/g,'').slice(-4);
+ const mastercard=/master|\bmc\b/i.test(o.name+' '+(o.network||''));
+ return `<button type="button" data-v749="pickSource" data-kind="${kind}" data-role="${type}" data-value="${esc(o.id)}" class="${current?'is-selected':''}">
+ <span class="v768-source-visual ${kind==='card'?'v768-source-card':'v768-source-account'} ${mastercard?'v768-mastercard':''}">${kind==='card'?(mastercard?'● ●':'VISA'):'▣'}</span>
+ <span class="v768-source-copy"><strong>${esc(o.name)}</strong><small>${kind==='card'?esc((o.bank||'Tarjeta')+(last4?' · •••• '+last4:'')):esc(o.currency||'DOP')}</small></span>
+ <span class="v768-source-radio">${current?'✓':''}</span></button>`;
+ }).join('')||'<p>Sin productos activos registrados</p>'}</div>`;
+}else if(type==='loan'){title='Préstamos registrados';html=`<div class="v749-source-list">${db.loans.filter(x=>!x.archived).map(x=>`<button type="button" data-v749="loan" data-value="${esc(x.id)}"><span>🏦 ${esc(x.name)}</span></button>`).join('')||'<p>Sin préstamos activos</p>'}</div>`}else return;
+host.innerHTML=`<div class="v749-sheet-inner" role="dialog" aria-label="${esc(title)}"><header class="v749-sheet-head"><h3>${esc(title)}</h3><button type="button" data-v749="sheetClose" aria-label="Cerrar selector">×</button></header>${html}</div>`;host.querySelector('input')?.focus({preventScroll:true})}
+function setNative(f,name,value){const field=f.elements.namedItem(name);if(!field||typeof field.value!=='string')return;field.value=String(value??'');field.dispatchEvent(new Event('change',{bubbles:true}))}
+function validateEntry(s){if(!(Number(s.amount)>0)||!Number.isFinite(Number(s.amount)))return 'Introduce un importe válido mayor que cero.';if(!/^\d{4}-\d\d-\d\d$/.test(s.v749Date)||s.v749Date>today())return 'Revisa la fecha del movimiento.';if((s.mode!=='spend'||s.v749Source!=='card')&&(!acc(s.v749Account)||acc(s.v749Account).archived))return 'Selecciona una cuenta activa.';if(s.mode==='spend'&&s.v749Source==='card'&&(!cardRef(s.v749Card)||cardRef(s.v749Card).archived))return 'Selecciona una tarjeta activa.';if(s.mode==='transfer'&&s.transferKind!=='outgoing'&&(s.v749Account===s.v749ToAccount||!acc(s.v749ToAccount)||acc(s.v749ToAccount).archived))return 'Selecciona una cuenta de destino diferente.';if(s.mode==='transfer'&&s.transferKind==='outgoing'&&!s.v749Payee.trim())return 'Indica el beneficiario.';if(s.mode!=='transfer'&&!realCategories(s.mode).includes(s.preset))return 'Selecciona una categoría válida.';return ''}
+function continueToReview(){const s=state(),error=validateEntry(s);if(error){setError(error);return}
+const isSpend=s.mode==='spend',mode=s.mode==='transfer'?(s.transferKind==='outgoing'?'outgoing':'own'):s.mode;
+const p={flowMode:mode,type:s.mode==='income'?'income':s.mode==='transfer'&&s.transferKind!=='outgoing'?'transfer':isSpend&&s.v749Source==='card'?'card_charge':'expense',amount:String(s.amount),date:s.v749Date,category:s.preset,subcategory:s.v749Subcategory,note:s.v749Note,accountId:s.v749Account,toAccountId:s.v749ToAccount,cardId:s.v749Card,paymentSource:s.v749Source,currency:cur(s),paymentChannel:acc(s.v749Account)?.kind==='cash'?'presencial':'internet_banking',payee:s.v749Payee};
+// Native form remains the only data model and accounting submission mechanism.
+ui.mobileQuickInDetail=true;try{guidedTransactionForm(p)}finally{ui.mobileQuickInDetail=false}
+const f=document.getElementById('transactionForm');if(!f)return;
+f.dataset.v749Native='1';
+for(const [name,val] of Object.entries({category:s.preset,subcategory:s.v749Subcategory,date:s.v749Date,note:s.v749Note,amount:s.amount,accountId:s.v749Account,toAccountId:s.v749ToAccount,cardId:s.v749Card,paymentSource:s.v749Source,payee:s.v749Payee}))if(f.elements.namedItem(name))setNative(f,name,val);
+if(f.elements.currency)setNative(f,'currency',cur(s));
+try{refreshGuidedForm(f)}catch(e){console.warn('Vista previa contable',e)}
+const review=document.createElement('div');review.className='v749-review-overlay';review.innerHTML=renderReview(s,f);document.getElementById('modal-root').appendChild(review);
+}
+
+function v768Illustrate(label){
+ const s=normalize(label);
+ const symbol=/alimen|restaurant|comida|cafe|merienda|delivery/.test(s)?'food':/transporte|combust|uber|taxi|vehicul|auto/.test(s)?'car':/vivienda|hogar|alquiler|hipoteca/.test(s)?'house':/salud|farmacia|odont/.test(s)?'health':/educacion|universidad|curso/.test(s)?'study':/salario|nomina|ingres|negocios|inversion/.test(s)?'income':/viaje|vuelo/.test(s)?'plane':/compras|tienda|ropa|calzado/.test(s)?'bag':'wallet';
+ const shapes={
+ food:'<path d="M16 45Q35 66 56 45"/><path d="M17 45h39"/><path d="M23 17v19m7-19v19m7-19v19m-14-19h14m15 0v21"/>',
+ car:'<path d="M10 43h53l-4-16-10-8H26l-9 8z"/><circle cx="23" cy="45" r="5"/><circle cx="53" cy="45" r="5"/><path d="M24 28h27"/>',
+ house:'<path d="m12 30 26-18 26 18v29H12z"/><path d="M28 59V39h20v20"/>',
+ health:'<path d="M36 55C13 41 10 29 21 20c9-7 16 0 18 4 9-13 26-7 25 6-1 10-11 18-28 25z"/><path d="M26 39h9l4-9 6 16 5-7h6"/>',
+ study:'<path d="m7 28 29-15 30 15-30 15z"/><path d="M19 36v16c11 10 24 10 35 0V36"/><path d="M66 30v20"/>',
+ income:'<rect x="12" y="13" width="54" height="42" rx="8"/><circle cx="39" cy="34" r="12"/><path d="M34 28c7-4 13 3 6 6-8 2-4 10 4 7M39 24v20"/>',
+ plane:'<path d="m8 36 58-20-17 51-10-22-22-9z"/><path d="m39 45 27-29"/>',
+ bag:'<path d="M17 26h44l4 35H13z"/><path d="M27 27v-7a12 12 0 0 1 24 0v7"/>',
+ wallet:'<rect x="10" y="18" width="55" height="39" rx="8"/><path d="M12 29h43a9 9 0 0 1 0 18H39a9 9 0 0 1 0-18"/><circle cx="48" cy="38" r="2"/>'};
+ return `<svg viewBox="0 0 76 76" class="v768-hero-drawing" aria-hidden="true" focusable="false"><defs><linearGradient id="v768-draw-grad" x1="0" y1="0" x2="1" y2="1"><stop stop-color="white" stop-opacity=".95"/><stop offset="1" stop-color="var(--v749-accent)" stop-opacity=".9"/></linearGradient></defs><circle cx="38" cy="38" r="35" fill="var(--v749-accent)" opacity=".18"/><g fill="none" stroke="url(#v768-draw-grad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${shapes[symbol]}</g></svg>`;
+}
+
+function renderReview(s,f){const value=Number(s.amount),isTr=s.mode==='transfer',isIncome=s.mode==='income',isCard=s.mode==='spend'&&s.v749Source==='card';const cate=isTr?'Transferencias':s.preset;const p=v768Illustrate((s.v749Subcategory||'')+' '+cate);const selected=f.elements.category?.value||cate;const instrument=isCard?cardRef(s.v749Card)?.name:acc(s.v749Account)?.name;
+const rows=[['Tarjeta / Cuenta',instrument||'—'],...(isTr?[['Destino',s.transferKind==='outgoing'?s.v749Payee:(acc(s.v749ToAccount)?.name||'—')]]:[['Categoría',selected||'—'],['Subcategoría',s.v749Subcategory||'Sin subcategoría']]),['Fecha',s.v749Date]];
+return `<section class="v749-layer" data-v749-stage="review"><div class="v749-screen" role="dialog" aria-modal="true" aria-label="Confirmar movimiento"><header class="v749-head"><span class="v749-brand"><i></i> Vive el Hoy · Finanzas 360</span><button type="button" class="v749-close" data-v749="back" aria-label="Volver a editar">×</button></header><h2 class="v749-title">Confirma el movimiento</h2><p class="v749-subtitle">Revisa los detalles y el impacto en tus finanzas.</p><div class="v749-scroll"><section class="v749-illustrated"><div><small>${modeLabel(s)}</small><strong>${ccy(value,cur(s))}</strong><p>${esc(cate)}</p></div><span class="v749-artwork" aria-hidden="true">${p}</span></section>${impact(s)}<section class="v749-confirm-rows">${rows.map(([label,text])=>`<div class="v749-confirm-row"><span>${esc(label)}</span><b>${esc(text)}</b></div>`).join('')}<div class="v749-confirm-row"><span>Nota</span><input id="v749Note" maxlength="180" placeholder="Opcional" value="${esc(s.v749Note)}" aria-label="Nota del movimiento"></div></section><p class="v749-impact-note">Se revisarán impuestos y cargos mediante el cálculo contable existente antes de guardar; no se crea ninguna cuota ficticia.</p></div><footer class="v749-foot"><div class="v749-error" id="v749ReviewError" role="alert"></div><div class="v749-footrow"><button type="button" class="v749-secondary" data-v749="back">Editar</button><button type="button" class="v749-primary" data-v749="confirm">✓ Confirmar movimiento</button></div></footer></div></section>`}
+function back(){const s=state(),note=document.getElementById('v749Note');if(note)s.v749Note=note.value;document.getElementById('modal-root').querySelector('.v749-review-overlay')?.remove();renderEntry()}
+let confirmationBusy=false;
+function confirm(){if(confirmationBusy)return;const s=state(),f=document.querySelector('#modal-root #transactionForm[data-v749-native]');if(!f)return setError('No se encuentra el formulario contable.',true);const note=document.getElementById('v749Note');if(note){s.v749Note=note.value;setNative(f,'note',note.value)};
+const invalid=Array.from(f.elements).find(el=>el.willValidate&&!el.disabled&&!el.checkValidity());if(invalid){setError('Revisa el campo obligatorio «'+(invalid.name||'sin nombre')+'» en la edición antes de confirmar.',true);return}
+confirmationBusy=true;const b=document.querySelector('[data-v749="confirm"]');if(b){b.disabled=true;b.textContent='Guardando…'};
+try{const submit=f.querySelector('button[type=submit]');if(typeof f.requestSubmit!=='function')throw Error('El navegador no admite el envío seguro.');submit?f.requestSubmit(submit):f.requestSubmit();
+// A rejected native submission leaves the form and error in place; do not pretend success.
+queueMicrotask(()=>{if(!f.isConnected){confirmationBusy=false;return}const msg=f.querySelector('#formError')?.textContent?.trim();if(msg){setError(msg,true)}else{setError('La operación no se ha confirmado. Revisa los campos obligatorios antes de reintentar.',true)}confirmationBusy=false;if(b){b.disabled=false;b.textContent='✓ Confirmar movimiento'}});
+}catch(e){setError(e.message||'No se pudo enviar el movimiento.',true);confirmationBusy=false;if(b){b.disabled=false;b.textContent='✓ Confirmar movimiento'}}}
+const priorOpen=openMobileQuickRegister;
+openMobileQuickRegister=function(mode='income',amount=''){const chosen=mode==='expense'||mode==='card_charge'?'spend':mode==='transfer'||mode==='outgoing'?'transfer':mode;ui.mobileQuickRegister={mode:['income','spend','transfer'].includes(chosen)?chosen:'income',amount:String(amount||''),preset:'',transferKind:mode==='outgoing'?'outgoing':'own',v749Source:'account',v749Currency:'DOP',v749Date:today(),v749Note:'',v749Subcategory:'',v749Account:db.accounts.find(a=>!a.archived)?.id||'',v749Card:db.cards.find(c=>!c.archived)?.id||'',v749ToAccount:'',v749Payee:''};const s=state();s.v749ToAccount=db.accounts.find(a=>!a.archived&&a.id!==s.v749Account)?.id||'';renderEntry()};
+// Same two-screen flow from the main Registrar button; specialist flows remain untouched.
+const priorFlowPicker=flowPicker;
+flowPicker=function(...args){if(isMobileViewport()){ui.registrationGroup=ui.registrationGroup||'pay';return openRegisterAssistant()}return priorFlowPicker(...args)};
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v749]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const s=state(),act=b.dataset.v749;const v=b.dataset.value||'';
+if(act==='close'){closeModal();return}if(act==='mode'){changeMode(v);return}if(act==='key'){applyKey(v);return}if(act==='quick'){chooseCategory(v);return}if(act==='category'||act==='subcategory'||act==='source'||act==='destination'){sheet(act);return}
+if(act==='sheetClose'){closeSheet();return}if(act==='pickCategory'){s.preset=v;s.v749Subcategory='';sheet('subcategory');return}if(act==='pickSub'){s.v749Subcategory=v;closeSheet();renderEntry();return}
+if(act==='pickSource'){if(b.dataset.role==='destination'){s.v749ToAccount=v}else if(b.dataset.kind==='card'){s.v749Source='card';s.v749Card=v}else{s.v749Source='account';s.v749Account=v;s.v749ToAccount=s.v749ToAccount===v?db.accounts.find(a=>!a.archived&&a.id!==v)?.id||'':s.v749ToAccount}closeSheet();renderEntry();return}
+if(act==='currency'){s.v749Currency=s.v749Currency==='DOP'?'USD':'DOP';renderEntry();return}if(act==='transferKind'){s.transferKind=s.transferKind==='outgoing'?'own':'outgoing';renderEntry();return}
+if(act==='continue'){continueToReview();return}if(act==='back'){back();return}if(act==='confirm'){confirm();return}
+},true);
+document.addEventListener('input',e=>{if(e.target.id==='v749CategorySearch'){const q=normalize(e.target.value);document.querySelectorAll('#v749CategoryGrid button').forEach(el=>{el.hidden=!normalize(el.dataset.value).includes(q)});return}
+if(['v749SubcategorySearch','v768SourceSearch'].includes(e.target.id)){const q=normalize(e.target.value),root=e.target.id==='v749SubcategorySearch'?'#v749SubcategoryGrid':'#v768SourceList';document.querySelectorAll(root+' button').forEach(el=>{el.hidden=!normalize(el.textContent).includes(q)});return}
+if(e.target.id==='v749Amount'){const s=state();const raw=e.target.value.replace(/[^0-9.]/g,'');const [a,...b]=raw.split('.');s.amount=a.slice(0,11)+(b.length?'.'+b.join('').slice(0,2):'');if(s.amount!==e.target.value)e.target.value=s.amount;return}
+if(e.target.id==='v749Payee')state().v749Payee=e.target.value;if(e.target.id==='v749Date')state().v749Date=e.target.value;
+if(e.target.id==='v749Note')state().v749Note=e.target.value;
+},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheetContainer()&&!sheetContainer().hidden){e.preventDefault();closeSheet()}},true);
+})();
+
+
+(()=>{'use strict';
+// All entries come from existing form controls and already loaded entities, never remote requests.
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+let active=null;
+function makeLabel(select){
+ const label=select.closest('label');if(!label||label.querySelector('.v756-native-select-btn'))return;
+ const form=select.closest('form.other-studio-form');if(!form)return;
+ const mode=select.name;
+ if(!['cardId','accountId','loanId'].includes(mode))return;
+ const b=document.createElement('button');b.type='button';b.className='v756-native-select-btn';
+ b.setAttribute('aria-label','Abrir selector de '+(mode==='cardId'?'tarjetas':mode==='loanId'?'préstamos':'cuentas'));
+ b.innerHTML='<span class="v756-field-ico">▣</span><span></span>';
+ const txt=b.querySelector('span:nth-child(2)');
+ const sync=()=>{txt.textContent=select.selectedOptions?.[0]?.textContent?.trim()||'Seleccionar producto';};
+ sync();select.addEventListener('change',sync);b.addEventListener('click',()=>openPicker(select));label.appendChild(b);
+ // Keep native accessible to assistive tech and fallback; do not remove it.
+ select.style.position='absolute';select.style.width='1px';select.style.height='1px';select.style.opacity='0';select.style.pointerEvents='none';
+}
+function updateImpact(form){
+ const spec=form.dataset.special;if(!['refund','adjustment'].includes(spec))return;
+ let spot=form.querySelector('.other-studio-impact');
+ if(!spot){spot=document.createElement('section');spot.className='other-studio-impact';const anchor=form.querySelector('.other-studio-receipt');if(anchor)anchor.insertAdjacentElement('afterend',spot);else form.querySelector('.other-studio-right')?.appendChild(spot)}
+ if(!spot)return;
+ const amt=Number(form.elements.amount?.value),safeAmt=Number.isFinite(amt)?amt:0;
+ let prior=null,after=null,label='Saldo actual',currency='DOP',subtitle='Sin información de un producto seleccionado';
+ try{
+  if(spec==='adjustment'){
+   const chosen=db.accounts.find(a=>String(a.id)===String(form.elements.accountId?.value));
+   if(chosen){currency=chosen.currency||'DOP';prior=getAccountBalance(chosen);after=prior+safeAmt;subtitle='Ajuste documentado; no crea ingresos o gastos ordinarios'}
+  }else{
+   const chosen=db.cards.find(c=>String(c.id)===String(form.elements.cardId?.value));
+   if(chosen){currency=form.elements.currency?.value||'DOP';if(!['DOP','USD'].includes(currency))currency='DOP';prior=cardStatus(chosen,currency).debt;after=Math.max(0,prior-Math.max(0,safeAmt));label='Deuda actual';subtitle='Estimación de saldo de tarjeta tras el reintegro'}
+  }
+ }catch(_){prior=null;after=null;}
+ const cash=n=>n===null||!Number.isFinite(n)?'—':money(n,currency,2);
+ spot.innerHTML=`<h4>${spec==='refund'?'Impacto en tu tarjeta':'Vista previa del ajuste'}</h4><div class="other-studio-impact-grid"><span><small>${label}</small><strong>${esc(cash(prior))}</strong></span><span class="v756-arrow">→</span><span><small>${spec==='refund'?'Deuda estimada':'Nuevo saldo estimado'}</small><strong>${esc(cash(after))}</strong></span></div><p>${esc(subtitle)}</p>`;
+}
+
+function enhanceLoanPicker(pane){
+ if(pane.dataset.v756LoanEnhanced==='yes')return;
+ const rows=[...pane.querySelectorAll('button[data-act="otherLoanSelect"][data-id]')];
+ if(!rows.length)return;
+ pane.dataset.v756LoanEnhanced='yes';pane.classList.add('v756-loan-selector');
+ let picked='';
+ const footer=document.createElement('button');footer.type='button';footer.className='v756-loan-choose';footer.textContent='Usar este préstamo';footer.disabled=true;
+ const setChosen=(id)=>{picked=id;rows.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));footer.disabled=!picked};
+ rows.forEach(b=>{
+  const id=b.dataset.id;
+  b.removeAttribute('data-act'); // Changing the highlight is never a financial action.
+  b.setAttribute('aria-pressed','false');
+  const l=db.loans.find(x=>String(x.id)===id);
+  if(l){
+   try{
+    const st=loanStatus(l),balance=Number(st.balance)||0,principal=Number(l.principal)||0;
+    const details=document.createElement('span');details.className='v756-loan-info';
+    const pct=principal>0&&balance>=0?Math.max(0,Math.min(100,100*(principal-balance)/principal)):null;
+    details.innerHTML=`<span>Cuota: ${esc(st.installment>0?money(st.installment,l.currency||'DOP',2):'Sin cuota disponible')}</span>${pct!==null?`<span class="v756-loan-meter"><i style="width:${pct.toFixed(1)}%"></i></span><span>${pct.toFixed(1)}% amortizado</span>`:''}`;
+    b.appendChild(details);
+   }catch(_){/* No inventar saldos ni porcentajes */}
+  }
+  b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setChosen(id)},true);
+ });
+ footer.addEventListener('click',()=>{if(picked&&typeof otherLoanSelect==='function')otherLoanSelect(picked)});
+ pane.appendChild(footer);
+}
+// Attach to actual DOM forms rather than overriding the accounting function.
+// This also prevents registration errors while the user is on the sign-in screen.
+function augment(){
+ document.querySelectorAll('#modal-root .other-studio-picker').forEach(enhanceLoanPicker);
+ document.querySelectorAll('#modal-root form.other-studio-form').forEach(form=>{
+  if(form.dataset.v756Enhanced==='yes')return;
+  form.dataset.v756Enhanced='yes';
+  form.querySelectorAll('select[name="cardId"],select[name="accountId"],select[name="loanId"]').forEach(makeLabel);
+  if(['refund','adjustment'].includes(form.dataset.special)){
+   const sync=()=>queueMicrotask(()=>updateImpact(form));
+   form.addEventListener('input',sync);form.addEventListener('change',sync);sync();
+  }
+ });
+}
+function startObserver(){
+ const host=document.getElementById('modal-root');if(!host)return;
+ new MutationObserver(augment).observe(host,{childList:true,subtree:true});
+ augment();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startObserver,{once:true});else startObserver();
+function closePicker(){document.getElementById('v756-product-layer')?.remove();active=null;document.body.classList.remove('v756-picker-open')}
+function productRows(){if(!active)return [];const s=active.select;
+ return [...s.options].filter(o=>o.value&&!o.disabled).map(o=>{
+  const item=(active.kind==='cardId'?db.cards:active.kind==='loanId'?db.loans:db.accounts).find(x=>String(x.id)===o.value);
+  const typ=active.kind==='cardId'?norm([item?.type,item?.cardType,item?.kind].filter(Boolean).join(' ')):'all';
+  const brand=active.kind==='cardId'?(/master|mc/.test(norm(item?.name+' '+item?.network))?'Mastercard':/visa/.test(norm(item?.name+' '+item?.network))?'VISA':'Tarjeta'):active.kind==='loanId'?'Préstamo':'Cuenta';
+  const last4=(item?.last4||item?.lastFour||item?.lastFourDigits||'').toString().replace(/\D/g,'').slice(-4);
+  let caption=active.kind==='loanId'?'':active.kind==='cardId'?'Tarjeta':item?.currency||'Cuenta';
+  let details='';
+  try{if(active.kind==='loanId'&&item){const st=loanStatus(item);details='Saldo pendiente: '+money(st.balance,item.currency||'DOP',2)+(st.installment>0?' · Cuota: '+money(st.installment,item.currency||'DOP',2):'');}}
+  catch(_){}
+  return {value:o.value,title:item?.name||o.textContent,caption,brand,last4,typ,details};
+ });
+}
+function openPicker(select){closePicker();active={select,kind:select.name,provisional:select.value,filter:'all',q:''};
+ const layer=document.createElement('div');layer.id='v756-product-layer';
+ const isCard=select.name==='cardId';const title=isCard?'Selecciona una tarjeta':select.name==='loanId'?'Selecciona el préstamo':'Selecciona la cuenta';
+ layer.innerHTML=`<section class="v756-sheet" role="dialog" aria-modal="true" aria-label="${title}"><span class="v756-sheet-handle"></span><header class="v756-sheet-head"><div><h2>${title}</h2><p>Elige un producto registrado para esta operación.</p></div><button type="button" class="v756-sheet-close" data-v756="close" aria-label="Cancelar">×</button></header><input type="search" class="v756-sheet-search" id="v756-search" aria-label="Buscar producto" placeholder="Buscar ${isCard?'tarjeta':select.name==='loanId'?'préstamo':'cuenta'}…">${isCard?'<div class="v756-sheet-tabs" role="group" aria-label="Filtrar tarjetas"><button data-v756="filter" data-value="all" aria-pressed="true">Todas</button><button data-v756="filter" data-value="credit" aria-pressed="false">Crédito</button><button data-v756="filter" data-value="debit" aria-pressed="false">Débito</button></div>':''}<div class="v756-sheet-items"></div><button type="button" class="v756-use" data-v756="use">Usar ${isCard?'esta tarjeta':select.name==='loanId'?'este préstamo':'esta cuenta'}</button></section>`;
+ document.body.appendChild(layer);document.body.classList.add('v756-picker-open');
+ layer.addEventListener('click',e=>{if(e.target===layer||e.target.closest('[data-v756="close"]')){closePicker();return}
+ const filter=e.target.closest('[data-v756="filter"]');if(filter){active.filter=filter.dataset.value;draw();return}
+ const item=e.target.closest('[data-v756="choose"]');if(item){active.provisional=item.dataset.value;draw();return}
+ if(e.target.closest('[data-v756="use"]')){if(active.provisional&&[...select.options].some(o=>o.value===active.provisional)){select.value=active.provisional;select.dispatchEvent(new Event('change',{bubbles:true}));}closePicker();return}
+ });
+ layer.querySelector('#v756-search').addEventListener('input',e=>{active.q=e.target.value;draw()});
+ draw();
+}
+function draw(){if(!active)return;const layer=document.getElementById('v756-product-layer');if(!layer)return;
+ layer.querySelectorAll('[data-v756="filter"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.value===active.filter)));
+ const list=layer.querySelector('.v756-sheet-items');const rows=productRows().filter(r=>(active.filter==='all'||active.filter==='credit'&&!/debit/.test(r.typ)||active.filter==='debit'&&/debit/.test(r.typ))&&norm(r.title+' '+r.caption+' '+r.last4+' '+r.details).includes(norm(active.q)));
+ list.innerHTML=rows.length?rows.map(r=>`<button type="button" class="v756-item" data-v756="choose" data-value="${esc(r.value)}" aria-pressed="${r.value===active.provisional}"><span class="v756-card-preview ${r.brand==='Mastercard'?'mc':''}">${esc(r.brand)}</span><span class="v756-item-copy"><strong>${esc(r.title)}</strong><small>${esc(r.details||r.caption)}${r.last4?' ·•••• '+esc(r.last4):''}</small></span><span class="v756-item-check">${r.value===active.provisional?'✓':''}</span></button>`).join(''):'<div class="v756-empty">No hay productos registrados que coincidan con este filtro.</div>';
+ layer.querySelector('.v756-use').disabled=!active.provisional;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active){e.preventDefault();closePicker();}});
+})();
+
+
+(()=>{'use strict';
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ let queued=false;
+ function reconcileEnhancement(form){
+  if(form.dataset.special!=='adjustment'||form.dataset.v768Adjustment==='yes')return;
+  form.dataset.v768Adjustment='yes';
+  const submit=form.querySelector('[type=\"submit\"]');if(submit){submit.textContent='✓ Confirmar conciliación';submit.style.setProperty('background','var(--vive-theme-color,#8c79d3)','important');submit.style.setProperty('color','#101014','important');}
+  const amount=form.elements.namedItem('amount');
+  const panel=form.querySelector('.other-studio-amount');if(!amount||!panel)return;
+  const heading=document.createElement('div');heading.className='v768-adjust-heading';heading.innerHTML='<strong>Ajuste de saldo</strong><span class="v768-adjust-toggle" role="group" aria-label="Dirección del ajuste"><button type="button" data-v768-sign="plus" aria-pressed="true">+ Aumentar</button><button type="button" data-v768-sign="minus" aria-pressed="false">− Disminuir</button></span>';
+  panel.prepend(heading);
+  const refresh=()=>{const negative=Number(amount.value)<0;heading.querySelector('[data-v768-sign="minus"]').setAttribute('aria-pressed',String(negative));heading.querySelector('[data-v768-sign="plus"]').setAttribute('aria-pressed',String(!negative));};
+  heading.addEventListener('click',e=>{const b=e.target.closest('[data-v768-sign]');if(!b)return;const magnitude=Math.abs(Number(amount.value)||0);amount.value=String((b.dataset.v768Sign==='minus'?-1:1)*magnitude||'');amount.dispatchEvent(new Event('input',{bubbles:true}));amount.dispatchEvent(new Event('change',{bubbles:true}));refresh();});
+  amount.addEventListener('input',refresh);refresh();
+  // The native note field remains in the original form and records the documented reason.
+  const note=form.elements.namedItem('note');const label=note?.closest('label');const content=form.querySelector('.other-studio-content');
+  if(label&&content){label.classList.add('v768-reason');label.querySelector(':scope > span')?.replaceChildren(document.createTextNode('Motivo y evidencia del ajuste'));content.appendChild(label);}
+ }
+ function refundEnhancement(form){
+  if(form.dataset.special!=='refund'||form.dataset.v768Refund==='yes')return;
+  form.dataset.v768Refund='yes';
+  const submit=form.querySelector('[type=\"submit\"]');if(submit){submit.textContent='✓ Confirmar devolución';submit.style.setProperty('background','var(--vive-theme-color,#8c79d3)','important');submit.style.setProperty('color','#101014','important');}
+  const note=form.elements.namedItem('note');const label=note?.closest('label');
+  if(label){label.classList.add('v768-refund-reason');const left=form.querySelector('.other-studio-content');if(left)left.appendChild(label);}
+ }
+ function decorateRegister(){
+  document.querySelectorAll('#modal-root form.other-studio-form').forEach(f=>{reconcileEnhancement(f);refundEnhancement(f)});
+  const register=document.querySelector('#modal-root .v235-register-dialog');
+  if(register&&!register.dataset.v768Register){register.dataset.v768Register='yes';register.classList.add('v768-register-original');}
+ }
+ function augment(){queued=false;decorateRegister()}
+ function request(){if(!queued){queued=true;requestAnimationFrame(augment)}}
+ function start(){const modal=document.getElementById('modal-root');if(!modal)return;new MutationObserver(request).observe(modal,{subtree:true,childList:true});request()}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+
+
 })();
 
 
@@ -70950,115 +71554,7 @@ body:is(.theme-black,.theme-dark) #modal-root form[data-v379-income] :is(.fastx-
 body:is(.theme-black,.theme-dark) #modal-root form[data-v379-income] .fastx-cat.selected{background:#162b22!important;color:#e0ffef!important;border-color:#386e54!important}
 @media(max-width:365px){#modal-root .v379-income-preview .v379-income-figures{grid-template-columns:1fr}}
 </style>
-<script id="v379-income-controller">
-(function(){
- 'use strict';
- const root=document.getElementById('modal-root');if(!root)return;
- const moneySafe=(n,ccy)=>{
-   const v=Number(n);const p=ccy==='USD'?'US$':'RD$';
-   return Number.isFinite(v)?(v<0?'-':'')+p+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
- };
- const text=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const template=()=>'<header><strong>Impacto del ingreso</strong><span>VISTA PREVIA</span></header><div class="v379-income-route" data-v379-route></div><div class="v379-income-figures" data-v379-figures></div><p data-v379-note></p>';
- const lookupAccount=id=>typeof account==='function'?account(id):null;
- const currentBalance=a=>{try{return typeof getAccountBalance==='function'?Number(getAccountBalance(a)):NaN}catch{return NaN}};
- function attachPreview(form,anchor){
-  let preview=form.querySelector('.v379-income-preview');if(preview)return preview;
-  preview=document.createElement('section');preview.className='v379-income-preview';preview.setAttribute('aria-label','Vista previa del ingreso');preview.setAttribute('aria-live','polite');preview.innerHTML=template();
-  // La vista previa de impacto fue retirada de la interfaz a solicitud del usuario.
-  // Mantener el nodo desconectado conserva las validaciones y cálculos preexistentes.
-  return preview;
- }
- function renderPreview(preview,{route='',before=null,after=null,ccy='DOP',note='',future=false}){
-  const r=preview.querySelector('[data-v379-route]'),fig=preview.querySelector('[data-v379-figures]'),n=preview.querySelector('[data-v379-note]');
-  r.textContent=route;
-  fig.innerHTML=Number.isFinite(before)&&Number.isFinite(after)
-   ?'<div><small>Saldo registrado hoy</small><strong>'+moneySafe(before,ccy)+'</strong></div><div class="v379-after"><small>'+(future?'Estimado, no acreditado':'Saldo después, simulado')+'</small><strong>'+moneySafe(after,ccy)+'</strong></div>'
-   :'<div style="grid-column:1/-1" class="v379-income-placeholder">'+text(note||'Selecciona una cuenta y escribe un importe para ver el efecto.')+'</div>';
-  n.textContent=(Number.isFinite(before)&&Number.isFinite(after))?note:'';
- }
- function isIncomeForm(form){return form.id==='transactionForm' && (form.dataset.mode==='income'||form.dataset.mqrMode==='income'||form.elements.flowMode?.value==='income'||form.elements.type?.value==='income')}
- function installTransaction(form){
-  if(form.dataset.v379Income==='1')return;
-  form.dataset.v379Income='1';form.classList.add('v379-income-transaction');
-  const anchor=form.querySelector('.fastx-source-section')||form.querySelector('.v134-sources')||form.querySelector('.flow-receipt')||form.querySelector('.form-grid .flow-section-heading');
-  const preview=attachPreview(form,anchor);
-  const update=()=>{
-   const selected=lookupAccount(form.elements.accountId?.value);
-   const amount=Number(form.elements.amount?.value);
-   const editing=!!(form.dataset.editId||form.dataset.id||form.dataset.editing==='yes'||form.querySelector('.fastx-title')?.textContent.includes('Editar'));
-   const when=form.elements.date?.value||'';
-   if(!selected||selected.archived){
-    renderPreview(preview,{route:'Cuenta receptora no seleccionada',note:'Selecciona una cuenta activa para recibir el ingreso.'});return;
-   }
-   const ccy=selected.currency||'DOP';const before=currentBalance(selected);
-   if(!Number.isFinite(amount)||amount<=0){renderPreview(preview,{route:selected.name+' · '+ccy,note:'Escribe cuánto dinero recibiste.',ccy});return;}
-   const safe=!editing && Number.isFinite(before) && (!when || (typeof today==='function'&&when===today()));
-   renderPreview(preview,{route:'↗ '+moneySafe(amount,ccy)+' hacia '+selected.name,
-    before:safe?before:null,after:safe?before+amount:null,ccy,
-    note:editing?'Edición: el saldo definitivo se recalculará sustituyendo el asiento anterior, no sumándolo dos veces.':when&&typeof today==='function'&&when<today()?'Ingreso retroactivo: el saldo de hoy se recalcula con el historial. No se muestra una proyección engañosa.':'Es una simulación. No se acredita ningún importe hasta confirmar.',future:false});
-  };
-  form.addEventListener('input',update);form.addEventListener('change',update);
-  form.addEventListener('submit',e=>{
-   const selected=lookupAccount(form.elements.accountId?.value);const amount=Number(form.elements.amount?.value);
-   if(!selected||selected.archived){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('Selecciona una cuenta activa para registrar el ingreso.');form.elements.accountId?.focus();return;}
-   if(!(Number.isFinite(amount)&&amount>0)){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('El ingreso debe ser mayor que cero.');form.elements.amount?.focus();return;}
-  },true);
-  update();
- }
- function installRecurring(form){
-  if(form.dataset.v379Income==='1')return;
-  form.dataset.v379Income='1';
-  const anchor=form.querySelector('.v42-income-preview')||form.querySelector('.smart-sub-intro');
-  const preview=attachPreview(form,anchor);
-  const update=()=>{
-   const selected=lookupAccount(form.elements.accountId?.value);
-   const ccy=form.elements.currency?.value||'DOP';
-   const name=form.elements.name?.value||'Fuente recurrente';
-   const valid=selected&&!selected.archived&&selected.currency===ccy;
-   const raw=Number(form.elements.grossMonthly?.value);
-   renderPreview(preview,{route:'Programación · '+name+' · '+ccy,
-     note:!valid?'Selecciona una cuenta activa de la misma moneda. Programar no acredita dinero.':!(raw>0)?'Indica el bruto mensual para calcular tu programación.':'Fuente: '+selected.name+'. El neto se calcula en el desglose existente. No se acredita dinero hasta el asiento de cobro.',
-     ccy,future:true});
-  };
-  form.addEventListener('change',update);form.addEventListener('input',update);
-  form.addEventListener('submit',e=>{
-   const selected=lookupAccount(form.elements.accountId?.value),ccy=form.elements.currency?.value;
-   if(!selected||selected.archived||selected.currency!==ccy){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('La cuenta de destino debe estar activa y tener la misma moneda.');form.elements.accountId?.focus();}
-  },true);
-  update();
- }
- function installConfirm(form){
-  if(form.dataset.v379Income==='1')return;
-  form.dataset.v379Income='1';
-  const preview=attachPreview(form,form.querySelector('.smart-sub-intro'));
-  const update=()=>{
-   const schedule=(typeof db!=='undefined'&&Array.isArray(db.incomeSchedules))?db.incomeSchedules.find(x=>x.id===form.dataset.id):null;
-   const a=schedule?lookupAccount(schedule.accountId):null;
-   const amount=Number(form.elements.actualNet?.value);
-   const day=form.elements.date?.value||'';
-   const valid=Boolean(a&&!a.archived&&a.currency===schedule.currency);
-   const before=valid?currentBalance(a):NaN;
-   const safe=valid&&Number.isFinite(before)&&amount>0&&day===((typeof today==='function')?today():null);
-   renderPreview(preview,{route:valid?'↗ '+moneySafe(amount,schedule.currency)+' hacia '+a.name:'Cuenta de nómina no disponible',before:safe?before:null,after:safe?before+amount:null,ccy:schedule?.currency||'DOP',
-    note:!valid?'Corrige la cuenta configurada en el ingreso recurrente antes de acreditar.':day&&typeof today==='function'&&day<today()?'Depósito histórico: el saldo se recalcula por fecha, no se presenta un saldo de hoy ficticio.':'El depósito se acredita una sola vez al confirmar; no se suma al registrar la programación.'});
-  };
-  form.addEventListener('input',update);form.addEventListener('change',update);
-  form.addEventListener('submit',e=>{const schedule=db.incomeSchedules?.find(x=>x.id===form.dataset.id),a=schedule?lookupAccount(schedule.accountId):null;if(!a||a.archived||a.currency!==schedule.currency){e.preventDefault();e.stopImmediatePropagation();if(typeof toast==='function')toast('La cuenta vinculada al ingreso no es válida. Corrígela antes de confirmar.');}},true);
-  update();
- }
- function decorate(){
-  for(const form of root.querySelectorAll('form')){
-   if(isIncomeForm(form))installTransaction(form);
-   else if(form.id==='v40IncomeForm')installRecurring(form);
-   else if(form.id==='v40IncomeConfirmForm')installConfirm(form);
-  }
- }
- let queued=false;
- const obs=new MutationObserver(()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorate();});});
- obs.observe(root,{childList:true,subtree:true});decorate();
-})();
-</script>
+
 
 
 <style id="v380-expense-design">
@@ -71135,94 +71631,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v380-expense-preview .v380-exp-fi
  #modal-root form[data-v380-expense] :is(.fastx-right>.form-foot button,.fastx-form .btn){min-height:48px!important}
 }
 </style>
-<script id="v380-expense-controller">
-(function(){
- 'use strict';
- const root=document.getElementById('modal-root');if(!root)return;
- const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const amount=(n,c='DOP')=>{
-  const v=Number(n);if(!Number.isFinite(v))return '—';
-  return (v<0?'-':'')+(c==='USD'?'US$':'RD$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
- };
- const read=(f,key)=>f.elements.namedItem(key)?.value??'';
- const editing=f=>Boolean(f.dataset.id||f.dataset.editId||f.dataset.editing==='yes'||f.querySelector('.fastx-title')?.textContent.includes('Editar'));
- const liveToday=()=>typeof today==='function'?today():null;
- const findAccount=id=>typeof account==='function'?account(id):null;
- const findCard=id=>typeof card==='function'?card(id):null;
- const head='<header><strong>Impacto del egreso</strong><span class="v380-exp-badge">VISTA PREVIA</span></header><div class="v380-exp-route" data-v380-route></div><div class="v380-exp-figures" data-v380-values></div><p data-v380-note></p>';
- function attach(form){
-  if(form.dataset.v380Expense==='1')return;
-  form.dataset.v380Expense='1';
-  const preview=document.createElement('section');preview.className='v380-expense-preview';
-  preview.setAttribute('aria-label','Impacto financiero del egreso');preview.setAttribute('aria-live','polite');preview.innerHTML=head;
-  const target=form.querySelector('.fastx-source-section')||form.querySelector('.v134-sources')||form.querySelector('#guidedReceipt')||form.querySelector('.flow-receipt');
-  if(target)target.insertAdjacentElement('afterend',preview);
-  else (form.querySelector('.fastx-body')||form.querySelector('.form-grid')||form).appendChild(preview);
-  const show=(route,figures,note)=>{
-   preview.querySelector('[data-v380-route]').textContent=route;
-   preview.querySelector('[data-v380-values]').innerHTML=figures;
-   preview.querySelector('[data-v380-note]').textContent=note;
-  };
-  const figure=(label,value,after)=>'<div'+(after?' class="v380-exp-after"':'')+'><small>'+esc(label)+'</small><strong>'+esc(value)+'</strong></div>';
-  const isEnabled=c=>!!c&&!c.archived;
-  function update(){
-   if(!form.isConnected)return;
-   const type=read(form,'paymentSource')||'account',cardPay=type==='card';
-   const sum=Number(read(form,'amount')),day=read(form,'date'),historical=!!day&&liveToday()&&day!==liveToday();
-   const safe=!editing(form)&&!historical;
-   const cat=read(form,'category');
-   const channel=read(form,'paymentChannel');
-   if(cardPay){
-    const c=findCard(read(form,'cardId')),currency=read(form,'currency')||'DOP';
-    if(!isEnabled(c)){show('Impacto pendiente de calcular','', 'La vista previa no encuentra la tarjeta. El registro comprobará los datos al confirmar.');return;}
-    if(!(sum>0)&&Number.isFinite(sum)){show(c.name+' · '+currency,'','Introduce un importe positivo.');return;}
-    let status=null;try{status=typeof cardStatus==='function'?cardStatus(c,currency):null}catch(_){}
-    const before=Number(status?.debt),limit=Number(status?.limit);
-    const canShow=safe&&sum>0&&Number.isFinite(before)&&Number.isFinite(limit);
-    const figures=canShow?figure('Deuda registrada',amount(before,currency),false)+figure('Deuda estimada',amount(before+sum,currency),true)
-      :figure('Compra que se registrará',sum>0?amount(sum,currency):'—',false)+figure('Medio de pago','Crédito',true);
-    let note='La compra se registra como gasto y aumenta la deuda de la tarjeta. Cuando pagues esta deuda, el principal no volverá a contarse como gasto.';
-    if(historical)note='Compra con fecha distinta de hoy: la deuda se recalculará en el historial. No se simula un saldo final sin considerar los movimientos posteriores. '+note;
-    if(editing(form))note='Edición: se sustituirá el registro original, sin duplicar la compra. '+note;
-    if(Number.isFinite(limit)&&sum>0&&Number.isFinite(before)&&before+sum>limit+.01)note+=' Atención: el saldo resultante puede superar el límite ordinario; revisa los sobregiros autorizados de esta tarjeta.';
-    show('Tarjeta · '+c.name+' · '+currency,figures,note);
-   }else{
-    const a=findAccount(read(form,'accountId'));
-    if(!isEnabled(a)){show('Impacto pendiente de calcular','', 'La vista previa no encuentra la cuenta. El registro comprobará los datos al confirmar.');return;}
-    const currency=a.currency||'DOP';let before=NaN;try{before=typeof getAccountBalance==='function'?Number(getAccountBalance(a)):NaN}catch(_){}
-    const pct=read(form,'paymentTaxable')==='yes'?Number(read(form,'paymentTaxPct')):0;
-    const fee=Number(read(form,'paymentFee')||0);
-    const hasComplexFees=(Number.isFinite(pct)&&pct>0)||(Number.isFinite(fee)&&fee>0);
-    const canShow=safe&&Number.isFinite(before)&&sum>0&&!hasComplexFees;
-    const figs=canShow?figure('Saldo registrado',amount(before,currency),false)+figure('Saldo después (simulado)',amount(before-sum,currency),true)
-      :figure('Gasto principal',sum>0?amount(sum,currency):'—',false)+figure('Origen',a.kind==='cash'?'Efectivo':'Cuenta bancaria',true);
-    const note=editing(form)?'Edición: el movimiento anterior será sustituido; el saldo final dependerá del historial completo.':
-      historical?'Gasto histórico: no se muestra un saldo proyectado porque existen movimientos posteriores.':
-      hasComplexFees?'El cargo final puede incluir impuestos o comisiones. Consulta el comprobante en vivo para conocer el débito completo.':
-      'Saldo estimado antes de confirmar. No modifica tus fondos hasta registrar la operación.';
-    show('Sale de '+a.name+' · '+currency,figs,note);
-   }
-   preview.dataset.source=cardPay?'card':'account';
-   preview.dataset.category=cat;
-   preview.dataset.channel=channel;
-  }
-  form.addEventListener('input',()=>queueMicrotask(update));
-  form.addEventListener('change',()=>queueMicrotask(update));
-  form.addEventListener('click',e=>{if(e.target.closest('[data-fast-source],[data-fast-category]'))queueMicrotask(update)});
-  // V446: la tarjeta/cuenta se valida una única vez en el motor contable.
-  // Este panel es una vista previa informativa, NO un segundo guard de submit.
-  // El control anterior bloqueaba un registro ya revisado con un falso
-  // «tarjeta sin seleccionar» por discrepancias entre pasos del formulario.
-  update();
- }
- function decorate(){root.querySelectorAll('form#transactionForm').forEach(form=>{
-  if(form.dataset.mode==='spend'||read(form,'flowMode')==='spend')attach(form);
- });}
- let queued=false;const observer=new MutationObserver(()=>{
-  if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorate()});
- });observer.observe(root,{childList:true,subtree:true});decorate();
-})();
-</script>
+
 
 <style id="v381-transfer-design">
 /* V381 — Transferencias: tratamiento propio de movimientos entre cuentas y a terceros.
@@ -72105,125 +72514,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v388-review p{color:#aaa}
 @media(max-width:790px){#modal-root .v388-panel{padding:13px;border-radius:16px;margin-top:8px}#modal-root .v388-hero strong{font-size:22px}#modal-root .v388-line{font-size:11px}#modal-root .v388-line strong{font-size:12px}}
 </style>
 
-<script id="v388-refunds-reconciliation-logic">
-(()=>{'use strict';
- const root=document.getElementById('modal-root');if(!root)return;
- const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const field=(f,n)=>f.elements.namedItem(n);
- const raw=(f,n)=>String(field(f,n)?.value??'');
- const number=(f,n)=>Number(raw(f,n));
- const currency=(n,c)=>Number.isFinite(n)?(c==='USD'?'US$':'RD$')+new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n):'—';
- const getType=f=>raw(f,'type')||'';
- const txs=()=>Array.isArray(db?.transactions)?db.transactions:[];
- function purchases(f){
-   const cardId=raw(f,'cardId'),ccy=raw(f,'currency'),date=raw(f,'date'),current=f.dataset.id||'';
-   return txs().filter(t=>t.type==='card_charge'&&t.cardId===cardId&&t.currency===ccy&&(!date||t.date<=date)).map(t=>{
-     const returned=txs().filter(r=>r.type==='card_refund'&&r.originalPurchaseId===t.id&&r.id!==current).reduce((s,r)=>s+Number(r.amount||0),0);
-     return {t,available:Math.max(0,Number(t.amount||0)-returned)};
-   }).filter(x=>x.available>.005).sort((a,b)=>(b.t.date||'').localeCompare(a.t.date||''));
- }
- function model(f){
-  const kind=getType(f),isRefund=kind==='card_refund';if(!['card_refund','adjustment'].includes(kind))return null;
-  const value=number(f,'amount'),date=raw(f,'date'),note=raw(f,'note').trim(),editing=!!f.dataset.id;
-  const errors=[];
-  if(!date||date>today())errors.push('Selecciona una fecha válida que no sea futura.');
-  if(!Number.isFinite(value)||(isRefund?value<=0:Math.abs(value)<.005))errors.push(isRefund?'Indica un importe devuelto mayor que cero.':'El ajuste debe ser distinto de cero.');
-  let asset=null,ccy='DOP',current=NaN,after=NaN,purchase=null,linked='';
-  if(isRefund){
-   asset=card(raw(f,'cardId'));ccy=raw(f,'currency')||'DOP';
-   if(!asset||asset.archived||bank(asset.bankId)?.archived)errors.push('Selecciona una tarjeta activa para recibir el reintegro.');
-   if(!['DOP','USD'].includes(ccy))errors.push('Selecciona una moneda válida.');
-   linked=raw(f,'originalPurchaseId');
-   if(linked){
-    const match=purchases(f).find(x=>x.t.id===linked);purchase=match?.t;
-    if(!match)errors.push('La compra vinculada ya no está disponible o fue reintegrada por completo.');
-    else if(value>match.available+.011)errors.push('El reintegro excede lo pendiente de devolver de la compra seleccionada.');
-   }
-   const stat=asset?cardStatus(asset,ccy):null;
-   current=Number(stat?.debt??stat?.balance??NaN);
-   after=current-value;
-  }else{
-   asset=account(raw(f,'accountId'));ccy=asset?.currency||'DOP';
-   if(!asset||asset.archived||asset.bankId&&bank(asset.bankId)?.archived)errors.push('Selecciona una cuenta o efectivo activos.');
-   if(note.length<6)errors.push('Describe el motivo de la conciliación (mínimo 6 caracteres).');
-   current=asset?Number(getAccountBalance(asset)):NaN;
-   after=current+value;
-  }
-  return {kind,isRefund,value,date,note,editing,errors,asset,ccy,current,after,purchase,linked};
- }
- function fillPurchases(f){
-  const sel=f.querySelector('#v388Purchase');if(!sel)return;
-  const previous=sel.value,requested=sel.dataset.initial||previous;
-  const opts=purchases(f);
-  sel.replaceChildren(new Option('Sin vincular · reintegro independiente',''));
-  for(const {t,available} of opts)sel.add(new Option((t.date||'')+' · '+(t.note||t.category||'Compra')+' · '+currency(available,t.currency)+' disponible',t.id));
-  if(opts.some(x=>x.t.id===requested))sel.value=requested;
-  else sel.value='';
-  sel.dataset.initial='';
-  const h=field(f,'originalPurchaseId');if(h)h.value=sel.value;
- }
- function setLinkedCategory(f){
-   const link=raw(f,'originalPurchaseId');if(!link)return;
-   const original=txs().find(t=>t.id===link&&t.type==='card_charge');if(!original)return;
-   const cat=field(f,'category');if(cat&&original.category){cat.value=original.category;cat.dispatchEvent(new Event('change',{bubbles:true}));}
-   const sub=field(f,'subcategory');if(sub&&original.subcategory){if(![...sub.options].some(x=>x.value===original.subcategory))sub.add(new Option(original.subcategory,original.subcategory));sub.value=original.subcategory;}
- }
- function render(f){
-  const x=model(f),panel=f.querySelector('.v388-panel');if(!x||!panel)return;
-  const rows=panel.querySelector('.v388-rows'),hero=panel.querySelector('.v388-hero'),notice=panel.querySelector('.v388-note'),err=panel.querySelector('.v388-error');
-  const line=(label,val)=>'<div class="v388-line"><span>'+esc(label)+'</span><strong>'+esc(val)+'</strong></div>';
-  if(x.isRefund){
-   rows.innerHTML=line('Tarjeta',x.asset?.name||'Selecciona una tarjeta')+line('Moneda',x.ccy)+line('Operación',x.linked?'Devolución de compra vinculada':'Reintegro sin compra vinculada')+(x.purchase?line('Compra original',x.purchase.date+' · '+(x.purchase.note||x.purchase.category||'Compra')):'');
-   hero.innerHTML='<small>DEUDA QUE SE REDUCE</small><strong>'+currency(x.value,x.ccy)+'</strong>';
-   notice.textContent=x.editing?'Al editar este reintegro, los saldos se recalculan; no se crea un segundo movimiento.':x.date!==today()?'Reintegro histórico: los saldos posteriores se recalcularán al confirmar.':'No se genera un ingreso nuevo. El reintegro reduce la deuda y corrige el gasto de la categoría correspondiente.';
-   if(x.asset&&x.date===today()&&!x.editing&&Number.isFinite(x.current))rows.innerHTML+=line('Deuda actual → estimada',currency(x.current,x.ccy)+' → '+currency(x.after,x.ccy));
-  }else{
-   rows.innerHTML=line('Cuenta / efectivo',x.asset?.name||'Selecciona una cuenta')+line('Moneda',x.ccy)+line('Naturaleza',x.value>0?'Aumento por conciliación':'Disminución por conciliación');
-   hero.innerHTML='<small>AJUSTE CALCULADO · NO ES INGRESO/GASTO</small><strong>'+(x.value>0?'+':'')+currency(x.value,x.ccy)+'</strong>';
-   if(x.asset&&x.date===today()&&!x.editing&&Number.isFinite(x.current))rows.innerHTML+=line('Saldo actual → estimado',currency(x.current,x.ccy)+' → '+currency(x.after,x.ccy));
-   notice.textContent=x.editing?'Edición de ajuste: se recalculará el historial existente.':x.date===today()?'Solo se registra la diferencia entre el saldo de la app y el del banco. No es ingreso ni gasto.':'Fecha histórica: se recalcularán los movimientos posteriores; el saldo final no se puede representar como definitivo.';
-   const target=f.querySelector('#v388TargetBalance');if(target&&f.dataset.v388Mode==='target'&&document.activeElement!==target){const a=Number(getAccountBalance(x.asset));if(Number.isFinite(a))target.placeholder='Saldo bancario (actual app: '+currency(a,x.ccy)+')';}
-  }
-  err.hidden=!x.errors.length;err.textContent=x.errors[0]||'';f.dataset.v388Error=x.errors[0]||'';
- }
- function attach(f){
-  if(!['card_refund','adjustment'].includes(getType(f))||f.dataset.v388Attached==='1')return;
-  f.dataset.v388Attached='1';const isRefund=getType(f)==='card_refund';f.dataset.v388Kind=isRefund?'refund':'adjustment';
-  const target=f.querySelector('.other-studio-content')||f.querySelector('.form-grid')||f;
-  const panel=document.createElement('section');panel.className='v388-panel';panel.setAttribute('aria-live','polite');
-  panel.innerHTML='<div class="v388-panel-head"><strong>'+(isRefund?'Devolución y compra original':'Conciliación del saldo')+'</strong><span>ANTES DE CONFIRMAR</span></div>'+(isRefund?'<label class="v388-field">Compra que estás devolviendo (opcional)<select id="v388Purchase"></select></label><p class="v388-note">Asocia la compra si aparece en el historial. Así conservas su categoría y limitas el reintegro al importe pendiente.</p>':'<div class="v388-toggles"><button type="button" data-v388-mode="delta" aria-pressed="true">Indicar diferencia</button><button type="button" data-v388-mode="target" aria-pressed="false">Saldo que muestra el banco</button></div><label class="v388-field" id="v388TargetWrap" hidden>Saldo real informado por el banco<input id="v388TargetBalance" type="number" step="0.01" placeholder="0.00" inputmode="decimal"></label>')+'<div class="v388-rows"></div><div class="v388-hero"></div><p class="v388-note"></p><div class="v388-error" hidden></div>';
-  target.appendChild(panel);
-  if(isRefund){
-   const original=txs().find(t=>t.id===f.dataset.id);
-   const h=document.createElement('input');h.type='hidden';h.name='originalPurchaseId';h.value=original?.originalPurchaseId||'';panel.appendChild(h);
-   const sel=panel.querySelector('#v388Purchase');sel.dataset.initial=h.value;
-   const onChange=()=>{fillPurchases(f);render(f)};
-   field(f,'cardId')?.addEventListener('change',onChange);field(f,'currency')?.addEventListener('change',onChange);field(f,'date')?.addEventListener('change',onChange);
-   sel.addEventListener('change',()=>{h.value=sel.value;setLinkedCategory(f);render(f)});
-   fillPurchases(f);
-  }else{
-   f.dataset.v388Mode='delta';const targetInput=panel.querySelector('#v388TargetBalance');const delta=field(f,'amount');
-   for(const btn of panel.querySelectorAll('[data-v388-mode]'))btn.addEventListener('click',()=>{
-    f.dataset.v388Mode=btn.dataset.v388Mode;for(const b of panel.querySelectorAll('[data-v388-mode]'))b.setAttribute('aria-pressed',String(b===btn));
-    panel.querySelector('#v388TargetWrap').hidden=btn.dataset.v388Mode!=='target';
-    if(btn.dataset.v388Mode==='target'){
-     const acct=account(raw(f,'accountId'));const current=acct?Number(getAccountBalance(acct)):NaN;
-     if(Number.isFinite(current)&&Number.isFinite(Number(delta.value)))targetInput.value=(current+Number(delta.value)).toFixed(2);
-     targetInput.dispatchEvent(new Event('input',{bubbles:true}));
-    }
-    render(f);
-   });
-   const recalc=()=>{if(f.dataset.v388Mode!=='target')return;const acct=account(raw(f,'accountId'));if(!acct||targetInput.value==='')return;const current=Number(getAccountBalance(acct));if(Number.isFinite(current)){delta.value=(Number(targetInput.value)-current).toFixed(2);delta.dispatchEvent(new Event('change',{bubbles:true}));}};
-   targetInput.addEventListener('input',recalc);field(f,'accountId')?.addEventListener('change',recalc);
-  }
-  f.addEventListener('input',()=>queueMicrotask(()=>render(f)));f.addEventListener('change',()=>queueMicrotask(()=>render(f)));render(f);
- }
- window.v388Preflight=function(f){const x=model(f);if(!x)return true;render(f);if(!x.errors.length)return true;if(typeof toast==='function')toast(x.errors[0]);f.querySelector('.v388-error')?.scrollIntoView({block:'nearest'});return false;};
- function review(){const page=root.querySelector('.v349-review-screen:not([data-v388-review])');if(!page)return;const f=root.querySelector('form#transactionForm[data-v388-attached="1"]');if(!f)return;const where=page.querySelector('.v353-breakdowns');if(!where)return;const x=model(f);if(!x)return;const section=document.createElement('section');section.className='v388-review';const title=document.createElement('strong');title.textContent=x.isRefund?'Revisión de devolución':'Revisión de conciliación';const amount=document.createElement('p');amount.textContent=(x.isRefund?'Deuda que se reduce: ':'Ajuste que se aplicará: ')+(x.value>0&&!x.isRefund?'+':'')+currency(x.value,x.ccy);const text=document.createElement('p');text.textContent=x.isRefund?(x.purchase?'Compra vinculada: '+(x.purchase.note||x.purchase.category)+' · '+x.purchase.date:'Reintegro sin compra vinculada; verifica la categoría y el comprobante.'):'El ajuste no se clasificará como ingreso ni gasto. Motivo: '+x.note;section.append(title,amount,text);where.prepend(section);page.dataset.v388Review='1';}
- let queued=false;function scan(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;root.querySelectorAll('form#transactionForm').forEach(attach);review();})}
- new MutationObserver(scan).observe(root,{childList:true,subtree:true});scan();
-})();
-</script>
+
 
 
 <style id="v389-benefits-cashback">
@@ -79476,95 +79767,7 @@ body:not(.theme-black):not(.theme-dark) #modal-root .v749-foot{background:var(--
 @media(max-height:690px){#modal-root .v749-screen{padding-top:calc(7px + env(safe-area-inset-top,0px))}#modal-root .v749-keypad button{min-height:36px}#modal-root .v749-quick button{min-height:53px}}
 @media(prefers-reduced-motion:reduce){#modal-root .v749-layer *{transition:none!important;animation:none!important}}
 </style>
-<script id="v749-register-two-screen-behavior">
-(()=>{'use strict';
-// Presentation state is ephemeral only. Finance remains in db + existing Supabase engine.
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const ccy=(n,c='DOP')=>(c==='USD'?'US$':'RD$')+new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);
-const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-const pict=label=>{const q=normalize(label);const cues=[[/supermerc|mercado|compras de alimento/,'🛒'],[/restaurant|comida|aliment|delivery|cafe|merienda/,'🍽️'],[/transporte|taxi|gasolina|combust|vehicul/,'🚗'],[/vivienda|alquiler|hogar|hipoteca/,'🏡'],[/salud|farmacia|medic|odont/,'🩺'],[/educacion|universidad|curso|colegio/,'🎓'],[/compras|tienda|ropa|calzado/,'🛍️'],[/servicio|internet|electric|telefono|agua/,'📶'],[/nomina|salario|sueldo|ingreso/,'💵'],[/entreten|cine|musica|videojuego/,'🎬'],[/viaje|vuelo|hosped/,'✈️'],[/negocio|venta|trabajo/,'💼'],[/transfer|traspas|mover/,'⇄'],[/prestamo|deuda/,'🏦']];return cues.find(([re])=>re.test(q))?.[1]||'✦'};
-const realCategories=mode=>Object.keys(categoryMap(mode==='income'?'ingreso':'gasto'));
-const subcategories=(mode,cat)=>categoryMap(mode==='income'?'ingreso':'gasto')[cat]||[];
-const state=()=>{const s=mqrState();s.v749Source||='account';s.v749Currency||='DOP';s.v749Date||=today();s.v749Note??='';s.v749Subcategory??='';s.v749Payee??='';s.v749Account||=db.accounts.find(a=>!a.archived)?.id||'';s.v749Card||=db.cards.find(c=>!c.archived)?.id||'';s.v749ToAccount||=db.accounts.find(a=>!a.archived&&a.id!==s.v749Account)?.id||'';if((s.mode==='income'||s.mode==='spend')&&!realCategories(s.mode).includes(s.preset))s.preset=realCategories(s.mode)[0]||'';return s};
-const acc=(id)=>db.accounts.find(a=>a.id===id);const cardRef=id=>db.cards.find(c=>c.id===id);
-const displaySource=s=>s.mode==='transfer'?(acc(s.v749Account)?.name||'Seleccionar origen'):s.mode==='income'?(acc(s.v749Account)?.name||'Seleccionar cuenta'):s.v749Source==='card'?(cardRef(s.v749Card)?.name||'Seleccionar tarjeta'):(acc(s.v749Account)?.name||'Seleccionar cuenta');
-const cur=s=>s.v749Source==='card'&&s.mode==='spend'?s.v749Currency:(acc(s.v749Account)?.currency||'DOP');
-const snapshot=s=>{let d=null;try{d=v89DebtCapacity(String(s.v749Date||today()).slice(0,7))}catch(_){/* missing reference */};const before=Number.isFinite(d?.ratio)?d.ratio:null;const deficit=d?.income>0?Math.max(0,Number(d.monthly||0)-Number(d.income||0)):null;
-// A cash expense or own transfer does not create a contractual debt payment.
-// A card purchase's future minimum cannot be assumed before billing/cut.
-const after=before;
-const note=s.mode==='transfer'?'Mover fondos propios no crea ingresos ni deuda nueva.':s.mode==='income'?'Este ingreso no modifica por sí solo las cuotas registradas.':s.v749Source==='card'?'El mínimo de tarjeta puede cambiar al facturarse; no se inventa una cuota.':'El gasto reduce fondos, pero no crea automáticamente una cuota de deuda.';
-return {before,after,deficit,note}};
-const percent=x=>x===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1}).format(x)+'%';
-const impact=s=>{const x=snapshot(s),ratio=Math.min(100,Math.max(0,x.after??0));return `<section class="v749-impact" aria-label="Capacidad de endeudamiento"><div class="v749-impact-head"><span>◈ Impacto en tu perfil financiero</span><span>ⓘ</span></div><div class="v749-impact-grid"><span><small>ANTES</small><strong>${percent(x.before)}</strong></span><b class="v749-mid">→</b><span><small>DESPUÉS</small><strong>${percent(x.after)}</strong></span><span class="v749-deficit"><small>DÉFICIT</small><strong>${x.deficit===null?'—':ccy(x.deficit)}</strong></span></div><div class="v749-impact-track"><i style="width:${ratio}%"></i></div><p class="v749-impact-note">${esc(x.note)}</p></section>`};
-const modeLabel=s=>s.mode==='income'?'Ingreso':s.mode==='transfer'?'Transferencia':'Gasto';
-const quick=s=>{if(s.mode==='transfer')return '';const list=realCategories(s.mode);const top=(s.mode==='income'?['Salario y nómina','Negocios y ventas','Joseo e ingresos adicionales','Servicios profesionales']:['Alimentación','Compras personales','Transporte','Servicios básicos']).filter(x=>list.includes(x));if(s.preset&&!top.includes(s.preset))top.splice(Math.min(3,top.length),0,s.preset);const labels=top.slice(0,4);return `<div class="v749-quick" role="group" aria-label="Categorías rápidas">${labels.map(c=>`<button type="button" data-v749="quick" data-value="${esc(c)}" aria-pressed="${s.preset===c}"><span style="font-size:23px">${pict(c)}</span><span>${esc(c.replace(' personales','').replace(' básicos',''))}</span></button>`).join('')}<button type="button" data-v749="category"><span style="font-size:23px">•••</span><span>Más</span></button></div>`};
-const entry=()=>{const s=state(),label=s.mode==='income'?'recibiste':s.mode==='transfer'?'vas a transferir':'gastaste';const curr=cur(s),names=[['spend','↗ Gasto'],['income','↘ Ingreso'],['transfer','⇄ Transferencia']];const nativeAmount=String(s.amount||'');return `<section class="v749-layer" data-v749-stage="entry"><div class="v749-screen" role="dialog" aria-modal="true" aria-label="Nuevo movimiento"><header class="v749-head"><span class="v749-brand"><i></i> Vive el Hoy · Finanzas 360</span><button type="button" class="v749-close" data-v749="close" aria-label="Cerrar">×</button></header><h2 class="v749-title">Nuevo movimiento</h2><p class="v749-subtitle">Registra con precisión y revisa el impacto antes de guardar.</p><div class="v749-scroll"><nav class="v749-segment" aria-label="Tipo de movimiento">${names.map(([k,v])=>`<button type="button" data-v749="mode" data-value="${k}" aria-pressed="${k===s.mode}">${v}</button>`).join('')}</nav><section class="v749-amount"><label for="v749Amount">¿Cuánto ${label}?</label><input id="v749Amount" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="Importe del movimiento" value="${esc(nativeAmount)}"><small>Importe en ${curr==='USD'?'US$':'RD$'} · usa el teclado integrado</small></section>${impact(s)}${quick(s)}<div class="v749-fieldline"><b>${s.mode==='transfer'?'Origen':s.mode==='income'?'Cuenta de ingreso':'Cuenta / Tarjeta'}</b><button type="button" data-v749="source">${esc(displaySource(s))} ›</button></div>${s.mode==='spend'&&s.v749Source==='card'?`<div class="v749-fieldline"><b>Moneda de la tarjeta</b><button type="button" data-v749="currency">${s.v749Currency==='USD'?'US$ (cambiar a RD$)':'RD$ (cambiar a US$)'}</button></div>`:''}${s.mode==='transfer'?`<div class="v749-fieldline"><b>Tipo de transferencia</b><button type="button" data-v749="transferKind">${s.transferKind==='outgoing'?'A terceros':'Entre mis cuentas'} ›</button></div>${s.transferKind==='outgoing'?`<div class="v749-fieldline"><b>Beneficiario</b><input id="v749Payee" maxlength="100" placeholder="Nombre" value="${esc(s.v749Payee)}"></div>`:`<div class="v749-fieldline"><b>Destino</b><button type="button" data-v749="destination">${esc(acc(s.v749ToAccount)?.name||'Seleccionar destino')} ›</button></div>`}`:`<div class="v749-fieldline"><b>Categoría</b><button type="button" data-v749="category">${esc(s.preset||'Seleccionar')} ›</button></div><div class="v749-fieldline"><b>Subcategoría</b><button type="button" data-v749="subcategory">${esc(s.v749Subcategory||'Seleccionar')} ›</button></div>`}<div class="v749-fieldline"><b>Fecha</b><input id="v749Date" type="date" max="${today()}" value="${esc(s.v749Date)}"></div><div class="v749-keypad" aria-label="Teclado numérico">${['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k=>`<button type="button" data-v749="key" data-value="${k}" aria-label="${k==='⌫'?'Borrar':k}">${k}</button>`).join('')}</div></div><footer class="v749-foot"><div class="v749-error" id="v749EntryError" role="alert"></div><button type="button" class="v749-primary" data-v749="continue">Continuar →</button></footer></div><div class="v749-sheet" id="v749Sheet" hidden></div></section>`};
-function renderEntry(){const root=document.getElementById('modal-root');if(!root)return;root.innerHTML=entry();
- // The keypad is the primary mobile interaction; secondary details follow it.
- const scroll=root.querySelector('.v749-scroll'),keypad=scroll?.querySelector('.v749-keypad'),quick=scroll?.querySelector('.v749-quick');
- if(!scroll||!keypad)return;
- const first=scroll.querySelector('.v749-fieldline');
- if(quick)quick.after(keypad);
- if(first)keypad.before(first); // source remains directly accessible above the keypad
- const extra=[...scroll.querySelectorAll(':scope > .v749-fieldline')].filter(x=>x!==first);
- if(extra.length){const more=document.createElement('details');more.className='v749-more';more.innerHTML='<summary>Más detalles · categoría, fecha y opciones</summary>';extra.forEach(x=>more.appendChild(x));scroll.appendChild(more);}
- }
-const setError=(message,review=false)=>{const el=document.getElementById(review?'v749ReviewError':'v749EntryError');if(el)el.textContent=message||''};
-const freshEntry=()=>{renderEntry();const el=document.getElementById('v749Amount');if(el)el.scrollIntoView({block:'nearest'})};
-const applyKey=(key)=>{const s=state(),current=String(s.amount||'');if(key==='⌫')s.amount=current.slice(0,-1);else if(key==='.'&&!current.includes('.'))s.amount=(current||'0')+'.';else if(/^\d$/.test(key)){const pts=current.split('.');if((pts.length===1||pts[1].length<2)&&current.replace(/\D/g,'').length<11)s.amount=current==='0'?key:current+key}const input=document.getElementById('v749Amount');if(input)input.value=s.amount;setError('')};
-const changeMode=mode=>{const s=state();s.mode=mode;s.v749Subcategory='';s.preset=realCategories(mode)[0]||'';if(mode==='transfer')s.transferKind='own';if(mode==='income')s.v749Source='account';renderEntry()};
-const chooseCategory=(cat)=>{const s=state();s.preset=cat;s.v749Subcategory='';freshEntry()};
-const sheetContainer=()=>document.querySelector('#modal-root .v749-sheet');
-const closeSheet=()=>{const host=sheetContainer();if(host){host.hidden=true;host.replaceChildren()}};
-function sheet(type){const s=state(),host=sheetContainer();if(!host)return;host.hidden=false;let title='',html='';if(type==='category'){title='Selecciona una categoría';html=`<input class="v749-sheet-search" id="v749CategorySearch" placeholder="Buscar categoría…" aria-label="Buscar categoría"><div class="v749-choice-grid" id="v749CategoryGrid">${realCategories(s.mode).map(cat=>`<button type="button" class="${s.preset===cat?'is-selected':''}" data-v749="pickCategory" data-value="${esc(cat)}"><span class="v749-choice-icon">${pict(cat)}</span><span class="v749-choice-name">${esc(cat)}</span></button>`).join('')}</div>`}else if(type==='subcategory'){title='Selecciona una subcategoría';html=`<div class="v749-sublist"><button type="button" data-v749="pickSub" data-value="" class="${!s.v749Subcategory?'is-selected':''}">Sin subcategoría</button>${subcategories(s.mode,s.preset).map(sub=>`<button type="button" data-v749="pickSub" data-value="${esc(sub)}" class="${sub===s.v749Subcategory?'is-selected':''}">${esc(sub)}</button>`).join('')}</div>`}else if(['source','destination'].includes(type)){title=type==='destination'?'Cuenta de destino':'Selecciona tu cuenta o tarjeta';const accounts=db.accounts.filter(a=>!a.archived);const cards=db.cards.filter(c=>!c.archived);const candidates=type==='destination'?accounts.filter(a=>a.id!==s.v749Account).map(a=>['account',a]):accounts.map(a=>['account',a]).concat(s.mode==='spend'?cards.map(c=>['card',c]):[]);html=`<div class="v749-source-list">${candidates.map(([kind,o])=>`<button type="button" data-v749="pickSource" data-kind="${kind}" data-role="${type}" data-value="${esc(o.id)}" class="${type==='destination'?(s.v749ToAccount===o.id?'is-selected':''):(kind==='card'?s.v749Source==='card'&&s.v749Card===o.id:s.v749Source==='account'&&s.v749Account===o.id)?'is-selected':''}"><span>${kind==='card'?'💳':'🏦'} ${esc(o.name)}</span><small>${kind==='card'?'Tarjeta':esc(o.currency||'DOP')}</small></button>`).join('')||'<p>Sin productos activos registrados</p>'}</div>`}else if(type==='loan'){title='Préstamos registrados';html=`<div class="v749-source-list">${db.loans.filter(x=>!x.archived).map(x=>`<button type="button" data-v749="loan" data-value="${esc(x.id)}"><span>🏦 ${esc(x.name)}</span></button>`).join('')||'<p>Sin préstamos activos</p>'}</div>`}else return;
-host.innerHTML=`<div class="v749-sheet-inner" role="dialog" aria-label="${esc(title)}"><header class="v749-sheet-head"><h3>${esc(title)}</h3><button type="button" data-v749="sheetClose" aria-label="Cerrar selector">×</button></header>${html}</div>`;host.querySelector('input')?.focus({preventScroll:true})}
-function setNative(f,name,value){const field=f.elements.namedItem(name);if(!field||typeof field.value!=='string')return;field.value=String(value??'');field.dispatchEvent(new Event('change',{bubbles:true}))}
-function validateEntry(s){if(!(Number(s.amount)>0)||!Number.isFinite(Number(s.amount)))return 'Introduce un importe válido mayor que cero.';if(!/^\d{4}-\d\d-\d\d$/.test(s.v749Date)||s.v749Date>today())return 'Revisa la fecha del movimiento.';if((s.mode!=='spend'||s.v749Source!=='card')&&(!acc(s.v749Account)||acc(s.v749Account).archived))return 'Selecciona una cuenta activa.';if(s.mode==='spend'&&s.v749Source==='card'&&(!cardRef(s.v749Card)||cardRef(s.v749Card).archived))return 'Selecciona una tarjeta activa.';if(s.mode==='transfer'&&s.transferKind!=='outgoing'&&(s.v749Account===s.v749ToAccount||!acc(s.v749ToAccount)||acc(s.v749ToAccount).archived))return 'Selecciona una cuenta de destino diferente.';if(s.mode==='transfer'&&s.transferKind==='outgoing'&&!s.v749Payee.trim())return 'Indica el beneficiario.';if(s.mode!=='transfer'&&!realCategories(s.mode).includes(s.preset))return 'Selecciona una categoría válida.';return ''}
-function continueToReview(){const s=state(),error=validateEntry(s);if(error){setError(error);return}
-const isSpend=s.mode==='spend',mode=s.mode==='transfer'?(s.transferKind==='outgoing'?'outgoing':'own'):s.mode;
-const p={flowMode:mode,type:s.mode==='income'?'income':s.mode==='transfer'&&s.transferKind!=='outgoing'?'transfer':isSpend&&s.v749Source==='card'?'card_charge':'expense',amount:String(s.amount),date:s.v749Date,category:s.preset,subcategory:s.v749Subcategory,note:s.v749Note,accountId:s.v749Account,toAccountId:s.v749ToAccount,cardId:s.v749Card,paymentSource:s.v749Source,currency:cur(s),paymentChannel:acc(s.v749Account)?.kind==='cash'?'presencial':'internet_banking',payee:s.v749Payee};
-// Native form remains the only data model and accounting submission mechanism.
-ui.mobileQuickInDetail=true;try{guidedTransactionForm(p)}finally{ui.mobileQuickInDetail=false}
-const f=document.getElementById('transactionForm');if(!f)return;
-f.dataset.v749Native='1';
-for(const [name,val] of Object.entries({category:s.preset,subcategory:s.v749Subcategory,date:s.v749Date,note:s.v749Note,amount:s.amount,accountId:s.v749Account,toAccountId:s.v749ToAccount,cardId:s.v749Card,paymentSource:s.v749Source,payee:s.v749Payee}))if(f.elements.namedItem(name))setNative(f,name,val);
-if(f.elements.currency)setNative(f,'currency',cur(s));
-try{refreshGuidedForm(f)}catch(e){console.warn('Vista previa contable',e)}
-const review=document.createElement('div');review.className='v749-review-overlay';review.innerHTML=renderReview(s,f);document.getElementById('modal-root').appendChild(review);
-}
-function renderReview(s,f){const value=Number(s.amount),isTr=s.mode==='transfer',isIncome=s.mode==='income',isCard=s.mode==='spend'&&s.v749Source==='card';const cate=isTr?'Transferencias':s.preset;const p=pict((s.v749Subcategory||'')+' '+cate);const selected=f.elements.category?.value||cate;const instrument=isCard?cardRef(s.v749Card)?.name:acc(s.v749Account)?.name;
-const rows=[['Tarjeta / Cuenta',instrument||'—'],...(isTr?[['Destino',s.transferKind==='outgoing'?s.v749Payee:(acc(s.v749ToAccount)?.name||'—')]]:[['Categoría',selected||'—'],['Subcategoría',s.v749Subcategory||'Sin subcategoría']]),['Fecha',s.v749Date]];
-return `<section class="v749-layer" data-v749-stage="review"><div class="v749-screen" role="dialog" aria-modal="true" aria-label="Confirmar movimiento"><header class="v749-head"><span class="v749-brand"><i></i> Vive el Hoy · Finanzas 360</span><button type="button" class="v749-close" data-v749="back" aria-label="Volver a editar">×</button></header><h2 class="v749-title">Confirma el movimiento</h2><p class="v749-subtitle">Revisa los detalles y el impacto en tus finanzas.</p><div class="v749-scroll"><section class="v749-illustrated"><div><small>${modeLabel(s)}</small><strong>${ccy(value,cur(s))}</strong><p>${esc(cate)}</p></div><span class="v749-artwork" aria-hidden="true">${p}</span></section>${impact(s)}<section class="v749-confirm-rows">${rows.map(([label,text])=>`<div class="v749-confirm-row"><span>${esc(label)}</span><b>${esc(text)}</b></div>`).join('')}<div class="v749-confirm-row"><span>Nota</span><input id="v749Note" maxlength="180" placeholder="Opcional" value="${esc(s.v749Note)}" aria-label="Nota del movimiento"></div></section><p class="v749-impact-note">Se revisarán impuestos y cargos mediante el cálculo contable existente antes de guardar; no se crea ninguna cuota ficticia.</p></div><footer class="v749-foot"><div class="v749-error" id="v749ReviewError" role="alert"></div><div class="v749-footrow"><button type="button" class="v749-secondary" data-v749="back">Editar</button><button type="button" class="v749-primary" data-v749="confirm">✓ Confirmar movimiento</button></div></footer></div></section>`}
-function back(){const s=state(),note=document.getElementById('v749Note');if(note)s.v749Note=note.value;document.getElementById('modal-root').querySelector('.v749-review-overlay')?.remove();renderEntry()}
-let confirmationBusy=false;
-function confirm(){if(confirmationBusy)return;const s=state(),f=document.querySelector('#modal-root #transactionForm[data-v749-native]');if(!f)return setError('No se encuentra el formulario contable.',true);const note=document.getElementById('v749Note');if(note){s.v749Note=note.value;setNative(f,'note',note.value)};
-const invalid=Array.from(f.elements).find(el=>el.willValidate&&!el.disabled&&!el.checkValidity());if(invalid){setError('Revisa el campo obligatorio «'+(invalid.name||'sin nombre')+'» en la edición antes de confirmar.',true);return}
-confirmationBusy=true;const b=document.querySelector('[data-v749="confirm"]');if(b){b.disabled=true;b.textContent='Guardando…'};
-try{const submit=f.querySelector('button[type=submit]');if(typeof f.requestSubmit!=='function')throw Error('El navegador no admite el envío seguro.');submit?f.requestSubmit(submit):f.requestSubmit();
-// A rejected native submission leaves the form and error in place; do not pretend success.
-queueMicrotask(()=>{if(!f.isConnected){confirmationBusy=false;return}const msg=f.querySelector('#formError')?.textContent?.trim();if(msg){setError(msg,true)}else{setError('El formulario sigue abierto. Comprueba las validaciones antes de volver a confirmar.',true)}confirmationBusy=false;if(b){b.disabled=false;b.textContent='✓ Confirmar movimiento'}});
-}catch(e){setError(e.message||'No se pudo enviar el movimiento.',true);confirmationBusy=false;if(b){b.disabled=false;b.textContent='✓ Confirmar movimiento'}}}
-const priorOpen=openMobileQuickRegister;
-openMobileQuickRegister=function(mode='income',amount=''){const chosen=mode==='expense'||mode==='card_charge'?'spend':mode==='transfer'||mode==='outgoing'?'transfer':mode;ui.mobileQuickRegister={mode:['income','spend','transfer'].includes(chosen)?chosen:'income',amount:String(amount||''),preset:'',transferKind:mode==='outgoing'?'outgoing':'own',v749Source:'account',v749Currency:'DOP',v749Date:today(),v749Note:'',v749Subcategory:'',v749Account:db.accounts.find(a=>!a.archived)?.id||'',v749Card:db.cards.find(c=>!c.archived)?.id||'',v749ToAccount:'',v749Payee:''};const s=state();s.v749ToAccount=db.accounts.find(a=>!a.archived&&a.id!==s.v749Account)?.id||'';renderEntry()};
-// Same two-screen flow from the main Registrar button; specialist flows remain untouched.
-const priorFlowPicker=flowPicker;
-flowPicker=function(...args){if(isMobileViewport()){ui.registrationGroup=ui.registrationGroup||'pay';return openRegisterAssistant()}return priorFlowPicker(...args)};
-document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v749]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const s=state(),act=b.dataset.v749;const v=b.dataset.value||'';
-if(act==='close'){closeModal();return}if(act==='mode'){changeMode(v);return}if(act==='key'){applyKey(v);return}if(act==='quick'){chooseCategory(v);return}if(act==='category'||act==='subcategory'||act==='source'||act==='destination'){sheet(act);return}
-if(act==='sheetClose'){closeSheet();return}if(act==='pickCategory'){s.preset=v;s.v749Subcategory='';sheet('subcategory');return}if(act==='pickSub'){s.v749Subcategory=v;closeSheet();renderEntry();return}
-if(act==='pickSource'){if(b.dataset.role==='destination'){s.v749ToAccount=v}else if(b.dataset.kind==='card'){s.v749Source='card';s.v749Card=v}else{s.v749Source='account';s.v749Account=v;s.v749ToAccount=s.v749ToAccount===v?db.accounts.find(a=>!a.archived&&a.id!==v)?.id||'':s.v749ToAccount}closeSheet();renderEntry();return}
-if(act==='currency'){s.v749Currency=s.v749Currency==='DOP'?'USD':'DOP';renderEntry();return}if(act==='transferKind'){s.transferKind=s.transferKind==='outgoing'?'own':'outgoing';renderEntry();return}
-if(act==='continue'){continueToReview();return}if(act==='back'){back();return}if(act==='confirm'){confirm();return}
-},true);
-document.addEventListener('input',e=>{if(e.target.id==='v749CategorySearch'){const q=normalize(e.target.value);document.querySelectorAll('#v749CategoryGrid button').forEach(el=>{el.hidden=!normalize(el.dataset.value).includes(q)});return}
-if(e.target.id==='v749Amount'){const s=state();const raw=e.target.value.replace(/[^0-9.]/g,'');const [a,...b]=raw.split('.');s.amount=a.slice(0,11)+(b.length?'.'+b.join('').slice(0,2):'');if(s.amount!==e.target.value)e.target.value=s.amount;return}
-if(e.target.id==='v749Payee')state().v749Payee=e.target.value;if(e.target.id==='v749Date')state().v749Date=e.target.value;
-if(e.target.id==='v749Note')state().v749Note=e.target.value;
-},true);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheetContainer()&&!sheetContainer().hidden){e.preventDefault();closeSheet()}},true);
-})();
-</script>
+
 <style id="v752-exact-composition-correction">
 /* V752: reference-led arrangement — drag | copy | separate illustration | controls.
    Overrides the absolute-positioned illustration and forced fake opacity of V747.
@@ -79795,129 +79998,7 @@ body:not(.theme-black):not(.theme-dark) #v756-product-layer .v756-sheet-tabs but
 </style>
 
 
-<script id="v756-real-product-selector-and-impact">
-(()=>{'use strict';
-// All entries come from existing form controls and already loaded entities, never remote requests.
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-let active=null;
-function makeLabel(select){
- const label=select.closest('label');if(!label||label.querySelector('.v756-native-select-btn'))return;
- const form=select.closest('form.other-studio-form');if(!form)return;
- const mode=select.name;
- if(!['cardId','accountId','loanId'].includes(mode))return;
- const b=document.createElement('button');b.type='button';b.className='v756-native-select-btn';
- b.setAttribute('aria-label','Abrir selector de '+(mode==='cardId'?'tarjetas':mode==='loanId'?'préstamos':'cuentas'));
- b.innerHTML='<span class="v756-field-ico">▣</span><span></span>';
- const txt=b.querySelector('span:nth-child(2)');
- const sync=()=>{txt.textContent=select.selectedOptions?.[0]?.textContent?.trim()||'Seleccionar producto';};
- sync();select.addEventListener('change',sync);b.addEventListener('click',()=>openPicker(select));label.appendChild(b);
- // Keep native accessible to assistive tech and fallback; do not remove it.
- select.style.position='absolute';select.style.width='1px';select.style.height='1px';select.style.opacity='0';select.style.pointerEvents='none';
-}
-function updateImpact(form){
- const spec=form.dataset.special;if(!['refund','adjustment'].includes(spec))return;
- let spot=form.querySelector('.other-studio-impact');
- if(!spot){spot=document.createElement('section');spot.className='other-studio-impact';const anchor=form.querySelector('.other-studio-receipt');if(anchor)anchor.insertAdjacentElement('afterend',spot);else form.querySelector('.other-studio-right')?.appendChild(spot)}
- if(!spot)return;
- const amt=Number(form.elements.amount?.value),safeAmt=Number.isFinite(amt)?amt:0;
- let prior=null,after=null,label='Saldo actual',currency='DOP',subtitle='Sin información de un producto seleccionado';
- try{
-  if(spec==='adjustment'){
-   const chosen=db.accounts.find(a=>String(a.id)===String(form.elements.accountId?.value));
-   if(chosen){currency=chosen.currency||'DOP';prior=getAccountBalance(chosen);after=prior+safeAmt;subtitle='Ajuste documentado; no crea ingresos o gastos ordinarios'}
-  }else{
-   const chosen=db.cards.find(c=>String(c.id)===String(form.elements.cardId?.value));
-   if(chosen){currency=form.elements.currency?.value||'DOP';if(!['DOP','USD'].includes(currency))currency='DOP';prior=cardStatus(chosen,currency).debt;after=Math.max(0,prior-Math.max(0,safeAmt));label='Deuda actual';subtitle='Estimación de saldo de tarjeta tras el reintegro'}
-  }
- }catch(_){prior=null;after=null;}
- const cash=n=>n===null||!Number.isFinite(n)?'—':money(n,currency,2);
- spot.innerHTML=`<h4>${spec==='refund'?'Impacto en tu tarjeta':'Vista previa del ajuste'}</h4><div class="other-studio-impact-grid"><span><small>${label}</small><strong>${esc(cash(prior))}</strong></span><span class="v756-arrow">→</span><span><small>${spec==='refund'?'Deuda estimada':'Nuevo saldo estimado'}</small><strong>${esc(cash(after))}</strong></span></div><p>${esc(subtitle)}</p>`;
-}
 
-function enhanceLoanPicker(pane){
- if(pane.dataset.v756LoanEnhanced==='yes')return;
- const rows=[...pane.querySelectorAll('button[data-act="otherLoanSelect"][data-id]')];
- if(!rows.length)return;
- pane.dataset.v756LoanEnhanced='yes';pane.classList.add('v756-loan-selector');
- let picked='';
- const footer=document.createElement('button');footer.type='button';footer.className='v756-loan-choose';footer.textContent='Usar este préstamo';footer.disabled=true;
- const setChosen=(id)=>{picked=id;rows.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));footer.disabled=!picked};
- rows.forEach(b=>{
-  const id=b.dataset.id;
-  b.removeAttribute('data-act'); // Changing the highlight is never a financial action.
-  b.setAttribute('aria-pressed','false');
-  const l=db.loans.find(x=>String(x.id)===id);
-  if(l){
-   try{
-    const st=loanStatus(l),balance=Number(st.balance)||0,principal=Number(l.principal)||0;
-    const details=document.createElement('span');details.className='v756-loan-info';
-    const pct=principal>0&&balance>=0?Math.max(0,Math.min(100,100*(principal-balance)/principal)):null;
-    details.innerHTML=`<span>Cuota: ${esc(st.installment>0?money(st.installment,l.currency||'DOP',2):'Sin cuota disponible')}</span>${pct!==null?`<span class="v756-loan-meter"><i style="width:${pct.toFixed(1)}%"></i></span><span>${pct.toFixed(1)}% amortizado</span>`:''}`;
-    b.appendChild(details);
-   }catch(_){/* No inventar saldos ni porcentajes */}
-  }
-  b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setChosen(id)},true);
- });
- footer.addEventListener('click',()=>{if(picked&&typeof otherLoanSelect==='function')otherLoanSelect(picked)});
- pane.appendChild(footer);
-}
-// Attach to actual DOM forms rather than overriding the accounting function.
-// This also prevents registration errors while the user is on the sign-in screen.
-function augment(){
- document.querySelectorAll('#modal-root .other-studio-picker').forEach(enhanceLoanPicker);
- document.querySelectorAll('#modal-root form.other-studio-form').forEach(form=>{
-  if(form.dataset.v756Enhanced==='yes')return;
-  form.dataset.v756Enhanced='yes';
-  form.querySelectorAll('select[name="cardId"],select[name="accountId"],select[name="loanId"]').forEach(makeLabel);
-  if(['refund','adjustment'].includes(form.dataset.special)){
-   const sync=()=>queueMicrotask(()=>updateImpact(form));
-   form.addEventListener('input',sync);form.addEventListener('change',sync);sync();
-  }
- });
-}
-function startObserver(){
- const host=document.getElementById('modal-root');if(!host)return;
- new MutationObserver(augment).observe(host,{childList:true,subtree:true});
- augment();
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startObserver,{once:true});else startObserver();
-function closePicker(){document.getElementById('v756-product-layer')?.remove();active=null;document.body.classList.remove('v756-picker-open')}
-function productRows(){if(!active)return [];const s=active.select;
- return [...s.options].filter(o=>o.value&&!o.disabled).map(o=>{
-  const item=(active.kind==='cardId'?db.cards:active.kind==='loanId'?db.loans:db.accounts).find(x=>String(x.id)===o.value);
-  const typ=active.kind==='cardId'?norm([item?.type,item?.cardType,item?.kind].filter(Boolean).join(' ')):'all';
-  const brand=active.kind==='cardId'?(/master|mc/.test(norm(item?.name+' '+item?.network))?'Mastercard':/visa/.test(norm(item?.name+' '+item?.network))?'VISA':'Tarjeta'):active.kind==='loanId'?'Préstamo':'Cuenta';
-  const last4=(item?.last4||item?.lastFour||item?.lastFourDigits||'').toString().replace(/\D/g,'').slice(-4);
-  let caption=active.kind==='loanId'?'':active.kind==='cardId'?'Tarjeta':item?.currency||'Cuenta';
-  let details='';
-  try{if(active.kind==='loanId'&&item){const st=loanStatus(item);details='Saldo pendiente: '+money(st.balance,item.currency||'DOP',2)+(st.installment>0?' · Cuota: '+money(st.installment,item.currency||'DOP',2):'');}}
-  catch(_){}
-  return {value:o.value,title:item?.name||o.textContent,caption,brand,last4,typ,details};
- });
-}
-function openPicker(select){closePicker();active={select,kind:select.name,provisional:select.value,filter:'all',q:''};
- const layer=document.createElement('div');layer.id='v756-product-layer';
- const isCard=select.name==='cardId';const title=isCard?'Selecciona una tarjeta':select.name==='loanId'?'Selecciona el préstamo':'Selecciona la cuenta';
- layer.innerHTML=`<section class="v756-sheet" role="dialog" aria-modal="true" aria-label="${title}"><span class="v756-sheet-handle"></span><header class="v756-sheet-head"><div><h2>${title}</h2><p>Elige un producto registrado para esta operación.</p></div><button type="button" class="v756-sheet-close" data-v756="close" aria-label="Cancelar">×</button></header><input type="search" class="v756-sheet-search" id="v756-search" aria-label="Buscar producto" placeholder="Buscar ${isCard?'tarjeta':select.name==='loanId'?'préstamo':'cuenta'}…">${isCard?'<div class="v756-sheet-tabs" role="group" aria-label="Filtrar tarjetas"><button data-v756="filter" data-value="all" aria-pressed="true">Todas</button><button data-v756="filter" data-value="credit" aria-pressed="false">Crédito</button><button data-v756="filter" data-value="debit" aria-pressed="false">Débito</button></div>':''}<div class="v756-sheet-items"></div><button type="button" class="v756-use" data-v756="use">Usar ${isCard?'esta tarjeta':select.name==='loanId'?'este préstamo':'esta cuenta'}</button></section>`;
- document.body.appendChild(layer);document.body.classList.add('v756-picker-open');
- layer.addEventListener('click',e=>{if(e.target===layer||e.target.closest('[data-v756="close"]')){closePicker();return}
- const filter=e.target.closest('[data-v756="filter"]');if(filter){active.filter=filter.dataset.value;draw();return}
- const item=e.target.closest('[data-v756="choose"]');if(item){active.provisional=item.dataset.value;draw();return}
- if(e.target.closest('[data-v756="use"]')){if(active.provisional&&[...select.options].some(o=>o.value===active.provisional)){select.value=active.provisional;select.dispatchEvent(new Event('change',{bubbles:true}));}closePicker();return}
- });
- layer.querySelector('#v756-search').addEventListener('input',e=>{active.q=e.target.value;draw()});
- draw();
-}
-function draw(){if(!active)return;const layer=document.getElementById('v756-product-layer');if(!layer)return;
- layer.querySelectorAll('[data-v756="filter"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.value===active.filter)));
- const list=layer.querySelector('.v756-sheet-items');const rows=productRows().filter(r=>(active.filter==='all'||active.filter==='credit'&&!/debit/.test(r.typ)||active.filter==='debit'&&/debit/.test(r.typ))&&norm(r.title+' '+r.caption+' '+r.last4+' '+r.details).includes(norm(active.q)));
- list.innerHTML=rows.length?rows.map(r=>`<button type="button" class="v756-item" data-v756="choose" data-value="${esc(r.value)}" aria-pressed="${r.value===active.provisional}"><span class="v756-card-preview ${r.brand==='Mastercard'?'mc':''}">${esc(r.brand)}</span><span class="v756-item-copy"><strong>${esc(r.title)}</strong><small>${esc(r.details||r.caption)}${r.last4?' ·•••• '+esc(r.last4):''}</small></span><span class="v756-item-check">${r.value===active.provisional?'✓':''}</span></button>`).join(''):'<div class="v756-empty">No hay productos registrados que coincidan con este filtro.</div>';
- layer.querySelector('.v756-use').disabled=!active.provisional;
-}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active){e.preventDefault();closePicker();}});
-})();
-</script>
 
 
 <style id="v756-loan-picker-visual">
@@ -80245,5 +80326,121 @@ body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-pre
 }
 </style>
 
+<style id="v768-register-real-flows-visual">
+/* Incremental visual system: the legacy forms remain the accounting source of truth. */
+:root{--v768-accent:var(--vive-theme-color,#8c79d3)}
+#modal-root :is(.v749-layer,.other-studio-form),#v756-product-layer{--v768-a:var(--vive-theme-color,#8c79d3)}
+#modal-root .v749-layer{--v749-accent:var(--vive-theme-color,#8c79d3)!important;--v749-base:#050508;--v749-panel:#161619;--v749-ink:#fbfafc;--v749-muted:#adabb6;--v749-line:rgba(242,240,255,.17);background:radial-gradient(ellipse 70% 32% at 105% 10%,color-mix(in srgb,var(--v749-accent) 19%,transparent),transparent 75%),#050508!important}
+#modal-root .v749-screen{padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:max(7px,env(safe-area-inset-bottom,0px));max-width:500px}
+#modal-root .v749-brand{font-size:13px;font-weight:740;letter-spacing:-.025em}
+#modal-root .v749-brand i{width:30px;height:30px;border-radius:10px;transform:none;box-shadow:inset 0 1px 1px #fff6,0 0 20px color-mix(in srgb,var(--v749-accent) 25%,transparent)}
+#modal-root .v749-title{font-size:clamp(27px,7.7vw,36px);margin:5px 0 3px;line-height:1.12}
+#modal-root .v749-subtitle{font-size:clamp(12px,3.45vw,15px);margin-bottom:14px}
+#modal-root .v749-segment{gap:7px;padding:0;border:0;background:transparent;margin-bottom:15px}
+#modal-root .v749-segment button{height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px solid #ffffff22!important;border-radius:16px!important;background:linear-gradient(140deg,#1b1b1e,#0e0e10)!important;font-size:12px!important}
+#modal-root .v749-segment button:before{font-size:20px;line-height:1}
+#modal-root .v749-segment button[data-value="spend"]:before{content:'▤'}
+#modal-root .v749-segment button[data-value="income"]:before{content:'↗'}
+#modal-root .v749-segment button[data-value="transfer"]:before{content:'⇄'}
+#modal-root .v749-segment button[aria-pressed="true"]{border-color:color-mix(in srgb,var(--v749-accent) 80%,#ffffff)!important;background:linear-gradient(145deg,color-mix(in srgb,var(--v749-accent) 32%,#1a191b),#181719)!important;box-shadow:0 0 18px color-mix(in srgb,var(--v749-accent) 28%,transparent),inset 0 1px 0 #ffffff25!important;color:#fff!important}
+#modal-root .v749-amount{border-radius:21px;background:radial-gradient(ellipse at 100% 100%,color-mix(in srgb,var(--v749-accent) 22%,transparent),transparent 70%),linear-gradient(145deg,#171719,#0c0c0f)!important;border-color:#ffffff30;box-shadow:inset 0 1px 0 #ffffff1b;margin-bottom:11px}
+#modal-root .v749-amount input{font-size:clamp(37px,10vw,47px)!important}
+#modal-root .v749-impact{border-radius:18px;background:radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--v749-accent) 12%,transparent),transparent 75%),linear-gradient(125deg,#131315,#0e0e11)!important;border-color:#ffffff1e!important;padding:12px 13px;box-shadow:inset 0 1px 0 #ffffff15}
+#modal-root .v749-impact-head{font-size:12px}
+#modal-root .v749-quick{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+#modal-root .v749-quick button{min-height:70px;border-radius:17px!important;box-shadow:inset 0 1px 0 #ffffff16}
+#modal-root .v749-quick button svg,#modal-root .v749-quick button .v749-choice-icon{width:23px;height:23px}
+#modal-root .v749-fieldline{border:1px solid #ffffff24!important;background:linear-gradient(145deg,#171719,#101013)!important;border-radius:15px!important;margin-bottom:8px;min-height:49px}
+#modal-root .v749-fieldline button{color:var(--v749-ink)!important;min-width:0;overflow:hidden;text-overflow:ellipsis}
+#modal-root .v749-more{border:1px solid #ffffff22!important;background:#131315!important;border-radius:16px!important;margin-top:10px;padding:8px 10px!important}
+#modal-root .v749-more summary{font-size:12px;color:#e4deef}
+#modal-root .v749-keypad{gap:7px}
+#modal-root .v749-keypad button{min-height:44px;border:1px solid #ffffff20!important;border-radius:14px!important;background:linear-gradient(145deg,#262629,#171719)!important;font-size:23px!important;box-shadow:inset 0 1px 0 #ffffff17!important}
+#modal-root .v749-foot{border-top:1px solid #ffffff12;background:#050508!important}
+#modal-root .v749-primary{background:linear-gradient(135deg,color-mix(in srgb,var(--v749-accent) 77%,#ffffff),var(--v749-accent))!important;border:1px solid color-mix(in srgb,var(--v749-accent) 75%,white)!important;box-shadow:0 3px 20px color-mix(in srgb,var(--v749-accent) 32%,transparent),inset 0 1px 0 #ffffff53!important}
+#modal-root .v749-illustrated{min-height:128px;position:relative;overflow:hidden;background:radial-gradient(ellipse 45% 85% at 91% 65%,color-mix(in srgb,var(--v749-accent) 27%,transparent),transparent 90%),linear-gradient(120deg,#17171a,#09090d)!important;border:1px solid #ffffff28!important;border-radius:20px!important;padding:17px 20px!important;box-shadow:inset 0 1px 0 #ffffff22!important}
+#modal-root .v749-artwork{font-size:inherit!important;right:15px;top:10px;width:111px;height:111px;display:grid;place-items:center;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--v749-accent) 33%,transparent))}
+#modal-root .v768-hero-drawing{width:108px;height:108px;display:block}
+#modal-root .v749-illustrated>div{position:relative;z-index:1;max-width:65%}
+#modal-root .v749-illustrated strong{font-size:clamp(24px,7vw,32px)}
+#modal-root .v749-confirm-rows{border-radius:17px!important;border:1px solid #ffffff20!important;overflow:hidden}
+#modal-root .v749-confirm-row{min-height:46px;padding:10px 13px!important}
+#modal-root .v749-review-overlay{z-index:2147483000!important}
+#modal-root .v749-review-overlay .v749-layer{z-index:2147483001!important}
+#modal-root .v749-sheet{z-index:2147483100!important}
+#modal-root .v749-sheet-inner{max-width:520px;border-radius:28px 28px 0 0;border:1px solid color-mix(in srgb,var(--v749-accent) 38%,#888)!important;background:radial-gradient(ellipse at 95% 95%,color-mix(in srgb,var(--v749-accent) 15%,transparent),transparent 65%),#121215!important;box-shadow:0 -12px 50px #000c}
+#modal-root .v749-choice-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#modal-root .v749-choice-grid button{border:1px solid #ffffff24!important;background:linear-gradient(140deg,#1f1f22,#101013)!important;border-radius:16px!important;min-height:99px!important;box-shadow:inset 0 1px 0 #ffffff0e}
+#modal-root .v749-choice-icon{display:grid;place-items:center;font-size:28px;min-height:43px;filter:drop-shadow(0 3px 5px #0009)}
+#modal-root .v749-choice-grid button.is-selected{border-color:var(--v749-accent)!important;box-shadow:0 0 0 1px var(--v749-accent),0 0 18px color-mix(in srgb,var(--v749-accent) 20%,transparent)!important}
+#modal-root .v768-sublist{display:grid;gap:7px;max-height:60dvh;overflow:auto}
+#modal-root .v768-sublist button{display:flex;gap:13px;align-items:center;text-align:left;min-height:54px!important;border:1px solid #ffffff20!important;padding:9px 12px!important;border-radius:14px!important;background:#222225!important}
+#modal-root .v768-subicon{font-size:21px;min-width:35px;text-align:center}
+#modal-root .v768-sublist button.is-selected{border-color:var(--v749-accent)!important}
+#modal-root .v768-source-list{display:grid;gap:9px;max-height:57dvh;overflow-y:auto}
+#modal-root .v768-source-list button{width:100%;display:grid!important;grid-template-columns:75px minmax(0,1fr) 23px;align-items:center;gap:12px;min-height:70px!important;border-radius:15px!important;background:linear-gradient(145deg,#232326,#151518)!important;border:1px solid #ffffff27!important;padding:9px 10px!important;text-align:left}
+#modal-root .v768-source-list button.is-selected{border-color:var(--v749-accent)!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--v749-accent) 37%,transparent),0 0 18px color-mix(in srgb,var(--v749-accent) 19%,transparent)}
+#modal-root .v768-source-visual{width:75px;height:46px;display:grid;place-items:center;border-radius:9px;font-weight:900;font-style:italic;letter-spacing:-.05em;font-size:17px;color:#fff;background:linear-gradient(137deg,#123468,#4763d0 66%,#14295a);box-shadow:inset 0 1px 0 #ffffff4d,0 4px 8px #0006}
+#modal-root .v768-source-visual.v768-mastercard{background:linear-gradient(137deg,#351448,#7442a4 65%,#181126);color:#ffa2ab;letter-spacing:-.2em;font-size:27px}
+#modal-root .v768-source-account{background:linear-gradient(120deg,#202a35,#374453);font-style:normal}
+#modal-root .v768-source-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0;gap:4px}
+#modal-root .v768-source-copy strong{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+#modal-root .v768-source-copy small{color:#aaaab9;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+#modal-root .v768-source-radio{width:20px;height:20px;border:2px solid #aaaaaf;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px}
+#modal-root .v768-source-list .is-selected .v768-source-radio{border-color:var(--v749-accent);background:var(--v749-accent)}
+#modal-root .other-studio-form{--os-accent:var(--vive-theme-color,#8c79d3)!important}
+#modal-root .other-studio-header{background:radial-gradient(ellipse at 95% 20%,color-mix(in srgb,var(--os-accent) 24%,transparent),transparent 64%),#09090c!important}
+#modal-root .other-studio-amount,#modal-root .other-studio-receipt{border:1px solid #ffffff29!important;border-radius:19px!important;box-shadow:inset 0 1px 0 #ffffff1c!important}
+#modal-root .other-studio-right{background:radial-gradient(ellipse at 85% 80%,color-mix(in srgb,var(--os-accent) 11%,transparent),transparent 79%),#121214!important}
+#modal-root .v768-adjust-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+#modal-root .v768-adjust-heading strong{font-size:13px;font-weight:780}
+#modal-root .v768-adjust-toggle{display:flex;align-items:center;gap:3px;padding:3px;border-radius:999px;background:#08080a;border:1px solid #ffffff24}
+#modal-root .v768-adjust-toggle button{color:#bdbcc7;border:0;border-radius:999px;padding:8px 11px;font-size:11px;font-weight:780;background:transparent;white-space:nowrap}
+#modal-root .v768-adjust-toggle button[aria-pressed="true"]{background:linear-gradient(120deg,color-mix(in srgb,var(--os-accent) 70%,#fff),var(--os-accent));color:#08080a;box-shadow:0 0 10px color-mix(in srgb,var(--os-accent) 30%,transparent)}
+#modal-root .v768-reason,#modal-root .v768-refund-reason{display:block;margin-top:12px}
+#modal-root .v768-reason input,#modal-root .v768-refund-reason input{min-height:47px;border:1px solid #ffffff2a;border-radius:12px;background:#1b1b1d;color:#fff}
+#v756-product-layer .v756-sheet{--v756-accent:var(--vive-theme-color,#8c79d3)!important}
+#v756-product-layer .v756-card-preview{position:relative;overflow:hidden;font-style:italic;font-size:16px!important;box-shadow:inset 0 1px 0 #ffffff48}
+#v756-product-layer .v756-card-preview:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(147deg,transparent 36%,#ffffff27 37%,transparent 56%),radial-gradient(ellipse at 100% 120%,#ffffff2a,transparent 65%)}
+#v756-product-layer .v756-item{min-height:69px}
+#v756-product-layer .v756-item-copy strong{font-size:clamp(12px,3.6vw,15px)}
+#v756-product-layer .v756-use{background:linear-gradient(125deg,color-mix(in srgb,var(--v756-accent) 75%,#fff),var(--v756-accent))}
+/* White theme adapts surfaces; never use fixed gold/violet as the active color. */
+body:not(.theme-black):not(.theme-dark) #modal-root .v749-layer{--v749-base:#f7f8fb;--v749-panel:#fff;--v749-ink:#19253a;--v749-muted:#67758b;--v749-line:#dbe0e9;background:radial-gradient(ellipse at 100% 3%,color-mix(in srgb,var(--v749-accent) 10%,transparent),transparent 60%),#f4f6fa!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v749-segment button,body:not(.theme-black):not(.theme-dark) #modal-root .v749-amount,body:not(.theme-black):not(.theme-dark) #modal-root .v749-impact,body:not(.theme-black):not(.theme-dark) #modal-root .v749-fieldline,body:not(.theme-black):not(.theme-dark) #modal-root .v749-keypad button,body:not(.theme-black):not(.theme-dark) #modal-root .v749-illustrated,body:not(.theme-black):not(.theme-dark) #modal-root .v749-quick button{background:linear-gradient(145deg,#fff,#eef1f8)!important;color:#16263f!important;border-color:#d6dce6!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v749-segment button[aria-pressed=true]{background:color-mix(in srgb,var(--v749-accent) 17%,#fff)!important;color:#17223e!important;border-color:var(--v749-accent)!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v749-keypad button{color:#16223a!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v749-foot{background:#f7f8fb!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v749-illustrated strong,body:not(.theme-black):not(.theme-dark) #modal-root .v749-illustrated small{color:#13253d!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v749-sheet-inner{background:#f9fbff!important;color:#18253e!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v749-choice-grid button,body:not(.theme-black):not(.theme-dark) #modal-root .v768-sublist button,body:not(.theme-black):not(.theme-dark) #modal-root .v768-source-list button{background:#fff!important;color:#1b2b46!important;border-color:#dce1ec!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v768-source-copy small{color:#708097!important}
+@media(max-width:390px){#modal-root .v749-quick{gap:5px}#modal-root .v749-quick button{font-size:9px!important}#modal-root .v768-source-list button{grid-template-columns:61px minmax(0,1fr) 19px;gap:8px}#modal-root .v768-source-visual{width:61px;height:41px;font-size:14px}}
+@media(max-height:720px){#modal-root .v749-segment button{height:53px}#modal-root .v749-quick button{min-height:54px}#modal-root .v749-amount{min-height:90px}#modal-root .v749-keypad button{min-height:36px}}
+@media(prefers-reduced-motion:reduce){#modal-root .v749-layer *,#v756-product-layer *{animation:none!important}}
+
+/* Repair search-state visibility despite previous !important grid rules. */
+#modal-root #v749CategoryGrid button[hidden],#modal-root #v749SubcategoryGrid button[hidden],#modal-root #v768SourceList button[hidden]{display:none!important}
+/* Premium specialist operations: remove duplicate legacy modal header but retain its close button inside the actual form. */
+@media(max-width:790px){
+ #modal-root .modal-layer:has(.other-studio-shell){inset:0!important;align-items:stretch!important;padding:0!important;background:#050507!important}
+ #modal-root .modal:has(.other-studio-shell){width:100%!important;max-width:100%!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important;background:#050507!important;padding:0!important;box-shadow:none!important;overflow-y:auto!important;overscroll-behavior:contain}
+ #modal-root .modal:has(.other-studio-shell)>.modal-head{display:none!important}
+ #modal-root .other-studio-shell{min-height:100%!important;border:0!important;border-radius:0!important}
+ #modal-root .other-studio-left{padding:calc(12px + env(safe-area-inset-top,0px)) 15px 15px!important;background:#050507!important}
+ #modal-root .other-studio-header{padding:8px 6px 21px!important;margin-bottom:8px!important;border-radius:0 0 20px 20px!important}
+ #modal-root .other-studio-header h2{font-size:clamp(27px,8.2vw,35px)!important;letter-spacing:-.052em!important;line-height:1.08!important}
+ #modal-root .other-studio-header p{font-size:13px!important;line-height:1.45!important}
+ #modal-root .other-studio-form .other-studio-fields{min-width:0!important;grid-template-columns:minmax(0,1fr)!important}
+ #modal-root .other-studio-form .other-studio-fields>*,#modal-root .other-studio-form .other-studio-fields label{min-width:0!important;max-width:100%!important;width:100%!important;overflow:hidden!important}
+ #modal-root .other-studio-form .v756-native-select-btn{max-width:100%!important;min-width:0!important;overflow:hidden!important}
+ #modal-root .other-studio-form .v756-native-select-btn span:nth-child(2){overflow:hidden!important;min-width:0!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+ #modal-root .other-studio-form .other-studio-amount{padding:14px!important;min-width:0!important}
+ #modal-root .other-studio-form .other-studio-amount input[name="amount"]{font-size:clamp(31px,9vw,45px)!important;max-width:100%!important;width:100%!important}
+ #modal-root .other-studio-form .other-studio-right{margin:6px 15px 100px!important;border-radius:20px!important;border:1px solid #ffffff22!important;padding:16px!important}
+ #modal-root .other-studio-form .form-foot{background:linear-gradient(0deg,#050507 80%,transparent)!important;border-top:1px solid #ffffff18!important;box-shadow:0 -4px 20px #0007!important;gap:8px!important}
+ #modal-root .other-studio-form .form-foot button[type="submit"]{background:linear-gradient(125deg,color-mix(in srgb,var(--vive-theme-color,#8c79d3) 79%,#fff),var(--vive-theme-color,#8c79d3))!important;color:#101014!important;border:1px solid color-mix(in srgb,var(--vive-theme-color,#8c79d3) 55%,white)!important;border-radius:18px!important;box-shadow:0 0 22px color-mix(in srgb,var(--vive-theme-color,#8c79d3) 24%,transparent)!important;font-weight:850!important}
+}
+</style>
 </body>
 </html>
