@@ -44373,7 +44373,7 @@ window.__f360RecurringVisualAdapter={
   const state={view:'list',previous:'list',query:'',flow:'all',category:'all',otherCategories:[],product:'all',period:'month',month:null,openFilters:false,selected:null,productType:'cards',limit:35};
   const INCOMING=new Set(['income','card_refund','card_reward','bank_reward','certificate_interest','certificate_redemption']);
   const OUTGOING=new Set(['expense','card_charge','card_payment','loan_payment','personal_issue','certificate_funding']);
-  const SHOW_TABS=[['list','Historial','list'],['search','Buscar','search'],['summary','Resumen','chart'],['categories','Categorías','grid'],['products','Tarjetas y bancos','card'],['reconcile','Conciliar','check'],['apple','Apple Pay','apple']];
+  const SHOW_TABS=[['list','Historial','list'],['summary','Resumen','chart'],['categories','Categorías','grid'],['products','Tarjetas y bancos','card'],['reconcile','Conciliar','check'],['apple','Apple Pay','apple']];
   const safe=x=>sanitize(String(x??''));
   const number=n=>Number.isFinite(Number(n))?Number(n):0;
   const month=()=>state.month||today().slice(0,7);
@@ -44418,6 +44418,14 @@ window.__f360RecurringVisualAdapter={
   function header(title='Movimientos',subtitle='Consulta, filtra y gestiona tus transacciones.',back=false){return `<header class="v708-head"><div class="v708-heading">${back?`<button type="button" class="v708-back" data-v708="back" aria-label="Volver">${icon('arrow')}</button>`:''}<div><small>VIVE EL HOY · ACTIVIDAD</small><h1>${safe(title)}</h1><p>${safe(subtitle)}</p></div></div><button class="v708-head-icon" type="button" data-v708="calendar" aria-label="Seleccionar período" title="Período">${icon('calendar')}</button></header>`}
   function tabs(){return `<nav class="v708-tabstrip" aria-label="Vistas de movimientos">${SHOW_TABS.map(([id,label,ic])=>`<button type="button" class="v708-tab ${state.view===id?'active':''}" data-v708="view" data-value="${id}" aria-pressed="${state.view===id}">${icon(ic)}<span>${safe(label)}</span></button>`).join('')}</nav>`;}
   function searchBar(){return `<label class="v708-search"><span>${icon('search')}</span><input id="v708-search-input" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Comercio, tarjeta, categoría o monto…" value="${safe(state.query)}" aria-label="Buscar movimientos"/><button type="button" data-v708="filters" class="v708-search-filter" title="Filtros" aria-label="Abrir filtros">${icon('settings')}</button></label>`;}
+  // V722: accesos visuales compactos al estilo de la referencia móvil.
+  // Cada acceso utiliza las mismas vistas y datos existentes; sin solicitudes extra.
+  function quickActions(){return `<nav class="v722-movement-actions" aria-label="Accesos rápidos a movimientos">
+    <button type="button" class="v722-movement-action" data-v708="quickCards" aria-label="Ver movimientos por tarjeta"><span class="v722-action-icon">${icon('card')}</span><span>Tarjetas</span></button>
+    <button type="button" class="v722-movement-action" data-v708="quickApple" aria-label="Ver movimientos Apple Pay"><span class="v722-action-icon">${icon('apple')}</span><span>Apple Pay</span></button>
+    <button type="button" class="v722-movement-action" data-v708="quickServices" aria-label="Filtrar servicios"><span class="v722-action-icon">${icon('receipt')}</span><span>Servicios</span></button>
+    <button type="button" class="v722-movement-action" data-v708="quickMore" aria-label="Más filtros"><span class="v722-action-icon">${icon('settings')}</span><span>Más</span></button>
+  </nav>`;}
   function quickFilters(){return `<div class="v708-chips">${labelChip('Todos',state.flow==='all','flow','data-value="all"')}${labelChip('Entradas',state.flow==='in','flow','data-value="in"')}${labelChip('Salidas',state.flow==='out','flow','data-value="out"')}${labelChip('Apple Pay',state.flow==='apple','flow','data-value="apple"')}</div>`;}
   function selectItems(items,selected){return items.map(([value,label])=>`<option value="${safe(value)}" ${String(selected)===String(value)?'selected':''}>${safe(label)}</option>`).join('');}
   function filterPanel(){
@@ -44452,7 +44460,7 @@ window.__f360RecurringVisualAdapter={
   function listView(searchMode=false){
     const data=filtered(),prefix=searchMode?'Buscar movimientos':'Movimientos';
     const title=searchMode?'Encuentra cualquier operación': 'Consulta, filtra y gestiona tus transacciones.';
-    return `${header(prefix,title,searchMode)}${searchBar()}${quickFilters()}${filterPanel()}<div class="v708-list-top"><strong>${data.length} resultado${data.length===1?'':'s'}</strong><button type="button" data-v708="view" data-value="summary">Ver resumen ${icon('arrow')}</button></div>${rows(data,{max:state.limit})}${draftsView()}`;
+    return `${header(prefix,title,searchMode)}${searchBar()}${quickActions()}${quickFilters()}${filterPanel()}<div class="v708-list-top"><strong>${data.length} resultado${data.length===1?'':'s'}</strong><button type="button" data-v708="view" data-value="summary">Ver resumen ${icon('arrow')}</button></div>${rows(data,{max:state.limit})}${draftsView()}`;
   }
   function summaryView(){
     const data=base(),t=totals(data);
@@ -44592,11 +44600,20 @@ window.__f360RecurringVisualAdapter={
     const op=button.dataset.v708,value=button.dataset.value||'',id=button.dataset.id||'';
     switch(op){
       case 'open':openMovements(value||'list');break;
-      case 'view':state.view=value;state.selected=null;state.limit=35;state.openFilters=false;redraw({focus:value==='search'});break;
+      case 'view':state.view=value==='search'?'list':value;state.selected=null;state.limit=35;state.openFilters=false;redraw({focus:value==='search'});break;
       case 'back':if(state.view==='detail'){state.view=state.previous||'list';state.selected=null;}else {state.view='list';state.query='';}redraw();break;
       case 'detail':state.previous=state.view;state.view='detail';state.selected=id;redraw();break;
       case 'calendar':if(!['list','search'].includes(state.view)){state.view='list';state.selected=null;state.openFilters=true;redraw();}else{state.openFilters=!state.openFilters;redraw({keepScroll:true});}break;
       case 'filters':state.openFilters=!state.openFilters;redraw({keepScroll:true});break;
+      case 'quickCards':state.productType='cards';state.view='products';state.selected=null;redraw();break;
+      case 'quickApple':state.flow='apple';state.view='list';state.category='all';state.product='all';state.query='';state.period='all';redraw();break;
+      case 'quickServices':{
+        const options=[...new Set(all().map(t=>String(t.category||'')))];
+        const match=options.find(c=>/^servicios?$/i.test(c.trim()));
+        state.category=match||'all';state.product='all';state.flow='all';state.view='list';
+        state.query=match?'':'servicio';state.period='all';redraw();break;
+      }
+      case 'quickMore':state.openFilters=!state.openFilters;state.view='list';redraw({keepScroll:true});break;
       case 'flow':state.flow=value;state.limit=35;redraw({keepScroll:true});break;
       case 'reset':Object.assign(state,{query:'',flow:'all',category:'all',otherCategories:[],product:'all',period:'month',month:null,limit:35,openFilters:false});redraw();break;
       case 'more':if(state.view==='detail')moreOptions();else{state.limit+=35;redraw({keepScroll:true})}break;
@@ -77835,6 +77852,14 @@ html body.theme-black #modal-root .v85-capacity-modal .v85-capacity-metrics stro
   .v708-tab{display:flex;align-items:center;justify-content:center;gap:6px;flex:0 0 auto;padding:10px 13px;white-space:nowrap;min-height:38px;border:1px solid var(--v708-line);background:var(--v708-card);color:var(--v708-muted)!important;border-radius:99px;font-size:11px!important;font-weight:725;scroll-snap-align:start;backdrop-filter:blur(16px)}
   .v708-tab svg{width:14px;height:14px}
   .v708-tab.active{background:var(--v708-ink)!important;border-color:transparent!important;color:white!important;box-shadow:0 5px 12px var(--v708-glow)}
+  /* V722 · Iconos rápidos Liquid Glass dentro de Historial; sin pestaña Buscar duplicada. */
+  .v722-movement-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 2px;min-width:0}
+  .v722-movement-action{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:76px;padding:9px 3px 8px;border:1px solid var(--v708-line);border-radius:18px;background:var(--v708-card-strong);color:var(--v708-ink)!important;box-shadow:0 5px 16px var(--v708-glow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);font-size:10.5px!important;font-weight:750;line-height:1.1;text-align:center;white-space:nowrap;cursor:pointer}
+  .v722-action-icon{display:grid;place-items:center;width:35px;height:34px;border-radius:12px;background:color-mix(in srgb,var(--v708-accent) 10%,transparent);color:var(--v708-ink)}
+  .v722-action-icon svg{width:19px;height:19px;stroke-width:1.8}
+  .v722-movement-action:active{transform:scale(.97)}
+  .v722-movement-action:focus-visible{outline:2px solid var(--v708-accent);outline-offset:2px}
+  @media(max-width:350px){.v722-movement-actions{gap:5px}.v722-movement-action{font-size:9px!important;border-radius:14px;min-height:69px}}
   .v708-search{display:flex;align-items:center;gap:9px;min-height:50px;padding:5px 7px 5px 15px;border:1px solid rgba(255,255,255,.74);background:var(--v708-card-strong);border-radius:17px;box-shadow:0 6px 21px var(--v708-glow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
   .v708-search>span{color:var(--v708-muted)}
   .v708-search>span svg{width:17px;height:17px}
