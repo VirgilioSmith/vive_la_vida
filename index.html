@@ -25812,77 +25812,37 @@ body.theme-black .v726-profile-state{color:color-mix(in srgb,var(--v726-accent,#
 }
 @media(max-width:370px){.vive-mobile-home .v732-kpi-stat-icon{width:24px;height:24px;flex-basis:24px}.vive-mobile-home .v732-kpi-stats button{gap:3px;padding:0 2px}.vive-mobile-home .v732-kpi-stats button+button{padding-left:5px}.vive-mobile-home .v732-bank-list .v711-bank-spark{display:none}}
 </style>
-<style id="v737-independent-kpi-responsive">
-/* V737: exclusively the newly added standalone KPI — no global components changed. */
-@media (max-width: 790px) {
- .vive-mobile-home .v736-extra-kpi {display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;margin:14px 0 18px;isolation:isolate;clear:both}
- .vive-mobile-home .v736-extra-kpi *, .vive-mobile-home .v736-extra-kpi *::before,.vive-mobile-home .v736-extra-kpi *::after {box-sizing:border-box}
- .vive-mobile-home .v736-extra-heading {margin:0 0 11px;padding:0 2px;min-width:0}
- .vive-mobile-home .v736-extra-heading .vive-mobile-eyebrow {font-size:10px;letter-spacing:.16em;opacity:.75}
- .vive-mobile-home .v736-extra-heading h2 {font-size:clamp(17px,4.8vw,21px);line-height:1.25;margin:4px 0 0;font-weight:780;letter-spacing:-.4px}
- .vive-mobile-home .v736-extra-kpi .v732-home-kpi {width:100%;max-width:100%;min-width:0;padding:clamp(15px,4vw,20px);overflow:hidden}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-head {position:relative;z-index:1}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-value {display:block;position:relative;z-index:1;font-size:clamp(21px,5.6vw,35px)!important;line-height:1.15!important;letter-spacing:-.045em!important;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;max-width:100%;overflow:visible!important;text-overflow:clip!important;font-variant-numeric:tabular-nums}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-variance {flex-wrap:wrap;row-gap:4px;max-width:100%}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-ornament {opacity:.16;right:9px;max-width:46%;overflow:hidden}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:22px;padding-top:12px;min-width:0}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button {width:100%;min-width:0;min-height:58px;padding:8px 9px!important;border:1px solid rgba(134,157,191,.18)!important;border-radius:13px;background:rgba(255,255,255,.26);display:flex;align-items:center;gap:8px;overflow:visible}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button:nth-child(3) {grid-column:1 / -1}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button span:last-child {display:flex;flex-direction:column;flex:1 1 auto;min-width:0;gap:3px;overflow:visible}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button strong {display:block;max-width:100%;font-size:clamp(11px,3vw,13px);line-height:1.22;letter-spacing:-.03em;white-space:nowrap;word-break:normal;overflow-wrap:normal;overflow:visible;text-overflow:clip;font-variant-numeric:tabular-nums}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button small {display:block;font-size:11px;line-height:1.25;white-space:normal}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stat-icon {width:27px;height:27px;flex:0 0 27px}
-}
-@media(max-width:350px){
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats{grid-template-columns:minmax(0,1fr);gap:7px}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button:nth-child(3){grid-column:auto}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button{min-height:48px!important}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-value{font-size:clamp(18px,5.2vw,24px)!important}
-}
-@media(min-width:600px) and (max-width:790px){
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button:nth-child(3){grid-column:auto}
-}
-</style>
-<style id="v739-compact-configurable-balance">
-/* Solo la tarjeta adicional; el KPI principal no cambia. */
-.vive-mobile-home .v736-extra-kpi[hidden]{display:none!important}
-@media(max-width:790px){
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin-top:15px!important;padding-top:10px!important}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats>button{grid-column:auto!important;min-width:0!important;min-height:62px!important;padding:8px 7px!important;gap:5px!important;overflow:hidden!important}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button span:last-child{min-width:0!important;overflow:hidden!important}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button strong{font-size:clamp(10px,2.75vw,13px)!important;letter-spacing:-.055em!important;white-space:nowrap!important;font-variant-numeric:tabular-nums!important;overflow:visible!important}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stat-icon{width:clamp(22px,6vw,27px)!important;height:clamp(22px,6vw,27px)!important;flex:0 0 clamp(22px,6vw,27px)!important}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-value{font-size:clamp(21px,5.4vw,35px)!important}
- .vive-mobile-home .v736-extra-kpi .v732-home-kpi{padding:clamp(14px,3.5vw,19px)!important}
-}
-@media(max-width:360px){
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats>button{gap:3px!important;padding:7px 4px!important}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stat-icon{width:20px!important;height:20px!important;flex-basis:20px!important}
- .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button strong{font-size:clamp(9px,2.8vw,11px)!important}
-}
-</style>
+
+
 <style id="v742-personalization-balance-style">
 /* Cuarta opción del selector de estilos iPhone; no modifica las tres anteriores. */
 #app .v242-mini-balance{display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:7px;min-width:0;min-height:129px;padding:12px;border-radius:16px;background:linear-gradient(133deg,#f9faff 0%,#e8edff 65%,#e3e5fb 100%);color:#182a4a;overflow:hidden;position:relative}
 #app .v242-mini-balance::after{content:"";position:absolute;right:-22px;bottom:-28px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,#a1a1ff66,transparent 70%);pointer-events:none}
 #app .v242-mini-balance .v742-mini-label{font-size:10px;font-weight:730;line-height:1.2;color:#536786}
 #app .v242-mini-balance>strong{font-size:clamp(15px,3.8vw,21px);line-height:1.06;letter-spacing:-.045em;white-space:nowrap;position:relative;z-index:1}
-#app .v242-mini-balance .v742-mini-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;position:relative;z-index:1}
-#app .v242-mini-balance .v742-mini-pair i{display:grid;gap:4px;border-radius:10px;background:#ffffff9e;border:1px solid #ffffffc4;padding:7px 5px;font-style:normal;min-width:0}
+#app .v242-mini-balance .v742-mini-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;position:relative;z-index:1;margin-top:2px;padding-top:7px;border-top:1px solid rgba(115,132,173,.18)}
+#app .v242-mini-balance .v742-mini-pair i{display:grid;gap:3px;padding:0 6px 0 0;font-style:normal;min-width:0;background:none;border:0;border-radius:0}
+#app .v242-mini-balance .v742-mini-pair i+i{padding:0 0 0 8px;border-left:1px solid rgba(115,132,173,.18)}
 #app .v242-mini-balance .v742-mini-pair small{font-size:9px;color:#62728f}
 #app .v242-mini-balance .v742-mini-pair b{font-size:clamp(10px,2.5vw,13px);white-space:nowrap;letter-spacing:-.025em}
 body.theme-black #app .v242-mini-balance,body.theme-dark #app .v242-mini-balance{background:linear-gradient(135deg,#151b2d,#23234e)!important;color:#f6f8ff!important}
 body.theme-black #app .v242-mini-balance .v742-mini-label,body.theme-dark #app .v242-mini-balance .v742-mini-label{color:#c4cdec!important}
-body.theme-black #app .v242-mini-balance .v742-mini-pair i,body.theme-dark #app .v242-mini-balance .v742-mini-pair i{background:#ffffff13;border-color:#ffffff24}
+body.theme-black #app .v242-mini-balance .v742-mini-pair,body.theme-dark #app .v242-mini-balance .v742-mini-pair{border-top-color:#ffffff22}
+body.theme-black #app .v242-mini-balance .v742-mini-pair i+i,body.theme-dark #app .v242-mini-balance .v742-mini-pair i+i{border-left-color:#ffffff22}
 body.theme-black #app .v242-mini-balance .v742-mini-pair small,body.theme-dark #app .v242-mini-balance .v742-mini-pair small{color:#c9cde4}
 /* Mismo dimensionamiento compacto cuando se usa como KPI principal. */
 .vive-mobile-home .v742-primary-kpi{display:block;width:100%;min-width:0;max-width:100%;margin:0 0 16px;box-sizing:border-box}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button{min-width:0;overflow:hidden;padding:8px 6px}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button strong{font-size:clamp(10px,3vw,13px);white-space:nowrap}
+.vive-mobile-home .v742-primary-kpi .v732-home-kpi{padding-bottom:15px}
+.vive-mobile-home .v742-primary-kpi .v732-kpi-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin-top:24px;padding-top:12px;border-top:1px solid rgba(134,157,191,.17)}
+.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button{min-width:0;overflow:hidden;padding:2px 6px;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button+button{border-left:1px solid rgba(134,157,191,.22)!important;padding-left:12px}
+.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button strong{font-size:clamp(14px,3.8vw,18px);white-space:nowrap}
+.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button small{font-size:10px;letter-spacing:.01em}
+.vive-mobile-home .v742-primary-kpi .v732-kpi-stat-icon{width:28px;height:28px;flex-basis:28px;border-radius:9px}
 .vive-mobile-home .v742-primary-kpi .v732-kpi-value{font-size:clamp(23px,6vw,35px);white-space:nowrap;letter-spacing:-.04em}
-@media(max-width:360px){.vive-mobile-home .v742-primary-kpi .v732-kpi-stats{gap:5px}.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button{padding:7px 4px}}
+body.theme-black .vive-mobile-home .v742-primary-kpi .v732-kpi-stats,body.theme-dark .vive-mobile-home .v742-primary-kpi .v732-kpi-stats{border-top-color:#ffffff18}
+body.theme-black .vive-mobile-home .v742-primary-kpi .v732-kpi-stats button+button,body.theme-dark .vive-mobile-home .v742-primary-kpi .v732-kpi-stats button+button{border-left-color:#ffffff20!important}
+@media(max-width:360px){.vive-mobile-home .v742-primary-kpi .v732-kpi-stats{gap:0}.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button{padding:2px 4px}.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button+button{padding-left:8px}}
 </style>
 </head>
 <body>
@@ -29690,7 +29650,7 @@ function v732HomeKpi(liquid,debt,net,compact=false){
  const delta=valid?(change>0?'+':'')+new Intl.NumberFormat('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1}).format(change)+'%':'—';
  const tone=!valid?'neutral':change>=0?'up':'down';
  const diffText=valid?'vs. mes anterior':'Sin base comparable';
- return `<section class="v732-home-kpi" aria-label="Resumen de posición financiera">
+ return `<section class="v732-home-kpi ${compact?'v742-kpi-clean':''}" aria-label="Resumen de posición financiera">
   <div class="v732-kpi-head"><span>Posición financiera actual</span><span class="v732-kpi-mark" aria-hidden="true">${icon('chart')}</span></div>
   <strong class="v732-kpi-value">${money(net,'DOP',2)}</strong>
   <div class="v732-kpi-variance ${tone}"><b>${delta}</b><span>${diffText}</span></div>
@@ -29752,11 +29712,6 @@ function mobileHome(){
    ${v360HomeLinks()}
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
-   <!-- V736 · KPI adicional: módulo independiente. No sustituye la tarjeta principal ni sus tres indicadores. -->
-   ${db.settings.mobilePositionStyle==='balance'?'':`<section class="v736-extra-kpi" data-v105-widget="balancePosition" aria-label="Análisis adicional de balance">
-    <div class="v736-extra-heading"><span class="vive-mobile-eyebrow">ANÁLISIS COMPLEMENTARIO</span><h2>Balance y posición neta</h2></div>
-    ${v732HomeKpi(liquid,debt,net,true)}
-   </section>`}
    ${v412PremiumMobileWidgets()}
    ${v105Config().visible.includes('applePayInbox')&&v5ApplePayPending().length?v7ApplePayMobileWidget():''}
    ${v105CapacityWidget(true)}
@@ -39875,7 +39830,6 @@ loanForm=function(id,preBank){
    Los datos salen del documento db ya cargado. No se añade ninguna consulta remota.
    La personalización persiste solo claves de presentación. */
 const V105_WIDGETS=[
- {id:'balancePosition',title:'Balance y posición neta',hint:'KPI complementario con posición financiera, fondos y deudas · opcional'},
  {id:'applePayInbox',title:'Apple Pay · Por clasificar',hint:'Compras Wallet pendientes: asigna categoría y subcategoría desde Inicio'},
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
  {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
@@ -39945,8 +39899,6 @@ function v105Config(){
  // Nuevo módulo una sola vez, sin volver a habilitarlo si luego se desactiva.
  if(!originalOrder.includes('applePayInbox')){const i=order.indexOf('applePayInbox');if(i>=0)order.splice(i,1);order.unshift('applePayInbox');}
  const visible=Array.isArray(raw.visible)?[...new Set(raw.visible.filter(x=>ids.includes(x)))]:v316VisibleDefaults(ids);
- // V739: nuevo KPI configurable. Se incorpora visible una sola vez y se respeta cualquier desactivación posterior.
- if(!originalOrder.includes('balancePosition')&&!visible.includes('balancePosition'))visible.push('balancePosition');
  if(!originalOrder.includes('applePayInbox')&&!visible.includes('applePayInbox'))visible.push('applePayInbox');
  // V317: migrar solo los dos gráficos nuevos; las selecciones anteriores quedan intactas.
  if(!V317_NEW_GRAPHS.every(id=>originalOrder.includes(id))){
@@ -42559,7 +42511,7 @@ function v242SettingsPreview(){
  return `<section class="v242-appearance-picker" aria-label="Estilo del indicador principal en iPhone"><div class="v242-preference-title"><div><span class="summary-tag">RESUMEN · SOLO IPHONE</span><h3>Tu posición financiera</h3><p>Elige uno de cuatro estilos. Las miniaturas usan tus cifras reales y muestran la composición de cada tarjeta. El escritorio conserva su apariencia actual.</p></div><span class="v242-setting-kicker">Se sincroniza con tu cuenta</span></div><div class="v242-appearance-grid">
  <button type="button" class="v242-style-option ${chosen==='original'?'selected':''}" data-v242-style="original" aria-pressed="${chosen==='original'}"><span class="v242-style-art v242-mini-original"><span class="v242-mini-label">Liquidez disponible</span><strong>${bubbleMoney(liquid)}</strong><span class="v242-mini-divider"></span><span class="v242-mini-foot"><i>Deudas <b>${bubbleMoney(debt)}</b></i><i>Posición neta <b>${bubbleMoney(net)}</b></i></span></span><span class="v242-style-description"><strong>Original móvil</strong><small>El diseño predeterminado</small><i aria-hidden="true">${chosen==='original'?'✓':'○'}</i></span></button>
  <button type="button" class="v242-style-option ${chosen==='circles'?'selected':''}" data-v242-style="circles" aria-pressed="${chosen==='circles'}"><span class="v242-style-art v242-mini-circles"><span class="v242-mini-title">Tu posición financiera</span><strong>${bubbleMoney(net)}</strong><span class="v242-mini-orbs"><i><b>${bubbleMoney(liquid)}</b><small>Liquidez</small></i><i class="v242-featured"><b>${bubbleMoney(debt)}</b><small>Deudas</small></i><i><b>${bubbleMoney(net)}</b><small>Neto</small></i></span></span><span class="v242-style-description"><strong>Tres círculos</strong><small>Adaptación del diseño web</small><i aria-hidden="true">${chosen==='circles'?'✓':'○'}</i></span></button><button type="button" class="v242-style-option v342-style-creative ${chosen==='creative'?'selected':''}" data-v242-style="creative" aria-pressed="${chosen==='creative'}"><span class="v242-style-art v342-mini-creative v421-mini-creative"><span class="v342-preview-kicker">PANORAMA FINANCIERO</span><strong>${bubbleMoney(net)}</strong><span class="v421-mini-split"><i><small>Liquidez</small><b>${bubbleMoney(liquid)}</b></i><i><small>Deudas</small><b>${bubbleMoney(debt)}</b></i></span><span class="v342-mini-progress"><b style="width:${Math.max(0,Math.min(100,v290BudgetSnapshot().percent||0))}%"></b></span><small>${v290BudgetPct(v290BudgetSnapshot().percent)} · ${v290BudgetSnapshot().remaining<0?'Exceso':'Libre'} ${bubbleMoney(Math.abs(v290BudgetSnapshot().remaining||0))}</small></span><span class="v242-style-description"><strong>Creativo</strong><small>Todo el presupuesto en un solo vistazo</small><i aria-hidden="true">${chosen==='creative'?'✓':'○'}</i></span></button>
- <button type="button" class="v242-style-option v742-style-balance ${chosen==='balance'?'selected':''}" data-v242-style="balance" aria-pressed="${chosen==='balance'}"><span class="v242-style-art v242-mini-balance"><span class="v742-mini-label">Posición financiera actual</span><strong>${bubbleMoney(net)}</strong><span class="v742-mini-pair"><i><small>Fondos</small><b>${bubbleMoney(liquid)}</b></i><i><small>Deudas</small><b>${bubbleMoney(debt)}</b></i></span></span><span class="v242-style-description"><strong>Balance y posición neta</strong><small>Nuevo KPI compacto</small><i aria-hidden="true">${chosen==='balance'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Los cuatro estilos reutilizan tus cifras reales; el escritorio conserva su diseño. Cambiar el estilo no modifica registros.</p></section>`;
+ <button type="button" class="v242-style-option v742-style-balance ${chosen==='balance'?'selected':''}" data-v242-style="balance" aria-pressed="${chosen==='balance'}"><span class="v242-style-art v242-mini-balance"><span class="v742-mini-label">Posición financiera actual</span><strong>${bubbleMoney(net)}</strong><span class="v742-mini-pair"><i><small>Fondos</small><b>${bubbleMoney(liquid)}</b></i><i><small>Deudas</small><b>${bubbleMoney(debt)}</b></i></span></span><span class="v242-style-description"><strong>Balance y posición neta</strong><small>Nuevo KPI limpio y continuo</small><i aria-hidden="true">${chosen==='balance'?'✓':'○'}</i></span></button></div><p class="v242-picker-note">Los cuatro estilos reutilizan tus cifras reales; el escritorio conserva su diseño. Cambiar el estilo no modifica registros.</p></section>`;
 }
 
 function v273SettingsWidgetEditor(){
