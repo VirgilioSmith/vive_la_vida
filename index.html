@@ -26282,6 +26282,57 @@ body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-pre
  #app .v778-personalization .v766-indicator.v767-row .v766-info h2{font-size:9.5px!important;letter-spacing:-.45px!important;}
 }
 </style>
+
+
+<style id="v787-register-product-selector">
+/* Instrument picker for Gasto, Ingreso and Transferencia. The native accounting model remains authoritative. */
+#modal-root .v787-product-picker{--v787-accent:var(--vive-theme-color,var(--accent,#a28de8));--v787-fg:#f5f6fc;--v787-sub:#aeb7cb;--v787-surface:#17171b;--v787-line:rgba(240,242,255,.14);--v787-highlight:color-mix(in srgb,var(--v787-accent) 20%,#19191f);position:relative!important;padding:18px 14px max(16px,env(safe-area-inset-bottom,16px))!important;display:flex!important;flex-direction:column!important;max-height:min(86dvh,780px)!important;background:radial-gradient(ellipse at 50% 100%,color-mix(in srgb,var(--v787-accent) 10%,transparent),transparent 76%),#0d0d11!important;border:1px solid var(--v787-line)!important;color:var(--v787-fg)!important;box-shadow:0 -15px 48px #0008!important;overflow:hidden!important}
+#modal-root .v787-product-picker .v787-sheet-handle{width:46px;height:5px;flex:0 0 5px;margin:-8px auto 14px;background:rgba(181,181,192,.5);border-radius:10px}
+#modal-root .v787-product-picker .v749-sheet-head{flex:0 0 auto;gap:10px;margin-bottom:4px!important}
+#modal-root .v787-product-picker .v749-sheet-head h3{font-size:clamp(21px,5.5vw,29px)!important;line-height:1.12!important;font-weight:820!important;letter-spacing:-.05em!important;color:var(--v787-fg)!important}
+#modal-root .v787-product-picker .v749-sheet-head button{border-radius:50%!important;width:37px;height:37px;min-width:37px;background:rgba(160,160,180,.14)!important;color:var(--v787-fg)!important;border:1px solid var(--v787-line)!important}
+#modal-root .v787-product-picker .v787-selector-description{color:var(--v787-sub)!important;margin:0 0 15px;font-size:13px;line-height:1.4}
+#modal-root .v787-product-picker .v787-search-wrap{position:relative;display:flex;align-items:center;flex:0 0 auto;min-height:47px;margin:0 0 11px!important;padding:0 12px;gap:10px;border:1px solid var(--v787-line);border-radius:15px;background:rgba(255,255,255,.055);color:var(--v787-sub)}
+#modal-root .v787-product-picker .v787-search-wrap input{min-height:43px!important;height:43px!important;box-shadow:none!important;border:0!important;background:transparent!important;outline:0!important;flex:1;min-width:0;padding:0!important;color:var(--v787-fg)!important;font-size:14px!important}
+#modal-root .v787-product-picker .v787-search-wrap input::placeholder{color:var(--v787-sub)!important;opacity:.85}
+#modal-root .v787-product-picker .v787-product-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;flex:0 0 auto;margin-bottom:12px}
+#modal-root .v787-product-picker .v787-product-tabs button{border-radius:13px;min-height:39px;border:1px solid var(--v787-line);background:rgba(255,255,255,.065);color:var(--v787-sub);font-size:12px;font-weight:720;padding:7px 4px}
+/* V788: filtros con identidad propia; "Cuentas" usa el icono de banco, no tarjeta de debito. */
+#modal-root .v787-product-picker .v787-product-tabs button{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;white-space:nowrap!important}
+#modal-root .v787-product-picker .v787-product-tabs button svg{display:block!important;flex-shrink:0!important;width:17px!important;height:17px!important;color:currentColor!important}
+#modal-root .v787-product-picker .v787-product-tabs button span{min-width:0}
+#modal-root .v787-product-picker .v787-product-tabs button[aria-pressed="true"]{color:var(--v787-fg)!important;background:var(--v787-highlight)!important;border-color:color-mix(in srgb,var(--v787-accent) 75%,white 8%)!important;box-shadow:0 0 15px color-mix(in srgb,var(--v787-accent) 17%,transparent)}
+#modal-root .v787-product-picker .v787-mode-context{display:flex;justify-content:space-between;gap:8px;align-items:center;border-bottom:1px solid var(--v787-line);padding:1px 2px 10px;margin-bottom:10px;font-size:12px;color:var(--v787-fg);font-weight:740}
+#modal-root .v787-product-picker .v787-mode-context small{color:var(--v787-sub);font-weight:500}
+#modal-root .v787-product-picker .v787-product-scroll{flex:1 1 auto;min-height:60px;overflow-y:auto!important;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px;padding:2px 2px 9px;scrollbar-width:thin}
+#modal-root .v787-product-picker .v787-product-row{display:grid!important;grid-template-columns:70px minmax(0,1fr) 29px!important;align-items:center!important;gap:12px!important;min-height:88px!important;width:100%!important;text-align:left!important;padding:10px 11px!important;flex:0 0 auto;border:1px solid var(--v787-line)!important;border-radius:18px!important;background:linear-gradient(120deg,rgba(255,255,255,.075),rgba(255,255,255,.025))!important;color:var(--v787-fg)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important;transition:border-color .15s,box-shadow .15s,transform .15s}
+#modal-root .v787-product-picker .v787-product-row.is-selected{border-color:var(--v787-accent)!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--v787-accent) 34%,transparent),0 0 16px color-mix(in srgb,var(--v787-accent) 13%,transparent)!important}
+#modal-root .v787-product-picker .v787-product-row[hidden]{display:none!important}
+#modal-root .v787-product-picker .v787-product-brand{width:70px;height:53px;border-radius:13px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.15);color:#fff;box-shadow:0 5px 14px #0004}
+#modal-root .v787-product-picker .v787-product-brand.is-card.visa{background:linear-gradient(145deg,#2870bf 0%,#153f78 55%,#0c1c39 100%)}
+#modal-root .v787-product-picker .v787-product-brand.is-card.visa:after{content:"";position:absolute;width:95px;height:30px;border-radius:50%;border-top:1px solid #bfdcff90;transform:rotate(-22deg);left:-12px;bottom:-17px}
+#modal-root .v787-product-picker .v787-product-brand.is-card.visa strong{font-size:19px;letter-spacing:-1px;font-weight:900;font-style:italic;z-index:1}
+#modal-root .v787-product-picker .v787-product-brand.is-card.mc{background:linear-gradient(140deg,#423060,#141022)}
+#modal-root .v787-product-picker .v787-mc-left,#modal-root .v787-product-picker .v787-mc-right{position:absolute;width:25px;height:25px;border-radius:50%;top:13px}
+#modal-root .v787-product-picker .v787-mc-left{background:#eb2434;left:21px}
+#modal-root .v787-product-picker .v787-mc-right{background:#f59c24;left:34px;opacity:.94}
+#modal-root .v787-product-picker .v787-product-brand.is-account{background:linear-gradient(145deg,color-mix(in srgb,var(--v787-accent) 45%,#111722),#131725);color:#f4f6ff}
+#modal-root .v787-product-picker .v787-product-main{display:flex;flex-direction:column;gap:3px;min-width:0}
+#modal-root .v787-product-picker .v787-product-main strong{font-size:clamp(12.5px,3.7vw,15px);font-weight:790;line-height:1.25;color:var(--v787-fg);white-space:normal;overflow-wrap:anywhere}
+#modal-root .v787-product-picker .v787-product-main small{color:var(--v787-sub);font-size:11.5px;line-height:1.32}
+#modal-root .v787-product-picker .v787-product-main em{color:var(--v787-sub);font-size:10.5px;font-style:normal;line-height:1.25}
+#modal-root .v787-product-picker .v787-product-mark{width:25px;height:25px;border:1.5px solid var(--v787-sub);border-radius:50%;display:grid;place-items:center;font-size:14px;color:transparent}
+#modal-root .v787-product-picker .v787-product-row.is-selected .v787-product-mark{background:var(--v787-accent);border-color:var(--v787-accent);color:#101014}
+#modal-root .v787-product-picker .v787-no-results{color:var(--v787-sub);text-align:center;padding:20px 12px;font-size:12px}
+#modal-root .v787-product-picker .v787-confirm-bar{flex:0 0 auto;margin:8px -1px 0;padding:3px 1px 0;background:transparent}
+#modal-root .v787-product-picker .v787-confirm-button{width:100%;min-height:49px;border:1px solid color-mix(in srgb,var(--v787-accent) 65%,white 12%);border-radius:18px;color:#111018;background:linear-gradient(110deg,color-mix(in srgb,var(--v787-accent) 65%,white),var(--v787-accent));font-size:15px;font-weight:820;box-shadow:0 4px 20px color-mix(in srgb,var(--v787-accent) 20%,transparent)}
+#modal-root .v787-product-picker .v787-confirm-button:disabled{opacity:.45;filter:grayscale(.3);cursor:not-allowed}
+body:not(.theme-black):not(.theme-dark) #modal-root .v787-product-picker{--v787-fg:#162642;--v787-sub:#697991;--v787-line:#d7dfea;--v787-surface:#ffffff;--v787-highlight:color-mix(in srgb,var(--v787-accent) 14%,#fff);background:radial-gradient(ellipse at 50% 100%,color-mix(in srgb,var(--v787-accent) 10%,transparent),transparent 77%),#f6f8fc!important;box-shadow:0 -15px 40px #1b2c4f20!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v787-product-picker .v787-product-row{background:#ffffff!important;box-shadow:0 3px 12px #1b2c4f08!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v787-product-picker .v787-product-row.is-selected{box-shadow:0 0 0 1px color-mix(in srgb,var(--v787-accent) 25%,transparent),0 0 13px color-mix(in srgb,var(--v787-accent) 10%,transparent)!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .v787-product-picker .v787-search-wrap,body:not(.theme-black):not(.theme-dark) #modal-root .v787-product-picker .v787-product-tabs button{background:#fff!important}
+@media(max-width:360px){#modal-root .v787-product-picker{padding-left:10px!important;padding-right:10px!important}#modal-root .v787-product-picker .v787-product-row{grid-template-columns:60px minmax(0,1fr) 24px!important;gap:8px!important;padding:8px!important;min-height:76px!important}#modal-root .v787-product-picker .v787-product-brand{width:60px;height:47px}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -34914,8 +34965,8 @@ function v711CompactCardPayment(f){
   const counter=f.querySelector('.studio-stepcounter');if(counter)counter.textContent=step===3?'PASO 02 DE 02':'PASO 01 DE 02';
   const heading=f.querySelector('.studio-active-title');if(heading)heading.textContent=step===3?'Revisar y pagar':'Completar pago de tarjeta';
   const subtitle=f.querySelector('.studio-active-subtitle');if(subtitle)subtitle.textContent=step===3?'Confirma el importe y los cargos antes de registrar.':'Selecciona tarjeta, origen, importe y condiciones del pago.';
-  const back=f.querySelector('[data-studio-back]');if(back)back.hidden=step!==3;
-  const next=f.querySelector('[data-studio-next]');if(next)next.hidden=step===3;
+  const back=f.querySelector('[data-studio-back]');if(back && back.hidden !== (step!==3)) back.hidden=step!==3;
+  const next=f.querySelector('[data-studio-next]');if(next && next.hidden !== (step===3)) next.hidden=step===3;
   if(buttons[0])buttons[0].classList.toggle('current',step!==3);
   if(buttons[2])buttons[2].classList.toggle('current',step===3);
  };
@@ -43172,7 +43223,7 @@ function v273SettingsWidgetEditor(){
   const w=V105_WIDGETS.find(x=>x.id===id);
   return w?v747PersonalizationCard(w,id,i,visible.has(id),cfg.order.length):'';
  }).join('');
- return `<section class="v273-settings-customizer v766-stage" aria-label="Personalizar indicadores de Resumen"><div class="v766-app"><main class="v766-content"><section class="v766-cards" aria-label="Orden y visibilidad de indicadores">${rows}</section><div class="v783-reset-region"><button type="button" class="v783-reset-pill" data-v273-reset="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.6 6.4"/><path d="M3 4v7h7"/><path d="M12 7v5l3 2"/></svg><span>Restaurar orden esencial</span></button></div><details class="v766-advanced"><summary>Más opciones de personalización</summary><div class="v766-advanced-content">El orden y la visibilidad se guardan en tus preferencias de Resumen.</div></details></main></div></section>`;
+ return `<section class="v273-settings-customizer v766-stage" aria-label="Personalizar indicadores de Resumen"><div class="v766-app"><main class="v766-content"><section class="v766-cards" aria-label="Orden y visibilidad de indicadores">${rows}</section><div class="v783-reset-region"><button type="button" class="v783-reset-pill" data-v273-reset="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.6 6.4"/><path d="M3 4v7h7"/><path d="M12 7v5l3 2"/></svg><span>Restaurar orden esencial</span></button></div></main></div></section>`;
 }
 
 /* V772 · Personalización real: flechas, switches y persistencia, sin un estado paralelo. */
@@ -46148,7 +46199,7 @@ const quick=s=>{
  const labels=mostUsedCategories(s.mode);
  return `<div class="v749-quick v770-quick-four" role="group" aria-label="Tres categorías más usadas y todas las demás">${labels.map(c=>`<button type="button" data-v749="quick" data-value="${esc(c)}" aria-pressed="${s.preset===c}" title="${esc(c)}"><span class="v770-quick-emoji" aria-hidden="true">${pict(c)}</span><span class="v770-quick-label">${esc(c.replace(' personales','').replace(' básicos',''))}</span></button>`).join('')}<button type="button" class="v770-quick-more" data-v749="category" aria-label="Más categorías"><span class="v770-quick-emoji" aria-hidden="true">•••</span><span class="v770-quick-label">Más</span></button></div>`;
 };
-const entry=()=>{const s=state(),label=s.mode==='income'?'recibiste':s.mode==='transfer'?'vas a transferir':'gastaste';const curr=cur(s),names=[['spend','Gasto'],['income','Ingreso'],['transfer','Transferencia']];const nativeAmount=String(s.amount||'');return `<section class="v749-layer" data-v749-stage="entry"><div class="v749-screen" role="dialog" aria-modal="true" aria-label="Nuevo movimiento"><header class="v749-head v769-clean-head"><button type="button" class="v749-close" data-v749="close" aria-label="Cerrar">×</button></header><h2 class="v749-title">Nuevo movimiento</h2><p class="v749-subtitle">Registra con precisión y revisa el impacto antes de guardar.</p><div class="v749-scroll"><nav class="v749-segment" aria-label="Tipo de movimiento">${names.map(([k,label])=>`<button type="button" data-v749="mode" data-value="${k}" aria-pressed="${k===s.mode}" aria-label="${label}"><span class="v771-mode-icon" aria-hidden="true">${v771ModeIcon(k)}</span><span class="v769-mode-text">${label}</span></button>`).join('')}</nav><section class="v749-amount"><label for="v749Amount">¿Cuánto ${label}?</label><input id="v749Amount" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="Importe del movimiento" value="${esc(nativeAmount)}"><small>Importe en ${curr==='USD'?'US$':'RD$'} · usa el teclado integrado</small></section>${impact(s)}${quick(s)}<div class="v749-fieldline"><b>${s.mode==='transfer'?'Origen':s.mode==='income'?'Cuenta de ingreso':'Cuenta / Tarjeta'}</b><button type="button" data-v749="source">${esc(displaySource(s))} ›</button></div>${s.mode==='spend'&&s.v749Source==='card'?`<div class="v749-fieldline"><b>Moneda de la tarjeta</b><button type="button" data-v749="currency">${s.v749Currency==='USD'?'US$ (cambiar a RD$)':'RD$ (cambiar a US$)'}</button></div>`:''}${s.mode==='transfer'?`<div class="v749-fieldline"><b>Tipo de transferencia</b><button type="button" data-v749="transferKind">${s.transferKind==='outgoing'?'A terceros':'Entre mis cuentas'} ›</button></div>${s.transferKind==='outgoing'?`<div class="v749-fieldline"><b>Beneficiario</b><input id="v749Payee" maxlength="100" placeholder="Nombre" value="${esc(s.v749Payee)}"></div>`:`<div class="v749-fieldline"><b>Destino</b><button type="button" data-v749="destination">${esc(acc(s.v749ToAccount)?.name||'Seleccionar destino')} ›</button></div>`}`:`<div class="v749-fieldline"><b>Categoría</b><button type="button" data-v749="category">${esc(s.preset||'Seleccionar')} ›</button></div><div class="v749-fieldline"><b>Subcategoría</b><button type="button" data-v749="subcategory">${esc(s.v749Subcategory||'Seleccionar')} ›</button></div>`}<div class="v749-fieldline"><b>Fecha</b><input id="v749Date" type="date" max="${today()}" value="${esc(s.v749Date)}"></div><div class="v749-keypad" aria-label="Teclado numérico">${['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k=>`<button type="button" data-v749="key" data-value="${k}" aria-label="${k==='⌫'?'Borrar':k}">${k}</button>`).join('')}</div></div><footer class="v749-foot"><div class="v749-error" id="v749EntryError" role="alert"></div><button type="button" class="v749-primary" data-v749="continue">Continuar →</button></footer></div><div class="v749-sheet" id="v749Sheet" hidden></div></section>`};
+const entry=()=>{const s=state(),label=s.mode==='income'?'recibiste':s.mode==='transfer'?'vas a transferir':'gastaste';const curr=cur(s),names=[['spend','Gasto'],['income','Ingreso'],['transfer','Transferencia']];const nativeAmount=String(s.amount||'');return `<section class="v749-layer" data-v749-stage="entry"><div class="v749-screen" role="dialog" aria-modal="true" aria-label="Nuevo movimiento"><header class="v749-head v769-clean-head"><button type="button" class="v749-close" data-v749="close" aria-label="Cerrar">×</button></header><h2 class="v749-title">Nuevo movimiento</h2><p class="v749-subtitle">Registra con precisión y revisa el impacto antes de guardar.</p><div class="v749-scroll"><nav class="v749-segment" aria-label="Tipo de movimiento">${names.map(([k,label])=>`<button type="button" data-v749="mode" data-value="${k}" aria-pressed="${k===s.mode}" aria-label="${label}"><span class="v771-mode-icon" aria-hidden="true">${v771ModeIcon(k)}</span><span class="v769-mode-text">${label}</span></button>`).join('')}</nav><section class="v749-amount"><label for="v749Amount">¿Cuánto ${label}?</label><input id="v749Amount" type="text" placeholder="0.00" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="Importe del movimiento" value="${esc(nativeAmount)}"><small>Importe en ${curr==='USD'?'US$':'RD$'} · usa el teclado integrado</small></section>${impact(s)}${quick(s)}<div class="v749-fieldline"><b>${s.mode==='transfer'?'Desde':s.mode==='income'?'Recibir en':'Pagar con'}</b><button type="button" data-v749="source">${esc(displaySource(s))} ›</button></div>${s.mode==='spend'&&s.v749Source==='card'?`<div class="v749-fieldline"><b>Moneda de la tarjeta</b><button type="button" data-v749="currency">${s.v749Currency==='USD'?'US$ (cambiar a RD$)':'RD$ (cambiar a US$)'}</button></div>`:''}${s.mode==='transfer'?`<div class="v749-fieldline"><b>Tipo de transferencia</b><button type="button" data-v749="transferKind">${s.transferKind==='outgoing'?'A terceros':'Entre mis cuentas'} ›</button></div>${s.transferKind==='outgoing'?`<div class="v749-fieldline"><b>Beneficiario</b><input id="v749Payee" maxlength="100" placeholder="Nombre" value="${esc(s.v749Payee)}"></div>`:`<div class="v749-fieldline"><b>Hacia</b><button type="button" data-v749="destination">${esc(acc(s.v749ToAccount)?.name||'Seleccionar destino')} ›</button></div>`}`:`<div class="v749-fieldline"><b>Categoría</b><button type="button" data-v749="category">${esc(s.preset||'Seleccionar')} ›</button></div><div class="v749-fieldline"><b>Subcategoría</b><button type="button" data-v749="subcategory">${esc(s.v749Subcategory||'Seleccionar')} ›</button></div>`}<div class="v749-fieldline"><b>Fecha</b><input id="v749Date" type="date" max="${today()}" value="${esc(s.v749Date)}"></div><div class="v749-keypad" aria-label="Teclado numérico">${['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k=>`<button type="button" data-v749="key" data-value="${k}" aria-label="${k==='⌫'?'Borrar':k}">${k}</button>`).join('')}</div></div><footer class="v749-foot"><div class="v749-error" id="v749EntryError" role="alert"></div><button type="button" class="v749-primary" data-v749="continue">Continuar →</button></footer></div><div class="v749-sheet" id="v749Sheet" hidden></div></section>`};
 function renderEntry(){const root=document.getElementById('modal-root');if(!root)return;root.innerHTML=entry();
  // The keypad is the primary mobile interaction; secondary details follow it.
  const scroll=root.querySelector('.v749-scroll'),keypad=scroll?.querySelector('.v749-keypad'),quick=scroll?.querySelector('.v749-quick');
@@ -46177,22 +46228,48 @@ function sheet(type){const s=state(),host=sheetContainer();if(!host)return;host.
  html=`<input class="v749-sheet-search" id="v749SubcategorySearch" type="search" placeholder="Buscar subcategoría…" aria-label="Buscar subcategoría">
  <div class="v749-sublist v768-sublist" id="v749SubcategoryGrid"><button type="button" data-v749="pickSub" data-value="" class="${!s.v749Subcategory?'is-selected':''}"><span class="v768-subicon">◈</span><span>Sin subcategoría</span></button>${subcategories(s.mode,s.preset).map(sub=>`<button type="button" data-v749="pickSub" data-value="${esc(sub)}" class="${sub===s.v749Subcategory?'is-selected':''}"><span class="v768-subicon">${pict(sub+' '+s.preset)}</span><span>${esc(sub)}</span></button>`).join('')}</div>`;
  }else if(['source','destination'].includes(type)){
- title=type==='destination'?'Cuenta de destino':'Selecciona una cuenta o tarjeta';
- const accounts=db.accounts.filter(a=>!a.archived);
- const cards=db.cards.filter(c=>!c.archived);
- const candidates=type==='destination'?accounts.filter(a=>a.id!==s.v749Account).map(a=>['account',a]):accounts.map(a=>['account',a]).concat(s.mode==='spend'?cards.map(c=>['card',c]):[]);
- html=`<input class="v749-sheet-search" id="v768SourceSearch" type="search" placeholder="Buscar producto…" aria-label="Buscar cuenta o tarjeta">
- <div class="v749-source-list v768-source-list" id="v768SourceList">${candidates.map(([kind,o])=>{
- const current=type==='destination'?s.v749ToAccount===o.id:kind==='card'?(s.v749Source==='card'&&s.v749Card===o.id):(s.v749Source==='account'&&s.v749Account===o.id);
- const last4=String(o.last4||'').replace(/\D/g,'').slice(-4);
- const mastercard=/master|\bmc\b/i.test(o.name+' '+(o.network||''));
- return `<button type="button" data-v749="pickSource" data-kind="${kind}" data-role="${type}" data-value="${esc(o.id)}" class="${current?'is-selected':''}">
- <span class="v768-source-visual ${kind==='card'?'v768-source-card':'v768-source-account'} ${mastercard?'v768-mastercard':''}">${kind==='card'?(mastercard?'● ●':'VISA'):'▣'}</span>
- <span class="v768-source-copy"><strong>${esc(o.name)}</strong><small>${kind==='card'?esc((o.bank||'Tarjeta')+(last4?' · •••• '+last4:'')):esc(o.currency||'DOP')}</small></span>
- <span class="v768-source-radio">${current?'✓':''}</span></button>`;
- }).join('')||'<p>Sin productos activos registrados</p>'}</div>`;
+ const isDestination=type==='destination';
+ const isSpend=s.mode==='spend';
+ const isIncome=s.mode==='income';
+ title=isDestination?'Cuenta de destino':isIncome?'Cuenta de ingreso':isSpend?'Selecciona cómo pagar':'Cuenta de origen';
+ const description=isDestination?'¿Dónde recibirás el dinero?':isIncome?'Selecciona dónde recibir el ingreso.':isSpend?'Elige una tarjeta de crédito o una cuenta disponible.':'¿Desde qué cuenta vas a transferir?';
+ const bankName=o=>{const bank=(db.banks||[]).find(b=>String(b.id)===String(o.bankId));return bank?.name||o.bank||o.institution||''};
+ const last4=o=>String(o.last4||o.lastFour||o.lastFourDigits||'').replace(/\D/g,'').slice(-4);
+ const isDebit=c=>/debit|debito|débito/.test(normalize([c.type,c.cardType,c.kind].filter(Boolean).join(' ')));
+ // Las tarjetas de débito se representan por la cuenta vinculada; nunca como un cargo a crédito.
+ // No crear un producto financiero nuevo ni alterar la clasificación contable original.
+ const accounts=(db.accounts||[]).filter(a=>!a.archived&&(isDestination?a.id!==s.v749Account:true));
+ const credits=isSpend?(db.cards||[]).filter(c=>!c.archived&&!isDebit(c)):[];
+ const products=[...credits.map(c=>({kind:'card',item:c})),...accounts.map(a=>({kind:'account',item:a}))];
+ const currentKind=isDestination?'account':isSpend?s.v749Source:'account';
+ const currentId=isDestination?s.v749ToAccount:currentKind==='card'?s.v749Card:s.v749Account;
+ host.dataset.v787Role=type;
+ host.dataset.v787Id=String(currentId||'');
+ host.dataset.v787Kind=currentKind;
+ host.dataset.v787Filter=isSpend?'all':'accounts';
+ const iconCard='<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M3 10.5h18"/></svg>';
+ const iconAccount='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-5 9 5M4 10h16M5.5 10v9m4-9v9m5-9v9m4-9v9M3 20.5h18"/></svg>';
+ const fmtAvailable=a=>{try{const n=Number(getAccountBalance(a));return Number.isFinite(n)?new Intl.NumberFormat('es-DO',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+' '+esc(a.currency||'DOP'):''}catch(_){return ''}};
+ const pieces=products.map(({kind,item})=>{
+   const id=String(item.id),isCard=kind==='card';
+   const bank=bankName(item),last=last4(item),current=kind===currentKind&&id===String(currentId);
+   const displayBrand=isCard?(/master|mc|qik/.test(normalize((item.network||'')+' '+item.name))?'mc':'visa'):'account';
+   const info=isCard?[(bank||'Crédito'),last?'•••• '+last:''].filter(Boolean).join(' · '):[bank,item.currency||'DOP'].filter(Boolean).join(' · ');
+   const available=!isCard?fmtAvailable(item):'';
+   const key=normalize(item.name+' '+bank+' '+last+' '+(item.currency||'')+' '+info);
+   return `<button type="button" class="v787-product-row ${current?'is-selected':''}" data-v749="v787Pick" data-kind="${kind}" data-value="${esc(id)}" data-v787-category="${isCard?'credit':'accounts'}" data-search="${esc(key)}" aria-pressed="${current}" aria-label="${esc(item.name)}${last?', terminada en '+esc(last):''}">
+     <span class="v787-product-brand ${isCard?'is-card '+displayBrand:'is-account'}" aria-hidden="true">${isCard?(displayBrand==='mc'?'<i class="v787-mc-left"></i><i class="v787-mc-right"></i>':'<strong>VISA</strong>'):iconAccount}</span>
+     <span class="v787-product-main"><strong>${esc(item.name)}</strong><small>${esc(info)}</small>${available?`<em>Disponible: ${esc(available)}</em>`:''}</span>
+     <span class="v787-product-mark" aria-hidden="true">${current?'✓':''}</span>
+   </button>`;
+ });
+ html=`<p class="v787-selector-description">${esc(description)}</p>
+ <label class="v787-search-wrap" for="v787ProductSearch"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input class="v749-sheet-search" id="v787ProductSearch" type="search" placeholder="Buscar ${isSpend?'tarjeta o cuenta':'cuenta'}…" autocomplete="off" aria-label="Buscar productos registrados"></label>
+ ${isSpend?`<div class="v787-product-tabs" role="group" aria-label="Filtrar método de pago"><button type="button" data-v749="v787Filter" data-value="all" aria-pressed="true"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="7" height="7" rx="1.5"/><rect x="13.5" y="4" width="7" height="7" rx="1.5"/><rect x="3.5" y="14" width="7" height="7" rx="1.5"/><rect x="13.5" y="14" width="7" height="7" rx="1.5"/></svg><span>Todas</span></button><button type="button" data-v749="v787Filter" data-value="credit" aria-pressed="false">${iconCard}<span>Crédito</span></button><button type="button" data-v749="v787Filter" data-value="accounts" aria-pressed="false">${iconAccount}<span>Cuentas</span></button></div>`:`<div class="v787-mode-context"><span>${isDestination?'Destino':'Cuentas'}</span><small>${accounts.length} cuenta${accounts.length===1?'':'s'} disponible${accounts.length===1?'':'s'}</small></div>`}
+ <div class="v787-product-scroll" id="v787ProductRows">${pieces.join('')||'<p class="v787-no-results">No tienes cuentas o tarjetas disponibles para esta operación.</p>'}</div><p class="v787-no-results" id="v787NoResults" hidden>Sin coincidencias. Prueba otra búsqueda.</p>
+ <div class="v787-confirm-bar"><button type="button" data-v749="v787Confirm" class="v787-confirm-button" ${products.some(x=>String(x.item.id)===String(currentId)&&x.kind===currentKind)?'':'disabled'}>${isDestination?'Usar esta cuenta':isSpend&&currentKind==='card'?'Usar esta tarjeta':'Usar esta cuenta'}</button></div>`;
 }else if(type==='loan'){title='Préstamos registrados';html=`<div class="v749-source-list">${db.loans.filter(x=>!x.archived).map(x=>`<button type="button" data-v749="loan" data-value="${esc(x.id)}"><span>🏦 ${esc(x.name)}</span></button>`).join('')||'<p>Sin préstamos activos</p>'}</div>`}else return;
-host.innerHTML=`<div class="v749-sheet-inner" role="dialog" aria-label="${esc(title)}"><header class="v749-sheet-head"><h3>${esc(title)}</h3><button type="button" data-v749="sheetClose" aria-label="Cerrar selector">×</button></header>${html}</div>`;host.querySelector('input')?.focus({preventScroll:true})}
+host.innerHTML=`<div class="v749-sheet-inner ${['source','destination'].includes(type)?'v787-product-picker':''}" role="dialog" aria-modal="true" aria-label="${esc(title)}">${['source','destination'].includes(type)?'<span class="v787-sheet-handle" aria-hidden="true"></span>':''}<header class="v749-sheet-head"><h3>${esc(title)}</h3><button type="button" data-v749="sheetClose" aria-label="Cerrar selector">×</button></header>${html}</div>`;if(!['source','destination'].includes(type))host.querySelector('input')?.focus({preventScroll:true})}
 function setNative(f,name,value){const field=f.elements.namedItem(name);if(!field||typeof field.value!=='string')return;field.value=String(value??'');field.dispatchEvent(new Event('change',{bubbles:true}))}
 function validateEntry(s){if(!(Number(s.amount)>0)||!Number.isFinite(Number(s.amount)))return 'Introduce un importe válido mayor que cero.';if(!/^\d{4}-\d\d-\d\d$/.test(s.v749Date)||s.v749Date>today())return 'Revisa la fecha del movimiento.';if((s.mode!=='spend'||s.v749Source!=='card')&&(!acc(s.v749Account)||acc(s.v749Account).archived))return 'Selecciona una cuenta activa.';if(s.mode==='spend'&&s.v749Source==='card'&&(!cardRef(s.v749Card)||cardRef(s.v749Card).archived))return 'Selecciona una tarjeta activa.';if(s.mode==='transfer'&&s.transferKind!=='outgoing'&&(s.v749Account===s.v749ToAccount||!acc(s.v749ToAccount)||acc(s.v749ToAccount).archived))return 'Selecciona una cuenta de destino diferente.';if(s.mode==='transfer'&&s.transferKind==='outgoing'&&!s.v749Payee.trim())return 'Indica el beneficiario.';if(s.mode!=='transfer'&&!realCategories(s.mode).includes(s.preset))return 'Selecciona una categoría válida.';return ''}
 function continueToReview(){const s=state(),error=validateEntry(s);if(error){setError(error);return}
@@ -46260,12 +46337,56 @@ const priorFlowPicker=flowPicker;
 flowPicker=function(...args){if(isMobileViewport()){ui.registrationGroup=ui.registrationGroup||'pay';return openRegisterAssistant()}return priorFlowPicker(...args)};
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v749]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const s=state(),act=b.dataset.v749;const v=b.dataset.value||'';
 if(act==='close'){closeModal();return}if(act==='mode'){changeMode(v);return}if(act==='key'){applyKey(v);return}if(act==='quick'){chooseCategory(v);return}if(act==='category'||act==='subcategory'||act==='source'||act==='destination'){sheet(act);return}
+if(act==='v787Filter'){
+ const host=sheetContainer();if(!host)return;
+ host.dataset.v787Filter=v;
+ host.querySelectorAll('[data-v749="v787Filter"]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.value===v)));
+ const q=normalize(host.querySelector('#v787ProductSearch')?.value||'');let count=0;
+ host.querySelectorAll('.v787-product-row').forEach(row=>{const show=(v==='all'||v===row.dataset.v787Category)&&(!q||row.dataset.search.includes(q));row.hidden=!show;if(show)count++});
+ const empty=host.querySelector('#v787NoResults');if(empty)empty.hidden=count>0;return;
+}
+if(act==='v787Pick'){
+ const host=sheetContainer();if(!host)return;
+ host.dataset.v787Id=v;host.dataset.v787Kind=b.dataset.kind||'account';
+ host.querySelectorAll('.v787-product-row').forEach(row=>{const yes=row===b;row.classList.toggle('is-selected',yes);row.setAttribute('aria-pressed',String(yes));row.querySelector('.v787-product-mark').textContent=yes?'✓':''});
+ const confirm=host.querySelector('[data-v749="v787Confirm"]');if(confirm){confirm.disabled=false;confirm.textContent=b.dataset.kind==='card'?'Usar esta tarjeta':'Usar esta cuenta'}return;
+}
+if(act==='v787Confirm'){
+ const host=sheetContainer();if(!host)return;
+ const id=host.dataset.v787Id,kind=host.dataset.v787Kind,role=host.dataset.v787Role;
+ if(!id)return;
+ if(role==='destination'){
+   if(!db.accounts.some(a=>!a.archived&&String(a.id)===id&&String(a.id)!==String(s.v749Account)))return;
+   s.v749ToAccount=id;
+ }else if(kind==='card'&&s.mode==='spend'){
+   if(!db.cards.some(c=>!c.archived&&String(c.id)===id))return;
+   s.v749Source='card';s.v749Card=id;
+ }else{
+   if(!db.accounts.some(a=>!a.archived&&String(a.id)===id))return;
+   s.v749Source='account';s.v749Account=id;
+   if(s.v749ToAccount===id)s.v749ToAccount=(db.accounts||[]).find(a=>!a.archived&&String(a.id)!==id)?.id||'';
+ }
+ const fromReview=!!document.querySelector('#modal-root .v749-review-overlay .v749-sheet:not([hidden])');
+ closeSheet();
+ if(fromReview){
+   const form=document.querySelector('#modal-root #transactionForm[data-v749-native]');
+   if(form){for(const [name,val] of Object.entries({accountId:s.v749Account,toAccountId:s.v749ToAccount,cardId:s.v749Card,paymentSource:s.v749Source}))if(form.elements.namedItem(name))setNative(form,name,val);}
+   refreshReview();
+ }else renderEntry();
+ return;
+}
 if(act==='sheetClose'){closeSheet();return}if(act==='pickCategory'){const fromReview=!!document.querySelector('#modal-root .v749-review-overlay .v749-sheet:not([hidden])');s.preset=v;s.v749Subcategory='';closeSheet();if(fromReview){refreshReview();return}sheet('subcategory');return}if(act==='pickSub'){const fromReview=!!document.querySelector('#modal-root .v749-review-overlay .v749-sheet:not([hidden])');s.v749Subcategory=v;closeSheet();if(fromReview)refreshReview();else renderEntry();return}
 if(act==='pickSource'){if(b.dataset.role==='destination'){s.v749ToAccount=v}else if(b.dataset.kind==='card'){s.v749Source='card';s.v749Card=v}else{s.v749Source='account';s.v749Account=v;s.v749ToAccount=s.v749ToAccount===v?db.accounts.find(a=>!a.archived&&a.id!==v)?.id||'':s.v749ToAccount}closeSheet();renderEntry();return}
 if(act==='currency'){s.v749Currency=s.v749Currency==='DOP'?'USD':'DOP';renderEntry();return}if(act==='transferKind'){s.transferKind=s.transferKind==='outgoing'?'own':'outgoing';renderEntry();return}
 if(act==='continue'){continueToReview();return}if(act==='back'){back();return}if(act==='confirm'){confirm();return}
 },true);
 document.addEventListener('input',e=>{if(e.target.id==='v749CategorySearch'){const q=normalize(e.target.value);document.querySelectorAll('#v749CategoryGrid button').forEach(el=>{el.hidden=!normalize(el.dataset.value).includes(q)});return}
+if(e.target.id==='v787ProductSearch'){
+ const host=sheetContainer();if(!host)return;
+ const q=normalize(e.target.value),filter=host.dataset.v787Filter||'all';let count=0;
+ host.querySelectorAll('.v787-product-row').forEach(row=>{const show=(filter==='all'||filter===row.dataset.v787Category)&&(!q||row.dataset.search.includes(q));row.hidden=!show;if(show)count++});
+ const empty=host.querySelector('#v787NoResults');if(empty)empty.hidden=count>0;return;
+}
 if(['v749SubcategorySearch','v768SourceSearch'].includes(e.target.id)){const q=normalize(e.target.value),root=e.target.id==='v749SubcategorySearch'?'#v749SubcategoryGrid':'#v768SourceList';document.querySelectorAll(root+' button').forEach(el=>{el.hidden=!normalize(el.textContent).includes(q)});return}
 if(e.target.id==='v749Amount'){const s=state();const raw=e.target.value.replace(/[^0-9.]/g,'');const [a,...b]=raw.split('.');s.amount=a.slice(0,11)+(b.length?'.'+b.join('').slice(0,2):'');if(s.amount!==e.target.value)e.target.value=s.amount;refreshImpact();return}
 if(e.target.id==='v749Payee')state().v749Payee=e.target.value;if(e.target.id==='v749Date')state().v749Date=e.target.value;
@@ -81379,5 +81500,404 @@ body.theme-light #modal-root form.other-studio-form .other-studio-close{backgrou
 body.theme-light #modal-root form.other-studio-form .other-studio-fold summary{color:#5c6d85!important}
 body.theme-light #modal-root form.other-studio-form .form-foot{background:#f7f9fd!important;border-color:#dbe2ea!important}
 </style>
+<style id="vive-v786-personalizacion-final-precision">
+/* V786: late-loaded override. Only Personalización; keep financial records and navigation unchanged. */
+@media(max-width:950px){body:has(#app .v778-personalization) #app .main.world-personalize{padding-bottom:0!important;}}
+#app .v778-personalization .v766-app .v783-reset-region{
+ display:flex!important;justify-content:flex-end!important;align-items:center!important;
+ margin:12px 2px 5px!important;padding:0 clamp(58px,16vw,68px) 0 0!important;min-height:32px!important;
+ width:calc(100% - 4px)!important;
+}
+#app .v778-personalization .v766-app .v783-reset-pill{
+ min-height:30px!important;height:30px!important;width:auto!important;max-width:100%!important;
+ padding:5px 11px!important;gap:6px!important;border-radius:999px!important;
+ font-size:10.5px!important;font-weight:720!important;line-height:1.1!important;
+ white-space:nowrap!important;letter-spacing:-.1px!important;
+ color:color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 66%,#263754)!important;
+ background:linear-gradient(125deg,color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 13%,rgba(255,255,255,.72)),rgba(255,255,255,.50))!important;
+ border:1px solid color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 30%,rgba(126,149,184,.16))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.68),0 2px 7px rgba(29,53,85,.045)!important;
+ backdrop-filter:blur(12px) saturate(125%);-webkit-backdrop-filter:blur(12px) saturate(125%);
+}
+#app .v778-personalization .v783-reset-pill svg{width:14px!important;height:14px!important;color:inherit!important;stroke:currentColor!important;}
+#app .v778-personalization .v783-reset-pill:focus-visible,
+#app .v778-personalization .v783-reset-pill:hover{
+ border-color:var(--vive-theme-color,var(--v560-accent,#647ce4))!important;
+}
+/* No alternative options block survives, including any stale duplicated markup. */
+#app .v778-personalization .v766-advanced{display:none!important;}
+/* Soft continuous cards and individually identifiable accent-colored miniatures. */
+#app .v778-personalization .v766-indicator.v767-row{
+ height:auto!important;min-height:77px!important;max-height:none!important;
+ padding-block:9px!important;overflow:visible!important;border-radius:16px!important;
+}
+#app .v778-personalization .v766-indicator.v767-row .v766-info{
+ overflow:visible!important;align-self:center!important;min-width:0!important;
+}
+#app .v778-personalization .v766-indicator.v767-row .v766-info h2{
+ text-overflow:clip!important;overflow:visible!important;white-space:normal!important;
+ font-size:clamp(11px,2.85vw,14px)!important;line-height:1.2!important;
+ letter-spacing:-.22px!important;overflow-wrap:break-word!important;
+}
+#app .v778-personalization .v766-indicator.v767-row .v766-info p{
+ display:block!important;white-space:normal!important;overflow:visible!important;
+ -webkit-line-clamp:unset!important;line-height:1.27!important;
+ font-size:clamp(9.5px,2.36vw,11.5px)!important;
+}
+#app .v778-personalization .v766-indicator.v767-row .v767-icon{
+ border-radius:13px!important;border-width:1px!important;
+ background:linear-gradient(150deg,color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 12%,rgba(255,255,255,.77)),rgba(239,244,253,.9))!important;
+ border-color:color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 22%,rgba(143,158,187,.16))!important;
+ box-shadow:inset 0 1px 0 #ffffffb0,0 2px 9px color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 11%,transparent)!important;
+}
+#app .v778-personalization .v767-icon-svg{
+ filter:drop-shadow(0 2px 5px color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 25%,transparent)) saturate(1.22)!important;
+}
+#app .v778-personalization .v766-indicator.v767-row .v766-controls{gap:clamp(3px,1vw,6px)!important;flex-shrink:0!important;}
+#app .v778-personalization .v766-indicator.v767-row .v766-move-btn{
+ min-width:clamp(26px,7vw,34px)!important;width:clamp(26px,7vw,34px)!important;
+ height:clamp(32px,8.7vw,39px)!important;border-radius:10px!important;
+ border-width:1px!important;box-shadow:inset 0 1px 0 #ffffff8c,0 2px 5px #152b4e0a!important;
+}
+#app .v778-personalization .v766-indicator.v767-row .v766-move-btn .v782-direction-icon{
+ display:block!important;overflow:visible!important;width:18px!important;height:18px!important;
+ stroke:currentColor!important;fill:none!important;stroke-width:2.2px!important;
+ transform:none!important;
+}
+#app .v778-personalization .v766-indicator.v767-row .v766-move-btn .v782-direction-icon path{
+ stroke:currentColor!important;fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#app .v778-personalization .v766-indicator.v767-row .v766-move-btn:disabled{opacity:.3!important;}
+#app .v778-personalization .v766-indicator.v767-row .v766-drag-handle{
+ border-radius:7px!important;min-height:41px!important;cursor:grab!important;
+}
+#app .v778-personalization .v766-indicator.v767-row .v766-drag-handle:active{cursor:grabbing!important;}
+/* Light: restrained blue-grey outlines. */
+body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row{
+ border:1px solid rgba(140,159,190,.18)!important;
+ background:linear-gradient(118deg,rgba(255,255,255,.91),rgba(247,250,255,.78))!important;
+ box-shadow:0 3px 12px rgba(33,62,109,.038),inset 0 1px 0 rgba(255,255,255,.86)!important;
+}
+body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-move-btn{
+ color:color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 52%,#334565)!important;
+ border-color:rgba(140,159,190,.18)!important;background:rgba(252,253,255,.69)!important;
+}
+body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-drag-handle{
+ color:color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 42%,#7688a2)!important;
+}
+/* Black: OLED base, colored glow without fixed purple or thick stroke. */
+body.theme-black #app .v778-personalization .v766-indicator.v767-row,
+body.theme-dark #app .v778-personalization .v766-indicator.v767-row{
+ border:1px solid rgba(255,255,255,.11)!important;
+ background:radial-gradient(ellipse 80% 90% at 12% 15%,color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 11%,transparent),transparent 80%),rgba(16,15,23,.70)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 3px 10px rgba(0,0,0,.14)!important;
+}
+body.theme-black #app .v778-personalization .v767-row .v767-icon,
+body.theme-dark #app .v778-personalization .v767-row .v767-icon{
+ background:linear-gradient(155deg,color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 19%,#14121e),#0b0a14)!important;
+ border-color:rgba(255,255,255,.11)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 3px 12px color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#647ce4)) 13%,transparent)!important;
+}
+body.theme-black #app .v778-personalization .v783-reset-pill,
+body.theme-dark #app .v778-personalization .v783-reset-pill{
+ color:color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#9a80ff)) 78%,white)!important;
+ background:linear-gradient(125deg,color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#9a80ff)) 24%,#101019),rgba(19,18,29,.62))!important;
+ border-color:color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#9a80ff)) 44%,rgba(255,255,255,.15))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 2px 10px rgba(0,0,0,.14)!important;
+}
+body.theme-black #app .v778-personalization .v766-indicator.v767-row .v766-move-btn,
+body.theme-dark #app .v778-personalization .v766-indicator.v767-row .v766-move-btn{
+ color:color-mix(in srgb,var(--vive-theme-color,var(--v560-accent,#9a80ff)) 37%,white)!important;
+ border-color:rgba(255,255,255,.12)!important;background:rgba(29,27,39,.58)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+@media(max-width:950px){
+ #app .v778-personalization,
+ #app .v778-personalization .v296-settings-body,
+ #app .v778-personalization .v766-app,
+ #app .v778-personalization .v766-content{min-height:0!important;height:auto!important;max-height:none!important;}
+ #app .v778-personalization .v766-content{padding-bottom:8px!important;}
+ #app .v778-personalization .v296-settings-body{padding-bottom:calc(84px + env(safe-area-inset-bottom))!important;}
+}
+@media(max-width:355px){
+ #app .v778-personalization .v766-indicator.v767-row{
+  grid-template-columns:15px 40px minmax(0,1fr) auto!important;
+  column-gap:3px!important;padding-inline:5px!important;
+ }
+ #app .v778-personalization .v766-indicator.v767-row .v767-icon{width:40px!important;height:45px!important;}
+ #app .v778-personalization .v766-indicator.v767-row .v766-controls{gap:2px!important;}
+ #app .v778-personalization .v766-indicator.v767-row .v766-switch{width:29px!important;}
+ #app .v778-personalization .v766-indicator.v767-row .v766-move-btn{width:24px!important;min-width:24px!important;height:32px!important;}
+ #app .v778-personalization .v766-indicator.v767-row .v766-info h2{font-size:10.6px!important;}
+}
+@media(prefers-reduced-motion:reduce){#app .v778-personalization .v766-stage *{transition:none!important;animation:none!important;}}
+</style>
+<style id="v789-register-other-motion-premium">
+/* V789 — Integrated visual pass. Original data fields, event handlers, account IDs and accounting writes are preserved. */
+#modal-root{--v789-accent:var(--vive-theme-color,var(--v560-accent,var(--accent,#d7ac6d)));--v789-line:rgba(255,255,255,.17)}
+#modal-root :is(.v235-register-dialog,.other-studio-form,.studio-form[data-mode="cardpay"],.v749-layer){--v789-accent:var(--vive-theme-color,var(--v560-accent,var(--accent,#d7ac6d)))}
+@keyframes v789-arrive{from{opacity:.18;transform:translate3d(0,17px,0) scale(.987)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@keyframes v789-fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes v789-shimmer{0%{transform:translateX(-145%) skewX(-23deg)}100%{transform:translateX(360%) skewX(-23deg)}}
+#modal-root .v789-motion-in{animation:v789-arrive .34s cubic-bezier(.18,.9,.24,1) both}
+#modal-root .v789-motion-in :is(.vr-other-operations .v29-other-action,.other-studio-amount,.other-studio-fields>label,.other-studio-impact,.v49-payment-breakdown,.studio-fields>label,.studio-fields>[data-segment]){animation:v789-fadein .36s ease both}
+#modal-root .v789-motion-in :is(.vr-other-operations .v29-other-action,.other-studio-fields>label,.studio-fields>label):nth-child(2){animation-delay:.045s}
+#modal-root .v789-motion-in :is(.vr-other-operations .v29-other-action,.other-studio-fields>label,.studio-fields>label):nth-child(3){animation-delay:.09s}
+#modal-root .v789-motion-in :is(.vr-other-operations .v29-other-action,.other-studio-fields>label,.studio-fields>label):nth-child(4){animation-delay:.125s}
+#modal-root .v235-register-dialog .vr-other-operations{gap:11px!important}
+#modal-root .v235-register-dialog .vr-other-operations .v29-other-action{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--v789-accent) 14%,transparent),transparent 48%),linear-gradient(145deg,#19191c,#080809)!important;border:1px solid rgba(255,255,255,.18)!important;border-radius:20px!important;min-height:82px!important;box-shadow:inset 0 1px rgba(255,255,255,.09),0 13px 26px #0004!important;transition:transform .19s ease,border-color .19s ease,background .19s ease!important}
+#modal-root .v235-register-dialog .vr-other-operations .v29-other-action:active{transform:scale(.979)!important;border-color:var(--v789-accent)!important}
+#modal-root .v235-register-dialog .vr-other-operations .v29-other-icon{background:linear-gradient(145deg,color-mix(in srgb,var(--v789-accent) 26%,#1c1b1a),#0d0d10)!important;border-color:color-mix(in srgb,var(--v789-accent) 45%,transparent)!important;color:var(--v789-accent)!important;box-shadow:inset 0 1px 0 #ffffff1d,0 0 20px color-mix(in srgb,var(--v789-accent) 18%,transparent)!important}
+#modal-root .v235-register-dialog .vr-other-operations .v29-other-copy strong{color:#fcfafc!important;font-size:clamp(13px,3.7vw,16px)!important}
+#modal-root .v235-register-dialog .vr-other-operations .v29-other-copy small{color:#bab7c1!important}
+/* OTRAS GESTIONES: one coherent premium design around the native real accounting forms. */
+#modal-root form.other-studio-form{--os-accent:var(--v789-accent)!important;--os-soft:color-mix(in srgb,var(--v789-accent) 14%,#101013)!important;color:#f8f7f8!important;background:#050506!important;overflow-x:hidden!important}
+#modal-root form.other-studio-form :is(.other-studio-shell,.other-studio-left,.other-studio-content,.other-studio-fields){min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+#modal-root form.other-studio-form .other-studio-header{background:radial-gradient(ellipse 95% 100% at 107% 90%,color-mix(in srgb,var(--v789-accent) 17%,transparent),transparent 70%),linear-gradient(145deg,#100f13,#050506)!important;border-bottom:1px solid #ffffff16!important;padding:clamp(15px,4vw,23px)!important;border-radius:0!important}
+#modal-root form.other-studio-form .other-studio-header h2{font-size:clamp(27px,7.4vw,37px)!important;max-width:min(86%,480px)!important;line-height:1.11!important;letter-spacing:-.05em!important}
+#modal-root form.other-studio-form .other-studio-header p{font-size:clamp(12px,3.6vw,15px)!important;max-width:42ch!important;color:#bfc0c7!important}
+#modal-root form.other-studio-form .v785-hero-icon{background:radial-gradient(circle at 35% 20%,color-mix(in srgb,var(--v789-accent) 39%,#2a1c10),#121114)!important;color:var(--v789-accent)!important;border:1px solid color-mix(in srgb,var(--v789-accent) 42%,transparent)!important;box-shadow:0 7px 20px color-mix(in srgb,var(--v789-accent) 16%,transparent),inset 0 1px #ffffff29!important}
+#modal-root form.other-studio-form .other-studio-content{gap:12px!important}
+#modal-root form.other-studio-form :is(.other-studio-amount,.other-studio-impact,.other-studio-receipt,.v383-loan-impact,.v49-payment-breakdown,.v388-panel,.v785-benefit-preview){position:relative;background:radial-gradient(ellipse at 103% 102%,color-mix(in srgb,var(--v789-accent) 14%,transparent),transparent 72%),linear-gradient(135deg,#19181b,#0e0e11)!important;border:1px solid #ffffff2a!important;border-radius:22px!important;box-shadow:inset 0 1px #ffffff17,0 8px 26px #0003!important}
+#modal-root form.other-studio-form .other-studio-amount{padding:17px!important}
+#modal-root form.other-studio-form .other-studio-amount input[name="amount"]{font-size:clamp(34px,9.6vw,54px)!important;color:#faf9fc!important;border:0!important;background:transparent!important;min-height:59px!important;font-weight:810!important;font-variant-numeric:tabular-nums}
+#modal-root form.other-studio-form .other-studio-section-title{color:color-mix(in srgb,var(--v789-accent) 30%,#b4bbc8)!important}
+#modal-root form.other-studio-form :is(.other-studio-fields>label,.other-studio-fold-body>label){min-width:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;overflow:hidden!important}
+#modal-root form.other-studio-form :is(.field,.v756-native-select-btn,select){min-width:0!important;max-width:100%!important;box-sizing:border-box!important;border-radius:16px!important;background:linear-gradient(135deg,#242226,#111114)!important;border:1px solid #ffffff29!important;box-shadow:inset 0 1px #ffffff10!important;color:#f6f5fa!important}
+#modal-root form.other-studio-form .v756-native-select-btn{width:100%!important;display:flex!important;align-items:center!important;gap:9px!important;overflow:hidden!important}
+#modal-root form.other-studio-form .v756-native-select-btn>span:nth-child(2){min-width:0!important;flex:1 1 0!important;overflow:hidden!important;white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.3!important;color:#f9f8fa!important}
+#modal-root form.other-studio-form .v768-adjust-toggle button[aria-pressed="true"]{background:linear-gradient(135deg,color-mix(in srgb,var(--v789-accent) 78%,white),var(--v789-accent))!important;border-color:var(--v789-accent)!important}
+#modal-root form.other-studio-form :is(.other-studio-impact-grid,.v785-benefit-grid,.v383-loan-figures){min-width:0!important}
+#modal-root form.other-studio-form :is(.other-studio-impact-grid strong,.v785-benefit-grid strong,.v383-loan-figures strong){min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important;font-size:clamp(14px,4.3vw,22px)!important}
+#modal-root form.other-studio-form .form-foot button[type="submit"]{position:relative;overflow:hidden;min-height:54px!important;border-radius:18px!important;border:1px solid color-mix(in srgb,var(--v789-accent) 67%,white)!important;color:#151213!important;background:linear-gradient(110deg,color-mix(in srgb,var(--v789-accent) 61%,white),var(--v789-accent),color-mix(in srgb,var(--v789-accent) 75%,white))!important;box-shadow:0 0 20px color-mix(in srgb,var(--v789-accent) 20%,transparent),inset 0 1px #ffffff64!important;transition:transform .18s ease,filter .2s ease!important}
+#modal-root form.other-studio-form .form-foot button[type="submit"]:active{transform:scale(.98)!important;filter:brightness(.94)}
+/* Pagar tarjeta: maintain native 2-stage financial validation; repair the visual architecture. */
+#modal-root .modal:has(.studio-form[data-mode="cardpay"]){--v789-ink:#f8f7fa;--v789-soft:#adaab6;--v789-stroke:#ffffff26;color:var(--v789-ink)!important;background:#060608!important;border-color:#ffffff22!important;box-shadow:0 22px 80px #0009!important}
+#modal-root .modal:has(.studio-form[data-mode="cardpay"])>.modal-head{background:#08080b!important;border-color:#ffffff19!important;min-height:55px!important}
+#modal-root .modal:has(.studio-form[data-mode="cardpay"])>.modal-head h2{color:#f9f8fa!important;font-size:clamp(19px,5vw,26px)!important}
+#modal-root .studio-form[data-mode="cardpay"]{background:#060608!important;max-width:100%!important;min-width:0!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-shell{min-height:0!important;max-width:100%!important;gap:0!important;background:#060608!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-rail{flex:0 0 auto!important;display:flex!important;flex-direction:column!important;gap:8px!important;margin:8px 12px 12px!important;padding:13px 14px!important;background:radial-gradient(ellipse at 105% 15%,color-mix(in srgb,var(--v789-accent) 18%,transparent),transparent 65%),linear-gradient(135deg,#201d23,#101014)!important;border:1px solid #ffffff26!important;border-radius:22px!important;box-shadow:inset 0 1px #ffffff18,0 10px 26px #0003!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-rail-name{display:block!important;font-size:clamp(16px,4.3vw,21px)!important;font-weight:720!important;color:#c9c5d0!important;line-height:1.15!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-rail-name strong{color:#fff!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-steps-nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-nav-step:not([hidden]){display:flex!important;justify-content:center!important;align-items:center!important;gap:7px!important;min-height:46px!important;padding:8px!important;color:#b8b4c1!important;border:1px solid #ffffff21!important;border-radius:14px!important;background:linear-gradient(155deg,#27252b,#151417)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-nav-step.current{border-color:color-mix(in srgb,var(--v789-accent) 65%,transparent)!important;background:color-mix(in srgb,var(--v789-accent) 17%,#151417)!important;color:#fff!important;box-shadow:0 0 16px color-mix(in srgb,var(--v789-accent) 11%,transparent)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-step-number{color:var(--v789-accent)!important;border-radius:10px!important;background:color-mix(in srgb,var(--v789-accent) 18%,#151417)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-main{min-width:0!important;max-width:100%!important;flex:1 1 auto!important;overflow-y:auto!important;overflow-x:hidden!important;padding:0 12px!important;background:#060608!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-panels{min-width:0!important;overflow:visible!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;min-width:0!important;padding:0 0 12px!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields>*{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+#modal-root .studio-form[data-mode="cardpay"] :is(.studio-fields>label,.studio-fields>[data-segment],.studio-fields>.flow-payment-preview,.studio-fields>#guidedReceipt,.studio-fields>.flow-minor-details){padding:12px!important;background:linear-gradient(135deg,#19181b,#101014)!important;color:#f9f8fc!important;border:1px solid #ffffff24!important;border-radius:19px!important;box-shadow:inset 0 1px #ffffff14!important}
+#modal-root .studio-form[data-mode="cardpay"] :is(.filter-label,.studio-fields>label .filter-label){color:#a8a4b5!important;font-size:11px!important;font-weight:760!important;letter-spacing:.03em!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .field{max-width:100%!important;min-width:0!important;width:100%!important;min-height:49px!important;background:#222125!important;color:#f8f8fc!important;border:1px solid #ffffff2d!important;border-radius:14px!important;font-size:clamp(14px,4vw,17px)!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment{gap:6px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment-surface{background:linear-gradient(135deg,#242229,#131317)!important;color:#e5e2ee!important;border:1px solid #ffffff2a!important;border-radius:15px!important;min-height:64px!important;max-width:100%!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment-option>input:checked+.flow-segment-surface{border-color:var(--v789-accent)!important;background:color-mix(in srgb,var(--v789-accent) 23%,#16141a)!important;box-shadow:0 0 17px color-mix(in srgb,var(--v789-accent) 18%,transparent)!important;color:#fff!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-payment-preview{background:radial-gradient(ellipse at 100% 100%,color-mix(in srgb,var(--v789-accent) 13%,transparent),transparent 75%),linear-gradient(135deg,#201c22,#101014)!important;border-color:color-mix(in srgb,var(--v789-accent) 25%,#ffffff20)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-navigation{flex:0 0 auto!important;position:sticky!important;bottom:0!important;z-index:17!important;display:grid!important;gap:8px!important;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px))!important;background:#060608!important}
+#modal-root .studio-form[data-mode="cardpay"] :is(.studio-next,.form-foot button[type="submit"]){background:linear-gradient(110deg,color-mix(in srgb,var(--v789-accent) 65%,white),var(--v789-accent))!important;border:1px solid color-mix(in srgb,var(--v789-accent) 50%,white)!important;color:#111013!important;border-radius:16px!important;min-height:49px!important;box-shadow:0 4px 17px color-mix(in srgb,var(--v789-accent) 16%,transparent)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-back{background:#232126!important;color:#f4f2fa!important;border:1px solid #ffffff26!important;border-radius:16px!important}
+#modal-root .studio-form[data-mode="cardpay"] .form-foot{background:#060608!important;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px))!important}
+/* Device-fitted layout: no artificial vertical space between amount, cards and keypad. */
+@media(max-width:600px){
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-screen{height:100dvh!important;max-height:100dvh!important;min-height:0!important;display:flex!important;flex-direction:column!important;box-sizing:border-box!important;padding:clamp(5px,1.1dvh,12px) clamp(12px,4vw,20px) max(7px,env(safe-area-inset-bottom,0px))!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-scroll{display:flex!important;flex-direction:column!important;flex:0 1 auto!important;min-height:0!important;max-height:calc(100dvh - 119px)!important;overflow-y:auto!important;overflow-x:hidden!important;margin:auto 0 0!important;padding:0 1px 1px!important;scrollbar-width:none!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-foot{flex:0 0 auto!important;margin:0!important;padding:6px 0 2px!important;background:var(--v749-base)!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-segment{flex:0 0 auto!important;margin:0 0 clamp(5px,1dvh,9px)!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-amount{flex:0 0 auto!important;min-height:clamp(69px,10.5dvh,88px)!important;margin:0 0 clamp(5px,.85dvh,8px)!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-impact{flex:0 0 auto!important;margin:0 0 clamp(5px,.8dvh,8px)!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-quick{flex:0 0 auto!important;margin:0 0 clamp(5px,.8dvh,8px)!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-fieldline{flex:0 0 auto!important;margin-bottom:5px!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-keypad{flex:0 0 auto!important;margin:2px 0 0!important;gap:5px!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-keypad button{min-height:clamp(32px,4.7dvh,43px)!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-primary{min-height:clamp(43px,6dvh,54px)!important}
+ #modal-root .other-studio-form .other-studio-content{padding-inline:clamp(12px,4vw,19px)!important}
+ #modal-root .other-studio-form .other-studio-fields{grid-template-columns:minmax(0,1fr)!important}
+ #modal-root .other-studio-form .other-studio-right{min-width:0!important;margin:7px clamp(12px,4vw,19px) calc(93px + env(safe-area-inset-bottom,0px))!important;padding:14px!important}
+ #modal-root .other-studio-form .form-foot{max-width:100%!important;box-sizing:border-box!important;padding:9px clamp(12px,4vw,19px) calc(10px + env(safe-area-inset-bottom,0px))!important}
+ #modal-root .modal:has(.studio-form[data-mode="cardpay"]){width:100%!important;max-width:520px!important;height:100dvh!important;max-height:100dvh!important;overflow:hidden!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-rail{margin:8px 12px 8px!important;padding:10px 12px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-main{padding:0 12px!important}
+}
+@media(max-width:600px) and (max-height:730px){
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-title{font-size:clamp(21px,5.7vw,26px)!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-subtitle{font-size:10px!important;margin-bottom:4px!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-head{min-height:28px!important;height:28px!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-segment button{height:44px!important;min-height:44px!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-quick button{min-height:42px!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-keypad button{min-height:31px!important}
+}
+body:is(.theme-light,.theme-white) #modal-root .modal:has(.studio-form[data-mode="cardpay"]),body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"],body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] :is(.studio-main,.studio-shell){background:#f7f9fc!important;color:#1b2940!important}
+body:is(.theme-light,.theme-white) #modal-root .modal:has(.studio-form[data-mode="cardpay"])>.modal-head{background:#fff!important;border-color:#dfe4ed!important}
+body:is(.theme-light,.theme-white) #modal-root .modal:has(.studio-form[data-mode="cardpay"])>.modal-head h2,body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .studio-rail-name strong{color:#17243a!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .studio-rail{background:linear-gradient(145deg,#fff,#f1f4fa)!important;color:#26344c!important;border-color:#dce3ed!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] :is(.studio-fields>label,.studio-fields>[data-segment],.studio-fields>.flow-payment-preview,.studio-fields>#guidedReceipt,.studio-fields>.flow-minor-details,.studio-nav-step:not([hidden])){background:linear-gradient(145deg,#fff,#f3f5f9)!important;color:#213149!important;border-color:#dfe4ec!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] :is(.studio-fields .field,.flow-segment-surface){background:#fff!important;color:#1e2a3e!important;border-color:#dce3ec!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] :is(.filter-label,.studio-rail-name){color:#5a6980!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] :is(.studio-navigation,.form-foot){background:#f7f9fc!important}
+body:is(.theme-light,.theme-white) #modal-root form.other-studio-form{background:#f7f9fd!important;color:#18263d!important}
+body:is(.theme-light,.theme-white) #modal-root form.other-studio-form .other-studio-header{background:radial-gradient(ellipse at 110% 90%,color-mix(in srgb,var(--v789-accent) 12%,transparent),transparent 70%),#fff!important;border-color:#dfe4ed!important}
+body:is(.theme-light,.theme-white) #modal-root form.other-studio-form :is(.other-studio-header h2,.other-studio-amount input[name="amount"]){color:#18263d!important}
+body:is(.theme-light,.theme-white) #modal-root form.other-studio-form :is(.other-studio-amount,.other-studio-impact,.other-studio-receipt,.v383-loan-impact,.v49-payment-breakdown,.v388-panel,.v785-benefit-preview){background:linear-gradient(145deg,#fff,#f1f5fb)!important;border-color:#dee5ee!important;color:#1c293f!important}
+body:is(.theme-light,.theme-white) #modal-root form.other-studio-form :is(.field,.v756-native-select-btn,select){background:#fff!important;border-color:#dce3ed!important;color:#1c293f!important}
+body:is(.theme-light,.theme-white) #modal-root form.other-studio-form .v756-native-select-btn>span:nth-child(2){color:#1c293f!important}
+body:is(.theme-light,.theme-white) #modal-root .v235-register-dialog .vr-other-operations .v29-other-action{background:linear-gradient(145deg,#fff,#f5f7fc)!important;border-color:#dce3ed!important}
+body:is(.theme-light,.theme-white) #modal-root .v235-register-dialog .vr-other-operations .v29-other-copy strong{color:#192940!important}
+@media(prefers-reduced-motion:reduce){#modal-root .v789-motion-in,#modal-root .v789-motion-in *{animation:none!important;transition:none!important}}
+</style>
+<script id="v789-register-motion-mount">
+(()=>{'use strict';
+ if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+ const root=document.getElementById('modal-root');if(!root)return;
+ let queued=false;
+ function activate(){queued=false;const panes=root.querySelectorAll('.v235-register-dialog,.other-studio-form,.studio-form[data-mode="cardpay"],.v749-layer[data-v749-stage="entry"],.v749-layer[data-v749-stage="review"]');for(const item of panes){if(item.dataset.v789Motion==='1')continue;item.dataset.v789Motion='1';item.classList.add('v789-motion-in')}}
+ const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(activate)});
+ observer.observe(root,{subtree:true,childList:true});activate();
+})();
+</script>
+<style id="v789-viewport-vertical-final">
+@media(max-width:600px){
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-screen{justify-content:safe center!important;}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-scroll{margin:0!important;flex:0 1 auto!important;max-height:none!important;}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-head{flex:0 0 auto!important;}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-title,#modal-root .v749-layer[data-v749-stage="entry"] .v749-subtitle{flex:0 0 auto!important;}
+}
+@media(max-width:600px) and (max-height:719px){
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-screen{justify-content:flex-start!important;}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-scroll{flex:1 1 auto!important;max-height:unset!important;}
+}
+</style>
+<style id="v789-card-payment-critical-fixes">
+/* The old V352 hiding rule is valid for new transactions, NOT for the native two-stage card-payment wizard. */
+#modal-root .v349-register-dialog>form.studio-form[data-mode="cardpay"][data-studio-step="3"] #guidedReceipt{display:block!important;visibility:visible!important;opacity:1!important;grid-column:1/-1!important;min-width:0!important;margin:3px 0 12px!important;padding:15px!important;border-radius:19px!important;border:1px solid color-mix(in srgb,var(--v789-accent) 33%,#ffffff20)!important;background:radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--v789-accent) 15%,transparent),transparent 80%),#161519!important;color:#f8f7fa!important;box-shadow:inset 0 1px 0 #ffffff18!important}
+#modal-root .v349-register-dialog>form.studio-form[data-mode="cardpay"][data-studio-step="1"] .flow-payment-preview{display:block!important;visibility:visible!important;grid-column:1/-1!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-surface{background:linear-gradient(145deg,#242229,#121216)!important;background-image:linear-gradient(145deg,#242229,#121216)!important;color:#f7f5fb!important;border:1px solid #ffffff28!important;box-shadow:inset 0 1px 0 #ffffff16!important;min-height:68px!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-surface strong{font-size:clamp(10px,2.8vw,13px)!important;color:#f9f8fb!important;line-height:1.19!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-surface small{font-size:10px!important;color:#b6b2c1!important;line-height:1.23!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-option>input:checked+.flow-segment-surface{background:linear-gradient(145deg,color-mix(in srgb,var(--v789-accent) 23%,#18161a),#17151a)!important;border-color:var(--v789-accent)!important;box-shadow:0 0 14px color-mix(in srgb,var(--v789-accent) 18%,transparent),inset 0 1px 0 #ffffff1e!important;color:#fff!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-option>input:checked+.flow-segment-surface strong{color:#fff!important}
+#modal-root .studio-form[data-mode="cardpay"][data-studio-step="3"] #guidedReceipt .flow-receipt-title{display:flex!important;justify-content:space-between!important;gap:8px!important;color:var(--v789-accent)!important;align-items:center!important}
+#modal-root .studio-form[data-mode="cardpay"][data-studio-step="3"] #guidedReceipt .flow-receipt-lines{display:grid!important;gap:8px!important;margin:12px 0!important}
+#modal-root .studio-form[data-mode="cardpay"][data-studio-step="3"] #guidedReceipt .flow-receipt-lines>span{display:flex!important;gap:8px!important;justify-content:space-between!important;align-items:baseline!important;flex-wrap:wrap!important;color:#c8c5d2!important}
+#modal-root .studio-form[data-mode="cardpay"][data-studio-step="3"] #guidedReceipt .flow-receipt-lines b{color:#fff!important;font-variant-numeric:tabular-nums!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-surface{background:linear-gradient(145deg,#fff,#eef1f8)!important;color:#17243c!important;border-color:#d9e2ee!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-surface :is(strong,small){color:#28364b!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-option>input:checked+.flow-segment-surface{background:color-mix(in srgb,var(--v789-accent) 13%,#fff)!important;border-color:var(--v789-accent)!important}
+body:is(.theme-light,.theme-white) #modal-root .v349-register-dialog>form.studio-form[data-mode="cardpay"][data-studio-step="3"] #guidedReceipt{background:#fff!important;color:#203046!important;border-color:#dbe2ed!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"][data-studio-step="3"] #guidedReceipt .flow-receipt-lines :is(span,b){color:#203046!important}
+</style>
+<style id="v789-final-stage-motion">
+#modal-root .studio-form[data-mode="cardpay"] .studio-step:not([hidden])>.studio-fields{animation:v789-fadein .26s ease both}
+#modal-root .v749-layer[data-v749-stage="entry"] .v749-primary,#modal-root .studio-form[data-mode="cardpay"] :is(.studio-next,.form-foot button[type="submit"]){transition:transform .18s cubic-bezier(.2,.85,.25,1),filter .2s ease!important}
+#modal-root .v749-layer[data-v749-stage="entry"] .v749-primary:active,#modal-root .studio-form[data-mode="cardpay"] :is(.studio-next,.form-foot button[type="submit"]):active{transform:scale(.984)!important;filter:brightness(.94)!important}
+@media(prefers-reduced-motion:reduce){#modal-root .studio-form[data-mode="cardpay"] .studio-step:not([hidden])>.studio-fields{animation:none!important}}
+</style>
+<style id="v789-final-light-contrast">
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-option>input:checked+.flow-segment-surface :is(strong,small){color:#182841!important;text-shadow:none!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .studio-fields .flow-segment .flow-segment-option>input:checked+.flow-segment-surface{background:linear-gradient(135deg,color-mix(in srgb,var(--v789-accent) 18%,white),#fff)!important}
+</style>
+<style id="v789-small-mobile-amount">
+#modal-root .v749-layer[data-v749-stage="entry"] .v749-amount input#v749Amount{background:transparent!important;background-image:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;color:var(--v749-ink)!important;outline:none!important}
+#modal-root .v749-layer[data-v749-stage="entry"] .v749-amount input#v749Amount::placeholder{color:color-mix(in srgb,var(--v749-ink) 45%,transparent)!important;opacity:1!important}
+@media(max-width:350px) and (max-height:720px){
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-amount{min-height:64px!important;padding:7px 11px!important}
+ #modal-root .v749-layer[data-v749-stage="entry"] .v749-keypad button{min-height:30px!important;height:30px!important}
+}
+</style>
+<style id="v789-low-height-safeguard">@media(max-width:350px) and (max-height:720px){#modal-root .v749-layer[data-v749-stage="entry"] .v749-foot{transform:translateY(-9px)!important}}</style>
+<style id="v789-cardpay-bottom-sheet-style">
+#modal-root .studio-form[data-mode="cardpay"] label.v789-select-enhanced{position:relative!important;display:flex!important;flex-direction:column!important;gap:6px!important}
+#modal-root .studio-form[data-mode="cardpay"] label.v789-select-enhanced select.v789-native-keep{position:absolute!important;left:10px!important;bottom:6px!important;width:1px!important;height:1px!important;opacity:0!important;clip-path:inset(50%)!important;pointer-events:none!important;z-index:-1!important}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open{display:flex!important;align-items:center!important;gap:11px!important;text-align:left!important;width:100%!important;min-height:65px!important;max-width:100%!important;padding:10px 12px!important;background:linear-gradient(145deg,#252328,#121216)!important;border:1px solid #ffffff2d!important;border-radius:15px!important;color:#f7f6fa!important;box-shadow:inset 0 1px #ffffff19!important;cursor:pointer}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-ico{width:35px;height:35px;flex:0 0 35px;display:grid;place-items:center;border-radius:11px;color:var(--v789-accent);background:color-mix(in srgb,var(--v789-accent) 15%,#19171b);border:1px solid color-mix(in srgb,var(--v789-accent) 27%,transparent)}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-ico svg{width:21px;height:21px}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-details{min-width:0;flex:1}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-details strong{font-size:13px;line-height:1.25;display:block;color:inherit;white-space:normal;overflow-wrap:anywhere}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-details small{font-size:10px;color:#b3afbb;line-height:1.35;display:block;margin-top:3px}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-chevron{color:var(--v789-accent);font-size:23px;line-height:1;opacity:.9}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open:focus-visible{outline:2px solid var(--v789-accent);outline-offset:2px}
+@keyframes v789-sheet-rise{from{opacity:.3;transform:translateY(35px)}to{opacity:1;transform:translateY(0)}}
+#modal-root .v789-product-backdrop{position:fixed!important;inset:0!important;z-index:2147483630!important;background:rgba(0,0,0,.67)!important;display:flex!important;align-items:flex-end!important;justify-content:center!important;backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important}
+#modal-root .v789-product-sheet{--v789-sheet-bg:#141317;--v789-sheet-ink:#fff;--v789-sheet-sub:#b8b4c1;--v789-sheet-line:#ffffff25;position:relative;width:min(100%,520px);max-height:min(85dvh,780px);min-height:0;display:flex;flex-direction:column;gap:10px;padding:14px 15px calc(16px + env(safe-area-inset-bottom,0px));overflow:hidden;background:radial-gradient(ellipse at 90% 100%,color-mix(in srgb,var(--v789-accent) 12%,transparent),transparent 73%),var(--v789-sheet-bg);color:var(--v789-sheet-ink);border-radius:29px 29px 0 0;border:1px solid var(--v789-sheet-line);box-shadow:0 -12px 42px #000b;animation:v789-sheet-rise .32s cubic-bezier(.2,.85,.2,1) both}
+#modal-root .v789-product-sheet>.v789-sheet-grip{width:44px;height:5px;border-radius:20px;background:#ffffff6a;flex:0 0 5px;align-self:center;margin-bottom:4px}
+#modal-root .v789-product-sheet header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#modal-root .v789-product-sheet h3{font-size:clamp(21px,6vw,27px);font-weight:800;letter-spacing:-.04em;margin:0;line-height:1.15;color:var(--v789-sheet-ink)}
+#modal-root .v789-product-sheet .v789-sheet-sub{color:var(--v789-sheet-sub);font-size:12px;line-height:1.4;margin:0 0 6px}
+#modal-root .v789-product-sheet .v789-picker-close{border:1px solid var(--v789-sheet-line);border-radius:50%;background:#ffffff16;color:var(--v789-sheet-ink);width:40px;height:40px;flex:0 0 40px;font-size:23px}
+#modal-root .v789-product-sheet .v789-picker-search{width:100%;min-height:49px;padding:12px 15px;background:#ffffff0c;border:1px solid var(--v789-sheet-line);color:var(--v789-sheet-ink);border-radius:17px;font-size:14px;outline:0}
+#modal-root .v789-product-sheet .v789-picker-search:focus{border-color:var(--v789-accent)}
+#modal-root .v789-product-sheet .v789-picker-search::placeholder{color:var(--v789-sheet-sub)}
+#modal-root .v789-product-sheet .v789-picker-list{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;padding:3px 1px}
+#modal-root .v789-product-sheet .v789-picker-row{min-height:72px;width:100%;display:flex;align-items:center;gap:12px;padding:10px;border-radius:19px;border:1px solid var(--v789-sheet-line);background:linear-gradient(135deg,#232126,#121115);color:var(--v789-sheet-ink);text-align:left;transition:transform .16s ease,border-color .2s ease,box-shadow .2s ease;cursor:pointer}
+#modal-root .v789-product-sheet .v789-picker-row:active{transform:scale(.985)}
+#modal-root .v789-product-sheet .v789-picker-row[aria-pressed="true"]{border-color:var(--v789-accent);box-shadow:inset 0 1px #ffffff20,0 0 15px color-mix(in srgb,var(--v789-accent) 22%,transparent)}
+#modal-root .v789-product-sheet .v789-picker-mini{display:grid;place-items:center;flex:0 0 64px;width:64px;height:45px;border-radius:11px;color:#fff;font-size:13px;font-weight:900;font-style:italic;background:linear-gradient(145deg,#345da5,#142245);box-shadow:0 5px 12px #0004}
+#modal-root .v789-product-sheet .v789-picker-mini.is-master{background:linear-gradient(130deg,#341f57,#121227);font-size:28px;letter-spacing:-12px;padding-right:12px;color:#ffa13f}
+#modal-root .v789-product-sheet .v789-picker-mini.is-account{background:linear-gradient(135deg,color-mix(in srgb,var(--v789-accent) 45%,#343342),#16151a);color:#f3f0f9;font-style:normal}
+#modal-root .v789-product-sheet .v789-picker-mini svg{width:27px;height:27px}
+#modal-root .v789-product-sheet .v789-picker-text{flex:1;min-width:0}
+#modal-root .v789-product-sheet .v789-picker-text strong{color:inherit;font-size:clamp(12px,3.4vw,15px);font-weight:770;display:block;line-height:1.25;overflow-wrap:anywhere}
+#modal-root .v789-product-sheet .v789-picker-text small{color:var(--v789-sheet-sub);display:block;font-size:11px;margin-top:4px}
+#modal-root .v789-product-sheet .v789-picker-mark{flex:0 0 23px;width:23px;height:23px;border:2px solid var(--v789-sheet-sub);border-radius:50%;display:grid;place-items:center;color:#161212;font-size:16px;font-weight:850}
+#modal-root .v789-product-sheet .v789-picker-row[aria-pressed="true"] .v789-picker-mark{background:var(--v789-accent);border-color:var(--v789-accent)}
+#modal-root .v789-product-sheet .v789-picker-confirm{flex:0 0 auto;min-height:52px;border-radius:17px;font-size:15px;font-weight:800;background:linear-gradient(115deg,color-mix(in srgb,var(--v789-accent) 65%,#fff),var(--v789-accent));color:#171218;border:0;cursor:pointer}
+#modal-root .v789-product-sheet .v789-picker-confirm:disabled{opacity:.4;cursor:not-allowed}
+#modal-root .v789-product-sheet [hidden]{display:none!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .v789-select-open{background:#fff!important;border-color:#dce3ed!important;color:#23334b!important}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-details small{color:#65748b!important}
+body:is(.theme-light,.theme-white) #modal-root .v789-product-sheet{--v789-sheet-bg:#f6f8fc;--v789-sheet-ink:#18263c;--v789-sheet-sub:#627087;--v789-sheet-line:#dce3ee}
+body:is(.theme-light,.theme-white) #modal-root .v789-product-sheet .v789-picker-row{background:#fff!important;color:#1e2d45!important}
+body:is(.theme-light,.theme-white) #modal-root .v789-product-sheet :is(.v789-picker-search,.v789-picker-close){background:#fff!important;color:#1e2d45!important}
+body:is(.theme-light,.theme-white) #modal-root .v789-product-sheet .v789-sheet-grip{background:#8b96a6}
+@media(prefers-reduced-motion:reduce){#modal-root .v789-product-sheet{animation:none!important}}
+</style>
+<script id="v789-cardpay-native-picker">
+(()=>{'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ const bankSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 10-6 10 6M3 10h18M5 10v9m4-9v9m6-9v9m4-9v9M2 21h20"/></svg>';
+ const cardSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>';
+ function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"]')){
+   for(const name of ['cardId','accountId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement)||field.dataset.v789Enhanced==='1')continue;
+     const label=field.closest('label');if(!label)continue;
+     field.dataset.v789Enhanced='1';field.classList.add('v789-native-keep');label.classList.add('v789-select-enhanced');
+     const button=document.createElement('button');button.type='button';button.className='v789-select-open';button.setAttribute('aria-label','Seleccionar '+(name==='cardId'?'tarjeta':'cuenta de origen'));
+     const ic=document.createElement('span');ic.className='v789-select-ico';ic.innerHTML=name==='cardId'?cardSvg:bankSvg;
+     const details=document.createElement('span');details.className='v789-select-details';const strong=document.createElement('strong');const small=document.createElement('small');small.textContent=name==='cardId'?'Tarjeta de crédito':'Cuenta bancaria o efectivo';details.append(strong,small);
+     const chevron=document.createElement('span');chevron.className='v789-select-chevron';chevron.textContent='⌄';button.append(ic,details,chevron);
+     label.appendChild(button);
+     const update=()=>{const text=field.selectedOptions?.[0]?.textContent?.trim()||'Seleccionar';if(strong.textContent!==text)strong.textContent=text};
+     field.addEventListener('change',update);update();button.addEventListener('click',()=>show(field,name));
+   }
+ }}
+ let busy=false;
+ function show(field,name){if(root.querySelector('.v789-product-backdrop'))return;
+  const options=[...field.options].filter(o=>!o.disabled&&o.value);let selected=field.value;
+  const layer=document.createElement('div');layer.className='v789-product-backdrop';layer.setAttribute('role','presentation');
+  const sheet=document.createElement('section');sheet.className='v789-product-sheet';sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');sheet.setAttribute('aria-label','Seleccionar '+(name==='cardId'?'tarjeta':'cuenta'));
+  const grip=document.createElement('span');grip.className='v789-sheet-grip';grip.setAttribute('aria-hidden','true');
+  const header=document.createElement('header');const title=document.createElement('h3');title.textContent=name==='cardId'?'Selecciona una tarjeta':'Selecciona una cuenta';const close=document.createElement('button');close.type='button';close.className='v789-picker-close';close.setAttribute('aria-label','Cerrar selector');close.textContent='×';header.append(title,close);
+  const intro=document.createElement('p');intro.className='v789-sheet-sub';intro.textContent=name==='cardId'?'Elige la tarjeta que quieres pagar.':'Elige desde qué cuenta se descontará el pago.';
+  const search=document.createElement('input');search.type='search';search.className='v789-picker-search';search.placeholder=name==='cardId'?'Buscar tarjeta…':'Buscar cuenta…';search.setAttribute('aria-label',search.placeholder);
+  const list=document.createElement('div');list.className='v789-picker-list';const rows=[];
+  for(const o of options){const line=document.createElement('button');line.type='button';line.className='v789-picker-row';line.dataset.value=o.value;
+   const mini=document.createElement('span');const str=o.textContent||'';const mc=/mastercard|qik/i.test(str);mini.className='v789-picker-mini '+(name!=='cardId'?'is-account':mc?'is-master':'');mini.innerHTML=name!=='cardId'?bankSvg:mc?'🔴🟠':'VISA';
+   const txt=document.createElement('span');txt.className='v789-picker-text';const strong=document.createElement('strong');strong.textContent=str;const sub=document.createElement('small');sub.textContent=name==='cardId'?'Tarjeta registrada':'Cuenta registrada';txt.append(strong,sub);
+   const mark=document.createElement('span');mark.className='v789-picker-mark';line.append(mini,txt,mark);rows.push(line);list.appendChild(line);
+   line.addEventListener('click',()=>{selected=o.value;updateRows()});
+  }
+  const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';confirm.textContent=name==='cardId'?'Usar esta tarjeta':'Usar esta cuenta';
+  function updateRows(){for(const row of rows){const yes=row.dataset.value===selected;row.setAttribute('aria-pressed',String(yes));row.lastElementChild.textContent=yes?'✓':''}confirm.disabled=!selected;}
+  function dismiss(){layer.remove();document.removeEventListener('keydown',onKey)}
+  function onKey(e){if(e.key==='Escape'){e.preventDefault();dismiss()}}
+  close.addEventListener('click',dismiss);layer.addEventListener('click',e=>{if(e.target===layer)dismiss()});document.addEventListener('keydown',onKey);
+  confirm.addEventListener('click',()=>{if(!options.some(o=>o.value===selected))return;field.value=selected;field.dispatchEvent(new Event('change',{bubbles:true}));dismiss()});
+  search.addEventListener('input',()=>{const q=search.value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();for(const row of rows){const s=row.querySelector('strong')?.textContent.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()||'';row.hidden=!!q&&!s.includes(q)}});
+  sheet.append(grip,header,intro,search,list,confirm);layer.appendChild(sheet);root.appendChild(layer);updateRows();
+ }
+ function schedule(){if(busy)return;busy=true;requestAnimationFrame(()=>{busy=false;enhance()})}
+ new MutationObserver(schedule).observe(root,{childList:true,subtree:true});enhance();
+})();
+</script>
 </body>
 </html>
