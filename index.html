@@ -83238,5 +83238,199 @@ body:is(.theme-light,.theme-white) #modal-root .other-studio-form.v790-refined .
 body:is(.theme-black,.theme-dark) #modal-root .other-studio-form.v790-refined .v49-payment-intro :is(.v49-quiet-tag,small){color:#bac1cd!important;-webkit-text-fill-color:#bac1cd!important}
 </style>
 <!-- V804 · FIN -->
+
+<style id="v806-bank-forms-black-coherence">
+/* V806: Black auténtico en subpantallas bancarias y sus hojas de edición.
+   Intervención visual: no modifica entradas, IDs, callbacks, relaciones ni persistencia. */
+body.theme-black #modal-root :is(.v378-group-banks,.v378-group-cards,.v378-group-loans,.v378-group-investments){
+  --v806-deep:#000;--v806-card:#080809;--v806-field:#101011;
+  --v806-border:#303033;--v806-ink:#f5f5f6;--v806-muted:#acadb3;
+  color:var(--v806-ink)!important;
+}
+/* Encabezado y cierre: no conservar píldoras blancas o azules en Black. */
+body.theme-black #modal-root :is(.v378-group-banks,.v378-group-cards,.v378-group-loans,.v378-group-investments)>.modal-head{
+  background:#000!important;background-image:none!important;color:#f7f7f7!important;
+  border-bottom:1px solid #27272a!important;
+}
+body.theme-black #modal-root :is(.v378-group-banks,.v378-group-cards,.v378-group-loans,.v378-group-investments)>.modal-head .close{
+  background:#121214!important;background-image:none!important;color:#f7f7f7!important;
+  -webkit-text-fill-color:#f7f7f7!important;border:1px solid #353538!important;
+  box-shadow:none!important;
+}
+/* Mismo lenguaje para los cinco formularios: institution/account/card/loan/certificate. */
+body.theme-black #modal-root :is(.v378-group-banks,.v378-group-cards,.v378-group-loans,.v378-group-investments) :is(
+ .v135-more,.smart-fold,.v28-card-identifiers,.smart-form-section,.smart-quiet-help,
+ .v87-section,.v87-optional-costs,.v87-inline-note,.form-note.form-full
+){
+  background:var(--v806-card)!important;background-image:none!important;
+  border:1px solid var(--v806-border)!important;
+  box-shadow:none!important;color:var(--v806-ink)!important;
+  -webkit-text-fill-color:initial!important;
+}
+/* Los certificados se componen de labels contenedores que conservaron el blanco. */
+body.theme-black #modal-root .v378-group-investments .form-grid>label,
+body.theme-black #modal-root .v378-group-investments .form-grid>label.v135-compact-field{
+  background:var(--v806-card)!important;background-image:none!important;
+  border:1px solid var(--v806-border)!important;box-shadow:none!important;color:var(--v806-ink)!important;
+}
+/* El wizard de préstamo utilizaba botones azul cielo y footer blanquecino. */
+body.theme-black #modal-root .v378-group-loans .v83-form-step{
+  background:#0c0c0e!important;background-image:none!important;
+  border:1px solid var(--v806-border)!important;color:#bfc3cd!important;box-shadow:none!important;
+}
+body.theme-black #modal-root .v378-group-loans .v83-form-step.selected,
+body.theme-black #modal-root .v378-group-loans .v83-form-step[aria-current="step"]{
+  background:color-mix(in srgb,var(--vive-theme-color,#777) 17%,#0a0a0b)!important;
+  border-color:color-mix(in srgb,var(--vive-theme-color,#777) 44%,#303033)!important;
+  color:var(--v806-ink)!important;
+}
+body.theme-black #modal-root .v378-group-loans .v83-form-navigation.v87-nav{
+  background:#000!important;background-image:none!important;
+  border:1px solid #252528!important;box-shadow:none!important;
+}
+body.theme-black #modal-root .v378-group-loans :is(.v87-section>header,.v87-section .v87-section-head,.v87-section .v87-section-title){
+  background:transparent!important;color:var(--v806-ink)!important;
+}
+body.theme-black #modal-root :is(.v378-group-banks,.v378-group-cards,.v378-group-loans,.v378-group-investments) :is(
+ .v135-more>summary,.smart-fold>summary,.v87-optional-costs>summary,
+ .v28-card-identifiers>strong,.smart-form-section>strong,.v87-section strong
+){color:var(--v806-ink)!important}
+body.theme-black #modal-root :is(.v378-group-banks,.v378-group-cards,.v378-group-loans,.v378-group-investments) :is(
+ .form-note,.smart-quiet-help,.v87-inline-note,.v87-section p,.v87-section small
+){color:var(--v806-muted)!important}
+/* Campos editables mantienen contraste independiente del fondo del agrupador. */
+body.theme-black #modal-root :is(.v378-group-banks,.v378-group-cards,.v378-group-loans,.v378-group-investments) :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
+  background:#111112!important;background-image:none!important;color:#f8f8f9!important;
+  -webkit-text-fill-color:#f8f8f9!important;border-color:#353539!important;
+}
+body.theme-black #modal-root :is(.v378-group-banks,.v378-group-cards,.v378-group-loans,.v378-group-investments) :is(input,textarea)::placeholder{
+  color:#999ba5!important;-webkit-text-fill-color:#999ba5!important;opacity:1!important;
+}
+body.theme-black #modal-root :is(.v378-group-banks,.v378-group-cards,.v378-group-loans,.v378-group-investments) :is(input,select,textarea,button):focus-visible{
+  outline:2px solid var(--vive-theme-color,#9a86f4)!important;outline-offset:2px!important;
+}
+/* Expediente detallado de institución: los KPI aislados conservaban azul gris. */
+body.theme-black #app .world-banks .v203-full-detail :is(.v40-tile,.v40-benefit-card,.v42-bank-card),
+body.theme-black #app .world-banks .v203-full-detail :is(.v40-grid>div,.v40-products>article){
+  background:#090909!important;background-image:none!important;
+  border:1px solid #303033!important;box-shadow:none!important;color:#f5f5f6!important;
+}
+/* En Bancos, unificar las superficies principales con negro OLED sin eliminar
+   la diferenciación necesaria entre tarjetas, acciones y elementos activos. */
+@media(max-width:767px){
+ body.theme-black #app .world-banks .v203-mobile-banks{
+   --b203-surface:#080809;--b203-wash:#101011;
+   --b203-text:#f5f5f6;--b203-sub:#b2b2b8;
+   --b203-line:#303033;--b203-shadow:none;
+ }
+ body.theme-black #app .world-banks .v203-institution.v202-bank-item{
+   background:#080809!important;border-color:#303033!important;box-shadow:none!important;
+ }
+ body.theme-black #app .world-banks .v203-expanded{
+   background:#050505!important;border-color:#303033!important;
+ }
+ body.theme-black #app .world-banks .v203-mobile-banks :is(
+  .v203-expanded-top>div,.v203-product-type,.v203-items-list,.v203-expand-actions button
+ ){
+   background:#101011!important;border-color:#303033!important;
+ }
+ body.theme-black #app .world-banks .v203-product-type.active,
+ body.theme-black #app .world-banks .v203-profile.active{
+   background:color-mix(in srgb,var(--vive-theme-color,#777) 17%,#101011)!important;
+   border-color:#48484e!important;color:#fafafa!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ body.theme-black #app .world-banks .v203-institution,
+ body.theme-black #modal-root .v378-group-loans .v83-form-step{transition:none!important;animation:none!important}
+}
+</style>
+
+<style id="v807-more-options-compact-headers">
+/* V807 · Más opciones: eliminar encabezados repetidos sin tocar la lógica del módulo.
+   Alcance: formularios y submenús de Otras gestiones / Más opciones. */
+#modal-root form.other-studio-form :is(.v790-brand,.v790-kicker,.other-studio-overline){display:none!important}
+#modal-root form.other-studio-form :is(.other-studio-header,.other-studio-top,.other-studio-content){min-width:0!important;box-sizing:border-box!important}
+#modal-root form.other-studio-form.v790-refined .other-studio-header,
+#modal-root form.other-studio-form.v797-approved .other-studio-header{
+  grid-template-columns:56px minmax(0,1fr)!important;
+  align-items:start!important;
+  align-content:start!important;
+  min-height:0!important;
+  padding:6px 0 14px!important;
+  margin:0 0 6px!important;
+  row-gap:4px!important;
+}
+#modal-root form.other-studio-form.v790-refined .other-studio-top,
+#modal-root form.other-studio-form.v797-approved .other-studio-top{
+  position:absolute!important;
+  top:2px!important;
+  right:0!important;
+  width:auto!important;
+  min-width:0!important;
+  height:auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  margin:0!important;
+  padding:0!important;
+  gap:0!important;
+  background:transparent!important;
+  border:0!important;
+  z-index:4!important;
+}
+#modal-root form.other-studio-form.v790-refined .other-studio-close,
+#modal-root form.other-studio-form.v797-approved .other-studio-close{
+  width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
+  font-size:24px!important;line-height:1!important;border-radius:50%!important;
+}
+#modal-root form.other-studio-form.v790-refined .v785-hero-icon,
+#modal-root form.other-studio-form.v797-approved .v785-hero-icon{
+  grid-column:1!important;grid-row:1 / span 2!important;
+  width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;
+  margin:0!important;border-radius:16px!important;
+}
+#modal-root form.other-studio-form.v790-refined .v785-hero-icon svg,
+#modal-root form.other-studio-form.v797-approved .v785-hero-icon svg{width:28px!important;height:28px!important}
+#modal-root form.other-studio-form.v790-refined .other-studio-header h2,
+#modal-root form.other-studio-form.v797-approved .other-studio-header h2{
+  grid-column:2!important;grid-row:1!important;
+  margin:0!important;max-width:none!important;
+  font-size:clamp(22px,6vw,31px)!important;line-height:1.08!important;
+}
+#modal-root form.other-studio-form.v790-refined .other-studio-header>p,
+#modal-root form.other-studio-form.v797-approved .other-studio-header>p{
+  grid-column:2!important;grid-row:2!important;
+  margin:2px 0 0!important;max-width:none!important;
+  font-size:clamp(12px,3.25vw,14px)!important;line-height:1.42!important;
+}
+#modal-root form.other-studio-form.v790-refined .other-studio-content,
+#modal-root form.other-studio-form.v797-approved .other-studio-content{padding-top:4px!important}
+@media (max-width:390px){
+  #modal-root form.other-studio-form.v790-refined .other-studio-header,
+  #modal-root form.other-studio-form.v797-approved .other-studio-header{grid-template-columns:50px minmax(0,1fr)!important;padding-top:4px!important}
+  #modal-root form.other-studio-form.v790-refined .v785-hero-icon,
+  #modal-root form.other-studio-form.v797-approved .v785-hero-icon{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;border-radius:14px!important}
+  #modal-root form.other-studio-form.v790-refined .other-studio-header h2,
+  #modal-root form.other-studio-form.v797-approved .other-studio-header h2{font-size:clamp(20px,6vw,28px)!important}
+  #modal-root form.other-studio-form.v790-refined .other-studio-close,
+  #modal-root form.other-studio-form.v797-approved .other-studio-close{width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important}
+}
+</style>
+<script id="v807-more-options-compact-headers-script">
+(function(){
+  const root = document.getElementById('modal-root');
+  if(!root) return;
+  const clean = scope => {
+    (scope.querySelectorAll ? scope.querySelectorAll('form.other-studio-form .v790-brand, form.other-studio-form .v790-kicker, form.other-studio-form .other-studio-overline') : []).forEach(el=>{
+      el.setAttribute('aria-hidden','true');
+      el.style.display='none';
+    });
+  };
+  clean(root);
+  new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n && n.nodeType===1) clean(n);}}}).observe(root,{childList:true,subtree:true});
+})();
+</script>
+
 </body>
 </html>
