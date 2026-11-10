@@ -25766,6 +25766,7 @@ body.theme-black .v726-profile-state{color:color-mix(in srgb,var(--v726-accent,#
 .v730-apple-access button span:nth-child(2){flex:1;display:flex;flex-direction:column;gap:2px}
 .v730-apple-access button small{font-size:11px;opacity:.7}
 .theme-dark .v730-apple-mini .v730-apple-logo{color:#fff}
+.v730-apple-wordmark{display:inline-flex;align-items:center;gap:4px;font-weight:800;letter-spacing:-.02em;color:var(--text,#162a45);line-height:1;white-space:nowrap}.v730-apple-wordmark svg{width:14px;height:17px;display:block;flex:none}.v730-apple-wordmark span{font-size:18px;line-height:1}.v730-apple-mini .v730-apple-wordmark span{font-size:17px}.theme-dark .v730-apple-wordmark,.theme-black .v730-apple-wordmark{color:#fff}
 @media(max-width:390px){.v726-profile-stats>div:first-child strong{font-size:13px}}
 </style>
 <style id="v732-home-three-block-refinement">
@@ -25841,6 +25842,24 @@ body.theme-black .v726-profile-state{color:color-mix(in srgb,var(--v726-accent,#
 @media(min-width:600px) and (max-width:790px){
  .vive-mobile-home .v736-extra-kpi .v732-kpi-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
  .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button:nth-child(3){grid-column:auto}
+}
+</style>
+<style id="v739-compact-configurable-balance">
+/* Solo la tarjeta adicional; el KPI principal no cambia. */
+.vive-mobile-home .v736-extra-kpi[hidden]{display:none!important}
+@media(max-width:790px){
+ .vive-mobile-home .v736-extra-kpi .v732-kpi-stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin-top:15px!important;padding-top:10px!important}
+ .vive-mobile-home .v736-extra-kpi .v732-kpi-stats>button{grid-column:auto!important;min-width:0!important;min-height:62px!important;padding:8px 7px!important;gap:5px!important;overflow:hidden!important}
+ .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button span:last-child{min-width:0!important;overflow:hidden!important}
+ .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button strong{font-size:clamp(10px,2.75vw,13px)!important;letter-spacing:-.055em!important;white-space:nowrap!important;font-variant-numeric:tabular-nums!important;overflow:visible!important}
+ .vive-mobile-home .v736-extra-kpi .v732-kpi-stat-icon{width:clamp(22px,6vw,27px)!important;height:clamp(22px,6vw,27px)!important;flex:0 0 clamp(22px,6vw,27px)!important}
+ .vive-mobile-home .v736-extra-kpi .v732-kpi-value{font-size:clamp(21px,5.4vw,35px)!important}
+ .vive-mobile-home .v736-extra-kpi .v732-home-kpi{padding:clamp(14px,3.5vw,19px)!important}
+}
+@media(max-width:360px){
+ .vive-mobile-home .v736-extra-kpi .v732-kpi-stats>button{gap:3px!important;padding:7px 4px!important}
+ .vive-mobile-home .v736-extra-kpi .v732-kpi-stat-icon{width:20px!important;height:20px!important;flex-basis:20px!important}
+ .vive-mobile-home .v736-extra-kpi .v732-kpi-stats button strong{font-size:clamp(9px,2.8vw,11px)!important}
 }
 </style>
 </head>
@@ -29516,13 +29535,9 @@ function v273OverviewExtraWidgets(){
  // Subscriptions, cards-to-pay and credit-card summaries are still available
  // in their own modules; financial records remain unchanged.
  const recent=(recentTx()||[]).slice(0,4);
- const activity=recent.map(t=>{
-  const category=String(t.category||t.subcategory||'').trim();
-  const detail=[prettyDate(t.date),t.time||'',TRANSL[t.type]||t.type].filter(Boolean).join(' · ');
-  return `<button type="button" class="v273-widget-row v8-activity-button v732-activity-row" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Abrir movimiento de ${sanitize(transactionTitle(t))}"><span class="v273-widget-symbol">${icon(['income','bank_reward','card_reward'].includes(t.type)?'up':'wallet')}</span><span class="v273-widget-copy"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${sanitize(detail)}</small>${category?`<em class="v732-activity-chip">${sanitize(category)}</em>`:''}</span><b>${txDisplay(t)}</b><span aria-hidden="true" class="v8-row-arrow">${icon('arrow')}</span></button>`;
- }).join('');
+ const activity=recent.map(t=>`<button type="button" class="v273-widget-row v8-activity-button" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Abrir movimiento de ${sanitize(transactionTitle(t))}"><span class="v273-widget-symbol">${icon(['income','bank_reward','card_reward'].includes(t.type)?'up':'wallet')}</span><span class="v273-widget-copy"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b><span aria-hidden="true" class="v8-row-arrow">${icon('arrow')}</span></button>`).join('');
  const head=(eyebrow,title,link,text)=>`<div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">${eyebrow}</span><h2>${title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${link}">${text} ${icon('arrow')}</button></div>`;
- return `<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver todos')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
+ return `<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver historial')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
 ${v294BankingWidgets()}${v309ExtraCharts()}`;
 }
 
@@ -29645,7 +29660,7 @@ function v342CreativePositionMobile(liquid,debt,net){
  </section>`;
 }
 /* V732: tres refinamientos visuales en Inicio; solo datos ya sincronizados. */
-function v732HomeKpi(liquid,debt,net){
+function v732HomeKpi(liquid,debt,net,compact=false){
  const prior=v64PositionComparison();
  const previous=prior.valid?Number(prior.position?.net):NaN;
  const valid=prior.valid&&Number.isFinite(previous)&&Math.abs(previous)>0.005;
@@ -29661,7 +29676,7 @@ function v732HomeKpi(liquid,debt,net){
   <div class="v732-kpi-stats">
    <button type="button" data-act="v186Deep" data-id="liquidity"><span class="v732-kpi-stat-icon">${icon('wallet')}</span><span><strong>${money(liquid)}</strong><small>Fondos</small></span></button>
    <button type="button" data-act="v186Deep" data-id="debt"><span class="v732-kpi-stat-icon">${icon('card')}</span><span><strong>${money(debt)}</strong><small>Deudas</small></span></button>
-   <button type="button" data-act="v186Deep" data-id="net"><span class="v732-kpi-stat-icon">${icon('analytics')}</span><span><strong>${money(net)}</strong><small>Posición neta</small></span></button>
+${compact?'':`   <button type="button" data-act="v186Deep" data-id="net"><span class="v732-kpi-stat-icon">${icon('analytics')}</span><span><strong>${money(net)}</strong><small>Posición neta</small></span></button>`}
   </div>
  </section>`;
 }
@@ -29716,9 +29731,9 @@ function mobileHome(){
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
    <!-- V736 · KPI adicional: módulo independiente. No sustituye la tarjeta principal ni sus tres indicadores. -->
-   <section class="v736-extra-kpi" aria-label="Análisis adicional de balance">
+   <section class="v736-extra-kpi" data-v105-widget="balancePosition" aria-label="Análisis adicional de balance">
     <div class="v736-extra-heading"><span class="vive-mobile-eyebrow">ANÁLISIS COMPLEMENTARIO</span><h2>Balance y posición neta</h2></div>
-    ${v732HomeKpi(liquid,debt,net)}
+    ${v732HomeKpi(liquid,debt,net,true)}
    </section>
    ${v412PremiumMobileWidgets()}
    ${v105Config().visible.includes('applePayInbox')&&v5ApplePayPending().length?v7ApplePayMobileWidget():''}
@@ -39838,6 +39853,7 @@ loanForm=function(id,preBank){
    Los datos salen del documento db ya cargado. No se añade ninguna consulta remota.
    La personalización persiste solo claves de presentación. */
 const V105_WIDGETS=[
+ {id:'balancePosition',title:'Balance y posición neta',hint:'KPI complementario con posición financiera, fondos y deudas · opcional'},
  {id:'applePayInbox',title:'Apple Pay · Por clasificar',hint:'Compras Wallet pendientes: asigna categoría y subcategoría desde Inicio'},
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
  {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
@@ -39907,6 +39923,8 @@ function v105Config(){
  // Nuevo módulo una sola vez, sin volver a habilitarlo si luego se desactiva.
  if(!originalOrder.includes('applePayInbox')){const i=order.indexOf('applePayInbox');if(i>=0)order.splice(i,1);order.unshift('applePayInbox');}
  const visible=Array.isArray(raw.visible)?[...new Set(raw.visible.filter(x=>ids.includes(x)))]:v316VisibleDefaults(ids);
+ // V739: nuevo KPI configurable. Se incorpora visible una sola vez y se respeta cualquier desactivación posterior.
+ if(!originalOrder.includes('balancePosition')&&!visible.includes('balancePosition'))visible.push('balancePosition');
  if(!originalOrder.includes('applePayInbox')&&!visible.includes('applePayInbox'))visible.push('applePayInbox');
  // V317: migrar solo los dos gráficos nuevos; las selecciones anteriores quedan intactas.
  if(!V317_NEW_GRAPHS.every(id=>originalOrder.includes(id))){
@@ -39964,7 +39982,7 @@ function v105Customizer(){
   const w=V105_WIDGETS.find(x=>x.id===id);if(!w)return '';
   return `<div class="v105-config-row"><label><input type="checkbox" data-v105-toggle="${id}" ${enabled.has(id)?'checked':''}/><span><strong>${w.title}</strong><small>${w.hint}</small></span></label><span class="v105-config-order"><button type="button" data-v105-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${w.title}">↑</button><button type="button" data-v105-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${w.title}">↓</button></span></div>`;
  }).join('');
- document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v105-config-modal" role="dialog" aria-modal="true" aria-label="Personalizar resumen"><div class="modal-head"><div><h2>Personalizar Resumen</h2><p>Elige los widgets visibles y su orden. Tu posición financiera queda fija.</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v105-config-rows">${rows}</div><div class="v105-config-actions"><button type="button" class="btn soft" data-v105-reset="1">Restaurar diseño</button><span><button type="button" class="btn soft" data-act="closeModal">Cancelar</button><button type="button" class="btn" data-v105-apply="1">Guardar</button></span></div></section></div>`;
+ document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v105-config-modal" role="dialog" aria-modal="true" aria-label="Personalizar resumen"><div class="modal-head"><div><h2>Personalizar Resumen</h2><p>Elige los widgets visibles y su orden. El balance complementario también se puede ocultar.</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v105-config-rows">${rows}</div><div class="v105-config-actions"><button type="button" class="btn soft" data-v105-reset="1">Restaurar diseño</button><span><button type="button" class="btn soft" data-act="closeModal">Cancelar</button><button type="button" class="btn" data-v105-apply="1">Guardar</button></span></div></section></div>`;
 }
 function v105PayMenu(x){
  const kind=x.kind,ref=x.ref,ccy=x.ccy||'DOP',amount=Math.max(0,Number(x.amount)||0),date=x.due||today();
@@ -42618,7 +42636,7 @@ function v726LinkedStrip(){
  const rows=v726LinkedRecords(),count=rows.filter(x=>!x.archived).length;
  const institutions=(db.banks||[]).filter(x=>!x.archived).slice(0,5);
  return `<section class="v726-linked-section" aria-label="Cuentas vinculadas"><div class="v726-section-line"><span class="v242-group-caption">CUENTAS VINCULADAS</span><button type="button" class="v726-manage-link" data-v242-section="linked">Gestionar ${icon('arrow')}</button></div>
- <div class="v726-linked-strip"><button type="button" class="v726-linked-mini v730-apple-mini" data-v726-open-apple-pay="1" aria-label="Abrir configuración de Apple Pay"><span class="v730-apple-logo" aria-hidden="true">●Pay</span><small>Apple Pay</small><span class="v730-mini-arrow" aria-hidden="true">›</span></button>${institutions.length?institutions.map(x=>`<button type="button" class="v726-linked-mini" data-v726-linked-open="bank" data-v726-id="${sanitize(x.id)}"><span class="v726-bank-mark">${bankLogoMark(x,'v726-mini-logo')}</span><small>${sanitize(v726CleanText(x.name,26))}</small><span class="v726-mini-dot" title="Registrada, no necesariamente conectada al banco"></span></button>`).join(''):`<div class="v726-empty-mini">Todavía no hay instituciones activas registradas.</div>`}</div>
+ <div class="v726-linked-strip"><button type="button" class="v726-linked-mini v730-apple-mini" data-v726-open-apple-pay="1" aria-label="Abrir configuración de Apple Pay"><span class="v730-apple-wordmark" aria-hidden="true"><svg viewBox="0 0 26 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M16.68 10.55c-2.53 0-4.14 1.52-6.29 1.52-2.19 0-3.43-1.47-6.15-1.21C.88 11.55-.26 15.94.26 20.18c.74 5.16 3.98 11.5 7.67 11.5 1.96 0 2.75-1.22 5.16-1.22 2.23 0 3.14 1.22 5.16 1.22 3.28 0 5.59-4.13 7.17-8.16-3.95-1.43-5.24-6.62-1.4-9.46-1.58-2.39-4.05-3.41-7.34-3.51Z"/><path d="M13.59 8.68c.09-4.14 2.8-6.88 6.87-7.8.31 4.03-2.47 7.28-6.87 7.8Z"/></svg><span>Pay</span></span><small>Apple Pay</small><span class="v730-mini-arrow" aria-hidden="true">›</span></button>${institutions.length?institutions.map(x=>`<button type="button" class="v726-linked-mini" data-v726-linked-open="bank" data-v726-id="${sanitize(x.id)}"><span class="v726-bank-mark">${bankLogoMark(x,'v726-mini-logo')}</span><small>${sanitize(v726CleanText(x.name,26))}</small><span class="v726-mini-dot" title="Registrada, no necesariamente conectada al banco"></span></button>`).join(''):`<div class="v726-empty-mini">Todavía no hay instituciones activas registradas.</div>`}</div>
  <p class="v726-linked-meta">${count} registros activos · ${rows.length-count} ${rows.length-count===1?'archivado':'archivados'}. Los productos se muestran desde tus datos financieros, sin conexión bancaria automática.</p></section>`;
 }
 function v726LinkedPage(){
@@ -42626,7 +42644,7 @@ function v726LinkedPage(){
  const visible=rows.filter(x=>filter==='all'||(filter==='active'?!x.archived:x.archived));
  const countActive=rows.filter(x=>!x.archived).length;
  return `<div class="v726-linked-page" aria-label="Gestión de cuentas vinculadas"><div class="v726-linked-intro"><span class="v726-kicker">TUS REGISTROS FINANCIEROS</span><h2>Productos registrados</h2><p>Consulta tus instituciones y productos registrados. Archivar conserva movimientos, pagos e historial.</p></div>
- <div class="v730-apple-access"><button type="button" data-v726-open-apple-pay="1"><span class="v730-apple-logo" aria-hidden="true">●Pay</span><span><strong>Apple Pay</strong><small>Gestionar integración y tarjetas asociadas</small></span><span aria-hidden="true">›</span></button></div>
+ <div class="v730-apple-access"><button type="button" data-v726-open-apple-pay="1"><span class="v730-apple-wordmark" aria-hidden="true"><svg viewBox="0 0 26 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M16.68 10.55c-2.53 0-4.14 1.52-6.29 1.52-2.19 0-3.43-1.47-6.15-1.21C.88 11.55-.26 15.94.26 20.18c.74 5.16 3.98 11.5 7.67 11.5 1.96 0 2.75-1.22 5.16-1.22 2.23 0 3.14 1.22 5.16 1.22 3.28 0 5.59-4.13 7.17-8.16-3.95-1.43-5.24-6.62-1.4-9.46-1.58-2.39-4.05-3.41-7.34-3.51Z"/><path d="M13.59 8.68c.09-4.14 2.8-6.88 6.87-7.8.31 4.03-2.47 7.28-6.87 7.8Z"/></svg><span>Pay</span></span><span><strong>Apple Pay</strong><small>Gestionar integración y tarjetas asociadas</small></span><span aria-hidden="true">›</span></button></div>
  <div class="v726-linked-tabs" role="group" aria-label="Estado de productos">${[['all','Todas',rows.length],['active','Activas',countActive],['archived','Archivadas',rows.length-countActive]].map(([v,label,n])=>`<button type="button" class="${filter===v?'is-active':''}" data-v726-linked-filter="${v}" aria-pressed="${filter===v}">${label} <small>${n}</small></button>`).join('')}</div>
  <div class="v726-linked-list">${visible.length?visible.map(x=>`<article class="v726-linked-record"><span class="v726-linked-icon">${x.kind==='bank'?bankLogoMark((db.banks||[]).find(b=>String(b.id)===x.id),'v726-record-logo'):icon(x.ico)}</span><div class="v726-linked-detail"><strong>${sanitize(x.name)}</strong><small>${sanitize(x.type)} · ${sanitize(v726CleanText(x.bank,70))}</small><span class="v726-linked-status ${x.archived?'is-archived':''}">${x.archived?'Archivada':'Activa'}</span></div><div class="v726-linked-actions"><button type="button" data-v726-linked-open="${x.kind}" data-v726-id="${sanitize(x.id)}" aria-label="Consultar ${sanitize(x.name)}">Ver</button><button type="button" data-v726-linked-toggle="${x.kind}" data-v726-id="${sanitize(x.id)}">${x.archived?'Reactivar':'Archivar'}</button></div></article>`).join(''):`<div class="v726-linked-empty">No hay productos en esta categoría.</div>`}</div>
  <p class="v726-linked-note">«Vinculadas» significa registradas en tus finanzas. No implica que exista una conexión bancaria o sincronización bancaria automática.</p></div>`;
@@ -42720,7 +42738,7 @@ function v294BankingWidgets(){
   {id:'loans',title:'Préstamos bancarios',eyebrow:'FINANCIAMIENTO',page:'loans',icon:'receipt',count:loans.length,amount:money(loanTotal),unit:'saldo pendiente equivalente',hint:`${loans.length} contratos activos`,items:loans.slice(0,3).map(l=>({name:l.name||'Préstamo',value:money(loanBalance(l))}))},
   {id:'certificates',title:'Certificados',eyebrow:'AHORRO E INVERSIÓN',page:'certificates',icon:'analytics',count:certificates.length,amount:money(certificateTotal),unit:'capital registrado equivalente',hint:`${certificates.length} certificados activos`,items:certificates.slice(0,3).map(c=>({name:c.name||'Certificado',value:'Activo'}))}
  ];
- return layouts.filter(w=>w.id!=='cards').map(w=>w.id==='banks'?v732HomeBanks():`<section class="v105-mobile-extra v273-overview-widget v294-finance-widget" data-v105-widget="${w.id}" aria-label="${w.title}">
+ return layouts.filter(w=>w.id!=='cards').map(w=>`<section class="v105-mobile-extra v273-overview-widget v294-finance-widget" data-v105-widget="${w.id}" aria-label="${w.title}">
   <div class="vive-mobile-card-head v294-widget-head"><div><span class="vive-mobile-eyebrow">${w.eyebrow}</span><h2>${w.title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${w.page}" aria-label="Abrir ${w.title}">${icon('arrow')}</button></div>
   <div class="v294-widget-amount"><span class="v294-widget-ico">${icon(w.icon)}</span><div><strong>${w.amount}</strong><small>${w.unit}</small></div></div>
   <span class="v294-widget-count">${w.hint}</span>
