@@ -83432,5 +83432,187 @@ body.theme-black #app .world-banks .v203-full-detail :is(.v40-grid>div,.v40-prod
 })();
 </script>
 
+
+<style id="v808-otras-gestiones-legibilidad">
+/* V808 — Mejora localizada de contraste, tipografía y layout. Ningún input, validación o listener modificado. */
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined{
+ --v808-ink:#17263e;--v808-muted:#51627b;--v808-bg:#f7f9fd;
+ --v808-surface:linear-gradient(145deg,#fff,#f3f6fb);
+ --v808-border:#d5deeb;--v808-icon:#344b74;
+ --v808-icon-surface:#eaf0fb;--v808-soft:#eff3f9;
+ --v790-text:var(--v808-ink);--v790-muted:var(--v808-muted);--v790-surface:var(--v808-bg);
+ --v790-field:var(--v808-surface);--v790-panel:var(--v808-surface);
+ --v797-text:var(--v808-ink);--v797-sub:var(--v808-muted);--v797-card:var(--v808-surface);--v797-border:var(--v808-border);--v808-focus:var(--vive-theme-color,var(--v801-accent,#665dec));
+}
+#modal-root[data-v808-skin="dark"] form.other-studio-form.v790-refined{
+ --v808-ink:#fafafb;--v808-muted:#c2c4cc;--v808-bg:#000;
+ --v808-surface:linear-gradient(145deg,#17171a,#0c0c0e);
+ --v808-border:#36363a;--v808-icon:#d5d9e3;
+ --v808-icon-surface:#1b1e27;--v808-soft:#151519;
+ --v790-text:var(--v808-ink);--v790-muted:var(--v808-muted);--v790-surface:var(--v808-bg);
+ --v790-field:var(--v808-surface);--v790-panel:var(--v808-surface);
+ --v797-text:var(--v808-ink);--v797-sub:var(--v808-muted);--v797-card:var(--v808-surface);--v797-border:var(--v808-border);--v808-focus:var(--vive-theme-color,var(--v801-accent,#8d84ef));
+}
+/* Approved refund and adjustment flows contained older, higher-specificity dark overrides. */
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined[data-special="refund"].v794-linked-flow :is(
+ .other-studio-amount,.v794-source-card,.v794-purchase-card,.v796-refund-method,.v794-recovery,.v796-field-button
+),
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined.v797-approved[data-special="adjustment"] :is(
+ .other-studio-amount,.other-studio-fields>label,.other-studio-impact,.other-studio-fold
+){background:var(--v808-surface)!important;border-color:var(--v808-border)!important;
+ color:var(--v808-ink)!important;box-shadow:none!important}
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined[data-special="refund"].v794-linked-flow :is(
+ .v794-card-text,.v794-card-text strong,.v794-purchase-main,.v794-purchase-main strong,
+ .v796-field-copy,.v796-field-copy strong,.v796-impact-values strong,.v794-recovery h4,
+ .other-studio-amount>span,.other-studio-amount input[name="amount"]
+),
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined.v797-approved[data-special="adjustment"] :is(
+ .other-studio-amount input[name="amount"],.v790-money-symbol,.v768-adjust-heading strong,
+ .other-studio-fields>label,.other-studio-fields>label button,.other-studio-impact h4,.other-studio-impact strong
+){color:var(--v808-ink)!important;-webkit-text-fill-color:var(--v808-ink)!important}
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined[data-special="refund"].v794-linked-flow .v794-recovery .v796-impact-values span:last-child strong{color:var(--v808-focus)!important;-webkit-text-fill-color:var(--v808-focus)!important}
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined[data-special="refund"].v794-linked-flow :is(
+ .v794-card-text small,.v794-purchase-main small,.v796-field-copy small,.v794-recovery p
+){color:var(--v808-muted)!important;-webkit-text-fill-color:var(--v808-muted)!important}
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined.v797-approved[data-special="adjustment"] .v768-adjust-toggle{background:#e7ecf5!important}
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined.v797-approved[data-special="adjustment"] .v768-adjust-toggle button[aria-pressed="true"]{color:#111827!important;-webkit-text-fill-color:#111827!important}
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined .v756-native-select-btn{
+ background:#fff!important;color:var(--v808-ink)!important;border:1px solid var(--v808-border)!important;
+}
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined .v790-currency select{
+ color:#17263e!important;-webkit-text-fill-color:#17263e!important;
+ background:#fff!important;border:1px solid #d5deeb!important;
+}
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined :is(.v796-field-copy small,.v796-impact-values small,.other-studio-impact small){
+ font-size:max(12px, .81rem)!important;line-height:1.4!important;
+}
+#modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined.v797-approved[data-special="adjustment"] .other-studio-fields>label :is(.filter-label,small){
+ color:#51627b!important;-webkit-text-fill-color:#51627b!important;
+}
+/* Compact header: the close affordance has a real grid column and cannot cover text. */
+#modal-root form.other-studio-form.v790-refined .other-studio-header,
+#modal-root form.other-studio-form.v797-approved .other-studio-header{
+ display:grid!important;grid-template-columns:52px minmax(0,1fr) 36px!important;
+ grid-template-rows:auto auto!important;column-gap:11px!important;row-gap:5px!important;
+ padding:8px 0 15px!important;min-height:0!important;align-content:start!important;
+ background:transparent!important;
+}
+#modal-root form.other-studio-form.v790-refined .other-studio-top,
+#modal-root form.other-studio-form.v797-approved .other-studio-top{
+ position:relative!important;inset:auto!important;
+ grid-column:3!important;grid-row:1 /span 2!important;
+ width:36px!important;height:38px!important;min-width:0!important;
+ align-self:start!important;justify-self:end!important;margin:0!important;padding:0!important;
+}
+#modal-root form.other-studio-form.v790-refined .other-studio-close,
+#modal-root form.other-studio-form.v797-approved .other-studio-close{
+ width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
+ background:var(--v808-soft)!important;border:1px solid var(--v808-border)!important;
+ color:var(--v808-ink)!important;-webkit-text-fill-color:var(--v808-ink)!important;
+ box-shadow:none!important;display:grid!important;opacity:1!important;visibility:visible!important;
+}
+#modal-root form.other-studio-form.v790-refined .v785-hero-icon,
+#modal-root form.other-studio-form.v797-approved .v785-hero-icon{
+ grid-column:1!important;grid-row:1 /span 2!important;
+ width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;
+ margin:0!important;border-radius:14px!important;
+ background:var(--v808-icon-surface)!important;color:var(--v808-icon)!important;
+ border:1px solid var(--v808-border)!important;box-shadow:none!important;
+}
+#modal-root form.other-studio-form.v790-refined .other-studio-header h2,
+#modal-root form.other-studio-form.v797-approved .other-studio-header h2{
+ grid-column:2!important;grid-row:1!important;align-self:end!important;
+ max-width:100%!important;min-width:0!important;
+ margin:0!important;padding:0!important;
+ font-size:clamp(20px,5.4vw,29px)!important;font-weight:780!important;
+ line-height:1.15!important;letter-spacing:-.04em!important;
+ color:var(--v808-ink)!important;overflow-wrap:normal!important;
+}
+#modal-root form.other-studio-form.v790-refined .other-studio-header>p,
+#modal-root form.other-studio-form.v797-approved .other-studio-header>p{
+ grid-column:2 /span 2!important;grid-row:2!important;
+ margin:0!important;max-width:100%!important;
+ color:var(--v808-muted)!important;font-size:clamp(12px,3.3vw,14px)!important;
+ line-height:1.45!important;letter-spacing:0!important;
+}
+/* Avoid the re-initializing entry animation fading amounts while native selectors refresh. */
+#modal-root form.other-studio-form.v790-refined.v789-motion-in .other-studio-amount{
+ animation:none!important;opacity:1!important;transform:none!important;
+}
+/* Readable amount, currency, descriptions and native input controls in both themes. */
+#modal-root form.other-studio-form.v790-refined .other-studio-amount,
+#modal-root form.other-studio-form.v790-refined .other-studio-impact,
+#modal-root form.other-studio-form.v790-refined :is(.other-studio-fields>label,.v794-recovery,.v794-source-card,.v794-purchase-card,.v796-refund-method,.other-studio-fold,.v790-note,.v785-benefit-preview){
+ color:var(--v808-ink)!important;background:var(--v808-surface)!important;
+ border:1px solid var(--v808-border)!important;box-shadow:none!important;
+}
+#modal-root form.other-studio-form.v790-refined .other-studio-amount :is(span,strong),
+#modal-root form.other-studio-form.v790-refined .v768-adjust-heading strong,
+#modal-root form.other-studio-form.v790-refined .other-studio-impact :is(h3,h4,strong),
+#modal-root form.other-studio-form.v790-refined .v794-recovery :is(h3,h4,strong),
+#modal-root form.other-studio-form.v790-refined :is(.v796-field-copy strong,.v796-impact-values strong),
+#modal-root form.other-studio-form.v790-refined .other-studio-fold summary{
+ color:var(--v808-ink)!important;-webkit-text-fill-color:var(--v808-ink)!important;
+}
+#modal-root form.other-studio-form.v790-refined :is(.other-studio-amount input[name=amount],.other-studio-fields .field,.other-studio-fields input,.other-studio-fields select,.other-studio-fields textarea,.other-studio-fold input,.other-studio-fold select,.other-studio-fold textarea){
+ color:var(--v808-ink)!important;-webkit-text-fill-color:var(--v808-ink)!important;
+ caret-color:var(--v808-focus)!important;
+}
+#modal-root form.other-studio-form.v790-refined :is(input,textarea)::placeholder{
+ color:var(--v808-muted)!important;-webkit-text-fill-color:var(--v808-muted)!important;opacity:1!important;
+}
+#modal-root form.other-studio-form.v790-refined .v790-money-symbol,
+#modal-root form.other-studio-form.v790-refined .other-studio-amount>span:first-child{
+ color:var(--v808-ink)!important;-webkit-text-fill-color:var(--v808-ink)!important;
+}
+#modal-root form.other-studio-form.v790-refined :is(.v790-currency select,.v756-native-select-btn,.v796-field-button){
+ background:var(--v808-soft)!important;border:1px solid var(--v808-border)!important;
+ color:var(--v808-ink)!important;-webkit-text-fill-color:var(--v808-ink)!important;
+ box-shadow:none!important;
+}
+#modal-root form.other-studio-form.v790-refined :is(.v756-native-select-btn,.v796-field-button) :is(span,strong,small,svg){color:inherit!important}
+#modal-root form.other-studio-form.v790-refined .v756-native-select-btn>span:nth-child(2){
+ min-width:0!important;flex:1 1 auto!important;color:var(--v808-ink)!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.32!important;
+}
+#modal-root form.other-studio-form.v790-refined :is(.filter-label,.v796-field-copy small,.v796-impact-values small,.other-studio-impact small,.v794-recovery small,.v794-recovery p,.other-studio-hint,.other-studio-section-title){
+ color:var(--v808-muted)!important;-webkit-text-fill-color:var(--v808-muted)!important;opacity:1!important;
+}
+#modal-root form.other-studio-form.v790-refined :is(.v796-field-icon,.v794-source-icon,.v794-purchase-icon,.v794-recovery-icon){
+ background:var(--v808-icon-surface)!important;color:var(--v808-icon)!important;
+ border-color:var(--v808-border)!important;
+}
+#modal-root form.other-studio-form.v790-refined :is(.v796-field-icon,.v794-source-icon,.v794-purchase-icon,.v794-recovery-icon) svg{color:inherit!important;stroke:currentColor!important}
+#modal-root form.other-studio-form.v790-refined .v768-adjust-toggle{background:var(--v808-soft)!important;border:1px solid var(--v808-border)!important}
+#modal-root form.other-studio-form.v790-refined .v768-adjust-toggle>button:not([aria-pressed="true"]){color:var(--v808-muted)!important;-webkit-text-fill-color:var(--v808-muted)!important;background:transparent!important}
+#modal-root form.other-studio-form.v790-refined .v768-adjust-toggle>button[aria-pressed="true"]{opacity:1!important}
+#modal-root form.other-studio-form.v790-refined :is(.other-studio-fields>label,.v794-source-card,.v794-purchase-card,.v796-refund-method,.v796-field-button,.other-studio-fold){min-width:0!important;max-width:100%!important}
+#modal-root form.other-studio-form.v790-refined .other-studio-fields>label{overflow:visible!important}
+#modal-root form.other-studio-form.v790-refined :is(button,select,input,textarea):focus-visible{outline:2px solid var(--v808-focus)!important;outline-offset:2px!important}
+@media(max-width:359px){
+ #modal-root form.other-studio-form.v790-refined .other-studio-header{grid-template-columns:44px minmax(0,1fr) 34px!important;column-gap:8px!important}
+ #modal-root form.other-studio-form.v790-refined .v785-hero-icon{width:43px!important;height:43px!important;min-width:43px!important;min-height:43px!important}
+ #modal-root form.other-studio-form.v790-refined .other-studio-header h2{font-size:19px!important}
+}
+@media(prefers-reduced-motion:reduce){#modal-root form.other-studio-form.v790-refined *{animation:none!important;transition:none!important}}
+</style>
+
+
+<script id="v808-theme-detection">
+(()=>{
+ const host=document.getElementById('modal-root');if(!host)return;
+ const update=()=>{
+   const scheme=getComputedStyle(document.documentElement).colorScheme;
+   const isLight=(scheme==='light'||scheme.startsWith('light '));
+   const next=isLight?'light':'dark';
+   if(host.dataset.v808Skin!==next)host.dataset.v808Skin=next;
+ };
+ update();
+ const obs=new MutationObserver(update);
+ obs.observe(document.documentElement,{attributes:true,attributeFilter:['style','class']});
+ obs.observe(document.body,{attributes:true,attributeFilter:['style','class','data-theme']});
+})();
+</script>
+
 </body>
 </html>
