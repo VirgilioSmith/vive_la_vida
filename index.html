@@ -80976,5 +80976,96 @@ body.theme-dark #app .v778-personalization .v766-indicator.v767-row .v766-info p
  #app .v778-personalization .v766-cards{gap:7px!important}
 }
 </style>
+
+<style id="vive-v781-personalization-light-harmony">
+/* V781: SOLO Personalización en temas claros. Mantener orden KPI -> espacio -> indicadores,
+   manejadores, cálculos y preferencias intactos. Neutralizar bordes negros y miniaturas
+   de fondo oscuro heredadas de las versiones Liquid Glass negras. */
+@media (max-width: 950px) {
+ body:not(.theme-black):not(.theme-dark):has(#app .v778-personalization) {
+   background:#f5f7fb!important;color:#1c2d48!important;
+ }
+ body:not(.theme-black):not(.theme-dark):has(#app .v778-personalization) #app,
+ body:not(.theme-black):not(.theme-dark):has(#app .v778-personalization) #page,
+ body:not(.theme-black):not(.theme-dark):has(#app .v778-personalization) .main {
+   background-color:#f5f7fb!important;
+   border-color:transparent!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v296-personalize.v778-personalization,
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v296-settings-body {
+   background:linear-gradient(164deg,#ffffff 0%,#f9fbfe 42%,#f4f7fc 100%)!important;
+   color:#1b2e4d!important;
+   border-color:transparent!important;
+   box-shadow:none!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v242-appearance-picker {
+   background:rgba(255,255,255,.91)!important;
+   border:1px solid #e5ebf4!important;
+   box-shadow:0 8px 24px rgba(45,70,109,.045),inset 0 1px 0 #fff!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v242-style-option {
+   background:linear-gradient(159deg,#fff 0%,#fcfdff 100%)!important;
+   border:1px solid #e2e8f1!important;
+   box-shadow:0 2px 9px rgba(38,64,100,.04)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v242-style-option.selected {
+   border:1px solid color-mix(in srgb,var(--vive-theme-color,#678ceb) 48%,#ffffff)!important;
+   outline:0!important;
+   box-shadow:0 0 0 2px color-mix(in srgb,var(--vive-theme-color,#678ceb) 10%,transparent),0 5px 15px rgba(43,75,136,.095)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row {
+   background:linear-gradient(114deg,rgba(255,255,255,.99),rgba(247,250,255,.97))!important;
+   border:1px solid #e2e8f2!important;
+   box-shadow:0 3px 12px rgba(41,62,106,.055),inset 0 1px 0 rgba(255,255,255,.95)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row:before {
+   background:radial-gradient(ellipse 62% 130% at 19% 40%,color-mix(in srgb,var(--vive-theme-color,#678ceb) 7%,transparent),transparent 83%)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row:after {
+   background:linear-gradient(180deg,rgba(255,255,255,.65),transparent 40%)!important;
+ }
+ /* Miniaturas: cristal claro, no rectángulos negros en una tarjeta blanca. */
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v767-row .v767-icon {
+   background:linear-gradient(145deg,#f3f6fd 0%,#e8eef9 100%)!important;
+   border:1px solid #dfe7f3!important;
+   box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 3px 9px rgba(47,72,116,.085)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v767-row .v767-icon-svg {
+   filter:drop-shadow(0 2px 2px rgba(50,70,119,.11)) saturate(1.14) contrast(1.12)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-info h2 {
+   color:#21334f!important;text-shadow:none!important;font-weight:750!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-info p {
+   color:#63748e!important;text-shadow:none!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-drag-handle {
+   color:#8394ab!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-move-btn {
+   background:linear-gradient(145deg,#fff,#f5f8fc)!important;
+   color:#465d80!important;border:1px solid #e1e8f2!important;
+   box-shadow:0 1px 2px rgba(48,71,109,.035)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-move-btn:disabled {
+   opacity:.38!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-switch {
+   border:1px solid #d1dae7!important;background:#e6ebf3!important;
+   box-shadow:inset 0 1px 2px rgba(37,62,97,.09)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-switch[aria-checked="true"] {
+   background:color-mix(in srgb,var(--vive-theme-color,#678ceb) 28%,#e9effa)!important;
+   border-color:color-mix(in srgb,var(--vive-theme-color,#678ceb) 27%,#c8d3e4)!important;
+   box-shadow:0 1px 4px rgba(67,89,129,.10)!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v766-indicator.v767-row .v766-switch-thumb {
+   background:linear-gradient(150deg,#fff,#edf2fa)!important;
+   box-shadow:0 1px 3px rgba(48,70,108,.16)!important;
+ }
+}
+/* Preserve premium OLED/Black styling without sharing any light-mode icon treatment. */
+</style>
+
 </body>
 </html>
