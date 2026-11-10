@@ -29576,6 +29576,24 @@ const TRANSL={personal_issue:'Entrega / recepción de préstamo personal',person
 const ICONS={search:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.8 4.8"/>',money:'<rect x="3" y="6" width="18" height="12" rx="2.8"/><circle cx="12" cy="12" r="2.4"/><path d="M6 9.5h.01M18 14.5h.01"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>',home:'<rect x="3" y="10" width="18" height="11" rx="2"/><path d="m2 11 10-8 10 8"/>',wallet:'<rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18"/><path d="M16 15h3"/>',card:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 16h6"/>',cycle:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 9a7 7 0 0 1 12-2l2 2M4 15l2 2a7 7 0 0 0 12-2"/>',analytics:'<path d="M3 19h18M5 16l4-5 4 3 6-9"/><path d="M16 5h3v3"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4 12H2m20 0h-2M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/>',plus:'<path d="M12 5v14M5 12h14"/>',download:'<path d="M12 3v13m-5-5 5 5 5-5M4 19v2h16v-2"/>',upload:'<path d="M12 21V8m-5 5 5-5 5 5M4 5V3h16v2"/>',check:'<path d="m4 12 5 5L20 6"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',up:'<path d="m4 14 6-6 4 4 6-6"/>',down:'<path d="m4 8 6 6 4-4 6 6"/>',shield:'<path d="m12 2 9 4v6c0 6-4 9-9 10-5-1-9-4-9-10V6l9-4Z"/>',receipt:'<path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z"/><path d="M8 8h8m-8 4h8"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',chart:'<path d="M4 20V12m6 8V5m6 15v-8m4 8V9"/>',trash:'<path d="M4 7h16m-14 0 1 14h10l1-14M9 7V4h6v3"/>'};
 ICONS.puzzle='<path d="M9 3h3a2 2 0 0 0 4 0h3v6h-2a2 2 0 0 0 0 4h2v6h-6v-2a2 2 0 0 0-4 0v2H3v-6h2a2 2 0 0 0 0-4H3V3h6Z"/>';
 const icon=(k)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]||ICONS.wallet}</svg>`;
+/* V803 · Registrar icon vocabulary: one meaning, one symbol, original icon() renderer. */
+Object.assign(ICONS,{
+ 'r803-receive':'<path d="M17 3v10H7"/><path d="m12 8-5 5 5 5"/><path d="M4 21h16"/>',
+ 'r803-pay':'<path d="M7 21V11h10"/><path d="m12 16 5-5-5-5"/><path d="M4 3h16"/>',
+ 'r803-move':'<path d="M4 7h15m-5-4 5 4-5 4M20 17H5m5-4-5 4 5 4"/>',
+ 'r803-other':'<path d="m12 2 1.6 4.8L18.4 8.4 13.6 10 12 15l-1.6-5L5.6 8.4l4.8-1.6L12 2Z"/><path d="m20 14 .8 2.2 2.2.8-2.2.8L20 20l-.8-2.2-2.2-.8 2.2-.8L20 14ZM4 14l.8 2.2L7 17l-2.2.8L4 20l-.8-2.2L1 17l2.2-.8L4 14Z"/>',
+ 'r803-income':'<path d="M19 5 5 19m0-8v8h8"/><path d="M3 5h12"/>',
+ 'r803-spend':'<rect x="4" y="8" width="16" height="12" rx="3"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+ 'r803-service':'<path d="M5 3h14v18l-3.5-2.5L12 21l-3.5-2.5L5 21V3Z"/><path d="M9 8h6m-6 4h6"/>',
+ 'r803-cardpay':'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18m-7 5h4"/>',
+ 'r803-own':'<path d="M4 7h16m-5-4 5 4-5 4M20 17H4m5-4-5 4 5 4"/>',
+ 'r803-outgoing':'<circle cx="9" cy="8" r="3"/><path d="M3 21v-1a6 6 0 0 1 11-3"/><path d="m13 15 8-8m-6 0h6v6"/>',
+ 'r803-refund':'<path d="M10 7H5v5"/><path d="M5 12a7 7 0 1 1 2 5"/><path d="m5 12 5-5"/>',
+ 'r803-adjustment':'<path d="M5 3h14v18H5zM8 8h8m-8 5h8m-4-2v4"/>',
+ 'r803-benefit':'<rect x="3" y="9" width="18" height="12" rx="2"/><path d="M12 9v12M3 13h18M12 9c-7-1-8-5-5-6 3-1 5 3 5 6m0 0c7-1 8-5 5-6-3-1-5 3-5 6"/>',
+ 'r803-loan':'<path d="M4 20h16M6 16V8m4 8V8m4 8V8m4 8V8M3 8h18L12 3 3 8Z"/><path d="m10 19 2 2 4-4"/>'
+});
+
 
 Object.assign(ICONS,{briefcase:'<rect x="4" y="7" width="16" height="11" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>',play:'<path d="M8 5v14l11-7-11-7Z"/>',map:'<path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20V6.5Z"/><path d="M9 4v13.5M15 6.5V20"/>',cpu:'<rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9 1v3m6-3v3M9 20v3m6-3v3M20 9h3m-3 6h3M1 9h3m-3 6h3"/>',headphones:'<path d="M4 13a8 8 0 1 1 16 0"/><rect x="4" y="13" width="3" height="6" rx="1.5"/><rect x="17" y="13" width="3" height="6" rx="1.5"/>',users:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M4 20v-1a5 5 0 0 1 10 0v1"/><path d="M14 20v-1a4 4 0 0 1 6 0v1"/>',star:'<path d="m12 3 2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.9 6.7 19.1l1-5.8L3.5 9.2l5.9-.9L12 3Z"/>'});
 Object.assign(ICONS,{cart:'<circle cx="9" cy="20" r="1.35"/><circle cx="18" cy="20" r="1.35"/><path d="M3 4h2l2.1 10.2A2 2 0 0 0 9 16h8.7a2 2 0 0 0 1.95-1.57L21 8H7.2"/>',utensils:'<path d="M4 3v8M7 3v8M4 7h3M12 3v18M17 3c0 4 3 4 3 8v10"/>',coffee:'<path d="M4 8h11v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Z"/><path d="M15 10h2a3 3 0 1 1 0 6h-2"/><path d="M8 4v2m3-2v2"/>',bag:'<path d="M6 8h12l1 11H5L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',home2:'<path d="m3 10 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',wrench:'<path d="M14 6a4 4 0 0 0 4.8 4.8l-8.7 8.7a2 2 0 1 1-2.8-2.8l8.7-8.7A4 4 0 0 0 14 6Z"/><path d="M15 5l4 4"/>',sofa:'<path d="M4 12a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v5H4v-5Z"/><path d="M6 9V7a2 2 0 0 1 2-2h1m6 0h1a2 2 0 0 1 2 2v2"/><path d="M4 17v3m16-3v3"/>',bolt2:'<path d="M13 2 6 13h5l-1 9 8-12h-5l0-8Z"/>',droplet2:'<path d="M12 3s-6 6.3-6 10.2A6 6 0 0 0 18 13.2C18 9.3 12 3 12 3Z"/>',wifi2:'<path d="M2 8a16 16 0 0 1 20 0"/><path d="M5 12a11 11 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="20" r="1.2"/>',smartphone:'<rect x="7" y="2.5" width="10" height="19" rx="2.3"/><path d="M10 5.5h4M11.5 18.2h1"/>',flame2:'<path d="M12 3c2.4 2.1 4 4.6 4 7.4A4 4 0 0 1 8 10c0-1.8.8-3.3 2.1-4.9.5 1.2 1.4 2.1 1.9 2.6C12.9 6.2 13 4.8 12 3Z"/><path d="M12 12c1.7 1.4 2.5 2.6 2.5 4.1A2.5 2.5 0 0 1 9.5 16c0-1.1.5-2 1.5-3 .2.7.7 1.1 1 1.4.7-.7.9-1.3 0-2.4Z"/>',car2:'<path d="M5 16l1.3-4a3 3 0 0 1 2.9-2h5.6a3 3 0 0 1 2.9 2L19 16"/><path d="M4 16h16v3H4z"/><circle cx="7.5" cy="18.5" r="1.4"/><circle cx="16.5" cy="18.5" r="1.4"/>',bus2:'<rect x="5" y="3.5" width="14" height="15" rx="3"/><path d="M5 9h14M8 13h2m4 0h2"/><circle cx="8" cy="19" r="1.2"/><circle cx="16" cy="19" r="1.2"/>',fuel:'<path d="M7 4h7v16H7z"/><path d="M14 7h2l2 2v7a2 2 0 0 0 4 0v-5l-2-2"/><path d="M9 8h3"/>',heart2:'<path d="M12 20s-7-4.7-7-10a4 4 0 0 1 7-2.4A4 4 0 0 1 19 10c0 5.3-7 10-7 10Z"/>',pills:'<path d="M9 3a4 4 0 0 1 5.7 0l2.3 2.3A4 4 0 0 1 11.3 11L9 8.7A4 4 0 0 1 9 3Z"/><path d="m13 5-6 6"/><rect x="4" y="13" width="10" height="6" rx="3"/>',microscope:'<path d="M10 3v5l4 4"/><path d="M8 13h6a4 4 0 0 1 0 8H6"/><path d="M6 21h12"/><path d="M13 8l3-3"/>',tooth:'<path d="M12 4c3.3-2 7 0 7 4 0 3-1.8 5-2.4 8-.3 1.5-.9 3-2.1 3-.9 0-1.5-.7-1.9-1.5l-.6-1.4-.6 1.4c-.4.8-1 1.5-1.9 1.5-1.2 0-1.8-1.5-2.1-3C6.8 13 5 11 5 8c0-4 3.7-6 7-4Z"/>',dumbbell:'<path d="M3 10v4m3-6v8m12-8v8m3-6v4"/><path d="M6 12h12"/>',book2:'<path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v18H7.5A2.5 2.5 0 0 0 5 22V4.5Z"/><path d="M5 4.5A2.5 2.5 0 0 1 7.5 7H19"/>',graduation:'<path d="m2 9 10-5 10 5-10 5-10-5Z"/><path d="M6 11v4c0 1.7 2.7 3 6 3s6-1.3 6-3v-4"/><path d="M22 10v5"/>',badge2:'<circle cx="12" cy="8" r="3"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/>',shirt:'<path d="m8 4 4 2 4-2 3 4-3 2v10H8V10L5 8l3-4Z"/>',gift2:'<rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/><path d="M7.5 8A2.5 2.5 0 1 1 10 5.5V8H7.5Zm9 0H14V5.5A2.5 2.5 0 1 1 16.5 8Z"/>',ticket:'<path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7Z"/><path d="M12 7v10"/>',gamepad:'<path d="M7 10h10a4 4 0 0 1 4 4v1a3 3 0 0 1-5.1 2.1L13 14H11l-2.9 3.1A3 3 0 0 1 3 15v-1a4 4 0 0 1 4-4Z"/><path d="M8 13h3m-1.5-1.5v3M16.5 12.5h.01M18.5 14.5h.01"/>',plane2:'<path d="m2 12 20-8-5 8 5 8-20-8h8Z"/>',bed2:'<path d="M3 10h18v7H3z"/><path d="M5 10V7a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3"/><path d="M3 17v3m18-3v3"/>',box2:'<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="M12 12 4 7.5m8 4.5 8-4.5M12 12v9"/>',monitor2:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',laptop2:'<path d="M4 6h16v10H4z"/><path d="M2 18h20"/>',cloud2:'<path d="M7 18a4 4 0 1 1 .8-7.9A5 5 0 0 1 18 11a3.5 3.5 0 1 1-.2 7H7Z"/>',shield3:'<path d="m12 2 7 3v6c0 5-3.4 8.3-7 10-3.6-1.7-7-5-7-10V5l7-3Z"/><path d="M9 12h6"/>',paw2:'<circle cx="7" cy="10" r="1.4"/><circle cx="11" cy="7.2" r="1.4"/><circle cx="16" cy="8" r="1.4"/><circle cx="18" cy="12" r="1.4"/><path d="M9 16c1.2-2 4.8-2 6 0 .6 1 .1 2.2-1.3 2.7-1 .4-2 .8-3 .8s-2-.4-3-.8C8.3 18.2 7.8 17 9 16Z"/>',handHeart:'<path d="M15.5 5.5A2.5 2.5 0 0 1 18 8c0 3-4 5.5-4 5.5S10 11 10 8a2.5 2.5 0 0 1 5.5-2.5Z"/><path d="M3 15h5l2 4h8a2 2 0 0 0 0-4h-5"/><path d="M3 11h4a2 2 0 0 1 2 2v6H3z"/>',refresh2:'<path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M6 9a7 7 0 0 1 11.4-2.3L20 9M4 15l2.6 2.3A7 7 0 0 0 18 15"/>',alert2:'<path d="m12 3 9 16H3L12 3Z"/><path d="M12 9v4m0 4h.01"/>',sparkles:'<path d="M12 3l1.3 3.7L17 8l-3.7 1.3L12 13l-1.3-3.7L7 8l3.7-1.3L12 3Z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14Zm-14 0 .8 2.2L8 17l-2.2.8L5 20l-.8-2.2L2 17l2.2-.8L5 14Z"/>',percent2:'<path d="M19 5 5 19"/><circle cx="7" cy="7" r="2"/><circle cx="17" cy="17" r="2"/>',megaphone2:'<path d="M4 11v2a2 2 0 0 0 2 2h2l3 4h2l-1-4h3l5-3V8l-5-3H6a2 2 0 0 0-2 2v4Z"/>',truck2:'<path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.4"/><circle cx="18" cy="18" r="1.4"/>',tools2:'<path d="m4 21 6-6"/><path d="m7 7 10 10"/><path d="M14 4 20 10l-2 2-6-6 2-2ZM4 14l6 6"/>',coins2:'<ellipse cx="12" cy="6" rx="6" ry="3"/><path d="M6 6v6c0 1.7 2.7 3 6 3s6-1.3 6-3V6"/><path d="M6 12v6c0 1.7 2.7 3 6 3s6-1.3 6-3v-6"/>',banknote2:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9h.01M17 15h.01"/>',trend2:'<path d="M3 17 9 11l4 4 8-8"/><path d="M15 7h6v6"/>',handshake2:'<path d="M8 12 5 9l3-3 3 3m2 2 3 3 3-3-3-3-3 3"/><path d="M10 10 7 13a2.5 2.5 0 0 0 3.5 3.5L14 13"/>',cup2:'<path d="M5 9h10v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V9Z"/><path d="M15 10h2a2.5 2.5 0 1 1 0 5h-2"/><path d="M7 5h6"/>',music2:'<path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/>',film2:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4m10 0h4M3 15h4m10 0h4"/>'});
@@ -32102,18 +32120,18 @@ function moneyRegister(mode="page"){
   other:{label:'Otros',sub:'Devoluciones, ajustes y abonos',modes:[],sideTitle:'Gestiones que completan tu registro.',sideCopy:'Devuelve un consumo, concilia un saldo, registra un beneficio o abona a un préstamo. Cada operación abre su formulario específico.',accent:'amber',symbol:'✦'}
  };
  const group=registerGroups[rg]||registerGroups.pay;
- const operationIcon={income:'arrow-down-left',spend:'shopping-bag',service:'receipt',own:'repeat',outgoing:'send',cardpay:'credit-card'};
+ const operationIcon={income:'r803-income',spend:'r803-spend',service:'r803-service',own:'r803-own',outgoing:'r803-outgoing',cardpay:'r803-cardpay'};
  const amountCashD=cashD?getAccountBalance(cashD):0,amountCashU=cashU?getAccountBalance(cashU):0;
  const actionTile=(mode)=>{const c=FLOW_CATALOG[mode];return `<button class="vr-operation" type="button" data-act="guidedFlow" data-mode="${mode}"><span class="vr-operation-icon">${icon(operationIcon[mode])}</span><span class="vr-operation-copy"><strong>${c.name}</strong><small>${c.subtitle}</small></span><span class="vr-chevron">${icon('arrow')}</span></button>`};
  const formTiles=`<div class="vr-register">
   <section class="vr-hero"><div class="vr-hero-content"><div class="vr-eyebrow"><span class="vr-star">✦</span> vive el hoy <span class="vr-hero-divider"></span> CENTRO DE REGISTRO</div><h2>Un movimiento.<br><em>Todo bajo control.</em></h2><p>Registra lo importante en pocos pasos. Sin formularios interminables, sin cargos escondidos y con cada saldo en su moneda.</p><div class="vr-hero-actions"><button type="button" class="vr-hero-primary" data-act="newTransaction">${icon('plus')} Nueva operación</button><span>Registro inteligente · RD$ y US$</span></div></div><div class="vr-hero-art"><span class="vr-orbit vr-orbit-1"></span><span class="vr-orbit vr-orbit-2"></span><div class="vr-art-card"><span>DISPONIBLE EN EFECTIVO</span><strong>${money(amountCashD,'DOP',2)}</strong><div class="vr-art-bottom"><span>También en US$</span><b>${money(amountCashU,'USD',2)}</b></div></div><div class="vr-art-chip">✓&nbsp; Registro organizado</div></div></section>
-  <section class="vr-workspace"><header class="vr-workspace-head"><div><span class="vr-small-kicker">EMPEZAR</span><h3>${rg==='other'?'Gestiones avanzadas':'¿Qué necesitas hacer?'}</h3><p>${rg==='other'?'Operaciones especiales, ajustes y correcciones.':'Selecciona una categoría y elige tu operación.'}</p></div><span class="vr-timehint">01 / 03 · ELIGE UNA ACCIÓN</span></header>
+  <section class="vr-workspace"><header class="vr-workspace-head"><div><span class="vr-small-kicker">EMPEZAR</span><h3>${rg==='other'?'Gestiones avanzadas':'¿Qué necesitas hacer?'}</h3><p>${rg==='other'?'Operaciones especiales, ajustes y correcciones.':'Selecciona una categoría y elige tu operación.'}</p></div><span class="vr-timehint">ELIGE UNA OPERACIÓN</span></header>
    <nav class="vr-switcher" aria-label="Tipo de movimiento">${Object.entries(registerGroups).map(([key,g])=>`<button type="button" class="vr-switch ${rg===key?'selected':''}" data-group="${key}" data-act="registrationGroup" data-id="${key}" aria-pressed="${rg===key}" ${rg===key?'aria-current="true"':''}><span class="vr-switch-symbol">${icon(({receive:'down',pay:'up',move:'cycle',other:'sparkles'})[key])}</span><span><strong>${g.label}</strong><small>${g.sub}</small></span></button>`).join('')}</nav>
    <div class="vr-content"><div class="vr-action-stack"><span class="vr-group-heading">${group.label.toUpperCase()} <span>${rg==='other'?4:group.modes.length} ${rg==='other'||group.modes.length!==1?'OPCIONES':'OPCIÓN'}</span></span>${rg==='other'?`<div class="vr-other-operations" role="group" aria-label="Otras gestiones">
-    <button class="v29-other-action" type="button" data-act="otherRefund"><span class="v29-other-icon refund">${icon('repeat')}</span><span class="v29-other-copy"><strong>Devolución de compra</strong><small>Revertir un consumo de tarjeta</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
-    <button class="v29-other-action" type="button" data-act="otherAdjust"><span class="v29-other-icon adjustment">${icon('wallet')}</span><span class="v29-other-copy"><strong>Conciliar un saldo</strong><small>Corrige una diferencia en tu cuenta o efectivo</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
-    <button class="v29-other-action" type="button" data-act="otherBenefitPicker"><span class="v29-other-icon benefit">${icon('gift')}</span><span class="v29-other-copy"><strong>Beneficios bancarios</strong><small>Cashback y beneficios recibidos</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
-    <button class="v29-other-action" type="button" data-act="otherLoanPicker"><span class="v29-other-icon loan">${icon('calendar')}</span><span class="v29-other-copy"><strong>Abonar a un préstamo</strong><small>Cuota o pago adicional al capital</small></span><span class="v29-other-arrow">${icon('arrow')}</span></button>
+    <button class="vr-operation v29-other-action" type="button" data-act="otherRefund"><span class="vr-operation-icon v29-other-icon refund">${icon('refresh2')}</span><span class="vr-operation-copy v29-other-copy"><strong>Devolución de compra</strong><small>Revertir un consumo de tarjeta</small></span><span class="vr-chevron v29-other-arrow">${icon('arrow')}</span></button>
+    <button class="vr-operation v29-other-action" type="button" data-act="otherAdjust"><span class="vr-operation-icon v29-other-icon adjustment">${icon('r803-adjustment')}</span><span class="vr-operation-copy v29-other-copy"><strong>Conciliar un saldo</strong><small>Corrige una diferencia en tu cuenta o efectivo</small></span><span class="vr-chevron v29-other-arrow">${icon('arrow')}</span></button>
+    <button class="vr-operation v29-other-action" type="button" data-act="otherBenefitPicker"><span class="vr-operation-icon v29-other-icon benefit">${icon('r803-benefit')}</span><span class="vr-operation-copy v29-other-copy"><strong>Beneficios bancarios</strong><small>Cashback y beneficios recibidos</small></span><span class="vr-chevron v29-other-arrow">${icon('arrow')}</span></button>
+    <button class="vr-operation v29-other-action" type="button" data-act="otherLoanPicker"><span class="vr-operation-icon v29-other-icon loan">${icon('coins2')}</span><span class="vr-operation-copy v29-other-copy"><strong>Abonar a un préstamo</strong><small>Cuota o pago adicional al capital</small></span><span class="vr-chevron v29-other-arrow">${icon('arrow')}</span></button>
 </div>`:group.modes.map(actionTile).join('')}</div><aside class="vr-guidance ${group.accent}"><span class="vr-guidance-glyph">${group.symbol}</span><span class="vr-guidance-label">TU ASISTENTE</span><h4>${group.sideTitle}</h4><p>${group.sideCopy}</p><div class="vr-guidance-bottom"><span class="vr-dot"></span> Los saldos se actualizan al confirmar</div></aside></div>
   </section>
  </div>`;
@@ -32125,7 +32143,7 @@ function moneyRegister(mode="page"){
 /* V235: Registrar es un asistente flotante, separado del libro de Movimientos. */
 function openRegisterAssistant(){
  const root=document.getElementById('modal-root');if(!root)return;
- root.innerHTML=`<div class="modal-layer v235-register-layer" data-backdrop="true"><section class="modal v235-register-dialog" role="dialog" aria-modal="true" aria-label="Registrar movimiento"><div class="v235-register-close"><span>REGISTRAR</span><button type="button" class="close" data-act="closeModal" aria-label="Cerrar asistente">×</button></div>${moneyRegister('assistant')}</section></div>`;
+ root.innerHTML=`<div class="modal-layer v235-register-layer" data-backdrop="true"><section class="modal v235-register-dialog" data-component="RegistrarShell" role="dialog" aria-modal="true" aria-label="Registrar movimiento"><div class="v235-register-close"><span>REGISTRAR</span><button type="button" class="close" data-act="closeModal" aria-label="Cerrar asistente">×</button></div>${moneyRegister('assistant')}</section></div>`;
 }
 function pendingOperationsView(){let items=db.pendingOperations||[];
  const row=q=>{const type=q.values?.type||q.formId,kind=TRANSL[type]||({personalPaymentForm:'Abono entre personas',annualFeeForm:'Anualidad',rewardReceivedForm:'Beneficio recibido',benefitLedgerForm:'Beneficio o recompensa'})[q.formId]||'Operación',val=num(q.values?.amount||q.values?.principal||0),name=q.values?.note||q.values?.description||q.values?.merchant||kind;return `<tr><td>${sanitize(prettyDate(q.values?.date||q.created.slice(0,10)))}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">${sanitize(kind)}</div></td><td class="right">${val>0?money(val,q.values?.currency||'DOP',2):'A verificar'}</td><td><span class="pending-pill">Pendiente de confirmar</span></td><td class="right"><div class="tx-actions"><button class="btn sm" data-act="pendingConfirm" data-id="${q.id}">Revisar y confirmar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar registro">Descartar</button></div></td></tr>`};
@@ -82951,5 +82969,274 @@ body:not(.theme-light):not(.theme-white):not(.theme-black):not(.theme-dark) #mod
 @media(prefers-reduced-motion:reduce){#modal-root :is(.other-studio-form,.v785-premium-picker,.v756-loan-selector) *{transition:none!important;animation:none!important}}
 </style>
 <!-- V801-INNER-SCREENS-COHERENCE-END -->
+
+<!-- V802-SIMPLIFIED-CARDPAY-START -->
+<style id="v802-cardpay-simplificado">
+/* Scoped entirely to card payments. Original inputs, validation and submit handlers remain in place. */
+#modal-root .studio-form[data-mode="cardpay"]{--pay-accent:var(--v801-accent,var(--vive-theme-color,var(--accent,#bc91fa)));--pay-bg:#08090c;--pay-tile:rgba(255,255,255,.045);--pay-ink:#fafafd;--pay-muted:#a9acba;--pay-stroke:rgba(255,255,255,.12);--pay-shadow:rgba(0,0,0,.26)}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"]{--pay-bg:#f7f9ff;--pay-tile:rgba(255,255,255,.87);--pay-ink:#16233a;--pay-muted:#63738d;--pay-stroke:rgba(81,103,144,.15);--pay-shadow:rgba(40,63,106,.08)}
+@media(max-width:790px){
+ #modal-root .studio-form[data-mode="cardpay"]{color:var(--pay-ink)!important;background:var(--pay-bg)!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-shell{display:block!important;min-height:0!important;background:var(--pay-bg)!important;color:var(--pay-ink)!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-rail{display:none!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-main{width:100%!important;max-width:none!important;padding:clamp(14px,4vw,22px)!important;padding-bottom:calc(20px + env(safe-area-inset-bottom))!important;max-height:calc(100dvh - 35px)!important;overflow-y:auto!important;background:var(--pay-bg)!important;color:var(--pay-ink)!important;box-sizing:border-box!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-topline{margin:0 0 7px!important;color:var(--pay-muted)!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-active-title{font-size:clamp(25px,6.8vw,31px)!important;letter-spacing:-.04em!important;line-height:1.08!important;margin:4px 0 5px!important;color:var(--pay-ink)!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-active-subtitle{font-size:13px!important;line-height:1.4!important;color:var(--pay-muted)!important;margin:0 0 12px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields{display:flex!important;flex-direction:column!important;gap:10px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>*{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;margin:0!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>.flow-section-heading{display:none!important}
+ #modal-root .studio-form[data-mode="cardpay"] .v802-pay-title{display:flex;align-items:center;gap:9px;padding:1px 2px 2px;color:var(--pay-ink);font-size:12px;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
+ #modal-root .studio-form[data-mode="cardpay"] .v802-pay-title svg{width:17px;height:17px;color:var(--pay-accent)}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>label:not(.flow-segment-option),
+ #modal-root .studio-form[data-mode="cardpay"] .v802-advanced-body>label{display:flex!important;flex-direction:column!important;gap:5px!important;min-height:66px!important;padding:11px 13px!important;border:1px solid var(--pay-stroke)!important;border-radius:18px!important;background:var(--pay-tile)!important;box-shadow:inset 0 1px rgba(255,255,255,.06),0 7px 18px var(--pay-shadow)!important;color:var(--pay-ink)!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-fields :is(input,select,textarea){color:var(--pay-ink)!important;-webkit-text-fill-color:var(--pay-ink)!important;background:transparent!important;border:0!important;box-shadow:none!important;min-width:0!important;max-width:100%!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-fields select option{color:#15243b!important;background:#fff!important}
+ #modal-root .studio-form[data-mode="cardpay"] label.v789-select-enhanced .v789-select-trigger{border:0!important;box-shadow:none!important;background:transparent!important;color:var(--pay-ink)!important;min-height:35px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"]{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin:0!important}
+ #modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{padding:8px 4px!important;min-height:57px!important;border:1px solid var(--pay-stroke)!important;border-radius:14px!important;background:var(--pay-tile)!important;color:var(--pay-ink)!important;box-shadow:none!important;text-align:center!important}
+ #modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface strong{font-size:12px!important;line-height:1.25!important;color:var(--pay-ink)!important}
+ #modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface small{font-size:10px!important;line-height:1.15!important;color:var(--pay-muted)!important}
+ #modal-root .studio-form[data-mode="cardpay"] .flow-segment-option input:checked+.flow-segment-surface{border-color:var(--pay-accent)!important;background:color-mix(in srgb,var(--pay-accent) 14%,var(--pay-tile))!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--pay-accent) 15%,transparent)!important}
+ #modal-root .studio-form[data-mode="cardpay"] #cardPaymentPreview{padding:12px!important;border:1px solid var(--pay-stroke)!important;border-radius:18px!important;background:linear-gradient(120deg,color-mix(in srgb,var(--pay-accent) 9%,var(--pay-tile)),var(--pay-tile))!important;box-shadow:none!important;color:var(--pay-ink)!important}
+ #modal-root .studio-form[data-mode="cardpay"] #cardPaymentPreview *{color:inherit}
+ #modal-root .studio-form[data-mode="cardpay"] .v802-advanced{border:1px solid var(--pay-stroke);border-radius:15px;background:var(--pay-tile);overflow:hidden;margin-top:2px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .v802-advanced>summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none;padding:12px 13px;color:var(--pay-muted);font-size:12px;font-weight:650}
+ #modal-root .studio-form[data-mode="cardpay"] .v802-advanced>summary::-webkit-details-marker{display:none}
+ #modal-root .studio-form[data-mode="cardpay"] .v802-advanced>summary:after{content:'⌄';color:var(--pay-accent);font-size:17px}
+ #modal-root .studio-form[data-mode="cardpay"] .v802-advanced[open]>summary:after{transform:rotate(180deg)}
+ #modal-root .studio-form[data-mode="cardpay"] .v802-advanced-body{padding:0 10px 12px;display:flex;flex-direction:column;gap:9px}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-navigation{position:sticky!important;bottom:0!important;z-index:5!important;display:flex!important;background:linear-gradient(0deg,var(--pay-bg) 76%,transparent)!important;padding:14px 0 2px!important;margin:4px 0 0!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-navigation [data-studio-next]{width:100%!important;min-height:52px!important;display:flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important;border-radius:17px!important;background:linear-gradient(115deg,color-mix(in srgb,var(--pay-accent) 72%,white),var(--pay-accent))!important;color:#111!important;-webkit-text-fill-color:#111!important;font-size:15px!important;font-weight:800!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-navigation [data-studio-back][hidden]{display:none!important}
+ #modal-root .studio-form[data-mode="cardpay"] .form-foot button[type="submit"]{min-height:52px!important;border-radius:17px!important;background:var(--pay-accent)!important;color:#101010!important;-webkit-text-fill-color:#101010!important}
+}
+</style>
+<script id="v802-cardpay-simplified-layout">
+(()=>{'use strict';const root=document.getElementById('modal-root');if(!root)return;
+ const icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>';
+ function enhance(){const form=root.querySelector('.studio-form[data-mode="cardpay"]');if(!form||form.dataset.v802Ready)return;
+  const fields=form.querySelector('.studio-step[data-step="1"]>.studio-fields');if(!fields)return;
+  form.dataset.v802Ready='1';
+  const get=n=>[...fields.children].find(el=>el.getAttribute('name')===n||el.querySelector?.(`[name="${n}"]`));
+  const elCard=get('cardId'),elCurrency=get('currency'),elAccount=get('accountId'),elDate=get('date'),elAmount=get('amount'),elChannel=get('paymentChannel'),elMode=fields.querySelector('[data-segment="cardPaymentMode"]'),preview=fields.querySelector('#cardPaymentPreview');
+  const extras=[...fields.children].filter(el=>el.matches('[data-flow-context="conversion"]')||el.getAttribute('name')==='date'||el.querySelector?.('[name="date"]'));
+  const title=document.createElement('div');title.className='v802-pay-title';title.innerHTML=icon+'<span>Tarjeta y origen del pago</span>';
+  const subtitle=document.createElement('div');subtitle.className='v802-pay-title';subtitle.innerHTML='<span>¿Cuánto deseas pagar?</span>';
+  const advanced=document.createElement('details');advanced.className='v802-advanced';const summary=document.createElement('summary');summary.textContent='Fecha, moneda y ajustes adicionales';const more=document.createElement('div');more.className='v802-advanced-body';advanced.append(summary,more);
+  [elDate,...extras,elCurrency].filter((el,i,a)=>el&&a.indexOf(el)===i).forEach(el=>more.appendChild(el));
+  [title,elCard,preview,elAccount,subtitle,elMode,elAmount,elChannel,advanced].filter(Boolean).forEach(el=>fields.appendChild(el));
+  // The source selector and all original fields remain the same DOM nodes with their original handlers.
+  const heading=form.querySelector('.studio-active-title');if(heading)heading.textContent='Pagar tarjeta';
+  const hint=form.querySelector('.studio-active-subtitle');if(hint)hint.textContent='Elige tarjeta, cuenta y monto. Revisa antes de confirmar.';
+ }
+ let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhance()})});observer.observe(root,{subtree:true,childList:true});enhance();
+})();
+</script>
+<!-- V802-SIMPLIFIED-CARDPAY-END -->
+<!-- V804 · REGISTRAR SISTEMA COHERENTE · NO ALTERA DATOS / TRANSACCIONES -->
+<style id="v804-registrar-system">
+/* RegistrarShell & OperationCard: shared tokens for exactly these four categories. */
+#modal-root .v235-register-dialog {
+  --reg-accent:var(--vive-theme-color,var(--v801-accent,var(--v560-accent,var(--accent,#8c82b8))));
+  --reg-bg:#f2f5fb;--reg-panel:rgba(255,255,255,.93);--reg-ink:#1e2c47;
+  --reg-sub:#63758e;--reg-border:rgba(99,119,151,.17);
+  --reg-icon-bg:#edf2fa;--reg-icon-ink:#425f84;--reg-switch-bg:#e5ebf7;
+  --reg-selected:#fff;--reg-radius:22px;--reg-gap:10px;
+  --reg-shadow:0 9px 24px rgba(31,51,82,.065);
+  background:var(--reg-bg)!important;background-image:none!important;color:var(--reg-ink)!important;
+  color-scheme:light;box-sizing:border-box!important;overscroll-behavior:contain;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v235-register-dialog {
+  --reg-bg:#000;--reg-panel:#131315;--reg-ink:#f7f8fb;--reg-sub:#b4b8c2;
+  --reg-border:rgba(255,255,255,.13);--reg-icon-bg:#252529;--reg-icon-ink:#eeeef4;
+  --reg-switch-bg:#111113;--reg-selected:#26262a;--reg-shadow:none;
+  color-scheme:dark;
+}
+#modal-root .v235-register-dialog :is(.vr-register,.vr-workspace,.vr-content,.vr-action-stack){box-sizing:border-box!important;min-width:0!important;max-width:100%!important}
+#modal-root .v235-register-dialog :is(.vr-register,.vr-workspace,.vr-content){background:transparent!important;background-image:none!important}
+#modal-root .v235-register-dialog .v235-register-close{
+  color:var(--reg-sub)!important;background:var(--reg-bg)!important;
+  border-bottom:1px solid var(--reg-border)!important;
+}
+#modal-root .v235-register-dialog .v235-register-close .close{
+  width:44px!important;height:44px!important;min-width:44px!important;border-radius:50%!important;
+  color:var(--reg-ink)!important;background:var(--reg-panel)!important;
+  border:1px solid var(--reg-border)!important;line-height:1!important;
+}
+#modal-root .v235-register-dialog .vr-workspace{border:0!important;box-shadow:none!important;padding-block:12px 16px!important}
+#modal-root .v235-register-dialog .vr-workspace-head{min-width:0!important;margin-bottom:12px!important}
+#modal-root .v235-register-dialog .vr-workspace-head h3{
+  color:var(--reg-ink)!important;letter-spacing:-.045em!important;
+  font-size:clamp(25px,6vw,32px)!important;font-weight:790!important;line-height:1.12!important;
+  white-space:normal!important;overflow-wrap:break-word!important;
+}
+#modal-root .v235-register-dialog .vr-workspace-head p{
+  display:block!important;color:var(--reg-sub)!important;font-size:clamp(12px,3.4vw,14px)!important;
+  line-height:1.4!important;margin-top:5px!important;
+}
+#modal-root .v235-register-dialog .vr-small-kicker{color:var(--reg-sub)!important}
+#modal-root .v235-register-dialog .vr-timehint{color:var(--reg-sub)!important}
+/* One selector, same geometry, same selected state, no category-dependent height jumps. */
+#modal-root .v235-register-dialog .vr-switcher{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:4px!important;align-items:stretch!important;width:100%!important;
+  padding:6px!important;border-radius:24px!important;
+  background:var(--reg-switch-bg)!important;background-image:none!important;
+  border:1px solid var(--reg-border)!important;box-shadow:none!important;
+}
+#modal-root .v235-register-dialog .vr-switch{
+  display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;
+  gap:5px!important;min-width:0!important;min-height:71px!important;
+  margin:0!important;padding:9px 3px!important;border-radius:18px!important;
+  color:var(--reg-sub)!important;background:transparent!important;background-image:none!important;
+  border:1px solid transparent!important;box-shadow:none!important;
+  transition:background-color .17s ease,transform .17s ease,border-color .17s ease!important;
+}
+#modal-root .v235-register-dialog .vr-switch.selected{
+  color:var(--reg-ink)!important;background:var(--reg-selected)!important;
+  border-color:color-mix(in srgb,var(--reg-accent) 24%,var(--reg-border))!important;
+  box-shadow:var(--reg-shadow)!important;
+}
+#modal-root .v235-register-dialog .vr-switch>span:last-child{width:100%!important;min-width:0!important;text-align:center!important}
+#modal-root .v235-register-dialog .vr-switch strong{
+  display:block!important;color:inherit!important;font-size:clamp(10px,2.8vw,13px)!important;
+  line-height:1.25!important;font-weight:720!important;white-space:normal!important;
+}
+#modal-root .v235-register-dialog .vr-switch small{display:none!important}
+#modal-root .v235-register-dialog .vr-switch .vr-switch-symbol{
+  display:grid!important;place-items:center!important;flex:0 0 30px!important;
+  width:30px!important;height:30px!important;border-radius:10px!important;
+  color:var(--reg-icon-ink)!important;background:var(--reg-panel)!important;
+  border:0!important;box-shadow:none!important;
+}
+#modal-root .v235-register-dialog .vr-switch.selected .vr-switch-symbol{
+  color:var(--reg-ink)!important;background:color-mix(in srgb,var(--reg-accent) 10%,var(--reg-selected))!important;
+}
+#modal-root .v235-register-dialog .vr-switch .vr-switch-symbol svg{width:19px!important;height:19px!important;stroke:currentColor!important}
+/* Content anatomy is the same for 1, 2, 3, or 4 options. */
+#modal-root .v235-register-dialog .vr-content{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;
+  align-items:start!important;margin-top:12px!important;
+}
+#modal-root .v235-register-dialog .vr-group-heading{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:8px!important;min-width:0!important;color:var(--reg-sub)!important;
+  font-size:11px!important;font-weight:800!important;letter-spacing:.15em!important;
+  margin:0 0 11px!important;
+}
+#modal-root .v235-register-dialog .vr-group-heading>span{
+  margin-left:auto!important;color:var(--reg-sub)!important;font-size:11px!important;
+  letter-spacing:.14em!important;white-space:nowrap!important;
+}
+#modal-root .v235-register-dialog :is(.vr-action-stack,.vr-other-operations){width:100%!important;min-width:0!important}
+#modal-root .v235-register-dialog .vr-other-operations{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:var(--reg-gap)!important;
+}
+#modal-root .v235-register-dialog .vr-action-stack>.vr-operation{margin-bottom:var(--reg-gap)!important}
+#modal-root .v235-register-dialog :is(.vr-operation,.vr-other-operations .v29-other-action){
+  position:relative!important;isolation:isolate!important;box-sizing:border-box!important;
+  display:grid!important;grid-template-columns:46px minmax(0,1fr) 20px!important;
+  align-items:center!important;gap:12px!important;width:100%!important;min-width:0!important;
+  height:auto!important;min-height:80px!important;margin-inline:0!important;
+  padding:13px 14px!important;border-radius:var(--reg-radius)!important;
+  background:var(--reg-panel)!important;background-image:none!important;
+  border:1px solid var(--reg-border)!important;
+  box-shadow:var(--reg-shadow)!important;color:var(--reg-ink)!important;
+  text-align:left!important;overflow:visible!important;
+  transition:transform .16s ease,background-color .16s ease,border-color .16s ease!important;
+}
+#modal-root .v235-register-dialog :is(.vr-operation,.v29-other-action):active{transform:scale(.986)!important}
+#modal-root .v235-register-dialog :is(.vr-operation-icon,.v29-other-icon){
+  grid-column:1!important;grid-row:1!important;display:grid!important;place-items:center!important;
+  flex:0 0 46px!important;width:46px!important;height:46px!important;min-width:46px!important;
+  margin:0!important;padding:0!important;border:0!important;border-radius:14px!important;
+  color:var(--reg-icon-ink)!important;background:var(--reg-icon-bg)!important;
+  background-image:none!important;box-shadow:none!important;
+}
+#modal-root .v235-register-dialog :is(.vr-operation-icon,.v29-other-icon) svg{
+  width:22px!important;height:22px!important;max-width:22px!important;max-height:22px!important;
+  color:inherit!important;stroke:currentColor!important;stroke-width:1.9!important;
+  fill:none!important;opacity:1!important;filter:none!important;
+}
+#modal-root .v235-register-dialog :is(.vr-operation-copy,.v29-other-copy){
+  grid-column:2!important;grid-row:1!important;min-width:0!important;width:auto!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;gap:3px!important;
+  text-align:left!important;
+}
+#modal-root .v235-register-dialog :is(.vr-operation-copy,.v29-other-copy)>strong{
+  color:var(--reg-ink)!important;font-size:clamp(14px,3.8vw,16px)!important;
+  line-height:1.25!important;font-weight:760!important;letter-spacing:-.025em!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;
+}
+#modal-root .v235-register-dialog :is(.vr-operation-copy,.v29-other-copy)>small{
+  color:var(--reg-sub)!important;font-size:clamp(11px,3vw,13px)!important;
+  line-height:1.35!important;font-weight:460!important;white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+#modal-root .v235-register-dialog :is(.vr-chevron,.v29-other-arrow){
+  grid-column:3!important;grid-row:1!important;display:grid!important;place-items:center!important;
+  width:20px!important;min-width:20px!important;color:var(--reg-sub)!important;
+  opacity:1!important;margin:0!important;padding:0!important;
+}
+#modal-root .v235-register-dialog :is(.vr-chevron,.v29-other-arrow) svg{
+  width:18px!important;height:18px!important;stroke:currentColor!important;opacity:1!important;
+}
+#modal-root .v235-register-dialog .vr-guidance{
+  box-sizing:border-box!important;position:static!important;width:100%!important;min-width:0!important;
+  min-height:0!important;margin-top:0!important;padding:17px 18px!important;
+  border:1px solid var(--reg-border)!important;border-radius:var(--reg-radius)!important;
+  background:var(--reg-panel)!important;background-image:none!important;
+  color:var(--reg-ink)!important;box-shadow:none!important;
+}
+#modal-root .v235-register-dialog .vr-guidance :is(.vr-guidance-glyph,.vr-guidance-label,.vr-guidance-bottom){display:none!important}
+#modal-root .v235-register-dialog .vr-guidance h4{
+  margin:0 0 6px!important;color:var(--reg-ink)!important;font-size:clamp(12px,3.6vw,15px)!important;
+  font-weight:750!important;line-height:1.35!important;
+}
+#modal-root .v235-register-dialog .vr-guidance p{
+  display:block!important;margin:0!important;color:var(--reg-sub)!important;
+  font-size:clamp(11px,3vw,13px)!important;line-height:1.5!important;
+}
+#modal-root .v235-register-dialog :is(.vr-switch,.vr-operation,.v29-other-action,.v235-register-close .close):focus-visible{
+  outline:2px solid var(--reg-accent)!important;outline-offset:2px!important;
+}
+/* Interior continuity: preserve real fields, premium card previews, product identity and payment engine. */
+#modal-root :is(.fastx-form,.studio-form,.other-studio-form,.mqr-modal) {--register-focus:var(--vive-theme-color,var(--v801-accent,var(--accent,#a17ae0)))}
+#modal-root :is(.fastx-form,.studio-form,.other-studio-form) :is(input,select,textarea,button):focus-visible{outline:2px solid var(--register-focus)!important;outline-offset:2px!important}
+#modal-root :is(.studio-form[data-mode="cardpay"],.other-studio-form.v790-refined) :is(.v789-select-enhanced,.v789-select-trigger){box-sizing:border-box!important;min-width:0!important;max-width:100%!important}
+#modal-root .studio-form[data-mode="cardpay"] :is(.v789-select-trigger,.v789-select-trigger span){white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.35!important}
+#modal-root :is(.v785-premium-picker,.v756-loan-selector) :is(button,input,select):focus-visible{outline:2px solid var(--register-focus,var(--v801-accent,var(--accent,#9b8df0)))!important;outline-offset:2px!important}
+@media(max-width:430px){
+ #modal-root .v235-register-layer{padding:0!important;align-items:flex-end!important}
+ #modal-root .v235-register-dialog{width:100%!important;max-width:100%!important;max-height:calc(100dvh - env(safe-area-inset-top,0px))!important;overflow-y:auto!important;overflow-x:hidden!important}
+ #modal-root .v235-register-dialog .vr-register{padding:0 14px calc(18px + env(safe-area-inset-bottom,0px))!important}
+ #modal-root .v235-register-dialog .vr-workspace{padding:14px 0 12px!important}
+ #modal-root .v235-register-dialog .vr-content{gap:10px!important}
+}
+@media(max-width:359px){
+ #modal-root .v235-register-dialog .vr-register{padding-inline:10px!important}
+ #modal-root .v235-register-dialog .vr-switcher{gap:2px!important;padding:4px!important}
+ #modal-root .v235-register-dialog .vr-switch{min-height:65px!important;padding-inline:2px!important}
+ #modal-root .v235-register-dialog :is(.vr-operation,.vr-other-operations .v29-other-action){grid-template-columns:42px minmax(0,1fr) 16px!important;gap:9px!important;padding:11px 10px!important}
+ #modal-root .v235-register-dialog :is(.vr-operation-icon,.v29-other-icon){width:42px!important;height:42px!important;min-width:42px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #modal-root .v235-register-dialog :is(.vr-switch,.vr-operation,.v29-other-action){transition:none!important;animation:none!important;transform:none!important}
+}
+
+/* V804 visual finishing: preserve readable disabled buttons, and loan explanation in both themes. */
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .studio-navigation button:disabled,
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .form-foot button:disabled{
+  color:#adb2c0!important;-webkit-text-fill-color:#adb2c0!important;background:#26262a!important;border:1px solid #414148!important;opacity:1!important
+}
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .studio-navigation button:disabled,
+body:is(.theme-light,.theme-white) #modal-root .studio-form[data-mode="cardpay"] .form-foot button:disabled{
+  color:#61738a!important;-webkit-text-fill-color:#61738a!important;background:#e5e9f1!important;border:1px solid #c9d1dc!important;opacity:1!important
+}
+body:is(.theme-light,.theme-white) #modal-root .other-studio-form.v790-refined .v49-payment-intro :is(.v49-quiet-tag,small){color:#5d6f89!important;-webkit-text-fill-color:#5d6f89!important}
+body:is(.theme-black,.theme-dark) #modal-root .other-studio-form.v790-refined .v49-payment-intro :is(.v49-quiet-tag,small){color:#bac1cd!important;-webkit-text-fill-color:#bac1cd!important}
+</style>
+<!-- V804 · FIN -->
 </body>
 </html>
