@@ -2,7 +2,7 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="720"/>
+<meta name="vive-el-hoy-version" content="726"/>
 <meta name="vive-el-hoy-ui-patch" content="v714-supabase-stabilization"/>
 
 
@@ -25717,6 +25717,43 @@ body.theme-dark #app [data-v105-widget="futureWaterfall"] .v362-detail-stat stro
  .v708-movements[data-v708-screen="advanced"] .v722-movement-actions{margin-top:12px;margin-bottom:16px}
 }
 </style>
+<style id="v726-premium-settings">
+/* V726 · Settings only; no global dock, floating action button or navbar overrides. */
+.v242-settings-home .v726-profile-card,.v726-profile-pane .v726-profile-card{position:relative;border:1px solid rgba(255,255,255,.78);border-radius:28px;background:linear-gradient(120deg,rgba(255,255,255,.74),rgba(236,243,255,.60) 65%,rgba(222,207,254,.39));box-shadow:0 18px 42px rgba(39,56,102,.09),inset 0 1px 0 rgba(255,255,255,.72);backdrop-filter:blur(23px) saturate(155%);-webkit-backdrop-filter:blur(23px) saturate(155%);padding:19px 20px 15px;overflow:hidden;margin:0 0 18px}
+.v726-profile-card:after{content:"";position:absolute;right:-45px;top:-55px;width:180px;height:160px;pointer-events:none;background:radial-gradient(circle,rgba(139,110,239,.23),transparent 68%)}
+.v726-profile-head{display:flex;align-items:center;gap:13px;position:relative;z-index:1;min-width:0}
+.v726-avatar-wrap{width:71px;height:71px;flex:none;position:relative}
+.v726-profile-avatar{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:23px;background:linear-gradient(140deg,rgba(190,183,253,.57),rgba(170,218,252,.56));color:#253b61;font-size:24px;font-weight:800;border:2px solid rgba(255,255,255,.87);box-shadow:0 4px 16px rgba(40,70,120,.07);overflow:hidden}
+.v726-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.v726-online{position:absolute;right:-2px;bottom:3px;width:14px;height:14px;border-radius:50%;background:#8894a6;border:2px solid #fff}.v726-online.is-connected{background:#19b987}
+.v726-profile-copy{display:flex;flex-direction:column;flex:1;min-width:0;gap:4px}.v726-profile-copy strong{font-size:clamp(17px,4vw,22px);line-height:1.18;color:#152748;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.035em}.v726-profile-copy small{color:#71819a;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v726-profile-state{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;color:#6854ca;border:1px solid rgba(126,111,220,.17);background:rgba(163,140,248,.13);border-radius:100px;font-size:10px;font-weight:800;padding:5px 9px;margin-top:2px}.v726-profile-state svg{width:12px;height:12px}
+.v726-profile-edit{width:38px;height:38px;border-radius:15px;background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.78);box-shadow:0 2px 12px rgba(60,70,100,.1);display:grid;place-items:center;color:#43567a;cursor:pointer;flex:none}.v726-profile-edit svg{width:18px;height:18px}
+.v726-profile-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid rgba(125,144,183,.18);margin-top:17px;padding-top:13px;position:relative;z-index:1}.v726-profile-stats>div{display:flex;flex-direction:column;gap:2px;min-width:0;padding:0 12px;border-right:1px solid rgba(125,144,183,.16)}.v726-profile-stats>div:first-child{padding-left:0}.v726-profile-stats>div:last-child{border-right:0;padding-right:0}.v726-profile-stats small{font-size:10px;color:#72829c;white-space:normal;line-height:1.25}.v726-profile-stats strong{font-size:22px;color:#122745;line-height:1.2;font-weight:800;letter-spacing:-.04em}
+.v242-settings-home .v242-settings-section{margin-top:17px}.v242-settings-home .v242-settings-rows{overflow:hidden;border:1px solid rgba(255,255,255,.69)!important;border-radius:24px!important;box-shadow:0 9px 24px rgba(52,70,102,.055);background:rgba(255,255,255,.44);backdrop-filter:blur(17px);-webkit-backdrop-filter:blur(17px)}
+.v242-settings-home .v242-settings-row{min-height:70px}.v242-settings-home .v242-settings-row:not(:last-child){border-bottom:1px solid rgba(126,145,181,.14)}.v242-settings-home .v242-settings-row-copy strong{letter-spacing:-.018em}
+.v726-linked-section{margin:22px 0 14px}.v726-section-line{display:flex;justify-content:space-between;align-items:center;gap:9px;margin-bottom:9px}.v726-section-line .v242-group-caption{margin:0}.v726-manage-link{display:inline-flex;align-items:center;gap:4px;border:0;background:transparent;color:var(--accent,#5574dc);font-size:12px;font-weight:750;cursor:pointer;white-space:nowrap}.v726-manage-link svg{width:14px;height:14px}
+.v726-linked-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:8px}.v726-linked-mini{min-height:92px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 5px;border:1px solid rgba(255,255,255,.72);border-radius:19px;background:rgba(255,255,255,.56);color:#273956;box-shadow:0 9px 25px rgba(38,60,100,.045);min-width:0;cursor:pointer}.v726-linked-mini small{text-align:center;width:100%;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v726-bank-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:11px;background:linear-gradient(135deg,#dbe7fb,#d7e2ff);color:#4160a1}.v726-bank-mark svg{width:17px;height:17px}.v726-mini-dot{position:absolute;right:7px;top:7px;width:7px;height:7px;border-radius:50%;background:#1dae88}.v726-linked-meta{font-size:11px;line-height:1.45;color:#7b8aa0;margin:9px 2px 0}.v726-empty-mini{padding:15px;border-radius:15px;color:#63748c;font-size:12px;background:rgba(255,255,255,.45);grid-column:1/-1}
+.v726-linked-intro h2{font-size:24px;line-height:1.15;margin:7px 0 6px;letter-spacing:-.04em}.v726-kicker{font-size:10px;letter-spacing:.13em;color:#7d8ea9;font-weight:800}.v726-linked-intro p,.v726-linked-note{font-size:12px;line-height:1.55;color:#7b8aa0}.v726-linked-tabs{display:flex;gap:7px;padding:4px;background:rgba(160,177,212,.13);border-radius:18px;margin:16px 0}.v726-linked-tabs button{flex:1;border:0;padding:11px 5px;min-width:0;border-radius:14px;background:transparent;color:#526887;font-size:12px;font-weight:760;cursor:pointer}.v726-linked-tabs button.is-active{background:#203759;color:white;box-shadow:0 3px 12px rgba(30,54,85,.14)}.v726-linked-tabs button small{font-size:10px;opacity:.77}
+.v726-linked-list{display:flex;flex-direction:column;gap:9px}.v726-linked-record{display:flex;align-items:center;gap:10px;padding:13px;background:rgba(255,255,255,.57);border:1px solid rgba(255,255,255,.75);border-radius:19px;min-width:0}.v726-linked-icon{width:40px;height:40px;display:grid;place-items:center;flex:none;border-radius:13px;background:rgba(108,119,225,.11);color:#666bd0}.v726-linked-icon svg{width:20px;height:20px}.v726-linked-detail{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.v726-linked-detail strong{font-size:13px;color:#1f3557;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v726-linked-detail small{font-size:10px;color:#7b8ca1;line-height:1.35}.v726-linked-status{width:fit-content;color:#0f977b;background:rgba(25,175,139,.09);border-radius:30px;font-size:9px;font-weight:800;padding:3px 7px}.v726-linked-status.is-archived{color:#8a8295;background:rgba(90,104,129,.10)}.v726-linked-actions{display:flex;flex-direction:column;gap:5px;flex:none}.v726-linked-actions button{border-radius:10px;border:1px solid rgba(115,134,180,.20);background:rgba(255,255,255,.48);font-size:10px;font-weight:800;color:#465b7b;padding:7px 9px;cursor:pointer}.v726-linked-actions button:last-child{background:rgba(110,113,219,.10);color:#5357b4}.v726-linked-empty{border-radius:15px;padding:22px;text-align:center;color:#7b8ba0;background:rgba(255,255,255,.34)}.v726-linked-note{margin-top:16px}
+.v726-profile-pane .v726-profile-card{margin-bottom:12px}.v726-profile-quick{display:flex;flex-direction:column;gap:8px;margin-bottom:15px}.v726-profile-quick button{border:1px solid rgba(153,165,201,.25);background:rgba(255,255,255,.55);border-radius:15px;padding:12px 14px;display:flex;align-items:center;gap:11px;color:#2c4267;font-size:13px;text-align:left;font-weight:700}.v726-profile-quick svg{width:18px;height:18px}.v726-profile-form{padding:17px;border-radius:19px;background:rgba(255,255,255,.62);margin-bottom:12px}.v726-profile-form label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;margin-bottom:12px}.v726-profile-form input{width:100%;min-width:0;border-radius:12px;padding:11px;border:1px solid #cad5e9;background:white;color:#223a5d}.v726-profile-form-actions{display:flex;gap:7px}.v726-profile-form p{font-size:11px;line-height:1.5;color:#75849a}.v726-notifications-panel{border-radius:20px;padding:20px;background:rgba(255,255,255,.5)}.v726-notifications-panel h2{margin:8px 0}.v726-notifications-panel p{color:#667b96;font-size:13px;line-height:1.55}
+body.theme-black .v242-settings-home .v726-profile-card,body.theme-black .v726-profile-pane .v726-profile-card,body.theme-black .v726-linked-mini,body.theme-black .v726-linked-record,body.theme-black .v242-settings-home .v242-settings-rows,body.theme-black .v726-profile-quick button,body.theme-black .v726-profile-form,body.theme-black .v726-notifications-panel{background:#101013!important;border:1px solid #303039!important;box-shadow:none!important;backdrop-filter:blur(23px);-webkit-backdrop-filter:blur(23px)}
+body.theme-black .v726-profile-copy strong,body.theme-black .v726-profile-stats strong,body.theme-black .v726-linked-detail strong,body.theme-black .v726-linked-intro h2,body.theme-black .v726-linked-mini,body.theme-black .v726-profile-quick button,body.theme-black .v726-notifications-panel h2{color:#f6f7ff!important}
+body.theme-black .v726-profile-copy small,body.theme-black .v726-profile-stats small,body.theme-black .v726-linked-detail small,body.theme-black .v726-linked-meta,body.theme-black .v726-linked-intro p,body.theme-black .v726-linked-note{color:#a8b4c9!important}
+body.theme-black .v726-profile-edit,body.theme-black .v726-linked-actions button,body.theme-black .v726-profile-form input{background:#1d1e25!important;color:#e8e9fb!important;border-color:#333642!important}
+body.theme-black .v726-profile-avatar,body.theme-black .v726-bank-mark{background:linear-gradient(140deg,#252b48,#342845)!important;color:#e8e9ff!important;border-color:#343641!important}
+body.theme-black .v726-linked-tabs{background:#191a1e!important}body.theme-black .v726-linked-tabs button{color:#c6cce0!important}body.theme-black .v726-linked-tabs button.is-active{background:#36365b!important;color:white!important}
+@media(max-width:420px){.v726-profile-card{padding:16px 15px 13px!important}.v726-avatar-wrap{width:61px;height:61px}.v726-profile-head{gap:10px}.v726-profile-copy strong{font-size:17px}.v726-profile-stats>div{padding:0 8px}.v726-linked-strip{grid-template-columns:repeat(auto-fit,minmax(75px,1fr))}.v726-linked-record{padding:10px 9px;gap:7px}.v726-linked-actions button{padding:7px}}
+
+.v726-profile-avatar{position:relative}.v726-profile-avatar img{position:absolute;inset:0}.v726-avatar-initial{display:grid;place-items:center;width:100%;height:100%}
+.v726-profile-state,.v726-manage-link,.v726-linked-actions button:last-child{color:var(--v726-accent,#6866f3)!important}
+.v726-profile-state{background:color-mix(in srgb,var(--v726-accent,#6866f3) 12%,transparent)!important;border-color:color-mix(in srgb,var(--v726-accent,#6866f3) 19%,transparent)!important}
+.v726-linked-icon,.v726-bank-mark{color:var(--v726-accent,#6866f3)!important;background:color-mix(in srgb,var(--v726-accent,#6866f3) 12%,transparent)!important}
+.v726-linked-tabs button.is-active{background:var(--v726-accent,#6866f3)!important;color:white!important}
+body.theme-black .v726-profile-state{color:color-mix(in srgb,var(--v726-accent,#6866f3) 65%,white)!important}
+
+.v726-bank-mark .bank-photo-mark,.v726-linked-icon .bank-photo-mark{width:100%;height:100%;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;border-radius:10px;background:transparent;box-shadow:none;border:0;overflow:hidden}.v726-bank-mark .bank-photo-mark img,.v726-linked-icon .bank-photo-mark img{width:100%;height:100%;max-height:32px;object-fit:contain;padding:2px}.v726-bank-mark .bank-photo-fallback,.v726-linked-icon .bank-photo-fallback{font-size:12px;font-weight:850}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -42180,9 +42217,11 @@ let v242SettingsPane='home';
 const V242_PANES=[
  ['appearance','Apariencia y colores','Temas Claro y Black oscuro, acentos y fondos','sun','Visual'],
  ['profile','Perfil y sincronización','Conexión privada y estado de tu cuenta','wallet','Cuenta'],
+ ['notifications','Notificaciones','Alertas internas, recordatorios y vencimientos','receipt','Alertas'],
  ['integrations','Integraciones y automatizaciones','Apple Pay y Atajos de iPhone','card','Servicios'],
  ['financial','Configuración financiera','Tasa de cambio, impuestos y cargos','chart','Finanzas'],
  ['security','Seguridad y privacidad','Revisión, recuperación y respaldos','shield','Privacidad'],
+ ['linked','Cuentas vinculadas','Todas, activas y archivadas','building','Instituciones'],
  ['about','Acerca de vive el hoy','Información y registros guardados','settings','Aplicación']
 ];
 
@@ -42379,6 +42418,66 @@ function v300AppearancePane(){
 ${isMobileViewport()?`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN MÓVIL</span><h3>Liquid Glass · barra inferior</h3></div></div>${v250DockGlassPanel()}`:`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN WEB</span><h3>Intensidad de las barras superiores</h3></div></div>${v443NavPanel()}`}</div>`;
 }
 
+
+ICONS.edit='<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4 10.5-10.5Z"/>';
+/* V726 · Perfil y cuentas registradas. Fuente: estado financiero de sesión
+   recuperado de Supabase; no añade lecturas, tablas ni conexiones. */
+let v726LinkedFilter='all';
+let v726ProfileEditing=false;
+const v726CleanText=(v,max=110)=>String(v??'').trim().slice(0,max);
+function v726AccentColor(){const s=db?.settings||{};const predefined={original:'#6866f3',emerald:'#087f75',coral:'#bd4f70'};return s.paletteChoice==='custom'&&/^#[0-9a-f]{6}$/i.test(s.paletteHex||'')?s.paletteHex:(predefined[s.paletteChoice]||predefined.original)}
+function v726ProfileInfo(){
+ const user=(typeof f33User!=='undefined'&&f33User)||null;
+ const m=user?.user_metadata||{};
+ const preferred=[m.full_name,m.name,m.display_name,db?.settings?.userName,db?.settings?.ownerName].find(x=>typeof x==='string'&&x.trim());
+ const name=preferred?v726CleanText(preferred,75):(user?.email?v726CleanText(user.email,75):'Mi perfil');
+ const avatar=String(m.avatar_url||m.picture||'').trim();
+ return {name,email:v726CleanText(user?.email||'',110),avatar:/^https:\/\//i.test(avatar)&&avatar.length<1700?avatar:'',connected:!!f33Active};
+}
+function v726Initials(v){return (String(v||'').split(/\s+/).filter(Boolean).map(x=>x[0]).slice(0,2).join('')||'VF').toUpperCase()}
+function v726ProfileCard(){
+ const p=v726ProfileInfo(),banks=(db.banks||[]).filter(x=>!x.archived).length;
+ const products=['accounts','cards','loans','certificates'].reduce((n,k)=>n+(db[k]||[]).filter(x=>!x.archived).length,0);
+ const movements=(db.transactions||[]).length;
+ return `<section class="v726-profile-card" aria-label="Mi perfil financiero">
+  <div class="v726-profile-head"><div class="v726-avatar-wrap"><span class="v726-profile-avatar"><span aria-hidden="true" class="v726-avatar-initial">${sanitize(v726Initials(p.name))}</span>${p.avatar?`<img src="${sanitize(p.avatar)}" alt="Foto de perfil" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">`:``}</span><i class="v726-online ${p.connected?'is-connected':''}" aria-label="${p.connected?'Sesión conectada':'Conexión pendiente'}"></i></div>
+  <div class="v726-profile-copy"><strong>${sanitize(p.name)}</strong><small>${p.email?sanitize(p.email):'Cuenta personal'} · Finanzas 360</small><span class="v726-profile-state">${icon('shield')} ${p.connected?'Sesión protegida':'Verificando conexión'}</span></div>
+  <button type="button" class="v726-profile-edit" data-v726-profile-edit="1" aria-label="Editar perfil">${icon('edit')}</button></div>
+  <div class="v726-profile-stats"><div><small>Instituciones</small><strong>${banks}</strong></div><div><small>Productos activos</small><strong>${products}</strong></div><div><small>Movimientos</small><strong>${movements}</strong></div></div>
+ </section>`;
+}
+function v726LinkedRecords(){
+ const source=[['banks','bank','Institución','building'],['accounts','account','Cuenta','wallet'],['cards','card','Tarjeta','card'],['loans','loan','Préstamo','chart'],['certificates','certificate','Certificado','receipt']];
+ const rows=[];
+ for(const [collection,kind,type,ico] of source)for(const p of db[collection]||[]){
+  if(!p||!p.id)continue;
+  if(kind==='account'&&p.kind==='cash')continue; // Efectivo del sistema no es una cuenta bancaria vinculada
+  rows.push({id:String(p.id),kind,collection,type,ico,archived:!!p.archived,name:v726CleanText(p.name||p.title||type,120),bank:kind==='bank'?'Institución registrada':bankOf(p)});
+ }
+ return rows.sort((a,b)=>Number(a.archived)-Number(b.archived)||a.name.localeCompare(b.name,'es'));
+}
+function v726LinkedStrip(){
+ const rows=v726LinkedRecords(),count=rows.filter(x=>!x.archived).length;
+ const institutions=(db.banks||[]).filter(x=>!x.archived).slice(0,5);
+ return `<section class="v726-linked-section" aria-label="Cuentas vinculadas"><div class="v726-section-line"><span class="v242-group-caption">CUENTAS VINCULADAS</span><button type="button" class="v726-manage-link" data-v242-section="linked">Gestionar ${icon('arrow')}</button></div>
+ <div class="v726-linked-strip">${institutions.length?institutions.map(x=>`<button type="button" class="v726-linked-mini" data-v726-linked-open="bank" data-v726-id="${sanitize(x.id)}"><span class="v726-bank-mark">${bankLogoMark(x,'v726-mini-logo')}</span><small>${sanitize(v726CleanText(x.name,26))}</small><span class="v726-mini-dot" title="Registrada, no necesariamente conectada al banco"></span></button>`).join(''):`<div class="v726-empty-mini">Todavía no hay instituciones activas registradas.</div>`}</div>
+ <p class="v726-linked-meta">${count} registros activos · ${rows.length-count} ${rows.length-count===1?'archivado':'archivados'}. Los productos se muestran desde tus datos financieros, sin conexión bancaria automática.</p></section>`;
+}
+function v726LinkedPage(){
+ const rows=v726LinkedRecords(),filter=v726LinkedFilter;
+ const visible=rows.filter(x=>filter==='all'||(filter==='active'?!x.archived:x.archived));
+ const countActive=rows.filter(x=>!x.archived).length;
+ return `<div class="v726-linked-page" aria-label="Gestión de cuentas vinculadas"><div class="v726-linked-intro"><span class="v726-kicker">TUS REGISTROS FINANCIEROS</span><h2>Productos registrados</h2><p>Consulta tus instituciones y productos registrados. Archivar conserva movimientos, pagos e historial.</p></div>
+ <div class="v726-linked-tabs" role="group" aria-label="Estado de productos">${[['all','Todas',rows.length],['active','Activas',countActive],['archived','Archivadas',rows.length-countActive]].map(([v,label,n])=>`<button type="button" class="${filter===v?'is-active':''}" data-v726-linked-filter="${v}" aria-pressed="${filter===v}">${label} <small>${n}</small></button>`).join('')}</div>
+ <div class="v726-linked-list">${visible.length?visible.map(x=>`<article class="v726-linked-record"><span class="v726-linked-icon">${x.kind==='bank'?bankLogoMark((db.banks||[]).find(b=>String(b.id)===x.id),'v726-record-logo'):icon(x.ico)}</span><div class="v726-linked-detail"><strong>${sanitize(x.name)}</strong><small>${sanitize(x.type)} · ${sanitize(v726CleanText(x.bank,70))}</small><span class="v726-linked-status ${x.archived?'is-archived':''}">${x.archived?'Archivada':'Activa'}</span></div><div class="v726-linked-actions"><button type="button" data-v726-linked-open="${x.kind}" data-v726-id="${sanitize(x.id)}" aria-label="Consultar ${sanitize(x.name)}">Ver</button><button type="button" data-v726-linked-toggle="${x.kind}" data-v726-id="${sanitize(x.id)}">${x.archived?'Reactivar':'Archivar'}</button></div></article>`).join(''):`<div class="v726-linked-empty">No hay productos en esta categoría.</div>`}</div>
+ <p class="v726-linked-note">«Vinculadas» significa registradas en tus finanzas. No implica que exista una conexión bancaria o sincronización bancaria automática.</p></div>`;
+}
+function v726NotificationsPane(){return `<section class="v726-notifications-panel"><div class="v726-kicker">AVISOS DE LA APLICACIÓN</div><h2>Notificaciones</h2><p>Las alertas de vencimientos y compromisos se muestran dentro de la aplicación. No se reactivará el sistema antiguo de notificaciones push.</p><button type="button" class="btn soft" data-v726-open-bell="1">${icon('receipt')} Consultar avisos de la campanita</button></section>`}
+function v726ProfilePane(){
+ const p=v726ProfileInfo();
+ return `<div class="v726-profile-pane">${v726ProfileCard()}${v726ProfileEditing?`<form id="v726ProfileForm" class="v726-profile-form"><label>Nombre para mostrar<input name="name" type="text" maxlength="75" required value="${sanitize(p.name)}" autocomplete="name"></label><label>Foto de perfil (URL HTTPS, opcional)<input name="avatar" type="url" maxlength="1700" placeholder="https://..." value="${sanitize(p.avatar)}"></label><div class="v726-profile-form-actions"><button type="submit" class="btn">Guardar perfil</button><button type="button" class="btn soft" data-v726-profile-cancel="1">Cancelar</button></div><p>Los datos de perfil se guardan en tu cuenta de Supabase Auth; no alteran movimientos ni saldos.</p></form>`:`<div class="v726-profile-quick"><button type="button" data-v726-profile-edit="1">${icon('edit')} Editar nombre y fotografía</button><button type="button" data-v242-section="linked">${icon('building')} Gestionar productos registrados</button></div>`}${f34CloudPanel()}</div>`;
+}
+
 function v242Settings(){
  const s=db.settings,pane=V242_PANES.some(x=>x[0]===v242SettingsPane)?v242SettingsPane:'home';
  const desktopSettings=!isMobileViewport();
@@ -42387,7 +42486,9 @@ function v242Settings(){
  const tile=(entry)=>`<button class="v242-settings-row" type="button" data-v242-section="${entry[0]}"><span class="v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v242-settings-row-copy"><strong>${entry[1]}</strong><small>${entry[2]}</small></span><span class="v242-settings-chevron" aria-hidden="true">›</span></button>`;
  const content={
   appearance:()=>`${v300AppearancePane()}`,
-  profile:()=>`${f34CloudPanel()}`,
+  profile:()=>`${v726ProfilePane()}`,
+  notifications:()=>`${v726NotificationsPane()}`,
+  linked:()=>`${v726LinkedPage()}`,
   integrations:()=>`${v212SettingsPanel()}`,
   financial:()=>`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / REGLAS FINANCIERAS</span><h3>Tasas, transferencias y cargos</h3></div></div>
 ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div class="form-grid">${formItem('fx','RD$ por cada US$1 · tasa de referencia',s.fx,'number','required min="0.001" step="0.0001"')}${formItem('transferTaxPct','Impuesto de transferencias y pagos bancarios (%)',num(s.transferTaxPct),'number','required min="0" max="100" step="0.001"')}</div><div class="settings-explain">El impuesto general a determinadas transferencias es <b>0.20% desde el 3 de julio de 2026</b> (era 0.15%); no todas las operaciones están gravadas. Las transferencias entre cuentas propias y los consumos con tarjeta pueden estar exentos. Para pagos de tarjeta desde cuenta bancaria, Internet Banking utiliza la tasa manual de este ajuste y Presencial no genera este impuesto en la aplicación; verifica posibles excepciones según el banco. No existe una comisión fija general. <b>Pago al instante</b> es una modalidad que puedes elegir en cada transferencia y agrega RD$100 solamente cuando la seleccionas. Ejemplo: una transferencia gravada de RD$10,000 con Pago al instante suma RD$20 de impuesto y RD$100 por esa modalidad, totalizando RD$10,120. La tasa USD/DOP se consulta automáticamente y solo se usa para valoración y nuevas conversiones. Los movimientos históricos conservan la tasa registrada en cada operación.</div><div class="form-foot"><button class="btn" type="submit">Guardar configuración financiera</button></div></form></div>
@@ -42407,15 +42508,15 @@ ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div 
  const title=paneInfo?.[1]||'Configuración';
  if(desktopSettings){
   const desktopTile=(entry)=>`<button type="button" class="v439-mac-item ${activeDesktopPane===entry[0]?'is-active':''}" data-v242-section="${entry[0]}" aria-current="${activeDesktopPane===entry[0]?'page':'false'}"><span class="v439-mac-item-icon v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v439-mac-item-copy"><strong>${entry[1]}</strong><small>${entry[4]}</small></span><span class="v439-mac-item-arrow" aria-hidden="true">›</span></button>`;
-  const groups=[['CUENTA',['profile']],['PERSONALIZACIÓN',['appearance','notifications']],['SERVICIOS',['integrations','financial']],['PRIVACIDAD Y AYUDA',['security','about']]];
-  return `<div class="settings-layout v242-ios-settings v439-macos-settings" data-v242-settings="${activeDesktopPane}">
+  const groups=[['CUENTA',['profile']],['PERSONALIZACIÓN',['appearance','notifications']],['SERVICIOS',['integrations','financial']],['PRIVACIDAD Y AYUDA',['security','about']],['CUENTAS VINCULADAS',['linked']]];
+  return `<div class="settings-layout v242-ios-settings v439-macos-settings" style="--v726-accent:${v726AccentColor()}" data-v242-settings="${activeDesktopPane}">
     <header class="v439-mac-top"><div><span class="v439-mac-eyebrow">VIVE EL HOY · FINANZAS 360</span><h1>Configuración</h1><p>Tus preferencias, organizadas en un solo lugar.</p></div></header>
-    <div class="v439-mac-workspace"><aside class="v439-mac-sidebar" aria-label="Secciones de Configuración"><div class="v439-mac-sidehead"><span class="v439-mac-avatar">${icon('wallet')}</span><span><strong>Tu espacio financiero</strong><small>Ajustes y preferencias</small></span></div><nav aria-label="Categorías de Configuración">${groups.map(([label,ids])=>`<div class="v439-mac-group"><p>${label}</p>${V242_PANES.filter(x=>ids.includes(x[0])).map(desktopTile).join('')}</div>`).join('')}</nav><div class="v439-mac-sidefoot">${icon('shield')} Datos vinculados a tu sesión</div></aside>
+    <div class="v439-mac-workspace"><aside class="v439-mac-sidebar" aria-label="Secciones de Configuración"><div class="v439-mac-sidehead"><span class="v439-mac-avatar">${icon('wallet')}</span><span><strong>${sanitize(v726ProfileInfo().name)}</strong><small>Ajustes y preferencias</small></span></div><nav aria-label="Categorías de Configuración">${groups.map(([label,ids])=>`<div class="v439-mac-group"><p>${label}</p>${V242_PANES.filter(x=>ids.includes(x[0])).map(desktopTile).join('')}</div>`).join('')}</nav><div class="v439-mac-sidefoot">${icon('shield')} Datos vinculados a tu sesión</div></aside>
     <main class="v439-mac-detail" id="v439-settings-detail" tabindex="-1" aria-label="${title}"><header class="v439-mac-detail-head"><span class="v439-mac-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h2>${title}</h2><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner v439-mac-detail-body">${sectionBody}</div></main></div>
   </div>`;
  }
- return `<div class="settings-layout v242-ios-settings" data-v242-settings="${pane}">
- ${pane==='home'?`<div class="v242-settings-home"><header class="v242-settings-intro"><span class="v242-settings-eyebrow">VIVE EL HOY · FINANZAS 360</span><h1>Configuración</h1><p>Todo a tu manera, con la claridad de Ajustes de iPhone.</p></header><section class="v242-settings-profile"><span class="v242-profile-avatar">${icon('wallet')}</span><span><strong>Tu espacio financiero</strong><small>Preferencias, conexión y protección</small></span><span class="v242-settings-chevron">›</span><button class="v242-profile-hit" type="button" data-v242-section="profile" aria-label="Abrir perfil y sincronización"></button></section><div class="v242-settings-section"><span class="v242-group-caption">APARIENCIA</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='appearance').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">NOTIFICACIONES</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='notifications').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">CONEXIONES Y FINANZAS</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['integrations','financial'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">PRIVACIDAD Y SOPORTE</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['security','about'].includes(x[0])).map(tile).join('')}</div></div><p class="v242-settings-footer">Tus registros y operaciones financieras se mantienen protegidos por las reglas actuales de la aplicación.</p></div>`:
+ return `<div class="settings-layout v242-ios-settings" style="--v726-accent:${v726AccentColor()}" data-v242-settings="${pane}">
+ ${pane==='home'?`<div class="v242-settings-home"><header class="v242-settings-intro"><span class="v242-settings-eyebrow">VIVE EL HOY · FINANZAS 360</span><h1>Configuración</h1><p>Todo a tu manera, con la claridad de Ajustes de iPhone.</p></header>${v726ProfileCard()}<div class="v242-settings-section"><span class="v242-group-caption">APARIENCIA</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='appearance').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">NOTIFICACIONES</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='notifications').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">CONEXIONES Y FINANZAS</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['integrations','financial'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">PRIVACIDAD Y SOPORTE</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['security','about'].includes(x[0])).map(tile).join('')}</div></div>${v726LinkedStrip()}<p class="v242-settings-footer">Tus registros y operaciones financieras se mantienen protegidos por las reglas actuales de la aplicación.</p></div>`:
  `<div class="v242-settings-subpage"><header class="v242-settings-subhead"><button type="button" class="v242-settings-back" data-v242-back="1">‹ <span>Configuración</span></button><span class="v242-settings-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h1>${title}</h1><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner">${sectionBody}</div></div>`}
  </div>`;
 }
@@ -43020,6 +43121,54 @@ document.addEventListener('click',function(event){
  button.setAttribute('aria-expanded',String(!expanded));
  panel.hidden=expanded;
 },true);
+
+/* V726 · Controls with existing in-memory Supabase-backed state. */
+document.addEventListener('click',function(event){
+ const target=event.target.closest?.('[data-v726-linked-filter],[data-v726-linked-open],[data-v726-linked-toggle],[data-v726-profile-edit],[data-v726-profile-cancel],[data-v726-open-bell]');
+ if(!target)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ if(target.hasAttribute('data-v726-linked-filter')){const v=target.dataset.v726LinkedFilter;if(['all','active','archived'].includes(v)){v726LinkedFilter=v;render()}return}
+ if(target.hasAttribute('data-v726-profile-edit')){v726ProfileEditing=true;v242SettingsPane='profile';render();if(isMobileViewport())window.scrollTo(0,0);return}
+ if(target.hasAttribute('data-v726-profile-cancel')){v726ProfileEditing=false;render();return}
+ if(target.hasAttribute('data-v726-open-bell')){
+   const bell=document.querySelector('.v36-notifications');
+   if(bell&&bell.tagName.toLowerCase()==='details'){bell.open=true;bell.querySelector('summary')?.focus()}
+   else toast('Consulta tus avisos desde la campanita del encabezado.');
+   return;
+ }
+ const kind=target.dataset.v726LinkedOpen||target.dataset.v726LinkedToggle;
+ const collection={bank:'banks',account:'accounts',card:'cards',loan:'loans',certificate:'certificates'}[kind];
+ const id=target.dataset.v726Id;
+ if(!collection||!id||!db[collection]?.some(x=>String(x.id)===id))return;
+ if(target.hasAttribute('data-v726-linked-toggle')){manageProduct(kind,id,'toggle');return}
+ ui.showHidden=true;
+ ui.page={bank:'banks',account:'accounts',card:'cards',loan:'loans',certificate:'certificates'}[kind];
+ if(kind==='bank'){ui.bankId=id;if(typeof v202ShowBankDetail!=='undefined')v202ShowBankDetail=true}
+ if(kind==='account')ui.accountId=id;
+ if(kind==='card')ui.cardId=id;
+ if(kind==='loan')ui.loanId=id;
+ if(kind==='certificate')ui.v239CertificateId=id;
+ render();window.scrollTo(0,0);
+},true);
+document.addEventListener('submit',async function(event){
+ if(event.target?.id!=='v726ProfileForm')return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const form=event.target,btn=form.querySelector('[type="submit"]');
+ const name=String(new FormData(form).get('name')||'').trim().slice(0,75);
+ const avatar=String(new FormData(form).get('avatar')||'').trim();
+ if(!name){toast('Indica un nombre.');return}
+ if(avatar&&(!/^https:\/\/[^\s]+$/i.test(avatar)||avatar.length>1700)){toast('La foto requiere una URL HTTPS válida.');return}
+ if(!f33Api||!f33User){toast('Inicia sesión para actualizar el perfil.');return}
+ if(btn)btn.disabled=true;
+ try{
+   const metadata={...f33User.user_metadata,full_name:name,avatar_url:avatar||null};
+   const {data,error}=await f33Api.auth.updateUser({data:metadata});
+   if(error)throw error;
+   if(data?.user)f33User=data.user;
+   v726ProfileEditing=false;render();toast('Perfil actualizado en tu cuenta.');
+ }catch(err){console.warn('No se pudo guardar el perfil',err);toast('No se pudo guardar. Comprueba la conexión y vuelve a intentar.');if(btn)btn.disabled=false}
+},true);
+
 pages.settings=v242Settings;
 pages.personalize=v296PersonalizePage;
 document.addEventListener('click',event=>{
@@ -78284,41 +78433,47 @@ body.theme-black .world-mobilesearch #page .v721-search-corner{color:#d7dcf2!imp
 </style>
 
 
-<!-- V724 · Dos botones flotantes compactos, alineados y separados, sin alterar el Dock -->
-<style id="v724-floating-action-duo">
+<!-- V727 · Solo refinamiento del acceso secundario. El + conserva íntegro su CSS, DOM y eventos. -->
+<style id="v727-secondary-floating-only">
 @media (max-width:790px) {
-  /* Mismo borde derecho para el botón principal; el auxiliar se centra sobre él. */
-  body .v249-register-fab {
-    width:54px!important;height:54px!important;
-    right:max(14px,calc((100vw - 460px)/2 + 13px))!important;
-    bottom:calc(var(--v398-dock-bottom,0px) + var(--v398-dock-height,64px) + 13px)!important;
-    z-index:75!important;
-  }
-  body .v249-register-fab .v249-fab-surface svg {width:25px!important;height:25px!important;}
-  body .v708-movements-fab {
-    width:43px!important;height:43px!important;
-    right:calc(max(14px,calc((100vw - 460px)/2 + 13px)) + 5.5px)!important;
-    bottom:calc(var(--v398-dock-bottom,0px) + var(--v398-dock-height,64px) + 78px)!important;
-    border:1px solid rgba(255,255,255,.18)!important;
-    background:linear-gradient(145deg,#33455f,#243349)!important;
-    color:#fff!important;
-    box-shadow:0 7px 17px rgba(15,26,44,.23),inset 0 1px 0 rgba(255,255,255,.12)!important;
-    backdrop-filter:blur(14px)!important;
-    -webkit-backdrop-filter:blur(14px)!important;
+  /* El botón principal mide 54px en móviles normales, según su regla existente.
+     Centrar 43px sobre él => desplazamiento horizontal (54-43)/2 = 5.5px. */
+  html body .v708-movements-fab {
+    width:43px!important;
+    height:43px!important;
+    right:calc(max(13px,calc((100dvw - 460px)/2 + 14px)) + 5.5px)!important;
+    bottom:calc(var(--v398-dock-bottom,var(--v367-dock-bottom,0px)) + var(--v398-dock-height,var(--v367-dock-height,64px)) + 77px)!important;
+    border-radius:50%!important;
+    border:1px solid color-mix(in srgb,var(--f360-accent-readable,var(--accent,#678ce9)) 30%,white 35%)!important;
+    background:color-mix(in srgb,var(--f360-accent-readable,var(--accent,#678ce9)) 18%,#f1f5fc 82%)!important;
+    color:var(--f360-accent-readable,var(--accent,#4269b2))!important;
+    box-shadow:0 6px 16px rgba(23,37,66,.16),inset 0 1px 0 rgba(255,255,255,.58)!important;
+    backdrop-filter:blur(16px) saturate(130%)!important;
+    -webkit-backdrop-filter:blur(16px) saturate(130%)!important;
     z-index:74!important;
   }
-  body .v708-movements-fab>span:first-child svg {width:20px!important;height:20px!important;stroke-width:2.15!important;}
-  body:is(.theme-black,.theme-dark) .v708-movements-fab {
-    background:linear-gradient(145deg,#303643,#1b2028)!important;
-    border-color:rgba(255,255,255,.19)!important;color:#fff!important;
+  html body .v708-movements-fab>span:first-child svg {width:20px!important;height:20px!important;stroke-width:2.1!important;}
+  html body:is(.theme-black,.theme-dark) .v708-movements-fab {
+    background:color-mix(in srgb,var(--f360-accent-readable,var(--accent,#8ea6ff)) 18%,#151515 82%)!important;
+    border-color:color-mix(in srgb,var(--f360-accent-readable,var(--accent,#8ea6ff)) 28%,#343434 72%)!important;
+    color:var(--f360-accent-readable,#dbe3fa)!important;
+    box-shadow:0 7px 17px rgba(0,0,0,.33),inset 0 1px rgba(255,255,255,.07)!important;
+  }
+  body:is(.v154-mobile-input-focused,.v158-keyboard-visible,.v216-modal-open) .v708-movements-fab,
+  body:has(#modal-root .modal-layer) .v708-movements-fab,
+  body:has(#modal-root [role="dialog"]) .v708-movements-fab {
+    visibility:hidden!important;opacity:0!important;pointer-events:none!important;
   }
 }
-@media (max-width:355px){
-  body .v249-register-fab {width:50px!important;height:50px!important;right:11px!important;}
-  body .v708-movements-fab {width:40px!important;height:40px!important;right:16px!important;
-    bottom:calc(var(--v398-dock-bottom,0px) + var(--v398-dock-height,64px) + 74px)!important;}
+@media(max-width:355px){
+  html body .v708-movements-fab {
+    width:40px!important;height:40px!important;
+    right:16px!important;
+    bottom:calc(var(--v398-dock-bottom,var(--v367-dock-bottom,0px)) + var(--v398-dock-height,var(--v367-dock-height,64px)) + 73px)!important;
+  }
 }
-@media(min-width:791px){body .v708-movements-fab{display:none!important;}}
+@media(min-width:791px){html body .v708-movements-fab{display:none!important;}}
+@media(prefers-reduced-motion:reduce){html body .v708-movements-fab{transition:none!important;}}
 </style>
 
 </body>
