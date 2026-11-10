@@ -29617,37 +29617,29 @@ function v711SearchRecentTerms(){
  if((db.banks||[]).length)push('Bancos');
  return terms.slice(0,5);
 }
+function v721SearchArt(id){
+ const arts={
+  dinero:`<svg viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="v721gBank" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#71ccff"/><stop offset="1" stop-color="#1965e1"/></linearGradient></defs><rect x="29" y="25" width="102" height="80" rx="14" fill="#73c9ff" opacity=".64" transform="rotate(-15 80 65)"/><rect x="18" y="34" width="108" height="80" rx="13" fill="url(#v721gBank)" transform="rotate(-5 72 74)"/><path d="M72 49 46 63h52L72 49Zm-20 19v24m13-24v24m14-24v24m13-24v24M45 96h55" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  tarjetas:`<svg viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="v721gCard" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b19cff"/><stop offset="1" stop-color="#7050d9"/></linearGradient></defs><rect x="35" y="20" width="105" height="68" rx="13" fill="#9b7af2" opacity=".55" transform="rotate(-13 87 54)"/><rect x="18" y="44" width="113" height="70" rx="13" fill="url(#v721gCard)" transform="rotate(-8 75 79)"/><rect x="37" y="66" width="23" height="16" rx="4" fill="#f8d794" transform="rotate(-8 49 74)"/><path d="M94 69q10 8 0 16m8-23q16 15 0 30" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".9"/></svg>`,
+  pagos:`<svg viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="v721gPay" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffafd3"/><stop offset="1" stop-color="#ea65a2"/></linearGradient></defs><rect x="22" y="28" width="108" height="88" rx="17" fill="url(#v721gPay)"/><rect x="22" y="46" width="108" height="15" fill="#ffd6e9"/><path d="M50 21v24M102 21v24" stroke="#d45a9b" stroke-width="9" stroke-linecap="round"/><path d="m57 87 13 12 26-28" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  servicios:`<svg viewBox="0 0 150 130" aria-hidden="true"><rect x="18" y="30" width="66" height="65" rx="17" fill="#ff9d75" transform="rotate(-8 51 63)"/><path d="m41 50 25 14-25 14Z" fill="#fff"/><rect x="70" y="55" width="65" height="63" rx="18" fill="#71c98a" transform="rotate(11 102 87)"/><path d="M87 82q15-12 30 0m-27 9q12-10 24 0m-19 8q7-5 14 0" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><rect x="80" y="11" width="54" height="50" rx="14" fill="#f9f9ff" stroke="#e5dcf1"/><path d="M107 22c-10 0-15 9-15 18 0 13 15 17 15 17s15-4 15-17c0-9-5-18-15-18Z" fill="#d5a5ff"/></svg>`,
+  movimientos:`<svg viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="v721gTx" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#c5e7f4"/></linearGradient></defs><path d="M43 14h73a12 12 0 0 1 12 12v99l-13-10-12 10-12-10-12 10-12-10-12 10V26a12 12 0 0 1 12-12Z" fill="url(#v721gTx)" transform="rotate(6 82 69)"/><path d="M58 39h48M58 53h37M58 67h42" stroke="#9ab7e4" stroke-width="6" stroke-linecap="round"/><rect x="63" y="89" width="9" height="19" rx="3" fill="#70d5c2"/><rect x="79" y="80" width="9" height="28" rx="3" fill="#36caa8"/><rect x="95" y="72" width="9" height="36" rx="3" fill="#13ae95"/></svg>`,
+  analitica:`<svg viewBox="0 0 150 130" aria-hidden="true"><rect x="23" y="82" width="22" height="40" rx="5" fill="#a7d5ff"/><rect x="53" y="63" width="22" height="59" rx="5" fill="#6eb5ff"/><rect x="83" y="43" width="22" height="79" rx="5" fill="#358efa"/><rect x="113" y="24" width="22" height="98" rx="5" fill="#216ce5"/><path d="m28 76 34-25 30 11 36-45" stroke="#2779df" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><g fill="#fff" stroke="#2a83ee" stroke-width="4"><circle cx="28" cy="76" r="6"/><circle cx="62" cy="51" r="6"/><circle cx="92" cy="62" r="6"/><circle cx="128" cy="17" r="6"/></g></svg>`
+ };
+ return arts[id]||'';
+}
 function v154MobileSearchPage(){
  v154PrepareMobileIndex();
- const profileName=v711SearchProfileName();
- const initials=v711SearchInitials(profileName);
- const banksCount=v711SearchLinkedBanks().length;
- const productsCount=(db.accounts||[]).filter(a=>!isHidden(a)).length+(db.cards||[]).filter(c=>!isHidden(c)).length+(db.loans||[]).filter(l=>!isHidden(l)).length+(db.certificates||[]).filter(c=>!isHidden(c)).length;
- const monthKey=ui.month||today().slice(0,7);
- const monthMovements=(db.transactions||[]).filter(t=>String(t.date||'').startsWith(monthKey)).length;
- const chips=[['Todo','clear'],['Tarjetas','tarjetas'],['Bancos','dinero'],['Servicios','servicios'],['Movimientos','movimientos']];
+ const chips=[['Todo','clear','bolt'],['Tarjetas','tarjetas','card'],['Bancos','dinero','building'],['Servicios','servicios','receipt']];
  const recents=v711SearchRecentTerms();
- return `<div class="vive-mobile-hub v154-search-hub v711-search-shell">
+ return `<div class="vive-mobile-hub v154-search-hub v711-search-shell v721-search-shell">
   <div class="v154-search-heading v711-search-heading"><div><span class="v154-search-eyebrow">EXPLORA, ENCUENTRA Y GESTIONA</span><h1>Buscar</h1><p>Accede rápido a tus finanzas, movimientos y más.</p></div></div>
-  <section class="v711-search-profile" aria-label="Perfil de búsqueda">
-    <div class="v711-profile-top">
-      <span class="v711-profile-avatar">${sanitize(initials)}</span>
-      <div class="v711-profile-copy"><strong>${sanitize(profileName)}</strong><small>Mi perfil · búsqueda financiera</small><span class="v711-profile-badge">Finanzas 360</span></div>
-      <button type="button" class="v711-profile-action" data-act="navigate" data-id="settings" aria-label="Abrir perfil y ajustes">${icon('edit')}</button>
-    </div>
-    <div class="v711-profile-stats"><div><span>Bancos</span><b>${banksCount}</b></div><div><span>Productos</span><b>${productsCount}</b></div><div><span>Movimientos</span><b>${monthMovements}</b></div></div>
-  </section>
-  <div class="v154-search-box v711-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios, movimientos..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button></div>
-  <nav class="v711-search-pills" aria-label="Filtros rápidos">${chips.map(([label,key],i)=>key==='clear'?`<button type="button" class="${i===0?'active':''}" data-v154-clear="1">${label}</button>`:`<button type="button" data-v154-category="${key}">${label}</button>`).join('')}</nav>
+  <div class="v154-search-box v711-search-box v721-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios, movimientos..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button><span class="v721-search-corner" aria-hidden="true">${icon('grid')}</span></div>
+  <nav class="v711-search-pills v721-search-pills" aria-label="Filtros rápidos">${chips.map(([label,key,ic],i)=>key==='clear'?`<button type="button" class="${i===0?'active':''}" data-v154-clear="1">${icon(ic)}<span>${label}</span></button>`:`<button type="button" data-v154-category="${key}">${icon(ic)}<span>${label}</span></button>`).join('')}</nav>
   <div class="v154-search-discover" id="v154-mobile-discover">
-    <div class="v154-section-header v711-section-header"><h2>Explora tus finanzas</h2><p>Encuentra lo que necesitas sin salir de esta vista</p></div>
-    <div class="v154-category-grid v711-category-grid">${V154_MOBILE_CATEGORIES.map(c=>`<button type="button" class="v154-category-tile v154-tone-${c.tone}" data-v154-category="${c.id}" aria-label="Explorar ${c.title}"><span class="v154-category-mark">${icon(c.ico)}</span><span class="v154-category-title">${c.title}</span><span class="v154-category-sub">${c.sub}</span><span class="v711-category-arrow">${icon('arrow')}</span></button>`).join('')}</div>
-    <section class="v711-bank-widget" aria-label="Mis bancos y mis cuentas">
-      <div class="v711-widget-head"><div><span>MIS BANCOS Y MIS CUENTAS</span><h3>Mis bancos y mis cuentas</h3></div><button type="button" data-act="navigate" data-id="banks">Ver todos ${icon('arrow')}</button></div>
-      <div class="v711-bank-list">${v711SearchBankRows()}</div>
-    </section>
-    <section class="v711-recent-widget" aria-label="Búsquedas recientes">
-      <div class="v711-widget-head"><div><span>ACCESO RÁPIDO</span><h3>Búsquedas recientes</h3></div><button type="button" data-v154-clear="1">Ver todo</button></div>
+    <div class="v154-category-grid v711-category-grid v721-category-grid">${V154_MOBILE_CATEGORIES.map(c=>`<button type="button" class="v154-category-tile v154-tone-${c.tone} v721-category-tile" data-v154-category="${c.id}" aria-label="Explorar ${c.title}"><span class="v721-tile-copy"><strong class="v154-category-title">${c.title}</strong><small class="v154-category-sub">${c.sub}</small></span><span class="v721-tile-art">${v721SearchArt(c.id)}</span><span class="v711-category-arrow">${icon('arrow')}</span></button>`).join('')}</div>
+    <section class="v711-recent-widget v721-recent-widget" aria-label="Búsquedas recientes">
+      <div class="v711-widget-head"><h3>Búsquedas recientes</h3><button type="button" data-v154-clear="1">Ver todo ${icon('arrow')}</button></div>
       <div class="v711-recent-row">${recents.length?recents.map(term=>`<button type="button" class="v711-recent-pill" data-v711-search-term="${sanitize(term)}">${sanitize(term)}</button>`).join(''):`<span class="v711-empty-inline">Tus búsquedas recientes aparecerán aquí.</span>`}</div>
     </section>
   </div>
@@ -29655,6 +29647,18 @@ function v154MobileSearchPage(){
  </div>`;
 }
 
+/* V721 · Recent-search chips reuse existing client-side search, without new API calls. */
+document.addEventListener('click',e=>{
+ const chip=e.target.closest?.('[data-v711-search-term]');
+ if(!chip)return;
+ const input=document.getElementById('v154-mobile-search-input');
+ if(!input)return;
+ e.preventDefault();
+ input.value=chip.dataset.v711SearchTerm||'';
+ v154MobileCategory=null;
+ v154SearchResultsUpdate();
+ input.focus();
+});
 
 /* V371 · Rentabilidad de tarjeta, lectura anual sin asientos duplicados.
    Beneficios = solo acreditaciones monetarias reales vinculadas a la tarjeta.
@@ -78182,6 +78186,56 @@ body.theme-black .world-mobilesearch #page .v711-search-heading p,body.theme-bla
 body.theme-black .world-mobilesearch #page :is(.v711-profile-copy strong,.v711-profile-stats b,.v711-widget-head h3,.v711-bank-copy strong,.v711-bank-value b){color:#ffffff!important}
 body.theme-black .world-mobilesearch #page .v711-profile-badge{background:rgba(144,108,255,.18)!important;border-color:rgba(173,144,255,.24)!important;color:#d8ccff!important}
 body.theme-black .world-mobilesearch #page .v711-search-pills button.active{background:linear-gradient(135deg,#1e56d6,#4578ff)!important;border-color:#4578ff!important;color:#fff!important}
+</style>
+
+
+<style id="v721-mobile-search-reference-restoration">
+/* V721 · Restored compact six-card search layout. Mobile only, no financial logic changes. */
+@media (max-width:790px){
+ .world-mobilesearch #page .v721-search-shell{width:100%;max-width:680px;margin:0 auto;padding:2px 0 calc(120px + env(safe-area-inset-bottom))!important;overflow:visible;}
+ .world-mobilesearch #page .v721-search-shell .v711-search-heading{margin:12px 4px 20px!important;}
+ .world-mobilesearch #page .v721-search-shell .v154-search-eyebrow{font-size:10px!important;font-weight:820!important;letter-spacing:.19em!important;color:#6c7d9f!important;}
+ .world-mobilesearch #page .v721-search-shell .v711-search-heading h1{font-size:clamp(39px,11vw,51px)!important;line-height:1.03!important;letter-spacing:-.055em!important;margin:9px 0 0!important;color:var(--mob-ink,#162b52)!important;}
+ .world-mobilesearch #page .v721-search-shell .v711-search-heading p{font-size:14px!important;line-height:1.4!important;margin-top:8px!important;}
+ .world-mobilesearch #page .v721-search-box{min-height:61px!important;border-radius:30px!important;padding:0 16px!important;margin:0 0 15px!important;background:rgba(255,255,255,.66)!important;border:1px solid rgba(255,255,255,.86)!important;box-shadow:0 9px 26px rgba(55,78,134,.09),inset 0 1px 0 rgba(255,255,255,.94)!important;}
+ .world-mobilesearch #page .v721-search-box input{font-size:14px!important;}
+ .world-mobilesearch #page .v721-search-corner{display:grid;place-items:center;flex:0 0 30px;color:#36547f;opacity:.84;pointer-events:none;}
+ .world-mobilesearch #page .v721-search-corner svg{width:21px;height:21px;}
+ .world-mobilesearch #page .v721-search-pills{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important;overflow:visible!important;padding:0 0 3px!important;margin-bottom:15px!important;}
+ .world-mobilesearch #page .v721-search-pills button{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;min-width:0!important;min-height:40px!important;padding:0 5px!important;font-size:clamp(10px,2.7vw,13px)!important;white-space:nowrap!important;border-radius:999px!important;}
+ .world-mobilesearch #page .v721-search-pills svg{width:16px!important;height:16px!important;flex:none;}
+ .world-mobilesearch #page .v721-category-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;margin:0!important;}
+ .world-mobilesearch #page .v721-category-grid .v721-category-tile{display:block!important;position:relative!important;isolation:isolate!important;min-height:0!important;height:clamp(143px,42vw,191px)!important;overflow:hidden!important;padding:16px 14px!important;border-radius:23px!important;text-align:left!important;border:1.5px solid rgba(255,255,255,.88)!important;box-shadow:0 11px 22px rgba(63,79,132,.09),inset 0 1px 0 rgba(255,255,255,.76)!important;color:#142c54!important;}
+ .world-mobilesearch #page .v721-category-tile::before{content:""!important;position:absolute!important;inset:auto -12% -35% 23%!important;width:100%!important;height:85%!important;border-radius:50%!important;filter:blur(1px)!important;opacity:.45!important;z-index:0!important;}
+ .world-mobilesearch #page .v721-category-tile::after{content:none!important;}
+ .world-mobilesearch #page .v721-category-tile.v154-tone-ocean{background:linear-gradient(135deg,#f8fbff 0%,#e6f2ff 54%,#badbff 100%)!important;}.world-mobilesearch #page .v721-category-tile.v154-tone-ocean::before{background:#75bdff!important;}
+ .world-mobilesearch #page .v721-category-tile.v154-tone-violet{background:linear-gradient(135deg,#fffaff 0%,#f0e8ff 55%,#d3c1ff 100%)!important;}.world-mobilesearch #page .v721-category-tile.v154-tone-violet::before{background:#b28bff!important;}
+ .world-mobilesearch #page .v721-category-tile.v154-tone-coral{background:linear-gradient(135deg,#fffaff 0%,#fff0f8 55%,#ffd1e6 100%)!important;}.world-mobilesearch #page .v721-category-tile.v154-tone-coral::before{background:#fba8d2!important;}
+ .world-mobilesearch #page .v721-category-tile.v154-tone-amber{background:linear-gradient(135deg,#fffffa 0%,#fff4e8 50%,#ffdaac 100%)!important;}.world-mobilesearch #page .v721-category-tile.v154-tone-amber::before{background:#ffd08d!important;}
+ .world-mobilesearch #page .v721-category-tile.v154-tone-teal{background:linear-gradient(135deg,#fbffff 0%,#e6f9f7 52%,#b1efe4 100%)!important;}.world-mobilesearch #page .v721-category-tile.v154-tone-teal::before{background:#88e5d6!important;}
+ .world-mobilesearch #page .v721-category-tile.v154-tone-blue{background:linear-gradient(135deg,#fff 0%,#edf4ff 52%,#c7deff 100%)!important;}.world-mobilesearch #page .v721-category-tile.v154-tone-blue::before{background:#8cbaff!important;}
+ .world-mobilesearch #page .v721-tile-copy{position:relative;z-index:2;display:block;max-width:80%;}
+ .world-mobilesearch #page .v721-category-grid .v154-category-title{display:block!important;font-size:clamp(17px,4.7vw,23px)!important;letter-spacing:-.05em!important;line-height:1.1!important;font-weight:820!important;color:#142b52!important;margin:0 0 6px!important;}
+ .world-mobilesearch #page .v721-category-grid .v154-category-sub{display:block!important;font-size:clamp(10px,2.55vw,12px)!important;max-width:100%!important;line-height:1.32!important;margin:0!important;font-weight:510!important;color:#354e72!important;letter-spacing:-.01em!important;}
+ .world-mobilesearch #page .v721-tile-art{position:absolute;z-index:1;right:-2px;bottom:2px;width:70%;max-width:145px;filter:drop-shadow(0 10px 10px rgba(65,78,148,.17));pointer-events:none;transform:rotate(-3deg);}
+ .world-mobilesearch #page .v721-tile-art svg{width:100%;height:auto;display:block;overflow:visible;}
+ .world-mobilesearch #page .v721-category-grid .v711-category-arrow{left:13px!important;bottom:12px!important;width:34px!important;height:34px!important;z-index:3!important;border:1px solid rgba(255,255,255,.92)!important;background:rgba(255,255,255,.68)!important;color:#2c497c!important;box-shadow:0 5px 12px rgba(40,59,113,.11)!important;}
+ .world-mobilesearch #page .v721-category-grid .v711-category-arrow svg{height:16px!important;width:16px!important;}
+ .world-mobilesearch #page .v721-recent-widget{margin:16px 0 0!important;border-radius:24px!important;padding:15px 14px!important;}
+ .world-mobilesearch #page .v721-recent-widget .v711-widget-head{align-items:center!important;margin:0 0 10px!important;}
+ .world-mobilesearch #page .v721-recent-widget .v711-widget-head h3{font-size:16px!important;letter-spacing:-.035em!important;margin:0!important;}
+ .world-mobilesearch #page .v721-recent-widget .v711-widget-head button{font-size:12px!important;padding:3px 0!important;}
+ .world-mobilesearch #page .v721-recent-widget .v711-widget-head svg{height:13px;width:13px;}
+ .world-mobilesearch #page .v721-recent-widget .v711-recent-row{flex-wrap:nowrap!important;overflow-x:auto!important;padding:1px 1px 6px!important;scrollbar-width:none!important;}
+ .world-mobilesearch #page .v721-recent-widget .v711-recent-row::-webkit-scrollbar{display:none;}
+ .world-mobilesearch #page .v721-recent-widget .v711-recent-pill{min-height:34px!important;font-size:11px!important;white-space:nowrap!important;padding:0 12px!important;flex:none!important;}
+}
+@media(max-width:365px){.world-mobilesearch #page .v721-category-grid{gap:8px!important;}.world-mobilesearch #page .v721-category-grid .v721-category-tile{height:145px!important;padding:12px 11px!important;}.world-mobilesearch #page .v721-search-pills svg{display:none!important;}}
+body.theme-black .world-mobilesearch #page .v721-category-grid .v721-category-tile{background:linear-gradient(135deg,#191b23 0%,#14151b 58%,#20222b 100%)!important;border-color:rgba(95,99,111,.6)!important;box-shadow:0 9px 20px rgba(0,0,0,.28)!important;}
+body.theme-black .world-mobilesearch #page .v721-category-grid :is(.v154-category-title,.v154-category-sub){color:#f5f6fa!important;}
+body.theme-black .world-mobilesearch #page .v721-category-grid .v154-category-sub{color:#bec3d2!important;}
+body.theme-black .world-mobilesearch #page .v721-category-grid .v721-category-tile::before{opacity:.19!important;}
+body.theme-black .world-mobilesearch #page .v721-search-corner{color:#d7dcf2!important;}
 </style>
 
 </body>
