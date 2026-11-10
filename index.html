@@ -29680,7 +29680,7 @@ function mobileHome(){
  return `<div class="vive-mobile-home vive-mobile-home-essential" data-mobile-experience="${vis?'vision':'claridad'}">
    <div class="vive-mobile-greeting v51-executive-greeting"><span class="vive-mobile-eyebrow">FINANZAS 360</span><div class="v732-heading-line"><h1>Resumen financiero</h1><label class="v732-period"><span>${sanitize(dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}))}</span><input id="monthFilter" type="month" value="${sanitize(ui.month||today().slice(0,7))}" aria-label="Período de análisis"></label></div><p>Tu panorama total, en un solo lugar.</p><button type="button" class="v273-personalize-link" data-v273-open-personalization="1" aria-label="Personalizar estilo y secciones del Resumen"><span class="v309-personalize-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="8" height="8" rx="2"/><rect x="13.5" y="2.5" width="8" height="5.5" rx="1.6"/><rect x="2.5" y="13.5" width="8" height="8" rx="2"/><rect x="13.5" y="10.5" width="8" height="11" rx="2"/></svg></span>Personalizar</button></div>
    ${v360HomeLinks()}
-   ${v732HomeKpi(liquid,debt,net)}
+   ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
    ${v412PremiumMobileWidgets()}
    ${v105Config().visible.includes('applePayInbox')&&v5ApplePayPending().length?v7ApplePayMobileWidget():''}
@@ -29766,7 +29766,7 @@ function v721SearchArt(id){
   dinero:`<svg viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="v721gBank" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#71ccff"/><stop offset="1" stop-color="#1965e1"/></linearGradient></defs><rect x="29" y="25" width="102" height="80" rx="14" fill="#73c9ff" opacity=".64" transform="rotate(-15 80 65)"/><rect x="18" y="34" width="108" height="80" rx="13" fill="url(#v721gBank)" transform="rotate(-5 72 74)"/><path d="M72 49 46 63h52L72 49Zm-20 19v24m13-24v24m14-24v24m13-24v24M45 96h55" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   tarjetas:`<svg viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="v721gCard" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b19cff"/><stop offset="1" stop-color="#7050d9"/></linearGradient></defs><rect x="35" y="20" width="105" height="68" rx="13" fill="#9b7af2" opacity=".55" transform="rotate(-13 87 54)"/><rect x="18" y="44" width="113" height="70" rx="13" fill="url(#v721gCard)" transform="rotate(-8 75 79)"/><rect x="37" y="66" width="23" height="16" rx="4" fill="#f8d794" transform="rotate(-8 49 74)"/><path d="M94 69q10 8 0 16m8-23q16 15 0 30" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".9"/></svg>`,
   pagos:`<svg viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="v721gPay" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffafd3"/><stop offset="1" stop-color="#ea65a2"/></linearGradient></defs><rect x="22" y="28" width="108" height="88" rx="17" fill="url(#v721gPay)"/><rect x="22" y="46" width="108" height="15" fill="#ffd6e9"/><path d="M50 21v24M102 21v24" stroke="#d45a9b" stroke-width="9" stroke-linecap="round"/><path d="m57 87 13 12 26-28" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
-  servicios:`<svg class="v728-brand-art" viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="v728yt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff555b"/><stop offset="1" stop-color="#e31321"/></linearGradient><linearGradient id="v728sp" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36e786"/><stop offset="1" stop-color="#1db954"/></linearGradient><linearGradient id="v728ap" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e9e6f2"/></linearGradient><filter id="v728sh"><feGaussianBlur stdDeviation="3"/></filter></defs><g opacity=".17" filter="url(#v728sh)"><rect x="11" y="32" width="69" height="60" rx="18"/><rect x="69" y="56" width="67" height="62" rx="17"/><rect x="85" y="11" width="52" height="53" rx="14"/></g><g transform="rotate(-9 45 61)"><rect x="12" y="29" width="69" height="61" rx="17" fill="url(#v728yt)" stroke="#fff" stroke-opacity=".65" stroke-width="2"/><rect x="23" y="46" width="47" height="28" rx="9" fill="#fff" fill-opacity=".98"/><path d="m43 50 15 10-15 10z" fill="#f32732"/></g><g transform="rotate(10 105 88)"><rect x="75" y="60" width="63" height="59" rx="17" fill="url(#v728sp)" stroke="#fff" stroke-opacity=".65" stroke-width="2"/><circle cx="106" cy="89" r="22" fill="#10251c"/><path d="M92 83c10-4 24-3 33 3M94 91c10-3 21-2 28 3M96 99c8-2 15-1 21 3" fill="none" stroke="#1ed760" stroke-width="3.5" stroke-linecap="round"/></g><g transform="rotate(7 110 37)"><rect x="84" y="8" width="52" height="55" rx="15" fill="url(#v728ap)" stroke="#fff" stroke-width="2"/><path fill="#17171b" d="M112.8 26.6c-1.7-1.6-3.5-1.4-4.7-1.1-1.4.4-2.1.4-3.6-.1-2.2-.7-4.7.3-6.2 2.7-2.7 4.4-.8 11.2 1.8 14.9 1.1 1.7 2.4 3.5 4.2 3.5 1.5 0 2.1-.9 4.4-.9 2.2 0 2.8.9 4.5.8 1.9 0 3.1-1.8 4.2-3.4.7-1 1.2-2 1.6-3.1-3.1-1.5-4.4-5.8-1.2-8.2-1.2-1.7-2.9-2.3-5-2.6zm-3.8-3.1c.1-3 2.1-5.5 5-6.2.3 3-1.8 5.5-5 6.2z"/></g></svg>`,
+  servicios:`<svg class="v728-brand-art" viewBox="-5 -5 160 140" overflow="visible" aria-hidden="true"><defs><linearGradient id="v728yt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff555b"/><stop offset="1" stop-color="#e31321"/></linearGradient><linearGradient id="v728sp" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36e786"/><stop offset="1" stop-color="#1db954"/></linearGradient><linearGradient id="v728ap" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e9e6f2"/></linearGradient><filter id="v728sh"><feGaussianBlur stdDeviation="3"/></filter></defs><g opacity=".17" filter="url(#v728sh)"><rect x="11" y="32" width="69" height="60" rx="18"/><rect x="69" y="56" width="67" height="62" rx="17"/><rect x="85" y="11" width="52" height="53" rx="14"/></g><g transform="rotate(-9 45 61)"><rect x="12" y="29" width="69" height="61" rx="17" fill="url(#v728yt)" stroke="#fff" stroke-opacity=".65" stroke-width="2"/><rect x="23" y="46" width="47" height="28" rx="9" fill="#fff" fill-opacity=".98"/><path d="m43 50 15 10-15 10z" fill="#f32732"/></g><g transform="rotate(10 105 88)"><rect x="75" y="60" width="63" height="59" rx="17" fill="url(#v728sp)" stroke="#fff" stroke-opacity=".65" stroke-width="2"/><circle cx="106" cy="89" r="22" fill="#10251c"/><path d="M92 83c10-4 24-3 33 3M94 91c10-3 21-2 28 3M96 99c8-2 15-1 21 3" fill="none" stroke="#1ed760" stroke-width="3.5" stroke-linecap="round"/></g><g transform="rotate(7 110 37)"><rect x="84" y="8" width="52" height="55" rx="15" fill="url(#v728ap)" stroke="#fff" stroke-width="2"/><path fill="#17171b" d="M112.8 26.6c-1.7-1.6-3.5-1.4-4.7-1.1-1.4.4-2.1.4-3.6-.1-2.2-.7-4.7.3-6.2 2.7-2.7 4.4-.8 11.2 1.8 14.9 1.1 1.7 2.4 3.5 4.2 3.5 1.5 0 2.1-.9 4.4-.9 2.2 0 2.8.9 4.5.8 1.9 0 3.1-1.8 4.2-3.4.7-1 1.2-2 1.6-3.1-3.1-1.5-4.4-5.8-1.2-8.2-1.2-1.7-2.9-2.3-5-2.6zm-3.8-3.1c.1-3 2.1-5.5 5-6.2.3 3-1.8 5.5-5 6.2z"/></g></svg>`,
   movimientos:`<svg class="v728-receipt-art" viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="v728paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".62" stop-color="#effbff"/><stop offset="1" stop-color="#b9e6e8"/></linearGradient><linearGradient id="v728paperEdge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d6f5fc"/><stop offset="1" stop-color="#9ec9dc"/></linearGradient><linearGradient id="v728bar" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#69e8bd"/><stop offset="1" stop-color="#0db18d"/></linearGradient><filter id="v728drop" x="-30%" y="-30%" width="170%" height="170%"><feGaussianBlur stdDeviation="5"/></filter></defs><path d="M42 25h71c13 0 19 8 19 19v68l-12 13-12-7-11 9-10-9-11 8-12-8-12 7V44c0-11 2-17 10-19z" fill="#3c8e9d" opacity=".18" filter="url(#v728drop)"/><g transform="rotate(5 79 68)"><path d="M49 11h66c9 0 17 7 17 17v83l-14 13-13-7-13 10-13-9-14 10-13-9-13 8V26c0-9 4-15 10-15z" fill="url(#v728paperEdge)"/><path d="M43 12h70c10 0 17 8 17 18v77l-12 13-12-7-13 10-12-9-12 10-13-9-13 8V29c0-9 3-17 10-17z" fill="url(#v728paper)" stroke="#fff" stroke-opacity=".95" stroke-width="2"/><path d="M52 17h57" stroke="#fff" stroke-opacity=".85" stroke-width="3" stroke-linecap="round"/><path d="M58 39h46M58 52h38M58 65h43" fill="none" stroke="#9fbde8" stroke-width="6" stroke-linecap="round"/><rect x="63" y="91" width="10" height="19" rx="3" fill="#8adacb"/><rect x="80" y="80" width="10" height="30" rx="3" fill="#4bd6b1"/><rect x="97" y="71" width="10" height="39" rx="3" fill="url(#v728bar)"/><path d="M55 31h56" stroke="#fff" stroke-opacity=".65" stroke-width="2"/></g></svg>`,
   analitica:`<svg viewBox="0 0 150 130" aria-hidden="true"><rect x="23" y="82" width="22" height="40" rx="5" fill="#a7d5ff"/><rect x="53" y="63" width="22" height="59" rx="5" fill="#6eb5ff"/><rect x="83" y="43" width="22" height="79" rx="5" fill="#358efa"/><rect x="113" y="24" width="22" height="98" rx="5" fill="#216ce5"/><path d="m28 76 34-25 30 11 36-45" stroke="#2779df" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><g fill="#fff" stroke="#2a83ee" stroke-width="4"><circle cx="28" cy="76" r="6"/><circle cx="62" cy="51" r="6"/><circle cx="92" cy="62" r="6"/><circle cx="128" cy="17" r="6"/></g></svg>`
  };
@@ -41651,6 +41651,8 @@ function v212Show(){const target=document.querySelector('.v212-panel');if(target
 async function v212SessionToken(){const {data,error}=await f33Api.auth.getSession();if(error||!data?.session?.access_token)throw Error('Vuelve a iniciar sesión.');return data.session.access_token;}
 async function v212Load(){
  if(!v212Enabled())return;
+ // V733: respetar la pausa compartida del servidor durante errores 503/504.
+ if(Date.now()<v719BusyUntil())return;
  try{
   const [l,e]=await Promise.all([
     f33Api.from('apple_pay_links').select('id,instrument_type,instrument_id,card_label,currency,active').eq('user_id',f33User.id).order('created_at',{ascending:false}).limit(100),
@@ -41658,7 +41660,7 @@ async function v212Load(){
   ]);
   if(l.error||e.error)throw(l.error||e.error);
   v212State.links=l.data||[];v212State.events=e.data||[];v212State.error='';v212State.loaded=true;
- }catch(e){v212State.error='No se pudo consultar Apple Pay: '+(e.message||'revisa tu conexión y permisos de Supabase')+(e.code?' ['+e.code+']':'');v212State.loaded=false;}
+ }catch(e){v719MarkBusy(e);v212State.error='No se pudo consultar Apple Pay: '+(e.message||'revisa tu conexión y permisos de Supabase')+(e.code?' ['+e.code+']':'');v212State.loaded=false;}
  v212Show();
 }
 function v212LinkError(payload, status, action){
@@ -41939,6 +41941,8 @@ async function v212ImportEvent(e,forced=false){
 }
 async function v212Sync(){
  if(!v212Enabled()||v212Busy)return;
+ // V733: evitar tráfico recurrente durante saturación de PostgREST.
+ if(Date.now()<v719BusyUntil())return;
  if(f33Dirty||f33Saving||f33Conflict||!navigator.onLine){v212State.syncError=f33Conflict?'Apple Pay en espera: resuelve el conflicto de sincronización de la app.':!navigator.onLine?'Apple Pay en espera: sin conexión.':'Apple Pay en espera: hay cambios de la app pendientes de guardar.';v212Show();return;}
  v212State.syncError='';v212Busy=true;
  try{
@@ -41950,7 +41954,7 @@ async function v212Sync(){
    if(await v212ImportEvent(e))added++;
   }
   if(added)toast(`${added} compra${added===1?'':'s'} de Apple Pay registrada${added===1?'':'s'} en tus tarjetas.`);
- }catch(err){v212State.syncError='No se pudo sincronizar Apple Pay: '+(err.message||String(err));console.warn('Sincronización Apple Pay:',err.message||err);v212Show();}
+ }catch(err){v719MarkBusy(err);v212State.syncError='No se pudo sincronizar Apple Pay: '+(err.message||String(err));console.warn('Sincronización Apple Pay:',err.message||err);v212Show();}
  finally{v212Busy=false;v212State.lastSync=new Date().toISOString();if(ui.page==='settings')await v212Load();}
 }
 // La interfaz utiliza un controlador propio, sin cambiar los flujos existentes.
@@ -41978,7 +41982,10 @@ document.addEventListener('click',async ev=>{
 document.addEventListener('change',ev=>{if(ev.target.id==='v212-card')v212State.selectedCard=ev.target.value;if(ev.target.id==='v212-currency')v212State.currency=ev.target.value;});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&v212Enabled()){v212Sync();}});
 window.addEventListener('online',()=>{if(v212Enabled())v212Sync();});
-setInterval(()=>{if(!document.hidden&&v212Enabled())v212Sync();},45000);
+// V733: el canal Realtime ya recibe eventos de Apple Pay inmediatamente.
+// Este intervalo es solo rescate ante eventos perdidos: 3 min en vez de 45 s.
+// Se conserva además sincronización al volver online, visible y al recibir eventos.
+setInterval(()=>{if(!document.hidden&&v212Enabled()&&Date.now()>=v719BusyUntil())void v212Sync();},180000);
 
 /* V219 | Informes internos de solo lectura. Los datos financieros no se mutan.
    Cada período queda habilitado a las 19:00 de America/Santo_Domingo.
@@ -78669,7 +78676,7 @@ body.theme-black .world-mobilesearch #page .v721-search-corner{color:#d7dcf2!imp
     width:43px!important;
     height:43px!important;
     right:calc(max(13px,calc((100dvw - 460px)/2 + 14px)) + 5.5px)!important;
-    bottom:calc(var(--v398-dock-bottom,var(--v367-dock-bottom,0px)) + var(--v398-dock-height,var(--v367-dock-height,64px)) + 70px)!important;
+    bottom:calc(var(--v398-dock-bottom,var(--v367-dock-bottom,0px)) + var(--v398-dock-height,var(--v367-dock-height,64px)) + 62px)!important;
     border-radius:50%!important;
     border:1px solid color-mix(in srgb,var(--f360-accent-readable,var(--accent,#678ce9)) 30%,white 35%)!important;
     background:color-mix(in srgb,var(--f360-accent-readable,var(--accent,#678ce9)) 18%,#f1f5fc 82%)!important;
@@ -78696,7 +78703,7 @@ body.theme-black .world-mobilesearch #page .v721-search-corner{color:#d7dcf2!imp
   html body .v708-movements-fab {
     width:40px!important;height:40px!important;
     right:16px!important;
-    bottom:calc(var(--v398-dock-bottom,var(--v367-dock-bottom,0px)) + var(--v398-dock-height,var(--v367-dock-height,64px)) + 67px)!important;
+    bottom:calc(var(--v398-dock-bottom,var(--v367-dock-bottom,0px)) + var(--v398-dock-height,var(--v367-dock-height,64px)) + 59px)!important;
   }
 }
 @media(min-width:791px){html body .v708-movements-fab{display:none!important;}}
@@ -78722,5 +78729,50 @@ body.theme-black .world-mobilesearch #page .v721-search-corner{color:#d7dcf2!imp
 @media(max-width:365px){.world-mobilesearch #page .v721-category-grid .v721-category-tile[data-v154-category="dinero"] .v154-category-title{font-size:16px!important;}}
 </style>
 
+
+<!-- V734 · Corrective polish for the two requested mobile screens only. -->
+<style id="v734-mobile-visual-corrections">
+@media(max-width:790px){
+ /* Restore KPI's three original metrics; keep all amounts on one line without breaking columns. */
+ .vive-mobile-home .v242-mobile-circles, .vive-mobile-home .v242-mobile-circles *,
+ .vive-mobile-home .v342-creative-position, .vive-mobile-home .v342-creative-position *{box-sizing:border-box;min-width:0;}
+ .vive-mobile-home :is(.v242-mobile-circles,.v342-creative-position,.vive-mobile-position-card) :is(.money,.metric-value,[class*="amount"],[class*="value"]){font-variant-numeric:tabular-nums;overflow-wrap:normal;word-break:normal;}
+ .vive-mobile-home .v732-heading-line{min-width:0;gap:8px!important;}
+ .vive-mobile-home .v732-heading-line h1{font-size:clamp(20px,5.4vw,28px)!important;min-width:0;}
+ .vive-mobile-home .v732-period{flex:0 0 auto;max-width:45%;min-width:0;text-overflow:ellipsis;}
+ /* Search remains a two-column grid with safe tile text and uncropped logos. */
+ .world-mobilesearch #page .v721-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+ .world-mobilesearch #page .v721-category-tile{min-width:0;}
+ .world-mobilesearch #page .v721-category-grid .v721-category-tile[data-v154-category="servicios"] .v721-tile-art{overflow:visible!important;}
+ .world-mobilesearch #page .v721-category-grid .v721-category-tile[data-v154-category="servicios"] svg.v728-brand-art{overflow:visible!important;max-width:100%;max-height:100%;}
+ /* The primary selected search filter follows user-selected accent, never fixed blue. */
+ .world-mobilesearch #page .v711-search-pills button.active,
+ body.theme-black .world-mobilesearch #page .v711-search-pills button.active,
+ body.theme-dark .world-mobilesearch #page .v711-search-pills button.active{
+   background:var(--f360-accent-readable,var(--accent,#366fcb))!important;
+   border-color:var(--f360-accent-readable,var(--accent,#366fcb))!important;
+   color:#fff!important;
+   box-shadow:0 7px 17px color-mix(in srgb,var(--f360-accent-readable,var(--accent,#366fcb)) 23%,transparent)!important;
+ }
+ .world-mobilesearch #page .v711-search-pills button.active :is(svg,span){color:inherit!important;stroke:currentColor!important;}
+ /* Leave breathing room so floating controls don't cover 'Ver todo' or recent searches. */
+ .world-mobilesearch #page .v721-recent-widget{padding-right:clamp(18px,5vw,28px)!important;padding-bottom:clamp(45px,10vw,66px)!important;min-height:130px;}
+ .world-mobilesearch #page .v721-recent-widget .v711-widget-head{padding-right:82px!important;min-width:0;}
+ .world-mobilesearch #page .v721-recent-widget .v711-recent-row{padding-right:70px!important;min-width:0;}
+ .world-mobilesearch #page .v721-recent-widget .v711-recent-pill{max-width:100%;}
+ /* Browser keyboard: inputs remain legible and focused fields can scroll into view. */
+ html{scroll-padding-bottom:calc(env(safe-area-inset-bottom,0px) + 110px);}
+ body :is(input,textarea,[contenteditable="true"]){scroll-margin-bottom:calc(env(safe-area-inset-bottom,0px) + 120px);}
+ .world-mobilesearch #page .v154-search-box input{font-size:16px!important;min-width:0!important;}
+ body.v158-keyboard-visible .world-mobilesearch #page .v154-search-hub,
+ body.v154-mobile-input-focused .world-mobilesearch #page .v154-search-hub{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 130px)!important;}
+}
+@media(max-width:360px){
+ .world-mobilesearch #page .v721-category-tile{padding:14px 11px!important;}
+ .world-mobilesearch #page .v721-category-tile .v154-category-title{font-size:clamp(15px,4.5vw,19px)!important;}
+ .vive-mobile-home .v732-heading-line h1{font-size:20px!important;}
+}
+@media(prefers-reduced-motion:reduce){.world-mobilesearch #page .v711-search-pills button{transition:none!important;}}
+</style>
 </body>
 </html>
