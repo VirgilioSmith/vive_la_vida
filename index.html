@@ -2,7 +2,7 @@
 
 <html lang="es">
 <head>
-<meta name="vive-el-hoy-version" content="717"/>
+<meta name="vive-el-hoy-version" content="720"/>
 <meta name="vive-el-hoy-ui-patch" content="v714-supabase-stabilization"/>
 
 
@@ -36540,6 +36540,11 @@ f33LoadUser=async function(user){
  v10LiveStop();f33User=user;f33Active=false;f33Conflict=false;v403ExplicitDeletes.clear();v403RestoreApproved();
  f33Phase='loading';f33Shell('Conectando tus finanzas…','Leyendo tablas de Supabase en tiempo real.','');
  try{
+  if(Date.now()<v719BusyUntil()){
+   f33Shell('Supabase está recuperándose.','Se ha pausado la conexión para evitar sobrecargar el servidor. Tus datos no se han modificado.',
+    '<button class="f33-primary" data-f33="load">Comprobar conexión</button>');
+   f33Phase='failure';return;
+  }
   let remote=await v405Read(user.id);
   if(token!==f151CloudLoadToken||f33User?.id!==user.id)return;
   if(!remote.documento){
@@ -36628,7 +36633,7 @@ v10PullRemote=async function(){
  if(v10Pulling){return;}
  if(!f33Active||!f33Api||!f33User||!navigator.onLine)return;
  // Agrupar eventos Realtime repetidos: evitar consultas a la misma revisión cada pocos ms.
- if(Date.now()<Math.max(v714NextReadAt,v719BusyUntil())||Date.now()-v715LastRevisionCheck<4000)return;
+ if(Date.now()<Math.max(v714NextReadAt,v719BusyUntil())||Date.now()-v715LastRevisionCheck<15000)return;
  v715LastRevisionCheck=Date.now();
  if(f33Saving){v10RemoteQueued=true;return;}
  if(f33Dirty){v10RemoteQueued=true;if(!f33Conflict)window.__f360LastPersistPromise=f33Flush();return;}
@@ -36656,6 +36661,7 @@ v10PullRemote=async function(){
  }
  finally{v10Pulling=false;v10LastPull=Date.now();v10RemoteQueued=false;}
 };
+let v720RealtimeFailures=0;
 v10LiveStart=function(){
  if(!f33Active||!f33Api||!f33User)return;
  if(v10WatchedUser===f33User.id&&v10Channel)return;
@@ -36667,12 +36673,19 @@ v10LiveStart=function(){
   .on('postgres_changes',{event:'DELETE',schema:'public',table:'apple_pay_events'},()=>{if(typeof v212Load==='function'&&v212Enabled())void v212Load();})
   .subscribe(status=>{
    v402RealtimeStatus(status);
-   if(status==='SUBSCRIBED'){clearTimeout(v11LiveRetryTimer);v10SchedulePull(0);v11ScheduleAppleSync(100);}
+   if(status==='SUBSCRIBED'){v720RealtimeFailures=0;clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=0;v11ScheduleAppleSync(100);}
    else if(['TIMED_OUT','CHANNEL_ERROR','CLOSED'].includes(status)){
-    clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=setTimeout(()=>{if(f33Active&&navigator.onLine)v10LiveStartForce()},3000);
+    // V720: un solo temporizador de reconexión, con espera progresiva y pausa entre pestañas.
+    v720RealtimeFailures=Math.min(10,v720RealtimeFailures+1);
+    if(v11LiveRetryTimer)return;
+    const wait=Math.max(30000,v719BusyUntil()-Date.now(),Math.min(300000,30000*Math.pow(2,Math.min(4,v720RealtimeFailures-1))));
+    v11LiveRetryTimer=setTimeout(()=>{
+      v11LiveRetryTimer=0;
+      if(f33Active&&navigator.onLine&&!document.hidden)v10LiveStartForce();
+    },wait);
    }
   });
- v10ProbeTimer=setInterval(()=>{if(f33Active&&navigator.onLine&&!document.hidden&&!f33Saving&&!f33Dirty&&Date.now()>=v714NextReadAt)v10SchedulePull(0)},180000);
+ v10ProbeTimer=setInterval(()=>{if(f33Active&&navigator.onLine&&!document.hidden&&!f33Saving&&!f33Dirty&&Date.now()>=v714NextReadAt)v10SchedulePull(0)},300000);
  v10SchedulePull(0);
 };
 
@@ -36681,7 +36694,11 @@ async function f33Boot(){
  f33Gate();f33Shell('','', '');
  if(!window.supabase?.createClient){f33LoginScreen();f33Message('No pudo cargarse la biblioteca de Supabase. Debes tener conexión a Internet y permitir cdn.jsdelivr.net.',true);return;}
  try{
-  f33Api=window.supabase.createClient(F33_URL,F33_KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
+  // V720: el cliente controla sus propios reintentos; evita multiplicar los reintentos internos de PostgREST.
+  f33Api=window.supabase.createClient(F33_URL,F33_KEY,{
+   auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true},
+   db:{retry:false}
+  });
   const {data,error}=await f33Api.auth.getUser();
    if(error||!data.user){
     f33LoginScreen();return;
