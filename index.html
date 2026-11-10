@@ -44426,7 +44426,7 @@ window.__f360RecurringVisualAdapter={
     <button type="button" class="v722-movement-action" data-v708="quickServices" aria-label="Filtrar servicios"><span class="v722-action-icon">${icon('receipt')}</span><span>Servicios</span></button>
     <button type="button" class="v722-movement-action" data-v708="quickMore" aria-label="Más filtros"><span class="v722-action-icon">${icon('settings')}</span><span>Más</span></button>
   </nav>`;}
-  function quickFilters(){return `<div class="v708-chips">${labelChip('Todos',state.flow==='all','flow','data-value="all"')}${labelChip('Entradas',state.flow==='in','flow','data-value="in"')}${labelChip('Salidas',state.flow==='out','flow','data-value="out"')}${labelChip('Apple Pay',state.flow==='apple','flow','data-value="apple"')}</div>`;}
+  function quickFilters(){return `<nav class="v708-chips v723-flow-chips" aria-label="Filtrar por tipo de movimiento">${labelChip('Todos',state.flow==='all','flow','data-value="all"')}${labelChip('Entradas',state.flow==='in','flow','data-value="in"')}${labelChip('Salidas',state.flow==='out','flow','data-value="out"')}</nav>`;}
   function selectItems(items,selected){return items.map(([value,label])=>`<option value="${safe(value)}" ${String(selected)===String(value)?'selected':''}>${safe(label)}</option>`).join('');}
   function filterPanel(){
     if(!state.openFilters)return '';
@@ -44460,7 +44460,7 @@ window.__f360RecurringVisualAdapter={
   function listView(searchMode=false){
     const data=filtered(),prefix=searchMode?'Buscar movimientos':'Movimientos';
     const title=searchMode?'Encuentra cualquier operación': 'Consulta, filtra y gestiona tus transacciones.';
-    return `${header(prefix,title,searchMode)}${searchBar()}${quickActions()}${quickFilters()}${filterPanel()}<div class="v708-list-top"><strong>${data.length} resultado${data.length===1?'':'s'}</strong><button type="button" data-v708="view" data-value="summary">Ver resumen ${icon('arrow')}</button></div>${rows(data,{max:state.limit})}${draftsView()}`;
+    return `${header(prefix,title,searchMode)}${searchBar()}${quickFilters()}${quickActions()}${filterPanel()}<div class="v708-list-top"><strong>${data.length} resultado${data.length===1?'':'s'}</strong><button type="button" data-v708="view" data-value="summary">Ver resumen ${icon('arrow')}</button></div>${rows(data,{max:state.limit})}${draftsView()}`;
   }
   function summaryView(){
     const data=base(),t=totals(data);
@@ -77852,6 +77852,12 @@ html body.theme-black #modal-root .v85-capacity-modal .v85-capacity-metrics stro
   .v708-tab{display:flex;align-items:center;justify-content:center;gap:6px;flex:0 0 auto;padding:10px 13px;white-space:nowrap;min-height:38px;border:1px solid var(--v708-line);background:var(--v708-card);color:var(--v708-muted)!important;border-radius:99px;font-size:11px!important;font-weight:725;scroll-snap-align:start;backdrop-filter:blur(16px)}
   .v708-tab svg{width:14px;height:14px}
   .v708-tab.active{background:var(--v708-ink)!important;border-color:transparent!important;color:white!important;box-shadow:0 5px 12px var(--v708-glow)}
+  /* V723: Todos / Entradas / Salidas como filtros principales, antes de las cuatro categorías icónicas. */
+  .v708-movements .v723-flow-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;overflow:visible;padding:12px 0 5px}
+  .v708-movements .v723-flow-chips .v708-chip{min-width:0;min-height:42px;width:100%;padding:10px 6px;text-align:center;justify-content:center;border-radius:16px;font-weight:750;font-size:12px!important;background:var(--v708-card-strong);box-shadow:0 4px 14px var(--v708-glow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+  .v708-movements .v723-flow-chips .v708-chip.is-selected{background:#1c2d4b!important;color:#fff!important;border-color:#1c2d4b!important;box-shadow:0 6px 16px rgba(28,45,75,.18)}
+  .v708-movements .v722-movement-actions{margin-top:10px}
+  @media(max-width:350px){.v708-movements .v723-flow-chips{gap:5px}.v708-movements .v723-flow-chips .v708-chip{font-size:11px!important}}
   /* V722 · Iconos rápidos Liquid Glass dentro de Historial; sin pestaña Buscar duplicada. */
   .v722-movement-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 2px;min-width:0}
   .v722-movement-action{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:76px;padding:9px 3px 8px;border:1px solid var(--v708-line);border-radius:18px;background:var(--v708-card-strong);color:var(--v708-ink)!important;box-shadow:0 5px 16px var(--v708-glow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);font-size:10.5px!important;font-weight:750;line-height:1.1;text-align:center;white-space:nowrap;cursor:pointer}
