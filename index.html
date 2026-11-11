@@ -30889,7 +30889,8 @@ function manualBenefitForm(cardId,currency='DOP',entryId=''){
  const c=card(cardId);if(!c){toast('Selecciona una tarjeta válida.');return}
  const p=entryId?(db.perkUses||[]).find(x=>x.id===entryId&&x.cardId===cardId):null;
  const ac=db.accounts.filter(a=>!a.archived).map(a=>[a.id,`${a.name} · ${a.currency}`]);
- modal(p?'Editar beneficio':'Registrar beneficio · '+c.name,`<input type="hidden" name="cardId" value="${sanitize(cardId)}"><input type="hidden" name="entryId" value="${sanitize(entryId)}">${formSelect('kind','¿Qué recibiste?',[['cashback','Cashback en dinero'],['other','Otro beneficio recibido']],p?'other':'cashback','id="manualBenefitKind"')}${formItem('name','Concepto',p?.name||'Cashback recibido','text','required maxlength="85"')}${formSelect('currency','Moneda',['DOP','USD'],p?.currency||currency||'DOP')}${formItem('amount','Importe del beneficio',p?.value??'','number','min="0" step="0.01" required')}${formItem('date','Fecha',p?.date||today(),'date','required max="'+today()+'"')}<div class="benefit-only-cash">${formSelect('destination','¿Dónde te acreditaron el cashback?',[['card','En la tarjeta · reduce deuda'],['account','En una cuenta · aumenta saldo']],'card')}${formSelect('accountId','Cuenta de depósito (solo si aplica)',[['','Selecciona una cuenta'],...ac],'')}</div>${formItem('note','Nota (opcional)',p?.note||'','text','maxlength="150"')}${para('Cashback: registra exactamente lo que el banco acreditó. Otro beneficio: anota el valor que consideres, solo como referencia; nunca sumará ingresos ni alterará cuentas o tarjetas.')}`,'manualBenefitForm',true);
+ const cards=db.cards.filter(x=>x.id===cardId||(!p&&!x.archived)).map(x=>[x.id,x.name]);
+ modal(p?'Editar beneficio':'Registrar beneficio · '+c.name,`${formSelect('cardId','Tarjeta del beneficio',cards,cardId)}<input type="hidden" name="entryId" value="${sanitize(entryId)}">${formSelect('kind','¿Qué recibiste?',[['cashback','Cashback en dinero'],['other','Otro beneficio recibido']],p?'other':'cashback','id="manualBenefitKind"')}${formItem('name','Concepto',p?.name||'Cashback recibido','text','required maxlength="85"')}${formSelect('currency','Moneda',['DOP','USD'],p?.currency||currency||'DOP')}${formItem('amount','Importe del beneficio',p?.value??'','number','min="0" step="0.01" required')}${formItem('date','Fecha',p?.date||today(),'date','required max="'+today()+'"')}<div class="benefit-only-cash">${formSelect('destination','¿Dónde te acreditaron el cashback?',[['card','En la tarjeta · reduce deuda'],['account','En una cuenta · aumenta saldo']],'card')}${formSelect('accountId','Cuenta de depósito (solo si aplica)',[['','Selecciona una cuenta'],...ac],'')}</div>${formItem('note','Nota (opcional)',p?.note||'','text','maxlength="150"')}${para('Cashback: registra exactamente lo que el banco acreditó. Otro beneficio: anota el valor que consideres, solo como referencia; nunca sumará ingresos ni alterará cuentas o tarjetas.')}`,'manualBenefitForm',true);
  const f=document.getElementById('manualBenefitForm');if(f){f.dataset.kind=p?'other':'cashback';if(p)f.querySelector('[name="kind"]').value='other';const i=f.querySelector('[name="kind"]');i?.addEventListener('change',()=>{f.dataset.kind=i.value;const n=f.querySelector('[name="name"]');if(n&&n.value==='Cashback recibido'&&i.value==='other')n.value='Beneficio recibido';const a=f.querySelector('[name="amount"]');if(a&&!a.value&&i.value==='other')a.value='0';});}
 }
 
@@ -35696,7 +35697,13 @@ case 'newTransaction':{const kind=el.dataset.type||'';
     openMobileQuickRegister(kind);break;
   }
   transactionForm({type:kind||'expense',cardId:id||db.cards[0]?.id});if(kind==='transfer')queueMicrotask(refreshTransferFee);break;}
-case 'otherRefund':if(!db.cards.length){toast('Registra una tarjeta para asociar una devolución.');break}transactionForm({type:'card_refund',cardId:db.cards[0].id});break;
+case 'otherRefund':{
+ const active=db.cards.filter(c=>!c.archived&&!bank(c.bankId)?.archived);
+ if(!active.length){toast('Registra una tarjeta activa para asociar una devolución.');break;}
+ const first=active.find(c=>db.transactions.some(t=>t.cardId===c.id&&t.type==='card_charge'))||active[0];
+ transactionForm({type:'card_refund',cardId:first.id});
+ break;
+}
 case 'otherAdjust':transactionForm({type:'adjustment'});break;
 case 'otherBenefitPicker':otherBenefitPicker();break;
 case 'otherLoanPicker':otherLoanPicker();break;
@@ -36175,9 +36182,29 @@ modal=function(title,body,formid,wide=false){v26OldModal(title,body,formid,wide)
 
 
 /* V29 · Otras gestiones: registro rápido REAL, sobre los formularios contables existentes. */
-function otherLoanSelect(id){const l=loan(id);if(!l){toast('Selecciona un préstamo válido.');return}closeModal();const a=db.accounts.find(a=>a.currency===l.currency&&!a.archived&&a.kind!=='cash')||db.accounts.find(a=>a.currency===l.currency&&!a.archived)||db.accounts.find(a=>!a.archived);transactionForm({type:'loan_payment',loanId:id,accountId:a?.id||'',paymentKind:'regular',amount:'',principal:'',interest:'',insurance:'',fee:''})}
-function otherLoanPicker(){const loans=db.loans.filter(l=>!l.archived&&!loanAccounting(l).settled);if(!loans.length){toast('Primero registra un préstamo bancario activo.');return}if(loans.length===1){otherLoanSelect(loans[0].id);return}modal('Elige el préstamo que vas a pagar',`<div class="v12-modal-choices other-studio-picker">${loans.map(l=>`<button type="button" data-act="otherLoanSelect" data-id="${sanitize(l.id)}"><span>${icon('receipt')}</span><strong>${sanitize(l.name)}</strong><small>${sanitize(bankOf(l))} · ${money(loanStatus(l).balance,l.currency,2)} pendiente</small>${icon('arrow')}</button>`).join('')}</div>`,'v12Picker',true)}
-function otherBenefitPicker(){const cards=db.cards.filter(c=>!c.archived);if(!cards.length){toast('Primero registra una tarjeta para asociar el beneficio.');return}if(cards.length===1){manualBenefitForm(cards[0].id);return}modal('¿En qué tarjeta recibiste el beneficio?',`<div class="v12-modal-choices other-studio-picker">${cards.map(c=>`<button type="button" data-act="quickBenefitCard" data-id="${sanitize(c.id)}"><span>${icon('card')}</span><strong>${sanitize(c.name)}</strong><small>${sanitize(bankOf(c))}</small>${icon('arrow')}</button>`).join('')}</div>`,'v12Picker',true)}
+function otherLoanSelect(id,previousForm=null){
+ const l=loan(id);
+ if(!l){toast('Selecciona un préstamo válido.');return;}
+ const a=db.accounts.find(a=>a.currency===l.currency&&!a.archived&&a.kind!=='cash')
+  ||db.accounts.find(a=>a.currency===l.currency&&!a.archived)
+  ||db.accounts.find(a=>!a.archived);
+ const editId=previousForm?.dataset.id||null;
+ const original=editId?db.transactions.find(t=>t.id===editId):null;
+ closeModal();
+ transactionForm({
+  ...(original?{date:original.date,note:original.note,tags:original.tags,postingStatus:original.postingStatus}:{}),
+  type:'loan_payment',loanId:id,accountId:a?.id||'',paymentKind:'regular',
+  amount:'',principal:'',interest:'',insurance:'',fee:''
+ },editId);
+}
+function otherLoanPicker(){
+ const loans=db.loans.filter(l=>!l.archived&&!loanAccounting(l).settled);
+ window.openFinancialProductPicker('loanId',loans,otherLoanSelect);
+}
+function otherBenefitPicker(){
+ const cards=db.cards.filter(c=>!c.archived);
+ window.openFinancialProductPicker('cardId',cards,id=>manualBenefitForm(id));
+}
 function otherStudioApply(kind){
  const f=document.getElementById(kind==='benefit'?'manualBenefitForm':'transactionForm');if(!f||f.querySelector('.other-studio-shell'))return;
  const grid=f.querySelector(':scope > .form-grid'),footer=f.querySelector(':scope > .form-foot');if(!grid||!footer)return;
@@ -36197,11 +36224,11 @@ function otherStudioApply(kind){
  const body=document.createElement('div');body.className='other-studio-content';left.appendChild(body);
  const amt=document.createElement('section');amt.className='other-studio-amount';amt.innerHTML=`<span>${config.amount}</span>`;pull('amount',amt);if(amt.querySelector('input')){amt.querySelector('input').placeholder=kind==='adjustment'?'+ 0.00 / − 0.00':'0.00';body.appendChild(amt);}
  const section=(title)=>{const p=document.createElement('p');p.className='other-studio-section-title';p.textContent=title;body.appendChild(p);const d=document.createElement('div');d.className='other-studio-fields';body.appendChild(d);return d};
- if(kind==='loan')pullElement('.v49-payment-intro',body);
+ 
  const core=section('DATOS DE LA OPERACIÓN');
  if(kind==='refund'){['cardId','currency','category','subcategory','date'].forEach(k=>pull(k,core))}
  if(kind==='adjustment'){['accountId','date'].forEach(k=>pull(k,core))}
- if(kind==='benefit'){['kind','name','currency','date'].forEach(k=>pull(k,core));pullElement('.benefit-only-cash',core)}
+ if(kind==='benefit'){['cardId','kind','name','currency','date'].forEach(k=>pull(k,core));pullElement('.benefit-only-cash',core)}
  if(kind==='loan'){pullElement('.v359-mode-picker',core);['loanId','accountId','paymentKind','paymentChannel','date','installmentPeriod'].forEach(k=>pull(k,core));pullElement('#v359BankRecon',core);const b=section('DESGLOSE DEL PAGO');b.classList.add('other-studio-breakdown');['principal','interest','insurance','fee'].forEach(k=>pull(k,b));}
  const fold=document.createElement('details');fold.className='other-studio-fold';fold.innerHTML='<summary>Más detalles y estado <span>⌄</span></summary>';const foldBody=document.createElement('div');foldBody.className='other-studio-fold-body';fold.appendChild(foldBody);body.appendChild(fold);
  if(kind==='loan'){pullElement('#loanBankTaxBlock',foldBody);pullElement('#legacyPaymentConversion',foldBody)}
@@ -46348,44 +46375,33 @@ function sheet(type){const s=state(),host=sheetContainer();if(!host)return;host.
  const isSpend=s.mode==='spend';
  const isIncome=s.mode==='income';
  title=isDestination?'Cuenta de destino':isIncome?'Cuenta de ingreso':isSpend?'Selecciona cómo pagar':'Cuenta de origen';
- const description=isDestination?'¿Dónde recibirás el dinero?':isIncome?'Selecciona dónde recibir el ingreso.':isSpend?'Elige una tarjeta de crédito o una cuenta disponible.':'¿Desde qué cuenta vas a transferir?';
- const bankName=o=>{const bank=(db.banks||[]).find(b=>String(b.id)===String(o.bankId));return bank?.name||o.bank||o.institution||''};
- const last4=o=>String(o.last4||o.lastFour||o.lastFourDigits||'').replace(/\D/g,'').slice(-4);
- const isDebit=c=>/debit|debito|débito/.test(normalize([c.type,c.cardType,c.kind].filter(Boolean).join(' ')));
- // Las tarjetas de débito se representan por la cuenta vinculada; nunca como un cargo a crédito.
- // No crear un producto financiero nuevo ni alterar la clasificación contable original.
- const accounts=(db.accounts||[]).filter(a=>!a.archived&&(isDestination?a.id!==s.v749Account:true));
- const credits=isSpend?(db.cards||[]).filter(c=>!c.archived&&!isDebit(c)):[];
- const products=[...credits.map(c=>({kind:'card',item:c})),...accounts.map(a=>({kind:'account',item:a}))];
- const currentKind=isDestination?'account':isSpend?s.v749Source:'account';
- const currentId=isDestination?s.v749ToAccount:currentKind==='card'?s.v749Card:s.v749Account;
- host.dataset.v787Role=type;
- host.dataset.v787Id=String(currentId||'');
- host.dataset.v787Kind=currentKind;
- host.dataset.v787Filter=isSpend?'all':'accounts';
- const iconCard='<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M3 10.5h18"/></svg>';
- const iconAccount='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-5 9 5M4 10h16M5.5 10v9m4-9v9m5-9v9m4-9v9M3 20.5h18"/></svg>';
- const fmtAvailable=a=>{try{const n=Number(getAccountBalance(a));return Number.isFinite(n)?new Intl.NumberFormat('es-DO',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+' '+esc(a.currency||'DOP'):''}catch(_){return ''}};
- const pieces=products.map(({kind,item})=>{
-   const id=String(item.id),isCard=kind==='card';
-   const bank=bankName(item),last=last4(item),current=kind===currentKind&&id===String(currentId);
-   const displayBrand=isCard?(/master|mc|qik/.test(normalize((item.network||'')+' '+item.name))?'mc':'visa'):'account';
-   const info=isCard?[(bank||'Crédito'),last?'•••• '+last:''].filter(Boolean).join(' · '):[bank,item.currency||'DOP'].filter(Boolean).join(' · ');
-   const available=!isCard?fmtAvailable(item):'';
-   const key=normalize(item.name+' '+bank+' '+last+' '+(item.currency||'')+' '+info);
-   return `<button type="button" class="v787-product-row ${current?'is-selected':''}" data-v749="v787Pick" data-kind="${kind}" data-value="${esc(id)}" data-v787-category="${isCard?'credit':'accounts'}" data-search="${esc(key)}" aria-pressed="${current}" aria-label="${esc(item.name)}${last?', terminada en '+esc(last):''}">
-     <span class="v787-product-brand ${isCard?'is-card '+displayBrand:'is-account'}" aria-hidden="true">${isCard?(displayBrand==='mc'?'<i class="v787-mc-left"></i><i class="v787-mc-right"></i>':'<strong>VISA</strong>'):iconAccount}</span>
-     <span class="v787-product-main"><strong>${esc(item.name)}</strong><small>${esc(info)}</small>${available?`<em>Disponible: ${esc(available)}</em>`:''}</span>
-     <span class="v787-product-mark" aria-hidden="true">${current?'✓':''}</span>
-   </button>`;
+ const isDebit=c=>/debit|debito/.test(normalize([c.type,c.cardType,c.kind].filter(Boolean).join(' ')));
+ const accounts=db.accounts.filter(a=>!a.archived&&(!isDestination||a.id!==s.v749Account));
+ const credits=isSpend?db.cards.filter(c=>!c.archived&&!isDebit(c)):[];
+ const products=[...credits.map(item=>({type:'cardId',item})),...accounts.map(item=>({type:'accountId',item}))];
+ const current=String((isDestination?s.v749ToAccount:isSpend&&s.v749Source==='card'?s.v749Card:s.v749Account)||'');
+ const fromReview=!!host.closest('.v749-review-overlay');
+ closeSheet();
+ window.openRegisterProductPicker(title,products,current,option=>{
+   const id=option.value;
+   if(isDestination)s.v749ToAccount=id;
+   else if(option.kind==='credit'){s.v749Source='card';s.v749Card=id;}
+   else {
+    s.v749Source='account';s.v749Account=id;
+    if(s.v749ToAccount===id)s.v749ToAccount=accounts.find(a=>a.id!==id)?.id||'';
+   }
+   if(!fromReview){renderEntry();return;}
+   const form=document.querySelector('#modal-root #transactionForm[data-v749-native]');
+   if(form)for(const [name,value] of Object.entries({accountId:s.v749Account,toAccountId:s.v749ToAccount,cardId:s.v749Card,paymentSource:s.v749Source})){
+    if(form.elements.namedItem(name))setNative(form,name,value);
+   }
+   refreshReview();
  });
- html=`<p class="v787-selector-description">${esc(description)}</p>
- <label class="v787-search-wrap" for="v787ProductSearch"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input class="v749-sheet-search" id="v787ProductSearch" type="search" placeholder="Buscar ${isSpend?'tarjeta o cuenta':'cuenta'}…" autocomplete="off" aria-label="Buscar productos registrados"></label>
- ${isSpend?`<div class="v787-product-tabs" role="group" aria-label="Filtrar método de pago"><button type="button" data-v749="v787Filter" data-value="all" aria-pressed="true"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="7" height="7" rx="1.5"/><rect x="13.5" y="4" width="7" height="7" rx="1.5"/><rect x="3.5" y="14" width="7" height="7" rx="1.5"/><rect x="13.5" y="14" width="7" height="7" rx="1.5"/></svg><span>Todas</span></button><button type="button" data-v749="v787Filter" data-value="credit" aria-pressed="false">${iconCard}<span>Crédito</span></button><button type="button" data-v749="v787Filter" data-value="accounts" aria-pressed="false">${iconAccount}<span>Cuentas</span></button></div>`:`<div class="v787-mode-context"><span>${isDestination?'Destino':'Cuentas'}</span><small>${accounts.length} cuenta${accounts.length===1?'':'s'} disponible${accounts.length===1?'':'s'}</small></div>`}
- <div class="v787-product-scroll" id="v787ProductRows">${pieces.join('')||'<p class="v787-no-results">No tienes cuentas o tarjetas disponibles para esta operación.</p>'}</div><p class="v787-no-results" id="v787NoResults" hidden>Sin coincidencias. Prueba otra búsqueda.</p>
- <div class="v787-confirm-bar"><button type="button" data-v749="v787Confirm" class="v787-confirm-button" ${products.some(x=>String(x.item.id)===String(currentId)&&x.kind===currentKind)?'':'disabled'}>${isDestination?'Usar esta cuenta':isSpend&&currentKind==='card'?'Usar esta tarjeta':'Usar esta cuenta'}</button></div>`;
-}else if(type==='loan'){title='Préstamos registrados';html=`<div class="v749-source-list">${db.loans.filter(x=>!x.archived).map(x=>`<button type="button" data-v749="loan" data-value="${esc(x.id)}"><span>🏦 ${esc(x.name)}</span></button>`).join('')||'<p>Sin préstamos activos</p>'}</div>`}else return;
-host.innerHTML=`<div class="v749-sheet-inner ${['source','destination'].includes(type)?'v787-product-picker':''}" role="dialog" aria-modal="true" aria-label="${esc(title)}">${['source','destination'].includes(type)?'<span class="v787-sheet-handle" aria-hidden="true"></span>':''}<header class="v749-sheet-head"><h3>${esc(title)}</h3><button type="button" data-v749="sheetClose" aria-label="Cerrar selector">×</button></header>${html}</div>`;if(!['source','destination'].includes(type))host.querySelector('input')?.focus({preventScroll:true})}
+ return;
+}else return;
+host.innerHTML=`<div class="v749-sheet-inner" role="dialog" aria-modal="true" aria-label="${esc(title)}"><header class="v749-sheet-head"><h3>${esc(title)}</h3><button type="button" data-v749="sheetClose" aria-label="Cerrar selector">×</button></header>${html}</div>`;
+host.querySelector('input')?.focus({preventScroll:true});
+}
 function setNative(f,name,value){const field=f.elements.namedItem(name);if(!field||typeof field.value!=='string')return;field.value=String(value??'');field.dispatchEvent(new Event('change',{bubbles:true}))}
 function validateEntry(s){if(!(Number(s.amount)>0)||!Number.isFinite(Number(s.amount)))return 'Introduce un importe válido mayor que cero.';if(!/^\d{4}-\d\d-\d\d$/.test(s.v749Date)||s.v749Date>today())return 'Revisa la fecha del movimiento.';if((s.mode!=='spend'||s.v749Source!=='card')&&(!acc(s.v749Account)||acc(s.v749Account).archived))return 'Selecciona una cuenta activa.';if(s.mode==='spend'&&s.v749Source==='card'&&(!cardRef(s.v749Card)||cardRef(s.v749Card).archived))return 'Selecciona una tarjeta activa.';if(s.mode==='transfer'&&s.transferKind!=='outgoing'&&(s.v749Account===s.v749ToAccount||!acc(s.v749ToAccount)||acc(s.v749ToAccount).archived))return 'Selecciona una cuenta de destino diferente.';if(s.mode==='transfer'&&s.transferKind==='outgoing'&&!s.v749Payee.trim())return 'Indica el beneficiario.';if(s.mode!=='transfer'&&!realCategories(s.mode).includes(s.preset))return 'Selecciona una categoría válida.';return ''}
 function continueToReview(){const s=state(),error=validateEntry(s);if(error){setError(error);return}
@@ -46453,56 +46469,12 @@ const priorFlowPicker=flowPicker;
 flowPicker=function(...args){if(isMobileViewport()){ui.registrationGroup=ui.registrationGroup||'pay';return openRegisterAssistant()}return priorFlowPicker(...args)};
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v749]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const s=state(),act=b.dataset.v749;const v=b.dataset.value||'';
 if(act==='close'){closeModal();return}if(act==='mode'){changeMode(v);return}if(act==='key'){applyKey(v);return}if(act==='quick'){chooseCategory(v);return}if(act==='category'||act==='subcategory'||act==='source'||act==='destination'){sheet(act);return}
-if(act==='v787Filter'){
- const host=sheetContainer();if(!host)return;
- host.dataset.v787Filter=v;
- host.querySelectorAll('[data-v749="v787Filter"]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.value===v)));
- const q=normalize(host.querySelector('#v787ProductSearch')?.value||'');let count=0;
- host.querySelectorAll('.v787-product-row').forEach(row=>{const show=(v==='all'||v===row.dataset.v787Category)&&(!q||row.dataset.search.includes(q));row.hidden=!show;if(show)count++});
- const empty=host.querySelector('#v787NoResults');if(empty)empty.hidden=count>0;return;
-}
-if(act==='v787Pick'){
- const host=sheetContainer();if(!host)return;
- host.dataset.v787Id=v;host.dataset.v787Kind=b.dataset.kind||'account';
- host.querySelectorAll('.v787-product-row').forEach(row=>{const yes=row===b;row.classList.toggle('is-selected',yes);row.setAttribute('aria-pressed',String(yes));row.querySelector('.v787-product-mark').textContent=yes?'✓':''});
- const confirm=host.querySelector('[data-v749="v787Confirm"]');if(confirm){confirm.disabled=false;confirm.textContent=b.dataset.kind==='card'?'Usar esta tarjeta':'Usar esta cuenta'}return;
-}
-if(act==='v787Confirm'){
- const host=sheetContainer();if(!host)return;
- const id=host.dataset.v787Id,kind=host.dataset.v787Kind,role=host.dataset.v787Role;
- if(!id)return;
- if(role==='destination'){
-   if(!db.accounts.some(a=>!a.archived&&String(a.id)===id&&String(a.id)!==String(s.v749Account)))return;
-   s.v749ToAccount=id;
- }else if(kind==='card'&&s.mode==='spend'){
-   if(!db.cards.some(c=>!c.archived&&String(c.id)===id))return;
-   s.v749Source='card';s.v749Card=id;
- }else{
-   if(!db.accounts.some(a=>!a.archived&&String(a.id)===id))return;
-   s.v749Source='account';s.v749Account=id;
-   if(s.v749ToAccount===id)s.v749ToAccount=(db.accounts||[]).find(a=>!a.archived&&String(a.id)!==id)?.id||'';
- }
- const fromReview=!!document.querySelector('#modal-root .v749-review-overlay .v749-sheet:not([hidden])');
- closeSheet();
- if(fromReview){
-   const form=document.querySelector('#modal-root #transactionForm[data-v749-native]');
-   if(form){for(const [name,val] of Object.entries({accountId:s.v749Account,toAccountId:s.v749ToAccount,cardId:s.v749Card,paymentSource:s.v749Source}))if(form.elements.namedItem(name))setNative(form,name,val);}
-   refreshReview();
- }else renderEntry();
- return;
-}
 if(act==='sheetClose'){closeSheet();return}if(act==='pickCategory'){const fromReview=!!document.querySelector('#modal-root .v749-review-overlay .v749-sheet:not([hidden])');s.preset=v;s.v749Subcategory='';closeSheet();if(fromReview){refreshReview();return}sheet('subcategory');return}if(act==='pickSub'){const fromReview=!!document.querySelector('#modal-root .v749-review-overlay .v749-sheet:not([hidden])');s.v749Subcategory=v;closeSheet();if(fromReview)refreshReview();else renderEntry();return}
 if(act==='pickSource'){if(b.dataset.role==='destination'){s.v749ToAccount=v}else if(b.dataset.kind==='card'){s.v749Source='card';s.v749Card=v}else{s.v749Source='account';s.v749Account=v;s.v749ToAccount=s.v749ToAccount===v?db.accounts.find(a=>!a.archived&&a.id!==v)?.id||'':s.v749ToAccount}closeSheet();renderEntry();return}
 if(act==='currency'){s.v749Currency=s.v749Currency==='DOP'?'USD':'DOP';renderEntry();return}if(act==='transferKind'){s.transferKind=s.transferKind==='outgoing'?'own':'outgoing';renderEntry();return}
 if(act==='continue'){continueToReview();return}if(act==='back'){back();return}if(act==='confirm'){confirm();return}
 },true);
 document.addEventListener('input',e=>{if(e.target.id==='v749CategorySearch'){const q=normalize(e.target.value);document.querySelectorAll('#v749CategoryGrid button').forEach(el=>{el.hidden=!normalize(el.dataset.value).includes(q)});return}
-if(e.target.id==='v787ProductSearch'){
- const host=sheetContainer();if(!host)return;
- const q=normalize(e.target.value),filter=host.dataset.v787Filter||'all';let count=0;
- host.querySelectorAll('.v787-product-row').forEach(row=>{const show=(filter==='all'||filter===row.dataset.v787Category)&&(!q||row.dataset.search.includes(q));row.hidden=!show;if(show)count++});
- const empty=host.querySelector('#v787NoResults');if(empty)empty.hidden=count>0;return;
-}
 if(['v749SubcategorySearch','v768SourceSearch'].includes(e.target.id)){const q=normalize(e.target.value),root=e.target.id==='v749SubcategorySearch'?'#v749SubcategoryGrid':'#v768SourceList';document.querySelectorAll(root+' button').forEach(el=>{el.hidden=!normalize(el.textContent).includes(q)});return}
 if(e.target.id==='v749Amount'){const s=state();const raw=e.target.value.replace(/[^0-9.]/g,'');const [a,...b]=raw.split('.');s.amount=a.slice(0,11)+(b.length?'.'+b.join('').slice(0,2):'');if(s.amount!==e.target.value)e.target.value=s.amount;refreshImpact();return}
 if(e.target.id==='v749Payee')state().v749Payee=e.target.value;if(e.target.id==='v749Date')state().v749Date=e.target.value;
@@ -46518,20 +46490,6 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheetContainer()&&!
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 let active=null;
-function makeLabel(select){
- const label=select.closest('label');if(!label||label.querySelector('.v756-native-select-btn'))return;
- const form=select.closest('form.other-studio-form');if(!form)return;
- const mode=select.name;
- if(!['cardId','accountId','loanId'].includes(mode))return;
- const b=document.createElement('button');b.type='button';b.className='v756-native-select-btn';
- b.setAttribute('aria-label','Abrir selector de '+(mode==='cardId'?'tarjetas':mode==='loanId'?'préstamos':'cuentas'));
- b.innerHTML='<span class="v756-field-ico">▣</span><span></span>';
- const txt=b.querySelector('span:nth-child(2)');
- const sync=()=>{txt.textContent=select.selectedOptions?.[0]?.textContent?.trim()||'Seleccionar producto';};
- sync();select.addEventListener('change',sync);b.addEventListener('click',()=>openPicker(select));label.appendChild(b);
- // Keep native accessible to assistive tech and fallback; do not remove it.
- select.style.position='absolute';select.style.width='1px';select.style.height='1px';select.style.opacity='0';select.style.pointerEvents='none';
-}
 function updateImpact(form){
  const spec=form.dataset.special;if(!['refund','adjustment'].includes(spec))return;
  let spot=form.querySelector('.other-studio-impact');
@@ -46596,7 +46554,6 @@ function augment(){
  document.querySelectorAll('#modal-root form.other-studio-form').forEach(form=>{
   if(form.dataset.v756Enhanced==='yes')return;
   form.dataset.v756Enhanced='yes';
-  form.querySelectorAll('select[name="cardId"],select[name="accountId"],select[name="loanId"]').forEach(makeLabel);
   if(['refund','adjustment'].includes(form.dataset.special)){
    const sync=()=>queueMicrotask(()=>updateImpact(form));
    form.addEventListener('input',sync);form.addEventListener('change',sync);sync();
@@ -46705,21 +46662,21 @@ function findSelected(f){return purchases(f).find(x=>x.t.id===val(f,'originalPur
 function update(f){
  if(!f.isConnected)return;
  const x=findSelected(f),hasLink=!!x;
- const c=f.querySelector('.v794-source-card'),p=f.querySelector('.v794-purchase-card'),r=f.querySelector('.v794-recovery'),method=f.querySelector('.v796-refund-method');
+ const c=f.querySelector('.v794-source-card'),p=f.querySelector('.v794-purchase-card'),r=f.querySelector('.v794-recovery');
  if(!c||!p||!r)return;
  const cardObj=db.cards?.find(z=>String(z.id)===String(val(f,'cardId'))) || x?.card;
  const currency=val(f,'currency')||'DOP';
  const amount=Math.max(0,Number(val(f,'amount'))||0),max=x?.remaining||0;
  let prior=null,after=null;
- try{if(cardObj){prior=Number(cardStatus(cardObj,currency).debt);if(Number.isFinite(prior))after=Math.max(0,prior-amount);else prior=null}}catch(_){prior=null;after=null}
+ try{if(cardObj){prior=Number(cardStatus(cardObj,currency).debt);if(Number.isFinite(prior))after=Math.max(0,prior-(x?Math.min(amount,max):0));else prior=null}}catch(_){prior=null;after=null}
  const moneySafe=n=>n===null||!Number.isFinite(n)?'—':E(fmt(n,currency));
- c.setAttribute('role','button');c.setAttribute('tabindex','0');
- c.setAttribute('aria-label','Seleccionar compra original y tarjeta o cuenta');
+ c.setAttribute('aria-haspopup','dialog');
+ c.setAttribute('aria-label','Seleccionar tarjeta para la devolución');
  c.innerHTML='<span class="v796-box-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><span class="v796-field-copy"><small>Tarjeta o cuenta</small><strong>'+E(cardObj?.name||'Seleccionar una compra')+(cardObj?' · '+E(String(cardObj.number||cardObj.last4||'').slice(-4)):'')+'</strong></span><span class="v796-chevron">⌄</span>';
  const title=x?(x.t.note||x.t.payee||x.t.category||'Compra registrada'):'Seleccionar compra registrada';
  const category=x?[x.t.category,x.t.subcategory].filter(Boolean).join(' · '):'Compra original pendiente de seleccionar';
  p.innerHTML='<button type="button" class="v796-field-button" data-v794-action="choose"><span class="v796-box-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 12 9-9h8a1 1 0 0 1 1 1v8l-9 9a2 2 0 0 1-3 0l-6-6a2 2 0 0 1 0-3Z"/><circle cx="17" cy="7" r="1"/></svg></span><span class="v796-field-copy"><small>Motivo</small><strong>'+E(x?'Producto devuelto':'Elegir compra registrada')+'</strong><em>'+E(x?title+' · '+category:'Selecciona la compra que deseas devolver')+'</em></span><span class="v796-chevron">⌄</span></button>';
- if(method){method.innerHTML='<span class="v796-box-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 11a8 8 0 1 0 2-5"/><path d="M4 4v7h7"/></svg></span><span class="v796-field-copy"><small>Forma de devolución</small><strong>A la misma tarjeta</strong></span><span class="v796-chevron">✓</span>'}
+
  r.innerHTML='<h4><span class="v796-impact-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V12m5 8V6m5 14V9m5 11V3"/></svg></span>Impacto en tu tarjeta</h4><div class="v796-impact-values"><span><small>Saldo actual</small><strong>'+moneySafe(prior)+'</strong></span><span class="v796-impact-arrow">→</span><span><small>Saldo estimado</small><strong>'+moneySafe(after)+'</strong></span></div><p>'+(x?'Devolución vinculada a '+E(title)+'. Pendiente de reintegrar: '+E(fmt(max,x.t.currency||currency))+'.':'Selecciona una compra para calcular el efecto sobre tu tarjeta.')+'</p>'+(x&&amount>max+.011?'<p class="v794-warn">El importe supera el pendiente de reintegro.</p>':'');
  f.classList.toggle('v794-has-purchase',hasLink);
  // The canonical financial submit and originalPurchaseId stay unchanged.
@@ -46738,13 +46695,21 @@ function applyPurchase(f,id){const match=purchases(f).find(x=>x.t.id===id);if(!m
  if(!val(f,'note').trim())write('note','Devolución de compra: '+(t.note||t.payee||t.category||'Compra registrada'));
  update(f);
 }
-function openPicker(f){if(document.getElementById('v794-purchase-sheet'))return;const items=purchases(f);let current=val(f,'originalPurchaseId'),query='';const sheet=document.createElement('div');sheet.id='v794-purchase-sheet';sheet.innerHTML='<div class="v794-sheet" role="dialog" aria-modal="true" aria-label="Seleccionar compra registrada"><div class="v794-handle"></div><div class="v794-sheet-head"><div><h3>Seleccionar compra</h3><p>Compras con saldo pendiente de devolver</p></div><button type="button" class="v794-close" aria-label="Cerrar">×</button></div><input type="search" placeholder="Buscar comercio, categoría o tarjeta" aria-label="Buscar compras"><div class="v794-list"></div><button class="v794-apply" type="button" '+(!current?'disabled':'')+'>Usar esta compra</button></div>';
- document.body.appendChild(sheet);const list=sheet.querySelector('.v794-list'),apply=sheet.querySelector('.v794-apply');const paint=()=>{list.replaceChildren();const filtered=items.filter(x=>[x.t.note,x.t.payee,x.t.category,x.t.subcategory,x.card?.name,x.t.date].join(' ').toLocaleLowerCase('es').includes(query));if(!filtered.length){const empty=document.createElement('p');empty.textContent=items.length?'No hay compras que coincidan.':'No hay compras con saldo pendiente de devolver.';list.appendChild(empty)}for(const x of filtered){const b=document.createElement('button');b.type='button';b.className='v794-choice'+(current===x.t.id?' selected':'');b.innerHTML='<span class="v794-dots">↶</span><span><strong>'+E(x.t.note||x.t.payee||x.t.category||'Compra')+'</strong><small>'+E([x.t.date,x.t.category,x.t.subcategory,x.card?.name].filter(Boolean).join(' · '))+'</small></span><b>'+E(fmt(x.remaining,x.t.currency))+'</b>';b.onclick=()=>{current=x.t.id;apply.disabled=false;paint()};list.appendChild(b)}};paint();const close=()=>sheet.remove();sheet.querySelector('.v794-close').onclick=close;sheet.addEventListener('click',e=>{if(e.target===sheet)close()});sheet.querySelector('input').addEventListener('input',e=>{query=e.target.value.toLocaleLowerCase('es');paint()});apply.onclick=()=>{if(!current)return;applyPurchase(f,current);close()};}
+function openPicker(f){
+ const selectedCard=val(f,'cardId');
+ const options=purchases(f).filter(x=>!selectedCard||x.t.cardId===selectedCard).map(({t,remaining})=>({
+  value:t.id,
+  name:t.note||t.payee||t.category||'Compra registrada',
+  kind:'purchase',
+  detail:[t.date,t.category,fmt(remaining,t.currency)+' pendiente'].filter(Boolean).join(' · ')
+ }));
+ window.openRefundPurchasePicker(options,val(f,'originalPurchaseId'),id=>applyPurchase(f,id));
+}
 function attach(f){if(f.dataset.special!=='refund'||f.dataset.v794Ready||!f.classList.contains('v790-refined'))return;if(f.dataset.id&&!val(f,'originalPurchaseId'))return;const content=f.querySelector('.other-studio-content');if(!content||!f.querySelector('#v388Purchase'))return;
  f.dataset.v794Ready='yes';f.classList.add('v794-linked-flow');
  const header=f.querySelector('.other-studio-header p');if(header)header.textContent='Recupera el dinero de una compra anterior.';
  const title=f.querySelector('.other-studio-amount>span');if(title)title.textContent='IMPORTE A DEVOLVER';
- for(const klass of ['v794-source-card','v794-purchase-card','v796-refund-method','v794-recovery']){const section=document.createElement('section');section.className=klass;content.appendChild(section)}
+ for(const klass of ['v794-source-card','v794-purchase-card','v794-recovery']){const section=document.createElement(klass==='v794-source-card'?'button':'section');if(section instanceof HTMLButtonElement)section.type='button';section.className=klass;content.appendChild(section)}
  content.addEventListener('click',e=>{if(e.target.closest('.v794-source-card')){const shared=f.querySelector('.v789-select-open');if(shared){shared.click()}else{openPicker(f)}return}const b=e.target.closest('[data-v794-action]');if(!b)return;if(b.dataset.v794Action==='edit'||b.dataset.v794Action==='choose')openPicker(f)});
  f.addEventListener('input',()=>queueMicrotask(()=>update(f)));
  f.addEventListener('change',()=>queueMicrotask(()=>update(f)));
@@ -82058,42 +82023,71 @@ const cardSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 const bankSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 10-6 10 6M3 10h18M5 10v9m4-9v9m6-9v9m4-9v9M2 21h20"/></svg>';
 const cashSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5" width="19" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg>';
 const normalize=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
-let active=null;const isDark=()=>document.body.matches('.theme-black,.theme-dark');
-function optionsOf(field){return [...field.options].filter(o=>o.value&&!o.disabled).map(o=>({value:o.value,name:o.textContent.trim(),kind:field.name==='cardId'?'credit':'account'}));}
+let active=null;
+const productLabels={cardId:'tarjeta',accountId:'cuenta',loanId:'préstamo',purchase:'compra'};
+function productOption(name,item,label=item.name){
+ const kind=name==='loanId'?(/hipotec|vivienda|inmueble|mortgage/.test(normalize([item.kind,item.type,item.loanType,item.name].join(' ')))?'mortgage':'personal'):name==='cardId'?'credit':'account';
+ const institution=bankOf(item);
+ const suffix=name==='cardId'&&item.last4?'•••• '+item.last4:name==='accountId'?item.currency:'';
+ const detail=[institution,suffix].filter(Boolean).join(' · ');
+ let amount='';
+ if(name==='loanId'&&loan(item.id))amount=money(loanAccounting(item).balance,item.currency,2)+' pendiente';
+ if(name==='accountId'&&account(item.id))amount='Disponible: '+money(getAccountBalance(item),item.currency,2);
+ const brand=kind==='credit'?(/master|mc|qik/.test(normalize([item.network,item.name].join(' ')))?'mc':/visa/.test(normalize([item.network,item.name].join(' ')))?'visa':''):'';
+ return {value:String(item.id),name:label,kind,detail,amount,brand};
+}
+function optionsOf(field){
+ const lookup={cardId:card,accountId:account,loanId:loan}[field.name];
+ const form=field.form;
+ const canRefund=field.name==='cardId'&&form.dataset.special==='refund'&&!form.dataset.id;
+ const date=form.elements.date?.value;
+ const eligible=id=>!canRefund||db.transactions.some(t=>t.cardId===id&&t.type==='card_charge'&&(!date||t.date<=date)&&
+  num(t.amount)-db.transactions.filter(r=>r.type==='card_refund'&&r.originalPurchaseId===t.id).reduce((sum,r)=>sum+num(r.amount),0)>.005);
+ return [...field.options].filter(o=>o.value&&!o.disabled&&eligible(o.value)).map(o=>productOption(field.name,lookup(o.value)||{id:o.value},o.textContent.trim()));
+}
+window.openFinancialProductPicker=(name,products,onConfirm)=>open(name,products.map(item=>productOption(name,item)),'',onConfirm);
+window.openRegisterProductPicker=(title,products,selected,onConfirm)=>open('product',products.map(({type,item})=>productOption(type,item)),selected,id=>{
+ const product=products.find(({item})=>String(item.id)===id);
+ if(product)onConfirm(productOption(product.type,product.item));
+},title);
+window.openRefundPurchasePicker=(purchases,selected,onConfirm)=>open('purchase',purchases,selected,onConfirm);
 function updateTrigger(field){const label=field.closest('label');const value=label?.querySelector('.v789-select-details strong');if(value)value.textContent=field.selectedOptions?.[0]?.textContent.trim()||'Seleccionar';}
 function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form')){
- for(const name of ['cardId','accountId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement))continue;
+ for(const name of ['cardId','accountId','loanId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement))continue;
  const label=field.closest('label');if(!label||field.dataset.v789Enhanced==='1')continue;
- field.dataset.v789Enhanced='1';field.classList.add('v789-native-keep');label.classList.add('v789-select-enhanced');
- const button=document.createElement('button');button.type='button';button.className='v789-select-open v827-universal-trigger';button.setAttribute('aria-label','Seleccionar '+(name==='cardId'?'tarjeta':'cuenta'));
+ field.dataset.v789Enhanced='1';field.classList.add('v789-native-keep');field.tabIndex=-1;label.classList.add('v789-select-enhanced');
+ const button=document.createElement('button');button.type='button';button.className='v789-select-open v827-universal-trigger';button.setAttribute('aria-label','Seleccionar '+productLabels[name]);button.setAttribute('aria-haspopup','dialog');
  const ico=document.createElement('span');ico.className='v789-select-ico';ico.innerHTML=name==='cardId'?cardSvg:bankSvg;
- const details=document.createElement('span');details.className='v789-select-details';const strong=document.createElement('strong');const small=document.createElement('small');small.textContent=name==='cardId'?'Tarjeta de crédito':'Cuenta bancaria o efectivo';details.append(strong,small);
+ const details=document.createElement('span');details.className='v789-select-details';const strong=document.createElement('strong');details.append(strong);
  const arrow=document.createElement('span');arrow.className='v789-select-chevron';arrow.textContent='⌄';button.append(ico,details,arrow);label.append(button);
- field.addEventListener('change',()=>updateTrigger(field));updateTrigger(field);button.addEventListener('click',()=>open(field));
+ field.addEventListener('change',()=>updateTrigger(field));updateTrigger(field);button.addEventListener('click',()=>open(name,optionsOf(field),field.value,selected=>{
+  if(field.value===selected)return;
+  if(name==='loanId'&&form.dataset.special==='loan'){otherLoanSelect(selected,form);return;}
+  field.value=selected;
+  field.dispatchEvent(new Event('change',{bubbles:true}));
+ }));
  }
 }}
-function open(field){if(active){active.dismiss();}let selected=field.value;const all=optionsOf(field);const hasCredit=all.some(o=>o.kind==='credit');const hasAccount=all.some(o=>o.kind==='account');
- const layer=document.createElement('div');layer.className='v789-product-backdrop v827-picker-backdrop';
- const sheet=document.createElement('section');sheet.className='v789-product-sheet v827-picker-sheet';sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');sheet.setAttribute('aria-label','Seleccionar tarjeta o cuenta');
- const grip=document.createElement('div');grip.className='v789-sheet-grip';grip.setAttribute('aria-hidden','true');
- const header=document.createElement('header');header.className='v827-picker-head';const title=document.createElement('h3');title.textContent=field.name==='cardId'?'Seleccionar tarjeta':'Seleccionar cuenta';const close=document.createElement('button');close.type='button';close.className='v789-picker-close';close.setAttribute('aria-label','Cerrar selector');close.textContent='×';header.append(title,close);
- const search=document.createElement('input');search.type='search';search.className='v789-picker-search';search.placeholder=field.name==='cardId'?'Buscar tarjeta…':'Buscar cuenta…';search.setAttribute('aria-label',search.placeholder);
- const tabs=document.createElement('div');tabs.className='v827-picker-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Filtrar productos');
- let filter='all';for(const [key,label] of [['all','Todas'],['credit','Crédito'],['account','Cuentas']]){const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key==='all'));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
- const list=document.createElement('div');list.className='v789-picker-list';const rows=[];
- for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini '+(opt.kind==='account'?'is-account':'');ico.innerHTML=opt.kind==='account'?(normalize(opt.name).includes('efectivo')?cashSvg:bankSvg):cardSvg;
- const content=document.createElement('span');content.className='v789-picker-text';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.kind==='account'?'Cuenta bancaria o efectivo':'Tarjeta de crédito';content.append(strong,small);const mark=document.createElement('span');mark.className='v789-picker-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);list.append(row);rows.push(row);row.addEventListener('click',()=>{selected=opt.value;refresh()});}
+function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels[name]){if(active)active.dismiss();selected=String(selected||'');const product=productLabels[name]||'producto';
+ const layer=document.createElement('dialog');layer.className='v789-product-backdrop v827-picker-backdrop';layer.setAttribute('aria-label',titleText);
+ const sheet=document.createElement('section');sheet.className='v789-product-sheet v827-picker-sheet v787-product-picker';
+ const grip=document.createElement('div');grip.className='v789-sheet-grip v787-sheet-handle';grip.setAttribute('aria-hidden','true');
+ const header=document.createElement('header');header.className='v827-picker-head v749-sheet-head';const title=document.createElement('h3');title.textContent=titleText;const close=document.createElement('button');close.type='button';close.className='v789-picker-close';close.setAttribute('aria-label','Cerrar selector');close.textContent='×';header.append(title,close);
+ const search=document.createElement('input');search.type='search';search.className='v789-picker-search';search.placeholder=name==='purchase'?'Buscar comercio, categoría o fecha…':name==='product'?'Buscar por nombre o institución…':'Buscar '+product+' o institución…';search.setAttribute('aria-label',search.placeholder);
+ const tabs=document.createElement('div');tabs.className='v827-picker-tabs v787-product-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Filtrar productos');
+ let filter='all';for(const [key,label] of (name==='loanId'?[['all','Todos'],['personal','Personales'],['mortgage','Hipotecarios']]:[['all','Todas'],['credit','Crédito'],['account','Cuentas']].filter(([key])=>key==='all'||name!=='purchase'))){const btn=document.createElement('button');btn.type='button';btn.textContent=label+' ('+all.filter(o=>key==='all'||o.kind===key).length+')';btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key==='all'));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
+ const list=document.createElement('div');list.className='v789-picker-list v787-product-scroll';const rows=[];
+ for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row v787-product-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini v787-product-brand '+(opt.kind==='credit'&&opt.brand?'is-card '+opt.brand:opt.kind==='account'?'is-account':'');ico.innerHTML=opt.brand==='mc'?'<i class="v787-mc-left"></i><i class="v787-mc-right"></i>':opt.brand==='visa'?'<strong>VISA</strong>':opt.kind==='account'?(normalize(opt.name).includes('efectivo')?cashSvg:bankSvg):name==='loanId'?bankSvg:name==='purchase'?'<span aria-hidden="true">↶</span>':cardSvg;
+ const content=document.createElement('span');content.className='v789-picker-text v787-product-main';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.detail;content.append(strong,small);if(opt.amount){const amount=document.createElement('em');amount.textContent=opt.amount;content.append(amount);}const mark=document.createElement('span');mark.className='v789-picker-mark v787-product-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);list.append(row);rows.push(row);row.addEventListener('click',()=>{selected=opt.value;refresh()});}
  const empty=document.createElement('p');empty.className='v827-picker-empty';empty.textContent=all.length?'No se encontraron coincidencias.':'No hay productos disponibles para esta operación.';list.append(empty);
- const actions=document.createElement('div');actions.className='v827-picker-actions';const cancel=document.createElement('button');cancel.type='button';cancel.className='v827-picker-cancel';cancel.textContent='Cancelar';const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';confirm.textContent=field.name==='cardId'?'Usar esta tarjeta':'Usar esta cuenta';actions.append(cancel,confirm);
- function refresh(){const q=normalize(search.value);let visible=0;for(const row of rows){const match=(filter==='all'||row.dataset.kind===filter)&&(!q||normalize(row.querySelector('strong').textContent).includes(q));row.hidden=!match;if(match)visible++;const yes=row.dataset.value===selected;row.setAttribute('aria-pressed',String(yes));row.querySelector('.v789-picker-mark').textContent=yes?'✓':'›';}empty.hidden=visible>0;confirm.disabled=!selected||!all.some(o=>o.value===selected)}
- const previous=document.activeElement;function dismiss(){if(!layer.isConnected)return;layer.remove();document.removeEventListener('keydown',keyHandler);active=null;if(previous?.isConnected)previous.focus({preventScroll:true})}
- function keyHandler(e){if(e.key==='Escape'){e.preventDefault();dismiss()}if(e.key==='Tab'){const focusables=[...sheet.querySelectorAll('button:not([disabled]),input')].filter(x=>!x.hidden);if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}
- close.onclick=dismiss;cancel.onclick=dismiss;layer.onclick=e=>{if(e.target===layer)dismiss()};search.oninput=refresh;document.addEventListener('keydown',keyHandler);
- confirm.onclick=()=>{if(!all.some(o=>o.value===selected))return;
- if(field.name==='cardId'&&field.value!==selected){const form=field.closest('form');if(form?.matches('.other-studio-form[data-special="refund"]')){for(const name of ['originalPurchaseId','amount']){const dep=form.elements.namedItem(name);if(dep){dep.value='';dep.dispatchEvent(new Event(name==='amount'?'input':'change',{bubbles:true}))}}const purchase=form.querySelector('#v388Purchase');if(purchase){purchase.value='';purchase.dataset.initial='';purchase.dispatchEvent(new Event('change',{bubbles:true}))}}}
- field.value=selected;field.dispatchEvent(new Event('change',{bubbles:true}));dismiss();};
- sheet.append(grip,header,search,tabs,list,actions);layer.append(sheet);root.append(layer);active={dismiss};refresh();close.focus({preventScroll:true});}
- let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhance()})};new MutationObserver(schedule).observe(root,{childList:true,subtree:true});enhance();
+ const actions=document.createElement('div');actions.className='v827-picker-actions';const cancel=document.createElement('button');cancel.type='button';cancel.className='v827-picker-cancel';cancel.textContent='Cancelar';const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';const confirmLabel={loanId:'Usar este préstamo',purchase:'Usar esta compra',cardId:'Usar esta tarjeta',accountId:'Usar esta cuenta'};actions.append(cancel,confirm);
+ function refresh(){const q=normalize(search.value);let visible=0;for(const row of rows){const match=(filter==='all'||row.dataset.kind===filter)&&(!q||normalize([...row.querySelector('.v789-picker-text').children].map(node=>node.textContent).join(' ')).includes(q));row.hidden=!match;if(match)visible++;const yes=row.dataset.value===selected;row.setAttribute('aria-pressed',String(yes));row.querySelector('.v789-picker-mark').textContent=yes?'✓':'›';}empty.hidden=visible>0;const chosen=all.find(o=>o.value===selected);confirm.disabled=!chosen;confirm.textContent=confirmLabel[name]||(chosen?.kind==='credit'?confirmLabel.cardId:chosen?.kind==='account'?confirmLabel.accountId:'Usar producto')}
+ const previous=document.activeElement;function dismiss(){layer.remove();document.removeEventListener('keydown',keyHandler,true);active=null;if(previous?.isConnected)previous.focus({preventScroll:true})}
+ function keyHandler(e){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();dismiss()}if(e.key==='Tab'){const focusables=[...sheet.querySelectorAll('button:not([disabled]),input')].filter(x=>!x.hidden);if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}
+ close.onclick=dismiss;cancel.onclick=dismiss;layer.onclick=e=>{if(e.target===layer)dismiss()};layer.addEventListener('cancel',e=>{e.preventDefault();dismiss()});search.oninput=refresh;document.addEventListener('keydown',keyHandler,true);
+ confirm.onclick=()=>{if(!all.some(o=>o.value===selected))return;dismiss();onConfirm(selected);};
+ sheet.append(grip,header,search);if(tabs.children.length>1)sheet.append(tabs);sheet.append(list,actions);layer.append(sheet);root.append(layer);if(typeof layer.showModal==='function')layer.showModal();active={dismiss,layer};refresh();close.focus({preventScroll:true});}
+ let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;if(active&&!active.layer.isConnected)active.dismiss();enhance()})};new MutationObserver(schedule).observe(root,{childList:true,subtree:true});enhance();
 })();
 </script>
 <style id="v790-other-faithful-implementation">
@@ -82259,11 +82253,11 @@ body:is(.theme-light,.theme-white) #modal-root .v790-filter-row button{backgroun
  function iconPath(kind){const P={refund:'<path d="M6 8h12l1 13H5L6 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/>',adjust:'<path d="m12 2 8 5-8 5-8-5 8-5Zm-8 10 8 5 8-5M4 17l8 5 8-5"/>'};return `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">${P[kind]||P.refund}</svg>`}
  function upgradeForm(form){if(form.dataset.v790Done){const content=form.querySelector('.other-studio-content'),fields=form.querySelector('.other-studio-fields'),note=content?.querySelector(':scope>.v768-refund-reason,:scope>.v768-reason');if(note&&fields){note.classList.add('v790-note','v790-full');for(const p of ['background','border','color','box-shadow'])note.style.removeProperty(p);fields.appendChild(note)}return;}const kind=form.dataset.special;
  if(!['refund','adjustment','loan','benefit'].includes(kind))return;
- form.dataset.v790Done='yes';form.classList.add('v790-refined');form.style.setProperty('transform','none','important');form.style.setProperty('animation','none','important');const foot=form.querySelector(':scope>.form-foot');if(foot){for(const [p,v] of [['position','fixed'],['bottom','0'],['top','auto'],['left','0'],['right','0'],['width','100%'],['max-width','none'],['z-index','100']])foot.style.setProperty(p,v,'important')}
+ form.dataset.v790Done='yes';form.classList.add('v790-refined');
  const header=form.querySelector('.other-studio-header'),content=form.querySelector('.other-studio-content'),fields=form.querySelector('.other-studio-fields'),aside=form.querySelector('.other-studio-right');if(!header||!content||!fields||!aside)return;fields.style.setProperty('grid-template-columns','repeat(2,minmax(0,1fr))','important');
  const brand=document.createElement('div');brand.className='v790-brand';brand.innerHTML='<span class="v790-brandmark" aria-hidden="true">v</span><span class="v790-brandname">vive el hoy<small>FINANZAS 360</small></span>';header.prepend(brand);
  const kicker=document.createElement('div');kicker.className='v790-kicker';kicker.textContent='OTRAS GESTIONES';brand.after(kicker);
- const hero=header.querySelector('.v785-hero-icon');if(hero)hero.innerHTML=iconPath(kind);
+ const hero=header.querySelector('.v785-hero-icon');if(hero&&['refund','adjustment'].includes(kind)&&!hero.firstElementChild)hero.innerHTML=iconPath(kind);
  const amount=content.querySelector('.other-studio-amount');
  const rowField=(name,classname)=>{const elem=fields.querySelector(`[name="${name}"]`);const label=elem?.closest('label');if(label){label.classList.add(...classname.split(/\s+/));if(classname.includes('v790-full'))label.style.setProperty('grid-column','1/-1','important');for(const p of ['background','background-color','color','border','border-color','box-shadow'])label.style.removeProperty(p)}return label};
  const card=rowField('cardId','v790-card-field v790-full');rowField('accountId',kind==='loan'?'v790-account-field':'v790-account-field v790-full');rowField('loanId','v790-full');rowField('kind','v790-full');rowField('name','v790-full');rowField('paymentKind','v790-full');
@@ -82684,7 +82678,7 @@ function enhance(f){if(f.dataset.special!=='adjustment'||f.dataset.v797Ready)ret
  f.dataset.v797Ready='yes';f.classList.add('v797-approved');
  const content=f.querySelector('.other-studio-content'),fields=content?.querySelector('.other-studio-fields'),impact=content?.querySelector('.other-studio-impact');if(!content||!fields)return;
  const note=fields.querySelector('label.v768-reason, label:has([name="note"])');const date=fields.querySelector('label.v790-date, label:has([name="date"])');
- if(date)date.style.setProperty('grid-column','auto','important');if(note){note.style.setProperty('grid-column','auto','important');note.classList.add('v797-reason');const n=note.querySelector('.filter-label');if(n)n.textContent='Motivo del ajuste';const i=note.querySelector('input[name="note"]');if(i&&!i.value)i.placeholder='Diferencia de saldo'}
+ if(date)date.style.setProperty('grid-column','1/-1','important');if(note){note.style.setProperty('grid-column','1/-1','important');note.classList.add('v797-reason');const n=note.querySelector('.filter-label');if(n)n.textContent='Motivo del ajuste';const i=note.querySelector('input[name="note"]');if(i&&!i.value)i.placeholder='Diferencia de saldo'}
  const old=content.querySelector('.other-studio-section-title');if(old)old.style.display='none';
  const moneyInput=f.querySelector('input[name=amount]');if(moneyInput)moneyInput.placeholder='0.00';
  const amt=content.querySelector('.other-studio-amount');if(amt){const redundant=amt.querySelector(':scope>span:not(.v790-money-symbol)');if(redundant)redundant.setAttribute('aria-hidden','true');}
@@ -82692,7 +82686,7 @@ function enhance(f){if(f.dataset.special!=='adjustment'||f.dataset.v797Ready)ret
  const fold=content.querySelector('.other-studio-fold');if(fold){const sum=fold.querySelector(':scope > summary');if(sum)sum.innerHTML='Más detalles y evidencia <span aria-hidden="true">›</span>'}
  const top=f.querySelector('.v790-kicker');if(top)top.textContent='‹  OTRAS GESTIONES';
  const actions=f.querySelector('.form-foot');if(actions){const submit=actions.querySelector('[type="submit"]');if(submit)submit.textContent=f.dataset.id?'Guardar conciliación':'✓  Confirmar conciliación'}
- if(!content.querySelector('.v797-ops')){const d=document.createElement('details');d.className='v797-ops';d.innerHTML='<summary>Más operaciones <span aria-hidden="true">⌄</span></summary><div><button type="button" data-act="otherRefund">Devolución de compra</button><button type="button" data-act="otherBenefitPicker">Beneficios bancarios</button><button type="button" data-act="otherLoanPicker">Abonar a un préstamo</button></div>';content.appendChild(d)}
+
  }
 function scan(){queued=false;for(const f of root.querySelectorAll('form.other-studio-form[data-special="adjustment"]'))enhance(f)}
 new MutationObserver(()=>{if(!queued){queued=true;requestAnimationFrame(scan)}}).observe(root,{subtree:true,childList:true});scan();
@@ -84857,7 +84851,7 @@ body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] 
   if(advanced.parentElement!==fields){fields.appendChild(advanced);}
   advanced.classList.remove('v817-header-adjustments');
   const summary=advanced.querySelector(':scope > summary');
-  if(summary){summary.textContent='Fecha y opciones adicionales';summary.removeAttribute('aria-label');summary.removeAttribute('title');}
+  if(summary){if(summary.textContent!=='Fecha y opciones adicionales')summary.textContent='Fecha y opciones adicionales';summary.removeAttribute('aria-label');summary.removeAttribute('title');}
   const body=advanced.querySelector('.v802-advanced-body');
   if(body){for(const nested of [...body.querySelectorAll('details.v134-more')]){
     const inner=nested.querySelector('.v134-more-body');
@@ -85496,6 +85490,490 @@ body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-specia
 @media(min-width:700px){#modal-root .modal-layer:has(.v756-loan-selector){align-items:center!important;padding:20px!important}#modal-root .modal:has(.v756-loan-selector){border-radius:28px!important;max-height:min(90dvh,850px)!important}}
 @media(max-width:400px){#modal-root .v756-loan-selector>button.v785-choice.v790-loan-choice{padding:10px!important}#modal-root .v756-loan-selector .v790-filter-row button{padding:9px 7px!important}}
 @media(prefers-reduced-motion:reduce){#modal-root .v756-loan-selector *,#modal-root form.other-studio-form[data-special="loan"] *{transition:none!important;animation:none!important}}
+</style>
+<style id="financial-operation-tokens">
+#modal-root {
+ --financial-ink:#1B2944;
+ --financial-secondary:#526581;
+ --financial-muted:#64748B;
+ --financial-surface:#f5f7fb;
+ --financial-card:#fff;
+ --financial-line:#d3ddea;
+ --financial-accent:var(--vive-theme-color,var(--accent,#6758ef));
+ --financial-action:color-mix(in srgb,var(--financial-accent) 63%,#151327);
+}
+body:is(.theme-black,.theme-dark) #modal-root {
+ --financial-ink:#fff;
+ --financial-secondary:#c3c9d4;
+ --financial-muted:#aeb7c7;
+ --financial-surface:#000;
+ --financial-card:#17171c;
+ --financial-line:#3d404a;
+}
+#modal-root :is(.financial-currency-hidden,.financial-legacy-control),
+#modal-root form[data-financial-layout] .v383-loan-quick,
+#modal-root label.v789-select-enhanced>select.v789-native-keep {
+ display:none!important;
+}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger {
+ box-sizing:border-box;
+ width:100%;
+ padding:8px 10px;
+ min-height:46px;
+ text-align:left;
+ border:1px solid var(--financial-line);
+ border-radius:12px;
+ color:var(--financial-ink);
+ background:var(--financial-card);
+}
+#modal-root .v827-universal-trigger .v789-select-ico {display:grid;place-items:center;flex:0 0 30px}
+#modal-root .v827-universal-trigger .v789-select-ico svg {width:22px;height:22px}
+#modal-root .v827-universal-trigger .v789-select-details {color:inherit}
+#modal-root .v827-picker-tabs {grid-template-columns:repeat(auto-fit,minmax(78px,1fr))}
+#modal-root .v827-picker-sheet .v789-picker-text {overflow-wrap:anywhere}
+#modal-root .v827-picker-sheet .v789-picker-row[hidden] {display:none!important}
+#modal-root .v827-picker-empty {color:var(--financial-secondary)}
+#modal-root .v827-picker-sheet .v789-picker-search::placeholder {color:var(--financial-secondary);opacity:1}
+#modal-root .v827-picker-sheet .v789-picker-mark {color:var(--financial-secondary)!important}
+#modal-root .v827-picker-sheet .v789-picker-row[aria-pressed="true"] .v789-picker-mark {color:var(--financial-ink)!important}
+#modal-root .v827-picker-tabs button[aria-pressed="true"] {color:var(--financial-ink);border-width:2px}
+#modal-root .v827-picker-sheet {
+ max-height:min(89dvh,calc(var(--financial-viewport,100dvh) - 8px),760px);
+}
+#modal-root .v827-picker-sheet .v789-picker-list {max-height:none;overscroll-behavior:contain}
+#modal-root .v827-picker-sheet .v789-picker-row {flex-shrink:0}
+#modal-root .v827-picker-sheet .v789-picker-confirm:not(:disabled) {background:var(--financial-action)!important;color:white!important}
+#modal-root .v827-picker-sheet .v789-picker-search {font-size:16px!important}
+#modal-root .modal:has(>form[data-financial-layout]) {background:var(--financial-surface)!important}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] {
+ --v790-text:var(--financial-ink);
+ --v790-muted:var(--financial-secondary);
+ --v790-stroke:var(--financial-line);
+ --v790-surface:var(--financial-surface);
+ --v790-field:var(--financial-card);
+ display:flex!important;
+ flex-direction:column!important;
+ overflow:hidden!important;
+ width:100%!important;
+ min-height:0!important;
+ height:min(92dvh,var(--financial-viewport,100dvh),840px)!important;
+ max-height:var(--financial-viewport,100dvh)!important;
+ background:var(--financial-surface)!important;
+ color:var(--financial-ink)!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout]>.other-studio-shell {
+ flex:1 1 auto!important;
+ min-height:0!important;
+ width:100%!important;
+ max-width:none!important;
+ overflow:auto!important;
+ overscroll-behavior:contain;
+ scrollbar-width:thin;
+ margin:0!important;
+ padding:14px clamp(12px,4vw,24px) 18px!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-left {
+ background:var(--financial-surface)!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-content {
+ padding:0!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-header {
+ display:grid!important;
+ grid-template-columns:40px minmax(0,1fr) 44px!important;
+ grid-template-rows:auto!important;
+ align-items:start!important;
+ gap:10px!important;
+ padding:0!important;
+ margin:0 0 14px!important;
+ min-height:0!important;
+ height:auto!important;
+ background:none!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-header::before,
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-header::after {content:none!important}
+#modal-root form[data-financial-layout] .other-studio-header>.financial-header-copy {grid-area:1/2;min-width:0}
+#modal-root form[data-financial-layout] .financial-header-copy h2 {
+ color:var(--financial-ink)!important;
+ -webkit-text-fill-color:currentColor!important;
+ font-size:clamp(20px,5.5vw,28px)!important;
+ line-height:1.12!important;
+ margin:0 0 4px!important;
+ overflow-wrap:anywhere;
+}
+#modal-root form[data-financial-layout] .financial-header-copy p {
+ color:var(--financial-secondary)!important;
+ -webkit-text-fill-color:currentColor!important;
+ font-size:14px!important;
+ line-height:1.4!important;
+ margin:0!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-header>.v785-hero-icon {
+ grid-area:1/1!important;
+ width:40px!important;height:40px!important;min-width:0!important;min-height:0!important;
+ margin:0!important;padding:7px!important;
+ background:color-mix(in srgb,var(--financial-accent) 13%,var(--financial-card))!important;
+ color:var(--financial-ink)!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-header>.other-studio-close {
+ grid-area:1/3!important;
+ position:static!important;
+ display:grid!important;
+ place-items:center;
+ width:44px!important;height:44px!important;min-width:44px!important;
+ padding:0!important;margin:0!important;
+ color:var(--financial-ink)!important;
+ -webkit-text-fill-color:currentColor!important;
+ background:var(--financial-card)!important;
+ border:1px solid var(--financial-line)!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout]>:is(.form-foot,.v83-loan-pay-controls) {
+ position:static!important;
+ flex:0 0 auto!important;
+ display:flex!important;
+ gap:8px!important;
+ width:100%!important;
+ padding:8px clamp(12px,4vw,24px) calc(8px + env(safe-area-inset-bottom,0px))!important;
+ margin:0!important;
+ transform:none!important;
+ background:var(--financial-surface)!important;
+ border-top:1px solid var(--financial-line)!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout]>:is(.form-foot,.v83-loan-pay-controls)>button {
+ min-height:46px!important;
+ border-radius:16px!important;
+ box-shadow:none!important;
+ justify-content:center!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout]>:is(.form-foot,.v83-loan-pay-controls)>button:is([type=submit],.studio-next,[data-v83-pay-next]):not(:disabled) {
+ background:var(--financial-action)!important;
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+ border:1px solid var(--financial-action)!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout]>:is(.form-foot,.v83-loan-pay-controls)>button.ghost,
+#modal-root form.other-studio-form.v790-refined[data-financial-layout]>.form-foot>button:disabled {
+ background:var(--financial-card)!important;
+ color:var(--financial-secondary)!important;
+ -webkit-text-fill-color:currentColor!important;
+ border:1px solid var(--financial-line)!important;
+ opacity:1!important;
+}
+#modal-root form[data-financial-layout] .financial-payment-type {
+ display:grid;
+ gap:5px;
+ grid-column:1/-1;
+ color:var(--financial-secondary);
+}
+#modal-root form[data-financial-layout] .financial-payment-type select {
+ width:100%;
+ min-height:44px;
+ padding:8px;
+ color:var(--financial-ink);
+ background:var(--financial-card);
+ border:1px solid var(--financial-line);
+ border-radius:12px;
+ font-size:16px;
+}
+#modal-root form[data-financial-layout] .other-studio-fields>.other-studio-amount {grid-column:1/-1}
+#modal-root form[data-financial-layout] input[type=date] {color-scheme:light!important}
+body:is(.theme-black,.theme-dark) #modal-root form[data-financial-layout] input[type=date] {color-scheme:dark!important}
+#modal-root .v235-register-dialog .vr-other-operations .v29-other-icon {
+ background:color-mix(in srgb,var(--financial-accent) 13%,var(--financial-card))!important;
+ color:var(--financial-ink)!important;
+ border-color:var(--financial-line)!important;
+}
+.v36-notification-count {background:#a83150!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+body:is(.theme-light,.theme-white) .v7-apple-widget .v7-apple-counter {
+ background:#e4ebf6!important;
+ border-color:#cbd7e7!important;
+ color:#1B2944!important;
+ -webkit-text-fill-color:currentColor!important;
+}
+body:is(.theme-black,.theme-dark) .v7-apple-widget .v7-apple-counter {
+ background:#202025!important;
+ border-color:#3d404a!important;
+ color:#fff!important;
+ -webkit-text-fill-color:currentColor!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] :is(.form-foot,.other-studio-content,.other-studio-right,.other-studio-fields,.other-studio-fold,button)[hidden] {
+ display:none!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout][data-special="adjustment"] .other-studio-fields>label:is(.v790-date,.v768-reason)>.filter-label {
+ max-height:none!important;
+ overflow:visible!important;
+ font-size:14px!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .v768-adjust-heading {
+ flex-wrap:wrap;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .v785-benefit-preview {
+ background:var(--financial-card)!important;
+ border-color:var(--financial-line)!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .v785-benefit-preview :is(h4,strong) {
+ color:var(--financial-ink)!important;
+ -webkit-text-fill-color:currentColor!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .v785-benefit-preview :is(small,p) {
+ color:var(--financial-secondary)!important;
+ -webkit-text-fill-color:currentColor!important;
+}
+@media(max-width:699px) {
+ #modal-root form.other-studio-form.v790-refined[data-financial-layout] {height:var(--financial-viewport,100dvh)!important}
+}
+</style>
+<script id="financial-operation-layout">
+(() => {
+ const root = document.getElementById('modal-root');
+ const kindOf = form => form.dataset.special;
+ const control = (form, name) => form.elements.namedItem(name);
+ const emit = field => field.dispatchEvent(new Event('change', {bubbles:true}));
+ const balances = card => {
+  if (!card) return [];
+  const configured = ['DOP','USD'].filter(currency =>
+   num(card['limit'+currency]) || num(card['opening'+currency]) ||
+   db.transactions.some(t => t.cardId === card.id && t.currency === currency));
+  return configured.length ? configured : [card.currency === 'USD' ? 'USD' : 'DOP'];
+ };
+ function syncCurrency(form, resetAmount = false) {
+  const currency = control(form,'currency');
+  const cardField = control(form,'cardId');
+  if (!currency || !cardField) return;
+  const kind = kindOf(form);
+  const refund = kind === 'refund';
+  const destination = kind === 'benefit' && control(form,'destination')?.value === 'account'
+   && control(form,'kind')?.value === 'cashback';
+  const accountCurrency = destination && account(control(form,'accountId')?.value)?.currency;
+  const cardCurrencies = balances(card(cardField.value));
+  const choices = destination ? (accountCurrency ? [accountCurrency] : []) : cardCurrencies;
+  const automatic = (refund && (!form.dataset.id || form.classList.contains('v794-linked-flow'))) || choices.length < 2;
+  const label = currency.closest('label');
+  if (label) {
+   label.classList.toggle('financial-currency-hidden', automatic);
+   const caption = label.querySelector('.filter-label');
+   if (!automatic) {
+    if (caption) caption.textContent = 'Saldo de la tarjeta';
+    currency.setAttribute('aria-label','Saldo de la tarjeta');
+   }
+  }
+  if (choices.length && !(kind==='benefit' && control(form,'entryId')?.value) && (!refund || !control(form,'originalPurchaseId')?.value)
+   && !choices.includes(currency.value)) {
+   if (resetAmount && control(form,'amount')) control(form,'amount').value = '';
+   currency.value = choices[0];
+   emit(currency);
+  }
+  const unit = form.querySelector('.v790-money-symbol');
+  if (unit) unit.textContent = destination && !accountCurrency ? '—' : currency.value === 'USD' ? 'US$' : 'RD$';
+ }
+ function combineLoanTypes(form) {
+  const original = control(form,'paymentKind');
+  const mode = control(form,'loanPaymentMode');
+  const legacy = form.querySelector('.v359-mode-picker');
+  const label = original?.closest('label');
+  const loanLabel = control(form,'loanId')?.closest('label');
+  const amount = form.querySelector('.other-studio-amount');
+  if (!label || !mode || !legacy || !loanLabel || !amount) return;
+  const unified = document.createElement('label');
+  unified.className = 'financial-payment-type';
+  unified.innerHTML = '<span>Tipo de pago</span><select><option value="regular">Cuota ordinaria</option><option value="extra">Abono extraordinario al capital</option><option value="bank">Conciliación de capital</option></select>';
+  const select = unified.querySelector('select');
+  select.value = original.value === 'extra' ? 'extra' : mode.value === 'bank' ? 'bank' : 'regular';
+  select.addEventListener('change', () => {
+   const quick = form.querySelector('[data-v383-action="'+(select.value==='extra'?'extra':'regular')+'"]');
+   if (quick) quick.click();
+   else {
+    original.value = select.value === 'extra' ? 'extra' : 'regular';
+    emit(original);
+   }
+   legacy.querySelector('[data-v359-mode="'+(select.value === 'bank' ? 'bank' : 'normal')+'"]')?.click();
+  });
+  label.classList.add('financial-legacy-control');
+  legacy.classList.add('financial-legacy-control');
+  form.querySelector('.v49-payment-intro')?.remove();
+  loanLabel.after(unified, amount);
+ }
+ function arrange(form) {
+  const header = form.querySelector('.other-studio-header');
+  const footer = form.querySelector('.form-foot');
+  if (!header || !footer) return;
+  const title = header.querySelector('h2');
+  const subtitle = header.querySelector('p');
+  const icon = header.querySelector('.v785-hero-icon');
+  const close = header.querySelector('.other-studio-close');
+  if (!title || !subtitle || !close || !icon) return;
+  form.dataset.financialLayout = 'ready';
+  const copy = document.createElement('div');
+  copy.className = 'financial-header-copy';
+  copy.append(title,subtitle);
+  header.replaceChildren(icon,copy,close);
+  form.append(footer);
+  const shell = form.querySelector('.other-studio-shell');
+  const error = form.querySelector('#formError');
+  if (error && shell && !shell.contains(error)) shell.append(error);
+  if (kindOf(form) === 'loan') {
+   combineLoanTypes(form);
+   const unit = form.querySelector('.v790-money-symbol');
+   const setUnit = () => {if(unit) unit.textContent=loan(control(form,'loanId')?.value)?.currency==='USD'?'US$':'RD$';};
+   control(form,'loanId')?.addEventListener('change',setUnit);
+   setUnit();
+   const steps = form.querySelector('.v83-loan-pay-controls');
+   if (steps) {
+    footer.before(steps);
+    const summary = form.querySelector('.other-studio-right');
+    const content = form.querySelector('.other-studio-content');
+    if (summary && content) content.after(summary);
+    form.querySelector('.v83-loan-pay-nav')?.addEventListener('click',()=>{shell.scrollTop=0;});
+    steps.addEventListener('click',()=>{shell.scrollTop=0;});
+   }
+  }
+  if (kindOf(form) === 'refund') {
+   const linked = form.classList.contains('v794-linked-flow');
+   if (linked) {
+    form.querySelector('.v790-extra-details:has(#v388Purchase)')?.classList.add('financial-legacy-control');
+   }
+  }
+  if (kindOf(form) === 'adjustment') {
+   const unit = form.querySelector('.v790-money-symbol');
+   const setUnit = () => {if(unit) unit.textContent=account(control(form,'accountId')?.value)?.currency==='USD'?'US$':'RD$';};
+   control(form,'accountId')?.addEventListener('change',setUnit);
+   setUnit();
+  }
+  if (['refund','benefit'].includes(kindOf(form))) syncCurrency(form);
+ }
+ root.addEventListener('change', event => {
+  const field = event.target;
+  const form = field.form;
+  if (!form) return;
+  if (kindOf(form) === 'refund' && field.name === 'cardId' && field.dataset.v789Enhanced==='1') {
+   const amount = control(form,'amount');
+   if (amount) {amount.value='';amount.dispatchEvent(new Event('input',{bubbles:true}));}
+  }
+  if (['refund','benefit'].includes(kindOf(form)) && ['cardId','accountId','destination','currency','kind'].includes(field.name)) syncCurrency(form,field.name!=='currency');
+  if (form.matches('.studio-form[data-mode="cardpay"]') && field.name==='cardId') syncCurrency(form);
+ }, true);
+ const viewport = window.visualViewport;
+ if (viewport) {
+  const updateViewport = () => root.style.setProperty('--financial-viewport', viewport.height+'px');
+  viewport.addEventListener('resize',updateViewport);
+  updateViewport();
+ }
+ let queued = false;
+ const scan = () => {
+  queued = false;
+  for (const form of root.querySelectorAll('.other-studio-form.v790-refined:not([data-financial-layout])')) arrange(form);
+  for (const form of root.querySelectorAll('.studio-form[data-mode="cardpay"]:not([data-financial-currency])')) {
+   form.dataset.financialCurrency = 'ready';
+   syncCurrency(form);
+  }
+ };
+ new MutationObserver(() => {
+  if (queued) return;
+  queued = true;
+  requestAnimationFrame(scan);
+ }).observe(root,{childList:true,subtree:true});
+ scan();
+})();
+</script>
+<style id="compact-register-operation-layout">
+/* Native modal layering keeps the picker above every registration and review surface. */
+#modal-root dialog.v827-picker-backdrop {
+ box-sizing:border-box;
+ width:100%;
+ height:100%;
+ max-width:none;
+ max-height:none;
+ margin:0;
+ padding:0;
+ border:0;
+ overflow:hidden;
+ color:var(--financial-ink);
+ background:transparent!important;
+ backdrop-filter:none!important;
+ -webkit-backdrop-filter:none!important;
+}
+#modal-root dialog.v827-picker-backdrop::backdrop {background:rgba(14,18,35,.48)}
+#modal-root dialog.v827-picker-backdrop .v827-picker-sheet {
+ box-sizing:border-box;
+ width:min(100%,520px);
+ max-height:min(84dvh,calc(var(--financial-viewport,100dvh) - 8px),720px)!important;
+ padding:12px 14px max(12px,env(safe-area-inset-bottom))!important;
+ background:var(--financial-surface)!important;
+ color:var(--financial-ink)!important;
+}
+#modal-root dialog.v827-picker-backdrop .v827-picker-head {display:flex;gap:10px;justify-content:space-between}
+#modal-root dialog.v827-picker-backdrop .v827-picker-head h3 {color:var(--financial-ink)!important}
+#modal-root dialog.v827-picker-backdrop .v789-picker-search {min-height:44px!important;flex:none}
+#modal-root dialog.v827-picker-backdrop .v789-picker-row {
+ grid-template-columns:50px minmax(0,1fr) 23px!important;
+ background:var(--financial-card)!important;
+ color:var(--financial-ink)!important;
+ border-color:var(--financial-line)!important;
+ min-height:64px!important;
+}
+#modal-root dialog.v827-picker-backdrop .v789-picker-row[aria-pressed=true] {
+ border-color:var(--financial-accent)!important;
+ background:color-mix(in srgb,var(--financial-accent) 12%,var(--financial-card))!important;
+}
+#modal-root dialog.v827-picker-backdrop .v789-picker-text strong {color:var(--financial-ink)!important}
+#modal-root dialog.v827-picker-backdrop .v789-picker-text :is(small,em) {color:var(--financial-secondary)!important}
+#modal-root dialog.v827-picker-backdrop .v789-picker-mini.is-card strong {color:#fff!important}
+#modal-root dialog.v827-picker-backdrop .v789-picker-list {max-height:none;min-height:0}
+#modal-root dialog.v827-picker-backdrop .v827-picker-tabs button {white-space:normal!important}
+
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-shell {
+ height:auto!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-content {
+ gap:8px!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-section-title {
+ margin:0!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-amount {
+ min-height:0!important;
+ padding:10px 12px!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-amount input[name=amount] {
+ min-height:48px!important;
+ font-size:clamp(27px,8vw,42px)!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-fields {
+ min-height:0!important;
+ gap:8px!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-fields>label:not([hidden]) {
+ min-height:0!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] :is(.v794-recovery,.other-studio-impact,.v785-benefit-preview) {
+ margin:0!important;
+ padding:10px 12px!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout] :is(.v794-recovery,.other-studio-impact,.v785-benefit-preview) h4 {
+ margin:0 0 6px!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout][data-special=benefit] .other-studio-right {
+ display:contents!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout][data-special=benefit] .other-studio-right > :is(.other-studio-aside-label,.other-studio-aside-icon,h3,p,.other-studio-receipt,.other-studio-hint) {
+ display:none!important;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout][data-special=benefit] .benefit-only-cash {
+ grid-column:1/-1;
+ min-width:0;
+}
+#modal-root form.other-studio-form.v790-refined[data-financial-layout][data-special=benefit] .benefit-only-cash[hidden] {
+ display:none!important;
+}
+@media(max-width:699px){
+ #modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-shell {padding:12px 12px 10px!important}
+ #modal-root form.other-studio-form.v790-refined[data-financial-layout] .other-studio-header {margin-bottom:9px!important}
+ #modal-root form.other-studio-form.v790-refined[data-financial-layout] .financial-header-copy p {font-size:12px!important}
+ #modal-root form.other-studio-form.v790-refined[data-financial-layout]>.form-foot {flex-direction:row!important;align-items:stretch}
+ #modal-root form.other-studio-form.v790-refined[data-financial-layout]>.form-foot>button {width:auto!important;flex:1 1 auto;min-width:0;white-space:normal}
+ #modal-root form.other-studio-form.v790-refined[data-financial-layout]>.form-foot>button.ghost {flex:0 1 auto}
+ #modal-root form.other-studio-form.v790-refined[data-financial-layout] .v83-loan-pay-nav {padding:0 0 8px!important}
+}
 </style>
 </body>
 </html>
