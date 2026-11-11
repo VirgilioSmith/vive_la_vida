@@ -26442,6 +26442,113 @@ body:is(.theme-light,.theme-white) #modal-root .v785-premium-picker:not(.v756-lo
 #modal-root .v785-premium-picker:not(.v756-loan-selector) .v785-select-footer button{white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;min-width:0!important}
 @media(max-width:359px){#modal-root .v235-register-dialog .vr-other-operations .v29-other-action{grid-template-columns:43px minmax(0,1fr) 18px!important;gap:9px!important;padding:10px!important}}
 </style>
+<style id="v867-universal-picker-identities">
+/* V867: Identidad de producto e institución en el selector financiero compartido. */
+#modal-root .v827-picker-sheet .v789-picker-row{min-height:82px!important;display:grid!important;grid-template-columns:62px minmax(0,1fr) 30px!important;gap:12px!important;align-items:center!important}
+#modal-root .v827-picker-sheet .v789-picker-mini{width:58px!important;height:58px!important;flex-basis:58px!important;border-radius:16px!important;overflow:hidden!important;display:flex!important;align-items:center!important;justify-content:center!important}
+#modal-root .v827-picker-sheet .v789-picker-mini:has(.v867-institution-logo){background:color-mix(in srgb,var(--v827-accent) 6%,white)!important;padding:5px!important}
+#modal-root .v827-picker-sheet .v867-institution-logo{width:100%;height:100%;object-fit:contain;border-radius:9px;display:block}
+#modal-root .v827-picker-sheet .v867-institution-fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1}
+#modal-root .v827-picker-sheet .v867-institution-fallback svg{width:21px!important;height:21px!important}
+#modal-root .v827-picker-sheet .v867-institution-fallback b{font-size:9px;letter-spacing:.04em;font-weight:800}
+#modal-root .v827-picker-sheet .v789-picker-text{min-width:0!important;flex:1!important}
+#modal-root .v827-picker-sheet .v789-picker-text strong{font-size:clamp(15px,4.4vw,18px)!important;line-height:1.18!important;font-weight:750!important;letter-spacing:-.025em!important;white-space:normal!important;overflow-wrap:anywhere!important}
+#modal-root .v827-picker-sheet .v789-picker-text small{font-size:clamp(12px,3.35vw,14px)!important;line-height:1.3!important;margin-top:3px!important}
+#modal-root .v827-picker-sheet .v789-picker-text em{font-size:clamp(11px,3vw,13px)!important;line-height:1.25!important;margin-top:3px!important;font-style:normal!important}
+body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet .v789-picker-mini:has(.v867-institution-logo){background:#292934!important}
+@media(max-width:359px){#modal-root .v827-picker-sheet .v789-picker-row{grid-template-columns:52px minmax(0,1fr) 26px!important;gap:9px!important;padding:9px!important}#modal-root .v827-picker-sheet .v789-picker-mini{width:50px!important;height:50px!important}}
+</style>
+
+<style id="v868-overview-fluid-layout">
+/* V868 · CICLO 01 / INICIO ONLY.
+   Refinamiento de geometría sin cambiar datos, navegación, los dos temas ni acentos.
+   Regla: adaptar a contenedores y contenido, sin escalar el cuerpo ni ocultar overflow.
+*/
+#app main.world-overview {
+  --v868-space: clamp(8px, 1.6vw, 16px);
+  --v868-control-min: 44px;
+  min-width: 0;
+}
+#app main.world-overview #page,
+#app main.world-overview :is(.ff-dashboard,.ff-dashboard-grid,.ff-mid,.ff-tile,.ff-panel-top,.ff-panel-top>div),
+#app main.world-overview :is(.vive-mobile-home,.v732-heading-line,.vive-mobile-balance,.vive-mobile-commitments,.vive-mobile-dues,.v36-month-capsule) {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+#app main.world-overview :is(.ff-trans-main,.ff-pay-name,.ff-person-name,.v36-commitment-name),
+#app main.world-overview :is(.ff-balance-header>div,.v36-commitment-detail-copy) { min-width: 0; }
+#app main.world-overview :is(.ff-balance-total,.ff-person-sums strong,.ff-health-foot strong,.ff-pay-row>b),
+#app main.world-overview :is(.vive-mobile-balance-amount,.v186-mobile-foot-amount,.vive-mobile-commitment-value,.vive-mobile-net-value,.v36-month-columns strong) {
+  font-variant-numeric: tabular-nums;
+  max-width: 100%;
+}
+/* Pantallas móviles: conservar la composición aprobada con espacio útil real. */
+@media (max-width: 790px) {
+  #app main.world-overview,
+  #app main.world-overview .vive-mobile-home { min-width: 0; }
+  #app main.world-overview .vive-mobile-home {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  #app main.world-overview .v732-heading-line {
+    min-width: 0;
+    gap: clamp(6px, 1.8vw, 12px);
+  }
+  #app main.world-overview .v732-heading-line h1 {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+  #app main.world-overview :is(.vive-mobile-due-row,.v36-commitment-group summary,.v36-commitment-detail,.vive-mobile-card-head) > * {
+    min-width: 0;
+  }
+  #app main.world-overview :is(.vive-mobile-quick-actions,.v36-month-columns,.v36-commitment-list,.vive-mobile-balance-foot) {
+    max-width: 100%;
+  }
+  #app main.world-overview :is(.vive-mobile-quick-actions button,.v273-personalize-link,.vive-mobile-view-all) {
+    min-height: var(--v868-control-min);
+  }
+  #app main.world-overview :is(.v732-period input,.v732-period button) {
+    max-width: 100%;
+  }
+}
+/* El ajuste se activa por anchura disponible y no por marca/modelo del teléfono. */
+@media (max-width: 359px) {
+  #app main.world-overview .v732-heading-line {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  #app main.world-overview .v732-heading-line h1 { flex: 1 1 100%; }
+  #app main.world-overview .v732-period {
+    flex: 0 1 auto;
+    max-width: 100%;
+  }
+  #app main.world-overview :is(.v36-commitment-name strong,.vive-mobile-due-row strong) {
+    font-size: clamp(12px, 3.6vw, 14px) !important;
+    line-height: 1.35;
+    overflow-wrap: break-word;
+  }
+  #app main.world-overview :is(.v36-commitment-name small,.vive-mobile-due-row small) {
+    font-size: clamp(11px, 3.3vw, 12px);
+    line-height: 1.35;
+  }
+  #app main.world-overview .vive-mobile-balance-amount {
+    font-size: clamp(24px, 7.8vw, 34px);
+    letter-spacing: -0.025em;
+  }
+}
+/* Ventanas muy bajas: reducir solo espacio decorativo; el scroll real permanece. */
+@media (max-width: 790px) and (max-height: 680px) {
+  #app main.world-overview :is(.vive-mobile-greeting,.vive-mobile-card-head) { margin-bottom: clamp(6px, 1.6vh, 12px); }
+}
+/* Accesibilidad: no introducir movimiento extra durante el redimensionamiento. */
+@media (prefers-reduced-motion: reduce) {
+  #app main.world-overview :is(.vive-mobile-home,.ff-dashboard) { scroll-behavior: auto; }
+}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -46848,7 +46955,13 @@ function productOption(name,item,label=item.name){
  if(name==='loanId'&&loan(item.id))amount=money(loanAccounting(item).balance,item.currency,2)+' pendiente';
  if(name==='accountId'&&account(item.id))amount='Disponible: '+money(getAccountBalance(item),item.currency,2);
  const brand=kind==='credit'?(/master|mc|qik/.test(normalize([item.network,item.name].join(' ')))?'mc':/visa/.test(normalize([item.network,item.name].join(' ')))?'visa':''):'';
- return {value:String(item.id),name:label,kind,detail,amount,brand};
+ // Reutilizar la identidad cargada para la institución en Bancos; nunca una imagen inventada.
+ const institutionRecord=item.bankId?bank(item.bankId):null;
+ const savedLogo=institutionRecord?.logo;
+ const institutionLogo=typeof bankLogoSafe==='function'?bankLogoSafe(savedLogo):'';
+ const accountIsCash=kind==='account'&&(item.kind==='cash'||normalize(item.name).includes('efectivo'));
+ const institutionLabel=accountIsCash?'EF':(institutionRecord?.name||institution||'CU').replace(/[^\p{L}\p{N} ]/gu,'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3);
+ return {value:String(item.id),name:label,kind,detail,amount,brand,institutionLogo,institutionLabel,accountIsCash};
 }
 function optionsOf(field){
  const lookup={cardId:card,accountId:account,loanId:loan}[field.name];
@@ -46906,7 +47019,7 @@ function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels
  const tabs=document.createElement('div');tabs.className='v827-picker-tabs v787-product-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Filtrar productos');
  let filter='all';for(const [key,label] of (name==='loanId'?[['all','Todos'],['personal','Personales'],['mortgage','Hipotecarios']]:[['all','Todas'],['credit','Crédito'],['account','Cuentas']].filter(([key])=>key==='all'||name!=='purchase'))){const btn=document.createElement('button');btn.type='button';btn.textContent=label+' ('+all.filter(o=>key==='all'||o.kind===key).length+')';btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key==='all'));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
  const list=document.createElement('div');list.className='v789-picker-list v787-product-scroll';const rows=[];
- for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row v787-product-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini v787-product-brand '+(opt.kind==='credit'&&opt.brand?'is-card '+opt.brand:opt.kind==='account'?'is-account':'');ico.innerHTML=opt.brand==='mc'?'<i class="v787-mc-left"></i><i class="v787-mc-right"></i>':opt.brand==='visa'?'<strong>VISA</strong>':opt.kind==='account'?(normalize(opt.name).includes('efectivo')?cashSvg:bankSvg):name==='loanId'?bankSvg:name==='purchase'?'<span aria-hidden="true">↶</span>':cardSvg;
+ for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row v787-product-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini v787-product-brand '+(opt.kind==='credit'&&opt.brand?'is-card '+opt.brand:opt.kind==='account'?'is-account':'');ico.innerHTML=opt.institutionLogo?'<img class="v867-institution-logo" src="'+opt.institutionLogo+'" alt="" loading="eager" decoding="async">':opt.brand==='mc'?'<i class="v787-mc-left"></i><i class="v787-mc-right"></i>':opt.brand==='visa'?'<strong>VISA</strong>':opt.kind==='account'?'<span class="v867-institution-fallback">'+(opt.accountIsCash?cashSvg:bankSvg)+'<b>'+String(opt.institutionLabel||'').replace(/[^A-Z0-9]/g,'')+'</b></span>':name==='loanId'?bankSvg:name==='purchase'?'<span aria-hidden="true">↶</span>':cardSvg;
  const content=document.createElement('span');content.className='v789-picker-text v787-product-main';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.detail;content.append(strong,small);if(opt.amount){const amount=document.createElement('em');amount.textContent=opt.amount;content.append(amount);}const mark=document.createElement('span');mark.className='v789-picker-mark v787-product-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);list.append(row);rows.push(row);row.addEventListener('click',()=>{selected=opt.value;refresh()});}
  const empty=document.createElement('p');empty.className='v827-picker-empty';empty.textContent=all.length?'No se encontraron coincidencias.':'No hay productos disponibles para esta operación.';list.append(empty);
  const actions=document.createElement('div');actions.className='v827-picker-actions';const cancel=document.createElement('button');cancel.type='button';cancel.className='v827-picker-cancel';cancel.textContent='Cancelar';const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';const confirmLabel={loanId:'Usar este préstamo',purchase:'Usar esta compra',cardId:'Usar esta tarjeta',accountId:'Usar esta cuenta'};actions.append(cancel,confirm);
