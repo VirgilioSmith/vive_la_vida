@@ -46652,7 +46652,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active){e.preventDe
  function reconcileEnhancement(form){
   if(form.dataset.special!=='adjustment'||form.dataset.v768Adjustment==='yes')return;
   form.dataset.v768Adjustment='yes';
-  const submit=form.querySelector('[type=\"submit\"]');if(submit){submit.textContent='✓ Confirmar conciliación';submit.style.setProperty('background','var(--vive-theme-color,#8c79d3)','important');submit.style.setProperty('color','#101014','important');}
+  const submit=form.querySelector('[type=\"submit\"]');if(submit){submit.textContent='✓ Confirmar conciliación';/* El color del CTA corresponde al tema visual compartido. */}
   const amount=form.elements.namedItem('amount');
   const panel=form.querySelector('.other-studio-amount');if(!amount||!panel)return;
   const heading=document.createElement('div');heading.className='v768-adjust-heading';heading.innerHTML='<strong>Ajuste de saldo</strong><span class="v768-adjust-toggle" role="group" aria-label="Dirección del ajuste"><button type="button" data-v768-sign="plus" aria-pressed="true">+ Aumentar</button><button type="button" data-v768-sign="minus" aria-pressed="false">− Disminuir</button></span>';
@@ -46667,7 +46667,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active){e.preventDe
  function refundEnhancement(form){
   if(form.dataset.special!=='refund'||form.dataset.v768Refund==='yes')return;
   form.dataset.v768Refund='yes';
-  const submit=form.querySelector('[type=\"submit\"]');if(submit){submit.textContent='✓ Confirmar devolución';submit.style.setProperty('background','var(--vive-theme-color,#8c79d3)','important');submit.style.setProperty('color','#101014','important');}
+  const submit=form.querySelector('[type=\"submit\"]');if(submit){submit.textContent='✓ Confirmar devolución';/* El color del CTA corresponde al tema visual compartido. */}
   const note=form.elements.namedItem('note');const label=note?.closest('label');
   if(label){label.classList.add('v768-refund-reason');const left=form.querySelector('.other-studio-content');if(left)left.appendChild(label);}
  }
@@ -82055,7 +82055,7 @@ body:is(.theme-light,.theme-white) #modal-root .v789-product-sheet .v789-sheet-g
  const root=document.getElementById('modal-root');if(!root)return;
  const bankSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 10-6 10 6M3 10h18M5 10v9m4-9v9m6-9v9m4-9v9M2 21h20"/></svg>';
  const cardSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>';
- function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"]')){
+ function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"], form.studio-form[data-mode="service"], form.v355-fast-form')){
    for(const name of ['cardId','accountId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement)||field.dataset.v789Enhanced==='1')continue;
      const label=field.closest('label');if(!label)continue;
      field.dataset.v789Enhanced='1';field.classList.add('v789-native-keep');label.classList.add('v789-select-enhanced');
@@ -82075,7 +82075,7 @@ body:is(.theme-light,.theme-white) #modal-root .v789-product-sheet .v789-sheet-g
   const sheet=document.createElement('section');sheet.className='v789-product-sheet';sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');sheet.setAttribute('aria-label','Seleccionar '+(name==='cardId'?'tarjeta':'cuenta'));
   const grip=document.createElement('span');grip.className='v789-sheet-grip';grip.setAttribute('aria-hidden','true');
   const header=document.createElement('header');const title=document.createElement('h3');title.textContent=name==='cardId'?'Selecciona una tarjeta':'Selecciona una cuenta';const close=document.createElement('button');close.type='button';close.className='v789-picker-close';close.setAttribute('aria-label','Cerrar selector');close.textContent='×';header.append(title,close);
-  const intro=document.createElement('p');intro.className='v789-sheet-sub';intro.textContent=name==='cardId'?'Elige la tarjeta que quieres pagar.':'Elige desde qué cuenta se descontará el pago.';
+  const intro=document.createElement('p');intro.className='v789-sheet-sub';intro.textContent=field.closest('.studio-form[data-mode="service"]')?'Selecciona el origen real de este pago de servicio.':name==='cardId'?(field.closest('.v355-fast-form')?'Elige la tarjeta utilizada para esta compra.':'Elige la tarjeta que quieres pagar.'):(field.closest('.v355-fast-form')?'Elige la cuenta donde recibiste el dinero.':'Elige desde qué cuenta se descontará el pago.');
   const search=document.createElement('input');search.type='search';search.className='v789-picker-search';search.placeholder=name==='cardId'?'Buscar tarjeta…':'Buscar cuenta…';search.setAttribute('aria-label',search.placeholder);
   const list=document.createElement('div');list.className='v789-picker-list';const rows=[];
   for(const o of options){const line=document.createElement('button');line.type='button';line.className='v789-picker-row';line.dataset.value=o.value;
@@ -82279,12 +82279,12 @@ body:is(.theme-light,.theme-white) #modal-root .v790-filter-row button{backgroun
   const amountLabel=amount.querySelector(':scope>label .filter-label');if(amountLabel)amountLabel.textContent='Importe del ajuste';
  }
  const title=amount.querySelector(':scope>span');if(title&&kind==='refund')title.textContent='Importe devuelto';const input=amount.querySelector('input[name=amount]');if(input){for(const [prop,val] of [['background','transparent'],['border','0'],['box-shadow','none'],['padding','5px 0'],['color','var(--v790-text)'],['font-size','clamp(35px,10vw,54px)'],['min-height','65px']])input.style.setProperty(prop,val,'important')}const amtlabel=amount.querySelector(':scope>label');if(amtlabel){for(const [prop,val] of [['background','transparent'],['border','0'],['box-shadow','none'],['padding','0'],['color','var(--v790-text)']])amtlabel.style.setProperty(prop,val,'important')}
- if(input&&!amount.querySelector('.v790-money-symbol')){input.style.setProperty('padding-left','clamp(68px,17vw,92px)','important');const unit=document.createElement('span');unit.className='v790-money-symbol';const fmt=()=>{const c=form.querySelector('[name=currency]');unit.textContent=c?.value==='USD'?'US$':'RD$'};fmt();amount.appendChild(unit);form.querySelector('[name=currency]')?.addEventListener('change',fmt);amount.style.setProperty('position','relative','important');}const submit=form.querySelector('.form-foot>button[type=submit]');if(submit){for(const [p,v] of [['background','linear-gradient(110deg,color-mix(in srgb,var(--v790-accent) 63%,#fff),var(--v790-accent))'],['color','#17120f'],['border-radius','28px'],['min-height','54px'],['width','100%'],['border','1px solid var(--v790-accent)']])submit.style.setProperty(p,v,'important')}
+ if(input&&!amount.querySelector('.v790-money-symbol')){input.style.setProperty('padding-left','clamp(68px,17vw,92px)','important');const unit=document.createElement('span');unit.className='v790-money-symbol';const fmt=()=>{const c=form.querySelector('[name=currency]');unit.textContent=c?.value==='USD'?'US$':'RD$'};fmt();amount.appendChild(unit);form.querySelector('[name=currency]')?.addEventListener('change',fmt);amount.style.setProperty('position','relative','important');}const submit=form.querySelector('.form-foot>button[type=submit]');if(submit){for(const [p,v] of [['border-radius','22px'],['min-height','54px'],['width','100%']])submit.style.setProperty(p,v,'important')}
  for(const native of form.querySelectorAll('.other-studio-fields>label :is(select.field,input.field,textarea.field)')){for(const [prop,val] of [['border','0'],['outline','0'],['box-shadow','none'],['background-color','transparent'],['color','var(--v790-text)'],['min-width','0'],['width','100%']])native.style.setProperty(prop,val,'important');native.style.setProperty('appearance','none','important');native.style.setProperty('-webkit-appearance','none','important')}
  const impact=aside.querySelector('.other-studio-impact');if(impact)impact.setAttribute('aria-live','polite');
  }
  function upgradePicker(picker){if(picker.classList.contains('v790-picker'))return;picker.classList.add('v790-picker');
- const modal=picker.closest('.modal'),head=modal?.querySelector(':scope>.modal-head');if(modal){modal.style.setProperty('background','var(--v790-surface)','important');modal.style.setProperty('color','var(--v790-text)','important');}if(head){head.style.setProperty('background','var(--v790-surface)','important');head.style.setProperty('color','var(--v790-text)','important');const title=head.querySelector('h2');if(title){title.style.setProperty('color','var(--v790-text)','important');title.textContent=picker.classList.contains('v756-loan-selector')?'Seleccionar préstamo':'Seleccionar tarjeta';}}
+ const modal=picker.closest('.modal'),head=modal?.querySelector(':scope>.modal-head');if(modal){/* La superficie la define el tema Claro/Black. */}if(head){/* Cabecera temática compartida. */const title=head.querySelector('h2');if(title){title.textContent=picker.classList.contains('v756-loan-selector')?'Seleccionar préstamo':'Seleccionar tarjeta';}}
  const loans=picker.classList.contains('v756-loan-selector');
  const filter=document.createElement('div');filter.className='v790-filter-row';
  const modes=loans?['Todos','Personales','Hipotecarios']:['Todas','Crédito'];
@@ -83828,5 +83828,477 @@ body.theme-black #app .world-banks .v203-full-detail :is(.v40-grid>div,.v40-prod
 }
 </style>
 
+
+<!-- V810 · Corrección de conflictos detectados en pruebas Chromium. Se mantienen intactos los manejadores financieros. -->
+<style id="v810-audited-scope-fixes">
+/* Contrast: the light theme must not inherit legacy black selector backgrounds. */
+body:not(.theme-black):not(.theme-dark) #modal-root[data-v808-skin="light"] .modal-layer:has(:is(.v756-loan-selector,.v785-premium-picker:not(.v756-loan-selector))){
+ background:rgba(31,42,62,.24)!important;
+ backdrop-filter:blur(5px)!important;-webkit-backdrop-filter:blur(5px)!important;
+}
+body:not(.theme-black):not(.theme-dark) #modal-root[data-v808-skin="light"] .modal:has(:is(.v756-loan-selector,.v785-premium-picker:not(.v756-loan-selector))){
+ background:#f5f6fa!important;color:#17243b!important;
+ border-color:#d5dce7!important;box-shadow:0 -14px 42px rgba(28,43,67,.15)!important;
+}
+body:not(.theme-black):not(.theme-dark) #modal-root[data-v808-skin="light"] .modal:has(:is(.v756-loan-selector,.v785-premium-picker:not(.v756-loan-selector)))>.modal-head{
+ background:#f5f6fa!important;color:#17243b!important;
+}
+body:not(.theme-black):not(.theme-dark) #modal-root[data-v808-skin="light"] .modal:has(:is(.v756-loan-selector,.v785-premium-picker:not(.v756-loan-selector)))>.modal-head h2{color:#17243b!important}
+body:not(.theme-black):not(.theme-dark) #modal-root[data-v808-skin="light"] .modal:has(.v756-loan-selector) .v798-titlegroup small{color:#586981!important;-webkit-text-fill-color:#586981!important}
+/* Card picker: eliminate the native default purple disabled state from the footer. */
+#modal-root .v785-premium-picker:not(.v756-loan-selector) .v785-select-footer button:disabled{
+ background:var(--v809-soft)!important;color:var(--v809-sub)!important;
+ -webkit-text-fill-color:var(--v809-sub)!important;border:1px solid var(--v809-border)!important;
+ opacity:1!important;box-shadow:none!important;
+}
+/* Financial forms: the frame follows the product theme, not an old dark backdrop. */
+body:not(.theme-black):not(.theme-dark) #modal-root[data-v808-skin="light"] .modal-layer:has(form.other-studio-form.v790-refined:is([data-special="adjustment"],[data-special="refund"] )){
+ background:#f5f6fa!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+body:not(.theme-black):not(.theme-dark) #modal-root[data-v808-skin="light"] form.other-studio-form.v790-refined:is([data-special="adjustment"],[data-special="refund"]){
+ background:#f5f6fa!important;
+}
+#modal-root form.other-studio-form.v790-refined:is([data-special="adjustment"],[data-special="refund"]) .form-foot button[type="submit"]:not(:disabled){
+ background:#09090b!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+ border:1px solid #09090b!important;box-shadow:0 8px 20px rgba(0,0,0,.12)!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root[data-v808-skin="dark"] form.other-studio-form.v790-refined:is([data-special="adjustment"],[data-special="refund"]) .form-foot button[type="submit"]:not(:disabled){
+ background:#f5f5f7!important;background-image:none!important;color:#09090b!important;-webkit-text-fill-color:#09090b!important;
+ border-color:#f5f5f7!important;
+}
+#modal-root form.other-studio-form.v790-refined:is([data-special="adjustment"],[data-special="refund"]) .form-foot button[type="submit"]:disabled{
+ background:var(--v809-soft)!important;background-image:none!important;
+ color:var(--v809-sub)!important;-webkit-text-fill-color:var(--v809-sub)!important;
+ border-color:var(--v809-border)!important;opacity:1!important;
+}
+@media(max-width:699px){
+ body:not(.theme-black):not(.theme-dark) #modal-root[data-v808-skin="light"] .modal-layer:has(form.other-studio-form.v790-refined:is([data-special="adjustment"],[data-special="refund"])){
+  padding:0!important;
+ }
+ body:not(.theme-black):not(.theme-dark) #modal-root[data-v808-skin="light"] .modal:has(form.other-studio-form.v790-refined:is([data-special="adjustment"],[data-special="refund"])){
+  width:100vw!important;min-width:0!important;max-width:100vw!important;margin:0!important;
+  border:0!important;border-radius:0!important;background:#f5f6fa!important;
+ }
+}
+</style>
+
+
+<style id="v811-income-responsive-audit">
+/* Ajustes limitados a las dos etapas de Nuevo movimiento; conserva identidad y acentos. */
+#modal-root .v749-layer{overflow:hidden!important;max-width:100vw!important;max-height:100dvh!important}
+#modal-root .v749-layer .v749-screen{
+ width:min(100%,520px)!important;min-width:0!important;max-height:100dvh!important;height:100dvh!important;
+ padding:calc(16px + env(safe-area-inset-top,0px)) clamp(16px,4vw,24px) calc(12px + env(safe-area-inset-bottom,0px))!important;
+ display:flex!important;flex-direction:column!important;overflow:hidden!important;justify-content:flex-start!important;
+}
+#modal-root .v749-layer .v749-head{
+ height:52px!important;min-height:52px!important;display:flex!important;justify-content:flex-end!important;
+ align-items:flex-start!important;margin:0 0 6px!important;flex-shrink:0!important;padding-right:2px!important
+}
+#modal-root .v749-layer .v749-close{
+ position:relative!important;inset:auto!important;top:auto!important;right:auto!important;transform:none!important;margin:0!important;flex:0 0 44px!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ display:grid!important;place-items:center!important;border-radius:50%!important;
+ background:color-mix(in srgb,var(--v749-ink) 11%,var(--v749-base))!important;
+ border:1px solid var(--v749-line)!important;color:var(--v749-ink)!important;
+ font-size:24px!important;font-weight:500!important;line-height:1!important;opacity:1!important;visibility:visible!important;z-index:4!important;box-shadow:none!important
+}
+#modal-root .v749-layer .v749-title{font-size:clamp(26px,6.4vw,34px)!important;line-height:1.08!important;letter-spacing:-.055em!important;margin:0 0 6px!important;overflow-wrap:anywhere!important}
+#modal-root .v749-layer .v749-subtitle{font-size:clamp(12px,3.6vw,15px)!important;line-height:1.38!important;margin:0 0 14px!important}
+#modal-root .v749-layer .v749-scroll{min-height:0!important;min-width:0!important;overflow-x:hidden!important;overflow-y:auto!important;flex:1 1 auto!important;max-height:none!important;margin:0!important;padding:0 1px 10px!important;overscroll-behavior:contain!important}
+#modal-root .v749-layer .v749-foot{min-width:0!important;flex-shrink:0!important;margin:0!important;padding:10px 0 4px!important;background:var(--v749-base)!important}
+#modal-root .v749-layer .v749-primary,#modal-root .v749-layer .v749-secondary{min-height:56px!important;max-width:100%!important;white-space:normal!important;line-height:1.15!important}
+#modal-root .v749-layer .v749-footrow{grid-template-columns:minmax(0,.85fr) minmax(0,1.65fr)!important;gap:10px!important}
+#modal-root .v749-layer .v749-impact{margin-top:12px!important}
+#modal-root .v749-layer .v749-impact-grid{grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr) minmax(0,1.14fr)!important;min-width:0!important}
+#modal-root .v749-layer .v749-impact-grid strong{font-size:clamp(13px,3.5vw,19px)!important;overflow-wrap:anywhere!important;white-space:normal!important}
+#modal-root .v749-layer .v749-impact-track{margin-top:12px!important}
+#modal-root .v749-layer .v749-illustrated{min-width:0!important;min-height:120px!important;max-width:100%!important;padding:18px!important}
+#modal-root .v749-layer .v749-illustrated strong{font-size:clamp(23px,6vw,34px)!important;white-space:normal!important;overflow-wrap:anywhere!important}
+#modal-root .v749-layer .v749-artwork{flex-basis:clamp(72px,20vw,108px)!important;min-width:0!important}
+#modal-root .v749-layer .v749-confirm-rows{margin-top:14px!important}
+#modal-root .v749-layer .v749-confirm-row{min-width:0!important;padding-block:14px!important}
+#modal-root .v749-layer .v749-confirm-row b,#modal-root .v749-layer .v749-confirm-row input{min-width:0!important;overflow-wrap:anywhere!important}
+@media(max-width:360px){
+ #modal-root .v749-layer .v749-screen{padding-left:12px!important;padding-right:12px!important;padding-top:calc(12px + env(safe-area-inset-top,0px))!important}
+ #modal-root .v749-layer .v749-title{font-size:25px!important}
+ #modal-root .v749-layer .v749-impact-grid strong{font-size:12px!important}
+ #modal-root .v749-layer .v749-footrow{gap:8px!important}
+ #modal-root .v749-layer .v749-footrow button{font-size:12px!important}
+}
+@media(max-height:730px){
+ #modal-root .v749-layer .v749-screen{padding-top:calc(12px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important}
+ #modal-root .v749-layer .v749-head{min-height:46px!important;height:46px!important;margin-bottom:4px!important}
+ #modal-root .v749-layer .v749-subtitle{margin-bottom:10px!important}
+ #modal-root .v749-layer .v749-foot{padding-top:8px!important}
+}
+@media(min-width:700px){
+ #modal-root .v749-layer .v749-screen{padding-top:clamp(18px,3vh,28px)!important;padding-bottom:20px!important}
+}
+</style>
+
+<style id="v813-quick-cardpay-fidelity">
+/* V813: Scoped implementation. Original forms, events, validation and financial posting remain untouched. */
+#modal-root .v354-dialog:has(.v355-fast-form),
+#modal-root .v354-dialog:has(.v355-review-hero){
+ --t-bg:#f5f6fa;--t-surface:rgba(255,255,255,.88);--t-input:rgba(255,255,255,.95);
+ --t-line:#d5dce7;--t-ink:#17243b;--t-muted:#66758b;
+ background:linear-gradient(155deg,#f6f7fc 0%,#f0f3fc 64%,#f6f7fb 100%)!important;
+ color:var(--t-ink)!important;color-scheme:light!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v354-scroll,
+#modal-root .v354-dialog:has(.v355-review-hero) .v354-scroll{
+ background:transparent!important;padding:clamp(14px,3.6vw,20px) clamp(16px,4vw,24px) 22px!important;
+ min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;
+}
+#modal-root .v354-dialog .v354-top{
+ padding:calc(14px + env(safe-area-inset-top,0px)) clamp(16px,4vw,24px) 12px!important;
+ background:transparent!important;min-height:0!important;gap:12px!important;flex-shrink:0!important;
+}
+#modal-root .v354-dialog .v354-top h2{font-size:clamp(22px,5.6vw,29px)!important;line-height:1.12!important;overflow-wrap:anywhere!important;color:var(--t-ink)!important}
+#modal-root .v354-dialog .v354-close{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:var(--t-surface)!important;color:var(--t-ink)!important;border:1px solid var(--t-line)!important;line-height:1!important;position:relative!important;inset:auto!important}
+#modal-root .v354-dialog .v354-progress{background:linear-gradient(120deg,rgba(229,238,255,.95),rgba(243,246,255,.7))!important;border:1px solid #d2def5!important;border-radius:18px!important;color:var(--t-ink)!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:12px 14px!important;margin-bottom:16px!important}
+#modal-root .v354-dialog .v354-progress :is(small,strong){color:var(--t-ink)!important;min-width:0!important}
+#modal-root .v354-dialog .v354-progress small{font-size:11px!important;letter-spacing:.08em!important}
+#modal-root .v355-intro{margin:0 0 16px!important;gap:6px!important}
+#modal-root .v355-intro strong{font-size:clamp(25px,6.6vw,33px)!important;color:var(--t-ink)!important}
+#modal-root .v355-intro span{font-size:clamp(13px,3.6vw,15px)!important;color:var(--t-muted)!important}
+#modal-root .v355-fast-form{gap:12px!important}
+#modal-root .v355-fast-form label{color:var(--t-muted)!important;gap:7px!important;font-size:13px!important;min-width:0!important}
+#modal-root .v355-fast-form :is(input,select){min-width:0!important;max-width:100%!important;background:var(--t-input)!important;border:1px solid var(--t-line)!important;color:var(--t-ink)!important;color-scheme:light!important;border-radius:18px!important;min-height:54px!important;padding:12px 14px!important;-webkit-text-fill-color:var(--t-ink)!important}
+#modal-root .v355-fast-form :is(input,select)::placeholder{color:#818999!important;-webkit-text-fill-color:#818999!important}
+#modal-root .v355-result,#modal-root .v356-tax-indicator,#modal-root .v355-compact-note,#modal-root .v355-extra,#modal-root .v355-review-hero,#modal-root .v355-review-panel{background:var(--t-surface)!important;border:1px solid var(--t-line)!important;border-radius:21px!important;color:var(--t-ink)!important;box-shadow:0 6px 20px rgba(25,38,65,.04)!important;min-width:0!important}
+#modal-root .v355-result{min-height:76px!important;padding:15px 18px!important}
+#modal-root .v355-result :is(span,strong),#modal-root .v356-tax-indicator :is(span,strong),#modal-root .v355-extra summary :is(span,strong),#modal-root .v355-review-hero :is(span,strong,small){color:var(--t-ink)!important}
+#modal-root .v355-result strong{font-size:clamp(18px,5vw,26px)!important}
+#modal-root .v355-compact-note{font-size:12px!important;line-height:1.5!important;padding:12px 14px!important;color:var(--t-ink)!important}
+#modal-root .v356-tax-indicator{padding:14px!important}
+#modal-root .v356-tax-indicator small{color:var(--t-muted)!important}
+#modal-root .v355-extra summary{padding:14px 16px!important;color:var(--t-ink)!important}
+#modal-root .v355-extra-fields{padding:14px!important}
+#modal-root .v354-dialog .v354-foot{background:linear-gradient(0deg,#f5f6fa 86%,rgba(245,246,250,.94))!important;padding:12px clamp(16px,4vw,24px) calc(12px + env(safe-area-inset-bottom,0px))!important;gap:10px!important;flex-shrink:0!important}
+#modal-root .v354-dialog .v354-foot button{min-width:0!important;min-height:56px!important;border-radius:18px!important;font-size:14px!important;white-space:normal!important}
+#modal-root .v354-dialog .v354-foot button.primary{background:linear-gradient(115deg,color-mix(in srgb,var(--vive-theme-color,#7468ef) 73%,white),var(--vive-theme-color,#7468ef))!important;color:white!important;border:1px solid color-mix(in srgb,var(--vive-theme-color,#7468ef) 65%,white)!important;box-shadow:0 6px 20px rgba(88,78,190,.16)!important}
+#modal-root .v354-dialog .v354-foot button:not(.primary){background:rgba(235,240,248,.85)!important;color:#182941!important;border-color:var(--t-line)!important}
+/* Reuse V789 picker exactly; native select stays available to form serialization/validation. */
+#modal-root .v355-fast-form label.v789-select-enhanced{position:relative!important}
+#modal-root .v355-fast-form label.v789-select-enhanced>select.v789-native-keep{position:absolute!important;left:10px!important;bottom:5px!important;width:1px!important;height:1px!important;min-height:1px!important;opacity:0!important;pointer-events:none!important;clip-path:inset(50%)!important}
+#modal-root .v355-fast-form .v789-select-open{display:flex!important;align-items:center!important;width:100%!important;min-height:59px!important;gap:12px!important;padding:10px 12px!important;border-radius:18px!important;border:1px solid var(--t-line)!important;background:var(--t-input)!important;color:var(--t-ink)!important;text-align:left!important;min-width:0!important}
+#modal-root .v355-fast-form .v789-select-open .v789-select-details{flex:1!important;min-width:0!important;color:var(--t-ink)!important}
+#modal-root .v355-fast-form .v789-select-open .v789-select-details strong{font-size:14px!important;white-space:normal!important;overflow-wrap:anywhere!important}
+#modal-root .v355-fast-form .v789-select-open .v789-select-details small{color:var(--t-muted)!important}
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog:has(.v355-fast-form),body:is(.theme-black,.theme-dark) #modal-root .v354-dialog:has(.v355-review-hero){--t-bg:#000;--t-surface:#141416;--t-input:#18181b;--t-line:#353539;--t-ink:#f8f8fa;--t-muted:#bec1cc;background:#000!important;color-scheme:dark!important}
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog .v354-progress{background:#15151a!important;border-color:#38383e!important}
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog .v354-foot{background:#000!important}
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog .v354-foot button:not(.primary){background:#202024!important;color:#f5f5f8!important;border-color:#3f3f44!important}
+body:is(.theme-black,.theme-dark) #modal-root .v355-fast-form :is(input,select){color-scheme:dark!important;-webkit-text-fill-color:var(--t-ink)!important}
+body:is(.theme-black,.theme-dark) #modal-root .v355-fast-form .v789-select-open{color:var(--t-ink)!important}
+/* Payment: original V802 layout; uniform size and themed surfaces. */
+#modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields{gap:12px!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-main{overflow-x:hidden!important;padding:clamp(16px,4vw,24px)!important;max-width:100%!important;min-width:0!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>label:not(.flow-segment-option){border-radius:22px!important;min-height:72px!important;padding:14px!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"]{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{height:100%!important;min-height:86px!important;border-radius:19px!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface strong{font-size:clamp(11px,3.2vw,14px)!important;overflow-wrap:anywhere!important}
+#modal-root .studio-form[data-mode="cardpay"] .v802-pay-title{font-size:12px!important;line-height:1.4!important}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open{width:100%!important;min-width:0!important;max-width:100%!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-navigation{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))!important}
+body:not(.theme-black):not(.theme-dark) #modal-root .studio-form[data-mode="cardpay"]{--pay-bg:#f5f6fa;--pay-ink:#17243b;--pay-muted:#66758b;--pay-tile:rgba(255,255,255,.93);--pay-stroke:#d5dce7;--pay-shadow:rgba(25,40,75,.05)}
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"]{--pay-bg:#000;--pay-ink:#fff;--pay-muted:#b6b8c4;--pay-tile:#18181c;--pay-stroke:#39393e;--pay-shadow:transparent}
+@media(max-width:360px){#modal-root .v355-sums{gap:8px!important}#modal-root .v355-fast-form :is(input,select){padding-inline:10px!important}#modal-root .v354-dialog .v354-progress{flex-wrap:wrap!important}#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"]{gap:5px!important}}
+@media(min-width:791px){#modal-root .v354-dialog .v354-top{padding-top:16px!important}}
+@media(prefers-reduced-motion:reduce){#modal-root .v354-dialog *,#modal-root .studio-form[data-mode="cardpay"] *{scroll-behavior:auto!important}}
+</style>
+
+<style id="v814-services-unified-layout">
+/* Uses the preexisting v789 product picker over native accountId/cardId fields. */
+#modal-root .studio-form[data-mode="service"] label.v789-select-enhanced{position:relative!important;min-width:0!important}
+#modal-root .studio-form[data-mode="service"] label.v789-select-enhanced>select.v789-native-keep{position:absolute!important;left:12px!important;bottom:6px!important;width:1px!important;height:1px!important;min-height:1px!important;opacity:0!important;pointer-events:none!important}
+#modal-root .studio-form[data-mode="service"] .v789-select-open{display:flex!important;align-items:center!important;gap:12px!important;padding:12px 14px!important;min-height:60px!important;width:100%!important;max-width:100%!important;min-width:0!important;border-radius:18px!important;border:1px solid var(--v261-border,#d5dce7)!important;background:rgba(255,255,255,.78)!important;color:var(--v261-ink,#17243b)!important;text-align:left!important}
+#modal-root .studio-form[data-mode="service"] .v789-select-details{min-width:0!important;flex:1!important}
+#modal-root .studio-form[data-mode="service"] .v789-select-details strong{white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.3!important;font-size:clamp(13px,3.6vw,16px)!important}
+#modal-root .studio-form[data-mode="service"] .v789-select-details small{color:var(--v261-muted,#66758b)!important}
+#modal-root .v261-service-dialog{--v261-accent:var(--vive-theme-color,var(--v560-accent,var(--accent,#08776f)))!important;--v261-ink:#193d3e;--v261-line:#dce8ea}
+#modal-root .v261-service-dialog .v261-primary{background:var(--v261-accent)!important;border-color:var(--v261-accent)!important;color:#fff!important}
+#modal-root .v261-service-dialog .v261-service-tile:focus-visible,#modal-root .v261-service-dialog .v261-bill-row:focus-visible,#modal-root .v261-service-dialog .v261-header-close:focus-visible{outline:3px solid var(--v261-accent)!important;outline-offset:2px!important}
+#modal-root .v261-service-dialog .v261-number{color:var(--v261-accent)!important}
+#modal-root .v261-service-dialog .v261-dialog-scroll{min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important}
+#modal-root .v261-service-dialog .v261-dialog-footer{flex-shrink:0!important;z-index:2!important;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important}
+#modal-root .v261-service-dialog .v261-header-close,#modal-root .v261-service-dialog .v261-header-back{display:grid!important;place-items:center!important;min-width:44px!important;min-height:44px!important;width:44px!important;height:44px!important;opacity:1!important;visibility:visible!important}
+@media(max-width:790px){
+ #modal-root .v261-service-layer{padding:0!important;align-items:flex-end!important}
+ #modal-root .v261-service-layer>.v261-service-dialog{width:100%!important;max-width:620px!important;height:calc(100dvh - max(64px,env(safe-area-inset-top,0px) + 10px))!important;max-height:calc(100dvh - max(64px,env(safe-area-inset-top,0px) + 10px))!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+ #modal-root .v261-service-dialog .v261-dialog-header{flex-shrink:0!important;grid-template-columns:44px minmax(0,1fr) 44px!important;gap:8px!important;min-width:0!important}
+ #modal-root .v261-service-dialog .v261-dialog-scroll{flex:1 1 auto!important;padding:12px clamp(12px,4vw,20px) 18px!important}
+ #modal-root .v261-service-dialog .v261-group{padding:clamp(12px,3vw,18px)!important}
+ #modal-root .v261-service-dialog .v261-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+ #modal-root .v261-service-dialog .v261-service-tile{min-width:0!important;min-height:88px!important}
+ #modal-root .v261-service-dialog .v261-service-tile strong{overflow-wrap:anywhere!important;line-height:1.3!important}
+ #modal-root .v261-service-dialog .v261-bill-row{min-width:0!important;max-width:100%!important}
+ #modal-root .v261-service-dialog .v261-bill-text{min-width:0!important;overflow-wrap:anywhere!important}
+ #modal-root .v261-service-dialog .v261-dialog-footer{padding:12px clamp(12px,4vw,20px) calc(12px + env(safe-area-inset-bottom,0px))!important}
+}
+@media(max-width:350px){#modal-root .v261-service-dialog .v261-category-grid{gap:6px!important}#modal-root .v261-service-dialog .v261-service-tile{padding:8px 4px!important}#modal-root .v261-service-dialog .v261-service-tile strong{font-size:10px!important}}
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog{--v261-ink:#f5f6fa;--v261-muted:#b9c0c9;--v261-line:#34383d;background:#000!important;color:#f5f6fa!important;border-color:#2c3034!important}
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="service"] .v789-select-open{background:#17181b!important;border-color:#393c41!important;color:#f5f6fa!important}
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-dialog-header,body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-dialog-footer{background:#080909!important;border-color:#303337!important}
+@media(prefers-reduced-motion:reduce){#modal-root .v261-service-dialog *{scroll-behavior:auto!important}}
+</style>
+<style id="v815-premium-two-flows">
+/* V815 — visual layout ONLY. Unmodified native payment forms, data, validations and persistence. */
+#modal-root{--v815-accent:var(--vive-theme-color,var(--v801-accent,var(--v560-accent,var(--accent,#705bf2))))}
+#modal-root .v354-dialog:has(.v355-fast-form),
+#modal-root .v354-dialog:has(.v355-review-hero),
+#modal-root .studio-form[data-mode="cardpay"]{
+ --v815-bg:#f4f6fd;--v815-surface:rgba(255,255,255,.82);--v815-text:#17243c;
+ --v815-muted:#60708b;--v815-border:rgba(135,151,189,.27);--v815-soft:rgba(237,240,252,.89);
+ --v815-drop:0 7px 22px rgba(37,46,89,.065),inset 0 1px 0 rgba(255,255,255,.82);
+ --v815-glow:color-mix(in srgb,var(--v815-accent) 18%,transparent);
+ color:var(--v815-text)!important;color-scheme:light!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog:has(.v355-fast-form),
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog:has(.v355-review-hero),
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"]{
+ --v815-bg:#000;--v815-surface:#17171b;--v815-text:#f8f8fc;
+ --v815-muted:#b8bbcb;--v815-border:#3d3d45;--v815-soft:#202025;
+ --v815-drop:inset 0 1px 0 rgba(255,255,255,.07);--v815-glow:color-mix(in srgb,var(--v815-accent) 19%,transparent);
+ color-scheme:dark!important;
+}
+/* Shared, deliberately narrow single-column workspace. */
+#modal-root .modal-layer:has(.v354-dialog),
+#modal-root .modal-layer:has(.studio-form[data-mode="cardpay"]){align-items:center!important;justify-content:center!important;overflow:hidden!important;padding:0!important}
+#modal-root .v354-dialog:has(.v355-fast-form),
+#modal-root .v354-dialog:has(.v355-review-hero){
+ width:min(100vw,600px)!important;max-width:600px!important;height:100dvh!important;max-height:100dvh!important;
+ padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;
+ background:radial-gradient(ellipse 90% 52% at 91% -10%,var(--v815-glow),transparent 70%),linear-gradient(160deg,var(--v815-bg),var(--v815-bg))!important;
+ box-shadow:0 20px 60px rgba(24,18,64,.14)!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v354-top,
+#modal-root .v354-dialog:has(.v355-review-hero) .v354-top{
+ display:flex!important;justify-content:space-between!important;align-items:center!important;gap:12px!important;flex:0 0 auto!important;
+ padding:calc(14px + env(safe-area-inset-top,0px)) clamp(16px,4.1vw,28px) 11px!important;
+ background:transparent!important;border:0!important;min-height:65px!important;
+}
+#modal-root .v354-dialog .v354-eyebrow{font-size:clamp(10px,2.7vw,12px)!important;font-weight:650!important;letter-spacing:.025em!important;color:var(--v815-muted)!important;line-height:1.4!important}
+#modal-root .v354-dialog .v354-top h2{font-size:clamp(23px,6.1vw,32px)!important;line-height:1.1!important;color:var(--v815-text)!important;margin:5px 0 0!important;letter-spacing:-.045em!important}
+#modal-root .v354-dialog .v354-close,
+#modal-root .studio-form[data-mode="cardpay"] .studio-close{
+ width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;border-radius:50%!important;
+ display:grid!important;place-items:center!important;position:relative!important;inset:auto!important;transform:none!important;
+ background:var(--v815-surface)!important;border:1px solid var(--v815-border)!important;
+ color:var(--v815-text)!important;-webkit-text-fill-color:var(--v815-text)!important;font-size:26px!important;
+ box-shadow:var(--v815-drop)!important;opacity:1!important;visibility:visible!important;z-index:6!important;flex:none!important;
+}
+#modal-root .v354-dialog .v354-scroll{flex:1 1 auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important;
+ padding:8px clamp(16px,4.1vw,28px) 24px!important;background:transparent!important;scrollbar-width:thin!important;overscroll-behavior:contain!important}
+#modal-root .v354-dialog .v354-progress{min-height:54px!important;padding:11px 16px!important;margin:0 0 16px!important;border-radius:20px!important;
+ border:1px solid var(--v815-border)!important;background:var(--v815-surface)!important;color:var(--v815-text)!important;
+ box-shadow:var(--v815-drop)!important;position:relative!important;display:grid!important;
+ grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr)!important;align-items:center!important;gap:8px!important}
+#modal-root .v354-dialog .v354-progress small{color:var(--v815-text)!important;font-size:clamp(10px,2.7vw,12px)!important;letter-spacing:.02em!important;font-weight:780!important;grid-column:1;grid-row:1;min-width:0!important;overflow-wrap:anywhere!important}
+#modal-root .v354-dialog .v354-progress strong{font-size:clamp(12px,3.4vw,16px)!important;color:var(--v815-text)!important;font-variant-numeric:tabular-nums!important;grid-column:3;grid-row:1;text-align:right!important;min-width:0!important;overflow-wrap:anywhere!important}
+#modal-root .v354-dialog .v354-progress:after{content:'●  ●';color:var(--v815-accent);font-size:13px;letter-spacing:2px;position:static;left:auto;top:auto;transform:none;opacity:.88;grid-column:2;grid-row:1;text-align:center!important}
+#modal-root .v355-intro{position:relative!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;margin:0 0 13px!important;gap:5px!important}
+#modal-root .v815-quick-art{display:flex;align-items:center;justify-content:center;width:100%;height:clamp(80px,16dvh,145px);max-height:145px;pointer-events:none;margin:0 0 4px;overflow:hidden}
+#modal-root .v815-quick-art svg{height:100%;width:auto;max-width:100%;filter:drop-shadow(0 12px 18px var(--v815-glow))}
+#modal-root .v355-intro strong{color:var(--v815-text)!important;font-size:clamp(25px,6.7vw,35px)!important;line-height:1.12!important;letter-spacing:-.05em!important}
+#modal-root .v355-intro span{font-size:clamp(12px,3.45vw,15px)!important;line-height:1.4!important;color:var(--v815-muted)!important}
+#modal-root .v355-fast-form{display:flex!important;flex-direction:column!important;gap:12px!important;min-width:0!important}
+#modal-root .v355-fast-form label{min-width:0!important;max-width:100%!important;display:flex!important;flex-direction:column!important;gap:6px!important;color:var(--v815-text)!important;font-size:clamp(12px,3.5vw,14px)!important;font-weight:740!important}
+#modal-root .v355-fast-form :is(input,select),
+#modal-root .v355-fast-form .v789-select-open{
+ width:100%!important;min-height:56px!important;max-width:100%!important;min-width:0!important;
+ border:1px solid var(--v815-border)!important;border-radius:18px!important;
+ background:var(--v815-surface)!important;color:var(--v815-text)!important;-webkit-text-fill-color:var(--v815-text)!important;
+ box-shadow:var(--v815-drop)!important;padding:12px 15px!important;font-size:clamp(13px,3.65vw,16px)!important;
+ font-weight:700!important;color-scheme:inherit!important;
+}
+#modal-root .v355-fast-form input::placeholder{color:var(--v815-muted)!important;-webkit-text-fill-color:var(--v815-muted)!important;opacity:.8!important}
+#modal-root .v355-fast-form .v355-sums{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;min-width:0!important}
+#modal-root .v355-fast-form .v355-sums label{min-width:0!important}
+#modal-root .v355-fast-form .v355-sums input{font-variant-numeric:tabular-nums!important;font-size:clamp(14px,3.9vw,20px)!important}
+#modal-root .v355-result,#modal-root .v356-tax-indicator,#modal-root .v355-compact-note,#modal-root .v355-extra,#modal-root .v355-review-hero,#modal-root .v355-review-panel{
+ color:var(--v815-text)!important;background:var(--v815-surface)!important;border:1px solid var(--v815-border)!important;
+ border-radius:20px!important;box-shadow:var(--v815-drop)!important;min-width:0!important;
+}
+#modal-root .v355-result{min-height:65px!important;padding:13px 16px!important;align-items:center!important}
+#modal-root .v355-result span,#modal-root .v356-tax-indicator span{color:var(--v815-text)!important}
+#modal-root .v355-result strong{color:var(--v815-accent)!important;font-size:clamp(14px,4vw,21px)!important}
+#modal-root .v356-tax-indicator{padding:13px 15px!important}
+#modal-root .v356-tax-indicator small,#modal-root .v355-compact-note{color:var(--v815-muted)!important;font-size:12px!important;line-height:1.4!important}
+#modal-root .v355-compact-note{padding:13px 15px!important}
+#modal-root .v355-extra{overflow:hidden!important}
+#modal-root .v355-extra>summary{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;padding:15px!important;color:var(--v815-text)!important;font-size:13px!important}
+#modal-root .v355-extra>summary span{min-width:0!important;overflow-wrap:anywhere!important;color:var(--v815-text)!important}
+#modal-root .v355-extra-fields{padding:0 14px 16px!important;gap:12px!important;background:transparent!important}
+#modal-root .v355-extra-fields label[hidden]{display:none!important}
+#modal-root .v355-review-panel{padding:15px!important}
+#modal-root .v354-dialog .v354-foot{
+ position:relative!important;bottom:auto!important;flex:0 0 auto!important;display:flex!important;gap:10px!important;
+ background:var(--v815-bg)!important;border-top:1px solid var(--v815-border)!important;
+ padding:12px clamp(16px,4.1vw,28px) calc(13px + env(safe-area-inset-bottom,0px))!important;
+}
+#modal-root .v354-dialog .v354-foot button{min-height:57px!important;min-width:0!important;border-radius:19px!important;font-size:clamp(13px,3.5vw,16px)!important;font-weight:780!important;flex:1!important;white-space:normal!important}
+#modal-root .v354-dialog .v354-foot button.primary{flex:1.6!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid color-mix(in srgb,var(--v815-accent) 64%,white)!important;
+ background:linear-gradient(115deg,color-mix(in srgb,var(--v815-accent) 74%,white),var(--v815-accent))!important;
+ box-shadow:0 6px 18px var(--v815-glow)!important}
+#modal-root .v354-dialog .v354-foot button:not(.primary){background:var(--v815-soft)!important;color:var(--v815-text)!important;border:1px solid var(--v815-border)!important}
+/* Payment: native studio steps, native inputs and v789 selectors remain mounted. */
+#modal-root .modal:has(.studio-form[data-mode="cardpay"]){
+ width:min(100vw,600px)!important;max-width:600px!important;height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;
+ padding:0!important;border:0!important;border-radius:0!important;background:var(--v815-bg)!important;box-shadow:0 20px 60px rgba(24,18,64,.15)!important;
+}
+#modal-root .modal:has(.studio-form[data-mode="cardpay"])>.modal-head{display:none!important}
+#modal-root .studio-form[data-mode="cardpay"],
+#modal-root .studio-form[data-mode="cardpay"] .studio-shell{
+ display:flex!important;flex-direction:column!important;width:100%!important;max-width:100%!important;min-height:0!important;height:100%!important;
+ background:radial-gradient(ellipse 80% 45% at 98% 0%,var(--v815-glow),transparent 70%),var(--v815-bg)!important;
+ color:var(--v815-text)!important;overflow:hidden!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-rail{display:none!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-main{
+ display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;width:100%!important;
+ padding:calc(16px + env(safe-area-inset-top,0px)) clamp(16px,4.1vw,28px) calc(12px + env(safe-area-inset-bottom,0px))!important;
+ margin:0!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;
+ background:transparent!important;color:var(--v815-text)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-topline{display:flex!important;align-items:center!important;justify-content:space-between!important;
+ margin:0 0 9px!important;min-height:46px!important;gap:10px!important;color:var(--v815-muted)!important;flex:0 0 auto!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-top-actions{display:flex!important;align-items:center!important;gap:5px!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-top-pill{display:none!important}
+#modal-root .studio-form[data-mode="cardpay"] .v815-brand{font-size:clamp(10px,2.8vw,13px)!important;color:var(--v815-text)!important;font-weight:740!important;line-height:1.3!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-stepcounter{font-size:10px!important;line-height:1.3!important;letter-spacing:.02em!important;color:var(--v815-muted)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-active-title{font-size:clamp(28px,7.1vw,36px)!important;letter-spacing:-.052em!important;line-height:1.08!important;
+ color:var(--v815-text)!important;margin:0 0 6px!important;flex:0 0 auto!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-active-subtitle{order:1!important;font-size:clamp(12px,3.6vw,15px)!important;line-height:1.43!important;
+ color:var(--v815-muted)!important;margin:0 0 10px!important;flex:0 0 auto!important}
+#modal-root .studio-form[data-mode="cardpay"] .v815-card-art{order:0!important;display:flex!important;justify-content:center!important;align-items:center!important;
+ width:100%!important;height:clamp(85px,17dvh,160px)!important;flex:0 0 auto!important;pointer-events:none!important;overflow:hidden!important;margin:0 0 3px!important}
+#modal-root .studio-form[data-mode="cardpay"] .v815-card-art svg{height:100%;width:auto;max-width:100%;filter:drop-shadow(0 12px 13px var(--v815-glow))}
+#modal-root .studio-form[data-mode="cardpay"] .studio-panels{order:2!important;min-height:0!important;flex:1 1 auto!important;overflow-x:hidden!important;overflow-y:auto!important;
+ scrollbar-width:thin!important;padding:3px 1px 14px!important;margin:0!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields{display:flex!important;flex-direction:column!important;gap:11px!important;padding:0!important;overflow:visible!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>*{max-width:100%!important;min-width:0!important;width:100%!important;margin:0!important;box-sizing:border-box!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>.flow-section-heading{display:none!important}
+#modal-root .studio-form[data-mode="cardpay"] .v802-pay-title{font-size:clamp(14px,4vw,19px)!important;line-height:1.25!important;letter-spacing:-.015em!important;
+ color:var(--v815-text)!important;font-weight:790!important;text-transform:none!important}
+#modal-root .studio-form[data-mode="cardpay"] .v802-pay-title:first-child{display:none!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields>label:not(.flow-segment-option),
+#modal-root .studio-form[data-mode="cardpay"] .v802-advanced-body>label{
+ display:flex!important;flex-direction:column!important;gap:7px!important;min-width:0!important;
+ min-height:77px!important;padding:13px 15px!important;background:var(--v815-surface)!important;border:1px solid var(--v815-border)!important;
+ border-radius:21px!important;box-shadow:var(--v815-drop)!important;color:var(--v815-text)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .filter-label{font-size:clamp(11px,3.1vw,13px)!important;letter-spacing:.025em!important;
+ font-weight:750!important;color:var(--v815-muted)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields :is(input,select,textarea){min-width:0!important;max-width:100%!important;color:var(--v815-text)!important;-webkit-text-fill-color:var(--v815-text)!important;font-size:clamp(13px,3.8vw,17px)!important;}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields label:has([name="amount"]) .field{font-size:clamp(19px,5.6vw,28px)!important;font-weight:800!important;color:var(--v815-accent)!important;-webkit-text-fill-color:var(--v815-accent)!important;font-variant-numeric:tabular-nums!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields label.v789-select-enhanced .v789-select-open{
+ display:flex!important;gap:12px!important;align-items:center!important;background:transparent!important;border:0!important;box-shadow:none!important;
+ padding:3px 0!important;min-height:44px!important;min-width:0!important;width:100%!important;color:var(--v815-text)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-details{flex:1!important;min-width:0!important}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-details strong{font-size:clamp(13px,3.8vw,17px)!important;font-weight:780!important;color:var(--v815-text)!important;white-space:normal!important;overflow-wrap:anywhere!important}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-details small{font-size:11px!important;color:var(--v815-muted)!important}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-ico{display:grid!important;place-items:center!important;flex:0 0 42px!important;width:42px!important;height:42px!important;
+ border-radius:13px!important;background:color-mix(in srgb,var(--v815-accent) 15%,var(--v815-soft))!important;color:var(--v815-accent)!important;
+ border:1px solid color-mix(in srgb,var(--v815-accent) 18%,transparent)!important}
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-chevron{color:var(--v815-accent)!important;font-size:25px!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"]{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:8px!important;
+ min-height:109px!important;height:100%!important;max-width:100%!important;border-radius:20px!important;border:1px solid var(--v815-border)!important;
+ background:var(--v815-surface)!important;color:var(--v815-text)!important;box-shadow:var(--v815-drop)!important;padding:11px 5px!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface:before{content:'▣';display:block;color:var(--v815-accent);font-size:24px;line-height:1.1;opacity:.95}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] label:nth-child(2) .flow-segment-surface:before{content:'▱'}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] label:nth-child(3) .flow-segment-surface:before{content:'✎'}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface strong{
+ color:var(--v815-text)!important;font-size:clamp(11px,3vw,14px)!important;line-height:1.18!important;font-weight:810!important;text-align:center!important;overflow-wrap:anywhere!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface small{color:var(--v815-muted)!important;font-size:clamp(9px,2.5vw,11px)!important;text-align:center!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment-option>input:checked+.flow-segment-surface{
+ background:linear-gradient(145deg,color-mix(in srgb,var(--v815-accent) 86%,white),var(--v815-accent))!important;
+ border:1px solid var(--v815-accent)!important;box-shadow:0 8px 18px var(--v815-glow)!important;color:#fff!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment-option>input:checked+.flow-segment-surface :is(strong,small){color:#fff!important;-webkit-text-fill-color:#fff!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment-option>input:checked+.flow-segment-surface:before{color:#fff!important}
+#modal-root .studio-form[data-mode="cardpay"] .v802-advanced{border-radius:20px!important;border:1px solid var(--v815-border)!important;
+ background:var(--v815-surface)!important;box-shadow:var(--v815-drop)!important;overflow:hidden!important}
+#modal-root .studio-form[data-mode="cardpay"] .v802-advanced>summary{min-height:59px!important;padding:14px 15px!important;color:var(--v815-text)!important;font-size:13px!important;font-weight:760!important}
+#modal-root .studio-form[data-mode="cardpay"] #cardPaymentPreview{background:var(--v815-surface)!important;border:1px solid var(--v815-border)!important;
+ border-radius:18px!important;color:var(--v815-text)!important;margin:0!important;box-shadow:var(--v815-drop)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-navigation,
+#modal-root .studio-form[data-mode="cardpay"] .form-foot{order:3!important;flex:0 0 auto!important;position:sticky!important;bottom:0!important;z-index:12!important;
+ padding:10px 0 3px!important;margin:0!important;background:var(--v815-bg)!important;border-top:1px solid var(--v815-border)!important;
+ min-height:0!important;gap:9px!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-navigation [data-studio-next],
+#modal-root .studio-form[data-mode="cardpay"] .form-foot button[type="submit"]{
+ width:100%!important;min-height:57px!important;border-radius:19px!important;font-size:16px!important;font-weight:800!important;
+ background:linear-gradient(115deg,color-mix(in srgb,var(--v815-accent) 76%,white),var(--v815-accent))!important;
+ border:1px solid color-mix(in srgb,var(--v815-accent) 62%,white)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+ box-shadow:0 8px 22px var(--v815-glow)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-navigation [data-studio-back],
+#modal-root .studio-form[data-mode="cardpay"] .form-foot button:not([type="submit"]){min-height:52px!important;border-radius:17px!important;background:var(--v815-soft)!important;color:var(--v815-text)!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-navigation [hidden],
+#modal-root .studio-form[data-mode="cardpay"] .form-foot[style*="display: none"]{display:none!important}
+/* Theme mode should be independent of the user-selected accent. */
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog:has(.v355-fast-form),
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog:has(.v355-review-hero){background:#000!important}
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] :is(.studio-shell,.studio-main){background:#000!important;color:#f9f9fc!important}
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog .v354-foot,
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] :is(.studio-navigation,.form-foot){background:#000!important}
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .studio-fields select option{background:#141416!important;color:white!important}
+/* iOS safe area, narrow devices, touch keyboard and reduced motion. */
+@media(max-width:390px){
+ #modal-root .v354-dialog .v354-progress:after{content:'●●';letter-spacing:1px;font-size:11px}
+ #modal-root .v354-dialog .v354-progress{padding-inline:12px!important}
+ #modal-root .v354-dialog .v354-top h2{font-size:25px!important}
+ #modal-root .v355-intro strong{font-size:25px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{min-height:94px!important;padding-inline:4px!important}
+}
+@media(max-height:740px){
+ #modal-root .v815-quick-art{height:74px}
+ #modal-root .studio-form[data-mode="cardpay"] .v815-card-art{height:86px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-main{padding-top:calc(9px + env(safe-area-inset-top,0px))!important}
+}
+@media(min-width:791px){
+ #modal-root .v354-dialog:has(.v355-fast-form),#modal-root .v354-dialog:has(.v355-review-hero),
+ #modal-root .modal:has(.studio-form[data-mode="cardpay"]){height:min(93dvh,1060px)!important;max-height:93dvh!important;border-radius:28px!important;border:1px solid var(--v815-border)!important}
+}
+@media(prefers-reduced-motion:reduce){#modal-root :is(.v815-quick-art,.v815-card-art) *{animation:none!important}}
+</style>
+<script id="v815-presentation-artwork">
+/* Purely decorative mount: never clones/replaces fields or submits. */
+(()=>{'use strict';
+const root=document.getElementById('modal-root');if(!root)return;
+const cardArt=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 170" aria-hidden="true">
+<defs><linearGradient id="v815c1" x1="0" y1="0" x2="1" y2="1"><stop style="stop-color:color-mix(in srgb,var(--v815-accent) 65%,white)"/><stop offset="1" style="stop-color:var(--v815-accent)"/></linearGradient><linearGradient id="v815c2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#51628a"/><stop offset="1" stop-color="#191c2d"/></linearGradient><linearGradient id="v815c3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ecdfbd"/><stop offset="1" stop-color="#c3a66d"/></linearGradient></defs>
+<ellipse cx="178" cy="151" rx="122" ry="10" fill="#745be0" opacity=".13"/>
+<rect x="105" y="32" width="190" height="112" rx="17" transform="rotate(-8 105 32)" fill="url(#v815c1)" opacity=".85"/>
+<rect x="74" y="22" width="202" height="121" rx="17" transform="rotate(8 74 22)" fill="url(#v815c2)" stroke="#74769c" stroke-width="1.1"/>
+<rect x="112" y="66" width="37" height="29" rx="6" transform="rotate(8 112 66)" fill="url(#v815c3)" stroke="#fff0c7" stroke-width="1"/>
+<path d="M132 67v27M111 81h37M119 67v27" stroke="#99804f" stroke-width="1.1" transform="rotate(8 112 66)"/>
+<g transform="translate(222,48) rotate(8)" fill="none" stroke="#e7eaf8" stroke-width="3" stroke-linecap="round"><path d="M0 16q12 13 0 26"/><path d="M8 11q18 20 0 36"/><path d="M16 5q23 26 0 48"/></g>
+</svg>`;
+const quickArt=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 325 165" aria-hidden="true">
+<defs><linearGradient id="v815q1" x1="0" y1="0" x2="1" y2="1"><stop style="stop-color:color-mix(in srgb,var(--v815-accent) 60%,white)"/><stop offset="1" style="stop-color:var(--v815-accent)"/></linearGradient><linearGradient id="v815q2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fefbff"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--v815-accent) 28%,white)"/></linearGradient><linearGradient id="v815q3" x1="0" y1="0" x2="1" y2="1"><stop style="stop-color:var(--v815-accent)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--v815-accent) 74%,#101538)"/></linearGradient></defs>
+<ellipse cx="165" cy="151" rx="126" ry="8" fill="#6a54c9" opacity=".16"/>
+<path d="M37 56h73l8 88H27z" fill="url(#v815q1)"/><path d="M53 61V43q0-23 20-23t20 23v18" stroke="#7766ed" stroke-width="9" fill="none"/>
+<path d="M91 47h96l10 99H79z" fill="url(#v815q3)"/><path d="M117 55V32q0-28 24-28t24 28v23" stroke="#3a48bb" stroke-width="9" fill="none"/><path d="M117 55V32q0-28 24-28t24 28v23" stroke="#8e9cff" stroke-width="3" fill="none"/>
+<path d="M177 66h100l8 80H170z" fill="url(#v815q2)"/><path d="M196 72V54q0-20 23-20t23 20v18" stroke="#bab8ef" stroke-width="8" fill="none"/>
+<path d="M208 99c8-12 20-3 12 7-8 9-23-2-10-14" stroke="#6650d8" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>`;
+function mount(){
+ const card=root.querySelector('form.studio-form[data-mode="cardpay"]');
+ if(card){const main=card.querySelector('.studio-main');const heading=main?.querySelector('.studio-active-title');
+  if(main&&heading&&!main.querySelector('.v815-card-art')){const brand=document.createElement('span');brand.className='v815-brand';brand.textContent='Vive el Hoy · Finanzas 360';const line=main.querySelector('.studio-topline');line?.prepend(brand);
+  const art=document.createElement('div');art.className='v815-card-art';art.setAttribute('aria-hidden','true');art.innerHTML=cardArt;heading.after(art);
+  }}
+ const q=root.querySelector('.v354-dialog:has(.v355-intro)');if(q){const eyebrow=q.querySelector('.v354-eyebrow');if(eyebrow&&eyebrow.textContent!=='Vive el Hoy · Finanzas 360')eyebrow.textContent='Vive el Hoy · Finanzas 360';const intro=q.querySelector('.v355-intro');if(intro&&!intro.querySelector('.v815-quick-art')){const art=document.createElement('div');art.className='v815-quick-art';art.setAttribute('aria-hidden','true');art.innerHTML=quickArt;intro.prepend(art);}}
+}
+let queued=false;new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;mount()})}).observe(root,{childList:true,subtree:true});
+mount();
+})();
+</script>
 </body>
 </html>
