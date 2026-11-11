@@ -46707,7 +46707,7 @@ function update(f){
  const x=findSelected(f),hasLink=!!x;
  const c=f.querySelector('.v794-source-card'),p=f.querySelector('.v794-purchase-card'),r=f.querySelector('.v794-recovery'),method=f.querySelector('.v796-refund-method');
  if(!c||!p||!r)return;
- const cardObj=x?.card || db.cards?.find(z=>String(z.id)===String(val(f,'cardId')));
+ const cardObj=db.cards?.find(z=>String(z.id)===String(val(f,'cardId'))) || x?.card;
  const currency=val(f,'currency')||'DOP';
  const amount=Math.max(0,Number(val(f,'amount'))||0),max=x?.remaining||0;
  let prior=null,after=null;
@@ -46745,7 +46745,7 @@ function attach(f){if(f.dataset.special!=='refund'||f.dataset.v794Ready||!f.clas
  const header=f.querySelector('.other-studio-header p');if(header)header.textContent='Recupera el dinero de una compra anterior.';
  const title=f.querySelector('.other-studio-amount>span');if(title)title.textContent='IMPORTE A DEVOLVER';
  for(const klass of ['v794-source-card','v794-purchase-card','v796-refund-method','v794-recovery']){const section=document.createElement('section');section.className=klass;content.appendChild(section)}
- content.addEventListener('click',e=>{if(e.target.closest('.v794-source-card')){openPicker(f);return}const b=e.target.closest('[data-v794-action]');if(!b)return;if(b.dataset.v794Action==='edit'||b.dataset.v794Action==='choose')openPicker(f)});
+ content.addEventListener('click',e=>{if(e.target.closest('.v794-source-card')){const shared=f.querySelector('.v789-select-open');if(shared){shared.click()}else{openPicker(f)}return}const b=e.target.closest('[data-v794-action]');if(!b)return;if(b.dataset.v794Action==='edit'||b.dataset.v794Action==='choose')openPicker(f)});
  f.addEventListener('input',()=>queueMicrotask(()=>update(f)));
  f.addEventListener('change',()=>queueMicrotask(()=>update(f)));
  // New refunds must select a recorded purchase. Existing independent refunds remain editable.
@@ -82050,51 +82050,50 @@ body:is(.theme-light,.theme-white) #modal-root .v789-product-sheet :is(.v789-pic
 body:is(.theme-light,.theme-white) #modal-root .v789-product-sheet .v789-sheet-grip{background:#8b96a6}
 @media(prefers-reduced-motion:reduce){#modal-root .v789-product-sheet{animation:none!important}}
 </style>
-<script id="v789-cardpay-native-picker">
+<script id="v827-universal-financial-picker">
+/* One native-select adapter for cards and accounts. Existing form values & events remain authoritative. */
 (()=>{'use strict';
- const root=document.getElementById('modal-root');if(!root)return;
- const bankSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 10-6 10 6M3 10h18M5 10v9m4-9v9m6-9v9m4-9v9M2 21h20"/></svg>';
- const cardSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>';
- function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"], form.studio-form[data-mode="service"], form.v355-fast-form')){
-   for(const name of ['cardId','accountId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement)||field.dataset.v789Enhanced==='1')continue;
-     const label=field.closest('label');if(!label)continue;
-     field.dataset.v789Enhanced='1';field.classList.add('v789-native-keep');label.classList.add('v789-select-enhanced');
-     const button=document.createElement('button');button.type='button';button.className='v789-select-open';button.setAttribute('aria-label','Seleccionar '+(name==='cardId'?'tarjeta':'cuenta de origen'));
-     const ic=document.createElement('span');ic.className='v789-select-ico';ic.innerHTML=name==='cardId'?cardSvg:bankSvg;
-     const details=document.createElement('span');details.className='v789-select-details';const strong=document.createElement('strong');const small=document.createElement('small');small.textContent=name==='cardId'?'Tarjeta de crédito':'Cuenta bancaria o efectivo';details.append(strong,small);
-     const chevron=document.createElement('span');chevron.className='v789-select-chevron';chevron.textContent='⌄';button.append(ic,details,chevron);
-     label.appendChild(button);
-     const update=()=>{const text=field.selectedOptions?.[0]?.textContent?.trim()||'Seleccionar';if(strong.textContent!==text)strong.textContent=text};
-     field.addEventListener('change',update);update();button.addEventListener('click',()=>show(field,name));
-   }
- }}
- let busy=false;
- function show(field,name){if(root.querySelector('.v789-product-backdrop'))return;
-  const options=[...field.options].filter(o=>!o.disabled&&o.value);let selected=field.value;
-  const layer=document.createElement('div');layer.className='v789-product-backdrop';layer.setAttribute('role','presentation');
-  const sheet=document.createElement('section');sheet.className='v789-product-sheet';sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');sheet.setAttribute('aria-label','Seleccionar '+(name==='cardId'?'tarjeta':'cuenta'));
-  const grip=document.createElement('span');grip.className='v789-sheet-grip';grip.setAttribute('aria-hidden','true');
-  const header=document.createElement('header');const title=document.createElement('h3');title.textContent=name==='cardId'?'Selecciona una tarjeta':'Selecciona una cuenta';const close=document.createElement('button');close.type='button';close.className='v789-picker-close';close.setAttribute('aria-label','Cerrar selector');close.textContent='×';header.append(title,close);
-  const intro=document.createElement('p');intro.className='v789-sheet-sub';intro.textContent=field.closest('.studio-form[data-mode="service"]')?'Selecciona el origen real de este pago de servicio.':name==='cardId'?(field.closest('.v355-fast-form')?'Elige la tarjeta utilizada para esta compra.':'Elige la tarjeta que quieres pagar.'):(field.closest('.v355-fast-form')?'Elige la cuenta donde recibiste el dinero.':'Elige desde qué cuenta se descontará el pago.');
-  const search=document.createElement('input');search.type='search';search.className='v789-picker-search';search.placeholder=name==='cardId'?'Buscar tarjeta…':'Buscar cuenta…';search.setAttribute('aria-label',search.placeholder);
-  const list=document.createElement('div');list.className='v789-picker-list';const rows=[];
-  for(const o of options){const line=document.createElement('button');line.type='button';line.className='v789-picker-row';line.dataset.value=o.value;
-   const mini=document.createElement('span');const str=o.textContent||'';const mc=/mastercard|qik/i.test(str);mini.className='v789-picker-mini '+(name!=='cardId'?'is-account':mc?'is-master':'');mini.innerHTML=name!=='cardId'?bankSvg:mc?'🔴🟠':'VISA';
-   const txt=document.createElement('span');txt.className='v789-picker-text';const strong=document.createElement('strong');strong.textContent=str;const sub=document.createElement('small');sub.textContent=name==='cardId'?'Tarjeta registrada':'Cuenta registrada';txt.append(strong,sub);
-   const mark=document.createElement('span');mark.className='v789-picker-mark';line.append(mini,txt,mark);rows.push(line);list.appendChild(line);
-   line.addEventListener('click',()=>{selected=o.value;updateRows()});
-  }
-  const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';confirm.textContent=name==='cardId'?'Usar esta tarjeta':'Usar esta cuenta';
-  function updateRows(){for(const row of rows){const yes=row.dataset.value===selected;row.setAttribute('aria-pressed',String(yes));row.lastElementChild.textContent=yes?'✓':''}confirm.disabled=!selected;}
-  function dismiss(){layer.remove();document.removeEventListener('keydown',onKey)}
-  function onKey(e){if(e.key==='Escape'){e.preventDefault();dismiss()}}
-  close.addEventListener('click',dismiss);layer.addEventListener('click',e=>{if(e.target===layer)dismiss()});document.addEventListener('keydown',onKey);
-  confirm.addEventListener('click',()=>{if(!options.some(o=>o.value===selected))return;field.value=selected;field.dispatchEvent(new Event('change',{bubbles:true}));dismiss()});
-  search.addEventListener('input',()=>{const q=search.value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();for(const row of rows){const s=row.querySelector('strong')?.textContent.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()||'';row.hidden=!!q&&!s.includes(q)}});
-  sheet.append(grip,header,intro,search,list,confirm);layer.appendChild(sheet);root.appendChild(layer);updateRows();
+const root=document.getElementById('modal-root');if(!root)return;
+const cardSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>';
+const bankSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 10-6 10 6M3 10h18M5 10v9m4-9v9m6-9v9m4-9v9M2 21h20"/></svg>';
+const cashSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5" width="19" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg>';
+const normalize=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+let active=null;const isDark=()=>document.body.matches('.theme-black,.theme-dark');
+function optionsOf(field){return [...field.options].filter(o=>o.value&&!o.disabled).map(o=>({value:o.value,name:o.textContent.trim(),kind:field.name==='cardId'?'credit':'account'}));}
+function updateTrigger(field){const label=field.closest('label');const value=label?.querySelector('.v789-select-details strong');if(value)value.textContent=field.selectedOptions?.[0]?.textContent.trim()||'Seleccionar';}
+function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form')){
+ for(const name of ['cardId','accountId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement))continue;
+ const label=field.closest('label');if(!label||field.dataset.v789Enhanced==='1')continue;
+ field.dataset.v789Enhanced='1';field.classList.add('v789-native-keep');label.classList.add('v789-select-enhanced');
+ const button=document.createElement('button');button.type='button';button.className='v789-select-open v827-universal-trigger';button.setAttribute('aria-label','Seleccionar '+(name==='cardId'?'tarjeta':'cuenta'));
+ const ico=document.createElement('span');ico.className='v789-select-ico';ico.innerHTML=name==='cardId'?cardSvg:bankSvg;
+ const details=document.createElement('span');details.className='v789-select-details';const strong=document.createElement('strong');const small=document.createElement('small');small.textContent=name==='cardId'?'Tarjeta de crédito':'Cuenta bancaria o efectivo';details.append(strong,small);
+ const arrow=document.createElement('span');arrow.className='v789-select-chevron';arrow.textContent='⌄';button.append(ico,details,arrow);label.append(button);
+ field.addEventListener('change',()=>updateTrigger(field));updateTrigger(field);button.addEventListener('click',()=>open(field));
  }
- function schedule(){if(busy)return;busy=true;requestAnimationFrame(()=>{busy=false;enhance()})}
- new MutationObserver(schedule).observe(root,{childList:true,subtree:true});enhance();
+}}
+function open(field){if(active){active.dismiss();}let selected=field.value;const all=optionsOf(field);const hasCredit=all.some(o=>o.kind==='credit');const hasAccount=all.some(o=>o.kind==='account');
+ const layer=document.createElement('div');layer.className='v789-product-backdrop v827-picker-backdrop';
+ const sheet=document.createElement('section');sheet.className='v789-product-sheet v827-picker-sheet';sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');sheet.setAttribute('aria-label','Seleccionar tarjeta o cuenta');
+ const grip=document.createElement('div');grip.className='v789-sheet-grip';grip.setAttribute('aria-hidden','true');
+ const header=document.createElement('header');header.className='v827-picker-head';const title=document.createElement('h3');title.textContent=field.name==='cardId'?'Seleccionar tarjeta':'Seleccionar cuenta';const close=document.createElement('button');close.type='button';close.className='v789-picker-close';close.setAttribute('aria-label','Cerrar selector');close.textContent='×';header.append(title,close);
+ const search=document.createElement('input');search.type='search';search.className='v789-picker-search';search.placeholder=field.name==='cardId'?'Buscar tarjeta…':'Buscar cuenta…';search.setAttribute('aria-label',search.placeholder);
+ const tabs=document.createElement('div');tabs.className='v827-picker-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Filtrar productos');
+ let filter='all';for(const [key,label] of [['all','Todas'],['credit','Crédito'],['account','Cuentas']]){const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key==='all'));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
+ const list=document.createElement('div');list.className='v789-picker-list';const rows=[];
+ for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini '+(opt.kind==='account'?'is-account':'');ico.innerHTML=opt.kind==='account'?(normalize(opt.name).includes('efectivo')?cashSvg:bankSvg):cardSvg;
+ const content=document.createElement('span');content.className='v789-picker-text';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.kind==='account'?'Cuenta bancaria o efectivo':'Tarjeta de crédito';content.append(strong,small);const mark=document.createElement('span');mark.className='v789-picker-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);list.append(row);rows.push(row);row.addEventListener('click',()=>{selected=opt.value;refresh()});}
+ const empty=document.createElement('p');empty.className='v827-picker-empty';empty.textContent=all.length?'No se encontraron coincidencias.':'No hay productos disponibles para esta operación.';list.append(empty);
+ const actions=document.createElement('div');actions.className='v827-picker-actions';const cancel=document.createElement('button');cancel.type='button';cancel.className='v827-picker-cancel';cancel.textContent='Cancelar';const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';confirm.textContent=field.name==='cardId'?'Usar esta tarjeta':'Usar esta cuenta';actions.append(cancel,confirm);
+ function refresh(){const q=normalize(search.value);let visible=0;for(const row of rows){const match=(filter==='all'||row.dataset.kind===filter)&&(!q||normalize(row.querySelector('strong').textContent).includes(q));row.hidden=!match;if(match)visible++;const yes=row.dataset.value===selected;row.setAttribute('aria-pressed',String(yes));row.querySelector('.v789-picker-mark').textContent=yes?'✓':'›';}empty.hidden=visible>0;confirm.disabled=!selected||!all.some(o=>o.value===selected)}
+ const previous=document.activeElement;function dismiss(){if(!layer.isConnected)return;layer.remove();document.removeEventListener('keydown',keyHandler);active=null;if(previous?.isConnected)previous.focus({preventScroll:true})}
+ function keyHandler(e){if(e.key==='Escape'){e.preventDefault();dismiss()}if(e.key==='Tab'){const focusables=[...sheet.querySelectorAll('button:not([disabled]),input')].filter(x=>!x.hidden);if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}
+ close.onclick=dismiss;cancel.onclick=dismiss;layer.onclick=e=>{if(e.target===layer)dismiss()};search.oninput=refresh;document.addEventListener('keydown',keyHandler);
+ confirm.onclick=()=>{if(!all.some(o=>o.value===selected))return;
+ if(field.name==='cardId'&&field.value!==selected){const form=field.closest('form');if(form?.matches('.other-studio-form[data-special="refund"]')){for(const name of ['originalPurchaseId','amount']){const dep=form.elements.namedItem(name);if(dep){dep.value='';dep.dispatchEvent(new Event(name==='amount'?'input':'change',{bubbles:true}))}}const purchase=form.querySelector('#v388Purchase');if(purchase){purchase.value='';purchase.dataset.initial='';purchase.dispatchEvent(new Event('change',{bubbles:true}))}}}
+ field.value=selected;field.dispatchEvent(new Event('change',{bubbles:true}));dismiss();};
+ sheet.append(grip,header,search,tabs,list,actions);layer.append(sheet);root.append(layer);active={dismiss};refresh();close.focus({preventScroll:true});}
+ let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhance()})};new MutationObserver(schedule).observe(root,{childList:true,subtree:true});enhance();
 })();
 </script>
 <style id="v790-other-faithful-implementation">
@@ -84300,5 +84299,1203 @@ let queued=false;new MutationObserver(()=>{if(queued)return;queued=true;requestA
 mount();
 })();
 </script>
+
+<style id="v816-service-accent-dimensions">
+/* V816 — Solo Pagar servicios: identidad de color, dimensionamiento y legibilidad.
+   El flujo, los nueve tipos, los vencimientos y las confirmaciones quedan intactos. */
+#modal-root .v261-service-dialog{
+  --v261-accent:var(--vive-theme-color,#6d69f1)!important;
+  --v816-accent:var(--vive-theme-color,#6d69f1);
+  --v816-accent-readable:var(--f360-accent-readable,var(--v816-accent));
+  --v816-accent-strong:var(--v424-accent-strong,var(--v816-accent));
+  --v816-wash:color-mix(in srgb,var(--v816-accent) 10%,#ffffff);
+  --v816-wash2:color-mix(in srgb,var(--v816-accent) 6%,#ffffff);
+  --v816-stroke:color-mix(in srgb,var(--v816-accent) 14%,#d5dce9);
+  --v816-ink:#17243b;
+  --v816-muted:#68778e;
+  --v816-paper:rgba(255,255,255,.88);
+  --v816-shadow:0 8px 22px rgba(31,42,80,.045),inset 0 1px 0 rgba(255,255,255,.79);
+  --v261-ink:var(--v816-ink)!important;
+  --v261-muted:var(--v816-muted)!important;
+  --v261-line:var(--v816-stroke)!important;
+  background:radial-gradient(ellipse 90% 44% at 90% -9%,color-mix(in srgb,var(--v816-accent) 14%,transparent),transparent 78%),#f5f6fb!important;
+  background-color:#f5f6fb!important;color:var(--v816-ink)!important;
+  min-width:0!important;min-height:0!important;box-sizing:border-box!important;
+  isolation:isolate!important;
+}
+#modal-root .v261-service-layer{overflow:hidden!important;justify-content:center!important;box-sizing:border-box!important}
+#modal-root .v261-service-layer>.v261-service-dialog{
+  width:min(100%,620px)!important;max-width:620px!important;
+  max-height:min(92dvh,900px)!important;
+  display:flex!important;flex-direction:column!important;overflow:hidden!important;
+}
+#modal-root .v261-service-dialog .v261-dialog-header{
+  position:relative!important;flex-shrink:0!important;z-index:3!important;
+  grid-template-columns:44px minmax(0,1fr) 44px!important;
+  gap:8px!important;align-items:center!important;
+  padding:13px clamp(15px,3.8vw,24px)!important;min-height:80px!important;
+  background:rgba(255,255,255,.82)!important;
+  backdrop-filter:blur(18px) saturate(140%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(140%)!important;
+  border-bottom:1px solid var(--v816-stroke)!important;
+}
+#modal-root .v261-service-dialog .v261-dialog-heading{min-width:0!important;gap:4px!important}
+#modal-root .v261-service-dialog .v261-overline{
+  color:var(--v816-accent-readable)!important;letter-spacing:.13em!important;font-weight:800!important;
+}
+#modal-root .v261-service-dialog .v261-dialog-heading h2{
+  color:var(--v816-ink)!important;font-size:clamp(19px,4.2vw,23px)!important;line-height:1.12!important;
+}
+#modal-root .v261-service-dialog .v261-dialog-heading p{color:var(--v816-muted)!important;font-size:clamp(10px,2.8vw,12px)!important}
+#modal-root .v261-service-dialog .v261-header-close,#modal-root .v261-service-dialog .v261-header-back{
+  position:relative!important;inset:auto!important;transform:none!important;
+  display:grid!important;place-items:center!important;width:44px!important;height:44px!important;
+  min-width:44px!important;min-height:44px!important;padding:0!important;
+  border-radius:50%!important;border:1px solid var(--v816-stroke)!important;
+  background:var(--v816-paper)!important;color:var(--v816-ink)!important;
+  font-size:26px!important;line-height:1!important;z-index:4!important;
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+}
+#modal-root .v261-service-dialog .v261-dialog-scroll{
+  flex:1 1 auto!important;min-height:0!important;min-width:0!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;
+  scrollbar-gutter:stable!important;padding:12px clamp(14px,4vw,22px) 16px!important;
+}
+#modal-root .v261-service-dialog .v261-intro{gap:5px!important;padding:8px 1px 15px!important}
+#modal-root .v261-service-dialog .v261-intro h3{
+  font-size:clamp(22px,5.1vw,28px)!important;line-height:1.15!important;
+  margin:8px 0 0!important;color:var(--v816-ink)!important;
+}
+#modal-root .v261-service-dialog .v261-intro p{color:var(--v816-muted)!important;font-size:clamp(11px,2.9vw,13px)!important;line-height:1.45!important}
+#modal-root .v261-service-dialog .v261-hero-icon{
+  width:42px!important;height:42px!important;border-radius:15px!important;
+  color:var(--v816-accent-readable)!important;background:var(--v816-wash)!important;
+}
+#modal-root .v261-service-dialog .v261-group{
+  min-width:0!important;max-width:100%!important;margin-bottom:12px!important;
+  padding:clamp(12px,3.5vw,18px)!important;border-radius:22px!important;
+  background:var(--v816-paper)!important;border:1px solid var(--v816-stroke)!important;
+  box-shadow:var(--v816-shadow)!important;
+}
+#modal-root .v261-service-dialog .v261-group-head{min-width:0!important;gap:10px!important;margin-bottom:12px!important}
+#modal-root .v261-service-dialog :is(.v261-group-head h3,.v261-related h3){
+  color:var(--v816-ink)!important;font-size:clamp(15px,4vw,18px)!important;
+}
+#modal-root .v261-service-dialog .v261-group-head small{color:var(--v816-muted)!important;font-size:11px!important}
+#modal-root .v261-service-dialog .v261-number{
+  background:var(--v816-wash)!important;color:var(--v816-accent-readable)!important;
+  min-width:32px!important;min-height:32px!important;border-radius:11px!important;
+}
+#modal-root .v261-service-dialog .v261-category-grid{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:clamp(7px,2vw,11px)!important;min-width:0!important;
+}
+#modal-root .v261-service-dialog .v261-service-tile{
+  min-height:clamp(84px,21vw,104px)!important;min-width:0!important;
+  padding:10px 5px!important;gap:7px!important;border-radius:18px!important;
+  border:1px solid var(--v816-stroke)!important;
+  color:var(--v816-ink)!important;background:rgba(249,250,255,.9)!important;
+  transition:background .15s,border-color .15s,transform .15s!important;
+}
+#modal-root .v261-service-dialog .v261-service-tile:hover,
+#modal-root .v261-service-dialog .v261-service-tile:focus-visible{
+  border-color:color-mix(in srgb,var(--v816-accent) 55%,#d5dce9)!important;
+  background:var(--v816-wash2)!important;
+}
+#modal-root .v261-service-dialog .v261-service-tile:active{transform:scale(.98)}
+#modal-root .v261-service-dialog .v261-service-tile>span{
+  width:40px!important;height:40px!important;color:var(--v816-accent-readable)!important;
+  background:var(--v816-wash)!important;
+}
+#modal-root .v261-service-dialog .v261-service-tile strong{
+  color:var(--v816-ink)!important;font-size:clamp(10px,2.9vw,12px)!important;
+  line-height:1.25!important;overflow-wrap:anywhere!important;
+}
+#modal-root .v261-service-dialog .v261-bill-list{min-width:0!important;gap:9px!important}
+#modal-root .v261-service-dialog .v261-bill-row{
+  padding:11px!important;min-width:0!important;min-height:73px!important;
+  border:1px solid var(--v816-stroke)!important;border-radius:17px!important;
+  background:rgba(252,253,255,.9)!important;color:var(--v816-ink)!important;
+}
+#modal-root .v261-service-dialog .v261-bill-row:hover{
+  background:var(--v816-wash2)!important;border-color:color-mix(in srgb,var(--v816-accent) 42%,#d9deea)!important;
+}
+#modal-root .v261-service-dialog .v261-bill-symbol{
+  background:var(--v816-wash)!important;border-radius:13px!important;overflow:hidden!important;
+}
+#modal-root .v261-service-dialog .v261-bill-text{min-width:0!important}
+#modal-root .v261-service-dialog .v261-bill-text strong{
+  color:var(--v816-ink)!important;font-size:clamp(11px,3vw,13px)!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;
+}
+#modal-root .v261-service-dialog .v261-bill-text small{color:var(--v816-muted)!important;line-height:1.35!important}
+#modal-root .v261-service-dialog .v261-bill-money strong{
+  color:var(--v816-ink)!important;font-size:clamp(11px,3vw,13px)!important;
+}
+#modal-root .v261-service-dialog .v261-bill-money span{
+  color:var(--v816-accent-readable)!important;font-size:10px!important;
+}
+#modal-root .v261-service-dialog .v261-none{color:var(--v816-muted)!important}
+#modal-root .v261-service-dialog .v261-none strong{color:var(--v816-ink)!important}
+#modal-root .v261-service-dialog .v261-related>div{gap:9px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#modal-root .v261-service-dialog .v261-related button{
+  background:var(--v816-paper)!important;border:1px solid var(--v816-stroke)!important;
+  color:var(--v816-accent-readable)!important;min-width:0!important;border-radius:17px!important;
+}
+#modal-root .v261-service-dialog .v261-dialog-footer{
+  position:relative!important;z-index:4!important;flex-shrink:0!important;
+  display:grid!important;gap:8px!important;
+  padding:12px clamp(14px,4vw,22px) calc(12px + env(safe-area-inset-bottom,0px))!important;
+  border-top:1px solid var(--v816-stroke)!important;
+  background:rgba(250,251,255,.96)!important;
+  backdrop-filter:blur(15px)!important;-webkit-backdrop-filter:blur(15px)!important;
+}
+#modal-root .v261-service-dialog .v261-dialog-footer p{
+  color:var(--v816-muted)!important;font-size:clamp(10px,2.7vw,11px)!important;
+  line-height:1.3!important;margin:0!important;overflow-wrap:anywhere!important;
+}
+#modal-root .v261-service-dialog .v261-primary{
+  width:100%!important;min-height:56px!important;border-radius:999px!important;
+  background:linear-gradient(115deg,color-mix(in srgb,var(--v816-accent-strong) 72%,white),var(--v816-accent-strong))!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  border:1px solid color-mix(in srgb,var(--v816-accent-strong) 63%,white)!important;
+  box-shadow:0 7px 20px color-mix(in srgb,var(--v816-accent) 22%,transparent)!important;
+  font-size:clamp(13px,3.4vw,16px)!important;white-space:normal!important;text-align:center!important;
+}
+#modal-root .v261-service-dialog .v261-secondary{color:var(--v816-accent-readable)!important}
+#modal-root .v261-service-dialog .v261-header-close:focus-visible,
+#modal-root .v261-service-dialog .v261-header-back:focus-visible,
+#modal-root .v261-service-dialog .v261-service-tile:focus-visible,
+#modal-root .v261-service-dialog .v261-bill-row:focus-visible,
+#modal-root .v261-service-dialog .v261-primary:focus-visible{
+  outline:3px solid var(--v816-accent)!important;outline-offset:2px!important;
+}
+/* Vista de factura individual: misma identidad, mismos datos. */
+#modal-root .v261-service-dialog .v261-detail-identity h3,
+#modal-root .v261-service-dialog .v261-facts b{color:var(--v816-ink)!important}
+#modal-root .v261-service-dialog .v261-detail-identity p,
+#modal-root .v261-service-dialog .v261-facts span,
+#modal-root .v261-service-dialog .v261-detail-note{color:var(--v816-muted)!important}
+#modal-root .v261-service-dialog .v261-detail-symbol{background:var(--v816-wash)!important}
+#modal-root .v261-service-dialog .v261-facts{background:var(--v816-paper)!important;border-color:var(--v816-stroke)!important}
+#modal-root .v261-service-dialog .v261-facts>div{border-color:var(--v816-stroke)!important}
+/* El segundo paso conserva el formulario nativo y el selector v789. */
+#modal-root .studio-form[data-mode="service"] .v261-service-brand{
+  background:linear-gradient(120deg,var(--v424-accent-soft,#ece9ff),#fff)!important;
+  border-color:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 20%,#d5dce9)!important;
+}
+#modal-root .studio-form[data-mode="service"] .v261-service-brand-icon,
+#modal-root .studio-form[data-mode="service"] .v260-preset-icon{
+  background:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 12%,#fff)!important;
+  color:var(--f360-accent-readable,var(--vive-theme-color,#6d69f1))!important;
+}
+#modal-root .studio-form[data-mode="service"] .v260-preset.selected,
+#modal-root .studio-form[data-mode="service"] .v260-method-grid button.selected{
+  background:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 11%,#fff)!important;
+  border-color:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 49%,#d5dce9)!important;
+  color:var(--f360-accent-readable,var(--vive-theme-color,#6d69f1))!important;
+}
+/* Black oscuro: OLED, superficies diferenciadas y acento dinámico legible. */
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog{
+  --v816-wash:color-mix(in srgb,var(--v816-accent) 22%,#16161b);
+  --v816-wash2:color-mix(in srgb,var(--v816-accent) 10%,#17171b);
+  --v816-stroke:#3b3c46;
+  --v816-ink:#f8f9ff;--v816-muted:#b5bbce;
+  --v816-paper:#17171b;
+  --v816-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+  --v261-ink:#f8f9ff!important;--v261-muted:#b5bbce!important;
+  --v261-line:#3b3c46!important;
+  background:#000!important;background-image:none!important;color:#f8f9ff!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-dialog-header,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-dialog-footer{
+  background:#0b0b0e!important;border-color:#303038!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-header-close,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-header-back{
+  background:#222227!important;color:#fff!important;border-color:#45454c!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-group,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-service-tile,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-bill-row,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-related button,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-facts{
+  background:#17171b!important;border-color:#383840!important;color:#f7f7fb!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-group h3,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-intro h3,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-dialog-heading h2,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-bill-text strong,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-bill-money strong,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-facts b{
+  color:#f8f9ff!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-service-tile>span,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-hero-icon{
+  background:var(--v816-wash)!important;color:var(--v816-accent-readable)!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-bill-symbol{background:#272731!important}
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-group-head small,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-dialog-heading p,
+body:is(.theme-black,.theme-dark) #modal-root .v261-service-dialog .v261-bill-text small{
+  color:#b5bbce!important;
+}
+/* Responsividad: cuerpo desplazable, encabezado y pie siempre visibles. */
+@media(max-width:790px){
+ #modal-root .v261-service-layer{padding:0!important;align-items:flex-end!important}
+ #modal-root .v261-service-layer>.v261-service-dialog{
+   height:calc(100dvh - max(44px,env(safe-area-inset-top,0px) + 8px))!important;
+   max-height:calc(100dvh - max(44px,env(safe-area-inset-top,0px) + 8px))!important;
+   width:100%!important;max-width:620px!important;margin:0 auto!important;
+   border-radius:27px 27px 0 0!important;
+ }
+ #modal-root .v261-service-dialog .v261-dialog-header{
+   min-height:77px!important;padding:12px clamp(12px,4vw,20px)!important;
+ }
+ #modal-root .v261-service-dialog .v261-dialog-scroll{
+   padding:11px clamp(12px,4vw,20px) 13px!important;
+   scrollbar-gutter:auto!important;
+ }
+ #modal-root .v261-service-dialog .v261-intro{padding:7px 2px 14px!important}
+ #modal-root .v261-service-dialog .v261-category-grid{gap:8px!important}
+ #modal-root .v261-service-dialog .v261-service-tile{min-height:90px!important}
+ #modal-root .v261-service-dialog .v261-dialog-footer{
+   padding:10px clamp(12px,4vw,20px) calc(12px + env(safe-area-inset-bottom,0px))!important;
+ }
+}
+@media(max-width:360px){
+ #modal-root .v261-service-dialog .v261-category-grid{gap:6px!important}
+ #modal-root .v261-service-dialog .v261-service-tile{min-height:84px!important;padding:8px 3px!important}
+ #modal-root .v261-service-dialog .v261-service-tile>span{width:36px!important;height:36px!important}
+ #modal-root .v261-service-dialog .v261-bill-row{gap:7px!important;padding:9px 7px!important}
+ #modal-root .v261-service-dialog .v261-bill-symbol{width:34px!important;height:34px!important;flex-basis:34px!important}
+ #modal-root .v261-service-dialog .v261-bill-money strong{font-size:11px!important}
+}
+@media(max-height:680px){
+ #modal-root .v261-service-dialog .v261-dialog-header{min-height:66px!important;padding-block:8px!important}
+ #modal-root .v261-service-dialog .v261-dialog-footer{gap:4px!important;padding-top:8px!important}
+ #modal-root .v261-service-dialog .v261-intro{padding-bottom:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #modal-root .v261-service-dialog .v261-service-tile{transition:none!important}
+}
+</style>
+
+<!-- V817 · DIMENSIONAMIENTO REAL Y COHERENCIA CLARO/BLACK EN PAGO TARJETA + MOVIMIENTO RÁPIDO -->
+<style id="v817-compact-flow-system">
+/* Only these two flows: no modification to money calculations, database access or persistence. */
+#modal-root .v354-dialog:has(.v355-fast-form),
+#modal-root .v354-dialog:has(.v355-review-hero),
+#modal-root .studio-form[data-mode="cardpay"]{
+ --v815-accent:var(--vive-theme-color,var(--v801-accent,var(--accent,#6866f3)));
+ --v815-bg:#f5f6fb;--v815-surface:rgba(255,255,255,.84);
+ --v815-soft:rgba(244,246,254,.92);--v815-text:#17243b;--v815-muted:#64748c;
+ --v815-border:#d6ddec;--v815-glow:color-mix(in srgb,var(--v815-accent) 16%,transparent);
+ --t-bg:var(--v815-bg);--t-surface:var(--v815-surface);--t-input:var(--v815-surface);
+ --t-line:var(--v815-border);--t-ink:var(--v815-text);--t-muted:var(--v815-muted);
+ --pay-bg:var(--v815-bg);--pay-tile:var(--v815-surface);--pay-ink:var(--v815-text);
+ --pay-muted:var(--v815-muted);--pay-stroke:var(--v815-border);--pay-accent:var(--v815-accent);
+ color:var(--v815-text)!important;color-scheme:light!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog:has(.v355-fast-form),
+body:is(.theme-black,.theme-dark) #modal-root .v354-dialog:has(.v355-review-hero),
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"]{
+ --v815-bg:#000;--v815-surface:#19191e;--v815-soft:#232329;
+ --v815-text:#fbfbfd;--v815-muted:#b4bac9;--v815-border:#42434c;
+ --t-bg:#000;--t-surface:#19191e;--t-input:#232329;
+ --t-line:#42434c;--t-ink:#fbfbfd;--t-muted:#b4bac9;
+ --pay-bg:#000;--pay-tile:#19191e;--pay-ink:#fbfbfd;
+ --pay-muted:#b4bac9;--pay-stroke:#42434c;
+ color-scheme:dark!important;
+}
+/* Rápido: condensar el mismo contenido y sus campos, sin quitar cálculos ni avisos. */
+#modal-root .v354-dialog:has(.v355-fast-form) .v354-top,
+#modal-root .v354-dialog:has(.v355-review-hero) .v354-top{
+ min-height:50px!important;padding:calc(8px + env(safe-area-inset-top,0px)) clamp(12px,4vw,22px) 5px!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v354-top h2{font-size:clamp(20px,5.5vw,26px)!important;line-height:1.06!important}
+#modal-root .v354-dialog:has(.v355-fast-form) .v354-scroll,
+#modal-root .v354-dialog:has(.v355-review-hero) .v354-scroll{
+ padding:4px clamp(13px,4vw,22px) 7px!important;scrollbar-width:none!important;
+}
+#modal-root .v354-dialog .v354-scroll::-webkit-scrollbar{display:none}
+#modal-root .v354-dialog .v354-progress{
+ min-height:39px!important;max-height:42px!important;margin:0 0 7px!important;
+ padding:6px 12px!important;border-radius:16px!important;
+}
+#modal-root .v354-dialog .v354-progress small{font-size:clamp(9px,2.6vw,12px)!important}
+#modal-root .v354-dialog .v354-progress strong{font-size:clamp(12px,3.2vw,15px)!important}
+#modal-root .v354-dialog:has(.v355-fast-form) .v815-quick-art{
+ height:clamp(51px,8.1dvh,84px)!important;margin:0 auto 1px!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-intro{
+ margin:0 0 8px!important;gap:1px!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-intro strong{
+ font-size:clamp(22px,5.7vw,29px)!important;line-height:1.06!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-intro span{
+ font-size:clamp(11px,3vw,13px)!important;line-height:1.28!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-fast-form{gap:7px!important}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-fast-form label{
+ font-size:clamp(11px,2.95vw,13px)!important;font-weight:750!important;gap:4px!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-fast-form :is(input,select),
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-fast-form .v789-select-open{
+ min-height:44px!important;height:44px!important;padding:8px 12px!important;
+ border-radius:15px!important;font-size:clamp(12px,3.4vw,15px)!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-sums{gap:8px!important}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-result{
+ min-height:41px!important;padding:8px 11px!important;border-radius:16px!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-result span{font-size:11px!important}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-result strong{font-size:clamp(13px,3.4vw,16px)!important}
+#modal-root .v354-dialog:has(.v355-fast-form) .v356-tax-indicator{
+ border-radius:15px!important;padding:8px 11px!important;min-height:42px!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v356-tax-indicator>div{
+ display:flex!important;justify-content:space-between!important;align-items:center!important;gap:8px!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v356-tax-indicator :is(span,strong){font-size:clamp(10px,2.85vw,12px)!important}
+#modal-root .v354-dialog:has(.v355-fast-form) .v356-tax-indicator small{
+ font-size:clamp(9px,2.35vw,10px)!important;line-height:1.2!important;margin-top:2px!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-compact-note{
+ border-radius:14px!important;padding:7px 11px!important;font-size:clamp(10px,2.65vw,11px)!important;
+ line-height:1.26!important;min-height:0!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-extra{
+ border-radius:15px!important;min-height:0!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-extra>summary{
+ min-height:40px!important;padding:8px 12px!important;line-height:1.25!important;
+ font-size:clamp(10px,2.9vw,13px)!important;
+}
+#modal-root .v354-dialog:has(.v355-fast-form) .v355-extra-fields{padding:6px 10px 11px!important;gap:7px!important}
+#modal-root .v354-dialog .v354-foot{
+ padding:8px clamp(13px,4vw,22px) calc(8px + env(safe-area-inset-bottom,0px))!important;
+ gap:8px!important;
+}
+#modal-root .v354-dialog .v354-foot button{
+ min-height:49px!important;border-radius:17px!important;font-size:clamp(12px,3.4vw,15px)!important;
+}
+/* Tarjeta: una sola superficie de cristal claro; no contenedores negros en tema Claro. */
+#modal-root .modal:has(.studio-form[data-mode="cardpay"]){background:#f5f6fb!important}
+body:is(.theme-black,.theme-dark) #modal-root .modal:has(.studio-form[data-mode="cardpay"]){background:#000!important}
+#modal-root .studio-form[data-mode="cardpay"] :is(.studio-shell,.studio-main,.studio-panels){
+ background:transparent!important;color:var(--v815-text)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-main{
+ padding:calc(9px + env(safe-area-inset-top,0px)) clamp(13px,4vw,24px) calc(8px + env(safe-area-inset-bottom,0px))!important;
+ overflow:hidden!important;gap:0!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-topline{
+ min-height:43px!important;margin:0 0 1px!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-close{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important}
+#modal-root .studio-form[data-mode="cardpay"] .studio-active-title{
+ display:block!important;visibility:visible!important;position:relative!important;
+ font-size:clamp(24px,6.5vw,31px)!important;line-height:1.08!important;
+ margin:0 0 3px!important;order:0!important;min-height:0!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .v815-card-art{
+ height:clamp(75px,11.2dvh,115px)!important;margin:1px 0 3px!important;order:1!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-active-subtitle{
+ font-size:clamp(11px,2.95vw,13px)!important;line-height:1.25!important;
+ margin:0 0 6px!important;order:2!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-panels{
+ order:3!important;overflow-x:hidden!important;overflow-y:auto!important;
+ scrollbar-width:none!important;padding:0 0 5px!important;overscroll-behavior:contain!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-panels::-webkit-scrollbar{display:none}
+#modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields{
+ gap:7px!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>label:not(.flow-segment-option),
+#modal-root .studio-form[data-mode="cardpay"] .v802-advanced-body>label{
+ min-height:0!important;padding:9px 12px!important;gap:3px!important;
+ border:1px solid var(--v815-border)!important;border-radius:17px!important;
+ background:var(--v815-surface)!important;box-shadow:var(--v815-drop)!important;
+ color:var(--v815-text)!important;-webkit-text-fill-color:var(--v815-text)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>label:not(.flow-segment-option) :is(input,select,button,span,strong,small),
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open :is(span,strong,small){
+ color:var(--v815-text)!important;-webkit-text-fill-color:var(--v815-text)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .filter-label,
+#modal-root .studio-form[data-mode="cardpay"] .v789-select-open .v789-select-details small{
+ color:var(--v815-muted)!important;-webkit-text-fill-color:var(--v815-muted)!important;
+ font-size:clamp(10px,2.6vw,12px)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .v789-select-open,
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .v789-select-trigger{
+ min-height:43px!important;height:auto!important;max-width:100%!important;
+ padding:2px 0!important;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields .v789-select-open .v789-select-ico{
+ background:color-mix(in srgb,var(--v815-accent) 15%,var(--v815-soft))!important;
+ color:var(--v815-accent)!important;-webkit-text-fill-color:var(--v815-accent)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .v802-pay-title{
+ font-size:clamp(13px,3.6vw,17px)!important;line-height:1.2!important;
+ min-height:22px!important;padding:0 2px!important;color:var(--v815-text)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"]{
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{
+ min-height:76px!important;max-height:87px!important;height:auto!important;gap:4px!important;
+ padding:7px 3px!important;border-radius:17px!important;
+ background:var(--v815-surface)!important;color:var(--v815-text)!important;
+ border:1px solid var(--v815-border)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface:before{font-size:19px!important}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface strong{
+ color:var(--v815-text)!important;-webkit-text-fill-color:var(--v815-text)!important;
+ font-size:clamp(10px,2.75vw,13px)!important;line-height:1.14!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface small{
+ color:var(--v815-muted)!important;-webkit-text-fill-color:var(--v815-muted)!important;font-size:clamp(9px,2.4vw,10px)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-option>input:checked+.flow-segment-surface,
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-option>input:checked~.flow-segment-surface{
+ background:linear-gradient(145deg,color-mix(in srgb,var(--v815-accent) 88%,white),var(--v815-accent))!important;
+ color:#fff!important;border-color:var(--v815-accent)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-option>input:checked+.flow-segment-surface :is(strong,small),
+#modal-root .studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-option>input:checked~.flow-segment-surface :is(strong,small){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-fields label:has([name="amount"]) .field{
+ font-size:clamp(17px,4.4vw,22px)!important;line-height:1.25!important;
+ min-height:35px!important;padding:3px 0!important;
+ color:var(--v815-accent)!important;-webkit-text-fill-color:var(--v815-accent)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] #cardPaymentPreview{
+ padding:6px 10px!important;min-height:0!important;max-height:60px!important;
+ overflow:hidden!important;color:var(--v815-text)!important;
+ background:var(--v815-surface)!important;border-color:var(--v815-border)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-navigation,
+#modal-root .studio-form[data-mode="cardpay"] .form-foot{
+ position:relative!important;bottom:auto!important;padding:7px 0 0!important;
+ flex:0 0 auto!important;margin:0!important;min-height:0!important;
+ background:transparent!important;border:0!important;order:4!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .studio-navigation [data-studio-next],
+#modal-root .studio-form[data-mode="cardpay"] .form-foot button[type="submit"]{
+ min-height:49px!important;border-radius:17px!important;font-size:clamp(12px,3.5vw,15px)!important;
+}
+/* V802 had nested V134 panels. Move ONE native set of controls into compact header popover. */
+#modal-root .studio-form[data-mode="cardpay"] .studio-top-actions{
+ position:relative!important;z-index:19!important;gap:6px!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .v802-advanced.v817-header-adjustments{
+ position:static!important;z-index:21!important;flex:0 0 37px!important;
+ width:37px!important;max-width:37px!important;margin:0!important;
+ padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;overflow:visible!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .v817-header-adjustments>summary{
+ display:grid!important;place-items:center!important;width:37px!important;height:37px!important;
+ min-width:37px!important;min-height:37px!important;padding:0!important;
+ border-radius:50%!important;background:var(--v815-surface)!important;
+ border:1px solid var(--v815-border)!important;color:var(--v815-text)!important;
+ font-size:23px!important;font-weight:800!important;letter-spacing:2px!important;
+ list-style:none!important;cursor:pointer!important;box-shadow:var(--v815-drop)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .v817-header-adjustments>summary::after{display:none!important;content:none!important}
+#modal-root .studio-form[data-mode="cardpay"] .v817-header-adjustments>summary::-webkit-details-marker{display:none}
+#modal-root .studio-form[data-mode="cardpay"] .v817-header-adjustments>.v802-advanced-body{
+ position:absolute!important;right:0!important;top:44px!important;
+ width:min(318px,calc(100vw - 24px))!important;max-height:65dvh!important;overflow:auto!important;
+ display:flex!important;flex-direction:column!important;gap:7px!important;
+ padding:12px!important;border:1px solid var(--v815-border)!important;
+ border-radius:19px!important;background:var(--v815-bg)!important;
+ box-shadow:0 16px 46px rgba(23,33,63,.2)!important;color:var(--v815-text)!important;
+}
+#modal-root .studio-form[data-mode="cardpay"] .v817-header-adjustments:not([open])>.v802-advanced-body{display:none!important}
+#modal-root .studio-form[data-mode="cardpay"] .v817-header-adjustments .v134-more{display:contents!important}
+#modal-root .studio-form[data-mode="cardpay"] .v817-header-adjustments .v134-more>summary{display:none!important}
+body:is(.theme-black,.theme-dark) #modal-root .studio-form[data-mode="cardpay"] .v817-header-adjustments>.v802-advanced-body{
+ background:#19191e!important;border-color:#42434c!important;color:#fff!important;
+}
+/* In short viewports, preserve accessibility with a single inner scroll fallback instead of cropping input fields. */
+@media(max-width:430px){
+ #modal-root .v354-dialog:has(.v355-fast-form) .v354-top h2{font-size:23px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-active-title{font-size:27px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .v815-card-art{height:clamp(63px,9dvh,82px)!important}
+}
+@media(max-height:710px){
+ #modal-root .v354-dialog:has(.v355-fast-form) .v815-quick-art{height:43px!important}
+ #modal-root .v354-dialog:has(.v355-fast-form) .v355-intro strong{font-size:22px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .v815-card-art{height:55px!important}
+ #modal-root .studio-form[data-mode="cardpay"] .studio-active-subtitle{margin-bottom:3px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #modal-root .studio-form[data-mode="cardpay"] *,#modal-root .v354-dialog:has(.v355-fast-form) *{scroll-behavior:auto!important}
+}
+</style>
+<script id="v820-remove-dots-restore-fields">
+(()=>{'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ let busy=false;
+ function fix(){
+  const form=root.querySelector('form.studio-form[data-mode="cardpay"]');
+  if(!form)return;
+  const advanced=form.querySelector('.v802-advanced');
+  if(!advanced)return;
+  const fields=form.querySelector('.studio-step[data-step="1"] > .studio-fields');
+  if(!fields)return;
+  // Restore existing financial settings inputs into the form, rather than a toolbar popover.
+  if(advanced.parentElement!==fields){fields.appendChild(advanced);}
+  advanced.classList.remove('v817-header-adjustments');
+  const summary=advanced.querySelector(':scope > summary');
+  if(summary){summary.textContent='Fecha y opciones adicionales';summary.removeAttribute('aria-label');summary.removeAttribute('title');}
+  const body=advanced.querySelector('.v802-advanced-body');
+  if(body){for(const nested of [...body.querySelectorAll('details.v134-more')]){
+    const inner=nested.querySelector('.v134-more-body');
+    if(inner)while(inner.firstChild)nested.before(inner.firstChild);
+    nested.remove();
+  }}
+  form.dataset.v817Ready='1';
+ }
+ new MutationObserver(()=>{if(busy)return;busy=true;requestAnimationFrame(()=>{busy=false;fix();});}).observe(root,{childList:true,subtree:true});
+ fix();
+})();
+</script>
+
+<!-- V818 · Final proportional fixes for card payment title, selected state and selector heights -->
+<style id="v818-final-visible-composition">
+/* Restore the genuine native title and subtitle, previously collapsed by a legacy stylesheet. */
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main>.studio-active-title,
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main>.studio-active-subtitle{
+ height:auto!important;max-height:none!important;min-height:0!important;
+ overflow:visible!important;visibility:visible!important;opacity:1!important;
+ padding:0!important;position:relative!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main>.studio-active-title{
+ line-height:1.08!important;margin:0 0 2px!important;font-size:clamp(24px,6.4vw,29px)!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main>.studio-active-subtitle{
+ line-height:1.27!important;margin:0 0 5px!important;font-size:clamp(10px,2.85vw,12px)!important;
+}
+/* Stop the live shared selectors from expanding beyond their informative content. */
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>label.v789-select-enhanced{
+ height:auto!important;min-height:72px!important;max-height:83px!important;
+ overflow:hidden!important;padding:6px 11px!important;gap:2px!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] label.v789-select-enhanced .v789-select-open,
+html body #modal-root form.studio-form[data-mode="cardpay"] label.v789-select-enhanced .v789-select-trigger{
+ min-height:39px!important;height:43px!important;max-height:45px!important;
+ margin:0!important;padding:1px 0!important;gap:9px!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] label.v789-select-enhanced .v789-select-details{
+ min-width:0!important;max-height:43px!important;overflow:hidden!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] label.v789-select-enhanced .v789-select-details strong{
+ display:block!important;font-size:clamp(12px,3.5vw,15px)!important;line-height:1.25!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] label.v789-select-enhanced .v789-select-details small{
+ display:block!important;font-size:10px!important;line-height:1.22!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v815-card-art{
+ height:clamp(52px,8dvh,78px)!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields{gap:6px!important}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-fields .filter-label{
+ font-size:clamp(10px,2.6vw,11px)!important;line-height:1.2!important;
+}
+/* Accessible selected state with the actual personalized accent, never amber/grey in Claro. */
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-fields .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface{
+ background:linear-gradient(125deg,color-mix(in srgb,var(--v815-accent) 76%,white),var(--v815-accent))!important;
+ background-image:linear-gradient(125deg,color-mix(in srgb,var(--v815-accent) 76%,white),var(--v815-accent))!important;
+ border:1px solid var(--v815-accent)!important;color:#fff!important;
+ box-shadow:0 7px 19px var(--v815-glow)!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-fields .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface :is(strong,small){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-fields .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface::before{color:#fff!important}
+/* Correct remaining legacy background overrides only within payment surfaces. */
+html body:not(.theme-dark):not(.theme-black) #modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>label:not(.flow-segment-option),
+html body:not(.theme-dark):not(.theme-black) #modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment-surface{
+ background-color:rgba(255,255,255,.83)!important;color:#17243b!important;
+}
+html body:not(.theme-dark):not(.theme-black) #modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment-option:has(input:checked) .flow-segment-surface{
+ background-color:var(--v815-accent)!important;
+}
+/* Keep the real subtitle; the original flow hid it in mobile mode. */
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main>.studio-active-subtitle{
+ display:block!important;opacity:1!important;visibility:visible!important;
+ height:auto!important;overflow:visible!important;max-width:100%!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v815-card-art{
+ height:clamp(44px,6dvh,56px)!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{
+ min-height:72px!important;max-height:78px!important;
+}
+/* Desktop-like premium hero proportion on a phone: card illustration on the right,
+   explanatory text on the left, sharing one vertical band without duplicate sections. */
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main{position:relative!important}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v815-card-art{
+ width:55%!important;max-width:55%!important;align-self:flex-end!important;
+ justify-content:center!important;height:clamp(68px,9.3dvh,88px)!important;
+ margin:0 0 2px!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main>.studio-active-subtitle{
+ position:absolute!important;left:clamp(13px,4vw,24px)!important;
+ top:calc(96px + env(safe-area-inset-top,0px))!important;
+ width:42%!important;max-width:42%!important;font-size:clamp(11px,2.9vw,13px)!important;
+ line-height:1.38!important;margin:0!important;
+}
+/* Stronger yet user-defined accent in the selected payment option. */
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-fields .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface{
+ background-image:linear-gradient(125deg,color-mix(in srgb,var(--v815-accent) 91%,#18203e),color-mix(in srgb,var(--v815-accent) 74%,#141933))!important;
+ border-color:color-mix(in srgb,var(--v815-accent) 83%,#141933)!important;
+}
+/* Keep the personalized action accent in Black oscuro too: no inactive-looking black primary. */
+html body:is(.theme-black,.theme-dark) #modal-root form.studio-form[data-mode="cardpay"] .studio-navigation button[data-studio-next]:not(:disabled),
+html body:is(.theme-black,.theme-dark) #modal-root form.studio-form[data-mode="cardpay"] .form-foot button[type="submit"]:not(:disabled){
+ background:linear-gradient(125deg,color-mix(in srgb,var(--v815-accent) 85%,#c4bbff),var(--v815-accent))!important;
+ background-image:linear-gradient(125deg,color-mix(in srgb,var(--v815-accent) 85%,#c4bbff),var(--v815-accent))!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ border-color:color-mix(in srgb,var(--v815-accent) 70%,white)!important;
+}
+/* In compact mode the native keyboard can require scrolling: only the panel scrolls, the actions stay visible. */
+@media (max-width:430px){
+ html body #modal-root form.studio-form[data-mode="cardpay"] .studio-panels{padding-bottom:2px!important}
+ html body #modal-root form.studio-form[data-mode="cardpay"] .studio-navigation{padding-top:4px!important}
+}
+</style>
+
+<!-- V822: Audited single source of truth for Pagar tarjeta. Always white in either global theme. -->
+<style id="v822-cardpay-canonical-white">
+/* IMPORTANT: applies ONLY to Pagar tarjeta; no financial methods or callbacks change. */
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]{
+  --v815-text:#17243b!important;--v815-muted:#62718a!important;
+  --v815-surface:#ffffff!important;--v815-border:#d6ddec!important;
+  --pay-ink:#17243b!important;--pay-tile:#ffffff!important;
+  --pay-muted:#62718a!important;--pay-stroke:#d6ddec!important;
+  color-scheme:light!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] :is(.studio-main,.studio-panels,.studio-step,.studio-fields){
+  color-scheme:light!important;
+}
+/* Override the legacy background-image gradients rather than background-color alone. */
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] > .studio-fields > label:not(.flow-segment-option),
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .studio-fields > label.v789-select-enhanced,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .v789-select-enhanced,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] #cardPaymentPreview,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced:not(.v817-header-adjustments),
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced-body > label,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"]{
+  background:#fff!important;background-color:#fff!important;background-image:none!important;
+  color:#17243b!important;-webkit-text-fill-color:#17243b!important;
+  border-color:#d6ddec!important;box-shadow:0 5px 18px rgba(35,45,80,.045)!important;
+}
+/* Same rules with increased specificity when theme styles are active on body. */
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] > .studio-fields > label:not(.flow-segment-option),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .v789-select-enhanced,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] #cardPaymentPreview,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced:not(.v817-header-adjustments),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced-body > label{
+  background:#fff!important;background-image:none!important;background-color:#fff!important;
+  color:#17243b!important;-webkit-text-fill-color:#17243b!important;border-color:#d6ddec!important;
+}
+/* Actual shared component: card/account trigger and text. */
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced .v789-select-open,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced .v789-select-trigger,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced .v789-select-open{
+  background:transparent!important;background-image:none!important;border:0!important;
+  box-shadow:none!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced :is(.v789-select-details,.v789-select-details strong,.v789-select-open strong,.v789-select-open span,.v789-select-chevron),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced :is(.v789-select-details,.v789-select-details strong,.v789-select-open strong,.v789-select-open span,.v789-select-chevron){
+  color:#17243b!important;-webkit-text-fill-color:#17243b!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] :is(.filter-label,.v789-select-details small,.studio-fields small),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] :is(.filter-label,.v789-select-details small,.studio-fields small){
+  color:#62718a!important;-webkit-text-fill-color:#62718a!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .v789-select-ico{
+  background:color-mix(in srgb,var(--v815-accent) 14%,white)!important;
+  color:var(--v815-accent)!important;-webkit-text-fill-color:var(--v815-accent)!important;
+}
+/* Payment option tiles: white until selected; preserve the chosen accent. */
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"]{
+  background:transparent!important;background-image:none!important;box-shadow:none!important;border:0!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{
+  background:#fff!important;background-image:none!important;color:#17243b!important;
+  -webkit-text-fill-color:#17243b!important;border-color:#d6ddec!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface :is(strong,small){color:#17243b!important;-webkit-text-fill-color:#17243b!important;}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--v815-accent) 85%,white),var(--v815-accent))!important;
+  background-image:linear-gradient(135deg,color-mix(in srgb,var(--v815-accent) 85%,white),var(--v815-accent))!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:var(--v815-accent)!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface :is(strong,small,span){
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+/* Native fields and option panel are light in all themes. */
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .studio-fields :is(input:not([type="radio"]),select,textarea),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .studio-fields :is(input:not([type="radio"]),select,textarea){
+  background:#f8f9fe!important;background-image:none!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important;
+  border-color:#d6ddec!important;color-scheme:light!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] input[name="amount"]{
+  color:var(--v815-accent)!important;-webkit-text-fill-color:var(--v815-accent)!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced:not(.v817-header-adjustments) :is(summary,label,span,small,strong){color:#17243b!important;-webkit-text-fill-color:#17243b!important;}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced:not(.v817-header-adjustments)>summary{background:transparent!important;background-image:none!important;color:#475a78!important;-webkit-text-fill-color:#475a78!important;}
+/* No changing widths or hiding forms: preserve all controls and native submit flow. */
+</style>
+
+
+<!-- V823: Pagar tarjeta - only date visible, no extra accordion or blank panel -->
+<style id="v823-cardpay-date-only">
+html body #modal-root form.studio-form[data-mode="cardpay"] .v802-advanced,
+html body #modal-root form.studio-form[data-mode="cardpay"] .v134-more,
+html body #modal-root form.studio-form[data-mode="cardpay"] .v817-header-adjustments {display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;overflow:hidden!important}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v823-date-field{display:flex!important;flex-direction:column!important;gap:5px!important;background:#fff!important;background-image:none!important;color:#17243b!important;border:1px solid #d6ddec!important;border-radius:17px!important;padding:9px 13px!important;min-height:54px!important;margin:0!important;box-shadow:none!important}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v823-date-field :is(input,select){display:block!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important;background:#f8f9fe!important;color-scheme:light!important;max-width:100%!important;min-height:32px!important}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v823-date-field .filter-label{color:#62718a!important}
+@media(max-width:790px){
+ html body #modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields{gap:7px!important}
+ html body #modal-root form.studio-form[data-mode="cardpay"] .studio-navigation{padding-top:7px!important;padding-bottom:calc(5px + env(safe-area-inset-bottom,0px))!important;margin-top:10px!important;transform:translateY(5px)!important}
+ html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important}
+}
+</style>
+<script id="v823-cardpay-date-only-behavior">
+(()=>{'use strict';const root=document.getElementById('modal-root');if(!root)return;
+let queued=false;
+function update(){const form=root.querySelector('form.studio-form[data-mode="cardpay"]');if(!form)return;
+ const fields=form.querySelector('.studio-step[data-step="1"]>.studio-fields');const advanced=fields?.querySelector('.v802-advanced');if(!fields||!advanced)return;
+ if(!fields.querySelector('.v823-date-field')){
+ const date=advanced.querySelector('input[name="date"]');
+ const host=date?.closest('label')||date?.parentElement;
+ if(host&&advanced.contains(host)){
+  host.classList.add('v823-date-field');
+  const caption=host.querySelector('.filter-label');if(caption)caption.textContent='Fecha';
+  fields.insertBefore(host,advanced);
+ }
+ }
+ // Keep the advanced fields intact in DOM for existing business rules, but remove its visible controls.
+ advanced.open=false;
+}
+new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;update()})}).observe(root,{childList:true,subtree:true});update();
+})();
+</script>
+
+<!-- V824: dimensional audit, compact card payment with visible date and action -->
+<style id="v824-cardpay-dimensions">
+/* All rules scoped to Pagar tarjeta. Financial handlers and selectors unchanged. */
+html body #modal-root form.studio-form[data-mode="cardpay"]{box-sizing:border-box!important}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main{
+  display:flex!important;flex-direction:column!important;min-height:0!important;
+  height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;
+  padding:calc(8px + env(safe-area-inset-top,0px)) clamp(12px,3.6vw,20px) calc(12px + env(safe-area-inset-bottom,0px))!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-topline{
+  height:40px!important;min-height:40px!important;max-height:40px!important;margin-bottom:0!important;flex:0 0 40px!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-active-title{
+  font-size:clamp(25px,6vw,31px)!important;margin:0 0 2px!important;line-height:1.06!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v815-card-art{
+  height:clamp(46px,8dvh,83px)!important;margin:0 0 1px!important;flex:0 0 auto!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-main>.studio-active-subtitle{
+  top:calc(84px + env(safe-area-inset-top,0px))!important;line-height:1.25!important;
+  font-size:clamp(11px,2.8vw,13px)!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-panels{
+  order:3!important;min-height:0!important;flex:1 1 auto!important;overflow-y:auto!important;
+  overflow-x:hidden!important;padding:2px 1px 5px!important;margin:0!important;scrollbar-width:none!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields{gap:5px!important}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields>label:not(.flow-segment-option){
+  min-height:0!important;padding:7px 10px!important;gap:2px!important;border-radius:16px!important;
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-fields .filter-label{
+  font-size:clamp(10px,2.6vw,12px)!important;line-height:1.12!important;margin:0!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v789-select-enhanced .v789-select-open,
+html body #modal-root form.studio-form[data-mode="cardpay"] .v789-select-enhanced .v789-select-trigger{
+  min-height:39px!important;padding:1px 0!important;gap:8px!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v789-select-open .v789-select-ico{
+  flex-basis:38px!important;width:38px!important;height:38px!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v789-select-open .v789-select-details strong{
+  font-size:clamp(12px,3.25vw,15px)!important;line-height:1.2!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v802-pay-title{
+  min-height:18px!important;line-height:1.14!important;font-size:clamp(12px,3.4vw,15px)!important;
+  margin:1px 0!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"]{
+  gap:7px!important;padding:0!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{
+  height:69px!important;min-height:69px!important;max-height:69px!important;
+  padding:5px 3px!important;gap:2px!important;border-radius:14px!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface:before{
+  font-size:15px!important;line-height:1!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface strong{
+  font-size:clamp(10px,2.6vw,12px)!important;line-height:1.13!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface small{
+  font-size:clamp(9px,2.2vw,10px)!important;line-height:1.1!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-fields label:has([name="amount"]) .field{
+  min-height:33px!important;height:33px!important;padding:2px 0!important;font-size:clamp(17px,4vw,22px)!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-fields select{min-height:37px!important;height:37px!important;padding:4px 10px!important}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v823-date-field{
+  display:flex!important;min-height:0!important;padding:7px 10px!important;gap:3px!important;
+  flex-direction:row!important;align-items:center!important;justify-content:space-between!important;
+  border-radius:16px!important;background:#fff!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v823-date-field .filter-label{
+  flex:0 0 auto!important;margin:0!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .v823-date-field input[name="date"]{
+  flex:0 1 180px!important;width:auto!important;min-width:0!important;height:37px!important;min-height:37px!important;
+  font-size:clamp(12px,3.2vw,14px)!important;padding:4px 8px!important
+}
+/* Footer lives inside the viewport and does not cover the date field. */
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-navigation{
+  position:relative!important;transform:none!important;order:4!important;bottom:auto!important;
+  flex:0 0 auto!important;margin:0!important;padding:8px 0 2px!important;min-height:0!important;
+  border-top:1px solid #dce2ed!important;background:#f5f6fb!important
+}
+html body #modal-root form.studio-form[data-mode="cardpay"] .studio-navigation [data-studio-next]{
+  min-height:51px!important;height:51px!important;border-radius:16px!important;
+}
+@media (min-height:810px){
+  html body #modal-root form.studio-form[data-mode="cardpay"] .studio-panels{overflow-y:auto!important}
+}
+@media (max-height:730px){
+  html body #modal-root form.studio-form[data-mode="cardpay"] .v815-card-art{height:38px!important}
+  html body #modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"]>.studio-fields{gap:4px!important}
+  html body #modal-root form.studio-form[data-mode="cardpay"] .studio-navigation [data-studio-next]{height:46px!important;min-height:46px!important}
+}
+</style>
+
+<style id="v825-refund-unified-premium">
+/* V825: scoped refund layout; existing financial form and shared v789 picker. */
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow{
+ --v825-accent:var(--vive-theme-color,var(--v560-accent,var(--accent,#7568f7)));
+ --v790-accent:var(--v825-accent);--v796-accent:var(--v825-accent);
+ width:min(100%,500px)!important;min-width:0!important;max-height:100dvh!important;height:100dvh!important;
+ padding:calc(12px + env(safe-area-inset-top,0px)) clamp(14px,4vw,20px) calc(8px + env(safe-area-inset-bottom,0px))!important;
+ overflow:hidden!important;display:flex!important;flex-direction:column!important;gap:0!important;
+ background:linear-gradient(148deg,#f9faff,#f5f6fa 56%,#f6f7fb)!important;color:#17243b!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-top{
+ flex:0 0 auto!important;min-height:0!important;padding:0!important;margin:0 0 10px!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-header{
+ padding:0!important;margin:0!important;gap:4px 10px!important;min-height:58px!important;
+ display:grid!important;grid-template-columns:38px minmax(0,1fr) 42px!important;align-items:center!important;
+ background:none!important;border:0!important;box-shadow:none!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-header h2{font-size:clamp(22px,5.7vw,29px)!important;line-height:1.1!important;letter-spacing:-.05em!important;margin:0!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-header p{font-size:clamp(11px,3vw,13px)!important;line-height:1.35!important;margin:4px 0 0!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v785-hero-icon{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;border-radius:12px!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-close{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;border-radius:50%!important;position:relative!important;inset:auto!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-content{
+ min-height:0!important;flex:1 1 auto!important;overflow-y:auto!important;overflow-x:hidden!important;
+ padding:3px 1px 10px!important;margin:0!important;gap:clamp(9px,1.45vh,13px)!important;
+ scrollbar-width:thin!important;overscroll-behavior:contain!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow :is(.other-studio-amount,.v794-source-card,.v794-purchase-card,.v796-refund-method,.v794-recovery){
+ background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(242,244,250,.85))!important;
+ border:1px solid #d5dce8!important;border-radius:21px!important;
+ box-shadow:0 3px 15px #1c315008,inset 0 1px #fff!important;
+ min-width:0!important;max-width:100%!important;flex-shrink:0!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-amount{
+ min-height:112px!important;padding:15px!important;margin:0!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-amount input[name="amount"]{font-size:clamp(32px,9vw,48px)!important;max-width:100%!important;min-width:0!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow :is(.v794-source-card,.v796-refund-method){
+ padding:10px 13px!important;min-height:66px!important;gap:11px!important;cursor:pointer;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v794-purchase-card{padding:0!important;min-height:66px!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v796-field-button{min-height:66px!important;padding:10px 13px!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v796-box-icon{width:39px!important;height:39px!important;flex-basis:39px!important;border-radius:11px!important;color:var(--v825-accent)!important;background:color-mix(in srgb,var(--v825-accent) 13%,white)!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v796-field-copy strong{color:#17243b!important;font-size:clamp(13px,3.8vw,17px)!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v796-field-copy small{color:#68768b!important;font-size:11px!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v794-recovery{
+ padding:14px!important;margin:0!important;min-height:118px!important;
+ background:radial-gradient(ellipse at 95% 94%,color-mix(in srgb,var(--v825-accent) 15%,transparent),transparent 65%),linear-gradient(140deg,#fff,#f3f5fa)!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v794-recovery h4{font-size:16px!important;margin:0 0 10px!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v796-impact-values strong{font-size:clamp(14px,4vw,18px)!important;overflow-wrap:anywhere!important;white-space:normal!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v796-impact-values span:last-child strong{color:var(--v825-accent)!important;-webkit-text-fill-color:var(--v825-accent)!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v794-recovery p{font-size:11px!important;line-height:1.35!important;margin:8px 0 0!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .form-foot{
+ flex:0 0 auto!important;position:relative!important;inset:auto!important;margin:0!important;
+ padding:10px 0 calc(8px + env(safe-area-inset-bottom,0px))!important;
+ background:linear-gradient(180deg,rgba(247,249,252,.96),#f7f8fb)!important;
+ border:0!important;box-shadow:none!important;z-index:2!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .form-foot button{
+ width:100%!important;min-height:49px!important;border-radius:18px!important;font-size:14px!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .form-foot button[type="submit"]{
+ background:#09090b!important;color:white!important;-webkit-text-fill-color:white!important;border-color:#09090b!important;
+}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .form-foot button[type="submit"]:disabled{opacity:.47!important}
+#modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v794-source-card:focus-visible{outline:2px solid var(--v825-accent)!important;outline-offset:2px!important}
+/* The original data-driven cardId select remains mounted; the v789 trigger opens the shared picker. */
+#modal-root form.other-studio-form[data-special="refund"] label.v789-select-enhanced select.v789-native-keep{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+#modal-root form.other-studio-form[data-special="refund"] label.v789-select-enhanced .v789-select-open{display:none!important}
+@media(max-height:720px){
+ #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-content{gap:8px!important}
+ #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .other-studio-amount{min-height:97px!important;padding:11px!important}
+ #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v794-recovery{min-height:104px!important;padding:11px!important}
+}
+/* Black mode keeps its own dark surface and legible text; accents stay dynamic. */
+body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow{background:#050506!important;color:#f6f7fa!important}
+body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow :is(.other-studio-amount,.v794-source-card,.v794-purchase-card,.v796-refund-method,.v794-recovery){background:linear-gradient(145deg,#19191d,#0d0d10)!important;border-color:#34353b!important;color:#f6f7fa!important;box-shadow:none!important}
+body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v794-recovery{background:radial-gradient(ellipse at 98% 94%,color-mix(in srgb,var(--v825-accent) 17%,transparent),transparent 60%),#121215!important}
+body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow :is(.v796-field-copy strong,.v794-recovery h4,.v796-impact-values strong,.other-studio-header h2){color:#f6f7fa!important;-webkit-text-fill-color:#f6f7fa!important}
+body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .v796-field-copy small{color:#b4b7c0!important}
+body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .form-foot{background:#050506!important}
+body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-special="refund"].v794-linked-flow .form-foot button[type="submit"]{background:var(--v825-accent)!important;border-color:var(--v825-accent)!important;color:#101014!important;-webkit-text-fill-color:#101014!important}
+</style>
+<style id="v826-conciliation-coherent">
+/* V826: one scoped presentation, no changes to submit, account data, dates, preview math or Supabase. */
+#modal-root form.other-studio-form.v790-refined[data-special="adjustment"].v797-approved{
+ --v826-accent:var(--vive-theme-color,var(--v560-accent,var(--accent,#7568f7)));
+ --v797-accent:var(--v826-accent);--v790-accent:var(--v826-accent);
+ --v797-bg:#f6f7fb;--v797-card:linear-gradient(145deg,#fff,#f3f5fa);--v797-border:#d5dce8;
+ --v797-text:#17243b;--v797-sub:#65758d;
+ width:min(100%,500px)!important;min-width:0!important;height:100dvh!important;max-height:100dvh!important;
+ display:flex!important;flex-direction:column!important;overflow:hidden!important;
+ padding:calc(12px + env(safe-area-inset-top,0px)) clamp(14px,4vw,20px) 0!important;
+ background:linear-gradient(145deg,#f9faff,#f4f6fa)!important;color:#17243b!important;
+}
+#modal-root .modal:has(>form.other-studio-form.v797-approved[data-special="adjustment"]){padding:0!important;width:min(100%,500px)!important;max-height:100dvh!important;background:#f6f7fb!important;overflow:hidden!important;border-radius:22px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-shell{
+ min-height:0!important;flex:1 1 auto!important;padding:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;
+}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-top{min-height:0!important;flex:0 0 auto!important;margin:0 0 8px!important;padding:0!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-header{
+ display:grid!important;grid-template-columns:40px minmax(0,1fr) 42px!important;grid-template-rows:auto auto!important;
+ align-items:center!important;align-content:center!important;gap:4px 10px!important;
+ min-height:68px!important;padding:0!important;margin:0!important;
+ background:none!important;border:0!important;box-shadow:none!important;
+}
+#modal-root form.v797-approved[data-special="adjustment"] .v790-brand,#modal-root form.v797-approved[data-special="adjustment"] .v790-kicker{display:none!important}
+#modal-root form.v797-approved[data-special="adjustment"] .v785-hero-icon{grid-column:1!important;grid-row:1/span 2!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;margin:0!important;border-radius:12px!important;background:color-mix(in srgb,var(--v826-accent) 12%,#fff)!important;border:1px solid #d5dce8!important;color:var(--v826-accent)!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-header h2{grid-column:2!important;grid-row:1!important;font-size:clamp(21px,5.7vw,28px)!important;line-height:1.08!important;letter-spacing:-.05em!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important;margin:0!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-header>p{grid-column:2!important;grid-row:2!important;font-size:clamp(11px,3.1vw,13px)!important;line-height:1.3!important;margin:0!important;color:#66758b!important;-webkit-text-fill-color:#66758b!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-close{grid-column:3!important;grid-row:1/span 2!important;position:relative!important;inset:auto!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;border-radius:50%!important;color:#17243b!important;background:#eef2f9!important;border:1px solid #d5dce8!important;z-index:3!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-content{
+ display:flex!important;flex-direction:column!important;gap:clamp(8px,1.35vh,12px)!important;
+ flex:1 1 auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important;
+ padding:2px 1px 14px!important;margin:0!important;overscroll-behavior:contain!important;
+}
+#modal-root form.v797-approved[data-special="adjustment"] :is(.other-studio-amount,.other-studio-fields>label,.other-studio-impact,.other-studio-fold,.v790-extra-details){
+ min-width:0!important;max-width:100%!important;flex-shrink:0!important;
+ background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(243,245,250,.9))!important;
+ color:#17243b!important;border:1px solid #d5dce8!important;border-radius:21px!important;
+ box-shadow:0 3px 14px rgba(25,38,59,.035),inset 0 1px #fff!important;
+}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-amount{min-height:115px!important;padding:14px!important;margin:0!important;gap:6px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-amount>.v768-adjust-heading{margin:0 0 3px!important;gap:6px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .v768-adjust-heading>strong{font-size:15px!important;color:#17243b!important}
+#modal-root form.v797-approved[data-special="adjustment"] .v768-adjust-toggle{background:#eef1f8!important;border:1px solid #d5dce8!important;padding:3px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .v768-adjust-toggle button{min-height:31px!important;color:#53637b!important;-webkit-text-fill-color:#53637b!important;font-size:clamp(10px,2.7vw,12px)!important}
+#modal-root form.v797-approved[data-special="adjustment"] .v768-adjust-toggle button[aria-pressed="true"]{background:var(--v826-accent)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:0 2px 7px color-mix(in srgb,var(--v826-accent) 22%,transparent)!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-amount>label{min-height:55px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-amount input[name="amount"]{font-size:clamp(30px,8vw,43px)!important;color:#63738b!important;-webkit-text-fill-color:#63738b!important;border:0!important;background:transparent!important;padding-top:2px!important;padding-bottom:2px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-amount .v790-money-symbol{color:#17243b!important;font-size:clamp(28px,7.4vw,40px)!important;bottom:10px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fields>label{min-height:66px!important;padding:11px 9px 9px 42px!important;margin:0!important;gap:3px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fields>label.v790-account-field{grid-column:1/-1!important;min-height:74px!important;padding:11px 13px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fields>label:is(.v790-date,.v768-reason){min-height:66px!important;padding:10px 8px 9px 41px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fields>label:is(.v790-date,.v768-reason):before{left:10px!important;width:22px!important;height:22px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fields>label>.filter-label{font-size:clamp(10px,2.6vw,12px)!important;color:#66758b!important;-webkit-text-fill-color:#66758b!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fields>label .field{background:transparent!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important;border:0!important;font-size:clamp(10px,2.7vw,13px)!important;min-height:22px!important;max-width:100%!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fields>label.v790-account-field .v756-native-select-btn{color:#17243b!important;-webkit-text-fill-color:#17243b!important;min-height:42px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fields>label.v790-account-field .v756-field-ico{color:var(--v826-accent)!important;background:color-mix(in srgb,var(--v826-accent) 13%,white)!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-impact{padding:13px 14px!important;margin:0!important;min-height:112px!important;background:radial-gradient(ellipse at 95% 92%,color-mix(in srgb,var(--v826-accent) 13%,transparent),transparent 70%),linear-gradient(145deg,#fff,#f3f5fa)!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-impact>h4{font-size:16px!important;margin:0 0 10px!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-impact-grid{gap:6px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-impact-grid strong{font-size:clamp(13px,3.75vw,19px)!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-impact-grid small,#modal-root form.v797-approved[data-special="adjustment"] .other-studio-impact>p{color:#66758b!important;-webkit-text-fill-color:#66758b!important;font-size:11px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-impact-grid .v756-arrow{color:var(--v826-accent)!important}
+#modal-root form.v797-approved[data-special="adjustment"] .other-studio-fold>summary{padding:12px 14px!important;color:#17243b!important}
+#modal-root form.v797-approved[data-special="adjustment"] .v790-extra-details{margin:0!important}
+/* Extra operation shortcuts are already present in the parent navigation; remove visual duplicate only. */
+#modal-root form.v797-approved[data-special="adjustment"] .v797-ops{display:none!important}
+#modal-root form.v797-approved[data-special="adjustment"] .form-foot{position:relative!important;inset:auto!important;flex:0 0 auto!important;display:flex!important;flex-direction:column!important;gap:7px!important;margin:0!important;padding:9px 0 calc(9px + env(safe-area-inset-bottom,0px))!important;background:#f6f7fb!important;box-shadow:none!important;z-index:5!important}
+#modal-root form.v797-approved[data-special="adjustment"] .form-foot button{width:100%!important;min-height:50px!important;border-radius:17px!important;font-size:14px!important}
+#modal-root form.v797-approved[data-special="adjustment"] .form-foot button[type="submit"]{background:#09090b!important;border-color:#09090b!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+#modal-root form.v797-approved[data-special="adjustment"] .form-foot button[type="submit"]:disabled{opacity:.48!important}
+@media(max-height:740px){#modal-root form.v797-approved[data-special="adjustment"] .other-studio-content{gap:8px!important}#modal-root form.v797-approved[data-special="adjustment"] .other-studio-amount{min-height:100px!important}#modal-root form.v797-approved[data-special="adjustment"] .other-studio-impact{min-height:100px!important}}
+/* Dark mode: preserve product theme, not accidental black text on black cards. */
+body:is(.theme-black,.theme-dark) #modal-root form.v797-approved[data-special="adjustment"]{--v797-bg:#050506;--v797-card:#151519;--v797-border:#35353e;--v797-text:#f8f8fa;--v797-sub:#b9bcc8;background:#050506!important;color:#f8f8fa!important}
+body:is(.theme-black,.theme-dark) #modal-root form.v797-approved[data-special="adjustment"] :is(.other-studio-amount,.other-studio-fields>label,.other-studio-impact,.other-studio-fold,.v790-extra-details){background:linear-gradient(145deg,#19191e,#101013)!important;border-color:#35353e!important;color:#f8f8fa!important;box-shadow:none!important}
+body:is(.theme-black,.theme-dark) #modal-root form.v797-approved[data-special="adjustment"] :is(.other-studio-header h2,.v768-adjust-heading>strong,.other-studio-impact h4,.other-studio-impact-grid strong,.other-studio-fields .field,.v756-native-select-btn,.other-studio-fold summary){color:#f8f8fa!important;-webkit-text-fill-color:#f8f8fa!important}
+body:is(.theme-black,.theme-dark) #modal-root form.v797-approved[data-special="adjustment"] :is(.other-studio-header>p,.other-studio-impact-grid small,.other-studio-impact>p,.filter-label){color:#b9bcc8!important;-webkit-text-fill-color:#b9bcc8!important}
+body:is(.theme-black,.theme-dark) #modal-root form.v797-approved[data-special="adjustment"] .v768-adjust-toggle{background:#25252b!important;border-color:#3b3b42!important}
+body:is(.theme-black,.theme-dark) #modal-root form.v797-approved[data-special="adjustment"] .other-studio-amount input[name="amount"]{color:#e5e7ef!important;-webkit-text-fill-color:#e5e7ef!important}
+body:is(.theme-black,.theme-dark) #modal-root form.v797-approved[data-special="adjustment"] .other-studio-amount .v790-money-symbol{color:#f8f8fa!important}
+body:is(.theme-black,.theme-dark) #modal-root form.v797-approved[data-special="adjustment"] .form-foot{background:#050506!important}
+body:is(.theme-black,.theme-dark) #modal-root form.v797-approved[data-special="adjustment"] .form-foot button[type="submit"]{background:var(--v826-accent)!important;border-color:var(--v826-accent)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+</style>
+<style id="v827-universal-selector-ui">
+/* Financial selector tokens follow Personalización and are shared by native picker + quick register. */
+#modal-root{--v827-accent:var(--vive-theme-color,var(--v560-accent,var(--accent,#7568ef)));--v827-surface:#f5f6fb;--v827-card:#fff;--v827-ink:#17243b;--v827-muted:#60718d;--v827-line:#d5deec}
+#modal-root .v827-picker-backdrop{background:rgba(14,18,35,.42)!important;backdrop-filter:blur(7px)!important;-webkit-backdrop-filter:blur(7px)!important}
+#modal-root .v827-picker-sheet{--v789-sheet-bg:#f5f6fb;--v789-sheet-ink:#17243b;--v789-sheet-sub:#60718d;--v789-sheet-line:#d5deec;--v789-accent:var(--v827-accent);width:min(100%,520px);max-height:min(89dvh,760px);padding:15px 16px calc(16px + env(safe-area-inset-bottom,0px));gap:12px;background:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--v827-accent) 9%,transparent),transparent 72%),#f5f6fb!important;border-color:#e2e7f0!important;color:#17243b!important;box-shadow:0 -14px 60px #101b343b!important}
+#modal-root .v827-picker-head{min-height:52px!important;margin:0!important}
+#modal-root .v827-picker-head h3{color:#17243b!important;font-size:clamp(23px,6vw,29px)!important}
+#modal-root .v827-picker-sheet .v789-sheet-grip{background:#c7d0df!important;margin-bottom:1px}
+#modal-root .v827-picker-sheet .v789-picker-close{background:#fff!important;color:#17243b!important;border:1px solid #d6deeb!important;width:44px;height:44px}
+#modal-root .v827-picker-sheet .v789-picker-search{min-height:54px!important;border-radius:20px!important;background:#fff!important;color:#17243b!important;border:1px solid #d5deec!important;font-size:15px!important;padding:12px 18px!important}
+#modal-root .v827-picker-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;flex:0 0 auto}
+#modal-root .v827-picker-tabs button{background:color-mix(in srgb,var(--v827-accent) 5%,#fff);color:#52627f;border:1px solid #d5deec;min-height:42px;border-radius:16px;font-weight:730;font-size:13px;padding:8px 4px;min-width:0}
+#modal-root .v827-picker-tabs button[aria-pressed="true"]{border-color:var(--v827-accent);color:var(--v827-accent);background:color-mix(in srgb,var(--v827-accent) 10%,#fff)}
+#modal-root .v827-picker-sheet .v789-picker-list{gap:9px!important;max-height:46dvh;padding:1px 1px 3px!important}
+#modal-root .v827-picker-sheet .v789-picker-row{min-height:76px!important;padding:11px 12px!important;gap:12px!important;border:1px solid #d9e1ee!important;border-radius:21px!important;background:linear-gradient(150deg,#fff,#f9faff)!important;color:#17243b!important;box-shadow:0 6px 17px #192d4e08!important}
+#modal-root .v827-picker-sheet .v789-picker-row[aria-pressed="true"]{border-color:var(--v827-accent)!important;background:color-mix(in srgb,var(--v827-accent) 7%,white)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--v827-accent) 15%,transparent)!important}
+#modal-root .v827-picker-sheet .v789-picker-mini{flex:0 0 50px!important;width:50px!important;height:50px!important;border-radius:15px!important;background:color-mix(in srgb,var(--v827-accent) 13%,#fff)!important;color:var(--v827-accent)!important;box-shadow:none!important;font-style:normal!important}
+#modal-root .v827-picker-sheet .v789-picker-mini svg{width:25px;height:25px}
+#modal-root .v827-picker-sheet .v789-picker-text strong{font-size:clamp(13px,3.8vw,16px)!important;color:#17243b!important}
+#modal-root .v827-picker-sheet .v789-picker-text small{font-size:12px!important;color:#60718d!important}
+#modal-root .v827-picker-sheet .v789-picker-mark{border:0!important;width:26px!important;height:26px!important;font-size:21px!important;color:#8e9ab0!important;background:transparent!important}
+#modal-root .v827-picker-sheet .v789-picker-row[aria-pressed="true"] .v789-picker-mark{color:var(--v827-accent)!important;background:transparent!important}
+#modal-root .v827-picker-empty{color:#60718d;text-align:center;padding:24px 8px;margin:0;font-size:13px}
+#modal-root .v827-picker-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:9px;flex-shrink:0}
+#modal-root .v827-picker-actions button{min-height:52px;border-radius:17px;font-size:14px;font-weight:780}
+#modal-root .v827-picker-cancel{border:1px solid #d7dfeb;background:#fff;color:#17243b}
+#modal-root .v827-picker-sheet .v789-picker-confirm{color:#fff!important;background:var(--v827-accent)!important}
+#modal-root .v827-picker-sheet .v789-picker-confirm:disabled{background:#e8edf5!important;color:#6a778e!important;opacity:1!important}
+/* Existing quick-register picker: same visual component dimensions, palette, and rows; its business-state engine remains native. */
+#modal-root .v749-sheet .v787-product-picker{background:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--v827-accent) 8%,transparent),transparent 70%),#f5f6fb!important;color:#17243b!important;max-width:520px!important;border-radius:27px 27px 0 0!important;padding:15px 16px calc(16px + env(safe-area-inset-bottom,0px))!important}
+#modal-root .v749-sheet .v787-product-picker .v749-sheet-head h3{color:#17243b!important}
+#modal-root .v749-sheet .v787-product-picker .v787-product-row{background:linear-gradient(145deg,#fff,#f9faff)!important;border:1px solid #d9e1ee!important;border-radius:21px!important;min-height:76px!important;padding:11px 12px!important;color:#17243b!important;box-shadow:0 6px 17px #192d4e08!important}
+#modal-root .v749-sheet .v787-product-picker .v787-product-row .v787-product-main strong{color:#17243b!important}
+#modal-root .v749-sheet .v787-product-picker .v787-product-row .v787-product-main :is(small,em){color:#60718d!important}
+#modal-root .v749-sheet .v787-product-picker .v787-product-brand{background:color-mix(in srgb,var(--v827-accent) 13%,white)!important;color:var(--v827-accent)!important;box-shadow:none!important;border:0!important;width:50px!important;height:50px!important;min-width:50px!important;border-radius:15px!important}
+#modal-root .v749-sheet .v787-product-picker .v787-product-row.is-selected{border-color:var(--v827-accent)!important;background:color-mix(in srgb,var(--v827-accent) 7%,white)!important}
+#modal-root .v749-sheet .v787-product-picker .v787-product-tabs button[aria-pressed="true"]{border-color:var(--v827-accent)!important;color:var(--v827-accent)!important;background:color-mix(in srgb,var(--v827-accent) 10%,white)!important}
+#modal-root .v749-sheet .v787-product-picker .v787-confirm-button{background:var(--v827-accent)!important;color:#fff!important}
+/* Any enhanced form can trigger the same universal component; preserve native select for validation. */
+#modal-root label.v789-select-enhanced{position:relative!important}
+#modal-root label.v789-select-enhanced>select.v789-native-keep{position:absolute!important;left:0!important;top:0!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;clip-path:inset(50%)!important}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;max-width:100%!important;cursor:pointer!important}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-ico{color:var(--v827-accent)!important}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-details{min-width:0;flex:1}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-details strong{overflow-wrap:anywhere;white-space:normal}
+/* Older refund override hid the shared trigger; remove that conflict. */
+#modal-root form.other-studio-form[data-special="refund"] label.v789-select-enhanced>.v827-universal-trigger{display:flex!important}
+body:is(.theme-black,.theme-dark) #modal-root{--v827-surface:#050506;--v827-card:#17171b;--v827-ink:#fff;--v827-muted:#b9bfcc;--v827-line:#383840}
+body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet{--v789-sheet-bg:#08080b;--v789-sheet-ink:#fff;--v789-sheet-sub:#b9bfcc;--v789-sheet-line:#383840;background:linear-gradient(145deg,#17171b,#09090b)!important;color:#fff!important;border-color:#383840!important}
+body:is(.theme-black,.theme-dark) #modal-root .v827-picker-head h3{color:#fff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet :is(.v789-picker-close,.v789-picker-search,.v789-picker-row,.v827-picker-cancel){background:#202025!important;border-color:#414149!important;color:#fff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet .v789-picker-row[aria-pressed="true"]{background:color-mix(in srgb,var(--v827-accent) 19%,#19191e)!important}
+body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet .v789-picker-text strong{color:#fff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet .v789-picker-text small{color:#bcc1ce!important}
+body:is(.theme-black,.theme-dark) #modal-root .v827-picker-tabs button{background:#222228;color:#c6c8d1;border-color:#44444e}
+body:is(.theme-black,.theme-dark) #modal-root .v827-picker-tabs button[aria-pressed="true"]{background:color-mix(in srgb,var(--v827-accent) 24%,#151519);color:#fff}
+body:is(.theme-black,.theme-dark) #modal-root .v749-sheet .v787-product-picker{background:linear-gradient(145deg,#17171b,#09090b)!important;color:#fff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v749-sheet .v787-product-picker .v787-product-row{background:#202025!important;border-color:#414149!important;color:#fff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v749-sheet .v787-product-picker .v787-product-row .v787-product-main strong{color:#fff!important}
+body:is(.theme-black,.theme-dark) #modal-root .v749-sheet .v787-product-picker .v787-product-row .v787-product-main :is(small,em){color:#bcc1ce!important}
+body:is(.theme-black,.theme-dark) #modal-root .v749-sheet .v787-product-picker .v749-sheet-head h3{color:#fff!important}
+@media(max-width:360px){#modal-root .v827-picker-sheet{padding-left:12px!important;padding-right:12px!important}#modal-root .v827-picker-tabs button{font-size:12px!important}}
+@media(prefers-reduced-motion:reduce){#modal-root .v827-picker-sheet{animation:none!important}}
+
+/* V828 — Sistema coherente de préstamos: selector y menú posterior.
+   Únicamente presentación; conserva los eventos y cálculos financieros. */
+#modal-root .modal:has(.v756-loan-selector){
+ --v828-accent:var(--vive-theme-color,var(--v801-accent,var(--accent,#7667f5)));
+ --v828-ink:#17243b;--v828-muted:#66758b;--v828-border:#d5dce7;--v828-surface:#f5f6fa;--v828-card:#fff;
+ width:min(540px,100%)!important;max-width:540px!important;
+ background:var(--v828-surface)!important;color:var(--v828-ink)!important;
+ border:1px solid var(--v828-border)!important;
+ border-radius:28px 28px 0 0!important;padding:16px!important;
+ max-height:min(94dvh,920px)!important;overflow-y:auto!important;
+ box-shadow:0 22px 72px rgba(20,28,55,.17)!important;
+}
+#modal-root .modal-layer:has(.v756-loan-selector){align-items:flex-end!important;padding:0!important;background:rgba(13,21,37,.45)!important}
+#modal-root .modal:has(.v756-loan-selector)>.modal-head{margin:0 0 8px!important;padding:6px 0 4px!important;align-items:flex-start!important;min-height:70px!important;border:0!important;background:none!important}
+#modal-root .modal:has(.v756-loan-selector)>.modal-head h2{font-size:clamp(23px,6.3vw,30px)!important;line-height:1.13!important;letter-spacing:-.8px!important;color:var(--v828-ink)!important;max-width:calc(100% - 60px)!important}
+#modal-root .modal:has(.v756-loan-selector)>.modal-head>button{width:44px!important;height:44px!important;flex:0 0 44px!important;border-radius:50%!important;border:1px solid var(--v828-border)!important;background:var(--v828-card)!important;color:var(--v828-ink)!important}
+#modal-root .v756-loan-selector.v790-picker{padding:0!important;gap:10px!important;background:transparent!important;max-width:100%!important}
+#modal-root .v756-loan-selector :is(.v785-picker-search,input[type=search]){width:100%!important;min-height:54px!important;margin:4px 0 6px!important;border:1px solid var(--v828-border)!important;border-radius:17px!important;background:var(--v828-card)!important;color:var(--v828-ink)!important;padding:0 16px!important}
+#modal-root .v756-loan-selector .v790-filter-row{display:flex!important;gap:7px!important;flex-wrap:nowrap!important;overflow-x:auto!important;padding:2px 1px 8px!important;margin:0!important}
+#modal-root .v756-loan-selector .v790-filter-row button{min-width:0!important;flex:1 0 auto!important;padding:10px 9px!important;border-radius:99px!important;background:color-mix(in srgb,var(--v828-card) 85%,var(--v828-surface))!important;color:var(--v828-muted)!important;border:1px solid var(--v828-border)!important;font-size:clamp(11px,3.2vw,14px)!important}
+#modal-root .v756-loan-selector .v790-filter-row button[aria-pressed=true]{border-color:var(--v828-accent)!important;color:var(--v828-ink)!important;background:color-mix(in srgb,var(--v828-accent) 10%,var(--v828-card))!important}
+#modal-root .v756-loan-selector>button.v785-choice.v790-loan-choice{width:100%!important;min-height:0!important;margin:0!important;padding:12px!important;border:1px solid var(--v828-border)!important;border-radius:21px!important;background:linear-gradient(135deg,var(--v828-card),color-mix(in srgb,var(--v828-card) 91%,var(--v828-surface)))!important;box-shadow:0 6px 19px rgba(38,54,91,.035)!important;color:var(--v828-ink)!important;overflow:visible!important}
+#modal-root .v756-loan-selector>button.v785-choice.v790-loan-choice[aria-pressed=true]{border-color:var(--v828-accent)!important;background:linear-gradient(120deg,var(--v828-card),color-mix(in srgb,var(--v828-accent) 10%,var(--v828-card)))!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--v828-accent) 45%,transparent)!important}
+#modal-root .v756-loan-selector>button.v785-choice.v790-loan-choice :is(strong,b){color:var(--v828-ink)!important;-webkit-text-fill-color:var(--v828-ink)!important}
+#modal-root .v756-loan-selector>button.v785-choice.v790-loan-choice :is(small,.v790-loan-figures>span,.v756-loan-info){color:var(--v828-muted)!important;-webkit-text-fill-color:var(--v828-muted)!important}
+#modal-root .v756-loan-selector .v790-loan-figures{min-width:0!important;gap:8px!important}
+#modal-root .v756-loan-selector .v790-loan-figures strong{font-size:clamp(12px,3.55vw,17px)!important;overflow-wrap:anywhere!important}
+#modal-root .v756-loan-selector .v756-loan-meter{background:var(--v828-border)!important;max-width:100%!important}
+#modal-root .v756-loan-selector .v756-loan-meter i{background:var(--v828-accent)!important}
+#modal-root .v756-loan-selector .v798-loan-actions{position:sticky!important;bottom:0!important;z-index:3!important;margin:6px 0 0!important;padding:10px 0 calc(8px + env(safe-area-inset-bottom,0px))!important;background:var(--v828-surface)!important;display:grid!important;grid-template-columns:1fr 1.15fr!important;gap:10px!important}
+#modal-root .v756-loan-selector .v798-loan-actions button{min-height:54px!important;border-radius:17px!important;font-weight:750!important;font-size:15px!important}
+#modal-root .v756-loan-selector .v798-loan-actions .v798-cancel{background:var(--v828-card)!important;border:1px solid var(--v828-border)!important;color:var(--v828-ink)!important}
+#modal-root .v756-loan-selector .v798-loan-actions .v756-loan-choose:not(:disabled){background:var(--v828-accent)!important;border:1px solid var(--v828-accent)!important;color:#fff!important}
+/* Menú posterior: Pago de préstamo, sin duplicar formularios ni cambiar datos. */
+#modal-root form.other-studio-form[data-special="loan"]{
+ --v828-accent:var(--vive-theme-color,var(--v801-accent,var(--accent,#7667f5)));
+ --v828-ink:#17243b;--v828-muted:#66758b;--v828-border:#d5dce7;--v828-card:#fff;--v828-surface:#f5f6fa;
+ color:var(--v828-ink)!important;
+}
+#modal-root .modal:has(form.other-studio-form[data-special="loan"]){background:var(--v828-surface,#f5f6fa)!important}
+#modal-root form.other-studio-form[data-special="loan"] :is(.other-studio-left,.other-studio-right){background:var(--v828-surface)!important;color:var(--v828-ink)!important}
+#modal-root form.other-studio-form[data-special="loan"] .other-studio-header{padding:16px 18px 10px!important}
+#modal-root form.other-studio-form[data-special="loan"] .other-studio-header h2{font-size:clamp(25px,6vw,32px)!important;line-height:1.12!important;letter-spacing:-.8px!important;color:var(--v828-ink)!important}
+#modal-root form.other-studio-form[data-special="loan"] .other-studio-header p{color:var(--v828-muted)!important;line-height:1.35!important}
+#modal-root form.other-studio-form[data-special="loan"] .other-studio-content{padding:10px 16px 20px!important;gap:12px!important}
+#modal-root form.other-studio-form[data-special="loan"] .other-studio-amount,
+#modal-root form.other-studio-form[data-special="loan"] .v359-mode-picker,
+#modal-root form.other-studio-form[data-special="loan"] .other-studio-fields,
+#modal-root form.other-studio-form[data-special="loan"] .other-studio-fold,
+#modal-root form.other-studio-form[data-special="loan"] .v49-payment-intro,
+#modal-root form.other-studio-form[data-special="loan"] .other-studio-receipt{background:var(--v828-card)!important;border:1px solid var(--v828-border)!important;color:var(--v828-ink)!important;border-radius:20px!important;box-shadow:0 3px 15px rgba(26,39,72,.035)!important}
+#modal-root form.other-studio-form[data-special="loan"] .v49-payment-intro{margin:0!important;padding:12px 14px!important;gap:3px!important}
+#modal-root form.other-studio-form[data-special="loan"] .v49-payment-intro :is(strong,small,.v49-quiet-tag){color:var(--v828-ink)!important}
+#modal-root form.other-studio-form[data-special="loan"] .v359-mode-picker{padding:12px!important}
+#modal-root form.other-studio-form[data-special="loan"] .v359-mode-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+#modal-root form.other-studio-form[data-special="loan"] .v359-mode-btn{min-width:0!important;border:1px solid var(--v828-border)!important;border-radius:16px!important;background:var(--v828-card)!important;color:var(--v828-ink)!important;padding:12px 9px!important}
+#modal-root form.other-studio-form[data-special="loan"] .v359-mode-btn.selected{border-color:var(--v828-accent)!important;background:color-mix(in srgb,var(--v828-accent) 12%,var(--v828-card))!important}
+#modal-root form.other-studio-form[data-special="loan"] .v359-mode-btn :is(strong,small){color:var(--v828-ink)!important}
+#modal-root form.other-studio-form[data-special="loan"] :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){background:var(--v828-card)!important;color:var(--v828-ink)!important;border:1px solid var(--v828-border)!important;border-radius:14px!important;min-width:0!important;max-width:100%!important}
+#modal-root form.other-studio-form[data-special="loan"] :is(label,.filter-label,small,.other-studio-section-title){color:var(--v828-muted)!important}
+#modal-root form.other-studio-form[data-special="loan"] .form-foot{background:var(--v828-surface)!important;padding:10px 0 calc(12px + env(safe-area-inset-bottom,0px))!important}
+#modal-root form.other-studio-form[data-special="loan"] .form-foot button[type="submit"]{background:var(--v828-accent)!important;color:#fff!important;min-height:56px!important;border-radius:18px!important}
+body:is(.theme-black,.theme-dark) #modal-root .modal:has(.v756-loan-selector),
+body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-special="loan"]{--v828-ink:#f7f8fb;--v828-muted:#b3bac8;--v828-border:#393941;--v828-card:#1a1a1e;--v828-surface:#09090b;color-scheme:dark}
+@media(min-width:700px){#modal-root .modal-layer:has(.v756-loan-selector){align-items:center!important;padding:20px!important}#modal-root .modal:has(.v756-loan-selector){border-radius:28px!important;max-height:min(90dvh,850px)!important}}
+@media(max-width:400px){#modal-root .v756-loan-selector>button.v785-choice.v790-loan-choice{padding:10px!important}#modal-root .v756-loan-selector .v790-filter-row button{padding:9px 7px!important}}
+@media(prefers-reduced-motion:reduce){#modal-root .v756-loan-selector *,#modal-root form.other-studio-form[data-special="loan"] *{transition:none!important;animation:none!important}}
+</style>
 </body>
 </html>
