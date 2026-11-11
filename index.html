@@ -8524,8 +8524,8 @@ table{border-collapse:collapse}table thead th{background:#ecf2faec!important;col
 .ff-balance{grid-column:1;grid-row:1;background:linear-gradient(132deg,rgba(239,244,254,.56),rgba(233,240,250,.73))!important;padding:18px 24px 16px;position:relative;display:flex;flex-direction:column}
 .ff-balance::after{content:'';width:290px;height:270px;position:absolute;top:-130px;left:-130px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.44),transparent 70%);pointer-events:none}
 .ff-balance-header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;position:relative;z-index:1}
-.ff-label{font-size:12px;font-weight:730;color:#2f415e;margin-bottom:3px}.ff-balance-total{font-size:clamp(25px,2.35vw,35px);font-weight:710;letter-spacing:-.06em;color:#172c50;line-height:1.15;white-space:nowrap}
-.ff-balance-header p{font-size:10px;color:#7183a5;line-height:1.3;margin:4px 0 0}.ff-currency-pills{display:flex;gap:3px;padding:4px;background:#dae5f2a3;border:1px solid #ffffff70;border-radius:20px;white-space:nowrap}.ff-currency-pills button{background:transparent;border:0;padding:5px 9px;border-radius:12px;font-size:10px;color:#7586a6}.ff-currency-pills button.chosen{background:white;color:#243752;font-weight:730;box-shadow:0 2px 9px #667eab18}
+.ff-label{font-size:12px;font-weight:730;color:#2f415e;margin-bottom:3px}
+.ff-balance-header p{font-size:10px;color:#7183a5;line-height:1.3;margin:4px 0 0}
 .ff-bubbles{display:flex;justify-content:center;align-items:center;flex:1;min-height:0;position:relative;z-index:1;padding-top:2px}
 .ff-bubble{width:clamp(108px,10.1vw,145px);height:clamp(108px,10.1vw,145px);border-radius:50%;background:linear-gradient(135deg,#f7faff,#e4ecf8);border:1px solid #ffffffd8;box-shadow:inset 0 5px 13px #ffffff90,0 12px 25px rgba(74,91,163,.07);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:8px;flex:0 0 auto;margin:0 -5px}
 .ff-bubble.featured{position:relative;z-index:2;background:linear-gradient(130deg,#7d79f7,#625cf1 70%,#698cfb);border-color:#9095ff;color:white;box-shadow:0 13px 25px #665de72a,inset 0 2px 8px #ffffff4f}
@@ -8536,19 +8536,19 @@ table{border-collapse:collapse}table thead th{background:#ecf2faec!important;col
 /* Unboxed transactions: the right column is an integrated workspace */
 .ff-activity{grid-column:2;grid-row:1/3;padding:0 6px 0 17px;min-height:0;display:flex;flex-direction:column}
 .ff-panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.ff-panel-top h2{margin:0;font-size:clamp(16px,1.34vw,20px);line-height:1.24;letter-spacing:-.045em;color:#1d2c49;font-weight:730}.ff-panel-top p{font-size:10px;color:#72819b;margin:4px 0 0;line-height:1.2}.ff-black-btn{flex-shrink:0;height:32px!important;min-height:32px!important;padding:0 13px!important;font-size:10px!important}.ff-black-btn svg{height:13px;width:13px}
-.ff-trans-list{flex:1;min-height:0;margin-top:13px;display:flex;flex-direction:column;justify-content:space-evenly}
+
 .ff-trans-row{display:grid;grid-template-columns:32px minmax(0,1fr) minmax(63px,auto) minmax(65px,auto);align-items:center;gap:10px;padding:9px 1px;min-height:54px;border-bottom:1px solid #6c83b018}.ff-trans-row:last-child{border-bottom:0}
 .ff-trans-icon{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;border:1px solid #b7c8e1;color:#566b95;background:#e6eaf685}.ff-trans-icon.positive{color:#276d73}.ff-trans-icon svg{width:14px;height:14px}
 .ff-trans-main{min-width:0;display:flex;flex-direction:column;gap:5px}.ff-trans-main strong{font-size:11.5px;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#273757}.ff-trans-main small{font-size:9.5px;color:#8391aa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ff-state{display:inline-block;padding:6px 8px;border-radius:13px;font-size:9px;text-align:center;white-space:nowrap;color:#40566e;background:#f5f9ff9e}.ff-state.pending{color:#ffffff;background:#6d9dee}.ff-trans-row>b{font-size:11px;white-space:nowrap;text-align:right;letter-spacing:-.02em;color:#22324c}.ff-trans-row>b.ff-positive{color:#187466}
 .ff-activity-foot{border:0;border-top:1px solid #90a7c126;background:none;color:#5772a0;font-weight:680;font-size:10px;padding:10px 0 4px;display:flex;align-items:center;gap:7px}.ff-activity-foot svg{height:13px;width:13px}.ff-activity-foot span{margin-left:auto}
-.ff-empty-activity{color:#7e8da7;font-size:12px;line-height:1.5;text-align:center;padding:40px 12px}
-.ff-mid{grid-column:1;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;min-width:0;min-height:0}
+
+
 .ff-expense-card{background:linear-gradient(135deg,#e9f0fbd1,#e5edf8dd)!important;padding:15px 21px 12px;display:flex;flex-direction:column}
 .ff-inline-pill{font-size:10px;background:#f7faffbd;border-radius:16px;padding:7px 12px;color:#435a7c;white-space:nowrap}
 .ff-bar-chart{display:flex;justify-content:space-between;gap:9px;align-items:flex-end;flex:1;min-height:0;padding-top:7px;padding-bottom:1px}
 .ff-bar-group{display:flex;align-items:center;flex-direction:column;gap:6px;height:100%;flex:1;min-width:0;outline-offset:3px}.ff-bar-cluster{width:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px;min-height:0}.ff-bar{width:min(27px,42%);min-height:5px;border-radius:12px 12px 5px 5px;display:block;transition:filter .16s}.ff-bar-in{background:linear-gradient(#628fff,#9cc3f4)}.ff-bar-out{background:linear-gradient(#e3eafa,#ffffffb5);border:1px solid #ffffff9e}.ff-bar-group:hover .ff-bar{filter:brightness(1.08)}.ff-bar-label{font-size:9px;color:#7b8ca7;font-weight:670}.ff-stat-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:6px;font-size:9px;color:#657897}.ff-stat-footer span{display:flex;align-items:center;gap:4px}.ff-stat-footer b{color:#314768;font-size:10px}.ff-legend-blue,.ff-legend-white{width:7px;height:7px;border-radius:50%;background:#658fff}.ff-legend-white{background:#d9e6fa;border:1px solid #a9bdda}
-.ff-health-card{background:linear-gradient(135deg,#647df8,#5b97f4 65%,#8ec1f3)!important;border-color:#80a3f8!important;color:white;padding:15px 21px 13px;position:relative;display:flex;flex-direction:column}.ff-health-card::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 100% 1%,#ffffff24,transparent 45%)}.ff-health-card .ff-panel-top{position:relative;z-index:1}.ff-health-card .ff-panel-top h2{color:white}.ff-health-card .ff-panel-top p{color:#e7edffbd}.ff-refresh{width:30px;height:30px;border:1px solid #ffffff46;border-radius:50%;background:#ffffff35;color:white;display:grid;place-items:center}.ff-refresh svg{width:15px;height:15px}
+.ff-health-card{background:linear-gradient(135deg,#647df8,#5b97f4 65%,#8ec1f3)!important;border-color:#80a3f8!important;color:white;padding:15px 21px 13px;position:relative;display:flex;flex-direction:column}.ff-health-card::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 100% 1%,#ffffff24,transparent 45%)}.ff-health-card .ff-panel-top{position:relative;z-index:1}.ff-health-card .ff-panel-top h2{color:white}.ff-health-card .ff-panel-top p{color:#e7edffbd}
 .ff-health-number{font-size:clamp(28px,2.8vw,40px);font-weight:620;letter-spacing:-.055em;margin-top:12px;line-height:1;z-index:1}.ff-health-caption{font-size:10px;color:#e7f2ffd9;margin-top:5px;z-index:1}.ff-sparkline{position:absolute;width:98%;height:auto;max-height:54%;bottom:13px;left:1%;opacity:.94;pointer-events:none}.ff-health-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;gap:10px;color:#f6faff}.ff-health-foot span{font-size:10px}.ff-health-foot strong{font-size:17px;letter-spacing:-.035em}
 .ff-upcoming{grid-column:1;grid-row:3;background:linear-gradient(130deg,rgba(239,246,253,.74),rgba(247,251,255,.84))!important;padding:17px 21px;display:flex;flex-direction:column}
 .ff-payment-list{display:flex;flex-direction:column;justify-content:space-evenly;flex:1;min-height:0;margin-top:8px}.ff-pay-row{display:grid;grid-template-columns:35px minmax(0,1fr) minmax(56px,auto) minmax(75px,auto);gap:9px;align-items:center;border-bottom:1px solid #c4d4e457;min-height:43px;padding:6px 7px}.ff-pay-row:last-child{border-bottom:0}.ff-pay-row:nth-child(2){border-radius:12px;background:#ffffff71}.ff-pay-symbol{width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:#e6f0ff;color:#47648e}.ff-pay-symbol svg{width:15px;height:15px}.ff-pay-name{min-width:0}.ff-pay-name strong{display:block;color:#344361;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ff-pay-name small{display:block;color:#91a0b6;font-size:9px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ff-pay-row>b{color:#22334f;font-size:11px;white-space:nowrap;text-align:right}.ff-due{font-size:9px;color:#6c7f9b;background:#e9f1f9;padding:6px 8px;border-radius:13px;white-space:nowrap;text-align:center}.ff-due.today{color:white;background:#5e94ee}.ff-due.soon{color:#567cb3;background:#d3e7fa}.ff-due.overdue{color:#ae5963;background:#f9e7ec}.ff-empty-payment{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;text-align:center;color:#8b9ab0;font-size:10px}.ff-empty-payment svg{width:25px;height:25px;color:#4eac99}.ff-empty-payment strong{font-size:12px;color:#37536e}
@@ -8569,12 +8569,12 @@ body.theme-dark .universe-switch,body.theme-dark .module-switch-shell{background
 body.theme-dark .universe-switch button.active,body.theme-dark .module-switch-tab.active{background:#496084!important;color:#f0f5ff!important}
 body.theme-dark .universe-switch button:not(.active),body.theme-dark .module-switch-title strong{color:#c7d5ec!important}
 body.theme-dark .ff-tile:not(.ff-health-card),body.theme-dark .panel,body.theme-dark .kpi,body.theme-dark .bank-card,body.theme-dark .summary-glass,body.theme-dark .world-intro,body.theme-dark .bank-workspace,body.theme-dark .outline-box{background:linear-gradient(145deg,#263852,#26364e)!important;border-color:#50648190!important;color:#eef4ff!important}
-body.theme-dark .ff-balance-total,body.theme-dark .ff-label,body.theme-dark .ff-bubble:not(.featured) span,body.theme-dark .ff-trans-main strong,body.theme-dark .ff-trans-row>b,body.theme-dark .ff-pay-name strong,body.theme-dark .ff-pay-row>b,body.theme-dark .ff-person-sums strong,body.theme-dark .ff-person-name strong{color:#f2f6ff!important}
+body.theme-dark .ff-label, body.theme-dark .ff-bubble:not(.featured) span, body.theme-dark .ff-trans-main strong, body.theme-dark .ff-trans-row>b, body.theme-dark .ff-pay-name strong, body.theme-dark .ff-pay-row>b, body.theme-dark .ff-person-sums strong, body.theme-dark .ff-person-name strong{color:#f2f6ff!important}
 body.theme-dark .ff-bubble:not(.featured){background:linear-gradient(137deg,#425473,#2c4163);border-color:#6980a060}
 body.theme-dark .ff-bubble:not(.featured) small{color:#c2d0e6}
 body.theme-dark .ff-balance-header p,body.theme-dark .ff-pay-name small,body.theme-dark .ff-trans-main small,body.theme-dark .ff-person-name small,body.theme-dark .ff-person-sums small{color:#afbdd3}
-body.theme-dark .ff-currency-pills,body.theme-dark .ff-inline-pill,body.theme-dark .ff-person-sums>div,body.theme-dark .ff-outline-pill,body.theme-dark .ff-state.done{background:#405373aa;border-color:#ffffff24;color:#deebff}
-body.theme-dark .ff-currency-pills button.chosen{background:#5d7497;color:white}
+body.theme-dark .ff-inline-pill, body.theme-dark .ff-person-sums>div, body.theme-dark .ff-outline-pill, body.theme-dark .ff-state.done{background:#405373aa;border-color:#ffffff24;color:#deebff}
+
 body.theme-dark .ff-balance-actions button:not(.dark){background:#334a6b;color:#e8f2ff;border-color:#6981a2}
 body.theme-dark .ff-expense-card .ff-panel-top h2,body.theme-dark .ff-upcoming .ff-panel-top h2,body.theme-dark .ff-personal .ff-panel-top h2{color:#f1f5ff}
 body.theme-dark .ff-stat-footer b{color:#e4eeff}body.theme-dark .ff-pay-row:nth-child(2){background:#ffffff0b}body.theme-dark .ff-pay-symbol{background:#3f5674;color:#bbd4ff}
@@ -8583,10 +8583,10 @@ body.theme-dark[data-menu-layout="rail"] .rail-action{color:#d0dff7!important}bo
 body.theme-dark .kpi-value,body.theme-dark .panel-head h3,body.theme-dark .section-title h2{color:#eff5ff!important}body.theme-dark .field,body.theme-dark .filter-select{background:#344a68!important;color:#e4efff!important;border-color:#526887!important}
 /* More breathing room on smaller laptops without clipping actions. */
 @media (max-width:1450px){.ff-dashboard-grid{gap:11px}.ff-activity{padding-left:10px}.ff-balance{padding:15px 19px 13px}.ff-expense-card,.ff-health-card{padding:14px 16px}.ff-upcoming,.ff-personal{padding:14px 17px}.ff-trans-row{gap:7px}.ff-trans-main strong{font-size:10px}.ff-trans-main small{font-size:9px}.ff-state{font-size:8.5px;padding:5px 6px}.ff-trans-row>b{font-size:10px}.ff-bubble{width:clamp(98px,9.4vw,130px);height:clamp(98px,9.4vw,130px)}.ff-person-sums{margin-top:7px}}
-@media (max-width:1160px){.ff-dashboard-grid{grid-template-columns:minmax(0,1.3fr) minmax(0,.86fr);grid-template-rows:260px 206px 240px;height:auto}.ff-trans-list{margin-top:6px}.ff-bubble{width:110px;height:110px}.ff-activity{padding:0}.ff-trans-row:nth-child(n+6){display:none}.ff-health-number{margin-top:9px}.ff-health-foot strong{font-size:14px}}
-@media (max-width:960px){.ff-header-middle{display:none}.universe-context{display:none}.ff-dashboard-grid{grid-template-columns:1fr 1fr;grid-template-rows:265px 226px 220px 250px}.ff-balance{grid-column:1/3;grid-row:1}.ff-activity{grid-column:2;grid-row:2/4;padding:0 5px}.ff-mid{grid-column:1;grid-row:2;grid-template-columns:1fr;gap:10px}.ff-upcoming{grid-column:1;grid-row:3}.ff-personal{grid-column:1/3;grid-row:4}.ff-mid .ff-health-card{display:none}.ff-bubble{width:120px;height:120px}.ff-people-list{min-height:70px}}
-@media (max-width:790px){html{scrollbar-gutter:auto}body[data-menu-layout="rail"] .main{margin-left:0!important;width:100%!important;padding:15px 12px 35px!important}body[data-menu-layout="rail"] .sidebar.rail-sidebar{position:fixed!important;top:60px!important;left:10px!important;bottom:10px!important;width:68px!important;min-width:68px!important;display:none!important;border-radius:19px!important;background:#dee8f6ed!important;box-shadow:0 16px 35px #1c345c33!important;padding:9px!important;z-index:33!important}body[data-menu-layout="rail"] .sidebar.rail-sidebar.open{display:flex!important}body.theme-dark[data-menu-layout="rail"] .sidebar.rail-sidebar{background:#1b2a42!important}.mobile-bar{background:#e5edfaee!important;color:#223858!important;box-shadow:none!important;border-bottom:1px solid #ffffffc8!important;z-index:35!important}.topbar{margin-top:52px!important;gap:9px!important;align-items:flex-start!important;flex-direction:column!important}.top-actions{width:100%;justify-content:flex-start!important}.top-actions .date-chip{display:none}.top-title{font-size:24px!important}.universe-switch-wrap{margin:0 0 10px!important}.universe-switch{width:100%!important}.ff-dashboard-tools{flex-wrap:wrap;gap:6px}.ff-dashboard-grid{display:flex;flex-direction:column;gap:11px;height:auto!important}.ff-dashboard-grid>*{flex:none;width:100%}.ff-balance{height:280px}.ff-mid{display:grid;grid-template-columns:1fr 1fr;height:210px}.ff-mid .ff-health-card{display:flex}.ff-activity{min-height:310px;max-height:none}.ff-trans-row:nth-child(n+6){display:grid}.ff-upcoming{min-height:215px}.ff-personal{min-height:235px}.ff-trans-list{min-height:210px}.ff-dashboard-filters{margin-left:auto}.ff-health-number{font-size:32px}.ff-sparkline{max-height:50%}body.theme-dark .mobile-bar{background:#21324a!important;color:white!important}}
-@media (max-width:560px){.ff-overline{font-size:8.5px;letter-spacing:.05em}.ff-tools-separator{display:none}.ff-dashboard-filters{gap:3px}.ff-month-filter input{max-width:109px}.ff-balance{height:265px;padding:16px 13px}.ff-bubbles{padding-top:11px}.ff-bubble{width:31%;height:auto;aspect-ratio:1;margin:0 -3px}.ff-bubble span{font-size:clamp(12px,3.1vw,17px)}.ff-bubble small{font-size:9px}.ff-balance-total{font-size:clamp(24px,5.5vw,30px)}.ff-balance-actions button{height:34px;padding:0 10px;font-size:10px}.ff-currency-pills{display:none}.ff-mid{grid-template-columns:1fr;height:200px}.ff-mid .ff-health-card{display:none}.ff-expense-card{padding:14px 17px}.ff-activity{min-height:355px}.ff-trans-row{grid-template-columns:28px minmax(0,1fr) 52px 73px;gap:6px}.ff-trans-row>b{font-size:9.5px}.ff-state{font-size:8px;padding:5px 4px}.ff-pay-row{gap:6px;grid-template-columns:27px minmax(0,1fr) 50px 75px}.ff-pay-row>b{font-size:9.5px}.ff-person-sums strong{font-size:12px}.ff-header-new{font-size:10px!important}.top-actions .btn.ghost{height:34px!important;width:34px!important;min-width:34px!important}.ff-master-card{display:none}}
+@media (max-width:1160px){.ff-dashboard-grid{grid-template-columns:minmax(0,1.3fr) minmax(0,.86fr);grid-template-rows:260px 206px 240px;height:auto}.ff-bubble{width:110px;height:110px}.ff-activity{padding:0}.ff-trans-row:nth-child(n+6){display:none}.ff-health-number{margin-top:9px}.ff-health-foot strong{font-size:14px}}
+@media (max-width:960px){.ff-header-middle{display:none}.universe-context{display:none}.ff-dashboard-grid{grid-template-columns:1fr 1fr;grid-template-rows:265px 226px 220px 250px}.ff-balance{grid-column:1/3;grid-row:1}.ff-activity{grid-column:2;grid-row:2/4;padding:0 5px}.ff-upcoming{grid-column:1;grid-row:3}.ff-personal{grid-column:1/3;grid-row:4}.ff-bubble{width:120px;height:120px}.ff-people-list{min-height:70px}}
+@media (max-width:790px){html{scrollbar-gutter:auto}body[data-menu-layout="rail"] .main{margin-left:0!important;width:100%!important;padding:15px 12px 35px!important}body[data-menu-layout="rail"] .sidebar.rail-sidebar{position:fixed!important;top:60px!important;left:10px!important;bottom:10px!important;width:68px!important;min-width:68px!important;display:none!important;border-radius:19px!important;background:#dee8f6ed!important;box-shadow:0 16px 35px #1c345c33!important;padding:9px!important;z-index:33!important}body[data-menu-layout="rail"] .sidebar.rail-sidebar.open{display:flex!important}body.theme-dark[data-menu-layout="rail"] .sidebar.rail-sidebar{background:#1b2a42!important}.mobile-bar{background:#e5edfaee!important;color:#223858!important;box-shadow:none!important;border-bottom:1px solid #ffffffc8!important;z-index:35!important}.topbar{margin-top:52px!important;gap:9px!important;align-items:flex-start!important;flex-direction:column!important}.top-actions{width:100%;justify-content:flex-start!important}.top-actions .date-chip{display:none}.top-title{font-size:24px!important}.universe-switch-wrap{margin:0 0 10px!important}.universe-switch{width:100%!important}.ff-dashboard-tools{flex-wrap:wrap;gap:6px}.ff-dashboard-grid{display:flex;flex-direction:column;gap:11px;height:auto!important}.ff-dashboard-grid>*{flex:none;width:100%}.ff-balance{height:280px}.ff-activity{min-height:310px;max-height:none}.ff-trans-row:nth-child(n+6){display:grid}.ff-upcoming{min-height:215px}.ff-personal{min-height:235px}.ff-dashboard-filters{margin-left:auto}.ff-health-number{font-size:32px}.ff-sparkline{max-height:50%}body.theme-dark .mobile-bar{background:#21324a!important;color:white!important}}
+@media (max-width:560px){.ff-overline{font-size:8.5px;letter-spacing:.05em}.ff-tools-separator{display:none}.ff-dashboard-filters{gap:3px}.ff-month-filter input{max-width:109px}.ff-balance{height:265px;padding:16px 13px}.ff-bubbles{padding-top:11px}.ff-bubble{width:31%;height:auto;aspect-ratio:1;margin:0 -3px}.ff-bubble span{font-size:clamp(12px,3.1vw,17px)}.ff-bubble small{font-size:9px}.ff-balance-actions button{height:34px;padding:0 10px;font-size:10px}.ff-expense-card{padding:14px 17px}.ff-activity{min-height:355px}.ff-trans-row{grid-template-columns:28px minmax(0,1fr) 52px 73px;gap:6px}.ff-trans-row>b{font-size:9.5px}.ff-state{font-size:8px;padding:5px 4px}.ff-pay-row{gap:6px;grid-template-columns:27px minmax(0,1fr) 50px 75px}.ff-pay-row>b{font-size:9.5px}.ff-person-sums strong{font-size:12px}.ff-header-new{font-size:10px!important}.top-actions .btn.ghost{height:34px!important;width:34px!important;min-width:34px!important}.ff-master-card{display:none}}
 @media (prefers-reduced-motion:reduce){.ff-tile,.rail-action{transition:none!important}}
 
 .settings-hero{background:linear-gradient(120deg,#355a9d,#618bd3 56%,#779ce0)!important;border:1px solid #7996c5!important;color:#fff!important;box-shadow:0 15px 32px #375d9c1a!important;min-height:auto!important;padding:23px 28px!important}
@@ -8607,10 +8607,10 @@ body[data-menu-layout="rail"] .rail-action.active{box-shadow:0 7px 22px #476cb01
  .universe-switch{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;max-width:100%!important;scrollbar-width:thin!important}
  .universe-switch button{white-space:nowrap!important;flex:0 0 auto!important;min-width:max-content!important;padding:0 9px!important;font-size:10px!important}
  .ff-activity:has(.ff-empty-activity){min-height:170px!important}
- .ff-activity:has(.ff-empty-activity) .ff-trans-list{min-height:86px!important}
+ 
 }
 /* Keep privacy blur scoped to private financial values also in the new home. */
-body.privacy-finanzas .ff-balance-total,body.privacy-finanzas .ff-bubble span,body.privacy-finanzas .ff-trans-row>b,body.privacy-finanzas .ff-person-row>b,body.privacy-finanzas .ff-person-sums strong,body.privacy-finanzas .ff-stat-footer b,body.privacy-finanzas .ff-health-foot strong,body.privacy-finanzas .ff-pay-row>b{filter:blur(6px);user-select:none}
+body.privacy-finanzas .ff-bubble span, body.privacy-finanzas .ff-trans-row>b, body.privacy-finanzas .ff-person-row>b, body.privacy-finanzas .ff-person-sums strong, body.privacy-finanzas .ff-stat-footer b, body.privacy-finanzas .ff-health-foot strong, body.privacy-finanzas .ff-pay-row>b{filter:blur(6px);user-select:none}
 
 /* V59 · Tarjetas móviles estilo wallet */
 .v58m-card-showcase{display:none}
@@ -10082,8 +10082,8 @@ body.theme-dark .matrix-detail-table .matrix-group td{background:#354766!importa
  .ff-dashboard .ff-position-note{display:none!important}
  .ff-dashboard .ff-pos-tag{display:none!important}
  .main:has(.ff-dashboard) .ff-upcoming,.main:has(.ff-dashboard) .ff-personal{height:100%!important;overflow:hidden!important}
- .main:has(.ff-dashboard) .ff-mid{height:100%!important;min-height:0!important;}
- .main:has(.ff-dashboard) .ff-mid>section{min-height:0!important;height:100%!important;}
+ 
+ 
 }
 /* La comparación de cada burbuja siempre es sutil y semántica. */
 .ff-executive-bubbles .ff-yoy.up{color:#0b7869!important;background:#d9f5e8!important;border:1px solid #b5e6d0!important}
@@ -19395,8 +19395,8 @@ body.theme-dark .v82-forecast-breakdown b{color:#d7e9ff}
 .world-overview .ff-dashboard-grid.v105-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:none!important;grid-auto-rows:minmax(205px,auto)!important;height:auto!important;align-items:stretch!important}
 .world-overview .v105-grid>.ff-balance{grid-column:auto!important;grid-row:auto!important;order:0;min-height:290px}
 .world-overview .v105-grid>.ff-activity,.world-overview .v105-grid>.ff-upcoming,.world-overview .v105-grid>.ff-personal{grid-column:auto!important;grid-row:auto!important;min-height:235px;height:auto!important}
-.world-overview .v105-grid>.ff-mid{display:contents!important}
-.world-overview .v105-grid>.ff-mid>.ff-tile{grid-column:auto!important;grid-row:auto!important;min-height:235px;height:auto!important}
+
+
 .world-overview .ff-executive-bubbles .ff-bubble{gap:5px!important}
 .world-overview .ff-executive-bubbles .ff-bubble .bubble-amount{font-size:clamp(22px,2.2vw,31px)!important;font-weight:900!important;letter-spacing:-.065em!important}
 .world-overview .ff-executive-bubbles .ff-bubble small{order:3;font-size:10px!important;font-weight:750!important;margin-top:1px!important;line-height:1.12}
@@ -20133,19 +20133,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     grid-column:8/-1!important;grid-row:1/3!important;order:0!important;
     min-width:0!important;min-height:0!important;height:100%!important;
   }
-  .ff-dashboard.summary-space .v105-grid>.ff-mid{
-    display:contents!important;
-  }
-  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card,
-  .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card{
-    grid-column:1/5!important;grid-row:2!important;order:0!important;
-    min-width:0!important;min-height:0!important;height:100%!important;
-  }
-  .world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card,
-  .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card{
-    grid-column:5/8!important;grid-row:2!important;order:0!important;
-    min-width:0!important;min-height:0!important;height:100%!important;
-  }
+  
+  
+  
   .world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming,
   .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-upcoming{
     grid-column:1/8!important;grid-row:3!important;order:0!important;
@@ -26470,18 +26460,20 @@ body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet .v789-picker-mi
   min-width: 0;
 }
 #app main.world-overview #page,
-#app main.world-overview :is(.ff-dashboard,.ff-dashboard-grid,.ff-mid,.ff-tile,.ff-panel-top,.ff-panel-top>div),
+#app main.world-overview :is(.ff-dashboard,.ff-dashboard-grid,.ff-tile,.ff-panel-top,.ff-panel-top>div),
 #app main.world-overview :is(.vive-mobile-home,.v732-heading-line,.vive-mobile-balance,.vive-mobile-commitments,.vive-mobile-dues,.v36-month-capsule) {
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
 }
+#app main.world-overview .v732-period-short { display: none; }
 #app main.world-overview :is(.ff-trans-main,.ff-pay-name,.ff-person-name,.v36-commitment-name),
 #app main.world-overview :is(.ff-balance-header>div,.v36-commitment-detail-copy) { min-width: 0; }
-#app main.world-overview :is(.ff-balance-total,.ff-person-sums strong,.ff-health-foot strong,.ff-pay-row>b),
+#app main.world-overview :is(.ff-person-sums strong,.ff-health-foot strong,.ff-pay-row>b),
 #app main.world-overview :is(.vive-mobile-balance-amount,.v186-mobile-foot-amount,.vive-mobile-commitment-value,.vive-mobile-net-value,.v36-month-columns strong) {
   font-variant-numeric: tabular-nums;
   max-width: 100%;
+  min-width: 0;
 }
 /* Pantallas móviles: conservar la composición aprobada con espacio útil real. */
 @media (max-width: 790px) {
@@ -26506,6 +26498,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet .v789-picker-mi
   }
   #app main.world-overview :is(.vive-mobile-quick-actions,.v36-month-columns,.v36-commitment-list,.vive-mobile-balance-foot) {
     max-width: 100%;
+    min-width: 0;
   }
   #app main.world-overview :is(.vive-mobile-quick-actions button,.v273-personalize-link,.vive-mobile-view-all) {
     min-height: var(--v868-control-min);
@@ -26516,15 +26509,39 @@ body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet .v789-picker-mi
 }
 /* El ajuste se activa por anchura disponible y no por marca/modelo del teléfono. */
 @media (max-width: 359px) {
+  /* Keep month and heading together: the old forced second row was crowding mobile actions. */
   #app main.world-overview .v732-heading-line {
-    flex-wrap: wrap;
-    align-items: flex-start;
+    flex-wrap: nowrap;
+    align-items: center;
     justify-content: space-between;
+    gap: 6px;
   }
-  #app main.world-overview .v732-heading-line h1 { flex: 1 1 100%; }
+  #app main.world-overview .v732-heading-line h1 {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: clamp(18px, 5.65vw, 20px) !important;
+    line-height: 1.12;
+    letter-spacing: -.055em;
+    white-space: nowrap;
+  }
   #app main.world-overview .v732-period {
-    flex: 0 1 auto;
-    max-width: 100%;
+    flex: 0 0 auto;
+    max-width: 105px;
+    padding: 9px 8px;
+    font-size: 10px;
+  }
+  #app main.world-overview .v732-period-long { display: none; }
+  #app main.world-overview .v732-period-short { display: inline; }
+  /* Give the existing floating Register control a dedicated right rail at 320px.
+     Preserve all three actions, without hiding or shrinking their labels. */
+  #app main.world-overview .vive-mobile-home .vive-mobile-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: calc(100% - 68px);
+    gap: 8px;
+  }
+  #app main.world-overview .vive-mobile-home .vive-mobile-quick-actions button:last-child {
+    grid-column: 1 / -1;
   }
   #app main.world-overview :is(.v36-commitment-name strong,.vive-mobile-due-row strong) {
     font-size: clamp(12px, 3.6vw, 14px) !important;
@@ -26538,6 +26555,13 @@ body:is(.theme-black,.theme-dark) #modal-root .v827-picker-sheet .v789-picker-mi
   #app main.world-overview .vive-mobile-balance-amount {
     font-size: clamp(24px, 7.8vw, 34px);
     letter-spacing: -0.025em;
+  }
+}
+/* Readable line lengths on portrait tablets, without changing web layout or mobile navigation. */
+@media (min-width: 600px) and (max-width: 790px) {
+  #app main.world-overview .vive-mobile-home {
+    width: min(100%, 680px);
+    margin-inline: auto;
   }
 }
 /* Ventanas muy bajas: reducir solo espacio decorativo; el scroll real permanece. */
@@ -30433,7 +30457,7 @@ function mobileHome(){
    return `<div class="vive-mobile-due-row v105-mobile-due"><span class="v360-due-symbol" aria-hidden="true">${icon(o.kind==='card'?'card':o.kind==='loan'?'receipt':o.kind==='personal'?'wallet':'cycle')}</span><div><strong title="${sanitize(o.name)}">${sanitize(o.name)}</strong><small>${overdue?'<span class="vive-mobile-late-label">Vencido</span> · ':''}${prettyDate(o.date)} · ${kindName}</small></div><b>${money(o.amount,o.currency)}</b><button type="button" class="v105-pay-mini" data-v105-pay-menu="1" data-kind="${o.kind}" data-ref="${sanitize(o.ref)}" data-ccy="${sanitize(o.ccy||o.currency||'DOP')}" data-due="${sanitize(o.date)}" data-amount="${Number(o.amount)||0}" aria-label="Opciones para pagar ${sanitize(o.name)}">Pagar</button></div>`;
  }).join('');
  return `<div class="vive-mobile-home vive-mobile-home-essential" data-mobile-experience="${vis?'vision':'claridad'}">
-   <div class="vive-mobile-greeting v51-executive-greeting"><span class="vive-mobile-eyebrow">FINANZAS 360</span><div class="v732-heading-line"><h1>Resumen financiero</h1><label class="v732-period"><span>${sanitize(dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}))}</span><input id="monthFilter" type="month" value="${sanitize(ui.month||today().slice(0,7))}" aria-label="Período de análisis"></label></div><p>Tu panorama total, en un solo lugar.</p><button type="button" class="v273-personalize-link" data-v273-open-personalization="1" aria-label="Personalizar estilo y secciones del Resumen"><span class="v309-personalize-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="8" height="8" rx="2"/><rect x="13.5" y="2.5" width="8" height="5.5" rx="1.6"/><rect x="2.5" y="13.5" width="8" height="8" rx="2"/><rect x="13.5" y="10.5" width="8" height="11" rx="2"/></svg></span>Personalizar</button></div>
+   <div class="vive-mobile-greeting v51-executive-greeting"><span class="vive-mobile-eyebrow">FINANZAS 360</span><div class="v732-heading-line"><h1>Resumen financiero</h1><label class="v732-period"><span class="v732-period-long">${sanitize(dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}))}</span><span class="v732-period-short" aria-hidden="true">${sanitize(dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'short',year:'numeric'}))}</span><input id="monthFilter" type="month" value="${sanitize(ui.month||today().slice(0,7))}" aria-label="Período de análisis"></label></div><p>Tu panorama total, en un solo lugar.</p><button type="button" class="v273-personalize-link" data-v273-open-personalization="1" aria-label="Personalizar estilo y secciones del Resumen"><span class="v309-personalize-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="8" height="8" rx="2"/><rect x="13.5" y="2.5" width="8" height="5.5" rx="1.6"/><rect x="2.5" y="13.5" width="8" height="8" rx="2"/><rect x="13.5" y="10.5" width="8" height="11" rx="2"/></svg></span>Personalizar</button></div>
    ${v360HomeLinks()}
    ${v242BalancePanel}
    <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
@@ -30783,55 +30807,7 @@ function visionPositionHistory(monthCount=6, currentPosition=null){
 
 /* V312: retired legacy Vision dashboard; historical trend calculator remains in use. */
 
-function overview(){
- const m=monthStats(),period=dateObj(ui.month+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'});
- const fundsDOP=db.accounts.filter(a=>a.currency==='DOP').reduce((s,a)=>s+getAccountBalance(a),0);
- const fundsUSD=db.accounts.filter(a=>a.currency==='USD').reduce((s,a)=>s+getAccountBalance(a),0);
- const cardDebtDOP=db.cards.reduce((s,c)=>s+cardStatus(c,'DOP').debt,0);
- const cardDebtUSD=db.cards.reduce((s,c)=>s+cardStatus(c,'USD').debt,0);
- const totalFunds=rnd(fundsDOP+fx(fundsUSD,'USD'));
- const recent=[...recentTx().map(t=>({kind:'posted',t,date:t.date})),...(db.pendingOperations||[]).map(q=>({kind:'pending',q,date:q.values?.date||String(q.created||today()).slice(0,10)}))].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
- const activity=recent.map(x=>{
-   if(x.kind==='pending'){
-     let v=x.q.values||{},kind=TRANSL[v.type]||'Operación pendiente',desc=v.note||v.category||kind;
-     return `<div class="ff-trans-row"><span class="ff-trans-icon">${icon('clock')}</span><div class="ff-trans-main"><strong>${sanitize(desc)}</strong><small>${prettyDate(x.date)} · ${sanitize(kind)}</small></div><span class="ff-state pending">Pendiente</span><b>${money(num(v.amount||v.principal||0),v.currency||'DOP',2)}</b></div>`;
-   }
-   let t=x.t,positive=txDisplay(t).trim().startsWith('+');
-   return `<div class="ff-trans-row"><span class="ff-trans-icon ${positive?'positive':''}">${icon(positive?'up':'cycle')}</span><div class="ff-trans-main"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Registrado · por revisar'}</span></div><span class="ff-state done">Hecho</span><b class="${positive?'ff-positive':''}">${txDisplay(t)}</b></div>`;
- }).join('');
- const five=Array.from({length:5},(_,i)=>{const base=dateObj(ui.month+'-01');base.setMonth(base.getMonth()-4+i);let y=base.getFullYear(),mo=base.getMonth()+1;return {date:base,tot:monthlyTotals(y,mo)}});
- const high=Math.max(1,...five.flatMap(x=>[x.tot.income,x.tot.expense]));
- const bars=five.map((x,i)=>{
-   let inH=Math.max(4,100*Math.max(0,x.tot.income)/high),outH=Math.max(4,100*Math.max(0,x.tot.expense)/high),mn=x.date.toLocaleDateString('es-DO',{month:'short'}).replace('.','').toUpperCase();
-   return `<div class="ff-bar-group" tabindex="0" data-chart-tip="${x.date.toLocaleDateString('es-DO',{month:'long',year:'numeric'})}|Ingresos: ${money(x.tot.income)}|Egresos: ${money(x.tot.expense)}|Neto: ${money(x.tot.net)}"><div class="ff-bar-cluster"><span class="ff-bar ff-bar-in" style="height:${inH}%"></span><span class="ff-bar ff-bar-out" style="height:${outH}%"></span></div><span class="ff-bar-label">${mn}</span></div>`;
- }).join('');
- const series=Array.from({length:7},(_,i)=>{let d=dateObj(ui.month+'-01');d.setMonth(d.getMonth()-6+i);return monthlyTotals(d.getFullYear(),d.getMonth()+1).net});
- let hi=Math.max(...series,1),lo=Math.min(...series,0),range=Math.max(1,hi-lo);
- let points=series.map((v,i)=>[12+i*62,105-(v-lo)/range*78]);
- let path=smoothPath(points);
- let spark=`<svg class="ff-sparkline" viewBox="0 0 400 128" role="img" aria-label="Evolución del ahorro neto en los últimos 7 meses"><defs><linearGradient id="ffLineArea" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path d="${path} L 384 124 L 12 124 Z" fill="url(#ffLineArea)"/><path d="${path}" fill="none" stroke="#f8ffff" stroke-width="2.6" stroke-linecap="round"/><circle cx="${points[6][0]}" cy="${points[6][1]}" r="5" fill="white" stroke="#8eb7fb" stroke-width="3"/></svg>`;
- let ratio=m.income>0?m.net/m.income*100:null;
- const obligations=v99PendingForPeriod(ui.month).filter(o=>['card','loan','recurring'].includes(o.kind)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3);
- const obligationsHtml=obligations.map(o=>{let n=diffDays(o.date,today()),badge=n<0?`<span class="ff-due overdue">Vencido</span>`:n===0?`<span class="ff-due today">Hoy</span>`:n<8?`<span class="ff-due soon">En ${n} días</span>`:`<span class="ff-due">${prettyDate(o.date)}</span>`;
- return `<div class="ff-pay-row"><span class="ff-pay-symbol">${icon(o.kind==='card'?'card':o.kind==='loan'?'receipt':'calendar')}</span><div class="ff-pay-name"><strong>${sanitize(o.name)}</strong><small>${o.kind==='card'?'Tarjeta':o.kind==='loan'?'Préstamo bancario':'Suscripción'} · ${prettyDate(o.date)}</small></div>${badge}<b>${money(o.amount,o.currency,2)}</b></div>`}).join('');
- const loans=(db.personalLoans||[]).filter(l=>personalBalance(l)>.005).slice().sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));
- let owed=loans.filter(l=>l.direction==='borrowed').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0),receivable=loans.filter(l=>l.direction==='lent').reduce((a,l)=>a+fx(personalBalance(l),l.currency),0);
- const peopleRows=loans.slice(0,3).map(l=>`<div class="ff-person-row"><span class="ff-person-initial">${sanitize((l.person||'?').slice(0,1).toUpperCase())}</span><span class="ff-person-name"><strong>${sanitize(l.person)}</strong><small>${l.direction==='lent'?'Me deben':'Yo debo'} · ${prettyDate(l.dueDate)}</small></span><b>${money(personalBalance(l),l.currency,2)}</b></div>`).join('');
- const ratioText=ratio===null?'—':`<span class="ff-number-core">${new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(ratio)}</span><span class="ff-percent-sign">%</span>`;
- return `<div class="ff-dashboard summary-space">
-  <div class="ff-dashboard-tools"><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
-  <div class="ff-dashboard-grid">
-   <section class="ff-balance ff-tile" aria-label="Balance y productos principales"><div class="ff-balance-header"><div><div class="ff-label">Balance en cuentas</div><div class="ff-balance-total">${money(totalFunds,'DOP',2)}</div><p>Efectivo consolidado · RD$ y US$ al cambio configurado${!db.settings.fxAcknowledged?' (referencial)':''}</p></div><div class="ff-currency-pills"><button class="chosen" data-act="navigate" data-id="accounts" title="Ver cuentas bancarias">RD$</button><button data-act="navigate" data-id="cards" title="Ver tarjetas en dólares">US$</button></div></div><div class="ff-bubbles"><div class="ff-bubble"><span>${money(fundsDOP,'DOP')}</span><small>Cuentas en RD$</small></div><div class="ff-bubble featured"><span>${money(fundsUSD,'USD',2)}</span><small>Cuentas en US$</small></div><div class="ff-bubble"><span>${money(cardDebtDOP+fx(cardDebtUSD,'USD'))}</span><small>Deuda en tarjetas</small></div></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
-   <aside class="ff-activity"><div class="ff-panel-top"><div><h2>Movimientos</h2><p>Últimas operaciones y confirmaciones</p></div><button class="ff-black-btn" data-act="viewActivity">Ver todo ${icon('arrow')}</button></div><div class="ff-trans-list">${activity||'<div class="ff-empty-activity">Todavía no hay movimientos. Los registros aparecerán aquí.</div>'}</div><button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} por confirmar <span>${icon('arrow')}</span></button></aside>
-   <div class="ff-mid">
-    <section class="ff-expense-card ff-tile"><div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses</p></div><span class="ff-inline-pill">Mensual</span></div><div class="ff-bar-chart" role="img" aria-label="Gráfico de ingresos y egresos de cinco meses">${bars}</div><div class="ff-stat-footer"><span><i class="ff-legend-blue"></i> Ingresos <b>${money(m.income)}</b></span><span><i class="ff-legend-white"></i> Egresos <b>${money(m.expense)}</b></span></div></section>
-    <section class="ff-health-card ff-tile"><div class="ff-panel-top"><div><h2>Neto del mes</h2><p>Ingresos − egresos</p></div><button class="ff-refresh" data-act="navigate" data-id="analytics" title="Ver el resumen detallado">${icon('analytics')}</button></div><div class="ff-health-number">${ratioText}</div><div class="ff-health-caption">${ratio===null?'Sin ingresos registrados':'Porcentaje del ingreso que quedó como neto'}</div>${spark}<div class="ff-health-foot"><span>Resultado neto</span><strong>${money(m.net)}</strong></div></section>
-   </div>
-   <section class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
-   <section class="ff-personal ff-tile"><div class="ff-panel-top"><div><h2>Entre personas</h2><p>Dinero prestado y recibido</p></div><button class="ff-outline-pill" data-act="navigate" data-id="personal">Ver relaciones</button></div><div class="ff-person-sums"><div><small>Por cobrar</small><strong>${money(receivable)}</strong></div><div><small>Por devolver</small><strong>${money(owed)}</strong></div></div><div class="ff-people-list">${peopleRows||'<div class="ff-no-people">No hay préstamos personales activos.</div>'}</div><button class="ff-person-cta" data-act="addPersonal">${icon('plus')} Nueva relación</button></section>
-  </div>
- </div>`;
-}
+
 function bankFigures(b){let aa=db.accounts.filter(a=>linkedBank(a,b.id)),cc=db.cards.filter(c=>linkedBank(c,b.id)),ll=db.loans.filter(l=>linkedBank(l,b.id)),certs=db.certificates.filter(c=>linkedBank(c,b.id));let liquidity=aa.reduce((sum,a)=>sum+fx(getAccountBalance(a),a.currency),0),credit=cc.reduce((sum,c)=>sum+fx(cardStatus(c,'DOP').debt,'DOP')+fx(cardStatus(c,'USD').debt,'USD'),0),loansDue=ll.reduce((sum,l)=>sum+fx(loanStatus(l).balance,l.currency),0);let investment=certs.reduce((sum,c)=>sum+fx(certificateCapital(c),c.currency),0);return {aa,cc,ll,certs,liquidity,credit,loansDue,investment,benefits:bankBenefits(b.id),net:liquidity+investment-credit-loansDue}}
 function banks(){let liq=totalLiquid(),debt=totalCardDebt()+totalLoanDebt(),invested=totalCertificates();let selected=bank(ui.bankId),visibleBanks=db.banks.filter(b=>ui.showHidden||!b.archived);return `<div class="bank-hero v46-bank-hero">
   <div class="v46-bank-intro">
@@ -46958,7 +46934,7 @@ function productOption(name,item,label=item.name){
  // Reutilizar la identidad cargada para la institución en Bancos; nunca una imagen inventada.
  const institutionRecord=item.bankId?bank(item.bankId):null;
  const savedLogo=institutionRecord?.logo;
- const institutionLogo=typeof bankLogoSafe==='function'?bankLogoSafe(savedLogo):'';
+ const institutionLogo=kind==='account'&&typeof bankLogoSafe==='function'?bankLogoSafe(savedLogo):'';
  const accountIsCash=kind==='account'&&(item.kind==='cash'||normalize(item.name).includes('efectivo'));
  const institutionLabel=accountIsCash?'EF':(institutionRecord?.name||institution||'CU').replace(/[^\p{L}\p{N} ]/gu,'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3);
  return {value:String(item.id),name:label,kind,detail,amount,brand,institutionLogo,institutionLabel,accountIsCash};
@@ -46989,7 +46965,62 @@ window.openRegisterProductPicker=(title,products,selected,onConfirm)=>open('prod
  if(product)onConfirm(productOption(product.type,product.item));
 },title);
 window.openRefundPurchasePicker=(purchases,selected,onConfirm)=>open('purchase',purchases,selected,onConfirm);
-function updateTrigger(field){const label=field.closest('label');const value=label?.querySelector('.v789-select-details strong');if(value)value.textContent=field.selectedOptions?.[0]?.textContent.trim()||'Seleccionar';}
+/* V869 · Identidad bancaria unificada: marca de tarjeta en crédito, institución en cuentas.
+   Un mismo renderizador pinta iconos dentro del picker y en la selección exterior. */
+function paintProductIdentity(node,opt){
+  if(!node)return;
+  node.classList.remove('v869-credit','v869-visa','v869-mastercard','v869-account','v869-cash');
+  node.replaceChildren();
+  node.setAttribute('aria-hidden','true');
+  if(opt?.kind==='credit'){
+    node.classList.add('v869-credit');
+    if(opt.brand==='visa'){
+      node.classList.add('v869-visa');
+      const mark=document.createElement('strong');mark.className='v869-visa-word';mark.textContent='VISA';node.append(mark);
+    }else if(opt.brand==='mc'){
+      node.classList.add('v869-mastercard');
+      const mark=document.createElement('span');mark.className='v869-mastermark';
+      mark.append(document.createElement('i'),document.createElement('i'));node.append(mark);
+    }else node.innerHTML=cardSvg;
+    return;
+  }
+  if(opt?.kind==='account'){
+    node.classList.add(opt.accountIsCash?'v869-cash':'v869-account');
+    if(!opt.accountIsCash&&opt.institutionLogo){
+      const img=document.createElement('img');img.className='v867-institution-logo v869-bank-logo';img.src=opt.institutionLogo;img.alt='';
+      img.loading='eager';img.decoding='async';img.addEventListener('error',()=>{img.remove();node.innerHTML=bankSvg},{once:true});
+      node.append(img);
+    }else node.innerHTML=opt.accountIsCash?cashSvg:bankSvg;
+    return;
+  }
+  node.innerHTML=opt?.kind==='mortgage'||opt?.kind==='personal'?bankSvg:cardSvg;
+}
+function updateTrigger(field){
+  const label=field.closest('label');
+  const details=label?.querySelector('.v789-select-details');
+  const value=details?.querySelector('strong');
+  const text=field.selectedOptions?.[0]?.textContent.trim()||'Seleccionar';
+  const product=field.name==='cardId'?card(field.value):field.name==='accountId'?account(field.value):null;
+  const option=product?productOption(field.name,product):null;
+  if(value)value.textContent=option?.name||text;
+  const icon=label?.querySelector('.v789-select-ico');
+  if(icon){
+    if(option)paintProductIdentity(icon,option);
+    else{
+      icon.classList.remove('v869-credit','v869-visa','v869-mastercard','v869-account','v869-cash');
+      icon.innerHTML=field.name==='cardId'?cardSvg:bankSvg;
+    }
+  }
+  if(details){
+    let sub=details.querySelector('.v869-selected-meta');
+    if(option?.detail){
+      if(!sub){sub=document.createElement('small');sub.className='v869-selected-meta';details.append(sub);}
+      sub.textContent=option.detail;
+    }else sub?.remove();
+  }
+  const trigger=label?.querySelector('.v789-select-open');
+  if(trigger)trigger.setAttribute('aria-label','Cambiar '+(productLabels[field.name]||'producto')+': '+(option?.name||text));
+}
 function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form')){
  for(const name of ['cardId','accountId','loanId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement))continue;
  const label=field.closest('label');if(!label||field.dataset.v789Enhanced==='1')continue;
@@ -47019,7 +47050,7 @@ function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels
  const tabs=document.createElement('div');tabs.className='v827-picker-tabs v787-product-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Filtrar productos');
  let filter='all';for(const [key,label] of (name==='loanId'?[['all','Todos'],['personal','Personales'],['mortgage','Hipotecarios']]:[['all','Todas'],['credit','Crédito'],['account','Cuentas']].filter(([key])=>key==='all'||name!=='purchase'))){const btn=document.createElement('button');btn.type='button';btn.textContent=label+' ('+all.filter(o=>key==='all'||o.kind===key).length+')';btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key==='all'));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
  const list=document.createElement('div');list.className='v789-picker-list v787-product-scroll';const rows=[];
- for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row v787-product-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini v787-product-brand '+(opt.kind==='credit'&&opt.brand?'is-card '+opt.brand:opt.kind==='account'?'is-account':'');ico.innerHTML=opt.institutionLogo?'<img class="v867-institution-logo" src="'+opt.institutionLogo+'" alt="" loading="eager" decoding="async">':opt.brand==='mc'?'<i class="v787-mc-left"></i><i class="v787-mc-right"></i>':opt.brand==='visa'?'<strong>VISA</strong>':opt.kind==='account'?'<span class="v867-institution-fallback">'+(opt.accountIsCash?cashSvg:bankSvg)+'<b>'+String(opt.institutionLabel||'').replace(/[^A-Z0-9]/g,'')+'</b></span>':name==='loanId'?bankSvg:name==='purchase'?'<span aria-hidden="true">↶</span>':cardSvg;
+ for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row v787-product-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini v787-product-brand '+(opt.kind==='credit'&&opt.brand?'is-card '+opt.brand:opt.kind==='account'?'is-account':'');paintProductIdentity(ico,opt);
  const content=document.createElement('span');content.className='v789-picker-text v787-product-main';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.detail;content.append(strong,small);if(opt.amount){const amount=document.createElement('em');amount.textContent=opt.amount;content.append(amount);}const mark=document.createElement('span');mark.className='v789-picker-mark v787-product-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);list.append(row);rows.push(row);row.addEventListener('click',()=>{selected=opt.value;refresh()});}
  const empty=document.createElement('p');empty.className='v827-picker-empty';empty.textContent=all.length?'No se encontraron coincidencias.':'No hay productos disponibles para esta operación.';list.append(empty);
  const actions=document.createElement('div');actions.className='v827-picker-actions';const cancel=document.createElement('button');cancel.type='button';cancel.className='v827-picker-cancel';cancel.textContent='Cancelar';const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';const confirmLabel={loanId:'Usar este préstamo',purchase:'Usar esta compra',cardId:'Usar esta tarjeta',accountId:'Usar esta cuenta'};actions.append(cancel,confirm);
@@ -50603,12 +50634,8 @@ body.theme-dark .v149-icon-tabs button{background:#263b5c;border-color:#476182;c
   body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-obligations {
     grid-column:10/-1!important;grid-row:1/3!important;
   }
-  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card {
-    grid-column:1/6!important;grid-row:2!important;
-  }
-  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card {
-    grid-column:6/10!important;grid-row:2!important;
-  }
+  
+  
   body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-upcoming {
     grid-column:1/10!important;grid-row:3!important;
   }
@@ -51022,11 +51049,7 @@ body.theme-dark .v156-feedback-caption{color:#bdcce2}
   gap:clamp(7px,1.0dvh,11px)!important;grid-auto-rows:minmax(0,1fr)!important;
   align-items:stretch!important;overflow:visible!important;
  }
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-balance,
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-obligations,
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-upcoming,
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-personal,
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-mid>.ff-tile{
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-balance, body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-obligations, body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-upcoming, body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-personal{
   min-height:0!important;max-height:100%!important;height:100%!important;
  }
  /* Límites de contenido: acceso íntegro a los registros desde sus enlaces Ver todo. */
@@ -51069,9 +51092,7 @@ body.theme-dark .v156-feedback-caption{color:#bdcce2}
  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal .ff-people-list{
   min-height:0!important;overflow:hidden!important;
  }
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-mid>.ff-tile{
-  overflow:hidden!important;
- }
+ 
  /* La tarjeta principal se adapta al alto; el círculo central conserva el enfoque. */
  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.v152-position-reference{
   padding:clamp(11px,1.55dvh,26px) clamp(17px,2.2vw,34px) clamp(9px,1.2dvh,18px)!important;
@@ -51119,10 +51140,7 @@ body.theme-dark .v156-feedback-caption{color:#bdcce2}
   font-size:clamp(9px,.75vw,11.5px)!important;
  }
  /* Los gráficos mantienen su legibilidad sin exigir una altura fija. */
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-mid .ff-panel-top h2,
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming .ff-panel-top h2,
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal .ff-panel-top h2,
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations .ff-panel-top h2{
+ body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-upcoming .ff-panel-top h2, body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-personal .ff-panel-top h2, body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-obligations .ff-panel-top h2{
   font-size:clamp(14px,1.15vw,20px)!important;
  }
  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .ff-health-number{
@@ -51191,9 +51209,9 @@ body.theme-dark .v156-feedback-caption{color:#bdcce2}
  }
  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.v152-position-reference{grid-column:1/10!important;grid-row:1!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;overflow:hidden!important;}
  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-obligations{grid-column:10/-1!important;grid-row:1/3!important;}
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid{display:contents!important;}
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card{grid-column:1/6!important;grid-row:2!important;}
- body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card{grid-column:6/10!important;grid-row:2!important;}
+ 
+ 
+ 
  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-upcoming{grid-column:1/10!important;grid-row:3!important;}
  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v105-grid>.ff-personal{grid-column:10/-1!important;grid-row:3!important;}
  body .main:has(.ff-dashboard) .ff-dashboard.summary-space .v152-position-reference .ff-executive-bubbles{display:flex!important;justify-content:center!important;height:100%!important;align-items:center!important;}
@@ -51302,31 +51320,8 @@ document.addEventListener('click',e=>{document.querySelectorAll('.v162-brand-men
     overflow:hidden!important;
   }
   /* Agrupación real de las dos tarjetas intermedias, no pseudo-columnas anchas. */
-  body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-mid{
-    grid-column:1!important;
-    grid-row:2!important;
-    order:0!important;
-    display:grid!important;
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    grid-template-rows:minmax(0,1fr)!important;
-    align-items:stretch!important;
-    gap:14px!important;
-    min-width:0!important;
-    min-height:0!important;
-    height:100%!important;
-  }
-  body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-expense-card,
-  body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-health-card{
-    grid-column:auto!important;
-    grid-row:auto!important;
-    min-width:0!important;
-    min-height:0!important;
-    height:100%!important;
-    width:100%!important;
-    order:0!important;
-    padding:clamp(13px,1.7dvh,20px) clamp(14px,1.35vw,21px)!important;
-    border-radius:28px!important;
-  }
+  
+  
   body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-upcoming{
     grid-column:1!important;
     grid-row:3!important;
@@ -51463,10 +51458,7 @@ document.addEventListener('click',e=>{document.querySelectorAll('.v162-brand-men
     min-height:26px!important;
     font-size:10px!important;
   }
-  body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-mid .ff-panel-top h2,
-  body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-upcoming .ff-panel-top h2,
-  body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-personal .ff-panel-top h2,
-  body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-panel-top h2{
+  body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-upcoming .ff-panel-top h2, body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-personal .ff-panel-top h2, body .main:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .ff-obligations .ff-panel-top h2{
     font-size:clamp(16px,1.45vw,21px)!important;
     line-height:1.14!important;
   }
@@ -52926,15 +52918,8 @@ body.theme-dark .world-benefits .v180-benefits-filter-label strong,body.theme-da
    grid-column:2!important;grid-row:1/3!important;min-height:0!important;height:100%!important;
    padding:4px 0 1px clamp(12px,1.1vw,20px)!important;
  }
- body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.ff-mid{
-   grid-column:1!important;grid-row:2!important;display:grid!important;
-   grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:clamp(13px,1vw,18px)!important;
-   height:100%!important;min-height:0!important;
- }
- body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.ff-mid>.ff-tile{
-   grid-column:auto!important;grid-row:auto!important;min-height:0!important;height:100%!important;
-   padding:clamp(15px,1.65dvh,20px) clamp(16px,1.3vw,22px)!important;
- }
+ 
+ 
  body .main.world-overview:has(.ff-dashboard.summary-space) .v105-grid>.ff-upcoming{
    grid-column:1!important;grid-row:3!important;min-height:0!important;height:100%!important;
    padding:clamp(14px,1.5dvh,19px) clamp(16px,1.3vw,22px)!important;
@@ -53439,14 +53424,11 @@ body.theme-dark .world-benefits .v183-annual-totals b,body.theme-dark .v119-moda
     min-height: 0 !important;
     overflow: visible !important;
   }
-  body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid,.ff-dashboard.summary-space .v105-grid>.ff-upcoming,.ff-dashboard.summary-space .v105-grid>.ff-personal {
+  .ff-dashboard.summary-space .v105-grid>.ff-upcoming, .ff-dashboard.summary-space .v105-grid>.ff-personal{
     height: auto !important;
     min-height: 235px !important;
   }
-  body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-tile {
-    height: 100% !important;
-    min-height: 235px !important;
-  }
+  
   body .main.world-overview .ff-dashboard.summary-space .ff-executive-bubbles {
     display: flex !important;
     align-items: center !important;
@@ -54476,15 +54458,12 @@ body.theme-dark .v186-deep-rows,body.theme-dark .v186-deep-summary>div {
     height: 100% !important;
     overflow: auto !important;
   }
-  body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid,.ff-dashboard.summary-space .v105-grid>.ff-upcoming,.ff-dashboard.summary-space .v105-grid>.ff-personal {
+  .ff-dashboard.summary-space .v105-grid>.ff-upcoming, .ff-dashboard.summary-space .v105-grid>.ff-personal{
     height: 100% !important;
     min-height: 0 !important;
     overflow: hidden !important;
   }
-  body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-tile {
-    min-height: 0 !important;
-    max-height: 100% !important;
-  }
+  
   body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming .ff-payment-list {
     max-height: calc(100% - 50px) !important;
     overflow-y: auto !important;
@@ -54498,7 +54477,7 @@ body.theme-dark .v186-deep-rows,body.theme-dark .v186-deep-summary>div {
     grid-template-columns: minmax(0,1fr) !important;
     grid-template-rows: auto !important;
   }
-  body .main.world-overview .ff-dashboard.summary-space .v105-grid>.v152-position-reference,body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-obligations,body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid,body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming,body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-personal {
+  body .main.world-overview .ff-dashboard.summary-space .v105-grid>.v152-position-reference, body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-obligations, body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming, body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-personal{
     grid-column: 1/-1 !important;
     grid-row: auto !important;
     height: auto !important;
@@ -54513,11 +54492,7 @@ body.theme-dark .v186-deep-rows,body.theme-dark .v186-deep-summary>div {
     height: clamp(115px,15vw,153px) !important;
     flex-basis: clamp(115px,15vw,153px) !important;
   }
-  body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid {
-    display: grid !important;
-    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
-    gap: 12px;
-  }
+  
 }
 @media (max-width:1100px) {
   .v187-patrimony .v187-charts {
@@ -56284,10 +56259,10 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
  body .main.world-overview .ff-dashboard.summary-space .ff-obligations .ff-obligation-title strong{font-size:clamp(10px,.78vw,12px)!important;line-height:1.2!important}
  body .main.world-overview .ff-dashboard.summary-space .ff-obligations .ff-obligation-title small{font-size:clamp(8px,.64vw,10px)!important;line-height:1.25!important}
  body .main.world-overview .ff-dashboard.summary-space .ff-obligations .ff-activity-foot{padding-top:4px!important;padding-bottom:3px!important;min-height:24px!important;font-size:clamp(9px,.75vw,11px)!important;flex:0 0 auto!important}
- body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid{height:100%!important;min-height:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:clamp(8px,1vw,14px)!important}
- body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid>.ff-tile{height:100%!important;min-height:0!important;padding:clamp(10px,1.2dvh,17px) clamp(12px,1.2vw,20px)!important}
- body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid .ff-panel-top{margin-bottom:clamp(5px,.7dvh,11px)!important}
- body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid .ff-panel-top h2{font-size:clamp(15px,1.3vw,22px)!important;line-height:1.2!important}
+ 
+ 
+ 
+ 
  body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-upcoming,body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-personal{height:100%!important;min-height:0!important;max-height:100%!important;padding:clamp(10px,1.25dvh,17px) clamp(12px,1.2vw,20px)!important;overflow:hidden!important}
  body .main.world-overview .ff-dashboard.summary-space .ff-payment-list{min-height:0!important;max-height:none!important;overflow:hidden!important;grid-auto-rows:minmax(0,1fr)!important}
  body .main.world-overview .ff-dashboard.summary-space .ff-pay-row{min-height:0!important;padding-top:3px!important;padding-bottom:3px!important}
@@ -56303,12 +56278,12 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
 @media (max-width:979px),(max-height:659px){
  body .main.world-overview{overflow-x:hidden!important;overflow-y:auto!important}
  body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid{zoom:1!important;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;max-height:none!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;gap:12px!important;overflow:visible!important}
- body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.v152-position-reference,body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-obligations,body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-mid,body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-upcoming,body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-personal{grid-column:1/-1!important;grid-row:auto!important;width:100%!important;height:auto!important;max-height:none!important}
- body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.v152-position-reference, body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-obligations, body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-upcoming, body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-grid.v105-grid>.ff-personal{grid-column:1/-1!important;grid-row:auto!important;width:100%!important;height:auto!important;max-height:none!important}
+ 
 }
 @media (max-width:600px){
  body .main.world-overview .ff-dashboard.summary-space .ff-dashboard-tools{align-items:flex-start!important;flex-wrap:wrap!important}
- body .main.world-overview .ff-dashboard.summary-space .v105-grid>.ff-mid{grid-template-columns:1fr!important}
+ 
 }
 </style>
 <style>
@@ -65154,12 +65129,7 @@ body.theme-black #page #v145-payment-center .v286-pay-tile-name,body.theme-dark 
     height: 100% !important;
     min-height: 198px !important;
   }
-  body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-mid {
-    grid-column: 1 !important;
-    grid-row: 2 !important;
-    display: grid !important;
-    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
-  }
+  
   body .main.world-overview:has(.ff-dashboard.summary-space) .ff-dashboard.summary-space .v105-grid>.ff-upcoming {
     grid-column: 1 !important;
     grid-row: 3 !important;
@@ -80632,7 +80602,7 @@ body.theme-black .world-mobilesearch #page .v721-search-corner{color:#d7dcf2!imp
 @media(max-width:360px){
  .world-mobilesearch #page .v721-category-tile{padding:14px 11px!important;}
  .world-mobilesearch #page .v721-category-tile .v154-category-title{font-size:clamp(15px,4.5vw,19px)!important;}
- .vive-mobile-home .v732-heading-line h1{font-size:20px!important;}
+ .vive-mobile-home .v732-heading-line h1{font-size:clamp(18px,5.65vw,20px)!important;}
 }
 @media(prefers-reduced-motion:reduce){.world-mobilesearch #page .v711-search-pills button{transition:none!important;}}
 </style>
@@ -88714,5 +88684,59 @@ window.__v866Runners.v865=run;
 })();
 </script>
 <!-- V866: transformaciones de Otras gestiones integradas en la ruta de apertura, antes de mostrar el formulario. -->
+
+<style id="v869-financial-product-identity">
+/* El tipo de producto manda: Visa/Mastercard para crédito, institución para cuenta. */
+#modal-root .v827-picker-sheet .v789-picker-mini.v869-credit{
+ width:58px!important;height:48px!important;flex:0 0 58px!important;border-radius:13px!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ color:#fff!important;padding:0!important;overflow:hidden!important;border:1px solid #ffffff2e!important;
+ box-shadow:inset 0 1px 0 #ffffff35,0 7px 18px #0003!important;
+}
+#modal-root .v827-picker-sheet .v789-picker-mini.v869-visa,
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-ico.v869-visa{
+ background:linear-gradient(145deg,#2676c6 0%,#12447f 55%,#0b2148 100%)!important;
+}
+#modal-root .v827-picker-sheet .v789-picker-mini.v869-mastercard,
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-ico.v869-mastercard{
+ background:linear-gradient(145deg,#35244c,#10142b)!important;
+}
+#modal-root .v869-visa-word{
+ font-family:Arial,Helvetica,sans-serif!important;font-size:clamp(13px,3.8vw,19px)!important;
+ font-weight:900!important;font-style:italic!important;letter-spacing:-1.3px!important;
+ color:#fff!important;line-height:1!important;text-shadow:0 1px 2px #071b4677!important;
+}
+#modal-root .v869-mastermark{display:block;position:relative;width:43px;height:27px;flex:none}
+#modal-root .v869-mastermark i{position:absolute;top:1px;left:1px;width:25px;height:25px;border-radius:50%;background:#eb001b;opacity:1}
+#modal-root .v869-mastermark i+i{left:17px;background:#f79e1b;opacity:.93}
+#modal-root .v827-picker-sheet .v789-picker-mini.v869-account,
+#modal-root .v827-picker-sheet .v789-picker-mini.v869-cash{border-radius:14px!important;color:var(--v827-accent,var(--vive-theme-color,#6b60ed))!important}
+#modal-root .v827-picker-sheet .v789-picker-mini.v869-account svg,
+#modal-root .v827-picker-sheet .v789-picker-mini.v869-cash svg{width:26px!important;height:26px!important}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-ico:is(.v869-credit,.v869-account,.v869-cash){
+ width:46px!important;height:39px!important;flex:0 0 46px!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;border-radius:12px!important;overflow:hidden!important;
+}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-ico.v869-credit{
+ color:#fff!important;border-color:#ffffff30!important;box-shadow:inset 0 1px 0 #ffffff3d,0 4px 10px #0002!important;
+}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-ico .v869-visa-word{font-size:15px!important}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-ico .v869-mastermark{transform:scale(.78)}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-ico .v869-bank-logo{
+ max-width:37px!important;max-height:32px!important;object-fit:contain!important;border-radius:7px!important;
+}
+#modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-details .v869-selected-meta{
+ display:block!important;font-size:clamp(10px,2.8vw,12px)!important;line-height:1.25!important;
+ margin-top:3px!important;color:var(--v827-muted,var(--financial-secondary,#687892))!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;
+}
+body:is(.theme-black,.theme-dark) #modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-details .v869-selected-meta{color:#b5bfd1!important}
+@media(max-width:359px){
+ #modal-root .v827-picker-sheet .v789-picker-mini.v869-credit{width:49px!important;height:42px!important;flex-basis:49px!important}
+ #modal-root .v827-picker-sheet .v789-picker-mini .v869-visa-word{font-size:15px!important}
+ #modal-root .v827-picker-sheet .v869-mastermark{transform:scale(.85)}
+ #modal-root label.v789-select-enhanced>.v827-universal-trigger .v789-select-ico:is(.v869-credit,.v869-account,.v869-cash){width:40px!important;flex-basis:40px!important}
+}
+</style>
 </body>
 </html>
