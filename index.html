@@ -53,7 +53,7 @@ html{scroll-behavior:smooth}
 body{margin:0;
 background:var(--bg);
 color:var(--ink);
-font-family:Inter,'Segoe UI',Arial,sans-serif;
+font-family:var(--v397-font);
 font-size:14px;
 font-weight:400}
 button,input,select,textarea{font:inherit}
@@ -795,7 +795,7 @@ padding:0}
 --muted:#7c889a;
 --radius:20px;
 --shadow:0 10px 40px rgba(32,48,80,.045)}
-body{font-family:Inter,'Segoe UI',-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+body{font-family:var(--v397-font);
 background:radial-gradient(ellipse at 58% -28%,#eaf0ff 0%,transparent 48%),var(--bg);
 letter-spacing:-.1px}
 .sidebar{width:262px;
@@ -1239,7 +1239,7 @@ margin:10px 0 0}
 --radius:24px;
 --shadow:0 15px 50px rgba(65,91,139,.075),inset 0 1px 0 rgba(255,255,255,.85)}
 html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,"Segoe UI",Arial,sans-serif;
+body{font-family:var(--v397-font);
 letter-spacing:-.12px;
 background:#edf2f9;
 min-height:100vh;
@@ -4624,7 +4624,7 @@ flex-direction:column}
 .world-income .v55-shell{color:#192438;
 max-width:1500px;
 margin:0 auto 42px;
-font-family:Inter,'Segoe UI',Arial,sans-serif}
+font-family:var(--v397-font)}
 .v55-shell *{box-sizing:border-box}
 .v55-hero{display:flex;
 justify-content:space-between;
@@ -7879,7 +7879,7 @@ body.theme-dark .personal-ledger-filter{background:#22314a;border-color:#3d506c}
    Layout inspired by user's supplied reference, not its logos/graphics.
    ======================================================================= */
 :root {--ff-blue-bg:#d8e2f1;--ff-surface:#eaf0f9;--ff-surface-white:rgba(249,251,255,.76);--ff-ink:#17243b;--ff-muted:#697d99;--ff-readable-muted:#526984;--ff-stroke:rgba(255,255,255,.42);--ff-cobalt:#5b7bf6;--ff-accent:#5779ec;--ff-shadow:0 12px 26px rgba(62,84,131,.043)}
-html{scrollbar-gutter:stable}body{background:linear-gradient(134deg,#b6c7ef 0%,#dce6f3 48%,#e7edf2 100%)!important;color:var(--ff-ink);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',system-ui,sans-serif!important;-webkit-font-smoothing:antialiased}
+html{scrollbar-gutter:stable}body{background:linear-gradient(134deg,#b6c7ef 0%,#dce6f3 48%,#e7edf2 100%)!important;color:var(--ff-ink);font-family:var(--v397-font)!important;-webkit-font-smoothing:antialiased}
 body::before{content:'';pointer-events:none;position:fixed;z-index:-1;inset:0;background:radial-gradient(circle at 2% 3%,rgba(98,132,239,.3),transparent 38%),radial-gradient(circle at 94% 96%,rgba(157,205,217,.13),transparent 50%)}
 #app,.shell{min-height:100vh}.shell{display:flex!important;gap:0!important}
 /* Primary icon navigation: restrained, naturally integrated with page */
@@ -9853,7 +9853,7 @@ body.theme-dark .world-settings :is(.summary-tag,.form-note){color:#b6c8e4!impor
 .visual-design-choice.is-selected .design-check{color:#fff;background:var(--vive-theme-color,#6d69f1)}
 .design-footnote{font-size:12px;color:#78869a;margin:12px 2px 0}
 /* VISIÓN: base, navegación y tipografía contrastada en TODOS los módulos */
-body.vision-mode{--bg:#090f1e!important;--white:#141f33!important;--ink:#eaf1ff!important;--muted:#91a4c3!important;--line:#26354f!important;--navy:#0c1424!important;--navy2:#192640!important;--blue:#6ea2ff!important;--blue2:#1b2c46!important;--shadow:0 16px 44px rgba(0,0,0,.22)!important;color-scheme:dark!important;background:#080f1e!important;background-image:radial-gradient(ellipse 75% 48% at 76% -9%,#253957 0%,transparent 78%)!important;color:#eaf1ff!important;font-family:Inter,'Segoe UI',Arial,sans-serif}
+body.vision-mode{--bg:#090f1e!important;--white:#141f33!important;--ink:#eaf1ff!important;--muted:#91a4c3!important;--line:#26354f!important;--navy:#0c1424!important;--navy2:#192640!important;--blue:#6ea2ff!important;--blue2:#1b2c46!important;--shadow:0 16px 44px rgba(0,0,0,.22)!important;color-scheme:dark!important;background:#080f1e!important;background-image:radial-gradient(ellipse 75% 48% at 76% -9%,#253957 0%,transparent 78%)!important;color:#eaf1ff!important;font-family:var(--v397-font)}
 body.vision-mode #app,body.vision-mode .shell{background:transparent!important}
 body.vision-mode .main{background:transparent!important;max-width:none!important;color:#eaf1ff!important}
 body.vision-mode .rail-sidebar{background:linear-gradient(180deg,#17243d,#10192c)!important;border:1px solid #2a3954!important;border-radius:26px!important;left:13px!important;top:14px!important;bottom:14px!important;box-shadow:0 20px 38px #0005!important}
@@ -9901,7 +9901,7 @@ body.vision-mode .visual-design-choice.is-selected .design-check{color:#0d1c34;b
 /* V312: shared historic trend used by Inicio mobile (not dead code). */
 .vision-liquid-chart{display:block;width:100%;height:215px;overflow:visible}
 .vision-gridline{stroke:#40516c;stroke-opacity:.4;stroke-width:1}
-.vision-axis,.vision-month{fill:#9ab0d1;font-size:12px;font-family:Inter,'Segoe UI',Arial,sans-serif}
+.vision-axis,.vision-month{fill:#9ab0d1;font-size:12px;font-family:var(--v397-font)}
 .vision-month{font-size:12px}
 .vision-chart-point{cursor:help}
 .vision-chart-point:hover{r:7;filter:drop-shadow(0 0 8px #26f2ad)}
@@ -10476,8 +10476,8 @@ body.vision-mode .vision-position-breakdown strong{font-size:12px;white-space:no
 .fastx-entry{display:flex;flex-direction:column;min-width:0;min-height:0;background:#ffffff;overflow-y:auto}
 .fastx-head{background:linear-gradient(120deg,#f6fffc,#eef8f8);border-bottom:1px solid #e7f0ef;padding:25px 30px 20px}
 .fastx-form[data-mode="spend"] .fastx-head{background:linear-gradient(120deg,#fffbf8,#fff1ed);border-bottom-color:#f8e7e1}
-.fastx-head-top{display:flex;align-items:center;justify-content:space-between;gap:15px}
-.fastx-brand{font-size:10px;font-weight:850;letter-spacing:1.2px;color:#6d91a2;display:flex;align-items:center;gap:8px}.fastx-brand .star{font-size:19px;color:var(--fx-accent)}
+.fastx-head-top{display:flex;align-items:center;justify-content:flex-end;gap:15px}
+
 .fastx-close{border:1px solid #dce8ea;width:32px;height:32px;border-radius:10px;background:#ffffffbc;color:#647b8c;font-size:24px;line-height:1;display:grid;place-items:center}
 .fastx-mode-tabs{margin:20px 0 0;display:inline-flex;gap:5px;padding:5px;background:#e8eeef;border:1px solid #dce8e8;border-radius:15px}
 .fastx-mode-tabs button{min-width:141px;padding:10px 17px;border:0;background:transparent;color:#748999;border-radius:11px;font-size:12px;font-weight:760;display:flex;align-items:center;justify-content:center;gap:9px}
@@ -12187,7 +12187,7 @@ body.theme-dark .v58-drill-modal{background:#1b2b42}body.theme-dark .v58-drill-r
 <style id="v80-purchase-advisor-style">
 /* V80 · Radar de compra, adaptación móvil y escritorio, mantiene el diseño Liquid Glass */
 .v80-advisor-slot{min-width:0;margin:12px 0 4px;width:100%;grid-column:1/-1}
-.v80-advisor{padding:16px;border:1px solid rgba(116,151,208,.28);border-radius:22px;background:linear-gradient(148deg,rgba(247,250,255,.96),rgba(232,241,255,.82));color:#1c304c;box-shadow:0 12px 34px rgba(21,59,121,.07);font-family:Inter,'Segoe UI',Arial,sans-serif}
+.v80-advisor{padding:16px;border:1px solid rgba(116,151,208,.28);border-radius:22px;background:linear-gradient(148deg,rgba(247,250,255,.96),rgba(232,241,255,.82));color:#1c304c;box-shadow:0 12px 34px rgba(21,59,121,.07);font-family:var(--v397-font)}
 .v80-advisor-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:11px}
 .v80-advisor-head>span{display:flex;align-items:center;gap:7px;font-weight:800;font-size:13px;letter-spacing:-.15px}
 .v80-advisor-head svg{width:17px;height:17px}
@@ -19127,7 +19127,7 @@ body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-pre
  body:has(.v766-app) .v273-settings-customizer{padding:0!important;margin:0!important;display:block!important;overflow:visible!important}
  body:has(.v766-app) .mobile-bar{display:none!important}
 }
-#app .v766-app{width:min(100%,432px)!important;margin:0 auto!important;height:auto!important;overflow:hidden!important;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Arial,sans-serif!important;color:#f3f1fb!important}
+#app .v766-app{width:min(100%,432px)!important;margin:0 auto!important;height:auto!important;overflow:hidden!important;font-family:var(--v397-font)!important;color:#f3f1fb!important}
 #app .v766-app .v766-content{padding-top:33px!important;padding-bottom:140px!important}
 #app .v766-app .v766-cards{display:flex!important;flex-direction:column!important;gap:6px!important;padding:0!important}
 #app .v766-app .v766-indicator{display:block!important;position:relative!important;flex-shrink:0!important;box-sizing:border-box!important;min-width:0!important;padding:0!important;margin-left:0!important}
@@ -28041,7 +28041,7 @@ function enhanceIncomeExpenseExpress(f,mode,editing=false){
  const head=document.createElement('header');head.className='fastx-head';
  const tabs=editing?`<div class="fastx-mode-tabs"><button type="button" class="active" disabled>${mode==='income'?'↗ Ingreso':'↘ Egreso'}</button></div>`:
  `<div class="fastx-mode-tabs" role="group" aria-label="Tipo de movimiento"><button type="button" data-fast-mode="income" class="${mode==='income'?'active':''}" aria-pressed="${mode==='income'}">↗ Ingreso</button><button type="button" data-fast-mode="spend" class="${mode==='spend'?'active':''}" aria-pressed="${mode==='spend'}">↘ Egreso</button></div>`;
- head.innerHTML=`<div class="fastx-head-top"><span class="fastx-brand">vive el hoy · FINANZAS 360</span><button type="button" class="fastx-close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v700-heading"><div><span class="v700-eyebrow">REGISTRO DE MOVIMIENTOS</span><h2 class="fastx-title">${editing?'Editar ':''}${mode==='income'?'Registrar ingreso':'Registrar gasto'}</h2><p class="fastx-description">${mode==='income'?'Indica cuánto recibiste, de dónde proviene y dónde se depositará.':'Registra cuánto pagaste, su categoría y de qué cuenta o tarjeta salió.'}</p></div>${tabs}</div>`;
+ head.innerHTML=`<div class="fastx-head-top"><button type="button" class="fastx-close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v700-heading"><div><span class="v700-eyebrow">REGISTRO DE MOVIMIENTOS</span><h2 class="fastx-title">${editing?'Editar ':''}${mode==='income'?'Registrar ingreso':'Registrar gasto'}</h2><p class="fastx-description">${mode==='income'?'Indica cuánto recibiste, de dónde proviene y dónde se depositará.':'Registra cuánto pagaste, su categoría y de qué cuenta o tarjeta salió.'}</p></div>${tabs}</div>`;
  left.appendChild(head);
  const body=document.createElement('div');body.className='fastx-body';left.appendChild(body);
  const hidden=document.createElement('div');hidden.hidden=true;
@@ -28088,6 +28088,11 @@ function enhanceIncomeExpenseExpress(f,mode,editing=false){
  footer.classList.add('fastx-bottom-actions');const cancel=footer.querySelector('[data-act="closeModal"]');if(cancel)cancel.textContent='Cerrar';shell.append(left,right,footer);
  grid.replaceWith(shell);
  f.classList.add('fastx-form','v129-express-organized','v700-express');f.classList.remove('studio-form');f.noValidate=true;
+ // The modern express form already owns its title and close control.
+ // Remove the superseded wrapper header from the DOM rather than masking it with CSS.
+ const expressModal=f.closest('.modal');
+ const redundantWrapperHead=expressModal?.querySelector(':scope > .modal-head');
+ if(redundantWrapperHead&&f.querySelector('.fastx-head .fastx-close'))redundantWrapperHead.remove();
  f.addEventListener('click',ev=>{
   const categoryButton=ev.target.closest('[data-fast-category]');if(categoryButton){ev.preventDefault();const x=f.elements.category;if(x){x.value=categoryButton.dataset.fastCategory;x.dispatchEvent(new Event('change',{bubbles:true}))}queueMicrotask(()=>fastxSync(f));return}
   const otherButton=ev.target.closest('[data-fast-other]');if(otherButton){ev.preventDefault();const more=f.querySelector('.v134-category-more');if(more){more.open=true;const sel=more.querySelector('select[name="category"]')||f.elements.category;if(sel)sel.focus({preventScroll:true});otherButton.setAttribute('aria-expanded','true');}return}
@@ -63851,7 +63856,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v349-review-screen .v349-review-n
 /* V350: lenguaje visual compartido, conservando componentes y comportamiento */
 @media (max-width: 790px) {
   #modal-root .v349-register-dialog {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif !important;
+    font-family: var(--v397-font)!important;
     letter-spacing: -.012em;
   }
   #modal-root .v349-register-dialog > .modal-head {
@@ -63910,7 +63915,7 @@ body:is(.theme-black,.theme-dark) #modal-root .v349-review-screen .v349-review-n
     white-space: normal;
   }
   #modal-root .v349-review-panel {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif !important;
+    font-family: var(--v397-font)!important;
     gap: 16px !important;
   }
   #modal-root .v349-review-panel h2 {
@@ -64569,7 +64574,7 @@ html body #modal-root .modal-layer.v354-layer > .modal.v354-dialog{position:rela
  body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-entry,.fastx-head,.fastx-right,.fastx-form[data-mode="spend"] .fastx-head,.fastx-form[data-mode="spend"] .fastx-right){background:#080808!important;background-image:none!important;color:#f7f7f7!important;border-color:#292929!important}
  body:is(.theme-black,.theme-dark) #modal-root .fastx-entry{background:#090909!important}
  body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-title,.fastx-receipt-title,.fastx-section-title strong){color:#f6f6f6!important}
- body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-brand,.fastx-description,.fastx-section-title small,.fastx-receipt-sub,.fastx-receipt-head){color:#a9a9a9!important}
+ body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-description,.fastx-section-title small,.fastx-receipt-sub,.fastx-receipt-head){color:#a9a9a9!important}
  body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-amount-zone,.fastx-value-card,.fastx-method,.fastx-cat,.fastx-fold-inner .flow-minor-details,.fastx-fold-inner .confirm-status,.fastx-receipt-details .flow-receipt-v4,.fastx-form .field){background:#151515!important;background-image:none!important;color:#f5f5f5!important;border:1px solid #353535!important;box-shadow:none!important}
  body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-mode-tabs,.fastx-close,.fastx-currency-badge,.fastx-cat .fastx-cat-ico){background:#202020!important;background-image:none!important;border-color:#363636!important;color:#eee!important}
  body:is(.theme-black,.theme-dark) #modal-root :is(.fastx-mode-tabs button,.fastx-mode-tabs button.active){color:#f6f6f6!important}
@@ -67007,6 +67012,12 @@ body.theme-black :is(.pill:not(.green):not(.red):not(.orange):not(.blue)){backgr
   --v397-tracking-value:-.04em;
   --v397-line-body:1.48;
   --v397-space-unit:4px;
+  /* Semantic metrics extracted from established controls, not device-specific scaling. */
+  --v397-tap-target:44px;
+  --v397-copy-line:1.48;
+  --v397-section-gap:12px;
+  --v397-card-gap:14px;
+  --v397-title-size:clamp(21px,2vw,27px);
   --v397-page-ink:#19253a;
   --v397-hint:#68778e;
   --v397-hairline:#e4e9f1;
@@ -67024,10 +67035,10 @@ body.theme-black {
 body { font-family:var(--v397-font); font-kerning:normal; text-rendering:optimizeLegibility; }
 body :is(.top-title,.section-title h2,.panel-head h3,.modal-head h2,.brand-name) {
   letter-spacing:var(--v397-tracking-title); text-wrap:balance; }
-body .top-title { font-size:clamp(21px,2vw,27px); font-weight:790; line-height:1.16; }
+body .top-title { font-size:var(--v397-title-size); font-weight:790; line-height:1.16; }
 body .section-title h2 { font-weight:770; line-height:1.22; }
 body .panel-head h3 { font-weight:745; line-height:1.3; }
-body :is(.top-sub,.section-title p,.subtle,.mini-sub,.kpi-foot) {line-height:var(--v397-line-body);}
+body :is(.top-sub,.section-title p,.subtle,.mini-sub,.kpi-foot) {line-height:var(--v397-copy-line);}
 body :is(.money,.kpi-value,[class*="balance-value"],[class*="amount-value"],[class*="metric-value"]) {
   font-variant-numeric:tabular-nums lining-nums; font-feature-settings:"tnum" 1; }
 body .kpi-value {letter-spacing:var(--v397-tracking-value);font-weight:790;}
@@ -67051,6 +67062,14 @@ body :is(.field-label,.form-label) {line-height:1.38;}
 body :is(.field-hint,.help-text,.form-hint) {line-height:1.5;}
 body :is(button,input,select,textarea) {font-family:var(--v397-font);}
 body :is(.btn,.pill,.tab) {letter-spacing:0;}
+/* All page families can shrink inside Grid/Flex without losing content. */
+body :is(.main,#page,.topbar,.section-title,.panel-head,.panel,.kpi,.modal) {min-width:0;}
+body :is(.top-title,.section-title h2,.panel-head h3,.modal-head h2) {overflow-wrap:break-word;}
+/* One accessible focus grammar, with brand-aware accent fallback. */
+body :where(button,a[href],input,select,textarea,[role="button"],[role="tab"]):focus-visible {
+  outline:2px solid var(--v396-focus,var(--vive-theme-color,#6d69f1));
+  outline-offset:2px;
+}
 /* Fidelity of black: neutral accent-independent borders; don't recolor financial signals. */
 body.theme-black :is(.panel,.kpi,.modal) {box-shadow:var(--v397-elevation);}
 body.theme-black :is(.top-sub,.section-title p,.subtle,.mini-sub) {color:var(--v397-hint);}
@@ -67061,6 +67080,10 @@ body.theme-black .brand-name {font-weight:780;}
  body .topbar {gap:12px;}
  body :is(.panel-head,.section-title) {gap:10px;}
  body .kpi-value {letter-spacing:-.03em;}
+  body :is(.topbar,.section-title,.panel-head) > * {min-width:0;}
+  body :is(.section-title p,.top-sub,.panel-head p) {overflow-wrap:break-word;}
+  body :is(.modal,.panel,.kpi) {max-inline-size:100%;}
+
 }
 @media(prefers-reduced-motion:reduce) {
  body :is(.panel,.kpi,.nav-btn,.tab,.module-switch-tab,.v206-banks-pill) {transition:none!important;}
@@ -69861,7 +69884,7 @@ html body #modal-root .fastx-form .fastx-fold-inner{display:grid!important;grid-
   border:1px solid transparent!important;border-radius:14px!important;
   background:transparent!important;background-image:none!important;
   box-shadow:none!important;color:var(--ink,#506b91)!important;
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,'Segoe UI',Arial,sans-serif!important;
+  font-family:var(--v397-font)!important;
   font-size:clamp(11px,.81vw,13px)!important;line-height:1.1!important;font-weight:680!important;
   letter-spacing:-.018em!important;white-space:nowrap!important;
   transition:background .18s ease,box-shadow .18s ease,color .18s ease!important;
@@ -70027,7 +70050,7 @@ html body #modal-root .fastx-form .fastx-fold-inner{display:grid!important;grid-
 @media screen and (max-width: 790px) {
  html body #app #page .v266-wallet.v279-wallet,
  html body #app #page .v266-wallet.v279-wallet :is(h1,h2,h3,h4,p,small,span,div,b,strong,button,summary,label) {
-   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,"Segoe UI",Arial,sans-serif!important;
+   font-family:var(--v397-font)!important;
    font-synthesis:none;
    font-kerning:normal;
    text-rendering:optimizeLegibility;
@@ -70570,7 +70593,7 @@ html body.theme-dark #app .vive-mobile-home .v344-creative.v342-creative-positio
  }
  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>small,
  html body #app #page .v266-wallet.v279-wallet .v565-credit-dashboard .v550-balance-column>span{
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,"Segoe UI",Arial,sans-serif!important;
+  font-family:var(--v397-font)!important;
   font-size:9px!important;font-weight:650!important;line-height:1.3!important;
   letter-spacing:.045em!important;white-space:normal!important;
  }
@@ -70635,7 +70658,7 @@ html body.theme-dark #app .vive-mobile-home .v344-creative.v342-creative-positio
   margin:0 0 13px!important;align-items:center!important;gap:12px!important;
  }
  html body #app #page .v266-wallet.v279-wallet .v371-return-heading h2{
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,"Segoe UI",Arial,sans-serif!important;
+  font-family:var(--v397-font)!important;
   font-weight:790!important;font-size:clamp(18px,5vw,21px)!important;
   letter-spacing:-.04em!important;line-height:1.17!important;
  }
@@ -70652,12 +70675,12 @@ html body.theme-dark #app .vive-mobile-home .v344-creative.v342-creative-positio
  }
  html body #app #page .v266-wallet.v279-wallet .v371-return-tile:nth-child(even){border-left:1px solid color-mix(in srgb,var(--vive-theme-color,#577fe5) 13%,rgba(200,215,234,.72))!important}
  html body #app #page .v266-wallet.v279-wallet .v371-return-tile small{
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,"Segoe UI",Arial,sans-serif!important;
+  font-family:var(--v397-font)!important;
   color:var(--muted,#72819b)!important;font-size:10px!important;font-weight:640!important;
   letter-spacing:0!important;line-height:1.25!important;
  }
  html body #app #page .v266-wallet.v279-wallet .v371-return-tile strong{
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,"Segoe UI",Arial,sans-serif!important;
+  font-family:var(--v397-font)!important;
   font-size:clamp(15px,4.35vw,20px)!important;font-weight:790!important;
   line-height:1.15!important;letter-spacing:-.04em!important;
   font-variant-numeric:tabular-nums!important;overflow-wrap:anywhere!important;
@@ -72074,7 +72097,7 @@ html body.theme-black #app #page .v302-subs-app .v302-subs-add{
   padding:18px 25px 15px!important;background:#fff!important;border-bottom:1px solid #e9eef5!important;flex:0 0 auto!important;
  }
  html body #modal-root form.v700-express .fastx-head-top{margin-bottom:14px!important}
- html body #modal-root form.v700-express .fastx-brand{font-size:10px!important;letter-spacing:.12em!important;font-weight:800!important;color:#758aa3!important}
+ 
  html body #modal-root form.v700-express .v700-heading{display:flex;justify-content:space-between;gap:18px;align-items:end;min-width:0}
  html body #modal-root form.v700-express .v700-heading>div:first-child{min-width:0}
  html body #modal-root form.v700-express .v700-eyebrow{font-size:9px;font-weight:820;letter-spacing:.15em;color:var(--vive-theme-color,#3f74cb);text-transform:uppercase}
@@ -73223,7 +73246,7 @@ html body.theme-black #modal-root .v85-capacity-modal .v85-capacity-metrics stro
     --v708-glow:rgba(91,120,178,.12);--v708-accent:var(--v424-accent-strong,var(--vive-theme-color,#526bdd));
     --v708-soft:color-mix(in srgb,var(--v708-accent) 13%,white);
     color:var(--v708-ink)!important;width:100%;max-width:700px;margin:0 auto;padding:12px 2px 36px;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,sans-serif;
+    font-family:var(--v397-font);
     animation:v708-enter .24s ease both;
   }
   @keyframes v708-enter{from{opacity:.3;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
@@ -73938,7 +73961,7 @@ body #app :is(.v721-category-tile,.v154-category-tile){border-color:var(--v748-f
 </style>
 <style id="v749-register-two-screen-design">
 /* V749: UI only; no new finance store, network calls or third-party artwork. */
-#modal-root .v749-layer{--v749-accent:var(--vive-theme-color,#8862e9);--v749-ink:#f8f9ff;--v749-muted:#a9acc0;--v749-base:#030305;--v749-panel:#111115;--v749-line:rgba(255,255,255,.16);position:fixed!important;inset:0!important;z-index:2147482900!important;background:var(--v749-base)!important;color:var(--v749-ink)!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;isolation:isolate;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;box-sizing:border-box}
+#modal-root .v749-layer{--v749-accent:var(--vive-theme-color,#8862e9);--v749-ink:#f8f9ff;--v749-muted:#a9acc0;--v749-base:#030305;--v749-panel:#111115;--v749-line:rgba(255,255,255,.16);position:fixed!important;inset:0!important;z-index:2147482900!important;background:var(--v749-base)!important;color:var(--v749-ink)!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;isolation:isolate;font-family:var(--v397-font);box-sizing:border-box}
 #modal-root .v749-layer *{box-sizing:border-box}
 #modal-root .v749-layer:before{content:"";position:absolute;inset:-10% -30% auto 30%;height:50%;pointer-events:none;background:radial-gradient(ellipse at 65% 15%,color-mix(in srgb,var(--v749-accent) 24%,transparent),transparent 62%);z-index:-1}
 #modal-root .v749-screen{width:min(100%,520px);margin:0 auto;display:flex;flex-direction:column;min-height:0;max-height:100%;height:100%;padding:calc(12px + env(safe-area-inset-top,0px)) clamp(16px,4.6vw,26px) 0;}
@@ -82338,7 +82361,7 @@ body:is(.theme-black,.theme-dark) #modal-root form[data-special="refund"] .v388-
  --r872-corner:20px;
  color:var(--r872-text)!important;
  background:var(--r872-canvas)!important;
- font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,"Segoe UI",sans-serif!important;
+ font-family:var(--v397-font)!important;
  letter-spacing:-.015em;
  -webkit-font-smoothing:antialiased;
 }
