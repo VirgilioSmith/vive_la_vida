@@ -18414,6 +18414,60 @@ body.theme-black .v6-wallet-detail-actions{background:#080808;}
 .v7-apple-modal{max-width:470px;width:min(94vw,470px)}.v7-apple-modal-eyebrow{font-size:11px;display:inline-flex;align-items:center;gap:6px}.v7-apple-purchase{display:grid;gap:7px;padding:16px;border:1px solid var(--line,rgba(125,125,125,.22));border-radius:16px;margin-bottom:18px}.v7-apple-purchase strong{font-size:17px}.v7-apple-purchase b{font-size:25px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.v7-apple-purchase small{opacity:.6;font-size:12px}.v7-apple-field{display:grid;gap:7px;margin-bottom:14px;font-size:13px;font-weight:650}.v7-apple-field select{min-height:46px;max-width:100%}.v7-apple-privacy{font-size:12px;line-height:1.5;opacity:.68}.v7-apple-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.v7-apple-actions button{min-height:44px}.v7-apple-submit:disabled{opacity:.65;cursor:wait}
 body.theme-black .v7-apple-item,body.theme-black .v7-apple-purchase{background:#0c0c0c;border-color:#303030}body.theme-black .v7-apple-counter{background:#161616;border-color:#333}
 @media(max-width:790px){.v7-apple-summary{flex-wrap:wrap}.v7-apple-item{padding:12px;gap:8px}.v7-apple-copy strong{font-size:12px}.v7-apple-value{font-size:12px}.v7-apple-modal{max-height:calc(100dvh - 36px);overflow:auto}.v7-apple-actions{display:grid;grid-template-columns:1fr 1fr}}
+
+/* V880: Apple Pay · Por clasificar, coherent with the existing Personalización token. */
+.v880-apple-item{display:block;min-width:0;padding:12px 13px;transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease}
+.v880-purchase-row{display:grid;grid-template-columns:58px minmax(0,1fr) auto;align-items:center;column-gap:11px;row-gap:7px;min-width:0;width:100%}
+.v880-pay-mark{grid-column:1;grid-row:1 / 3;display:inline-flex;align-items:center;justify-content:center;gap:3px;width:58px;height:52px;border-radius:14px;background:#111;color:#fff;font-size:14px;font-weight:800}
+.v880-pay-mark svg{width:17px;height:17px;fill:currentColor}
+.v880-purchase-copy{grid-column:2;grid-row:1;min-width:0;display:grid;align-content:center;gap:5px}
+.v880-purchase-copy>strong{font-size:clamp(13px,3.6vw,16px);font-weight:760;line-height:1.2;overflow-wrap:anywhere}
+.v880-purchase-copy>small{font-size:11px;color:var(--v880-muted,#71809a);font-weight:500}
+.v880-purchase-card{grid-column:2 / 4;grid-row:2;display:block;min-width:0;font-size:11px;line-height:1.4;color:var(--v880-ink,#1c2c45)}
+.v880-card-identity{display:inline-flex;min-width:0;align-items:center;gap:7px;max-width:100%}
+.v880-card-name{overflow-wrap:anywhere;min-width:0}
+.v880-card-network{display:inline-flex;align-items:center;justify-content:center;flex:none;max-width:48px;max-height:25px}
+.v880-card-network .credit-network{transform:none!important;font-size:9px!important;max-width:48px!important;min-height:19px!important;padding:1px 3px!important;display:inline-flex!important;align-items:center;justify-content:center;border-radius:5px}
+.v880-card-network .credit-network-mastercard .network-circles{transform:scale(.54);transform-origin:center}
+.v880-purchase-amount{grid-column:3;grid-row:1;justify-self:end;font-size:clamp(12px,3.4vw,15px);font-variant-numeric:tabular-nums;white-space:nowrap;padding:7px 9px;border-radius:12px;background:var(--v880-amount-bg,#eeecff);color:var(--v880-ink,#1c2c45)}
+.v880-pending-label{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:11px;color:var(--v880-accent,var(--vive-theme-color,#7565ee));margin:7px 0 0;font-weight:650}
+.v880-pending-label svg{width:12px;height:12px}
+.v880-apple-modal{--v880-accent:var(--vive-theme-color,#7565ee);--v880-ink:#172941;--v880-muted:#697893;--v880-bg:#f8f9fc;--v880-card:#fff;--v880-line:#d8def0;--v880-amount-bg:color-mix(in srgb,var(--v880-accent) 12%,#fff);background:var(--v880-bg)!important;color:var(--v880-ink)!important;max-width:510px;max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;border-radius:25px;padding:clamp(15px,3.5vw,24px)}
+.v7-apple-widget,.v8-inbox-modal{--v880-accent:var(--vive-theme-color,#7565ee);--v880-ink:var(--text,#172941);--v880-muted:var(--muted,#697893);--v880-amount-bg:color-mix(in srgb,var(--v880-accent) 12%,transparent)}
+.v880-apple-modal .modal-head{align-items:flex-start;gap:10px;margin-bottom:14px}
+.v880-apple-modal .modal-head h2{font-size:clamp(23px,5vw,30px);line-height:1.12;letter-spacing:-.035em}
+.v880-apple-subtitle{font-size:13px;line-height:1.4;color:var(--v880-muted);margin:7px 0 0}
+.v880-apple-modal .v7-apple-purchase{display:block;border-radius:19px;border:1px solid var(--v880-line);background:var(--v880-card);padding:12px;margin-bottom:16px}
+.v880-apple-modal .v7-apple-purchase .v880-purchase-copy>strong{font-size:clamp(16px,4vw,19px)}
+.v880-apple-modal .v7-apple-purchase .v880-pay-mark{width:60px;height:56px}
+.v880-apple-modal .v7-apple-field{gap:6px;margin-bottom:12px;font-size:14px;color:var(--v880-ink)}
+.v880-select-wrap{display:flex;align-items:center;position:relative;background:var(--v880-card);border:1px solid var(--v880-line);border-radius:15px;min-height:55px;min-width:0}
+.v880-select-wrap:focus-within{border-color:var(--v880-accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--v880-accent) 22%,transparent)}
+.v880-select-icon{width:38px;height:38px;border-radius:11px;background:color-mix(in srgb,var(--v880-accent) 13%,transparent);color:var(--v880-accent);display:grid;place-items:center;flex:none;margin-left:8px}
+.v880-select-icon svg{width:20px;height:20px}
+.v880-select-wrap select{flex:1;min-width:0;width:100%;max-width:100%;min-height:52px;padding:8px 28px 8px 11px;border:0!important;outline:none!important;box-shadow:none!important;background:transparent!important;color:var(--v880-ink)!important;font:inherit;font-weight:700;appearance:none;-webkit-appearance:none}
+.v880-select-chevron{position:absolute;right:12px;pointer-events:none;color:var(--v880-muted);font-size:23px}
+.v880-apple-similar{display:flex;align-items:center;gap:12px;padding:13px;border-radius:17px;border:1px solid var(--v880-line);background:var(--v880-card);margin:15px 0 0;cursor:pointer}
+.v880-similar-icon{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:13px;background:color-mix(in srgb,var(--v880-accent) 13%,transparent);color:var(--v880-accent)}
+.v880-similar-icon svg{width:21px;height:21px}
+.v880-similar-copy{min-width:0;display:grid;gap:4px;flex:1;line-height:1.25}
+.v880-similar-copy strong{font-size:13px;color:var(--v880-ink)}
+.v880-similar-copy small{font-size:11px;line-height:1.4;color:var(--v880-muted)}
+.v880-apple-similar>input{position:absolute;width:1px;height:1px;opacity:0}
+.v880-switch-track{position:relative;display:block;width:47px;height:28px;border-radius:999px;flex:none;border:1px solid var(--v880-line);background:var(--v880-line);transition:background .18s ease}
+.v880-switch-track i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002;transition:transform .18s ease}
+.v880-apple-similar>input:checked+.v880-switch-track{background:var(--v880-accent);border-color:var(--v880-accent)}
+.v880-apple-similar>input:checked+.v880-switch-track i{transform:translateX(19px)}
+.v880-apple-similar:focus-within{outline:2px solid var(--v880-accent);outline-offset:3px}
+.v880-apple-modal .v7-apple-actions{display:block;margin-top:17px}
+.v880-apple-modal .v7-apple-submit{display:flex;width:100%;align-items:center;justify-content:center;gap:9px;min-height:51px;padding:10px 15px;border-radius:17px;border:1px solid color-mix(in srgb,var(--v880-accent) 58%,#fff);background:color-mix(in srgb,var(--v880-accent) 68%,#152036);color:#fff;font-weight:750}
+.v880-apple-modal .v7-apple-submit svg{width:17px;height:17px}
+body.theme-black .v880-apple-modal,body.theme-dark .v880-apple-modal{--v880-bg:#050506;--v880-card:#17171b;--v880-line:#3b3946;--v880-ink:#fff;--v880-muted:#b7b5c3;--v880-amount-bg:color-mix(in srgb,var(--v880-accent) 17%,#17171b)}
+body.theme-black :is(.v7-apple-widget,.v8-inbox-modal),body.theme-dark :is(.v7-apple-widget,.v8-inbox-modal){--v880-ink:#f7f7fa;--v880-muted:#b7b5c3;--v880-amount-bg:color-mix(in srgb,var(--v880-accent) 19%,#17171b)}
+body.theme-black .v880-apple-item,body.theme-dark .v880-apple-item{--v880-ink:#f7f7fa;--v880-muted:#b7b5c3;--v880-amount-bg:color-mix(in srgb,var(--v880-accent,var(--vive-theme-color,#7565ee)) 19%,#17171b);background:#17171b;color:#f7f7fa;border-color:#383743}
+@media(max-width:480px){.v880-apple-modal{padding:14px;max-width:calc(100vw - 18px);max-height:calc(100dvh - 12px)}.v880-apple-modal .v7-apple-purchase{padding:10px}.v880-purchase-row{grid-template-columns:43px minmax(0,1fr) auto;column-gap:8px;row-gap:5px}.v880-pay-mark{width:43px;height:44px;border-radius:11px}.v880-apple-modal .v7-apple-purchase .v880-pay-mark{width:45px;height:46px}.v880-purchase-amount{font-size:12px;padding:6px}.v880-purchase-copy>strong{font-size:13px}.v880-apple-modal .v7-apple-field{margin-bottom:9px}.v880-apple-similar{padding:10px;gap:9px}.v880-similar-icon{width:36px;height:36px}.v880-apple-modal .modal-head{margin-bottom:10px}}
+@media(prefers-reduced-motion:reduce){.v880-apple-item,.v880-switch-track,.v880-switch-track i{transition:none!important}}
+
 </style>
 <style id="v8-apple-usability">
 .v8-activity-button{appearance:none;border:0;background:transparent;width:100%;font:inherit;color:inherit;text-align:left;cursor:pointer;display:flex;align-items:center;min-height:58px;padding:8px 2px}.v8-activity-button:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:10px}.v8-row-arrow{opacity:.45;flex-shrink:0}.v8-row-arrow svg{width:15px;height:15px}
@@ -35813,7 +35867,7 @@ async function v212Load(){
  try{
   const [l,e]=await Promise.all([
     f33Api.from('apple_pay_links').select('id,instrument_type,instrument_id,card_label,currency,active').eq('user_id',f33User.id).order('created_at',{ascending:false}).limit(100),
-    f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,transaction_time,status').eq('user_id',f33User.id).in('status',['pending','review','imported']).order('received_at',{ascending:false}).limit(50)
+    f33Api.from('apple_pay_events').select('id,event_id,link_id,instrument_id,amount,merchant,currency,received_at,transaction_time,status').eq('user_id',f33User.id).in('status',['pending','review','imported']).order('received_at',{ascending:false}).limit(50)
   ]);
   if(l.error||e.error)throw(l.error||e.error);
   v212State.links=l.data||[];v212State.events=e.data||[];v212State.error='';v212State.loaded=true;
@@ -35951,14 +36005,57 @@ function v274GuessAppleCategory(e){
  return {category,subcategory};
 }
 
+/* V880 Apple Pay: render data only from the imported event's instrument reference
+   and the user's saved card. Never infer a card from merchant, amount or currency. */
+function v880AppleMerchantKey(value){
+ return String(value||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').replace(/[^\p{L}\p{N}]+/gu,' ').trim().replace(/\s+/g,' ');
+}
+function v880AppleMerchantName(t){return String(t?.payee||'').trim()||String(t?.note||'').replace(/^Apple Pay\s*[·:-]\s*/i,'').trim()||'Compra Apple Pay';}
+function v880AppleCardDetails(t){
+ const ev=(v212State.events||[]).find(e=>String(e.id)===String(t?.applePayEventId||''));
+ const link=ev?.link_id?(v212State.links||[]).find(l=>String(l.id)===String(ev.link_id)):null;
+ if(ev&&link&&String(ev.instrument_id)!==String(link.instrument_id))return null;
+ if(ev&&t?.cardId&&String(t.cardId)!==String(ev.instrument_id))return null;
+ const id=ev?.instrument_id||t?.cardId;
+ if(!id)return null;
+ const c=card(id);
+ if(!c)return null;
+ const network=cardNetworkKey(c),brand=network==='visa'?'Visa':network==='mastercard'?'Mastercard':network==='amex'?'American Express':network==='discover'?'Discover':'';
+ const raw=String(c.last4||c.number||'').replace(/\D/g,'');
+ const last4=raw.length>=4?raw.slice(-4):'';
+ const name=String(c.name||'').trim()||'Tarjeta';
+ const bankName=bankOf(c);
+ return {name,brand,bankName:bankName==='Sin institución asignada'?'':bankName,last4,logo:cardNetworkMark(c)};
+}
+function v880AppleCardIdentity(t,compact=false){
+ const c=v880AppleCardDetails(t);
+ if(!c)return '<span class="v880-apple-unknown">Tarjeta sin identificar</span>';
+ const suffix=c.last4?' •••• '+sanitize(c.last4):'';
+ const bank=c.bankName&&!c.name.toLocaleLowerCase('es').includes(c.bankName.toLocaleLowerCase('es'))?' · '+sanitize(c.bankName):'';
+ return `<span class="v880-card-identity${compact?' is-compact':''}"><span class="v880-card-network">${c.logo}</span><span class="v880-card-name">${sanitize(c.name)}${bank}${suffix}</span></span>`;
+}
+function v880ApplePurchaseCard(t){
+ const name=v880AppleMerchantName(t),identity=v880AppleCardIdentity(t),amount=money(num(t.amount),t.currency||'DOP',2);
+ return `<div class="v880-purchase-row"><span class="v880-pay-mark" aria-label="Apple Pay">${icon('apple')}<b>Pay</b></span><span class="v880-purchase-copy"><strong>${sanitize(name)}</strong><small>Apple Pay · Por clasificar</small></span><b class="v880-purchase-amount">${amount}</b><span class="v880-purchase-card">${identity}</span></div>`;
+}
+function v880AppleStoredRule(merchant){
+ const key=v880AppleMerchantKey(merchant);
+ const rules=db?.settings?.applePayMerchantRules;
+ if(!key||!Array.isArray(rules))return null;
+ const rule=rules.find(r=>r?.merchantKey===key&&r.enabled!==false);
+ if(!rule||!categoryMap('gasto')[rule.category])return null;
+ if(rule.subcategory&&!subcategoryOptions('gasto',rule.category).includes(rule.subcategory))return null;
+ return rule;
+}
+
 /* V7 · Apple Pay · Por clasificar. Reutiliza el movimiento ya importado;
    ni cambia el importe ni envía nuevas compras a apple-pay-ingest. */
 function v7ApplePayInboxBody(){
  const pending=v5ApplePayPending();
  if(!pending.length)return `<div class="v7-apple-empty"><span class="v7-apple-emblem">${icon('check')}</span><strong>Todo clasificado</strong><p>Las próximas compras con Apple Pay aparecerán aquí hasta que les asignes una categoría.</p></div>`;
  return `<div class="v7-apple-summary"><span>${pending.length} ${pending.length===1?'compra pendiente':'compras pendientes'}</span><small>Toca una para clasificarla</small></div>
- <div class="v7-apple-queue">${pending.slice(0,30).map(t=>`<button type="button" class="v7-apple-item" data-v7-apple-id="${sanitize(String(t.id))}" aria-label="Clasificar ${sanitize(transactionTitle(t))}">
- <span class="v7-apple-copy"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)} · Categoría provisional</small></span><span class="v7-apple-value">${txDisplay(t)}<small>Categorizar ${icon('arrow')}</small></span></button>`).join('')}</div>
+ <div class="v7-apple-queue">${pending.slice(0,30).map(t=>`<button type="button" class="v7-apple-item v880-apple-item" data-v7-apple-id="${sanitize(String(t.id))}" aria-label="Clasificar ${sanitize(v880AppleMerchantName(t))}, ${sanitize(money(num(t.amount),t.currency||'DOP',2))}">
+ ${v880ApplePurchaseCard(t)}<span class="v880-pending-label">Por clasificar ${icon('arrow')}</span></button>`).join('')}</div>
  ${pending.length>30?`<p class="v7-apple-overflow">Mostrando 30 de ${pending.length} compras pendientes.</p>`:''}`;
 }
 function v7ApplePayMobileWidget(){
@@ -35971,13 +36068,19 @@ function v7OpenAppleClassifier(id){
  const categories=categoryOptions('gasto').filter(([v])=>v!=='Apple Pay');
  if(!categories.length){toast('Primero crea una categoría de gastos.');return;}
  const root=document.getElementById('modal-root');if(!root)return;
- root.innerHTML=`<div class="modal-layer v7-apple-layer" data-backdrop="true"><section class="modal v7-apple-modal" role="dialog" aria-modal="true" aria-label="Clasificar compra Apple Pay">
- <header class="modal-head"><div><span class="v7-apple-modal-eyebrow">${v213ApplePayBadge(t)} · PENDIENTE</span><h2>Clasificar compra</h2></div><button type="button" class="close" data-v7-apple-close="1" aria-label="Cerrar">×</button></header>
- <div class="v7-apple-purchase"><strong>${sanitize(transactionTitle(t))}</strong><b>${txDisplay(t)}</b><small>${prettyDate(t.date)} · Ya registrada; no se cobrará nuevamente.</small></div>
- <form id="v7-apple-category-form" data-tx="${sanitize(String(t.id))}"><label class="v7-apple-field"><span>Categoría</span><select class="field" id="v7-apple-category" name="category" required><option value="">Selecciona una categoría</option>${categories.map(([v,label])=>`<option value="${sanitize(v)}">${sanitize(label)}</option>`).join('')}</select></label>
- <label class="v7-apple-field"><span>Subcategoría</span><select class="field" id="v7-apple-subcategory" name="subcategory"><option value="">Sin subcategoría</option></select></label>
- <p class="v7-apple-privacy">Solo se actualizará la clasificación. El importe, la tarjeta, el comercio y el distintivo Apple Pay se mantienen.</p>
- <div class="v7-apple-actions"><button type="button" class="btn soft" data-v7-apple-close="1">Después</button><button type="submit" class="btn v7-apple-submit">Confirmar categoría</button></div></form></section></div>`;
+ const existing=v880AppleStoredRule(v880AppleMerchantName(t));
+ root.innerHTML=`<div class="modal-layer v7-apple-layer" data-backdrop="true"><section class="modal v7-apple-modal v880-apple-modal" role="dialog" aria-modal="true" aria-label="Clasificar compra Apple Pay">
+ <header class="modal-head"><div><h2>Clasificar compra</h2><p class="v880-apple-subtitle">Define la categoría y subcategoría de esta transacción.</p></div><button type="button" class="close" data-v7-apple-close="1" aria-label="Cerrar">×</button></header>
+ <div class="v7-apple-purchase">${v880ApplePurchaseCard(t)}</div>
+ <form id="v7-apple-category-form" data-tx="${sanitize(String(t.id))}">
+ <label class="v7-apple-field"><span>Categoría</span><span class="v880-select-wrap"><span class="v880-select-icon" aria-hidden="true">${icon('cart')}</span><select class="field" id="v7-apple-category" name="category" required><option value="">Selecciona una categoría</option>${categories.map(([v,label])=>`<option value="${sanitize(v)}" ${existing?.category===v?'selected':''}>${sanitize(label)}</option>`).join('')}</select><span class="v880-select-chevron" aria-hidden="true">⌄</span></span></label>
+ <label class="v7-apple-field"><span>Subcategoría</span><span class="v880-select-wrap"><span class="v880-select-icon" aria-hidden="true">${icon('receipt')}</span><select class="field" id="v7-apple-subcategory" name="subcategory"><option value="">Sin subcategoría</option></select><span class="v880-select-chevron" aria-hidden="true">⌄</span></span></label>
+ <label class="v880-apple-similar"><span class="v880-similar-icon" aria-hidden="true">${v153DockIcon('layers')}</span><span class="v880-similar-copy"><strong>Aplicar a compras similares</strong><small>Clasificar automáticamente futuras compras de este comercio.</small></span><input type="checkbox" name="applySimilar" ${existing?'checked':''} role="switch" aria-label="Aplicar clasificación a compras similares"><span class="v880-switch-track" aria-hidden="true"><i></i></span></label>
+ <div class="v7-apple-actions"><button type="submit" class="btn v7-apple-submit">${icon('check')} Guardar clasificación</button></div></form></section></div>`;
+ if(existing?.category){
+  v7FillAppleSubcategory(existing.category);
+  const select=root.querySelector('#v7-apple-subcategory');if(select&&existing.subcategory)select.value=existing.subcategory;
+ }
  root.querySelector('#v7-apple-category')?.focus({preventScroll:true});
 }
 function v7FillAppleSubcategory(category){
@@ -36004,10 +36107,19 @@ document.addEventListener('submit',async e=>{
  if(subcategory&&!subcategoryOptions('gasto',category).includes(subcategory)){toast('Selecciona una subcategoría válida.');return;}
  const submit=form.querySelector('button[type="submit"]');if(submit){submit.disabled=true;submit.textContent='Guardando…';}
  const before={category:t.category,subcategory:t.subcategory,editedAt:t.editedAt,reviewed:t.reviewed};
+ const oldRules=Array.isArray(db.settings.applePayMerchantRules)?db.settings.applePayMerchantRules.slice():null;
+ const merchant=v880AppleMerchantName(t),merchantKey=v880AppleMerchantKey(merchant);
+ if(merchantKey){
+  const remaining=(oldRules||[]).filter(r=>r?.merchantKey!==merchantKey);
+  if(form.elements.applySimilar?.checked)remaining.push({merchantKey,merchant,category,subcategory,enabled:true,updatedAt:new Date().toISOString()});
+  db.settings.applePayMerchantRules=remaining;
+ }
  t.category=category;t.subcategory=subcategory;t.editedAt=new Date().toISOString();
- // No marcar reviewed= true: clasificar y conciliar son operaciones independientes.
+ // Clasificar no concilia: nunca cambia importes, tarjeta, ni reviewed.
  if(!persist()){
-  Object.assign(t,before);if(submit){submit.disabled=false;submit.textContent='Confirmar categoría';}
+  Object.assign(t,before);
+  if(oldRules)db.settings.applePayMerchantRules=oldRules;else delete db.settings.applePayMerchantRules;
+  if(submit){submit.disabled=false;submit.innerHTML='Guardar clasificación';}
   toast('No se pudieron guardar los cambios. Vuelve a intentarlo.');return;
  }
  document.getElementById('modal-root').innerHTML='';render();
@@ -36086,14 +36198,15 @@ async function v212ImportEvent(e,forced=false){
  // La elección final la hace la persona desde el editor existente.
  db.customCategories=Array.isArray(db.customCategories)?db.customCategories:[];
  if(!(db.customCategories||[]).some(x=>x.kind==='gasto'&&x.name==='Apple Pay'))db.customCategories.push({kind:'gasto',name:'Apple Pay',subcategories:[]});
- const tx={id:e.id,created:new Date().toISOString(),date,type:'card_charge',amount:rnd(amount),currency:e.currency,cardId:c.id,accountId:'',toAccountId:'',loanId:'',category:'Apple Pay',subcategory:'',note:`Apple Pay · ${String(e.merchant||'Comercio').slice(0,100)}`,payee:String(e.merchant||'Comercio').slice(0,100),tags:'apple-pay',reviewed:false,flowMode:'spend',paymentFlowMode:'spend',paymentChannel:'presencial',paymentService:'',paymentSource:'card',cardOnly:'no',paymentTax:0,paymentFee:0,fxRateSnapshot:num(db.settings.fx),applePayEventId:e.id,applePaySource:'wallet-shortcuts',applePayReceivedAt:e.received_at,applePayTransactionTime:e.transaction_time||null};
+ const autoRule=v880AppleStoredRule(e.merchant);
+ const tx={id:e.id,created:new Date().toISOString(),date,type:'card_charge',amount:rnd(amount),currency:e.currency,cardId:c.id,accountId:'',toAccountId:'',loanId:'',category:autoRule?.category||'Apple Pay',subcategory:autoRule?.subcategory||'',applePayLinkId:e.link_id||'',note:`Apple Pay · ${String(e.merchant||'Comercio').slice(0,100)}`,payee:String(e.merchant||'Comercio').slice(0,100),tags:'apple-pay',reviewed:false,flowMode:'spend',paymentFlowMode:'spend',paymentChannel:'presencial',paymentService:'',paymentSource:'card',cardOnly:'no',paymentTax:0,paymentFee:0,fxRateSnapshot:num(db.settings.fx),applePayEventId:e.id,applePaySource:'wallet-shortcuts',applePayReceivedAt:e.received_at,applePayTransactionTime:e.transaction_time||null};
  db.transactions.push(tx);
  if(!persist()){db.transactions=db.transactions.filter(t=>t.id!==tx.id);return false;}
  await (window.__f360LastPersistPromise||f33Flush());
  if(f33Dirty||f33Saving||f33Conflict)throw Error('La compra está pendiente de confirmar en la nube. Resuelve la sincronización; no la registres manualmente de nuevo.');
  await v212Mark(e,'imported',tx.id);
  if(!document.querySelector('#modal-root .modal-layer'))render();
- v5ApplePayArrival(tx);
+ if(v5NeedsAppleCategory(tx))v5ApplePayArrival(tx);
  return true;
 }
 async function v212Sync(){
@@ -36103,7 +36216,7 @@ async function v212Sync(){
  if(f33Dirty||f33Saving||f33Conflict||!navigator.onLine){v212State.syncError=f33Conflict?'Apple Pay en espera: resuelve el conflicto de sincronización de la app.':!navigator.onLine?'Apple Pay en espera: sin conexión.':'Apple Pay en espera: hay cambios de la app pendientes de guardar.';v212Show();return;}
  v212State.syncError='';v212Busy=true;
  try{
-  const result=await f33Api.from('apple_pay_events').select('id,event_id,instrument_id,amount,merchant,currency,received_at,transaction_time,status').eq('user_id',f33User.id).eq('status','pending').order('received_at',{ascending:true}).limit(30);
+  const result=await f33Api.from('apple_pay_events').select('id,event_id,link_id,instrument_id,amount,merchant,currency,received_at,transaction_time,status').eq('user_id',f33User.id).eq('status','pending').order('received_at',{ascending:true}).limit(30);
   if(result.error)throw result.error;
   let added=0;
   for(const e of result.data||[]){
@@ -83857,6 +83970,163 @@ document.addEventListener('click', function(){
   #modal-root form.studio-form.vop-cardpay[data-vop-stage="confirmation"] .vop-pay-copy p{font-size:10px!important;}
   #modal-root form.studio-form.vop-cardpay[data-vop-stage="confirmation"] .vop-pay-header{padding-bottom:3px!important;}
   #modal-root form.studio-form.vop-cardpay[data-vop-stage="confirmation"] .vop-summary-line{padding:2px 0!important;}
+}
+</style>
+<style id="vive-kpi-four-refinement">
+/* Refinamiento de los cuatro KPI móvil + miniaturas del selector existente.
+   Conserva componentes, fuentes de datos y estados; acento desde Personalización. */
+#app .vive-mobile-home :is(.vive-mobile-balance,.v421-creative-compact,.v242-mobile-web-position,.v732-kpi-card,.v732-position-card){
+ box-sizing:border-box!important;min-width:0!important;
+}
+#app .vive-mobile-home .vive-mobile-balance,
+#app .vive-mobile-home .v242-mobile-web-position{
+ border-radius:clamp(20px,5.5vw,28px)!important;
+ border-color:color-mix(in srgb,var(--vive-theme-color,#7165ee) 23%,#dce5f4)!important;
+ box-shadow:0 12px 30px color-mix(in srgb,var(--vive-theme-color,#7165ee) 10%,transparent)!important;
+}
+/* Original móvil: una tarjeta, mismas dos columnas finales, sólo precisión cromática. */
+#app .vive-mobile-home .vive-mobile-balance:not(.vive-mobile-net-balance) .vive-mobile-balance-divider{
+ background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--vive-theme-color,#7165ee) 45%,#d7e2ef),transparent)!important;
+}
+#app .vive-mobile-home .vive-mobile-balance :is(.vive-mobile-balance-amount,.v186-mobile-foot-amount){
+ min-width:0!important;max-width:100%!important;font-variant-numeric:tabular-nums!important;
+}
+/* Tres círculos: composición horizontal estricta, sin iconos/tarjetas sustitutas. */
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-bubbles.ff-executive-bubbles{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ align-items:center!important;justify-items:center!important;gap:clamp(4px,1.4vw,12px)!important;
+ width:100%!important;height:auto!important;max-height:none!important;min-height:0!important;
+ margin:0!important;padding:5px 0!important;flex:none!important;
+}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ width:100%!important;max-width:136px!important;min-width:0!important;
+ height:auto!important;min-height:0!important;aspect-ratio:1 / 1!important;
+ border-radius:50%!important;margin:0!important;
+ padding:clamp(4px,1.6vw,10px)!important;gap:clamp(2px,.9vw,5px)!important;
+ overflow:hidden!important;transform:none!important;
+}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble:not(.featured){
+ background:linear-gradient(145deg,#fff,#f8fbff)!important;
+ border:1px solid #dfe6f4!important;color:#1b3051!important;
+ box-shadow:inset 0 1px 0 #fff,0 8px 18px rgba(34,51,87,.075)!important;
+}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble.featured{
+ background:linear-gradient(145deg,color-mix(in srgb,var(--vive-theme-color,#7165ee) 86%,#ffffff),var(--vive-theme-color,#7165ee))!important;
+ border:1px solid color-mix(in srgb,var(--vive-theme-color,#7165ee) 75%,#ffffff)!important;
+ color:#fff!important;box-shadow:0 10px 25px color-mix(in srgb,var(--vive-theme-color,#7165ee) 24%,transparent)!important;
+}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble>.bubble-amount{
+ display:block!important;width:100%!important;max-width:100%!important;
+ font-size:clamp(9px,2.55vw,16px)!important;line-height:1.1!important;
+ letter-spacing:-.055em!important;overflow:hidden!important;text-overflow:clip!important;
+ white-space:nowrap!important;font-variant-numeric:tabular-nums!important;
+}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble>small{
+ display:block!important;font-size:clamp(8px,2.05vw,11px)!important;line-height:1.12!important;
+ font-weight:750!important;text-align:center!important;margin:0!important;
+}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble.featured :is(.bubble-amount,small){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble:not(.featured) :is(.bubble-amount,small){
+ color:#1c3153!important;-webkit-text-fill-color:#1c3153!important;
+}
+/* A diferencia de fondos, la variación porcentual conserva sentido semántico. */
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .v105-pct-up,
+html body #app .v242-mini-circles .v105-pct-up{color:#087c59!important;-webkit-text-fill-color:#087c59!important;}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .v105-pct-down,
+html body #app .v242-mini-circles .v105-pct-down{color:#b76016!important;-webkit-text-fill-color:#b76016!important;}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .ff-bubble.featured .v105-pct-up{color:#dcffeb!important;-webkit-text-fill-color:#dcffeb!important;}
+html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles .ff-bubble.featured .v105-pct-down{color:#ffdfb3!important;-webkit-text-fill-color:#ffdfb3!important;}
+/* Miniaturas: preservar composición y diámetro igual incluso en tarjetas estrechas. */
+html body #app .v242-style-art{box-sizing:border-box!important;min-width:0!important;max-width:100%!important;}
+html body #app .v242-mini-circles .v242-mini-orbs{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ justify-items:center!important;align-items:center!important;
+ width:100%!important;max-width:260px!important;gap:clamp(2px,.65vw,6px)!important;
+ margin:auto 0 0!important;min-width:0!important;
+}
+html body #app .v242-mini-circles .v242-mini-orbs>i{
+ box-sizing:border-box!important;width:100%!important;max-width:72px!important;
+ height:auto!important;aspect-ratio:1 / 1!important;min-width:0!important;min-height:0!important;
+ border-radius:50%!important;display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;gap:2px!important;
+ padding:4px!important;overflow:hidden!important;text-align:center!important;
+}
+html body #app .v242-mini-circles .v242-mini-orbs>i:not(.v242-featured){
+ background:linear-gradient(145deg,#fff,#f8fbff)!important;border:1px solid #e0e9f5!important;
+ box-shadow:0 3px 9px rgba(27,67,110,.075)!important;
+}
+html body #app .v242-mini-circles .v242-mini-orbs>i.v242-featured{
+ background:linear-gradient(145deg,color-mix(in srgb,var(--vive-theme-color,#7165ee) 86%,#fff),var(--vive-theme-color,#7165ee))!important;
+ border:1px solid color-mix(in srgb,var(--vive-theme-color,#7165ee) 70%,#fff)!important;
+ color:#fff!important;
+}
+html body #app .v242-mini-circles .v242-mini-orbs>i :is(b,small){
+ max-width:100%!important;display:block!important;text-align:center!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;
+}
+html body #app .v242-mini-circles .v242-mini-orbs>i b{font-size:clamp(7px,1.9vw,10px)!important;letter-spacing:-.045em!important;line-height:1.12!important;}
+html body #app .v242-mini-circles .v242-mini-orbs>i small{font-size:clamp(6px,1.48vw,8px)!important;line-height:1.1!important;}
+html body #app .v242-mini-circles .v242-mini-orbs>i.v242-featured :is(b,small){color:#fff!important;-webkit-text-fill-color:#fff!important;}
+/* Los otros tres estilos conservan sus estructuras, pero responden al acento. */
+html body #app .v242-mini-original{
+ background:linear-gradient(135deg,#ffffff,color-mix(in srgb,var(--vive-theme-color,#7165ee) 12%,#f6fbff))!important;
+ border:1px solid color-mix(in srgb,var(--vive-theme-color,#7165ee) 19%,#dbe5f3)!important;
+}
+html body #app .v242-mini-original .v242-mini-divider{background:color-mix(in srgb,var(--vive-theme-color,#7165ee) 28%,#dae4f3)!important;}
+html body #app .v342-style-creative .v421-mini-creative{
+ background:linear-gradient(145deg,#112441,color-mix(in srgb,var(--vive-theme-color,#7165ee) 37%,#19375a),color-mix(in srgb,var(--vive-theme-color,#7165ee) 62%,#20376a))!important;
+ background-image:linear-gradient(145deg,#112441,color-mix(in srgb,var(--vive-theme-color,#7165ee) 37%,#19375a),color-mix(in srgb,var(--vive-theme-color,#7165ee) 62%,#20376a))!important;
+}
+html body #app .v421-mini-creative .v342-mini-progress b,
+html body #app .v421-creative-compact .v421-meter.stable .v421-meter-track i{
+ background:var(--vive-theme-color,#7165ee)!important;
+}
+html body #app .v242-mini-balance{
+ background:linear-gradient(135deg,#ffffff,color-mix(in srgb,var(--vive-theme-color,#7165ee) 13%,#f4f7ff))!important;
+ border:1px solid color-mix(in srgb,var(--vive-theme-color,#7165ee) 19%,#dce5f1)!important;
+}
+html body #app .v242-mini-balance::after{
+ background:radial-gradient(circle,color-mix(in srgb,var(--vive-theme-color,#7165ee) 27%,transparent),transparent 72%)!important;
+}
+html body #app .v242-style-option.selected{
+ border-color:var(--vive-theme-color,#7165ee)!important;
+ box-shadow:0 0 0 2px color-mix(in srgb,var(--vive-theme-color,#7165ee) 17%,transparent)!important;
+}
+/* Black: laterales oscuros neutros, central de acento; nunca fondo claro accidental. */
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble:not(.featured){
+ background:linear-gradient(145deg,#161a24,#202636)!important;color:#f3f6ff!important;
+ border-color:#394253!important;box-shadow:0 6px 18px #0005!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble:not(.featured) :is(.bubble-amount,small){
+ color:#f4f6fc!important;-webkit-text-fill-color:#f4f6fc!important;
+}
+html body:is(.theme-black,.theme-dark) #app .v242-mini-circles .v242-mini-orbs>i:not(.v242-featured){
+ background:#1b2332!important;border-color:#3a4b61!important;box-shadow:none!important;
+}
+html body:is(.theme-black,.theme-dark) #app .v242-mini-circles .v242-mini-orbs>i:not(.v242-featured) :is(b,small){
+ color:#eef5ff!important;-webkit-text-fill-color:#eef5ff!important;
+}
+html body:is(.theme-black,.theme-dark) #app .v242-mini-original{
+ background:linear-gradient(145deg,#0f141e,#202737)!important;border-color:#394355!important;
+}
+html body:is(.theme-black,.theme-dark) #app .v242-mini-balance{
+ background:linear-gradient(135deg,#11151e,#28283f)!important;border-color:#3c3e59!important;
+}
+html body:is(.theme-black,.theme-dark) #app .v242-mini-circles{
+ background:linear-gradient(140deg,#080b12,#172133)!important;
+}
+@media(max-width:375px){
+ html body #app .vive-mobile-home .v242-mobile-web-position .ff-bubbles.ff-executive-bubbles{gap:4px!important;}
+ html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble{padding:4px!important;gap:2px!important;}
+ html body #app .vive-mobile-home .v242-mobile-web-position .ff-executive-bubbles>.ff-bubble>.bubble-amount{font-size:clamp(9px,2.65vw,12px)!important;}
+ html body #app .v242-mini-circles .v242-mini-orbs>i{padding:2px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+ html body #app .v242-style-option,html body #app .vive-mobile-home .v242-mobile-web-position .ff-bubble{transition:none!important;}
 }
 </style>
 </body>
