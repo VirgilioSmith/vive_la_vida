@@ -30,7 +30,7 @@ window.__v866Compose=function(){
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="vive el hoy"/>
-<meta content="light" name="color-scheme"/>
+<meta content="light dark" name="color-scheme"/>
 <title>vive el hoy</title>
 <style>
 :root{--navy:#101d35;
@@ -13531,7 +13531,7 @@ body.theme-dark .v159-tomorrow-intro h3,body.theme-dark .v159-outcome-money,body
 .world-overview .topbar{display:grid;grid-template-columns:minmax(240px,1fr) auto minmax(260px,1fr);align-items:center;gap:18px;margin-bottom:18px}
 .world-overview .topbar .topbar-intro{min-width:0}
 .world-overview .top-title{font-size:29px!important;letter-spacing:-1.25px!important;line-height:1.02!important;margin:0!important}
-.world-overview .top-sub{font-size:13px!important;margin-top:5px!important;color:#7a89a2!important}
+.world-overview .top-sub{font-size:13px!important;margin-top:5px!important;color:var(--v397-hint)!important}
 .world-overview .ff-header-middle{justify-content:center!important;flex:none!important}
 .world-overview .ff-overview-pill{height:40px;border-radius:999px;border:1px solid rgba(255,255,255,.9);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(244,247,253,.72));padding:0 22px;color:#304767;font-weight:770;font-size:12px;letter-spacing:-.01em;box-shadow:0 8px 22px rgba(54,82,128,.07), inset 0 1px 0 rgba(255,255,255,.95)}
 .world-overview .ff-overview-pill:hover{transform:translateY(-1px)}
@@ -13642,7 +13642,7 @@ body.theme-dark .v159-tomorrow-intro h3,body.theme-dark .v159-outcome-money,body
   .world-overview .top-sub,
   .world-overview .ff-panel-top p,
   .world-overview .ff-balance-header p {
-    color: #7183a0 !important;
+    color: var(--v397-hint) !important;
   }
   .world-overview .ff-dashboard-tools .ff-overline {
     color: #607598 !important;
@@ -28751,6 +28751,8 @@ function render(){
  document.body.classList.toggle('theme-dark',['dark','black'].includes(db.settings.theme));
   document.body.classList.toggle('theme-black',db.settings.theme==='black');
   document.documentElement.style.colorScheme=db.settings.theme==='light'?'light':'dark';
+ // Mantener la barra nativa del navegador alineada con la apariencia existente.
+ document.querySelector('meta[name="theme-color"]')?.setAttribute('content',db.settings.theme==='light'?'#f3f6fb':'#000000');
  document.body.classList.remove('vision-mode');
  document.body.dataset.visualDesign='claridad';
  document.body.classList.toggle('privacy-finanzas',privacyMode);
@@ -44789,7 +44791,7 @@ document.addEventListener('click',e=>{document.querySelectorAll('.v162-brand-men
   }
   body .main.world-overview:has(.ff-dashboard.summary-space) .topbar .top-sub{
     font-size:12px!important;
-    color:#7e8da6!important;
+    color:var(--v397-hint)!important;
   }
   body .main.world-overview:has(.ff-dashboard.summary-space) .v164-header-dock{
     justify-self:center!important;
@@ -67004,7 +67006,7 @@ body.theme-black #modal-root :is(input:not([type="checkbox"]):not([type="radio"]
 body.theme-black :is(input,textarea)::placeholder {color:#999!important;opacity:1}
 body.theme-black :is(input,select,textarea):disabled{background-color:#0e0e0e!important;color:#a2a2a2!important;opacity:.75}
 body.theme-black select option{background:#171717!important;color:#f4f4f4!important}
-body.theme-black :is(input,select,textarea,button,a,[tabindex]):focus-visible{outline:2px solid #93b9ff!important;outline-offset:2px}
+body.theme-black :is(input,select,textarea,button,a,[tabindex]):focus-visible{outline:2px solid var(--v396-focus,#b9b8ff)!important;outline-offset:2px}
 /* Modals and shared registration flows (the content must stay visible above overlays). */
 body.theme-black :is(#modal-root,.modal-layer,.modal-backdrop,.dialog-backdrop){color:#f5f5f5}
 body.theme-black :is(.modal,.modal-body,.modal-head,.modal-footer,.modal-content,.mqr-modal,.v235-register-dialog,.studio-form,.other-studio-form,.fastx-form,.vr-workspace,.v119-modal,.v353-review-modal,.v353-review-panel,.v391-form-section,.v390-person-preview,.v388-reconciliation-preview,.v385-certificate-preview,.v384-account-preview) {
@@ -67017,7 +67019,7 @@ body.theme-black :is(.btn.ghost,.btn.soft,.btn.secondary,.btn-outline,.studio-ba
   background-color:#171717!important;background-image:none!important;border-color:#393939!important;color:#ededed!important;
 }
 body.theme-black :is(.module-switch-tab.active,.v239-segment.active,.v61-profile-option.active,.studio-nav-step.current,.v387-cat[aria-pressed="true"],.v387-cat.active,.vr-switch.selected){
-  background-color:#303030!important;background-image:none!important;border-color:#747474!important;color:#fff!important;
+  background-color:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 14%,#252525)!important;background-image:none!important;border-color:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 55%,#85858b)!important;color:#fff!important;
 }
 body.theme-black :is(.btn.ghost,.btn.soft,.btn.secondary,.module-switch-tab,.v387-cat):hover:not(:disabled){background-color:#262626!important}
 body.theme-black :is(.btn,.studio-next,.studio-save,.v394-routebar button):disabled{opacity:.58;cursor:not-allowed}
@@ -67051,12 +67053,12 @@ body.theme-black :is(.chart-axis,.chart-label,.chart-caption,.axis-label,.tick-l
  --v396-radius-control:12px; --v396-radius-panel:17px; --v396-radius-chip:8px;
  --v396-control-height:42px; --v396-space-label:7px; --v396-border:#dce3ed;
  --v396-surface:#fff; --v396-control:#fff; --v396-ink:#18263c;
- --v396-muted:#617086; --v396-focus:#4679cf; --v396-hover:#f5f8fd;
+ --v396-muted:#617086; --v396-focus:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 42%,#152437); --v396-hover:#f5f8fd;
  --v396-elevation:0 6px 22px rgba(19,39,69,.045);
 }
 body.theme-black {
  --v396-border:#333; --v396-surface:#0b0b0b; --v396-control:#151515;
- --v396-ink:#f4f4f4; --v396-muted:#b4b4b4; --v396-focus:#a8c8ff;
+ --v396-ink:#f4f4f4; --v396-muted:#b4b4b4; --v396-focus:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 55%,#ffffff);
  --v396-hover:#1d1d1d; --v396-elevation:0 6px 22px rgba(0,0,0,.28);
 }
 /* Shared actions; leave branded credit-card visuals and special payment buttons untouched. */
@@ -67146,7 +67148,7 @@ body.theme-black :is(.pill:not(.green):not(.red):not(.orange):not(.blue)){backgr
   --v397-card-gap:14px;
   --v397-title-size:clamp(21px,2vw,27px);
   --v397-page-ink:#19253a;
-  --v397-hint:#68778e;
+  --v397-hint:#5e6d83;
   --v397-hairline:#e4e9f1;
   --v397-elevation:0 12px 36px rgba(20,38,68,.045);
   --v397-selection:#eef3fc;
