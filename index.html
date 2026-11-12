@@ -17083,16 +17083,16 @@ body:is(.theme-dark,.theme-black) .world-patrimony .v187-patrimony .v187-wealth-
   background: #191b21;
 }
 .v318-heat-box.level-1 {
-  background: #243e62;
+  background: var(--v876-heat-1,#243e62);
 }
 .v318-heat-box.level-2 {
-  background: #2764a1;
+  background: var(--v876-heat-2,#2764a1);
 }
 .v318-heat-box.level-3 {
-  background: #337ac8;
+  background: var(--v876-heat-3,#337ac8);
 }
 .v318-heat-box.level-4 {
-  background: #6bb0ff;
+  background: var(--v876-heat-4,#6bb0ff);
   color: #091120;
 }
 .v318-heat-footer {
@@ -23580,7 +23580,7 @@ function v154MobileSearchPage(){
  return `<div class="vive-mobile-hub v154-search-hub v711-search-shell v721-search-shell">
   <div class="v154-search-heading v711-search-heading"><div><span class="v154-search-eyebrow">EXPLORA, ENCUENTRA Y GESTIONA</span><h1>Buscar</h1><p>Accede rápido a tus finanzas, movimientos y más.</p></div></div>
   <div class="v154-search-box v711-search-box v721-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios, movimientos..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button><span class="v721-search-corner" aria-hidden="true">${icon('grid')}</span></div>
-  <nav class="v711-search-pills v721-search-pills" aria-label="Filtros rápidos">${chips.map(([label,key,ic],i)=>key==='clear'?`<button type="button" class="${i===0?'active':''}" data-v154-clear="1">${icon(ic)}<span>${label}</span></button>`:`<button type="button" data-v154-category="${key}">${icon(ic)}<span>${label}</span></button>`).join('')}</nav>
+  <nav class="v711-search-pills v721-search-pills" aria-label="Filtros rápidos">${chips.map(([label,key,ic])=>key==='clear'?`<button type="button" class="active" data-v154-clear="1" data-v154-filter="all" aria-pressed="true">${icon(ic)}<span>${label}</span></button>`:`<button type="button" data-v154-category="${key}" data-v154-filter="${key}" aria-pressed="false">${icon(ic)}<span>${label}</span></button>`).join('')}</nav>
   <div class="v154-search-discover" id="v154-mobile-discover">
     <div class="v154-category-grid v711-category-grid v721-category-grid">${V154_MOBILE_CATEGORIES.map(c=>`<button type="button" class="v154-category-tile v154-tone-${c.tone} v721-category-tile" data-v154-category="${c.id}" aria-label="Explorar ${c.title}"><span class="v721-tile-copy"><strong class="v154-category-title">${c.title}</strong><small class="v154-category-sub">${c.sub}</small></span><span class="v721-tile-art">${v721SearchArt(c.id)}</span><span class="v711-category-arrow">${icon('arrow')}</span></button>`).join('')}</div>
     <section class="v711-recent-widget v721-recent-widget" aria-label="Búsquedas recientes">
@@ -26642,7 +26642,7 @@ function v14PatrimonyTrend(year=ui.year){
  if(year===thisYear&&model.sampleCount){
   forecast[thisMonth-1]=current[thisMonth-1];
  }
- const list=[{name:String(year-1)+' completo',color:'#91a3c2',values:old,width:3},{name:String(year)+' registrado',color:'#6568ec',values:current,width:3.8}];
+ const list=[{name:String(year-1)+' completo',color:'#91a3c2',values:old,width:3},{name:String(year)+' registrado',color:'var(--v876-trend-main,#6568ec)',values:current,width:3.8}];
  if(forecast.some(x=>x!==null))list.push({name:'Proyección orientativa '+year,color:'#159c8c',values:forecast,dash:true,width:3});
  return v14ChartSvg(months,list);
 }
@@ -26650,7 +26650,7 @@ function v22ProjectionTrend(model,scenario='base'){
   const current=model.baseNet,delta=v14MonthlyScenario(model,scenario);
   const rows=Array.from({length:13},(_,i)=>i===0?'Hoy':`+${i}m`);
   const values=rows.map((_,i)=>rnd(current+delta*i));
-  return v14ChartSvg(rows,[{name:'Patrimonio proyectado · escenario '+({base:'Base',conservative:'Conservador',optimistic:'Optimista'}[scenario]||'Base'),color:'#6269e7',values,width:3.8,dash:true}]);
+  return v14ChartSvg(rows,[{name:'Patrimonio proyectado · escenario '+({base:'Base',conservative:'Conservador',optimistic:'Optimista'}[scenario]||'Base'),color:'var(--v876-trend-main,#6269e7)',values,width:3.8,dash:true}]);
 }
 /* Patrimonio: comparación histórica verdadera, no una simulación. */
 function v23PatrimonyActualComparison(year=ui.year){
@@ -26667,7 +26667,7 @@ function v23PatrimonyActualComparison(year=ui.year){
  const current=labels.map((_,i)=>observed(selected,i+1));
  return v14ChartSvg(labels,[
   {name:String(selected-1)+' · año anterior',color:'#93a9c7',values:previous,width:3.1},
-  {name:String(selected)+' · registrado',color:'#6366ef',values:current,width:3.8}
+  {name:String(selected)+' · registrado',color:'var(--v876-trend-main,#6366ef)',values:current,width:3.8}
  ]);
 }
 function patrimonyWorld(){
@@ -35011,7 +35011,20 @@ function v154PrepareMobileIndex(){
  ui.v154MobileSearchQuery='';
  v154MobileSearchIndex=v71SearchEntries().filter(x=>x.page!=='kpis').map(x=>({...x,_v154Text:v71SearchNormalize([x.title,x.sub,x.meta].filter(Boolean).join(' ')),_v154Title:v71SearchNormalize(x.title)}));
 }
+/* V877: One visual active filter, derived from the existing search category.
+   Do not store a parallel selection state or change the search index. */
+function v877SyncMobileSearchFilters(){
+ const nav=document.querySelector('.world-mobilesearch #page .v711-search-pills');
+ if(!nav)return;
+ const key=v154MobileCategory||'all';
+ nav.querySelectorAll('button[data-v154-filter]').forEach(button=>{
+  const selected=button.dataset.v154Filter===key;
+  button.classList.toggle('active',selected);
+  button.setAttribute('aria-pressed',String(selected));
+ });
+}
 function v154SearchResultsUpdate(){
+ v877SyncMobileSearchFilters();
  const input=document.getElementById('v154-mobile-search-input');
  const output=document.getElementById('v154-mobile-search-results');
  const discover=document.getElementById('v154-mobile-discover');
@@ -36377,13 +36390,13 @@ const V752_PREMIUM_IDS=new Set(['applePayInbox','patrimonyTrend','capacity','pay
 function v752PremiumWidgetArt(id){
  const g=`v752-${id}`;
  const defs=`<defs>
- <linearGradient id="${g}-steel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5dcff"/><stop offset=".22" stop-color="#7f6fc9"/><stop offset=".6" stop-color="#251e46"/><stop offset="1" stop-color="#8a7cc4"/></linearGradient>
- <linearGradient id="${g}-glass" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#bcbaff" stop-opacity=".90"/><stop offset=".4" stop-color="#5558b7" stop-opacity=".80"/><stop offset="1" stop-color="#141b42" stop-opacity=".95"/></linearGradient>
+ <linearGradient id="${g}-steel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--v876-preview-highlight,#e5dcff)"/><stop offset=".22" stop-color="var(--v876-preview-base,#7f6fc9)"/><stop offset=".6" stop-color="#251e46"/><stop offset="1" stop-color="var(--v876-preview-base,#8a7cc4)"/></linearGradient>
+ <linearGradient id="${g}-glass" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="var(--v876-preview-highlight,#bcbaff)" stop-opacity=".90"/><stop offset=".4" stop-color="var(--v876-preview-base,#5558b7)" stop-opacity=".80"/><stop offset="1" stop-color="#141b42" stop-opacity=".95"/></linearGradient>
  <linearGradient id="${g}-pink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffb5ff"/><stop offset=".45" stop-color="#9f69f9"/><stop offset="1" stop-color="#5842b4"/></linearGradient>
  <linearGradient id="${g}-cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#adffff"/><stop offset=".45" stop-color="#55f0d5"/><stop offset="1" stop-color="#128e9e"/></linearGradient>
  <linearGradient id="${g}-coin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dbd0ff"/><stop offset=".38" stop-color="#886ad8"/><stop offset="1" stop-color="#3a236b"/></linearGradient>
- <linearGradient id="${g}-area" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a8a0ff" stop-opacity=".52"/><stop offset="1" stop-color="#6f6aff" stop-opacity="0"/></linearGradient>
- <radialGradient id="${g}-halo"><stop stop-color="#9a7dff" stop-opacity=".64"/><stop offset="1" stop-color="#9a7dff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="${g}-area" x1="0" y1="0" x2="0" y2="1"><stop stop-color="var(--v876-preview-area,#a8a0ff)" stop-opacity=".52"/><stop offset="1" stop-color="var(--v876-preview-area-end,#6f6aff)" stop-opacity="0"/></linearGradient>
+ <radialGradient id="${g}-halo"><stop stop-color="var(--v876-preview-halo,#9a7dff)" stop-opacity=".64"/><stop offset="1" stop-color="var(--v876-preview-halo,#9a7dff)" stop-opacity="0"/></radialGradient>
  <filter id="${g}-shadow" x="-50%" y="-50%" width="210%" height="220%"><feDropShadow dx="0" dy="9" stdDeviation="6" flood-color="#050413" flood-opacity=".6"/></filter>
  <filter id="${g}-glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>
  </defs>`;
@@ -36394,7 +36407,7 @@ function v752PremiumWidgetArt(id){
  case 'applePayInbox':
    art=`<ellipse cx="116" cy="66" rx="62" ry="54" fill="url(#${g}-halo)" opacity=".65"/>${card(66,72,78,42,-14,`url(#${g}-pink)`)}${card(60,82,80,38,2,`url(#${g}-glass)`)}<g transform="rotate(15 103 52)" filter="url(#${g}-shadow)"><rect x="74" y="4" width="68" height="105" rx="16" fill="#090b14" stroke="url(#${g}-steel)" stroke-width="4"/><rect x="79" y="11" width="58" height="91" rx="12" fill="url(#${g}-glass)"/><rect x="95" y="13" width="25" height="5" rx="3" fill="#10101b"/><g transform="translate(93 35) scale(.64)" fill="#fff">${apple}</g><text x="111" y="53" fill="#fff" font-weight="700" font-size="15">Pay</text><path d="M98 63q10-9 20 0m-16 4q6-5 12 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="87" y="80" width="44" height="17" rx="5" fill="#a493fe" opacity=".8"/></g>`;break;
  case 'patrimonyTrend':
-   art=`<path d="M7 104h151M17 18v87M49 18v87M81 18v87M113 18v87M145 18v87" stroke="#b9b0fa" stroke-opacity=".12" stroke-width="1"/><path d="M8 104C31 100 40 88 52 89S70 78 81 77 99 60 109 64 139 39 154 15V108H8Z" fill="url(#${g}-area)"/><path d="M8 104C31 100 40 88 52 89S70 78 81 77 99 60 109 64 139 39 154 15" stroke="#9c86ff" stroke-width="8" fill="none" opacity=".55" filter="url(#${g}-glow)"/><path d="M8 104C31 100 40 88 52 89S70 78 81 77 99 60 109 64 139 39 154 15" stroke="#cabfff" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="154" cy="15" r="12" fill="#b6a4ff" opacity=".5" filter="url(#${g}-glow)"/><circle cx="154" cy="15" r="5.5" fill="#faf9ff" stroke="#9a87ff" stroke-width="2"/>`;break;
+   art=`<path d="M7 104h151M17 18v87M49 18v87M81 18v87M113 18v87M145 18v87" stroke="var(--v876-preview-area,#b9b0fa)" stroke-opacity=".12" stroke-width="1"/><path d="M8 104C31 100 40 88 52 89S70 78 81 77 99 60 109 64 139 39 154 15V108H8Z" fill="url(#${g}-area)"/><path d="M8 104C31 100 40 88 52 89S70 78 81 77 99 60 109 64 139 39 154 15" stroke="var(--v876-preview-base,#9c86ff)" stroke-width="8" fill="none" opacity=".55" filter="url(#${g}-glow)"/><path d="M8 104C31 100 40 88 52 89S70 78 81 77 99 60 109 64 139 39 154 15" stroke="var(--v876-preview-highlight,#cabfff)" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="154" cy="15" r="12" fill="var(--v876-preview-highlight,#b6a4ff)" opacity=".5" filter="url(#${g}-glow)"/><circle cx="154" cy="15" r="5.5" fill="#faf9ff" stroke="var(--v876-preview-base,#9a87ff)" stroke-width="2"/>`;break;
  case 'capacity': case 'creditUtil': case 'budgetPulse': case 'cashPressure': {
    const ratio=(()=>{try{const n=Number(v89DebtCapacity()?.ratio);return Number.isFinite(n)?Math.round(n):null;}catch(_){return null}})();
    const pct=ratio===null?'—':`${ratio}%`;
@@ -36431,13 +36444,13 @@ const V755_EXTRA_PREMIUM_IDS=new Set([
 function v755ExtraPremiumVisual(id){
  const g='v755-'+id;
  const defs=`<defs>
-  <linearGradient id="${g}-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7efff"/><stop offset=".23" stop-color="#aea4ee"/><stop offset=".55" stop-color="#53498f"/><stop offset="1" stop-color="#231b46"/></linearGradient>
-  <linearGradient id="${g}-glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d0bdff" stop-opacity=".96"/><stop offset=".42" stop-color="#7567d7" stop-opacity=".90"/><stop offset="1" stop-color="#21234e"/></linearGradient>
+  <linearGradient id="${g}-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--v876-preview-highlight,#f7efff)"/><stop offset=".23" stop-color="var(--v876-preview-highlight,#aea4ee)"/><stop offset=".55" stop-color="var(--v876-preview-base,#53498f)"/><stop offset="1" stop-color="#231b46"/></linearGradient>
+  <linearGradient id="${g}-glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--v876-preview-highlight,#d0bdff)" stop-opacity=".96"/><stop offset=".42" stop-color="var(--v876-preview-base,#7567d7)" stop-opacity=".90"/><stop offset="1" stop-color="#21234e"/></linearGradient>
   <linearGradient id="${g}-ice" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c9fdff"/><stop offset=".55" stop-color="#65acef"/><stop offset="1" stop-color="#4261c1"/></linearGradient>
   <linearGradient id="${g}-mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a8ffea"/><stop offset=".5" stop-color="#2bd8b3"/><stop offset="1" stop-color="#086e86"/></linearGradient>
-  <linearGradient id="${g}-pink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffc5ff"/><stop offset=".52" stop-color="#af72ff"/><stop offset="1" stop-color="#563caa"/></linearGradient>
-  <linearGradient id="${g}-area" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#aaa6ff" stop-opacity=".6"/><stop offset="1" stop-color="#847aff" stop-opacity="0"/></linearGradient>
-  <radialGradient id="${g}-halo"><stop stop-color="#aa89ff" stop-opacity=".55"/><stop offset="1" stop-color="#aa89ff" stop-opacity="0"/></radialGradient>
+  <linearGradient id="${g}-pink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffc5ff"/><stop offset=".52" stop-color="var(--v876-preview-highlight,#af72ff)"/><stop offset="1" stop-color="var(--v876-preview-base,#563caa)"/></linearGradient>
+  <linearGradient id="${g}-area" x1="0" y1="0" x2="0" y2="1"><stop stop-color="var(--v876-preview-area,#aaa6ff)" stop-opacity=".6"/><stop offset="1" stop-color="var(--v876-preview-area-end,#847aff)" stop-opacity="0"/></linearGradient>
+  <radialGradient id="${g}-halo"><stop stop-color="var(--v876-preview-halo,#aa89ff)" stop-opacity=".55"/><stop offset="1" stop-color="var(--v876-preview-halo,#aa89ff)" stop-opacity="0"/></radialGradient>
   <filter id="${g}-shadow" x="-35%" y="-50%" width="170%" height="210%"><feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#060316" flood-opacity=".65"/></filter>
   <filter id="${g}-soft" x="-40%" y="-80%" width="180%" height="260%"><feGaussianBlur stdDeviation="3.5"/></filter>
  </defs>`;
@@ -60504,8 +60517,8 @@ body.theme-black :is(.subtle,.muted,.subtitle,.kpi-foot){
   .v315-wealth-chart{width:100%;min-height:142px}
   .v315-wealth-chart svg{width:100%;height:125px;display:block;overflow:visible}
   .v315-wealth-axis{stroke:#d4dfed;stroke-width:1}
-  .v315-wealth-path polyline{fill:none;stroke:#4594ef;stroke-width:3.3;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-  .v315-wealth-dots circle{fill:#4594ef;stroke:#fff;stroke-width:1.6}
+  .v315-wealth-path polyline{fill:none;stroke:var(--v876-trend-main,var(--vive-theme-color,#7066ee));stroke-width:3.3;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+  .v315-wealth-dots circle{fill:var(--v876-trend-main,var(--vive-theme-color,#7066ee));stroke:#fff;stroke-width:1.6}
   .v315-wealth-labels{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin-top:1px;color:#71839c;font-size:10px;text-align:center}
   .v315-small-note{font-size:10px;color:#6a7e97;line-height:1.5;margin:12px 0 0}
   .v315-empty{padding:13px 0;font-size:12px;line-height:1.55;color:#657995}
@@ -60772,10 +60785,10 @@ body.theme-dark tbody td{background:transparent!important;border-color:#2f2f32!i
  .v317-heat-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;min-width:0}
  .v317-heat-cell{aspect-ratio:1/1;min-width:0;min-height:0;display:grid;place-items:center;border-radius:9px;background:#e9eff8;border:1px solid rgba(0,0,0,.04)}
  .v317-heat-cell span{font-size:10px;font-weight:750;color:#6e7891;font-variant-numeric:tabular-nums}
- .v317-heat-cell.heat-1{background:#b7d4fa}.v317-heat-cell.heat-2{background:#86b9f6}.v317-heat-cell.heat-3{background:#4e91e7}.v317-heat-cell.heat-4{background:#1b5fc1}
+ .v317-heat-cell.heat-1{background:var(--v876-heat-1,#b7d4fa)}.v317-heat-cell.heat-2{background:var(--v876-heat-2,#86b9f6)}.v317-heat-cell.heat-3{background:var(--v876-heat-3,#4e91e7)}.v317-heat-cell.heat-4{background:var(--v876-heat-4,#1b5fc1)}
  .v317-heat-cell.heat-3 span,.v317-heat-cell.heat-4 span{color:white}
  .v317-heat-foot{align-items:center;margin-top:9px;flex-wrap:wrap}
- .v317-heat-legend{display:flex;gap:3px}.v317-heat-legend i{display:block;width:11px;height:11px;border-radius:3px;background:#e9eff8}.v317-heat-legend .heat-1{background:#b7d4fa}.v317-heat-legend .heat-2{background:#86b9f6}.v317-heat-legend .heat-3{background:#4e91e7}.v317-heat-legend .heat-4{background:#1b5fc1}
+ .v317-heat-legend{display:flex;gap:3px}.v317-heat-legend i{display:block;width:11px;height:11px;border-radius:3px;background:#e9eff8}.v317-heat-legend .heat-1{background:var(--v876-heat-1,#b7d4fa)}.v317-heat-legend .heat-2{background:var(--v876-heat-2,#86b9f6)}.v317-heat-legend .heat-3{background:var(--v876-heat-3,#4e91e7)}.v317-heat-legend .heat-4{background:var(--v876-heat-4,#1b5fc1)}
  .v317-peak{display:flex;justify-content:space-between;gap:8px;align-items:baseline;padding:10px;border-radius:11px;background:#f5f8fc;font-size:10.5px}
  .v317-peak span{color:#647995}.v317-peak strong{white-space:nowrap;color:#294a77;font-size:11px}
  .v317-insights-head{margin-top:16px}
@@ -60789,10 +60802,10 @@ body.theme-dark tbody td{background:transparent!important;border-color:#2f2f32!i
  body.theme-dark .v317-due-tower{background:#222225!important}
  body.theme-dark .v317-next-pays{border-color:#303034!important}
  body.theme-dark .v317-heat-cell.heat-0,body.theme-dark .v317-heat-legend i.heat-0{background:#202024!important;border-color:#323239!important}
- body.theme-dark .v317-heat-cell.heat-1,body.theme-dark .v317-heat-legend i.heat-1{background:#1e3552!important}
- body.theme-dark .v317-heat-cell.heat-2,body.theme-dark .v317-heat-legend i.heat-2{background:#23528c!important}
- body.theme-dark .v317-heat-cell.heat-3,body.theme-dark .v317-heat-legend i.heat-3{background:#3478d1!important}
- body.theme-dark .v317-heat-cell.heat-4,body.theme-dark .v317-heat-legend i.heat-4{background:#74b3ff!important}
+ body.theme-dark .v317-heat-cell.heat-1,body.theme-dark .v317-heat-legend i.heat-1{background:var(--v876-heat-1,#1e3552)!important}
+ body.theme-dark .v317-heat-cell.heat-2,body.theme-dark .v317-heat-legend i.heat-2{background:var(--v876-heat-2,#23528c)!important}
+ body.theme-dark .v317-heat-cell.heat-3,body.theme-dark .v317-heat-legend i.heat-3{background:var(--v876-heat-3,#3478d1)!important}
+ body.theme-dark .v317-heat-cell.heat-4,body.theme-dark .v317-heat-legend i.heat-4{background:var(--v876-heat-4,#74b3ff)!important}
  body.theme-dark .v317-heat-cell.heat-0 span{color:#9da3ad!important}
  body.theme-dark .v317-heat-cell.heat-1 span,body.theme-dark .v317-heat-cell.heat-2 span,body.theme-dark .v317-heat-cell.heat-3 span{color:#f7faff!important}
  body.theme-dark .v317-heat-cell.heat-4 span{color:#0b1523!important}
@@ -67440,7 +67453,7 @@ body.theme-black #v402-popover,body.theme-dark #v402-popover{background:#101010;
 #app .v410-credit-bar-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0 7px;font-size:11px;color:#506b95}
 #app .v410-credit-bar-row strong{font-size:17px;color:#283e72}
 #app .v410-credit-track{height:11px;background:#d8e3f6;border-radius:99px;overflow:hidden;position:relative}
-#app .v410-credit-track i{display:block;height:100%;background:linear-gradient(90deg,#5365f2,#ab73f7);border-radius:99px;transition:width .25s}
+#app .v410-credit-track i{display:block;height:100%;background:var(--v876-credit-progress,linear-gradient(90deg,#5365f2,#ab73f7));border-radius:99px;transition:width .25s}
 #app .v410-credit-note{font-size:10px;color:#748aa7;margin-top:10px;line-height:1.5}
 /* Pantallas pequeñas y la misma identidad en modo Black oscuro. */
 @media (max-width:1070px){#app .v410-explore-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#app .v410-insight{grid-template-columns:repeat(3,minmax(0,1fr))}#app .v410-insight-title{grid-column:1/-1}#app .v410-subs-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -72259,18 +72272,66 @@ html body:is(.theme-black,.theme-dark) #modal-root form.v700-express .fastx-cate
 
 
 <style id="v705-calendars-credits-and-black-consistency">
+/* V878 · Escala cuantitativa adaptativa para AMBOS calendarios y leyenda.
+   level-0 = sin vencimientos; level-1..4 = importes relativos crecientes.
+   El color NO cambia los cálculos, fechas ni estados financieros. */
+body{
+ --v876-trend-main:color-mix(in srgb,var(--vive-theme-color,#7066ee) 85%,#293c5c);
+ --v878-pressure-0:#edf2f9;
+ --v878-pressure-1:color-mix(in srgb,var(--vive-theme-color,#7066ee) 14%,#fff);
+ --v878-pressure-2:color-mix(in srgb,var(--vive-theme-color,#7066ee) 34%,#fff);
+ --v878-pressure-3:color-mix(in srgb,var(--vive-theme-color,#7066ee) 54%,#fff);
+ --v878-pressure-4:color-mix(in srgb,var(--vive-theme-color,#7066ee) 70%,#fff);
+ --v878-pressure-ink:#172a43;
+ --v878-pressure-line:color-mix(in srgb,var(--vive-theme-color,#7066ee) 24%,#dbe4f1);
+}
+body:is(.theme-black,.theme-dark){
+ --v876-trend-main:color-mix(in srgb,var(--vive-theme-color,#7066ee) 76%,#edf0f8);
+ --v878-pressure-0:#15171b;
+ --v878-pressure-1:color-mix(in srgb,var(--vive-theme-color,#7066ee) 24%,#151820);
+ --v878-pressure-2:color-mix(in srgb,var(--vive-theme-color,#7066ee) 43%,#252834);
+ --v878-pressure-3:color-mix(in srgb,var(--vive-theme-color,#7066ee) 55%,#e4e9f3);
+ --v878-pressure-4:color-mix(in srgb,var(--vive-theme-color,#7066ee) 72%,#fff);
+ --v878-pressure-ink:#e9f0fa;
+ --v878-pressure-line:color-mix(in srgb,var(--vive-theme-color,#7066ee) 42%,#343a45);
+}
+
 /* V705 · Escala real y navegación por día, iPhone y escritorio. */
 .v705-scale{display:grid!important;gap:7px!important;margin-top:17px!important;width:100%;max-width:100%;color:var(--muted,#9baac4);font-size:11px;line-height:1.45}
 .v705-scale-endpoints,.v705-scale-values{display:flex;justify-content:space-between;align-items:center;gap:12px;min-width:0}
 .v705-scale-endpoints>span:last-child,.v705-scale-values>span:last-child{text-align:right}
 .v705-scale-ramp{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;height:13px}
 .v705-scale-ramp i{display:block;min-width:0;border-radius:5px;border:1px solid rgba(119,146,183,.22)}
-.v705-scale-ramp .level-0{background:#141720}.v705-scale-ramp .level-1{background:#172945}.v705-scale-ramp .level-2{background:#22416b}.v705-scale-ramp .level-3{background:#315a93}.v705-scale-ramp .level-4{background:#66aaff}
-body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-0{background:#edf2f9}
-body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-1{background:#dceafb}
-body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-2{background:#b5d4fa}
-body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-3{background:#80b3f2}
-body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-4{background:#367bd1}
+/* Las mismas variables controlan los treinta días, el calendario ampliado y la leyenda. */
+html body:not(.theme-black):not(.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-0,
+html body:not(.theme-black):not(.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-0{background:var(--v878-pressure-0)!important;background-image:none!important;color:#28405b!important;border-color:var(--v878-pressure-line)!important}
+html body:not(.theme-black):not(.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-1,
+html body:not(.theme-black):not(.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-1{background:var(--v878-pressure-1)!important;background-image:none!important;color:#192e49!important;border-color:var(--v878-pressure-line)!important}
+html body:not(.theme-black):not(.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-2,
+html body:not(.theme-black):not(.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-2{background:var(--v878-pressure-2)!important;background-image:none!important;color:#192e49!important;border-color:var(--v878-pressure-line)!important}
+html body:not(.theme-black):not(.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-3,
+html body:not(.theme-black):not(.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-3{background:var(--v878-pressure-3)!important;background-image:none!important;color:#192e49!important;border-color:var(--v878-pressure-line)!important}
+html body:not(.theme-black):not(.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-4,
+html body:not(.theme-black):not(.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-4{background:var(--v878-pressure-4)!important;background-image:none!important;color:#192e49!important;border-color:var(--v878-pressure-line)!important}
+html body:is(.theme-black,.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-0,
+html body:is(.theme-black,.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-0{background:var(--v878-pressure-0)!important;background-image:none!important;color:#dae2ef!important;border-color:var(--v878-pressure-line)!important}
+html body:is(.theme-black,.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-1,
+html body:is(.theme-black,.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-1{background:var(--v878-pressure-1)!important;background-image:none!important;color:#e9f0fa!important;border-color:var(--v878-pressure-line)!important}
+html body:is(.theme-black,.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-2,
+html body:is(.theme-black,.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-2{background:var(--v878-pressure-2)!important;background-image:none!important;color:#e9f0fa!important;border-color:var(--v878-pressure-line)!important}
+html body:is(.theme-black,.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-3,
+html body:is(.theme-black,.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-3{background:var(--v878-pressure-3)!important;background-image:none!important;color:#101b2b!important;border-color:var(--v878-pressure-line)!important}
+html body:is(.theme-black,.theme-dark) #app .v322-cal-grid button.v322-cal-cell.level-4,
+html body:is(.theme-black,.theme-dark) #app .v362-pressure-grid button.v322-cal-cell.level-4{background:var(--v878-pressure-4)!important;background-image:none!important;color:#101b2b!important;border-color:var(--v878-pressure-line)!important}
+.v322-cal-grid button.v322-cal-cell:focus-visible,.v362-pressure-grid button.v322-cal-cell:focus-visible{outline:3px solid var(--vive-theme-color,#7066ee)!important;outline-offset:2px}
+.v322-cal-grid button.v322-cal-cell:hover,.v362-pressure-grid button.v322-cal-cell:hover{border-color:var(--vive-theme-color,#7066ee)!important}
+.v705-scale-ramp i{border-color:var(--v878-pressure-line)}
+.v705-scale-ramp .level-0{background:var(--v878-pressure-0)}.v705-scale-ramp .level-1{background:var(--v878-pressure-1)}.v705-scale-ramp .level-2{background:var(--v878-pressure-2)}.v705-scale-ramp .level-3{background:var(--v878-pressure-3)}.v705-scale-ramp .level-4{background:var(--v878-pressure-4)}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-0{background:var(--v878-pressure-0)}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-1{background:var(--v878-pressure-1)}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-2{background:var(--v878-pressure-2)}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-3{background:var(--v878-pressure-3)}
+body:not(.theme-black):not(.theme-dark) .v705-scale-ramp .level-4{background:var(--v878-pressure-4)}
 .v317-heat-grid button.v317-heat-cell{appearance:none;padding:0;font-family:inherit;cursor:pointer;touch-action:manipulation;position:relative;transition:transform .15s,border-color .15s}
 .v317-heat-grid button.v317-heat-cell:hover,.v322-cal-grid button.v322-cal-cell:hover,.v362-pressure-grid button[data-v360-pressure-day]:hover{transform:translateY(-1px);border-color:#7da8ee!important}
 .v317-heat-grid button.v317-heat-cell:focus-visible,.v322-cal-grid button[data-v705-due-day]:focus-visible{outline:3px solid #8eb9ff!important;outline-offset:2px}
@@ -72584,23 +72645,23 @@ html body.theme-black #app #page .v242-picker-note{color:#b6bfca!important}
    Se conservan las clases level-0..4 y todos los importes/fechas originales. */
 html body.theme-black #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-0,
 html body.theme-dark #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-0 {
-  background:#141720!important;background-image:none!important;color:#d9e1ee!important;border-color:#292e39!important;
+  background:var(--v878-pressure-0)!important;background-image:none!important;color:#d5dfeb!important;border-color:var(--v878-pressure-line)!important;
 }
 html body.theme-black #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-1,
 html body.theme-dark #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-1 {
-  background:#172945!important;background-image:none!important;color:#eef4ff!important;border-color:#314b75!important;
+  background:var(--v878-pressure-1)!important;background-image:none!important;color:#e6edf8!important;border-color:var(--v878-pressure-line)!important;
 }
 html body.theme-black #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-2,
 html body.theme-dark #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-2 {
-  background:#22416b!important;background-image:none!important;color:#f4f8ff!important;border-color:#456394!important;
+  background:var(--v878-pressure-2)!important;background-image:none!important;color:#e6edf8!important;border-color:var(--v878-pressure-line)!important;
 }
 html body.theme-black #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-3,
 html body.theme-dark #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-3 {
-  background:#315a93!important;background-image:none!important;color:#ffffff!important;border-color:#527abb!important;
+  background:var(--v878-pressure-3)!important;background-image:none!important;color:#101b2b!important;border-color:var(--v878-pressure-line)!important;
 }
 html body.theme-black #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-4,
 html body.theme-dark #app #page .v362-pressure-month .v362-pressure-grid button.v322-cal-cell.level-4 {
-  background:#66aaff!important;background-image:none!important;color:#061323!important;border-color:#7fbaff!important;
+  background:var(--v878-pressure-4)!important;background-image:none!important;color:#101b2b!important;border-color:var(--v878-pressure-line)!important;
 }
 /* Valores previos quedan atenuados, sin alterar el nivel relativo al importe. */
 html body.theme-black #app #page .v362-pressure-month .v362-pressure-grid button.v362-pressure-past,
@@ -73531,7 +73592,7 @@ body:is(.theme-black,.theme-dark) .v731-list,body:is(.theme-black,.theme-dark) .
 .world-mobilesearch #page .v711-search-pills{display:flex;gap:10px;overflow:auto hidden;padding:2px 2px 4px;scrollbar-width:none;margin-bottom:16px}
 .world-mobilesearch #page .v711-search-pills::-webkit-scrollbar{display:none}
 .world-mobilesearch #page .v711-search-pills button{flex:none;min-height:38px;padding:0 18px;border-radius:999px;border:1px solid rgba(255,255,255,.78);background:rgba(255,255,255,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 7px 18px rgba(63,87,144,.08);font-size:14px;font-weight:710;color:#23385b}
-.world-mobilesearch #page .v711-search-pills button.active{background:linear-gradient(135deg,#2f78ff,#5b88ff);border-color:rgba(61,111,255,.75);color:#fff;box-shadow:0 12px 24px rgba(52,110,245,.24)}
+.world-mobilesearch #page .v711-search-pills button.active{background:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 14%,white);border-color:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 55%,white);color:var(--f360-accent-readable,var(--vive-theme-color,#5742b7));box-shadow:0 4px 12px color-mix(in srgb,var(--vive-theme-color,#6e62e9) 12%,transparent)}
 .world-mobilesearch #page .v711-section-header{margin:2px 4px 13px!important}
 .world-mobilesearch #page .v711-category-grid{gap:12px!important}
 .world-mobilesearch #page .v711-category-grid .v154-category-tile{position:relative;height:154px!important;border-radius:24px!important;padding:16px!important;box-shadow:0 18px 30px rgba(62,80,132,.12)!important}
@@ -73578,7 +73639,7 @@ body.theme-black .world-mobilesearch #page :is(.v711-search-profile,.v711-bank-w
 body.theme-black .world-mobilesearch #page .v711-search-heading p,body.theme-black .world-mobilesearch #page .v711-profile-copy small,body.theme-black .world-mobilesearch #page .v711-profile-stats span,body.theme-black .world-mobilesearch #page .v711-bank-copy small,body.theme-black .world-mobilesearch #page .v711-bank-value small,body.theme-black .world-mobilesearch #page .v711-empty-inline{color:#b4b4b4!important}
 body.theme-black .world-mobilesearch #page :is(.v711-profile-copy strong,.v711-profile-stats b,.v711-widget-head h3,.v711-bank-copy strong,.v711-bank-value b){color:#ffffff!important}
 body.theme-black .world-mobilesearch #page .v711-profile-badge{background:rgba(144,108,255,.18)!important;border-color:rgba(173,144,255,.24)!important;color:#d8ccff!important}
-body.theme-black .world-mobilesearch #page .v711-search-pills button.active{background:linear-gradient(135deg,#1e56d6,#4578ff)!important;border-color:#4578ff!important;color:#fff!important}
+body.theme-black .world-mobilesearch #page .v711-search-pills button.active{background:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 22%,#111111)!important;border-color:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 62%,#393939)!important;color:var(--f360-accent-readable,#d8ccff)!important}
 </style>
 
 
@@ -73710,16 +73771,45 @@ body.theme-black .world-mobilesearch #page .v721-search-corner{color:#d7dcf2!imp
  .world-mobilesearch #page .v721-category-tile{min-width:0;}
  .world-mobilesearch #page .v721-category-grid .v721-category-tile[data-v154-category="servicios"] .v721-tile-art{overflow:visible!important;}
  .world-mobilesearch #page .v721-category-grid .v721-category-tile[data-v154-category="servicios"] svg.v728-brand-art{overflow:visible!important;max-width:100%;max-height:100%;}
- /* The primary selected search filter follows user-selected accent, never fixed blue. */
- .world-mobilesearch #page .v711-search-pills button.active,
- body.theme-black .world-mobilesearch #page .v711-search-pills button.active,
- body.theme-dark .world-mobilesearch #page .v711-search-pills button.active{
-   background:var(--f360-accent-readable,var(--accent,#366fcb))!important;
-   border-color:var(--f360-accent-readable,var(--accent,#366fcb))!important;
-   color:#fff!important;
-   box-shadow:0 7px 17px color-mix(in srgb,var(--f360-accent-readable,var(--accent,#366fcb)) 23%,transparent)!important;
+ /* V877 · Mobile universal search: one selected filter; other pills remain neutral. */
+ .world-mobilesearch #page .v711-search-pills button{
+   transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease!important;
+ }
+ .world-mobilesearch #page .v711-search-pills button:not(.active){
+   background:rgba(255,255,255,.72)!important;
+   border-color:rgba(205,216,235,.78)!important;
+   color:#354765!important;
+   box-shadow:none!important;
+ }
+ body.theme-black .world-mobilesearch #page .v711-search-pills button:not(.active){
+   background:#151515!important;border-color:#383838!important;color:#d7d7df!important;box-shadow:none!important;
+ }
+ .world-mobilesearch #page .v711-search-pills button.active{
+   background:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 14%,white)!important;
+   border-color:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 58%,white)!important;
+   color:var(--f360-accent-readable,var(--vive-theme-color,#5642b3))!important;
+   box-shadow:0 4px 12px color-mix(in srgb,var(--vive-theme-color,#6e62e9) 14%,transparent)!important;
+ }
+ body.theme-black .world-mobilesearch #page .v711-search-pills button.active{
+   background:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 22%,#111111)!important;
+   border-color:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 62%,#393939)!important;
+   color:var(--f360-accent-readable,#e0d5ff)!important;
  }
  .world-mobilesearch #page .v711-search-pills button.active :is(svg,span){color:inherit!important;stroke:currentColor!important;}
+ .world-mobilesearch #page .v711-search-pills button:focus-visible,
+ .world-mobilesearch #page .v154-result-item:focus-visible{
+   outline:2px solid var(--f360-accent-readable,var(--vive-theme-color,#6e62e9))!important;
+   outline-offset:2px!important;
+ }
+ .world-mobilesearch #page .v154-search-box:focus-within{
+   outline-color:var(--f360-accent-readable,var(--vive-theme-color,#6e62e9))!important;
+   border-color:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 55%,transparent)!important;
+ }
+ .world-mobilesearch #page .v154-active-filter{
+   background:color-mix(in srgb,var(--vive-theme-color,#6e62e9) 11%,transparent)!important;
+   border:1px solid color-mix(in srgb,var(--vive-theme-color,#6e62e9) 32%,transparent)!important;
+ }
+ @media(prefers-reduced-motion:reduce){.world-mobilesearch #page .v711-search-pills button{transition:none!important;}}
  /* Leave breathing room so floating controls don't cover 'Ver todo' or recent searches. */
  .world-mobilesearch #page .v721-recent-widget{padding-right:clamp(18px,5vw,28px)!important;padding-bottom:clamp(45px,10vw,66px)!important;min-height:130px;}
  .world-mobilesearch #page .v721-recent-widget .v711-widget-head{padding-right:82px!important;min-width:0;}
@@ -73837,8 +73927,7 @@ body:is(.theme-black,.theme-dark) :is(.ws-library,.v216-report){
  background-image:radial-gradient(ellipse 74% 60% at 90% 0%,var(--v748-halo-soft),transparent 80%)!important;
 }
 /* Accent selected surfaces: only border/lighting, never overwrite the semantic solid fill. */
-body #app :is(.v711-search-pills button.active,.v154-search-pills button.active,
- .module-switch-tab.active,.v242-style-option.selected,.v273-visibility.is-on){
+body #app :is(.module-switch-tab.active,.v242-style-option.selected,.v273-visibility.is-on){
  border-color:var(--v748-edge)!important;
  box-shadow:0 0 0 1px var(--v748-halo-soft)!important;
 }
@@ -82679,6 +82768,100 @@ body:is(.theme-black,.theme-dark) #modal-root .modal[data-v204-form="cardForm"] 
 body:is(.theme-black,.theme-dark) #modal-root .modal[data-v204-form="cardForm"] #cardForm :is(.filter-label,.smart-form-section strong,.smart-card-intro h3){color:#f5f5f5!important;}
 body:is(.theme-black,.theme-dark) #modal-root .modal[data-v204-form="cardForm"] #cardForm :is(.smart-card-intro,.smart-form-section,.smart-fold,.smart-quiet-help){background:#0c0c0c!important;color:#e4e4e4!important;border-color:#303030!important;}
 @media(prefers-reduced-motion:reduce){#modal-root .modal[data-v204-form="cardForm"] *{scroll-behavior:auto!important;transition-duration:0.01ms!important;}}
+
+/* V876 · Complemento cromático móvil del Paso 3.
+   Un único origen: --vive-theme-color. Sin ajustes de datos, gráficas semánticas
+   ni dimensiones de escritorio. Los fallbacks originales conservan web intacta. */
+@media (max-width:790px){
+ body{
+  --v876-accent-source:var(--vive-theme-color,#7066ee);
+  --v876-trend-main:color-mix(in srgb,var(--v876-accent-source) 87%,#253b61);
+  --v876-accent-glow:color-mix(in srgb,var(--v876-accent-source) 13%,transparent);
+  --v876-accent-border:color-mix(in srgb,var(--v876-accent-source) 49%,transparent);
+  --v876-credit-progress:linear-gradient(90deg,color-mix(in srgb,var(--v876-accent-source) 70%,#24365e),var(--v876-accent-source));
+  --v876-heat-1:color-mix(in srgb,var(--v876-accent-source) 16%,#fff);
+  --v876-heat-2:color-mix(in srgb,var(--v876-accent-source) 35%,#fff);
+  --v876-heat-3:color-mix(in srgb,var(--v876-accent-source) 35%,#182c43);
+  --v876-heat-4:color-mix(in srgb,var(--v876-accent-source) 53%,#0d1726);
+  --v876-preview-highlight:color-mix(in srgb,var(--v876-accent-source) 32%,#fff);
+  --v876-preview-base:color-mix(in srgb,var(--v876-accent-source) 80%,#27375a);
+  --v876-preview-area:color-mix(in srgb,var(--v876-accent-source) 42%,#fff);
+  --v876-preview-area-end:color-mix(in srgb,var(--v876-accent-source) 78%,#243858);
+  --v876-preview-halo:var(--v876-accent-source);
+ }
+ body:is(.theme-black,.theme-dark){
+  --v876-trend-main:color-mix(in srgb,var(--v876-accent-source) 74%,#edf0f8);
+  --v876-accent-glow:color-mix(in srgb,var(--v876-accent-source) 20%,transparent);
+  --v876-accent-border:color-mix(in srgb,var(--v876-accent-source) 62%,transparent);
+  --v876-heat-1:color-mix(in srgb,var(--v876-accent-source) 17%,#101419);
+  --v876-heat-2:color-mix(in srgb,var(--v876-accent-source) 30%,#11151d);
+  --v876-heat-3:color-mix(in srgb,var(--v876-accent-source) 40%,#111827);
+  --v876-heat-4:color-mix(in srgb,var(--v876-accent-source) 55%,#111b2a);
+  --v876-preview-highlight:color-mix(in srgb,var(--v876-accent-source) 54%,#edf1ff);
+  --v876-preview-base:color-mix(in srgb,var(--v876-accent-source) 63%,#212138);
+  --v876-preview-area:color-mix(in srgb,var(--v876-accent-source) 55%,#30354e);
+  --v876-preview-area-end:color-mix(in srgb,var(--v876-accent-source) 60%,#151a29);
+ }
+ /* Patrimonio: resaltado de foco y leyenda, sin teñir el histórico ni previsiones de riesgo. */
+ .world-patrimony .v14-timeline-svg circle:focus-visible,
+ .world-patrimony .v14-timeline-svg circle:hover{
+   outline:2px solid var(--v876-trend-main)!important;outline-offset:2px;
+ }
+ /* Escala ordinal de gasto: niveles 1-4 siguen siendo distinguibles.
+    Los contrastes se tratan por nivel y por tema; la celda vacía permanece neutra. */
+ .v317-heat-grid .v317-heat-cell.heat-1 span,
+ .v317-heat-grid .v317-heat-cell.heat-2 span{color:#1a2b43!important}
+ .v317-heat-grid .v317-heat-cell:is(.heat-3,.heat-4) span{color:#fff!important}
+ body:is(.theme-black,.theme-dark) .v317-heat-grid .v317-heat-cell.heat-1 span,
+ body:is(.theme-black,.theme-dark) .v317-heat-grid .v317-heat-cell.heat-2 span,
+ body:is(.theme-black,.theme-dark) .v317-heat-grid .v317-heat-cell:is(.heat-3,.heat-4) span{color:#f5f7fc!important}
+ .v317-heat-grid{gap:clamp(4px,1.45vw,7px)!important}
+ .v317-heat-grid .v317-heat-cell{border-radius:clamp(7px,2vw,9px)!important}
+ .v317-heat-grid .v317-heat-cell:focus-visible{
+   outline:2px solid var(--v876-trend-main)!important;outline-offset:2px;
+ }
+ /* Black: ganan a los overrides generales de botones, sin teñir el nivel vacío. */
+ html body:is(.theme-black,.theme-dark) #app #page .v317-heat-grid button.v317-heat-cell.heat-1{background:var(--v876-heat-1)!important}
+ html body:is(.theme-black,.theme-dark) #app #page .v317-heat-grid button.v317-heat-cell.heat-2{background:var(--v876-heat-2)!important}
+ html body:is(.theme-black,.theme-dark) #app #page .v317-heat-grid button.v317-heat-cell.heat-3{background:var(--v876-heat-3)!important}
+ html body:is(.theme-black,.theme-dark) #app #page .v317-heat-grid button.v317-heat-cell.heat-4{background:var(--v876-heat-4)!important}
+ /* Presión: selección y escala cuantitativa usan el acento; el importe continúa siendo la fuente de cada nivel. */
+ .v360-pressure-page .v322-cal-cell:focus-visible,
+ .v360-pressure-page .v322-cal-cell:focus-within{
+   outline:2px solid var(--v876-trend-main)!important;outline-offset:2px;
+ }
+ .v360-pressure-page .v322-cal-cell:hover{border-color:var(--v876-accent-border)!important}
+ .v362-pressure-month :is(.v362-pressure-month-nav button,.v322-cal-cell){touch-action:manipulation}
+ .v362-pressure-month .v322-cal-grid{gap:clamp(4px,1.1vw,7px)!important}
+ .v362-pressure-month .v322-cal-cell{min-width:0!important;min-height:44px!important;border-radius:clamp(10px,2.8vw,14px)!important}
+ /* Compromisos: pequeños acentos en iconografía, no en montos de deuda ni alertas. */
+ .vive-mobile-commitments .v360-due-symbol,
+ .vive-mobile-dues .v360-due-symbol{
+   color:var(--v876-trend-main)!important;
+   background:var(--v876-accent-glow)!important;
+   border-color:var(--v876-accent-border)!important;
+ }
+ .vive-mobile-commitments .vive-mobile-eyebrow{color:var(--v876-trend-main)!important}
+ .vive-mobile-commitments .v36-commitment-ico{
+  color:var(--v876-trend-main)!important;
+  background:var(--v876-accent-glow)!important;
+  border:1px solid var(--v876-accent-border)!important;
+ }
+ .vive-mobile-commitments .v36-commitment-detail-copy button:not(.v36-overdue){
+  color:var(--v876-trend-main)!important;
+ }
+ /* Tarjetas: barras decorativas, manteniendo los estados semánticos existentes. */
+ .v412-premium-credit .v410-credit-track{background:color-mix(in srgb,var(--v876-accent-source) 9%,#e8edf5)!important}
+ body:is(.theme-black,.theme-dark) .v412-premium-credit .v410-credit-track{background:color-mix(in srgb,var(--v876-accent-source) 12%,#16181e)!important}
+ /* Personalización: foco, bordes activos y vistas previas integradas. */
+ .v273-settings-customizer [data-act^="v273-"]:focus-visible,
+ .v273-settings-customizer .v766-indicator:focus-within{
+  outline:2px solid var(--v876-trend-main)!important;outline-offset:2px;
+ }
+ .v273-settings-customizer .v766-indicator:has(.v766-switch[aria-checked="true"]) .v767-icon{
+  border-color:var(--v876-accent-border)!important;
+ }
+}
 </style>
 
 <script id="v873-card-editor-back-access">
