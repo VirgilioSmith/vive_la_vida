@@ -19748,6 +19748,251 @@ body:not(.theme-black):not(.theme-dark) #modal-root form.studio-form.vop-cardpay
 </style>
 
 
+
+<style id="v885-panorama-acento-compromisos-y-espacio-final">
+/* V885 · Panorama financiero: conservar colores internos, pero usar el mismo
+   tratamiento de acento exterior que Compromisos. Además, dejar espacio real
+   al final del scroll móvil para que el último bloque se vea completo. */
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama{
+ --v881-accent:var(--v876-trend-main,var(--vive-theme-color,#7165ee))!important;
+ background-color:#fff!important;
+ background-image:radial-gradient(ellipse 240px 162px at 100% 0%,color-mix(in srgb,var(--v881-accent) 8%,transparent),color-mix(in srgb,var(--v881-accent) 3%,transparent) 40%,transparent 78%)!important;
+ border:1px solid color-mix(in srgb,var(--v881-accent) 23%,#dfe4ed)!important;
+ box-shadow:0 10px 26px rgba(28,41,67,.045)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-head,
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-kicker{
+ color:color-mix(in srgb,var(--v881-accent) 74%,#334764)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net{
+ background:#fff!important;
+ background-image:radial-gradient(ellipse 188px 138px at 100% 0%,color-mix(in srgb,var(--v881-accent) 7%,transparent),transparent 82%)!important;
+ border:1px solid color-mix(in srgb,var(--v881-accent) 23%,#dfe4ed)!important;
+ box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama :is(.v421-core-metrics>button,.v421-meter,.v421-mini-card){
+ background-color:#fff!important;
+ box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-grid>.v421-meter:last-child{
+ border-color:color-mix(in srgb,var(--v881-accent) 24%,#dde2ec)!important;
+ background-image:radial-gradient(ellipse 160px 108px at 100% 0%,color-mix(in srgb,var(--v881-accent) 6%,transparent),transparent 84%)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-bottom-strip>button{
+ border-color:color-mix(in srgb,var(--v881-accent) 21%,#dde2ec)!important;
+ background-image:radial-gradient(ellipse 120px 90px at 100% 0%,color-mix(in srgb,var(--v881-accent) 4%,transparent),transparent 84%)!important;
+}
+/* Mantener colores internos existentes de iconos y barras; aquí solo reforzamos
+   el acento exterior y la familia violeta de Compromisos. */
+html body #app .vive-mobile-home.vive-mobile-home-essential{
+ padding-bottom:calc(190px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(190px + env(safe-area-inset-bottom,0px))!important;
+}
+html body #app .vive-mobile-home.vive-mobile-home-essential > :last-child{
+ margin-bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;
+}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama{
+ scroll-margin-bottom:calc(168px + env(safe-area-inset-bottom,0px))!important;
+}
+/* Si el último módulo visible es un gráfico/tarjeta, asegurar que no quede cortado
+   por la barra inferior ni por los FAB flotantes. */
+html body #app .vive-mobile-home :is(.v105-mobile-extra,.v273-overview-widget,.v318-mobile-card,.v344-creative.v421-creative-compact):last-of-type{
+ margin-bottom:calc(18px + env(safe-area-inset-bottom,0px))!important;
+}
+@media(max-width:420px){
+ html body #app .vive-mobile-home.vive-mobile-home-essential{
+  padding-bottom:calc(208px + env(safe-area-inset-bottom,0px))!important;
+  scroll-padding-bottom:calc(208px + env(safe-area-inset-bottom,0px))!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama{
+  background-image:radial-gradient(ellipse 210px 146px at 100% 0%,color-mix(in srgb,var(--v881-accent) 9%,transparent),color-mix(in srgb,var(--v881-accent) 4%,transparent) 43%,transparent 79%)!important;
+ }
+}
+/* Tema Black: mismo criterio, pero más sobrio. */
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama{
+ --v881-accent:var(--v876-trend-main,var(--vive-theme-color,#9987eb))!important;
+ background:#080809!important;
+ background-image:radial-gradient(ellipse 210px 136px at 100% 0%,color-mix(in srgb,var(--v881-accent) 11%,transparent),transparent 82%)!important;
+ border-color:#2c2c33!important;
+ box-shadow:none!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net,
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama :is(.v421-meter:last-child,.v421-bottom-strip>button){
+ background-color:#101014!important;
+ background-image:radial-gradient(ellipse 152px 104px at 100% 0%,color-mix(in srgb,var(--v881-accent) 8%,transparent),transparent 84%)!important;
+ border-color:#303038!important;
+}
+</style>
+
+
+<style id="v887-neto-botones-contextuales">
+/* Cambio puntual en las dos capturas: Neto, Pagar, Ver relaciones. */
+body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v36-month-capsule .v36-month-net {
+ --v887-net-accent:var(--vive-theme-color,#7867e8);
+ background-color:#fff!important;
+ background-image:radial-gradient(ellipse 240px 140px at 100% 0%,color-mix(in srgb,var(--v887-net-accent) 12%,transparent),color-mix(in srgb,var(--v887-net-accent) 5%,transparent) 48%,transparent 90%)!important;
+ border:1px solid color-mix(in srgb,var(--v887-net-accent) 18%,#e3e7ee)!important;
+ box-shadow:none!important;
+}
+/* El color de Neto continúa definido por su signo; no recolorear cifras. */
+body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .vive-mobile-dues .v105-mobile-due .v105-pay-mini {
+ --v887-pay-accent:var(--vive-theme-color,#7867e8);
+ background:color-mix(in srgb,var(--v887-pay-accent) 8%,#fff)!important;
+ background-image:linear-gradient(140deg,color-mix(in srgb,var(--v887-pay-accent) 8%,transparent),transparent 75%)!important;
+ border:1px solid color-mix(in srgb,var(--v887-pay-accent) 30%,#e0e6ed)!important;
+ color:color-mix(in srgb,var(--v887-pay-accent) 76%,#273a53)!important;
+ box-shadow:none!important;
+}
+/* Entre personas: recuperar el verde/teal propio de Relaciones. */
+body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home [data-v105-widget="people"] .vive-mobile-view-all {
+ --v887-people-accent:var(--v884-context,#009b89);
+ background:color-mix(in srgb,var(--v887-people-accent) 7%,#fff)!important;
+ background-image:radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--v887-people-accent) 6%,transparent),transparent 80%)!important;
+ border:1px solid color-mix(in srgb,var(--v887-people-accent) 27%,#e3e7ed)!important;
+ color:color-mix(in srgb,var(--v887-people-accent) 85%,#15453f)!important;
+ box-shadow:none!important;
+}
+body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home :is(.vive-mobile-dues .v105-pay-mini,[data-v105-widget="people"] .vive-mobile-view-all):is(:hover,:focus-visible){
+ filter:saturate(1.05)!important;
+}
+body #app .vive-mobile-home :is(.vive-mobile-dues .v105-pay-mini,[data-v105-widget="people"] .vive-mobile-view-all):focus-visible{
+ outline:2px solid var(--vive-theme-color,#7867e8)!important;outline-offset:2px!important;
+}
+body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v36-month-capsule .v36-month-net{
+ background:#101012!important;
+ background-image:radial-gradient(ellipse 210px 120px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#9987eb) 12%,transparent),transparent 84%)!important;
+ border:1px solid #303039!important;
+}
+body:is(.theme-black,.theme-dark) #app .vive-mobile-home .vive-mobile-dues .v105-mobile-due .v105-pay-mini{
+ background:color-mix(in srgb,var(--vive-theme-color,#9987eb) 13%,#101012)!important;
+ border-color:color-mix(in srgb,var(--vive-theme-color,#9987eb) 32%,#303038)!important;
+ color:color-mix(in srgb,var(--vive-theme-color,#9987eb) 65%,#fff)!important;
+}
+body:is(.theme-black,.theme-dark) #app .vive-mobile-home [data-v105-widget="people"] .vive-mobile-view-all{
+ background:color-mix(in srgb,#009b89 12%,#101012)!important;
+ border-color:color-mix(in srgb,#009b89 32%,#303038)!important;
+ color:#62cdbd!important;
+}
+</style>
+
+<style id="v886-no-decorative-card-art-payment">
+/* Only decorative dual-card artwork; preserve card brand logos in selectors. */
+html body #modal-root form.studio-form.vop-cardpay .v815-card-art{display:none!important;}
+html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-header{
+ grid-template-columns:42px minmax(0,1fr)!important;
+ grid-template-rows:auto auto!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-copy{
+ grid-column:1 / -1!important;grid-row:2!important;
+}
+</style>
+
+<style id="v888-compromisos-sin-contornos-render-original">
+/* Elimina exclusivamente los marcos de las cuatro filas internas de Compromisos.
+   La tarjeta externa sigue conservando su contorno y su acento. */
+html body #app details.v36-commitment-group.v888-borderless-row,
+html body #app details.v36-commitment-group.v888-borderless-row[open],
+html body #app #page details.v36-commitment-group.v888-borderless-row,
+html body #app #page details.v36-commitment-group.v888-borderless-row[open] {
+ border:0!important; border-color:transparent!important; border-width:0!important;
+ border-radius:0!important; outline:0!important; outline-style:none!important;
+ box-shadow:none!important; background:transparent!important; background-image:none!important;
+}
+html body #app details.v36-commitment-group.v888-borderless-row::before,
+html body #app details.v36-commitment-group.v888-borderless-row::after{
+ content:none!important;display:none!important;
+}
+html body #app details.v36-commitment-group.v888-borderless-row > summary {
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;background:transparent!important;background-image:none!important;
+}
+html body #app details.v36-commitment-group.v888-borderless-row > summary .v36-commitment-ico {
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;background:transparent!important;background-image:none!important;
+}
+html body #app .vive-mobile-commitments .v36-commitment-list{
+ gap:0!important;
+}
+html body #app .vive-mobile-commitments .v888-borderless-row + .v888-borderless-row{
+ border-top:0!important;
+}
+</style>
+
+<style id="v889-entre-personas-acento-verde">
+/* V889 · Entre personas conserva su acento verde/turquesa contextual. */
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home [data-v105-widget="people"]{
+  --v889-people:#10a894;
+  background-color:#fff!important;
+  background-image:radial-gradient(ellipse 175px 118px at 100% 0%,color-mix(in srgb,var(--v889-people) 7%,transparent),transparent 83%)!important;
+  border:1px solid color-mix(in srgb,var(--v889-people) 26%,#dce6ea)!important;
+  box-shadow:0 7px 20px rgba(20,48,54,.04)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home [data-v105-widget="people"] .vive-mobile-eyebrow{
+  color:color-mix(in srgb,var(--v889-people) 72%,#47606a)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home [data-v105-widget="people"] .vive-mobile-view-all{
+  color:color-mix(in srgb,var(--v889-people) 94%,#0e6a5f)!important;
+  background:color-mix(in srgb,var(--v889-people) 5%,#fff)!important;
+  border:1px solid color-mix(in srgb,var(--v889-people) 28%,#d8e5e6)!important;
+  box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home [data-v105-widget="people"] .vive-mobile-view-all:is(:hover,:focus-visible){
+  border-color:color-mix(in srgb,var(--v889-people) 44%,#d8e5e6)!important;
+  background:color-mix(in srgb,var(--v889-people) 8%,#fff)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home [data-v105-widget="people"] .v105-mobile-people>span{
+  background:#fff!important;
+  border:1px solid #dfe4eb!important;
+  box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home [data-v105-widget="people"] .v105-mobile-people small{
+  color:#73819a!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home [data-v105-widget="people"] .v105-mobile-people strong{
+  color:#294b7a!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home [data-v105-widget="people"]{
+  --v889-people:#18b8a3;
+  background-color:#080909!important;
+  background-image:radial-gradient(ellipse 170px 112px at 100% 0%,color-mix(in srgb,var(--v889-people) 11%,transparent),transparent 82%)!important;
+  border-color:#25413d!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home [data-v105-widget="people"] .vive-mobile-view-all{
+  color:color-mix(in srgb,var(--v889-people) 70%,white)!important;
+  background:#111514!important;
+  border-color:#28514a!important;
+}
+</style>
+
+
+<style id="v890-capacity-percentage-semantic-gradient">
+/* Porcentaje: identidad SEMÁNTICA independiente del acento decorativo global. */
+#app .v105-capacity-widget .v105-capacity-rate.v890-capacity-danger{--v890-from:#e64b60;--v890-to:#bd263c;--v890-glow:rgba(231,71,93,.085)}
+#app .v105-capacity-widget .v105-capacity-rate.v890-capacity-healthy{--v890-from:#16b78d;--v890-to:#08795f;--v890-glow:rgba(16,172,128,.075)}
+#app .v105-capacity-widget .v105-capacity-rate.v890-capacity-warning{--v890-from:#edab43;--v890-to:#b66b16;--v890-glow:rgba(231,154,45,.075)}
+#app .v105-capacity-widget .v105-capacity-rate.v890-capacity-neutral{--v890-from:#77879c;--v890-to:#50617c;--v890-glow:rgba(110,120,135,.04)}
+html body:not(.theme-black):not(.theme-dark) #app .v105-capacity-widget .v105-capacity-rate[class*="v890-capacity-"]{
+ background-color:#fff!important;
+ background-image:radial-gradient(ellipse 170px 105px at 100% 0%,var(--v890-glow),transparent 86%)!important;
+ border-color:#e1e5ed!important;
+}
+html body #app .v105-capacity-widget .v105-capacity-rate[class*="v890-capacity-"]>strong{
+ color:var(--v890-to)!important;
+ background-image:linear-gradient(115deg,var(--v890-from),var(--v890-to))!important;
+ -webkit-background-clip:text!important;background-clip:text!important;
+ -webkit-text-fill-color:transparent!important;
+ text-shadow:none!important;
+}
+html body:is(.theme-black,.theme-dark) #app .v105-capacity-widget .v105-capacity-rate[class*="v890-capacity-"]{
+ background-color:#111!important;
+ background-image:radial-gradient(ellipse 165px 110px at 100% 0%,var(--v890-glow),transparent 85%)!important;
+ border-color:#29292d!important;
+}
+html body:is(.theme-black,.theme-dark) #app .v105-capacity-widget .v105-capacity-rate.v890-capacity-danger{--v890-from:#ff8894;--v890-to:#ff5266}
+html body:is(.theme-black,.theme-dark) #app .v105-capacity-widget .v105-capacity-rate.v890-capacity-healthy{--v890-from:#51e7bd;--v890-to:#17bf93}
+html body:is(.theme-black,.theme-dark) #app .v105-capacity-widget .v105-capacity-rate.v890-capacity-warning{--v890-from:#ffd18b;--v890-to:#efa64b}
+@media(forced-colors:active){html body #app .v105-capacity-widget .v105-capacity-rate[class*="v890-capacity-"]>strong{background:none!important;-webkit-text-fill-color:currentColor!important}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -23553,17 +23798,27 @@ function v342CreativePositionMobile(liquid,debt,net){
  })();
  const budgetLine=pct===null?'Sin presupuesto definido':pct>100?'Ya excediste el presupuesto del mes':'Tu ejecución va según lo registrado';
  const freeBudget=p.percent===null?'Sin definir':money(Math.abs(p.remaining));
- const meter=(title,kpi,caption,tone,action,aria,progress,foot)=>`<button type="button" class="v421-meter ${tone}" ${action} aria-label="${aria}"><span class="v421-meter-top"><small>${title}</small><strong>${kpi}</strong></span><p>${caption}</p><span class="v421-meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${clamp(progress)}"><i style="width:${clamp(progress)}%"></i></span><em>${foot}</em></button>`;
- return `<section class="v344-creative v342-creative-position v421-creative-compact" aria-label="Panel creativo compacto de situación financiera">
-   <div class="v421-head"><span class="v421-kicker">PANORAMA FINANCIERO</span></div>
-   <button type="button" class="v421-net" data-act="v186Deep" data-id="net" aria-label="Abrir el detalle de tu posición neta"><small>TU POSICIÓN FINANCIERA</small><strong>${money(net,'DOP',2)}</strong><span>Activos menos deudas · equivalente RD$</span></button>
-   <div class="v421-core-metrics" aria-label="Indicadores principales"><button type="button" data-act="v186Deep" data-id="liquidity"><small>Liquidez</small><strong>${bubbleMoney(liquid)}</strong></button><button type="button" data-act="v186Deep" data-id="debt"><small>Deudas</small><strong>${bubbleMoney(debt)}</strong></button><button type="button" data-v290-budget-open="execution"><small>Presupuesto libre</small><strong>${p.percent===null?'—':bubbleMoney(p.remaining)}</strong></button></div>
-   <div class="v421-meter-grid" aria-label="Presupuesto y compromisos del mes">
-     ${meter('Presupuesto',pctLabel(pct),budgetLine,budgetState,'data-v290-budget-open="execution"','Abrir presupuesto mensual',pct,p.percent===null?'Aún no has definido un límite':`Gastado ${money(p.spent)} · ${p.remaining<0?'Exceso':'Libre'} ${freeBudget}`)}
-     ${meter('Compromisos del mes',money(capacity.monthly),pressure.detail,pressure.tone,'data-act="navigate" data-id="payments"','Abrir compromisos del mes',debtRatio===null?0:debtRatio,debtRatio===null?'Sin ingresos de referencia':`${pctLabel(debtRatio)} de tus ingresos comprometidos`)}
-   </div>
-   <div class="v421-bottom-strip" aria-label="Resumen complementario"><button type="button" class="v421-mini-card" data-act="navigate" data-id="advanced"><small>Balance del mes</small><strong>${bubbleMoney(m.net)}</strong><span>Ingresos − egresos</span></button><button type="button" class="v421-mini-card v421-tomorrow" data-act="navigate" data-id="payments"><small>El costo del mañana</small><strong>${money(nextDue)}</strong><span>Próximo mes · estimación</span></button></div>
- </section>`;
+ /* V881: misma fuente financiera y mismos handlers; se restituyen iconos y jerarquía de la referencia. */
+  const meter=(title,kpi,caption,tone,action,aria,progress,foot)=>`<button type="button" class="v421-meter ${tone}" ${action} aria-label="${aria}: ${caption}"><span class="v421-meter-top"><small>${title}</small><strong>${kpi}</strong></span><p>${caption}</p><span class="v881-meter-side"><span class="v421-meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${clamp(progress)}"><i style="width:${clamp(progress)}%"></i></span><em>${foot}</em></span></button>`;
+  const metric=(label,value,kind,ico,action)=>`<button type="button" class="v881-metric v881-${kind}" ${action}><span class="v881-metric-icon" aria-hidden="true">${icon(ico)}</span><span class="v881-metric-copy"><small>${label}</small><strong>${value}</strong></span></button>`;
+  const mini=(label,value,caption,kind,ico,action)=>`<button type="button" class="v421-mini-card v881-mini v881-${kind}" ${action}><span class="v881-metric-icon" aria-hidden="true">${icon(ico)}</span><span class="v881-metric-copy"><small>${label}</small><strong>${value}</strong><span>${caption}</span></span></button>`;
+  return `<section class="v344-creative v342-creative-position v421-creative-compact v881-panorama" aria-label="Panel creativo compacto de situación financiera">
+    <div class="v421-head"><span class="v421-kicker">PANORAMA FINANCIERO</span></div>
+    <button type="button" class="v421-net" data-act="v186Deep" data-id="net" aria-label="Abrir el detalle de tu posición neta"><span class="v881-net-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><small>TU POSICIÓN FINANCIERA</small><strong>${money(net,'DOP',2)}</strong><span>Activos menos deudas · equivalente RD$</span></button>
+    <div class="v421-core-metrics" aria-label="Indicadores principales">
+      ${metric('Liquidez',bubbleMoney(liquid),'liquidity','wallet','data-act="v186Deep" data-id="liquidity"')}
+      ${metric('Deudas',bubbleMoney(debt),'debt','card','data-act="v186Deep" data-id="debt"')}
+      ${metric('Presupuesto libre',p.percent===null?'—':bubbleMoney(p.remaining),'budget','coins2','data-v290-budget-open="execution"')}
+    </div>
+    <div class="v421-meter-grid" aria-label="Presupuesto y compromisos del mes">
+      ${meter('Presupuesto',pctLabel(pct),budgetLine,budgetState,'data-v290-budget-open="execution"','Abrir presupuesto mensual',pct,p.percent===null?'Aún no has definido un límite':`Gastado ${money(p.spent)} · ${p.remaining<0?'Exceso':'Libre'} ${freeBudget}`)}
+      ${meter('Compromisos del mes',money(capacity.monthly),pressure.detail,pressure.tone,'data-act="navigate" data-id="payments"','Abrir compromisos del mes',debtRatio===null?0:debtRatio,debtRatio===null?'Sin ingresos de referencia':`${pctLabel(debtRatio)} de tus ingresos comprometidos`)}
+    </div>
+    <div class="v421-bottom-strip" aria-label="Resumen complementario">
+      ${mini('Balance del mes',bubbleMoney(m.net),'Ingresos − egresos','balance','cycle','data-act="navigate" data-id="advanced"')}
+      ${mini('El costo del mañana',money(nextDue),'Próximo mes · estimación','tomorrow','calendar','data-act="navigate" data-id="payments"')}
+    </div>
+  </section>`;
 }
 /* V732: tres refinamientos visuales en Inicio; solo datos ya sincronizados. */
 function v732HomeKpi(liquid,debt,net,compact=false){
@@ -23615,7 +23870,7 @@ function mobileHome(){
      const state=days<0?'Vencido · revisar':days===0?'Hoy':days===1?'Mañana':`En ${days} días`;
      return `<div class="v36-commitment-detail"><div class="v36-commitment-detail-copy"><strong>${sanitize(o.name)}</strong><small class="${days<0?'v36-overdue':''}">${prettyDate(o.date)} · ${state}</small><button type="button" data-act="${o.action}" data-id="${o.ref}" ${o.ccy?`data-ccy="${o.ccy}"`:''}>Registrar pago ›</button></div><b title="${money(o.amount,o.currency,2)}">${money(o.amount,o.currency,2)}</b></div>`;
    }).join('');
-   return `<details class="v36-commitment-group"><summary><span class="v36-commitment-ico">${icon(g.icon)}</span><span class="v36-commitment-name"><strong>${g.label}</strong><small>${items.length?`${items.length} pago${items.length===1?'':'s'} · Próximo: ${prettyDate(soon)}`:'Sin pagos pendientes registrados'}</small><small class="v64-subdebt">${v64DueSummary(g.kind,v64Totals[g.kind])}</small></span><b title="Suma de vencimientos registrados: ${money(subtotal,'DOP',2)}">${money(subtotal)}</b><span class="v36-commitment-chevron">⌄</span></summary><div class="v36-commitment-items">${entries||'<p class="v36-commitment-empty">No tienes compromisos registrados de este tipo.</p>'}</div></details>`;
+   return `<details class="v36-commitment-group v888-borderless-row" style="border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;background-image:none!important;margin:0!important;padding:0!important"><summary style="border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;background-image:none!important"><span class="v36-commitment-ico" style="border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;background-image:none!important">${icon(g.icon)}</span><span class="v36-commitment-name"><strong>${g.label}</strong><small>${items.length?`${items.length} pago${items.length===1?'':'s'} · Próximo: ${prettyDate(soon)}`:'Sin pagos pendientes registrados'}</small><small class="v64-subdebt">${v64DueSummary(g.kind,v64Totals[g.kind])}</small></span><b title="Suma de vencimientos registrados: ${money(subtotal,'DOP',2)}">${money(subtotal)}</b><span class="v36-commitment-chevron">⌄</span></summary><div class="v36-commitment-items">${entries||'<p class="v36-commitment-empty">No tienes compromisos registrados de este tipo.</p>'}</div></details>`;
  }).join('');
 
  const late=commitments.filter(o=>o.date<today());
@@ -34096,9 +34351,10 @@ function v105CapacityWidget(isMobile=false){
  const state=noIncome?'Sin ingresos suficientes':d.ratio>100?'Ingresos insuficientes':d.ratio>=80?'Capacidad ajustada':'Dentro de tus ingresos';
  const avail=d.balance===null?'—':money(Math.abs(d.balance));
  const shortDesc=d.balance===null?'No es posible calcular el disponible':d.balance<0?'Déficit previsto':'Disponible después de pagos';
+ const capacityColor=d.ratio===null?'neutral':d.ratio>100?'danger':d.ratio>=80?'warning':'healthy';
  return `<section data-v105-widget="capacity" class="v105-capacity-widget ${d.risk==='over'?'v105-capacity-over':''} ${isMobile?'v105-capacity-mobile':'ff-tile'}" aria-label="Capacidad de endeudamiento">
   <div class="v105-capacity-top"><div><small>CONTROL DEL MES · ${sanitize(d.period)}</small><h2>Capacidad de endeudamiento</h2><p>¿Qué parte de mis ingresos debo pagar?</p></div><button type="button" class="v105-capacity-info" data-v85-action="capacity" aria-label="Ver explicación de la capacidad">${icon('arrow')}</button></div>
-  <div class="v105-capacity-grid"><div class="v105-capacity-rate"><small>Ingresos comprometidos</small><strong>${v85Pct(d.ratio)}</strong><span>${state}</span></div><div class="v105-capacity-rest"><small>${shortDesc}</small><strong>${avail}</strong><span>Ingresos: ${money(d.income)} · Pagos: ${money(d.monthly)}</span></div></div>
+  <div class="v105-capacity-grid"><div class="v105-capacity-rate v890-capacity-${capacityColor}"><small>Ingresos comprometidos</small><strong>${v85Pct(d.ratio)}</strong><span>${state}</span></div><div class="v105-capacity-rest"><small>${shortDesc}</small><strong>${avail}</strong><span>Ingresos: ${money(d.income)} · Pagos: ${money(d.monthly)}</span></div></div>
   <div class="v105-capacity-meter" aria-hidden="true"><span style="width:${d.ratio===null?0:Math.max(0,Math.min(100,d.ratio))}%"></span></div>
   <details class="v105-capacity-details"><summary>Ver el desglose de este mes ${icon('arrow')}</summary>${v89CapacityExplanation(d)}</details>
  </section>`;
@@ -36979,7 +37235,7 @@ function v273SettingsWidgetEditor(){
   const w=V105_WIDGETS.find(x=>x.id===id);
   return w?v747PersonalizationCard(w,id,i,visible.has(id),cfg.order.length):'';
  }).join('');
- return `<section class="v273-settings-customizer v766-stage" aria-label="Personalizar indicadores de Resumen"><div class="v766-app"><main class="v766-content"><section class="v766-cards" aria-label="Orden y visibilidad de indicadores">${rows}</section><div class="v783-reset-region"><button type="button" class="v783-reset-pill" data-v273-reset="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.6 6.4"/><path d="M3 4v7h7"/><path d="M12 7v5l3 2"/></svg><span>Restaurar orden esencial</span></button></div></main></div></section>`;
+ return `<section class="v273-settings-customizer v766-stage" aria-label="Personalizar indicadores de Resumen"><div class="v766-app"><main class="v766-content"><section class="v766-cards" aria-label="Orden y visibilidad de indicadores">${rows}</section><div class="v783-reset-region"><button type="button" class="v783-reset-pill" data-v273-reset="1" title="Recuperar el orden original sin cambiar los indicadores visibles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.6 6.4"/><path d="M3 4v7h7"/><path d="M12 7v5l3 2"/></svg><span>Restaurar orden esencial</span></button><button type="button" class="v783-reset-pill v883-reset-all" data-v883-reset-all="1" title="Restablecer el orden inicial y mostrar todos los indicadores en Inicio" aria-label="Restaurar todo: orden y visibilidad de todos los indicadores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="m14 17 3 3 4-6"/></svg><span>Restaurar todo</span></button></div></main></div></section>`;
 }
 
 /* V772 · Personalización real: flechas, switches y persistencia, sin un estado paralelo. */
@@ -37208,17 +37464,20 @@ document.addEventListener('click',event=>{
  const toggle=event.target.closest('[data-v273-toggle]');
  const move=event.target.closest('[data-v273-move]');
  const reset=event.target.closest('[data-v273-reset]');
- if(!opener&&!toggle&&!move&&!reset)return;
+ const resetAll=event.target.closest('[data-v883-reset-all]');
+ if(!opener&&!toggle&&!move&&!reset&&!resetAll)return;
  event.preventDefault();event.stopImmediatePropagation();
  if(opener){ui.page=isMobileViewport()?'personalize':'settings';ui.mobile=false;if(!isMobileViewport())v242SettingsPane='appearance';render();window.scrollTo(0,0);return}
  const cfg=v105Config();
  if(toggle){const id=toggle.dataset.v273Toggle;if(!cfg.order.includes(id))return;cfg.visible=cfg.visible.includes(id)?cfg.visible.filter(x=>x!==id):[...cfg.visible,id]}
  else if(move){const id=move.dataset.id,i=cfg.order.indexOf(id),j=i+(move.dataset.v273Move==='up'?-1:1);if(i<0||j<0||j>=cfg.order.length)return;[cfg.order[i],cfg.order[j]]=[cfg.order[j],cfg.order[i]]}
  else if(reset){const ids=V105_WIDGETS.map(x=>x.id);cfg.order=[...ids.filter(id=>cfg.order.includes(id)),...cfg.order.filter(id=>!ids.includes(id))]}
+ else if(resetAll){const ids=V105_WIDGETS.map(x=>x.id);cfg.order=['applePayInbox',...v316OrderDefaults(ids).filter(id=>id!=='applePayInbox')];cfg.visible=ids.slice()}
  const old=db.settings.v105OverviewWidgets;
  db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};
  if(!persist()){db.settings.v105OverviewWidgets=old;toast('No se pudieron guardar los cambios de personalización.');return}
  render();
+ if(resetAll)toast('Restaurados todos los indicadores y su orden inicial.');
 },true);
 
 
@@ -78392,11 +78651,9 @@ const quickArt=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 325 165" ar
 <path d="M208 99c8-12 20-3 12 7-8 9-23-2-10-14" stroke="#6650d8" stroke-width="4" fill="none" stroke-linecap="round"/>
 </svg>`;
 function mount(){
- const card=root.querySelector('form.studio-form[data-mode="cardpay"]');
- if(card){const main=card.querySelector('.studio-main');const heading=main?.querySelector('.studio-active-title');
-  if(main&&heading&&!main.querySelector('.v815-card-art')){
-  const art=document.createElement('div');art.className='v815-card-art';art.setAttribute('aria-hidden','true');art.innerHTML=cardArt;heading.after(art);
-  }}
+ // No decorative credit-card illustration in either payment step.
+ // Keep the payment card's Visa/Mastercard badge in its actual selector.
+ root.querySelectorAll('form.studio-form[data-mode="cardpay"] .v815-card-art').forEach(el=>el.remove());
  const q=root.querySelector('.v354-dialog:has(.v355-intro)');if(q){const eyebrow=q.querySelector('.v354-eyebrow');if(eyebrow&&eyebrow.textContent!=='Vive el Hoy · Finanzas 360')eyebrow.textContent='Vive el Hoy · Finanzas 360';const intro=q.querySelector('.v355-intro');if(intro&&!intro.querySelector('.v815-quick-art')){const art=document.createElement('div');art.className='v815-quick-art';art.setAttribute('aria-hidden','true');art.innerHTML=quickArt;intro.prepend(art);}}
 }
 let queued=false;new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;mount()})}).observe(root,{childList:true,subtree:true});
@@ -84066,11 +84323,11 @@ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .studio
 html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay :is(.vop-pay-summary,.vop-payment-details,.vop-review-selects){display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;}
 html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-header{display:grid!important;grid-template-columns:42px minmax(0,1fr) 72px!important;grid-template-rows:auto auto!important;gap:12px 10px!important;padding:16px 0!important;min-height:0!important;margin:0!important;position:relative!important;flex:none!important;}
 html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-circular-back{grid-column:1!important;grid-row:1!important;width:40px!important;height:40px!important;min-width:40px!important;padding:0!important;border-radius:50%!important;align-self:start!important;display:grid!important;place-items:center!important;}
-html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-copy{grid-column:1 / 3!important;grid-row:2!important;padding:0!important;margin:0!important;min-width:0!important;}
+html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-copy{grid-column:1 / -1!important;grid-row:2!important;padding:0!important;margin:0!important;min-width:0!important;}
 html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-header:has(.v815-card-art) .vop-pay-copy{padding:0!important;}
 html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-copy h2{font-size:clamp(25px,7vw,32px)!important;line-height:1.12!important;letter-spacing:-1px!important;margin:0 0 6px!important;color:var(--r871-ink)!important;}
 html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-copy p{font-size:13px!important;line-height:1.4!important;margin:0!important;max-width:34ch!important;}
-html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .v815-card-art{position:relative!important;inset:auto!important;grid-column:3!important;grid-row:2!important;width:72px!important;height:54px!important;align-self:center!important;margin:0!important;transform:none!important;}
+html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .v815-card-art{position:relative!important;inset:auto!important;grid-column:3!important;grid-row:1!important;width:72px!important;height:48px!important;align-self:center!important;justify-self:end!important;margin:0!important;transform:none!important;pointer-events:none!important;}
 html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay :is(.vop-review-entry,.studio-fields>label:has([name="cardId"]),.studio-fields>label:has([name="accountId"])){width:100%!important;max-width:none!important;min-height:72px!important;padding:10px 13px!important;border:1px solid var(--r871-line)!important;border-radius:18px!important;background:var(--r871-card)!important;box-shadow:none!important;}
 html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay :is(.v789-select-details,.vop-review-details){min-width:0!important;flex:1!important;}
 html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay :is(.v789-select-details,.vop-review-details) strong{font-size:16px!important;line-height:1.2!important;}
@@ -84106,6 +84363,39 @@ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-vo
 @media(max-width:790px){html body #modal-root .modal-layer:has(form.vop-cardpay){padding:0!important;}
 html body #modal-root .modal-layer>.modal:has(form.vop-cardpay){height:100dvh!important;max-height:100dvh!important;width:100%!important;max-width:100%!important;border:0!important;border-radius:0!important;}}
 @media(max-height:750px){html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-header{padding:9px 0!important;gap:6px!important;}html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-copy h2{font-size:25px!important;}html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay :is(.vop-pay-summary,.vop-payment-details,.vop-review-selects,.studio-fields){gap:7px!important;}}
+/* Correct the source insertion order and keep the artwork in the top-right slot
+   on both Pagar tarjeta and Confirmar pago, opposite the back control. */
+html body #modal-root form.studio-form.vop-cardpay .studio-main > .v815-card-art {display:none!important;height:0!important;margin:0!important;}
+html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-header > .v815-card-art {
+ display:flex!important;position:relative!important;inset:auto!important;
+ grid-column:3!important;grid-row:1!important;
+ width:clamp(62px,17vw,78px)!important;height:clamp(43px,11vw,53px)!important;
+ margin:0!important;padding:0!important;align-self:center!important;justify-self:end!important;
+ align-items:center!important;justify-content:center!important;
+ transform:none!important;pointer-events:none!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-header > .v815-card-art svg{
+ width:100%!important;height:100%!important;max-width:100%!important;object-fit:contain!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-header{
+ grid-template-columns:42px minmax(0,1fr) 78px!important;
+ grid-template-rows:53px auto!important;
+ gap:5px 9px!important;padding:clamp(10px,2vh,17px) 0 12px!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-copy{
+ grid-column:1 / -1!important;grid-row:2!important;margin:0!important;padding:0!important;
+}
+html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-vop-stage="confirmation"] .vop-pay-header{
+ padding-bottom:8px!important;
+}
+@media(max-height:750px){
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-header{
+  grid-template-rows:44px auto!important;gap:3px 8px!important;padding:8px 0!important;
+ }
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-header > .v815-card-art{
+  height:43px!important;width:65px!important;
+ }
+}
 </style>
 
 
@@ -84249,5 +84539,744 @@ html body :is(.v880-apple-item,.v880-apple-modal button):focus-visible{outline:2
 @media(prefers-reduced-motion:reduce){html body :is(.v880-apple-modal,.v880-apple-item) *{transition:none!important;}}
 </style>
 
+
+<style id="v881-finanzas-unified-surfaces-and-panorama">
+/* V881 — Corrección de la fuente del KPI de Inicio. Las cifras y acciones permanecen
+   en v342CreativePositionMobile; esta capa gobierna solamente su representación. */
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama{
+ --v881-accent:var(--vive-theme-color,#7165ee);
+ --v881-accent-ink:var(--v424-accent-readable,var(--v424-accent-strong,var(--vive-theme-color,#7165ee)));
+ display:flex!important;flex-direction:column!important;
+ box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+ gap:clamp(11px,2.3vw,17px)!important;padding:clamp(15px,3.5vw,25px)!important;
+ border-radius:clamp(22px,3vw,30px)!important;
+}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama :is(button,.v881-metric-copy,.v881-meter-side){box-sizing:border-box;min-width:0;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama button{cursor:pointer;transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama button:focus-visible{outline:2px solid var(--v881-accent)!important;outline-offset:3px!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama :is(.v421-core-metrics,.v421-meter-grid,.v421-bottom-strip){width:100%!important;min-width:0!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-head{margin:1px 0 3px!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-kicker{font-size:clamp(10px,1.3vw,13px)!important;font-weight:840!important;letter-spacing:.155em!important;}
+/* Posición: número legible, pequeño motivo ascendente del segundo diseño. */
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net{
+ position:relative!important;isolation:isolate!important;overflow:hidden!important;
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ justify-content:center!important;text-align:left!important;min-height:138px!important;
+ gap:clamp(6px,1.2vw,11px)!important;padding:clamp(17px,3vw,27px)!important;
+ border-radius:23px!important;width:100%!important;max-width:100%!important;
+}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net :is(small,strong,span:not(.v881-net-bars)){position:relative;z-index:1;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net small{font-size:clamp(10px,1.9vw,14px)!important;letter-spacing:.11em!important;font-weight:800!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net strong{
+ font-size:clamp(26px,5.8vw,51px)!important;line-height:1.03!important;
+ letter-spacing:-.055em!important;max-width:100%!important;
+ overflow-wrap:normal!important;word-break:normal!important;white-space:normal!important;
+ font-variant-numeric:tabular-nums!important;text-shadow:none!important;
+}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net>span:last-child{font-size:clamp(10px,1.5vw,13px)!important;line-height:1.4!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-net-bars{position:absolute!important;z-index:0!important;inset:auto 4% 0 auto!important;width:34%!important;height:78%!important;display:flex!important;justify-content:space-between!important;align-items:flex-end!important;pointer-events:none!important;overflow:hidden!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-net-bars i{display:block;width:15%;border-radius:20px 20px 0 0;flex:none;height:46%;opacity:.48;background:linear-gradient(to bottom,color-mix(in srgb,var(--v881-accent) 20%,#fff),transparent 92%);}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-net-bars i:nth-child(2){height:57%;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-net-bars i:nth-child(3){height:68%;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-net-bars i:nth-child(4){height:80%;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-net-bars i:nth-child(5){height:94%;}
+/* Tres métricas: icono real + texto, en una sola familia de botones. */
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-core-metrics{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:clamp(7px,1.8vw,12px)!important;padding:0!important;border:0!important;background:none!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-core-metrics>button,
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-bottom-strip>button{
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:flex-start!important;gap:clamp(7px,1.7vw,12px)!important;
+ padding:clamp(11px,2vw,17px)!important;min-height:85px!important;
+ border-radius:19px!important;min-width:0!important;
+ text-align:left!important;
+}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-metric-icon{
+ position:relative!important;display:grid!important;place-items:center!important;
+ width:clamp(29px,4vw,42px)!important;height:clamp(29px,4vw,42px)!important;
+ min-width:clamp(29px,4vw,42px)!important;flex:0 0 auto!important;
+ border-radius:14px!important;line-height:0!important;isolation:isolate!important;
+}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-metric-icon svg{display:block!important;width:53%!important;height:53%!important;stroke-width:1.9!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-metric-copy{display:flex!important;flex-direction:column!important;gap:5px!important;align-items:flex-start!important;justify-content:center!important;min-width:0!important;width:100%!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-metric-copy small{
+ font-size:clamp(10px,1.4vw,13px)!important;line-height:1.22!important;
+ font-weight:660!important;letter-spacing:0!important;text-transform:none!important;
+ white-space:normal!important;overflow-wrap:normal!important;
+}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-metric-copy strong{
+ display:block!important;width:100%!important;font-size:clamp(14px,2vw,23px)!important;
+ font-weight:810!important;line-height:1.12!important;letter-spacing:-.045em!important;
+ overflow-wrap:anywhere!important;word-break:normal!important;font-variant-numeric:tabular-nums!important;
+}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-metric-copy>span{font-size:clamp(9px,1.4vw,12px)!important;line-height:1.3!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-liquidity{--v881-tone:#039473;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-debt{--v881-tone:#c04a73;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-budget{--v881-tone:var(--v881-accent);}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-balance,
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-tomorrow{--v881-tone:var(--v881-accent);}
+/* Dos bandas comparables de información; no dos recuadros teñidos. */
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;margin:0!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter{
+ display:grid!important;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr)!important;
+ align-items:center!important;gap:clamp(9px,2vw,20px)!important;
+ padding:clamp(12px,2vw,19px)!important;border-radius:20px!important;min-height:82px!important;
+ text-align:left!important;
+}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-top{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:6px!important;min-width:0!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-top small{font-size:clamp(9px,1.45vw,12px)!important;line-height:1.25!important;font-weight:790!important;letter-spacing:.11em!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-top strong{font-size:clamp(18px,3.3vw,30px)!important;line-height:1.05!important;letter-spacing:-.04em!important;overflow-wrap:anywhere!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter p{display:none!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-meter-side{display:flex!important;flex-direction:column!important;gap:7px!important;justify-content:center!important;width:100%!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-track{height:8px!important;width:100%!important;margin:0!important;border-radius:999px!important;overflow:hidden!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-track i{height:100%!important;border-radius:inherit!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter em{font-size:clamp(9px,1.4vw,12px)!important;line-height:1.28!important;font-style:normal!important;overflow-wrap:anywhere!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-bottom-strip{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:clamp(8px,2vw,13px)!important;margin-top:4px!important;}
+html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-bottom-strip>button{min-height:94px!important;}
+/* Blanco: superficies limpias, halo mínimo y localizado, no un relleno violeta. */
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama{
+ background:#fff!important;background-image:radial-gradient(ellipse 185px 125px at 100% 100%,color-mix(in srgb,var(--v881-accent) 5%,transparent),transparent 88%)!important;
+ border:1px solid #e0e5ee!important;box-shadow:0 12px 32px rgba(29,42,70,.055)!important;color:#18243b!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net,
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-core-metrics>button,
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter,
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-mini-card{
+ background:#fff!important;background-image:radial-gradient(ellipse 125px 95px at 100% 0%,color-mix(in srgb,var(--v881-accent) 6%,transparent),transparent 86%)!important;
+ border:1px solid #e2e6ee!important;box-shadow:0 4px 15px rgba(28,46,80,.045)!important;
+ color:#18243b!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net{
+ background:#fff!important;background-image:radial-gradient(ellipse 210px 170px at 100% 12%,color-mix(in srgb,var(--v881-accent) 8%,transparent),transparent 90%)!important;
+ border-color:color-mix(in srgb,var(--v881-accent) 15%,#e0e6ef)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net :is(small,span:not(.v881-net-bars)){
+ color:#657187!important;-webkit-text-fill-color:#657187!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net strong,
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-core-metrics strong,
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-top strong,
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-mini-card strong{
+ color:#192942!important;-webkit-text-fill-color:#192942!important;text-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-kicker{color:#202f48!important;-webkit-text-fill-color:#202f48!important;}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama :is(.v881-metric-copy small,.v881-metric-copy>span,.v421-meter-top small,.v421-meter em){
+ color:#626f85!important;-webkit-text-fill-color:#626f85!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-metric-icon{
+ background:color-mix(in srgb,var(--v881-tone) 10%,#fff)!important;
+ color:var(--v881-tone)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-track{
+ background:color-mix(in srgb,var(--v881-accent) 12%,#edf0f5)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-grid>.v421-meter:first-child:not(.urgent) .v421-meter-track i{
+ background:linear-gradient(90deg,color-mix(in srgb,var(--v881-accent) 30%,white),color-mix(in srgb,var(--v881-accent) 67%,white))!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter.urgent .v421-meter-track i{background:linear-gradient(90deg,#f398af,#ef577c)!important;}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter.watch .v421-meter-track i{background:linear-gradient(90deg,#f3c36c,#d79039)!important;}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter.stable .v421-meter-track i{background:#3da783!important;}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-grid>.v421-meter:first-child:not(.urgent) .v421-meter-track i{background:linear-gradient(90deg,color-mix(in srgb,var(--v881-accent) 30%,white),color-mix(in srgb,var(--v881-accent) 67%,white))!important;}
+/* Hovers sin cambiar los colores informativos. */
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama :is(.v421-net,.v881-metric,.v421-meter,.v881-mini):hover{
+ border-color:color-mix(in srgb,var(--v881-accent) 23%,#e0e5ef)!important;box-shadow:0 5px 18px rgba(28,46,80,.065)!important;
+}
+/* Tema OLED: negro auténtico de base y separación por trazos discretos. */
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama{
+ background:#000!important;background-image:none!important;color:#f7f7fa!important;
+ border:1px solid #24242a!important;box-shadow:none!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama :is(.v421-net,.v421-core-metrics>button,.v421-meter,.v421-mini-card){
+ background:#08080a!important;background-image:none!important;
+ border:1px solid #24242a!important;border-radius:19px!important;
+ box-shadow:none!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net{border-radius:23px!important;}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama :is(.v421-net strong,.v421-core-metrics strong,.v421-meter strong,.v421-mini-card strong){
+ color:#f6f7fc!important;-webkit-text-fill-color:#f6f7fc!important;text-shadow:none!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama :is(.v421-net small,.v421-net>span:last-child,.v881-metric-copy small,.v881-metric-copy>span,.v421-meter small,.v421-meter em){
+ color:#b9bdca!important;-webkit-text-fill-color:#b9bdca!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-kicker{color:#e9eaf1!important;-webkit-text-fill-color:#e9eaf1!important;}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-metric-icon{
+ background:color-mix(in srgb,var(--v881-tone) 14%,#09090d)!important;
+ color:color-mix(in srgb,var(--v881-tone) 68%,white)!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-track{background:#25252a!important;}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-grid>.v421-meter:first-child:not(.urgent) .v421-meter-track i{
+ background:var(--v881-accent)!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter.urgent .v421-meter-track i{background:#f27796!important;}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter.watch .v421-meter-track i{background:#e8ab58!important;}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter-grid>.v421-meter:nth-child(2).stable .v421-meter-track i{background:#59cca1!important;}
+/* Componentes Inicio/Personalización: la misma superficie neutral para las tarjetas
+   informativas; barras, gráficas, calendarios y semáforos conservan sus propios colores. */
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home{
+ background:#fafbfc!important;background-image:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app :is(.v315-chart-widget,.v273-overview-widget,.v242-appearance-picker,.v242-style-option,.v242-settings-row){
+ background-color:#fff!important;
+ background-image:radial-gradient(ellipse 155px 102px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#7165ee) 5%,transparent),transparent 89%)!important;
+ border-color:#e4e8ef!important;
+ box-shadow:0 6px 21px rgba(26,47,75,.045)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app :is(.v315-chart-widget,.v273-overview-widget) :is(.v318-chart-content,.v315-wealth-chart,.v316-cash-chart){
+ background-color:transparent!important;background-image:none!important;
+}
+html body:is(.theme-black,.theme-dark) #app :is(.v315-chart-widget,.v273-overview-widget,.v242-appearance-picker,.v242-style-option,.v242-settings-row){
+ background:#070708!important;background-image:none!important;border-color:#25252b!important;
+ box-shadow:none!important;color:#f7f7fa!important;
+}
+/* La vista previa creativa comparte blanco y acento con la versión real. */
+html body:not(.theme-black):not(.theme-dark) #app .v342-style-creative .v421-mini-creative{
+ background:#fff!important;background-image:radial-gradient(ellipse 90px 80px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#7165ee) 7%,transparent),transparent 87%)!important;
+ border:1px solid #e3e7ef!important;
+}
+html body:is(.theme-black,.theme-dark) #app .v342-style-creative .v421-mini-creative{
+ background:#08080a!important;background-image:none!important;border:1px solid #272730!important;
+}
+@media(max-width:790px){
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama{padding:clamp(12px,3.5vw,19px)!important;gap:clamp(10px,2.4vw,13px)!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-core-metrics>button{
+  flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;
+  gap:6px!important;padding:clamp(9px,2.2vw,12px)!important;min-height:86px!important;
+ }
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net{min-height:124px!important;padding:clamp(13px,3.6vw,19px)!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net strong{font-size:clamp(25px,7.3vw,38px)!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-bottom-strip>button{flex-direction:column!important;align-items:flex-start!important;gap:6px!important;padding:clamp(10px,2.8vw,14px)!important;min-height:108px!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-meter{grid-template-columns:minmax(0,.93fr) minmax(0,1.07fr)!important;min-height:78px!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net .v881-net-bars{opacity:.52!important;}
+}
+@media(max-width:390px){
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-core-metrics{gap:7px!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-core-metrics>button{padding:9px 7px!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v881-metric-icon{width:29px!important;height:29px!important;min-width:29px!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-core-metrics strong{font-size:clamp(12px,3.5vw,15px)!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-bottom-strip strong{font-size:clamp(13px,4vw,17px)!important;}
+ html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama .v421-net .v881-net-bars{display:none!important;}
+}
+@media(prefers-reduced-motion:reduce){html body #app .vive-mobile-home .v344-creative.v342-creative-position.v421-creative-compact.v881-panorama button{transition:none!important;}}
+</style>
+
+<style id="v882-personalizacion-claro-blanco-universal">
+/* V882 | Personalización / modo Claro: UN SOLO CRITERIO DE BLANCO.
+   Solo fondos/superficies/legibilidad; no afecta cálculos, gráficos semánticos,
+   presión-financiera por niveles ni los acentos activos. Tema Black excluido. */
+html body:not(.theme-black):not(.theme-dark){
+ --v882-white:#fff;
+ --v882-ink:#17263f;
+ --v882-muted:#65748a;
+ --v882-line:#e1e5ed;
+ --v882-soft:#f8f9fb;
+ --v882-accent:var(--vive-theme-color,#7165ee);
+ --v882-glow:radial-gradient(ellipse 185px 138px at 100% 0%,color-mix(in srgb,var(--v882-accent) 10%,transparent),color-mix(in srgb,var(--v882-accent) 3%,transparent) 40%,transparent 79%);
+}
+/* V765 incluía un body:has(...) que pintaba Personalización negro aun en Claro. */
+html body:not(.theme-black):not(.theme-dark):has(#app .v273-settings-customizer),
+html body:not(.theme-black):not(.theme-dark):has(#app .v273-settings-customizer)::before{
+ background:#fff!important;background-image:none!important;color:var(--v882-ink)!important;
+}
+html body:not(.theme-black):not(.theme-dark):has(#app .v273-settings-customizer) #app,
+html body:not(.theme-black):not(.theme-dark):has(#app .v273-settings-customizer) :is(.main,#page,.world-settings,.v296-personalize){
+ background-color:#fff!important;background-image:none!important;color:var(--v882-ink)!important;
+}
+/* V882: estructura y superficies internas solamente; V884 gobierna el
+   acabado de tarjetas exteriores para evitar dos halos competidores. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .v273-settings-customizer,.v296-settings-body,.v296-block,
+ .ws-preview-body,.v332-mini-preview>.ws-preview-body,.v318-chart-content,
+ .v360-pressure-details,.v324-cost-metric,.v326-stat,.v318-stat-row>div,.v318-no-data
+ ){
+ background-color:#fff!important;background-image:none!important;
+ border-color:var(--v882-line)!important;color:var(--v882-ink)!important;
+ box-shadow:none!important;
+}
+/* Personalización móvil: neutralizar tarjetas moradas/oscuras V747/V765,
+   incluso los modificadores capacidad, pagos, patrimonio y compactas. */
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row.v765-hero,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row.v765-compact,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-hero[data-v316-row],
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row[data-v316-row]{
+ background:#fff!important;background-image:var(--v882-glow)!important;
+ color:var(--v882-ink)!important;border:1px solid var(--v882-line)!important;
+ box-shadow:0 5px 18px rgba(20,38,64,.045)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card::before,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row::before{
+ background:none!important;filter:none!important;box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card::after,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row::after{
+ background:none!important;border:0!important;box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer::before{background:none!important;filter:none!important;}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer > header{
+ color:var(--v882-ink)!important;background:transparent!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer > header h3,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v765-brandnames b,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card .v273-custom-copy strong,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row .v273-custom-copy strong{
+ color:var(--v882-ink)!important;text-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer > header p,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card .v273-custom-copy small,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row .v273-custom-copy small,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v273-custom-footer,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v273-custom-footer span{
+ color:var(--v882-muted)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v765-brandnames em{
+ color:var(--v882-accent)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v765-brandicon{
+ background:color-mix(in srgb,var(--v882-accent) 9%,white)!important;
+ border-color:var(--v882-line)!important;box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card .v342-drag-handle,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row .v342-drag-handle{
+ color:#68758b!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card .v273-order,
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card.v765-row .v273-order{
+ background:#fff!important;color:var(--v882-ink)!important;
+ border-color:var(--v882-line)!important;box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card:hover{
+ border-color:color-mix(in srgb,var(--v882-accent) 22%,var(--v882-line))!important;
+ box-shadow:0 6px 20px rgba(20,38,64,.06)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card:focus-within{
+ outline:2px solid var(--v882-accent)!important;outline-offset:2px!important;
+}
+/* Quitar el rayo violeta ornamental heredado del encabezado oscuro. */
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer > header::after{
+ display:none!important;box-shadow:none!important;
+}
+/* Texto de tablas y gráficos; respetar estados .v318-danger/.v318-good y series. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .v318-chart-content,.v318-mobile-card,.ws-library,.widgets-world
+ ) :is(.v318-mobile-head h2,.widget-card-top h3,.v326-list strong,.v326-stat strong,.v318-stat-row strong:not(.v318-danger):not(.v318-good),.v318-radar-metrics strong){
+ color:var(--v882-ink)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .v318-chart-content,.v318-mobile-card,.ws-library,.widgets-world
+ ) :is(.v318-chart-note,.v318-mobile-head small,.v318-inline-legend,.v318-year-col span,
+ .v318-heat-footer,.v318-radar-metrics span,.v326-list p,.v326-list>div,
+ .v326-stat span,.v326-legend,.v326-budget-history>div,.v326-trend>div,
+ .v318-stat-row small,.v318-no-data){
+ color:var(--v882-muted)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app :is(.v326-list>div,.v318-radar-metrics>div){
+ border-color:var(--v882-line)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app :is(.v326-meter,.v318-bar-track,.v318-vertical-rail){
+ background:#edf0f4!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v318-svg>rect{
+ fill:#fff!important;stroke:#e1e6ed!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v318-svg-caption{fill:#263951!important;}
+/* Las celdas de presión, gráficos de intensidad y estados NO se neutralizan. */
+html body:not(.theme-black):not(.theme-dark) #app .v360-pressure-calendar :is(.v322-cal-grid,.v362-pressure-grid){
+ background-color:transparent!important;background-image:none!important;
+}
+@media(max-width:700px){
+ html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer{
+  color:var(--v882-ink)!important;
+ }
+}
+</style>
+
+<style id="vive-v884-precision-contextual-final">
+/* V884 — Refinamiento de precisión: sustitución de la capa V883; NO añade
+   JavaScript, datos ni un segundo render. Toma la tarjeta de Bancos como modelo
+   de luz ambiental superior derecha, sin imponer su tono lavanda. */
+
+/* Tokens compartidos: el componente puede fijar --v884-context; si no existe,
+   hereda el acento real de Ajustes. Nunca sustituir colores de datos. */
+html body:not(.theme-black):not(.theme-dark) #app {
+ --v884-ui:var(--vive-theme-color,var(--v876-accent-source,#7364cc));
+ --v884-accent:var(--v884-context,var(--v884-ui));
+ --v884-ink:#192740;
+ --v884-muted:#68778e;
+ --v884-line:#e3e7ee;
+ --v884-base:#fff;
+ --v884-elevation:0 6px 24px rgba(27,40,69,.054);
+}
+/* Herencia cromática por familia. Las series de gráficos y porcentajes siguen
+   sus propias variables; estos valores sólo colorean luz, bordes y navegación. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .v105-capacity-widget,.v82-capacity-widget,[data-v105-widget="capacity"]
+ ) {--v884-accent:var(--v884-context,var(--v876-trend-main,var(--v884-ui)));}
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .v290-budget-trend,.v290-budget-mobile,.v290-budget-web,[data-v105-widget="budgetTrend"]
+ ) {--v884-accent:var(--v884-context,#31a793);}
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ [data-v105-widget="people"],.v105-mobile-people
+ ) {--v884-accent:var(--v884-context,#0d9c8a);}
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ [data-v105-widget="creditUtil"],[data-v105-widget="premiumCredit"],
+ .v412-premium-credit,.v410-credit-widget,.v315-credit-hero
+ ) {--v884-accent:var(--v884-context,var(--v876-accent-source,var(--v884-ui)));}
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ [data-v105-widget="commitments"],[data-v105-widget="premiumCommitments"],
+ .vive-mobile-commitments,.v412-premium-commitments
+ ) {--v884-accent:var(--v884-context,var(--v876-trend-main,var(--v884-ui)));}
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ [data-v105-widget="chart"],[data-v105-widget="patrimonyTrend"],
+ [data-v105-widget="budgetPulse"],.v315-chart-widget,.v316-chart-widget,.v317-chart-widget
+ ) {--v884-accent:var(--v884-context,var(--v876-trend-main,var(--v884-ui)));}
+
+/* Superficies autónomas: un solo halo para cada tarjeta exterior.
+   Excluye expresamente tarjetas bancarias con marca, alertas, selects activos,
+   celdas de intensidad del calendario, gráficos SVG y barras informativas. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .kpi,.panel,.v105-capacity-widget,.v82-capacity-widget,
+ .v290-budget-trend,.v290-budget-mobile,.v290-budget-web,
+ .vive-mobile-commitments,.vive-mobile-dues,.vive-mobile-net-card,
+ .v105-mobile-extra,.v273-overview-widget,.v294-finance-widget,
+ .v315-chart-widget,.v316-chart-widget,.v317-chart-widget,.v318-mobile-card,
+ .v410-credit-widget,.v412-premium,.v324-cost-design,.v360-pressure-calendar,
+ .ws-gallery-card,.widgets-world .ws-tile,.ws-library,.widgets-world .widget-card
+ ) {
+ --v884-halo:radial-gradient(ellipse 185px 138px at 100% 0%,
+   color-mix(in srgb,var(--v884-accent) 12%,transparent) 0%,
+   color-mix(in srgb,var(--v884-accent) 5%,transparent) 38%,transparent 79%);
+ --v884-outline:color-mix(in srgb,var(--v884-accent) 15%,#e0e5ed);
+ background-color:#fff!important;
+ background-image:var(--v884-halo)!important;
+ border-color:var(--v884-outline)!important;
+ box-shadow:var(--v884-elevation)!important;
+ color:var(--v884-ink);
+}
+/* En Inicio hay selectores históricos más específicos que los del catálogo. */
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-home :is(
+ .v105-mobile-extra,.v273-overview-widget,.v315-chart-widget,.v316-chart-widget,.v317-chart-widget
+ ) {
+ background-color:#fff!important;
+ background-image:var(--v884-halo)!important;
+ border-color:var(--v884-outline)!important;
+ box-shadow:var(--v884-elevation)!important;
+ color:var(--v884-ink)!important;
+}
+/* Una superficie dentro de otra no recibe un segundo brillo. Mantener las piezas
+   internas blancas y su geometría original, sin repetir halo ni sombra. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .v105-capacity-grid>div,.v290-mobile-money>div,.v105-mobile-people>span,
+ .v315-credit-hero>div,.v315-credit-row,.v410-credit-kpis>div,
+ .v36-commitment-group,.v36-month-columns>span,.v318-stat-row>div,
+ .v326-stat,.v326-list>div,.v318-radar-metrics>div,
+ .v560-commitment-group,.v560-commitment-totals>span,.v324-cost-metric
+ ) {
+ background-color:#fff!important;background-image:none!important;
+ border-color:var(--v884-line)!important;box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v105-mobile-extra :is(
+ .v410-credit-widget,.v412-premium,.v318-chart-content,.v315-credit-hero,.v290-history-chart
+ ){
+ background-color:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .v290-history-chart,.v315-credit-rows,.v315-credit-overall,
+ .v326-budget-history,.v410-credit-kpis,.v560-commitment-groups,
+ .v318-stat-row,.v332-mini-preview,.v318-chart-content,.ws-preview-body
+ ){
+ background-color:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+}
+/* Compromisos — recuadros exteriores, encabezado e iconografía con el acento
+   elegido, NO la barra de vencidos / completados / riesgo. */
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-commitments :is(
+ .v36-commitment-group,.v36-commitment-items
+ ){
+ border-color:color-mix(in srgb,var(--v884-accent) 23%,var(--v884-line))!important;
+}
+/* Las cuatro obligaciones recuperan su cuadradito original:
+   escala suave del acento de Ajustes, sin alterar colores de importes/alertas. */
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-commitments .v36-commitment-group>summary .v36-commitment-ico {
+ display:grid!important;place-items:center!important;flex:0 0 32px!important;
+ width:32px!important;height:32px!important;min-width:32px!important;
+ border-radius:11px!important;
+ color:var(--vive-theme-color,var(--v884-accent))!important;
+ background-color:color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 8%,#fff)!important;
+ background-image:linear-gradient(145deg,
+  color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 13%,#fff),
+  color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 6%,#fff))!important;
+ border:1.3px solid color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 34%,#dfe4ee)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.85)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-commitments .v36-commitment-group>summary .v36-commitment-ico svg{
+ display:block!important;width:17px!important;height:17px!important;
+ stroke:currentColor!important;stroke-width:1.9!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-commitments .v36-commitment-group[open]>summary .v36-commitment-ico{
+ background-image:linear-gradient(145deg,
+  color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 16%,#fff),
+  color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 9%,#fff))!important;
+ border-color:color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 45%,#dfe4ee)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .vive-mobile-commitments :is(
+ .v36-commitment-chevron,.v36-commitment-detail-copy button:not(.v36-overdue)
+ ) {color:var(--v884-accent)!important;}
+/* Controles secundarios de las familias auditadas. Nunca alterar botones
+   primarios, alarma, selección, porcentajes ni el progreso informativo. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .vive-mobile-view-all,.v105-capacity-info,.v290-mobile-header>button,
+ .v410-credit-head>button,.v410-credit-head button,.v326-budget-history button,
+ .v318-mobile-head>button,.v318-mobile-card .v318-head>button
+ ){
+ color:var(--v884-accent,var(--v884-ui))!important;
+ background:color-mix(in srgb,var(--v884-accent,var(--v884-ui)) 6%,#fff)!important;
+ border-color:color-mix(in srgb,var(--v884-accent,var(--v884-ui)) 18%,var(--v884-line))!important;
+ box-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .vive-mobile-view-all,.v105-capacity-info,.v290-mobile-header>button,
+ .v410-credit-head button,.v326-budget-history button,.v318-mobile-head>button
+ ):is(:hover,:focus-visible){
+ border-color:color-mix(in srgb,var(--v884-accent,var(--v884-ui)) 41%,var(--v884-line))!important;
+}
+/* Separar texto ordinario de importes y estados. No aplicar color genérico a
+   .positive, .negative, .v318-good, .v318-danger ni a series SVG. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .v105-capacity-widget,.v290-budget-trend,.v410-credit-widget,.v315-chart-widget,
+ .v318-mobile-card,.v412-premium
+ ) :is(h2,h3){color:var(--v884-ink)!important;}
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .v290-history-note,.v410-credit-note,.v410-credit-head p,
+ .v315-credit-row-foot,.v36-commitment-note,.v105-mobile-people small,
+ .v105-capacity-top p
+ ){color:var(--v884-muted)!important;}
+/* Paneles de Personalización que tenían el antiguo fondo tintado. Heredan
+   exactamente el mismo criterio de la tarjeta real, sin repintar los gráficos. */
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer :is(
+ .v747-premium-card,.v765-row,.v332-preview-card
+ ){
+ background-color:#fff!important;background-image:var(--v884-halo)!important;
+ border-color:var(--v884-outline)!important;
+ box-shadow:var(--v884-elevation)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v273-settings-customizer .v747-premium-card:is(:focus-within,:hover){
+ border-color:color-mix(in srgb,var(--v884-ui) 38%,#d8dce8)!important;
+}
+/* Mis indicadores / Personalización: superficies de la previsualización siempre
+   blancas. Las celdas de calendario y los círculos conservan sus rellenos. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .ws-preview-body,.v332-mini-preview>.ws-preview-body,.v318-chart-content,
+ .v360-pressure-details,.v318-no-data
+ ){
+ background-color:#fff!important;background-image:none!important;
+ box-shadow:none!important;
+}
+/* Elementos neutros de formularios: blanco limpio, no tintar selectores, sin
+   reemplazar estados de error ni los colores semánticos de las píldoras. */
+html body:not(.theme-black):not(.theme-dark) #app :is(
+ .field,.filter-select,.year-control,.modal,.modal input:not([type="checkbox"]):not([type="radio"]),
+ .modal select,.modal textarea
+ ) {background-color:#fff;background-image:none;}
+
+/* Tema Black: cero placas azul marino. Luz contextual pequeña y algo más tenue;
+   sin alterar alertas coloreadas, marcas de tarjeta ni celdas de presión. */
+html body:is(.theme-black,.theme-dark) #app{
+ --v884-ui:var(--vive-theme-color,var(--v876-accent-source,#9987eb));
+ --v884-accent:var(--v884-context,var(--v884-ui));
+ --v884-dark:#080809;--v884-dark-inner:#101012;
+ --v884-outline:#2a2a2f;
+ --v884-ink:#f6f6fa;
+ --v884-muted:#b6bac6;
+}
+/* Contextual illumination in Black follows component semantics as in Claro. */
+html body:is(.theme-black,.theme-dark) #app :is(
+ .v290-budget-trend,.v290-budget-mobile,.v290-budget-web,[data-v105-widget="budgetTrend"]
+ ){--v884-accent:var(--v884-context,#31a793);}
+html body:is(.theme-black,.theme-dark) #app :is(
+ [data-v105-widget="people"],.v105-mobile-people
+ ){--v884-accent:var(--v884-context,#0d9c8a);}
+html body:is(.theme-black,.theme-dark) #app :is(
+ .v412-premium-credit,.v412-premium-commitments,.v410-credit-widget,
+ .vive-mobile-commitments,.v315-chart-widget
+ ){--v884-accent:var(--v884-context,var(--v876-trend-main,var(--v884-ui)));}
+html body:is(.theme-black,.theme-dark) #app :is(
+ .v105-capacity-widget,.v82-capacity-widget,.v290-budget-trend,.v290-budget-mobile,
+ .v290-budget-web,.vive-mobile-commitments,.vive-mobile-dues,
+ .v105-mobile-extra,.v273-overview-widget,.v294-finance-widget,
+ .v315-chart-widget,.v316-chart-widget,.v317-chart-widget,.v318-mobile-card,
+ .v410-credit-widget,.v412-premium,.v324-cost-design,.v360-pressure-calendar,
+ .ws-gallery-card,.widgets-world .ws-tile,.ws-library,.widgets-world .widget-card
+ ) {
+ --v884-halo:radial-gradient(ellipse 185px 125px at 100% 0%,
+   color-mix(in srgb,var(--v884-accent) 9%,transparent),transparent 83%);
+ background-color:var(--v884-dark)!important;
+ background-image:var(--v884-halo)!important;
+ border-color:var(--v884-outline)!important;
+ box-shadow:none!important;color:var(--v884-ink);
+}
+html body:is(.theme-black,.theme-dark) #app :is(
+ .v105-capacity-grid>div,.v290-mobile-money>div,.v105-mobile-people>span,
+ .v315-credit-hero>div,.v315-credit-row,.v410-credit-kpis>div,
+ .v36-commitment-group,.v318-stat-row>div,.v326-stat,
+ .v560-commitment-group,.v560-commitment-totals>span
+ ) {
+ background-color:var(--v884-dark-inner)!important;background-image:none!important;
+ border-color:var(--v884-outline)!important;box-shadow:none!important;
+}
+html body:is(.theme-black,.theme-dark) #app :is(
+ .v105-mobile-extra .v410-credit-widget,.v105-mobile-extra .v412-premium,
+ .v318-chart-content,.v290-history-chart,.ws-preview-body
+ ) {background-color:transparent!important;background-image:none!important;box-shadow:none!important;}
+/* Legible names in Black: legacy --mob-ink was dark navy. */
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-commitments .v36-commitment-group :is(
+ .v36-commitment-name strong,.v36-commitment-detail-copy strong
+ ){color:#f3f3f6!important;}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-commitments .v36-commitment-name small{
+ color:#bdc0cb!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-commitments .v36-commitment-group>summary .v36-commitment-ico{
+ display:grid!important;place-items:center!important;flex:0 0 32px!important;
+ width:32px!important;height:32px!important;min-width:32px!important;
+ border-radius:11px!important;
+ background-color:#101012!important;
+ background-image:linear-gradient(145deg,
+  color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 16%,#101012),
+  color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 7%,#101012))!important;
+ color:color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 77%,white)!important;
+ border:1.3px solid color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 36%,#303039)!important;
+ box-shadow:none!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-commitments .v36-commitment-group>summary .v36-commitment-ico svg{
+ display:block!important;width:17px!important;height:17px!important;
+ stroke:currentColor!important;stroke-width:1.9!important;
+}
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-commitments .v36-commitment-group[open]>summary .v36-commitment-ico{
+ background-image:linear-gradient(145deg,
+  color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 21%,#101012),
+  color-mix(in srgb,var(--vive-theme-color,var(--v884-accent)) 10%,#101012))!important;
+}
+html body:is(.theme-black,.theme-dark) #app :is(
+ .vive-mobile-view-all,.v105-capacity-info,.v290-mobile-header>button,
+ .v410-credit-head button,.v326-budget-history button,.v318-mobile-head>button
+ ) {
+ background-color:#141416!important;background-image:none!important;
+ border-color:#37373d!important;
+ color:color-mix(in srgb,var(--v884-accent) 65%,white)!important;
+}
+html body:is(.theme-black,.theme-dark) #app :is(
+ .v105-capacity-widget,.v290-budget-trend,.v410-credit-widget,.v315-chart-widget,.v318-mobile-card
+ ) :is(h2,h3){color:var(--v884-ink)!important;}
+html body:is(.theme-black,.theme-dark) #app :is(
+ .v290-history-note,.v410-credit-note,.v410-credit-head p,.v315-credit-row-foot,
+ .v36-commitment-note,.v105-mobile-people small
+ ){color:var(--v884-muted)!important;}
+
+/* Acción Restaurar todo existente (V883) y Restaurar orden esencial: botones
+   coherentes, sin ocultar el primero ni confundir orden con visibilidad. */
+#app .v778-personalization .v766-app .v783-reset-region{
+ display:flex!important;justify-content:flex-end!important;align-items:center!important;
+ flex-wrap:wrap!important;gap:8px!important;width:100%!important;
+ padding:2px 3px!important;margin:13px 0 7px!important;min-height:42px!important;
+}
+#app .v778-personalization .v766-app .v783-reset-pill{
+ min-height:38px!important;height:auto!important;padding:8px 13px!important;
+ font-size:11.5px!important;line-height:1.2!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v783-reset-pill{
+ background:#fff!important;background-image:none!important;
+ border:1px solid color-mix(in srgb,var(--vive-theme-color,#7364cc) 27%,#dfe4ed)!important;
+ color:color-mix(in srgb,var(--vive-theme-color,#7364cc) 85%,#263953)!important;
+ box-shadow:0 3px 12px rgba(24,40,70,.055)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .v778-personalization .v883-reset-all{
+ background-color:color-mix(in srgb,var(--vive-theme-color,#7364cc) 7%,#fff)!important;
+}
+html body:is(.theme-black,.theme-dark) #app .v778-personalization .v883-reset-all{
+ background:#161518!important;color:color-mix(in srgb,var(--vive-theme-color,#9987eb) 70%,white)!important;
+ border-color:color-mix(in srgb,var(--vive-theme-color,#9987eb) 32%,#303038)!important;
+}
+/* Foco visible: el indicador accesible puede ser más fuerte que el halo decorativo. */
+#app :is(.v783-reset-pill,.vive-mobile-view-all,.v105-capacity-info,
+ .v410-credit-head button,.v290-mobile-header>button,.v36-commitment-group summary):focus-visible{
+ outline:2px solid var(--vive-theme-color,#7165ee)!important;outline-offset:3px!important;
+}
+/* Geometría: nunca forzar una tarjeta entera a ser fila; iconos circulares
+   y textos se adaptan sin overflow horizontal en móvil. */
+#app :is(.v105-capacity-widget,.v290-budget-trend,.vive-mobile-commitments,
+ .v105-mobile-extra,.v412-premium,.v315-chart-widget,.v318-mobile-card){min-width:0;max-width:100%;box-sizing:border-box;}
+#app :is(.v410-credit-head,.vive-mobile-card-head,.v290-mobile-header)>*{min-width:0;}
+#app .v36-commitment-ico{flex-shrink:0;}
+#app .v410-credit-kpis>div{min-width:0;}
+@media(max-width:420px){
+ #app .v778-personalization .v766-app .v783-reset-region{justify-content:center!important;}
+ #app .v778-personalization .v766-app .v783-reset-pill{min-height:40px!important;padding:9px 10px!important;font-size:11px!important;}
+ #app .vive-mobile-home .v410-credit-kpis>div{min-width:0!important;padding:10px 7px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+ #app :is(.v105-capacity-widget,.v290-budget-trend,.v412-premium,.v318-mobile-card) *{transition-duration:.01ms!important;animation-duration:.01ms!important;}
+}
+</style>
+<style id="v886-compromisos-sin-cuadritos-iconos">
+/* Eliminar únicamente los recuadros decorativos de los iconos de las cuatro
+   categorías de Compromisos; mantener icono, filas, clic, cifras y acentos. */
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group>summary .v36-commitment-ico,
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group[open]>summary .v36-commitment-ico {
+ background:transparent!important;
+ background-color:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ filter:none!important;
+ width:24px!important;
+ min-width:24px!important;
+ height:28px!important;
+ flex:0 0 24px!important;
+ padding:0!important;
+ display:grid!important;
+ place-items:center!important;
+}
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group>summary .v36-commitment-ico svg {
+ width:20px!important;
+ height:20px!important;
+ display:block!important;
+}
+</style>
+<style id="v887-compromisos-filas-limpias-sin-bordes">
+/* Compromisos: retirar el marco de los cuatro grupos y de sus iconos.
+   Los details, importes, flechas y paneles desplegables siguen funcionando. */
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-list{
+ display:flex!important;flex-direction:column!important;gap:0!important;
+}
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-list>.v36-commitment-group,
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group,
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group[open]{
+ border:0!important;border-width:0!important;border-radius:0!important;
+ outline:0!important;box-shadow:none!important;
+ background:transparent!important;background-image:none!important;
+ margin:0!important;padding:0!important;
+}
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group>summary{
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ background:transparent!important;background-image:none!important;
+ padding:13px 0!important;min-height:76px!important;
+}
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group>summary .v36-commitment-ico,
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group[open]>summary .v36-commitment-ico{
+ background:transparent!important;background-image:none!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;outline:0!important;
+ width:24px!important;min-width:24px!important;height:28px!important;
+ flex:0 0 24px!important;padding:0!important;
+}
+html body #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group>summary .v36-commitment-ico svg{
+ width:20px!important;height:20px!important;
+}
+/* Conservar contraste en ambos temas; no tocar flechas ni colores de estados. */
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group,
+html body:is(.theme-black,.theme-dark) #app .vive-mobile-home .vive-mobile-commitments .v36-commitment-group>summary{
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+</style>
 </body>
 </html>
