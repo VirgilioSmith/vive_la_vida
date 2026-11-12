@@ -28255,44 +28255,158 @@ function enhanceGuidedStudio(f,mode,editing=false){
 /* V711: payment card has two real mobile stages: details and confirmation.
    Original form controls, original stage-3 validation and persistence remain untouched. */
 function v711CompactCardPayment(f){
- if(!f || f.dataset.v711CardCompact==='yes')return;
- const mq=window.matchMedia('(max-width:790px)');
- if(!mq.matches)return;
+ if(!f || f.dataset.v711CardCompact==='yes'||!window.matchMedia('(max-width:790px)').matches)return;
  const first=f.querySelector('.studio-step[data-step="1"] .studio-fields');
  const second=f.querySelector('.studio-step[data-step="2"] .studio-fields');
- if(!first||!second)return;
- f.dataset.v711CardCompact='yes';
- // Preserve all live form fields and event handlers: move nodes, never clone them.
- while(second.firstChild)first.appendChild(second.firstChild);
- const hiddenStep=f.querySelector('.studio-step[data-step="2"]');
- if(hiddenStep)hiddenStep.hidden=true;
- const nav=f.querySelector('.studio-steps-nav');
- const buttons=[...(nav?.querySelectorAll('.studio-nav-step')||[])];
- if(buttons[1])buttons[1].hidden=true;
- if(buttons[0]){buttons[0].querySelector('.studio-step-number').textContent='01';const label=buttons[0].querySelector('span:last-child');if(label)label.firstChild.textContent='Datos del pago';}
- if(buttons[2]){buttons[2].querySelector('.studio-step-number').textContent='02';const label=buttons[2].querySelector('span:last-child');if(label)label.firstChild.textContent='Confirmar';}
+ const third=f.querySelector('.studio-step[data-step="3"] .studio-fields');
  const main=f.querySelector('.studio-main');
- const update=()=>{
-  const step=Number(f.dataset.studioStep||1);
-  const counter=f.querySelector('.studio-stepcounter');if(counter)counter.textContent=step===3?'PASO 02 DE 02':'PASO 01 DE 02';
-  const heading=f.querySelector('.studio-active-title');if(heading)heading.textContent=step===3?'Revisar y pagar':'Completar pago de tarjeta';
-  const subtitle=f.querySelector('.studio-active-subtitle');if(subtitle)subtitle.textContent=step===3?'Confirma el importe y los cargos antes de registrar.':'Selecciona tarjeta, origen, importe y condiciones del pago.';
-  const back=f.querySelector('[data-studio-back]');if(back && back.hidden !== (step!==3)) back.hidden=step!==3;
-  const next=f.querySelector('[data-studio-next]');if(next && next.hidden !== (step===3)) next.hidden=step===3;
-  if(buttons[0])buttons[0].classList.toggle('current',step!==3);
-  if(buttons[2])buttons[2].classList.toggle('current',step===3);
+ if(!first||!second||!third||!main)return;
+ f.dataset.v711CardCompact='yes';f.classList.add('vop-cardpay');
+ // Two real stages, no alternative financial engine. Retain original controls in one form.
+ while(second.firstChild)first.appendChild(second.firstChild);
+ f.querySelector('.studio-step[data-step="2"]').hidden=true;
+ const modal=f.closest('.modal');
+ modal?.querySelector(':scope > .modal-head')?.remove();
+ const nav=f.querySelector('.studio-steps-nav');
+ const navButtons=[...(nav?.querySelectorAll('.studio-nav-step')||[])];
+ if(navButtons[1])navButtons[1].hidden=true;
+ if(navButtons[0]){navButtons[0].querySelector('.studio-step-number').textContent='01';}
+ if(navButtons[2]){navButtons[2].querySelector('.studio-step-number').textContent='02';}
+ // Move the canonical channel selector to confirmation. Its original name and logic persist.
+ const channel=f.elements.namedItem('paymentChannel');const channelField=channel?.closest('label');
+ if(channelField)third.prepend(channelField);
+ const header=document.createElement('header');header.className='vop-pay-header';
+ header.innerHTML='<button type="button" class="vop-pay-back vop-circular-back" aria-label="Regresar" title="Regresar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><div class="vop-pay-copy"><h2>Pagar tarjeta</h2><p>Realiza el pago de tu tarjeta de crédito de forma rápida y segura.</p></div>';
+ main.insertBefore(header,main.querySelector('.studio-panels'));
+ const summary=document.createElement('section');summary.className='vop-pay-summary';summary.setAttribute('aria-live','polite');
+ third.prepend(summary);
+ // Remove the superseded visual subtitle; the new header is the sole source.
+ f.querySelector('.studio-active-subtitle')?.remove();
+ const modeSel=f.elements.namedItem('cardPaymentMode');
+ const segments=[...f.querySelectorAll('[data-segment="cardPaymentMode"] .flow-segment-option')];
+ segments.forEach((button,index)=>{
+   const icons=['✓','▰','✎'];
+   button.dataset.vopMode=String(index);
+   button.setAttribute('aria-label',(['Al corte · Facturado','Total · Toda la deuda','Otro monto · Indica el importe'])[index]);
+   const text=button.querySelector('.flow-segment-surface')||button;
+   text.dataset.vopIcon=icons[index];
+ });
+ const number=n=>Number.isFinite(n)?n:0;
+ const fmt=(n,ccy='DOP')=>Number.isFinite(n)?(ccy==='USD'?'US$':'RD$')+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+ const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ const amount=document.createElement('div');amount.className='vop-pay-amount';amount.setAttribute('aria-live','polite');
+ const amountInput=f.elements.namedItem('amount');const amountRow=amountInput?.closest('label');
+ const modeGroup=f.querySelector('[data-segment="cardPaymentMode"]');
+ if(modeGroup){
+  const title=document.createElement('h3');title.className='vop-mode-title';title.textContent='¿Cuánto deseas pagar?';
+  modeGroup.insertAdjacentElement('beforebegin',title);
+  modeGroup.insertAdjacentElement('afterend',amount);
+ }
+ else if(!modeGroup&&amountRow)amountRow.insertAdjacentElement('afterend',amount);
+ if(amountRow)amountRow.classList.add('vop-custom-amount');
+ // Do not display the historical heading twice in the streamlined first stage.
+ [...first.querySelectorAll('.v802-pay-title')].filter(el=>/Tarjeta y origen del pago/i.test(el.textContent.trim())).forEach(el=>el.remove());
+ // Keep original payment figures available as a native expandable details view.
+ const preview=first.querySelector('#cardPaymentPreview');
+ const more=first.querySelector('.v134-more-body');
+ if(preview&&more)more.appendChild(preview);
+ const channelControls=document.createElement('div');channelControls.className='vop-channel';
+ channelControls.setAttribute('role','group');channelControls.setAttribute('aria-label','Canal del pago');
+ channelControls.innerHTML='<strong>Canal del pago</strong><div class="vop-channel-actions"><button type="button" data-vop-channel="internet_banking">Internet banking</button><button type="button" data-vop-channel="presencial">Presencial</button></div><p>El canal seleccionado se registrará con la operación.</p>';
+ if(channelField){channelField.classList.add('vop-channel-native');channelField.before(channelControls);}
+ const paymentModeLabel={cut:'Pago al corte',total:'Pago completo',custom:'Monto específico'};
+ // Preserve the original native submit, but remove duplicate Cancelar inside this flow.
+ f.querySelector('.form-foot button[data-act="closeModal"]')?.remove();
+ f.querySelector('.form-foot button[type="button"]:not([data-studio-back])')?.remove();
+ const actualMode=()=>f.elements.namedItem('cardPaymentMode')?.value||'cut';
+ const setStep=()=>{
+  const isReview=Number(f.dataset.studioStep)===3;
+  header.querySelector('h2').textContent=isReview?'Confirmar pago':'Pagar tarjeta';
+  header.querySelector('p').textContent=isReview?'Revisa el detalle antes de procesarlo.':'Realiza el pago de tu tarjeta de crédito de forma rápida y segura.';
+  const counter=f.querySelector('.studio-stepcounter');if(counter)counter.textContent=isReview?'PASO 02 DE 02':'PASO 01 DE 02';
+  navButtons[0]?.classList.toggle('current',!isReview);
+  navButtons[2]?.classList.toggle('current',isReview);
+  const next=f.querySelector('[data-studio-next]');if(next){next.hidden=isReview;next.textContent='Continuar →';}
+  const back=f.querySelector('[data-studio-back]');if(back)back.hidden=true;
+  const foot=f.querySelector('.form-foot');const submit=foot?.querySelector('button[type="submit"]');
+  if(foot){foot.style.setProperty('display',isReview?'flex':'none','important');foot.style.setProperty('grid-template-columns','1fr','important');foot.style.setProperty('width','100%','important');}
+  if(submit){
+   submit.textContent='✓ Confirmar pago';
+   submit.style.setProperty('width','100%','important');
+   submit.style.setProperty('min-height','55px','important');
+   submit.style.setProperty('flex','1 1 100%','important');
+   submit.style.setProperty('margin','0','important');
+  }
+  f.dataset.vopStage=isReview?'confirmation':'details';
+  renderSummary();
  };
- f.addEventListener('click',e=>{
-  const b=e.target.closest('[data-studio-next],[data-studio-back]');if(!b)return;
-  // Capture ahead of the original wizard listener, preserve its validation by calling studioShowStep.
-  e.preventDefault();e.stopImmediatePropagation();
-  if(b.hasAttribute('data-studio-next'))studioShowStep(f,3);
-  else studioShowStep(f,1,{force:true});
-  queueMicrotask(update);
+ const renderSummary=()=>{
+  const c=card(f.elements.namedItem('cardId')?.value),a=account(f.elements.namedItem('accountId')?.value);
+  const ccy=f.elements.namedItem('currency')?.value||'DOP';const src=a?.currency||ccy;
+  const info=c?cardStatus(c,ccy):null;
+  const n=Number(f.elements.namedItem('amount')?.value),debt=number(n);
+  const rate=Number(f.elements.namedItem('paymentFxRate')?.value||db.settings.fx);
+  const requiresFx=ccy!==src;
+  let debit=requiresFx?(rate>0?(ccy==='USD'?debt*rate:debt/rate):NaN):debt;
+  if(requiresFx&&f.elements.namedItem('actualDebitMode')?.value==='manual'&&f.elements.namedItem('sourceAmount')?.value)debit=Number(f.elements.namedItem('sourceAmount').value);
+  const channel=f.elements.namedItem('paymentChannel')?.value||'internet_banking';
+  const eligible=!!a&&isTaxableBankPayment(a,channel,false,false);
+  const pct=eligible&&f.elements.namedItem('paymentTaxable')?.value==='yes'?Number(cardPaymentSettingsTaxPct()):0;
+  const tax=Number.isFinite(debit)?Math.round((debit*pct/100+Number.EPSILON)*100)/100:NaN;
+  const fee=Number(f.elements.namedItem('paymentFee')?.value||0);
+  const full=Number.isFinite(debit)&&Number.isFinite(tax)?Math.round((debit+tax+fee+Number.EPSILON)*100)/100:NaN;
+  amount.hidden=actualMode()==='custom';
+  amountRow?.classList.toggle('vop-custom-active',actualMode()==='custom');
+  if(amountRow)amountRow.style.setProperty('display',actualMode()==='custom'?'flex':'none','important');
+  if(!f.elements.namedItem('amount')?.value||Number(f.elements.namedItem('amount')?.value)===0){amount.innerHTML='<small>Monto a pagar</small><strong>'+fmt(0,ccy)+'</strong>';}
+  else amount.innerHTML='<small>Monto a pagar · '+esc(paymentModeLabel[actualMode()]||'')+'</small><strong>'+fmt(debt,ccy)+'</strong>';
+  const billed=Number(info?.billed);
+  const official=info?.official;
+  // The ledger exposes billed debt, but it does not guarantee bank interest or arrears
+  // breakdowns. Never invent a 0.00 for a charge whose amount is unknown.
+  const interest=Number(official?.interest),hasInterest=official?.interest!=null&&Number.isFinite(interest);
+  const arrears=Number(official?.lateFee??official?.arrears),hasArrears=(official?.lateFee!=null||official?.arrears!=null)&&Number.isFinite(arrears);
+  const badge=paymentModeLabel[actualMode()]||'Pago de tarjeta';
+  const line=(label,value)=>'<div class="vop-summary-line"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong></div>';
+  summary.innerHTML='<div class="vop-review-selects">'+
+    '<div><small>Tarjeta</small><strong>'+esc(c?.name||'Seleccionar tarjeta')+'</strong><span>'+esc(bankOf(c)||'')+' · '+esc(ccy)+'</span></div>'+
+    '<div><small>Pagar desde</small><strong>'+esc(a?.name||'Seleccionar cuenta')+'</strong><span>'+esc(bankOf(a)||'')+' · '+esc(src)+'</span></div></div>'+
+    '<div class="vop-summary-total"><div><small>Total a pagar</small><strong>'+fmt(debt,ccy)+'</strong></div><span>'+esc(badge)+'</span></div>'+
+    '<div class="vop-breakdown"><h3>Desglose del pago</h3>'+line('Saldo facturado al corte',fmt(Number.isFinite(billed)?billed:NaN,ccy))+
+    line('Importe a aplicar',fmt(debt,ccy))+line('Intereses',hasInterest?fmt(interest,ccy):'No desglosados')+
+    line('Impuestos y cargos',fmt(Number.isFinite(tax)?tax+fee:NaN,src))+
+    line('Mora',hasArrears?fmt(arrears,ccy):'No desglosada')+
+    line('Total a debitar',fmt(full,src))+'</div>'+
+    '<p class="vop-impact-note">El pago reducirá la deuda de tu tarjeta y se registrará en el historial. Los cargos solo se incluyen cuando correspondan.</p>';
+  for(const btn of channelControls.querySelectorAll('[data-vop-channel]')){
+   const active=btn.dataset.vopChannel===channel;btn.classList.toggle('selected',active);btn.setAttribute('aria-pressed',String(active));
+  }
+ };
+ channelControls.addEventListener('click',event=>{
+  const btn=event.target.closest('button[data-vop-channel]');if(!btn||!channel)return;
+  channel.value=btn.dataset.vopChannel;
+  channel.dispatchEvent(new Event('change',{bubbles:true}));
+  queueMicrotask(renderSummary);
+ });
+ header.querySelector('.vop-pay-back').addEventListener('click',()=>{
+  if(Number(f.dataset.studioStep)===3){studioShowStep(f,1,{force:true});setStep();}
+  else{
+   const trigger=document.createElement('button');trigger.type='button';trigger.dataset.act='newTransaction';trigger.hidden=true;
+   f.appendChild(trigger);try{trigger.click()}finally{trigger.remove()}
+  }
+ });
+ f.addEventListener('click',event=>{
+  const b=event.target.closest('[data-studio-next],[data-studio-back]');if(!b)return;
+  event.preventDefault();event.stopImmediatePropagation();
+  if(b.hasAttribute('data-studio-next')){if(studioShowStep(f,3))queueMicrotask(setStep);}
+  else{studioShowStep(f,1,{force:true});queueMicrotask(setStep);}
  },true);
- f.addEventListener('click',e=>{if(e.target.closest('.studio-nav-step'))queueMicrotask(update)},true);
- if(main){const observer=new MutationObserver(()=>update());observer.observe(main,{attributes:true,subtree:true,attributeFilter:['hidden']}); f.addEventListener('submit',()=>observer.disconnect(),{once:true});}
- update();
+ f.addEventListener('input',()=>queueMicrotask(renderSummary));
+ f.addEventListener('change',()=>queueMicrotask(renderSummary));
+ // Preserve the original staged submit guard, bank tax engine, and accounting posting.
+ f.addEventListener('click',e=>{if(e.target.closest('.studio-nav-step'))queueMicrotask(setStep)},true);
+ requestAnimationFrame(()=>{const art=main.querySelector('.v815-card-art');if(art)header.appendChild(art);});
+ setStep();
 }
 function selectedFlowCurrency(f){const mode=f.dataset.mode,src=f.elements.paymentSource?.value||'account';return (mode==='cardpay'||(['spend','service'].includes(mode)&&src==='card'))?(f.elements.currency?.value||'DOP'):(account(f.elements.accountId?.value)?.currency||'DOP')}
 function flowSetVisible(f,key,visible){f.querySelectorAll(`[data-flow-context="${key}"]`).forEach(el=>{el.hidden=!visible;el.querySelectorAll('input,select,textarea').forEach(i=>{i.disabled=!visible})})}
@@ -39460,6 +39574,19 @@ window.__f360RecurringVisualAdapter={
  function attach(f){
   if(!['card_refund','adjustment'].includes(getType(f))||f.dataset.v388Attached==='1')return;
   f.dataset.v388Attached='1';const isRefund=getType(f)==='card_refund';f.dataset.v388Kind=isRefund?'refund':'adjustment';
+  // The approved mobile studio already owns the purchase picker and the signed adjustment.
+  // Do not mount the superseded V388 visual sections for these two operations.
+  if(f.classList.contains('other-studio-form')&&window.matchMedia('(max-width:790px)').matches){
+   if(isRefund&&!field(f,'originalPurchaseId')){
+    const original=txs().find(t=>t.id===f.dataset.id);
+    const hidden=document.createElement('input');hidden.type='hidden';hidden.name='originalPurchaseId';
+    hidden.value=original?.originalPurchaseId||'';
+    (f.querySelector('.other-studio-content')||f).appendChild(hidden);
+   }
+   // v388Preflight still checks date, amount, purchase availability and account validity.
+   // No second UI, no duplicate select and no unused empty wrapper.
+   return;
+  }
   const target=f.querySelector('.other-studio-content')||f.querySelector('.form-grid')||f;
   const panel=document.createElement('section');panel.className='v388-panel';panel.setAttribute('aria-live','polite');
   panel.innerHTML='<div class="v388-panel-head"><strong>'+(isRefund?'Devolución y compra original':'Conciliación del saldo')+'</strong></div>'+(isRefund?'<label class="v388-field">Compra que estás devolviendo (opcional)<select id="v388Purchase"></select></label><p class="v388-note">Asocia la compra si aparece en el historial. Así conservas su categoría y limitas el reintegro al importe pendiente.</p>':'<div class="v388-toggles"><button type="button" data-v388-mode="delta" aria-pressed="true">Indicar diferencia</button><button type="button" data-v388-mode="target" aria-pressed="false">Saldo que muestra el banco</button></div><label class="v388-field" id="v388TargetWrap" hidden>Saldo real informado por el banco<input id="v388TargetBalance" type="number" step="0.01" placeholder="0.00" inputmode="decimal"></label>')+'<div class="v388-rows"></div><div class="v388-hero"></div><p class="v388-note"></p><div class="v388-error" hidden></div>';
@@ -39920,7 +40047,7 @@ function openPicker(f){
  }));
  window.openRefundPurchasePicker(options,val(f,'originalPurchaseId'),id=>applyPurchase(f,id));
 }
-function attach(f){if(f.dataset.special!=='refund'||f.dataset.v794Ready||!f.classList.contains('v790-refined'))return;if(f.dataset.id&&!val(f,'originalPurchaseId'))return;const content=f.querySelector('.other-studio-content');if(!content||!f.querySelector('#v388Purchase'))return;
+function attach(f){if(f.dataset.special!=='refund'||f.dataset.v794Ready||!f.classList.contains('v790-refined'))return;if(f.dataset.id&&!val(f,'originalPurchaseId'))return;const content=f.querySelector('.other-studio-content');if(!content||!el(f,'originalPurchaseId'))return;
  f.dataset.v794Ready='yes';f.classList.add('v794-linked-flow');
  const header=f.querySelector('.other-studio-header p');if(header)header.textContent='Recupera el dinero de una compra anterior.';
  const title=f.querySelector('.other-studio-amount>span');if(title)title.textContent='IMPORTE A DEVOLVER';
@@ -78567,86 +78694,86 @@ html body:is(.theme-black,.theme-dark) #modal-root form.studio-form[data-mode="c
 <!-- V822: Audited single source of truth for Pagar tarjeta. Always white in either global theme. -->
 <style id="v822-cardpay-canonical-white">
 /* IMPORTANT: applies ONLY to Pagar tarjeta; no financial methods or callbacks change. */
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]{
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay){
   --v815-text:#17243b!important;--v815-muted:#62718a!important;
   --v815-surface:#ffffff!important;--v815-border:#d6ddec!important;
   --pay-ink:#17243b!important;--pay-tile:#ffffff!important;
   --pay-muted:#62718a!important;--pay-stroke:#d6ddec!important;
   color-scheme:light!important;
 }
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] :is(.studio-main,.studio-panels,.studio-step,.studio-fields){
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) :is(.studio-main,.studio-panels,.studio-step,.studio-fields){
   color-scheme:light!important;
 }
 /* Override the legacy background-image gradients rather than background-color alone. */
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] > .studio-fields > label:not(.flow-segment-option),
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .studio-fields > label.v789-select-enhanced,
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .v789-select-enhanced,
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] #cardPaymentPreview,
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced:not(.v817-header-adjustments),
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced-body > label,
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"]{
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] > .studio-fields > label:not(.flow-segment-option),
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .studio-fields > label.v789-select-enhanced,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .v789-select-enhanced,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] #cardPaymentPreview,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .v802-advanced:not(.v817-header-adjustments),
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .v802-advanced-body > label,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"]{
   background:#fff!important;background-color:#fff!important;background-image:none!important;
   color:#17243b!important;-webkit-text-fill-color:#17243b!important;
   border-color:#d6ddec!important;box-shadow:0 5px 18px rgba(35,45,80,.045)!important;
 }
 /* Same rules with increased specificity when theme styles are active on body. */
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] > .studio-fields > label:not(.flow-segment-option),
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .v789-select-enhanced,
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] #cardPaymentPreview,
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced:not(.v817-header-adjustments),
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced-body > label{
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] > .studio-fields > label:not(.flow-segment-option),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .v789-select-enhanced,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] #cardPaymentPreview,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .v802-advanced:not(.v817-header-adjustments),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .v802-advanced-body > label{
   background:#fff!important;background-image:none!important;background-color:#fff!important;
   color:#17243b!important;-webkit-text-fill-color:#17243b!important;border-color:#d6ddec!important;
 }
 /* Actual shared component: card/account trigger and text. */
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced .v789-select-open,
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced .v789-select-trigger,
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced .v789-select-open{
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] label.v789-select-enhanced .v789-select-open,
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] label.v789-select-enhanced .v789-select-trigger,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] label.v789-select-enhanced .v789-select-open{
   background:transparent!important;background-image:none!important;border:0!important;
   box-shadow:none!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important;
 }
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced :is(.v789-select-details,.v789-select-details strong,.v789-select-open strong,.v789-select-open span,.v789-select-chevron),
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] label.v789-select-enhanced :is(.v789-select-details,.v789-select-details strong,.v789-select-open strong,.v789-select-open span,.v789-select-chevron){
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] label.v789-select-enhanced :is(.v789-select-details,.v789-select-details strong,.v789-select-open strong,.v789-select-open span,.v789-select-chevron),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] label.v789-select-enhanced :is(.v789-select-details,.v789-select-details strong,.v789-select-open strong,.v789-select-open span,.v789-select-chevron){
   color:#17243b!important;-webkit-text-fill-color:#17243b!important;
 }
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] :is(.filter-label,.v789-select-details small,.studio-fields small),
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] :is(.filter-label,.v789-select-details small,.studio-fields small){
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] :is(.filter-label,.v789-select-details small,.studio-fields small),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] :is(.filter-label,.v789-select-details small,.studio-fields small){
   color:#62718a!important;-webkit-text-fill-color:#62718a!important;
 }
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .v789-select-ico{
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .v789-select-ico{
   background:color-mix(in srgb,var(--v815-accent) 14%,white)!important;
   color:var(--v815-accent)!important;-webkit-text-fill-color:var(--v815-accent)!important;
 }
 /* Payment option tiles: white until selected; preserve the chosen accent. */
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"]{
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"]{
   background:transparent!important;background-image:none!important;box-shadow:none!important;border:0!important;
 }
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface,
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{
   background:#fff!important;background-image:none!important;color:#17243b!important;
   -webkit-text-fill-color:#17243b!important;border-color:#d6ddec!important;
 }
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface :is(strong,small){color:#17243b!important;-webkit-text-fill-color:#17243b!important;}
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface,
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface{
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface :is(strong,small){color:#17243b!important;-webkit-text-fill-color:#17243b!important;}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface,
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface{
   background:linear-gradient(135deg,color-mix(in srgb,var(--v815-accent) 85%,white),var(--v815-accent))!important;
   background-image:linear-gradient(135deg,color-mix(in srgb,var(--v815-accent) 85%,white),var(--v815-accent))!important;
   color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:var(--v815-accent)!important;
 }
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface :is(strong,small,span){
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .flow-segment[data-segment="cardPaymentMode"] label.flow-segment-option:has(input:checked) .flow-segment-surface :is(strong,small,span){
   color:#fff!important;-webkit-text-fill-color:#fff!important;
 }
 /* Native fields and option panel are light in all themes. */
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .studio-fields :is(input:not([type="radio"]),select,textarea),
-html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] .studio-fields :is(input:not([type="radio"]),select,textarea){
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .studio-fields :is(input:not([type="radio"]),select,textarea),
+html body:is(.theme-black,.theme-dark) #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] .studio-fields :is(input:not([type="radio"]),select,textarea){
   background:#f8f9fe!important;background-image:none!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important;
   border-color:#d6ddec!important;color-scheme:light!important;
 }
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .studio-step[data-step="1"] input[name="amount"]{
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .studio-step[data-step="1"] input[name="amount"]{
   color:var(--v815-accent)!important;-webkit-text-fill-color:var(--v815-accent)!important;
 }
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced:not(.v817-header-adjustments) :is(summary,label,span,small,strong){color:#17243b!important;-webkit-text-fill-color:#17243b!important;}
-html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"] .v802-advanced:not(.v817-header-adjustments)>summary{background:transparent!important;background-image:none!important;color:#475a78!important;-webkit-text-fill-color:#475a78!important;}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .v802-advanced:not(.v817-header-adjustments) :is(summary,label,span,small,strong){color:#17243b!important;-webkit-text-fill-color:#17243b!important;}
+html body #modal-root#modal-root#modal-root form.studio-form[data-mode="cardpay"]:not(.vop-cardpay) .v802-advanced:not(.v817-header-adjustments)>summary{background:transparent!important;background-image:none!important;color:#475a78!important;-webkit-text-fill-color:#475a78!important;}
 /* No changing widths or hiding forms: preserve all controls and native submit flow. */
 </style>
 
@@ -80954,14 +81081,14 @@ body:is(.theme-black,.theme-dark) #modal-root form.other-studio-form[data-specia
     let back=topbar.querySelector('.v855-back');
     if(!back){ back=document.createElement('button'); back.type='button'; back.className='v855-back'; back.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5.5-6 6 6 6"/><path d="M8.5 11.5H20"/></svg><span>Otras gestiones</span>'; topbar.append(back); }
     let close=topbar.querySelector('.v855-close');
-    if(!close){ close=document.createElement('button'); close.type='button'; close.className='v855-close'; close.setAttribute('aria-label','Cerrar'); close.innerHTML='×'; topbar.append(close); }
+    if(!close&&!(form.dataset.vopNavCompact==='1'&&matchMedia('(max-width:790px)').matches)){ close=document.createElement('button'); close.type='button'; close.className='v855-close'; close.setAttribute('aria-label','Cerrar'); close.innerHTML='×'; topbar.append(close); }
     let hero=header.querySelector('.v855-hero');
     if(!hero){ hero=document.createElement('div'); hero.className='v855-hero'; hero.innerHTML='<div class="v855-copy"><h2>Devolución de compra</h2><p>Recupera el dinero de una compra anterior.</p></div><div class="v855-art">'+bagSvg+'</div>'; header.append(hero); }
     const oldH2=header.querySelector('h2'); const oldP=header.querySelector('p');
     const heroH2=hero.querySelector('h2'); const heroP=hero.querySelector('p');
     if(heroH2 && oldH2 && !oldH2.closest('.v855-hero')) heroH2.textContent=(oldH2.textContent||'Devolución de compra').trim()||'Devolución de compra';
     if(heroP && oldP && !oldP.closest('.v855-hero')) heroP.textContent=(oldP.textContent||'Recupera el dinero de una compra anterior.').trim()||'Recupera el dinero de una compra anterior.';
-    wire(close, ()=>{ if(nativeClose && nativeClose!==close){ nativeClose.click(); } else { form.dispatchEvent(new CustomEvent('close',{bubbles:true})); const overlay=form.closest('.modal-layer,.modal-backdrop,.modal'); if(overlay) overlay.remove(); else form.remove(); } });
+    if(close)wire(close, ()=>{ if(nativeClose && nativeClose!==close){ nativeClose.click(); } else { form.dispatchEvent(new CustomEvent('close',{bubbles:true})); const overlay=form.closest('.modal-layer,.modal-backdrop,.modal'); if(overlay) overlay.remove(); else form.remove(); } });
     wire(back, ()=>{ const evtBtn=document.createElement('button'); evtBtn.type='button'; evtBtn.dataset.act='newTransaction'; evtBtn.style.display='none'; form.appendChild(evtBtn); evtBtn.click(); evtBtn.remove(); });
   });
  }
@@ -82564,6 +82691,172 @@ html body:is(.theme-black,.theme-dark) #modal-root .modal-layer>.modal>form.othe
  }
 }
 
+
+/* Six operations — shared compact mobile navigation and dimensional contract.
+   Part of the existing registrar visual system, not a parallel implementation. */
+@media(max-width:790px){
+ html body #modal-root form.other-studio-form[data-special] :is(.v861-back,.v855-back,.v864-back,.v871-loan-back,.v844-back).vop-circular-back,
+ html body #modal-root form.studio-form.vop-cardpay .vop-circular-back{
+  display:grid!important;place-items:center!important;flex:0 0 44px!important;
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  aspect-ratio:1!important;padding:0!important;margin:0!important;border-radius:50%!important;
+  background:color-mix(in srgb,var(--vive-theme-color,#7565ee) 6%,var(--r871-card,#17171a))!important;
+  border:1px solid color-mix(in srgb,var(--vive-theme-color,#7565ee) 24%,var(--r871-line,#404047))!important;
+  color:var(--r871-ink,#fff)!important;-webkit-text-fill-color:var(--r871-ink,#fff)!important;
+  box-shadow:none!important;position:relative!important;inset:auto!important;transform:none!important;
+ }
+ html body #modal-root form.other-studio-form[data-special] .vop-circular-back svg,
+ html body #modal-root form.studio-form.vop-cardpay .vop-circular-back svg{display:block!important;width:21px!important;height:21px!important;stroke:currentColor!important;fill:none!important;flex:none!important;}
+ #modal-root form.other-studio-form[data-special] :is(.v861-topline,.v855-topbar,.v864-topbar,.v871-loan-topbar){
+  min-height:48px!important;justify-content:flex-start!important;margin:0 0 clamp(10px,1.8vh,15px)!important;
+ }
+ #modal-root form.other-studio-form[data-special]>.other-studio-shell{
+  padding-top:calc(12px + env(safe-area-inset-top,0px))!important;
+  padding-bottom:20px!important;scroll-padding-bottom:110px!important;
+ }
+ #modal-root form.other-studio-form[data-special] .other-studio-content{gap:clamp(9px,1.5vh,14px)!important;}
+ #modal-root form.other-studio-form[data-special] .other-studio-amount{min-height:0!important;height:auto!important;padding-block:clamp(10px,1.65vh,15px)!important;}
+ #modal-root form.other-studio-form[data-special] .other-studio-fields>label,
+ #modal-root form.other-studio-form[data-special] .v794-source-card,
+ #modal-root form.other-studio-form[data-special] .v794-purchase-card,
+ #modal-root form.other-studio-form[data-special] .v849-refund-method{min-height:68px!important;height:auto!important;}
+ #modal-root form.other-studio-form[data-special]>.form-foot,
+ #modal-root form.v865-loan .v83-loan-pay-controls:not(:empty){
+  position:relative!important;bottom:auto!important;flex:0 0 auto!important;z-index:12!important;
+  padding:8px clamp(14px,4.1vw,22px) calc(6px + env(safe-area-inset-bottom,0px))!important;
+  margin:0!important;
+ }
+ #modal-root form.other-studio-form[data-special]>.form-foot button[type="submit"],
+ #modal-root form.v865-loan .v83-loan-pay-controls [data-v83-pay-next]{
+  min-height:54px!important;height:clamp(54px,7.2vh,60px)!important;border-radius:19px!important;width:100%!important;
+ }
+ #modal-root form[data-special="refund"] :is(.v794-recovery,.v849-refund-method){padding:12px!important;}
+ #modal-root form.v857-conciliation .other-studio-impact{min-height:0!important;padding:12px!important;}
+ #modal-root form.v857-conciliation .other-studio-amount{min-height:0!important;}
+ #modal-root form[data-special="benefit"] :is(.f834-benefit-hero,.v785-benefit-preview){min-height:0!important;}
+ #modal-root form[data-special="benefit"] .f834-kind-choices>button{min-height:72px!important;padding:9px 3px!important;}
+ #modal-root form.v865-loan .v83-loan-pay-nav{min-height:0!important;margin-bottom:9px!important;}
+ #modal-root form.v865-loan .f844-paybox{padding:0!important;}
+ #modal-root form.v865-loan .f837-payment-summary .f837-pay-line{padding-block:8px!important;}
+ /* Approved two-stage card payment. Only the mobile composition changes. */
+ #modal-root .modal:has(form.vop-cardpay){background:var(--r871-bg,#000)!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-rail,
+ #modal-root form.studio-form.vop-cardpay .studio-topline,
+ #modal-root form.studio-form.vop-cardpay :is(.studio-active-title,.studio-active-subtitle){display:none!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-main{padding:0 clamp(13px,4vw,22px)!important;overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-pay-header{
+  display:flex!important;align-items:flex-start!important;gap:12px!important;flex:none!important;
+  padding:calc(15px + env(safe-area-inset-top,0px)) 0 12px!important;position:relative!important;min-height:0!important;
+ }
+ #modal-root form.studio-form.vop-cardpay .vop-pay-copy{flex:1!important;min-width:0!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-pay-copy h2{margin:1px 0 5px!important;font-size:clamp(22px,5.8vw,28px)!important;line-height:1.12!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-pay-copy p{margin:0!important;font-size:clamp(12px,3.3vw,14px)!important;line-height:1.4!important;}
+ #modal-root form.studio-form.vop-cardpay .v815-card-art{position:absolute!important;right:0!important;top:calc(17px + env(safe-area-inset-top,0px))!important;width:clamp(49px,13vw,67px)!important;height:46px!important;opacity:.85!important;pointer-events:none!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-pay-header:has(.v815-card-art) .vop-pay-copy{padding-right:35px!important;}
+ #modal-root form.studio-form.vop-cardpay[data-vop-stage="confirmation"] .v815-card-art{display:none!important;} /* Avoid covering Confirmar pago. */
+ #modal-root form.studio-form.vop-cardpay .studio-panels{overflow:visible!important;flex:0 0 auto!important;min-height:0!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-fields{display:flex!important;flex-direction:column!important;gap:clamp(8px,1.35vh,13px)!important;padding:0 0 16px!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>label:has([name="cardId"]),
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>label:has([name="accountId"]){padding:10px 12px!important;min-height:69px!important;border-radius:20px!important;}
+ #modal-root form.studio-form.vop-cardpay .flow-segment[data-segment="cardPaymentMode"]{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;display:grid!important;gap:7px!important;
+ }
+ #modal-root form.studio-form.vop-cardpay .flow-segment[data-segment="cardPaymentMode"] .flow-segment-option{
+  min-width:0!important;min-height:88px!important;display:block!important;position:relative!important;
+ }
+ #modal-root form.studio-form.vop-cardpay .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface{
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;min-width:0!important;min-height:88px!important;height:100%!important;
+  padding:8px 2px!important;border-radius:18px!important;
+  background:var(--r871-card,#17171a)!important;color:var(--r871-ink,#f8f8fc)!important;
+  -webkit-text-fill-color:var(--r871-ink,#f8f8fc)!important;border:1px solid var(--r871-line,#414149)!important;
+ }
+ #modal-root form.studio-form.vop-cardpay .flow-segment[data-segment="cardPaymentMode"] .flow-segment-option input:checked + .flow-segment-surface{
+  background:color-mix(in srgb,var(--vive-theme-color,#7565ee) 78%,var(--r871-card,#17171a))!important;
+  border-color:var(--vive-theme-color,#7565ee)!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+ }
+ #modal-root form.studio-form.vop-cardpay .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface :is(strong,small){
+  font-size:clamp(10px,2.9vw,13px)!important;line-height:1.23!important;color:inherit!important;-webkit-text-fill-color:inherit!important;
+ }
+ #modal-root form.studio-form.vop-cardpay .flow-segment[data-segment="cardPaymentMode"] .flow-segment-surface::before{
+  content:attr(data-vop-icon);display:block!important;margin:0 auto 5px!important;font-size:19px!important;
+ }
+ #modal-root form.studio-form.vop-cardpay :is(label,[data-flow-context])[hidden],
+ #modal-root form.studio-form.vop-cardpay .vop-pay-amount[hidden]{display:none!important;}
+ #modal-root form.studio-form.vop-cardpay label.vop-custom-amount:not(.vop-custom-active){display:none!important;}
+ #modal-root form.studio-form.vop-cardpay .v802-pay-title{display:none!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-mode-title{margin:6px 0 2px!important;font-size:15px!important;line-height:1.3!important;font-weight:700!important;color:var(--r871-ink,#fff)!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-pay-amount strong{white-space:nowrap;}
+
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields{display:flex!important;flex-direction:column!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>label:has([name="cardId"]){order:10!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>label:has([name="accountId"]){order:20!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>.vop-mode-title{order:30!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>[data-segment="cardPaymentMode"]{order:40!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>.vop-pay-amount{order:50!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>label:has([name="amount"]){order:60!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>:not(label):not([data-segment]):not(.vop-pay-amount):not(.vop-mode-title){order:70!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>label:not(:has([name="cardId"],[name="accountId"],[name="amount"])){order:70!important;}
+ #modal-root form.studio-form.vop-cardpay .v789-select-enhanced .v789-select-details :is(strong,small),
+ #modal-root form.studio-form.vop-cardpay .v789-select-enhanced .v789-select-open,
+ #modal-root form.studio-form.vop-cardpay .v827-universal-trigger{color:var(--r871-ink,#f8f8fc)!important;-webkit-text-fill-color:var(--r871-ink,#f8f8fc)!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-pay-amount,
+ #modal-root form.studio-form.vop-cardpay .vop-summary-total{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--r871-line,#34343a);
+  border-radius:19px;padding:12px!important;background:var(--r871-card,#17171a);min-width:0!important;
+ }
+ #modal-root form.studio-form.vop-cardpay .vop-pay-amount small,
+ #modal-root form.studio-form.vop-cardpay .vop-summary-total small{display:block;font-size:12px;opacity:.78;}
+ #modal-root form.studio-form.vop-cardpay .vop-pay-amount strong{font-size:clamp(20px,5.7vw,27px);font-variant-numeric:tabular-nums;}
+ #modal-root form.studio-form.vop-cardpay .vop-pay-summary{display:grid!important;gap:12px!important;padding:0!important;background:transparent!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-review-selects{display:grid;gap:10px;}
+ #modal-root form.studio-form.vop-cardpay .vop-review-selects>div{
+  padding:12px;border:1px solid var(--r871-line,#35353c);border-radius:18px;background:var(--r871-card,#17171a);
+  display:grid;gap:3px;
+ }
+ #modal-root form.studio-form.vop-cardpay .vop-review-selects small{font-size:12px;opacity:.78;}
+ #modal-root form.studio-form.vop-cardpay .vop-review-selects strong{font-size:15px;}
+ #modal-root form.studio-form.vop-cardpay .vop-review-selects span{font-size:12px;opacity:.77;}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-total{border-color:var(--vive-theme-color,#7565ee)!important;background:color-mix(in srgb,var(--vive-theme-color,#7565ee) 12%,var(--r871-card,#17171a))!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-total strong{font-size:clamp(22px,7vw,31px);font-variant-numeric:tabular-nums;}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-total{flex-wrap:wrap!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-total>div{min-width:0;flex:1 1 180px;}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-total strong{overflow-wrap:normal!important;white-space:nowrap!important;font-size:clamp(20px,6vw,26px)!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-total>span{font-size:11px;border-radius:100px;padding:7px 10px;background:color-mix(in srgb,var(--vive-theme-color,#7565ee) 25%,transparent)}
+ #modal-root form.studio-form.vop-cardpay .vop-breakdown,
+ #modal-root form.studio-form.vop-cardpay .vop-channel,
+ #modal-root form.studio-form.vop-cardpay .vop-impact-note{border:1px solid var(--r871-line,#34343a);border-radius:18px;background:var(--r871-card,#17171a);padding:13px;}
+ #modal-root form.studio-form.vop-cardpay .vop-breakdown h3{margin:0 0 9px;font-size:17px;}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-line{display:flex;justify-content:space-between;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--r871-line,#34343a)}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-line:last-child{border:0;font-weight:800;}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-line span{opacity:.76;font-size:12px;}
+ #modal-root form.studio-form.vop-cardpay .vop-summary-line strong{text-align:right;font-size:12px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+ #modal-root form.studio-form.vop-cardpay .vop-channel{display:grid;gap:11px;}
+ #modal-root form.studio-form.vop-cardpay .vop-channel strong{font-size:16px;}
+ #modal-root form.studio-form.vop-cardpay .vop-channel-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+ #modal-root form.studio-form.vop-cardpay .vop-channel button{border-radius:14px;min-height:46px;padding:6px;color:inherit;background:transparent;border:1px solid var(--r871-line,#34343a);font-size:clamp(11px,3.2vw,13px);}
+ #modal-root form.studio-form.vop-cardpay .vop-channel button.selected{background:color-mix(in srgb,var(--vive-theme-color,#7565ee) 60%,#343047);color:#fff;border-color:var(--vive-theme-color,#7565ee)}
+ #modal-root form.studio-form.vop-cardpay .vop-channel p{font-size:11px;opacity:.75;margin:0;}
+ #modal-root form.studio-form.vop-cardpay .vop-channel-native{display:none!important;}
+ #modal-root form.studio-form.vop-cardpay .vop-impact-note{font-size:12px;line-height:1.45;margin:0;}
+ #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .form-foot{display:none!important;}
+ #modal-root form.studio-form.vop-cardpay[data-vop-stage="confirmation"] .studio-navigation{display:none!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .v823-date-field{
+   min-height:60px!important;max-height:72px!important;height:auto!important;padding:8px 12px!important;
+   display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;
+   gap:10px!important;overflow:hidden!important;
+ }
+ #modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .v823-date-field .field{
+   min-height:0!important;max-height:44px!important;height:auto!important;width:auto!important;flex:0 1 auto!important;
+ }
+ #modal-root form.studio-form.vop-cardpay .studio-navigation{margin-top:auto!important;position:sticky!important;bottom:0!important;z-index:5!important;background:var(--r871-bg,#000)!important;padding:10px 0 calc(8px + env(safe-area-inset-bottom,0px))!important;}
+ #modal-root form.studio-form.vop-cardpay .studio-navigation button[data-studio-next]{min-height:55px!important;border-radius:19px!important;width:100%!important;}
+ #modal-root form.studio-form.vop-cardpay .form-foot{position:sticky!important;bottom:0!important;z-index:6!important;background:var(--r871-bg,#000)!important;padding:8px 0 calc(6px + env(safe-area-inset-bottom,0px))!important;}
+ #modal-root form.studio-form.vop-cardpay .form-foot button[type="submit"]{min-height:55px!important;border-radius:19px!important;width:100%!important;flex:1 1 100%!important;}
+}
+body:not(.theme-black):not(.theme-dark) #modal-root form.studio-form.vop-cardpay{--r871-card:#fff;--r871-bg:#f7f8fc;--r871-line:#d3dced;--r871-ink:#202b43;}
+body:is(.theme-black,.theme-dark) #modal-root form.studio-form.vop-cardpay{--r871-card:#17171a;--r871-bg:#000;--r871-line:#414149;--r871-ink:#f8f8fc;}
 </style>
 <script id="v872-registrar-navigation-canonical">
 (()=>{'use strict';
@@ -82606,6 +82899,27 @@ html body:is(.theme-black,.theme-dark) #modal-root .modal-layer>.modal>form.othe
   const kind=form.dataset.special;
   if(kind==='benefit')mountBenefit(form);
   if(kind==='loan')mountLoan(form);
+  // One navigation control per operation, taking the route already owned by V872.
+  // No parallel navigation bar and no close X in these six mobile operations.
+  if(window.matchMedia('(max-width:790px)').matches&&!form.dataset.vopNavCompact){
+   const back=form.querySelector('.v861-back,.v855-back,.v864-back,.v871-loan-back,.v844-back');
+   if(back){
+    back.classList.add('vop-circular-back');
+    back.innerHTML=svg;
+    back.setAttribute('aria-label','Regresar a Registrar · Otras gestiones');
+    back.setAttribute('title','Regresar');
+    form.dataset.vopNavCompact='1';
+    const header=back.closest('.other-studio-header');
+    form.querySelectorAll('.v861-x,.v855-close,.v864-close,.v871-loan-close,.other-studio-close,.v857-close')
+     .forEach(node=>node.remove());
+    // Earlier navigation bar has no remaining purpose.
+    form.querySelector('.v857-headrow')?.remove();
+    if(form.dataset.special==='adjustment'){
+     const submit=form.querySelector('.form-foot button[type="submit"]');
+     if(submit)submit.textContent='✓ Confirmar ajuste';
+    }
+   }
+  }
   const shell=form.querySelector('.other-studio-shell');if(shell&&!form.dataset.v871Mounted){
     form.dataset.v871Mounted='1';
     shell.setAttribute('role','region');shell.setAttribute('aria-label','Contenido de '+({benefit:'Beneficios bancarios',loan:'Abonar a un préstamo',refund:'Devolución de compra',adjustment:'Conciliar un saldo'}[kind]||'operación'));
