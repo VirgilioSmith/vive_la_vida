@@ -87573,8 +87573,40 @@ html body #app{
  --v925-halo:radial-gradient(ellipse 220px 140px at 100% 0%,color-mix(in srgb,var(--v925-accent) 9%,transparent),transparent 80%);
  --v925-shadow:0 10px 26px rgba(31,51,83,.055);
 }
-/* Web: keep the glass philosophy of Ingresos y egresos, don't force white opaque KPIs. */
-html body:not(.theme-black):not(.theme-dark) #app .main.world-overview :is(.ff-balance.ff-tile,.ff-upcoming.ff-tile,.ff-personal.ff-tile,.ff-expense-card.ff-tile,.v290-budget-web,.v105-capacity-widget),
+/* V938 / INICIO WEB — reparar las superficies en su árbol real,
+   sin repintar Neto del mes, círculos, ni trasladar estilos al móvil. */
+@media (min-width:791px){
+ html body:not(.theme-black):not(.theme-dark) #app main.main.world-overview #page .ff-dashboard.summary-space :is(
+  .ff-balance.ff-tile,.ff-upcoming.ff-tile,.ff-expense-card.ff-tile,.ff-obligation-total
+ ){
+  background-color:rgba(255,255,255,.68)!important;
+  background-image:radial-gradient(ellipse 230px 152px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#7066ee) 8%,transparent),transparent 83%)!important;
+  border-color:color-mix(in srgb,var(--vive-theme-color,#7066ee) 15%,rgba(255,255,255,.82))!important;
+  box-shadow:0 10px 29px rgba(31,51,83,.065)!important;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ }
+ /* Estas dos tarjetas conservan color contextual, pero la misma translucidez base. */
+ html body:not(.theme-black):not(.theme-dark) #app main.main.world-overview #page .ff-dashboard.summary-space .ff-personal.ff-tile{
+  --v938-home-tone:#0c9c8b;
+  background-color:rgba(255,255,255,.68)!important;
+  background-image:radial-gradient(ellipse 230px 152px at 100% 0%,color-mix(in srgb,var(--v938-home-tone) 9%,transparent),transparent 83%)!important;
+  border-color:color-mix(in srgb,var(--v938-home-tone) 16%,rgba(255,255,255,.82))!important;
+  box-shadow:0 10px 29px rgba(31,51,83,.065)!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app main.main.world-overview #page .ff-dashboard.summary-space .v290-budget-web{
+  --v938-home-tone:var(--v290-good,#109783);
+  background-color:rgba(255,255,255,.68)!important;
+  background-image:radial-gradient(ellipse 230px 152px at 100% 0%,color-mix(in srgb,var(--v938-home-tone) 9%,transparent),transparent 83%)!important;
+  border-color:color-mix(in srgb,var(--v938-home-tone) 16%,rgba(255,255,255,.82))!important;
+  box-shadow:0 10px 29px rgba(31,51,83,.065)!important;
+ }
+ /* El área de Compromisos sigue SIN tarjeta exterior. */
+ html body #app main.main.world-overview #page .ff-dashboard.summary-space aside.ff-activity.ff-obligations.ff-obligations{
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ }
+}
+/* Las demás páginas conservan su capa previa, no reciben estilos de Inicio. */
 html body:not(.theme-black):not(.theme-dark) #app .main.world-advanced :is(.advanced-stat,.advanced-hero,.advanced-quick),
 html body:not(.theme-black):not(.theme-dark) #app #page :is(.v273-overview-widget,.v294-finance-widget,.v315-chart-widget,.v316-chart-widget,.v317-chart-widget,.v296-preview-card,.v332-preview-card):not(.v105-pct-up):not(.v105-pct-down){
  background-color:var(--v925-glass)!important;
@@ -87583,19 +87615,43 @@ html body:not(.theme-black):not(.theme-dark) #app #page :is(.v273-overview-widge
  box-shadow:var(--v925-shadow)!important;
  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
 }
-/* Mobile: no white-on-white, contextual corner illumination instead of whole blue/green fill. */
+/* V938 / INICIO MÓVIL — independientes de la grilla web.
+   El contenedor es transparente; vidrio solo en tarjetas NEUTRALES.
+   Nunca aplanar las 4 variantes KPI, los tres círculos ni los colores semánticos. */
 @media(max-width:790px){
+ html body:not(.theme-black):not(.theme-dark) #app main.main.world-overview #page .vive-mobile-home.vive-mobile-home-essential{
+  background:transparent!important;background-image:none!important;
+  border:0!important;box-shadow:none!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app main.main.world-overview #page .vive-mobile-home :is(
+  .vive-mobile-commitments,.vive-mobile-dues,.vive-mobile-net-card,.v105-mobile-extra,
+  .v105-capacity-widget,.v290-budget-mobile,.v273-overview-widget
+ ):not(.selected):not(.active):not(.danger):not(.warning){
+  background-color:rgba(255,255,255,.69)!important;
+  background-image:radial-gradient(ellipse 200px 138px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#7066ee) 8%,transparent),transparent 82%)!important;
+  border-color:color-mix(in srgb,var(--vive-theme-color,#7066ee) 15%,rgba(255,255,255,.82))!important;
+  box-shadow:0 9px 26px rgba(31,51,83,.07)!important;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ }
+ /* Presupuesto conserva su identidad, no lo teñimos siempre de lila. */
+ html body:not(.theme-black):not(.theme-dark) #app main.main.world-overview #page .vive-mobile-home .v290-budget-mobile{
+  background-image:radial-gradient(ellipse 200px 138px at 100% 0%,color-mix(in srgb,var(--v290-good,#109783) 9%,transparent),transparent 82%)!important;
+  border-color:color-mix(in srgb,var(--v290-good,#109783) 17%,rgba(255,255,255,.82))!important;
+ }
+ /* Neutral financial labels remain legible, including empty states. */
+ html body:not(.theme-black):not(.theme-dark) #app main.main.world-overview #page .vive-mobile-home :is(
+  .vive-mobile-commitments,.vive-mobile-dues,.vive-mobile-net-card,.v105-mobile-extra
+ ) :is(.vive-mobile-card-head h2,.vive-mobile-commitment-value,.vive-mobile-due-row strong){
+  color:#1b2a43;-webkit-text-fill-color:#1b2a43;
+ }
  html body:not(.theme-black):not(.theme-dark) #app #page :is(
- .vive-mobile-home .v105-mobile-extra,.vive-mobile-home .v273-overview-widget,
- .vive-mobile-home .v318-mobile-card,.vive-mobile-home .v105-capacity-widget,
- .vive-mobile-home .v290-budget-mobile,.vive-mobile-home .v344-creative,
- .v410-explore-sec,.v431-tile,.v410-explore-grid .v431-tile,
- .v239-hero,.v239-sheet,.v239-product,.v296-preview-card,.v332-preview-card
+  .v410-explore-sec,.v431-tile,.v410-explore-grid .v431-tile,
+  .v239-hero,.v239-sheet,.v239-product,.v296-preview-card,.v332-preview-card
  ):not(.selected):not(.active):not(.danger):not(.warning){
   background-color:var(--v925-glass)!important;background-image:var(--v925-halo)!important;
   border-color:var(--v925-border)!important;box-shadow:var(--v925-shadow)!important;
  }
- html body:not(.theme-black):not(.theme-dark) #app #page :is(.v410-explore,.v431-explore,.vive-mobile-home){background-color:transparent!important;}
+ html body:not(.theme-black):not(.theme-dark) #app #page :is(.v410-explore,.v431-explore){background-color:transparent!important;}
 }
 /* Never impose green on decorative icons/headers in Personalización or Explorar. */
 html body #app #page :is([data-v105-widget="cashPressure"],[data-v105-widget="patrimonyTrend"],[data-v105-widget="budgetPulse"],[data-v105-widget="creditUtil"],[data-v105-widget="tomorrowInsight"],.v410-explore,.v431-explore,.v239-hero){
@@ -87672,6 +87728,38 @@ html body:is(.theme-black,.theme-dark) #app{
  --v925-glass:rgba(14,14,15,.75);--v925-border:rgba(255,255,255,.14);
  --v925-halo:radial-gradient(ellipse 200px 136px at 100% 0%,color-mix(in srgb,var(--v925-accent) 10%,transparent),transparent 83%);
  --v925-shadow:0 12px 28px rgba(0,0,0,.27);
+}
+/* V938: Black Inicio has its own neutral surfaces, never the white glass palette. */
+@media(min-width:791px){
+ html body:is(.theme-black,.theme-dark) #app main.main.world-overview #page .ff-dashboard.summary-space :is(
+  .ff-balance.ff-tile,.ff-upcoming.ff-tile,.ff-expense-card.ff-tile,.ff-personal.ff-tile,.v290-budget-web,.ff-obligation-total
+ ){
+  background-color:rgba(14,14,16,.76)!important;
+  background-image:radial-gradient(ellipse 205px 144px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#9185ef) 9%,transparent),transparent 83%)!important;
+  border-color:rgba(255,255,255,.13)!important;
+  box-shadow:0 12px 29px rgba(0,0,0,.24)!important;
+ }
+ /* Conserva las identidades contextuales de Relaciones y Presupuesto. */
+ html body:is(.theme-black,.theme-dark) #app main.main.world-overview #page .ff-dashboard.summary-space .ff-personal.ff-tile{
+  background-image:radial-gradient(ellipse 205px 144px at 100% 0%,color-mix(in srgb,#24b5a0 9%,transparent),transparent 83%)!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app main.main.world-overview #page .ff-dashboard.summary-space .v290-budget-web{
+  background-image:radial-gradient(ellipse 205px 144px at 100% 0%,color-mix(in srgb,var(--v290-good,#35b69b) 9%,transparent),transparent 83%)!important;
+ }
+}
+@media(max-width:790px){
+ html body:is(.theme-black,.theme-dark) #app main.main.world-overview #page .vive-mobile-home :is(
+  .vive-mobile-commitments,.vive-mobile-dues,.vive-mobile-net-card,.v105-mobile-extra,
+  .v105-capacity-widget,.v290-budget-mobile,.v273-overview-widget
+ ):not(.selected):not(.active):not(.danger):not(.warning){
+  background-color:rgba(14,14,16,.78)!important;
+  background-image:radial-gradient(ellipse 195px 136px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#9185ef) 10%,transparent),transparent 83%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 12px 29px rgba(0,0,0,.27)!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app main.main.world-overview #page .vive-mobile-home .v290-budget-mobile{
+  background-image:radial-gradient(ellipse 195px 136px at 100% 0%,color-mix(in srgb,var(--v290-good,#35b69b) 10%,transparent),transparent 83%)!important;
+ }
 }
 html body:is(.theme-black,.theme-dark) #app #page :is(.v105-capacity-widget,.v273-overview-widget,.v290-budget-mobile,.v315-chart-widget,.v410-explore-sec,.v431-tile,.v239-sheet,.v239-hero,.v296-preview-card,.v332-preview-card){
  background-color:var(--v925-glass)!important;background-image:var(--v925-halo)!important;
