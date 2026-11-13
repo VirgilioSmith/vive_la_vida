@@ -20334,6 +20334,8 @@ body.theme-dark .v913-wallet-advance-note{ border-top-color:rgba(255,255,255,.09
 #modal-root .v918-channel-options button svg{width:18px;height:18px;flex-shrink:0}
 #modal-root .v918-channel-options button[aria-pressed="true"]{background:color-mix(in srgb,var(--v261-accent,#7066ee) 13%,transparent);border-color:color-mix(in srgb,var(--v261-accent,#7066ee) 55%,transparent);color:var(--v261-accent,#958aff)}
 #modal-root .v918-channel-explanation{font-size:12px;color:var(--v261-muted,#a4b0c4);line-height:1.4;margin:0}
+#modal-root .v923-pending-overflow{margin:2px 12px 14px;padding:10px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--v261-accent,#7066ee) 23%,transparent);font-size:12px;line-height:1.5;color:var(--v261-ink,#1f2c48);background:color-mix(in srgb,var(--v261-accent,#7066ee) 5%,transparent)}
+#modal-root .v923-pending-overflow button{font:inherit;font-weight:720;color:var(--v261-accent,#7066ee);border:0;padding:3px 0;background:transparent;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 #modal-root .v918-payment-breakdown{display:grid;gap:7px;padding:14px 16px 4px;border-top:1px solid var(--v261-line,#34343b)}
 #modal-root .v918-payment-breakdown>div{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--v261-muted,#a4b0c4)}
 #modal-root .v918-payment-breakdown strong{font-weight:750;color:var(--v261-ink,#f3f3f6);white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -29501,6 +29503,31 @@ function v711CompactCardPayment(f){
    if(strong)strong.textContent=(['Al corte','Total','Otro monto'])[index];
    if(small)small.textContent=(['Facturado','Toda la deuda','Indica el importe'])[index];
  });
+ // V946: activate the ORIGINAL required amount input when 'Otro monto' is selected.
+ // These radio listeners belong to this one form; no DOM observers or duplicate payment flow.
+ let priorPaymentMode=modeSel?.value||'cut';
+ for(const item of segments){
+  const radio=item.querySelector('input[type="radio"]');if(!radio)continue;
+  radio.addEventListener('change',()=>{
+   if(!radio.checked)return;
+   const nextMode=radio.value;
+   const field=f.elements.namedItem('amount');const row=field?.closest('label');
+   if(nextMode==='custom'){
+    if(field){
+     field.readOnly=false;
+     // Clear the previous automatic cut/total amount; preserve an existing custom edit.
+     if(priorPaymentMode!=='custom'&&!f.dataset.id)field.value='';
+     field.inputMode='decimal';
+    }
+    if(row){row.hidden=false;row.classList.add('vop-custom-active');row.style.setProperty('display','flex','important');}
+    requestAnimationFrame(()=>{renderSummary();field?.focus({preventScroll:true});});
+   }else{
+    if(row){row.hidden=true;row.classList.remove('vop-custom-active');row.style.setProperty('display','none','important');}
+    queueMicrotask(renderSummary);
+   }
+   priorPaymentMode=nextMode;
+  });
+ }
  const number=n=>Number.isFinite(n)?n:0;
  const fmt=(n,ccy='DOP')=>Number.isFinite(n)?(ccy==='USD'?'US$':'RD$')+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
  const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -29522,7 +29549,7 @@ function v711CompactCardPayment(f){
  if(preview)preview.remove(); if(more)more.remove();
  const channelControls=document.createElement('div');channelControls.className='vop-channel';
  channelControls.setAttribute('role','group');channelControls.setAttribute('aria-label','Canal del pago');
- channelControls.innerHTML='<div class="vop-channel-actions"><button type="button" data-vop-channel="internet_banking"><span class="vop-channel-icon" aria-hidden="true">⌘</span><span>Internet banking</span></button><button type="button" data-vop-channel="presencial"><span class="vop-channel-icon" aria-hidden="true">◫</span><span>Presencial</span></button></div>';
+ channelControls.innerHTML='<div class="vop-channel-actions"><button type="button" data-vop-channel="internet_banking"><span class="vop-channel-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3M7 8h10M7 12h6"/></svg></span><span>Internet Banking</span></button><button type="button" data-vop-channel="presencial"><span class="vop-channel-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 10h8M8 14h3M16 14h.01"/></svg></span><span>Presencial</span></button></div>';
  if(channelField){channelField.classList.add('vop-channel-native');channelField.hidden=true;channelField.style.setProperty('display','none','important');}
  summary.insertAdjacentElement('afterend',channelControls);
  const paymentModeLabel={cut:'Pago al corte',total:'Pago completo',custom:'Monto específico'};
@@ -29569,7 +29596,7 @@ function v711CompactCardPayment(f){
   amount.hidden=actualMode()==='custom';
   amountRow?.classList.toggle('vop-custom-active',actualMode()==='custom');
   if(amountRow)amountRow.style.setProperty('display',actualMode()==='custom'?'flex':'none','important');
-  if(!f.elements.namedItem('amount')?.value||Number(f.elements.namedItem('amount')?.value)===0){amount.innerHTML='<small>Monto a pagar</small><strong>'+fmt(0,ccy)+'</strong>';}
+  if(!f.elements.namedItem('amount')?.value||!Number.isFinite(n)||Number(f.elements.namedItem('amount')?.value)===0){amount.innerHTML='<small>Monto a pagar</small><strong>'+(!Number.isFinite(n)?'—':fmt(0,ccy))+'</strong>';}
   else amount.innerHTML='<small>Monto a pagar · '+esc(paymentModeLabel[actualMode()]||'')+'</small><strong>'+fmt(debt,ccy)+'</strong>';
   const billed=Number(info?.billed);
   const official=info?.official;
@@ -32192,7 +32219,7 @@ function v40IncomeForm(id){
  modal(id?'Editar ingreso recurrente':'Nuevo ingreso recurrente',body,'v40IncomeForm',true);
  document.getElementById('v40IncomeForm').dataset.id=id||'';
 }
-function v40IncomeRow(s){let p;try{p=v40Payroll(s,s.nextDue)}catch(e){p={net:0,staleRule:true}}const auto=s.postingMode==='auto',due=s.nextDue<=today();return `<div class="v40-row"><div><strong>${sanitize(s.name)}</strong><small>${sanitize(s.kind==='formal'?'Nómina formal':'Ingreso independiente')} · ${sanitize(s.frequency==='semi_monthly'?'Quincenal · 15 y último día':s.frequency==='weekly'?'Semanal':s.frequency==='quarterly'?'Trimestral':s.frequency==='annual'?'Anual':'Mensual')} · Próximo ${prettyDate(s.nextDue)}<br/>${sanitize(bank(s.institutionId)?.name||'Sin institución')} · ${sanitize(account(s.accountId)?.name||'Sin cuenta')}${p.staleRule?' · Revisar reglas fiscales del año':''}</small></div><div class="v40-row-actions"><span class="v40-pill ${auto?'good':'manual'}">${auto?'Auto al sincronizar':'Confirmación'}</span><b>${money(p.net,s.currency,2)}</b>${s.active!==false&&!auto?`<button class="btn sm soft" data-v40-action="confirmIncome" data-id="${s.id}">${due?'Confirmar cobro':'Registrar cobro anticipado'}</button>`:''}${s.active!==false?`<button class="btn sm ghost" data-v40-action="v940Additional" data-id="${s.id}">+ Ingreso adicional</button>`:''}<button class="btn sm ghost" data-v40-action="editIncome" data-id="${s.id}">Editar</button><button class="btn sm ghost" data-v40-action="toggleIncome" data-id="${s.id}">${s.active===false?'Activar':'Pausar'}</button></div></div>`}
+function v40IncomeRow(s){let p;try{p=v40Payroll(s,s.nextDue)}catch(e){p={net:0,staleRule:true}}const auto=s.postingMode==='auto',due=s.nextDue<=today();return `<div class="v40-row"><div><strong>${sanitize(s.name)}</strong><small>${sanitize(s.kind==='formal'?'Nómina formal':'Ingreso independiente')} · ${sanitize(s.frequency==='semi_monthly'?'Quincenal · 15 y último día':s.frequency==='weekly'?'Semanal':s.frequency==='quarterly'?'Trimestral':s.frequency==='annual'?'Anual':'Mensual')} · Próximo ${prettyDate(s.nextDue)}<br/>${sanitize(bank(s.institutionId)?.name||'Sin institución')} · ${sanitize(account(s.accountId)?.name||'Sin cuenta')}${p.staleRule?' · Revisar reglas fiscales del año':''}</small></div><div class="v40-row-actions"><span class="v40-pill ${auto?'good':'manual'}">${auto?'Auto al sincronizar':'Confirmación'}</span><b>${money(p.net,s.currency,2)}</b>${s.active!==false&&!auto?`<button class="btn sm soft" data-v40-action="confirmIncome" data-id="${s.id}">${s.kind==='formal'?(due?'Confirmar salario':'Registrar salario anticipado'):(due?'Confirmar cobro':'Registrar cobro anticipado')}</button>`:''}${s.active!==false?`<button class="btn sm ghost" data-v40-action="v940Additional" data-id="${s.id}">+ Ingreso adicional</button>`:''}<button class="btn sm ghost" data-v40-action="editIncome" data-id="${s.id}">Editar</button><button class="btn sm ghost" data-v40-action="toggleIncome" data-id="${s.id}">${s.active===false?'Activar':'Pausar'}</button></div></div>`}
 function v40IncomeBreakdown(s){let p;try{p=v40Payroll(s,s.nextDue);}catch(e){return '';}const paid=db.transactions.filter(t=>t.incomeScheduleId===s.id).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);return `<details class="v40-breakdown"><summary>Desglose estimado · bruto, AFP, SFS, ISR y neto</summary><div class="v40-break-grid">${[['Bruto del período',p.gross],['AFP',p.afp],['SFS',p.sfs],['ISR / Retención',p.isr],['Otros descuentos',p.other],['Neto estimado',p.net]].map(([n,v])=>`<div><small>${n}</small><b>${money(v,s.currency,2)}</b></div>`).join('')}</div>${paid.length?`<div class="v40-past"><strong>Depósitos contabilizados</strong>${paid.map(t=>`<p>${prettyDate(t.date)} · ${money(t.amount,t.currency,2)} · ${sanitize(t.postingOrigin||'Registrado')} · ISR de ese recibo: ${money(t.payrollSnapshot?.isr||0,t.currency,2)}</p>`).join('')}</div>`:'<p class="v40-one">Todavía sin depósitos contabilizados.</p>'}</details>`;}
 function v40IncomeSection(){
  v40Ensure();const active=db.incomeSchedules.filter(x=>x.active!==false),formal=active.filter(x=>x.kind==='formal'),informal=active.filter(x=>x.kind!=='formal');
@@ -33085,7 +33112,7 @@ v40IncomeConfirmForm=function(id){return v940IncomeCaptureForm(id,'scheduled');}
 const v48PreIncomeRow=v40IncomeRow;
 v40IncomeRow=function(s){
  const html=v48PreIncomeRow(s);
- const action=s.nextDue>today()?'Registrar cobro anticipado':v40IncomeOccurrence(s,s.nextDue).parts.length?'Completar cobro':'Confirmar cobro';
+ const isSalary=s.kind==='formal';const action=s.nextDue>today()?(isSalary?'Registrar salario anticipado':'Registrar cobro anticipado'):v40IncomeOccurrence(s,s.nextDue).parts.length?(isSalary?'Completar salario':'Completar cobro'):(isSalary?'Confirmar salario':'Confirmar cobro');
  return html.replace(/(<button class="btn sm soft" data-v40-action="confirmIncome"[^>]*>)[\s\S]*?(<\/button>)/,'$1'+action+'$2');
 };
 
@@ -33111,9 +33138,10 @@ function v940IncomeCaptureForm(sourceId,requested='scheduled'){
  const accountOptions=possible.map(([id,text])=>opt(id,text,s.accountId)).join('');
  const sourceOptions=sources.map(x=>opt(x.id,x.name,x.id===s.id?s.id:'' )).join('');
  const amount=mode==='additional'?'':state.remaining.toFixed(2);
+ const isSalary=s.kind==='formal';
  const body=`<div class="form-full v940-intro"><span class="smart-kicker">INGRESOS · REGISTRO</span><strong>${sanitize(s.name)}</strong><small>Un solo movimiento por cada cobro recibido. La programación original permanece vinculada.</small></div>
  <label class="form-full"><span class="filter-label">Tipo de ingreso</span><select name="captureMode" class="field" required>
-  ${[['scheduled','Cobro recurrente programado'],['advance','Registrar cobro anticipado'],['additional','Ingreso laboral adicional']].map(([id,label])=>opt(id,label,mode)).join('')}</select></label>
+  ${[['scheduled',isSalary?'Salario recurrente programado':'Cobro recurrente programado'],['advance',isSalary?'Registrar salario anticipado':'Registrar cobro anticipado'],['additional','Ingreso laboral adicional']].map(([id,label])=>opt(id,label,mode)).join('')}</select></label>
  <label class="form-full"><span class="filter-label">Trabajo o fuente vinculada</span><select name="sourceId" class="field" required>${sourceOptions}</select></label>
  <div class="v940-occurrence form-full" aria-live="polite"><span>Vencimiento programado: <strong>${prettyDate(s.nextDue)}</strong></span><span>Previsto: <strong>${money(state.expected,s.currency,2)}</strong></span><span>Ya recibido: <strong>${money(state.received,s.currency,2)}</strong></span><span>Pendiente: <strong>${money(state.remaining,s.currency,2)}</strong></span></div>
  <label class="form-full v940-kind"><span class="filter-label">Concepto del ingreso adicional</span><select name="extraKind" class="field">${[['salary','Salario extraordinario'],['commission','Comisión'],['incentive','Incentivo'],['bonus','Bonificación'],['overtime','Horas extras'],['retroactive','Retroactivo'],['reimbursement','Reembolso laboral'],['other','Otros ingresos']].map(([id,label])=>opt(id,label,'salary')).join('')}</select></label>
@@ -33123,11 +33151,11 @@ function v940IncomeCaptureForm(sourceId,requested='scheduled'){
  ${formItem('note','Nota (opcional)','','text','maxlength="160"')}
  <p class="form-full v940-help">Un anticipo o abono parcial acredita únicamente lo recibido. El siguiente período no se altera hasta completar la ocurrencia. Un ingreso adicional no sustituye el sueldo recurrente.</p>
  <div class="form-full v940-error" role="alert" aria-live="polite"></div>`;
- modal('Registrar ingreso recibido',body,'v940IncomeCaptureForm',true);
+ modal(isSalary?'Registrar salario recibido':'Registrar ingreso recibido',body,'v940IncomeCaptureForm',true);
  const f=document.getElementById('v940IncomeCaptureForm');if(!f)return;
  f.classList.add('v940-income-capture');
  f.elements.sourceId.value=s.id;
- const submit=f.querySelector('button[type="submit"]');if(submit)submit.textContent='Registrar cobro';
+ const submit=f.querySelector('button[type="submit"]');if(submit)submit.textContent=mode==='additional'?'Registrar ingreso adicional':isSalary&&mode==='advance'?'Registrar salario anticipado':isSalary?'Confirmar salario':'Registrar cobro';
  const sync=()=>{
   const extra=f.elements.captureMode.value==='additional';
   f.querySelector('.v940-kind').hidden=!extra;
@@ -33137,7 +33165,7 @@ function v940IncomeCaptureForm(sourceId,requested='scheduled'){
   if(extra&&f.dataset.v940Mode!=='additional')f.elements.amount.value='';
   if(!extra&&f.dataset.v940Mode==='additional')f.elements.amount.value=state.remaining.toFixed(2);
   f.dataset.v940Mode=f.elements.captureMode.value;
-  if(submit)submit.textContent=extra?'Registrar ingreso adicional':'Registrar cobro';
+  if(submit)submit.textContent=extra?'Registrar ingreso adicional':isSalary&&f.elements.captureMode.value==='advance'?'Registrar salario anticipado':isSalary?'Confirmar salario':'Registrar cobro';
  };
  f.elements.captureMode.addEventListener('change',sync);
  f.elements.sourceId.addEventListener('change',()=>v940IncomeCaptureForm(f.elements.sourceId.value,f.elements.captureMode.value));
@@ -33663,7 +33691,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   return `<section class="v55-section-lead formal"><span class="v55-overline">NÓMINA · TRABAJO FORMAL</span><div class="v55-lead-row"><div><h2>Tu nómina, sin complicaciones.</h2><p>Salario, retenciones, incrementos y depósitos en una vista ejecutiva.</p></div>${addButton('+ Agregar trabajo')}</div></section>${select}
   <section class="v55-metrics">${metric('wallet','Salario bruto mensual',monthly?cash(monthly.gross,s.currency,2):'Sin programación','Base actual del empleo')}${metric('check-circle','Salario neto mensual',monthly?cash(monthly.net,s.currency,2):cash(sDetails.currentAmount),'Estimación tras descuentos o cobros recibidos','accent')}${metric('calendar','Neto por cobro',period?cash(period.net,s.currency,2):'—',hasSchedule?v45FreqName(s.frequency):'Fuente sin frecuencia')}${metric('pie-chart','Deducciones estimadas',monthly&&monthly.gross?`${((monthly.gross-monthly.net)/monthly.gross*100).toFixed(1)}%`:'—',monthly?cash(monthly.gross-monthly.net,s.currency,2)+' del bruto mensual':'Sin datos fiscales vinculados')}</section>
   <div class="v55-payroll-grid"><section class="v55-panel v55-payroll-detail"><div class="v55-panel-head"><div><span class="v55-overline">EMPLEO Y REMUNERACIÓN</span><h3>${txt(s.name)}</h3><p>${hasSchedule?txt(bank(s.institutionId)?.name||'Sin empleador vinculado')+' · '+txt(v45FreqName(s.frequency)):'Cobros no asociados a un perfil de nómina'}</p></div>${tag(s.active===false?'Pausada':hasSchedule?'ACTIVA':'MANUAL',s.active===false?'amber':'good')}</div>${monthly?`<div class="v55-payroll-rows">${[['Salario bruto',monthly.gross,'gross'],['AFP · Pensiones',monthly.afp,''],['SFS · Seguro de salud',monthly.sfs,''],['ISR · Impuesto sobre la renta',monthly.isr,''],['Otros descuentos',monthly.other,''],['Salario neto mensual',monthly.net,'net']].map(([label,val,c])=>`<div class="v55-payline ${c}"><span>${txt(label)}</span><strong>${c==='gross'||c==='net'?'':'−'}${cash(val,s.currency,2)}</strong></div>`).join('')}</div><p class="v55-muted-note">Cálculo basado en las reglas fiscales configuradas. El recibo real puede variar y cada depósito histórico conserva su cálculo original.</p>`:empty('Sin configuración de nómina','Asocia este ingreso a un trabajo formal para obtener AFP, SFS e ISR.')}
-  <div class="v55-inline-actions">${hasSchedule?`<button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(s.id)}">${icon('pencil')} Editar empleo</button>${s.active!==false?`<button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(s.id)}">${s.nextDue>today()?'Registrar cobro anticipado':'Confirmar cobro'}</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(s.id)}">+ Ingreso laboral adicional</button>`:''}`:`<button class="btn sm soft" data-v40-action="addIncome">Vincular nuevo empleo</button>`}</div></section>
+  <div class="v55-inline-actions">${hasSchedule?`<button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(s.id)}">${icon('pencil')} Editar empleo</button>${s.active!==false?`<button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(s.id)}">${s.kind==='formal'?(s.nextDue>today()?'Registrar salario anticipado':'Confirmar salario'):(s.nextDue>today()?'Registrar cobro anticipado':'Confirmar cobro')}</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(s.id)}">+ Ingreso laboral adicional</button>`:''}`:`<button class="btn sm soft" data-v40-action="addIncome">Vincular nuevo empleo</button>`}</div></section>
   <section class="v55-panel v55-salary-history"><div class="v55-panel-head"><div><span class="v55-overline">TRAYECTORIA PROFESIONAL</span><h3>Evolución e incrementos de salario</h3><p>Solo cambios de sueldo guardados. Sin aumentos inventados.</p></div>${tag(events.length+' cambios','blue')}</div>${events.length?`<div class="v55-salary-events">${events.slice().reverse().map(e=>`<div class="v55-salary-event"><i></i><div><small>${prettyDate(e.date)}</small><b>${cash(e.before,s.currency,2)} → ${cash(e.after,s.currency,2)}</b><span>Variación del bruto: <strong class="${e.after>=e.before?'positive':'negative'}">${e.before?fmtPct((e.after/e.before-1)*100):'Primer registro'}</strong></span></div></div>`).join('')}</div>`:empty('Aún no hay aumentos registrados','Cuando edites el importe de tu nómina, se conservarán las versiones anteriores con su fecha.')}
   ${hasSchedule?`<div class="v55-salary-baseline"><small>SALARIO BASE ACTUAL</small><b>${cash(s.grossMonthly,s.currency,2)}</b><span>Historial conservado al modificar la fuente, sin alterar recibos anteriores.</span></div>`:''}</section></div>
   ${hasSchedule?`<section class="v55-panel v55-employment-panel"><div class="v55-panel-head"><div><span class="v55-overline">CONFIGURACIÓN DEL EMPLEO</span><h3>Tu empresa y cuenta receptora</h3><p>Información vinculada a esta nómina, sin exponer números completos de cuenta.</p></div></div><div class="v55-employment-grid"><div><small>EMPLEADOR</small><strong>${txt(bank(s.institutionId)?.name||'Empresa no vinculada')}</strong></div><div><small>CUENTA RECEPTORA</small><strong>${txt(account(s.accountId)?.name||'Cuenta no vinculada')}</strong></div><div><small>FRECUENCIA DEL PAGO</small><strong>${txt(v45FreqName(s.frequency))}</strong></div><div><small>PRÓXIMO COBRO PROGRAMADO</small><strong>${prettyDate(s.nextDue)}</strong></div><div><small>MODALIDAD DE REGISTRO</small><strong>${s.postingMode==='auto'?'Asiento automático al sincronizar':'Confirmación de depósito'}</strong></div><div><small>MONEDA</small><strong>${txt(s.currency||'DOP')}</strong></div></div></section>`:''}
@@ -33676,7 +33704,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   <section class="v55-metrics">${metric('wallet','Joseo ingresado · período',cash(amount),'Cobros reconocidos: '+txt(periodDescription()),'amber')}${metric('layers','Joseo acumulado histórico',cash(m.sumAmount(all)),'Ingresos reales desde el inicio')}${metric('calendar','Neto previsto / mes',cash(m.informalExpected),'Fuentes informales activas, sin cobros manuales','amber')}${metric('store','Actividades programadas',String(ss.filter(s=>s.active!==false).length),'Fuentes independientes activas')}</section>
   <div class="v55-two"><section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">MIS ACTIVIDADES</span><h3>Trabajos, emprendimientos y ventas</h3><p>Selecciona un negocio para consultar su detalle</p></div></div><div class="v55-informal-list">${options.length?options.map(s=>{const d=sourceTotals(m,s);return `<button class="v55-informal-card ${selected?.id===s.id?'active':''}" data-v55-informal="${txt(s.id)}"><span class="v55-informal-icon">${icon('store')}</span><span><strong>${txt(s.name)}</strong><small>${s._manual?'Ventas y cobros sin programación':v45FreqName(s.frequency)+' · '+(s.active===false?'Pausado':'Activo')}</small></span><b>${cash(d.currentAmount)}</b>${icon('chevron-right')}</button>`}).join(''):empty('Aún sin ingresos independientes','Registra una actividad informal recurrente o un ingreso de ventas.',addButton('Agregar actividad'))}</div></section>
   <section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">¿QUÉ GENERA EL JOSEO?</span><h3>Composición de ingresos independientes</h3><p>Clasificación por categoría del movimiento</p></div></div>${parts.length?parts.map(([cat,v])=>`<div class="v55-cat"><div><b>${txt(cat)}</b><strong>${cash(v)}</strong></div>${fullBar(v,amount,'informal')}<small>${amount?(v/amount*100).toFixed(1):0}% del total informal</small></div>`).join(''):empty('Todavía no hay cobros este período','Las ventas y servicios aparecerán cuando se registren.')}</section></div>
-  ${selected?`<section class="v55-panel v55-informal-detail"><div class="v55-panel-head"><div><span class="v55-overline">DESGLOSE DE ACTIVIDAD</span><h3>${txt(selected.name)}</h3><p>${selected._manual?'Ingresos registrados sin programación; no son una mensualidad garantizada.':'Importes por frecuencia y depósitos confirmados.'}</p></div>${selected._manual?tag('SIN PROGRAMAR','amber'):`<div class="v940-source-actions"><button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(selected.id)}">${icon('pencil')} Editar fuente</button><button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(selected.id)}">Registrar cobro</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(selected.id)}">+ Ingreso adicional</button></div>`}</div>${(()=>{const data=sourceTotals(m,selected);let p=null;if(!selected._manual)try{p=v40Payroll({...selected,frequency:'monthly'},today())}catch(e){}return `<div class="v55-informal-stats"><div><small>INGRESADO EN EL PERÍODO</small><b>${cash(data.currentAmount)}</b></div><div><small>ACUMULADO DE ESTA FUENTE</small><b>${cash(data.total)}</b></div><div><small>BRUTO PREVISTO / MES</small><b>${p?cash(p.gross,selected.currency,2):'No aplica'}</b></div><div><small>NETO PREVISTO / MES</small><b>${p?cash(p.net,selected.currency,2):'No aplica'}</b></div></div>${!selected._manual?`<div class="v55-informal-info"><span>Cuenta receptora: <b>${txt(account(selected.accountId)?.name||'Sin cuenta vinculada')}</b></span><span>Próximo cobro: <b>${prettyDate(selected.nextDue)}</b></span><span>Registro: <b>${selected.postingMode==='auto'?'Automático al sincronizar':'Confirmación manual'}</b></span></div>`:''}<div class="v55-two"><div><h4>Cobros por mes</h4>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(pm)))}}))}</div><div><h4>Últimos cobros de esta actividad</h4>${txList(data.arr,6)}</div></div>`;})()}</section>`:''}`;
+  ${selected?`<section class="v55-panel v55-informal-detail"><div class="v55-panel-head"><div><span class="v55-overline">DESGLOSE DE ACTIVIDAD</span><h3>${txt(selected.name)}</h3><p>${selected._manual?'Ingresos registrados sin programación; no son una mensualidad garantizada.':'Importes por frecuencia y depósitos confirmados.'}</p></div>${selected._manual?tag('SIN PROGRAMAR','amber'):`<div class="v940-source-actions"><button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(selected.id)}">${icon('pencil')} Editar fuente</button><button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(selected.id)}">Registrar cobro anticipado</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(selected.id)}">+ Ingreso adicional</button></div>`}</div>${(()=>{const data=sourceTotals(m,selected);let p=null;if(!selected._manual)try{p=v40Payroll({...selected,frequency:'monthly'},today())}catch(e){}return `<div class="v55-informal-stats"><div><small>INGRESADO EN EL PERÍODO</small><b>${cash(data.currentAmount)}</b></div><div><small>ACUMULADO DE ESTA FUENTE</small><b>${cash(data.total)}</b></div><div><small>BRUTO PREVISTO / MES</small><b>${p?cash(p.gross,selected.currency,2):'No aplica'}</b></div><div><small>NETO PREVISTO / MES</small><b>${p?cash(p.net,selected.currency,2):'No aplica'}</b></div></div>${!selected._manual?`<div class="v55-informal-info"><span>Cuenta receptora: <b>${txt(account(selected.accountId)?.name||'Sin cuenta vinculada')}</b></span><span>Próximo cobro: <b>${prettyDate(selected.nextDue)}</b></span><span>Registro: <b>${selected.postingMode==='auto'?'Automático al sincronizar':'Confirmación manual'}</b></span></div>`:''}<div class="v55-two"><div><h4>Cobros por mes</h4>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(pm)))}}))}</div><div><h4>Últimos cobros de esta actividad</h4>${txList(data.arr,6)}</div></div>`;})()}</section>`:''}`;
  }
  function evolution(m){const rows=m.timeline.map(x=>({...x,total:x.formal+x.informal})),year=+ym().slice(0,4),cutoff=year===+today().slice(0,4)?Math.min(+ym().slice(5),+today().slice(5,7)):12,total=sum(rows.filter((x,i)=>i<cutoff),x=>x.total),prior=sum(rows.filter((x,i)=>i<cutoff),x=>x.previous),acc=[];
   let run=0,runPrior=0;for(const x of rows){run+=x.total;runPrior+=x.previous;acc.push({...x,total:run,previous:runPrior});}
@@ -33689,7 +33717,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  function v55RecurringWorkspace(){
   const m=model(),tab=['general','formal','informal','evolution'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
   const tabs=[['general','Visión general','layout-dashboard'],['formal','Trabajo formal','briefcase'],['informal','Trabajo informal · Joseo','trending-up'],['evolution','Evolución y acumulado','chart-no-axes-combined']];
-  return `<div class="v55-shell"><header class="v55-hero"><div class="v55-hero-left"><div class="v55-eyebrow">INGRESOS <span>›</span> INGRESOS RECURRENTES</div><h1>Todo lo que genera tu trabajo<span class="v55-h1-dot">.</span></h1><p>Nómina, negocios, joseo y otras fuentes. Cada peso en su lugar, desde su origen hasta el acumulado.</p></div><div class="v55-hero-right">${tag('PANEL DE INGRESOS','blue')}${addButton('Agregar fuente')}<button type="button" class="btn ghost" data-v40-action="v940Advance">Registrar cobro</button></div></header>
+  return `<div class="v55-shell"><header class="v55-hero"><div class="v55-hero-left"><div class="v55-eyebrow">INGRESOS <span>›</span> INGRESOS RECURRENTES</div><h1>Todo lo que genera tu trabajo<span class="v55-h1-dot">.</span></h1><p>Nómina, negocios, joseo y otras fuentes. Cada peso en su lugar, desde su origen hasta el acumulado.</p></div><div class="v55-hero-right">${tag('PANEL DE INGRESOS','blue')}${addButton('Agregar fuente')}<button type="button" class="btn ghost" data-v40-action="v940Advance">Registrar salario anticipado / cobro</button></div></header>
   <nav class="v55-subnav" aria-label="Módulos dentro de ingresos recurrentes">${tabs.map(([id,label,ico])=>`<button type="button" class="v55-subtab ${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}" data-v55-tab="${id}">${icon(ico)}<span>${label}</span></button>`).join('')}</nav>
   <div class="v55-workspace-toolbar"><div><span class="v55-workspace-label">${txt(periodDescription())}</span><small>Cifras reales vs. programación futura, siempre diferenciadas</small></div><div class="v55-controls"><div class="v55-period-tabs">${[['month','Mes'],['year','Año'],['all','Histórico']].map(([id,label])=>`<button type="button" data-v55-period="${id}" class="${ui.v55RecurringRange===id?'selected':''}">${label}</button>`).join('')}</div><label class="v55-month-label">Período <input type="month" aria-label="Elegir período de ingresos recurrentes" class="v55-month" value="${ym()}"></label></div></div>
   <div class="v55-body">${tab==='general'?general(m):tab==='formal'?formal(m):tab==='informal'?informal(m):evolution(m)}</div></div>`;
@@ -42114,7 +42142,11 @@ function v918ChannelPolicy(kind,a,requested){
  if(kind==='card')return {channel:'presencial',choice:false,note:'Consumo directo con tarjeta: no es transferencia bancaria y no genera cargo por transferencia.'};
  if(!a)return {channel:'internet_banking',choice:false,note:'Selecciona una cuenta de origen.'};
  if(a.kind==='cash')return {channel:'presencial',choice:false,note:'Pago en efectivo, realizado cara a cara (presencial). Sin comisión de transferencia.'};
- return {channel:'internet_banking',choice:false,note:'Pago desde cuenta bancaria, convencional o digital: transferencia por Internet Banking. Se utiliza la tasa configurada en Ajustes cuando corresponda.'};
+ if(v918IsDigitalAccount(a))return {channel:'internet_banking',choice:false,note:'Cuenta digital: transferencia por Internet Banking. La tasa configurada se incorpora automáticamente cuando corresponde.'};
+ // Cuenta de ahorro/corriente convencional: el usuario puede indicar si el movimiento
+ // fue Internet Banking (predeterminado) o presencial. No se altera el impuesto base.
+ const chosen=requested==='presencial'?'presencial':'internet_banking';
+ return {channel:chosen,choice:true,note:chosen==='presencial'?'Operación realizada cara a cara (presencial). No se añade el impuesto de transferencia en esta modalidad.':'Transferencia por Internet Banking. Si está gravada, se incorpora automáticamente la tasa guardada en Ajustes.'};
 }
 function v918ConfiguredBankRate(){
  // The current configured rate is authoritative; no date-dependent percentage is inferred.
@@ -42157,7 +42189,10 @@ function v917BillDetail(id){
   </section>
   <section class="v918-payment-channel" aria-label="Canal del pago">
    <h3>¿Cómo realizaste el pago?</h3>
- 
+   <div class="v918-channel-options" role="group" aria-label="Modalidad para cuenta bancaria convencional">
+    <button type="button" data-v918-channel="internet_banking" aria-pressed="true">${icon('wallet')} Internet Banking</button>
+    <button type="button" data-v918-channel="presencial" aria-pressed="false">${icon('building')} Presencial</button>
+   </div>
    <p id="v918ChannelExplanation" class="v918-channel-explanation" aria-live="polite"></p>
   </section>
   <div class="v918-payment-breakdown" aria-live="polite">
@@ -42211,9 +42246,11 @@ function v923ServiceChooser(){
  const ranked=all.slice().sort((a,b)=>String(a.x.date).localeCompare(String(b.x.date)));
  const pending=ranked.filter(({x})=>diffDays(x.date,today())<=7).slice(0,6);
  const taken=new Set(pending.map(({r})=>String(r.id)));
- const future=ranked.filter(({r})=>!taken.has(String(r.id)));
+ const extraPending=ranked.filter(({r,x})=>!taken.has(String(r.id))&&diffDays(x.date,today())<=7);
+ const future=ranked.filter(({x})=>diffDays(x.date,today())>7);
  const group=(title,detail,items)=>`<section class="v261-group v923-service-group"><div class="v261-group-head"><div><h3>${title}</h3><small>${detail}</small></div><span class="v261-number">${items.length}</span></div><div class="v261-bill-list">${items.length?items.map(({r,x})=>v261BillRow(r,x)).join(''):'<div class="v261-none"><strong>Sin pagos en este grupo</strong><small>Los vencimientos se mostrarán cuando estén pendientes.</small></div>'}</div></section>`;
- const body=`${group('Pendientes','Hasta seis cargos vencidos o próximos, por fecha',pending)}${group('Próximos pagos y programados','Otros compromisos registrados y futuros',future)}`;
+ const pendingOverflow=extraPending.length?`<p class="v923-pending-overflow" role="status">Hay ${extraPending.length} compromiso${extraPending.length===1?'':'s'} pendiente${extraPending.length===1?'':'s'} adicional${extraPending.length===1?'':'es'}; la lista muestra los seis más próximos. <button type="button" data-act="navigate" data-id="recurring" data-tab="next">Ver todos en Suscripciones →</button></p>`:'';
+ const body=`${group('Pendientes','Hasta seis cargos vencidos o próximos, por fecha',pending)}${pendingOverflow}${group('Próximos pagos y programados','Otros compromisos futuros',future)}`;
  v261ServiceFrame('Pagar servicios','Selecciona un compromiso pendiente para confirmar el pago',body);
 };
 v261OpenBill=v917BillDetail;
@@ -88425,27 +88462,37 @@ body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader::before{
 </style>
 
 <style id="v937-cardpay-compact-stage1">
-/* V937 · Pagar tarjeta móvil: primera pantalla compacta como Pago de servicios;
-   Confirmación conserva el largo natural. No cambia lógica, selectores ni cálculos. */
+/* V946 · Misma base financiera; dos geometrías independientes. Sin nuevos componentes de pago. */
+#modal-root form.studio-form.vop-cardpay .vop-channel-icon{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:21px!important;height:21px!important;min-width:21px!important;
+ border:0!important;border-radius:0!important;padding:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+#modal-root form.studio-form.vop-cardpay .vop-channel-icon svg{width:20px!important;height:20px!important;display:block!important;}
+#modal-root form.studio-form.vop-cardpay .vop-review-entry:focus-visible{outline:2px solid var(--vive-theme-color,#7565ee)!important;outline-offset:3px!important;}
 @media (max-width:790px){
   #modal-root .modal-layer:has(> .modal > form.studio-form.vop-cardpay[data-vop-stage="details"]){
-    align-items:flex-start!important;
-    padding:calc(env(safe-area-inset-top,0px) + 8px) 6px 10px!important;
+    align-items:center!important;
+    justify-content:center!important;
+    padding:calc(env(safe-area-inset-top,0px) + 8px) 10px calc(env(safe-area-inset-bottom,0px) + 8px)!important;
   }
-  #modal-root .modal:has(> form.studio-form.vop-cardpay[data-vop-stage="details"]){
-    width:100%!important;
-    max-width:100%!important;
+  html body #modal-root#modal-root#modal-root .modal:has(> form.studio-form.vop-cardpay[data-vop-stage="details"]){
+    width:min(440px,calc(100vw - 20px))!important;
+    max-width:440px!important;
     height:auto!important;
     min-height:0!important;
-    max-height:calc(100dvh - 18px)!important;
+    max-height:calc(100dvh - 22px)!important;
     border-radius:28px!important;
     overflow:hidden!important;
+    box-shadow:0 18px 44px rgba(18,26,52,.14)!important;
   }
   html body #modal-root .modal-layer>.modal>form.studio-form.vop-cardpay[data-vop-stage="details"]{
     height:auto!important;
     max-height:calc(100dvh - 18px)!important;
     min-height:0!important;
-    overflow:visible!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
     padding-bottom:0!important;
   }
   #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-shell,
@@ -88464,8 +88511,8 @@ body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader::before{
     padding-bottom:12px!important;
   }
   #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-fields{
-    gap:10px!important;
-    padding-bottom:8px!important;
+    gap:8px!important;
+    padding-bottom:5px!important;
   }
   #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-navigation{
     position:static!important;
@@ -88479,6 +88526,10 @@ body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader::before{
   #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-navigation button[data-studio-next]{
     min-height:54px!important;
     border-radius:21px!important;
+    background:var(--vive-theme-color,#7066ee)!important;
+    color:#fff!important;-webkit-text-fill-color:#fff!important;
+    border-color:var(--vive-theme-color,#7066ee)!important;
+    box-shadow:0 8px 22px color-mix(in srgb,var(--vive-theme-color,#7066ee) 18%,transparent)!important;
   }
   /* Limpieza visual del canal en Confirmar pago: íconos translúcidos sin pastilla interna. */
   #modal-root form.studio-form.vop-cardpay .vop-channel-icon{
@@ -88493,14 +88544,18 @@ body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader::before{
     opacity:.92!important;
     font-size:15px!important;
   }
-  #modal-root form.studio-form.vop-cardpay .vop-channel button{
+  #modal-root form.studio-form.vop-cardpay .vop-channel button:not(.selected){
     background:color-mix(in srgb,var(--r871-card,#17171a) 92%,transparent)!important;
     backdrop-filter:blur(12px)!important;
   }
-  body:not(.theme-black):not(.theme-dark) #modal-root form.studio-form.vop-cardpay .vop-channel button{
+  body:not(.theme-black):not(.theme-dark) #modal-root form.studio-form.vop-cardpay .vop-channel button:not(.selected){
     background:color-mix(in srgb,#ffffff 88%,var(--vive-theme-color,#7565ee) 4%)!important;
   }
   #modal-root form.studio-form.vop-cardpay .vop-channel button.selected{
+    background:var(--vive-theme-color,#7565ee)!important;
+    color:#fff!important;-webkit-text-fill-color:#fff!important;
+    border-color:var(--vive-theme-color,#7565ee)!important;
+    box-shadow:0 7px 20px color-mix(in srgb,var(--vive-theme-color,#7565ee) 19%,transparent)!important;
     backdrop-filter:none!important;
   }
 }
