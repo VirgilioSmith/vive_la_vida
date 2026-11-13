@@ -88686,5 +88686,128 @@ body:is(.theme-black,.theme-dark) #modal-root form.v940-income-capture .v940-int
 }
 </style>
 
+<style id="v950-responsive-engine">
+/* ==========================================================================
+   V950 · Motor responsive fluido y autodimensionable
+   --------------------------------------------------------------------------
+   Capa final de la cascada. NO redefine la identidad visual: conserva por
+   separado el diseño móvil (≤790px) y el de escritorio (≥791px) y solo:
+     1. Declara tokens fluidos (clamp) reutilizables.
+     2. Añade salvaguardas globales contra desbordes (media, texto, formularios,
+        hijos de grid/flex) con especificidad cero (:where) para no pisar
+        reglas existentes.
+     3. Convierte componentes clave en contenedores (Container Queries) para
+        que reaccionen a SU propio ancho, no al del dispositivo.
+     4. Corrige desalineaciones y desbordes medidos en 320–2560px.
+   ========================================================================== */
+
+/* 1 · Tokens fluidos ------------------------------------------------------ */
+:root{
+ --rx-gutter:clamp(12px,1.6vw + 6px,32px);
+ --rx-gap:clamp(8px,.9vw + 5px,20px);
+ --rx-radius:clamp(14px,.8vw + 10px,24px);
+ --rx-tap:44px;
+ --rx-content-max:1800px;
+ --rx-safe-l:env(safe-area-inset-left,0px);
+ --rx-safe-r:env(safe-area-inset-right,0px);
+ --rx-safe-b:env(safe-area-inset-bottom,0px);
+}
+
+/* 2 · Salvaguardas globales (especificidad 0) ----------------------------- */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* Nunca debe existir scroll horizontal de página; clip no rompe position:sticky. */
+body{overflow-x:clip}
+:where(#app,#modal-root,.modal-layer) :where(img,video,canvas,iframe,picture){max-width:100%}
+:where(#app,#modal-root,.modal-layer) :where(input,select,textarea){max-width:100%;min-width:0}
+:where(#app main,#modal-root,.modal-layer) :where(h1,h2,h3,h4,h5,p,li,dt,dd,label,figcaption,blockquote){overflow-wrap:break-word}
+/* Hijos de rejillas y filas: pueden encogerse en lugar de empujar fuera del contenedor. */
+:where(#app main) :where([class*="grid"],[class*="-row"],[class*="kpis"],[class*="-cols"],[class*="columns"],[class*="-stack"])>:where(*){min-width:0}
+/* Tablas: siempre dentro de su propio scroll si no caben. */
+:where(#app main) :where(.table-wrap,[class*="table-scroll"],[class*="-scroll"]){max-width:100%}
+/* Ventanas modales: nunca más grandes que la pantalla visible. */
+:where(.modal-layer,#modal-root) :where(.modal,[role="dialog"]){max-width:calc(100vw - var(--rx-safe-l) - var(--rx-safe-r));max-height:100dvh}
+
+/* 3 · Contenedores (Container Queries) ------------------------------------ */
+html body #app .ff-dashboard .v152-position-reference,
+html body #app .theme-settings.panel,
+html body #app .v431-explore .v431-tile,
+html body #app .v443-nav-settings{container-type:inline-size}
+html body #app .ff-dashboard .v152-position-reference{container-name:rx-position}
+html body #app .theme-settings.panel{container-name:rx-theme}
+
+/* Posición financiera (escritorio): si la tarjeta es estrecha, los botones
+   "Recibir dinero / Registrar egreso" bajan al flujo en vez de pisar las burbujas. */
+@container rx-position (max-width:860px){
+ html body #app .main .ff-dashboard.summary-space .v152-position-reference .ff-balance-actions{
+  position:static!important;inset:auto!important;justify-content:flex-end!important;
+  flex-wrap:wrap!important;gap:8px!important;margin-top:10px!important;padding-top:0!important;
+ }
+}
+/* Burbujas proporcionales al ancho de su tarjeta (sin cambiar su forma). */
+@container rx-position (max-width:560px){
+ html body #app .ff-dashboard .ff-bubbles .ff-bubble{width:clamp(96px,27cqi,133px)!important;height:clamp(96px,27cqi,133px)!important}
+ html body #app .ff-dashboard .ff-bubbles .ff-bubble.featured{width:clamp(108px,31cqi,153px)!important;height:clamp(108px,31cqi,153px)!important}
+}
+
+/* Configuración · tema: el selector Claro / Black baja a su propia línea cuando falta ancho. */
+@container rx-theme (max-width:540px){
+ html body #app .theme-settings.panel{flex-wrap:wrap!important;row-gap:14px!important}
+ html body #app .theme-settings.panel>div:first-child{flex:1 1 100%!important;min-width:0!important}
+ html body #app .theme-settings.panel .theme-choice-row{flex:1 1 100%!important;width:100%!important;min-width:0!important}
+ html body #app .theme-settings.panel .theme-choice{flex:1 1 0!important;min-width:0!important}
+}
+/* Configuración · vista previa de menú: se desplaza dentro de su caja. */
+html body #app .v443-nav-preview{max-width:100%;min-width:0}
+html body #app .v443-nav-preview-bar{max-width:100%!important;overflow-x:auto!important;overscroll-behavior-x:contain;scrollbar-width:none}
+html body #app .v443-nav-preview-bar>*{flex:0 0 auto}
+
+/* Explorar · comparativa "vs. mes anterior": se ajusta en lugar de cortarse. */
+html body #app .v431-explore .v431-tile-body{min-width:0!important}
+html body #app .v431-explore .v431-compare{flex-wrap:wrap!important;white-space:normal!important;max-width:100%!important;row-gap:2px!important}
+html body #app .v431-explore .v431-compare-label{min-width:0;overflow-wrap:anywhere}
+html body #app .v431-explore .v431-tile-description{min-width:0;overflow-wrap:anywhere}
+@container (max-width:150px){
+ html body #app .v431-explore .v431-compare-label{flex-basis:100%}
+}
+
+/* Categorías · subcategoría + botón eliminar siempre dentro de su fila. */
+html body #app .v191-taxonomy-subitem{max-width:100%;min-width:0}
+html body #app .v191-taxonomy-subitem>span{min-width:0;overflow:hidden}
+html body #app .v191-taxonomy-subitem .v255-tax-badge{min-width:0}
+html body #app .v191-taxonomy-subitem .v255-tax-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body #app .v191-taxonomy-subitem .v191-taxonomy-delete{flex:0 0 auto}
+
+/* Egresos · Pareto: columnas que se comprimen proporcionalmente en pantallas pequeñas
+   (en anchos normales el resultado es idéntico: 105px / 80px / 63px como mínimo). */
+html body #app :is(.expenses-pareto-legend,.expenses-pareto-row){
+ grid-template-columns:minmax(min(105px,34%),1.2fr) minmax(min(80px,24%),1fr) minmax(min(63px,22%),auto)!important;
+}
+html body #app .expenses-pareto-row>*{min-width:0}
+html body #app .expenses-pareto-row>strong{overflow-wrap:anywhere}
+
+/* Calendario de calor: celdas fluidas sin rebasar la rejilla. */
+html body #app .v317-heat-grid{gap:clamp(3px,1.2cqi,7px)}
+html body #app .v317-heat-grid>*{min-width:0;max-width:100%}
+
+/* 4 · Escritorio (≥791px) ------------------------------------------------- */
+@media (min-width:791px){
+ /* Pantallas muy anchas: el área de contenido se centra con un ancho máximo equilibrado.
+    Se resuelve con el relleno de <main> (no con cada bloque) para que cabecera, pestañas
+    y tarjetas mantengan exactamente la misma alineación entre sí. */
+}
+@media (min-width:1960px){
+ html body #app main.main{padding-left:max(29px,calc((100vw - 86px - var(--rx-content-max)) / 2))!important;padding-right:max(29px,calc((100vw - 86px - var(--rx-content-max)) / 2))!important}
+}
+
+/* 5 · Móvil y tablet (≤790px) -------------------------------------------- */
+@media (max-width:790px){
+ /* Áreas táctiles mínimas sin alterar el tamaño visual de los iconos. */
+ html body #app :where(.vive-mobile-dock) :where(button,a){min-height:var(--rx-tap)}
+}
+/* 6 · Accesibilidad de movimiento ---------------------------------------- */
+@media (prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+}
+</style>
 </body>
 </html>
