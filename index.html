@@ -24891,7 +24891,7 @@ function v68Wallet(){
     <div class="v550-currency-breakdown" aria-label="Deuda en pesos y dólares"><span><i>RD$</i><b>${num(dop.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span><span><i>US$</i><b>${num(usd.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span></div>
    </div>
   </div>
- <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" data-act="payCard" data-id="${sanitize(active.id)}"><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('card')}</span><b>Detalles</b></button><button type="button" data-v900-action="advance" data-id="${sanitize(active.id)}" aria-label="Solicitar avance de efectivo"><span>${icon('wallet')}</span><b>Avance</b></button><button type="button" data-act="editCard" data-id="${sanitize(active.id)}"><span>${icon('settings')}</span><b>Editar</b></button></div>
+ <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" data-act="payCard" data-id="${sanitize(active.id)}"><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" data-v900-action="advance" data-id="${sanitize(active.id)}" aria-label="Solicitar avance de efectivo"><span>${icon('wallet')}</span><b>Avance</b></button><button type="button" data-act="editCard" data-id="${sanitize(active.id)}"><span>${icon('settings')}</span><b>Editar</b></button></div>
  <section class="v266-wallet-panel"><div class="v266-panel-heading"><div><span class="v266-overline">CONTROL DE CRÉDITO</span><h2>Estado de tu tarjeta</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Abrir detalles">${icon('arrow')}</button></div>
  <div class="v268-limit-row v565-limit-header"><span>Límite total</span><strong>${money(totalLimit)}</strong></div><div class="v565-limit-currencies" aria-label="Límites originales por moneda"><div><span>EN PESOS</span><strong>${money(num(active.limitDOP),'DOP',2)}</strong></div><div><span>EN DÓLARES</span><strong>${money(num(active.limitUSD),'USD',2)}</strong></div></div><div class="v266-credit-meter" role="meter" aria-label="Porcentaje utilizado del límite" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${usage.toFixed(1)}"><span style="width:${usage}%"></span></div><div class="v266-meter-foot"><span>Utilización del límite</span><b>${usage.toFixed(1)}%</b></div>${due?`<div class="v266-next-payment"><div><small>${due.nextDue<today()?'VENCIMIENTO ATRASADO':'PRÓXIMO VENCIMIENTO'}</small><strong>${prettyDate(due.nextDue)}</strong></div><b>${money(due.billed,due.ccy,2)}</b><button type="button" data-act="payCard" data-id="${sanitize(active.id)}" data-ccy="${due.ccy}">Pagar ${icon('arrow')}</button></div>`:''}</section>
  ${v371CardReturnWidget(active)}
@@ -35119,7 +35119,7 @@ function v105CapacityWidget(isMobile=false){
  const state=noIncome?'Sin ingresos suficientes':d.ratio>100?'Ingresos insuficientes':d.ratio>=80?'Capacidad ajustada':'Dentro de tus ingresos';
  const avail=d.balance===null?'—':money(Math.abs(d.balance));
  const shortDesc=d.balance===null?'No es posible calcular el disponible':d.balance<0?'Déficit previsto':'Disponible después de pagos';
- return `<section data-v105-widget="capacity" class="v105-capacity-widget ${d.risk==='over'?'v105-capacity-over':''} ${isMobile?'v105-capacity-mobile':'ff-tile'}" aria-label="Capacidad de endeudamiento">
+ return `<section data-v105-widget="capacity" class="v105-capacity-widget v105-capacity-${d.risk} ${d.risk==='over'?'v105-capacity-over':''} ${isMobile?'v105-capacity-mobile':'ff-tile'}" aria-label="Capacidad de endeudamiento">
   <div class="v105-capacity-top"><div><small>CONTROL DEL MES · ${sanitize(d.period)}</small><h2>Capacidad de endeudamiento</h2><p>¿Qué parte de mis ingresos debo pagar?</p></div><button type="button" class="v105-capacity-info" data-v85-action="capacity" aria-label="Ver explicación de la capacidad">${icon('arrow')}</button></div>
   <div class="v105-capacity-grid"><div class="v105-capacity-rate"><small>Ingresos comprometidos</small><strong>${v85Pct(d.ratio)}</strong><span>${state}</span></div><div class="v105-capacity-rest"><small>${shortDesc}</small><strong>${avail}</strong><span>Ingresos: ${money(d.income)} · Pagos: ${money(d.monthly)}</span></div></div>
   <div class="v105-capacity-meter" aria-hidden="true"><span style="width:${d.ratio===null?0:Math.max(0,Math.min(100,d.ratio))}%"></span></div>
@@ -36005,13 +36005,8 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&document.activeEl
 
 /* Selección de servicios desde el mismo motor de Próximos pagos.
    Reutiliza payRecurring/guideTransactionForm, nunca crea operaciones paralelas. */
-function v146ServiceChooser(){
- const due=v99PendingForPeriod(today().slice(0,7)).filter(x=>x.kind==='recurring');
- const unique=new Map();
- due.sort((a,b)=>a.date.localeCompare(b.date)).forEach(x=>{const r=db.recurring.find(r=>r.id===x.ref);if(r&&r.active!==false&&!unique.has(r.id))unique.set(r.id,{r,x})});
- const entries=[...unique.values()].map(({r,x})=>`<button type="button" class="v146-service-choice" data-v146-pay-service="${sanitize(r.id)}"><span><strong>${sanitize(r.name)}</strong><small>${prettyDate(x.date)} · ${sanitize(r.category||'Servicio')} · Vencimiento registrado</small></span><b>${money(x.amount,x.currency,2)}</b></button>`).join('');
- document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v146-service-modal" role="dialog" aria-modal="true" aria-label="Pagar servicio"><div class="modal-head"><div><h2>Pagar servicio</h2><p>Selecciona el compromiso que vas a liquidar.</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v146-service-picker"><p class="v146-service-picker-intro">Los vencimientos registrados en Próximos pagos se vinculan al movimiento. Después de pagar, se actualizará su siguiente fecha.</p>${entries||'<p class="v146-service-picker-intro">No tienes servicios pendientes registrados para este mes.</p>'}<button type="button" class="v146-service-choice v146-service-choice-occasional" data-v146-service-occasional="1"><span><strong>Servicio ocasional</strong><small>Registrar una factura o servicio no programado</small></span>${icon('arrow')}</button></div></section></div>`;
-}
+function v146ServiceChooser(){ return v923ServiceChooser(); }
+
 document.addEventListener('click',function(event){
  const opening=event.target.closest?.('[data-act="guidedFlow"][data-mode="service"]');
  if(opening){event.preventDefault();event.stopImmediatePropagation();v146ServiceChooser();return}
@@ -36266,19 +36261,8 @@ function v261ServiceFrame(title,subtitle,body,{detail=false,footer=''}={}){
   ${footer?`<footer class="v261-dialog-footer">${footer}</footer>`:''}
  </section></div>`;
 }
-v146ServiceChooser=function(){
- const list=v261PendingServices();
- const soon=list.filter(({x})=>diffDays(x.date,today())<=14);
- const scheduled=list.filter(({x})=>diffDays(x.date,today())>14);
- const tiles=V261_SERVICE_CATALOG.filter(([id])=>!!SERVICE_PRESETS[id]).map(([id,label,ico])=>`<button type="button" class="v261-service-tile" data-v260-service-quick="${id}" title="Registrar factura de ${sanitize(label)}"><span>${icon(ico)}</span><strong>${sanitize(label)}</strong></button>`).join('');
- const block=(heading,desc,items)=>`<section class="v261-group"><div class="v261-group-head"><div><h3>${heading}</h3><small>${desc}</small></div><span class="v261-number">${items.length}</span></div><div class="v261-bill-list">${items.map(({r,x})=>v261BillRow(r,x)).join('')||'<div class="v261-none">'+icon('calendar')+'<strong>Sin cargos en este grupo</strong><small>Los vencimientos se muestran cuando los registras en Suscripciones.</small></div>'}</div></section>`;
- const body=`<div class="v261-intro"><div class="v261-hero-icon">${icon('receipt')}</div><h3>¿Qué deseas pagar?</h3><p>Elige una factura o una categoría. Un camino sencillo, sin duplicar movimientos.</p></div>
-  <section class="v261-group v261-category-group"><div class="v261-group-head"><div><h3>Facturas y servicios</h3><small>Selecciona el tipo de servicio</small></div></div><div class="v261-category-grid">${tiles}</div></section>
-  ${block('Próximos pagos','Cargos pendientes que ya tienes registrados',soon)}
-  ${scheduled.length?block('Programados','Próximos vencimientos fuera de los 14 días',scheduled):''}
-  <section class="v261-related"><h3>Otros pagos</h3><div><button type="button" data-v261-pay-card>${icon('card')} Pagar tarjeta ${icon('arrow')}</button><button type="button" data-v261-go-loans>${icon('building')} Préstamos ${icon('arrow')}</button></div></section>`;
- v261ServiceFrame('Pagar servicios','Facturas, suscripciones y pagos del día',body,{footer:`<button type="button" class="v261-primary" data-v146-service-occasional="1">${icon('plus')} Registrar otra factura</button><p>Se registra en tus finanzas; no envía dinero al proveedor.</p>`});
-};
+/* Menú v261 legado retirado; v923ServiceChooser es la entrada única para servicios. */
+
 function v261OpenBill(id){
  const pair=v261PendingServices().find(({r})=>String(r.id)===String(id));
  if(!pair){v146ServiceChooser();return}
@@ -38310,7 +38294,7 @@ function v309ExtraCharts(){
      <div class="v315-credit-row-foot"><span>Usado ${displayMoney(c.used)}</span><span>Límite ${displayMoney(c.max)}</span></div>
     </div>`}).join('')}</div>`;
  const cardSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget" data-v105-widget="creditUtil" aria-label="Utilización total y por tarjeta">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">01 / 06 · CRÉDITO · LÍMITES</span><h2>Utilización por tarjeta</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="cards" aria-label="Ver detalles de tarjetas">Ver tarjetas ${icon('arrow')}</button></div>${creditHTML}
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">CRÉDITO · UTILIZACIÓN</span><h2>Utilización por tarjeta</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="cards" aria-label="Ver detalles de tarjetas">Ver tarjetas ${icon('arrow')}</button></div>${creditHTML}
  </section>`;
  // Máximo 6 cierres recientes; un mes sin histórico real queda sin punto.
  const now=today();const [y,m]=now.slice(0,7).split('-').map(Number);
@@ -38340,7 +38324,7 @@ function v309ExtraCharts(){
   <div class="v315-wealth-chart" role="img" aria-label="Tendencia patrimonial de los últimos seis cierres disponibles. Último patrimonio ${displayMoney(last.snapshot.net)}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="14" x2="316" y1="111" y2="111" class="v315-wealth-axis"/><g class="v315-wealth-path">${path}</g><g class="v315-wealth-dots">${circles}</g></svg><div class="v315-wealth-labels">${months.map(x=>`<span>${x.label}</span>`).join('')}</div></div>
   <p class="v315-small-note">Cierres de activos menos obligaciones registrados; no incluye límites disponibles como patrimonio.${observed.some(x=>x.snapshot.estimatedLoan)?' Algún préstamo histórico es estimado.':''}</p>`;
  }
- const wealthSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget" data-v105-widget="patrimonyTrend" aria-label="Tendencia de patrimonio neto"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">02 / 06 · PATRIMONIO</span><h2>Tendencia de patrimonio</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="patrimony" aria-label="Abrir detalle del patrimonio">Ver detalle ${icon('arrow')}</button></div>${historyHTML}</section>`;
+ const wealthSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget" data-v105-widget="patrimonyTrend" aria-label="Tendencia de patrimonio neto"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">PATRIMONIO · EVOLUCIÓN</span><h2>Tendencia de patrimonio</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="patrimony" aria-label="Abrir detalle del patrimonio">Ver detalle ${icon('arrow')}</button></div>${historyHTML}</section>`;
  /* V316 · Gráfico 03/04 — El costo de mañana.
     No equivale a la deuda total: solamente cobros y vencimientos calendarizados. */
  const forecast=v119Baseline(30);
@@ -38359,7 +38343,7 @@ function v309ExtraCharts(){
  const fLast=fPoints.at(-1);
  const fTimeline=dayValues.length?`<div class="v316-cash-chart"><svg viewBox="0 0 ${FW} ${FH}" preserveAspectRatio="none" role="img" aria-label="Proyección de liquidez diaria a 30 días, desde ${displayMoney(fStart)} hasta ${displayMoney(fEnd)}"><line class="v316-cash-zero" x1="12" x2="320" y1="${zeroY}" y2="${zeroY}"/><polyline class="v316-cash-path ${fMin<0?'at-risk':''}" points="${cashLine}"/><circle class="v316-cash-point" cx="${fLast.x.toFixed(2)}" cy="${fLast.y.toFixed(2)}" r="4"/></svg><div class="v316-cash-axis"><span>Hoy</span><span>+15 días</span><span>+30 días</span></div></div>`:'';
  const tomorrowSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget v316-chart-widget v316-tomorrow" data-v105-widget="tomorrowInsight" aria-label="El costo de mañana: proyección de liquidez a 30 días">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">03 / 06 · PROYECCIÓN · 30 DÍAS</span><h2>El costo de mañana</h2></div><button type="button" class="vive-mobile-view-all" data-v119-open="1" aria-label="Abrir simulador del costo de mañana">Simular ${icon('arrow')}</button></div>
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">PROYECCIÓN · 30 DÍAS</span><h2>El costo de mañana</h2></div><button type="button" class="vive-mobile-view-all" data-v119-open="1" aria-label="Abrir simulador del costo de mañana">Simular ${icon('arrow')}</button></div>
   <div class="v316-tomorrow-pair"><div><small>HOY · DISPONIBLE</small><strong>${displayMoney(fStart)}</strong></div><span class="v316-tomorrow-arrow" aria-hidden="true">→</span><div><small>EN 30 DÍAS · ESTIMADO</small><strong class="${fEnd<0?'v316-negative':''}">${displayMoney(fEnd)}</strong></div></div>
   ${fTimeline}
   <div class="v316-tomorrow-foot"><span>${fMinLabel} <b class="${fMin<0?'v316-negative':''}">${displayMoney(Math.abs(fMin))}</b></span><span>${fCritical?'Primer día crítico: '+prettyDate(fCritical):'Sin días críticos previstos'}</span></div>
@@ -38378,7 +38362,7 @@ function v309ExtraCharts(){
  const bTop=budget.categories.filter(c=>c.limit>0).slice(0,3);
  const bRows=bTop.map(c=>`<div class="v316-budget-category"><div><span>${sanitize(c.name)}</span><b class="${c.percent>100?'v316-negative':''}">${pctText(c.percent)}</b></div><div class="v316-budget-track"><i class="${c.percent>100?'is-over':''}" style="width:${fill(c.percent)}%"></i></div></div>`).join('');
  const budgetSection=`<section class="v105-mobile-extra v273-overview-widget v309-graph-widget v315-chart-widget v316-chart-widget v316-budget" data-v105-widget="budgetPulse" aria-label="Cumplimiento del presupuesto y distribución por categoría">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">04 / 06 · CONTROL · ${sanitize(budget.month)}</span><h2>Tu pulso presupuestario</h2></div><button type="button" class="vive-mobile-view-all" data-v290-budget-open="execution" aria-label="Ver ejecución del presupuesto">Detalles ${icon('arrow')}</button></div>
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">PRESUPUESTO · ${sanitize(budget.month)}</span><h2>Tu pulso presupuestario</h2></div><button type="button" class="vive-mobile-view-all" data-v290-budget-open="execution" aria-label="Ver ejecución del presupuesto">Detalles ${icon('arrow')}</button></div>
   <div class="v316-budget-display"><div class="v316-budget-orbit ${bTone}" style="--v316-angle:${angle}deg" role="img" aria-label="Presupuesto utilizado: ${pctText(bPct)}"><div><small>UTILIZADO</small><strong>${pctText(bPct)}</strong><span>${budget.state}</span></div></div>
    <div class="v316-budget-money"><div><small>ASIGNADO</small><strong>${displayMoney(budget.allocated)}</strong></div><div><small>EJECUTADO</small><strong>${displayMoney(budget.spent)}</strong></div><div><small>${budget.remaining<0?'EXCESO':'DISPONIBLE'}</small><strong class="${budget.remaining<0?'v316-negative':''}">${displayMoney(Math.abs(budget.remaining))}</strong></div></div></div>
   <div class="v316-budget-pace"><span class="v316-pace-dot ${bTone}" aria-hidden="true"></span><span>${bPace}${budget.pace!==null?' · '+displayMoney(Math.abs(budget.pace))+' de diferencia':''}</span></div>
@@ -38400,7 +38384,7 @@ function v309ExtraCharts(){
  const v317DueBars=v317Buckets.map((d,i)=>`<div class="v317-due-col"><div class="v317-due-value">${displayMoney(d.total)}</div><div class="v317-due-tower"><i style="height:${d.total>0?Math.max(5,100*d.total/v317MaxDue):0}%" class="${i===0?'is-urgent':''}"></i></div><b>${d.label}</b><span>${d.count} ${d.count===1?'cargo':'cargos'}</span></div>`).join('');
  const v317Upcoming=v317DueEvents.slice(0,3).map(e=>`<div class="v317-next-pay"><span>${sanitize(prettyDate(e.date))} · ${sanitize(e.name||'Compromiso')}</span><strong>${displayMoney(e.amount)}</strong></div>`).join('');
  const dueSection=`<section class="v105-mobile-extra v273-overview-widget v315-chart-widget v317-chart-widget" data-v105-widget="cashPressure" aria-label="Radar de compromisos con vencimiento en los próximos treinta días">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">05 / 06 · TIEMPO · 30 DÍAS</span><h2>Radar de vencimientos</h2></div><button class="vive-mobile-view-all" type="button" data-act="navigate" data-id="payments" aria-label="Abrir compromisos">Ver pagos ${icon('arrow')}</button></div>
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">VENCIMIENTOS · 30 DÍAS</span><h2>Radar de vencimientos</h2></div><button class="vive-mobile-view-all" type="button" data-act="navigate" data-id="payments" aria-label="Abrir compromisos">Ver pagos ${icon('arrow')}</button></div>
   <div class="v317-due-overview"><span>COMPROMETIDO PRÓXIMOS 30 DÍAS</span><strong>${displayMoney(v317DueTotal)}</strong><small>Incluye únicamente cargos calendarizados y pendientes conocidos.</small></div>
   <div class="v317-due-chart" role="img" aria-label="Vencimientos previstos por periodos: ${v317Buckets.map(d=>d.label+' '+displayMoney(d.total)).join(', ')}">${v317DueBars}</div>
   ${v317Upcoming?`<div class="v317-next-pays"><span class="v316-mini-eyebrow">PRÓXIMOS VENCIMIENTOS</span>${v317Upcoming}</div>`:'<p class="v315-empty">No se han registrado obligaciones futuras en este periodo.</p>'}
@@ -38426,7 +38410,7 @@ function v309ExtraCharts(){
   return `<button type="button" class="v317-heat-cell heat-${level}" data-v705-spend-day="${d.date}" ${v318Tip(prettyDate(d.date),'Gasto neto: '+money(d.amount,'DOP',2),'Tocar para ver cada movimiento')} aria-label="Ver movimientos del ${sanitize(prettyDate(d.date))}; gasto neto ${money(d.amount,'DOP',2)}"><span>${Number(d.date.slice(-2))}</span></button>`;
  }).join('');
  const fingerprintSection=`<section class="v105-mobile-extra v273-overview-widget v315-chart-widget v317-chart-widget" data-v105-widget="spendingFingerprint" aria-label="Huella del gasto registrado durante veintiocho días">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">06 / 06 · PATRÓN · 28 DÍAS</span><h2>Huella de tus gastos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="register" aria-label="Ver movimientos">Movimientos ${icon('arrow')}</button></div>
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">PANORAMA · PATRÓN · 28 DÍAS</span><h2>Huella de tus gastos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="register" aria-label="Ver movimientos">Movimientos ${icon('arrow')}</button></div>
   <div class="v317-heat-summary"><div><small>TOTAL REGISTRADO · 28 DÍAS</small><strong>${displayMoney(v317Spent)}</strong></div><div><small>DÍAS CON GASTOS</small><strong>${v317ActiveDays} / 28</strong></div></div>
   <div class="v317-heat-label"><span>${sanitize(prettyDate(v317Start))}</span><span>${sanitize(prettyDate(v317Today))}</span></div>
   <div class="v317-heat-grid" aria-label="Gastos diarios. Toca un día para ver los movimientos">${v317Cells}</div>
@@ -41778,9 +41762,9 @@ function v921WalletAdvanceDetails(c){
  const d=v900AdvanceMonthly(c);
  const month=sanitize(ui.month||today().slice(0,7));
  const count=d.count;
- return `<details class="v921-wallet-advance" aria-label="Avance de efectivo del mes">
+ return `<details class="v266-wallet-detail v921-wallet-advance" aria-label="Avance de efectivo del mes">
   <summary><span class="v921-advance-summary-label">${icon('wallet')} <strong>Avance de efectivo</strong><small>${month}</small></span><span class="v921-advance-summary-count">${count} avance${count===1?'':'s'}</span><span class="v921-advance-chevron" aria-hidden="true">${icon('arrow')}</span></summary>
-  <div class="v921-advance-inner"><div class="v921-advance-metrics"><div class="v266-currency-row"><span>Efectivo recibido</span><b>${money(d.net,'DOP',2)}</b></div><div class="v266-currency-row"><span>Comisiones cobradas</span><b>${money(d.fee,'DOP',2)}</b></div><div class="v266-currency-row"><span>Deuda originada</span><b>${money(d.gross,'DOP',2)}</b></div></div><p>RD$ equivalentes · Sin impuestos añadidos.</p></div>
+  <div class="v921-advance-inner"><div class="v921-advance-metrics v921-cut-rows"><div class="v266-currency-row"><span>Efectivo recibido</span><b>${money(d.net,'DOP',2)}</b></div><div class="v266-currency-row"><span>Comisiones cobradas</span><b>${money(d.fee,'DOP',2)}</b></div><div class="v266-currency-row"><span>Deuda originada</span><b>${money(d.gross,'DOP',2)}</b></div></div><p>RD$ equivalentes · Sin impuestos añadidos.</p></div>
  </details>`;
 }
 function v900CardDetailPanel(c){
@@ -42069,12 +42053,11 @@ function v917BillDetail(id){
  sync();
 }
 // Preserve existing generic entry: only show pending bills (no category catalogue).
-v146ServiceChooser=function(){
+function v923ServiceChooser(){
  const all=v261PendingServices();
  // Prioritize overdue/today and the nearest due dates. No categories or independent card/loan actions.
  const ranked=all.slice().sort((a,b)=>String(a.x.date).localeCompare(String(b.x.date)));
- const near=ranked.filter(({x})=>diffDays(x.date,today())<=7);
- const pending=(near.length?near:ranked).slice(0,6);
+ const pending=ranked.filter(({x})=>diffDays(x.date,today())<=7).slice(0,6);
  const taken=new Set(pending.map(({r})=>String(r.id)));
  const future=ranked.filter(({r})=>!taken.has(String(r.id)));
  const group=(title,detail,items)=>`<section class="v261-group v923-service-group"><div class="v261-group-head"><div><h3>${title}</h3><small>${detail}</small></div><span class="v261-number">${items.length}</span></div><div class="v261-bill-list">${items.length?items.map(({r,x})=>v261BillRow(r,x)).join(''):'<div class="v261-none"><strong>Sin pagos en este grupo</strong><small>Los vencimientos se mostrarán cuando estén pendientes.</small></div>'}</div></section>`;
@@ -87409,6 +87392,268 @@ html body #app .main:is(.world-payments,.world-vision) #page :is(.v295-global-pa
 #app .v51-mobile-movement-info .v922-movement-open{display:block;max-width:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;text-align:left;white-space:normal;overflow-wrap:anywhere;cursor:pointer}
 #app .v51-mobile-movement-info .v922-movement-open:focus-visible{outline:2px solid var(--vive-theme-color,#7066ee);outline-offset:3px;border-radius:4px}
 #app .v708-row-desc>strong{white-space:normal;overflow-wrap:anywhere}
+</style>
+
+
+<style id="v924-mobile-kpi-wallet-design-final">
+/* v924: only visual tokens and targeted surfaces, not financial/chart logic. */
+html body #app {
+ --v924-accent:var(--vive-theme-color,var(--accent,#7066ee));
+ --v924-glass:rgba(255,255,255,.68);
+ --v924-glass-strong:rgba(255,255,255,.78);
+ --v924-glass-line:color-mix(in srgb,var(--v924-accent) 16%,rgba(255,255,255,.8));
+ --v924-glass-light:radial-gradient(ellipse 195px 132px at 100% 0%,color-mix(in srgb,var(--v924-accent) 10%,transparent),transparent 82%),linear-gradient(142deg,rgba(255,255,255,.15),rgba(255,255,255,.02));
+ --v924-glass-shadow:0 10px 26px rgba(30,48,78,.075);
+}
+/* Restore original glass on the actual mobile cards and personalized indicators.
+   Do not flatten plot surfaces, calendars, heatmap days or semantic chart colors. */
+@media(max-width:790px){
+ html body:not(.theme-black):not(.theme-dark) #app #page :is(
+  .vive-mobile-home .v105-mobile-extra,
+  .vive-mobile-home .v273-overview-widget,
+  .vive-mobile-home .v318-mobile-card,
+  .vive-mobile-home .v105-capacity-widget,
+  .vive-mobile-home .v290-budget-mobile,
+  .vive-mobile-home .v344-creative,
+  .v410-explore-sec,.v431-tile,.v205-explore-group,
+  .v239-certificates .v239-hero,.v239-certificates .v239-sheet,
+  .v239-certificates .v239-product,.v239-certificates .v239-certificate-item,
+  .v296-preview-card,.v332-preview-card
+ ):not(.selected):not(.active):not(.danger):not(.warning){
+  background-color:var(--v924-glass)!important;
+  background-image:var(--v924-glass-light)!important;
+  border:1px solid var(--v924-glass-line)!important;
+  box-shadow:var(--v924-glass-shadow)!important;
+  -webkit-backdrop-filter:blur(13px)!important;backdrop-filter:blur(13px)!important;
+ }
+ /* When personalized previews are embedded inside other cards they still use the same glass depth. */
+ html body:not(.theme-black):not(.theme-dark) #app :is(
+   .v273-settings-customizer,.v296-block,.v296-library-card,.v296-order-card,
+   .v332-mini-preview,.v273-overview-widget,.v294-finance-widget,
+   .v315-chart-widget,.v316-chart-widget,.v317-chart-widget
+ ):not(.selected):not(.active):not(.danger):not(.warning){
+   background-color:var(--v924-glass)!important;
+   background-image:var(--v924-glass-light)!important;
+   border-color:var(--v924-glass-line)!important;
+   box-shadow:var(--v924-glass-shadow)!important;
+ }
+ /* Previously white-on-white: create optical separation through a faint neutral ambient
+    behind cards, without installing another opaque rectangular backdrop. */
+ html body:not(.theme-black):not(.theme-dark) #app #page :is(.v410-explore,.v431-explore,.v239-certificates){
+   background:transparent!important;
+ }
+ /* Large certificate hero is not semantically green; follow Settings accent. */
+ html body:not(.theme-black):not(.theme-dark) #app #page .v239-certificates .v239-hero,
+ html body:not(.theme-black):not(.theme-dark) #app #page .v239-certificates .v239-cert-hero{
+   --v239-accent:var(--v924-accent)!important;
+   --cert-accent:var(--v924-accent)!important;
+   background-color:var(--v924-glass)!important;
+   background-image:var(--v924-glass-light)!important;
+   border-color:var(--v924-glass-line)!important;
+ }
+ /* Explore: retain shapes/content, remove washed out white-on-white. */
+ html body:not(.theme-black):not(.theme-dark) #app #page .v410-explore-sec,
+ html body:not(.theme-black):not(.theme-dark) #app #page .v410-explore-grid .v431-tile{
+   --v410-accent:var(--v924-accent)!important;
+   --v431-accent:var(--v924-accent)!important;
+   background-color:var(--v924-glass)!important;
+   background-image:var(--v924-glass-light)!important;
+ }
+ /* Day pressure/calendar container gets theme accent; day heatmap and legend retain data colors. */
+ html body #app :is([data-v105-widget="cashPressure"],[data-v105-widget="tomorrowInsight"],[data-v105-widget="patrimonyTrend"],[data-v105-widget="budgetPulse"],[data-v105-widget="creditUtil"]){
+   --v315-accent:var(--v924-accent)!important;
+   --v316-accent:var(--v924-accent)!important;
+   --v317-accent:var(--v924-accent)!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app :is([data-v105-widget="cashPressure"],[data-v105-widget="tomorrowInsight"],[data-v105-widget="patrimonyTrend"],[data-v105-widget="budgetPulse"],[data-v105-widget="creditUtil"]) :is(.vive-mobile-view-all,.vive-mobile-card-head>button,.v317-heading-ico){
+   color:var(--v924-accent)!important;
+   border-color:color-mix(in srgb,var(--v924-accent) 24%,#dce4ef)!important;
+ }
+ /* Wallet: Pagar/Corte icons use customized accent, no forced bank green. */
+ html body #app #page .v68-wallet .v266-wallet-actions>button:not([data-v900-action="advance"])>span{
+   color:var(--v924-accent)!important;
+   background:color-mix(in srgb,var(--v924-accent) 8%,rgba(255,255,255,.87))!important;
+   border-color:color-mix(in srgb,var(--v924-accent) 22%,rgba(255,255,255,.7))!important;
+ }
+ html body #app #page .v68-wallet .v266-wallet-actions>button:not([data-v900-action="advance"])>span svg{
+   stroke:currentColor!important;color:inherit!important;fill:none!important;
+ }
+ /* Advance: black action plate, theme-colored icon (not green), white readable label. */
+ html body #app #page .v68-wallet .v266-wallet-actions>button[data-v900-action="advance"]{
+   background-color:#13161d!important;background-image:none!important;color:#fff!important;
+   border-color:#13161d!important;box-shadow:0 9px 22px rgba(17,20,29,.18)!important;
+ }
+ html body #app #page .v68-wallet .v266-wallet-actions>button[data-v900-action="advance"]>span{
+   background:color-mix(in srgb,var(--v924-accent) 23%,#171a20)!important;
+   border:1px solid color-mix(in srgb,var(--v924-accent) 34%,#272a32)!important;
+   color:color-mix(in srgb,var(--v924-accent) 48%,#fff)!important;
+ }
+ html body #app #page .v68-wallet .v266-wallet-actions>button[data-v900-action="advance"]>span svg{
+   color:inherit!important;stroke:currentColor!important;fill:none!important;opacity:1!important;
+ }
+ html body #app #page .v68-wallet .v266-wallet-actions>button[data-v900-action="advance"]>b{
+   color:#fff!important;-webkit-text-fill-color:#fff!important;
+ }
+ /* Available credit denomination chips match the bold black debt denomination labels. */
+ html body:not(.theme-black):not(.theme-dark) #app #page .v68-wallet .v565-credit-dashboard .v565-primary .v550-currency-breakdown>span :is(i,b),
+ html body:not(.theme-black):not(.theme-dark) #app #page .v68-wallet .v565-credit-dashboard .v565-primary .v550-currency-breakdown>span{
+   color:#19243a!important;-webkit-text-fill-color:#19243a!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app #page .v68-wallet .v565-credit-dashboard .v565-primary .v550-currency-breakdown>span b{font-weight:790!important}
+ /* Advance breakdown exactly mimics cut-by-currency rows rather than mini KPI boxes. */
+ html body #app #page .v68-wallet .v921-wallet-advance .v921-advance-metrics,
+ html body #app #page .v68-wallet .v921-wallet-advance .v921-advance-inner{background:transparent!important}
+ html body #app #page .v68-wallet .v921-wallet-advance .v921-advance-metrics>.v266-currency-row{
+   display:flex!important;align-items:center!important;justify-content:space-between!important;
+   gap:10px!important;background:transparent!important;border:0!important;
+   border-bottom:1px solid rgba(148,167,190,.22)!important;border-radius:0!important;
+   box-shadow:none!important;padding:13px 0!important;
+ }
+ html body #app #page .v68-wallet .v921-wallet-advance .v921-advance-metrics>.v266-currency-row:last-child{border-bottom:0!important}
+}
+/* Black is black glass, not navy or solid gray; neutralize forced white KPI panels. */
+html body:is(.theme-black,.theme-dark) #app{
+ --v924-glass:rgba(14,14,15,.79);--v924-glass-strong:rgba(22,22,24,.83);
+ --v924-glass-line:rgba(255,255,255,.14);
+ --v924-glass-light:radial-gradient(ellipse 200px 137px at 100% 0%,color-mix(in srgb,var(--v924-accent) 10%,transparent),transparent 82%);
+ --v924-glass-shadow:0 12px 28px rgba(0,0,0,.28);
+}
+@media(max-width:790px){
+ html body:is(.theme-black,.theme-dark) #app #page :is(
+  .vive-mobile-home .v105-mobile-extra,.vive-mobile-home .v273-overview-widget,
+  .vive-mobile-home .v318-mobile-card,.vive-mobile-home .v105-capacity-widget,
+  .vive-mobile-home .v290-budget-mobile,.v410-explore-sec,.v431-tile,
+  .v239-certificates .v239-hero,.v239-certificates .v239-sheet,
+  .v239-certificates .v239-product,.v296-preview-card,.v332-preview-card
+ ):not(.selected):not(.active):not(.danger):not(.warning){
+  background-color:var(--v924-glass)!important;background-image:var(--v924-glass-light)!important;
+  border-color:var(--v924-glass-line)!important;box-shadow:var(--v924-glass-shadow)!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app #page .v68-wallet .v565-primary .v550-currency-breakdown>span :is(i,b){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
+}
+</style>
+
+
+<style id="v925-verified-visual-contract">
+/* v925: one token family for translucent surfaces; finance-meaning colors retain precedence. */
+html body #app{
+ --v925-accent:var(--vive-theme-color,var(--accent,#7066ee));
+ --v925-glass:rgba(255,255,255,.69);
+ --v925-border:color-mix(in srgb,var(--v925-accent) 14%,rgba(255,255,255,.78));
+ --v925-halo:radial-gradient(ellipse 220px 140px at 100% 0%,color-mix(in srgb,var(--v925-accent) 9%,transparent),transparent 80%);
+ --v925-shadow:0 10px 26px rgba(31,51,83,.055);
+}
+/* Web: keep the glass philosophy of Ingresos y egresos, don't force white opaque KPIs. */
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview :is(.ff-balance.ff-tile,.ff-upcoming.ff-tile,.ff-personal.ff-tile,.ff-expense-card.ff-tile,.v290-budget-web,.v105-capacity-widget),
+html body:not(.theme-black):not(.theme-dark) #app .main.world-advanced :is(.advanced-stat,.advanced-hero,.advanced-quick),
+html body:not(.theme-black):not(.theme-dark) #app #page :is(.v273-overview-widget,.v294-finance-widget,.v315-chart-widget,.v316-chart-widget,.v317-chart-widget,.v296-preview-card,.v332-preview-card):not(.v105-pct-up):not(.v105-pct-down){
+ background-color:var(--v925-glass)!important;
+ background-image:var(--v925-halo)!important;
+ border-color:var(--v925-border)!important;
+ box-shadow:var(--v925-shadow)!important;
+ -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+/* Mobile: no white-on-white, contextual corner illumination instead of whole blue/green fill. */
+@media(max-width:790px){
+ html body:not(.theme-black):not(.theme-dark) #app #page :is(
+ .vive-mobile-home .v105-mobile-extra,.vive-mobile-home .v273-overview-widget,
+ .vive-mobile-home .v318-mobile-card,.vive-mobile-home .v105-capacity-widget,
+ .vive-mobile-home .v290-budget-mobile,.vive-mobile-home .v344-creative,
+ .v410-explore-sec,.v431-tile,.v410-explore-grid .v431-tile,
+ .v239-hero,.v239-sheet,.v239-product,.v296-preview-card,.v332-preview-card
+ ):not(.selected):not(.active):not(.danger):not(.warning){
+  background-color:var(--v925-glass)!important;background-image:var(--v925-halo)!important;
+  border-color:var(--v925-border)!important;box-shadow:var(--v925-shadow)!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app #page :is(.v410-explore,.v431-explore,.vive-mobile-home){background-color:transparent!important;}
+}
+/* Never impose green on decorative icons/headers in Personalización or Explorar. */
+html body #app #page :is([data-v105-widget="cashPressure"],[data-v105-widget="patrimonyTrend"],[data-v105-widget="budgetPulse"],[data-v105-widget="creditUtil"],[data-v105-widget="tomorrowInsight"],.v410-explore,.v431-explore,.v239-hero){
+ --v315-accent:var(--v925-accent)!important;--v316-accent:var(--v925-accent)!important;
+ --v317-accent:var(--v925-accent)!important;--v410-accent:var(--v925-accent)!important;
+ --cert-accent:var(--v925-accent)!important;
+}
+html body #app #page :is(.v410-explore,.v431-explore,[data-v105-widget="cashPressure"],[data-v105-widget="budgetPulse"],[data-v105-widget="patrimonyTrend"],[data-v105-widget="tomorrowInsight"]) :is(.vive-mobile-view-all,.v317-heading-ico,.v410-kicker){
+ color:var(--v925-accent)!important;
+}
+/* The Wallet action is genuinely BLACK, while its icon picks up the personalized color. */
+html body #app #page .v68-wallet.v266-wallet .v266-wallet-actions{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:clamp(6px,1.5vw,12px)!important;
+}
+html body #app #page .v68-wallet.v266-wallet .v266-wallet-actions>button{min-width:0!important;width:100%!important}
+html body #app #page .v68-wallet.v266-wallet .v266-wallet-actions>button:not([data-v900-action="advance"])>span{
+ background:color-mix(in srgb,var(--v925-accent) 9%,rgba(255,255,255,.8))!important;
+ border-color:color-mix(in srgb,var(--v925-accent) 20%,rgba(255,255,255,.64))!important;
+ color:var(--v925-accent)!important;
+}
+html body #app #page .v68-wallet.v266-wallet .v266-wallet-actions>button[data-v900-action="advance"]{
+ background:transparent!important;background-image:none!important;border-color:transparent!important;
+ box-shadow:none!important;color:var(--v925-accent)!important;
+}
+html body #app #page .v68-wallet.v266-wallet .v266-wallet-actions>button[data-v900-action="advance"]>span{
+ background:#121316!important;
+ border:1px solid color-mix(in srgb,var(--v925-accent) 38%,#27282b)!important;
+ color:color-mix(in srgb,var(--v925-accent) 64%,#fff)!important;
+}
+html body #app #page .v68-wallet.v266-wallet .v266-wallet-actions>button[data-v900-action="advance"] svg{
+ color:inherit!important;stroke:currentColor!important;fill:none!important;opacity:1!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app #page .v68-wallet.v266-wallet .v266-wallet-actions>button[data-v900-action="advance"]>b{
+ color:#111827!important;-webkit-text-fill-color:#111827!important;
+}
+/* For dark mode keep white label on dark background. */
+html body:is(.theme-black,.theme-dark) #app #page .v68-wallet.v266-wallet .v266-wallet-actions>button[data-v900-action="advance"]>b{
+ color:#f6f6f8!important;-webkit-text-fill-color:#f6f6f8!important;
+}
+/* USD/DOP amounts in available credit visually match the used-debt amounts. */
+html body:not(.theme-black):not(.theme-dark) #app #page .v68-wallet .v565-primary .v550-currency-breakdown :is(i,b){
+ color:#151d2b!important;-webkit-text-fill-color:#151d2b!important;font-weight:800!important;
+}
+/* Same outer shell as Cortes por moneda, same row layout and dividers. */
+html body #app #page .v68-wallet details.v266-wallet-detail.v921-wallet-advance{
+ background-color:var(--v925-glass)!important;
+ border-radius:inherit!important;box-shadow:var(--v925-shadow)!important;
+}
+html body #app #page .v68-wallet .v921-wallet-advance :is(.v921-advance-inner,.v921-advance-metrics){
+ background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
+}
+html body #app #page .v68-wallet .v921-wallet-advance .v921-advance-metrics>.v266-currency-row{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;
+ border:0!important;border-bottom:1px solid rgba(145,165,189,.22)!important;
+ background:transparent!important;border-radius:0!important;box-shadow:none!important;padding:12px 0!important;
+}
+html body #app #page .v68-wallet .v921-wallet-advance .v921-advance-metrics>.v266-currency-row:last-child{border-bottom:0!important}
+/* Capacity: green for favorable, amber for caution, red for excessive, neutral if missing. */
+html body:not(.theme-black):not(.theme-dark) #app #page .v105-capacity-widget .v105-capacity-rate{
+ --v925-risk:#15966f;
+ background-color:rgba(255,255,255,.52)!important;
+ background-image:linear-gradient(145deg,rgba(255,255,255,.04),color-mix(in srgb,var(--v925-risk) 12%,transparent))!important;
+ border:1px solid color-mix(in srgb,var(--v925-risk) 23%,#dce4ed)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app #page .v105-capacity-widget.v105-capacity-caution .v105-capacity-rate{--v925-risk:#d18c34;}
+html body:not(.theme-black):not(.theme-dark) #app #page .v105-capacity-widget.v105-capacity-over .v105-capacity-rate{--v925-risk:#cb4456;}
+html body:not(.theme-black):not(.theme-dark) #app #page .v105-capacity-widget.v105-capacity-missing .v105-capacity-rate{--v925-risk:#718198;}
+html body:not(.theme-black):not(.theme-dark) #app #page .v105-capacity-widget .v105-capacity-rate strong{
+ background:linear-gradient(180deg,color-mix(in srgb,var(--v925-risk) 85%,#fff),color-mix(in srgb,var(--v925-risk) 88%,#4a2027))!important;
+ -webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app #page .v105-capacity-widget .v105-capacity-rate span{color:var(--v925-risk)!important;}
+html body:is(.theme-black,.theme-dark) #app{
+ --v925-glass:rgba(14,14,15,.75);--v925-border:rgba(255,255,255,.14);
+ --v925-halo:radial-gradient(ellipse 200px 136px at 100% 0%,color-mix(in srgb,var(--v925-accent) 10%,transparent),transparent 83%);
+ --v925-shadow:0 12px 28px rgba(0,0,0,.27);
+}
+html body:is(.theme-black,.theme-dark) #app #page :is(.v105-capacity-widget,.v273-overview-widget,.v290-budget-mobile,.v315-chart-widget,.v410-explore-sec,.v431-tile,.v239-sheet,.v239-hero,.v296-preview-card,.v332-preview-card){
+ background-color:var(--v925-glass)!important;background-image:var(--v925-halo)!important;
+ border-color:var(--v925-border)!important;box-shadow:var(--v925-shadow)!important;
+}
+html body:is(.theme-black,.theme-dark) #app #page .v239-hero.v239-hero,
+html body:is(.theme-black,.theme-dark) #app #page .v239-certificates .v239-hero{
+ background-color:rgba(14,14,15,.79)!important;
+ background-image:var(--v925-halo)!important;
+ border-color:var(--v925-border)!important;
+}
+@media(prefers-reduced-motion:reduce){html body #app #page .v68-wallet .v266-wallet-actions>button{transition:none!important;}}
 </style>
 
 </body>
