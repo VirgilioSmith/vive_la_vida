@@ -20058,6 +20058,376 @@ html body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal .v900-for
 html body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal .v900-preview{background:#141419!important;color:#f5f5f9!important;}
 html body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal .v900-preview-row strong{color:#f5f5f9!important;}
 </style>
+
+<style id="v912-budget-home-refine">
+/* V912 · Refinamiento puntual de “Cumplimiento del presupuesto” en Inicio web
+   para alinearlo con la familia visual predominante del nuevo Resumen. */
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v290-budget-web,
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web{
+  --v912-budget-accent: #35b99e;
+  position: relative;
+  overflow: hidden;
+  background-color: #ffffff !important;
+  background-image:
+    radial-gradient(190px 140px at 100% 0%, color-mix(in srgb, var(--v912-budget-accent) 12%, transparent), transparent 73%),
+    radial-gradient(180px 120px at 0% 100%, color-mix(in srgb, var(--v912-budget-accent) 6%, transparent), transparent 76%),
+    linear-gradient(180deg, rgba(255,255,255,.985), rgba(251,253,255,.985)) !important;
+  border: 1px solid color-mix(in srgb, var(--v912-budget-accent) 20%, #dfe5ee) !important;
+  box-shadow: 0 12px 30px rgba(36, 52, 76, 0.055) !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background: linear-gradient(135deg, rgba(255,255,255,.26), rgba(255,255,255,0) 42%);
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web :is(.v291-budget-content,.v290-budget-summary,.v290-budget-facts){
+  background: transparent !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-head{
+  position: relative;
+  z-index: 1;
+  margin-bottom: 10px;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-head>div h2{
+  color:#21314f !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-head>button{
+  color: #48678a !important;
+  background: rgba(255,255,255,.72) !important;
+  border: 1px solid color-mix(in srgb, var(--v912-budget-accent) 24%, #dbe3ec) !important;
+  box-shadow: 0 6px 16px rgba(36,52,76,.04) !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-head>button:hover,
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-head>button:focus-visible{
+  background:#fff !important;
+  border-color: color-mix(in srgb, var(--v912-budget-accent) 38%, #dbe3ec) !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v291-budget-content{
+  position: relative;
+  z-index: 1;
+  gap: clamp(14px, 2vw, 22px) !important;
+  align-items: center !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-summary{
+  border-radius: 22px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.34)) !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-facts{
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,.14)) !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-facts>div{
+  border-bottom: 1px solid rgba(151, 168, 192, 0.22) !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-facts>div:last-child{
+  border-bottom: 0 !important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-facts b,
+html body:not(.theme-black):not(.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-summary b{
+  color:#253a5a !important;
+}
+html body:is(.theme-black,.theme-dark) #app .main.world-overview #page .v105-grid>.v297-summary-trio>.v290-budget-web,
+html body:is(.theme-black,.theme-dark) #app .main.world-overview #page .v290-budget-web{
+  --v912-budget-accent: #35b99e;
+  position:relative;
+  overflow:hidden;
+  background-color:#0b0b0b !important;
+  background-image:
+    radial-gradient(180px 132px at 100% 0%, color-mix(in srgb, var(--v912-budget-accent) 15%, transparent), transparent 74%),
+    linear-gradient(180deg, rgba(14,14,14,.98), rgba(11,11,11,.98)) !important;
+  border:1px solid color-mix(in srgb, var(--v912-budget-accent) 18%, #2b2f33) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.46) !important;
+}
+html body:is(.theme-black,.theme-dark) #app .main.world-overview #page .v290-budget-web :is(.v291-budget-content,.v290-budget-summary,.v290-budget-facts){
+  background: transparent !important;
+}
+html body:is(.theme-black,.theme-dark) #app .main.world-overview #page .v290-budget-web .v290-budget-head>button{
+  background: rgba(255,255,255,.03) !important;
+  border-color: color-mix(in srgb, var(--v912-budget-accent) 22%, #2d3238) !important;
+}
+</style>
+
+
+<style id="v913-wallet-accents-patch">
+/* V913 · Wallet móvil, acentos contextuales, navegación activa y coherencia de labels */
+:root{
+  --v913-ink:#243655;
+  --v913-muted:#6f82a1;
+  --v913-line:rgba(152,171,197,.28);
+  --v913-accent:var(--accent, #6d6af8);
+  --v913-accent-soft:color-mix(in srgb, var(--v913-accent) 9%, #ffffff);
+  --v913-accent-soft-2:color-mix(in srgb, var(--v913-accent) 16%, #ffffff);
+  --v913-green:#17a37a;
+  --v913-red:#dd5b67;
+}
+/* Wallet móvil: tarjetas y detalles con acento superior derecho como Inicio/Bancos */
+.v266-wallet-panel,
+.v266-wallet-detail,
+.v913-wallet-advance-block{
+  position:relative;
+  overflow:hidden;
+  border:1px solid color-mix(in srgb, var(--v913-accent) 20%, #dfe7f1) !important;
+  background:
+    radial-gradient(170px 130px at 100% 0%, color-mix(in srgb, var(--v913-accent) 11%, transparent), transparent 74%),
+    linear-gradient(180deg, rgba(255,255,255,.985), rgba(251,253,255,.985)) !important;
+  box-shadow:0 10px 28px rgba(31,49,79,.055) !important;
+}
+.v266-wallet-panel::before,
+.v266-wallet-detail::before,
+.v913-wallet-advance-block::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,0) 42%);
+}
+.v266-wallet-panel .v266-panel-heading,
+.v266-wallet-detail summary,
+.v913-wallet-advance-block header{ position:relative; z-index:1; }
+.v266-wallet-panel .v266-panel-heading button,
+.v266-wallet-detail summary > svg,
+.v266-wallet-detail summary > span svg,
+.v913-wallet-advance-block .v913-wallet-advance-top-right{
+  color:color-mix(in srgb, var(--v913-accent) 78%, #314867) !important;
+}
+.v266-wallet-panel .v266-panel-heading button,
+.v266-wallet-detail summary > :last-child,
+.v913-wallet-advance-block .v913-wallet-advance-top-right{
+  background:rgba(255,255,255,.72);
+  border:1px solid color-mix(in srgb, var(--v913-accent) 20%, #dbe4ee);
+  box-shadow:0 6px 16px rgba(36,52,76,.05);
+}
+.v266-wallet-actions{
+  gap:14px !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+}
+.v266-wallet-actions button{
+  min-height:112px !important;
+  border:1px solid color-mix(in srgb, var(--v913-accent) 18%, #dbe4ee) !important;
+  box-shadow:0 8px 20px rgba(36,52,76,.04);
+}
+.v266-wallet-actions button span{
+  width:62px !important;
+  height:62px !important;
+  border-radius:50%;
+  display:grid !important;
+  place-items:center;
+  background:linear-gradient(180deg, rgba(255,255,255,.9), color-mix(in srgb, var(--v913-accent) 7%, #fff)) !important;
+  border:1px solid color-mix(in srgb, var(--v913-accent) 18%, #dde5ef) !important;
+}
+.v266-wallet-actions button span svg{width:24px;height:24px}
+.v266-wallet-actions button b{font-size:18px !important}
+.v266-wallet-actions button[aria-label*="avance" i],
+.v266-wallet-actions button[data-v900-action="advance"]{
+  background:linear-gradient(180deg, color-mix(in srgb, var(--v913-accent) 84%, #ffffff), color-mix(in srgb, var(--v913-accent) 94%, #3843dc)) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+}
+.v266-wallet-actions button[aria-label*="avance" i] span,
+.v266-wallet-actions button[data-v900-action="advance"] span{
+  background:rgba(255,255,255,.14) !important;
+  border-color:rgba(255,255,255,.2) !important;
+}
+.v913-advance-month-hidden{display:none !important;}
+.v913-wallet-advance-block{
+  margin-top:16px;
+  padding:18px 18px 14px;
+  border-radius:28px;
+}
+.v913-wallet-advance-block header{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px;
+}
+.v913-wallet-advance-block header strong{font-size:18px; color:var(--v913-ink); letter-spacing:.01em}
+.v913-wallet-advance-block header small{font-size:12px; text-transform:uppercase; letter-spacing:.16em; color:#7788a6; font-weight:800}
+.v913-wallet-advance-top-right{
+  display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; font-weight:800; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+}
+.v913-wallet-advance-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; position:relative; z-index:1}
+.v913-wallet-advance-grid div{display:flex; flex-direction:column; gap:6px}
+.v913-wallet-advance-grid small{font-size:12px; text-transform:uppercase; letter-spacing:.18em; color:#7586a5; font-weight:800}
+.v913-wallet-advance-grid strong{font-size:26px; line-height:1.05; color:var(--v913-ink)}
+.v913-wallet-advance-note{margin-top:12px; padding-top:12px; border-top:1px solid rgba(151,168,192,.24); color:#6b7e9b; font-size:13px; line-height:1.45; position:relative; z-index:1}
+/* Actividad reciente y estado de tarjeta: iconos y filas mejor dimensionados */
+.v266-wallet-panel.v266-activity .v266-panel-heading button,
+.v266-wallet-panel .v266-panel-heading button{
+  width:50px;height:50px;border-radius:50%;display:grid;place-items:center;
+}
+.v266-activity .row-icon,
+.v266-activity [class*="icon"],
+.v266-wallet-detail summary span svg,
+.v266-panel-heading button svg,
+.v266-next-payment button svg{ width:21px; height:21px; }
+/* Tarjetas activas y navegación superior en Bancos / Movimientos / módulos */
+.module-switch-tab.active,
+.subnav .active,
+button[aria-current="page"],
+[data-page].active{
+  background:linear-gradient(180deg, color-mix(in srgb, var(--v913-accent) 82%, #ffffff), color-mix(in srgb, var(--v913-accent) 94%, #3a44de)) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+  box-shadow:0 14px 26px color-mix(in srgb, var(--v913-accent) 22%, transparent) !important;
+}
+.module-switch-tab.active svg,
+.subnav .active svg,
+button[aria-current="page"] svg{color:#fff !important;stroke:currentColor !important}
+/* Explorar / Visión global / botones secundarios con coherencia de iconos y acento */
+.v205-explore-grid [class*="arrow"],
+.v410-explore-grid [class*="arrow"],
+.v295-global-overview [class*="chart"],
+.v306-global-desktop [class*="chart"],
+.v708 [class*="chart"],
+.v243-explore-return button,
+.vive-mobile-view-all,
+.v290-budget-head > button,
+.v295-global-overview button,
+.v306-global-desktop button{
+  color:color-mix(in srgb, var(--v913-accent) 72%, #2f466a) !important;
+}
+/* Capacidad de endeudamiento: tono semántico sutil dentro del cuadrito */
+.v105-capacity-grid .v105-capacity-rate{
+  border:1px solid rgba(219,229,238,.95) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+}
+.v105-capacity-widget.v105-capacity-over .v105-capacity-rate{
+  background:linear-gradient(180deg, rgba(255,255,255,.96), color-mix(in srgb, var(--v913-red) 10%, #fff)) !important;
+  border-color:color-mix(in srgb, var(--v913-red) 22%, #dbe5ef) !important;
+}
+.v105-capacity-widget:not(.v105-capacity-over) .v105-capacity-rate{
+  background:linear-gradient(180deg, rgba(255,255,255,.96), color-mix(in srgb, var(--v913-green) 10%, #fff)) !important;
+  border-color:color-mix(in srgb, var(--v913-green) 22%, #dbe5ef) !important;
+}
+.v105-capacity-rate strong{
+  display:inline-block;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--v913-red) 92%, #fff), color-mix(in srgb, var(--v913-red) 74%, #ad3047));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.v105-capacity-widget:not(.v105-capacity-over) .v105-capacity-rate strong{
+  background:linear-gradient(180deg, color-mix(in srgb, var(--v913-green) 92%, #fff), color-mix(in srgb, var(--v913-green) 70%, #0f7e62));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.v105-capacity-rate span{
+  color:color-mix(in srgb, var(--v913-red) 74%, #7a5060) !important;
+}
+.v105-capacity-widget:not(.v105-capacity-over) .v105-capacity-rate span{
+  color:color-mix(in srgb, var(--v913-green) 70%, #4f6d63) !important;
+}
+/* Inicio móvil: quitar la lectura de “cuadrito tapado”; devolver el fondo vivo detrás del resumen */
+.v273-overview-widget,
+.v105-capacity-widget,
+.v266-wallet-panel,
+.v266-wallet-detail,
+.v295-global-overview .panel,
+.v306-global-desktop .panel{
+  backdrop-filter:blur(14px);
+}
+/* Otros / editar / recibir / mover / pagar: iconos coherentes */
+.vr-operation-icon,
+.v29-other-icon,
+.v785-action-icon,
+.v803-action-icon,
+.v244-action svg,
+.v244-action-primary svg{
+  width:22px !important; height:22px !important;
+}
+.vr-operation,
+.v29-other-action{ align-items:center !important; }
+.vr-operation-icon,
+.v29-other-icon{
+  width:46px !important; height:46px !important; border-radius:16px !important; display:grid !important; place-items:center;
+}
+/* Cumplimiento del presupuesto en Inicio web: más alineado con la familia predominante */
+.v290-budget-web{
+  border:1px solid color-mix(in srgb, var(--v913-accent) 18%, #dfe5ee) !important;
+  background:
+    radial-gradient(180px 130px at 100% 0%, color-mix(in srgb, var(--v913-accent) 11%, transparent), transparent 74%),
+    linear-gradient(180deg, rgba(255,255,255,.985), rgba(252,253,255,.985)) !important;
+  box-shadow:0 12px 28px rgba(34,50,72,.05) !important;
+}
+.v290-budget-web .v290-budget-summary,
+.v290-budget-web .v290-budget-facts{ background:transparent !important; }
+.v290-budget-web .v290-budget-head > button{
+  background:rgba(255,255,255,.72) !important; border:1px solid color-mix(in srgb, var(--v913-accent) 20%, #dbe4ee) !important; border-radius:999px;
+}
+/* Tema black */
+body.theme-black .v266-wallet-panel,
+body.theme-black .v266-wallet-detail,
+body.theme-black .v913-wallet-advance-block,
+body.theme-dark .v266-wallet-panel,
+body.theme-dark .v266-wallet-detail,
+body.theme-dark .v913-wallet-advance-block{
+  background:
+    radial-gradient(170px 130px at 100% 0%, color-mix(in srgb, var(--v913-accent) 15%, transparent), transparent 74%),
+    linear-gradient(180deg, rgba(13,13,13,.98), rgba(9,9,9,.98)) !important;
+  border-color:color-mix(in srgb, var(--v913-accent) 18%, #2b2f35) !important;
+  box-shadow:0 14px 32px rgba(0,0,0,.46) !important;
+}
+body.theme-black .v913-wallet-advance-note,
+body.theme-dark .v913-wallet-advance-note{ border-top-color:rgba(255,255,255,.09); }
+@media (max-width: 790px){
+  .v913-wallet-advance-grid{grid-template-columns:1fr 1fr}
+  .v266-wallet-actions button{min-height:104px !important}
+}
+</style>
+
+
+
+
+
+
+
+
+<style id="v917-direct-service-confirm-styles">
+#modal-root .v917-picker-heading{padding:8px 4px 16px}
+#modal-root .v917-picker-heading h3{font-size:clamp(22px,5vw,28px);margin:0 0 6px}
+#modal-root .v917-picker-heading p{margin:0;color:var(--v261-muted,#9ca3b5);line-height:1.5}
+#modal-root .v917-confirm-form{display:flex;flex-direction:column;gap:17px;min-width:0;width:100%;padding:3px 0 12px;overflow:visible}
+#modal-root .v917-confirm-form .v917-service-identity{margin-bottom:0!important;padding-bottom:5px!important}
+#modal-root .v917-service-review{border:1px solid var(--v261-line,#32343e);border-radius:20px;overflow:hidden;background:color-mix(in srgb,var(--v261-accent,#7365eb) 4%,transparent)}
+#modal-root .v917-service-review>div{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 17px;border-bottom:1px solid var(--v261-line,#32343e)}
+#modal-root .v917-service-review>div:last-child{border-bottom:0}
+#modal-root .v917-service-review span{color:var(--v261-muted,#aeb4c3);font-size:14px}
+#modal-root .v917-service-review strong{font-size:15px;text-align:right;max-width:62%;overflow-wrap:anywhere}
+#modal-root .v917-money-label{display:block;color:var(--v261-ink,#f1f1f1);font-weight:700;font-size:14px}
+#modal-root .v917-money-field{display:flex;align-items:center;gap:10px;border:1px solid var(--v261-line,#32343e);background:color-mix(in srgb,var(--v261-accent,#7566e9) 5%,transparent);border-radius:18px;padding:14px 16px;margin-top:9px}
+#modal-root .v917-money-field b{font-size:17px;white-space:nowrap}
+#modal-root .v917-money-field input{width:100%;min-width:0;flex:1;border:0;outline:0;background:transparent;color:inherit;font:700 clamp(22px,5vw,30px)/1.2 inherit;text-align:right}
+#modal-root .v917-source h3{font-size:17px;margin:0 0 5px}
+#modal-root .v917-source p{margin:0 0 12px;color:var(--v261-muted,#a4b0c4);font-size:13px}
+#modal-root .v917-kind-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:13px}
+#modal-root .v917-kind-choices button{display:flex;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:49px;border:1px solid var(--v261-line,#34343b);border-radius:15px;background:transparent;color:inherit;font:inherit;font-weight:700;font-size:13px;cursor:pointer}
+#modal-root .v917-kind-choices button[aria-pressed="true"]{background:color-mix(in srgb,var(--v261-accent,#7165eb) 13%,transparent);border-color:color-mix(in srgb,var(--v261-accent,#7165eb) 46%,transparent);color:var(--v261-accent,#8074ed)}
+#modal-root .v917-kind-choices svg{width:19px;height:19px}
+#modal-root .v917-source-fields label{display:flex;flex-direction:column;gap:8px;font-weight:700;font-size:13px}
+#modal-root .v917-source-fields label[hidden]{display:none!important}
+#modal-root .v917-source-fields select{width:100%;max-width:100%;min-height:54px;border:1px solid var(--v261-line,#34343b);border-radius:16px;padding:12px 15px;background:color-mix(in srgb,var(--v261-accent,#7165eb) 4%,transparent);color:inherit}
+#modal-root .v917-source-fields .v789-select-open{min-height:60px!important;width:100%;max-width:100%;border-radius:17px!important}
+#modal-root .v917-service-total{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 18px;border-radius:20px;background:color-mix(in srgb,var(--v261-accent,#7165eb) 11%,transparent);border:1px solid color-mix(in srgb,var(--v261-accent,#7165eb) 28%,transparent)}
+#modal-root .v917-service-total strong{font-size:clamp(20px,5vw,28px);font-variant-numeric:tabular-nums}
+#modal-root .v917-service-total span{font-size:14px}
+#modal-root .v917-safe-note{font-size:12px;color:var(--v261-muted,#a7acbb);line-height:1.5;margin:0 2px}
+#modal-root .v917-error{color:#f87171;min-height:16px;font-size:13px}
+#modal-root .v917-submit[disabled]{opacity:.55;cursor:progress}
+#modal-root .v917-confirm-form .v261-detail-identity{padding-top:10px!important}
+@media(max-width:420px){#modal-root .v917-kind-choices button{font-size:11px;gap:5px}#modal-root .v917-service-review>div{padding:11px 14px}}
+</style>
+
+<style id="v918-service-payment-channel">
+#modal-root .v918-payment-channel{display:flex;flex-direction:column;gap:10px;min-width:0;margin:4px 0 0}
+#modal-root .v918-payment-channel[hidden]{display:none!important}
+#modal-root .v918-payment-channel h3{font-size:14px;line-height:1.25;margin:0;color:inherit}
+#modal-root .v918-channel-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#modal-root .v918-channel-options button{min-height:47px;padding:9px 10px;border-radius:15px;border:1px solid var(--v261-line,#34343b);background:transparent;color:inherit;font:inherit;font-size:13px;font-weight:700;display:flex;justify-content:center;align-items:center;gap:7px;cursor:pointer}
+#modal-root .v918-channel-options button svg{width:18px;height:18px;flex-shrink:0}
+#modal-root .v918-channel-options button[aria-pressed="true"]{background:color-mix(in srgb,var(--v261-accent,#7066ee) 13%,transparent);border-color:color-mix(in srgb,var(--v261-accent,#7066ee) 55%,transparent);color:var(--v261-accent,#958aff)}
+#modal-root .v918-channel-explanation{font-size:12px;color:var(--v261-muted,#a4b0c4);line-height:1.4;margin:0}
+#modal-root .v918-payment-breakdown{display:grid;gap:7px;padding:14px 16px 4px;border-top:1px solid var(--v261-line,#34343b)}
+#modal-root .v918-payment-breakdown>div{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--v261-muted,#a4b0c4)}
+#modal-root .v918-payment-breakdown strong{font-weight:750;color:var(--v261-ink,#f3f3f6);white-space:nowrap;font-variant-numeric:tabular-nums}
+#modal-root .v918-payment-breakdown em{font-style:normal}
+@media(max-width:420px){#modal-root .v918-channel-options button{font-size:11px;gap:5px}}
+</style>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -37022,6 +37392,7 @@ function v443NavTone(n){
 }
 function v443NavApply(raw){
  const n=v443NavLevel(raw),ratio=n/100,style=document.documentElement.style;
+ document.documentElement.dataset.v443NavIntensity=n===0?'off':n<=28?'soft':n<=58?'medium':'strong';
  style.setProperty('--v443-nav-level',String(n));
  style.setProperty('--v443-nav-preview-alpha',(0.09+0.32*ratio).toFixed(3));
  style.setProperty('--v443-nav-preview-border-alpha',(0.04+0.70*ratio).toFixed(3));
@@ -41252,6 +41623,161 @@ document.addEventListener('click',event=>{if(!event.target.closest('.v36-notific
 
 
 
+
+
+
+/* V917 — Servicio registrado -> confirmación editable directa.
+   Un único flujo contable para los accesos: Compromisos, Próximos pagos, Servicios y Registrar.
+   No abre el catálogo de categorías ni el wizard de 3 pasos para pagos ya configurados. */
+const v917OriginalPayRecurring=payRecurring;
+function v917ServiceSourceOptions(currency){
+ const accounts=(db.accounts||[]).filter(a=>!a.archived&&a.currency===currency&&(!a.bankId||!bank(a.bankId)?.archived));
+ const cards=(db.cards||[]).filter(c=>!c.archived&&(!c.bankId||!bank(c.bankId)?.archived));
+ return {accounts,cards};
+}
+function v917SelectedSource(r,available){
+ const [kind,id]=String(r.source||'').split(':');
+ if(kind==='card'&&available.cards.some(c=>c.id===id))return {kind,id};
+ if(kind==='account'&&available.accounts.some(a=>a.id===id))return {kind,id};
+ return available.accounts[0]?{kind:'account',id:available.accounts[0].id}:available.cards[0]?{kind:'card',id:available.cards[0].id}:{kind:'',id:''};
+}
+function v918IsDigitalAccount(a){
+ if(!a||a.kind==='cash')return false;
+ // Only explicit account classification triggers forced Internet Banking.
+ return a.kind==='digital'||a.isDigital===true||a.digital===true||a.accountType==='digital'||a.modality==='digital';
+}
+function v918ChannelPolicy(kind,a,requested){
+ // Canal determinado exclusivamente por el instrumento: presencial solo para efectivo.
+ if(kind==='card')return {channel:'presencial',choice:false,note:'Consumo directo con tarjeta: no es transferencia bancaria y no genera cargo por transferencia.'};
+ if(!a)return {channel:'internet_banking',choice:false,note:'Selecciona una cuenta de origen.'};
+ if(a.kind==='cash')return {channel:'presencial',choice:false,note:'Pago en efectivo, realizado cara a cara (presencial). Sin comisión de transferencia.'};
+ return {channel:'internet_banking',choice:false,note:'Pago desde cuenta bancaria, convencional o digital: transferencia por Internet Banking. Se utiliza la tasa configurada en Ajustes cuando corresponda.'};
+}
+function v918ConfiguredBankRate(){
+ // The current configured rate is authoritative; no date-dependent percentage is inferred.
+ const rate=Number(db.settings?.transferTaxPct??0);
+ return Number.isFinite(rate)&&rate>=0&&rate<=100?rate:0;
+}
+function v918ServiceDebit(amount,kind,a,channel){
+ const safe=Number.isFinite(amount)&&amount>0?amount:0;
+ const taxable=kind==='account'&&isTaxableBankPayment(a,channel,false,false);
+ const pct=taxable?v918ConfiguredBankRate():0;
+ const fee=rnd(safe*pct/100);
+ return {pct,fee,total:rnd(safe+fee),taxable};
+}
+function v917BillDetail(id){
+ const r=(db.recurring||[]).find(s=>String(s.id)===String(id));
+ const pair=v261PendingServices().find(({r:entry})=>String(entry.id)===String(id));
+ if(!r||r.active===false||r.archived||!pair){toast('Este servicio no tiene un vencimiento activo pendiente.');return;}
+ const x=pair.x,available=v917ServiceSourceOptions(x.currency),selected=v917SelectedSource(r,available),st=v261ServiceStatus(x.date);
+ const accountChoices=available.accounts.map(a=>`<option value="${sanitize(a.id)}" ${selected.kind==='account'&&a.id===selected.id?'selected':''}>${sanitize(a.name)} · ${sanitize(bankOf(a))} · ${sanitize(a.currency)}</option>`).join('');
+ const cardChoices=available.cards.map(c=>`<option value="${sanitize(c.id)}" ${selected.kind==='card'&&c.id===selected.id?'selected':''}>${sanitize(c.name)} · ${sanitize(bankOf(c))} · RD$ / US$</option>`).join('');
+ const body=`<form id="v917ServiceConfirm" class="v917-confirm-form studio-form" data-mode="service" data-recurring="${sanitize(r.id)}" novalidate>
+  <div class="v261-detail-identity v917-service-identity"><div class="v261-detail-symbol">${v45SubIcon(r,'tiny')}</div><h3>${sanitize(r.name)}</h3><p>${sanitize(r.category||'Servicio recurrente')}</p><span class="v261-due ${st.kind}">${sanitize(st.name)}</span></div>
+  <section class="v917-service-review" aria-label="Datos de la factura">
+   <div><span>Servicio</span><strong>${sanitize(r.name)}</strong></div>
+   <div><span>Vencimiento</span><strong>${prettyDate(x.date)}</strong></div>
+   <div><span>Moneda</span><strong>${sanitize(x.currency)}</strong></div>
+  </section>
+  <label class="v917-money-label"><span>Importe a registrar</span><div class="v917-money-field"><b>${x.currency==='USD'?'US$':'RD$'}</b><input required name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" value="${Number(x.amount).toFixed(2)}" aria-label="Importe de esta factura"/></div></label>
+  <section class="v917-source" aria-label="Origen del pago"><h3>Origen del pago</h3><p>Selecciona la cuenta o tarjeta desde la que se registró.</p>
+   <div class="v917-kind-choices" role="group" aria-label="Tipo de origen">
+    <button type="button" data-v917-kind="account" aria-pressed="${selected.kind==='account'}">${icon('wallet')} Cuenta o efectivo</button>
+    <button type="button" data-v917-kind="card" aria-pressed="${selected.kind==='card'}">${icon('card')} Tarjeta de crédito</button>
+   </div>
+   <div class="v917-source-fields">
+    <label class="v917-account" ${selected.kind!=='account'?'hidden':''}><span>Cuenta de origen</span><select name="accountId" ${selected.kind==='account'?'required':''}>${accountChoices}</select></label>
+    <label class="v917-card" ${selected.kind!=='card'?'hidden':''}><span>Tarjeta de origen</span><select name="cardId" ${selected.kind==='card'?'required':''}>${cardChoices}</select></label>
+   </div>
+  </section>
+  <section class="v918-payment-channel" aria-label="Canal del pago">
+   <h3>¿Cómo realizaste el pago?</h3>
+ 
+   <p id="v918ChannelExplanation" class="v918-channel-explanation" aria-live="polite"></p>
+  </section>
+  <div class="v918-payment-breakdown" aria-live="polite">
+   <div><span>Importe del servicio</span><strong id="v918BillAmount">${money(x.amount,x.currency,2)}</strong></div>
+   <div><span>Cargo bancario · <em id="v918RateLabel">0 %</em></span><strong id="v918BankFee">${money(0,x.currency,2)}</strong></div>
+  </div>
+  <div class="v917-service-total"><span>Total a debitar</span><strong id="v917ServiceTotal">${money(x.amount,x.currency,2)}</strong></div>
+  <p class="v917-safe-note">Se registra en tus finanzas, no envía dinero al proveedor. Este vencimiento solo puede registrarse una vez.</p>
+  <div role="alert" id="v917ServiceError" class="v917-error"></div>
+ </form>`;
+ const footer=`<button type="submit" form="v917ServiceConfirm" class="v261-primary v917-submit">${icon('check')} Registrar pago</button>`;
+ v261ServiceFrame('Confirmar pago','Revisa la factura antes de registrarla',body,{detail:true,footer});
+ const form=document.getElementById('v917ServiceConfirm');if(!form)return;
+ form.dataset.kind=selected.kind;
+ // Efectivo = presencial; cualquier cuenta bancaria = Internet Banking.
+ // Tarjeta = consumo directo, sin cargo de transferencia.
+ form.dataset.channel='internet_banking';
+ const sync=()=>{
+  const kind=form.dataset.kind;
+  form.querySelectorAll('[data-v917-kind]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v917Kind===kind)));
+  for(const [t,selector] of [['account','.v917-account'],['card','.v917-card']]){
+   const label=form.querySelector(selector),isActive=kind===t;
+   label.hidden=!isActive;label.querySelector('select').required=isActive;
+  }
+  const a=account(form.elements.accountId.value);
+  const mode=v918ChannelPolicy(kind,a,form.dataset.channel);
+  form.dataset.channel=mode.channel;
+  const channelBox=form.querySelector('.v918-payment-channel');
+  const buttons=form.querySelectorAll('[data-v918-channel]');
+  channelBox.hidden=!mode.choice;
+  buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v918Channel===mode.channel)));
+  const n=Number(form.elements.amount.value);
+  const calc=v918ServiceDebit(n,kind,a,mode.channel);
+  form.querySelector('#v918ChannelExplanation').textContent=mode.note;
+  form.querySelector('#v918BillAmount').textContent=Number.isFinite(n)?money(Math.max(0,n),x.currency,2):'—';
+  form.querySelector('#v918RateLabel').textContent=calc.taxable?`${calc.pct.toFixed(2).replace(/\.00$/,'')} %`:'No aplica';
+  form.querySelector('#v918BankFee').textContent=Number.isFinite(n)?money(calc.fee,x.currency,2):'—';
+  form.querySelector('#v917ServiceTotal').textContent=Number.isFinite(n)?money(calc.total,x.currency,2):'—';
+ };
+ form.querySelectorAll('[data-v917-kind]').forEach(b=>b.addEventListener('click',()=>{form.dataset.kind=b.dataset.v917Kind;form.dataset.channel='internet_banking';sync()}));
+ form.querySelectorAll('[data-v918-channel]').forEach(b=>b.addEventListener('click',()=>{form.dataset.channel=b.dataset.v918Channel;sync()}));
+ form.elements.accountId.addEventListener('change',sync);
+ form.elements.cardId.addEventListener('change',sync);
+ form.elements.amount.addEventListener('input',sync);
+ sync();
+}
+// Preserve existing generic entry: only show pending bills (no category catalogue).
+v146ServiceChooser=function(){
+ const list=v261PendingServices();
+ const body=`<div class="v917-picker-heading"><h3>¿Qué servicio vas a pagar?</h3><p>Selecciona una factura registrada para revisar su importe y origen.</p></div>
+  <div class="v261-bill-list">${list.length?list.map(({r,x})=>v261BillRow(r,x)).join(''):'<div class="v261-none"><strong>No tienes facturas pendientes.</strong><small>Registra un servicio en Suscripciones para poder pagarlo desde aquí.</small></div>'}</div>`;
+ v261ServiceFrame('Pagar servicios','Facturas pendientes',body);
+};
+v261OpenBill=v917BillDetail;
+payRecurring=function(id){return v917BillDetail(id)};
+document.addEventListener('submit',function(e){
+ const form=e.target;if(form?.id!=='v917ServiceConfirm')return;
+ e.preventDefault();e.stopImmediatePropagation();
+ const error=form.querySelector('#v917ServiceError');error.textContent='';
+ const submit=document.querySelector('.v917-submit');if(submit?.disabled)return;
+ try{
+  const id=form.dataset.recurring,r=(db.recurring||[]).find(x=>String(x.id)===id),pair=v261PendingServices().find(({r:x})=>String(x.id)===id);
+  if(!r||r.archived||r.active===false||!pair)throw Error('La factura ya no está pendiente o fue modificada. Actualiza la lista.');
+  const amount=Number(form.elements.amount.value),kind=form.dataset.kind,currency=pair.x.currency;
+  if(!Number.isFinite(amount)||amount<=0)throw Error('Introduce un importe mayor que cero.');
+  if(db.transactions.some(t=>t.scheduleKey===`recurring:${id}:${r.nextDue}`))throw Error('Este vencimiento ya está registrado; consulta el historial.');
+  if(!['card','account'].includes(kind))throw Error('Selecciona una cuenta o tarjeta.');
+  const a=account(form.elements.accountId.value),c=card(form.elements.cardId.value);
+  if(kind==='account'&&(!a||a.archived||a.currency!==currency||bank(a.bankId)?.archived))throw Error('Selecciona una cuenta activa de la misma moneda.');
+  if(kind==='card'&&(!c||c.archived||bank(c.bankId)?.archived))throw Error('Selecciona una tarjeta activa.');
+  const src=kind==='card'?'card':'account';
+  const channel=v918ChannelPolicy(kind,a,form.dataset.channel).channel;
+  const debit=v918ServiceDebit(amount,kind,a,channel);
+  const taxable=debit.taxable;
+  const pct=debit.pct;
+  // The financial engine owns the posting, scheduleKey, historical balance and persistence.
+  // No duplicate second transaction or new database table is introduced here.
+  if(submit){submit.disabled=true;submit.textContent='Registrando…'}
+  saveTx({type:kind==='card'?'card_charge':'expense',flowMode:'service',date:today(),amount,currency,
+   paymentSource:src,accountId:kind==='account'?a.id:'',cardId:kind==='card'?c.id:'',
+   paymentChannel:channel,paymentTaxable:taxable?'yes':'no',paymentTaxPct:pct,paymentFee:0,
+   category:r.category||'Servicios básicos',subcategory:r.subcategory||'',
+   servicePreset:'other',note:r.name,recurringId:r.id,cardOnly:'no'});
+ }catch(ex){error.textContent=ex.message||String(ex);if(submit){submit.disabled=false;submit.innerHTML=`${icon('check')} Registrar pago`}}
+},true);
 
 </script>
 <!-- V40: compromisos por modalidad, nómina recurrente, instituciones no bancarias y reglas fiscales versionadas. -->
@@ -85918,5 +86444,568 @@ html body #app :is(.v790-brandname,.brand-name,.v766-brand-name,.v242-settings-e
 html body #f33-gate .f33-label{text-transform:none!important;letter-spacing:.045em!important;}
 /* Preservar series de gráficos, colores semánticos de KPI, iconografía y calendarios. */
 </style>
+
+<script id="v913-wallet-accents-script">
+(function(){
+  const SEEN='data-v913-processed';
+  function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function replaceBrandText(root=document.body){
+    const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node){
+        if(!node.nodeValue) return NodeFilter.FILTER_REJECT;
+        if(!/FINANZAS\s*360/i.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+        if(node.parentElement && /script|style/i.test(node.parentElement.tagName)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n=>{ n.nodeValue=n.nodeValue.replace(/FINANZAS\s*360/gi,'vive el hoy'); });
+  }
+  function stripCounterEyebrows(){
+    document.querySelectorAll('.vive-mobile-eyebrow, .v105-capacity-top small, .v266-overline').forEach(el=>{
+      if(el.hasAttribute('data-v913-keep')) return;
+      const raw=el.textContent||'';
+      let txt=raw.replace(/^\s*\d+\s*\/\s*\d+\s*·\s*/,'').trim();
+      txt=txt.replace(/^FINANZAS\s*360$/i,'vive el hoy');
+      if(txt!==raw.trim()) el.textContent=txt;
+    });
+  }
+  function removeWalletDetailsButton(){
+    document.querySelectorAll('.v266-wallet-actions').forEach(row=>{
+      Array.from(row.querySelectorAll('button')).forEach(btn=>{
+        const t=(btn.querySelector('b')?.textContent||btn.textContent||'').trim();
+        if(/^Detalles$/i.test(t)) btn.remove();
+      });
+      const by={};
+      Array.from(row.querySelectorAll('button')).forEach(btn=>{ const k=(btn.querySelector('b')?.textContent||btn.textContent||'').trim(); by[k]=btn; });
+      ['Pagar','Corte','Avance','Editar'].forEach(k=>{ if(by[k]) row.appendChild(by[k]); });
+    });
+  }
+  function buildAdvanceCard(source){
+    const title=source.querySelector('header strong')?.textContent?.trim()||'Avances de efectivo';
+    const count=source.querySelector('header small')?.textContent?.trim()||'';
+    const items=Array.from(source.querySelectorAll('.v900-advance-values > div')).map(div=>({
+      label: div.querySelector('small')?.textContent?.trim()||'',
+      value: div.querySelector('strong')?.textContent?.trim()||''
+    }));
+    const note=source.querySelector(':scope > small:last-of-type')?.textContent?.trim()||'';
+    const el=document.createElement('section');
+    el.className='v913-wallet-advance-block';
+    el.innerHTML=`<header><div><strong>${esc(title)}</strong></div><span class="v913-wallet-advance-top-right">${icon('arrow')} ${esc(count)}</span></header>
+      <div class="v913-wallet-advance-grid">${items.map(item=>`<div><small>${esc(item.label)}</small><strong>${esc(item.value)}</strong></div>`).join('')}</div>
+      <div class="v913-wallet-advance-note">${esc(note)}</div>`;
+    return el;
+  }
+  function syncWalletAdvanceCard(){
+    document.querySelectorAll('.v900-advance-month').forEach(src=>{
+      src.classList.add('v913-advance-month-hidden');
+      const walletPanel=src.closest('.v266-wallet-panel');
+      const walletArea=walletPanel?.parentElement;
+      const cuts=walletArea?.querySelector('.v266-wallet-detail');
+      if(!walletArea || !cuts) return;
+      let injected=walletArea.querySelector('.v913-wallet-advance-block');
+      const card=buildAdvanceCard(src);
+      if(injected) injected.replaceWith(card);
+      else cuts.insertAdjacentElement('afterend',card);
+    });
+  }
+  function normalizeWalletAccents(){
+    document.querySelectorAll('.v266-wallet-panel, .v266-wallet-detail').forEach(el=>el.classList.add('v913-accent-ready'));
+  }
+  function normalizeTitleBadges(){
+    document.querySelectorAll('.vive-mobile-card-head .vive-mobile-eyebrow, .v266-overline, .eyebrow, .module-switch-kicker').forEach(el=>{
+      const raw=(el.textContent||'').trim();
+      const cleaned=raw.replace(/^\d+\s*\/\s*\d+\s*·\s*/,'').replace(/\bFINANZAS\s*360\b/ig,'vive el hoy').trim();
+      if(cleaned) el.textContent=cleaned;
+    });
+  }
+  function markHistoricalButtons(){
+    document.querySelectorAll('[data-act="cardHistory"]').forEach(btn=>{
+      btn.classList.add('v913-history-ready');
+      btn.style.borderColor='color-mix(in srgb, var(--accent, #6d6af8) 20%, #dbe4ee)';
+    });
+  }
+  function fixExploreAndModuleIcons(){
+    document.querySelectorAll('.module-switch-tab svg, .v410-explore-grid svg, .v205-explore-grid svg, .v243-explore-return svg').forEach(svg=>{
+      svg.style.width='20px'; svg.style.height='20px';
+    });
+  }
+  function sync(){
+    try{ replaceBrandText(); }catch(e){}
+    stripCounterEyebrows();
+    normalizeTitleBadges();
+    removeWalletDetailsButton();
+    syncWalletAdvanceCard();
+    normalizeWalletAccents();
+    markHistoricalButtons();
+    fixExploreAndModuleIcons();
+  }
+  document.addEventListener('DOMContentLoaded', sync, {once:true});
+  let raf=0;
+  const obs=new MutationObserver(()=>{ cancelAnimationFrame(raf); raf=requestAnimationFrame(sync); });
+  const start=()=>{ const root=document.getElementById('app')||document.body; obs.observe(root,{childList:true,subtree:true}); sync(); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start, {once:true}); else start();
+})();
+</script>
+
+<style id="v914-web-navigation-actual-intensity">
+/* La intensidad es única para Inicio, Bancos, Movimientos y módulos asociados.
+   El estado APAGADA borra carcasa, halo, borde y sombras de todas las capas,
+   pero no desactiva la pestaña seleccionada. Los cuatro niveles usan --v443. */
+@media (min-width:791px){
+ html body #app main.main :is(
+   .universe-switch-wrap,.universe-switch,.module-switch-shell,.module-switch-tabs,
+   .inner-menu-tabs,.v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,
+   .v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs
+ ){
+   background-color:rgba(255,255,255,var(--v443-nav-shell-alpha,0))!important;
+   background-image:none!important;
+   border-color:rgba(163,184,218,var(--v443-nav-shell-border-alpha,0))!important;
+   box-shadow:inset 0 1px 0 rgba(255,255,255,var(--v443-nav-shell-inner-alpha,0)),0 9px 24px rgba(49,81,136,var(--v443-nav-shell-shadow-alpha,0))!important;
+   backdrop-filter:blur(var(--v443-nav-shell-blur,0px))!important;
+   -webkit-backdrop-filter:blur(var(--v443-nav-shell-blur,0px))!important;
+ }
+ html body:is(.theme-black,.theme-dark) #app main.main :is(
+   .universe-switch-wrap,.universe-switch,.module-switch-shell,.module-switch-tabs,
+   .inner-menu-tabs,.v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,
+   .v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs
+ ){
+   background-color:rgba(28,31,39,var(--v443-nav-shell-alpha,0))!important;
+   border-color:rgba(130,147,179,var(--v443-nav-shell-border-alpha,0))!important;
+   box-shadow:0 9px 24px rgba(0,0,0,var(--v443-nav-shell-shadow-alpha,0))!important;
+ }
+ html[data-v443-nav-intensity="off"] body #app main.main :is(
+   .universe-switch-wrap,.universe-switch,.module-switch-shell,.module-switch-tabs,
+   .inner-menu-tabs,.v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,
+   .v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs
+ ){
+   background:transparent!important;
+   background-color:transparent!important;
+   background-image:none!important;
+   border:1px solid transparent!important;
+   outline:none!important;
+   box-shadow:none!important;
+   backdrop-filter:none!important;
+   -webkit-backdrop-filter:none!important;
+ }
+ html[data-v443-nav-intensity="off"] body #app main.main :is(
+   .universe-switch-wrap,.universe-switch,.module-switch-shell,.module-switch-tabs,
+   .inner-menu-tabs,.v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,
+   .v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs
+ )::before,
+ html[data-v443-nav-intensity="off"] body #app main.main :is(
+   .universe-switch-wrap,.universe-switch,.module-switch-shell,.module-switch-tabs,
+   .inner-menu-tabs,.v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,
+   .v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs
+ )::after{
+   background:transparent!important;
+   background-image:none!important;
+   border-color:transparent!important;
+   box-shadow:none!important;
+ }
+ /* Los inactivos no se convierten en píldoras blancas por reglas heredadas. */
+ html body #app main.main :is(
+   .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+   .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+   .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):not(.active):not([aria-selected="true"]):not([aria-current="page"]){
+   background:transparent!important;
+   background-image:none!important;
+   border-color:transparent!important;
+   box-shadow:none!important;
+ }
+ /* Estado activo visible con el acento seleccionado, incluso a 0. */
+ html body #app main.main :is(
+   .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+   .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+   .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):is(.active,[aria-selected="true"],[aria-current="page"]){
+   background:var(--v424-accent-strong,var(--vive-theme-color,#665fe7))!important;
+   background-image:none!important;
+   border-color:transparent!important;
+   color:#fff!important;
+   -webkit-text-fill-color:#fff!important;
+   box-shadow:0 6px 17px color-mix(in srgb,var(--vive-theme-color,#665fe7) 18%,transparent)!important;
+ }
+ html body #app main.main :is(
+   .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+   .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+   .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):is(.active,[aria-selected="true"],[aria-current="page"]) :is(svg,span,i){
+   color:#fff!important;
+   stroke:currentColor!important;
+   -webkit-text-fill-color:#fff!important;
+ }
+ /* La regla v913 había añadido acento a controles sin tomar en cuenta nivel. */
+ html[data-v443-nav-intensity="off"] body #app main.main .module-switch-tab:not(.active):not([aria-current="page"]){
+   background:transparent!important;
+   border-color:transparent!important;
+   box-shadow:none!important;
+ }
+}
+</style>
+
+<script id="v914-navigation-enforcement">
+/* Aplica el nivel REAL a las cápsulas que renderiza la app, incluso cuando
+   componentes heredados tienen reglas más específicas o estilos dinámicos. */
+(function(){
+ const shells='.universe-switch-wrap,.universe-switch,.module-switch-shell,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs';
+ function level(){const n=Number(document.documentElement.style.getPropertyValue('--v443-nav-level'));return Number.isFinite(n)?Math.max(0,Math.min(100,n)):0;}
+ function force(){
+  if(window.matchMedia('(max-width:790px)').matches)return;
+  const root=document.querySelector('#app main.main');if(!root)return;
+  const n=level(), r=n/100, off=n===0;
+  const black=document.body.classList.contains('theme-black')||document.body.classList.contains('theme-dark');
+  const col=black?'31,33,41':'255,255,255';
+  const border=black?'130,147,179':'163,184,218';
+  const shadow=black?'0,0,0':'49,81,136';
+  const vals={
+   'background': off?'transparent':`rgba(${col},${(.4*r).toFixed(3)})`,
+   'background-image':'none',
+   'border-color':off?'transparent':`rgba(${border},${(.75*r).toFixed(3)})`,
+   'box-shadow':off?'none':`inset 0 1px 0 rgba(255,255,255,${(.68*r).toFixed(3)}),0 9px 24px rgba(${shadow},${(.09*r).toFixed(3)})`,
+   'backdrop-filter':off?'none':`blur(${(26*r).toFixed(1)}px)`,
+   '-webkit-backdrop-filter':off?'none':`blur(${(26*r).toFixed(1)}px)`
+  };
+  root.querySelectorAll(shells).forEach(el=>{
+   const key=n+'|'+black;
+   if(el.dataset.v914Level===key)return;
+   for(const [k,v] of Object.entries(vals))el.style.setProperty(k,v,'important');
+   el.dataset.v914Level=key;
+  });
+  /* V916: no pintar pestañas con estilos inline en cada render.
+     La clase .active/aria de la vista es la fuente única del estado. */
+ }
+ let raf=0;
+ const queue=()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;force();})};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',queue,{once:true});else queue();
+ document.addEventListener('input',e=>{if(e.target?.id==='v443-nav-slider')queue()},true);
+ document.addEventListener('change',e=>{if(e.target?.id==='v443-nav-slider')queue()},true);
+ document.addEventListener('click',e=>{if(e.target?.closest('[data-v443-nav-preset]'))queue()},true);
+ const host=document.getElementById('app');
+ if(host)new MutationObserver(queue).observe(host,{subtree:true,childList:true});
+})();
+</script>
+
+<style id="v915-master-surface-and-seamless-rail">
+/* V915 · Restaurar el lenguaje de Inicio sin rediseñar la información:
+   capas translúcidas sobre ambiente, iluminación contextual contenida arriba
+   a la derecha, sin fondos planos ni una banda compartida bajo los KPI.
+   Regla al final del archivo para resolver v891/v910/v912/v913 sin alterar JS. */
+@media (min-width:791px) {
+  /* El rail es parte del mismo lienzo; se conserva su geometría y accesos. */
+  html body[data-menu-layout="rail"] #app .sidebar.rail-sidebar,
+  html body[data-menu-layout="rail"] #app .sidebar.rail-sidebar:is(:hover,:focus-within) {
+    background:transparent!important;
+    background-color:transparent!important;
+    background-image:none!important;
+    border:0!important;
+    border-left:0!important;
+    border-right:0!important;
+    outline:0!important;
+    box-shadow:none!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+  html body[data-menu-layout="rail"] #app .sidebar.rail-sidebar :is(.rail-top,.rail-main,.rail-bottom,.rail-hairline){
+    background:transparent!important;background-image:none!important;
+    border:0!important;box-shadow:none!important;
+  }
+  html body[data-menu-layout="rail"] #app .sidebar.rail-sidebar::before,
+  html body[data-menu-layout="rail"] #app .sidebar.rail-sidebar::after{
+    display:none!important;content:none!important;
+  }
+  /* El corte de la cuarta imagen también procedía de bordes en el shell. */
+  html body[data-menu-layout="rail"] #app .shell{
+    border-left:0!important;border-right:0!important;box-shadow:none!important;
+  }
+  html body[data-menu-layout="rail"] #app main.main{
+    border-left:0!important;outline:0!important;box-shadow:none!important;
+  }
+  html body[data-menu-layout="rail"] #app .rail-action{
+    background:transparent!important;border:1px solid transparent!important;
+    box-shadow:none!important;transform:none!important;
+  }
+  /* Tile activo del diseño anterior: blanco cristalino, icono acentuado. */
+  html body[data-menu-layout="rail"] #app .rail-sidebar .rail-action:is(.active,[aria-current="page"]){
+    color:var(--vive-theme-color,#5468c8)!important;
+    background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(240,242,255,.64))!important;
+    border:1px solid rgba(255,255,255,.9)!important;
+    border-radius:16px!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.94),0 8px 24px rgba(61,79,151,.14)!important;
+    backdrop-filter:blur(17px)!important;
+    -webkit-backdrop-filter:blur(17px)!important;
+  }
+  html body[data-menu-layout="rail"] #app .rail-sidebar .rail-action:is(.active,[aria-current="page"]) :is(svg,.rail-symbol){
+    color:inherit!important;stroke:currentColor!important;
+  }
+  html body[data-menu-layout="rail"] #app .rail-sidebar .rail-action:not(.active):not([aria-current="page"]):hover{
+    background:rgba(255,255,255,.25)!important;
+    border-color:transparent!important;
+  }
+  html body:is(.theme-black,.theme-dark)[data-menu-layout="rail"] #app .rail-sidebar .rail-action:is(.active,[aria-current="page"]){
+    background:linear-gradient(145deg,rgba(37,36,47,.92),rgba(24,25,32,.86))!important;
+    color:color-mix(in srgb,var(--vive-theme-color,#9185ef) 68%,#fff)!important;
+    border:1px solid #393840!important;
+    box-shadow:0 8px 24px rgba(0,0,0,.34)!important;
+  }
+  html body:is(.theme-black,.theme-dark)[data-menu-layout="rail"] #app .rail-sidebar .rail-action:not(.active):not([aria-current="page"]):hover{
+    background:#17171a!important;
+  }
+}
+/* El lienzo de Analítica no es una sola tarjeta: tres elementos autónomos. */
+html body:not(.theme-black):not(.theme-dark) #app main.main.world-advanced #page .advanced-quick.advanced-gaps.v14-advanced-three,
+html body:is(.theme-black,.theme-dark) #app main.main.world-advanced #page .advanced-quick.advanced-gaps.v14-advanced-three{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:clamp(14px,1.5vw,24px)!important;
+  min-width:0!important;
+  padding:0!important;
+  margin:clamp(16px,1.8vw,24px) 0 clamp(22px,2vw,30px)!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .advanced-stat.v16-annual-clean{
+  --v915-tone:var(--vive-theme-color,#7066ee);
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  min-width:0!important;
+  min-height:clamp(150px,11vw,205px)!important;
+  padding:clamp(18px,2vw,28px)!important;
+  border:1px solid color-mix(in srgb,var(--v915-tone) 19%,#dbe4f0)!important;
+  border-radius:clamp(20px,1.75vw,26px)!important;
+  background-color:rgba(255,255,255,.66)!important;
+  background-image:
+    radial-gradient(ellipse 235px 160px at 100% 0%,color-mix(in srgb,var(--v915-tone) 9%,transparent),transparent 80%),
+    linear-gradient(130deg,rgba(255,255,255,.74),rgba(247,249,255,.38))!important;
+  box-shadow:0 12px 31px rgba(41,66,110,.065)!important;
+  overflow:hidden!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .v14-income{--v915-tone:#28a586;}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .v14-expense{--v915-tone:#d88c75;}
+html body:not(.theme-black):not(.theme-dark) #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .v14-net{--v915-tone:var(--vive-theme-color,#7066ee);}
+html body #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .v16-annual-clean::before,
+html body #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .v16-annual-clean::after{
+  content:none!important;display:none!important;
+}
+html body #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .v16-annual-clean > strong{
+  font-size:clamp(27px,2.25vw,45px)!important;
+  line-height:1.11!important;
+  letter-spacing:-.045em!important;
+  overflow-wrap:anywhere;
+}
+html body #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .v16-annual-clean > span{
+  font-size:clamp(12px,.94vw,16px)!important;
+  letter-spacing:.015em!important;
+}
+html body #app .main.world-advanced #page .advanced-quick.v14-advanced-three .advanced-gap{
+  margin-top:11px!important;
+}
+/* Acabado de familia para superficies de módulos, inspirado en Inicio:
+   por debajo del brillo principal se percibe el ambiente; la tarjeta deja de ser
+   una lámina blanca plana. Excluye explícitamente hero semánticos y selección. */
+html body:not(.theme-black):not(.theme-dark) #app .main:is(
+  .world-advanced,.world-analytics,.world-patrimony,.world-vision,.world-payments,
+  .world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates,
+  .world-recurring,.world-personal,.world-budget,.world-income,.world-expenses,
+  .world-register,.world-transactions,.world-categories,.world-benefits,.world-mobilehub
+) #page :is(
+  .v16-clean-table.panel,.advanced-summary.panel,.v14-category-table.panel,
+  .v239-sheet,.v239-account-item,.v239-certificate-item,.v244-sheet,
+  .v22-wealth-chart,.v22-wealth-balance,.v22-forecast-kpi,
+  .v46-subscription-card,.v145-payment-section,.v295-payment-section,
+  .v187-chart-card,.v187-benefits-ledger,.v55-panel,.v55-metric,
+  .v205-explore-group,.v410-explore-sec,.v431-tile
+):not(.active):not(.selected):not(.featured){
+  --v915-tone:var(--v910-tone,var(--vive-theme-color,#7066ee));
+  background-color:rgba(255,255,255,.68)!important;
+  background-image:
+    radial-gradient(ellipse 255px 175px at 100% 0%,color-mix(in srgb,var(--v915-tone) 9%,transparent),transparent 79%),
+    linear-gradient(140deg,rgba(255,255,255,.70),rgba(244,249,255,.34))!important;
+  border-color:color-mix(in srgb,var(--v915-tone) 15%,#dce5ee)!important;
+  box-shadow:0 10px 29px rgba(30,51,91,.055)!important;
+}
+/* Los KPI genéricos de Analítica, no el gráfico ni el contenedor de la cuadrícula. */
+html body:not(.theme-black):not(.theme-dark) #app .main.world-advanced #page :is(.advanced-stat,.advanced-quick > span):not(.v16-annual-clean){
+  background-color:rgba(255,255,255,.68)!important;
+  background-image:radial-gradient(ellipse 200px 135px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#7066ee) 8%,transparent),transparent 80%)!important;
+  border-color:rgba(193,204,230,.44)!important;
+}
+/* Respeto de identidad: el hero de Entre personas mantiene su violeta original. */
+html body #app .main.world-personal #page :is(.v390-hero,.personal-hero,.v390-personal-hero){
+  --v915-tone:var(--vive-theme-color,#7066ee);
+}
+/* Modo Black: negro auténtico, tarjetas diferenciadas sin azul marino. */
+html body:is(.theme-black,.theme-dark) #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .advanced-stat.v16-annual-clean,
+html body:is(.theme-black,.theme-dark) #app .main:is(.world-advanced,.world-analytics,.world-patrimony,.world-vision,.world-payments,
+.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates,.world-recurring,.world-personal,
+.world-budget,.world-income,.world-expenses,.world-register,.world-transactions,.world-categories,.world-benefits,.world-mobilehub) #page :is(
+ .v16-clean-table.panel,.advanced-summary.panel,.v14-category-table.panel,.v239-sheet,.v239-account-item,
+ .v239-certificate-item,.v244-sheet,.v22-wealth-chart,.v22-wealth-balance,.v22-forecast-kpi,
+ .v46-subscription-card,.v145-payment-section,.v295-payment-section,.v187-chart-card,.v187-benefits-ledger,
+ .v55-panel,.v55-metric,.v205-explore-group,.v410-explore-sec,.v431-tile
+):not(.active):not(.selected):not(.featured){
+  --v915-tone:var(--v910-tone,var(--vive-theme-color,#9288ee));
+  background-color:#0b0b0c!important;
+  background-image:radial-gradient(ellipse 220px 150px at 100% 0%,color-mix(in srgb,var(--v915-tone) 12%,transparent),transparent 83%)!important;
+  border-color:#2c2d35!important;
+  box-shadow:0 10px 29px rgba(0,0,0,.34)!important;
+}
+html body:is(.theme-black,.theme-dark) #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .v16-annual-clean > strong{
+  color:#f0f2fa!important;
+}
+@media(max-width:1050px){
+  html body #app .main.world-advanced #page .advanced-quick.v14-advanced-three{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:12px!important;
+  }
+}
+@media(max-width:790px){
+  html body #app .main.world-advanced #page .advanced-quick.v14-advanced-three{
+    grid-template-columns:1fr!important;gap:12px!important;margin-top:14px!important;
+  }
+  html body #app .main.world-advanced #page .advanced-quick.v14-advanced-three > .v16-annual-clean{
+    min-height:126px!important;padding:18px 20px!important;
+  }
+  /* La navegación móvil no se modifica para restaurar la barra de escritorio. */
+}
+@media(prefers-reduced-motion:reduce){
+  html body[data-menu-layout="rail"] #app .rail-sidebar .rail-action{transition:none!important;}
+}
+</style>
+<style id="v916-nav-single-active-instant">
+/* V916 · Al cambiar de apartado SOLO hay una pestaña resaltada.
+   Ninguna pestaña anterior persiste por transiciones ni por fondos inline. */
+@media (min-width:791px){
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]){
+  transition:none!important;
+  animation:none!important;
+  transform:none!important;
+  will-change:auto!important;
+  filter:none!important;
+ }
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"])::before,
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"])::after{
+  transition:none!important;animation:none!important;transform:none!important;
+ }
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):not(.active):not([aria-selected="true"]):not([aria-current="page"]){
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  color:var(--v916-nav-muted,#607a9d)!important;
+  -webkit-text-fill-color:currentColor!important;
+ }
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):not(.active):not([aria-selected="true"]):not([aria-current="page"]):is(:hover,:focus-visible){
+  background:color-mix(in srgb,var(--vive-theme-color,#665fe7) 5%,transparent)!important;
+  box-shadow:none!important;
+  transform:none!important;
+ }
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):is(.active,[aria-selected="true"],[aria-current="page"]){
+  background:var(--v424-accent-strong,var(--vive-theme-color,#665fe7))!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  box-shadow:0 5px 15px color-mix(in srgb,var(--vive-theme-color,#665fe7) 19%,transparent)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  transform:none!important;
+ }
+ html body #app main.main :is(
+  .universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,
+  .segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,
+  .v207-operation-choice,.v245-inner-tabs
+ ) :is(button,[role="tab"]):is(.active,[aria-selected="true"],[aria-current="page"]) :is(svg,span,i){
+  color:#fff!important;stroke:currentColor!important;-webkit-text-fill-color:#fff!important;
+ }
+}
+</style>
+
+<style id="v916-module-active-priority">
+@media (min-width:791px){
+ html body #app main.main .module-switch-shell .module-switch-tabs > .module-switch-tab:is(.active,[aria-current="page"],[aria-selected="true"]){background:var(--v424-accent-strong,var(--vive-theme-color,#665fe7))!important;background-color:var(--v424-accent-strong,var(--vive-theme-color,#665fe7))!important;background-image:none!important;color:#fff!important;box-shadow:0 5px 15px color-mix(in srgb,var(--vive-theme-color,#665fe7) 19%,transparent)!important;}
+ html body #app main.main .module-switch-shell .module-switch-tabs > .module-switch-tab:not(.active):not([aria-current="page"]):not([aria-selected="true"]){background:transparent!important;background-color:transparent!important;background-image:none!important;box-shadow:none!important;transform:none!important;}
+}
+</style>
+
+<script id="v916-instant-single-active-state">
+/* El botón activo se actualiza de manera atómica: no hay dos cápsulas
+   resaltadas ni una animación del botón anterior hacia el siguiente. */
+(function(){
+ const groups='.universe-switch,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs';
+ const buttons='button,[role="tab"]';
+ const accent='var(--v424-accent-strong,var(--vive-theme-color,#665fe7))';
+ const ink='var(--v916-nav-muted,#607a9d)';
+ function paint(group, selected){
+  if(!group || matchMedia('(max-width:790px)').matches)return;
+  for(const el of group.querySelectorAll(buttons)){
+   const on=el===selected;
+   el.style.setProperty('transition','none','important');
+   el.style.setProperty('animation','none','important');
+   el.style.setProperty('transform','none','important');
+   el.style.setProperty('background-color',on?accent:'transparent','important');
+   el.style.setProperty('background-image','none','important');
+   el.style.setProperty('border-color','transparent','important');
+   el.style.setProperty('box-shadow',on?'0 5px 15px color-mix(in srgb,var(--vive-theme-color,#665fe7) 19%,transparent)':'none','important');
+   el.style.setProperty('color',on?'#fff':ink,'important');
+   el.style.setProperty('-webkit-text-fill-color',on?'#fff':ink,'important');
+  }
+ }
+ function reconcile(){
+  document.querySelectorAll('#app main.main '+groups.replaceAll(',',',#app main.main ')).forEach(group=>{
+   const selected=Array.from(group.querySelectorAll(buttons)).find(el=>el.classList.contains('active')||el.getAttribute('aria-selected')==='true'||el.getAttribute('aria-current')==='page');
+   if(selected)paint(group,selected);
+  });
+ }
+ document.addEventListener('click',function(e){
+  if(matchMedia('(max-width:790px)').matches)return;
+  const el=e.target.closest('#app main.main :is('+groups+') > button, #app main.main :is('+groups+') > [role="tab"]');
+  if(!el||el.disabled)return;
+  const group=el.parentElement;
+  if(!group || group.querySelectorAll(buttons).length < 2)return;
+  for(const button of group.querySelectorAll(buttons)){
+   const selected=button===el;
+   button.classList.toggle('active',selected);
+   if(button.getAttribute('role')==='tab'||button.hasAttribute('aria-selected')) button.setAttribute('aria-selected',String(selected));
+   if(selected)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+  }
+  paint(group,el);
+ },true);
+ let scheduled=false;
+ const queue=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;reconcile()});};
+ const start=()=>{reconcile();const host=document.getElementById('app');if(host)new MutationObserver(queue).observe(host,{childList:true,subtree:true});};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+
 </body>
 </html>
