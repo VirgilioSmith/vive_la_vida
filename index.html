@@ -42291,6 +42291,8 @@ document.addEventListener('submit',function(e){
 },true);
 
 
+/* V951: puente de solo lectura para controladores externos (p. ej. V383 · abono a préstamo), que no ven las funciones internas de este bloque. */
+window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
 })();
 
 
@@ -67937,6 +67939,9 @@ body:is(.theme-black,.theme-dark) #modal-root .v383-loan-review p{color:#b6b6b6}
 <script id="v383-loan-controller">
 (function(){
  'use strict';
+ // V951: sin este puente, loan/account eran inaccesibles aquí y TODO abono quedaba bloqueado con «Selecciona un préstamo activo».
+ const core=window.__viveCore||{};
+ const loan=core.loan,account=core.account,loanAccounting=core.loanAccounting,xconvert=core.xconvert,isTaxableBankPayment=core.isTaxableBankPayment,today=core.today,toast=core.toast;
  const currency=(n,c)=> (c==='USD'?'US$':'RD$')+new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.abs(Number(n)||0));
  const escape=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
  const numValue=(f,name)=>{const field=f.elements.namedItem(name);return field&&field.value.trim()!==''?Number(field.value):NaN};
