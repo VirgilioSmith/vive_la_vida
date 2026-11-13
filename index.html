@@ -20739,6 +20739,7 @@ html body:is(.theme-black,.theme-dark) #app #page .v68-wallet .v266-wallet-actio
   border-color:color-mix(in srgb,var(--vive-theme-color,var(--accent,#6d65ee)) 20%,#303037)!important;
 }
 </style>
+<script id="vive-feature-flag">window.VIVE_ENABLED=window.VIVE_ENABLED!==false;</script>
 </head>
 <body>
 <!-- V262 redesign patch --><div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
@@ -24366,7 +24367,7 @@ function v36Bell(){
  }).join('');
  const spendingItems=spendAlerts.map(a=>`<article class="v36-notice v123-bell-alert"><span class="v36-notice-dot"></span><div><strong>${sanitize(a.category)} · ${a.kind==='trend'?'Tendencia al alza':'Gasto elevado'}</strong><small>${sanitize(v123AlertText(a))}</small></div></article>`).join('');
  const totalAlerts=urgent+spendAlerts.length+v246UnreadReportCount();
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-access-mobile" data-vive-open="mobile"><span class="vive-access-symbol" aria-hidden="true">✧</span><span class="vive-access-text"><strong>Vive</strong><small>Un instante para lo que importa</small></span><span class="vive-access-arrow" aria-hidden="true">›</span></button>`}${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
@@ -26921,6 +26922,7 @@ function overview(){
 
  return `<div class="ff-dashboard summary-space">
   <div class="ff-dashboard-tools"><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
+  ${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-access-web" data-vive-open="web"><span class="vive-access-symbol" aria-hidden="true">✧</span><span class="vive-access-text"><strong>Vive</strong><small>Un instante para lo que importa</small></span><span class="vive-access-arrow" aria-hidden="true">›</span></button>`}
   <div class="ff-dashboard-grid v105-grid">
    <section class="ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${allNet<-.005?'v176-net-negative':allNet>.005?'v176-net-positive':''}">${money(allNet,'DOP',2)}</button><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="v186Deep" data-id="liquidity" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="v186Deep" data-id="debt" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="net" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
    <aside data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong><span>Pendientes hasta fin de mes, incluidos vencidos: ${money(allDue)}. La carga mensual es distinta del saldo total de deuda.</span></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} pendientes de revisión <span>${icon('arrow')}</span></button></aside>
@@ -87656,5 +87658,126 @@ html body:is(.theme-black,.theme-dark) #app #page .v239-certificates .v239-hero{
 @media(prefers-reduced-motion:reduce){html body #app #page .v68-wallet .v266-wallet-actions>button{transition:none!important;}}
 </style>
 
+<style id="vive-module-css">
+/* Vive: isolated styling; no selectors on existing finance cards */
+.vive-access-mobile,.vive-access-web{font:inherit;color:inherit;cursor:pointer;text-align:left;display:flex;align-items:center;gap:11px;min-width:0;border:1px solid rgba(135,142,161,.2);border-radius:17px;background:linear-gradient(112deg,rgba(255,255,255,.72),rgba(255,255,255,.46));box-shadow:0 5px 18px rgba(33,42,66,.045);padding:12px 14px;position:relative}
+.vive-access-mobile:focus-visible,.vive-access-web:focus-visible,.vive-reader button:focus-visible{outline:2px solid var(--vive-theme-color,#7066ee);outline-offset:3px}
+.vive-access-mobile{width:calc(100% - 24px);margin:10px 12px 13px;max-width:none;min-height:61px}
+.vive-access-web{width:100%;min-height:62px;margin:0 0 12px;flex:0 0 auto}
+.vive-access-symbol{font-size:21px;color:var(--vive-theme-color,#7066ee);flex:0 0 auto;width:30px;text-align:center}
+.vive-access-text{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}.vive-access-text strong{font-size:14px;font-weight:750;line-height:1.1}.vive-access-text small{font-size:12px;opacity:.72;font-weight:500}.vive-access-arrow{font-size:19px;opacity:.57}
+.vive-reader-overlay{position:fixed;inset:0;z-index:2147483640;background:rgba(9,12,23,.42);display:flex;align-items:center;justify-content:center;padding:clamp(14px,4vw,32px);overscroll-behavior:contain}
+.vive-reader{font-family:inherit;box-sizing:border-box;color:#202631;width:min(100%,530px);max-height:min(88dvh,760px);overflow:auto;background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(252,252,255,.94));border:1px solid rgba(255,255,255,.72);border-radius:27px;box-shadow:0 28px 80px rgba(4,10,32,.19);padding:21px 25px 22px;display:flex;flex-direction:column;outline:none;animation:vive-enter .29s ease-out both}
+.vive-reader-head{display:flex;align-items:center;gap:9px;margin:0}.vive-reader-head h2{font-size:17px;font-weight:750;margin:0;color:inherit}.vive-reader-mark{color:var(--vive-theme-color,#7066ee);font-size:25px;line-height:1}.vive-reader-close{margin-left:auto;border:0;background:transparent;color:inherit;font-size:27px;width:38px;height:38px;cursor:pointer;border-radius:13px}
+.vive-reader-body{min-height:175px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:27px 10px 31px;transition:opacity .2s ease}
+.vive-reader-copy{font-weight:570;line-height:1.6;font-size:clamp(19px,2.5vw,26px);white-space:pre-line;overflow-wrap:anywhere;max-width:44ch}
+.vive-kind-word .vive-reader-copy{font-size:clamp(40px,8vw,66px);font-weight:740;letter-spacing:-.045em;line-height:1.13}
+.vive-kind-mantra .vive-reader-copy{font-size:clamp(24px,4vw,36px);font-weight:670;line-height:1.35}
+.vive-repeat-marker{font-size:10px;opacity:.55;margin-top:17px}.vive-reader-status{font-size:15px;line-height:1.6;max-width:30ch;opacity:.69}.vive-reader-status.is-error{opacity:.85}
+.vive-reader-actions{display:flex;gap:10px;align-items:center;justify-content:center;border-top:1px solid rgba(95,103,124,.12);padding-top:17px}.vive-reader-actions button{font:inherit;cursor:pointer}.vive-reader-another{border:1px solid color-mix(in srgb,var(--vive-theme-color,#7066ee) 29%,transparent);background:color-mix(in srgb,var(--vive-theme-color,#7066ee) 9%,transparent);color:inherit;border-radius:99px;padding:11px 18px;font-size:13px;font-weight:650}.vive-reader-another:disabled{opacity:.42;cursor:default}.vive-reader-icon{border:1px solid rgba(120,125,148,.16);background:transparent;border-radius:50%;height:40px;width:40px;color:inherit;font-size:21px}.vive-reader-icon[hidden]{display:none}
+body.theme-black .vive-access-mobile,body.theme-black .vive-access-web,body.theme-dark .vive-access-mobile,body.theme-dark .vive-access-web{background:rgba(15,15,17,.86);border-color:rgba(255,255,255,.11);color:#f8f8fa}
+body.theme-black .vive-reader,body.theme-dark .vive-reader{background:#080809;color:#f8f8fa;border-color:rgba(255,255,255,.13);box-shadow:0 26px 60px rgba(0,0,0,.55)}
+@media(max-width:790px){.vive-access-web{display:none}.vive-reader-overlay{align-items:flex-end;padding:0}.vive-reader{width:100%;border-radius:25px 25px 0 0;max-height:calc(92dvh - env(safe-area-inset-bottom,0px));padding:18px 21px calc(20px + env(safe-area-inset-bottom,0px))}.vive-reader-body{min-height:165px;padding:24px 5px 33px}}
+@media(min-width:791px){.vive-access-mobile{display:none}}
+@media(prefers-reduced-motion:reduce){.vive-reader{animation:none}.vive-reader-body{transition:none}}
+@keyframes vive-enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+
+</style>
+<script id="vive-module-js">
+/* Vive: isolated presentation; one API for both entry points. No financial reads. */
+(()=>{'use strict';
+  const state={open:false,busy:false,current:null,origin:'web',abort:null,opener:null,pendingKey:null};
+  const rootId='vive-reader';
+  function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function api(){try{return typeof f33Api!=='undefined'?f33Api:null}catch(_){return null}}
+  function user(){try{return typeof f33User!=='undefined'?f33User:null}catch(_){return null}}
+  function open(origin,opener){
+    if(document.getElementById(rootId))return;
+    state.open=true;state.origin=origin;state.opener=opener;
+    const container=document.createElement('div');container.id=rootId;
+    container.className='vive-reader-overlay';container.innerHTML=`<section class="vive-reader" role="dialog" aria-modal="true" aria-labelledby="vive-reader-title" tabindex="-1"><header class="vive-reader-head"><span class="vive-reader-mark" aria-hidden="true">✧</span><h2 id="vive-reader-title">Vive</h2><button type="button" class="vive-reader-close" data-vive-close aria-label="Cerrar Vive">×</button></header><div class="vive-reader-body" aria-live="polite" aria-atomic="true"><p class="vive-reader-status">Un instante para lo que importa.</p></div><footer class="vive-reader-actions"><button type="button" class="vive-reader-another" data-vive-next>Otro instante <span aria-hidden="true">↗</span></button><button type="button" class="vive-reader-icon" data-vive-favorite hidden aria-label="Guardar como favorito" title="Guardar">♡</button><button type="button" class="vive-reader-icon" data-vive-share hidden aria-label="Compartir reflexión" title="Compartir">↗</button></footer></section>`;
+    container.addEventListener('click',e=>{if(e.target===container)close()});
+    document.body.append(container);container.querySelector('.vive-reader').focus();next();
+  }
+  function close(){const r=document.getElementById(rootId);if(!r)return;state.open=false;r.remove();state.opener?.focus?.();}
+  function content(data){const r=document.getElementById(rootId);if(!r)return;
+    const body=r.querySelector('.vive-reader-body');
+    const text=String(data?.text||'');let kind=data?.kind||'reflection';
+    body.className='vive-reader-body vive-kind-'+kind;
+    body.innerHTML=`<div class="vive-reader-copy">${safe(text).replace(/\n/g,'<span class="vive-softbreak"></span>')}</div>${data.repeatable?'<small class="vive-repeat-marker">Palabra o mantra recurrente</small>':''}`;
+    for(const k of ['favorite','share']){const b=r.querySelector('[data-vive-'+k+']'); b.hidden=!data.content_id; b.disabled=false;}
+  }
+  function status(message,problem=false){const r=document.getElementById(rootId);if(!r)return;r.querySelector('.vive-reader-body').innerHTML=`<p class="vive-reader-status${problem?' is-error':''}">${safe(message)}</p>`;}
+  // crypto.getRandomValues works for local file previews where crypto.randomUUID may be unavailable.
+  // Never fall back to Math.random: the request key identifies an idempotent database reservation.
+  function requestUuid(){
+    if(typeof crypto==='undefined')throw new Error('VIVE_NO_CRYPTO');
+    if(typeof crypto.randomUUID==='function')return crypto.randomUUID();
+    if(typeof crypto.getRandomValues!=='function')throw new Error('VIVE_NO_CRYPTO');
+    const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);
+    bytes[6]=(bytes[6]&15)|64; bytes[8]=(bytes[8]&63)|128;
+    const h=Array.from(bytes,v=>v.toString(16).padStart(2,'0')).join('');
+    return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+  }
+  function friendlyError(error){
+    const msg=String(error?.message||'');
+    const code=String(error?.code||'');
+    if(msg==='VIVE_NO_CRYPTO')return 'No se pudo establecer una solicitud segura. Abre vive el hoy desde su sitio HTTPS.';
+    if(/Inicia sesión|JWT|not authenticated|invalid jwt|authenticaci[oó]n|PGRST301|42501/i.test(msg+' '+code))return 'Tu sesión necesita validarse. Vuelve a iniciar sesión e inténtalo nuevamente.';
+    if(/Could not find the function|schema cache|PGRST202/i.test(msg+' '+code))return 'Vive aún no está disponible en esta versión del servidor. Actualiza la aplicación e inténtalo nuevamente.';
+    if(/Failed to fetch|network|fetch failed|timeout|offline/i.test(msg+' '+code) || navigator.onLine===false)return 'No se pudo conectar con Vive. Comprueba tu conexión e inténtalo nuevamente.';
+    return 'No se pudo cargar un instante nuevo. Puedes intentarlo otra vez.';
+  }
+  async function next(){if(state.busy||!state.open)return;state.busy=true;
+    const r=document.getElementById(rootId);if(!r)return;
+    const button=r.querySelector('[data-vive-next]');button.disabled=true;r.setAttribute('aria-busy','true');
+    status('Buscando un instante para ti…');
+    try{
+      const client=api();if(!client||!user())throw new Error('Inicia sesión y comprueba la conexión para recibir un instante nuevo.');
+      // Secure RNG for independent requests; retry of the SAME request uses the SAME key.
+      const key=state.pendingKey||(state.pendingKey=requestUuid());
+      let result,err;
+      for(let attempt=0;attempt<2;attempt++){
+        const reply=await client.rpc('vive_next',{p_request_key:key,p_origin:state.origin});
+        result=reply.data;err=reply.error;
+        if(!err)break;
+        if(attempt===0 && /network|fetch|timeout/i.test(String(err.message||'')))continue;
+        break;
+      }
+      if(err)throw err;
+      if(!state.open)return;
+      if(!result||result.available===false){state.pendingKey=null;status('Por ahora no hay otro instante nuevo disponible. Puedes regresar más tarde.');return;}
+      if(!result.text)throw new Error('El servidor no devolvió contenido válido.');
+      state.pendingKey=null;state.current=result;content(result);
+    }catch(e){if(!state.open)return;status(friendlyError(e),true);console.warn('Vive: fallo de solicitud (sin datos sensibles). Código:',e?.code||e?.name||'desconocido');}
+    finally{state.busy=false;const rr=document.getElementById(rootId);if(rr){rr.removeAttribute('aria-busy');rr.querySelector('[data-vive-next]').disabled=false;}}
+  }
+  async function favorite(){const c=state.current,client=api(),u=user();if(!client||!u||!c?.content_id)return;
+    const b=document.querySelector('#'+rootId+' [data-vive-favorite]');if(!b)return;b.disabled=true;
+    try{const {error}=await client.from('vive_favorites').upsert({user_id:u.id,content_id:c.content_id},{onConflict:'user_id,content_id',ignoreDuplicates:true});if(error)throw error;b.textContent='♥';b.setAttribute('aria-label','Guardado en favoritos');}catch(e){b.textContent='♡';console.warn('Vive: no se pudo guardar favorito.');}finally{b.disabled=false;}
+  }
+  async function share(){const c=state.current;if(!c?.text)return;try{if(navigator.share)await navigator.share({text:c.text});else if(navigator.clipboard)await navigator.clipboard.writeText(c.text);}catch(e){if(e?.name!=='AbortError')console.warn('Vive: acción compartir no disponible.')}}
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('[data-vive-open]');if(a){e.preventDefault();const details=a.closest('details.v36-notifications');if(details)details.open=false;open(a.getAttribute('data-vive-open')||'web',a);return;}
+    if(e.target.closest('[data-vive-close]'))close();
+    else if(e.target.closest('[data-vive-next]'))next();
+    else if(e.target.closest('[data-vive-favorite]'))favorite();
+    else if(e.target.closest('[data-vive-share]'))share();
+  });
+  document.addEventListener('keydown',e=>{
+    if(!state.open)return;
+    if(e.key==='Escape'){e.preventDefault();close();return;}
+    if(e.key==='Tab'){
+      const r=document.getElementById(rootId);if(!r)return;
+      const controls=[...r.querySelectorAll('button:not([hidden]):not([disabled])')];if(!controls.length)return;
+      const first=controls[0],last=controls[controls.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    }
+  });
+  window.ViveModule=Object.freeze({open:()=>open('web',document.activeElement),close});
+})();
+
+</script>
 </body>
 </html>
