@@ -36010,10 +36010,17 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&document.activeEl
 function v146ServiceChooser(){ return v923ServiceChooser(); }
 
 document.addEventListener('click',function(event){
+ // V929: one entry to the same service confirmation for subscription / commitment payments.
+ // Intercept before the old wizard and before any other delegated click listener.
+ const specific=event.target.closest?.('[data-act="payRecurring"][data-id], [data-v146-pay-service], [data-v261-bill], [data-v261-continue], [data-act="quickPaySpecific"][data-kind="payRecurring"]');
+ if(specific){
+  event.preventDefault();event.stopImmediatePropagation();
+  const serviceId=specific.dataset.id||specific.dataset.v146PayService||specific.dataset.v261Bill||specific.dataset.v261Continue;
+  if(serviceId)v917BillDetail(serviceId);
+  return;
+ }
  const opening=event.target.closest?.('[data-act="guidedFlow"][data-mode="service"]');
  if(opening){event.preventDefault();event.stopImmediatePropagation();v146ServiceChooser();return}
- const paying=event.target.closest?.('[data-v146-pay-service]');
- if(paying){event.preventDefault();event.stopImmediatePropagation();const id=paying.dataset.v146PayService;closeModal();payRecurring(id);return}
  const occasional=event.target.closest?.('[data-v146-service-occasional]');
  if(occasional){event.preventDefault();event.stopImmediatePropagation();closeModal();guidedTransactionForm({type:'expense',flowMode:'service',servicePreset:'other'});return}
 },true);
@@ -36224,9 +36231,19 @@ function v261PendingServices(){
  const current=v99Period(today().slice(0,7));
  const recurring=new Map((db.recurring||[]).filter(r=>r&&r.active!==false).map(r=>[r.id,r]));
  const due=[...v99PendingForPeriod(current),...upcoming()].filter(x=>x.kind==='recurring');
+ // A recurring service is not a separate payment form. Its nextDue is the source
+ // even when the financial calendar does not include that future date yet.
+ for(const r of recurring.values()){
+  if(r.archived||!r.nextDue||!r.currency)continue;
+  const key=`recurring:${r.id}:${r.nextDue}`;
+  if(db.transactions.some(t=>t.scheduleKey===key))continue;
+  if(!due.some(x=>String(x.ref)===String(r.id)))due.push({kind:'recurring',ref:r.id,date:r.nextDue,amount:num(r.amount),currency:r.currency});
+ }
  const seen=new Set();
  return due.sort((a,b)=>String(a.date).localeCompare(String(b.date))).filter(x=>{
   if(!recurring.has(x.ref)||seen.has(x.ref))return false;
+  const r=recurring.get(x.ref);
+  if(r.archived||db.transactions.some(t=>t.scheduleKey===`recurring:${r.id}:${r.nextDue}`))return false;
   seen.add(x.ref);return true;
  }).map(x=>({r:recurring.get(x.ref),x}));
 }
@@ -36245,10 +36262,10 @@ function v261ServiceSource(r){
 }
 function v261BillRow(r,x){
  const st=v261ServiceStatus(x.date);
- return `<button type="button" class="v261-bill-row" data-v261-bill="${sanitize(r.id)}" aria-label="Ver detalle de ${sanitize(r.name)}">
+ return `<button type="button" class="v261-bill-row" data-v261-bill="${sanitize(r.id)}" aria-label="Confirmar pago de ${sanitize(r.name)}">
   <span class="v261-bill-symbol">${v45SubIcon(r,'tiny')}</span>
   <span class="v261-bill-text"><strong>${sanitize(r.name)}</strong><small><span class="v261-due ${st.kind}">${sanitize(st.name)}</span> · ${sanitize(r.category||'Servicio')}</small></span>
-  <span class="v261-bill-money"><strong>${money(x.amount,x.currency,2)}</strong><span>Ver detalle ${icon('arrow')}</span></span>
+  <span class="v261-bill-money"><strong>${money(x.amount,x.currency,2)}</strong><span>Confirmar pago ${icon('arrow')}</span></span>
  </button>`;
 }
 function v261ServiceFrame(title,subtitle,body,{detail=false,footer=''}={}){
@@ -41991,11 +42008,11 @@ function v917BillDetail(id){
   <div class="v261-detail-identity v917-service-identity"><div class="v261-detail-symbol">${v45SubIcon(r,'tiny')}</div><h3>${sanitize(r.name)}</h3><p>${sanitize(r.category||'Servicio recurrente')}</p><span class="v261-due ${st.kind}">${sanitize(st.name)}</span></div>
   <section class="v917-service-review" aria-label="Datos de la factura">
    <div><span>Servicio</span><strong>${sanitize(r.name)}</strong></div>
-   <div><span>Vencimiento</span><strong>${prettyDate(x.date)}</strong></div>
+   <div><span>Fecha de vencimiento</span><strong>${prettyDate(x.date)}</strong></div>
    <div><span>Moneda</span><strong>${sanitize(x.currency)}</strong></div>
   </section>
-  <label class="v917-money-label"><span>Importe a registrar</span><div class="v917-money-field"><b>${x.currency==='USD'?'US$':'RD$'}</b><input required name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" value="${Number(x.amount).toFixed(2)}" aria-label="Importe de esta factura"/></div></label>
-  <section class="v917-source" aria-label="Origen del pago"><h3>Origen del pago</h3><p>Selecciona la cuenta o tarjeta desde la que se registró.</p>
+  <label class="v917-money-label"><span>Importe previsto · editable</span><div class="v917-money-field"><b>${x.currency==='USD'?'US$':'RD$'}</b><input required name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" value="${Number(x.amount).toFixed(2)}" aria-label="Importe de esta factura"/></div></label>
+  <section class="v917-source" aria-label="Origen del pago"><h3>Cuenta o tarjeta vinculada</h3><p>Selecciona la cuenta o tarjeta desde la que se registró.</p>
    <div class="v917-kind-choices" role="group" aria-label="Tipo de origen">
     <button type="button" data-v917-kind="account" aria-pressed="${selected.kind==='account'}">${icon('wallet')} Cuenta o efectivo</button>
     <button type="button" data-v917-kind="card" aria-pressed="${selected.kind==='card'}">${icon('card')} Tarjeta de crédito</button>
@@ -42019,7 +42036,7 @@ function v917BillDetail(id){
   <div role="alert" id="v917ServiceError" class="v917-error"></div>
  </form>`;
  const footer=`<button type="submit" form="v917ServiceConfirm" class="v261-primary v917-submit">${icon('check')} Registrar pago</button>`;
- v261ServiceFrame('Confirmar pago','Revisa la factura antes de registrarla',body,{detail:true,footer});
+ v261ServiceFrame('Confirmar pago de servicio','Revisa el plan, el importe y el origen antes de registrar',body,{detail:true,footer});
  const form=document.getElementById('v917ServiceConfirm');if(!form)return;
  form.dataset.kind=selected.kind;
  // Efectivo = presencial; cualquier cuenta bancaria = Internet Banking.
@@ -87779,5 +87796,61 @@ body.theme-black .vive-reader,body.theme-dark .vive-reader{background:#080809;co
 })();
 
 </script>
+
+<style id="v928-contrast-financial-heros">
+/* v928: light glass must use dark ink. Correct old white-on-glass contracts at their shared output. */
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero,
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v203-mobile-banks .v203-hero {
+  color:#203451!important;
+  -webkit-text-fill-color:initial!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero :is(h2,h2 em,p,strong,small,span,.hero-eyebrow,.v46-hero-foot,.v46-global-note,.v46-global-main>strong,.v46-global-secondary strong,.v46-global-secondary b,.v46-global-main>span,.v46-global-main>small,.v46-global-secondary span,.v46-global-secondary small),
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v203-mobile-banks .v203-hero :is(.v203-hero-tag,.v203-hero-value,.v203-hero-grid,.v203-hero-grid small,.v203-hero-grid strong,.v203-hero-mark) {
+  color:#203451!important;
+  -webkit-text-fill-color:#203451!important;
+  text-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero :is(.hero-eyebrow,.v46-global-main>span,.v46-global-secondary small,.v46-global-secondary span),
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v203-mobile-banks .v203-hero :is(.v203-hero-tag,.v203-hero-grid small) {
+  color:#557096!important;-webkit-text-fill-color:#557096!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero :is(p,.v46-global-note,.v46-global-main>small,.v46-hero-foot),
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v203-mobile-banks .v203-hero .v203-hero-mark {
+  color:#506482!important;-webkit-text-fill-color:#506482!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero h2 em {
+  color:var(--vive-theme-color,var(--accent,#7066ee))!important;
+  -webkit-text-fill-color:var(--vive-theme-color,var(--accent,#7066ee))!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero .v46-global-secondary>div,
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v203-mobile-banks .v203-hero .v203-hero-grid>div {
+  background:rgba(255,255,255,.20)!important;
+  border-color:rgba(91,116,160,.10)!important;
+}
+/* The same historical white-only styling affected the desktop Banks and Institutions hero. */
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v46-bank-hero :is(h2,strong,p,small,.hero-eyebrow,.v46-global-note,.v46-global-main>strong,.v46-global-secondary strong) {
+  color:#203451!important;-webkit-text-fill-color:#203451!important;text-shadow:none!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app .main #page .v46-bank-hero :is(.hero-eyebrow,.v46-global-main>span,.v46-global-secondary small) {
+  color:#557096!important;-webkit-text-fill-color:#557096!important;
+}
+/* Explore: featured Visión global tile used white type on restored light glass. */
+html body:not(.theme-black):not(.theme-dark) #app #page .v410-tile[data-feature="true"] {
+  background:linear-gradient(155deg,rgba(255,255,255,.74),rgba(255,255,255,.50))!important;
+  border:1px solid color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 14%,rgba(255,255,255,.74))!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app #page .v410-tile[data-feature="true"] :is(strong,b,small,.v410-tile-content,.v410-tile-arrow,.v410-tile-icon) {
+  color:#203451!important;-webkit-text-fill-color:#203451!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app #page .v410-tile[data-feature="true"] .v410-tile-icon {
+  background:color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 11%,white)!important;
+  color:var(--vive-theme-color,var(--accent,#7066ee))!important;
+}
+/* Dark mode: keep the original dark surfaces and white ink, never force the light correction. */
+html body:is(.theme-black,.theme-dark) #app .main #page :is(.v57-product-hero,.v203-mobile-banks .v203-hero) :is(h2,strong,.v46-global-main>strong,.v46-global-secondary strong,.v203-hero-value,.v203-hero-grid strong) {
+  color:#f5f6fb!important;-webkit-text-fill-color:#f5f6fb!important;
+}
+</style>
+
 </body>
 </html>
