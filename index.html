@@ -20545,6 +20545,7 @@ html body:is(.theme-black,.theme-dark) #app .main:is(
  box-shadow:var(--vy-glass-shadow)!important;
 }
 
+.vive-reader-overlay .vive-reader > *{position:relative;z-index:1;}
 @media(prefers-reduced-transparency:reduce){
  html body #app,html body #modal-root{
   --vy-glass-primary:rgba(255,255,255,.94);
@@ -23891,6 +23892,7 @@ function v922MovementProduct(t){
 }
 const TRANSL={personal_issue:'Entrega / recepción de préstamo personal',personal_settlement:'Abono de préstamo personal',bank_reward:'Cashback en cuenta',income:'Ingreso',expense:'Gasto',card_charge:'Consumo tarjeta',card_refund:'Devolución tarjeta',card_payment:'Pago tarjeta',transfer:'Transferencia',loan_payment:'Pago préstamo',adjustment:'Ajuste de saldo',card_reward:'Cashback de tarjeta',certificate_funding:'Constitución de certificado',certificate_redemption:'Rescate de capital',card_advance:'Avance de efectivo'};
 const ICONS={search:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.8 4.8"/>',money:'<rect x="3" y="6" width="18" height="12" rx="2.8"/><circle cx="12" cy="12" r="2.4"/><path d="M6 9.5h.01M18 14.5h.01"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>',home:'<rect x="3" y="10" width="18" height="11" rx="2"/><path d="m2 11 10-8 10 8"/>',wallet:'<rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18"/><path d="M16 15h3"/>',card:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 16h6"/>',cycle:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 9a7 7 0 0 1 12-2l2 2M4 15l2 2a7 7 0 0 0 12-2"/>',analytics:'<path d="M3 19h18M5 16l4-5 4 3 6-9"/><path d="M16 5h3v3"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4 12H2m20 0h-2M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/>',plus:'<path d="M12 5v14M5 12h14"/>',download:'<path d="M12 3v13m-5-5 5 5 5-5M4 19v2h16v-2"/>',upload:'<path d="M12 21V8m-5 5 5-5 5 5M4 5V3h16v2"/>',check:'<path d="m4 12 5 5L20 6"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',up:'<path d="m4 14 6-6 4 4 6-6"/>',down:'<path d="m4 8 6 6 4-4 6 6"/>',shield:'<path d="m12 2 9 4v6c0 6-4 9-9 10-5-1-9-4-9-10V6l9-4Z"/>',receipt:'<path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z"/><path d="M8 8h8m-8 4h8"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',chart:'<path d="M4 20V12m6 8V5m6 15v-8m4 8V9"/>',trash:'<path d="M4 7h16m-14 0 1 14h10l1-14M9 7V4h6v3"/>'};
+ICONS.cashAdvance='<rect x="3" y="9" width="18" height="12" rx="2.5"/><path d="M3 13h18"/><path d="M12 9V2m-4 4 4-4 4 4"/>';
 ICONS.landmark='<path d="M3 9 12 3l9 6"/><path d="M4 9h16M4 21h16M6 11v8m4-8v8m4-8v8m4-8v8"/>';
 ICONS.puzzle='<path d="M9 3h3a2 2 0 0 0 4 0h3v6h-2a2 2 0 0 0 0 4h2v6h-6v-2a2 2 0 0 0-4 0v2H3v-6h2a2 2 0 0 0 0-4H3V3h6Z"/>';
 const icon=(k)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]||ICONS.wallet}</svg>`;
@@ -24371,7 +24373,7 @@ function v36Bell(){
 }
 function mobileHeader(){
  const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
- return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions">${v36Bell()}${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-mobile-head-access" data-vive-open="mobile" aria-label="Abrir Vive" title="Vive"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></button>`}${v402SyncButton()}<button type="button" class="v65-settings-button v271-settings-access ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración">${icon('settings')}</button></div></header>`;
+ return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions">${v402SyncButton()}${v36Bell()}${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-mobile-head-access" data-vive-open="mobile" aria-label="Abrir Vive" title="Vive"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></button>`}<button type="button" class="v65-settings-button v271-settings-access ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.52V20h-3v-.08a1.65 1.65 0 0 0-1-1.52 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.6 15a1.65 1.65 0 0 0-1.52-1H6v-3h.08A1.65 1.65 0 0 0 7.6 10a1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06A1.65 1.65 0 0 0 11 6.6a1.65 1.65 0 0 0 1-1.52V5h3v.08A1.65 1.65 0 0 0 16 6.6a1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.52 1H21v3h-.08A1.65 1.65 0 0 0 19.4 15Z" transform="translate(-1.5 -0.5) scale(1.05)"/></svg></button></div></header>`;
 }
 function mobileBottomNavigation(){
  // Cada producto bancario pertenece al espacio Bancos; no debe marcar Explorar por error.
@@ -24892,11 +24894,11 @@ function v68Wallet(){
     <div class="v550-currency-breakdown" aria-label="Deuda en pesos y dólares"><span><i>RD$</i><b>${num(dop.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span><span><i>US$</i><b>${num(usd.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span></div>
    </div>
   </div>
- <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" data-act="payCard" data-id="${sanitize(active.id)}"><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" data-v900-action="advance" data-id="${sanitize(active.id)}" aria-label="Solicitar avance de efectivo"><span>${icon('wallet')}</span><b>Avance</b></button><button type="button" data-act="editCard" data-id="${sanitize(active.id)}"><span>${icon('settings')}</span><b>Editar</b></button></div>
+ <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" data-act="payCard" data-id="${sanitize(active.id)}"><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" data-v900-action="advance" data-id="${sanitize(active.id)}" aria-label="Solicitar avance de efectivo"><span>${icon('cashAdvance')}</span><b>Avance</b></button><button type="button" data-act="editCard" data-id="${sanitize(active.id)}"><span>${icon('settings')}</span><b>Editar</b></button></div>
  <section class="v266-wallet-panel"><div class="v266-panel-heading"><div><span class="v266-overline">CONTROL DE CRÉDITO</span><h2>Estado de tu tarjeta</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Abrir detalles">${icon('arrow')}</button></div>
  <div class="v268-limit-row v565-limit-header"><span>Límite total</span><strong>${money(totalLimit)}</strong></div><div class="v565-limit-currencies" aria-label="Límites originales por moneda"><div><span>EN PESOS</span><strong>${money(num(active.limitDOP),'DOP',2)}</strong></div><div><span>EN DÓLARES</span><strong>${money(num(active.limitUSD),'USD',2)}</strong></div></div><div class="v266-credit-meter" role="meter" aria-label="Porcentaje utilizado del límite" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${usage.toFixed(1)}"><span style="width:${usage}%"></span></div><div class="v266-meter-foot"><span>Utilización del límite</span><b>${usage.toFixed(1)}%</b></div>${due?`<div class="v266-next-payment"><div><small>${due.nextDue<today()?'VENCIMIENTO ATRASADO':'PRÓXIMO VENCIMIENTO'}</small><strong>${prettyDate(due.nextDue)}</strong></div><b>${money(due.billed,due.ccy,2)}</b><button type="button" data-act="payCard" data-id="${sanitize(active.id)}" data-ccy="${due.ccy}">Pagar ${icon('arrow')}</button></div>`:''}</section>
  ${v371CardReturnWidget(active)}
- <details class="v266-wallet-detail"><summary><span>${icon('receipt')} Cortes por moneda <small>Pesos y dólares</small></span>${icon('arrow')}</summary><div class="v266-currency-row"><span>Facturado · RD$</span><b>${money(dop.billed,'DOP',2)}</b></div><div class="v266-currency-row"><span>Facturado · US$</span><b>${money(usd.billed,'USD',2)}</b></div><p>Los importes son registros internos. Consulta el estado oficial de tu entidad para conciliar.</p></details>
+ <details class="v266-wallet-detail v935-wallet-accordion"><summary><span>${icon('receipt')} Cortes por moneda <small>Pesos y dólares</small></span>${icon('arrow')}</summary><div class="v266-currency-row"><span>Facturado · RD$</span><b>${money(dop.billed,'DOP',2)}</b></div><div class="v266-currency-row"><span>Facturado · US$</span><b>${money(usd.billed,'USD',2)}</b></div><p>Los importes son registros internos. Consulta el estado oficial de tu entidad para conciliar.</p></details>
  ${v921WalletAdvanceDetails(active)}
  <section class="v266-wallet-panel v266-activity"><div class="v266-panel-heading"><div><span class="v266-overline">TUS ÚLTIMOS CONSUMOS</span><h2>Actividad reciente</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Ver todos los movimientos">${icon('arrow')}</button></div>${rows||'<p class="v266-empty-activity">Sin movimientos recientes en esta tarjeta.</p>'}</section>
  <p class="v266-wallet-note">Una compra con tarjeta aumenta tu deuda; pagarla reduce el saldo pendiente sin duplicar el gasto.</p></section>`;
@@ -24925,7 +24927,7 @@ function main(){
  // V363: marca unificada en la segunda línea del encabezado de cada sección.
  h=[h[0],'vive el hoy'];
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong>${APP_BRAND}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}">
-  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<div class="v363-vision-identity"><span class="v363-vision-brand">vive el hoy</span><label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label></div>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}${ui.page==='overview'&&db.settings.visualDesign==='vision'?`<div class="top-actions v146-header-actions ff-overview-top-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v402SyncButton()}<button class="btn ghost ff-overview-tool" data-act="navigate" data-id="settings" title="Ajustes y protección">${icon('shield')}</button><button class="btn ghost ff-overview-tool" data-act="export" title="Descargar respaldo JSON">${icon('download')}</button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`:`<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v402SyncButton()}${v36Bell()}${v165SearchAction()}<button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div>`}</header>
+  <header class="topbar"><div class="topbar-intro">${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<div class="v363-vision-identity"><span class="v363-vision-brand">vive el hoy</span><label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label></div>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v402SyncButton()}${v165SearchAction()}${v36Bell()}${window.VIVE_ENABLED===false?'':`<button type="button" class="v934-web-vive" data-vive-open="web" aria-label="Abrir Vive" title="Vive"><span class="v934-vive-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span></button>`}<button type="button" class="v936-web-settings" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.52V20h-3v-.08a1.65 1.65 0 0 0-1-1.52 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.6 15a1.65 1.65 0 0 0-1.52-1H6v-3h.08A1.65 1.65 0 0 0 7.6 10a1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06A1.65 1.65 0 0 0 11 6.6a1.65 1.65 0 0 0 1-1.52V5h3v.08A1.65 1.65 0 0 0 16 6.6a1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.52 1H21v3h-.08A1.65 1.65 0 0 0 19.4 15Z" transform="translate(-1.5 -0.5) scale(1.05)"/></svg></button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
  
  ${ui.page==='wallet'||ui.page==='pressure'?'':['overview','recurring','personal','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
  ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${v243ExploreReturn()}${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?v68Wallet():pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
@@ -26922,7 +26924,6 @@ function overview(){
 
  return `<div class="ff-dashboard summary-space">
   <div class="ff-dashboard-tools"><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
-  ${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-access-web" data-vive-open="web"><span class="vive-access-symbol" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span><strong class="vive-web-name">Vive</strong><span class="vive-web-pulse" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="vive-web-subtitle">Un instante para lo que realmente importa.</span><span class="vive-web-arrow" aria-hidden="true">→</span></button>`}
   <div class="ff-dashboard-grid v105-grid">
    <section class="ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${allNet<-.005?'v176-net-negative':allNet>.005?'v176-net-positive':''}">${money(allNet,'DOP',2)}</button><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="v186Deep" data-id="liquidity" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="v186Deep" data-id="debt" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="net" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
    <aside data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong><span>Pendientes hasta fin de mes, incluidos vencidos: ${money(allDue)}. La carga mensual es distinta del saldo total de deuda.</span></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} pendientes de revisión <span>${icon('arrow')}</span></button></aside>
@@ -41779,11 +41780,15 @@ function v900WalletAdvanceCurrencyDetails(c){
 }
 function v921WalletAdvanceDetails(c){
  const d=v900AdvanceMonthly(c);
- const month=sanitize(ui.month||today().slice(0,7));
  const count=d.count;
- return `<details class="v266-wallet-detail v921-wallet-advance" aria-label="Avance de efectivo del mes">
-  <summary><span class="v921-advance-summary-label">${icon('wallet')} <strong>Avance de efectivo</strong><small>${month}</small></span><span class="v921-advance-summary-count">${count} avance${count===1?'':'s'}</span><span class="v921-advance-chevron" aria-hidden="true">${icon('arrow')}</span></summary>
-  <div class="v921-advance-inner"><div class="v921-advance-metrics v921-cut-rows"><div class="v266-currency-row"><span>Efectivo recibido</span><b>${money(d.net,'DOP',2)}</b></div><div class="v266-currency-row"><span>Comisiones cobradas</span><b>${money(d.fee,'DOP',2)}</b></div><div class="v266-currency-row"><span>Deuda originada</span><b>${money(d.gross,'DOP',2)}</b></div></div><p>RD$ equivalentes · Sin impuestos añadidos.</p></div>
+ // Use the actual Cortes por moneda structure and classes: identical summary, rows, footer.
+ // Do not create an extra card, inner grid, faux boxes or secondary shell.
+ return `<details class="v266-wallet-detail v933-wallet-advance v935-wallet-accordion" aria-label="Avance de efectivo del mes">
+  <summary><span>${icon('cashAdvance')} Avance de efectivo <small>${count} avance${count===1?'':'s'}</small></span>${icon('arrow')}</summary>
+  <div class="v266-currency-row"><span>Efectivo recibido</span><b>${money(d.net,'DOP',2)}</b></div>
+  <div class="v266-currency-row"><span>Comisiones cobradas</span><b>${money(d.fee,'DOP',2)}</b></div>
+  <div class="v266-currency-row"><span>Deuda originada</span><b>${money(d.gross,'DOP',2)}</b></div>
+  <p>RD$ equivalentes · Sin impuestos añadidos.</p>
  </details>`;
 }
 function v900CardDetailPanel(c){
@@ -41963,8 +41968,10 @@ function v918ChannelPolicy(kind,a,requested){
 }
 function v918ConfiguredBankRate(){
  // The current configured rate is authoritative; no date-dependent percentage is inferred.
- const rate=Number(db.settings?.transferTaxPct??0);
- return Number.isFinite(rate)&&rate>=0&&rate<=100?rate:0;
+ const raw=db.settings?.transferTaxPct;
+ // Respect explicit 0%; use the application's existing 0.20% default only if unset.
+ const rate=(raw===undefined||raw===null||raw==='')?0.20:Number(raw);
+ return Number.isFinite(rate)&&rate>=0&&rate<=100?rate:0.20;
 }
 function v918ServiceDebit(amount,kind,a,channel){
  const safe=Number.isFinite(amount)&&amount>0?amount:0;
@@ -42005,7 +42012,7 @@ function v917BillDetail(id){
   </section>
   <div class="v918-payment-breakdown" aria-live="polite">
    <div><span>Importe del servicio</span><strong id="v918BillAmount">${money(x.amount,x.currency,2)}</strong></div>
-   <div><span>Cargo bancario · <em id="v918RateLabel">0 %</em></span><strong id="v918BankFee">${money(0,x.currency,2)}</strong></div>
+   <div><span>Impuesto de transferencia · <em id="v918RateLabel">0 %</em></span><strong id="v918BankFee">${money(0,x.currency,2)}</strong></div>
   </div>
   <div class="v917-service-total"><span>Total a debitar</span><strong id="v917ServiceTotal">${money(x.amount,x.currency,2)}</strong></div>
   <p class="v917-safe-note">Se registra en tus finanzas, no envía dinero al proveedor. Este vencimiento solo puede registrarse una vez.</p>
@@ -87956,5 +87963,302 @@ body:is(.theme-black,.theme-dark) .vive-mobile-head-access{background:rgba(18,18
 @media(max-width:370px){.vive-mobile-top>.v146-mobile-actions{gap:3px!important}.vive-mobile-top>.v146-mobile-actions>.vive-mobile-head-access{width:32px!important;flex-basis:32px!important;height:32px!important}}
 @media(prefers-reduced-motion:reduce){.vive-reader-overlay .vive-reader{animation:none}.vive-reader-overlay .vive-reader-body{transition:none}}
 </style>
+<style id="v933-wallet-visual-parity">
+/* A single visual contract shared by the two currency/advance accordions. */
+#app #page .v68-wallet details.v266-wallet-detail.v933-wallet-advance{
+  margin-top:14px!important;margin-bottom:16px!important;
+}
+#app #page .v68-wallet details.v933-wallet-advance > summary,
+#app #page .v68-wallet details.v933-wallet-advance > .v266-currency-row,
+#app #page .v68-wallet details.v933-wallet-advance > p{
+  /* The original v266 detail CSS owns padding, font, border and surface. */
+  background-image:none;
+}
+#app #page .v68-wallet.v266-wallet .v266-wallet-actions > button[data-v900-action="advance"] > span svg{
+  width:23px!important;height:23px!important;stroke-width:1.95!important;
+  display:block!important;opacity:1!important;stroke:currentColor!important;
+}
+@media (prefers-reduced-motion:reduce){
+  #app #page .v68-wallet details.v933-wallet-advance *{transition:none!important;}
+}
+</style>
+
+<style id="v934-vive-header-only">
+/* Only header buttons and their positions. All finance dashboard/grid/styles remain unchanged. */
+@media (min-width:791px){
+ #app .topbar .top-actions .v934-web-vive{display:inline-grid;place-items:center;width:38px;height:38px;min-width:38px;min-height:38px;flex:0 0 38px;border-radius:12px;border:1px solid rgba(140,150,168,.21);background:rgba(255,255,255,.30);color:var(--vive-theme-color,var(--accent,#7066ee));padding:9px;cursor:pointer;box-shadow:0 2px 10px rgba(18,32,65,.035);}
+ #app .topbar .top-actions .v934-web-vive svg{display:block;width:100%;height:100%;stroke:currentColor;fill:none;}
+ #app .topbar .top-actions .v934-web-vive:hover{background:rgba(255,255,255,.48);}
+ body:is(.theme-black,.theme-dark) #app .topbar .top-actions .v934-web-vive{background:rgba(20,20,22,.65);border-color:rgba(255,255,255,.13);}
+ #app .topbar .top-actions .v934-web-vive:focus-visible{outline:2px solid var(--vive-theme-color,#7066ee);outline-offset:3px;}
+}
+@media (max-width:790px){
+ #app .vive-mobile-top .v65-settings-button.v271-settings-access{display:inline-grid!important;place-items:center!important;flex:0 0 34px!important;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;border-radius:50%!important;padding:7px!important;}
+ #app .vive-mobile-top .v65-settings-button.v271-settings-access svg{display:block!important;width:22px!important;height:22px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.9!important;}
+ #app .vive-mobile-top .v65-header-tools{flex-direction:row!important;}
+}
+</style>
+
+<style id="v935-wallet-banks-root-consistency">
+/* v935: Scope exclusively to existing wallet accordions/actions and bank overview heroes. */
+#app #page .v68-wallet details.v935-wallet-accordion,
+html body #app #page .v68-wallet details.v935-wallet-accordion {
+  box-sizing:border-box!important; width:100%!important; max-width:100%!important;
+  margin:0 0 16px!important; overflow:hidden!important;
+  border:1px solid color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 26%,rgba(208,218,237,.84))!important;
+  border-radius:26px!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.76),rgba(250,251,255,.64))!important;
+  box-shadow:0 12px 28px rgba(37,60,107,.065)!important;
+  color:#273346!important;
+}
+html body #app #page .v68-wallet details.v935-wallet-accordion > summary {
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  min-height:70px!important;padding:18px 22px!important;
+  background:transparent!important;border:0!important; cursor:pointer!important;
+  font-size:16px!important;font-weight:750!important;color:#273346!important;
+}
+html body #app #page .v68-wallet details.v935-wallet-accordion > summary > span {
+ display:flex!important;align-items:center!important;gap:11px!important;min-width:0!important;
+ color:#273346!important;font-size:16px!important;font-weight:750!important;
+}
+html body #app #page .v68-wallet details.v935-wallet-accordion > summary > span > small {
+ font-size:12px!important;letter-spacing:.07em!important;font-weight:650!important;
+ color:#8997ab!important;white-space:nowrap!important;
+}
+html body #app #page .v68-wallet details.v935-wallet-accordion > summary svg {
+ width:21px!important;height:21px!important;min-width:21px!important;
+ color:var(--vive-theme-color,var(--accent,#7066ee))!important;
+ stroke:currentColor!important;stroke-width:2!important;
+}
+html body #app #page .v68-wallet details.v935-wallet-accordion > .v266-currency-row{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:14px!important;min-height:53px!important;padding:12px 22px!important;
+ margin:0!important;border:0!important;border-top:1px solid rgba(113,136,172,.12)!important;
+ border-radius:0!important;box-shadow:none!important;
+ background:rgba(255,255,255,.18)!important;
+ font-size:14px!important;color:#344057!important;
+}
+html body #app #page .v68-wallet details.v935-wallet-accordion > .v266-currency-row > span {color:#344057!important;font-weight:540!important;}
+html body #app #page .v68-wallet details.v935-wallet-accordion > .v266-currency-row > b {
+ color:#1e293b!important;font-weight:760!important;white-space:nowrap!important;font-size:14px!important;
+}
+html body #app #page .v68-wallet details.v935-wallet-accordion > p {
+ padding:11px 22px 18px!important;margin:0!important;font-size:12px!important;
+ line-height:1.55!important;color:#8290a4!important;background:transparent!important;
+}
+/* Every wallet action receives the same treatment, including Advance: no black selected-looking circle. */
+html body #app #page .v68-wallet .v266-wallet-actions > button[data-v900-action="advance"],
+html body #app #page .v68-wallet .v266-wallet-actions > button[aria-label*="avance" i] {
+ color:#334155!important;background:transparent!important;border:0!important;
+ box-shadow:none!important;outline:0!important;
+}
+html body #app #page .v68-wallet .v266-wallet-actions > button[data-v900-action="advance"] > span,
+html body #app #page .v68-wallet .v266-wallet-actions > button[aria-label*="avance" i] > span {
+ display:grid!important;place-items:center!important;
+ background:color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 6%,#f6f7ff)!important;
+ border:1px solid color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 17%,#e6eafa)!important;
+ border-radius:50%!important;
+ color:var(--vive-theme-color,var(--accent,#7066ee))!important;
+ box-shadow:none!important;
+}
+html body #app #page .v68-wallet .v266-wallet-actions > button[data-v900-action="advance"] :is(svg,b),
+html body #app #page .v68-wallet .v266-wallet-actions > button[aria-label*="avance" i] :is(svg,b) {
+ color:inherit!important;-webkit-text-fill-color:currentColor!important;
+}
+html body #app #page .v68-wallet .v266-wallet-actions > button[data-v900-action="advance"] > b {
+ color:#334155!important;-webkit-text-fill-color:#334155!important;font-weight:700!important;
+}
+/* Web bank pages: restore original contrasting, product-specific hero instead of white-on-white. */
+@media (min-width:761px) {
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-accounts,
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-cards,
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-loans,
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-certificates {
+   color:#fff!important;-webkit-text-fill-color:#fff!important;
+   border:1px solid rgba(255,255,255,.20)!important;
+   box-shadow:0 20px 45px rgba(25,41,75,.14)!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-accounts {background:linear-gradient(115deg,#123f46,#176b72 58%,#378e93)!important;}
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-cards {background:linear-gradient(115deg,#17284e,#334b90 58%,#506ab7)!important;}
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-loans {background:linear-gradient(115deg,#31284f,#534a83 58%,#726da4)!important;}
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-certificates {background:linear-gradient(115deg,#453627,#746044 58%,#9b835f)!important;}
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero :is(h2,h2 em,p,small,strong,span,.hero-eyebrow,.v46-hero-foot,.v46-global-main,.v46-global-main>span,.v46-global-main>strong,.v46-global-main>small,.v46-global-note,.v46-global-secondary strong,.v46-global-secondary b,.v46-global-secondary span,.v46-global-secondary small){
+   color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:none!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero :is(.hero-eyebrow,.v46-global-main>span,.v46-global-secondary span,.v46-global-secondary small,.v46-global-note,p,.v46-hero-foot){
+   color:rgba(255,255,255,.78)!important;-webkit-text-fill-color:rgba(255,255,255,.78)!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero .v46-global-secondary>div {
+ background:rgba(255,255,255,.095)!important;border-color:rgba(255,255,255,.17)!important;
+ }
+}
+/* Mobile: preserve already-approved Banks/Cuentas/Tarjetas; repair only Loans and Certificates. */
+@media (max-width:760px) {
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero:is(.v57-loans,.v57-certificates){
+  color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid rgba(255,255,255,.20)!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-loans {background:linear-gradient(120deg,#31284f,#534a83 58%,#726da4)!important;}
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-certificates {background:linear-gradient(120deg,#453627,#746044 58%,#9b835f)!important;}
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero:is(.v57-loans,.v57-certificates) :is(h2,h2 em,p,small,strong,span,.hero-eyebrow,.v46-hero-foot,.v46-global-main>strong,.v46-global-note,.v46-global-secondary strong,.v46-global-secondary b,.v46-global-secondary span,.v46-global-secondary small){
+   color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:none!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero:is(.v57-loans,.v57-certificates) :is(.hero-eyebrow,.v46-global-main>span,.v46-global-secondary small,.v46-global-note,p){
+ color:rgba(255,255,255,.78)!important;-webkit-text-fill-color:rgba(255,255,255,.78)!important;
+ }
+}
+html body:is(.theme-black,.theme-dark) #app #page .v68-wallet details.v935-wallet-accordion{
+ background:linear-gradient(140deg,#111114,#19191e)!important;color:#f6f6f8!important;
+ border-color:rgba(178,174,246,.2)!important;
+}
+html body:is(.theme-black,.theme-dark) #app #page .v68-wallet details.v935-wallet-accordion > summary,
+html body:is(.theme-black,.theme-dark) #app #page .v68-wallet details.v935-wallet-accordion > summary > span,
+html body:is(.theme-black,.theme-dark) #app #page .v68-wallet details.v935-wallet-accordion > .v266-currency-row > span,
+html body:is(.theme-black,.theme-dark) #app #page .v68-wallet details.v935-wallet-accordion > .v266-currency-row > b{
+ color:#f6f6f8!important;-webkit-text-fill-color:#f6f6f8!important;
+}
+html body:is(.theme-black,.theme-dark) #app #page .v68-wallet details.v935-wallet-accordion > .v266-currency-row{
+ background:rgba(255,255,255,.025)!important;border-top-color:rgba(255,255,255,.09)!important;
+}
+html body:is(.theme-black,.theme-dark) #app #page .v68-wallet .v266-wallet-actions > button[data-v900-action="advance"] > b{
+ color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important;
+}
+html body:is(.theme-black,.theme-dark) #app #page .v68-wallet .v266-wallet-actions > button[data-v900-action="advance"] > span{
+ background:color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 12%,#131319)!important;
+ border-color:color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 22%,#292935)!important;
+}
+
+/* Specificity reconciliation: later legacy declarations had overridden brand surfaces. */
+html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero.v57-accounts{background:linear-gradient(115deg,#123f46,#176b72 58%,#378e93)!important;}
+html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero.v57-cards{background:linear-gradient(115deg,#17284e,#334b90 58%,#506ab7)!important;}
+html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero.v57-loans{background:linear-gradient(115deg,#31284f,#534a83 58%,#726da4)!important;}
+html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero.v57-certificates{background:linear-gradient(115deg,#453627,#746044 58%,#9b835f)!important;}
+html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero :is(h2,h2 em,p,small,strong,span,.hero-eyebrow,.v46-global-main>strong,.v46-global-secondary strong,.v46-global-secondary b,.v46-global-main>span,.v46-global-note,.v46-hero-foot){color:#fff!important;-webkit-text-fill-color:#fff!important;}
+html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero :is(p,.hero-eyebrow,.v46-global-main>span,.v46-global-secondary small,.v46-global-secondary span,.v46-global-note,.v46-hero-foot){color:rgba(255,255,255,.79)!important;-webkit-text-fill-color:rgba(255,255,255,.79)!important;}
+html body #app #page#page .v68-wallet .v266-wallet-actions > button[data-v900-action="advance"] > span {background:color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 6%,#f6f7ff)!important;border:1px solid color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 17%,#e6eafa)!important;color:var(--vive-theme-color,var(--accent,#7066ee))!important;}
+html body:is(.theme-black,.theme-dark) #app #page#page .v68-wallet .v266-wallet-actions > button[data-v900-action="advance"] > span {background:color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 12%,#131319)!important;}
+</style>
+
+<style id="v936-vive-header-reader-parity">
+/* Desktop right-to-left: Registrar, Configuración, Vive, Notificaciones, Buscar, Sincronización, Fecha. */
+@media (min-width:791px){
+ #app .topbar .top-actions .v936-web-settings{box-sizing:border-box;display:inline-grid;place-items:center;width:38px;height:38px;min-width:38px;min-height:38px;flex:0 0 38px;border-radius:12px;padding:8px;border:1px solid rgba(133,147,171,.23);background:rgba(255,255,255,.30);color:var(--text,#40516c);cursor:pointer;box-shadow:0 2px 9px rgba(20,29,55,.035);transition:background .15s ease,border-color .15s ease;}
+ #app .topbar .top-actions .v936-web-settings svg{display:block;width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;}
+ #app .topbar .top-actions .v936-web-settings:hover{background:rgba(255,255,255,.52);border-color:color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 28%,transparent);}
+ #app .topbar .top-actions .v936-web-settings:focus-visible{outline:2px solid var(--vive-theme-color,var(--accent,#7066ee));outline-offset:3px;}
+ body:is(.theme-black,.theme-dark) #app .topbar .top-actions .v936-web-settings{background:rgba(22,22,23,.63);border-color:rgba(255,255,255,.13);color:#e8eaf2;}
+}
+/* Reader: light glass with a small accent bloom, not white-on-white or global tinted panels. */
+body:not(.theme-black):not(.theme-dark) .vive-reader-overlay .vive-reader{
+  isolation:isolate;position:relative;
+  background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(255,255,255,.68))!important;
+  border:1px solid rgba(255,255,255,.78)!important;
+  box-shadow:0 24px 72px rgba(20,35,65,.16),inset 0 1px 0 rgba(255,255,255,.64)!important;
+  -webkit-backdrop-filter:blur(17px) saturate(115%);backdrop-filter:blur(17px) saturate(115%);
+  color:#192131!important;
+}
+body:not(.theme-black):not(.theme-dark) .vive-reader-overlay .vive-reader::before{
+  content:"";pointer-events:none;position:absolute;z-index:0;top:0;right:0;width:min(70%,370px);height:210px;border-top-right-radius:inherit;
+  background:radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 11%,transparent),transparent 72%);
+}
+body:not(.theme-black):not(.theme-dark) .vive-reader-overlay .vive-reader .vive-reader-copy{color:#192131;}
+body:not(.theme-black):not(.theme-dark) .vive-reader-overlay .vive-reader .vive-reader-category{color:#546078;opacity:.74;}
+body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader{
+  isolation:isolate;position:relative;background:linear-gradient(140deg,rgba(7,7,8,.94),rgba(0,0,0,.87))!important;
+  border:1px solid rgba(255,255,255,.14)!important;color:#fff!important;
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  box-shadow:0 24px 78px rgba(0,0,0,.56)!important;
+}
+body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader .vive-reader-copy{color:#f6f6f8!important;}
+body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader::before{
+  content:"";pointer-events:none;position:absolute;z-index:0;top:0;right:0;width:min(70%,370px);height:190px;border-top-right-radius:inherit;
+  background:radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 8%,transparent),transparent 76%);
+}
+.vive-reader-overlay .vive-reader > *{position:relative;z-index:1;}
+@media(prefers-reduced-transparency:reduce){.vive-reader-overlay .vive-reader{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;}}
+@media(max-width:790px){#app .topbar .top-actions .v936-web-settings{display:none!important;}}
+</style>
+
+<style id="v937-cardpay-compact-stage1">
+/* V937 · Pagar tarjeta móvil: primera pantalla compacta como Pago de servicios;
+   Confirmación conserva el largo natural. No cambia lógica, selectores ni cálculos. */
+@media (max-width:790px){
+  #modal-root .modal-layer:has(> .modal > form.studio-form.vop-cardpay[data-vop-stage="details"]){
+    align-items:flex-start!important;
+    padding:calc(env(safe-area-inset-top,0px) + 8px) 6px 10px!important;
+  }
+  #modal-root .modal:has(> form.studio-form.vop-cardpay[data-vop-stage="details"]){
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:calc(100dvh - 18px)!important;
+    border-radius:28px!important;
+    overflow:hidden!important;
+  }
+  html body #modal-root .modal-layer>.modal>form.studio-form.vop-cardpay[data-vop-stage="details"]{
+    height:auto!important;
+    max-height:calc(100dvh - 18px)!important;
+    min-height:0!important;
+    overflow:visible!important;
+    padding-bottom:0!important;
+  }
+  #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-shell,
+  #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-main,
+  #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-panels{
+    height:auto!important;
+    max-height:none!important;
+    min-height:0!important;
+    overflow:visible!important;
+    flex:0 0 auto!important;
+  }
+  #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-main{
+    padding-bottom:0!important;
+  }
+  #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .vop-pay-header{
+    padding-bottom:12px!important;
+  }
+  #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-fields{
+    gap:10px!important;
+    padding-bottom:8px!important;
+  }
+  #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-navigation{
+    position:static!important;
+    margin-top:4px!important;
+    padding:8px clamp(14px,4.3vw,23px) calc(10px + env(safe-area-inset-bottom,0px))!important;
+    background:transparent!important;
+  }
+  body:not(.theme-black):not(.theme-dark) #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-navigation{
+    background:transparent!important;
+  }
+  #modal-root form.studio-form.vop-cardpay[data-vop-stage="details"] .studio-navigation button[data-studio-next]{
+    min-height:54px!important;
+    border-radius:21px!important;
+  }
+  /* Limpieza visual del canal en Confirmar pago: íconos translúcidos sin pastilla interna. */
+  #modal-root form.studio-form.vop-cardpay .vop-channel-icon{
+    width:auto!important;
+    min-width:0!important;
+    height:auto!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    border:0!important;
+    padding:0!important;
+    opacity:.92!important;
+    font-size:15px!important;
+  }
+  #modal-root form.studio-form.vop-cardpay .vop-channel button{
+    background:color-mix(in srgb,var(--r871-card,#17171a) 92%,transparent)!important;
+    backdrop-filter:blur(12px)!important;
+  }
+  body:not(.theme-black):not(.theme-dark) #modal-root form.studio-form.vop-cardpay .vop-channel button{
+    background:color-mix(in srgb,#ffffff 88%,var(--vive-theme-color,#7565ee) 4%)!important;
+  }
+  #modal-root form.studio-form.vop-cardpay .vop-channel button.selected{
+    backdrop-filter:none!important;
+  }
+}
+</style>
+
 </body>
 </html>
