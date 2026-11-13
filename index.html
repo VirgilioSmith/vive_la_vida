@@ -24367,11 +24367,11 @@ function v36Bell(){
  }).join('');
  const spendingItems=spendAlerts.map(a=>`<article class="v36-notice v123-bell-alert"><span class="v36-notice-dot"></span><div><strong>${sanitize(a.category)} · ${a.kind==='trend'?'Tendencia al alza':'Gasto elevado'}</strong><small>${sanitize(v123AlertText(a))}</small></div></article>`).join('');
  const totalAlerts=urgent+spendAlerts.length+v246UnreadReportCount();
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-access-mobile" data-vive-open="mobile"><span class="vive-access-symbol" aria-hidden="true">✧</span><span class="vive-access-text"><strong>Vive</strong><small>Un instante para lo que importa</small></span><span class="vive-access-arrow" aria-hidden="true">›</span></button>`}${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
- return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions">${v402SyncButton()}${v36Bell()}<button type="button" class="v65-settings-button v271-settings-access ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración">${icon('settings')}</button></div></header>`;
+ return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana"><span>${APP_BRAND}</span></button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><span class="v146-mobile-date" title="${prettyDate(today())}" aria-label="Fecha: ${prettyDate(today())}">${prettyDate(today()).replace(/\s+de\s+\d{4}$/i,'')}</span><div class="v65-header-tools v146-mobile-actions">${v36Bell()}${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-mobile-head-access" data-vive-open="mobile" aria-label="Abrir Vive" title="Vive"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></button>`}${v402SyncButton()}<button type="button" class="v65-settings-button v271-settings-access ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración">${icon('settings')}</button></div></header>`;
 }
 function mobileBottomNavigation(){
  // Cada producto bancario pertenece al espacio Bancos; no debe marcar Explorar por error.
@@ -26922,7 +26922,7 @@ function overview(){
 
  return `<div class="ff-dashboard summary-space">
   <div class="ff-dashboard-tools"><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilter" type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
-  ${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-access-web" data-vive-open="web"><span class="vive-access-symbol" aria-hidden="true">✧</span><span class="vive-access-text"><strong>Vive</strong><small>Un instante para lo que importa</small></span><span class="vive-access-arrow" aria-hidden="true">›</span></button>`}
+  ${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-access-web" data-vive-open="web"><span class="vive-access-symbol" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span><strong class="vive-web-name">Vive</strong><span class="vive-web-pulse" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="vive-web-subtitle">Un instante para lo que realmente importa.</span><span class="vive-web-arrow" aria-hidden="true">→</span></button>`}
   <div class="ff-dashboard-grid v105-grid">
    <section class="ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${allNet<-.005?'v176-net-negative':allNet>.005?'v176-net-positive':''}">${money(allNet,'DOP',2)}</button><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="v186Deep" data-id="liquidity" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="v186Deep" data-id="debt" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="net" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
    <aside data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong><span>Pendientes hasta fin de mes, incluidos vencidos: ${money(allDue)}. La carga mensual es distinta del saldo total de deuda.</span></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} pendientes de revisión <span>${icon('arrow')}</span></button></aside>
@@ -41932,32 +41932,8 @@ document.addEventListener('submit',async ev=>{
  try{await v900SaveAdvance(form)}catch(error){if(err)err.textContent=error.message||String(error);else toast('No se pudo confirmar el avance.');}
 },true);
 
-})();
 
-
-/* V64 · El panel de notificaciones solo permanece abierto durante interacción explícita. */
-document.addEventListener('pointerdown',function(ev){
- const bell=document.querySelector('.v36-notifications[open]');
- if(bell&&!bell.contains(ev.target))bell.open=false;
-},true);
-document.addEventListener('keydown',function(ev){
- if(ev.key==='Escape'){const bell=document.querySelector('.v36-notifications[open]');if(bell){bell.open=false;bell.querySelector('summary')?.focus();}}
-},true);
-
-
-/* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
-window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
-document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
-
-
-
-
-
-
-
-
-
-
+/* V931 — El motor de servicios pertenece al cierre léxico del motor financiero. */
 /* V917 — Servicio registrado -> confirmación editable directa.
    Un único flujo contable para los accesos: Compromisos, Próximos pagos, Servicios y Registrar.
    No abre el catálogo de categorías ni el wizard de 3 pasos para pagos ya configurados. */
@@ -42115,6 +42091,34 @@ document.addEventListener('submit',function(e){
    servicePreset:'other',note:r.name,recurringId:r.id,cardOnly:'no'});
  }catch(ex){error.textContent=ex.message||String(ex);if(submit){submit.disabled=false;submit.innerHTML=`${icon('check')} Registrar pago`}}
 },true);
+
+
+})();
+
+
+/* V64 · El panel de notificaciones solo permanece abierto durante interacción explícita. */
+document.addEventListener('pointerdown',function(ev){
+ const bell=document.querySelector('.v36-notifications[open]');
+ if(bell&&!bell.contains(ev.target))bell.open=false;
+},true);
+document.addEventListener('keydown',function(ev){
+ if(ev.key==='Escape'){const bell=document.querySelector('.v36-notifications[open]');if(bell){bell.open=false;bell.querySelector('summary')?.focus();}}
+},true);
+
+
+/* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
+window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
+document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
+
+
+
+
+
+
+
+
+
+
 
 </script>
 <!-- V40: compromisos por modalidad, nómina recurrente, instituciones no bancarias y reglas fiscales versionadas. -->
@@ -87676,7 +87680,7 @@ html body:is(.theme-black,.theme-dark) #app #page .v239-certificates .v239-hero{
 </style>
 
 <style id="vive-module-css">
-/* Vive: isolated styling; no selectors on existing finance cards */
+/* Vive: local, isolated styling; no selectors on existing finance cards */
 .vive-access-mobile,.vive-access-web{font:inherit;color:inherit;cursor:pointer;text-align:left;display:flex;align-items:center;gap:11px;min-width:0;border:1px solid rgba(135,142,161,.2);border-radius:17px;background:linear-gradient(112deg,rgba(255,255,255,.72),rgba(255,255,255,.46));box-shadow:0 5px 18px rgba(33,42,66,.045);padding:12px 14px;position:relative}
 .vive-access-mobile:focus-visible,.vive-access-web:focus-visible,.vive-reader button:focus-visible{outline:2px solid var(--vive-theme-color,#7066ee);outline-offset:3px}
 .vive-access-mobile{width:calc(100% - 24px);margin:10px 12px 13px;max-width:none;min-height:61px}
@@ -87701,100 +87705,158 @@ body.theme-black .vive-reader,body.theme-dark .vive-reader{background:#080809;co
 
 </style>
 <script id="vive-module-js">
-/* Vive: isolated presentation; one API for both entry points. No financial reads. */
+/* Vive: independent, ephemeral editorial experience. NO network, accounts, storage or financial data. */
 (()=>{'use strict';
-  const state={open:false,busy:false,current:null,origin:'web',abort:null,opener:null,pendingKey:null};
-  const rootId='vive-reader';
-  function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  function api(){try{return typeof f33Api!=='undefined'?f33Api:null}catch(_){return null}}
-  function user(){try{return typeof f33User!=='undefined'?f33User:null}catch(_){return null}}
-  function open(origin,opener){
-    if(document.getElementById(rootId))return;
-    state.open=true;state.origin=origin;state.opener=opener;
-    const container=document.createElement('div');container.id=rootId;
-    container.className='vive-reader-overlay';container.innerHTML=`<section class="vive-reader" role="dialog" aria-modal="true" aria-labelledby="vive-reader-title" tabindex="-1"><header class="vive-reader-head"><span class="vive-reader-mark" aria-hidden="true">✧</span><h2 id="vive-reader-title">Vive</h2><button type="button" class="vive-reader-close" data-vive-close aria-label="Cerrar Vive">×</button></header><div class="vive-reader-body" aria-live="polite" aria-atomic="true"><p class="vive-reader-status">Un instante para lo que importa.</p></div><footer class="vive-reader-actions"><button type="button" class="vive-reader-another" data-vive-next>Otro instante <span aria-hidden="true">↗</span></button><button type="button" class="vive-reader-icon" data-vive-favorite hidden aria-label="Guardar como favorito" title="Guardar">♡</button><button type="button" class="vive-reader-icon" data-vive-share hidden aria-label="Compartir reflexión" title="Compartir">↗</button></footer></section>`;
-    container.addEventListener('click',e=>{if(e.target===container)close()});
-    document.body.append(container);container.querySelector('.vive-reader').focus();next();
-  }
-  function close(){const r=document.getElementById(rootId);if(!r)return;state.open=false;r.remove();state.opener?.focus?.();}
-  function content(data){const r=document.getElementById(rootId);if(!r)return;
-    const body=r.querySelector('.vive-reader-body');
-    const text=String(data?.text||'');let kind=data?.kind||'reflection';
-    body.className='vive-reader-body vive-kind-'+kind;
-    body.innerHTML=`<div class="vive-reader-copy">${safe(text).replace(/\n/g,'<span class="vive-softbreak"></span>')}</div>${data.repeatable?'<small class="vive-repeat-marker">Palabra o mantra recurrente</small>':''}`;
-    for(const k of ['favorite','share']){const b=r.querySelector('[data-vive-'+k+']'); b.hidden=!data.content_id; b.disabled=false;}
-  }
-  function status(message,problem=false){const r=document.getElementById(rootId);if(!r)return;r.querySelector('.vive-reader-body').innerHTML=`<p class="vive-reader-status${problem?' is-error':''}">${safe(message)}</p>`;}
-  // crypto.getRandomValues works for local file previews where crypto.randomUUID may be unavailable.
-  // Never fall back to Math.random: the request key identifies an idempotent database reservation.
-  function requestUuid(){
-    if(typeof crypto==='undefined')throw new Error('VIVE_NO_CRYPTO');
-    if(typeof crypto.randomUUID==='function')return crypto.randomUUID();
-    if(typeof crypto.getRandomValues!=='function')throw new Error('VIVE_NO_CRYPTO');
-    const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);
-    bytes[6]=(bytes[6]&15)|64; bytes[8]=(bytes[8]&63)|128;
-    const h=Array.from(bytes,v=>v.toString(16).padStart(2,'0')).join('');
-    return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
-  }
-  function friendlyError(error){
-    const msg=String(error?.message||'');
-    const code=String(error?.code||'');
-    if(msg==='VIVE_NO_CRYPTO')return 'No se pudo establecer una solicitud segura. Abre vive el hoy desde su sitio HTTPS.';
-    if(/Inicia sesión|JWT|not authenticated|invalid jwt|authenticaci[oó]n|PGRST301|42501/i.test(msg+' '+code))return 'Tu sesión necesita validarse. Vuelve a iniciar sesión e inténtalo nuevamente.';
-    if(/Could not find the function|schema cache|PGRST202/i.test(msg+' '+code))return 'Vive aún no está disponible en esta versión del servidor. Actualiza la aplicación e inténtalo nuevamente.';
-    if(/Failed to fetch|network|fetch failed|timeout|offline/i.test(msg+' '+code) || navigator.onLine===false)return 'No se pudo conectar con Vive. Comprueba tu conexión e inténtalo nuevamente.';
-    return 'No se pudo cargar un instante nuevo. Puedes intentarlo otra vez.';
-  }
-  async function next(){if(state.busy||!state.open)return;state.busy=true;
-    const r=document.getElementById(rootId);if(!r)return;
-    const button=r.querySelector('[data-vive-next]');button.disabled=true;r.setAttribute('aria-busy','true');
-    status('Buscando un instante para ti…');
-    try{
-      const client=api();if(!client||!user())throw new Error('Inicia sesión y comprueba la conexión para recibir un instante nuevo.');
-      // Secure RNG for independent requests; retry of the SAME request uses the SAME key.
-      const key=state.pendingKey||(state.pendingKey=requestUuid());
-      let result,err;
-      for(let attempt=0;attempt<2;attempt++){
-        const reply=await client.rpc('vive_next',{p_request_key:key,p_origin:state.origin});
-        result=reply.data;err=reply.error;
-        if(!err)break;
-        if(attempt===0 && /network|fetch|timeout/i.test(String(err.message||'')))continue;
-        break;
-      }
-      if(err)throw err;
-      if(!state.open)return;
-      if(!result||result.available===false){state.pendingKey=null;status('Por ahora no hay otro instante nuevo disponible. Puedes regresar más tarde.');return;}
-      if(!result.text)throw new Error('El servidor no devolvió contenido válido.');
-      state.pendingKey=null;state.current=result;content(result);
-    }catch(e){if(!state.open)return;status(friendlyError(e),true);console.warn('Vive: fallo de solicitud (sin datos sensibles). Código:',e?.code||e?.name||'desconocido');}
-    finally{state.busy=false;const rr=document.getElementById(rootId);if(rr){rr.removeAttribute('aria-busy');rr.querySelector('[data-vive-next]').disabled=false;}}
-  }
-  async function favorite(){const c=state.current,client=api(),u=user();if(!client||!u||!c?.content_id)return;
-    const b=document.querySelector('#'+rootId+' [data-vive-favorite]');if(!b)return;b.disabled=true;
-    try{const {error}=await client.from('vive_favorites').upsert({user_id:u.id,content_id:c.content_id},{onConflict:'user_id,content_id',ignoreDuplicates:true});if(error)throw error;b.textContent='♥';b.setAttribute('aria-label','Guardado en favoritos');}catch(e){b.textContent='♡';console.warn('Vive: no se pudo guardar favorito.');}finally{b.disabled=false;}
-  }
-  async function share(){const c=state.current;if(!c?.text)return;try{if(navigator.share)await navigator.share({text:c.text});else if(navigator.clipboard)await navigator.clipboard.writeText(c.text);}catch(e){if(e?.name!=='AbortError')console.warn('Vive: acción compartir no disponible.')}}
-  document.addEventListener('click',e=>{
-    const a=e.target.closest('[data-vive-open]');if(a){e.preventDefault();const details=a.closest('details.v36-notifications');if(details)details.open=false;open(a.getAttribute('data-vive-open')||'web',a);return;}
-    if(e.target.closest('[data-vive-close]'))close();
-    else if(e.target.closest('[data-vive-next]'))next();
-    else if(e.target.closest('[data-vive-favorite]'))favorite();
-    else if(e.target.closest('[data-vive-share]'))share();
-  });
-  document.addEventListener('keydown',e=>{
-    if(!state.open)return;
-    if(e.key==='Escape'){e.preventDefault();close();return;}
-    if(e.key==='Tab'){
-      const r=document.getElementById(rootId);if(!r)return;
-      const controls=[...r.querySelectorAll('button:not([hidden]):not([disabled])')];if(!controls.length)return;
-      const first=controls[0],last=controls[controls.length-1];
-      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
-      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
-    }
-  });
-  window.ViveModule=Object.freeze({open:()=>open('web',document.activeElement),close});
+ const textByTheme={
+  presente:[
+   'Vive. No necesitas convertir cada instante en un logro para que tenga valor.',
+   'El día de hoy no tiene que ser extraordinario para merecer tu presencia.',
+   'Mira a tu alrededor. La vida ocurre también en los detalles que no publicamos.',
+   'Hay mañanas que empiezan sin grandes planes y terminan llenas de recuerdos.',
+   'No pospongas cada momento bonito hasta tenerlo todo resuelto.',
+   'Lo que estás viviendo ahora también forma parte de tu historia.',
+   'Dedica unos minutos a algo que disfrutes sin exigirle ningún resultado.',
+   'Lo sencillo puede ser suficiente. Date permiso para descubrirlo.',
+   'Quizás hoy encuentres algo hermoso donde ayer solo viste rutina.'
+  ],
+  gratitud:[
+   'Agradecerle a Dios por este día no exige que haya sido perfecto.',
+   'Reconoce una cosa pequeña que hoy te hizo bien. También merece gratitud.',
+   'Antes de pensar en todo lo pendiente, contempla algo bueno que ya está aquí.',
+   'La gratitud puede comenzar con una conversación, un vaso de agua o una sonrisa.',
+   'Quizás lo cotidiano sea una respuesta a una oración que hiciste hace tiempo.',
+   'Agradece a Dios por las personas que te ayudan a encontrar belleza en los días comunes.',
+   'No todos los regalos vienen envueltos: algunos llegan como tiempo compartido.',
+   'Mira lo que has recibido sin reducir su valor a una cifra.'
+  ],
+  fe:[
+   'La fe también se expresa cuando escuchas sin interrumpir a quien necesita hablar.',
+   'Amar a Dios puede comenzar por la bondad con la que tratas a quien tienes cerca.',
+   'Haz espacio para una oración sencilla, sin prisa y sin palabras perfectas.',
+   'Una acción generosa puede dar forma concreta a tu agradecimiento.',
+   'No necesitas entender cada paso para caminar con esperanza.',
+   'Pedir ayuda no contradice la fe. También es una forma de cuidarte.',
+   'Puedes hablar con Dios desde la alegría, no solamente desde la preocupación.'
+  ],
+  familia:[
+   'Si puedes, pregúntale a tu madre qué música le gustaba cuando era joven.',
+   'Tu padre también tiene historias que comenzaron mucho antes de conocerte.',
+   'Una comida compartida puede convertirse en el mejor recuerdo de una semana sencilla.',
+   'Escuchar una anécdota de tus abuelos es una manera hermosa de cuidar la memoria.',
+   'Cuando juegues con tus hijos, procura estar allí también con la mirada y la atención.',
+   'Una conversación de pocos minutos puede acercarte a alguien que quieres.',
+   'Si tu familia está lejos, una palabra cariñosa también puede acortar la distancia.',
+   'La familia puede tomar muchas formas. Agradece a quienes te hacen sentir acompañado.',
+   'No todas las relaciones familiares son sencillas. Cuidar tu paz también es válido.'
+  ],
+  amor:[
+   'Amar también es preguntar cómo se siente el otro y esperar su respuesta.',
+   'Tu cariño no tiene que ser perfecto para ser sincero.',
+   'Hay gestos de amor que caben en un mensaje de dos líneas.',
+   'Escuchar con atención es una manera discreta de decir «me importas».',
+   'Comparte una alegría pequeña con la persona que amas.',
+   'El afecto puede mostrarse sin grandes discursos: con respeto y presencia.',
+   'Ser amable contigo también es una forma de aprender a amar.'
+  ],
+  amistad:[
+   'Una amistad puede renovarse con una conversación sincera y sin prisa.',
+   'Piensa en alguien que te hizo reír. Tal vez hoy puedas saludarle.',
+   'A veces, acompañar a un amigo es suficiente, incluso sin respuestas.',
+   'No hace falta esperar una ocasión especial para agradecer una amistad.',
+   'Hay recuerdos que se iluminan al volver a contarlos con quien los vivió.'
+  ],
+  perdon:[
+   'Perdonar no te obliga a volver a un lugar donde dejaste de sentirte seguro.',
+   'Pedir disculpas con sinceridad puede ser el comienzo de una conversación distinta.',
+   'Reconocer un error no borra lo bueno que también hay en ti.',
+   'La paz no siempre requiere recuperar una relación.',
+   'Puedes soltar una exigencia imposible sin dejar de cuidar tus límites.'
+  ],
+  esperanza:[
+   'Puedes empezar de nuevo sin negar todo lo que aprendiste ayer.',
+   'La esperanza puede ser pequeña y aun así ayudarte a dar el siguiente paso.',
+   'No tienes que resolver todo el futuro durante esta mañana.',
+   'Que un día sea difícil no significa que todos los que siguen deban serlo.',
+   'Reconoce el camino recorrido, aunque todavía falten cosas por construir.',
+   'La paciencia también puede ser una forma de valentía.'
+  ],
+  alegria:[
+   'Una risa espontánea no necesita una razón importante.',
+   'Baila una canción si te nace. La alegría no necesita permiso.',
+   'Guarda un poco de espacio para jugar, incluso cuando seas adulto.',
+   'No todos los momentos memorables necesitan un plan extraordinario.',
+   'Comparte algo gracioso con alguien que aprecias.'
+  ],
+  solidaridad:[
+   'Acompañar a alguien durante un momento difícil puede valer más que encontrar las palabras exactas.',
+   'La bondad silenciosa también transforma el día de alguien.',
+   'Si hoy puedes ayudar a alguien sin esperar nada a cambio, hazlo desde el cariño.',
+   'Compartir tiempo puede ser tan valioso como compartir cosas.',
+   'La humildad crece cuando escuchamos algo que todavía no sabíamos.'
+  ],
+  pausa:[
+   'Respira. Afloja los hombros. Regresa con suavidad a este instante.',
+   'Si te apetece, toma un poco de agua y aprecia su frescura.',
+   'Siente los pies apoyados en el suelo. No hay prisa en esta pausa.',
+   'Descansa la mandíbula. Suelta el aire despacio.',
+   'Escucha durante unos segundos los sonidos que te rodean.',
+   'Permite que tu mirada descanse en algo sencillo.',
+   'Detente un momento. Observa cómo estás respirando, sin cambiar nada.',
+   'Mira el cielo cuando puedas. Puede ser suficiente por ahora.',
+   'Deja reposar la lengua y nota cómo se siente tu cuerpo al soltar tensión.',
+   'Si puedes, levántate un instante y siente cómo cambias de postura.'
+  ],
+  tiempo:[
+   'No pospongas todas las conversaciones bonitas hasta que llegue una fecha especial.',
+   'Hoy puedes escuchar una canción entera sin hacer otra cosa al mismo tiempo.',
+   'El futuro merece cuidado, pero este momento también merece compañía.',
+   'Una tarde corriente puede convertirse en una memoria extraordinaria.',
+   'El tiempo compartido no siempre se mide en horas; a veces se mide en atención.'
+  ]
+ };
+ const mantras=['Respira. Agradece. Vive.','Escucha. Comprende. Abraza.','Detente. Mira. Agradece.','Ama. Ayuda. Confía.','Descansa. Sonríe. Vuelve.','Mira. Siente. Vive.'];
+ const words=['Vive.','Respira.','Agradece.','Ama.','Abraza.','Confía.','Escucha.','Sonríe.','Renace.','Vive el hoy.'];
+ const unique=Object.entries(textByTheme).flatMap(([theme,lines])=>lines.map(text=>({text,kind:theme==='pausa'?'pause':'reflection',theme,repeatable:false})));
+ const recurring=[...words.map(text=>({text,kind:'word',repeatable:true})),...mantras.map(text=>({text,kind:'mantra',repeatable:true}))];
+ // An independent shuffle in memory: no full reflection repeats while the tab stays open.
+ // Do not claim persistence between sessions/devices without a server or storage.
+ let deck=[],recentRecurring=-1,lastTheme='',lastText='';
+ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+ function newPiece(){
+   if(!deck.length)deck=shuffle([...unique]);
+   if(Math.random()<.14){let i=Math.floor(Math.random()*recurring.length);if(i===recentRecurring)i=(i+1)%recurring.length;recentRecurring=i;return recurring[i];}
+   // Diversity across consecutive ideas, with no duplication until deck exhaustion.
+   let i=deck.findIndex(item=>item.theme!==lastTheme&&item.text!==lastText);
+   if(i<0)i=0;
+   const [piece]=deck.splice(i,1);lastTheme=piece.theme;lastText=piece.text;return piece;
+ }
+ const rootId='vive-reader';const state={open:false,busy:false,current:null,opener:null};
+ const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function open(opener){if(document.getElementById(rootId))return;state.open=true;state.opener=opener;
+   const r=document.createElement('div');r.id=rootId;r.className='vive-reader-overlay';
+   r.innerHTML=`<section class="vive-reader" role="dialog" aria-modal="true" aria-labelledby="vive-reader-title" tabindex="-1"><header class="vive-reader-head"><span class="vive-reader-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span><h2 id="vive-reader-title">Vive</h2><span class="vive-reader-category" aria-hidden="true"></span><button type="button" class="vive-reader-close" data-vive-close aria-label="Cerrar Vive">×</button></header><div class="vive-reader-body" aria-live="polite" aria-atomic="true"></div><footer class="vive-reader-actions"><button type="button" class="vive-reader-another" data-vive-next>Otro instante <span aria-hidden="true">↗</span></button></footer></section>`;
+   r.addEventListener('click',e=>{if(e.target===r)close()});document.body.append(r);r.querySelector('.vive-reader').focus();next();
+ }
+ function close(){const r=document.getElementById(rootId);if(!r)return;state.open=false;r.remove();state.opener?.focus?.();}
+ function next(){if(!state.open||state.busy)return;const r=document.getElementById(rootId);if(!r)return;state.busy=true;
+   const b=r.querySelector('[data-vive-next]');b.disabled=true;
+   try{const piece=newPiece();const body=r.querySelector('.vive-reader-body');
+     body.className='vive-reader-body vive-kind-'+piece.kind;
+     body.innerHTML=`<div class="vive-reader-copy">${safe(piece.text)}</div>`;
+     const category=r.querySelector('.vive-reader-category');if(category)category.textContent=({dios:'Fe',gratitud:'Gratitud',familia:'Familia',padres:'Familia',abuelos:'Familia',hijos:'Familia',amistad:'Amistad',amor:'Amor',pareja:'Amor',perdon:'Perdón',esperanza:'Esperanza',pausa:'Pausa',tiempo:'Presente',presente:'Presente',alegria:'Alegría',solidaridad:'Humanidad',humildad:'Humildad'}[piece.theme]||'Lo esencial');
+     state.current=piece;
+   }finally{b.disabled=false;state.busy=false;}
+ }
+ document.addEventListener('click',e=>{
+   const a=e.target.closest('[data-vive-open]');if(a){e.preventDefault();const details=a.closest('details.v36-notifications');if(details)details.open=false;open(a);return;}
+   if(e.target.closest('[data-vive-close]'))close();else if(e.target.closest('[data-vive-next]'))next();
+ });
+ document.addEventListener('keydown',e=>{
+   if(!state.open)return;if(e.key==='Escape'){e.preventDefault();close();return;}
+   if(e.key==='Tab'){const r=document.getElementById(rootId);if(!r)return;const controls=[...r.querySelectorAll('button:not([disabled])')];const first=controls[0],last=controls[controls.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
+ });
+ window.ViveModule=Object.freeze({open:()=>open(document.activeElement),close});
 })();
-
 </script>
 
 <style id="v928-contrast-financial-heros">
@@ -87852,5 +87914,47 @@ html body:is(.theme-black,.theme-dark) #app .main #page :is(.v57-product-hero,.v
 }
 </style>
 
+
+<style id="vive-v932-editorial-refinement">
+/* V932: Vive only, never changes financial cards or shared navigation controls. */
+.vive-access-web.vive-access-web{display:flex;align-items:center;justify-content:flex-start;gap:12px;min-height:42px;height:auto;width:100%;padding:7px 12px;margin:0 0 9px;border-radius:11px;border:1px solid rgba(140,145,166,.14);background:rgba(255,255,255,.34);box-shadow:none;letter-spacing:0;max-width:none}
+.vive-access-web .vive-access-symbol{display:grid;place-items:center;width:24px;height:24px;flex:0 0 24px;color:var(--vive-theme-color,#7066ee)}
+.vive-access-web .vive-access-symbol svg,.vive-mobile-head-access svg,.vive-reader-mark svg{width:100%;height:100%;fill:none;stroke:currentColor}
+.vive-access-web .vive-web-name{font-size:14px;font-weight:720;white-space:nowrap}
+.vive-access-web .vive-web-pulse{display:flex;align-items:center;gap:3px;flex:0 0 auto;height:20px;margin:0 7px;color:var(--vive-theme-color,#7066ee)}
+.vive-access-web .vive-web-pulse i{width:2px;background:currentColor;border-radius:10px;opacity:.57;height:5px}
+.vive-access-web .vive-web-pulse i:nth-child(2),.vive-access-web .vive-web-pulse i:nth-child(4){height:10px}
+.vive-access-web .vive-web-pulse i:nth-child(3){height:17px}
+.vive-access-web .vive-web-subtitle{font-size:12px;font-weight:500;color:inherit;opacity:.68;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vive-access-web .vive-web-arrow{font-size:17px;opacity:.58;margin-left:auto}
+.vive-mobile-head-access{font:inherit;display:inline-grid;place-items:center;flex:0 0 35px;width:35px;height:35px;min-width:35px;min-height:35px;padding:8px;border-radius:12px;border:1px solid rgba(140,150,165,.19);background:rgba(255,255,255,.35);color:var(--vive-theme-color,#7066ee);cursor:pointer}
+.vive-mobile-head-access:focus-visible{outline:2px solid var(--vive-theme-color,#7066ee);outline-offset:2px}
+.vive-mobile-top>.v146-mobile-actions>.vive-mobile-head-access{flex:0 0 34px!important;width:34px!important;height:34px!important;padding:7px!important;margin:0!important}
+.vive-mobile-top>.v146-mobile-actions>.v36-notifications{margin:0!important}
+.vive-mobile-top>.v146-mobile-actions>.v402-sync{margin:0!important;flex:0 0 34px!important;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important}
+.vive-reader-overlay .vive-reader{width:min(100%,600px);max-height:min(88dvh,780px);background:#fff;color:#15171b;border:1px solid rgba(12,14,18,.09);border-radius:24px;box-shadow:0 22px 64px rgba(0,0,0,.18);padding:27px clamp(22px,4vw,36px) 22px}
+.vive-reader-overlay .vive-reader-head{display:flex;align-items:center;gap:13px;min-height:36px}
+.vive-reader-overlay .vive-reader-mark{display:grid;place-items:center;width:24px;height:24px;color:var(--vive-theme-color,#7066ee);flex:0 0 24px}
+.vive-reader-overlay .vive-reader-head h2{font-size:clamp(19px,2.2vw,23px);font-weight:650;letter-spacing:-.025em;margin:0;line-height:1.3}
+.vive-reader-overlay .vive-reader-category{margin-left:auto;color:inherit;opacity:.46;font-size:13px;font-weight:500;white-space:nowrap}
+.vive-reader-overlay .vive-reader-close{margin-left:10px;font-size:26px;width:34px;height:34px;flex:0 0 34px}
+.vive-reader-overlay .vive-reader-body{align-items:stretch;text-align:left;min-height:180px;padding:clamp(30px,6vw,48px) 0 clamp(30px,6vw,48px);justify-content:center}
+.vive-reader-overlay .vive-reader-copy{max-width:100%;font-size:clamp(24px,3.4vw,36px);font-weight:470;letter-spacing:-.035em;line-height:1.36;white-space:pre-line;overflow-wrap:break-word}
+.vive-reader-overlay .vive-kind-word .vive-reader-copy{font-size:clamp(42px,7vw,70px);font-weight:600;line-height:1.15}
+.vive-reader-overlay .vive-kind-mantra .vive-reader-copy{font-size:clamp(29px,5vw,47px);font-weight:540;line-height:1.32}
+.vive-reader-overlay .vive-reader-actions{border-top:1px solid rgba(120,125,135,.16);justify-content:flex-start;padding-top:15px}
+.vive-reader-overlay .vive-reader-another{font-size:13px;min-height:37px;padding:7px 14px;border-radius:11px;font-weight:580;background:transparent;color:inherit;border:1px solid rgba(120,125,135,.2)}
+body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader{background:#000;color:#fff;border-color:#292929;box-shadow:0 26px 70px rgba(0,0,0,.65)}
+body:is(.theme-black,.theme-dark) .vive-access-web{background:rgba(0,0,0,.2);border-color:rgba(255,255,255,.10);color:#fff}
+body:is(.theme-black,.theme-dark) .vive-mobile-head-access{background:rgba(18,18,19,.65);border-color:rgba(255,255,255,.14)}
+@media(max-width:790px){
+ .vive-access-web.vive-access-web{display:none}
+ .vive-reader-overlay .vive-reader{width:100%;border-radius:24px 24px 0 0;padding:22px 24px calc(22px + env(safe-area-inset-bottom,0px));max-height:calc(92dvh - env(safe-area-inset-bottom,0px))}
+ .vive-reader-overlay .vive-reader-body{padding:40px 0 46px;min-height:180px}
+ .vive-reader-overlay .vive-reader-copy{font-size:clamp(25px,6vw,34px)}
+}
+@media(max-width:370px){.vive-mobile-top>.v146-mobile-actions{gap:3px!important}.vive-mobile-top>.v146-mobile-actions>.vive-mobile-head-access{width:32px!important;flex-basis:32px!important;height:32px!important}}
+@media(prefers-reduced-motion:reduce){.vive-reader-overlay .vive-reader{animation:none}.vive-reader-overlay .vive-reader-body{transition:none}}
+</style>
 </body>
 </html>
