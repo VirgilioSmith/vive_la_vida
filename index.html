@@ -14528,7 +14528,7 @@ body.theme-black a:focus-visible,body.theme-black button:focus-visible{outline:2
 </style>
 <style id="v203-bancos-pocket">
 /*V203 | Bancos · experiencia móvil de cartera (no toca Buscar ni escritorio).*/
-@media (max-width:767px) {
+@media (max-width:790px) {
   main.world-banks:has(.v203-mobile-banks) {
     min-width: 0;
     overflow-x: clip;
@@ -24369,7 +24369,7 @@ function v36Bell(){
  }).join('');
  const spendingItems=spendAlerts.map(a=>`<article class="v36-notice v123-bell-alert"><span class="v36-notice-dot"></span><div><strong>${sanitize(a.category)} · ${a.kind==='trend'?'Tendencia al alza':'Gasto elevado'}</strong><small>${sanitize(v123AlertText(a))}</small></div></article>`).join('');
  const totalAlerts=urgent+spendAlerts.length+v246UnreadReportCount();
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver todos los compromisos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v216BellItems()}${spendingItems}${items}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="pressure">Ver calendario de vencimientos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
@@ -24655,7 +24655,7 @@ function mobileHome(){
    ${v105CapacityWidget(true)}
    <!-- V319: tarjeta resumen redundante eliminada; presupuesto sigue en su módulo. -->
    <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div><div class="v96-month-due-note">Pendiente hasta fin de mes, incluidos vencidos: <strong>${money(pendingTotal,'DOP',2)}</strong></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
-   <section data-v105-widget="payments" class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
+   <section data-v105-widget="payments" class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="pressure">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
    <section data-v105-widget="net" class="vive-mobile-net-card v36-month-capsule" aria-label="Balance del mes"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RESUMEN MENSUAL</span><h2>Balance del mes</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="advanced">Ver análisis ${icon('up')}</button></div><div class="v36-month-columns"><span><small>Ingresos</small><strong class="v36-income">${money(m.income)}</strong></span><span><small>Egresos</small><strong class="v36-expense">${money(m.expense)}</strong></span></div><div class="v36-month-net"><span><small>Neto</small><strong class="vive-mobile-net-value ${m.net<0?'negative':''}" title="Ingresos menos egresos: ${money(m.net,'DOP',2)}">${money(m.net)}</strong></span><small>${netLabel}</small></div></section>
    <section data-v105-widget="chart" class="v105-mobile-extra" aria-label="Gráfico de ingresos y egresos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">EVOLUCIÓN</span><h2>Ingresos y egresos</h2></div></div>${mobileMiniTrend()}</section>
    <section data-v105-widget="people" class="v105-mobile-extra" aria-label="Compromisos entre personas"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RELACIONES</span><h2>Entre personas</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="personal">Ver relaciones ${icon('up')}</button></div><div class="v105-mobile-people"><span><small>Por cobrar</small><strong>${money(personalTotals().receivable)}</strong></span><span><small>Por devolver</small><strong>${money(personalTotals().payable)}</strong></span></div></section>
@@ -25051,7 +25051,7 @@ function overview(){
     <section class="ff-expense-card ff-tile"><div class="ff-panel-top"><div><h2>Ingresos y egresos</h2><p>Últimos cinco meses</p></div><span class="ff-inline-pill">Mensual</span></div><div class="ff-bar-chart" role="img" aria-label="Gráfico de ingresos y egresos de cinco meses">${bars}</div><div class="ff-stat-footer"><span><i class="ff-legend-blue"></i> Ingresos <b>${money(m.income)}</b></span><span><i class="ff-legend-white"></i> Egresos <b>${money(m.expense)}</b></span></div></section>
     <section class="ff-health-card ff-tile"><div class="ff-panel-top"><div><h2>Neto del mes</h2><p>Ingresos − egresos</p></div><button class="ff-refresh" data-act="navigate" data-id="analytics" title="Ver el resumen detallado">${icon('analytics')}</button></div><div class="ff-health-number">${ratioText}</div><div class="ff-health-caption">${ratio===null?'Sin ingresos registrados':'Porcentaje del ingreso que quedó como neto'}</div>${spark}<div class="ff-health-foot"><span>Resultado neto</span><strong>${money(m.net)}</strong></div></section>
    </div>
-   <section class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
+   <section class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="pressure">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
    <section class="ff-personal ff-tile"><div class="ff-panel-top"><div><h2>Entre personas</h2><p>Dinero prestado y recibido</p></div><button class="ff-outline-pill" data-act="navigate" data-id="personal">Ver relaciones</button></div><div class="ff-person-sums"><div><small>Por cobrar</small><strong>${money(receivable)}</strong></div><div><small>Por devolver</small><strong>${money(owed)}</strong></div></div><div class="ff-people-list">${peopleRows||'<div class="ff-no-people">No hay préstamos personales activos.</div>'}</div><button class="ff-person-cta" data-act="addPersonal">${icon('plus')} Nueva relación</button></section>
   </div>
  </div>`;
@@ -26120,14 +26120,14 @@ function v265BalanceHTML(tx,mode='desktop'){
 }
 function v265LedgerModelCached(){return v99Memo('v265:transaction:post-balance',v265LedgerModel)}
 
-function transactions(embedded=false){let tr=recentTx().filter(t=>(ui.bankScope==='all'||bankTx(t,ui.bankScope))&&(ui.transType==='all'||t.type===ui.transType)&&(!ui.search||`${transactionTitle(t)} ${t.type} ${t.category} ${t.subcategory||''} ${t.tags||''} ${v143CostSearch(t)}`.toLowerCase().includes(ui.search.toLowerCase()))&&(ui.reviewFilter==='all'||(ui.reviewFilter==='reviewed')===(t.reviewed===true))&&(ui.txPeriod!=='month'||t.date.startsWith(ui.month))&&ui.reviewFilter!=='drafts'&&(ui.v361Category==='all'||String(t.category||'').trim()===ui.v361Category)).sort(v265SortLedgerRecent);
+function transactions(embedded=false){let tr=recentTx().filter(t=>(ui.bankScope==='all'||bankTx(t,ui.bankScope))&&(ui.transType==='all'||t.type===ui.transType)&&(!ui.search||`${v922MovementHeading(t)} ${transactionTitle(t)} ${t.type} ${t.category||''} ${t.subcategory||''} ${t.tags||''} ${t.merchant||''} ${t.payee||''} ${t.description||''} ${t.note||''} ${t.amount||''} ${t.date||''} ${t.currency||''} ${v922MovementProduct(t)} ${v143CostSearch(t)}`.toLowerCase().includes(ui.search.toLowerCase()))&&(ui.reviewFilter==='all'||(ui.reviewFilter==='reviewed')===(t.reviewed===true))&&(ui.txPeriod!=='month'||t.date.startsWith(ui.month))&&ui.reviewFilter!=='drafts'&&(ui.v361Category==='all'||String(t.category||'').trim()===ui.v361Category)).sort(v265SortLedgerRecent);
 const v221Drafts=(db.pendingOperations||[]).filter(q=>{const vals=q.values||{};const date=String(vals.date||q.created||'').slice(0,10);const haystack=`${vals.note||''} ${vals.description||''} ${vals.merchant||''} ${vals.category||''} ${vals.name||''} ${vals.type||''}`.toLowerCase();return (ui.reviewFilter==='all'||ui.reviewFilter==='drafts')&&(!ui.search||haystack.includes(ui.search.toLowerCase()))&&(ui.txPeriod!=='month'||date.startsWith(ui.month))&&(ui.bankScope==='all'||vals.bankId===ui.bankScope||vals.accountId&&account(vals.accountId)?.bankId===ui.bankScope)&&(ui.transType==='all'||vals.type===ui.transType)&&(ui.v361Category==='all'||String(vals.category||'').trim()===ui.v361Category)});
 const v361Cats=[...new Set([...(db.transactions||[]).map(t=>t.category),...(db.pendingOperations||[]).map(q=>q.values?.category)].map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
 let tools=`<div class="ledger-controls"><div class="ledger-control"><label for="searchTx">Buscar movimiento</label><input type="search" class="field searchbox" id="searchTx" placeholder="Comercio, categoría, concepto…" value="${sanitize(ui.search)}"/></div><div class="ledger-control"><label for="bankFilter">Institución</label><select class="filter-select" id="bankFilter"><option value="all">Todas las instituciones</option>${db.banks.map(b=>`<option value="${b.id}" ${ui.bankScope===b.id?'selected':''}>${sanitize(b.name)}</option>`).join('')}</select></div><div class="ledger-control"><label for="v361CategoryFilter">Categoría</label><select class="filter-select" id="v361CategoryFilter"><option value="all">Todas las categorías</option>${v361Cats.map(cat=>`<option value="${sanitize(cat)}" ${ui.v361Category===cat?'selected':''}>${sanitize(cat)}</option>`).join('')}</select></div><div class="ledger-control"><label for="typeFilter">Tipo</label><select class="filter-select" id="typeFilter"><option value="all">Todos los tipos</option>${Object.entries(TRANSL).map(([k,v])=>`<option value="${k}" ${ui.transType===k?'selected':''}>${sanitize(v)}</option>`).join('')}</select></div><div class="ledger-control"><label for="txPeriod">Período</label><select class="filter-select" id="txPeriod"><option value="all" ${ui.txPeriod!=='month'?'selected':''}>Todo el historial</option><option value="month" ${ui.txPeriod==='month'?'selected':''}>Un mes</option></select></div><div class="ledger-control"><label for="reviewFilter">Estado</label><select class="filter-select" id="reviewFilter"><option value="all" ${ui.reviewFilter==='all'?'selected':''}>Todos los estados</option><option value="drafts" ${ui.reviewFilter==='drafts'?'selected':''}>Borradores · sin registrar</option><option value="pending" ${ui.reviewFilter==='pending'?'selected':''}>Registrados · por revisar</option><option value="reviewed" ${ui.reviewFilter==='reviewed'?'selected':''}>Conciliados</option></select></div>${ui.txPeriod==='month'?`<div class="ledger-control"><label for="ledgerMonth">Mes</label><input type="month" class="filter-select" id="ledgerMonth" value="${ui.month}"></div>`:''}<button class="btn sm ghost" data-act="csv" title="Exportar movimientos filtrables a CSV">${icon('download')} CSV</button></div>`;
 const mobileCards=tr.slice(0,Math.max(12,ui.v51LedgerVisible||18)).map(t=>`<article class="v51-mobile-movement"><div class="v51-mobile-movement-icon">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':t.type==='loan_payment'?'receipt':'wallet')}</div><div class="v51-mobile-movement-info"><strong><button type="button" class="v922-movement-open" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}">${sanitize(v922MovementHeading(t))} ${v213ApplePayBadge(t)}</button></strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small><span>${sanitize(v922MovementProduct(t))}</span></div><div class="v51-mobile-movement-side"><b class="${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</b><div><button type="button" data-act="editTransaction" data-id="${t.id}">Editar</button><button type="button" class="v51-delete-trigger" data-act="deleteTransaction" data-id="${t.id}" aria-label="Eliminar ${sanitize(transactionTitle(t))}">${icon('trash')}</button></div></div><div class="v265-mobile-balance"><span>Balance</span>${v265BalanceHTML(t,'mobile')}</div></article>`+v143CostMobile(t)).join('');
 const v221DraftMobile=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<article class="v51-mobile-movement v221-draft-row"><div class="v51-mobile-movement-icon">${icon('clock')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(name)}</strong><small>${date?prettyDate(date):'Sin fecha'} · ${sanitize(TRANSL[v.type]||'Borrador')}</small><span class="v221-state draft">○ Sin contabilizar</span></div><div class="v51-mobile-movement-side"><b>${val>0?money(val,v.currency||'DOP',2):'Importe pendiente'}</b><div><button type="button" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button type="button" class="v51-delete-trigger" data-act="pendingRemove" data-id="${q.id}" aria-label="Descartar borrador">${icon('trash')}</button></div></div></article>`}).join('');
 const v221DraftRows=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<tr class="v221-draft-row"><td>${date?prettyDate(date):'—'}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">Borrador · sin efecto en saldos</div></td><td>${sanitize(TRANSL[v.type]||'Operación')}</td><td><span class="v221-state draft">○ Sin contabilizar</span></td><td>${sanitize(account(v.accountId)?.name||'—')}</td><td>${sanitize(v.category||'—')}</td><td class="right money">${val>0?money(val,v.currency||'DOP',2):'—'}</td><td class="v265-no-balance-cell" title="Borrador sin registrar">—</td><td class="right"><div class="tx-actions"><button class="btn sm soft" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar borrador">${icon('trash')}</button></div></td></tr>`}).join('');
-let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><button type="button" class="v9-ledger-detail" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalle de ${sanitize(v922MovementHeading(t))}"><strong>${sanitize(v922MovementHeading(t))} ${v213ApplePayBadge(t)}</strong></button><div class="subtitle">${sanitize(v922MovementProduct(t))}</div>${t.note?`<div class="subtitle">${sanitize(t.note)}</div>`:''}${v423VisibleTagMarkup(t)}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(account(t.accountId)?.name||card(t.cardId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||certificate(t.certificateId)?.name||'—')}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="v265-balance-cell">${v265BalanceHTML(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
+let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><button type="button" class="v9-ledger-detail" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalle de ${sanitize(v922MovementHeading(t))}"><strong>${sanitize(v922MovementHeading(t))} ${v213ApplePayBadge(t)}</strong></button><div class="subtitle">${sanitize(v922MovementProduct(t))}</div>${t.note?`<div class="subtitle">${sanitize(t.note)}</div>`:''}${v423VisibleTagMarkup(t)}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(v922MovementProduct(t))}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="v265-balance-cell">${v265BalanceHTML(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
 return `<section class="ledger-world section" id="ledger-world"><div class="section-title"><div><span class="summary-tag">HISTORIAL ÚNICO · ${tr.length} MOVIMIENTOS · ${v221Drafts.length} BORRADORES</span><h2>Movimientos y estados</h2><p>Revisa, concilia y completa borradores desde el mismo historial. Cada estado indica su efecto contable.</p></div><button class="btn" data-act="newTransaction">${icon('plus')} Registrar movimiento</button></div><div class="panel no-pad ledger-card">${tools}<div class="v51-mobile-ledger">${(v221DraftMobile+mobileCards)||'<div class="empty">No hay movimientos con estos filtros.</div>'}${tr.length>Math.max(12,ui.v51LedgerVisible||18)?`<button type="button" class="v51-ledger-more" data-act="v51LedgerMore">Ver más movimientos · ${Math.max(0,tr.length-Math.max(12,ui.v51LedgerVisible||18))} restantes</button>`:''}</div><div class="table-wrap ledger-scroll"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Operación</th><th>Estado</th><th>Producto / persona</th><th>Categoría</th><th class="right">Importe</th><th>Balance</th><th class="right">Gestión</th></tr></thead><tbody>${(v221DraftRows+rows)||'<tr><td colspan="9"><div class="empty">No hay movimientos con estos filtros.</div></td></tr>'}</tbody></table></div></div>${v51RemovedMovementsPanel()}<p class="footnote">Los renglones de impuestos y comisiones son desgloses vinculados a su operación; ya están incluidos en el débito de la cuenta y en el gasto. Para modificarlos, edita la operación principal. Las marcas de revisión no modifican importes; los borradores no afectan saldos hasta completar su registro. Los consumos con tarjetas se reconocen una sola vez; los pagos y transferencias no duplican gastos. Cuando corrijas una operación vinculada a un corte bancario, revisa la conciliación contra el estado oficial.</p></section>`}
 
 function subscriptionAnalysis(){const active=v339ActiveRecurring();const mon=r=>v339MonthlyEquivalent(r.amount,r.currency,r.frequency);
@@ -26939,7 +26939,7 @@ function overview(){
      </section>
      ${v290BudgetWeb()}
    </div>
-   <section data-v105-widget="payments" class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
+   <section data-v105-widget="payments" class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="pressure">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
   </div>
  </div>`;
 }
@@ -30135,7 +30135,7 @@ case 'pendingConfirm':openPendingOperation(id);break;
    if(id==='settings' && ui.page!=='settings')v242SettingsPane='home';
   ui.page=id==='kpis'?'overview':id==='transactions'?'register':id==='projection'?'patrimony':id==='vision'?'payments':id;
   if(ui.page==='register')ui.movementTab='all'; // Movimientos conserva su historial; el botón Registrar abre el asistente.
-  if(ui.page==='banks' && window.matchMedia?.('(min-width: 768px)').matches){
+  if(ui.page==='banks' && window.matchMedia?.('(min-width: 791px)').matches){
     v225DesktopBankOpened=false;
     ui.bankId=null;
   }
@@ -30167,7 +30167,7 @@ case 'addBank':bankForm();break;
  case 'advancedCsv':advancedCsv();break;
 case 'editBank':bankForm(id);break;
 case 'bankDetails':{
-  const desktopBank=window.matchMedia?.('(min-width: 768px)').matches;
+  const desktopBank=window.matchMedia?.('(min-width: 791px)').matches;
   if(desktopBank){
     // Un segundo clic sobre la misma institución cierra todo el detalle.
     const alreadyOpen=v225DesktopBankOpened && String(ui.bankId)===String(id);
@@ -32192,7 +32192,7 @@ function v40IncomeForm(id){
  modal(id?'Editar ingreso recurrente':'Nuevo ingreso recurrente',body,'v40IncomeForm',true);
  document.getElementById('v40IncomeForm').dataset.id=id||'';
 }
-function v40IncomeRow(s){let p;try{p=v40Payroll(s,s.nextDue)}catch(e){p={net:0,staleRule:true}}const auto=s.postingMode==='auto',due=s.nextDue<=today();return `<div class="v40-row"><div><strong>${sanitize(s.name)}</strong><small>${sanitize(s.kind==='formal'?'Nómina formal':'Ingreso independiente')} · ${sanitize(s.frequency==='semi_monthly'?'Quincenal · 15 y último día':s.frequency==='weekly'?'Semanal':s.frequency==='quarterly'?'Trimestral':s.frequency==='annual'?'Anual':'Mensual')} · Próximo ${prettyDate(s.nextDue)}<br/>${sanitize(bank(s.institutionId)?.name||'Sin institución')} · ${sanitize(account(s.accountId)?.name||'Sin cuenta')}${p.staleRule?' · Revisar reglas fiscales del año':''}</small></div><div class="v40-row-actions"><span class="v40-pill ${auto?'good':'manual'}">${auto?'Auto al sincronizar':'Confirmación'}</span><b>${money(p.net,s.currency,2)}</b>${s.active!==false&&!auto?`<button class="btn sm soft" data-v40-action="confirmIncome" data-id="${s.id}">${due?'Confirmar cobro':'Registrar recibido'}</button>`:''}<button class="btn sm ghost" data-v40-action="editIncome" data-id="${s.id}">Editar</button><button class="btn sm ghost" data-v40-action="toggleIncome" data-id="${s.id}">${s.active===false?'Activar':'Pausar'}</button></div></div>`}
+function v40IncomeRow(s){let p;try{p=v40Payroll(s,s.nextDue)}catch(e){p={net:0,staleRule:true}}const auto=s.postingMode==='auto',due=s.nextDue<=today();return `<div class="v40-row"><div><strong>${sanitize(s.name)}</strong><small>${sanitize(s.kind==='formal'?'Nómina formal':'Ingreso independiente')} · ${sanitize(s.frequency==='semi_monthly'?'Quincenal · 15 y último día':s.frequency==='weekly'?'Semanal':s.frequency==='quarterly'?'Trimestral':s.frequency==='annual'?'Anual':'Mensual')} · Próximo ${prettyDate(s.nextDue)}<br/>${sanitize(bank(s.institutionId)?.name||'Sin institución')} · ${sanitize(account(s.accountId)?.name||'Sin cuenta')}${p.staleRule?' · Revisar reglas fiscales del año':''}</small></div><div class="v40-row-actions"><span class="v40-pill ${auto?'good':'manual'}">${auto?'Auto al sincronizar':'Confirmación'}</span><b>${money(p.net,s.currency,2)}</b>${s.active!==false&&!auto?`<button class="btn sm soft" data-v40-action="confirmIncome" data-id="${s.id}">${due?'Confirmar cobro':'Registrar cobro anticipado'}</button>`:''}${s.active!==false?`<button class="btn sm ghost" data-v40-action="v940Additional" data-id="${s.id}">+ Ingreso adicional</button>`:''}<button class="btn sm ghost" data-v40-action="editIncome" data-id="${s.id}">Editar</button><button class="btn sm ghost" data-v40-action="toggleIncome" data-id="${s.id}">${s.active===false?'Activar':'Pausar'}</button></div></div>`}
 function v40IncomeBreakdown(s){let p;try{p=v40Payroll(s,s.nextDue);}catch(e){return '';}const paid=db.transactions.filter(t=>t.incomeScheduleId===s.id).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);return `<details class="v40-breakdown"><summary>Desglose estimado · bruto, AFP, SFS, ISR y neto</summary><div class="v40-break-grid">${[['Bruto del período',p.gross],['AFP',p.afp],['SFS',p.sfs],['ISR / Retención',p.isr],['Otros descuentos',p.other],['Neto estimado',p.net]].map(([n,v])=>`<div><small>${n}</small><b>${money(v,s.currency,2)}</b></div>`).join('')}</div>${paid.length?`<div class="v40-past"><strong>Depósitos contabilizados</strong>${paid.map(t=>`<p>${prettyDate(t.date)} · ${money(t.amount,t.currency,2)} · ${sanitize(t.postingOrigin||'Registrado')} · ISR de ese recibo: ${money(t.payrollSnapshot?.isr||0,t.currency,2)}</p>`).join('')}</div>`:'<p class="v40-one">Todavía sin depósitos contabilizados.</p>'}</details>`;}
 function v40IncomeSection(){
  v40Ensure();const active=db.incomeSchedules.filter(x=>x.active!==false),formal=active.filter(x=>x.kind==='formal'),informal=active.filter(x=>x.kind!=='formal');
@@ -32205,14 +32205,48 @@ function v40IncomeConfirmForm(id){const s=db.incomeSchedules.find(x=>x.id===id);
  modal('Confirmar ingreso recibido',`<div class="form-full smart-sub-intro"><span class="smart-kicker">CONCILIACIÓN</span><strong>${sanitize(s.name)}</strong><small>Bruto ${money(p.gross,s.currency,2)} · AFP ${money(p.afp,s.currency,2)} · SFS ${money(p.sfs,s.currency,2)} · ISR ${money(p.isr,s.currency,2)} · otros ${money(p.other,s.currency,2)}</small></div>${formItem('actualNet','Neto depositado según banco',p.net,'number','required min="0.01" step="0.01"')}${formItem('date','Fecha efectiva del depósito',s.nextDue<=today()?s.nextDue:today(),'date','required')}${formItem('note','Comentario (opcional)','','text','maxlength="120"')}<p class="form-full v40-help">Este registro se acreditará a la cuenta seleccionada. No modificará nóminas previas. Puedes ajustar el importe recibido si difiere de la estimación.</p>`,'v40IncomeConfirmForm');
  document.getElementById('v40IncomeConfirmForm').dataset.id=id;
 }
-function v40IncomePost(s,due,actualNet,actualDate='',note='',mode='auto'){
+function v40IncomeOccurrence(s,due){
+ const parts=(db.transactions||[]).filter(t=>t.type==='income'&&t.incomeScheduleId===s.id&&(
+  t.incomeOccurrenceDate===due||(!t.incomeOccurrenceDate&&t.scheduleKey===`income:${s.id}:${due}`)));
+ const received=rnd(parts.reduce((total,t)=>total+num(t.amount),0));
+ const snap=parts.find(t=>num(t.incomeOccurrenceExpected)>0);
+ const estimated=num(snap?.incomeOccurrenceExpected)||num(v40Payroll(s,due).net);
+ // Legacy single-post settlements were completed even when actual pay differed from estimate.
+ const closed=parts.some(t=>t.incomeOccurrenceCompleted===true||(!t.incomeOccurrenceDate&&t.scheduleKey===`income:${s.id}:${due}`));
+ return {parts,received,expected:rnd(estimated),remaining:closed?0:rnd(Math.max(0,estimated-received))};
+}
+function v40IncomePost(s,due,actualNet,actualDate='',note='',mode='auto',targetAccountId=''){
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(String(due||'')))throw Error('Vencimiento de ingreso inválido.');
+ if(mode==='auto'&&due>today())throw Error('No se puede generar automáticamente un ingreso futuro.');
+ const day=actualDate||due;if(day>today()||!/^\d{4}-\d{2}-\d{2}$/.test(String(day)))throw Error('La fecha efectiva del depósito debe ser actual o pasada.');
+ const a=account(targetAccountId||s.accountId);
+ if(!a||a.archived||bank(a.bankId)?.archived||a.currency!==s.currency||!(num(actualNet)>0))throw Error('La cuenta de destino o el importe recibido no es válido.');
+ const occurrence=v40IncomeOccurrence(s,due),value=rnd(actualNet);
+ if(!(occurrence.remaining>.005))return false;
+ if(value>occurrence.remaining+.005)throw Error('Este cobro supera el saldo pendiente de '+money(occurrence.remaining,s.currency,2)+'. Registra cualquier excedente como ingreso laboral adicional.');
+ if(mode==='auto'&&occurrence.parts.length)return false; // No completar a ciegas un depósito parcial.
+ const completed=occurrence.remaining-value<=.005;
  const key=`income:${s.id}:${due}`;
- if(db.transactions.some(t=>t.scheduleKey===key))return false;
- const a=account(s.accountId);if(!a||a.currency!==s.currency||!(num(actualNet)>0))throw Error('La cuenta de destino o el neto recibido no es válido.');
- const day=actualDate||due;if(day>today())throw Error('No se pueden acreditar depósitos futuros.');
- const snap=v40Payroll(s,due);
- const tx={id:uuid(),created:new Date().toISOString(),type:'income',date:day,amount:rnd(actualNet),currency:s.currency,accountId:a.id,category:s.kind==='formal'?'Salario y nómina':'Negocios y ventas',subcategory:s.kind==='formal'?'Sueldo recurrente':'Ingreso recurrente',note:(note||s.name).slice(0,180),reviewed:mode!=='auto',incomeScheduleId:s.id,scheduleKey:key,postingOrigin:mode==='auto'?'automático estimado':'confirmado',payrollSnapshot:{...snap,sourceName:s.name,institutionName:bank(s.institutionId)?.name||'',institutionId:s.institutionId||'',accountName:a.name,expectedDate:due,actualNet:rnd(actualNet),actualDate:day,mode},fxRateSnapshot:db.settings.fx};
- db.transactions.push(tx);s.nextDue=v40IncomeNext(due,s.frequency);s.lastPostedAt=new Date().toISOString();s.lastPostedDate=day;return true;
+ const snap=occurrence.parts[0]?.incomeOriginalPayroll||v40Payroll(s,due);
+ // Each installment owns its proportional historical payroll snapshot, so partial receipts
+ // never multiply the gross or withholding amounts in payroll analytics.
+ const ratio=occurrence.expected>0?value/occurrence.expected:0;
+ const scaled={...snap};
+ for(const fld of ['gross','afp','sfs','isr','other','generalOther','companyOther'])scaled[fld]=rnd(num(snap[fld])*ratio);
+ scaled.net=value;
+ scaled.companyItems=(snap.companyItems||[]).map(x=>({...x,amount:rnd(num(x.amount)*ratio)}));
+ const tx={id:uuid(),created:new Date().toISOString(),type:'income',date:day,amount:value,currency:s.currency,
+  accountId:a.id,category:s.kind==='formal'?'Salario y nómina':'Negocios y ventas',
+  subcategory:s.kind==='formal'?'Sueldo recurrente':'Ingreso recurrente',note:(note||s.name).slice(0,180),
+  reviewed:mode!=='auto',incomeScheduleId:s.id,incomeOccurrenceDate:due,
+  incomeOccurrenceExpected:occurrence.expected,incomeOriginalPayroll:{...snap,companyItems:(snap.companyItems||[]).map(x=>({...x}))},incomeOccurrenceCompleted:completed,incomeInstallment:occurrence.parts.length+1,
+  scheduleKey:completed&&!occurrence.parts.length?key:key+':part:'+uuid(),
+  postingOrigin:mode==='auto'?'automático estimado':day<due?'cobro anticipado':'confirmado',
+  payrollSnapshot:{...scaled,sourceName:s.name,institutionName:bank(s.institutionId)?.name||'',institutionId:s.institutionId||'',accountName:a.name,expectedDate:due,actualNet:value,actualDate:day,mode,kind:s.kind,partial:!completed||occurrence.parts.length>0},
+  fxRateSnapshot:db.settings.fx};
+ db.transactions.push(tx);
+ if(completed){s.nextDue=v40IncomeNext(due,s.frequency);s.lastPostedAt=new Date().toISOString();s.lastPostedDate=day;}
+ return completed?'completed':'partial';
 }
 function v40FiscalSection(){v40Ensure();let sorted=db.fiscalRulesVersions.slice().sort((a,b)=>b.effectiveFrom.localeCompare(a.effectiveFrom)),r=sorted[0];return `<section class="v40-shell" id="v40-tax-rules"><div class="v40-head"><div><h3>Reglas fiscales y nómina · RD</h3><p>Configuración versionada: una tasa nueva nunca reescribe recibos ni movimientos anteriores.</p></div><button class="btn" data-v40-action="fiscalNew">Nueva vigencia</button></div><div class="v40-grid"><div class="v40-tile"><small>AFP · TRABAJADOR</small><strong>${num(r.afpPct).toFixed(2)}%</strong><p>Base cotizable máxima RD$${num(r.afpCap).toLocaleString('en-US')} / mes</p></div><div class="v40-tile"><small>SFS · TRABAJADOR</small><strong>${num(r.sfsPct).toFixed(2)}%</strong><p>Base cotizable máxima RD$${num(r.sfsCap).toLocaleString('en-US')} / mes</p></div><div class="v40-tile"><small>ISR · EXENCIÓN ANUAL</small><strong>${money(r.exempt)}</strong><p>${sanitize(r.source||'')} · desde ${prettyDate(r.effectiveFrom)}</p></div></div><div class="v40-rows">${sorted.map(x=>`<div class="v40-row"><div><strong>Reglas ${sanitize(x.taxYear)} · desde ${prettyDate(x.effectiveFrom)}</strong><small>${sanitize(x.source||'Personalizadas')} · AFP ${x.afpPct}% · SFS ${x.sfsPct}% · exención ${money(x.exempt)}</small></div><span class="v40-pill ${x.id===r.id?'good':''}">${x.id===r.id?'Última versión':'Histórica'}</span></div>`).join('')}</div><div class="v40-note">Referencias iniciales 2026: DGII y TSS. Es una estimación de nómina, no un comprobante oficial. Los beneficios informativos no se suman a la liquidez y los descuentos de nómina no son egresos bancarios duplicados. Actualiza los valores del nuevo año cuando las autoridades los publiquen.</div></section>`;}
 function v40FiscalForm(){v40Ensure();const r=db.fiscalRulesVersions.slice().sort((a,b)=>b.effectiveFrom.localeCompare(a.effectiveFrom))[0];modal('Nueva versión de reglas fiscales',`<div class="form-full smart-sub-intro"><span class="smart-kicker">CONFIGURACIÓN · VIGENCIAS</span><strong>Reglas a partir de una fecha</strong><small>No modifica los cálculos históricos.</small></div>${formItem('effectiveFrom','Vigente desde',today(),'date','required')}${formItem('taxYear','Año fiscal',Number(today().slice(0,4)),'number','required min="2026" max="2100"')}${formItem('afpPct','AFP trabajador (%)',r.afpPct,'number','required min="0" max="100" step="0.001"')}${formItem('sfsPct','SFS trabajador (%)',r.sfsPct,'number','required min="0" max="100" step="0.001"')}${formItem('afpCap','Tope AFP mensual (RD$)',r.afpCap,'number','required min="0" step="0.01"')}${formItem('sfsCap','Tope SFS mensual (RD$)',r.sfsCap,'number','required min="0" step="0.01"')}${formItem('exempt','ISR exención anual',r.exempt,'number','required min="0" step="0.01"')}${formItem('threshold2','ISR final segundo tramo',r.threshold2,'number','required min="0" step="0.01"')}${formItem('threshold3','ISR final tercer tramo',r.threshold3,'number','required min="0" step="0.01"')}${formItem('secondBase','Cuota fija tercer tramo anual',r.secondBase,'number','required min="0" step="0.01"')}${formItem('thirdBase','Cuota fija cuarto tramo anual',r.thirdBase,'number','required min="0" step="0.01"')}${formItem('source','Fuente / referencia',r.source,'text','maxlength="120"')}<p class="form-full v40-help">Solo se permiten vigencias desde hoy. Verifica los datos de DGII y TSS antes de guardar: los impuestos reales pueden diferir por múltiples empleadores, ingresos variables o retenciones adicionales.</p>`,'v40FiscalForm',true);}
@@ -32264,7 +32298,8 @@ function v40ProcessDue(){
   // Never backfill dates prior to the date the user opted into automatic posting.
   for(const s of db.incomeSchedules){if(s.active===false||s.postingMode!=='auto'||!s.nextDue||s.nextDue>today()||s.nextDue<(s.autoFrom||today()))continue;
    for(let j=0;j<3&&s.nextDue<=today()&&s.nextDue>=(s.autoFrom||today());j++){
-    try{const p=v40Payroll(s,s.nextDue),date=s.nextDue;if(p.staleRule)throw Error('Actualiza las reglas fiscales del año antes de asentar '+s.name);
+    try{const date=s.nextDue;if(v40IncomeOccurrence(s,date).parts.length)break;
+      const p=v40Payroll(s,date);if(p.staleRule)throw Error('Actualiza las reglas fiscales del año antes de asentar '+s.name);
       if(v40IncomePost(s,date,p.net,'','','auto')){count++;v40RecordEvent('income',s.name,date,'Ingreso previsto; comprobar depósito real');}
       else break;
     }catch(e){errors.push(e.message);break;}
@@ -32332,6 +32367,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-v40-action
   if(cmd==='addIncome')v40IncomeForm();
   else if(cmd==='editIncome')v40IncomeForm(id);
   else if(cmd==='confirmIncome')v40IncomeConfirmForm(id);
+  else if(cmd==='v940Advance')v940IncomeCaptureForm(id,'advance');
+  else if(cmd==='v940Additional')v940IncomeCaptureForm(id,'additional');
   else if(cmd==='toggleIncome'){let s=db.incomeSchedules.find(x=>x.id===id);if(s){s.active=s.active===false;persist();render();}}
   else if(cmd==='fiscalNew')v40FiscalForm();
   else if(cmd==='addBenefit')v40BenefitForm('',id);
@@ -32527,7 +32564,7 @@ function v202MobileBanks(){
     <p class="v202-bank-foot">Los montos muestran únicamente productos vinculados a las instituciones del perfil. El efectivo sin banco no se incluye.</p>
   </div>`;
 }
-banks=function(){return window.matchMedia?.('(max-width: 767px)').matches?v202MobileBanks():v202DesktopBanks();};
+banks=function(){return window.matchMedia?.('(max-width: 790px)').matches?v202MobileBanks():v202DesktopBanks();};
 pages.banks=banks;
 document.addEventListener('click',e=>{
  const pick=e.target.closest?.('[data-v202-bank]');
@@ -32620,7 +32657,7 @@ function v203MobileBanks(){
   </div>`;
 }
 // Exclusivamente en móvil; la página bancaria de escritorio mantiene el código anterior.
-banks=function(){return window.matchMedia?.('(max-width: 767px)').matches?v203MobileBanks():v202DesktopBanks();};
+banks=function(){return window.matchMedia?.('(max-width: 790px)').matches?v203MobileBanks():v202DesktopBanks();};
 pages.banks=banks;
 document.addEventListener('click',function(event){
   const category=event.target.closest?.('[data-v203-category]');
@@ -32636,8 +32673,9 @@ document.addEventListener('click',function(event){
   if(kind==='accounts')ui.accountId=id;
   if(kind==='cards'){ui.cardId=id;ui.cardDetailTab='status';}
   if(kind==='loans'){ui.loanId=id;ui.innerViews=ui.innerViews||{};ui.innerViews.loans='overview';loanWorkspace.tab='vision';}
+  if(kind==='certs')ui.v239CertificateId=id;
   render();
-  requestAnimationFrame(()=>document.querySelector(kind==='accounts'?'.account-detail':kind==='cards'?'.card-detail':kind==='loans'?'#loan-workspace':'.cert-card')?.scrollIntoView({block:'nearest',behavior:'smooth'}));
+  requestAnimationFrame(()=>document.querySelector(kind==='accounts'?'.account-detail':kind==='cards'?'.card-detail':kind==='loans'?'#loan-workspace':'.v239-detail-hero')?.scrollIntoView({block:'nearest',behavior:'smooth'}));
 },true);
 
 /* Uses existing event delegation and app navigation, never touches bank balances. */
@@ -32676,7 +32714,7 @@ const scopeField=`<div class="v42-scope-field"><label>Perfil de uso de la instit
 modal(id?'Editar institución':'Añadir institución',`<div class="v42-form-kicker"><strong>Tipo, uso e identidad</strong><span>Registra bancos y entidades no bancarias en el mismo catálogo, sin crear instituciones duplicadas.</span></div>${upload}${formItem('name','Nombre de la institución',o.name,'text','required maxlength="80" placeholder="Ej. Claro Dominicana"')}${formSelect('kind','Tipo de institución',kinds,o.kind)}${scopeField}${colorField}${formItem('notes','Nota opcional',o.notes,'text','maxlength="120" placeholder="Ej. Beneficios laborales / negocio"')}`,'bankForm',true);
 const f=document.getElementById('bankForm');f.dataset.id=id||'';f.dataset.logo=logo;};
 document.addEventListener('click',e=>{const target=e.target.closest?.('[data-v42-filter], [data-v42-color]');if(!target)return;if(target.dataset.v42Filter){e.preventDefault();e.stopImmediatePropagation();v42InstitutionFilter=target.dataset.v42Filter;
-    if(window.matchMedia?.('(min-width: 768px)').matches){
+    if(window.matchMedia?.('(min-width: 791px)').matches){
       v225DesktopBankOpened=false;
       ui.bankId=null;
     }
@@ -32687,7 +32725,7 @@ document.addEventListener('click',event=>{
  event.preventDefault();event.stopImmediatePropagation();
  const next=option.dataset.v61Profile;if(!['all','personal','negocio'].includes(next))return;
  v61InstitutionProfile=next;v42InstitutionFilter='all';
-  if(window.matchMedia?.('(min-width: 768px)').matches){
+  if(window.matchMedia?.('(min-width: 791px)').matches){
     v225DesktopBankOpened=false;
     ui.bankId=null;
   }
@@ -32800,10 +32838,10 @@ function v45NextPayDate(due,s){
 const v45PreviousPayroll=v40Payroll;
 // Annual payments represent twelve months of a configured monthly gross salary.
 const v45PreviousIncomePost=v40IncomePost;
-v40IncomePost=function(s,due,net,date,note,mode){
- const completed=v45PreviousIncomePost(s,due,net,date,note,mode);
- if(completed){s.nextDue=v45NextPayDate(due,s);}
- return completed;
+v40IncomePost=function(s,due,net,date,note,mode,accountId){
+ const status=v45PreviousIncomePost(s,due,net,date,note,mode,accountId);
+ if(status==='completed')s.nextDue=v45NextPayDate(due,s);
+ return status;
 };
 const v45PrevDeductionNormalizer=v43NormalizeCompanyDeductions;
 v43NormalizeCompanyDeductions=function(items){
@@ -33033,38 +33071,123 @@ pages.expenses=function(){return v45PrevExpenses()+v45PayrollExpensePanel();};
 
 
 
-/* V48 · Registro de ingresos solo desde la fecha efectiva de vencimiento. */
+/* V940 · Se elimina la prohibición V48 de cobrar antes del vencimiento.
+   La fecha efectiva no puede ser futura; la recurrencia original conserva su fecha. */
 const v48PrePostIncome=v40IncomePost;
-v40IncomePost=function(schedule,due,net,actualDate,note,mode){
- const clock=today(),effective=actualDate||due;
- if(!/^\d{4}-\d{2}-\d{2}$/.test(String(due||'')) || due>clock)
-   throw Error('Este ingreso está programado para '+prettyDate(due)+'. No se puede acreditar antes de la fecha de cobro.');
- if(effective>clock) throw Error('No puedes acreditar ingresos futuros.');
- if(effective<due) throw Error('La fecha efectiva no puede ser anterior al vencimiento programado.');
- return v48PrePostIncome(schedule,due,net,actualDate,note,mode);
+v40IncomePost=function(schedule,due,net,actualDate,note,mode,accountId){
+ const effective=actualDate||due;
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(String(due||''))||!/^\d{4}-\d{2}-\d{2}$/.test(String(effective||''))||effective>today())
+  throw Error('El cobro debe tener una fecha efectiva válida, hasta hoy.');
+ return v48PrePostIncome(schedule,due,net,actualDate,note,mode,accountId);
 };
-const v48OldConfirmIncome=v40IncomeConfirmForm;
-v40IncomeConfirmForm=function(id){
- const s=db.incomeSchedules.find(x=>x.id===id);
- if(!s)return;
- if(s.nextDue>today()){toast('Cobro esperado el '+prettyDate(s.nextDue)+'. Todavía no afecta tus cuentas.');return;}
- v48OldConfirmIncome(id);
- const form=document.getElementById('v40IncomeConfirmForm');
- if(form?.elements?.date){form.elements.date.min=s.nextDue;form.elements.date.max=today();}
-};
+/* El mismo formulario compartido se usa desde la fuente recurrente en web y móvil. */
+v40IncomeConfirmForm=function(id){return v940IncomeCaptureForm(id,'scheduled');};
 const v48PreIncomeRow=v40IncomeRow;
 v40IncomeRow=function(s){
- let html=v48PreIncomeRow(s);
- if(s.nextDue>today())html=html.replace(/<button class="btn sm soft" data-v40-action="confirmIncome"[^>]*>.*?<\/button>/,
-  '<span class="v48-not-due">Próximo ingreso · sin contabilizar</span>');
- return html;
+ const html=v48PreIncomeRow(s);
+ const action=s.nextDue>today()?'Registrar cobro anticipado':v40IncomeOccurrence(s,s.nextDue).parts.length?'Completar cobro':'Confirmar cobro';
+ return html.replace(/(<button class="btn sm soft" data-v40-action="confirmIncome"[^>]*>)[\s\S]*?(<\/button>)/,'$1'+action+'$2');
 };
-// La confirmación manual también verifica la fecha antes de que se cree una transacción.
+
+/* V940 · Un solo capturador funcional de cobros para web y móvil.
+   Reutiliza modal(), selector universal de cuenta, v40IncomePost y persist(). */
+const V940_LABOR_EXTRA={
+ salary:['Salario y nómina','Sueldo extraordinario'],commission:['Salario y nómina','Comisiones'],
+ incentive:['Salario y nómina','Incentivos'],bonus:['Salario y nómina','Bonos'],
+ overtime:['Salario y nómina','Horas extras'],retroactive:['Salario y nómina','Retroactivos'],
+ reimbursement:['Reembolsos','Reintegro laboral'],other:['Salario y nómina','Otros ingresos laborales']
+};
+function v940IncomeCaptureForm(sourceId,requested='scheduled'){
+ v40Ensure();
+ const sources=(db.incomeSchedules||[]).filter(s=>s.active!==false);
+ const s=sources.find(s=>s.id===sourceId)||sources[0];
+ if(!s){toast('Primero registra una fuente laboral o recurrente para vincular este ingreso.');return;}
+ let mode=['scheduled','advance','additional'].includes(requested)?requested:'scheduled';
+ if(mode==='scheduled'&&s.nextDue>today())mode='advance';
+ if(mode==='advance'&&s.nextDue<=today())mode='scheduled';
+ const state=v40IncomeOccurrence(s,s.nextDue);
+ const possible=v40AccountOptions(s.currency);
+ const opt=(val,label,sel)=>`<option value="${sanitize(val)}" ${val===sel?'selected':''}>${sanitize(label)}</option>`;
+ const accountOptions=possible.map(([id,text])=>opt(id,text,s.accountId)).join('');
+ const sourceOptions=sources.map(x=>opt(x.id,x.name,x.id===s.id?s.id:'' )).join('');
+ const amount=mode==='additional'?'':state.remaining.toFixed(2);
+ const body=`<div class="form-full v940-intro"><span class="smart-kicker">INGRESOS · REGISTRO</span><strong>${sanitize(s.name)}</strong><small>Un solo movimiento por cada cobro recibido. La programación original permanece vinculada.</small></div>
+ <label class="form-full"><span class="filter-label">Tipo de ingreso</span><select name="captureMode" class="field" required>
+  ${[['scheduled','Cobro recurrente programado'],['advance','Registrar cobro anticipado'],['additional','Ingreso laboral adicional']].map(([id,label])=>opt(id,label,mode)).join('')}</select></label>
+ <label class="form-full"><span class="filter-label">Trabajo o fuente vinculada</span><select name="sourceId" class="field" required>${sourceOptions}</select></label>
+ <div class="v940-occurrence form-full" aria-live="polite"><span>Vencimiento programado: <strong>${prettyDate(s.nextDue)}</strong></span><span>Previsto: <strong>${money(state.expected,s.currency,2)}</strong></span><span>Ya recibido: <strong>${money(state.received,s.currency,2)}</strong></span><span>Pendiente: <strong>${money(state.remaining,s.currency,2)}</strong></span></div>
+ <label class="form-full v940-kind"><span class="filter-label">Concepto del ingreso adicional</span><select name="extraKind" class="field">${[['salary','Salario extraordinario'],['commission','Comisión'],['incentive','Incentivo'],['bonus','Bonificación'],['overtime','Horas extras'],['retroactive','Retroactivo'],['reimbursement','Reembolso laboral'],['other','Otros ingresos']].map(([id,label])=>opt(id,label,'salary')).join('')}</select></label>
+ ${formItem('amount','Importe recibido · '+s.currency,amount,'number','required min="0.01" step="0.01" inputmode="decimal"')}
+ ${formItem('date','Fecha efectiva del cobro',today(),'date',`required max="${today()}"`)}
+ <label class="form-full"><span class="filter-label">Cuenta receptora · selector universal</span><select class="field" name="accountId" required>${accountOptions}</select></label>
+ ${formItem('note','Nota (opcional)','','text','maxlength="160"')}
+ <p class="form-full v940-help">Un anticipo o abono parcial acredita únicamente lo recibido. El siguiente período no se altera hasta completar la ocurrencia. Un ingreso adicional no sustituye el sueldo recurrente.</p>
+ <div class="form-full v940-error" role="alert" aria-live="polite"></div>`;
+ modal('Registrar ingreso recibido',body,'v940IncomeCaptureForm',true);
+ const f=document.getElementById('v940IncomeCaptureForm');if(!f)return;
+ f.classList.add('v940-income-capture');
+ f.elements.sourceId.value=s.id;
+ const submit=f.querySelector('button[type="submit"]');if(submit)submit.textContent='Registrar cobro';
+ const sync=()=>{
+  const extra=f.elements.captureMode.value==='additional';
+  f.querySelector('.v940-kind').hidden=!extra;
+  f.querySelector('.v940-occurrence').hidden=extra;
+  f.elements.extraKind.required=extra;
+  f.elements.amount.max=extra?'':String(state.remaining);
+  if(extra&&f.dataset.v940Mode!=='additional')f.elements.amount.value='';
+  if(!extra&&f.dataset.v940Mode==='additional')f.elements.amount.value=state.remaining.toFixed(2);
+  f.dataset.v940Mode=f.elements.captureMode.value;
+  if(submit)submit.textContent=extra?'Registrar ingreso adicional':'Registrar cobro';
+ };
+ f.elements.captureMode.addEventListener('change',sync);
+ f.elements.sourceId.addEventListener('change',()=>v940IncomeCaptureForm(f.elements.sourceId.value,f.elements.captureMode.value));
+ sync();
+}
+function v940CaptureIncome(form){
+ const v=Object.fromEntries(new FormData(form).entries());
+ const s=(db.incomeSchedules||[]).find(s=>s.id===v.sourceId);
+ if(!s||s.active===false)throw Error('La fuente laboral no está disponible.');
+ const a=account(v.accountId),amount=Number(v.amount),date=v.date;
+ if(!a||a.archived||bank(a.bankId)?.archived||a.currency!==s.currency)throw Error('Selecciona una cuenta activa en '+s.currency+'.');
+ if(!Number.isFinite(amount)||amount<=0)throw Error('Introduce un importe válido mayor que cero.');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date>today()||!Number.isFinite(Date.parse(date+'T12:00:00')))throw Error('La fecha efectiva debe ser real y no puede ser futura.');
+ if(!['scheduled','advance','additional'].includes(v.captureMode))throw Error('Selecciona el tipo de ingreso.');
+ const priorTx=db.transactions.slice(),before={nextDue:s.nextDue,lastPostedAt:s.lastPostedAt,lastPostedDate:s.lastPostedDate};
+ try{
+  if(v.captureMode==='additional'){
+   const classification=V940_LABOR_EXTRA[v.extraKind];
+   if(!classification)throw Error('Selecciona un concepto válido.');
+   db.transactions.push({id:uuid(),created:new Date().toISOString(),type:'income',date,
+    amount:rnd(amount),currency:s.currency,accountId:a.id,incomeScheduleId:s.id,laborExtra:true,
+    laborExtraKind:v.extraKind,category:classification[0],subcategory:classification[1],
+    note:String(v.note||classification[1]+' · '+s.name).slice(0,180),reviewed:true,
+    postingOrigin:'ingreso laboral adicional',fxRateSnapshot:db.settings.fx});
+  }else{
+   const status=v40IncomePost(s,s.nextDue,amount,date,v.note||'', 'manual',a.id);
+   if(!status)throw Error('Este cobro ya está completo. No se puede registrar otra vez.');
+  }
+  if(!persist())throw Error('No se pudo preparar el guardado en Supabase. No se acreditó el ingreso.');
+  v99Invalidate();closeModal();render();
+  toast(v.captureMode==='additional'?'Ingreso adicional registrado y vinculado al trabajo.':
+   s.nextDue===before.nextDue?'Cobro parcial registrado. Puedes completar el saldo después.':'Cobro registrado; próxima recurrencia preservada.');
+ }catch(error){
+  db.transactions=priorTx;
+  s.nextDue=before.nextDue;s.lastPostedAt=before.lastPostedAt;s.lastPostedDate=before.lastPostedDate;
+  v99Invalidate();throw error;
+ }
+}
+/* La captura se añade a los eventos existentes, sin otro formulario contable. */
 document.addEventListener('submit',function(ev){
- const f=ev.target;if(f?.id!=='v40IncomeConfirmForm')return;
- const s=db.incomeSchedules.find(x=>x.id===f.dataset.id);
- if(s&&(s.nextDue>today() || !f.elements.date?.value || f.elements.date.value<s.nextDue || f.elements.date.value>today())){
-  ev.preventDefault();ev.stopImmediatePropagation();showError('El depósito solo puede confirmarse desde su vencimiento ('+prettyDate(s.nextDue)+') hasta hoy.');
+ if(ev.target?.id!=='v940IncomeCaptureForm')return;
+ ev.preventDefault();ev.stopImmediatePropagation();
+ const f=ev.target,err=f.querySelector('.v940-error');
+ if(f.dataset.v940Saving==='1')return;
+ f.dataset.v940Saving='1';
+ const submit=f.querySelector('button[type="submit"]');if(submit)submit.disabled=true;
+ if(err)err.textContent='';
+ try{v940CaptureIncome(f)}catch(e){
+  delete f.dataset.v940Saving;if(submit)submit.disabled=false;
+  if(err)err.textContent=e.message||String(e);else showError(e.message||'No se pudo registrar el ingreso.');
  }
 },true);
 
@@ -33540,7 +33663,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   return `<section class="v55-section-lead formal"><span class="v55-overline">NÓMINA · TRABAJO FORMAL</span><div class="v55-lead-row"><div><h2>Tu nómina, sin complicaciones.</h2><p>Salario, retenciones, incrementos y depósitos en una vista ejecutiva.</p></div>${addButton('+ Agregar trabajo')}</div></section>${select}
   <section class="v55-metrics">${metric('wallet','Salario bruto mensual',monthly?cash(monthly.gross,s.currency,2):'Sin programación','Base actual del empleo')}${metric('check-circle','Salario neto mensual',monthly?cash(monthly.net,s.currency,2):cash(sDetails.currentAmount),'Estimación tras descuentos o cobros recibidos','accent')}${metric('calendar','Neto por cobro',period?cash(period.net,s.currency,2):'—',hasSchedule?v45FreqName(s.frequency):'Fuente sin frecuencia')}${metric('pie-chart','Deducciones estimadas',monthly&&monthly.gross?`${((monthly.gross-monthly.net)/monthly.gross*100).toFixed(1)}%`:'—',monthly?cash(monthly.gross-monthly.net,s.currency,2)+' del bruto mensual':'Sin datos fiscales vinculados')}</section>
   <div class="v55-payroll-grid"><section class="v55-panel v55-payroll-detail"><div class="v55-panel-head"><div><span class="v55-overline">EMPLEO Y REMUNERACIÓN</span><h3>${txt(s.name)}</h3><p>${hasSchedule?txt(bank(s.institutionId)?.name||'Sin empleador vinculado')+' · '+txt(v45FreqName(s.frequency)):'Cobros no asociados a un perfil de nómina'}</p></div>${tag(s.active===false?'Pausada':hasSchedule?'ACTIVA':'MANUAL',s.active===false?'amber':'good')}</div>${monthly?`<div class="v55-payroll-rows">${[['Salario bruto',monthly.gross,'gross'],['AFP · Pensiones',monthly.afp,''],['SFS · Seguro de salud',monthly.sfs,''],['ISR · Impuesto sobre la renta',monthly.isr,''],['Otros descuentos',monthly.other,''],['Salario neto mensual',monthly.net,'net']].map(([label,val,c])=>`<div class="v55-payline ${c}"><span>${txt(label)}</span><strong>${c==='gross'||c==='net'?'':'−'}${cash(val,s.currency,2)}</strong></div>`).join('')}</div><p class="v55-muted-note">Cálculo basado en las reglas fiscales configuradas. El recibo real puede variar y cada depósito histórico conserva su cálculo original.</p>`:empty('Sin configuración de nómina','Asocia este ingreso a un trabajo formal para obtener AFP, SFS e ISR.')}
-  <div class="v55-inline-actions">${hasSchedule?`<button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(s.id)}">${icon('pencil')} Editar empleo</button>${s.active!==false&&s.postingMode!=='auto'?`<button class="btn sm ghost" data-v40-action="confirmIncome" data-id="${txt(s.id)}">Confirmar cobro</button>`:''}`:`<button class="btn sm soft" data-v40-action="addIncome">Vincular nuevo empleo</button>`}</div></section>
+  <div class="v55-inline-actions">${hasSchedule?`<button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(s.id)}">${icon('pencil')} Editar empleo</button>${s.active!==false?`<button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(s.id)}">${s.nextDue>today()?'Registrar cobro anticipado':'Confirmar cobro'}</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(s.id)}">+ Ingreso laboral adicional</button>`:''}`:`<button class="btn sm soft" data-v40-action="addIncome">Vincular nuevo empleo</button>`}</div></section>
   <section class="v55-panel v55-salary-history"><div class="v55-panel-head"><div><span class="v55-overline">TRAYECTORIA PROFESIONAL</span><h3>Evolución e incrementos de salario</h3><p>Solo cambios de sueldo guardados. Sin aumentos inventados.</p></div>${tag(events.length+' cambios','blue')}</div>${events.length?`<div class="v55-salary-events">${events.slice().reverse().map(e=>`<div class="v55-salary-event"><i></i><div><small>${prettyDate(e.date)}</small><b>${cash(e.before,s.currency,2)} → ${cash(e.after,s.currency,2)}</b><span>Variación del bruto: <strong class="${e.after>=e.before?'positive':'negative'}">${e.before?fmtPct((e.after/e.before-1)*100):'Primer registro'}</strong></span></div></div>`).join('')}</div>`:empty('Aún no hay aumentos registrados','Cuando edites el importe de tu nómina, se conservarán las versiones anteriores con su fecha.')}
   ${hasSchedule?`<div class="v55-salary-baseline"><small>SALARIO BASE ACTUAL</small><b>${cash(s.grossMonthly,s.currency,2)}</b><span>Historial conservado al modificar la fuente, sin alterar recibos anteriores.</span></div>`:''}</section></div>
   ${hasSchedule?`<section class="v55-panel v55-employment-panel"><div class="v55-panel-head"><div><span class="v55-overline">CONFIGURACIÓN DEL EMPLEO</span><h3>Tu empresa y cuenta receptora</h3><p>Información vinculada a esta nómina, sin exponer números completos de cuenta.</p></div></div><div class="v55-employment-grid"><div><small>EMPLEADOR</small><strong>${txt(bank(s.institutionId)?.name||'Empresa no vinculada')}</strong></div><div><small>CUENTA RECEPTORA</small><strong>${txt(account(s.accountId)?.name||'Cuenta no vinculada')}</strong></div><div><small>FRECUENCIA DEL PAGO</small><strong>${txt(v45FreqName(s.frequency))}</strong></div><div><small>PRÓXIMO COBRO PROGRAMADO</small><strong>${prettyDate(s.nextDue)}</strong></div><div><small>MODALIDAD DE REGISTRO</small><strong>${s.postingMode==='auto'?'Asiento automático al sincronizar':'Confirmación de depósito'}</strong></div><div><small>MONEDA</small><strong>${txt(s.currency||'DOP')}</strong></div></div></section>`:''}
@@ -33553,7 +33676,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   <section class="v55-metrics">${metric('wallet','Joseo ingresado · período',cash(amount),'Cobros reconocidos: '+txt(periodDescription()),'amber')}${metric('layers','Joseo acumulado histórico',cash(m.sumAmount(all)),'Ingresos reales desde el inicio')}${metric('calendar','Neto previsto / mes',cash(m.informalExpected),'Fuentes informales activas, sin cobros manuales','amber')}${metric('store','Actividades programadas',String(ss.filter(s=>s.active!==false).length),'Fuentes independientes activas')}</section>
   <div class="v55-two"><section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">MIS ACTIVIDADES</span><h3>Trabajos, emprendimientos y ventas</h3><p>Selecciona un negocio para consultar su detalle</p></div></div><div class="v55-informal-list">${options.length?options.map(s=>{const d=sourceTotals(m,s);return `<button class="v55-informal-card ${selected?.id===s.id?'active':''}" data-v55-informal="${txt(s.id)}"><span class="v55-informal-icon">${icon('store')}</span><span><strong>${txt(s.name)}</strong><small>${s._manual?'Ventas y cobros sin programación':v45FreqName(s.frequency)+' · '+(s.active===false?'Pausado':'Activo')}</small></span><b>${cash(d.currentAmount)}</b>${icon('chevron-right')}</button>`}).join(''):empty('Aún sin ingresos independientes','Registra una actividad informal recurrente o un ingreso de ventas.',addButton('Agregar actividad'))}</div></section>
   <section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">¿QUÉ GENERA EL JOSEO?</span><h3>Composición de ingresos independientes</h3><p>Clasificación por categoría del movimiento</p></div></div>${parts.length?parts.map(([cat,v])=>`<div class="v55-cat"><div><b>${txt(cat)}</b><strong>${cash(v)}</strong></div>${fullBar(v,amount,'informal')}<small>${amount?(v/amount*100).toFixed(1):0}% del total informal</small></div>`).join(''):empty('Todavía no hay cobros este período','Las ventas y servicios aparecerán cuando se registren.')}</section></div>
-  ${selected?`<section class="v55-panel v55-informal-detail"><div class="v55-panel-head"><div><span class="v55-overline">DESGLOSE DE ACTIVIDAD</span><h3>${txt(selected.name)}</h3><p>${selected._manual?'Ingresos registrados sin programación; no son una mensualidad garantizada.':'Importes por frecuencia y depósitos confirmados.'}</p></div>${selected._manual?tag('SIN PROGRAMAR','amber'):`<button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(selected.id)}">${icon('pencil')} Editar fuente</button>`}</div>${(()=>{const data=sourceTotals(m,selected);let p=null;if(!selected._manual)try{p=v40Payroll({...selected,frequency:'monthly'},today())}catch(e){}return `<div class="v55-informal-stats"><div><small>INGRESADO EN EL PERÍODO</small><b>${cash(data.currentAmount)}</b></div><div><small>ACUMULADO DE ESTA FUENTE</small><b>${cash(data.total)}</b></div><div><small>BRUTO PREVISTO / MES</small><b>${p?cash(p.gross,selected.currency,2):'No aplica'}</b></div><div><small>NETO PREVISTO / MES</small><b>${p?cash(p.net,selected.currency,2):'No aplica'}</b></div></div>${!selected._manual?`<div class="v55-informal-info"><span>Cuenta receptora: <b>${txt(account(selected.accountId)?.name||'Sin cuenta vinculada')}</b></span><span>Próximo cobro: <b>${prettyDate(selected.nextDue)}</b></span><span>Registro: <b>${selected.postingMode==='auto'?'Automático al sincronizar':'Confirmación manual'}</b></span></div>`:''}<div class="v55-two"><div><h4>Cobros por mes</h4>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(pm)))}}))}</div><div><h4>Últimos cobros de esta actividad</h4>${txList(data.arr,6)}</div></div>`;})()}</section>`:''}`;
+  ${selected?`<section class="v55-panel v55-informal-detail"><div class="v55-panel-head"><div><span class="v55-overline">DESGLOSE DE ACTIVIDAD</span><h3>${txt(selected.name)}</h3><p>${selected._manual?'Ingresos registrados sin programación; no son una mensualidad garantizada.':'Importes por frecuencia y depósitos confirmados.'}</p></div>${selected._manual?tag('SIN PROGRAMAR','amber'):`<div class="v940-source-actions"><button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(selected.id)}">${icon('pencil')} Editar fuente</button><button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(selected.id)}">Registrar cobro</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(selected.id)}">+ Ingreso adicional</button></div>`}</div>${(()=>{const data=sourceTotals(m,selected);let p=null;if(!selected._manual)try{p=v40Payroll({...selected,frequency:'monthly'},today())}catch(e){}return `<div class="v55-informal-stats"><div><small>INGRESADO EN EL PERÍODO</small><b>${cash(data.currentAmount)}</b></div><div><small>ACUMULADO DE ESTA FUENTE</small><b>${cash(data.total)}</b></div><div><small>BRUTO PREVISTO / MES</small><b>${p?cash(p.gross,selected.currency,2):'No aplica'}</b></div><div><small>NETO PREVISTO / MES</small><b>${p?cash(p.net,selected.currency,2):'No aplica'}</b></div></div>${!selected._manual?`<div class="v55-informal-info"><span>Cuenta receptora: <b>${txt(account(selected.accountId)?.name||'Sin cuenta vinculada')}</b></span><span>Próximo cobro: <b>${prettyDate(selected.nextDue)}</b></span><span>Registro: <b>${selected.postingMode==='auto'?'Automático al sincronizar':'Confirmación manual'}</b></span></div>`:''}<div class="v55-two"><div><h4>Cobros por mes</h4>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(pm)))}}))}</div><div><h4>Últimos cobros de esta actividad</h4>${txList(data.arr,6)}</div></div>`;})()}</section>`:''}`;
  }
  function evolution(m){const rows=m.timeline.map(x=>({...x,total:x.formal+x.informal})),year=+ym().slice(0,4),cutoff=year===+today().slice(0,4)?Math.min(+ym().slice(5),+today().slice(5,7)):12,total=sum(rows.filter((x,i)=>i<cutoff),x=>x.total),prior=sum(rows.filter((x,i)=>i<cutoff),x=>x.previous),acc=[];
   let run=0,runPrior=0;for(const x of rows){run+=x.total;runPrior+=x.previous;acc.push({...x,total:run,previous:runPrior});}
@@ -33566,7 +33689,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  function v55RecurringWorkspace(){
   const m=model(),tab=['general','formal','informal','evolution'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
   const tabs=[['general','Visión general','layout-dashboard'],['formal','Trabajo formal','briefcase'],['informal','Trabajo informal · Joseo','trending-up'],['evolution','Evolución y acumulado','chart-no-axes-combined']];
-  return `<div class="v55-shell"><header class="v55-hero"><div class="v55-hero-left"><div class="v55-eyebrow">INGRESOS <span>›</span> INGRESOS RECURRENTES</div><h1>Todo lo que genera tu trabajo<span class="v55-h1-dot">.</span></h1><p>Nómina, negocios, joseo y otras fuentes. Cada peso en su lugar, desde su origen hasta el acumulado.</p></div><div class="v55-hero-right">${tag('PANEL DE INGRESOS','blue')}${addButton('Agregar fuente')}</div></header>
+  return `<div class="v55-shell"><header class="v55-hero"><div class="v55-hero-left"><div class="v55-eyebrow">INGRESOS <span>›</span> INGRESOS RECURRENTES</div><h1>Todo lo que genera tu trabajo<span class="v55-h1-dot">.</span></h1><p>Nómina, negocios, joseo y otras fuentes. Cada peso en su lugar, desde su origen hasta el acumulado.</p></div><div class="v55-hero-right">${tag('PANEL DE INGRESOS','blue')}${addButton('Agregar fuente')}<button type="button" class="btn ghost" data-v40-action="v940Advance">Registrar cobro</button></div></header>
   <nav class="v55-subnav" aria-label="Módulos dentro de ingresos recurrentes">${tabs.map(([id,label,ico])=>`<button type="button" class="v55-subtab ${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}" data-v55-tab="${id}">${icon(ico)}<span>${label}</span></button>`).join('')}</nav>
   <div class="v55-workspace-toolbar"><div><span class="v55-workspace-label">${txt(periodDescription())}</span><small>Cifras reales vs. programación futura, siempre diferenciadas</small></div><div class="v55-controls"><div class="v55-period-tabs">${[['month','Mes'],['year','Año'],['all','Histórico']].map(([id,label])=>`<button type="button" data-v55-period="${id}" class="${ui.v55RecurringRange===id?'selected':''}">${label}</button>`).join('')}</div><label class="v55-month-label">Período <input type="month" aria-label="Elegir período de ingresos recurrentes" class="v55-month" value="${ym()}"></label></div></div>
   <div class="v55-body">${tab==='general'?general(m):tab==='formal'?formal(m):tab==='informal'?informal(m):evolution(m)}</div></div>`;
@@ -34268,8 +34391,9 @@ function v99IncomeMonth(period=ui.month){
    if(s.active===false||!(num(s.grossMonthly)>0)||!s.nextDue)continue;
    let due=s.nextDue;
    for(let n=0;n<650&&due<=v99End(p);n++){
-    if(v99DueInPeriod(due,p)&&!linked.has(`income:${s.id}:${due}`)){
-     try{expected+=v99MoneyInDop(v40Payroll(s,due).net,s.currency)}catch(error){console.warn('V99: ingreso no proyectable',s.id,error)}
+    if(v99DueInPeriod(due,p)){
+     try{const state=v40IncomeOccurrence(s,due),remaining=state.parts.length?state.remaining:(linked.has(`income:${s.id}:${due}`)?0:v40Payroll(s,due).net);
+       expected+=v99MoneyInDop(remaining,s.currency)}catch(error){console.warn('V99: ingreso no proyectable',s.id,error)}
     }
     const next=v40IncomeNext(due,s.frequency||'monthly');if(!next||next<=due)break;due=next;
    }
@@ -34593,8 +34717,10 @@ function v102ForecastMonthRaw(){
   if(s.active===false||!(num(s.grossMonthly)>0)||!s.nextDue)continue;
   let day=s.nextDue,steps=0;
   while(day<=end&&steps++<80){
-   if(day>=current&&!linked.has(`income:${s.id}:${day}`)){
-    try{const payroll=v40Payroll(s,day),value=fx(Math.max(0,num(payroll.net)),s.currency||'DOP');
+   if(day>=current){
+    try{const payroll=v40Payroll(s,day),state=v40IncomeOccurrence(s,day),
+      left=state.parts.length?state.remaining:(linked.has(`income:${s.id}:${day}`)?0:num(payroll.net)),
+      value=fx(Math.max(0,left),s.currency||'DOP');
      if(value>0){expectedIncome+=value;detail.income.push({name:s.name||'Ingreso recurrente',date:day,amount:value});}
     }catch(_){/* Ingreso sin regla fiscal válida: no inventar importe. */}
    }
@@ -36106,7 +36232,7 @@ function v149CardLifecycle(c){
 }
 /* Spotlight — real local data, ranked and grouped. No network calls, no demo results. */
 const V149_NAV=[
- ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Visión global','Vencimientos y obligaciones','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['settings','Ajustes','Configuración y privacidad','settings']
+ ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Visión global','Vencimientos y obligaciones','calendar'],['pressure','Presión financiera','Calendario de compromisos próximos 30 días','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['settings','Ajustes','Configuración y privacidad','settings']
 ];
 const V149_SEARCH_LABELS={section:'Navegación',bank:'Instituciones',account:'Cuentas',card:'Tarjetas',loan:'Préstamos',certificate:'Certificados',recurring:'Suscripciones y servicios',transaction:'Movimientos',contact:'Entre personas',budget:'Presupuestos',incomeSchedule:'Ingresos recurrentes',benefit:'Beneficios',statement:'Estados históricos',category:'Categorías'};
 function v71SearchEntries(){
@@ -36439,7 +36565,7 @@ document.addEventListener('click',e=>{
  if(result){v728StoreRecentSearch(document.getElementById('v154-mobile-search-input')?.value);v71SearchPick(v154MobileSearchMatches[Number(result.dataset.v154Pick)]);return}
  const input=document.getElementById('v154-mobile-search-input');if(!input)return;
  if(tile){v154MobileCategory=tile.dataset.v154Category;input.value='';input.blur()}
- else if(clear){v154MobileCategory=null;input.value='';input.blur()}
+ else if(clear){v154MobileCategory=null;if(clear.dataset.v154Filter!=='all'){input.value='';input.blur()}}
  else if(clearCategory){v154MobileCategory=null}
  v154SearchResultsUpdate();
 },true);
@@ -38496,6 +38622,10 @@ function v360PressurePage(){
  const ctx=v318Context();
  // One calendar, one source of forecast events. No new accounting methodology.
  const source=ctx.year.events||[];
+ const next30Start=today(),next30End=addDays(next30Start,29);
+ const next30Events=source.filter(e=>e.type==='expense'&&Number(e.amount)>0&&e.date>=next30Start&&e.date<=next30End);
+ const next30Total=next30Events.reduce((sum,e)=>sum+Number(e.amount),0);
+ const next30Days=new Set(next30Events.map(e=>e.date)).size;
  const daily=new Map(),grouped=new Map();
  for(const e of source){
   if(e.type!=='expense'||!(Number(e.amount)>0)||e.date<monthStart||e.date>monthEnd)continue;
@@ -38517,7 +38647,7 @@ function v360PressurePage(){
  }
  const total=Array.from(daily.values()).reduce((a,b)=>a+b,0);
  const label=first.toLocaleDateString('es-DO',{month:'long',year:'numeric'});
- return `<div class="v360-pressure-page v361-pressure-compact v362-pressure-month" aria-label="Calendario de presión financiera completo"><section class="v360-pressure-calendar" aria-label="Calendario ampliado de ${sanitize(label)}"><header class="v362-pressure-toolbar"><div class="v362-pressure-heading"><small>PRESIÓN FINANCIERA</small><h1>Presión financiera</h1></div><nav aria-label="Cambiar mes" class="v362-pressure-month-nav"><button type="button" data-v362-month="-1" aria-label="Mes anterior" ${offset===0?'disabled':''}>‹</button><strong aria-live="polite">${sanitize(label)}</strong><button type="button" data-v362-month="1" aria-label="Mes siguiente" ${offset===11?'disabled':''}>›</button></nav></header><div class="v362-pressure-summary"><span><b>${Array.from(daily.values()).filter(x=>x>0).length}</b> días con compromisos</span><span><b>${v318Money(total)}</b> previstos en el mes</span></div><div class="v362-pressure-grid" role="group" aria-label="Días del mes">${weekdays}${cells}</div>${v705ScaleLegend(total>0?max:0)}<p class="v362-pressure-disclaimer">${offset===0?'Este mes: compromisos previstos desde la fecha actual.':'Proyección de compromisos registrados; no incluye gastos futuros sin programar.'}</p></section></div>`;
+ return `<div class="v360-pressure-page v361-pressure-compact v362-pressure-month" aria-label="Calendario de presión financiera completo"><section class="v360-pressure-calendar" aria-label="Calendario ampliado de ${sanitize(label)}"><header class="v362-pressure-toolbar"><div class="v362-pressure-heading"><small>PRESIÓN FINANCIERA</small><h1>Presión financiera</h1></div><nav aria-label="Cambiar mes" class="v362-pressure-month-nav"><button type="button" data-v362-month="-1" aria-label="Mes anterior" ${offset===0?'disabled':''}>‹</button><strong aria-live="polite">${sanitize(label)}</strong><button type="button" data-v362-month="1" aria-label="Mes siguiente" ${offset===11?'disabled':''}>›</button></nav></header>${offset===0?`<div class="v942-next30-summary" aria-label="Compromisos de los próximos 30 días"><div><span>PRÓXIMOS 30 DÍAS · ${next30Days} días con obligaciones</span><br><strong>${v318Money(next30Total)}</strong></div><span>Del ${sanitize(prettyDate(next30Start))} al ${sanitize(prettyDate(next30End))} · previsión, no pago registrado</span></div>`:''}<div class="v362-pressure-summary"><span><b>${Array.from(daily.values()).filter(x=>x>0).length}</b> días con compromisos</span><span><b>${v318Money(total)}</b> previstos en el mes</span></div><div class="v362-pressure-grid" role="group" aria-label="Días del mes">${weekdays}${cells}</div>${v705ScaleLegend(total>0?max:0)}<p class="v362-pressure-disclaimer">${offset===0?'Este mes: compromisos previstos desde la fecha actual.':'Proyección de compromisos registrados; no incluye gastos futuros sin programar.'}</p></section></div>`;
 }
 /* V361: la selección abre el detalle en una vista superpuesta, sin reducir el calendario. */
 let v361PressureLastFocus=null;
@@ -38533,7 +38663,7 @@ function v361OpenPressureDay(date){
 }
 document.addEventListener('click',e=>{
  const close=e.target.closest('[data-v361-pressure-close]');if(close){e.preventDefault();v361ClosePressureDay();return}
- const monthBtn=e.target.closest('[data-v362-month]');if(monthBtn){e.preventDefault();v362PressureMonthOffset=Math.max(0,Math.min(11,v362PressureMonthOffset+Number(monthBtn.dataset.v362Month)));const parent=document.querySelector('.v360-pressure-page');if(parent){const holder=document.createElement('div');holder.innerHTML=v360PressurePage();parent.replaceWith(holder.firstElementChild)}return;}
+ const monthBtn=e.target.closest('[data-v362-month]');if(monthBtn){e.preventDefault();v362PressureMonthOffset=Math.max(0,Math.min(11,v362PressureMonthOffset+Number(monthBtn.dataset.v362Month)));const parent=document.querySelector('.v360-pressure-page');if(parent){const holder=document.createElement('div');holder.innerHTML=v360PressurePage();parent.replaceWith(holder.firstElementChild);document.querySelector('.v362-pressure-month-nav [data-v362-month="'+monthBtn.dataset.v362Month+'"]')?.focus({preventScroll:true})}return;}
  const b=e.target.closest('[data-v360-pressure-day]');if(!b)return;
  e.preventDefault();v361PressureLastFocus=b;v361OpenPressureDay(b.dataset.v360PressureDay);
 });
@@ -38738,9 +38868,11 @@ pages.vision=()=>pages.payments();
  * Suscripciones (recurring) y Entre personas (personal) siguen intactos.
  */
 function v295GlobalVisionAndPayments(){
+  // Reusar Analítica; el antiguo Centro de pagos fue eliminado. Sus accesos
+  // a pagos llevan ahora al calendario real de Presión financiera.
   const globalContents=analytics().replace(
     /data-act="navigate" data-id="payments"/g,
-    'data-v295-open-payment-center="1"'
+    'data-act="navigate" data-id="pressure"'
   );
   return `<div class="v295-global-payments">
     <section class="v295-global-overview" aria-label="Visión global de tus finanzas">
@@ -38771,17 +38903,8 @@ pages.payments=function(){
  // Visión global del iPhone conserva íntegra la estructura V295.
  return isMobileViewport()?v295GlobalVisionAndPayments():v297DesktopPaymentCenter();
 };
-/* V312: eliminado evento V297 sin disparadores en el HTML activo. */
-document.addEventListener('click',function(event){
-  const down=event.target.closest('[data-v295-open-payment-center]');
-  const up=event.target.closest('[data-v295-scroll-up]');
-  if(!down&&!up)return;
-  if(!event.target.closest('#page .v295-global-payments'))return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  const target=document.querySelector(down?'#v295-payments-below':'#page .v295-global-overview');
-  if(target)target.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
-},true);
+/* V942: retirado el listener de una sección que dejó de existir; los accesos
+   conservan data-act='navigate' y usan la ruta de Presión financiera. */
 
 /* V302 | Mobile Subscriptions, reference-grounded. Existing financial
    functions and all editing/payment/history routes are deliberately reused. */
@@ -40062,7 +40185,7 @@ document.addEventListener('input',function(event){
       ]},
       {tag:'TU VISIÓN',heading:'Planifica y mantén el control integral',desc:'Una mirada completa de tus finanzas, compromisos y próximos pasos.',items:[
        ['payments','Visión global','Estrategia','eye','blue','',true],
-       ['pressure','Compromisos','Compromisos mes','calendar','violet',fmtShort(v89DebtCapacity(monthKey()).monthly)],
+       ['pressure','Presión financiera','Próximos 30 días','calendar','violet',fmtShort(v89DebtCapacity(monthKey()).monthly)],
        ['cards','Tarjetas','Créditos','card','blue',cards.filter(c=>num(cardStatus(c,'DOP').debt)>0.005||num(cardStatus(c,'USD').debt)>0.005).length+' de '+cards.length+' con balance'],
        ['projection','Planificación','Escenarios','analytics','violet','']
       ]}
@@ -40265,16 +40388,27 @@ window.__f360RecurringVisualAdapter={
     return OUTGOING.has(t.type)?-1:0;
   };
   const periodPass=t=>state.period==='all'||(state.period==='month'?String(t.date||'').startsWith(month()):String(t.date||'')>=addDays(today(),-29));
-  const productId=t=>String(t.cardId||t.accountId||t.loanId||'');
+  // A movement can affect more than one instrument (account-to-account transfers,
+  // cash advances to accounts, certificates). Keep one financial movement, not
+  // synthetic duplicate entries per instrument.
+  const productIds=t=>[t.cardId,t.accountId,t.toAccountId,t.loanId,t.certificateId]
+    .filter(Boolean).map(String);
+  const productId=t=>productIds(t)[0]||'';
   const fullName=t=>String(transactionTitle(t)||'Movimiento');
-  const searchText=t=>[fullName(t),TRANSL[t.type]||t.type,t.category,t.subcategory,t.note,t.payee,t.tags,card(t.cardId)?.name,account(t.accountId)?.name,loan(t.loanId)?.name,bankName(t)].filter(Boolean).join(' ').toLocaleLowerCase('es');
+  const searchText=t=>[fullName(t),TRANSL[t.type]||t.type,t.category,t.subcategory,
+    t.note,t.description,t.merchant,t.payee,t.tags,t.date,t.currency,t.amount,
+    Number(t.amount||0).toLocaleString('es-DO',{maximumFractionDigits:2}),txDisplay(t),
+    card(t.cardId)?.name,account(t.accountId)?.name,account(t.toAccountId)?.name,
+    loan(t.loanId)?.name,certificate(t.certificateId)?.name,bankName(t)]
+    .filter(x=>x!==undefined&&x!==null&&x!=='').join(' ').toLocaleLowerCase('es');
   function bankName(t){const p=card(t.cardId)||account(t.accountId)||loan(t.loanId);return db.banks?.find(b=>b.id===p?.bankId)?.name||'';}
   const amountDOP=t=>Math.abs(number(fx(t.amount,t.currency||'DOP')));
   const moneyDOP=n=>money(n,'DOP',2);
   const typedAmount=t=>txDisplay(t);
   const friendlyDate=d=>{try{return dateObj(d).toLocaleDateString('es-DO',{day:'2-digit',month:'long',year:'numeric'});}catch(_){return safe(d)}};
   const createdTime=t=>{const s=t.created||t.timestamp||'';if(!s||!String(s).includes('T'))return '';const d=new Date(s);return !Number.isNaN(d.getTime())?d.toLocaleTimeString('es-DO',{hour:'numeric',minute:'2-digit'}):'';};
-  const sourceName=t=>card(t.cardId)?.name||account(t.accountId)?.name||loan(t.loanId)?.name||personalLoan(t.personalLoanId)?.person||'Movimiento registrado';
+  const sourceName=t=>v922MovementProduct(t)==='Sin producto asociado'
+    ?'Movimiento registrado':v922MovementProduct(t);
   const labelChip=(label,sel,act,extra='')=>`<button type="button" class="v708-chip ${sel?'is-selected':''}" data-v708="${act}" ${extra} aria-pressed="${sel}">${safe(label)}</button>`;
   const iconMark=t=>isApple(t)?`<span class="v708-brand-apple">${icon('apple')}<small>Pay</small></span>`:t.cardId?icon('card'):t.loanId?icon('building'):direction(t)===1?icon('up'):t.type==='transfer'?icon('cycle'):icon('wallet');
   function all(){const unique=new Map();for(const t of db.transactions||[]){if(movement(t))unique.set(String(t.id),t);}return [...unique.values()].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.created||'').localeCompare(String(a.created||'')));}
@@ -40284,7 +40418,7 @@ window.__f360RecurringVisualAdapter={
       if(!periodPass(t))return false;
       if(state.flow==='in'&&direction(t)!==1||state.flow==='out'&&direction(t)!==-1||state.flow==='apple'&&!isApple(t))return false;
       if(state.category==='__v710_otros__'){if(!state.otherCategories.includes(String(t.category||'Sin categoría')))return false;}else if(state.category!=='all'&&String(t.category||'Sin categoría')!==state.category)return false;
-      if(state.product!=='all'&&productId(t)!==state.product)return false;
+      if(state.product!=='all'&&!productIds(t).includes(String(state.product)))return false;
       if(needle&&!searchText(t).includes(needle))return false;
       return !opts.applePending||v5NeedsAppleCategory(t);
     });
@@ -40307,8 +40441,11 @@ window.__f360RecurringVisualAdapter={
   function filterPanel(){
     if(!state.openFilters)return '';
     const categories=[...new Set(all().map(t=>t.category||'Sin categoría'))].sort((a,b)=>a.localeCompare(b,'es')).map(x=>[x,x]);if(state.category==='__v710_otros__')categories.push(['__v710_otros__','Otros (categorías agrupadas)']);
-    const products=[...db.cards.map(c=>[c.id,`Tarjeta · ${c.name}`]),...db.accounts.map(a=>[a.id,`Cuenta · ${a.name}`]),...db.loans.map(l=>[l.id,`Préstamo · ${l.name}`])];
-    return `<section class="v708-filters" aria-label="Filtros de movimientos"><div class="v708-panel-head"><strong>${state.view==='advanced'?'Filtros avanzados':'Filtrar historial'}</strong><button type="button" data-v708="reset" aria-label="Restablecer filtros">Restablecer</button></div><div class="v708-filter-grid"><label><span>Período</span><select id="v708-filter-period">${selectItems([['month','Este mes'],['30','Últimos 30 días'],['all','Todo el historial']],state.period)}</select></label>${state.period==='month'?`<label><span>Mes</span><input type="month" id="v708-filter-month" value="${safe(month())}"/></label>`:''}<label><span>Producto</span><select id="v708-filter-product">${selectItems([['all','Todas las tarjetas y cuentas'],...products],state.product)}</select></label><label><span>Categoría</span><select id="v708-filter-category">${selectItems([['all','Todas las categorías'],...categories],state.category)}</select></label></div><button type="button" class="v708-apply" data-v708="filters">Listo ${icon('check')}</button></section>`;
+    const products=[...db.cards.map(c=>[c.id,`Tarjeta · ${c.name}`]),
+      ...db.accounts.map(a=>[a.id,`Cuenta · ${a.name}`]),
+      ...db.loans.map(l=>[l.id,`Préstamo · ${l.name}`]),
+      ...(db.certificates||[]).map(c=>[c.id,`Certificado · ${c.name}`])];
+    return `<section class="v708-filters" aria-label="Filtros de movimientos"><div class="v708-panel-head"><strong>${state.view==='advanced'?'Filtros avanzados':'Filtrar historial'}</strong><button type="button" data-v708="reset" aria-label="Restablecer filtros">Restablecer</button></div><div class="v708-filter-grid"><label><span>Período</span><select id="v708-filter-period">${selectItems([['month','Este mes'],['30','Últimos 30 días'],['all','Todo el historial']],state.period)}</select></label>${state.period==='month'?`<label><span>Mes</span><input type="month" id="v708-filter-month" value="${safe(month())}"/></label>`:''}<label><span>Producto</span><select id="v708-filter-product">${selectItems([['all','Todos los productos financieros'],...products],state.product)}</select></label><label><span>Categoría</span><select id="v708-filter-category">${selectItems([['all','Todas las categorías'],...categories],state.category)}</select></label></div><button type="button" class="v708-apply" data-v708="filters">Listo ${icon('check')}</button></section>`;
   }
   function row(t){
     const title=v922MovementHeading(t),positive=direction(t)>0,apple=isApple(t),pending=typeof v5NeedsAppleCategory==='function'&&v5NeedsAppleCategory(t);
@@ -40477,12 +40614,12 @@ window.__f360RecurringVisualAdapter={
   },true);
   function productView(){
     const type=state.productType;const data=base();
-    const items=type==='cards'?db.cards:type==='accounts'?db.accounts:db.loans;
+    const items=type==='cards'?db.cards:type==='accounts'?db.accounts:type==='loans'?db.loans:(db.certificates||[]);
     const group=(items||[]).filter(x=>!x.archived).map(x=>{
-      const linked=data.filter(t=>String(type==='cards'?t.cardId:type==='accounts'?t.accountId:t.loanId)===String(x.id));
-      const n=totals(linked);return `<button class="v708-product-card" type="button" data-v708="product" data-value="${safe(x.id)}"><span class="v708-product-top"><span class="v708-product-badge">${icon(type==='cards'?'card':type==='loans'?'building':'wallet')}</span><span><strong>${safe(x.name)}</strong><small>${safe(db.banks?.find(b=>b.id===x.bankId)?.name||'Producto financiero')}</small></span>${icon('arrow')}</span><span class="v708-product-bottom"><span><small>Movimientos del período</small><b>${linked.length}</b></span><span><small>Salidas registradas</small><b>${moneyDOP(n.minus)}</b></span></span></button>`;
+      const linked=data.filter(t=>productIds(t).includes(String(x.id)));
+      const n=totals(linked);return `<button class="v708-product-card" type="button" data-v708="product" data-value="${safe(x.id)}"><span class="v708-product-top"><span class="v708-product-badge">${icon(type==='cards'?'card':type==='loans'?'building':type==='certificates'?'receipt':'wallet')}</span><span><strong>${safe(x.name)}</strong><small>${safe(db.banks?.find(b=>b.id===x.bankId)?.name||'Producto financiero')}</small></span>${icon('arrow')}</span><span class="v708-product-bottom"><span><small>Movimientos del período</small><b>${linked.length}</b></span><span><small>Salidas registradas</small><b>${moneyDOP(n.minus)}</b></span></span></button>`;
     }).join('');
-    return `${header('Por tarjeta / banco','Actividad por producto financiero, con tus datos reales.')}<div class="v708-chip-set">${labelChip('Tarjetas',type==='cards','productType','data-value="cards"')}${labelChip('Cuentas',type==='accounts','productType','data-value="accounts"')}${labelChip('Préstamos',type==='loans','productType','data-value="loans"')}</div><div class="v708-product-stack">${group||'<div class="v708-empty"><strong>Sin productos registrados</strong><p>Los productos que agregues en Bancos aparecerán aquí.</p></div>'}</div>`;
+    return `${header('Por producto financiero','Actividad por tarjeta, cuenta, préstamo y certificado.')}<div class="v708-chip-set">${labelChip('Tarjetas',type==='cards','productType','data-value="cards"')}${labelChip('Cuentas',type==='accounts','productType','data-value="accounts"')}${labelChip('Préstamos',type==='loans','productType','data-value="loans"')}${labelChip('Certificados',type==='certificates','productType','data-value="certificates"')}</div><div class="v708-product-stack">${group||'<div class="v708-empty"><strong>Sin productos registrados</strong><p>Los productos que agregues en Bancos aparecerán aquí.</p></div>'}</div>`;
   }
   function reconcileView(){
     const data=base();const reviewed=data.filter(t=>t.reviewed===true),pending=data.filter(t=>!t.reviewed),drafts=(db.pendingOperations||[]).length;
@@ -40553,6 +40690,19 @@ window.__f360RecurringVisualAdapter={
     const small=`<button type="button" class="v708-movements-fab" data-v708="open" data-value="list" title="Ver movimientos" aria-label="Abrir movimientos"><span aria-hidden="true">${icon('history')}</span><span class="v708-fab-tooltip">Movimientos</span></button>`;
     return html.replace('<button type="button" class="v249-register-fab"',small+'<button type="button" class="v249-register-fab"');
   };
+  // Global Movimientos is unfiltered by default, both when entering from the
+  // navigation and when returning from another module. Bank-specific drilldowns
+  // use a different action (navigateBankTransactions), so their scope is preserved.
+  document.addEventListener('click',event=>{
+    const target=event.target.closest?.('[data-act="navigate"][data-id="register"],'+
+      '[data-act="v30Go"][data-page="register"],[data-act="viewActivity"]');
+    if(!target)return;
+    Object.assign(state,{view:'list',previous:'list',selected:null,query:'',flow:'all',
+      category:'all',otherCategories:[],product:'all',period:'all',month:null,
+      openFilters:false,limit:35});
+    Object.assign(ui,{bankScope:'all',transType:'all',reviewFilter:'all',
+      v361Category:'all',txPeriod:'all',search:''});
+  },true);
   // Buscar ya contiene la categoría Movimientos; añadir un acceso directo al mismo módulo.
   // V728: Movimientos remains exclusively in the six-tile grid; no duplicated shortcut.
   document.addEventListener('click',e=>{
@@ -41559,7 +41709,7 @@ function updateTrigger(field){
   const trigger=label?.querySelector('.v789-select-open');
   if(trigger)trigger.setAttribute('aria-label','Cambiar '+(productLabels[field.name]||'producto')+': '+(option?.name||text));
 }
-function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form')){
+function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form,form.v940-income-capture')){
  for(const name of ['cardId','accountId','loanId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement))continue;
  const label=field.closest('label');if(!label||field.dataset.v789Enhanced==='1')continue;
  field.dataset.v789Enhanced='1';field.classList.add('v789-native-keep');field.tabIndex=-1;label.classList.add('v789-select-enhanced');
@@ -87388,7 +87538,7 @@ html body #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.
  --vy-tone:var(--vive-theme-color,var(--accent,#7066ee));
 }
 html body:not(.theme-black):not(.theme-dark) #app .main:is(.world-accounts,.world-cards,.world-loans,.world-certificates) #page :is(
- .v239-sheet,.v239-product,.v244-sheet,.v57-product-hero,.v55-panel,.v55-metric,
+ .v239-sheet,.v239-product,.v244-sheet,.v55-panel,.v55-metric,
  .bank-card,.account-card,.loan-card,.certificate-card,.loan-product,.cert-card,.panel:not(.featured)
 ):not(.selected):not(.active){
  background-color:var(--vy-glass-primary,rgba(255,255,255,.64))!important;
@@ -87446,7 +87596,7 @@ html body #app {
   .vive-mobile-home .v290-budget-mobile,
   .vive-mobile-home .v344-creative,
   .v410-explore-sec,.v431-tile,.v205-explore-group,
-  .v239-certificates .v239-hero,.v239-certificates .v239-sheet,
+  .v239-certificates .v239-sheet,
   .v239-certificates .v239-product,.v239-certificates .v239-certificate-item,
   .v296-preview-card,.v332-preview-card
  ):not(.selected):not(.active):not(.danger):not(.warning){
@@ -87472,14 +87622,10 @@ html body #app {
  html body:not(.theme-black):not(.theme-dark) #app #page :is(.v410-explore,.v431-explore,.v239-certificates){
    background:transparent!important;
  }
- /* Large certificate hero is not semantically green; follow Settings accent. */
- html body:not(.theme-black):not(.theme-dark) #app #page .v239-certificates .v239-hero,
+ /* Certificados conserva el héroe de identidad existente; el acento se hereda sin cambiar su fondo. */
  html body:not(.theme-black):not(.theme-dark) #app #page .v239-certificates .v239-cert-hero{
    --v239-accent:var(--v924-accent)!important;
    --cert-accent:var(--v924-accent)!important;
-   background-color:var(--v924-glass)!important;
-   background-image:var(--v924-glass-light)!important;
-   border-color:var(--v924-glass-line)!important;
  }
  /* Explore: retain shapes/content, remove washed out white-on-white. */
  html body:not(.theme-black):not(.theme-dark) #app #page .v410-explore-sec,
@@ -87553,7 +87699,7 @@ html body:is(.theme-black,.theme-dark) #app{
   .vive-mobile-home .v105-mobile-extra,.vive-mobile-home .v273-overview-widget,
   .vive-mobile-home .v318-mobile-card,.vive-mobile-home .v105-capacity-widget,
   .vive-mobile-home .v290-budget-mobile,.v410-explore-sec,.v431-tile,
-  .v239-certificates .v239-hero,.v239-certificates .v239-sheet,
+  .v239-certificates .v239-sheet,
   .v239-certificates .v239-product,.v296-preview-card,.v332-preview-card
  ):not(.selected):not(.active):not(.danger):not(.warning){
   background-color:var(--v924-glass)!important;background-image:var(--v924-glass-light)!important;
@@ -87645,8 +87791,8 @@ html body:not(.theme-black):not(.theme-dark) #app #page :is(.v273-overview-widge
   color:#1b2a43;-webkit-text-fill-color:#1b2a43;
  }
  html body:not(.theme-black):not(.theme-dark) #app #page :is(
-  .v410-explore-sec,.v431-tile,.v410-explore-grid .v431-tile,
-  .v239-hero,.v239-sheet,.v239-product,.v296-preview-card,.v332-preview-card
+  .v410-explore-sec,.v431-tile:not(.v431-tile-featured),.v410-explore-grid .v431-tile:not(.v431-tile-featured),
+  .v239-accounts>.v239-hero,.v239-sheet,.v239-product,.v296-preview-card,.v332-preview-card
  ):not(.selected):not(.active):not(.danger):not(.warning){
   background-color:var(--v925-glass)!important;background-image:var(--v925-halo)!important;
   border-color:var(--v925-border)!important;box-shadow:var(--v925-shadow)!important;
@@ -87984,25 +88130,34 @@ html body:not(.theme-black):not(.theme-dark) #app .main #page .v203-mobile-banks
   background:rgba(255,255,255,.20)!important;
   border-color:rgba(91,116,160,.10)!important;
 }
-/* The same historical white-only styling affected the desktop Banks and Institutions hero. */
-html body:not(.theme-black):not(.theme-dark) #app .main #page .v46-bank-hero :is(h2,strong,p,small,.hero-eyebrow,.v46-global-note,.v46-global-main>strong,.v46-global-secondary strong) {
+/* Instituciones web utiliza un hero de identidad oscura, NO el panel neutro.
+   La regla de contraste oscuro solo corresponde a los paneles claros definidos arriba. */
+/* Fase 4: la tarjeta real destacada es .v431-tile-featured, no el componente antiguo v410-tile. */
+html body:not(.theme-black):not(.theme-dark) #app #page .v431-explore .v431-tile-featured {
+  background:radial-gradient(ellipse 160px 110px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#7066ee) 9%,transparent),transparent 88%),rgba(255,255,255,.73)!important;
+  background-image:radial-gradient(ellipse 160px 110px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#7066ee) 9%,transparent),transparent 88%)!important;
+  background-color:rgba(255,255,255,.73)!important;
+  border:1px solid color-mix(in srgb,var(--vive-theme-color,#7066ee) 18%,rgba(255,255,255,.8))!important;
+  color:#203451!important;
+  box-shadow:0 10px 28px rgba(31,51,83,.075)!important;
+}
+html body:not(.theme-black):not(.theme-dark) #app #page .v431-explore .v431-tile-featured :is(.v431-tile-body,.v431-tile-name,.v431-tile-description,.v431-tile-stat,.v431-tile-arrow,.v431-tile-icon,.v431-value,strong,b,small){
   color:#203451!important;-webkit-text-fill-color:#203451!important;text-shadow:none!important;
 }
-html body:not(.theme-black):not(.theme-dark) #app .main #page .v46-bank-hero :is(.hero-eyebrow,.v46-global-main>span,.v46-global-secondary small) {
-  color:#557096!important;-webkit-text-fill-color:#557096!important;
+html body:not(.theme-black):not(.theme-dark) #app #page .v431-explore .v431-tile-featured .v431-tile-description{
+  color:#617392!important;-webkit-text-fill-color:#617392!important;
 }
-/* Explore: featured Visión global tile used white type on restored light glass. */
-html body:not(.theme-black):not(.theme-dark) #app #page .v410-tile[data-feature="true"] {
-  background:linear-gradient(155deg,rgba(255,255,255,.74),rgba(255,255,255,.50))!important;
-  border:1px solid color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 14%,rgba(255,255,255,.74))!important;
+html body:not(.theme-black):not(.theme-dark) #app #page .v431-explore .v431-tile-featured .v431-tile-icon{
+  background:color-mix(in srgb,var(--vive-theme-color,#7066ee) 9%,white)!important;
+  color:var(--vive-theme-color,#7066ee)!important;-webkit-text-fill-color:var(--vive-theme-color,#7066ee)!important;
 }
-html body:not(.theme-black):not(.theme-dark) #app #page .v410-tile[data-feature="true"] :is(strong,b,small,.v410-tile-content,.v410-tile-arrow,.v410-tile-icon) {
-  color:#203451!important;-webkit-text-fill-color:#203451!important;
-}
-html body:not(.theme-black):not(.theme-dark) #app #page .v410-tile[data-feature="true"] .v410-tile-icon {
-  background:color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 11%,white)!important;
-  color:var(--vive-theme-color,var(--accent,#7066ee))!important;
-}
+/* Fase 4: resumen de los siguientes treinta días, derivado del mismo pronóstico que el calendario mensual. */
+#app .v360-pressure-page .v942-next30-summary{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;padding:12px 15px;border-radius:16px;margin:10px 0;background:color-mix(in srgb,var(--vive-theme-color,#7066ee) 6%,transparent);border:1px solid color-mix(in srgb,var(--vive-theme-color,#7066ee) 15%,transparent);color:inherit}
+#app .v360-pressure-page .v942-next30-summary strong{font-variant-numeric:tabular-nums;font-size:clamp(16px,4vw,21px);color:inherit}
+#app .v360-pressure-page .v942-next30-summary span{font-size:12px;line-height:1.5;color:inherit;opacity:.82}
+#app .v360-pressure-page .v942-next30-summary b{font-weight:750}
+@media(max-width:790px){#app .v360-pressure-page .v942-next30-summary{flex-direction:column;align-items:flex-start;gap:3px;padding:11px 13px}}
+body:is(.theme-black,.theme-dark) #app .v360-pressure-page .v942-next30-summary{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.12)}
 /* Dark mode: keep the original dark surfaces and white ink, never force the light correction. */
 html body:is(.theme-black,.theme-dark) #app .main #page :is(.v57-product-hero,.v203-mobile-banks .v203-hero) :is(h2,strong,.v46-global-main>strong,.v46-global-secondary strong,.v203-hero-value,.v203-hero-grid strong) {
   color:#f5f6fb!important;-webkit-text-fill-color:#f5f6fb!important;
@@ -88161,7 +88316,8 @@ html body #app #page .v68-wallet .v266-wallet-actions > button[data-v900-action=
  html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-accounts,
  html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-cards,
  html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-loans,
- html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-certificates {
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-certificates,
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-benefits {
    color:#fff!important;-webkit-text-fill-color:#fff!important;
    border:1px solid rgba(255,255,255,.20)!important;
    box-shadow:0 20px 45px rgba(25,41,75,.14)!important;
@@ -88170,6 +88326,7 @@ html body #app #page .v68-wallet .v266-wallet-actions > button[data-v900-action=
  html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-cards {background:linear-gradient(115deg,#17284e,#334b90 58%,#506ab7)!important;}
  html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-loans {background:linear-gradient(115deg,#31284f,#534a83 58%,#726da4)!important;}
  html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-certificates {background:linear-gradient(115deg,#453627,#746044 58%,#9b835f)!important;}
+ html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero.v57-benefits {background:linear-gradient(115deg,#283750,#465484 58%,#7463aa)!important;}
  html body:not(.theme-black):not(.theme-dark) #app .main #page .v57-product-hero :is(h2,h2 em,p,small,strong,span,.hero-eyebrow,.v46-hero-foot,.v46-global-main,.v46-global-main>span,.v46-global-main>strong,.v46-global-main>small,.v46-global-note,.v46-global-secondary strong,.v46-global-secondary b,.v46-global-secondary span,.v46-global-secondary small){
    color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:none!important;
  }
@@ -88220,6 +88377,7 @@ html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero.v
 html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero.v57-cards{background:linear-gradient(115deg,#17284e,#334b90 58%,#506ab7)!important;}
 html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero.v57-loans{background:linear-gradient(115deg,#31284f,#534a83 58%,#726da4)!important;}
 html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero.v57-certificates{background:linear-gradient(115deg,#453627,#746044 58%,#9b835f)!important;}
+html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero.v57-benefits{background:linear-gradient(115deg,#283750,#465484 58%,#7463aa)!important;}
 html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero :is(h2,h2 em,p,small,strong,span,.hero-eyebrow,.v46-global-main>strong,.v46-global-secondary strong,.v46-global-secondary b,.v46-global-main>span,.v46-global-note,.v46-hero-foot){color:#fff!important;-webkit-text-fill-color:#fff!important;}
 html body:not(.theme-black):not(.theme-dark) #app #page#page .v57-product-hero :is(p,.hero-eyebrow,.v46-global-main>span,.v46-global-secondary small,.v46-global-secondary span,.v46-global-note,.v46-hero-foot){color:rgba(255,255,255,.79)!important;-webkit-text-fill-color:rgba(255,255,255,.79)!important;}
 html body #app #page#page .v68-wallet .v266-wallet-actions > button[data-v900-action="advance"] > span {background:color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 6%,#f6f7ff)!important;border:1px solid color-mix(in srgb,var(--vive-theme-color,var(--accent,#7066ee)) 17%,#e6eafa)!important;color:var(--vive-theme-color,var(--accent,#7066ee))!important;}
@@ -88346,6 +88504,19 @@ body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader::before{
     backdrop-filter:none!important;
   }
 }
+
+/* V940 · Solo formulario de captura y acciones de Ingresos. */
+#modal-root form.v940-income-capture .v940-intro{display:grid;gap:5px;padding:8px 2px 12px}
+#modal-root form.v940-income-capture .v940-intro strong{font-size:clamp(18px,2.3vw,23px);color:var(--ink,#192c47)}
+#modal-root form.v940-income-capture .v940-intro small,#modal-root form.v940-income-capture .v940-help{color:var(--muted,#637992);font-size:12px;line-height:1.5}
+#modal-root form.v940-income-capture .v940-occurrence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:13px;border:1px solid var(--line,#dbe2ee);border-radius:15px;background:color-mix(in srgb,var(--vive-theme-color,#7067f4) 5%,transparent);font-size:11px;color:var(--ink,#192c47)}
+#modal-root form.v940-income-capture .v940-occurrence span{display:grid;gap:4px}#modal-root form.v940-income-capture .v940-occurrence strong{font-size:13px}
+#modal-root form.v940-income-capture .v940-error{color:#b91c1c;font-size:12px;min-height:0}
+#modal-root form.v940-income-capture [hidden]{display:none!important}
+.v55-inline-actions,.v940-source-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+body:is(.theme-black,.theme-dark) #modal-root form.v940-income-capture .v940-intro strong,body:is(.theme-black,.theme-dark) #modal-root form.v940-income-capture .v940-occurrence{color:#f5f6fa}
+@media(max-width:790px){#modal-root form.v940-income-capture .v940-occurrence{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#modal-root form.v940-income-capture{width:100%;max-width:100%}.v55-inline-actions,.v940-source-actions{gap:6px}.v55-inline-actions button,.v940-source-actions button{flex:1 1 auto;min-height:42px}}
+
 </style>
 
 </body>
