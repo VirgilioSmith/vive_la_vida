@@ -20008,7 +20008,7 @@ html body:not(.theme-black):not(.theme-dark) #modal-root .v900-advance-modal{
  background-color:#fff!important;
  background-image:radial-gradient(ellipse 230px 148px at 100% 0%,color-mix(in srgb,var(--vive-theme-color,#7165ee) 6%,transparent),transparent 82%)!important;
 }
-#modal-root .v900-advance-modal .v900-form-footer{position:static!important;bottom:auto!important;background:transparent!important;margin-top:0!important;padding:2px 0 0!important;}
+#modal-root .v900-advance-modal .v900-form-footer{position:sticky!important;bottom:0!important;background:var(--r871-card,#fff)!important;margin-top:0!important;padding:8px 0 max(8px,env(safe-area-inset-bottom,0px))!important;z-index:3!important;}
 #modal-root .v900-advance-modal .v900-form{gap:9px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;}
 #modal-root .v900-advance-modal .v900-field{min-width:0!important;grid-column:auto!important;gap:5px!important;}
 #modal-root .v900-advance-modal .v900-field.v900-wide{grid-column:1/-1!important;}
@@ -20034,7 +20034,14 @@ html body:not(.theme-black):not(.theme-dark) #modal-root .v900-advance-modal{
  #modal-root .v900-advance-modal .v901-select-text small{font-size:11px!important;}
  #modal-root .v900-advance-modal .v900-form-footer button{font-size:12px!important;}
 }
-body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal .v900-form-footer{background:transparent!important;}
+@media (max-width:790px){
+ #modal-root .v900-advance-modal{display:flex!important;flex-direction:column!important;overflow:hidden!important;max-height:calc(100dvh - 10px)!important;min-height:0!important;}
+ #modal-root .v900-advance-modal .v901-advance-header,
+ #modal-root .v900-advance-modal .v901-advance-intro{flex:0 0 auto!important;}
+ html body #modal-root .v900-advance-modal form#v900AdvanceForm{overflow-x:hidden!important;overflow-y:auto!important;min-height:0!important;flex:1 1 auto!important;align-content:start!important;overscroll-behavior-y:contain;}
+ #modal-root .v900-advance-modal .v900-form-footer{flex:0 0 auto!important;align-self:stretch!important;}
+}
+body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal .v900-form-footer{background:#09090b!important;}
 </style>
 
 <style id="v903-avance-form-grid-y-black">
@@ -20054,7 +20061,7 @@ html body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal{
  background:#09090b!important;background-image:radial-gradient(ellipse 215px 135px at 100% 0%,rgba(130,117,230,.06),transparent 80%)!important;
  color:#f5f5f9!important;
 }
-html body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal .v900-form-footer{background:transparent!important;}
+html body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal .v900-form-footer{background:#09090b!important;}
 html body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal .v900-preview{background:#141419!important;color:#f5f5f9!important;}
 html body:is(.theme-black,.theme-dark) #modal-root .v900-advance-modal .v900-preview-row strong{color:#f5f5f9!important;}
 </style>
@@ -88572,6 +88579,50 @@ body:is(.theme-black,.theme-dark) .vive-reader-overlay .vive-reader::before{
 body:is(.theme-black,.theme-dark) #modal-root form.v940-income-capture .v940-intro strong,body:is(.theme-black,.theme-dark) #modal-root form.v940-income-capture .v940-occurrence{color:#f5f6fa}
 @media(max-width:790px){#modal-root form.v940-income-capture .v940-occurrence{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#modal-root form.v940-income-capture{width:100%;max-width:100%}.v55-inline-actions,.v940-source-actions{gap:6px}.v55-inline-actions button,.v940-source-actions button{flex:1 1 auto;min-height:42px}}
 
+
+/* V947 · Registrar: geometría por familia y plataforma, sin modificar lógica ni navegación.
+   Compatibilidad: fastx ingreso/gasto, estudio transferencias, otras gestiones,
+   servicio, avance, nómina y selector de tarjeta en confirmación. */
+#modal-root :is(.v235-register-dialog,.fastx-form,.studio-form,.v261-service-dialog,.v900-advance-modal,.other-studio-form,.v940-income-capture){box-sizing:border-box;min-width:0;}
+#modal-root :is(.fastx-form,.studio-form,.other-studio-form,.v940-income-capture) :is(.form-grid,.studio-fields,.other-studio-fields,.fastx-sources,.fastx-receipt-details){min-width:0;}
+#modal-root :is(.fastx-form,.studio-form,.other-studio-form,.v940-income-capture) :is(label,fieldset,input,select,textarea){max-width:100%;box-sizing:border-box;}
+#modal-root :is(.studio-form,.other-studio-form,.v940-income-capture) :is(.form-foot,.studio-navigation,.other-studio-content,.studio-panels){min-width:0;box-sizing:border-box;}
+@media (max-width:790px){
+  /* Operations and confirmations keep their own layouts; only shared dimensions. */
+  #modal-root .other-studio-form .other-studio-header{padding:clamp(12px,2.2dvh,17px) clamp(12px,4vw,18px) clamp(12px,2dvh,19px)!important;}
+  #modal-root .other-studio-form .other-studio-content{gap:clamp(8px,1.35dvh,12px)!important;padding-top:clamp(7px,1.1dvh,11px)!important;}
+  #modal-root .other-studio-form .other-studio-fields{gap:clamp(7px,1.25dvh,12px)!important;}
+  #modal-root .other-studio-form .other-studio-shell{min-height:0!important;}
+  #modal-root .other-studio-form>.form-foot{box-sizing:border-box!important;max-width:100%!important;}
+  #modal-root form.studio-form[data-mode="own"] .studio-fields,
+  #modal-root form.studio-form[data-mode="outgoing"] .studio-fields,
+  #modal-root form.studio-form[data-mode="service"] .studio-fields{gap:clamp(8px,1.5dvh,14px)!important;}
+  #modal-root .v261-service-dialog .v261-dialog-scroll{min-height:0!important;overscroll-behavior-y:contain;}
+  #modal-root form.v940-income-capture .form-grid{gap:clamp(9px,1.45dvh,15px)!important;}
+  #modal-root form.v940-income-capture .v940-intro{padding-top:4px;padding-bottom:8px;}
+  #modal-root form.v940-income-capture .v940-occurrence{padding:clamp(9px,2.6vw,13px);}
+}
+@media (max-width:350px){
+  /* At 320px a native date picker and currency picker cannot fit in half-width fields. */
+  html body #modal-root .v900-advance-modal form#v900AdvanceForm>.v900-field:not(.v900-wide){grid-column:1/-1!important;}
+  /* Small phones: natural scrolling rather than a sticky footer covering input fields. */
+  #modal-root .v900-advance-modal{overflow-x:hidden!important;overflow-y:auto!important;}
+  html body #modal-root .v900-advance-modal form#v900AdvanceForm{overflow:visible!important;flex:0 0 auto!important;}
+  #modal-root .v900-advance-modal .v900-form-footer{position:static!important;bottom:auto!important;}
+  #modal-root .v900-advance-modal .v901-select-text strong{font-size:13px!important;}
+  #modal-root form.v940-income-capture .v940-occurrence strong{font-size:12px;overflow-wrap:anywhere;}
+  #modal-root .other-studio-form .other-studio-content{padding-inline:12px!important;}
+}
+@media (min-width:791px){
+  /* Desktop retains its native columns, modal ratios and independent navigation. */
+  #modal-root .studio-form .studio-fields > *,
+  #modal-root .fastx-form .fastx-source-section > *,
+  #modal-root .other-studio-form .other-studio-fields > *{min-width:0;box-sizing:border-box;}
+  #modal-root .other-studio-form .other-studio-shell{min-width:0!important;}
+  #modal-root .other-studio-form .other-studio-left,
+  #modal-root .other-studio-form .other-studio-right{min-width:0!important;}
+  #modal-root .v900-advance-modal .v900-preview-row{min-width:0;}
+}
 </style>
 
 </body>
