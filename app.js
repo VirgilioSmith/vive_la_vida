@@ -7257,7 +7257,7 @@ function v980SplashAccent(){
  return c==='custom'&&hex.test(db?.settings?.paletteHex||'')?db.settings.paletteHex:(pal[c]||pal.original);
 }
 function v980DismissSplash(gate){
- const finish=()=>{gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');gate.querySelectorAll('.v980-dust').forEach(x=>x.remove());v335SplashSince=0;};
+ const finish=()=>{gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');document.querySelectorAll('.v980-dust').forEach(x=>x.remove());v335SplashSince=0;};
  try{
   const word=gate.querySelector('.v329-wordmark');
   const calm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -7265,38 +7265,53 @@ function v980DismissSplash(gate){
   const r=word.getBoundingClientRect();if(r.width<20||r.height<10){finish();return;}
   const cs=getComputedStyle(word),dpr=Math.min(2,window.devicePixelRatio||1),pad=36;
   const W=Math.ceil(r.width+pad*2),H=Math.ceil(r.height+pad*2);
-  const cv=document.createElement('canvas');cv.className='v980-dust';cv.width=W*dpr;cv.height=H*dpr;
-  cv.style.cssText=`position:fixed;left:${r.left-pad}px;top:${r.top-pad}px;width:${W}px;height:${H}px;pointer-events:none;z-index:2`;
-  const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
-  // Rasterizar el texto con la misma tipografía
-  const fs=parseFloat(cs.fontSize),ls=parseFloat(cs.letterSpacing)||0,txt=word.textContent;
-  ctx.font=`${cs.fontWeight} ${fs}px ${cs.fontFamily}`;ctx.fillStyle=cs.color;ctx.textBaseline='alphabetic';
-  let total=0;for(const ch of txt)total+=ctx.measureText(ch).width+ls;
-  let x=pad+(r.width-total)/2;const y=pad+r.height*0.5+fs*0.33;
-  for(const ch of txt){ctx.fillText(ch,x,y);x+=ctx.measureText(ch).width+ls;}
-  const img=ctx.getImageData(0,0,W*dpr,H*dpr),step=Math.max(2,Math.round(2*dpr)),parts=[];
-  for(let py=0;py<H*dpr;py+=step)for(let px=0;px<W*dpr;px+=step){const i=(py*W*dpr+px)*4;if(img.data[i+3]>110){
-   const nx=(px/dpr)/W;parts.push({x:px/dpr,y:py/dpr,vx:20+Math.random()*80,vy:-(10+Math.random()*70)+(Math.random()-.5)*30,wob:Math.random()*6.28,sz:step/dpr*(.9+Math.random()*.5),delay:120+nx*520+Math.random()*180,life:620+Math.random()*420});}}
-  if(!parts.length){finish();return;}
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  gate.appendChild(cv);word.style.visibility='hidden';
+  /* V1030 · El polvo viaja hacia la izquierda y se vuelve a formar como el logotipo de la esquina superior izquierda. */
+  const brand=[...document.querySelectorAll('.vive-p-brand,.vive-mobile-brand')].find(e=>{const b=e.getBoundingClientRect();return b.width>8&&b.height>8&&getComputedStyle(e).visibility!=='hidden'});
+  const vw=window.innerWidth,vh=window.innerHeight;
+  const cv=document.createElement('canvas');cv.className='v980-dust';cv.width=vw*dpr;cv.height=vh*dpr;
+  cv.style.cssText=`position:fixed;left:0;top:0;width:${vw}px;height:${vh}px;pointer-events:none;z-index:2147483000`;
+  const ctx=cv.getContext('2d');
+  const raster=(text,font,rect,color)=>{const c=document.createElement('canvas');c.width=Math.ceil(vw*dpr);c.height=Math.ceil(vh*dpr);const g=c.getContext('2d',{willReadFrequently:true});g.scale(dpr,dpr);g.font=font;g.fillStyle=color;g.textBaseline='alphabetic';g.textAlign='center';g.fillText(text,rect.left+rect.width/2,rect.top+rect.height*0.5+parseFloat(font.match(/(\d+(\.\d+)?)px/)?.[1]||16)*0.34);return g.getImageData(0,0,c.width,c.height)};
+  const sample=(img,step,minA)=>{const out=[];for(let py=0;py<img.height;py+=step)for(let px=0;px<img.width;px+=step){if(img.data[(py*img.width+px)*4+3]>minA)out.push({x:px/dpr,y:py/dpr})}return out};
+  const fs=parseFloat(cs.fontSize),step=Math.max(2,Math.round(2*dpr));
+  const src=sample(raster(word.textContent,`${cs.fontWeight} ${fs}px ${cs.fontFamily}`,r,cs.color),step,110);
+  if(!src.length){finish();return;}
+  let dst=[],bcol=v980SplashAccent();
+  if(brand){
+   let bs2=null;const br=brand.getBoundingClientRect(),bs=getComputedStyle(brand),bf=parseFloat(bs.fontSize)||24;
+   // Solo el primer texto de la marca (en móvil comparte el botón con la fecha): se mide su rectángulo exacto.
+   const tw=document.createTreeWalker(brand,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.textContent.trim()?1:2});const tn=tw.nextNode();
+   let txt=(brand.textContent||'V').trim(),rr=br;
+   if(tn){const rg=document.createRange();rg.selectNodeContents(tn);const q=rg.getBoundingClientRect();if(q.width>4){rr=q;txt=tn.textContent.trim();const ps=getComputedStyle(tn.parentElement);bs2=ps}}
+   dst=sample(raster(txt,`${(bs2||bs).fontWeight} ${parseFloat((bs2||bs).fontSize)||bf}px ${(bs2||bs).fontFamily}`,rr,'#000'),step,110);
+   bcol=bs.color&&!/rgba?\(0, 0, 0, 0\)/.test(bs.color)?bs.color:bcol;
+  }
+  const parts=src.map((p,n)=>{const t=dst.length?dst[(Math.random()*dst.length)|0]:{x:-20,y:p.y};const nx=(p.x-r.left)/Math.max(1,r.width);
+   return {x0:p.x,y0:p.y,tx:t.x,ty:t.y,sz:step/dpr*(.9+Math.random()*.5),wob:Math.random()*6.28,amp:6+Math.random()*16,delay:100+(1-nx)*420+Math.random()*160,life:900+Math.random()*500}});
+  ctx.scale(dpr,dpr);
+  document.body.appendChild(cv);word.style.visibility='hidden';
+  const brandPrev=brand?brand.style.opacity:'';if(brand)brand.style.opacity='0';
   gate.classList.add('v980-dissolving');gate.style.pointerEvents='none';
-  const t0=performance.now(),DUR=1500;
-  const col=cs.color;
+  const t0=performance.now(),DUR=2300,col=cs.color;
+  const ease=k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
   (function frame(now){
-   const t=now-t0;ctx.clearRect(0,0,W,H);ctx.fillStyle=col;
+   const t=now-t0;ctx.clearRect(0,0,vw,vh);
    for(const q of parts){
     const a=t-q.delay;
-    if(a<0){ctx.globalAlpha=1;ctx.fillRect(q.x,q.y,q.sz,q.sz);continue;}
-    const k=a/q.life;if(k>=1)continue;
-    const e=k*k;
-    ctx.globalAlpha=1-k;
-    ctx.fillRect(q.x+q.vx*(a/1000)*(1+k)+Math.sin(q.wob+a/180)*3*k,q.y+q.vy*(a/1000)*(1+k)-e*18,q.sz*(1-k*.5),q.sz*(1-k*.5));
+    if(a<0){ctx.globalAlpha=1;ctx.fillStyle=col;ctx.fillRect(q.x0,q.y0,q.sz,q.sz);continue}
+    const k=Math.min(1,a/q.life),e=ease(k);
+    const wob=Math.sin(q.wob+a/160)*q.amp*Math.sin(Math.PI*k);
+    // El polvo se desprende hacia la izquierda y baja/sube hasta asentarse en el logotipo
+    const x=q.x0+(q.tx-q.x0)*e-Math.sin(Math.PI*k)*40,y=q.y0+(q.ty-q.y0)*e+wob;
+    ctx.globalAlpha=k<1?.95:1;ctx.fillStyle=k>.6?bcol:col;
+    ctx.fillRect(x,y,q.sz*(1-.25*Math.sin(Math.PI*k)),q.sz*(1-.25*Math.sin(Math.PI*k)));
    }
    ctx.globalAlpha=1;
-   // El telón se aclara mientras el polvo se va, revelando la app ya lista
-   gate.style.opacity=String(Math.max(0,1-Math.max(0,(t-350)/900)));
-   if(t<DUR)requestAnimationFrame(frame);else{gate.style.opacity='';gate.style.pointerEvents='';finish();}
+   gate.style.opacity=String(Math.max(0,1-Math.max(0,(t-250)/800)));
+   const done=t>=DUR-250;
+   if(brand&&done){brand.style.transition='opacity .35s ease';brand.style.opacity=brandPrev||'';}
+   if(done)cv.style.opacity=String(Math.max(0,1-(t-(DUR-250))/250));
+   if(t<DUR)requestAnimationFrame(frame);else{if(brand){brand.style.opacity=brandPrev;brand.style.transition=''}gate.style.opacity='';gate.style.pointerEvents='';finish();}
   })(t0);
  }catch(e){console.warn('V980: disolución no disponible',e);finish();}
 }
