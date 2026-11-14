@@ -246,3 +246,8 @@ cambiaría esa regla. No se ha implementado.
 **Verificado** (zona segura simulada 59/34, 47/34, 24/0 y 0/0; 393×852, 390×844, 412×839, 375×667, 360×640): las 4 hojas sin scroll con volver y botón visibles; botón de confirmación probado en cada una: Préstamo 4→5 pagos, Beneficios y Conciliar registran, Devolución abre «Seleccionar compra» y registra; consola sin errores.
 
 **Pendiente:** comprobar en un iPhone real la altura de la barra respecto al indicador de inicio (el emulador usa valores simulados).
+
+**Nota de integración (2026-11-14):** al fusionar, `main` ya traía cambios propios del dueño del repositorio sobre la barra de navegación
+(`--v367-dock-bottom`, degradado de acento en el «Liquid Glass» V250) y el espacio superior de cinco vistas. Se conservó su versión y se
+retiraron de este cambio las reglas de posición/estilo de la barra y de los botones flotantes (`--v340-nav-inset`, cristal propio, FAB).
+Quedan de este cambio: hojas de las 4 operaciones, hoja «Motivo del ajuste» y zonas seguras como variables.
