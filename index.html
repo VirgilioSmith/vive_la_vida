@@ -90442,5 +90442,21 @@ body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986
 body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-delta{background:rgba(255,255,255,.08)!important}
 body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v708-live-label{background:rgba(255,255,255,.06)}
 </style>
+<style id="v988-capacity-tint">
+/* V988 · Capacidad de endeudamiento: el recuadro del porcentaje se tiñe según el riesgo (rojo traslúcido si supera el 100 %, ámbar si es ajustado, verde si está dentro) */
+html body #app#app .v105-capacity-widget .v105-capacity-rate{--tc:34,160,100;background:linear-gradient(180deg,rgba(var(--tc),.13),rgba(var(--tc),.06))!important;border:1px solid rgba(var(--tc),.28)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+html body #app#app .v105-capacity-widget.v105-capacity-over .v105-capacity-rate{--tc:224,72,100}
+html body #app#app .v105-capacity-widget.v105-capacity-caution .v105-capacity-rate{--tc:240,150,40}
+html body #app#app .v105-capacity-widget.v105-capacity-missing .v105-capacity-rate{--tc:120,135,170}
+html body #app#app .v105-capacity-widget .v105-capacity-rate>strong{color:rgb(var(--tc))!important;-webkit-text-fill-color:rgb(var(--tc))!important}
+html body #app#app .v105-capacity-widget.v105-capacity-over .v105-capacity-rate>strong{color:#c2354f!important;-webkit-text-fill-color:#c2354f!important}
+html body #app#app .v105-capacity-widget.v105-capacity-ok .v105-capacity-rate>strong{color:#0e8a54!important;-webkit-text-fill-color:#0e8a54!important}
+html body #app#app .v105-capacity-widget.v105-capacity-caution .v105-capacity-rate>strong{color:#b36a0b!important;-webkit-text-fill-color:#b36a0b!important}
+html body #app#app .v105-capacity-widget .v105-capacity-rate>span{color:rgb(var(--tc))!important;font-weight:700}
+html body:is(.theme-black,.theme-dark) #app#app .v105-capacity-widget .v105-capacity-rate{background:linear-gradient(180deg,rgba(var(--tc),.2),rgba(var(--tc),.08))!important;border-color:rgba(var(--tc),.4)!important}
+html body:is(.theme-black,.theme-dark) #app#app .v105-capacity-widget.v105-capacity-over .v105-capacity-rate>strong{color:#ff8da5!important;-webkit-text-fill-color:#ff8da5!important}
+html body:is(.theme-black,.theme-dark) #app#app .v105-capacity-widget.v105-capacity-ok .v105-capacity-rate>strong{color:#5ee2be!important;-webkit-text-fill-color:#5ee2be!important}
+html body:is(.theme-black,.theme-dark) #app#app .v105-capacity-widget.v105-capacity-caution .v105-capacity-rate>strong{color:#ffc36a!important;-webkit-text-fill-color:#ffc36a!important}
+</style>
 </body>
 </html>
