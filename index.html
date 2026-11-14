@@ -40425,7 +40425,7 @@ document.addEventListener('input',function(event){
         ${id==='projection'?`<span class="v434-planning-spark" aria-hidden="true"><svg viewBox="0 0 120 40" preserveAspectRatio="xMaxYMax meet"><defs><linearGradient id="v434Spark" x1="0" y1="0" x2="1" y2="0"><stop offset="0" class="v984-s0"/><stop offset="1" class="v984-s1"/></linearGradient><linearGradient id="v984Area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="v984-a0"/><stop offset="1" class="v984-a1"/></linearGradient></defs><path class="v984-area" d="M4 34 C18 33 22 24 34 25 C46 26 50 16 62 18 C74 20 78 9 92 10 C102 11 108 6 116 4 L116 38 L4 38 Z" fill="url(#v984Area)"/><path class="v984-line" d="M4 34 C18 33 22 24 34 25 C46 26 50 16 62 18 C74 20 78 9 92 10 C102 11 108 6 116 4" fill="none" stroke="url(#v434Spark)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="v984-dot" cx="116" cy="4" r="3.6"/></svg></span>`:''}
       </button>`;
     };
-    return `<div class="v410-explore v431-explore" aria-label="Explorar módulos financieros"><header class="v410-explore-head"><div><h1>Explorar</h1><p>Organiza y potencia tu espacio financiero.</p></div><span class="v410-date">${esc(monthText())}</span></header>${sections.map(s=>`<section class="v410-explore-sec"><header><span class="v410-kicker">${s.tag}</span><h2>${s.heading}</h2><p>${s.desc}</p></header><div class="v410-explore-grid">${s.items.map(tile).join('')}</div></section>`).join('')}</div>`;
+    return `<div class="v410-explore v431-explore" aria-label="Explorar módulos financieros"><header class="v410-explore-head"><div><h1>Explorar</h1><p>Organiza y potencia tu espacio financiero.</p></div><label class="v410-date v990-month"><span>${esc(monthText())}</span><input id="monthFilter" type="month" value="${esc(ui.month||today().slice(0,7))}" aria-label="Período de análisis"></label></header>${sections.map(s=>`<section class="v410-explore-sec"><header><span class="v410-kicker">${s.tag}</span><h2>${s.heading}</h2><p>${s.desc}</p></header><div class="v410-explore-grid">${s.items.map(tile).join('')}</div></section>`).join('')}</div>`;
   };
 
   // Image 1 supplies *behavior* only; existing app style controls all layout.
@@ -90573,6 +90573,14 @@ html body #app#app .v410-substat{background-image:linear-gradient(180deg,color-m
  html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-action.active{background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 24%,#14161d)!important;box-shadow:0 12px 18px -10px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,transparent)!important}
  html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-action.active svg{color:#fff!important;stroke:#fff!important}
 }
+</style>
+<style id="v990-month">
+/* V990 · Selector de mes con el mismo diseño (acento + flecha) en Inicio y Explorar; en Explorar ahora cambia el período */
+html body #app#app :is(.v990-month,.vive-mobile-home .v732-period){position:relative;display:inline-flex!important;align-items:center;gap:8px;color:var(--v424-accent-strong,#5b57d6)!important;font-weight:780!important;cursor:pointer}
+html body #app#app :is(.v990-month,.vive-mobile-home .v732-period) span{color:inherit!important;-webkit-text-fill-color:currentColor!important;text-transform:capitalize}
+html body #app#app :is(.v990-month,.vive-mobile-home .v732-period)::after{content:"";flex:0 0 16px;width:16px;height:16px;background:var(--v424-accent-strong,#5b57d6);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center/contain no-repeat}
+html body #app#app .v990-month input,html body #app#app .vive-mobile-home .v732-period input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
+html body #app#app .vive-mobile-home .v732-period{background:rgba(255,255,255,.78)!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:0 10px 24px -16px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 55%,transparent),inset 0 1px 0 #fff!important;font-size:12.5px!important;padding:10px 14px!important;max-width:none!important}
 </style>
 </body>
 </html>

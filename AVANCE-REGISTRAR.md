@@ -447,3 +447,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 ## V989 · Auditoría de acentos fijos + menú lateral web
 - Auditoría con acento coral en 25 páginas (móvil y web): los únicos restos azul/violeta fijos eran: botón principal de Cuentas/Certificados («Recibir», «Nuevo certificado»), texto «Nuevo», pestañas seleccionadas (Todas/Vigentes, Instituciones, Ingresos/Egresos), cabecera de Planificación y el icono de Apariencia en Configuración. Todos pasan al acento configurado (en algunos casos un fallback `--v963-a` impedía heredarlo). Los colores de gráficos de dona/categorías se dejan: son una paleta de datos, no de acento.
 - Web: el menú lateral toma el efecto de cristal de la barra móvil: cápsula translúcida, tinta de acento, píldora activa clara con resplandor del acento; variante Black.
+
+## V990 · Selector de mes en Explorar
+- Explorar: la píldora del mes ahora es un selector real (mismo control que Inicio): al elegir otro mes se actualizan las fichas (verificado: noviembre → octubre cambia Ingresos RD$118,000 → RD$116,000). Inicio y Explorar comparten diseño: texto y flecha en el acento, cristal claro.
