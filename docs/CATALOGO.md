@@ -1,6 +1,6 @@
 # Catálogo y estado de vive el hoy · Finanzas 360
 
-Fecha: 14 nov 2026 · Versión de código: V1009 · Calificación global: **64 / 100**
+Fecha: 14 nov 2026 · Versión de código: V1013 · Calificación global: **70 / 100** (antes 64)
 
 ## 1. Cifras del código
 | Dato | Valor |
@@ -8,7 +8,7 @@ Fecha: 14 nov 2026 · Versión de código: V1009 · Calificación global: **64 /
 | `app.js` | 2,4 MB · ~20.800 líneas · 244 acciones (`case`) · 24 pantallas registradas |
 | `styles.css` | 3,9 MB · ~56.000 líneas · 39.400 `!important` · ~12.900 colores hexadecimales |
 | Capas de versión (`V###`) acumuladas | más de 1.000; cada una sobrescribe a la anterior |
-| Diálogos nativos del navegador (`confirm`) | 25 llamadas |
+| Diálogos nativos del navegador (`confirm`) | 25 llamadas → diálogo propio (V1011), con respaldo nativo si no se identifica la acción |
 
 ## 2. Catálogo de pantallas
 **Móvil (barra inferior):** Inicio · Wallet · Bancos (Instituciones, Cuentas, Tarjetas, Préstamos, Certificados) · Explorar (módulos) · Buscar · botón Registrar (+) · botón historial.
@@ -23,8 +23,8 @@ Fecha: 14 nov 2026 · Versión de código: V1009 · Calificación global: **64 /
 | Icono de institución | logo o iniciales con color del banco | Coherente en cuentas, préstamos, certificados, tarjetas |
 | Icono de categoría | sistema único `v255TaxonomyIconName` | Coherente en registro y confirmación (V1004) |
 | Cabecera de detalle | degradado del acento | Coherente en tarjeta y movimiento (V1008) |
-| Detalle de movimiento | vista nueva «Movimiento» | Móvil unificado (V1007); web aún usa modal antiguo |
-| Confirmaciones | diálogo nativo del navegador | **Incoherente** (25 sitios) |
+| Detalle de movimiento | vista nueva «Movimiento» | Móvil (V1007) y web (V1012) unificados |
+| Confirmaciones | diálogo propio (V1011) | Coherente |
 | Colores de datos (gráficas) | paleta fija azul/verde/ámbar | Aceptable (son categóricos), pero la 1.ª serie podría ser el acento |
 
 ## 4. Hallazgos por severidad
@@ -66,3 +66,18 @@ Fecha: 14 nov 2026 · Versión de código: V1009 · Calificación global: **64 /
 3. Neutrales derivados del acento y 1.ª serie de gráficas = acento (media).
 4. Consolidar CSS por componente y minificar (media).
 5. Documentar RLS y funciones edge en el repositorio (alta, depende de Supabase).
+
+## 7. Actualización V1013 — nota 70/100
+| Dimensión | Antes | Ahora | Qué lo mueve |
+|---|---|---|---|
+| Funcionalidad y datos | 78 | 80 | Pagar servicio directo al formulario (V1010) |
+| Coherencia visual | 66 | 74 | Neutros y primera serie de gráficas derivados del acento; kicker legible |
+| Coherencia de flujos | 60 | 76 | Confirmaciones propias; un solo detalle de movimiento en móvil y web |
+| Móvil | 72 | 76 | |
+| Web | 58 | 64 | Detalle de movimiento nuevo |
+| Mantenibilidad | 55 | 55 | Sin cambios (siguen los `!important`) |
+| Accesibilidad | 62 | 64 | Diálogo con foco atrapado, Esc y rol alertdialog |
+| Seguridad / backend | 55 | 55 | Depende de Supabase |
+| Rendimiento | 60 | 60 | |
+
+**Por qué no es 100:** (a) el CSS tiene unos 39.000 `!important` y más de 1.000 capas; llevarlo a un sistema limpio exige reescribir el diseño pantalla por pantalla; (b) las reglas RLS y las funciones edge no están en el repositorio y no se pueden verificar desde aquí; (c) no hay pruebas automáticas ni auditoría de contraste completa; (d) el fondo y el rediseño web de las pantallas de análisis siguen pendientes.
