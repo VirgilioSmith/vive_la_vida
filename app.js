@@ -1062,7 +1062,7 @@ function v371CardReturnWidget(c){
 
 /* V6 · Wallet móvil: ficha de transacción solo lectura, edición mediante el editor financiero existente. */
 function v6WalletTransactionDetail(id){
- if(isMobileViewport()&&typeof window.v708OpenDetail==='function'&&(db.transactions||[]).some(r=>String(r.id)===String(id))){window.v708OpenDetail(id);return}
+ if(typeof window.v708OpenDetail==='function'&&(db.transactions||[]).some(r=>String(r.id)===String(id))){window.v708OpenDetail(id);return}
  const t=(db.transactions||[]).find(row=>String(row.id)===String(id));
  if(!t){toast('Este movimiento ya no está disponible.');return;}
  const c=t.cardId?card(t.cardId):null;
@@ -15943,7 +15943,7 @@ window.__f360RecurringVisualAdapter={
     redraw();
   };
   const oldRegister=pages.register;
-  pages.register=function(...args){return isMobileViewport()?v708Movements():oldRegister.apply(this,args);};
+  pages.register=function(...args){return (isMobileViewport()||(state.view==='detail'&&state.selected))?v708Movements():oldRegister.apply(this,args);};
   // Mantener intacta la navegación de cinco pestañas; insertar solo un botón auxiliar encima del +.
   const oldDock=mobileBottomNavigation;
   mobileBottomNavigation=function(...args){
