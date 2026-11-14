@@ -6,7 +6,7 @@ PWA de finanzas personales en español. Sitio estático (GitHub Pages) con Supab
 - `index.html` – cascarón mínimo: metas, enlaces a `styles.css` y `app.js`, tres scripts de arranque en la cabecera.
 - `styles.css` – todos los estilos (cascada por versiones; se resuelve con `!important` y mayor especificidad).
 - `app.js` – toda la lógica y las vistas.
-- `manifest.webmanifest`, `icons/` – instalación como PWA.
+- `manifest.webmanifest`, `app-icon-*.png`, `favicon-v201.png` – instalación como PWA.
 - `docs/AVANCE.md` – notas de avance del registro.
 
 ## Publicar (GitHub Pages)
