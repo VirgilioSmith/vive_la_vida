@@ -54532,7 +54532,7 @@ html body:not(.theme-black):not(.theme-dark) #app#app .topbar :is(h1,h2){color:v
 @media (max-width:790px){
  html body:not(.theme-black):not(.theme-dark) #app#app :is(header[class*="-intro"],.v239-intro,.v244-intro,.v248-intro,.v205-intro) h2{color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important}
 }
-@media (min-width:791px){html body #app#app .topbar-intro .top-sub{margin-top:-7px!important;line-height:1.1}}
+@media (min-width:791px){html body #app#app .topbar-intro .top-sub{margin-top:-4px!important;line-height:1.1}}
 
 /* V1035 · Cambio de pestañas sin destello: se elimina la aparición con opacidad parcial («inner-appear») al recargar el contenido */
 html body #app#app :is(.v26-body,.inner-view,.inner-menu,.v32-integrated,.v26-internal){animation-name:none!important}
@@ -54593,3 +54593,24 @@ html body:not(.theme-black):not(.theme-dark) #app#app .v46-bank-filters>button.a
 html body:not(.theme-black):not(.theme-dark) #app#app .v46-bank-filters>button:not(.active){background:color-mix(in srgb,var(--v424-accent-strong) 8%,#fff)!important;color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 22%,transparent)!important}
 /* V1040c · Fondo blanco traslúcido (Liquid Glass) detrás del filtro de instituciones */
 html body:not(.theme-black):not(.theme-dark) #app#app .v46-bank-filters{background:linear-gradient(150deg,rgba(255,255,255,.62),rgba(255,255,255,.3))!important;-webkit-backdrop-filter:blur(18px) saturate(1.7)!important;backdrop-filter:blur(18px) saturate(1.7)!important;border:1px solid rgba(255,255,255,.75)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.3),0 10px 28px color-mix(in srgb,var(--v424-accent-strong) 12%,transparent)!important}
+
+/* V1041 · «Dentro de …»: barra interna compacta, cápsula de vidrio como las demás (el nav lleva estilos en línea, se estiliza el contenedor) */
+@media (min-width:791px){
+ html body:not(.theme-black):not(.theme-dark) #app#app #page .inner-menu{display:inline-flex!important;align-items:center;gap:14px!important;width:fit-content!important;max-width:100%;padding:5px 8px 5px 18px!important;margin:0 0 16px!important;border-radius:999px!important;background:linear-gradient(150deg,rgba(255,255,255,.62),rgba(255,255,255,.3))!important;-webkit-backdrop-filter:blur(18px) saturate(1.7);backdrop-filter:blur(18px) saturate(1.7);border:1px solid rgba(255,255,255,.75)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 10px 28px color-mix(in srgb,var(--v424-accent-strong) 12%,transparent)!important}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page .inner-menu-caption{display:flex;flex-direction:column;gap:0;padding-right:6px;border-right:1px solid color-mix(in srgb,var(--v424-accent-strong) 16%,transparent)}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page .inner-menu-caption b{font-size:12px;color:#33405a}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page .inner-menu-caption small{font-size:10.5px;color:#7a859b}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page .inner-menu-tabs{display:inline-flex!important;gap:2px!important;padding:0!important;margin:0!important}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page .inner-menu-tab{padding:8px 16px!important;font-size:13px!important;font-weight:750!important;border-radius:999px!important}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page .inner-menu-tab:not(.active){color:#566480!important}
+}
+
+/* V1041b · Referencia del usuario: cápsula de vidrio, activo con degradado del acento (texto e icono blancos), inactivos grises con icono */
+@media (min-width:791px){
+ html body:not(.theme-black):not(.theme-dark) #app#app #page :is(.v26-nav,.inner-menu,.v285-budget-nav){display:inline-flex!important;flex-wrap:nowrap!important;align-items:center;gap:4px!important;width:fit-content!important;padding:5px!important;border-radius:999px!important;background:linear-gradient(150deg,color-mix(in srgb,var(--v424-accent-strong) 9%,rgba(255,255,255,.62)),color-mix(in srgb,var(--v424-accent-strong) 5%,rgba(255,255,255,.3)))!important;-webkit-backdrop-filter:blur(18px) saturate(1.7);backdrop-filter:blur(18px) saturate(1.7);border:1px solid rgba(255,255,255,.75)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 10px 28px color-mix(in srgb,var(--v424-accent-strong) 12%,transparent)!important}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page .inner-menu-caption{display:none!important}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page .inner-menu-tabs{display:inline-flex!important;flex-wrap:nowrap!important;gap:4px!important;padding:0!important;margin:0!important;width:auto!important}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page :is(.v26-nav>button,.inner-menu-tab,.v285-budget-nav>button){display:inline-flex!important;align-items:center;gap:8px!important;width:auto!important;white-space:nowrap;padding:10px 20px!important;border-radius:999px!important;font-size:14px!important;font-weight:750!important;background:transparent!important;border:0!important;box-shadow:none!important;color:#566480!important;-webkit-text-fill-color:#566480!important}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page :is(.v26-nav>button,.inner-menu-tab,.v285-budget-nav>button):is(.active,[aria-selected="true"],[aria-current="page"]){background:linear-gradient(135deg,var(--v424-accent-strong),color-mix(in srgb,var(--v424-accent-strong) 78%,#fff))!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:0 8px 20px var(--v424-accent-shadow,rgba(0,0,0,.2))!important}
+ html body:not(.theme-black):not(.theme-dark) #app#app #page :is(.v26-nav>button,.inner-menu-tab,.v285-budget-nav>button) svg{width:18px;height:18px;stroke:currentColor!important;color:inherit!important}
+}
