@@ -9564,7 +9564,103 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  // El formulario ofrece contacto registrado o alta rápida. Nunca altera préstamos anteriores.
  function contactForm(id=''){const c=contactById(id)||{};modal(id?'Editar contacto':'Guardar nuevo contacto',`<div class="v56-form-note full">${icon('users')} Una persona se guarda una sola vez y puede tener varios préstamos o conceptos.</div>${inputText('firstName','Nombre',c.firstName||'','required maxlength="60" autocomplete="given-name"')}${inputText('lastName','Apellido',c.lastName||'','required maxlength="65" autocomplete="family-name"')}${inputText('alias','Apodo o referencia (opcional)',c.alias||'','maxlength="60"')}${inputText('phone','Teléfono (opcional)',c.phone||'','maxlength="35" type="tel"')}${inputText('email','Correo (opcional)',c.email||'','type="email" maxlength="120"')}${textArea('notes','Notas generales del contacto',c.notes||'',500)}`,'v56ContactForm',true);const f=document.getElementById('v56ContactForm');f.dataset.id=id;}
  const conceptOptions=()=>[...new Set(['Préstamo personal','Adelanto de efectivo','Compra compartida','Gastos prestados','Negocio / inversión','Otro',...allLoans().map(loanCategory)])];
- function loanForm(contactId=''){if(!db.accounts.length&&!db.cards.length){toast('Primero registra una cuenta o tarjeta para identificar el movimiento.');return;}const c=contactById(contactId),options=[['','Selecciona una persona'],...contacts().map(x=>[x.id,fullName(x)]),['__new__','+ Registrar contacto ahora']];const currency='DOP';const examples=conceptOptions().map(v=>`<option value="${clean(v)}"></option>`).join('');modal('Nuevo acuerdo entre personas',`<div class="v56-form-note full v390-personal-intro">${icon('wallet')} <b>Nuevo acuerdo</b> · Define si prestaste dinero o lo recibiste. El capital se contabiliza una sola vez.</div>${selectField('contactId','Persona a quien corresponde el acuerdo',options,c?.id||'__new__')}<div class="v56-inline-new full" ${c?'hidden':''}>${inputText('firstName','Nombre','','maxlength="60"')}${inputText('lastName','Apellido','','maxlength="65"')}${inputText('phone','Teléfono (opcional)','','maxlength="35"')}${inputText('alias','Apodo (opcional)','','maxlength="60"')}</div>${selectField('direction','¿Quién debe a quién?',[['lent','Me deben · entregué el dinero'],['borrowed','Yo debo · recibí el dinero']],'lent')}${selectField('currency','Moneda',[['DOP','Peso dominicano · RD$'],['USD','Dólar estadounidense · US$']],currency)}${inputText('principal','Capital entregado / recibido','','type="number" required min="0.01" step="0.01" inputmode="decimal"')}${selectField('instrumentId','Cuenta o tarjeta del movimiento',personalInstrumentOptions(currency))}${inputText('date','Fecha en que se entregó',today(),'type="date" required max="'+today()+'"')}${inputText('dueDate','Fecha pactada para devolver',plusMonths(today(),1),'type="date" required')}<label class="v56-field full"><span>Concepto (agrupa las observaciones como categoría)</span><input class="field" name="concept" list="v56-concepts" value="" required maxlength="90" placeholder="Ej. Préstamo para mercancía"><datalist id="v56-concepts">${examples}</datalist></label>${textArea('note','Observación descriptiva · ¿Qué ocurrió?', '',700)}${selectField('agreementType','Forma del acuerdo',[['verbal','Verbal'],['message','Chat o mensajes'],['written','Escrito / documento']],'verbal')}${textArea('agreementTerms','Condiciones pactadas (cuotas, plazos, promesas, aclaraciones)', '',1600)}${selectField('openingMode','¿El dinero ya está incluido en el saldo inicial?',[['new','No · Contabilizar entrada o salida ahora'],['existing','Sí · No mover el saldo otra vez']],'new')}<div class="v56-form-note full">El acuerdo se registra como referencia privada, no equivale a un documento firmado. Los intereses solo se contabilizan al cobrarlos o pagarlos.</div>`,'v56LoanForm',true);const f=document.getElementById('v56LoanForm');if(f){f.elements.currency.addEventListener('change',e=>{const sel=f.elements.instrumentId;sel.innerHTML=personalInstrumentOptions(e.target.value).map(([id,title])=>`<option value="${clean(id)}">${clean(title)}</option>`).join('')});f.elements.contactId.addEventListener('change',()=>{f.querySelector('.v56-inline-new').hidden=f.elements.contactId.value!=='__new__';});}}
+ function loanForm(contactId=''){
+  if(!db.accounts.length&&!db.cards.length){toast('Primero registra una cuenta o tarjeta para identificar el movimiento.');return;}
+  /* V1100 · Nuevo acuerdo: web en dos columnas; móvil en dos pestañas (Persona · Pago). Mismos campos y mismo guardado (submit de #v56LoanForm). */
+  const c=contactById(contactId),people=contacts().map(x=>({id:x.id,name:fullName(x)})).filter(x=>x.name).sort((p,q)=>p.name.localeCompare(q.name,'es'));
+  const insts=v1100Instruments(),initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';
+  const concepts=conceptOptions().map(v=>`<option value="${clean(v)}"></option>`).join('');
+  const personRows=people.map(p=>`<button type="button" class="v1100-person" data-pf-person="${clean(p.id)}" data-name="${clean(p.name)}"><span class="v1100-avatar">${clean(initials(p.name))}</span><strong>${clean(p.name)}</strong><span class="v1100-check" aria-hidden="true">✓</span></button>`).join('');
+  const instRows=insts.map((x,i)=>`<button type="button" role="option" class="v1100-inst" data-pf-inst="${i}"><span class="v1100-inst-logo">${x.logo}</span><span class="v1100-inst-copy"><strong>${clean(x.title)}</strong><small>${clean(x.sub)}</small></span><span class="v1100-inst-amt">${clean(x.amount)}</span><span class="v1100-check" aria-hidden="true">✓</span></button>`).join('');
+  modal('Nuevo acuerdo',`
+  <div class="full v1100-pf" data-step="persona">
+   <input type="hidden" name="contactId" value="__new__"><input type="hidden" name="direction" value="lent"><input type="hidden" name="currency" value="${insts[0]?.currency||'DOP'}"><input type="hidden" name="instrumentId" value=""><input type="hidden" name="openingMode" value="new">
+   <div class="v1100-tabs" role="tablist" aria-label="Pasos del acuerdo"><button type="button" role="tab" class="on" data-pf-tab="persona">Persona</button><button type="button" role="tab" data-pf-tab="pago">Pago</button></div>
+   <section class="v1100-col v1100-col-persona" aria-label="Persona">
+    <h3>Persona</h3>
+    <div class="v1100-seg" role="group" aria-label="Tipo de persona"><button type="button" class="on" data-pf-kind="habitual">Habitual</button><button type="button" data-pf-kind="nueva">Nueva persona</button></div>
+    <div class="v1100-habitual"><label class="v1100-search"><span aria-hidden="true">${icon('search')}</span><input type="search" class="field" placeholder="Buscar persona…" data-pf-search autocomplete="off"/></label><div class="v1100-people">${personRows||'<p class="v1100-empty">Aún no tienes personas guardadas. Usa «Nueva persona».</p>'}</div></div>
+    <div class="v1100-nueva" hidden>
+     <div class="v1100-row"><label class="v1100-field"><span>Nombre</span><input class="field" name="firstName" maxlength="60" autocomplete="off"/></label><label class="v1100-field"><span>Apellido</span><input class="field" name="lastName" maxlength="65" autocomplete="off"/></label></div>
+     <div class="v1100-row"><label class="v1100-field"><span>Teléfono (opcional)</span><input class="field" name="phone" maxlength="35" inputmode="tel"/></label><label class="v1100-field"><span>Apodo (opcional)</span><input class="field" name="alias" maxlength="60"/></label></div>
+    </div>
+    <button type="button" class="v1100-next" data-pf-next>Continuar <span aria-hidden="true">→</span></button>
+   </section>
+   <section class="v1100-col v1100-col-pago" aria-label="Acuerdo">
+    <h3>Acuerdo</h3>
+    <div class="v1100-who" hidden><span class="v1100-avatar" data-pf-who-av></span><strong data-pf-who></strong><button type="button" class="v1100-change" data-pf-change>Cambiar</button></div>
+    <div class="v1100-seg v1100-dir" role="group" aria-label="Sentido"><button type="button" class="on" data-pf-dir="lent">Me deben</button><button type="button" data-pf-dir="borrowed">Debo</button></div>
+    <div class="v1100-row">
+     <label class="v1100-field v1100-amount"><span>Monto <b data-pf-ccy>RD$</b></span><input class="field" type="number" name="principal" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required/></label>
+     <div class="v1100-field v1100-instwrap"><span>Cuenta o tarjeta</span><button type="button" class="v1100-instbtn" aria-haspopup="listbox" aria-expanded="false" data-pf-instbtn><span class="v1100-instplaceholder">Selecciona una cuenta o tarjeta</span></button><div class="v1100-instlist" role="listbox" hidden>${instRows}</div></div>
+    </div>
+    <div class="v1100-row">
+     <label class="v1100-field"><span>Entrega</span><input class="field" type="date" name="date" value="${today()}" max="${today()}" required/></label>
+     <label class="v1100-field"><span>Devolución</span><input class="field" type="date" name="dueDate" value="${plusMonths(today(),1)}" required/></label>
+    </div>
+    <div class="v1100-row">
+     <label class="v1100-field"><span>Concepto</span><input class="field" name="concept" list="v56-concepts" required maxlength="90" value="Préstamo personal" placeholder="Ej. Préstamo para mercancía"><datalist id="v56-concepts">${concepts}</datalist></label>
+     <label class="v1100-field"><span>Forma</span><select class="field" name="agreementType"><option value="verbal">Verbal</option><option value="message">Chat o mensajes</option><option value="written">Escrito / documento</option></select></label>
+    </div>
+    <label class="v1100-toggle"><input type="checkbox" data-pf-included/><span class="v1100-switch" aria-hidden="true"></span><span>Ya incluido en mi saldo</span></label>
+    <details class="v1100-help"><summary>Más detalles (observación y condiciones)</summary>
+     <label class="v1100-field"><span>Observación · ¿Qué ocurrió?</span><textarea class="field" name="note" maxlength="700" rows="2"></textarea></label>
+     <label class="v1100-field"><span>Condiciones pactadas (cuotas, plazos, promesas)</span><textarea class="field" name="agreementTerms" maxlength="1600" rows="2"></textarea></label>
+     <p>El acuerdo se registra como referencia privada, no equivale a un documento firmado. El capital se contabiliza una sola vez; los intereses solo al cobrarlos o pagarlos.</p>
+    </details>
+   </section>
+  </div>`,'v56LoanForm',true);
+  const f=document.getElementById('v56LoanForm');if(f)v1100WireLoanForm(f,insts,c?.id||'');
+ }
+ function v1100Instruments(){
+  const out=[];
+  for(const a of db.accounts.filter(x=>!isHidden(x))){const b=bank(a.bankId);
+   out.push({value:'account:'+a.id,currency:a.currency,title:a.name,sub:(a.kind==='cash'?'Efectivo':bankOf(a))+' · '+a.currency,amount:money(getAccountBalance(a),a.currency,2),
+    logo:b&&a.kind!=='cash'?bankLogoMark(b,'v1028-logo'):`<span class="v1028-logo v1028-glyph">${icon(a.kind==='cash'?'wallet':'building')}</span>`});}
+  for(const cd of db.cards.filter(x=>!isHidden(x))){const b=bank(cd.bankId),ccys=['DOP','USD'].filter(k=>num(k==='USD'?cd.limitUSD:cd.limitDOP)>0);
+   for(const k of (ccys.length?ccys:['DOP'])){const st=cardStatus(cd,k);
+    out.push({value:'card:'+cd.id,currency:k,title:cd.name,sub:'Tarjeta · '+bankOf(cd)+' · '+k,amount:'Disp. '+money(st.available,k,2),
+     logo:b?bankLogoMark(b,'v1028-logo'):`<span class="v1028-logo v1028-glyph">${icon('card')}</span>`});}}
+  return out;
+ }
+ function v1100WireLoanForm(f,insts,preContact){
+  const root=f.querySelector('.v1100-pf'),q=s=>f.querySelector(s),qa=s=>[...f.querySelectorAll(s)],el=n=>f.elements.namedItem(n);
+  let kind='habitual';
+  const initialsOf=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+  const setStep=st=>{root.dataset.step=st;f.dataset.pfStep=st;qa('[data-pf-tab]').forEach(b=>{const on=b.dataset.pfTab===st;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))});};
+  f.dataset.pfStep='persona';
+  const chosenName=()=>kind==='nueva'?[el('firstName').value.trim(),el('lastName').value.trim()].filter(Boolean).join(' '):(qa('.v1100-person.on')[0]?.dataset.name||'');
+  const syncWho=()=>{const n=chosenName(),who=q('.v1100-who');who.hidden=!n;q('[data-pf-who]').textContent=n;q('[data-pf-who-av]').textContent=initialsOf(n);};
+  const pickPerson=id=>{kind='habitual';el('contactId').value=id;qa('.v1100-person').forEach(b=>b.classList.toggle('on',b.dataset.pfPerson===id));syncWho();};
+  const setKind=k=>{kind=k;qa('[data-pf-kind]').forEach(b=>b.classList.toggle('on',b.dataset.pfKind===k));q('.v1100-habitual').hidden=k!=='habitual';q('.v1100-nueva').hidden=k!=='nueva';
+   if(k==='nueva'){el('contactId').value='__new__';q('[name=firstName]').focus({preventScroll:true})}else{const on=qa('.v1100-person.on')[0];el('contactId').value=on?on.dataset.pfPerson:'__new__'}syncWho();};
+  const valid=()=>kind==='nueva'?(el('firstName').value.trim()&&el('lastName').value.trim()):el('contactId').value&&el('contactId').value!=='__new__';
+  f.addEventListener('click',e=>{
+   const t=e.target.closest('button');if(!t)return;
+   if(t.matches('[data-pf-tab]')){e.preventDefault();if(t.dataset.pfTab==='pago'&&!valid()){toast('Elige una persona o escribe nombre y apellido.');return}setStep(t.dataset.pfTab);syncWho();return}
+   if(t.matches('[data-pf-next]')){e.preventDefault();if(!valid()){toast('Elige una persona o escribe nombre y apellido.');return}setStep('pago');syncWho();return}
+   if(t.matches('[data-pf-change]')){e.preventDefault();setStep('persona');return}
+   if(t.matches('[data-pf-kind]')){e.preventDefault();setKind(t.dataset.pfKind);return}
+   if(t.matches('[data-pf-person]')){e.preventDefault();pickPerson(t.dataset.pfPerson);if(!window.matchMedia('(min-width:791px)').matches)setStep('pago');return}
+   if(t.matches('[data-pf-dir]')){e.preventDefault();el('direction').value=t.dataset.pfDir;qa('[data-pf-dir]').forEach(b=>b.classList.toggle('on',b===t));return}
+   if(t.matches('[data-pf-instbtn]')){e.preventDefault();const l=q('.v1100-instlist');l.hidden=!l.hidden;t.setAttribute('aria-expanded',String(!l.hidden));return}
+   if(t.matches('[data-pf-inst]')){e.preventDefault();const x=insts[Number(t.dataset.pfInst)];if(!x)return;
+    el('instrumentId').value=x.value;el('currency').value=x.currency;q('[data-pf-ccy]').textContent=x.currency==='USD'?'US$':'RD$';
+    qa('.v1100-inst').forEach(b=>b.classList.toggle('on',b===t));
+    const btn=q('[data-pf-instbtn]');btn.innerHTML=`<span class="v1100-inst-logo">${x.logo}</span><span class="v1100-inst-copy"><strong>${clean(x.title)}</strong><small>${clean(x.sub)}</small></span><span class="v1100-inst-amt">${clean(x.amount)}</span><span class="v1100-chev" aria-hidden="true">⌄</span>`;
+    q('.v1100-instlist').hidden=true;btn.setAttribute('aria-expanded','false');return}
+  });
+  q('[data-pf-search]')?.addEventListener('input',e=>{const t=e.target.value.trim().toLowerCase();qa('.v1100-person').forEach(b=>{b.hidden=!!t&&!b.dataset.name.toLowerCase().includes(t)})});
+  q('[data-pf-included]')?.addEventListener('change',e=>{el('openingMode').value=e.target.checked?'existing':'new'});
+  f.addEventListener('input',e=>{if(e.target.name==='firstName'||e.target.name==='lastName')syncWho()});
+  f.addEventListener('submit',e=>{
+   if(!valid()){e.preventDefault();e.stopImmediatePropagation();setStep('persona');toast('Elige una persona o escribe nombre y apellido.');return}
+   if(!el('instrumentId').value){e.preventDefault();e.stopImmediatePropagation();setStep('pago');toast('Selecciona la cuenta o tarjeta del acuerdo.');return}
+  },true);
+  if(insts.length===1)q('[data-pf-inst="0"]')?.click();
+  if(preContact&&qa('.v1100-person').some(b=>b.dataset.pfPerson===preContact))pickPerson(preContact);
+  else if(!qa('.v1100-person').length)setKind('nueva');
+ }
  function editLoan(id){const l=personalLoan(id);if(!l)return;
  const issue=db.transactions.find(t=>t.type==='personal_issue'&&t.personalLoanId===l.id),instrument=issue||l;
  const chosen=instrument.cardId?'card:'+instrument.cardId:instrument.accountId?'account:'+instrument.accountId:'';
