@@ -308,3 +308,7 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - Instituciones, Cuentas, Tarjetas, Préstamos, Certificados y Beneficios (web y móvil, claro y black) usan ahora el mismo degradado del acento (`--v440-*`) con texto blanco.
 - Antes: web con degradados fijos (teal/azul/morado/café) y móvil con tarjeta blanca (Bancos), lavada (Cuentas) o mezclas fijas (Préstamos/Certificados).
 - Sin cambios en cálculos, datos ni reglas. Botones del hero conservan su estilo (claro / contorno).
+
+## V959 · Wallet móvil y capacidad de endeudamiento dinámica
+- Wallet móvil: acordeones («Cortes por moneda», «Avance de efectivo») alineados a la misma línea izquierda que los títulos de los paneles; separación uniforme de 14px entre píldoras (antes ~48px); «Cortes por moneda» ya no parte en dos líneas.
+- Capacidad de endeudamiento (mes en curso): ahora compara lo **pendiente por pagar** con (**ingresos por cobrar** + **dinero disponible hoy** en cuentas corrientes y efectivo; los ahorros no cuentan). Lo ya cobrado/pagado no se cuenta dos veces. Meses pasados/futuros conservan el cálculo mensual completo. El desglose muestra ambos lados y la referencia mensual completa.
