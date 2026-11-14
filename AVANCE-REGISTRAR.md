@@ -411,3 +411,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - Explorar: las flechas de las fichas pierden el círculo y el borde (queda solo la flecha en el acento).
 - Configuración (web): las pestañas de Apariencia se estiraban a ~340px de alto en pantallas grandes (rejilla con filas elásticas); ahora toman su altura natural. Verificado a 1440×900 y 2000×1227.
 - El nombre «vive el hoy» de la cabecera móvil va en el color del acento.
+
+## V983 · Configuración compacta en pantallas grandes
+- El menú lateral ya no reparte sus grupos por toda la altura (había huecos enormes en monitores grandes): grupos juntos arriba. La altura de la página de Configuración se limita a 791px, así menú y panel quedan alineados y compactos igual que en 1440×900. Verificado a 1440×900 y 2000×1227: sin scroll en ninguna pestaña.
