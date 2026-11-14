@@ -316,3 +316,8 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 ## V960 · Color de la categoría Platinum
 - Platinum es ahora gris plata neutro (`--v960-platinum`) en todas las vistas de tarjeta: web (lista de Tarjetas), Wallet móvil (tarjeta grande y miniaturas) y selector de pago. Antes: azul pizarra en Wallet móvil y azul marino fijo en el selector de pago (que pintaba todas las categorías igual).
 - `cardTierKey`: si la tarjeta está guardada como «Clásica»/«Otra» (valor por defecto del formulario) pero su nombre/categoría dice Platinum, Gold, Black…, manda el nombre.
+
+## V961 · Hueco bajo la cabecera, mini-KPI de Bancos y capacidad con ingresos adicionales
+- Todas las páginas que no eran Bancos/Wallet/Inicio sumaban otra vez la zona segura superior (ya reservada por `.shell`), dejando ~60px de hueco bajo la cabecera en iPhone. Corregido: todas arrancan a la misma altura. (El simulador no reproducía `env()`; ahora emula `.shell` con la zona segura.)
+- Hero móvil de Bancos: «Deudas» y «Posición neta» ahora son mosaicos redondeados con relleno (antes cajas cuadradas con texto pegado al borde).
+- Capacidad de endeudamiento: se suman explícitamente los ingresos adicionales del mes (extras laborales y otros ingresos no programados); los depositados en ahorros se incluyen aparte para no perderlos. Se muestran en el desglose.
