@@ -392,3 +392,8 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V978 · Barra de navegación según la referencia del usuario
 - Placa lavanda casi plana sin borde visible, tinta azul noche en inactivos (iconos y texto), píldora activa clara con resplandor del acento debajo, sin punto indicador; iconos de trazo más fino. Solo tema claro; el tema Black conserva su versión.
+
+## V979 · Restos del acento anterior
+- Etiqueta superior de cada título («titulito»: PATRIMONIO · EVOLUCIÓN, CONTROL DEL MES, VENCIMIENTOS…, también web y personalización): siempre en el color del acento (claro y Black). Se excluyen las etiquetas sobre tarjetas de acento (blancas) y las etiquetas de métricas (UTILIZADO, SALDO DISPONIBLE…).
+- Explorar: fichas azul/violeta → acento (icono, flecha, barras de «Visión global», trazo de «Planificación», barra de «Presupuesto»); ingresos (verde) y egresos (rosa) se conservan por ser semánticos.
+- Botón flotante de movimientos con el acento.
