@@ -7286,8 +7286,15 @@ function v980DismissSplash(gate){
    dst=sample(raster(txt,`${(bs2||bs).fontWeight} ${parseFloat((bs2||bs).fontSize)||bf}px ${(bs2||bs).fontFamily}`,rr,'#000'),step,110);
    bcol=bs.color&&!/rgba?\(0, 0, 0, 0\)/.test(bs.color)?bs.color:bcol;
   }
-  const parts=src.map((p,n)=>{const t=dst.length?dst[(Math.random()*dst.length)|0]:{x:-20,y:p.y};const nx=(p.x-r.left)/Math.max(1,r.width);
-   return {x0:p.x,y0:p.y,tx:t.x,ty:t.y,sz:step/dpr*(.9+Math.random()*.5),wob:Math.random()*6.28,amp:6+Math.random()*16,delay:100+(1-nx)*420+Math.random()*160,life:900+Math.random()*500}});
+  /* El polvo también forma el subtítulo «vive el hoy» (escritorio), debajo del logotipo. */
+  const subEl=[...document.querySelectorAll('.topbar-intro .top-sub')].find(e=>{const b=e.getBoundingClientRect();return b.width>8&&b.height>6});
+  let dst2=[];const subPrev=subEl?subEl.style.opacity:'';
+  if(subEl){const sr=subEl.getBoundingClientRect(),ss=getComputedStyle(subEl),sf=parseFloat(ss.fontSize)||14;
+   const rg=document.createRange();rg.selectNodeContents(subEl);const q=rg.getBoundingClientRect();
+   dst2=sample(raster(subEl.textContent.trim(),`${ss.fontWeight} ${sf}px ${ss.fontFamily}`,q.width>4?q:sr,'#000'),Math.max(1,Math.round(dpr)),110);subEl.style.opacity='0'}
+  const pickDst=()=>dst2.length&&Math.random()<.45?{...dst2[(Math.random()*dst2.length)|0],sub:1}:dst[(Math.random()*dst.length)|0];
+  const parts=src.map((p,n)=>{const t=dst.length?pickDst():{x:-20,y:p.y};const nx=(p.x-r.left)/Math.max(1,r.width);
+   return {x0:p.x,y0:p.y,tx:t.x,ty:t.y,sz:(t.sub?Math.max(1,step/dpr*.6):step/dpr)*(.9+Math.random()*.5),wob:Math.random()*6.28,amp:6+Math.random()*16,delay:100+(1-nx)*420+Math.random()*160,life:900+Math.random()*500}});
   ctx.scale(dpr,dpr);
   document.body.appendChild(cv);word.style.visibility='hidden';
   const brandPrev=brand?brand.style.opacity:'';if(brand)brand.style.opacity='0';
@@ -7309,9 +7316,9 @@ function v980DismissSplash(gate){
    ctx.globalAlpha=1;
    gate.style.opacity=String(Math.max(0,1-Math.max(0,(t-250)/800)));
    const done=t>=DUR-250;
-   if(brand&&done){brand.style.transition='opacity .35s ease';brand.style.opacity=brandPrev||'';}
+   if(done){if(brand){brand.style.transition='opacity .35s ease';brand.style.opacity=brandPrev||'';}if(subEl){subEl.style.transition='opacity .35s ease';subEl.style.opacity=subPrev||''}}
    if(done)cv.style.opacity=String(Math.max(0,1-(t-(DUR-250))/250));
-   if(t<DUR)requestAnimationFrame(frame);else{if(brand){brand.style.opacity=brandPrev;brand.style.transition=''}gate.style.opacity='';gate.style.pointerEvents='';finish();}
+   if(t<DUR)requestAnimationFrame(frame);else{if(brand){brand.style.opacity=brandPrev;brand.style.transition=''}if(subEl){subEl.style.opacity=subPrev;subEl.style.transition=''}gate.style.opacity='';gate.style.pointerEvents='';finish();}
   })(t0);
  }catch(e){console.warn('V980: disolución no disponible',e);finish();}
 }
