@@ -1,6 +1,6 @@
 # Catálogo y estado de vive el hoy · Finanzas 360
 
-Fecha: 14 nov 2026 · Versión de código: V1013 · Calificación global: **70 / 100** (antes 64)
+Fecha: 14 nov 2026 · Versión de código: V1014 · Calificación global: **73 / 100** (antes 64 → 70)
 
 ## 1. Cifras del código
 | Dato | Valor |
@@ -81,3 +81,20 @@ Fecha: 14 nov 2026 · Versión de código: V1013 · Calificación global: **70 /
 | Rendimiento | 60 | 60 | |
 
 **Por qué no es 100:** (a) el CSS tiene unos 39.000 `!important` y más de 1.000 capas; llevarlo a un sistema limpio exige reescribir el diseño pantalla por pantalla; (b) las reglas RLS y las funciones edge no están en el repositorio y no se pueden verificar desde aquí; (c) no hay pruebas automáticas ni auditoría de contraste completa; (d) el fondo y el rediseño web de las pantallas de análisis siguen pendientes.
+
+## 8. Actualización V1014 — nota 73/100 (mejoras sutiles, sin tocar la lógica ni la estructura)
+| Mejora | Efecto medido |
+|---|---|
+| El acento se oscurece solo lo mínimo para que el texto blanco sobre él cumpla 5:1; texto atenuado más legible | Fallos de contraste (axe-core, 18 pantallas × 2 formatos): 134 → 43 |
+| `role="tablist"` sin pestañas y `<main>` anidado corregidos | Fallos críticos de estructura: 2 → 0 |
+| `tests/` con arnés y prueba de humo (`node tests/smoke.js`) | Primer control automático en el repositorio |
+| `docs/SUPABASE.md` con las tablas, columnas y políticas RLS esperadas | Backend documentado (sigue sin verificarse en tu proyecto) |
+
+| Dimensión | V1013 | V1014 |
+|---|---|---|
+| Accesibilidad | 64 | 78 |
+| Mantenibilidad (pruebas + documentación) | 55 | 60 |
+| Seguridad / backend (documentado, no verificado) | 55 | 60 |
+Las demás se mantienen. **Global: 73.**
+
+Pendiente para seguir subiendo: 43 contrastes sueltos, 2 encabezados fuera de orden, `aside` dentro de `main`, consolidar el CSS, verificar RLS en Supabase.
