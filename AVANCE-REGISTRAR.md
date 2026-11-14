@@ -361,3 +361,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V970 · Botones Recibir / Gastar / Transferir, versión limpia
 - Se retira el rayado: botones planos de cristal claro, borde fino, texto en grafito y solo el icono (sin mosaico) en el acento. Sin sombras ni efectos. Versión Black en grafito oscuro. Verificado sin recortes de 320 a 430px.
+
+## V971 · Buscador móvil sin icono de cuatro cuadros
+- Se elimina el icono de cuadrícula (4 cuadritos) del campo de búsqueda de Buscar; el campo gana ancho y el marcador se acorta a «Bancos, tarjetas, servicios…» para que no se corte.
