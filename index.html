@@ -89814,15 +89814,15 @@ html body #app#app #page#page .v203-hero .v203-hero-grid>div strong{display:bloc
  html body #app#app .main :is(.v239-loans,.v239-loan-deep,.loans-world){--v963-a:var(--v424-accent-strong,#5b57d6);--v963-grad:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9));--loan-accent:var(--v424-accent-strong,#5b57d6)}
  /* Acción principal: acento (antes azul suelto) */
  html body #app#app .main .v239-action.v239-action-primary,
- html body #app#app .main .v239-loan-deep :is(.btn.loan-primary,.btn.sm.loan-primary){background:var(--v963-grad,linear-gradient(180deg,#6d69f1,#4b46c9))!important;color:#fff!important;border-color:transparent!important;box-shadow:0 10px 22px -12px var(--v424-accent-shadow,rgba(75,70,201,.55))!important}
+ html body #app#app .main .v239-loan-deep :is(.btn.loan-primary,.btn.sm.loan-primary){background:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9))!important;color:#fff!important;border-color:transparent!important;box-shadow:0 10px 22px -12px var(--v424-accent-shadow,rgba(75,70,201,.55))!important}
  html body #app#app .main .v239-action.v239-action-primary *{color:#fff!important}
- html body #app#app .main .v239-add{color:var(--v963-a,#5b57d6)!important}
+ html body #app#app .main .v239-add{color:var(--v424-accent-strong,#5b57d6)!important}
  /* Detalle del préstamo: tonos terracota → acento */
- html body #app#app .main .v239-loan-deep :is(.loan-overline,.loan-detail-micro,.loan-inline-button,.loan-compare-header strong:last-child,.loan-compare-row b:last-child){color:var(--v963-a,#5b57d6)!important}
+ html body #app#app .main .v239-loan-deep :is(.loan-overline,.loan-detail-micro,.loan-inline-button,.loan-compare-header strong:last-child,.loan-compare-row b:last-child){color:var(--v424-accent-strong,#5b57d6)!important}
  html body #app#app .main .v239-loan-deep .loan-detail-micro span{color:inherit;opacity:.6}
- html body #app#app .main .v239-loan-deep .loan-tab.on{color:var(--v963-a,#5b57d6)!important;box-shadow:0 6px 16px -10px var(--v424-accent-shadow,rgba(75,70,201,.5))}
+ html body #app#app .main .v239-loan-deep .loan-tab.on{color:var(--v424-accent-strong,#5b57d6)!important;box-shadow:0 6px 16px -10px var(--v424-accent-shadow,rgba(75,70,201,.5))}
  html body #app#app #page#page .v239-loan-deep .btn.sm:is(.ghost,.soft),
- html body #app#app #page#page .v239-loan-deep .btn:is(.ghost,.soft){background:rgba(255,255,255,.72)!important;color:var(--v963-a,#5b57d6)!important;border:1px solid color-mix(in srgb,var(--v963-a,#5b57d6) 30%,transparent)!important;box-shadow:none!important}
+ html body #app#app #page#page .v239-loan-deep .btn:is(.ghost,.soft){background:rgba(255,255,255,.72)!important;color:var(--v424-accent-strong,#5b57d6)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 30%,transparent)!important;box-shadow:none!important}
  /* Acciones de cabecera: cuadrícula ordenada, sin textos partidos */
  html body #app#app .main .v239-loan-deep .loan-detail-top-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;width:100%}
  html body #app#app .main .v239-loan-deep .loan-detail-top-actions .btn{min-height:44px;white-space:nowrap;padding-inline:10px;font-size:13px;justify-content:center}
@@ -90550,6 +90550,29 @@ html body:is(.theme-black,.theme-dark) #v216-layer#v216-layer.v216-overlay .v216
 html body:is(.theme-black,.theme-dark) #v216-layer#v216-layer.v216-overlay .v216-report.v243-report .v988-due{background:rgba(255,255,255,.06)!important}
 html body:is(.theme-black,.theme-dark) #v216-layer#v216-layer.v216-overlay .v216-report.v243-report .v243-report-hero strong.v216-negative{color:#ff8da5!important;-webkit-text-fill-color:#ff8da5!important}html body:is(.theme-black,.theme-dark) #v216-layer#v216-layer.v216-overlay .v216-report.v243-report .v243-report-hero strong.v216-positive{color:#5ee2be!important;-webkit-text-fill-color:#5ee2be!important}
 html body:is(.theme-black,.theme-dark) #v216-layer#v216-layer.v216-overlay .v216-report.v243-report .v243-report-hero>span{color:color-mix(in srgb,var(--a) 60%,#fff)!important}
+</style>
+<style id="v989-accent-dynamic">
+/* V989 · Elementos que seguían con el acento fijo (azul/violeta) → acento configurado; menú lateral web con el efecto de cristal de la barra móvil */
+html body #app#app .v239-add{color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app .v239-add svg{stroke:var(--v424-accent-strong,#5b57d6)!important;color:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app .v239-action.v239-action-primary,html body #app#app .v239-direct-open{background:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9))!important;color:#fff!important;border-color:transparent!important;box-shadow:0 12px 24px -14px var(--v424-accent-shadow,rgba(75,70,201,.6))!important}
+html body #app#app .btn.primary,html body #app#app button.btn:not(.ghost):not(.soft):not(.light):not(.outline-light):not(.sm):not(.danger){--v989:1}
+html body #app#app :is(.v203-profile.active,.v244-filters button.selected,.v239-filter.selected,.inner-menu-tab.active,.inner-menu-tabs .active,.v61-profile-option.active):not(.v203-hero *):not(.v57-product-hero *){color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app main :is(button.selected):not([class*=hero] *){color:var(--v424-accent-strong,#5b57d6)}
+html body #app#app .v12-wealth-hero.v22-wealth-hero{background:radial-gradient(ellipse at 108% -12%,rgba(255,255,255,.2),transparent 42%),linear-gradient(115deg,var(--v440-ink,#2b2870) 0%,var(--v440-deep,#4b46c9) 46%,var(--v440-glow,#6d69f1) 120%)!important}
+html body #app#app .v242-settings-symbol.v242-symbol-appearance,html body #app#app .v439-mac-item-icon.v242-symbol-appearance{background:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9))!important}
+html body #app#app .v410-substat{background-image:linear-gradient(180deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 12%,#fff),color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 4%,#fff))!important}
+/* Menú lateral web: cápsula de cristal con tinta de acento y píldora activa con resplandor */
+@media(min-width:791px){
+ html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-main{padding:10px 6px!important;border-radius:999px!important;background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.28) 55%,rgba(240,238,252,.4))!important;border:1px solid rgba(255,255,255,.75)!important;-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 20px rgba(255,255,255,.3),0 18px 34px -18px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 40%,rgba(31,50,90,.3))!important}
+ html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-action:not(.active),html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-action:not(.active) svg{color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 9%,#1e2342)!important;stroke:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 9%,#1e2342)!important}
+ html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-action.active{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(246,243,253,.8))!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:inset 0 1px 0 #fff,0 12px 18px -8px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 70%,transparent),0 4px 10px -4px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 30%,transparent)!important}
+ html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-action.active svg{color:var(--v424-accent-strong,#5b57d6)!important;stroke:var(--v424-accent-strong,#5b57d6)!important}
+ html body #app#app .rail-sidebar .rail-action:hover:not(.active){background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 9%,transparent)!important}
+ html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-main{padding:10px 6px!important;border-radius:999px!important;background:linear-gradient(135deg,rgba(70,70,92,.5),rgba(30,30,42,.4))!important;border:1px solid rgba(255,255,255,.12)!important;-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%)}
+ html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-action.active{background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 24%,#14161d)!important;box-shadow:0 12px 18px -10px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,transparent)!important}
+ html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-action.active svg{color:#fff!important;stroke:#fff!important}
+}
 </style>
 </body>
 </html>
