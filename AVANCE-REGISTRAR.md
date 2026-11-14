@@ -417,3 +417,11 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V984 · Gráfico de la tarjeta Planificación (Explorar)
 - El minigráfico (antes una línea fina y sin proporción) pasa a curva suave con trazo degradado en el acento, área tenue bajo la curva, sombra suave y punto final; tamaño 108×38 (84×30 en pantallas ≤370px). Sigue el acento configurado.
+
+## V985 · Widget «Matriz de simplificación» (Personalización)
+- Nuevo indicador en Explorar → Personalizar (apagado por defecto, grupo «Posición financiera»): cuatro tarjetas con los datos reales de la app.
+  - **Entender 01:** patrimonio neto + variación vs. mes anterior, tendencia de 6 cierres mensuales, Activos y Pasivos.
+  - **Actuar 02:** Ingresos, Gastos, Transferencias y Pagos del mes; los tres primeros abren el registro correspondiente, Pagos abre Pagos.
+  - **Anticipar 03:** próximos compromisos (modelo de Capacidad de endeudamiento), anillo con % ya pagado del mes y desglose Tarjetas / Préstamos / Suscripciones / Entre personas (cada uno navega a su módulo).
+  - **Decidir 04:** capacidad disponible, % comprometido, anillo «Salud financiera» (= 100 − % de endeudamiento) y accesos Metas (Presupuesto) / Simuladores (Planificación) / Análisis / Recuperación (Configuración › Seguridad).
+- Estilo: cristal de la app, cuatro tonos como en la referencia (verde, azul, naranja, morado), una columna en móvil y 2×2 desde 640px; variante Black. Solo lectura, sin cambios de cálculo ni de datos.
