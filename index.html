@@ -24761,7 +24761,7 @@ function v154MobileSearchPage(){
  const chips=[['Todo','clear','bolt'],['Tarjetas','tarjetas','card'],['Bancos','dinero','building'],['Servicios','servicios','receipt']];
  return `<div class="vive-mobile-hub v154-search-hub v711-search-shell v721-search-shell">
   <div class="v154-search-heading v711-search-heading"><div><span class="v154-search-eyebrow">EXPLORA, ENCUENTRA Y GESTIONA</span><h1>Buscar</h1><p>Accede rápido a tus finanzas, movimientos y más.</p></div></div>
-  <div class="v154-search-box v711-search-box v721-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios, movimientos..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button><span class="v721-search-corner" aria-hidden="true">${icon('grid')}</span></div>
+  <div class="v154-search-box v711-search-box v721-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button></div>
   <nav class="v711-search-pills v721-search-pills" aria-label="Filtros rápidos">${chips.map(([label,key,ic])=>key==='clear'?`<button type="button" class="active" data-v154-clear="1" data-v154-filter="all" aria-pressed="true">${icon(ic)}<span>${label}</span></button>`:`<button type="button" data-v154-category="${key}" data-v154-filter="${key}" aria-pressed="false">${icon(ic)}<span>${label}</span></button>`).join('')}</nav>
   <div class="v154-search-discover" id="v154-mobile-discover">
     <div class="v154-category-grid v711-category-grid v721-category-grid">${V154_MOBILE_CATEGORIES.map(c=>`<button type="button" class="v154-category-tile v154-tone-${c.tone} v721-category-tile" data-v154-category="${c.id}" aria-label="Explorar ${c.title}"><span class="v721-tile-copy"><strong class="v154-category-title">${c.title}</strong><small class="v154-category-sub">${c.sub}</small></span><span class="v721-tile-art">${v721SearchArt(c.id)}</span><span class="v711-category-arrow">${icon('arrow')}</span></button>`).join('')}</div>
@@ -89766,6 +89766,11 @@ html body #app#app .v742-primary-kpi .v732-kpi-ornament i{background:linear-grad
   -webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 12px),transparent);mask-image:linear-gradient(180deg,#000 calc(100% - 12px),transparent)}
  html:has(body.theme-black)::after,html:has(body.theme-dark)::after{background:linear-gradient(180deg,rgba(0,0,0,.94) 0,rgba(0,0,0,.9) calc(100% - 10px),rgba(0,0,0,0) 100%)}
 }
+</style>
+<style id="v971-search-no-corner">
+/* V971 · Buscador móvil: sin el icono de cuatro cuadros; el campo aprovecha todo el ancho */
+html body #app#app .world-mobilesearch #page .v721-search-corner{display:none!important}
+html body #app#app .world-mobilesearch #page .v154-search-box input#v154-mobile-search-input{padding-right:14px!important}
 </style>
 </body>
 </html>
