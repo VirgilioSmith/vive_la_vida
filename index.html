@@ -42547,6 +42547,8 @@ document.addEventListener('submit',function(e){
 
 /* V951: puente de solo lectura para controladores externos (p. ej. V383 · abono a préstamo), que no ven las funciones internas de este bloque. */
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
+/* V994: los scripts posteriores (vistas previas de formularios, auditoría de Seguridad) usaban `db` y `today`, que solo existían dentro de este bloque → ReferenceError. Se exponen de forma segura (db como lectura viva). */
+try{if(typeof today==='function'&&typeof window.today!=='function')window.today=today;if(typeof toast==='function'&&typeof window.toast!=='function')window.toast=toast;if(typeof account==='function'&&typeof window.account!=='function')window.account=account;if(typeof getAccountBalance==='function'&&typeof window.getAccountBalance!=='function')window.getAccountBalance=getAccountBalance;if(typeof closeModal==='function'&&typeof window.closeModal!=='function')window.closeModal=closeModal;if(typeof persist==='function'&&typeof window.persist!=='function')window.persist=persist;if(typeof render==='function'&&typeof window.render!=='function')window.render=render;if(typeof cardStatus==='function'&&typeof window.cardStatus!=='function')window.cardStatus=cardStatus;if(typeof bankLogoMark==='function'&&typeof window.bankLogoMark!=='function')window.bankLogoMark=bankLogoMark;if(typeof certProjection==='function'&&typeof window.certProjection!=='function')window.certProjection=certProjection;if(typeof certificate==='function'&&typeof window.certificate!=='function')window.certificate=certificate;if(typeof bank==='function'&&typeof window.bank!=='function')window.bank=bank;if(typeof sanitize==='function'&&typeof window.sanitize!=='function')window.sanitize=sanitize;if(typeof personalLoan==='function'&&typeof window.personalLoan!=='function')window.personalLoan=personalLoan;if(typeof card==='function'&&typeof window.card!=='function')window.card=card;if(typeof money==='function'&&typeof window.money!=='function')window.money=money;if(typeof loan==='function'&&typeof window.loan!=='function')window.loan=loan;if(typeof prettyDate==='function'&&typeof window.prettyDate!=='function')window.prettyDate=prettyDate;if(typeof loanAccounting==='function'&&typeof window.loanAccounting!=='function')window.loanAccounting=loanAccounting;if(typeof icon==='function'&&typeof window.icon!=='function')window.icon=icon;if(typeof cardPaymentSettingsTaxPct==='function'&&typeof window.cardPaymentSettingsTaxPct!=='function')window.cardPaymentSettingsTaxPct=cardPaymentSettingsTaxPct;if(typeof isTaxableBankPayment==='function'&&typeof window.isTaxableBankPayment!=='function')window.isTaxableBankPayment=isTaxableBankPayment;if(typeof v105Config==='function'&&typeof window.v105Config!=='function')window.v105Config=v105Config;if(typeof v40IsFinancial==='function'&&typeof window.v40IsFinancial!=='function')window.v40IsFinancial=v40IsFinancial;if(typeof v359LoanRefresh==='function'&&typeof window.v359LoanRefresh!=='function')window.v359LoanRefresh=v359LoanRefresh;if(typeof studioShowStep==='function'&&typeof window.studioShowStep!=='function')window.studioShowStep=studioShowStep;if(typeof fx==='function'&&typeof window.fx!=='function')window.fx=fx;if(typeof num==='function'&&typeof window.num!=='function')window.num=num;if(typeof rnd==='function'&&typeof window.rnd!=='function')window.rnd=rnd;if(typeof dateObj==='function'&&typeof window.dateObj!=='function')window.dateObj=dateObj;if(typeof plusMonths==='function'&&typeof window.plusMonths!=='function')window.plusMonths=plusMonths;if(typeof diffDays==='function'&&typeof window.diffDays!=='function')window.diffDays=diffDays;if(typeof uuid==='function'&&typeof window.uuid!=='function')window.uuid=uuid;if(typeof bankOf==='function'&&typeof window.bankOf!=='function')window.bankOf=bankOf;if(!Object.getOwnPropertyDescriptor(window,'db'))Object.defineProperty(window,'db',{get:()=>db,configurable:true});}catch(_){}
 /* V953 · «Volver» a REGISTRAR. Cada operación abierta desde el asistente recuerda su pestaña
    (Recibir/Pagar/Mover/Otros); volver reabre el asistente en esa pestaña sin guardar nada.
    Si la operación se abrió desde otra parte de la app, se conserva el comportamiento anterior. */
@@ -90231,6 +90233,8 @@ html body #app#app .world-mobilesearch #page .v154-search-box input#v154-mobile-
   const integ=document.querySelector('.v212-panel');
   if(integ)build(integ,'integrations',[['Vincular','Tarjeta y atajo'],['Guía','Atajos de iPhone'],['Conexiones','Vínculos y actividad']],k=>has(k,'v212-guide')?1:has(k,'v212-sections','v212-error')?2:0);
   const body=document.querySelector('.v439-mac-detail-body');
+  const sec=body&&body.querySelector(':scope>.v30-control')?body:null;
+  if(sec){let n=-1;let c=0;build(sec,'security',[['Revisión','Coherencia de datos'],['Recuperación','Copias y rescate'],['Historial','Privacidad y archivados']],k=>{if(has(k,'settings-group-title')){n++;if(n>0)return 2;return 0}if(has(k,'v30-control')){c++;return c>1?1:0}return n>0?2:0});}
   const fin=body&&body.querySelector(':scope>.f34-fx-panel')?body:null;
   if(fin)build(fin,'financial',[['Cambio','Tasa de referencia'],['Cargos','Transferencias y pagos'],['Nómina','Reglas fiscales']],k=>has(k,'settings-finance')?1:has(k,'v40-shell')?2:0);
   pageLinked();
@@ -90707,6 +90711,55 @@ html body #app#app .v994-empty{margin:18px 16px;text-align:center;color:#5d6b86;
 html body #app#app .v36-notice-pop .v988-amt em{font-size:9.5px!important;padding:2px 8px!important;font-weight:800!important;background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 14%,#fff)!important;color:var(--v424-accent-strong,#5b57d6)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 22%,transparent);box-shadow:none!important}
 html body #app#app .v36-notice-pop .v988-nico{width:32px!important;height:32px!important;border-radius:11px!important}
 html body #app#app .v36-notice-pop .v988-notice{grid-template-columns:32px minmax(0,1fr) auto!important}
+</style>
+<style id="v995-notif-accent">
+/* V995 · Panel de notificaciones: sin azules fijos (etiqueta de cierres, tarjeta «próximo corte», iconos) */
+html body #app#app .v36-notice-pop .v246-inbox-heading{border-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 16%,transparent)!important}
+html body #app#app .v36-notice-pop .v246-inbox-heading>span{color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important;font-weight:900!important}
+html body #app#app .v36-notice-pop .v246-inbox-heading small{color:#5d6b86!important}
+html body #app#app .v36-notice-pop .v246-inbox-empty{background:linear-gradient(180deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 8%,#fff),color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 3%,#fff))!important;border:1px dashed color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 40%,transparent)!important}
+html body #app#app .v36-notice-pop .v246-empty-icon{background:linear-gradient(145deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 55%,#fff),var(--v424-accent-strong,#5b57d6))!important}
+html body #app#app .v36-notice-pop .v246-empty-icon svg,html body #app#app .v36-notice-pop .v246-empty-icon svg *{stroke:#fff!important}
+html body #app#app .v36-notice-pop .v246-inbox-empty strong{color:#1c1f26!important}html body #app#app .v36-notice-pop .v246-inbox-empty p{color:#5d6b86!important}
+html body #app#app .v36-notice-pop .v988-nico,html body #app#app .v36-notice-pop .v988-card .v988-nico,html body #app#app .v36-notice-pop .v988-loan .v988-nico,html body #app#app .v36-notice-pop .v988-personal .v988-nico{background:linear-gradient(145deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 55%,#fff),var(--v424-accent-strong,#5b57d6))!important;box-shadow:0 8px 14px -8px var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app .v36-notice-pop .v246-report-history summary,html body #app#app .v36-notice-pop .v246-report-history summary b{color:var(--v424-accent-strong,#5b57d6)!important}
+body:is(.theme-black,.theme-dark) html body #app#app .v36-notice-pop .v246-inbox-empty{background:rgba(255,255,255,.05)!important}
+body:is(.theme-black,.theme-dark) html body #app#app .v36-notice-pop .v246-inbox-empty strong{color:#f2f4f8!important}
+body:is(.theme-black,.theme-dark) html body #app#app .v36-notice-pop .v246-inbox-heading>span{color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,#fff)!important;-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,#fff)!important}
+</style>
+<style id="v995-security-compact">
+@media(min-width:791px){
+ html body #app#app .v975-panel .v30-control-head p{display:none!important}
+ html body #app#app .v975-panel .v30-control{padding:10px 14px!important;gap:8px!important}
+ html body #app#app .v975-panel .v30-overview{gap:8px!important}
+ html body #app#app .v975-panel .v30-overview>div{padding:8px 12px!important;min-height:0!important}
+ html body #app#app .v975-panel .v30-overview strong{font-size:22px!important;line-height:1.1!important}
+ html body #app#app .v975-panel details.v30-control{padding:8px 14px!important;margin:0!important}
+ html body #app#app .v975-panel .v30-issue{padding:6px 10px!important}
+ html body #app#app .v975-panel .settings-group-title{margin:0 0 4px!important}
+ html body #app#app [data-v975="security"]>.v975-panel>.settings-group-title{display:none!important}
+}
+</style>
+<style id="v995-blue-text">
+/* V995 · Recorrido de color: textos/botones/etiquetas que seguían en azul o violeta fijo → acento configurado */
+html body #app#app :is(.v203-card-link,.v239-product button:not(.btn):not(.v239-action),.v244-product-list button.v375-open,.v248-new,.v26-primary.v248-new,.v187-history-launch,.v147-freq-btn.active,.v147-step,.v386-rec-kicker,.eyebrow,.v384-intro-eyebrow,.v384-emblem,.smart-fold-icon,.v487-x),
+html body #app#app .v248-new span,
+html body #modal-root#modal-root :is(.v384-emblem,.smart-fold-icon,.v384-intro-eyebrow,.v147-step,.v386-rec-kicker,.eyebrow,.v147-freq-btn.active,.smart-form-section>span:first-child){color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app main button:is(:not(.btn)):not([class*=hero] *):not(.v203-profile):is([data-act="v239Open"],[data-act="openAccount"],[data-act="openCard"],[data-act="viewAccount"],[data-act="viewCard"]){color:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app .v12-wealth-hero em,html body #app#app .v22-wealth-hero em{color:#fff!important}
+html body #app#app main em:not([class*=hero] *){color:var(--v424-accent-strong,#5b57d6)}
+html body #modal-root#modal-root .smart-form-section>span:first-child,html body #modal-root#modal-root .v384-emblem{background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 12%,#fff)!important}
+/* Suscripciones (cabeceras en degradado azul) y símbolos de Configuración */
+html body #app#app :is(.subscription-hero,.v264-subs-kpi){background:radial-gradient(ellipse at 108% -12%,rgba(255,255,255,.2),transparent 42%),linear-gradient(115deg,var(--v440-ink,#2b2870) 0%,var(--v440-deep,#4b46c9) 48%,var(--v440-glow,#6d69f1) 122%)!important}
+html body #app#app :is(.v242-symbol-integrations,.v242-symbol-security,.v242-symbol-profile,.v242-symbol-linked){background:linear-gradient(145deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 55%,#fff),var(--v424-accent-strong,#5b57d6))!important}
+html body #app#app .v431-tile-stat.v431-status-commitment .v431-value{color:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app .v431-tile-stat.v431-status-commitment{background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 10%,#fff)!important}
+html body #app#app .v154-search-box:focus-within{border-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 58%,transparent)!important;box-shadow:0 10px 32px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 14%,transparent),0 0 0 3px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 14%,transparent)!important}
+html body:is(.theme-black,.theme-dark) #app#app :is(.v248-new,.v187-history-launch,.eyebrow,.v147-step),html body:is(.theme-black,.theme-dark) #modal-root#modal-root :is(.v384-emblem,.smart-fold-icon,.eyebrow,.v147-step,.v386-rec-kicker){color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,#fff)!important;-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,#fff)!important}
+html body #app#app button[data-act="cardDetails"],html body #app#app button[data-act="accountDetails"],html body #app#app summary:not([class*=hero] *),html body #app#app [data-act="loanDetails"]:not(.btn){color:var(--v424-accent-strong,#5b57d6)}
+html body #modal-root#modal-root .v147-freq-btn{color:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app :is(.ff-person-cta,.v236-scope.is-personal,.v187-benefits-add,.v144-link,.v410-subtotal,.v221-state.review,.v375-usage,button[data-act="benefitDetails"],button[data-act="cardBenefit"]){color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app main .v244-list button:not(.btn):not([class*=hero] *),html body #app#app .v239-product button[data-v375]{color:var(--v424-accent-strong,#5b57d6)}
 </style>
 </body>
 </html>

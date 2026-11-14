@@ -461,3 +461,9 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V993 · Wallet: galería de tarjetas plana
 - La sombra de las tarjetas la recortaba el contenedor de la galería (overflow), dibujando una línea horizontal arriba y abajo. Se quitan sombras y filtros de la galería y sus tarjetas; queda totalmente plano.
+
+## V994–V995 · Recorrido de calidad
+- **Bugs corregidos:** (1) vistas previas de Institución/Cuenta/Certificado y la sección Seguridad fallaban con «db / today / card is not defined» (scripts posteriores usaban variables del bloque principal): ahora se exponen de forma segura; Seguridad vuelve a cargar (antes mostraba «No fue posible cargar esta sección») y se reparte en 3 pestañas sin scroll. (2) **Reintento de guardado**: ante un error de Supabase `f33Flush` se reprogramaba con 0 ms en bucle; ahora usa retroceso exponencial 2 s→60 s y respeta la marca de «servidor ocupado».
+- **Supabase / notificaciones:** no existe código de notificaciones push en la app (sin service worker, sin Notification API, sin VAPID); las notificaciones son calculadas en el panel. Tráfico real: Realtime (finanzas/finance_revision, apple_pay_events), comprobación de revisión cada 5 min (el sondeo de 10 s original queda sustituido por V720), sincronización de Apple Pay cada 3 min, tipo de cambio cada hora y lecturas al volver a primer plano. Las Edge Functions (apple-pay-*) no están en este repo y no se pudieron auditar.
+- **Notificaciones:** botón «Limpiar todo» (por dispositivo; lo nuevo reaparece), «Pagar» más discreto, tarjeta «próximo corte» y etiquetas sin azul fijo.
+- **Color:** textos, botones y etiquetas azules/violetas fijos de Cuentas, Tarjetas, Beneficios, Categorías, Patrimonio, Suscripciones, formularios y Explorar → acento.
