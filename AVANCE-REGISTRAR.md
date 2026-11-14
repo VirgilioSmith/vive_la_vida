@@ -386,3 +386,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - Además de Apariencia, los paneles largos se reparten en pestañas con el mismo estilo: Integraciones (Vincular · Guía · Conexiones) y Configuración financiera (Cambio · Cargos · Nómina). Cuentas vinculadas pasa a una cuadrícula de 2 columnas con paginación (‹ 1–4 de 10 ›). Verificado a 1440×900: los 8 paneles caben sin barra de desplazamiento (ni de página ni interna).
 - En pantallas de 768px de alto o menos, algunos paneles conservan un desplazamiento interno mínimo.
 - Hallazgo (sin cambiar): en la sección Seguridad, `v401FinancialLogicAudit` (script aparte) usa `db`, que está dentro del scope del script principal; en pruebas lanza «db is not defined» y se muestra «No fue posible cargar esta sección».
+
+## V977 · Suscripciones (móvil)
+- Título «Suscripciones» legible (estaba en blanco sobre fondo claro); tarjetas superiores con el degradado del acento configurado (antes azul fijo); las marcas del cuadro derecho van en una cuadrícula 2×2 centrada (máx. 4) sobre círculos blancos, con el recuento («N Activas») abajo.
