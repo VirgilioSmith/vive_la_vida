@@ -54366,8 +54366,6 @@ html body #app#app #page#page :is(.v57-product-hero,.v46-bank-hero,.v203-hero,.v
 #app svg [data-chart-tip]:is(circle){stroke:transparent;stroke-width:18px;paint-order:stroke;cursor:pointer;outline:none}
 #app svg [data-chart-tip]:is(circle):focus-visible{stroke:color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 35%,transparent)}
 
-/* V1018 · Tendencia de patrimonio: verde si sube, rojo si baja (misma dualidad que Capacidad de endeudamiento) */
-html body #app#app .v315-wealth-chart.v315-positive .v315-wealth-path polyline{stroke:#059669!important}
-html body #app#app .v315-wealth-chart.v315-positive .v315-wealth-dots circle{fill:#059669!important}
-html body #app#app .v315-wealth-chart.v315-negative .v315-wealth-path polyline{stroke:#d90629!important}
-html body #app#app .v315-wealth-chart.v315-negative .v315-wealth-dots circle{fill:#d90629!important}
+/* V1018 · Variación del patrimonio: solo el texto va en verde (sube) o rojo (baja); la línea conserva el acento */
+html body #app#app .v315-wealth-delta.v315-positive{color:#059669!important}
+html body #app#app .v315-wealth-delta.v315-negative{color:#d90629!important}
