@@ -467,3 +467,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - **Supabase / notificaciones:** no existe código de notificaciones push en la app (sin service worker, sin Notification API, sin VAPID); las notificaciones son calculadas en el panel. Tráfico real: Realtime (finanzas/finance_revision, apple_pay_events), comprobación de revisión cada 5 min (el sondeo de 10 s original queda sustituido por V720), sincronización de Apple Pay cada 3 min, tipo de cambio cada hora y lecturas al volver a primer plano. Las Edge Functions (apple-pay-*) no están en este repo y no se pudieron auditar.
 - **Notificaciones:** botón «Limpiar todo» (por dispositivo; lo nuevo reaparece), «Pagar» más discreto, tarjeta «próximo corte» y etiquetas sin azul fijo.
 - **Color:** textos, botones y etiquetas azules/violetas fijos de Cuentas, Tarjetas, Beneficios, Categorías, Patrimonio, Suscripciones, formularios y Explorar → acento.
+
+## V996 · Matriz de simplificación refinada
+- Se quitan los iconos grandes de las cabeceras; el título (Entender/Actuar/Anticipar/Decidir) va en el tono de su tarjeta con peso 900 y debajo la pregunta, igual que el patrón etiqueta → título del resto de la app. Etiquetas de los botones y cifras de Activos en el tono de la tarjeta; textos de apoyo en gris azulado. «Suscripciones» ya no se parte en 360–430px. Variante Black.
