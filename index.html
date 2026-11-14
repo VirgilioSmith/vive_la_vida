@@ -89769,5 +89769,34 @@ html body #app#app .v242-mini-balance .v742-mini-pair{border-top:0!important}
 html body #app#app .v732-home-kpi .v732-kpi-stats::before,html body #app#app .v732-home-kpi .v732-kpi-stats::after{display:none!important}
 html body #app#app .v732-home-kpi .v732-kpi-stats{padding-top:6px!important}
 </style>
+<style id="v966-quick-actions">
+/* V966 · Recibir / Gastar / Transferir (Resumen móvil): botones de cristal con icono en acento, 48px y estados táctiles */
+@media (max-width:790px){
+ html body #app#app .vive-mobile-quick-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+ html body #app#app .vive-mobile-quick-actions>button{
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-width:0;min-height:48px!important;height:48px!important;padding:0 8px!important;
+  border-radius:16px!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 16%,#dbe4f2)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.68))!important;
+  box-shadow:0 8px 18px -14px var(--v424-accent-shadow,rgba(75,70,201,.45)),inset 0 1px 0 rgba(255,255,255,.95)!important;
+  color:#1f2d4a!important;font-size:12.5px!important;font-weight:740!important;letter-spacing:-.005em;white-space:nowrap;
+  transition:transform .14s ease,box-shadow .14s ease,background .14s ease;-webkit-tap-highlight-color:transparent}
+ html body #app#app .vive-mobile-quick-actions>button svg{flex:0 0 auto;width:26px!important;height:26px!important;padding:5px;border-radius:9px;box-sizing:border-box;
+  color:var(--v424-accent-strong,#5b57d6)!important;stroke:currentColor!important;background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 12%,#fff)}
+ html body #app#app .vive-mobile-quick-actions>button span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+ html body #app#app .vive-mobile-quick-actions>button:active{transform:scale(.97);box-shadow:0 3px 8px -8px var(--v424-accent-shadow,rgba(75,70,201,.45)),inset 0 1px 0 rgba(255,255,255,.9)!important}
+ html body #app#app .vive-mobile-quick-actions>button:focus-visible{outline:2px solid var(--v424-accent-strong,#5b57d6);outline-offset:2px}
+ html body.theme-black #app#app .vive-mobile-quick-actions>button,html body.theme-dark #app#app .vive-mobile-quick-actions>button{background:linear-gradient(180deg,#171a22,#0e1016)!important;border-color:rgba(255,255,255,.12)!important;color:#f2f5fb!important;box-shadow:none!important}
+ html body.theme-black #app#app .vive-mobile-quick-actions>button svg,html body.theme-dark #app#app .vive-mobile-quick-actions>button svg{background:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 28%,#10131a);color:#fff!important}
+}
+@media (max-width:379px){
+ html body #app#app .vive-mobile-quick-actions{gap:8px!important}
+ html body #app#app .vive-mobile-quick-actions>button{gap:5px!important;padding:0 5px!important;font-size:12px!important}
+ html body #app#app .vive-mobile-quick-actions>button svg{width:22px!important;height:22px!important;padding:4px;border-radius:8px}
+}
+@media (max-width:344px){
+ html body #app#app .vive-mobile-quick-actions>button{gap:4px!important;padding:0 3px!important;font-size:11.5px!important}
+ html body #app#app .vive-mobile-quick-actions>button svg{width:18px!important;height:18px!important;padding:3px}
+}
+</style>
 </body>
 </html>
