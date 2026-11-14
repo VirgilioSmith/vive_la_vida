@@ -470,3 +470,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V996 · Matriz de simplificación refinada
 - Se quitan los iconos grandes de las cabeceras; el título (Entender/Actuar/Anticipar/Decidir) va en el tono de su tarjeta con peso 900 y debajo la pregunta, igual que el patrón etiqueta → título del resto de la app. Etiquetas de los botones y cifras de Activos en el tono de la tarjeta; textos de apoyo en gris azulado. «Suscripciones» ya no se parte en 360–430px. Variante Black.
+
+## V997 · Menú lateral web: solo iconos
+- Se retira la cápsula/píldora de V989 del menú lateral web (era una regresión). Ahora solo iconos, sin fondo, borde ni contenedor; el estado activo = icono en el acento + barrita lateral. Las 6 pestañas navegan correctamente. Barra móvil sin cambios.
