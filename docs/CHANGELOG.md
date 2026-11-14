@@ -1,0 +1,117 @@
+# Changelog (inferido de `git log`)
+
+> El repositorio no tiene tags ni notas de versión. Se agrupa por día; las etiquetas `V###` son las del código. Fechas: 13–14 nov 2026.
+
+## 2026-11-13
+- `420173e` Add files via upload
+- `c203ff4` Añade capa responsive fluida V950 (tokens clamp, container queries, correcciones de desborde)
+- `452694e` Corrige «Confirmar operación» en Abonar a un préstamo
+- `2a2ba98` Fix duplicated mobile safe-area spacing in five primary views
+- `90b561a` Restore mobile dock position and add subtle dynamic accent gradient
+
+## 2026-11-14
+- `8138f91` Registrar: hojas y confirmación por encima del teclado en móvil
+- `2aa1bca` Registrar: flujo terminado en web y móvil (V953)
+- `eb10f76` Confirmar pago: pantallas bajas sin recorte y emblema de cuenta proporcionado
+- `bcda61a` Operaciones como hoja inferior, barra liquid glass y zonas seguras
+- `0676c3a` Barra de navegación de cristal y corrección de Aumentar/Disminuir en Conciliar
+- `3b4060f` Registrar: iconos de categoría coherentes y selección sin redibujar
+- `90f1f5e` Registrar: subcategorías en la pantalla de entrada con el mismo estilo que las categorías
+- `8a807e5` Registrar: cuatro botones de selección en cada fila (3 + Más)
+- `c9eb73d` Registrar: cuatro botones de categoría exactos e iconos en el color de acento
+- `77d02c0` V957: KPI grande de Bancos sigue el acento configurado (web y móvil)
+- `da9feb5` V958: pestañas activas de Bancos siguen el acento
+- `d6da5bf` V959: Wallet móvil alineado y espaciado; capacidad de endeudamiento dinámica
+- `7c2be9a` V960: Platinum gris en todas las vistas de tarjeta; categoría por nombre cuando es Clásica por defecto
+- `40845be` V961: hueco bajo cabecera, mosaicos del hero de Bancos y capacidad con ingresos adicionales
+- `a8566de` V962: retira la suma de ingresos adicionales de la capacidad de endeudamiento
+- `5a7ea2f` V963: Préstamos móvil coherente con el acento; auditoría de avance de efectivo
+- `d46923c` V964: alinear Crédito disponible y Deuda utilizada en Wallet móvil
+- `860b51b` V965: elimina KPI Original móvil, quita línea del KPI Balance y lista la comisión de avance en Egresos
+- `20775db` V966: refinar botones Recibir, Gastar y Transferir del Resumen móvil
+- `6a3d12c` V967: KPI Balance premium (barras verde/roja, grafito) y botones rayados sin resplandor
+- `36c76a6` V968: KPI con rótulos visibles, cifras en verde/rojo y principal según patrimonio
+- `58be42f` V969: Vive con ~16 millones de combinaciones sin repetición, Apple Pay últimos 3 y velo de barra de estado
+- `6553e9b` V970: botones de acciones rápidas limpios y sobrios
+- `2e8c3d0` V971: quitar icono de cuatro cuadros del buscador móvil
+- `84a9f63` V972: formularios de alta móviles con el diseño nuevo (acento, tarjeta de contexto, pie fijo)
+- `80d288e` V973: Explorar refinado y barra de navegación con tinta y halo de acento
+- `7028a5b` V974: Configuración web sin desplazamiento, alineada y con pestañas estilo barra de navegación; Explorar sin subtítulo
+- `096b695` V976: Ajustes web sin desplazamiento en todos los paneles (pestañas y paginación)
+- `2ce8317` V977: Suscripciones móvil con título legible, acento y marcas centradas
+- `122bf14` V978: barra de navegación según la referencia (placa lavanda, píldora clara con resplandor)
+- `d3914f0` V979: etiquetas superiores y restos de Explorar en el color del acento
+- `d36d889` V980: splash con el acento y disolución del logotipo al abrir
+- `6949dd0` V981: disolución de página al navegar (móvil y web)
+- `4fe23a6` V982: quita transición de página, barra en píldora translúcida, flechas sin círculo, arregla pestañas de Configuración
+- `ba87c3a` V983: Configuración compacta y alineada en pantallas grandes
+- `536376d` V984: gráfico de Planificación más cuidado y en el acento
+- `3efffb5` V985: widget Matriz de simplificación en Personalización
+- `d3a4d60` V986: matriz sin Metas ni Simuladores (no existen en la app)
+- `cf8363c` V987: Presupuesto en la tarjeta Decidir
+- `777b81f` V986: El costo de mañana rediseñado (móvil y web)
+- `73294fc` V988: recuadro del porcentaje de capacidad con tinte de riesgo
+- `6f0b96d` V988: notificaciones e informes con el estilo nuevo; avisos de pago abren el pago correspondiente
+- `6a28aca` V989: acentos fijos restantes pasan al acento dinámico; menú lateral web con efecto de cristal
+- `fc179b2` V990: selector de mes funcional en Explorar y diseño de acento compartido con Inicio
+- `c0c744e` V991: confirmación de registro rediseñada con chispas, disolución y vibración
+- `6817df5` V992: chip de Endeudamiento con tinte de riesgo
+- `a8280f2` V993: galería de tarjetas del Wallet plana, sin línea de borde
+- `c5229aa` V994: limpiar notificaciones, Pagar discreto y reintentos de guardado con retroceso
+- `4840118` V994-V995: limpiar notificaciones, bugs (db/today), reintentos con retroceso, Seguridad en pestañas y colores fijos al acento
+- `bd618d3` V996: matriz de simplificación sin iconos grandes y con títulos en color
+- `f6dc262` V997: menú lateral web solo iconos, sin cápsula (regresión de V989)
+- `96bed03` V998: Tarjetas como Cuentas con logo de banco; acento en detalle, Categorías, Wallet y Visión global; sin fondo tras botones
+- `e2bcc7f` Refactor: index.html dividido en index.html + styles.css + app.js (sin cambios visuales ni de comportamiento)
+- `b580838` Elimina 155 funciones muertas o duplicadas de app.js (verificado visual y funcionalmente)
+- `27f7fe2` Elimina 5.500 reglas CSS sin uso (-644 KB) y corrige una llave suelta que invalidaba una regla
+- `b239975` Limpieza: quita sw.js e iconos sin uso, fija supabase-js, mueve docs, reescribe README
+- `3b9500a` README: corrige lista de archivos
+- `75068ca` V999: Registro rápido en Movimientos (escritorio): Egreso/Ingreso, monto, cuenta, categoría, fecha de hoy y nota; usa el mismo gu
+- `9a61859` V1000: Registro rápido: quita selector de moneda engañoso (la moneda es la de la cuenta)
+- `a43ad58` V1001: Wallet oculta en escritorio (redirige a Tarjetas); solo existe en móvil
+- `6bb9789` V1002: Logo de la institución en cuentas, préstamos y certificados móviles (efectivo conserva su icono)
+- `77df734` V1003: Ver histórico de tarjeta funciona en móvil
+- `41aa959` V1003b: Histórico de tarjeta con el acento de la paleta (gráfica, botones y selectores)
+- `2a4030f` V1004: «Confirma el movimiento» muestra el icono de la categoría elegida
+- `6ade080` V1005: Botones Continuar/Confirmar y flecha de impacto siguen el acento (antes morado fijo)
+- `8747628` V1006: Wallet: todas las flechas con el estilo de Beneficios y retorno
+- `2db64e5` V1006b: ajuste del subtítulo en acordeones del Wallet
+- `b2877e8` V1007: En móvil, cualquier movimiento abre la vista de detalle nueva y «volver» regresa al origen
+- `74743b6` V1008: Cabecera del detalle de movimiento con el acento
+- `686fb4c` V1009: kicker legible en cabeceras ejecutivas + catálogo y calificación en docs/CATALOGO.md
+- `bc95213` V1010: Pagar servicio / abono entre personas va directo al formulario (sin menú de dos opciones); título del menú sin cortes
+- `72c7cf3` V1011: Diálogo de confirmación propio (sustituye a los 25 confirm() nativos)
+- `eb7715e` V1012: Detalle de movimiento nuevo también en escritorio (reemplaza el modal antiguo)
+- `6d507a2` V1013: neutros y serie de gráficas derivados del acento, kicker legible, catálogo actualizado (70/100)
+- `593210c` V1014: contraste AA (acento y texto atenuado), estructura accesible, tests/smoke y docs/SUPABASE; catálogo 73/100
+- `aa7c93f` V1015: Pago de tarjeta: moneda con deuda por defecto, sin proponer «al corte» en cero, importes visibles en el menú y avisos cla
+- `04d3844` V1016: accesibilidad: 43 contrastes sueltos → 3 (2 son iconos de banco demo, 1 transición), encabezados en orden y aside como re
+- `cf1f430` CSS: elimina 4.600 declaraciones muertas (redefinidas más abajo en el mismo selector), 2.456 de ellas con !important
+- `6ed098d` V1017-V1018: acento en Bancos/Suscripciones/desglose, tooltips táctiles en gráficas, tendencia verde/roja, sin naranjas (→ rojo
+- `583e21d` V1019: Tendencia de patrimonio: la línea vuelve al acento; solo la variación va en verde/rojo
+- `478b6b4` V1020: Presupuestos y Categorías con el acento; kicker legible
+- `7a59f58` V1021: segundo nivel de navegación compacto (estilo Todas/Personal/Negocio) con acento; botón Nueva relación con acento
+- `4beef10` V1022: fondo con el acento al costado también en escritorio y toque Liquid Glass (paneles, barra lateral, navegación secundaria, 
+- `296aced` V1023: barra lateral integrada como antes (sin divisor), resplandor en toda la página, logo alineado con el título
+- `4d1f094` V1024: filtros de Suscripciones con el acento
+- `a47b8d1` V1025: iconos de categoría y servicio de Suscripciones con el acento (antes morado fijo)
+- `a0ac731` V1026: iconos de la cabecera (buscar, ajustes, notificaciones) con el acento
+- `c79c439` V1027: flechas de año sobre cabecera oscura en blanco
+- `7ec9011` V1028-V1029: registro web simplificado con selector universal, exportación anual en Excel de 3 hojas
+- `33fbeed` V1030: el chasquido de inicio viaja a la izquierda y forma el logotipo de la esquina
+- `a44c279` V1031: logotipo V de la esquina con el acento
+- `36f56e9` V1032: «vive el hoy» junto al logotipo con el acento
+- `bcfed14` V1033: el chasquido también forma el subtítulo «vive el hoy»
+- `fede942` V1034: títulos de pantalla con el acento (web y móvil)
+- `1dea933` V1033b-V1036: subtítulo más pegado al título, V primero y luego se escribe «vive el hoy», sin destello al cambiar pestañas, g
+- `14fada3` V1037: tras formarse la V, el polvo sale de ella y crea «vive el hoy» rápidamente
+- `22a6df9` V1038: tablas anuales con ancho automático, columnas sin choques y aspecto premium con acento
+- `63d7430` V1039: tablas anuales blancas y sutiles; color solo en títulos
+- `02fbb42` V1040: filtro Todas/Bancos/No bancarias compacto como las demás barras
+- `6fc8bf2` V1040b: filtro de instituciones con píldora activa del acento y fondo blanco
+- `f36f9ad` V1040c: fondo traslúcido Liquid Glass en el filtro de instituciones
+- `dc8f039` V1041: barras secundarias y «Dentro de…» como la referencia: cápsula de vidrio, activo con degradado del acento
+- `48abaa0` V1042: sin destello blanco al cambiar de vista: se retiran backdrop-filter de paneles/barras y el fondo fijo pasa a capa propia
+- `613f9bf` V1043: sincronización incremental por colección, sin descargas con la pestaña oculta, sondeo Apple Pay cada 10 min
+- `5e915f0` V1044: Apple Pay con sondeo mínimo (Realtime como vía principal); documentación de la limpieza de tablas heredadas
