@@ -89467,7 +89467,9 @@ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-rev
 @media (max-width:790px){
  /* Cabecera fija bajo la barra de estado. */
  html body .vive-mobile-top{padding-top:env(safe-area-inset-top,0px)!important;height:calc(66px + env(safe-area-inset-top,0px))!important}
- html body #app#app main.main{padding-top:calc(10px + env(safe-area-inset-top,0px))!important;
+ html body #app#app main.main:is(.world-overview,.world-wallet,.world-banks,.world-mobilehub,.world-mobilesearch){padding-top:10px!important}
+ html body #app#app main.main:not(.world-overview,.world-wallet,.world-banks,.world-mobilehub,.world-mobilesearch){padding-top:calc(10px + env(safe-area-inset-top,0px))!important}
+ html body #app#app main.main{
   /* El contenido desplazable nunca queda bajo el menú: ≥ alto del menú (62) + separación (8) + zona segura. */
   padding-bottom:max(166px,calc(62px + 8px + 24px + env(safe-area-inset-bottom,0px)))!important}
  /* Hoja del asistente REGISTRAR: misma hoja que Pagar tarjeta/Avance (separación mínima, esquinas 28px). */
