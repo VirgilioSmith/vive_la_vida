@@ -334,3 +334,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## Auditoría · Avance de efectivo (sin cambios de código)
 - Con un avance de RD$10,000 (comisión 3%): Egresos del mes sube solo RD$300 (comisión, en «Deudas e intereses»); ingresos no cambian; la deuda de la tarjeta sube RD$10,300; el efectivo recibido entra a la cuenta. El principal no cuenta como gasto (igual que el pago de tarjeta).
+
+## V964 · Wallet móvil: «Crédito disponible» y «Deuda utilizada» alineados
+- Etiqueta, cifra, equivalencia y desglose por moneda comparten ahora las mismas líneas en ambas columnas (la deuda tenía 19px de relleno superior y tipografías distintas). Verificado a 360/390/430px.
