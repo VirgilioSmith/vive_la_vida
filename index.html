@@ -90196,5 +90196,66 @@ html body #app#app .v708-movements-fab svg{color:var(--v424-accent-strong,#5b57d
 .f33-gate.v329-splash.v980-dissolving .v329-wordmark{animation:none!important}
 .f33-gate.v329-splash.v980-dissolving{transition:none!important}
 </style>
+<style id="v981-page-dust-css">
+/* V981 · Transición de páginas: el contenido saliente se deshace en polvo y el nuevo aparece (móvil y web) */
+.v981-layer{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:50;contain:strict;will-change:filter,opacity,transform}
+.v981-layer>.shell{position:absolute;left:0;top:0;width:100%;pointer-events:none}
+@keyframes v981-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+main.main.v981-in{animation:v981-in .55s cubic-bezier(.16,1,.3,1) .12s both}
+@media(prefers-reduced-motion:reduce){.v981-layer{display:none!important}main.main.v981-in{animation:none}}
+</style>
+<script id="v981-page-dust">
+/* V981 · Disolución de página («chasquido») al cambiar de sección. Solo presentación: reutiliza el nodo saliente, no toca datos ni lógica. */
+(()=>{'use strict';
+ if(window.__v981)return;window.__v981=true;
+ const calm=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+ const worldOf=n=>{const m=n&&n.querySelector&&n.querySelector('main.main');const c=m&&m.className;const r=c&&String(c).match(/\bworld-([\w-]+)/);return r?r[1]:'';};
+ let lastY=window.scrollY||0,layer=null,raf=0;
+ window.addEventListener('scroll',()=>{if(!layer)lastY=window.scrollY||0;},{passive:true});
+ function ensureFilter(){
+  if(document.getElementById('v981-svg'))return;
+  const d=document.createElement('div');d.id='v981-svg';d.setAttribute('aria-hidden','true');d.style.cssText='position:absolute;width:0;height:0;overflow:hidden';
+  d.innerHTML='<svg width="0" height="0" xmlns="http://www.w3.org/2000/svg"><defs><filter id="v981-dust" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="1" seed="11" result="n"/><feDisplacementMap id="v981-disp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G" result="d"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0" result="na"/><feComponentTransfer in="na" result="m"><feFuncA id="v981-fa" type="linear" slope="7" intercept="3"/></feComponentTransfer><feComposite in="d" in2="m" operator="in"/></filter></defs></svg>';
+  document.body.appendChild(d);
+ }
+ function dissolve(oldShell,app){
+  cancelAnimationFrame(raf);if(layer)layer.remove();
+  const main=oldShell.querySelector('main.main');if(!main)return;
+  // Conservar solo la cadena hasta <main>: se retiran barra lateral, dock y otros elementos fijos
+  let n=main;while(n&&n!==oldShell){const par=n.parentElement;if(!par)break;[...par.children].forEach(c=>{if(c!==n)c.remove();});n=par;}
+  ensureFilter();
+  layer=document.createElement('div');layer.className='v981-layer';layer.setAttribute('aria-hidden','true');
+  oldShell.style.transform=`translateY(${-lastY}px)`;
+  layer.appendChild(oldShell);app.appendChild(layer);
+  const L=layer,disp=document.getElementById('v981-disp'),fa=document.getElementById('v981-fa');
+  L.style.filter='url(#v981-dust)';
+  const t0=performance.now(),DUR=950;
+  (function f(now){
+   if(L!==layer)return;
+   const t=Math.min(1,(now-t0)/DUR),e=t*t*(3-2*t);
+   if(disp)disp.setAttribute('scale',String(e*110));
+   if(fa)fa.setAttribute('intercept',String(3-e*7.6));
+   L.style.transform=`translate3d(${e*46}px,${-e*10}px,0)`;
+   L.style.opacity=String(1-Math.max(0,(t-.72)/.28));
+   if(t<1)raf=requestAnimationFrame(f);else{L.remove();if(layer===L)layer=null;}
+  })(t0);
+ }
+ function onMutations(list){
+  const app=document.getElementById('app');if(!app)return;
+  // el relleno del #app puede haber retirado la capa: se restituye mientras dura el efecto
+  if(layer&&!layer.isConnected)app.appendChild(layer);
+  for(const m of list){
+   if(m.target!==app)continue;
+   const rem=[...m.removedNodes].find(x=>x.nodeType===1&&x.matches&&x.matches('.shell')&&x.querySelector('main.main'));
+   const add=[...m.addedNodes].find(x=>x.nodeType===1&&x.matches&&x.matches('.shell')&&x.querySelector('main.main'));
+   if(add){const nm=add.querySelector('main.main');if(nm&&rem&&worldOf(rem)!==worldOf(add)){nm.classList.add('v981-in');setTimeout(()=>nm.classList.remove('v981-in'),900);}}
+   if(rem&&add&&!calm()&&worldOf(rem)&&worldOf(rem)!==worldOf(add)){dissolve(rem,app);}
+  }
+ }
+ function start(){const app=document.getElementById('app');if(!app){setTimeout(start,200);return;}new MutationObserver(onMutations).observe(app,{childList:true});}
+ start();
+ window.__v981Test=(a,b)=>dissolve(a,b);
+})();
+</script>
 </body>
 </html>
