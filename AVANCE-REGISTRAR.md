@@ -450,3 +450,8 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V990 · Selector de mes en Explorar
 - Explorar: la píldora del mes ahora es un selector real (mismo control que Inicio): al elegir otro mes se actualizan las fichas (verificado: noviembre → octubre cambia Ingresos RD$118,000 → RD$116,000). Inicio y Explorar comparten diseño: texto y flecha en el acento, cristal claro.
+
+## V991 · Confirmación de registro rediseñada (aparición «¡fua!» + disolución + vibración)
+- Tarjeta de cristal con sombra del color del movimiento (verde ingreso, rojo gasto, azul transferencia), símbolo grande en degradado con rebote, 14 chispas que salen del símbolo, etiqueta en píldora, importe de 42px/900. Variante Black.
+- Al terminar (~1.7s) la tarjeta se deshace en grano y sale hacia la derecha (filtro SVG, 1s) mientras el velo se aclara; con «reducir movimiento» se retira sin efecto.
+- Vibración: `navigator.vibrate([18,40,28])` donde exista (Android/Chrome); en iPhone Safari no existe esa API, por lo que se intenta el interruptor háptico nativo de Safari 17.4+ (no verificable fuera de un iPhone real).
