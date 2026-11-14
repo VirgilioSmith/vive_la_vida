@@ -401,3 +401,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 ## V980 · Arranque: logotipo en el acento y disolución tipo «chasquido»
 - Pantalla de inicio: «vive el hoy» toma el color del acento (se recuerda el último usado; en tema Black, una versión clara) y se elimina la barra de carga inferior.
 - Al terminar de cargar, el logotipo se deshace en partículas (de izquierda a derecha) mientras el telón se aclara y deja ver la app ya renderizada (~1.5 s, no bloquea toques). Con «reducir movimiento» activado se retira directamente. Si algo falla, cae al cierre inmediato anterior.
+
+## V981 · Disolución de página al navegar (móvil y web)
+- Al cambiar de sección, el contenido saliente se deshace en polvo (filtro SVG de ruido + desplazamiento, ~0.95 s, desplazándose levemente hacia la derecha) mientras la página nueva aparece ya renderizada y sube suavemente. Se elimina el chasquido del dock y la barra lateral (fijos, no participan). No bloquea toques, respeta «reducir movimiento» y no altera datos ni lógica. Cambios dentro de la misma sección (filtros, pestañas) no disparan el efecto. Probado en 390×844 y 1440×900 con navegación rápida encadenada sin errores.
