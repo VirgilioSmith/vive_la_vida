@@ -9598,7 +9598,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
      <label class="v1100-field"><span>Devolución</span><input class="field" type="date" name="dueDate" value="${plusMonths(today(),1)}" required/></label>
     </div>
     <div class="v1100-row">
-     <label class="v1100-field"><span>Concepto</span><input class="field" name="concept" list="v56-concepts" required maxlength="90" value="Préstamo personal" placeholder="Ej. Préstamo para mercancía"><datalist id="v56-concepts">${concepts}</datalist></label>
+     <label class="v1100-field"><span>Concepto</span><select class="field" name="concept" required>${conceptOptions().map(v=>`<option value="${clean(v)}">${clean(v)}</option>`).join('')}</select></label>
      <label class="v1100-field"><span>Forma</span><select class="field" name="agreementType"><option value="verbal">Verbal</option><option value="message">Chat o mensajes</option><option value="written">Escrito / documento</option></select></label>
     </div>
     <label class="v1100-toggle"><input type="checkbox" data-pf-included/><span class="v1100-switch" aria-hidden="true"></span><span>Ya incluido en mi saldo</span></label>
@@ -9614,11 +9614,11 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  function v1100Instruments(){
   const out=[];
   for(const a of db.accounts.filter(x=>!isHidden(x))){const b=bank(a.bankId);
-   out.push({value:'account:'+a.id,currency:a.currency,title:a.name,sub:(a.kind==='cash'?'Efectivo':bankOf(a))+' · '+a.currency,amount:money(getAccountBalance(a),a.currency,2),
+   out.push({value:'account:'+a.id,currency:a.currency,title:a.name,sub:(a.kind==='cash'?'Efectivo':bankOf(a))+(String(a.last4||a.number||'').replace(/\D/g,'').slice(-4)?' • '+String(a.last4||a.number).replace(/\D/g,'').slice(-4):' · '+a.currency),amount:money(getAccountBalance(a),a.currency,2),
     logo:b&&a.kind!=='cash'?bankLogoMark(b,'v1028-logo'):`<span class="v1028-logo v1028-glyph">${icon(a.kind==='cash'?'wallet':'building')}</span>`});}
   for(const cd of db.cards.filter(x=>!isHidden(x))){const b=bank(cd.bankId),ccys=['DOP','USD'].filter(k=>num(k==='USD'?cd.limitUSD:cd.limitDOP)>0);
    for(const k of (ccys.length?ccys:['DOP'])){const st=cardStatus(cd,k);
-    out.push({value:'card:'+cd.id,currency:k,title:cd.name,sub:'Tarjeta · '+bankOf(cd)+' · '+k,amount:'Disp. '+money(st.available,k,2),
+    out.push({value:'card:'+cd.id,currency:k,title:cd.name,sub:bankOf(cd)+(String(cd.last4||cd.number||'').replace(/\D/g,'').slice(-4)?' • '+String(cd.last4||cd.number).replace(/\D/g,'').slice(-4):' · '+k)+(k==='USD'?' · US$':''),amount:'Disp. '+money(st.available,k,2),
      logo:b?bankLogoMark(b,'v1028-logo'):`<span class="v1028-logo v1028-glyph">${icon('card')}</span>`});}}
   return out;
  }
@@ -9664,7 +9664,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
    if(!valid()){e.preventDefault();e.stopImmediatePropagation();setStep('persona');toast('Elige una persona o escribe nombre y apellido.');return}
    if(!el('instrumentId').value){e.preventDefault();e.stopImmediatePropagation();setStep('pago');toast('Selecciona la cuenta o tarjeta del acuerdo.');return}
   },true);
-  if(insts.length===1)q('[data-pf-inst="0"]')?.click();
+  if(insts.length)q('[data-pf-inst="0"]')?.click();
   if(preContact&&qa('.v1100-person').some(b=>b.dataset.pfPerson===preContact))pickPerson(preContact);
   else if(!qa('.v1100-person').length)setKind('nueva');
  }
