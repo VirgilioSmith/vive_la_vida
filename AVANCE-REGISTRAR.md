@@ -312,3 +312,7 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 ## V959 · Wallet móvil y capacidad de endeudamiento dinámica
 - Wallet móvil: acordeones («Cortes por moneda», «Avance de efectivo») alineados a la misma línea izquierda que los títulos de los paneles; separación uniforme de 14px entre píldoras (antes ~48px); «Cortes por moneda» ya no parte en dos líneas.
 - Capacidad de endeudamiento (mes en curso): ahora compara lo **pendiente por pagar** con (**ingresos por cobrar** + **dinero disponible hoy** en cuentas corrientes y efectivo; los ahorros no cuentan). Lo ya cobrado/pagado no se cuenta dos veces. Meses pasados/futuros conservan el cálculo mensual completo. El desglose muestra ambos lados y la referencia mensual completa.
+
+## V960 · Color de la categoría Platinum
+- Platinum es ahora gris plata neutro (`--v960-platinum`) en todas las vistas de tarjeta: web (lista de Tarjetas), Wallet móvil (tarjeta grande y miniaturas) y selector de pago. Antes: azul pizarra en Wallet móvil y azul marino fijo en el selector de pago (que pintaba todas las categorías igual).
+- `cardTierKey`: si la tarjeta está guardada como «Clásica»/«Otra» (valor por defecto del formulario) pero su nombre/categoría dice Platinum, Gold, Black…, manda el nombre.
