@@ -264,3 +264,18 @@ Quedan de este cambio: hojas de las 4 operaciones, hoja «Motivo del ajuste» y 
 | Conciliar un saldo: la dirección Aumentar/Disminuir se recuerda aunque el importe esté vacío, y un importe tecleado con «Disminuir» activo se guarda negativo (`adjustmentEnhancement`) | Con el importe vacío, «Disminuir» se perdía (el signo solo vivía en el signo del importe) y al teclear quedaba positivo. El valor guardado no cambia: positivo aumenta, negativo disminuye |
 
 **Verificado:** 5 botones de la barra navegan y marcan su pestaña; Conciliar: Disminuir con importe vacío → −250 registrado; Aumentar → +90 registrado; Disminuir→Aumentar→teclear → positivo; las 4 hojas y sus botones de confirmación siguen funcionando; consola sin errores.
+
+---
+
+## Ajuste · Categorías rápidas: iconos y selección — 2026-11-14
+
+**Estado:** Móvil: terminado. Web: sin cambios.
+
+| Cambio (`index.html`) | Motivo |
+|---|---|
+| Iconos de categoría del sistema de la app (`V255_TAXONOMY` → `icon()` SVG) en los 3 chips, «Más», hoja de categorías y de subcategorías (`catIcon`, `moreIcon`); mismo color que las etiquetas de categoría | Los chips usaban emojis (`pict`), distintos al resto de la app |
+| `chooseCategory`: tocar un chip solo marca `aria-pressed` y limpia el error; ya no se redibuja la pantalla (antes: capa nueva + animación `v789-arrive` = «flashback») | Bug de selección en gasto e ingreso |
+| `renderEntry`: si la pantalla ya estaba abierta, el redibujo no repite la animación de entrada (`v956-no-anim`) | Al volver de la hoja de subcategorías |
+| Buscador de las hojas de categoría: campo blanco con borde y texto casi negro (tema claro) | Estándar de campos |
+
+**Verificado** (gasto e ingreso, 393×852 con zona segura, 375×667): tocar chips → 0 capas nuevas y 0 animaciones en marcha; «Más» → categoría → subcategoría → importe → Continuar → Confirmar guarda la categoría y subcategoría elegidas; teclado abierto: hojas por encima; consola sin errores.
