@@ -438,3 +438,8 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V988 · Capacidad de endeudamiento: recuadro del porcentaje con tinte de riesgo
 - El recuadro «Ingresos comprometidos» se tiñe en rojo traslúcido cuando supera el 100 % (o no hay ingresos suficientes), ámbar cuando es ajustado (80–100 %) y verde cuando está dentro; la cifra y la etiqueta toman el mismo tono. Variante Black.
+
+## V988b · Notificaciones e informes con el estilo nuevo; avisos de pago directos
+- Panel de notificaciones (móvil y web): cabecera con el degradado del acento, tarjetas de aviso en cristal con icono por tipo (tarjeta azul, préstamo morado, suscripción naranja, entre personas verde), estado en color (vencido/urgente) y botón «Pagar»; botón final en el acento. Variante Black.
+- Cada aviso de pago abre directamente su formulario: tarjeta → Pagar tarjeta (con su moneda), préstamo → pago de préstamo, suscripción → pago de servicio, entre personas → pago personal. El panel se cierra al tocar.
+- Informe (corte, diario, mitad, cierre, semanal): más simple y conciso. Cabecera de acento con fecha en píldora; balance grande; tres cifras (Ingresos/Egresos/Movimientos) en una fila; se quitan el párrafo descriptivo, la franja «Informe liberado» y el pie; compromisos limitados a 4 y cada uno abre su pago; máx. 2 observaciones.
