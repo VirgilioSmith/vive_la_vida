@@ -54542,3 +54542,19 @@ html body:not(.theme-black):not(.theme-dark) #app#app .account-history{--blue:va
 html body:not(.theme-black):not(.theme-dark) #app#app .account-history svg path[stroke]:not([stroke="none"]){stroke:var(--v424-accent-strong)!important}
 html body:not(.theme-black):not(.theme-dark) #app#app .account-history svg circle{fill:var(--v424-accent-strong)!important}
 html body:not(.theme-black):not(.theme-dark) #app#app .account-history svg :is(linearGradient,stop){stop-color:var(--v424-accent-strong)!important}
+
+/* V1038 · Tablas anuales (Un año, cuatro cifras / Ingresos y Egresos por categoría): ancho automático, columnas fijas sin choques, aspecto premium */
+html body #app#app #page .v12-table-scroller{overflow-x:auto;border-radius:18px;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 14%,rgba(255,255,255,.7));background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 28px color-mix(in srgb,var(--v424-accent-strong) 8%,transparent)}
+html body #app#app #page table.v12-year-table{table-layout:auto!important;width:max-content!important;min-width:100%!important;border-collapse:separate!important;border-spacing:0!important}
+html body #app#app #page table.v12-year-table :is(th,td){white-space:nowrap!important;font-variant-numeric:tabular-nums;padding:11px 16px!important;border-bottom:1px solid color-mix(in srgb,var(--v424-accent-strong) 8%,rgba(120,130,160,.12))}
+html body #app#app #page table.v12-year-table :is(th,td).num{min-width:92px;text-align:right!important}
+html body #app#app #page table.v12-year-table :is(th,td).v12-sticky{position:sticky!important;left:0;z-index:3;min-width:220px;text-align:left!important;background:color-mix(in srgb,var(--v424-accent-strong) 4%,#fff)!important;box-shadow:6px 0 14px -10px rgba(20,30,60,.25)}
+html body #app#app #page table.v12-year-table :is(th,td).v12-total{position:sticky!important;right:112px!important;z-index:3;min-width:112px;width:112px;background:color-mix(in srgb,var(--v424-accent-strong) 7%,#fff)!important;font-weight:800}
+html body #app#app #page table.v12-year-table :is(th,td).v12-total+:is(th,td).num{position:sticky!important;right:0!important;z-index:3;min-width:112px;width:112px;background:color-mix(in srgb,var(--v424-accent-strong) 4%,#fff)!important;box-shadow:-6px 0 14px -10px rgba(20,30,60,.25)}
+html body #app#app #page table.v12-year-table thead th{position:sticky;top:0;z-index:4;background:linear-gradient(180deg,color-mix(in srgb,var(--v424-accent-strong) 12%,#fff),color-mix(in srgb,var(--v424-accent-strong) 6%,#fff))!important;color:var(--v424-accent-strong)!important;font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:800;border-bottom:1px solid color-mix(in srgb,var(--v424-accent-strong) 22%,transparent)}
+html body #app#app #page table.v12-year-table thead :is(th.v12-sticky,th.v12-total,th.v12-total+th){z-index:6}
+html body #app#app #page table.v12-year-table tbody tr:nth-child(even) td:not(.v12-sticky):not(.v12-total):not(.v12-total+td){background:color-mix(in srgb,var(--v424-accent-strong) 3%,transparent)}
+html body #app#app #page table.v12-year-table tbody tr:hover td{background:color-mix(in srgb,var(--v424-accent-strong) 8%,#fff)!important}
+html body #app#app #page table.v12-year-table tbody tr:last-child td,html body #app#app #page table.v12-year-table tr.total td,html body #app#app #page table.v12-year-table tr[class*="total"] td{font-weight:800;background:linear-gradient(180deg,color-mix(in srgb,var(--v424-accent-strong) 10%,#fff),color-mix(in srgb,var(--v424-accent-strong) 5%,#fff))!important;color:var(--v424-accent-strong)}
+html body #app#app #page table.v12-year-table td.num{color:#33405a}
+html body #app#app #page table.v12-year-table td.num:is(:empty,.quiet){color:#9aa6bd}
