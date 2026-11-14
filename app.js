@@ -12919,7 +12919,8 @@ window.addEventListener('online',()=>{if(v212Enabled())v212Sync();});
 // V733: el canal Realtime ya recibe eventos de Apple Pay inmediatamente.
 // Este intervalo es solo rescate ante eventos perdidos: 3 min en vez de 45 s.
 // Se conserva además sincronización al volver online, visible y al recibir eventos.
-setInterval(()=>{if(!document.hidden&&v212Enabled()&&Date.now()>=v719BusyUntil())void v212Sync();},600000);
+/* V1044 · Apple Pay: el evento llega por Realtime en cuanto el atajo lo envía (la función apple-pay-ingest lo inserta). El sondeo es solo una red de seguridad: con Realtime conectado se hace cada 30 min; sin él, cada 3 min. */
+setInterval(()=>{if(document.hidden||!v212Enabled()||Date.now()<v719BusyUntil())return;const now=Date.now(),gap=v402Realtime?1800000:180000;if(now-(window.__v1044LastApple||0)<gap)return;window.__v1044LastApple=now;void v212Sync();},60000);
 
 /* V219 | Informes internos de solo lectura. Los datos financieros no se mutan.
    Cada período queda habilitado a las 19:00 de America/Santo_Domingo.

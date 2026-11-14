@@ -38,3 +38,9 @@ Verificado directamente en el proyecto `vive-el-hoy-finanzas-360`:
 - Con la pestaña oculta no se descarga nada; al volver a verse se verifica la revisión.
 - El sondeo de Apple Pay baja de cada 3 min a cada 10 min (los eventos nuevos siguen llegando por realtime al instante).
 - Pendiente en el panel de Supabase (no se puede cambiar por SQL): activar *Leaked password protection* en Authentication.
+
+
+### Limpieza y Apple Pay (V1044)
+- Se eliminaron las 19 tablas heredadas (todas con 0 filas, sin referencias en la app, funciones edge, vistas, disparadores ni cron): `bancos, cuentas, tarjetas, prestamos, movimientos, suscripciones, estados_cuenta, presupuestos, certificados, beneficios, prestamos_personales, categorias, revisiones_movimientos, operaciones_pendientes, previsiones, conciliaciones, documentos, auditoria, tasas_cambio`.
+- Apple Pay no se tocó. Flujo: el atajo del iPhone hace POST a `apple-pay-ingest` (token `vhap_…`, idempotente por `event_id`) → inserta en `apple_pay_events` → Realtime avisa a la app al instante → la app importa. El sondeo queda solo como red de seguridad: cada 30 min con Realtime conectado, cada 3 min si no lo está.
+- Los índices de `apple_pay_*` aparecen como «sin uso» porque las tablas tienen pocas filas; se conservan para cuando crezcan.
