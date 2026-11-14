@@ -389,3 +389,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V977 · Suscripciones (móvil)
 - Título «Suscripciones» legible (estaba en blanco sobre fondo claro); tarjetas superiores con el degradado del acento configurado (antes azul fijo); las marcas del cuadro derecho van en una cuadrícula 2×2 centrada (máx. 4) sobre círculos blancos, con el recuento («N Activas») abajo.
+
+## V978 · Barra de navegación según la referencia del usuario
+- Placa lavanda casi plana sin borde visible, tinta azul noche en inactivos (iconos y texto), píldora activa clara con resplandor del acento debajo, sin punto indicador; iconos de trazo más fino. Solo tema claro; el tema Black conserva su versión.
