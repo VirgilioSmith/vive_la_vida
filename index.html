@@ -41499,9 +41499,18 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active){e.preventDe
   const panel=form.querySelector('.other-studio-amount');if(!amount||!panel)return;
   const heading=document.createElement('div');heading.className='v768-adjust-heading';heading.innerHTML='<strong>Ajuste de saldo</strong><span class="v768-adjust-toggle" role="group" aria-label="Dirección del ajuste"><button type="button" data-v768-sign="plus" aria-pressed="true">+ Aumentar</button><button type="button" data-v768-sign="minus" aria-pressed="false">− Disminuir</button></span>';
   panel.prepend(heading);
-  const refresh=()=>{const negative=Number(amount.value)<0;heading.querySelector('[data-v768-sign="minus"]').setAttribute('aria-pressed',String(negative));heading.querySelector('[data-v768-sign="plus"]').setAttribute('aria-pressed',String(!negative));};
-  heading.addEventListener('click',e=>{const b=e.target.closest('[data-v768-sign]');if(!b)return;const magnitude=Math.abs(Number(amount.value)||0);amount.value=String((b.dataset.v768Sign==='minus'?-1:1)*magnitude||'');amount.dispatchEvent(new Event('input',{bubbles:true}));amount.dispatchEvent(new Event('change',{bubbles:true}));refresh();});
-  amount.addEventListener('input',refresh);refresh();
+  // V956: la dirección elegida (Aumentar / Disminuir) se recuerda aunque el importe esté vacío.
+  // Antes solo vivía en el signo del importe: con el campo vacío, «Disminuir» se perdía y al teclear el
+  // importe quedaba positivo. El valor guardado sigue siendo el mismo (positivo = aumenta, negativo = disminuye).
+  let negativeMode=false,syncing=false;
+  const refresh=()=>{const v=Number(amount.value);
+   if(amount.value!==''&&Number.isFinite(v)&&v!==0)negativeMode=v<0;
+   const minus=heading.querySelector('[data-v768-sign="minus"]'),plus=heading.querySelector('[data-v768-sign="plus"]');
+   minus.setAttribute('aria-pressed',String(negativeMode));plus.setAttribute('aria-pressed',String(!negativeMode));};
+  heading.addEventListener('click',e=>{const b=e.target.closest('[data-v768-sign]');if(!b)return;negativeMode=b.dataset.v768Sign==='minus';const magnitude=Math.abs(Number(amount.value)||0);amount.value=magnitude?String((negativeMode?-1:1)*magnitude):'';amount.dispatchEvent(new Event('input',{bubbles:true}));amount.dispatchEvent(new Event('change',{bubbles:true}));refresh();});
+  // Con «Disminuir» activo, el importe tecleado en positivo se guarda como negativo.
+  amount.addEventListener('input',()=>{if(syncing)return;const v=Number(amount.value);if(negativeMode&&amount.value!==''&&Number.isFinite(v)&&v>0){syncing=true;amount.value=String(-v);amount.dispatchEvent(new Event('change',{bubbles:true}));syncing=false}refresh();});
+  refresh();
   // The native note field remains in the original form and records the documented reason.
   const note=form.elements.namedItem('note');const label=note?.closest('label');const content=form.querySelector('.other-studio-content');
   if(label&&content){label.classList.add('v768-reason');label.querySelector(':scope > span')?.replaceChildren(document.createTextNode('Motivo y evidencia del ajuste'));content.appendChild(label);}
@@ -89536,6 +89545,53 @@ html body #modal-root#modal-root .v857-sheet{padding-bottom:calc(16px + var(--v9
 html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .v857-sheet :is(select,input,textarea){background:#fff!important;border:1px solid var(--v953-line,#c3cddc)!important;color:var(--v953-ink,#0f172a)!important;-webkit-text-fill-color:var(--v953-ink,#0f172a)!important;opacity:1!important}
 html body #modal-root#modal-root .v857-sheet :is(button,select){min-height:var(--v953-tap,44px)}
 
+</style>
+<style id="v955-dock-glass">
+/* V955 · Barra de navegación «cristal líquido» (móvil), sobre la posición y el degradado de acento ya
+   definidos en el proyecto (--v367-dock-bottom, --v250-dock-*): solo cambia el material.
+   Vidrio translúcido con desenfoque y saturación, borde de luz, brillo especular superior y una
+   «píldora» de cristal en la pestaña activa. Mismos iconos, textos y acciones. */
+@media (max-width:790px){
+ html body .vive-mobile-dock::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.12) 42%,rgba(255,255,255,0) 60%),radial-gradient(120% 90% at 12% -20%,rgba(255,255,255,.5),rgba(255,255,255,0) 60%)}
+ html body .vive-mobile-dock .vive-mobile-dock-item{position:relative;z-index:1}
+ html body nav.vive-mobile-dock.vive-mobile-dock button.vive-mobile-dock-item.vive-mobile-dock-item:not(.active),
+ html body:is(.theme-dark,.theme-black) #app#app nav.vive-mobile-dock.vive-mobile-dock button.vive-mobile-dock-item.vive-mobile-dock-item:not(.active){background:transparent!important;background-image:none!important;border-color:transparent!important;box-shadow:none!important}
+
+ /* Claro: el degradado de acento del proyecto se conserva como capa superior. */
+ html body:not(.theme-dark):not(.theme-black) .vive-mobile-dock{
+  background-color:transparent!important;
+  background-image:radial-gradient(ellipse at 85% 15%,color-mix(in srgb,var(--vive-theme-color,#665fe7) 9%,transparent) 0%,color-mix(in srgb,var(--vive-theme-color,#665fe7) 3%,transparent) 45%,transparent 78%),linear-gradient(135deg,rgba(255,255,255,.66) 0%,rgba(255,255,255,.38) 48%,rgba(255,255,255,.56) 100%)!important;
+  -webkit-backdrop-filter:blur(max(22px,var(--v250-dock-blur,26px))) saturate(190%) brightness(1.05)!important;
+  backdrop-filter:blur(max(22px,var(--v250-dock-blur,26px))) saturate(190%) brightness(1.05)!important;
+  border:1px solid rgba(255,255,255,.7)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.3),inset 0 0 22px rgba(255,255,255,.3),0 14px 34px rgba(31,50,90,.18),0 2px 8px rgba(31,50,90,.08)!important}
+ html body:not(.theme-dark):not(.theme-black) .vive-mobile-dock .vive-mobile-dock-item,
+ html body:not(.theme-dark):not(.theme-black) .vive-mobile-dock .vive-mobile-dock-item .vive-mobile-dock-label{color:#2b3a55!important;-webkit-text-fill-color:#2b3a55!important;font-weight:700}
+ html body:not(.theme-dark):not(.theme-black) .vive-mobile-dock>.vive-mobile-dock-item.active{
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.62))!important;border:1px solid rgba(255,255,255,.9)!important;
+  box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(255,255,255,.4),0 6px 16px rgba(60,60,150,.18)!important}
+ html body:not(.theme-dark):not(.theme-black) .vive-mobile-dock>.vive-mobile-dock-item.active :is(.vive-mobile-dock-label,.vive-mobile-dock-icon){color:var(--v953-accent,#4f4ad6)!important;-webkit-text-fill-color:var(--v953-accent,#4f4ad6)!important}
+
+ /* Oscuro: cristal oscuro translúcido (el proyecto lo tenía en negro sólido sin desenfoque). */
+ html body:is(.theme-dark,.theme-black) #app#app nav.vive-mobile-dock.vive-mobile-dock{
+  background-color:transparent!important;
+  background-image:radial-gradient(ellipse at 85% 15%,color-mix(in srgb,var(--vive-theme-color,#665fe7) 14%,transparent) 0%,transparent 70%),linear-gradient(135deg,rgba(70,70,92,.55) 0%,rgba(30,30,42,.42) 50%,rgba(60,60,80,.52) 100%)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(170%)!important;backdrop-filter:blur(28px) saturate(170%)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(255,255,255,.06),0 14px 34px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3)!important}
+ html body:is(.theme-dark,.theme-black) .vive-mobile-dock::before{opacity:.35}
+ html body:is(.theme-dark,.theme-black) .vive-mobile-dock>.vive-mobile-dock-item{color:#e8ecf6!important;-webkit-text-fill-color:#e8ecf6!important}
+ html body:is(.theme-dark,.theme-black) #app#app nav.vive-mobile-dock>.vive-mobile-dock-item.active{background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.1))!important;border:1px solid rgba(255,255,255,.26)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.35)!important}
+
+ /* Botones flotantes (Registrar +, Historial): mismo material; su posición no cambia. */
+ html body:not(.theme-dark):not(.theme-black) .v249-register-fab{
+  background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,255,255,.5))!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;backdrop-filter:blur(20px) saturate(180%)!important;
+  border:1px solid rgba(255,255,255,.8)!important;box-shadow:inset 0 1px 0 #fff,0 10px 26px rgba(31,50,90,.2),0 2px 6px rgba(31,50,90,.1)!important}
+ html body:not(.theme-dark):not(.theme-black) .v708-movements-fab{
+  background:linear-gradient(135deg,rgba(190,188,252,.7),rgba(150,146,245,.5))!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;backdrop-filter:blur(20px) saturate(180%)!important;
+  border:1px solid rgba(255,255,255,.8)!important;box-shadow:inset 0 1px 0 #fff,0 10px 26px rgba(31,50,90,.2)!important}
+}
 </style>
 </body>
 </html>
