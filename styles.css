@@ -54369,3 +54369,13 @@ html body #app#app #page#page :is(.v57-product-hero,.v46-bank-hero,.v203-hero,.v
 /* V1018 · Variación del patrimonio: solo el texto va en verde (sube) o rojo (baja); la línea conserva el acento */
 html body #app#app .v315-wealth-delta.v315-positive{color:#059669!important}
 html body #app#app .v315-wealth-delta.v315-negative{color:#d90629!important}
+
+/* V1020 · Presupuestos y Categorías con el acento; kicker legible (el relleno de texto del acento anulaba el color) */
+html body:not(.theme-black):not(.theme-dark) #app#app .v58-exec .v58-left>.v58-kicker{-webkit-text-fill-color:rgba(255,255,255,.85)!important;color:rgba(255,255,255,.85)!important}
+html body:not(.theme-black):not(.theme-dark) #app#app .v285-budget-tab.active{background:linear-gradient(120deg,var(--v424-accent-strong),color-mix(in srgb,var(--v424-accent-strong) 82%,#fff))!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:0 8px 20px var(--v424-accent-shadow,rgba(0,0,0,.18))!important}
+html body:not(.theme-black):not(.theme-dark) #app#app .v285-budget-tab:not(.active){color:#566480!important;-webkit-text-fill-color:#566480!important}
+html body:not(.theme-black):not(.theme-dark) #app#app :is(.v26-primary,.section-title>.btn[data-act="newTransaction"]){background:linear-gradient(120deg,color-mix(in srgb,var(--v424-accent-strong) 100%,#000),color-mix(in srgb,var(--v424-accent-strong) 82%,#fff))!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:0 8px 20px var(--v424-accent-shadow,rgba(0,0,0,.18))!important}
+html body:not(.theme-black):not(.theme-dark) #app#app .v26-overview-chip{background:color-mix(in srgb,var(--v424-accent-strong) 8%,#fff)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 20%,transparent)!important}
+html body:not(.theme-black):not(.theme-dark) #app#app .v26-overview-chip strong{color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important}
+html body:not(.theme-black):not(.theme-dark) #app#app .v26-overview-chip small{color:#566480!important;-webkit-text-fill-color:#566480!important}
+html body:not(.theme-black):not(.theme-dark) #app#app :is(.v26-eyebrow,.v26-kicker,.v26-head) :is(i,.dot,.v26-dot,span[aria-hidden="true"]){background:var(--v424-accent-strong)!important}
