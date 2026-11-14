@@ -54532,3 +54532,13 @@ html body:not(.theme-black):not(.theme-dark) #app#app .topbar :is(h1,h2){color:v
 @media (max-width:790px){
  html body:not(.theme-black):not(.theme-dark) #app#app :is(header[class*="-intro"],.v239-intro,.v244-intro,.v248-intro,.v205-intro) h2{color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important}
 }
+@media (min-width:791px){html body #app#app .topbar-intro .top-sub{margin-top:-7px!important;line-height:1.1}}
+
+/* V1035 · Cambio de pestañas sin destello: se elimina la aparición con opacidad parcial («inner-appear») al recargar el contenido */
+html body #app#app :is(.v26-body,.inner-view,.inner-menu,.v32-integrated,.v26-internal){animation-name:none!important}
+
+/* V1036 · Detalle de cuenta/efectivo: gráfica y elementos con el acento */
+html body:not(.theme-black):not(.theme-dark) #app#app .account-history{--blue:var(--v424-accent-strong);--moduleAccent:var(--v424-accent-strong)}
+html body:not(.theme-black):not(.theme-dark) #app#app .account-history svg path[stroke]:not([stroke="none"]){stroke:var(--v424-accent-strong)!important}
+html body:not(.theme-black):not(.theme-dark) #app#app .account-history svg circle{fill:var(--v424-accent-strong)!important}
+html body:not(.theme-black):not(.theme-dark) #app#app .account-history svg :is(linearGradient,stop){stop-color:var(--v424-accent-strong)!important}
