@@ -37079,7 +37079,7 @@ function v212SettingsPanel(){
    const c=card(x.instrument_id);
    return `<div class="v212-linked"><div><strong>${sanitize(c?.name||x.card_label||'Tarjeta')}</strong><small>${sanitize(x.currency)} · Vínculo antiguo inactivo</small></div><button type="button" class="v212-small" data-v212="revoke" data-id="${sanitize(x.id)}" ${v212State.busy?'disabled':''}>Eliminar definitivamente</button></div>`;
  }).join('');
- const eventRows=v212State.events.filter(x=>['pending','review','imported'].includes(x.status)).slice(0,12).map(x=>{
+ const eventRows=v212State.events.filter(x=>['pending','review','imported'].includes(x.status)).slice().sort((a,b)=>String(b.received_at||'').localeCompare(String(a.received_at||''))).slice(0,3).map(x=>{
    const c=card(x.instrument_id);
    return `<div class="v212-event"><span class="v212-dot"></span><div><strong>${sanitize(x.merchant||'Comercio')}</strong><small>${sanitize(c?.name||'Tarjeta archivada')} · ${prettyDate(String(x.received_at||'').slice(0,10))} · ${x.status==='review'?'Revisar posible duplicado':x.status==='imported'?'Registrada en Movimientos':'Por sincronizar'}</small></div><b>${money(x.amount,x.currency,2)}</b>${x.status==='review'?`<button class="v212-small" type="button" data-v212="force" data-id="${sanitize(x.id)}">Registrar</button><button class="v212-small" type="button" data-v212="ignore" data-id="${sanitize(x.id)}">Ignorar</button>`:''}</div>`;
  }).join('');
@@ -37088,7 +37088,7 @@ function v212SettingsPanel(){
  <div class="v274-apple-health ${v212State.health==='ok'?'ready':v212State.health==='error'?'fail':'neutral'}" role="status" aria-live="polite"><div><strong>${v212State.health==='ok'?'Receptor verificado · sin registrar gastos':v212State.health==='testing'?'Comprobando receptor…':v212State.health==='error'?'Receptor pendiente de reparar':'Vinculación y recepción se verifican por separado'}</strong><p>${sanitize(v212State.healthMessage||'')}</p></div>${v212State.secret?`<button type="button" class="v212-small" data-v212="test-ingest" ${v212State.health==='testing'?'disabled':''}>Probar conexión</button>`:''}</div>
  ${v212State.secret?`<div class="v212-secret"><strong>Conexión creada: guarda estos datos en tu Atajo</strong><p>La clave solo se muestra ahora. No la compartas ni la coloques en capturas.</p><div class="v212-secretline"><span>URL de Apple Pay para Atajos</span><button class="v212-small" data-v212="copy-url" type="button">Copiar URL</button></div><code>${sanitize(v288ShortcutUrl(v212State.webhook)||"Publica primero apple-pay-shortcuts")}</code><div class="v212-secretline"><span>Encabezado: X-Vive-Token</span><button class="v212-small" data-v212="copy-token" type="button">Copiar clave</button></div><input type="password" autocomplete="off" readonly aria-label="Clave del atajo" value="${sanitize(v212State.secret)}"/></div>`:''}
  <details class="v212-guide" open><summary>Apple Pay · Configuración de Atajos</summary><ol><li>En Atajos → Automatización → Transacción, selecciona la tarjeta y habilita ejecución inmediata, cuando iOS lo permita.</li><li>Obtén <b>Comercio</b> y <b>Importe</b> directamente de la Entrada del atajo. No los conviertas en una nota. Si el importe aparece como <code>DOP 140.00</code>, envía ese texto completo.</li><li>En Obtener contenido de URL usa la URL de este panel, método <b>POST</b>, formato <b>JSON</b> y encabezado <b>X-Vive-Token</b> con la clave privada de la tarjeta.</li><li>Campos JSON: <code>merchant</code> = comercio; <code>amount_raw</code> = importe dinámico tal como viene de Wallet; <code>currency</code> = DOP o USD (opcional cuando ya viene en el texto); <code>event_id</code> = identificador estable de esa transacción o una fecha capturada una sola vez por ejecución.</li><li>Pulsa <b>Probar conexión</b> en esta pantalla para ejecutar <code>dry_run</code> sin contabilizar. Las compras reales se reciben en Supabase y se importan a la app al sincronizar.</li></ol><p>Si Apple Wallet no suministra el importe, el servidor no puede recuperarlo desde Notas automáticamente. Si el valor se obtiene de un archivo .txt, primero extrae su contenido en Atajos y envíalo como texto en <code>amount_raw</code>. No compartas tu clave privada.</p></details>
- <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}${oldRows?`<div class="v212-title" style="margin-top:12px"><strong>Vínculos anteriores</strong></div><p class="v212-muted">No están conectados. Puedes eliminarlos sin borrar las compras históricas.</p>${oldRows}`:''}</div><div><div class="v212-title"><strong>Actividad reciente</strong><span>${v212State.events.length} evento${v212State.events.length===1?'':'s'}</span></div>${eventRows||'<p class="v212-muted">No hay compras recibidas recientemente.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
+ <div class="v212-sections"><div><div class="v212-title"><strong>Tarjetas conectadas</strong><button type="button" class="v212-small" data-v212="refresh">Actualizar</button></div>${linkRows||'<p class="v212-muted">Todavía no has vinculado tarjetas.</p>'}${oldRows?`<div class="v212-title" style="margin-top:12px"><strong>Vínculos anteriores</strong></div><p class="v212-muted">No están conectados. Puedes eliminarlos sin borrar las compras históricas.</p>${oldRows}`:''}</div><div><div class="v212-title"><strong>Actividad reciente</strong><span>${v212State.events.length>3?'Últimos 3 de '+v212State.events.length:v212State.events.length+' evento'+(v212State.events.length===1?'':'s')}</span></div>${eventRows||'<p class="v212-muted">No hay compras recibidas recientemente.</p>'}<small class="v212-muted">Las compras claras se contabilizan al sincronizar la app. Coincidencias dudosas quedan pendientes de revisión.</small></div></div>
  ${(v212State.error||v212State.syncError)?`<p class="v212-error" role="status">${sanitize(v212State.error||v212State.syncError)}</p>`:''}</section>`;
 }
 function v212Show(){const target=document.querySelector('.v212-panel');if(target)target.outerHTML=v212SettingsPanel();}
@@ -88132,128 +88132,73 @@ body.theme-black .vive-reader,body.theme-dark .vive-reader{background:#080809;co
 <script id="vive-module-js">
 /* Vive: independent, ephemeral editorial experience. NO network, accounts, storage or financial data. */
 (()=>{'use strict';
- const textByTheme={
-  presente:[
-   'Vive. No necesitas convertir cada instante en un logro para que tenga valor.',
-   'El día de hoy no tiene que ser extraordinario para merecer tu presencia.',
-   'Mira a tu alrededor. La vida ocurre también en los detalles que no publicamos.',
-   'Hay mañanas que empiezan sin grandes planes y terminan llenas de recuerdos.',
-   'No pospongas cada momento bonito hasta tenerlo todo resuelto.',
-   'Lo que estás viviendo ahora también forma parte de tu historia.',
-   'Dedica unos minutos a algo que disfrutes sin exigirle ningún resultado.',
-   'Lo sencillo puede ser suficiente. Date permiso para descubrirlo.',
-   'Quizás hoy encuentres algo hermoso donde ayer solo viste rutina.'
-  ],
-  gratitud:[
-   'Agradecerle a Dios por este día no exige que haya sido perfecto.',
-   'Reconoce una cosa pequeña que hoy te hizo bien. También merece gratitud.',
-   'Antes de pensar en todo lo pendiente, contempla algo bueno que ya está aquí.',
-   'La gratitud puede comenzar con una conversación, un vaso de agua o una sonrisa.',
-   'Quizás lo cotidiano sea una respuesta a una oración que hiciste hace tiempo.',
-   'Agradece a Dios por las personas que te ayudan a encontrar belleza en los días comunes.',
-   'No todos los regalos vienen envueltos: algunos llegan como tiempo compartido.',
-   'Mira lo que has recibido sin reducir su valor a una cifra.'
-  ],
-  fe:[
-   'La fe también se expresa cuando escuchas sin interrumpir a quien necesita hablar.',
-   'Amar a Dios puede comenzar por la bondad con la que tratas a quien tienes cerca.',
-   'Haz espacio para una oración sencilla, sin prisa y sin palabras perfectas.',
-   'Una acción generosa puede dar forma concreta a tu agradecimiento.',
-   'No necesitas entender cada paso para caminar con esperanza.',
-   'Pedir ayuda no contradice la fe. También es una forma de cuidarte.',
-   'Puedes hablar con Dios desde la alegría, no solamente desde la preocupación.'
-  ],
-  familia:[
-   'Si puedes, pregúntale a tu madre qué música le gustaba cuando era joven.',
-   'Tu padre también tiene historias que comenzaron mucho antes de conocerte.',
-   'Una comida compartida puede convertirse en el mejor recuerdo de una semana sencilla.',
-   'Escuchar una anécdota de tus abuelos es una manera hermosa de cuidar la memoria.',
-   'Cuando juegues con tus hijos, procura estar allí también con la mirada y la atención.',
-   'Una conversación de pocos minutos puede acercarte a alguien que quieres.',
-   'Si tu familia está lejos, una palabra cariñosa también puede acortar la distancia.',
-   'La familia puede tomar muchas formas. Agradece a quienes te hacen sentir acompañado.',
-   'No todas las relaciones familiares son sencillas. Cuidar tu paz también es válido.'
-  ],
-  amor:[
-   'Amar también es preguntar cómo se siente el otro y esperar su respuesta.',
-   'Tu cariño no tiene que ser perfecto para ser sincero.',
-   'Hay gestos de amor que caben en un mensaje de dos líneas.',
-   'Escuchar con atención es una manera discreta de decir «me importas».',
-   'Comparte una alegría pequeña con la persona que amas.',
-   'El afecto puede mostrarse sin grandes discursos: con respeto y presencia.',
-   'Ser amable contigo también es una forma de aprender a amar.'
-  ],
-  amistad:[
-   'Una amistad puede renovarse con una conversación sincera y sin prisa.',
-   'Piensa en alguien que te hizo reír. Tal vez hoy puedas saludarle.',
-   'A veces, acompañar a un amigo es suficiente, incluso sin respuestas.',
-   'No hace falta esperar una ocasión especial para agradecer una amistad.',
-   'Hay recuerdos que se iluminan al volver a contarlos con quien los vivió.'
-  ],
-  perdon:[
-   'Perdonar no te obliga a volver a un lugar donde dejaste de sentirte seguro.',
-   'Pedir disculpas con sinceridad puede ser el comienzo de una conversación distinta.',
-   'Reconocer un error no borra lo bueno que también hay en ti.',
-   'La paz no siempre requiere recuperar una relación.',
-   'Puedes soltar una exigencia imposible sin dejar de cuidar tus límites.'
-  ],
-  esperanza:[
-   'Puedes empezar de nuevo sin negar todo lo que aprendiste ayer.',
-   'La esperanza puede ser pequeña y aun así ayudarte a dar el siguiente paso.',
-   'No tienes que resolver todo el futuro durante esta mañana.',
-   'Que un día sea difícil no significa que todos los que siguen deban serlo.',
-   'Reconoce el camino recorrido, aunque todavía falten cosas por construir.',
-   'La paciencia también puede ser una forma de valentía.'
-  ],
-  alegria:[
-   'Una risa espontánea no necesita una razón importante.',
-   'Baila una canción si te nace. La alegría no necesita permiso.',
-   'Guarda un poco de espacio para jugar, incluso cuando seas adulto.',
-   'No todos los momentos memorables necesitan un plan extraordinario.',
-   'Comparte algo gracioso con alguien que aprecias.'
-  ],
-  solidaridad:[
-   'Acompañar a alguien durante un momento difícil puede valer más que encontrar las palabras exactas.',
-   'La bondad silenciosa también transforma el día de alguien.',
-   'Si hoy puedes ayudar a alguien sin esperar nada a cambio, hazlo desde el cariño.',
-   'Compartir tiempo puede ser tan valioso como compartir cosas.',
-   'La humildad crece cuando escuchamos algo que todavía no sabíamos.'
-  ],
-  pausa:[
-   'Respira. Afloja los hombros. Regresa con suavidad a este instante.',
-   'Si te apetece, toma un poco de agua y aprecia su frescura.',
-   'Siente los pies apoyados en el suelo. No hay prisa en esta pausa.',
-   'Descansa la mandíbula. Suelta el aire despacio.',
-   'Escucha durante unos segundos los sonidos que te rodean.',
-   'Permite que tu mirada descanse en algo sencillo.',
-   'Detente un momento. Observa cómo estás respirando, sin cambiar nada.',
-   'Mira el cielo cuando puedas. Puede ser suficiente por ahora.',
-   'Deja reposar la lengua y nota cómo se siente tu cuerpo al soltar tensión.',
-   'Si puedes, levántate un instante y siente cómo cambias de postura.'
-  ],
-  tiempo:[
-   'No pospongas todas las conversaciones bonitas hasta que llegue una fecha especial.',
-   'Hoy puedes escuchar una canción entera sin hacer otra cosa al mismo tiempo.',
-   'El futuro merece cuidado, pero este momento también merece compañía.',
-   'Una tarde corriente puede convertirse en una memoria extraordinaria.',
-   'El tiempo compartido no siempre se mide en horas; a veces se mide en atención.'
-  ]
+ /* V969 · Motor combinatorio de reflexiones.
+    Cada texto se arma con partes independientes (apertura · núcleo = verbo + objeto · matiz · cierre) dentro de un tema.
+    Combinaciones posibles ≈ 17 millones; Vive.stats() las calcula. Las palabras pueden repetirse (p. ej. «Dios»), pero
+    casi nunca en el mismo contexto: no se repite ninguna combinación exacta (se recuerda en este dispositivo) y las
+    aperturas, matices y cierres recientes se evitan para que no suenen iguales. Sin red, sin cuentas, sin datos financieros. */
+ const DATA={
+  presente:{v:['nota','aprecia','disfruta','quédate un instante con','date un momento para apreciar','regálate un momento para disfrutar de','reconoce','dale un lugar a'],
+   o:['la luz que entra por la ventana','el sabor de lo primero que comas hoy','una conversación sencilla','el ruido amable de tu casa','lo que hoy salió bien','algo bonito que suele pasar desapercibido','el momento exacto en que estás','las personas que comparten tu día','un detalle que ayer no viste']},
+  gratitud:{v:['agradece a Dios por','da gracias por','reconoce con gratitud','recuerda con cariño','nombra en voz baja','celebra','valora','piensa con gratitud en'],
+   o:['algo pequeño que hoy te hizo bien','una persona que estuvo presente cuando la necesitaste','un alimento que no te faltó','una conversación que te alegró el día','un recuerdo que todavía te acompaña','una puerta que se abrió sin hacer ruido','un gesto amable que recibiste','algo que antes pedías y hoy ya tienes','un descanso que llegó a tiempo','la voz de alguien que te quiere']},
+  fe:{v:['habla con Dios sobre','pon en manos de Dios','ofrécele a Dios','confía a Dios','pídele a Dios serenidad para','dedica una oración a','ora por','encomienda a Dios'],
+   o:['una decisión que te pesa','una preocupación que no te deja descansar','alguien a quien quieres','un día que apenas empieza','un temor que aún no has dicho en voz alta','algo que todavía no entiendes','una tarea que te cansa','una conversación pendiente']},
+  familia:{v:['pregúntale a alguien de tu familia por','escucha con interés','comparte','recuerda','guarda en la memoria','cuéntale a alguien de tu familia sobre','busca un momento para hablar de','revive junto a los tuyos'],
+   o:['una canción que les gustaba cuando eran jóvenes','una historia de la infancia','la receta que se repite en tu casa','una costumbre que viene de tus abuelos','un recuerdo de una comida compartida','un lugar donde crecieron','una anécdota que todos cuentan distinto','un consejo que recibiste de niño','una fecha que significa algo para tu familia']},
+  amor:{v:['agradece a quien amas','comparte con quien amas','pregúntale a quien amas por','recuerda con cariño','celebra con quien amas','escribe un mensaje a quien amas sobre','dedica unos minutos a conversar con quien amas sobre','piensa con ternura en'],
+   o:['un detalle que suele pasar desapercibido','una alegría reciente','un recuerdo que los une','algo que te hizo reír hoy','un sueño que tienen en común','una manera de apoyarse esta semana','algo que admiras en esa persona','un momento tranquilo de ayer','una pequeña victoria']},
+  amistad:{v:['recuerda con una amiga o un amigo','escríbele a alguien querido sobre','agradece a un amigo','comparte con una amistad','invita a alguien de confianza a hablar de','piensa con cariño en','celebra con un amigo','pregúntale a una amistad por'],
+   o:['un recuerdo que todavía los hace reír','una anécdota de hace tiempo','algo que están viviendo ahora','una canción de otra etapa','un lugar donde coincidieron','una conversación que quedó a medias','un consejo que te sirvió','una alegría reciente','una meta que les gustaría cumplir']},
+  perdon:{v:['reconoce con honestidad','piensa con calma en','date permiso para soltar','escribe en una nota','revisa con compasión','ten presente','pon en perspectiva','dedica un momento a'],
+   o:['una discusión que todavía pesa','una palabra que dijiste sin pensar','un malentendido que sigue abierto','un error que quieres reparar','una conversación que quedó tensa','una expectativa que ya no puedes sostener','una culpa que has cargado demasiado tiempo','una situación que no pudiste resolver','algo que dijeron y todavía duele']},
+  esperanza:{v:['recuerda','imagina','da un paso pequeño hacia','reconoce','confía en','valora','mira con esperanza','dedica un momento a pensar en'],
+   o:['un plan que apenas empieza','una puerta que todavía puede abrirse','un cambio que ya empezó sin que lo notaras','una meta a tu medida','una mañana distinta','una versión más serena de tu semana','el siguiente paso que sí está a tu alcance','una razón para seguir intentándolo']},
+  alegria:{v:['regálate','busca','comparte','recuerda','permítete disfrutar de','celebra','ríete recordando','haz espacio hoy para'],
+   o:['una canción que te ponga a bailar','una risa sin motivo','algo que te haga sentir niño o niña por un rato','un juego sencillo','un plato que te guste','una anécdota graciosa','un paseo sin destino','un baile en la sala de tu casa','un momento de humor con alguien']},
+  solidaridad:{v:['ofrece tu compañía','escucha sin interrumpir','ofrece una palabra amable','pregúntale cómo está','dedica unos minutos de tu día','ofrece tu ayuda','agradece con un mensaje','regala un gesto de cariño'],
+   o:['a un vecino que vive solo','a una persona que atraviesa un mal momento','a un compañero que parece cansado','a alguien que ayuda sin que lo noten','a un familiar que hace tiempo no ves','a un amigo que se siente solo','a quien lleva días sin descansar','a alguien que acaba de llegar y no conoce a nadie']},
+  pausa:{v:['nota','siente','observa','percibe','reconoce','dale atención a','quédate un momento con','regresa con suavidad a'],
+   o:['el peso de tus pies en el suelo','el aire que entra y sale sin esfuerzo','los sonidos que te rodean','tus hombros cuando se aflojan','la temperatura del agua en tus manos','la luz que entra por la ventana','la manera en que respiras ahora','el descanso de tu mandíbula','el silencio que hay entre dos ruidos']},
+  tiempo:{v:['no pospongas','dale tiempo a','reserva unos minutos para','agenda hoy','elige con cuidado','recupera','protege','dedica tiempo a'],
+   o:['una conversación que vienes aplazando','una llamada que te hará bien','una comida sin pantallas','un paseo corto','una tarde sin prisa','un abrazo que estás guardando','un proyecto que te ilusiona','una visita pendiente']}
  };
- const mantras=['Respira. Agradece. Vive.','Escucha. Comprende. Abraza.','Detente. Mira. Agradece.','Ama. Ayuda. Confía.','Descansa. Sonríe. Vuelve.','Mira. Siente. Vive.'];
- const words=['Vive.','Respira.','Agradece.','Ama.','Abraza.','Confía.','Escucha.','Sonríe.','Renace.','Vive el hoy.'];
- const unique=Object.entries(textByTheme).flatMap(([theme,lines])=>lines.map(text=>({text,kind:theme==='pausa'?'pause':'reflection',theme,repeatable:false})));
- const recurring=[...words.map(text=>({text,kind:'word',repeatable:true})),...mantras.map(text=>({text,kind:'mantra',repeatable:true}))];
- // An independent shuffle in memory: no full reflection repeats while the tab stays open.
- // Do not claim persistence between sessions/devices without a server or storage.
- let deck=[],recentRecurring=-1,lastTheme='',lastText='';
- function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+ const OPEN=['Hoy','Si puedes','Sin prisa','Esta mañana','Esta tarde','Esta noche','Antes de que termine el día','Cuando tengas un momento','En algún momento de hoy','Aunque el día esté lleno','Por un instante','Si hoy te sobra un minuto','Quizás ahora','Mientras el día sigue su curso','Entre una tarea y otra','Cuando la casa esté en silencio','Al terminar lo urgente','Si te nace','Sin exigirte demasiado','Con la próxima respiración','Antes de revisar el teléfono','Cuando todo parezca apurado','Al despertar','Cuando llegue una pausa','Un poco más tarde','Si el día lo permite','Aunque sea por poco tiempo','En este momento','Cuando puedas','Antes de dormir'];
+ const MOD=['con calma','sin prisa','con el corazón tranquilo','aunque sea un minuto','aunque nadie lo note','con toda tu atención','a tu propio ritmo','con sencillez','aunque el día haya sido largo','con un poco de paciencia','con sinceridad','como mejor puedas','aunque tengas pendientes','de manera sencilla','con humildad','sin que nada más te interrumpa','con la mente un poco más ligera','sin darle más vueltas','con calidez','con suavidad','aunque hoy cueste un poco','con respeto','con presencia','sin pedirte perfección'];
+ const CLOSE=['Eso también cuenta.','Con eso es suficiente por ahora.','No hace falta más.','Lo pequeño también importa.','Mañana habrá otro comienzo.','Hoy ya es bastante.','Tu ritmo es el correcto.','Nada de esto es una tarea.','Puedes volver a esto cuando quieras.','Lo demás puede esperar.','Quizás sea lo único que necesitabas hoy.','Que sea sin exigencias.','Hay valor en lo sencillo.','Esto también es vivir.','Un paso pequeño sigue siendo un paso.','El resto puede esperar un rato.','Regresa a esto cuando lo necesites.','No necesitas hacerlo perfecto.','Vale la pena detenerse aquí.','Quédate con lo que sientas.','Basta con empezar.','Tómate el tiempo que haga falta.','Es una buena manera de seguir.','La vida también ocurre así.'];
+ const THEMES=Object.keys(DATA);
+ const COMBOS=THEMES.reduce((n,t)=>n+DATA[t].v.length*DATA[t].o.length,0)*(OPEN.length+1)*(MOD.length+1)*(CLOSE.length+1);
+ const SEEN_KEY='vive.seen.v2',SEEN_MAX=4000;
+ let seen=new Set();
+ try{const raw=JSON.parse(localStorage.getItem(SEEN_KEY)||'[]');if(Array.isArray(raw))seen=new Set(raw.slice(-SEEN_MAX));}catch(_){}
+ function remember(id){seen.add(id);if(seen.size>SEEN_MAX){seen=new Set([...seen].slice(-SEEN_MAX));}try{localStorage.setItem(SEEN_KEY,JSON.stringify([...seen]));}catch(_){}}
+ const rnd=n=>Math.floor(Math.random()*n);
+ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+ let bag=[];const recent={theme:[],v:[],o:[],op:[],mo:[],cl:[]};
+ const push=(k,x,n)=>{recent[k].push(x);if(recent[k].length>n)recent[k].shift();};
+ function pick(k,size,n){for(let i=0;i<40;i++){const x=rnd(size);if(!recent[k].includes(x))return x;}return rnd(size);}
+ function compose(t,v,o,op,mo,cl){
+  const d=DATA[t];let core=d.v[v]+' '+d.o[o]+(mo>=0?', '+MOD[mo]:'');
+  let s=(op>=0?OPEN[op]+', '+core:core.charAt(0).toUpperCase()+core.slice(1))+'.';
+  if(cl>=0)s+=' '+CLOSE[cl];
+  return s;
+ }
  function newPiece(){
-   if(!deck.length)deck=shuffle([...unique]);
-   if(Math.random()<.14){let i=Math.floor(Math.random()*recurring.length);if(i===recentRecurring)i=(i+1)%recurring.length;recentRecurring=i;return recurring[i];}
-   // Diversity across consecutive ideas, with no duplication until deck exhaustion.
-   let i=deck.findIndex(item=>item.theme!==lastTheme&&item.text!==lastText);
-   if(i<0)i=0;
-   const [piece]=deck.splice(i,1);lastTheme=piece.theme;lastText=piece.text;return piece;
+  let piece=null;
+  for(let attempt=0;attempt<60&&!piece;attempt++){
+   if(!bag.length)bag=shuffle([...THEMES]);
+   let ti=bag.findIndex(x=>!recent.theme.includes(x));if(ti<0)ti=0;
+   const t=bag[ti];
+   const v=pick('v',DATA[t].v.length,3),o=pick('o',DATA[t].o.length,3);
+   const op=Math.random()<.78?pick('op',OPEN.length,8):-1,mo=Math.random()<.7?pick('mo',MOD.length,8):-1,cl=Math.random()<.82?pick('cl',CLOSE.length,8):-1;
+   const id=[t,v,o,op,mo,cl].join('.');
+   if(seen.has(id)&&attempt<59)continue;
+   bag.splice(ti,1);
+   push('theme',t,3);push('v',v,3);push('o',o,3);if(op>=0)push('op',op,8);if(mo>=0)push('mo',mo,8);if(cl>=0)push('cl',cl,8);
+   remember(id);
+   piece={text:compose(t,v,o,op,mo,cl),kind:t==='pausa'?'pause':'reflection',theme:t,repeatable:false};
+  }
+  return piece;
  }
  const rootId='vive-reader';const state={open:false,busy:false,current:null,opener:null};
  const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -88268,7 +88213,7 @@ body.theme-black .vive-reader,body.theme-dark .vive-reader{background:#080809;co
    try{const piece=newPiece();const body=r.querySelector('.vive-reader-body');
      body.className='vive-reader-body vive-kind-'+piece.kind;
      body.innerHTML=`<div class="vive-reader-copy">${safe(piece.text)}</div>`;
-     const category=r.querySelector('.vive-reader-category');if(category)category.textContent=({dios:'Fe',gratitud:'Gratitud',familia:'Familia',padres:'Familia',abuelos:'Familia',hijos:'Familia',amistad:'Amistad',amor:'Amor',pareja:'Amor',perdon:'Perdón',esperanza:'Esperanza',pausa:'Pausa',tiempo:'Presente',presente:'Presente',alegria:'Alegría',solidaridad:'Humanidad',humildad:'Humildad'}[piece.theme]||'Lo esencial');
+     const category=r.querySelector('.vive-reader-category');if(category)category.textContent=({fe:'Fe',dios:'Fe',gratitud:'Gratitud',familia:'Familia',padres:'Familia',abuelos:'Familia',hijos:'Familia',amistad:'Amistad',amor:'Amor',pareja:'Amor',perdon:'Perdón',esperanza:'Esperanza',pausa:'Pausa',tiempo:'Presente',presente:'Presente',alegria:'Alegría',solidaridad:'Humanidad',humildad:'Humildad'}[piece.theme]||'Lo esencial');
      state.current=piece;
    }finally{b.disabled=false;state.busy=false;}
  }
@@ -88280,7 +88225,7 @@ body.theme-black .vive-reader,body.theme-dark .vive-reader{background:#080809;co
    if(!state.open)return;if(e.key==='Escape'){e.preventDefault();close();return;}
    if(e.key==='Tab'){const r=document.getElementById(rootId);if(!r)return;const controls=[...r.querySelectorAll('button:not([disabled])')];const first=controls[0],last=controls[controls.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
  });
- window.ViveModule=Object.freeze({open:()=>open(document.activeElement),close});
+ window.ViveModule=Object.freeze({open:()=>open(document.activeElement),close,stats:()=>({themes:THEMES.length,combinations:COMBOS})});
 })();
 </script>
 
@@ -89812,6 +89757,16 @@ html body.theme-black #app#app .v742-primary-kpi .v732-kpi-value.v968-neg,html b
 html body.theme-black #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-up,html body.theme-dark #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-up{color:#4fdcb0!important}
 html body.theme-black #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-down,html body.theme-dark #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-down{color:#ff8da5!important}
 html body #app#app .v742-primary-kpi .v732-kpi-ornament i{background:linear-gradient(180deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 26%,#fff),transparent)!important}
+</style>
+<style id="v969-status-scrim">
+/* V969 · Zona de la barra de estado / isla dinámica: el contenido que se desplaza por debajo queda difuminado y velado, nunca legible */
+@media (max-width:790px){
+ html::after{content:"";position:fixed;left:0;right:0;top:0;height:var(--v954-safe-top,0px);z-index:79;pointer-events:none;
+  background:linear-gradient(180deg,rgba(244,246,252,.94) 0,rgba(244,246,252,.9) calc(100% - 10px),rgba(244,246,252,0) 100%);
+  -webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);
+  -webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 12px),transparent);mask-image:linear-gradient(180deg,#000 calc(100% - 12px),transparent)}
+ html:has(body.theme-black)::after,html:has(body.theme-dark)::after{background:linear-gradient(180deg,rgba(0,0,0,.94) 0,rgba(0,0,0,.9) calc(100% - 10px),rgba(0,0,0,0) 100%)}
+}
 </style>
 </body>
 </html>
