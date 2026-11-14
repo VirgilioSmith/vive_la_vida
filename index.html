@@ -29097,7 +29097,14 @@ function cardPaymentSettingsTaxPct(){
 const flowRates=()=>Math.max(.0001,num(db.settings.fx)||60);
 function flowWrap(key,html,extra=''){return `<div class="flow-context ${extra}" data-flow-context="${key}">${html}</div>`}
 function flowSegment(name,choices,value){return `<div class="form-full flow-segment" data-segment="${name}">${choices.map(([id,title,desc])=>`<label class="flow-segment-option"><input type="radio" name="${name}" value="${id}" ${value===id?'checked':''}><span class="flow-segment-surface"><strong>${title}</strong><small>${desc}</small></span></label>`).join('')}</div>`}
-function flowAmountField(label,amount){return formItem('amount',label,amount,'number','required min="0.01" step="0.01" id="flowAmount"')}
+function flowAmountField(label,amount){return formItem('amount',label,amount,'text','required inputmode="decimal" autocomplete="off" spellcheck="false" pattern="[0-9]+([.,][0-9]{1,2})?" id="flowAmount"')}
+// V953: el importe acepta coma o punto. Se normaliza a punto (el formato que ya leen num()/los cálculos)
+// y se mantiene la regla existente «mayor que cero» (antes min="0.01") con un mensaje junto al campo.
+document.addEventListener('input',e=>{const f=e.target;if(f?.id!=='flowAmount')return;
+ const clean=f.value.replace(/,/g,'.').replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1');if(clean!==f.value)f.value=clean;
+ f.setCustomValidity(f.value&&!(Number(f.value)>0)?'Introduce un importe mayor que cero.':'');},true);
+document.addEventListener('invalid',e=>{const f=e.target;if(f?.id==='flowAmount'&&f.validity.valueMissing)f.setCustomValidity('Introduce el importe.');},true);
+document.addEventListener('input',e=>{const f=e.target;if(f?.id==='flowAmount'&&f.validity.customError&&f.value&&Number(f.value)>0)f.setCustomValidity('');},true);
 function guidedTransactionForm(partial={},editId=null){
  const o={type:'expense',flowMode:'spend',date:today(),amount:'',currency:'DOP',category:'Otros gastos',subcategory:'',accountId:db.accounts.find(a=>a.kind==='cash'&&a.currency==='DOP')?.id||db.accounts[0]?.id||'',toAccountId:'',cardId:db.cards[0]?.id||'',note:'',tags:'',targetAmount:'',sourceAmount:'',fxRate:flowRates(),paymentFxRate:flowRates(),paymentSource:'account',paymentChannel:'presencial',cardPaymentMode:'cut',transferSpeed:'normal',paymentSpeed:'normal',extraChargeMode:'none',extraBankFee:0,transferTaxable:'no',paymentTaxable:'no',...partial};
  let mode=o.flowMode||'spend';
@@ -29648,7 +29655,7 @@ function v711CompactCardPayment(f){
  });
  header.querySelector('.vop-pay-back').addEventListener('click',()=>{
   if(Number(f.dataset.studioStep)===3){studioShowStep(f,1,{force:true});setStep();}
-  else{closeModal();}
+  else if(!(window.v953BackToRegistrar&&window.v953BackToRegistrar())){closeModal();} // V953: «Regresar» vuelve a Registrar
  });
  f.addEventListener('click',event=>{
   const b=event.target.closest('[data-studio-next],[data-studio-back]');if(!b)return;
@@ -34915,7 +34922,9 @@ innerView=function(page,selection){
 
 /* V83 · Paso ejecutivo para registrar cuotas: fuente → desglose → confirmación */
 function v83LoanPaymentSteps(f){
- if(!isMobileViewport()||f?.dataset.special!=='loan')return;
+ // V953: el mismo asistente de 3 pasos también en web (antes solo móvil): en web los tres pasos
+ // se apilaban en una columna de ~1600px con scroll interno. Misma lógica, mismos pasos.
+ if(f?.dataset.special!=='loan')return;
  const shell=f.querySelector('.other-studio-shell'),left=shell?.querySelector('.other-studio-left'),right=shell?.querySelector('.other-studio-right'),body=shell?.querySelector('.other-studio-content');
  if(!left||!right||!body)return;
  const parts=[...body.querySelectorAll(':scope > .other-studio-section-title')];const blocks=[...body.querySelectorAll(':scope > .other-studio-fields')];
@@ -41202,7 +41211,13 @@ function renderEntry(){const root=document.getElementById('modal-root');if(!root
   else keypad.before(row); // Mantener moneda de tarjeta, destino y beneficiario antes del teclado.
  }
  }
-const setError=(message,review=false)=>{const el=document.getElementById(review?'v749ReviewError':'v749EntryError');if(el)el.textContent=message||''};
+const setError=(message,review=false)=>{const el=document.getElementById(review?'v749ReviewError':'v749EntryError');if(!el)return;el.textContent=message||'';
+ // V953: en la entrada, el mensaje se muestra junto al campo que lo provoca (solo presentación).
+ if(review)return;const text=String(message||''),amount=document.getElementById('v749Amount');
+ const isAmount=/importe/i.test(text);if(amount)amount.setAttribute('aria-invalid',isAmount?'true':'false');
+ const anchor=isAmount?document.querySelector('#modal-root .v749-amount'):/categor/i.test(text)?document.querySelector('#modal-root .v749-quick'):/cuenta|tarjeta|destino|beneficiario/i.test(text)?document.querySelector('#modal-root .v749-scroll .v749-fieldline'):null;
+ if(text&&anchor&&anchor.nextElementSibling!==el)anchor.after(el);
+ if(text&&anchor)el.scrollIntoView({block:'nearest'});};
 const freshEntry=()=>{renderEntry();const el=document.getElementById('v749Amount');if(el)el.scrollIntoView({block:'nearest'})};
 const applyKey=(key)=>{const s=state(),current=String(s.amount||'');if(key==='⌫')s.amount=current.slice(0,-1);else if(key==='.'&&!current.includes('.'))s.amount=(current||'0')+'.';else if(/^\d$/.test(key)){const pts=current.split('.');if((pts.length===1||pts[1].length<2)&&current.replace(/\D/g,'').length<11)s.amount=current==='0'?key:current+key}const input=document.getElementById('v749Amount');if(input)input.value=s.amount;refreshImpact();setError('')};
 const changeMode=mode=>{const s=state();s.mode=mode;s.v749Subcategory='';s.preset=mode==='transfer'?'':(mostUsedCategories(mode)[0]||'');if(mode==='transfer')s.transferKind='own';if(mode==='income')s.v749Source='account';renderEntry()};
@@ -41322,7 +41337,7 @@ if(act==='continue'){continueToReview();return}if(act==='back'){back();return}if
 },true);
 document.addEventListener('input',e=>{if(e.target.id==='v749CategorySearch'){const q=normalize(e.target.value);document.querySelectorAll('#v749CategoryGrid button').forEach(el=>{el.hidden=!normalize(el.dataset.value).includes(q)});return}
 if(['v749SubcategorySearch','v768SourceSearch'].includes(e.target.id)){const q=normalize(e.target.value),root=e.target.id==='v749SubcategorySearch'?'#v749SubcategoryGrid':'#v768SourceList';document.querySelectorAll(root+' button').forEach(el=>{el.hidden=!normalize(el.textContent).includes(q)});return}
-if(e.target.id==='v749Amount'){const s=state();const raw=e.target.value.replace(/[^0-9.]/g,'');const [a,...b]=raw.split('.');s.amount=a.slice(0,11)+(b.length?'.'+b.join('').slice(0,2):'');if(s.amount!==e.target.value)e.target.value=s.amount;refreshImpact();return}
+if(e.target.id==='v749Amount'){const s=state();const raw=e.target.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); /* V953: acepta coma o punto decimal */const [a,...b]=raw.split('.');s.amount=a.slice(0,11)+(b.length?'.'+b.join('').slice(0,2):'');if(s.amount!==e.target.value)e.target.value=s.amount;refreshImpact();return}
 if(e.target.id==='v749Payee')state().v749Payee=e.target.value;if(e.target.id==='v749Date')state().v749Date=e.target.value;
 if(e.target.id==='v749Note'){state().v749Note=e.target.value;const f=document.querySelector('#modal-root #transactionForm[data-v749-native]');if(f)setNative(f,'note',e.target.value)}
 if(e.target.id==='v749ReviewDate'){state().v749Date=e.target.value;const f=document.querySelector('#modal-root #transactionForm[data-v749-native]');if(f)setNative(f,'date',e.target.value)}
@@ -42320,6 +42335,56 @@ document.addEventListener('submit',function(e){
 
 /* V951: puente de solo lectura para controladores externos (p. ej. V383 · abono a préstamo), que no ven las funciones internas de este bloque. */
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
+/* V953 · «Volver» a REGISTRAR. Cada operación abierta desde el asistente recuerda su pestaña
+   (Recibir/Pagar/Mover/Otros); volver reabre el asistente en esa pestaña sin guardar nada.
+   Si la operación se abrió desde otra parte de la app, se conserva el comportamiento anterior. */
+let v953Origin=null;
+const v953BackIcon='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>';
+window.addEventListener('click',e=>{ // window: se ejecuta antes que los manejadores data-act de document
+ const op=e.target.closest?.('#modal-root .v235-register-dialog .vr-register button:not(.vr-switch)');
+ if(op){v953Origin=document.querySelector('#modal-root .vr-switch.selected')?.dataset.id||ui.registrationGroup||'pay';setTimeout(()=>window.v953AddBack?.(),0);return}
+ if(e.target.closest?.('#modal-root .v235-register-close .close'))v953Origin=null;
+ const back=e.target.closest?.('#modal-root .v953-back');
+ if(back){e.preventDefault();e.stopImmediatePropagation();window.v953BackToRegistrar()}
+},true);
+window.v953BackToRegistrar=()=>{const group=v953Origin;if(!group)return false;
+ ui.registrationGroup=group;openRegisterAssistant();
+ queueMicrotask(()=>{const tab=document.querySelector(`#modal-root .vr-switch[data-id="${group}"]`);if(tab&&!tab.classList.contains('selected'))tab.click()});
+ return true};
+(()=>{const root=document.getElementById('modal-root');if(!root)return;
+ const add=(host,before)=>{if(!host||host.querySelector('.v953-back'))return;const b=document.createElement('button');b.type='button';b.className='v953-back';b.setAttribute('aria-label','Volver a Registrar');b.title='Volver a Registrar';b.innerHTML=v953BackIcon;before?host.insertBefore(b,before):host.prepend(b)};
+ // Campos de formularios de operación con estilos en línea (V790: fondo transparente, sin borde):
+ // en tema claro se dejan con fondo blanco, borde visible y texto casi negro. Solo presentación.
+ const fixFields=()=>{const dark=document.body.classList.contains('theme-dark')||document.body.classList.contains('theme-black');
+  if(!dark)root.querySelectorAll(':is(.other-studio-form,.studio-form) :is(input.field,select.field,textarea.field)').forEach(el=>{
+   if(el.type==='hidden'||el.type==='range'||el.dataset.v953Field)return;const st=el.style;
+   if(!(st.getPropertyValue('background')||st.getPropertyValue('background-color')||st.getPropertyValue('border')))return;
+   el.dataset.v953Field='1';
+   st.setProperty('background','#fff','important');st.setProperty('border','1px solid #c3cddc','important');st.setProperty('border-radius','12px','important');
+   st.setProperty('color','#0f172a','important');st.setProperty('-webkit-text-fill-color','#0f172a','important');});
+  // Pago de tarjeta: icono decorativo arriba a la derecha (tarjeta en el paso 1, comprobante en la confirmación).
+  root.querySelectorAll('form.vop-cardpay .vop-pay-header').forEach(h=>{if(h.querySelector('.v953-pay-art'))return;const a=document.createElement('span');a.className='v953-pay-art';a.setAttribute('aria-hidden','true');
+   a.innerHTML='<svg class="v953-art-card" viewBox="0 0 96 76" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-13 45 41)"><rect x="13" y="24" width="68" height="44" rx="8" fill="currentColor" opacity=".10"/><rect x="13" y="24" width="68" height="44" rx="8" stroke-width="2.6"/><path d="M13 36h68" stroke-width="5"/><path d="M22 56h16M44 56h8" stroke-width="2.4"/></g></svg>'
+    +'<svg class="v953-art-check" viewBox="0 0 96 76" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M26 8h40a4 4 0 0 1 4 4v58l-8-5-8 5-8-5-8 5-8-5-8 5V12a4 4 0 0 1 4-4z" fill="currentColor" opacity=".10"/><path d="M26 8h40a4 4 0 0 1 4 4v58l-8-5-8 5-8-5-8 5-8-5-8 5V12a4 4 0 0 1 4-4z" stroke-width="2.6"/><path d="m35 38 8 8 15-17" stroke-width="3"/></svg>';
+   h.appendChild(a);});
+  // Cabecera del préstamo: «volver» y título en una sola fila (la cabecera trae display:grid en línea).
+  root.querySelectorAll('.other-studio-form .other-studio-header').forEach(h=>{if(h.dataset.v953Row||!h.querySelector(':scope>.v871-loan-topbar'))return;h.dataset.v953Row='1';
+   h.style.setProperty('display','flex','important');h.style.setProperty('align-items','center','important');h.style.setProperty('gap','12px','important');});};
+ const inject=()=>{fixFields();
+  if(!root.children.length){v953Origin=null;return}
+  if(!v953Origin)return;
+  add(root.querySelector('.v749-layer[data-v749-stage="entry"] .v749-head'));      // Gasto · Ingreso · Transferencia
+  add(root.querySelector('.v261-dialog-header .v261-header-spacer'));               // Pagar servicio: ocupa el hueco izquierdo de la cabecera
+ };
+ window.v953AddBack=inject;
+ new MutationObserver(inject).observe(root,{childList:true,subtree:true});
+})();
+/* V953: confirmación visible al registrar en web. Solo se anuncia cuando el formulario se cerró
+   y existe un movimiento nuevo (no se presume éxito). En móvil el flujo V749 ya muestra su aviso. */
+window.addEventListener('submit',e=>{const f=e.target;if(f?.id!=='transactionForm'||isMobileViewport())return;
+ const before=(db.transactions||[]).length,type=f.elements.type?.value||'';
+ setTimeout(()=>{if(f.isConnected||(db.transactions||[]).length<=before)return;
+  toast(type==='income'?'Ingreso registrado':type==='expense'||type==='card_charge'?'Gasto registrado':'Movimiento registrado');},350);},true);
 })();
 
 
@@ -88876,6 +88941,521 @@ html body #modal-root.v952-kb-open .v749-choice-grid button{min-height:68px!impo
 html body #modal-root.v952-kb-open .v749-choice-grid button .v749-choice-icon{font-size:21px!important}
 html body #modal-root .v749-sheet-inner:focus{outline:none}
 html body #modal-root .v749-sheet-inner:focus-visible{outline:2px solid var(--v749-accent,#7165ee);outline-offset:-2px}
+</style>
+<style id="v953-registrar-finish">
+/* ==========================================================================
+   V953 · Cierre del flujo REGISTRAR (web y móvil)
+   Solo presentación: legibilidad, áreas táctiles, ajuste a 100dvh y bloqueo
+   del fondo. No cambia cálculos, datos ni reglas de negocio.
+   ========================================================================== */
+:root{
+ --v953-ink:#0f172a;          /* texto principal casi negro */
+ --v953-muted:#45556e;        /* texto secundario ≥ 6:1 sobre fondos claros */
+ --v953-line:#c3cddc;         /* borde visible de campos */
+ --v953-field:#ffffff;        /* fondo de campos */
+ --v953-danger:#b42335;       /* déficit / error legible */
+ --v953-tap:44px;             /* área táctil mínima */
+ --v953-radius:12px;
+ --v953-gap:clamp(4px,1dvh,9px);
+}
+/* Fondo bloqueado mientras haya una capa abierta en #modal-root (se libera al cerrarla). */
+html:has(#modal-root>*),html:has(#modal-root>*) body{overflow:hidden!important;overscroll-behavior:none}
+
+/* ---------- Legibilidad (tema claro) ---------- */
+html body:not(.theme-dark):not(.theme-black) #modal-root :is(.v749-subtitle,.v749-amount small,.v749-impact small,.v749-illustrated p,.v749-confirm-row>span,.v749-illustrated small){color:var(--v953-muted)!important;-webkit-text-fill-color:var(--v953-muted)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root .v749-deficit strong{color:var(--v953-danger)!important;-webkit-text-fill-color:var(--v953-danger)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root .v749-error{color:var(--v953-danger)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root .v749-mid{color:#4f4ad6!important}
+html body #modal-root .v749-scroll>.v749-error{margin:2px 4px 6px!important;font-size:12px!important;font-weight:650!important;line-height:1.3!important}
+html body #modal-root .v749-error:empty{display:none!important}
+/* Botón principal: mismo morado, un tono más profundo para que el texto blanco supere 4.5:1. */
+html body #modal-root .v749-layer[data-v749-stage] .v749-primary{min-height:var(--v953-tap)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root .v749-primary:not(:disabled){background:linear-gradient(120deg,#5853dc,#625ee8)!important;color:#fff!important}
+
+/* ---------- Campos: fondo blanco, borde visible, texto casi negro ---------- */
+html body:not(.theme-dark):not(.theme-black) #modal-root .v749-layer[data-v749-stage="entry"] .v749-amount input#v749Amount,
+html body:not(.theme-dark):not(.theme-black) #modal-root .v749-confirm-row :is(input,select),
+html body:not(.theme-dark):not(.theme-black) #modal-root .v749-confirm-row :is(#v749ReviewDate,#v749Note){
+ background:var(--v953-field)!important;border:1px solid var(--v953-line)!important;border-radius:var(--v953-radius)!important;
+ color:var(--v953-ink)!important;-webkit-text-fill-color:var(--v953-ink)!important;box-shadow:none!important;
+}
+html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-amount input#v749Amount{padding:2px 10px!important;margin-top:2px!important;max-width:100%!important}
+html body #modal-root .v749-confirm-row :is(input,select,#v749ReviewDate,#v749Note){min-height:40px!important;padding:6px 10px!important;max-width:62%!important;text-align:right}
+html body:not(.theme-dark):not(.theme-black) #modal-root .v749-confirm-row input::placeholder{color:#5b6a82!important;-webkit-text-fill-color:#5b6a82!important;opacity:1!important}
+html body #modal-root .v749-amount input#v749Amount[aria-invalid="true"]{border-color:var(--v953-danger)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--v953-danger) 22%,transparent)!important}
+
+/* ---------- Áreas táctiles ≥ 44px ---------- */
+html body #modal-root .v795-operations>summary{min-height:var(--v953-tap)!important;display:flex!important;align-items:center!important}
+html body #modal-root .v749-layer .v749-fieldline{min-height:var(--v953-tap)!important}
+html body #modal-root .v749-layer .v749-fieldline button{min-height:var(--v953-tap)!important;display:inline-flex!important;align-items:center!important}
+html body #modal-root .v749-layer .v773-editable>button{min-height:var(--v953-tap)!important;display:inline-flex!important;align-items:center!important;justify-content:flex-end!important}
+html body #modal-root .v749-layer .v749-confirm-row{padding-block:4px!important;min-height:48px!important;align-items:center!important}
+
+/* ---------- Confirmación compacta: todo cabe sin desplazarse ---------- */
+html body #modal-root .v749-layer[data-v749-stage="review"] .v749-illustrated{min-height:0!important;padding:12px 16px!important}
+html body #modal-root .v749-layer[data-v749-stage="review"] .v749-artwork{flex-basis:64px!important;width:64px!important;height:64px!important}
+html body #modal-root .v749-layer[data-v749-stage="review"] .v749-artwork svg{width:64px!important;height:64px!important}
+html body #modal-root .v749-layer[data-v749-stage="review"] .v749-impact{margin-top:var(--v953-gap)!important;padding-block:10px!important}
+html body #modal-root .v749-layer[data-v749-stage="review"] .v749-impact-track{margin-top:8px!important}
+html body #modal-root .v749-layer[data-v749-stage="review"] .v749-confirm-rows{margin-top:var(--v953-gap)!important}
+
+/* ---------- Pantallas bajas (≤740px de alto): menos aire, mismas áreas táctiles ---------- */
+@media (max-height:740px){
+ html body #modal-root .v749-layer .v749-subtitle{display:none!important}
+ html body #modal-root .v749-layer .v749-head{min-height:40px!important;height:40px!important;margin-bottom:0!important}
+ html body #modal-root .v749-layer .v749-title{font-size:22px!important;margin-bottom:4px!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-impact{padding-block:7px!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-impact-head{display:none!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-impact-track{margin-top:5px!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-amount{min-height:0!important;padding:6px 11px!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-keypad button{min-height:var(--v953-tap)!important;height:var(--v953-tap)!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-segment button{height:var(--v953-tap)!important;min-height:var(--v953-tap)!important}
+ html body #modal-root .v749-layer[data-v749-stage="review"] .v749-impact-head{display:none!important}
+ /* «Más operaciones» sube a la fila del botón cerrar: libera una fila completa. */
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-screen{position:relative!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v795-operations-rail{position:absolute!important;top:max(8px,env(safe-area-inset-top,0px));left:15px;right:70px;min-height:0!important;margin:0!important;justify-content:flex-start!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-head{min-height:46px!important;height:46px!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v795-operations-panel{left:0!important;right:auto!important;max-width:calc(100vw - 30px)!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-amount small{display:none!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-fieldline{padding-block:0!important;min-height:var(--v953-tap)!important}
+ html body #modal-root .v749-layer[data-v749-stage="review"] .v749-illustrated{padding:8px 14px!important}
+ html body #modal-root .v749-layer[data-v749-stage="review"] .v749-artwork,html body #modal-root .v749-layer[data-v749-stage="review"] .v749-artwork svg{width:48px!important;height:48px!important;flex-basis:48px!important}
+}
+</style>
+<style id="v953-registrar-web">
+/* V953 · Registrar en web (formulario fastx): cabe en el modal sin desplazarse,
+   campos legibles y áreas táctiles ≥44px. Solo presentación. */
+html body #modal-root#modal-root .modal:has(.fastx-shell){max-height:calc(100dvh - 24px)!important;height:auto!important;margin-block:auto!important}
+html body #modal-root#modal-root .fastx-head{position:relative!important;padding-block:14px 12px!important}
+html body #modal-root#modal-root .fastx-head .fastx-head-top{position:absolute!important;top:12px;right:14px;height:auto!important;margin:0!important;z-index:2}
+html body #modal-root#modal-root .fastx-head .v700-heading{padding-right:56px!important;align-items:center!important}
+html body #modal-root#modal-root .fastx-body{gap:8px!important;padding-block:12px 14px!important}
+html body #modal-root#modal-root .fastx-amount-zone{padding:9px 14px 8px!important}
+html body #modal-root#modal-root .fastx-shell .v380-expense-preview{margin-top:2px!important;padding:10px 14px!important;gap:6px!important}
+html body #modal-root#modal-root .fastx-shell .v380-expense-preview .v380-exp-figures{gap:8px!important}
+html body #modal-root#modal-root .fastx-shell .v380-expense-preview .v380-exp-figures>*{padding:8px 12px!important;min-height:0!important}
+html body #modal-root#modal-root .fastx-shell .v380-expense-preview .v380-exp-figures strong{font-size:20px!important;line-height:1.15!important}
+html body #modal-root#modal-root .fastx-shell .fastx-right{padding-block:16px!important}
+/* Campos: fondo blanco, borde visible, texto casi negro. */
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-shell :is(input.field,select.field,textarea.field),
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-amount-zone #flowAmount{
+ background:var(--v953-field)!important;border:1px solid var(--v953-line)!important;color:var(--v953-ink)!important;-webkit-text-fill-color:var(--v953-ink)!important;
+}
+html body #modal-root#modal-root .fastx-amount-zone #flowAmount{border-radius:var(--v953-radius)!important;height:58px!important;min-height:58px!important;padding:0 12px!important}
+html body #modal-root#modal-root .fastx-amount-zone #flowAmount:invalid:not(:placeholder-shown):not(:focus){border-color:var(--v953-danger)!important}
+/* Legibilidad de etiquetas y descripciones (tema claro). */
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-shell :is(.fastx-description,.filter-label,.fastx-amount-cap>span:not(.fastx-currency-badge),.fastx-section-title small,.fastx-receipt-sub,.fastx-receipt-head,.fastx-notice,.fastx-fold summary,.v380-expense-preview p,.v380-expense-preview small,.fastx-value-card small,.fastx-value-card span){color:var(--v953-muted)!important;-webkit-text-fill-color:var(--v953-muted)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-mode-tabs button:not(.active){color:var(--v953-muted)!important}
+/* Áreas táctiles. */
+html body #modal-root#modal-root .fastx-shell :is(.fastx-mode-tabs button,.fastx-category-grid button,.fastx-methods button,.fastx-close,.fastx-fold>summary){min-height:var(--v953-tap)!important}
+html body #modal-root#modal-root .fastx-shell .fastx-close{min-width:var(--v953-tap)!important}
+/* Texto en color de acento: mismo morado, un tono más profundo para superar 4.5:1. */
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-shell :is(.v700-eyebrow,.v700-index,.fastx-currency-badge,.fastx-mode-tabs button.active,.fastx-method.active,.fastx-cat-ico,.fastx-category-grid button.active,.fastx-category-grid button[aria-pressed="true"],.fastx-category-grid button.active span){color:#4f4ad6!important;-webkit-text-fill-color:#4f4ad6!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-shell .fastx-method:not(.active){color:var(--v953-muted)!important}
+/* Estructura: el formulario ocupa el alto del modal y solo el cuerpo se ajusta (sin empujar el pie). */
+html body #modal-root#modal-root .modal:has(.fastx-shell)>form.fastx-form{display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:100%!important}
+html body #modal-root#modal-root .fastx-form>.fastx-shell{flex:1 1 auto!important;min-height:0!important;height:auto!important;grid-template-rows:minmax(0,1fr) auto!important}
+html body #modal-root#modal-root .fastx-shell>.fastx-entry,html body #modal-root#modal-root .fastx-shell>.fastx-right{min-height:0!important;max-height:none!important}
+html body #modal-root#modal-root .fastx-shell .fastx-bottom-actions{padding-block:10px!important}
+html body #modal-root#modal-root .modal-layer:has(.fastx-shell){padding-block:12px!important}
+html body #modal-root#modal-root .fastx-body{gap:6px!important;padding-block:10px 10px!important}
+html body #modal-root#modal-root .fastx-amount-zone #flowAmount{height:48px!important;min-height:48px!important}
+html body #modal-root#modal-root .fastx-shell .v380-expense-preview{padding:8px 14px!important;gap:4px!important}
+html body #modal-root#modal-root .fastx-shell .v380-expense-preview .v380-exp-figures>*{padding:6px 12px!important}
+html body #modal-root#modal-root .fastx-shell :is(.fastx-category-section,.fastx-source-section){gap:6px!important}
+html body #modal-root#modal-root .fastx-shell .fastx-fold{padding-top:0!important}
+/* En pantallas de ≤960px de alto, la nota aclaratoria de la vista previa se oculta (la misma
+   aclaración está en «Resumen en vivo» de la columna derecha) para que el formulario quepa. */
+@media (max-height:960px){html body #modal-root#modal-root .fastx-shell .v380-expense-preview>p{display:none!important}}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-shell .fastx-right :is(small,.v107-pill-arrow,.fastx-receipt-details span:not([class*="amount"]):not([class*="value"])),
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-shell .field+span,
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-shell label>span[aria-hidden="true"]{color:var(--v953-muted)!important;-webkit-text-fill-color:var(--v953-muted)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-bottom-actions .btn:not(.ghost):not(:disabled){background:linear-gradient(120deg,#5853dc,#625ee8)!important;color:#fff!important;border-color:#5853dc!important}
+/* Botón de información pequeño: área táctil ampliada a 44px sin mover el diseño. */
+html body #modal-root#modal-root .fastx-shell .fastx-right button{position:relative}
+html body #modal-root#modal-root .fastx-shell .fastx-right button:not([class*="btn"])::before{content:"";position:absolute;inset:max(-9px,calc((44px - 100%) / -2))}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-shell :is(.v134-more-chevron,.smart-chevron,summary>span:last-child){color:var(--v953-muted)!important;-webkit-text-fill-color:var(--v953-muted)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .fastx-shell .field::placeholder{color:#5b6a82!important;-webkit-text-fill-color:#5b6a82!important;opacity:1!important}
+/* Montos largos completos (sin partir «RD$58,796» en dos líneas). */
+html body #modal-root#modal-root .fastx-shell .fastx-right strong{white-space:nowrap!important;overflow-wrap:normal!important;font-size:clamp(14px,1.25vw,19px)!important}
+html body #modal-root#modal-root .fastx-shell .fastx-value-card strong{font-size:clamp(26px,2.4vw,34px)!important}
+</style>
+<style id="v953-registrar-assistant">
+/* V953 · Asistente REGISTRAR (pestañas Recibir / Pagar / Mover / Otros).
+   Hoja inferior en móvil y modal centrado en web, dimensionados por contenido. Solo presentación. */
+#modal-root{--v953-tab-h:72px}
+/* Pestañas: misma altura en ambas versiones; los textos largos se ajustan en vez de cortarse. */
+html body #modal-root#modal-root .vr-switcher .vr-switch{min-height:var(--v953-tab-h)!important;height:var(--v953-tab-h)!important;padding:8px 4px!important}
+html body #modal-root#modal-root .vr-switcher .vr-switch>span:not(.vr-switch-symbol){white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.15!important;text-overflow:clip!important;overflow:visible!important}
+/* Legibilidad (tema claro). */
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .v235-register-dialog :is(.v235-register-close>span,.vr-workspace-head p,.vr-small-kicker,.vr-timehint,.vr-group-heading,.vr-group-heading *,.vr-switch:not(.selected) span,.vr-operation small,.vr-guidance p){color:var(--v953-muted)!important;-webkit-text-fill-color:var(--v953-muted)!important}
+
+/* ---------- Web: modal ajustado al contenido ---------- */
+@media (min-width:791px){
+ html body #modal-root#modal-root .modal.v235-register-dialog{height:auto!important;min-height:0!important;max-height:min(90dvh,calc(100dvh - 24px))!important;width:min(900px,calc(100vw - 48px))!important;margin:auto!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-register{padding:12px 28px 24px!important;overflow:visible!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-workspace{padding:20px 24px!important;min-height:0!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-workspace-head{align-items:flex-end!important;margin-bottom:12px!important}
+ /* Cuadrícula y bloque explicativo alineados: el bloque empieza con las tarjetas y termina con ellas. */
+ html body #modal-root#modal-root .v235-register-dialog .vr-content{align-items:stretch!important;column-gap:16px!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-guidance{align-self:stretch!important;margin-top:25px!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+}
+
+/* ---------- Móvil: hoja inferior por contenido ---------- */
+@media (max-width:790px){
+ html body #modal-root#modal-root .modal.v235-register-dialog{height:auto!important;min-height:0!important;max-height:calc(100dvh - env(safe-area-inset-top,0px))!important;margin-top:auto!important}
+ /* Encabezado REGISTRAR y botón cerrar siempre bajo la barra de estado. */
+ html body #modal-root#modal-root .v235-register-close{padding-top:max(10px,env(safe-area-inset-top,0px))!important;padding-bottom:6px!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-register{overflow:visible!important;padding-bottom:max(12px,env(safe-area-inset-bottom,0px))!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-workspace{padding-block:8px 6px!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-workspace-head{margin-bottom:8px!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-switcher{margin-bottom:10px!important}
+ /* Otros: cuadrícula de 2 columnas con tarjetas compactas; títulos y descripciones completos. */
+ html body #modal-root#modal-root .vr-other-operations{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ html body #modal-root#modal-root .vr-other-operations .vr-operation{position:relative!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-start!important;gap:6px!important;min-height:var(--v953-tap)!important;height:auto!important;padding:10px 11px 11px!important;text-align:left!important}
+ html body #modal-root#modal-root .vr-other-operations .vr-operation-icon{width:32px!important;height:32px!important;min-width:32px!important;flex:0 0 32px!important;border-radius:10px!important}
+ html body #modal-root#modal-root .vr-other-operations .vr-operation-copy{min-width:0!important;width:100%!important;padding-right:0!important}
+ html body #modal-root#modal-root .vr-other-operations .vr-operation-copy strong{display:block!important;font-size:14px!important;line-height:1.2!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
+ html body #modal-root#modal-root .vr-other-operations .vr-operation-copy small{display:block!important;font-size:11.5px!important;line-height:1.3!important;margin-top:3px!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;-webkit-line-clamp:unset!important}
+ html body #modal-root#modal-root .vr-other-operations .vr-chevron{position:absolute!important;top:12px!important;right:10px!important;width:16px!important;height:16px!important}
+ /* Bloque explicativo: una línea breve. */
+ html body #modal-root#modal-root .v235-register-dialog .vr-guidance{padding:9px 12px!important;margin-top:8px!important;min-height:0!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-guidance h4{font-size:13px!important;line-height:1.3!important;margin:0!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-guidance p{display:none!important}
+}
+/* Botón «Volver a Registrar» (Gasto/Ingreso/Transferencia y Pagar servicio). */
+html body #modal-root .v953-back{display:inline-grid;place-items:center;width:var(--v953-tap);height:var(--v953-tap);min-width:var(--v953-tap);border-radius:50%;border:1px solid var(--v953-line);background:#fff;color:var(--v953-ink);cursor:pointer;flex:0 0 auto;padding:0}
+html body.theme-dark #modal-root .v953-back,html body.theme-black #modal-root .v953-back{background:#1d1d22;color:#fff;border-color:#3a3a42}
+html body #modal-root .v749-layer .v749-head:has(.v953-back){display:flex!important;justify-content:space-between!important;align-items:center!important}
+@media (max-height:740px){html body #modal-root .v749-layer .v749-head:has(.v953-back)~.v795-operations-rail{left:69px!important}}
+html body #modal-root .v261-header-spacer:has(.v953-back){width:var(--v953-tap)!important;height:auto!important;align-self:center!important;display:grid!important}
+</style>
+<style id="v953-operation-forms">
+/* V953 · Formularios de operaciones (Devolución, Conciliar, Beneficios, Préstamo, Servicio,
+   Pagar tarjeta) y resto de modales. Solo presentación, tema claro.
+   --v953-accent = la paleta elegida por la persona, un 16% más profunda: mantiene el morado
+   (o la paleta personalizada) y lleva el texto sobre/en ese color a ≥4.5:1. */
+html body:not(.theme-dark):not(.theme-black) #modal-root{--v953-accent:color-mix(in srgb,var(--vive-theme-color,#6d69f1) 84%,#10123a)}
+html body:not(.theme-dark):not(.theme-black) #modal-root :is(.modal,form,.v749-layer,.v749-sheet,.v789-product-backdrop){--financial-action:var(--v953-accent);--financial-accent:var(--v953-accent);--v789-accent:var(--v953-accent);--v827-accent:var(--v953-accent);--v790-accent:var(--v953-accent);--os-accent:var(--v953-accent);--v785-accent:var(--v953-accent);--v797-accent:var(--v953-accent);--v801-accent:var(--v953-accent);--v815-accent:var(--v953-accent);--v826-accent:var(--v953-accent);--v873-accent:var(--v953-accent);--vc-accent:var(--v953-accent);--v774-active:var(--v953-accent);--v768-a:var(--v953-accent);--vy-accent:var(--v953-accent);--v882-accent:var(--v953-accent);--v748-accent:var(--v953-accent);--v748-accent-strong:var(--v953-accent);--v440-accent:var(--v953-accent);--v7-accent:var(--v953-accent);--v424-accent-strong:var(--v953-accent);--v438-base:var(--v953-accent);--v844-accent:var(--v953-accent);--v749-accent:var(--v953-accent);--v700-accent:var(--v953-accent);--v710-accent:var(--v953-accent);--v876-accent-source:var(--v953-accent)}
+/* Campos: fondo blanco, borde visible, texto casi negro. */
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root :is(.other-studio-form,.studio-form,.v261-service-dialog,.modal) :is(input.field,select.field,textarea.field,#loanAmount):not([type=hidden]):not([type=range]):not([type=checkbox]):not([type=radio]){
+ background:var(--v953-field)!important;border:1px solid var(--v953-line)!important;border-radius:var(--v953-radius)!important;
+ color:var(--v953-ink)!important;-webkit-text-fill-color:var(--v953-ink)!important;box-shadow:none!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root :is(.other-studio-form,.studio-form,.modal) .field::placeholder{color:#5b6a82!important;-webkit-text-fill-color:#5b6a82!important;opacity:1!important}
+html body #modal-root#modal-root .other-studio-form .other-studio-amount :is(input.field,#loanAmount){padding-inline:10px!important;min-height:48px!important}
+/* Textos secundarios legibles (fuera de tarjetas de color). */
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root :is(.other-studio-form,.studio-form,.v261-service-dialog) :is(.filter-label,em,.f844-due,.f837-payment-summary span,.financial-header-copy p,.other-studio-header p,.v261-dialog-heading p,small,p):not([class*="error"]):not([role="alert"]):not([class*="due"]):not([class*="hero"] *):not([class*="hero"]):not(.v844-primary *):not(.btn *):not([aria-pressed="true"] *):not([class*="selected"] *):not([class*="active"] *):not([aria-checked="true"] *):not(.flow-segment-option *){color:var(--v953-muted)!important;-webkit-text-fill-color:var(--v953-muted)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .v83-loan-pay-nav button:not(.selected){color:var(--v953-muted)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .v261-due.near{color:#8a5a12!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .v261-due.later{color:#2c6a61!important}
+/* Conmutadores seleccionados (p. ej. «+ Aumentar»): texto blanco sobre el acento. */
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .other-studio-form :is(button[aria-pressed="true"],button.active,button.selected):not(.v83-loan-pay-nav button){color:#fff!important;-webkit-text-fill-color:#fff!important}
+/* Áreas táctiles ≥44px. */
+html body #modal-root#modal-root :is(.other-studio-form,.studio-form,.v261-service-dialog,.v789-product-backdrop) :is(button,[role="button"],summary,select.field){min-height:var(--v953-tap)}
+html body #modal-root#modal-root :is(.other-studio-form,.studio-form) :is(.vop-circular-back,.other-studio-close,.v855-close){min-width:var(--v953-tap)!important;min-height:var(--v953-tap)!important}
+/* Encabezado de formularios de operación: título alineado a la izquierda y sin tocar el borde. */
+html body #modal-root#modal-root .other-studio-form .other-studio-header :is(.financial-header-copy,.financial-header-copy h2,.financial-header-copy p){text-align:left!important;justify-self:start!important;align-items:flex-start!important}
+html body #modal-root#modal-root .other-studio-form .other-studio-header .financial-header-copy{min-width:0!important;padding-right:8px!important}
+html body #modal-root#modal-root .other-studio-form .other-studio-header .financial-header-copy h2{font-size:clamp(19px,5.4vw,24px)!important;overflow-wrap:anywhere!important}
+/* Superficies con el morado fijo (no variable): mismo morado, un tono más profundo. */
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root :is(.other-studio-form .form-foot .btn:not(.ghost):not(.soft),.studio-navigation .studio-next,.v768-adjust-toggle button[aria-pressed="true"],.flow-segment-option:has(input:checked) .flow-segment-surface):not(:disabled){background-color:var(--v953-accent)!important;background-image:none!important;color:#fff!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .flow-segment-option:has(input:checked) .flow-segment-surface *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root#modal-root :is(.v793-impact-triple>div:not(:first-child),.v796-impact-values>span:last-child) strong{color:var(--v953-accent)!important;-webkit-text-fill-color:var(--v953-accent)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .other-studio-form .other-studio-header p{color:#3d4c64!important;-webkit-text-fill-color:#3d4c64!important}
+/* Áreas táctiles con prioridad suficiente frente a reglas existentes. */
+html body #modal-root#modal-root .other-studio-form :is(button,[role="button"],summary):not(.v953-skip){min-height:var(--v953-tap)!important}
+html body #modal-root#modal-root .other-studio-form .v768-adjust-toggle button{padding-inline:12px!important}
+html body #modal-root#modal-root .other-studio-form :is(.v864-close,.other-studio-close,[aria-label^="Cerrar"]){min-width:var(--v953-tap)!important}
+html body #modal-root#modal-root .other-studio-form :is([class*="amount-clear"],[aria-label*="Borrar"],[aria-label*="Limpiar"]){min-width:var(--v953-tap)!important;flex-basis:var(--v953-tap)!important}
+html body #modal-root#modal-root :is(.studio-form .vop-circular-back,.vop-pay-back,.other-studio-form .v855-back,.other-studio-form .v861-back){min-width:var(--v953-tap)!important;max-width:none!important;min-height:var(--v953-tap)!important;flex-shrink:0!important}
+@media (min-width:791px){html body #modal-root#modal-root .modal-layer:has(>.modal>form.other-studio-form[data-special]){padding-block:12px!important}}
+html body #modal-root#modal-root#modal-root#modal-root :is(form.studio-form.vop-cardpay .vop-circular-back,form.other-studio-form :is(.v854-back,.v855-back,.v857-back,.v861-back,.v864-back),.vop-pay-back){min-width:var(--v953-tap)!important;width:var(--v953-tap)!important;height:var(--v953-tap)!important}
+html body #modal-root#modal-root#modal-root#modal-root form.other-studio-form :is(.v854-back,.v855-back,.v857-back,.v861-back,.v864-back):not(:has(>svg:only-child)){width:auto!important;padding-inline:10px!important}
+html body #modal-root#modal-root#modal-root .vop-pay-header{display:grid!important;grid-template-columns:var(--v953-tap) minmax(0,1fr) auto!important;grid-template-rows:auto!important;align-items:center!important;column-gap:12px!important;padding-block:max(10px,env(safe-area-inset-top,0px)) 6px!important}
+html body #modal-root#modal-root#modal-root .vop-pay-header>*{grid-row:1!important}
+html body #modal-root#modal-root#modal-root .vop-pay-header .vop-pay-copy h2{margin:0 0 2px!important}
+/* Móvil: formularios de «Otros» compactos para caber sin desplazarse. */
+@media (max-width:790px){
+ html body #modal-root#modal-root .other-studio-form .other-studio-content{gap:6px!important;padding-bottom:4px!important}
+ html body #modal-root#modal-root .other-studio-form .other-studio-header{gap:6px!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v855-hero,.v864-hero){padding-block:0 4px!important;min-height:0!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v855-hero,.v864-hero) :is(svg,.v855-art,.v864-art,[class*="art"]){max-height:56px!important;max-width:56px!important}
+ html body #modal-root#modal-root .other-studio-form .f834-benefit-hero{padding:11px 14px!important;min-height:0!important}
+ html body #modal-root#modal-root .other-studio-form .f834-kind-select :is(button,label,[role="radio"]){min-height:var(--v953-tap)!important;height:auto!important;padding-block:6px!important}
+ html body #modal-root#modal-root .other-studio-form .f834-kind-select :is(button,label) svg{width:20px!important;height:20px!important}
+ html body #modal-root#modal-root .other-studio-form>.other-studio-shell{padding-block:10px 8px!important}
+ html body #modal-root#modal-root .other-studio-form .f834-benefit-hero :is(svg,[class*="gift"]){max-height:44px!important;max-width:44px!important}
+ html body #modal-root#modal-root .other-studio-form .other-studio-fields{gap:8px!important}
+ html body #modal-root#modal-root .other-studio-form section.other-studio-amount{padding-block:10px!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v794-recovery,.other-studio-impact){padding:12px 14px!important}
+}
+/* Cabeceras V864/V871 (Beneficios, Préstamo): el bloque de título ocupa el ancho y se alinea a la izquierda. */
+html body #modal-root#modal-root .other-studio-form :is(.v864-hero,.v871-loan-hero,.v855-hero){justify-content:flex-start!important}
+html body #modal-root#modal-root .other-studio-form :is(.v864-hero,.v871-loan-hero,.v855-hero) .financial-header-copy{flex:1 1 auto!important;margin-left:0!important;min-width:0!important;display:block!important}
+html body #modal-root#modal-root .other-studio-form :is(.v864-hero,.v871-loan-hero,.v855-hero) .financial-header-copy>*{align-self:auto!important;margin-left:0!important;text-align:left!important}
+/* Prefijo de moneda (RD$/US$) siempre por encima del campo blanco del importe. */
+html body #modal-root#modal-root .other-studio-form .other-studio-amount .v790-money-symbol{z-index:2!important}
+/* Pantallas bajas (≤700px de alto): los bloques de vista previa (solo informativos, no editables) se
+   ocultan para que el formulario y su botón quepan sin desplazarse. En Préstamo, el desglose del
+   paso 1 se oculta porque el paso 2 «Desglose» lo muestra completo. Decisión de diseño reportada. */
+@media (max-width:790px) and (max-height:700px){
+ html body #modal-root#modal-root .other-studio-form :is(.v794-recovery,.other-studio-impact,.v785-benefit-preview,.f837-payment-summary){display:none!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v864-hero,.v871-loan-hero,.v855-hero,.v861-heading) p{display:none!important}
+ html body #modal-root#modal-root .other-studio-form .f834-benefit-hero{display:none!important}
+ html body #modal-root#modal-root .other-studio-form .v83-loan-pay-nav{padding-block:4px!important}
+ html body #modal-root#modal-root .other-studio-form .f844-calendar{display:none!important}
+ html body #modal-root#modal-root .other-studio-form .f844-payhero{padding:8px 12px!important;min-height:0!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v871-loan-hero,.v864-hero,.v855-hero){padding-block:0!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v871-loan-hero,.v864-hero) :is(.v785-hero-icon,[class*="hero-icon"]){width:40px!important;height:40px!important;min-width:40px!important}
+ html body #modal-root#modal-root .other-studio-form .other-studio-fields{gap:6px!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v871-loan-topbar,.v864-topbar,.v855-topbar,.v861-topline){margin-bottom:4px!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v871-loan-hero,.v864-hero) :is(.v785-hero-icon,.v864-hero-icon){display:none!important}
+ html body #modal-root#modal-root .other-studio-form .f837-flow{gap:8px!important}
+ html body #modal-root#modal-root .other-studio-form .v83-loan-pay-nav{margin-bottom:6px!important}
+ html body #modal-root#modal-root .other-studio-form .f837-flow>label.v790-full{padding-block:5px!important;min-height:0!important}
+ html body #modal-root#modal-root .other-studio-form>.other-studio-shell{padding-block:6px 4px!important}
+ html body #modal-root#modal-root .other-studio-form .other-studio-header{margin-bottom:4px!important}
+ html body #modal-root#modal-root .other-studio-form .v83-loan-pay-nav button{min-height:var(--v953-tap)!important;height:auto!important}
+ html body #modal-root#modal-root .other-studio-form .v83-loan-pay-nav button small{height:26px!important;width:26px!important;margin-bottom:2px!important}
+}
+/* Web (≥791px): estilos base del asistente de pasos del préstamo y del pago de tarjeta, que antes
+   solo existían dentro de @media(max-width:790px). Mismos componentes; sin lógica nueva. */
+@media (min-width:791px){
+ html body #modal-root#modal-root .v83-loan-pay-nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 12px}
+ html body #modal-root#modal-root .v83-loan-pay-nav button{border:1px solid #dce6f3;border-radius:14px;background:#eff5fe;color:var(--v953-muted);padding:8px 6px;font-size:12px;font-weight:750;min-height:var(--v953-tap)}
+ html body #modal-root#modal-root .v83-loan-pay-nav button small{display:block;margin-bottom:4px;font-weight:900}
+ html body #modal-root#modal-root .v83-loan-pay-nav button.selected{background:#e1eeff;border-color:#87b0ed;color:#1f4a91}
+ html body #modal-root#modal-root .v83-loan-pay-controls{display:flex;gap:10px;margin-top:10px}
+ html body #modal-root#modal-root .v83-loan-pay-controls .btn{flex:1;min-height:48px}
+ html body #modal-root#modal-root .other-studio-form :is(.other-studio-right[hidden],.other-studio-content>[hidden],.other-studio-content[hidden],.form-foot[hidden]){display:none!important}
+ /* Pago de tarjeta: mismo orden de campos que en móvil e icono del título a tamaño de icono. */
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields{display:flex!important;flex-direction:column!important;gap:12px!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>label:has([name="cardId"]){order:10!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>label:has([name="accountId"]){order:20!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>.vop-mode-title{order:30!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>[data-segment="cardPaymentMode"]{order:40!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>.vop-pay-amount{order:50!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>label:has([name="amount"]){order:60!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>:not(label):not([data-segment]):not(.vop-pay-amount):not(.vop-mode-title){order:70!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .v802-pay-title{display:none!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .v802-pay-title svg{width:17px!important;height:17px!important}
+ /* Formularios de «Otros»: usar el alto disponible y el mismo espaciado compacto que en móvil. */
+ html body #modal-root#modal-root .modal-layer>.modal>form.other-studio-form[data-special]{max-height:calc(100dvh - 24px)!important}
+ html body #modal-root#modal-root .modal-layer>.modal>form.other-studio-form[data-special]>.other-studio-shell{max-height:calc(100dvh - 24px - 88px)!important}
+ html body #modal-root#modal-root .modal:has(>form.other-studio-form[data-special]){max-height:calc(100dvh - 24px)!important}
+ html body #modal-root#modal-root .other-studio-form .other-studio-content{gap:8px!important}
+ html body #modal-root#modal-root .other-studio-form .f837-flow{gap:8px!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v794-recovery,.other-studio-impact){padding:12px 14px!important}
+ html body #modal-root#modal-root .other-studio-form :is(.v855-back,.v861-back){min-width:var(--v953-tap)!important}
+ html body #modal-root#modal-root .other-studio-form .other-studio-shell:has(>.other-studio-right[hidden]){grid-template-columns:minmax(0,1fr)!important}
+ html body #modal-root#modal-root .other-studio-form .other-studio-shell:has(>.other-studio-right[hidden]) :is(.f837-flow,.f837-flow>*,.f844-paybox){max-width:none!important;width:100%!important}
+ html body #modal-root#modal-root .other-studio-form[data-special="loan"] :is(.other-studio-content,.other-studio-fields){grid-template-columns:minmax(0,1fr)!important}
+ html body #modal-root#modal-root .other-studio-form[data-special="loan"] .other-studio-fields>*{grid-column:1/-1!important;max-width:none!important}
+ html body #modal-root#modal-root .modal:has(>form.studio-form.vop-cardpay){height:auto!important;min-height:0!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay{height:auto!important;min-height:0!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay :is(.studio-shell,.studio-main,.studio-panels){height:auto!important;min-height:0!important;flex:0 1 auto!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-amount{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--v953-line);border-radius:18px;padding:12px 16px!important;background:#fff}
+}
+/* Préstamo · paso «Desglose»: cada importe en una fila «etiqueta | campo» (antes tarjetas de 84px). */
+html body #modal-root#modal-root .other-studio-form .v790-loan-breakdown{gap:4px!important}
+html body #modal-root#modal-root .other-studio-form .v790-loan-breakdown>label{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,46%)!important;align-items:center!important;gap:8px!important;padding:2px 10px 2px 12px!important;min-height:48px!important}
+html body #modal-root#modal-root .other-studio-form .v790-loan-breakdown>label>:is(input,.field){margin:0!important;min-height:44px!important;text-align:right!important}
+html body #modal-root#modal-root .other-studio-form .v865-step2-meta{gap:6px!important}
+html body #modal-root#modal-root .other-studio-form .v865-step2-meta>*{padding:6px 12px!important;min-height:0!important}
+html body #modal-root#modal-root .other-studio-form .v865-step2-meta :is(input,select){min-height:44px!important;height:44px!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .other-studio-form :is(.v83-loan-pay-controls .btn.ghost,.v49-quiet-tag,details>summary){color:var(--v953-muted)!important;-webkit-text-fill-color:var(--v953-muted)!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .v83-loan-pay-nav button:not(.selected){color:#3d4c64!important;-webkit-text-fill-color:#3d4c64!important}
+html body #modal-root#modal-root .v83-loan-pay-nav button{opacity:1!important}
+/* Préstamo (móvil y web): el botón volver comparte fila con el título (libera ~60px para los pasos). */
+@media all{
+ html body #modal-root#modal-root .other-studio-form .other-studio-header:has(>.v871-loan-topbar){display:flex!important;align-items:center!important;gap:12px!important;grid-template-columns:none!important}
+ html body #modal-root#modal-root .other-studio-form .v871-loan-topbar{display:contents!important}
+ html body #modal-root#modal-root .other-studio-form .v871-loan-topbar>:first-child{order:0;flex:0 0 auto!important;white-space:nowrap!important}
+ html body #modal-root#modal-root .other-studio-form .v871-loan-hero{order:1}
+ html body #modal-root#modal-root .other-studio-form .v871-loan-topbar>:not(:first-child){order:2;margin-left:auto!important;flex:0 0 auto!important}
+ html body #modal-root#modal-root .other-studio-form .v871-loan-hero{flex:1 1 auto!important;min-width:0!important;padding:0!important;min-height:48px!important;align-items:center!important}
+ html body #modal-root#modal-root .other-studio-form .v871-loan-hero .v785-hero-icon{display:none!important}
+ html body #modal-root#modal-root .other-studio-form[data-special="loan"] .other-studio-section-title{margin-block:2px 4px!important}
+}
+/* Confirmar pago de servicio (móvil): pantalla completa, volver bajo la barra de estado, botón fijo
+   abajo con zona segura y contenido compacto que cabe sin desplazarse. */
+@media (max-width:790px){ html body #modal-root#modal-root .modal-layer:has(#v917ServiceConfirm){padding:0!important;align-items:stretch!important}
+ html body #modal-root#modal-root .modal:has(#v917ServiceConfirm){margin:0!important;top:0!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important;width:100%!important}
+ html body #modal-root#modal-root .modal:has(#v917ServiceConfirm) .v261-drag{display:none!important}
+}
+/* Compactación compartida por web y móvil. */
+@media all{
+ html body #modal-root#modal-root .modal:has(#v917ServiceConfirm) .v261-dialog-header{padding-top:max(10px,env(safe-area-inset-top,0px))!important;padding-bottom:8px!important}
+ html body #modal-root#modal-root .modal:has(#v917ServiceConfirm) .v261-dialog-footer{padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
+ html body #modal-root#modal-root #v917ServiceConfirm{gap:6px!important;padding-block:6px!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v918-channel-explanation{font-size:11.5px!important;line-height:1.3!important;margin:4px 0 0!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-safe-note{font-size:11.5px!important;line-height:1.3!important;margin:0!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-money-label>span{margin-bottom:4px!important;display:block}
+ html body #modal-root#modal-root #v917ServiceConfirm>*{flex-shrink:0!important}
+ /* El resumen «Servicio · Vencimiento · Moneda» repite datos visibles (nombre, «En N días», prefijo RD$):
+    se oculta en móvil para que la confirmación quepa sin desplazarse. */
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-service-review{display:none!important}
+ html body #modal-root#modal-root #v917ServiceConfirm{gap:5px!important}
+ html body #modal-root#modal-root .modal:has(#v917ServiceConfirm) .v261-dialog-heading p{display:none!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-source>p{display:none!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-service-identity{grid-template-columns:52px minmax(0,1fr) auto!important;grid-template-areas:"sym title due" "sym sub due"!important;align-items:center!important;justify-items:start!important;text-align:left!important;gap:0 12px!important;padding:0!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-service-identity .v261-detail-symbol{grid-area:sym!important;width:52px!important;height:52px!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-service-identity h3{grid-area:title!important;margin:0!important;font-size:20px!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-service-identity p{grid-area:sub!important;margin:0!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-service-identity .v261-due{grid-area:due!important;align-self:center!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-money-field{min-height:56px!important;padding-block:4px!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-source>p{margin:2px 0 6px!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-source label.v917-account{min-height:0!important;padding-block:6px!important}
+ html body #modal-root#modal-root #v917ServiceConfirm :is(.v917-source,.v918-payment-channel)>h3{margin:0 0 4px!important}
+ html body #modal-root#modal-root #v917ServiceConfirm .v917-kind-choices{margin-top:6px!important}
+}
+/* Montos largos (p. ej. RD$33,427.74) completos: sin cortar ni partir. */
+html body #modal-root#modal-root :is(#v917ServiceTotal,#v918BillAmount,#v918BankFee,.vop-summary-total strong,.vop-pay-amount strong){white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;font-variant-numeric:tabular-nums}
+html body #modal-root#modal-root #v917ServiceConfirm .v917-money-field input{background:var(--v953-field)!important;border:1px solid var(--v953-line)!important;border-radius:var(--v953-radius)!important;color:var(--v953-ink)!important;-webkit-text-fill-color:var(--v953-ink)!important;padding-inline:10px!important;min-height:44px!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root :is(.v917-submit,.v917-kind-choices button[aria-pressed="true"],.v918-channel-options button[aria-pressed="true"]){background:var(--v953-accent)!important;background-image:none!important;color:#fff!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root form.studio-form.vop-cardpay :is(.studio-navigation .btn:not(.ghost),.form-foot .btn:not(.ghost),label:has(input:checked)>.flow-segment-surface,.vop-channel label:has(input:checked)>span){background-color:var(--v953-accent)!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root :is(#v917ServiceConfirm,.v918-payment-breakdown) span{color:var(--v953-muted)!important}
+/* Avance de efectivo: el modal termina con su contenido (sin bloque blanco sobrante); Fecha dentro de su
+   columna; botones del pie en el mismo contenedor y ≥44px. */
+html body #modal-root#modal-root#modal-root .v900-advance-modal{height:auto!important;min-height:0!important}
+@media (min-width:791px){html body #modal-root#modal-root#modal-root .v900-advance-modal{margin-block:auto!important}}
+html body #modal-root#modal-root#modal-root .v900-advance-modal form#v900AdvanceForm{flex:0 1 auto!important}
+html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-field{min-width:0!important}
+html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-field :is(input,select){min-width:0!important;width:100%!important;max-width:100%!important}
+html body #modal-root#modal-root#modal-root .v900-advance-modal .v901-go-back{width:var(--v953-tap)!important;height:var(--v953-tap)!important;min-width:var(--v953-tap)!important}
+html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-form-footer button{min-height:var(--v953-tap)!important}
+/* Pago de tarjeta · confirmación: espaciado compacto para que quepa con el botón fijo. */
+html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step:not([data-step="1"]) :is(.studio-fields,.vop-pay-summary,.vop-review-selects){gap:8px!important}
+html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step:not([data-step="1"]) .vop-review-entry{min-height:64px!important;padding-block:8px!important}
+/* Móvil · Hoja inferior de REGISTRAR para Pagar tarjeta (paso 1 y confirmación) y Avance de efectivo:
+   pegada al borde inferior con una separación mínima (--v953-sheet-gap), ajustada a su contenido,
+   esquinas de 28px y zona segura dentro del relleno inferior: calc(16px + env(safe-area-inset-bottom)). */
+@media (max-width:790px){
+ html body{--v953-sheet-gap:6px}
+ html body #modal-root#modal-root .modal-layer:has(:is(.v900-advance-modal,form.studio-form.vop-cardpay)){align-items:flex-end!important;justify-content:center!important;padding:0!important}
+ html body #modal-root#modal-root#modal-root#modal-root :is(.v900-advance-modal,.modal:has(>form.studio-form.vop-cardpay)){
+  margin:auto var(--v953-sheet-gap) var(--v953-sheet-gap)!important;width:calc(100vw - 2 * var(--v953-sheet-gap))!important;min-width:0!important;max-width:calc(100vw - 2 * var(--v953-sheet-gap))!important;
+  height:auto!important;min-height:0!important;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 2 * var(--v953-sheet-gap))!important;
+  border-radius:28px!important;top:auto!important;bottom:auto!important;overflow:hidden!important;
+  padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay :is(.studio-navigation,.form-foot){padding-bottom:0!important;margin-bottom:0!important}
+ html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-form-footer{padding-bottom:0!important}
+ /* Pie de Avance en el mismo contenedor que la hoja (sin bloque blanco distinto). */
+ html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-form-footer{background:transparent!important;box-shadow:none!important;border-top:0!important}
+ /* Confirmación del pago de tarjeta: subtítulo fuera y filas del detalle más bajas para caber sin scroll. */
+ html body #modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-pay-copy p{display:none!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-entry{min-height:56px!important;padding:6px 12px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-entry .vop-review-row{min-height:0!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-entry .v789-select-ico{width:32px!important;height:32px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-summary-total{padding:8px 12px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-breakdown{padding:8px 12px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-summary-line{padding-block:3px!important;min-height:0!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] :is(.studio-fields,.vop-review-selects,.vop-payment-details){gap:6px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-channel{padding:4px 6px!important;gap:6px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-confirm-date{min-height:0!important;padding-block:0!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-breakdown h3{margin:0 0 2px!important;font-size:16px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-entry{min-height:52px!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-pay-summary{gap:6px!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-pay-summary *{line-height:1.25!important}
+ html body #modal-root#modal-root .modal:has(>form.studio-form.vop-cardpay)>form{height:auto!important;max-height:inherit!important}
+ /* Confirmación del pago de tarjeta compacta. */
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .vop-pay-summary :is(.vop-summary-row,li,tr,.v49-line,div>div){padding-block:3px!important}
+ html body #modal-root#modal-root form.studio-form.vop-cardpay .vop-channel{padding:8px 10px!important}
+}
+/* Icono decorativo arriba a la derecha en Pagar tarjeta (tarjeta) y su confirmación (comprobante),
+   con el mismo trazo y color de acento que el de Avance de efectivo. */
+html body #modal-root .v953-pay-art{grid-column:3!important;grid-row:1!important;justify-self:end;display:grid;place-items:center;width:46px;height:43px;color:var(--v953-accent,var(--vive-theme-color,#6d69f1))}
+html body #modal-root .v953-pay-art svg{width:46px;height:43px}
+html body #modal-root .v953-pay-art .v953-art-check{display:none}
+html body #modal-root form.vop-cardpay[data-studio-step="3"] .v953-pay-art .v953-art-card{display:none}
+html body #modal-root form.vop-cardpay[data-studio-step="3"] .v953-pay-art .v953-art-check{display:block}
+</style>
+<style id="v953-app-legibility">
+/* V953 · Legibilidad en páginas (tema claro): pestañas de navegación interna inactivas y subtítulo/fecha
+   de la cabecera. Mismo diseño; solo tono de texto. */
+html body:not(.theme-dark):not(.theme-black) #app#app :is(.universe-switch>button:not(.active):not([aria-current="page"]),.v708-tabstrip .v708-tab:not(.active):not([aria-selected="true"])),
+html body:not(.theme-dark):not(.theme-black) #app#app :is(.universe-switch>button:not(.active):not([aria-current="page"]),.v708-tabstrip .v708-tab:not(.active):not([aria-selected="true"])) span{color:#3d4c64!important;-webkit-text-fill-color:#3d4c64!important}
+html body:not(.theme-dark):not(.theme-black) #app#app :is(.top-sub,.date-chip.v146-header-date){color:#3d4c64!important;-webkit-text-fill-color:#3d4c64!important}
+</style>
+<style id="v953-universal-selector">
+/* V953 · Campos de tarjeta/cuenta con el mismo diseño que las filas del selector universal (V787/V869):
+   lo que se ve por fuera coincide con lo que se ve por dentro. Solo presentación. */
+:root{--v953-row-radius:21px;--v953-row-line:#d9e1ee;--v953-row-shadow:0 3px 12px rgba(27,44,79,.03)}
+/* Contenedor: fila blanca de 21px con borde suave (tema claro). */
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root :is(.v789-select-enhanced:has(.v827-universal-trigger),.vop-review-entry,.v901-product-trigger){
+ background:#fff!important;border:1px solid var(--v953-row-line)!important;border-radius:var(--v953-row-radius)!important;box-shadow:var(--v953-row-shadow)!important}
+html body #modal-root#modal-root :is(.v827-universal-trigger,.vop-review-row,.v901-product-trigger){display:flex!important;align-items:center!important;gap:12px!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root :is(.v789-select-details,.vop-review-details,.v901-select-text) strong{color:var(--v953-ink)!important;-webkit-text-fill-color:var(--v953-ink)!important;font-weight:900!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root :is(.v789-select-details,.vop-review-details,.v901-select-text) small{color:#5b6a82!important;-webkit-text-fill-color:#5b6a82!important}
+/* Emblema de tarjeta: logo de marca como dentro del selector (VISA azul, Mastercard morado oscuro). */
+html body #modal-root#modal-root#modal-root :is(.v789-select-ico,.v901-select-emblem):is(.v869-credit,.vop-network,.v901-credit-emblem,:has(.credit-network)){
+ width:54px!important;height:44px!important;min-width:54px!important;flex:0 0 54px!important;border-radius:13px!important;border:1px solid rgba(255,255,255,.18)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.21),0 6px 14px rgba(0,0,0,.18)!important;display:grid!important;place-items:center!important;overflow:hidden!important;
+ background:linear-gradient(145deg,#2676c6 0%,#12447f 55%,#0b2148 100%)!important}
+html body #modal-root#modal-root#modal-root :is(.v789-select-ico,.v901-select-emblem):is(.v869-mastercard,:has(.credit-network-mastercard),:has(.credit-network-mc)){background:linear-gradient(145deg,#35244c,#10142b)!important}
+html body #modal-root#modal-root#modal-root :is(.v789-select-ico,.v901-select-emblem) :is(.v869-visa-word,.credit-network){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:14.8px!important;font-weight:900!important;font-style:italic!important;letter-spacing:-1.3px!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;width:auto!important;height:auto!important;opacity:1!important}
+/* Emblema de cuenta: recuadro lila con el icono en el color de acento, como dentro del selector. */
+html body #modal-root#modal-root#modal-root :is(.v789-select-ico,.v901-select-emblem):is(.v869-account,.v869-cash,:not(.v869-credit):not(.vop-network):not(.v901-credit-emblem):not(:has(.credit-network))){
+ width:50px!important;height:50px!important;min-width:50px!important;flex:0 0 50px!important;border-radius:14px!important;display:grid!important;place-items:center!important;
+ background:#eae9f9!important;border:1px solid rgba(255,255,255,.15)!important;box-shadow:none!important;color:var(--v953-accent,var(--vive-theme-color,#6d69f1))!important}
+html body.theme-dark #modal-root#modal-root#modal-root :is(.v789-select-ico,.v901-select-emblem):is(.v869-account,.v869-cash,:not(.v869-credit):not(.vop-network):not(.v901-credit-emblem):not(:has(.credit-network))),
+html body.theme-black #modal-root#modal-root#modal-root :is(.v789-select-ico,.v901-select-emblem):is(.v869-account,.v869-cash,:not(.v869-credit):not(.vop-network):not(.v901-credit-emblem):not(:has(.credit-network))){background:#26233d!important}
+html body #modal-root#modal-root#modal-root :is(.v789-select-ico,.v901-select-emblem) svg{width:24px!important;height:24px!important}
+
+/* Hojas de REGISTRAR (móvil): sin aire de más bajo el botón y la confirmación ajustada a su contenido. */
+@media (max-width:790px){
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay :is(.studio-shell,.studio-main,.studio-panels,.studio-step){flex:0 0 auto!important;height:auto!important;min-height:0!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay .studio-navigation{margin-top:10px!important;padding-top:0!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay{padding-bottom:0!important}
+ html body #modal-root#modal-root#modal-root .v900-advance-modal{padding-top:10px!important}
+ html body #modal-root#modal-root#modal-root .v900-advance-modal form#v900AdvanceForm{padding-bottom:0!important;gap:8px!important}
+ html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-form-footer{margin-top:4px!important;padding-top:4px!important}
+}
+@media (max-width:790px) and (max-height:740px){
+ /* Confirmar pago (tarjeta) en pantallas bajas: etiquetas de los campos dentro de la fila, detalle más compacto. */
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-label{display:none!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-entry{min-height:var(--v953-tap)!important;padding:4px 12px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] :is(.v789-select-ico,.v901-select-emblem){transform:scale(.86);transform-origin:left center}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-summary-line{padding-block:1px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-summary-total{padding:6px 12px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-pay-header{padding-block:4px 0!important;min-height:0!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-pay-header h2{font-size:22px!important;line-height:1.1!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .v953-pay-art svg{width:38px!important;height:36px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-entry{min-height:52px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-summary-total strong{font-size:24px!important;line-height:1.1!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-breakdown h3{display:none!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-channel{padding:2px 4px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-channel :is(button,label){min-height:var(--v953-tap)!important;padding-block:0!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-selects{gap:4px!important}
+ html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] :is(.studio-fields,.vop-payment-details){gap:5px!important}
+ html body #modal-root#modal-root#modal-root .v900-advance-modal .v901-advance-intro p{display:none!important}
+ html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-preview>p,html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-preview small:last-child{display:none!important}
+ html body #modal-root#modal-root#modal-root .v900-advance-modal :is(.v900-field>span,.v901-product-field>span){margin-bottom:2px!important}
+}
+</style>
+<style id="v953-mobile-safe-areas">
+/* V953 · Móvil (360–430px, iOS Safari / Chrome Android): zonas seguras y menú flotante.
+   Requiere <meta name="viewport" content="...,viewport-fit=cover"> (ya presente). */
+@media (max-width:519px){
+ /* Menú flotante inferior: anclado a 12px de los lados y 8px sobre la zona segura; por encima del
+    contenido (z 71) y por debajo de los modales (#modal-root, z ≥ 1000). */
+ html body .vive-mobile-dock{position:fixed!important;left:12px!important;right:12px!important;width:auto!important;max-width:none!important;transform:none!important;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;border-radius:20px!important;z-index:71!important;
+  box-shadow:0 8px 24px rgba(32,51,84,.12),0 1px 3px rgba(32,51,84,.08)!important}
+}
+@media (max-width:790px){
+ /* Cabecera fija bajo la barra de estado. */
+ html body .vive-mobile-top{padding-top:env(safe-area-inset-top,0px)!important;height:calc(66px + env(safe-area-inset-top,0px))!important}
+ html body #app#app main.main{padding-top:calc(10px + env(safe-area-inset-top,0px))!important;
+  /* El contenido desplazable nunca queda bajo el menú: ≥ alto del menú (62) + separación (8) + zona segura. */
+  padding-bottom:max(166px,calc(62px + 8px + 24px + env(safe-area-inset-bottom,0px)))!important}
+ /* Hoja del asistente REGISTRAR: misma hoja que Pagar tarjeta/Avance (separación mínima, esquinas 28px). */
+ html body #modal-root#modal-root#modal-root .modal-layer:has(>.v235-register-dialog){padding:0!important;align-items:flex-end!important}
+ html body #modal-root#modal-root#modal-root .modal.v235-register-dialog{margin:auto var(--v953-sheet-gap,6px) var(--v953-sheet-gap,6px)!important;width:calc(100vw - 2 * var(--v953-sheet-gap,6px))!important;max-width:none!important;border-radius:28px!important;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 2 * var(--v953-sheet-gap,6px))!important}
+ /* Hoja del asistente REGISTRAR: relleno inferior con zona segura. */
+ html body #modal-root#modal-root .v235-register-dialog .vr-register{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
+}
 </style>
 </body>
 </html>
