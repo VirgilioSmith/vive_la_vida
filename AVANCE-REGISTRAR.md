@@ -375,3 +375,9 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 ## V973 · Explorar refinado y barra de navegación con halo de acento
 - Explorar (móvil): título más contundente, fecha con chevron a la derecha del título y subtítulo debajo; paneles de cristal más redondeados; etiquetas «TU ACTIVIDAD / TU VISIÓN» en el acento con su icono (barras / ojo); fichas con relieve suave, iconos con luz interior y flechas en círculo de acento. Variante Black incluida.
 - Barra de navegación: la tinta que era grafito pasa al color del acento (inactivos mezclados con grafito para legibilidad, activo en acento pleno); halo de acento bajo la barra y píldora activa de cristal con resplandor del acento.
+
+## V974 · Configuración (web) sin desplazamiento y alineada
+- Apariencia: las cuatro opciones (Tema · Acento · Fondo · Navegación) pasan a pestañas de cristal con el estilo de la barra de navegación (píldora activa con halo del acento); cada una cabe sin desplazar la página.
+- La página de Configuración ocupa exactamente la ventana: el menú lateral y el panel de opciones comparten borde superior e inferior (verificado a 1280×720, 1366×768, 1440×900 y 1920×1080). Otros paneles largos (p. ej. Integraciones) se desplazan dentro de su propio panel, no la página.
+- Cabecera con etiqueta y título pesados (11px/900, 36px/900) en el acento; menú lateral compacto con etiquetas de grupo en el acento y elemento activo con el estilo de la barra de navegación. Variante Black.
+- Explorar móvil: se quita «Organiza y potencia tu espacio financiero.» y las descripciones de panel para subir el contenido.
