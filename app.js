@@ -9584,7 +9584,6 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
      <div class="v1100-row"><label class="v1100-field"><span>Nombre</span><input class="field" name="firstName" maxlength="60" autocomplete="off"/></label><label class="v1100-field"><span>Apellido</span><input class="field" name="lastName" maxlength="65" autocomplete="off"/></label></div>
      <div class="v1100-row"><label class="v1100-field"><span>Teléfono (opcional)</span><input class="field" name="phone" maxlength="35" inputmode="tel"/></label><label class="v1100-field"><span>Apodo (opcional)</span><input class="field" name="alias" maxlength="60"/></label></div>
     </div>
-    <button type="button" class="v1100-next" data-pf-next>Continuar <span aria-hidden="true">→</span></button>
    </section>
    <section class="v1100-col v1100-col-pago" aria-label="Acuerdo">
     <h3>Acuerdo</h3>
@@ -9629,6 +9628,14 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   const initialsOf=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
   const setStep=st=>{root.dataset.step=st;f.dataset.pfStep=st;qa('[data-pf-tab]').forEach(b=>{const on=b.dataset.pfTab===st;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))});};
   f.dataset.pfStep='persona';
+  /* Cabecera con flecha atrás (Pago → Persona; en Persona cierra) y pie con un solo botón principal por vista. */
+  const head=f.closest('.modal')?.querySelector('.modal-head');
+  if(head&&!head.querySelector('.v1100-back')){head.insertAdjacentHTML('afterbegin',`<button type="button" class="v1100-back" data-pf-back aria-label="Volver">${icon('arrow')}</button>`);}
+  const foot=f.querySelector('.form-foot');
+  if(foot&&!foot.querySelector('[data-pf-next]'))foot.insertAdjacentHTML('afterbegin','<button type="button" class="btn v1100-continue" data-pf-next>Continuar <span aria-hidden="true">→</span></button>');
+  const sub=foot?.querySelector('button[type=submit]');if(sub)sub.innerHTML=`${icon('check')} Guardar acuerdo`;
+  const goBack=()=>{if(root.dataset.step==='pago')setStep('persona');else closeModal()};
+  head?.addEventListener('click',e=>{if(e.target.closest('[data-pf-back]')){e.preventDefault();goBack()}});
   const chosenName=()=>kind==='nueva'?[el('firstName').value.trim(),el('lastName').value.trim()].filter(Boolean).join(' '):(qa('.v1100-person.on')[0]?.dataset.name||'');
   const syncWho=()=>{const n=chosenName(),who=q('.v1100-who');who.hidden=!n;q('[data-pf-who]').textContent=n;q('[data-pf-who-av]').textContent=initialsOf(n);};
   const pickPerson=id=>{kind='habitual';el('contactId').value=id;qa('.v1100-person').forEach(b=>b.classList.toggle('on',b.dataset.pfPerson===id));syncWho();};
