@@ -54389,3 +54389,30 @@ html body:not(.theme-black):not(.theme-dark) #app#app :is(.v26-eyebrow,.v26-kick
  html body:not(.theme-black):not(.theme-dark) #app#app .v26-internal{display:block}
 }
 html body:not(.theme-black):not(.theme-dark) #app#app :is(.v56-button.primary,.v56-button.v56-primary,button.v252-add,.v26-primary){background:linear-gradient(120deg,var(--v424-accent-strong),color-mix(in srgb,var(--v424-accent-strong) 82%,#fff))!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important;box-shadow:0 8px 20px var(--v424-accent-shadow,rgba(0,0,0,.18))!important}
+
+/* V1022 · Fondo con el acento al costado (como en móvil) también en escritorio + toque Liquid Glass */
+body[data-vive-bg][data-vive-bg]:not(.theme-black):not(.theme-dark){
+ background-color:color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 15%,#faf8fa)!important;
+ background-image:
+  radial-gradient(ellipse 102% 64% at -18% 0%,color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 30%,#fbeef2),transparent 71%),
+  radial-gradient(ellipse 110% 92% at 112% 18%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 52%,#e6f2f4),transparent 76%),
+  linear-gradient(136deg,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 16%,#fffafb) 2%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 11%,#faf9fa) 52%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 24%,#f0f6f5) 100%)!important;
+ background-attachment:fixed!important;
+}
+@media (min-width:791px){
+ /* Liquid Glass: translucidez, desenfoque, brillo especular en el borde superior */
+ html body:not(.theme-black):not(.theme-dark) #app#app :is(.panel,.v239-product,.v410-substat:not(:first-child),.stat-box){
+  background:linear-gradient(150deg,rgba(255,255,255,.78),rgba(255,255,255,.46))!important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);
+  border:1px solid rgba(255,255,255,.72)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.3),0 14px 36px color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 11%,transparent),0 2px 6px rgba(20,30,60,.05)!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app#app .sidebar{
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.28))!important;
+  -webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);
+  border-right:1px solid rgba(255,255,255,.7)!important;box-shadow:inset -1px 0 0 rgba(255,255,255,.6),8px 0 30px color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 8%,transparent)!important;
+ }
+ html body:not(.theme-black):not(.theme-dark) #app#app :is(.v26-nav,.v285-budget-nav,.inner-menu-tabs){-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 22px color-mix(in srgb,var(--v424-accent-strong) 14%,transparent)!important}
+ html body:not(.theme-black):not(.theme-dark) #modal-root .modal{-webkit-backdrop-filter:blur(28px) saturate(1.6);backdrop-filter:blur(28px) saturate(1.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 30px 80px rgba(20,30,70,.22)!important}
+}
+@media (prefers-reduced-transparency:reduce){html body #app#app :is(.panel,.v239-product,.sidebar){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
