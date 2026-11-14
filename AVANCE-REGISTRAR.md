@@ -473,3 +473,11 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V997 · Menú lateral web: solo iconos
 - Se retira la cápsula/píldora de V989 del menú lateral web (era una regresión). Ahora solo iconos, sin fondo, borde ni contenedor; el estado activo = icono en el acento + barrita lateral. Las 6 pestañas navegan correctamente. Barra móvil sin cambios.
+
+## V998 · Tarjetas organizadas como Cuentas + restos de color
+- Lista de Tarjetas (móvil): misma organización/escala que Cuentas (valor 20px, logo del banco en vez del símbolo de tarjeta —con iniciales en acento si el banco no tiene logo—, métricas compactas en una sola línea, «Ver tarjeta» en acento).
+- Detalle de tarjeta: «Todas mis tarjetas», cabecera y «Registrar pago» pasan de azul fijo al acento.
+- Categorías: iconos y nombres (antes azul/violeta fijos) → iconos en acento, nombres en tinta.
+- Wallet · Estado de tu tarjeta: botón «Pagar» (negro) → acento.
+- Visión global: la cabecera era una banda rectangular con degradado; ahora es un título normal (etiqueta en acento).
+- Cuentas/Préstamos/Certificados: se quita el fondo blanco con sombra detrás de la fila de botones (Recibir/Transferir/Pagar).

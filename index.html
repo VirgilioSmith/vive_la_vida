@@ -39478,7 +39478,7 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
     const next = nexts[0] || null;
     return `<article class="v244-product v244-card-item">
       <div class="v244-product-top">
-        <span class="v244-logo">${icon('card')}</span>
+        <span class="v244-logo v997-bank">${bankLogoInline(cardItem.bankId)||icon('card')}</span>
         <span class="v244-product-meta"><strong>${sanitize(cardItem.name)}</strong><small>${sanitize(bankOf(cardItem))} · ${sanitize(CARD_TIER_NAMES[cardTierKey(cardItem)] || 'Tarjeta')}</small></span>
         <span class="v244-currency">•••• ${sanitize(cardItem.last4||'—')}</span>
       </div>
@@ -90789,6 +90789,48 @@ html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-head h3{color
 html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-mini strong{color:color-mix(in srgb,var(--t) 55%,#fff)!important}
 html body #app#app .v985-matrix .v985-minis-4 .v985-mini strong{overflow-wrap:normal!important;word-break:normal!important;font-size:9.6px!important;letter-spacing:-.03em!important;white-space:normal}
 html body #app#app .v985-matrix .v985-minis-4 .v985-mini{padding-inline:2px!important}
+</style>
+<style id="v997-cards-tidy">
+/* V997 · Tarjetas (lista) organizadas como Cuentas, con logo del banco; detalle de tarjeta, Categorías, Wallet y Visión global en acento; sin fondo tras los botones de acciones */
+html body #app#app .v244-card-item{padding:17px 16px 13px!important}
+html body #app#app .v244-card-item .v244-product-value strong{font-size:20.3px!important;margin-top:0!important}
+html body #app#app .v244-card-item .v244-product-value small{font-size:9px!important}
+html body #app#app .v244-card-item .v244-inline-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:9px 0 0!important;margin-top:8px;border-top:1px solid rgba(125,140,170,.18)}
+html body #app#app .v244-card-item .v244-inline-metrics small{font-size:9.5px!important;letter-spacing:.08em;text-transform:uppercase;color:#5d6b86!important}
+html body #app#app .v244-card-item .v244-inline-metrics b{font-size:14px!important;font-weight:850;color:#1c1f26}
+html body #app#app .v244-card-item .v244-product-foot{padding-top:10px!important;margin-top:9px!important}
+html body #app#app .v244-logo.v997-bank{display:grid;place-items:center;overflow:hidden;background:#fff!important;border:1px solid rgba(125,140,170,.2)}
+html body #app#app .v244-logo.v997-bank :is(svg.bank-inline-logo,.bank-inline-logo,img,span){width:100%!important;height:100%!important;border-radius:inherit;object-fit:contain}
+html body #app#app .v244-product-foot button{color:var(--v424-accent-strong,#5b57d6)!important}
+/* Detalle de tarjeta */
+html body #app#app .v244-back,html body #app#app .v244-back span{color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app .v244-hero.v244-detail-hero{background:radial-gradient(ellipse at 108% -12%,rgba(255,255,255,.2),transparent 42%),linear-gradient(115deg,var(--v440-ink,#2b2870) 0%,var(--v440-deep,#4b46c9) 48%,var(--v440-glow,#6d69f1) 122%)!important;border-color:rgba(255,255,255,.18)!important}
+html body #app#app .v244-action-primary{background:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9))!important;color:#fff!important;border-color:transparent!important;box-shadow:0 12px 24px -14px var(--v424-accent-shadow,rgba(75,70,201,.6))!important}
+html body #app#app .v244-action-primary *{color:#fff!important}
+/* Categorías */
+html body #app#app .v191-taxonomy-cat :is(svg,.v255-tax-icon,.v255-tax-badge svg){color:var(--v424-accent-strong,#5b57d6)!important;stroke:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app .v191-taxonomy-cat :is(.v255-tax-label,.v255-tax-name,strong){color:#1c1f26!important;-webkit-text-fill-color:#1c1f26!important}
+html body #app#app .v191-taxonomy-cat .v255-tax-badge{background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 9%,#fff)!important;border-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 20%,transparent)!important}
+html body #app#app :is(.world-categories) .pill{background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 10%,#fff)!important;color:var(--v424-accent-strong,#5b57d6)!important}
+/* Wallet · Estado de tu tarjeta */
+html body #app#app .v266-wallet-panel :is(.v375-pay,button.v375-pay,[data-act="payCard"].btn,.v266-panel-pay){background:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9))!important;color:#fff!important;border-color:transparent!important;box-shadow:0 12px 22px -14px var(--v424-accent-shadow,rgba(75,70,201,.6))!important}
+html body #app#app .v266-wallet-panel :is(.v375-pay,.v266-panel-pay) *{color:#fff!important}
+html body #app#app .v266-wallet-panel .v266-limit-box,html body #app#app .v266-wallet-panel :is(.v565-limit-box){border-color:rgba(125,140,170,.2)!important}
+/* Visión global: la cabecera es un título, no una banda */
+html body #app#app .v295-global-top{background:none!important;border:0!important;box-shadow:none!important;padding:4px 2px 8px!important;border-radius:0!important}
+html body #app#app .v295-global-top .v295-eye{color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important;font-weight:900!important}
+html body #app#app .v295-global-top :is(h1,h2){color:#1c1f26!important;-webkit-text-fill-color:#1c1f26!important;font-weight:900!important;letter-spacing:-.05em}
+html body #app#app .v295-global-top p{color:#5d6b86!important;-webkit-text-fill-color:#5d6b86!important}
+html body:is(.theme-black,.theme-dark) #app#app .v295-global-top :is(h1,h2){color:#f2f4f8!important;-webkit-text-fill-color:#f2f4f8!important}
+/* Sin «blanquito» detrás de los botones de acciones (Cuentas, Préstamos, Certificados) */
+html body #app#app .v239-actions{background:none!important;background-image:none!important;box-shadow:none!important;border:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding:0!important}
+html body #app#app .v244-logo.v997-bank .bank-photo-mark{width:100%;height:100%;border-radius:inherit}
+html body #app#app .v244-logo.v997-bank .bank-photo-fallback{display:grid;place-items:center;width:100%;height:100%;font-weight:900;font-size:13px;color:#fff;background:linear-gradient(145deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 55%,#fff),var(--v424-accent-strong,#5b57d6))}
+html body #app#app .v255-tax-ico,html body #app#app .v255-tax-ico svg{color:var(--v424-accent-strong,#5b57d6)!important;stroke:var(--v424-accent-strong,#5b57d6)!important}
+html body #app#app .v255-tax-strong{color:#1c1f26!important;-webkit-text-fill-color:#1c1f26!important;font-weight:850}
+html body:is(.theme-black,.theme-dark) #app#app .v255-tax-strong{color:#f2f4f8!important;-webkit-text-fill-color:#f2f4f8!important}
+html body #app#app .v266-wallet button[data-act="payCard"]:not(.v266-wallet-actions *){background:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9))!important;color:#fff!important;border:0!important;box-shadow:0 12px 22px -14px var(--v424-accent-shadow,rgba(75,70,201,.6))!important}
+html body #app#app .v266-wallet button[data-act="payCard"]:not(.v266-wallet-actions *) *{color:#fff!important;stroke:#fff!important}
 </style>
 </body>
 </html>
