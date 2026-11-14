@@ -90591,16 +90591,18 @@ html body #app#app main :is(button.selected):not([class*=hero] *){color:var(--v4
 html body #app#app .v12-wealth-hero.v22-wealth-hero{background:radial-gradient(ellipse at 108% -12%,rgba(255,255,255,.2),transparent 42%),linear-gradient(115deg,var(--v440-ink,#2b2870) 0%,var(--v440-deep,#4b46c9) 46%,var(--v440-glow,#6d69f1) 120%)!important}
 html body #app#app .v242-settings-symbol.v242-symbol-appearance,html body #app#app .v439-mac-item-icon.v242-symbol-appearance{background:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9))!important}
 html body #app#app .v410-substat{background-image:linear-gradient(180deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 12%,#fff),color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 4%,#fff))!important}
-/* Menú lateral web: cápsula de cristal con tinta de acento y píldora activa con resplandor */
+/* V997 · Menú lateral web: solo iconos, integrados en la página (sin cápsula, fondo ni borde). La forma de píldora es exclusiva de la barra móvil. */
 @media(min-width:791px){
- html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-main{padding:10px 6px!important;border-radius:999px!important;background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.28) 55%,rgba(240,238,252,.4))!important;border:1px solid rgba(255,255,255,.75)!important;-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 20px rgba(255,255,255,.3),0 18px 34px -18px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 40%,rgba(31,50,90,.3))!important}
- html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-action:not(.active),html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-action:not(.active) svg{color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 9%,#1e2342)!important;stroke:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 9%,#1e2342)!important}
- html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-action.active{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(246,243,253,.8))!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:inset 0 1px 0 #fff,0 12px 18px -8px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 70%,transparent),0 4px 10px -4px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 30%,transparent)!important}
- html body:not(.theme-dark):not(.theme-black) #app#app .rail-sidebar .rail-action.active svg{color:var(--v424-accent-strong,#5b57d6)!important;stroke:var(--v424-accent-strong,#5b57d6)!important}
- html body #app#app .rail-sidebar .rail-action:hover:not(.active){background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 9%,transparent)!important}
- html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-main{padding:10px 6px!important;border-radius:999px!important;background:linear-gradient(135deg,rgba(70,70,92,.5),rgba(30,30,42,.4))!important;border:1px solid rgba(255,255,255,.12)!important;-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%)}
- html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-action.active{background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 24%,#14161d)!important;box-shadow:0 12px 18px -10px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,transparent)!important}
- html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-action.active svg{color:#fff!important;stroke:#fff!important}
+ html body #app#app .rail-sidebar .rail-main{background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-radius:0!important;padding:0!important}
+ html body #app#app .rail-sidebar .rail-action{background:none!important;border:0!important;box-shadow:none!important;border-radius:12px!important;position:relative;color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 9%,#1e2342)!important;transition:color .15s ease,transform .15s ease}
+ html body #app#app .rail-sidebar .rail-action svg{color:inherit!important;stroke:currentColor!important}
+ html body #app#app .rail-sidebar .rail-action:hover:not(.active){background:none!important;color:var(--v424-accent-strong,#5b57d6)!important;transform:scale(1.08)}
+ html body #app#app .rail-sidebar .rail-action.active{background:none!important;border:0!important;box-shadow:none!important;color:var(--v424-accent-strong,#5b57d6)!important}
+ html body #app#app .rail-sidebar .rail-action.active svg{color:var(--v424-accent-strong,#5b57d6)!important;stroke:var(--v424-accent-strong,#5b57d6)!important;stroke-width:2.2!important}
+ html body #app#app .rail-sidebar .rail-action.active::before{content:"";position:absolute;left:-10px;top:50%;width:4px;height:22px;transform:translateY(-50%);border-radius:0 4px 4px 0;background:var(--v424-accent-strong,#5b57d6)}
+ html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-action{color:#cfd6ea!important}
+ html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-action.active{color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,#fff)!important}
+ html body:is(.theme-dark,.theme-black) #app#app .rail-sidebar .rail-action.active svg{color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,#fff)!important;stroke:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,#fff)!important}
 }
 </style>
 <style id="v990-month">
