@@ -88942,6 +88942,10 @@ html body #modal-root.v952-kb-open .v749-choice-grid button .v749-choice-icon{fo
 html body #modal-root .v749-sheet-inner:focus{outline:none}
 html body #modal-root .v749-sheet-inner:focus-visible{outline:2px solid var(--v749-accent,#7165ee);outline-offset:-2px}
 </style>
+<style id="v954-safe-vars">
+/* V954 · Zonas seguras como variables: una sola fuente (env) y valores comprobables en pruebas. */
+:root{--v954-safe-top:env(safe-area-inset-top,0px);--v954-safe-bottom:env(safe-area-inset-bottom,0px)}
+</style>
 <style id="v953-registrar-finish">
 /* ==========================================================================
    V953 · Cierre del flujo REGISTRAR (web y móvil)
@@ -89013,7 +89017,7 @@ html body #modal-root .v749-layer[data-v749-stage="review"] .v749-confirm-rows{m
  html body #modal-root .v749-layer[data-v749-stage="review"] .v749-impact-head{display:none!important}
  /* «Más operaciones» sube a la fila del botón cerrar: libera una fila completa. */
  html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-screen{position:relative!important}
- html body #modal-root .v749-layer[data-v749-stage="entry"] .v795-operations-rail{position:absolute!important;top:max(8px,env(safe-area-inset-top,0px));left:15px;right:70px;min-height:0!important;margin:0!important;justify-content:flex-start!important}
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v795-operations-rail{position:absolute!important;top:max(8px,var(--v954-safe-top,0px));left:15px;right:70px;min-height:0!important;margin:0!important;justify-content:flex-start!important}
  html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-head{min-height:46px!important;height:46px!important}
  html body #modal-root .v749-layer[data-v749-stage="entry"] .v795-operations-panel{left:0!important;right:auto!important;max-width:calc(100vw - 30px)!important}
  html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-amount small{display:none!important}
@@ -89103,10 +89107,10 @@ html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .v235-regist
 
 /* ---------- Móvil: hoja inferior por contenido ---------- */
 @media (max-width:790px){
- html body #modal-root#modal-root .modal.v235-register-dialog{height:auto!important;min-height:0!important;max-height:calc(100dvh - env(safe-area-inset-top,0px))!important;margin-top:auto!important}
+ html body #modal-root#modal-root .modal.v235-register-dialog{height:auto!important;min-height:0!important;max-height:calc(100dvh - var(--v954-safe-top,0px))!important;margin-top:auto!important}
  /* Encabezado REGISTRAR y botón cerrar siempre bajo la barra de estado. */
- html body #modal-root#modal-root .v235-register-close{padding-top:max(10px,env(safe-area-inset-top,0px))!important;padding-bottom:6px!important}
- html body #modal-root#modal-root .v235-register-dialog .vr-register{overflow:visible!important;padding-bottom:max(12px,env(safe-area-inset-bottom,0px))!important}
+ html body #modal-root#modal-root .v235-register-close{padding-top:max(10px,var(--v954-safe-top,0px))!important;padding-bottom:6px!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-register{overflow:visible!important;padding-bottom:max(12px,var(--v954-safe-bottom,0px))!important}
  html body #modal-root#modal-root .v235-register-dialog .vr-workspace{padding-block:8px 6px!important}
  html body #modal-root#modal-root .v235-register-dialog .vr-workspace-head{margin-bottom:8px!important}
  html body #modal-root#modal-root .v235-register-dialog .vr-switcher{margin-bottom:10px!important}
@@ -89171,7 +89175,7 @@ html body #modal-root#modal-root :is(.studio-form .vop-circular-back,.vop-pay-ba
 @media (min-width:791px){html body #modal-root#modal-root .modal-layer:has(>.modal>form.other-studio-form[data-special]){padding-block:12px!important}}
 html body #modal-root#modal-root#modal-root#modal-root :is(form.studio-form.vop-cardpay .vop-circular-back,form.other-studio-form :is(.v854-back,.v855-back,.v857-back,.v861-back,.v864-back),.vop-pay-back){min-width:var(--v953-tap)!important;width:var(--v953-tap)!important;height:var(--v953-tap)!important}
 html body #modal-root#modal-root#modal-root#modal-root form.other-studio-form :is(.v854-back,.v855-back,.v857-back,.v861-back,.v864-back):not(:has(>svg:only-child)){width:auto!important;padding-inline:10px!important}
-html body #modal-root#modal-root#modal-root .vop-pay-header{display:grid!important;grid-template-columns:var(--v953-tap) minmax(0,1fr) auto!important;grid-template-rows:auto!important;align-items:center!important;column-gap:12px!important;padding-block:max(10px,env(safe-area-inset-top,0px)) 6px!important}
+html body #modal-root#modal-root#modal-root .vop-pay-header{display:grid!important;grid-template-columns:var(--v953-tap) minmax(0,1fr) auto!important;grid-template-rows:auto!important;align-items:center!important;column-gap:12px!important;padding-block:max(10px,var(--v954-safe-top,0px)) 6px!important}
 html body #modal-root#modal-root#modal-root .vop-pay-header>*{grid-row:1!important}
 html body #modal-root#modal-root#modal-root .vop-pay-header .vop-pay-copy h2{margin:0 0 2px!important}
 /* Móvil: formularios de «Otros» compactos para caber sin desplazarse. */
@@ -89285,8 +89289,8 @@ html body #modal-root#modal-root .v83-loan-pay-nav button{opacity:1!important}
 }
 /* Compactación compartida por web y móvil. */
 @media all{
- html body #modal-root#modal-root .modal:has(#v917ServiceConfirm) .v261-dialog-header{padding-top:max(10px,env(safe-area-inset-top,0px))!important;padding-bottom:8px!important}
- html body #modal-root#modal-root .modal:has(#v917ServiceConfirm) .v261-dialog-footer{padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
+ html body #modal-root#modal-root .modal:has(#v917ServiceConfirm) .v261-dialog-header{padding-top:max(10px,var(--v954-safe-top,0px))!important;padding-bottom:8px!important}
+ html body #modal-root#modal-root .modal:has(#v917ServiceConfirm) .v261-dialog-footer{padding-bottom:max(10px,var(--v954-safe-bottom,0px))!important}
  html body #modal-root#modal-root #v917ServiceConfirm{gap:6px!important;padding-block:6px!important}
  html body #modal-root#modal-root #v917ServiceConfirm .v918-channel-explanation{font-size:11.5px!important;line-height:1.3!important;margin:4px 0 0!important}
  html body #modal-root#modal-root #v917ServiceConfirm .v917-safe-note{font-size:11.5px!important;line-height:1.3!important;margin:0!important}
@@ -89335,9 +89339,9 @@ html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step:not([
  html body #modal-root#modal-root .modal-layer:has(:is(.v900-advance-modal,form.studio-form.vop-cardpay)){align-items:flex-end!important;justify-content:center!important;padding:0!important}
  html body #modal-root#modal-root#modal-root#modal-root :is(.v900-advance-modal,.modal:has(>form.studio-form.vop-cardpay)){
   margin:auto var(--v953-sheet-gap) var(--v953-sheet-gap)!important;width:calc(100vw - 2 * var(--v953-sheet-gap))!important;min-width:0!important;max-width:calc(100vw - 2 * var(--v953-sheet-gap))!important;
-  height:auto!important;min-height:0!important;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 2 * var(--v953-sheet-gap))!important;
+  height:auto!important;min-height:0!important;max-height:calc(100dvh - var(--v954-safe-top,0px) - 2 * var(--v953-sheet-gap))!important;
   border-radius:28px!important;top:auto!important;bottom:auto!important;overflow:hidden!important;
-  padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
+  padding-bottom:calc(16px + var(--v954-safe-bottom,0px))!important}
  html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay :is(.studio-navigation,.form-foot){padding-bottom:0!important;margin-bottom:0!important}
  html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-form-footer{padding-bottom:0!important}
  /* Pie de Avance en el mismo contenedor que la hoja (sin bloque blanco distinto). */
@@ -89466,18 +89470,72 @@ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-rev
 }
 @media (max-width:790px){
  /* Cabecera fija bajo la barra de estado. */
- html body .vive-mobile-top{padding-top:env(safe-area-inset-top,0px)!important;height:calc(66px + env(safe-area-inset-top,0px))!important}
+ html body .vive-mobile-top{padding-top:var(--v954-safe-top,0px)!important;height:calc(66px + var(--v954-safe-top,0px))!important}
  html body #app#app main.main:is(.world-overview,.world-wallet,.world-banks,.world-mobilehub,.world-mobilesearch){padding-top:10px!important}
- html body #app#app main.main:not(.world-overview,.world-wallet,.world-banks,.world-mobilehub,.world-mobilesearch){padding-top:calc(10px + env(safe-area-inset-top,0px))!important}
+ html body #app#app main.main:not(.world-overview,.world-wallet,.world-banks,.world-mobilehub,.world-mobilesearch){padding-top:calc(10px + var(--v954-safe-top,0px))!important}
  html body #app#app main.main{
   /* El contenido desplazable nunca queda bajo el menú: ≥ alto del menú (62) + separación (8) + zona segura. */
-  padding-bottom:max(166px,calc(62px + 8px + 24px + env(safe-area-inset-bottom,0px)))!important}
+  padding-bottom:max(166px,calc(62px + 8px + 24px + var(--v954-safe-bottom,0px)))!important}
  /* Hoja del asistente REGISTRAR: misma hoja que Pagar tarjeta/Avance (separación mínima, esquinas 28px). */
  html body #modal-root#modal-root#modal-root .modal-layer:has(>.v235-register-dialog){padding:0!important;align-items:flex-end!important}
- html body #modal-root#modal-root#modal-root .modal.v235-register-dialog{margin:auto var(--v953-sheet-gap,6px) var(--v953-sheet-gap,6px)!important;width:calc(100vw - 2 * var(--v953-sheet-gap,6px))!important;max-width:none!important;border-radius:28px!important;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 2 * var(--v953-sheet-gap,6px))!important}
+ html body #modal-root#modal-root#modal-root .modal.v235-register-dialog{margin:auto var(--v953-sheet-gap,6px) var(--v953-sheet-gap,6px)!important;width:calc(100vw - 2 * var(--v953-sheet-gap,6px))!important;max-width:none!important;border-radius:28px!important;max-height:calc(100dvh - var(--v954-safe-top,0px) - 2 * var(--v953-sheet-gap,6px))!important}
  /* Hoja del asistente REGISTRAR: relleno inferior con zona segura. */
- html body #modal-root#modal-root .v235-register-dialog .vr-register{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
+ html body #modal-root#modal-root .v235-register-dialog .vr-register{padding-bottom:calc(16px + var(--v954-safe-bottom,0px))!important}
 }
+</style>
+<style id="v954-nav-and-sheets">
+/* V954 · (1) Barra de navegación más abajo y (2) hoja inferior para Préstamo, Beneficios, Conciliar y
+   Devolución, con el mismo estilo que Pagar tarjeta / Confirmar pago. Solo presentación. */
+@media (max-width:790px){
+ /* (2) Hoja inferior: pegada abajo (separación mínima), esquinas de 28px, por contenido, y nunca por
+    encima de la barra de estado: la altura máxima descuenta la zona segura superior. */
+ html body #modal-root#modal-root#modal-root .modal-layer:has(>.modal>form.other-studio-form[data-special]){align-items:flex-end!important;justify-content:center!important;padding:0!important;
+  background:rgba(9,18,33,.42)!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important}
+ html body #modal-root#modal-root#modal-root#modal-root .modal:has(>form.other-studio-form[data-special]){
+  display:flex!important;flex-direction:column!important;
+  margin:auto var(--v953-sheet-gap,6px) var(--v953-sheet-gap,6px)!important;
+  width:calc(100vw - 2 * var(--v953-sheet-gap,6px))!important;min-width:0!important;max-width:calc(100vw - 2 * var(--v953-sheet-gap,6px))!important;
+  height:auto!important;min-height:0!important;max-height:calc(100dvh - var(--v954-safe-top,0px) - 2 * var(--v953-sheet-gap,6px))!important;
+  border-radius:28px!important;top:auto!important;bottom:auto!important;overflow:hidden!important;
+  padding:0!important}
+  html body #modal-root#modal-root#modal-root#modal-root .modal>form.other-studio-form[data-special]{flex:0 1 auto!important;height:auto!important;min-height:0!important;max-height:100%!important;border-radius:0!important}
+ /* El relleno inferior (16px + zona segura) va en el pie del formulario: comparte su fondo y no lo pisan los estilos en línea del formulario. */
+ html body #modal-root#modal-root#modal-root .modal>form.other-studio-form[data-special] :is(.form-foot,.v83-loan-pay-controls){padding-bottom:calc(16px + var(--v954-safe-bottom,0px))!important;margin-bottom:0!important}
+}
+
+/* Cabecera compacta de las operaciones: «volver» y título en una sola fila, sin icono decorativo ni
+   subtítulo (la hoja ya lo explica el nombre de la operación). Aplica cuando la altura es limitada. */
+@media (max-width:790px) and (max-height:900px){
+ html body #modal-root#modal-root .other-studio-form[data-special] :is(.other-studio-header:has(>.v864-topbar),.other-studio-header:has(>.v855-topbar),.v861-banner){position:relative!important}
+ html body #modal-root#modal-root .other-studio-form[data-special] :is(.v864-topbar,.v855-topbar,.v861-topline){position:absolute!important;top:0!important;left:0!important;z-index:2!important;margin:0!important;height:auto!important;width:auto!important}
+ html body #modal-root#modal-root .other-studio-form[data-special] :is(.v864-hero,.v855-hero,.v861-heading){padding-left:56px!important;min-height:48px!important;align-items:center!important;margin:0!important}
+ html body #modal-root#modal-root .other-studio-form[data-special] .v855-hero{grid-template-columns:minmax(0,1fr)!important}
+ html body #modal-root#modal-root .other-studio-form[data-special] :is(.v864-hero-icon,.v855-art,.v861-mark,.v857-heroicon,.v861-heading :is([class*="icon"],[class*="art"])){display:none!important}
+ html body #modal-root#modal-root .other-studio-form[data-special] .v861-heading{grid-template-columns:minmax(0,1fr)!important}
+ html body #modal-root#modal-root .other-studio-form[data-special] :is(.v864-hero,.v855-hero,.v861-heading,.v857-hero,.v871-loan-hero) p{display:none!important}
+ html body #modal-root#modal-root .other-studio-form[data-special] :is(.v864-hero,.v855-hero,.v861-heading,.v857-hero) h2{font-size:clamp(19px,5.4vw,24px)!important;margin:0!important;line-height:1.15!important}
+}
+
+/* Compactación de cuerpo y pie en la hoja (altura limitada): mismas piezas, menos aire; áreas táctiles ≥44px. */
+@media (max-width:790px) and (max-height:900px){
+ html body #modal-root#modal-root#modal-root .modal>form.other-studio-form[data-special] :is(.form-foot,.v83-loan-pay-controls){padding-top:6px!important;gap:8px!important}
+ html body #modal-root#modal-root#modal-root .modal>form.other-studio-form[data-special] :is(.form-foot,.v83-loan-pay-controls) .btn{min-height:52px!important;height:52px!important}
+ html body #modal-root#modal-root#modal-root .other-studio-form[data-special] :is(.other-studio-content,.other-studio-fields,.f837-flow){gap:6px!important}
+ html body #modal-root#modal-root#modal-root .other-studio-form[data-special] .other-studio-shell{padding-top:6px!important}
+ html body #modal-root#modal-root#modal-root .other-studio-form[data-special] label.v790-full.v789-select-enhanced{padding-block:4px!important;min-height:0!important}
+ html body #modal-root#modal-root#modal-root .other-studio-form[data-special] :is(.f844-calendar){display:none!important}
+ html body #modal-root#modal-root#modal-root .other-studio-form[data-special] .f844-payhero{padding:6px 12px!important;min-height:0!important}
+ html body #modal-root#modal-root#modal-root .other-studio-form[data-special] .v83-loan-pay-nav{margin-bottom:4px!important}
+ html body #modal-root#modal-root#modal-root .other-studio-form[data-special] .f834-benefit-hero{padding:8px 14px!important}
+ html body #modal-root#modal-root#modal-root .other-studio-form[data-special] section.other-studio-amount{padding-block:6px!important}
+ html body #modal-root#modal-root#modal-root .other-studio-form[data-special] :is(.v794-recovery,.other-studio-impact,.v785-benefit-preview){padding:8px 12px!important}
+}
+
+/* Hoja «Motivo del ajuste» (Conciliar): lista de motivos legible y relleno inferior con zona segura. */
+html body #modal-root#modal-root .v857-sheet{padding-bottom:calc(16px + var(--v954-safe-bottom,0px))!important}
+html body:not(.theme-dark):not(.theme-black) #modal-root#modal-root .v857-sheet :is(select,input,textarea){background:#fff!important;border:1px solid var(--v953-line,#c3cddc)!important;color:var(--v953-ink,#0f172a)!important;-webkit-text-fill-color:var(--v953-ink,#0f172a)!important;opacity:1!important}
+html body #modal-root#modal-root .v857-sheet :is(button,select){min-height:var(--v953-tap,44px)}
+
 </style>
 </body>
 </html>

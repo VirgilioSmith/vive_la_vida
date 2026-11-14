@@ -227,3 +227,27 @@ cambiaría esa regla. No se ha implementado.
 **Verificado:** 360×640, 393×659 (iPhone 15), 375×667, 390×844 y 412×915: formulario sin scroll, botón «Confirmar pago» de 55px completamente visible; Pagar tarjeta, Avance y el asistente sin scroll en 360×640; pago con tarjeta registrado (consola sin errores).
 
 **Bugs abiertos:** ninguno nuevo.
+
+---
+
+## Ajuste · Hojas de las 4 operaciones, barra liquid glass y zonas seguras — 2026-11-14
+
+**Estado:** Móvil: terminado. Web: sin cambios.
+
+| Cambio (`index.html`, bloques `v954-safe-vars` y `v954-nav-and-sheets`) | Motivo |
+|---|---|
+| Zonas seguras como variables `--v954-safe-top/bottom` (una sola fuente `env()`), usadas por todos los bloques V953/V954 | Poder verificarlas en el emulador (Chromium no simula `env()`): se prueban con valores de iPhone (59/34 px) |
+| Préstamo, Beneficios, Conciliar y Devolución: hoja inferior igual que Pagar tarjeta (pegada abajo a 6 px, esquinas 28 px, por contenido, fondo atenuado); la altura máxima descuenta la zona segura superior | En iPhone ocupaban toda la pantalla y el botón volver quedaba tapado por la barra de estado |
+| Cabeceras de esas 4 operaciones: «volver» y título en una fila, sin icono decorativo ni subtítulo; cuerpos y pie compactos (botón 52–56 px) | Para caber sin scroll con la zona segura |
+| Hoja «Motivo del ajuste» (Conciliar): lista legible y relleno inferior con zona segura | El texto de «Seleccionar motivo» era casi invisible |
+| Barra de navegación: `--v340-nav-inset` pasa a `max(6px, safe-bottom − 20px)` (14 px en iPhone); los botones flotantes derivan de esa variable y quedan a 16 px de la barra (antes 1 px) | La barra estaba alta y pegada al botón «+» |
+| Barra y botones flotantes «liquid glass» (claro y oscuro): vidrio translúcido con desenfoque, borde de luz, brillo superior y píldora de cristal en la pestaña activa | Pedido del usuario |
+
+**Verificado** (zona segura simulada 59/34, 47/34, 24/0 y 0/0; 393×852, 390×844, 412×839, 375×667, 360×640): las 4 hojas sin scroll con volver y botón visibles; botón de confirmación probado en cada una: Préstamo 4→5 pagos, Beneficios y Conciliar registran, Devolución abre «Seleccionar compra» y registra; consola sin errores.
+
+**Pendiente:** comprobar en un iPhone real la altura de la barra respecto al indicador de inicio (el emulador usa valores simulados).
+
+**Nota de integración (2026-11-14):** al fusionar, `main` ya traía cambios propios del dueño del repositorio sobre la barra de navegación
+(`--v367-dock-bottom`, degradado de acento en el «Liquid Glass» V250) y el espacio superior de cinco vistas. Se conservó su versión y se
+retiraron de este cambio las reglas de posición/estilo de la barra y de los botones flotantes (`--v340-nav-inset`, cristal propio, FAB).
+Quedan de este cambio: hojas de las 4 operaciones, hoja «Motivo del ajuste» y zonas seguras como variables.
