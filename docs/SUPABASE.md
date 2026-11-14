@@ -25,3 +25,16 @@ y rechazar revisiones desactualizadas. Funciones edge usadas y **no incluidas** 
 `apple-pay-link`, `apple-pay-shortcuts`.
 
 Este documento describe lo que la app espera; no sustituye la verificación en tu proyecto.
+
+
+## Estado real verificado (14 nov 2026) y consumo de recursos
+Verificado directamente en el proyecto `vive-el-hoy-finanzas-360`:
+- Todas las tablas tienen RLS activo. Base de datos: 24 MB. El modelo vigente es relacional (`finance_items`, `finance_values`, `finance_revision`) más `apple_pay_*`; las 18 tablas heredadas (`bancos`, `cuentas`, …) están vacías.
+- `finanzas_estado` **ya no existe** en el servidor (el código solo la menciona en rutas heredadas).
+- Tráfico de 24 h antes de la optimización: 1.290 lecturas de `finance_values` (≈117 recargas completas de ~10.000 filas), 1.372 de `apple_pay_events`, 713 de `finance_revision`, 312 conexiones realtime.
+
+### Optimización V1043
+- Tabla `finance_collection_state(user_id, collection, revision)`: `finance_apply_changes` registra en qué revisión cambió cada colección. El cliente compara y **solo descarga las colecciones que cambiaron**; si hay cualquier duda cae a la lectura completa.
+- Con la pestaña oculta no se descarga nada; al volver a verse se verifica la revisión.
+- El sondeo de Apple Pay baja de cada 3 min a cada 10 min (los eventos nuevos siguen llegando por realtime al instante).
+- Pendiente en el panel de Supabase (no se puede cambiar por SQL): activar *Leaked password protection* en Authentication.
