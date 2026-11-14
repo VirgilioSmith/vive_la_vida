@@ -4,7 +4,7 @@ const mock=fs.readFileSync(__dirname+'/mock.js','utf8');
 module.exports=async function open(b,w,h){
   const ctx=await b.newContext(Object.assign({viewport:{width:w,height:h||900}},process.env.TOUCH?{hasTouch:true,isMobile:true,deviceScaleFactor:2}:{}));
   await ctx.route('**/*',r=>{const u=r.request().url();const ROOT=process.env.ROOT||require('path').resolve(__dirname,'..');
-  if(u.includes('supabase-js'))return r.fulfill({body:mock,contentType:'application/javascript'});
+  if(u.includes('supabase.js'))return r.fulfill({body:mock,contentType:'application/javascript'});
   const m=u.match(/^http:\/\/localhost:8765\/([^?#]*)/);
   if(m){const f=ROOT+'/'+(m[1]||'index.html');
    if(!fs.existsSync(f))return r.fulfill({status:404,body:''});

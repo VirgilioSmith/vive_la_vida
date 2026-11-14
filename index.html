@@ -14,25 +14,15 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="vive el hoy"/>
 <meta content="light dark" name="color-scheme"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://sghlpmhiihmnaulibcja.supabase.co wss://sghlpmhiihmnaulibcja.supabase.co https://api.frankfurter.dev https://frankfurter.dev https://open.er-api.com; manifest-src 'self'; media-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'"/>
+<meta name="referrer" content="no-referrer"/>
 <title>vive el hoy</title>
 <link rel="stylesheet" href="./styles.css?v=65"/>
-<script id="v866-direct-component-assembly">
-/* V866: Montaje síncrono de vistas existentes. No oculta contenido ni inserta overlays. */
-window.__v866Runners=Object.create(null);
-window.__v866Compose=function(){
- const order=['v785','v790','v794','financial','v797','v798','v799','f834','f835','f836','f837','v844','v849','v854','v855','v857','v861','v864','v865'];
- for(let pass=0;pass<2;pass++)for(const name of order){
-  const fn=window.__v866Runners[name];
-  if(typeof fn==='function')try{fn()}catch(err){console.error('[V866] Componente '+name,err)}
- }
-};
-</script>
-<script id="v386-early-submit-guard">document.addEventListener('submit',function(e){if(e.target?.id==='recurringForm'&&typeof window.v386ValidateRecurringForm==='function')window.v386ValidateRecurringForm(e);},true);</script>
-<script id="vive-feature-flag">window.VIVE_ENABLED=window.VIVE_ENABLED!==false;</script>
+<script src="./early.js?v=1"></script>
 </head>
 <body>
 <div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
+<script src="./vendor/supabase.js?v=2.119.0"></script>
 <script src="./app.js?v=31"></script>
 </body>
 </html>
