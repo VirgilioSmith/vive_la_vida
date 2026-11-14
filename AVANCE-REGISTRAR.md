@@ -321,3 +321,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - Todas las páginas que no eran Bancos/Wallet/Inicio sumaban otra vez la zona segura superior (ya reservada por `.shell`), dejando ~60px de hueco bajo la cabecera en iPhone. Corregido: todas arrancan a la misma altura. (El simulador no reproducía `env()`; ahora emula `.shell` con la zona segura.)
 - Hero móvil de Bancos: «Deudas» y «Posición neta» ahora son mosaicos redondeados con relleno (antes cajas cuadradas con texto pegado al borde).
 - Capacidad de endeudamiento: se suman explícitamente los ingresos adicionales del mes (extras laborales y otros ingresos no programados); los depositados en ahorros se incluyen aparte para no perderlos. Se muestran en el desglose.
+
+## V962 · Se retira la suma de ingresos adicionales en la capacidad de endeudamiento
+- A petición del usuario: sumar aparte los ingresos adicionales podía contar dos veces el dinero (al registrar un ingreso y pagar un compromiso). Se vuelve al cálculo de V959: pendiente por pagar ÷ (por cobrar + disponible hoy en cuentas corrientes y efectivo).
