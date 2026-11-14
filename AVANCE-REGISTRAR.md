@@ -349,3 +349,7 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 ## V967 · KPI Balance premium y botones rayados
 - KPI «Balance y posición neta»: sin iconos ni rótulos bajo las cifras (quedan como texto oculto para lectores de pantalla); barra verde (Fondos) y roja (Deudas) a su lado; cifras en grafito; fila subida ~8px para no pegar con el borde inferior; barras decorativas en el acento.
 - Botones Recibir/Gastar/Transferir: sin sombra exterior; efecto solo interior, tipo cepillado/rayado diagonal en el color del acento (versión grafito en Black).
+
+## V968 · KPI Balance: color en la cifra, rótulos de vuelta
+- Se revierte el diseño con barras (V967): vuelven las palabras «Fondos» y «Deudas» bajo las cifras; sin iconos ni rayitas.
+- El color va en la cifra: Fondos en verde, Deudas en rojo. La cifra principal es grafito si el patrimonio es positivo y rojo si es negativo. La fila se mantiene elevada (~8px) para no rozar el borde inferior.
