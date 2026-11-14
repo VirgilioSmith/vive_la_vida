@@ -89746,5 +89746,20 @@ html body #app#app #page#page .v203-hero .v203-hero-grid>div strong{display:bloc
  html body #app#app .main .v239-hero :is(.v239-hero-bottom,.v239-hero-metrics) strong{font-size:clamp(15px,4.6vw,18px)!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 }
 </style>
+<style id="v964-wallet-balance-align">
+/* V964 · Wallet móvil: «Crédito disponible» y «Deuda utilizada» comparten líneas (etiqueta, cifra, equivalencia y desglose) */
+@media (max-width:790px){
+ html body #app#app #page#page .v266-selected-balance>.v565-primary>span:first-child,html body #app#app #page#page .v266-selected-debt>small:first-child{display:block!important;height:13px!important;line-height:13px!important}
+ html body #app#app #page#page .v266-selected-balance{--v964-row:40px}
+ html body #app#app #page#page .v266-selected-balance>.v565-primary>strong{display:flex!important;align-items:flex-end;height:var(--v964-row,40px);margin:6px 0 3px!important;line-height:1!important}
+ html body #app#app #page#page .v266-selected-balance>.v550-balance-column.v565-second,html body #app#app #page#page .v266-selected-balance>.v550-balance-column{padding-top:0!important;margin-top:0!important;align-self:start!important}
+ html body #app#app #page#page .v266-selected-debt{text-align:right!important;display:flex!important;flex-direction:column;align-items:flex-end}
+ html body #app#app #page#page .v266-selected-debt>small:first-child{text-align:right!important;font-size:8.19px!important;line-height:11px!important;display:block;width:100%}
+ html body #app#app #page#page .v266-selected-debt>b{display:flex!important;align-items:flex-end;justify-content:flex-end;height:var(--v964-row,40px);margin:6px 0 3px!important;padding-top:0!important;line-height:1!important;font-size:clamp(18px,5.4vw,21px)!important;width:100%;text-align:right!important;white-space:nowrap}
+ html body #app#app #page#page .v266-selected-debt>small:nth-of-type(2){font-size:10.5px!important;margin-top:4px!important;line-height:15px;height:15px;text-align:right!important;width:100%}
+ html body #app#app #page#page .v266-selected-debt .v550-currency-breakdown{margin-top:14px!important;width:100%}
+ html body #app#app #page#page .v266-selected-debt .v550-currency-breakdown b{font-size:10.335px!important}
+}
+</style>
 </body>
 </html>
