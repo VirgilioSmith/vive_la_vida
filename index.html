@@ -25110,7 +25110,10 @@ function normCardText(value){return String(value||'').normalize('NFD').replace(/
 const CARD_TIER_NAMES={classic:'Clásica',gold:'Gold',platinum:'Platinum',black:'Black',infinite:'Infinite',signature:'Signature',world:'World',worldelite:'World Elite',diamond:'Diamond',business:'Business',titanium:'Titanium',other:'Otra categoría'};
 function cardTierKey(c){
  const direct=normCardText(c?.tier),t=normCardText((c?.name||'')+' '+(c?.category||''));
- if(CARD_TIER_NAMES[direct])return direct;
+ /* V960: «Clásica»/«Otra» es el valor por defecto del formulario; si el nombre o la categoría dicen
+    Platinum, Gold, Black… manda el nombre para que el color corresponda a la tarjeta real. */
+ if(CARD_TIER_NAMES[direct]&&!(direct==='classic'||direct==='other'))return direct;
+ if(CARD_TIER_NAMES[direct]&&!/world\s*elite|infinite|infinity|infinit|signature|black|negra|centurion|platinum|platino|diamond|diamante|titanium|titanio|business|corporativa|empresarial|gold|\boro\b|\bworld\b/.test(t))return direct;
  if(/world\s*elite/.test(t))return 'worldelite';
  if(/infinite|infinity|infinit/.test(t))return 'infinite';
  if(/signature/.test(t))return 'signature';
@@ -89684,6 +89687,25 @@ html body #app#app #page#page :is(.v26-nav button[aria-selected="true"],.v206-ba
  html body #app#app main.world-wallet .v266-wallet>.v266-wallet-detail>summary>span small{min-width:0;overflow:hidden;text-overflow:ellipsis;letter-spacing:.03em!important;margin-left:auto}
  html body #app#app main.world-wallet .v266-wallet>.v266-wallet-detail{min-height:72px}
 }
+</style>
+<style id="v960-card-tiers">
+/* V960 · Platinum = gris plata neutro en TODAS las vistas de tarjeta (web y móvil); el selector de pago deja de pintar todas las categorías de azul */
+:root{--v960-platinum:linear-gradient(125deg,#34373d 0%,#6f747c 54%,#a9aeb5 100%)}
+html body #app#app :is(.v28-card-face,.v266-physical-card,.v68-wallet-face,.v144-card-face,.v58m-card,.v239-card-face).tier-platinum,
+html body #app#app .world-cards #page .bank-card .v28-card-face.tier-platinum,
+html body #app#app .v266-wallet .v266-physical-card.tier-platinum{background:var(--v960-platinum)!important;border-color:rgba(255,255,255,.28)!important}
+html body #app#app :is(.v28-card-face,.v266-physical-card,.v144-card-face).tier-platinum :is(strong,b,span,small,em,h3,p){text-shadow:0 1px 2px rgba(18,20,24,.38)}
+/* Selector de pago: cada categoría con su color (antes todas azul marino) */
+html body #app#app .v144-card-face.tier-classic,html body #app#app .v144-card-face.tier-other{background:linear-gradient(127deg,#187b89 0%,#2e80aa 60%,#79bdcd 100%)!important}
+html body #app#app .v144-card-face.tier-gold{background:linear-gradient(125deg,#705023 0%,#b8893f 54%,#e8c887 100%)!important}
+html body #app#app .v144-card-face.tier-black{background:linear-gradient(125deg,#11141b 0%,#282e38 58%,#525b6e 100%)!important}
+html body #app#app .v144-card-face.tier-infinite{background:linear-gradient(125deg,#23264f 0%,#515c9b 58%,#a09ac7 100%)!important}
+html body #app#app .v144-card-face.tier-signature{background:linear-gradient(125deg,#3b2a53 0%,#795a91 60%,#b591bb 100%)!important}
+html body #app#app .v144-card-face.tier-world{background:linear-gradient(125deg,#15465c 0%,#267c95 53%,#68b6b8 100%)!important}
+html body #app#app .v144-card-face.tier-worldelite{background:linear-gradient(125deg,#0e1a26 0%,#2b495a 58%,#567e8c 100%)!important}
+html body #app#app .v144-card-face.tier-diamond{background:linear-gradient(125deg,#355a75 0%,#6c9db5 55%,#b7d9e4 100%)!important}
+html body #app#app .v144-card-face.tier-business{background:linear-gradient(125deg,#14504e 0%,#297e6b 55%,#73b4a0 100%)!important}
+html body #app#app .v144-card-face.tier-titanium{background:linear-gradient(125deg,#455159 0%,#7b919c 58%,#becad1 100%)!important}
 </style>
 </body>
 </html>
