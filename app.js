@@ -3898,7 +3898,7 @@ function advanced(){
  const indicator=(label,value,earlier,favorable,tone)=>`<div class="advanced-stat v16-annual-clean ${tone}"><span>${label}</span><strong>${money(value)}</strong>${observed?annualGap(value,earlier,y-1,favorable):'<small class="advanced-gap neutral">Sin meses registrados</small>'}</div>`;
  const period=observed===12?'Enero–diciembre':observed>0?`Enero–${new Date(y,observed-1,1).toLocaleDateString('es-DO',{month:'long'})}`:'Sin meses cerrados';
  return `<div class="v142-advanced" id="v142Advanced">
-  <header class="advanced-hero v142-advanced-hero"><div><span class="hero-eyebrow">ANALÍTICA AVANZADA · ${y}</span><h2>Tu año, con otra perspectiva.</h2><p>Ingresos, egresos y neto. Comparación ${period.toLowerCase()} ${y} frente al mismo tramo de ${y-1}.</p></div><button class="btn light" data-act="advancedCsv">Exportar CSV ${icon('download')}</button></header>
+  <header class="advanced-hero v142-advanced-hero"><div><span class="hero-eyebrow">ANALÍTICA AVANZADA · ${y}</span><h2>Tu año, con otra perspectiva.</h2><p>Ingresos, egresos y neto. Comparación ${period.toLowerCase()} ${y} frente al mismo tramo de ${y-1}.</p></div><button class="btn light" data-act="advancedCsv">Exportar Excel ${icon('download')}</button></header>
   <div class="advanced-quick advanced-gaps v14-advanced-three v142-advanced-stats">${indicator('Ingresos del año',income,priorIncome,true,'v14-income')}${indicator('Egresos del año',expense,priorExpense,false,'v14-expense')}${indicator('Neto del año',net,priorNet,true,'v14-net')}</div>
   <div class="v142-advanced-section-title v142-advanced-table-heading"><div><span>01 / BALANCE ANUAL</span><h3>Cuatro cifras. Una lectura del año completo.</h3></div></div>
   ${compactAnnualSummary({inAdvanced:true})}
@@ -3909,7 +3909,41 @@ function advanced(){
  </div>`;
 }
 
-function advancedCsv(){let data=Array.from({length:12},(_,i)=>monthlyTotals(ui.year,i+1)),cats=[...new Set([...EXP,...data.flatMap(m=>Object.keys(m.expenseBy))])],inc=[...new Set([...INC,...data.flatMap(m=>Object.keys(m.incomeBy))])],rows=[['Concepto',...MON,'Total','Promedio']];const push=(label,values,stock=false)=>{let total=values.reduce((a,b)=>a+b,0);rows.push([label,...values.map(v=>rnd(v)),stock?'':rnd(total),rnd(total/12)])};for(let k of inc){push('Ingreso · '+k,data.map(x=>num(x.incomeBy[k])));for(let sub of [...new Set(data.flatMap(x=>Object.keys(x.incomeSubBy).filter(s=>s.startsWith(k+'||')).map(s=>s.split('||')[1])))] )push('  ↳ '+sub,data.map(x=>num(x.incomeSubBy[k+'||'+sub])))}push('TOTAL INGRESOS',data.map(x=>x.income));for(let k of cats){push('Gasto · '+k,data.map(x=>num(x.expenseBy[k])));for(let sub of [...new Set(data.flatMap(x=>Object.keys(x.expenseSubBy).filter(s=>s.startsWith(k+'||')).map(s=>s.split('||')[1])))] )push('  ↳ '+sub,data.map(x=>num(x.expenseSubBy[k+'||'+sub])))}push('TOTAL GASTOS',data.map(x=>x.expense));push('NETO',data.map(x=>x.net));push('SALDO FINAL',data.map(x=>x.ending),true);download('\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(';')).join('\r\n'),`analitica_avanzada_${ui.year}.csv`,'text/csv;charset=utf-8')}
+function advancedCsv(){
+ /* V1029 · Exportación anual en Excel con tres hojas: Resumen, Ingresos y Egresos (con subcategorías). */
+ const year=ui.year,data=Array.from({length:12},(_,m)=>monthlyTotals(year,m+1)),now=new Date();
+ const limit=year===now.getFullYear()?now.getMonth()+1:year<now.getFullYear()?12:0;
+ const head=['Concepto',...MON,'Total '+year,'Promedio mensual'];
+ const line=(label,vals,{stock=false,bold=false,level=0}={})=>{const t=vals.reduce((a,b)=>a+(Number(b)||0),0);return {bold,cells:[(level?'    ↳ ':'')+label,...vals.map(v=>v===null?null:rnd(v)),stock?null:rnd(t),stock?null:rnd(t/12)]}};
+ const monthsOf=(fn)=>data.map((x,m)=>m<limit?fn(x):0);
+ const summary=[
+  {title:'Resumen anual '+year+' · valores en RD$'},
+  {header:head},
+  line('Ingresos',monthsOf(x=>x.income),{bold:true}),
+  line('Egresos',monthsOf(x=>x.expense),{bold:true}),
+  line('Neto (ingresos − egresos)',monthsOf(x=>x.net),{bold:true}),
+  line('Saldo final del mes',data.map((x,m)=>m<limit?x.ending:null),{stock:true}),
+  {blank:true},
+  {title:'Nota: el neto es el resultado del mes; el saldo final es el dinero en cuentas y efectivo al cierre. Los meses que aún no han ocurrido aparecen en cero.'}
+ ];
+ const section=(by,subBy,catList,title,totalKey)=>{
+  const rows=[{title},{header:head}];
+  const cats=[...new Set([...catList,...data.flatMap(x=>Object.keys(x[by]))])];
+  for(const k of cats){
+   const vals=monthsOf(x=>num(x[by][k]));if(!vals.some(v=>v))continue;
+   rows.push(line(k,vals,{bold:true}));
+   const subs=[...new Set(data.flatMap(x=>Object.keys(x[subBy]).filter(z=>z.startsWith(k+'||')).map(z=>z.split('||')[1])))];
+   for(const sub of subs)rows.push(line(sub,monthsOf(x=>num(x[subBy][k+'||'+sub])),{level:1}));
+  }
+  rows.push(line('TOTAL',monthsOf(x=>x[totalKey]),{bold:true}));
+  return rows;
+ };
+ window.v1029Xlsx([
+  {name:'Resumen',rows:summary},
+  {name:'Ingresos',rows:section('incomeBy','incomeSubBy',INC,'Ingresos por categoría y subcategoría · '+year+' · RD$','income')},
+  {name:'Egresos',rows:section('expenseBy','expenseSubBy',EXP,'Egresos por categoría y subcategoría · '+year+' · RD$','expense')}
+ ],`vive-el-hoy_${year}.xlsx`);
+}
 
 function loanForm(id,preBank){
  if(!ensureBanks())return;
@@ -4827,7 +4861,79 @@ function guidedTransactionForm(partial={},editId=null){
   else enhanceGuidedStudio(f,mode,editing);
  }
  if(mode==='service'&&f.classList.contains('studio-form')){v260EnhanceServiceWizard(f);v261EnhanceServiceWizard(f)}
- if(mode==='spend'||mode==='service')v80InstallAdvisor(f);
+ if(mode==='spend'||mode==='service'||mode==='income')v80InstallAdvisor(f);
+ if(mode==='income'||mode==='spend')v1028EnhanceFastx(f,mode);
+}
+/* V1028 · Registro de escritorio simplificado: iconos reales de categoría (sistema único) y panel de capacidad también en ingresos. */
+function v1028EnhanceFastx(f,mode){
+ if(!f||!f.classList.contains('fastx-form'))return;
+ const kind=mode==='income'?'ingreso':'gasto';
+ const paint=()=>f.querySelectorAll('.fastx-cat[data-fast-category]:not(.fastx-cat-other)').forEach(b=>{const ico=b.querySelector('.fastx-cat-ico');if(ico&&!ico.querySelector('svg'))ico.innerHTML=icon(v255TaxonomyIconName(kind,b.dataset.fastCategory,''))});
+ paint();
+ const zone=f.querySelector('.fastx-amount-zone'),badge=f.querySelector('.fastx-currency-badge');
+ const sym=()=>{if(zone&&badge)zone.dataset.sym=(badge.textContent.trim().split(/[\s·]+/)[0])||'RD$'};
+ sym();if(badge)new MutationObserver(sym).observe(badge,{childList:true,characterData:true,subtree:true});
+ const grid=f.querySelector('.fastx-category-grid');if(grid)new MutationObserver(paint).observe(grid,{childList:true,subtree:true});
+ /* Canal de pago: dato secundario, pasa a «Opciones adicionales» para dejar fecha y nota a la vista. */
+ const fold=f.querySelector('.fastx-fold-inner'),ch=f.querySelector('#flowChannel')?.closest('label');
+ if(fold&&ch&&!fold.contains(ch))fold.prepend(ch);
+ v1028UniversalPicker(f,mode);
+}
+/* Selector universal (cuentas, efectivo y tarjetas) con logo de institución: reemplaza la forma de pago + lista desplegable. */
+function v1028UniversalPicker(f,mode){
+ const host=f.querySelector('.fastx-source-section');if(!host||host.querySelector('.v1028-picker'))return;
+ const accSel=f.querySelector('#flowAccount'),cardSel=f.querySelector('#txCard');if(!accSel)return;
+ const isSpend=mode==='spend'&&!!cardSel;
+ const logoFor=(kind,id)=>{
+  if(kind==='card'){const c=card(id),b=c&&bank(c.bankId);return b?bankLogoMark(b,'v1028-logo'):`<span class="v1028-logo v1028-glyph">${icon('card')}</span>`}
+  const a=account(id),b=a&&bank(a.bankId);
+  if(b&&a.kind!=='cash')return bankLogoMark(b,'v1028-logo');
+  return `<span class="v1028-logo v1028-glyph">${icon(a?.kind==='cash'?'wallet':'building')}</span>`;
+ };
+ const items=()=>{
+  const list=[...accSel.options].map(o=>{const a=account(o.value);return {kind:'account',id:o.value,title:a?.name||o.text,sub:a?(a.kind==='cash'?'Efectivo':bankOf(a))+(a.currency==='USD'?' · US$':''):'',amount:a?money(getAccountBalance(a),a.currency,2):''}});
+  if(isSpend)[...cardSel.options].forEach(o=>{const c=card(o.value),st=c?cardStatus(c,'DOP'):null;list.push({kind:'card',id:o.value,title:c?.name||o.text,sub:'Tarjeta de crédito'+(c?' · '+bankOf(c):''),amount:st?'Disp. '+money(st.available,'DOP',2):''})});
+  return list;
+ };
+ let chosen=null;
+ const current=()=>{
+  const src=isSpend?(chosen||f.querySelector('[data-fast-source].active')?.dataset.fastSource||'account'):'account';
+  return src==='card'?{kind:'card',id:cardSel.value}:{kind:'account',id:accSel.value};
+ };
+ const wrap=document.createElement('div');wrap.className='v1028-picker';
+ const title=host.querySelector('.fastx-section-title strong');
+ wrap.innerHTML='<button type="button" class="v1028-picker-btn" aria-haspopup="listbox" aria-expanded="false"></button><div class="v1028-picker-list" role="listbox" hidden></div>';
+ host.querySelector('.fastx-section-title')?.after(wrap);
+ const btn=wrap.querySelector('.v1028-picker-btn'),list=wrap.querySelector('.v1028-picker-list');
+ const row=(it,sel)=>`<span class="v1028-row-logo">${logoFor(it.kind,it.id)}</span><span class="v1028-row-copy"><strong>${sanitize(it.title)}</strong><small>${sanitize(it.sub)}</small></span><span class="v1028-row-amt">${sanitize(it.amount)}</span>${sel!==undefined?`<span class="v1028-row-check" aria-hidden="true">${sel?'✓':''}</span>`:''}`;
+ const render=()=>{
+  const cur=current(),all=items(),it=all.find(x=>x.kind===cur.kind&&x.id===cur.id)||all[0];
+  if(it)btn.innerHTML=row(it)+`<span class="v1028-chevron" aria-hidden="true">⌄</span>`;
+  const group=(label,kind)=>{const g=all.filter(x=>x.kind===kind);return g.length?`<div class="v1028-group">${label}</div>`+g.map(x=>`<button type="button" role="option" class="v1028-opt${x.kind===cur.kind&&x.id===cur.id?' is-on':''}" data-kind="${x.kind}" data-id="${sanitize(x.id)}">${row(x,x.kind===cur.kind&&x.id===cur.id)}</button>`).join(''):''};
+  list.innerHTML=group(isSpend?'Cuentas y efectivo':'Cuentas y efectivo','account')+(isSpend?group('Tarjetas de crédito','card'):'');
+ };
+ const setOpen=o=>{list.hidden=!o;btn.setAttribute('aria-expanded',String(o))};
+ btn.addEventListener('click',()=>setOpen(list.hidden));
+ list.addEventListener('click',e=>{
+  const o=e.target.closest('.v1028-opt');if(!o)return;
+  const kind=o.dataset.kind,id=o.dataset.id;
+  if(isSpend)f.querySelector(`[data-fast-source="${kind}"]`)?.click();
+  chosen=kind;const sel=kind==='card'?cardSel:accSel;sel.value=id;
+  ['input','change'].forEach(t=>sel.dispatchEvent(new Event(t,{bubbles:true})));
+  setOpen(false);render();
+ });
+ document.addEventListener('click',e=>{if(!wrap.contains(e.target))setOpen(false)});
+ f.addEventListener('keydown',e=>{if(e.key==='Escape'&&!list.hidden){e.stopPropagation();setOpen(false);btn.focus()}},true);
+ f.addEventListener('change',e=>{if(['accountId','cardId','paymentSource'].includes(e.target.name))render()});
+ render();
+}
+function v1028IncomeAdvisorMarkup(f){
+ const acc=account(f.elements.accountId?.value),curr=acc?.currency||f.elements.currency?.value||'DOP';
+ const amt=v99MoneyInDop(f.elements.amount?.value||0,curr),d=v89DebtCapacity(String(f.elements.date?.value||today()).slice(0,7));
+ const newIncome=d.income+amt,after=newIncome>0?rnd(d.monthly/newIncome*100):null,before=d.ratio;
+ const risk=after===null?'missing':after>100?'over':after>=80?'caution':'ok',avail=newIncome>0?rnd(newIncome-d.monthly):null;
+ const label=avail===null?'Sin ingresos suficientes':avail<0?'Déficit previsto':'Disponible después del ingreso';
+ return `<section class="v80-advisor v90-expense-advisor v99-simple-capacity v107-capacity-pill v107-risk-${risk}" id="v80PurchaseAdvisor" aria-label="Capacidad de endeudamiento antes y después del ingreso"><div class="v107-pill-heading"><span>${icon('shield')} Capacidad de endeudamiento</span><button type="button" class="v107-pill-info" data-v85-action="capacity" aria-label="Ver desglose de capacidad de endeudamiento" title="Ver desglose">${icon('info')}</button></div><div class="v107-pill-metrics"><div class="v107-pill-metric"><small>ACTUAL</small><strong class="v99-${d.risk}">${v85Pct(before)}</strong></div><span class="v107-pill-arrow" aria-hidden="true">→</span><div class="v107-pill-metric"><small>DESPUÉS DEL INGRESO</small><strong class="v99-${risk}">${v85Pct(after)}</strong></div><div class="v107-pill-available ${avail!==null&&avail<0?'v107-pill-negative':''}"><small>${label}</small><strong>${avail===null?'—':money(Math.abs(avail))}</strong></div></div></section>`;
 }
 
 /* ------------- INGRESOS Y EGRESOS · REGISTRO EXPRESS -------------
@@ -7151,7 +7257,7 @@ function v980SplashAccent(){
  return c==='custom'&&hex.test(db?.settings?.paletteHex||'')?db.settings.paletteHex:(pal[c]||pal.original);
 }
 function v980DismissSplash(gate){
- const finish=()=>{gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');gate.querySelectorAll('.v980-dust').forEach(x=>x.remove());v335SplashSince=0;};
+ const finish=()=>{gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');document.querySelectorAll('.v980-dust').forEach(x=>x.remove());v335SplashSince=0;};
  try{
   const word=gate.querySelector('.v329-wordmark');
   const calm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -7159,38 +7265,53 @@ function v980DismissSplash(gate){
   const r=word.getBoundingClientRect();if(r.width<20||r.height<10){finish();return;}
   const cs=getComputedStyle(word),dpr=Math.min(2,window.devicePixelRatio||1),pad=36;
   const W=Math.ceil(r.width+pad*2),H=Math.ceil(r.height+pad*2);
-  const cv=document.createElement('canvas');cv.className='v980-dust';cv.width=W*dpr;cv.height=H*dpr;
-  cv.style.cssText=`position:fixed;left:${r.left-pad}px;top:${r.top-pad}px;width:${W}px;height:${H}px;pointer-events:none;z-index:2`;
-  const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
-  // Rasterizar el texto con la misma tipografía
-  const fs=parseFloat(cs.fontSize),ls=parseFloat(cs.letterSpacing)||0,txt=word.textContent;
-  ctx.font=`${cs.fontWeight} ${fs}px ${cs.fontFamily}`;ctx.fillStyle=cs.color;ctx.textBaseline='alphabetic';
-  let total=0;for(const ch of txt)total+=ctx.measureText(ch).width+ls;
-  let x=pad+(r.width-total)/2;const y=pad+r.height*0.5+fs*0.33;
-  for(const ch of txt){ctx.fillText(ch,x,y);x+=ctx.measureText(ch).width+ls;}
-  const img=ctx.getImageData(0,0,W*dpr,H*dpr),step=Math.max(2,Math.round(2*dpr)),parts=[];
-  for(let py=0;py<H*dpr;py+=step)for(let px=0;px<W*dpr;px+=step){const i=(py*W*dpr+px)*4;if(img.data[i+3]>110){
-   const nx=(px/dpr)/W;parts.push({x:px/dpr,y:py/dpr,vx:20+Math.random()*80,vy:-(10+Math.random()*70)+(Math.random()-.5)*30,wob:Math.random()*6.28,sz:step/dpr*(.9+Math.random()*.5),delay:120+nx*520+Math.random()*180,life:620+Math.random()*420});}}
-  if(!parts.length){finish();return;}
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  gate.appendChild(cv);word.style.visibility='hidden';
+  /* V1030 · El polvo viaja hacia la izquierda y se vuelve a formar como el logotipo de la esquina superior izquierda. */
+  const brand=[...document.querySelectorAll('.vive-p-brand,.vive-mobile-brand')].find(e=>{const b=e.getBoundingClientRect();return b.width>8&&b.height>8&&getComputedStyle(e).visibility!=='hidden'});
+  const vw=window.innerWidth,vh=window.innerHeight;
+  const cv=document.createElement('canvas');cv.className='v980-dust';cv.width=vw*dpr;cv.height=vh*dpr;
+  cv.style.cssText=`position:fixed;left:0;top:0;width:${vw}px;height:${vh}px;pointer-events:none;z-index:2147483000`;
+  const ctx=cv.getContext('2d');
+  const raster=(text,font,rect,color)=>{const c=document.createElement('canvas');c.width=Math.ceil(vw*dpr);c.height=Math.ceil(vh*dpr);const g=c.getContext('2d',{willReadFrequently:true});g.scale(dpr,dpr);g.font=font;g.fillStyle=color;g.textBaseline='alphabetic';g.textAlign='center';g.fillText(text,rect.left+rect.width/2,rect.top+rect.height*0.5+parseFloat(font.match(/(\d+(\.\d+)?)px/)?.[1]||16)*0.34);return g.getImageData(0,0,c.width,c.height)};
+  const sample=(img,step,minA)=>{const out=[];for(let py=0;py<img.height;py+=step)for(let px=0;px<img.width;px+=step){if(img.data[(py*img.width+px)*4+3]>minA)out.push({x:px/dpr,y:py/dpr})}return out};
+  const fs=parseFloat(cs.fontSize),step=Math.max(2,Math.round(2*dpr));
+  const src=sample(raster(word.textContent,`${cs.fontWeight} ${fs}px ${cs.fontFamily}`,r,cs.color),step,110);
+  if(!src.length){finish();return;}
+  let dst=[],bcol=v980SplashAccent();
+  if(brand){
+   let bs2=null;const br=brand.getBoundingClientRect(),bs=getComputedStyle(brand),bf=parseFloat(bs.fontSize)||24;
+   // Solo el primer texto de la marca (en móvil comparte el botón con la fecha): se mide su rectángulo exacto.
+   const tw=document.createTreeWalker(brand,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.textContent.trim()?1:2});const tn=tw.nextNode();
+   let txt=(brand.textContent||'V').trim(),rr=br;
+   if(tn){const rg=document.createRange();rg.selectNodeContents(tn);const q=rg.getBoundingClientRect();if(q.width>4){rr=q;txt=tn.textContent.trim();const ps=getComputedStyle(tn.parentElement);bs2=ps}}
+   dst=sample(raster(txt,`${(bs2||bs).fontWeight} ${parseFloat((bs2||bs).fontSize)||bf}px ${(bs2||bs).fontFamily}`,rr,'#000'),step,110);
+   bcol=bs.color&&!/rgba?\(0, 0, 0, 0\)/.test(bs.color)?bs.color:bcol;
+  }
+  const parts=src.map((p,n)=>{const t=dst.length?dst[(Math.random()*dst.length)|0]:{x:-20,y:p.y};const nx=(p.x-r.left)/Math.max(1,r.width);
+   return {x0:p.x,y0:p.y,tx:t.x,ty:t.y,sz:step/dpr*(.9+Math.random()*.5),wob:Math.random()*6.28,amp:6+Math.random()*16,delay:100+(1-nx)*420+Math.random()*160,life:900+Math.random()*500}});
+  ctx.scale(dpr,dpr);
+  document.body.appendChild(cv);word.style.visibility='hidden';
+  const brandPrev=brand?brand.style.opacity:'';if(brand)brand.style.opacity='0';
   gate.classList.add('v980-dissolving');gate.style.pointerEvents='none';
-  const t0=performance.now(),DUR=1500;
-  const col=cs.color;
+  const t0=performance.now(),DUR=2300,col=cs.color;
+  const ease=k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
   (function frame(now){
-   const t=now-t0;ctx.clearRect(0,0,W,H);ctx.fillStyle=col;
+   const t=now-t0;ctx.clearRect(0,0,vw,vh);
    for(const q of parts){
     const a=t-q.delay;
-    if(a<0){ctx.globalAlpha=1;ctx.fillRect(q.x,q.y,q.sz,q.sz);continue;}
-    const k=a/q.life;if(k>=1)continue;
-    const e=k*k;
-    ctx.globalAlpha=1-k;
-    ctx.fillRect(q.x+q.vx*(a/1000)*(1+k)+Math.sin(q.wob+a/180)*3*k,q.y+q.vy*(a/1000)*(1+k)-e*18,q.sz*(1-k*.5),q.sz*(1-k*.5));
+    if(a<0){ctx.globalAlpha=1;ctx.fillStyle=col;ctx.fillRect(q.x0,q.y0,q.sz,q.sz);continue}
+    const k=Math.min(1,a/q.life),e=ease(k);
+    const wob=Math.sin(q.wob+a/160)*q.amp*Math.sin(Math.PI*k);
+    // El polvo se desprende hacia la izquierda y baja/sube hasta asentarse en el logotipo
+    const x=q.x0+(q.tx-q.x0)*e-Math.sin(Math.PI*k)*40,y=q.y0+(q.ty-q.y0)*e+wob;
+    ctx.globalAlpha=k<1?.95:1;ctx.fillStyle=k>.6?bcol:col;
+    ctx.fillRect(x,y,q.sz*(1-.25*Math.sin(Math.PI*k)),q.sz*(1-.25*Math.sin(Math.PI*k)));
    }
    ctx.globalAlpha=1;
-   // El telón se aclara mientras el polvo se va, revelando la app ya lista
-   gate.style.opacity=String(Math.max(0,1-Math.max(0,(t-350)/900)));
-   if(t<DUR)requestAnimationFrame(frame);else{gate.style.opacity='';gate.style.pointerEvents='';finish();}
+   gate.style.opacity=String(Math.max(0,1-Math.max(0,(t-250)/800)));
+   const done=t>=DUR-250;
+   if(brand&&done){brand.style.transition='opacity .35s ease';brand.style.opacity=brandPrev||'';}
+   if(done)cv.style.opacity=String(Math.max(0,1-(t-(DUR-250))/250));
+   if(t<DUR)requestAnimationFrame(frame);else{if(brand){brand.style.opacity=brandPrev;brand.style.transition=''}gate.style.opacity='';gate.style.pointerEvents='';finish();}
   })(t0);
  }catch(e){console.warn('V980: disolución no disponible',e);finish();}
 }
@@ -10182,7 +10303,7 @@ function v80InstallAdvisor(f){
 function v80UpdateAdvisor(f){
  const host=f?.querySelector('.v80-advisor-slot');if(!host)return;
  const active=host.querySelector('.v80-breakdown')?.open;
- host.innerHTML=v80AdvisorMarkup(v80AdvisorFromForm(f));
+ host.innerHTML=(f.dataset.mode==='income'||f.classList.contains('v379-income-transaction'))?v1028IncomeAdvisorMarkup(f):v80AdvisorMarkup(v80AdvisorFromForm(f));
  if(active)host.querySelector('.v80-breakdown')?.setAttribute('open','');
 }
 function v80RefreshQuickAdvisor(){
@@ -20872,4 +20993,64 @@ window.__v866Runners.v865=run;
   if(node&&ev.pointerType!=='mouse'){window.showChartTip?.(node,ev.clientX,ev.clientY);hideTimer=setTimeout(()=>window.hideChartTip?.(),3500)}
   else if(!node)window.hideChartTip?.();
  },{passive:true});
+})();
+
+/* V1029 · Generador mínimo de .xlsx (sin dependencias): hojas con título, cabecera, cifras y totales. */
+(()=>{
+ const enc=new TextEncoder();
+ const crcTable=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+ const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=crcTable[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0};
+ const zip=files=>{
+  const chunks=[],central=[];let offset=0;
+  const u16=n=>[n&255,(n>>>8)&255],u32=n=>[n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255];
+  for(const f of files){
+   const name=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+   const local=new Uint8Array([0x50,0x4b,3,4,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),0,0]);
+   chunks.push(local,name,data);
+   central.push({name,crc,size:data.length,offset});
+   offset+=local.length+name.length+data.length;
+  }
+  const cdStart=offset;
+  for(const c of central){
+   const h=new Uint8Array([0x50,0x4b,1,2,20,0,20,0,0,8,0,0,0,0,0x21,0,...u32(c.crc),...u32(c.size),...u32(c.size),...u16(c.name.length),0,0,0,0,0,0,0,0,0,0,0,0,...u32(c.offset)]);
+   chunks.push(h,c.name);offset+=h.length+c.name.length;
+  }
+  const end=new Uint8Array([0x50,0x4b,5,6,0,0,0,0,...u16(central.length),...u16(central.length),...u32(offset-cdStart),...u32(cdStart),0,0]);
+  chunks.push(end);
+  return new Blob(chunks,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+ };
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const col=i=>{let s='';for(i++;i>0;i=Math.floor((i-1)/26))s=String.fromCharCode(65+(i-1)%26)+s;return s};
+ // estilos: 0 normal · 1 cabecera · 2 número · 3 número en negrita · 4 título · 5 texto en negrita
+ const styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.00;[Red]\\-#,##0.00"/></numFmts><fonts count="4"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="14"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF3F5F8C"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="6"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"><alignment horizontal="center"/></xf><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="2" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1"/><xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs></styleSheet>';
+ const sheetXml=rows=>{
+  let r=0,out='';
+  for(const row of rows){
+   r++;
+   if(row.blank)continue;
+   let cells='';
+   if(row.title){cells=`<c r="A${r}" s="4" t="inlineStr"><is><t>${esc(row.title)}</t></is></c>`}
+   else if(row.header){cells=row.header.map((h,i)=>`<c r="${col(i)}${r}" s="1" t="inlineStr"><is><t>${esc(h)}</t></is></c>`).join('')}
+   else cells=row.cells.map((v,i)=>{
+    if(v===null||v===undefined)return '';
+    if(typeof v==='number')return `<c r="${col(i)}${r}" s="${row.bold?3:2}"><v>${v}</v></c>`;
+    return `<c r="${col(i)}${r}" s="${row.bold?5:0}" t="inlineStr"><is><t xml:space="preserve">${esc(v)}</t></is></c>`;
+   }).join('');
+   out+=`<row r="${r}">${cells}</row>`;
+  }
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane xSplit="1" topLeftCell="B1" activePane="topRight" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="38" customWidth="1"/><col min="2" max="15" width="14" customWidth="1"/></cols><sheetData>${out}</sheetData></worksheet>`;
+ };
+ window.v1029Xlsx=(sheets,filename)=>{
+  const files=[
+   {name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')+'</Types>'},
+   {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+   {name:'xl/workbook.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+sheets.map((s,i)=>`<sheet name="${esc(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')+'</sheets></workbook>'},
+   {name:'xl/_rels/workbook.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+sheets.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')+`<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+   {name:'xl/styles.xml',data:styles},
+   ...sheets.map((s,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,data:sheetXml(s.rows)}))
+  ];
+  const blob=zip(files),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);
+  window.toast?.('Excel descargado: '+filename);
+ };
 })();
