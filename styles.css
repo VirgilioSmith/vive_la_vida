@@ -54766,3 +54766,32 @@ html{background:transparent!important}
  html body #modal-root form#v56LoanForm .form-foot .btn{min-height:40px!important}
  html body #modal-root .modal.v378-form-v56LoanForm{max-height:calc(100dvh - 8px)!important}
 }
+
+/* V1103 · Nuevo acuerdo según la referencia: flecha atrás en la cabecera y un solo botón principal abajo por vista */
+html body #modal-root .modal.v378-form-v56LoanForm .modal-head{display:flex;align-items:center;gap:10px}
+html body #modal-root .modal.v378-form-v56LoanForm .modal-head h2{flex:1}
+html body #modal-root .v1100-back{flex:0 0 38px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 22%,transparent);background:color-mix(in srgb,var(--v424-accent-strong) 7%,#fff);color:var(--v424-accent-strong);cursor:pointer;padding:0}
+html body #modal-root .v1100-back svg{width:18px;height:18px;transform:rotate(180deg);stroke:currentColor}
+html body #modal-root form#v56LoanForm .v1100-continue{display:none}
+html body #modal-root form#v56LoanForm .v1100-tabs button:focus,html body #modal-root form#v56LoanForm .v1100-tabs button:focus-visible{outline:none!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--v424-accent-strong) 35%,transparent)}
+html body #modal-root form#v56LoanForm .v1100-search .field,html body #modal-root form#v56LoanForm .v1100-search input{border:0!important;background:transparent!important;box-shadow:none!important;outline:none!important;padding:12px 0!important;height:auto!important;min-height:0!important;border-radius:0!important;width:100%}
+html body #modal-root form#v56LoanForm .v1100-search{border:1px solid color-mix(in srgb,var(--v424-accent-strong) 18%,transparent)!important}
+@media (max-width:790px){
+ html body #modal-root form#v56LoanForm .v1100-next{display:none!important}
+ html body #modal-root form#v56LoanForm .form-foot{display:flex!important}
+ html body #modal-root form#v56LoanForm .form-foot .btn.ghost{display:none!important}
+ html body #modal-root form#v56LoanForm .form-foot .btn,html body #modal-root form#v56LoanForm .form-foot .v1100-continue{flex:1 1 100%!important;width:100%}
+ html body #modal-root form#v56LoanForm[data-pf-step="persona"] .form-foot button[type="submit"]{display:none!important}
+ html body #modal-root form#v56LoanForm[data-pf-step="persona"] .form-foot .v1100-continue{display:flex!important;align-items:center;justify-content:center;gap:8px}
+ html body #modal-root form#v56LoanForm[data-pf-step="pago"] .form-foot .v1100-continue{display:none!important}
+ html body #modal-root form#v56LoanForm .form-foot{position:static!important;margin-top:auto!important}
+ html body #modal-root form#v56LoanForm .v1100-pf{flex:1}
+}
+@media (max-width:790px){
+ html body #modal-root form#v56LoanForm .form-foot{display:grid!important;grid-template-columns:1fr!important;padding:8px 0 0!important}
+ html body #modal-root form#v56LoanForm .form-foot>.btn{width:100%!important;max-width:none!important;margin:0!important;justify-self:stretch}
+}
+@media (max-width:790px){
+ html body #modal-root#modal-root .modal.v391-form-shell > form#v56LoanForm > .form-foot{display:flex!important;grid-template-columns:none!important}
+ html body #modal-root#modal-root .modal.v391-form-shell > form#v56LoanForm > .form-foot > .btn{flex:1 1 100%!important;width:100%!important;max-width:none!important}
+}
