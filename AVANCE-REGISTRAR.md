@@ -353,3 +353,8 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 ## V968 · KPI Balance: color en la cifra, rótulos de vuelta
 - Se revierte el diseño con barras (V967): vuelven las palabras «Fondos» y «Deudas» bajo las cifras; sin iconos ni rayitas.
 - El color va en la cifra: Fondos en verde, Deudas en rojo. La cifra principal es grafito si el patrimonio es positivo y rojo si es negativo. La fila se mantiene elevada (~8px) para no rozar el borde inferior.
+
+## V969 · Vive (frases), Apple Pay y barra de estado
+- **Vive — validación:** el motor anterior tenía solo 81 frases fijas + 10 palabras sueltas y 6 mantras que salían ~14 % de las veces («Vive.», «Respira.», «Agradece.»…); no existía ningún generador de millones de combinaciones, por eso se repetía tanto. Ahora cada texto se arma con apertura (30) · verbo+objeto por tema (12 temas) · matiz (24) · cierre (24): **≈16.3 millones de combinaciones** (`ViveModule.stats()`). Las palabras (p. ej. «Dios») pueden repetirse, pero en contextos distintos; no se repite ninguna combinación exacta (se recuerda en el dispositivo, hasta 4,000) y se evitan aperturas, matices, cierres, verbos y objetos recientes y el mismo tema seguido. Prueba: 3,000 lecturas → 3,000 únicas, 0 finales repetidos consecutivos. Se retiran las palabras sueltas y mantras.
+- **Apple Pay (Configuración):** «Actividad reciente» muestra solo los 3 eventos más recientes («Últimos 3 de N»).
+- **Barra de estado / isla dinámica:** el contenido que se desplaza por debajo queda velado y desenfocado (nunca legible detrás de la hora o la isla).
