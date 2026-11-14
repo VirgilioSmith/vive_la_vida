@@ -279,3 +279,18 @@ Quedan de este cambio: hojas de las 4 operaciones, hoja «Motivo del ajuste» y 
 | Buscador de las hojas de categoría: campo blanco con borde y texto casi negro (tema claro) | Estándar de campos |
 
 **Verificado** (gasto e ingreso, 393×852 con zona segura, 375×667): tocar chips → 0 capas nuevas y 0 animaciones en marcha; «Más» → categoría → subcategoría → importe → Continuar → Confirmar guarda la categoría y subcategoría elegidas; teclado abierto: hojas por encima; consola sin errores.
+
+---
+
+## Ajuste · Subcategorías en la pantalla de entrada — 2026-11-14
+
+**Estado:** Móvil: terminado. Web: sin cambios.
+
+| Cambio (`index.html`) | Motivo |
+|---|---|
+| Fila de subcategorías bajo la de categorías (`subQuick`, `quickStack`): las 3 subcategorías más usadas de la categoría + «Más», con los mismos chips, iconos (`catIcon` con la subcategoría) y alineación (grid de 4) | Pedido del usuario: elegir subcategoría directamente, como las categorías |
+| `chooseSub`: tocar una subcategoría solo la marca (tocarla otra vez la quita = sin subcategoría); `chooseCategory` reemplaza la fila de subcategorías en el lugar, sin redibujar | Sin «flashback» |
+| La categoría elegida desde «Más» queda visible y marcada en la fila (reemplaza la 3.ª); ya no se abre otra hoja detrás: se vuelve a la pantalla con sus subcategorías | «Selecciona únicamente eso, no hace más nada» |
+| Pantallas ≤700px de alto: teclado 36px, chips 42px, iconos 19px | Para que quepa sin scroll con la fila nueva (375×667 y 360×640) |
+
+**Verificado:** gasto e ingreso: tocar subcategoría (0 capas nuevas), quitarla, cambiar de categoría (la fila cambia en el lugar), «Más» categorías → categoría marcada con sus subcategorías, «Más» subcategorías → hoja → queda marcada, Continuar y Confirmar guardan categoría/subcategoría; 393×852, 390×844, 375×667 y 360×640 sin scroll; hoja de subcategorías sobre el teclado; consola sin errores. En 320×568 (fuera del rango 360–430) queda scroll interno.
