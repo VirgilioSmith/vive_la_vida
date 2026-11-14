@@ -251,3 +251,16 @@ cambiaría esa regla. No se ha implementado.
 (`--v367-dock-bottom`, degradado de acento en el «Liquid Glass» V250) y el espacio superior de cinco vistas. Se conservó su versión y se
 retiraron de este cambio las reglas de posición/estilo de la barra y de los botones flotantes (`--v340-nav-inset`, cristal propio, FAB).
 Quedan de este cambio: hojas de las 4 operaciones, hoja «Motivo del ajuste» y zonas seguras como variables.
+
+---
+
+## Ajuste · Barra de navegación «cristal» y Conciliar (Aumentar / Disminuir) — 2026-11-14
+
+**Estado:** Móvil: terminado. Web: sin cambios.
+
+| Cambio (`index.html`) | Motivo |
+|---|---|
+| `<style id="v955-dock-glass">`: barra de navegación de cristal (desenfoque `max(22px, --v250-dock-blur)` + saturación, borde de luz, brillo especular, píldora de cristal en la pestaña activa) en claro y oscuro; botones flotantes del mismo material. Conserva la posición del propietario (`--v367-dock-bottom`) y su degradado de acento | Pedido del usuario; se monta sobre `main` sin pisar su posición |
+| Conciliar un saldo: la dirección Aumentar/Disminuir se recuerda aunque el importe esté vacío, y un importe tecleado con «Disminuir» activo se guarda negativo (`adjustmentEnhancement`) | Con el importe vacío, «Disminuir» se perdía (el signo solo vivía en el signo del importe) y al teclear quedaba positivo. El valor guardado no cambia: positivo aumenta, negativo disminuye |
+
+**Verificado:** 5 botones de la barra navegan y marcan su pestaña; Conciliar: Disminuir con importe vacío → −250 registrado; Aumentar → +90 registrado; Disminuir→Aumentar→teclear → positivo; las 4 hojas y sus botones de confirmación siguen funcionando; consola sin errores.
