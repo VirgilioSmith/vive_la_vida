@@ -54394,7 +54394,7 @@ html body:not(.theme-black):not(.theme-dark) #app#app :is(.v56-button.primary,.v
 body[data-vive-bg][data-vive-bg]:not(.theme-black):not(.theme-dark){
  background-color:color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 15%,#faf8fa)!important;
  background-image:
-  radial-gradient(ellipse 102% 64% at -18% 0%,color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 30%,#fbeef2),transparent 71%),
+  radial-gradient(ellipse 90% 78% at -14% 4%,color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 62%,#fff),transparent 72%),
   radial-gradient(ellipse 110% 92% at 112% 18%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 52%,#e6f2f4),transparent 76%),
   linear-gradient(136deg,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 16%,#fffafb) 2%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 11%,#faf9fa) 52%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 24%,#f0f6f5) 100%)!important;
  background-attachment:fixed!important;
@@ -54620,10 +54620,4 @@ html body:not(.theme-black):not(.theme-dark) #app#app .v46-bank-filters{backgrou
 html body #app#app :is(.panel,.v239-product,.v410-substat,.stat-box,.v26-nav,.inner-menu,.v285-budget-nav,.v46-bank-filters,.v61-profile-switch,.inner-menu-tabs,.module-switch,.module-switch-shell){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 html body #app#app :is(.panel,.v239-product){background:linear-gradient(150deg,rgba(255,255,255,.92),rgba(255,255,255,.72))!important}
 html body:not(.theme-black):not(.theme-dark) #app#app :is(.v26-nav,.inner-menu,.v285-budget-nav,.v46-bank-filters){background:linear-gradient(150deg,color-mix(in srgb,var(--v424-accent-strong) 9%,rgba(255,255,255,.88)),color-mix(in srgb,var(--v424-accent-strong) 5%,rgba(255,255,255,.7)))!important}
-body[data-vive-bg][data-vive-bg]:not(.theme-black):not(.theme-dark){background-attachment:scroll!important;background-image:none!important}
-body[data-vive-bg][data-vive-bg]:not(.theme-black):not(.theme-dark)::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
- background:
-  radial-gradient(ellipse 102% 64% at -18% 0%,color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 30%,#fbeef2),transparent 71%),
-  radial-gradient(ellipse 110% 92% at 112% 18%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 52%,#e6f2f4),transparent 76%),
-  linear-gradient(136deg,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 16%,#fffafb) 2%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 11%,#faf9fa) 52%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 24%,#f0f6f5) 100%);
- transform:translateZ(0)}
+/* Reflejo del acento a la izquierda: se restituye el fondo original del body (el resplandor en una capa aparte quedaba tapado por el color del body). */
