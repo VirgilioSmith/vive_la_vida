@@ -324,3 +324,13 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V962 · Se retira la suma de ingresos adicionales en la capacidad de endeudamiento
 - A petición del usuario: sumar aparte los ingresos adicionales podía contar dos veces el dinero (al registrar un ingreso y pagar un compromiso). Se vuelve al cálculo de V959: pendiente por pagar ÷ (por cobrar + disponible hoy en cuentas corrientes y efectivo).
+
+## V963 · Préstamos móvil: coherencia visual
+- Detalle del préstamo: tonos terracota (botones, etiquetas, pestaña activa, columna «Con estrategia») → acento configurado. Botones secundarios con contorno de acento.
+- Acciones de cabecera ordenadas: «Registrar cuota» ancho completo, «Editar ficha»/«Cancelar» en pareja y «Abono extraordinario» ancho completo (antes texto partido en dos líneas).
+- Comparativa de escenarios: columnas con ancho real (las cifras ya no se montan); desplaza solo dentro de su tarjeta.
+- Acción principal de Cuentas/Préstamos/Tarjetas (`v239-action-primary`): del azul suelto al acento.
+- Hero v239: cifras secundarias en una línea (ya no parten «14 nov de 2026» ni los montos largos).
+
+## Auditoría · Avance de efectivo (sin cambios de código)
+- Con un avance de RD$10,000 (comisión 3%): Egresos del mes sube solo RD$300 (comisión, en «Deudas e intereses»); ingresos no cambian; la deuda de la tarjeta sube RD$10,300; el efectivo recibido entra a la cuenta. El principal no cuenta como gasto (igual que el pago de tarjeta).
