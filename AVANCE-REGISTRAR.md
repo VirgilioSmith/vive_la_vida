@@ -364,3 +364,10 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V971 · Buscador móvil sin icono de cuatro cuadros
 - Se elimina el icono de cuadrícula (4 cuadritos) del campo de búsqueda de Buscar; el campo gana ancho y el marcador se acorta a «Bancos, tarjetas, servicios…» para que no se corte.
+
+## V972 · Formularios de alta móviles (Institución, Cuenta, Tarjeta, Préstamo, Certificado)
+- Misma familia visual que las hojas de Registrar: cabecera limpia con cierre redondo en acento; tarjeta de contexto en el degradado del acento con icono propio de cada formulario (banco, cartera, tarjeta, recibo, gráfico) y su descripción; campos uniformes (48px, enfoque con aro de acento, 16px para no hacer zoom en iOS); pie de acciones a ancho completo pegado abajo con zona segura.
+- Botón principal en el acento (antes verde en Institución/Cuenta/Certificado y azul en el asistente de Préstamo); Cancelar como botón de contorno.
+- Se eliminan las barras en blanco (contenedores vacíos `v384-intro`, `v385-cert-intro`, vista previa vacía) y el recuadro blanco inset bajo el pie.
+- Préstamo: «Siguiente» ya no flota sobre los campos; pasos y numeración en el acento; cabecera de paso en degradado.
+- Variante Black completa. Verificado a 360/390/430px y con acentos coral, esmeralda y original. Sin cambios de lógica ni de guardado.
