@@ -35817,12 +35817,15 @@ function v178Kpi(label,before,after,className){
  const afterLong=money(after).length>=15?' v708-money-long':'';
  const change=rnd(after-before);
  const movement=change>0?'is-positive':change<0?'is-negative':'is-steady';
- return `<article class="v178-kpi v708-impact-card ${className} ${movement}" aria-label="${sanitize(label)}: antes ${money(before)}, después ${money(after)}">
-  <div class="v708-card-top"><span class="v178-kpi-name">${sanitize(label)}</span><span class="v708-card-indicator" aria-hidden="true">${change===0?'—':change>0?'↗':'↘'}</span></div>
-  <div class="v708-card-before"><small>ANTES</small><strong class="${beforeLong}">${money(before)}</strong></div>
-  <div class="v708-card-divider" aria-hidden="true"><span>↓</span></div>
-  <div class="v178-kpi-new v708-card-after"><small>DESPUÉS</small><strong class="${afterLong} ${after<0?'v178-value-negative':''}">${money(after)}</strong></div>
-  <div class="v708-card-delta ${movement}">${change===0?'Sin variación':`Variación ${change>0?'+':'−'}${money(Math.abs(change))}`}</div>
+ const ico=className.includes('liquid')?'wallet':className.includes('debt')?'card':className.includes('commit')?'cal':'trend';
+ return `<article class="v178-kpi v708-impact-card v986-kpi ${className} ${movement}" aria-label="${sanitize(label)}: antes ${money(before)}, después ${money(after)}">
+  <div class="v708-card-top"><span class="v986-kico" aria-hidden="true">${v985Svg(V985_ICO[ico],20)}</span><span class="v178-kpi-name">${sanitize(label)}</span><span class="v708-card-indicator" aria-hidden="true">${change===0?'—':change>0?'↗':'↘'}</span></div>
+  <div class="v986-flow">
+   <div class="v708-card-before"><small>ANTES</small><strong class="${beforeLong}">${money(before)}</strong></div>
+   <div class="v708-card-divider" aria-hidden="true"><span>→</span></div>
+   <div class="v178-kpi-new v708-card-after"><small>DESPUÉS</small><strong class="${afterLong} ${after<0?'v178-value-negative':''}">${money(after)}</strong></div>
+  </div>
+  <div class="v708-card-delta ${movement}">${change===0?'Sin variación':`${change>0?'+':'−'}${money(Math.abs(change))}`}</div>
  </article>`;
 }
 function v178Kpis(){
@@ -35855,21 +35858,22 @@ function v315DecisionComparison(){
 }
 function v119Markup(){
  const kind=v119DecisionState.kind==='income'?'income':'expense';
- return `<div class="v119-content v159-tomorrow v169-simple-tomorrow v178-tomorrow v315-tomorrow">
-  <p class="v315-intro">Simula un ingreso o gasto y descubre su efecto en tu liquidez, deudas, compromisos y posición financiera. No se registra ningún movimiento.</p>
-  <div class="v178-input-first">
-   <div class="v169-choice" role="group" aria-label="Tipo de simulación">
+ return `<div class="v119-content v159-tomorrow v169-simple-tomorrow v178-tomorrow v315-tomorrow v986-tomorrow is-${kind}">
+  <section class="v986-hero" aria-label="Simulación">
+   <span class="v986-eyebrow">SIMULADOR · NO REGISTRA NINGÚN MOVIMIENTO</span>
+   <div class="v169-choice v986-seg" role="group" aria-label="Tipo de simulación">
     <button type="button" data-v159-kind="expense" class="${kind==='expense'?'active is-expense':''}" aria-pressed="${kind==='expense'}">${icon('down')} Gasto</button>
     <button type="button" data-v159-kind="income" class="${kind==='income'?'active is-income':''}" aria-pressed="${kind==='income'}">${icon('up')} Ingreso</button>
    </div>
-   <label class="v169-amount v178-amount"><span>${kind==='income'?'¿Cuánto recibirías?':'¿Cuánto gastarías?'}</span>
+   <label class="v169-amount v178-amount v986-amount"><span>${kind==='income'?'¿Cuánto recibirías?':'¿Cuánto gastarías?'}</span>
     <div><small>RD$</small><input id="v119-amount" type="number" inputmode="decimal" min="0" step="0.01" value="${sanitize(String(v119DecisionState.amount||''))}" placeholder="0.00" aria-label="Importe que ${kind==='income'?'recibirías':'gastarías'}"></div>
    </label>
-  </div>
-  <section class="v708-impact-section" aria-label="Impacto financiero de la decisión">
-   <div class="v708-impact-heading"><div><span class="v708-eyebrow">SIMULACIÓN FINANCIERA</span><h3>El impacto de tu decisión</h3></div><span class="v708-live-label">${kind==='income'?'Ingreso simulado':'Gasto simulado'}</span></div>
+   <p class="v986-insight" id="v986-insight" role="status" aria-live="polite">${v183TomorrowInsight()}</p>
+  </section>
+  <section class="v708-impact-section v986-impact" aria-label="Impacto financiero de la decisión">
+   <div class="v708-impact-heading"><div><span class="v708-eyebrow">ANTES Y DESPUÉS</span><h3>El impacto de tu decisión</h3></div><span class="v708-live-label">${kind==='income'?'Ingreso simulado':'Gasto simulado'}</span></div>
    <div class="v178-kpi-grid" id="v178-kpis" role="group" aria-label="Liquidez, deudas totales, compromisos y posición financiera antes y después">${v178Kpis()}</div>
-   <p class="v708-impact-foot"><span aria-hidden="true">◌</span> Cada indicador compara el antes y el después. Las obligaciones solo varían si la operación realmente las modifica. Esta simulación no altera tus saldos.</p>
+   <p class="v708-impact-foot">Las obligaciones solo varían si la operación realmente las modifica. Esta simulación no altera tus saldos.</p>
   </section>
  </div>`;
 }
@@ -35926,6 +35930,7 @@ document.addEventListener('input',event=>{
  v119DecisionState.amount=event.target.value;
  const grid=document.getElementById('v178-kpis');
  if(grid)grid.innerHTML=v178Kpis();
+ const ins=document.getElementById('v986-insight');if(ins)ins.innerHTML=v183TomorrowInsight();
 });
 /* Reutiliza el Resumen existente, sin reestructurar las demás vistas. */
 /* V123 · Alertas de gasto por categoría, exclusivamente desde datos locales.
@@ -90357,6 +90362,85 @@ body:is(.theme-black,.theme-dark) .v985-head p,body:is(.theme-black,.theme-dark)
 body:is(.theme-black,.theme-dark) .v985-mini{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08);box-shadow:none}
 body:is(.theme-black,.theme-dark) .v985-go{background:#1a1c23;border-color:rgba(255,255,255,.12);color:#f2f4f8;box-shadow:none}
 @media(max-width:380px){.v985-mini strong{font-size:9.8px}.v985-tile{flex-basis:46px;width:46px;height:46px}.v985-head h3{font-size:20px}}
+</style>
+<style id="v986-tomorrow-css">
+/* V986 · El costo de mañana: simulador rediseñado (móvil y web) */
+#modal-root#modal-root .modal.v119-modal{--a:var(--v424-accent-strong,#5b57d6);--g:#16a36a;--r:#e0486a;--o:#f08a24;--ink:#1c1f26;--mut:#5d6b86;
+ background:radial-gradient(120% 60% at 100% -10%,color-mix(in srgb,var(--a) 14%,transparent),transparent 60%),linear-gradient(180deg,#f8f9fd,#f1f3fa)!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 40px 80px -40px color-mix(in srgb,var(--a) 50%,rgba(20,30,70,.5))!important}
+@media(min-width:791px){#modal-root#modal-root .modal.v119-modal{max-width:880px!important;width:min(880px,94vw)!important;border-radius:32px!important}}
+#modal-root#modal-root .modal.v119-modal>.modal-head{background:transparent!important;border:0!important;box-shadow:none!important;padding-bottom:0!important}
+#modal-root#modal-root .modal.v119-modal>.modal-head h2{font-size:26px!important;font-weight:900!important;letter-spacing:-.05em!important;color:var(--ink)!important}
+#modal-root#modal-root .modal.v119-modal>.modal-head .close{width:42px!important;height:42px!important;border-radius:50%!important;background:#fff!important;border:1px solid color-mix(in srgb,var(--a) 18%,#e2e7f2)!important;color:var(--a)!important;box-shadow:0 10px 18px -12px color-mix(in srgb,var(--a) 55%,transparent)!important}
+#modal-root#modal-root .modal.v119-modal #v119-results>.v986-tomorrow{display:flex!important;flex-direction:column!important;grid-template-columns:none!important;gap:16px;padding:6px 16px 28px}
+#modal-root#modal-root .modal.v119-modal .v986-hero{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:28px;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.95);box-shadow:0 24px 44px -32px color-mix(in srgb,var(--a) 45%,rgba(31,50,90,.4)),inset 0 1px 0 #fff;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+#modal-root#modal-root .modal.v119-modal .v986-eyebrow{font-size:10.5px;font-weight:900;letter-spacing:.2em;color:var(--a)}
+#modal-root#modal-root .modal.v119-modal .v986-seg{display:grid!important;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:999px;background:rgba(120,135,170,.12);border:0!important}
+#modal-root#modal-root .modal.v119-modal .v986-seg button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:999px!important;border:1px solid transparent!important;background:transparent!important;color:var(--mut)!important;font-size:15px;font-weight:800;box-shadow:none!important}
+#modal-root#modal-root .modal.v119-modal .v986-seg button svg{width:18px;height:18px}
+#modal-root#modal-root .modal.v119-modal .v986-seg button.active.is-expense{background:#fff!important;color:var(--r)!important;box-shadow:0 10px 18px -10px color-mix(in srgb,var(--r) 60%,transparent)!important}
+#modal-root#modal-root .modal.v119-modal .v986-seg button.active.is-income{background:#fff!important;color:var(--g)!important;box-shadow:0 10px 18px -10px color-mix(in srgb,var(--g) 60%,transparent)!important}
+#modal-root#modal-root .modal.v119-modal .v986-amount{display:flex;flex-direction:column;gap:8px;padding:0!important;background:none!important;border:0!important}
+#modal-root#modal-root .modal.v119-modal .v986-amount>span{font-size:13px;font-weight:800;color:var(--mut)}
+#modal-root#modal-root .modal.v119-modal .v986-amount>div{display:flex;align-items:center;gap:10px;padding:6px 18px;min-height:76px;border-radius:22px;background:#fff;border:2px solid color-mix(in srgb,var(--a) 16%,#e2e7f2);transition:border-color .15s,box-shadow .15s}
+#modal-root#modal-root .modal.v119-modal .v986-amount>div:focus-within{border-color:var(--a);box-shadow:0 0 0 4px color-mix(in srgb,var(--a) 18%,transparent)}
+#modal-root#modal-root .modal.v119-modal .v986-amount small{font-size:20px!important;font-weight:850;color:var(--a)}
+#modal-root#modal-root .modal.v119-modal .v986-amount input{flex:1;min-width:0;border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;font-size:38px!important;font-weight:900!important;letter-spacing:-.04em;color:var(--ink)!important;padding:0!important;height:auto!important}
+#modal-root#modal-root .modal.v119-modal .v986-amount input::placeholder{color:#b4bccd}
+#modal-root#modal-root .modal.v119-modal .v986-tomorrow.is-expense .v986-amount>div:focus-within{border-color:var(--r);box-shadow:0 0 0 4px color-mix(in srgb,var(--r) 16%,transparent)}
+#modal-root#modal-root .modal.v119-modal .v986-tomorrow.is-income .v986-amount>div:focus-within{border-color:var(--g);box-shadow:0 0 0 4px color-mix(in srgb,var(--g) 16%,transparent)}
+#modal-root#modal-root .modal.v119-modal .v986-insight{margin:0;padding:11px 14px;border-radius:16px;font-size:13.5px;line-height:1.4;color:var(--mut);background:color-mix(in srgb,var(--a) 7%,#fff);border:1px solid color-mix(in srgb,var(--a) 14%,transparent)}
+#modal-root#modal-root .modal.v119-modal .v986-insight b{color:var(--ink)}
+#modal-root#modal-root .modal.v119-modal .v986-impact{display:flex;flex-direction:column;gap:12px;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+#modal-root#modal-root .modal.v119-modal .v708-impact-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+#modal-root#modal-root .modal.v119-modal .v708-eyebrow{font-size:10.5px!important;font-weight:900!important;letter-spacing:.2em!important;color:var(--a)!important}
+#modal-root#modal-root .modal.v119-modal .v708-impact-heading h3{margin:2px 0 0!important;font-size:22px!important;font-weight:900!important;letter-spacing:-.04em!important;color:var(--ink)!important}
+#modal-root#modal-root .modal.v119-modal .v708-live-label{padding:6px 12px;border-radius:999px;font-size:12px;font-weight:800;color:var(--a);background:color-mix(in srgb,var(--a) 11%,#fff);border:1px solid color-mix(in srgb,var(--a) 20%,transparent)}
+#modal-root#modal-root .modal.v119-modal #v178-kpis.v178-kpi-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}
+@media(min-width:791px){#modal-root#modal-root .modal.v119-modal #v178-kpis.v178-kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px}#modal-root#modal-root .modal.v119-modal #v119-results>.v986-tomorrow{padding:8px 28px 32px;gap:20px}#modal-root#modal-root .modal.v119-modal .v986-hero{display:grid;grid-template-columns:1fr 1fr;column-gap:20px;row-gap:12px;align-items:end}#modal-root#modal-root .modal.v119-modal .v986-eyebrow,#modal-root#modal-root .modal.v119-modal .v986-seg+*{}#modal-root#modal-root .modal.v119-modal .v986-eyebrow{grid-column:1/-1}#modal-root#modal-root .modal.v119-modal .v986-insight{grid-column:1/-1}#modal-root#modal-root .modal.v119-modal .v986-seg{align-self:end}}
+#modal-root#modal-root .modal.v119-modal .v986-kpi{--t:var(--a);position:relative;display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:24px;background:rgba(255,255,255,.88)!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:0 20px 34px -26px color-mix(in srgb,var(--t) 70%,rgba(20,30,70,.4)),inset 0 1px 0 #fff!important;overflow:hidden}
+#modal-root#modal-root .modal.v119-modal .v986-kpi::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--t),color-mix(in srgb,var(--t) 40%,#fff))}
+#modal-root#modal-root .modal.v119-modal .v986-kpi.v178-liquid{--t:var(--g)}#modal-root#modal-root .modal.v119-modal .v986-kpi.v178-debt{--t:var(--r)}#modal-root#modal-root .modal.v119-modal .v986-kpi.v178-commitments{--t:var(--o)}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-top{display:flex;align-items:center;gap:8px;margin:2px 0 0!important}
+#modal-root#modal-root .modal.v119-modal .v986-kico{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border-radius:11px;color:#fff;background:linear-gradient(145deg,color-mix(in srgb,var(--t) 55%,#fff),var(--t));box-shadow:0 8px 14px -8px var(--t)}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v178-kpi-name{flex:1;min-width:0;font-size:13.5px!important;font-weight:850!important;color:var(--ink)!important;text-align:left!important}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-indicator{width:26px!important;height:26px!important;display:grid;place-items:center;border-radius:50%!important;font-size:14px;color:var(--mut)!important;background:rgba(120,135,170,.12)!important}
+#modal-root#modal-root .modal.v119-modal .v986-kpi.is-positive .v708-card-indicator{color:var(--g)!important;background:color-mix(in srgb,var(--g) 14%,#fff)!important}
+#modal-root#modal-root .modal.v119-modal .v986-kpi.is-negative .v708-card-indicator{color:var(--r)!important;background:color-mix(in srgb,var(--r) 14%,#fff)!important}
+#modal-root#modal-root .modal.v119-modal .v986-flow{display:flex;flex-direction:column;gap:2px}
+#modal-root#modal-root .modal.v119-modal .v986-flow .v708-card-divider{display:none!important}
+#modal-root#modal-root .modal.v119-modal .v986-flow small{display:block;font-size:9.5px!important;font-weight:850!important;letter-spacing:.16em!important;color:#8a96ae!important}
+#modal-root#modal-root .modal.v119-modal .v986-flow .v708-card-before strong{display:block;font-size:14px!important;font-weight:750!important;color:#7d89a3!important;text-decoration:line-through;text-decoration-color:rgba(125,137,163,.5)}
+#modal-root#modal-root .modal.v119-modal .v986-flow .v708-card-after{margin-top:4px}
+#modal-root#modal-root .modal.v119-modal .v986-flow .v708-card-after strong{display:block;font-size:clamp(19px,5.4vw,23px)!important;font-weight:900!important;letter-spacing:-.04em!important;color:var(--ink)!important;overflow-wrap:anywhere}
+#modal-root#modal-root .modal.v119-modal .v986-flow strong.v708-money-long{font-size:15px!important}
+#modal-root#modal-root .modal.v119-modal .v986-flow .v708-card-after strong.v708-money-long{font-size:17px!important}
+#modal-root#modal-root .modal.v119-modal .v986-kpi.is-positive .v708-card-after strong{color:#0e8a54!important}
+#modal-root#modal-root .modal.v119-modal .v986-kpi.is-negative .v708-card-after strong{color:#c2354f!important}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v178-value-negative{color:#c2354f!important}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-delta{align-self:flex-start;margin:0!important;padding:4px 11px!important;border-radius:999px!important;border:0!important;font-size:12px!important;font-weight:850!important;background:rgba(120,135,170,.12)!important;color:var(--mut)!important}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-delta.is-positive{background:color-mix(in srgb,var(--g) 15%,#fff)!important;color:#0e8a54!important}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-delta.is-negative{background:color-mix(in srgb,var(--r) 14%,#fff)!important;color:#c2354f!important}
+#modal-root#modal-root .modal.v119-modal .v708-impact-foot{margin:2px 2px 0!important;font-size:11.5px!important;color:#8a96ae!important;line-height:1.4}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-top{flex-wrap:wrap;row-gap:8px}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v986-kico{order:1}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-indicator{order:2;margin-left:auto}
+#modal-root#modal-root .modal.v119-modal .v986-kpi .v178-kpi-name{order:3;flex:1 1 100%!important;overflow-wrap:normal!important;word-break:normal!important;hyphens:none}
+#modal-root#modal-root .modal.v119-modal .v986-flow .v708-card-after strong{font-size:clamp(17px,4.9vw,20px)!important}
+#modal-root#modal-root .modal.v119-modal .v986-flow .v708-card-after strong.v708-money-long{font-size:15px!important}
+#modal-root#modal-root .modal.v119-modal .v986-flow .v708-card-before strong{font-size:13px!important}
+@media(min-width:791px){#modal-root#modal-root .modal.v119-modal .v986-flow .v708-card-after strong{font-size:19px!important}}
+/* Oscuro */
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal{--ink:#f2f4f8;--mut:#aab4cc;background:radial-gradient(120% 60% at 100% -10%,color-mix(in srgb,var(--a) 22%,transparent),transparent 60%),#0b0c10!important;border-color:rgba(255,255,255,.08)!important}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal>.modal-head .close{background:#14161d!important;border-color:rgba(255,255,255,.12)!important}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986-hero{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.09);box-shadow:none}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986-amount>div{background:#12141b;border-color:rgba(255,255,255,.12)}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986-seg{background:rgba(255,255,255,.07)}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986-seg button.active{background:#1c1f28!important}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986-insight{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986-kpi{background:#101116!important;border-color:rgba(255,255,255,.08)!important;box-shadow:none!important}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-indicator{background:rgba(255,255,255,.08)!important}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v986-kpi .v708-card-delta{background:rgba(255,255,255,.08)!important}
+body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal.v119-modal .v708-live-label{background:rgba(255,255,255,.06)}
 </style>
 </body>
 </html>

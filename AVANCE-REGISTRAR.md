@@ -431,3 +431,7 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V987 · Matriz: Presupuesto en Decidir
 - La tarjeta Decidir incluye «Presupuesto» (abre Presupuesto y muestra el % usado del mes cuando hay presupuesto asignado), junto a Análisis y Recuperación.
+
+## V986b · El costo de mañana rediseñado (móvil y web)
+- Hoja con degradado de acento; cabecera de 26px/900. Bloque de simulación en cristal: etiqueta «SIMULADOR · NO REGISTRA NINGÚN MOVIMIENTO», selector Gasto/Ingreso en píldora (rojo/verde), importe grande (38px) con foco de color según el tipo, y lectura dinámica del efecto que se actualiza al escribir.
+- «Antes y después»: cuatro tarjetas (Liquidez · Deudas totales · Compromisos · Posición financiera) con icono, tono propio, antes tachado, después grande (verde si sube, rojo si baja) y etiqueta de variación. 2×2 en móvil y 4 en una fila en web. Variante Black. Sin cambios de cálculo.
