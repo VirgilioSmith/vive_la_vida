@@ -425,3 +425,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
   - **Anticipar 03:** próximos compromisos (modelo de Capacidad de endeudamiento), anillo con % ya pagado del mes y desglose Tarjetas / Préstamos / Suscripciones / Entre personas (cada uno navega a su módulo).
   - **Decidir 04:** capacidad disponible, % comprometido, anillo «Salud financiera» (= 100 − % de endeudamiento) y accesos Metas (Presupuesto) / Simuladores (Planificación) / Análisis / Recuperación (Configuración › Seguridad).
 - Estilo: cristal de la app, cuatro tonos como en la referencia (verde, azul, naranja, morado), una columna en móvil y 2×2 desde 640px; variante Black. Solo lectura, sin cambios de cálculo ni de datos.
+
+## V986 · Matriz de simplificación: solo lo que existe
+- Se quitan «Metas» y «Simuladores» de la tarjeta Decidir (la app no tiene esos módulos). Quedan Análisis y Recuperación. Criterio: no mostrar accesos ni datos que la app no tenga.

@@ -24522,7 +24522,7 @@ function v985SimplificationWidget(){
    <div class="v985-minis v985-minis-4 v985-flat">${mini('card','Tarjetas',sumKind('card'),'data-act="navigate" data-id="cards"')}${mini('bank','Préstamos',sumKind('loan'),'data-act="navigate" data-id="loans"')}${mini('grid4','Suscripciones',sumKind('recurring'),'data-act="navigate" data-id="recurring"')}${mini('people','Entre personas',sumKind('personal'),'data-act="navigate" data-id="personal"')}</div></article>
   <article class="v985-card v985-purple">${head('purple','bars','Decidir','¿Qué puedo hacer con mi dinero?','04','data-act="navigate" data-id="projection"')}
    <div class="v985-body v985-row"><div class="v985-figure"><strong>${money(room)}</strong><small class="v985-cap">Capacidad de endeudamiento</small>${ratio===null?'':`<span class="v985-delta up v985-soft">${ratio.toLocaleString('es-DO',{maximumFractionDigits:1})}% comprometido</span>`}</div>${v985Ring(health,'purple','Salud financiera','Salud financiera')}</div>
-   <div class="v985-minis v985-minis-4 v985-flat">${mini('target','Metas',null,'data-act="navigate" data-id="budget"')}${mini('calc','Simuladores',null,'data-act="navigate" data-id="projection"')}${mini('pie','Análisis',null,'data-act="navigate" data-id="analytics"')}${mini('trend','Recuperación',null,'data-act="navigate" data-id="settings" data-v985-pane="security"')}</div></article>
+   <div class="v985-minis v985-minis-2 v985-flat">${mini('pie','Análisis',null,'data-act="navigate" data-id="analytics"')}${mini('trend','Recuperación',null,'data-act="navigate" data-id="settings" data-v985-pane="security"')}</div></article>
  </div></section>`;
 }
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v985-pane]');if(b)v242SettingsPane=b.dataset.v985Pane;},true);
@@ -90333,6 +90333,7 @@ html body #app#app .v431-explore .v434-planning-spark .v984-line{filter:drop-sha
 .v985-stat small{display:block;font-size:12.5px;color:#4c5670}.v985-stat strong{display:block;font-size:14.5px;font-weight:800;letter-spacing:-.02em;color:#1c1f26;white-space:nowrap}
 .v985-minis{display:grid;gap:8px}
 .v985-minis-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.v985-minis-2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .v985-mini{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;min-width:0;min-height:76px;padding:11px 4px 9px;border-radius:18px;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.8);box-shadow:0 12px 20px -16px rgba(var(--tint),.7),inset 0 1px 0 #fff;color:#1c1f26;font:inherit;cursor:pointer;text-align:center}
 .v985-mini-ico{display:grid;color:var(--t)}
 .v985-mini strong{font-size:10.6px;font-weight:800;letter-spacing:-.03em;line-height:1.1;max-width:100%;white-space:normal;overflow-wrap:anywhere;min-height:2.2em;display:flex;align-items:center;justify-content:center}
