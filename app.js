@@ -5948,7 +5948,7 @@ case 'cardHistoryBack':ui.cardDetailTab='status';render();setTimeout(()=>documen
 case 'cardHistoryCurrency':ui.cardHistoryCurrency=id==='USD'?'USD':'DOP';render();break;
 case 'cardHistoryYearPrev':ui.cardHistoryYear=Math.max(2015,Number(ui.cardHistoryYear||new Date().getFullYear())-1);render();break;
 case 'cardHistoryYearNext':ui.cardHistoryYear=Math.min(new Date().getFullYear(),Number(ui.cardHistoryYear||new Date().getFullYear())+1);render();break;
-case 'closeCardDetails':ui.cardId=null;render();break;
+case 'closeCardDetails':ui.cardId=null;ui.cardDetailTab='status';render();break;
 case 'payCard':{let c=card(id),a=db.accounts.find(x=>!x.archived&&x.kind!=='cash')||db.accounts.find(x=>!x.archived)||db.accounts[0];transactionForm({type:'card_payment',cardId:id,currency:ccy||'DOP',accountId:a?.id||'',paymentChannel:a?.kind==='cash'?'presencial':'internet_banking',amount:'',cardPaymentMode:'cut',category:''});break}
 case 'addLoan':loanForm(null,id);break;
 case 'editLoan':loanForm(id);break;
@@ -14518,6 +14518,7 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
     const totalDebt = visible.reduce((s,c)=>s + num(cardStatus(c,'DOP').debt) + fx(num(cardStatus(c,'USD').debt),'USD'),0);
     const totalAvailable = Math.max(0,totalLimit-totalDebt);
     const overallUtil = totalLimit>0 ? (totalDebt/totalLimit)*100 : null;
+    if(selected&&ui.cardDetailTab==='history')return `<div class="v244-mobile-root v244-cards v244-detail-mode v1003-history">${cardHistoricalView(selected)}</div>`;
     if(selected){
       const dop = cardStatus(selected,'DOP');
       const usd = cardStatus(selected,'USD');
