@@ -381,3 +381,8 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - La página de Configuración ocupa exactamente la ventana: el menú lateral y el panel de opciones comparten borde superior e inferior (verificado a 1280×720, 1366×768, 1440×900 y 1920×1080). Otros paneles largos (p. ej. Integraciones) se desplazan dentro de su propio panel, no la página.
 - Cabecera con etiqueta y título pesados (11px/900, 36px/900) en el acento; menú lateral compacto con etiquetas de grupo en el acento y elemento activo con el estilo de la barra de navegación. Variante Black.
 - Explorar móvil: se quita «Organiza y potencia tu espacio financiero.» y las descripciones de panel para subir el contenido.
+
+## V976 · Ajustes (web): ningún panel obliga a desplazar
+- Además de Apariencia, los paneles largos se reparten en pestañas con el mismo estilo: Integraciones (Vincular · Guía · Conexiones) y Configuración financiera (Cambio · Cargos · Nómina). Cuentas vinculadas pasa a una cuadrícula de 2 columnas con paginación (‹ 1–4 de 10 ›). Verificado a 1440×900: los 8 paneles caben sin barra de desplazamiento (ni de página ni interna).
+- En pantallas de 768px de alto o menos, algunos paneles conservan un desplazamiento interno mínimo.
+- Hallazgo (sin cambiar): en la sección Seguridad, `v401FinancialLogicAudit` (script aparte) usa `db`, que está dentro del scope del script principal; en pruebas lanza «db is not defined» y se muestra «No fue posible cargar esta sección».
