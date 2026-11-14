@@ -1,11 +1,20 @@
-# Vive el hoy · Finanzas 360 — V10 (Supabase en vivo)
+# vive el hoy · Finanzas 360
 
-- Fuente de datos: public.finanzas_estado (documento completo con control de versión), filtrado por usuario autenticado.
-- Recepción de actualizaciones de otros dispositivos: Supabase Realtime por user_id, con comprobación del sello remoto cada 20 segundos y al volver a enfocar la app.
-- Si la red está caída o el documento financiero no ha sido confirmado por Supabase, se bloquea la vista provisional y se ofrece reintento; el borrador permanece localmente protegido.
-- Escrituras con control optimista mediante actualizado_en y conciliación de tres vías para preservar registros. Conflictos irreconciliables: se conservan ambos estados y NO se sobrescribe el servidor.
-- Borrados y otras operaciones son parte del mismo documento financiero, sin una segunda tabla ni una deducción adicional.
-- La integridad de la sincronización depende también de que todos los dispositivos utilicen una versión compatible; no instalar versiones anteriores en paralelo.
-- Sin cambiar Apple Pay Edge Functions o los secretos de los tokens.
+PWA de finanzas personales en español. Sitio estático (GitHub Pages) con Supabase como respaldo/sincronización.
 
-IMPORTANTE: Esta entrega contiene la app completa. Subir todo el contenido de esta carpeta al sitio; no se ha desplegado automáticamente en GitHub.
+## Estructura
+- `index.html` – cascarón mínimo: metas, enlaces a `styles.css` y `app.js`, tres scripts de arranque en la cabecera.
+- `styles.css` – todos los estilos (cascada por versiones; se resuelve con `!important` y mayor especificidad).
+- `app.js` – toda la lógica y las vistas.
+- `manifest.webmanifest`, `icons/` – instalación como PWA.
+- `docs/AVANCE.md` – notas de avance del registro.
+
+## Publicar (GitHub Pages)
+Rama `main`, carpeta raíz. Tras cambiar `styles.css` o `app.js`, sube el número de `?v=` en `index.html` para romper la caché del navegador.
+
+## Supabase
+- Clave publicable en el cliente (la seguridad depende de RLS en las tablas `finanzas_estado`, `finance_revision`, `apple_pay_events`, `apple_pay_links`).
+- Escrituras con reintento y espera creciente; sincronización por canales realtime.
+- Las funciones edge `apple-pay-link` / `apple-pay-shortcuts` no están en este repositorio.
+- La app no envía notificaciones push; las alertas son internas.
+- Librería fijada: `@supabase/supabase-js@2.119.0` (jsDelivr).
