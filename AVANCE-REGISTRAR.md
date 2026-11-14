@@ -303,3 +303,8 @@ Quedan de este cambio: hojas de las 4 operaciones, hoja «Motivo del ajuste» y 
 
 Por indicación del usuario: la selección de categoría son **exactamente cuatro botones (3 categorías + «Más»), nada más**. Se retiró la fila de subcategorías de la pantalla de entrada y la sustitución del tercer chip. Las subcategorías se eligen como siempre: «Más» → categoría → hoja de subcategorías (o desde la confirmación).
 Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en el color de acento** elegido en Ajustes (claro y oscuro), la selección sin «flashback» y el buscador legible.
+
+## V957 · KPI grande de Bancos con el acento configurado
+- Instituciones, Cuentas, Tarjetas, Préstamos, Certificados y Beneficios (web y móvil, claro y black) usan ahora el mismo degradado del acento (`--v440-*`) con texto blanco.
+- Antes: web con degradados fijos (teal/azul/morado/café) y móvil con tarjeta blanca (Bancos), lavada (Cuentas) o mezclas fijas (Préstamos/Certificados).
+- Sin cambios en cálculos, datos ni reglas. Botones del hero conservan su estilo (claro / contorno).
