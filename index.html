@@ -24603,8 +24603,8 @@ function v732HomeKpi(liquid,debt,net,compact=false){
   <div class="v732-kpi-variance ${tone}"><b>${delta}</b><span>${diffText}</span></div>
   <div class="v732-kpi-ornament" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
   <div class="v732-kpi-stats">
-   <button type="button" data-act="v186Deep" data-id="liquidity"><span class="v732-kpi-stat-icon">${icon('wallet')}</span><span><strong>${money(liquid)}</strong><small>Fondos</small></span></button>
-   <button type="button" data-act="v186Deep" data-id="debt"><span class="v732-kpi-stat-icon">${icon('card')}</span><span><strong>${money(debt)}</strong><small>Deudas</small></span></button>
+   <button type="button" data-act="v186Deep" data-id="liquidity" ${compact?'aria-label="Fondos '+sanitize(money(liquid))+'"':''}>${compact?'<span class="v967-kpi-bar up" aria-hidden="true"></span>':`<span class="v732-kpi-stat-icon">${icon('wallet')}</span>`}<span><strong>${money(liquid)}</strong><small${compact?' class="v967-sr"':''}>Fondos</small></span></button>
+   <button type="button" data-act="v186Deep" data-id="debt" ${compact?'aria-label="Deudas '+sanitize(money(debt))+'"':''}>${compact?'<span class="v967-kpi-bar down" aria-hidden="true"></span>':`<span class="v732-kpi-stat-icon">${icon('card')}</span>`}<span><strong>${money(debt)}</strong><small${compact?' class="v967-sr"':''}>Deudas</small></span></button>
 ${compact?'':`   <button type="button" data-act="v186Deep" data-id="net"><span class="v732-kpi-stat-icon">${icon('analytics')}</span><span><strong>${money(net)}</strong><small>Posición neta</small></span></button>`}
   </div>
  </section>`;
@@ -89775,17 +89775,17 @@ html body #app#app .v732-home-kpi .v732-kpi-stats{padding-top:6px!important}
  html body #app#app .vive-mobile-quick-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
  html body #app#app .vive-mobile-quick-actions>button{
   display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-width:0;min-height:48px!important;height:48px!important;padding:0 8px!important;
-  border-radius:16px!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 16%,#dbe4f2)!important;
-  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.68))!important;
-  box-shadow:0 8px 18px -14px var(--v424-accent-shadow,rgba(75,70,201,.45)),inset 0 1px 0 rgba(255,255,255,.95)!important;
+  border-radius:16px!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 22%,#d6deee)!important;
+  background:repeating-linear-gradient(118deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 11%,transparent) 0 1px,transparent 1px 4px),linear-gradient(180deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 5%,#fff),color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 13%,#f1f3f9))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -10px 16px -12px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 34%,transparent),inset 0 0 0 1px rgba(255,255,255,.35)!important;
   color:#1f2d4a!important;font-size:12.5px!important;font-weight:740!important;letter-spacing:-.005em;white-space:nowrap;
   transition:transform .14s ease,box-shadow .14s ease,background .14s ease;-webkit-tap-highlight-color:transparent}
  html body #app#app .vive-mobile-quick-actions>button svg{flex:0 0 auto;width:26px!important;height:26px!important;padding:5px;border-radius:9px;box-sizing:border-box;
   color:var(--v424-accent-strong,#5b57d6)!important;stroke:currentColor!important;background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 12%,#fff)}
  html body #app#app .vive-mobile-quick-actions>button span{min-width:0;overflow:hidden;text-overflow:ellipsis}
- html body #app#app .vive-mobile-quick-actions>button:active{transform:scale(.97);box-shadow:0 3px 8px -8px var(--v424-accent-shadow,rgba(75,70,201,.45)),inset 0 1px 0 rgba(255,255,255,.9)!important}
+ html body #app#app .vive-mobile-quick-actions>button:active{transform:scale(.98);box-shadow:inset 0 2px 8px -2px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 40%,transparent),inset 0 0 0 1px rgba(255,255,255,.3)!important}
  html body #app#app .vive-mobile-quick-actions>button:focus-visible{outline:2px solid var(--v424-accent-strong,#5b57d6);outline-offset:2px}
- html body.theme-black #app#app .vive-mobile-quick-actions>button,html body.theme-dark #app#app .vive-mobile-quick-actions>button{background:linear-gradient(180deg,#171a22,#0e1016)!important;border-color:rgba(255,255,255,.12)!important;color:#f2f5fb!important;box-shadow:none!important}
+ html body.theme-black #app#app .vive-mobile-quick-actions>button,html body.theme-dark #app#app .vive-mobile-quick-actions>button{background:repeating-linear-gradient(118deg,rgba(255,255,255,.055) 0 1px,transparent 1px 4px),linear-gradient(180deg,#1b1e27,#0e1016)!important;border-color:rgba(255,255,255,.12)!important;color:#f2f5fb!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
  html body.theme-black #app#app .vive-mobile-quick-actions>button svg,html body.theme-dark #app#app .vive-mobile-quick-actions>button svg{background:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 28%,#10131a);color:#fff!important}
 }
 @media (max-width:379px){
@@ -89797,6 +89797,20 @@ html body #app#app .v732-home-kpi .v732-kpi-stats{padding-top:6px!important}
  html body #app#app .vive-mobile-quick-actions>button{gap:4px!important;padding:0 3px!important;font-size:11.5px!important}
  html body #app#app .vive-mobile-quick-actions>button svg{width:18px!important;height:18px!important;padding:3px}
 }
+</style>
+<style id="v967-kpi-premium">
+/* V967 · KPI Balance y posición neta: sin iconos ni rótulos; barra verde (fondos) / roja (deudas) a su lado, cifras en grafito */
+html body #app#app .v742-primary-kpi .v732-kpi-stats{margin-top:16px!important;padding-top:4px!important}
+html body #app#app .v742-primary-kpi.v742-primary-kpi .v732-home-kpi{padding-bottom:22px!important}
+html body #app#app .v742-primary-kpi .v732-home-kpi{padding-bottom:22px!important}
+html body #app#app .v742-primary-kpi .v732-kpi-stats button{align-items:center!important;gap:10px!important}
+html body #app#app .v967-sr{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;margin:-1px!important;padding:0!important}
+html body #app#app .v967-kpi-bar{flex:0 0 4px;width:4px;height:30px;border-radius:4px;display:block}
+html body #app#app .v967-kpi-bar.up{background:linear-gradient(180deg,#46d0a2,#12a07a);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.35)}
+html body #app#app .v967-kpi-bar.down{background:linear-gradient(180deg,#f0728f,#c9486f);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.35)}
+html body #app#app .v742-primary-kpi .v732-kpi-stats button strong{color:#262a32!important;font-weight:780!important;letter-spacing:-.02em}
+html body.theme-black #app#app .v742-primary-kpi .v732-kpi-stats button strong,html body.theme-dark #app#app .v742-primary-kpi .v732-kpi-stats button strong{color:#f2f4f8!important}
+html body #app#app .v742-primary-kpi .v732-kpi-ornament i{background:linear-gradient(180deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 26%,#fff),transparent)!important}
 </style>
 </body>
 </html>
