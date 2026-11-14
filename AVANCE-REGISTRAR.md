@@ -296,3 +296,10 @@ Quedan de este cambio: hojas de las 4 operaciones, hoja «Motivo del ajuste» y 
 **Verificado:** gasto e ingreso: tocar subcategoría (0 capas nuevas), quitarla, cambiar de categoría (la fila cambia en el lugar), «Más» categorías → categoría marcada con sus subcategorías, «Más» subcategorías → hoja → queda marcada, Continuar y Confirmar guardan categoría/subcategoría; 393×852, 390×844, 375×667 y 360×640 sin scroll; hoja de subcategorías sobre el teclado; consola sin errores. En 320×568 (fuera del rango 360–430) queda scroll interno.
 
 **Ajuste posterior (misma fecha):** cada fila de selección tiene siempre cuatro botones (hasta 3 opciones + «Más», «Más» en la 4.ª columna). En la fila de subcategorías «Más» ya no desaparece con ≤3 subcategorías (antes faltaba, p. ej. en Inversiones) y, con menos de 3, se añaden huecos invisibles (`v956-slot`) para mantener la alineación (p. ej. «Otros gastos»). Verificado en las 28 categorías (19 gasto + 9 ingreso). En pantallas ≤700px chips y línea «Pagar con» a 44px (sin scroll en 375×667 y 360×640).
+
+---
+
+## Decisión final · Categorías rápidas — 2026-11-14
+
+Por indicación del usuario: la selección de categoría son **exactamente cuatro botones (3 categorías + «Más»), nada más**. Se retiró la fila de subcategorías de la pantalla de entrada y la sustitución del tercer chip. Las subcategorías se eligen como siempre: «Más» → categoría → hoja de subcategorías (o desde la confirmación).
+Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en el color de acento** elegido en Ajustes (claro y oscuro), la selección sin «flashback» y el buscador legible.
