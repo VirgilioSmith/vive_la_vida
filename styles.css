@@ -54621,3 +54621,107 @@ html body #app#app :is(.panel,.v239-product,.v410-substat,.stat-box,.v26-nav,.in
 html body #app#app :is(.panel,.v239-product){background:linear-gradient(150deg,rgba(255,255,255,.92),rgba(255,255,255,.72))!important}
 html body:not(.theme-black):not(.theme-dark) #app#app :is(.v26-nav,.inner-menu,.v285-budget-nav,.v46-bank-filters){background:linear-gradient(150deg,color-mix(in srgb,var(--v424-accent-strong) 9%,rgba(255,255,255,.88)),color-mix(in srgb,var(--v424-accent-strong) 5%,rgba(255,255,255,.7)))!important}
 /* Reflejo del acento a la izquierda: se restituye el fondo original del body (el resplandor en una capa aparte quedaba tapado por el color del body). */
+
+/* V1100 · Nuevo acuerdo entre personas: web en dos columnas, móvil en pestañas Persona · Pago */
+html body #modal-root form#v56LoanForm .v1100-pf{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:0 22px;align-items:start}
+html body #modal-root form#v56LoanForm .v1100-tabs{display:none}
+html body #modal-root form#v56LoanForm .v1100-col h3{margin:0 0 12px;font-size:15px;font-weight:800;letter-spacing:.01em;color:var(--v424-accent-strong)}
+html body #modal-root form#v56LoanForm .v1100-col-persona{padding-right:20px;border-right:1px solid color-mix(in srgb,var(--v424-accent-strong) 12%,rgba(120,130,160,.2))}
+html body #modal-root form#v56LoanForm .v1100-next{display:none}
+html body #modal-root form#v56LoanForm .v1100-seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:color-mix(in srgb,var(--v424-accent-strong) 8%,rgba(255,255,255,.75));border:1px solid color-mix(in srgb,var(--v424-accent-strong) 16%,transparent);margin-bottom:12px}
+html body #modal-root form#v56LoanForm .v1100-seg button{min-height:0;padding:10px 12px;border-radius:11px;border:0;background:transparent;color:#566480;font:inherit;font-size:13.5px;font-weight:750;cursor:pointer}
+html body #modal-root form#v56LoanForm .v1100-seg button.on{background:linear-gradient(120deg,var(--v424-accent-strong),color-mix(in srgb,var(--v424-accent-strong) 80%,#fff));color:#fff;box-shadow:0 6px 16px var(--v424-accent-shadow,rgba(0,0,0,.18))}
+html body #modal-root form#v56LoanForm .v1100-search{display:flex;align-items:center;gap:8px;padding:0 12px;border-radius:14px;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 18%,transparent);background:rgba(255,255,255,.9);margin-bottom:8px}
+html body #modal-root form#v56LoanForm .v1100-search svg{width:18px;height:18px;color:#7a859b}
+html body #modal-root form#v56LoanForm .v1100-search .field{border:0!important;background:transparent!important;box-shadow:none!important;padding:12px 0!important;min-height:0}
+html body #modal-root form#v56LoanForm .v1100-people{display:grid;gap:2px;max-height:300px;overflow:auto}
+html body #modal-root form#v56LoanForm .v1100-person{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid transparent;background:transparent;font:inherit;color:#25304a;cursor:pointer}
+html body #modal-root form#v56LoanForm .v1100-person:hover{background:color-mix(in srgb,var(--v424-accent-strong) 6%,#fff)}
+html body #modal-root form#v56LoanForm .v1100-person.on{background:color-mix(in srgb,var(--v424-accent-strong) 11%,#fff);border-color:color-mix(in srgb,var(--v424-accent-strong) 28%,transparent)}
+html body #modal-root form#v56LoanForm .v1100-person strong{flex:1;font-size:15px}
+html body #modal-root form#v56LoanForm .v1100-avatar{flex:0 0 38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;background:color-mix(in srgb,var(--v424-accent-strong) 14%,#fff);color:var(--v424-accent-strong)}
+html body #modal-root form#v56LoanForm .v1100-check{opacity:0;color:var(--v424-accent-strong);font-weight:900}
+html body #modal-root form#v56LoanForm :is(.v1100-person,.v1100-inst).on .v1100-check{opacity:1}
+html body #modal-root form#v56LoanForm .v1100-empty{margin:8px 4px;color:#7a859b;font-size:13px}
+html body #modal-root form#v56LoanForm .v1100-who{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+html body #modal-root form#v56LoanForm .v1100-who[hidden]{display:none}
+html body #modal-root form#v56LoanForm .v1100-who strong{flex:1;font-size:15px}
+html body #modal-root form#v56LoanForm .v1100-change{border:0;background:transparent;color:var(--v424-accent-strong);font:inherit;font-weight:750;text-decoration:underline;cursor:pointer}
+html body #modal-root form#v56LoanForm .v1100-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;margin-bottom:10px}
+html body #modal-root form#v56LoanForm .v1100-field{display:grid;gap:5px;margin:0 0 10px;min-width:0}
+html body #modal-root form#v56LoanForm .v1100-row .v1100-field{margin:0}
+html body #modal-root form#v56LoanForm .v1100-field>span{font-size:12px;font-weight:700;color:#566480}
+html body #modal-root form#v56LoanForm .v1100-field>span b{color:var(--v424-accent-strong);margin-left:4px}
+html body #modal-root form#v56LoanForm .v1100-amount .field{font-size:22px;font-weight:800;color:var(--v424-accent-strong)}
+html body #modal-root form#v56LoanForm .v1100-field .field{border-radius:14px;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 18%,transparent);background:rgba(255,255,255,.92);min-height:46px}
+html body #modal-root form#v56LoanForm .v1100-instbtn,html body #modal-root form#v56LoanForm .v1100-inst{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 12px;border-radius:14px;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 18%,transparent);background:rgba(255,255,255,.92);font:inherit;color:#25304a;cursor:pointer;min-height:46px}
+html body #modal-root form#v56LoanForm .v1100-instplaceholder{color:#7a859b;font-size:14px}
+html body #modal-root form#v56LoanForm .v1100-inst-logo{flex:0 0 34px;height:34px;display:grid;place-items:center}
+html body #modal-root form#v56LoanForm .v1100-inst-logo .v1028-logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;overflow:hidden}
+html body #modal-root form#v56LoanForm .v1100-inst-copy{flex:1;min-width:0;display:grid}
+html body #modal-root form#v56LoanForm .v1100-inst-copy strong{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body #modal-root form#v56LoanForm .v1100-inst-copy small{font-size:11.5px;color:#566480}
+html body #modal-root form#v56LoanForm .v1100-inst-amt{font-size:12px;font-weight:750;color:var(--v424-accent-strong);white-space:nowrap}
+html body #modal-root form#v56LoanForm .v1100-chev{color:var(--v424-accent-strong);font-size:18px}
+html body #modal-root form#v56LoanForm .v1100-instwrap{position:relative}
+html body #modal-root form#v56LoanForm .v1100-instlist{display:grid;gap:2px;margin-top:6px;padding:6px;border-radius:16px;background:rgba(255,255,255,.97);border:1px solid color-mix(in srgb,var(--v424-accent-strong) 18%,transparent);box-shadow:0 14px 34px rgba(20,30,70,.16);max-height:260px;overflow:auto}
+html body #modal-root form#v56LoanForm .v1100-instlist[hidden]{display:none}
+html body #modal-root form#v56LoanForm .v1100-inst{border-color:transparent}
+html body #modal-root form#v56LoanForm .v1100-inst:hover{background:color-mix(in srgb,var(--v424-accent-strong) 7%,#fff)}
+html body #modal-root form#v56LoanForm .v1100-inst.on{background:color-mix(in srgb,var(--v424-accent-strong) 11%,#fff)}
+html body #modal-root form#v56LoanForm .v1100-toggle{display:flex;align-items:center;gap:10px;margin:4px 0 6px;font-size:13px;color:#33405a;cursor:pointer}
+html body #modal-root form#v56LoanForm .v1100-toggle input{position:absolute;opacity:0;pointer-events:none}
+html body #modal-root form#v56LoanForm .v1100-switch{width:38px;height:22px;border-radius:999px;background:#d3d9e6;position:relative;transition:background .15s}
+html body #modal-root form#v56LoanForm .v1100-switch::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}
+html body #modal-root form#v56LoanForm .v1100-toggle input:checked+.v1100-switch{background:var(--v424-accent-strong)}
+html body #modal-root form#v56LoanForm .v1100-toggle input:checked+.v1100-switch::after{transform:translateX(16px)}
+html body #modal-root form#v56LoanForm .v1100-toggle input:focus-visible+.v1100-switch{outline:3px solid color-mix(in srgb,var(--v424-accent-strong) 40%,transparent);outline-offset:2px}
+html body #modal-root form#v56LoanForm .v1100-help{font-size:12px;color:#566480;margin-top:6px}
+html body #modal-root form#v56LoanForm .v1100-help summary{cursor:pointer;color:var(--v424-accent-strong);font-weight:700}
+html body #modal-root form#v56LoanForm .form-foot .btn:not(.ghost){background:linear-gradient(120deg,var(--v424-accent-strong),color-mix(in srgb,var(--v424-accent-strong) 80%,#fff))!important;color:#fff!important}
+@media (max-width:790px){
+ html body #modal-root form#v56LoanForm .v1100-pf{grid-template-columns:1fr}
+ html body #modal-root form#v56LoanForm .v1100-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:color-mix(in srgb,var(--v424-accent-strong) 8%,rgba(255,255,255,.75));border:1px solid color-mix(in srgb,var(--v424-accent-strong) 16%,transparent);margin-bottom:14px}
+ html body #modal-root form#v56LoanForm .v1100-tabs button{padding:10px;border-radius:11px;border:0;background:transparent;font:inherit;font-weight:750;color:#566480}
+ html body #modal-root form#v56LoanForm .v1100-tabs button.on{background:linear-gradient(120deg,var(--v424-accent-strong),color-mix(in srgb,var(--v424-accent-strong) 80%,#fff));color:#fff;box-shadow:0 6px 16px var(--v424-accent-shadow,rgba(0,0,0,.18))}
+ html body #modal-root form#v56LoanForm .v1100-col-persona{padding-right:0;border-right:0}
+ html body #modal-root form#v56LoanForm .v1100-pf[data-step="persona"] .v1100-col-pago,html body #modal-root form#v56LoanForm .v1100-pf[data-step="pago"] .v1100-col-persona{display:none}
+ html body #modal-root form#v56LoanForm .v1100-col>h3{display:none}
+ html body #modal-root form#v56LoanForm .v1100-next{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;min-height:52px;border-radius:16px;border:0;font:inherit;font-weight:800;color:#fff;background:linear-gradient(120deg,var(--v424-accent-strong),color-mix(in srgb,var(--v424-accent-strong) 80%,#fff));box-shadow:0 8px 20px var(--v424-accent-shadow,rgba(0,0,0,.2))}
+ html body #modal-root form#v56LoanForm[data-pf-step="persona"] .form-foot{display:none}
+ html body #modal-root form#v56LoanForm .v1100-who{display:flex}
+}
+@media (min-width:791px){html body #modal-root form#v56LoanForm .v1100-who{display:none!important}}
+html body #modal-root form#v56LoanForm .form-grid{display:block!important}
+html body #modal-root form#v56LoanForm .form-grid>.v378-form-identity{display:none!important}
+html body #modal-root form#v56LoanForm .form-grid>.v1100-pf{width:100%}
+html body #modal-root .modal.v378-form-v56LoanForm{width:min(980px,94vw)!important;max-width:94vw!important}
+html body #modal-root form#v56LoanForm .v1100-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+html body #modal-root form#v56LoanForm .v1100-field .field{width:100%;box-sizing:border-box}
+html body #modal-root form#v56LoanForm .v1100-amount .field{padding-right:8px}
+html body #modal-root form#v56LoanForm .v1100-row{align-items:start}
+html body #modal-root form#v56LoanForm .v1100-amount .field{height:50px;min-height:50px}
+html body #modal-root form#v56LoanForm .v1100-instbtn{height:50px}
+@media (min-width:791px){
+ html body #modal-root form#v56LoanForm .v1100-instlist{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:40;min-width:300px}
+ html body #modal-root form#v56LoanForm .v1100-instwrap{position:relative}
+ html body #modal-root form#v56LoanForm .v1100-instlist{right:auto;width:max(100%,340px)}
+}
+html body #modal-root .modal.v378-form-v56LoanForm .v378-form-identity{display:none!important}
+html body #modal-root form#v56LoanForm .v1100-instlist{position:static!important;width:auto!important;min-width:0!important;margin-top:6px}
+html body #modal-root form#v56LoanForm .v1100-row:has(.v1100-instwrap){grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+@media (max-width:790px){
+ html body #modal-root form#v56LoanForm .v1100-row:has(.v1100-instwrap){grid-template-columns:1fr}
+ html body #modal-root form#v56LoanForm .form-foot .btn{white-space:nowrap}
+}
+@media (max-width:790px){
+ html body #modal-root form#v56LoanForm .form-grid>.v378-form-identity,html body #modal-root .v378-form-v56LoanForm .v378-form-identity{display:none!important}
+ html body #modal-root form#v56LoanForm .v1100-field input[type="date"]{padding-left:10px!important;padding-right:6px!important;font-size:14px}
+}
+/* V1101 · El reflejo del acento llega hasta el borde superior de la pantalla (también bajo la isla dinámica) */
+body[data-vive-bg][data-vive-bg]:not(.theme-black):not(.theme-dark){background-position:0 0!important;background-repeat:no-repeat!important;background-size:100% 100%!important;min-height:100vh;min-height:100dvh}
+body[data-vive-bg][data-vive-bg]:not(.theme-black):not(.theme-dark){background-image:
+  radial-gradient(ellipse 92% 82% at -14% -6%,color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 66%,#fff),transparent 74%),
+  radial-gradient(ellipse 110% 92% at 112% 18%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 52%,#e6f2f4),transparent 76%),
+  linear-gradient(136deg,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 16%,#fffafb) 2%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 11%,#faf9fa) 52%,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 24%,#f0f6f5) 100%)!important}
+html{background:transparent!important}
