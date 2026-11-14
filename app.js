@@ -5245,7 +5245,7 @@ function v711CompactCardPayment(f){
   amount.hidden=actualMode()==='custom';
   amountRow?.classList.toggle('vop-custom-active',actualMode()==='custom');
   if(amountRow)amountRow.style.setProperty('display',actualMode()==='custom'?'flex':'none','important');
-  if(!f.elements.namedItem('amount')?.value||!Number.isFinite(n)||Number(f.elements.namedItem('amount')?.value)===0){amount.innerHTML='<small>Monto a pagar</small><strong>'+(!Number.isFinite(n)?'—':fmt(0,ccy))+'</strong>';}
+  if(!f.elements.namedItem('amount')?.value||!Number.isFinite(n)||Number(f.elements.namedItem('amount')?.value)===0){const m0=actualMode(),dbt=Number(info?.debt)||0,bl=Number(info?.billed)||0;const why=m0==='custom'?'':dbt<=.004?'Sin deuda pendiente en '+(ccy==='USD'?'dólares':'pesos')+'.':(m0==='cut'&&bl<=.004?'Sin saldo facturado al corte. Elige «Total» para pagar '+fmt(dbt,ccy)+'.':'');amount.innerHTML='<small>Monto a pagar</small><strong>'+(!Number.isFinite(n)?'—':fmt(0,ccy))+'</strong>'+(why?'<small class="vop-zero-hint">'+esc(why)+'</small>':'');}
   else amount.innerHTML='<small>Monto a pagar · '+esc(paymentModeLabel[actualMode()]||'')+'</small><strong>'+fmt(debt,ccy)+'</strong>';
   const billed=Number(info?.billed);
   const official=info?.official;
@@ -5952,7 +5952,7 @@ case 'cardHistoryCurrency':ui.cardHistoryCurrency=id==='USD'?'USD':'DOP';render(
 case 'cardHistoryYearPrev':ui.cardHistoryYear=Math.max(2015,Number(ui.cardHistoryYear||new Date().getFullYear())-1);render();break;
 case 'cardHistoryYearNext':ui.cardHistoryYear=Math.min(new Date().getFullYear(),Number(ui.cardHistoryYear||new Date().getFullYear())+1);render();break;
 case 'closeCardDetails':ui.cardId=null;ui.cardDetailTab='status';render();break;
-case 'payCard':{let c=card(id),a=db.accounts.find(x=>!x.archived&&x.kind!=='cash')||db.accounts.find(x=>!x.archived)||db.accounts[0];transactionForm({type:'card_payment',cardId:id,currency:ccy||'DOP',accountId:a?.id||'',paymentChannel:a?.kind==='cash'?'presencial':'internet_banking',amount:'',cardPaymentMode:'cut',category:''});break}
+case 'payCard':{let c=card(id),a=db.accounts.find(x=>!x.archived&&x.kind!=='cash')||db.accounts.find(x=>!x.archived)||db.accounts[0];const d1015=v1015CardPayDefaults(c,ccy||'DOP','cut');transactionForm({type:'card_payment',cardId:id,currency:d1015.ccy,accountId:a?.id||'',paymentChannel:a?.kind==='cash'?'presencial':'internet_banking',amount:'',cardPaymentMode:d1015.mode,category:''});if(d1015.note)toast(d1015.note);break}
 case 'addLoan':loanForm(null,id);break;
 case 'editLoan':loanForm(id);break;
 case 'loanDetails':ui.loanId=id;ui.innerViews.loans='overview';loanWorkspace.tab='vision';render();setTimeout(()=>document.getElementById('loan-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),40);break;
@@ -10809,13 +10809,26 @@ function v105Customizer(){
  }).join('');
  document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v105-config-modal" role="dialog" aria-modal="true" aria-label="Personalizar resumen"><div class="modal-head"><div><h2>Personalizar Resumen</h2><p>Elige los widgets visibles y su orden. El balance complementario también se puede ocultar.</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v105-config-rows">${rows}</div><div class="v105-config-actions"><button type="button" class="btn soft" data-v105-reset="1">Restaurar diseño</button><span><button type="button" class="btn soft" data-act="closeModal">Cancelar</button><button type="button" class="btn" data-v105-apply="1">Guardar</button></span></div></section></div>`;
 }
+/* V1015 · Valores iniciales del pago de tarjeta: usa la moneda que realmente tiene deuda y evita proponer «al corte» cuando no hay saldo facturado. */
+function v1015CardPayDefaults(c,ccy='DOP',mode='cut'){
+ const other=ccy==='USD'?'DOP':'USD',a=c?cardStatus(c,ccy):null,b=c?cardStatus(c,other):null;
+ let cur=ccy,st=a,note='';
+ if(c&&(a?.debt||0)<=.004&&(b?.debt||0)>.004){cur=other;st=b;note='La deuda de esta tarjeta está en '+(other==='USD'?'dólares':'pesos')+'.'}
+ let m=mode;
+ if(c&&(m==='cut'||m==='total')){
+  if((st?.debt||0)<=.004){m='custom';note=note||'Esta tarjeta no tiene deuda pendiente en '+(cur==='USD'?'dólares':'pesos')+'.'}
+  else if(m==='cut'&&(st?.billed||0)<=.004){m='total';note=note||'Aún no hay saldo facturado al corte; se muestra la deuda total.'}
+ }
+ return {ccy:cur,mode:m,note};
+}
 function v105PayMenu(x){
  const kind=x.kind,ref=x.ref,ccy=x.ccy||'DOP',amount=Math.max(0,Number(x.amount)||0),date=x.due||today();
  const name=kind==='card'?card(ref)?.name:kind==='loan'?loan(ref)?.name:kind==='recurring'?db.recurring.find(r=>r.id===ref)?.name:db.personalLoans.find(l=>l.id===ref)?.person;
  if(!name)return toast('No se encontró esta obligación. Actualiza Compromisos.');
  /* V1010: servicios y abonos entre personas tienen una sola vía real (el formulario ya permite editar el importe): se va directo. */
  if(kind==='recurring'||kind==='personal'){v105StartPayment({dataset:{v105Kind:kind,v105Ref:String(ref),v105Ccy:ccy,v105PayOption:'regular',v105Amount:String(amount),v105Date:date}});return}
- const choices=kind==='card'?[['cut','Pago al corte','Pagar lo facturado'],['total','Pago completo','Toda la deuda de la tarjeta'],['custom','Pago específico','Introducir importe']]:kind==='loan'?[['regular','Pagar cuota','Registrar la cuota pactada'],['custom','Pago específico','Registrar otro importe'],['full','Liquidar préstamo','Comprobar capital e intereses con el banco']]:kind==='recurring'?[['regular','Pagar servicio','Registrar el vencimiento'],['custom','Importe específico','Ajustar el importe antes de guardar']]:[['regular','Registrar abono','Pago entre personas']];
+ const v1015=kind==='card'?(()=>{const c=card(ref),d=v1015CardPayDefaults(c,ccy,'cut'),st=c?cardStatus(c,d.ccy):null;return {ccy:d.ccy,billed:st?.billed||0,debt:st?.debt||0}})():null;
+ const choices=kind==='card'?[['cut','Pago al corte',v1015.billed>.004?'Pagar lo facturado · '+money(v1015.billed,v1015.ccy,2):'Sin saldo facturado al corte'],['total','Pago completo',v1015.debt>.004?'Toda la deuda · '+money(v1015.debt,v1015.ccy,2):'Sin deuda pendiente'],['custom','Pago específico','Introducir importe']]:kind==='loan'?[['regular','Pagar cuota','Registrar la cuota pactada'],['custom','Pago específico','Registrar otro importe'],['full','Liquidar préstamo','Comprobar capital e intereses con el banco']]:kind==='recurring'?[['regular','Pagar servicio','Registrar el vencimiento'],['custom','Importe específico','Ajustar el importe antes de guardar']]:[['regular','Registrar abono','Pago entre personas']];
  const attr=`data-v105-kind="${kind}" data-v105-ref="${sanitize(ref)}" data-v105-ccy="${sanitize(ccy)}" data-v105-amount="${amount}" data-v105-date="${sanitize(date)}"`;
  document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal v105-pay-modal" role="dialog" aria-modal="true" aria-label="Opciones de pago"><div class="modal-head"><div><h2>Registrar pago</h2><p>${sanitize(name)} · ${prettyDate(date)}</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v105-pay-context"><span>Importe del vencimiento</span><strong>${money(amount,ccy,2)}</strong></div><div class="v105-pay-choices">${choices.map(([value,title,desc])=>`<button type="button" ${attr} data-v105-pay-option="${value}"><span><strong>${title}</strong><small>${desc}</small></span>${icon('arrow')}</button>`).join('')}</div><p class="v105-pay-disclaimer">El importe se calcula o edita en el formulario. El dinero solo se mueve al confirmar el registro.</p></section></div>`;
 }
@@ -10823,8 +10836,10 @@ function v105StartPayment(b){
  const kind=b.dataset.v105Kind,ref=b.dataset.v105Ref,ccy=b.dataset.v105Ccy||'DOP',value=b.dataset.v105PayOption,amount=Math.max(0,Number(b.dataset.v105Amount)||0),date=b.dataset.v105Date||today();
  closeModal();
  if(kind==='card'){
-  const a=db.accounts.find(a=>a.currency===ccy&&!a.archived&&a.kind!=='cash')||db.accounts.find(a=>!a.archived&&a.kind!=='cash')||db.accounts.find(a=>a.currency===ccy&&!a.archived)||db.accounts.find(a=>!a.archived)||db.accounts[0];
-  transactionForm({type:'card_payment',flowMode:'cardpay',cardId:ref,currency:ccy,accountId:a?.id||'',paymentChannel:a?.kind==='cash'?'presencial':'internet_banking',cardPaymentMode:value,amount:value==='custom'?'':amount,date:today()});
+  const d1015=v1015CardPayDefaults(card(ref),ccy,value),cc=d1015.ccy;
+  const a=db.accounts.find(a=>a.currency===cc&&!a.archived&&a.kind!=='cash')||db.accounts.find(a=>!a.archived&&a.kind!=='cash')||db.accounts.find(a=>a.currency===cc&&!a.archived)||db.accounts.find(a=>!a.archived)||db.accounts[0];
+  transactionForm({type:'card_payment',flowMode:'cardpay',cardId:ref,currency:cc,accountId:a?.id||'',paymentChannel:a?.kind==='cash'?'presencial':'internet_banking',cardPaymentMode:d1015.mode,amount:d1015.mode==='custom'?'':amount,date:today()});
+  if(d1015.note)toast(d1015.note);
  }else if(kind==='loan'){
   const l=loan(ref);if(!l)return toast('No se encontró el préstamo.');
   const a=db.accounts.find(a=>a.currency===l.currency&&!a.archived)||db.accounts[0];
