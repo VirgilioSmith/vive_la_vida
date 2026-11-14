@@ -89715,5 +89715,36 @@ html body #app#app #page#page .v203-hero .v203-hero-grid>div{background:rgba(255
 html body #app#app #page#page .v203-hero .v203-hero-grid>div small{display:block;margin-bottom:2px}
 html body #app#app #page#page .v203-hero .v203-hero-grid>div strong{display:block;overflow-wrap:anywhere}
 </style>
+<style id="v963-loans-mobile">
+/* V963 · Préstamos móvil (y acciones v239): mismo acento, botones y tipografía coherentes */
+@media (max-width:790px){
+ html body #app#app .main :is(.v239-loans,.v239-loan-deep,.loans-world){--v963-a:var(--v424-accent-strong,#5b57d6);--v963-grad:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9));--loan-accent:var(--v424-accent-strong,#5b57d6)}
+ /* Acción principal: acento (antes azul suelto) */
+ html body #app#app .main .v239-action.v239-action-primary,
+ html body #app#app .main .v239-loan-deep :is(.btn.loan-primary,.btn.sm.loan-primary){background:var(--v963-grad,linear-gradient(180deg,#6d69f1,#4b46c9))!important;color:#fff!important;border-color:transparent!important;box-shadow:0 10px 22px -12px var(--v424-accent-shadow,rgba(75,70,201,.55))!important}
+ html body #app#app .main .v239-action.v239-action-primary *{color:#fff!important}
+ html body #app#app .main .v239-add{color:var(--v963-a,#5b57d6)!important}
+ /* Detalle del préstamo: tonos terracota → acento */
+ html body #app#app .main .v239-loan-deep :is(.loan-overline,.loan-detail-micro,.loan-inline-button,.loan-compare-header strong:last-child,.loan-compare-row b:last-child){color:var(--v963-a,#5b57d6)!important}
+ html body #app#app .main .v239-loan-deep .loan-detail-micro span{color:inherit;opacity:.6}
+ html body #app#app .main .v239-loan-deep .loan-tab.on{color:var(--v963-a,#5b57d6)!important;box-shadow:0 6px 16px -10px var(--v424-accent-shadow,rgba(75,70,201,.5))}
+ html body #app#app #page#page .v239-loan-deep .btn.sm:is(.ghost,.soft),
+ html body #app#app #page#page .v239-loan-deep .btn:is(.ghost,.soft){background:rgba(255,255,255,.72)!important;color:var(--v963-a,#5b57d6)!important;border:1px solid color-mix(in srgb,var(--v963-a,#5b57d6) 30%,transparent)!important;box-shadow:none!important}
+ /* Acciones de cabecera: cuadrícula ordenada, sin textos partidos */
+ html body #app#app .main .v239-loan-deep .loan-detail-top-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;width:100%}
+ html body #app#app .main .v239-loan-deep .loan-detail-top-actions .btn{min-height:44px;white-space:nowrap;padding-inline:10px;font-size:13px;justify-content:center}
+ html body #app#app .main .v239-loan-deep .loan-detail-top-actions .loan-primary{grid-column:1/-1;order:-1}
+ html body #app#app .main .v239-loan-deep .loan-detail-top-actions .btn.soft{grid-column:1/-1}
+ html body #app#app .main .v239-loan-deep .loan-action-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ html body #app#app .main .v239-loan-deep .loan-action-row .btn{min-height:44px;white-space:nowrap;justify-content:center}
+ /* Comparativa de escenarios: columnas con ancho real; desplazamiento solo dentro de la tarjeta */
+ html body #app#app .main .v239-loan-deep .loan-compare-table{min-width:470px}
+ html body #app#app .main .v239-loan-deep :is(.loan-compare-header,.loan-compare-row){grid-template-columns:104px repeat(3,minmax(110px,1fr))!important;column-gap:8px}
+ html body #app#app .main .v239-loan-deep .loan-compare-row b{white-space:nowrap;font-variant-numeric:tabular-nums;font-size:12.5px}
+ html body #app#app .main .v239-loan-deep .loan-compare-header strong{font-size:11px;white-space:normal}
+ /* Hero v239: cifras secundarias en una sola línea */
+ html body #app#app .main .v239-hero :is(.v239-hero-bottom,.v239-hero-metrics) strong{font-size:clamp(15px,4.6vw,18px)!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+}
+</style>
 </body>
 </html>
