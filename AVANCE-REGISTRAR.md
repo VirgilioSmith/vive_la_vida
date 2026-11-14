@@ -414,3 +414,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V983 · Configuración compacta en pantallas grandes
 - El menú lateral ya no reparte sus grupos por toda la altura (había huecos enormes en monitores grandes): grupos juntos arriba. La altura de la página de Configuración se limita a 791px, así menú y panel quedan alineados y compactos igual que en 1440×900. Verificado a 1440×900 y 2000×1227: sin scroll en ninguna pestaña.
+
+## V984 · Gráfico de la tarjeta Planificación (Explorar)
+- El minigráfico (antes una línea fina y sin proporción) pasa a curva suave con trazo degradado en el acento, área tenue bajo la curva, sombra suave y punto final; tamaño 108×38 (84×30 en pantallas ≤370px). Sigue el acento configurado.
