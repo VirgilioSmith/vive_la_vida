@@ -54523,3 +54523,12 @@ html body:not(.theme-black):not(.theme-dark) #app#app .vive-p-brand,html body:no
 
 /* V1032 · «vive el hoy» junto al logotipo con el acento */
 html body:not(.theme-black):not(.theme-dark) #app#app :is(.topbar-intro .top-sub,.mobile-bar>strong){color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important;font-weight:750}
+
+/* V1034 · Título de cada pantalla (Resumen, Cuentas bancarias…) con el acento */
+html body:not(.theme-black):not(.theme-dark) #app#app .topbar :is(h1,h2){color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important}
+@media (max-width:790px){
+ html body:not(.theme-black):not(.theme-dark) #app#app .vive-mobile-top~* :is(.v732-heading-line h1),html body:not(.theme-black):not(.theme-dark) #app#app :is(.v732-heading-line h1,.v203-header h1,.v203-header h2,.vive-mobile-page-title,#page>h1:first-child,#page>.section-title:first-child h2,#page>section:first-child>.section-title h2){color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important}
+}
+@media (max-width:790px){
+ html body:not(.theme-black):not(.theme-dark) #app#app :is(header[class*="-intro"],.v239-intro,.v244-intro,.v248-intro,.v205-intro) h2{color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important}
+}
