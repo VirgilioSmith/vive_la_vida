@@ -3898,7 +3898,7 @@ function advanced(){
  const indicator=(label,value,earlier,favorable,tone)=>`<div class="advanced-stat v16-annual-clean ${tone}"><span>${label}</span><strong>${money(value)}</strong>${observed?annualGap(value,earlier,y-1,favorable):'<small class="advanced-gap neutral">Sin meses registrados</small>'}</div>`;
  const period=observed===12?'Enero–diciembre':observed>0?`Enero–${new Date(y,observed-1,1).toLocaleDateString('es-DO',{month:'long'})}`:'Sin meses cerrados';
  return `<div class="v142-advanced" id="v142Advanced">
-  <header class="advanced-hero v142-advanced-hero"><div><span class="hero-eyebrow">ANALÍTICA AVANZADA · ${y}</span><h2>Tu año, con otra perspectiva.</h2><p>Ingresos, egresos y neto. Comparación ${period.toLowerCase()} ${y} frente al mismo tramo de ${y-1}.</p></div><button class="btn light" data-act="advancedCsv">Exportar CSV ${icon('download')}</button></header>
+  <header class="advanced-hero v142-advanced-hero"><div><span class="hero-eyebrow">ANALÍTICA AVANZADA · ${y}</span><h2>Tu año, con otra perspectiva.</h2><p>Ingresos, egresos y neto. Comparación ${period.toLowerCase()} ${y} frente al mismo tramo de ${y-1}.</p></div><button class="btn light" data-act="advancedCsv">Exportar Excel ${icon('download')}</button></header>
   <div class="advanced-quick advanced-gaps v14-advanced-three v142-advanced-stats">${indicator('Ingresos del año',income,priorIncome,true,'v14-income')}${indicator('Egresos del año',expense,priorExpense,false,'v14-expense')}${indicator('Neto del año',net,priorNet,true,'v14-net')}</div>
   <div class="v142-advanced-section-title v142-advanced-table-heading"><div><span>01 / BALANCE ANUAL</span><h3>Cuatro cifras. Una lectura del año completo.</h3></div></div>
   ${compactAnnualSummary({inAdvanced:true})}
@@ -3909,7 +3909,41 @@ function advanced(){
  </div>`;
 }
 
-function advancedCsv(){let data=Array.from({length:12},(_,i)=>monthlyTotals(ui.year,i+1)),cats=[...new Set([...EXP,...data.flatMap(m=>Object.keys(m.expenseBy))])],inc=[...new Set([...INC,...data.flatMap(m=>Object.keys(m.incomeBy))])],rows=[['Concepto',...MON,'Total','Promedio']];const push=(label,values,stock=false)=>{let total=values.reduce((a,b)=>a+b,0);rows.push([label,...values.map(v=>rnd(v)),stock?'':rnd(total),rnd(total/12)])};for(let k of inc){push('Ingreso · '+k,data.map(x=>num(x.incomeBy[k])));for(let sub of [...new Set(data.flatMap(x=>Object.keys(x.incomeSubBy).filter(s=>s.startsWith(k+'||')).map(s=>s.split('||')[1])))] )push('  ↳ '+sub,data.map(x=>num(x.incomeSubBy[k+'||'+sub])))}push('TOTAL INGRESOS',data.map(x=>x.income));for(let k of cats){push('Gasto · '+k,data.map(x=>num(x.expenseBy[k])));for(let sub of [...new Set(data.flatMap(x=>Object.keys(x.expenseSubBy).filter(s=>s.startsWith(k+'||')).map(s=>s.split('||')[1])))] )push('  ↳ '+sub,data.map(x=>num(x.expenseSubBy[k+'||'+sub])))}push('TOTAL GASTOS',data.map(x=>x.expense));push('NETO',data.map(x=>x.net));push('SALDO FINAL',data.map(x=>x.ending),true);download('\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(';')).join('\r\n'),`analitica_avanzada_${ui.year}.csv`,'text/csv;charset=utf-8')}
+function advancedCsv(){
+ /* V1029 · Exportación anual en Excel con tres hojas: Resumen, Ingresos y Egresos (con subcategorías). */
+ const year=ui.year,data=Array.from({length:12},(_,m)=>monthlyTotals(year,m+1)),now=new Date();
+ const limit=year===now.getFullYear()?now.getMonth()+1:year<now.getFullYear()?12:0;
+ const head=['Concepto',...MON,'Total '+year,'Promedio mensual'];
+ const line=(label,vals,{stock=false,bold=false,level=0}={})=>{const t=vals.reduce((a,b)=>a+(Number(b)||0),0);return {bold,cells:[(level?'    ↳ ':'')+label,...vals.map(v=>v===null?null:rnd(v)),stock?null:rnd(t),stock?null:rnd(t/12)]}};
+ const monthsOf=(fn)=>data.map((x,m)=>m<limit?fn(x):0);
+ const summary=[
+  {title:'Resumen anual '+year+' · valores en RD$'},
+  {header:head},
+  line('Ingresos',monthsOf(x=>x.income),{bold:true}),
+  line('Egresos',monthsOf(x=>x.expense),{bold:true}),
+  line('Neto (ingresos − egresos)',monthsOf(x=>x.net),{bold:true}),
+  line('Saldo final del mes',data.map((x,m)=>m<limit?x.ending:null),{stock:true}),
+  {blank:true},
+  {title:'Nota: el neto es el resultado del mes; el saldo final es el dinero en cuentas y efectivo al cierre. Los meses que aún no han ocurrido aparecen en cero.'}
+ ];
+ const section=(by,subBy,catList,title,totalKey)=>{
+  const rows=[{title},{header:head}];
+  const cats=[...new Set([...catList,...data.flatMap(x=>Object.keys(x[by]))])];
+  for(const k of cats){
+   const vals=monthsOf(x=>num(x[by][k]));if(!vals.some(v=>v))continue;
+   rows.push(line(k,vals,{bold:true}));
+   const subs=[...new Set(data.flatMap(x=>Object.keys(x[subBy]).filter(z=>z.startsWith(k+'||')).map(z=>z.split('||')[1])))];
+   for(const sub of subs)rows.push(line(sub,monthsOf(x=>num(x[subBy][k+'||'+sub])),{level:1}));
+  }
+  rows.push(line('TOTAL',monthsOf(x=>x[totalKey]),{bold:true}));
+  return rows;
+ };
+ window.v1029Xlsx([
+  {name:'Resumen',rows:summary},
+  {name:'Ingresos',rows:section('incomeBy','incomeSubBy',INC,'Ingresos por categoría y subcategoría · '+year+' · RD$','income')},
+  {name:'Egresos',rows:section('expenseBy','expenseSubBy',EXP,'Egresos por categoría y subcategoría · '+year+' · RD$','expense')}
+ ],`vive-el-hoy_${year}.xlsx`);
+}
 
 function loanForm(id,preBank){
  if(!ensureBanks())return;
@@ -4827,7 +4861,79 @@ function guidedTransactionForm(partial={},editId=null){
   else enhanceGuidedStudio(f,mode,editing);
  }
  if(mode==='service'&&f.classList.contains('studio-form')){v260EnhanceServiceWizard(f);v261EnhanceServiceWizard(f)}
- if(mode==='spend'||mode==='service')v80InstallAdvisor(f);
+ if(mode==='spend'||mode==='service'||mode==='income')v80InstallAdvisor(f);
+ if(mode==='income'||mode==='spend')v1028EnhanceFastx(f,mode);
+}
+/* V1028 · Registro de escritorio simplificado: iconos reales de categoría (sistema único) y panel de capacidad también en ingresos. */
+function v1028EnhanceFastx(f,mode){
+ if(!f||!f.classList.contains('fastx-form'))return;
+ const kind=mode==='income'?'ingreso':'gasto';
+ const paint=()=>f.querySelectorAll('.fastx-cat[data-fast-category]:not(.fastx-cat-other)').forEach(b=>{const ico=b.querySelector('.fastx-cat-ico');if(ico&&!ico.querySelector('svg'))ico.innerHTML=icon(v255TaxonomyIconName(kind,b.dataset.fastCategory,''))});
+ paint();
+ const zone=f.querySelector('.fastx-amount-zone'),badge=f.querySelector('.fastx-currency-badge');
+ const sym=()=>{if(zone&&badge)zone.dataset.sym=(badge.textContent.trim().split(/[\s·]+/)[0])||'RD$'};
+ sym();if(badge)new MutationObserver(sym).observe(badge,{childList:true,characterData:true,subtree:true});
+ const grid=f.querySelector('.fastx-category-grid');if(grid)new MutationObserver(paint).observe(grid,{childList:true,subtree:true});
+ /* Canal de pago: dato secundario, pasa a «Opciones adicionales» para dejar fecha y nota a la vista. */
+ const fold=f.querySelector('.fastx-fold-inner'),ch=f.querySelector('#flowChannel')?.closest('label');
+ if(fold&&ch&&!fold.contains(ch))fold.prepend(ch);
+ v1028UniversalPicker(f,mode);
+}
+/* Selector universal (cuentas, efectivo y tarjetas) con logo de institución: reemplaza la forma de pago + lista desplegable. */
+function v1028UniversalPicker(f,mode){
+ const host=f.querySelector('.fastx-source-section');if(!host||host.querySelector('.v1028-picker'))return;
+ const accSel=f.querySelector('#flowAccount'),cardSel=f.querySelector('#txCard');if(!accSel)return;
+ const isSpend=mode==='spend'&&!!cardSel;
+ const logoFor=(kind,id)=>{
+  if(kind==='card'){const c=card(id),b=c&&bank(c.bankId);return b?bankLogoMark(b,'v1028-logo'):`<span class="v1028-logo v1028-glyph">${icon('card')}</span>`}
+  const a=account(id),b=a&&bank(a.bankId);
+  if(b&&a.kind!=='cash')return bankLogoMark(b,'v1028-logo');
+  return `<span class="v1028-logo v1028-glyph">${icon(a?.kind==='cash'?'wallet':'building')}</span>`;
+ };
+ const items=()=>{
+  const list=[...accSel.options].map(o=>{const a=account(o.value);return {kind:'account',id:o.value,title:a?.name||o.text,sub:a?(a.kind==='cash'?'Efectivo':bankOf(a))+(a.currency==='USD'?' · US$':''):'',amount:a?money(getAccountBalance(a),a.currency,2):''}});
+  if(isSpend)[...cardSel.options].forEach(o=>{const c=card(o.value),st=c?cardStatus(c,'DOP'):null;list.push({kind:'card',id:o.value,title:c?.name||o.text,sub:'Tarjeta de crédito'+(c?' · '+bankOf(c):''),amount:st?'Disp. '+money(st.available,'DOP',2):''})});
+  return list;
+ };
+ let chosen=null;
+ const current=()=>{
+  const src=isSpend?(chosen||f.querySelector('[data-fast-source].active')?.dataset.fastSource||'account'):'account';
+  return src==='card'?{kind:'card',id:cardSel.value}:{kind:'account',id:accSel.value};
+ };
+ const wrap=document.createElement('div');wrap.className='v1028-picker';
+ const title=host.querySelector('.fastx-section-title strong');
+ wrap.innerHTML='<button type="button" class="v1028-picker-btn" aria-haspopup="listbox" aria-expanded="false"></button><div class="v1028-picker-list" role="listbox" hidden></div>';
+ host.querySelector('.fastx-section-title')?.after(wrap);
+ const btn=wrap.querySelector('.v1028-picker-btn'),list=wrap.querySelector('.v1028-picker-list');
+ const row=(it,sel)=>`<span class="v1028-row-logo">${logoFor(it.kind,it.id)}</span><span class="v1028-row-copy"><strong>${sanitize(it.title)}</strong><small>${sanitize(it.sub)}</small></span><span class="v1028-row-amt">${sanitize(it.amount)}</span>${sel!==undefined?`<span class="v1028-row-check" aria-hidden="true">${sel?'✓':''}</span>`:''}`;
+ const render=()=>{
+  const cur=current(),all=items(),it=all.find(x=>x.kind===cur.kind&&x.id===cur.id)||all[0];
+  if(it)btn.innerHTML=row(it)+`<span class="v1028-chevron" aria-hidden="true">⌄</span>`;
+  const group=(label,kind)=>{const g=all.filter(x=>x.kind===kind);return g.length?`<div class="v1028-group">${label}</div>`+g.map(x=>`<button type="button" role="option" class="v1028-opt${x.kind===cur.kind&&x.id===cur.id?' is-on':''}" data-kind="${x.kind}" data-id="${sanitize(x.id)}">${row(x,x.kind===cur.kind&&x.id===cur.id)}</button>`).join(''):''};
+  list.innerHTML=group(isSpend?'Cuentas y efectivo':'Cuentas y efectivo','account')+(isSpend?group('Tarjetas de crédito','card'):'');
+ };
+ const setOpen=o=>{list.hidden=!o;btn.setAttribute('aria-expanded',String(o))};
+ btn.addEventListener('click',()=>setOpen(list.hidden));
+ list.addEventListener('click',e=>{
+  const o=e.target.closest('.v1028-opt');if(!o)return;
+  const kind=o.dataset.kind,id=o.dataset.id;
+  if(isSpend)f.querySelector(`[data-fast-source="${kind}"]`)?.click();
+  chosen=kind;const sel=kind==='card'?cardSel:accSel;sel.value=id;
+  ['input','change'].forEach(t=>sel.dispatchEvent(new Event(t,{bubbles:true})));
+  setOpen(false);render();
+ });
+ document.addEventListener('click',e=>{if(!wrap.contains(e.target))setOpen(false)});
+ f.addEventListener('keydown',e=>{if(e.key==='Escape'&&!list.hidden){e.stopPropagation();setOpen(false);btn.focus()}},true);
+ f.addEventListener('change',e=>{if(['accountId','cardId','paymentSource'].includes(e.target.name))render()});
+ render();
+}
+function v1028IncomeAdvisorMarkup(f){
+ const acc=account(f.elements.accountId?.value),curr=acc?.currency||f.elements.currency?.value||'DOP';
+ const amt=v99MoneyInDop(f.elements.amount?.value||0,curr),d=v89DebtCapacity(String(f.elements.date?.value||today()).slice(0,7));
+ const newIncome=d.income+amt,after=newIncome>0?rnd(d.monthly/newIncome*100):null,before=d.ratio;
+ const risk=after===null?'missing':after>100?'over':after>=80?'caution':'ok',avail=newIncome>0?rnd(newIncome-d.monthly):null;
+ const label=avail===null?'Sin ingresos suficientes':avail<0?'Déficit previsto':'Disponible después del ingreso';
+ return `<section class="v80-advisor v90-expense-advisor v99-simple-capacity v107-capacity-pill v107-risk-${risk}" id="v80PurchaseAdvisor" aria-label="Capacidad de endeudamiento antes y después del ingreso"><div class="v107-pill-heading"><span>${icon('shield')} Capacidad de endeudamiento</span><button type="button" class="v107-pill-info" data-v85-action="capacity" aria-label="Ver desglose de capacidad de endeudamiento" title="Ver desglose">${icon('info')}</button></div><div class="v107-pill-metrics"><div class="v107-pill-metric"><small>ACTUAL</small><strong class="v99-${d.risk}">${v85Pct(before)}</strong></div><span class="v107-pill-arrow" aria-hidden="true">→</span><div class="v107-pill-metric"><small>DESPUÉS DEL INGRESO</small><strong class="v99-${risk}">${v85Pct(after)}</strong></div><div class="v107-pill-available ${avail!==null&&avail<0?'v107-pill-negative':''}"><small>${label}</small><strong>${avail===null?'—':money(Math.abs(avail))}</strong></div></div></section>`;
 }
 
 /* ------------- INGRESOS Y EGRESOS · REGISTRO EXPRESS -------------
@@ -10182,7 +10288,7 @@ function v80InstallAdvisor(f){
 function v80UpdateAdvisor(f){
  const host=f?.querySelector('.v80-advisor-slot');if(!host)return;
  const active=host.querySelector('.v80-breakdown')?.open;
- host.innerHTML=v80AdvisorMarkup(v80AdvisorFromForm(f));
+ host.innerHTML=(f.dataset.mode==='income'||f.classList.contains('v379-income-transaction'))?v1028IncomeAdvisorMarkup(f):v80AdvisorMarkup(v80AdvisorFromForm(f));
  if(active)host.querySelector('.v80-breakdown')?.setAttribute('open','');
 }
 function v80RefreshQuickAdvisor(){
@@ -20872,4 +20978,64 @@ window.__v866Runners.v865=run;
   if(node&&ev.pointerType!=='mouse'){window.showChartTip?.(node,ev.clientX,ev.clientY);hideTimer=setTimeout(()=>window.hideChartTip?.(),3500)}
   else if(!node)window.hideChartTip?.();
  },{passive:true});
+})();
+
+/* V1029 · Generador mínimo de .xlsx (sin dependencias): hojas con título, cabecera, cifras y totales. */
+(()=>{
+ const enc=new TextEncoder();
+ const crcTable=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+ const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=crcTable[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0};
+ const zip=files=>{
+  const chunks=[],central=[];let offset=0;
+  const u16=n=>[n&255,(n>>>8)&255],u32=n=>[n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255];
+  for(const f of files){
+   const name=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+   const local=new Uint8Array([0x50,0x4b,3,4,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),0,0]);
+   chunks.push(local,name,data);
+   central.push({name,crc,size:data.length,offset});
+   offset+=local.length+name.length+data.length;
+  }
+  const cdStart=offset;
+  for(const c of central){
+   const h=new Uint8Array([0x50,0x4b,1,2,20,0,20,0,0,8,0,0,0,0,0x21,0,...u32(c.crc),...u32(c.size),...u32(c.size),...u16(c.name.length),0,0,0,0,0,0,0,0,0,0,0,0,...u32(c.offset)]);
+   chunks.push(h,c.name);offset+=h.length+c.name.length;
+  }
+  const end=new Uint8Array([0x50,0x4b,5,6,0,0,0,0,...u16(central.length),...u16(central.length),...u32(offset-cdStart),...u32(cdStart),0,0]);
+  chunks.push(end);
+  return new Blob(chunks,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+ };
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const col=i=>{let s='';for(i++;i>0;i=Math.floor((i-1)/26))s=String.fromCharCode(65+(i-1)%26)+s;return s};
+ // estilos: 0 normal · 1 cabecera · 2 número · 3 número en negrita · 4 título · 5 texto en negrita
+ const styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.00;[Red]\\-#,##0.00"/></numFmts><fonts count="4"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="14"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF3F5F8C"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="6"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"><alignment horizontal="center"/></xf><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="2" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1"/><xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs></styleSheet>';
+ const sheetXml=rows=>{
+  let r=0,out='';
+  for(const row of rows){
+   r++;
+   if(row.blank)continue;
+   let cells='';
+   if(row.title){cells=`<c r="A${r}" s="4" t="inlineStr"><is><t>${esc(row.title)}</t></is></c>`}
+   else if(row.header){cells=row.header.map((h,i)=>`<c r="${col(i)}${r}" s="1" t="inlineStr"><is><t>${esc(h)}</t></is></c>`).join('')}
+   else cells=row.cells.map((v,i)=>{
+    if(v===null||v===undefined)return '';
+    if(typeof v==='number')return `<c r="${col(i)}${r}" s="${row.bold?3:2}"><v>${v}</v></c>`;
+    return `<c r="${col(i)}${r}" s="${row.bold?5:0}" t="inlineStr"><is><t xml:space="preserve">${esc(v)}</t></is></c>`;
+   }).join('');
+   out+=`<row r="${r}">${cells}</row>`;
+  }
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane xSplit="1" topLeftCell="B1" activePane="topRight" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="38" customWidth="1"/><col min="2" max="15" width="14" customWidth="1"/></cols><sheetData>${out}</sheetData></worksheet>`;
+ };
+ window.v1029Xlsx=(sheets,filename)=>{
+  const files=[
+   {name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')+'</Types>'},
+   {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+   {name:'xl/workbook.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+sheets.map((s,i)=>`<sheet name="${esc(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')+'</sheets></workbook>'},
+   {name:'xl/_rels/workbook.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+sheets.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')+`<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+   {name:'xl/styles.xml',data:styles},
+   ...sheets.map((s,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,data:sheetXml(s.rows)}))
+  ];
+  const blob=zip(files),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);
+  window.toast?.('Excel descargado: '+filename);
+ };
 })();
