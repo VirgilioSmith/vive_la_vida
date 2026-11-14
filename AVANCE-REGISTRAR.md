@@ -342,3 +342,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - Se elimina la opción «Original móvil» del selector de KPI (Explorar → Personalizar). Quedan tres estilos (Tres círculos, Creativo, Balance y posición neta). Balance y posición neta es ahora el estándar: quien tuviera «original» (o ninguno) lo ve automáticamente; quien eligió otro estilo lo conserva.
 - Se quita la línea divisoria horizontal del KPI «Balance y posición neta» (la que cruzaba las barras) en la tarjeta real y en su miniatura.
 - Avance de efectivo (validación completa): comisión = efectivo × %; deuda = efectivo + comisión; solo la comisión entra en Egresos («Deudas e intereses › Comisión de avance de efectivo»), convertida a RD$ si es US$. Probado: 0 % (sin comisión), 3.75 % de 1,234.56 → 46.30, US$200 al 5 % → US$10 (RD$600), 101 % rechazado. Corrección: la comisión ahora aparece también como renglón en el análisis de Egresos (estaba en los totales pero no en el listado).
+
+## V966 · Botones Recibir / Gastar / Transferir (Resumen móvil)
+- Botones de cristal de 48px, radio 16, icono en mosaico de acento, texto 12.5px/740, estado táctil y foco visible; variante Black. Sin recortes de texto de 344px en adelante (los más estrechos reducen icono y tipografía).
