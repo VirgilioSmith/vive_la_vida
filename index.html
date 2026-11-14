@@ -30031,6 +30031,7 @@ function render(){
  const hex=/^#[0-9a-f]{6}$/i;
  const v424Accent=choice==='custom'&&hex.test(db.settings.paletteHex||'')?db.settings.paletteHex:(pal[choice]||pal.original);
  document.body.style.setProperty('--vive-theme-color',v424Accent);
+ try{localStorage.setItem('vive.el.hoy.lastAccent',v424Accent);}catch(_){ }
  // Uniformizar la paleta de Inicio sin comprometer el contraste del texto.
  const v424RGB=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
  const v424Mix=(a,b,t)=>'#'+a.map((n,i)=>Math.round(n*(1-t)+b[i]*t).toString(16).padStart(2,'0')).join('');
@@ -31619,6 +31620,58 @@ function v333RememberTheme(){
  const t=db.settings?.theme==='black'?'black':'light';
  try{localStorage.setItem('vive.el.hoy.lastTheme',t);}catch(_){ }
 }
+/* V980 · Arranque: el logotipo toma el acento y, al abrir, se deshace en partículas («chasquido») sobre la app ya renderizada. */
+function v980SplashAccent(){
+ const hex=/^#[0-9a-f]{6}$/i;
+ try{const a=localStorage.getItem('vive.el.hoy.lastAccent');if(hex.test(a||''))return a;}catch(_){ }
+ const pal={original:'#6d69f1',ocean:'#306fdd',emerald:'#087f75',coral:'#bd4f70',plum:'#8b55c6',amber:'#b77c2f'};
+ const c=db?.settings?.paletteChoice||'original';
+ return c==='custom'&&hex.test(db?.settings?.paletteHex||'')?db.settings.paletteHex:(pal[c]||pal.original);
+}
+function v980DismissSplash(gate){
+ const finish=()=>{gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');gate.querySelectorAll('.v980-dust').forEach(x=>x.remove());v335SplashSince=0;};
+ try{
+  const word=gate.querySelector('.v329-wordmark');
+  const calm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(calm||!word||!gate.classList.contains('v329-splash')||gate.hidden){finish();return;}
+  const r=word.getBoundingClientRect();if(r.width<20||r.height<10){finish();return;}
+  const cs=getComputedStyle(word),dpr=Math.min(2,window.devicePixelRatio||1),pad=36;
+  const W=Math.ceil(r.width+pad*2),H=Math.ceil(r.height+pad*2);
+  const cv=document.createElement('canvas');cv.className='v980-dust';cv.width=W*dpr;cv.height=H*dpr;
+  cv.style.cssText=`position:fixed;left:${r.left-pad}px;top:${r.top-pad}px;width:${W}px;height:${H}px;pointer-events:none;z-index:2`;
+  const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
+  // Rasterizar el texto con la misma tipografía
+  const fs=parseFloat(cs.fontSize),ls=parseFloat(cs.letterSpacing)||0,txt=word.textContent;
+  ctx.font=`${cs.fontWeight} ${fs}px ${cs.fontFamily}`;ctx.fillStyle=cs.color;ctx.textBaseline='alphabetic';
+  let total=0;for(const ch of txt)total+=ctx.measureText(ch).width+ls;
+  let x=pad+(r.width-total)/2;const y=pad+r.height*0.5+fs*0.33;
+  for(const ch of txt){ctx.fillText(ch,x,y);x+=ctx.measureText(ch).width+ls;}
+  const img=ctx.getImageData(0,0,W*dpr,H*dpr),step=Math.max(2,Math.round(2*dpr)),parts=[];
+  for(let py=0;py<H*dpr;py+=step)for(let px=0;px<W*dpr;px+=step){const i=(py*W*dpr+px)*4;if(img.data[i+3]>110){
+   const nx=(px/dpr)/W;parts.push({x:px/dpr,y:py/dpr,vx:20+Math.random()*80,vy:-(10+Math.random()*70)+(Math.random()-.5)*30,wob:Math.random()*6.28,sz:step/dpr*(.9+Math.random()*.5),delay:120+nx*520+Math.random()*180,life:620+Math.random()*420});}}
+  if(!parts.length){finish();return;}
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  gate.appendChild(cv);word.style.visibility='hidden';
+  gate.classList.add('v980-dissolving');gate.style.pointerEvents='none';
+  const t0=performance.now(),DUR=1500;
+  const col=cs.color;
+  (function frame(now){
+   const t=now-t0;ctx.clearRect(0,0,W,H);ctx.fillStyle=col;
+   for(const q of parts){
+    const a=t-q.delay;
+    if(a<0){ctx.globalAlpha=1;ctx.fillRect(q.x,q.y,q.sz,q.sz);continue;}
+    const k=a/q.life;if(k>=1)continue;
+    const e=k*k;
+    ctx.globalAlpha=1-k;
+    ctx.fillRect(q.x+q.vx*(a/1000)*(1+k)+Math.sin(q.wob+a/180)*3*k,q.y+q.vy*(a/1000)*(1+k)-e*18,q.sz*(1-k*.5),q.sz*(1-k*.5));
+   }
+   ctx.globalAlpha=1;
+   // El telón se aclara mientras el polvo se va, revelando la app ya lista
+   gate.style.opacity=String(Math.max(0,1-Math.max(0,(t-350)/900)));
+   if(t<DUR)requestAnimationFrame(frame);else{gate.style.opacity='';gate.style.pointerEvents='';finish();}
+  })(t0);
+ }catch(e){console.warn('V980: disolución no disponible',e);finish();}
+}
 let v335SplashSince=0;
 function f33Shell(title,description,content){
  f33Gate();const el=document.getElementById('f33-gate');el.hidden=false;
@@ -31628,6 +31681,7 @@ function f33Shell(title,description,content){
   el.classList.add('v329-splash');
   el.classList.toggle('v331-splash-light',v333SplashTheme()==='light');
   el.setAttribute('aria-label','Abriendo vive hoy');
+  el.style.setProperty('--v980-accent',v980SplashAccent());
   el.innerHTML='<div class="v329-splash-content" role="status" aria-live="polite" aria-label="Abriendo vive el hoy"><div class="v329-wordmark">vive el hoy</div></div>';
   return;
  }
@@ -31718,7 +31772,7 @@ function f33Ready(){
  if(existingSplash?.classList.contains('v329-splash'))existingSplash.classList.toggle('v331-splash-light',db.settings?.theme==='light');
  const gate=document.getElementById('f33-gate');
  // Render first; dismiss splash immediately when the authenticated data is ready.
- v360RestoreUI();render();if(gate){gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out');v335SplashSince=0;}if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
+ v360RestoreUI();render();if(gate){v980DismissSplash(gate);}if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
  v10LiveStart();
  setTimeout(()=>{v212Load().then(()=>v212Sync()).catch(err=>console.warn('Apple Pay:',err));},1600);
  // Consultar tasa externa de forma no bloqueante tras autenticar al usuario.
@@ -90131,6 +90185,16 @@ html body #app#app .v431-tile-stat:not(.v431-status-commitment):not(.v431-status
 /* Botón flotante de movimientos */
 html body #app#app .v708-movements-fab{background:linear-gradient(135deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 28%,#fff),color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 44%,#fff))!important;border:1px solid rgba(255,255,255,.7)!important;color:var(--v424-accent-strong,#5b57d6)!important;box-shadow:0 12px 22px -10px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 60%,transparent)!important}
 html body #app#app .v708-movements-fab svg{color:var(--v424-accent-strong,#5b57d6)!important;stroke:currentColor!important}
+</style>
+<style id="v980-splash-accent">
+/* V980 · Splash: logotipo en el acento; sin barra de carga; el logotipo se disuelve al abrir */
+.f33-gate.v329-splash .v329-wordmark{color:var(--v980-accent,#6d69f1)!important;font-weight:850!important}
+.f33-gate.v329-splash:not(.v331-splash-light) .v329-wordmark{color:color-mix(in srgb,var(--v980-accent,#6d69f1) 62%,#fff)!important}
+.f33-gate.v329-splash.v331-splash-light .v329-wordmark{color:color-mix(in srgb,var(--v980-accent,#6d69f1) 100%,#000 0%)!important}
+.f33-gate.v329-splash .v329-splash-content::after{display:none!important;animation:none!important}
+.f33-gate.v329-splash .v329-wordmark{animation:v570-logo-in .5s cubic-bezier(.16,1,.3,1) both!important}
+.f33-gate.v329-splash.v980-dissolving .v329-wordmark{animation:none!important}
+.f33-gate.v329-splash.v980-dissolving{transition:none!important}
 </style>
 </body>
 </html>

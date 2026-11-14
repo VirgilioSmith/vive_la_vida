@@ -397,3 +397,7 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - Etiqueta superior de cada título («titulito»: PATRIMONIO · EVOLUCIÓN, CONTROL DEL MES, VENCIMIENTOS…, también web y personalización): siempre en el color del acento (claro y Black). Se excluyen las etiquetas sobre tarjetas de acento (blancas) y las etiquetas de métricas (UTILIZADO, SALDO DISPONIBLE…).
 - Explorar: fichas azul/violeta → acento (icono, flecha, barras de «Visión global», trazo de «Planificación», barra de «Presupuesto»); ingresos (verde) y egresos (rosa) se conservan por ser semánticos.
 - Botón flotante de movimientos con el acento.
+
+## V980 · Arranque: logotipo en el acento y disolución tipo «chasquido»
+- Pantalla de inicio: «vive el hoy» toma el color del acento (se recuerda el último usado; en tema Black, una versión clara) y se elimina la barra de carga inferior.
+- Al terminar de cargar, el logotipo se deshace en partículas (de izquierda a derecha) mientras el telón se aclara y deja ver la app ya renderizada (~1.5 s, no bloquea toques). Con «reducir movimiento» activado se retira directamente. Si algo falla, cae al cierre inmediato anterior.
