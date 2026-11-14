@@ -1062,6 +1062,7 @@ function v371CardReturnWidget(c){
 
 /* V6 · Wallet móvil: ficha de transacción solo lectura, edición mediante el editor financiero existente. */
 function v6WalletTransactionDetail(id){
+ if(isMobileViewport()&&typeof window.v708OpenDetail==='function'&&(db.transactions||[]).some(r=>String(r.id)===String(id))){window.v708OpenDetail(id);return}
  const t=(db.transactions||[]).find(row=>String(row.id)===String(id));
  if(!t){toast('Este movimiento ya no está disponible.');return;}
  const c=t.cardId?card(t.cardId):null;
@@ -15925,12 +15926,20 @@ window.__f360RecurringVisualAdapter={
     if(focus){const field=document.getElementById('v708-search-input');if(field)try{field.focus({preventScroll:true})}catch(_){field.focus()}}
   }
   function openMovements(section='list',needle=''){
-    state.view=SHOW_TABS.some(x=>x[0]===section)?section:'list';state.previous='list';state.selected=null;
+    state.origin=null;state.view=SHOW_TABS.some(x=>x[0]===section)?section:'list';state.previous='list';state.selected=null;
     state.query=String(needle||'');state.flow='all';state.category='all';state.product='all';state.period='all';state.month=null;state.openFilters=false;state.limit=35;
     ui.page='register';ui.movementTab='all';
     redraw({focus:section==='search'});
   }
   window.v708OpenMovements=openMovements;
+  /* V1007: cualquier acceso móvil a un movimiento abre esta misma vista de detalle y «volver» regresa a la pantalla de origen. */
+  window.v708OpenDetail=function(id){
+    state.origin=ui.page!=='register'?ui.page:null;
+    state.previous=state.view==='detail'?'list':(state.view||'list');state.view='detail';state.selected=String(id);
+    ui.page='register';ui.movementTab='all';
+    document.getElementById('modal-root')?.querySelectorAll('.v6-wallet-detail-layer').forEach(n=>n.remove());
+    redraw();
+  };
   const oldRegister=pages.register;
   pages.register=function(...args){return isMobileViewport()?v708Movements():oldRegister.apply(this,args);};
   // Mantener intacta la navegación de cinco pestañas; insertar solo un botón auxiliar encima del +.
@@ -15962,8 +15971,8 @@ window.__f360RecurringVisualAdapter={
     switch(op){
       case 'open':openMovements(value||'list');break;
       case 'view':state.view=value==='search'?'advanced':value;state.selected=null;state.limit=35;state.openFilters=false;redraw({focus:value==='search'});break;
-      case 'back':if(state.view==='detail'){state.view=state.previous||'list';state.selected=null;}else {state.view='list';state.query='';}redraw();break;
-      case 'detail':state.previous=state.view;state.view='detail';state.selected=id;redraw();break;
+      case 'back':if(state.view==='detail'&&state.origin){const o=state.origin;state.origin=null;state.view=state.previous||'list';state.selected=null;ui.page=o;redraw();break}if(state.view==='detail'){state.view=state.previous||'list';state.selected=null;}else {state.view='list';state.query='';}redraw();break;
+      case 'detail':state.origin=null;state.previous=state.view;state.view='detail';state.selected=id;redraw();break;
       case 'calendar':if(!['list','search'].includes(state.view)){state.view='list';state.selected=null;state.openFilters=true;redraw();}else{state.openFilters=!state.openFilters;redraw({keepScroll:true});}break;
       case 'filters':state.openFilters=!state.openFilters;redraw({keepScroll:true});break;
       case 'quickCards':state.productType='cards';state.view='products';state.selected=null;redraw();break;
