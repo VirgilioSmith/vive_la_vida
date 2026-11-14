@@ -212,3 +212,18 @@ cambiaría esa regla. No se ha implementado.
 - `env(safe-area-*)` no se puede simular en el emulador de Chromium (vale 0); las reglas están aplicadas y se comprobaron por CSS.
 
 **Bugs abiertos:** 360×640 (pantalla muy baja, fuera del rango pedido): Confirmar pago aún recorta ~17px de contenido.
+
+---
+
+## Ajuste · Pendientes de pantalla baja y emblema de cuenta — 2026-11-14
+
+**Estado:** Móvil: terminado. Web: sin cambios.
+
+| Cambio | Motivo |
+|---|---|
+| Confirmar pago: emblemas con proporción fija (tarjeta 54×44, cuenta 44×44; en pantallas ≤700px 46×38 y 38×38) y sin `transform: scale` | Otra regla forzaba 32px de alto: la cuenta se veía 50×32 (más ancha que alta) |
+| Confirmar pago en pantallas ≤700px: filas, total, cabecera y detalle más compactos; datos de la tarjeta en una línea con «…» | En 360×640 se recortaban ~17px |
+
+**Verificado:** 360×640, 393×659 (iPhone 15), 375×667, 390×844 y 412×915: formulario sin scroll, botón «Confirmar pago» de 55px completamente visible; Pagar tarjeta, Avance y el asistente sin scroll en 360×640; pago con tarjeta registrado (consola sin errores).
+
+**Bugs abiertos:** ninguno nuevo.

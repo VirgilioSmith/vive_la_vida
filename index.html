@@ -89416,7 +89416,6 @@ html body #modal-root#modal-root#modal-root :is(.v789-select-ico,.v901-select-em
  /* Confirmar pago (tarjeta) en pantallas bajas: etiquetas de los campos dentro de la fila, detalle más compacto. */
  html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-label{display:none!important}
  html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-review-entry{min-height:var(--v953-tap)!important;padding:4px 12px!important}
- html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] :is(.v789-select-ico,.v901-select-emblem){transform:scale(.86);transform-origin:left center}
  html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-summary-line{padding-block:1px!important}
  html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-summary-total{padding:6px 12px!important}
  html body #modal-root#modal-root#modal-root form.studio-form.vop-cardpay[data-studio-step="3"] .vop-pay-header{padding-block:4px 0!important;min-height:0!important}
@@ -89432,6 +89431,27 @@ html body #modal-root#modal-root#modal-root :is(.v789-select-ico,.v901-select-em
  html body #modal-root#modal-root#modal-root .v900-advance-modal .v901-advance-intro p{display:none!important}
  html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-preview>p,html body #modal-root#modal-root#modal-root .v900-advance-modal .v900-preview small:last-child{display:none!important}
  html body #modal-root#modal-root#modal-root .v900-advance-modal :is(.v900-field>span,.v901-product-field>span){margin-bottom:2px!important}
+}
+/* Confirmar pago: emblemas con la misma proporción que en el selector (la regla previa forzaba 32px de alto). */
+html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-review-entry .v789-select-ico{transform:none!important}
+html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-review-entry .v789-select-ico:is(.vop-network,.v869-credit,:has(.credit-network)){width:54px!important;height:44px!important;min-width:54px!important;min-height:44px!important;flex:0 0 54px!important;border-radius:13px!important}
+html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-review-entry .v789-select-ico:is(.v869-account,.v869-cash){width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;flex:0 0 44px!important;border-radius:13px!important;margin-inline:5px!important}
+/* Pantallas bajas: emblemas proporcionalmente más pequeños, nunca deformados. */
+@media (max-width:790px) and (max-height:700px){
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-review-entry .v789-select-ico:is(.vop-network,.v869-credit,:has(.credit-network)){width:46px!important;height:38px!important;min-width:46px!important;min-height:38px!important;flex-basis:46px!important;border-radius:11px!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-review-entry .v789-select-ico:is(.v869-account,.v869-cash){width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;flex-basis:38px!important;border-radius:11px!important;margin-inline:4px!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-review-entry .v789-select-ico :is(.credit-network,.v869-visa-word){font-size:12.5px!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-review-entry .v789-select-ico svg{width:20px!important;height:20px!important}
+ /* Confirmar pago en pantallas muy bajas (≤700px): bloques más compactos para que todo quepa. */
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay[data-studio-step="3"] .vop-review-entry{min-height:var(--v953-tap)!important;padding:3px 12px!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay[data-studio-step="3"] .vop-review-row{min-height:0!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay[data-studio-step="3"] .vop-summary-total{padding:5px 12px!important;min-height:0!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay[data-studio-step="3"] .vop-summary-total strong{font-size:22px!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay[data-studio-step="3"] .vop-pay-header{padding-block:2px 0!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay[data-studio-step="3"] .vop-pay-header h2{font-size:20px!important;margin:0!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay[data-studio-step="3"] .vop-breakdown{padding:5px 12px!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-review-details{min-width:0!important}
+ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-review-details :is(strong,small){display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
 }
 </style>
 <style id="v953-mobile-safe-areas">
