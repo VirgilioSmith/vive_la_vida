@@ -7586,10 +7586,11 @@ function v405Unflatten(values){
  }
  return root;
 }
-async function v405All(table,columns,userId,ordering){
+async function v405All(table,columns,userId,ordering,only){
  const records=[];let from=0;
  for(let page=0;page<300;page++){
   let query=f33Api.from(table).select(columns).eq('user_id',userId).range(from,from+999);
+  if(only&&only.length)query=query.in('collection',only);
   if(ordering)query=query.order(ordering).order('record_id');
   if(table==='finance_values')query=query.order('path');
   const {data,error}=await query;
@@ -7599,6 +7600,44 @@ async function v405All(table,columns,userId,ordering){
   from+=1000;
  }
  throw Error('Demasiados registros: paginación de Supabase excedida.');
+}
+/* V1043 · Lectura incremental: solo se vuelven a bajar las colecciones que cambiaron desde la revisión local (tabla finance_collection_state).
+   Cualquier duda (sin historial, marca de inicio, error, revisión que cambia durante la lectura) cae a la lectura completa de siempre. */
+async function v1043ReadSmart(userId,serverRevision){
+ try{
+  if(!v405Loaded||!v405Base||!Number.isFinite(Number(v405Revision))||Number(v405Revision)<=0)return await v405Read(userId);
+  const st=await f33Api.from('finance_collection_state').select('collection,revision').eq('user_id',userId).gt('revision',Number(v405Revision));
+  if(st.error||!Array.isArray(st.data)||!st.data.length)return await v405Read(userId);
+  if(st.data.some(r=>r.collection==='__since__'))return await v405Read(userId);
+  const changed=[...new Set(st.data.map(r=>r.collection))];
+  if(changed.length>8)return await v405Read(userId); // si cambió casi todo, la lectura completa es igual de barata
+  const [items,fields]=await Promise.all([
+   v405All('finance_items','collection,record_id,position',userId,'collection',changed),
+   v405All('finance_values','collection,record_id,path,kind,text_value,number_value,boolean_value',userId,'collection',changed)
+  ]);
+  const end=await f33Api.from('finance_revision').select('revision').eq('user_id',userId).single();
+  if(end.error||Number(end.data.revision)!==Number(serverRevision))return await v405Read(userId);
+  const part=v405Assemble(items,fields);
+  const doc=v405Clone(v405Base);
+  for(const c of changed){if(part[c]!==undefined)doc[c]=part[c];else delete doc[c];}
+  window.__f360Incremental=(window.__f360Incremental||0)+1;
+  return {revision:Number(end.data.revision),documento:doc};
+ }catch(e){console.warn('Lectura incremental no disponible; se usa la lectura completa.',e?.message||e);return await v405Read(userId);}
+}
+function v405Assemble(items,fields){
+ const grouped=new Map();
+ for(const field of fields){const key=field.collection+'\u0000'+field.record_id;
+  if(!grouped.has(key))grouped.set(key,[]);grouped.get(key).push(field);
+ }
+ const result={};
+ for(const item of items){
+  const value=v405Unflatten(grouped.get(item.collection+'\u0000'+item.record_id)||[]);
+  if(v405ArrayCollections.has(item.collection)){
+   (result[item.collection]??=[]).push({position:item.position,value});
+  }else if(item.record_id==='__root__')result[item.collection]=value;
+ }
+ for(const key of v405ArrayCollections)if(Array.isArray(result[key]))result[key]=result[key].sort((a,b)=>a.position-b.position).map(x=>x.value);
+ return result;
 }
 async function v405Read(userId){
  for(let attempt=0;attempt<3;attempt++){
@@ -7776,6 +7815,8 @@ let v715LastRevisionCheck=0;
 v10PullRemote=async function(){
  if(v10Pulling){return;}
  if(!f33Active||!f33Api||!f33User||!navigator.onLine)return;
+ /* V1043: con la pestaña oculta no se descarga nada; al volver a verse, visibilitychange dispara la verificación. */
+ if(document.hidden){v10RemoteQueued=true;return;}
  // Agrupar eventos Realtime repetidos: evitar consultas a la misma revisión cada pocos ms.
  if(Date.now()<Math.max(v714NextReadAt,v719BusyUntil())||Date.now()-v715LastRevisionCheck<15000)return;
  v715LastRevisionCheck=Date.now();
@@ -7787,7 +7828,7 @@ v10PullRemote=async function(){
   const {data,error}=await f33Api.from('finance_revision').select('revision').eq('user_id',uid).maybeSingle();
   if(error)throw error;
   if(data&&Number(data.revision)!==v405Revision){
-   const latest=await v405Read(uid);
+   const latest=await v1043ReadSmart(uid,data.revision);
    if(f33Dirty||f33Saving||!f33Active||f33User?.id!==uid){v10RemoteQueued=true;return;}
    db=f33Prepare(latest.documento);v405Base=v405Clone(latest.documento);v405Revision=latest.revision;
    f33Stamp=String(latest.revision);v360RememberBase(latest.documento,f33Stamp);v99Invalidate();render();
@@ -12878,7 +12919,7 @@ window.addEventListener('online',()=>{if(v212Enabled())v212Sync();});
 // V733: el canal Realtime ya recibe eventos de Apple Pay inmediatamente.
 // Este intervalo es solo rescate ante eventos perdidos: 3 min en vez de 45 s.
 // Se conserva además sincronización al volver online, visible y al recibir eventos.
-setInterval(()=>{if(!document.hidden&&v212Enabled()&&Date.now()>=v719BusyUntil())void v212Sync();},180000);
+setInterval(()=>{if(!document.hidden&&v212Enabled()&&Date.now()>=v719BusyUntil())void v212Sync();},600000);
 
 /* V219 | Informes internos de solo lectura. Los datos financieros no se mutan.
    Cada período queda habilitado a las 19:00 de America/Santo_Domingo.
