@@ -90652,5 +90652,24 @@ body:is(.theme-dark,.theme-black) .v156-feedback-caption{color:#aab4cc!important
  };
 })();
 </script>
+<style id="v992-burden-chip">
+/* V992 · Chip «Endeudamiento»: mismo tinte de riesgo que Capacidad de endeudamiento (rojo traslúcido >100 %, ámbar ajustado, verde dentro) */
+html body #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden){--tc:34,160,100;background:linear-gradient(180deg,rgba(var(--tc),.14),rgba(var(--tc),.07))!important;border:1px solid rgba(var(--tc),.32)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)!important}
+html body #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden).v85-risk-over,html body #app#app .v82-burden-over{--tc:224,72,100}
+html body #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden).v85-risk-caution,html body #app#app .v82-burden-warn,html body #app#app .v82-burden-caution{--tc:240,150,40}
+html body #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden).v85-risk-missing,html body #app#app .v82-burden-missing{--tc:120,135,170}
+html body #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden) :is(strong,span,small,svg){color:rgb(var(--tc))!important;-webkit-text-fill-color:rgb(var(--tc))!important;stroke:currentColor}
+html body #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden).v85-risk-over strong,html body #app#app .v82-burden-over strong{color:#c2354f!important;-webkit-text-fill-color:#c2354f!important}
+html body #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden).v85-risk-ok strong,html body #app#app .v82-burden-ok strong{color:#0e8a54!important;-webkit-text-fill-color:#0e8a54!important}
+html body #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden).v85-risk-caution strong,html body #app#app .v82-burden-caution strong,html body #app#app .v82-burden-warn strong{color:#b36a0b!important;-webkit-text-fill-color:#b36a0b!important}
+html body #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden) span{font-weight:750}
+html body:is(.theme-black,.theme-dark) #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden){background:linear-gradient(180deg,rgba(var(--tc),.22),rgba(var(--tc),.09))!important;border-color:rgba(var(--tc),.45)!important}
+html body:is(.theme-black,.theme-dark) #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden).v85-risk-over :is(strong,span,svg){color:#ff8da5!important;-webkit-text-fill-color:#ff8da5!important}
+html body:is(.theme-black,.theme-dark) #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden).v85-risk-ok :is(strong,span,svg){color:#5ee2be!important;-webkit-text-fill-color:#5ee2be!important}
+html body:is(.theme-black,.theme-dark) #app#app :is(.v85-load-chip,.v85-summary-burden,.v82-burden).v85-risk-caution :is(strong,span,svg){color:#ffc36a!important;-webkit-text-fill-color:#ffc36a!important}
+html body:is(.theme-black,.theme-dark) #app#app .v82-burden-over :is(strong,span,small){color:#ff8da5!important;-webkit-text-fill-color:#ff8da5!important}
+html body:is(.theme-black,.theme-dark) #app#app .v82-burden-ok :is(strong,span,small){color:#5ee2be!important;-webkit-text-fill-color:#5ee2be!important}
+html body:is(.theme-black,.theme-dark) #app#app :is(.v82-burden-warn,.v82-burden-caution) :is(strong,span,small){color:#ffc36a!important;-webkit-text-fill-color:#ffc36a!important}
+</style>
 </body>
 </html>

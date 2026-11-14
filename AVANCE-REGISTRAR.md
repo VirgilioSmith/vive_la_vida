@@ -455,3 +455,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - Tarjeta de cristal con sombra del color del movimiento (verde ingreso, rojo gasto, azul transferencia), símbolo grande en degradado con rebote, 14 chispas que salen del símbolo, etiqueta en píldora, importe de 42px/900. Variante Black.
 - Al terminar (~1.7s) la tarjeta se deshace en grano y sale hacia la derecha (filtro SVG, 1s) mientras el velo se aclara; con «reducir movimiento» se retira sin efecto.
 - Vibración: `navigator.vibrate([18,40,28])` donde exista (Android/Chrome); en iPhone Safari no existe esa API, por lo que se intenta el interruptor háptico nativo de Safari 17.4+ (no verificable fuera de un iPhone real).
+
+## V992 · Chip «Endeudamiento» con tinte de riesgo
+- Los chips «Endeudamiento N %» (Compromisos en Inicio, resúmenes y prioridad de pagos) usan el mismo tinte que Capacidad de endeudamiento: rojo traslúcido sobre 100 %, ámbar si es ajustado, verde si está dentro; cifra y etiqueta del mismo tono; variante Black.
