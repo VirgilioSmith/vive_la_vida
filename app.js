@@ -20799,3 +20799,48 @@ window.__v866Runners.v865=run;
   }catch(_){}
  };
 })();
+
+/* V1011 · Diálogo de confirmación propio.
+   Sustituye al confirm() del navegador sin reescribir los 25 puntos de uso: la primera llamada muestra el diálogo
+   y devuelve false; si la persona acepta, se repite exactamente la acción que la originó (clic, envío o cambio) y
+   esa segunda llamada, con el mismo texto, devuelve true. Si no se puede identificar la acción, usa el nativo. */
+(()=>{
+ const nativeConfirm=window.confirm.bind(window);
+ let last=null,approved=null,open=false;
+ const remember=type=>e=>{const el=e.target;if(el&&el.nodeType===1&&!el.closest('.v1011-layer'))last={el,type,at:Date.now()}};
+ ['click','submit','change'].forEach(t=>document.addEventListener(t,remember(t),true));
+ const replay=t=>{
+  const {el,type}=t;if(!el.isConnected)return false;
+  if(type==='click')el.click();
+  else if(type==='submit'&&el.requestSubmit)el.requestSubmit();
+  else el.dispatchEvent(new Event(type,{bubbles:true,cancelable:true}));
+  return true;
+ };
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ function show(message,trigger){
+  open=true;
+  const danger=/elimin|borr|vaci|descart|reemplaz|quit|cancelar/i.test(message);
+  const lines=String(message).split('\n').filter(Boolean);
+  const layer=document.createElement('div');layer.className='v1011-layer';
+  layer.innerHTML=`<section class="v1011-dialog${danger?' is-danger':''}" role="alertdialog" aria-modal="true" aria-labelledby="v1011-t"><h2 id="v1011-t">${danger?'Confirma esta acción':'¿Continuar?'}</h2>${lines.map(l=>`<p>${esc(l)}</p>`).join('')}<div class="v1011-actions"><button type="button" class="v1011-cancel">Cancelar</button><button type="button" class="v1011-ok">${danger?'Sí, continuar':'Continuar'}</button></div></section>`;
+  const prevFocus=document.activeElement;
+  const close=ok=>{
+   document.removeEventListener('keydown',key,true);layer.remove();open=false;
+   try{prevFocus?.focus?.({preventScroll:true})}catch(_){}
+   if(ok){approved=message;setTimeout(()=>{if(approved===message)approved=null},1500);if(!replay(trigger)){approved=null;window.toast?.('Vuelve a intentarlo.')}}
+  };
+  const key=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close(false)}else if(e.key==='Tab'){const f=[...layer.querySelectorAll('button')];const i=f.indexOf(document.activeElement);e.preventDefault();f[(i+(e.shiftKey?-1:1)+f.length)%f.length].focus()}};
+  layer.addEventListener('click',e=>{if(e.target===layer)close(false);else if(e.target.closest('.v1011-cancel'))close(false);else if(e.target.closest('.v1011-ok'))close(true)});
+  document.addEventListener('keydown',key,true);
+  document.body.appendChild(layer);
+  layer.querySelector('.v1011-cancel').focus();
+ }
+ window.confirm=function(message){
+  const msg=String(message??'');
+  if(approved!==null&&approved===msg){approved=null;return true}
+  const t=last;
+  if(open)return false;
+  if(!t||!t.el.isConnected||Date.now()-t.at>4000)return nativeConfirm(msg);
+  show(msg,t);return false;
+ };
+})();

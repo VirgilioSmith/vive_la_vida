@@ -56268,3 +56268,19 @@ html body #app .v58-exec .v58-kicker{color:rgba(255,255,255,.78)!important}
 /* V1010 · Menú de pago (tarjetas/préstamos): título sin cortes de palabra */
 html body #modal-root .v105-pay-modal .modal-head h2{overflow-wrap:normal!important;word-break:normal!important;hyphens:none!important;white-space:normal}
 html body #modal-root .v105-pay-modal .modal-head>div{min-width:0;flex:1 1 auto}
+
+/* V1011 · Diálogo de confirmación propio */
+.v1011-layer{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:20px;background:rgba(20,22,34,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:v1011-in .16s ease-out}
+.v1011-dialog{width:min(420px,100%);padding:24px 22px 18px;border-radius:26px;background:var(--panel,#fff);color:var(--ink,#1f2a44);border:1px solid color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 18%,transparent);box-shadow:0 24px 60px rgba(10,12,30,.28);animation:v1011-pop .2s cubic-bezier(.2,.9,.3,1.1)}
+.v1011-dialog h2{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.v1011-dialog p{margin:0 0 8px;font-size:15px;line-height:1.45;opacity:.86}
+.v1011-actions{display:flex;gap:10px;margin-top:18px}
+.v1011-actions button{flex:1;min-height:48px;border-radius:15px;font:inherit;font-weight:800;cursor:pointer;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 24%,transparent);background:transparent;color:var(--v424-accent-strong,#6d69f1)}
+.v1011-actions .v1011-ok{border:0;color:#fff;background:linear-gradient(120deg,var(--v424-accent-strong,#6d69f1),color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 82%,#fff))}
+.v1011-dialog.is-danger .v1011-ok{background:linear-gradient(120deg,#c0364f,#d9546a)}
+.v1011-actions button:focus-visible{outline:3px solid color-mix(in srgb,var(--v424-accent-strong,#6d69f1) 45%,transparent);outline-offset:2px}
+body.theme-dark .v1011-dialog,body.theme-black .v1011-dialog{background:#17181d;color:#f4f5f8}
+@keyframes v1011-in{from{opacity:0}to{opacity:1}}
+@keyframes v1011-pop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+@media (max-width:790px){.v1011-layer{place-items:end center;padding:12px 12px calc(12px + env(safe-area-inset-bottom))}.v1011-dialog{border-radius:26px}}
+@media (prefers-reduced-motion:reduce){.v1011-layer,.v1011-dialog{animation:none}}
