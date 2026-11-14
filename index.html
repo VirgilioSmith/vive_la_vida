@@ -41242,8 +41242,11 @@ function sheet(type){const s=state(),host=sheetContainer();if(!host)return;host.
  });
  return;
 }else return;
-host.innerHTML=`<div class="v749-sheet-inner" role="dialog" aria-modal="true" aria-label="${esc(title)}"><header class="v749-sheet-head"><h3>${esc(title)}</h3><button type="button" data-v749="sheetClose" aria-label="Cerrar selector">×</button></header>${html}</div>`;
-host.querySelector('input')?.focus({preventScroll:true});
+host.innerHTML=`<div class="v749-sheet-inner" role="dialog" aria-modal="true" tabindex="-1" aria-label="${esc(title)}"><header class="v749-sheet-head"><h3>${esc(title)}</h3><button type="button" data-v749="sheetClose" aria-label="Cerrar selector">×</button></header>${html}</div>`;
+// V952: en pantallas táctiles el foco automático en «Buscar» abría el teclado y tapaba la lista.
+// Solo se enfoca el buscador con teclado físico; en táctil se enfoca el diálogo (accesible, sin teclado).
+if(window.matchMedia?.('(hover:hover) and (pointer:fine)').matches)host.querySelector('input')?.focus({preventScroll:true});
+else host.querySelector('.v749-sheet-inner')?.focus({preventScroll:true});
 }
 function setNative(f,name,value){const field=f.elements.namedItem(name);if(!field||typeof field.value!=='string')return;field.value=String(value??'');field.dispatchEvent(new Event('change',{bubbles:true}))}
 function validateEntry(s){if(!(Number(s.amount)>0)||!Number.isFinite(Number(s.amount)))return 'Introduce un importe válido mayor que cero.';if(!/^\d{4}-\d\d-\d\d$/.test(s.v749Date)||s.v749Date>today())return 'Revisa la fecha del movimiento.';if((s.mode!=='spend'||s.v749Source!=='card')&&(!acc(s.v749Account)||acc(s.v749Account).archived))return 'Selecciona una cuenta activa.';if(s.mode==='spend'&&s.v749Source==='card'&&(!cardRef(s.v749Card)||cardRef(s.v749Card).archived))return 'Selecciona una tarjeta activa.';if(s.mode==='transfer'&&s.transferKind!=='outgoing'&&(s.v749Account===s.v749ToAccount||!acc(s.v749ToAccount)||acc(s.v749ToAccount).archived))return 'Selecciona una cuenta de destino diferente.';if(s.mode==='transfer'&&s.transferKind==='outgoing'&&!s.v749Payee.trim())return 'Indica el beneficiario.';if(s.mode!=='transfer'&&!realCategories(s.mode).includes(s.preset))return 'Selecciona una categoría válida.';return ''}
@@ -41325,6 +41328,30 @@ if(e.target.id==='v749Note'){state().v749Note=e.target.value;const f=document.qu
 if(e.target.id==='v749ReviewDate'){state().v749Date=e.target.value;const f=document.querySelector('#modal-root #transactionForm[data-v749-native]');if(f)setNative(f,'date',e.target.value)}
 },true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheetContainer()&&!sheetContainer().hidden){e.preventDefault();closeSheet()}},true);
+/* V952 · Teclado en pantalla. iOS y Chrome Android (≥108) superponen el teclado sin reducir
+   100dvh: se mide la parte tapada con visualViewport y se expone como --v952-kb en #modal-root,
+   para que pantallas, hojas y pie se apoyen encima del teclado. Solo presentación. */
+(()=>{
+ let frame=0;
+ const field=el=>el instanceof HTMLElement&&el.matches('input:not([type=checkbox]):not([type=radio]):not([type=button]),textarea,select,[contenteditable="true"]');
+ const reveal=()=>{const el=document.activeElement;if(field(el)&&el.closest('#modal-root .v749-layer'))el.scrollIntoView({block:'nearest',inline:'nearest'})};
+ const update=()=>{frame=0;const root=document.getElementById('modal-root');if(!root)return;
+  const vv=window.visualViewport;
+  const covered=vv?Math.max(0,Math.round(window.innerHeight-vv.height-vv.offsetTop)):0;
+  const open=covered>80; // ignora barras del navegador que aparecen y desaparecen
+  root.style.setProperty('--v952-kb',(open?covered:0)+'px');
+  root.style.setProperty('--v952-vvh',Math.round(vv?vv.height:window.innerHeight)+'px');
+  root.classList.toggle('v952-kb-open',open);
+  if(open)requestAnimationFrame(reveal);
+ };
+ const schedule=()=>{if(!frame)frame=requestAnimationFrame(update)};
+ window.visualViewport?.addEventListener('resize',schedule);
+ window.visualViewport?.addEventListener('scroll',schedule);
+ window.addEventListener('resize',schedule);
+ // El teclado aparece con animación: se vuelve a medir cuando termina.
+ document.addEventListener('focusin',e=>{if(e.target.closest?.('#modal-root')){schedule();setTimeout(schedule,120);setTimeout(()=>{schedule();reveal()},320)}});
+ document.addEventListener('focusout',e=>{if(e.target.closest?.('#modal-root')){setTimeout(schedule,120);setTimeout(schedule,320)}});
+})();
 })();
 
 
@@ -88813,6 +88840,42 @@ html body #app .v317-heat-grid>*{min-width:0;max-width:100%}
 @media (prefers-reduced-motion:reduce){
  html{scroll-behavior:auto}
 }
+</style>
+<style id="v952-register-keyboard">
+/* V952 · Registrar (gasto/ingreso): teclado en pantalla y pie fijo con zona segura.
+   --v952-kb = alto tapado por el teclado (0 si está cerrado), calculado por el controlador V952. */
+#modal-root{--v952-kb:0px}
+/* Pantallas de entrada y confirmación: terminan donde empieza el teclado; la zona central
+   se desplaza y el pie (Continuar / Confirmar) queda visible encima del teclado. */
+html body #modal-root.v952-kb-open .v749-layer .v749-screen{
+ height:calc(100dvh - var(--v952-kb))!important;max-height:calc(100dvh - var(--v952-kb))!important;min-height:0!important;
+}
+/* Pie pegado abajo y por encima de la barra de inicio del iPhone. */
+html body #modal-root .v749-layer .v749-foot{
+ flex:0 0 auto!important;margin-top:auto!important;
+ padding-bottom:max(4px,env(safe-area-inset-bottom,0px))!important;
+}
+html body #modal-root.v952-kb-open .v749-layer .v749-foot{padding-bottom:4px!important}
+/* Hojas de categoría y subcategoría: se apoyan sobre el teclado y su lista se desplaza. */
+html body #modal-root .v749-sheet{padding-bottom:max(var(--v952-kb),env(safe-area-inset-bottom,0px))!important}
+/* Con el teclado abierto la hoja sube COMPLETA por encima del teclado, como una tarjeta:
+   título y buscador fijos arriba, la lista se desplaza dentro y el borde inferior queda visible. */
+html body #modal-root.v952-kb-open .v749-sheet-inner{
+ display:flex!important;flex-direction:column!important;overflow:hidden!important;
+ max-height:calc(var(--v952-vvh,100dvh) - 20px)!important;min-height:0!important;
+ margin:0 auto 8px!important;border-radius:24px!important;padding-bottom:10px!important;
+}
+html body #modal-root.v952-kb-open .v749-sheet-inner>:is(.v749-sheet-head,.v749-sheet-search){flex:0 0 auto!important}
+html body #modal-root.v952-kb-open .v749-sheet-inner>:is(.v749-choice-grid,.v749-sublist){
+ flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;
+ align-content:start;padding-bottom:4px;scroll-snap-type:y proximity;
+}
+html body #modal-root.v952-kb-open .v749-sheet-inner>:is(.v749-choice-grid,.v749-sublist)>button{scroll-snap-align:start}
+/* Casillas de categoría más compactas mientras se escribe, para que quepan filas completas. */
+html body #modal-root.v952-kb-open .v749-choice-grid button{min-height:68px!important;padding:6px 4px!important;gap:3px!important}
+html body #modal-root.v952-kb-open .v749-choice-grid button .v749-choice-icon{font-size:21px!important}
+html body #modal-root .v749-sheet-inner:focus{outline:none}
+html body #modal-root .v749-sheet-inner:focus-visible{outline:2px solid var(--v749-accent,#7165ee);outline-offset:-2px}
 </style>
 </body>
 </html>
