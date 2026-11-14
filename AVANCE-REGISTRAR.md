@@ -371,3 +371,7 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 - Se eliminan las barras en blanco (contenedores vacíos `v384-intro`, `v385-cert-intro`, vista previa vacía) y el recuadro blanco inset bajo el pie.
 - Préstamo: «Siguiente» ya no flota sobre los campos; pasos y numeración en el acento; cabecera de paso en degradado.
 - Variante Black completa. Verificado a 360/390/430px y con acentos coral, esmeralda y original. Sin cambios de lógica ni de guardado.
+
+## V973 · Explorar refinado y barra de navegación con halo de acento
+- Explorar (móvil): título más contundente, fecha con chevron a la derecha del título y subtítulo debajo; paneles de cristal más redondeados; etiquetas «TU ACTIVIDAD / TU VISIÓN» en el acento con su icono (barras / ojo); fichas con relieve suave, iconos con luz interior y flechas en círculo de acento. Variante Black incluida.
+- Barra de navegación: la tinta que era grafito pasa al color del acento (inactivos mezclados con grafito para legibilidad, activo en acento pleno); halo de acento bajo la barra y píldora activa de cristal con resplandor del acento.
