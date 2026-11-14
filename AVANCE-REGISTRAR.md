@@ -264,3 +264,42 @@ Quedan de este cambio: hojas de las 4 operaciones, hoja «Motivo del ajuste» y 
 | Conciliar un saldo: la dirección Aumentar/Disminuir se recuerda aunque el importe esté vacío, y un importe tecleado con «Disminuir» activo se guarda negativo (`adjustmentEnhancement`) | Con el importe vacío, «Disminuir» se perdía (el signo solo vivía en el signo del importe) y al teclear quedaba positivo. El valor guardado no cambia: positivo aumenta, negativo disminuye |
 
 **Verificado:** 5 botones de la barra navegan y marcan su pestaña; Conciliar: Disminuir con importe vacío → −250 registrado; Aumentar → +90 registrado; Disminuir→Aumentar→teclear → positivo; las 4 hojas y sus botones de confirmación siguen funcionando; consola sin errores.
+
+---
+
+## Ajuste · Categorías rápidas: iconos y selección — 2026-11-14
+
+**Estado:** Móvil: terminado. Web: sin cambios.
+
+| Cambio (`index.html`) | Motivo |
+|---|---|
+| Iconos de categoría del sistema de la app (`V255_TAXONOMY` → `icon()` SVG) en los 3 chips, «Más», hoja de categorías y de subcategorías (`catIcon`, `moreIcon`); mismo color que las etiquetas de categoría | Los chips usaban emojis (`pict`), distintos al resto de la app |
+| `chooseCategory`: tocar un chip solo marca `aria-pressed` y limpia el error; ya no se redibuja la pantalla (antes: capa nueva + animación `v789-arrive` = «flashback») | Bug de selección en gasto e ingreso |
+| `renderEntry`: si la pantalla ya estaba abierta, el redibujo no repite la animación de entrada (`v956-no-anim`) | Al volver de la hoja de subcategorías |
+| Buscador de las hojas de categoría: campo blanco con borde y texto casi negro (tema claro) | Estándar de campos |
+
+**Verificado** (gasto e ingreso, 393×852 con zona segura, 375×667): tocar chips → 0 capas nuevas y 0 animaciones en marcha; «Más» → categoría → subcategoría → importe → Continuar → Confirmar guarda la categoría y subcategoría elegidas; teclado abierto: hojas por encima; consola sin errores.
+
+---
+
+## Ajuste · Subcategorías en la pantalla de entrada — 2026-11-14
+
+**Estado:** Móvil: terminado. Web: sin cambios.
+
+| Cambio (`index.html`) | Motivo |
+|---|---|
+| Fila de subcategorías bajo la de categorías (`subQuick`, `quickStack`): las 3 subcategorías más usadas de la categoría + «Más», con los mismos chips, iconos (`catIcon` con la subcategoría) y alineación (grid de 4) | Pedido del usuario: elegir subcategoría directamente, como las categorías |
+| `chooseSub`: tocar una subcategoría solo la marca (tocarla otra vez la quita = sin subcategoría); `chooseCategory` reemplaza la fila de subcategorías en el lugar, sin redibujar | Sin «flashback» |
+| La categoría elegida desde «Más» queda visible y marcada en la fila (reemplaza la 3.ª); ya no se abre otra hoja detrás: se vuelve a la pantalla con sus subcategorías | «Selecciona únicamente eso, no hace más nada» |
+| Pantallas ≤700px de alto: teclado 36px, chips 42px, iconos 19px | Para que quepa sin scroll con la fila nueva (375×667 y 360×640) |
+
+**Verificado:** gasto e ingreso: tocar subcategoría (0 capas nuevas), quitarla, cambiar de categoría (la fila cambia en el lugar), «Más» categorías → categoría marcada con sus subcategorías, «Más» subcategorías → hoja → queda marcada, Continuar y Confirmar guardan categoría/subcategoría; 393×852, 390×844, 375×667 y 360×640 sin scroll; hoja de subcategorías sobre el teclado; consola sin errores. En 320×568 (fuera del rango 360–430) queda scroll interno.
+
+**Ajuste posterior (misma fecha):** cada fila de selección tiene siempre cuatro botones (hasta 3 opciones + «Más», «Más» en la 4.ª columna). En la fila de subcategorías «Más» ya no desaparece con ≤3 subcategorías (antes faltaba, p. ej. en Inversiones) y, con menos de 3, se añaden huecos invisibles (`v956-slot`) para mantener la alineación (p. ej. «Otros gastos»). Verificado en las 28 categorías (19 gasto + 9 ingreso). En pantallas ≤700px chips y línea «Pagar con» a 44px (sin scroll en 375×667 y 360×640).
+
+---
+
+## Decisión final · Categorías rápidas — 2026-11-14
+
+Por indicación del usuario: la selección de categoría son **exactamente cuatro botones (3 categorías + «Más»), nada más**. Se retiró la fila de subcategorías de la pantalla de entrada y la sustitución del tercer chip. Las subcategorías se eligen como siempre: «Más» → categoría → hoja de subcategorías (o desde la confirmación).
+Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en el color de acento** elegido en Ajustes (claro y oscuro), la selección sin «flashback» y el buscador legible.
