@@ -63207,7 +63207,7 @@ body.theme-black .world-kpis #page .ff-bubble.featured{
   /* Visibilidad y legibilidad de Liquid Glass mientras el contenido se desplaza. */
   body:not(.theme-black):not(.theme-dark) .vive-mobile-dock{
     background:rgba(255,255,255,calc(.72 + var(--v250-dock-opacity,.37) * .22))!important;
-    background-image:none!important;
+    background-image:radial-gradient(ellipse at 85% 15%,color-mix(in srgb,var(--vive-theme-color,#665fe7) 8%,transparent) 0%,color-mix(in srgb,var(--vive-theme-color,#665fe7) 3%,transparent) 45%,transparent 78%)!important;
     border:1px solid rgba(255,255,255,.90)!important;
     -webkit-backdrop-filter:blur(var(--v250-dock-blur,20px)) saturate(var(--v250-dock-saturation,150%))!important;
     backdrop-filter:blur(var(--v250-dock-blur,20px)) saturate(var(--v250-dock-saturation,150%))!important;
@@ -89461,7 +89461,7 @@ html body #modal-root#modal-root#modal-root#modal-root form.vop-cardpay .vop-rev
  /* Menú flotante inferior: anclado a 12px de los lados y 8px sobre la zona segura; por encima del
     contenido (z 71) y por debajo de los modales (#modal-root, z ≥ 1000). */
  html body .vive-mobile-dock{position:fixed!important;left:12px!important;right:12px!important;width:auto!important;max-width:none!important;transform:none!important;
-  bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;border-radius:20px!important;z-index:71!important;
+  bottom:var(--v367-dock-bottom)!important;border-radius:20px!important;z-index:71!important;
   box-shadow:0 8px 24px rgba(32,51,84,.12),0 1px 3px rgba(32,51,84,.08)!important}
 }
 @media (max-width:790px){
