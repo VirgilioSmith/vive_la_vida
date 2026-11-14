@@ -5668,7 +5668,9 @@ function render(){
  const v424Base=v424RGB(v424Accent);
  const v424Luminance=c=>c.map(n=>{let x=n/255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4}).reduce((a,x,i)=>a+x*[.2126,.7152,.0722][i],0);
  // El acento saturado se atenúa con azul profundo cuando es muy claro (ámbar, amarillo, etc.).
- const v424Strength=v424Luminance(v424Base)>.25? v424Mix(v424Base,[21,37,69],.36):v424Accent;
+ let v424Strength=v424Luminance(v424Base)>.25? v424Mix(v424Base,[21,37,69],.36):v424Accent;
+ /* V1014: contraste AA (>=5:1 con blanco) para texto blanco sobre el acento y acento sobre fondos claros; solo oscurece lo minimo necesario. */
+ for(let i=0;i<14&&1.05/(v424Luminance(v424RGB(v424Strength))+.05)<5;i++)v424Strength=v424Mix(v424RGB(v424Strength),[0,0,0],.04);
  document.body.style.setProperty('--v424-accent-strong',v424Strength);
  document.body.style.setProperty('--v424-accent-soft',v424Mix(v424RGB(v424Strength),[255,255,255],.64));
  document.body.style.setProperty('--v424-accent-contrast','#ffffff');
@@ -11310,10 +11312,10 @@ function v144BenefitsPage(){
  const selected=ui.v144BenefitsCard||'all',shown=cards.filter(c=>selected==='all'||c.id===selected);
  if(cards.length&&!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage()}
  const hero=typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():'';
- return `<main class="v144-benefit-world v180-benefits-clean v187-benefits-only" id="v144Benefits">${hero}${v389BenefitsKPIs(shown)}
+ return `<div class="v144-benefit-world v180-benefits-clean v187-benefits-only" id="v144Benefits">${hero}${v389BenefitsKPIs(shown)}
  <section class="v187-benefits-ledger" aria-label="Tabla de beneficios por tarjeta"><div class="v187-benefits-ledger-head"><div><span>RESULTADO POR TARJETA</span><h3>Beneficios y costos</h3><p>Solo beneficio acreditado y costo efectivamente pagado forman el resultado neto.</p></div>${cards.length?`<button type="button" class="v187-benefits-add" data-v144-action="new-cashback" data-id="${sanitize(shown[0]?.id||cards[0].id)}">${icon('plus')} Registrar beneficio</button>`:''}</div>
  ${cards.length?`${v144CardFilterUI()}${v144BenefitsTable(shown)}`:'<div class="v187-benefits-empty">No tienes tarjetas registradas. <button type="button" data-act="addCard">Añadir tarjeta</button></div>'}
- </section></main>`;
+ </section></div>`;
 }
 function v144FormCategories(){return ['Supermercado','Combustible','Restaurantes','Compras','Promociones','Servicios','Otros'];}
 function v144CashbackForm(cardId,ref='',source=''){v144Ready();const c=card(cardId);if(!c)return toast('Tarjeta no disponible.');const t=source==='posted'?db.transactions.find(x=>x.id===ref&&x.cardId===cardId&&['card_reward','bank_reward'].includes(x.type)):null;const p=source==='pending'?db.v144PendingBenefits.find(x=>x.id===ref&&x.cardId===cardId):null;const x=t||p||{};
@@ -14564,7 +14566,7 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
       <section class="v203-hero" aria-label="Resumen de tarjetas"><div class="v203-hero-top"><span class="v203-hero-tag">LÍMITE TOTAL · RD$ EQUIVALENTES</span><span class="v203-hero-mark">${icon('card')}</span></div><strong class="v203-hero-value">${money(totalLimit)}</strong><div class="v203-hero-grid"><div><small>Deuda utilizada</small><strong>${money(totalDebt)}</strong></div><div><small>Crédito disponible</small><strong>${money(totalAvailable)}</strong></div></div><p class="v244-hero-footnote">${overallUtil===null?'Sin límites suficientes para calcular uso.':overallUtil.toFixed(1)+'% del límite comprometido'} · ${visible.length} ${visible.length===1?'tarjeta registrada':'tarjetas registradas'}.</p></section>
 
 
-      <div class="v244-segments" role="tablist" aria-label="Filtrar tarjetas"><button type="button" class="${scope==='all'?'selected':''}" data-v244-cards="all">Todas <small>${visible.length}</small></button><button type="button" class="${scope==='used'?'selected':''}" data-v244-cards="used">Con deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))>0.005).length}</small></button><button type="button" class="${scope==='free'?'selected':''}" data-v244-cards="free">Sin deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))<=0.005).length}</small></button></div>
+      <div class="v244-segments" role="group" aria-label="Filtrar tarjetas"><button type="button" class="${scope==='all'?'selected':''}" data-v244-cards="all">Todas <small>${visible.length}</small></button><button type="button" class="${scope==='used'?'selected':''}" data-v244-cards="used">Con deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))>0.005).length}</small></button><button type="button" class="${scope==='free'?'selected':''}" data-v244-cards="free">Sin deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))<=0.005).length}</small></button></div>
       <div class="v244-list-head"><div><span class="v203-kicker">MIS PRODUCTOS</span><h3>Mis tarjetas <small>${visible.length}</small></h3></div>${visibility}<button type="button" class="v375-pay" data-act="guidedFlow" data-mode="cardpay">${icon('card')} Pagar</button></div>
       <div class="v244-product-list">${shown.length?shown.map(v244CardProduct).join(''):'<section class="v244-empty"><span>'+icon('card')+'</span><h3>No hay tarjetas para este filtro</h3><p>Prueba otro filtro o registra una nueva tarjeta.</p><button class="btn" data-act="addCard">Crear tarjeta</button></section>'}</div>
 
