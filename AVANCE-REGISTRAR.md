@@ -345,3 +345,7 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V966 · Botones Recibir / Gastar / Transferir (Resumen móvil)
 - Botones de cristal de 48px, radio 16, icono en mosaico de acento, texto 12.5px/740, estado táctil y foco visible; variante Black. Sin recortes de texto de 344px en adelante (los más estrechos reducen icono y tipografía).
+
+## V967 · KPI Balance premium y botones rayados
+- KPI «Balance y posición neta»: sin iconos ni rótulos bajo las cifras (quedan como texto oculto para lectores de pantalla); barra verde (Fondos) y roja (Deudas) a su lado; cifras en grafito; fila subida ~8px para no pegar con el borde inferior; barras decorativas en el acento.
+- Botones Recibir/Gastar/Transferir: sin sombra exterior; efecto solo interior, tipo cepillado/rayado diagonal en el color del acento (versión grafito en Black).
