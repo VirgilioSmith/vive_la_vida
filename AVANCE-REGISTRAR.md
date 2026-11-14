@@ -458,3 +458,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V992 · Chip «Endeudamiento» con tinte de riesgo
 - Los chips «Endeudamiento N %» (Compromisos en Inicio, resúmenes y prioridad de pagos) usan el mismo tinte que Capacidad de endeudamiento: rojo traslúcido sobre 100 %, ámbar si es ajustado, verde si está dentro; cifra y etiqueta del mismo tono; variante Black.
+
+## V993 · Wallet: galería de tarjetas plana
+- La sombra de las tarjetas la recortaba el contenedor de la galería (overflow), dibujando una línea horizontal arriba y abajo. Se quitan sombras y filtros de la galería y sus tarjetas; queda totalmente plano.
