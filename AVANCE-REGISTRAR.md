@@ -428,3 +428,6 @@ Se mantienen los iconos de categoría del sistema de la app (V255), ahora **en e
 
 ## V986 · Matriz de simplificación: solo lo que existe
 - Se quitan «Metas» y «Simuladores» de la tarjeta Decidir (la app no tiene esos módulos). Quedan Análisis y Recuperación. Criterio: no mostrar accesos ni datos que la app no tenga.
+
+## V987 · Matriz: Presupuesto en Decidir
+- La tarjeta Decidir incluye «Presupuesto» (abre Presupuesto y muestra el % usado del mes cuando hay presupuesto asignado), junto a Análisis y Recuperación.
