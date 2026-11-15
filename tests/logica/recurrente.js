@@ -10,8 +10,8 @@ await set('name','Internet hogar');await set('amount','1500');
 await p.evaluate(()=>[...document.querySelectorAll('#modal-root .v147-preset')].find(b=>/Internet/.test(b.textContent))?.click());await p.waitForTimeout(200);
 
 await p.evaluate(()=>document.querySelector('#modal-root .v1110-next').click());await p.waitForTimeout(400);
-await p.evaluate(()=>document.querySelector('#modal-root .v1110-pickbtn').click());await p.waitForTimeout(200);
-await p.evaluate(()=>[...document.querySelectorAll('#modal-root .v1028-opt')].find(o=>/Cuenta principal/.test(o.textContent)).click());await p.waitForTimeout(200);
+await p.evaluate(()=>document.querySelector('#modal-root .v1110-pickbtn').click());await p.waitForTimeout(500);
+await p.evaluate(()=>[...document.querySelectorAll('.v827-picker-sheet .v789-picker-row')].find(o=>/Cuenta principal/.test(o.textContent)).click());await p.evaluate(()=>document.querySelector('.v789-picker-confirm').click());await p.waitForTimeout(300);
 await p.evaluate(()=>[...document.querySelectorAll('#modal-root .v147-freq-btn')].find(b=>/Mensual/.test(b.textContent))?.click());
 
 console.log('paso2 campos:',await p.evaluate(()=>{const e=document.querySelector('#modal-root form').elements;return JSON.stringify({source:e.source.value.slice(0,12),cur:e.currency.value,freq:e.frequency.value,due:e.nextDue.value,mode:e.postingMode.value,act:e.active.value})}));
