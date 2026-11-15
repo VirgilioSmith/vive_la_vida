@@ -796,6 +796,20 @@ function v1121Pay(kind){
   }
  }catch(err){console.warn('V1121',err);}
 }
+/* V1126 · Radar: tocar un tramo (0–7, 8–15, 16–30 días) abre el desglose de sus vencimientos, igual que el calendario. */
+function v1126OpenDueRange(i){
+ const limits=[7,15,30],labels=['0–7 días','8–15 días','16–30 días'];
+ const from=v119DateAfter(i?limits[i-1]+1:0),end=v119DateAfter(limits[i]);
+ const events=(v119Baseline(30).events||[]).filter(e=>e.type==='expense'&&num(e.amount)>0&&e.date>=from&&e.date<=end).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+ const total=events.reduce((t,e)=>t+num(e.amount),0);
+ document.getElementById('v361-pressure-day-dialog')?.remove();
+ const rows=events.map(e=>`<article class="v361-pressure-item"><div><strong>${sanitize(e.name||'Compromiso')}</strong><span>${sanitize(prettyDate(e.date))}</span></div><b>${v318Money(num(e.amount))}</b></article>`).join('');
+ const dialog=document.createElement('div');dialog.id='v361-pressure-day-dialog';dialog.className='v361-pressure-overlay';
+ dialog.innerHTML=`<div class="v361-pressure-backdrop" data-v361-pressure-close="1"></div><section role="dialog" aria-modal="true" aria-labelledby="v361-pressure-title" class="v361-pressure-sheet"><header><div><small>RADAR DE VENCIMIENTOS · ${labels[i]}</small><h2 id="v361-pressure-title">${labels[i]}</h2></div><button type="button" data-v361-pressure-close="1" aria-label="Cerrar desglose">×</button></header><div class="v361-pressure-main"><span>Compromisos previstos</span><strong>${v318Money(total)}</strong><small>${events.length} ${events.length===1?'compromiso':'compromisos'} en este tramo</small></div><div class="v361-pressure-list">${rows||'<p class="v360-pressure-empty">No hay obligaciones en este tramo.</p>'}</div><footer><button type="button" data-v361-pressure-close="1">Cerrar</button></footer></section>`;
+ document.body.appendChild(dialog);document.body.classList.add('v361-pressure-open');dialog.querySelector('.v361-pressure-sheet header button')?.focus();
+}
+document.addEventListener('click',e=>{const c=e.target.closest?.('[data-v1126-bucket]');if(!c)return;e.preventDefault();e.stopPropagation();v361PressureLastFocus=c;v1126OpenDueRange(Number(c.dataset.v1126Bucket))},true);
+document.addEventListener('keydown',e=>{const c=e.target.closest?.('[data-v1126-bucket]');if(c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();v1126OpenDueRange(Number(c.dataset.v1126Bucket))}});
 /* V1125 · Radar de vencimientos: el botón «Pagar» pregunta qué vencimiento pagar y abre el pago. */
 function v1125PayUpcoming(){
  let list=[];try{list=(upcoming()||[]).filter(u=>u&&u.action&&u.ref).slice(0,40)}catch(e){}
@@ -14798,13 +14812,13 @@ function v309ExtraCharts(){
  });
  const v317DueTotal=v317Buckets.reduce((a,b)=>a+b.total,0);
  const v317MaxDue=Math.max(1,...v317Buckets.map(x=>x.total));
- const v317DueBars=v317Buckets.map((d,i)=>`<div class="v317-due-col"><div class="v317-due-value">${displayMoney(d.total)}</div><div class="v317-due-tower"><i style="height:${d.total>0?Math.max(5,100*d.total/v317MaxDue):0}%" class="${i===0?'is-urgent':''}"></i></div><b>${d.label}</b><span>${d.count} ${d.count===1?'cargo':'cargos'}</span></div>`).join('');
+ const v317DueBars=v317Buckets.map((d,i)=>`<div class="v317-due-col" data-v1126-bucket="${i}" role="button" tabindex="0" aria-label="Ver desglose de ${d.label}"><div class="v317-due-value">${displayMoney(d.total)}</div><div class="v317-due-tower"><i style="height:${d.total>0?Math.max(5,100*d.total/v317MaxDue):0}%" class="${i===0?'is-urgent':''}"></i></div><b>${d.label}</b><span>${d.count} ${d.count===1?'cargo':'cargos'}</span></div>`).join('');
  const v317Upcoming=v317DueEvents.slice(0,3).map(e=>`<div class="v317-next-pay"><span>${sanitize(prettyDate(e.date))} · ${sanitize(e.name||'Compromiso')}</span><strong>${displayMoney(e.amount)}</strong></div>`).join('');
  const dueSection=`<section class="v105-mobile-extra v273-overview-widget v315-chart-widget v317-chart-widget" data-v105-widget="cashPressure" aria-label="Radar de compromisos con vencimiento en los próximos treinta días">
   <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">VENCIMIENTOS · 30 DÍAS</span><h2>Radar de vencimientos</h2></div><button class="vive-mobile-view-all" type="button" data-v1125-pay="1" aria-label="Elegir qué pago registrar">Pagar ${icon('arrow')}</button></div>
   <div class="v317-due-overview"><span>COMPROMETIDO PRÓXIMOS 30 DÍAS</span><strong>${displayMoney(v317DueTotal)}</strong><small>Incluye únicamente cargos calendarizados y pendientes conocidos.</small></div>
   <div class="v317-due-chart" role="img" aria-label="Vencimientos previstos por periodos: ${v317Buckets.map(d=>d.label+' '+displayMoney(d.total)).join(', ')}">${v317DueBars}</div>
-  ${v317Upcoming?'':'<p class="v315-empty">No se han registrado obligaciones futuras en este periodo.</p>'}
+  ${v317Upcoming?`<div class="v317-next-pays"><span class="v316-mini-eyebrow">PRÓXIMOS VENCIMIENTOS</span>${v317Upcoming}</div>`:'<p class="v315-empty">No se han registrado obligaciones futuras en este periodo.</p>'}
   <p class="v315-small-note">Montos por fecha de vencimiento; no equivale a deuda total. Pueden incluir estimaciones y no duplica pagos ya conciliados por el motor.</p>
  </section>`;
  const v317Today=today();
