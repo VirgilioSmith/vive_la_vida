@@ -7,4 +7,11 @@
 | 2026-11-15 | `tests/harness.js` expone funciones internas solo para pruebas | Poder comparar la app con la capa pura | Solo pruebas |
 | 2026-11-15 | Migración `20261115000000_reglas_vigentes_y_instantaneas` y su reversión | Guardar vigencias e instantáneas sin reescribir historial | Sin aplicar a producción; probada en una base local de pruebas |
 
-No se modificó ninguna fórmula, función ni dato existente de la app.
+| 2026-11-15 | `today()` usa `America/Santo_Domingo` | D1: el reloj no debe depender del dispositivo | Sin cambio para usuarios en esa zona; en otra zona la fecha de «hoy» puede diferir hasta un día |
+| 2026-11-15 | `v900Round` delega en `rnd` | D7: una sola regla de redondeo | Resultados idénticos |
+| 2026-11-15 | Certificados: vigencias de tasa y retención; cálculo por tramos; instantánea al crear | D2: lo ya devengado no se recalcula | Certificados sin cambios de tasa dan exactamente el mismo resultado; los editados desde ahora conservan el interés anterior al cambio |
+| 2026-11-15 | Beneficios, cashback, préstamos entre personas y certificados usan la tasa guardada con el movimiento | D3 | Totales en RD$ de movimientos en US$ con tasa guardada pueden diferir de los mostrados antes (antes usaban la tasa vigente) |
+| 2026-11-15 | Préstamo: la tasa de cada periodo sale del historial de condiciones | D6 | Solo cambia préstamos con dos o más cambios de tasa registrados |
+| 2026-11-15 | Tarjeta: campo «monto mínimo» del pago mínimo y vigencia por cambio | D5 | Vacío = sin cambio; los cortes anteriores conservan su mínimo |
+| 2026-11-15 | Instantáneas al crear cuenta, tarjeta, certificado y préstamo | Historial de reglas y resultados | Datos nuevos (`ruleVersions`, `recordSnapshots`) que se sincronizan como las demás colecciones |
+| 2026-11-15 | Detalle de tarjeta: el interés orientativo usa la capa pura | Centralizar fórmulas | Mismo valor |

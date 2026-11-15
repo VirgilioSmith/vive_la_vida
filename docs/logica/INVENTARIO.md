@@ -8,7 +8,7 @@ Estado: **verificado** = leído y comparado con la versión pura (`lib/finanzas/
 |---|---|---|---|---|---|
 | Número seguro | `num` 130 | cualquier valor | número (0 si no es finito) | — | verificado |
 | Redondeo | `rnd` 130 (también `v900Round` 17891) | número | 2 decimales, mitad hacia arriba | dos funciones idénticas | verificado |
-| Fecha de hoy | `today` 120 | reloj del dispositivo | AAAA-MM-DD | **zona del dispositivo** (ver discrepancia D1) | verificado |
+| Fecha de hoy | `today` 120 | reloj del dispositivo | AAAA-MM-DD | zona `America/Santo_Domingo` | verificado |
 | Día válido del mes | `monthDay` 124 | año, mes, día | fecha con el día limitado al último del mes | 29/30/31 se ajustan | verificado |
 | Sumar meses | `plusMonths` 125 | fecha, n | fecha | conserva el día; limita al fin de mes | verificado |
 | Diferencia de días | `diffDays` 128 | dos fechas | días enteros | calendario, sin hora | verificado |
@@ -36,10 +36,10 @@ Estado: **verificado** = leído y comparado con la versión pura (`lib/finanzas/
 | Último corte | `lastCutAt` 243 | fecha, día de corte | fecha | corte ≤ fecha | verificado |
 | Fecha de pago | `cardDue` 246 | corte, día de pago | fecha | primer día de pago posterior al corte | verificado |
 | Ciclo y estado | `v102CardStatusRaw` 342, `v169CardCycleLedger` 251 | movimientos por moneda, límite, sobregiro, apertura | deuda, facturado, no facturado, vencido, disponible, estado en el corte, próximo pago | los pagos se aplican a los cargos más antiguos; el exceso queda a favor | localizado |
-| Pago mínimo | 313 | facturado, % mínimo (por defecto 5) | mínimo | facturado × % (sin piso mínimo) | verificado |
+| Pago mínimo | ciclo de la tarjeta (~329) | facturado, % y piso vigentes en el corte | mínimo | máx(facturado × %, piso), sin superar lo facturado | verificado |
 | Avance de efectivo | 17903 | efectivo recibido, comisión % | comisión y total | comisión = efectivo × % ; total = efectivo + comisión | verificado |
 | Anualidad | 1027 y 1388 | monto, moneda, fecha de renovación | cargo único por tarjeta | se contabiliza como gasto solo al registrar el cobro | localizado |
-| Tasa anual de la tarjeta | campos `aprDOP` y `aprUSD` | — | — | **solo se guarda y se muestra; no se calcula interés por saldo** (D4) | localizado |
+| Interés orientativo de la tarjeta | detalle de tarjeta (`cardDetail`, ~1756) | saldo facturado, tasa anual | interés mensual | facturado × tasa / 12; informativo, no se registra | verificado |
 | Pagos para no generar intereses | estado de tarjeta | saldo facturado | monto | = facturado al corte (menos pagos aplicados) | localizado |
 
 ## Préstamos
@@ -56,7 +56,7 @@ Estado: **verificado** = leído y comparado con la versión pura (`lib/finanzas/
 ## Monedas, beneficios y Apple Pay
 | Cálculo | Dónde | Entradas | Salida | Regla | Estado |
 |---|---|---|---|---|---|
-| Conversión USD → RD$ | `fx` 194, `xconvert` 195, `v144AmountDOP` 11726 | monto, moneda | RD$ | multiplica por `db.settings.fx` (tasa **vigente**, un solo valor; sin fuente ni fecha) (D3) | verificado |
+| Conversión USD → RD$ | `fx` 194, `xconvert` 195, `v144AmountDOP` 11726 | monto, moneda | RD$ | `fx` usa la tasa vigente (`db.settings.fx`, con fuente y fecha); los movimientos usan `txDop` (tasa guardada) | verificado |
 | Tasa guardada por movimiento | `fxRateSnapshot` (se completa en la carga, 7915) | tasa al registrar | — | los totales mensuales la usan; otros cálculos no | localizado |
 | Beneficios y resumen anual | `v144PeriodMatch` 11728, `v144CostPaid` 11734, `v144AmountDOP` 11726 | cargos, pagos, año y mes elegidos | valor recibido y costo pagado | convierte con la tasa vigente | localizado |
 | Apple Pay | `v5ApplePayPending` 13193, 6881 y siguientes, función `apple-pay-ingest` | eventos de compra | movimientos pendientes y confirmados | cada evento se vincula por `applePayEventId`; no duplica | localizado |

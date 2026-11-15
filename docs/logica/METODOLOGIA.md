@@ -40,14 +40,22 @@ Un monto en US$ se convierte con la **tasa guardada en el registro**; solo si fa
 - Al crear o calcular un registro se guarda una **instantánea inmutable** con las reglas y resultados vigentes (`instantanea`). Un cambio de regla no la toca.
 - En la base de datos: tablas `finance_rule_versions` y `finance_record_snapshots` (solo insertar, con disparadores que impiden actualizar o borrar, y acceso por usuario). Migración y reversión en `supabase/migrations` y `supabase/rollback`.
 
-## Discrepancias encontradas
-| # | Hallazgo | Impacto | Propuesta | Estado |
-|---|---|---|---|---|
-| D1 | `today()` usa la zona horaria del dispositivo, no `America/Santo_Domingo` | Un dispositivo en otra zona puede adelantar o atrasar «hoy» (cortes, vencimientos) | Reemplazar por `hoy()` de la capa pura | **Requiere tu decisión** (cambia el reloj global) |
-| D2 | `certProjection` recalcula con la tasa y retención actuales del certificado: editar la tasa cambia el interés de periodos pasados | Rompe «el pasado no se modifica» | Guardar vigencias de tasa/retención e instantánea al crear y al cobrar; calcular periodos futuros con la regla nueva | Modelo y migración listos; **falta conectar la pantalla** |
-| D3 | `fx` y los beneficios convierten con la tasa vigente; solo los totales mensuales usan la tasa guardada. La carga rellena `fxRateSnapshot` de movimientos antiguos con la tasa actual | Los totales en RD$ de movimientos en US$ cambian si cambia la tasa; no hay fuente ni fecha de la tasa | Usar siempre la tasa guardada; guardar fuente y fecha de la tasa; marcar los rellenados como «estimados» | **Requiere tu decisión** |
-| D4 | La tasa anual de la tarjeta (RD$ y US$) solo se guarda y se muestra; no se calcula interés por saldo | Los «intereses» de tarjeta no se reflejan en saldos | Decidir si debe calcularse (método: saldo medio diario o saldo facturado) | **Requiere tu decisión** |
-| D5 | El pago mínimo es porcentaje simple sin piso | Un banco real suele fijar un mínimo absoluto | Añadir piso como regla con vigencia | Pendiente de decisión |
-| D6 | Préstamo: ya existe una vigencia parcial de tasa (`rateEffectiveFrom`) y de cuota, pero con solo dos niveles (tasa inicial y vigente) | Un tercer cambio de tasa sobrescribe el anterior | Migrar a lista de vigencias | Pendiente |
-| D7 | Existen dos funciones de redondeo idénticas (`rnd`, `v900Round`) | Riesgo de divergencia futura | Unificar en `rnd` | Marcada; sin cambios hasta confirmar |
-| D8 | El interés del préstamo se redondea por periodo y el total difiere en centavos de un cálculo sin redondeo intermedio | Diferencias de centavos frente al estado del banco | Mantener (es lo que se cobra); documentado | Sin acción |
+## Discrepancias: estado
+| # | Hallazgo | Qué se hizo | Estado |
+|---|---|---|---|
+| D1 | «hoy» usaba la zona del dispositivo | `today()` ahora devuelve la fecha de `America/Santo_Domingo` (capa pura `hoy`). Para quien está en esa zona no cambia nada | **Corregida** |
+| D2 | El interés del certificado se recalculaba con la tasa y retención actuales | Cada cambio de tasa o retención agrega una vigencia desde hoy (la primera guarda las condiciones previas desde la constitución). El interés se calcula por tramos: lo devengado antes del cambio no se recalcula. Cada certificado nuevo guarda su vigencia inicial y una instantánea | **Corregida** (certificados nuevos y editados desde ahora) |
+| D3 | Varios cálculos convertían US$ con la tasa vigente | Se usa la tasa guardada con el movimiento (`txDop`) en beneficios, cashback, préstamos entre personas, intereses de certificados y rendimiento; si falta, la vigente. Los movimientos que no tenían tasa y se completaron al cargar se marcan `fxRateEstimated`. La tasa vigente ya guarda fuente y fecha (`fxSource`, `fxRateDate`) | **Corregida** |
+| D4 | Intereses de tarjeta | Verificación: la app **sí** muestra un interés mensual orientativo (facturado × tasa / 12) en el detalle de la tarjeta, que no se registra. Ahora usa la capa pura (`interesTarjetaMensual`). Se agrega `interesTarjetaEstimado` (diario) como método alternativo, sin mostrar | **Aclarada**; el método diario requiere tu decisión |
+| D5 | Pago mínimo sin piso | Campo opcional «monto mínimo» (vacío = como antes). Cada cambio del porcentaje o del piso crea una vigencia desde hoy; los cortes anteriores conservan su mínimo | **Corregida** |
+| D6 | Tasa del préstamo con dos niveles | El préstamo ya guardaba `conditionHistory`, pero el cálculo solo leía la tasa inicial y la vigente. Ahora cada fecha usa la tasa registrada para su tramo; sin historial, igual que antes | **Corregida** |
+| D7 | Dos funciones de redondeo | `v900Round` delega en `rnd` (una sola regla); la función se conserva | **Corregida** |
+| D8 | Centavos por redondeo de interés de préstamo | Se mantiene: es lo que se cobra | Sin acción |
+
+### Reglas que ya estaban protegidas de otra forma
+- **Día de corte y de pago de la tarjeta, banco, saldos iniciales:** con historial no se pueden cambiar (la app lo rechaza). Una configuración con fecha efectiva queda pendiente: exige separar todos los ciclos por vigencia.
+- **Comisión por avance y anualidad:** cada operación guarda su importe al registrarse; un cambio posterior no los recalcula.
+- **Cuota del préstamo:** `installmentHistory` ya conserva cada cuota con su fecha de vigencia.
+
+## Instantáneas en la app
+Se guardan al crear cuenta, tarjeta, certificado y préstamo (`recordSnapshots`: reglas y resultados del momento). En la base de datos, la tabla correspondiente impide actualizar o borrar; en el documento local de la app solo se agregan.
