@@ -55530,3 +55530,39 @@ html body #app#app .v985-matrix .v985-minis-3 .v985-mini{padding:6px 0;overflow:
 html body #app#app .v985-matrix .v985-minis-3 .v985-mini strong{font-size:7.2px!important;white-space:nowrap;letter-spacing:-.06em;overflow-wrap:normal!important}
 html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-grid .v985-card .v985-figure>strong{color:#f2f4f8!important}
 html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-cap{color:#b8c1d8!important}
+
+/* V1120 · Matriz Jobs: sin subtítulo ni numeración, tipografía menor, todo en tonos del acento (fuerte → suave). */
+html body #app#app .v985-matrix{--ac:var(--v424-accent-strong,#5b57d6)}
+html body #app#app .v985-matrix .v985-green{--t:var(--ac)}
+html body #app#app .v985-matrix .v985-blue{--t:color-mix(in srgb,var(--ac) 84%,#fff)}
+html body #app#app .v985-matrix .v985-orange{--t:color-mix(in srgb,var(--ac) 71%,#fff)}
+html body #app#app .v985-matrix .v985-purple{--t:color-mix(in srgb,var(--ac) 58%,#fff)}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-blue{--t:color-mix(in srgb,var(--ac) 80%,#0b0c10)}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-orange{--t:color-mix(in srgb,var(--ac) 62%,#0b0c10)}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-purple{--t:color-mix(in srgb,var(--ac) 46%,#0b0c10)}
+html body #app#app .v985-matrix .v985-grid .v985-card{background:radial-gradient(130% 90% at 100% -10%,color-mix(in srgb,var(--t) 20%,transparent),transparent 55%),linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.76))!important;box-shadow:0 18px 34px -28px color-mix(in srgb,var(--t) 70%,transparent),inset 0 1px 0 #fff!important}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-grid .v985-card{background:radial-gradient(130% 90% at 100% -10%,color-mix(in srgb,var(--t) 22%,transparent),transparent 55%),#101116!important;box-shadow:none!important}
+html body #app#app .v985-matrix .v985-grid .v985-card .v985-head h3,
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-grid .v985-card .v985-head h3{color:var(--t)!important;font-size:clamp(13px,3.5vw,19px)!important}
+html body #app#app .v985-matrix .v985-chip{display:none!important}
+html body #app#app .v985-matrix .v985-head p{font-size:clamp(9px,2.5vw,11.5px)}
+html body #app#app .v985-matrix .v985-grid .v985-card .v985-figure>strong{font-size:clamp(13px,3.4vw,20px)!important}
+html body #app#app .v985-matrix .v985-cap{font-size:clamp(9.5px,2.6vw,12px)}
+html body #app#app .v985-matrix .v985-row-lbl,html body #app#app .v985-matrix .v985-row-item strong{font-size:clamp(9px,2.45vw,11.5px)}
+html body #app#app .v985-matrix .v985-grid .v985-card .v985-stat strong{font-size:clamp(9.5px,2.6vw,12px)!important}
+html body #app#app .v985-matrix .v985-row-ico,html body #app#app .v985-matrix .v985-mini-ico,html body #app#app .v985-matrix .v985-stat-ico{color:var(--t)!important}
+html body #app#app .v985-matrix .v985-row-item{border-top-color:color-mix(in srgb,var(--t) 22%,transparent)}
+html body #app#app .v985-matrix .v985-stats{border-top-color:color-mix(in srgb,var(--t) 24%,transparent)}
+html body #app#app .v985-matrix .v985-spark,html body #app#app .v985-matrix .v985-ring-fg{color:var(--t);stroke:var(--t)}
+html body #app#app .v985-matrix .v985-ring-bg{stroke:color-mix(in srgb,var(--t) 18%,transparent)}
+html body #app#app .v985-matrix .v985-bar{background:color-mix(in srgb,var(--t) 16%,transparent)}
+html body #app#app .v985-matrix .v985-bar i{background:var(--t)}
+html body #app#app .v985-matrix .v985-delta.v985-soft{background:color-mix(in srgb,var(--t) 15%,transparent);color:var(--t)}
+html body #app#app .v985-matrix .v985-mini{background:color-mix(in srgb,var(--t) 8%,transparent);border-color:color-mix(in srgb,var(--t) 16%,transparent)}
+html body #app#app .v985-matrix .v985-mini strong{color:var(--t)!important}
+html body #app#app .v985-matrix .v985-go{color:var(--t)}
+html body #app#app .v985-matrix .v985-body.v985-row{gap:2px}
+html body #app#app .v985-matrix .v985-duo{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;margin-top:-2px}
+html body #app#app .v985-matrix .v985-duo>div:first-child{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+html body #app#app .v985-matrix .v985-duo .v985-ring{flex-basis:50px;width:50px;height:50px;margin:0}
+html body #app#app .v985-matrix .v985-ring strong{font-size:12px;color:var(--t)}

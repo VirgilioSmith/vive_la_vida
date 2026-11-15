@@ -751,11 +751,11 @@ function v985SimplificationWidget(){
  let budgetTxt=null;try{const bs=v290BudgetSnapshot(period);if(bs&&bs.allocated>0)budgetTxt=Math.round(bs.percent)+'% usado';}catch(e){}
  const mini=(ico,label,val,attrs,cls='')=>`<button type="button" class="v985-mini ${cls}" ${attrs}><span class="v985-mini-ico">${v985Svg(V985_ICO[ico],22)}</span><strong>${sanitize(label)}</strong>${val===null?'':`<small>${typeof val==='string'?sanitize(val):money(val)}</small>`}</button>`;
  const stat=(ico,label,val)=>`<div class="v985-stat"><span class="v985-stat-ico">${v985Svg(V985_ICO[ico],22)}</span><div><small>${sanitize(label)}</small><strong>${money(val)}</strong></div></div>`;
- const head=(tone,title,q,n,act)=>`<header class="v985-head"><div class="v985-head-copy"><div><h3>${title}</h3><span class="v985-chip v985-${tone}">${n}</span></div><p>${q}</p></div><button type="button" class="v985-go" ${act} aria-label="Abrir ${title}">${v985Svg(V985_ICO.chev,16)}</button></header>`;
+ const head=(tone,title,q,n,act)=>`<header class="v985-head"><div class="v985-head-copy"><div><h3>${title}</h3></div><p>${q}</p></div><button type="button" class="v985-go" ${act} aria-label="Abrir ${title}">${v985Svg(V985_ICO.chev,16)}</button></header>`;
  const row=(ico,label,val,attrs)=>`<button type="button" class="v985-row-item" ${attrs}><span class="v985-row-ico">${v985Svg(V985_ICO[ico],20)}</span><span class="v985-row-lbl">${sanitize(label)}</span><strong>${money(val)}</strong></button>`;
  const dotted=Math.round(paidShare);
  return `<section data-v105-widget="simplification" class="v985-matrix" aria-label="Matriz Jobs">
- <header class="v985-title"><h2>Matriz Jobs</h2><p>Tu dinero, en cuatro miradas</p></header>
+ <header class="v985-title"><h2>Matriz Jobs</h2></header>
  <div class="v985-grid">
   <article class="v985-card v985-green">${head('green','Entender','¿Cómo estoy financieramente?','01','data-act="navigate" data-id="patrimony"')}
    <div class="v985-body"><small class="v985-cap">Patrimonio neto</small><div class="v985-figure"><strong>${money(net)}</strong></div>${delta===null?'':`<span class="v985-delta ${delta<0?'down':'up'}">${delta>=0?'▲ ':'▼ '}${deltaTxt}</span>`}${spark}</div>
@@ -763,10 +763,10 @@ function v985SimplificationWidget(){
   <article class="v985-card v985-blue">${head('blue','Actuar','¿Qué necesito registrar o pagar?','02','data-act="newTransaction"')}
    <div class="v985-list">${row('plusC','Ingresos',inc,'data-act="newTransaction" data-type="income"')}${row('minusC','Gastos',exp,'data-act="newTransaction" data-type="expense"')}${row('swap','Transferir',trf,'data-act="newTransaction" data-type="transfer"')}${row('card','Pagos',pay,'data-act="navigate" data-id="payments"')}</div></article>
   <article class="v985-card v985-orange">${head('orange','Anticipar','¿Qué viene y qué debo pagar?','03','data-act="navigate" data-id="payments"')}
-   <div class="v985-body"><div class="v985-figure"><strong>${money(pending)}</strong></div><small class="v985-cap">Próximos compromisos</small><div class="v985-bar" role="img" aria-label="Compromisos pagados ${dotted}%"><i style="width:${Math.max(0,Math.min(100,dotted))}%"></i><span>${dotted}% pagado</span></div></div>
+   <div class="v985-body"><div class="v985-figure"><strong>${money(pending)}</strong></div><small class="v985-cap">Compromisos</small><div class="v985-bar" role="img" aria-label="Compromisos pagados ${dotted}%"><i style="width:${Math.max(0,Math.min(100,dotted))}%"></i><span>${dotted}% pagado</span></div></div>
    <div class="v985-list">${row('card','Tarjetas',sumKind('card'),'data-act="navigate" data-id="cards"')}${row('bank','Préstamos',sumKind('loan'),'data-act="navigate" data-id="loans"')}${row('grid4','Suscripciones',sumKind('recurring'),'data-act="navigate" data-id="recurring"')}${row('people','Personas',sumKind('personal'),'data-act="navigate" data-id="personal"')}</div></article>
   <article class="v985-card v985-purple">${head('purple','Decidir','¿Qué puedo hacer con mi dinero?','04','data-act="navigate" data-id="projection"')}
-   <div class="v985-body v985-row"><div class="v985-figure"><strong>${money(room)}</strong><small class="v985-cap">Capacidad de endeudamiento</small>${ratio===null?'':`<span class="v985-delta up v985-soft">${ratio.toLocaleString('es-DO',{maximumFractionDigits:1})}% comprometido</span>`}</div>${v985Ring(health,'purple','Salud financiera','Salud financiera')}</div>
+   <div class="v985-body v985-row"><div class="v985-figure"><strong>${money(room)}</strong></div><div class="v985-duo"><div><small class="v985-cap">Endeudamiento</small>${ratio===null?'':`<span class="v985-delta up v985-soft">${ratio.toLocaleString('es-DO',{maximumFractionDigits:1})}% usado</span>`}</div>${v985Ring(health,'purple','Salud financiera','Salud financiera')}</div></div>
    <div class="v985-minis v985-minis-3 v985-flat">${mini('target','Presupuesto',budgetTxt,'data-act="navigate" data-id="budget"')}${mini('pie','Análisis',null,'data-act="navigate" data-id="analytics"')}${mini('trend','Recuperación',null,'data-act="navigate" data-id="settings" data-v985-pane="security"')}</div></article>
  </div></section>`;
 }
