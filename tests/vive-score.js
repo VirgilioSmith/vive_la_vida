@@ -169,7 +169,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
 
   /* 24 · Centro de control: las 5 secciones unificadas, el resto de páginas intactas, sin información repetida */
   const tabsNow = await frameOf(p).evaluate(() => [...document.querySelectorAll('#tabs [data-tab]')].map(b => b.textContent.trim()));
-  const expectedTabs = ['Mi score', 'Evolución', 'Créditos y capacidad', 'Variables', 'Patrones IA', 'TransUnion (simulación)', 'Metodología', 'Centro de control'];
+  const expectedTabs = ['Mi score', 'Evolución', 'Créditos y capacidad', 'TransUnion (simulación)', 'Centro de control'];
   const secs = {}; const headings = []; const features = {};
   await fclick(p, '[data-tab="control"]');
   const chips = await frameOf(p).evaluate(() => [...document.querySelectorAll('details.ccdet > summary')].map(b => b.textContent.trim()));
@@ -181,7 +181,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const dupHeadings = headings.filter((t, i) => headings.indexOf(t) !== i);
   const evidenceTotal = Object.values(secs).reduce((a, x) => a + x.sel, 0);
   const aliasOk = await frameOf(p).evaluate(() => { tab = 'observatory'; render(); const a = ccOpen.antecedentes && tab === 'control'; tab = 'audit'; render(); const b = ccOpen.auditoria; tab = 'capacity'; render(); const c = tab === 'detail'; tab = 'summary'; render(); return a && b && c; });
-  const otherPages = []; for (const t of ['summary', 'evolution', 'detail', 'matrix', 'patterns', 'transunion', 'method']) { await fclick(p, '[data-tab="' + t + '"]'); otherPages.push((await ftext(p)).length > 300); }
+  const otherPages = []; for (const t of ['summary', 'evolution', 'detail', 'transunion']) { await fclick(p, '[data-tab="' + t + '"]'); otherPages.push((await ftext(p)).length > 300); }
   const bgW = await p.evaluate(async () => { const c = el => getComputedStyle(el); const sl = document.querySelector('[data-vs-slot]'); const w = c(document.body).backgroundImage; return { slot: c(sl).backgroundColor, gradient: /gradient/.test(w), body: c(document.body).backgroundColor }; });
   check('fondo', 'La página Score conserva el fondo de las demás vistas (el contenedor del marco es transparente y el degradado de la app se ve)', bgW.slot === 'rgba(0, 0, 0, 0)' && bgW.gradient, JSON.stringify(bgW));
   check(24, 'Centro de control corto: indicadores, estado y 4 secciones plegables (Antecedentes, Productos y cancelados, Cortes guardados, Auditoría); sin botones de exportar, borrar, sellar ni releer; las demás páginas siguen; sin repetidos', JSON.stringify(tabsNow) === JSON.stringify(expectedTabs) && JSON.stringify(chips) === JSON.stringify(['Antecedentes y procedencia', 'Productos y cancelados', 'Cortes guardados', 'Auditoría y pruebas']) && Object.values(secs).every(x => x.len > 300) && dupHeadings.length === 0 && secs.antecedentes.edit && secs.auditoria.audit && secs.productos.ov >= 2 && Object.values(secs).every(x => !x.seal && !x.json && !x.csv && !x.reset && !x.refresh) && aliasOk && otherPages.every(Boolean), JSON.stringify({ pestanas: tabsNow.length, apartados: chips.length, repetidos: dupHeadings }));
@@ -189,7 +189,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   /* 25 · independencia: leer → analizar → calcular → mostrar, sin modificar datos originales */
   const orig = () => p.evaluate(() => { const d = window.__T.dbg(); return JSON.stringify(['cards', 'loans', 'transactions', 'incomeSchedules', 'recurring', 'accounts', 'banks', 'categories'].map(k => d[k])); });
   const origA = await orig();
-  for (const t of ['summary', 'evolution', 'detail', 'matrix', 'patterns', 'transunion', 'method', 'control']) await fclick(p, '[data-tab="' + t + '"]');
+  for (const t of ['summary', 'evolution', 'detail', 'transunion', 'control']) await fclick(p, '[data-tab="' + t + '"]');
   for (const k of ['antecedentes', 'productos', 'cortes', 'auditoria']) await cc(p, k);
   await cc(p, 'antecedentes'); await fclick(p, '[data-q-act="edit"]'); await frameOf(p).evaluate(() => { qStep = 7; render(); }); await fclick(p, '[data-q-act="finish"]');
   await frameOf(p).evaluate(async () => { await autoSeal(); });

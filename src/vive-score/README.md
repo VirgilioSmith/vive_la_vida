@@ -28,7 +28,7 @@ Pruebas: `tests/vive-score.js` (`node tests/vive-score.js`).
 
 ## Páginas
 
-Mi score · Evolución · Créditos y capacidad · Variables · Patrones IA · TransUnion (simulación) · Metodología · **Centro de control**.
+Mi score · Evolución · Créditos y capacidad · TransUnion (simulación) · **Centro de control**.
 
 El **Centro de control** es una sola página sin menú: cinco secciones plegables (*Observatorio*, *Historial y evidencias*, *Auditoría*, *Antecedentes*, *Configuración*) bajo una fila de indicadores. Los enlaces antiguos (`capacity`, `observatory`, `audit`…) siguen funcionando.
 
@@ -165,3 +165,7 @@ El resto de la aplicación no depende de nada de esta carpeta.
 - **Todo se guarda solo.** Respuestas, antecedentes, historial de límites, productos cancelados y observaciones mensuales se guardan al instante en el almacenamiento del navegador. Cada mes se genera solo un **corte** con huella SHA-256 que se actualiza mientras el mes siga abierto y queda fijo al cerrar. Ya no hay botones de exportar JSON/CSV, borrar, sellar ni «releer»; la lectura de vive el hoy es automática.
 - **Centro de control:** fila de indicadores, tarjeta de estado (calibrado/incompleto + advertencias) y cuatro secciones plegables: *Antecedentes y procedencia*, *Productos y cancelados*, *Cortes guardados* y *Auditoría y pruebas*.
 - **Productos cancelados:** los cerrados en vive el hoy se leen solos; los anteriores se agregan en *Productos y cancelados* (institución, tipo, mes/año de apertura y de cierre, estado final). Los cancelados en buen estado suman años a la antigüedad y a la edad promedio del historial; los castigados no suman. No restan puntos por sí mismos.
+
+## Pestañas retiradas (análisis de uso)
+
+Se eliminaron *Variables*, *Patrones IA* y *Metodología* por no usarse: *Variables* era un catálogo estático de ~100 nombres sin enlace desde ninguna otra pantalla ni efecto en cálculos; *Metodología* era un manual estático duplicado en este README (fórmulas, pesos y reglas); *Patrones IA* necesita al menos 4 cortes mensuales y el historial arranca el 15 de noviembre de 2026, así que mostraba «datos insuficientes» durante meses. El modelo no supervisado interno (`patternModel`) se conserva porque alimenta el indicador de «corte atípico» de Evolución; los enlaces antiguos (`matrix`, `patterns`, `method`) llevan a Mi score. Las fórmulas y pesos están en este documento y en el detalle de cada factor.

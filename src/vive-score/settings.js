@@ -58,7 +58,7 @@ function configuracionView(){
 }
 /* Centro de control: una sola página, sin menú. Cada apartado es una sección plegable; los datos no se repiten. */
 const CC_SECTIONS=[['antecedentes','Antecedentes y procedencia'],['productos','Productos y cancelados'],['cortes','Cortes guardados'],['auditoria','Auditoría y pruebas']];
-const TAB_ALIAS={observatory:'antecedentes',snapshots:'cortes',audit:'auditoria',data:'antecedentes',capacity:'__detail'};   // enlaces de las páginas anteriores
+const TAB_ALIAS={observatory:'antecedentes',snapshots:'cortes',audit:'auditoria',data:'antecedentes',capacity:'__detail',matrix:'__summary',patterns:'__summary',method:'__summary'};   // enlaces de las páginas anteriores
 const ccOpen={antecedentes:false,productos:false,cortes:false,auditoria:false};
 function controlView(){
  const s=current(),q=qualityReport(s),tests=modelAuditSuite(),passed=tests.filter(z=>z.ok).length,c=evaluate(s),warn=c.errors.filter(z=>z.level!=='info').length,cal=!s.missing.length,last=(DB.seals||[]).filter(z=>z.auto).slice(-1)[0];
