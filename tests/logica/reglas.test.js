@@ -160,3 +160,33 @@ test('idempotencia: recalcular dos veces da el mismo resultado', () => {
   const ent = { id: 'a', apertura: 10, abierta: '2026-01-01', movimientos: [{ type: 'income', accountId: 'a', amount: 5, date: '2026-01-02' }], hasta: '2026-02-01' };
   assert.equal(R.saldoCuenta(ent), R.saldoCuenta(ent));
 });
+
+test('certificado con cambio de tasa: lo devengado no se recalcula', () => {
+  const eventos = [{ fecha: '2026-01-01', delta: 100000 }];
+  const cond = (f) => (f < '2026-07-01' ? { tasa: 8, retencion: 10 } : { tasa: 10, retencion: 15 });
+  const r = R.interesCertificadoVigencias({ eventos, inicio: '2026-01-01', fin: '2027-01-01', condiciones: cond, cortes: ['2026-07-01'] });
+  const primero = 100000 * 181 * 8 / 36500, segundo = 100000 * 184 * 10 / 36500;
+  assert.equal(r.bruto, R.rnd(primero + segundo));
+  assert.equal(r.retencion, R.rnd(primero * 0.10 + segundo * 0.15));
+  assert.equal(r.neto, R.rnd(r.bruto - r.retencion));
+  // sin cambios coincide con el cálculo simple
+  const igual = R.interesCertificadoVigencias({ eventos, inicio: '2026-01-01', fin: '2027-01-01', condiciones: () => ({ tasa: 8, retencion: 10 }) });
+  assert.deepEqual(igual, R.interesCertificadoSimple({ capital: 100000, inicio: '2026-01-01', fin: '2027-01-01', tasaPct: 8, retencionPct: 10 }));
+  // un cambio que empieza después del fin no afecta
+  const tarde = R.interesCertificadoVigencias({ eventos, inicio: '2026-01-01', fin: '2027-01-01', condiciones: (f) => (f < '2028-01-01' ? { tasa: 8, retencion: 10 } : { tasa: 99, retencion: 99 }), cortes: ['2028-01-01'] });
+  assert.deepEqual(tarde, igual);
+  // la tasa vigente al devengar es la del tramo: fechas anteriores a un cambio no se alteran
+  const antes = R.interesCertificadoVigencias({ eventos, inicio: '2026-01-01', fin: '2026-06-30', condiciones: cond, cortes: ['2026-07-01'] });
+  const antesSinCambio = R.interesCertificadoSimple({ capital: 100000, inicio: '2026-01-01', fin: '2026-06-30', tasaPct: 8, retencionPct: 10 });
+  assert.deepEqual(antes, antesSinCambio);
+});
+
+test('tarjeta: pago mínimo con piso e interés estimado informativo', () => {
+  assert.equal(R.pagoMinimo(10000, 5, 0), 500);
+  assert.equal(R.pagoMinimo(10000, 5, 800), 800);
+  assert.equal(R.pagoMinimo(300, 5, 800), 300, 'nunca supera lo facturado');
+  assert.equal(R.pagoMinimo(0, 5, 800), 0);
+  assert.equal(R.interesTarjetaEstimado(10000, 36, 10), 98.63);
+  assert.equal(R.interesTarjetaEstimado(10000, 36, 0), 0);
+  assert.equal(R.interesTarjetaEstimado(-5, 36, 10), 0);
+});

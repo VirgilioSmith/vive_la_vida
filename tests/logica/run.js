@@ -3,7 +3,7 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
 let fallo = 0;
-for (const [titulo, args] of [['Unitarias', ['--test', path.join(__dirname, 'reglas.test.js')]], ['Paridad con la app', [path.join(__dirname, 'paridad.js')]]]) {
+for (const [titulo, args] of [['Unitarias', ['--test', path.join(__dirname, 'reglas.test.js')]], ['Paridad con la app', [path.join(__dirname, 'paridad.js')]], ['App real', [path.join(__dirname, 'app.js')]]]) {
   console.log(`\n== ${titulo}`);
   const r = spawnSync(process.execPath, args, { stdio: 'inherit' });
   if (r.status) fallo = 1;
