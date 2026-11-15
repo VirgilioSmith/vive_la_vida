@@ -117,7 +117,7 @@ function v255TransactionCategoryCell(t){const kind=['income','bank_reward','card
 function v255TransactionMetaLine(t,prefix=''){const kind=['income','bank_reward','card_reward'].includes(t.type)?'ingreso':'gasto';const cat=t.category||(TRANSL[t.type]||(['income','bank_reward','card_reward'].includes(t.type)?'Otros ingresos':'Otros gastos'));const pre=prefix?`<span class="v255-tax-prefix">${sanitize(prefix)}</span><span class="v255-tax-sep">·</span>`:'';const sub=t.subcategory?`<span class="v255-tax-sep">/</span>${v255TaxonomyBadge(kind,cat,t.subcategory,{compact:true,subOnly:true})}`:'';return `<span class="v255-tax-inline">${pre}${v255TaxonomyBadge(kind,cat,'',{compact:true})}${sub}</span>`}
 function v255DecorateTaxonomyUI(){const root=document.getElementById('app');if(!root)return;root.querySelectorAll('label').forEach(label=>{const catSel=label.querySelector('select[name="category"]');if(catSel){const parentForm=catSel.form||label.closest('form');let preview=label.querySelector('.v255-tax-select-preview');if(!preview){preview=document.createElement('div');preview.className='v255-tax-select-preview';label.appendChild(preview)}const kind=()=>{if(catSel.id==='customParent')return document.getElementById('customKind')?.value||'gasto';if(catSel.id==='txCategory')return parentForm?.elements?.type?.value==='income'?'ingreso':'gasto';if(['recCategory','budgetCategory'].includes(catSel.id))return 'gasto';if(parentForm?.elements?.kind?.value==='ingreso')return 'ingreso';return v255TaxonomyKindForCategory(catSel.value)};const paint=()=>{preview.innerHTML=catSel.value?`<span class="v255-tax-select-note">Categoría</span>${v255TaxonomyBadge(kind(),catSel.value)}`:''};paint();catSel.addEventListener('change',paint)}const subSel=label.querySelector('select[name="subcategory"]');if(subSel){const parentForm=subSel.form||label.closest('form');const catSel=parentForm?.querySelector('select[name="category"]');let preview=label.querySelector('.v255-tax-select-preview');if(!preview){preview=document.createElement('div');preview.className='v255-tax-select-preview';label.appendChild(preview)}const kind=()=>{if(catSel?.id==='txCategory')return parentForm?.elements?.type?.value==='income'?'ingreso':'gasto';if(['recCategory','budgetCategory'].includes(catSel?.id))return 'gasto';if(parentForm?.elements?.kind?.value==='ingreso')return 'ingreso';return v255TaxonomyKindForCategory(catSel?.value)};const paint=()=>{preview.innerHTML=(subSel.value&&catSel?.value)?`<span class="v255-tax-select-note">Subcategoría</span>${v255TaxonomyBadge(kind(),catSel.value,subSel.value,{subOnly:true})}`:''};paint();subSel.addEventListener('change',paint);if(catSel)catSel.addEventListener('change',paint)}})}
 
-const today=()=>{const d=new Date();return dateStr(d)};
+const today=()=>{try{return window.FinanzasReglas.hoy()}catch(_){const d=new Date();return dateStr(d)}};
 const dateStr=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const dateObj=s=>{if(!s)return new Date(2000,0,1);let [y,m,d]=String(s).slice(0,10).split('-').map(Number);return new Date(y,m-1,d||1)};
 const addDays=(s,n)=>{let d=dateObj(s);d.setDate(d.getDate()+n);return dateStr(d)};
@@ -128,6 +128,20 @@ const periodEnd=(y,m)=>dateStr(new Date(y,m,0));
 const diffDays=(a,b)=>Math.round((dateObj(a)-dateObj(b))/86400000);
 const prettyDate=s=>s?dateObj(s).toLocaleDateString('es-DO',{day:'2-digit',month:'short',year:'numeric'}):'—';
 const num=v=>Number.isFinite(+v)?+v:0;const rnd=v=>Math.round((num(v)+Number.EPSILON)*100)/100;
+/* Reglas con vigencia e instantáneas: solo se agrega, nunca se edita ni se borra (ver docs/logica/METODOLOGIA.md). */
+function financeRuleAt(key,subject,date){try{return window.FinanzasReglas.reglaVigente(db.ruleVersions||[],key,date||today(),subject||'*')}catch(_){return undefined}}
+function financeRuleList(key,subject){return (db.ruleVersions||[]).filter(v=>v.clave===key&&v.sujeto===(subject||'*')).sort((a,b)=>a.desde.localeCompare(b.desde))}
+function financeRuleAdd(key,subject,value,from){
+ const R=window.FinanzasReglas;db.ruleVersions=Array.isArray(db.ruleVersions)?db.ruleVersions:[];
+ const made=R.nuevaVigencia(db.ruleVersions,{clave:key,sujeto:subject||'*',valor:value,desde:from});
+ const item=made[made.length-1];const entry={id:uuid(),clave:item.clave,sujeto:item.sujeto,valor:JSON.parse(JSON.stringify(item.valor)),desde:item.desde,creada:item.creada};
+ db.ruleVersions.push(entry);return entry;
+}
+function financeSnapshot(type,recordId,rules,results){
+ db.recordSnapshots=Array.isArray(db.recordSnapshots)?db.recordSnapshots:[];
+ const s=window.FinanzasReglas.instantanea({tipo:type,idRegistro:String(recordId),fecha:today(),reglas:rules,resultados:results});
+ db.recordSnapshots.push({id:uuid(),tipo:s.tipo,idRegistro:s.idRegistro,fecha:s.fecha,reglas:JSON.parse(JSON.stringify(s.reglas)),resultados:JSON.parse(JSON.stringify(s.resultados)),creada:new Date().toISOString()});
+}
 const sanitize=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const v115NumberFormats=new Map();
 function v115Formatter(digits=0){const d=Math.max(0,Math.min(12,Number(digits)||0));if(!v115NumberFormats.has(d))v115NumberFormats.set(d,new Intl.NumberFormat('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}));return v115NumberFormats.get(d)}
@@ -152,11 +166,11 @@ function ensureDefaultCashAccounts(data){
  }
  return data;
 }
-const init=()=>({version:4,settings:{fx:60,fxAcknowledged:false,menuLayout:'rail',theme:'light',transferTaxPct:0.20,transferFeeDOP:0,transferFeeUSD:0,paletteChoice:'original',paletteHex:'#6866f3',mobilePositionStyle:'balance'},banks:[],customCategories:[],hiddenTaxonomy:{categories:[],subcategories:[]},accounts:defaultCashAccounts(),cards:[],loans:[],transactions:[],recurring:[],statements:[],budgets:[],certificates:[],perkUses:[],personalLoans:[],personalContacts:[],txRevisions:[],pendingOperations:[],demo:false});
+const init=()=>({version:4,settings:{fx:60,fxAcknowledged:false,menuLayout:'rail',theme:'light',transferTaxPct:0.20,transferFeeDOP:0,transferFeeUSD:0,paletteChoice:'original',paletteHex:'#6866f3',mobilePositionStyle:'balance'},banks:[],ruleVersions:[],recordSnapshots:[],customCategories:[],hiddenTaxonomy:{categories:[],subcategories:[]},accounts:defaultCashAccounts(),cards:[],loans:[],transactions:[],recurring:[],statements:[],budgets:[],certificates:[],perkUses:[],personalLoans:[],personalContacts:[],txRevisions:[],pendingOperations:[],demo:false});
 let db=(()=>{try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.accounts)&&Array.isArray(x.transactions))return {...init(),...x,settings:{...init().settings,...(x.settings||{})}}}catch(e){}return init()})();
 let privacyMode=false;
 const ui={projectionMenu:false,movementTab:'all',navExpanded:null,showHidden:false,kpiBank:'',kpiEditing:false,page:'overview',expenseRange:'month',bankId:null,bankScope:'all',month:today().slice(0,7),year:new Date().getFullYear(),search:'',transType:'all',txPeriod:'all',reviewFilter:'all',v361Category:'all',cardId:null,cardDetailTab:'status',cardHistoryCurrency:'DOP',cardHistoryYear:new Date().getFullYear(),accountId:null,loanId:null,annualDetails:true,annualCurrency:'DOP',forecastScenario:'base',forecastHorizon:12,mobile:false};
-function migrateData(d){d.banks=Array.isArray(d.banks)?d.banks:[];d.customCategories=Array.isArray(d.customCategories)?d.customCategories:[];
+function migrateData(d){d.banks=Array.isArray(d.banks)?d.banks:[];d.ruleVersions=Array.isArray(d.ruleVersions)?d.ruleVersions:[];d.recordSnapshots=Array.isArray(d.recordSnapshots)?d.recordSnapshots:[];d.customCategories=Array.isArray(d.customCategories)?d.customCategories:[];
   d.hiddenTaxonomy=(d.hiddenTaxonomy&&typeof d.hiddenTaxonomy==='object'&&!Array.isArray(d.hiddenTaxonomy))?d.hiddenTaxonomy:{};
   d.hiddenTaxonomy.categories=Array.isArray(d.hiddenTaxonomy.categories)?d.hiddenTaxonomy.categories:[];
   d.hiddenTaxonomy.subcategories=Array.isArray(d.hiddenTaxonomy.subcategories)?d.hiddenTaxonomy.subcategories:[];d.certificates=Array.isArray(d.certificates)?d.certificates:[];d.perkUses=Array.isArray(d.perkUses)?d.perkUses:[];d.txRevisions=Array.isArray(d.txRevisions)?d.txRevisions:[];d.rewardBalances=Array.isArray(d.rewardBalances)?d.rewardBalances:[];d.personalLoans=Array.isArray(d.personalLoans)?d.personalLoans:[];d.personalContacts=Array.isArray(d.personalContacts)?d.personalContacts:[];
@@ -397,7 +411,14 @@ const totalLoanDebt=()=>db.loans.reduce((v,l)=>v+fx(loanStatus(l).balance,l.curr
    current=Math.max(0,rnd(current+event.delta));cursor=day;
   }
   capitalDays+=Math.max(0,current)*Math.max(0,diffDays(end,cursor));
-  const gross=rnd(capitalDays*Math.max(0,num(c.rate))/36500),tax=rnd(gross*Math.max(0,num(c.taxPct))/100);
+  let gross=rnd(capitalDays*Math.max(0,num(c.rate))/36500),tax=rnd(gross*Math.max(0,num(c.taxPct))/100);
+  /* Si la tasa o la retención cambiaron, cada tramo usa las condiciones vigentes en su fecha (lo devengado no se recalcula). */
+  const vigencias=financeRuleList('certificado.condiciones',c.id);
+  if(vigencias.length&&window.FinanzasReglas){
+   const cond=day=>{const v=financeRuleAt('certificado.condiciones',c.id,day);return {tasa:v?v.rate:c.rate,retencion:v?v.taxPct:c.taxPct}};
+   const r=window.FinanzasReglas.interesCertificadoVigencias({eventos:events.map(e=>({fecha:e.date,delta:e.delta})),inicio:start,fin:end,condiciones:cond,cortes:vigencias.map(v=>v.desde)});
+   gross=r.bruto;tax=r.retencion;
+  }
   return {capital,days,gross,tax,net:rnd(gross-tax),expiry:diffDays(c.maturityDate,today()),collected:db.transactions.filter(t=>t.type==='income'&&t.certificateId===c.id).reduce((x,t)=>x+num(t.amount),0)};
  };
 function v96NextRecurringDate(day,frequency,anchorDay){
@@ -6233,7 +6254,21 @@ case 'certificateForm':{let entry={id:id||uuid(),name:String(v.name||'').trim(),
  if(previous&&db.transactions.some(t=>t.certificateId===id)&&(
  previous.currency!==entry.currency||previous.principal!==entry.principal||(previous.capitalMode||'already')!==entry.capitalMode||
  previous.bankId!==entry.bankId||previous.startDate!==entry.startDate||previous.maturityDate!==entry.maturityDate
- ))throw Error('El certificado ya tiene operaciones: no se puede cambiar banco, moneda, capital, modo de constitución ni fechas contractuales. Crea un nuevo certificado o concilia las operaciones.');if(previous)Object.assign(previous,entry);else db.certificates.push(entry);break}
+ ))throw Error('El certificado ya tiene operaciones: no se puede cambiar banco, moneda, capital, modo de constitución ni fechas contractuales. Crea un nuevo certificado o concilia las operaciones.');
+ if(previous){
+  /* Cambiar tasa o retención crea una vigencia nueva desde hoy: el interés ya devengado conserva las condiciones anteriores. */
+  if(num(previous.rate)!==entry.rate||num(previous.taxPct)!==entry.taxPct){
+   if(!financeRuleList('certificado.condiciones',previous.id).length)financeRuleAdd('certificado.condiciones',previous.id,{rate:num(previous.rate),taxPct:num(previous.taxPct)},previous.startDate);
+   const last=financeRuleList('certificado.condiciones',previous.id).at(-1).desde;
+   financeRuleAdd('certificado.condiciones',previous.id,{rate:entry.rate,taxPct:entry.taxPct},today()>last?today():addDays(last,1));
+  }
+  Object.assign(previous,entry);
+ }else{
+  db.certificates.push(entry);
+  financeRuleAdd('certificado.condiciones',entry.id,{rate:entry.rate,taxPct:entry.taxPct},entry.startDate);
+  try{const p=certProjection(entry);financeSnapshot('certificado',entry.id,{rate:entry.rate,taxPct:entry.taxPct,principal:entry.principal,start:entry.startDate,maturity:entry.maturityDate,capitalMode:entry.capitalMode},{gross:p.gross,tax:p.tax,net:p.net,days:p.days})}catch(_){}
+ }
+ break}
  case 'loanForm':{let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',currency:v.currency,openingMode:v.loanOpeningMode==='existing'?'existing':'new',openingBalanceDate:v.openingBalanceDate||today(),principal:rnd(v.principal),originationDate:v.originationDate||loan(id)?.originationDate||'',lastPaidDate:v.loanOpeningMode==='existing'?(v.lastPaidDate||loan(id)?.lastPaidDate||''):'',openingDebt:v.loanOpeningMode==='existing'?rnd(v.openingDebt):null,termUnit:v.termUnit||loan(id)?.termUnit||'months',termQuincenas:(v.termUnit||loan(id)?.termUnit)==='fortnights'?Math.floor(num(v.termCount)||num(loan(id)?.termQuincenas)):null,rate:num(v.rate),rateType:v.rateType==='variable'?'variable':'fixed',installmentStyle:v.installmentStyle==='variable'?'variable':'fixed',installmentEffectiveFrom:v.installmentEffectiveFrom||v.firstDue,months:num(v.months),paymentFrequency:v.termUnit==='fortnights'?'semi_monthly':v.paymentFrequency==='semi_monthly'?'semi_monthly':(loan(id)?.paymentFrequency||'monthly'),insuranceKind:v.insuranceKind||'none',firstDue:v.firstDue,insuranceMonthly:v.insuranceKind==='none'?0:rnd(v.insuranceMonthly),monthlyFee:rnd(v.monthlyFee),currentInstallment:rnd(v.currentInstallment),reportedBalance:v.reportedBalance===''?null:rnd(v.reportedBalance),balanceAsOf:v.balanceAsOf||today(),currentRate:num(v.currentRate),rateEffectiveFrom:v.rateEffectiveFrom||today(),postingMode:v.postingMode==='auto'?'auto':'confirm',autoAccountId:v.autoAccountId||'',autoFrom:(loan(id)?.postingMode==='auto'&&loan(id)?.autoFrom)?loan(id).autoFrom:today()};if(entry.installmentStyle==='variable'&&entry.postingMode==='auto')throw Error('Una cuota variable requiere confirmación manual antes de afectar tu saldo.');if(entry.currentInstallment<0)throw Error('La cuota de capital e interés no puede ser negativa.');if(entry.postingMode==='auto'&&(!account(entry.autoAccountId)||account(entry.autoAccountId).currency!==entry.currency))throw Error('Para un préstamo automático elige una cuenta de débito de la misma moneda.');if(!entry.name||!bank(entry.bankId)||entry.principal<=0)throw Error('El nombre, institución y capital original son obligatorios.');if(entry.openingMode==='existing'&&(entry.openingDebt===null||entry.openingDebt<0||entry.openingDebt>entry.principal))throw Error('El saldo actual debe estar entre cero y el capital original.');if(entry.openingMode==='existing'){if(!entry.originationDate||!entry.lastPaidDate)throw Error('Indica la primera y la última cuota pagada.');if(entry.originationDate>entry.lastPaidDate||entry.lastPaidDate>entry.openingBalanceDate||entry.lastPaidDate>today())throw Error('La última cuota pagada debe ser posterior o igual a la primera y no puede ser futura.');if(entry.firstDue!==entry.originationDate&&(!loan(id)||!loanTransactions(id).length))throw Error('La primera cuota pagada debe iniciar el calendario del préstamo.');}if(entry.termUnit==='fortnights'&&(!entry.termQuincenas||entry.termQuincenas>1200))throw Error('Indica una cantidad válida de quincenas.');let prev=loan(id);if(prev&&loanTransactions(id).length&&(prev.currency!==entry.currency||num(prev.principal)!==entry.principal||num(prev.rate)!==entry.rate||num(prev.months)!==entry.months||prev.firstDue!==entry.firstDue||v49LoanPeriodCount(prev)!==v49LoanPeriodCount(entry)||v49LoanPeriodsPerMonth(prev)!==v49LoanPeriodsPerMonth(entry)||String(prev.openingDebt??'')!==String(entry.openingDebt??'')))throw Error('El plan original está protegido cuando existen pagos. Solo puedes editar cuota vigente, seguros, cargos o conciliación.');if(id){let changed=['currentRate','insuranceKind','insuranceMonthly','monthlyFee','currentInstallment','postingMode','autoAccountId'].some(k=>['postingMode','autoAccountId'].includes(k)?String(prev[k]||'')!==String(entry[k]||''):num(prev[k]??(k==='currentRate'?prev.rate:0))!==num(entry[k]));let revisions=Array.isArray(prev.installmentHistory)?prev.installmentHistory.map(x=>({...x})):[];
 const amountChanged=Math.abs(num(prev.currentInstallment)-entry.currentInstallment)>.005 || (prev.installmentStyle||'fixed')!==entry.installmentStyle;
 if(amountChanged){
@@ -7541,7 +7576,7 @@ const v405ArrayCollections=new Set([
  'certificates','perkUses','personalLoans','personalContacts','txRevisions',
  'pendingOperations','rewardBalances','customCategories','automationEvents',
  'budgetVersions','fiscalRulesVersions','incomeSchedules','institutionBenefits',
- 'v144PendingBenefits','v144ScheduledCosts'
+ 'v144PendingBenefits','v144ScheduledCosts','ruleVersions','recordSnapshots'
 ]);
 let v405Base={},v405Revision=0,v405Loaded=false;
 const v405Clone=v=>JSON.parse(JSON.stringify(v));
@@ -17888,7 +17923,7 @@ function v900AdvanceForm(cardId,editId=''){
  repaint();
  form.elements.advanceNet.focus({preventScroll:true});
 }
-function v900Round(value){return Math.round((Number(value)+Number.EPSILON)*100)/100;}
+function v900Round(value){return rnd(value);}
 async function v900SaveAdvance(form){
  if(form.dataset.v911Saving==='1'||form.dataset.v911CloudPending==='1')return;
  const v=Object.fromEntries(new FormData(form).entries());
