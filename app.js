@@ -11694,7 +11694,7 @@ function v105SaveConfig(c){
  v105ApplyWidgetPreferences();
 }
 let v105DraftConfig=null;
-const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow'];
+const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow','banks','accounts','loans','certificates'];
 function v1118Skip(id){return V1118_MOBILE_REMOVED.includes(id)&&isMobileViewport()}
 function v105Customizer(){
  const cfg=v105DraftConfig||v105Config(),enabled=new Set(cfg.visible);
