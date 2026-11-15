@@ -55350,3 +55350,15 @@ html body.theme-black #app #page :is(.v242-group-caption,.v439-mac-group-title),
 html body.theme-black #app #page .v439-mac-item-arrow,html body.theme-dark #app #page .v439-mac-item-arrow{color:#aab3cc!important}
 html body.theme-black #app #page .bank-photo-fallback,html body.theme-dark #app #page .bank-photo-fallback{color:#fff!important}
 html body.theme-black #app #page .ff-obligation-row>b,html body.theme-dark #app #page .ff-obligation-row>b{color:#eef1fb!important}
+
+/* Móvil en modo oscuro: pestaña activa legible (texto claro sobre el acento) */
+@media (max-width:790px){
+ html body.theme-black #app :is(.inner-menu-tab,.v203-profile,.v245-inner-tab,.segmented-hist button,.product-tabs button,.bank-tabs button).active,html body.theme-dark #app :is(.inner-menu-tab,.v203-profile,.v245-inner-tab,.segmented-hist button,.product-tabs button,.bank-tabs button).active{background:var(--v424-accent-strong,#7b2d57)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+ html body.theme-black #app :is(.inner-menu-tab,.v203-profile).active *,html body.theme-dark #app :is(.inner-menu-tab,.v203-profile).active *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+}
+@media (max-width:790px){
+ html body.theme-black #app#app #page#page :is(.inner-menu-tab,.v203-profile,.v245-inner-tab).active,html body.theme-dark #app#app #page#page :is(.inner-menu-tab,.v203-profile,.v245-inner-tab).active{background:var(--v424-accent-strong,#7b2d57)!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+ html body.theme-black #app#app #page#page :is(.inner-menu-tab,.v203-profile,.v245-inner-tab).active *,html body.theme-dark #app#app #page#page :is(.inner-menu-tab,.v203-profile,.v245-inner-tab).active *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+}
+html body.theme-black #app#app #page :is(.v203-profile em,.pill,.v295-eye),html body.theme-dark #app#app #page :is(.v203-profile em,.pill,.v295-eye){color:#d6dcf0!important;-webkit-text-fill-color:#d6dcf0!important}
+html body.theme-black #app#app #page .v26-primary span,html body.theme-dark #app#app #page .v26-primary span{color:#fff!important}
