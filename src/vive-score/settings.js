@@ -36,30 +36,36 @@ function recentAuto(s){
 }
 /* Antecedentes: estado de calibración, trazabilidad y procedencia de cada dato. */
 function antecedentesView(){
- const s=current(),A=ST.answers||{},cal=!s.missing.length;
- return `<p class="muted sm" style="margin:0 0 12px">Lo que declaraste, de dónde sale cada dato y qué falta. Cada cambio queda registrado.</p>
- <div class="grid pair"><div class="card"><div class="caps">ESTADO DE CALIBRACIÓN</div><h2 style="margin-top:7px">${cal?'Calibrado':'Incompleto'}</h2><p>${cal?'Todos los datos esenciales están disponibles; el score se calcula.':'Falta información esencial; el score no se calcula hasta completarla:'}</p>${s.missing.length?`<div class="warnings">${s.missing.map(m=>`<div class="witem critical"><span>!</span><div>${safe(m)}</div></div>`).join('')}</div>`:''}<div class="metricList"><div class="metricLine"><span>Cuestionario</span><b>${A.completed?'Completado':'Pendiente'}</b></div><div class="metricLine"><span>Versión de antecedentes</span><b>${ST.declVersion}</b></div><div class="metricLine"><span>Inicio del historial observado</span><b>${myLabel(VS_START)} (desde el 15)</b></div></div><div class="actionLine"><button class="smallbtn" data-q-act="edit">Editar antecedentes</button></div></div>
- <div class="card"><div class="caps">TRAZABILIDAD</div><h2 style="margin-top:7px">Cambios de antecedentes</h2>${(ST.answersLog||[]).length?`<div class="metricList">${ST.answersLog.map(l=>`<div class="metricLine"><span>Versión ${l.version}</span><b>${safe(l.at.slice(0,16).replace('T',' '))}</b></div>`).join('')}</div>`:'<p class="muted">Todavía no hay versiones guardadas.</p>'}<p class="xs muted">Si corriges un antecedente, los cortes se recalculan como corrección de información, no como un movimiento crediticio nuevo.</p></div></div>
- <div class="card" style="margin-top:15px"><div class="caps">CRÉDITOS RECIENTES · DETECTADOS SOLOS</div><h2 style="margin:7px 0 4px">${s.new0to6} en los últimos 6 meses</h2><p class="muted sm">Se leen de la fecha de apertura de cada tarjeta y préstamo en vive el hoy; no tienes que marcar nada.</p>${recentAuto(s)}</div>
- <div class="card" style="margin-top:15px"><div class="caps">HISTORIAL DE LÍMITES · AUTOMÁTICO</div><h2 style="margin:7px 0 4px">Cambios de límite de tus tarjetas</h2>${limitHistory()}</div>
- ${sec('¿De dónde sale cada dato?','Conocido en la app, declarado por ti, verificado con documento o desconocido.')}<div class="card"><div class="metricList">${provenance(s)}</div></div>`;
+ const s=current();
+ return `<div class="card"><div class="caps">CRÉDITOS RECIENTES · DETECTADOS SOLOS</div><h2 style="margin:7px 0 4px">${s.new0to6} en los últimos 6 meses</h2><p class="muted sm">Se leen de la fecha de apertura de cada tarjeta y préstamo en vive el hoy.</p>${recentAuto(s)}</div>
+ <div class="card" style="margin-top:12px"><div class="caps">HISTORIAL DE LÍMITES · AUTOMÁTICO</div>${limitHistory()}</div>
+ <div class="card" style="margin-top:12px"><div class="caps">¿DE DÓNDE SALE CADA DATO?</div><div class="metricList">${provenance(s)}</div></div>`;
 }
 /* Configuración: productos leídos (fechas, procedencia, documento), actualización de datos, exportación y borrado. */
+function cancelledView(s){
+ const mSel=id=>`<select class="formSelect" id="${id}-m" aria-label="Mes"><option value="">Mes</option>${MONTH_NAMES.map((n,i)=>`<option value="${String(i+1).padStart(2,'0')}">${n}</option>`).join('')}</select>`;
+ const now=Number((PAYLOAD?.today||new Date().toISOString()).slice(0,4)),ySel=id=>`<select class="formSelect" id="${id}-y" aria-label="Año"><option value="">Año</option>${Array.from({length:41},(_,i)=>now-i).map(y=>`<option>${y}</option>`).join('')}</select>`;
+ const app=[...s.cards,...s.loans,...(s.unrated||[])].filter(x=>x.status==='closed');
+ const mine=ST.cancelled||[];
+ const row=(n,sub,right,btn)=>`<div class="metricLine"><span><b>${safe(n)}</b><div class="muted xs">${sub}</div></span><span style="text-align:right">${right}${btn?`<div>${btn}</div>`:''}</span></div>`;
+ return `<div class="card" style="margin-top:12px"><div class="caps">PRODUCTOS CANCELADOS · HISTORIAL</div><p class="muted sm" style="margin:6px 0 10px">Los cancelados en buen estado siguen sumando años a tu historial y a la edad promedio (como en un buró). Los de vive el hoy se leen solos; aquí agregas los de antes.</p>
+ ${app.length||mine.length?`<div class="metricList">${app.map(x=>row(x.name.replace(/ · (DOP|USD)$/,''),'Cerrado · leído de vive el hoy',safe(validPeriod(x.opened)?'abierto '+myLabel(x.opened):'sin fecha de apertura'),'')).join('')}${mine.map(x=>row(x.inst||'Producto',`${x.kind==='loan'?'Préstamo':'Tarjeta'} · ${safe(x.state)} · declarado`,safe(myLabel(x.opened)+' → '+myLabel(x.closed)),`<button class="smallbtn" data-cancel-del="${safe(x.id)}">Quitar</button>`)).join('')}</div>`:'<p class="muted">Todavía no hay productos cancelados.</p>'}
+ <div class="qmyrow" style="flex-wrap:wrap;gap:8px;margin-top:14px"><input class="formInput" id="cx-inst" placeholder="Institución o producto" aria-label="Institución o producto" style="max-width:220px"><select class="formSelect" id="cx-kind" aria-label="Tipo"><option value="card">Tarjeta</option><option value="loan">Préstamo</option></select><span class="xs muted">Apertura</span>${mSel('cx-o')}${ySel('cx-o')}<span class="xs muted">Cierre</span>${mSel('cx-c')}${ySel('cx-c')}<select class="formSelect" id="cx-state" aria-label="Estado final"><option value="cancelado sin saldo">Cancelado sin saldo</option><option value="saldado">Saldado</option><option value="castigado">Castigado (no suma)</option></select><button class="smallbtn" data-cancel-add="1">+ Agregar</button></div></div>`;
+}
 function configuracionView(){
  const s=current();
- return `<p class="muted sm" style="margin:0 0 12px">Los datos se leen de vive el hoy y nunca se modifican. Aquí completas lo que falta dentro de VIVE SCORE.</p>
- <div class="card">${instrumentRows(s)}<div class="actionLine"><button class="smallbtn" data-refresh-data="1">↻ Releer datos de vive el hoy</button><button class="smallbtn" data-go="cards">Ver Tarjetas ↗</button><button class="smallbtn" data-go="loans">Ver Préstamos ↗</button></div><p class="xs muted">VIVE SCORE se actualiza solo cuando registras o cambias algo en la app; este botón fuerza una lectura inmediata.</p></div>
- ${sec('Datos y reversión','Todo lo de VIVE SCORE vive aparte, en el almacenamiento experimental de este navegador.')}<div class="card"><div class="actionLine"><button class="smallbtn" id="downloadJson">↓ Exportar JSON</button><button class="smallbtn" id="downloadCSV">↓ Exportar CSV</button><button class="smallbtn dangerText" id="vsReset">Borrar los datos de VIVE SCORE</button></div><div class="callout">Borrar elimina únicamente las respuestas, cortes observados y sellos de VIVE SCORE. Tus tarjetas, préstamos, movimientos e ingresos no se tocan. Para quitar el módulo por completo, sigue el procedimiento de <code>src/vive-score/README.md</code>.</div></div>`;
+ return `<p class="muted sm" style="margin:0 0 12px">Se leen de vive el hoy y nunca se modifican. Solo completas el mes y año de apertura cuando la app no lo tiene.</p>${instrumentRows(s)}${cancelledView(s)}`;
 }
 /* Centro de control: una sola página, sin menú. Cada apartado es una sección plegable; los datos no se repiten. */
-const CC_SECTIONS=[['observatorio','Observatorio'],['historial','Historial y evidencias'],['auditoria','Auditoría'],['antecedentes','Antecedentes'],['configuracion','Configuración']];
-const TAB_ALIAS={observatory:'observatorio',snapshots:'historial',audit:'auditoria',data:'antecedentes',capacity:'__detail'};   // enlaces de las páginas anteriores
-const ccOpen={observatorio:true,historial:false,auditoria:false,antecedentes:true,configuracion:false};
+const CC_SECTIONS=[['antecedentes','Antecedentes y procedencia'],['productos','Productos y cancelados'],['cortes','Cortes guardados'],['auditoria','Auditoría y pruebas']];
+const TAB_ALIAS={observatory:'antecedentes',snapshots:'cortes',audit:'auditoria',data:'antecedentes',capacity:'__detail'};   // enlaces de las páginas anteriores
+const ccOpen={antecedentes:false,productos:false,cortes:false,auditoria:false};
 function controlView(){
- const s=current(),q=qualityReport(s),tests=modelAuditSuite(),passed=tests.filter(z=>z.ok).length,c=evaluate(s),warn=c.errors.filter(z=>z.level!=='info').length;
- const bodies={observatorio:observatory,historial:snapshotView,auditoria:audits,antecedentes:antecedentesView,configuracion:configuracionView};
- return `${sec('Centro de control','Calidad de los datos, historial, auditoría, antecedentes y configuración, en una sola página.')}
+ const s=current(),q=qualityReport(s),tests=modelAuditSuite(),passed=tests.filter(z=>z.ok).length,c=evaluate(s),warn=c.errors.filter(z=>z.level!=='info').length,cal=!s.missing.length,last=(DB.seals||[]).filter(z=>z.auto).slice(-1)[0];
+ const bodies={antecedentes:antecedentesView,productos:configuracionView,cortes:snapshotView,auditoria:audits};
+ return `${sec('Centro de control','Todo se lee y se guarda solo. Aquí solo ves lo importante.')}
  <div class="grid stats">${kpi('Confianza de evidencia',`${q.reliability}/100`,'Calidad de los datos, no es score')}${kpi('Cortes observados',DB.months.length,'Desde el 15 de noviembre de 2026')}${kpi('Pruebas del motor',`${passed}/${tests.length}`,'Coherencia algorítmica local')}${kpi('Advertencias',warn,'Datos por revisar',warn?'neg':'')}</div>
+ <div class="card" style="margin:15px 0 12px"><div class="hrow wrapMobile"><div><div class="caps">ESTADO</div><h2 style="margin:6px 0 2px">${cal?'Calibrado':'Incompleto'}</h2><p class="sm">${cal?'Todos los datos esenciales están disponibles; el score se calcula.':'Falta información esencial; el score no se calcula hasta completarla.'}</p></div><div class="links"><span class="tag good">● Guardado automático${last?' · '+safe(last.period):''}</span><button class="smallbtn" data-q-act="edit">Editar antecedentes</button></div></div>${s.missing.length?`<div class="warnings">${s.missing.map(m=>`<div class="witem critical"><span>!</span><div>${safe(m)}</div></div>`).join('')}</div>`:''}</div>
  ${CC_SECTIONS.map(([k,l])=>`<details class="ccdet" data-cc="${k}" ${ccOpen[k]?'open':''}><summary>${l}</summary><div class="ccbody">${bodies[k]()}</div></details>`).join('')}`;
 }
 document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.classList?.contains('ccdet')&&d.dataset.cc)ccOpen[d.dataset.cc]=d.open},true);
@@ -72,7 +78,10 @@ document.addEventListener('change',e=>{
 document.addEventListener('click',e=>{
  const lk=e.target.closest('[data-limit-kind]');
  if(lk){const ev=(ST.answers?.limit?.events||[]).find(x=>x.id===lk.dataset.limitKind);if(ev){ev.kind=ev.kind==='requested'?'automatic':'requested';ST.declVersion++;saveStore();rebuildDB();render()}return}
- const b=e.target.closest('button');if(!b||b.id!=='vsReset')return;
- if(!confirm('¿Borrar TODOS los datos de VIVE SCORE (respuestas, cortes observados, sellos)? Tus tarjetas, préstamos y movimientos no se tocan.'))return;
- ST=newStore();auditHistory=[];qEditing=false;qStep=0;saveStore();rebuildDB();render();notify('Datos de VIVE SCORE borrados.');
+ const ca=e.target.closest('[data-cancel-add]'),cd=e.target.closest('[data-cancel-del]');
+ if(ca){const g=i=>document.getElementById(i)?.value||'',inst=g('cx-inst').trim().slice(0,60),o=g('cx-o-y')&&g('cx-o-m')?g('cx-o-y')+'-'+g('cx-o-m'):'',c=g('cx-c-y')&&g('cx-c-m')?g('cx-c-y')+'-'+g('cx-c-m'):'';
+  if(!inst||!validPeriod(o)||!validPeriod(c)||c<o){notify('Completa institución, mes y año de apertura y de cierre (el cierre no puede ser anterior).');return}
+  (ST.cancelled=ST.cancelled||[]).push({id:uid(),inst,kind:g('cx-kind'),opened:o,closed:c,state:g('cx-state')});ST.declVersion++;auditLog('Agregó un producto cancelado: '+inst+' ('+o+' → '+c+').');saveStore();rebuildDB();render();notify('Producto cancelado agregado al historial.');return}
+ if(cd){ST.cancelled=(ST.cancelled||[]).filter(x=>x.id!==cd.dataset.cancelDel);ST.declVersion++;saveStore();rebuildDB();render();return}
+ return;
 });

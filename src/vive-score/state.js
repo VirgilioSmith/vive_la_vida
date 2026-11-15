@@ -3,7 +3,7 @@
    Se carga DESPUÉS de score.js (motor + vistas) y comparte su ámbito global. */
 const VS_START='2026-11';                       // inicio del historial observado: 15 de noviembre de 2026
 const MONTH_NAMES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const newStore=()=>({v:1,seeded:{},external:{tu:null},startedOn:VS_START,answers:null,answersLog:[],overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
+const newStore=()=>({v:1,seeded:{},external:{tu:null},startedOn:VS_START,answers:null,answersLog:[],overrides:{},observed:{},settings:null,cancelled:[],audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
 let ST=newStore(),PAYLOAD=null,qEditing=false,qStep=0,saveTimer=0,heightTimer=0,lastHeight=0;
 function restoreStore(x){return x&&x.v===1?{...newStore(),...x}:newStore()}
 function saveStore(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>VSHost.send('save',{store:ST}),250)}
@@ -83,11 +83,14 @@ function materialize(period,idxInList){
  const dc=declaredCounters(period,observedLate),ao=appOpenings(facts,period);
  // antigüedad: apertura registrada en la app o declarada, en mes y año
  const opened=[...cards,...loans,...(facts.unrated||[]).map(u=>({...u,opened:openedOf(u)}))].filter(x=>x.status!=='closed'&&validPeriod(x.opened)).map(x=>x.opened);
- const declaredFirst=validPeriod(A.first?.period)?A.first.period:'';
- const earliestApp=opened.length?opened.slice().sort()[0]:'';
+ // Productos cancelados (cerrados en la app o declarados en Configuración): cuentan para la antigüedad y el promedio de edad del historial, como los cerrados en buen estado de un buró. Los castigados no.
+ const appClosedOpened=[...cards,...loans,...(facts.unrated||[])].filter(x=>x.status==='closed'&&validPeriod(x.opened)).map(x=>x.opened);
+ const declCancelled=(ST.cancelled||[]).filter(x=>x.state!=='castigado'&&validPeriod(x.opened)&&x.opened<=period).map(x=>x.opened);
+ const declaredFirst=[validPeriod(A.first?.period)?A.first.period:'',...declCancelled].filter(Boolean).sort()[0]||'';
+ const allOpened=opened.concat(appClosedOpened),earliestApp=allOpened.length?allOpened.slice().sort()[0]:'';
  const oldest=[earliestApp,declaredFirst].filter(Boolean).sort()[0]||'';
  const historyMonths=oldest?Math.max(0,monthsFrom(oldest,period)):0;
- const ages=opened.map(o=>Math.max(0,monthsFrom(o,period)));
+ const ages=allOpened.concat(declCancelled).map(o=>Math.max(0,monthsFrom(o,period)));
  const avgEstimated=!ages.length&&historyMonths>0;
  const avgHistoryMonths=ages.length?Math.round(ages.reduce((a,v)=>a+v,0)/ages.length):historyMonths;
  const keys=Object.keys(ST.observed).sort(),recordMonths=Math.max(1,keys.indexOf(period)+1);
@@ -138,5 +141,18 @@ function rebuildDB(){
  DB.settings={...clone(CAP_DEFAULT),...(ST.settings||{})};DB.seals=ST.seals=Array.isArray(ST.seals)?ST.seals:[];DB.metadata={source:'datos reales de vive el hoy',startedOn:VS_START};
  idx=DB.months.length-1;editIndex=idx;
  if(!sim.cardId||!current().cards.some(c=>c.id===sim.cardId))sim.cardId=current().cards[0]?.id||'';
+ autoSeal();
+}
+/* Corte automático: cada mes se guarda solo una copia con huella SHA-256 del mes en curso; se actualiza mientras el mes siga abierto y, al cerrar, queda fijo. */
+let sealBusy=false;
+async function autoSeal(){
+ if(sealBusy||!DB.months.length)return;sealBusy=true;
+ try{
+  const s=DB.months[DB.months.length-1],e=evaluate(s);if(e.score===null)return;
+  const input=canonicalInput(s),cur=(DB.seals||[]).find(z=>z.period===s.period&&z.auto);if(cur&&cur.sourceText===input)return;
+  const stamp={id:cur?cur.id:'seal-'+Date.now()+'-'+Math.floor(Math.random()*10000),period:s.period,engine:ENGINE,at:new Date().toISOString(),points:clone(e.points),score:e.score,quality:qualityReport(s).reliability,sha256:await hashText(input),sourceText:input,auto:true};
+  DB.seals=ST.seals=(DB.seals||[]).filter(z=>!(z.period===s.period&&z.auto)).concat(stamp);saveStore();
+  const a=document.activeElement;if(!(a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)))render();
+ }catch(_){}finally{sealBusy=false}
 }
 const OTHER_TYPES={refinanciamiento:'Refinanciamiento',reestructuracion:'Reestructuración',consolidacion:'Consolidación',avance:'Avance de efectivo',sobrelimite:'Sobrelímite',abono:'Pago extraordinario a capital',suspension:'Suspensión',otro:'Otro acontecimiento relevante'};

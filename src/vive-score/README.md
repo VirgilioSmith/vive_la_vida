@@ -133,7 +133,7 @@ Todos están marcados con `VIVE_SCORE` (excepto los de datos de menú) y son mí
 
 **Apagar (reversible, sin tocar código de la app):** en `src/vive-score/flag.js` pon `window.VIVE_SCORE_EXPERIMENTAL=false;`. Desaparecen el ítem, la página y el puente.
 
-**Borrar solo los datos de VIVE SCORE:** *Configuración y antecedentes → Borrar los datos de VIVE SCORE*, o en la consola del navegador `localStorage.removeItem('vive-score:v1')`.
+**Borrar solo los datos de VIVE SCORE:** en la consola del navegador (la página ya no tiene botón de borrar) `localStorage.removeItem('vive-score:v1')`.
 
 **Retirar el módulo por completo:**
 1. `git revert <commit de implementación>` (o restaurar los archivos desde la rama `backup/pre-vive-score` (commit `55f3441`, anterior a la implementación)), o a mano:
@@ -159,3 +159,9 @@ El resto de la aplicación no depende de nada de esta carpeta.
 - **Historial de límites automático.** La app no guarda historial de límites; el módulo recuerda el último límite visto de cada tarjeta y moneda (`limitObs`). Si lo editas en vive el hoy, registra el cambio con fecha y hora exactas y lo cuenta desde ese mes y año. Un aumento se registra como *automático* (no resta); puedes marcarlo «Solicitado por mí» en Antecedentes. Una reducción se anota sin puntuar. La primera lectura es la línea base: no se inventa historia.
 - **Reserva automática (solo capacidad, nunca el score).** «Dinero guardado» = lo más bajo que tuvo cada cuenta (y el efectivo) durante los últimos 30 días, convertido a pesos; lo que sacas o gastas deja de contar. La reserva de planificación (10 % del ingreso, mínimo RD$5,000) se reduce según la cobertura sobre 3 meses de compromisos. Ya no hay campos manuales de DTI ni reserva; el DTI objetivo (35 %) es una referencia fija.
 - **Referencias consultadas.** Pesos FICO públicos: historial de pagos 35 %, montos adeudados 30 %, antigüedad 15 %, crédito nuevo 10 %, mezcla 10 % (los mismos de este modelo). VantageScore 4.0 (ficha oficial): historial 41 %, utilización 20 %, profundidad 20 %, crédito reciente 11 %, saldos 6 %, crédito disponible 2 %, con hasta 24 meses de datos de tendencia. No hay documentación pública verificable de la escala 459–848 de TransUnion RD ni de sus pesos, por lo que la simulación sigue marcada como orientativa.
+
+## Guardado automático y Centro de control corto
+
+- **Todo se guarda solo.** Respuestas, antecedentes, historial de límites, productos cancelados y observaciones mensuales se guardan al instante en el almacenamiento del navegador. Cada mes se genera solo un **corte** con huella SHA-256 que se actualiza mientras el mes siga abierto y queda fijo al cerrar. Ya no hay botones de exportar JSON/CSV, borrar, sellar ni «releer»; la lectura de vive el hoy es automática.
+- **Centro de control:** fila de indicadores, tarjeta de estado (calibrado/incompleto + advertencias) y cuatro secciones plegables: *Antecedentes y procedencia*, *Productos y cancelados*, *Cortes guardados* y *Auditoría y pruebas*.
+- **Productos cancelados:** los cerrados en vive el hoy se leen solos; los anteriores se agregan en *Productos y cancelados* (institución, tipo, mes/año de apertura y de cierre, estado final). Los cancelados en buen estado suman años a la antigüedad y a la edad promedio del historial; los castigados no suman. No restan puntos por sí mismos.

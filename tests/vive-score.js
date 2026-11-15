@@ -72,13 +72,13 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const adapterSrc = fs.readFileSync(path.join(ROOT, 'src/vive-score/adapter.js'), 'utf8');
   const before7 = await frameOf(p).evaluate(() => evaluate(current()).score);
   await p.evaluate(() => { const d = window.__T.dbg(); d.transactions.push({ id: 'sv-test-1', date: '2026-11-10', type: 'income', amount: 9000000, currency: 'DOP', accountId: d.accounts[0].id, category: 'Otros ingresos', note: 'prueba saldo' }); });
-  await go(p, 'score'); await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
+  await go(p, 'score'); await cc(p, 'productos'); await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(500);
   const after7 = await frameOf(p).evaluate(() => evaluate(current()).score);
   check(7, 'El score no usa cuentas de ahorro ni saldos bancarios', !/certificates|savings/.test(adapterSrc) && !('accounts' in payload) && Object.keys(payload.liquidity || {}).sort().join() === 'accounts,days,held30,now' && before7 === after7, `score ${before7} → ${after7} tras un depósito de RD$9,000,000`);
   /* 30 · reserva automática: solo cuenta lo que lleva ≥30 días; un depósito reciente no cuenta, uno antiguo sí; el score no cambia */
   const liqA = await frameOf(p).evaluate(() => PAYLOAD.liquidity);
   await p.evaluate(() => { const d = window.__T.dbg(); d.transactions.push({ id: 'sv-test-2', date: '2026-09-01', type: 'income', amount: 3000000, currency: 'DOP', accountId: d.accounts[0].id, category: 'Otros ingresos', note: 'prueba reserva antigua' }); window.__viveScoreBridge.rerender(); });
-  await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
+  await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(600);
   const liqB = await frameOf(p).evaluate(() => ({ f: window.parent.__T.dbg().accounts[0].currency === 'USD' ? PAYLOAD.fx : 1, l: PAYLOAD.liquidity, score: evaluate(current()).score, a: evaluate(current()).capacity }));
   check(30, 'Reserva automática: solo cuenta el dinero que lleva ≥30 días en cuentas y efectivo (un depósito de hace 5 días no suma; uno de hace más de 30 días sí) y nunca cambia el score', liqA && liqA.held30 < liqA.now && liqB.l.held30 - liqA.held30 === 3000000 * liqB.f && liqB.score === after7, JSON.stringify({ antes: liqA, despues: liqB.l, score: liqB.score, cobertura: liqB.a && Math.round((liqB.a.coverage || 0) * 100) }));
 
@@ -86,7 +86,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await cc(p, 'antecedentes');
   const prov = await ftext(p);
   const ageBefore = await frameOf(p).evaluate(() => current().ageSource);
-  await cc(p, 'configuracion');
+  await cc(p, 'productos');
   await frameOf(p).evaluate(() => { const c = document.querySelector('[data-evidence-checked]'); c.checked = true; c.dispatchEvent(new Event('change', { bubbles: true })); });
   await p.waitForTimeout(300);
   const ageAfter = await frameOf(p).evaluate(() => current().ageSource);
@@ -109,7 +109,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   /* 12 · ingresos no alteran el score */
   const capBefore = await frameOf(p).evaluate(() => evaluate(current()).capacity.income);
   await p.evaluate(() => { const d = window.__T.dbg(); d.incomeSchedules = [{ id: 'sv-inc', name: 'Salario prueba', kind: 'formal', active: true, nextDue: '2026-11-30', currency: 'DOP', grossMonthly: 150000, frequency: 'monthly', accountId: d.accounts[0].id, postingMode: 'manual' }]; });
-  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
+  await cc(p, 'productos'); await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(500);
   const inc = await frameOf(p).evaluate(() => { const e = evaluate(current()); return { score: e.score, income: e.capacity.income, newQuota: e.capacity.newQuota }; });
   check(12, 'Los ingresos no alteran directamente el score; solo la capacidad de endeudamiento', inc.score === after7 && inc.income > capBefore, `score ${after7} → ${inc.score}; ingreso reconocido ${Math.round(capBefore)} → ${Math.round(inc.income)}`);
 
@@ -141,7 +141,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
 
   /* 22 · créditos recientes: ventanas 0–6 / 7–12 meses, tarjetas sin límite, la fecha de «Editar» manda */
   await p.evaluate(() => { const d = window.__T.dbg(); d.cards[0].name = 'BHD Visa'; d.cards[0].acquiredOn = '2026-09'; d.cards[1].name = 'Qik Pro'; d.cards[1].acquiredOn = '2026-05'; d.loans[0].acquiredOn = '2025-11'; const extra = JSON.parse(JSON.stringify(d.cards[0])); Object.assign(extra, { id: 'nuevo-sv', name: 'Tarjeta nueva', acquiredOn: '2026-10', limitDOP: 0, limitUSD: 0 }); Object.keys(extra).filter(k => /^opening|overdraft/.test(k)).forEach(k => { extra[k] = 0; }); d.cards.push(extra); });
-  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
+  await cc(p, 'productos'); await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(600);
   await frameOf(p).evaluate(() => { const id = current().cards.find(c => /BHD/.test(c.name)).productId; setOverride(id, { opened: '2020-01' }); rebuildDB(); render(); });
   await fclick(p, '[data-tab="detail"]');
   const rc = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s); return { n06: s.new0to6, n712: s.new7to12, list: s.products.map(x => x.name + ':' + x.window + ':' + x.source).join(' | '), text: document.getElementById('view').innerText, part: e.parts.new[0].points, score: e.score }; });
@@ -150,16 +150,16 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const sc23 = await frameOf(p).evaluate(() => evaluate(current()).score);
   /* 23 · ingresos dinámicos: nómina quincenal en base mensual, bruto→neto, adicionales recurrentes */
   await p.evaluate(() => { const d = window.__T.dbg(), acc = d.accounts[0].id; d.incomeSchedules = [{ id: 'sv-q', name: 'Salario quincenal', kind: 'formal', active: true, nextDue: '2026-11-30', currency: 'DOP', grossMonthly: 150000, frequency: 'semi_monthly', accountId: acc, postingMode: 'manual' }]; for (const m of ['2026-06', '2026-08', '2026-09', '2026-10']) d.transactions.push({ id: 'bx-' + m, type: 'income', date: m + '-20', amount: 20000, currency: 'DOP', accountId: acc, incomeScheduleId: 'sv-q', laborExtra: true, laborExtraKind: 'bonus', category: 'Salario y nómina', note: 'bono' }); d.transactions.push({ id: 'rb-1', type: 'income', date: '2026-10-21', amount: 50000, currency: 'DOP', accountId: acc, incomeScheduleId: 'sv-q', laborExtra: true, laborExtraKind: 'reimbursement', category: 'Reembolsos', note: 'reembolso' }); });
-  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
+  await cc(p, 'productos'); await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(600);
   await fclick(p, '[data-tab="detail"]');
   const inc2 = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s), br = window.parent.__viveScoreBridge, sch = window.parent.__T.dbg().incomeSchedules[0]; const per = br.payroll(sch, '2026-11-30'), mon = br.payroll({ ...sch, frequency: 'monthly' }, '2026-11-30'); return { net: Math.round(s.payroll.net), perPayment: Math.round(per.net), monthlyRef: Math.round(mon.net), extra: Math.round(s.otherFormal), gross: Math.round(s.payroll.gross), parts: [s.payroll.afp, s.payroll.sfs, s.payroll.isr].map(Math.round), text: document.getElementById('view').innerText, score: e.score }; });
   check(23, 'Ingresos dinámicos: la nómina quincenal se mide en base mensual (2 pagos), muestra bruto→AFP/SFS/ISR→neto y reconoce adicionales recurrentes sin reembolsos', Math.abs(inc2.net - inc2.monthlyRef) <= 2 && Math.abs(inc2.net - 2 * inc2.perPayment) <= 2 && inc2.extra === 13333 && inc2.gross === 150000 && inc2.parts.every(v => v > 0) && /del bruto al neto/i.test(inc2.text) && /AFP/.test(inc2.text) && /ISR/.test(inc2.text) && inc2.score === sc23, JSON.stringify({ netMensual: inc2.net, pagoQuincenal: inc2.perPayment, referenciaMensual: inc2.monthlyRef, adicionalesRecurrentes: inc2.extra, bruto: inc2.gross, afpSfsIsr: inc2.parts }));
 
   /* 20 · entidades no financieras: no van para nada (ni score, ni capacidad, ni pantallas) */
-  await cc(p, 'configuracion');
+  await cc(p, 'productos');
   const nb0 = await frameOf(p).evaluate(() => { const c = evaluate(current()); return { loans: current().loans.length, debt: Math.round(c.capacity.debt), due: Math.round(c.capacity.loanDues) }; });
   await p.evaluate(() => { const d = window.__T.dbg(); const l = d.loans[0]; const bk = d.banks.find(b => b.id === l.bankId); bk.kind = 'Telefonía'; });
-  await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
+  await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(500);
   await fclick(p, '[data-tab="detail"]');
   const nb1 = await frameOf(p).evaluate(() => { const c = evaluate(current()), s = current(); return { loans: s.loans.length, payload: window.__nbPayload, debt: Math.round(c.capacity.debt), due: Math.round(c.capacity.loanDues), text: document.getElementById('view').innerText, amort: c.parts.owed.find(x => x.id === 'o_installments').points }; });
   const nbLoanName = await p.evaluate(() => window.__T.dbg().loans[0].name);
@@ -173,26 +173,26 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const secs = {}; const headings = []; const features = {};
   await fclick(p, '[data-tab="control"]');
   const chips = await frameOf(p).evaluate(() => [...document.querySelectorAll('details.ccdet > summary')].map(b => b.textContent.trim()));
-  for (const k of ['observatorio', 'historial', 'auditoria', 'antecedentes', 'configuracion']) {
+  for (const k of ['antecedentes', 'productos', 'cortes', 'auditoria']) {
     await cc(p, k);
     secs[k] = await frameOf(p).evaluate(() => ({ h: [...document.querySelectorAll('#view h2, #view .ccdet > summary')].map(e => e.textContent.trim()), len: document.getElementById('view').innerText.length, sel: document.querySelectorAll('[data-evidence-source]').length, chk: document.querySelectorAll('[data-evidence-checked]').length, seal: !!document.getElementById('sealMonth'), audit: !!document.getElementById('downloadAudit'), edit: !!document.querySelector('[data-q-act="edit"]'), json: !!document.getElementById('downloadJson'), csv: !!document.getElementById('downloadCSV'), reset: !!document.getElementById('vsReset'), refresh: !!document.querySelector('[data-refresh-data]'), ov: document.querySelectorAll('[data-ov]').length }));
     if (!headings.length) headings.push(...secs[k].h.filter(t => t !== 'Centro de control'));
   }
   const dupHeadings = headings.filter((t, i) => headings.indexOf(t) !== i);
   const evidenceTotal = Object.values(secs).reduce((a, x) => a + x.sel, 0);
-  const aliasOk = await frameOf(p).evaluate(() => { tab = 'observatory'; render(); const a = ccOpen.observatorio && tab === 'control'; tab = 'audit'; render(); const b = ccOpen.auditoria; tab = 'capacity'; render(); const c = tab === 'detail'; tab = 'summary'; render(); return a && b && c; });
+  const aliasOk = await frameOf(p).evaluate(() => { tab = 'observatory'; render(); const a = ccOpen.antecedentes && tab === 'control'; tab = 'audit'; render(); const b = ccOpen.auditoria; tab = 'capacity'; render(); const c = tab === 'detail'; tab = 'summary'; render(); return a && b && c; });
   const otherPages = []; for (const t of ['summary', 'evolution', 'detail', 'matrix', 'patterns', 'transunion', 'method']) { await fclick(p, '[data-tab="' + t + '"]'); otherPages.push((await ftext(p)).length > 300); }
   const bgW = await p.evaluate(async () => { const c = el => getComputedStyle(el); const sl = document.querySelector('[data-vs-slot]'); const w = c(document.body).backgroundImage; return { slot: c(sl).backgroundColor, gradient: /gradient/.test(w), body: c(document.body).backgroundColor }; });
   check('fondo', 'La página Score conserva el fondo de las demás vistas (el contenedor del marco es transparente y el degradado de la app se ve)', bgW.slot === 'rgba(0, 0, 0, 0)' && bgW.gradient, JSON.stringify(bgW));
-  check(24, 'Centro de control reúne Observatorio, Historial y evidencias, Auditoría, Antecedentes y Configuración; las demás páginas siguen; sin repetidos', JSON.stringify(tabsNow) === JSON.stringify(expectedTabs) && JSON.stringify(chips) === JSON.stringify(['Observatorio', 'Historial y evidencias', 'Auditoría', 'Antecedentes', 'Configuración']) && Object.values(secs).every(x => x.len > 300) && dupHeadings.length === 0 && secs.configuracion.sel >= 1 && secs.historial.seal && secs.auditoria.audit && secs.antecedentes.edit && secs.configuracion.json && secs.configuracion.csv && secs.configuracion.reset && secs.configuracion.refresh && secs.configuracion.ov >= 2 && aliasOk && otherPages.every(Boolean), JSON.stringify({ pestanas: tabsNow.length, apartados: chips.length, repetidos: dupHeadings, procedenciaEnTotal: evidenceTotal }));
+  check(24, 'Centro de control corto: indicadores, estado y 4 secciones plegables (Antecedentes, Productos y cancelados, Cortes guardados, Auditoría); sin botones de exportar, borrar, sellar ni releer; las demás páginas siguen; sin repetidos', JSON.stringify(tabsNow) === JSON.stringify(expectedTabs) && JSON.stringify(chips) === JSON.stringify(['Antecedentes y procedencia', 'Productos y cancelados', 'Cortes guardados', 'Auditoría y pruebas']) && Object.values(secs).every(x => x.len > 300) && dupHeadings.length === 0 && secs.antecedentes.edit && secs.auditoria.audit && secs.productos.ov >= 2 && Object.values(secs).every(x => !x.seal && !x.json && !x.csv && !x.reset && !x.refresh) && aliasOk && otherPages.every(Boolean), JSON.stringify({ pestanas: tabsNow.length, apartados: chips.length, repetidos: dupHeadings }));
 
   /* 25 · independencia: leer → analizar → calcular → mostrar, sin modificar datos originales */
   const orig = () => p.evaluate(() => { const d = window.__T.dbg(); return JSON.stringify(['cards', 'loans', 'transactions', 'incomeSchedules', 'recurring', 'accounts', 'banks', 'categories'].map(k => d[k])); });
   const origA = await orig();
   for (const t of ['summary', 'evolution', 'detail', 'matrix', 'patterns', 'transunion', 'method', 'control']) await fclick(p, '[data-tab="' + t + '"]');
-  for (const k of ['observatorio', 'historial', 'auditoria', 'antecedentes', 'configuracion']) await cc(p, k);
+  for (const k of ['antecedentes', 'productos', 'cortes', 'auditoria']) await cc(p, k);
   await cc(p, 'antecedentes'); await fclick(p, '[data-q-act="edit"]'); await frameOf(p).evaluate(() => { qStep = 7; render(); }); await fclick(p, '[data-q-act="finish"]');
-  await frameOf(p).evaluate(async () => { await sealCurrent(); });
+  await frameOf(p).evaluate(async () => { await autoSeal(); });
   await fclick(p, '[data-tab="transunion"]'); await fchange(p, '#tuObserved', '700');
   const origB = await orig();
   const sealsKept = await frameOf(p).evaluate(() => ST.seals.length);
@@ -210,7 +210,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await fclick(p, '[data-tab="detail"]');
   const cap0 = await frameOf(p).evaluate(() => { const e = evaluate(current()), sp = current().spending || {}; return { fixed: Math.round(e.capacity.cashFixed), score: e.score, ess: Math.round(sp.essentialMonthly || 0), vari: Math.round(sp.variableMonthly || 0), cash: Math.round(sp.cashMonthly || 0), bank: Math.round(sp.bankMonthly || 0), used: sp.monthsUsed || 0 }; });
   await p.evaluate(() => { const d = window.__T.dbg(); const isCash = a => a.kind === 'cash' || /efectivo/i.test(a.name); const bank = d.accounts.find(a => !isCash(a)), cashAcc = d.accounts.find(isCash); const card = d.cards[0], loan = d.loans[0]; let n = 0; const add = (o) => d.transactions.push({ id: 'sp-' + (n++), currency: 'DOP', ...o }); for (const m of ['2026-08', '2026-09', '2026-10']) { add({ type: 'expense', date: m + '-05', amount: 10000, accountId: cashAcc.id, category: 'Alimentación' }); add({ type: 'expense', date: m + '-06', amount: 25000, accountId: bank.id, category: 'Vivienda' }); add({ type: 'expense', date: m + '-07', amount: 4000, accountId: bank.id, category: 'Entretenimiento' }); add({ type: 'card_payment', date: m + '-08', amount: 50000, accountId: bank.id, cardId: card.id }); add({ type: 'transfer', date: m + '-09', amount: 100000, accountId: bank.id, toAccountId: cashAcc.id }); add({ type: 'loan_payment', date: m + '-10', amount: 8000, accountId: bank.id, loanId: loan.id }); add({ type: 'expense', date: m + '-11', amount: 800, accountId: bank.id, category: 'Servicios básicos', recurringId: 'rec-x' }); add({ type: 'card_charge', date: m + '-12', amount: 3000, cardId: card.id, category: 'Compras personales' }); add({ type: 'expense', date: m + '-13', amount: 700, accountId: bank.id, category: 'Deudas e intereses' }); } });
-  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
+  await cc(p, 'productos'); await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(600);
   await fclick(p, '[data-tab="detail"]');
   const sp = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s), sp = s.spending; return { ess: Math.round(sp.essentialMonthly), vari: Math.round(sp.variableMonthly), cash: Math.round(sp.cashMonthly), bank: Math.round(sp.bankMonthly), used: sp.monthsUsed, exp: s.expenses.filter(x => x.auto).map(x => x.name + ':' + Math.round(x.amount)).sort().join(' | '), fixed: Math.round(e.capacity.cashFixed), score: e.score, text: document.getElementById('view').innerText, excl: Object.keys(sp.excluded).filter(k => sp.excluded[k] > 0).sort().join(',') }; });
   check(27, 'Destino del dinero: separa efectivo y transferencia, esencial y variable, sin contar pagos de tarjeta/préstamo, transferencias propias, recurrentes ni intereses; no usa ahorros', sp.ess - cap0.ess === 35000 && sp.vari - cap0.vari === 4000 && sp.cash - cap0.cash === 10000 && sp.bank - cap0.bank === 29000 && sp.used === 3 && /Alimentación \(efectivo y transferencia\):/.test(sp.exp) && /Vivienda \(efectivo y transferencia\):/.test(sp.exp) && !/Entretenimiento/.test(sp.exp) && sp.fixed - cap0.fixed === 35000 && sp.score === cap0.score && /Destino de tu dinero/.test(sp.text) && /no usa saldos ni ahorros/.test(sp.text) && sp.excl === 'cardCharges,cardPayments,debtInterest,loanPayments,recurring,transfers', JSON.stringify({ sumaEsencial: sp.ess - cap0.ess, sumaVariable: sp.vari - cap0.vari, sumaEfectivo: sp.cash - cap0.cash, sumaTransferencia: sp.bank - cap0.bank, descuentaDelMargen: sp.fixed - cap0.fixed, fuera: sp.excl }));
@@ -226,13 +226,25 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await go(p, 'score'); await p.waitForTimeout(800);
   const lim0 = await frameOf(p).evaluate(() => { const e = evaluate(current()); return { score: e.score, req: current().limitReq0to6, auto: current().limitAuto, ev: (ST.answers.limit.events || []).filter(x => x.detected).length, obs: Object.keys(ST.limitObs || {}).length }; });
   await p.evaluate(() => { const c = window.__T.dbg().cards.find(x => x.limitDOP > 0 && !/popular|cibao/i.test(x.name + (x.bank || ''))) || window.__T.dbg().cards.find(x => x.limitDOP > 0); window.__lim = { id: c.id, old: c.limitDOP }; c.limitDOP = c.limitDOP + 100000; });
-  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(700);
+  await cc(p, 'productos'); await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(700);
   const lim1 = await frameOf(p).evaluate(() => { const e = evaluate(current()), d = (ST.answers.limit.events || []).filter(x => x.detected); return { score: e.score, req: current().limitReq0to6, auto: current().limitAuto, n: d.length, last: d[d.length - 1] || null, hasAt: !!(d[d.length - 1] && d[d.length - 1].at) }; });
   await cc(p, 'antecedentes');
   await fclick(p, '[data-limit-kind]'); await p.waitForTimeout(300);
-  const lim2 = await frameOf(p).evaluate(() => ({ req: current().limitReq0to6, score: evaluate(current()).score, text: document.getElementById('view').innerText.includes('Cambios de límite de tus tarjetas') }));
+  const lim2 = await frameOf(p).evaluate(() => ({ req: current().limitReq0to6, score: evaluate(current()).score, text: /historial de límites/i.test(document.getElementById('view').innerText) }));
   await p.evaluate(() => { const c = window.__T.dbg().cards.find(x => x.id === window.__lim.id); c.limitDOP = window.__lim.old; });
   check(29, 'Historial de límites automático: el cambio de límite editado en la app se registra solo con fecha y hora, no resta puntos mientras sea automático y sí al marcarlo como solicitado', lim0.obs >= 1 && lim1.n === lim0.ev + 1 && lim1.hasAt && lim1.last.next - lim1.last.prev === 100000 && lim1.last.period === lim1.last.at.slice(0, 7) && lim1.score === lim0.score && lim1.auto === lim0.auto + 1 && lim2.req === lim0.req + 1 && lim2.score <= lim1.score && lim2.text, JSON.stringify({ lim0, lim1: { ...lim1, last: lim1.last && { prev: lim1.last.prev, next: lim1.last.next, period: lim1.last.period } }, lim2 }));
+
+  /* 31 · productos cancelados: suman años al historial y a la edad promedio; los castigados no; no tocan los datos de la app */
+  await go(p, 'score'); await cc(p, 'productos');
+  const cx0 = await frameOf(p).evaluate(() => { const c = current(); return { hist: c.historyMonths, avg: c.avgHistoryMonths, oldest: c.oldestPeriod, n: (ST.cancelled || []).length }; });
+  const origC0 = await p.evaluate(() => JSON.stringify(['cards', 'loans', 'accounts'].map(k => window.__T.dbg()[k])));
+  const addCancelled = (state, y) => frameOf(p).evaluate(([state, y]) => { const set = (id, v) => { document.getElementById(id).value = v; }; set('cx-inst', 'Banco Antiguo'); set('cx-kind', 'card'); set('cx-o-m', '03'); set('cx-o-y', String(y)); set('cx-c-m', '08'); set('cx-c-y', String(y + 3)); set('cx-state', state); document.querySelector('[data-cancel-add]').click(); }, [state, y]);
+  await addCancelled('castigado', 2008); await p.waitForTimeout(300);
+  const cx1 = await frameOf(p).evaluate(() => { const c = current(); return { hist: c.historyMonths, n: (ST.cancelled || []).length }; });
+  await cc(p, 'productos'); await addCancelled('cancelado sin saldo', 2010); await p.waitForTimeout(300);
+  const cx2 = await frameOf(p).evaluate(() => { const c = current(), e = evaluate(c); return { hist: c.historyMonths, avg: c.avgHistoryMonths, oldest: c.oldestPeriod, n: (ST.cancelled || []).length, score: e.score, text: document.getElementById('view').innerText.includes('Banco Antiguo') }; });
+  const origC1 = await p.evaluate(() => JSON.stringify(['cards', 'loans', 'accounts'].map(k => window.__T.dbg()[k])));
+  check(31, 'Productos cancelados: un cancelado en buen estado alarga el historial y la edad promedio; uno castigado no suma; los datos de la app no cambian', cx1.n === cx0.n + 1 && cx1.hist === cx0.hist && cx2.n === cx0.n + 2 && cx2.oldest === '2010-03' && cx2.hist > cx0.hist && cx2.avg >= cx0.avg && cx2.text && origC0 === origC1, JSON.stringify({ antes: cx0, castigado: cx1, bueno: cx2 }));
 
   await ctx.close();
   process.env.TOUCH = '1';
