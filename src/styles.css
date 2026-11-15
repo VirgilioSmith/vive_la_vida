@@ -36788,7 +36788,7 @@ body.theme-black #v402-popover,body.theme-dark #v402-popover{background:#101010;
 #app .v410-explore-sec{margin:0 0 18px;background:rgba(255,255,255,.74);border:1px solid rgba(255,255,255,.91);box-shadow:0 12px 37px #36568e0d}
 #app .v410-explore-sec h2{line-height:1.22;letter-spacing:-.7px}
 /* Suscripciones: referencia funcional n.º 1, identidad visual de la aplicación. */
-#app .v410-subs{width:100%;max-width:1390px;margin-inline:auto;padding-bottom:25px}
+#app .v410-subs{width:100%;max-width:none;margin-inline:auto;padding-bottom:25px}
 #app .v410-subs-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:2px 0 20px}
 #app .v410-subs-head h1{font-size:clamp(26px,3.2vw,41px);letter-spacing:-1.1px;margin:6px 0 5px}
 #app .v410-subs-head p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}
@@ -55676,10 +55676,11 @@ html body:is(.theme-black,.theme-dark) #app#app #page :is(.inner-menu-tabs,.v55-
  html body #app#app #page .inner-menu-tabs svg{width:13px!important;height:13px!important}
 }
 @media(min-width:821px){
- html body #app#app #page>:is(.v134-patrimony,.v410-subs),html body #app#app #page .inner-view>.v55-shell,html body #app#app #page .inner-view>:is(.v248-finance,.v248-rest){max-width:1390px;margin-inline:auto;width:100%;box-sizing:border-box}
+ /* Mismo ancho que Analítica avanzada y el resto de vistas (antes se limitaban a 1390px y quedaban más pequeñas y centradas). */
+ html body #app#app #page>:is(.v134-patrimony,.v410-subs),html body #app#app #page .inner-view>.v55-shell,html body #app#app #page .inner-view>:is(.v248-finance,.v248-rest){max-width:none;margin-inline:0;width:100%;box-sizing:border-box}
 }
 @media(min-width:821px){
- html body.world-income #app#app #page .v55-shell{max-width:1390px!important;margin-inline:auto!important;width:100%!important}
+ html body.world-income #app#app #page .v55-shell{max-width:none!important;margin-inline:0!important;width:100%!important}
 }
 @media(max-width:820px){html body #app#app #page input[type="month"]{font-size:13px!important;padding:6px 8px!important}}
 
