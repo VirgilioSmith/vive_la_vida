@@ -9734,9 +9734,9 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
    build(f){
     const lim=v1110Sec('layers','Límites de crédito',v1110Row(v1110Field(f,'limitDOP','Límite en RD$',{prefix:'RD$'}),v1110Field(f,'limitUSD','Límite en US$',{prefix:'US$'})));
     const tas=v1110Sec('percent','Tasas anuales',v1110Row(v1110Field(f,'aprDOP','Tasa anual RD$',{suffix:'%'}),v1110Field(f,'aprUSD','Tasa anual US$',{suffix:'%'})));
-    const cic=v1110Sec('calendar','Ciclo y cargos',v1110Row(v1110Day(f,'cutDay','Día de corte'),v1110Day(f,'dueDay','Día de pago')),v1110Field(f,'advanceFeePct','Comisión por avance',{suffix:'%'}),v1110Row(v1110Field(f,'annualFeeAmount','Anualidad'),v1110Field(f,'annualFeeCurrency','Moneda de la anualidad',{cls:'v1110-nolab'})),v1110Node('Una anualidad por tarjeta','small','v1110-hint'));
+    const cic=v1110Sec('calendar','Ciclo y cargos',v1110Row(v1110Day(f,'cutDay','Día de corte'),v1110Day(f,'dueDay','Día de pago')),v1110Field(f,'advanceFeePct','Comisión por avance',{suffix:'%'}),v1110Row(v1110Field(f,'annualFeeAmount','Anualidad'),(()=>{const c=v1110El(f,'annualFeeCurrency');if(c)[...c.options].forEach(o=>{o.textContent=o.value==='USD'?'USD':'DOP'});return v1110Field(f,'annualFeeCurrency','Moneda',{cls:'v1110-nolab'})})()),v1110Node('Una anualidad por tarjeta','small','v1110-hint'));
     const s1=[v1110Field(f,'name','Nombre de la tarjeta'),v1110BankPicker(f,'bankId','Banco emisor'),v1110Row(v1110Field(f,'network','Red de pago'),v1110Field(f,'tier','Categoría de tarjeta')),lim,tas,cic];
-    const more=f.querySelector('#cardExtraDetails');if(more){more.className='v1110-more';more.id='cardExtraDetails';more.querySelector('summary').innerHTML='<span>Más opciones de la tarjeta</span><small>Deudas iniciales, sobregiro y datos adicionales</small>';s1.push(more)}
+    const more=f.querySelector('#cardExtraDetails');if(more){more.className='v1110-more';more.id='cardExtraDetails';more.querySelector('summary').innerHTML='<span>Más opciones</span><small>Opcional</small>';s1.push(more)}
     return [s1];
    },
    confirm(f){const b=v1110BankObj(f),net=v1110Txt(f,'network'),nk=v1110Val(f,'network');
@@ -9754,7 +9754,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
     if(scope){scope.querySelector(':scope>label')?.remove();scope.querySelector(':scope>small')?.remove();scope.prepend(Object.assign(document.createElement('span'),{className:'v1110-lab',textContent:'Perfil de uso'}));
      scope.classList.add('v1110-field');const t={personal:['Personal','Finanzas propias'],negocio:['Negocio','Emprendimiento']};
      scope.querySelectorAll('.v42-scope-choices label').forEach(l=>{const i=l.querySelector('input');const [a,b]=t[i.value]||[i.value,''];[...l.childNodes].forEach(n=>{if(n!==i)n.remove()});l.append(Object.assign(document.createElement('span'),{className:'v1110-rc-t',innerHTML:`<i class="v1110-dot"></i><strong>${a}</strong><small>${b}</small>`}))})}
-    const up=f.querySelector('.v28-bank-upload');if(up){up.classList.add('v1110-upload');up.insertAdjacentHTML('afterbegin','<span class="v1110-lab">Identidad visual</span>')}
+    const up=f.querySelector('.v28-bank-upload');if(up){up.classList.add('v1110-upload');up.insertAdjacentHTML('afterbegin','<span class="v1110-lab">Identidad visual</span>')}if(up){const ub=up.querySelector('[data-act=bankLogoChoose]');if(ub)ub.innerHTML=`${v1110Ico('upload')}<b>Subir logo</b><span>· Opcional</span>`}
     const col=f.querySelector('.v42-color-field');if(col){col.classList.add('v1110-field');const l=col.querySelector(':scope>label');if(l){l.className='v1110-lab';l.textContent='Color de la institución'}}
     const prev=v1110Node('','div','v1110-field v1110-prevbox');prev.innerHTML='<span class="v1110-lab">Vista previa</span><div class="v1110-hero v1110-prev"></div>';
     const s1=[v1110Field(f,'name','Nombre de la institución'),v1110Field(f,'kind','Tipo de institución'),scope,up,col,prev];
