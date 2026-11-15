@@ -76,6 +76,25 @@ const afirmar = (n, c, d = '') => { if (c) ok++; else fallos.push(n + (d ? ' →
   afirmar('USD con tasa guardada usa esa tasa', fxr[0] === 5800 && fxr[1] === 5800 && fxr[4] === 5800, JSON.stringify(fxr));
   afirmar('USD sin tasa guardada usa la vigente', fxr[2] === 6000, JSON.stringify(fxr));
   afirmar('DOP no se convierte', fxr[3] === 100, JSON.stringify(fxr));
+  // 9) tarjeta: cambiar el pago mínimo no altera los cortes anteriores
+  const tj = await p.evaluate(() => { const d = window.__T.dbg(), c = d.cards.find((x) => d.transactions.some((t) => t.cardId === x.id)); return c ? { id: c.id, minPct: c.minPct } : null; });
+  if (tj) {
+    const leer = () => p.evaluate((id) => { const d = window.__T.dbg(), c = d.cards.find((x) => x.id === id); const L = window.__T.fn.v169CardCycleLedger(c, 'DOP'); return L.cycles.map((x) => [x.cutDate, x.amount, x.minimum]); }, tj.id);
+    const antesC = await leer();
+    await p.evaluate(([a, id]) => { document.getElementById('modal-root').innerHTML = ''; const x = document.createElement('button'); x.dataset.act = a; x.dataset.id = id; document.body.appendChild(x); x.click(); x.remove(); }, ['editCard', tj.id]);
+    await p.waitForTimeout(900);
+    await p.evaluate(() => { const f = document.querySelector('#modal-root form'); for (const [n, v] of [['minPct', '9'], ['minFloor', '500']]) { const e = f.elements.namedItem(n); e.value = v; e.dispatchEvent(new Event('input', { bubbles: true })); } });
+    for (let i = 0; i < 2; i++) { await p.evaluate(() => document.querySelector('#modal-root form .v1110-next:not([hidden])')?.click()); await p.waitForTimeout(200); }
+    await p.evaluate(() => document.querySelector('#modal-root form button[type=submit]:not([hidden])')?.click());
+    await p.waitForTimeout(800);
+    const vers = await p.evaluate((id) => window.__T.dbg().ruleVersions.filter((v) => v.sujeto === id && v.clave === 'tarjeta.pago_minimo').map((v) => ({ ...v })), tj.id);
+    afirmar('cambiar el mínimo agregó dos vigencias', vers.length === 2, String(vers.length));
+    const despuesC = await leer();
+    const hoyT = hoyApp;
+    const cerrados = antesC.filter((c) => c[0] < hoyT && c[2] > 0);
+    afirmar('hay cortes anteriores para comparar', cerrados.length > 0, String(antesC.length));
+    for (const c of cerrados) { const d2 = despuesC.find((x) => x[0] === c[0]); afirmar('el mínimo del corte ' + c[0] + ' no cambia', d2 && d2[2] === c[2], JSON.stringify([c, d2])); }
+  }
   afirmar('sin errores de consola', errs.length === 0, errs.join(' | '));
   await b.close();
   console.log(`app: ${ok} correctas, ${fallos.length} fallan`); fallos.forEach((f) => console.log(' -', f));
