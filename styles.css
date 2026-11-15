@@ -55571,3 +55571,19 @@ html body #app#app .v985-matrix .v985-title h2{font-size:clamp(24px,7vw,32px)}
 /* V1121 · Títulos de la matriz con la tipografía de los demás widgets (SF Pro, peso 850) y color del acento. */
 html body #app#app .v985-matrix .v985-grid .v985-card .v985-head h3,
 html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-grid .v985-card .v985-head h3{font-size:clamp(14px,4vw,17px)!important;font-weight:850!important;letter-spacing:-.03em!important;line-height:1.1}
+
+/* V1122 · Matriz Jobs recupera los colores de cada mirada (verde, azul, rojo, morado) como distintivo; el resto de detalles sigue el acento. */
+html body #app#app .v985-matrix .v985-green,html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-green{--t:#16a05a}
+html body #app#app .v985-matrix .v985-blue,html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-blue{--t:#2f6fe0}
+html body #app#app .v985-matrix .v985-orange,html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-orange{--t:#e5243f}
+html body #app#app .v985-matrix .v985-purple,html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-purple{--t:#8f3be0}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-green{--t:#3ddc84}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-blue{--t:#6aa2ff}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-orange{--t:#ff6b81}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-purple{--t:#c08bff}
+/* Actividad reciente y Entre personas: iconos y píldoras con el acento */
+html body #app#app [data-v105-widget="activity"] .v273-widget-symbol{color:var(--v424-accent-strong)!important;background:color-mix(in srgb,var(--v424-accent-strong) 12%,transparent)!important}
+html body #app#app [data-v105-widget="activity"] .v273-widget-symbol svg{color:var(--v424-accent-strong)!important;stroke:var(--v424-accent-strong)!important}
+html body #app#app :is([data-v105-widget="people"] .vive-mobile-view-all,.vive-mobile-view-all[data-id="personal"],.ff-outline-pill[data-id="personal"]){color:var(--v424-accent-strong)!important;background:color-mix(in srgb,var(--v424-accent-strong) 9%,#fff)!important;border-color:color-mix(in srgb,var(--v424-accent-strong) 26%,transparent)!important}
+html body #app#app :is([data-v105-widget="people"] .vive-mobile-view-all,.vive-mobile-view-all[data-id="personal"]) svg{color:var(--v424-accent-strong)!important;stroke:var(--v424-accent-strong)!important}
+html body:is(.theme-black,.theme-dark) #app#app :is([data-v105-widget="people"] .vive-mobile-view-all,.vive-mobile-view-all[data-id="personal"],.ff-outline-pill[data-id="personal"]){background:color-mix(in srgb,var(--v424-accent-strong) 16%,#101116)!important}
