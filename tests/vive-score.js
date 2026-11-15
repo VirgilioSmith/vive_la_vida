@@ -105,16 +105,6 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const inc = await frameOf(p).evaluate(() => { const e = evaluate(current()); return { score: e.score, income: e.capacity.income, newQuota: e.capacity.newQuota }; });
   check(12, 'Los ingresos no alteran directamente el score; solo la capacidad de endeudamiento', inc.score === after7 && inc.income > capBefore, `score ${after7} → ${inc.score}; ingreso reconocido ${Math.round(capBefore)} → ${Math.round(inc.income)}`);
 
-  /* 13 · simulaciones sin tocar datos reales */
-  const snapDb = await p.evaluate(() => JSON.stringify(window.__T.dbg()));
-  const snapSt = await frameOf(p).evaluate(() => JSON.stringify(ST));
-  await fclick(p, '[data-tab="simulator"]');
-  await fchange(p, '#simPayment', '40000'); await fchange(p, '#simLoan', '250000'); await fchange(p, '#simLimit', '50000');
-  const simOut = await ftext(p);
-  const snapDb2 = await p.evaluate(() => JSON.stringify(window.__T.dbg()));
-  const snapSt2 = await frameOf(p).evaluate(() => JSON.stringify(ST));
-  check(13, 'Las simulaciones no modifican datos reales', snapDb === snapDb2 && snapSt === snapSt2 && /Simulado/.test(simOut), 'base y almacenamiento idénticos');
-
   /* 14 · texto explicativo coincide con el cálculo */
   await fclick(p, '[data-tab="summary"]');
   const sum = await frameOf(p).evaluate(() => { const c = evaluate(current()); return { text: document.getElementById('view').innerText, score: c.score, util: pct(c.util) }; });
@@ -166,7 +156,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const nb1 = await frameOf(p).evaluate(() => { const c = evaluate(current()), s = current(); return { loans: s.loans.length, payload: window.__nbPayload, debt: Math.round(c.capacity.debt), due: Math.round(c.capacity.loanDues), text: document.getElementById('view').innerText, amort: c.parts.owed.find(x => x.id === 'o_installments').points }; });
   const nbLoanName = await p.evaluate(() => window.__T.dbg().loans[0].name);
   const nbPay = await p.evaluate(() => window.ViveScoreAdapter.read());
-  const nbAll = []; for (const t of ['summary', 'detail', 'capacity', 'simulator', 'data']) { await fclick(p, '[data-tab="' + t + '"]'); nbAll.push(await ftext(p)); }
+  const nbAll = []; for (const t of ['summary', 'detail', 'capacity', 'transunion', 'data']) { await fclick(p, '[data-tab="' + t + '"]'); nbAll.push(await ftext(p)); }
   check(20, 'Las entidades no financieras no van para nada: ni score, ni capacidad, ni pantallas, ni lectura del adaptador', nb0.loans === 1 && nb1.loans === 0 && nbPay.loans.length === 0 && nb1.debt < nb0.debt && nb1.due === 0 && nb1.amort === 26 && !/Fuera del score/.test(nb1.text) && nbAll.every(t => !t.includes(nbLoanName)), JSON.stringify({ antes: nb0, despues: { loans: nb1.loans, debt: nb1.debt, due: nb1.due }, nombreAusenteEnPantallas: nbAll.every(t => !t.includes(nbLoanName)) }));
 
   /* 2 · solo web / 16 · móvil sin cambios / 17 · desactivación */

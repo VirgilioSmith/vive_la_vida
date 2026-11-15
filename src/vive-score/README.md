@@ -16,7 +16,7 @@ Página nueva **«Score»** de la versión web de *vive el hoy · Finanzas 360*.
 | `adapter.js` | **Adaptador de solo lectura.** Convierte los datos existentes en una «carga» para el motor. |
 | `host.js` · `host.css` | Anfitrión: número del ítem lateral, montaje de la página en un `iframe` aislado, persistencia experimental. |
 | `frame.html` · `frame.css` | Página (documento aislado con su propia CSP). Estilos del HTML de referencia + acento dinámico + modos Claro/Oscuro/Black. |
-| `score.js` | Motor y vistas del HTML de referencia (scorecard, evolución, simulador, patrones, observatorio, metodología, auditoría, sellos, resguardo), adaptados a datos reales. |
+| `score.js` | Motor y vistas del HTML de referencia (scorecard, evolución, patrones, observatorio, metodología, auditoría, sellos), adaptados a datos reales. |
 | `state.js` | Estado, mensajería con el anfitrión y construcción de cada corte (datos reales + antecedentes declarados). |
 | `questionnaire.js` | Cuestionario inteligente de calibración (solo mes y año). |
 | `settings.js` | «Configuración y antecedentes»: procedencia de cada dato, edición con trazabilidad, borrado. |
