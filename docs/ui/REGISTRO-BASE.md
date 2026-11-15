@@ -74,3 +74,9 @@ Recorrido de punta a punta (crear y editar) con `node` + Playwright en 390×844 
 | Nueva institución | Datos · Confirmación | `V1110.bankForm`, formulario original `bankForm` (~1329) |
 | Nuevo certificado | Datos y capital · Condiciones · Confirmación | `V1110.certificateForm`, original `certificateForm` (~3873) |
 | Nuevo préstamo | Contrato · Capital y cuotas · Confirmación | `v1110Loan` sobre el asistente v83/v87 de `loanForm` (~3978) |
+
+## V1116 · Selector universal e hoja ajustada
+- El selector de institución usa el **mismo diseño del selector universal de cuentas y tarjetas** (`v1028-picker`: logo 38 px, título, subtítulo «Tipo · N productos», ✓ en la elegida, chevron del acento, lista agrupada «Instituciones»). Un solo componente (`v1110BankPicker`) para cuenta, tarjeta, certificado y préstamo.
+- En móvil la hoja ya no ocupa toda la pantalla: su alto sigue al contenido, sube desde abajo con el borde superior redondeado y respeta la zona segura. Sin hueco en blanco entre los campos y el botón.
+- Corrección: el logo de la institución con imagen ya no se estira en la lista.
+- Corrección: «Tipo de cobertura» y «Seguro mensual» del préstamo permanecen ocultos mientras «¿Incluye seguro?» está en «No».

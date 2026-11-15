@@ -55173,3 +55173,35 @@ html body #app#app #page#page#page .v726-profile-edit{color:var(--v424-accent-st
 html body #app#app #page#page#page .v726-profile-edit svg{stroke:currentColor!important}
 #modal-root .v1110-help{margin:0;font-size:11.5px;line-height:1.4;color:var(--k-sub)}
 html body #modal-root#modal-root form.v1110-loan label.v1110-firstdue{display:flex;flex-direction:column;gap:3px}
+
+/* V1116 · Selector de institución = mismo diseño que el selector universal de cuentas/tarjetas (v1028) */
+html body #modal-root#modal-root .v1110-pick .v1028-picker-btn,html body #modal-root#modal-root .v1110-pick .v1028-opt{display:flex;align-items:center;gap:12px;width:100%;height:auto;min-height:0;text-align:left;padding:10px 14px;border-radius:16px;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 20%,transparent);background:rgba(255,255,255,.88);color:#25304a;cursor:pointer;font:inherit;box-shadow:none}
+html body #modal-root#modal-root .v1110-pick .v1028-picker-btn[aria-expanded="true"]{border-color:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 45%,transparent);box-shadow:0 8px 22px color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 14%,transparent)}
+html body #modal-root#modal-root .v1110-pick .v1028-row-logo{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center}
+html body #modal-root#modal-root .v1110-pick .v1028-logo{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:grid;place-items:center;overflow:hidden}
+html body #modal-root#modal-root .v1110-pick .v1028-logo img{width:100%;height:100%;object-fit:cover;display:block}
+html body #modal-root#modal-root .v1110-pick .v1028-glyph{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 11%,#fff);color:var(--v424-accent-strong,#7b2d57)}
+html body #modal-root#modal-root .v1110-pick .v1028-glyph svg{width:20px;height:20px;stroke:currentColor}
+html body #modal-root#modal-root .v1110-pick .v1028-row-copy{flex:1;min-width:0;display:grid;gap:1px}
+html body #modal-root#modal-root .v1110-pick .v1028-row-copy strong{font-size:14px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#25304a}
+html body #modal-root#modal-root .v1110-pick .v1028-row-copy strong.is-empty{font-weight:600;color:#566480}
+html body #modal-root#modal-root .v1110-pick .v1028-row-copy small{font-size:12px;color:#566480}
+html body #modal-root#modal-root .v1110-pick .v1028-row-check{width:18px;color:var(--v424-accent-strong,#7b2d57);font-weight:900}
+html body #modal-root#modal-root .v1110-pick .v1028-chevron{color:var(--v424-accent-strong,#7b2d57);font-size:18px;line-height:1;transition:transform .15s}
+html body #modal-root#modal-root .v1110-pick.open .v1028-chevron{transform:rotate(180deg)}
+html body #modal-root#modal-root .v1110-pick .v1028-picker-list{position:static;margin-top:8px;max-height:240px;overflow:auto;padding:8px;border-radius:18px;background:rgba(255,255,255,.96);border:1px solid color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 20%,transparent);box-shadow:0 24px 50px rgba(20,30,70,.18)}
+html body #modal-root#modal-root .v1110-pick .v1028-group{padding:8px 10px 4px;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#566480}
+html body #modal-root#modal-root .v1110-pick .v1028-opt{border-color:transparent;background:transparent;border-radius:14px}
+html body #modal-root#modal-root .v1110-pick .v1028-opt:hover{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 8%,#fff)}
+html body #modal-root#modal-root .v1110-pick .v1028-opt.is-on{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 12%,#fff);border-color:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 30%,transparent)}
+body.theme-dark #modal-root .v1110-pick :is(.v1028-picker-btn,.v1028-picker-list),body.theme-black #modal-root .v1110-pick :is(.v1028-picker-btn,.v1028-picker-list){background:rgba(24,28,40,.92);color:#eef1fb}
+body.theme-dark #modal-root .v1110-pick .v1028-row-copy strong,body.theme-black #modal-root .v1110-pick .v1028-row-copy strong{color:#eef1fb}
+
+/* V1116 · La hoja se ajusta a su contenido (sin hueco en blanco) y sube desde abajo con borde superior redondeado */
+@media (max-width:790px){
+ html body #modal-root#modal-root .modal.v1110-modal{height:auto!important;min-height:0!important;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 14px)!important;margin-top:auto!important;align-self:flex-end;border-radius:26px 26px 0 0!important}
+ html body #modal-root#modal-root .modal.v1110-modal form.v1110-form{flex:0 1 auto!important}
+ html body #modal-root#modal-root .modal.v1110-modal form.v1110-form>.form-grid{flex:0 1 auto!important;min-height:0}
+ html body #modal-root#modal-root .modal.v1110-modal form.v1110-form>.form-foot{padding-bottom:max(14px,env(safe-area-inset-bottom,0px))!important}
+}
+html body #modal-root#modal-root form.v1110-loan .v87-field-grid[hidden]{display:none!important}
