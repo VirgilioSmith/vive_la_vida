@@ -202,14 +202,15 @@ test('tarjeta: interés mensual orientativo = facturado × tasa / 12', () => {
   assert.equal(R.interesTarjetaMensual(12345.67, 60), 617.28);
 });
 
-test('antigüedad: años, meses y días completos', () => {
-  assert.equal(R.antiguedad('2023-09-15', '2026-11-14').texto, '3 años y 1 mes');
-  assert.equal(R.antiguedad('2026-11-14', '2026-11-14').texto, '0 días');
-  assert.equal(R.antiguedad('2026-11-01', '2026-11-14').texto, '13 días');
-  assert.equal(R.antiguedad('2025-11-14', '2026-11-14').texto, '1 año');
-  assert.equal(R.antiguedad('2026-01-31', '2026-03-01').texto, '1 mes');
-  assert.equal(R.antiguedad('2024-02-29', '2025-02-28').texto, '11 meses');
-  assert.equal(R.antiguedad('2027-01-01', '2026-11-14'), null, 'fecha futura');
+test('antigüedad: solo mes y año', () => {
+  assert.equal(R.antiguedad('2023-09', '2026-11-14').texto, '3 años y 2 meses');
+  assert.equal(R.antiguedad('2026-11', '2026-11-14').texto, 'Menos de 1 mes');
+  assert.equal(R.antiguedad('2025-11', '2026-11-14').texto, '1 año');
+  assert.equal(R.antiguedad('2026-01', '2026-03-31').texto, '2 meses');
+  assert.equal(R.antiguedad('2024-12', '2026-01-01').texto, '1 año y 1 mes');
+  assert.equal(R.antiguedad('2023-09-15', '2026-11-14').texto, '3 años y 2 meses', 'una fecha completa se reduce a mes y año');
+  assert.equal(R.antiguedad('2027-01', '2026-11-14'), null, 'mes futuro');
   assert.equal(R.antiguedad('', '2026-11-14'), null);
+  assert.equal(R.antiguedad('2026-13', '2026-11-14'), null);
   assert.equal(R.antiguedad('basura', '2026-11-14'), null);
 });

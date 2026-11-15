@@ -46,4 +46,4 @@ Verificado directamente en el proyecto `vive-el-hoy-finanzas-360`:
 - Los índices de `apple_pay_*` aparecen como «sin uso» porque las tablas tienen pocas filas; se conservan para cuando crezcan.
 
 ## Antigüedad de productos
-Cuentas bancarias, tarjetas, préstamos y certificados guardan `acquiredOn` (AAAA-MM-DD, opcional, no futura) dentro del mismo documento de cada producto. No requiere cambios de esquema: los datos viajan por `finance_items` y `finance_values` como cualquier otro campo. El efectivo no tiene antigüedad. Préstamos y certificados usan su fecha de inicio si no se indica.
+Cuentas bancarias, tarjetas, préstamos y certificados guardan `acquiredOn` (AAAA-MM, solo mes y año; opcional, no futuro) dentro del mismo documento de cada producto. No requiere cambios de esquema: los datos viajan por `finance_items` y `finance_values` como cualquier otro campo. El efectivo no tiene antigüedad. Préstamos y certificados usan su fecha de inicio si no se indica.
