@@ -19,3 +19,5 @@
 | 2026-11-15 | Cierre de sesión tras 30 minutos sin actividad | Seguridad de la sesión | No cierra con cambios sin sincronizar |
 | 2026-11-15 | Captura global de errores y red con tiempo de espera y reintentos solo en lecturas | Resiliencia | Sin cambio visible |
 | 2026-11-15 | Fondo de las ventanas de registro sin desenfoque; color de acento en Ingresos recurrentes | Pedido de diseño | Solo visual |
+| 2026-11-15 | Tarjeta: límites, sobregiro, tasas, comisión por avance y anualidad con vigencia; historial visible en el detalle | Un cambio rige desde su fecha y no altera el pasado | El utilizado mensual histórico usa el límite vigente de cada mes; el estado actual usa el vigente hoy |
+| 2026-11-15 | Vigencias: una corrección el mismo día agrega otro registro (gana el más reciente); fechas anteriores se rechazan | Poder corregir sin reescribir | La migración permite varias entradas por día; sigue sin permitir editar ni borrar |

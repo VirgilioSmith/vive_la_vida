@@ -9,7 +9,7 @@ create table if not exists public.finance_rule_versions (
   value       jsonb not null,
   valid_from  date not null,                          -- inicio de vigencia; el fin es el inicio de la siguiente
   created_at  timestamptz not null default now(),
-  unique (user_id, rule_key, subject_id, valid_from)
+  unique (user_id, rule_key, subject_id, valid_from, created_at)
 );
 create index if not exists finance_rule_versions_lookup
   on public.finance_rule_versions (user_id, rule_key, subject_id, valid_from desc);
@@ -51,7 +51,7 @@ language plpgsql set search_path = '' as $$
 begin
   if exists (select 1 from public.finance_rule_versions v
              where v.user_id = new.user_id and v.rule_key = new.rule_key
-               and v.subject_id = new.subject_id and v.valid_from >= new.valid_from) then
+               and v.subject_id = new.subject_id and v.valid_from > new.valid_from) then
     raise exception 'La nueva vigencia debe empezar después de la última registrada.' using errcode = 'P0001';
   end if;
   return new;

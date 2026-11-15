@@ -95,6 +95,27 @@ const afirmar = (n, c, d = '') => { if (c) ok++; else fallos.push(n + (d ? ' →
     afirmar('hay cortes anteriores para comparar', cerrados.length > 0, String(antesC.length));
     for (const c of cerrados) { const d2 = despuesC.find((x) => x[0] === c[0]); afirmar('el mínimo del corte ' + c[0] + ' no cambia', d2 && d2[2] === c[2], JSON.stringify([c, d2])); }
   }
+  // 11) tarjeta: cambiar el límite rige desde hoy y no altera el histórico
+  const tl = await p.evaluate(() => { const d = window.__T.dbg(), c = d.cards.find((x) => d.transactions.some((t) => t.cardId === x.id)); return c ? { id: c.id, limit: c.limitDOP } : null; });
+  if (tl) {
+    const util = () => p.evaluate((id) => { const d = window.__T.dbg(), c = d.cards.find((x) => x.id === id), F = window.__T.fn, y = +F.today().slice(0, 4); return F.cardHistoryData(c, y, 'DOP').filter((m) => m.balance !== null).map((m) => [m.key, m.limit]); }, tl.id);
+    const antesL = await util();
+    const nuevoLimite = tl.limit + 100000;
+    await p.evaluate(([a, id]) => { document.getElementById('modal-root').innerHTML = ''; const x = document.createElement('button'); x.dataset.act = a; x.dataset.id = id; document.body.appendChild(x); x.click(); x.remove(); }, ['editCard', tl.id]);
+    await p.waitForTimeout(900);
+    await p.evaluate((v) => { const f = document.querySelector('#modal-root form'); const e = f.elements.namedItem('limitDOP'); e.value = String(v); e.dispatchEvent(new Event('input', { bubbles: true })); }, nuevoLimite);
+    for (let i = 0; i < 2; i++) { await p.evaluate(() => document.querySelector('#modal-root form .v1110-next:not([hidden])')?.click()); await p.waitForTimeout(200); }
+    await p.evaluate(() => document.querySelector('#modal-root form button[type=submit]:not([hidden])')?.click());
+    await p.waitForTimeout(800);
+    const info = await p.evaluate(([id, ayer]) => { const d = window.__T.dbg(), c = d.cards.find((x) => x.id === id), F = window.__T.fn; return { hoy: F.cardConditionAt(c, 'limitDOP', F.today()), pasado: F.cardConditionAt(c, 'limitDOP', ayer), cambios: F.cardConditionChanges(c), vig: d.ruleVersions.filter((v) => v.sujeto === id && v.clave === 'tarjeta.condiciones').length, audit: d.auditLog.filter((a) => a.idRegistro === id).length }; }, [tl.id, R.fechaTexto(new Date(R.fechaObj(hoyApp).getTime() - 86400000))]);
+    afirmar('el límite nuevo rige hoy', info.hoy === nuevoLimite, JSON.stringify(info));
+    afirmar('el día anterior conserva el límite anterior', info.pasado === tl.limit, JSON.stringify(info));
+    afirmar('se registró el cambio en el historial visible', info.cambios.some((c) => c.campo === 'limitDOP' && c.antes === tl.limit && c.despues === nuevoLimite));
+    afirmar('quedó registro de auditoría', info.audit >= 1);
+    const despuesL = await util();
+    const hoyMes = hoyApp.slice(0, 7);
+    for (const [k, lim] of antesL) { if (k >= hoyMes) continue; const d2 = despuesL.find((x) => x[0] === k); afirmar('el límite del mes ' + k + ' no cambia', d2 && d2[1] === lim, JSON.stringify([k, lim, d2])); }
+  }
   afirmar('sin errores de consola', errs.length === 0, errs.join(' | '));
   await b.close();
   console.log(`app: ${ok} correctas, ${fallos.length} fallan`); fallos.forEach((f) => console.log(' -', f));

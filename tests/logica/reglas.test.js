@@ -126,7 +126,11 @@ test('vigencias: el pasado no se modifica', () => {
   assert.equal(R.hastaVigencia(v2, 'tarjeta.avance', '2026-01-01', 't1'), '2026-07-01');
   assert.equal(R.hastaVigencia(v2, 'tarjeta.avance', '2026-07-01', 't1'), null);
   assert.throws(() => R.nuevaVigencia(v2, { clave: 'tarjeta.avance', sujeto: 't1', valor: { pct: 9 }, desde: '2026-03-01' }), /no se reescribe/);
-  assert.throws(() => R.nuevaVigencia(v2, { clave: 'tarjeta.avance', sujeto: 't1', valor: { pct: 9 }, desde: '2026-07-01' }), /no se reescribe/);
+  // el mismo día agrega otro registro y gana el más reciente; el anterior queda intacto
+  const v3 = R.nuevaVigencia(v2, { clave: 'tarjeta.avance', sujeto: 't1', valor: { pct: 9 }, desde: '2026-07-01' });
+  assert.equal(v3.length, 3); assert.equal(R.reglaVigente(v3, 'tarjeta.avance', '2026-07-01', 't1').pct, 9);
+  assert.equal(v3[1].valor.pct, 7, 'la vigencia previa del mismo día se conserva');
+  assert.equal(R.reglaVigente(v3, 'tarjeta.avance', '2026-06-30', 't1').pct, 6.5);
   assert.throws(() => { v2[0].valor.pct = 99; }, TypeError, 'las vigencias están congeladas');
   assert.throws(() => R.nuevaVigencia(v2, { clave: '', valor: 1, desde: 'x' }), /inválida/);
   // regla general con excepción por sujeto
