@@ -21151,7 +21151,8 @@ window.__v866Runners.v865=run;
 /* Aplica el nivel REAL a las cápsulas que renderiza la app, incluso cuando
    componentes heredados tienen reglas más específicas o estilos dinámicos. */
 (function(){
- const shells='.universe-switch-wrap,.universe-switch,.module-switch-shell,.module-switch-tabs,.inner-menu-tabs,.v248-budget-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs';
+ /* Movimientos, Bancos y Presupuestos usan la misma barra plana que Inicio: sin cristal ni desenfoque dinámico. */
+ const shells='.universe-switch-wrap,.universe-switch,.inner-menu-tabs,.segmented-hist,.product-tabs,.top-tabs,.bank-tabs,.v206-bank-tabs,.v207-operation-choice,.v245-inner-tabs';
  function level(){const n=Number(document.documentElement.style.getPropertyValue('--v443-nav-level'));return Number.isFinite(n)?Math.max(0,Math.min(100,n)):0;}
  function force(){
   if(window.matchMedia('(max-width:790px)').matches)return;
@@ -21206,7 +21207,8 @@ window.__v866Runners.v865=run;
    el.style.setProperty('background-color',on?accent:'transparent','important');
    el.style.setProperty('background-image','none','important');
    el.style.setProperty('border-color','transparent','important');
-   el.style.setProperty('box-shadow',on?'0 5px 15px color-mix(in srgb,var(--vive-theme-color,#665fe7) 19%,transparent)':'none','important');
+   el.style.setProperty('box-shadow',on?'0 5px 15px color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 24%,transparent)':'none','important');
+   el.style.setProperty('opacity','1','important');
    el.style.setProperty('color',on?'#fff':ink,'important');
    el.style.setProperty('-webkit-text-fill-color',on?'#fff':ink,'important');
   }

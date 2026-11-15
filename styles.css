@@ -55246,3 +55246,13 @@ html body #v71-search-overlay .v71-search-field{caret-color:var(--v424-accent-st
 html body #v71-search-overlay .v153-spotlight-shortcuts button svg,html body #v71-search-overlay .v153-spotlight-shortcuts button span svg,html body #v71-search-overlay .v159-brand-symbol *{color:var(--v424-accent-strong,#7b2d57)!important;stroke:currentColor!important}
 html body #v71-search-overlay .v159-brand-symbol{-webkit-text-fill-color:var(--v424-accent-strong,#7b2d57)!important}
 html body #v71-search-overlay .v153-spotlight-shortcuts button>span:first-child{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 11%,#fff)!important}
+
+/* Barra de Movimientos, Bancos y Presupuestos = la de Inicio (plana, sin cristal) */
+@media (min-width:791px){
+ html body #app#app main.main :is(.module-switch-shell,.module-switch-tabs,.v248-budget-tabs){background:transparent!important;background-image:none!important;border-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;opacity:1!important;filter:none!important}
+ html body #app#app main.main :is(.module-switch-tabs,.v248-budget-tabs)>button{opacity:1!important;filter:none!important;transition:none!important}
+ html body #app#app main.main :is(.module-switch-tabs,.v248-budget-tabs)>button.active{background:var(--v424-accent-strong,#7b2d57)!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+}
+/* Presupuesto · Ejecución: panel y barra con el acento */
+html body #app#app #page#page#page .v285-execution-hero{background:linear-gradient(135deg,color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 88%,#000),var(--v424-accent-strong,#7b2d57))!important}
+html body #app#app #page#page#page .v285-execution-hero [class*=bar] i,html body #app#app #page#page#page .v285-execution-hero [class*=track]>*{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 25%,#fff)!important}
