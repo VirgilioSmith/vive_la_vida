@@ -11,8 +11,8 @@ function provenance(s){
   ['Utilización y balances',`${s.cards.length} tarjeta(s)`,tag2('Observado en la app','good'),'Límite, saldo, avances y mínimos de tarjetas registradas.'],
   ['Préstamos',`${s.loans.length} préstamo(s)`,tag2('Observado en la app','good'),'Capital, saldo y cuota de los préstamos registrados.'],
   ['Antigüedad',s.oldestPeriod?`${myLabel(s.oldestPeriod)} · ${s.historyMonths} meses`:'Desconocida',s.ageSource==='verificada'?tag2('Verificada','good'):s.ageSource==='registrada en vive el hoy'?tag2('Registrada en la app','good'):s.ageSource==='declarada'?tag2('Declarada','warn'):tag2('Desconocida','bad'),'Apertura bancaria (mes y año); distinta de la fecha en que se registró en la app.'],
-  ['Aperturas recientes',`${s.new0to6} (0–6m) · ${s.new7to12} (7–12m)`,tag2('Observado en la app','good'),'Se detectan solos por la fecha de apertura de cada producto.'],
-  ['Aumentos de límite solicitados',`${s.limitReq0to6} (0–6m) · ${s.limitReq7to12} (7–12m)`,tag2('Declarado','warn'),'Los aumentos automáticos no se penalizan.'],
+  ['Aperturas recientes',`${s.new0to6} en los últimos 6 meses`,tag2('Observado en la app','good'),'Se detectan solos por la fecha de apertura de cada producto.'],
+  ['Aumentos de límite solicitados',`${s.limitReq0to6} en los últimos 6 meses`,tag2('Declarado','warn'),'Los aumentos automáticos no se penalizan.'],
   ['Profundidad del historial',`${s.recordMonths} mes(es) observado(s)`,tag2('Observado','good'),'Empieza el 15 de noviembre de 2026; no se inventan meses anteriores.']
  ];
  return rows.map(r=>`<div class="metricLine"><span><b>${safe(r[0])}</b><div class="muted xs">${safe(r[3])}</div></span><span style="text-align:right">${safe(r[1])}<div>${r[2]}</div></span></div>`).join('');
@@ -24,9 +24,14 @@ function instrumentRows(s){
  const lock=p=>p.openedSource==='app'?'disabled title="La fecha viene de Editar en vive el hoy"':'';
  return `<div class="tblscroll"><table class="tbl"><thead><tr><th>Producto</th><th>Apertura (mes y año)</th><th>Procedencia del dato</th><th>Documento</th></tr></thead><tbody>${all.map(p=>{const id=p.productId||p.id,m=validPeriod(p.opened)?p.opened.slice(5):'',y=validPeriod(p.opened)?p.opened.slice(0,4):'';return `<tr><td><b>${safe(p.name.replace(/ · (DOP|USD)$/,''))}</b><div class="muted xs">${p.k}${p.bank?' · '+safe(p.bank):''}</div></td><td><div class="qmyrow"><select class="formSelect" ${lock(p)} data-ov="${safe(id)}|m" aria-label="Mes de apertura de ${safe(p.name)}"><option value="">Mes</option>${MONTH_NAMES.map((n,i)=>{const v=String(i+1).padStart(2,'0');return `<option value="${v}" ${m===v?'selected':''}>${n[0].toUpperCase()+n.slice(1)}</option>`}).join('')}</select><select class="formSelect" ${lock(p)} data-ov="${safe(id)}|y" aria-label="Año de apertura de ${safe(p.name)}"><option value="">Año</option>${years.map(a=>`<option value="${a}" ${String(a)===y?'selected':''}>${a}</option>`).join('')}</select></div><div class="muted xs">${p.openedSource==='app'?'Fecha registrada en la app (manda sobre lo que completes aquí)':p.openedSource==='usuario'?'Completada por ti':'Falta la fecha'}</div></td><td><select class="formSelect" data-evidence-source="${safe(p.id)}" aria-label="Procedencia de ${safe(p.name)}">${Object.entries(V5_SOURCE_LABELS).map(([k,v])=>`<option value="${k}" ${p.source===k?'selected':''}>${safe(v)}</option>`).join('')}</select></td><td><label class="qcheck"><input type="checkbox" data-evidence-checked="${safe(p.id)}" ${p.evidenceVerified?'checked':''}><span>Documento revisado</span></label></td></tr>`}).join('')}</tbody></table></div>`;
 }
+function limitHistory(){
+ const ev=((ST.answers?.limit?.answer==='yes'?ST.answers.limit.events:[])||[]).slice().sort((a,b)=>String(b.at||b.period).localeCompare(String(a.at||a.period)));
+ if(!ev.length)return '<p class="muted">Todavía no hay cambios de límite. Si editas el límite de una tarjeta en vive el hoy, el cambio se registra solo con su fecha.</p>';
+ return `<div class="metricList">${ev.map(e=>`<div class="metricLine"><span><b>${safe(e.productLabel||'Tarjeta')} · ${safe(e.currency||'')}</b><div class="muted xs">${e.detected?'Detectado en la app'+(e.at?' · '+safe(e.at.slice(0,10)+' '+e.at.slice(11,16)+' UTC'):''):'Declarado'} · ${safe(myLabel(e.period))}</div></span><span style="text-align:right">${Number(e.prev||0).toLocaleString('es-DO')} → ${Number(e.next||0).toLocaleString('es-DO')}<div>${e.kind==='decrease'?'<span class="badge">Reducción</span>':`<button class="smallbtn" data-limit-kind="${safe(e.id)}">${e.kind==='requested'?'Solicitado por mí':'Automático'} ⇄</button>`}</div></span></div>`).join('')}</div><p class="xs muted">Los aumentos automáticos no restan puntos; marca «Solicitado por mí» solo si tú lo pediste al banco.</p>`;
+}
 function recentAuto(s){
- const r=(s.products||[]).filter(p=>p.opened&&(p.window==='0–6 meses'||p.window==='7–12 meses'));
- if(!r.length)return '<p class="muted">Ninguna tarjeta ni préstamo se abrió en los últimos 12 meses.</p>';
+ const r=(s.products||[]).filter(p=>p.opened&&p.window==='0–6 meses');
+ if(!r.length)return '<p class="muted">Ninguna tarjeta ni préstamo se abrió en los últimos 6 meses.</p>';
  return `<div class="metricList">${r.map(p=>`<div class="metricLine"><span><b>${safe(p.name)}</b><div class="muted xs">${p.kind==='loan'?'Préstamo':'Tarjeta'}${p.bank?' · '+safe(p.bank):''} · ${safe(p.source)}</div></span><span style="text-align:right">${safe(myLabel(p.opened))}<div><span class="badge">${safe(p.window)}</span></div></span></div>`).join('')}</div>`;
 }
 /* Antecedentes: estado de calibración, trazabilidad y procedencia de cada dato. */
@@ -35,7 +40,8 @@ function antecedentesView(){
  return `<p class="muted sm" style="margin:0 0 12px">Lo que declaraste, de dónde sale cada dato y qué falta. Cada cambio queda registrado.</p>
  <div class="grid pair"><div class="card"><div class="caps">ESTADO DE CALIBRACIÓN</div><h2 style="margin-top:7px">${cal?'Calibrado':'Incompleto'}</h2><p>${cal?'Todos los datos esenciales están disponibles; el score se calcula.':'Falta información esencial; el score no se calcula hasta completarla:'}</p>${s.missing.length?`<div class="warnings">${s.missing.map(m=>`<div class="witem critical"><span>!</span><div>${safe(m)}</div></div>`).join('')}</div>`:''}<div class="metricList"><div class="metricLine"><span>Cuestionario</span><b>${A.completed?'Completado':'Pendiente'}</b></div><div class="metricLine"><span>Versión de antecedentes</span><b>${ST.declVersion}</b></div><div class="metricLine"><span>Inicio del historial observado</span><b>${myLabel(VS_START)} (desde el 15)</b></div></div><div class="actionLine"><button class="smallbtn" data-q-act="edit">Editar antecedentes</button></div></div>
  <div class="card"><div class="caps">TRAZABILIDAD</div><h2 style="margin-top:7px">Cambios de antecedentes</h2>${(ST.answersLog||[]).length?`<div class="metricList">${ST.answersLog.map(l=>`<div class="metricLine"><span>Versión ${l.version}</span><b>${safe(l.at.slice(0,16).replace('T',' '))}</b></div>`).join('')}</div>`:'<p class="muted">Todavía no hay versiones guardadas.</p>'}<p class="xs muted">Si corriges un antecedente, los cortes se recalculan como corrección de información, no como un movimiento crediticio nuevo.</p></div></div>
- <div class="card" style="margin-top:15px"><div class="caps">CRÉDITOS RECIENTES · DETECTADOS SOLOS</div><h2 style="margin:7px 0 4px">${s.new0to6} en 0–6 meses · ${s.new7to12} en 7–12 meses</h2><p class="muted sm">Se leen de la fecha de apertura de cada tarjeta y préstamo en vive el hoy; no tienes que marcar nada.</p>${recentAuto(s)}</div>
+ <div class="card" style="margin-top:15px"><div class="caps">CRÉDITOS RECIENTES · DETECTADOS SOLOS</div><h2 style="margin:7px 0 4px">${s.new0to6} en los últimos 6 meses</h2><p class="muted sm">Se leen de la fecha de apertura de cada tarjeta y préstamo en vive el hoy; no tienes que marcar nada.</p>${recentAuto(s)}</div>
+ <div class="card" style="margin-top:15px"><div class="caps">HISTORIAL DE LÍMITES · AUTOMÁTICO</div><h2 style="margin:7px 0 4px">Cambios de límite de tus tarjetas</h2>${limitHistory()}</div>
  ${sec('¿De dónde sale cada dato?','Conocido en la app, declarado por ti, verificado con documento o desconocido.')}<div class="card"><div class="metricList">${provenance(s)}</div></div>`;
 }
 /* Configuración: productos leídos (fechas, procedencia, documento), actualización de datos, exportación y borrado. */
@@ -64,6 +70,8 @@ document.addEventListener('change',e=>{
  if(m&&y){setOverride(id,{opened:`${y}-${m}`});auditLog(`Completó la apertura de ${id} (${y}-${m}) dentro de VIVE SCORE`);rebuildDB();render()}
 });
 document.addEventListener('click',e=>{
+ const lk=e.target.closest('[data-limit-kind]');
+ if(lk){const ev=(ST.answers?.limit?.events||[]).find(x=>x.id===lk.dataset.limitKind);if(ev){ev.kind=ev.kind==='requested'?'automatic':'requested';ST.declVersion++;saveStore();rebuildDB();render()}return}
  const b=e.target.closest('button');if(!b||b.id!=='vsReset')return;
  if(!confirm('¿Borrar TODOS los datos de VIVE SCORE (respuestas, cortes observados, sellos)? Tus tarjetas, préstamos y movimientos no se tocan.'))return;
  ST=newStore();auditHistory=[];qEditing=false;qStep=0;saveStore();rebuildDB();render();notify('Datos de VIVE SCORE borrados.');

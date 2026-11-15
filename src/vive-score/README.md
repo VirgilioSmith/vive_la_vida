@@ -152,3 +152,10 @@ El resto de la aplicación no depende de nada de esta carpeta.
 - La mora vigente sale de los vencimientos de la app; si hay pagos sin conciliar, aparece como mora y el módulo lo avisa.
 - Solo hay un corte hasta que pase el primer cierre mensual; evolución, patrones y anomalías necesitan más meses.
 - El indicador del ítem lateral muestra el último puntaje calculado al abrir la página, no se recalcula en segundo plano.
+
+## Automatización y referencias (noviembre 2026)
+
+- **Créditos recientes = solo 0–6 meses.** Cada apertura de tarjeta o préstamo en ese periodo resta 15 puntos en «Aperturas recientes» (base 60); los aumentos de límite *solicitados* en 0–6 meses restan 8 (base 40). Se detectan solos por la fecha de apertura de vive el hoy.
+- **Historial de límites automático.** La app no guarda historial de límites; el módulo recuerda el último límite visto de cada tarjeta y moneda (`limitObs`). Si lo editas en vive el hoy, registra el cambio con fecha y hora exactas y lo cuenta desde ese mes y año. Un aumento se registra como *automático* (no resta); puedes marcarlo «Solicitado por mí» en Antecedentes. Una reducción se anota sin puntuar. La primera lectura es la línea base: no se inventa historia.
+- **Reserva automática (solo capacidad, nunca el score).** «Dinero guardado» = lo más bajo que tuvo cada cuenta (y el efectivo) durante los últimos 30 días, convertido a pesos; lo que sacas o gastas deja de contar. La reserva de planificación (10 % del ingreso, mínimo RD$5,000) se reduce según la cobertura sobre 3 meses de compromisos. Ya no hay campos manuales de DTI ni reserva; el DTI objetivo (35 %) es una referencia fija.
+- **Referencias consultadas.** Pesos FICO públicos: historial de pagos 35 %, montos adeudados 30 %, antigüedad 15 %, crédito nuevo 10 %, mezcla 10 % (los mismos de este modelo). VantageScore 4.0 (ficha oficial): historial 41 %, utilización 20 %, profundidad 20 %, crédito reciente 11 %, saldos 6 %, crédito disponible 2 %, con hasta 24 meses de datos de tendencia. No hay documentación pública verificable de la escala 459–848 de TransUnion RD ni de sus pesos, por lo que la simulación sigue marcada como orientativa.

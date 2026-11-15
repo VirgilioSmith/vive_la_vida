@@ -9,11 +9,30 @@ const SEEDS=[
  {key:'limit-cibao-2026-09',kind:'limit',match:/cibao/i,period:'2026-09',label:'Cibao',
   changes:[{currency:'DOP',prev:144000,next:400000},{currency:'USD',prev:2000,next:6000}],note:'Aumento automático del banco: de RD$144,000 y US$2,000 a RD$400,000 y US$6,000.'}
 ];
+/* Historial de límites: la app no guarda uno, así que VIVE SCORE recuerda el último límite visto de cada tarjeta y moneda.
+   Si cambia (porque lo editas en vive el hoy), registra solo el cambio con fecha y hora exactas; el score lo cuenta desde ese mes y año.
+   La primera lectura es la línea base (no se inventa historia). Un aumento se registra como automático (no penaliza); puedes marcarlo como solicitado en Antecedentes. */
+function observeLimits(A){
+ ST.limitObs=ST.limitObs||{};let n=0;const at=new Date().toISOString();
+ for(const c of (PAYLOAD.cards||[])){
+  const lim=Number(c.limit);if(!(lim>0))continue;
+  const key='card:'+(c.productId||c.id)+':'+c.currency,old=ST.limitObs[key];
+  if(!old){ST.limitObs[key]={limit:lim,at};n++;continue}
+  if(old.limit===lim)continue;
+  const label=(c.name||'Tarjeta').replace(/ · (DOP|USD)$/,'');
+  A.limit.answer='yes';A.limit.autoFilled=true;A.limit.confirmed=true;
+  A.limit.events.push({id:uid(),detected:true,at,product:'card:'+(c.productId||c.id),productLabel:label,period:todayPeriod(),currency:c.currency,prev:old.limit,next:lim,kind:lim>old.limit?'automatic':'decrease',note:'Cambio de límite detectado en vive el hoy el '+at.slice(0,10)+' a las '+at.slice(11,16)+' (UTC).'});
+  ST.limitObs[key]={limit:lim,at};n++;
+  auditLog('Detectó un cambio de límite en '+label+' ('+c.currency+'): '+old.limit+' → '+lim+'.');
+ }
+ return n;
+}
 function applySeeds(){
  if(!PAYLOAD)return false;
  ST.seeded=ST.seeded||{};let changed=false;const A=ensureAnswers();
  let auto=false;
- /* Aperturas recientes: se leen solas de las fechas de apertura de vive el hoy (ventanas 0–6 y 7–12 meses); no hay nada que seleccionar. */
+ const ev0=A.limit.events.length;if(observeLimits(A)){auto=true;if(A.limit.events.length>ev0)ST.declVersion++}
+ /* Aperturas recientes: se leen solas de las fechas de apertura de vive el hoy (ventana de 0–6 meses); no hay nada que seleccionar. */
  for(const k of ['newCards','newLoans'])if(A[k]&&A[k].answer==null){A[k].answer='no';A[k].items=[];A[k].auto=true;auto=true}
  for(const sd of SEEDS){
   if(ST.seeded[sd.key])continue;

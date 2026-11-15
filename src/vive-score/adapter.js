@@ -1,7 +1,7 @@
 /* VIVE SCORE · adaptador de LECTURA. Convierte los datos existentes de vive el hoy en una «carga» (payload)
    para el motor. No escribe en la base, no modifica tarjetas, préstamos, movimientos ni ingresos.
    Solo crédito: tarjetas, préstamos y su historial de pagos. Los ingresos y los gastos fijos se entregan
-   únicamente para el módulo de capacidad de endeudamiento. NO se leen cuentas de ahorro ni saldos. */
+   únicamente para el módulo de capacidad de endeudamiento. El score NO usa cuentas ni saldos; para la capacidad se entrega solo un agregado de liquidez (dinero que se mantiene ≥30 días). */
 (function(){
 'use strict';
 const num=x=>Number.isFinite(Number(x))?Number(x):0;
@@ -89,7 +89,15 @@ function read(){
  const k=Math.max(1,used.size),rows=Object.values(cat).map(r=>({category:r.category,kind:r.kind,cash:r.cash/k,bank:r.bank/k,total:(r.cash+r.bank)/k,count:r.n})).sort((a,c)=>c.total-a.total);
  const sum=(f)=>rows.filter(f).reduce((a,r)=>a+r.total,0);
  const spending={months:win,monthsUsed:used.size,categories:rows,essentialMonthly:sum(r=>r.kind==='essential'),variableMonthly:sum(r=>r.kind!=='essential'),cashMonthly:rows.reduce((a,r)=>a+r.cash,0),bankMonthly:rows.reduce((a,r)=>a+r.bank,0),excluded:Object.fromEntries(Object.entries(excl).map(([n,v])=>[n,v/k]))};
- return {version:1,today,fx:fx>0?fx:60,cards,loans,unrated,incomes,fixed,spending};
+ /* Liquidez estable (solo capacidad): lo que se ha mantenido en cuentas y efectivo durante los últimos 30 días = el saldo más bajo de ese periodo
+    en cada cuenta (si lo sacaste o lo gastaste, deja de contar). Se convierte a pesos con el tipo de cambio de la app. */
+ let liquidity=null;
+ try{if(b.balanceAt){let held=0,now=0,n=0;const days=[0,3,6,9,12,15,18,21,24,27,30].map(k=>addDays(today,-k));
+  for(const a of db.accounts||[]){if(!a||hidden(a))continue;const f=(a.currency==='USD'?(fx>0?fx:60):1);let low=Infinity,cur=0;
+   for(const d of days){if(a.opened&&a.opened>d)continue;const v=num(b.balanceAt(a,d))*f;if(d===today)cur=v;low=Math.min(low,v)}
+   if(!Number.isFinite(low))continue;held+=Math.max(0,low);now+=Math.max(0,cur);n++}
+  liquidity={held30:Math.round(held),now:Math.round(now),accounts:n,days:30}}}catch(_){liquidity=null}
+ return {version:1,today,fx:fx>0?fx:60,cards,loans,unrated,incomes,fixed,spending,liquidity};
 }
 window.ViveScoreAdapter=Object.freeze({read});
 })();

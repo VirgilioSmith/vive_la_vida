@@ -74,7 +74,13 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await p.evaluate(() => { const d = window.__T.dbg(); d.transactions.push({ id: 'sv-test-1', date: '2026-11-10', type: 'income', amount: 9000000, currency: 'DOP', accountId: d.accounts[0].id, category: 'Otros ingresos', note: 'prueba saldo' }); });
   await go(p, 'score'); await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
   const after7 = await frameOf(p).evaluate(() => evaluate(current()).score);
-  check(7, 'El score no usa cuentas de ahorro ni saldos bancarios', !/db\.accounts|\.accounts\b|certificates|savings/.test(adapterSrc) && !('accounts' in payload) && before7 === after7, `score ${before7} → ${after7} tras un depósito de RD$9,000,000`);
+  check(7, 'El score no usa cuentas de ahorro ni saldos bancarios', !/certificates|savings/.test(adapterSrc) && !('accounts' in payload) && Object.keys(payload.liquidity || {}).sort().join() === 'accounts,days,held30,now' && before7 === after7, `score ${before7} → ${after7} tras un depósito de RD$9,000,000`);
+  /* 30 · reserva automática: solo cuenta lo que lleva ≥30 días; un depósito reciente no cuenta, uno antiguo sí; el score no cambia */
+  const liqA = await frameOf(p).evaluate(() => PAYLOAD.liquidity);
+  await p.evaluate(() => { const d = window.__T.dbg(); d.transactions.push({ id: 'sv-test-2', date: '2026-09-01', type: 'income', amount: 3000000, currency: 'DOP', accountId: d.accounts[0].id, category: 'Otros ingresos', note: 'prueba reserva antigua' }); window.__viveScoreBridge.rerender(); });
+  await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
+  const liqB = await frameOf(p).evaluate(() => ({ f: window.parent.__T.dbg().accounts[0].currency === 'USD' ? PAYLOAD.fx : 1, l: PAYLOAD.liquidity, score: evaluate(current()).score, a: evaluate(current()).capacity }));
+  check(30, 'Reserva automática: solo cuenta el dinero que lleva ≥30 días en cuentas y efectivo (un depósito de hace 5 días no suma; uno de hace más de 30 días sí) y nunca cambia el score', liqA && liqA.held30 < liqA.now && liqB.l.held30 - liqA.held30 === 3000000 * liqB.f && liqB.score === after7, JSON.stringify({ antes: liqA, despues: liqB.l, score: liqB.score, cobertura: liqB.a && Math.round((liqB.a.coverage || 0) * 100) }));
 
   /* 9 · declarado vs verificado */
   await cc(p, 'antecedentes');
@@ -139,7 +145,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await frameOf(p).evaluate(() => { const id = current().cards.find(c => /BHD/.test(c.name)).productId; setOverride(id, { opened: '2020-01' }); rebuildDB(); render(); });
   await fclick(p, '[data-tab="detail"]');
   const rc = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s); return { n06: s.new0to6, n712: s.new7to12, list: s.products.map(x => x.name + ':' + x.window + ':' + x.source).join(' | '), text: document.getElementById('view').innerText, part: e.parts.new[0].points, score: e.score }; });
-  check(22, 'Créditos recientes: BHD, Qik y una tarjeta sin límite cuentan por su mes y año de apertura (0–6 y 7–12 meses); la fecha de la app manda', rc.n06 === 3 && rc.n712 === 1 && /BHD Visa:0–6 meses:registrada en vive el hoy/.test(rc.list) && /Qik Pro:0–6 meses/.test(rc.list) && /Tarjeta nueva:0–6 meses/.test(rc.list) && /Créditos recientes/.test(rc.text) && /sin límite ni saldo/.test(rc.text) && rc.part === 60 - 15 * 3 - 6, JSON.stringify({ n0a6: rc.n06, n7a12: rc.n712, puntos: rc.part, productos: rc.list }));
+  check(22, 'Créditos recientes: BHD, Qik y una tarjeta sin límite cuentan por su mes y año de apertura (solo 0–6 meses); la fecha de la app manda', rc.n06 === 3 && rc.n712 === 0 && /BHD Visa:0–6 meses:registrada en vive el hoy/.test(rc.list) && /Qik Pro:0–6 meses/.test(rc.list) && /Tarjeta nueva:0–6 meses/.test(rc.list) && /Créditos recientes/.test(rc.text) && /sin límite ni saldo/.test(rc.text) && rc.part === 60 - 15 * 3, JSON.stringify({ n0a6: rc.n06, n7a12: rc.n712, puntos: rc.part, productos: rc.list }));
 
   const sc23 = await frameOf(p).evaluate(() => evaluate(current()).score);
   /* 23 · ingresos dinámicos: nómina quincenal en base mensual, bruto→neto, adicionales recurrentes */
@@ -176,8 +182,8 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const evidenceTotal = Object.values(secs).reduce((a, x) => a + x.sel, 0);
   const aliasOk = await frameOf(p).evaluate(() => { tab = 'observatory'; render(); const a = ccOpen.observatorio && tab === 'control'; tab = 'audit'; render(); const b = ccOpen.auditoria; tab = 'capacity'; render(); const c = tab === 'detail'; tab = 'summary'; render(); return a && b && c; });
   const otherPages = []; for (const t of ['summary', 'evolution', 'detail', 'matrix', 'patterns', 'transunion', 'method']) { await fclick(p, '[data-tab="' + t + '"]'); otherPages.push((await ftext(p)).length > 300); }
-  const bgW = await p.evaluate(() => { const rgb = el => getComputedStyle(el).backgroundColor; const sl = document.querySelector('[data-vs-slot]'); return { body: rgb(document.body), html: rgb(document.documentElement), slot: rgb(sl) }; });
-  check('fondo', 'El fondo de la página Score es blanco puro (página y contenedor del marco)', bgW.body === 'rgb(255, 255, 255)' && bgW.slot === 'rgb(255, 255, 255)' && bgW.html === 'rgb(255, 255, 255)', JSON.stringify(bgW));
+  const bgW = await p.evaluate(async () => { const c = el => getComputedStyle(el); const sl = document.querySelector('[data-vs-slot]'); const w = c(document.body).backgroundImage; return { slot: c(sl).backgroundColor, gradient: /gradient/.test(w), body: c(document.body).backgroundColor }; });
+  check('fondo', 'La página Score conserva el fondo de las demás vistas (el contenedor del marco es transparente y el degradado de la app se ve)', bgW.slot === 'rgba(0, 0, 0, 0)' && bgW.gradient, JSON.stringify(bgW));
   check(24, 'Centro de control reúne Observatorio, Historial y evidencias, Auditoría, Antecedentes y Configuración; las demás páginas siguen; sin repetidos', JSON.stringify(tabsNow) === JSON.stringify(expectedTabs) && JSON.stringify(chips) === JSON.stringify(['Observatorio', 'Historial y evidencias', 'Auditoría', 'Antecedentes', 'Configuración']) && Object.values(secs).every(x => x.len > 300) && dupHeadings.length === 0 && secs.configuracion.sel >= 1 && secs.historial.seal && secs.auditoria.audit && secs.antecedentes.edit && secs.configuracion.json && secs.configuracion.csv && secs.configuracion.reset && secs.configuracion.refresh && secs.configuracion.ov >= 2 && aliasOk && otherPages.every(Boolean), JSON.stringify({ pestanas: tabsNow.length, apartados: chips.length, repetidos: dupHeadings, procedenciaEnTotal: evidenceTotal }));
 
   /* 25 · independencia: leer → analizar → calcular → mostrar, sin modificar datos originales */
@@ -216,6 +222,18 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   check(28, 'La página se titula VIVE SCORE CRÉDITO con «historial de créditos» debajo, y el fondo es transparente (hereda el diseño de la app)', head28.title === 'VIVE SCORE CRÉDITO' && head28.sub === 'historial de créditos' && bg28.cs === 'normal' && frameCs === 'normal' && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs }));
 
   /* 2 · solo web / 16 · móvil sin cambios / 17 · desactivación */
+  /* 29 · historial de límites automático: editar el límite de una tarjeta queda registrado con fecha y se cuenta desde ese mes */
+  await go(p, 'score'); await p.waitForTimeout(800);
+  const lim0 = await frameOf(p).evaluate(() => { const e = evaluate(current()); return { score: e.score, req: current().limitReq0to6, auto: current().limitAuto, ev: (ST.answers.limit.events || []).filter(x => x.detected).length, obs: Object.keys(ST.limitObs || {}).length }; });
+  await p.evaluate(() => { const c = window.__T.dbg().cards.find(x => x.limitDOP > 0 && !/popular|cibao/i.test(x.name + (x.bank || ''))) || window.__T.dbg().cards.find(x => x.limitDOP > 0); window.__lim = { id: c.id, old: c.limitDOP }; c.limitDOP = c.limitDOP + 100000; });
+  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(700);
+  const lim1 = await frameOf(p).evaluate(() => { const e = evaluate(current()), d = (ST.answers.limit.events || []).filter(x => x.detected); return { score: e.score, req: current().limitReq0to6, auto: current().limitAuto, n: d.length, last: d[d.length - 1] || null, hasAt: !!(d[d.length - 1] && d[d.length - 1].at) }; });
+  await cc(p, 'antecedentes');
+  await fclick(p, '[data-limit-kind]'); await p.waitForTimeout(300);
+  const lim2 = await frameOf(p).evaluate(() => ({ req: current().limitReq0to6, score: evaluate(current()).score, text: document.getElementById('view').innerText.includes('Cambios de límite de tus tarjetas') }));
+  await p.evaluate(() => { const c = window.__T.dbg().cards.find(x => x.id === window.__lim.id); c.limitDOP = window.__lim.old; });
+  check(29, 'Historial de límites automático: el cambio de límite editado en la app se registra solo con fecha y hora, no resta puntos mientras sea automático y sí al marcarlo como solicitado', lim0.obs >= 1 && lim1.n === lim0.ev + 1 && lim1.hasAt && lim1.last.next - lim1.last.prev === 100000 && lim1.last.period === lim1.last.at.slice(0, 7) && lim1.score === lim0.score && lim1.auto === lim0.auto + 1 && lim2.req === lim0.req + 1 && lim2.score <= lim1.score && lim2.text, JSON.stringify({ lim0, lim1: { ...lim1, last: lim1.last && { prev: lim1.last.prev, next: lim1.last.next, period: lim1.last.period } }, lim2 }));
+
   await ctx.close();
   process.env.TOUCH = '1';
   const mon = await open(b, 390, 844); const monErr = []; mon.p.on('pageerror', e => monErr.push(e.message));

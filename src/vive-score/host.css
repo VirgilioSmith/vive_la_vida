@@ -7,7 +7,4 @@ body[data-menu-layout="rail"] .rail-sidebar .rail-action .rail-symbol{position:r
 .vs-frame.vs-on{display:block}
 @media(max-width:790px){.vs-slot,.vs-frame{display:none!important}.vive-score-badge{display:none}}
 
-/* Fondo de la página Score: blanco puro en modo claro (y oscuro/negro puros en sus temas), en la página y en todos sus contenedores; sin el degradado de la app. */
-html:has([data-vs-slot]),html body[class]:not(.theme-dark):not(.theme-black):has([data-vs-slot]),html body[class]:not(.theme-dark):not(.theme-black) :has([data-vs-slot]),html body[class]:not(.theme-dark):not(.theme-black) .vs-slot{background:#fff!important;background-image:none!important}
-html body.theme-dark[class]:has([data-vs-slot]),html body.theme-dark[class] :has([data-vs-slot]),html body.theme-dark[class] .vs-slot{background:#070809!important;background-image:none!important}
-html body.theme-black[class]:has([data-vs-slot]),html body.theme-black[class] :has([data-vs-slot]),html body.theme-black[class] .vs-slot{background:#000!important;background-image:none!important}
+/* El marco es transparente: la página Score usa el mismo fondo que las demás vistas de vive el hoy. */
