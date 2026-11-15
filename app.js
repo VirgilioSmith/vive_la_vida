@@ -1784,8 +1784,22 @@ function v49LoanPeriodDate(l,index){
  const cycle=Math.floor(index/2);
  return index%2===0?v91AnchoredMonthDay(y,m+cycle,day):v91AnchoredMonthDay(y,m+cycle+1,15);
 }
+/* Tasa vigente de un préstamo en una fecha: tasa del contrato, luego cada cambio registrado desde su fecha de vigencia.
+   Sin historial de cambios equivale a la regla anterior (tasa del contrato antes de `rateEffectiveFrom`, tasa vigente después). */
+function loanRateTimeline(l){
+ const line=[{desde:'0000-00-00',rate:num(l.rate)}];
+ const hist=(Array.isArray(l.conditionHistory)?l.conditionHistory:[]).filter(h=>h&&h.effectiveFrom&&h.toRate!==undefined&&h.toRate!==null).map(h=>({desde:String(h.effectiveFrom).slice(0,10),rate:num(h.toRate)}));
+ line.push(...hist);
+ const cur=String(l.rateEffectiveFrom||'0000-00-00').slice(0,10);
+ if(!hist.some(h=>h.desde===cur))line.push({desde:cur,rate:num(l.currentRate??l.rate)});
+ return line.sort((x,y)=>x.desde.localeCompare(y.desde));
+}
+function loanRateAt(l,due){
+ if(!due)return num(l.currentRate??l.rate);
+ let rate=num(l.rate);for(const t of loanRateTimeline(l)){if(t.desde<=due)rate=t.rate}return rate;
+}
 function v49LoanPeriodInterest(l,balance,due){
- const annual=(due&&(due<(l.rateEffectiveFrom||'0000-00-00')))?num(l.rate):num(l.currentRate??l.rate);
+ const annual=loanRateAt(l,due);
  return rnd(Math.max(0,balance)*Math.max(0,annual)/1200/v49LoanPeriodsPerMonth(l));
 }
 function v49SplitMonthlyCost(amount,l,index=0){const monthly=rnd(amount);if(v49LoanPeriodsPerMonth(l)===1)return monthly;const first=rnd(monthly/2);return index%2===0?first:rnd(monthly-first);}

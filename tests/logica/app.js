@@ -57,6 +57,16 @@ const afirmar = (n, c, d = '') => { if (c) ok++; else fallos.push(n + (d ? ' →
   const movs = await p.evaluate(() => window.__T.dbg().transactions.map((t) => ({ ...t })));
   const cuentas = await p.evaluate(() => window.__T.dbg().accounts.map((a) => ({ id: a.id, opening: a.opening, opened: a.opened })));
   for (const c of cons) { if (c.t) continue; const a = cuentas.find((x) => x.id === c.id); const m = movs.filter((t) => t.accountId === c.id || t.toAccountId === c.id); afirmar('saldo inicial + movimientos = saldo (cuenta)', R.saldoCuenta({ id: c.id, apertura: a.opening, abierta: a.opened, movimientos: m, hasta: hoyApp }) === c.app); }
+  // 7) préstamo con varios cambios de tasa: cada fecha usa su tasa
+  const tasas = await p.evaluate(() => {
+    const F = window.__T.fn;
+    const base = { rate: 10, currentRate: 14, rateEffectiveFrom: '2026-09-01', paymentFrequency: 'monthly', months: 12 };
+    const con = { ...base, conditionHistory: [{ effectiveFrom: '2026-03-01', fromRate: 10, toRate: 12 }, { effectiveFrom: '2026-09-01', fromRate: 12, toRate: 14 }] };
+    const ini = (l, f) => F.loanRateAt(l, f);
+    return { sinHist: [ini(base, '2026-01-01'), ini(base, '2026-08-31'), ini(base, '2026-09-01')], conHist: [ini(con, '2026-01-01'), ini(con, '2026-03-01'), ini(con, '2026-08-31'), ini(con, '2026-09-01'), ini(con, '2027-01-01')] };
+  });
+  afirmar('préstamo sin historial: regla anterior intacta', JSON.stringify(tasas.sinHist) === '[10,10,14]', JSON.stringify(tasas.sinHist));
+  afirmar('préstamo con 2 cambios: cada tramo usa su tasa', JSON.stringify(tasas.conHist) === '[10,12,12,14,14]', JSON.stringify(tasas.conHist));
   afirmar('sin errores de consola', errs.length === 0, errs.join(' | '));
   await b.close();
   console.log(`app: ${ok} correctas, ${fallos.length} fallan`); fallos.forEach((f) => console.log(' -', f));
