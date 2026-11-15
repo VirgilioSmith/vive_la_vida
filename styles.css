@@ -55645,3 +55645,46 @@ html body #app#app .v1129-income>b{font-size:14px}
 html body #app#app .v1129-income-btn{min-height:38px;border-radius:12px;font-size:12.5px}
 html body #app#app .v1129-hint{font-size:10.5px}
 html body #app#app .v1129-salary .v273-widget-empty{font-size:11.5px;line-height:1.35;margin:0}
+
+/* V1131 · Barras de pestañas internas en móvil (Ingresos / Egresos / Movimientos, subpestañas de Ingresos recurrentes):
+   compactas y desplazables, para que se note que hay más opciones al lado. */
+@media(max-width:820px){
+ html body #app#app #page :is(.inner-menu-tabs,.v55-subnav){display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;align-items:center!important;gap:6px!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;padding:4px!important;margin:0 0 10px!important;box-sizing:border-box!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;border-radius:999px!important;-webkit-mask-image:linear-gradient(90deg,#000 0,#000 86%,transparent 100%);mask-image:linear-gradient(90deg,#000 0,#000 86%,transparent 100%)}
+ html body #app#app #page :is(.inner-menu-tabs,.v55-subnav)::-webkit-scrollbar{display:none}
+ html body #app#app #page :is(.inner-menu-tabs>:is(button,a),.v55-subnav>button){flex:0 0 auto!important;width:auto!important;min-width:0!important;height:34px!important;min-height:34px!important;padding:0 14px!important;display:inline-flex!important;align-items:center!important;gap:6px!important;white-space:nowrap!important;font-size:12.5px!important;line-height:1!important;border-radius:999px!important;scroll-snap-align:start}
+ html body #app#app #page :is(.inner-menu-tabs,.v55-subnav) svg{width:15px!important;height:15px!important}
+ html body #app#app #page .inner-menu:has(.inner-menu-tabs){padding:0!important;min-height:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+ html body #app#app #page .inner-menu-caption{display:none!important}
+}
+@media(max-width:820px){
+ html body #app#app #page .inner-menu-tabs>.inner-menu-tab.active,html body #app#app #page .inner-menu-tabs>.inner-menu-tab.active *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+ html body #app#app #page .inner-menu-tabs>.inner-menu-tab.active{background:var(--v424-accent-strong,#5b57d6)!important}
+ html body #app#app #page input[type="month"]{font-size:14px!important;min-height:40px!important;padding:6px 10px!important;min-width:0!important;max-width:100%!important}
+}
+
+/* V1132 · Barras de pestañas: acento real (sin morado fijo), compactas para ver las tres opciones, y ancho lateral uniforme en web. */
+html body #app#app #page :is(.inner-menu-tab,.v55-subtab,.module-switch-tab).active,
+html body #app#app #page :is(.inner-menu-tab,.v55-subtab,.module-switch-tab)[aria-current="page"],
+html body #app#app #page :is(.inner-menu-tab,.v55-subtab,.module-switch-tab)[aria-selected="true"]{background:var(--v424-accent-strong,#5b57d6)!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:800!important;border-color:transparent!important;box-shadow:0 10px 20px -10px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 85%,transparent),inset 0 1px 0 rgba(255,255,255,.28)!important}
+html body #app#app #page :is(.inner-menu-tab,.v55-subtab,.module-switch-tab).active *{color:#fff!important;-webkit-text-fill-color:#fff!important;stroke:#fff!important}
+html body #app#app #page :is(.inner-menu-tabs,.v55-subnav,.module-switch-tabs){border-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 22%,transparent)!important;background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 7%,rgba(255,255,255,.82))!important;box-shadow:0 14px 28px -22px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 70%,transparent)!important}
+html body #app#app #page :is(.inner-menu-tab,.v55-subtab,.module-switch-tab):not(.active):not([aria-current="page"]){color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 62%,#3a4358)!important;font-weight:700!important}
+html body:is(.theme-black,.theme-dark) #app#app #page :is(.inner-menu-tabs,.v55-subnav,.module-switch-tabs){background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 14%,#101116)!important}
+@media(max-width:820px){
+ html body #app#app #page .inner-menu-tabs{-webkit-mask-image:none!important;mask-image:none!important;gap:2px!important;padding:3px!important;justify-content:space-between!important;width:100%!important}
+ html body #app#app #page .inner-menu-tabs>:is(button,a){flex:1 1 auto!important;justify-content:center!important;height:32px!important;min-height:32px!important;padding:0 8px!important;font-size:11.5px!important;gap:4px!important}
+ html body #app#app #page .inner-menu-tabs svg{width:13px!important;height:13px!important}
+}
+@media(min-width:821px){
+ html body #app#app #page>:is(.v134-patrimony,.v410-subs),html body #app#app #page .inner-view>.v55-shell,html body #app#app #page .inner-view>:is(.v248-finance,.v248-rest){max-width:1390px;margin-inline:auto;width:100%;box-sizing:border-box}
+}
+@media(min-width:821px){
+ html body.world-income #app#app #page .v55-shell{max-width:1390px!important;margin-inline:auto!important;width:100%!important}
+}
+@media(max-width:820px){html body #app#app #page input[type="month"]{font-size:13px!important;padding:6px 8px!important}}
+
+/* V1133 · Patrimonio: la variación del hero era ilegible (texto blanco sobre píldora clara). */
+html body #app#app #page .v187-hero-change .v134-change{font-weight:850!important;font-size:12px!important;padding:3px 10px!important}
+html body #app#app #page .v187-hero-change .v134-change.v134-change-up,html body #app#app #page .v187-hero-change .v134-change.v134-change-up *{color:#07624f!important;-webkit-text-fill-color:#07624f!important}
+html body #app#app #page .v187-hero-change .v134-change.v134-change-down,html body #app#app #page .v187-hero-change .v134-change.v134-change-down *{color:#a11d38!important;-webkit-text-fill-color:#a11d38!important}
+html body #app#app #page .v187-hero-change .v134-change:not(.v134-change-up):not(.v134-change-down),html body #app#app #page .v187-hero-change .v134-change:not(.v134-change-up):not(.v134-change-down) *{color:#3b4358!important;-webkit-text-fill-color:#3b4358!important}
