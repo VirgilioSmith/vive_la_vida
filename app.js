@@ -9955,28 +9955,30 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   paint();wrap.v1110Invalid=()=>{wrap.classList.add('is-invalid');toggle(true)};
   return wrap;
  }
- /* Selector universal de cuenta o tarjeta de pago (mismo diseño que el de instituciones). */
+ /* Cuenta o tarjeta de pago: abre el selector universal (la misma hoja «Seleccionar tarjeta / cuenta» de toda la app). */
  function v1110ProductPicker(f,n,label){
   const sel=v1110El(f,n),box=v1110Box(f,n);if(!sel||!box)return null;
   const wrap=document.createElement('div');wrap.className='v1110-field v1110-pick v1028-picker';wrap.dataset.field=n;
-  wrap.innerHTML=`<span class="v1110-lab">${v1110Esc(label)}</span><button type="button" class="v1028-picker-btn v1110-pickbtn" aria-haspopup="listbox" aria-expanded="false"></button><div class="v1028-picker-list v1110-picklist" role="listbox" hidden></div>`;
-  const btn=wrap.querySelector('.v1110-pickbtn'),list=wrap.querySelector('.v1110-picklist');
+  wrap.innerHTML=`<span class="v1110-lab">${v1110Esc(label)}</span><button type="button" class="v1028-picker-btn v1110-pickbtn" aria-haspopup="dialog"></button>`;
+  const btn=wrap.querySelector('.v1110-pickbtn');
   sel.classList.add('v1110-native');sel.tabIndex=-1;wrap.append(sel);box.remove();
   const info=v=>{const [k,id]=String(v).split(':');const it=k==='card'?card(id):account(id);if(!it)return null;const b=bank(it.bankId),l4=String(it.last4||'').replace(/\D/g,'').slice(-4);
    return {kind:k,item:it,bank:b,title:it.name,sub:(it.kind==='cash'?'Efectivo':(b?.name||''))+(l4?' • '+l4:'')+(k==='card'?' · Tarjeta':' · '+(it.currency||'DOP'))}};
   const logo=i=>i?.bank?bankLogoMark(i.bank,'v1028-logo'):`<span class="v1028-logo v1028-glyph">${v1110Ico(i?.kind==='card'?'card':'building')}</span>`;
-  const row=(i,t,sub,sl)=>`<span class="v1028-row-logo">${logo(i)}</span><span class="v1028-row-copy"><strong${i?'':' class="is-empty"'}>${v1110Esc(t)}</strong>${sub?`<small>${v1110Esc(sub)}</small>`:''}</span>${sl===undefined?'':`<span class="v1028-row-check" aria-hidden="true">${sl?'✓':''}</span>`}`;
-  const opts=()=>[...sel.options].filter(o=>o.value);
   const paint=()=>{const i=sel.value?info(sel.value):null;
-   btn.innerHTML=(i?row(i,i.title,i.sub):row(null,'Selecciona la cuenta o tarjeta',''))+`<span class="v1028-chevron" aria-hidden="true">⌄</span>`;
-   const grp=(t,k)=>{const g=opts().filter(o=>o.value.startsWith(k+':'));return g.length?`<div class="v1028-group">${t}</div>`+g.map(o=>{const x=info(o.value);return `<button type="button" role="option" class="v1028-opt${o.value===sel.value?' is-on':''}" data-v="${v1110Esc(o.value)}" aria-selected="${o.value===sel.value}">${row(x,x?x.title:o.text,x?x.sub:'',o.value===sel.value)}</button>`}).join(''):''};
-   list.innerHTML=opts().length?grp('Cuentas y efectivo','account')+grp('Tarjetas de crédito','card'):'<p class="v1110-empty">Aún no tienes cuentas ni tarjetas.</p>'};
-  const toggle=on=>{list.hidden=!on;btn.setAttribute('aria-expanded',String(on));wrap.classList.toggle('open',on)};
-  btn.addEventListener('click',()=>toggle(list.hidden));
-  list.addEventListener('click',e=>{const it=e.target.closest('.v1028-opt');if(!it)return;sel.value=it.dataset.v;v1110Fire(sel,'input');v1110Fire(sel,'change');paint();toggle(false)});
+   btn.innerHTML=`<span class="v1028-row-logo">${logo(i)}</span><span class="v1028-row-copy"><strong${i?'':' class="is-empty"'}>${v1110Esc(i?i.title:'Selecciona la cuenta o tarjeta')}</strong>${i?`<small>${v1110Esc(i.sub)}</small>`:''}</span><span class="v1028-chevron" aria-hidden="true">›</span>`};
+  btn.addEventListener('click',()=>{
+   const products=[...sel.options].filter(o=>o.value&&!o.disabled).map(o=>{const [k,id]=o.value.split(':');const item=k==='card'?card(id):account(id);return item?{type:k==='card'?'cardId':'accountId',item}:null}).filter(Boolean);
+   if(!products.length){toast('Aún no tienes cuentas ni tarjetas.');return}
+   const [k0,id0]=String(sel.value||'').split(':');
+   if(typeof window.openRegisterProductPicker!=='function'){return}
+   window.openRegisterProductPicker('Seleccionar cuenta o tarjeta',products,id0||'',opt=>{
+    const value=(opt.kind==='credit'?'card:':'account:')+opt.value;
+    if([...sel.options].some(o=>o.value===value)){sel.value=value;v1110Fire(sel,'input');v1110Fire(sel,'change');paint()}
+   });
+  });
   sel.addEventListener('change',paint);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!list.hidden&&wrap.isConnected){toggle(false);e.stopPropagation()}},true);
-  paint();wrap.v1110Invalid=()=>{wrap.classList.add('is-invalid');toggle(true)};wrap.v1110Info=info;
+  paint();wrap.v1110Invalid=()=>{wrap.classList.add('is-invalid');btn.focus()};wrap.v1110Info=info;
   return wrap;
  }
  /* Segmentado (p. ej. DOP | USD) sobre una lista nativa. */
@@ -17928,7 +17930,9 @@ function updateTrigger(field){
   const trigger=label?.querySelector('.v789-select-open');
   if(trigger)trigger.setAttribute('aria-label','Cambiar '+(productLabels[field.name]||'producto')+': '+(option?.name||text));
 }
-function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form,form.v940-income-capture')){
+function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form,form.v940-income-capture,form#transactionForm')){
+ /* Cobro de interés y rescate de certificados: su cuenta también usa el selector universal. */
+ if(form.id==='transactionForm'&&!form.elements.namedItem('certificateId'))continue;
  for(const name of ['cardId','accountId','loanId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement))continue;
  const label=field.closest('label');if(!label||field.dataset.v789Enhanced==='1')continue;
  field.dataset.v789Enhanced='1';field.classList.add('v789-native-keep');field.tabIndex=-1;label.classList.add('v789-select-enhanced');
