@@ -33,7 +33,7 @@ function applySeeds(){
  let auto=false;
  const ev0=A.limit.events.length;if(observeLimits(A)){auto=true;if(A.limit.events.length>ev0)ST.declVersion++}
  /* Aperturas recientes: se leen solas de las fechas de apertura de vive el hoy (ventana de 0–6 meses); no hay nada que seleccionar. */
- for(const k of ['newCards','newLoans'])if(A[k]&&A[k].answer==null){A[k].answer='no';A[k].items=[];A[k].auto=true;auto=true}
+ for(const k of ['limit','newCards','newLoans'])if(A[k]&&A[k].answer==null){A[k].answer='no';A[k].items=[];A[k].auto=true;auto=true}
  for(const sd of SEEDS){
   if(ST.seeded[sd.key])continue;
   const card=uniqueProducts().find(p=>p.kind==='card'&&(sd.match.test(p.name||'')||sd.match.test(p.bank||'')));

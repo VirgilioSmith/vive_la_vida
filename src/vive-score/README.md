@@ -175,3 +175,9 @@ El resto de la aplicación no depende de nada de esta carpeta.
 ## Fondo transparente
 
 El marco de VIVE SCORE es transparente y deja ver el fondo de las demás vistas de vive el hoy. La app declara `color-scheme: light dark`; si el marco no declara exactamente lo mismo (en el documento y en el elemento `iframe`), el navegador pinta un panel opaco cuando el sistema operativo está en modo oscuro. Por eso `frame.html` y `.vs-frame` usan `light dark`, y la prueba 28 lo comprueba con el sistema en modo claro y oscuro.
+
+## Sin variables manuales
+
+- **Todo lo actual es automático** desde vive el hoy: aperturas, cambios de límite, productos cancelados (el estado cerrado/saldado de la app), ingresos, compromisos, gasto esencial y reserva. No hay ningún dato personal (sexo, edad, estado civil, ocupación): no se pide ni se usa.
+- **Lo único manual es el historial anterior a la app:** atrasos anteriores (una pregunta, solo mes y año) y productos cancelados antes de usar vive el hoy (Configuración → *Productos y cancelados*). El primer crédito solo se pregunta si la app no tiene fechas de apertura.
+- Se retiraron las preguntas «tarjetas nuevas», «préstamos recientes», «aumentos de límite», «créditos cerrados» y «otros acontecimientos» del cuestionario (siguen disponibles al editar antecedentes solo para el límite y el primer crédito). La sección *Variables* del Centro de control lista únicamente las variables que el modelo realmente lee y su fuente.

@@ -4,7 +4,7 @@
    - No hay preguntas sobre consultas de TransUnion, Equifax ni otros burós.
    - Lo que respondes se guarda como DECLARACIÓN PERSONAL (no como evidencia bancaria verificada). */
 const Q_STEPS=[
- ['late','Atrasos','¿Te has atrasado alguna vez en el pago de una tarjeta de crédito o préstamo?'],
+ ['late','Atrasos anteriores','Antes de usar vive el hoy, ¿te atrasaste alguna vez en el pago de una tarjeta de crédito o préstamo?'],
  ['limit','Aumentos de límite','¿Te han aumentado el límite de alguna tarjeta de crédito?'],
  ['newCards','Tarjetas nuevas','¿Has adquirido alguna tarjeta de crédito recientemente?'],
  ['newLoans','Préstamos recientes','¿Has solicitado o recibido algún préstamo recientemente?'],
@@ -101,7 +101,13 @@ function summaryBody(){
  const rows=[['Productos identificados en vive el hoy',`${prods.filter(p=>p.kind==='card').length} tarjeta(s) · ${prods.filter(p=>p.kind==='loan').length} préstamo(s)`],['Atrasos declarados',A.late.answer==='no'?'Ninguno (declaración personal)':A.late.answer==='yes'?String(late):'—'],['Antigüedad conocida',validPeriod(A.first.period)?myLabel(A.first.period)+' (declarada)':'—'],['Aumentos de límite históricos',A.limit.answer==null?'—':String(lim)+(A.limit.autoFilled?' · cargados automáticamente':'')],['Nuevos créditos',A.newCards.answer==null&&A.newLoans.answer==null?'—':`${nc} tarjeta(s) · ${nl} préstamo(s)`],['Productos cerrados',A.closed.answer==null?'—':String(cl)],['Acontecimientos extraordinarios',A.other.answer==null?'—':String(ot)]];
  return `<div class="metricList">${rows.map(([a,b])=>`<div class="metricLine"><span>${a}</span><b>${safe(b)}</b></div>`).join('')}</div><h3 style="margin:16px 0 6px">Información faltante</h3>${miss.length?`<div class="warnings">${miss.map(m=>`<div class="witem warning"><span>!</span><div>${m}</div></div>`).join('')}</div>`:'<div class="okMessage">✓ No falta información esencial.</div>'}<p class="xs muted">Todo lo anterior son declaraciones personales y datos de la app, no evidencia bancaria verificada. Puedes cambiarlo después en Configuración y antecedentes; cada cambio queda registrado.</p>`;
 }
-const skipStep=id=>{const A=ST.answers;if(qEditing)return false;return (id==='limit'&&A?.limit?.autoFilled&&A.limit.confirmed)||((id==='newCards'||id==='newLoans')&&A?.[id]?.auto)};
+/* Solo se pregunta lo que vive el hoy no puede saber: atrasos anteriores a la app (y, al editar, aumentos de límite o el primer crédito anteriores).
+   Todo lo actual (aperturas, aumentos de límite, productos cancelados en la app, otros acontecimientos) se lee o se detecta solo. Los cancelados de antes se agregan en Configuración. */
+const skipStep=id=>{const A=ST.answers;
+ if(['newCards','newLoans','other','closed'].includes(id))return true;
+ if(id==='limit')return !qEditing&&(!!A?.limit?.auto||(A?.limit?.autoFilled&&A.limit.confirmed));
+ if(id==='first')return !qEditing&&!validPeriod(A?.first?.period)&&uniqueProducts().some(p=>validPeriod(p.opened));
+ return false};
 function stepTo(from,dir){let n=clamp(from+dir,0,Q_STEPS.length-1);while(skipStep(Q_STEPS[n][0])&&n>0&&n<Q_STEPS.length-1)n+=dir;return n}
 function questionnaire(){
  ensureAnswers();const step=clamp(qStep,0,Q_STEPS.length-1),[id,title,question]=Q_STEPS[step],last=step===Q_STEPS.length-1,shown=Q_STEPS.filter(q=>!skipStep(q[0])),pos=shown.findIndex(q=>q[0]===id)+1;
