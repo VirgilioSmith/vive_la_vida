@@ -11614,7 +11614,7 @@ const V332_PERSONALIZATION_AREAS=[
  {key:'other',title:'04 · RELACIONES Y OTROS MÓDULOS',label:'Relaciones',ids:['people']}
 ];
 function v332PersonalizationGroups(cfg){
- const ids=(cfg?.order||V105_WIDGETS.map(w=>w.id)).filter(id=>V105_WIDGETS.some(w=>w.id===id));
+ const ids=(cfg?.order||V105_WIDGETS.map(w=>w.id)).filter(id=>V105_WIDGETS.some(w=>w.id===id)&&!v1118Skip(id));
  const area=id=>V332_PERSONALIZATION_AREAS.find(g=>g.ids.includes(id))||{key:'more',title:'OTROS INDICADORES',label:'Otros'};
  // Runs follow the user's real order. A widget can cross old section boundaries.
  const groups=[];
@@ -11691,9 +11691,11 @@ function v105SaveConfig(c){
  v105ApplyWidgetPreferences();
 }
 let v105DraftConfig=null;
+const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow'];
+function v1118Skip(id){return V1118_MOBILE_REMOVED.includes(id)&&isMobileViewport()}
 function v105Customizer(){
  const cfg=v105DraftConfig||v105Config(),enabled=new Set(cfg.visible);
- const rows=cfg.order.map((id,i)=>{
+ const rows=cfg.order.filter(id=>!v1118Skip(id)).map((id,i)=>{
   const w=V105_WIDGETS.find(x=>x.id===id);if(!w)return '';
   return `<div class="v105-config-row"><label><input type="checkbox" data-v105-toggle="${id}" ${enabled.has(id)?'checked':''}/><span><strong>${w.title}</strong><small>${w.hint}</small></span></label><span class="v105-config-order"><button type="button" data-v105-move="up" data-id="${id}" ${i===0?'disabled':''} aria-label="Subir ${w.title}">↑</button><button type="button" data-v105-move="down" data-id="${id}" ${i===cfg.order.length-1?'disabled':''} aria-label="Bajar ${w.title}">↓</button></span></div>`;
  }).join('');
@@ -14349,7 +14351,7 @@ function v747PersonalizationCard(w,id,index,enabled,total){
 
 function v273SettingsWidgetEditor(){
  const cfg=v105Config(),visible=new Set(cfg.visible);
- const rows=cfg.order.map((id,i)=>{
+ const rows=cfg.order.filter(id=>!v1118Skip(id)).map((id,i)=>{
   const w=V105_WIDGETS.find(x=>x.id===id);
   return w?v747PersonalizationCard(w,id,i,visible.has(id),cfg.order.length):'';
  }).join('');
