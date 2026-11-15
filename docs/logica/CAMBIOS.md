@@ -15,3 +15,7 @@
 | 2026-11-15 | Tarjeta: campo «monto mínimo» del pago mínimo y vigencia por cambio | D5 | Vacío = sin cambio; los cortes anteriores conservan su mínimo |
 | 2026-11-15 | Instantáneas al crear cuenta, tarjeta, certificado y préstamo | Historial de reglas y resultados | Datos nuevos (`ruleVersions`, `recordSnapshots`) que se sincronizan como las demás colecciones |
 | 2026-11-15 | Detalle de tarjeta: el interés orientativo usa la capa pura | Centralizar fórmulas | Mismo valor |
+| 2026-11-15 | Registro de auditoría (`auditLog`) en ediciones de cuenta, tarjeta, certificado y préstamo y en eliminaciones de movimientos | Saber quién, cuándo y el valor anterior | Datos nuevos sincronizados como las demás colecciones |
+| 2026-11-15 | Cierre de sesión tras 30 minutos sin actividad | Seguridad de la sesión | No cierra con cambios sin sincronizar |
+| 2026-11-15 | Captura global de errores y red con tiempo de espera y reintentos solo en lecturas | Resiliencia | Sin cambio visible |
+| 2026-11-15 | Fondo de las ventanas de registro sin desenfoque; color de acento en Ingresos recurrentes | Pedido de diseño | Solo visual |
