@@ -12724,7 +12724,7 @@ function v261ServiceFrame(title,subtitle,body,{detail=false,footer=''}={}){
  root.innerHTML=`<div class="modal-layer v260-service-layer v261-service-layer" data-backdrop="true"><section class="modal v146-service-modal v260-service-picker-dialog v261-service-dialog${detail?' v261-detail-dialog':''}" role="dialog" aria-modal="true" aria-label="${sanitize(title)}">
   <header class="v261-dialog-header"><span class="v261-drag" aria-hidden="true"></span>
    ${detail?`<button type="button" class="v261-header-back" data-v261-back aria-label="Volver">${icon('arrow')}</button>`:'<span class="v261-header-spacer"></span>'}
-   <div class="v261-dialog-heading"><span class="v261-overline">vive el hoy</span><h2>${sanitize(title)}</h2>${subtitle?`<p>${sanitize(subtitle)}</p>`:''}</div>
+   <div class="v261-dialog-heading"><h2>${sanitize(title)}</h2>${subtitle?`<p>${sanitize(subtitle)}</p>`:''}</div>
    <button type="button" class="v261-header-close" data-act="closeModal" aria-label="Cerrar">×</button>
   </header>
   <div class="v261-dialog-scroll">${body}</div>
