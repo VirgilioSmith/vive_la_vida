@@ -55442,3 +55442,91 @@ html body #modal-root#modal-root#modal-root form .v1110-freqseg>button[aria-pres
 
 /* V1118 · Vista móvil sin Ingresos y egresos, Utilización por tarjeta (y Premium) ni El río de tu dinero. La web conserva sus paneles. */
 html body #app .vive-mobile-home :is([data-v105-widget="chart"],[data-v105-widget="creditUtil"],[data-v105-widget="premiumCredit"],[data-v105-widget="futureFlow"]){display:none!important}
+
+/* V1119 · Matriz Jobs: cuadrícula 2×2 compacta también en móvil, filas en lugar de mosaicos. */
+html body #app#app .v985-matrix{margin:0 0 14px}
+html body #app#app .v985-title{text-align:center;margin:2px 0 12px}
+html body #app#app .v985-title h2{margin:0;font-size:clamp(30px,9vw,44px);font-weight:900;letter-spacing:-.055em;line-height:1;color:#14161c}
+html body #app#app .v985-title p{margin:4px 0 0;font-size:clamp(13px,3.6vw,16px);color:#5c6780;font-weight:500}
+html body #app#app .v985-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px;align-items:stretch}
+html body #app#app .v985-card{padding:12px 10px 10px;gap:8px;border-radius:22px}
+html body #app#app .v985-head{align-items:flex-start;gap:6px}
+html body #app#app .v985-head h3{font-size:clamp(17px,5.4vw,24px);letter-spacing:-.05em}
+html body #app#app .v985-head p{font-size:clamp(10px,2.9vw,12.5px);line-height:1.2;margin-top:2px}
+html body #app#app .v985-chip{min-width:24px;height:18px;padding:0 6px;font-size:10px}
+html body #app#app .v985-go{flex-basis:26px;width:26px;height:26px}
+html body #app#app .v985-go svg{width:14px;height:14px}
+html body #app#app .v985-figure>strong{font-size:clamp(17px,5.3vw,26px)}
+html body #app#app .v985-cap{font-size:clamp(10.5px,3vw,13px);font-weight:700}
+html body #app#app .v985-body>.v985-figure{flex-direction:row}
+html body #app#app .v985-delta{font-size:10.5px;padding:2px 8px}
+html body #app#app .v985-spark{height:38px;margin-top:2px}
+html body #app#app .v985-stats{grid-template-columns:1fr 1fr;padding-top:8px}
+html body #app#app .v985-stat{padding:0 4px;gap:5px}
+html body #app#app .v985-stat small{font-size:10px}
+html body #app#app .v985-stat strong{font-size:clamp(10.5px,3vw,13px);letter-spacing:-.03em}
+html body #app#app .v985-stat-ico svg{width:16px;height:16px}
+html body #app#app .v985-list{display:flex;flex-direction:column}
+html body #app#app .v985-row-item{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:6px;min-height:38px;padding:0 2px;background:transparent;border:0;border-top:1px solid rgba(var(--tint),.18);color:inherit;font:inherit;text-align:left;cursor:pointer}
+html body #app#app .v985-row-item:first-child{border-top:0}
+html body #app#app .v985-row-ico{display:grid;color:var(--t)}
+html body #app#app .v985-row-ico svg{width:18px;height:18px}
+html body #app#app .v985-row-lbl{font-size:clamp(10.5px,3vw,13px);color:#4c5670;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body #app#app .v985-row-item strong{font-size:clamp(10.5px,3vw,13px);font-weight:850;letter-spacing:-.035em;white-space:nowrap;color:#1c1f26}
+html body #app#app .v985-bar{position:relative;height:16px;border-radius:999px;background:rgba(var(--tint),.15);overflow:hidden;margin-top:4px}
+html body #app#app .v985-bar i{position:absolute;inset:0 auto 0 0;background:var(--t);border-radius:999px}
+html body #app#app .v985-bar span{position:relative;display:block;text-align:right;padding:0 8px;font-size:9.5px;font-weight:800;line-height:16px;color:#4c5670}
+html body #app#app .v985-body.v985-row{flex-direction:column;align-items:flex-start;gap:6px}
+html body #app#app .v985-ring{flex-basis:64px;width:64px;height:64px;align-self:flex-end;margin-top:-4px}
+html body #app#app .v985-ring strong{font-size:15px}
+html body #app#app .v985-ring small{font-size:8px;max-width:44px}
+html body #app#app .v985-minis-3{gap:4px}
+html body #app#app .v985-mini{padding:6px 2px;min-height:54px;gap:3px;border-radius:12px}
+html body #app#app .v985-mini-ico svg{width:17px;height:17px}
+html body #app#app .v985-mini strong{font-size:8.8px;letter-spacing:-.04em}
+html body #app#app .v985-mini small{font-size:8.5px}
+html body:is(.theme-black,.theme-dark) #app#app .v985-title h2{color:#f2f4f8}
+html body:is(.theme-black,.theme-dark) #app#app .v985-title p,html body:is(.theme-black,.theme-dark) #app#app .v985-row-lbl,html body:is(.theme-black,.theme-dark) #app#app .v985-bar span{color:#aab4cc}
+html body:is(.theme-black,.theme-dark) #app#app .v985-row-item strong{color:#f2f4f8}
+html body #app#app .v985-head-copy>div{flex-wrap:nowrap;gap:5px}
+html body #app#app .v985-head h3{font-size:clamp(15px,4.3vw,22px)}
+html body #app#app .v985-chip{flex:0 0 auto}
+html body #app#app .v985-head p{font-size:clamp(9.5px,2.7vw,12px)}
+html body #app#app .v985-figure>strong{font-size:clamp(15px,4.4vw,24px);white-space:nowrap;letter-spacing:-.05em}
+html body #app#app .v985-stats{grid-template-columns:1fr 1fr;gap:4px}
+html body #app#app .v985-stat{flex-direction:column;align-items:flex-start;gap:2px;padding:0 2px}
+html body #app#app .v985-stat+.v985-stat{border-left:0;padding-left:4px}
+html body #app#app .v985-stat-ico{display:none}
+html body #app#app .v985-stat strong{font-size:clamp(10px,2.8vw,13px);white-space:nowrap;letter-spacing:-.05em}
+html body #app#app .v985-row-item{grid-template-columns:16px minmax(0,1fr) auto;gap:4px}
+html body #app#app .v985-row-ico svg{width:15px;height:15px}
+html body #app#app .v985-row-lbl{font-size:clamp(9.5px,2.7vw,12.5px)}
+html body #app#app .v985-row-item strong{font-size:clamp(9.5px,2.7vw,12.5px);letter-spacing:-.05em}
+html body #app#app .v985-body.v985-row{flex-direction:row;flex-wrap:wrap;gap:4px}
+html body #app#app .v985-body.v985-row .v985-figure{flex:1 1 100%}
+html body #app#app .v985-ring{flex-basis:54px;width:54px;height:54px;margin:0 0 0 auto}
+html body #app#app .v985-ring strong{font-size:13px}
+html body #app#app .v985-ring small{display:none}
+html body #app#app .v985-mini strong{font-size:8px;letter-spacing:-.05em;overflow:visible}
+html body #app#app .v985-mini small{font-size:8px}
+html body #app#app .v985-head{display:grid;grid-template-columns:minmax(0,1fr) 22px}
+html body #app#app .v985-head h3{font-size:clamp(14px,3.9vw,21px)}
+html body #app#app .v985-chip{min-width:20px;height:16px;padding:0 5px;font-size:9px}
+html body #app#app .v985-go{flex-basis:22px;width:22px;height:22px}
+html body #app#app .v985-figure>strong{font-size:clamp(14px,3.8vw,23px)}
+html body #app#app .v985-cap{font-size:clamp(10px,2.8vw,12.5px)}
+html body #app#app .v985-row-lbl{font-size:clamp(9.5px,2.6vw,12px)}
+html body #app#app .v985-row-item strong{font-size:clamp(9.5px,2.6vw,12px)}
+html body #app#app .v985-mini strong{font-size:7.6px}
+html body #app#app .v985-minis-3 .v985-mini small{display:none}
+/* V1119 · especificidad sobre V996 */
+html body #app#app .v985-matrix .v985-grid .v985-card .v985-head h3{font-size:clamp(14px,3.9vw,21px)!important}
+html body #app#app .v985-matrix .v985-grid .v985-card .v985-go{width:22px!important;height:22px!important;flex-basis:22px!important}
+html body #app#app .v985-matrix .v985-grid .v985-card .v985-figure>strong{font-size:clamp(14px,3.7vw,22px)!important;white-space:nowrap;overflow-wrap:normal}
+html body #app#app .v985-matrix .v985-grid .v985-card{min-width:0;overflow:hidden}
+html body #app#app .v985-matrix .v985-grid .v985-card .v985-stat strong{font-size:clamp(10px,2.8vw,13px)!important}
+html body #app#app .v985-matrix .v985-minis-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+html body #app#app .v985-matrix .v985-minis-3 .v985-mini{padding:6px 0;overflow:hidden}
+html body #app#app .v985-matrix .v985-minis-3 .v985-mini strong{font-size:7.2px!important;white-space:nowrap;letter-spacing:-.06em;overflow-wrap:normal!important}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-grid .v985-card .v985-figure>strong{color:#f2f4f8!important}
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-cap{color:#b8c1d8!important}

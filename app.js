@@ -691,7 +691,7 @@ function v64PositionComparison(){
 /* V273 · Optional Resumen sections. These are presentation-only and never
    mutate financial data or create duplicate transactions. */
 
-/* V985 · Matriz de simplificación: widget de Personalización con cuatro tarjetas (Entender · Actuar · Anticipar · Decidir).
+/* V985 · Matriz Jobs (antes Matriz de simplificación): widget de Personalización con cuatro tarjetas (Entender · Actuar · Anticipar · Decidir).
    Solo lectura de datos existentes; los botones reutilizan acciones ya existentes. */
 function v985Preview(){
  const t=[['#22b45e','#8ff0b0'],['#2f7bf2','#9cc4ff'],['#f51f43','#ff8a9d'],['#9a3be8','#dca8ff']];
@@ -751,18 +751,21 @@ function v985SimplificationWidget(){
  let budgetTxt=null;try{const bs=v290BudgetSnapshot(period);if(bs&&bs.allocated>0)budgetTxt=Math.round(bs.percent)+'% usado';}catch(e){}
  const mini=(ico,label,val,attrs,cls='')=>`<button type="button" class="v985-mini ${cls}" ${attrs}><span class="v985-mini-ico">${v985Svg(V985_ICO[ico],22)}</span><strong>${sanitize(label)}</strong>${val===null?'':`<small>${typeof val==='string'?sanitize(val):money(val)}</small>`}</button>`;
  const stat=(ico,label,val)=>`<div class="v985-stat"><span class="v985-stat-ico">${v985Svg(V985_ICO[ico],22)}</span><div><small>${sanitize(label)}</small><strong>${money(val)}</strong></div></div>`;
- const head=(tone,ico,title,q,n,act)=>`<header class="v985-head"><span class="v985-tile v985-${tone}">${v985Svg(V985_ICO[ico],30)}</span><div class="v985-head-copy"><div><h3>${title}</h3><span class="v985-chip v985-${tone}">${n}</span></div><p>${q}</p></div><button type="button" class="v985-go" ${act} aria-label="Abrir ${title}">${v985Svg(V985_ICO.chev,18)}</button></header>`;
- return `<section data-v105-widget="simplification" class="v985-matrix" aria-label="Matriz de simplificación">
+ const head=(tone,title,q,n,act)=>`<header class="v985-head"><div class="v985-head-copy"><div><h3>${title}</h3><span class="v985-chip v985-${tone}">${n}</span></div><p>${q}</p></div><button type="button" class="v985-go" ${act} aria-label="Abrir ${title}">${v985Svg(V985_ICO.chev,16)}</button></header>`;
+ const row=(ico,label,val,attrs)=>`<button type="button" class="v985-row-item" ${attrs}><span class="v985-row-ico">${v985Svg(V985_ICO[ico],20)}</span><span class="v985-row-lbl">${sanitize(label)}</span><strong>${money(val)}</strong></button>`;
+ const dotted=Math.round(paidShare);
+ return `<section data-v105-widget="simplification" class="v985-matrix" aria-label="Matriz Jobs">
+ <header class="v985-title"><h2>Matriz Jobs</h2><p>Tu dinero, en cuatro miradas</p></header>
  <div class="v985-grid">
-  <article class="v985-card v985-green">${head('green','wallet','Entender','¿Cómo estoy financieramente?','01','data-act="navigate" data-id="patrimony"')}
-   <div class="v985-body"><div class="v985-figure"><strong>${money(net)}</strong><span class="v985-delta ${delta!==null&&delta<0?'down':'up'}">${delta===null?'':(delta>=0?'▲ ':'▼ ')}${deltaTxt}</span></div><small class="v985-cap">Patrimonio neto</small>${spark}</div>
+  <article class="v985-card v985-green">${head('green','Entender','¿Cómo estoy financieramente?','01','data-act="navigate" data-id="patrimony"')}
+   <div class="v985-body"><small class="v985-cap">Patrimonio neto</small><div class="v985-figure"><strong>${money(net)}</strong></div>${delta===null?'':`<span class="v985-delta ${delta<0?'down':'up'}">${delta>=0?'▲ ':'▼ '}${deltaTxt}</span>`}${spark}</div>
    <div class="v985-stats">${stat('layers','Activos',assets)}${stat('layers','Pasivos',debt)}</div></article>
-  <article class="v985-card v985-blue">${head('blue','swap','Actuar','¿Qué necesito registrar o pagar?','02','data-act="newTransaction"')}
-   <div class="v985-minis v985-minis-4">${mini('plusC','Ingresos',inc,'data-act="newTransaction" data-type="income"')}${mini('minusC','Gastos',exp,'data-act="newTransaction" data-type="expense"')}${mini('swap','Transfer.',trf,'data-act="newTransaction" data-type="transfer"')}${mini('card','Pagos',pay,'data-act="navigate" data-id="payments"')}</div></article>
-  <article class="v985-card v985-orange">${head('orange','cal','Anticipar','¿Qué viene y qué debo pagar?','03','data-act="navigate" data-id="payments"')}
-   <div class="v985-body v985-row"><div class="v985-figure"><strong>${money(pending)}</strong><small class="v985-cap">Próximos compromisos</small></div>${v985Ring(paidShare,'orange','Compromisos pagados','pagado')}</div>
-   <div class="v985-minis v985-minis-4 v985-flat">${mini('card','Tarjetas',sumKind('card'),'data-act="navigate" data-id="cards"')}${mini('bank','Préstamos',sumKind('loan'),'data-act="navigate" data-id="loans"')}${mini('grid4','Suscripciones',sumKind('recurring'),'data-act="navigate" data-id="recurring"')}${mini('people','Entre personas',sumKind('personal'),'data-act="navigate" data-id="personal"')}</div></article>
-  <article class="v985-card v985-purple">${head('purple','bars','Decidir','¿Qué puedo hacer con mi dinero?','04','data-act="navigate" data-id="projection"')}
+  <article class="v985-card v985-blue">${head('blue','Actuar','¿Qué necesito registrar o pagar?','02','data-act="newTransaction"')}
+   <div class="v985-list">${row('plusC','Ingresos',inc,'data-act="newTransaction" data-type="income"')}${row('minusC','Gastos',exp,'data-act="newTransaction" data-type="expense"')}${row('swap','Transferir',trf,'data-act="newTransaction" data-type="transfer"')}${row('card','Pagos',pay,'data-act="navigate" data-id="payments"')}</div></article>
+  <article class="v985-card v985-orange">${head('orange','Anticipar','¿Qué viene y qué debo pagar?','03','data-act="navigate" data-id="payments"')}
+   <div class="v985-body"><div class="v985-figure"><strong>${money(pending)}</strong></div><small class="v985-cap">Próximos compromisos</small><div class="v985-bar" role="img" aria-label="Compromisos pagados ${dotted}%"><i style="width:${Math.max(0,Math.min(100,dotted))}%"></i><span>${dotted}% pagado</span></div></div>
+   <div class="v985-list">${row('card','Tarjetas',sumKind('card'),'data-act="navigate" data-id="cards"')}${row('bank','Préstamos',sumKind('loan'),'data-act="navigate" data-id="loans"')}${row('grid4','Suscripciones',sumKind('recurring'),'data-act="navigate" data-id="recurring"')}${row('people','Personas',sumKind('personal'),'data-act="navigate" data-id="personal"')}</div></article>
+  <article class="v985-card v985-purple">${head('purple','Decidir','¿Qué puedo hacer con mi dinero?','04','data-act="navigate" data-id="projection"')}
    <div class="v985-body v985-row"><div class="v985-figure"><strong>${money(room)}</strong><small class="v985-cap">Capacidad de endeudamiento</small>${ratio===null?'':`<span class="v985-delta up v985-soft">${ratio.toLocaleString('es-DO',{maximumFractionDigits:1})}% comprometido</span>`}</div>${v985Ring(health,'purple','Salud financiera','Salud financiera')}</div>
    <div class="v985-minis v985-minis-3 v985-flat">${mini('target','Presupuesto',budgetTxt,'data-act="navigate" data-id="budget"')}${mini('pie','Análisis',null,'data-act="navigate" data-id="analytics"')}${mini('trend','Recuperación',null,'data-act="navigate" data-id="settings" data-v985-pane="security"')}</div></article>
  </div></section>`;
@@ -11571,7 +11574,7 @@ loanForm=function(id,preBank){
    La personalización persiste solo claves de presentación. */
 const V105_WIDGETS=[
  {id:'applePayInbox',title:'Apple Pay · Por clasificar',hint:'Compras Wallet pendientes: asigna categoría y subcategoría desde Inicio'},
- {id:'simplification',title:'Matriz de simplificación',hint:'Entender, actuar, anticipar y decidir: cuatro tarjetas con lo esencial'},
+ {id:'simplification',title:'Matriz Jobs',hint:'Entender, actuar, anticipar y decidir: cuatro tarjetas con lo esencial'},
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
  {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
