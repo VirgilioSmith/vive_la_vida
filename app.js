@@ -9728,19 +9728,21 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  /* Selector universal de institución. La lista nativa queda oculta y sigue siendo la fuente del valor. */
  function v1110BankPicker(f,n,label){
   const sel=v1110El(f,n);const box=v1110Box(f,n);if(!sel||!box)return null;
-  const wrap=document.createElement('div');wrap.className='v1110-field v1110-pick';wrap.dataset.field=n;
-  wrap.innerHTML=`<span class="v1110-lab">${v1110Esc(label)}</span><button type="button" class="v1110-pickbtn" aria-haspopup="listbox" aria-expanded="false"></button><div class="v1110-picklist" role="listbox" hidden></div>`;
+  const wrap=document.createElement('div');wrap.className='v1110-field v1110-pick v1028-picker';wrap.dataset.field=n;
+  wrap.innerHTML=`<span class="v1110-lab">${v1110Esc(label)}</span><button type="button" class="v1028-picker-btn v1110-pickbtn" aria-haspopup="listbox" aria-expanded="false"></button><div class="v1028-picker-list v1110-picklist" role="listbox" hidden></div>`;
   const btn=wrap.querySelector('.v1110-pickbtn'),list=wrap.querySelector('.v1110-picklist');
   sel.classList.add('v1110-native');sel.tabIndex=-1;wrap.append(sel);box.remove();
-  const logoOf=id=>{const b=bank(id);return b?bankLogoMark(b,'v1110-logo'):`<span class="v1110-logo v1110-glyph">${v1110Ico('building')}</span>`};
+  const logoOf=id=>{const b=bank(id);return b?bankLogoMark(b,'v1028-logo'):`<span class="v1028-logo v1028-glyph">${v1110Ico('building')}</span>`};
+  const subOf=id=>{const b=bank(id);if(!b)return '';const n=[...(db.accounts||[]),...(db.cards||[]),...(db.loans||[]),...(db.certificates||[])].filter(x=>x.bankId===id&&!x.archived).length;return (b.kind||'Banco')+(n?' · '+n+(n===1?' producto':' productos'):'')};
+  const row=(id,title,sub,sel)=>`<span class="v1028-row-logo">${logoOf(id)}</span><span class="v1028-row-copy"><strong>${v1110Esc(title)}</strong>${sub?`<small>${v1110Esc(sub)}</small>`:''}</span>${sel===undefined?'':`<span class="v1028-row-check" aria-hidden="true">${sel?'✓':''}</span>`}`;
   const opts=()=>[...sel.options].filter(o=>o.value);
   const paint=()=>{const o=sel.options[sel.selectedIndex];const has=o&&o.value;
-   btn.innerHTML=`${logoOf(has?o.value:'')}<span class="v1110-pick-t${has?'':' is-empty'}">${v1110Esc(has?o.text:'Selecciona una institución')}</span>${v1110Ico('chev','v1110-chev')}`;
-   list.innerHTML=opts().length?opts().map(x=>`<button type="button" role="option" class="v1110-pickitem${x.value===sel.value?' on':''}" data-v="${v1110Esc(x.value)}" aria-selected="${x.value===sel.value}">${logoOf(x.value)}<span>${v1110Esc(x.text)}</span>${x.value===sel.value?v1110Ico('check','v1110-tick'):''}</button>`).join(''):'<p class="v1110-empty">Aún no tienes instituciones registradas.</p>';
+   btn.innerHTML=(has?row(o.value,o.text,subOf(o.value)):`<span class="v1028-row-logo">${logoOf('')}</span><span class="v1028-row-copy"><strong class="is-empty">Selecciona una institución</strong></span>`)+`<span class="v1028-chevron" aria-hidden="true">⌄</span>`;
+   list.innerHTML=opts().length?`<div class="v1028-group">Instituciones</div>`+opts().map(x=>`<button type="button" role="option" class="v1028-opt${x.value===sel.value?' is-on':''}" data-v="${v1110Esc(x.value)}" aria-selected="${x.value===sel.value}">${row(x.value,x.text,subOf(x.value),x.value===sel.value)}</button>`).join(''):'<p class="v1110-empty">Aún no tienes instituciones registradas.</p>';
    wrap.classList.toggle('is-invalid',false)};
   const toggle=on=>{list.hidden=!on;btn.setAttribute('aria-expanded',String(on));wrap.classList.toggle('open',on)};
   btn.addEventListener('click',()=>toggle(list.hidden));
-  list.addEventListener('click',e=>{const it=e.target.closest('.v1110-pickitem');if(!it)return;sel.value=it.dataset.v;v1110Fire(sel,'input');v1110Fire(sel,'change');paint();toggle(false)});
+  list.addEventListener('click',e=>{const it=e.target.closest('.v1028-opt');if(!it)return;sel.value=it.dataset.v;v1110Fire(sel,'input');v1110Fire(sel,'change');paint();toggle(false)});
   sel.addEventListener('change',paint);
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!list.hidden&&wrap.isConnected){toggle(false);e.stopPropagation()}},true);
   paint();wrap.v1110Invalid=()=>{wrap.classList.add('is-invalid');toggle(true)};
@@ -9854,7 +9856,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
     return `<h3 class="v1110-ct">Confirma tu certificado</h3><p class="v1110-lead">Revisa la información y crea tu certificado.</p><div class="v1110-hero v1110-hero-cert"><div class="v1110-hero-t"><strong>${v1110Esc(v1110Val(f,'name')||'Certificado')}</strong><span class="v1110-mini">${v1110BankLogo(f)}${v1110Esc(b?.name||'—')}</span></div><div class="v1110-hero-r"><small>CAPITAL</small><b>${v1110Esc(v1110Money(cap,c,0))}</b></div></div>`+
      `<div class="v1110-kpis"><div><small>Bruto estimado</small><b>${v1110Esc(v1110Money(gross,c,0))}</b></div><div><small>Neto estimado</small><b>${v1110Esc(v1110Money(net,c,0))}</b></div></div>`+
      `<dl class="v1110-dl v1110-dl-card"><div><dt>Moneda</dt><dd>${c}</dd></div><div><dt>Tasa</dt><dd>${rate}% anual</dd></div><div><dt>Retención</dt><dd>${tax}%</dd></div><div><dt>Plazo</dt><dd>${days} días</dd></div><div><dt>Vigencia</dt><dd>${v1110Date(v1110Val(f,'startDate'))} – ${v1110Date(v1110Val(f,'maturityDate'))}</dd></div><div><dt>Cobro de intereses</dt><dd>${v1110Esc(v1110Txt(f,'payoutFrequency'))}</dd></div><div><dt>Capital</dt><dd>${v1110Val(f,'capitalMode')==='pending'?'Pendiente de constituir':'Ya constituido'}</dd></div></dl>`+
-     v1110Note('Estimación simple, base 365 días. No se descontará de nuevo de tu cuenta.')+`<button type="button" class="v1110-edit v1110-edit-solo" data-edit-step="0" data-edit-field="name">${v1110Ico('pencil')}<u>Editar</u></button>`}}
+     v1110Note('Estimación simple, base 365 días. No se descontará de nuevo de tu cuenta.')+`<p class="v1110-help">El saldo invertido se registra como activo distinto del efectivo. Para disminuir una cuenta al constituirlo, usa «Constitución» después de crearlo. Nunca registres de nuevo la salida si ya está reflejada en el saldo inicial.</p>`+`<button type="button" class="v1110-edit v1110-edit-solo" data-edit-step="0" data-edit-field="name">${v1110Ico('pencil')}<u>Editar</u></button>`}}
  };
  /* Motor: cabecera, pasos, validación por paso, pie con un único botón principal. */
  function v1110Enhance(f){
@@ -9918,6 +9920,11 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   if(ik){const grid=ik.closest('.v87-field-grid');if(grid){const row=document.createElement('div');row.className='v1110-toggle';row.innerHTML='<span>¿Incluye seguro?</span><b class="v1110-tstate"></b><button type="button" role="switch" class="v1110-sw" aria-label="¿Incluye seguro?"></button>';grid.before(row);let last=ik.value!=='none'?ik.value:'vida';const sw=row.querySelector('.v1110-sw');
    const paint=()=>{const on=ik.value!=='none';sw.setAttribute('aria-checked',String(on));row.querySelector('.v1110-tstate').textContent=on?'Sí':'No';grid.hidden=!on};
    sw.addEventListener('click',()=>{if(ik.value!=='none'){last=ik.value;ik.value='none'}else ik.value=last;v1110Fire(ik,'input');v1110Fire(ik,'change');paint()});ik.addEventListener('change',paint);paint()}}
+  const fdReal=q('firstDue'),pf=q('paymentFrequency')?.closest('label');
+  if(fdReal&&pf&&!f.querySelector('.v1110-firstdue')){const w=document.createElement('label');w.className='v1110-field v1110-firstdue v1110-date';w.innerHTML='<span class="v1110-lab">Primera cuota</span><input class="field" type="date" aria-label="Primera cuota">';const di=w.querySelector('input');di.value=fdReal.value||'';
+   di.addEventListener('input',()=>{fdReal.value=di.value;v1110Fire(fdReal,'input');v1110Fire(fdReal,'change')});pf.after(w);
+   const sync=()=>{if(document.activeElement!==di)di.value=fdReal.value||'';w.hidden=v1110Val(f,'loanOpeningMode')==='existing'};
+   f.addEventListener('click',()=>setTimeout(sync,60));setTimeout(sync,120)}
   const panels=[...f.querySelectorAll('.v83-loan-form-panel')];
   [['Datos del contrato'],['Capital y cuotas']].forEach((h,i)=>{if(panels[i]&&!panels[i].querySelector('.v1110-head'))panels[i].prepend(v1110Node(`<h3 class="v1110-ct">${h[0]}</h3>`,'div','v1110-head'))});
   const sub=f.querySelector('.form-foot button[type=submit]');if(sub)sub.innerHTML=`<span>${edit?'Guardar cambios':'Crear préstamo'}</span>`;
