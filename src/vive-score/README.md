@@ -28,9 +28,11 @@ Pruebas: `tests/vive-score.js` (`node tests/vive-score.js`).
 
 ## Páginas
 
-Mi score · Evolución · Mis créditos · Capacidad · Variables · Patrones IA · TransUnion (simulación) · Metodología · **Centro de control**.
+Mi score · Evolución · Créditos y capacidad · Variables · Patrones IA · TransUnion (simulación) · Metodología · **Centro de control**.
 
-El **Centro de control** reúne en apartados internos lo que antes eran páginas separadas: *Observatorio*, *Historial y evidencias*, *Auditoría*, *Antecedentes* y *Configuración*. Sin información repetida (la procedencia de cada producto y su documento viven solo en Configuración). Los enlaces antiguos siguen funcionando.
+El **Centro de control** es una sola página sin menú: cinco secciones plegables (*Observatorio*, *Historial y evidencias*, *Auditoría*, *Antecedentes*, *Configuración*) bajo una fila de indicadores. Los enlaces antiguos (`capacity`, `observatory`, `audit`…) siguen funcionando.
+
+**Automatización:** las aperturas recientes (0–6 y 7–12 meses) se detectan solas por la fecha de apertura de cada producto; las preguntas manuales de «tarjetas nuevas» y «préstamos recientes» se omiten (solo aparecen si editas antecedentes). El fondo de la página Score es blanco puro (oscuro/negro puros en esos temas).
 
 ## Alimentación automática e independencia
 

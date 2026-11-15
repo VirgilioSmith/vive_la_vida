@@ -12,6 +12,9 @@ const SEEDS=[
 function applySeeds(){
  if(!PAYLOAD)return false;
  ST.seeded=ST.seeded||{};let changed=false;const A=ensureAnswers();
+ let auto=false;
+ /* Aperturas recientes: se leen solas de las fechas de apertura de vive el hoy (ventanas 0–6 y 7–12 meses); no hay nada que seleccionar. */
+ for(const k of ['newCards','newLoans'])if(A[k]&&A[k].answer==null){A[k].answer='no';A[k].items=[];A[k].auto=true;auto=true}
  for(const sd of SEEDS){
   if(ST.seeded[sd.key])continue;
   const card=uniqueProducts().find(p=>p.kind==='card'&&(sd.match.test(p.name||'')||sd.match.test(p.bank||'')));
@@ -22,5 +25,5 @@ function applySeeds(){
   ST.seeded[sd.key]=true;changed=true;
  }
  if(changed){ST.declVersion++;ST.answersLog=[{at:new Date().toISOString(),version:ST.declVersion,answers:JSON.parse(JSON.stringify(A))},...(ST.answersLog||[])].slice(0,20);auditLog('Cargó automáticamente los aumentos de límite indicados por el titular (Popular, agosto de 2026; Cibao, septiembre de 2026).');saveStore()}
- return changed;
+ return changed||auto;
 }
