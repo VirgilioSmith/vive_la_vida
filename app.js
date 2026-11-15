@@ -11654,12 +11654,25 @@ function v332PersonalizationGroups(cfg){
 }
 
 
-function v316OrderDefaults(ids){return [...V317_FEATURE_GRAPHS,...ids.filter(id=>!V317_FEATURE_GRAPHS.includes(id))]}
+const V1123_TOP=['applePayInbox','patrimonyTrend','capacity','commitments'];
+const V1123_ORDER=[...V1123_TOP,'simplification','budgetPulse','cashPressure','futureCalendar','futureWaterfall','futureMap','spendingFingerprint','budgetTrend','net','creditUtil','futureFlow','futureBubbles'];
+function v316OrderDefaults(ids){const pri=V1123_ORDER.filter(id=>ids.includes(id));return [...pri,...ids.filter(id=>!pri.includes(id))]}
 function v316VisibleDefaults(ids){
  const hidden=new Set(['simplification','premiumCredit','premiumCommitments','activity','subscriptions','cardsDue','budget','budgetTrend','chart','banks','accounts','cards','loans','certificates']);
  return ids.filter(id=>!hidden.has(id));
 }
 function v105Config(){
+ const cfg=v105ConfigBase();
+ // V1123: una sola vez, Apple Pay · Patrimonio · Capacidad · Compromisos primero y el resto en orden estratégico.
+ if(db.settings&&!db.settings.v1123Order){
+  const order=v316OrderDefaults(cfg.order);
+  db.settings.v1123Order=true;
+  db.settings.v105OverviewWidgets={order:order.slice(),visible:cfg.visible.slice()};
+  return {order,visible:cfg.visible};
+ }
+ return cfg;
+}
+function v105ConfigBase(){
  const raw=db.settings?.v105OverviewWidgets;
  const ids=V105_WIDGETS.map(w=>w.id);
  if(!raw||!Array.isArray(raw.order))return {order:['applePayInbox',...v316OrderDefaults(ids).filter(x=>x!=='applePayInbox')],visible:v316VisibleDefaults(ids)};
@@ -11719,7 +11732,7 @@ function v105SaveConfig(c){
  v105ApplyWidgetPreferences();
 }
 let v105DraftConfig=null;
-const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow','banks','accounts','loans','certificates','futureBubbles','payments','people','activity','premiumCommitments'];
+const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow','banks','accounts','loans','certificates','futureBubbles','payments','people','activity','premiumCommitments','futureCostKpi'];
 function v1118Skip(id){return V1118_MOBILE_REMOVED.includes(id)&&isMobileViewport()}
 function v105Customizer(){
  const cfg=v105DraftConfig||v105Config(),enabled=new Set(cfg.visible);
@@ -14383,7 +14396,7 @@ function v273SettingsWidgetEditor(){
   const w=V105_WIDGETS.find(x=>x.id===id);
   return w?v747PersonalizationCard(w,id,i,visible.has(id),cfg.order.length):'';
  }).join('');
- return `<section class="v273-settings-customizer v766-stage" aria-label="Personalizar indicadores de Resumen"><div class="v766-app"><main class="v766-content"><section class="v766-cards" aria-label="Orden y visibilidad de indicadores">${rows}</section><div class="v783-reset-region"><button type="button" class="v783-reset-pill" data-v273-reset="1" title="Recuperar el orden original sin cambiar los indicadores visibles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.6 6.4"/><path d="M3 4v7h7"/><path d="M12 7v5l3 2"/></svg><span>Restaurar orden esencial</span></button><button type="button" class="v783-reset-pill v883-reset-all" data-v883-reset-all="1" title="Restablecer el orden inicial y mostrar todos los indicadores en Inicio" aria-label="Restaurar todo: orden y visibilidad de todos los indicadores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="m14 17 3 3 4-6"/></svg><span>Restaurar todo</span></button></div></main></div></section>`;
+ return `<section class="v273-settings-customizer v766-stage" aria-label="Personalizar indicadores de Resumen"><div class="v766-app"><main class="v766-content"><section class="v766-cards" aria-label="Orden y visibilidad de indicadores">${rows}</section></main></div></section>`;
 }
 
 /* V772 · Personalización real: flechas, switches y persistencia, sin un estado paralelo. */
