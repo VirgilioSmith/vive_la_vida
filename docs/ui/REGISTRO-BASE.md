@@ -18,7 +18,7 @@ Fuente de verdad: las imágenes de referencia de móvil (Nueva tarjeta, Nueva cu
 | Colores | siempre derivados de `--v424-accent-strong`; modo oscuro con variables propias |
 
 ## Mapeo imagen → código
-| Imagen | Código (`app.js`, bloque V1110) |
+| Imagen | Código (`src/app.js`, bloque V1110) |
 |---|---|
 | Selector de institución («Popular ›») | `v1110BankPicker` (lista nativa `bankId` oculta como fuente del valor) |
 | Campo universal (texto, monto, fecha, selección) | `v1110Field` (+ prefijo `RD$`/`US$` o sufijo `%`) |
@@ -28,7 +28,7 @@ Fuente de verdad: las imágenes de referencia de móvil (Nueva tarjeta, Nueva cu
 | Secciones con icono | `v1110Sec` |
 | Confirmación con «Editar» | `v1110Hero`, `v1110Rows`, `v1110Note`, `V1110.<form>.confirm` |
 | Motor de pasos | `v1110Enhance` (cuenta, tarjeta, institución, certificado) · `v1110Loan` (préstamo, conserva su asistente v83/v87) |
-| Estilos | `styles.css`, bloques «V1110» |
+| Estilos | `src/styles.css`, bloques «V1110» |
 
 ## Adiciones respecto a la imagen (mismo sistema visual)
 - **Datos adicionales / Más opciones** (plegables): últimos 4 dígitos, interés de cuenta, deudas iniciales, sobregiro, pago mínimo, renovación de anualidad, nota de institución. Existían en los formularios; se conservan para no eliminar funciones.
@@ -66,7 +66,7 @@ Recorrido de punta a punta (crear y editar) con `node` + Playwright en 390×844 
 - Marca de red con logotipos (Visa/Mastercard) como imagen.
 - Contraste y accesibilidad de teclado en el selector (probados: Esc cierra, Enter avanza).
 
-## Pantalla → implementación (todas en `app.js` bloque V1110 y `styles.css` bloques V1110–V1113)
+## Pantalla → implementación (todas en `src/app.js` bloque V1110 y `src/styles.css` bloques V1110–V1113)
 | Imagen | Pantallas | Implementación |
 |---|---|---|
 | Nueva tarjeta | Datos · Confirmación | `V1110.cardForm` (`build`, `confirm`), formulario original `cardForm` (app.js ~3866) |

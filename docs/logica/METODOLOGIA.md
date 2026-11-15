@@ -1,6 +1,6 @@
 # Metodología de cálculo
 
-Todas las fórmulas viven en `lib/finanzas/reglas.js` (funciones puras, sin datos ni reloj). La app aplica hoy las mismas fórmulas dentro de `app.js`; las pruebas de paridad (`tests/logica/paridad.js`) comparan ambas en cada ejecución.
+Todas las fórmulas viven en `src/lib/finanzas/reglas.js` (funciones puras, sin datos ni reloj). La app aplica hoy las mismas fórmulas dentro de `src/app.js`; las pruebas de paridad (`tests/logica/paridad.js`) comparan ambas en cada ejecución.
 
 ## Reglas generales
 - **Redondeo:** dos decimales, mitad hacia arriba, solo al producir un importe. Los pasos intermedios no se redondean, salvo el interés de cada periodo de un préstamo, que sí es un importe (se cobra redondeado).

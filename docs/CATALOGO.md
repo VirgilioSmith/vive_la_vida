@@ -5,8 +5,8 @@ Fecha: 14 nov 2026 · Versión de código: V1014 · Calificación global: **73 /
 ## 1. Cifras del código
 | Dato | Valor |
 |---|---|
-| `app.js` | 2,4 MB · ~20.800 líneas · 244 acciones (`case`) · 24 pantallas registradas |
-| `styles.css` | 3,9 MB · ~56.000 líneas · 39.400 `!important` · ~12.900 colores hexadecimales |
+| `src/app.js` | 2,4 MB · ~20.800 líneas · 244 acciones (`case`) · 24 pantallas registradas |
+| `src/styles.css` | 3,9 MB · ~56.000 líneas · 39.400 `!important` · ~12.900 colores hexadecimales |
 | Capas de versión (`V###`) acumuladas | más de 1.000; cada una sobrescribe a la anterior |
 | Diálogos nativos del navegador (`confirm`) | 25 llamadas → diálogo propio (V1011), con respaldo nativo si no se identifica la acción |
 

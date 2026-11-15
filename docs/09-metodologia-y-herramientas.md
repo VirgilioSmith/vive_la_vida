@@ -9,7 +9,7 @@
 | Pruebas | Playwright + arnés propio | `tests/` |
 
 ## Convenciones
-- Versionado interno por etiquetas `V###` en comentarios y nombres de función; la última, **V1044**. Los estilos se apilan por «capas de versión» con `!important` (`styles.css`).
+- Versionado interno por etiquetas `V###` en comentarios y nombres de función; la última, **V1044**. Los estilos se apilan por «capas de versión» con `!important` (`src/styles.css`).
 - Caché: parámetro `?v=N` en `index.html:35-36` que se incrementa a mano.
 - Commits en español con trailer de coautoría y URL de sesión.
 

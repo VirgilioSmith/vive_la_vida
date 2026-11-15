@@ -24,7 +24,7 @@ flowchart LR
 ```
 
 ## Capas (de hecho, no de diseño)
-No hay separación en módulos: **un solo archivo** `app.js` mezcla capas (ver deuda técnica). Pueden distinguirse por responsabilidad:
+No hay separación en módulos: **un solo archivo** `src/app.js` mezcla capas (ver deuda técnica). Pueden distinguirse por responsabilidad:
 | Capa | Funciones representativas | Línea |
 |---|---|---|
 | Estado | `db` (objeto único), `ui` (estado de interfaz) | `app.js:158` |
@@ -32,7 +32,7 @@ No hay separación en módulos: **un solo archivo** `app.js` mezcla capas (ver d
 | Persistencia local | `persist`, `migrateData`, borrador en `localStorage` | `app.js:159`, `v360SaveUI` |
 | Sincronización | `f33Boot`, `f33Flush`, `v405Read`, `v405Commit`, `v10LiveStart` | `app.js:7877,7445,7642,7670,7850` |
 | UI | `render`, `pages`, `nav`, funciones por pantalla | `app.js:5728,3798,498` |
-| Estilos | Cascada por «versiones» con `!important` (~37.000) | `styles.css` |
+| Estilos | Cascada por «versiones» con `!important` (~37.000) | `src/styles.css` |
 
 ## Flujo de datos de extremo a extremo
 1. `f33Boot` crea el cliente Supabase y comprueba sesión (`app.js:7877-7895`); sin sesión muestra login (`app.js:7361`, `signInWithPassword`).

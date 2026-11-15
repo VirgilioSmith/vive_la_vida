@@ -13,7 +13,7 @@
 | — | Idempotencia de compras duplicadas | **Verificada** | Pruebas: repetición, carrera concurrente y conflicto de `event_id` (409) |
 | F1 | Sin CSP | **Resuelto** | `tests/csp.js`: 0 violaciones en 20 pantallas × 2 formatos |
 | F2 | Biblioteca sin SRI | **Resuelto** | Biblioteca local; hash SHA-384 registrado; `npm audit` 0 vulnerabilidades |
-| F3 | Scripts en línea | **Resuelto** | `early.js` |
+| F3 | Scripts en línea | **Resuelto** | `src/early.js` |
 | F4 | XSS por `innerHTML` | **Mitigado** | `tests/xss.js`: 4 cargas × 22 pantallas × 7 modales × 2 formatos sin ejecución ni inyección. No se auditaron las ~257 interpolaciones una a una; la defensa es `sanitize` + CSP |
 | F5 | Referrer | **Resuelto** | `<meta name="referrer" content="no-referrer">` |
 | P1 | Contraseñas filtradas | **Abierto — acción del usuario** | Solo se activa en el panel de Auth |

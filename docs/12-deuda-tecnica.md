@@ -2,8 +2,8 @@
 
 | # | Prioridad | Hallazgo | Evidencia |
 |---|---|---|---|
-| 1 | Alta | Monolito de ~21.000 líneas sin módulos ni tipos | `app.js` |
-| 2 | Alta | CSS de ~54.600 líneas con ~37.000 `!important` y capas por versión | `styles.css` |
+| 1 | Alta | Monolito de ~21.000 líneas sin módulos ni tipos | `src/app.js` |
+| 2 | Alta | CSS de ~54.600 líneas con ~37.000 `!important` y capas por versión | `src/styles.css` |
 | 3 | Alta | Sin pruebas de reglas financieras, RLS ni funciones edge | [11](11-pruebas.md) |
 | 4 | Alta | Backend no versionado: sin migraciones ni código de funciones en el repo | ausencia de `supabase/` |
 | 5 | Media | Sin SRI/CSP; dependencia de CDN | `index.html:35` |

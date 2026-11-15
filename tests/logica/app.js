@@ -2,7 +2,7 @@
 /* Pruebas de la app real: reloj de Santo Domingo, vigencias de certificados, historial inmutable. */
 const { chromium } = require('playwright');
 const open = require('../harness.js');
-const R = require('../../lib/finanzas/reglas.js');
+const R = require('../../src/lib/finanzas/reglas.js');
 let ok = 0; const fallos = [];
 const afirmar = (n, c, d = '') => { if (c) ok++; else fallos.push(n + (d ? ' → ' + d : '')); };
 (async () => {

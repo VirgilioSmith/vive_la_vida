@@ -1,7 +1,7 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const R = require('../../lib/finanzas/reglas.js');
+const R = require('../../src/lib/finanzas/reglas.js');
 
 test('redondeo: dos decimales, mitad hacia arriba, entradas inválidas = 0', () => {
   assert.equal(R.rnd(1.005), 1.01);

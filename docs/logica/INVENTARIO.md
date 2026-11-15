@@ -1,7 +1,7 @@
 # Inventario de cálculos
 
-Archivo de referencia: `app.js` (los números son líneas). Los identificadores con prefijo `v…` son nombres internos ya existentes; se citan solo para poder localizarlos.
-Estado: **verificado** = leído y comparado con la versión pura (`lib/finanzas/reglas.js`) con pruebas de paridad; **localizado** = ubicado y descrito, sin prueba de paridad todavía.
+Archivo de referencia: `src/app.js` (los números son líneas). Los identificadores con prefijo `v…` son nombres internos ya existentes; se citan solo para poder localizarlos.
+Estado: **verificado** = leído y comparado con la versión pura (`src/lib/finanzas/reglas.js`) con pruebas de paridad; **localizado** = ubicado y descrito, sin prueba de paridad todavía.
 
 ## Base común
 | Cálculo | Dónde | Entradas | Salida | Regla | Estado |

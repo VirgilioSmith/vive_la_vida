@@ -1,6 +1,6 @@
 # Auditoría de seguridad — Fase 0 (14-nov-2026)
 
-Alcance: frontend (`index.html`, `app.js`, `styles.css`), configuración, funciones edge (`apple-pay-link`, `apple-pay-shortcuts`, `apple-pay-ingest`, leídas del proyecto), esquema/RLS/privilegios de Postgres (consultas al catálogo), dependencias e historial de git (250 commits). Valores de claves y datos: `<REDACTADO>`.
+Alcance: frontend (`index.html`, `src/app.js`, `src/styles.css`), configuración, funciones edge (`apple-pay-link`, `apple-pay-shortcuts`, `apple-pay-ingest`, leídas del proyecto), esquema/RLS/privilegios de Postgres (consultas al catálogo), dependencias e historial de git (250 commits). Valores de claves y datos: `<REDACTADO>`.
 Severidades: C crítica · A alta · M media · B baja.
 
 | ID | Sev. | Hallazgo | Evidencia | Riesgo | Corrección |
@@ -15,8 +15,8 @@ Severidades: C crítica · A alta · M media · B baja.
 | E5 | M | Sin `try/catch` global en las funciones | código v8/v12/v4 | Respuesta no JSON ante excepción | Captura global → 500 JSON genérico |
 | F1 | **A** | Sin CSP | `index.html` | XSS ejecutable con scripts remotos | CSP por `<meta>` (`script-src 'self'`) |
 | F2 | M | `supabase-js` desde CDN sin SRI | `index.html:35` | Compromiso de la CDN = ejecución de código | Biblioteca local `vendor/supabase.js` (hash SHA-384 registrado), versión fija |
-| F3 | M | Scripts en línea impedían CSP estricta | `index.html:19-31` | — | Movidos a `early.js` |
-| F4 | M | ~257 usos de `innerHTML` con datos de usuario | `app.js` | XSS almacenado | `sanitize` ya cubre los campos probados; prueba automática de 4 cargas × 22 pantallas × 7 modales (sin hallazgos) |
+| F3 | M | Scripts en línea impedían CSP estricta | `index.html:19-31` | — | Movidos a `src/early.js` |
+| F4 | M | ~257 usos de `innerHTML` con datos de usuario | `src/app.js` | XSS almacenado | `sanitize` ya cubre los campos probados; prueba automática de 4 cargas × 22 pantallas × 7 modales (sin hallazgos) |
 | F5 | B | Sin `Referrer-Policy` | `index.html` | Fuga de URL | `<meta name="referrer" content="no-referrer">` |
 | P1 | M | Protección contra contraseñas filtradas desactivada | Asesor de seguridad de Supabase | Contraseñas comprometidas aceptadas | **Acción del usuario** (panel de Auth) |
 | P2 | B | `X-Content-Type-Options`, `X-Frame-Options`, HSTS no configurables en GitHub Pages | Plataforma | Clickjacking | Limitación documentada; mitigación: CSP `form-action/base-uri`, `frame-ancestors` no aplicable por `<meta>` |

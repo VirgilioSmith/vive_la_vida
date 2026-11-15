@@ -13,7 +13,7 @@ function entorno(fetchFalso) {
     console: { warn() {}, log() {} },
   };
   const contexto = vm.createContext({ document: { addEventListener() {} }, window: ventana, console: ventana.console, setTimeout, clearTimeout, AbortController, Promise, Date, Object, String, Math, Array });
-  vm.runInContext(fs.readFileSync(path.join(__dirname, '../../early.js'), 'utf8'), contexto);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '../../src/early.js'), 'utf8'), contexto);
   return { ventana, oyentes };
 }
 const URL = 'https://ejemplo.supabase.co/rest/v1/finance_items';

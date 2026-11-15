@@ -1,9 +1,9 @@
 'use strict';
-/* Paridad: las funciones puras de lib/finanzas/reglas.js deben dar el mismo resultado que la app. */
+/* Paridad: las funciones puras de src/lib/finanzas/reglas.js deben dar el mismo resultado que la app. */
 const { chromium } = require('playwright');
 const path = require('path');
 const open = require('../harness.js');
-const R = require('../../lib/finanzas/reglas.js');
+const R = require('../../src/lib/finanzas/reglas.js');
 let ok = 0, fallos = [];
 const eq = (nombre, a, b) => { if (JSON.stringify(a) === JSON.stringify(b)) ok++; else fallos.push(`${nombre}: app=${JSON.stringify(a)} puro=${JSON.stringify(b)}`); };
 (async () => {

@@ -21,6 +21,6 @@
 ## Cifras del repositorio
 | Dato | Valor | Evidencia |
 |---|---|---|
-| Archivos de la aplicación | `index.html` (38 líneas), `app.js` (~21.100 líneas), `styles.css` (~54.600 líneas) | `wc -l` |
+| Archivos de la aplicación | `index.html` (38 líneas), `src/app.js` (~21.100 líneas), `src/styles.css` (~54.600 líneas) | `wc -l` |
 | Commits / merges | 250 / 140 | `git log` |
 | Rango de fechas | 13–14 nov 2026 | `git log --date=short` |

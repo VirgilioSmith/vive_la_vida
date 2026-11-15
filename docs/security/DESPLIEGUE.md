@@ -17,4 +17,4 @@ Orden recomendado:
 **Reversión:** redeployar `supabase/rollback/apple-pay-ingest.v12.ts` como `index.ts` de `apple-pay-ingest` (ingest). Para `apple-pay-link` y `apple-pay-shortcuts` las versiones previas (v8 y v4) siguen en el historial de versiones del panel de Supabase `[POR CONFIRMAR]`; el código original de v12 de ingest se conserva en el repo.
 
 ## Frontend
-Rama `security/hardening-v183` → revisar → fusionar. Reversión: `git revert` del merge (CSP, biblioteca local y `early.js` son cambios aislados). Prueba: `node tests/csp.js && node tests/xss.js && node tests/smoke.js`.
+Rama `security/hardening-v183` → revisar → fusionar. Reversión: `git revert` del merge (CSP, biblioteca local y `src/early.js` son cambios aislados). Prueba: `node tests/csp.js && node tests/xss.js && node tests/smoke.js`.

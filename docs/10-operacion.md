@@ -1,7 +1,7 @@
 # 10 · Operación
 
 ## Despliegue
-1. Frontend: PR → `main` → GitHub Pages. Tras cambiar `styles.css`/`app.js` subir `?v=` en `index.html`.
+1. Frontend: PR → `main` → GitHub Pages. Tras cambiar `src/styles.css`/`app.js` subir `?v=` en `index.html`.
 2. Backend: migraciones SQL y funciones edge se aplican en el proyecto Supabase (no versionadas en el repo).
 
 ## Variables de entorno
