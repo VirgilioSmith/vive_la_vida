@@ -206,6 +206,8 @@ const persist=()=>{
  }catch(e){console.error('Error preparando registro',e);toast('No se pudo preparar el registro; los datos locales permanecen sin alterar.');return false;}
 };
 const fx=(v,c)=>num(v)*(c==='USD'?num(db.settings.fx)||0:1);
+/* Monto de un movimiento en RD$: usa la tasa guardada con el movimiento; solo si falta, la vigente. */
+const txDop=(t,amount)=>num(amount??t.amount)*((t.currency||'DOP')==='USD'?(num(t.fxRateSnapshot)>0?num(t.fxRateSnapshot):(num(db.settings.fx)||0)):1);
 const xconvert=(v,from,to)=>from===to?num(v):to==='DOP'?fx(v,from):num(v)/(num(db.settings.fx)||1);
 const account=id=>db.accounts.find(a=>a.id===id);
 const card=id=>db.cards.find(c=>c.id===id);
@@ -389,7 +391,7 @@ const totalCardDebt=()=>db.cards.reduce((v,c)=>v+fx(cardStatus(c,'DOP').debt,'DO
 const totalLoanDebt=()=>db.loans.reduce((v,l)=>v+fx(loanStatus(l).balance,l.currency),0);
  const certificateCapital=c=>{let funded=(c.capitalMode==='pending'?db.transactions.filter(t=>t.type==='certificate_funding'&&t.certificateId===c.id&&t.date<=today()).reduce((a,t)=>a+num(t.amount),0):num(c.principal));let redeemed=db.transactions.filter(t=>t.type==='certificate_redemption'&&t.certificateId===c.id&&t.date<=today()).reduce((a,t)=>a+num(t.amount),0);return Math.max(0,rnd(funded-redeemed))};
  const totalCertificates=()=>db.certificates.reduce((v,c)=>v+fx(certificateCapital(c),c.currency),0);
- const bankBenefits=(bid)=>db.transactions.filter(t=>t.type==='card_reward'||t.type==='bank_reward'||(t.type==='income'&&t.category==='Beneficios bancarios')).filter(t=>t.cardId?card(t.cardId)?.bankId===bid:bankTx(t,bid)).reduce((sum,t)=>sum+fx(t.amount,t.currency),0);
+ const bankBenefits=(bid)=>db.transactions.filter(t=>t.type==='card_reward'||t.type==='bank_reward'||(t.type==='income'&&t.category==='Beneficios bancarios')).filter(t=>t.cardId?card(t.cardId)?.bankId===bid:bankTx(t,bid)).reduce((sum,t)=>sum+txDop(t),0);
  /* V62: rendimiento simple ponderado por capital y días efectivamente invertidos.
     Respeta aportes confirmados (capital pendiente) y rescates parciales; no capitaliza intereses.
     No reemplaza el calendario ni la tasa de un contrato bancario específico. */
@@ -2778,7 +2780,7 @@ function incomeAnalysis(){
  const txs=recognized(month),by={},byCategory={},bySub={};for(let {t,amount} of txs){let v=fx(amount,t.currency),group=t.type==='personal_settlement'?'Rendimientos e inversiones':classify(t);by[group]=(by[group]||0)+v;let cat=t.type==='personal_settlement'?'Intereses personales':t.category||'Otros ingresos';byCategory[cat]=(byCategory[cat]||0)+v;let sub=cat+' / '+(t.subcategory||'Sin subcategoría');bySub[sub]=(bySub[sub]||0)+v}
  const groups=Object.entries(by).sort((a,b)=>b[1]-a[1]);const total=groups.reduce((a,[,v])=>a+v,0);let colors=['#668bea','#28a99a','#ad86cf','#d56376','#d17d8c','#81a0bd','#7388c9'];let cum=0;let slices=groups.map(([k,v],i)=>{let a=cum;cum+=v/total*100;return `${colors[i%colors.length]} ${a}% ${cum}%`}).join(',');
  
- const borrowed=db.transactions.filter(t=>t.date.startsWith(month)&&t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed').reduce((a,t)=>a+fx(t.amount,t.currency),0);
+ const borrowed=db.transactions.filter(t=>t.date.startsWith(month)&&t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed').reduce((a,t)=>a+txDop(t),0);
  const interestPersonal=db.transactions.filter(t=>t.date.startsWith(month)&&t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent').reduce((a,t)=>a+fx(num(t.interest),t.currency),0);
  let trends=yearMonths.map(m=>recognized(m));let byMonth=trends.map(arr=>arr.reduce((a,{t,amount})=>a+fx(amount,t.currency),0));let max=Math.max(...byMonth,1);
  return `<div class="v287-analysis v287-income-restored" aria-label="Análisis completo de ingresos">
@@ -3243,7 +3245,7 @@ function widgetPicture(id){
  loanDue:give(money(debtL),'Capital pendiente en bancos','loans'),certs:give(money(totalCertificates()),'No cuenta como liquidez','certificates'),
  personalOwed:give(money(p.receivable),'Préstamos por cobrar','personal'),personalDue:give(money(p.payable),'Préstamos por devolver','personal'),
  incomeMonthly:give(money(m.income),'Ingreso reconocido del mes','income'),expenseMonthly:give(money(m.expense),'Gasto reconocido del mes','register'),netMonthly:give(money(m.net),'Ingresos menos egresos','advanced'),
- benefits:give(money(db.transactions.filter(t=>['card_reward','bank_reward'].includes(t.type)&&t.date.startsWith(ui.year+'')).reduce((s,t)=>s+fx(t.amount,t.currency),0)),'Cashback recibido este año','benefits'),
+ benefits:give(money(db.transactions.filter(t=>['card_reward','bank_reward'].includes(t.type)&&t.date.startsWith(ui.year+'')).reduce((s,t)=>s+txDop(t),0)),'Cashback recibido este año','benefits'),
  subscriptions:give(money(db.recurring.filter(r=>r.active!==false).reduce((s,r)=>s+fx(r.amount,r.currency)/(r.frequency==='annual'?12:r.frequency==='quarterly'?3:r.frequency==='weekly'?7/30.4375:1),0)),'Costo mensual equivalente','recurring')};
  if(mapping[id])return mapping[id];
  if(id.startsWith('account:')){const a=account(id.slice(8));return a?give(money(getAccountBalance(a),a.currency,2),`${a.kind==='cash'?'Efectivo sin banco':bankOf(a)} · ${a.currency}`,'accounts'):null}
@@ -7961,7 +7963,7 @@ function v40Ensure(){
  if(!Array.isArray(db.institutionBenefits))db.institutionBenefits=[];
  if(!Array.isArray(db.fiscalRulesVersions))db.fiscalRulesVersions=[];
  if(!Array.isArray(db.automationEvents))db.automationEvents=[];
- for(const t of db.transactions||[]){if(t.currency==='USD'&&!(num(t.fxRateSnapshot)>0))t.fxRateSnapshot=num(db.settings.fx);}
+ for(const t of db.transactions||[]){if(t.currency==='USD'&&!(num(t.fxRateSnapshot)>0)){t.fxRateSnapshot=num(db.settings.fx);t.fxRateEstimated=true}}
  /* Auditoría V62: topes TSS vigentes en enero y febrero de 2026, sin reescribir comprobantes ni reglas personalizadas. */
  const seeded2026={taxYear:2026,afpPct:2.87,sfsPct:3.04,exempt:416220,threshold2:624329,threshold3:867123,secondBase:31216,thirdBase:79776,initial:true};
  if(!db.fiscalRulesVersions.length){
@@ -10136,7 +10138,7 @@ function deletePersonalLoan(id){
   const archivedCount=list.filter(c=>c.archived).length;
   const archivedAction=`<button type="button" class="btn outline-light v257-cert-archive" data-act="toggleHidden" aria-pressed="${!!ui.showHidden}">${icon('receipt')} ${ui.showHidden?'Ocultar archivados':'Archivados'} · ${archivedCount}</button>`;const gross=list.reduce((s,c)=>s+fx(certProjection(c).gross,c.currency),0);
   const net=list.reduce((s,c)=>s+fx(certProjection(c).net,c.currency),0);
-  const interest=db.transactions.filter(t=>t.type==='income'&&t.certificateId).reduce((s,t)=>s+fx(t.amount,t.currency),0);
+  const interest=db.transactions.filter(t=>t.type==='income'&&t.certificateId).reduce((s,t)=>s+txDop(t),0);
   const current=list.reduce((s,c)=>s+fx(certificateCapital(c),c.currency),0);
   const maturities=list.filter(c=>c.maturityDate>=today()).slice().sort((a,b)=>cDate(a).localeCompare(cDate(b)));
   function cDate(x){return String(x.maturityDate||'9999-12-31')}
@@ -11771,7 +11773,7 @@ function v144Ready(){
  if(!Array.isArray(db.v144PendingBenefits))db.v144PendingBenefits=[];
  if(!Array.isArray(db.v144ScheduledCosts))db.v144ScheduledCosts=[];
 }
-function v144CurrentFx(t){return num(t.amount)*(t.currency==='USD'?num(db.settings.fx)||0:1)}
+function v144CurrentFx(t){return txDop(t)}
 function v144AmountDOP(amount,currency){return rnd(num(amount)*(currency==='USD'?num(db.settings.fx)||0:1))}
 function v144Value(value,currency='DOP'){return money(value,currency,2)}
 function v144PeriodMatch(date){const y=String(ui.v144BenefitYear||new Date().getFullYear()),m=String(ui.v144BenefitMonth||'all');return String(date||'').startsWith(y)&&(m==='all'||String(date||'').slice(5,7)===m)}
@@ -16260,7 +16262,7 @@ window.__f360RecurringVisualAdapter={
     loan(t.loanId)?.name,certificate(t.certificateId)?.name,bankName(t)]
     .filter(x=>x!==undefined&&x!==null&&x!=='').join(' ').toLocaleLowerCase('es');
   function bankName(t){const p=card(t.cardId)||account(t.accountId)||loan(t.loanId);return db.banks?.find(b=>b.id===p?.bankId)?.name||'';}
-  const amountDOP=t=>Math.abs(number(fx(t.amount,t.currency||'DOP')));
+  const amountDOP=t=>Math.abs(number(txDop(t)));
   const moneyDOP=n=>money(n,'DOP',2);
   const typedAmount=t=>txDisplay(t);
   const friendlyDate=d=>{try{return dateObj(d).toLocaleDateString('es-DO',{day:'2-digit',month:'long',year:'numeric'});}catch(_){return safe(d)}};

@@ -67,6 +67,15 @@ const afirmar = (n, c, d = '') => { if (c) ok++; else fallos.push(n + (d ? ' →
   });
   afirmar('préstamo sin historial: regla anterior intacta', JSON.stringify(tasas.sinHist) === '[10,10,14]', JSON.stringify(tasas.sinHist));
   afirmar('préstamo con 2 cambios: cada tramo usa su tasa', JSON.stringify(tasas.conHist) === '[10,12,12,14,14]', JSON.stringify(tasas.conHist));
+  // 8) monedas: se usa la tasa guardada con el movimiento, no la vigente
+  const fxr = await p.evaluate(() => {
+    const F = window.__T.fn, d = window.__T.dbg(), antes = d.settings.fx; d.settings.fx = 60;
+    const t = { currency: 'USD', amount: 100, fxRateSnapshot: 58 }, sin = { currency: 'USD', amount: 100 }, dop = { currency: 'DOP', amount: 100, fxRateSnapshot: 58 };
+    const r = [F.txDop(t), F.v144CurrentFx(t), F.txDop(sin), F.txDop(dop)]; d.settings.fx = 70; r.push(F.txDop(t)); d.settings.fx = antes; return r;
+  });
+  afirmar('USD con tasa guardada usa esa tasa', fxr[0] === 5800 && fxr[1] === 5800 && fxr[4] === 5800, JSON.stringify(fxr));
+  afirmar('USD sin tasa guardada usa la vigente', fxr[2] === 6000, JSON.stringify(fxr));
+  afirmar('DOP no se convierte', fxr[3] === 100, JSON.stringify(fxr));
   afirmar('sin errores de consola', errs.length === 0, errs.join(' | '));
   await b.close();
   console.log(`app: ${ok} correctas, ${fallos.length} fallan`); fallos.forEach((f) => console.log(' -', f));
