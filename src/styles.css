@@ -55690,9 +55690,25 @@ html body #app#app #page .v187-hero-change .v134-change.v134-change-up,html body
 html body #app#app #page .v187-hero-change .v134-change.v134-change-down,html body #app#app #page .v187-hero-change .v134-change.v134-change-down *{color:#a11d38!important;-webkit-text-fill-color:#a11d38!important}
 html body #app#app #page .v187-hero-change .v134-change:not(.v134-change-up):not(.v134-change-down),html body #app#app #page .v187-hero-change .v134-change:not(.v134-change-up):not(.v134-change-down) *{color:#3b4358!important;-webkit-text-fill-color:#3b4358!important}
 
-/* Acento del tema en «Próximos pagos» (íconos y píldoras de días) y «Cumplimiento del presupuesto» (botón Ver ejecución).
-   Antes salían azul y verde fijos y no seguían el color de acento elegido. Vencido se queda en rojo. */
+/* Acento del tema en «Próximos pagos» (íconos y píldoras de días). Vencido se queda en rojo. */
 html body #app#app .ff-upcoming .ff-pay-symbol{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 13%,#fff)!important;color:var(--v424-accent-strong,#7b2d57)!important}
 html body #app#app .ff-upcoming .ff-due.soon,html body #app#app .ff-upcoming .ff-due.today{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 13%,#fff)!important;color:var(--v424-accent-strong,#7b2d57)!important}
-html body #app#app .v290-budget-head>button[data-v290-budget-open]{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 9%,#fff)!important;border-color:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 38%,transparent)!important;color:var(--v424-accent-strong,#7b2d57)!important}
-html body:is(.theme-dark,.theme-black) #app#app .ff-upcoming .ff-pay-symbol,html body:is(.theme-dark,.theme-black) #app#app .ff-upcoming .ff-due.soon,html body:is(.theme-dark,.theme-black) #app#app .ff-upcoming .ff-due.today,html body:is(.theme-dark,.theme-black) #app#app .v290-budget-head>button[data-v290-budget-open]{background:color-mix(in srgb,var(--v424-accent-strong,#a85a85) 22%,#101116)!important;color:color-mix(in srgb,var(--v424-accent-strong,#a85a85) 62%,#fff)!important}
+html body:is(.theme-dark,.theme-black) #app#app .ff-upcoming .ff-pay-symbol,html body:is(.theme-dark,.theme-black) #app#app .ff-upcoming .ff-due.soon,html body:is(.theme-dark,.theme-black) #app#app .ff-upcoming .ff-due.today{background:color-mix(in srgb,var(--v424-accent-strong,#a85a85) 22%,#101116)!important;color:color-mix(in srgb,var(--v424-accent-strong,#a85a85) 62%,#fff)!important}
+
+/* «Ver ejecución» (Cumplimiento del presupuesto) y «Ver relaciones» (Entre personas) con el mismo botón sólido de acento y letra blanca que «Ver todo» en Próximos pagos. */
+html body #app#app .v290-budget-head>button[data-v290-budget-open],html body #app#app .ff-outline-pill[data-id="personal"],html body #app#app .ff-persona .ff-outline-pill{display:inline-flex!important;align-items:center!important;gap:6px!important;height:32px!important;min-height:32px!important;padding:0 13px!important;border:0!important;border-radius:24px!important;background:var(--v424-accent-strong,#615dd5)!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:10px!important;font-weight:690!important;box-shadow:0 5px 12px rgba(37,52,82,.07)!important}
+html body #app#app .v290-budget-head>button[data-v290-budget-open] *,html body #app#app .ff-outline-pill[data-id="personal"] *{color:#fff!important;-webkit-text-fill-color:#fff!important;stroke:currentColor}
+
+/* Notificaciones: el panel desplaza su contenido (una regla anterior forzaba overflow:hidden y no se podía bajar). */
+html body #app#app#app .v36-notice-pop{overflow-x:hidden!important;overflow-y:auto!important;max-height:min(78vh,640px)!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media(max-width:790px){html body #app#app#app .v36-notifications .v36-notice-pop{max-height:min(72dvh,560px)!important}}
+
+/* «Ver todo», «Ver ejecución» y «Ver relaciones»: misma medida (116 × 32) y misma posición (arriba a la derecha de su tarjeta), para que se vean alineados. */
+html body #app#app :is(.ff-upcoming.ff-tile,.v290-budget-web.ff-tile,.ff-personal.ff-tile){position:relative}
+html body #app#app :is(.ff-upcoming .ff-black-btn,.v290-budget-head>button[data-v290-budget-open],.ff-personal .ff-outline-pill[data-id="personal"]){position:absolute!important;top:18px!important;right:20px!important;margin:0!important;width:116px!important;min-width:116px!important;max-width:116px!important;justify-content:center!important;box-sizing:border-box!important;z-index:2}
+html body #app#app :is(.ff-upcoming .ff-panel-top,.v290-budget-head,.ff-personal .ff-panel-top){padding-right:132px!important;min-height:44px}
+
+/* Movimientos: el ícono de Apple Pay va en la misma línea del comercio, más compacto. */
+html body #app#app .v213-note-apple{display:flex!important;align-items:center;gap:6px;flex-wrap:nowrap}
+html body #app#app .v213-note-apple .v213-apple-badge{flex:none;margin:0!important;transform:scale(.86);transform-origin:left center;margin-right:-6px!important}
+html body #app#app .v213-note-apple>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
