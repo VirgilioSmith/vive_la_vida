@@ -55129,7 +55129,7 @@ html body #modal-root#modal-root .modal.v1110-modal form.v1110-form .v1110-step{
 #modal-root .v1110-field{gap:3px}
 html body #modal-root#modal-root .modal.v1110-modal form.v1110-form .v1110-field :is(input:not([type=radio]):not([type=checkbox]):not([type=color]),select,.field){height:37px!important;min-height:37px!important}
 /* V1112 · institución: 7 colores en una fila, logo y certificado como en el mockup */
-html body #modal-root#modal-root form.v1110-form .v42-color-choices button[data-v42-color="#f50b32"],html body #modal-root#modal-root form.v1110-form .v42-color-choices button[data-v42-color="#f9163c"],html body #modal-root#modal-root form.v1110-form .v42-color-choices button[data-v42-color="#4b8dcd"]{display:none!important}
+html body #modal-root#modal-root form.v1110-form .v42-color-choices button[data-v42-color="#f50b32"],html body #modal-root#modal-root form.v1110-form .v42-color-choices button[data-v42-color="#f9163c"],html body #modal-root#modal-root form.v1110-form .v42-color-choices button[data-v42-color="#4b8dcd"],html body #modal-root#modal-root form.v1110-form .v42-color-choices button[data-v42-color="#8b5cf6"]{display:none!important}
 html body #modal-root#modal-root form.v1110-form .v42-color-field.v1110-field .v42-color-choices{flex-wrap:nowrap;justify-content:space-between;padding:3px 4px}
 html body #modal-root#modal-root form.v1110-form .v42-color-field.v1110-field .v42-color-choices>*{flex:0 0 30px;width:30px!important;height:30px!important;min-width:0}
 html body #modal-root#modal-root form.v1110-form .v42-color-choices input[type=color]{display:block;border-radius:50%!important;aspect-ratio:1}
@@ -55140,3 +55140,26 @@ html body #modal-root#modal-root .v1110-upload [data-act=bankLogoChoose] .v1110-
 #modal-root form.v1110-cards .v1110-lab{font-size:11.5px;white-space:nowrap}
 #modal-root form.v1110-cards .v1110-step>.v1110-grid2{align-items:stretch!important}
 html body #modal-root#modal-root form.v1110-form .v42-color-choices input[type=color]#v42ColorInput{width:30px!important;height:30px!important;min-height:0!important;max-height:30px!important;padding:0!important;align-self:center}
+
+/* V1113 · detalles exactos del mockup: formato numérico, encabezados, seguro, confirmación de préstamo */
+#modal-root .v1110-head{display:flex;flex-direction:column;gap:2px;margin-bottom:2px}
+#modal-root .v1110-head .v1110-ct{margin:0;font-size:22px}
+#modal-root .v1110-prev .v1110-hero-t,#modal-root .v1110-hero-bank .v1110-hero-t{border-left:1px solid var(--k-line);padding-left:12px}
+html body #modal-root#modal-root .v1110-form .v1110-twin{font-variant-numeric:tabular-nums}
+#modal-root .v1110-toggle{display:flex;align-items:center;gap:10px;padding:2px 0}
+#modal-root .v1110-toggle>span{flex:1;font-weight:700;font-size:13.5px;color:var(--k-ink)}
+#modal-root .v1110-tstate{font-weight:600;color:var(--k-sub);font-size:14px}
+html body #modal-root#modal-root .v1110-sw{width:46px;height:26px;border-radius:999px;border:0;background:#cdd3e3;position:relative;padding:0;cursor:pointer;flex:0 0 46px}
+html body #modal-root#modal-root .v1110-sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+html body #modal-root#modal-root .v1110-sw[aria-checked=true]{background:var(--k-acc)}
+html body #modal-root#modal-root .v1110-sw[aria-checked=true]::after{left:23px}
+html body #modal-root#modal-root form.v1110-loan [data-v83-step="2"] :is(.v87-summary,.v87-review-grid,.v87-inline-note,.v87-step-intro,.v87-section-heading,.v97-quota-hint){display:none!important}
+html body #modal-root#modal-root form.v1110-loan .v97-quota-hint{display:none!important}
+html body #modal-root#modal-root form.v1110-loan [data-v83-step="2"] .v87-section{gap:8px}
+#modal-root .v1110-lconf{display:flex;flex-direction:column;gap:10px}
+#modal-root .v1110-lconf .v1110-rows{border:1px solid var(--k-line);border-radius:14px;background:var(--k-card);padding:2px 12px}
+#modal-root .v1110-affix>i:not([data-affix]){font-size:12px;font-weight:500}
+html body #modal-root#modal-root form.v1110-loan .v1110-affix>input{padding-right:84px!important}
+html body #modal-root#modal-root .modal.v1110-modal form.v1110-loan>.form-foot:not([hidden]){padding:10px 16px 14px!important}
+html body #modal-root#modal-root .modal.v1110-modal form.v1110-loan>.v83-form-navigation{padding:10px 16px 14px!important}
+html body #modal-root#modal-root .modal.v1110-modal form.v1110-loan .v48-kind-card.selected>b::before{content:"✓ ";font-weight:800}

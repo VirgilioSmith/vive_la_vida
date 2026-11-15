@@ -9638,6 +9638,18 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  const v1110Node=(html,tag='div',cls='')=>{const d=document.createElement(tag);if(cls)d.className=cls;d.innerHTML=html;return d};
  const v1110Ccy=c=>c==='USD'?'US$':'RD$';
  const v1110Money=(n,c,d=2)=>money(num(n),c==='USD'?'USD':'DOP',d);
+ /* Campo numérico con formato visible («RD$400,000», «60%») sobre el campo numérico real. */
+ function v1110Twin(real,opt={}){
+  if(!real||real._tw)return null;
+  const tw=document.createElement('input');tw.type='text';tw.inputMode='decimal';tw.autocomplete='off';tw.className=(real.className||'field')+' v1110-twin';tw.placeholder=real.placeholder||'0';
+  const lab=real.closest('label')?.querySelector('.filter-label')?.textContent;if(lab)tw.setAttribute('aria-label',lab);
+  const fmt=()=>{const raw=real.value;if(raw===''||!Number.isFinite(+raw))return '';const v=+raw;const d=opt.dec??(Number.isInteger(v)?0:2);return (opt.pre?opt.pre():'')+v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:Math.max(d,opt.dec==null?2:d)})+(opt.suffix||'')};
+  const show=()=>{tw.value=fmt()};
+  tw.addEventListener('focus',()=>{tw.value=real.value===''?'':String(real.value);try{tw.select()}catch(_){}});
+  tw.addEventListener('input',()=>{const c=tw.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1');if(c!==tw.value)tw.value=c;real.value=c;v1110Fire(real,'input')});
+  tw.addEventListener('blur',()=>{v1110Fire(real,'change');show()});
+  real.classList.add('v1110-native');real.tabIndex=-1;real._tw=tw;real._v1110r=show;real.after(tw);show();return tw;
+ }
  /* Campo universal: etiqueta + control, sin cajas heredadas. */
  function v1110Field(f,n,label,opt={}){
   const box=v1110Box(f,n);if(!box)return null;
@@ -9648,6 +9660,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   wrap.append(lab);
   if(opt.prefix||opt.suffix){const m=document.createElement('div');m.className='v1110-affix';if(opt.prefix){const p=document.createElement('i');p.textContent=opt.prefix;p.dataset.affix='pre';m.append(p)}m.append(ctl);if(opt.suffix){const s=document.createElement('i');s.textContent=opt.suffix;m.append(s)}wrap.append(m)}
   else wrap.append(ctl);
+  if(opt.num)v1110Twin(ctl,opt.num);
   if(opt.hint){const h=document.createElement('small');h.className='v1110-hint';h.textContent=opt.hint;wrap.append(h)}
   box.remove();
   return wrap;
@@ -9706,7 +9719,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   inp.classList.add('v1110-native');inp.tabIndex=-1;
   wrap.innerHTML=`<span class="v1110-lab">${v1110Esc(label)}</span>`;wrap.append(s,inp);box.remove();return wrap;
  }
- const v1110Hero=(logo,t1,t2,right='')=>`<div class="v1110-hero">${logo}<div class="v1110-hero-t"><strong>${v1110Esc(t1)}</strong><small>${v1110Esc(t2)}</small></div>${right?`<div class="v1110-hero-r">${right}</div>`:''}</div>`;
+ const v1110Hero=(logo,t1,t2,right='',cls='')=>`<div class="v1110-hero ${cls}">${logo}<div class="v1110-hero-t"><strong>${v1110Esc(t1)}</strong><small>${v1110Esc(t2)}</small></div>${right?`<div class="v1110-hero-r">${right}</div>`:''}</div>`;
  const v1110Rows=(rows)=>`<div class="v1110-rows">${rows.map(([l,v,fld,step,raw])=>`<div class="v1110-r"><span>${v1110Esc(l)}</span><strong>${raw?v:v1110Esc(v)}</strong><button type="button" class="v1110-edit" data-edit-step="${step||0}" data-edit-field="${v1110Esc(fld||'')}">${v1110Ico('pencil')}<u>Editar</u></button></div>`).join('')}</div>`;
  const v1110Note=t=>`<p class="v1110-note">${v1110Ico('info')}<span>${v1110Esc(t)}</span></p>`;
  const V1110_COLORS={'#376bea':'Azul','#111827':'Negro','#64748b':'Gris','#0f766e':'Verde','#8b5cf6':'Violeta','#db2777':'Rosa','#ef4444':'Rojo','#f50b32':'Rojo vivo','#f9163c':'Carmesí','#4b8dcd':'Celeste','#7b2d57':'Ciruela'};
@@ -9720,11 +9733,11 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
      v1110Field(f,'name','Nombre de la cuenta'),
      v1110BankPicker(f,'bankId','Banco'),
      v1110Row(v1110Field(f,'kind','Tipo de cuenta'),v1110Seg(f,'currency','Moneda',{DOP:'DOP',USD:'USD'})),
-     v1110Field(f,'opening','Saldo inicial',{prefix:v1110Ccy(cur.value)}),
+     v1110Field(f,'opening','Saldo inicial',{num:{pre:()=>v1110Ccy(cur.value),dec:2}}),
      v1110Field(f,'opened','Fecha del saldo',{cls:'v1110-date'}),
      v1110Node(`${v1110Ico('info')}<span>Tu saldo inicial es el punto de partida.</span>`,'p','v1110-note')];
     const more=f.querySelector('details.smart-fold');if(more){more.className='v1110-more';more.querySelector('summary').innerHTML='<span>Datos adicionales</span><small>Opcional</small>';more.querySelectorAll('label').forEach(l=>{const n=l.querySelector('[name]')?.name;const t={last4:'Últimos 4 dígitos',annualRate:'Interés anual (%)'}[n];if(t&&l.querySelector('.filter-label'))l.querySelector('.filter-label').textContent=t});s1.push(more)}
-    cur.addEventListener('change',()=>{const p=f.querySelector('[data-field=opening] [data-affix=pre]');if(p)p.textContent=v1110Ccy(cur.value)});
+    cur.addEventListener('change',()=>v1110El(f,'opening')?._v1110r?.());
     return [s1];
    },
    confirm(f){const b=v1110BankObj(f),cur=v1110Val(f,'currency')||'DOP';
@@ -9732,9 +9745,9 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
     v1110Rows([['Nombre',v1110Val(f,'name'),'name',0],['Banco',b?.name||'—','bankId',0],['Tipo',v1110Txt(f,'kind'),'kind',0],['Moneda',cur,'currency',0],['Fecha',v1110Date(v1110Val(f,'opened')),'opened',0]])+v1110Note('No se registrará como ingreso ni como depósito adicional.')}},
   cardForm:{title:'Nueva tarjeta',steps:['Datos','Confirmación'],submit:'Crear tarjeta',
    build(f){
-    const lim=v1110Sec('layers','Límites de crédito',v1110Row(v1110Field(f,'limitDOP','Límite en RD$',{prefix:'RD$'}),v1110Field(f,'limitUSD','Límite en US$',{prefix:'US$'})));
-    const tas=v1110Sec('percent','Tasas anuales',v1110Row(v1110Field(f,'aprDOP','Tasa anual RD$',{suffix:'%'}),v1110Field(f,'aprUSD','Tasa anual US$',{suffix:'%'})));
-    const cic=v1110Sec('calendar','Ciclo y cargos',v1110Row(v1110Day(f,'cutDay','Día de corte'),v1110Day(f,'dueDay','Día de pago')),v1110Field(f,'advanceFeePct','Comisión por avance',{suffix:'%'}),v1110Row(v1110Field(f,'annualFeeAmount','Anualidad'),(()=>{const c=v1110El(f,'annualFeeCurrency');if(c)[...c.options].forEach(o=>{o.textContent=o.value==='USD'?'USD':'DOP'});return v1110Field(f,'annualFeeCurrency','Moneda',{cls:'v1110-nolab'})})()),v1110Node('Una anualidad por tarjeta','small','v1110-hint'));
+    const lim=v1110Sec('layers','Límites de crédito',v1110Row(v1110Field(f,'limitDOP','Límite en RD$',{num:{pre:()=>'RD$ ',dec:0}}),v1110Field(f,'limitUSD','Límite en US$',{num:{pre:()=>'US$ ',dec:0}})));
+    const tas=v1110Sec('percent','Tasas anuales',v1110Row(v1110Field(f,'aprDOP','Tasa anual RD$',{num:{suffix:'%'}}),v1110Field(f,'aprUSD','Tasa anual US$',{num:{suffix:'%'}})));
+    const cic=v1110Sec('calendar','Ciclo y cargos',v1110Row(v1110Day(f,'cutDay','Día de corte'),v1110Day(f,'dueDay','Día de pago')),v1110Field(f,'advanceFeePct','Comisión por avance',{num:{suffix:'%'}}),v1110Row(v1110Field(f,'annualFeeAmount','Anualidad',{num:{dec:0}}),(()=>{const c=v1110El(f,'annualFeeCurrency');if(c)[...c.options].forEach(o=>{o.textContent=o.value==='USD'?'USD':'DOP'});return v1110Field(f,'annualFeeCurrency','Moneda',{cls:'v1110-nolab'})})()),v1110Node('Una anualidad por tarjeta','small','v1110-hint'));
     const s1=[v1110Field(f,'name','Nombre de la tarjeta'),v1110BankPicker(f,'bankId','Banco emisor'),v1110Row(v1110Field(f,'network','Red de pago'),v1110Field(f,'tier','Categoría de tarjeta')),lim,tas,cic];
     const more=f.querySelector('#cardExtraDetails');if(more){more.className='v1110-more';more.id='cardExtraDetails';more.querySelector('summary').innerHTML='<span>Más opciones</span><small>Opcional</small>';s1.push(more)}
     return [s1];
@@ -9755,7 +9768,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
      scope.classList.add('v1110-field');const t={personal:['Personal','Finanzas propias'],negocio:['Negocio','Emprendimiento']};
      scope.querySelectorAll('.v42-scope-choices label').forEach(l=>{const i=l.querySelector('input');const [a,b]=t[i.value]||[i.value,''];[...l.childNodes].forEach(n=>{if(n!==i)n.remove()});l.append(Object.assign(document.createElement('span'),{className:'v1110-rc-t',innerHTML:`<i class="v1110-dot"></i><strong>${a}</strong><small>${b}</small>`}))})}
     const up=f.querySelector('.v28-bank-upload');if(up){up.classList.add('v1110-upload');up.insertAdjacentHTML('afterbegin','<span class="v1110-lab">Identidad visual</span>')}if(up){const ub=up.querySelector('[data-act=bankLogoChoose]');if(ub)ub.innerHTML=`${v1110Ico('upload')}<b>Subir logo</b><span>· Opcional</span>`}
-    const col=f.querySelector('.v42-color-field');if(col){col.classList.add('v1110-field');const l=col.querySelector(':scope>label');if(l){l.className='v1110-lab';l.textContent='Color de la institución'}}
+    const col=f.querySelector('.v42-color-field');if(col){const ch=col.querySelector('.v42-color-choices');if(ch&&!ch.querySelector('[data-v42-color="#7b2d57"]'))ch.insertAdjacentHTML('afterbegin','<button type="button" data-v42-color="#7b2d57" aria-pressed="false" title="Elegir ciruela" aria-label="Elegir color ciruela"></button>');if(!f.dataset.id)setTimeout(()=>ch?.querySelector('[data-v42-color="#7b2d57"]')?.click(),30);col.classList.add('v1110-field');const l=col.querySelector(':scope>label');if(l){l.className='v1110-lab';l.textContent='Color de la institución'}}
     const prev=v1110Node('','div','v1110-field v1110-prevbox');prev.innerHTML='<span class="v1110-lab">Vista previa</span><div class="v1110-hero v1110-prev"></div>';
     const s1=[v1110Field(f,'name','Nombre de la institución'),v1110Field(f,'kind','Tipo de institución'),scope,up,col,prev];
     const more=f.querySelector('details.v135-more');if(more){more.className='v1110-more';more.querySelector('summary').innerHTML='<span>Más opciones</span><small>Nota opcional</small>';s1.push(more)}
@@ -9766,15 +9779,15 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
    },
    confirm(f){const c=String(v1110Val(f,'color')||'').toLowerCase(),b={name:v1110Val(f,'name')||'Institución',color:c,logo:f.dataset.logo||''};
     const sc=v1110Val(f,'scope')==='negocio'?'Negocio':'Personal';
-    return `<h3 class="v1110-ct">Revisa tu institución</h3><p class="v1110-lead">Verifica la información antes de crearla.</p>`+v1110Hero(bankLogoMark(b,'v1110-logo'),b.name,v1110Txt(f,'kind')+' · '+sc)+
+    return `<h3 class="v1110-ct">Revisa tu institución</h3><p class="v1110-lead">Verifica la información antes de crearla.</p>`+v1110Hero(bankLogoMark(b,'v1110-logo'),b.name,v1110Txt(f,'kind')+' · '+sc,'','v1110-hero-bank')+
      v1110Rows([['Nombre',b.name,'name',0],['Tipo',v1110Txt(f,'kind'),'kind',0],['Perfil',sc,'scope',0],['Color',`<span class="v1110-swatch" style="background:${v1110Esc(c)}"></span>${v1110Esc(V1110_COLORS[c]||'Personalizado')}`,'color',0,true],['Logo',f.dataset.logo?'Personalizado':'Predeterminado','name',0]])+v1110Note('Se crea la institución. Las cuentas se añaden por separado.')}},
-  certificateForm:{title:'Nuevo certificado',steps:['Datos y capital','Condiciones','Confirmación'],submit:'Crear certificado',stepper:true,cards:true,
+  certificateForm:{title:'Nuevo certificado',steps:['Datos y capital','Condiciones','Confirmación'],submit:'Crear certificado',stepper:true,cards:true,heads:[['Datos del certificado','Completa la información de tu inversión.'],['Condiciones del certificado','Define los rendimientos y la vigencia.']],
    build(f){
-    const cur=v1110El(f,'currency');
-    const s1=[v1110Field(f,'name','Nombre del certificado'),v1110Row(v1110BankPicker(f,'bankId','Banco emisor'),v1110Field(f,'currency','Moneda')),v1110Field(f,'principal','Capital',{prefix:v1110Ccy(cur.value)}),
+    const cur=v1110El(f,'currency');if(cur)[...cur.options].forEach(o=>{o.textContent=o.value==='USD'?'USD':'DOP'});
+    const s1=[v1110Field(f,'name','Nombre del certificado'),v1110Row(v1110BankPicker(f,'bankId','Banco emisor'),v1110Field(f,'currency','Moneda')),v1110Field(f,'principal','Capital',{num:{pre:()=>v1110Ccy(cur.value),dec:0}}),
      v1110Choice(f,'capitalMode','Situación del capital',[['already','Ya constituido'],['pending','Pendiente de constituir']],v=>v==='pending'?'Aún debes trasladarlo desde una cuenta.':'Ya descontado de mi saldo.')];
-    cur.addEventListener('change',()=>{const p=f.querySelector('[data-field=principal] [data-affix=pre]');if(p)p.textContent=v1110Ccy(cur.value)});
-    const s2=[v1110Row(v1110Field(f,'rate','Tasa anual',{suffix:'%'}),v1110Field(f,'taxPct','Retención sobre intereses',{suffix:'%'})),v1110Row(v1110Field(f,'startDate','Fecha de constitución',{cls:'v1110-date'}),v1110Field(f,'maturityDate','Fecha de vencimiento',{cls:'v1110-date'})),v1110Field(f,'payoutFrequency','Pago de intereses'),v1110Field(f,'note','Referencia opcional')];
+    cur.addEventListener('change',()=>v1110El(f,'principal')?._v1110r?.());
+    const s2=[v1110Row(v1110Field(f,'rate','Tasa anual',{num:{suffix:'%'}}),v1110Field(f,'taxPct','Retención sobre intereses',{num:{suffix:'%'}})),v1110Row(v1110Field(f,'startDate','Fecha de constitución',{cls:'v1110-date'}),v1110Field(f,'maturityDate','Fecha de vencimiento',{cls:'v1110-date'})),v1110Field(f,'payoutFrequency','Pago de intereses'),v1110Field(f,'note','Referencia opcional')];
     return [s1,s2];
    },
    confirm(f){const b=v1110BankObj(f),c=v1110Val(f,'currency')||'DOP',cap=num(v1110Val(f,'principal')),rate=num(v1110Val(f,'rate')),tax=num(v1110Val(f,'taxPct'));
@@ -9793,6 +9806,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   const edit=!!f.dataset.id;
   let groups;try{groups=cfg.build(f)}catch(err){console.warn('v1110',err);f.dataset.v1110='error';f.classList.remove('v1110-form');modal.classList.remove('v1110-modal');return}
   const total=cfg.steps.length,steps=groups.map((g,i)=>{const d=document.createElement('div');d.className='v1110-step';d.dataset.s=String(i);d.append(...g.filter(Boolean));return d});
+  if(cfg.heads)steps.forEach((st,i)=>{const h=cfg.heads[i];if(h)st.prepend(v1110Node(`<h3 class="v1110-ct">${v1110Esc(h[0])}</h3><p class="v1110-lead">${v1110Esc(h[1])}</p>`,'div','v1110-head'))});
   const conf=document.createElement('div');conf.className='v1110-step v1110-confirm';conf.dataset.s=String(total-1);
   const stepper=document.createElement('ol');stepper.className='v1110-stepper';stepper.hidden=!cfg.stepper;
   grid.prepend(conf);steps.slice().reverse().forEach(s=>grid.prepend(s));if(cfg.stepper)grid.prepend(stepper);
@@ -9809,7 +9823,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
    const sc=f.closest('.modal')?.querySelector('.form-grid')||grid;try{sc.scrollTop=0;f.scrollTop=0}catch(_){ }};
   const validate=()=>{const s=steps[cur];if(!s)return true;
    for(const w of s.querySelectorAll('.v1110-pick')){const sel=w.querySelector('select');if(sel&&sel.required&&!sel.value){w.v1110Invalid?.();w.scrollIntoView?.({block:'center'});toast?.('Selecciona una institución.');return false}}
-   for(const c of s.querySelectorAll('input,select,textarea')){if(c.type==='hidden'||c.closest('.v1110-native')&&!c.matches('input'))continue;if(!c.checkValidity()){const det=c.closest('details');if(det)det.open=true;c.reportValidity();return false}}
+   for(const c of s.querySelectorAll('input,select,textarea')){if(c.type==='hidden'||c.closest('.v1110-native')&&!c.matches('input'))continue;if(!c.checkValidity()){const det=c.closest('details');if(det)det.open=true;if(c._tw){c._tw.focus();toast?.(c.validationMessage||'Revisa este campo.')}else c.reportValidity();return false}}
    return true};
   next.addEventListener('click',e=>{e.preventDefault();if(validate())go(cur+1)});
   head?.querySelector('.v1110-back')?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(cur>0)go(cur-1);else if(typeof closeModal==='function')closeModal();else head.querySelector('.close')?.click()});
@@ -9830,6 +9844,34 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   if(!head.querySelector('.v1110-back'))head.insertAdjacentHTML('afterbegin',`<button type="button" class="v1110-back" aria-label="Volver">${v1110Ico('arrow')}</button>`);
   head.querySelector('.v1110-back').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const c=cur();if(c>0)f._v83Switch(c-1);else closeModal()});
   const box=v1110Box(f,'bankId');if(box){const ph=document.createComment('');box.before(ph);const w=v1110BankPicker(f,'bankId','Institución o entidad');if(w)ph.replaceWith(w);else ph.remove()}
+  const q=n=>v1110El(f,n),edit=!!f.dataset.id;
+  const cu=q('currency');if(cu)[...cu.options].forEach(o=>{o.textContent=o.value==='USD'?'USD':'DOP'});
+  const rt0=q('rateType');if(rt0)[...rt0.options].forEach(o=>{o.textContent=o.value==='variable'?'Variable':'Fija'});
+  const setLab=(n,t)=>{const l=q(n)?.closest('label')?.querySelector('.filter-label');if(l)l.textContent=t};
+  setLab('name','Nombre del préstamo');setLab('currency','Moneda');setLab('rateType','Modalidad de la tasa');setLab('rate','Tasa anual pactada');setLab('principal','Capital original del contrato');setLab('termCount','Plazo');setLab('paymentFrequency','Frecuencia de pago');setLab('currentInstallment','Cuota exacta (capital + interés)');setLab('postingMode','Registro de pagos');
+  if(q('principal'))v1110Twin(q('principal'),{pre:()=>v1110Ccy(q('currency')?.value),dec:0});
+  if(q('rate'))v1110Twin(q('rate'),{suffix:'%'});
+  if(cu)cu.addEventListener('change',()=>q('principal')?._v1110r?.());
+  const ci=q('currentInstallment');if(ci){const w=document.createElement('div');w.className='v1110-affix';ci.before(w);w.append(ci);w.insertAdjacentHTML('beforeend','<i>0 = calcular</i>')}
+  const kp=f.querySelector('.v48-kind-pick');if(kp){const b0=kp.querySelector('[data-v48-loan-mode=new] b');if(b0)b0.textContent='Nuevo'}if(kp&&!kp.previousElementSibling?.classList.contains('v1110-lab'))kp.insertAdjacentHTML('beforebegin','<span class="v1110-lab">Estado del préstamo</span>');
+  const ik=q('insuranceKind');
+  if(ik&&!edit){ik.value='none';const im0=q('insuranceMonthly');if(im0)im0.value='0'}
+  setLab('insuranceKind','Tipo de cobertura');
+  if(ik){const grid=ik.closest('.v87-field-grid');if(grid){const row=document.createElement('div');row.className='v1110-toggle';row.innerHTML='<span>¿Incluye seguro?</span><b class="v1110-tstate"></b><button type="button" role="switch" class="v1110-sw" aria-label="¿Incluye seguro?"></button>';grid.before(row);let last=ik.value!=='none'?ik.value:'vida';const sw=row.querySelector('.v1110-sw');
+   const paint=()=>{const on=ik.value!=='none';sw.setAttribute('aria-checked',String(on));row.querySelector('.v1110-tstate').textContent=on?'Sí':'No';grid.hidden=!on};
+   sw.addEventListener('click',()=>{if(ik.value!=='none'){last=ik.value;ik.value='none'}else ik.value=last;v1110Fire(ik,'input');v1110Fire(ik,'change');paint()});ik.addEventListener('change',paint);paint()}}
+  const panels=[...f.querySelectorAll('.v83-loan-form-panel')];
+  [['Datos del contrato'],['Capital y cuotas']].forEach((h,i)=>{if(panels[i]&&!panels[i].querySelector('.v1110-head'))panels[i].prepend(v1110Node(`<h3 class="v1110-ct">${h[0]}</h3>`,'div','v1110-head'))});
+  const sub=f.querySelector('.form-foot button[type=submit]');if(sub)sub.innerHTML=`<span>${edit?'Guardar cambios':'Crear préstamo'}</span>`;
+  if(panels[2]){const panel=panels[2],conf=document.createElement('div');conf.className='v1110-lconf';panel.prepend(conf);
+   const render=()=>{const bk=bank(v1110Val(f,'bankId')),cur=v1110Val(f,'currency')||'DOP',n=k=>num(v1110Val(f,k));
+    const unit={months:'meses',years:'años',fortnights:'quincenas'}[v1110Val(f,'termUnit')]||'meses';
+    const fd=v1110Val(f,'firstDue')||v1110Val(f,'originationDate'),inst=n('currentInstallment');
+    const rows=[['Estado',v1110Val(f,'loanOpeningMode')==='existing'?'Ya iniciado':'Nuevo','',1],['Moneda',cur,'currency',0],['Tasa de interés',(v1110Val(f,'rateType')==='variable'?'Variable':'Fija')+' · '+n('rate')+'% anual','rate',0],['Seguro',v1110Val(f,'insuranceKind')!=='none'?'Sí':'No','insuranceKind',0],['Plazo',n('termCount')+' '+unit,'termCount',1],['Frecuencia',String(v1110Txt(f,'paymentFrequency')).split(' · ')[0],'paymentFrequency',1],['Primera cuota',fd?v1110Date(fd):'—','',1],['Cuota exacta',inst>0?v1110Money(inst,cur,2):'Cálculo automático','currentInstallment',1],['Pagos',v1110Val(f,'postingMode')==='auto'?'Automático':'Confirmación manual','postingMode',1]];
+    conf.innerHTML=`<h3 class="v1110-ct">Confirma tu préstamo</h3><p class="v1110-lead">Revisa los datos antes de crearlo.</p>`+v1110Hero(bk?bankLogoMark(bk,'v1110-logo'):`<span class="v1110-logo v1110-glyph">${v1110Ico('building')}</span>`,bk?.name||'Institución',v1110Val(f,'name')||'Préstamo','<small>Capital original</small><b>'+v1110Esc(v1110Money(n('principal'),cur,0))+'</b>','v1110-hero-div')+v1110Rows(rows)};
+   new MutationObserver(()=>{if(!panel.hidden)render()}).observe(panel,{attributes:true,attributeFilter:['hidden']});
+   conf.addEventListener('click',e=>{const b=e.target.closest('.v1110-edit');if(!b)return;e.preventDefault();f._v83Switch?.(+b.dataset.editStep||0);const t=b.dataset.editField&&q(b.dataset.editField);setTimeout(()=>{const el=t&&(t._tw||t);try{el?.focus?.({preventScroll:true})}catch(_){}},80)})}
+
  }
  const v1110Scan=()=>{const f=document.querySelector('#modal-root form');if(f&&!f.dataset.v1110&&(V1110[f.id]||f.id==='loanForm'))setTimeout(()=>{if(f.isConnected)(f.id==='loanForm'?v1110Loan:v1110Enhance)(f)},90)};
  new MutationObserver(v1110Scan).observe(document.getElementById('modal-root')||document.body,{childList:true,subtree:true});
