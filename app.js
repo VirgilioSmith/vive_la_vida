@@ -721,7 +721,7 @@ function v985Ring(pct,tone,label,small){
  return `<div class="v985-ring v985-${tone}" role="img" aria-label="${sanitize(label)} ${Math.round(v)}%"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="${r}" class="v985-ring-bg"/><circle cx="50" cy="50" r="${r}" class="v985-ring-fg" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off}" transform="rotate(-90 50 50)"/></svg><div><strong>${Math.round(v)}%</strong><small>${sanitize(small)}</small></div></div>`;
 }
 function v985SimplificationWidget(asKpi){
- if(!asKpi&&db.settings?.mobilePositionStyle==='matrix')return '';
+ if(!asKpi)return ''; // La Matriz Jobs solo existe como estilo del KPI principal.
  let liquid=0,debt=0,cert=0,recv=0;
  try{liquid=totalLiquid();debt=totalCardDebt()+totalLoanDebt()+personalTotals().payable;cert=totalCertificates();recv=personalTotals().receivable;}catch(e){console.warn('V985: posición no disponible',e);}
  const assets=liquid+cert+recv,net=assets-debt;
@@ -11600,7 +11600,6 @@ loanForm=function(id,preBank){
    La personalización persiste solo claves de presentación. */
 const V105_WIDGETS=[
  {id:'applePayInbox',title:'Apple Pay · Por clasificar',hint:'Compras Wallet pendientes: asigna categoría y subcategoría desde Inicio'},
- {id:'simplification',title:'Matriz Jobs',hint:'Entender, actuar, anticipar y decidir: cuatro tarjetas con lo esencial'},
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
  {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
@@ -11655,7 +11654,7 @@ function v332PersonalizationGroups(cfg){
 
 
 const V1123_TOP=['applePayInbox','patrimonyTrend','capacity','commitments'];
-const V1123_ORDER=[...V1123_TOP,'simplification','budgetPulse','cashPressure','futureCalendar','futureWaterfall','futureMap','spendingFingerprint','budgetTrend','net','creditUtil','futureFlow','futureBubbles'];
+const V1123_ORDER=[...V1123_TOP,'budgetPulse','cashPressure','futureCalendar','futureWaterfall','futureMap','spendingFingerprint','budgetTrend','net','creditUtil','futureFlow','futureBubbles'];
 function v316OrderDefaults(ids){const pri=V1123_ORDER.filter(id=>ids.includes(id));return [...pri,...ids.filter(id=>!pri.includes(id))]}
 function v316VisibleDefaults(ids){
  const hidden=new Set(['simplification','premiumCredit','premiumCommitments','activity','subscriptions','cardsDue','budget','budgetTrend','chart','banks','accounts','cards','loans','certificates']);
