@@ -3744,8 +3744,8 @@ function v134WealthHistory(period){
  const labels=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
  const data=(year)=>labels.map((_,i)=>{const x=v134WealthMonth(year+'-'+String(i+1).padStart(2,'0'));return x.snapshot?.net??null});
  return v14ChartSvg(labels,[
-  {name:String(selectedYear-1)+' · histórico',color:'#9eafcd',values:data(selectedYear-1),width:2.6},
-  {name:String(selectedYear)+' · histórico',color:'#6366ef',values:data(selectedYear),width:3.7}
+  {name:String(selectedYear-1)+' · histórico',color:'color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 38%,#c9ced9)',values:data(selectedYear-1),width:2.6},
+  {name:String(selectedYear)+' · histórico',color:'var(--v424-accent-strong,#7b2d57)',values:data(selectedYear),width:3.7}
  ]);
 }
 /* V187: Patrimonio — un solo KPI principal y tres gráficos simultáneos. */
