@@ -166,6 +166,12 @@ El resto de la aplicación no depende de nada de esta carpeta.
 - **Centro de control:** fila de indicadores, tarjeta de estado (calibrado/incompleto + advertencias) y cuatro secciones plegables: *Antecedentes y procedencia*, *Productos y cancelados*, *Cortes guardados* y *Auditoría y pruebas*.
 - **Productos cancelados:** los cerrados en vive el hoy se leen solos; los anteriores se agregan en *Productos y cancelados* (institución, tipo, mes/año de apertura y de cierre, estado final). Los cancelados en buen estado suman años a la antigüedad y a la edad promedio del historial; los castigados no suman. No restan puntos por sí mismos.
 
-## Pestañas retiradas (análisis de uso)
+## Variables, Metodología y Patrones IA
 
-Se eliminaron *Variables*, *Patrones IA* y *Metodología* por no usarse: *Variables* era un catálogo estático de ~100 nombres sin enlace desde ninguna otra pantalla ni efecto en cálculos; *Metodología* era un manual estático duplicado en este README (fórmulas, pesos y reglas); *Patrones IA* necesita al menos 4 cortes mensuales y el historial arranca el 15 de noviembre de 2026, así que mostraba «datos insuficientes» durante meses. El modelo no supervisado interno (`patternModel`) se conserva porque alimenta el indicador de «corte atípico» de Evolución; los enlaces antiguos (`matrix`, `patterns`, `method`) llevan a Mi score. Las fórmulas y pesos están en este documento y en el detalle de cada factor.
+- **Variables** y **Metodología** viven dentro del *Centro de control* como secciones plegables (cerradas por defecto). Antes eran pestañas.
+- **Patrones IA** ya no tiene pestaña: el modelo no supervisado (k-medias sobre los cortes mensuales) no suma ni resta puntos; trabaja en segundo plano solo para marcar un corte atípico en Evolución y necesita al menos 4 cortes (el historial arranca el 15 de noviembre de 2026). Se explica en la sección *Metodología*.
+- Enlaces antiguos: `matrix` → Variables; `method` y `patterns` → Metodología.
+
+## Fondo transparente
+
+El marco de VIVE SCORE es transparente y deja ver el fondo de las demás vistas de vive el hoy. La app declara `color-scheme: light dark`; si el marco no declara exactamente lo mismo (en el documento y en el elemento `iframe`), el navegador pinta un panel opaco cuando el sistema operativo está en modo oscuro. Por eso `frame.html` y `.vs-frame` usan `light dark`, y la prueba 28 lo comprueba con el sistema en modo claro y oscuro.

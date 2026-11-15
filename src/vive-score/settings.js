@@ -57,12 +57,12 @@ function configuracionView(){
  return `<p class="muted sm" style="margin:0 0 12px">Se leen de vive el hoy y nunca se modifican. Solo completas el mes y año de apertura cuando la app no lo tiene.</p>${instrumentRows(s)}${cancelledView(s)}`;
 }
 /* Centro de control: una sola página, sin menú. Cada apartado es una sección plegable; los datos no se repiten. */
-const CC_SECTIONS=[['antecedentes','Antecedentes y procedencia'],['productos','Productos y cancelados'],['cortes','Cortes guardados'],['auditoria','Auditoría y pruebas']];
-const TAB_ALIAS={observatory:'antecedentes',snapshots:'cortes',audit:'auditoria',data:'antecedentes',capacity:'__detail',matrix:'__summary',patterns:'__summary',method:'__summary'};   // enlaces de las páginas anteriores
-const ccOpen={antecedentes:false,productos:false,cortes:false,auditoria:false};
+const CC_SECTIONS=[['antecedentes','Antecedentes y procedencia'],['productos','Productos y cancelados'],['cortes','Cortes guardados'],['auditoria','Auditoría y pruebas'],['variables','Variables'],['metodologia','Metodología']];
+const TAB_ALIAS={observatory:'antecedentes',snapshots:'cortes',audit:'auditoria',data:'antecedentes',capacity:'__detail',matrix:'variables',patterns:'metodologia',method:'metodologia'};   // enlaces de las páginas anteriores
+const ccOpen={antecedentes:false,productos:false,cortes:false,auditoria:false,variables:false,metodologia:false};
 function controlView(){
  const s=current(),q=qualityReport(s),tests=modelAuditSuite(),passed=tests.filter(z=>z.ok).length,c=evaluate(s),warn=c.errors.filter(z=>z.level!=='info').length,cal=!s.missing.length,last=(DB.seals||[]).filter(z=>z.auto).slice(-1)[0];
- const bodies={antecedentes:antecedentesView,productos:configuracionView,cortes:snapshotView,auditoria:audits};
+ const bodies={antecedentes:antecedentesView,productos:configuracionView,cortes:snapshotView,auditoria:audits,variables:matrixView,metodologia:methodView};
  return `${sec('Centro de control','Todo se lee y se guarda solo. Aquí solo ves lo importante.')}
  <div class="grid stats">${kpi('Confianza de evidencia',`${q.reliability}/100`,'Calidad de los datos, no es score')}${kpi('Cortes observados',DB.months.length,'Desde el 15 de noviembre de 2026')}${kpi('Pruebas del motor',`${passed}/${tests.length}`,'Coherencia algorítmica local')}${kpi('Advertencias',warn,'Datos por revisar',warn?'neg':'')}</div>
  <div class="card" style="margin:15px 0 12px"><div class="hrow wrapMobile"><div><div class="caps">ESTADO</div><h2 style="margin:6px 0 2px">${cal?'Calibrado':'Incompleto'}</h2><p class="sm">${cal?'Todos los datos esenciales están disponibles; el score se calcula.':'Falta información esencial; el score no se calcula hasta completarla.'}</p></div><div class="links"><span class="tag good">● Guardado automático${last?' · '+safe(last.period):''}</span><button class="smallbtn" data-q-act="edit">Editar antecedentes</button></div></div>${s.missing.length?`<div class="warnings">${s.missing.map(m=>`<div class="witem critical"><span>!</span><div>${safe(m)}</div></div>`).join('')}</div>`:''}</div>

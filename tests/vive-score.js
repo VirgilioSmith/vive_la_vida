@@ -173,24 +173,24 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const secs = {}; const headings = []; const features = {};
   await fclick(p, '[data-tab="control"]');
   const chips = await frameOf(p).evaluate(() => [...document.querySelectorAll('details.ccdet > summary')].map(b => b.textContent.trim()));
-  for (const k of ['antecedentes', 'productos', 'cortes', 'auditoria']) {
+  for (const k of ['antecedentes', 'productos', 'cortes', 'auditoria', 'variables', 'metodologia']) {
     await cc(p, k);
     secs[k] = await frameOf(p).evaluate(() => ({ h: [...document.querySelectorAll('#view h2, #view .ccdet > summary')].map(e => e.textContent.trim()), len: document.getElementById('view').innerText.length, sel: document.querySelectorAll('[data-evidence-source]').length, chk: document.querySelectorAll('[data-evidence-checked]').length, seal: !!document.getElementById('sealMonth'), audit: !!document.getElementById('downloadAudit'), edit: !!document.querySelector('[data-q-act="edit"]'), json: !!document.getElementById('downloadJson'), csv: !!document.getElementById('downloadCSV'), reset: !!document.getElementById('vsReset'), refresh: !!document.querySelector('[data-refresh-data]'), ov: document.querySelectorAll('[data-ov]').length }));
     if (!headings.length) headings.push(...secs[k].h.filter(t => t !== 'Centro de control'));
   }
   const dupHeadings = headings.filter((t, i) => headings.indexOf(t) !== i);
   const evidenceTotal = Object.values(secs).reduce((a, x) => a + x.sel, 0);
-  const aliasOk = await frameOf(p).evaluate(() => { tab = 'observatory'; render(); const a = ccOpen.antecedentes && tab === 'control'; tab = 'audit'; render(); const b = ccOpen.auditoria; tab = 'capacity'; render(); const c = tab === 'detail'; tab = 'summary'; render(); return a && b && c; });
+  const aliasOk = await frameOf(p).evaluate(() => { tab = 'observatory'; render(); const a = ccOpen.antecedentes && tab === 'control'; tab = 'audit'; render(); const b = ccOpen.auditoria; tab = 'matrix'; render(); const d = ccOpen.variables; tab = 'method'; render(); const e2 = ccOpen.metodologia; tab = 'capacity'; render(); const c = tab === 'detail' && d && e2; tab = 'summary'; render(); return a && b && c; });
   const otherPages = []; for (const t of ['summary', 'evolution', 'detail', 'transunion']) { await fclick(p, '[data-tab="' + t + '"]'); otherPages.push((await ftext(p)).length > 300); }
   const bgW = await p.evaluate(async () => { const c = el => getComputedStyle(el); const sl = document.querySelector('[data-vs-slot]'); const w = c(document.body).backgroundImage; return { slot: c(sl).backgroundColor, gradient: /gradient/.test(w), body: c(document.body).backgroundColor }; });
   check('fondo', 'La página Score conserva el fondo de las demás vistas (el contenedor del marco es transparente y el degradado de la app se ve)', bgW.slot === 'rgba(0, 0, 0, 0)' && bgW.gradient, JSON.stringify(bgW));
-  check(24, 'Centro de control corto: indicadores, estado y 4 secciones plegables (Antecedentes, Productos y cancelados, Cortes guardados, Auditoría); sin botones de exportar, borrar, sellar ni releer; las demás páginas siguen; sin repetidos', JSON.stringify(tabsNow) === JSON.stringify(expectedTabs) && JSON.stringify(chips) === JSON.stringify(['Antecedentes y procedencia', 'Productos y cancelados', 'Cortes guardados', 'Auditoría y pruebas']) && Object.values(secs).every(x => x.len > 300) && dupHeadings.length === 0 && secs.antecedentes.edit && secs.auditoria.audit && secs.productos.ov >= 2 && Object.values(secs).every(x => !x.seal && !x.json && !x.csv && !x.reset && !x.refresh) && aliasOk && otherPages.every(Boolean), JSON.stringify({ pestanas: tabsNow.length, apartados: chips.length, repetidos: dupHeadings }));
+  check(24, 'Centro de control corto: indicadores, estado y 6 secciones plegables (Antecedentes, Productos y cancelados, Cortes guardados, Auditoría, Variables, Metodología); sin botones de exportar, borrar, sellar ni releer; las demás páginas siguen; sin repetidos', JSON.stringify(tabsNow) === JSON.stringify(expectedTabs) && JSON.stringify(chips) === JSON.stringify(['Antecedentes y procedencia', 'Productos y cancelados', 'Cortes guardados', 'Auditoría y pruebas', 'Variables', 'Metodología']) && Object.values(secs).every(x => x.len > 300) && dupHeadings.length === 0 && secs.antecedentes.edit && secs.auditoria.audit && secs.productos.ov >= 2 && Object.values(secs).every(x => !x.seal && !x.json && !x.csv && !x.reset && !x.refresh) && aliasOk && otherPages.every(Boolean), JSON.stringify({ pestanas: tabsNow.length, apartados: chips.length, repetidos: dupHeadings }));
 
   /* 25 · independencia: leer → analizar → calcular → mostrar, sin modificar datos originales */
   const orig = () => p.evaluate(() => { const d = window.__T.dbg(); return JSON.stringify(['cards', 'loans', 'transactions', 'incomeSchedules', 'recurring', 'accounts', 'banks', 'categories'].map(k => d[k])); });
   const origA = await orig();
   for (const t of ['summary', 'evolution', 'detail', 'transunion', 'control']) await fclick(p, '[data-tab="' + t + '"]');
-  for (const k of ['antecedentes', 'productos', 'cortes', 'auditoria']) await cc(p, k);
+  for (const k of ['antecedentes', 'productos', 'cortes', 'auditoria', 'variables', 'metodologia']) await cc(p, k);
   await cc(p, 'antecedentes'); await fclick(p, '[data-q-act="edit"]'); await frameOf(p).evaluate(() => { qStep = 7; render(); }); await fclick(p, '[data-q-act="finish"]');
   await frameOf(p).evaluate(async () => { await autoSeal(); });
   await fclick(p, '[data-tab="transunion"]'); await fchange(p, '#tuObserved', '700');
@@ -219,7 +219,17 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const head28 = await p.evaluate(() => ({ title: document.querySelector('.topbar-intro .top-title')?.textContent, sub: document.querySelector('.topbar-intro .top-sub')?.textContent }));
   const bg28 = await frameOf(p).evaluate(() => ({ cs: getComputedStyle(document.documentElement).colorScheme, html: getComputedStyle(document.documentElement).backgroundColor, body: getComputedStyle(document.body).backgroundColor })) ;
   const frameCs = await p.evaluate(() => getComputedStyle(document.querySelector('.vs-frame')).colorScheme);
-  check(28, 'La página se titula VIVE SCORE CRÉDITO con «historial de créditos» debajo, y el fondo es transparente (hereda el diseño de la app)', head28.title === 'VIVE SCORE CRÉDITO' && head28.sub === 'historial de créditos' && bg28.cs === 'normal' && frameCs === 'normal' && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs }));
+  /* el marco debe ser transparente con el sistema en modo claro y oscuro (si no, el navegador lo pinta con un panel opaco) */
+  const fondoOk = {};
+  for (const scheme of ['light', 'dark']) {
+    await p.emulateMedia({ colorScheme: scheme }); await p.evaluate(() => window.scrollTo(0, 0)); await p.waitForTimeout(400);
+    const r = await p.evaluate(() => { const f = document.querySelector('.vs-frame').getBoundingClientRect(); return { x: Math.round(f.right - 70), y: Math.round(f.top + 6), width: 50, height: 24 }; });
+    const a = await p.screenshot({ clip: r }); await p.evaluate(() => { document.querySelector('.vs-frame').style.visibility = 'hidden'; }); await p.waitForTimeout(150);
+    const b2 = await p.screenshot({ clip: r }); await p.evaluate(() => { document.querySelector('.vs-frame').style.visibility = ''; });
+    fondoOk[scheme] = a.equals(b2);
+  }
+  await p.emulateMedia({ colorScheme: 'light' });
+  check(28, 'La página se titula VIVE SCORE CRÉDITO con «historial de créditos» debajo, y el fondo es transparente (hereda el diseño de la app)', head28.title === 'VIVE SCORE CRÉDITO' && head28.sub === 'historial de créditos' && frameCs === 'light dark' && fondoOk.light && fondoOk.dark && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs, transparenteClaro: fondoOk.light, transparenteOscuro: fondoOk.dark }));
 
   /* 2 · solo web / 16 · móvil sin cambios / 17 · desactivación */
   /* 29 · historial de límites automático: editar el límite de una tarjeta queda registrado con fecha y se cuenta desde ese mes */
