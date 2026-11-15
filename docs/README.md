@@ -14,6 +14,7 @@
 | Evaluar riesgos | [07](07-seguridad.md), [12](12-deuda-tecnica.md) |
 | Operar y desplegar | [09](09-metodologia-y-herramientas.md), [10](10-operacion.md), [11](11-pruebas.md) |
 | Historial | [CHANGELOG](CHANGELOG.md) |
+| Módulo experimental VIVE SCORE | [`src/vive-score/README.md`](../src/vive-score/README.md) |
 
 ## Documentos previos que se conservan
 `AVANCE.md` (notas de avance del registro), `CATALOGO.md` (catálogo de componentes y calificación), `SUPABASE.md` (estado verificado del backend y consumo).

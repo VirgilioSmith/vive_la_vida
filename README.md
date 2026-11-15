@@ -21,6 +21,7 @@ La idea: ver de un vistazo **cuánto tienes, cuánto debes y qué viene**, y reg
 | **Entre personas** | Dinero prestado y por devolver. |
 | **Apple Pay** | Compras de Wallet por clasificar. |
 | **Registrar** | Un solo flujo universal (web y móvil) con selector de cuentas y tarjetas, formato DOP y vista previa del impacto. |
+| **Score** *(experimental, solo escritorio)* | VIVE SCORE CRÉDITO: puntuación crediticia propia, explicada, con cuestionario de antecedentes, simulador y capacidad de endeudamiento. Ver [`src/vive-score/README.md`](src/vive-score/README.md). |
 | **Vive** | Generador de frases y mensajes simples («presente», «otro instante», copiar). |
 
 Todo se adapta al **color de acento** que elijas y a los temas claro y oscuro.
@@ -37,7 +38,8 @@ Todo se adapta al **color de acento** que elijas y a los temas claro y oscuro.
 │   ├── app.js                  Lógica y vistas (se carga en el navegador)
 │   ├── styles.css              Todos los estilos (cascada por versiones)
 │   ├── early.js                Montaje temprano y síncrono de las vistas
-│   └── lib/finanzas/reglas.js  Reglas de cálculo puras, sin DOM (también usadas por las pruebas)
+│   ├── lib/finanzas/reglas.js  Reglas de cálculo puras, sin DOM (también usadas por las pruebas)
+│   └── vive-score/             Módulo experimental VIVE SCORE CRÉDITO (aislado y reversible)
 ├── assets/icons/               Iconos de la PWA y favicon
 ├── vendor/                     Biblioteca de Supabase fijada y su huella SHA-384
 ├── supabase/                   Backend: migraciones, funciones edge, pruebas y reversiones
