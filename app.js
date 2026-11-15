@@ -5641,6 +5641,11 @@ if(v.type==='card_refund'){
 }
 if(['income','bank_reward','expense','adjustment','certificate_funding','certificate_redemption'].includes(v.type))base.currency=account(v.accountId).currency;
 if(v.type==='card_payment'){
+ /* El pago debe ser positivo y no superar la deuda de la tarjeta en esa moneda (al editar se devuelve primero el importe anterior). */
+ {const pagoNum=Number(v.amount),tarjetaPago=card(v.cardId);
+  if(!Number.isFinite(pagoNum)||pagoNum<=0)throw Error('Escribe un monto de pago mayor que cero.');
+  if(tarjetaPago){const deudaPago=Math.max(0,cardStatus(tarjetaPago,v.currency||base.currency).debt)+(previous&&previous.cardId===v.cardId&&previous.currency===(v.currency||base.currency)?num(previous.amount):0);
+   if(pagoNum>deudaPago+.011)throw Error('El pago ('+money(pagoNum,v.currency||base.currency,2)+') supera la deuda de la tarjeta ('+money(deudaPago,v.currency||base.currency,2)+'). Ajusta el monto.');}}
  const a=account(v.accountId),rate=num(v.paymentFxRate||previous?.paymentFxRate||db.settings.fx);
  const cross=base.currency!==a.currency;
  if(cross&&!(rate>0))throw Error('Escribe la tasa a la que compraste US$1.');

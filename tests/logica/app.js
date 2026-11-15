@@ -130,6 +130,19 @@ const afirmar = (n, c, d = '') => { if (c) ok++; else fallos.push(n + (d ? ' →
     afirmar('pago de tarjeta: al volver a A el importe vuelve al corte de A', +(await monto()) === pc[0].cut, await monto());
     await p.evaluate(() => { document.getElementById('modal-root').innerHTML = ''; });
   }
+  // 13) pagar tarjeta: no se acepta un pago mayor que la deuda
+  const id0 = await p.evaluate(() => window.__T.dbg().cards[0].id);
+  const antesP = await p.evaluate((id) => ({ d: window.__T.cs(id, 'DOP').debt, n: window.__T.dbg().transactions.length }), id0);
+  const msg = await p.evaluate((id) => { try { const d = window.__T.dbg(); return null; } catch (e) { return String(e); } }, id0);
+  await p.evaluate((id) => { document.getElementById('modal-root').innerHTML = ''; const x = document.createElement('button'); x.dataset.act = 'payCard'; x.dataset.id = id; x.dataset.ccy = 'DOP'; document.body.appendChild(x); x.click(); x.remove(); }, id0);
+  await p.waitForTimeout(800);
+  await p.getByText('Otro monto').first().click(); await p.waitForTimeout(200);
+  await p.evaluate((v) => { const a = document.querySelector('#modal-root form').elements.amount; a.value = String(v); a.dispatchEvent(new Event('input', { bubbles: true })); }, antesP.d + 1000);
+  await p.evaluate(() => document.querySelector('#modal-root [data-studio-next]')?.click()); await p.waitForTimeout(400);
+  await p.evaluate(() => document.querySelector('#modal-root form button[type=submit]')?.click()); await p.waitForTimeout(700);
+  const despuesP = await p.evaluate((id) => ({ d: window.__T.cs(id, 'DOP').debt, n: window.__T.dbg().transactions.length }), id0);
+  afirmar('un pago mayor que la deuda se rechaza', despuesP.n === antesP.n && despuesP.d === antesP.d, JSON.stringify([antesP, despuesP]));
+  await p.evaluate(() => { document.getElementById('modal-root').innerHTML = ''; });
   afirmar('sin errores de consola', errs.length === 0, errs.join(' | '));
   await b.close();
   console.log(`app: ${ok} correctas, ${fallos.length} fallan`); fallos.forEach((f) => console.log(' -', f));
