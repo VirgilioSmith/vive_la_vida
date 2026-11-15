@@ -1355,7 +1355,7 @@ function cardNetworkKey(c){const direct=normCardText(c?.network),name=normCardTe
  return 'other';
 }
 function cardNetworkMark(c){const net=cardNetworkKey(c);
- if(net==='mastercard')return `<span class="credit-network credit-network-mastercard" role="img" aria-label="Mastercard"><span class="network-circles"><i></i><i></i></span><b>mastercard</b></span>`;
+ if(net==='mastercard')return `<span class="credit-network credit-network-mastercard" role="img" aria-label="Mastercard"><span class="network-circles"><svg viewBox="0 0 43 26" width="43" height="26" aria-hidden="true"><circle cx="13" cy="13" r="12.5" fill="#eb001b"/><circle cx="30" cy="13" r="12.5" fill="#f79e1b"/><path d="M21.5 3.2a12.5 12.5 0 0 1 0 19.6 12.5 12.5 0 0 1 0-19.6Z" fill="#ff5f00"/></svg></span><b>mastercard</b></span>`;
  if(net==='visa')return `<span class="credit-network credit-network-visa" role="img" aria-label="Visa">VISA</span>`;
  if(net==='amex')return `<span class="credit-network credit-network-amex" role="img" aria-label="American Express">AMEX</span>`;
  if(net==='discover')return `<span class="credit-network credit-network-discover" role="img" aria-label="Discover">DISCOVER</span>`;
@@ -3657,7 +3657,21 @@ function refreshTransferFee(){
  node.innerHTML=`<div><strong>Conversión y costos de la transferencia</strong><small>${pct}% + cargo fijo ${money(fixed,cur,2)}. Tasa ${rate.toFixed(4)} RD$ por US$</small></div><div class="v12-fee-breakdown"><span>Envías <b>${money(amount,cur,2)}</b></span><span>Recibe el destino <b>${money(target,b?.currency||cur,2)}</b></span><span>Impuesto <b>${money(variable,cur,2)}</b></span><span>Otro cargo, si aplica <b>${money(fixed,cur,2)}</b></span><span>Cargos <b>${money(cost,cur,2)}</b></span><span>Total debitado <b>${money(amount+cost,cur,2)}</b></span></div><small>Si el banco depositó otra cantidad, introduce el importe real en «Monto recibido». Solo los cargos son gasto; el capital convertido no.</small>`;
 }
 function refreshCardPaymentPreview(auto=false){
- const f=document.getElementById('transactionForm'),node=document.getElementById('cardPaymentPreview');if(!f||!node)return;
+ const f=document.getElementById('transactionForm'),node=document.getElementById('cardPaymentPreview');if(!f)return;
+ /* Al cambiar de tarjeta se recalculan moneda, modalidad e importe con la tarjeta elegida (también en el formulario compacto, sin vista previa). */
+ if(auto&&f.elements.cardId&&f.elements.cardPaymentMode){
+  const cc=card(f.elements.cardId.value);
+  if(cc){
+   const d=v1015CardPayDefaults(cc,f.elements.currency?.value||'DOP',f.elements.cardPaymentMode.value||'cut');
+   if(f.elements.currency&&f.elements.currency.value!==d.ccy)f.elements.currency.value=d.ccy;
+   if(f.elements.cardPaymentMode.value!==d.mode)f.elements.cardPaymentMode.value=d.mode;
+   const stt=cardStatus(cc,d.ccy),m=f.elements.cardPaymentMode.value;
+   if(m!=='custom'&&f.elements.amount){f.elements.amount.value=rnd(m==='cut'?Math.min(Math.max(0,stt.billed),Math.max(0,stt.debt)):Math.max(0,stt.debt)).toFixed(2)}
+   if(f.elements.amount)f.elements.amount.readOnly=m!=='custom';
+   for(const n of ['amount','currency','cardPaymentMode'])f.querySelectorAll('[name="'+n+'"]').forEach(el=>el.dispatchEvent(new Event('input',{bubbles:true})));
+  }
+ }
+ if(!node)return;
  const c=card(f.elements.cardId?.value),ccy=f.elements.currency?.value||'DOP',st=c?cardStatus(c,ccy):null;
  const billed=Math.max(0,st?.billed??0),total=Math.max(0,st?.debt??0),mode=f.elements.cardPaymentMode?.value||'custom';
  let amt=mode==='cut'?Math.min(billed,total):mode==='total'?total:num(f.elements.amount?.value);
@@ -17682,7 +17696,7 @@ function paintProductIdentity(node,opt){
     }else if(opt.brand==='mc'){
       node.classList.add('v869-mastercard');
       const mark=document.createElement('span');mark.className='v869-mastermark';
-      mark.append(document.createElement('i'),document.createElement('i'));node.append(mark);
+      mark.innerHTML='<svg viewBox="0 0 43 26" width="43" height="26" aria-hidden="true"><circle cx="13" cy="13" r="12.5" fill="#eb001b"/><circle cx="30" cy="13" r="12.5" fill="#f79e1b"/><path d="M21.5 3.2a12.5 12.5 0 0 1 0 19.6 12.5 12.5 0 0 1 0-19.6Z" fill="#ff5f00"/></svg>';node.append(mark);
     }else node.innerHTML=cardSvg;
     return;
   }

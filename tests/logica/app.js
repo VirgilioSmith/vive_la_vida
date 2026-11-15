@@ -116,6 +116,20 @@ const afirmar = (n, c, d = '') => { if (c) ok++; else fallos.push(n + (d ? ' →
     const hoyMes = hoyApp.slice(0, 7);
     for (const [k, lim] of antesL) { if (k >= hoyMes) continue; const d2 = despuesL.find((x) => x[0] === k); afirmar('el límite del mes ' + k + ' no cambia', d2 && d2[1] === lim, JSON.stringify([k, lim, d2])); }
   }
+  // 12) pagar tarjeta: al cambiar de tarjeta se recalcula el importe con la tarjeta elegida
+  const pc = await p.evaluate(() => window.__T.dbg().cards.map((c) => ({ id: c.id, cut: window.__T.cs(c.id, 'DOP').billed })));
+  if (pc.length >= 2 && pc[0].cut !== pc[1].cut) {
+    await p.evaluate((id) => { document.getElementById('modal-root').innerHTML = ''; const x = document.createElement('button'); x.dataset.act = 'payCard'; x.dataset.id = id; x.dataset.ccy = 'DOP'; document.body.appendChild(x); x.click(); x.remove(); }, pc[0].id);
+    await p.waitForTimeout(1000);
+    const monto = () => p.evaluate(() => document.querySelector('#modal-root form').elements.amount.value);
+    afirmar('pago de tarjeta: importe inicial = corte de la tarjeta A', +(await monto()) === pc[0].cut, await monto());
+    const cambiar = async (id) => { await p.evaluate((id) => { const s = document.querySelector('#modal-root form select[name=cardId]'); s.value = id; s.dispatchEvent(new Event('input', { bubbles: true })); s.dispatchEvent(new Event('change', { bubbles: true })); }, id); await p.waitForTimeout(400); };
+    await cambiar(pc[1].id);
+    afirmar('pago de tarjeta: al elegir la tarjeta B el importe es el corte de B', +(await monto()) === pc[1].cut, await monto());
+    await cambiar(pc[0].id);
+    afirmar('pago de tarjeta: al volver a A el importe vuelve al corte de A', +(await monto()) === pc[0].cut, await monto());
+    await p.evaluate(() => { document.getElementById('modal-root').innerHTML = ''; });
+  }
   afirmar('sin errores de consola', errs.length === 0, errs.join(' | '));
   await b.close();
   console.log(`app: ${ok} correctas, ${fallos.length} fallan`); fallos.forEach((f) => console.log(' -', f));
