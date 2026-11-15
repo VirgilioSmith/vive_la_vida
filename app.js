@@ -9967,7 +9967,33 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
    conf.addEventListener('click',e=>{const b=e.target.closest('.v1110-edit');if(!b)return;e.preventDefault();f._v83Switch?.(+b.dataset.editStep||0);const t=b.dataset.editField&&q(b.dataset.editField);setTimeout(()=>{const el=t&&(t._tw||t);try{el?.focus?.({preventScroll:true})}catch(_){}},80)})}
 
  }
- const v1110Scan=()=>{const f=document.querySelector('#modal-root form');if(f&&!f.dataset.v1110&&(V1110[f.id]||f.id==='loanForm'))setTimeout(()=>{if(f.isConnected)(f.id==='loanForm'?v1110Loan:v1110Enhance)(f)},90)};
+ /* Registro de ingreso y gasto (web): sin panel lateral. La capacidad de endeudamiento y el aviso viven dentro del formulario. */
+ function v1111Integrar(f){
+  if(!f||f.dataset.v1111||!f.classList.contains('fastx-form'))return;
+  const body=f.querySelector('.fastx-body'),right=f.querySelector('.fastx-right');if(!body||!right)return;
+  f.dataset.v1111='1';
+  const slot=right.querySelector('.v80-advisor-slot'),notice=right.querySelector('.fastx-notice');
+  const wrap=document.createElement('div');wrap.className='fastx-inline-extra';
+  if(slot)wrap.append(slot);if(notice)wrap.append(notice);
+  body.append(wrap);
+  /* Mismo bloque «Impacto en tu perfil financiero» que en móvil: antes → después, margen y barra. */
+  if(slot){
+   const pulir=()=>{
+    const adv=slot.querySelector('.v80-advisor');if(!adv)return;
+    const title=adv.querySelector('.v107-pill-heading>span');if(title&&!/Impacto/.test(title.textContent)){const svg=title.querySelector('svg');title.textContent=' Impacto en tu perfil financiero';if(svg)title.prepend(svg)}
+    const labs=adv.querySelectorAll('.v107-pill-metric small');
+    if(labs[0])labs[0].textContent='ANTES';if(labs[1])labs[1].textContent='DESPUÉS';
+    const nums=adv.querySelectorAll('.v107-pill-metric strong'),after=parseFloat((nums[1]?.textContent||'0').replace(/[^\d.]/g,''))||0;
+    let bar=adv.querySelector('.fastx-impact-bar');
+    if(!bar){bar=document.createElement('div');bar.className='fastx-impact-bar';bar.innerHTML='<i></i>';adv.append(bar)}
+    const fill=bar.firstElementChild;const w=Math.max(2,Math.min(100,after)).toFixed(1)+'%';if(fill.style.width!==w)fill.style.width=w;
+    adv.dataset.nivel=adv.classList.contains('v107-risk-ok')?'ok':(adv.className.match(/v107-risk-(\w+)/)||[])[1]||'ok';
+   };
+   pulir();new MutationObserver(()=>{try{pulir()}catch(_){}}).observe(slot,{childList:true,subtree:true,characterData:true});
+  }
+  f.classList.add('fastx-no-aside');f.closest('.modal')?.classList.add('fastx-single');
+ }
+ const v1110Scan=()=>{const f=document.querySelector('#modal-root form');if(f&&f.classList.contains('fastx-form')&&!f.dataset.v1111&&!matchMedia('(max-width:790px)').matches)setTimeout(()=>{if(f.isConnected)v1111Integrar(f)},60);if(f&&!f.dataset.v1110&&(V1110[f.id]||f.id==='loanForm'))setTimeout(()=>{if(f.isConnected)(f.id==='loanForm'?v1110Loan:v1110Enhance)(f)},90)};
  new MutationObserver(v1110Scan).observe(document.getElementById('modal-root')||document.body,{childList:true,subtree:true});
  function v1100Instruments(){
   const out=[];

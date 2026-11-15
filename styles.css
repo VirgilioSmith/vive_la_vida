@@ -55256,3 +55256,41 @@ html body #v71-search-overlay .v153-spotlight-shortcuts button>span:first-child{
 /* Presupuesto · Ejecución: panel y barra con el acento */
 html body #app#app #page#page#page .v285-execution-hero{background:linear-gradient(135deg,color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 88%,#000),var(--v424-accent-strong,#7b2d57))!important}
 html body #app#app #page#page#page .v285-execution-hero [class*=bar] i,html body #app#app #page#page#page .v285-execution-hero [class*=track]>*{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 25%,#fff)!important}
+
+/* Registro web de ingreso y gasto: una sola columna, resumen integrado */
+@media (min-width:791px){
+ html body #modal-root#modal-root .modal.fastx-single{max-width:720px!important;width:min(720px,94vw)!important}
+ html body #modal-root#modal-root form.fastx-no-aside .fastx-shell{display:block!important;grid-template-columns:none!important}
+ html body #modal-root#modal-root form.fastx-no-aside .fastx-entry{width:100%!important;max-width:none!important}
+ html body #modal-root#modal-root form.fastx-no-aside .fastx-right{display:none!important}
+ html body #modal-root#modal-root form.fastx-no-aside .fastx-inline-extra{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+ html body #modal-root#modal-root form.fastx-no-aside .fastx-inline-extra .v80-advisor-slot{width:100%}
+ html body #modal-root#modal-root form.fastx-no-aside .fastx-notice{font-size:12.5px;color:#566480;border:0;background:transparent;padding:0}
+}
+/* Colores fijos violeta/azul del registro → acento */
+html body #modal-root#modal-root .fastx-form :is(.fastx-cat-chip,.fastx-category,[class*=cat-chip]) .ico,html body #modal-root#modal-root .fastx-form :is(.fastx-cat-chip,.fastx-category,[class*=cat-chip]) svg{color:var(--v424-accent-strong,#7b2d57)!important;stroke:currentColor}
+html body #modal-root#modal-root .fastx-form :is(.fastx-flow-switch,.fastx-segment,[class*=flow]) button.active,html body #modal-root#modal-root .fastx-form :is(.fastx-flow-switch,.fastx-segment,[class*=flow]) [aria-selected=true]{color:var(--v424-accent-strong,#7b2d57)!important}
+html body #modal-root#modal-root .fastx-form :is(.v700-eyebrow,.v700-index,.fastx-currency-badge,.fastx-cat-ico,.fastx-cat-ico svg,.fastx-head button.active,.fastx-flow button.active,[class*=flow] button.active,.fastx-cat.active .fastx-cat-ico,.fastx-cat.is-on,.fastx-cat[aria-pressed=true]){color:var(--v424-accent-strong,#7b2d57)!important;-webkit-text-fill-color:var(--v424-accent-strong,#7b2d57)!important}
+html body #modal-root#modal-root .fastx-form :is(.fastx-cat-ico,.fastx-currency-badge){background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 10%,#fff)!important}
+html body #modal-root#modal-root .fastx-form .fastx-cat:is(.active,.is-on,[aria-pressed=true]){border-color:var(--v424-accent-strong,#7b2d57)!important;background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 8%,#fff)!important}
+html body #modal-root#modal-root .fastx-form .v80-advisor-slot,html body #modal-root#modal-root .fastx-form .v80-advisor-slot>*{background-image:none!important;border-color:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 22%,transparent)!important}
+html body #modal-root#modal-root .fastx-form .v80-advisor-slot>*{background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 5%,#fff)!important}
+html body #modal-root#modal-root .fastx-form .fastx-mode-tabs button.active{color:var(--v424-accent-strong,#7b2d57)!important;-webkit-text-fill-color:var(--v424-accent-strong,#7b2d57)!important}
+
+/* Impacto en tu perfil financiero (web): alineado como en móvil; verde = bien, rojo = riesgo */
+html body #modal-root#modal-root form.fastx-no-aside .v80-advisor{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:18px}
+html body #modal-root#modal-root form.fastx-no-aside .v107-pill-heading{display:flex;align-items:center;justify-content:space-between;font-size:14.5px;font-weight:800;color:#1b2540}
+html body #modal-root#modal-root form.fastx-no-aside .v107-pill-heading svg{color:var(--v424-accent-strong,#7b2d57);stroke:currentColor}
+html body #modal-root#modal-root form.fastx-no-aside .v107-pill-metrics{display:grid!important;grid-template-columns:1fr auto 1fr 1.4fr;align-items:end;gap:10px 14px}
+html body #modal-root#modal-root form.fastx-no-aside .v107-pill-metric,html body #modal-root#modal-root form.fastx-no-aside .v107-pill-available{display:flex;flex-direction:column;gap:2px;min-width:0;border:0!important;padding:0!important}
+html body #modal-root#modal-root form.fastx-no-aside .v107-pill-metrics small{font-size:11px;font-weight:700;letter-spacing:.05em;color:#566480;text-transform:uppercase}
+html body #modal-root#modal-root form.fastx-no-aside .v107-pill-metrics strong{font-size:22px;font-weight:800;line-height:1.1;white-space:nowrap}
+html body #modal-root#modal-root form.fastx-no-aside .v107-pill-available strong{font-size:18px;color:#1b2540}
+html body #modal-root#modal-root form.fastx-no-aside .v107-pill-arrow{align-self:center;color:var(--v424-accent-strong,#7b2d57);font-weight:800;padding-top:14px}
+html body #modal-root#modal-root form.fastx-no-aside .v99-ok{color:#1c8a5a!important}
+html body #modal-root#modal-root form.fastx-no-aside :is(.v99-over,.v99-bad,.v99-danger,.v99-high){color:#c0302f!important}
+html body #modal-root#modal-root form.fastx-no-aside :is(.v99-caution,.v99-warn){color:#a8690d!important}
+html body #modal-root#modal-root form.fastx-no-aside .fastx-impact-bar{height:8px;border-radius:999px;background:color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 12%,#e6e9f2);overflow:hidden}
+html body #modal-root#modal-root form.fastx-no-aside .fastx-impact-bar>i{display:block;height:100%;border-radius:inherit;background:#1c8a5a;transition:width .2s}
+html body #modal-root#modal-root form.fastx-no-aside .v80-advisor[data-nivel=over] .fastx-impact-bar>i,html body #modal-root#modal-root form.fastx-no-aside .v80-advisor[data-nivel=high] .fastx-impact-bar>i{background:#c0302f}
+html body #modal-root#modal-root form.fastx-no-aside .v80-advisor[data-nivel=caution] .fastx-impact-bar>i{background:#d08a1c}
