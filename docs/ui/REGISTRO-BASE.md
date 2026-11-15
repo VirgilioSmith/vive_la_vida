@@ -55,6 +55,14 @@ Fuente de verdad: las imágenes de referencia de móvil (Nueva tarjeta, Nueva cu
 ## Verificación
 Recorrido de punta a punta (crear y editar) con `node` + Playwright en 390×844 y 1440×900: cuenta, tarjeta, institución, certificado y préstamo se guardan; sin banco, «Continuar» se bloquea con aviso; 0 errores de consola; `tests/smoke.js` sin hallazgos. La validación de entrada, el escapado de salida (`sanitize`) y el guardado original (`submit` de cada formulario) no se modificaron.
 
+## Ajustes V1113 (comparación fila por fila con las imágenes)
+- Campos numéricos con formato visible como en la imagen («RD$25,000.00», «RD$ 400,000», «60%», «8%»); el campo numérico real sigue siendo la fuente del valor (`v1110Twin`).
+- Encabezados de paso: «Datos del certificado», «Condiciones del certificado», «Datos del contrato», «Capital y cuotas», «Confirma tu préstamo».
+- Préstamo: moneda DOP/USD, modalidad Fija/Variable, ¿Incluye seguro? como interruptor (por defecto «No»), «Estado del préstamo» con «✓ Nuevo | Ya iniciado», «Cuota exacta» con «0 = calcular», y confirmación con tarjeta-resumen y filas «Editar».
+- Institución: color ciruela primero y seleccionado por defecto; 7 colores en una fila; divisor entre logo y nombre en la vista previa.
+
 ## Pendiente
+- Préstamo: la «Primera cuota» se muestra en la confirmación pero no es editable en el paso 2 (el asistente heredado la calcula y la mantiene oculta).
+- Selectores de fecha: usan el formato del dispositivo, no se puede forzar dd/mm/aaaa.
 - Marca de red con logotipos (Visa/Mastercard) como imagen.
 - Contraste y accesibilidad de teclado en el selector (probados: Esc cierra, Enter avanza).
