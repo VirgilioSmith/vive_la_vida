@@ -21380,7 +21380,7 @@ window.__v866Runners.v865=run;
  function newPiece(){
   let piece=null;
   for(let attempt=0;attempt<60&&!piece;attempt++){
-   if(!bag.length)bag=shuffle([...THEMES]);
+   if(!bag.length)bag=shuffle(state.theme==='all'?[...THEMES]:[state.theme]);
    let ti=bag.findIndex(x=>!recent.theme.includes(x));if(ti<0)ti=0;
    const t=bag[ti];
    const v=pick('v',DATA[t].v.length,3),o=pick('o',DATA[t].o.length,3);
@@ -21392,31 +21392,106 @@ window.__v866Runners.v865=run;
    remember(id);
    piece={text:compose(t,v,o,op,mo,cl),kind:t==='pausa'?'pause':'reflection',theme:t,repeatable:false};
   }
+  if(!piece){/* Todas las combinaciones del tema ya se vieron en este dispositivo: se reinicia la memoria y se vuelve a intentar. */
+   seen=new Set();try{localStorage.removeItem(SEEN_KEY)}catch(_){}
+   const t=state.theme==='all'?THEMES[rnd(THEMES.length)]:state.theme,d=DATA[t];
+   piece={text:compose(t,rnd(d.v.length),rnd(d.o.length),-1,-1,-1),kind:t==='pausa'?'pause':'reflection',theme:t,repeatable:true};
+  }
   return piece;
  }
- const rootId='vive-reader';const state={open:false,busy:false,current:null,opener:null};
+ const THEME_LABEL={presente:'Presente',gratitud:'Gratitud',fe:'Fe',familia:'Familia',amor:'Amor',amistad:'Amistad',perdon:'Perdón',esperanza:'Esperanza',alegria:'Alegría',solidaridad:'Solidaridad',pausa:'Pausa',tiempo:'Tiempo'};
+ const FAV_KEY='vive.favs.v1',FAV_MAX=100,HIST_MAX=60;
+ let favs=[];try{const raw=JSON.parse(localStorage.getItem(FAV_KEY)||'[]');if(Array.isArray(raw))favs=raw.filter(f=>f&&typeof f.text==='string').slice(-FAV_MAX)}catch(_){}
+ const saveFavs=()=>{try{localStorage.setItem(FAV_KEY,JSON.stringify(favs))}catch(_){}};
+ const isFav=p=>!!p&&favs.some(f=>f.text===p.text);
+ const rootId='vive-reader';const state={open:false,busy:false,current:null,opener:null,theme:'all',history:[],pos:-1,view:'read'};
  const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function open(opener){if(document.getElementById(rootId))return;state.open=true;state.opener=opener;
    const r=document.createElement('div');r.id=rootId;r.className='vive-reader-overlay';
-   r.innerHTML=`<section class="vive-reader" role="dialog" aria-modal="true" aria-labelledby="vive-reader-title" tabindex="-1"><header class="vive-reader-head"><span class="vive-reader-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span><h2 id="vive-reader-title">Vive</h2><span class="vive-reader-category" aria-hidden="true"></span><button type="button" class="vive-reader-close" data-vive-close aria-label="Cerrar Vive">×</button></header><div class="vive-reader-body" aria-live="polite" aria-atomic="true"></div><footer class="vive-reader-actions"><button type="button" class="vive-reader-another" data-vive-next>Otro instante <span aria-hidden="true">↗</span></button></footer></section>`;
-   r.addEventListener('click',e=>{if(e.target===r)close()});document.body.append(r);r.querySelector('.vive-reader').focus();next();
+   r.innerHTML=`<section class="vive-reader" role="dialog" aria-modal="true" aria-labelledby="vive-reader-title" tabindex="-1"><header class="vive-reader-head"><span class="vive-reader-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span><h2 id="vive-reader-title">Vive</h2><span class="vive-reader-category" aria-hidden="true"></span><button type="button" class="vive-reader-close" data-vive-close aria-label="Cerrar Vive">×</button></header><nav class="vive-reader-themes" aria-label="Tema"></nav><div class="vive-reader-body" aria-live="polite" aria-atomic="true"></div><footer class="vive-reader-actions"><button type="button" class="vive-reader-ghost" data-vive-prev aria-label="Instante anterior">← Anterior</button><button type="button" class="vive-reader-another" data-vive-next>Otro instante <span aria-hidden="true">↗</span></button><button type="button" class="vive-reader-ghost" data-vive-fav aria-pressed="false">♡ Guardar</button><button type="button" class="vive-reader-ghost" data-vive-copy>Copiar</button><button type="button" class="vive-reader-ghost" data-vive-saved>Guardadas</button></footer></section>`;
+   r.addEventListener('click',e=>{if(e.target===r)close()});document.body.append(r);r.querySelector('.vive-reader').focus();buildChips(r);next();
  }
  function close(){const r=document.getElementById(rootId);if(!r)return;state.open=false;r.remove();state.opener?.focus?.();}
- function next(){if(!state.open||state.busy)return;const r=document.getElementById(rootId);if(!r)return;state.busy=true;
-   const b=r.querySelector('[data-vive-next]');b.disabled=true;
-   try{const piece=newPiece();const body=r.querySelector('.vive-reader-body');
-     body.className='vive-reader-body vive-kind-'+piece.kind;
-     body.innerHTML=`<div class="vive-reader-copy">${safe(piece.text)}</div>`;
-     const category=r.querySelector('.vive-reader-category');if(category)category.textContent=({fe:'Fe',dios:'Fe',gratitud:'Gratitud',familia:'Familia',padres:'Familia',abuelos:'Familia',hijos:'Familia',amistad:'Amistad',amor:'Amor',pareja:'Amor',perdon:'Perdón',esperanza:'Esperanza',pausa:'Pausa',tiempo:'Presente',presente:'Presente',alegria:'Alegría',solidaridad:'Humanidad',humildad:'Humildad'}[piece.theme]||'Lo esencial');
-     state.current=piece;
-   }finally{b.disabled=false;state.busy=false;}
+ const CAT={fe:'Fe',dios:'Fe',gratitud:'Gratitud',familia:'Familia',padres:'Familia',abuelos:'Familia',hijos:'Familia',amistad:'Amistad',amor:'Amor',pareja:'Amor',perdon:'Perdón',esperanza:'Esperanza',alegria:'Alegría',solidaridad:'Solidaridad',pausa:'Pausa',tiempo:'Tiempo',presente:'Presente'};
+ const rootEl=()=>document.getElementById(rootId);
+ function paint(){
+  const r=rootEl();if(!r)return;const piece=state.history[state.pos]||null;state.current=piece;
+  const body=r.querySelector('.vive-reader-body');
+  if(state.view==='saved'){
+   body.className='vive-reader-body vive-kind-saved';
+   body.innerHTML=favs.length?`<ul class="vive-saved-list">${favs.slice().reverse().map((f,i)=>`<li><span>${safe(f.text)}</span><button type="button" data-vive-unsave="${favs.length-1-i}" aria-label="Quitar de guardadas">Quitar</button></li>`).join('')}</ul>`:'<div class="vive-reader-copy">Aún no guardas ningún instante. Toca «Guardar» cuando uno te hable.</div>';
+   const c=r.querySelector('.vive-reader-category');if(c)c.textContent='Guardadas · '+favs.length;
+  }else if(piece){
+   body.className='vive-reader-body vive-kind-'+piece.kind;
+   body.innerHTML=`<div class="vive-reader-copy">${safe(piece.text)}</div>`;
+   const c=r.querySelector('.vive-reader-category');if(c)c.textContent=CAT[piece.theme]||'Presente';
+  }
+  const prev=r.querySelector('[data-vive-prev]');if(prev)prev.disabled=state.view==='saved'?false:state.pos<=0;
+  if(prev)prev.textContent=state.view==='saved'?'← Volver':'← Anterior';
+  const fav=r.querySelector('[data-vive-fav]');if(fav){const on=isFav(piece);fav.setAttribute('aria-pressed',String(on));fav.textContent=on?'♥ Guardada':'♡ Guardar';fav.disabled=state.view==='saved'||!piece}
+  const cp=r.querySelector('[data-vive-copy]');if(cp)cp.disabled=state.view==='saved'||!piece;
+  const sv=r.querySelector('[data-vive-saved]');if(sv)sv.textContent=favs.length?`Guardadas (${favs.length})`:'Guardadas';
+  r.querySelectorAll('[data-vive-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.viveTheme===state.theme)));
  }
+ function buildChips(r){
+  const nav=r.querySelector('.vive-reader-themes');if(!nav)return;
+  nav.innerHTML=[['all','Todos'],...THEMES.map(t=>[t,THEME_LABEL[t]||t])].map(([k,l])=>`<button type="button" class="vive-chip" data-vive-theme="${k}" aria-pressed="${k===state.theme}">${safe(l)}</button>`).join('');
+ }
+ function next(){
+  if(!state.open||state.busy)return;const r=rootEl();if(!r)return;state.busy=true;
+  const b=r.querySelector('[data-vive-next]');if(b)b.disabled=true;
+  try{
+   state.view='read';
+   if(state.pos<state.history.length-1){state.pos++}
+   else{const piece=newPiece();state.history.push(piece);if(state.history.length>HIST_MAX)state.history.shift();state.pos=state.history.length-1}
+   paint();
+  }catch(err){
+   console.warn('Vive:',err);
+   const body=rootEl()?.querySelector('.vive-reader-body');
+   if(body)body.innerHTML='<div class="vive-reader-copy">Respira un momento. Vuelve a tocar «Otro instante».</div>';
+  }finally{if(b)b.disabled=false;state.busy=false}
+ }
+ function prev(){
+  if(!state.open)return;
+  if(state.view==='saved'){state.view='read';paint();return}
+  if(state.pos>0){state.pos--;paint()}
+ }
+ function toggleFav(){
+  const p=state.history[state.pos];if(!p)return;
+  const i=favs.findIndex(f=>f.text===p.text);
+  if(i>=0)favs.splice(i,1);else{favs.push({text:p.text,theme:p.theme,at:new Date().toISOString()});if(favs.length>FAV_MAX)favs.shift()}
+  saveFavs();paint();
+ }
+ async function copyText(){
+  const p=state.history[state.pos];if(!p)return;const btn=rootEl()?.querySelector('[data-vive-copy]');
+  const text=p.text+'\n— vive el hoy';
+  let ok=false;
+  try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);ok=true}}catch(_){}
+  if(!ok){try{const t=document.createElement('textarea');t.value=text;t.setAttribute('readonly','');t.style.cssText='position:fixed;opacity:0';document.body.append(t);t.select();ok=document.execCommand('copy');t.remove()}catch(_){}}
+  if(btn){const old='Copiar';btn.textContent=ok?'Copiado ✓':'No se pudo copiar';setTimeout(()=>{if(btn.isConnected)btn.textContent=old},1600)}
+ }
+ function showSaved(){state.view=state.view==='saved'?'read':'saved';paint()}
+ function setTheme(t){if(!THEMES.includes(t)&&t!=='all')return;state.theme=t;bag=[];state.view='read';
+  /* Al cambiar de tema se muestra enseguida un instante nuevo de ese tema. */
+  state.history=state.history.slice(0,state.pos+1);state.pos=state.history.length-1;next();}
+ /* Deslizar: izquierda = siguiente instante, derecha = anterior. */
+ {let x0=null,y0=null;
+  document.addEventListener('touchstart',e=>{if(!state.open||!e.target.closest?.('.vive-reader-body'))return;const t=e.touches[0];x0=t.clientX;y0=t.clientY},{passive:true});
+  document.addEventListener('touchend',e=>{if(x0===null||!state.open)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx<0)next();else prev()}},{passive:true})}
  document.addEventListener('click',e=>{
    const a=e.target.closest('[data-vive-open]');if(a){e.preventDefault();const details=a.closest('details.v36-notifications');if(details)details.open=false;open(a);return;}
-   if(e.target.closest('[data-vive-close]'))close();else if(e.target.closest('[data-vive-next]'))next();
+   if(e.target.closest('[data-vive-close]'))close();
+   else if(e.target.closest('[data-vive-next]'))next();
+   else if(e.target.closest('[data-vive-prev]'))prev();
+   else if(e.target.closest('[data-vive-fav]'))toggleFav();
+   else if(e.target.closest('[data-vive-copy]'))copyText();
+   else if(e.target.closest('[data-vive-saved]'))showSaved();
+   else{const th=e.target.closest('[data-vive-theme]');if(th){setTheme(th.dataset.viveTheme);return}
+    const un=e.target.closest('[data-vive-unsave]');if(un){const i=+un.dataset.viveUnsave;if(Number.isInteger(i)&&i>=0&&i<favs.length){favs.splice(i,1);saveFavs();paint()}}}
  });
  document.addEventListener('keydown',e=>{
    if(!state.open)return;if(e.key==='Escape'){e.preventDefault();close();return;}
+   if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest?.('input,textarea')){e.preventDefault();if(e.key==='ArrowRight')next();else prev();return;}
    if(e.key==='Tab'){const r=document.getElementById(rootId);if(!r)return;const controls=[...r.querySelectorAll('button:not([disabled])')];const first=controls[0],last=controls[controls.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
  });
  window.ViveModule=Object.freeze({open:()=>open(document.activeElement),close,stats:()=>({themes:THEMES.length,combinations:COMBOS})});
