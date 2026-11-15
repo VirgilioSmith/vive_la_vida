@@ -190,3 +190,10 @@ test('tarjeta: pago mínimo con piso e interés estimado informativo', () => {
   assert.equal(R.interesTarjetaEstimado(10000, 36, 0), 0);
   assert.equal(R.interesTarjetaEstimado(-5, 36, 10), 0);
 });
+
+test('tarjeta: interés mensual orientativo = facturado × tasa / 12', () => {
+  assert.equal(R.interesTarjetaMensual(10000, 36), 300);
+  assert.equal(R.interesTarjetaMensual(0, 36), 0);
+  assert.equal(R.interesTarjetaMensual(-1, 36), 0);
+  assert.equal(R.interesTarjetaMensual(12345.67, 60), 617.28);
+});
