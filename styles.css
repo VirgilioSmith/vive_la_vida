@@ -55441,7 +55441,7 @@ html body #modal-root#modal-root#modal-root form .v1110-freqseg>button[aria-pres
 #modal-root .v41-panel .field{height:42px;margin-bottom:6px}
 
 /* V1118 · Vista móvil sin Ingresos y egresos, Utilización por tarjeta (y Premium) ni El río de tu dinero. La web conserva sus paneles. */
-html body #app .vive-mobile-home :is([data-v105-widget="chart"],[data-v105-widget="creditUtil"],[data-v105-widget="premiumCredit"],[data-v105-widget="futureFlow"],[data-v105-widget="banks"],[data-v105-widget="accounts"],[data-v105-widget="loans"],[data-v105-widget="certificates"]){display:none!important}
+html body #app .vive-mobile-home :is([data-v105-widget="chart"],[data-v105-widget="creditUtil"],[data-v105-widget="premiumCredit"],[data-v105-widget="futureFlow"],[data-v105-widget="banks"],[data-v105-widget="accounts"],[data-v105-widget="loans"],[data-v105-widget="certificates"],[data-v105-widget="futureBubbles"]){display:none!important}
 
 /* V1119 · Matriz Jobs: cuadrícula 2×2 compacta también en móvil, filas en lugar de mosaicos. */
 html body #app#app .v985-matrix{margin:0 0 14px}
@@ -55566,3 +55566,8 @@ html body #app#app .v985-matrix .v985-duo{display:flex;align-items:center;justif
 html body #app#app .v985-matrix .v985-duo>div:first-child{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
 html body #app#app .v985-matrix .v985-duo .v985-ring{flex-basis:50px;width:50px;height:50px;margin:0}
 html body #app#app .v985-matrix .v985-ring strong{font-size:12px;color:var(--t)}
+html body #app#app .v985-matrix .v985-title{text-align:left;margin:2px 0 10px 2px}
+html body #app#app .v985-matrix .v985-title h2{font-size:clamp(24px,7vw,32px)}
+/* V1121 · Títulos de la matriz con la tipografía de los demás widgets (SF Pro, peso 850) y color del acento. */
+html body #app#app .v985-matrix .v985-grid .v985-card .v985-head h3,
+html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-grid .v985-card .v985-head h3{font-size:clamp(14px,4vw,17px)!important;font-weight:850!important;letter-spacing:-.03em!important;line-height:1.1}

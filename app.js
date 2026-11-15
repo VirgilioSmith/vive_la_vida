@@ -764,13 +764,38 @@ function v985SimplificationWidget(){
    <div class="v985-list">${row('plusC','Ingresos',inc,'data-act="newTransaction" data-type="income"')}${row('minusC','Gastos',exp,'data-act="newTransaction" data-type="expense"')}${row('swap','Transferir',trf,'data-act="newTransaction" data-type="transfer"')}${row('card','Pagos',pay,'data-act="navigate" data-id="payments"')}</div></article>
   <article class="v985-card v985-orange">${head('orange','Anticipar','¿Qué viene y qué debo pagar?','03','data-act="navigate" data-id="payments"')}
    <div class="v985-body"><div class="v985-figure"><strong>${money(pending)}</strong></div><small class="v985-cap">Compromisos</small><div class="v985-bar" role="img" aria-label="Compromisos pagados ${dotted}%"><i style="width:${Math.max(0,Math.min(100,dotted))}%"></i><span>${dotted}% pagado</span></div></div>
-   <div class="v985-list">${row('card','Tarjetas',sumKind('card'),'data-act="navigate" data-id="cards"')}${row('bank','Préstamos',sumKind('loan'),'data-act="navigate" data-id="loans"')}${row('grid4','Suscripciones',sumKind('recurring'),'data-act="navigate" data-id="recurring"')}${row('people','Personas',sumKind('personal'),'data-act="navigate" data-id="personal"')}</div></article>
+   <div class="v985-list">${row('card','Tarjetas',sumKind('card'),'data-v1121-pay="card"')}${row('bank','Préstamos',sumKind('loan'),'data-v1121-pay="loan"')}${row('grid4','Suscripciones',sumKind('recurring'),'data-v1121-pay="recurring"')}${row('people','Personas',sumKind('personal'),'data-v1121-pay="personal"')}</div></article>
   <article class="v985-card v985-purple">${head('purple','Decidir','¿Qué puedo hacer con mi dinero?','04','data-act="navigate" data-id="projection"')}
    <div class="v985-body v985-row"><div class="v985-figure"><strong>${money(room)}</strong></div><div class="v985-duo"><div><small class="v985-cap">Endeudamiento</small>${ratio===null?'':`<span class="v985-delta up v985-soft">${ratio.toLocaleString('es-DO',{maximumFractionDigits:1})}% usado</span>`}</div>${v985Ring(health,'purple','Salud financiera','Salud financiera')}</div></div>
    <div class="v985-minis v985-minis-3 v985-flat">${mini('target','Presupuesto',budgetTxt,'data-act="navigate" data-id="budget"')}${mini('pie','Análisis',null,'data-act="navigate" data-id="analytics"')}${mini('trend','Recuperación',null,'data-act="navigate" data-id="settings" data-v985-pane="security"')}</div></article>
  </div></section>`;
 }
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v985-pane]');if(b)v242SettingsPane=b.dataset.v985Pane;},true);
+/* V1121 · Anticipar: cada fila abre primero el selector de qué pagar y luego el flujo de pago existente. */
+function v1121Go(act,id){const b=document.createElement('button');b.type='button';b.dataset.act=act;b.dataset.id=String(id);b.hidden=true;document.body.append(b);b.click();b.remove()}
+function v1121Pay(kind){
+ const nav=(page,msg)=>{toast(msg);ui.page=page;render()};
+ try{
+  if(kind==='card'){
+   const cards=(db.cards||[]).filter(c=>c&&!c.archived&&!isHidden(c)&&!/debit|debito/.test(String([c.type,c.cardType,c.kind].join(' ')).toLowerCase()));
+   if(!cards.length)return nav('cards','No tienes tarjetas de crédito registradas.');
+   window.openRegisterProductPicker('Selecciona la tarjeta a pagar',cards.map(item=>({type:'cardId',item})),'',o=>v1121Go('payCard',o.value));
+  }else if(kind==='loan'){
+   const loans=(db.loans||[]).filter(l=>l&&!l.archived&&!isHidden(l));
+   if(!loans.length)return nav('loans','No tienes préstamos activos.');
+   window.openRegisterProductPicker('Selecciona el préstamo a pagar',loans.map(item=>({type:'loanId',item})),'',o=>v1121Go('payLoan',o.value));
+  }else if(kind==='recurring'){
+   const list=(typeof v339ActiveRecurring==='function'?v339ActiveRecurring():(db.recurring||[]).filter(r=>r.active!==false&&!r.archived));
+   if(!list.length)return nav('recurring','No tienes suscripciones activas.');
+   window.openItemPicker('Selecciona la suscripción a pagar',list.map(r=>({value:r.id,name:r.name,detail:[r.nextDue?prettyDate(r.nextDue):'',r.category].filter(Boolean).join(' · '),amount:money(num(r.amount),r.currency||'DOP',2)})),id=>v1121Go('payRecurring',id));
+  }else{
+   const list=(db.personalLoans||[]).filter(l=>l&&!l.archived&&personalBalance(l)>.005);
+   if(!list.length)return nav('personal','No tienes saldos pendientes con personas.');
+   window.openItemPicker('Selecciona la persona',list.map(l=>({value:l.id,name:l.person,detail:l.direction==='lent'?'Te debe':'Le debes',amount:money(personalBalance(l),l.currency||'DOP',2)})),id=>v1121Go('payPersonal',id));
+  }
+ }catch(err){console.warn('V1121',err);}
+}
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1121-pay]');if(!b)return;e.preventDefault();e.stopPropagation();v1121Pay(b.dataset.v1121Pay)},true);
 function v273OverviewExtraWidgets(){
  // V319: mobile only keeps Recent activity + remaining user-selected widgets.
  // Subscriptions, cards-to-pay and credit-card summaries are still available
@@ -11694,7 +11719,7 @@ function v105SaveConfig(c){
  v105ApplyWidgetPreferences();
 }
 let v105DraftConfig=null;
-const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow','banks','accounts','loans','certificates'];
+const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow','banks','accounts','loans','certificates','futureBubbles'];
 function v1118Skip(id){return V1118_MOBILE_REMOVED.includes(id)&&isMobileViewport()}
 function v105Customizer(){
  const cfg=v105DraftConfig||v105Config(),enabled=new Set(cfg.visible);
@@ -17833,7 +17858,7 @@ const bankSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 const cashSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5" width="19" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg>';
 const normalize=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 let active=null;
-const productLabels={cardId:'tarjeta',accountId:'cuenta',loanId:'préstamo',purchase:'compra'};
+const productLabels={cardId:'tarjeta',accountId:'cuenta',loanId:'préstamo',purchase:'compra',item:'elemento'};
 function productOption(name,item,label=item.name){
  const kind=name==='loanId'?(/hipotec|vivienda|inmueble|mortgage/.test(normalize([item.kind,item.type,item.loanType,item.name].join(' ')))?'mortgage':'personal'):name==='cardId'?'credit':'account';
  const institution=bankOf(item);
@@ -17877,6 +17902,7 @@ window.openRegisterProductPicker=(title,products,selected,onConfirm)=>open('prod
  if(product)onConfirm(productOption(product.type,product.item));
 },title);
 window.openRefundPurchasePicker=(purchases,selected,onConfirm)=>open('purchase',purchases,selected,onConfirm);
+window.openItemPicker=(title,items,onConfirm)=>open('item',items.map(i=>({kind:'account',brand:'',institutionLogo:'',accountIsCash:false,amount:'',detail:'',institutionLabel:String(i.name||'?').replace(/[^\p{L}\p{N} ]/gu,'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3),...i,value:String(i.value)})),'',onConfirm,title);
 /* V869 · Identidad bancaria unificada: marca de tarjeta en crédito, institución en cuentas.
    Un mismo renderizador pinta iconos dentro del picker y en la selección exterior. */
 function paintProductIdentity(node,opt){
@@ -17962,14 +17988,14 @@ function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels
  const sheet=document.createElement('section');sheet.className='v789-product-sheet v827-picker-sheet v787-product-picker';
  const grip=document.createElement('div');grip.className='v789-sheet-grip v787-sheet-handle';grip.setAttribute('aria-hidden','true');
  const header=document.createElement('header');header.className='v827-picker-head v749-sheet-head';const title=document.createElement('h3');title.textContent=titleText;const close=document.createElement('button');close.type='button';close.className='v789-picker-close';close.setAttribute('aria-label','Cerrar selector');close.textContent='×';header.append(title,close);
- const search=document.createElement('input');search.type='search';search.className='v789-picker-search';search.placeholder=name==='purchase'?'Buscar comercio, categoría o fecha…':name==='product'?'Buscar por nombre o institución…':'Buscar '+product+' o institución…';search.setAttribute('aria-label',search.placeholder);
+ const search=document.createElement('input');search.type='search';search.className='v789-picker-search';search.placeholder=name==='item'?'Buscar por nombre…':name==='purchase'?'Buscar comercio, categoría o fecha…':name==='product'?'Buscar por nombre o institución…':'Buscar '+product+' o institución…';search.setAttribute('aria-label',search.placeholder);
  const tabs=document.createElement('div');tabs.className='v827-picker-tabs v787-product-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Filtrar productos');
- let filter='all';for(const [key,label] of (name==='loanId'?[['all','Todos'],['personal','Personales'],['mortgage','Hipotecarios']]:[['all','Todas'],['credit','Crédito'],['account','Cuentas']].filter(([key])=>key==='all'||name!=='purchase'))){const btn=document.createElement('button');btn.type='button';btn.textContent=label+' ('+all.filter(o=>key==='all'||o.kind===key).length+')';btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key==='all'));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
+ let filter='all';for(const [key,label] of (name==='loanId'?[['all','Todos'],['personal','Personales'],['mortgage','Hipotecarios']]:[['all','Todas'],['credit','Crédito'],['account','Cuentas']].filter(([key])=>key==='all'||(name!=='purchase'&&name!=='item')))){const btn=document.createElement('button');btn.type='button';btn.textContent=label+' ('+all.filter(o=>key==='all'||o.kind===key).length+')';btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key==='all'));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
  const list=document.createElement('div');list.className='v789-picker-list v787-product-scroll';const rows=[];
  for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row v787-product-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini v787-product-brand '+(opt.kind==='credit'&&opt.brand?'is-card '+opt.brand:opt.kind==='account'?'is-account':'');paintProductIdentity(ico,opt);
  const content=document.createElement('span');content.className='v789-picker-text v787-product-main';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.detail;content.append(strong,small);if(opt.amount){const amount=document.createElement('em');amount.textContent=opt.amount;content.append(amount);}const mark=document.createElement('span');mark.className='v789-picker-mark v787-product-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);list.append(row);rows.push(row);row.addEventListener('click',()=>{selected=opt.value;refresh()});}
  const empty=document.createElement('p');empty.className='v827-picker-empty';empty.textContent=all.length?'No se encontraron coincidencias.':'No hay productos disponibles para esta operación.';list.append(empty);
- const actions=document.createElement('div');actions.className='v827-picker-actions';const cancel=document.createElement('button');cancel.type='button';cancel.className='v827-picker-cancel';cancel.textContent='Cancelar';const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';const confirmLabel={loanId:'Usar este préstamo',purchase:'Usar esta compra',cardId:'Usar esta tarjeta',accountId:'Usar esta cuenta'};actions.append(cancel,confirm);
+ const actions=document.createElement('div');actions.className='v827-picker-actions';const cancel=document.createElement('button');cancel.type='button';cancel.className='v827-picker-cancel';cancel.textContent='Cancelar';const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';const confirmLabel={loanId:'Usar este préstamo',purchase:'Usar esta compra',cardId:'Usar esta tarjeta',accountId:'Usar esta cuenta',item:'Continuar'};actions.append(cancel,confirm);
  function refresh(){const q=normalize(search.value);let visible=0;for(const row of rows){const match=(filter==='all'||row.dataset.kind===filter)&&(!q||normalize([...row.querySelector('.v789-picker-text').children].map(node=>node.textContent).join(' ')).includes(q));row.hidden=!match;if(match)visible++;const yes=row.dataset.value===selected;row.setAttribute('aria-pressed',String(yes));row.querySelector('.v789-picker-mark').textContent=yes?'✓':'›';}empty.hidden=visible>0;const chosen=all.find(o=>o.value===selected);const cardUnsupported=name==='accountId'&&String(selected).startsWith('card:');confirm.disabled=!chosen||cardUnsupported;confirm.title=cardUnsupported?'La conciliación contable de tarjetas requiere integración financiera segura':'';confirm.textContent=cardUnsupported?'Ajuste de tarjeta no disponible':(confirmLabel[name]||(chosen?.kind==='credit'?confirmLabel.cardId:chosen?.kind==='account'?confirmLabel.accountId:'Usar producto'))}
  const previous=document.activeElement;function dismiss(){layer.remove();document.removeEventListener('keydown',keyHandler,true);active=null;if(previous?.isConnected)previous.focus({preventScroll:true})}
  function keyHandler(e){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();dismiss()}if(e.key==='Tab'){const focusables=[...sheet.querySelectorAll('button:not([disabled]),input')].filter(x=>!x.hidden);if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}
