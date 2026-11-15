@@ -137,6 +137,19 @@ function financeRuleAdd(key,subject,value,from){
  const item=made[made.length-1];const entry={id:uuid(),clave:item.clave,sujeto:item.sujeto,valor:JSON.parse(JSON.stringify(item.valor)),desde:item.desde,creada:item.creada};
  db.ruleVersions.push(entry);return entry;
 }
+/* Registro de auditoría: quién, cuándo (UTC), qué cambió y el valor anterior. Solo se agrega. */
+function financeAudit(entity,recordId,action,before,after){
+ try{
+  db.auditLog=Array.isArray(db.auditLog)?db.auditLog:[];
+  const copy=o=>o==null?null:JSON.parse(JSON.stringify(o));
+  db.auditLog.push({id:uuid(),en:new Date().toISOString(),usuario:(typeof f33User!=='undefined'&&f33User&&f33User.id)||null,entidad:entity,idRegistro:String(recordId),accion:action,antes:copy(before),despues:copy(after)});
+ }catch(_){}
+}
+function financeAuditDiff(entity,recordId,prev,next,fields){
+ const a={},b={};
+ for(const k of fields){if(String(prev?.[k]??'')!==String(next?.[k]??'')){a[k]=prev?.[k]??null;b[k]=next?.[k]??null}}
+ if(Object.keys(a).length)financeAudit(entity,recordId,'edición',a,b);
+}
 function financeSnapshot(type,recordId,rules,results){
  db.recordSnapshots=Array.isArray(db.recordSnapshots)?db.recordSnapshots:[];
  const s=window.FinanzasReglas.instantanea({tipo:type,idRegistro:String(recordId),fecha:today(),reglas:rules,resultados:results});
@@ -166,11 +179,11 @@ function ensureDefaultCashAccounts(data){
  }
  return data;
 }
-const init=()=>({version:4,settings:{fx:60,fxAcknowledged:false,menuLayout:'rail',theme:'light',transferTaxPct:0.20,transferFeeDOP:0,transferFeeUSD:0,paletteChoice:'original',paletteHex:'#6866f3',mobilePositionStyle:'balance'},banks:[],ruleVersions:[],recordSnapshots:[],customCategories:[],hiddenTaxonomy:{categories:[],subcategories:[]},accounts:defaultCashAccounts(),cards:[],loans:[],transactions:[],recurring:[],statements:[],budgets:[],certificates:[],perkUses:[],personalLoans:[],personalContacts:[],txRevisions:[],pendingOperations:[],demo:false});
+const init=()=>({version:4,settings:{fx:60,fxAcknowledged:false,menuLayout:'rail',theme:'light',transferTaxPct:0.20,transferFeeDOP:0,transferFeeUSD:0,paletteChoice:'original',paletteHex:'#6866f3',mobilePositionStyle:'balance'},banks:[],ruleVersions:[],recordSnapshots:[],auditLog:[],customCategories:[],hiddenTaxonomy:{categories:[],subcategories:[]},accounts:defaultCashAccounts(),cards:[],loans:[],transactions:[],recurring:[],statements:[],budgets:[],certificates:[],perkUses:[],personalLoans:[],personalContacts:[],txRevisions:[],pendingOperations:[],demo:false});
 let db=(()=>{try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.accounts)&&Array.isArray(x.transactions))return {...init(),...x,settings:{...init().settings,...(x.settings||{})}}}catch(e){}return init()})();
 let privacyMode=false;
 const ui={projectionMenu:false,movementTab:'all',navExpanded:null,showHidden:false,kpiBank:'',kpiEditing:false,page:'overview',expenseRange:'month',bankId:null,bankScope:'all',month:today().slice(0,7),year:new Date().getFullYear(),search:'',transType:'all',txPeriod:'all',reviewFilter:'all',v361Category:'all',cardId:null,cardDetailTab:'status',cardHistoryCurrency:'DOP',cardHistoryYear:new Date().getFullYear(),accountId:null,loanId:null,annualDetails:true,annualCurrency:'DOP',forecastScenario:'base',forecastHorizon:12,mobile:false};
-function migrateData(d){d.banks=Array.isArray(d.banks)?d.banks:[];d.ruleVersions=Array.isArray(d.ruleVersions)?d.ruleVersions:[];d.recordSnapshots=Array.isArray(d.recordSnapshots)?d.recordSnapshots:[];d.customCategories=Array.isArray(d.customCategories)?d.customCategories:[];
+function migrateData(d){d.banks=Array.isArray(d.banks)?d.banks:[];d.ruleVersions=Array.isArray(d.ruleVersions)?d.ruleVersions:[];d.recordSnapshots=Array.isArray(d.recordSnapshots)?d.recordSnapshots:[];d.auditLog=Array.isArray(d.auditLog)?d.auditLog:[];d.customCategories=Array.isArray(d.customCategories)?d.customCategories:[];
   d.hiddenTaxonomy=(d.hiddenTaxonomy&&typeof d.hiddenTaxonomy==='object'&&!Array.isArray(d.hiddenTaxonomy))?d.hiddenTaxonomy:{};
   d.hiddenTaxonomy.categories=Array.isArray(d.hiddenTaxonomy.categories)?d.hiddenTaxonomy.categories:[];
   d.hiddenTaxonomy.subcategories=Array.isArray(d.hiddenTaxonomy.subcategories)?d.hiddenTaxonomy.subcategories:[];d.certificates=Array.isArray(d.certificates)?d.certificates:[];d.perkUses=Array.isArray(d.perkUses)?d.perkUses:[];d.txRevisions=Array.isArray(d.txRevisions)?d.txRevisions:[];d.rewardBalances=Array.isArray(d.rewardBalances)?d.rewardBalances:[];d.personalLoans=Array.isArray(d.personalLoans)?d.personalLoans:[];d.personalContacts=Array.isArray(d.personalContacts)?d.personalContacts:[];
@@ -6123,6 +6136,7 @@ case 'v51ConfirmDelete':{
  db.deletedMovements.push({id:t.id,at:new Date().toISOString(),tx:JSON.parse(JSON.stringify(t))});
  if(db.deletedMovements.length>150)db.deletedMovements=db.deletedMovements.slice(-150);
   v403RegisterDeletedTransactions([t]);
+ financeAudit('movimiento',t.id,'eliminación',t,null);
  db.transactions.splice(pos,1);
   if(t.type==='personal_issue'){const relation=personalLoan(t.personalLoanId);if(relation)relation.openingMode='existing';}
   persist();closeModal();render();toast('Eliminación enviada a Supabase; se confirmará al guardar.');break;
@@ -6134,6 +6148,7 @@ case 'v54ConfirmPermanent':{
  const deleted=db.transactions[pos],isPersonal=['personal_issue','personal_settlement'].includes(deleted.type);
  const removeEntry=()=>{
   v403RegisterDeletedTransactions([deleted]);
+  financeAudit('movimiento',deleted.id,'eliminación definitiva',deleted,null);
   db.transactions.splice(pos,1);
   if(deleted.type==='personal_issue'){const relation=personalLoan(deleted.personalLoanId);if(relation)relation.openingMode='existing';}
   if(Array.isArray(db.deletedMovements))db.deletedMovements=db.deletedMovements.filter(x=>x.id!==id);
@@ -6249,7 +6264,7 @@ case 'categoryForm':{
  }
  break;
 }
-case 'accountForm':{let prev=account(id),use=prev&&db.transactions.some(t=>t.accountId===id||t.toAccountId===id);if(use&&prev.currency!==v.currency)throw Error('No cambies la moneda de una cuenta con movimientos; crea otra cuenta para evitar distorsión histórica.');let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',kind:v.kind,currency:v.currency,opening:rnd(v.opening),opened:v.opened,last4:v.last4||'',annualRate:num(v.annualRate)};if(!entry.name||!bank(entry.bankId))throw Error('Indica el nombre y banco de la cuenta.');if(id)Object.assign(prev,entry);else{db.accounts.push(entry);try{financeSnapshot('cuenta',entry.id,{currency:entry.currency,kind:entry.kind,opened:entry.opened,annualRate:num(entry.annualRate)},{opening:rnd(entry.opening)})}catch(_){}}break}
+case 'accountForm':{let prev=account(id),use=prev&&db.transactions.some(t=>t.accountId===id||t.toAccountId===id);if(use&&prev.currency!==v.currency)throw Error('No cambies la moneda de una cuenta con movimientos; crea otra cuenta para evitar distorsión histórica.');let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',kind:v.kind,currency:v.currency,opening:rnd(v.opening),opened:v.opened,last4:v.last4||'',annualRate:num(v.annualRate)};if(!entry.name||!bank(entry.bankId))throw Error('Indica el nombre y banco de la cuenta.');if(id){financeAuditDiff('cuenta',prev.id,prev,entry,['name','kind','annualRate','last4']);Object.assign(prev,entry)}else{db.accounts.push(entry);try{financeSnapshot('cuenta',entry.id,{currency:entry.currency,kind:entry.kind,opened:entry.opened,annualRate:num(entry.annualRate)},{opening:rnd(entry.opening)})}catch(_){}}break}
 case 'cardForm':{let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',last4:v.last4||'',network:v.network||'other',tier:v.tier||'classic',cutDay:num(v.cutDay),dueDay:num(v.dueDay),limitDOP:rnd(v.limitDOP),limitUSD:rnd(v.limitUSD),openingDOP:rnd(v.openingDOP),openingUSD:rnd(v.openingUSD),openingBilledDOP:rnd(v.openingBilledDOP),openingBilledUSD:rnd(v.openingBilledUSD),overdraftDOP:rnd(num(v.limitDOP)*num(v.overdraftPctDOP)/100),overdraftUSD:rnd(num(v.limitUSD)*num(v.overdraftPctUSD)/100),overdraftPctDOP:num(v.overdraftPctDOP),overdraftPctUSD:num(v.overdraftPctUSD),cashbackPct:card(id)?.cashbackPct||0,annualFeeDOP:v.annualFeeCurrency==='DOP'?rnd(v.annualFeeAmount):0,annualFeeUSD:v.annualFeeCurrency==='USD'?rnd(v.annualFeeAmount):0,annualFeeAmount:rnd(v.annualFeeAmount),annualFeeCurrency:v.annualFeeCurrency,annualFeeRenewal:v.annualFeeRenewal||'',rewardsProgram:card(id)?.rewardsProgram||'cashback',rewardsName:card(id)?.rewardsName||'',benefitsDescription:card(id)?.benefitsDescription||'',benefitRules:card(id)?.benefitRules||[],opened:v.opened,minPct:num(v.minPct),minFloor:Math.max(0,num(v.minFloor)),aprDOP:num(v.aprDOP),aprUSD:num(v.aprUSD),advanceFeePct:Number(v.advanceFeePct)};if(!entry.name||!bank(entry.bankId))throw Error('Indica el nombre y banco de la tarjeta.');if(!Number.isFinite(entry.advanceFeePct)||entry.advanceFeePct<0||entry.advanceFeePct>100)throw Error('La comisión de avance debe estar entre 0% y 100%.');if([entry.limitDOP,entry.limitUSD,entry.openingDOP,entry.openingUSD].some(x=>x<0))throw Error('Los límites y deudas iniciales no pueden ser negativos.');if([entry.openingBilledDOP,entry.openingBilledUSD,entry.overdraftDOP,entry.overdraftUSD,entry.annualFeeDOP,entry.annualFeeUSD].some(x=>x<0)||entry.overdraftPctDOP>1000||entry.overdraftPctUSD>1000||entry.openingBilledDOP>entry.openingDOP||entry.openingBilledUSD>entry.openingUSD)throw Error('La deuda al corte no puede superar la deuda inicial; los sobregiros no pueden ser negativos.');if(!Number.isInteger(entry.cutDay)||entry.cutDay<1||entry.cutDay>31||!Number.isInteger(entry.dueDay)||entry.dueDay<1||entry.dueDay>31)throw Error('El día de corte y el de pago deben ser enteros entre 1 y 31.');
  if(!/^\d{0,4}$/.test(entry.last4||''))throw Error('Los últimos dígitos deben contener hasta cuatro números.');
  if(entry.annualFeeRenewal&&!/^\d{4}-\d{2}-\d{2}$/.test(entry.annualFeeRenewal))throw Error('La fecha de renovación de anualidad no es válida.');
@@ -6266,6 +6281,7 @@ case 'cardForm':{let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,ban
    const last=financeRuleList('tarjeta.pago_minimo',id).at(-1).desde;
    financeRuleAdd('tarjeta.pago_minimo',id,{pct:num(entry.minPct||5),floor:num(entry.minFloor||0)},today()>last?today():addDays(last,1));
   }
+  financeAuditDiff('tarjeta',prior.id,prior,entry,['name','limitDOP','limitUSD','aprDOP','aprUSD','advanceFeePct','minPct','minFloor','annualFeeAmount','annualFeeCurrency','network','tier','overdraftDOP','overdraftUSD','last4']);
   Object.assign(prior,entry);
  }else{db.cards.push(entry);try{financeSnapshot('tarjeta',entry.id,{cutDay:entry.cutDay,dueDay:entry.dueDay,minPct:entry.minPct,minFloor:entry.minFloor||0,advanceFeePct:entry.advanceFeePct,aprDOP:entry.aprDOP,aprUSD:entry.aprUSD,limitDOP:entry.limitDOP,limitUSD:entry.limitUSD,annualFee:{amount:num(entry.annualFeeAmount),currency:entry.annualFeeCurrency||'DOP'}},{limitDOP:entry.limitDOP,limitUSD:entry.limitUSD})}catch(_){}}break}
 case 'certificateForm':{let entry={id:id||uuid(),name:String(v.name||'').trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',currency:v.currency,principal:rnd(v.principal),rate:num(v.rate),startDate:v.startDate,maturityDate:v.maturityDate,taxPct:num(v.taxPct),payoutFrequency:v.payoutFrequency,capitalMode:v.capitalMode==='pending'?'pending':'already',note:String(v.note||'').trim()};if(!entry.name||!bank(entry.bankId)||entry.principal<=0||entry.maturityDate<=entry.startDate)throw Error('Verifica banco, capital y fechas: vencimiento posterior al inicio.');
@@ -6285,6 +6301,7 @@ case 'certificateForm':{let entry={id:id||uuid(),name:String(v.name||'').trim(),
    const last=financeRuleList('certificado.condiciones',previous.id).at(-1).desde;
    financeRuleAdd('certificado.condiciones',previous.id,{rate:entry.rate,taxPct:entry.taxPct},today()>last?today():addDays(last,1));
   }
+  financeAuditDiff('certificado',previous.id,previous,entry,['name','bankId','rate','taxPct','payoutFrequency','note']);
   Object.assign(previous,entry);
  }else{
   db.certificates.push(entry);
@@ -6300,7 +6317,7 @@ if(amountChanged){
  revisions.push({effectiveFrom:entry.installmentEffectiveFrom,amount:entry.currentInstallment,style:entry.installmentStyle,recordedAt:new Date().toISOString()});
  }else entry.installmentEffectiveFrom=prev.installmentEffectiveFrom||entry.installmentEffectiveFrom;
  entry.installmentHistory=revisions;
- let changes=Array.isArray(prev.conditionHistory)?prev.conditionHistory:[];if(changed)changes.push({at:new Date().toISOString(),effectiveFrom:entry.rateEffectiveFrom,fromRate:num(prev.currentRate??prev.rate),toRate:entry.currentRate,fromInsurance:num(prev.insuranceMonthly),toInsurance:entry.insuranceMonthly,fromFee:num(prev.monthlyFee),toFee:entry.monthlyFee,fromInstallment:num(prev.currentInstallment),toInstallment:entry.currentInstallment,fromPostingMode:prev.postingMode||'confirm',toPostingMode:entry.postingMode,fromAccountId:prev.autoAccountId||'',toAccountId:entry.autoAccountId||''});Object.assign(prev,entry,{conditionHistory:changes})}else{db.loans.push({...entry,installmentHistory:entry.currentInstallment>0?[{effectiveFrom:entry.installmentEffectiveFrom,amount:entry.currentInstallment,style:entry.installmentStyle,recordedAt:new Date().toISOString()}]:[],conditionHistory:[]});try{const o=fullOriginalLoan(entry);financeSnapshot('prestamo',entry.id,{principal:entry.principal,rate:entry.rate,currentRate:entry.currentRate,rateEffectiveFrom:entry.rateEffectiveFrom,months:entry.months,paymentFrequency:entry.paymentFrequency,insuranceMonthly:entry.insuranceMonthly,monthlyFee:entry.monthlyFee,firstDue:entry.firstDue},{installment:o.installment,interest:o.interest,periods:o.rows.length})}catch(_){}}break}
+ let changes=Array.isArray(prev.conditionHistory)?prev.conditionHistory:[];if(changed)changes.push({at:new Date().toISOString(),effectiveFrom:entry.rateEffectiveFrom,fromRate:num(prev.currentRate??prev.rate),toRate:entry.currentRate,fromInsurance:num(prev.insuranceMonthly),toInsurance:entry.insuranceMonthly,fromFee:num(prev.monthlyFee),toFee:entry.monthlyFee,fromInstallment:num(prev.currentInstallment),toInstallment:entry.currentInstallment,fromPostingMode:prev.postingMode||'confirm',toPostingMode:entry.postingMode,fromAccountId:prev.autoAccountId||'',toAccountId:entry.autoAccountId||''});financeAuditDiff('prestamo',prev.id,prev,entry,['name','rate','currentRate','rateEffectiveFrom','currentInstallment','insuranceMonthly','monthlyFee','postingMode']);Object.assign(prev,entry,{conditionHistory:changes})}else{db.loans.push({...entry,installmentHistory:entry.currentInstallment>0?[{effectiveFrom:entry.installmentEffectiveFrom,amount:entry.currentInstallment,style:entry.installmentStyle,recordedAt:new Date().toISOString()}]:[],conditionHistory:[]});try{const o=fullOriginalLoan(entry);financeSnapshot('prestamo',entry.id,{principal:entry.principal,rate:entry.rate,currentRate:entry.currentRate,rateEffectiveFrom:entry.rateEffectiveFrom,months:entry.months,paymentFrequency:entry.paymentFrequency,insuranceMonthly:entry.insuranceMonthly,monthlyFee:entry.monthlyFee,firstDue:entry.firstDue},{installment:o.installment,interest:o.interest,periods:o.rows.length})}catch(_){}}break}
 case 'recurringForm':{let [kind,src]=String(v.source).split(':'),a=kind==='account'?account(src):null,c=kind==='card'?card(src):null;if(!a&&!c||a?.archived||c?.archived||a&&bank(a.bankId)?.archived||c&&bank(c.bankId)?.archived)throw Error('Selecciona una cuenta o tarjeta activa de pago.');if(a&&a.currency!==v.currency)throw Error(`La cuenta ${a.name} trabaja en ${a.currency}. Selecciona esa moneda o cambia de fuente.`);let entry={id:id||uuid(),name:v.name.trim(),iconId:v41ValidIcon(v.serviceIcon),iconDataUrl:v45SafeIconData(v.serviceIconData||''),category:v.category,subcategory:v.subcategory||'',amount:rnd(v.amount),currency:v.currency,source:v.source,frequency:v.frequency,nextDue:v.nextDue,billingDay:(db.recurring.find(r=>r.id===id)&&db.recurring.find(r=>r.id===id).nextDue===v.nextDue&&db.recurring.find(r=>r.id===id).frequency===v.frequency)?(db.recurring.find(r=>r.id===id).billingDay||dateObj(v.nextDue).getDate()):dateObj(v.nextDue).getDate(),active:v.active==='true',postingMode:v.postingMode==='auto'?'auto':'confirm',autoFrom:(db.recurring.find(r=>r.id===id)?.postingMode==='auto'&&db.recurring.find(r=>r.id===id)?.autoFrom)?db.recurring.find(r=>r.id===id).autoFrom:today()};if(entry.amount<=0||!entry.name)throw Error('El nombre y el importe positivo son obligatorios.');if(!Number.isFinite(entry.amount)||!/^\d{4}-\d{2}-\d{2}$/.test(entry.nextDue)||!Number.isFinite(Date.parse(entry.nextDue+'T12:00:00')))throw Error('Revisa importe y próximo vencimiento.');if(!['weekly','monthly','quarterly','annual'].includes(entry.frequency))throw Error('Frecuencia no válida.');if(entry.postingMode==='auto'&&entry.nextDue<today())throw Error('Para el registro automático, el próximo vencimiento debe ser hoy o una fecha posterior.');if(id){let before=db.recurring.find(r=>r.id===id),versions=before?.conditionHistory||[];if(before&&['amount','currency','source','frequency','postingMode','category','subcategory','iconId','active'].some(k=>String(before[k]??'')!==String(entry[k]??'')))versions.push({at:new Date().toISOString(),effectiveFrom:today(),previous:{...before,conditionHistory:undefined},next:{...entry}});Object.assign(before,entry,{conditionHistory:versions});}else db.recurring.push({...entry,conditionHistory:[]});break}
 case 'budgetForm':{let amount=rnd(v.amount),effectiveFrom=String(v.effectiveMonth||ui.month);if(amount<0||!Number.isFinite(amount)||!/^\d{4}-(0[1-9]|1[0-2])$/.test(effectiveFrom))throw Error('Importe o mes de vigencia inválidos.');let versions=ensureBudgetVersions(),sub=v.subcategory||'',prior=versions.find(b=>b.category===v.category&&(b.subcategory||'')===sub&&b.effectiveFrom===effectiveFrom);let entry={id:prior?.id||uuid(),category:v.category,subcategory:sub,amount,effectiveFrom,createdAt:new Date().toISOString(),legacy:false};if(prior)Object.assign(prior,entry);else versions.push(entry);ui.month=effectiveFrom;break}
 
@@ -7575,6 +7592,18 @@ async function f33Logout(){
  db=init();document.getElementById('app').innerHTML='';const badge=document.getElementById('f33-cloud-badge');if(badge)badge.hidden=true;
  f33LoginScreen();
 }
+/* Cierre de sesión por inactividad: tras este tiempo sin tocar la pantalla se cierra la sesión local.
+   f33Logout protege los cambios sin sincronizar y no cierra mientras haya una sincronización en curso. */
+const INACTIVIDAD_MAXIMA_MS=30*60*1000;
+const INACTIVIDAD_REVISION_MS=60*1000;
+let ultimaActividadMs=Date.now();
+function revisarInactividad(){
+ if(!f33User||Date.now()-ultimaActividadMs<INACTIVIDAD_MAXIMA_MS)return;
+ ultimaActividadMs=Date.now();toast('Sesión cerrada por inactividad.');f33Logout();
+}
+['pointerdown','keydown','touchstart','scroll'].forEach(ev=>document.addEventListener(ev,()=>{ultimaActividadMs=Date.now()},{passive:true,capture:true}));
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')revisarInactividad()});
+setInterval(revisarInactividad,INACTIVIDAD_REVISION_MS);
 document.addEventListener('click',async e=>{
  const button=e.target.closest('[data-f33]');if(!button)return;
  const act=button.dataset.f33;
@@ -7599,7 +7628,7 @@ const v405ArrayCollections=new Set([
  'certificates','perkUses','personalLoans','personalContacts','txRevisions',
  'pendingOperations','rewardBalances','customCategories','automationEvents',
  'budgetVersions','fiscalRulesVersions','incomeSchedules','institutionBenefits',
- 'v144PendingBenefits','v144ScheduledCosts','ruleVersions','recordSnapshots'
+ 'v144PendingBenefits','v144ScheduledCosts','ruleVersions','recordSnapshots','auditLog'
 ]);
 let v405Base={},v405Revision=0,v405Loaded=false;
 const v405Clone=v=>JSON.parse(JSON.stringify(v));
