@@ -55366,3 +55366,14 @@ html body.theme-black #app#app #page .v26-primary span,html body.theme-dark #app
 /* Texto secundario con contraste suficiente en modo claro */
 html body:not(.theme-black):not(.theme-dark) #app#app #page :is(.ff-obligation-row small,.v64-subdebt,p.footnote,.v191-taxonomy summary>span:not([class*=label]):not([class*=badge]),.quiet){color:#566480!important}
 html body:not(.theme-black):not(.theme-dark) #app#app #page .advanced-hero~* p,html body:not(.theme-black):not(.theme-dark) #app#app #page [class*=advanced] :is(p,small):not([class*=hero]){color:#566480!important}
+
+/* Móvil: áreas táctiles de al menos 44 px */
+@media (max-width:790px){
+ html body #app#app #page :is(.btn,.v239-segment,.v708-tab,.inner-menu-tab,[data-act=editTransaction],[data-act=navigate],[data-act=expenseRange],[data-act=payCard],[data-act=addAccount],[data-act=addLoan],[data-act=addCertificate],.v726-manage-link,.v726-profile-edit,[data-act=prevYear],[data-act=nextYear],[data-act=goCard],.v371-return-action,[data-act=cardDetails]){min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center}
+ html body #app#app #page :is([data-act=v191DeleteSubcategory],[data-act=v191DeleteCategory],[data-act=v68WalletSelect]){position:relative}
+ html body #app#app #page :is([data-act=v191DeleteSubcategory],[data-act=v191DeleteCategory],[data-act=v68WalletSelect])::after{content:"";position:absolute;inset:-9px;min-width:44px;min-height:44px}
+}
+@media (max-width:790px){
+ html body #app#app #page :is(.v708-chip,.v708-head-icon,.v708-search-filter,[data-act=accountDetails],[data-act=payCard],[data-act=v68WalletSelect]+*,.v239-currency button,[data-currency]){min-height:44px}
+ html body #app#app #page :is(.v708-head-icon,.v708-search-filter){min-width:44px}
+}

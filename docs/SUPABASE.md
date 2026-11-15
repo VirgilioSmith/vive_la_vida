@@ -44,3 +44,6 @@ Verificado directamente en el proyecto `vive-el-hoy-finanzas-360`:
 - Se eliminaron las 19 tablas heredadas (todas con 0 filas, sin referencias en la app, funciones edge, vistas, disparadores ni cron): `bancos, cuentas, tarjetas, prestamos, movimientos, suscripciones, estados_cuenta, presupuestos, certificados, beneficios, prestamos_personales, categorias, revisiones_movimientos, operaciones_pendientes, previsiones, conciliaciones, documentos, auditoria, tasas_cambio`.
 - Apple Pay no se tocó. Flujo: el atajo del iPhone hace POST a `apple-pay-ingest` (token `vhap_…`, idempotente por `event_id`) → inserta en `apple_pay_events` → Realtime avisa a la app al instante → la app importa. El sondeo queda solo como red de seguridad: cada 30 min con Realtime conectado, cada 3 min si no lo está.
 - Los índices de `apple_pay_*` aparecen como «sin uso» porque las tablas tienen pocas filas; se conservan para cuando crezcan.
+
+## Antigüedad de productos
+Cuentas bancarias, tarjetas, préstamos y certificados guardan `acquiredOn` (AAAA-MM-DD, opcional, no futura) dentro del mismo documento de cada producto. No requiere cambios de esquema: los datos viajan por `finance_items` y `finance_values` como cualquier otro campo. El efectivo no tiene antigüedad. Préstamos y certificados usan su fecha de inicio si no se indica.
