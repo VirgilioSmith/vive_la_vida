@@ -62,7 +62,15 @@ Recorrido de punta a punta (crear y editar) con `node` + Playwright en 390×844 
 - Institución: color ciruela primero y seleccionado por defecto; 7 colores en una fila; divisor entre logo y nombre en la vista previa.
 
 ## Pendiente
-- Préstamo: la «Primera cuota» se muestra en la confirmación pero no es editable en el paso 2 (el asistente heredado la calcula y la mantiene oculta).
 - Selectores de fecha: usan el formato del dispositivo, no se puede forzar dd/mm/aaaa.
 - Marca de red con logotipos (Visa/Mastercard) como imagen.
 - Contraste y accesibilidad de teclado en el selector (probados: Esc cierra, Enter avanza).
+
+## Pantalla → implementación (todas en `app.js` bloque V1110 y `styles.css` bloques V1110–V1113)
+| Imagen | Pantallas | Implementación |
+|---|---|---|
+| Nueva tarjeta | Datos · Confirmación | `V1110.cardForm` (`build`, `confirm`), formulario original `cardForm` (app.js ~3866) |
+| Nueva cuenta | Datos · Confirmación | `V1110.accountForm`, formulario original `accountForm` (~3807) |
+| Nueva institución | Datos · Confirmación | `V1110.bankForm`, formulario original `bankForm` (~1329) |
+| Nuevo certificado | Datos y capital · Condiciones · Confirmación | `V1110.certificateForm`, original `certificateForm` (~3873) |
+| Nuevo préstamo | Contrato · Capital y cuotas · Confirmación | `v1110Loan` sobre el asistente v83/v87 de `loanForm` (~3978) |
