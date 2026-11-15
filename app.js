@@ -4164,13 +4164,79 @@ const V41_SERVICES=[
  {id:'calendar',label:'Membresía',glyph:'calendar',bg:'#e9ebff',fg:'#6971b7'},
  {id:'gift',label:'Regalos',glyph:'gift',bg:'#ffebf3',fg:'#bd6c90'},
  {id:'generic1',label:'Servicio genérico',glyph:'circle',bg:'#eef2fb',fg:'#687894'},
- {id:'generic2',label:'Otro pago',glyph:'dots',bg:'#edf2fa',fg:'#61769b'}
+ {id:'generic2',label:'Otro pago',glyph:'dots',bg:'#edf2fa',fg:'#61769b'},
+ {id:'appletv',label:'Apple TV+',glyph:'tv',bg:'#eef0f4',fg:'#1f2430'},
+ {id:'ytpremium',label:'YouTube Premium',glyph:'play',bg:'#ffe9e9',fg:'#d42424'},
+ {id:'audible',label:'Audible',glyph:'book',bg:'#fff1e0',fg:'#d9801a'},
+ {id:'kindle',label:'Kindle',glyph:'book',bg:'#e9f3f7',fg:'#2a6f8e'},
+ {id:'patreon',label:'Patreon',glyph:'P',bg:'#ffe8e4',fg:'#e0492e'},
+ {id:'onedrive',label:'OneDrive',glyph:'cloud',bg:'#e5f0ff',fg:'#2b6bd1'},
+ {id:'m365',label:'Microsoft 365',glyph:'tiles',bg:'#ffeee6',fg:'#d9531e'},
+ {id:'gmail',label:'Gmail',glyph:'@',bg:'#ffecec',fg:'#d44638'},
+ {id:'openai',label:'OpenAI',glyph:'✳',bg:'#e7f6f2',fg:'#0e7a67'},
+ {id:'claude',label:'Claude',glyph:'✺',bg:'#fbeee6',fg:'#c4693d'},
+ {id:'gemini',label:'Gemini',glyph:'✦',bg:'#e9eeff',fg:'#4a6cf0'},
+ {id:'midjourney',label:'Midjourney',glyph:'sparkle',bg:'#eef0f6',fg:'#303a52'},
+ {id:'amazon',label:'Amazon',glyph:'bag',bg:'#fff3e0',fg:'#d98100'},
+ {id:'uber',label:'Uber',glyph:'car',bg:'#eceff3',fg:'#151a22'},
+ {id:'rappi',label:'Rappi',glyph:'bag',bg:'#ffe9e4',fg:'#e0452a'},
+ {id:'pedidosya',label:'PedidosYa',glyph:'fork',bg:'#ffe6ea',fg:'#d6203f'},
+ {id:'edenorte',label:'Edenorte',glyph:'bolt',bg:'#fff3da',fg:'#c98a05'},
+ {id:'edesur',label:'Edesur',glyph:'bolt',bg:'#ffe9da',fg:'#c9611b'},
+ {id:'edeeste',label:'Edeeste',glyph:'bolt',bg:'#fff0dc',fg:'#cf7a10'},
+ {id:'caasd',label:'Agua (CAASD / CORAASAN)',glyph:'drop',bg:'#e4f4ff',fg:'#2186c4'},
+ {id:'tricom',label:'Tricom',glyph:'wifi',bg:'#e8f2ff',fg:'#2f6fc6'},
+ {id:'wind',label:'Wind Telecom',glyph:'wifi',bg:'#e6f6f4',fg:'#1f8b7c'},
+ {id:'viva',label:'Viva',glyph:'phone',bg:'#ffecef',fg:'#d1344f'},
+ {id:'orange',label:'Orange',glyph:'phone',bg:'#fff0e0',fg:'#e07410'},
+ {id:'smartfit',label:'Smart Fit',glyph:'gym',bg:'#fff2d8',fg:'#c78a00'},
+ {id:'yoga',label:'Yoga o pilates',glyph:'activity',bg:'#eaf7ee',fg:'#3f9b5c'},
+ {id:'lifeins',label:'Seguro de vida',glyph:'shield',bg:'#e9f4ec',fg:'#3a8f58'},
+ {id:'carins',label:'Seguro del vehículo',glyph:'car',bg:'#e8f0fc',fg:'#3a68b5'},
+ {id:'healthins',label:'Seguro de salud',glyph:'cross',bg:'#e6f7ef',fg:'#2f9a68'},
+ {id:'homeins',label:'Seguro del hogar',glyph:'home',bg:'#eef3e8',fg:'#5b8a35'},
+ {id:'school',label:'Colegio',glyph:'book',bg:'#eaf0ff',fg:'#3a5fc0'},
+ {id:'university',label:'Universidad',glyph:'glasses',bg:'#efeaff',fg:'#6644c2'},
+ {id:'tuition',label:'Cursos y clases',glyph:'book',bg:'#eef7e8',fg:'#4f9a2b'},
+ {id:'rent',label:'Alquiler',glyph:'home',bg:'#ffeee6',fg:'#c9602e'},
+ {id:'condo',label:'Mantenimiento de condominio',glyph:'tool',bg:'#f1efe8',fg:'#8b7a4f'},
+ {id:'mortgage',label:'Hipoteca',glyph:'home',bg:'#ece8ff',fg:'#6a4fc2'},
+ {id:'toll',label:'Peaje (Paso Rápido)',glyph:'car',bg:'#e8f1fb',fg:'#2f67b0'},
+ {id:'carwash',label:'Lavado de vehículo',glyph:'waves',bg:'#e4f5ff',fg:'#2288c4'},
+ {id:'parkingmo',label:'Parqueo mensual',glyph:'P',bg:'#e9f2fb',fg:'#3b6ca2'},
+ {id:'church',label:'Diezmo u ofrenda',glyph:'heart',bg:'#fff1e4',fg:'#c27a2e'},
+ {id:'charity',label:'Donación a fundación',glyph:'hand',bg:'#ffecef',fg:'#c64a63'},
+ {id:'daycare',label:'Guardería o cuidado',glyph:'users',bg:'#f0eeff',fg:'#6b5fc6'},
+ {id:'maid',label:'Servicio doméstico',glyph:'broom',bg:'#eef6ee',fg:'#4d8a4d'},
+ {id:'laundry',label:'Lavandería',glyph:'washing',bg:'#e6f3ff',fg:'#2f78bb'},
+ {id:'barber',label:'Barbería',glyph:'scissors',bg:'#e9f5ff',fg:'#3b75b7'},
+ {id:'salon',label:'Peluquería y uñas',glyph:'scissors',bg:'#fff0f6',fg:'#c25585'},
+ {id:'therapy',label:'Terapia o psicología',glyph:'brain',bg:'#f3ecff',fg:'#7a54c2'},
+ {id:'dentist',label:'Dentista',glyph:'tooth',bg:'#e6f6fb',fg:'#2a8fae'},
+ {id:'pharmacy2',label:'Medicamentos recurrentes',glyph:'syringe',bg:'#e8f6ed',fg:'#3f8f60'},
+ {id:'vet',label:'Veterinario',glyph:'paw',bg:'#fdeaea',fg:'#c25a5a'},
+ {id:'petfood',label:'Comida de mascota',glyph:'paw',bg:'#fff0e2',fg:'#cc7a2e'},
+ {id:'garden',label:'Jardín o plantas',glyph:'leaf',bg:'#eaf7e8',fg:'#4a9a3f'},
+ {id:'solar',label:'Paneles solares',glyph:'sun',bg:'#fff6dc',fg:'#d19a00'},
+ {id:'bike',label:'Bicicleta o scooter',glyph:'bike',bg:'#e8f7f0',fg:'#2f9a70'},
+ {id:'storage',label:'Almacén o depósito',glyph:'box',bg:'#f0efe9',fg:'#7f7655'},
+ {id:'photo',label:'Fotografía',glyph:'camera',bg:'#eef0f6',fg:'#364260'},
+ {id:'news',label:'Periódico o revista',glyph:'book',bg:'#eef0f4',fg:'#3a4560'},
+ {id:'games',label:'Videojuegos',glyph:'tiles',bg:'#eaeeff',fg:'#4c59d0'},
+ {id:'crypto',label:'Inversión mensual',glyph:'coins',bg:'#fff6e0',fg:'#c78c00'},
+ {id:'savings',label:'Ahorro programado',glyph:'coins',bg:'#e7f6ec',fg:'#2f9a58'},
+ {id:'loan2',label:'Cuota de préstamo',glyph:'receipt',bg:'#f0edff',fg:'#6a56c0'},
+ {id:'cardpay',label:'Pago de tarjeta',glyph:'card',bg:'#e8eef9',fg:'#4c66a8'},
+ {id:'tax2',label:'Impuesto o tasa',glyph:'receipt',bg:'#ffe8ec',fg:'#b8304a'},
+ {id:'fun',label:'Entretenimiento',glyph:'sparkle',bg:'#fff0f6',fg:'#c25585'}
 ];
 const V41_SVC_BY_ID=Object.fromEntries(V41_SERVICES.map(x=>[x.id,x]));
 function v41ValidIcon(id){return Object.hasOwn(V41_SVC_BY_ID,String(id||''))?String(id):'general'}
 function v41GuessIcon(value){
  const name=String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const patterns=[[/barber|barberia|barbershop|pelado de hombre/,'generic-barber'],[/peluqueria|estilista|salon de pelo/,'generic-hair'],[/dentista|odontolog/,'generic-dentist'],[/psicolog|terapia/,'generic-therapy'],[/consulta medica|medico|doctor|clinica/,'generic-doctor'],[/masaje/,'generic-massage'],[/manicura|pedicura|unas/,'generic-nails'],[/spa|bienestar/,'generic-spa'],[/lavanderia|lavado de ropa/,'generic-laundry'],[/limpieza|aseo/,'generic-cleaning'],[/jardin/,'generic-gardening'],[/veterinar/,'generic-veterinary'],[/laboratorio|analisis clinico/,'generic-laboratory'],[/nutricion|dietista/,'generic-nutrition'],[/guarderia/,'generic-daycare'],[/mantenimiento de piscina|piscina/,'generic-pool'],[/max\b|hbo/,'hbo'],[/paramount/,'paramount'],[/crunchyroll/,'crunchyroll'],[/twitch/,'twitch'],[/hulu/,'hulu'],[/tidal/,'tidal'],[/deezer/,'deezer'],[/apple music/,'applemusic'],[/soundcloud/,'soundcloud'],[/dropbox/,'dropbox'],[/google one/,'google'],[/google drive/,'drive'],[/adobe/,'adobe'],[/figma/,'figma'],[/zoom/,'zoom'],[/slack/,'slack'],[/github/,'github'],[/linkedin/,'linkedin'],[/playstation/,'playstation'],[/nintendo/,'nintendo'],[/steam/,'steam'],[/duolingo/,'duolingo'],[/coursera/,'coursera'],[/udemy/,'udemy'],[/claro/,'claro'],[/altice/,'altice'],[/starlink/,'starlink'],[/agua|acueducto/,'water'],[/gas/,'gas'],[/combustible|gasolina/,'fuel'],[/alimento|supermercado/,'food'],[/farmacia|medicina/,'pharmacy'],[/mascota|veterinar/,'pet'],[/impuesto|dgii/,'tax'],[/mantenimiento/,'maintenance'],[/dominio|hosting/,'website'],[/netflix/,'netflix'],[/spotify/,'spotify'],[/youtube/,'youtube'],[/chatgpt|openai/,'chatgpt'],[/icloud/,'icloud'],[/apple|app store|apple one/,'apple'],[/disney/,'disney'],[/prime|amazon/,'prime'],[/notion/,'notion'],[/canva/,'canva'],[/microsoft|office|onedrive|xbox/,'microsoft'],[/wifi|internet|fibra|banda ancha/,'internet'],[/telefon|celular|movil|movistar|claro|altice/,'phone'],[/video|hbo|max|hulu|paramount|stream|cine/,'streaming'],[/musica|music|deezer|tidal/,'music'],[/gimnasio|gym|fitness/,'gym'],[/curso|educa|univers|escuela/,'education'],[/seguro|poliza|salud/,'insurance'],[/luz|agua|electric|energia/,'utilities'],[/alquiler|renta|vivienda|condominio/,'home']];
+ const extra=[[/hbo|max\b/,'hbo'],[/paramount/,'paramount'],[/apple tv/,'appletv'],[/apple music/,'applemusic'],[/youtube premium/,'ytpremium'],[/deezer/,'deezer'],[/twitch/,'twitch'],[/crunchyroll/,'crunchyroll'],[/audible/,'audible'],[/kindle/,'kindle'],[/patreon/,'patreon'],[/dropbox/,'dropbox'],[/onedrive/,'onedrive'],[/microsoft 365|office 365/,'m365'],[/gmail/,'gmail'],[/openai/,'openai'],[/claude/,'claude'],[/gemini/,'gemini'],[/midjourney/,'midjourney'],[/amazon/,'amazon'],[/uber/,'uber'],[/rappi/,'rappi'],[/pedidosya|pedidos ya/,'pedidosya'],[/edenorte/,'edenorte'],[/edesur/,'edesur'],[/edeeste/,'edeeste'],[/caasd|coraasan|agua potable/,'caasd'],[/tricom/,'tricom'],[/\\bwind\\b|wind telecom/,'wind'],[/\bviva\b/,'viva'],[/orange/,'orange'],[/smart ?fit/,'smartfit'],[/yoga|pilates/,'yoga'],[/seguro de vida/,'lifeins'],[/seguro (del )?(vehiculo|carro|auto)/,'carins'],[/seguro (de )?salud|arss|senasa/,'healthins'],[/seguro (del )?hogar|seguro de casa/,'homeins'],[/colegio|escuela/,'school'],[/universidad|uasd|pucmm|intec/,'university'],[/alquiler|renta/,'rent'],[/condominio|mantenimiento del edificio/,'condo'],[/hipoteca/,'mortgage'],[/peaje|paso rapido/,'toll'],[/lavado|autolavado/,'carwash'],[/diezmo|ofrenda|iglesia/,'church'],[/guarderia|nana/,'daycare'],[/lavanderia/,'laundry'],[/barber/,'barber'],[/unas|manicur|salon|peluquer/,'salon'],[/terapia|psicolog/,'therapy'],[/dentista|ortodoncia/,'dentist'],[/veterinari/,'vet'],[/jardin|jardiner/,'garden'],[/solar|paneles/,'solar'],[/ahorro/,'savings'],[/prestamo|cuota/,'loan2'],[/tarjeta/,'cardpay']];
+ for(const [pattern,id] of extra)if(pattern.test(name)&&Object.hasOwn(V41_SVC_BY_ID,id))return id;
  for(const [pattern,id] of patterns)if(pattern.test(name))return id;
  return 'general';
 }
@@ -9835,6 +9901,30 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   paint();wrap.v1110Invalid=()=>{wrap.classList.add('is-invalid');toggle(true)};
   return wrap;
  }
+ /* Selector universal de cuenta o tarjeta de pago (mismo diseño que el de instituciones). */
+ function v1110ProductPicker(f,n,label){
+  const sel=v1110El(f,n),box=v1110Box(f,n);if(!sel||!box)return null;
+  const wrap=document.createElement('div');wrap.className='v1110-field v1110-pick v1028-picker';wrap.dataset.field=n;
+  wrap.innerHTML=`<span class="v1110-lab">${v1110Esc(label)}</span><button type="button" class="v1028-picker-btn v1110-pickbtn" aria-haspopup="listbox" aria-expanded="false"></button><div class="v1028-picker-list v1110-picklist" role="listbox" hidden></div>`;
+  const btn=wrap.querySelector('.v1110-pickbtn'),list=wrap.querySelector('.v1110-picklist');
+  sel.classList.add('v1110-native');sel.tabIndex=-1;wrap.append(sel);box.remove();
+  const info=v=>{const [k,id]=String(v).split(':');const it=k==='card'?card(id):account(id);if(!it)return null;const b=bank(it.bankId),l4=String(it.last4||'').replace(/\D/g,'').slice(-4);
+   return {kind:k,item:it,bank:b,title:it.name,sub:(it.kind==='cash'?'Efectivo':(b?.name||''))+(l4?' • '+l4:'')+(k==='card'?' · Tarjeta':' · '+(it.currency||'DOP'))}};
+  const logo=i=>i?.bank?bankLogoMark(i.bank,'v1028-logo'):`<span class="v1028-logo v1028-glyph">${v1110Ico(i?.kind==='card'?'card':'building')}</span>`;
+  const row=(i,t,sub,sl)=>`<span class="v1028-row-logo">${logo(i)}</span><span class="v1028-row-copy"><strong${i?'':' class="is-empty"'}>${v1110Esc(t)}</strong>${sub?`<small>${v1110Esc(sub)}</small>`:''}</span>${sl===undefined?'':`<span class="v1028-row-check" aria-hidden="true">${sl?'✓':''}</span>`}`;
+  const opts=()=>[...sel.options].filter(o=>o.value);
+  const paint=()=>{const i=sel.value?info(sel.value):null;
+   btn.innerHTML=(i?row(i,i.title,i.sub):row(null,'Selecciona la cuenta o tarjeta',''))+`<span class="v1028-chevron" aria-hidden="true">⌄</span>`;
+   const grp=(t,k)=>{const g=opts().filter(o=>o.value.startsWith(k+':'));return g.length?`<div class="v1028-group">${t}</div>`+g.map(o=>{const x=info(o.value);return `<button type="button" role="option" class="v1028-opt${o.value===sel.value?' is-on':''}" data-v="${v1110Esc(o.value)}" aria-selected="${o.value===sel.value}">${row(x,x?x.title:o.text,x?x.sub:'',o.value===sel.value)}</button>`}).join(''):''};
+   list.innerHTML=opts().length?grp('Cuentas y efectivo','account')+grp('Tarjetas de crédito','card'):'<p class="v1110-empty">Aún no tienes cuentas ni tarjetas.</p>'};
+  const toggle=on=>{list.hidden=!on;btn.setAttribute('aria-expanded',String(on));wrap.classList.toggle('open',on)};
+  btn.addEventListener('click',()=>toggle(list.hidden));
+  list.addEventListener('click',e=>{const it=e.target.closest('.v1028-opt');if(!it)return;sel.value=it.dataset.v;v1110Fire(sel,'input');v1110Fire(sel,'change');paint();toggle(false)});
+  sel.addEventListener('change',paint);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!list.hidden&&wrap.isConnected){toggle(false);e.stopPropagation()}},true);
+  paint();wrap.v1110Invalid=()=>{wrap.classList.add('is-invalid');toggle(true)};wrap.v1110Info=info;
+  return wrap;
+ }
  /* Segmentado (p. ej. DOP | USD) sobre una lista nativa. */
  function v1110Seg(f,n,label,short){
   const sel=v1110El(f,n),box=v1110Box(f,n);if(!sel||!box)return null;
@@ -9908,6 +9998,34 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
      card('layers','Límites de crédito',`<p>${v1110Esc(v1110Money(n('limitDOP'),'DOP',0))} · ${v1110Esc(v1110Money(n('limitUSD'),'USD',0))}</p>`,'limitDOP')+
      card('percent','Tasas anuales',`<p>RD$ ${pct('aprDOP')} · US$ ${pct('aprUSD')}</p>`,'aprDOP')+
      card('calendar','Ciclo y cargos',`<dl class="v1110-dl"><div><dt>Día de corte</dt><dd>${n('cutDay')}</dd></div><div><dt>Día de pago</dt><dd>${n('dueDay')}</dd></div><div><dt>Comisión por avance</dt><dd>${pct('advanceFeePct')}</dd></div><div><dt>Anualidad</dt><dd>${v1110Esc(v1110Money(n('annualFeeAmount'),v1110Val(f,'annualFeeCurrency')||'DOP',0))}</dd></div></dl>`,'cutDay')}},
+  recurringForm:{title:'Nuevo pago recurrente',steps:['Servicio','Programación','Confirmación'],submit:'Crear pago recurrente',stepper:true,
+   heads:[['¿Qué vas a pagar?','Identifica el servicio y clasifícalo como cualquier gasto.'],['¿Cómo y cuándo se cobra?','Define la cuenta, el ciclo y la fecha que verá Próximos pagos.']],
+   build(f){
+    const quick=f.querySelector('.v147-quick-icons'),drawer=f.querySelector('.v147-icon-drawer'),freqs=f.querySelector('.v147-frequencies');
+    const iconBlock=document.createElement('div');iconBlock.className='v1110-field v1110-iconblock';
+    iconBlock.innerHTML='<span class="v1110-lab">Icono del servicio <i>(opcional)</i></span>';
+    if(quick)iconBlock.append(quick);if(drawer){const sm=drawer.querySelector('summary');if(sm)sm.innerHTML='<span>Personalizar icono</span><small>Más de 300 opciones · buscar</small>';iconBlock.append(drawer)}
+    const s1=[v1110Field(f,'name','Nombre del servicio'),v1110Field(f,'amount','Importe por cobro',{num:{dec:2}}),v1110Row(v1110Field(f,'category','Categoría'),v1110Field(f,'subcategory','Subcategoría')),iconBlock];
+    const src=v1110ProductPicker(f,'source','Cuenta o tarjeta de pago');
+    const curWrap=v1110Seg(f,'currency','Moneda',{DOP:'DOP',USD:'USD'});
+    const syncCur=()=>{const i=src?.v1110Info(v1110Val(f,'source'));if(!curWrap)return;if(i&&i.kind==='account'){const cs=v1110El(f,'currency');if(cs&&cs.value!==i.item.currency){cs.value=i.item.currency;v1110Fire(cs,'change')}curWrap.hidden=true}else curWrap.hidden=false};
+    f.addEventListener('change',e=>{if(e.target&&e.target.name==='source')syncCur()});setTimeout(syncCur,0);
+    const freqBlock=document.createElement('div');freqBlock.className='v1110-field';freqBlock.innerHTML='<span class="v1110-lab">Periodicidad</span>';if(freqs){freqs.classList.add('v1110-freqseg');freqBlock.append(freqs)}
+    const mode=v1110El(f,'postingMode');if(mode)[...mode.options].forEach(o=>{o.textContent=o.value==='auto'?'Automático':'Confirmación manual'});
+    const note=v1110Node(`${v1110Ico('info')}<span>El registro automático solo crea movimientos en la app; no cobra en el banco.</span>`,'p','v1110-note');
+    const s2=[src,curWrap,freqBlock,v1110Field(f,'nextDue','Próximo vencimiento',{cls:'v1110-date'}),v1110Field(f,'postingMode','Registro del cobro'),note,v1110Seg(f,'active','Estado',{true:'Activo',false:'Pausado'})];
+    return [s1,s2];
+   },
+   confirm(f){
+    const ic=v1110Val(f,'serviceIcon')||'general',cur=v1110Val(f,'currency')||'DOP',amt=num(v1110Val(f,'amount')),fr=v1110Val(f,'frequency')||'monthly';
+    const FRL={monthly:'por mes',weekly:'por semana',quarterly:'por trimestre',annual:'por año'},FRN={monthly:'Mensual',weekly:'Semanal',quarterly:'Trimestral',annual:'Anual'};
+    const src=f.querySelector('[data-field=source]'),inf=src?.v1110Info?.(v1110Val(f,'source'));
+    const limpia=t=>String(t||'').replace(/^[^\p{L}\p{N}]+/u,'').trim(),cat=limpia(v1110Txt(f,'category')),sub=limpia(v1110Txt(f,'subcategory'));
+    const mensual=amt*(window.v80MonthlyFactor?window.v80MonthlyFactor(fr):({monthly:1,weekly:52/12,quarterly:1/3,annual:1/12}[fr]||1));
+    return `<h3 class="v1110-ct">Confirma los detalles</h3><p class="v1110-lead">Revisa la información antes de guardarla.</p>`+
+     `<div class="v1110-hero"><span class="v1110-svc">${v41ServiceIcon(ic)}</span><div class="v1110-hero-t"><strong>${v1110Esc(v1110Val(f,'name')||'Pago recurrente')}</strong><small>${v1110Esc(v1110Money(amt,cur,0))} ${FRL[fr]||''}</small></div><button type="button" class="v1110-edit" data-edit-step="0" data-edit-field="name">${v1110Ico('pencil')}<u>Editar</u></button></div>`+
+     v1110Rows([['Categoría',(cat||'—')+(sub&&sub!=='Sin subcategoría'?' · '+sub:''),'category',0],['Próxima fecha',v1110Date(v1110Val(f,'nextDue')),'nextDue',1],['Equivalente mensual',v1110Money(mensual,cur,0),'amount',0],['Fuente de pago',inf?inf.title+' · '+(inf.item.currency||cur):'—','source',1],['Registro del cobro',v1110Txt(f,'postingMode'),'postingMode',1],['Estado',v1110Val(f,'active')==='false'?'Pausado':'Activo','active',1]])+
+     v1110Note('Guardarlo no descuenta tu saldo.')}},
   bankForm:{title:'Nueva institución',steps:['Datos','Confirmación'],submit:'Crear institución',
    build(f){
     const scope=f.querySelector('.v42-scope-field');
