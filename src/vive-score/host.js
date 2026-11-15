@@ -29,7 +29,7 @@ setInterval(()=>{if(document.visibilityState==='visible'&&frame?.classList.conta
 function ensureFrame(){
  if(frame)return frame;
  frame=document.createElement('iframe');frame.className='vs-frame';frame.title='VIVE SCORE CRÉDITO';frame.setAttribute('aria-label','VIVE SCORE CRÉDITO');
- frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-downloads');frame.src=FRAME_SRC;document.body.appendChild(frame);return frame;
+ frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-downloads allow-popups allow-popups-to-escape-sandbox');frame.src=FRAME_SRC;document.body.appendChild(frame);return frame;
 }
 function slot(){return document.querySelector('[data-vs-slot]')}
 function place(){

@@ -16,18 +16,36 @@ function tuScenarios(){
   mk('Una tarjeta nueva','Cuenta como apertura reciente.',s=>{s.new0to6=N(s.new0to6)+1}),
   mk('Un préstamo nuevo de RD$250,000','Apertura reciente y nueva deuda.',s=>{s.loans.push({id:'tu-sim',name:'Préstamo hipotético',currency:'DOP',type:'personal',original:250000,balance:250000,due:loanQuota(250000,20,36),status:'active',daysPastDue:0,variable:false});s.new0to6=N(s.new0to6)+1}),
   mk('Un atraso de 30 a 59 días','Golpea el historial de pagos.',s=>{s.late30=N(s.late30)+1}),
+  mk('Cancelar la tarjeta con más límite','Baja el límite total (sube la utilización) pero su antigüedad sigue sumando.',s=>{const big=s.cards.slice().sort((a,b)=>N(b.limit)-N(a.limit))[0];if(big)big.status='closed'}),
+  mk('Un atraso de 90 a 119 días','Golpe mayor al historial de pagos.',s=>{s.late90=N(s.late90)+1}),
   mk('Un aumento de límite que yo solicite','Cuenta como solicitud reciente.',s=>{s.cards.forEach(c=>{c.limit=N(c.limit)*1.5});s.limitReq0to6=N(s.limitReq0to6)+1})
  ];
+}
+/* Variables del modelo que alimentan la simulación (valores en vivo; si cambian los datos o se cargan cancelados, todo se recalcula). */
+function tuInputs(s,e){
+ const canc=(ST.cancelled||[]).length,closedApp=[...s.cards,...s.loans].filter(x=>x.status==='closed').length;
+ return [
+  ['Historial de pagos','Atraso vigente máximo',`${Math.max(0,...s.cards.concat(s.loans).map(x=>N(x.daysPastDue)))} días`],
+  ['Historial de pagos','Atrasos anteriores y de cancelados',`${N(s.lateShort)+N(s.late30)+N(s.late60)+N(s.late90)+N(s.late120)+N(s.lateOlder)} registrados`],
+  ['Deuda y utilización','Utilización de tarjetas',e.util===undefined||e.util===null?'—':pct(e.util)],
+  ['Antigüedad','Cuenta más antigua',`${s.historyMonths} meses`],
+  ['Antigüedad','Edad promedio del historial',`${s.avgHistoryMonths} meses`],
+  ['Antigüedad','Productos cancelados o saldados que suman',`${canc+closedApp}`],
+  ['Crédito reciente','Aperturas en los últimos 6 meses',`${s.new0to6}`],
+  ['Crédito reciente','Aumentos de límite solicitados / automáticos',`${s.limitReq0to6} / ${s.limitAuto}`],
+  ['Composición','Tarjetas y préstamos activos',`${s.cards.filter(x=>x.status!=='closed').length} · ${s.loans.filter(x=>x.status!=='closed').length}`]
+ ].map(r=>`<div class="metricLine"><span><b>${safe(r[1])}</b><div class="muted xs">${safe(r[0])}</div></span><b>${safe(r[2])}</b></div>`).join('');
 }
 function tuView(){
  const s=current(),e=evaluate(s),est=tuEstimate(e.score),ext=(ST.external||{}).tu||null,gap=ext&&est!==null?ext.value-est:null;
  const rows=FACTORS.map(f=>{const pts=e.points[f.id],contrib=Math.round(pts/1000*TU_SPAN*10)/10,maxC=Math.round(f.max/1000*TU_SPAN*10)/10;return `<div class="metricLine"><span>${safe(f.name)}<div class="muted xs">${f.tag} del modelo · ${pts} / ${f.max} pts VIVE</div></span><b>${contrib} / ${maxC} pts TU</b></div>`}).join('');
  const sc=tuScenarios();
  const now=new Date().getFullYear(),years=[];for(let a=now;a>=now-10;a--)years.push(a);
- return `${sec('Simulación TransUnion','Cómo se vería tu perfil en la escala pública de TransUnion RD (459–848). Es una estimación educativa, separada de tu VIVE SCORE.')}
+ return `${sec('Simulación TransUnion','Cómo se vería tu perfil en la escala pública de TransUnion RD (459–848). Es una simulación educativa, separada de tu VIVE SCORE; se recalcula con todas las variables del modelo (incluidos los productos cancelados).')}
  <div class="callout warn"><b>Lectura correcta:</b> TransUnion no publica su fórmula ni sus coeficientes. Esta pantalla aplica de forma lineal su escala pública (459–848) a tu índice VIVE, que ya usa los pesos públicos 35 / 30 / 15 / 10 / 10. Es una referencia para comparar escenarios, <b>no</b> tu score real ni una predicción. <b>Equifax</b> no publica parámetros, por eso no se simula.</div>
  <div class="grid pair"><div class="card scoreHero" style="min-height:auto"><div class="heroDetails"><div class="caps">EQUIVALENCIA ORIENTATIVA · ESCALA 459–848</div><div class="bigNumber monoValue" style="font-size:78px;margin:6px 0">${est??'—'}</div><div class="muted">${est===null?'Sin score VIVE calculable: completa lo que falta en Configuración y antecedentes.':`desde tu VIVE SCORE de ${e.score} / 1 000`}</div><p class="xs muted" style="margin-top:10px">Fórmula: 459 + VIVE ÷ 1 000 × (848 − 459).</p></div></div>
  <div class="card"><div class="caps">APORTE POR FACTOR (EN PUNTOS TU)</div><h2 style="margin:7px 0 10px">De dónde sale el número</h2><div class="metricList">${rows}<div class="metricLine"><span><b>Base de la escala</b></span><b>${TU_MIN} pts</b></div><div class="metricLine"><span><b>Total estimado</b></span><b>${est??'—'}</b></div></div></div></div>
+ ${sec('Variables que alimentan la simulación','Valores en vivo del modelo; si cambian tus datos o cargas productos cancelados, esta pantalla se recalcula sola.')}<div class="card"><div class="metricList">${tuInputs(s,e)}</div></div>
  ${sec('Escenarios','Cada fila cambia un dato a la vez sobre una copia; no modifica nada real.')}
  <div class="card">${sc.length?`<div class="tblscroll"><table class="tbl"><thead><tr><th>Si…</th><th>Estimado TU</th><th>Cambio</th><th>VIVE</th></tr></thead><tbody>${sc.map(x=>`<tr><td><b>${safe(x.label)}</b><div class="muted xs">${safe(x.note)}</div></td><td>${x.tu??'—'}</td><td class="${cls(x.delta||0)}">${x.delta===null?'—':sign(x.delta)+' pts'}</td><td>${x.score??'—'}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">Sin score calculable, no hay escenarios.</p>'}</div>
  ${sec('Tu score TransUnion real (opcional)','Si lo conoces, anótalo solo para compararlo. No cambia tu VIVE SCORE.')}

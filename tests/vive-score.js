@@ -37,7 +37,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   check(3, 'El indicador muestra «—» si no hay puntaje', (await p.evaluate(() => document.querySelector('.rail-action[data-id="score"] .vive-score-badge')?.textContent)) === '—');
   await reopenScore(p);
   const fr = frameOf(p);
-  check('p', 'La página VIVE SCORE CRÉDITO abre en un marco aislado', !!fr && /VIVE SCORE CRÉDITO/.test(await p.evaluate(() => document.getElementById('app').innerText)));
+  check('p', 'La página VIVE SCORE CRÉDITO abre en un marco aislado', !!fr && /Vive score crédito/i.test(await p.evaluate(() => document.getElementById('app').innerText)));
 
   /* 4 · cuestionario, 5 · mes y año, 6 · sin buró */
   const steps = []; for (let k = 0; k < 8; k++) { steps.push(await ftext(p)); if (k < 7) await fclickIf(p, '[data-q-act="next"]'); }
@@ -137,7 +137,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await fchange(p, '#tuObserved', '900');
   const tuReject = await frameOf(p).evaluate(() => ST.external.tu?.value);
   const tuSnapDb2 = await p.evaluate(() => JSON.stringify(window.__T.dbg()));
-  check(21, 'Simulación TransUnion: escala 459–848, solo TransUnion, escenarios coherentes y sin tocar datos reales', tu.est >= 459 && tu.est <= 848 && tu.est === tu.expect && /Equifax/.test(tu.text) && /no publica/.test(tu.text) && tu.n === 7 && tu.late < 0 && tu.pay >= 0 && tu.auto >= 0 && tu.req <= tu.auto && tuGap.ext === 700 && tuGap.shown && tuGap.score === tuScoreBefore && tuReject === 700 && tuSnapDb === tuSnapDb2, JSON.stringify({ score: tu.score, est: tu.est, escenarios: { pagar: tu.pay, atraso: tu.late, limiteAuto: tu.auto, limiteSolicitado: tu.req }, miDato: tuGap.ext, difer: tuGap.gap, rechazaFueraDeRango: tuReject === 700 }));
+  check(21, 'Simulación TransUnion: escala 459–848, solo TransUnion, escenarios coherentes y sin tocar datos reales', tu.est >= 459 && tu.est <= 848 && tu.est === tu.expect && /Equifax/.test(tu.text) && /no publica/.test(tu.text) && tu.n === 9 && tu.late < 0 && tu.pay >= 0 && tu.auto >= 0 && tu.req <= tu.auto && tuGap.ext === 700 && tuGap.shown && tuGap.score === tuScoreBefore && tuReject === 700 && tuSnapDb === tuSnapDb2, JSON.stringify({ score: tu.score, est: tu.est, escenarios: { pagar: tu.pay, atraso: tu.late, limiteAuto: tu.auto, limiteSolicitado: tu.req }, miDato: tuGap.ext, difer: tuGap.gap, rechazaFueraDeRango: tuReject === 700 }));
 
   /* 22 · créditos recientes: ventanas 0–6 / 7–12 meses, tarjetas sin límite, la fecha de «Editar» manda */
   await p.evaluate(() => { const d = window.__T.dbg(); d.cards[0].name = 'BHD Visa'; d.cards[0].acquiredOn = '2026-09'; d.cards[1].name = 'Qik Pro'; d.cards[1].acquiredOn = '2026-05'; d.loans[0].acquiredOn = '2025-11'; const extra = JSON.parse(JSON.stringify(d.cards[0])); Object.assign(extra, { id: 'nuevo-sv', name: 'Tarjeta nueva', acquiredOn: '2026-10', limitDOP: 0, limitUSD: 0 }); Object.keys(extra).filter(k => /^opening|overdraft/.test(k)).forEach(k => { extra[k] = 0; }); d.cards.push(extra); });
@@ -229,7 +229,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
     fondoOk[scheme] = a.equals(b2);
   }
   await p.emulateMedia({ colorScheme: 'light' });
-  check(28, 'La página se titula VIVE SCORE CRÉDITO con «historial de créditos» debajo, y el fondo es transparente (hereda el diseño de la app)', head28.title === 'VIVE SCORE CRÉDITO' && head28.sub === 'historial de créditos' && frameCs === 'light dark' && fondoOk.light && fondoOk.dark && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs, transparenteClaro: fondoOk.light, transparenteOscuro: fondoOk.dark }));
+  check(28, 'La página se titula «Vive score crédito» con «vive el hoy» debajo (como las demás vistas), y el fondo es transparente (hereda el diseño de la app)', head28.title === 'Vive score crédito' && head28.sub === 'vive el hoy' && frameCs === 'light dark' && fondoOk.light && fondoOk.dark && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs, transparenteClaro: fondoOk.light, transparenteOscuro: fondoOk.dark }));
 
   /* 2 · solo web / 16 · móvil sin cambios / 17 · desactivación */
   /* 32 · variables: todo automático desde la app; solo el historial anterior es manual; sin datos personales */
@@ -273,6 +273,22 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await p.waitForTimeout(300);
   const lt1 = await frameOf(p).evaluate(() => { const c = current(); return { l60: c.late60, pts: evaluate(c).points.payment, rows: document.getElementById('view').innerText.includes('Atraso 60 días') }; });
   check(34, 'Un atraso de 60 días registrado en un producto cancelado suma al historial de pagos y resta puntos de pagos', lt1.l60 === lt0.l60 + 1 && lt1.pts < lt0.pts && lt1.rows, JSON.stringify({ antes: lt0, despues: lt1 }));
+
+  /* 35 · espaciado: ningún bloque principal queda pegado al siguiente y las filas de KPI no dejan columnas vacías */
+  const tight = [], emptyCols = [];
+  for (const t of ['summary', 'evolution', 'detail', 'transunion', 'control']) {
+    await fclick(p, '[data-tab="' + t + '"]'); await frameOf(p).evaluate(() => document.querySelectorAll('details.ccdet').forEach(d => { d.open = true; })); await p.waitForTimeout(250);
+    const r = await frameOf(p).evaluate(() => { const bad = [], empty = []; const sel = '.grid,.card,.callout'; for (const par of [document.getElementById('view'), ...document.querySelectorAll('.ccbody')]) { const kids = [...par.children].filter(c => c.matches(sel)); for (let i = 1; i < kids.length; i++) { const a = kids[i - 1].getBoundingClientRect(), c = kids[i].getBoundingClientRect(); if (c.top - a.bottom < 10 && c.top >= a.bottom - 1) bad.push(kids[i - 1].className + ' → ' + kids[i].className); } } for (const g of document.querySelectorAll('.grid.stats')) { const r = g.getBoundingClientRect(), last = [...g.children].reduce((m, k) => Math.max(m, k.getBoundingClientRect().right), 0); if (r.right - last > 24 && g.getBoundingClientRect().width > 700) empty.push(g.children.length); } return { bad, empty }; });
+    tight.push(...r.bad.map(x => t + ': ' + x)); emptyCols.push(...r.empty.map(n => t + ': ' + n + ' KPI'));
+  }
+  check(35, 'Espaciado: ningún bloque (KPI, tarjetas, avisos) queda pegado al siguiente y las filas de KPI ocupan todo el ancho', tight.length === 0 && emptyCols.length === 0, JSON.stringify({ pegados: tight, columnasVacias: emptyCols }));
+
+  /* 36 · Metodología esquematizada por fuente y simulación TransUnion calibrada con las variables del modelo */
+  await cc(p, 'metodologia');
+  const mt = await frameOf(p).evaluate(() => { const t = document.getElementById('view').innerText; const rules = [...document.querySelectorAll('#view .ccbody .rule code')].length; const links = [...document.querySelectorAll('#view a.source')].map(a => a.href); return { fuente: (t.match(/Qué dice la fuente/g) || []).length, aplica: (t.match(/Cómo lo aplica este modelo/g) || []).length, rules, links: links.length, https: links.every(l => /^https:/.test(l)), fico: /35 %/.test(t) && /VantageScore/.test(t) && /Ley 172-13/.test(t), propias: /Decisiones propias/.test(t), sinStale: !/Aperturas de 7|7–12|Conectar eventos reales|exigir permiso/.test(t), subreglas: FACTORS.reduce((a, f) => a + evaluate(current()).parts[f.id].length, 0) }; });
+  await fclick(p, '[data-tab="transunion"]');
+  const tv = await frameOf(p).evaluate(() => { const t = document.getElementById('view').innerText; return { vars: /Variables que alimentan la simulación/.test(t), cancel: /cancelados o saldados que suman/.test(t), esc: /Cancelar la tarjeta con más límite/.test(t), simulada: /simulación educativa/i.test(t) }; });
+  check(36, 'Metodología esquematizada (5 factores: qué dice la fuente → cómo lo aplica el modelo → fórmulas del motor), con fuentes https, decisiones propias y sin textos viejos; TransUnion simulada y alimentada por las variables del modelo', mt.fuente === 5 && mt.aplica === 5 && mt.links >= 8 && mt.https && mt.fico && mt.propias && mt.sinStale && mt.rules >= mt.subreglas && tv.vars && tv.cancel && tv.esc && tv.simulada, JSON.stringify({ mt, tv }));
 
   await ctx.close();
   process.env.TOUCH = '1';

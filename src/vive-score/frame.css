@@ -93,3 +93,9 @@ html,body{background:transparent!important}
 .ccdet[open]>summary::after{content:"−"}
 .ccbody{padding:0 18px 18px}
 .ccbody>.card{box-shadow:none}
+
+/* Separación uniforme entre bloques (antes quedaban pegados: KPI → tarjetas, aviso → tarjetas, lista → botón) y filas de KPI sin columnas vacías.
+   Solo hermanos de contenedores en bloque (#view y secciones del Centro de control); los estilos en línea con margen propio siguen mandando. */
+#view>:is(.grid,.card,.callout)+:is(.grid,.card,.callout),.ccbody>:is(.grid,.card,.callout)+:is(.grid,.card,.callout){margin-top:15px}
+.card>.metricList+:is(.btn,.smallbtn,.actionLine,.links,.callout),.callout+.metricList{margin-top:16px}
+@media(min-width:761px){.grid.stats{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}}
