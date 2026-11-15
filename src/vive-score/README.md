@@ -20,6 +20,7 @@ Página nueva **«Score»** de la versión web de *vive el hoy · Finanzas 360*.
 | `state.js` | Estado, mensajería con el anfitrión y construcción de cada corte (datos reales + antecedentes declarados). |
 | `questionnaire.js` | Cuestionario inteligente de calibración (solo mes y año). |
 | `settings.js` | «Configuración y antecedentes»: procedencia de cada dato, edición con trazabilidad, borrado. |
+| `transunion.js` | Pestaña «TransUnion (simulación)»: equivalencia orientativa en la escala pública 459–848, aporte por factor, 7 escenarios y comparación opcional con tu dato real. |
 | `seed.js` | Antecedentes ya conocidos que se cargan automáticamente (aumentos de límite de Popular y Cibao). |
 | `boot.js` | Arranque. |
 
@@ -75,6 +76,14 @@ Decisiones y límites:
 - Los ingresos y gastos **nunca** suman puntos.
 - Aprendizaje no supervisado (k‑medias determinista, normalización robusta por mediana e IQR, detección de atipicidad, deriva): **separado** del score. Con menos de 4 cortes no se forman grupos. Los grupos no son probabilidades de impago.
 - Capacidad de endeudamiento: motor independiente (DTI contractual, margen, cuota nueva orientativa, estrés), con ingresos ponderados por evidencia y recurrencia.
+
+## Simulación TransUnion
+
+Pestaña aparte, separada del score de VIVE. Solo TransUnion: **Equifax no publica parámetros, así que no se simula**.
+
+- Equivalencia **orientativa y lineal**: `459 + VIVE ÷ 1 000 × (848 − 459)` (escala pública de TransUnion RD). Ya usamos los pesos públicos 35 / 30 / 15 / 10 / 10.
+- TransUnion no publica su fórmula: **no es tu score real ni una predicción**. Sirve para comparar escenarios (pagar saldo, bajar el uso, límite automático o solicitado, tarjeta o préstamo nuevo, atraso).
+- Si conoces tu score de TransUnion, puedes anotarlo (opcional, con mes y año): solo se compara; **no cambia** el VIVE SCORE.
 
 ## Persistencia y seguridad
 

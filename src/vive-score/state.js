@@ -3,7 +3,7 @@
    Se carga DESPUÉS de score.js (motor + vistas) y comparte su ámbito global. */
 const VS_START='2026-11';                       // inicio del historial observado: 15 de noviembre de 2026
 const MONTH_NAMES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const newStore=()=>({v:1,seeded:{},startedOn:VS_START,answers:null,answersLog:[],overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
+const newStore=()=>({v:1,seeded:{},external:{tu:null},startedOn:VS_START,answers:null,answersLog:[],overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
 let ST=newStore(),PAYLOAD=null,qEditing=false,qStep=0,saveTimer=0,heightTimer=0,lastHeight=0;
 function restoreStore(x){return x&&x.v===1?{...newStore(),...x}:newStore()}
 function saveStore(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>VSHost.send('save',{store:ST}),250)}

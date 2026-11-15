@@ -129,6 +129,18 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const reload = await frameOf(p).evaluate(() => ({ gate: !!document.querySelector('.qcard'), cal: ST.answers?.completed, version: ST.declVersion, seeds: ST.answers.limit.events.length, ov: Object.values(ST.overrides).some(o => o.opened === '2019-08') }));
   check(15, 'Las respuestas y modificaciones se conservan al recargar', !!stored && reload.cal === true && reload.gate === false && reload.ov && reload.seeds === 4, JSON.stringify(reload));
 
+  /* 21 · simulación TransUnion (solo TransUnion; Equifax sin parámetros públicos) */
+  const tuSnapDb = await p.evaluate(() => JSON.stringify(window.__T.dbg()));
+  await fclick(p, '[data-tab="transunion"]');
+  const tuScoreBefore = await frameOf(p).evaluate(() => evaluate(current()).score);
+  const tu = await frameOf(p).evaluate(() => { const e = evaluate(current()), sc = tuScenarios(), by = l => sc.find(x => x.label.startsWith(l)); return { score: e.score, est: tuEstimate(e.score), expect: Math.round(459 + e.score * 0.389), text: document.getElementById('view').innerText, pay: by('Pagar el 25')?.delta, late: by('Un atraso')?.delta, auto: by('Aumento automático')?.delta, req: by('Un aumento de límite que yo solicite')?.delta, n: sc.length }; });
+  await fchange(p, '#tuObserved', '700');
+  const tuGap = await frameOf(p).evaluate(() => ({ ext: ST.external.tu?.value, gap: (ST.external.tu?.value ?? 0) - tuEstimate(evaluate(current()).score), shown: document.getElementById('view').innerText.includes('Diferencia'), score: evaluate(current()).score }));
+  await fchange(p, '#tuObserved', '900');
+  const tuReject = await frameOf(p).evaluate(() => ST.external.tu?.value);
+  const tuSnapDb2 = await p.evaluate(() => JSON.stringify(window.__T.dbg()));
+  check(21, 'Simulación TransUnion: escala 459–848, solo TransUnion, escenarios coherentes y sin tocar datos reales', tu.est >= 459 && tu.est <= 848 && tu.est === tu.expect && /Equifax/.test(tu.text) && /no publica/.test(tu.text) && tu.n === 7 && tu.late < 0 && tu.pay >= 0 && tu.auto >= 0 && tu.req <= tu.auto && tuGap.ext === 700 && tuGap.shown && tuGap.score === tuScoreBefore && tuReject === 700 && tuSnapDb === tuSnapDb2, JSON.stringify({ score: tu.score, est: tu.est, escenarios: { pagar: tu.pay, atraso: tu.late, limiteAuto: tu.auto, limiteSolicitado: tu.req }, miDato: tuGap.ext, difer: tuGap.gap, rechazaFueraDeRango: tuReject === 700 }));
+
   /* 20 · entidades no financieras: no puntúan (no se reportan a burós), pero sí cuentan para la capacidad */
   await fclick(p, '[data-tab="data"]');
   const nb0 = await frameOf(p).evaluate(() => { const c = evaluate(current()); return { loans: current().loans.length, debt: Math.round(c.capacity.debt), due: Math.round(c.capacity.loanDues) }; });
