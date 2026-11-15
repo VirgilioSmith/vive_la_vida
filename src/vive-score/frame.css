@@ -58,3 +58,20 @@ body.night .qchip.on{color:#07110e}
 @media(max-width:900px){.qgrid{grid-template-columns:1fr}}
 
 [hidden]{display:none!important}
+
+/* ===== Diseño de vive el hoy: pestañas compactas en una sola fila, títulos y espaciado más finos ===== */
+.shell{padding-top:2px}
+.herohead{margin:2px 0 12px;align-items:flex-end}
+.herohead .eyebrow{font-size:10.5px;letter-spacing:.18em}
+.herohead h1{font-size:clamp(24px,2.1vw,34px);letter-spacing:-.05em;line-height:1.08;margin:4px 0 6px;font-weight:850}
+.herohead p{font-size:13px;max-width:760px;line-height:1.45}
+.tabs{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;width:100%;gap:4px;padding:4px;margin:0 0 16px;border-radius:999px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 0,#000 93%,transparent 100%);mask-image:linear-gradient(90deg,#000 0,#000 93%,transparent 100%)}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;height:34px;padding:0 15px;font-size:12.5px;font-weight:750;line-height:1;white-space:nowrap;border-radius:999px;display:inline-flex;align-items:center}
+.sectionTop{margin:22px 0 10px}
+.sectionTop h2{font-size:clamp(18px,1.5vw,22px);letter-spacing:-.04em}
+.sectionTop p{font-size:12.5px}
+.card{border-radius:22px;padding:20px}
+.stat .statVal{font-size:clamp(22px,2vw,30px)}
+.grid{gap:12px}
+@media(min-width:1100px){.heroGrid{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}}
