@@ -23,7 +23,7 @@ let lastSig='',pollTimer=0,refreshTimer=0;
 function sendInit(){const p=window.ViveScoreAdapter?.read();lastSig=JSON.stringify(p||null);post('init',{payload:p,store:load(),env:env()});payloadSent=true}
 /* Alimentación automática: lee (solo lectura, en memoria) los datos de la app y avisa al módulo únicamente si cambiaron. No hay consultas a Supabase. */
 function refreshIfChanged(){if(!frame||!ready||!frame.classList.contains('vs-on'))return;const p=window.ViveScoreAdapter?.read(),sig=JSON.stringify(p||null);if(sig===lastSig)return;lastSig=sig;post('data',{payload:p})}
-const queueRefresh=()=>{clearTimeout(refreshTimer);refreshTimer=setTimeout(refreshIfChanged,350)};
+const queueRefresh=()=>{if(refreshTimer)return;refreshTimer=setTimeout(()=>{refreshTimer=0;refreshIfChanged()},350)};
 window.addEventListener('focus',queueRefresh);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')queueRefresh()});
 setInterval(()=>{if(document.visibilityState==='visible'&&frame?.classList.contains('vs-on'))refreshIfChanged()},5000);
 function ensureFrame(){
@@ -42,8 +42,10 @@ function place(){
  s.style.height=height+'px';
  if(!frame.classList.contains('vs-on')){frame.classList.add('vs-on');if(ready)sendInit()}
 }
-let raf=0;const schedule=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{place();queueRefresh()})};
-new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});
+/* Ocultar el marco es inmediato (sin esperar un cuadro) y el ciclo pendiente no se cancela: en vistas que cambian el DOM sin parar (p. ej. Resumen)
+   un debounce con cancelAnimationFrame nunca llegaba a ejecutarse y el marco se quedaba flotando sobre todas las vistas. */
+let raf=0;const schedule=()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;place();queueRefresh()})};
+new MutationObserver(()=>{if(frame&&frame.classList.contains('vs-on')&&!slot())frame.classList.remove('vs-on');schedule()}).observe(document.body,{childList:true,subtree:true});
 window.addEventListener('resize',schedule);
 new MutationObserver(()=>post('env',{env:env()})).observe(document.body,{attributes:true,attributeFilter:['class','style']});
 new MutationObserver(()=>post('env',{env:env()})).observe(document.documentElement,{attributes:true,attributeFilter:['style','class']});

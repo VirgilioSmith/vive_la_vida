@@ -290,6 +290,19 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const tv = await frameOf(p).evaluate(() => { const t = document.getElementById('view').innerText; return { vars: /Variables que alimentan la simulación/.test(t), cancel: /cancelados o saldados que suman/.test(t), esc: /Cancelar la tarjeta con más límite/.test(t), simulada: /simulación educativa/i.test(t) }; });
   check(36, 'Metodología esquematizada (5 factores: qué dice la fuente → cómo lo aplica el modelo → fórmulas del motor), con fuentes https, decisiones propias y sin textos viejos; TransUnion simulada y alimentada por las variables del modelo', mt.fuente === 5 && mt.aplica === 5 && mt.links >= 8 && mt.https && mt.fico && mt.propias && mt.sinStale && mt.rules >= mt.subreglas && tv.vars && tv.cancel && tv.esc && tv.simulada, JSON.stringify({ mt, tv }));
 
+  /* 37 · el marco desaparece al salir de Score, en todas las vistas, incluso si el DOM cambia sin parar */
+  const ghost = [];
+  await p.evaluate(() => { window.__churn = setInterval(() => { const i = document.createElement('i'); i.hidden = true; document.body.appendChild(i); setTimeout(() => i.remove(), 5); }, 8); });
+  for (const d of ['overview', 'banks', 'cards', 'loans', 'income', 'patrimony', 'recurring', 'payments', 'pressure']) {
+    await go(p, 'score'); await p.waitForTimeout(500);
+    const shown = await p.evaluate(() => document.querySelector('.vs-frame.vs-on') !== null);
+    await go(p, d); await p.waitForTimeout(250);
+    const still = await p.evaluate(() => { const f = document.querySelector('.vs-frame'); return !!f && f.classList.contains('vs-on') && getComputedStyle(f).display !== 'none'; });
+    if (!shown || still) ghost.push(d + (still ? ' (sigue visible)' : ' (no se mostró en Score)'));
+  }
+  await p.evaluate(() => clearInterval(window.__churn));
+  check(37, 'El marco de VIVE SCORE se oculta al salir de Score en todas las vistas, incluso con el DOM cambiando sin parar', ghost.length === 0, JSON.stringify(ghost));
+
   await ctx.close();
   process.env.TOUCH = '1';
   const mon = await open(b, 390, 844); const monErr = []; mon.p.on('pageerror', e => monErr.push(e.message));
