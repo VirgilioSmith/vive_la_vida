@@ -8022,6 +8022,7 @@ async function v405Reconcile(){
 }
 // V714: control del ritmo de sincronización ante saturación de Supabase.
 let v714WriteRetryCount=0,v714NextWriteAt=0,v714ReadFailureCount=0,v714NextReadAt=0;
+let v1134ConflictStreak=0;
 
 // V719: una pausa de infraestructura compartida entre pestañas del mismo origen.
 // Solo guarda marca temporal de indisponibilidad; nunca guarda ni altera datos financieros.
@@ -8114,6 +8115,9 @@ f33Flush=async function(){
   catch(err){
    if(err.code==='40001'||/CONFLICT|revision|simultáneo/i.test(err.message||'')){
     f33Dirty=true;
+    // V1134: si los conflictos se repiten seguidos, esperar con retroceso en lugar de reintentar sin pausa.
+    v1134ConflictStreak++;
+    if(v1134ConflictStreak>=3){v714WriteRetryCount++;v714NextWriteAt=Math.max(v714NextWriteAt,Date.now()+v714Backoff(v714WriteRetryCount,5000,300000));}
     const reconciled=await v405Reconcile();
     if(!reconciled)return;
     return;
@@ -8121,7 +8125,7 @@ f33Flush=async function(){
    throw err;
   }
   v403QueueAppleDeletes(v405Base.transactions||[],snapshot.transactions||[]);
-  v714WriteRetryCount=0;v714NextWriteAt=0;
+  v714WriteRetryCount=0;v714NextWriteAt=0;v1134ConflictStreak=0;
   v405Revision=newRevision;f33Stamp=String(newRevision);window.__f360BaseStamp=f33Stamp;
   v405Base=v405Clone(snapshot);v360RememberBase(snapshot,f33Stamp);
   for(const t of removed)v403ExplicitDeletes.delete(String(t.id));v403SaveApproved();
