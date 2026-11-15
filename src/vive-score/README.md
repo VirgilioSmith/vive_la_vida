@@ -37,6 +37,8 @@ El adaptador (`adapter.js`) solo **lee**, a través del puente `window.__viveSco
 | Ingresos recurrentes | **solo para capacidad de endeudamiento** |
 | Pagos recurrentes | **solo para capacidad**; los pagados con tarjeta se marcan para no duplicarlos |
 
+**Entidades no financieras:** los productos de instituciones que no son financieras (telefonía, comercios, etc., según el tipo de institución de la app) **no puntúan**: sus adelantos y financiamientos no se reportan a los burós. Aparecen en «Mis créditos → Fuera del score» y **sí cuentan en la capacidad de endeudamiento**, porque son cuotas reales.
+
 **No se leen** cuentas de ahorro, saldos bancarios, depósitos, patrimonio, inversiones ni transferencias. Una prueba lo comprueba (un depósito de RD$9 000 000 no mueve el score).
 
 ## Historial y fechas

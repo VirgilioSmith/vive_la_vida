@@ -129,6 +129,15 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const reload = await frameOf(p).evaluate(() => ({ gate: !!document.querySelector('.qcard'), cal: ST.answers?.completed, version: ST.declVersion, seeds: ST.answers.limit.events.length, ov: Object.values(ST.overrides).some(o => o.opened === '2019-08') }));
   check(15, 'Las respuestas y modificaciones se conservan al recargar', !!stored && reload.cal === true && reload.gate === false && reload.ov && reload.seeds === 4, JSON.stringify(reload));
 
+  /* 20 · entidades no financieras: no puntúan (no se reportan a burós), pero sí cuentan para la capacidad */
+  await fclick(p, '[data-tab="data"]');
+  const nb0 = await frameOf(p).evaluate(() => { const c = evaluate(current()); return { loans: current().loans.length, debt: Math.round(c.capacity.debt), due: Math.round(c.capacity.loanDues) }; });
+  await p.evaluate(() => { const d = window.__T.dbg(); const l = d.loans[0]; const bk = d.banks.find(b => b.id === l.bankId); bk.kind = 'Telefonía'; });
+  await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
+  await fclick(p, '[data-tab="detail"]');
+  const nb1 = await frameOf(p).evaluate(() => { const c = evaluate(current()), s = current(); return { loans: s.loans.length, excluded: s.excluded.loans.length, debt: Math.round(c.capacity.debt), due: Math.round(c.capacity.loanDues), text: document.getElementById('view').innerText, cashAdv: c.parts.owed.find(x => x.id === 'o_installments').points }; });
+  check(20, 'Las entidades no financieras no puntúan en el score pero sí cuentan en la capacidad', nb0.loans === 1 && nb1.loans === 0 && nb1.excluded === 1 && nb1.debt === nb0.debt && nb1.due === nb0.due && /Fuera del score/.test(nb1.text) && nb1.cashAdv === 26, JSON.stringify({ antes: nb0, despues: { loans: nb1.loans, excluded: nb1.excluded, debt: nb1.debt, due: nb1.due, amort: nb1.cashAdv } }));
+
   /* 2 · solo web / 16 · móvil sin cambios / 17 · desactivación */
   await ctx.close();
   process.env.TOUCH = '1';

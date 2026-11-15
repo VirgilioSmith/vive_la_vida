@@ -33,7 +33,7 @@ function ensureAnswers(){
   first:{period:app,fromApp:!!app,confirmed:false},closed:{answer:null,items:[]},other:{answer:null,items:[]}};
  return ST.answers;
 }
-function appProducts(){return PAYLOAD?[...(PAYLOAD.cards||[]).map(c=>({...c,kind:'card'})),...(PAYLOAD.loans||[]).map(l=>({...l,kind:'loan'}))]:[]}
+function appProducts(){return PAYLOAD?[...(PAYLOAD.cards||[]).map(c=>({...c,kind:'card'})),...(PAYLOAD.loans||[]).map(l=>({...l,kind:'loan'}))].filter(p=>p.reported!==false):[]}
 function uniqueProducts(){const seen=new Set();return appProducts().filter(p=>{const k=p.kind+':'+(p.productId||p.id);if(seen.has(k))return false;seen.add(k);return true})}
 const getObj=(path)=>{const parts=path.split('.');let o=ST.answers;for(const p of parts)o=o?.[p];return o};
 function setPath(path,value){const parts=path.split('.'),last=parts.pop();let o=ST.answers;for(const p of parts)o=o[p];o[last]=value}

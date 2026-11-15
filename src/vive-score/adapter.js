@@ -14,6 +14,8 @@ function read(){
  const b=window.__viveScoreBridge;if(!b)return null;
  const db=b.db(),today=b.today(),fx=num(db.settings?.fx)||0;
  const hidden=x=>!!(x?.archived||(x?.bankId&&b.bank(x.bankId)?.archived));
+ // Entidades NO financieras (telefonía, comercios, etc.): sus adelantos y financiamientos no se reportan a los burós, así que no puntúan.
+ const reported=x=>{const bk=x?.bankId?b.bank(x.bankId):null;return !bk||b.isFinancial(bk)!==false};
  let overdue=[];try{overdue=(b.upcoming()||[]).filter(u=>u&&u.date<today&&(u.kind==='card'||u.kind==='loan'))}catch(_){}
  const dpd=(kind,ref)=>{const d=overdue.filter(u=>u.kind===kind&&String(u.ref)===String(ref)).map(u=>u.date).sort()[0];return d?Math.max(0,daysBetween(d,today)):0};
  const since90=addDays(today,-90);
@@ -26,7 +28,7 @@ function read(){
    const adv=(db.transactions||[]).filter(t=>t.type==='card_advance'&&t.cardId===c.id&&(t.currency||'DOP')===ccy&&t.date>=since90&&t.date<=today).reduce((a,t)=>a+num(t.amount),0);
    cards.push({id:c.id+'-'+ccy,productId:c.id,name:(c.name||'Tarjeta')+((c.limitDOP>0&&c.limitUSD>0)?' · '+ccy:''),bank:b.bank(c.bankId)?.name||'',network:c.network||'',currency:ccy,limit,balance:debt,
     min:Math.max(0,num(st.minimum)),statementBalance:Math.max(0,num(st.billed)||debt),advance:Math.min(debt,adv),daysPastDue:dpd('card',c.id),
-    status:'active',opened:ym(b.acquiredOnOf(c,'card')),apr:num(ccy==='USD'?c.aprUSD:c.aprDOP),reportedAt:today});
+    status:'active',reported:reported(c),opened:ym(b.acquiredOnOf(c,'card')),apr:num(ccy==='USD'?c.aprUSD:c.aprDOP),reportedAt:today});
   }
  }
  const loans=[];
@@ -36,7 +38,7 @@ function read(){
   loans.push({id:String(l.id),productId:l.id,name:l.name||'Préstamo',bank:b.bank(l.bankId)?.name||'',currency:l.currency||'DOP',
    type:/hipotec|vivienda|inmueble|mortgage/i.test([l.kind,l.type,l.loanType,l.name].join(' '))?'hipotecario':'personal',
    original:Math.max(num(orig.principal||orig.amount||l.amount||l.principal),num(ls.balance)),balance:Math.max(0,num(ls.balance)),due:Math.max(0,num(ls.installment)),
-   apr:num(l.rate),variable:l.rateType==='variable'||l.variableRate===true,opened:ym(b.acquiredOnOf(l,'loan')),daysPastDue:dpd('loan',l.id),status:closed?'closed':'active'});
+   apr:num(l.rate),variable:l.rateType==='variable'||l.variableRate===true,opened:ym(b.acquiredOnOf(l,'loan')),daysPastDue:dpd('loan',l.id),status:closed?'closed':'active',reported:reported(l)});
  }
  // Ingresos recurrentes: SOLO para capacidad de endeudamiento.
  const incomes=[];

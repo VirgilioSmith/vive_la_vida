@@ -63,7 +63,7 @@ function declaredCounters(period,observedLate){
 function appOpenings(facts,period){
  const out={n0to6:0,n7to12:0};
  const seen=new Set();
- for(const p of [...facts.cards,...facts.loans]){const o=ST.overrides[p.productId||p.id]?.opened||p.opened;if(!validPeriod(o))continue;const key=(p.productId||p.id)+'';if(seen.has(key))continue;seen.add(key);const age=monthsFrom(o,period);if(age<0)continue;if(age<=5)out.n0to6++;else if(age<=11)out.n7to12++}
+ for(const p of [...facts.cards,...facts.loans].filter(x=>x.reported!==false)){const o=ST.overrides[p.productId||p.id]?.opened||p.opened;if(!validPeriod(o))continue;const key=(p.productId||p.id)+'';if(seen.has(key))continue;seen.add(key);const age=monthsFrom(o,period);if(age<0)continue;if(age<=5)out.n0to6++;else if(age<=11)out.n7to12++}
  return out;
 }
 function dpdBucket(d){return d>=120?'120+':d>=90?'90-119':d>=60?'60-89':d>=30?'30-59':'<30'}
@@ -71,10 +71,10 @@ function dpdBucket(d){return d>=120?'120+':d>=90?'90-119':d>=60?'60-89':d>=30?'3
 /* ---------- construcción de cada corte ---------- */
 function materialize(period,idxInList){
  const rec=ST.observed[period],facts=rec.facts,A=ST.answers||{};
- const cards=withOverrides(facts.cards),loans=withOverrides(facts.loans);
+ const allCards=withOverrides(facts.cards),allLoans=withOverrides(facts.loans),cards=allCards.filter(x=>x.reported!==false),loans=allLoans.filter(x=>x.reported!==false),excluded={cards:allCards.filter(x=>x.reported===false),loans:allLoans.filter(x=>x.reported===false)};
  // mora observada en cortes anteriores (se guarda solo lo que la app registró)
  const observedLate=[];
- for(const p of Object.keys(ST.observed).sort()){if(p>=period)continue;const f=ST.observed[p].facts;const worst=Math.max(0,...f.cards.concat(f.loans).map(x=>Number(x.daysPastDue)||0));if(worst>0)observedLate.push({period:p,duration:dpdBucket(worst)})}
+ for(const p of Object.keys(ST.observed).sort()){if(p>=period)continue;const f=ST.observed[p].facts;const worst=Math.max(0,...f.cards.concat(f.loans).filter(x=>x.reported!==false).map(x=>Number(x.daysPastDue)||0));if(worst>0)observedLate.push({period:p,duration:dpdBucket(worst)})}
  const dc=declaredCounters(period,observedLate),ao=appOpenings(facts,period);
  // antigüedad: apertura registrada en la app o declarada, en mes y año
  const opened=[...cards,...loans].filter(x=>x.status!=='closed'&&validPeriod(x.opened)).map(x=>x.opened);
@@ -112,7 +112,7 @@ function materialize(period,idxInList){
   hard0to3:0,hard4to6:0,hard7to12:0,
   new0to6:Math.max(dc.new0to6,0)+ao.n0to6,new7to12:Math.max(dc.new7to12,0)+ao.n7to12,limitReq0to6:dc.limitReq0to6,limitReq7to12:dc.limitReq7to12,limitAuto:dc.limitAuto,
   restructure:dc.restructure,refinance:dc.refinance,
-  reportedTU:null,reportedEquifax:null,reportDate:rec.observedAt,cards,loans,
+  reportedTU:null,reportedEquifax:null,reportDate:rec.observedAt,cards,loans,excluded,
   expenses:facts.fixed.map(f=>({id:f.id,name:f.name,kind:f.kind||'subscription',amount:f.amount,onCard:!!f.onCard})),events,missing,
   oldestPeriod:oldest,ageSource:!oldest?'desconocida':(earliestApp&&(!declaredFirst||earliestApp<=declaredFirst))?(cards.concat(loans).some(x=>x.opened===oldest&&x.evidenceVerified)?'verificada':'registrada en vive el hoy'):'declarada',
   declVersion:ST.declVersion,closedMonth:!!rec.closed
