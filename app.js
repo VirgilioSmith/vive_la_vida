@@ -827,6 +827,17 @@ function v1125PayUpcoming(){
 }
 document.addEventListener('click',e=>{if(!e.target.closest?.('[data-v1125-pay]'))return;e.preventDefault();e.stopPropagation();v1125PayUpcoming()},true);
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1121-pay]');if(!b)return;e.preventDefault();e.stopPropagation();v1121Pay(b.dataset.v1121Pay)},true);
+/* V1129 · Widget «Salario anticipado»: registra desde Inicio el cobro de un ingreso recurrente (nómina) antes de su fecha. */
+function v1129SalaryWidget(){
+ let sources=[];
+ try{v40Ensure();sources=(db.incomeSchedules||[]).filter(x=>x&&x.active!==false&&x.nextDue).sort((a,b)=>(a.kind==='formal'?0:1)-(b.kind==='formal'?0:1)||String(a.nextDue).localeCompare(String(b.nextDue))).slice(0,3)}catch(e){}
+ const head='<div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">INGRESOS RECURRENTES</span><h2>Salario anticipado</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="income">Ver ingresos '+icon('arrow')+'</button></div>';
+ const rows=sources.map(s=>{let net=0;try{net=num(v40Payroll(s,s.nextDue).net)}catch(e){}
+  const future=s.nextDue>today();const label=future?(s.kind==='formal'?'Registrar salario anticipado':'Registrar cobro anticipado'):(s.kind==='formal'?'Confirmar salario':'Confirmar cobro');
+  return `<div class="v1129-income"><div class="v1129-income-info"><strong>${sanitize(s.name||'Ingreso')}</strong><small>${future?'Próximo cobro':'Cobro pendiente'} · ${sanitize(prettyDate(s.nextDue))}</small></div><b>${money(net,s.currency||'DOP')}</b><button type="button" class="v1129-income-btn" data-v40-action="${future?'v940Advance':'confirmIncome'}" data-id="${sanitize(String(s.id))}">${label}</button></div>`}).join('');
+ const body=rows||'<p class="v273-widget-empty">Aún no tienes ingresos recurrentes.</p><button type="button" class="v1129-income-btn v1129-add" data-v40-action="addIncome">Añadir ingreso recurrente</button>';
+ return `<section data-v105-widget="salaryAdvance" class="v105-mobile-extra v273-overview-widget v1129-salary" aria-label="Salario anticipado">${head}${body}</section>`;
+}
 function v273OverviewExtraWidgets(){
  // V319: mobile only keeps Recent activity + remaining user-selected widgets.
  // Subscriptions, cards-to-pay and credit-card summaries are still available
@@ -834,7 +845,7 @@ function v273OverviewExtraWidgets(){
  const recent=(recentTx()||[]).slice(0,4);
  const activity=recent.map(t=>`<button type="button" class="v273-widget-row v8-activity-button" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Abrir movimiento de ${sanitize(transactionTitle(t))}"><span class="v273-widget-symbol">${icon(['income','bank_reward','card_reward'].includes(t.type)?'up':'wallet')}</span><span class="v273-widget-copy"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b><span aria-hidden="true" class="v8-row-arrow">${icon('arrow')}</span></button>`).join('');
  const head=(eyebrow,title,link,text)=>`<div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">${eyebrow}</span><h2>${title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${link}">${text} ${icon('arrow')}</button></div>`;
- return `${v985SimplificationWidget()}<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver historial')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
+ return `${v985SimplificationWidget()}${v1129SalaryWidget()}<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver historial')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
 ${v294BankingWidgets()}${v309ExtraCharts()}`;
 }
 
@@ -11633,6 +11644,7 @@ const V105_WIDGETS=[
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
  {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
+ {id:'salaryAdvance',title:'Salario anticipado',hint:'Registra tu salario o cobro recurrente antes de su fecha'},
  {id:'premiumCommitments',title:'Compromisos del mes · Premium',hint:'Tarjeta compacta con programado, pagos vinculados y pendiente · opcional'},
  {id:'net',title:'Neto del mes',hint:'Ingresos menos egresos'},
  {id:'patrimonyTrend',title:'Tendencia de patrimonio',hint:'Evolución real de activos menos obligaciones por mes'},
@@ -11672,7 +11684,7 @@ function v332PersonalizationGroups(cfg){
 
 
 const V1123_TOP=['applePayInbox','patrimonyTrend','capacity','commitments'];
-const V1123_ORDER=[...V1123_TOP,'budgetPulse','cashPressure','futureCalendar','futureWaterfall','futureMap','spendingFingerprint','budgetTrend','net','creditUtil','futureFlow','futureBubbles'];
+const V1123_ORDER=[...V1123_TOP,'salaryAdvance','budgetPulse','cashPressure','futureCalendar','futureWaterfall','futureMap','spendingFingerprint','budgetTrend','net','creditUtil','futureFlow','futureBubbles'];
 function v316OrderDefaults(ids){const pri=V1123_ORDER.filter(id=>ids.includes(id));return [...pri,...ids.filter(id=>!pri.includes(id))]}
 function v316VisibleDefaults(ids){
  const hidden=new Set(['simplification','premiumCredit','premiumCommitments','activity','subscriptions','cardsDue','budget','budgetTrend','chart','banks','accounts','cards','loans','certificates']);
@@ -11680,6 +11692,8 @@ function v316VisibleDefaults(ids){
 }
 function v105Config(){
  const cfg=v105ConfigBase();
+ // V1129: el widget Salario anticipado se activa una sola vez.
+ if(db.settings&&!db.settings.v1129Salary){db.settings.v1129Salary=true;if(!cfg.visible.includes('salaryAdvance'))cfg.visible.push('salaryAdvance');if(!cfg.order.includes('salaryAdvance'))cfg.order.splice(Math.min(4,cfg.order.length),0,'salaryAdvance');db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};}
  // V1128: «Compromisos del mes» se había quitado por error; se vuelve a mostrar una sola vez.
  if(db.settings&&!db.settings.v1128Commit){
   db.settings.v1128Commit=true;
