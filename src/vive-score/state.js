@@ -39,10 +39,10 @@ const todayPeriod=()=>(PAYLOAD?.today||new Date().toISOString().slice(0,10)).sli
 
 /* ---------- hechos observados (solo lo que existe en la app) ---------- */
 function factsFromPayload(P){
- if(!P)return {fx:60,cards:[],loans:[],incomes:[],fixed:[]};
- return {fx:P.fx,cards:clone(P.cards||[]),loans:clone(P.loans||[]),incomes:clone(P.incomes||[]),fixed:clone(P.fixed||[])};
+ if(!P)return {fx:60,cards:[],loans:[],unrated:[],incomes:[],fixed:[]};
+ return {fx:P.fx,cards:clone(P.cards||[]),loans:clone(P.loans||[]),unrated:clone(P.unrated||[]),incomes:clone(P.incomes||[]),fixed:clone(P.fixed||[])};
 }
-function withOverrides(list){return list.map(x=>{const o=ST.overrides[x.productId||x.id]||{};return {...x,...(validPeriod(o.opened)?{opened:o.opened}:{}),...(o.status?{status:o.status}:{}),source:o.source||(x.source||'app'),evidenceVerified:!!o.evidenceVerified,evidenceNote:o.note||''}})}
+function withOverrides(list){return list.map(x=>{const o=ST.overrides[x.productId||x.id]||{};return {...x,openedSource:validPeriod(x.opened)?'app':(validPeriod(o.opened)?'usuario':'falta'),...((!validPeriod(x.opened)&&validPeriod(o.opened))?{opened:o.opened}:{}),...(o.status?{status:o.status}:{}),source:o.source||(x.source||'app'),evidenceVerified:!!o.evidenceVerified,evidenceNote:o.note||''}})}
 
 /* ---------- contadores a partir de antecedentes declarados + observación ---------- */
 function declaredCounters(period,observedLate){
@@ -53,17 +53,21 @@ function declaredCounters(period,observedLate){
  };
  if(A.late?.answer==='yes')for(const e of A.late.events||[]){if(!validPeriod(e.period))continue;const age=monthsFrom(e.period,period);if(age<0)continue;bump(e.duration,age,e.repeated?2:1)}
  for(const o of observedLate||[]){const age=monthsFrom(o.period,period);if(age>=0)bump(o.duration,age,1)}
- const windowAdd=(per,key06,key712)=>{if(!validPeriod(per))return;const age=monthsFrom(per,period);if(age<0)return;if(age<=5)c[key06]++;else if(age<=11)c[key712]++};
+ const windowAdd=(per,key06,key712)=>{if(!validPeriod(per))return;const age=monthsFrom(per,period);if(age<0)return;if(age<=6)c[key06]++;else if(age<=12)c[key712]++};
  if(A.newCards?.answer==='yes')for(const x of A.newCards.items||[])windowAdd(x.period,'new0to6','new7to12');
  if(A.newLoans?.answer==='yes')for(const x of A.newLoans.items||[])windowAdd(x.period,'new0to6','new7to12');
  if(A.limit?.answer==='yes')for(const x of A.limit.events||[]){if(x.kind==='requested')windowAdd(x.period,'limitReq0to6','limitReq7to12');else c.limitAuto++}
  if(A.other?.answer==='yes')for(const x of A.other.items||[]){if(!validPeriod(x.period))continue;const age=monthsFrom(x.period,period);if(age<0||age>=24)continue;if(x.type==='reestructuracion')c.restructure++;if(x.type==='refinanciamiento')c.refinance++}
  return c;
 }
+function productList(facts){return [...facts.cards.map(x=>({...x,kind:'card'})),...(facts.unrated||[]),...facts.loans.map(x=>({...x,kind:'loan'}))].filter(x=>x.reported!==false)}
+function openedOf(p){return validPeriod(p.opened)?p.opened:(validPeriod(ST.overrides[p.productId||p.id]?.opened)?ST.overrides[p.productId||p.id].opened:'')}
+function windowOf(age){return age<0?'futuro':age<=6?'0–6 meses':age<=12?'7–12 meses':'más de 12 meses'}
 function appOpenings(facts,period){
- const out={n0to6:0,n7to12:0};
- const seen=new Set();
- for(const p of [...facts.cards,...facts.loans].filter(x=>x.reported!==false)){const o=ST.overrides[p.productId||p.id]?.opened||p.opened;if(!validPeriod(o))continue;const key=(p.productId||p.id)+'';if(seen.has(key))continue;seen.add(key);const age=monthsFrom(o,period);if(age<0)continue;if(age<=5)out.n0to6++;else if(age<=11)out.n7to12++}
+ const out={n0to6:0,n7to12:0,list:[]},seen=new Set();
+ for(const p of productList(facts)){const key=p.kind+':'+(p.productId||p.id);if(seen.has(key))continue;seen.add(key);const o=openedOf(p),age=o?monthsFrom(o,period):null;
+  out.list.push({key,name:(p.name||'').replace(/ · (DOP|USD)$/,''),kind:p.kind,bank:p.bank||'',opened:o,age,window:o?windowOf(age):'falta la fecha',source:validPeriod(p.opened)?'registrada en vive el hoy':(o?'completada por ti':'sin dato'),unrated:!!p.reason,closed:p.status==='closed'});
+  if(!o||age<0)continue;if(age<=6)out.n0to6++;else if(age<=12)out.n7to12++}
  return out;
 }
 function dpdBucket(d){return d>=120?'120+':d>=90?'90-119':d>=60?'60-89':d>=30?'30-59':'<30'}
@@ -71,13 +75,13 @@ function dpdBucket(d){return d>=120?'120+':d>=90?'90-119':d>=60?'60-89':d>=30?'3
 /* ---------- construcción de cada corte ---------- */
 function materialize(period,idxInList){
  const rec=ST.observed[period],facts=rec.facts,A=ST.answers||{};
- const allCards=withOverrides(facts.cards),allLoans=withOverrides(facts.loans),cards=allCards.filter(x=>x.reported!==false),loans=allLoans.filter(x=>x.reported!==false),excluded={cards:allCards.filter(x=>x.reported===false),loans:allLoans.filter(x=>x.reported===false)};
+ const allCards=withOverrides(facts.cards),allLoans=withOverrides(facts.loans),cards=allCards.filter(x=>x.reported!==false),loans=allLoans.filter(x=>x.reported!==false);
  // mora observada en cortes anteriores (se guarda solo lo que la app registró)
  const observedLate=[];
  for(const p of Object.keys(ST.observed).sort()){if(p>=period)continue;const f=ST.observed[p].facts;const worst=Math.max(0,...f.cards.concat(f.loans).filter(x=>x.reported!==false).map(x=>Number(x.daysPastDue)||0));if(worst>0)observedLate.push({period:p,duration:dpdBucket(worst)})}
  const dc=declaredCounters(period,observedLate),ao=appOpenings(facts,period);
  // antigüedad: apertura registrada en la app o declarada, en mes y año
- const opened=[...cards,...loans].filter(x=>x.status!=='closed'&&validPeriod(x.opened)).map(x=>x.opened);
+ const opened=[...cards,...loans,...(facts.unrated||[]).map(u=>({...u,opened:openedOf(u)}))].filter(x=>x.status!=='closed'&&validPeriod(x.opened)).map(x=>x.opened);
  const declaredFirst=validPeriod(A.first?.period)?A.first.period:'';
  const earliestApp=opened.length?opened.slice().sort()[0]:'';
  const oldest=[earliestApp,declaredFirst].filter(Boolean).sort()[0]||'';
@@ -87,6 +91,9 @@ function materialize(period,idxInList){
  const avgHistoryMonths=ages.length?Math.round(ages.reduce((a,v)=>a+v,0)/ages.length):historyMonths;
  const keys=Object.keys(ST.observed).sort(),recordMonths=Math.max(1,keys.indexOf(period)+1);
  const formalInc=facts.incomes.filter(i=>i.kind==='formal'),informalInc=facts.incomes.filter(i=>i.kind!=='formal');
+ // Adicionales (bonos, comisiones…): se reconocen si aparecen en ≥3 de los últimos 6 meses (promedio de 6 meses); con menos se reconocen proporcionalmente.
+ const extraMonthly=l=>l.reduce((a,i)=>a+((i.extra?.total6||0)/6)*clamp((i.extra?.months||0)/3,0,1),0);
+ const payroll={gross:formalInc.reduce((a,i)=>a+(i.gross||0),0),afp:formalInc.reduce((a,i)=>a+(i.afp||0),0),sfs:formalInc.reduce((a,i)=>a+(i.sfs||0),0),isr:formalInc.reduce((a,i)=>a+(i.isr||0),0),other:formalInc.reduce((a,i)=>a+(i.other||0),0),net:formalInc.reduce((a,i)=>a+i.net,0),extra:extraMonthly(formalInc),sources:facts.incomes.map(i=>({name:i.name,kind:i.kind,frequency:i.frequency,net:i.net,extra:i.extra}))};
  const informalVerified=informalInc.length&&informalInc.every(i=>i.verified),maxRec=a=>Math.max(0,...a.map(i=>i.recurrenceMonths||0));
  // calibración: sin respuesta de atrasos, o sin antigüedad conocida, no se calcula ningún puntaje
  const missing=[];
@@ -105,14 +112,14 @@ function materialize(period,idxInList){
  for(const e of (A.closed?.answer==='yes'?A.closed.items||[]:[]))add('close',e.period,'Producto cerrado · '+(e.productLabel||'producto'),`${e.reason||'motivo no indicado'} · ${e.state||'—'} · declaración personal`);
  for(const e of (A.other?.answer==='yes'?A.other.items||[]:[]))add('other',e.period,'Acontecimiento declarado · '+(OTHER_TYPES[e.type]||e.type),`${e.note||'sin nota'} · declaración personal`);
  return {
-  period,txRate:facts.fx,formal:formalInc.reduce((a,i)=>a+i.net,0),formalMonths:maxRec(formalInc),formalVerified:formalInc.length>0&&formalInc.every(i=>i.verified),otherFormal:0,
-  informal:informalInc.reduce((a,i)=>a+i.net,0),informalQuality:!informalInc.length?'none':informalVerified?'verified':'declared',informalMonths:maxRec(informalInc),paid:0,
+  period,txRate:facts.fx,formal:formalInc.reduce((a,i)=>a+i.net,0),formalMonths:maxRec(formalInc),formalVerified:formalInc.length>0&&formalInc.every(i=>i.verified),otherFormal:extraMonthly(formalInc),payroll,
+  informal:informalInc.reduce((a,i)=>a+i.net,0)+extraMonthly(informalInc),informalQuality:!informalInc.length?'none':informalVerified?'verified':'declared',informalMonths:maxRec(informalInc),paid:0,
   lateShort:dc.lateShort,late30:dc.late30,late60:dc.late60,late90:dc.late90,late120:dc.late120,lateOlder:dc.lateOlder+0,
   collections:0,chargeOffs:0,judicial:0,historyMonths,avgHistoryMonths,avgEstimated,recordMonths,
   hard0to3:0,hard4to6:0,hard7to12:0,
-  new0to6:Math.max(dc.new0to6,0)+ao.n0to6,new7to12:Math.max(dc.new7to12,0)+ao.n7to12,limitReq0to6:dc.limitReq0to6,limitReq7to12:dc.limitReq7to12,limitAuto:dc.limitAuto,
+  new0to6:Math.max(dc.new0to6,0)+ao.n0to6,new7to12:Math.max(dc.new7to12,0)+ao.n7to12,products:ao.list,limitReq0to6:dc.limitReq0to6,limitReq7to12:dc.limitReq7to12,limitAuto:dc.limitAuto,
   restructure:dc.restructure,refinance:dc.refinance,
-  reportedTU:null,reportedEquifax:null,reportDate:rec.observedAt,cards,loans,excluded,
+  reportedTU:null,reportedEquifax:null,reportDate:rec.observedAt,cards,loans,
   expenses:facts.fixed.map(f=>({id:f.id,name:f.name,kind:f.kind||'subscription',amount:f.amount,onCard:!!f.onCard})),events,missing,
   oldestPeriod:oldest,ageSource:!oldest?'desconocida':(earliestApp&&(!declaredFirst||earliestApp<=declaredFirst))?(cards.concat(loans).some(x=>x.opened===oldest&&x.evidenceVerified)?'verificada':'registrada en vive el hoy'):'declarada',
   declVersion:ST.declVersion,closedMonth:!!rec.closed

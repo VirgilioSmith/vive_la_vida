@@ -32,15 +32,20 @@ El adaptador (`adapter.js`) solo **lee**, a través del puente `window.__viveSco
 
 | Dato | Fuente |
 |---|---|
-| Tarjetas (una línea por moneda con límite o saldo) | institución, producto, marca, moneda, límite, saldo, mínimo, saldo del estado, avances (últimos 90 días), apertura, tasa |
+| Tarjetas (una línea por moneda con límite o saldo; las que aún no tienen ni límite ni saldo también cuentan como apertura y antigüedad) | institución, producto, marca, moneda, límite, saldo, mínimo, saldo del estado, avances (últimos 90 días), apertura, tasa |
 | Préstamos | institución, tipo, capital original, saldo, cuota, tasa, apertura, estado |
 | Mora vigente | vencimientos sin pagar de tarjetas y préstamos (`upcoming()`) |
-| Ingresos recurrentes | **solo para capacidad de endeudamiento** |
+| Ingresos recurrentes | **solo para capacidad de endeudamiento**, siempre en base **mensual** y en RD$ (una nómina quincenal = 2 pagos al mes). Se lee el desglose bruto → AFP → SFS (ARS) → ISR → otros descuentos → neto |
+| Ingresos laborales adicionales | bonos, comisiones, incentivos, horas extra, retroactivos y sueldo extraordinario registrados en vive el hoy; los reembolsos no cuentan. Se reconocen con el promedio de los últimos 6 meses si aparecen en ≥3 de ellos (proporcional si menos) |
 | Pagos recurrentes | **solo para capacidad**; los pagados con tarjeta se marcan para no duplicarlos |
 
-**Entidades no financieras:** los productos de instituciones que no son financieras (telefonía, comercios, etc., según el tipo de institución de la app) **no puntúan**: sus adelantos y financiamientos no se reportan a los burós. Aparecen en «Mis créditos → Fuera del score» y **sí cuentan en la capacidad de endeudamiento**, porque son cuotas reales.
+**Entidades no financieras:** los productos de instituciones que no son financieras (telefonía, comercios, etc., según el tipo de institución de la app) **no puntúan**: sus adelantos y financiamientos no se reportan a los burós. **No entran para nada**: ni en el score, ni en la capacidad de endeudamiento, ni en listas, cuestionario o simulaciones (el adaptador ni siquiera los lee).
 
 **No se leen** cuentas de ahorro, saldos bancarios, depósitos, patrimonio, inversiones ni transferencias. Una prueba lo comprueba (un depósito de RD$9 000 000 no mueve el score).
+
+## Créditos recientes
+
+Cada tarjeta y préstamo cuenta por su **mes y año de apertura** (el de «Editar» en vive el hoy; la fecha de la app manda sobre lo que se complete aquí). Se ve en *Mis créditos → Créditos recientes*: aperturas de **0–6 meses** y de **7–12 meses** (inclusivas, sin superponerse), también las de productos cerrados y las de tarjetas sin límite. Si falta la fecha, el producto dice «falta la fecha».
 
 ## Historial y fechas
 
