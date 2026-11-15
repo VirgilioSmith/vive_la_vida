@@ -11620,7 +11620,6 @@ const V105_WIDGETS=[
  {id:'budgetPulse',title:'Cumplimiento de presupuesto · Pulso',hint:'Utilización, ritmo mensual, disponible y categorías'},
  {id:'cashPressure',title:'Radar de vencimientos · 30 días',hint:'Distribución de compromisos futuros en tramos de 7, 15 y 30 días'},
  {id:'spendingFingerprint',title:'Huella de gastos · 28 días',hint:'Calendario visual de importes registrados, sin contar pagos de tarjetas dos veces'},
- {id:'futureCostKpi',title:'Costo del mañana',hint:'Compromisos del próximo mes, presión y carga futura'},
  {id:'futureCalendar',title:'Calendario de presión financiera',hint:'Mapa de vencimientos diarios en los próximos 30 días'},
  {id:'futureFlow',title:'El río de tu dinero',hint:'Flujos de liquidez e ingresos hacia compromisos y saldo'},
  {id:'futureWaterfall',title:'Dinero comprometido · 30 días',hint:'Cascada de saldos, ingresos programados y pagos'},
@@ -11632,14 +11631,14 @@ const V105_WIDGETS=[
    Otros widgets funcionales siguen disponibles desde el editor. */
 const V316_ESSENTIAL_GRAPHS=['creditUtil','patrimonyTrend','budgetPulse'];
 const V317_NEW_GRAPHS=['cashPressure','spendingFingerprint'];
-const V318_NEW_GRAPHS=['futureCostKpi','futureCalendar','futureFlow','futureWaterfall','futureMap','futureBubbles'];
+const V318_NEW_GRAPHS=['futureCalendar','futureFlow','futureWaterfall','futureMap','futureBubbles'];
 const V317_FEATURE_GRAPHS=[...V316_ESSENTIAL_GRAPHS,...V317_NEW_GRAPHS,...V318_NEW_GRAPHS];
 /* V332 · Una sola organización para Personalización móvil y Mis indicadores web.
    Ambos consumen V105_WIDGETS y el orden persistido de v105Config(). */
 const V332_PERSONALIZATION_AREAS=[
  {key:'position',title:'01 · TU POSICIÓN FINANCIERA',label:'Posición financiera',ids:['applePayInbox','simplification','premiumCredit','creditUtil','patrimonyTrend','capacity','net','accounts','banks','certificates']},
  {key:'budget',title:'02 · INGRESOS Y PRESUPUESTO',label:'Ingresos y presupuesto',ids:['budgetPulse','spendingFingerprint','chart','budgetTrend','activity']},
- {key:'future',title:'03 · COMPROMISOS Y PROYECCIONES',label:'Compromisos y proyecciones',ids:['premiumCommitments','futureCostKpi','futureCalendar','cashPressure','futureFlow','futureWaterfall','futureMap','futureBubbles','commitments','payments','loans']},
+ {key:'future',title:'03 · COMPROMISOS Y PROYECCIONES',label:'Compromisos y proyecciones',ids:['premiumCommitments','futureCalendar','cashPressure','futureFlow','futureWaterfall','futureMap','futureBubbles','commitments','payments','loans']},
  {key:'other',title:'04 · RELACIONES Y OTROS MÓDULOS',label:'Relaciones',ids:['people']}
 ];
 function v332PersonalizationGroups(cfg){
