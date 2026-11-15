@@ -835,9 +835,11 @@ function v1129SalaryWidget(){
  const rows=sources.map(s=>{let net=0;try{net=num(v40Payroll(s,s.nextDue).net)}catch(e){}
   const future=s.nextDue>today();const label=future?(s.kind==='formal'?'Registrar salario anticipado':'Registrar cobro anticipado'):(s.kind==='formal'?'Confirmar salario':'Confirmar cobro');
   return `<div class="v1129-income"><div class="v1129-income-info"><strong>${sanitize(s.name||'Ingreso')}</strong><small>${future?'Próximo cobro':'Cobro pendiente'} · ${sanitize(prettyDate(s.nextDue))}</small></div><b>${money(net,s.currency||'DOP')}</b><button type="button" class="v1129-income-btn" data-v40-action="${future?'v940Advance':'confirmIncome'}" data-id="${sanitize(String(s.id))}">${label}</button></div>`}).join('');
- const body=rows||'<p class="v273-widget-empty">Aún no tienes ingresos recurrentes.</p><button type="button" class="v1129-income-btn v1129-add" data-v40-action="addIncome">Añadir ingreso recurrente</button>';
+ const body=rows||'<p class="v273-widget-empty">Para registrar un salario anticipado primero crea tu salario recurrente; luego podrás cobrarlo antes de su fecha desde aquí.</p><button type="button" class="v1129-income-btn v1129-add" data-v1129-start="1">Registrar salario anticipado</button>';
  return `<section data-v105-widget="salaryAdvance" class="v105-mobile-extra v273-overview-widget v1129-salary" aria-label="Salario anticipado">${head}${body}</section>`;
 }
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1129-start]');if(!b)return;e.preventDefault();e.stopPropagation();
+ try{v40IncomeForm();const f=document.getElementById('v40IncomeForm');const k=f?.elements?.kind;if(k){k.value='formal';k.dispatchEvent(new Event('change',{bubbles:true}))}toast('Crea tu salario recurrente; después podrás registrarlo anticipado.')}catch(err){console.warn('V1129',err)}},true);
 function v273OverviewExtraWidgets(){
  // V319: mobile only keeps Recent activity + remaining user-selected widgets.
  // Subscriptions, cards-to-pay and credit-card summaries are still available
