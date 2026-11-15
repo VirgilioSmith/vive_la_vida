@@ -21,3 +21,4 @@
 | 2026-11-15 | Fondo de las ventanas de registro sin desenfoque; color de acento en Ingresos recurrentes | Pedido de diseño | Solo visual |
 | 2026-11-15 | Tarjeta: límites, sobregiro, tasas, comisión por avance y anualidad con vigencia; historial visible en el detalle | Un cambio rige desde su fecha y no altera el pasado | El utilizado mensual histórico usa el límite vigente de cada mes; el estado actual usa el vigente hoy |
 | 2026-11-15 | Vigencias: una corrección el mismo día agrega otro registro (gana el más reciente); fechas anteriores se rechazan | Poder corregir sin reescribir | La migración permite varias entradas por día; sigue sin permitir editar ni borrar |
+| 2026-11-15 | Pruebas de recorrido (`tests/logica/recorrido-*.js`): todas las entradas de pago de tarjeta, préstamo y servicio, el menú Registrar y los selectores de beneficios y préstamos | Verificar que cada acceso apunta al formulario y a la tarjeta correctos | Solo pruebas |
