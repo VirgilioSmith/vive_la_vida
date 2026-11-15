@@ -31,21 +31,27 @@ function observeLimits(A){
    Fecha de apertura y fecha de la última transacción (= cierre), en mes y año. Se excluye Altice (telefonía, entidad no financiera: no se reporta al buró).
    Todos aparecen al día (000) en los últimos 12 meses, así que no generan atrasos. Se cargan una vez; si los quitas, no se vuelven a cargar. */
 const CANCELLED_SEED=[
- {inst:'Banco Popular',kind:'card',opened:'2022-02',closed:'2024-09',limit:'RD$39,999'},
- {inst:'Banco Popular',kind:'loan',opened:'2022-08',closed:'2026-03',limit:''},
- {inst:'Qik Banco Digital',kind:'card',opened:'2024-02',closed:'2026-06',limit:'RD$259,000'},
- {inst:'Banco Popular',kind:'card',opened:'2024-05',closed:'2025-11',limit:'US$2,000'},
- {inst:'Banco Popular',kind:'card',opened:'2024-05',closed:'2026-01',limit:'RD$100,000'},
- {inst:'Banco Popular',kind:'loan',opened:'2024-09',closed:'2025-09',limit:'RD$100,000'},
- {inst:'Banco Santa Cruz',kind:'card',opened:'2025-03',closed:'2025-08',limit:'RD$75,000 · US$2,100'},
- {inst:'Asociación Cibao',kind:'card',opened:'2025-10',closed:'2025-12',limit:'RD$216,000 · US$1'},
- {inst:'Banco Lafise',kind:'card',opened:'2026-06',closed:'2026-06',limit:'RD$199,969 · US$4,081'}
+ {inst:'Banco Popular',kind:'card',opened:'2022-02',closed:'2024-09',limit:'RD$39,999',vector:'000 000 000 000'},
+ {inst:'Banco Popular',kind:'loan',opened:'2022-08',closed:'2026-03',limit:'',vector:'000 000 -00 000'},
+ {inst:'Qik Banco Digital',kind:'card',opened:'2024-02',closed:'2026-06',limit:'RD$259,000',vector:'000 000 000 00-'},
+ {inst:'Banco Popular',kind:'card',opened:'2024-05',closed:'2025-11',limit:'US$2,000',vector:'000 000 000 00-'},
+ {inst:'Banco Popular',kind:'card',opened:'2024-05',closed:'2026-01',limit:'RD$100,000',vector:'000 000 000 00-'},
+ {inst:'Banco Popular',kind:'loan',opened:'2024-09',closed:'2025-09',limit:'RD$100,000',vector:'000 000 000 000'},
+ {inst:'Banco Santa Cruz',kind:'card',opened:'2025-03',closed:'2025-08',limit:'RD$75,000 · US$2,100',vector:'--- --- 000 000'},
+ {inst:'Asociación Cibao',kind:'card',opened:'2025-10',closed:'2025-12',limit:'RD$216,000 · US$1',vector:'--- --- --- 000'},
+ {inst:'Banco Lafise',kind:'card',opened:'2026-06',closed:'2026-06',limit:'RD$199,969 · US$4,081',vector:'--- --- --- --0'}
 ];
+/* Estado final: un préstamo que llegó a su fin está «saldado» (se completó); una tarjeta se «cancela». El vector del reporte (0 = al día, 1 = 30 días … 7 = 181 o más) da el peor atraso de los últimos 12 meses. */
+const seedState=c=>c.kind==='loan'?'saldado':'cancelado sin saldo';
+const worstLate=v=>Math.max(0,...String(v||'').split('').filter(ch=>/\d/.test(ch)).map(Number));
+
 function applySeeds(){
  if(!PAYLOAD)return false;
  ST.seeded=ST.seeded||{};let changed=false;const A=ensureAnswers();
  let auto=false;
- if(!ST.seeded['cancelled-report-2026-11']){ST.seeded['cancelled-report-2026-11']=true;ST.cancelled=ST.cancelled||[];for(const c of CANCELLED_SEED)ST.cancelled.push({id:uid(),seed:true,inst:c.inst,kind:c.kind,opened:c.opened,closed:c.closed,state:'cancelado sin saldo',limit:c.limit});auditLog('Cargó los productos cancelados del reporte de crédito del titular ('+CANCELLED_SEED.length+').');auto=true}
+ /* migración: completa estado final y vector de atrasos en los cancelados ya cargados */
+ for(const x of ST.cancelled||[]){if(!x.seed||x.vector!==undefined)continue;const c=CANCELLED_SEED.find(q=>q.inst===x.inst&&q.kind===x.kind&&q.opened===x.opened&&q.closed===x.closed);if(c){x.vector=c.vector;x.maxLate=worstLate(c.vector);x.state=seedState(c);auto=true}}
+ if(!ST.seeded['cancelled-report-2026-11']){ST.seeded['cancelled-report-2026-11']=true;ST.cancelled=ST.cancelled||[];for(const c of CANCELLED_SEED)ST.cancelled.push({id:uid(),seed:true,inst:c.inst,kind:c.kind,opened:c.opened,closed:c.closed,state:seedState(c),limit:c.limit,vector:c.vector,maxLate:worstLate(c.vector)});auditLog('Cargó los productos cancelados del reporte de crédito del titular ('+CANCELLED_SEED.length+').');auto=true}
  const ev0=A.limit.events.length;if(observeLimits(A)){auto=true;if(A.limit.events.length>ev0)ST.declVersion++}
  /* Aperturas recientes: se leen solas de las fechas de apertura de vive el hoy (ventana de 0–6 meses); no hay nada que seleccionar. */
  for(const k of ['limit','newCards','newLoans'])if(A[k]&&A[k].answer==null){A[k].answer='no';A[k].items=[];A[k].auto=true;auto=true}

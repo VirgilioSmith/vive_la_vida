@@ -53,6 +53,7 @@ function declaredCounters(period,observedLate){
   const limit=key==='lateShort'?12:24;if(age>=limit)c.lateOlder+=mult;else c[key]+=mult;
  };
  if(A.late?.answer==='yes')for(const e of A.late.events||[]){if(!validPeriod(e.period))continue;const age=monthsFrom(e.period,period);if(age<0)continue;bump(e.duration,age,e.repeated?2:1)}
+ for(const x of ST.cancelled||[]){const d=Number(x.maxLate)||0;if(d<1||!validPeriod(x.closed))continue;const age=monthsFrom(x.closed,period);if(age<0)continue;bump(d===1?'30-59':d===2?'60-89':d===3?'90-119':'120+',age,1)}
  for(const o of observedLate||[]){const age=monthsFrom(o.period,period);if(age>=0)bump(o.duration,age,1)}
  const windowAdd=(per,key06,key712)=>{if(!validPeriod(per))return;const age=monthsFrom(per,period);if(age<0)return;if(age<=6)c[key06]++};
  if(A.newCards?.answer==='yes')for(const x of A.newCards.items||[])windowAdd(x.period,'new0to6','new7to12');
