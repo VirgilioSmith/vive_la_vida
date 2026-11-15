@@ -62,6 +62,11 @@ function declaredCounters(period,observedLate){
  return c;
 }
 function productList(facts){return [...facts.cards.map(x=>({...x,kind:'card'})),...(facts.unrated||[]),...facts.loans.map(x=>({...x,kind:'loan'}))].filter(x=>x.reported!==false)}
+/* Cancelados declarados que cuentan: con apertura válida y sin repetir un producto que la app ya tiene (mismo tipo, mismo mes de apertura y misma institución). */
+function effCancelled(facts,period){
+ const tok=x=>{const n=norm(x.inst).split(' ').filter(w=>!['banco','asociacion','cooperativa','digital','de','la','sa'].includes(w));return n[0]||norm(x.inst)},norm=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''),app=productList(facts).concat((facts.cards||[]).filter(c=>c.status==='closed').map(c=>({...c,kind:'card'})));
+ return (ST.cancelled||[]).filter(x=>validPeriod(x.opened)&&x.opened<=period&&!app.some(p=>p.kind===x.kind&&openedOf(p)===x.opened&&norm((p.bank||'')+' '+(p.name||'')).includes(tok(x))));
+}
 function openedOf(p){return validPeriod(p.opened)?p.opened:(validPeriod(ST.overrides[p.productId||p.id]?.opened)?ST.overrides[p.productId||p.id].opened:'')}
 function windowOf(age){return age<0?'futuro':age<=6?'0–6 meses':'más de 6 meses'}
 function appOpenings(facts,period){
@@ -80,12 +85,13 @@ function materialize(period,idxInList){
  // mora observada en cortes anteriores (se guarda solo lo que la app registró)
  const observedLate=[];
  for(const p of Object.keys(ST.observed).sort()){if(p>=period)continue;const f=ST.observed[p].facts;const worst=Math.max(0,...f.cards.concat(f.loans).filter(x=>x.reported!==false).map(x=>Number(x.daysPastDue)||0));if(worst>0)observedLate.push({period:p,duration:dpdBucket(worst)})}
- const dc=declaredCounters(period,observedLate),ao=appOpenings(facts,period);
+ const dc=declaredCounters(period,observedLate),ao=appOpenings(facts,period),canc=effCancelled(facts,period);
+ for(const x of canc){const age=monthsFrom(x.opened,period);if(age>=0&&age<=6){ao.n0to6++;ao.list.push({key:'x:'+x.id,name:x.inst,kind:x.kind,bank:x.inst,opened:x.opened,age,window:'0–6 meses',source:'historial de cancelados',unrated:false,closed:true})}}
  // antigüedad: apertura registrada en la app o declarada, en mes y año
  const opened=[...cards,...loans,...(facts.unrated||[]).map(u=>({...u,opened:openedOf(u)}))].filter(x=>x.status!=='closed'&&validPeriod(x.opened)).map(x=>x.opened);
  // Productos cancelados (cerrados en la app o declarados en Configuración): cuentan para la antigüedad y el promedio de edad del historial, como los cerrados en buen estado de un buró. Los castigados no.
  const appClosedOpened=[...cards,...loans,...(facts.unrated||[])].filter(x=>x.status==='closed'&&validPeriod(x.opened)).map(x=>x.opened);
- const declCancelled=(ST.cancelled||[]).filter(x=>x.state!=='castigado'&&validPeriod(x.opened)&&x.opened<=period).map(x=>x.opened);
+ const declCancelled=canc.filter(x=>x.state!=='castigado').map(x=>x.opened);
  const declaredFirst=[validPeriod(A.first?.period)?A.first.period:'',...declCancelled].filter(Boolean).sort()[0]||'';
  const allOpened=opened.concat(appClosedOpened),earliestApp=allOpened.length?allOpened.slice().sort()[0]:'';
  const oldest=[earliestApp,declaredFirst].filter(Boolean).sort()[0]||'';

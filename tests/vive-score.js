@@ -145,7 +145,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await frameOf(p).evaluate(() => { const id = current().cards.find(c => /BHD/.test(c.name)).productId; setOverride(id, { opened: '2020-01' }); rebuildDB(); render(); });
   await fclick(p, '[data-tab="detail"]');
   const rc = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s); return { n06: s.new0to6, n712: s.new7to12, list: s.products.map(x => x.name + ':' + x.window + ':' + x.source).join(' | '), text: document.getElementById('view').innerText, part: e.parts.new[0].points, score: e.score }; });
-  check(22, 'Créditos recientes: BHD, Qik y una tarjeta sin límite cuentan por su mes y año de apertura (solo 0–6 meses); la fecha de la app manda', rc.n06 === 3 && rc.n712 === 0 && /BHD Visa:0–6 meses:registrada en vive el hoy/.test(rc.list) && /Qik Pro:0–6 meses/.test(rc.list) && /Tarjeta nueva:0–6 meses/.test(rc.list) && /Créditos recientes/.test(rc.text) && /sin límite ni saldo/.test(rc.text) && rc.part === 60 - 15 * 3, JSON.stringify({ n0a6: rc.n06, n7a12: rc.n712, puntos: rc.part, productos: rc.list }));
+  check(22, 'Créditos recientes: BHD, Qik y una tarjeta sin límite cuentan por su mes y año de apertura (solo 0–6 meses); la fecha de la app manda', rc.n06 === 4 && rc.n712 === 0 && /BHD Visa:0–6 meses:registrada en vive el hoy/.test(rc.list) && /Qik Pro:0–6 meses/.test(rc.list) && /Tarjeta nueva:0–6 meses/.test(rc.list) && /Créditos recientes/.test(rc.text) && /sin límite ni saldo/.test(rc.text) && rc.part === 0 && /Banco Lafise:0–6 meses:historial de cancelados/.test(rc.list), JSON.stringify({ n0a6: rc.n06, n7a12: rc.n712, puntos: rc.part, productos: rc.list }));
 
   const sc23 = await frameOf(p).evaluate(() => evaluate(current()).score);
   /* 23 · ingresos dinámicos: nómina quincenal en base mensual, bruto→neto, adicionales recurrentes */
@@ -247,6 +247,12 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const lim2 = await frameOf(p).evaluate(() => ({ req: current().limitReq0to6, score: evaluate(current()).score, text: /historial de límites/i.test(document.getElementById('view').innerText) }));
   await p.evaluate(() => { const c = window.__T.dbg().cards.find(x => x.id === window.__lim.id); c.limitDOP = window.__lim.old; });
   check(29, 'Historial de límites automático: el cambio de límite editado en la app se registra solo con fecha y hora, no resta puntos mientras sea automático y sí al marcarlo como solicitado', lim0.obs >= 1 && lim1.n === lim0.ev + 1 && lim1.hasAt && lim1.last.next - lim1.last.prev === 100000 && lim1.last.period === lim1.last.at.slice(0, 7) && lim1.score === lim0.score && lim1.auto === lim0.auto + 1 && lim2.req === lim0.req + 1 && lim2.score <= lim1.score && lim2.text, JSON.stringify({ lim0, lim1: { ...lim1, last: lim1.last && { prev: lim1.last.prev, next: lim1.last.next, period: lim1.last.period } }, lim2 }));
+
+  /* 33 · reporte de crédito: los 9 productos cancelados (sin Altice) se cargan solos con su tipo (TC/PR), una sola vez */
+  const sd = await frameOf(p).evaluate(() => { const c = (ST.cancelled || []).filter(x => x.seed); return { n: c.length, cards: c.filter(x => x.kind === 'card').length, loans: c.filter(x => x.kind === 'loan').length, altice: c.some(x => /altice/i.test(x.inst)), first: c.map(x => x.opened).sort()[0], santa: c.find(x => /santa cruz/i.test(x.inst)), once: ST.seeded['cancelled-report-2026-11'] === true }; });
+  await cc(p, 'productos');
+  const sdText = await frameOf(p).evaluate(() => document.getElementById('view').innerText);
+  check(33, 'Cancelados del reporte de crédito: 9 productos (7 tarjetas y 2 préstamos, tipo por TC/PR) cargados solos, sin Altice, con límites y fechas, y visibles en Productos y cancelados', sd.n === 9 && sd.cards === 7 && sd.loans === 2 && !sd.altice && sd.first === '2022-02' && sd.once && sd.santa && sd.santa.opened === '2025-03' && sd.santa.closed === '2025-08' && /US\$2,100/.test(sd.santa.limit) && /Banco Lafise/.test(sdText) && /Qik Banco Digital/.test(sdText) && !/altice/i.test(sdText), JSON.stringify(sd));
 
   /* 31 · productos cancelados: suman años al historial y a la edad promedio; los castigados no; no tocan los datos de la app */
   await go(p, 'score'); await cc(p, 'productos');
