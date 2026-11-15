@@ -773,7 +773,7 @@ function v985SimplificationWidget(asKpi){
 }
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v985-pane]');if(b)v242SettingsPane=b.dataset.v985Pane;},true);
 /* V1121 · Anticipar: cada fila abre primero el selector de qué pagar y luego el flujo de pago existente. */
-function v1121Go(act,id){const b=document.createElement('button');b.type='button';b.dataset.act=act;b.dataset.id=String(id);b.hidden=true;document.body.append(b);b.click();b.remove()}
+function v1121Go(act,id,ccy){const b=document.createElement('button');b.type='button';b.dataset.act=act;b.dataset.id=String(id);if(ccy)b.dataset.ccy=ccy;b.hidden=true;document.body.append(b);b.click();b.remove()}
 function v1121Pay(kind){
  const nav=(page,msg)=>{toast(msg);ui.page=page;render()};
  try{
@@ -796,6 +796,14 @@ function v1121Pay(kind){
   }
  }catch(err){console.warn('V1121',err);}
 }
+/* V1125 · Radar de vencimientos: el botón «Pagar» pregunta qué vencimiento pagar y abre el pago. */
+function v1125PayUpcoming(){
+ let list=[];try{list=(upcoming()||[]).filter(u=>u&&u.action&&u.ref).slice(0,40)}catch(e){}
+ if(!list.length){toast('No tienes pagos próximos.');return}
+ const map=new Map(list.map((u,i)=>[String(i),u]));
+ window.openItemPicker('Selecciona qué pagar',list.map((u,i)=>({value:String(i),name:u.name,detail:prettyDate(u.date)+(u.kind==='card'?' · Tarjeta':u.kind==='loan'?' · Préstamo':u.kind==='recurring'?' · Suscripción':''),amount:money(num(u.amount),u.currency||'DOP',2)})),i=>{const u=map.get(String(i));if(u)v1121Go(u.action,u.ref,u.ccy)});
+}
+document.addEventListener('click',e=>{if(!e.target.closest?.('[data-v1125-pay]'))return;e.preventDefault();e.stopPropagation();v1125PayUpcoming()},true);
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1121-pay]');if(!b)return;e.preventDefault();e.stopPropagation();v1121Pay(b.dataset.v1121Pay)},true);
 function v273OverviewExtraWidgets(){
  // V319: mobile only keeps Recent activity + remaining user-selected widgets.
@@ -11731,7 +11739,7 @@ function v105SaveConfig(c){
  v105ApplyWidgetPreferences();
 }
 let v105DraftConfig=null;
-const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow','banks','accounts','loans','certificates','futureBubbles','people','activity','premiumCommitments','futureCostKpi'];
+const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow','banks','accounts','loans','certificates','futureBubbles','payments','people','activity','premiumCommitments','futureCostKpi'];
 function v1118Skip(id){return V1118_MOBILE_REMOVED.includes(id)&&isMobileViewport()}
 function v105Customizer(){
  const cfg=v105DraftConfig||v105Config(),enabled=new Set(cfg.visible);
@@ -14793,10 +14801,10 @@ function v309ExtraCharts(){
  const v317DueBars=v317Buckets.map((d,i)=>`<div class="v317-due-col"><div class="v317-due-value">${displayMoney(d.total)}</div><div class="v317-due-tower"><i style="height:${d.total>0?Math.max(5,100*d.total/v317MaxDue):0}%" class="${i===0?'is-urgent':''}"></i></div><b>${d.label}</b><span>${d.count} ${d.count===1?'cargo':'cargos'}</span></div>`).join('');
  const v317Upcoming=v317DueEvents.slice(0,3).map(e=>`<div class="v317-next-pay"><span>${sanitize(prettyDate(e.date))} · ${sanitize(e.name||'Compromiso')}</span><strong>${displayMoney(e.amount)}</strong></div>`).join('');
  const dueSection=`<section class="v105-mobile-extra v273-overview-widget v315-chart-widget v317-chart-widget" data-v105-widget="cashPressure" aria-label="Radar de compromisos con vencimiento en los próximos treinta días">
-  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">VENCIMIENTOS · 30 DÍAS</span><h2>Radar de vencimientos</h2></div><button class="vive-mobile-view-all" type="button" data-act="navigate" data-id="payments" aria-label="Abrir compromisos">Ver pagos ${icon('arrow')}</button></div>
+  <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">VENCIMIENTOS · 30 DÍAS</span><h2>Radar de vencimientos</h2></div><button class="vive-mobile-view-all" type="button" data-v1125-pay="1" aria-label="Elegir qué pago registrar">Pagar ${icon('arrow')}</button></div>
   <div class="v317-due-overview"><span>COMPROMETIDO PRÓXIMOS 30 DÍAS</span><strong>${displayMoney(v317DueTotal)}</strong><small>Incluye únicamente cargos calendarizados y pendientes conocidos.</small></div>
   <div class="v317-due-chart" role="img" aria-label="Vencimientos previstos por periodos: ${v317Buckets.map(d=>d.label+' '+displayMoney(d.total)).join(', ')}">${v317DueBars}</div>
-  ${v317Upcoming?`<div class="v317-next-pays"><span class="v316-mini-eyebrow">PRÓXIMOS VENCIMIENTOS</span>${v317Upcoming}</div>`:'<p class="v315-empty">No se han registrado obligaciones futuras en este periodo.</p>'}
+  ${v317Upcoming?'':'<p class="v315-empty">No se han registrado obligaciones futuras en este periodo.</p>'}
   <p class="v315-small-note">Montos por fecha de vencimiento; no equivale a deuda total. Pueden incluir estimaciones y no duplica pagos ya conciliados por el motor.</p>
  </section>`;
  const v317Today=today();
