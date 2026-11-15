@@ -66,7 +66,30 @@ function read(){
   let amount=0;try{amount=num(b.monthlyEquivalent(r.amount,r.currency,r.frequency))}catch(_){amount=num(r.amount)}
   fixed.push({id:String(r.id),name:r.name||'Pago recurrente',kind:'subscription',amount,onCard:String(r.source||'').startsWith('card:')});
  }
- return {version:1,today,fx:fx>0?fx:60,cards,loans,unrated,incomes,fixed};
+ // Destino del dinero (SOLO capacidad): en qué se va el dinero en efectivo y por transferencia/débito, promedio de los últimos 3 meses cerrados.
+ // No usa saldos ni ahorros: solo los gastos registrados. Se evitan malas lecturas: pagos de tarjeta y préstamo ya son cuotas,
+ // las compras con tarjeta se reflejan en su pago, las transferencias entre cuentas propias no son gasto y lo recurrente ya está en gastos fijos.
+ const ESSENTIAL=new Set(['Alimentación','Vivienda','Servicios básicos','Transporte','Salud','Educación','Familia e hijos','Seguros','Impuestos y comisiones']);
+ const monthsBack=(n)=>{const [y,m]=today.slice(0,7).split('-').map(Number);const out=[];for(let i=1;i<=n;i++){const d=new Date(Date.UTC(y,m-1-i,1));out.push(d.toISOString().slice(0,7))}return out};
+ const win=monthsBack(3),inWin=t=>win.includes(ym(t.date));
+ const isCashAcc=a=>!!a&&(a.kind==='cash'||/efectivo/i.test(String(a.name||'')));
+ const cat={},used=new Set(),excl={cardCharges:0,cardPayments:0,loanPayments:0,transfers:0,recurring:0,debtInterest:0};
+ for(const t of db.transactions||[]){
+  if(!t||t.deleted||!inWin(t))continue;const amt=b.xconvert(num(t.amount),t.currency||'DOP','DOP');
+  if(t.type==='card_charge'){excl.cardCharges+=amt;continue}
+  if(t.type==='card_payment'){excl.cardPayments+=amt;continue}
+  if(t.type==='loan_payment'){excl.loanPayments+=amt;continue}
+  if(t.type==='transfer'){excl.transfers+=amt;continue}
+  if(t.type!=='expense')continue;
+  if(t.recurringId||String(t.scheduleKey||'').startsWith('recurring:')||t.category==='Suscripciones'){excl.recurring+=amt;continue}
+  if(t.category==='Deudas e intereses'){excl.debtInterest+=amt;continue}
+  const c=t.category||'Otros gastos',row=cat[c]||(cat[c]={category:c,kind:ESSENTIAL.has(c)?'essential':'variable',cash:0,bank:0,n:0});
+  if(isCashAcc(b.account?b.account(t.accountId):null))row.cash+=amt;else row.bank+=amt;row.n++;used.add(ym(t.date));
+ }
+ const k=Math.max(1,used.size),rows=Object.values(cat).map(r=>({category:r.category,kind:r.kind,cash:r.cash/k,bank:r.bank/k,total:(r.cash+r.bank)/k,count:r.n})).sort((a,c)=>c.total-a.total);
+ const sum=(f)=>rows.filter(f).reduce((a,r)=>a+r.total,0);
+ const spending={months:win,monthsUsed:used.size,categories:rows,essentialMonthly:sum(r=>r.kind==='essential'),variableMonthly:sum(r=>r.kind!=='essential'),cashMonthly:rows.reduce((a,r)=>a+r.cash,0),bankMonthly:rows.reduce((a,r)=>a+r.bank,0),excluded:Object.fromEntries(Object.entries(excl).map(([n,v])=>[n,v/k]))};
+ return {version:1,today,fx:fx>0?fx:60,cards,loans,unrated,incomes,fixed,spending};
 }
 window.ViveScoreAdapter=Object.freeze({read});
 })();

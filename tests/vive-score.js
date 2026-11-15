@@ -11,6 +11,7 @@ const go = async (p, id) => { await p.evaluate(id => { const b = document.create
 const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.html'));
 const fclick = async (p, sel) => { const fr = frameOf(p); await fr.evaluate(s => { const e = document.querySelector(s); if (!e) throw Error('sin ' + s); e.click(); }, sel); await p.waitForTimeout(120); };
 const fclickIf = async (p, sel) => { const fr = frameOf(p); await fr.evaluate(s => { const e = document.querySelector(s); if (e) e.click(); }, sel); await p.waitForTimeout(120); };
+const cc = async (p, section) => { await fclick(p, '[data-tab="control"]'); await fclick(p, '[data-cc="' + section + '"]'); };
 const fchange = async (p, sel, val) => { const fr = frameOf(p); await fr.evaluate(([s, v]) => { const e = document.querySelector(s); if (!e) throw Error('sin ' + s); e.value = v; e.dispatchEvent(new Event('change', { bubbles: true })); }, [sel, val]); await p.waitForTimeout(120); };
 const ftext = p => frameOf(p).evaluate(() => document.getElementById('view').innerText);
 const seedDates = p => p.evaluate(() => { const d = window.__T.dbg(); d.cards[0].name = 'Visa Titanium Popular'; if (d.cards[1]) d.cards[1].name = 'Visa Platinum Cibao'; d.cards[0].acquiredOn = '2021-03'; if (d.cards[1]) d.cards[1].acquiredOn = '2023-06'; d.loans[0].acquiredOn = '2024-03'; });
@@ -71,14 +72,15 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const adapterSrc = fs.readFileSync(path.join(ROOT, 'src/vive-score/adapter.js'), 'utf8');
   const before7 = await frameOf(p).evaluate(() => evaluate(current()).score);
   await p.evaluate(() => { const d = window.__T.dbg(); d.transactions.push({ id: 'sv-test-1', date: '2026-11-10', type: 'income', amount: 9000000, currency: 'DOP', accountId: d.accounts[0].id, category: 'Otros ingresos', note: 'prueba saldo' }); });
-  await go(p, 'score'); await fclick(p, '[data-refresh-data]').catch(() => {}); await fclick(p, '[data-tab="data"]'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
+  await go(p, 'score'); await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
   const after7 = await frameOf(p).evaluate(() => evaluate(current()).score);
   check(7, 'El score no usa cuentas de ahorro ni saldos bancarios', !/db\.accounts|\.accounts\b|certificates|savings/.test(adapterSrc) && !('accounts' in payload) && before7 === after7, `score ${before7} → ${after7} tras un depósito de RD$9,000,000`);
 
   /* 9 · declarado vs verificado */
-  await fclick(p, '[data-tab="data"]');
+  await cc(p, 'antecedentes');
   const prov = await ftext(p);
   const ageBefore = await frameOf(p).evaluate(() => current().ageSource);
+  await cc(p, 'configuracion');
   await frameOf(p).evaluate(() => { const c = document.querySelector('[data-evidence-checked]'); c.checked = true; c.dispatchEvent(new Event('change', { bubbles: true })); });
   await p.waitForTimeout(300);
   const ageAfter = await frameOf(p).evaluate(() => current().ageSource);
@@ -101,7 +103,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   /* 12 · ingresos no alteran el score */
   const capBefore = await frameOf(p).evaluate(() => evaluate(current()).capacity.income);
   await p.evaluate(() => { const d = window.__T.dbg(); d.incomeSchedules = [{ id: 'sv-inc', name: 'Salario prueba', kind: 'formal', active: true, nextDue: '2026-11-30', currency: 'DOP', grossMonthly: 150000, frequency: 'monthly', accountId: d.accounts[0].id, postingMode: 'manual' }]; });
-  await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
+  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
   const inc = await frameOf(p).evaluate(() => { const e = evaluate(current()); return { score: e.score, income: e.capacity.income, newQuota: e.capacity.newQuota }; });
   check(12, 'Los ingresos no alteran directamente el score; solo la capacidad de endeudamiento', inc.score === after7 && inc.income > capBefore, `score ${after7} → ${inc.score}; ingreso reconocido ${Math.round(capBefore)} → ${Math.round(inc.income)}`);
 
@@ -133,7 +135,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
 
   /* 22 · créditos recientes: ventanas 0–6 / 7–12 meses, tarjetas sin límite, la fecha de «Editar» manda */
   await p.evaluate(() => { const d = window.__T.dbg(); d.cards[0].name = 'BHD Visa'; d.cards[0].acquiredOn = '2026-09'; d.cards[1].name = 'Qik Pro'; d.cards[1].acquiredOn = '2026-05'; d.loans[0].acquiredOn = '2025-11'; const extra = JSON.parse(JSON.stringify(d.cards[0])); Object.assign(extra, { id: 'nuevo-sv', name: 'Tarjeta nueva', acquiredOn: '2026-10', limitDOP: 0, limitUSD: 0 }); Object.keys(extra).filter(k => /^opening|overdraft/.test(k)).forEach(k => { extra[k] = 0; }); d.cards.push(extra); });
-  await fclick(p, '[data-tab="data"]'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
+  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
   await frameOf(p).evaluate(() => { const id = current().cards.find(c => /BHD/.test(c.name)).productId; setOverride(id, { opened: '2020-01' }); rebuildDB(); render(); });
   await fclick(p, '[data-tab="detail"]');
   const rc = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s); return { n06: s.new0to6, n712: s.new7to12, list: s.products.map(x => x.name + ':' + x.window + ':' + x.source).join(' | '), text: document.getElementById('view').innerText, part: e.parts.new[0].points, score: e.score }; });
@@ -142,13 +144,13 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const sc23 = await frameOf(p).evaluate(() => evaluate(current()).score);
   /* 23 · ingresos dinámicos: nómina quincenal en base mensual, bruto→neto, adicionales recurrentes */
   await p.evaluate(() => { const d = window.__T.dbg(), acc = d.accounts[0].id; d.incomeSchedules = [{ id: 'sv-q', name: 'Salario quincenal', kind: 'formal', active: true, nextDue: '2026-11-30', currency: 'DOP', grossMonthly: 150000, frequency: 'semi_monthly', accountId: acc, postingMode: 'manual' }]; for (const m of ['2026-06', '2026-08', '2026-09', '2026-10']) d.transactions.push({ id: 'bx-' + m, type: 'income', date: m + '-20', amount: 20000, currency: 'DOP', accountId: acc, incomeScheduleId: 'sv-q', laborExtra: true, laborExtraKind: 'bonus', category: 'Salario y nómina', note: 'bono' }); d.transactions.push({ id: 'rb-1', type: 'income', date: '2026-10-21', amount: 50000, currency: 'DOP', accountId: acc, incomeScheduleId: 'sv-q', laborExtra: true, laborExtraKind: 'reimbursement', category: 'Reembolsos', note: 'reembolso' }); });
-  await fclick(p, '[data-tab="data"]'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
+  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
   await fclick(p, '[data-tab="capacity"]');
   const inc2 = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s), br = window.parent.__viveScoreBridge, sch = window.parent.__T.dbg().incomeSchedules[0]; const per = br.payroll(sch, '2026-11-30'), mon = br.payroll({ ...sch, frequency: 'monthly' }, '2026-11-30'); return { net: Math.round(s.payroll.net), perPayment: Math.round(per.net), monthlyRef: Math.round(mon.net), extra: Math.round(s.otherFormal), gross: Math.round(s.payroll.gross), parts: [s.payroll.afp, s.payroll.sfs, s.payroll.isr].map(Math.round), text: document.getElementById('view').innerText, score: e.score }; });
   check(23, 'Ingresos dinámicos: la nómina quincenal se mide en base mensual (2 pagos), muestra bruto→AFP/SFS/ISR→neto y reconoce adicionales recurrentes sin reembolsos', Math.abs(inc2.net - inc2.monthlyRef) <= 2 && Math.abs(inc2.net - 2 * inc2.perPayment) <= 2 && inc2.extra === 13333 && inc2.gross === 150000 && inc2.parts.every(v => v > 0) && /Del bruto al neto/.test(inc2.text) && /AFP/.test(inc2.text) && /ISR/.test(inc2.text) && inc2.score === sc23, JSON.stringify({ netMensual: inc2.net, pagoQuincenal: inc2.perPayment, referenciaMensual: inc2.monthlyRef, adicionalesRecurrentes: inc2.extra, bruto: inc2.gross, afpSfsIsr: inc2.parts }));
 
   /* 20 · entidades no financieras: no van para nada (ni score, ni capacidad, ni pantallas) */
-  await fclick(p, '[data-tab="data"]');
+  await cc(p, 'configuracion');
   const nb0 = await frameOf(p).evaluate(() => { const c = evaluate(current()); return { loans: current().loans.length, debt: Math.round(c.capacity.debt), due: Math.round(c.capacity.loanDues) }; });
   await p.evaluate(() => { const d = window.__T.dbg(); const l = d.loans[0]; const bk = d.banks.find(b => b.id === l.bankId); bk.kind = 'Telefonía'; });
   await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(500);
@@ -156,8 +158,60 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const nb1 = await frameOf(p).evaluate(() => { const c = evaluate(current()), s = current(); return { loans: s.loans.length, payload: window.__nbPayload, debt: Math.round(c.capacity.debt), due: Math.round(c.capacity.loanDues), text: document.getElementById('view').innerText, amort: c.parts.owed.find(x => x.id === 'o_installments').points }; });
   const nbLoanName = await p.evaluate(() => window.__T.dbg().loans[0].name);
   const nbPay = await p.evaluate(() => window.ViveScoreAdapter.read());
-  const nbAll = []; for (const t of ['summary', 'detail', 'capacity', 'transunion', 'data']) { await fclick(p, '[data-tab="' + t + '"]'); nbAll.push(await ftext(p)); }
+  const nbAll = []; for (const t of ['summary', 'detail', 'capacity', 'transunion', 'control']) { await fclick(p, '[data-tab="' + t + '"]'); nbAll.push(await ftext(p)); }
   check(20, 'Las entidades no financieras no van para nada: ni score, ni capacidad, ni pantallas, ni lectura del adaptador', nb0.loans === 1 && nb1.loans === 0 && nbPay.loans.length === 0 && nb1.debt < nb0.debt && nb1.due === 0 && nb1.amort === 26 && !/Fuera del score/.test(nb1.text) && nbAll.every(t => !t.includes(nbLoanName)), JSON.stringify({ antes: nb0, despues: { loans: nb1.loans, debt: nb1.debt, due: nb1.due }, nombreAusenteEnPantallas: nbAll.every(t => !t.includes(nbLoanName)) }));
+
+  /* 24 · Centro de control: las 5 secciones unificadas, el resto de páginas intactas, sin información repetida */
+  const tabsNow = await frameOf(p).evaluate(() => [...document.querySelectorAll('#tabs [data-tab]')].map(b => b.textContent.trim()));
+  const expectedTabs = ['Mi score', 'Evolución', 'Mis créditos', 'Capacidad', 'Variables', 'Patrones IA', 'TransUnion (simulación)', 'Metodología', 'Centro de control'];
+  const secs = {}; const headings = []; const features = {};
+  await fclick(p, '[data-tab="control"]');
+  const chips = await frameOf(p).evaluate(() => [...document.querySelectorAll('.ccchip')].map(b => b.textContent.trim()));
+  for (const k of ['observatorio', 'historial', 'auditoria', 'antecedentes', 'configuracion']) {
+    await fclick(p, '[data-cc="' + k + '"]');
+    secs[k] = await frameOf(p).evaluate(() => ({ h: [...document.querySelectorAll('#view h2')].map(e => e.textContent.trim()), len: document.getElementById('view').innerText.length, sel: document.querySelectorAll('[data-evidence-source]').length, chk: document.querySelectorAll('[data-evidence-checked]').length, seal: !!document.getElementById('sealMonth'), audit: !!document.getElementById('downloadAudit'), edit: !!document.querySelector('[data-q-act="edit"]'), json: !!document.getElementById('downloadJson'), csv: !!document.getElementById('downloadCSV'), reset: !!document.getElementById('vsReset'), refresh: !!document.querySelector('[data-refresh-data]'), ov: document.querySelectorAll('[data-ov]').length }));
+    headings.push(...secs[k].h.filter(t => t !== 'Centro de control'));
+  }
+  const dupHeadings = headings.filter((t, i) => headings.indexOf(t) !== i);
+  const evidenceTotal = Object.values(secs).reduce((a, x) => a + x.sel, 0);
+  const aliasOk = await frameOf(p).evaluate(() => { tab = 'observatory'; render(); const a = ccSection === 'observatorio' && tab === 'control'; tab = 'audit'; render(); const b = ccSection === 'auditoria'; tab = 'summary'; render(); return a && b; });
+  const otherPages = []; for (const t of ['summary', 'evolution', 'detail', 'capacity', 'matrix', 'patterns', 'transunion', 'method']) { await fclick(p, '[data-tab="' + t + '"]'); otherPages.push((await ftext(p)).length > 300); }
+  check(24, 'Centro de control reúne Observatorio, Historial y evidencias, Auditoría, Antecedentes y Configuración; las demás páginas siguen; sin repetidos', JSON.stringify(tabsNow) === JSON.stringify(expectedTabs) && JSON.stringify(chips) === JSON.stringify(['Observatorio', 'Historial y evidencias', 'Auditoría', 'Antecedentes', 'Configuración']) && Object.values(secs).every(x => x.len > 300) && dupHeadings.length === 0 && evidenceTotal === secs.configuracion.sel && secs.configuracion.sel >= 1 && secs.historial.seal && secs.auditoria.audit && secs.antecedentes.edit && secs.configuracion.json && secs.configuracion.csv && secs.configuracion.reset && secs.configuracion.refresh && secs.configuracion.ov >= 2 && aliasOk && otherPages.every(Boolean), JSON.stringify({ pestanas: tabsNow.length, apartados: chips.length, repetidos: dupHeadings, procedenciaEnTotal: evidenceTotal }));
+
+  /* 25 · independencia: leer → analizar → calcular → mostrar, sin modificar datos originales */
+  const orig = () => p.evaluate(() => { const d = window.__T.dbg(); return JSON.stringify(['cards', 'loans', 'transactions', 'incomeSchedules', 'recurring', 'accounts', 'banks', 'categories'].map(k => d[k])); });
+  const origA = await orig();
+  for (const t of ['summary', 'evolution', 'detail', 'capacity', 'matrix', 'patterns', 'transunion', 'method', 'control']) await fclick(p, '[data-tab="' + t + '"]');
+  for (const k of ['observatorio', 'historial', 'auditoria', 'antecedentes', 'configuracion']) await cc(p, k);
+  await cc(p, 'antecedentes'); await fclick(p, '[data-q-act="edit"]'); await frameOf(p).evaluate(() => { qStep = 7; render(); }); await fclick(p, '[data-q-act="finish"]');
+  await frameOf(p).evaluate(async () => { await sealCurrent(); });
+  await fclick(p, '[data-tab="transunion"]'); await fchange(p, '#tuObserved', '700');
+  const origB = await orig();
+  const sealsKept = await frameOf(p).evaluate(() => ST.seals.length);
+  check(25, 'Independencia: recorrer todo, editar antecedentes, sellar un corte y anotar TransUnion no modifica ningún dato original de la app', origA === origB && sealsKept >= 1, `${origA.length} caracteres de datos originales idénticos antes y después`);
+
+  /* 26 · alimentación automática: un cambio en la app llega solo, sin pulsar nada */
+  await fclick(p, '[data-tab="detail"]');
+  const before26 = await frameOf(p).evaluate(() => ({ cards: current().cards.length, n06: current().new0to6 }));
+  await p.evaluate(() => { const d = window.__T.dbg(); const c = JSON.parse(JSON.stringify(d.cards[0])); Object.assign(c, { id: 'auto-feed-1', name: 'Tarjeta automática', acquiredOn: '2026-11', limitDOP: 90000, limitUSD: 0 }); Object.keys(c).filter(k => /^opening|overdraft/.test(k)).forEach(k => { c[k] = 0; }); d.cards.push(c); });
+  await p.evaluate(() => window.dispatchEvent(new Event('focus'))); await p.waitForTimeout(1200);
+  const after26 = await frameOf(p).evaluate(() => ({ cards: current().cards.length, n06: current().new0to6, text: document.getElementById('view').innerText }));
+  check(26, 'Alimentación automática: una tarjeta nueva registrada en la app aparece en VIVE SCORE sin pulsar nada', after26.cards === before26.cards + 1 && after26.n06 === before26.n06 + 1 && /Tarjeta automática/.test(after26.text), JSON.stringify({ antes: before26, despues: { cards: after26.cards, n0a6: after26.n06 } }));
+
+  /* 27 · destino del dinero: efectivo y transferencia, sin malas lecturas ni ahorros */
+  await fclick(p, '[data-tab="capacity"]');
+  const cap0 = await frameOf(p).evaluate(() => { const e = evaluate(current()), sp = current().spending || {}; return { fixed: Math.round(e.capacity.cashFixed), score: e.score, ess: Math.round(sp.essentialMonthly || 0), vari: Math.round(sp.variableMonthly || 0), cash: Math.round(sp.cashMonthly || 0), bank: Math.round(sp.bankMonthly || 0), used: sp.monthsUsed || 0 }; });
+  await p.evaluate(() => { const d = window.__T.dbg(); const isCash = a => a.kind === 'cash' || /efectivo/i.test(a.name); const bank = d.accounts.find(a => !isCash(a)), cashAcc = d.accounts.find(isCash); const card = d.cards[0], loan = d.loans[0]; let n = 0; const add = (o) => d.transactions.push({ id: 'sp-' + (n++), currency: 'DOP', ...o }); for (const m of ['2026-08', '2026-09', '2026-10']) { add({ type: 'expense', date: m + '-05', amount: 10000, accountId: cashAcc.id, category: 'Alimentación' }); add({ type: 'expense', date: m + '-06', amount: 25000, accountId: bank.id, category: 'Vivienda' }); add({ type: 'expense', date: m + '-07', amount: 4000, accountId: bank.id, category: 'Entretenimiento' }); add({ type: 'card_payment', date: m + '-08', amount: 50000, accountId: bank.id, cardId: card.id }); add({ type: 'transfer', date: m + '-09', amount: 100000, accountId: bank.id, toAccountId: cashAcc.id }); add({ type: 'loan_payment', date: m + '-10', amount: 8000, accountId: bank.id, loanId: loan.id }); add({ type: 'expense', date: m + '-11', amount: 800, accountId: bank.id, category: 'Servicios básicos', recurringId: 'rec-x' }); add({ type: 'card_charge', date: m + '-12', amount: 3000, cardId: card.id, category: 'Compras personales' }); add({ type: 'expense', date: m + '-13', amount: 700, accountId: bank.id, category: 'Deudas e intereses' }); } });
+  await cc(p, 'configuracion'); await fclick(p, '[data-refresh-data]'); await p.waitForTimeout(600);
+  await fclick(p, '[data-tab="capacity"]');
+  const sp = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s), sp = s.spending; return { ess: Math.round(sp.essentialMonthly), vari: Math.round(sp.variableMonthly), cash: Math.round(sp.cashMonthly), bank: Math.round(sp.bankMonthly), used: sp.monthsUsed, exp: s.expenses.filter(x => x.auto).map(x => x.name + ':' + Math.round(x.amount)).sort().join(' | '), fixed: Math.round(e.capacity.cashFixed), score: e.score, text: document.getElementById('view').innerText, excl: Object.keys(sp.excluded).filter(k => sp.excluded[k] > 0).sort().join(',') }; });
+  check(27, 'Destino del dinero: separa efectivo y transferencia, esencial y variable, sin contar pagos de tarjeta/préstamo, transferencias propias, recurrentes ni intereses; no usa ahorros', sp.ess - cap0.ess === 35000 && sp.vari - cap0.vari === 4000 && sp.cash - cap0.cash === 10000 && sp.bank - cap0.bank === 29000 && sp.used === 3 && /Alimentación \(efectivo y transferencia\):/.test(sp.exp) && /Vivienda \(efectivo y transferencia\):/.test(sp.exp) && !/Entretenimiento/.test(sp.exp) && sp.fixed - cap0.fixed === 35000 && sp.score === cap0.score && /Destino de tu dinero/.test(sp.text) && /no usa saldos ni ahorros/.test(sp.text) && sp.excl === 'cardCharges,cardPayments,debtInterest,loanPayments,recurring,transfers', JSON.stringify({ sumaEsencial: sp.ess - cap0.ess, sumaVariable: sp.vari - cap0.vari, sumaEfectivo: sp.cash - cap0.cash, sumaTransferencia: sp.bank - cap0.bank, descuentaDelMargen: sp.fixed - cap0.fixed, fuera: sp.excl }));
+
+  /* 28 · encabezado y fondo de la página */
+  const head28 = await p.evaluate(() => ({ title: document.querySelector('.topbar-intro .top-title')?.textContent, sub: document.querySelector('.topbar-intro .top-sub')?.textContent }));
+  const bg28 = await frameOf(p).evaluate(() => ({ cs: getComputedStyle(document.documentElement).colorScheme, html: getComputedStyle(document.documentElement).backgroundColor, body: getComputedStyle(document.body).backgroundColor })) ;
+  const frameCs = await p.evaluate(() => getComputedStyle(document.querySelector('.vs-frame')).colorScheme);
+  check(28, 'La página se titula VIVE SCORE CRÉDITO con «historial de créditos» debajo, y el fondo es transparente (hereda el diseño de la app)', head28.title === 'VIVE SCORE CRÉDITO' && head28.sub === 'historial de créditos' && bg28.cs === 'normal' && frameCs === 'normal' && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs }));
 
   /* 2 · solo web / 16 · móvil sin cambios / 17 · desactivación */
   await ctx.close();

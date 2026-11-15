@@ -26,6 +26,19 @@ Página nueva **«Score»** de la versión web de *vive el hoy · Finanzas 360*.
 
 Pruebas: `tests/vive-score.js` (`node tests/vive-score.js`).
 
+## Páginas
+
+Mi score · Evolución · Mis créditos · Capacidad · Variables · Patrones IA · TransUnion (simulación) · Metodología · **Centro de control**.
+
+El **Centro de control** reúne en apartados internos lo que antes eran páginas separadas: *Observatorio*, *Historial y evidencias*, *Auditoría*, *Antecedentes* y *Configuración*. Sin información repetida (la procedencia de cada producto y su documento viven solo en Configuración). Los enlaces antiguos siguen funcionando.
+
+## Alimentación automática e independencia
+
+**Leer → Analizar → Calcular → Mostrar.** El módulo nunca escribe en tarjetas, préstamos, movimientos, ingresos ni ningún otro dato de la app; solo guarda lo suyo (configuración, antecedentes, cortes y bitácora) en `localStorage['vive-score:v1']`.
+
+- Se actualiza solo: mientras la página está abierta, el anfitrión lee en memoria los datos de la app (al volver a la pestaña, tras cada cambio visible y cada 5 s) y avisa al módulo **solo si algo cambió**. No hay consultas a Supabase ni procesos Realtime.
+- Cada corte se calcula una sola vez (memoria de cálculo) para no repetir trabajo.
+
 ## De dónde salen los datos
 
 El adaptador (`adapter.js`) solo **lee**, a través del puente `window.__viveScoreBridge` (también de solo lectura):
@@ -37,6 +50,7 @@ El adaptador (`adapter.js`) solo **lee**, a través del puente `window.__viveSco
 | Mora vigente | vencimientos sin pagar de tarjetas y préstamos (`upcoming()`) |
 | Ingresos recurrentes | **solo para capacidad de endeudamiento**, siempre en base **mensual** y en RD$ (una nómina quincenal = 2 pagos al mes). Se lee el desglose bruto → AFP → SFS (ARS) → ISR → otros descuentos → neto |
 | Ingresos laborales adicionales | bonos, comisiones, incentivos, horas extra, retroactivos y sueldo extraordinario registrados en vive el hoy; los reembolsos no cuentan. Se reconocen con el promedio de los últimos 6 meses si aparecen en ≥3 de ellos (proporcional si menos) |
+| Destino del dinero | **solo para capacidad**: gastos registrados de los últimos 3 meses cerrados, separados en efectivo y transferencia/débito, y en esenciales y variables. Los esenciales (alimentación, vivienda, servicios, transporte, salud, educación, familia, seguros, impuestos) se descuentan del margen; los variables solo se muestran. Se dejan fuera para no contarlos dos veces: pagos de tarjeta y de préstamo, compras con tarjeta, transferencias entre cuentas propias, pagos recurrentes e intereses de deuda |
 | Pagos recurrentes | **solo para capacidad**; los pagados con tarjeta se marcan para no duplicarlos |
 
 **Entidades no financieras:** los productos de instituciones que no son financieras (telefonía, comercios, etc., según el tipo de institución de la app) **no puntúan**: sus adelantos y financiamientos no se reportan a los burós. **No entran para nada**: ni en el score, ni en la capacidad de endeudamiento, ni en listas, cuestionario o simulaciones (el adaptador ni siquiera los lee).

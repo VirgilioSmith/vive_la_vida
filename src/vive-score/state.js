@@ -20,6 +20,7 @@ const VSHost={
    if(e.origin!==location.origin||e.source!==parent)return;const m=e.data;if(!m||m.vs!==1)return;
    if(m.type==='init'){ST=restoreStore(m.store);PAYLOAD=m.payload||null;applyEnv(m.env);auditHistory=Array.isArray(ST.audit)?ST.audit.slice(0,200):[];if(ST.settings)DB.settings={...clone(CAP_DEFAULT),...ST.settings};applySeeds();rebuildDB();render()}
    else if(m.type==='env'){applyEnv(m.env);render()}
+   else if(m.type==='data'){PAYLOAD=m.payload||PAYLOAD;applySeeds();rebuildDB();const a=document.activeElement;if(!(a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)))render()}
   });
   this.send('ready');
  }
@@ -40,7 +41,7 @@ const todayPeriod=()=>(PAYLOAD?.today||new Date().toISOString().slice(0,10)).sli
 /* ---------- hechos observados (solo lo que existe en la app) ---------- */
 function factsFromPayload(P){
  if(!P)return {fx:60,cards:[],loans:[],unrated:[],incomes:[],fixed:[]};
- return {fx:P.fx,cards:clone(P.cards||[]),loans:clone(P.loans||[]),unrated:clone(P.unrated||[]),incomes:clone(P.incomes||[]),fixed:clone(P.fixed||[])};
+ return {fx:P.fx,cards:clone(P.cards||[]),loans:clone(P.loans||[]),unrated:clone(P.unrated||[]),incomes:clone(P.incomes||[]),fixed:clone(P.fixed||[]),spending:clone(P.spending||null)};
 }
 function withOverrides(list){return list.map(x=>{const o=ST.overrides[x.productId||x.id]||{};return {...x,openedSource:validPeriod(x.opened)?'app':(validPeriod(o.opened)?'usuario':'falta'),...((!validPeriod(x.opened)&&validPeriod(o.opened))?{opened:o.opened}:{}),...(o.status?{status:o.status}:{}),source:o.source||(x.source||'app'),evidenceVerified:!!o.evidenceVerified,evidenceNote:o.note||''}})}
 
@@ -120,7 +121,7 @@ function materialize(period,idxInList){
   new0to6:Math.max(dc.new0to6,0)+ao.n0to6,new7to12:Math.max(dc.new7to12,0)+ao.n7to12,products:ao.list,limitReq0to6:dc.limitReq0to6,limitReq7to12:dc.limitReq7to12,limitAuto:dc.limitAuto,
   restructure:dc.restructure,refinance:dc.refinance,
   reportedTU:null,reportedEquifax:null,reportDate:rec.observedAt,cards,loans,
-  expenses:facts.fixed.map(f=>({id:f.id,name:f.name,kind:f.kind||'subscription',amount:f.amount,onCard:!!f.onCard})),events,missing,
+  expenses:[...facts.fixed.map(f=>({id:f.id,name:f.name,kind:f.kind||'subscription',amount:f.amount,onCard:!!f.onCard})),...((facts.spending?.categories)||[]).filter(r=>r.kind==='essential'&&r.total>0).map(r=>({id:'sp-'+r.category,name:r.category+' (efectivo y transferencia)',kind:'essential',amount:r.total,onCard:false,auto:true}))],spending:facts.spending||null,events,missing,
   oldestPeriod:oldest,ageSource:!oldest?'desconocida':(earliestApp&&(!declaredFirst||earliestApp<=declaredFirst))?(cards.concat(loans).some(x=>x.opened===oldest&&x.evidenceVerified)?'verificada':'registrada en vive el hoy'):'declarada',
   declVersion:ST.declVersion,closedMonth:!!rec.closed
  };
