@@ -4231,7 +4231,26 @@ const V41_SERVICES=[
  {id:'fun',label:'Entretenimiento',glyph:'sparkle',bg:'#fff0f6',fg:'#c25585'}
 ];
 const V41_SVC_BY_ID=Object.fromEntries(V41_SERVICES.map(x=>[x.id,x]));
-function v41ValidIcon(id){return Object.hasOwn(V41_SVC_BY_ID,String(id||''))?String(id):'general'}
+/* Sistema universal de iconos: catálogo de servicios, cualquier emoji («emoji:☕») o monograma con color («mono:AB:#7b2d57»). La imagen propia se guarda aparte. */
+const V41_EMOJI_RE=/^emoji:(?:\p{Extended_Pictographic}|\p{Emoji_Presentation})(?:\uFE0F|\u200D(?:\p{Extended_Pictographic}|\p{Emoji_Presentation})|\p{Emoji_Modifier}){0,6}$/u;
+const V41_MONO_RE=/^mono:[A-Za-zÁÉÍÓÚÑáéíóúñ0-9]{1,2}:#[0-9a-fA-F]{6}$/;
+function v41ValidIcon(id){const t=String(id||'');if(Object.hasOwn(V41_SVC_BY_ID,t))return t;if(t.length<=40&&(V41_EMOJI_RE.test(t)||V41_MONO_RE.test(t)))return t;return 'general'}
+
+/* Emojis por grupo con palabras clave en español para buscarlos. */
+const V41_EMOJIS=[
+['Dinero','💰 dinero plata efectivo','💵 billete dolar efectivo','💳 tarjeta credito debito','🏦 banco','🪙 moneda','💸 gasto pago','🧾 recibo factura','📈 ganancia inversion','📉 perdida baja','🧮 calculo contabilidad','🏧 cajero','💱 cambio divisa','💎 joya lujo','🤑 ahorro','🛒 compras supermercado','🏷️ etiqueta oferta'],
+['Hogar','🏠 casa hogar','🏢 edificio apartamento condominio','🔑 llave alquiler','🛋️ sofa muebles','🛏️ cama','🚿 ducha agua','🚰 grifo agua','💡 luz electricidad','🔌 energia enchufe','🔥 gas fuego','🧹 limpieza escoba','🧺 lavanderia ropa','🪴 planta jardin','🔧 reparacion herramienta','🪟 ventana','🚪 puerta','🗑️ basura','🧯 extintor seguridad'],
+['Comida','🍽️ comida restaurante','🍔 hamburguesa','🍕 pizza','🍗 pollo','🥩 carne','🍞 pan panaderia','🥛 leche','🍎 fruta manzana','🥦 vegetales verduras','🍚 arroz','☕ cafe','🍺 cerveza bar','🍷 vino','🍰 postre pastel','🍦 helado','🥤 refresco bebida','🛵 delivery domicilio','🍳 desayuno','🥗 ensalada saludable'],
+['Transporte','🚗 carro auto vehiculo','⛽ gasolina combustible','🚌 autobus guagua','🚇 metro','🚕 taxi uber','🏍️ motor moto','🚲 bicicleta','🛴 scooter patineta','✈️ avion vuelo viaje','🚢 barco','🅿️ parqueo estacionamiento','🛣️ peaje carretera','🔧 mecanico taller','🛞 llanta','🚦 semaforo multa'],
+['Salud','🩺 doctor medico consulta','💊 medicina pastilla farmacia','🦷 dentista','👓 lentes optica','🏥 hospital clinica','💉 vacuna inyeccion','🧠 terapia psicologia','🧘 yoga meditacion','🏋️ gimnasio ejercicio','🏃 correr','🩹 curita','❤️‍🩹 salud','🧴 crema cuidado','💇 peluqueria barberia','💅 unas manicure','🛡️ seguro'],
+['Trabajo y estudio','💼 trabajo maletin','🖥️ computadora oficina','⌨️ teclado','🖨️ impresora','📚 libros estudio','🎓 universidad graduacion','🏫 colegio escuela','✏️ lapiz','📝 notas','📅 calendario','📞 telefono llamada','📧 correo email','🗂️ archivos','📦 paquete envio','🧑‍💻 programador software','🤝 negocio acuerdo','🏭 fabrica','🧰 herramientas'],
+['Tecnología','📱 celular movil','📶 senal internet wifi','🌐 internet web','☁️ nube almacenamiento','💾 disco guardar','🔐 seguridad contrasena','🎮 videojuegos consola','🕹️ juego','🎧 audifonos musica','📺 television tv','📷 camara foto','🔋 bateria carga','🖱️ raton','⌚ reloj','🤖 inteligencia artificial robot','🛰️ satelite starlink','🎬 cine pelicula streaming','🎵 musica cancion','🎙️ podcast'],
+['Familia y mascotas','👨‍👩‍👧 familia','👶 bebe','🧒 hijo nino','👵 abuela','🐶 perro mascota','🐱 gato','🐟 pez','🐴 caballo','🦴 hueso comida mascota','🎂 cumpleanos','🎁 regalo','💍 boda anillo','🎈 fiesta','🧸 juguete','🍼 biberon','💐 flores','❤️ amor','🙏 iglesia oracion diezmo','🤲 donacion caridad'],
+['Ocio y deporte','⚽ futbol','🏀 baloncesto','⚾ beisbol pelota','🎾 tenis','🏊 natacion piscina','🥊 boxeo','🎯 dardos','🎲 dados juegos','🎨 arte pintura','🎭 teatro','🎤 karaoke canto','🎸 guitarra','🎹 piano','🎟️ boletos entradas','🏖️ playa vacaciones','⛺ camping','🏔️ montana','🎣 pesca','🏆 trofeo','📖 lectura','🧩 rompecabezas'],
+['Compras y ropa','👕 camiseta ropa','👗 vestido','👟 zapatos tenis','👜 cartera bolso','🕶️ gafas sol','💄 maquillaje','🧼 jabon aseo','🧻 papel higienico','🛍️ compras','📦 pedido','🪞 espejo','👶 pañales','🧢 gorra','⌚ reloj accesorio'],
+['Naturaleza y clima','☀️ sol solar','🌧️ lluvia','🌊 olas mar','🌳 arbol','🌱 planta','🍃 hoja','🌍 mundo','🌙 luna noche','⭐ estrella','🔥 fuego','❄️ frio aire acondicionado','💧 agua gota','🌈 arcoiris','🐝 abeja'],
+['Símbolos','✅ listo pagado','⚠️ alerta aviso','❗ importante','⏰ alarma recordatorio','🔔 notificacion campana','📌 fijar','🔁 recurrente repetir','⏳ tiempo espera','🔒 candado','🗝️ llave','🎯 meta objetivo','⭐ favorito','💡 idea','🔖 marcador','♻️ reciclaje','🚩 bandera']
+];
 function v41GuessIcon(value){
  const name=String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const patterns=[[/barber|barberia|barbershop|pelado de hombre/,'generic-barber'],[/peluqueria|estilista|salon de pelo/,'generic-hair'],[/dentista|odontolog/,'generic-dentist'],[/psicolog|terapia/,'generic-therapy'],[/consulta medica|medico|doctor|clinica/,'generic-doctor'],[/masaje/,'generic-massage'],[/manicura|pedicura|unas/,'generic-nails'],[/spa|bienestar/,'generic-spa'],[/lavanderia|lavado de ropa/,'generic-laundry'],[/limpieza|aseo/,'generic-cleaning'],[/jardin/,'generic-gardening'],[/veterinar/,'generic-veterinary'],[/laboratorio|analisis clinico/,'generic-laboratory'],[/nutricion|dietista/,'generic-nutrition'],[/guarderia/,'generic-daycare'],[/mantenimiento de piscina|piscina/,'generic-pool'],[/max\b|hbo/,'hbo'],[/paramount/,'paramount'],[/crunchyroll/,'crunchyroll'],[/twitch/,'twitch'],[/hulu/,'hulu'],[/tidal/,'tidal'],[/deezer/,'deezer'],[/apple music/,'applemusic'],[/soundcloud/,'soundcloud'],[/dropbox/,'dropbox'],[/google one/,'google'],[/google drive/,'drive'],[/adobe/,'adobe'],[/figma/,'figma'],[/zoom/,'zoom'],[/slack/,'slack'],[/github/,'github'],[/linkedin/,'linkedin'],[/playstation/,'playstation'],[/nintendo/,'nintendo'],[/steam/,'steam'],[/duolingo/,'duolingo'],[/coursera/,'coursera'],[/udemy/,'udemy'],[/claro/,'claro'],[/altice/,'altice'],[/starlink/,'starlink'],[/agua|acueducto/,'water'],[/gas/,'gas'],[/combustible|gasolina/,'fuel'],[/alimento|supermercado/,'food'],[/farmacia|medicina/,'pharmacy'],[/mascota|veterinar/,'pet'],[/impuesto|dgii/,'tax'],[/mantenimiento/,'maintenance'],[/dominio|hosting/,'website'],[/netflix/,'netflix'],[/spotify/,'spotify'],[/youtube/,'youtube'],[/chatgpt|openai/,'chatgpt'],[/icloud/,'icloud'],[/apple|app store|apple one/,'apple'],[/disney/,'disney'],[/prime|amazon/,'prime'],[/notion/,'notion'],[/canva/,'canva'],[/microsoft|office|onedrive|xbox/,'microsoft'],[/wifi|internet|fibra|banda ancha/,'internet'],[/telefon|celular|movil|movistar|claro|altice/,'phone'],[/video|hbo|max|hulu|paramount|stream|cine/,'streaming'],[/musica|music|deezer|tidal/,'music'],[/gimnasio|gym|fitness/,'gym'],[/curso|educa|univers|escuela/,'education'],[/seguro|poliza|salud/,'insurance'],[/luz|agua|electric|energia/,'utilities'],[/alquiler|renta|vivienda|condominio/,'home']];
@@ -4241,7 +4260,10 @@ function v41GuessIcon(value){
  return 'general';
 }
 function v41ServiceIcon(id,small=''){
- const opt=V41_SVC_BY_ID[v41ValidIcon(id)];
+ const key=v41ValidIcon(id),cls=small==='tiny'?'is-tiny':small?'is-small':'';
+ if(key.startsWith('emoji:'))return `<span class="v41-service-mark v41-emoji-mark ${cls}" style="--v41-service-bg:#f1f3f9;--v41-service-fg:#222" aria-hidden="true">${sanitize(key.slice(6))}</span>`;
+ if(key.startsWith('mono:')){const [,t,c]=key.split(':');return `<span class="v41-service-mark v41-mono-mark ${cls}" style="--v41-service-bg:${sanitize(c)};--v41-service-fg:#fff" aria-hidden="true">${sanitize(t.toUpperCase())}</span>`}
+ const opt=V41_SVC_BY_ID[key];
  const paths={
  play:'<path d="M9 6.5 18 12l-9 5.5z" fill="currentColor" stroke="none"/>',
  cloud:'<path d="M7 18h11a4 4 0 0 0 .5-8 6.5 6.5 0 0 0-12-1.4A4.7 4.7 0 0 0 7 18z"/>',
@@ -4314,7 +4336,15 @@ function v41ServiceIcon(id,small=''){
 }
 function v41ServicePicker(id){
  const selected=v41ValidIcon(id);
- return `<section class="v41-icon-selector" aria-label="Ícono de la suscripción"><div class="v41-icon-top"><div><strong>Ícono del servicio</strong><small>Selecciona una identidad o escribe el nombre para obtener una sugerencia.</small></div><div class="v41-sub-preview" id="v41IconPreview">${v41ServiceIcon(selected)}<small>Elegido</small></div></div><input type="hidden" name="serviceIcon" value="${selected}"><input type="search" class="field v41-service-filter" id="v41IconSearch" autocomplete="off" aria-label="Buscar ícono por servicio" placeholder="Buscar: Netflix, internet, iCloud…"><div class="v41-service-grid" id="v41IconGrid">${V41_SERVICES.map(o=>`<button type="button" class="v41-service-choice" data-act="v41PickServiceIcon" data-id="${o.id}" data-icon-label="${sanitize(o.label.toLowerCase())}" aria-pressed="${o.id===selected}">${v41ServiceIcon(o.id)}<span class="v41-choice-label">${sanitize(o.label)}</span></button>`).join('')}</div><div class="v41-service-empty" id="v41IconEmpty" hidden>No hay íconos con ese nombre.</div></section>`;
+ return `<section class="v41-icon-selector" aria-label="Ícono de la suscripción"><div class="v41-icon-top"><div><strong>Ícono del servicio</strong><small>Selecciona una identidad o escribe el nombre para obtener una sugerencia.</small></div><div class="v41-sub-preview" id="v41IconPreview">${v41ServiceIcon(selected)}<small>Elegido</small></div></div><input type="hidden" name="serviceIcon" value="${selected}"><div class="v41-icon-tabs" role="tablist"><button type="button" role="tab" class="is-on" data-v41-tab="svc">Servicios</button><button type="button" role="tab" data-v41-tab="emoji">Emojis</button><button type="button" role="tab" data-v41-tab="mono">Letras</button></div><div class="v41-panel" data-v41-panel="svc"><input type="search" class="field v41-service-filter" id="v41IconSearch" autocomplete="off" aria-label="Buscar ícono por servicio" placeholder="Buscar: Netflix, internet, iCloud…"><div class="v41-service-grid" id="v41IconGrid">${V41_SERVICES.map(o=>`<button type="button" class="v41-service-choice" data-act="v41PickServiceIcon" data-id="${o.id}" data-icon-label="${sanitize(o.label.toLowerCase())}" aria-pressed="${o.id===selected}">${v41ServiceIcon(o.id)}<span class="v41-choice-label">${sanitize(o.label)}</span></button>`).join('')}</div><div class="v41-service-empty" id="v41IconEmpty" hidden>No hay íconos con ese nombre.</div></div>${v41EmojiPanel()}${v41MonoPanel()}</section>`;
+}
+function v41EmojiPanel(){
+ const groups=V41_EMOJIS.map(([g,...items])=>`<div class="v41-emoji-group" data-group="${sanitize(g)}"><h4>${sanitize(g)}</h4><div class="v41-emoji-grid">${items.map(it=>{const sp=it.indexOf(' ');const e=it.slice(0,sp),kw=it.slice(sp+1);return `<button type="button" class="v41-emoji-btn" data-v41-emoji="${sanitize(e)}" data-kw="${sanitize((kw+' '+g).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase())}" title="${sanitize(kw)}" aria-label="${sanitize(kw)}">${sanitize(e)}</button>`}).join('')}</div></div>`).join('');
+ return `<div class="v41-panel" data-v41-panel="emoji" hidden><input type="search" class="field" id="v41EmojiSearch" autocomplete="off" aria-label="Buscar emoji" placeholder="Buscar emoji: café, casa, gimnasio…"><input type="text" class="field" id="v41EmojiOwn" autocomplete="off" aria-label="Pega cualquier emoji" placeholder="O pega cualquier emoji de tu teclado"><div class="v41-emoji-list">${groups}</div><div class="v41-service-empty" id="v41EmojiEmpty" hidden>No hay emojis con ese nombre. Puedes pegar uno de tu teclado arriba.</div></div>`;
+}
+const V41_MONO_COLORS=['#7b2d57','#376bea','#0f766e','#c2410c','#7c3aed','#be123c','#0369a1','#4d7c0f','#a16207','#334155'];
+function v41MonoPanel(){
+ return `<div class="v41-panel" data-v41-panel="mono" hidden><label class="v41-mono-field"><span>Una o dos letras</span><input type="text" class="field" id="v41MonoText" maxlength="2" autocomplete="off" placeholder="Ej. TV"></label><div class="v41-mono-colors" role="group" aria-label="Color">${V41_MONO_COLORS.map((c,i)=>`<button type="button" class="v41-mono-color" data-v41-mono-color="${c}" aria-pressed="${i===0}" aria-label="Color ${c}" style="background:${c}"></button>`).join('')}</div><small class="v41-mono-hint">Sirve para cualquier servicio que no tenga logo.</small></div>`;
 }
 function v41SetServiceIcon(form,id){
  const key=v41ValidIcon(id);
@@ -4330,6 +4360,30 @@ function v41WireServicePicker(form){
   const term=search.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();let count=0;
   form.querySelectorAll('.v41-service-choice').forEach(el=>{const opt=V41_SVC_BY_ID[el.dataset.id];const label=opt?.label.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()||'';el.hidden=Boolean(term)&&!label.includes(term);if(!el.hidden)count++;});
   const empty=form.querySelector('#v41IconEmpty');if(empty)empty.hidden=!!count;
+ });
+ /* Pestañas y paneles del sistema universal de iconos. */
+ const setTab=t=>{form.querySelectorAll('[data-v41-tab]').forEach(b=>{const on=b.dataset.v41Tab===t;b.classList.toggle('is-on',on);b.setAttribute('aria-selected',String(on))});form.querySelectorAll('[data-v41-panel]').forEach(p=>{p.hidden=p.dataset.v41Panel!==t})};
+ const pick=id=>{v41SetServiceIcon(form,id);form.dataset.v41IconManual='1';const ph=form.querySelector('[data-v147-mark]');if(ph)ph.innerHTML=v41ServiceIcon(id)};
+ form.addEventListener('click',e=>{
+  const tab=e.target.closest('[data-v41-tab]');if(tab){e.preventDefault();setTab(tab.dataset.v41Tab);return}
+  const em=e.target.closest('[data-v41-emoji]');if(em){e.preventDefault();pick('emoji:'+em.dataset.v41Emoji);return}
+  const col=e.target.closest('[data-v41-mono-color]');if(col){e.preventDefault();form.querySelectorAll('[data-v41-mono-color]').forEach(b=>b.setAttribute('aria-pressed',String(b===col)));const t=form.querySelector('#v41MonoText')?.value.trim();if(t)pick('mono:'+t+':'+col.dataset.v41MonoColor)}
+ });
+ form.querySelector('#v41EmojiSearch')?.addEventListener('input',e=>{
+  const t=e.target.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();let n=0;
+  form.querySelectorAll('.v41-emoji-btn').forEach(b=>{const hide=Boolean(t)&&!b.dataset.kw.includes(t);b.hidden=hide;if(!hide)n++});
+  form.querySelectorAll('.v41-emoji-group').forEach(g=>{g.hidden=!g.querySelector('.v41-emoji-btn:not([hidden])')});
+  const em=form.querySelector('#v41EmojiEmpty');if(em)em.hidden=n>0;
+ });
+ form.querySelector('#v41EmojiOwn')?.addEventListener('input',e=>{
+  const raw=e.target.value;let first='';
+  try{for(const {segment} of new Intl.Segmenter('es',{granularity:'grapheme'}).segment(raw)){if(/\p{Extended_Pictographic}|\p{Emoji_Presentation}/u.test(segment)){first=segment;break}}}catch(_){const m=raw.match(/\p{Extended_Pictographic}/u);first=m?m[0]:''}
+  if(first&&V41_EMOJI_RE.test('emoji:'+first))pick('emoji:'+first);
+ });
+ form.querySelector('#v41MonoText')?.addEventListener('input',e=>{
+  const t=e.target.value.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ0-9]/g,'').slice(0,2);if(t!==e.target.value)e.target.value=t;
+  const c=form.querySelector('[data-v41-mono-color][aria-pressed="true"]')?.dataset.v41MonoColor||V41_MONO_COLORS[0];
+  if(t)pick('mono:'+t+':'+c);
  });
  const name=form.querySelector('[name="name"]');
  name?.addEventListener('input',()=>{if(form.dataset.v41IconManual==='1')return;const guess=v41GuessIcon(name.value);if(guess!=='general')v41SetServiceIcon(form,guess);});
