@@ -27,7 +27,7 @@ function instrumentRows(s){
 /* Antecedentes: estado de calibración, trazabilidad y procedencia de cada dato. */
 function antecedentesView(){
  const s=current(),A=ST.answers||{},cal=!s.missing.length;
- return `${sec('Antecedentes','Lo que declaraste, de dónde sale cada dato y qué falta. Cada cambio queda registrado.')}
+ return `<p class="muted sm" style="margin:0 0 12px">Lo que declaraste, de dónde sale cada dato y qué falta. Cada cambio queda registrado.</p>
  <div class="grid pair"><div class="card"><div class="caps">ESTADO DE CALIBRACIÓN</div><h2 style="margin-top:7px">${cal?'Calibrado':'Incompleto'}</h2><p>${cal?'Todos los datos esenciales están disponibles; el score se calcula.':'Falta información esencial; el score no se calcula hasta completarla:'}</p>${s.missing.length?`<div class="warnings">${s.missing.map(m=>`<div class="witem critical"><span>!</span><div>${safe(m)}</div></div>`).join('')}</div>`:''}<div class="metricList"><div class="metricLine"><span>Cuestionario</span><b>${A.completed?'Completado':'Pendiente'}</b></div><div class="metricLine"><span>Versión de antecedentes</span><b>${ST.declVersion}</b></div><div class="metricLine"><span>Inicio del historial observado</span><b>${myLabel(VS_START)} (desde el 15)</b></div></div><div class="actionLine"><button class="smallbtn" data-q-act="edit">Editar antecedentes</button></div></div>
  <div class="card"><div class="caps">TRAZABILIDAD</div><h2 style="margin-top:7px">Cambios de antecedentes</h2>${(ST.answersLog||[]).length?`<div class="metricList">${ST.answersLog.map(l=>`<div class="metricLine"><span>Versión ${l.version}</span><b>${safe(l.at.slice(0,16).replace('T',' '))}</b></div>`).join('')}</div>`:'<p class="muted">Todavía no hay versiones guardadas.</p>'}<p class="xs muted">Si corriges un antecedente, los cortes se recalculan como corrección de información, no como un movimiento crediticio nuevo.</p></div></div>
  ${sec('¿De dónde sale cada dato?','Conocido en la app, declarado por ti, verificado con documento o desconocido.')}<div class="card"><div class="metricList">${provenance(s)}</div></div>`;
@@ -35,19 +35,22 @@ function antecedentesView(){
 /* Configuración: productos leídos (fechas, procedencia, documento), actualización de datos, exportación y borrado. */
 function configuracionView(){
  const s=current();
- return `${sec('Configuración','Los datos se leen de vive el hoy y nunca se modifican. Aquí completas lo que falta dentro de VIVE SCORE.')}
+ return `<p class="muted sm" style="margin:0 0 12px">Los datos se leen de vive el hoy y nunca se modifican. Aquí completas lo que falta dentro de VIVE SCORE.</p>
  <div class="card">${instrumentRows(s)}<div class="actionLine"><button class="smallbtn" data-refresh-data="1">↻ Releer datos de vive el hoy</button><button class="smallbtn" data-go="cards">Ver Tarjetas ↗</button><button class="smallbtn" data-go="loans">Ver Préstamos ↗</button></div><p class="xs muted">VIVE SCORE se actualiza solo cuando registras o cambias algo en la app; este botón fuerza una lectura inmediata.</p></div>
  ${sec('Datos y reversión','Todo lo de VIVE SCORE vive aparte, en el almacenamiento experimental de este navegador.')}<div class="card"><div class="actionLine"><button class="smallbtn" id="downloadJson">↓ Exportar JSON</button><button class="smallbtn" id="downloadCSV">↓ Exportar CSV</button><button class="smallbtn dangerText" id="vsReset">Borrar los datos de VIVE SCORE</button></div><div class="callout">Borrar elimina únicamente las respuestas, cortes observados y sellos de VIVE SCORE. Tus tarjetas, préstamos, movimientos e ingresos no se tocan. Para quitar el módulo por completo, sigue el procedimiento de <code>src/vive-score/README.md</code>.</div></div>`;
 }
-/* Centro de control: Observatorio · Historial y evidencias · Auditoría · Antecedentes · Configuración. */
+/* Centro de control: una sola página, sin menú. Cada apartado es una sección plegable; los datos no se repiten. */
 const CC_SECTIONS=[['observatorio','Observatorio'],['historial','Historial y evidencias'],['auditoria','Auditoría'],['antecedentes','Antecedentes'],['configuracion','Configuración']];
-const TAB_ALIAS={observatory:'observatorio',snapshots:'historial',audit:'auditoria',data:'antecedentes'};   // enlaces de las páginas anteriores
-let ccSection='observatorio';
+const TAB_ALIAS={observatory:'observatorio',snapshots:'historial',audit:'auditoria',data:'antecedentes',capacity:'__detail'};   // enlaces de las páginas anteriores
+const ccOpen={observatorio:true,historial:false,auditoria:false,antecedentes:true,configuracion:false};
 function controlView(){
- const body={observatorio:observatory,historial:snapshotView,auditoria:audits,antecedentes:antecedentesView,configuracion:configuracionView}[ccSection]||observatory;
- return `${sec('Centro de control','Observatorio, historial, auditoría, antecedentes y configuración, en un solo lugar.')}<div class="ccnav" role="tablist" aria-label="Apartados del Centro de control">${CC_SECTIONS.map(([k,l])=>`<button type="button" role="tab" class="ccchip ${ccSection===k?'on':''}" data-cc="${k}" aria-selected="${ccSection===k}">${l}</button>`).join('')}</div>${body()}`;
+ const s=current(),q=qualityReport(s),tests=modelAuditSuite(),passed=tests.filter(z=>z.ok).length,c=evaluate(s),warn=c.errors.filter(z=>z.level!=='info').length;
+ const bodies={observatorio:observatory,historial:snapshotView,auditoria:audits,antecedentes:antecedentesView,configuracion:configuracionView};
+ return `${sec('Centro de control','Calidad de los datos, historial, auditoría, antecedentes y configuración, en una sola página.')}
+ <div class="grid stats">${kpi('Confianza de evidencia',`${q.reliability}/100`,'Calidad de los datos, no es score')}${kpi('Cortes observados',DB.months.length,'Desde el 15 de noviembre de 2026')}${kpi('Pruebas del motor',`${passed}/${tests.length}`,'Coherencia algorítmica local')}${kpi('Advertencias',warn,'Datos por revisar',warn?'neg':'')}</div>
+ ${CC_SECTIONS.map(([k,l])=>`<details class="ccdet" data-cc="${k}" ${ccOpen[k]?'open':''}><summary>${l}</summary><div class="ccbody">${bodies[k]()}</div></details>`).join('')}`;
 }
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!b.dataset.cc)return;ccSection=b.dataset.cc;render()});
+document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.classList?.contains('ccdet')&&d.dataset.cc)ccOpen[d.dataset.cc]=d.open},true);
 document.addEventListener('change',e=>{
  const t=e.target;if(!t.dataset?.ov)return;
  const [id,part]=t.dataset.ov.split('|'),cur=ST.overrides[id]?.opened||'';

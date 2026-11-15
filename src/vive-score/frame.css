@@ -84,3 +84,12 @@ body.night .ccchip.on{color:#07110e}
 
 /* Fondo transparente: el marco hereda el fondo de la página de vive el hoy (sin declarar color-scheme para que el navegador no pinte un lienzo opaco). */
 html,body{background:transparent!important}
+
+/* Centro de control: secciones plegables, sin menú */
+.ccdet{border:1px solid var(--line);border-radius:22px;background:var(--paper);margin:0 0 12px;overflow:hidden}
+.ccdet>summary{cursor:pointer;list-style:none;padding:16px 20px;font-size:17px;font-weight:800;letter-spacing:-.03em;display:flex;align-items:center;justify-content:space-between}
+.ccdet>summary::-webkit-details-marker{display:none}
+.ccdet>summary::after{content:"+";font-size:20px;font-weight:600;color:var(--teal)}
+.ccdet[open]>summary::after{content:"−"}
+.ccbody{padding:0 18px 18px}
+.ccbody>.card{box-shadow:none}
