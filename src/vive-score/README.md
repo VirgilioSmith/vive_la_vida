@@ -20,6 +20,7 @@ Página nueva **«Score»** de la versión web de *vive el hoy · Finanzas 360*.
 | `state.js` | Estado, mensajería con el anfitrión y construcción de cada corte (datos reales + antecedentes declarados). |
 | `questionnaire.js` | Cuestionario inteligente de calibración (solo mes y año). |
 | `settings.js` | «Configuración y antecedentes»: procedencia de cada dato, edición con trazabilidad, borrado. |
+| `seed.js` | Antecedentes ya conocidos que se cargan automáticamente (aumentos de límite de Popular y Cibao). |
 | `boot.js` | Arranque. |
 
 Pruebas: `tests/vive-score.js` (`node tests/vive-score.js`).
@@ -51,6 +52,7 @@ Siete pasos más resumen: atrasos, aumentos de límite, tarjetas nuevas, présta
 
 - Tu declaración inicial («nunca he tenido atrasos y estoy al día») aparece **precargada** y se guarda como *declaración personal*, no como evidencia bancaria.
 - **No hay preguntas sobre consultas de buró** (TransUnion, Equifax u otros).
+- **Antecedentes precargados** (`seed.js`): por indicación del titular, los aumentos automáticos de límite de **Popular (agosto de 2026: RD$200,000 y US$3,000 → RD$400,000 y US$6,000)** y de **Cibao (septiembre de 2026: RD$144,000 y US$2,000 → RD$400,000 y US$6,000)** se cargan solos, una vez, y ese paso del cuestionario se omite. Siguen siendo declaraciones personales, se pueden editar o quitar, y si se borran a propósito no se vuelven a cargar.
 - Se puede editar luego; cada versión queda registrada y los cortes se recalculan como *corrección de información*.
 - Sin respuesta a atrasos (o «No estoy seguro») o sin antigüedad conocida, **el score no se calcula** y se muestra qué falta.
 

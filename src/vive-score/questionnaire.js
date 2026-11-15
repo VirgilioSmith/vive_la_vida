@@ -67,7 +67,8 @@ function stepBody(id){
   ${A.late.answer==='yes'?listBlock('late',(it,p)=>`${productSelect(p,it,'Producto afectado')}${myPicker(p,it,'Mes y año del atraso')}${qSelect(p+'.duration',it.duration,'Duración aproximada',[['<30','Menos de 30 días'],['30-59','30 a 59 días'],['60-89','60 a 89 días'],['90-119','90 a 119 días'],['120+','120 días o más']])}${qCheck(p+'.resolved',it.resolved,'Ya se regularizó')}${qCheck(p+'.repeated',it.repeated,'Ocurrió más de una vez')}`,'Agregar otro atraso'):''}`;
  }
  if(id==='limit'){
-  return `${chips('limit',A.limit.answer,yn.slice(0,2))}${A.limit.answer==='yes'?listBlock('limit',(it,p)=>`${productSelect(p,it,'Tarjeta','card')}${myPicker(p,it,'Mes y año del aumento')}${qInput(p+'.prev',it.prev,'Límite anterior',{num:true})}${qInput(p+'.next',it.next,'Límite nuevo',{num:true})}${qSelect(p+'.kind',it.kind,'Tipo de aumento',[['automatic','Automático'],['requested','Solicitado por mí']])}`,'Agregar otro aumento'):''}`;
+  const seeded=(A.limit.events||[]).filter(e=>e.seed);
+  return `${seeded.length?`<div class="callout"><b>Cargado automáticamente por ti:</b> ${[...new Set(seeded.map(e=>e.productLabel+' · '+myLabel(e.period)))].join(' · ')} (aumentos automáticos del banco). Son declaraciones tuyas; puedes editarlas o quitarlas aquí. </div>`:''}${chips('limit',A.limit.answer,yn.slice(0,2))}${A.limit.answer==='yes'?listBlock('limit',(it,p)=>`${productSelect(p,it,'Tarjeta','card')}${myPicker(p,it,'Mes y año del aumento')}${qSelect(p+'.currency',it.currency||'DOP','Moneda',[['DOP','RD$'],['USD','US$']])}${qInput(p+'.prev',it.prev,'Límite anterior',{num:true})}${qInput(p+'.next',it.next,'Límite nuevo',{num:true})}${qSelect(p+'.kind',it.kind,'Tipo de aumento',[['automatic','Automático'],['requested','Solicitado por mí']])}`,'Agregar otro aumento'):''}`;
  }
  if(id==='newCards'){
   const recent=uniqueProducts().filter(p=>p.kind==='card'&&validPeriod(p.opened)&&monthsFrom(p.opened,todayPeriod())<=12);
@@ -97,13 +98,15 @@ function summaryBody(){
  if(!validPeriod(A.first.period)&&!prods.some(p=>validPeriod(p.opened)))miss.push('Antigüedad: falta el mes y año de tu primer crédito.');
  const noOpen=prods.filter(p=>!validPeriod(p.opened));if(noOpen.length)miss.push(`${noOpen.length} producto(s) sin fecha de apertura: ${noOpen.map(p=>safe(p.name)).join(', ')}.`);
  for(const [k,l] of [['limit','aumentos de límite'],['newCards','tarjetas nuevas'],['newLoans','préstamos recientes'],['closed','créditos cerrados'],['other','otros acontecimientos']])if(A[k].answer==null)miss.push(`Sin responder: ${l}.`);
- const rows=[['Productos identificados en vive el hoy',`${prods.filter(p=>p.kind==='card').length} tarjeta(s) · ${prods.filter(p=>p.kind==='loan').length} préstamo(s)`],['Atrasos declarados',A.late.answer==='no'?'Ninguno (declaración personal)':A.late.answer==='yes'?String(late):'—'],['Antigüedad conocida',validPeriod(A.first.period)?myLabel(A.first.period)+' (declarada)':'—'],['Aumentos de límite históricos',A.limit.answer==null?'—':String(lim)],['Nuevos créditos',A.newCards.answer==null&&A.newLoans.answer==null?'—':`${nc} tarjeta(s) · ${nl} préstamo(s)`],['Productos cerrados',A.closed.answer==null?'—':String(cl)],['Acontecimientos extraordinarios',A.other.answer==null?'—':String(ot)]];
+ const rows=[['Productos identificados en vive el hoy',`${prods.filter(p=>p.kind==='card').length} tarjeta(s) · ${prods.filter(p=>p.kind==='loan').length} préstamo(s)`],['Atrasos declarados',A.late.answer==='no'?'Ninguno (declaración personal)':A.late.answer==='yes'?String(late):'—'],['Antigüedad conocida',validPeriod(A.first.period)?myLabel(A.first.period)+' (declarada)':'—'],['Aumentos de límite históricos',A.limit.answer==null?'—':String(lim)+(A.limit.autoFilled?' · cargados automáticamente':'')],['Nuevos créditos',A.newCards.answer==null&&A.newLoans.answer==null?'—':`${nc} tarjeta(s) · ${nl} préstamo(s)`],['Productos cerrados',A.closed.answer==null?'—':String(cl)],['Acontecimientos extraordinarios',A.other.answer==null?'—':String(ot)]];
  return `<div class="metricList">${rows.map(([a,b])=>`<div class="metricLine"><span>${a}</span><b>${safe(b)}</b></div>`).join('')}</div><h3 style="margin:16px 0 6px">Información faltante</h3>${miss.length?`<div class="warnings">${miss.map(m=>`<div class="witem warning"><span>!</span><div>${m}</div></div>`).join('')}</div>`:'<div class="okMessage">✓ No falta información esencial.</div>'}<p class="xs muted">Todo lo anterior son declaraciones personales y datos de la app, no evidencia bancaria verificada. Puedes cambiarlo después en Configuración y antecedentes; cada cambio queda registrado.</p>`;
 }
+const skipStep=id=>{const A=ST.answers;return id==='limit'&&A?.limit?.autoFilled&&A.limit.confirmed&&!qEditing};
+function stepTo(from,dir){let n=clamp(from+dir,0,Q_STEPS.length-1);while(skipStep(Q_STEPS[n][0])&&n>0&&n<Q_STEPS.length-1)n+=dir;return n}
 function questionnaire(){
- ensureAnswers();const step=clamp(qStep,0,Q_STEPS.length-1),[id,title,question]=Q_STEPS[step],last=step===Q_STEPS.length-1;
- return `<div class="card qcard"><div class="qhead"><div><div class="caps">${qEditing?'EDITAR ANTECEDENTES':'CALIBRACIÓN INICIAL'} · PASO ${step+1} DE ${Q_STEPS.length}</div><h2>${safe(title)}</h2><p class="qquestion">${safe(question)}</p></div>${qEditing?`<button class="smallbtn" data-q-act="cancel">Cancelar</button>`:''}</div>
- <div class="qprogress" role="progressbar" aria-valuemin="1" aria-valuemax="${Q_STEPS.length}" aria-valuenow="${step+1}"><span style="width:${100*(step+1)/Q_STEPS.length}%"></span></div>
+ ensureAnswers();const step=clamp(qStep,0,Q_STEPS.length-1),[id,title,question]=Q_STEPS[step],last=step===Q_STEPS.length-1,shown=Q_STEPS.filter(q=>!skipStep(q[0])),pos=shown.findIndex(q=>q[0]===id)+1;
+ return `<div class="card qcard"><div class="qhead"><div><div class="caps">${qEditing?'EDITAR ANTECEDENTES':'CALIBRACIÓN INICIAL'} · PASO ${pos} DE ${shown.length}</div><h2>${safe(title)}</h2><p class="qquestion">${safe(question)}</p></div>${qEditing?`<button class="smallbtn" data-q-act="cancel">Cancelar</button>`:''}</div>
+ <div class="qprogress" role="progressbar" aria-valuemin="1" aria-valuemax="${shown.length}" aria-valuenow="${pos}"><span style="width:${100*pos/shown.length}%"></span></div>
  <div class="qbody">${stepBody(id)}</div>
  <div class="qnav"><button class="smallbtn" data-q-act="prev" ${step===0?'disabled':''}>← Anterior</button>${last?`<button class="btn green" data-q-act="finish">${qEditing?'Guardar cambios':'Comenzar mi VIVE SCORE'}</button>`:`<button class="btn green" data-q-act="next">Siguiente →</button>`}</div></div>
  <p class="xs muted qnote">Las preguntas históricas usan solo mes y año. No se pregunta por consultas a burós de crédito.</p>`;
@@ -119,8 +122,8 @@ function qAction(act,arg){
  if(act==='ans'){const [k,v]=arg.split(':');A[k].answer=v;if(k==='late'){A.late.prefilled=false;A.late.confirmed=true}if(v==='yes'&&!A[k][LIST_KEY[k]].length)A[k][LIST_KEY[k]].push(BLANK[k]())}
  else if(act==='add')A[arg][LIST_KEY[arg]].push(BLANK[arg]());
  else if(act==='rm'){const [k,i]=arg.split(':');A[k][LIST_KEY[k]].splice(Number(i),1)}
- else if(act==='next'){if(Q_STEPS[qStep][0]==='late'&&A.late.prefilled){A.late.prefilled=false;A.late.confirmed=true}qStep=Math.min(Q_STEPS.length-1,qStep+1)}
- else if(act==='prev')qStep=Math.max(0,qStep-1);
+ else if(act==='next'){if(Q_STEPS[qStep][0]==='late'&&A.late.prefilled){A.late.prefilled=false;A.late.confirmed=true}qStep=stepTo(qStep,1)}
+ else if(act==='prev')qStep=stepTo(qStep,-1);
  else if(act==='edit'){beginEdit();return}
  else if(act==='goto')qStep=Math.max(0,Math.min(Q_STEPS.length-1,Number(arg)||0));
  else if(act==='cancel'){qEditing=false;ST.answers=restoreStore({v:1,answers:JSON.parse(editBackup||'null')}).answers||ST.answers;qStep=0}

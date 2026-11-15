@@ -3,7 +3,7 @@
    Se carga DESPUÉS de score.js (motor + vistas) y comparte su ámbito global. */
 const VS_START='2026-11';                       // inicio del historial observado: 15 de noviembre de 2026
 const MONTH_NAMES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const newStore=()=>({v:1,startedOn:VS_START,answers:null,answersLog:[],overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
+const newStore=()=>({v:1,seeded:{},startedOn:VS_START,answers:null,answersLog:[],overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
 let ST=newStore(),PAYLOAD=null,qEditing=false,qStep=0,saveTimer=0,heightTimer=0,lastHeight=0;
 function restoreStore(x){return x&&x.v===1?{...newStore(),...x}:newStore()}
 function saveStore(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>VSHost.send('save',{store:ST}),250)}
@@ -18,7 +18,7 @@ const VSHost={
  boot(){
   window.addEventListener('message',e=>{
    if(e.origin!==location.origin||e.source!==parent)return;const m=e.data;if(!m||m.vs!==1)return;
-   if(m.type==='init'){ST=restoreStore(m.store);PAYLOAD=m.payload||null;applyEnv(m.env);auditHistory=Array.isArray(ST.audit)?ST.audit.slice(0,200):[];if(ST.settings)DB.settings={...clone(CAP_DEFAULT),...ST.settings};rebuildDB();render()}
+   if(m.type==='init'){ST=restoreStore(m.store);PAYLOAD=m.payload||null;applyEnv(m.env);auditHistory=Array.isArray(ST.audit)?ST.audit.slice(0,200):[];if(ST.settings)DB.settings={...clone(CAP_DEFAULT),...ST.settings};applySeeds();rebuildDB();render()}
    else if(m.type==='env'){applyEnv(m.env);render()}
   });
   this.send('ready');
@@ -99,7 +99,7 @@ function materialize(period,idxInList){
  const events=[];
  const add=(type,per,label,note)=>events.push({id:'ev-'+events.length,type,date:validPeriod(per)?per:'',label,note});
  for(const e of (A.late?.answer==='yes'?A.late.events||[]:[]))add('late',e.period,'Atraso declarado · '+(e.productLabel||'producto'),`Duración ${e.duration||'—'} · ${e.resolved?'regularizado':'sin regularizar'}${e.repeated?' · más de una vez':''} · declaración personal`);
- for(const e of (A.limit?.answer==='yes'?A.limit.events||[]:[]))add('limit',e.period,'Aumento de límite declarado · '+(e.productLabel||'tarjeta'),`${e.prev||'—'} → ${e.next||'—'} · ${e.kind==='requested'?'solicitado':'automático'} · declaración personal`);
+ for(const e of (A.limit?.answer==='yes'?A.limit.events||[]:[]))add('limit',e.period,'Aumento de límite declarado · '+(e.productLabel||'tarjeta'),`${e.prev||'—'} → ${e.next||'—'} ${e.currency||''} · ${e.kind==='requested'?'solicitado':'automático'} · declaración personal`);
  for(const e of (A.newCards?.answer==='yes'?A.newCards.items||[]:[]))add('open',e.period,'Tarjeta nueva declarada · '+(e.inst||'institución'),`Límite original ${e.limit||'—'} ${e.currency||''} · ${e.kind==='additional'?'tarjeta adicional':'línea nueva'} · declaración personal`);
  for(const e of (A.newLoans?.answer==='yes'?A.newLoans.items||[]:[]))add('open',e.period,'Préstamo declarado · '+(e.inst||'institución'),`${e.loanType||'préstamo'} · monto ${e.amount||'—'} · plazo ${e.term||'—'} · estado ${e.state||'—'} · declaración personal`);
  for(const e of (A.closed?.answer==='yes'?A.closed.items||[]:[]))add('close',e.period,'Producto cerrado · '+(e.productLabel||'producto'),`${e.reason||'motivo no indicado'} · ${e.state||'—'} · declaración personal`);

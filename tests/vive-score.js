@@ -10,12 +10,13 @@ const check = (n, name, ok, extra = '') => { results.push({ n, name, ok: !!ok, e
 const go = async (p, id) => { await p.evaluate(id => { const b = document.createElement('button'); b.dataset.act = 'navigate'; b.dataset.id = id; b.hidden = true; document.body.append(b); b.click(); b.remove(); }, id); await p.waitForTimeout(400); };
 const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.html'));
 const fclick = async (p, sel) => { const fr = frameOf(p); await fr.evaluate(s => { const e = document.querySelector(s); if (!e) throw Error('sin ' + s); e.click(); }, sel); await p.waitForTimeout(120); };
+const fclickIf = async (p, sel) => { const fr = frameOf(p); await fr.evaluate(s => { const e = document.querySelector(s); if (e) e.click(); }, sel); await p.waitForTimeout(120); };
 const fchange = async (p, sel, val) => { const fr = frameOf(p); await fr.evaluate(([s, v]) => { const e = document.querySelector(s); if (!e) throw Error('sin ' + s); e.value = v; e.dispatchEvent(new Event('change', { bubbles: true })); }, [sel, val]); await p.waitForTimeout(120); };
 const ftext = p => frameOf(p).evaluate(() => document.getElementById('view').innerText);
-const seedDates = p => p.evaluate(() => { const d = window.__T.dbg(); d.cards[0].acquiredOn = '2021-03'; if (d.cards[1]) d.cards[1].acquiredOn = '2023-06'; d.loans[0].acquiredOn = '2024-03'; });
+const seedDates = p => p.evaluate(() => { const d = window.__T.dbg(); d.cards[0].name = 'Visa Titanium Popular'; if (d.cards[1]) d.cards[1].name = 'Visa Platinum Cibao'; d.cards[0].acquiredOn = '2021-03'; if (d.cards[1]) d.cards[1].acquiredOn = '2023-06'; d.loans[0].acquiredOn = '2024-03'; });
 const rail = p => p.evaluate(() => [...document.querySelectorAll('.rail-main .rail-action')].map(b => b.dataset.id));
 async function reopenScore(p) { await go(p, 'score'); await p.waitForTimeout(1500); }
-async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick(p, '[data-q-act="next"]'); await fclick(p, '[data-q-act="finish"]'); await p.waitForTimeout(500); }
+async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclickIf(p, '[data-q-act="next"]'); await fclick(p, '[data-q-act="finish"]'); await p.waitForTimeout(500); }
 
 (async () => {
   const b = await chromium.launch();
@@ -38,7 +39,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   check('p', 'La página VIVE SCORE CRÉDITO abre en un marco aislado', !!fr && /VIVE SCORE CRÉDITO/.test(await p.evaluate(() => document.getElementById('app').innerText)));
 
   /* 4 · cuestionario, 5 · mes y año, 6 · sin buró */
-  const steps = []; for (let k = 0; k < 8; k++) { steps.push(await ftext(p)); if (k < 7) await fclick(p, '[data-q-act="next"]'); }
+  const steps = []; for (let k = 0; k < 8; k++) { steps.push(await ftext(p)); if (k < 7) await fclickIf(p, '[data-q-act="next"]'); }
   const dateInputs = await frameOf(p).evaluate(() => document.querySelectorAll('input[type="date"],input[type="time"],input[type="datetime-local"]').length);
   check(4, 'El cuestionario recorre sus 7 pasos y el resumen', steps.length === 8 && /Resumen/.test(steps[7]) && /Comenzar|Guardar/.test(await frameOf(p).evaluate(() => document.querySelector('.qnav .btn')?.textContent || '')));
   // paso «Sí» con atraso: pedir mes y año
@@ -56,6 +57,11 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
 
   const score0 = await frameOf(p).evaluate(() => evaluate(current()).score);
   check(3, 'El indicador muestra el último puntaje calculado', Number.isFinite(score0) && (await p.evaluate(() => document.querySelector('.vive-score-badge')?.textContent)) === String(score0), String(score0));
+
+  /* 19 · aumentos de límite precargados por indicación del titular */
+  const seedInfo = await frameOf(p).evaluate(() => { const L = ST.answers.limit, ev = L.events || []; return { answer: L.answer, auto: L.autoFilled, n: ev.length, periods: [...new Set(ev.map(e => e.period))].sort().join(','), cards: [...new Set(ev.map(e => e.productLabel))].sort().join(','), amounts: ev.map(e => e.currency + ':' + e.prev + '>' + e.next).sort().join(' '), kinds: [...new Set(ev.map(e => e.kind))].join(','), req: current().limitReq0to6 + current().limitReq7to12, autoCount: current().limitAuto, seeded: Object.keys(ST.seeded || {}).length }; });
+  const limitStepShown = steps.some(t => /Aumentos de límite\n/.test(t.split('\n').slice(0, 3).join('\n')));
+  check(19, 'Los aumentos de límite de Popular (ago-2026) y Cibao (sep-2026) quedan cargados solos y ese paso se omite', seedInfo.answer === 'yes' && seedInfo.auto && seedInfo.n === 4 && seedInfo.periods === '2026-08,2026-09' && /Cibao/.test(seedInfo.cards) && /Popular/.test(seedInfo.cards) && /DOP:200000>400000/.test(seedInfo.amounts) && /USD:3000>6000/.test(seedInfo.amounts) && /DOP:144000>400000/.test(seedInfo.amounts) && /USD:2000>6000/.test(seedInfo.amounts) && seedInfo.kinds === 'automatic' && seedInfo.req === 0 && seedInfo.autoCount === 4 && !limitStepShown && /PASO \d DE 7/.test(steps[0]), JSON.stringify(seedInfo));
 
   /* 8 · datos crediticios recuperados */
   const payload = await p.evaluate(() => window.ViveScoreAdapter.read());
@@ -120,8 +126,8 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const stored = await p.evaluate(() => JSON.parse(localStorage.getItem('vive-score:v1') || 'null'));
   await p.reload({ waitUntil: 'load' }); await p.waitForTimeout(2500); await p.evaluate(() => window.__T.boot()); await p.waitForTimeout(1200);
   await seedDates(p); await reopenScore(p);
-  const reload = await frameOf(p).evaluate(() => ({ gate: !!document.querySelector('.qcard'), cal: ST.answers?.completed, version: ST.declVersion, ov: Object.values(ST.overrides).some(o => o.opened === '2019-08') }));
-  check(15, 'Las respuestas y modificaciones se conservan al recargar', !!stored && reload.cal === true && reload.gate === false && reload.ov, JSON.stringify(reload));
+  const reload = await frameOf(p).evaluate(() => ({ gate: !!document.querySelector('.qcard'), cal: ST.answers?.completed, version: ST.declVersion, seeds: ST.answers.limit.events.length, ov: Object.values(ST.overrides).some(o => o.opened === '2019-08') }));
+  check(15, 'Las respuestas y modificaciones se conservan al recargar', !!stored && reload.cal === true && reload.gate === false && reload.ov && reload.seeds === 4, JSON.stringify(reload));
 
   /* 2 · solo web / 16 · móvil sin cambios / 17 · desactivación */
   await ctx.close();
