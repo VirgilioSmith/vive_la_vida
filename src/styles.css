@@ -56163,3 +56163,30 @@ html body:is(.theme-dark,.theme-black) #modal-root#modal-root#modal-root .v900-p
 html body #modal-root#modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm){background:var(--v903-base)!important;background-image:none!important}
 html body #modal-root#modal-root#modal-root form.v901-sal .form-grid.v901-step1>label:not(.v789-select-enhanced),html body #modal-root#modal-root#modal-root form.v901-steps .form-grid.v901-step1>label.v789-select-enhanced{background:transparent!important}
 html body #modal-root#modal-root#modal-root form:is(#v940IncomeCaptureForm) .form-foot>.btn:not(.v901-next):not([type=submit]){background:var(--v903-surface)!important;background-image:none!important}
+
+/* Modo Black: la matriz anual y el panel de lectura del patrimonio usaban fondos claros con texto claro (ilegibles). */
+html body:is(.theme-black,.theme-dark) #app#app #page :is(.matrix-scroll,.matrix-report,.matrix-table-scroll) :is(table,thead,tbody,tr,th,td){background-color:#000!important;color:#eef1f6!important;border-color:rgba(255,255,255,.12)!important}
+html body:is(.theme-black,.theme-dark) #app#app #page :is(.matrix-scroll,.matrix-report,.matrix-table-scroll) :is(.matrix-group td,td.matrix-group,tr.matrix-group>*){background-color:#0b0d12!important}
+html body:is(.theme-black,.theme-dark) #app#app #page :is(.matrix-scroll,.matrix-report,.matrix-table-scroll) :is(tr.matrix-total>*,.matrix-total td,td.matrix-total){background-color:#0d1117!important;font-weight:800}
+html body:is(.theme-black,.theme-dark) #app#app #page :is(.matrix-scroll,.matrix-report,.matrix-table-scroll) :is(.matrix-static-label,.matrix-label small,td small,th small){color:#b8c1d8!important}
+html body:is(.theme-black,.theme-dark) #app#app #page :is(.matrix-scroll,.matrix-report,.matrix-table-scroll){background:#000!important}
+html body:is(.theme-black,.theme-dark) #app#app #page .v176-patrimony-readout{background:#000!important;border:1px solid rgba(255,255,255,.14)!important;color:#eef1f6!important}
+html body:is(.theme-black,.theme-dark) #app#app #page .v176-patrimony-readout :is(small,span,p){color:#b8c1d8!important}
+html body:is(.theme-black,.theme-dark) #app#app #page .v176-patrimony-readout :is(strong,b,h3,h4){color:#fff!important}
+html body:is(.theme-black,.theme-dark) #app#app #page .matrix-report-panel{background:#000!important;background-image:none!important;border:1px solid rgba(255,255,255,.12)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
+html body #app#app #page .v985-matrix .v985-grid .v985-card .v985-figure>strong{white-space:nowrap;font-size:clamp(17px,5.2vw,26px)}
+html body #app#app #page .matrix-top-kpis .kpi-value{white-space:nowrap;font-size:clamp(15px,5vw,22px);letter-spacing:-.02em}
+
+/* Contraste AA (WCAG 1.4.3): textos secundarios y acentos pequeños que no llegaban a 4.5:1. */
+html body:not(.theme-black):not(.theme-dark) #app#app #page :is(.matrix th,.annual-table th,.matrix-detail-table th,.matrix-group span,.v358-budget-amounts small,.v358-budget-meta span,.v358-budget-name small,.v410-credit-kpis small){color:#566680!important}
+html body:not(.theme-black):not(.theme-dark) #app#app #page :is(.v410-credit-head button,.v708-more,.v200-black-choice){color:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 82%,#000)!important}
+html body:is(.theme-black,.theme-dark) #app#app #page :is(.v265-mobile-balance>span,.v176-patrimony-readout small,.expenses-pareto-row small,.v439-mac-group>p){color:#a7b2c6!important}
+html body:is(.theme-black,.theme-dark) #app#app#app#app :is(.v221-state.review,.v239-add>span,.v410-subtotal,button[data-view="recurring"]){color:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 52%,#fff)!important}
+html body:is(.theme-black,.theme-dark) #app#app #page .matrix-scroll :is(th,.matrix-static-label,.matrix-label small){color:#c3ccdd!important}
+html body:is(.theme-black,.theme-dark) #app#app#app #page :is(.v12-table-scroller,.v198-auto-category-scroll) :is(table,thead,tbody,tr,th,td){background-color:#000!important;color:#eef1f6!important;border-color:rgba(255,255,255,.12)!important}
+html body:not(.theme-black):not(.theme-dark) #app#app#app #page :is(.v12-table-scroller,.v198-auto-category-scroll) th{color:#566680!important}
+html body:not(.theme-black):not(.theme-dark) #app#app#app :is(.v410-credit-kpis small,.v410-credit-kpis div>small){color:#566680!important}
+/* WCAG 2.5.8: puntos de paginación del wallet con área táctil de 24 px (el punto visible mantiene 7 px). */
+html body .v266-wallet .v266-dots.v68-wallet-dots button,html body .v266-wallet .v266-dots.v68-wallet-dots button.active{box-sizing:border-box!important;height:24px!important;min-height:24px!important;max-height:24px!important;width:24px!important;min-width:24px!important;padding:8.5px!important;background-clip:content-box!important}
+html body .v266-wallet .v266-dots.v68-wallet-dots button.active{width:38px!important;min-width:38px!important;flex:0 0 38px!important;padding:8.5px 8.5px!important}
+html body .v266-wallet .v266-dots.v68-wallet-dots{gap:0!important}
