@@ -9422,7 +9422,8 @@ function v48SelectStep(form,number){
  form.querySelectorAll('.v48-back').forEach(b=>b.hidden=n===1);
  form.querySelectorAll('.v48-next').forEach(b=>b.hidden=n===4);
  form.querySelectorAll('.v48-final').forEach(b=>b.hidden=n!==4);
- const title=form.querySelector('.v48-step-title');if(title)title.textContent=['','1 · Tipo de trabajo','2 · Importe y descuentos','3 · Calendario de cobro','4 · Revisar y guardar'][n];
+ const title=form.querySelector('.v48-step-title');if(title)title.textContent=['','Datos','Descuentos','Calendario y cuenta','Revisa tu programación'][n];
+ if(typeof v902Refresh==='function')v902Refresh(form,n);
  const counter=form.querySelector('.v50-counter');if(counter)counter.textContent='Paso '+n+' de 4';
  const formal=form.elements.kind?.value==='formal';
  form.querySelectorAll('.v48-company-only').forEach(el=>el.hidden=!formal);
@@ -9463,20 +9464,31 @@ function v48RefreshSummary(form){
   const pay=v40Payroll(schedule,f.nextDue.value),factor=v80MonthlyFactor(frequency);
   const monthNet=pay.net*factor, monthGross=pay.gross*factor;
   const line=(label,number,emph=false)=>`<div class="v48-review-line ${emph?'major':''}"><span>${label}</span><strong>${money(number,schedule.currency,2)}</strong></div>`;
-  target.innerHTML=`<div class="v48-summary-hero"><small>${kind==='formal'?'Nómina formal · impuestos estimados':'Actividad independiente · descuentos generales'}</small><span>NETO POR COBRO</span><strong>${money(pay.net,schedule.currency,2)}</strong><p>Primer cobro: ${prettyDate(f.nextDue.value)} · ${v45FreqName(frequency)} · ${f.postingMode.value==='auto'?'Automático a partir del vencimiento':'Confirmación manual'}</p></div>
-    <div class="v48-review-lines">${line('Bruto por cobro',pay.gross)}${kind==='formal'?line('AFP (pensiones)',-pay.afp)+line('SFS (salud)',-pay.sfs)+line('ISR (impuesto)',-pay.isr):''}${line('Otros descuentos',-pay.other)}${line('Neto por cobro',pay.net,true)}</div>
-    <div class="v48-cash-planning"><div><small>BRUTO MENSUAL EQUIVALENTE</small><b>${money(monthGross,schedule.currency,2)}</b></div><div><small>NETO MENSUAL EQUIVALENTE</small><b>${money(monthNet,schedule.currency,2)}</b></div></div>
-    <p class="v48-cash-warning">Solo es una programación: <strong>no aumenta el saldo ni las estadísticas antes del ${prettyDate(f.nextDue.value)}</strong>. Los impuestos de nómina son estimados y los recibos pasados no se recalculan.</p>`;
+  const accountNm=account(f.accountId.value),bk=accountNm&&bank(accountNm.bankId),srcName=f.name.value.trim()||'Ingreso recurrente';
+  const dayTxt=frequency==='monthly'?'Día '+(Number((f.nextDue.value||'').slice(8,10))||''):'';
+  const dl=(k,v,cls='')=>`<div class="v902-r ${cls}"><span>${k}</span><strong>${v}</strong></div>`;
+  target.innerHTML=`<section class="v902-card"><div class="v902-card-head"><span class="v902-ico" aria-hidden="true">${icon('briefcase')}</span><div><strong>${sanitize(srcName)}</strong><small>${kind==='formal'?'Trabajo formal':'Trabajo informal'}</small></div><button type="button" class="v902-edit" data-v902-goto="1">Editar</button></div>
+   ${dl(frequency==='monthly'?'Bruto mensual':'Bruto por cobro',money(frequency==='monthly'?monthGross:pay.gross,schedule.currency,2))}
+   ${kind==='formal'?`<div class="v902-r v902-block"><span>Deducciones</span><ul><li><span>AFP</span><span>${money(pay.afp,schedule.currency,2)}</span></li><li><span>SFS</span><span>${money(pay.sfs,schedule.currency,2)}</span></li><li><span>ISR</span><span>${money(pay.isr,schedule.currency,2)}</span></li></ul></div>`:''}
+   ${dl('Otros descuentos',money(pay.other,schedule.currency,2))}
+   ${dl('Neto por cobro',money(pay.net,schedule.currency,2),'v902-net')}</section>
+   <section class="v902-card"><div class="v902-card-head v902-plain"><span class="v902-ico" aria-hidden="true">${icon('calendar')}</span><div><strong>${v45FreqName(frequency)}${dayTxt?' · '+dayTxt:''}</strong><small>Primer cobro: ${prettyDate(f.nextDue.value)}</small></div><button type="button" class="v902-edit" data-v902-goto="3">Editar</button></div>
+   <div class="v902-line">${icon('bank')||''}<span>${accountNm?sanitize(accountNm.name)+' · '+(accountNm.currency||schedule.currency):'—'}</span></div>
+   <div class="v902-line"><span aria-hidden="true">◌</span><span>${f.postingMode.value==='auto'?'Automático al sincronizar':'Confirmación manual'}</span></div></section>
+   <p class="v902-info"><span aria-hidden="true">ⓘ</span> Los recibos anteriores no cambian. Solo es una programación: no aumenta el saldo antes del ${prettyDate(f.nextDue.value)}.</p>`;
  }catch(err){target.innerHTML='<p class="v48-validation-error">'+sanitize(err.message||'Revisa la información')+'</p>';}
 }
 function v48WizardError(msg){showError(msg);}
 function v48ValidateStep(form,n){
  const e=form.elements;
- if(n===1 && form.dataset.v48KindChosen!=='true')throw Error('Elige primero si es trabajo formal o informal.');
- if(n===2){
+ /* Paso 1 = Datos (tipo, nombre, importe, moneda); paso 2 = Descuentos; paso 3 = Calendario y cuenta. */
+ if(n===1){
+  if(form.dataset.v48KindChosen!=='true')throw Error('Elige primero si es trabajo formal o informal.');
   if(!e.name.value.trim())throw Error('Escribe el nombre de tu trabajo o actividad.');
   if(!(Number(e.grossMonthly.value)>0))throw Error('Escribe un ingreso bruto válido.');
   if(e.kind.value==='formal'&&e.currency.value!=='DOP')throw Error('La nómina formal debe calcularse en pesos dominicanos.');
+ }
+ if(n===2){
   v43SyncCompany(form);
   const monthly=v45GrossMonthly(e.grossMonthly.value,e.salaryBasis?.value||'monthly',e.frequency.value);
   const s={kind:e.kind.value,currency:e.currency.value,grossMonthly:monthly,otherDeduction:Number(e.otherDeduction.value)||0,companyDeductions:JSON.parse(e.companyDeductionsJSON?.value||'[]'),frequency:e.frequency.value};
@@ -9538,9 +9550,44 @@ v40IncomeForm=function(id){
  form.dataset.v48KindChosen=id?'true':'false';
  form.querySelectorAll('[data-v48-kind]').forEach(b=>{b.classList.toggle('selected',!!id&&b.dataset.v48Kind===old.kind);b.setAttribute('aria-pressed',String(!!id&&b.dataset.v48Kind===old.kind));});
  v50IncomeRefresh(form);
- v45UpdateIncomeFields(form);v43SyncCompany(form);v48SelectStep(form,1);
+ v45UpdateIncomeFields(form);v43SyncCompany(form);
+ if(typeof v902RemapIncomeWizard==='function')v902RemapIncomeWizard(form,wizard,id);
+ v48SelectStep(form,1);
 };
+/* Ingreso recurrente (propuesta visual): Datos → Descuentos → Calendario y cuenta → Confirmación. Misma lógica y mismos campos; solo se reparte el contenido de los 4 pasos. */
+function v902RemapIncomeWizard(form,wizard,id){
+ const s1=wizard.querySelector('.v48-step[data-step="1"]'),s2=wizard.querySelector('.v48-step[data-step="2"]');if(!s1||!s2||form.dataset.v902)return;form.dataset.v902='1';
+ const amount=s2.querySelector('[data-v48-fields="amount"]'),quick=s2.querySelector('.v50-income-quick'),opts=[...s2.querySelectorAll('details.v48-optional')];
+ const dedDetails=opts[0],instDetails=opts[1];
+ s1.querySelector('.v50-subtle-tag')?.remove();s1.querySelector('.v48-question')?.remove();s1.querySelector('.v50-lead')?.remove();s1.querySelector('.v50-kind-confirm')?.remove();
+ const help=document.createElement('p');help.className='v902-help';help.textContent='La modalidad adapta los descuentos.';s1.querySelector('.v48-kind-pick')?.after(help);
+ if(amount)s1.appendChild(amount);if(quick)s1.appendChild(quick);if(instDetails)s1.appendChild(instDetails);
+ s2.querySelector('.v50-step-head')?.remove();
+ const head=document.createElement('div');head.className='v902-ded-head';
+ head.innerHTML=`<div class="v902-chip" data-v902-chip></div><section class="v902-payroll" data-v902-payroll><h4>Deducciones de nómina</h4><div class="v902-lines" data-v902-lines></div></section><p class="v902-informal" data-v902-informal>En informal: solo descuentos opcionales; sin AFP, SFS ni ISR automáticos.</p>`;
+ s2.prepend(head);
+ if(dedDetails){dedDetails.open=true;dedDetails.classList.add('v902-ded');const sm=dedDetails.querySelector('summary');if(sm)sm.textContent='Otros descuentos'}
+ s2.querySelector('.v48-helper')?.remove();
+ const t=form.closest('.modal')?.querySelector('h2,h3');if(t)t.textContent='Ingreso recurrente';
+ form.querySelector('.form-foot')?.style.setProperty('display','none','important');
+ if(!id){form.querySelector('[data-v48-kind="formal"]')?.click();}
+ else{form.dataset.v48KindChosen='true'}
+}
+function v902Refresh(form,n){
+ const f=form.elements,formal=f.kind?.value==='formal';
+ const chip=form.querySelector('[data-v902-chip]');if(chip)chip.textContent=formal?'Trabajo formal':'Trabajo informal';
+ const pay=form.querySelector('[data-v902-payroll]'),inf=form.querySelector('[data-v902-informal]');
+ if(pay)pay.hidden=!formal;if(inf)inf.hidden=formal;
+ const lines=form.querySelector('[data-v902-lines]');
+ if(lines&&formal){
+  let est=null;try{v43SyncCompany(form);const basis=f.salaryBasis?.value||'monthly',gross=v45GrossMonthly(f.grossMonthly.value,basis,f.frequency.value);if(gross>0){const sch={kind:'formal',frequency:f.frequency.value,currency:f.currency.value,grossMonthly:gross,otherDeduction:0,companyDeductions:[],nextDue:f.nextDue.value||today(),withholdingPct:0};est=v40Payroll(sch,sch.nextDue)}}catch(_){est=null}
+  const ccy=f.currency?.value||'DOP',row=(l,v)=>`<div><span>${l}</span><span class="v902-pill">${est&&Number.isFinite(v)?'−'+money(v,ccy,2):'Estimado'}</span></div>`;
+  lines.innerHTML=row('AFP',est?.afp)+row('SFS',est?.sfs)+row('ISR',est?.isr);
+ }
+}
+document.addEventListener('input',e=>{const f=e.target.closest?.('#v40IncomeForm');if(f&&f.dataset.v902&&f.dataset.v48Step==='2')v902Refresh(f,2)},true);
 document.addEventListener('click',function(event){
+ const go=event.target.closest?.('[data-v902-goto]');if(go){const gf=go.closest('#v40IncomeForm');if(gf){event.preventDefault();v48SelectStep(gf,Number(go.dataset.v902Goto)||1);return}}
  const button=event.target.closest?.('[data-v48-kind],[data-v48-next],[data-v48-back]');if(!button)return;
  const form=button.closest('#v40IncomeForm');if(!form)return;
  event.preventDefault();event.stopImmediatePropagation();
