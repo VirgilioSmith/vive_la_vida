@@ -33,7 +33,7 @@ const count = p => p.evaluate(() => window.__T.dbg().transactions.filter(t => t.
     await p.evaluate(() => { const e = document.querySelector('#modal-root input[name="amount"]'); e.value = '20000'; e.dispatchEvent(new Event('input', { bubbles: true })); });
     await p.click('.v901-next'); await p.waitForTimeout(400);
     const c2 = await p.evaluate(() => ({ titulo: document.querySelector('#modal-root .modal h2,#modal-root .modal h3')?.textContent.trim(), txt: document.querySelector('.v901-confirm')?.innerText.replace(/\s+/g, ' '), botones: [...document.querySelectorAll('#modal-root .form-foot button')].filter(x => x.offsetParent).map(x => x.textContent.trim()) }));
-    check(2, 'Confirmación del cobro parcial: muestra importe, período vinculado y el pendiente real (RD$25,191.00)', /Confirmar salario/.test(c2.titulo) && /RD\$20,000\.00/.test(c2.txt) && /30 nov de 2026/.test(c2.txt) && /Pendiente RD\$25,191\.00/.test(c2.txt) && c2.botones.join('|') === 'Volver|Confirmar registro', JSON.stringify(c2));
+    check(2, 'Confirmación del cobro parcial: muestra importe, período vinculado y el pendiente real (RD$25,191.00)', /Confirmar salario/.test(c2.titulo) && /RD\$20,000\.00/.test(c2.txt) && /30 nov 2026/.test(c2.txt) && /Pendiente RD\$25,191\.00/.test(c2.txt) && c2.botones.join('|') === 'Volver|Confirmar registro' && /Banco Modelo/.test(c2.txt) && /Fecha del cobro/.test(c2.txt) && /Anticipado/.test(c2.txt) && /Importe recibido/.test(c2.txt), JSON.stringify(c2));
     const antes = await count(p);
     await p.evaluate(() => { const s = document.querySelector('#modal-root .form-foot button[type="submit"]'); s.click(); s.click(); s.click(); }); await p.waitForTimeout(1800);
     const despues = await count(p);
@@ -45,6 +45,15 @@ const count = p => p.evaluate(() => window.__T.dbg().transactions.filter(t => t.
     check(4, 'Tras el cobro parcial, el siguiente registro propone exactamente el pendiente (25191.00)', Number(rest) === 25191, String(rest));
     await p.evaluate(() => { document.querySelector('#modal-root .v903-back')?.click(); }); await p.waitForTimeout(500);
     check(5, 'La flecha de retroceso del primer paso cierra el flujo sin registrar nada', await p.evaluate(() => !document.querySelector('#v940IncomeCaptureForm')) && await count(p) === 1);
+    // Cambiar frecuencia y día de cobro no altera los cobros ya registrados (ni crea otros).
+    const firmaCobros = () => p.evaluate(() => JSON.stringify(window.__T.dbg().transactions.filter(t => t.incomeScheduleId === 'sv-q').map(t => [t.id, t.amount, t.date, t.accountId])));
+    const cobrosAntes = await firmaCobros(), fuenteAntes = await p.evaluate(() => window.__T.dbg().incomeSchedules.length);
+    await p.evaluate(() => { const x = document.createElement('button'); x.dataset.v40Action = 'editIncome'; x.dataset.id = 'sv-q'; x.hidden = true; document.body.append(x); x.click(); }); await p.waitForTimeout(900);
+    await p.evaluate(() => { [...document.querySelectorAll('#v40IncomeForm .v45-schedule-pills button')].find(b => /Trimestral/.test(b.textContent))?.click(); }); await p.waitForTimeout(300);
+    for (let i = 0; i < 3; i++) { await p.click('#v40IncomeForm [data-v48-next]'); await p.waitForTimeout(350); }
+    await p.click('#v40IncomeForm .v48-final'); await p.waitForTimeout(1500);
+    const frec = await p.evaluate(() => window.__T.dbg().incomeSchedules.find(x => x.id === 'sv-q')?.frequency);
+    check('5b', 'Cambiar la frecuencia no altera cobros registrados ni duplica la fuente', frec === 'quarterly' && await firmaCobros() === cobrosAntes && await p.evaluate(() => window.__T.dbg().incomeSchedules.length) === fuenteAntes, frec + ' ' + (await firmaCobros()).slice(0, 80));
     check(6, 'Sin errores de página en el cobro', errs.length === 0, JSON.stringify(errs.slice(0, 2)));
     await p.close();
 

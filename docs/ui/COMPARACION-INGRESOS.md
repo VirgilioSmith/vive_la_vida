@@ -35,8 +35,8 @@ Leyenda: **Igual** = coincide con la imagen · **Adaptado** = difiere con motivo
 ## Flujo 4 · Registrar salario
 | Pantalla | Estado | Nota |
 |---|---|---|
-| 1 Datos del cobro | Igual | Mismos componentes que el flujo 2, con etiquetas encima de cada caja y encabezado en mayúsculas. |
-| 2 Revisión final | Igual | «Después del registro», texto de acreditación y «Editar datos» subrayado. |
+| 1 Datos del cobro | Igual | Mismos componentes que el flujo 2, con etiquetas encima de cada caja, encabezado en mayúsculas y «Ya recibido». |
+| 2 Revisión final | Igual | Etiqueta «Anticipado», «Importe recibido», filas Fuente · Cuenta · Banco · Fecha del cobro · Período vinculado, «Después del registro» y «Editar datos» subrayado. Corregido tras la auditoría: antes usaba la confirmación del cobro. |
 
 ## Resultado por ancho
 Las siete pantallas se verificaron sin scroll interno, superposiciones ni cortes a 390×844, 430×932, 768×1024, 1280×800 y 1440×900.

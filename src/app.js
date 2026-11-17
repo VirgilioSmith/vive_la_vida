@@ -1499,6 +1499,7 @@ function v905DateView(input,style){
  const upd=()=>{const v=input.value;view.textContent=/^\d{4}-\d{2}-\d{2}$/.test(v)?(style==='slash'?v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4):Number(v.slice(8,10))+' '+M[Number(v.slice(5,7))-1]+' '+v.slice(0,4)):''};
  wrap._upd=upd;['input','change'].forEach(e=>input.addEventListener(e,upd));upd();
 }
+function v905ShortDate(d){return String(prettyDate(d)).replace(/ de (\d{4})/,' $1')}
 function v903AddBack(modalEl,onBack){
  if(!modalEl||modalEl.querySelector('.v903-back'))return null;
  const x=modalEl.querySelector('.modal-head .close,.close');if(!x||!x.parentElement)return null;
@@ -9320,7 +9321,7 @@ function v940IncomeCaptureForm(sourceId,requested='scheduled'){
  <label class="form-full"><span class="filter-label">Tipo de ingreso</span><select name="captureMode" class="field" required>
   ${[['scheduled',isSalary?'Salario recurrente programado':'Cobro recurrente programado'],['advance',isSalary?'Salario anticipado':'Cobro anticipado'],['additional','Ingreso laboral adicional']].map(([id,label])=>opt(id,label,mode)).join('')}</select></label>
  <label class="form-full"><span class="filter-label">Trabajo o fuente</span><select name="sourceId" class="field" required>${sourceOptions}</select></label>
- <div class="v940-occurrence form-full" aria-live="polite"><span><small>Programado</small><strong>${prettyDate(s.nextDue)}</strong></span><span><small>Previsto</small><strong>${money(state.expected,s.currency,2)}</strong></span><span><small>Recibido</small><strong>${money(state.received,s.currency,2)}</strong></span><span><small>Pendiente</small><strong>${money(state.remaining,s.currency,2)}</strong></span></div>
+ <div class="v940-occurrence form-full" aria-live="polite"><span><small>Programado</small><strong>${v905ShortDate(s.nextDue)}</strong></span><span><small>Previsto</small><strong>${money(state.expected,s.currency,2)}</strong></span><span><small>${isSalary?'Ya recibido':'Recibido'}</small><strong>${money(state.received,s.currency,2)}</strong></span><span><small>Pendiente</small><strong>${money(state.remaining,s.currency,2)}</strong></span></div>
  <label class="form-full v940-kind"><span class="filter-label">Concepto del ingreso adicional</span><select name="extraKind" class="field">${[['salary','Salario extraordinario'],['commission','Comisión'],['incentive','Incentivo'],['bonus','Bonificación'],['overtime','Horas extras'],['retroactive','Retroactivo'],['reimbursement','Reembolso laboral'],['other','Otros ingresos']].map(([id,label])=>opt(id,label,'salary')).join('')}</select></label>
  ${formItem('amount','Importe recibido · '+s.currency,amount,'number','required min="0.01" step="0.01" inputmode="decimal"')}
  ${formItem('date','Fecha efectiva del cobro',today(),'date',`required max="${today()}"`)}
@@ -9374,11 +9375,11 @@ function v901CobroSteps(f,s,state,isSalary){
  };
  const build=()=>{
   const v=Object.fromEntries(new FormData(f).entries()),amount=Number(v.amount)||0,extra=v.captureMode==='additional',a=account(v.accountId),b=a&&bank(a.bankId);
-  const badge=extra?'Ingreso adicional':v.captureMode==='advance'?(isSalary?'Salario anticipado':'Cobro anticipado'):(isSalary?'Salario programado':'Cobro programado');
+  const badge=extra?(isSalary?'Adicional':'Ingreso adicional'):v.captureMode==='advance'?(isSalary?'Anticipado':'Cobro anticipado'):(isSalary?'Programado':'Cobro programado');
   const recvAcc=state.received+(extra?0:amount),pend=Math.max(0,state.remaining-(extra?0:amount));
   const row=(k,val)=>`<div><dt>${k}</dt><dd>${sanitize(val)}</dd></div>`;
-  confirm.innerHTML=`<span class="v901-badge">${sanitize(badge)}</span><div class="v901-amount">${money(amount,s.currency,2)}</div><div class="v901-to">${a?`A recibir en ${sanitize(a.name)}`:'Importe recibido'}</div>
-  <dl class="v901-rows">${row('Fuente',s.name)}${row(extra?'Fecha':'Fecha efectiva',prettyDate(v.date))}${extra?'':row('Período vinculado',prettyDate(s.nextDue))}${row('Cuenta',a?(b?.name?`${b.name} · ${a.currency||s.currency}`:a.name):'—')}</dl>
+  confirm.innerHTML=`<span class="v901-badge">${sanitize(badge)}</span><div class="v901-amount">${money(amount,s.currency,2)}</div><div class="v901-to">${isSalary?'Importe recibido':a?`A recibir en ${sanitize(a.name)}`:'Importe recibido'}</div>
+  <dl class="v901-rows">${isSalary?`${row('Fuente',s.name)}${row('Cuenta',a?a.name:'—')}${row('Banco',a?`${b?.name||'—'} · ${a.currency||s.currency}`:'—')}${row(extra?'Fecha':'Fecha del cobro',v905ShortDate(v.date))}${extra?'':row('Período vinculado',v905ShortDate(s.nextDue))}`:`${row('Fuente',s.name)}${row(extra?'Fecha':'Fecha efectiva',v905ShortDate(v.date))}${extra?'':row('Período vinculado',v905ShortDate(s.nextDue))}${row('Cuenta',a?(b?.name?`${b.name} · ${a.currency||s.currency}`:a.name):'—')}`}</dl>
   ${extra?'':`<section class="v901-after"><h4>${isSalary?'Después del registro':'Así quedará este '+noun}</h4><div class="v901-after-grid"><div><small>${isSalary?'Recibido':'Recibido acumulado'}</small><strong>${money(recvAcc,s.currency,2)}</strong></div><div><small>Pendiente</small><strong>${money(pend,s.currency,2)}</strong></div></div></section>`}
   <p class="v901-info">${isSalary?'':'<span aria-hidden="true">ⓘ</span> '}${isSalary?'Se acredita únicamente lo recibido y se conserva el vínculo con tu programación.':'Se registrará un solo movimiento por el importe recibido, vinculado a tu programación.'}</p>
   <button type="button" class="v901-edit" data-v901-edit="1">${isSalary?'':'✎ '}Editar datos</button>`;
