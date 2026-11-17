@@ -9325,7 +9325,7 @@ function v940IncomeCaptureForm(sourceId,requested='scheduled'){
  f.elements.captureMode.addEventListener('change',sync);
  f.elements.sourceId.addEventListener('change',()=>v940IncomeCaptureForm(f.elements.sourceId.value,f.elements.captureMode.value));
  sync();
- if(window.matchMedia&&window.matchMedia('(max-width:790px)').matches)v901CobroSteps(f,s,state,isSalary);
+ v901CobroSteps(f,s,state,isSalary);
 }
 /* Registrar cobro / salario (móvil): el mismo formulario en dos pasos, «Datos del cobro» y «Confirmación». El guardado sigue siendo v940CaptureIncome. */
 function v901CobroSteps(f,s,state,isSalary){
