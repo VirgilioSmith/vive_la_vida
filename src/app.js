@@ -1499,6 +1499,15 @@ function v905DateView(input,style){
  const upd=()=>{const v=input.value;view.textContent=/^\d{4}-\d{2}-\d{2}$/.test(v)?(style==='slash'?v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4):Number(v.slice(8,10))+' '+M[Number(v.slice(5,7))-1]+' '+v.slice(0,4)):''};
  wrap._upd=upd;['input','change'].forEach(e=>input.addEventListener(e,upd));upd();
 }
+/* Enter dentro de un campo no puede saltarse los pasos: avanza al siguiente paso en lugar de guardar. */
+window.addEventListener('submit',function(ev){
+ const f=ev.target;if(!f||!f.id)return;
+ const wizard=f.id==='v40IncomeForm'&&f.dataset.v48Step&&f.dataset.v48Step!=='4';
+ const cobro=f.id==='v940IncomeCaptureForm'&&f.dataset.v901Step==='1';
+ if(!wizard&&!cobro)return;
+ ev.preventDefault();ev.stopImmediatePropagation();
+ (wizard?f.querySelector('[data-v48-next]'):f.querySelector('.v901-next'))?.click();
+},true);
 function v905ShortDate(d){return String(prettyDate(d)).replace(/ de (\d{4})/,' $1')}
 function v903AddBack(modalEl,onBack){
  if(!modalEl||modalEl.querySelector('.v903-back'))return null;
@@ -9394,7 +9403,7 @@ function v901CobroSteps(f,s,state,isSalary){
   const origShow=show;show=step=>{origShow(step);live.style.display=step===2?'none':'';f.classList.toggle('v901-step2',step===2)};
  }
  next.addEventListener('click',()=>{if(!f.reportValidity())return;build();show(2)});
- let cur=1;const showOrig=show;show=st=>{cur=st;showOrig(st)};
+ let cur=1;f.dataset.v901Step='1';const showOrig=show;show=st=>{cur=st;f.dataset.v901Step=String(st);showOrig(st)};
  v903AddBack(modalEl,()=>{if(cur===2)show(1);else closeModal()});
  back.addEventListener('click',()=>show(1));
  confirm.addEventListener('click',e=>{if(e.target.closest('[data-v901-edit]'))show(1)});
@@ -9658,7 +9667,7 @@ document.addEventListener('click',function(event){
   }
   const n=Number(form.dataset.v48Step||'1');
   if(button.hasAttribute('data-v48-back'))v48SelectStep(form,n-1);
-  else if(button.hasAttribute('data-v48-next')){v48ValidateStep(form,n);if(n===3)v48NormalizeFirstDate(form);v48SelectStep(form,n+1);}
+  else if(button.hasAttribute('data-v48-next')){if(Date.now()-(form._v905t||0)<350)return;form._v905t=Date.now();v48ValidateStep(form,n);if(n===3)v48NormalizeFirstDate(form);v48SelectStep(form,n+1);}
  }catch(err){v48WizardError(err.message||'Revisa la información de este paso.');}
 },true);
 // Add final validation even if form was submitted programmatically.
