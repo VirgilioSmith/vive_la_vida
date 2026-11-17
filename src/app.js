@@ -1488,7 +1488,51 @@ function categories(){
  <div class="v191-taxonomy-footer"><button type="button" class="v191-taxonomy-delete v191-category-delete" data-act="v191DeleteCategory" data-kind="${kind}" data-cat="${sanitize(encodeURIComponent(cat))}">${icon('trash')} Eliminar categoría</button></div>
  </details>`).join('')}</div>`).join('')}</div>`;
 }
-function categoryForm(){let kinds=[['gasto','Gasto'],['ingreso','Ingreso']];modal('Ampliar catálogo',`${formSelect('kind','Tipo de catálogo',kinds,'gasto','id="customKind"')}${formSelect('category','Categoría existente (opcional)',[['','Crear categoría nueva'],...categoryOptions('gasto')],'','id="customParent"')}${formItem('name','Nombre de la categoría nueva (opcional)','','text','maxlength="55" placeholder="Ej. Actividades deportivas"')}${formItem('subcategory','Nueva subcategoría (opcional)','','text','maxlength="55" placeholder="Ej. Tenis"')}${para('Si eliges una categoría existente, escribe una subcategoría. Si quieres crear una categoría, deja el selector en «Crear categoría nueva» y escribe su nombre. Puedes incluir una primera subcategoría.')}`,'categoryForm')}
+function categoryForm(){
+ const kindSel=`<select name="kind" id="customKind" hidden aria-hidden="true" tabindex="-1"><option value="gasto" selected>Gasto</option><option value="ingreso">Ingreso</option></select>`;
+ const parentSel=`<select class="field" name="category" id="customParent" disabled>${categoryOptions('gasto').map(([v])=>`<option value="${sanitize(v)}">${sanitize(v)}</option>`).join('')}</select>`;
+ modal('Ampliar catálogo',`<div class="v900-cat" data-v900-cat>
+  <p class="v900-cat-sub">Organiza tus ingresos y gastos.</p>
+  <div class="v900-lbl">Tipo</div>
+  <div class="v900-seg" role="radiogroup" aria-label="Tipo" data-v900-seg="kind"><button type="button" role="radio" aria-checked="false" data-val="ingreso">Ingreso</button><button type="button" role="radio" aria-checked="true" data-val="gasto" class="on">Gasto</button></div>${kindSel}
+  <div class="v900-lbl">Qué quieres crear</div>
+  <div class="v900-seg" role="radiogroup" aria-label="Qué quieres crear" data-v900-seg="what"><button type="button" role="radio" aria-checked="true" data-val="categoria" class="on">Categoría</button><button type="button" role="radio" aria-checked="false" data-val="subcategoria">Subcategoría</button></div>
+  <div class="v900-pane" data-v900-pane="subcategoria" hidden><label class="v900-lbl" for="customParent">Categoría existente</label>${parentSel}</div>
+  <div class="v900-pane" data-v900-pane="categoria"><label class="v900-lbl" for="v900-name">Nombre de la categoría</label><input id="v900-name" class="field" name="name" type="text" maxlength="55" placeholder="Ej. Actividades deportivas" autocomplete="off"></div>
+  <label class="v900-lbl" for="v900-sub" id="v900-sub-lbl">Subcategoría (opcional)</label><input id="v900-sub" class="field" name="subcategory" type="text" maxlength="55" placeholder="Ej. Tenis" autocomplete="off">
+  <div class="v900-lbl">Vista previa</div>
+  <div class="v900-preview" id="v900-preview" aria-live="polite"></div>
+  <p class="v900-note"><span aria-hidden="true">ⓘ</span> Tus movimientos anteriores se mantienen.</p></div>`,'categoryForm');
+ v900CatSync();
+}
+/* Ampliar catálogo (móvil): segmentos Tipo / Qué quieres crear, vista previa en árbol y botón con el texto de la acción. */
+function v900CatSync(){
+ const f=document.querySelector('#modal-root form#categoryForm');if(!f)return;
+ const kind=f.querySelector('#customKind').value,what=f.querySelector('[data-v900-seg="what"] .on')?.dataset.val||'categoria';
+ const sub=what==='subcategoria';
+ f.querySelectorAll('[data-v900-seg="kind"] button').forEach(b=>{const on=b.dataset.val===kind;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});
+ f.querySelectorAll('[data-v900-seg="what"] button').forEach(b=>{const on=b.dataset.val===what;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});
+ const pane=f.querySelector('[data-v900-pane="subcategoria"]'),npane=f.querySelector('[data-v900-pane="categoria"]'),parent=f.querySelector('#customParent'),name=f.querySelector('#v900-name'),subIn=f.querySelector('#v900-sub');
+ pane.hidden=!sub;npane.hidden=sub;parent.disabled=!sub;name.disabled=sub;
+ f.querySelector('#v900-sub-lbl').textContent=sub?'Nombre de la subcategoría':'Subcategoría (opcional)';
+ subIn.placeholder=sub?'Ej. Natación':'Ej. Tenis';
+ const catName=sub?(parent.value||''):(name.value.trim()||'Nueva categoría');
+ const subName=subIn.value.trim();
+ const prev=f.querySelector('#v900-preview');
+ prev.innerHTML=`<div class="v900-prev-cat">${icon('folder')}<span>${sanitize(catName||'Elige una categoría')}</span></div>${subName||sub?`<div class="v900-prev-sub"><i aria-hidden="true">└</i><span>${sanitize(subName||'Nueva subcategoría')}</span></div>`:''}`;
+ const btn=f.querySelector('button[type="submit"]')||document.querySelector('#modal-root button[form="categoryForm"][type="submit"]');
+ if(btn)btn.textContent=sub?'Añadir subcategoría':'Crear categoría';
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-v900-seg] button');if(!b||!b.closest('form#categoryForm'))return;
+ e.preventDefault();const f=b.closest('form'),seg=b.closest('[data-v900-seg]').dataset.v900Seg;
+ if(seg==='kind'){const sel=f.querySelector('#customKind');sel.value=b.dataset.val;sel.dispatchEvent(new Event('change',{bubbles:true}));const par=f.querySelector('#customParent');
+  par.innerHTML=categoryOptions(sel.value).map(([v])=>`<option value="${sanitize(v)}">${sanitize(v)}</option>`).join('');}
+ else{b.closest('[data-v900-seg]').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))}
+ v900CatSync();
+},true);
+document.addEventListener('input',e=>{if(e.target.closest?.('form#categoryForm'))v900CatSync()},true);
+document.addEventListener('change',e=>{if(e.target.id==='customParent')v900CatSync()},true);
 function originalAccounts(){
  let sums=['DOP','USD'].map(cur=>db.accounts.filter(a=>a.currency===cur).reduce((total,a)=>total+getAccountBalance(a),0));
  const all=db.accounts.filter(a=>(ui.showHidden||!isHidden(a))&&a.kind!=='cash');
@@ -19713,7 +19757,6 @@ document.addEventListener('click',function(ev){
     cardForm:['cards','Tarjeta de crédito','Límites, ciclo y deuda separados por moneda.','▤'],
     loanForm:['loans','Contrato de préstamo','Condiciones, cuotas y verificación antes del registro.','≋'],
     certificateForm:['investments','Certificado financiero','Capital, tasa, vencimiento y tratamiento contable.','◈'],
-    categoryForm:['catalog','Catálogo','Clasifica ingresos y gastos sin alterar movimientos previos.','▦'],
     budgetForm:['catalog','Presupuesto','Límite por categoría y período.','▥'],
     personalLoanForm:['relations','Acuerdo entre personas','Una sola obligación con historial de abonos.','⇄'],
     personalPaymentForm:['relations','Abono entre personas','Reduce el saldo del acuerdo sin duplicar ingresos o egresos.','⇄'],

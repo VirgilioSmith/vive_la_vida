@@ -55753,3 +55753,22 @@ html body:is(.theme-dark,.theme-black) #modal-root .v880-pickfield{background:#1
 
 /* Con el selector de clasificación abierto, el aviso flotante de Apple Pay sobra y tapaba la hoja. */
 body:has(#modal-root .v7-apple-modal) #v5-apple-tray{display:none!important}
+
+/* ==== Ampliar catálogo (propuesta visual): segmentos, vista previa en árbol y botones de acción ==== */
+#modal-root .v900-cat{display:grid;gap:10px}
+#modal-root .v900-cat-sub{margin:-4px 0 2px;color:var(--muted,#6b7385);font-size:14px;text-align:center}
+#modal-root .v900-lbl{display:block;margin:6px 0 0;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--ink,#17202f)}
+#modal-root .v900-seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:15px;border:1px solid rgba(120,130,160,.28);background:#fff}
+#modal-root .v900-seg button{min-height:42px;border:0;border-radius:11px;background:transparent;color:var(--ink,#17202f);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+#modal-root .v900-seg button.on{background:var(--v424-accent-strong,#7b2d57);color:#fff;-webkit-text-fill-color:#fff;box-shadow:0 6px 14px color-mix(in srgb,var(--v424-accent-strong,#7b2d57) 30%,transparent)}
+#modal-root .v900-cat .field{min-height:52px;border-radius:14px;font-size:16px;padding:0 14px;width:100%;box-sizing:border-box}
+#modal-root .v900-pane[hidden]{display:none}
+#modal-root .v900-preview{display:grid;gap:6px;padding:14px 16px;border-radius:16px;background:rgba(120,130,160,.1)}
+#modal-root .v900-prev-cat{display:flex;align-items:center;gap:10px;font-size:16px}
+#modal-root .v900-prev-cat svg{width:22px;height:22px;flex:none}
+#modal-root .v900-prev-sub{display:flex;align-items:center;gap:10px;margin-left:6px;color:var(--muted,#6b7385);font-size:15px}
+#modal-root .v900-prev-sub i{font-style:normal;color:rgba(120,130,160,.8);width:22px;text-align:center}
+#modal-root .v900-note{margin:2px 0 0;font-size:13.5px;color:var(--muted,#6b7385)}
+html body:is(.theme-dark,.theme-black) #modal-root .v900-seg{background:#14161c}
+html body:is(.theme-dark,.theme-black) #modal-root .v900-seg button{color:#eef1f6}
+html body:is(.theme-dark,.theme-black) #modal-root .v900-preview{background:rgba(255,255,255,.06)}
