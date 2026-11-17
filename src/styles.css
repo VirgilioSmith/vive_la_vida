@@ -55904,7 +55904,7 @@ html body:is(.theme-dark,.theme-black) #v40IncomeForm.v48-wizard-mode .v45-sched
 html body #modal-root#modal-root#modal-root :is(form#categoryForm,form.v901-steps,form#v40IncomeForm) :is(button[type="submit"],.v901-next,.v48-next,.v48-final){background:var(--v424-accent-strong,#615dd5)!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important;box-shadow:0 8px 18px color-mix(in srgb,var(--v424-accent-strong,#615dd5) 28%,transparent)!important}
 html body #modal-root#modal-root#modal-root :is(form#categoryForm,form.v901-steps,form#v40IncomeForm) :is(button[type="submit"],.v901-next,.v48-next,.v48-final)[hidden]{display:none!important}
 
-/* ==== v904 · Réplica fiel de los cuatro flujos (móvil): sin tarjetas anidadas, sin scroll, acento dinámico, Claro y Black ==== */
+/* ==== Flujos de ingresos: sin tarjetas anidadas, sin scroll, acento dinámico, Claro y Black ==== */
 html body #modal-root#modal-root .v903-has-back>:is(h2,h3){text-align:center}
 html body #modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm){--fl-line:rgba(120,130,160,.32);--fl-acc:var(--v424-accent-strong,#615dd5);--fl-tint:color-mix(in srgb,var(--fl-acc) 9%,var(--v903-base));--fl-ink:var(--ink,#17202f);--fl-mut:color-mix(in srgb,var(--fl-ink) 58%,transparent)}
 html body:is(.theme-dark,.theme-black) #modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm){--fl-ink:#eef1f6;--fl-line:rgba(255,255,255,.16);--fl-tint:color-mix(in srgb,var(--fl-acc) 16%,var(--v903-base))}
@@ -56125,18 +56125,23 @@ html body #modal-root#modal-root form#v40IncomeForm .v902-block li>span:last-chi
 html body #modal-root#modal-root form#v40IncomeForm .v902-block li>span:first-child{font-weight:700;color:var(--fl-ink)}
 
 
-/* ==== v906 · Pantalla completa idéntica a la propuesta, en móvil y en PC (columna de teléfono centrada) ==== */
+/* ==== Flujos de ingresos: pantalla completa en móvil; columna centrada de 520 px en tableta y escritorio ==== */
 html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){display:flex!important;flex-direction:column;box-sizing:border-box;background:var(--v903-base)!important;overflow:hidden;padding:0!important;max-width:none!important}
-@media(max-width:790px){
+@media(max-width:520px){
 html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){position:fixed!important;inset:0!important;top:0!important;width:100%!important;height:100dvh!important;max-height:none!important;border-radius:0!important;margin:0!important;border:0!important;box-shadow:none!important;transform:none!important;padding-top:env(safe-area-inset-top,0)!important;padding-bottom:env(safe-area-inset-bottom,0)!important}
 }
-@media(min-width:791px){
-html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){width:min(430px,94vw)!important;height:min(880px,calc(100vh - 32px))!important;max-height:none!important;margin:auto!important;border-radius:28px!important}
+@media(min-width:521px){
+html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){width:min(520px,94vw)!important;height:min(880px,calc(100vh - 32px))!important;max-height:none!important;margin:auto!important;border-radius:28px!important}
 }
 html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)) .modal-head{display:flex;align-items:center;gap:10px;padding:12px 16px 10px!important;margin:0!important;border:0!important;background:var(--v903-base)!important;box-shadow:none!important;min-height:0;position:static;flex:0 0 auto}
 html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)) .modal-head :is(h2,h3){font-size:22px;line-height:1.2;font-weight:700;color:var(--fl-ink,#17202f);margin:0;text-align:center}
 html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)) .modal-head .close{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border-radius:50%;padding:0;color:var(--v424-accent-strong,#615dd5)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#615dd5) 28%,transparent)!important;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 6%,var(--v903-base))!important;box-shadow:none!important}
 html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)) form{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
 html body #modal-root#modal-root form#v40IncomeForm :is(.v45-payday-twins,.v45-monthly-day)[hidden]{display:none!important}
-@media(max-width:790px){html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){padding-top:max(env(safe-area-inset-top,0px),14px)!important}}
+@media(max-width:520px){html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){padding-top:max(env(safe-area-inset-top,0px),14px)!important}}
 html body #modal-root#modal-root form.v901-sal .form-grid.v901-step1>label:not(.v789-select-enhanced)>.filter-label,html body #modal-root#modal-root form.v901-sal .form-grid.v901-step1>label.v789-select-enhanced>.filter-label{font-weight:400;font-size:14px;color:var(--fl-ink)}
+
+html body #modal-root#modal-root:has(.modal form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){background:color-mix(in srgb,#8b92a3 30%,transparent)!important}
+html body #modal-root#modal-root form#v40IncomeForm .v902-company .v43-company-title,html body #modal-root#modal-root form#v40IncomeForm .v902-company .v43-company-total,html body #modal-root#modal-root form#v40IncomeForm .v902-company .v43-company-help,html body #modal-root#modal-root form#v40IncomeForm .v902-company .v43-company-deductions>small{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v902-company .v43-company-deductions{padding:0!important;border:0!important;background:none!important;box-shadow:none!important;margin:0}
+html body #modal-root#modal-root form#v40IncomeForm .v902-company .v43-add-deduction{border:0!important;background:none!important;box-shadow:none!important;color:var(--fl-acc)!important;font-weight:600;font-size:15px;padding:6px 0!important;height:auto;min-height:0}

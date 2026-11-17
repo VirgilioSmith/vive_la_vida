@@ -9502,14 +9502,14 @@ function v48RefreshSummary(form){
   const dayTxt=frequency==='monthly'?'Día '+(Number((f.nextDue.value||'').slice(8,10))||''):'';
   const dl=(k,v,cls='')=>`<div class="v902-r ${cls}"><span>${k}</span><strong>${v}</strong></div>`;
   target.innerHTML=`<section class="v902-card"><div class="v902-card-head"><span class="v902-ico" aria-hidden="true">${icon('briefcase')}</span><div><strong>${sanitize(srcName)}</strong><small>${kind==='formal'?'Trabajo formal':'Trabajo informal'}</small></div><button type="button" class="v902-edit" data-v902-goto="1">Editar</button></div>
-   ${dl(frequency==='monthly'?'Bruto mensual':'Bruto por cobro',money(frequency==='monthly'?monthGross:pay.gross,schedule.currency,2))}
+   ${dl(frequency==='monthly'?'Bruto mensual':'Bruto por cobro',money(frequency==='monthly'?monthGross:pay.gross,schedule.currency,Number.isInteger(frequency==='monthly'?monthGross:pay.gross)?0:2))}
    ${kind==='formal'?`<div class="v902-r v902-block"><span>Deducciones</span><ul><li><span>AFP</span><span><span class="v905-num">${money(pay.afp,schedule.currency,2)}</span><span class="v905-txt">Según configuración</span></span></li><li><span>SFS</span><span><span class="v905-num">${money(pay.sfs,schedule.currency,2)}</span><span class="v905-txt">Según configuración</span></span></li><li><span>ISR</span><span><span class="v905-num">${money(pay.isr,schedule.currency,2)}</span><span class="v905-txt">Según configuración</span></span></li></ul></div>`:''}
    ${dl('Otros descuentos',money(pay.other,schedule.currency,0))}
    ${dl('Neto por cobro','<span class="v905-num">'+money(pay.net,schedule.currency,2)+'</span><span class="v905-txt">Se calcula con tus reglas</span>','v902-net')}</section>
-   <section class="v902-card"><div class="v902-card-head v902-plain"><span class="v902-ico" aria-hidden="true">${icon('calendar')}</span><div><strong>${v45FreqName(frequency)}${dayTxt?' · '+dayTxt:''}</strong><small>Primer cobro: ${prettyDate(f.nextDue.value)}</small></div><button type="button" class="v902-edit" data-v902-goto="3">Editar</button></div>
+   <section class="v902-card"><div class="v902-card-head v902-plain"><span class="v902-ico" aria-hidden="true">${icon('calendar')}</span><div><strong>${v45FreqName(frequency)}${dayTxt?' · '+dayTxt:''}</strong><small>Primer cobro: ${String(f.nextDue.value).split('-').reverse().join('/')}</small></div><button type="button" class="v902-edit" data-v902-goto="3">Editar</button></div>
    <div class="v902-line">${icon('bank')||''}<span>${accountNm?sanitize(accountNm.name)+' · '+(accountNm.currency||schedule.currency):'—'}</span></div>
    <div class="v902-line"><span aria-hidden="true">◌</span><span>${f.postingMode.value==='auto'?'Automático al sincronizar':'Confirmación manual'}</span></div></section>
-   <p class="v902-info"><span aria-hidden="true">ⓘ</span> Los recibos anteriores no cambian. Solo es una programación: no aumenta el saldo antes del ${prettyDate(f.nextDue.value)}.</p>`;
+   <p class="v902-info"><span aria-hidden="true">ⓘ</span> Los recibos anteriores no cambian.</p>`;
  }catch(err){target.innerHTML='<p class="v48-validation-error">'+sanitize(err.message||'Revisa la información')+'</p>';}
 }
 function v48WizardError(msg){showError(msg);}
