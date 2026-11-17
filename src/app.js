@@ -1488,6 +1488,14 @@ function categories(){
  <div class="v191-taxonomy-footer"><button type="button" class="v191-taxonomy-delete v191-category-delete" data-act="v191DeleteCategory" data-kind="${kind}" data-cat="${sanitize(encodeURIComponent(cat))}">${icon('trash')} Eliminar categoría</button></div>
  </details>`).join('')}</div>`).join('')}</div>`;
 }
+/* Flecha circular de retroceso (misma forma que el botón X) en la cabecera de Ampliar catálogo, Registrar cobro/salario e Ingreso recurrente. */
+function v903AddBack(modalEl,onBack){
+ if(!modalEl||modalEl.querySelector('.v903-back'))return null;
+ const x=modalEl.querySelector('.modal-head .close,.close');if(!x||!x.parentElement)return null;
+ const b=document.createElement('button');b.type='button';b.className='close v903-back';b.setAttribute('aria-label','Volver');b.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>';
+ b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();onBack()});
+ x.parentElement.prepend(b);x.parentElement.classList.add('v903-has-back');return b;
+}
 function categoryForm(){
  const kindSel=`<select name="kind" id="customKind" hidden aria-hidden="true" tabindex="-1"><option value="gasto" selected>Gasto</option><option value="ingreso">Ingreso</option></select>`;
  const parentSel=`<select class="field" name="category" id="customParent" disabled>${categoryOptions('gasto').map(([v])=>`<option value="${sanitize(v)}">${sanitize(v)}</option>`).join('')}</select>`;
@@ -1504,6 +1512,7 @@ function categoryForm(){
   <div class="v900-preview" id="v900-preview" aria-live="polite"></div>
   <p class="v900-note"><span aria-hidden="true">ⓘ</span> Tus movimientos anteriores se mantienen.</p></aside></div>`,'categoryForm');
  v900CatSync();
+ v903AddBack(document.querySelector('#modal-root .modal'),()=>closeModal());
 }
 /* Ampliar catálogo (móvil): segmentos Tipo / Qué quieres crear, vista previa en árbol y botón con el texto de la acción. */
 function v900CatSync(){
@@ -9374,6 +9383,8 @@ function v901CobroSteps(f,s,state,isSalary){
   const origShow=show;show=step=>{origShow(step);live.style.display=step===2?'none':'';f.classList.toggle('v901-step2',step===2)};
  }
  next.addEventListener('click',()=>{if(!f.reportValidity())return;build();show(2)});
+ let cur=1;const showOrig=show;show=st=>{cur=st;showOrig(st)};
+ v903AddBack(modalEl,()=>{if(cur===2)show(1);else closeModal()});
  back.addEventListener('click',()=>show(1));
  confirm.addEventListener('click',e=>{if(e.target.closest('[data-v901-edit]'))show(1)});
 }
@@ -9574,6 +9585,7 @@ function v902RemapIncomeWizard(form,wizard,id){
  s1.querySelector('.v50-subtle-tag')?.remove();s1.querySelector('.v48-question')?.remove();s1.querySelector('.v50-lead')?.remove();s1.querySelector('.v50-kind-confirm')?.remove();
  const help=document.createElement('p');help.className='v902-help';help.textContent='La modalidad adapta los descuentos.';s1.querySelector('.v48-kind-pick')?.after(help);
  if(amount)s1.appendChild(amount);if(quick)s1.appendChild(quick);if(instDetails)s1.appendChild(instDetails);
+ try{const pick=window.v1110BankPicker&&window.v1110BankPicker(form,'institutionId','Empresa o institución');const host=instDetails?.querySelector('[data-v48-fields="institution"]');if(pick&&host){host.replaceChildren(pick);instDetails.open=true;const sm=instDetails.querySelector('summary');if(sm)sm.textContent='Vincular institución'}}catch(_){}
  s2.querySelector('.v50-step-head')?.remove();
  const head=document.createElement('div');head.className='v902-ded-head';
  head.innerHTML=`<div class="v902-chip" data-v902-chip></div><section class="v902-payroll" data-v902-payroll><h4>Deducciones de nómina</h4><div class="v902-lines" data-v902-lines></div></section><p class="v902-informal" data-v902-informal>En informal: solo descuentos opcionales; sin AFP, SFS ni ISR automáticos.</p>`;
@@ -9582,6 +9594,7 @@ function v902RemapIncomeWizard(form,wizard,id){
  s2.querySelector('.v48-helper')?.remove();
  const t=form.closest('.modal')?.querySelector('h2,h3');if(t)t.textContent='Ingreso recurrente';
  form.querySelector('.form-foot')?.style.setProperty('display','none','important');
+ v903AddBack(form.closest('.modal'),()=>{const n=Number(form.dataset.v48Step||'1');if(n>1)v48SelectStep(form,n-1);else closeModal()});
  const labels=['Datos','Descuentos','Calendario y cuenta','Confirmación'];
  wizard.querySelectorAll('.v48-step-track span').forEach((sp,i)=>sp.dataset.label=labels[i]);
  if(window.matchMedia&&window.matchMedia('(min-width:791px)').matches){
@@ -10184,6 +10197,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   paint();wrap.v1110Invalid=()=>{wrap.classList.add('is-invalid');toggle(true)};
   return wrap;
  }
+ window.v1110BankPicker=v1110BankPicker;
  /* Cuenta o tarjeta de pago: abre el selector universal (la misma hoja «Seleccionar tarjeta / cuenta» de toda la app). */
  function v1110ProductPicker(f,n,label){
   const sel=v1110El(f,n),box=v1110Box(f,n);if(!sel||!box)return null;
@@ -18245,7 +18259,7 @@ function updateTrigger(field){
   const trigger=label?.querySelector('.v789-select-open');
   if(trigger)trigger.setAttribute('aria-label','Cambiar '+(productLabels[field.name]||'producto')+': '+(option?.name||text));
 }
-function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form,form.v940-income-capture,form#transactionForm')){
+function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form,form.v940-income-capture,form#v40IncomeForm,form#transactionForm')){
  /* Cobro de interés y rescate de certificados: su cuenta también usa el selector universal. */
  if(form.id==='transactionForm'&&!form.elements.namedItem('certificateId'))continue;
  for(const name of ['cardId','accountId','loanId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement))continue;
