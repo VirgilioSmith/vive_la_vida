@@ -55857,3 +55857,12 @@ html body #modal-root #v40IncomeForm.v48-wizard-mode .form-foot{display:none!imp
 #v40IncomeForm.v48-wizard-mode .v902-block{flex-direction:column;gap:4px}
 #v40IncomeForm.v48-wizard-mode .v902-block ul{list-style:none;margin:0;padding:0 0 0 12px;width:100%}
 #v40IncomeForm.v48-wizard-mode .v902-block li{display:flex;justify-content:space-between;gap:12px;padding:3px 0;color:var(--muted,#6b7385)}
+
+/* Ingresos recurrentes (móvil): espacio entre la tarjeta principal, la barra de secciones y los controles (antes estaban pegados) y fecha en una sola línea. */
+@media(max-width:790px){
+ html body #app#app #page .v55-shell>.v55-hero{margin-bottom:14px!important}
+ html body #app#app #page .v55-shell>.v55-subnav{margin-top:0!important;margin-bottom:14px!important}
+ html body #app#app #page .v55-shell>.v55-workspace-toolbar{margin-bottom:14px!important}
+ html body #app#app #page .v55-shell .v55-controls{flex-wrap:wrap;gap:10px}
+ html body #app#app #page .v55-shell .v55-controls input[type="month"],html body #app#app #page .v55-shell .v55-controls input[type="date"]{white-space:nowrap;font-size:14px!important;min-width:176px}
+}
