@@ -1489,6 +1489,16 @@ function categories(){
  </details>`).join('')}</div>`).join('')}</div>`;
 }
 /* Flecha circular de retroceso (misma forma que el botón X) en la cabecera de Ampliar catálogo, Registrar cobro/salario e Ingreso recurrente. */
+/* Vista de fecha legible (móvil): «15 nov 2026» o «15/12/2026». El input date real sigue siendo la fuente de verdad. */
+function v905DateView(input,style){
+ if(!input||input.dataset.v905)return;input.dataset.v905='1';
+ const wrap=document.createElement('span');wrap.className='v905-date';input.before(wrap);wrap.append(input);
+ const view=document.createElement('span');view.className='v905-dv';view.setAttribute('aria-hidden','true');wrap.append(view);
+ const ico=document.createElement('span');ico.className='v905-di';ico.setAttribute('aria-hidden','true');ico.innerHTML='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';wrap.append(ico);
+ const M=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+ const upd=()=>{const v=input.value;view.textContent=/^\d{4}-\d{2}-\d{2}$/.test(v)?(style==='slash'?v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4):Number(v.slice(8,10))+' '+M[Number(v.slice(5,7))-1]+' '+v.slice(0,4)):''};
+ wrap._upd=upd;['input','change'].forEach(e=>input.addEventListener(e,upd));upd();
+}
 function v903AddBack(modalEl,onBack){
  if(!modalEl||modalEl.querySelector('.v903-back'))return null;
  const x=modalEl.querySelector('.modal-head .close,.close');if(!x||!x.parentElement)return null;
@@ -9345,7 +9355,7 @@ function v901CobroSteps(f,s,state,isSalary){
  const noun=isSalary?'salario':'cobro',title=modalEl.querySelector('h2,h3');
  const setTitle=t=>{if(title)title.textContent=t};setTitle(isSalary?'Registrar salario':'Registrar cobro');
  const grid=f.querySelector('.form-grid'),foot=f.querySelector('.form-foot');if(!grid||!foot)return;
- grid.classList.add('v901-step1');f.classList.add(isSalary?'v901-sal':'v901-cob');
+ grid.classList.add('v901-step1');f.classList.add(isSalary?'v901-sal':'v901-cob');v905DateView(f.elements.date,'text');
  const lead=document.createElement('div');lead.className='v901-lead form-full';lead.textContent=isSalary?'DATOS DEL COBRO':'Datos del cobro';grid.prepend(lead);
  const noteField=f.elements.note?.closest('label,.field-wrap,div');
  if(noteField&&!noteField.closest('details')){const d=document.createElement('details');d.className='v901-note form-full';d.innerHTML='<summary>+ Añadir nota (opcional)</summary>';noteField.replaceWith(d);d.appendChild(noteField)}
@@ -9447,6 +9457,7 @@ function v48SelectStep(form,number){
  form.querySelectorAll('.v48-final').forEach(b=>b.hidden=n!==4);
  const title=form.querySelector('.v48-step-title');if(title)title.textContent=['','Datos','Descuentos','Calendario y cuenta','Revisa tu programación'][n];
  if(typeof v902Refresh==='function')v902Refresh(form,n);
+ form.querySelectorAll('.v905-date').forEach(w=>w._upd&&w._upd());
  const counter=form.querySelector('.v50-counter');if(counter)counter.textContent='Paso '+n+' de 4';
  const formal=form.elements.kind?.value==='formal';
  form.querySelectorAll('.v48-company-only').forEach(el=>el.hidden=!formal);
@@ -9492,9 +9503,9 @@ function v48RefreshSummary(form){
   const dl=(k,v,cls='')=>`<div class="v902-r ${cls}"><span>${k}</span><strong>${v}</strong></div>`;
   target.innerHTML=`<section class="v902-card"><div class="v902-card-head"><span class="v902-ico" aria-hidden="true">${icon('briefcase')}</span><div><strong>${sanitize(srcName)}</strong><small>${kind==='formal'?'Trabajo formal':'Trabajo informal'}</small></div><button type="button" class="v902-edit" data-v902-goto="1">Editar</button></div>
    ${dl(frequency==='monthly'?'Bruto mensual':'Bruto por cobro',money(frequency==='monthly'?monthGross:pay.gross,schedule.currency,2))}
-   ${kind==='formal'?`<div class="v902-r v902-block"><span>Deducciones</span><ul><li><span>AFP</span><span>${money(pay.afp,schedule.currency,2)}</span></li><li><span>SFS</span><span>${money(pay.sfs,schedule.currency,2)}</span></li><li><span>ISR</span><span>${money(pay.isr,schedule.currency,2)}</span></li></ul></div>`:''}
-   ${dl('Otros descuentos',money(pay.other,schedule.currency,2))}
-   ${dl('Neto por cobro',money(pay.net,schedule.currency,2),'v902-net')}</section>
+   ${kind==='formal'?`<div class="v902-r v902-block"><span>Deducciones</span><ul><li><span>AFP</span><span><span class="v905-num">${money(pay.afp,schedule.currency,2)}</span><span class="v905-txt">Según configuración</span></span></li><li><span>SFS</span><span><span class="v905-num">${money(pay.sfs,schedule.currency,2)}</span><span class="v905-txt">Según configuración</span></span></li><li><span>ISR</span><span><span class="v905-num">${money(pay.isr,schedule.currency,2)}</span><span class="v905-txt">Según configuración</span></span></li></ul></div>`:''}
+   ${dl('Otros descuentos',money(pay.other,schedule.currency,0))}
+   ${dl('Neto por cobro','<span class="v905-num">'+money(pay.net,schedule.currency,2)+'</span><span class="v905-txt">Se calcula con tus reglas</span>','v902-net')}</section>
    <section class="v902-card"><div class="v902-card-head v902-plain"><span class="v902-ico" aria-hidden="true">${icon('calendar')}</span><div><strong>${v45FreqName(frequency)}${dayTxt?' · '+dayTxt:''}</strong><small>Primer cobro: ${prettyDate(f.nextDue.value)}</small></div><button type="button" class="v902-edit" data-v902-goto="3">Editar</button></div>
    <div class="v902-line">${icon('bank')||''}<span>${accountNm?sanitize(accountNm.name)+' · '+(accountNm.currency||schedule.currency):'—'}</span></div>
    <div class="v902-line"><span aria-hidden="true">◌</span><span>${f.postingMode.value==='auto'?'Automático al sincronizar':'Confirmación manual'}</span></div></section>
@@ -9604,6 +9615,7 @@ function v902RemapIncomeWizard(form,wizard,id){
  const t=form.closest('.modal')?.querySelector('h2,h3');if(t)t.textContent='Ingreso recurrente';
  form.querySelector('.form-foot')?.style.setProperty('display','none','important');
  v903AddBack(form.closest('.modal'),()=>{const n=Number(form.dataset.v48Step||'1');if(n>1)v48SelectStep(form,n-1);else closeModal()});
+ v905DateView(form.elements.nextDue,'slash');
  const labels=['Datos','Descuentos','Calendario y cuenta','Confirmación'];
  wizard.querySelectorAll('.v48-step-track span').forEach((sp,i)=>sp.dataset.label=labels[i]);
  if(window.matchMedia&&window.matchMedia('(min-width:791px)').matches){
@@ -9611,7 +9623,7 @@ function v902RemapIncomeWizard(form,wizard,id){
   const paint=()=>{const body=document.createElement('div');body.className='v48-confirm-body';try{const old=wizard.querySelector('.v48-confirm-body');const tmp=old;v48RefreshSummary(form);live.innerHTML='<div class="v902-live-title">Resumen en vivo</div>'+old.innerHTML.replace(/<button[^>]*data-v902-goto[^>]*>[^<]*<\/button>/g,'')}catch(_){}};
   form.addEventListener('input',paint);form.addEventListener('change',paint);form.addEventListener('click',()=>setTimeout(paint,0));paint();
  }
- if(!id){form.querySelector('[data-v48-kind="formal"]')?.click();}
+ if(!id){form.querySelector('[data-v48-kind="formal"]')?.click();try{const as=form.elements.accountId;if(as&&!as.value){const o=[...as.options].find(x=>x.value&&account(x.value)&&account(x.value).kind!=='cash')||[...as.options].find(x=>x.value);if(o){as.value=o.value;as.dispatchEvent(new Event('change',{bubbles:true}))}}}catch(_){}}
  else{form.dataset.v48KindChosen='true'}
 }
 function v902Refresh(form,n){
@@ -9623,7 +9635,7 @@ function v902Refresh(form,n){
  const lines=form.querySelector('[data-v902-lines]');
  if(lines&&formal){
   let est=null;try{v43SyncCompany(form);const basis=f.salaryBasis?.value||'monthly',gross=v45GrossMonthly(f.grossMonthly.value,basis,f.frequency.value);if(gross>0){const sch={kind:'formal',frequency:f.frequency.value,currency:f.currency.value,grossMonthly:gross,otherDeduction:0,companyDeductions:[],nextDue:f.nextDue.value||today(),withholdingPct:0};est=v40Payroll(sch,sch.nextDue)}}catch(_){est=null}
-  const ccy=f.currency?.value||'DOP',row=(l,v)=>`<div><span>${l}</span><span class="v902-pill">${est&&Number.isFinite(v)?'−'+money(v,ccy,2):'Estimado'}</span></div>`;
+  const ccy=f.currency?.value||'DOP',row=(l,v)=>`<div><span>${l}</span><span class="v902-pill">${est&&Number.isFinite(v)?'<span class="v905-num">−'+money(v,ccy,2)+'</span><span class="v905-txt">Estimado</span>':'Estimado'}</span></div>`;
   lines.innerHTML=row('AFP',est?.afp)+row('SFS',est?.sfs)+row('ISR',est?.isr);
  }
 }

@@ -56,7 +56,7 @@ const count = p => p.evaluate(() => window.__T.dbg().transactions.filter(t => t.
     await p.fill('#v40IncomeForm [name="name"]', 'Salario mensual'); await p.fill('#v40IncomeForm [name="grossMonthly"]', '50000');
     await p.click('#v40IncomeForm [data-v48-next]'); await p.waitForTimeout(400);
     const w2 = await p.evaluate(() => ({ chip: document.querySelector('[data-v902-chip]')?.textContent, nomina: !document.querySelector('[data-v902-payroll]').hidden, informal: !document.querySelector('[data-v902-informal]').hidden, lineas: [...document.querySelectorAll('[data-v902-lines] > div')].map(x => x.innerText.replace(/\s+/g, ' ')), live: !!document.querySelector('.v902-live') }));
-    check(8, 'Trabajo formal: el paso Descuentos muestra AFP, SFS e ISR con importes estimados', w2.chip === 'Trabajo formal' && w2.nomina && !w2.informal && w2.lineas.length === 3 && w2.lineas.every(l => /RD\$/.test(l)), JSON.stringify(w2.lineas));
+    check(8, 'Trabajo formal: el paso Descuentos muestra AFP, SFS e ISR con importes estimados', w2.chip === 'Trabajo formal' && w2.nomina && !w2.informal && w2.lineas.length === 3 && w2.lineas.every(l => /RD\$|Estimado/.test(l)), JSON.stringify(w2.lineas));
     await p.click('#v40IncomeForm [data-v48-next]'); await p.waitForTimeout(400);
     const w3 = await p.evaluate(() => ({ cuenta: !!document.querySelector('#v40IncomeForm .v789-select-open'), pills: [...document.querySelectorAll('#v40IncomeForm .v45-schedule-pills button')].map(x => x.textContent.trim()).join('|') }));
     check(9, 'Calendario y cuenta: selector universal de cuentas (logos y moneda) y frecuencias', w3.cuenta && /Mensual/.test(w3.pills), JSON.stringify(w3));

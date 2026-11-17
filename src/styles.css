@@ -56136,3 +56136,28 @@ html body #modal-root#modal-root#modal-root form.v901-steps .form-grid.v901-step
 }
 @media(max-width:790px){html body #modal-root#modal-root form.v901-steps .v940-occurrence{padding:12px 16px 14px!important}}
 html body:is(.theme-dark,.theme-black) #modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm) :is(.v902-chip,.v901-badge,.v901-edit,.v902-edit,.v901-note>summary,.v901-sal .v901-after h4){color:color-mix(in srgb,var(--fl-acc) 55%,#fff)!important}
+.v905-dv,.v905-di{display:none}
+@media(max-width:790px){
+html body #modal-root#modal-root .v905-date{position:relative;display:block;width:100%}
+html body #modal-root#modal-root .v905-date>input{opacity:0;position:absolute;inset:0;width:100%!important;height:100%!important;z-index:2;cursor:pointer;margin:0}
+html body #modal-root#modal-root .v905-dv{display:flex;align-items:center;height:44px;font-size:16px;color:var(--fl-ink);padding:0 44px 0 14px;border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);box-sizing:border-box}
+html body #modal-root#modal-root .v905-di{display:grid;place-items:center;position:absolute;right:12px;top:0;height:44px;color:var(--fl-acc);pointer-events:none}
+html body #modal-root#modal-root form.v901-cob .v905-dv{border:0;background:none;padding:0 32px 0 0;height:30px;font-size:17px}
+html body #modal-root#modal-root form.v901-cob .v905-di{right:0;height:30px}
+html body #modal-root#modal-root form#v40IncomeForm .v905-dv{height:48px;font-size:17px;font-weight:600;background:color-mix(in srgb,var(--fl-ink) 6%,var(--v903-base));border-color:transparent}
+html body #modal-root#modal-root form#v40IncomeForm .v905-di{display:none}
+html body #modal-root#modal-root form#v40IncomeForm .v48-fields .v905-dv{background:var(--v903-surface)}
+/* Textos de la propuesta visual (importes exactos solo en escritorio) */
+html body #modal-root#modal-root form#v40IncomeForm .v905-num{display:none}
+html body #modal-root#modal-root form#v40IncomeForm .v905-txt{display:inline}
+html body #modal-root#modal-root form#v40IncomeForm .v902-net .v905-txt{font-weight:500;font-size:13.5px;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm .v902-block li{list-style:disc;display:list-item;margin-left:18px;padding:1px 0}
+html body #modal-root#modal-root form#v40IncomeForm .v902-block ul{padding-left:6px}
+}
+@media(min-width:791px){.v905-txt{display:none}}
+@media(max-width:790px){
+html body #modal-root#modal-root form#v40IncomeForm .v902-block li{display:flex!important;justify-content:flex-start;gap:6px;margin:0;list-style:none}
+html body #modal-root#modal-root form#v40IncomeForm .v902-block li::before{content:"•";color:var(--fl-ink);width:12px;flex:none;margin-left:2px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-block li>span:last-child::before{content:"· "}
+html body #modal-root#modal-root form#v40IncomeForm .v902-block li>span:first-child{font-weight:700;color:var(--fl-ink)}
+}
