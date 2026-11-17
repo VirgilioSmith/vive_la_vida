@@ -2464,8 +2464,10 @@ let tools=`<div class="ledger-controls"><div class="ledger-control"><label for="
 const mobileCards=tr.slice(0,Math.max(12,ui.v51LedgerVisible||18)).map(t=>`<article class="v51-mobile-movement"><div class="v51-mobile-movement-icon">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':t.type==='loan_payment'?'receipt':'wallet')}</div><div class="v51-mobile-movement-info"><strong><button type="button" class="v922-movement-open" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}">${sanitize(v922MovementHeading(t))} ${v213ApplePayBadge(t)}</button></strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small><span>${sanitize(v922MovementProduct(t))}</span></div><div class="v51-mobile-movement-side"><b class="${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</b><div><button type="button" data-act="editTransaction" data-id="${t.id}">Editar</button><button type="button" class="v51-delete-trigger" data-act="deleteTransaction" data-id="${t.id}" aria-label="Eliminar ${sanitize(transactionTitle(t))}">${icon('trash')}</button></div></div><div class="v265-mobile-balance"><span>Balance</span>${v265BalanceHTML(t,'mobile')}</div></article>`+v143CostMobile(t)).join('');
 const v221DraftMobile=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<article class="v51-mobile-movement v221-draft-row"><div class="v51-mobile-movement-icon">${icon('clock')}</div><div class="v51-mobile-movement-info"><strong>${sanitize(name)}</strong><small>${date?prettyDate(date):'Sin fecha'} · ${sanitize(TRANSL[v.type]||'Borrador')}</small><span class="v221-state draft">○ Sin contabilizar</span></div><div class="v51-mobile-movement-side"><b>${val>0?money(val,v.currency||'DOP',2):'Importe pendiente'}</b><div><button type="button" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button type="button" class="v51-delete-trigger" data-act="pendingRemove" data-id="${q.id}" aria-label="Descartar borrador">${icon('trash')}</button></div></div></article>`}).join('');
 const v221DraftRows=v221Drafts.map(q=>{const v=q.values||{},name=v.note||v.description||v.merchant||v.category||v.name||'Operación sin completar',date=String(v.date||q.created||'').slice(0,10),val=num(v.amount||v.principal||0);return `<tr class="v221-draft-row"><td>${date?prettyDate(date):'—'}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">Borrador · sin efecto en saldos</div></td><td>${sanitize(TRANSL[v.type]||'Operación')}</td><td><span class="v221-state draft">○ Sin contabilizar</span></td><td>${sanitize(account(v.accountId)?.name||'—')}</td><td>${sanitize(v.category||'—')}</td><td class="right money">${val>0?money(val,v.currency||'DOP',2):'—'}</td><td class="v265-no-balance-cell" title="Borrador sin registrar">—</td><td class="right"><div class="tx-actions"><button class="btn sm soft" data-act="pendingConfirm" data-id="${q.id}">Completar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar borrador">${icon('trash')}</button></div></td></tr>`}).join('');
-let rows=tr.map(t=>`<tr><td>${prettyDate(t.date)}</td><td><button type="button" class="v9-ledger-detail" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalle de ${sanitize(v922MovementHeading(t))}"><strong>${sanitize(v922MovementHeading(t))} ${v213ApplePayNote(t).badgeInNote?'':v213ApplePayBadge(t)}</strong></button><div class="subtitle">${sanitize(v922MovementProduct(t))}</div>${v213ApplePayNote(t).html}${v423VisibleTagMarkup(t)}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(v922MovementProduct(t))}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="v265-balance-cell">${v265BalanceHTML(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
-return `<section class="ledger-world section" id="ledger-world"><div class="section-title"><div><span class="summary-tag">HISTORIAL ÚNICO · ${tr.length} MOVIMIENTOS · ${v221Drafts.length} BORRADORES</span><h2>Movimientos y estados</h2><p>Revisa, concilia y completa borradores desde el mismo historial. Cada estado indica su efecto contable.</p></div><button class="btn" data-act="newTransaction">${icon('plus')} Registrar movimiento</button></div><div class="panel no-pad ledger-card">${tools}<div class="v51-mobile-ledger">${(v221DraftMobile+mobileCards)||'<div class="empty">No hay movimientos con estos filtros.</div>'}${tr.length>Math.max(12,ui.v51LedgerVisible||18)?`<button type="button" class="v51-ledger-more" data-act="v51LedgerMore">Ver más movimientos · ${Math.max(0,tr.length-Math.max(12,ui.v51LedgerVisible||18))} restantes</button>`:''}</div><div class="table-wrap ledger-scroll"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Operación</th><th>Estado</th><th>Producto / persona</th><th>Categoría</th><th class="right">Importe</th><th>Balance</th><th class="right">Gestión</th></tr></thead><tbody>${(v221DraftRows+rows)||'<tr><td colspan="9"><div class="empty">No hay movimientos con estos filtros.</div></td></tr>'}</tbody></table></div></div>${v51RemovedMovementsPanel()}<p class="footnote">Los renglones de impuestos y comisiones son desgloses vinculados a su operación; ya están incluidos en el débito de la cuenta y en el gasto. Para modificarlos, edita la operación principal. Las marcas de revisión no modifican importes; los borradores no afectan saldos hasta completar su registro. Los consumos con tarjetas se reconocen una sola vez; los pagos y transferencias no duplican gastos. Cuando corrijas una operación vinculada a un corte bancario, revisa la conciliación contra el estado oficial.</p></section>`}
+/* Escritorio: solo se dibujan las primeras filas; con miles de movimientos dibujar todas congelaba la página. */
+const deskLimit=Math.max(100,ui.v51DeskVisible||100);
+let rows=tr.slice(0,deskLimit).map(t=>`<tr><td>${prettyDate(t.date)}</td><td><button type="button" class="v9-ledger-detail" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalle de ${sanitize(v922MovementHeading(t))}"><strong>${sanitize(v922MovementHeading(t))} ${v213ApplePayNote(t).badgeInNote?'':v213ApplePayBadge(t)}</strong></button><div class="subtitle">${sanitize(v922MovementProduct(t))}</div>${v213ApplePayNote(t).html}${v423VisibleTagMarkup(t)}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(v922MovementProduct(t))}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="v265-balance-cell">${v265BalanceHTML(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
+return `<section class="ledger-world section" id="ledger-world"><div class="section-title"><div><span class="summary-tag">HISTORIAL ÚNICO · ${tr.length} MOVIMIENTOS · ${v221Drafts.length} BORRADORES</span><h2>Movimientos y estados</h2><p>Revisa, concilia y completa borradores desde el mismo historial. Cada estado indica su efecto contable.</p></div><button class="btn" data-act="newTransaction">${icon('plus')} Registrar movimiento</button></div><div class="panel no-pad ledger-card">${tools}<div class="v51-mobile-ledger">${(v221DraftMobile+mobileCards)||'<div class="empty">No hay movimientos con estos filtros.</div>'}${tr.length>Math.max(12,ui.v51LedgerVisible||18)?`<button type="button" class="v51-ledger-more" data-act="v51LedgerMore">Ver más movimientos · ${Math.max(0,tr.length-Math.max(12,ui.v51LedgerVisible||18))} restantes</button>`:''}</div><div class="table-wrap ledger-scroll"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Operación</th><th>Estado</th><th>Producto / persona</th><th>Categoría</th><th class="right">Importe</th><th>Balance</th><th class="right">Gestión</th></tr></thead><tbody>${(v221DraftRows+rows)||'<tr><td colspan="9"><div class="empty">No hay movimientos con estos filtros.</div></td></tr>'}</tbody></table></div>${tr.length>deskLimit?`<button type="button" class="v51-ledger-more v51-desk-more" data-act="v51DeskMore">Ver más movimientos · ${tr.length-deskLimit} restantes</button>`:''}</div>${v51RemovedMovementsPanel()}<p class="footnote">Los renglones de impuestos y comisiones son desgloses vinculados a su operación; ya están incluidos en el débito de la cuenta y en el gasto. Para modificarlos, edita la operación principal. Las marcas de revisión no modifican importes; los borradores no afectan saldos hasta completar su registro. Los consumos con tarjetas se reconocen una sola vez; los pagos y transferencias no duplican gastos. Cuando corrijas una operación vinculada a un corte bancario, revisa la conciliación contra el estado oficial.</p></section>`}
 
 function subscriptionAnalysis(){const active=v339ActiveRecurring();const mon=r=>v339MonthlyEquivalent(r.amount,r.currency,r.frequency);
 const val=active.map(r=>({...r,monthly:mon(r)})).sort((a,b)=>b.monthly-a.monthly);let total=val.reduce((s,r)=>s+r.monthly,0),annual=total*12;let cumulative=0;
@@ -6458,6 +6460,7 @@ case 'v54PurgeTrash':{
  db.deletedMovements=(db.deletedMovements||[]).filter(x=>x.id!==id);persist();render();toast('Eliminado definitivamente de la Papelera.');break;
 }
 case 'v51LedgerMore':{ui.v51LedgerVisible=Math.min(10000,(ui.v51LedgerVisible||18)+18);render();break}
+case 'v51DeskMore':{ui.v51DeskVisible=Math.min(100000,(ui.v51DeskVisible||100)+200);render();break}
 case 'v51RestoreTransaction':{
  const removed=Array.isArray(db.deletedMovements)?db.deletedMovements:[],p=removed.findIndex(x=>x.id===id);
  if(p<0||!removed[p].tx){toast('No se encontró el movimiento.');break;}
@@ -10436,18 +10439,23 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   body.append(wrap);
   /* Mismo bloque «Impacto en tu perfil financiero» que en móvil: antes → después, margen y barra. */
   if(slot){
+   /* IDEMPOTENTE: solo escribe cuando el valor cambia y descarta sus propias mutaciones. Antes reescribía ANTES/DESPUÉS y data-nivel en cada llamada,
+      su propio observador la volvía a disparar y la página se congelaba en un bucle infinito en cuanto el asesor tenía datos. */
+   const setText=(el,t)=>{if(el&&el.textContent!==t)el.textContent=t};
    const pulir=()=>{
     const adv=slot.querySelector('.v80-advisor');if(!adv)return;
     const title=adv.querySelector('.v107-pill-heading>span');if(title&&!/Impacto/.test(title.textContent)){const svg=title.querySelector('svg');title.textContent=' Impacto en tu perfil financiero';if(svg)title.prepend(svg)}
     const labs=adv.querySelectorAll('.v107-pill-metric small');
-    if(labs[0])labs[0].textContent='ANTES';if(labs[1])labs[1].textContent='DESPUÉS';
+    setText(labs[0],'ANTES');setText(labs[1],'DESPUÉS');
     const nums=adv.querySelectorAll('.v107-pill-metric strong'),after=parseFloat((nums[1]?.textContent||'0').replace(/[^\d.]/g,''))||0;
     let bar=adv.querySelector('.fastx-impact-bar');
     if(!bar){bar=document.createElement('div');bar.className='fastx-impact-bar';bar.innerHTML='<i></i>';adv.append(bar)}
     const fill=bar.firstElementChild;const w=Math.max(2,Math.min(100,after)).toFixed(1)+'%';if(fill.style.width!==w)fill.style.width=w;
-    adv.dataset.nivel=adv.classList.contains('v107-risk-ok')?'ok':(adv.className.match(/v107-risk-(\w+)/)||[])[1]||'ok';
+    const nivel=adv.classList.contains('v107-risk-ok')?'ok':(adv.className.match(/v107-risk-(\w+)/)||[])[1]||'ok';
+    if(adv.dataset.nivel!==nivel)adv.dataset.nivel=nivel;
    };
-   pulir();new MutationObserver(()=>{try{pulir()}catch(_){}}).observe(slot,{childList:true,subtree:true,characterData:true});
+   const obsPulir=new MutationObserver(()=>{try{pulir()}catch(_){}obsPulir.takeRecords()});
+   pulir();obsPulir.observe(slot,{childList:true,subtree:true,characterData:true});obsPulir.takeRecords();
   }
   f.classList.add('fastx-no-aside');f.closest('.modal')?.classList.add('fastx-single');
  }
@@ -19837,12 +19845,27 @@ document.addEventListener('click',function(ev){
   else patch(document);
   const root=document.getElementById('app')||document.body;
   const modalRoot=document.getElementById('modal-root')||document.body;
+  /* Los cambios del DOM se agrupan y se procesan UNA vez por tanda (antes cada nodo añadido lanzaba consultas sobre todo el documento:
+     cientos de nodos × documento completo congelaba la página al escribir un importe con muchos movimientos). */
+  const pendingNodes=new Set();let timer=0,needFull=false;
+  function flush(){
+    timer=0;
+    const nodes=[...pendingNodes].filter(n=>n.isConnected);pendingNodes.clear();
+    const full=needFull;needFull=false;
+    if(full)normalizeMoney(document);
+    else{
+      const tops=nodes.filter(n=>!nodes.some(o=>o!==n&&o.contains(n)));
+      tops.forEach(normalizeMoney);
+    }
+    applyPageHints();
+  }
   const obs=new MutationObserver(muts=>{
-    const touched=[];
-    muts.forEach(m=>{m.addedNodes && m.addedNodes.forEach(n=>{if(n.nodeType===1) touched.push(n);});});
-    if(!touched.length){patch(document);return;}
-    touched.forEach(n=>patch(n));
-    patch(document);
+    let any=false;
+    for(const m of muts){
+      m.addedNodes&&m.addedNodes.forEach(n=>{if(n.nodeType===1){pendingNodes.add(n);any=true}});
+    }
+    if(!any)needFull=true;
+    if(!timer)timer=setTimeout(flush,60);
   });
   obs.observe(root,{childList:true,subtree:true});
   if(modalRoot!==root) obs.observe(modalRoot,{childList:true,subtree:true});
@@ -20845,16 +20868,20 @@ window.__v866Runners.v799=scan;
 /* ==== script: v808-theme-detection ==== */
 (()=>{
  const host=document.getElementById('modal-root');if(!host)return;
+ /* El tema se deduce de las clases del body (sin getComputedStyle) y los cambios se agrupan por cuadro: leer el estilo calculado en cada mutación
+    forzaba un recálculo completo del documento cientos de veces y congelaba la página con muchos movimientos. */
+ let queued=0;
  const update=()=>{
-   const scheme=getComputedStyle(document.documentElement).colorScheme;
-   const isLight=(scheme==='light'||scheme.startsWith('light '));
-   const next=isLight?'light':'dark';
+   queued=0;
+   const c=document.body.classList;
+   const next=(c.contains('theme-dark')||c.contains('theme-black'))?'dark':'light';
    if(host.dataset.v808Skin!==next)host.dataset.v808Skin=next;
  };
+ const schedule=()=>{if(!queued)queued=requestAnimationFrame(update)};
  update();
- const obs=new MutationObserver(update);
+ const obs=new MutationObserver(schedule);
  obs.observe(document.documentElement,{attributes:true,attributeFilter:['style','class']});
- obs.observe(document.body,{attributes:true,attributeFilter:['style','class','data-theme']});
+ obs.observe(document.body,{attributes:true,attributeFilter:['class','data-theme']});
 })();
 ;
 /* ==== script: v815-presentation-artwork ==== */
