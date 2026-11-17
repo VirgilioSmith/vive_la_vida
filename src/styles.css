@@ -55712,3 +55712,44 @@ html body #app#app :is(.ff-upcoming .ff-panel-top,.v290-budget-head,.ff-personal
 html body #app#app .v213-note-apple{display:flex!important;align-items:center;gap:6px;flex-wrap:nowrap}
 html body #app#app .v213-note-apple .v213-apple-badge{flex:none;margin:0!important;transform:scale(.86);transform-origin:left center;margin-right:-6px!important}
 html body #app#app .v213-note-apple>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ==== Clasificar compra: selector universal de categoría y subcategoría (hoja inferior con buscador) ==== */
+html body #modal-root .v880-apple-modal .v7-apple-field{display:grid;gap:7px}
+html body #modal-root .v880-pickfield{display:flex;align-items:center;gap:10px;width:100%;min-height:54px;padding:6px 14px 6px 8px;border-radius:15px;border:1px solid var(--v880-line,rgba(120,130,160,.28));background:var(--v880-card,#fff);color:var(--v880-ink,#17202f);text-align:left;font:inherit;cursor:pointer}
+html body #modal-root .v880-pickfield:disabled{opacity:.5;cursor:default}
+html body #modal-root .v880-pickfield .v880-select-icon{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 12%,#fff);color:var(--v424-accent-strong,#615dd5);position:static}
+html body #modal-root .v880-pickfield .v880-select-icon svg{width:20px;height:20px}
+html body #modal-root .v880-pickfield-text{flex:1;min-width:0;font-size:16px;font-weight:600;color:var(--v880-muted,#7a8493);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body #modal-root .v880-pickfield-text.is-set{color:var(--v880-ink,#17202f)}
+html body #modal-root .v880-pickfield .v880-select-chevron{position:static;flex:none;color:var(--v880-muted,#7a8493)}
+html body #modal-root .v880-apple-modal .v7-apple-submit:disabled{opacity:.45!important;cursor:not-allowed}
+
+/* La hoja ocupa toda la pantalla como capa y se apoya ENCIMA del teclado: --v952-kb es el alto tapado, --v952-vvh el alto visible. */
+#modal-root .v880-pick-layer{position:fixed;inset:0;z-index:3000;display:flex;align-items:flex-end;justify-content:center;background:rgba(14,20,36,.45);padding:0 0 var(--v952-kb,0px);box-sizing:border-box}
+#modal-root .v880-pick-sheet{display:flex;flex-direction:column;width:100%;max-width:520px;max-height:min(640px,calc(var(--v952-vvh,100dvh) - 16px));padding:8px 16px calc(14px + env(safe-area-inset-bottom,0px));border-radius:26px 26px 0 0;background:#fff;color:#17202f;box-shadow:0 -18px 50px rgba(10,16,32,.28);animation:v880-sheet-up .22s ease-out}
+@keyframes v880-sheet-up{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}
+#modal-root .v880-pick-handle{align-self:center;width:42px;height:5px;border-radius:9px;background:rgba(120,130,160,.35);margin:2px 0 8px}
+#modal-root .v880-pick-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+#modal-root .v880-pick-head h3{margin:0;font-size:21px;letter-spacing:-.03em}
+#modal-root .v880-pick-head p{margin:2px 0 0;font-size:12px;color:#7a8493}
+#modal-root .v880-pick-close{width:36px;height:36px;border-radius:50%;border:1px solid rgba(120,130,160,.3);background:#fff;color:inherit;font-size:20px;line-height:1}
+#modal-root .v880-pick-search{width:100%;box-sizing:border-box;min-height:46px;padding:0 14px;border-radius:14px;border:1px solid rgba(120,130,160,.32);background:#f4f6fa;color:inherit;font-size:16px;margin-bottom:12px}
+#modal-root .v880-pick-search:focus{outline:2px solid var(--v424-accent-strong,#615dd5);outline-offset:1px;background:#fff}
+#modal-root .v880-pick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:2px 1px 4px;min-height:0}
+#modal-root .v880-pick-opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:84px;padding:10px 6px;border-radius:16px;border:1px solid rgba(120,130,160,.24);background:#fff;color:inherit;font:inherit;cursor:pointer}
+#modal-root .v880-pick-opt[hidden]{display:none}
+#modal-root .v880-pick-opt.is-selected{border-color:var(--v424-accent-strong,#615dd5);background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 11%,#fff)}
+#modal-root .v880-pick-ico{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 12%,#fff);color:var(--v424-accent-strong,#615dd5)}
+#modal-root .v880-pick-ico svg{width:19px;height:19px}
+#modal-root .v880-pick-name{font-size:12.5px;font-weight:650;line-height:1.2;text-align:center;overflow-wrap:anywhere}
+#modal-root .v880-pick-empty{grid-column:1/-1;margin:8px 0;text-align:center;color:#7a8493}
+html body:is(.theme-dark,.theme-black) #modal-root .v880-pick-sheet{background:#12141a;color:#eef1f6}
+html body:is(.theme-dark,.theme-black) #modal-root .v880-pick-opt,html body:is(.theme-dark,.theme-black) #modal-root .v880-pick-close{background:#1a1d25;border-color:rgba(255,255,255,.1)}
+html body:is(.theme-dark,.theme-black) #modal-root .v880-pick-search{background:#1a1d25;border-color:rgba(255,255,255,.12)}
+html body:is(.theme-dark,.theme-black) #modal-root .v880-pick-opt.is-selected{background:color-mix(in srgb,var(--v424-accent-strong,#a85a85) 22%,#12141a)}
+html body:is(.theme-dark,.theme-black) #modal-root .v880-pickfield{background:#14161c}
+@media(max-width:360px){#modal-root .v880-pick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){#modal-root .v880-pick-sheet{animation:none}}
+
+/* Con el selector de clasificación abierto, el aviso flotante de Apple Pay sobra y tapaba la hoja. */
+body:has(#modal-root .v7-apple-modal) #v5-apple-tray{display:none!important}

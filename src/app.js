@@ -13559,18 +13559,72 @@ function v7OpenAppleClassifier(id){
  <header class="modal-head"><div><h2>Clasificar compra</h2><p class="v880-apple-subtitle">Define la categoría y subcategoría de esta transacción.</p></div><button type="button" class="close" data-v7-apple-close="1" aria-label="Cerrar">×</button></header>
  <div class="v7-apple-purchase">${v880ApplePurchaseCard(t)}</div>
  <form id="v7-apple-category-form" data-tx="${sanitize(String(t.id))}">
- <label class="v7-apple-field"><span>Categoría</span><span class="v880-select-wrap"><span class="v880-select-icon" aria-hidden="true">${icon('cart')}</span><select class="field" id="v7-apple-category" name="category" required><option value="">Selecciona una categoría</option>${categories.map(([v,label])=>`<option value="${sanitize(v)}" ${existing?.category===v?'selected':''}>${sanitize(label)}</option>`).join('')}</select><span class="v880-select-chevron" aria-hidden="true">⌄</span></span></label>
- <label class="v7-apple-field"><span>Subcategoría</span><span class="v880-select-wrap"><span class="v880-select-icon" aria-hidden="true">${icon('receipt')}</span><select class="field" id="v7-apple-subcategory" name="subcategory"><option value="">Sin subcategoría</option></select><span class="v880-select-chevron" aria-hidden="true">⌄</span></span></label>
+ <div class="v7-apple-field"><span>Categoría</span><button type="button" class="v880-pickfield" data-v880-pick="category" aria-haspopup="dialog" aria-label="Elegir categoría"><span class="v880-select-icon" aria-hidden="true">${icon('cart')}</span><span class="v880-pickfield-text" id="v7-apple-category-text">Selecciona una categoría</span><span class="v880-select-chevron" aria-hidden="true">⌄</span></button><input type="hidden" id="v7-apple-category" name="category" value=""></div>
+ <div class="v7-apple-field"><span>Subcategoría</span><button type="button" class="v880-pickfield" data-v880-pick="subcategory" aria-haspopup="dialog" aria-label="Elegir subcategoría" disabled><span class="v880-select-icon" aria-hidden="true">${icon('receipt')}</span><span class="v880-pickfield-text" id="v7-apple-subcategory-text">Sin subcategoría</span><span class="v880-select-chevron" aria-hidden="true">⌄</span></button><input type="hidden" id="v7-apple-subcategory" name="subcategory" value=""></div>
  <label class="v880-apple-similar"><span class="v880-similar-icon" aria-hidden="true">${v153DockIcon('layers')}</span><span class="v880-similar-copy"><strong>Aplicar a compras similares</strong><small>Clasificar automáticamente futuras compras de este comercio.</small></span><input type="checkbox" name="applySimilar" ${existing?'checked':''} role="switch" aria-label="Aplicar clasificación a compras similares"><span class="v880-switch-track" aria-hidden="true"><i></i></span></label>
- <div class="v7-apple-actions"><button type="submit" class="btn v7-apple-submit">${icon('check')} Guardar clasificación</button></div></form></section></div>`;
- if(existing?.category){
-  v7FillAppleSubcategory(existing.category);
-  const select=root.querySelector('#v7-apple-subcategory');if(select&&existing.subcategory)select.value=existing.subcategory;
+ <div class="v7-apple-actions"><button type="submit" class="btn v7-apple-submit" disabled>${icon('check')} Guardar clasificación</button></div></form></section></div>`;
+ if(existing?.category&&categories.some(([v])=>v===existing.category)){
+  v880SetApplePick('category',existing.category);
+  if(existing.subcategory)v880SetApplePick('subcategory',existing.subcategory);
  }
- root.querySelector('#v7-apple-category')?.focus({preventScroll:true});
+ root.querySelector('[data-v880-pick="category"]')?.focus({preventScroll:true});
 }
+/* Selector universal de categoría y subcategoría (hoja inferior con buscador e íconos de la taxonomía). La hoja se apoya encima del teclado (--v952-kb). */
+const v880Norm=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function v880SetApplePick(kind,value){
+ const root=document.getElementById('modal-root');if(!root)return;
+ const cat=root.querySelector('#v7-apple-category'),sub=root.querySelector('#v7-apple-subcategory');if(!cat||!sub)return;
+ if(kind==='category'){
+  if(cat.value!==value){sub.value='';const st=root.querySelector('#v7-apple-subcategory-text');if(st)st.textContent='Sin subcategoría'}
+  cat.value=value||'';
+  const t=root.querySelector('#v7-apple-category-text');if(t){t.textContent=value||'Selecciona una categoría';t.classList.toggle('is-set',!!value)}
+  const ic=root.querySelector('[data-v880-pick="category"] .v880-select-icon');if(ic&&value)ic.innerHTML=icon(v255TaxonomyIconName('gasto',value,''));
+  const subBtn=root.querySelector('[data-v880-pick="subcategory"]');if(subBtn)subBtn.disabled=!value||!subcategoryOptions('gasto',value).length;
+ }else{
+  sub.value=value||'';
+  const t=root.querySelector('#v7-apple-subcategory-text');if(t){t.textContent=value||'Sin subcategoría';t.classList.toggle('is-set',!!value)}
+  const ic=root.querySelector('[data-v880-pick="subcategory"] .v880-select-icon');if(ic&&value)ic.innerHTML=icon(v255TaxonomyIconName('gasto',cat.value,value));
+ }
+ const submit=root.querySelector('.v7-apple-submit');if(submit)submit.disabled=!cat.value;
+}
+function v880CloseApplePicker(){document.getElementById('v880-pick-layer')?.remove();}
+function v880OpenApplePicker(kind){
+ const root=document.getElementById('modal-root');if(!root)return;v880CloseApplePicker();
+ const cat=root.querySelector('#v7-apple-category')?.value||'';
+ let items;
+ if(kind==='category')items=categoryOptions('gasto').filter(([v])=>v!=='Apple Pay').map(([v])=>({value:v,label:v,icon:v255TaxonomyIconName('gasto',v,'')}));
+ else{if(!cat)return;items=[{value:'',label:'Sin subcategoría',icon:'receipt'}].concat(subcategoryOptions('gasto',cat).map(x=>({value:x,label:x,icon:v255TaxonomyIconName('gasto',cat,x)})));}
+ const current=root.querySelector(kind==='category'?'#v7-apple-category':'#v7-apple-subcategory')?.value||'';
+ const layer=document.createElement('div');layer.id='v880-pick-layer';layer.className='v880-pick-layer';layer.dataset.kind=kind;
+ layer.innerHTML=`<section class="v880-pick-sheet" role="dialog" aria-modal="true" aria-label="${kind==='category'?'Selecciona una categoría':'Selecciona una subcategoría'}"><span class="v880-pick-handle"></span>
+ <header class="v880-pick-head"><div><h3>${kind==='category'?'Selecciona una categoría':'Selecciona una subcategoría'}</h3>${kind==='subcategory'?`<p>${sanitize(cat)}</p>`:''}</div><button type="button" class="v880-pick-close" data-v880-pick-close="1" aria-label="Cerrar">×</button></header>
+ <input type="search" class="v880-pick-search" placeholder="${kind==='category'?'Buscar categoría…':'Buscar subcategoría…'}" aria-label="Buscar" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false">
+ <div class="v880-pick-grid" role="listbox">${items.map(it=>`<button type="button" role="option" class="v880-pick-opt ${it.value===current?'is-selected':''}" data-v880-opt="${sanitize(it.value)}" data-q="${sanitize(v880Norm(it.label))}" aria-selected="${it.value===current}"><span class="v880-pick-ico" aria-hidden="true">${icon(it.icon)}</span><span class="v880-pick-name">${sanitize(it.label)}</span></button>`).join('')}<p class="v880-pick-empty" hidden>Sin resultados</p></div></section>`;
+ root.appendChild(layer);
+}
+document.addEventListener('click',e=>{
+ const open=e.target.closest('[data-v880-pick]');
+ if(open&&open.closest('#modal-root')){e.preventDefault();e.stopPropagation();if(!open.disabled)v880OpenApplePicker(open.dataset.v880Pick);return;}
+ const opt=e.target.closest('[data-v880-opt]');
+ if(opt&&opt.closest('#v880-pick-layer')){
+  e.preventDefault();e.stopPropagation();
+  const kind=document.getElementById('v880-pick-layer').dataset.kind,val=opt.dataset.v880Opt;
+  v880SetApplePick(kind,val);v880CloseApplePicker();
+  if(kind==='category'&&val&&subcategoryOptions('gasto',val).length)setTimeout(()=>v880OpenApplePicker('subcategory'),120);
+  return;
+ }
+ const close=e.target.closest('[data-v880-pick-close]');
+ if(close||e.target.id==='v880-pick-layer'){e.preventDefault();e.stopPropagation();v880CloseApplePicker();}
+},true);
+document.addEventListener('input',e=>{
+ if(!e.target.classList?.contains('v880-pick-search'))return;
+ const q=v880Norm(e.target.value),layer=e.target.closest('#v880-pick-layer');let n=0;
+ layer.querySelectorAll('.v880-pick-opt').forEach(b=>{const show=!q||b.dataset.q.includes(q);b.hidden=!show;if(show)n++});
+ const empty=layer.querySelector('.v880-pick-empty');if(empty)empty.hidden=n>0;
+},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('v880-pick-layer')){e.preventDefault();e.stopPropagation();v880CloseApplePicker();}},true);
 function v7FillAppleSubcategory(category){
- const select=document.getElementById('v7-apple-subcategory');if(!select)return;
+ const select=document.getElementById('v7-apple-subcategory');if(!select||select.tagName!=='SELECT')return;
  select.innerHTML='<option value="">Sin subcategoría</option>'+subcategoryOptions('gasto',category).map(s=>`<option value="${sanitize(s)}">${sanitize(v255TaxonomyOptionLabel('gasto',category,s))}</option>`).join('');
 }
 document.addEventListener('click',e=>{
