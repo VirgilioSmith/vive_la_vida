@@ -9384,7 +9384,7 @@ function v901CobroSteps(f,s,state,isSalary){
   <button type="button" class="v901-edit" data-v901-edit="1">${isSalary?'':'✎ '}Editar datos</button>`;
  };
  /* Escritorio: panel «Así quedará» en vivo a la derecha del formulario. */
- const desktop=window.matchMedia&&window.matchMedia('(min-width:791px)').matches;
+ const desktop=false;
  let live=null;
  if(desktop){
   f.classList.add('v901-desktop');live=document.createElement('aside');live.className='v901-live';grid.after(live);
@@ -9618,7 +9618,7 @@ function v902RemapIncomeWizard(form,wizard,id){
  v905DateView(form.elements.nextDue,'slash');
  const labels=['Datos','Descuentos','Calendario y cuenta','Confirmación'];
  wizard.querySelectorAll('.v48-step-track span').forEach((sp,i)=>sp.dataset.label=labels[i]);
- if(window.matchMedia&&window.matchMedia('(min-width:791px)').matches){
+ if(false){
   const live=document.createElement('aside');live.className='v902-live';live.setAttribute('aria-live','polite');wizard.appendChild(live);form.classList.add('v902-desktop');
   const paint=()=>{const body=document.createElement('div');body.className='v48-confirm-body';try{const old=wizard.querySelector('.v48-confirm-body');const tmp=old;v48RefreshSummary(form);live.innerHTML='<div class="v902-live-title">Resumen en vivo</div>'+old.innerHTML.replace(/<button[^>]*data-v902-goto[^>]*>[^<]*<\/button>/g,'')}catch(_){}};
   form.addEventListener('input',paint);form.addEventListener('change',paint);form.addEventListener('click',()=>setTimeout(paint,0));paint();

@@ -55871,43 +55871,6 @@ html body #modal-root #v40IncomeForm.v48-wizard-mode .form-foot{display:none!imp
 #modal-root form#categoryForm .form-grid>.v900-cat,#modal-root form#categoryForm>.v900-cat{grid-column:1/-1;width:100%;max-width:none}
 html body #modal-root form#categoryForm .form-foot button[type="submit"]{background:var(--v424-accent-strong,#615dd5)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important}
 
-/* ==== Rediseño para PC: formulario a la izquierda y resumen en vivo a la derecha ==== */
-@media(min-width:791px){
- /* Ampliar catálogo */
- html body #modal-root .modal:has(#categoryForm){max-width:900px!important;width:min(900px,94vw)!important}
- #modal-root .v900-cat{grid-template-columns:minmax(0,1fr) 320px;column-gap:32px;align-items:start}
- #modal-root .v900-cat>*{grid-column:1}
- #modal-root .v900-cat>.v900-cat-sub{grid-column:1/-1;text-align:left;margin:0 0 4px}
- #modal-root .v900-cat>.v900-side{grid-column:2;grid-row:2/span 12;position:sticky;top:8px;align-self:start;padding:18px;border:1px solid rgba(120,130,160,.24);border-radius:20px;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 4%,var(--v903-base))}
- #modal-root .v900-side .v900-lbl:first-child{margin-top:0}
- /* Registrar cobro / salario */
- html body #modal-root .modal:has(#v940IncomeCaptureForm){max-width:980px!important;width:min(980px,94vw)!important}
- #modal-root form.v901-desktop{display:grid!important;grid-template-columns:minmax(0,1fr) 340px;column-gap:28px;align-items:start}
- #modal-root form.v901-desktop>.input-error,#modal-root form.v901-desktop>.form-foot{grid-column:1/-1}
- #modal-root form.v901-desktop>.form-grid{grid-column:1}
- #modal-root form.v901-desktop .v901-live{grid-column:2;position:sticky;top:8px;padding:18px;border:1px solid rgba(120,130,160,.24);border-radius:20px;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 4%,var(--v903-base))}
- #modal-root .v901-live-title{margin:0 0 6px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#6b7385);text-align:left}
- #modal-root .v901-live .v901-amount{font-size:30px}
- #modal-root .v901-live .v901-confirm,#modal-root .v901-live{display:grid;gap:12px}
- #modal-root form.v901-desktop.v901-step2>.v901-confirm{grid-column:1/-1;width:100%;max-width:600px;margin:0 auto}
- #modal-root form.v901-desktop .form-foot .btn{min-width:170px}
- /* Ingreso recurrente */
- html body #modal-root .modal:has(#v40IncomeForm){max-width:1020px!important;width:min(1020px,94vw)!important}
- #v40IncomeForm.v902-desktop .v48-wizard{display:grid;grid-template-columns:minmax(0,1fr) 340px;column-gap:32px;align-items:start}
- #v40IncomeForm.v902-desktop .v48-wizard>*{grid-column:1}
- #v40IncomeForm.v902-desktop .v48-wizard>.v48-top{grid-column:1/-1;padding-bottom:30px}
- #v40IncomeForm.v902-desktop .v48-wizard>.v902-live{grid-column:2;grid-row:2/span 8;position:sticky;top:8px;align-self:start;padding:18px;border:1px solid rgba(120,130,160,.24);border-radius:20px;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 4%,var(--v903-base))}
- #v40IncomeForm.v902-desktop[data-v48-step="4"] .v48-wizard>.v902-live{display:none}
- #v40IncomeForm.v902-desktop[data-v48-step="4"] .v48-wizard>*:not(.v48-top){grid-column:1/-1;max-width:640px;margin-inline:auto;width:100%}
- #v40IncomeForm.v902-desktop .v902-live-title{margin:0 0 8px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#6b7385)}
- #v40IncomeForm.v902-desktop .v902-live .v902-card{margin-bottom:10px}
- #v40IncomeForm.v902-desktop .v48-step-track span{position:relative;overflow:visible}
- #v40IncomeForm.v902-desktop .v48-step-track span::after{content:attr(data-label);position:absolute;top:13px;left:0;font-size:12.5px;font-weight:700;color:var(--muted,#6b7385);white-space:nowrap}
- #v40IncomeForm.v902-desktop .v48-step-track span.active::after{color:var(--v424-accent-strong,#7b2d57)}
- #v40IncomeForm.v902-desktop .v48-wizard-actions{justify-content:flex-end;position:static;background:none}
- #v40IncomeForm.v902-desktop .v48-wizard-actions .btn{flex:0 0 auto;min-width:190px}
-}
-
 /* Botón «Ver más movimientos» del libro en escritorio. */
 .v51-desk-more{display:block;margin:16px auto 6px;padding:12px 24px;border-radius:14px;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#615dd5) 35%,transparent);background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 9%,var(--v903-base));color:var(--v424-accent-strong,#615dd5);font-weight:700;cursor:pointer}
 
@@ -55935,7 +55898,7 @@ html body:is(.theme-dark,.theme-black) #v40IncomeForm.v48-wizard-mode .v45-sched
 #modal-root .v903-has-back{display:flex!important;align-items:center;gap:12px}
 #modal-root .v903-has-back>:not(.close){flex:1;min-width:0}
 #modal-root .v903-back{display:grid;place-items:center;flex:0 0 auto;color:var(--v424-accent-strong,#615dd5)}
-@media(max-width:790px){#modal-root .v903-has-back>:not(.close) h2,#modal-root .v903-has-back>:not(.close) h3{text-align:center}}
+#modal-root .v903-has-back>:not(.close) h2,#modal-root .v903-has-back>:not(.close) h3{text-align:center}
 
 /* Botones principales de los flujos: color de acento dinámico (antes degradado fijo) y letra blanca, en Claro y Black. */
 html body #modal-root#modal-root#modal-root :is(form#categoryForm,form.v901-steps,form#v40IncomeForm) :is(button[type="submit"],.v901-next,.v48-next,.v48-final){background:var(--v424-accent-strong,#615dd5)!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important;box-shadow:0 8px 18px color-mix(in srgb,var(--v424-accent-strong,#615dd5) 28%,transparent)!important}
@@ -55945,7 +55908,7 @@ html body #modal-root#modal-root#modal-root :is(form#categoryForm,form.v901-step
 html body #modal-root#modal-root .v903-has-back>:is(h2,h3){text-align:center}
 html body #modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm){--fl-line:rgba(120,130,160,.32);--fl-acc:var(--v424-accent-strong,#615dd5);--fl-tint:color-mix(in srgb,var(--fl-acc) 9%,var(--v903-base));--fl-ink:var(--ink,#17202f);--fl-mut:color-mix(in srgb,var(--fl-ink) 58%,transparent)}
 html body:is(.theme-dark,.theme-black) #modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm){--fl-ink:#eef1f6;--fl-line:rgba(255,255,255,.16);--fl-tint:color-mix(in srgb,var(--fl-acc) 16%,var(--v903-base))}
-@media(max-width:790px){
+
 html body #modal-root#modal-root form.v901-steps{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
 html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1{display:flex!important;flex-direction:column;gap:9px;padding:6px 16px 8px!important;margin:0!important;overflow:auto;flex:1 1 auto;min-height:0}
 html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1>*{margin:0!important;grid-column:auto!important;width:100%!important;max-width:none!important;box-sizing:border-box;align-self:stretch}
@@ -55995,10 +55958,10 @@ html body #modal-root#modal-root .v901-info{font-size:13.5px;color:var(--fl-mut)
 html body #modal-root#modal-root form.v901-sal .v901-info{text-align:center}
 html body #modal-root#modal-root .v901-edit{background:none!important;border:0!important;box-shadow:none!important;color:var(--fl-acc)!important;font-weight:600;font-size:15px;padding:6px;margin-top:2px}
 html body #modal-root#modal-root form.v901-sal .v901-edit{text-decoration:underline}
-}
+
 
 /* --- Ingreso recurrente (4 pasos) --- */
-@media(max-width:790px){
+
 html body #modal-root#modal-root form#v40IncomeForm.v48-wizard-mode{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
 html body #modal-root#modal-root form#v40IncomeForm .form-grid{display:flex!important;flex-direction:column;flex:1 1 auto;min-height:0;overflow:auto;padding:0 16px 0!important;margin:0!important}
 html body #modal-root#modal-root form#v40IncomeForm .v48-wizard{display:flex;flex-direction:column;flex:1 1 auto;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;margin:0!important;max-width:none!important;width:100%}
@@ -56035,8 +55998,8 @@ html body #modal-root#modal-root form#v40IncomeForm [data-v48-fields="amount"]>.
 html body #modal-root#modal-root form#v40IncomeForm .v50-income-quick{display:none!important}
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="1"]>details{border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);padding:0!important;box-shadow:none}
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="1"]>details>summary{display:none}
-}
-@media(max-width:790px){
+
+
 html body #modal-root#modal-root form#v40IncomeForm .v1110-native{display:none!important}
 html body #modal-root#modal-root form#v40IncomeForm .v1110-lab{display:none!important}
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="1"]>details{border:0!important;background:none!important;padding:0!important}
@@ -56070,8 +56033,8 @@ html body #modal-root#modal-root form#v40IncomeForm .v902-company[open]>summary:
 html body #modal-root#modal-root form#v40IncomeForm .v902-company .v48-company-only{display:block!important;padding-bottom:12px}
 html body #modal-root#modal-root form#v40IncomeForm .v902-informal{margin:0;font-size:13px;color:var(--fl-mut);line-height:1.4}
 html body #modal-root#modal-root form#v40IncomeForm .v43-company-title small{display:none}
-}
-@media(max-width:790px){
+
+
 /* paso 3 */
 html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields{display:grid!important;grid-template-columns:1fr 1fr;gap:12px 12px}
 html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields>*{margin:0!important;min-width:0}
@@ -56098,16 +56061,16 @@ html body #modal-root#modal-root form#v40IncomeForm .v50-destination>label{margi
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details{border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);padding:0 14px;box-shadow:none}
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary{min-height:46px;display:flex;align-items:center;font-size:16px;font-weight:700;color:var(--fl-ink)}
 html body #modal-root#modal-root form#v40IncomeForm .v50-schedule-disclaimer{padding:0!important;border:0!important;background:none!important;font-size:13px;color:var(--fl-mut);margin:0}
-}
-@media(max-width:790px){
+
+
 html body #modal-root#modal-root form#v40IncomeForm .v45-monthly-day label>span{display:block;margin:0 0 6px;font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fl-mut)}
 html body #modal-root#modal-root form#v40IncomeForm .v45-monthly-day label{display:block;padding:0!important;border:0!important;background:none!important}
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary{justify-content:space-between;list-style:none;padding:0!important;text-indent:0}
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary::-webkit-details-marker{display:none}
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary::before{content:none!important}
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--fl-mut);border-bottom:2px solid var(--fl-mut);transform:rotate(45deg);margin:-4px 2px 0 0}
-}
-@media(max-width:790px){
+
+
 html body #modal-root#modal-root form#v40IncomeForm .v902-h{margin:0 0 2px;font-size:22px;font-weight:800;color:var(--fl-ink);letter-spacing:-.01em}
 html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="4"]{gap:8px}
 html body #modal-root#modal-root form#v40IncomeForm .v48-confirm-body{display:flex;flex-direction:column;gap:8px}
@@ -56125,19 +56088,19 @@ html body #modal-root#modal-root form#v40IncomeForm .v902-line{padding:4px 0 6px
 html body #modal-root#modal-root form#v40IncomeForm .v902-card .v902-line+.v902-line{padding-top:0}
 html body #modal-root#modal-root form#v40IncomeForm .v902-info{margin:2px 2px 0;font-size:13px;line-height:1.35;color:var(--fl-mut)}
 html body #modal-root#modal-root form#v40IncomeForm .v902-edit{color:var(--fl-acc);font-size:14.5px}
-}
-@media(max-width:790px){
+
+
 html body #modal-root#modal-root form#v40IncomeForm .v50-review-extra{display:none!important}
 html body #modal-root#modal-root form#v40IncomeForm .v902-card-head small{white-space:nowrap}
-}
-@media(max-width:790px){
+
+
 html body #modal-root#modal-root#modal-root form.v901-steps .form-grid.v901-step1>label.v789-select-enhanced{border:0!important;background:none!important;box-shadow:none!important;padding:0!important;border-radius:0!important;height:auto;min-height:0}
 html body #modal-root#modal-root#modal-root form.v901-steps .form-grid.v901-step1>label.v789-select-enhanced::before,html body #modal-root#modal-root#modal-root form.v901-steps .form-grid.v901-step1>label.v789-select-enhanced::after{content:none!important}
-}
-@media(max-width:790px){html body #modal-root#modal-root form.v901-steps .v940-occurrence{padding:12px 16px 14px!important}}
+
+html body #modal-root#modal-root form.v901-steps .v940-occurrence{padding:12px 16px 14px!important}
 html body:is(.theme-dark,.theme-black) #modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm) :is(.v902-chip,.v901-badge,.v901-edit,.v902-edit,.v901-note>summary,.v901-sal .v901-after h4){color:color-mix(in srgb,var(--fl-acc) 55%,#fff)!important}
 .v905-dv,.v905-di{display:none}
-@media(max-width:790px){
+
 html body #modal-root#modal-root .v905-date{position:relative;display:block;width:100%}
 html body #modal-root#modal-root .v905-date>input{opacity:0;position:absolute;inset:0;width:100%!important;height:100%!important;z-index:2;cursor:pointer;margin:0}
 html body #modal-root#modal-root .v905-dv{display:flex;align-items:center;height:44px;font-size:16px;color:var(--fl-ink);padding:0 44px 0 14px;border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);box-sizing:border-box}
@@ -56153,11 +56116,27 @@ html body #modal-root#modal-root form#v40IncomeForm .v905-txt{display:inline}
 html body #modal-root#modal-root form#v40IncomeForm .v902-net .v905-txt{font-weight:500;font-size:13.5px;color:var(--fl-mut)}
 html body #modal-root#modal-root form#v40IncomeForm .v902-block li{list-style:disc;display:list-item;margin-left:18px;padding:1px 0}
 html body #modal-root#modal-root form#v40IncomeForm .v902-block ul{padding-left:6px}
-}
-@media(min-width:791px){.v905-txt{display:none}}
-@media(max-width:790px){
+
+
+
 html body #modal-root#modal-root form#v40IncomeForm .v902-block li{display:flex!important;justify-content:flex-start;gap:6px;margin:0;list-style:none}
 html body #modal-root#modal-root form#v40IncomeForm .v902-block li::before{content:"•";color:var(--fl-ink);width:12px;flex:none;margin-left:2px}
 html body #modal-root#modal-root form#v40IncomeForm .v902-block li>span:last-child::before{content:"· "}
 html body #modal-root#modal-root form#v40IncomeForm .v902-block li>span:first-child{font-weight:700;color:var(--fl-ink)}
+
+
+/* ==== v906 · Pantalla completa idéntica a la propuesta, en móvil y en PC (columna de teléfono centrada) ==== */
+html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){display:flex!important;flex-direction:column;box-sizing:border-box;background:var(--v903-base)!important;overflow:hidden;padding:0!important;max-width:none!important}
+@media(max-width:790px){
+html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){position:fixed!important;inset:0!important;top:0!important;width:100%!important;height:100dvh!important;max-height:none!important;border-radius:0!important;margin:0!important;border:0!important;box-shadow:none!important;transform:none!important;padding-top:env(safe-area-inset-top,0)!important;padding-bottom:env(safe-area-inset-bottom,0)!important}
 }
+@media(min-width:791px){
+html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){width:min(430px,94vw)!important;height:min(880px,calc(100vh - 32px))!important;max-height:none!important;margin:auto!important;border-radius:28px!important}
+}
+html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)) .modal-head{display:flex;align-items:center;gap:10px;padding:12px 16px 10px!important;margin:0!important;border:0!important;background:var(--v903-base)!important;box-shadow:none!important;min-height:0;position:static;flex:0 0 auto}
+html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)) .modal-head :is(h2,h3){font-size:22px;line-height:1.2;font-weight:700;color:var(--fl-ink,#17202f);margin:0;text-align:center}
+html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)) .modal-head .close{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border-radius:50%;padding:0;color:var(--v424-accent-strong,#615dd5)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#615dd5) 28%,transparent)!important;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 6%,var(--v903-base))!important;box-shadow:none!important}
+html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)) form{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+html body #modal-root#modal-root form#v40IncomeForm :is(.v45-payday-twins,.v45-monthly-day)[hidden]{display:none!important}
+@media(max-width:790px){html body #modal-root#modal-root .modal:has(form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm)){padding-top:max(env(safe-area-inset-top,0px),14px)!important}}
+html body #modal-root#modal-root form.v901-sal .form-grid.v901-step1>label:not(.v789-select-enhanced)>.filter-label,html body #modal-root#modal-root form.v901-sal .form-grid.v901-step1>label.v789-select-enhanced>.filter-label{font-weight:400;font-size:14px;color:var(--fl-ink)}
