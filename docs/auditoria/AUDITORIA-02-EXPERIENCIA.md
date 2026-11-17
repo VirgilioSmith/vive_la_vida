@@ -19,7 +19,7 @@ Además: 9 anchos de pantalla × 26 pantallas (234 mediciones), recorrido de tec
 Técnicas aplicadas en los formularios (9 particiones por formulario): vacío, hostil (HTML y SQL), 400 caracteres, cero, negativo, decimal fuera de paso (0,005), enorme (99 999 999 999), texto en campo numérico y valor típico; fechas inválidas (30 de febrero, año 0000, 1900, 9999) y selectores en primer y último valor.
 
 ## 2. Resultado de la exploración dinámica
-* **0 errores de JavaScript, 0 errores de consola, 0 textos `NaN`/`undefined`, 0 invariantes financieros rotos** (montos finitos, ids únicos, saldos finitos), **0 XSS** y 0 registros creados con entradas inválidas en 312 casos de formulario y 509 pulsaciones.
+* **0 errores de JavaScript, 0 errores de consola, 0 textos `NaN`/`undefined`, 0 invariantes financieros rotos** (montos finitos, ids únicos, saldos finitos), **0 XSS** y 0 registros creados con entradas inválidas en 279 casos de formulario y 509 pulsaciones.
 * 32 avisos automáticos fueron **falsos positivos**: la palabra «Infinity» en la etiqueta legítima del nivel de tarjeta «Infinite / Infinity».
 * Interacciones repetidas: 120 cambios de pantalla en 10,6 s (≈89 ms cada uno) sin errores; 30 aperturas/cierres de modal sin modales residuales; 10 envíos del mismo formulario de cuenta crearon **1** registro (idempotencia correcta).
 * Desbordes: **0 desbordes horizontales de página** en 234 mediciones (320 a 1 440 px y 844×390 horizontal). Las tablas de Ingresos, Egresos y Recurrentes sí son más anchas que la pantalla móvil (547, 569 y 439 px) y se desplazan dentro de su contenedor (`overflow-x:auto`), por lo que no se cortan.
@@ -50,7 +50,7 @@ Sin otras desviaciones detectadas en 7 pantallas × 5 anchos (prueba `pantallas-
 ## 4. Consolidación con la auditoría técnica (AUDITORIA-01)
 | Tema | Técnica (H-xx) | Experiencia (UX-xx) | Lectura conjunta | Prioridad unificada |
 |---|---|---|---|---|
-| Integridad financiera en servidor | H-01 (sin validación), H-12 (sin pruebas de sincronización), H-20 | 0 invariantes rotos y 0 XSS en 509 pulsaciones/312 casos | El cliente resiste bien; el riesgo está en que el servidor acepta cualquier JSON | **P1** |
+| Integridad financiera en servidor | H-01 (sin validación), H-12 (sin pruebas de sincronización), H-20 | 0 invariantes rotos y 0 XSS en 509 pulsaciones/279 casos | El cliente resiste bien; el riesgo está en que el servidor acepta cualquier JSON | **P1** |
 | Autenticación | H-03 (contraseñas filtradas) | No se pudo probar sesión expirada (ver limitaciones) | Brecha de verificación | **P1** |
 | Accesibilidad | H-13 (contraste), H-15 (listeners) | UX-01 a UX-03, UX-06 | Faltan gestión del foco en modales, indicadores de foco y nombres accesibles; el contraste ya mejoró | **P2** |
 | Precisión y fechas | H-07, H-08, H-09 | No reproducible desde la interfaz con importes límite (el campo `step=0,01` bloquea decimales a nivel de navegador) | Riesgo en cálculos internos, no en la captura | **P2** |
