@@ -84,6 +84,8 @@ const count = p => p.evaluate(() => window.__T.dbg().transactions.filter(t => t.
     ({ p, errs } = await session(b, w, h, dark));
     await p.evaluate(() => { const x = document.createElement('button'); x.dataset.act = 'addCategory'; x.hidden = true; document.body.append(x); x.click(); }); await p.waitForTimeout(800);
     const k1 = await p.evaluate(() => ({ back: !!document.querySelector('#modal-root .v903-back'), btn: document.querySelector('#modal-root form#categoryForm button[type="submit"]')?.textContent.trim(), prev: document.querySelector('#v900-preview')?.innerText.replace(/\s+/g, ' ') }));
+    const txFirma = () => p.evaluate(() => JSON.stringify(window.__T.dbg().transactions.map(t => [t.id, t.amount, t.category, t.subcategory, t.date])));
+    const firmaAntes = await txFirma();
     await p.fill('#v900-name', 'Actividades deportivas'); await p.fill('#v900-sub', 'Tenis');
     await p.click('#modal-root form#categoryForm button[type="submit"]'); await p.waitForTimeout(1300);
     const cat1 = await p.evaluate(() => (window.__T.dbg().customCategories || []).filter(c => c.name === 'Actividades deportivas'));
@@ -99,6 +101,7 @@ const count = p => p.evaluate(() => window.__T.dbg().transactions.filter(t => t.
     await p.click('#modal-root form#categoryForm button[type="submit"]'); await p.waitForTimeout(1000);
     const cat3 = await p.evaluate(() => (window.__T.dbg().customCategories || []).find(c => c.name === 'Actividades deportivas').subcategories);
     check(17, 'Una subcategoría repetida se rechaza: el catálogo no se duplica', cat3.length === 2, JSON.stringify(cat3));
+    check('17b', 'Crear categorías y subcategorías no modifica ningún movimiento anterior', (await txFirma()) === firmaAntes);
     check(18, 'Sin errores de página en el catálogo', errs.length === 0, JSON.stringify(errs.slice(0, 2)));
     await p.close();
 
