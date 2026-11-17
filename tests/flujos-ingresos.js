@@ -126,6 +126,9 @@ const count = p => p.evaluate(() => window.__T.dbg().transactions.filter(t => t.
     check(19, 'El acento elegido en Personalización (rojo) gobierna el selector segmentado y el botón principal: no hay colores fijos', rojo(ac.seg) && rojo(ac.sub), JSON.stringify(ac));
     if (dark) { const lum = c => { const m = toRgb(c); return (m[0] + m[1] + m[2]) / 3; }; check(20, 'En el modo oscuro las superficies de los flujos son oscuras (no quedan blancas)', lum(ac.caja) < 80, ac.caja); }
     else { const lum = c => { const m = toRgb(c); return (m[0] + m[1] + m[2]) / 3; }; check(20, 'En el modo claro las superficies son limpias (blancas)', lum(ac.caja) > 235, ac.caja); }
+    const sup = await p.evaluate(() => { const m = document.querySelector('#modal-root .modal'); return { modal: getComputedStyle(m).backgroundColor, form: getComputedStyle(m.querySelector('form')).backgroundColor, input: getComputedStyle(m.querySelector('#v900-name')).backgroundColor, glow: /radial-gradient/.test(getComputedStyle(m.querySelector('.v900-preview')).backgroundImage) }; });
+    const esperado = dark ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)';
+    check(21, `Superficies exactas del sistema de diseño (${dark ? 'Black #000000' : 'Claro #FFFFFF'}) con brillo de acento en las tarjetas`, sup.modal === esperado && sup.form === esperado && sup.input === esperado && sup.glow, JSON.stringify(sup));
     await p.close();
   }
   await b.close();
