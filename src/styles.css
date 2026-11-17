@@ -55870,3 +55870,40 @@ html body #modal-root #v40IncomeForm.v48-wizard-mode .form-foot{display:none!imp
 /* Ampliar catálogo en escritorio: el contenido usa todo el ancho y el botón principal el color de acento. */
 #modal-root form#categoryForm .form-grid>.v900-cat,#modal-root form#categoryForm>.v900-cat{grid-column:1/-1;width:100%;max-width:none}
 html body #modal-root form#categoryForm .form-foot button[type="submit"]{background:var(--v424-accent-strong,#615dd5)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important}
+
+/* ==== Rediseño para PC: formulario a la izquierda y resumen en vivo a la derecha ==== */
+@media(min-width:791px){
+ /* Ampliar catálogo */
+ html body #modal-root .modal:has(#categoryForm){max-width:900px!important;width:min(900px,94vw)!important}
+ #modal-root .v900-cat{grid-template-columns:minmax(0,1fr) 320px;column-gap:32px;align-items:start}
+ #modal-root .v900-cat>*{grid-column:1}
+ #modal-root .v900-cat>.v900-cat-sub{grid-column:1/-1;text-align:left;margin:0 0 4px}
+ #modal-root .v900-cat>.v900-side{grid-column:2;grid-row:2/span 12;position:sticky;top:8px;align-self:start;padding:18px;border:1px solid rgba(120,130,160,.24);border-radius:20px;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 4%,#fff)}
+ #modal-root .v900-side .v900-lbl:first-child{margin-top:0}
+ /* Registrar cobro / salario */
+ html body #modal-root .modal:has(#v940IncomeCaptureForm){max-width:980px!important;width:min(980px,94vw)!important}
+ #modal-root form.v901-desktop{display:grid!important;grid-template-columns:minmax(0,1fr) 340px;column-gap:28px;align-items:start}
+ #modal-root form.v901-desktop>.input-error,#modal-root form.v901-desktop>.form-foot{grid-column:1/-1}
+ #modal-root form.v901-desktop>.form-grid{grid-column:1}
+ #modal-root form.v901-desktop .v901-live{grid-column:2;position:sticky;top:8px;padding:18px;border:1px solid rgba(120,130,160,.24);border-radius:20px;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 4%,#fff)}
+ #modal-root .v901-live-title{margin:0 0 6px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#6b7385);text-align:left}
+ #modal-root .v901-live .v901-amount{font-size:30px}
+ #modal-root .v901-live .v901-confirm,#modal-root .v901-live{display:grid;gap:12px}
+ #modal-root form.v901-desktop.v901-step2>.v901-confirm{grid-column:1/-1;width:100%;max-width:600px;margin:0 auto}
+ #modal-root form.v901-desktop .form-foot .btn{min-width:170px}
+ /* Ingreso recurrente */
+ html body #modal-root .modal:has(#v40IncomeForm){max-width:1020px!important;width:min(1020px,94vw)!important}
+ #v40IncomeForm.v902-desktop .v48-wizard{display:grid;grid-template-columns:minmax(0,1fr) 340px;column-gap:32px;align-items:start}
+ #v40IncomeForm.v902-desktop .v48-wizard>*{grid-column:1}
+ #v40IncomeForm.v902-desktop .v48-wizard>.v48-top{grid-column:1/-1;padding-bottom:30px}
+ #v40IncomeForm.v902-desktop .v48-wizard>.v902-live{grid-column:2;grid-row:2/span 8;position:sticky;top:8px;align-self:start;padding:18px;border:1px solid rgba(120,130,160,.24);border-radius:20px;background:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 4%,#fff)}
+ #v40IncomeForm.v902-desktop[data-v48-step="4"] .v48-wizard>.v902-live{display:none}
+ #v40IncomeForm.v902-desktop[data-v48-step="4"] .v48-wizard>*:not(.v48-top){grid-column:1/-1;max-width:640px;margin-inline:auto;width:100%}
+ #v40IncomeForm.v902-desktop .v902-live-title{margin:0 0 8px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#6b7385)}
+ #v40IncomeForm.v902-desktop .v902-live .v902-card{margin-bottom:10px}
+ #v40IncomeForm.v902-desktop .v48-step-track span{position:relative;overflow:visible}
+ #v40IncomeForm.v902-desktop .v48-step-track span::after{content:attr(data-label);position:absolute;top:13px;left:0;font-size:12.5px;font-weight:700;color:var(--muted,#6b7385);white-space:nowrap}
+ #v40IncomeForm.v902-desktop .v48-step-track span.active::after{color:var(--v424-accent-strong,#7b2d57)}
+ #v40IncomeForm.v902-desktop .v48-wizard-actions{justify-content:flex-end;position:static;background:none}
+ #v40IncomeForm.v902-desktop .v48-wizard-actions .btn{flex:0 0 auto;min-width:190px}
+}

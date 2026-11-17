@@ -1500,9 +1500,9 @@ function categoryForm(){
   <div class="v900-pane" data-v900-pane="subcategoria" hidden><label class="v900-lbl" for="customParent">Categoría existente</label>${parentSel}</div>
   <div class="v900-pane" data-v900-pane="categoria"><label class="v900-lbl" for="v900-name">Nombre de la categoría</label><input id="v900-name" class="field" name="name" type="text" maxlength="55" placeholder="Ej. Actividades deportivas" autocomplete="off"></div>
   <label class="v900-lbl" for="v900-sub" id="v900-sub-lbl">Subcategoría (opcional)</label><input id="v900-sub" class="field" name="subcategory" type="text" maxlength="55" placeholder="Ej. Tenis" autocomplete="off">
-  <div class="v900-lbl">Vista previa</div>
+  <aside class="v900-side"><div class="v900-lbl">Vista previa</div>
   <div class="v900-preview" id="v900-preview" aria-live="polite"></div>
-  <p class="v900-note"><span aria-hidden="true">ⓘ</span> Tus movimientos anteriores se mantienen.</p></div>`,'categoryForm');
+  <p class="v900-note"><span aria-hidden="true">ⓘ</span> Tus movimientos anteriores se mantienen.</p></aside></div>`,'categoryForm');
  v900CatSync();
 }
 /* Ampliar catálogo (móvil): segmentos Tipo / Qué quieres crear, vista previa en árbol y botón con el texto de la acción. */
@@ -9343,7 +9343,7 @@ function v901CobroSteps(f,s,state,isSalary){
  const back=document.createElement('button');back.type='button';back.className='btn ghost v901-back';back.textContent='Volver';back.hidden=true;cancel.after(back);
  const original={cancel:cancel.textContent,submit:submit.textContent};
  const hide0=el=>{el.hidden=true;el.style.setProperty('display','none','important')};hide0(submit);hide0(back);
- const show=step=>{
+ let show=step=>{
   const two=step===2,vis=(el,on)=>{el.hidden=!on;if(on)el.style.removeProperty('display');else el.style.setProperty('display','none','important')};
   vis(grid,!two);vis(confirm,two);vis(cancel,!two);vis(back,two);vis(next,!two);vis(submit,two);
   setTitle(two?(isSalary?'Confirmar salario':'Confirmar cobro'):(isSalary?'Registrar salario':'Registrar cobro'));
@@ -9361,6 +9361,15 @@ function v901CobroSteps(f,s,state,isSalary){
   <p class="v901-info"><span aria-hidden="true">ⓘ</span> ${isSalary?'Se acredita únicamente lo recibido y se conserva el vínculo con tu programación.':'Se registrará un solo movimiento por el importe recibido, vinculado a tu programación.'}</p>
   <button type="button" class="v901-edit" data-v901-edit="1">✎ Editar datos</button>`;
  };
+ /* Escritorio: panel «Así quedará» en vivo a la derecha del formulario. */
+ const desktop=window.matchMedia&&window.matchMedia('(min-width:791px)').matches;
+ let live=null;
+ if(desktop){
+  f.classList.add('v901-desktop');live=document.createElement('aside');live.className='v901-live';grid.after(live);
+  const paint=()=>{try{const sc=document.createElement('div');build();live.innerHTML='<div class="v901-live-title">Así quedará</div>'+confirm.innerHTML.replace(/<button[^>]*data-v901-edit[\s\S]*?<\/button>/,'')}catch(_){}};
+  f.addEventListener('input',paint);f.addEventListener('change',paint);paint();
+  const origShow=show;show=step=>{origShow(step);live.style.display=step===2?'none':'';f.classList.toggle('v901-step2',step===2)};
+ }
  next.addEventListener('click',()=>{if(!f.reportValidity())return;build();show(2)});
  back.addEventListener('click',()=>show(1));
  confirm.addEventListener('click',e=>{if(e.target.closest('[data-v901-edit]'))show(1)});
@@ -9570,6 +9579,13 @@ function v902RemapIncomeWizard(form,wizard,id){
  s2.querySelector('.v48-helper')?.remove();
  const t=form.closest('.modal')?.querySelector('h2,h3');if(t)t.textContent='Ingreso recurrente';
  form.querySelector('.form-foot')?.style.setProperty('display','none','important');
+ const labels=['Datos','Descuentos','Calendario y cuenta','Confirmación'];
+ wizard.querySelectorAll('.v48-step-track span').forEach((sp,i)=>sp.dataset.label=labels[i]);
+ if(window.matchMedia&&window.matchMedia('(min-width:791px)').matches){
+  const live=document.createElement('aside');live.className='v902-live';live.setAttribute('aria-live','polite');wizard.appendChild(live);form.classList.add('v902-desktop');
+  const paint=()=>{const body=document.createElement('div');body.className='v48-confirm-body';try{const old=wizard.querySelector('.v48-confirm-body');const tmp=old;v48RefreshSummary(form);live.innerHTML='<div class="v902-live-title">Resumen en vivo</div>'+old.innerHTML.replace(/<button[^>]*data-v902-goto[^>]*>[^<]*<\/button>/g,'')}catch(_){}};
+  form.addEventListener('input',paint);form.addEventListener('change',paint);form.addEventListener('click',()=>setTimeout(paint,0));paint();
+ }
  if(!id){form.querySelector('[data-v48-kind="formal"]')?.click();}
  else{form.dataset.v48KindChosen='true'}
 }
