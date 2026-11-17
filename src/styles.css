@@ -55940,3 +55940,199 @@ html body:is(.theme-dark,.theme-black) #v40IncomeForm.v48-wizard-mode .v45-sched
 /* Botones principales de los flujos: color de acento dinámico (antes degradado fijo) y letra blanca, en Claro y Black. */
 html body #modal-root#modal-root#modal-root :is(form#categoryForm,form.v901-steps,form#v40IncomeForm) :is(button[type="submit"],.v901-next,.v48-next,.v48-final){background:var(--v424-accent-strong,#615dd5)!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important;box-shadow:0 8px 18px color-mix(in srgb,var(--v424-accent-strong,#615dd5) 28%,transparent)!important}
 html body #modal-root#modal-root#modal-root :is(form#categoryForm,form.v901-steps,form#v40IncomeForm) :is(button[type="submit"],.v901-next,.v48-next,.v48-final)[hidden]{display:none!important}
+
+/* ==== v904 · Réplica fiel de los cuatro flujos (móvil): sin tarjetas anidadas, sin scroll, acento dinámico, Claro y Black ==== */
+html body #modal-root#modal-root .v903-has-back>:is(h2,h3){text-align:center}
+html body #modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm){--fl-line:rgba(120,130,160,.32);--fl-acc:var(--v424-accent-strong,#615dd5);--fl-tint:color-mix(in srgb,var(--fl-acc) 9%,var(--v903-base));--fl-ink:var(--ink,#17202f);--fl-mut:color-mix(in srgb,var(--fl-ink) 58%,transparent)}
+html body:is(.theme-dark,.theme-black) #modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm,#categoryForm){--fl-ink:#eef1f6;--fl-line:rgba(255,255,255,.16);--fl-tint:color-mix(in srgb,var(--fl-acc) 16%,var(--v903-base))}
+@media(max-width:790px){
+html body #modal-root#modal-root form.v901-steps{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1{display:flex!important;flex-direction:column;gap:9px;padding:6px 16px 8px!important;margin:0!important;overflow:auto;flex:1 1 auto;min-height:0}
+html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1>*{margin:0!important;grid-column:auto!important;width:100%!important;max-width:none!important;box-sizing:border-box;align-self:stretch}
+html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1 .field{width:100%!important;box-sizing:border-box}
+html body #modal-root#modal-root form.v901-steps .v901-lead{padding:0!important;border:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;font-size:15px;font-weight:600;color:var(--fl-mut);min-height:0;height:auto}
+html body #modal-root#modal-root form.v901-sal .v901-lead{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1>label{display:flex;flex-direction:column;gap:5px;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;min-height:0}
+html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1>label>.filter-label{font-size:13.5px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--fl-ink);margin:0;min-height:0;height:auto;line-height:1.2}
+html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1>label>.field{height:44px;min-height:44px;border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);padding:0 14px;font-size:16px;box-shadow:none}
+html body #modal-root#modal-root form.v901-cob .form-grid.v901-step1>label:not(.v789-select-enhanced){position:relative;height:58px;border:1px solid var(--fl-line)!important;border-radius:12px!important;background:var(--v903-surface)!important;padding:8px 14px 0!important;gap:0}
+html body #modal-root#modal-root form.v901-cob .form-grid.v901-step1>label:not(.v789-select-enhanced)>.filter-label{font-size:12px;color:var(--fl-mut)}
+html body #modal-root#modal-root form.v901-cob .form-grid.v901-step1>label:not(.v789-select-enhanced)>.field{border:0;background:none;height:30px;min-height:30px;padding:0;font-size:17px}
+html body #modal-root#modal-root form.v901-steps .v940-occurrence{display:grid!important;grid-template-columns:1fr 1fr;gap:10px 0;padding:11px 16px!important;border:0!important;box-shadow:none!important;border-radius:14px!important;background:var(--fl-tint)!important;min-height:0;height:auto}
+html body #modal-root#modal-root form.v901-steps .v940-occurrence>span{display:flex;flex-direction:column;gap:2px;padding:0!important;border:0!important;background:none!important}
+html body #modal-root#modal-root form.v901-steps .v940-occurrence>span:nth-child(even){padding-left:16px!important;border-left:1px solid var(--fl-line)!important}
+html body #modal-root#modal-root form.v901-steps .v940-occurrence small{font-size:12px;color:var(--fl-mut);font-weight:500}
+html body #modal-root#modal-root form.v901-steps .v940-occurrence strong{font-size:16px;color:var(--fl-ink);font-weight:700}
+html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1>label.v789-select-enhanced .v789-select-open{min-height:64px;height:64px;padding:8px 12px;border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);box-shadow:none}
+html body #modal-root#modal-root form.v901-steps .form-grid.v901-step1>label.v789-select-enhanced .v789-select-ico{width:42px;height:42px;border-radius:12px}
+html body #modal-root#modal-root form.v901-steps .v901-note{border:1px solid var(--fl-line)!important;border-radius:12px!important;padding:0 14px!important;background:var(--v903-surface)!important;box-shadow:none!important;min-height:0}
+html body #modal-root#modal-root form.v901-steps .v901-note>summary{min-height:42px;font-size:15px;font-weight:600;color:var(--fl-acc);display:flex;align-items:center;justify-content:space-between}
+html body #modal-root#modal-root form.v901-steps .v940-error:empty{display:none!important}
+html body #modal-root#modal-root form.v901-steps .v940-error{padding:0!important;border:0!important;background:none!important;box-shadow:none!important;font-size:13px}
+html body #modal-root#modal-root form.v901-steps .form-foot{display:flex!important;gap:12px;padding:10px 16px 16px!important;margin:0!important;border-top:1px solid var(--fl-line);background:var(--v903-base);flex:0 0 auto}
+html body #modal-root#modal-root form.v901-steps .form-foot .btn{height:50px;min-height:50px;border-radius:14px;font-size:16px;font-weight:700}
+html body #modal-root#modal-root form.v901-steps .form-foot>.btn:not(.v901-next):not([type=submit]){flex:1 1 0;background:var(--v903-surface)!important;border:1px solid var(--fl-line)!important;color:var(--fl-ink)!important;box-shadow:none!important}
+html body #modal-root#modal-root form.v901-steps .form-foot>.v901-next,html body #modal-root#modal-root form.v901-steps .form-foot>[type=submit]{flex:1.25 1 0}
+html body #modal-root#modal-root form.v901-steps .v901-confirm{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 16px 8px;flex:1 1 auto;overflow:auto}
+html body #modal-root#modal-root .v901-badge{font-size:14px;padding:6px 16px}
+html body #modal-root#modal-root .v901-amount{font-size:38px;line-height:1.1;font-weight:800;color:var(--fl-ink,#17202f);letter-spacing:-.02em;margin:4px 0 0}
+html body #modal-root#modal-root .v901-to{font-size:15px;color:var(--fl-mut,#667);margin:0 0 6px}
+html body #modal-root#modal-root .v901-rows{display:block;padding:0 14px;border-radius:14px}
+html body #modal-root#modal-root .v901-rows>div{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;margin:0;border-bottom:1px solid var(--fl-line,rgba(120,130,160,.3))}
+html body #modal-root#modal-root .v901-rows>div:last-child{border-bottom:0}
+html body #modal-root#modal-root .v901-rows dt{font-size:14px;color:var(--fl-mut,#667);margin:0}
+html body #modal-root#modal-root .v901-rows dd{font-size:15px;font-weight:600;color:var(--fl-ink,#17202f);margin:0;text-align:right}
+html body #modal-root#modal-root form.v901-sal .v901-rows>div{display:grid;grid-template-columns:42% 1fr}
+html body #modal-root#modal-root form.v901-sal .v901-rows dd{text-align:left}
+html body #modal-root#modal-root .v901-after{border:0;background:var(--fl-tint);border-radius:14px;padding:12px 16px}
+html body #modal-root#modal-root .v901-after h4{margin:0 0 8px;font-size:16px;font-weight:700;color:var(--fl-ink)}
+html body #modal-root#modal-root form.v901-sal .v901-after h4{color:var(--fl-acc)}
+html body #modal-root#modal-root .v901-after-grid{display:grid;grid-template-columns:1fr 1fr}
+html body #modal-root#modal-root .v901-after-grid>div+div{padding-left:16px;border-left:1px solid var(--fl-line)}
+html body #modal-root#modal-root .v901-after-grid small{display:block;font-size:13px;color:var(--fl-mut)}
+html body #modal-root#modal-root .v901-after-grid strong{font-size:20px;font-weight:800;color:var(--fl-ink)}
+html body #modal-root#modal-root .v901-info{font-size:13.5px;color:var(--fl-mut);text-align:left;margin:2px 0;line-height:1.4}
+html body #modal-root#modal-root form.v901-sal .v901-info{text-align:center}
+html body #modal-root#modal-root .v901-edit{background:none!important;border:0!important;box-shadow:none!important;color:var(--fl-acc)!important;font-weight:600;font-size:15px;padding:6px;margin-top:2px}
+html body #modal-root#modal-root form.v901-sal .v901-edit{text-decoration:underline}
+}
+
+/* --- Ingreso recurrente (4 pasos) --- */
+@media(max-width:790px){
+html body #modal-root#modal-root form#v40IncomeForm.v48-wizard-mode{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+html body #modal-root#modal-root form#v40IncomeForm .form-grid{display:flex!important;flex-direction:column;flex:1 1 auto;min-height:0;overflow:auto;padding:0 16px 0!important;margin:0!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-wizard{display:flex;flex-direction:column;flex:1 1 auto;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;margin:0!important;max-width:none!important;width:100%}
+html body #modal-root#modal-root form#v40IncomeForm .v48-top{padding:4px 0 12px!important;margin:0!important;border:0!important;background:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-top>:not(.v48-step-track){display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step-track{display:grid!important;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 6px;margin:0}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step-track span{height:5px;border-radius:5px;background:color-mix(in srgb,var(--fl-ink) 14%,transparent)!important;position:static}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step-track span::after,html body #modal-root#modal-root form#v40IncomeForm .v48-step-track span::before{content:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step-track span:is(.active){background:var(--fl-acc)!important}
+html body #modal-root#modal-root form#v40IncomeForm[data-v48-step="2"] .v48-step-track span:nth-child(-n+2),html body #modal-root#modal-root form#v40IncomeForm[data-v48-step="3"] .v48-step-track span:nth-child(-n+3),html body #modal-root#modal-root form#v40IncomeForm[data-v48-step="4"] .v48-step-track span{background:var(--fl-acc)!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step{flex:1 1 auto;display:flex;flex-direction:column;gap:10px;padding:0!important;margin:0!important;border:0!important;background:none!important;box-shadow:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[hidden]{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-wizard-actions{position:sticky;bottom:0;display:flex;gap:12px;margin:auto -16px 0!important;padding:10px 16px 16px!important;border-top:1px solid var(--fl-line)!important;background:var(--v903-base)!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-wizard-actions .v48-back{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-wizard-actions .btn{flex:1;height:52px;min-height:52px;border-radius:14px;font-size:17px;font-weight:700}
+html body #modal-root#modal-root form#v40IncomeForm .v40-help{display:none!important}
+/* paso 1 */
+html body #modal-root#modal-root form#v40IncomeForm .v48-kind-pick{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+html body #modal-root#modal-root form#v40IncomeForm .v48-kind-card{height:46px;min-height:46px;padding:0 10px!important;border-radius:12px!important;font-size:15px;font-weight:700}
+html body #modal-root#modal-root form#v40IncomeForm .v48-kind-card>:not(b){display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-kind-card.selected{background:var(--fl-acc)!important;border-color:var(--fl-acc)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-kind-card.selected b{color:#fff!important}
+html body #modal-root#modal-root form#v40IncomeForm .v902-help{margin:0;font-size:13.5px;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm .v48-fields{display:flex!important;flex-direction:column;gap:10px;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;margin:0}
+html body #modal-root#modal-root form#v40IncomeForm .v48-fields>label{display:flex;flex-direction:column;gap:6px;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;margin:0;width:100%}
+html body #modal-root#modal-root form#v40IncomeForm .v48-fields>label>.filter-label,html body #modal-root#modal-root form#v40IncomeForm .v902-lbl{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fl-mut);margin:0}
+html body #modal-root#modal-root form#v40IncomeForm .v48-fields .field{height:44px;min-height:44px;width:100%;box-sizing:border-box;border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);padding:0 14px;font-size:16px;box-shadow:none}
+html body #modal-root#modal-root form#v40IncomeForm [data-v48-fields="amount"]>label:has([name="kind"]){display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm [data-v48-fields="amount"]>label:has([name="name"]){order:1}
+html body #modal-root#modal-root form#v40IncomeForm [data-v48-fields="amount"]>.v45-basis-label{order:2}
+html body #modal-root#modal-root form#v40IncomeForm [data-v48-fields="amount"]>label:has([name="grossMonthly"]){order:3}
+html body #modal-root#modal-root form#v40IncomeForm [data-v48-fields="amount"]>label:has([name="currency"]){order:4}
+html body #modal-root#modal-root form#v40IncomeForm [data-v48-fields="amount"]>.v45-base-helper{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v50-income-quick{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="1"]>details{border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);padding:0!important;box-shadow:none}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="1"]>details>summary{display:none}
+}
+@media(max-width:790px){
+html body #modal-root#modal-root form#v40IncomeForm .v1110-native{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v1110-lab{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="1"]>details{border:0!important;background:none!important;padding:0!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="1"]>details>div{padding:0!important}
+html body #modal-root#modal-root form#v40IncomeForm .v1110-pickbtn{display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:6px 14px;border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);box-shadow:none;color:var(--fl-ink)}
+html body #modal-root#modal-root form#v40IncomeForm .v1110-pickbtn strong{font-size:15px;font-weight:700}
+html body #modal-root#modal-root form#v40IncomeForm .v45-basis-label{display:flex;flex-direction:column;gap:6px}
+html body #modal-root#modal-root form#v40IncomeForm .v45-basis-label>span{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm .v45-basis-label>select{height:44px;border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);padding:0 14px;font-size:16px;font-weight:600;width:100%}
+/* paso 2 */
+html body #modal-root#modal-root form#v40IncomeForm .v902-ded-head{display:flex;flex-direction:column;gap:12px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-chip{display:inline-flex;align-self:flex-start;align-items:center;gap:10px;margin:0;padding:10px 16px;border-radius:12px;background:var(--fl-tint);color:var(--fl-acc);font-size:15px;font-weight:700;white-space:nowrap}
+html body #modal-root#modal-root form#v40IncomeForm .v902-chip svg{width:20px;height:20px;flex:none}
+html body #modal-root#modal-root form#v40IncomeForm .v902-payroll{margin:0;padding:12px 16px 4px;border:1px solid var(--fl-line);border-radius:14px;background:var(--v903-surface)}
+html body #modal-root#modal-root form#v40IncomeForm .v902-payroll h4,html body #modal-root#modal-root form#v40IncomeForm .v902-ded>summary{margin:0 0 4px;font-size:17px;font-weight:700;color:var(--fl-ink)}
+html body #modal-root#modal-root form#v40IncomeForm .v902-lines>div{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--fl-line);font-size:15px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-lines>div:last-child{border-bottom:0}
+html body #modal-root#modal-root form#v40IncomeForm .v902-pill{padding:4px 12px;border-radius:999px;background:color-mix(in srgb,var(--fl-ink) 8%,var(--v903-base));color:var(--fl-mut);font-size:13px;font-weight:600}
+html body #modal-root#modal-root form#v40IncomeForm .v902-ded{padding:12px 16px 14px!important;border:1px solid var(--fl-line)!important;border-radius:14px!important;background:var(--v903-surface)!important;box-shadow:none!important;margin:0}
+html body #modal-root#modal-root form#v40IncomeForm .v902-ded>summary{list-style:none;pointer-events:none;padding:0!important;background:none!important;border:0!important;min-height:0}
+html body #modal-root#modal-root form#v40IncomeForm .v902-ded>summary::-webkit-details-marker,html body #modal-root#modal-root form#v40IncomeForm .v902-ded>summary::after,html body #modal-root#modal-root form#v40IncomeForm .v902-ded>summary::before{display:none!important;content:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v902-ded .v48-fields{gap:8px;margin-top:8px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-ded label:has([name="otherDeduction"])>.filter-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+html body #modal-root#modal-root form#v40IncomeForm .v902-ded .v45-general-category>.filter-label{font-size:14px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm .v902-ded .v48-company-only{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v902-company{border:1px solid var(--fl-line);border-radius:14px;background:var(--v903-surface);padding:0 16px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-company>summary{display:flex;align-items:center;justify-content:space-between;min-height:48px;font-size:17px;font-weight:700;color:var(--fl-ink);list-style:none;cursor:pointer}
+html body #modal-root#modal-root form#v40IncomeForm .v902-company>summary::-webkit-details-marker{display:none}
+html body #modal-root#modal-root form#v40IncomeForm .v902-company>summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--fl-mut);border-bottom:2px solid var(--fl-mut);transform:rotate(45deg);margin:-4px 2px 0 0;transition:transform .2s}
+html body #modal-root#modal-root form#v40IncomeForm .v902-company[open]>summary::after{transform:rotate(-135deg);margin-top:4px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-company .v48-company-only{display:block!important;padding-bottom:12px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-informal{margin:0;font-size:13px;color:var(--fl-mut);line-height:1.4}
+html body #modal-root#modal-root form#v40IncomeForm .v43-company-title small{display:none}
+}
+@media(max-width:790px){
+/* paso 3 */
+html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields{display:grid!important;grid-template-columns:1fr 1fr;gap:12px 12px}
+html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields>*{margin:0!important;min-width:0}
+html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields .v45-calendar-explain{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields>.v45-schedule-pills{grid-column:1/-1;order:1}
+html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields>.v45-payday-twins{grid-column:1/-1;order:2}
+html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields>.v45-monthly-day{order:3;grid-column:1}
+html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields>label{order:4;grid-column:2}
+html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields>label:has([name="frequency"]),html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields>label:has([name="postingMode"]){display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v45-schedule-pills{display:flex;flex-wrap:wrap;gap:8px;position:relative;padding-top:22px}
+html body #modal-root#modal-root form#v40IncomeForm .v45-schedule-pills::before{content:"FRECUENCIA";position:absolute;left:0;top:0;font-size:11.5px;font-weight:700;letter-spacing:.12em;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm .v902-mode{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-mode::before{content:"REGISTRO";grid-column:1/-1}
+html body #modal-root#modal-root form#v40IncomeForm .v45-schedule-pills button{height:38px;min-height:38px;padding:0 18px;border-radius:999px;font-size:14px;font-weight:600;border:1px solid var(--fl-line);background:var(--v903-surface);color:var(--fl-ink);box-shadow:none;margin:0}
+html body #modal-root#modal-root form#v40IncomeForm .v902-mode button{height:50px;border-radius:12px;font-size:13.5px;line-height:1.15;padding:0 10px;white-space:normal}
+html body #modal-root#modal-root form#v40IncomeForm :is(.v45-monthly-day,.v50-calendar-fields>label)>:is(span,.filter-label){display:block;margin:0 0 6px;font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm :is(.v45-monthly-day input,.v50-calendar-fields>label input){height:48px;width:100%;box-sizing:border-box;border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);padding:0 14px;font-size:17px;font-weight:600;box-shadow:none}
+html body #modal-root#modal-root form#v40IncomeForm .v50-calendar-fields>label input{background:color-mix(in srgb,var(--fl-ink) 6%,var(--v903-base))}
+html body #modal-root#modal-root form#v40IncomeForm .v50-account-title{margin:2px 0 -4px;font-size:11.5px;font-weight:700;letter-spacing:.12em;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm .v50-destination>label>.filter-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+html body #modal-root#modal-root form#v40IncomeForm .v50-destination .v789-select-open{min-height:58px;height:58px;padding:6px 12px;border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);box-shadow:none}
+html body #modal-root#modal-root form#v40IncomeForm .v50-destination .v789-select-ico{width:40px;height:40px;border-radius:10px}
+html body #modal-root#modal-root form#v40IncomeForm .v50-destination>label{margin:0;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details{border:1px solid var(--fl-line);border-radius:12px;background:var(--v903-surface);padding:0 14px;box-shadow:none}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary{min-height:46px;display:flex;align-items:center;font-size:16px;font-weight:700;color:var(--fl-ink)}
+html body #modal-root#modal-root form#v40IncomeForm .v50-schedule-disclaimer{padding:0!important;border:0!important;background:none!important;font-size:13px;color:var(--fl-mut);margin:0}
+}
+@media(max-width:790px){
+html body #modal-root#modal-root form#v40IncomeForm .v45-monthly-day label>span{display:block;margin:0 0 6px;font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm .v45-monthly-day label{display:block;padding:0!important;border:0!important;background:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary{justify-content:space-between;list-style:none;padding:0!important;text-indent:0}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary::-webkit-details-marker{display:none}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary::before{content:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="3"]>details>summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--fl-mut);border-bottom:2px solid var(--fl-mut);transform:rotate(45deg);margin:-4px 2px 0 0}
+}
+@media(max-width:790px){
+html body #modal-root#modal-root form#v40IncomeForm .v902-h{margin:0 0 2px;font-size:22px;font-weight:800;color:var(--fl-ink);letter-spacing:-.01em}
+html body #modal-root#modal-root form#v40IncomeForm .v48-step[data-step="4"]{gap:8px}
+html body #modal-root#modal-root form#v40IncomeForm .v48-confirm-body{display:flex;flex-direction:column;gap:8px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-card{margin:0;padding:2px 14px 0;border-color:var(--fl-line);border-radius:14px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-card-head{padding:8px 0;gap:10px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-card-head strong{font-size:15.5px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-card-head small{font-size:13px;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm .v902-ico{width:28px;height:28px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-ico svg{width:22px;height:22px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-r{padding:5px 0;font-size:14.5px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-block{gap:0}
+html body #modal-root#modal-root form#v40IncomeForm .v902-block li{padding:1px 0;font-size:13.5px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-net{margin:4px -14px 0;padding:9px 14px}
+html body #modal-root#modal-root form#v40IncomeForm .v902-line{padding:4px 0 6px;font-size:14.5px;color:var(--fl-ink)}
+html body #modal-root#modal-root form#v40IncomeForm .v902-card .v902-line+.v902-line{padding-top:0}
+html body #modal-root#modal-root form#v40IncomeForm .v902-info{margin:2px 2px 0;font-size:13px;line-height:1.35;color:var(--fl-mut)}
+html body #modal-root#modal-root form#v40IncomeForm .v902-edit{color:var(--fl-acc);font-size:14.5px}
+}
+@media(max-width:790px){
+html body #modal-root#modal-root form#v40IncomeForm .v50-review-extra{display:none!important}
+html body #modal-root#modal-root form#v40IncomeForm .v902-card-head small{white-space:nowrap}
+}
+@media(max-width:790px){
+html body #modal-root#modal-root#modal-root form.v901-steps .form-grid.v901-step1>label.v789-select-enhanced{border:0!important;background:none!important;box-shadow:none!important;padding:0!important;border-radius:0!important;height:auto;min-height:0}
+html body #modal-root#modal-root#modal-root form.v901-steps .form-grid.v901-step1>label.v789-select-enhanced::before,html body #modal-root#modal-root#modal-root form.v901-steps .form-grid.v901-step1>label.v789-select-enhanced::after{content:none!important}
+}
+@media(max-width:790px){html body #modal-root#modal-root form.v901-steps .v940-occurrence{padding:12px 16px 14px!important}}
+html body:is(.theme-dark,.theme-black) #modal-root#modal-root form:is(#v40IncomeForm,#v940IncomeCaptureForm) :is(.v902-chip,.v901-badge,.v901-edit,.v902-edit,.v901-note>summary,.v901-sal .v901-after h4){color:color-mix(in srgb,var(--fl-acc) 55%,#fff)!important}
