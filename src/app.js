@@ -985,6 +985,11 @@ function v290BudgetRing(p){
 /* V291 · Resumen web: presupuesto junto a Próximos pagos.
    Cuatro datos, sin categorías. Las métricas provienen del mismo snapshot
    que utiliza Ejecución, y no se modifica el Resumen móvil. */
+/* V1130 · Utilización de tarjetas también en el Resumen web (mismos datos que el widget móvil, con más espacio). */
+function v1130CreditWeb(){
+ try{const t=document.createElement('template');t.innerHTML=v309ExtraCharts();const e=t.content.querySelector('[data-v105-widget="creditUtil"]');if(!e)return '';
+  e.className='ff-tile v1130-credit-web';e.querySelector('.vive-mobile-view-all')?.classList.replace('vive-mobile-view-all','ff-outline-pill');return e.outerHTML}catch(_){return ''}
+}
 function v290BudgetWeb(){
  const p=v290BudgetSnapshot();
  const remainingClass=p.remaining<-.005?'v290-negative':'';
@@ -3212,6 +3217,7 @@ function overview(){
      </section>
      ${v290BudgetWeb()}
    </div>
+   ${v1130CreditWeb()}
    <section data-v105-widget="payments" class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="pressure">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
   </div>
  </div>`;
@@ -11606,6 +11612,7 @@ loanForm=function(id,preBank){
 const V105_WIDGETS=[
  {id:'applePayInbox',title:'Apple Pay · Por clasificar',hint:'Compras Wallet pendientes: asigna categoría y subcategoría desde Inicio'},
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
+ {id:'creditUtil',title:'Utilización de tarjetas',hint:'Monto usado, límite y porcentaje por tarjeta y en conjunto'},
  {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
  {id:'salaryAdvance',title:'Salario anticipado',hint:'Registra tu salario o cobro recurrente antes de su fecha'},
@@ -11658,6 +11665,8 @@ function v105Config(){
  const cfg=v105ConfigBase();
  // V1129: el widget Salario anticipado se activa una sola vez.
  if(db.settings&&!db.settings.v1129Salary){db.settings.v1129Salary=true;if(!cfg.visible.includes('salaryAdvance'))cfg.visible.push('salaryAdvance');if(!cfg.order.includes('salaryAdvance'))cfg.order.splice(Math.min(4,cfg.order.length),0,'salaryAdvance');db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};}
+ // V1130: «Utilización de tarjetas» vuelve como widget; se activa una sola vez y luego respeta la elección del usuario.
+ if(db.settings&&!db.settings.v1130CreditUtil){db.settings.v1130CreditUtil=true;if(!cfg.visible.includes('creditUtil'))cfg.visible.push('creditUtil');if(!cfg.order.includes('creditUtil'))cfg.order.splice(Math.min(5,cfg.order.length),0,'creditUtil');db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};}
  // V1128: «Compromisos del mes» se había quitado por error; se vuelve a mostrar una sola vez.
  if(db.settings&&!db.settings.v1128Commit){
   db.settings.v1128Commit=true;
@@ -11734,7 +11743,7 @@ function v105SaveConfig(c){
  v105ApplyWidgetPreferences();
 }
 let v105DraftConfig=null;
-const V1118_MOBILE_REMOVED=['chart','creditUtil','premiumCredit','futureFlow','banks','accounts','loans','certificates','futureBubbles','payments','people','activity','premiumCommitments','futureCostKpi'];
+const V1118_MOBILE_REMOVED=['chart','premiumCredit','futureFlow','banks','accounts','loans','certificates','futureBubbles','payments','people','activity','premiumCommitments','futureCostKpi'];
 function v1118Skip(id){return V1118_MOBILE_REMOVED.includes(id)&&isMobileViewport()}
 function v105Customizer(){
  const cfg=v105DraftConfig||v105Config(),enabled=new Set(cfg.visible);

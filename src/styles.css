@@ -53280,7 +53280,7 @@ html body #modal-root#modal-root#modal-root form .v1110-freqseg>button[aria-pres
 #modal-root .v41-panel .field{height:42px;margin-bottom:6px}
 
 /* V1118 · Vista móvil sin Ingresos y egresos, Utilización por tarjeta (y Premium) ni El río de tu dinero. La web conserva sus paneles. */
-html body #app .vive-mobile-home :is([data-v105-widget="chart"],[data-v105-widget="creditUtil"],[data-v105-widget="premiumCredit"],[data-v105-widget="futureFlow"],[data-v105-widget="banks"],[data-v105-widget="accounts"],[data-v105-widget="loans"],[data-v105-widget="certificates"],[data-v105-widget="futureBubbles"],[data-v105-widget="payments"],[data-v105-widget="people"],[data-v105-widget="activity"]){display:none!important}
+html body #app .vive-mobile-home :is([data-v105-widget="chart"],[data-v105-widget="premiumCredit"],[data-v105-widget="futureFlow"],[data-v105-widget="banks"],[data-v105-widget="accounts"],[data-v105-widget="loans"],[data-v105-widget="certificates"],[data-v105-widget="futureBubbles"],[data-v105-widget="payments"],[data-v105-widget="people"],[data-v105-widget="activity"]){display:none!important}
 
 /* V1119 · Matriz Jobs: cuadrícula 2×2 compacta también en móvil, filas en lugar de mosaicos. */
 html body #app#app .v985-matrix{margin:0 0 14px}
@@ -54509,3 +54509,32 @@ html body #modal-root#modal-root .v235-register-dialog :is(.vr-register,.vr-work
 html body #modal-root#modal-root .v235-register-dialog .vr-other-operations{grid-template-columns:1fr 1fr!important}
 html body #modal-root#modal-root .v235-register-dialog .v235-register-close span::after{color:var(--g-ink,#111827)!important;-webkit-text-fill-color:var(--g-ink,#111827)}
 html body #modal-root#modal-root .v235-register-dialog .vr-content{display:block!important;grid-template-columns:none!important}
+/* v1130 · Utilización de tarjetas (Resumen web) */
+html body #app#app .v1130-credit-web{grid-column:1/-1;padding:20px 22px;border-radius:24px}
+html body #app#app .v1130-credit-web .vive-mobile-card-head,html body #app#app .v1130-credit-web .ff-panel-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+html body #app#app .v1130-credit-web .v315-credit-hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+html body #app#app .v1130-credit-web .v315-credit-rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px 22px;margin-top:14px}
+html body #app#app .v1130-credit-web{--c-ink:#1c2b44;--c-mut:#7a889c;--c-line:rgba(120,140,170,.22);--c-track:rgba(120,140,170,.18);--c-card:rgba(255,255,255,.7)}
+html body:is(.theme-black,.theme-dark) #app#app .v1130-credit-web{--c-ink:#f4f6fb;--c-mut:#9aa3b2;--c-line:rgba(255,255,255,.14);--c-track:rgba(255,255,255,.12);--c-card:rgba(255,255,255,.05)}
+html body #app#app .v1130-credit-web :is(h2,strong,b){color:var(--c-ink)!important}
+html body #app#app .v1130-credit-web h2{font-size:22px;letter-spacing:-.03em;margin:2px 0 0}
+html body #app#app .v1130-credit-web .vive-mobile-eyebrow{font-size:10.5px;letter-spacing:.14em;color:var(--ac,#5b5bd6)}
+html body #app#app .v1130-credit-web .ff-outline-pill{display:inline-flex!important;align-items:center;gap:6px;width:auto!important;height:auto!important;min-height:36px;padding:8px 16px!important;border-radius:999px!important;font-size:13px!important;font-weight:700}
+html body #app#app .v1130-credit-web .ff-outline-pill svg{width:16px;height:16px}
+html body #app#app .v1130-credit-web .v315-credit-hero{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px!important;margin:0 0 18px}
+html body #app#app .v1130-credit-web .v315-credit-hero>div{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:16px;background:var(--c-card)!important;border:1px solid var(--c-line)}
+html body #app#app .v1130-credit-web .v315-credit-hero small{font-size:10.5px;letter-spacing:.1em;font-weight:700;color:var(--c-mut)!important}
+html body #app#app .v1130-credit-web .v315-credit-hero strong{font-size:22px;letter-spacing:-.03em}
+html body #app#app .v1130-credit-web .v315-credit-overall{margin-bottom:6px}
+html body #app#app .v1130-credit-web .v315-credit-overall>div:first-child,html body #app#app .v1130-credit-web .v315-credit-row-head,html body #app#app .v1130-credit-web .v315-credit-row-foot{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+html body #app#app .v1130-credit-web .v315-credit-overall span{font-size:14px;font-weight:650;color:var(--c-mut)}
+html body #app#app .v1130-credit-web .v315-credit-overall strong{font-size:20px}
+html body #app#app .v1130-credit-web .v315-credit-track{height:9px;border-radius:9px;background:var(--c-track)!important;overflow:hidden;margin:8px 0}
+html body #app#app .v1130-credit-web .v315-credit-track i{display:block;height:100%;border-radius:9px;background:var(--ac,#5b5bd6)!important;min-width:4px}
+html body #app#app .v1130-credit-web .v315-credit-track i.v315-credit-over{background:#d6455d!important}
+html body #app#app .v1130-credit-web .v315-credit-rows{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px 18px!important;margin-top:16px}
+html body #app#app .v1130-credit-web .v315-credit-row{padding:14px 16px;border-radius:16px;background:var(--c-card)!important;border:1px solid var(--c-line)}
+html body #app#app .v1130-credit-web .v315-credit-row-head span{font-size:15px;font-weight:700;color:var(--c-ink)}
+html body #app#app .v1130-credit-web .v315-credit-row-head strong{font-size:16px}
+html body #app#app .v1130-credit-web .v315-credit-row-foot span{font-size:12.5px;color:var(--c-mut)}
+html body #app#app .v1130-credit-web .v315-warn{color:#d6455d!important}
