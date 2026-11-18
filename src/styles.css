@@ -56190,3 +56190,10 @@ html body:not(.theme-black):not(.theme-dark) #app#app#app :is(.v410-credit-kpis 
 html body .v266-wallet .v266-dots.v68-wallet-dots button,html body .v266-wallet .v266-dots.v68-wallet-dots button.active{box-sizing:border-box!important;height:24px!important;min-height:24px!important;max-height:24px!important;width:24px!important;min-width:24px!important;padding:8.5px!important;background-clip:content-box!important}
 html body .v266-wallet .v266-dots.v68-wallet-dots button.active{width:38px!important;min-width:38px!important;flex:0 0 38px!important;padding:8.5px 8.5px!important}
 html body .v266-wallet .v266-dots.v68-wallet-dots{gap:0!important}
+
+/* Indicador de foco visible para teclado (WCAG 2.4.7 / 2.4.11): incluye los puntos de los gráficos SVG. */
+html body :is(a[href],button,input,select,textarea,summary,[tabindex],[role="button"]):focus-visible,html body svg :focus-visible{outline:2px solid var(--v424-accent-strong,#615dd5)!important;outline-offset:2px}
+html body:is(.theme-black,.theme-dark) :is(a[href],button,input,select,textarea,summary,[tabindex],[role="button"]):focus-visible,html body:is(.theme-black,.theme-dark) svg :focus-visible{outline-color:color-mix(in srgb,var(--v424-accent-strong,#615dd5) 55%,#fff)!important}
+html body :is(input[type="month"],input[type="date"],input[type="datetime-local"],input[type="time"]):focus{outline:2px solid var(--v424-accent-strong,#615dd5)!important;outline-offset:2px}
+html body #app#app :is(input[type="month"],input[type="date"],input[type="datetime-local"],input[type="time"]):is(:focus,:focus-within),html body #modal-root#modal-root :is(input[type="month"],input[type="date"]):is(:focus,:focus-within){outline:2px solid var(--v424-accent-strong,#615dd5)!important;outline-offset:2px;box-shadow:0 0 0 2px color-mix(in srgb,var(--v424-accent-strong,#615dd5) 35%,transparent)!important}
+html body #app#app :is(summary,details>summary,[tabindex]):focus-visible,html body #modal-root#modal-root :is(summary,[tabindex]):focus-visible{outline:2px solid var(--v424-accent-strong,#615dd5)!important;outline-offset:2px}

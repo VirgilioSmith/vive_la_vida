@@ -1510,6 +1510,24 @@ window.addEventListener('submit',function(ev){
  ev.preventDefault();ev.stopImmediatePropagation();
  (wizard?f.querySelector('[data-v48-next]'):f.querySelector('.v901-next'))?.click();
 },true);
+/* Foco en diálogos: con una capa modal abierta el teclado no sale de ella; el primer Tab entra en la capa y Mayús+Tab cicla al final. */
+window.addEventListener('keydown',function(e){
+ if(e.key!=='Tab'||e.defaultPrevented)return;
+ const layers=[...document.querySelectorAll('#modal-root [role="dialog"],#modal-root .modal,[aria-modal="true"]')].filter(l=>l.offsetParent!==null||getComputedStyle(l).position==='fixed');
+ const layer=layers[layers.length-1];if(!layer)return;
+ const items=[...layer.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),summary,[tabindex]:not([tabindex="-1"])')].filter(el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');
+ if(!items.length)return;
+ const active=document.activeElement,first=items[0],last=items[items.length-1];
+ if(!layer.contains(active)){e.preventDefault();(e.shiftKey?last:first).focus();return}
+ if(e.shiftKey&&active===first){e.preventDefault();last.focus()}
+ else if(!e.shiftKey&&active===last){e.preventDefault();first.focus()}
+},true);
+/* Puntos y barras de los gráficos: el texto del globo (data-chart-tip) pasa a ser su nombre accesible al recibir el foco. */
+document.addEventListener('focusin',function(e){
+ const el=e.target;const tip=el&&el.dataset&&el.dataset.chartTip;
+ if(!tip||el.getAttribute('aria-label')||(el.textContent||'').trim())return;
+ el.setAttribute('aria-label',String(tip).replace(/\|/g,', '));if(!el.getAttribute('role'))el.setAttribute('role','img');
+},true);
 function v905ShortDate(d){return String(prettyDate(d)).replace(/ de (\d{4})/,' $1')}
 function v903AddBack(modalEl,onBack){
  if(!modalEl||modalEl.querySelector('.v903-back'))return null;
