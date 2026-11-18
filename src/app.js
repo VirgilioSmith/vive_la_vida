@@ -2581,7 +2581,7 @@ function budgetCompliance(totals){
  const overruns=groups.filter(x=>x.spent>x.amount+.005),warn=groups.filter(x=>x.spent>=x.amount*.8&&x.spent<=x.amount+.005);
  return `<section class="budget-compliance section"><div class="panel-head"><div><span class="summary-tag">EJECUCIÓN DEL PRESUPUESTO</span><h3>¿Dónde se está cumpliendo?</h3><p class="form-note">Los límites globales incluyen sus subcategorías; nunca se duplican.</p></div></div><p class="v180-budget-status"><span>${overruns.length} categoría${overruns.length===1?'':'s'} sobrepasada${overruns.length===1?'':'s'}</span><span>${warn.length} en atención (80–100%)</span></p>${groups.sort((a,b)=>b.spent/b.amount-a.spent/a.amount).slice(0,7).map(g=>{let pct=g.amount?g.spent/g.amount*100:0;return `<div class="budget-compliance-row" tabindex="0" data-chart-tip="${sanitize(g.category)}|Asignado: ${money(g.amount)}|Consumido: ${money(g.spent)}|Utilización: ${pct.toFixed(1)}%"><div class="split"><strong>${sanitize(g.category)}</strong><span class="${pct>100?'negative':pct>=80?'budget-warn':'positive'}">${pct.toFixed(1)}% · ${money(g.spent)} / ${money(g.amount)}</span></div><div class="progress"><span class="${pct>100?'high':pct>=80?'warn':''}" style="width:${Math.min(100,pct)}%"></span></div></div>`}).join('')||'<p class="empty">Aún no hay presupuestos asignados a este mes.</p>'}</section>`;
 }
-function percentVariance(a,b){return Math.abs(b)<.005?'Sin referencia':(a>=b?'+':'')+((a-b)/Math.abs(b)*100).toFixed(1)+'%'}
+
 
 
 function budgetEvolutionChart(year,selectedMonth){
@@ -2618,43 +2618,7 @@ function budgetEvolutionChart(year,selectedMonth){
 
 /* V301: Restore complete, user-approved budget analysis from V284.
    The financial functions and dataset remain sourced from current V300. */
-function budget(){
- const period=ui.month,priorYear=(Number(period.slice(0,4))-1)+period.slice(4),priorMonth=plusMonths(period+'-01',-1).slice(0,7);
- const current=budgetPlan(period),lastYear=budgetPlan(priorYear),lastMonth=budgetPlan(priorMonth),[year,month]=period.split('-').map(Number);
- const totals=monthlyTotals(year,month),ly=monthlyTotals(year-1,month),control=budgetCoveredSpend(totals),rest=rnd(current.total-control),performance=current.total&&period<=today().slice(0,7)?100*control/current.total:null;
- const active=current.groups.slice().sort((a,b)=>b.amount-a.amount),peak=Math.max(1,...active.map(x=>x.amount));
- const valueComparison=(label,a,b,hasPrior)=>`<div class="budget-variance-card"><small>${label}</small><strong>${hasPrior?money(a-b):'—'}</strong><span class="${a>b?'budget-warn':a<b?'positive':''}">${hasPrior?percentVariance(a,b):'Sin referencia histórica'}</span><p>Actual ${money(a)} · Anterior ${hasPrior?money(b):'sin registro'}</p></div>`;
- const chart=active.length?active.map(g=>`<div class="budget-allocation-row" tabindex="0" data-chart-tip="${sanitize(g.category)}|Asignación: ${money(g.amount)}|Peso: ${(g.amount/current.total*100).toFixed(1)}%"><div class="budget-allocation-label"><strong>${sanitize(g.category)}</strong><span>${(g.amount/current.total*100).toFixed(1)}%</span></div><div class="budget-allocation-track"><i style="width:${g.amount/peak*100}%"></i></div><b>${money(g.amount)}</b></div>`).join(''):'<p class="budget-empty-text">Define límites para ver cómo distribuyes tu presupuesto.</p>';
- const categories=new Set([...EXP,...active.map(x=>x.category),...Object.keys(totals.expenseBy)]);
- const lastPeriodTotals=monthlyTotals(Number(priorMonth.slice(0,4)),Number(priorMonth.slice(5,7)));
- const rows=[...categories].map(cat=>{
-  const g=active.find(x=>x.category===cat),amount=g?.amount||0,spent=num(totals.expenseBy[cat]),pct=amount?spent/amount*100:0;
-  const subs=[...new Set([...current.rows.filter(b=>b.category===cat&&b.subcategory).map(b=>b.subcategory),...Object.keys(totals.expenseSubBy).filter(k=>k.startsWith(cat+'||')).map(k=>k.split('||')[1])])];
-  if(!g&&!spent&&!subs.length)return '';
-  let global=current.rows.find(b=>b.category===cat&&!b.subcategory);
-  const before=num(lastPeriodTotals.expenseBy[cat]);
-  const hasBefore=before>.005;
-  const delta=hasBefore?((spent-before)/before*100):null;
-  const deltaCaption=delta===null?'Sin gasto anterior comparable':`${delta>0?'+':''}${delta.toFixed(1)}% vs. mes anterior`;
-  const status=amount===0?'Sin límite':pct>100?'Límite superado':pct>=80?'En atención':'Dentro del límite';
-  const statusClass=amount===0?'is-free':pct>100?'is-over':pct>=80?'is-near':'is-good';
-  return `<article class="budget-row v358-budget-row ${statusClass}">
-    <div class="v358-budget-row-main">
-     <div class="v358-budget-name"><strong>${sanitize(cat)}</strong><span class="v358-budget-status ${statusClass}">${status}</span></div>
-     <button type="button" class="btn sm ghost v358-budget-edit" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="" aria-label="${global?'Editar':'Definir'} presupuesto de ${sanitize(cat)}">${global?'Editar':'Definir'} ${icon('arrow')}</button>
-    </div>
-    <div class="v358-budget-amounts"><div><small>GASTADO</small><strong>${money(spent)}</strong></div><div><small>${amount?'LÍMITE ASIGNADO':'PRESUPUESTO'}</small><strong>${amount?money(amount):'Sin límite'}</strong></div></div>
-    <div class="v358-budget-meta"><span>${amount?pct.toFixed(1)+'% utilizado':'Sin porcentaje: no hay límite'}</span><span class="${delta!==null&&delta>0?'v358-up':''}">${deltaCaption}</span></div>
-    ${amount?`<div class="progress v358-budget-track" role="progressbar" aria-label="${sanitize(cat)} · porcentaje utilizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.min(100,Math.max(0,pct)).toFixed(1)}" data-chart-tip="${sanitize(cat)}|Gastado: ${money(spent)}|Asignado: ${money(amount)}|Ejecución: ${pct.toFixed(1)}%"><span class="${pct>100?'high':pct>=80?'warn':''}" style="width:${Math.min(100,pct)}%"></span></div>`:''}
-    ${subs.length?`<details class="v194-subcategory-drawer v358-budget-subcats"><summary><span>Subcategorías · ${subs.length}</span><span class="v194-drawer-arrow">⌄</span></summary><div class="v194-subcategory-content">${subs.map(sub=>{const setting=current.rows.find(b=>b.category===cat&&b.subcategory===sub),limit=num(setting?.amount),expense=num(totals.expenseSubBy[cat+'||'+sub]);return `<div class="subbudget"><div class="split"><span>↳ ${sanitize(sub)}</span><div class="hstack"><span>${money(expense)} / ${limit?money(limit):'Sin límite'}</span><button class="btn sm ghost" data-act="editBudget" data-cat="${sanitize(cat)}" data-sub="${sanitize(sub)}">${setting?'Editar':'Definir'}</button></div></div>${limit?`<div class="progress"><span class="${expense>limit?'high':expense>=limit*.8?'warn':''}" style="width:${Math.min(100,expense/limit*100)}%"></span></div>`:''}</div>`}).join('')}</div></details>`:''}
-   </article>`;
- }).filter(Boolean).join('');
- const hasLastYear=lastYear.rows.length>0;
- return `<div class="budget-world v180-budget-clean">
- ${budgetEvolutionChart(year,month)}
- <div class="budget-analytics-grid"><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">01 · ASIGNACIÓN</span><h3>¿A dónde va el presupuesto?</h3><p class="form-note">Peso porcentual y monto por categoría.</p></div><span class="pill">${active.length} categorías</span></div><div class="budget-allocation-list">${chart}</div></section><section class="panel budget-analysis-panel"><div class="panel-head"><div><span class="summary-tag">02 · COMPARACIÓN</span><h3>Variación absoluta e interanual</h3><p class="form-note">Mismo mes del año anterior · asignación y gasto real.</p></div></div><details class="budget-variance-disclosure"><summary>Consultar comparación mensual e interanual</summary><div class="budget-variance-grid">${valueComparison('PRESUPUESTO VS. AÑO ANTERIOR',current.total,lastYear.total,hasLastYear)}${valueComparison('PRESUPUESTO CAMBIO MENSUAL',current.total,lastMonth.total,lastMonth.rows.length>0)}${valueComparison('GASTO REAL VS. AÑO ANTERIOR',totals.expense,ly.expense,ly.expense!==0||db.transactions.some(t=>t.date.startsWith(priorYear)))}</div></details><div class="budget-coverage-note">El cumplimiento se calcula sobre el presupuesto asignado. Gastos sin límite se muestran por separado. ${hasLastYear&&lastYear.rows.every(x=>x.legacy)?'La asignación del año anterior procede de datos heredados sin fecha original y es solo orientativa.':''}</div></section></div>
- ${budgetCompliance(totals)}<section class="panel section v358-budget-editor"><div class="panel-head"><div><span class="summary-tag">03 · EDICIÓN POR CATEGORÍA</span><h3>Presupuesto de ${dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'})}</h3><p class="form-note">Edita una categoría o subcategoría. Cada período mantiene su propia referencia.</p></div><div class="v180-budget-edit-actions"><button type="button" class="btn sm soft" data-act="addBudget">${icon('plus')} Definir presupuesto</button><input type="month" class="field" id="monthFilter" value="${period}" aria-label="Mes de presupuesto" style="width:162px"/></div></div><div class="v358-budget-grid">${rows||'<div class="budget-empty-text">No se registran presupuestos ni gastos durante este mes.</div>'}</div><p class="footnote">Un límite de categoría incluye sus subcategorías. Los cambios afectan el mes seleccionado y los siguientes, salvo otra versión posterior; las versiones anteriores no se modifican. Si tus presupuestos proceden de una versión antigua, la app no puede recuperar sus importes históricos previos a esta actualización.</p></section></div>`;
-}
+
 
 /* V285: Ejecución no es un tercer catálogo. Reutiliza los cálculos originales. */
 function v285BudgetExecution(){
@@ -4004,7 +3968,7 @@ document.addEventListener('change', event=>{
  ui.month=p;ui.year=Number(p.slice(0,4));render();
 });
 
-const pages={score:()=>(window.ViveScoreHost&&!isMobileViewport()?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,categories,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,budget,annual,analytics,settings};
+const pages={score:()=>(window.ViveScoreHost&&!isMobileViewport()?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,categories,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -18475,6 +18439,55 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  /* Grupos desplegables: se recuerda cuáles están abiertos (el evento toggle no burbujea). */
  document.addEventListener('toggle',e=>{const d=e.target;if(!d?.matches?.('details.v911-grp'))return;const st=S(),k=d.dataset.v911Grp;st.grp=d.open?[...new Set([...st.grp,k])]:st.grp.filter(x=>x!==k)},true);
  document.addEventListener('input',e=>{if(e.target?.id==='v911-search'){S().query=e.target.value;filter(e.target.value)}});
+})();
+
+/* V919 · Presupuesto simplificado y estratégico (móvil y web, una sola vista): «Definir presupuesto» + ejecución por categoría + cumplimiento mensual.
+   Reutiliza budgetPlan / budgetCoveredSpend / monthlyTotals y la asignación guiada v918BudgetAssign; no cambia ninguna regla de cálculo. */
+(()=>{
+ const esc=v=>sanitize(String(v??''));
+ const MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+ const LBL={good:'Dentro del límite',near:'En atención',over:'Límite superado',free:'Sin límite'};
+ const stat=p=>p===null?'free':p>100?'over':p>=80?'near':'good';
+ const pc=p=>p===null?'—':(Math.round(p*10)/10).toFixed(1).replace(/\.0$/,'')+'%';
+ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+ const IC={chev:G('<path d="m9 6 6 6-6 6"/>'),plus:G('<path d="M12 5v14M5 12h14"/>'),cal:G('<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>'),target:G('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>'),spent:G('<path d="M4 7h16v12H4z"/><path d="M4 11h16"/>'),left:G('<path d="M20 12H4M10 6l-6 6 6 6"/>'),pct:G('<path d="M19 5 5 19"/><circle cx="7" cy="7" r="2"/><circle cx="17" cy="17" r="2"/>')};
+ function datos(period){
+  const [y,m]=period.split('-').map(Number),plan=budgetPlan(period),totals=monthlyTotals(y,m);
+  const groups=plan.groups.map(g=>{const spent=g.global!==null?num(totals.expenseBy[g.category]):g.subs.reduce((s,b)=>s+num(totals.expenseSubBy[g.category+'||'+b.subcategory]),0);return {...g,spent,pct:g.amount>0?spent/g.amount*100:null}}).sort((a,b)=>(b.pct??-1)-(a.pct??-1));
+  const spent=groups.reduce((n,g)=>n+g.spent,0),total=plan.total;
+  return {y,m,plan,totals,groups,spent,total,pct:total>0?spent/total*100:null,left:rnd(total-spent)};
+ }
+ function fila(g,period,totals){
+  const st=stat(g.pct),w=Math.max(0,Math.min(100,g.pct||0));
+  const subs=g.global!==null
+   ?Object.keys(totals.expenseSubBy||{}).filter(k=>k.startsWith(g.category+'||')).map(k=>({name:k.split('||')[1],spent:num(totals.expenseSubBy[k]),amount:0})).filter(x=>x.spent>0)
+   :g.subs.map(b=>({name:b.subcategory,spent:num(totals.expenseSubBy[g.category+'||'+b.subcategory]),amount:num(b.amount)}));
+  const subRows=subs.sort((a,b)=>b.spent-a.spent).map(x=>{const p=x.amount>0?x.spent/x.amount*100:null;return `<li><span>${esc(x.name)}</span><b>${money(x.spent)}${x.amount>0?` / ${money(x.amount)}`:''}</b>${p!==null?`<i class="v919-bar ${stat(p)}"><u style="width:${Math.min(100,p)}%"></u></i>`:''}</li>`}).join('');
+  return `<details class="v919-row ${st}"><summary><span class="v919-row-main"><strong>${esc(g.category)}</strong><small>${money(g.spent)} de ${money(g.amount)}</small></span><span class="v919-row-side"><span class="v919-pill ${st}">${LBL[st]}</span><b>${pc(g.pct)}</b></span>${IC.chev.replace('<svg','<svg class="v911-chev"')}</summary>
+   <i class="v919-bar ${st}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${w.toFixed(1)}" aria-label="${esc(g.category)} · porcentaje utilizado"><u style="width:${w}%"></u></i>
+   <div class="v919-det">${g.global!==null?'<p>Límite general de la categoría: incluye todas sus subcategorías.</p>':'<p>Límites por subcategoría.</p>'}${subRows?`<ul>${subRows}</ul>`:'<p class="v919-muted">Sin gasto registrado en subcategorías este mes.</p>'}<button type="button" class="v911-ghost v919-edit" data-act="editBudget" data-cat="${esc(g.category)}">Editar límite</button></div></details>`;
+ }
+ function mensual(y,period){
+  const hoy=today().slice(0,7);
+  const cols=MES.map((nm,i)=>{const p2=y+'-'+String(i+1).padStart(2,'0');if(p2>hoy)return {nm,p2,pct:null,fut:true};const d=datos(p2);return {nm,p2,pct:d.total>0?d.pct:null,fut:false}});
+  return `<div class="v919-year" role="group" aria-label="Cumplimiento mensual ${y}">${cols.map(c=>{const st=c.pct===null?'free':stat(c.pct),h=c.pct===null?4:Math.max(6,Math.min(100,c.pct/120*100));return `<button type="button" class="v919-col ${st}${c.p2===period?' is-sel':''}" data-v919-month="${c.p2}" aria-label="${c.nm} ${y}: ${c.pct===null?(c.fut?'aún no':'sin presupuesto'):pc(c.pct)}" aria-pressed="${c.p2===period}"><em>${c.pct===null?'—':Math.round(c.pct)+'%'}</em><span class="v919-colbar"><u style="height:${h}%"></u></span><small>${c.nm}</small></button>`}).join('')}</div>
+   <p class="v919-legend"><i class="good"></i>Menos de 80 % <i class="near"></i>80–100 % <i class="over"></i>Más del 100 %</p>`;
+ }
+ function page(){
+  const period=ui.month||today().slice(0,7),d=datos(period),y=d.y;
+  const mesTxt=dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
+  const kpi=(ic,lab,val,nota,cls='')=>`<article class="v911-kpi"><header><span class="v911-kpi-ic">${ic}</span><h4>${lab}</h4></header><b class="${cls}">${val}</b><small>${nota}</small></article>`;
+  const sinLimite=Object.entries(d.totals.expenseBy||{}).filter(([c,v])=>num(v)>0&&!d.plan.groups.some(g=>g.category===c)).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const filas=d.groups.map(g=>fila(g,period,d.totals)).join('');
+  return `<div class="v911 v919" data-v919="1"><header class="v911-head"><h1>Presupuesto</h1><label class="v911-month v919-month"><span class="v911-ic">${IC.cal}</span><span>${esc(mesTxt)}</span><input id="monthFilter" type="month" value="${esc(period)}" aria-label="Mes del presupuesto" /></label></header>
+   <button type="button" class="v919-define" data-act="addBudget">${IC.plus}<span>Definir presupuesto</span></button>
+   ${d.groups.length?`<div class="v911-kpis">${kpi(IC.target,'Presupuesto asignado',money(d.total),d.groups.length+(d.groups.length===1?' categoría':' categorías'))}${kpi(IC.spent,'Gastado',money(d.spent),'En categorías con límite')}${kpi(IC.left,d.left<0?'Excedido':'Disponible',money(Math.abs(d.left)),d.left<0?'Sobre el presupuesto':'Margen del mes',d.left<0?'v919-neg':'')}${kpi(IC.pct,'Ejecución',pc(d.pct),LBL[stat(d.pct)])}</div>
+   <p class="v911-eyebrow">Ejecución por categoría</p><div class="v919-list">${filas}</div>`:`<p class="v911-empty v919-empty">Aún no hay límites para ${esc(mesTxt)}. Usa «Definir presupuesto» para asignar un límite a una categoría o a una subcategoría.</p>`}
+   ${sinLimite.length?`<p class="v911-eyebrow">Gasto sin límite</p><div class="v911-card">${sinLimite.map(([c,v])=>`<button type="button" class="v911-row" data-act="editBudget" data-cat="${esc(c)}"><span class="v911-row-info"><strong>${esc(c)}</strong><small>Sin límite asignado</small></span><b>${money(v)}</b>${IC.chev.replace('<svg','<svg class="v911-chev"')}</button>`).join('')}</div>`:''}
+   <p class="v911-eyebrow">Cumplimiento mensual · ${y}</p>${mensual(y,period)}</div>`;
+ }
+ pages.budget=page;
+ document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v919-month]');if(!b||!b.closest('.v919'))return;e.preventDefault();ui.month=b.dataset.v919Month;ui.year=Number(ui.month.slice(0,4));render()},true);
 })();
 
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});

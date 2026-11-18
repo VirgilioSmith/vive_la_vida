@@ -26,6 +26,16 @@ const cont = p => p.evaluate(() => { const c = [...document.querySelectorAll('bu
     await p.evaluate(() => { const fm = document.querySelector('#budgetForm'); const a = fm.elements.amount; a.value = '9000'; a.dispatchEvent(new Event('input', { bubbles: true })); fm.requestSubmit() }); await p.waitForTimeout(700);
     const after = await p.evaluate(() => { const v = window.__T.dbg().budgetVersions || []; return { n: v.length, last: v.find(x => x.category === 'Transporte' && !x.subcategory && x.amount === 9000) } });
     check('P5-' + w, '«Toda la categoría» guarda un límite general (sin subcategoría) de la categoría', f.sub === '' && after.last && after.n >= before, JSON.stringify({ f, after: { n: after.n, last: !!after.last } }));
+    /* Vista simplificada */
+    await p.evaluate(() => { try { closeModal() } catch (_) { } window.__T.go('budget') }); await p.waitForTimeout(500);
+    const v = await p.evaluate(() => { const pg = document.querySelector('#page'); return { v919: !!pg.querySelector('.v919'), define: !!pg.querySelector('.v919-define[data-act=addBudget]'), legacy: pg.querySelectorAll('.v358-budget-editor,.v285-budget-workspace,.v248-hero,.budget-variance-card').length, eyebrows: [...pg.querySelectorAll('.v911-eyebrow')].map(e => e.textContent), kpis: [...pg.querySelectorAll('.v911-kpi')].map(e => e.innerText.replace(/\s+/g, ' ')), rows: pg.querySelectorAll('.v919-row').length, cols: pg.querySelectorAll('.v919-col').length } });
+    check('P7-' + w, 'Presupuesto simplificado: botón «Definir presupuesto», ejecución por categoría y cumplimiento mensual (sin el editor por categoría ni las demás secciones)', v.v919 && v.define && v.legacy === 0 && v.eyebrows.some(e => /Ejecución por categoría/i.test(e)) && v.eyebrows.some(e => /Cumplimiento mensual/i.test(e)) && v.cols === 12, JSON.stringify(v).slice(0, 200));
+    const k = v.kpis.join(' | ');
+    check('P8-' + w, 'Las tarjetas suman los límites (Vivienda 20,000 + Alimentación 10,800 + Transporte 9,000 = RD$39,800) y lo gastado en ellas (17,500 + 5,600 + 6,500 = RD$29,600); disponible RD$10,200', k.includes('RD$39,800') && k.includes('RD$29,600') && k.includes('RD$10,200') && v.rows === 3, k);
+    const mes0 = await p.evaluate(() => window.__T.ui().month);
+    await p.evaluate(() => document.querySelector('.v919-col[data-v919-month$="-09"]')?.click()); await p.waitForTimeout(400);
+    const mes1 = await p.evaluate(() => ({ m: window.__T.ui().month, sel: document.querySelector('.v919-col.is-sel')?.dataset.v919Month }));
+    check('P9-' + w, 'Tocar un mes del cumplimiento mensual cambia el mes mostrado', mes1.m !== mes0 && /-09$/.test(mes1.m) && mes1.sel === mes1.m, JSON.stringify(mes1));
     check('P6-' + w, 'Sin errores de página', errs.length === 0, errs.join('|')); await p.context().close();
   }
   console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); await b.close(); process.exit(fails ? 1 : 0);
