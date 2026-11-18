@@ -1,6 +1,8 @@
 /* ==== script: main ==== */
 (()=>{'use strict';
 const KEY='finanzas360.v1'; // Mismo almacenamiento para conservar los registros anteriores
+/* Las implementaciones iniciales de estas funciones fueron sustituidas por reasignación posterior; solo se conserva el enlace. */
+var v40IncomeConfirmForm,v43RowsToData,v261OpenBill,loanDetail,accountDetail,v10ResolveConflict,v10PullRemote,v10LiveStart,f33LoadUser,f33FirstStart,f33Flush,v216BellItems;
 const MAX_MONEY=9999999999; // tope por importe (el servidor rechaza |valor| > 1e13): evita datos que luego no sincronicen
 const APP_BRAND='vive el hoy'; // Identidad única en componentes JavaScript; los metadatos PWA son estáticos.
 // Wordmark: la "y" de «hoy» es un trazo SVG cuya cola se curva bajo «ho» y forma la sonrisa (sale de la y, no de un lado).
@@ -1618,7 +1620,7 @@ function originalAccounts(){
  return `<div class="grid cards-grid section">${cashCard}${all.length?all.map(a=>`<article class="bank-card account-product-card"><div class="split"><div><div class="name">${sanitize(a.name)}</div><div class="type v28-account-bankline">${bankLogoInline(a.bankId)}<span>${sanitize(bankOf(a))} · ${a.kind==='savings'?'Ahorros':a.kind==='checking'?'Corriente':'Efectivo'}</span></div></div><span class="pill">${a.currency}</span></div><button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver evolución de ${sanitize(a.name)}">${money(getAccountBalance(a),a.currency,2)} <span>↗</span></button><div class="product-mini-actions v176-account-actions">${productControls('account',a.id,a.archived)}<button class="btn sm ghost" data-act="accountDetails" data-id="${a.id}">Ver evolución</button></div><div class="bottom"><span class="subtle">${a.last4?'•••• '+sanitize(a.last4):'Sin terminación registrada'}</span></div></article>`).join(''):`<div class="panel"><div class="empty">No hay cuentas bancarias adicionales. El efectivo se gestiona desde la ficha anterior. <button class="btn sm soft" data-act="addAccount">Crear cuenta</button></div></div>`}</div>
  ${ui.accountId&&account(ui.accountId)?accountDetail(account(ui.accountId)):''}`;
 }
-function originalAccountDetail(a){let t=recentTx().filter(t=>t.accountId===a.id||t.toAccountId===a.id).slice(0,12);return `<div class="panel section"><div class="panel-head"><h3>Detalle · ${sanitize(a.name)} (${a.currency})</h3><div class="hstack">${a.kind==='cash'?'':productControls('account',a.id,a.archived)}<button class="btn sm soft" data-act="editAccount" data-id="${a.id}">Editar cuenta</button><button class="btn sm ghost" data-act="closeAccountDetails">Cerrar</button></div></div><div class="stats-inline"><div class="stat-box"><span class="small-label">SALDO INICIAL</span><div class="val">${money(a.opening,a.currency,2)}</div><span class="tiny muted">Desde ${prettyDate(a.opened)}</span></div><div class="stat-box"><span class="small-label">SALDO ACTUAL</span><div class="val">${money(getAccountBalance(a),a.currency,2)}</div><span class="tiny muted">Incluye todas las operaciones</span></div><div class="stat-box"><span class="small-label">INTERÉS POTENCIAL / MES</span><div class="val">${money(Math.max(0,getAccountBalance(a))*num(a.annualRate)/1200,a.currency,2)}</div><span class="tiny muted">Estimación simple; para cobros reales registra un ingreso.</span></div><div class="stat-box"><span class="small-label">MOVIMIENTOS</span><div class="val">${t.length}${t.length>=12?'+':''}</div><span class="tiny muted">Últimos 12 visibles</span></div></div><div class="gap"></div>${smallTxTable(t)}</div>`}
+
 function smallTxTable(tx){return tx.length?`<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Tipo</th><th class="right">Importe</th><th class="right">Acción</th></tr></thead><tbody>${tx.map(t=>`<tr><td>${prettyDate(t.date)}</td><td>${sanitize(transactionTitle(t))}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td class="right money">${txDisplay(t)}</td><td class="right"><button class="btn sm ghost" data-act="editTransaction" data-id="${t.id}" title="Editar sin duplicar el registro">Editar</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Sin movimientos en esta selección.</div>'}
 
 /* ═══════════════ vive el hoy · BENEFICIOS POR TARJETA ═══════════════
@@ -2147,9 +2149,7 @@ function loanBundle(l){
     projectedInterestSavings:rnd(baseline.interest-scenario.interest),projectedInsuranceSavings:rnd(baseline.insurance-scenario.insurance),
     globalInterestDifference:rnd(original.interest-scenarioInterest),monthsAdvanced:baseline.rows.length-scenario.rows.length};
 }
-function loanStat(label,value,note,iconName,tone=''){
-  return `<div class="loan-stat glass-loan"><span class="loan-stat-icon ${tone}">${icon(iconName)}</span><div class="loan-stat-label">${label}</div><strong>${value}</strong><small>${note}</small></div>`;
-}
+
 function loans(){
   const arr=db.loans,visible=arr.filter(l=>ui.showHidden||!isHidden(l)),active=arr.filter(l=>!loanAccounting(l).settled);
   const previousEstimatedInterest=arr.reduce((s,l)=>s+fx(loanAccounting(l).estimatedHistoricInterest,l.currency),0);
@@ -2165,82 +2165,17 @@ function loans(){
     ${ui.loanId&&loan(ui.loanId)?loanDetail(loan(ui.loanId)):''}
   </div>`;
 }
-function loanCurves(bundle,l){
-  const original=bundle.original.rows,actual=bundle.actual.rows,forecast=bundle.baseline.rows,sc=bundle.scenario.rows;
-  const O=[[0,num(l.principal)],...original.map((p,i)=>[i+1,p.balance])];
-  const nActual=bundle.actual.periods;const A=[[0,bundle.actual.openingPrincipal],...actual.map((p,i)=>[i+1,p.balance])];
-  const B=[[Math.max(0,actual.length),bundle.actual.balance],...forecast.map((p,i)=>[actual.length+i+1,p.balance])];
-  const S=[[Math.max(0,actual.length),bundle.actual.balance],...sc.map((p,i)=>[actual.length+i+1,p.balance])];
-  let count=Math.max(12,O.at(-1)?.[0]||0,B.at(-1)?.[0]||0,S.at(-1)?.[0]||0),w=920,h=280,x0=30,y0=218,cw=858,ch=188;
-  const pos=([i,v])=>[x0+i/count*cw,y0-v/Math.max(1,num(l.principal))*ch];
-  const path=pts=>pts.length?pts.map((p,i)=>`${i?'L':'M'}${pos(p)[0].toFixed(1)} ${pos(p)[1].toFixed(1)}`).join(' '):'';
-  const gr=[0,.25,.5,.75,1].map(v=>`<line x1="${x0}" x2="${x0+cw}" y1="${y0-v*ch}" y2="${y0-v*ch}" stroke="#c1cfe1" stroke-opacity=".4" stroke-dasharray="3 5"/><text x="${x0+cw+9}" y="${y0-v*ch+4}" font-size="10" fill="#8293aa">${Math.round(v*100)}%</text>`).join('');
-  return `<div class="loan-line-chart"><svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Curvas de amortización del plan original, capital registrado y proyecciones"><defs><linearGradient id="loanArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d81cb" stop-opacity=".14"/><stop offset="1" stop-color="#5d81cb" stop-opacity="0"/></linearGradient></defs>${gr}
-   <path d="${path(O)}" stroke="#9aabc7" stroke-width="3" stroke-dasharray="7 6" fill="none"/>
-   <path d="${path(B)}" stroke="#4a76c7" stroke-width="3.5" fill="none"/>
-   ${bundle.simOpt.amount>0?`<path d="${path(S)}" stroke="#d8586d" stroke-width="3.5" fill="none"/>`:''}
-   <path d="${path(A)}" stroke="#138c79" stroke-width="4" fill="none"/>
-   ${A.length>1?`<circle cx="${pos(A.at(-1))[0]}" cy="${pos(A.at(-1))[1]}" r="6" fill="#138c79" stroke="#fff" stroke-width="3"/>`:''}
-   <text x="${x0}" y="${h-24}" font-size="11" fill="#8797ae">Inicio</text><text x="${x0+cw}" y="${h-24}" text-anchor="end" font-size="11" fill="#8797ae">${count} períodos</text></svg></div>
-   <div class="loan-legend"><span><i style="background:#9aabc7"></i> Original</span><span><i style="background:#138c79"></i> Histórico estimado + registrado</span><span><i style="background:#4a76c7"></i> Proyección vigente</span>${bundle.simOpt.amount>0?'<span><i style="background:#d8586d"></i> Estrategia</span>':''}</div>`;
-}
-function loanComparison(l,b){
-  let curr=b.actual.interest+b.actual.estimatedHistoricInterest+b.baseline.interest,currIns=b.actual.insurance+b.actual.estimatedHistoricInsurance+b.baseline.insurance,currFee=b.actual.fees+b.actual.estimatedHistoricFees+b.baseline.fees;
-  let sim=b.actual.interest+b.actual.estimatedHistoricInterest+b.scenario.interest,simIns=b.actual.insurance+b.actual.estimatedHistoricInsurance+b.scenario.insurance,simFee=b.actual.fees+b.actual.estimatedHistoricFees+b.scenario.fees;
-  const r=(title,first,second,third)=>`<div class="loan-compare-row"><span>${title}</span><b>${first}</b><b>${second}</b><b>${third}</b></div>`;
-  const fmt=v=>money(v,l.currency,2);
-  return `<div class="glass-loan loan-compare"><div class="loan-panel-title"><h3>Tres escenarios, una misma deuda.</h3><p>Comparación basada en las condiciones registradas, no en valores confirmados por el banco.</p></div><div class="loan-compare-scroll"><div class="loan-compare-table"><div class="loan-compare-header"><span>Concepto</span><strong>Plan original</strong><strong>Proyección vigente</strong><strong>Con estrategia</strong></div>
-  ${r('Capital inicial',fmt(l.principal),fmt(l.principal),fmt(l.principal))}
-  ${r('Intereses totales',fmt(b.original.interest),fmt(curr),fmt(sim))}
-  ${r('Seguro estimado',fmt(b.original.insurance),fmt(currIns),fmt(simIns))}
-  ${r('Cargos estimados',fmt(b.original.fees),fmt(currFee),fmt(simFee))}
-  ${r('Costo total',fmt(num(l.principal)+b.original.interest+b.original.insurance+b.original.fees),fmt(num(l.principal)+curr+currIns+currFee),fmt(num(l.principal)+sim+simIns+simFee))}
-  ${r('Última cuota',prettyDate(b.original.end),prettyDate(b.baseline.end),prettyDate(b.scenario.end))}
-  </div></div><div class="loan-small-note">La columna vigente incluye pagos históricos y cuotas futuras estimadas. La estrategia solo representa un escenario hipotético; no cambia tus balances.</div></div>`;
-}
-function loanKpis(l,b){
-  const a=b.actual,pct=num(l.principal)>0?a.paidPrincipal/num(l.principal)*100:0;
-  return `<div class="loan-detail-kpis">${loanStat('Saldo pendiente',money(a.balance,l.currency,2),'Capital real según pagos','wallet','violet')}${loanStat('Avance de capital',pct.toFixed(1)+'%','Reducción de capital: '+money(a.paidPrincipal,l.currency),'check','teal')}${loanStat('Intereses a la fecha',money(a.interest+a.estimatedHistoricInterest,l.currency,2),'Confirmados: '+money(a.interest,l.currency,2)+' · históricos estimados: '+money(a.estimatedHistoricInterest,l.currency,2),'chart','blue')}${loanStat('Abonos extraordinarios',money(a.extras,l.currency,2),'Reducen principal directamente','up','amber')}</div>`;
-}
-function loanDetail(l){
-  let b=loanBundle(l),a=b.actual,status=a.settled?'Liquidado':diffDays(a.next,today())<0?'Cuota vencida':'Activo',next=a.settled?'Sin cuotas pendientes':prettyDate(a.next);
-  let tabs=[['vision','Visión general'],['amort','Amortización'],['payments','Historial real'],['simulate','Simulador de abonos']];
-  let tab=loanWorkspace.tab;
-  let body=tab==='vision'?loanVision(l,b)+loanConditions(l):tab==='amort'?loanAmortView(l,b):tab==='payments'?loanPaymentHistory(l,b):loanSimulator(l,b);
-  return `<section class="loan-workspace" id="loan-workspace"><div class="loan-detail-top"><div><button class="loan-back" data-act="closeLoanDetails">${icon('arrow')} Volver a mi cartera</button><div class="loan-detail-micro">${sanitize(bankOf(l))} <span>·</span> ${sanitize(l.currency)} <span>·</span> ${status}</div><h2>${sanitize(l.name)}</h2><p>Capital original: ${money(l.principal,l.currency,2)} · ${num(l.rate).toFixed(2)}% anual · ${v49LoanPeriodCount(l)} ${v49LoanPeriodsPerMonth(l)===2?'quincenas':'cuotas mensuales'}${l.originationDate?' · desde '+prettyDate(l.originationDate):''}</p>${a.historicReduction>0?`<div class="v83-loan-snapshot"><span>Saldo al registrar: <b>${money(a.openingPrincipal,l.currency,2)}</b></span><span>Capital reducido previamente: <b>${money(a.historicReduction,l.currency,2)}</b></span><span>Saldo actual: <b>${money(a.balance,l.currency,2)}</b></span></div>`:''}</div><div class="loan-detail-top-actions"><button class="btn sm ghost" data-act="editLoan" data-id="${l.id}">Editar ficha</button><button class="btn sm ghost" data-act="productArchive" data-kind="loan" data-id="${l.id}">${l.archived?'Reactivar':'Cancelar'}</button><button class="btn sm soft" data-act="extraLoan" data-id="${l.id}" ${a.settled||l.archived?'disabled':''}>Abono extraordinario</button><button class="btn sm loan-primary" data-act="payLoan" data-id="${l.id}" ${a.settled||l.archived?'disabled':''}>Registrar cuota</button></div></div>
-    ${loanKpis(l,b)}<div class="loan-compact-facts glass-loan"><div><span>PRÓXIMO VENCIMIENTO</span><strong>${next}</strong></div><div><span>CUOTA CONTRACTUAL</span><strong>${money(loanStatus(l).installment,l.currency,2)}</strong></div><div><span>CUOTAS TRANSCURRIDAS</span><strong>${a.periods} registradas / ${v49LoanPeriodCount(l)} pactadas</strong></div><div><span>INTERESES FUTUROS ESTIMADOS</span><strong>${money(l.archived?0:b.baseline.interest,l.currency,2)}</strong></div><div><span>INTERESES Y OTROS CARGOS A LA FECHA</span><strong>${money(a.interest+a.insurance+a.fees+a.estimatedHistoricInterest+a.estimatedHistoricInsurance+a.estimatedHistoricFees,l.currency,2)}</strong></div></div>
-    <nav class="loan-tabs" aria-label="Detalle de préstamo">${tabs.map(([key,title])=>`<button class="loan-tab ${key===tab?'on':''}" data-act="loanTab" data-id="${key}">${title}</button>`).join('')}</nav><div class="loan-tab-content">${body}</div>
-    <div class="loan-alert"><span>${icon('shield')}</span><div><strong>Control financiero y conciliación.</strong> La deuda parte del saldo de apertura informado y descuenta los pagos posteriores. Las quincenas anteriores se reconstruyen como estimaciones, no como movimientos bancarios verificados; su interés es orientativo y puede diferir del cobrado por el banco. Los intereses y seguros futuros se estiman; verifica cada importe contra el estado de cuenta de tu institución.${num(l.reportedBalance)>0?` <strong>Saldo confirmado por banco (${prettyDate(l.balanceAsOf||today())}): ${money(l.reportedBalance,l.currency,2)}. Diferencia frente al registro: ${money(a.balance-num(l.reportedBalance),l.currency,2)}.</strong>`:''}</div></div></section>`;
-}
-function loanConditions(l){let arr=l.conditionHistory||[];return `<div class="glass-loan loan-conditions"><div class="loan-panel-title"><h3>Condiciones originales y vigentes</h3><p>El contrato original no se sobrescribe cuando cambian las condiciones del banco.</p></div><div class="condition-grid"><div><span>TASA ORIGINAL</span><strong>${num(l.rate).toFixed(3)}%</strong></div><div><span>TASA VIGENTE</span><strong>${num(l.currentRate??l.rate).toFixed(3)}%</strong></div><div><span>SEGURO ACTUAL</span><strong>${money(l.insuranceMonthly||0,l.currency,2)}</strong></div><div><span>CAMBIOS REGISTRADOS</span><strong>${arr.length}</strong></div></div><div class="hstack" style="margin:15px 0"><button class="btn sm soft" data-act="editLoan" data-id="${l.id}">Actualizar condiciones</button>${productControls('loan',l.id,l.archived)}</div>${arr.length?`<div class="table-wrap"><table><thead><tr><th>Registrado</th><th>Vigente desde</th><th>Tasa anterior</th><th>Nueva tasa</th><th>Seguro anterior</th><th>Nuevo seguro</th><th>Cuota anterior</th><th>Nueva cuota</th></tr></thead><tbody>${arr.slice().reverse().map(x=>`<tr><td>${prettyDate(x.at.slice(0,10))}</td><td>${prettyDate(x.effectiveFrom)}</td><td>${num(x.fromRate).toFixed(3)}%</td><td>${num(x.toRate).toFixed(3)}%</td><td>${money(x.fromInsurance,l.currency,2)}</td><td>${money(x.toInsurance,l.currency,2)}</td><td>${x.fromInstallment===undefined?'—':money(x.fromInstallment,l.currency,2)}</td><td>${x.toInstallment===undefined?'—':money(x.toInstallment,l.currency,2)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="footnote">Todavía no existen revisiones de tasa, seguro o comisiones.</p>'}</div>`}
 
-function loanVision(l,b){
-  const a=b.actual,totalFees=a.interest+a.insurance+a.fees;
-  return `<div class="loan-vision-grid"><div class="glass-loan loan-visual"><div class="loan-panel-title"><h3>Cómo evoluciona el capital</h3><p>Contrato original frente a tus movimientos y proyecciones.</p></div>${loanCurves(b,l)}</div><div class="glass-loan loan-right-panel"><div class="loan-panel-title"><h3>Tu progreso real</h3><p>Desde la firma hasta hoy</p></div><div class="loan-big-progress">${Math.min(100,num(l.principal)?a.paidPrincipal/l.principal*100:0).toFixed(1)}<small>%</small></div><div class="loan-progress large"><span style="width:${Math.min(100,num(l.principal)?a.paidPrincipal/l.principal*100:0)}%"></span></div><div class="loan-double-fact"><span>Capital reducido (histórico + registrado)</span><b>${money(a.paidPrincipal,l.currency,2)}</b></div><div class="loan-double-fact"><span>Intereses y cargos pagados</span><b>${money(totalFees,l.currency,2)}</b></div><div class="loan-double-fact"><span>Capital extraordinario</span><b>${money(a.extras,l.currency,2)}</b></div><button class="loan-inline-button" data-act="loanTab" data-id="payments">Explorar pagos reales ${icon('arrow')}</button></div></div>
-  ${loanComparison(l,b)}
-  <div class="loan-vision-grid loan-bottom-grid"><div class="glass-loan loan-quick-panel"><span class="loan-overline">TUS PRÓXIMOS PASOS</span><h3>El siguiente movimiento importa.</h3><p>Registra la próxima cuota con el desglose exacto del banco o explora una estrategia de abonos antes de comprometer tu dinero.</p><div class="loan-action-row"><button class="btn sm loan-primary" data-act="payLoan" data-id="${l.id}" ${a.settled||l.archived?'disabled':''}>Registrar cuota</button><button class="btn sm soft" data-act="loanTab" data-id="simulate">Simular estrategia</button></div></div><div class="glass-loan loan-quick-panel"><span class="loan-overline">PRINCIPIO CONTABLE</span><h3>Tu abono no es un gasto nuevo.</h3><p>El capital de una cuota disminuye la deuda y la cuenta bancaria. Los intereses, seguros y comisiones sí forman parte del costo financiero del período.</p></div></div>`;
-}
-function loanGroupedRows(rows,size){
-  if(size===1)return rows;
-  let groups=[];for(const r of rows){const d=dateObj(r.date),key=size===12?`${d.getFullYear()}`:size===6?`${d.getFullYear()}-S${Math.floor(d.getMonth()/6)+1}`:`${d.getFullYear()}-T${Math.floor(d.getMonth()/3)+1}`;
-    let g=groups.at(-1);if(!g||g.groupKey!==key){g={...r,groupKey:key,label:key,opening:r.opening,principal:0,interest:0,insurance:0,fee:0,extra:0,payment:0,kind:r.kind};groups.push(g)}
-    g.principal+=r.principal;g.interest+=r.interest;g.insurance+=r.insurance;g.fee+=r.fee;g.extra+=r.extra;g.payment+=r.payment;g.balance=r.balance;g.date=r.date;
-  }return groups;
-}
-function loanAmortView(l,b){
-  let mode=loanWorkspace.plan,rows=mode==='original'?b.original.rows:mode==='strategy'?[...b.actual.rows,...b.scenario.rows]:[...b.actual.rows,...b.baseline.rows];
-  let sized=loanGroupedRows(rows,loanWorkspace.period);
-  return `<div class="glass-loan loan-amort-panel"><div class="loan-panel-title loan-with-actions"><div><h3>Amortización inteligente</h3><p>Desde el primer día, hasta la liquidación.</p></div><button class="btn sm ghost" data-act="loanCsv" data-id="${l.id}">Exportar CSV ${icon('arrow')}</button></div><div class="loan-control-line"><div class="loan-segment">${[['original','Original'],['actual','Real + proyectado'],['strategy','Con estrategia']].map(([k,label])=>`<button data-act="loanPlan" data-id="${k}" class="${mode===k?'selected':''}">${label}</button>`).join('')}</div><div class="loan-segment">${[[1,'Mensual'],[3,'Trimestral'],[6,'Semestral'],[12,'Anual']].map(([n,label])=>`<button data-act="loanPeriod" data-id="${n}" class="${loanWorkspace.period===n?'selected':''}">${label}</button>`).join('')}</div></div><div class="loan-table-scroll"><table class="loan-data-table"><thead><tr><th>Período</th><th>Estado</th><th class="right">Saldo inicial</th><th class="right">Capital ordinario</th><th class="right">Intereses</th><th class="right">Seguro</th><th class="right">Abonos extra</th><th class="right">Pago total</th><th class="right">Saldo final</th></tr></thead><tbody>${sized.length?sized.map(r=>`<tr class="${r.kind.includes('real')?'loan-actual-row':''}"><td>${loanWorkspace.period===1?prettyDate(r.date):r.label}</td><td><span class="loan-mini-state">${sanitize(r.kind)}</span></td><td class="right">${money(r.opening,l.currency,2)}</td><td class="right">${money(r.principal,l.currency,2)}</td><td class="right">${money(r.interest,l.currency,2)}</td><td class="right">${money(r.insurance+num(r.fee),l.currency,2)}</td><td class="right loan-extra-cell">${money(r.extra,l.currency,2)}</td><td class="right">${money(r.payment,l.currency,2)}</td><td class="right loan-balance-cell">${money(r.balance,l.currency,2)}</td></tr>`).join(''):'<tr><td colspan="9">No hay períodos disponibles.</td></tr>'}</tbody></table></div><div class="loan-small-note">La amortización calcula intereses y capital de cada cuota según el contrato. Los saldos bancarios informados se concilian explícitamente y no generan pagos falsos. La tasa puede diferir si el banco calcula por días exactos. La agregación trimestral, semestral y anual suma los pagos dentro de cada período.</div></div>`;
-}
-function loanPaymentHistory(l,b){
-  let a=b.actual;
-  return `<div class="glass-loan loan-history">${a.historicReduction>0?`<div class="v83-opening-banner"><span>HISTORIAL PREVIO · SALDO DE APERTURA</span><strong>${money(a.historicReduction,l.currency,2)} de capital reducido antes del registro</strong><small>Capital original menos el saldo de apertura. Los intereses se calcularon vencimiento por vencimiento según la cuota y tasa. Cualquier diferencia con el saldo del banco se muestra como conciliación, nunca como pago bancario registrado.</small></div>`:''}<div class="loan-panel-title loan-with-actions"><div><h3>Historial de cuotas</h3><p>Los pagos confirmados se distinguen de las cuotas históricas reconstruidas. Las estimaciones no mueven cuentas.</p></div><div class="loan-action-row"><button class="btn sm soft" data-act="extraLoan" data-id="${l.id}">+ Abono</button><button class="btn sm loan-primary" data-act="payLoan" data-id="${l.id}">+ Cuota</button></div></div><div class="loan-mini-summary"><span><small>Capital reducido desde origen</small><strong>${money(a.paidPrincipal,l.currency,2)}</strong></span><span><small>Interés pagado</small><strong>${money(a.interest,l.currency,2)} confirmado · ${money(a.estimatedHistoricInterest,l.currency,2)} estimado</strong></span>${Math.abs(a.historicAdjustment)>.009?`<span><small>Diferencia modelo / banco · conciliación (no pago)</small><strong>${money(Math.abs(a.historicAdjustment),l.currency,2)}</strong></span>`:''}<span><small>Seguro</small><strong>${money(a.insurance,l.currency,2)}</strong></span><span><small>Comisiones</small><strong>${money(a.fees,l.currency,2)}</strong></span></div><div class="loan-table-scroll"><table class="loan-data-table"><thead><tr><th>Fecha</th><th>Operación</th><th class="right">Capital</th><th class="right">Intereses</th><th class="right">Seguro + cargos</th><th class="right">Importe</th><th class="right">Saldo después</th><th></th></tr></thead><tbody>${a.rows.length?a.rows.map(r=>`<tr><td>${prettyDate(r.date)}</td><td><span class="loan-mini-state">${sanitize(r.kind)}</span></td><td class="right">${money(r.principal,l.currency,2)}</td><td class="right">${money(r.interest,l.currency,2)}</td><td class="right">${money(r.insurance+r.fee,l.currency,2)}</td><td class="right">${money(r.payment,l.currency,2)}</td><td class="right loan-balance-cell">${money(r.balance,l.currency,2)}</td><td>${r.txId?`<button class="loan-delete" data-act="deleteTransaction" data-id="${r.txId}" title="Eliminar movimiento">×</button>`:`<small title="Cálculo contractual; no representa un movimiento bancario">Calculado</small>`}</td></tr>`).join(''):'<tr><td colspan="8"><div class="loan-empty-small">Todavía no has registrado pagos. El préstamo conservará su plan original hasta que añadas el primer movimiento.</div></td></tr>'}</tbody></table></div></div>`;
-}
-function loanSimulator(l,b){
-  let s=b.simOpt,fmt=v=>money(v,l.currency,2),hasStrategy=num(s.amount)>0,bad=b.scenario.error;
-  return `<div class="loan-simulator"><div class="glass-loan loan-sim-inputs"><span class="loan-overline">LABORATORIO DE ABONOS</span><h3>Diseña otro final para tu préstamo.</h3><p>Modifica importes y frecuencia sin tocar el historial financiero real. Para reducir la cuota, el banco debe aprobar la reamortización.</p><div class="loan-sim-fields"><label>Abono adicional (${l.currency})<input id="loanSimAmount" class="field" type="number" min="0" step="0.01" value="${s.amount}"/></label><label>Frecuencia<select id="loanSimFrequency" class="field">${[[0,'Una sola vez'],[1,'Mensual'],[2,'Cada 2 meses'],[3,'Trimestral'],[6,'Semestral'],[12,'Anual']].map(([v,t])=>`<option value="${v}" ${num(s.frequency)===v?'selected':''}>${t}</option>`).join('')}</select></label><label>Comenzar en<input id="loanSimStart" class="field" type="date" value="${s.start||b.actual.next}" min="${today()}"/></label><label>Objetivo<select id="loanSimMode" class="field"><option value="term" ${s.mode==='term'?'selected':''}>Reducir plazo</option><option value="payment" ${s.mode==='payment'?'selected':''}>Reducir cuota (requiere banco)</option></select></label></div><div class="loan-sim-actions"><button class="btn loan-primary" data-act="loanCalculate">Calcular impacto ${icon('arrow')}</button><button class="btn sm ghost" data-act="loanSimReset">Restablecer</button></div></div>
-  <div class="glass-loan loan-sim-results"><span class="loan-overline">IMPACTO PROYECTADO</span><h3>${bad?'Revisa la simulación':'El ahorro posible.'}</h3>${bad?`<p class="loan-error">${sanitize(bad)}</p>`:`<div class="loan-saving">${fmt(b.projectedInterestSavings+b.projectedInsuranceSavings)}</div><p>Menos intereses y seguros futuros respecto a continuar sin nuevos abonos.</p><div class="loan-sim-facts"><div><span>Intereses evitados</span><strong>${fmt(b.projectedInterestSavings)}</strong></div><div><span>Seguros evitados</span><strong>${fmt(b.projectedInsuranceSavings)}</strong></div><div><span>Abonos extra previstos</span><strong>${fmt(b.scenario.extra)}</strong></div><div><span>Meses adelantados</span><strong>${b.monthsAdvanced>0?b.monthsAdvanced+' meses':'Sin cambio'}</strong></div><div><span>Liquidación sin estrategia</span><strong>${prettyDate(b.baseline.end)}</strong></div><div><span>Liquidación con estrategia</span><strong>${prettyDate(b.scenario.end)}</strong></div></div>`}<div class="loan-small-note">La cifra no incluye rendimientos alternativos del dinero ni penalidades de prepago. Las condiciones reales pueden diferir.</div></div></div>${loanComparison(l,b)}<div class="glass-loan loan-visual loan-sim-chart"><div class="loan-panel-title"><h3>Cómo cambiaría el saldo</h3><p>Comparación visual entre plan original, realidad y simulación.</p></div>${loanCurves(b,l)}</div>`;
-}
+
+
+
+
+
+
+
+
+
+
 function loanExportCsv(id){
   let l=loan(id);if(!l)return;let b=loanBundle(l),rows=loanWorkspace.plan==='original'?b.original.rows:loanWorkspace.plan==='strategy'?[...b.actual.rows,...b.scenario.rows]:[...b.actual.rows,...b.baseline.rows];
   let h=['Período','Fecha','Tipo','Saldo inicial','Capital regular','Intereses','Seguro','Comisiones','Abono extraordinario','Pago total','Saldo final'];
@@ -3238,16 +3173,7 @@ function universeSwitch(active){
  const tabs=[['overview','Resumen','home'],['advanced','Analítica avanzada','analytics'],['patrimony','Patrimonio','wallet'],['recurring','Suscripciones','cycle'],['personal','Entre personas','wallet']];
  return `<div class="universe-switch-wrap"><div class="universe-switch" role="tablist" aria-label="Vistas del resumen">${tabs.map(([id,label,ic])=>`<button type="button" role="tab" aria-selected="${active===id}" class="${active===id?'active':''}" data-act="navigate" data-id="${id}">${icon(ic)}<span>${label}</span></button>`).join('')}</div></div>`;
 }
-function accountDetail(a){
- let original=originalAccountDetail(a);if(a.kind==='cash')original=original.replaceAll(`data-act="editAccount" data-id="${a.id}"`,`data-act="editCashWallet" data-id="${a.id}"`).replace('Editar cuenta','Editar efectivo RD$ / US$');
- const dates=Array.from({length:8},(_,i)=>{let dt=dateObj(today());dt.setDate(1);dt.setMonth(dt.getMonth()-(7-i));return dateStr(new Date(dt.getFullYear(),dt.getMonth()+1,0));});
- const values=dates.map(d=>getAccountBalance(a,d));
- const max=Math.max(1,...values),min=Math.min(0,...values),span=Math.max(1,max-min);
- const coords=values.map((v,i)=>[22+i*87,126-(v-min)/span*105]);
- const line=coords.map(([x,y],i)=>`${i?'L':'M'}${x},${y.toFixed(1)}`).join(' ');
- const plot=`<section class="account-history" aria-label="Evolución histórica de la cuenta"><div class="panel-head"><div><h3>Cómo ha evolucionado tu saldo</h3><p class="subtle">Últimos ocho cierres mensuales · ${sanitize(a.currency)} · saldos calculados de tus registros</p></div><span class="pill">Saldo actual ${money(getAccountBalance(a),a.currency,2)}</span></div><svg viewBox="0 0 660 160" class="account-evolution-svg" role="img" aria-label="Evolución del saldo de ${sanitize(a.name)}">${[.25,.5,.75].map(i=>`<line x1="15" x2="653" y1="${126-i*105}" y2="${126-i*105}" stroke="currentColor" opacity=".12" stroke-dasharray="4 6"/>`).join('')}<path d="${line}" fill="none" stroke="#5986eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>${coords.map(([x,y],i)=>`<g tabindex="0" data-chart-tip="${prettyDate(dates[i])}|Saldo: ${money(values[i],a.currency,2)}"><circle cx="${x}" cy="${y}" r="4" fill="#5687ed" stroke="white" stroke-width="2"/><rect x="${x-20}" y="14" width="40" height="123" fill="transparent"/></g><text x="${x}" y="154" text-anchor="middle" font-size="10" fill="currentColor" opacity=".75">${dateObj(dates[i]).toLocaleDateString('es-DO',{month:'short'})}</text>`).join('')}</svg></section>`;
- return original.replace('<div class="gap"></div>',plot+'<div class="gap"></div>');
-}
+
 function cashWalletForm(){
  const aD=db.accounts.find(a=>a.kind==='cash'&&a.currency==='DOP');
  const aU=db.accounts.find(a=>a.kind==='cash'&&a.currency==='USD');
@@ -7328,80 +7254,9 @@ function v11ScheduleAppleSync(delay=80){
   void v212Sync();
  },delay);
 }
-async function v10ResolveConflict(){
- if(!f33User||!f33Active||!f33Api)return false;
- let result=await f33Api.from('finanzas_estado').select('documento,actualizado_en').eq('user_id',f33User.id).maybeSingle();
- if(result.error||!result.data?.documento){v10Protect('error','No se pudo recuperar la versión confirmada. Los cambios locales siguen protegidos.');return false;}
- const remote=result.data;
- if(remote.actualizado_en===f33Stamp){f33Conflict=false;return true;}
- const merged=v360ThreeWayMerge(v360BaseFromStorage(),db,remote.documento);
- if(!merged){f33Conflict=true;f33Dirty=true;v360WritePending();v10Protect('conflict','Dos cambios incompatibles. No se reemplazó ningún movimiento; conserva este dispositivo hasta resolverlos.');return false;}
- db=f33Prepare(merged);f33Stamp=remote.actualizado_en;
- v360RememberBase(remote.documento,f33Stamp);
- f33Conflict=false;f33Dirty=true;v360WritePending();
- v10Protect('saving','Conciliación segura realizada; confirmando en Supabase.');
- return true;
-}
-async function v10PullRemote(){
- if(v10Pulling){v10RemoteQueued=true;return;}
- if(!f33Active||!f33User||!f33Api||!navigator.onLine)return;
- if(f33Saving){v10RemoteQueued=true;return;}
- if(f33Dirty){v10RemoteQueued=true;if(!f33Conflict)f33Flush();return;}
- if(f33Conflict)return;
- v10Pulling=true;const userId=f33User.id;
- try{
-  const check=await f33Api.from('finanzas_estado').select('actualizado_en').eq('user_id',userId).maybeSingle();
-  if(check.error)throw check.error;
-  if(!check.data){
-   v10Protect('error','No existe un documento confirmado para esta cuenta. El estado anterior no se considera vigente.');
-   return;
-  }
-  if(check.data.actualizado_en===f33Stamp||!f33Active||f33User?.id!==userId){if(check.data.actualizado_en===f33Stamp)v402AutoConfirmed();return;}
-  const full=await f33Api.from('finanzas_estado').select('documento,actualizado_en').eq('user_id',userId).maybeSingle();
-  if(full.error)throw full.error;
-  if(!full.data?.documento||!f33Active||f33User?.id!==userId)return;
-  if(f33Dirty||f33Saving){v10RemoteQueued=true;return;}
-  db=f33Prepare(full.data.documento);f33Stamp=full.data.actualizado_en;
-  v360RememberBase(full.data.documento,f33Stamp);
-  window.__f360BaseStamp=f33Stamp;
-  v99Invalidate();render();
-  f33SetStatus('ok','✓ Actualizado desde Supabase');
-  v402AutoConfirmed();
- }catch(err){console.warn('Realtime: no se pudo cargar el estado remoto',err);f33SetStatus('error','No se pudieron comprobar cambios remotos');}
- finally{v10Pulling=false;v10LastPull=Date.now();if(v10RemoteQueued&&!f33Dirty&&!f33Saving){v10RemoteQueued=false;v10SchedulePull(0);}}
-}
-function v10LiveStart(){
- if(!f33Active||!f33Api||!f33User)return;
- if(v10WatchedUser===f33User.id&&v10Channel)return;
- v10LiveStop();v10WatchedUser=f33User.id;
- const uid=f33User.id;
- try{
-  v10Channel=f33Api.channel('finanzas360-direct-'+uid)
-   .on('postgres_changes',{event:'*',schema:'public',table:'finanzas_estado',filter:'user_id=eq.'+uid},()=>v10SchedulePull(0))
-   .on('postgres_changes',{event:'*',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},payload=>{
-     // INSERT/UPDATE/DELETE refresh the visible Apple Pay state on every device.
-     if(typeof v212Load==='function'&&typeof v212Enabled==='function'&&v212Enabled())void v212Load();
-     if(payload.eventType==='INSERT'||payload.new?.status==='pending')v11ScheduleAppleSync(40);
-   })
-   .subscribe(status=>{
-    v402RealtimeStatus(status);
-    if(!f33Active||f33User?.id!==uid)return;
-    if(status==='SUBSCRIBED'){
-     clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=0;
-     v10SchedulePull(0);v11ScheduleAppleSync(100);void v403DeleteAppleEvents();
-    }else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)){
-     // WebSocket reconnection failure must never be mistaken for synchronized data.
-     v11LiveRetryTimer=setTimeout(()=>{
-      v11LiveRetryTimer=0;
-      if(f33Active&&f33User?.id===uid&&navigator.onLine)v10LiveStartForce();
-     },2500);
-    }
-   });
- }catch(err){console.warn('Realtime: se usará comprobación periódica',err)}
- // Realtime + a lightweight 10s server revision check (also recovers from missed events).
- v10ProbeTimer=setInterval(()=>{if(f33Active&&!document.hidden)v10SchedulePull(0)},10000);
- v10SchedulePull(0);
-}
+
+
+
 function v10LiveStartForce(){
  if(!f33Active||!f33User)return;
  // Reset socket/channel, keep server-state validation and polling active.
@@ -7497,10 +7352,7 @@ function v360RememberBase(doc,stamp){
  v360BaseDoc=JSON.parse(JSON.stringify(doc));v360BaseUserId=f33User?.id||null;
  try{localStorage.setItem(v360BaselineKey(),JSON.stringify({documento:doc,stamp:stamp||f33Stamp,at:Date.now()}))}catch(e){console.warn('No se pudo copiar la versión base local.',e)}
 }
-function v360BaseFromStorage(){
- if(v360BaseDoc&&v360BaseUserId===f33User?.id)return v360BaseDoc;
- try{return JSON.parse(localStorage.getItem(v360BaselineKey())||'null')?.documento||null}catch(e){return null}
-}
+
 function v360ThreeWayMerge(base,local,remote){
  if(!base||!local||!remote)return null;
  /* Las listas vacías no existen como filas en el servidor: al releer faltan; se tratan como [] para no inventar conflictos. */
@@ -7735,58 +7587,9 @@ function f33SetStatus(state,label){
 function f33Prepare(doc){/* Las listas vacías no se guardan como filas: al releer faltan y equivalen a []. */if(doc&&typeof doc==='object'&&!Array.isArray(doc)){doc={...doc};for(const k of ['accounts','transactions'])if(doc[k]===undefined)doc[k]=[]}if(!doc||typeof doc!=='object'||!Array.isArray(doc.accounts)||!Array.isArray(doc.transactions))throw Error('El contenido almacenado no tiene el formato de vive el hoy.');
  return migrateData({...init(),...doc,settings:{...init().settings,...(doc.settings||{})}});
 }
-async function f33LoadUser(user){
- const loadToken=++f151CloudLoadToken;
- v10LiveStop();
- f33Phase='loading';f33User=user;v403ExplicitDeletes.clear();v403RestoreApproved();f33Conflict=false;f33Active=false;f33Shell('Conectando tus finanzas…','Estamos consultando tus registros privados en Supabase.','<div class="f33-label">Verificando acceso y base de datos</div>');
- try{
-  let {data,error}=await f33Api.from('finanzas_estado').select('documento,actualizado_en').eq('user_id',user.id).maybeSingle();
-  if(loadToken!==f151CloudLoadToken||f33User?.id!==user.id)return;
-  if(error)throw error;
-  if(data&&data.documento&&Object.keys(data.documento).length){
-    let pending=null;try{pending=JSON.parse(localStorage.getItem(f33CloudKey())||'null')}catch(err){}
-    if(pending?.pending&&pending.documento&&JSON.stringify(pending.documento)!==JSON.stringify(data.documento)){
-      f33PendingBackup=pending;f33RemoteCandidate=data;
-      const base=v360BaseFromStorage();
-      const recovered=pending.baseStamp===data.actualizado_en?pending.documento:v360ThreeWayMerge(base,pending.documento,data.documento);
-      db=f33Prepare(recovered||pending.documento);f33Stamp=data.actualizado_en;
-      v360RememberBase(data.documento,data.actualizado_en);
-      f33Ready();f33Dirty=true;v10Protect('saving');
-      if(recovered){v360WritePending();f33Flush();}
-      else{f33Conflict=true;f33SetStatus('conflict','Dos versiones conservadas; sin sobrescritura');}
-      return;
-    }
-    if(pending?.pending){try{localStorage.removeItem(f33CloudKey())}catch(err){}}
-    db=f33Prepare(data.documento);f33Stamp=data.actualizado_en;v360RememberBase(data.documento,data.actualizado_en);f33Ready();return
-  }
-  f33Stamp=null;
-  let legacy=null;try{legacy=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}
-  const hasData=legacy&&['transactions','loans','cards','recurring','certificates','personalLoans','budgets'].some(k=>Array.isArray(legacy[k])&&legacy[k].length>0);
-  if(!hasData){f33Phase='welcome';await f33FirstStart(false);return;}
-  // Una copia local anterior sin identidad no debe importarse a otra cuenta silenciosamente.
-  f33Welcome();
- }catch(err){if(loadToken!==f151CloudLoadToken||f33User?.id!==user.id)return;f33Phase='failure';f33Shell('No pudimos cargar tus datos.','No se hicieron cambios en Supabase. Puedes reintentar sin perder tus registros.',
- '<div class="f33-error" role="alert">'+sanitize(err.message||String(err))+'</div><div class="f33-auth-actions"><button class="f33-primary" type="button" data-f33="load">Reintentar conexión</button><button class="f33-secondary" type="button" data-f33="logout">Volver a entrar</button></div>');}
-}
-function f33Welcome(){
- f33Phase='welcome';let legacy=null;
- try{legacy=JSON.parse(localStorage.getItem(KEY)||'null')}catch(err){}
- const valid=legacy&&Array.isArray(legacy.accounts)&&Array.isArray(legacy.transactions),count=valid?(legacy.transactions.length||0):0;
- f33Shell('Preparar tu primera sesión.','Tu base privada está vacía. Elige cómo deseas comenzar: no copiaremos tus datos anteriores sin autorización.',
- '<div class="f33-choice"><button class="f33-primary" data-f33="start">Crear vive el hoy vacío</button>'+
- (valid?'<button class="f33-secondary" data-f33="import">Importar los datos de este navegador ('+count+' movimientos)</button>':'')+
- '<span>También podrás importar un respaldo JSON desde Configuración después de entrar.</span><button class="f33-secondary" data-f33="logout">Cancelar</button></div>');
-}
-async function f33FirstStart(importLocal){
- if(f33Phase!=='welcome'||!f33User)return;
- f33Phase='creating';let legacy=null;
- try{legacy=JSON.parse(localStorage.getItem(KEY)||'null')}catch(err){}
- try{db=importLocal&&legacy?f33Prepare(legacy):migrateData(init());
-  let {data,error}=await f33Api.from('finanzas_estado').insert({user_id:f33User.id,documento:db}).select('actualizado_en').single();
-  if(error){if(error.code==='23505'){await f33LoadUser(f33User);return;}throw error;}
-  f33Stamp=data.actualizado_en;f33Ready();
- }catch(err){f33Phase='welcome';f33Welcome();f33Message('No se pudo crear tu información: '+(err.message||err),true)}
-}
+
+
+
 function f33Ready(){
  v99Invalidate();
  if(!f33User||!f33Stamp)return;window.__f360CloudUid=f33User.id;
@@ -7804,60 +7607,7 @@ function f33Ready(){
  Promise.resolve().then(()=>f34UpdateFx(false)).catch(err=>console.warn('Consulta de divisas:',err));
 }
 let f993Fails=0,f993Failed=false;
-async function f33Flush(){
- if(!f33Active||!f33User||!f33Dirty||f33Saving||f33Conflict)return;
- f993Failed=false;
- if(!f33Stamp){f33SetStatus('error','Falta revisión de nube');return}
- if(!navigator.onLine){f33SetStatus('error','Sin conexión · no se muestra un estado sin confirmar');return}
- f33Saving=true;f33Dirty=false;f33SetStatus('saving','Guardando en Supabase…');
- const expected=f33Stamp,updated=new Date().toISOString();
- let f151SnapshotReady=false;
- try{
-  const snapshot=JSON.parse(JSON.stringify(db));f151SnapshotReady=true;
-  // Fail closed if an old browser version attempts to erase multiple records at once.
-  const baseline=v360BaseFromStorage();
-  if(!baseline||!Array.isArray(baseline.transactions)){throw Error('Sin copia base de Supabase: no se permite reemplazar movimientos hasta recargar el estado remoto.');}
-  if(Array.isArray(snapshot.transactions)){
-   const currentIds=new Set(snapshot.transactions.map(t=>String(t.id)));
-   const missing=baseline.transactions.filter(t=>t?.id&&!currentIds.has(String(t.id)));
-   const unapproved=missing.filter(t=>!v403ExplicitDeletes.has(String(t.id)));
-   if(unapproved.length){
-    f33Dirty=true;f33Conflict=true;v10ManualConflict=true;v360WritePending();
-    v10Protect('conflict','Protección de integridad: '+unapproved.length+' movimientos desaparecerían sin una eliminación confirmada. No se escribió en Supabase.');
-    return;
-   }
-  }
-  const {data,error}=await f33Api.from('finanzas_estado')
-   .update({documento:snapshot,actualizado_en:updated})
-   .eq('user_id',f33User.id).eq('actualizado_en',expected)
-   .select('actualizado_en').maybeSingle();
-  if(error)throw error;
-  if(!data){
-   f33Dirty=true;v360WritePending();f33SetStatus('saving','Conciliando cambios de otro dispositivo…');
-   // No recargar la app sobre la copia local: preservar las transacciones pendientes.
-   f33Conflict=true;return;
-  }
-  f33Stamp=data.actualizado_en;window.__f360BaseStamp=f33Stamp;f993Fails=0;
-  v403QueueAppleDeletes(baseline?.transactions||[],snapshot.transactions||[]);
-  v360RememberBase(snapshot,f33Stamp);
-  for(const t of (baseline?.transactions||[]))if(!(snapshot.transactions||[]).some(x=>String(x.id)===String(t.id)))v403ExplicitDeletes.delete(String(t.id));
-  v403SaveApproved();
-  if(!f33Dirty){try{localStorage.removeItem(f33CloudKey())}catch(err){}}
-  else{try{localStorage.setItem(f33CloudKey(),JSON.stringify({pending:true,baseStamp:f33Stamp,documento:db,savedAt:new Date().toISOString()}))}catch(err){}}
-  f33SetStatus(f33Dirty?'saving':v403GetAppleQueue().length?'saving':'ok',f33Dirty?'Confirmando cambios siguientes…':v403GetAppleQueue().length?'Confirmando eliminación Apple Pay…':'✓ Confirmado en Supabase');
-  if(!f33Dirty){v11ScheduleAppleSync(100);void v403DeleteAppleEvents();}
- }catch(err){f33Dirty=true;f993Failed=true;f993Fails++;try{if(typeof v719MarkBusy==='function')v719MarkBusy(err)}catch(_){}f33SetStatus('error','Error de nube · copia local');console.error('No se pudo sincronizar vive el hoy:',err)}
- finally{
-  f33Saving=false;
-  if(f33Conflict&&f33Dirty&&navigator.onLine&&!v10ManualConflict){
-   Promise.resolve().then(()=>v10ResolveConflict()).then(ok=>{if(ok){clearTimeout(f33Timeout);f33Timeout=setTimeout(f33Flush,0)}})
-    .catch(err=>{console.warn('Conciliación:',err);v10Protect('conflict',err.message)});
-  }else if(f151SnapshotReady&&f33Dirty&&!f33Conflict&&navigator.onLine){clearTimeout(f33Timeout);/* V994: ante un error el reintento espera con retroceso exponencial (2s→60s); antes reintentaba a 0 ms en bucle y saturaba Supabase */f33Timeout=setTimeout(f33Flush,f993Failed?Math.min(60000,2000*Math.pow(2,Math.min(5,f993Fails-1))):0)}
-  else if(v10RemoteQueued){v10RemoteQueued=false;v10SchedulePull(100)}
-  if(!f33Dirty&&!f33Saving&&!f33Conflict){v10Protect('ok');}
-  else if(f33Conflict){v10Protect('conflict','El servidor no aceptó un cambio. Se conservó tu copia sin modificar Supabase.');}
- }
-}
+
 async function f33ReloadRemote(){
  if(f33Saving){toast('Se está guardando en Supabase. Vuelve a consultar la nube cuando termine la sincronización.');return;}
  if(f33Dirty&&!confirm('Hay cambios locales que podrían no estar en Supabase. Descarga primero un respaldo JSON. ¿Quieres cargar la última versión de la nube?'))return;
@@ -8384,10 +8134,7 @@ function v40IncomeSection(){
  <div class="v40-grid"><div class="v40-tile"><small>FUENTES ACTIVAS</small><strong>${active.length}</strong><p>${formal.length} empleos formales · ${informal.length} fuentes independientes</p></div><div class="v40-tile"><small>NETO MENSUAL ESTIMADO</small><strong>${money(monthExpected)}</strong><p>Proyección RD$ equivalente; no se suma al balance hasta registrar depósito.</p></div><div class="v40-tile"><small>PRÓXIMO INGRESO</small><strong>${active.length?prettyDate(active.slice().sort((a,b)=>a.nextDue.localeCompare(b.nextDue))[0].nextDue):'—'}</strong><p>Confirmación manual o asiento al sincronizar, según cada fuente.</p></div></div>
  <div class="v40-rows">${db.incomeSchedules.length?db.incomeSchedules.map(s=>v40IncomeRow(s)+v40IncomeBreakdown(s)).join(''):'<div class="v40-empty">Todavía no hay fuentes programadas. Agrega tu empleo o una actividad periódica para construir el calendario de ingresos.</div>'}</div><div class="v40-note">El modo automático registra un asiento contable previsto, no verifica un depósito bancario. Los cambios de salario o reglas fiscales solo afectan vencimientos futuros; cada ingreso generado conserva su desglose y tasa de cambio de registro.</div></section>`;
 }
-function v40IncomeConfirmForm(id){const s=db.incomeSchedules.find(x=>x.id===id);if(!s)return;const p=v40Payroll(s,s.nextDue);
- modal('Confirmar ingreso recibido',`<div class="form-full smart-sub-intro"><span class="smart-kicker">CONCILIACIÓN</span><strong>${sanitize(s.name)}</strong><small>Bruto ${money(p.gross,s.currency,2)} · AFP ${money(p.afp,s.currency,2)} · SFS ${money(p.sfs,s.currency,2)} · ISR ${money(p.isr,s.currency,2)} · otros ${money(p.other,s.currency,2)}</small></div>${formItem('actualNet','Neto depositado según banco',p.net,'number','required min="0.01" step="0.01"')}${formItem('date','Fecha efectiva del depósito',s.nextDue<=today()?s.nextDue:today(),'date','required')}${formItem('note','Comentario (opcional)','','text','maxlength="120"')}<p class="form-full v40-help">Este registro se acreditará a la cuenta seleccionada. No modificará nóminas previas. Puedes ajustar el importe recibido si difiere de la estimación.</p>`,'v40IncomeConfirmForm');
- document.getElementById('v40IncomeConfirmForm').dataset.id=id;
-}
+
 function v40IncomeOccurrence(s,due){
  const parts=(db.transactions||[]).filter(t=>t.type==='income'&&t.incomeScheduleId===s.id&&(
   t.incomeOccurrenceDate===due||(!t.incomeOccurrenceDate&&t.scheduleKey===`income:${s.id}:${due}`)));
@@ -8940,13 +8687,7 @@ function v43DeductionsRow(item={name:'',amount:0}){
  <label class="v43-money"><span class="filter-label">Importe mensual (RD$)</span><input class="field v43-money-input" type="number" min="0" step="0.01" value="${item.amount||''}" placeholder="0.00" /></label>
  <button type="button" class="btn sm ghost v43-remove" data-v43-remove aria-label="Quitar esta deducción">Quitar</button></div>`;
 }
-function v43RowsToData(form){
- return [...form.querySelectorAll('.v43-company-row')].map(row=>{
-  const sel=row.querySelector('.v43-concept-select');
-  const custom=sel?.value==='__custom';
-  return {name:custom?row.querySelector('.v43-custom-name')?.value:sel?.value,amount:row.querySelector('.v43-money-input')?.value};
- }).filter(x=>x.name||Number(x.amount)>0);
-}
+
 function v43SyncCompany(form){
  if(!form||!form.querySelector('.v43-company-deductions'))return;
  const rows=v43RowsToData(form);
@@ -12852,12 +12593,7 @@ function v261ServiceStatus(date){
  if(days<=7)return {name:`En ${days} ${days===1?'día':'días'}`,kind:'near'};
  return {name:prettyDate(date),kind:'later'};
 }
-function v261ServiceSource(r){
- const [type,id]=String(r.source||'').split(':');
- const p=type==='card'?card(id):type==='account'?account(id):null;
- if(!p)return {label:'Origen pendiente de configurar',type};
- return {label:p.name||'Cuenta',type};
-}
+
 function v261BillRow(r,x){
  const st=v261ServiceStatus(x.date);
  return `<button type="button" class="v261-bill-row" data-v261-bill="${sanitize(r.id)}" aria-label="Confirmar pago de ${sanitize(r.name)}">
@@ -12880,17 +12616,7 @@ function v261ServiceFrame(title,subtitle,body,{detail=false,footer=''}={}){
 }
 /* Menú v261 legado retirado; v923ServiceChooser es la entrada única para servicios. */
 
-function v261OpenBill(id){
- const pair=v261PendingServices().find(({r})=>String(r.id)===String(id));
- if(!pair){v146ServiceChooser();return}
- const {r,x}=pair,st=v261ServiceStatus(x.date),source=v261ServiceSource(r),isCard=source.type==='card';
- const amount=money(x.amount,x.currency,2);
- const body=`<div class="v261-detail-identity"><div class="v261-detail-symbol">${v45SubIcon(r,'tiny')}</div><h3>${sanitize(r.name)}</h3><p>${sanitize(r.category||'Servicio recurrente')}</p><span class="v261-due ${st.kind}">${sanitize(st.name)}</span></div>
- <div class="v261-facts"><div><span>Importe previsto</span><b>${amount}</b></div><div><span>Fecha de vencimiento</span><b>${prettyDate(x.date)}</b></div><div><span>Servicio</span><b>${sanitize(r.name)}</b></div><div><span>${isCard?'Tarjeta vinculada':'Origen configurado'}</span><b>${sanitize(source.label)}</b></div></div>
- <p class="v261-detail-note">Antes de registrarlo podrás revisar el importe, el origen del pago y los cargos aplicables. El pago no se enviará al proveedor desde esta pantalla.</p>`;
- const foot=`<button type="button" class="v261-primary" data-v261-continue="${sanitize(r.id)}">Continuar con ${amount} ${icon('arrow')}</button><button type="button" class="v261-secondary" data-v261-back>Volver a servicios</button>`;
- v261ServiceFrame('Detalle de factura','Revisa lo registrado antes de continuar',body,{detail:true,footer:foot});
-}
+
 document.addEventListener('click',function(event){
  const action=event.target.closest?.('[data-v261-bill],[data-v261-back],[data-v261-continue],[data-v261-pay-card],[data-v261-go-loans]');
  if(!action)return;
@@ -13973,13 +13699,7 @@ function v216Period(kind,closed=v216ClosedDay()){
  if(kind==='corte')return {title:'Corte financiero · 7:00 p. m.',start:closed,end:closed};
  return {title:'Acumulado mensual',start:first,end:closed};
 }
-function v216Types(closed=v216ClosedDay()){
- const types=['diario','semanal','quincenal','acumulado','corte'];
- const day=Number(closed.slice(8,10));
- if(day===15)types.push('mitad');
- if(closed===periodEnd(Number(closed.slice(0,4)),Number(closed.slice(5,7))))types.push('cierre');
- return types;
-}
+
 function v216Amounts(start,end){
  let income=0,expense=0,count=0,appleCount=0;const byCategory={};
  const convert=(v,c,rate)=>num(v)*(c==='USD'?num(rate)||num(db.settings.fx):1);
@@ -14063,10 +13783,7 @@ function v216Modal(kind){
  layer.innerHTML=`<section class="v216-report" role="dialog" aria-modal="true" aria-labelledby="v216-title" tabindex="-1"><header class="v216-report-head"><div><div class="v216-eyebrow">vive el hoy · INTELIGENCIA FINANCIERA</div><h2 id="v216-title">${sanitize(p.title)}</h2><p>${prettyDate(p.start)}${p.start===p.end?'':' – '+prettyDate(p.end)} · Corte diario 7:00 p. m. (RD)</p></div><button class="v216-close" type="button" data-v216="close" aria-label="Cerrar informe">×</button></header><nav class="v216-periods" aria-label="Seleccionar período">${chips}</nav><div class="v216-report-body"><div class="v216-metrics"><article><small>Ingresos</small><strong>${v216Currency(a.income)}</strong></article><article><small>Egresos</small><strong>${v216Currency(a.expense)}</strong></article><article><small>Balance del período</small><strong class="${a.net<0?'v216-negative':'v216-positive'}">${v216Currency(a.net)}</strong></article></div><div class="v216-metrics v216-secondary"><article><small>Posición neta estimada actual</small><strong>${v216Currency(position)}</strong></article><article><small>Deudas totales actuales</small><strong>${v216Currency(debt)}</strong><small>Tarjetas, préstamos y deudas personales</small></article><article><small>Vencimientos próximos 7 días</small><strong>${v216Currency(sumDue)}</strong></article></div><section class="v216-report-section"><h3>Evolución financiera</h3><div class="v216-compare"><div><small>Balance del período anterior comparable</small><b>${v216Currency(b.net)}</b></div><div><small>Variación del balance</small><b class="${delta<0?'v216-negative':'v216-positive'}">${v216Currency(delta)} · ${pct}</b></div><div><small>Ingresos del período anterior</small><b>${v216Currency(b.income)}</b></div><div><small>Egresos del período anterior</small><b>${v216Currency(b.expense)}</b></div></div><p class="v216-note">Comparación con los ${Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1} días inmediatamente anteriores. No se contabilizan transferencias internas como ingresos ni pagos de capital como gasto adicional.</p></section><section class="v216-report-section"><h3>Alertas y recomendaciones</h3><ul class="v216-insights">${items}</ul></section><section class="v216-report-section"><h3>Compromisos y vencimientos</h3>${rows||'<p class="v216-note">No hay vencimientos pendientes registrados en los próximos 30 días ni atrasos vigentes.</p>'}<button type="button" class="v216-link" data-v216="payments">Abrir compromisos</button></section><footer class="v216-report-foot"><span>${a.count} movimiento(s) · ${a.appleCount} Apple Pay</span><span>Datos registrados al abrir · este informe se recalcula si editas movimientos</span></footer></div></section>`;
  document.body.append(layer);layer.querySelector('.v216-report')?.focus();document.body.classList.add('v216-modal-open');
 }
-function v216BellItems(){
- const closed=v216ClosedDay();
- return `<div class="v216-notice-title" role="heading" aria-level="3">INFORMES FINANCIEROS · 7:00 P. M.</div>${v216Types(closed).map(k=>{const p=v216Period(k,closed);return `<button type="button" class="v216-notice" data-v216="report" data-kind="${k}"><span class="v216-notice-icon" aria-hidden="true">↗</span><span class="v216-notice-copy"><strong>${sanitize(p.title)}</strong><small>${prettyDate(p.start)}${p.start!==p.end?' – '+prettyDate(p.end):''} · Ver informe ejecutivo</small></span><span aria-hidden="true">›</span></button>`}).join('')}`;
-}
+
 function v216Close(){document.getElementById('v216-layer')?.remove();document.body.classList.remove('v216-modal-open')}
 document.addEventListener('click',e=>{
  const action=e.target?.closest?.('[data-v216]');
