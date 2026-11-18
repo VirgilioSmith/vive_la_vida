@@ -6835,7 +6835,8 @@ for(const pg of ['income','expenses']){INNER_PAGES[pg].tabs=INNER_PAGES[pg].tabs
 const v26OldInnerWrap=innerWrap;
 innerWrap=function(page,view){
  if(page==='payments')return view(); // V301: Visión global has no redundant inner navigator
- if(page==='income'||page==='expenses')return v26OldInnerWrap(page,view); // Restore original analysis, recurring income and movement tabs
+ if(page==='expenses')return view(); // Egresos ya no tiene sub-pestañas: sin la segunda píldora «Egresos»
+ if(page==='income')return v26OldInnerWrap(page,view); // Restore original analysis and recurring income tabs
  if(page==='budget'){
    const mode=ui.innerViews?.budget==='status'?'status':'overview';
    const tab=(id,name)=>`<button type="button" class="v285-budget-tab ${mode===id?'active':''}" data-act="innerView" data-page="budget" data-view="${id}" aria-current="${mode===id?'page':'false'}">${name}</button>`;
