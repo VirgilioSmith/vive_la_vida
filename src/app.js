@@ -5,10 +5,8 @@ const KEY='finanzas360.v1'; // Mismo almacenamiento para conservar los registros
 var v40IncomeConfirmForm,v43RowsToData,v261OpenBill,loanDetail,accountDetail,v10ResolveConflict,v10PullRemote,v10LiveStart,f33LoadUser,f33FirstStart,f33Flush,v216BellItems;
 const MAX_MONEY=9999999999; // tope por importe (el servidor rechaza |valor| > 1e13): evita datos que luego no sincronicen
 const APP_BRAND='vive el hoy'; // Identidad única en componentes JavaScript; los metadatos PWA son estáticos.
-// Wordmark: la "y" de «hoy» es un trazo SVG cuya cola se curva bajo «ho» y forma la sonrisa (sale de la y, no de un lado).
-const BRAND_Y='<svg class="v908-y" viewBox="0 0 90 100" focusable="false" aria-hidden="true"><path d="M8 12 L44 66"/><path d="M84 12 L53 72 C47 88 34 98 12 99 C-10 100 -30 92 -44 78"/></svg>';
-/* compact=true: «hoy» con la sonrisa (riel de escritorio, 54 px); false: «vive el hoy» completo. */
-const brandMark=(compact)=>compact?`<span class="v908-wm is-compact" aria-hidden="true"><span class="v908-b"><span class="v908-ho">ho</span>${BRAND_Y}</span></span>`:`<span class="v908-wm" aria-hidden="true"><span class="v908-a">vive el</span><span class="v908-b">ho${BRAND_Y}</span></span>`;
+/* Marca: «vive el» en tinta y «hoy» en el color de acento; sin ornamentos. */
+const brandMark=()=>`<span class="v908-wm" aria-hidden="true"><span class="v908-a">vive el</span> <span class="v908-b">hoy</span></span>`;
 const EXP=['Alimentación','Vivienda','Servicios básicos','Transporte','Salud','Educación','Familia e hijos','Entretenimiento','Viajes','Compras personales','Tecnología','Seguros','Mascotas','Regalos y donaciones','Suscripciones','Deudas e intereses','Impuestos y comisiones','Negocio','Otros gastos'];
 const INC=['Salario y nómina','Joseo e ingresos adicionales','Negocios y ventas','Servicios profesionales','Inversiones','Ingresos pasivos','Reembolsos','Otros ingresos'];
 const CATALOG={
@@ -577,7 +575,7 @@ const v153DockIcon=(name)=>`<svg viewBox="0 0 24 24" fill="none" stroke="current
 function nav(){
  const one=([id,label,ic,description])=>{let active=id==='overview'?navFamilyForPage(ui.page)==='overview':navFamilyForPage(ui.page)===id;return `<button type="button" class="rail-action ${active?'active':''}" data-act="navigate" data-id="${id}" title="${label}" aria-label="${label}: ${description}" ${active?'aria-current="page"':''}><span class="rail-symbol">${v153RailIcon(ic)}${id==='score'?`<b class="vive-score-badge">${sanitize(String(window.ViveScoreHost?.badge?.()??'—'))}</b>`:''}</span><span class="rail-tooltip" role="presentation"><strong>${label}</strong><small>${description}</small></span></button>`};
  return `<aside class="sidebar rail-sidebar ${ui.mobile?'open':''}" aria-label="Navegación principal">
-   <div class="rail-top"><button type="button" class="vive-p-brand" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="El costo de mañana">${brandMark(true)}</button></div>
+   <div class="rail-top"><button type="button" class="vive-p-brand" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="El costo de mañana"><span class="v908-wm is-compact" aria-hidden="true"><span class="v908-b">hoy</span></span></button></div>
    <div class="rail-main" role="navigation" aria-label="Módulos financieros">${RAIL_DESTINATIONS.filter(d=>d[0]!=='score'||!isMobileViewport()).map(one).join('')}</div>
    <div class="rail-bottom">
      <div class="rail-hairline"></div>
@@ -7510,7 +7508,7 @@ function f33Shell(title,description,content){
   el.classList.toggle('v331-splash-light',v333SplashTheme()==='light');
   el.setAttribute('aria-label','Abriendo vive hoy');
   el.style.setProperty('--v980-accent',v980SplashAccent());
-  el.innerHTML='<div class="v329-splash-content" role="status" aria-live="polite" aria-label="Abriendo vive el hoy"><div class="v329-wordmark">vive el hoy</div></div>';
+  el.innerHTML='<div class="v329-splash-content" role="status" aria-live="polite" aria-label="Abriendo vive el hoy"><div class="v329-wordmark">vive el <span class="v329-hoy">hoy</span></div></div>';
   return;
  }
  v335SplashSince=0;
@@ -7575,25 +7573,13 @@ async function f33Logout(){
  }
  v10LiveStop();v10ManualConflict=false;v10Protect('ok');
  ++f151CloudLoadToken; // invalida cargas remotas aún pendientes antes de cambiar de sesión
- try{if(f33Api)await f33Api.auth.signOut({scope:'local'})}catch(err){console.warn('No se pudo cerrar completamente la sesión:',err)}
+ authCerrandoVoluntario=true;try{if(f33Api)await f33Api.auth.signOut({scope:'local'})}catch(err){console.warn('No se pudo cerrar completamente la sesión:',err)}finally{authCerrandoVoluntario=false}
  /* Sin cambios pendientes (se comprobó arriba): se borran del dispositivo las copias locales de los datos financieros de esta cuenta. */
  try{const uid=f33User&&f33User.id;if(uid)Object.keys(localStorage).filter(k=>k.startsWith('finanzas360.')&&k.indexOf(uid)>-1).forEach(k=>localStorage.removeItem(k))}catch(_){}
  f33User=null;v360BaseDoc=null;v360BaseUserId=null;window.__f360LastPersistPromise=null;f33Stamp=null;f33Active=false;f33Dirty=false;f33Conflict=false;window.__f360CloudUid=null;window.__f360BaseStamp=null;window.__f360CloudPersist=null;
  db=init();document.getElementById('app').innerHTML='';const badge=document.getElementById('f33-cloud-badge');if(badge)badge.hidden=true;
  f33LoginScreen();
 }
-/* Cierre de sesión por inactividad: tras este tiempo sin tocar la pantalla se cierra la sesión local.
-   f33Logout protege los cambios sin sincronizar y no cierra mientras haya una sincronización en curso. */
-const INACTIVIDAD_MAXIMA_MS=30*60*1000;
-const INACTIVIDAD_REVISION_MS=60*1000;
-let ultimaActividadMs=Date.now();
-function revisarInactividad(){
- if(!f33User||Date.now()-ultimaActividadMs<INACTIVIDAD_MAXIMA_MS)return;
- ultimaActividadMs=Date.now();toast('Sesión cerrada por inactividad.');f33Logout();
-}
-['pointerdown','keydown','touchstart','scroll'].forEach(ev=>document.addEventListener(ev,()=>{ultimaActividadMs=Date.now()},{passive:true,capture:true}));
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')revisarInactividad()});
-setInterval(revisarInactividad,INACTIVIDAD_REVISION_MS);
 document.addEventListener('click',async e=>{
  const button=e.target.closest('[data-f33]');if(!button)return;
  const act=button.dataset.f33;
@@ -7603,6 +7589,7 @@ document.addEventListener('click',async e=>{
  else if(act==='export'){exportJson();}
  else if(act==='reload'){await f33ReloadRemote();}
  else if(act==='logout'){await f33Logout();}
+ else if(act==='boot'){await f33Boot();}
 });
 window.addEventListener('online',()=>{if(f33Conflict&&f33User)f33LoadUser(f33User);else if(f33Dirty)f33Flush();f34UpdateFx(false)});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&f33Active)f34UpdateFx(false)});
@@ -7955,26 +7942,55 @@ v10LiveStart=function(){
  v10SchedulePull(0);
 };
 
-async function f33Boot(){
- f33Phase='loading';
- f33Gate();f33Shell('','', '');
- if(!window.supabase?.createClient){f33LoginScreen();f33Message('No pudo cargarse la biblioteca de Supabase. Debes tener conexión a Internet y permitir cdn.jsdelivr.net.',true);return;}
- try{
-  // V720: el cliente controla sus propios reintentos; evita multiplicar los reintentos internos de PostgREST.
-  f33Api=window.supabase.createClient(F33_URL,F33_KEY,{
-   auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true},
-   db:{retry:false}
-  });
-  const {data,error}=await f33Api.auth.getUser();
-   if(error||!data.user){
-    f33LoginScreen();return;
-   }
-   await f33LoadUser(data.user);
- }catch(err){
-  // Evitar exponer detalles internos de autenticación en la interfaz.
+/* Gestión única de la sesión (Supabase Auth). Un solo cliente; la sesión vive en localStorage (persistSession) y se renueva sola (autoRefreshToken).
+   La sesión solo termina por decisión de la persona (Cerrar sesión) o porque el servidor la revoca; un fallo de red o un servicio caído
+   NUNCA cierra la sesión: se informa y se reintenta. Se lee con getSession() (local, renueva si hace falta) y no con getUser() (red en cada arranque). */
+const AUTH_REINTENTOS_MS=[2000,5000,15000,30000,60000];
+let authReintento=0,authTemporizador=0,authArrancando=null,authEscuchando=false,authCerrandoVoluntario=false;
+const authEsTemporal=err=>{if(!err)return false;const st=Number(err.status||0);return err.name==='AuthRetryableFetchError'||st===0||st===429||st>=500||/failed to fetch|load failed|network|timeout|offline|aborted/i.test(String(err.message||''))||(typeof navigator!=='undefined'&&navigator.onLine===false)};
+function authProgramarReintento(){
+ clearTimeout(authTemporizador);
+ const espera=AUTH_REINTENTOS_MS[Math.min(authReintento,AUTH_REINTENTOS_MS.length-1)];authReintento++;
+ authTemporizador=setTimeout(()=>{if(!f33User&&f33Phase!=='ready')f33Boot(true)},espera);
+}
+function authPantallaReintento(){
+ if(f33Phase!=='retry'){f33Phase='retry';
+ f33Shell('No pudimos conectar','Tu sesión sigue guardada en este dispositivo. Reintentaremos en cuanto haya conexión.','<button class="f33-primary" data-f33="boot">Reintentar ahora</button>')}
+ authProgramarReintento();
+}
+function authEscuchar(){
+ if(authEscuchando||!f33Api)return;authEscuchando=true;
+ f33Api.auth.onAuthStateChange((evento)=>{
+  /* El servidor revocó la sesión (o se cerró en otra pestaña): se vuelve al acceso sin perder los cambios pendientes. */
+  if(evento==='SIGNED_OUT'&&!authCerrandoVoluntario&&f33User){
+   if(f33Dirty)v360WritePending();
+   v10LiveStop();f33Active=false;f33User=null;window.__f360CloudUid=null;
+   f33LoginScreen();f33Message('Tu sesión terminó. Inicia sesión de nuevo; tus cambios locales siguen protegidos.',false);
+  }
+ });
+ /* Al volver a la app (desbloquear, cambiar de aplicación, bfcache de Safari) se refresca la sesión sin cerrarla ante errores. */
+ const revisar=()=>{if(document.visibilityState==='hidden')return;f33Api.auth.getSession().catch(()=>{});if(!f33User&&f33Phase==='retry')f33Boot()};
+ document.addEventListener('visibilitychange',revisar);window.addEventListener('pageshow',e=>{if(e.persisted)revisar()});window.addEventListener('online',revisar);
+}
+async function f33Boot(silencioso){
+ if(authArrancando)return authArrancando;
+ authArrancando=(async()=>{
+  if(!silencioso){f33Phase='loading';f33Gate();f33Shell('','', '')}
+  if(!window.supabase?.createClient){f33LoginScreen();f33Message('No pudo cargarse la biblioteca de Supabase. Debes tener conexión a Internet y permitir cdn.jsdelivr.net.',true);return;}
+  if(!f33Api){
+   // V720: el cliente controla sus propios reintentos; evita multiplicar los reintentos internos de PostgREST.
+   f33Api=window.supabase.createClient(F33_URL,F33_KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true},db:{retry:false}});
+   authEscuchar();
+  }
+  let sesion=null,error=null;
+  /* Renovar el token con la red caída hace que el cliente reintente durante minutos: se espera un tiempo razonable y se muestra el aviso, sin cerrar nada. */
+  const claveLocal='sb-'+new URL(F33_URL).hostname.split('.')[0]+'-auth-token';
+  try{const r=await Promise.race([f33Api.auth.getSession(),new Promise(res=>setTimeout(()=>res({demora:true}),8000))]);if(r.demora){let guardada=false;try{guardada=!!localStorage.getItem(claveLocal)}catch(_){}if(guardada){authPantallaReintento();return}}else{sesion=r.data?.session||null;error=r.error||null}}catch(err){error=err}
+  if(sesion?.user){authReintento=0;clearTimeout(authTemporizador);await f33LoadUser(sesion.user);return}
+  if(error&&(authEsTemporal(error)||!error.status)){authPantallaReintento();return}
   f33LoginScreen();
-  f33Message('No se pudo comprobar tu sesión. Revisa la conexión e inténtalo de nuevo.',true);
- }
+ })().finally(()=>{authArrancando=null});
+ return authArrancando;
 }
 window.__f360Test={phase:()=>f33Phase,ready:()=>f33Active,cloudUser:()=>f33User?.id||null,state:()=>db,dirty:()=>f33Dirty,flush:f33Flush,load:f33LoadUser};
 /* Conserva deep link a Pagos sin paneles ni configuraciones push antiguas. */

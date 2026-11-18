@@ -54141,19 +54141,8 @@ html body :is(.v789-picker-row,.v787-product-row).is-unavailable small{font-styl
 html body #app#app .vive-mobile-top>.vive-mobile-brand{display:inline-flex;align-items:center;padding:0 2px 8px;min-height:28px;background:none!important;border:0!important;box-shadow:none!important}
 html body #app#app .vive-mobile-top>.vive-mobile-brand{width:auto!important;min-width:0!important;max-width:none!important;flex:0 0 auto!important;overflow:visible!important}
 
-/* Wordmark v908: «vive el» tinta, «hoy» acento; la cola de la y se curva en sonrisa bajo «ho». */
-.v908-wm{display:inline-flex;align-items:baseline;gap:.26em;line-height:1;font-weight:850;letter-spacing:-.055em;white-space:nowrap;font-size:inherit;overflow:visible}
-.v908-a{color:var(--ink,#14161c);-webkit-text-fill-color:var(--ink,#14161c)}
-.v908-b{display:inline-block;color:var(--v424-accent-strong,#5b57d6);-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)}
-.v908-y{display:inline-block;width:.9em;height:1em;margin-left:.01em;vertical-align:-.36em;overflow:visible;fill:none;stroke:currentColor;stroke-width:16;stroke-linecap:round;stroke-linejoin:round}
-body:is(.theme-black,.theme-dark) .v908-a{color:#f4f6fb;-webkit-text-fill-color:#f4f6fb}
-body:is(.theme-black,.theme-dark) .v908-b{color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff);-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff)}
 html body #app#app .vive-mobile-top>.vive-mobile-brand{overflow:visible!important;max-width:none!important;width:auto!important;flex:0 0 auto}
-html body #app#app .vive-mobile-top .v908-wm{font-size:21px!important}
-html body #app#app .mobile-bar .v908-wm,html body #app#app .f33-label .v908-wm{font-size:20px!important}
 .f33-label{display:flex;align-items:center;margin-bottom:10px}
-.f33-label .v908-wm{margin-bottom:.35em}
-.vive-mobile-top .v908-wm *::after,.vive-mobile-top .v908-wm::after,.vive-mobile-top>.vive-mobile-brand>span.v908-wm::after{content:none!important}
 /* v909 · Móvil iOS: campos sin desborde ni solapes (fecha/mes ajustados al ancho; etiquetas nunca recortadas, aunque el texto del sistema sea grande). */
 #modal-root form :is(input[type=date],input[type=month],input[type=time],input[type=datetime-local]){box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;-webkit-appearance:none;appearance:none;display:block;text-align:left;overflow:hidden}
 #modal-root form :is(input[type=date],input[type=month])::-webkit-date-and-time-value{text-align:left;min-width:0;margin:0}
@@ -54163,11 +54152,8 @@ html body #app#app .mobile-bar .v908-wm,html body #app#app .f33-label .v908-wm{f
 #modal-root form.v901-steps :is(label,.form-full)>:is(span,.filter-label,.v1110-lab){display:block;line-height:1.4;overflow:visible;white-space:normal;margin-bottom:2px}
 #modal-root form.v901-steps :is(label,.form-full){height:auto!important;gap:8px!important;overflow:visible}
 #modal-root form.v901-steps :is(input,select,textarea,.v1028-picker-btn){flex-shrink:0}
-html body #app#app .v908-wm .v908-a{color:#14161c!important;-webkit-text-fill-color:#14161c!important}
-html body:is(.theme-black,.theme-dark) #app#app .v908-wm .v908-a{color:#f4f6fb!important;-webkit-text-fill-color:#f4f6fb!important}
-html body #app#app .vive-mobile-top .v908-wm{font-size:23px!important}
 /* v910 · 320 px: la fecha junto al logo cede su sitio a los cuatro botones (antes empujaba el engranaje 24 px fuera de pantalla). */
-@media(max-width:350px){html body #app#app .vive-mobile-top>.v146-mobile-date{display:none!important}}
+
 
 /* v911 · Suscripciones (Agenda · Cartera · Historial · Análisis). Acento dinámico; Claro #FFFFFF y Black #000000. */
 html body #app#app .v911{--s-ink:#0f1115;--s-muted:#6b7385;--s-line:rgba(15,17,21,.1);--s-surface:#fff;--s-soft:rgba(15,17,21,.045);--v911-tint:#fff;--v911-track:rgba(0,0,0,.06);--ac:var(--v424-accent-strong,#5b57d6);display:flex;flex-direction:column;gap:14px;width:100%;max-width:640px;margin:0 auto;padding:6px 0 22px;color:var(--s-ink);box-sizing:border-box;min-width:0}
@@ -54333,18 +54319,25 @@ html body #app#app #page .v911 .v911-pill{color:var(--ac)!important;background:c
 html body:is(.theme-black,.theme-dark) #app#app .v911{--s-ink:#f4f6fb;--s-muted:#9aa3b2;--s-line:rgba(255,255,255,.14);--s-surface:#050506;--s-soft:rgba(255,255,255,.07);--v911-tint:#000;--v911-track:rgba(255,255,255,.1)}
 html body:is(.theme-black,.theme-dark) #app#app .v911 .v911-card{box-shadow:0 0 0 1px rgba(255,255,255,.03)}
 
-/* v912 · Riel de escritorio: «hoy» compacto (ho en tinta, y con su sonrisa en el acento), centrado y sin recortes. */
 html body #app#app .rail-top .vive-p-brand{transform:none!important;top:0!important;margin:0!important;height:56px!important;width:54px!important;display:flex!important;align-items:center;justify-content:center;overflow:visible!important;padding:0!important}
 html body #app#app .rail-top .vive-p-brand:hover{transform:scale(1.05)!important}
-html body #app#app .rail-top .v908-wm{font-size:23px!important;gap:0;margin-top:-6px}
-html body #app#app .rail-top .v908-b,html body #app#app .rail-top .v908-b .v908-y{color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:currentColor!important}
-html body #app#app .rail-top .v908-ho{color:var(--ink,#14161c)!important;-webkit-text-fill-color:var(--ink,#14161c)!important}
-html body:is(.theme-black,.theme-dark) #app#app .rail-top .v908-ho{color:#f4f6fb!important;-webkit-text-fill-color:#f4f6fb!important}
-html body:is(.theme-black,.theme-dark) #app#app .rail-top .v908-b .v908-y{color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff)!important}
-html body #app#app .rail-top .v908-wm{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,"Segoe UI",Arial,sans-serif!important;font-weight:850!important;letter-spacing:-.055em!important;font-style:normal!important;line-height:1!important}
-html body #app#app .rail-top .v908-y{stroke-width:12.5}
-html body #app#app .rail-top .v908-wm{font-size:28px!important;margin-top:-4px}
-html body #app#app .rail-top .v908-y{stroke-width:11}
-html body #app#app .v908-wm .v908-y,html body #app#app .v908-wm .v908-y path{fill:none!important;stroke:currentColor!important}
-html body #app#app .rail-sidebar .rail-top .vive-p-brand .v908-wm svg.v908-y path,html body #app#app .rail-top .vive-p-brand .v908-wm svg.v908-y{fill:none!important;stroke:currentColor!important;stroke-width:11px!important}
-html body #app#app#app .v908-wm svg.v908-y,html body #app#app#app .v908-wm svg.v908-y path{fill:none!important;stroke:currentColor!important}
+
+/* Marca (v913): «vive el» en tinta y «hoy» en el color de acento, tipografía del sistema, sin dibujos. */
+.v908-wm{display:inline-flex;align-items:baseline;gap:.26em;line-height:1;font-weight:850;letter-spacing:-.055em;white-space:nowrap;font-size:inherit}
+html body #app#app .v908-wm .v908-a{color:#14161c!important;-webkit-text-fill-color:#14161c!important}
+html body #app#app .v908-wm .v908-b{color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important}
+html body:is(.theme-black,.theme-dark) #app#app .v908-wm .v908-a{color:#f4f6fb!important;-webkit-text-fill-color:#f4f6fb!important}
+html body:is(.theme-black,.theme-dark) #app#app .v908-wm .v908-b{color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff)!important;-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff)!important}
+html body #app#app .vive-mobile-top>.vive-mobile-brand{overflow:visible!important;max-width:none!important;width:auto!important;flex:0 0 auto}
+html body #app#app .vive-mobile-top .v908-wm{font-size:23px!important}
+html body #app#app .mobile-bar .v908-wm,html body #app#app .f33-label .v908-wm{font-size:20px!important}
+.f33-label{display:flex;align-items:center;margin-bottom:10px}
+.vive-mobile-top .v908-wm *::after,.vive-mobile-top .v908-wm::after,.vive-mobile-top>.vive-mobile-brand>span.v908-wm::after{content:none!important}
+html body #app#app .rail-top .vive-p-brand{transform:none!important;top:0!important;margin:0!important;height:56px!important;width:54px!important;display:flex!important;align-items:center;justify-content:center;overflow:visible!important;padding:0!important}
+html body #app#app .rail-top .v908-wm{font-size:22px!important;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,"Segoe UI",Arial,sans-serif!important;font-style:normal!important}
+@media(max-width:350px){html body #app#app .vive-mobile-top>.v146-mobile-date{display:none!important}}
+/* Pantalla de apertura: «vive el» en tinta (negro en Claro, blanco en Black) y «hoy» en el acento. */
+.f33-gate.v329-splash .v329-wordmark{color:#0f1115!important}
+.f33-gate.v329-splash:not(.v331-splash-light) .v329-wordmark{color:#f8fafc!important}
+.f33-gate.v329-splash .v329-wordmark .v329-hoy{color:var(--v980-accent,#6d69f1)!important}
+.f33-gate.v329-splash:not(.v331-splash-light) .v329-wordmark .v329-hoy{color:color-mix(in srgb,var(--v980-accent,#6d69f1) 62%,#fff)!important}
