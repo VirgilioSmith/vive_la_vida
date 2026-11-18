@@ -2532,14 +2532,9 @@ const deskLimit=Math.max(100,ui.v51DeskVisible||100);
 let rows=tr.slice(0,deskLimit).map(t=>`<tr><td>${prettyDate(t.date)}</td><td><button type="button" class="v9-ledger-detail" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalle de ${sanitize(v922MovementHeading(t))}"><strong>${sanitize(v922MovementHeading(t))} ${v213ApplePayNote(t).badgeInNote?'':v213ApplePayBadge(t)}</strong></button><div class="subtitle">${sanitize(v922MovementProduct(t))}</div>${v213ApplePayNote(t).html}${v423VisibleTagMarkup(t)}${t.editedAt?`<span class="tx-edited" title="Corregido ${sanitize(prettyDate(t.editedAt.slice(0,10)))}">Editado</span>`:''}${v143CostOnlyChannel(t)}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td><span class="v221-state ${t.reviewed===true?'cleared':'review'}">${t.reviewed===true?'✓ Conciliado':'● Por revisar'}</span></td><td>${sanitize(v922MovementProduct(t))}</td><td>${v255TransactionCategoryCell(t)}</td><td class="right money ${['income','card_reward','bank_reward'].includes(t.type)?'positive':''}">${txDisplay(t)}</td><td class="v265-balance-cell">${v265BalanceHTML(t)}</td><td class="right"><div class="tx-actions"><button class="btn sm ${t.reviewed?'reviewed-yes':'ghost'} tx-review" data-act="toggleReview" data-id="${t.id}" title="${t.reviewed?'Marcar como pendiente de revisar':'Marcar registro como revisado'}">${t.reviewed?'✓':'○'}</button><button class="btn sm soft" data-act="editTransaction" data-id="${t.id}" title="Corregir este registro sin duplicarlo">Editar</button><button class="btn sm ghost danger-link" data-act="deleteTransaction" data-id="${t.id}" title="Eliminar movimiento definitivamente">${icon('trash')}</button></div></td></tr>`+v143CostDesktop(t)).join('');
 return `<section class="ledger-world section" id="ledger-world"><div class="section-title"><div><span class="summary-tag">HISTORIAL ÚNICO · ${tr.length} MOVIMIENTOS · ${v221Drafts.length} BORRADORES</span><h2>Movimientos y estados</h2><p>Revisa, concilia y completa borradores desde el mismo historial. Cada estado indica su efecto contable.</p></div><button class="btn" data-act="newTransaction">${icon('plus')} Registrar movimiento</button></div><div class="panel no-pad ledger-card">${tools}<div class="v51-mobile-ledger">${(v221DraftMobile+mobileCards)||'<div class="empty">No hay movimientos con estos filtros.</div>'}${tr.length>Math.max(12,ui.v51LedgerVisible||18)?`<button type="button" class="v51-ledger-more" data-act="v51LedgerMore">Ver más movimientos · ${Math.max(0,tr.length-Math.max(12,ui.v51LedgerVisible||18))} restantes</button>`:''}</div><div class="table-wrap ledger-scroll"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Operación</th><th>Estado</th><th>Producto / persona</th><th>Categoría</th><th class="right">Importe</th><th>Balance</th><th class="right">Gestión</th></tr></thead><tbody>${(v221DraftRows+rows)||'<tr><td colspan="9"><div class="empty">No hay movimientos con estos filtros.</div></td></tr>'}</tbody></table></div>${tr.length>deskLimit?`<button type="button" class="v51-ledger-more v51-desk-more" data-act="v51DeskMore">Ver más movimientos · ${tr.length-deskLimit} restantes</button>`:''}</div>${v51RemovedMovementsPanel()}<p class="footnote">Los renglones de impuestos y comisiones son desgloses vinculados a su operación; ya están incluidos en el débito de la cuenta y en el gasto. Para modificarlos, edita la operación principal. Las marcas de revisión no modifican importes; los borradores no afectan saldos hasta completar su registro. Los consumos con tarjetas se reconocen una sola vez; los pagos y transferencias no duplican gastos. Cuando corrijas una operación vinculada a un corte bancario, revisa la conciliación contra el estado oficial.</p></section>`}
 
-function subscriptionAnalysis(){const active=v339ActiveRecurring();const mon=r=>v339MonthlyEquivalent(r.amount,r.currency,r.frequency);
-const val=active.map(r=>({...r,monthly:mon(r)})).sort((a,b)=>b.monthly-a.monthly);let total=val.reduce((s,r)=>s+r.monthly,0),annual=total*12;let cumulative=0;
-let topCount=0;for(let r of val){if(total>0&&cumulative/total<.8){cumulative+=r.monthly;topCount++}}
-let by={};for(let r of val){let key=r.category||'Otros gastos';(by[key]??={label:key,amount:0,count:0}).amount+=r.monthly;by[key].count++}
-let cat=Object.values(by).sort((a,b)=>b.amount-a.amount);const max=val[0]?.monthly||1;let running=0;
-return `<section class="subscription-world section"><div class="subscription-hero"><div><span class="summary-tag">INTELIGENCIA DE SUSCRIPCIONES</span><h2>¿Dónde se va tu dinero recurrente?</h2><p>Composición anualizada, peso relativo y concentración 80/20 de tus servicios activos.</p></div><span class="sub-total-label">${money(total)}<small>equivalente mensual · RD$</small></span></div><div class="sub-analysis-stats"><div><small>GASTO ANUAL EQUIVALENTE</small><strong>${money(annual)}</strong></div><div><small>CONCENTRACIÓN HASTA 80%</small><strong>${topCount} de ${val.length}</strong></div><div><small>MAYOR SUSCRIPCIÓN</small><strong>${val[0]?sanitize(val[0].name):'Sin datos'}</strong></div></div><div class="sub-analysis-layout"><section class="panel"><div class="panel-head"><h3>Ranking y Pareto</h3><span class="pill">Ordenadas por impacto</span></div>${val.length?`<div class="table-wrap"><table class="sub-pareto"><thead><tr><th>Suscripción</th><th>Grupo</th><th class="right">Mensual</th><th class="right">Peso</th><th class="right">Acumulado</th></tr></thead><tbody>${val.map(r=>{let share=total?r.monthly/total*100:0;running+=share;return `<tr tabindex="0" data-chart-tip="${sanitize(r.name)}|Mensual: ${money(r.monthly)}|Peso: ${share.toFixed(1)}%|Acumulado: ${Math.min(100,running).toFixed(1)}%"><td><span class="v41-ranking-name">${v45SubIcon(r,'tiny')}<strong>${sanitize(r.name)}</strong></span><div class="sub-bar"><span style="width:${Math.min(100,r.monthly/max*100)}%"></span></div></td><td>${sanitize(r.category)}</td><td class="right">${money(r.monthly)}</td><td class="right">${share.toFixed(1)}%</td><td class="right">${Math.min(100,running).toFixed(1)}%</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">Registra suscripciones para ver su ranking y peso porcentual.</div>'}<p class="footnote">80% de gasto equivale a las primeras ${topCount} suscripciones del ranking; el número puede ser mayor o menor que 20% del catálogo.</p></section><section class="panel"><div class="panel-head"><h3>Distribución por categoría</h3><span class="pill">${cat.length} grupos</span></div>${cat.length?cat.map(c=>`<div class="sub-composition" tabindex="0" data-chart-tip="${sanitize(c.label)}|Mensual: ${money(c.amount)}|Anual: ${money(c.amount*12)}|Participación: ${total?(c.amount/total*100).toFixed(1):0}%"><div class="split"><span>${sanitize(c.label)} <small>(${c.count})</small></span><strong>${total?(c.amount/total*100).toFixed(1):'0.0'}%</strong></div><div class="sub-bar wide"><span style="width:${total?c.amount/total*100:0}%"></span></div><small>${money(c.amount)} al mes · ${money(c.amount*12)} al año</small></div>`).join(''):'<div class="empty">Los grupos aparecerán al registrar suscripciones.</div>'}</section></div><p class="footnote">La equivalencia mensual se obtiene de la frecuencia contractual y de la tasa manual RD$/US$ configurada; no significa que el cargo se haya cobrado.</p></section>`}
 
-function recurring(){const active=v339ActiveRecurring(),perMonth=v80RecurringMonthly();let all=v99PendingForPeriod(ui.month),due=all.filter(x=>x.date<today());return `<div class="section-title"><div><h2>Suscripciones y compromisos</h2><p>Suscripciones, servicios, pagos de tarjetas y cuotas de préstamos.</p></div><button class="btn" data-act="addRecurring">${icon('plus')} Nueva suscripción o pago</button></div><div class="grid kpis">${shellKpi('Costo mensual equivalente',money(perMonth),'Suscripciones, no cuotas de deuda','receipt')}${shellKpi('Compromisos vencidos',String(due.length),'Cuentas por atender','clock',due.length?'negative':'')}${shellKpi('Próximos 30 días',money(all.filter(a=>a.date>=today()&&a.date<=addDays(today(),30)).reduce((s,x)=>s+fx(x.amount,x.currency),0)),'Tarjetas, cuotas y suscripciones','calendar')}</div><div class="v149-rec-unified"><div><strong>${icon('calendar')} Una sola agenda de pagos</strong><p>Los servicios y suscripciones guardados aparecen en Próximos pagos cuando corresponde. Cuando se registra su pago, se actualiza el compromiso sin duplicarlo.</p></div><button class="btn sm soft" data-act="navigate" data-id="payments">Abrir Próximos pagos ${icon('arrow')}</button></div><div class="grid columns section"><div class="panel v46-subs-panel"><div class="panel-head v46-subs-head"><div><h3>Mis suscripciones y servicios</h3><p>Identidad visual, próximo cargo y control de cada servicio.</p></div><button class="btn sm soft" data-act="addRecurring">${icon('plus')} Añadir</button></div><div class="v46-subscriptions-grid">${db.recurring.length?db.recurring.map(r=>`<article data-v149-rec-id="${sanitize(r.id)}" class="v46-subscription-card ${r.active===false?'is-paused':''}"><div class="v46-sub-card-top">${v45SubIcon(r,'small')}<div class="v46-sub-card-title"><strong>${sanitize(r.name)}</strong><small>${sanitize(r.category||'Suscripciones')}${r.subcategory?' · '+sanitize(r.subcategory):''}</small></div><span class="v46-sub-dot ${r.active===false?'paused':''}" title="${r.active===false?'Pausada':'Activa'}"></span></div><div class="v46-sub-card-cost">${money(r.amount,r.currency,2)}<small>${({monthly:'Mensual',weekly:'Semanal',annual:'Anual',quarterly:'Trimestral'})[r.frequency]||'Periódico'}</small></div><div class="v46-sub-card-next"><span>${icon('calendar')} ${r.active===false?'En pausa':'Próximo '+prettyDate(r.nextDue)}</span><span>${(r.postingMode||'confirm')==='auto'?'Registro automático':'Confirmación manual'}</span></div><div class="v46-sub-card-actions"><button class="btn sm ghost" data-act="editRecurring" data-id="${r.id}">${icon('edit')} Editar</button><button class="btn sm ${r.active===false?'soft':'ghost'}" data-act="toggleRecurring" data-id="${r.id}">${r.active===false?'Activar':'Pausar'}</button></div></article>`).join(''):'<div class="empty">Añade tus suscripciones y elige un ícono propio o del catálogo.</div>'}</div></div></div>${subscriptionAnalysis()}<div class="notification section">“Registrar pago” crea el movimiento efectivo (en cuenta o tarjeta) y adelanta el próximo vencimiento de la suscripción. Los cargos se registran automáticamente solo en los servicios configurados para ello y al abrir o sincronizar la aplicación. Los demás exigen confirmación.</div>`}
+
+
 
 function ensureBudgetVersions(){
  if(!Array.isArray(db.budgetVersions)) db.budgetVersions=(db.budgets||[]).map(b=>({id:uuid(),category:b.category,subcategory:b.subcategory||'',amount:num(b.amount),effectiveFrom:'0001-01',legacy:true,createdAt:b.createdAt||null}));
@@ -4001,7 +3996,7 @@ document.addEventListener('change', event=>{
  ui.month=p;ui.year=Number(p.slice(0,4));render();
 });
 
-const pages={score:()=>(window.ViveScoreHost&&!isMobileViewport()?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,categories,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,recurring,budget,annual,analytics,settings};
+const pages={score:()=>(window.ViveScoreHost&&!isMobileViewport()?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,categories,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,budget,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -12124,30 +12119,7 @@ function v119BaselineRaw(horizon=30){
   dues:rnd(events.filter(e=>e.type==='expense').reduce((a,e)=>a+e.amount,0))};
 }
 function v119Baseline(horizon=30){return v99Memo('v119:baseline:'+today()+':'+horizon,()=>v119BaselineRaw(horizon))}
-function v119Decision(amount,scenario,horizon=30){
- const baseline=v119Baseline(horizon),value=Math.max(0,rnd(amount)),start=today();
- const nextIncome=baseline.events.find(e=>e.type==='income'&&e.date>start)?.date||null;
- let allocations=[],note='';
- if(scenario==='next'){
-  if(nextIncome)allocations=[{date:nextIncome,amount:value}];
-  else note='No hay un próximo ingreso programado verificable; no se puede simular la espera.';
- }else if(scenario==='split'){
-  if(nextIncome){const first=rnd(value/2);allocations=[{date:start,amount:first},{date:nextIncome,amount:rnd(value-first)}]}
-  else note='No hay próximo ingreso programado para dividir el pago.';
- }else allocations=[{date:start,amount:value}];
- if(note)return {...baseline,valid:false,note,nextIncome,amount:value,scenario};
- const extra=new Map();for(const x of allocations)extra.set(x.date,rnd((extra.get(x.date)||0)+x.amount));
- let minimum=baseline.initial,ending=baseline.initial,critical=null,missingDays=0;const points=[];
- for(const p of baseline.dayByDay){ending=rnd(p.balance-allocations.filter(x=>x.date<=p.date).reduce((sum,x)=>sum+x.amount,0));
-  if(ending<minimum)minimum=ending;
-  if(ending<0){missingDays++;if(!critical)critical=p.date}
-  points.push({...p,balance:ending,decision:extra.get(p.date)||0});
- }
- const extraRisk=rnd(Math.max(0,-minimum)-Math.max(0,-baseline.minimum));
- return {...baseline,valid:true,note:'',nextIncome,amount:value,scenario,
-   projectedEnding:ending,projectedMinimum:rnd(minimum),projectedCritical:critical,
-   projectedMissingDays:missingDays,extraRisk,points};
-}
+
 
 
 /* V143: transparencia para El costo de mañana. Las deudas totales son
@@ -15383,44 +15355,11 @@ pages.payments=function(){
 
 /* V302 | Mobile Subscriptions, reference-grounded. Existing financial
    functions and all editing/payment/history routes are deliberately reused. */
-function v302MobileSubscriptions(){
- const all=(db.recurring||[]).slice();
- const active=v339ActiveRecurring();
- const paused=all.filter(r=>!r.archived&&r.active===false);
- const monthly=typeof v80RecurringMonthly==='function'?v80RecurringMonthly():active.reduce((n,r)=>n+fx(num(r.amount),r.currency||'DOP')*({weekly:52/12,monthly:1,quarterly:1/3,annual:1/12}[r.frequency]||1),0);
- const year=monthly*12;
- const due=v99PendingForPeriod(ui.month).filter(p=>p.kind==='recurring').reduce((total,p)=>total+fx(num(p.amount),p.currency||'DOP'),0);
- const freq=r=>({monthly:'Mensual',weekly:'Semanal',quarterly:'Trimestral',annual:'Anual'})[r.frequency]||'Periódico';
- const next=active.slice().sort((a,b)=>String(a.nextDue||'9999').localeCompare(String(b.nextDue||'9999')));
- const mosaic=active.slice(0,7).map((r,i)=>`<span class="v302-brand v302-brand-${i%7}" title="${sanitize(r.name)}" aria-hidden="true">${v45SubIcon(r,'tiny')}</span>`).join('');
- const actualHistory=(db.transactions||[]).filter(t=>t&&t.recurringId&&['expense','card_charge'].includes(t.type)&&t.date).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
- const historyRows=actualHistory.slice(0,8).map(t=>{
-  const service=all.find(r=>String(r.id)===String(t.recurringId));
-  return `<div class="v305-history-row"><span class="v305-history-icon">${service?v45SubIcon(service,'small'):icon('receipt')}</span><span class="v305-history-info"><strong>${sanitize(service?.name||t.note||'Pago recurrente')}</strong><small>${prettyDate(t.date)} · ${t.reviewed===false?'Pendiente de revisión':'Registrado'}</small></span><b>${money(t.amount,t.currency||service?.currency||'DOP',2)}</b></div>`;
- }).join('');
- const serviceCard=(r,pausedFlag=false)=>`<details class="v302-service" data-v302-service-id="${sanitize(r.id)}">
-   <summary class="v302-service-summary"><span class="v302-service-icon">${v45SubIcon(r,'small')}</span><span class="v302-service-info"><strong>${sanitize(r.name)}</strong><small>${pausedFlag?'En pausa':prettyDate(r.nextDue)} · ${freq(r)}</small></span><b>${money(r.amount,r.currency,2)}</b>${icon('arrow')}</summary>
-   <div class="v302-service-details"><div><span>Categoría</span><b>${sanitize(r.category||'Suscripciones')}</b></div><div><span>Próximo cargo</span><b>${pausedFlag?'Pausado':prettyDate(r.nextDue)}</b></div><div class="v302-service-actions"><button type="button" data-act="editRecurring" data-id="${sanitize(r.id)}">${icon('edit')} Editar</button><button type="button" data-act="toggleRecurring" data-id="${sanitize(r.id)}">${pausedFlag?'Reactivar':'Pausar'}</button>${!pausedFlag?`<button type="button" data-act="payRecurring" data-id="${sanitize(r.id)}">Registrar pago</button>`:''}</div></div>
-  </details>`;
- const pausedPanel=paused.length?`<details class="v302-paused"><summary>Servicios en pausa <span>${paused.length}</span>${icon('chevron-down')}</summary><div>${paused.map(r=>serviceCard(r,true)).join('')}</div></details>`:'';
- return `<section class="v302-subs-app" aria-label="Resumen de suscripciones">
-  <header class="v302-subs-head"><h1>Suscripciones</h1></header>
-  <div class="v302-subs-stats"><article class="v302-cost-card"><div class="v302-cost-title"><span class="v302-mini-icon">${icon('calendar')}</span> Por pagar este mes</div><strong>${money(due)}</strong><div class="v302-cost-rule"></div><div class="v302-cost-secondary"><span>Equivalente anual</span><b>${money(year)}</b></div></article>
-  <button type="button" class="v302-brands-card v305-actives-card" data-v305-actives-toggle="1" aria-expanded="false" aria-controls="v305-actives-breakdown" aria-label="Ver desglose de ${active.length} suscripciones activas"><span class="v302-brand-cluster">${mosaic||'<span class="v302-brand v302-brand-empty">+</span>'}</span><span class="v302-brands-bottom"><strong>${active.length}</strong><span>Activas</span><i></i>${icon('chevron-down')}</span></button></div>
-  <section id="v305-actives-breakdown" class="v305-actives-breakdown" hidden aria-label="Desglose de suscripciones activas"><header><strong>Servicios activos</strong><span>${active.length} ${active.length===1?'servicio':'servicios'}</span></header>${active.length?`<div class="v305-active-list">${active.map(r=>serviceCard(r)).join('')}</div>`:'<p class="v302-subs-empty">No tienes suscripciones activas.</p>'}</section>
-  <button type="button" class="v302-subs-add" data-act="addRecurring">${icon('plus')} Añadir suscripción</button>
-  <section class="v302-subs-upcoming"><h2>Próximos cobros</h2>${next.length?`<div class="v302-subs-list">${next.map(r=>serviceCard(r)).join('')}</div>`:'<p class="v302-subs-empty">Aún no hay servicios activos.</p>'}</section>
-  <section class="v305-history" aria-label="Historial de cobros"><h2>Historial de cobros</h2>${historyRows?`<div class="v305-history-list">${historyRows}</div>`:'<p class="v302-subs-empty">Todavía no hay cobros de suscripciones registrados.</p>'}</section>
-  ${pausedPanel}
- </section>`;
-}
+
 /* Preserve the original historical views and analysis in an optional disclosure.
    Its actions, forms and financial calculations remain unchanged. */
-const v302HistoricalRecurringPage=pages.recurring;
-pages.recurring=function(){
- if(!isMobileViewport())return v302HistoricalRecurringPage();
- return `<div class="v302-subs-mobile">${v302MobileSubscriptions()}<details class="v302-subs-history"><summary>Ver historial completo y análisis ${icon('chevron-down')}</summary><div class="v301-recurring-original">${v302HistoricalRecurringPage()}</div></details></div>`;
-};
+
+
 
 /* V305: El KPI Activas muestra el desglose bajo las tarjetas; no cambia datos ni rutas. */
 document.addEventListener('click',function(event){
@@ -15488,10 +15427,7 @@ document.addEventListener('click',event=>{
  event.preventDefault();event.stopImmediatePropagation();
  ui.page='overview';ui.mobile=false;render();window.scrollTo(0,0);
 },true);
-function v242MobileCircles(liquid,debt,net,comparison){
- const circle=(id,label,value,prior,risk=false,featured=false)=>`<button type="button" class="ff-bubble ${featured?'featured':''} ${id==='net'&&value<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="${id}" data-chart-tip="${label}|Valor exacto: ${money(value,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(value)}</span>${v105BubblePercent(value,prior,comparison,risk)}<small>${label}</small></button>`;
- return `<section class="v242-mobile-web-position ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera, diseño de tres círculos"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${net<-.005?'v176-net-negative':net>.005?'v176-net-positive':''}">${money(net,'DOP',2)}</button><p>Liquidez + certificados + por cobrar − deudas totales</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles">${circle('liquidity','Liquidez',liquid,comparison.position?.liquid)}${circle('debt','Deudas totales',debt,comparison.position?.debt,true,true)}${circle('net','Posición neta',net,comparison.position?.net)}</div></section>`;
-}
+
 document.addEventListener('click',event=>{
  const sect=event.target.closest('[data-v242-section]'),back=event.target.closest('[data-v242-back]'),choice=event.target.closest('[data-v242-style]');
  if(!sect&&!back&&!choice)return;
@@ -15840,29 +15776,7 @@ function v245CleanPayments(){
  headline.append(main,sub);
  tiles.remove(); // V283: no crear otro bloque de vistas o KPIs redundantes.
 }
-function v245CleanRecurring(){
- const parent=document.querySelector('.v26-internal[data-module="recurring"] .v26-body');
- if(!parent||parent.dataset.v245Ready)return;
- parent.dataset.v245Ready='1';
- // Only the overview receives a new hero. V26 internal tabs keep their data.
- const main=parent.querySelector('.v46-subs-panel');
- if(!main)return;
- const active=(db.recurring||[]).filter(x=>x.active!==false);
- const sum=active.reduce((s,x)=>s+fx(num(x.amount),x.currency)/(x.frequency==='annual'?12:x.frequency==='quarterly'?3:x.frequency==='weekly'?7/30.4375:1),0);
- const future=active.filter(x=>x.nextDue).slice().sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
- const hero=v245CreateNode('section','v245-recurring-hero',
-  `<span class="v245-hero-kicker">SUSCRIPCIONES · COSTO RECURRENTE</span><strong class="v245-hero-total">${money(sum)}</strong><div class="v245-hero-sides"><span><small>SERVICIOS ACTIVOS</small><b>${active.length}</b></span><span><small>PRÓXIMO CARGO</small><b>${future?prettyDate(future.nextDue):'Sin fecha'}</b></span></div><p>Importe mensual equivalente, no deuda acumulada.</p>`);
- parent.insertBefore(hero,parent.firstChild);
- const extras=[...parent.children].filter(el=>el!==hero&&el!==main&&(el.matches('.section-title,.grid.kpis,.v149-rec-unified')));
- if(extras.length){
-   const details=v245CreateNode('details','v245-recurring-extra');
-   details.append(v245CreateNode('summary','',`${icon('chart')} Ver indicadores y agenda de pagos ${icon('arrow')}`));
-   extras.forEach(el=>details.appendChild(el));
-   parent.insertBefore(details,hero.nextSibling);
- }
- const head=main.querySelector('.v46-subs-head');
- if(head)head.querySelector('button[data-act="addRecurring"]')?.classList.add('v245-redundant-add');
-}
+
 function v245CleanPersonal(){
  // Preserve the existing V189 interactive hero, contact files and agreement
  // lifecycle. The V245 mobile layout is CSS-only to prevent a duplicate KPI.
@@ -15870,7 +15784,7 @@ function v245CleanPersonal(){
 function v245PolishOnRender(){
  if(!isMobileViewport())return;
  if(ui.page==='payments')v245CleanPayments();
- if(ui.page==='recurring')v245CleanRecurring();
+ 
  if(ui.page==='personal')v245CleanPersonal();
 }
 const v245PreviousRender=render;
@@ -16046,66 +15960,7 @@ render=function(){v245PreviousRender();v245PolishOnRender();};
     root.querySelector('.v145-pay-lower')?.classList.add('v252-schedule');
     root.dataset.v252Ready='1';
   }
-  function recurring(){
-    const root=document.querySelector('#page .v26-internal[data-module="recurring"]');
-    if(!root||root.dataset.v252Ready)return;
-    const body=root.querySelector(':scope > .v26-body');
-    if(!body)return;
-    const oldHead=root.querySelector(':scope > .v26-head');
-    const fresh=header('PAGOS RECURRENTES','Suscripciones','Servicios, próximos cargos y pagos registrados.');
-    const add=oldHead?.querySelector('button[data-act="addRecurring"]');
-    if(add){add.classList.add('v252-add');fresh.append(add);}
-    if(oldHead)oldHead.replaceWith(fresh);else root.insertBefore(fresh,root.firstChild);
-    const tabs=root.querySelector(':scope > .v26-nav');if(tabs)tabs.classList.add('v252-tabs');
-    // Las pestañas internas conservan su renderización y filtros propios.
-    const oldHero=body.querySelector(':scope > .v245-recurring-hero');
-    const duplicate=body.querySelector(':scope > .v58-exec');
-    if(oldHero){
-      const amount=oldHero.querySelector('.v245-hero-total');
-      const sides=oldHero.querySelector('.v245-hero-sides');
-      const hero=heroStart('COSTO RECURRENTE · EQUIVALENTE MENSUAL','Costo recurrente mensual');
-      hero.append(make('h3','v252-hero-title','Lo que mantienes activo.'));
-      if(amount){amount.classList.add('v252-hero-value');hero.append(amount);}
-      if(sides){sides.classList.add('v252-hero-sides');hero.append(sides);}
-      hero.append(make('p','v252-hero-note','Importe mensual equivalente; no representa deuda acumulada.'));
-      oldHero.replaceWith(hero);
-    } else if(duplicate){
-      // Escritorio: reutilizar el importe ya calculado en el KPI anterior.
-      const feature=duplicate.querySelector('.v58-feature');
-      const hero=heroStart('COSTO RECURRENTE · EQUIVALENTE MENSUAL','Costo recurrente mensual');
-      hero.append(make('h3','v252-hero-title','Lo que mantienes activo.'));
-      if(feature){feature.classList.add('v252-recurring-value');hero.append(feature);}
-      const active=(db.recurring||[]).filter(x=>x.active!==false);
-      const future=active.filter(x=>x.nextDue).slice().sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
-      const sides=make('div','v252-hero-sides');
-      const stat=(label,val)=>{const span=make('span','');span.append(make('small','',label),make('b','',String(val)));return span;};
-      sides.append(stat('SERVICIOS ACTIVOS',active.length),stat('PRÓXIMO CARGO',future?prettyDate(future.nextDue):'Sin fecha'));
-      hero.append(sides,make('p','v252-hero-note','Importe mensual equivalente; no representa deuda acumulada.'));
-      duplicate.before(hero);
-    }
-    if(duplicate){
-      const fold=make('details','v252-additional-metrics');
-      fold.append(make('summary','', 'Ver análisis y desglose del costo recurrente'));
-      duplicate.replaceWith(fold);fold.append(duplicate);
-    }
-    let extra=body.querySelector(':scope > .v245-recurring-extra');
-    if(!extra){
-      // Escritorio también tiene lectura complementaria; plegar las cifras
-      // repetidas sin perder acceso a botones ni a la agenda heredada.
-      const redundant=[...body.children].filter(x=>x.matches('.section-title,.grid.kpis,.v149-rec-unified'));
-      if(redundant.length){
-        extra=make('details','v245-recurring-extra');
-        extra.append(make('summary','','Más indicadores y agenda de pagos'));
-        redundant.forEach(x=>extra.append(x));
-        body.insertBefore(extra,body.querySelector('.v252-hero')?.nextSibling||body.firstChild);
-      }
-    }
-    extra?.classList.add('v252-additional-metrics');
-    const panel=body.querySelector('.v46-subs-panel');
-    if(panel){panel.classList.add('v252-product-panel');const title=panel.querySelector('.v46-subs-head h3');if(title)title.textContent='Tus servicios';const info=panel.querySelector('.v46-subs-head p');if(info)info.textContent='Importe, frecuencia y próximo cargo por servicio.';}
-    body.querySelector('.v46-subscriptions-grid')?.classList.add('v252-subscriptions');
-    root.classList.add('v252-recurring');root.dataset.v252Ready='1';
-  }
+  
   function persons(){
     const root=document.querySelector('#page .v26-internal[data-module="personal"]');
     if(!root||root.dataset.v252Ready)return;
@@ -16158,7 +16013,7 @@ render=function(){v245PreviousRender();v245PolishOnRender();};
   function decorate(){
     if(!document.getElementById('app'))return;
     if(ui.page==='payments')polishPayments();
-    if(ui.page==='recurring')recurring();
+    
     if(ui.page==='personal')persons();
   }
   const prev=render;
@@ -16387,83 +16242,7 @@ document.addEventListener('input',function(event){
 
 /* V264 · La UI de Suscripciones debe compartir el ámbito de db/render */
 
-(function(){
-  'use strict';
-  function $make(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e;}
-  function factor(freq){return freq==='annual'?12:freq==='quarterly'?3:freq==='weekly'?(7/30.4375):1;}
-  function monthlyEq(r){return fx(num(r.amount),r.currency)/factor(r.frequency);}
-  function calc(){
-    const active=(db.recurring||[]).filter(r=>r&&r.active!==false);
-    const monthlyTotal=active.reduce((s,r)=>s+monthlyEq(r),0);
-    const yearTotal=monthlyTotal*12;
-    const next=active.filter(r=>r.nextDue&&r.nextDue>=today()&&r.nextDue<=addDays(today(),30)).slice().sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)));
-    const upcomingVal=next.reduce((s,r)=>s+fx(num(r.amount),r.currency),0);
-    const month=String(ui.month||today().slice(0,7)).slice(0,7);
-    const paid=(db.transactions||[]).filter(t=>t&&t.recurringId&&['expense','card_charge'].includes(t.type)&&String(t.date||'').startsWith(month));
-    const paidVal=paid.reduce((s,t)=>s+fx(num(t.amount),t.currency),0);
-    return {active,monthlyTotal,yearTotal,next,upcomingVal,paidVal};
-  }
-  function ensureKpi(root,body,data){
-    let kpi=body.querySelector(':scope > .v264-subs-kpi');
-    if(!kpi){kpi=$make('section','v264-subs-kpi');body.insertBefore(kpi,body.firstChild);}
-    kpi.innerHTML='';
-    const copy=$make('div','v264-kpi-copy');
-    copy.innerHTML=`<span class="v264-kicker">SUSCRIPCIONES / COSTO RECURRENTE</span><h3>Lo que mantienes activo,<br><em>tiene un costo.</em></h3><p>Vista ejecutiva del gasto recurrente: costo mensual equivalente, próximos cargos, pagos del período y servicios activos, sin perder la profundidad analítica.</p>`;
-    const actions=$make('div','v264-kpi-actions');
-    actions.innerHTML=`<button type="button" class="btn" data-act="navigate" data-id="recurring" data-tab="overview">Ver servicios ${icon('arrow')}</button><button type="button" class="btn soft" data-act="navigate" data-id="recurring" data-tab="next">Próximos cargos ${icon('arrow')}</button>`;
-    copy.append(actions,$make('div','v264-kpi-note','Distingue el costo mensual equivalente de los cargos reales del período. Las cifras se mantienen sincronizadas con tus servicios y con sus pagos registrados.'));
-    const grid=$make('div','v264-kpi-grid');
-    const cards=[
-      ['COSTO MENSUAL EQUIVALENTE',money(data.monthlyTotal),'Solo suscripciones activas'],
-      ['COMPROMISO ANUALIZADO',money(data.yearTotal),'12 meses de referencia'],
-      ['PRÓXIMOS 30 DÍAS',money(data.upcomingVal),`${data.next.length} renovaciones registradas`],
-      ['PAGADO EN EL MES',money(data.paidVal),(typeof fmtMonth==='function'?fmtMonth(String(ui.month||today().slice(0,7)).slice(0,7)):String(ui.month||today().slice(0,7)))],
-      ['SERVICIOS ACTIVOS',String(data.active.length),'Con cargo programado']
-    ];
-    const primary=cards.slice(1,5); // leave monthly total as headline? no, also in grid? user wants KPI with main plus 4 support.
-    primary.forEach(([label,val,sub])=>{const c=$make('article','v264-kpi-card',`<small>${label}</small><strong>${val}</strong><span>${sub}</span>`);grid.append(c);});
-    // Add monthly equivalent first, replacing first card if needed, move before annualized.
-    grid.prepend($make('article','v264-kpi-card',`<small>${cards[0][0]}</small><strong>${cards[0][1]}</strong><span>${cards[0][2]}</span>`));
-    // keep only first 4 cards in 2x2 layout, but we still need servicios activos; replace annualized? maintain 4 indicators main. We'll trim below.
-    while(grid.children.length>4)grid.removeChild(grid.lastElementChild);
-    copy.querySelector('.btn[data-tab="overview"]')?.setAttribute('data-v264-link','overview');
-    copy.querySelector('.btn[data-tab="next"]')?.setAttribute('data-v264-link','next');
-    kpi.append(copy,grid);
-  }
-  function block(headEyebrow,title,desc,extraClass){
-    const section=$make('section','v264-block '+(extraClass||''));
-    section.innerHTML=`<header class="v264-block-head"><div class="copy"><span class="eyebrow">${headEyebrow}</span><h3>${title}</h3><p>${desc}</p></div></header>`;
-    return section;
-  }
-  function build(){
-    if(ui.page!=='recurring')return;
-    const root=document.querySelector('#page .v26-internal[data-module="recurring"]');
-    if(!root)return;
-    const body=root.querySelector(':scope > .v26-body');
-    if(!body)return;
-    root.classList.add('v264-recurring');
-    const data=calc();
-    body.querySelectorAll(':scope > .v252-hero,:scope > .v252-additional-metrics,:scope > .section-title,:scope > .grid.kpis,:scope > .v149-rec-unified').forEach(el=>el.classList.add('v264-hide'));
-    ensureKpi(root,body,data);
-    const panel=body.querySelector('.v46-subs-panel');
-    if(panel){
-      let wrap=panel.closest('.v264-services-block');
-      if(!wrap){wrap=block('TUS SERVICIOS','Tus servicios','Nombre, importe, frecuencia, próximo cargo y acciones de cada suscripción, en una presentación compacta y uniforme.','v264-services-block v264-services-card');panel.parentNode.insertBefore(wrap,panel);wrap.append(panel);} 
-      const h=panel.querySelector('.v46-subs-head h3');if(h)h.textContent='Tus servicios';
-      const p=panel.querySelector('.v46-subs-head p');if(p)p.textContent='Importe, frecuencia y próximo cargo por servicio. El nombre, el monto y la próxima renovación se priorizan visualmente.';
-    }
-    const intel=body.querySelector('.subscription-world');
-    if(intel){
-      let wrap=intel.closest('.v264-intelligence-block');
-      if(!wrap){wrap=block('INTELIGENCIA DE SUSCRIPCIONES','Tu inteligencia de suscripciones','Indicadores, ranking Pareto y distribución por categoría con una lectura más ejecutiva, manteniendo todos los datos y cálculos dinámicos.','v264-intelligence-block v264-intelligence-card');intel.parentNode.insertBefore(wrap,intel);wrap.append(intel);} 
-      const foot=wrap.querySelector('.v264-block-head .copy p');if(foot)foot.textContent='Equivalente mensual, gasto anual, concentración 80/20, mayor suscripción, ranking y distribución por categoría, sin eliminar profundidad analítica.';
-    }
-  }
-  const previous=render;
-  render=function(){const result=previous.apply(this,arguments);requestAnimationFrame(build);return result;};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(build),{once:true});
-  else requestAnimationFrame(build);
-})();
+
 
 
 
@@ -16630,8 +16409,7 @@ document.addEventListener('input',function(event){
   const number=n=>Number.isFinite(Number(n))?Number(n):0;
   const monthText=()=>dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'});
   const monthKey=()=>String(ui.month||today().slice(0,7));
-  const normalizedMonthly=r=>v339MonthlyEquivalent(r.amount,r.currency,r.frequency);
-  const activeRecurring=()=>v339ActiveRecurring();
+    const activeRecurring=()=>v339ActiveRecurring();
 
   // Image 4 is the exact visual/structural reference: two groups, 6 + 4 entries.
   mobileHub=function(){
@@ -16698,50 +16476,10 @@ document.addEventListener('input',function(event){
   };
 
   // Image 1 supplies *behavior* only; existing app style controls all layout.
-  const originalRecurring=pages.recurring;
-  let categoryFilter='__all__';
-  pages.recurring=function(){
-    // V416: La experiencia móvil utiliza íntegra la vista original de Suscripciones.
-    // El rediseño por categorías se aplica únicamente a la versión web de escritorio.
-    if(isMobileViewport()) return originalRecurring();
-    const records=(db.recurring||[]).filter(Boolean);
-    const active=activeRecurring();
-    const monthly=v80RecurringMonthly();
-    const todayDate=today();
-    const next7=active.filter(r=>r.nextDue&&r.nextDue>=todayDate&&r.nextDue<=addDays(todayDate,7));
-    const dueSoon=active.filter(r=>r.nextDue&&r.nextDue>=todayDate).slice().sort((a,b)=>a.nextDue.localeCompare(b.nextDue))[0];
-    const largest=active.slice().sort((a,b)=>normalizedMonthly(b)-normalizedMonthly(a))[0];
-    const groupOf=r=>String(r.category||'Sin categoría').trim()||'Sin categoría';
-    const byCategory=new Map();
-    for(const r of records){const cat=groupOf(r);if(!byCategory.has(cat))byCategory.set(cat,[]);byCategory.get(cat).push(r)}
-    const categories=[...byCategory.keys()].sort((a,b)=>a.localeCompare(b,'es'));
-    if(categoryFilter!=='__all__'&&!byCategory.has(categoryFilter))categoryFilter='__all__';
-    const selectedCategories=categories.filter(c=>categoryFilter==='__all__'||categoryFilter===c);
-    const rankedCategory=categories.map(c=>({cat:c,cost:byCategory.get(c).filter(r=>r.active!==false&&!r.archived).reduce((a,r)=>a+normalizedMonthly(r),0)})).sort((a,b)=>b.cost-a.cost)[0];
-    const frequency=f=>({monthly:'Mensual',weekly:'Semanal',semi_monthly:'Quincenal',quarterly:'Trimestral',semiannual:'Semestral',annual:'Anual',yearly:'Anual'})[f]||String(f||'Periódico');
-    const source=r=>{let card=(db.cards||[]).find(c=>c.id===r.cardId);let account=(db.accounts||[]).find(a=>a.id===r.accountId);return card?card.name:account?account.name:r.paymentMethod||r.paymentSource||'No indicada'};
-    const activeCount=active.length;
-    const firstMoney=(v,cur)=>money(v,cur||'DOP',2);
-    const line=(r)=>{const state=r.archived?'Archivada':r.active===false?'Pausada':'Activa';return `<tr>
-     <td data-label="Servicio"><span class="v410-servicename">${v45SubIcon(r,'small')}<strong>${esc(r.name||'Servicio')}</strong></span></td>
-     <td data-label="Categoría">${esc(groupOf(r))}</td>
-     <td data-label="Próximo pago">${r.nextDue?esc(prettyDate(r.nextDue)):'Sin fecha'}</td>
-     <td data-label="Monto"><b>${firstMoney(r.amount,r.currency)}</b></td>
-     <td data-label="Ciclo">${esc(frequency(r.frequency))}</td>
-     <td data-label="Estado"><span class="v410-service-status ${r.archived?'archived':r.active===false?'paused':''}">${state}</span></td>
-     <td data-label="Fuente de pago">${esc(source(r))}</td>
-     <td><div class="v410-rowactions"><button type="button" data-act="editRecurring" data-id="${esc(r.id)}">Editar</button>${!r.archived?`<button type="button" data-act="toggleRecurring" data-id="${esc(r.id)}">${r.active===false?'Reactivar':'Pausar'}</button>`:''}${r.active!==false&&!r.archived?`<button type="button" data-act="payRecurring" data-id="${esc(r.id)}">Registrar pago</button>`:''}</div></td>
-    </tr>`};
-    const group=(cat)=>{const list=byCategory.get(cat);const subtotal=list.filter(r=>r.active!==false&&!r.archived).reduce((sum,r)=>sum+normalizedMonthly(r),0);return `<details class="v410-subgroup" open><summary><span class="v410-category-icon">${icon('cycle')}</span><span><strong>${esc(cat)} · ${list.length}</strong><small>${list.filter(r=>r.active!==false&&!r.archived).length} activas · agrupación por categoría</small></span><b class="v410-subtotal">${fmt(subtotal)} / mes</b><span class="v410-drop" aria-hidden="true">⌄</span></summary><div class="v410-subtable"><table><thead><tr><th>Servicio</th><th>Categoría</th><th>Próximo pago</th><th>Monto</th><th>Ciclo</th><th>Estado</th><th>Fuente de pago</th><th>Acciones</th></tr></thead><tbody>${list.map(line).join('')}</tbody></table></div></details>`};
-    return `<div class="v410-subs"><header class="v410-subs-head"><div><span class="v410-kicker">vive el hoy · PAGOS RECURRENTES</span><h1>Suscripciones</h1><p>Gestiona tus servicios, categorías, renovaciones y pagos con tus registros reales.</p></div><button type="button" class="v410-primary" data-act="addRecurring">${icon('plus')} Agregar suscripción</button></header>
-      <div class="v410-subs-stats"><article class="v410-substat"><small>Equivalente mensual</small><strong>${fmt(monthly)}</strong><span>Servicios activos · RD$ al cambio configurado</span></article><article class="v410-substat"><small>Suscripciones activas</small><strong>${activeCount}</strong><span>De ${records.length} registradas</span></article><article class="v410-substat"><small>Renovaciones próximas</small><strong>${next7.length}</strong><span>En los próximos siete días</span></article><article class="v410-substat"><small>Promedio por servicio activo</small><strong>${activeCount?fmt(monthly/activeCount):'—'}</strong><span>Equivalente mensual</span></article></div>
-      <section class="v410-insight" aria-label="Análisis de suscripciones"><div class="v410-insight-title"><span class="v410-kicker">LECTURA EJECUTIVA</span><h2>Sobre tus pagos recurrentes</h2><p>Un resumen calculado únicamente con los servicios registrados.</p></div><article><small>Mayor gasto mensual</small><strong>${largest?esc(largest.name):'Sin servicios activos'}</strong><span>${largest?fmt(normalizedMonthly(largest))+' / mes':'—'}</span></article><article><small>Próxima renovación</small><strong>${dueSoon?esc(dueSoon.name):'Sin renovación próxima'}</strong><span>${dueSoon?esc(prettyDate(dueSoon.nextDue))+' · '+firstMoney(dueSoon.amount,dueSoon.currency):'—'}</span></article><article><small>Categoría de mayor costo</small><strong>${rankedCategory?.cost>0?esc(rankedCategory.cat):'Sin datos de gasto'}</strong><span>${rankedCategory?.cost>0?fmt(rankedCategory.cost)+' / mes':'—'}</span></article></section>
-      <div class="v410-subfilters" role="group" aria-label="Filtrar por categoría"><button type="button" data-v410-category="__all__" aria-pressed="${categoryFilter==='__all__'}">Todas (${records.length})</button>${categories.map(c=>`<button type="button" data-v410-category="${esc(c)}" aria-pressed="${categoryFilter===c}">${esc(c)} (${byCategory.get(c).length})</button>`).join('')}</div>
-      ${selectedCategories.length?selectedCategories.map(group).join(''):'<div class="panel empty">No hay suscripciones registradas.</div>'}
-      <div class="v417-subscriptions-analytics" aria-label="Análisis de gasto recurrente mensual y anual">${subscriptionAnalysis()}</div>
-    </div>`;
-  };
-  document.addEventListener('click',ev=>{const btn=ev.target.closest?.('[data-v410-category]');if(!btn)return;ev.preventDefault();ev.stopImmediatePropagation();categoryFilter=btn.dataset.v410Category||'__all__';render()},true);
+  
+  
+  
+  
 
   // Image 2: reuse the existing fully dynamic financial map/handlers.
   const creativeMap=v342CreativePositionMobile;
@@ -16844,9 +16582,7 @@ document.addEventListener('keydown',function(event){
 window.__f360RecurringVisualAdapter={
  account,card,bank,prettyDate,today,
  readState:()=>db,
- wrapRenderer(wrapper){if(typeof wrapper==='function')recurringForm=wrapper(recurringForm);},
- currentPage:()=>ui.page,
- wrapMainRenderer(wrapper){if(typeof wrapper==='function')render=wrapper(render);}
+ wrapRenderer(wrapper){if(typeof wrapper==='function')recurringForm=wrapper(recurringForm);}
 };
 
 /* V708 · Movimientos premium. Capa de presentación sobre la base real de transacciones. */
@@ -19043,8 +18779,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const seg=`<div class="v911-seg v911-seg-sub" role="tablist" aria-label="Perspectiva del análisis">${SUBS.map(([k,l])=>`<button type="button" role="tab" aria-selected="${st.sub===k}" class="${st.sub===k?'is-on':''}" data-v911-sub="${k}">${l}</button>`).join('')}</div>`;
   return seg+({radiografia,concentracion,inteligencia}[st.sub]||radiografia)();
  }
- const ICON_FALLBACK=n=>n;
- function page(){
+  function page(){
   const st=S();if(!TABS.some(t=>t[0]===st.tab))st.tab='agenda';
   const body=({agenda,cartera,historial,analisis})[st.tab]();
   const tabs=`<div class="v911-seg" role="tablist" aria-label="Secciones de Suscripciones">${TABS.map(([k,l])=>`<button type="button" role="tab" aria-selected="${st.tab===k}" class="${st.tab===k?'is-on':''}" data-v911-tab="${k}">${l}</button>`).join('')}</div>`;
@@ -19056,9 +18791,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   document.querySelectorAll('#v911-list [data-v911-group]').forEach(g=>{let vis=0;g.querySelectorAll('[data-v911-svc]').forEach(d=>{const ok=!query||d.dataset.q.includes(query);d.hidden=!ok;if(ok)vis++});g.hidden=!vis;if(vis)any=true});
   const none=document.getElementById('v911-noresult');if(none)none.hidden=any||!document.querySelector('#v911-list [data-v911-svc]');
  }
- const original=pages.recurring;
  pages.recurring=page;
- window.__v911Original=original;
  document.addEventListener('click',e=>{
   const t=e.target.closest?.('[data-v911-tab],[data-v911-sub],[data-v911-day],[data-v911-open],[data-v911-review],[data-v911-seg],[data-v911-pick],[data-v911-point],[data-v911-simtoggle]');
   if(!t||!t.closest('.v911'))return;const st=S();
@@ -20624,111 +20357,7 @@ document.addEventListener('click',function(ev){
 ;
 /* ==== script: v387-services-web-behavior ==== */
 /* Scoped desktop redesign; reuses original service cards/actions and dynamic values. */
-(function(){
- 'use strict';
- const hooks=window.__f360RecurringVisualAdapter;
- const state={category:'all',search:'',status:'all',frequency:'all',sort:'next'};
- let raf=0;
- const esc=(value)=>String(value??'').toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
- const safeString=value=>String(value??'');
- function sourceName(r){
-  const src=safeString(r.source);
-  if(!src)return 'Sin método asociado';
-  const parts=src.split(':');
-  if(parts.length!==2)return 'Método configurado';
-  if(parts[0]==='account'){
-   const a=(hooks.readState().accounts||[]).find(x=>String(x.id)===parts[1]);
-   return a?'Cuenta · '+safeString(a.name):'Cuenta no disponible';
-  }
-  if(parts[0]==='card'){
-   const c=(hooks.readState().cards||[]).find(x=>String(x.id)===parts[1]);
-   return c?'Tarjeta · '+safeString(c.name):'Tarjeta no disponible';
-  }
-  return 'Método configurado';
- }
- const $=(tag,cls,content)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(content!==undefined)el.textContent=content;return el};
- function reconcile(){
-  if(window.innerWidth<791||hooks?.currentPage()!=='recurring')return;
-  const root=document.querySelector('#page .v26-internal[data-module="recurring"]');
-  if(!root)return;
-  const kpi=root.querySelector('.v264-subs-kpi'), grid=root.querySelector('.v46-subscriptions-grid'),panel=root.querySelector('.v46-subs-panel');
-  if(!grid||!panel||!kpi)return;
-  root.classList.add('v387-services-web');
-  const kpiGrid=kpi.querySelector('.v264-kpi-grid');
-  if(kpiGrid&&!kpiGrid.querySelector('.v387-active-kpi')){
-   const active=(hooks.readState().recurring||[]).filter(r=>r&&!r.archived&&r.active!==false).length;
-   const k=$('article','v264-kpi-card v387-active-kpi');
-   k.append($('small','', 'SERVICIOS ACTIVOS'),$('strong','',String(active)),$('span','','Programados'));
-   kpiGrid.append(k);
-  }
-  const all=(hooks.readState().recurring||[]).filter(r=>r);
-  const cards=new Map([...grid.querySelectorAll('.v46-subscription-card[data-v149-rec-id]')].map(el=>[el.getAttribute('data-v149-rec-id'),el]));
-  const head=panel.querySelector('.v46-subs-head');
-  if(head){const h=head.querySelector('h3');if(h)h.textContent='Servicios y suscripciones';}
-  if(!panel.querySelector('.v387-toolbar')){
-   const toolbar=$('div','v387-toolbar');
-   const search=$('label','v387-search');search.innerHTML='<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>';
-   const input=$('input');input.type='search';input.placeholder='Buscar un servicio';input.setAttribute('aria-label','Buscar servicio');input.value=state.search;
-   input.addEventListener('input',()=>{state.search=input.value;draw()});search.append(input);
-   const controls=$('div','v387-controls');
-   const makeSelect=(label,options,field)=>{const select=$('select');select.setAttribute('aria-label',label);options.forEach(([val,text])=>{const opt=$('option');opt.value=val;opt.textContent=text;select.append(opt)});select.value=state[field];select.addEventListener('change',()=>{state[field]=select.value;draw()});return select};
-   controls.append(makeSelect('Estado',[['all','Todos los estados'],['active','Activas'],['paused','Pausadas']],'status'));
-   controls.append(makeSelect('Frecuencia',[['all','Todas las frecuencias'],['monthly','Mensual'],['weekly','Semanal'],['quarterly','Trimestral'],['annual','Anual']],'frequency'));
-   controls.append(makeSelect('Ordenar',[['next','Próximo cobro'],['name','Nombre A–Z'],['amount','Importe mayor'],['category','Categoría']],'sort'));
-   toolbar.append(search,controls);
-   const categories=$('nav','v387-categories');categories.setAttribute('aria-label','Filtrar por categoría');
-   const count=$('div','v387-summary-line');
-   panel.insertBefore(toolbar,grid);panel.insertBefore(categories,grid);panel.insertBefore(count,grid);
-  }
-  // DOM cards are moved, not cloned: data-act and data-id stay attached to the original event handlers.
-  const catalog=all.map(r=>({r,card:cards.get(String(r.id))})).filter(x=>x.card);
-  const chips=panel.querySelector('.v387-categories');
-  const categories=[...new Set(catalog.map(x=>safeString(x.r.category||'Otros').trim()||'Otros'))].sort((a,b)=>a.localeCompare(b,'es'));
-  if(state.category!=='all'&&!categories.includes(state.category))state.category='all';
-  chips.replaceChildren();
-  const chip=(name,value,count)=>{
-   const btn=$('button','v387-cat');btn.type='button';btn.setAttribute('aria-pressed',String(state.category===value));
-   btn.append(document.createTextNode(name+' '),$('b','',String(count)));
-   btn.addEventListener('click',()=>{state.category=value;draw()});chips.append(btn);
-  };
-  chip('Todas','all',catalog.length);categories.forEach(category=>chip(category,category,catalog.filter(x=>(x.r.category||'Otros')===category).length));
-  function draw(){
-   const query=esc(state.search.trim());
-   let shown=catalog.filter(({r})=>(state.category==='all'||(r.category||'Otros')===state.category)
-    &&(state.status==='all'||(state.status==='active'?(r.active!==false):(r.active===false)))
-    &&(state.frequency==='all'||r.frequency===state.frequency)
-    &&(!query||esc([r.name,r.category,r.subcategory,r.frequency,sourceName(r)].join(' ')).includes(query)));
-   shown.sort((a,b)=>{
-    const ar=a.r,br=b.r;
-    if(state.sort==='name')return safeString(ar.name).localeCompare(safeString(br.name),'es');
-    if(state.sort==='amount')return Number(br.amount||0)-Number(ar.amount||0);
-    if(state.sort==='category')return safeString(ar.category).localeCompare(safeString(br.category),'es')||safeString(ar.name).localeCompare(safeString(br.name),'es');
-    return safeString(ar.nextDue||'9999').localeCompare(safeString(br.nextDue||'9999'))||safeString(ar.name).localeCompare(safeString(br.name),'es');
-   });
-   panel.querySelector('.v387-summary-line').replaceChildren($('span','',shown.length+' de '+catalog.length+' servicios'),$('span','','Agrupados por categoría'));
-   grid.replaceChildren();grid.classList.add('v387-grouped');
-   if(!shown.length){grid.append($('div','v387-empty','No hay servicios para esta selección. Prueba con otros filtros.'));return;}
-   const names=[...new Set(shown.map(x=>safeString(x.r.category||'Otros').trim()||'Otros'))].sort((a,b)=>a.localeCompare(b,'es'));
-   names.forEach(name=>{
-    const group=$('section','v387-group');
-    const title=$('header','v387-group-head');const tally=shown.filter(x=>(x.r.category||'Otros')===name).length;
-    title.append($('strong','',name),$('small','',tally+' '+(tally===1?'servicio':'servicios')));
-    const items=$('div','v387-group-items');
-    shown.filter(x=>(x.r.category||'Otros')===name).forEach(({r,card})=>{
-     card.querySelector('.v387-pay-source')?.remove();
-     const details=card.querySelector('.v46-sub-card-next');
-     if(details)details.append($('span','v387-pay-source',sourceName(r)));
-     items.append(card);
-    });group.append(title,items);grid.append(group);
-   });
-  }
-  draw();
- }
- function schedule(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;try{reconcile()}catch(err){console.warn('Servicios V387:',err)}})}
- hooks?.wrapMainRenderer(original=>function(...args){const result=original.apply(this,args);schedule();return result});
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
- window.addEventListener('resize',schedule,{passive:true});
-})();
+
 ;
 /* ==== script: v391-registration-interaction ==== */
 (()=>{'use strict';
