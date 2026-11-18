@@ -1,4 +1,4 @@
-# AUDITORIA-01-TECNICA · vive el hoy · Finanzas 360
+# AUDITORIA-01-TECNICA · vive el hoy
 
 Fecha de la línea base: 2026-11-17 · Rama `main` · Fase de **investigación**: no se modificó código de la aplicación ni del backend. Todo lo marcado «Verificado» se reprodujo con un comando, una consulta de solo lectura o una prueba; lo marcado «Estático» sale de lectura/análisis de código sin ejecución; lo marcado «No verificado» se declara explícitamente.
 

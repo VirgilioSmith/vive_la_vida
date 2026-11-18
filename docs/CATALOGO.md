@@ -1,4 +1,4 @@
-# Catálogo y estado de vive el hoy · Finanzas 360
+# Catálogo y estado de vive el hoy
 
 Fecha: 14 nov 2026 · Versión de código: V1014 · Calificación global: **73 / 100** (antes 64 → 70)
 

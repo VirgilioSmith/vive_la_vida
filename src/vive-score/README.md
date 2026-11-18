@@ -1,6 +1,6 @@
 # VIVE SCORE CRÉDITO 5.0 · módulo experimental (solo escritorio)
 
-Página nueva **«Score»** de la versión web de *vive el hoy · Finanzas 360*. Muestra un índice de crédito propio de 0 a 1 000 puntos, explicado factor por factor, calculado **solo con tarjetas de crédito y préstamos reales**.
+Página nueva **«Score»** de la versión web de *vive el hoy*. Muestra un índice de crédito propio de 0 a 1 000 puntos, explicado factor por factor, calculado **solo con tarjetas de crédito y préstamos reales**.
 
 - Es un **modelo educativo propio**. No es un score oficial ni una probabilidad de impago, y no está calibrado contra TransUnion, Equifax ni FICO.
 - Es **experimental, aislado y reversible**: vive en esta carpeta, detrás del interruptor `VIVE_SCORE_EXPERIMENTAL`, con su propio estado y almacenamiento.

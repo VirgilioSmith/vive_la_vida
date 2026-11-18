@@ -1,4 +1,4 @@
-# AUDITORIA-02-EXPERIENCIA · vive el hoy · Finanzas 360
+# AUDITORIA-02-EXPERIENCIA · vive el hoy
 
 Fase dinámica: se recorrió la aplicación con Playwright (Chromium) sobre los datos de demostración en memoria. **No se modificó el código de la aplicación.** Se añadieron solo herramientas de auditoría (`tests/auditoria-exploracion.js`, `tests/auditoria-estados.js`), los datos crudos (`docs/auditoria/datos/`) y 52 capturas (`docs/auditoria/evidencias/`). Complementa a [AUDITORIA-01-TECNICA.md](AUDITORIA-01-TECNICA.md).
 

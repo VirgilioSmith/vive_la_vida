@@ -56223,15 +56223,21 @@ html body :is(.v789-picker-row,.v787-product-row).is-unavailable small{font-styl
 
 /* ==== Marca «vive el hoy»: «hoy» en el acento dinámico, con la sonrisa que nace de la «y»; junto a la fecha de hoy ==== */
 html body #app#app .vive-mobile-top>.vive-mobile-brand{display:inline-flex;align-items:center;padding:0 2px 8px;min-height:28px;background:none!important;border:0!important;box-shadow:none!important}
-html body #app#app .vive-mobile-top>.vive-mobile-brand>span.v907-wm{display:inline-flex;align-items:baseline;gap:.26em;font-size:21px!important;line-height:1;font-weight:850;letter-spacing:-.055em;white-space:nowrap}
-html body #app#app .vive-mobile-top>.vive-mobile-brand>span.v907-wm::after{content:none!important}
-html body #app#app .vive-mobile-brand .v907-wm-a{color:var(--ink,#14161c)!important;-webkit-text-fill-color:var(--ink,#14161c)!important;font-size:inherit!important}
-html body #app#app .vive-mobile-brand .v907-wm-b{position:relative;display:inline-block;color:var(--v424-accent-strong,#5b57d6)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important;font-size:inherit!important}
-html body #app#app .vive-mobile-brand .v907-smile{position:absolute;left:-4%;bottom:-.42em;width:112%;height:.5em;overflow:visible;color:var(--v424-accent-strong,#5b57d6);pointer-events:none}
-html body:is(.theme-black,.theme-dark) #app#app .vive-mobile-brand .v907-wm-a{color:#f4f6fb!important;-webkit-text-fill-color:#f4f6fb!important}
-html body:is(.theme-black,.theme-dark) #app#app .vive-mobile-brand .v907-wm-b{color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff)!important;-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff)!important}
-html body:is(.theme-black,.theme-dark) #app#app .vive-mobile-brand .v907-smile{color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff)}
-html body #app#app .vive-mobile-top .v146-mobile-date{display:inline-flex!important;align-items:center;margin-left:8px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:750;letter-spacing:.01em;background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 11%,transparent);color:var(--v424-accent-strong,#5b57d6)}
-html body:is(.theme-black,.theme-dark) #app#app .vive-mobile-top .v146-mobile-date{color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff);background:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 20%,transparent)}
 html body #app#app .vive-mobile-top>.vive-mobile-brand{width:auto!important;min-width:0!important;max-width:none!important;flex:0 0 auto!important;overflow:visible!important}
-html body #app#app .vive-mobile-top>.vive-mobile-brand>span.v907-wm,html body #app#app .vive-mobile-brand :is(.v907-wm-a,.v907-wm-b){overflow:visible!important;text-overflow:clip!important;max-width:none!important;width:auto!important}
+
+/* Wordmark v908: «vive el» tinta, «hoy» acento; la cola de la y se curva en sonrisa bajo «ho». */
+.v908-wm{display:inline-flex;align-items:baseline;gap:.26em;line-height:1;font-weight:850;letter-spacing:-.055em;white-space:nowrap;font-size:inherit;overflow:visible}
+.v908-a{color:var(--ink,#14161c);-webkit-text-fill-color:var(--ink,#14161c)}
+.v908-b{display:inline-block;color:var(--v424-accent-strong,#5b57d6);-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)}
+.v908-y{display:inline-block;width:.9em;height:1em;margin-left:.01em;vertical-align:-.36em;overflow:visible;fill:none;stroke:currentColor;stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+body:is(.theme-black,.theme-dark) .v908-a{color:#f4f6fb;-webkit-text-fill-color:#f4f6fb}
+body:is(.theme-black,.theme-dark) .v908-b{color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff);-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#7d79ff) 62%,#fff)}
+html body #app#app .vive-mobile-top>.vive-mobile-brand{overflow:visible!important;max-width:none!important;width:auto!important;flex:0 0 auto}
+html body #app#app .vive-mobile-top .v908-wm{font-size:21px!important}
+html body #app#app .rail-top .vive-p-brand .v908-wm{font-size:17px!important;gap:0}
+html body #app#app .mobile-bar .v908-wm,html body #app#app .f33-label .v908-wm{font-size:20px!important}
+.f33-label{display:flex;align-items:center;margin-bottom:10px}
+.f33-label .v908-wm{margin-bottom:.35em}
+.vive-mobile-top .v908-wm *::after,.vive-mobile-top .v908-wm::after,.vive-mobile-top>.vive-mobile-brand>span.v908-wm::after{content:none!important}
+html body #app#app .rail-top .vive-p-brand .v908-wm{font-size:19px!important}
+html body #app#app .rail-top .vive-p-brand .v908-b{color:inherit!important;-webkit-text-fill-color:currentColor!important}

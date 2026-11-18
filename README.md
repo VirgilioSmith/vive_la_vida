@@ -1,4 +1,4 @@
-# vive el hoy · Finanzas 360
+# vive el hoy
 
 PWA de finanzas personales **en español** (pesos dominicanos y dólares). Es un sitio estático que se publica en GitHub Pages; los datos viven en el dispositivo y se respaldan y sincronizan con Supabase.
 

@@ -1,4 +1,4 @@
-# Documentación técnica · Vive el Hoy Finanzas 360
+# Documentación técnica · vive el hoy
 
 > Documento descriptivo: refleja el sistema **tal como existe hoy**. Las correcciones y mejoras se tratan en otros trabajos.
 > Convención de citas: `archivo:línea` (líneas del estado de la rama principal el 14-nov-2026). Lo que no se puede verificar en el código se marca **`[POR CONFIRMAR]`**. Claves, tokens y URLs privadas aparecen como `<REDACTADO>`.
