@@ -618,7 +618,7 @@ const NAV_FAMILIES=[
  ]},
  {label:'GESTIÓN FINANCIERA',items:[
   {id:'banks',name:'Bancos',ico:'landmark',children:[['banks','Instituciones','landmark'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
-  {id:'register',name:'Movimientos',ico:'cycle',children:[['register','Registro de ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
+  {id:'register',name:'Movimientos',ico:'cycle',children:[['register','Registro de ingresos y egresos','cycle'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
   {id:'payments',name:'Visión global',ico:'eye',children:[['payments','Visión global','eye']]}
  ]},
  {label:'SISTEMA',items:[
@@ -627,7 +627,7 @@ const NAV_FAMILIES=[
 ];
 const NAV_SECTIONS={
  banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','landmark'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
- register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
+ register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
  payments:{title:'Visión global',hint:'Tus obligaciones y situación financiera.',tabs:[['payments','Visión global','eye']]}
 };
 function navFamilyForPage(page){if(['recurring','personal'].includes(page))return 'overview';if(page==='vision')return 'payments';if(['overview','analytics','kpis','advanced','patrimony','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
@@ -1160,7 +1160,6 @@ function mobileHub(){
  const period=ui.month||today().slice(0,7);
  const groups=[
   {eyebrow:'TU ACTIVIDAD',title:'Cada movimiento, en su lugar',subtitle:'Registros, análisis y planificación',entries:[
-   ['income','Ingresos','Recibes','up'],['expenses','Egresos','Gastas','down'],
    ['budget','Presupuesto','Ejecución','chart'],['categories','Categorías','Organización','grid']]},
   {eyebrow:'TU VISIÓN',title:'Visión global',subtitle:'Tu panorama integral sin menús duplicados',entries:[
    ['payments','Visión global','Vencimientos y pagos','eye']]},
