@@ -7603,7 +7603,7 @@ function f33Shell(title,description,content){
  v335SplashSince=0;
  el.classList.remove('v329-splash');
  el.setAttribute('aria-label','Acceso privado vive el hoy');
- el.innerHTML='<section class="f33-auth-card"><div class="f33-label">'+brandMark()+'<span class="sr-only">'+APP_BRAND+'</span></div><h2>'+sanitize(title)+'</h2><p>'+sanitize(description)+'</p><div class="f33-error" hidden role="alert"></div>'+content+'<p class="f33-auth-note">Tu información se mantiene protegida y vinculada a tu cuenta.</p></section>';
+ el.innerHTML='<section class="f33-auth-card"><div class="f33-label" role="img" aria-label="'+APP_BRAND+'">'+brandMark()+'</div><h2>'+sanitize(title)+'</h2><p>'+sanitize(description)+'</p><div class="f33-error" hidden role="alert"></div>'+content+'<p class="f33-auth-note">Tu información se mantiene protegida y vinculada a tu cuenta.</p></section>';
 }
 function f33LoginScreen(){
  f33Phase='login';document.getElementById('app').innerHTML='';
