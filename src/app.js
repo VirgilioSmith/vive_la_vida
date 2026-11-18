@@ -18250,17 +18250,19 @@ function productOption(name,item,label=item.name){
  const institutionLabel=accountIsCash?'EF':(institutionRecord?.name||institution||'CU').replace(/[^\p{L}\p{N} ]/gu,'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3);
  return {value:String(item.id),name:label,kind,detail,amount,brand,institutionLogo,institutionLabel,accountIsCash};
 }
+const pname=f=>({autoAccountId:'accountId',toAccountId:'accountId',fromAccountId:'accountId'})[f.name]||f.name;
 function optionsOf(field){
- const lookup={cardId:card,accountId:account,loanId:loan}[field.name];
+ const pn=pname(field);
+ const lookup={cardId:card,accountId:account,loanId:loan}[pn];
  const form=field.form;
- const canRefund=field.name==='cardId'&&form.dataset.special==='refund'&&!form.dataset.id;
+ const canRefund=pn==='cardId'&&form.dataset.special==='refund'&&!form.dataset.id;
  const date=form.elements.date?.value;
  const eligible=id=>!canRefund||db.transactions.some(t=>t.cardId===id&&t.type==='card_charge'&&(!date||t.date<=date)&&
   num(t.amount)-db.transactions.filter(r=>r.type==='card_refund'&&r.originalPurchaseId===t.id).reduce((sum,r)=>sum+num(r.amount),0)>.005);
- const accountOptions=[...field.options].filter(o=>o.value&&!o.disabled&&eligible(o.value)).map(o=>productOption(field.name,lookup(o.value)||{id:o.value},o.textContent.trim()));
+ const accountOptions=[...field.options].filter(o=>o.value&&!o.disabled&&eligible(o.value)).map(o=>productOption(pn,lookup(o.value)||{id:o.value},o.textContent.trim()));
  // V862: Reveal the real credit cards in the SAME universal bottom sheet.
  // Account adjustment storage is account-only; never persist a card id as accountId.
- if(field.name==='accountId'&&form.dataset.special==='adjustment'){
+ if(pn==='accountId'&&form.dataset.special==='adjustment'){
    const creditOptions=(db.cards||[]).filter(c=>!c.archived).map(c=>({
      ...productOption('cardId',c),value:'card:'+String(c.id),
      detail:[bankOf(c),c.last4?'•••• '+c.last4:'', 'Tarjeta de crédito'].filter(Boolean).join(' · '),
@@ -18268,10 +18270,16 @@ function optionsOf(field){
    }));
    return [...accountOptions,...creditOptions];
  }
- return accountOptions;
+ /* Selector universal: siempre se muestran TODOS los productos activos (pesos y dólares). Los que esta operación no admite
+    (otra moneda, sin compras reembolsables…) aparecen atenuados con su motivo, en lugar de desaparecer de la lista. */
+ const universe=(pn==='cardId'?db.cards:pn==='loanId'?db.loans:db.accounts).filter(x=>!x.archived);
+ const have=new Set(accountOptions.map(o=>String(o.value)));
+ const formCurrency=form.elements.namedItem('currency')?.value||'';
+ const unavailable=universe.filter(x=>!have.has(String(x.id))).map(x=>{const o=productOption(pn,x);const diff=x.currency&&formCurrency&&x.currency!==formCurrency;return {...o,disabled:true,detail:[o.detail,diff?'No disponible: esta operación es en '+formCurrency:'No disponible para esta operación'].filter(Boolean).join(' · ')}});
+ return [...accountOptions,...unavailable];
 }
 window.openFinancialProductPicker=(name,products,onConfirm)=>open(name,products.map(item=>productOption(name,item)),'',onConfirm);
-window.openRegisterProductPicker=(title,products,selected,onConfirm)=>open('product',products.map(({type,item})=>productOption(type,item)),selected,id=>{
+window.openRegisterProductPicker=(title,products,selected,onConfirm)=>open('product',products.map(({type,item,disabled,reason})=>{const o=productOption(type,item);return disabled?{...o,disabled:true,detail:[o.detail,reason||'No disponible para esta operación'].filter(Boolean).join(' · ')}:o}),selected,id=>{
  const product=products.find(({item})=>String(item.id)===id);
  if(product)onConfirm(productOption(product.type,product.item));
 },title);
@@ -18309,20 +18317,22 @@ function paintProductIdentity(node,opt){
   }
   node.innerHTML=opt?.kind==='mortgage'||opt?.kind==='personal'?bankSvg:cardSvg;
 }
+const boxOf=f=>f.closest('label');
 function updateTrigger(field){
-  const label=field.closest('label');
+  const label=boxOf(field);
   const details=label?.querySelector('.v789-select-details');
   const value=details?.querySelector('strong');
   const text=field.selectedOptions?.[0]?.textContent.trim()||'Seleccionar';
-  const product=field.name==='cardId'?card(field.value):field.name==='accountId'?account(field.value):field.name==='loanId'?loan(field.value):null;
-  const option=product?productOption(field.name,product):null;
+  const pn=pname(field);
+  const product=pn==='cardId'?card(field.value):pn==='accountId'?account(field.value):pn==='loanId'?loan(field.value):null;
+  const option=product?productOption(pn,product):null;
   if(value)value.textContent=option?.name||text;
   const icon=label?.querySelector('.v789-select-ico');
   if(icon){
     if(option)paintProductIdentity(icon,option);
     else{
       icon.classList.remove('v869-credit','v869-visa','v869-mastercard','v869-account','v869-cash','v869-loan');
-      icon.innerHTML=field.name==='cardId'?cardSvg:bankSvg;
+      icon.innerHTML=pn==='cardId'?cardSvg:bankSvg;
     }
   }
   if(details){
@@ -18333,25 +18343,24 @@ function updateTrigger(field){
     }else sub?.remove();
   }
   const trigger=label?.querySelector('.v789-select-open');
-  if(trigger)trigger.setAttribute('aria-label','Cambiar '+(productLabels[field.name]||'producto')+': '+(option?.name||text));
+  if(trigger)trigger.setAttribute('aria-label','Cambiar '+(productLabels[pn]||'producto')+': '+(option?.name||text));
 }
-function enhance(){for(const form of root.querySelectorAll('form.studio-form[data-mode="cardpay"],form.studio-form[data-mode="service"],form.v355-fast-form,form.other-studio-form,form.v940-income-capture,form#v40IncomeForm,form#transactionForm')){
- /* Cobro de interés y rescate de certificados: su cuenta también usa el selector universal. */
- if(form.id==='transactionForm'&&!form.elements.namedItem('certificateId'))continue;
- for(const name of ['cardId','accountId','loanId']){const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement))continue;
- const label=field.closest('label');if(!label||field.dataset.v789Enhanced==='1')continue;
+function enhance(){for(const form of root.querySelectorAll('form')){
+ /* Todos los formularios de captura usan el selector universal de cuentas, tarjetas y préstamos. */
+ for(const name of ['cardId','accountId','loanId','autoAccountId','toAccountId']){const pn=pname({name});const field=form.elements.namedItem(name);if(!(field instanceof HTMLSelectElement))continue;
+ const label=boxOf(field);if(!label||field.dataset.v789Enhanced==='1')continue;
  field.dataset.v789Enhanced='1';field.classList.add('v789-native-keep');field.tabIndex=-1;label.classList.add('v789-select-enhanced');
- const button=document.createElement('button');button.type='button';button.className='v789-select-open v827-universal-trigger';button.setAttribute('aria-label','Seleccionar '+productLabels[name]);button.setAttribute('aria-haspopup','dialog');
- const ico=document.createElement('span');ico.className='v789-select-ico';ico.innerHTML=name==='cardId'?cardSvg:bankSvg;
+ const button=document.createElement('button');button.type='button';button.className='v789-select-open v827-universal-trigger';button.setAttribute('aria-label','Seleccionar '+productLabels[pn]);button.setAttribute('aria-haspopup','dialog');
+ const ico=document.createElement('span');ico.className='v789-select-ico';ico.innerHTML=pn==='cardId'?cardSvg:bankSvg;
  const details=document.createElement('span');details.className='v789-select-details';const strong=document.createElement('strong');details.append(strong);
  const arrow=document.createElement('span');arrow.className='v789-select-chevron';arrow.textContent='⌄';button.append(ico,details,arrow);label.append(button);
- field.addEventListener('change',()=>updateTrigger(field));updateTrigger(field);button.addEventListener('click',()=>open(name,optionsOf(field),field.value,selected=>{
-  if(form.dataset.special==='adjustment'&&name==='accountId'&&String(selected).startsWith('card:')){
+ field.addEventListener('change',()=>updateTrigger(field));updateTrigger(field);button.addEventListener('focus',()=>updateTrigger(field));button.addEventListener('click',()=>open(pn,optionsOf(field),field.value,selected=>{
+  if(form.dataset.special==='adjustment'&&pn==='accountId'&&String(selected).startsWith('card:')){
     toast('Esta tarjeta existe, pero el ajuste contable de tarjetas todavía no está conectado a este formulario. No se registró ningún movimiento.');
     return;
   }
   if(field.value===selected)return;
-  if(name==='loanId'&&form.dataset.special==='loan'){otherLoanSelect(selected,form);return;}
+  if(pn==='loanId'&&form.dataset.special==='loan'){otherLoanSelect(selected,form);return;}
   field.value=selected;
   field.dispatchEvent(new Event('change',{bubbles:true}));
  }));
@@ -18367,7 +18376,7 @@ function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels
  let filter='all';for(const [key,label] of (name==='loanId'?[['all','Todos'],['personal','Personales'],['mortgage','Hipotecarios']]:[['all','Todas'],['credit','Crédito'],['account','Cuentas']].filter(([key])=>key==='all'||(name!=='purchase'&&name!=='item')))){const btn=document.createElement('button');btn.type='button';btn.textContent=label+' ('+all.filter(o=>key==='all'||o.kind===key).length+')';btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key==='all'));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
  const list=document.createElement('div');list.className='v789-picker-list v787-product-scroll';const rows=[];
  for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row v787-product-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini v787-product-brand '+(opt.kind==='credit'&&opt.brand?'is-card '+opt.brand:opt.kind==='account'?'is-account':'');paintProductIdentity(ico,opt);
- const content=document.createElement('span');content.className='v789-picker-text v787-product-main';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.detail;content.append(strong,small);if(opt.amount){const amount=document.createElement('em');amount.textContent=opt.amount;content.append(amount);}const mark=document.createElement('span');mark.className='v789-picker-mark v787-product-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);list.append(row);rows.push(row);row.addEventListener('click',()=>{selected=opt.value;refresh()});}
+ const content=document.createElement('span');content.className='v789-picker-text v787-product-main';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.detail;content.append(strong,small);if(opt.amount){const amount=document.createElement('em');amount.textContent=opt.amount;content.append(amount);}const mark=document.createElement('span');mark.className='v789-picker-mark v787-product-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);if(opt.disabled){row.disabled=true;row.classList.add('is-unavailable');row.setAttribute('aria-disabled','true')}list.append(row);rows.push(row);row.addEventListener('click',()=>{if(opt.disabled)return;selected=opt.value;refresh()});}
  const empty=document.createElement('p');empty.className='v827-picker-empty';empty.textContent=all.length?'No se encontraron coincidencias.':'No hay productos disponibles para esta operación.';list.append(empty);
  const actions=document.createElement('div');actions.className='v827-picker-actions';const cancel=document.createElement('button');cancel.type='button';cancel.className='v827-picker-cancel';cancel.textContent='Cancelar';const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';const confirmLabel={loanId:'Usar este préstamo',purchase:'Usar esta compra',cardId:'Usar esta tarjeta',accountId:'Usar esta cuenta',item:'Continuar'};actions.append(cancel,confirm);
  function refresh(){const q=normalize(search.value);let visible=0;for(const row of rows){const match=(filter==='all'||row.dataset.kind===filter)&&(!q||normalize([...row.querySelector('.v789-picker-text').children].map(node=>node.textContent).join(' ')).includes(q));row.hidden=!match;if(match)visible++;const yes=row.dataset.value===selected;row.setAttribute('aria-pressed',String(yes));row.querySelector('.v789-picker-mark').textContent=yes?'✓':'›';}empty.hidden=visible>0;const chosen=all.find(o=>o.value===selected);const cardUnsupported=name==='accountId'&&String(selected).startsWith('card:');confirm.disabled=!chosen||cardUnsupported;confirm.title=cardUnsupported?'La conciliación contable de tarjetas requiere integración financiera segura':'';confirm.textContent=cardUnsupported?'Ajuste de tarjeta no disponible':(confirmLabel[name]||(chosen?.kind==='credit'?confirmLabel.cardId:chosen?.kind==='account'?confirmLabel.accountId:'Usar producto'))}
@@ -18601,10 +18610,14 @@ function v900AdvanceForm(cardId,editId=''){
  };
  const openPicker=(kind)=>{
   const field=kind==='card'?form.elements.cardId:form.elements.toAccountId;
-  const choices=kind==='card'?activeCards:accounts.filter(a=>a.currency===form.elements.currency.value);
+  /* Selector universal: se listan TODAS las cuentas activas (pesos y dólares, efectivo incluido); las que el avance no admite aparecen atenuadas con su motivo. */
+  const cur=form.elements.currency.value;
+  const everyAccount=(db.accounts||[]).filter(a=>!a.archived);
+  const choices=kind==='card'?activeCards:everyAccount;
   const title=kind==='card'?'Seleccionar tarjeta de origen':'Seleccionar cuenta de destino';
+  const why=a=>a.kind==='cash'?'No disponible: el avance se recibe en una cuenta bancaria':a.currency!==cur?'No disponible: este avance es en '+cur:'';
   if(typeof window.openRegisterProductPicker==='function'){
-    window.openRegisterProductPicker(title,choices.map(item=>({type:kind==='card'?'cardId':'accountId',item})),field.value,opt=>{
+    window.openRegisterProductPicker(title,choices.map(item=>kind==='card'?{type:'cardId',item}:{type:'accountId',item,disabled:!!why(item),reason:why(item)}),field.value,opt=>{
       field.value=opt.value;
       field.dispatchEvent(new Event('change',{bubbles:true}));
       repaint();
