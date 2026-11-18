@@ -2176,12 +2176,7 @@ function loans(){
 
 
 
-function loanExportCsv(id){
-  let l=loan(id);if(!l)return;let b=loanBundle(l),rows=loanWorkspace.plan==='original'?b.original.rows:loanWorkspace.plan==='strategy'?[...b.actual.rows,...b.scenario.rows]:[...b.actual.rows,...b.baseline.rows];
-  let h=['Período','Fecha','Tipo','Saldo inicial','Capital regular','Intereses','Seguro','Comisiones','Abono extraordinario','Pago total','Saldo final'];
-  let data=[h,...rows.map(r=>[r.period,r.date,r.kind,r.opening,r.principal,r.interest,r.insurance,r.fee,r.extra,r.payment,r.balance])];
-  download('\uFEFF'+data.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n'),`prestamo-${String(l.name).replace(/[^\w-]/g,'-')}-amortizacion.csv`,'text/csv;charset=utf-8');
-}
+
 
 
 
@@ -6132,17 +6127,14 @@ case 'v68WalletSelect':v139WalletChooseCard(id);break;
 case 'v30Go':ui.page=el.dataset.page||'register';if(ui.page==='register'){ui.movementTab=el.dataset.tab||'all';ui.reviewFilter=el.dataset.issue==='unreviewed'?'pending':'all';}render();window.scrollTo(0,0);break;
 case 'v30NewPoint':if(v30SavePoint('Punto de recuperación manual')){render();toast('Punto local de recuperación creado. Descarga también un respaldo JSON.')}break;
 case 'v30RestorePoint':v30RestorePoint(id);break;
-case 'v30DownloadPoint':v30DownloadPoint(id);break;case 'projectionMenu':ui.projectionMenu=!ui.projectionMenu;render();break;case 'projectionScenario':ui.forecastScenario=['base','conservative','optimistic'].includes(id)?id:'base';render();break;case 'projectionHorizon':ui.forecastHorizon=[6,12,24].includes(Number(id))?Number(id):12;render();break;case 'cycleMenuStyle':db.settings.menuLayout='rail';render();break;
-case 'kpiMode':{let cfg=dashboardConfig();cfg.mode=id;saveDashboardConfig(cfg);render();break}
+case 'v30DownloadPoint':v30DownloadPoint(id);break;case 'projectionMenu':ui.projectionMenu=!ui.projectionMenu;render();break;
 case 'kpiEditor':{ui.kpiEditing=!ui.kpiEditing;let cfg=dashboardConfig();if(ui.kpiEditing&&cfg.mode!=='custom'){cfg.selected=[...dashboardEnabled(cfg)];cfg.mode='custom';saveDashboardConfig(cfg)}render();break}
-case 'kpiGroupUp':case 'kpiGroupDown':{let cfg=dashboardConfig(),i=cfg.groupOrder.indexOf(id),j=i+(action==='kpiGroupUp'?-1:1);if(i>=0&&j>=0&&j<cfg.groupOrder.length){[cfg.groupOrder[i],cfg.groupOrder[j]]=[cfg.groupOrder[j],cfg.groupOrder[i]];saveDashboardConfig(cfg);render()}break}
 case 'addPersonal':personalForm();break;
  case 'personalFilter':ui.personalFilter=id;render();break;
  case 'viewActivity':ui.page='register';ui.movementTab='all';render();window.scrollTo(0,0);break;
  case 'payPersonal':personalPaymentForm(id);break;
  case 'forgivePersonal':v82ForgivePersonalForm(id);break;
  case 'quickCommitment':ui.quickCommitment=ui.quickCommitment===id?null:id;render();break;
- case 'togglePrivacy':privacyMode=!privacyMode;render();break;
 case 'toggleHidden':ui.showHidden=!ui.showHidden;render();break;
 case 'productArchive':manageProduct(el.dataset.kind,id,'toggle');break;
 case 'productDelete':manageProduct(el.dataset.kind,id,'delete');break;
@@ -6157,7 +6149,6 @@ case 'backgroundCustom':{const c=document.getElementById('viveBackgroundColor')?
 case 'expenseRange':ui.expenseRange=id==='year'?'year':'month';render();break; case 'movementTab':ui.movementTab=id==='pending'?'all':id;if(id==='pending')ui.reviewFilter='drafts';render();break;
 case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break;if(!v30SavePoint('Antes de descartar operación pendiente'))break;db.pendingOperations=db.pendingOperations.filter(q=>q.id!==id);persist();render();toast('Operación pendiente descartada; puedes recuperarla desde Configuración.');break;
 case 'pendingConfirm':openPendingOperation(id);break;
- case 'navGroupToggle':ui.navExpanded=ui.navExpanded===id?null:id;render();break;
  case 'navigate':{
    v8SearchDestination=null;
    if(id==='settings' && ui.page!=='settings')v242SettingsPane='home';
@@ -6239,8 +6230,6 @@ case 'v191DeleteSubcategory':{
  break;
 }
 case 'matrixCategory':{ui.matrixExpanded||={};const key=(el.dataset.kind||'expense')+':'+(el.dataset.cat||'');ui.matrixExpanded[key]=!ui.matrixExpanded[key];render();break;}
-case 'annualToggle':ui.annualDetails=!ui.annualDetails;render();break;
-case 'gotoSettings':ui.page='settings';render();break;
 case 'mobile':ui.mobile=!ui.mobile;render();break;
 case 'registrationGroup':ui.registrationGroup=['receive','pay','move','other'].includes(id)?id:'pay';if(document.querySelector('#modal-root .v235-register-dialog'))openRegisterAssistant();else render();break;
 case 'v196PayKind':ui.v196PayKind=['all','card','loan','recurring','personal'].includes(id)?id:'all';ui.v176PayView='agenda';render();break; case 'v145PayFilter':ui.v145PayFilter=['all','overdue','upcoming'].includes(id)?id:'all';render();break; case 'guidedFlow':{
@@ -6284,7 +6273,6 @@ case 'v6WalletTransactionDetail':v6WalletTransactionDetail(id);break;
 case 'v6WalletEditTransaction':closeModal();openTransactionEditor(id);break;
 case 'editTransaction':openTransactionEditor(id);break;
 case 'toggleReview':{let t=db.transactions.find(x=>x.id===id);if(t){t.reviewed=!t.reviewed;persist();render();toast(t.reviewed?'Movimiento marcado como revisado.':'Movimiento pendiente de revisión.')}break}
-case 'viewLedger':ui.page='register';render();document.getElementById('ledger-world')?.scrollIntoView({behavior:'smooth',block:'start'});break;
 case 'addAccount':accountForm(null,id);break;
 case 'editAccount':accountForm(id);break;
 case 'accountBreakdown':ui.accountBreakdown=el.dataset.view||'';render();break;
@@ -6292,10 +6280,8 @@ case 'accountDetails':ui.accountId=id;render();break;
 case 'closeAccountDetails':ui.accountId=null;render();break;
 case 'addCard':cardForm(null,id);break;
  case 'rewardCard':manualBenefitForm(id,ccy);break;case 'benefitLedger':manualBenefitForm(id,ccy);break;
- case 'newBenefitRule':manualBenefitForm(id,ccy);break;
  case 'annualFee':annualFeeForm(id);break;
  case 'perkUsage':manualBenefitForm(id,ccy);break;
- case 'deleteBenefitRule':{let c=card(id);if(c&&confirm('¿Eliminar esta condición de beneficios? No se borrarán compras ni acreditaciones.')){c.benefitRules=(c.benefitRules||[]).filter(r=>r.id!==el.dataset.rule);persist();render()}break;}
 case 'editCard':cardForm(id);break;
 case 'cardDetails':ui.cardId=id;ui.cardDetailTab='status';render();setTimeout(()=>document.querySelector('.card-detail')?.scrollIntoView({behavior:'smooth',block:'start'}),50);break;
 case 'cardHistory':ui.cardId=id;ui.cardDetailTab='history';ui.cardHistoryCurrency='DOP';ui.cardHistoryYear=nowYear();render();setTimeout(()=>document.getElementById('card-history-detail')?.scrollIntoView({behavior:'smooth',block:'start'}),50);break;
@@ -6308,15 +6294,7 @@ case 'payCard':{let c=card(id),a=db.accounts.find(x=>!x.archived&&x.kind!=='cash
 case 'addLoan':loanForm(null,id);break;
 case 'editLoan':loanForm(id);break;
 case 'loanDetails':ui.loanId=id;ui.innerViews.loans='overview';loanWorkspace.tab='vision';render();setTimeout(()=>document.getElementById('loan-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),40);break;
-case 'closeLoanDetails':ui.loanId=null;render();break;
 case 'payLoan':{let l=loan(id),a=db.accounts.find(a=>a.currency===l?.currency)||db.accounts[0];transactionForm({type:'loan_payment',loanId:id,accountId:a?.id||'',amount:'',principal:'',interest:'',insurance:'',fee:'',paymentKind:'regular'});break}
- case 'extraLoan':{let l=loan(id),a=db.accounts.find(a=>a.currency===l?.currency)||db.accounts[0];transactionForm({type:'loan_payment',loanId:id,accountId:a?.id||'',amount:'',principal:'',interest:0,insurance:0,fee:0,paymentKind:'extra',note:'Abono extraordinario a capital'});break}
- case 'loanTab':loanWorkspace.tab=id;render();document.getElementById('loan-workspace')?.scrollIntoView({block:'start'});break;
- case 'loanPeriod':loanWorkspace.period=Number(id);render();break;
- case 'loanPlan':loanWorkspace.plan=id;render();break;
- case 'loanCsv':loanExportCsv(id);break;
- case 'loanSimReset':{if(ui.loanId){let l=loan(ui.loanId);loanWorkspace.sim[l.id]={amount:0,frequency:1,start:today(),mode:'term'};render();}break}
- case 'loanCalculate':{let l=loan(ui.loanId);if(l){loanWorkspace.sim[l.id]={amount:Math.max(0,num(document.getElementById('loanSimAmount')?.value)),frequency:Number(document.getElementById('loanSimFrequency')?.value||1),start:document.getElementById('loanSimStart')?.value||today(),mode:document.getElementById('loanSimMode')?.value||'term'};render();}break}
 case 'v41PickServiceIcon':{const f=document.getElementById('recurringForm');if(f){v41SetServiceIcon(f,id);f.dataset.v41IconManual='1';}break} case 'addRecurring':recurringForm();break;
 case 'editRecurring':recurringForm(id);break;
 case 'toggleRecurring':{let r=db.recurring.find(r=>r.id===id);if(r){r.active=r.active===false;persist();render()}break}
@@ -6334,19 +6312,6 @@ case 'print':window.print();break;
 case 'demo':if(confirm('¿Cargar una demostración con datos totalmente ficticios? REEMPLAZARÁ tus datos actuales. Exporta un respaldo antes de continuar.')){if(!v30SavePoint('Antes de cargar demostración'))break;v403RegisterDeletedTransactions(db.transactions);db=seedDemo();ui.page='banks';ui.bankId=null;ui.cardId=null;ui.accountId=null;ui.loanId=null;persist();render();toast('Demostración ficticia cargada.')}break;
 case 'clear':if(confirm('¿Eliminar todos los registros financieros de tu cuenta en Supabase y en todos tus dispositivos? Exporta un respaldo JSON antes de continuar.')){if(confirm('Confirmación final: ¿borrar todos los datos?')){if(!v30SavePoint('Antes de eliminar todos los datos'))break;v403RegisterDeletedTransactions(db.transactions);db=init();ui.page='overview';ui.accountId=null;ui.cardId=null;ui.loanId=null;persist();render();toast('Datos locales vaciados.')}}break;
 case 'deleteTransaction':{const tx=db.transactions.find(t=>t.id===id);if(tx)v51DeleteMovementPrompt(tx);else toast('El movimiento ya no existe.');break}
-case 'v51ConfirmDelete':{
- const pos=db.transactions.findIndex(t=>t.id===id);if(pos<0){closeModal();toast('El movimiento ya no existe.');break;}
- const t=db.transactions[pos];
- v30SavePoint('Antes de eliminar movimiento '+String(t.date||''));
- db.deletedMovements=Array.isArray(db.deletedMovements)?db.deletedMovements:[];
- db.deletedMovements.push({id:t.id,at:new Date().toISOString(),tx:JSON.parse(JSON.stringify(t))});
- if(db.deletedMovements.length>150)db.deletedMovements=db.deletedMovements.slice(-150);
-  v403RegisterDeletedTransactions([t]);
- financeAudit('movimiento',t.id,'eliminación',t,null);
- db.transactions.splice(pos,1);
-  if(t.type==='personal_issue'){const relation=personalLoan(t.personalLoanId);if(relation)relation.openingMode='existing';}
-  persist();closeModal();render();toast('Eliminación enviada a Supabase; se confirmará al guardar.');break;
-}
 case 'v54ConfirmPermanent':{
  const pos=db.transactions.findIndex(t=>t.id===id);
  if(pos<0){document.getElementById('v54-delete-layer')?.remove();closeModal();toast('Ese movimiento ya no está en el libro.');break;}
@@ -6892,7 +6857,6 @@ const v31E=sanitize;
 const v31Days=(s,t)=>Math.round((dateObj(t)-dateObj(s))/86400000);
 const v31Fmt=(n,ccy='DOP')=>money(n,ccy,2);
 const v31Title=(t)=>String(transactionTitle(t)||TRANSL[t.type]||t.type||'Movimiento');
-const v31Date=(s)=>/^\d{4}-\d{2}-\d{2}$/.test(String(s||''))?s:'';
 
 
 
@@ -6956,7 +6920,7 @@ function v31DataString(bytes){const u=bytes instanceof Uint8Array?bytes:new Uint
 function v31FromB64(input){let txt=atob(String(input)),out=new Uint8Array(txt.length);for(let i=0;i<out.length;i++)out[i]=txt.charCodeAt(i);return out}
 async function v31Sha(blob){if(!crypto?.subtle)return '';return [...new Uint8Array(await crypto.subtle.digest('SHA-256',await blob.arrayBuffer()))].map(b=>b.toString(16).padStart(2,'0')).join('')}
 
-async function v31SaveReceipt(form){try{const file=form.elements.file.files[0],txId=form.elements.txId.value,title=String(form.elements.title.value||'').trim();if(!file||!db.transactions.some(t=>t.id===txId))throw Error('Selecciona un movimiento existente y un archivo.');if(file.size>8*1024*1024)throw Error('Máximo 8 MB por comprobante.');if(!/\.(pdf|png|jpe?g|webp|txt)$/i.test(file.name))throw Error('Tipo de archivo no permitido.');if(!['application/pdf','image/jpeg','image/png','image/webp','text/plain',''].includes(file.type))throw Error('Formato de archivo no admitido.');const id=uuid(),sha=await v31Sha(file);await v31PutDoc(id,file);v31Ensure().docs.push({id,txId,title,filename:file.name,size:file.size,mime:file.type||'application/octet-stream',sha,date:new Date().toISOString()});v31LogAudit('Adjunto','Comprobante',title);if(!persist()){v31Ensure().docs=v31Ensure().docs.filter(x=>x.id!==id);await v31DeleteDoc(id);throw Error('Almacenamiento insuficiente para guardar los metadatos.');}render();toast('Comprobante asociado al movimiento.')}catch(e){toast('No se pudo adjuntar: '+e.message)}}
+
 async function v31OpenReceipt(id){try{const meta=v31Ensure().docs.find(x=>x.id===id);if(!meta)throw Error('Comprobante no encontrado.');const blob=await v31GetDoc(id);if(!blob)throw Error('El archivo no está en este navegador. Restaura un respaldo que incluya comprobantes.');if(meta.sha&&await v31Sha(blob)!==meta.sha)throw Error('El archivo no supera la verificación de integridad.');const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=meta.filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);}catch(e){toast(e.message)}}
 async function v31RemoveReceipt(id){let meta=v31Ensure().docs.find(x=>x.id===id);if(!meta||!confirm('¿Eliminar este comprobante? Esta acción no modifica el movimiento asociado.'))return;try{await v31DeleteDoc(id);v31Ensure().docs=v31Ensure().docs.filter(x=>x.id!==id);v31LogAudit('Eliminación','Comprobante',meta.title);persist();render();toast('Comprobante eliminado.')}catch(e){toast('No pudo eliminarse el archivo: '+e.message)}}
 
@@ -6967,32 +6931,21 @@ async function v31Bundle(){const files=[],docs=v31Ensure().docs;let total=0;for(
 async function v31CreateEncrypted(form){try{v31SecureSupported();const pwd=String(form.elements.password.value),conf=String(form.elements.confirmPassword.value);if(pwd.length<10||pwd!==conf)throw Error('Las contraseñas no coinciden o son demasiado cortas.');let payload=await v31Bundle(),salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await v31AesKey(pwd,salt);let content=new TextEncoder().encode(JSON.stringify(payload)),cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,content),output={format:'vivehoy360-encrypted-v1',kdf:'PBKDF2-SHA256',iterations:310000,cipher:'AES-256-GCM',salt:v31DataString(salt),iv:v31DataString(iv),data:v31DataString(cipher)};download(JSON.stringify(output),`vive-el-hoy-seguro-${today()}.v360`,'application/json');closeModal();toast('Respaldo cifrado creado. Conserva la contraseña en un lugar seguro.')}catch(e){toast('No se pudo cifrar: '+e.message)}}
 async function v31RestoreEncrypted(form){try{v31SecureSupported();let file=form.elements.file.files[0],password=String(form.elements.password.value);if(!file)throw Error('Selecciona el archivo cifrado.');if(file.size>48*1024*1024)throw Error('El archivo supera el límite de 48 MB.');let o=JSON.parse(await file.text());if(o.format!=='vivehoy360-encrypted-v1'||o.cipher!=='AES-256-GCM'||o.iterations!==310000)throw Error('Formato cifrado no reconocido.');let key=await v31AesKey(password,v31FromB64(o.salt)),plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:v31FromB64(o.iv)},key,v31FromB64(o.data));let pack=JSON.parse(new TextDecoder().decode(plain));if(pack.format!=='vivehoy360-bundle-v31')throw Error('Contenido cifrado inválido.');v30ValidateImport(pack.finance);if(!confirm('Este respaldo REEMPLAZARÁ los datos financieros actuales. ¿Confirmar?'))return;if(!v30SavePoint('Antes de restaurar respaldo cifrado V31'))throw Error('No se pudo crear el punto de recuperación. Exporta primero un JSON.');const before=db;try{db=migrateData({...init(),...pack.finance,settings:{...init().settings,...(pack.finance.settings||{})}});v31Ensure();if(!persist())throw Error('No se pudo guardar el respaldo restaurado.');for(const d of pack.files||[]){if(!d.id||!d.bytes)continue;let blob=new Blob([v31FromB64(d.bytes)],{type:d.mime||'application/octet-stream'});await v31PutDoc(d.id,blob);}v31AuditBaseline=v31Tracked();v31LogAudit('Restauración','Respaldo cifrado',file.name);persist();closeModal();ui.page='settings';ui.v32Tools.settings='audit';render();toast('Respaldo descifrado y restaurado. Verifica documentos y saldos.')}catch(e){db=before;persist();throw e;}}
  catch(e){toast('No se pudo restaurar (contraseña o archivo): '+e.message)}}
-function v31ExportAudit(){let rows=[['Fecha y hora','Acción','Colección','Detalle'],...v31Ensure().audit.map(a=>[a.at,a.action,a.subject,a.description])];download('\uFEFF'+rows.map(row=>row.map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')).join('\r\n'),`vive-el-hoy-auditoria-${today()}.csv`,'text/csv;charset=utf-8')}
+
 /* Acciones delegadas del nuevo centro: no cambian los formularios y rutas existentes. */
 const v31OriginalOnAction=onAction;
 onAction=function(action,el){const id=el?.dataset?.id||'';switch(action){
- case 'v31Tab':return v31Nav(id);
  case 'v31Horizon':ui.v31Horizon=Number(id);render();return;
  case 'v31AutoMatch':return v31AutoMatch();
  case 'v31MatchDialog':return v31MatchDialog(id);
  case 'v31PostBank':case 'v31Ignore':case 'v31Unmatch':return v31ReconcileAction(action,id);
- case 'v31ReconcileHelp':return modal('Importación de extractos','<div class="form-full v31-form-note"><strong>CSV y Excel XLSX</strong><p>Selecciona la cuenta de origen, luego importa un extracto con encabezados de fecha, descripción y monto; también se admiten columnas separadas de débito y crédito. Los cargos deben ser negativos y los abonos positivos. Admite fechas AAAA-MM-DD o DD/MM/AAAA.</p><p>El sistema omitirá filas idénticas, ofrecerá coincidencias por importe y fecha, y nunca realizará operaciones bancarias reales.</p></div>','v31HelpForm');
- case 'v31RemovePlanned':{let x=v31Ensure().planned.find(q=>q.id===id);if(x&&confirm('¿Quitar esta previsión? No se borran movimientos reales.')){v31Ensure().planned=v31Ensure().planned.filter(q=>q.id!==id);v31LogAudit('Eliminación','Previsión',x.name);persist();render();}return}
- case 'v31CardCcy':ui.v31CardCurrency=id;ui.v31CardAmount=0;render();return;
- case 'v31DeleteFx':{let x=v31Ensure().fxHistory.find(z=>z.id===id);if(x&&confirm('¿Eliminar esta tasa histórica manual?')){v31Ensure().fxHistory=v31Ensure().fxHistory.filter(z=>z.id!==id);v31LogAudit('Eliminación','Tasa histórica',x.source);persist();render();}return}
  case 'v31OpenDoc':v31OpenReceipt(id);return;
  case 'v31DeleteDoc':v31RemoveReceipt(id);return;
  case 'v31EncryptedExport':v31CipherForm('export');return;
  case 'v31EncryptedImport':v31CipherForm('import');return;
- case 'v31CsvAudit':v31ExportAudit();return;
- case 'v31OpenReview':ui.page='register';ui.movementTab='review';render();return;
  }return v31OriginalOnAction(action,el)};
 function v31VForm(e){let form=e.target;if(!form?.id?.startsWith('v31'))return;e.preventDefault();e.stopImmediatePropagation();try{let f=form.elements,s=v31Ensure();switch(form.id){
- case 'v31PlannedForm':{let name=f.name.value.trim(),amount=num(f.amount.value),date=f.date.value,kind=f.kind.value,ccy=f.currency.value,frequency=f.frequency.value;if(!name||amount<=0||!v31Date(date)||!['income','expense'].includes(kind)||!['DOP','USD'].includes(ccy))throw Error('Verifica la previsión.');s.planned.push({id:uuid(),name,amount,date,kind,currency:ccy,frequency});v31LogAudit('Creación','Previsión',name);persist();render();toast('Previsión añadida.');break}
- case 'v31FxForm':{let rate=num(f.rate.value),date=f.date.value,source=f.source.value.trim();if(rate<=0||rate>10000||!v31Date(date)||!source)throw Error('Tasa o fecha no válida.');s.fxHistory.push({id:uuid(),rate,date,source});v31LogAudit('Creación','Tasa',source);persist();render();toast('Tasa registrada.');break}
- case 'v31BankBalance':{let ac=account(ui.v31Account),val=Number(f.balance.value),date=f.date.value;if(!ac||!Number.isFinite(val)||!v31Date(date))throw Error('Selecciona cuenta, saldo y fecha.');s.bankBalances=s.bankBalances.filter(b=>b.accountId!==ac.id);s.bankBalances.push({id:uuid(),accountId:ac.id,date,balance:val});v31LogAudit('Conciliación','Saldo de banco',ac.name+' · '+date);persist();render();toast('Diferencia calculada sin alterar saldos.');break}
  case 'v31MatchForm':{let row=s.bankRows.find(x=>x.id===form.dataset.rowId),t=db.transactions.find(x=>x.id===f.txId.value);if(!row||!t)throw Error('Selecciona un movimiento válido.');let a=account(row.accountId);if(!a||Math.abs(v31BankImpact(t,a)-row.amount)>.06||Math.abs(v31Days(t.date,row.date))>3)throw Error('La coincidencia no cumple los criterios de cuenta, fecha e importe.');if(s.bankRows.some(r=>r.id!==row.id&&r.status==='matched'&&r.txId===t.id))throw Error('El movimiento ya está vinculado a otro registro bancario.');row.status='matched';row.txId=t.id;t.reviewed=true;v31LogAudit('Conciliación','Extracto',row.description);persist();closeModal();render();toast('Movimiento conciliado.');break}
- case 'v31DocForm':v31SaveReceipt(form);break;
  case 'v31EncryptedExportForm':v31CreateEncrypted(form);break;
  case 'v31EncryptedImportForm':v31RestoreEncrypted(form);break;
  }}catch(err){toast('Revisa los datos: '+err.message)}}
@@ -7015,7 +6968,7 @@ const V32_TOOLS={
  recurring:[['recurringPlan','Costo futuro','calendar']],
  certificates:[['maturity','Vencimientos','calendar']]
 };
-function v31Nav(id){const routes={pulse:'advanced',reconcile:'accounts',flow:'payments',cards:'cards',budget:'budget',receipts:'register',audit:'settings'};ui.page=routes[id]||'advanced';if(ui.v32Tools)ui.v32Tools[ui.page]='';render();window.scrollTo(0,0)}
+
 
 
 /* V286 · Eliminar las herramientas complementarias de todas las pantallas.
@@ -7336,9 +7289,7 @@ document.addEventListener('click',async e=>{
  switch(b.dataset.f34){
   case 'refreshFx':await f34UpdateFx(true);break;
   case 'autoFx':db.settings.fxAutoEnabled=true;db.settings.fxAcknowledged=!!db.settings.fxSource;persist();await f34UpdateFx(true);break;
-  case 'retryCloud':await f33Flush();f34PanelUpdate();break;
   case 'backup':exportJson();break;
-  case 'reloadCloud':await f33ReloadRemote();break;
   case 'logout':await f33Logout();break;
  }
 });
