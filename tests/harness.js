@@ -2,7 +2,8 @@ const {chromium}=require('playwright');const fs=require('fs');
 const SP=__dirname;
 const mock=fs.readFileSync(__dirname+'/mock.js','utf8');
 module.exports=async function open(b,w,h){
-  const ctx=await b.newContext(Object.assign({viewport:{width:w,height:h||900}},process.env.TOUCH?{hasTouch:true,isMobile:true,deviceScaleFactor:2}:{}));
+  const ctx=await b.newContext(Object.assign({viewport:{width:w,height:h||900}},process.env.TOUCH?{hasTouch:true,isMobile:true,deviceScaleFactor:2}:{},process.env.TZID?{timezoneId:process.env.TZID}:{}));
+  if(process.env.FREEZE)await ctx.addInitScript('(()=>{const R=Date,f=R.parse('+JSON.stringify(process.env.FREEZE)+');window.Date=class extends R{constructor(...a){a.length?super(...a):super(f)}static now(){return f}}})()');
   await ctx.route('**/*',r=>{const u=r.request().url();const ROOT=process.env.ROOT||require('path').resolve(__dirname,'..');
   if(u.includes('supabase.js'))return r.fulfill({body:mock,contentType:'application/javascript'});
   const m=u.match(/^http:\/\/localhost:8765\/([^?#]*)/);
