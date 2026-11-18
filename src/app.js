@@ -18329,6 +18329,11 @@ document.addEventListener('submit',function(e){
 
 
 /* V951: puente de solo lectura para controladores externos (p. ej. V383 · abono a préstamo), que no ven las funciones internas de este bloque. */
+/* V1131 · Experiencia web: la misma vista móvil se completa con una columna lateral de información adicional (≥1100 px). */
+const v1131Web=(main,aside)=>`<div class="v1131-web"><div class="v1131-main">${main}</div><aside class="v1131-side" aria-label="Información adicional">${aside}</aside></div>`;
+const v1131Card=(title,body)=>`<section class="v1131-card"><h3>${title}</h3>${body}</section>`;
+const v1131Row=(label,value,sub)=>`<div class="v1131-row"><span>${label}${sub?`<small>${sub}</small>`:''}</span><b>${value}</b></div>`;
+const v1131Bars=(rows,fmt)=>{const max=Math.max(1,...rows.map(r=>r[1]));return rows.length?`<div class="v1131-bars">${rows.map(([n,v])=>`<div class="v1131-bar"><div><span>${sanitize(String(n))}</span><b>${fmt(v)}</b></div><i style="--w:${Math.max(3,Math.round(v/max*100))}%"></i></div>`).join('')}</div>`:'<p class="v1131-empty">Sin datos todavía.</p>'};
 /* V911 · Suscripciones: Agenda · Cartera · Historial · Análisis (Radiografía · Concentración · Inteligencia).
    Una sola vista sobre db.recurring y los movimientos con recurringId (sin tabla ni consulta nuevas): pagar, editar y confirmar reutilizan
    las acciones existentes (payRecurring, editRecurring, toggleRecurring, editTransaction, toggleReview). Importes en su moneda; totales en RD$ con fx(). */
@@ -18438,7 +18443,17 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   document.querySelectorAll('#v911-list [data-v911-group]').forEach(g=>{let vis=0;g.querySelectorAll('[data-v911-svc]').forEach(d=>{const ok=!query||d.dataset.q.includes(query);d.hidden=!ok;if(ok)vis++});g.hidden=!vis;if(query&&vis)g.open=true;if(vis)any=true});
   const none=document.getElementById('v911-noresult');if(none)none.hidden=any||!document.querySelector('#v911-list [data-v911-svc]');
  }
- pages.recurring=page;
+    const side=()=>{
+     const act=activeList(),mensual=act.reduce((n,r)=>n+monthlyDop(r),0),t0=today();
+     const nm=new Date(+t0.slice(0,4),+t0.slice(5,7),1),nxt=nm.getFullYear()+'-'+String(nm.getMonth()+1).padStart(2,'0');
+     const next=[...pendingMonth(t0.slice(0,7)),...pendingMonth(nxt)].find(p=>p.date>=t0);
+     const by=new Map();act.forEach(r=>by.set(catOf(r),(by.get(catOf(r))||0)+monthlyDop(r)));
+     const top=[...by].sort((a,b)=>b[1]-a[1]).slice(0,6);
+     return v1131Card('Tu gasto en suscripciones',v1131Row('Mensual',rd(mensual))+v1131Row('Anual estimado',rd(mensual*12))+v1131Row('Servicios activos',String(act.length))+(act.length?v1131Row('Promedio por servicio',rd(mensual/act.length)):''))
+      +v1131Card('Próximo pago',next?v1131Row(esc(next.name||'Suscripción'),money(next.amount,next.currency||'DOP',2),esc(dayHead(next.date))):'<p class="v1131-empty">No hay pagos próximos programados.</p>')
+      +v1131Card('Por categoría · mensual',v1131Bars(top,v=>rd(v)));
+    };
+    pages.recurring=()=>v1131Web(page(),side());
  document.addEventListener('click',e=>{
   const t=e.target.closest?.('[data-v911-tab],[data-v911-day],[data-v911-open],[data-v911-review]');
   if(!t||!t.closest('.v911'))return;const st=S();
@@ -18499,7 +18514,16 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
    ${sinLimite.length?`<p class="v911-eyebrow">Gasto sin límite</p><div class="v911-card">${sinLimite.map(([c,v])=>`<button type="button" class="v911-row" data-act="editBudget" data-cat="${esc(c)}"><span class="v911-row-info"><strong>${esc(c)}</strong><small>Sin límite asignado</small></span><b>${money(v)}</b>${IC.chev.replace('<svg','<svg class="v911-chev"')}</button>`).join('')}</div>`:''}
    <p class="v911-eyebrow">Cumplimiento mensual · ${y}</p>${mensual(y,period)}</div>`;
  }
- pages.budget=page;
+    const side=()=>{
+     const period=ui.month||today().slice(0,7),d=datos(period),t0=today();
+     const dim=new Date(d.y,d.m,0).getDate(),dia=t0.slice(0,7)===period?Number(t0.slice(8,10)):(period<t0.slice(0,7)?dim:0),resta=Math.max(0,dim-dia);
+     const top=Object.entries(d.totals.expenseBy||{}).map(([c,v])=>[c,num(v)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6);
+     const cnt={good:0,near:0,over:0};d.groups.forEach(g=>{const k=stat(g.pct);if(cnt[k]!==undefined)cnt[k]++});
+     return v1131Card('Ritmo del mes',v1131Row('Días restantes',String(resta))+(d.total>0?v1131Row(d.left<0?'Exceso sobre presupuesto':'Disponible por día',money(resta>0?Math.max(0,d.left)/resta:Math.abs(d.left))):'')+v1131Row('Gastado en el mes',money(num(d.totals.expense))))
+      +(d.groups.length?v1131Card('Estado de las categorías',v1131Row(LBL.good,String(cnt.good))+v1131Row(LBL.near,String(cnt.near))+v1131Row(LBL.over,String(cnt.over))):'')
+      +v1131Card('Mayor gasto del mes',v1131Bars(top,v=>money(v)));
+    };
+    pages.budget=()=>v1131Web(page(),side());
  document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v919-month]');if(!b||!b.closest('.v919'))return;e.preventDefault();ui.month=b.dataset.v919Month;ui.year=Number(ui.month.slice(0,4));render()},true);
 })();
 
@@ -18558,7 +18582,14 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
    <p class="v911-eyebrow">Toca una categoría para ver, editar o eliminar</p>
    <div class="v911-card v920-list" id="v920-list">${filas||'<p class="v911-empty">No hay categorías. Crea la primera con el botón +.</p>'}</div></div>`;
  }
- pages.categories=pagina;
+    const side=()=>{
+     const k=S().kind,cats=Object.entries(categoryMap(k)),us=cats.map(([c])=>[c,usos(k,c)]);
+     const top=us.filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6),sinUso=us.filter(x=>!x[1]).length;
+     const conEmoji=Object.keys(db.categoryEmoji||{}).filter(x=>x.startsWith(k+'||')).length;
+     return v1131Card('Resumen del catálogo',v1131Row('Categorías',String(cats.length))+v1131Row('Subcategorías',String(cats.reduce((n,[,s])=>n+s.length,0)))+v1131Row('Sin movimientos',String(sinUso))+v1131Row('Con emoji propio',String(conEmoji)))
+      +v1131Card('Más utilizadas',v1131Bars(top,v=>v+(v===1?' mov.':' movs.')));
+    };
+    pages.categories=()=>v1131Web(pagina(),side());
  /* ---------- acciones ---------- */
  const partes=s=>String(s||'').split('|');
  const refrescar=(k,c)=>{persist();render();if(k&&c)detalle(k,c)};

@@ -54538,3 +54538,26 @@ html body #app#app .v1130-credit-web .v315-credit-row-head span{font-size:15px;f
 html body #app#app .v1130-credit-web .v315-credit-row-head strong{font-size:16px}
 html body #app#app .v1130-credit-web .v315-credit-row-foot span{font-size:12.5px;color:var(--c-mut)}
 html body #app#app .v1130-credit-web .v315-warn{color:#d6455d!important}
+
+/* v1131 · Web: columna lateral con información adicional (Suscripciones, Presupuesto, Categorías) */
+html body #app#app #page .v1131-web{display:block}
+html body #app#app #page .v1131-side{display:none}
+@media(min-width:1100px){
+ html body #app#app #page .v1131-web{display:grid;grid-template-columns:minmax(0,760px) 340px;gap:28px;justify-content:center;align-items:start;max-width:1200px;margin:0 auto}
+ html body #app#app #page .v1131-web>.v1131-main .v911{margin:0;max-width:none}
+ html body #app#app #page .v1131-side{display:flex;flex-direction:column;gap:14px;position:sticky;top:18px;padding-top:6px}
+}
+html body #app#app #page .v1131-card{--s-ink:#1c2b44;--s-mut:#7a889c;--s-line:rgba(120,140,170,.22);padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.72);border:1px solid var(--s-line)}
+html body:is(.theme-black,.theme-dark) #app#app #page .v1131-card{--s-ink:#f4f6fb;--s-mut:#9aa3b2;--s-line:rgba(255,255,255,.14);background:rgba(255,255,255,.05)}
+html body.theme-black #app#app #page .v1131-card{background:#0a0a0c}
+html body #app#app #page .v1131-card h3{margin:0 0 10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:750;color:var(--ac,#5b5bd6)}
+html body #app#app #page .v1131-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0;border-top:1px solid var(--s-line);font-size:14px;color:var(--s-mut)}
+html body #app#app #page .v1131-card h3+.v1131-row{border-top:0}
+html body #app#app #page .v1131-row small{display:block;font-size:12px;margin-top:2px}
+html body #app#app #page .v1131-row b{color:var(--s-ink);font-size:15px;font-weight:750;white-space:nowrap}
+html body #app#app #page .v1131-bars{display:flex;flex-direction:column;gap:12px}
+html body #app#app #page .v1131-bar>div{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--s-mut)}
+html body #app#app #page .v1131-bar b{color:var(--s-ink);font-weight:700}
+html body #app#app #page .v1131-bar i{display:block;height:7px;margin-top:6px;border-radius:7px;background:color-mix(in srgb,var(--s-mut) 22%,transparent);position:relative;overflow:hidden}
+html body #app#app #page .v1131-bar i::after{content:"";position:absolute;inset:0;width:var(--w);border-radius:7px;background:var(--ac,#5b5bd6)}
+html body #app#app #page .v1131-empty{margin:0;font-size:13.5px;color:var(--s-mut)}
