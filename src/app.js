@@ -18366,7 +18366,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  function agenda(){
   const st=S(),month=ui.month||today().slice(0,7),pend=pendingMonth(month);
   const total=pend.reduce((n,p)=>n+dop(p.amount,p.currency),0);
-  const [Y,M]=month.split('-').map(Number),dim=new Date(Y,M,0).getDate(),t0=today();
+  const [Y,M]=month.split('-').map(Number),pagadoAnio=charges().filter(t=>t.date.slice(0,4)===String(Y)).reduce((n,t)=>n+txDop(t),0),dim=new Date(Y,M,0).getDate(),t0=today();
   let sel=st.day&&st.day.slice(0,7)===month?st.day:(t0.slice(0,7)===month?t0:month+'-01');
   const dueDays=new Set(pend.map(p=>p.date));
   const strip=Array.from({length:dim},(_,i)=>{const d=month+'-'+String(i+1).padStart(2,'0');return `<button type="button" class="v911-day${d===sel?' is-on':''}${dueDays.has(d)?' has-due':''}${d===t0?' is-today':''}" data-v911-day="${d}" aria-pressed="${d===sel}" aria-label="${esc(dayHead(d))}${dueDays.has(d)?', con vencimientos':''}"><small>${MS[M-1].replace(/^./,c=>c.toUpperCase())}</small><b>${i+1}</b></button>`}).join('');
@@ -18376,6 +18376,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const review=charges().filter(t=>t.reviewed!==true).length;
   return `<div class="v911-agenda"><label class="v911-month"><span class="v911-ic">${icon('calendar')}</span><span>${esc(monthTitle())}</span>${ico2('chevron-down')}<input id="monthFilter" type="month" value="${esc(month)}" aria-label="Mes de la agenda" /></label>
    <p class="v911-kicker">Por pagar este mes</p><p class="v911-big" id="v911-due-total">${rd(total)}</p>
+   <p class="v911-ytd" id="v911-ytd"><span>Pagado en ${Y}</span><b>${rd(pagadoAnio,0)}</b></p>
    <div class="v911-strip" role="group" aria-label="Días del mes">${strip}</div>
    <div class="v911-timeline">${tl}</div>
    ${review?`<button type="button" class="v911-link" data-v911-tab="historial">Revisar cobros${review>0?` <em>${review}</em>`:''}${chev}</button>`:''}</div>`;

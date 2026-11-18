@@ -32,6 +32,8 @@ if (require.main === module) (async () => {
   const exp = await p.evaluate(() => { const d = window.__T.dbg(), m = window.__T.ui().month, fx = d.settings.fx; return d.recurring.filter(r => r.active !== false && r.nextDue.slice(0, 7) === m).reduce((s, r) => s + r.amount * (r.currency === 'USD' ? fx : 1), 0) });
   const shown = await txt(p, '#v911-due-total'); const num = +shown.replace(/[^\d.]/g, '');
   check('A1', 'Agenda: «Por pagar este mes» = suma de vencimientos del mes (USD convertido con el tipo de cambio de la app)', Math.abs(num - Math.round(exp)) <= 1, `mostrado ${shown} · esperado ${Math.round(exp)}`);
+  const ytdEsp = await p.evaluate(() => { const d = window.__T.dbg(), y = window.__T.ui().month.slice(0, 4); return d.transactions.filter(t => t.recurringId && ['expense', 'card_charge'].includes(t.type) && t.date.slice(0, 4) === y).reduce((s, t) => s + t.amount * (t.currency === 'USD' ? (t.fxRateSnapshot || d.settings.fx) : 1), 0) });
+  const ytdTxt = await txt(p, '#v911-ytd'); check('A1b', 'Agenda: «Pagado en el año» (suscripciones) bajo el total por pagar = cobros registrados del año', /Pagado en 2026/.test(ytdTxt) && Math.abs(+ytdTxt.replace(/[^\d.]/g, '').replace(/^2026/, '') - Math.round(ytdEsp)) <= 1, ytdTxt.replace(/\s+/g, ' ') + ' · esperado ' + Math.round(ytdEsp));
   const dayCount = await p.evaluate(() => document.querySelectorAll('.v911-day').length); check('A2', 'Calendario horizontal con todos los días del mes', dayCount >= 28 && dayCount <= 31, dayCount);
   const before = await p.evaluate(() => document.querySelectorAll('.v911-tl-group').length);
   await click(p, '.v911-day:nth-child(28)'); await p.waitForTimeout(300); const after = await p.evaluate(() => document.querySelectorAll('.v911-tl-group').length);
