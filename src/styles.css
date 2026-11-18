@@ -56241,3 +56241,12 @@ html body #app#app .mobile-bar .v908-wm,html body #app#app .f33-label .v908-wm{f
 .vive-mobile-top .v908-wm *::after,.vive-mobile-top .v908-wm::after,.vive-mobile-top>.vive-mobile-brand>span.v908-wm::after{content:none!important}
 html body #app#app .rail-top .vive-p-brand .v908-wm{font-size:19px!important}
 html body #app#app .rail-top .vive-p-brand .v908-b{color:inherit!important;-webkit-text-fill-color:currentColor!important}
+/* v909 · Móvil iOS: campos sin desborde ni solapes (fecha/mes ajustados al ancho; etiquetas nunca recortadas, aunque el texto del sistema sea grande). */
+#modal-root form :is(input[type=date],input[type=month],input[type=time],input[type=datetime-local]){box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;-webkit-appearance:none;appearance:none;display:block;text-align:left;overflow:hidden}
+#modal-root form :is(input[type=date],input[type=month])::-webkit-date-and-time-value{text-align:left;min-width:0;margin:0}
+#modal-root form :is(label,.form-full,.v135-compact-field,.v1110-field,.v901-field){min-width:0;max-width:100%;box-sizing:border-box}
+#modal-root form.v901-steps{row-gap:14px}
+#modal-root form.v901-steps>*{flex-shrink:0;min-height:0}
+#modal-root form.v901-steps :is(label,.form-full)>:is(span,.filter-label,.v1110-lab){display:block;line-height:1.4;overflow:visible;white-space:normal;margin-bottom:2px}
+#modal-root form.v901-steps :is(label,.form-full){height:auto!important;gap:8px!important;overflow:visible}
+#modal-root form.v901-steps :is(input,select,textarea,.v1028-picker-btn){flex-shrink:0}

@@ -10257,8 +10257,14 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
    list.innerHTML=opts().length?`<div class="v1028-group">Instituciones</div>`+opts().map(x=>`<button type="button" role="option" class="v1028-opt${x.value===sel.value?' is-on':''}" data-v="${v1110Esc(x.value)}" aria-selected="${x.value===sel.value}">${row(x.value,x.text,subOf(x.value),x.value===sel.value)}</button>`).join(''):'<p class="v1110-empty">Aún no tienes instituciones registradas.</p>';
    wrap.classList.toggle('is-invalid',false)};
   const toggle=on=>{list.hidden=!on;btn.setAttribute('aria-expanded',String(on));wrap.classList.toggle('open',on)};
-  btn.addEventListener('click',()=>toggle(list.hidden));
-  list.addEventListener('click',e=>{const it=e.target.closest('.v1028-opt');if(!it)return;sel.value=it.dataset.v;v1110Fire(sel,'input');v1110Fire(sel,'change');paint();toggle(false)});
+  const pick=v=>{sel.value=v;v1110Fire(sel,'input');v1110Fire(sel,'change');paint()};
+  /* Selector universal: la misma hoja inferior que cuentas y tarjetas, con todas las instituciones activas. */
+  btn.addEventListener('click',()=>{
+   const items=opts().map(x=>{const b=bank(x.value);return {value:x.value,name:x.text,detail:subOf(x.value),institutionLogo:b&&typeof bankLogoSafe==='function'?bankLogoSafe(b.logo):''}});
+   if(typeof window.openItemPicker==='function'&&items.length){window.openItemPicker(wrap.dataset.title||'Seleccionar institución',items,v=>pick(v));return}
+   toggle(list.hidden);
+  });
+  list.addEventListener('click',e=>{const it=e.target.closest('.v1028-opt');if(!it)return;pick(it.dataset.v);toggle(false)});
   sel.addEventListener('change',paint);
   const onEsc=e=>{if(!wrap.isConnected){document.removeEventListener('keydown',onEsc,true);return}if(e.key==='Escape'&&!list.hidden){toggle(false);e.stopPropagation()}};
   for(const h of v1110EscHandlers.splice(0)){if(h.wrap.isConnected)v1110EscHandlers.push(h);else document.removeEventListener('keydown',h.fn,true)}
