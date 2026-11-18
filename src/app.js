@@ -21803,7 +21803,7 @@ window.__v866Runners.v865=run;
    const el=t.parentElement;if(!el||el.tagName.toLowerCase()==='svg')return;
    const txt=t.textContent.trim();if(!txt)return;
    if(!el.hasAttribute('data-chart-tip')){const i=txt.indexOf(': ');el.setAttribute('data-chart-tip',i>0?txt.slice(0,i)+'|'+txt.slice(i+2):txt)}
-   el.setAttribute('tabindex','0');el.setAttribute('role','img');el.setAttribute('aria-label',txt);
+   el.setAttribute('tabindex','0');el.setAttribute('role','img');el.setAttribute('aria-label',txt);el.ownerSVGElement?.removeAttribute('aria-hidden');
    t.remove();
   });
  };

@@ -9,5 +9,7 @@
 | 2026-11-15 | Migración de vigencias a producción | Aplicar ya; solo repositorio | Solo repositorio | Ya probada en una base local; no se aplicó a Supabase sin un entorno de prueba propio |
 | 2026-11-15 | Borrado de movimientos | Anulación con reversión; conservar papelera y auditar | Papelera existente más registro de auditoría con el valor anterior | Anular exigiría cambiar todos los cálculos; el registro de auditoría conserva el contenido |
 | 2026-11-15 | Cierre por inactividad | 15, 30 o 60 minutos | 30 minutos | Equilibrio entre seguridad y uso normal; no cierra con cambios sin sincronizar |
+| 2026-11-18 | Retirada del cierre por inactividad | Mantenerlo / acortarlo / retirarlo | Retirado | Provocaba la pérdida de sesión al volver a la app (PWA en iPhone); la sesión termina solo por cierre voluntario o revocación del servidor. Riesgo residual: dispositivo compartido sin cierre manual; mitigable con la caducidad de refresh token en Supabase Auth |
+| 2026-11-18 | Lectura de sesión | `getUser()` / `getSession()` | `getSession()` + reintentos | `getUser()` consultaba la red en cada arranque y un fallo temporal mostraba el acceso; ahora un error de red nunca cierra la sesión |
 | 2026-11-15 | Reintentos de red | Todas las llamadas; solo lecturas | Solo lecturas (3 reintentos con espera creciente) | Una escritura repetida podría duplicar una operación |
 | 2026-11-15 | Fondo de las ventanas de registro | Con desenfoque; sin desenfoque | Atenuado sin desenfoque | Pedido de quitar el efecto de atrás |
