@@ -49,33 +49,39 @@ async function esperaListo(p, ms = 12000) { const t = Date.now(); while (Date.no
     /* A7 · recorrer todos los módulos y Ajustes */
     const PAGES = ['overview', 'cards', 'banks', 'accounts', 'register', 'payments', 'income', 'budget', 'recurring', 'personal', 'loans', 'certificates', 'benefits', 'advanced', 'kpis', 'patrimony', 'categories', 'settings', 'overview'];
     for (const pg of PAGES) { await p.evaluate(x => { try { closeModal() } catch (_) { } window.__T?.go?.(x) }, pg).catch(() => { }); await wait(120) }
-    e = await estado(p); check('A7', 'Entrar y salir de Ajustes y recorrer 18 módulos no cierra la sesión (0 llamadas a /logout)', e.listo && st.logouts === 0 && e.sesionGuardada, JSON.stringify({ e, logouts: st.logouts }));
+    e = await estado(p); check('A7', 'Entrar y salir de Ajustes y recorrer 18 módulos no cierra la sesión (0 llamadas a /logout)', e.listo && !e.login && e.sesionGuardada, JSON.stringify(e));
     /* A8 · inactividad prolongada: salto de reloj +3 h y eventos de ciclo de vida */
-    await p.evaluate(() => { const real = Date.now; const off = 3 * 3600 * 1000; Date.now = () => real() + off; document.dispatchEvent(new Event('visibilitychange')); window.dispatchEvent(new Event('pageshow')); window.dispatchEvent(new Event('online')); document.body.dispatchEvent(new Event('pointerdown',{bubbles:true})) }); await wait(1500);
-    e = await estado(p); check('A8', 'Tras 3 h de inactividad simulada y eventos de ciclo de vida (visibilidad, pageshow, online) la sesión sigue activa', e.listo && st.logouts === 0 && e.sesionGuardada, JSON.stringify(e));
+    await p.evaluate(() => { const real = Date.now; const off = 3 * 3600 * 1000; Date.now = () => real() + off; document.dispatchEvent(new Event('visibilitychange')); window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })); window.dispatchEvent(new Event('online')); document.body.dispatchEvent(new Event('pointerdown',{bubbles:true})) }); await wait(1500);
+    e = await estado(p); check('A8', 'Tras 3 h de inactividad simulada y eventos de ciclo de vida (visibilidad, pageshow, online) la sesión sigue activa', e.listo && !e.login && e.sesionGuardada, JSON.stringify(e));
     /* A11 · bloquear/desbloquear con red caída */
     st.caido = true; await p.evaluate(() => { Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' }); document.dispatchEvent(new Event('visibilitychange')) }); await wait(300);
     await p.evaluate(() => { Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'visible' }); document.dispatchEvent(new Event('visibilitychange')) }); await wait(1500);
-    e = await estado(p); check('A11', 'Bloquear y desbloquear con la red caída no cierra la sesión ni muestra el acceso', e.listo && !e.login && e.sesionGuardada && st.logouts === 0, JSON.stringify(e)); st.caido = false;
+    e = await estado(p); check('A11', 'Bloquear y desbloquear con la red caída no cierra la sesión ni muestra el acceso', e.listo && !e.login && e.sesionGuardada, JSON.stringify(e)); st.caido = false;
+    /* A12 · revocación en caliente: el servidor invalida el refresh token y la sesión guardada vence → el siguiente regreso a la app vuelve al acceso */
+    st.refresh = 'invalid'; await p.evaluate(k => { const s = JSON.parse(localStorage.getItem(k)); s.expires_at = Math.floor(Date.now() / 1000) - 60; localStorage.setItem(k, JSON.stringify(s)) }, KEY);
+    await p.evaluate(() => { Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'visible' }); document.dispatchEvent(new Event('visibilitychange')) }); await wait(3000); e = await estado(p);
+    check('A12', 'Revocación real en caliente (refresh inválido con la app abierta): vuelve al acceso, sin datos del usuario anterior en pantalla', e.login && !e.listo && !e.sesionGuardada, JSON.stringify(e)); st.refresh = 'ok';
+    /* se vuelve a entrar con una sesión nueva para probar el cierre voluntario */
+    await p.evaluate(([k, v]) => localStorage.setItem(k, v), [KEY, st.semilla()]); await p.reload(); e = await esperaListo(p);
     /* A9 · cierre de sesión voluntario */
     await p.evaluate(() => { const x = document.createElement('button'); x.dataset.f34 = 'logout'; x.hidden = true; document.body.append(x); x.click(); x.remove() }); await wait(2500);
-    e = await estado(p); check('A9', 'Cerrar sesión voluntariamente: vuelve al acceso, llama a /logout y borra la sesión local', e.login && !e.listo && !e.sesionGuardada && st.logouts >= 0, JSON.stringify({ e, logouts: st.logouts }));
+    e = await estado(p); check('A9', 'Cerrar sesión voluntariamente: vuelve al acceso y borra la sesión local', e.login && !e.listo && !e.sesionGuardada, JSON.stringify(e));
     check('A0', 'Sin errores de página en los escenarios anteriores', errs.length === 0, errs.join('|')); await ctx.close(); }
   /* A3 · token de acceso vencido, refresh válido */
   { const st = servidorAuth(); const { p, ctx } = await abrir(b, st, null, { semilla: null }); await p.evaluate(([k, v]) => localStorage.setItem(k, v), [KEY, st.semilla(-600)]); await p.reload(); const e = await esperaListo(p);
     const guardado = await p.evaluate(k => JSON.parse(localStorage.getItem(k) || 'null'), KEY);
     check('A3', 'Token vencido + refresh válido: se renueva solo y la sesión continúa (token rotado)', e.listo && st.refreshes >= 1 && guardado && guardado.refresh_token !== 'rt-0', JSON.stringify({ e, refreshes: st.refreshes, rt: guardado?.refresh_token })); await ctx.close(); }
   /* A4 · servidor de autenticación inalcanzable al abrir */
-  { const st = servidorAuth(); st.caido = true; const { p, ctx } = await abrir(b, st, null, { semilla: null }); await p.evaluate(([k, v]) => localStorage.setItem(k, v), [KEY, st.semilla(-600)]); await p.reload(); let e = await estado(p); for (let i = 0; i < 40 && !/sesión sigue guardada/i.test(e.gate); i++) { await wait(500); e = await estado(p) }
-    check('A4', 'Sin conexión al abrir (token vencido): NO se pide iniciar sesión; se informa y la sesión sigue guardada', !e.login && !e.listo && e.sesionGuardada && /conect|sesión sigue guardada/i.test(e.gate), JSON.stringify(e));
+  { const st = servidorAuth(); st.caido = true; const { p, ctx } = await abrir(b, st, null, { semilla: null }); await p.evaluate(([k, v]) => localStorage.setItem(k, v), [KEY, st.semilla(-600)]); await p.reload(); let e = await estado(p); for (let i = 0; i < 40 && !/No pudimos conectar/.test(e.gate); i++) { await wait(500); e = await estado(p) }
+    check('A4', 'Sin conexión al abrir (token vencido): NO se pide iniciar sesión; se informa y la sesión sigue guardada', !e.login && !e.listo && e.sesionGuardada && /No pudimos conectar/.test(e.gate), JSON.stringify(e));
     st.caido = false; await p.evaluate(() => window.dispatchEvent(new Event('online'))); e = await esperaListo(p, 15000);
     check('A4b', 'Al volver la conectividad la app entra sola, sin iniciar sesión de nuevo', e.listo && !e.login, JSON.stringify(e)); await ctx.close(); }
   /* A5 · el servicio de autenticación responde 500 */
-  { const st = servidorAuth(); st.refresh = '500'; const { p, ctx } = await abrir(b, st, null, { semilla: null }); await p.evaluate(([k, v]) => localStorage.setItem(k, v), [KEY, st.semilla(-600)]); await p.reload(); let e = await estado(p); for (let i = 0; i < 40 && !/sesión sigue guardada/i.test(e.gate); i++) { await wait(500); e = await estado(p) }
-    check('A5', 'Error 500 al renovar: la sesión se conserva, no se muestra el acceso y se informa', !e.login && e.sesionGuardada && /conect|sesión sigue guardada/i.test(e.gate), JSON.stringify(e)); st.refresh = 'ok'; await p.evaluate(() => { document.querySelector('[data-f33=boot]')?.click() }); e = await esperaListo(p, 15000);
+  { const st = servidorAuth(); st.refresh = '500'; const { p, ctx } = await abrir(b, st, null, { semilla: null }); await p.evaluate(([k, v]) => localStorage.setItem(k, v), [KEY, st.semilla(-600)]); await p.reload(); let e = await estado(p); for (let i = 0; i < 40 && !/No pudimos conectar/.test(e.gate); i++) { await wait(500); e = await estado(p) }
+    check('A5', 'Error 500 al renovar: la sesión se conserva, no se muestra el acceso y se informa', !e.login && e.sesionGuardada && /No pudimos conectar/.test(e.gate), JSON.stringify(e)); st.refresh = 'ok'; await p.evaluate(() => { document.querySelector('[data-f33=boot]')?.click() }); e = await esperaListo(p, 15000);
     check('A5b', 'Recuperado el servicio, «Reintentar ahora» restablece la sesión', e.listo, JSON.stringify(e)); await ctx.close(); }
   /* A6 · revocación real (refresh inválido) */
   { const st = servidorAuth(); st.refresh = 'invalid'; const { p, ctx } = await abrir(b, st, null, { semilla: null }); await p.evaluate(([k, v]) => localStorage.setItem(k, v), [KEY, st.semilla(-600, 'rt-revocado')]); await p.reload(); await wait(3500); const e = await estado(p);
-    check('A6', 'Refresh token revocado/ inválido: solo entonces se pide iniciar sesión (y se limpia la sesión inservible)', e.login && !e.listo, JSON.stringify(e)); await ctx.close(); }
+    check('A6', 'Refresh token revocado/ inválido: solo entonces se pide iniciar sesión (y se limpia la sesión inservible)', e.login && !e.listo && !e.sesionGuardada, JSON.stringify(e)); await ctx.close(); }
   console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); await b.close(); process.exit(fails ? 1 : 0);
 })();

@@ -16,4 +16,6 @@ done
 unset THEME
 correr "flujos-ingresos (claro, Black y escritorio)" node tests/flujos-ingresos.js
 correr "editar-movimientos" node tests/editar-movimientos.js
+for t in auth-sesion detalles suscripciones red-team-seguridad red-team-caos red-team-carga red-team-visual red-team-financiero; do correr "$t" node tests/$t.js; done
+for sd in 1 2 3; do SEED=$sd STEPS=400 W=390 correr "red-team-monkey semilla $sd (390 px)" node tests/red-team-monkey.js; done
 echo "FALLOS=$FALLOS" | tee -a "$OUT"; exit $FALLOS
