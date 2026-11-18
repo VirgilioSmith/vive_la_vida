@@ -25,7 +25,7 @@ if (require.main === module) (async () => {
   const b = await chromium.launch();
   let { p, errs } = await sesion(b, 390, 844);
   /* 1 · navegación */
-  check('N1', 'Tres vistas: Agenda, Cartera, Historial (sin Análisis)', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('.v911 > .v911-seg button')].map(e => e.textContent))) === '["Agenda","Cartera","Historial"]');
+  check('N1', 'Tres vistas: Agenda, Cartera, Historial (sin Análisis)', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('.v911 .v911-seg button')].map(e => e.textContent))) === '["Agenda","Cartera","Historial"]');
   check('N2', 'La vista Análisis ya no existe', !(await p.evaluate(() => !!document.querySelector('[data-v911-tab=analisis],[data-v911-sub]'))));
   /* 2 · Agenda: total independiente */
   await click(p, '[data-v911-tab=agenda]'); await p.waitForTimeout(250);
@@ -70,7 +70,7 @@ if (require.main === module) (async () => {
   for (const [label, env] of [['Claro', {}], ['Black', { theme: 'black' }], ['acento rojo', { palhex: '#c0264a' }]]) {
     const { p: q, errs: e2 } = await sesion(b, 390, 844, env);
     const st = await q.evaluate(() => { const bg = getComputedStyle(document.querySelector('#page')).backgroundColor; const on = getComputedStyle(document.querySelector('.v911-seg .is-on')).backgroundColor; return { bg, on, body: getComputedStyle(document.body).backgroundColor } });
-    if (label === 'Claro') check('V1', 'Modo Claro: fondo blanco puro #FFFFFF', st.bg === 'rgb(255, 255, 255)', JSON.stringify(st));
+    if (label === 'Claro') check('V1', 'Modo Claro: conserva el reflejo de fondo del acento (la página no fuerza blanco)', st.bg === 'rgba(0, 0, 0, 0)', JSON.stringify(st));
     if (label === 'Black') check('V2', 'Modo Black: fondo negro auténtico #000000', st.bg === 'rgb(0, 0, 0)' && st.body === 'rgb(0, 0, 0)', JSON.stringify(st));
     if (label === 'acento rojo') check('V3', 'El acento dinámico se aplica (no hay color fijo): la pestaña activa toma el acento elegido', /192, 38, 74/.test(st.on) || /rgb\(19\d, 3\d, 7\d\)/.test(st.on), st.on);
     check('V4-' + label, `Sin errores de página en ${label}`, e2.length === 0, e2.join('|'));

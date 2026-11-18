@@ -54081,8 +54081,9 @@ html body #app#app .vive-mobile-top>.vive-mobile-brand{overflow:visible!importan
 /* v911 · Suscripciones (Agenda · Cartera · Historial · Análisis). Acento dinámico; Claro #FFFFFF y Black #000000. */
 html body #app#app .v911{--s-ink:#0f1115;--s-muted:#6b7385;--s-line:rgba(15,17,21,.1);--s-surface:#fff;--s-soft:rgba(15,17,21,.045);--v911-tint:#fff;--v911-track:rgba(0,0,0,.06);--ac:var(--v424-accent-strong,#5b57d6);display:flex;flex-direction:column;gap:14px;width:100%;max-width:640px;margin:0 auto;padding:6px 0 22px;color:var(--s-ink);box-sizing:border-box;min-width:0}
 html body:is(.theme-black,.theme-dark) #app#app .v911{--s-ink:#f4f6fb;--s-muted:#9aa3b2;--s-line:rgba(255,255,255,.14);--s-surface:#050506;--s-soft:rgba(255,255,255,.07);--v911-tint:#000;--v911-track:rgba(255,255,255,.1)}
-html body:has(.v911){background:#fff!important}html body:has(.v911):before{display:none!important}
+/* El reflejo de fondo (acento) de las demás vistas se conserva en Claro; Black sigue en negro puro. */
 html body.theme-black:has(.v911),html body.theme-dark:has(.v911){background:#000!important}
+html body.theme-black:has(.v911):before,html body.theme-dark:has(.v911):before{display:none!important}
 html body #app#app .v911 *{box-sizing:border-box;min-width:0}
 html body #app#app .v911 button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 html body #app#app .v911 .v911-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -54159,7 +54160,8 @@ html body #app#app .v911 .v911-kpis small{color:var(--s-muted);font-size:12px;li
 html body #app#app .v911 button:focus-visible,html body #app#app .v911 summary:focus-visible,html body #app#app .v911 input:focus-visible{outline:3px solid color-mix(in srgb,var(--ac) 55%,transparent);outline-offset:2px}
 @media(min-width:900px){html body #app#app .v911{max-width:760px}}
 /* v911 · ajustes de fidelidad: fondo puro (Claro blanco / Black negro), colores de texto no heredados del acento global y holgura para los botones flotantes */
-html body:has(.v911) :is(#app,.shell,.main,#page,.world-recurring){background:#fff!important;background-image:none!important}
+html body:is(.theme-black,.theme-dark):has(.v911) :is(#app,.shell,.main,#page,.world-recurring){background:#000!important;background-image:none!important}
+html body:not(.theme-black):not(.theme-dark):has(.v911) :is(#app,.shell,.main,#page,.world-recurring){background:transparent!important;background-image:none!important}
 html body:is(.theme-black,.theme-dark):has(.v911) :is(#app,.shell,.main,#page,.world-recurring){background:#000!important;background-image:none!important}
 html body #app#app .v911 .v911-kicker{color:var(--s-muted)!important;font-weight:500!important;font-size:17px}
 html body #app#app .v911{padding-bottom:104px}
@@ -55175,3 +55177,19 @@ html body #app#app #page .v1131-web{--ac:var(--v424-accent-strong,#5b57d6)}
 /* v1133 · Patrimonio: sin titular; el selector de cierre queda arriba a la derecha y todo sube */
 html body #app#app #page .v1133-compact{display:flex!important;justify-content:flex-end!important;align-items:center;min-height:0!important;padding:0!important;margin:0 0 10px!important;gap:0!important}
 html body #app#app #page .v1133-compact .v137-wealth-top-tools{margin:0!important}
+
+/* v1134 · Suscripciones, Presupuestos y Categorías: selector de subpáginas como en las demás vistas (píldora con acento de Ajustes) */
+html body #app#app #page .v911 .v911-seg{display:flex;gap:2px;padding:3px;border-radius:999px;background:color-mix(in srgb,var(--ac,#5b57d6) 8%,rgba(255,255,255,.78));border:1px solid color-mix(in srgb,var(--ac,#5b57d6) 16%,transparent);box-shadow:0 14px 28px -22px color-mix(in srgb,var(--ac,#5b57d6) 70%,transparent)}
+html body:is(.theme-black,.theme-dark) #app#app #page .v911 .v911-seg{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);box-shadow:none}
+html body #app#app #page .v911 .v911-seg button{flex:1 1 0;min-height:44px;padding:0 14px;border-radius:999px;font-size:14px;font-weight:750;background:transparent!important;color:var(--v911-ink,inherit)!important;box-shadow:none!important}
+html body #app#app #page .v911 .v911-seg button.is-on{background:var(--v424-accent-strong,var(--ac,#5b57d6))!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:0 10px 20px -10px color-mix(in srgb,var(--ac,#5b57d6) 85%,transparent),inset 0 1px 0 rgba(255,255,255,.28)!important}
+/* Web: se oculta el segundo título (la cabecera de la página ya lo muestra) y el selector sube junto al botón de añadir */
+@media(min-width:791px){
+ html body #app#app #page .v911 .v911-head h1{display:none}
+ html body #app#app #page .v911 .v911-top{display:flex;align-items:center;gap:12px;margin:0 0 12px}
+ html body #app#app #page .v911 .v911-top .v911-head{display:contents}
+ html body #app#app #page .v911 .v911-top .v911-seg{order:1;flex:1 1 auto;max-width:520px;margin:0}
+ html body #app#app #page .v911 .v911-top .v911-add{order:2;margin-left:auto}
+ html body #app#app #page .v911.v919 .v911-head{justify-content:flex-end;margin:0 0 4px}
+}
+@media(max-width:790px){html body #app#app #page .v911 .v911-top .v911-head{margin-bottom:12px}}
