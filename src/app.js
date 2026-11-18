@@ -18819,6 +18819,265 @@ document.addEventListener('submit',function(e){
 
 
 /* V951: puente de solo lectura para controladores externos (p. ej. V383 · abono a préstamo), que no ven las funciones internas de este bloque. */
+/* V911 · Suscripciones: Agenda · Cartera · Historial · Análisis (Radiografía · Concentración · Inteligencia).
+   Una sola vista sobre db.recurring y los movimientos con recurringId (sin tabla ni consulta nuevas): pagar, editar y confirmar reutilizan
+   las acciones existentes (payRecurring, editRecurring, toggleRecurring, editTransaction, toggleReview). Importes en su moneda; totales en RD$ con fx(). */
+(()=>{
+const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+ const IC={'chevron-down':G('<path d="m6 9 6 6 6-6"/>'),edit:G('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>'),'bar-chart':G('<path d="M5 20v-6M12 20V6M19 20v-10"/>'),refresh:G('<path d="M21 12a9 9 0 0 1-15.5 6.2"/><path d="M3 12A9 9 0 0 1 18.5 5.8"/><path d="M18.5 2v4h-4M5.5 22v-4h4"/>'),tag:G('<path d="M3 12V4h8l10 10-8 8Z"/><circle cx="7.5" cy="8.5" r="1.3"/>'),sliders:G('<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>')};
+ IC.target=G('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>');IC.search=icon('search');
+ const ico2=k=>IC[k]||icon(k);
+ const TABS=[['agenda','Agenda'],['cartera','Cartera'],['historial','Historial'],['analisis','Análisis']];
+ const SUBS=[['radiografia','Radiografía'],['concentracion','Concentración'],['inteligencia','Inteligencia']];
+ const S=()=>ui.v911||(ui.v911={tab:'agenda',sub:'radiografia',day:'',open:'',cat:'',pick:'',query:'',review:'',point:'',sim:[],simOpen:false});
+ const esc=v=>sanitize(String(v??''));
+ const activeList=()=>v339ActiveRecurring();
+ const monthlyDop=r=>v339MonthlyEquivalent(r.amount,r.currency,r.frequency);
+ const dop=(v,c)=>fx(num(v),c||'DOP');
+ const rd=(v,d=0)=>money(v,'DOP',d);
+ const FREQ={monthly:'Mensual',weekly:'Semanal',semi_monthly:'Quincenal',quarterly:'Trimestral',semiannual:'Semestral',annual:'Anual',yearly:'Anual'};
+ const freq=r=>FREQ[r.frequency]||'Periódico';
+ const catOf=r=>String(r.category||'').trim()||'Sin categoría';
+ const pct=(v,d=0)=>(v*100).toFixed(d).replace(/\.0+$/,'')+'%';
+ const ymd=s=>{const m=/^(\d{4})-(\d\d)-(\d\d)/.exec(String(s||''));return m?{y:+m[1],m:+m[2],d:+m[3]}:null};
+ const local=s=>{const p=ymd(s);return p?new Date(p.y,p.m-1,p.d):null};
+ const WD=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+ const dayHead=s=>{const d=local(s);return d?`${WD[d.getDay()]} ${d.getDate()} ${MS[d.getMonth()]}`:'—'};
+ const sourceName=r=>{const [k,id]=String(r.source||'').split(':');const x=k==='card'?card(id):k==='account'?account(id):null;return x?x.name:'Sin fuente'};
+ const svc=id=>(db.recurring||[]).find(r=>String(r.id)===String(id));
+ const charges=()=>(db.transactions||[]).filter(t=>t&&t.recurringId&&['expense','card_charge'].includes(t.type)&&t.date).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.created||'').localeCompare(String(a.created||'')));
+ const expected=t=>{const s=svc(t.recurringId);const e=t.scheduleSnapshot&&Number.isFinite(Number(t.scheduleSnapshot.amount))?Number(t.scheduleSnapshot.amount):(s?num(s.amount):num(t.amount));return rnd(e)};
+ const ico=(r,size='small')=>v45SubIcon(r,size);
+ const chev='<svg class="v911-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+ const pendingMonth=month=>v99PendingForPeriod(month).filter(p=>p.kind==='recurring').sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+ const monthTitle=()=>dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
+
+ /* ---------- Agenda ---------- */
+ function agenda(){
+  const st=S(),month=ui.month||today().slice(0,7),pend=pendingMonth(month);
+  const total=pend.reduce((n,p)=>n+dop(p.amount,p.currency),0);
+  const [Y,M]=month.split('-').map(Number),dim=new Date(Y,M,0).getDate(),t0=today();
+  let sel=st.day&&st.day.slice(0,7)===month?st.day:(t0.slice(0,7)===month?t0:month+'-01');
+  const dueDays=new Set(pend.map(p=>p.date));
+  const strip=Array.from({length:dim},(_,i)=>{const d=month+'-'+String(i+1).padStart(2,'0');return `<button type="button" class="v911-day${d===sel?' is-on':''}${dueDays.has(d)?' has-due':''}${d===t0?' is-today':''}" data-v911-day="${d}" aria-pressed="${d===sel}" aria-label="${esc(dayHead(d))}${dueDays.has(d)?', con vencimientos':''}"><small>${MS[M-1].replace(/^./,c=>c.toUpperCase())}</small><b>${i+1}</b></button>`}).join('');
+  const rows=pend.filter(p=>p.date>=sel);const groups=new Map();rows.forEach(p=>{if(!groups.has(p.date))groups.set(p.date,[]);groups.get(p.date).push(p)});
+  const line=p=>{const r=svc(p.ref)||{name:p.name,currency:p.currency,amount:p.amount};return `<button type="button" class="v911-row" data-v911-open="${esc(p.ref)}"><span class="v911-logo">${ico(r)}</span><span class="v911-row-info"><strong>${esc(p.name||r.name)}</strong><small>${esc(r.frequency?freq(r):'')}${p.estimated?' · estimado':''}</small></span><b>${money(p.amount,p.currency||'DOP',2)}</b>${chev}</button>`};
+  const tl=groups.size?[...groups].map(([d,list])=>`<section class="v911-tl-group"><h3><i></i>${esc(dayHead(d))}</h3><div class="v911-card">${list.map(line).join('')}</div></section>`).join(''):`<p class="v911-empty">${pend.length?'No hay más vencimientos desde esta fecha.':'No tienes vencimientos de suscripciones este mes.'}</p>`;
+  const review=charges().filter(t=>t.reviewed!==true).length;
+  return `<div class="v911-agenda"><label class="v911-month"><span class="v911-ic">${icon('calendar')}</span><span>${esc(monthTitle())}</span>${ico2('chevron-down')}<input id="monthFilter" type="month" value="${esc(month)}" aria-label="Mes de la agenda" /></label>
+   <p class="v911-kicker">Por pagar este mes</p><p class="v911-big" id="v911-due-total">${rd(total)}</p>
+   <div class="v911-strip" role="group" aria-label="Días del mes">${strip}</div>
+   <div class="v911-timeline">${tl}</div>
+   ${review?`<button type="button" class="v911-link" data-v911-tab="historial">Revisar cobros${review>0?` <em>${review}</em>`:''}${chev}</button>`:''}</div>`;
+ }
+
+ /* ---------- Cartera ---------- */
+ function serviceItem(r,pausedFlag){
+  const open=S().open===String(r.id);
+  const q=(r.name+' '+catOf(r)+' '+sourceName(r)).toLowerCase();
+  return `<details class="v911-svc" data-v911-svc="${esc(r.id)}" data-q="${esc(q)}"${open?' open':''}><summary class="v911-row"><span class="v911-logo">${ico(r)}</span><span class="v911-row-info"><strong>${esc(r.name)}</strong><small>${pausedFlag?'En pausa · ':''}${esc(freq(r))}</small></span><b>${money(r.amount,r.currency||'DOP',2)}</b>${chev}</summary>
+   <div class="v911-det"><div><span>Categoría</span><b>${esc(catOf(r))}</b></div><div><span>Próximo cargo</span><b>${pausedFlag?'Pausado':esc(prettyDate(r.nextDue))}</b></div><div><span>Fuente</span><b>${esc(sourceName(r))}</b></div>${r.currency==='USD'||r.frequency!=='monthly'?`<div><span>Equivalente mensual</span><b>${rd(monthlyDop(r),2)}</b></div>`:''}
+   <div class="v911-acts"><button type="button" data-act="editRecurring" data-id="${esc(r.id)}">${ico2('edit')} Editar</button>${pausedFlag?'':`<button type="button" data-act="payRecurring" data-id="${esc(r.id)}">Registrar pago</button>`}<button type="button" data-act="toggleRecurring" data-id="${esc(r.id)}">${pausedFlag?'Reactivar':'Pausar'}</button></div></div></details>`;
+ }
+ function cartera(){
+  const st=S(),act=activeList(),paused=(db.recurring||[]).filter(r=>r&&!r.archived&&r.active===false);
+  const groups=new Map();act.forEach(r=>{const k=catOf(r);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(r)});
+  const ordered=[...groups].sort((a,b)=>b[1].reduce((n,r)=>n+monthlyDop(r),0)-a[1].reduce((n,r)=>n+monthlyDop(r),0));
+  const body=ordered.map(([k,list])=>`<section class="v911-group" data-v911-group><h3>${esc(k)}</h3><div class="v911-card">${list.sort((a,b)=>monthlyDop(b)-monthlyDop(a)).map(r=>serviceItem(r,false)).join('')}</div></section>`).join('')
+   +(paused.length?`<section class="v911-group" data-v911-group><h3>En pausa</h3><div class="v911-card">${paused.map(r=>serviceItem(r,true)).join('')}</div></section>`:'');
+  return `<div class="v911-cartera"><p class="v911-count"><b>${act.length}</b> ${act.length===1?'activa':'activas'}</p>
+   <label class="v911-search"><span class="v911-ic">${icon('search')}</span><input type="search" id="v911-search" value="${esc(st.query)}" placeholder="Buscar servicio" aria-label="Buscar servicio" autocomplete="off" /></label>
+   <div id="v911-list">${body||'<p class="v911-empty">Aún no tienes suscripciones. Añade la primera con el botón +.</p>'}<p class="v911-empty" id="v911-noresult" hidden>Ningún servicio coincide con la búsqueda.</p></div></div>`;
+ }
+
+ /* ---------- Historial ---------- */
+ function historial(){
+  const st=S(),all=charges(),pending=all.filter(t=>t.reviewed!==true),done=all.filter(t=>t.reviewed===true);
+  if(!all.length)return `<div class="v911-hist"><p class="v911-empty">Todavía no hay cobros de suscripciones. Registra un pago desde Agenda o Cartera y aparecerá aquí, vinculado a Movimientos.</p></div>`;
+  const feat=pending.find(t=>t.id===st.review)||pending[0];
+  const diffText=(t)=>{const d=rnd(num(t.amount)-expected(t));return d===0?'Sin diferencia':(d>0?'+':'−')+money(Math.abs(d),t.currency||'DOP',2)};
+  const diffCls=t=>{const d=rnd(num(t.amount)-expected(t));return d>0?'up':d<0?'down':'zero'};
+  const nameOf=t=>svc(t.recurringId)?.name||t.note||'Cobro recurrente';
+  const featCard=feat?`<article class="v911-feat"><header><span class="v911-logo">${ico(svc(feat.recurringId)||{name:nameOf(feat)},'small')}</span><div><strong>${esc(nameOf(feat))}</strong><small>${esc(prettyDate(feat.date))}</small></div><span class="v911-pill">Por revisar</span></header>
+    <p class="v911-feat-amt">${money(feat.amount,feat.currency||'DOP',2)}</p>
+    <dl><div><dt>Importe previsto</dt><dd>${money(expected(feat),feat.currency||'DOP',2)}</dd></div><div><dt>Importe registrado</dt><dd>${money(feat.amount,feat.currency||'DOP',2)}</dd></div><div class="${diffCls(feat)}"><dt>Diferencia</dt><dd>${diffText(feat)}</dd></div></dl>
+    <button type="button" class="v911-primary" data-act="toggleReview" data-id="${esc(feat.id)}">Confirmar importe</button><button type="button" class="v911-ghost" data-act="editTransaction" data-id="${esc(feat.id)}">Editar</button></article>`:`<p class="v911-empty">No tienes cobros pendientes de revisión.</p>`;
+  const small=t=>`<button type="button" class="v911-row" data-v911-review="${esc(t.id)}"><span class="v911-logo">${ico(svc(t.recurringId)||{name:nameOf(t)})}</span><span class="v911-row-info"><strong>${esc(nameOf(t))}</strong><small>${esc(prettyDate(t.date))}</small></span><b>${money(t.amount,t.currency||'DOP',2)}</b>${chev}</button>`;
+  const others=pending.filter(t=>!feat||t.id!==feat.id);
+  const doneRows=done.slice(0,25).map(t=>`<button type="button" class="v911-row" data-act="editTransaction" data-id="${esc(t.id)}"><span class="v911-logo">${ico(svc(t.recurringId)||{name:nameOf(t)})}</span><span class="v911-row-info"><strong>${esc(nameOf(t))}</strong><small>${esc(prettyDate(t.date))} · <i class="v911-d ${diffCls(t)}">${esc(diffText(t))}</i></small></span><b>${money(t.amount,t.currency||'DOP',2)}</b>${chev}</button>`).join('');
+  return `<div class="v911-hist">${featCard}${others.length?`<h3 class="v911-h3">Otros pendientes de revisión</h3><div class="v911-card">${others.map(small).join('')}</div>`:''}${done.length?`<h3 class="v911-h3">Cobros confirmados</h3><div class="v911-card">${doneRows}</div>`:''}</div>`;
+ }
+
+ /* ---------- Análisis ---------- */
+ const PALETTE=[100,62,34,18,9];
+ const shade=(i)=>`color-mix(in srgb,var(--v424-accent-strong,#5b57d6) ${PALETTE[Math.min(i,PALETTE.length-1)]}%,var(--v911-tint,#fff))`;
+ function catGroups(act){
+  const m=new Map();act.forEach(r=>{const k=catOf(r);m.set(k,(m.get(k)||0)+monthlyDop(r))});
+  let list=[...m].map(([name,v])=>({name,v})).sort((a,b)=>b.v-a.v);
+  if(list.length>4){const rest=list.slice(3);list=[...list.slice(0,3),{name:'Otros',v:rest.reduce((n,x)=>n+x.v,0),merged:rest.length}]}
+  return list;
+ }
+ function donut(groups,total,sel){
+  const R=44,C=2*Math.PI*R;let off=0;
+  const arcs=groups.map((g,i)=>{const frac=total>0?g.v/total:0,len=Math.max(0,frac*C-(groups.length>1?2.2:0));const el=`<circle class="v911-arc${sel===i?' is-sel':''}" data-v911-seg="${i}" cx="60" cy="60" r="${R}" fill="none" stroke="${shade(i)}" stroke-width="${sel===i?17:14}" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 60 60)" tabindex="0" role="button" aria-label="${esc(g.name)} ${pct(frac)}" />`;off+=frac*C;return el}).join('');
+  const g=sel>=0?groups[sel]:null;
+  const center=g?`<b>${esc(g.name)}</b><span>${rd(g.v)}/mes</span><span>${pct(total>0?g.v/total:0)}</span>`:`<span>Gasto recurrente mensual</span>`;
+  return `<div class="v911-donut"><svg viewBox="0 0 120 120" role="img" aria-label="Gasto recurrente por categoría"><circle cx="60" cy="60" r="${R}" fill="none" stroke="var(--v911-track,rgba(0,0,0,.06))" stroke-width="14"/>${arcs}</svg><div class="v911-donut-c">${center}</div></div>`;
+ }
+ function radiografia(){
+  const st=S(),act=activeList(),total=act.reduce((n,r)=>n+monthlyDop(r),0);
+  if(!act.length)return `<p class="v911-empty">Sin suscripciones activas no hay gasto que analizar.</p>`;
+  const groups=catGroups(act),sel=st.cat!==''&&groups[+st.cat]?+st.cat:-1;
+  const top=groups[0],t0=today(),limit=addDays(t0,7),soon=act.filter(r=>r.nextDue&&r.nextDue>=t0&&r.nextDue<=limit).length;
+  const ncats=new Set(act.map(catOf)).size;
+  return `<section class="v911-radio"><h2 class="v911-h2">Radiografía</h2><p class="v911-sub"><span class="v911-ic">${icon('calendar')}</span>${esc(monthTitle())}</p>
+   <p class="v911-hero">${rd(total)}</p><p class="v911-muted">${rd(total*12)} / año</p>
+   <div class="v911-donut-wrap">${donut(groups,total,sel)}<ul class="v911-legend">${groups.map((g,i)=>`<li><button type="button" data-v911-seg="${i}" class="${sel===i?'is-on':''}"><i style="background:${shade(i)}"></i><span>${esc(g.name)}</span><b>${pct(total>0?g.v/total:0)}</b></button></li>`).join('')}</ul></div>
+   <p class="v911-insight"><span class="v911-ic">${ico2('target')}</span><span>${Math.round(top.v/total*10)} de cada 10 pesos de tus suscripciones van a <b>${esc(top.name)}</b>.</span></p>
+   <div class="v911-stats"><div><b>${act.length}</b><span>activos</span></div><div><b>${ncats}</b><span>${ncats===1?'categoría':'categorías'}</span></div><div><b>${soon}</b><span title="Vencen en los próximos 7 días">próximos</span></div></div></section>`;
+ }
+ /* Treemap «squarified» (Bruls et al.): bloques con área proporcional al gasto mensual equivalente */
+ function squarify(items,w,h){
+  const rects=[];let x=0,y=0,W=w,H=h,rest=items.slice();const sum=a=>a.reduce((n,i)=>n+i.v,0);let area=sum(rest);
+  const worst=(row,len,scale)=>{const s=sum(row)*scale;let mx=0,mn=Infinity;row.forEach(i=>{const a=i.v*scale;mx=Math.max(mx,a);mn=Math.min(mn,a)});return Math.max(len*len*mx/(s*s),s*s/(len*len*mn))};
+  while(rest.length){
+   const scale=(W*H)/area,len=Math.min(W,H);let row=[rest[0]],k=1;
+   while(k<rest.length&&worst(row.concat(rest[k]),len,scale)<=worst(row,len,scale)){row.push(rest[k]);k++}
+   const rowArea=sum(row)*scale;
+   if(W>=H){const rw=rowArea/H;let yy=y;row.forEach(i=>{const rh=i.v*scale/rw;rects.push({...i,x,y:yy,w:rw,h:rh});yy+=rh});x+=rw;W-=rw}
+   else{const rh=rowArea/W;let xx=x;row.forEach(i=>{const rw=i.v*scale/rh;rects.push({...i,x:xx,y,w:rw,h:rh});xx+=rw});y+=rh;H-=rh}
+   rest=rest.slice(row.length);area=sum(rest);
+  }
+  return rects;
+ }
+ function treemapData(act){
+  const total=act.reduce((n,r)=>n+monthlyDop(r),0);
+  const ranked=act.map(r=>({id:String(r.id),name:r.name,v:monthlyDop(r),r})).sort((a,b)=>b.v-a.v);
+  let cum=0,n80=0;for(const i of ranked){cum+=i.v;n80++;if(cum/total>=.8)break}
+  const MAX=6;let shown=ranked,others=null;
+  if(ranked.length>MAX){shown=ranked.slice(0,MAX-1);const rest=ranked.slice(MAX-1);others={id:'__otros',name:'Otros',v:rest.reduce((n,x)=>n+x.v,0),merged:rest,r:null}}
+  const items=others?[...shown,others]:shown;
+  let c2=0;items.forEach((i,ix)=>{const before=c2;c2+=i.v;i.pareto=!i.merged&&before/total<.8&&ix<n80});
+  return {total,ranked,items,n80,cum80:cum/total};
+ }
+ function concentracion(){
+  const st=S(),act=activeList();if(!act.length)return `<p class="v911-empty">Sin suscripciones activas no hay concentración que mostrar.</p>`;
+  const d=treemapData(act),rects=squarify(d.items.slice().sort((a,b)=>b.v-a.v),100,75);
+  const pick=d.items.find(i=>i.id===st.pick)||null;
+  const blocks=rects.map((b,i)=>{const share=b.v/d.total;const tint=b.merged?'other':b.pareto?(i===0?'top':'mid'):'low';const small=b.w<22||b.h<22;
+   return `<button type="button" class="v911-tm v911-tm-${tint}${pick&&pick.id===b.id?' is-sel':''}${small?' is-small':''}" data-v911-pick="${esc(b.id)}" style="left:${b.x.toFixed(2)}%;top:${(b.y/75*100).toFixed(2)}%;width:${b.w.toFixed(2)}%;height:${(b.h/75*100).toFixed(2)}%" aria-label="${esc(b.name)}, ${rd(b.v)} al mes, ${pct(share)}"><strong>${esc(b.name)}</strong>${i===0||!small?`<em>${rd(b.v)}</em>`:''}<b>${pct(share)}</b></button>`}).join('');
+  const top=d.ranked[0],topShare=top.v/d.total;
+  const concl=topShare>=.45&&topShare<.55?`${esc(top.name)} concentra casi la mitad del total.`:topShare>=.55?`${esc(top.name)} concentra ${pct(topShare)} del total: una sola suscripción domina tu gasto.`:`${d.n80} de ${act.length} servicios concentran el ${pct(d.cum80)} de tu gasto recurrente.`;
+  let detail='';
+  if(pick){
+   if(pick.merged)detail=`<div class="v911-pick"><h3>Otros ${pick.merged.length} servicios · ${rd(pick.v)}/mes</h3><ul>${pick.merged.map(x=>`<li><button type="button" data-v911-open="${esc(x.id)}"><span>${esc(x.name)}</span><b>${rd(x.v)}</b></button></li>`).join('')}</ul></div>`;
+   else{const r=pick.r;detail=`<div class="v911-pick"><header><span class="v911-logo">${ico(r)}</span><div><strong>${esc(r.name)}</strong><small>${esc(catOf(r))} · ${esc(freq(r))}</small></div><b>${pct(pick.v/d.total)}</b></header><dl><div><dt>Precio</dt><dd>${money(r.amount,r.currency||'DOP',2)}</dd></div><div><dt>Equivale al mes</dt><dd>${rd(pick.v,2)}</dd></div><div><dt>Próximo cargo</dt><dd>${esc(prettyDate(r.nextDue))}</dd></div></dl><button type="button" class="v911-ghost" data-act="editRecurring" data-id="${esc(r.id)}">Ver y editar</button></div>`}
+  }
+  return `<section class="v911-conc"><h2 class="v911-h2">El peso de tus gastos</h2><p class="v911-hero">${pct(d.cum80)}</p><p class="v911-muted">en ${d.n80===1?'un servicio':'‹n› servicios'.replace('‹n›',['','','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez'][d.n80]||d.n80)}</p>
+   <div class="v911-treemap" role="group" aria-label="Mosaico de concentración del gasto">${blocks}</div>${detail}
+   <p class="v911-insight"><span class="v911-ic">${ico2('target')}</span><span>${concl}</span></p><p class="v911-note">Principio de Pareto: los bloques de color intenso suman cerca del 80 % del gasto mensual equivalente.</p></section>`;
+ }
+ /* Serie histórica: cobros registrados por mes (RD$) */
+ function series(n=6){
+  const base=(ui.month||today().slice(0,7)).split('-').map(Number);const out=[];
+  for(let i=n-1;i>=0;i--){const d=new Date(base[0],base[1]-1-i,1);out.push({key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),label:MS[d.getMonth()].replace(/^./,c=>c.toUpperCase()),v:0,n:0})}
+  const idx=new Map(out.map(o=>[o.key,o]));
+  charges().forEach(t=>{const o=idx.get(t.date.slice(0,7));if(o){o.v+=txDop(t);o.n++}});
+  return out;
+ }
+ function priceRises(){
+  const by=new Map();charges().slice().reverse().forEach(t=>{const k=String(t.recurringId);if(!by.has(k))by.set(k,[]);by.get(k).push(t)});
+  const out=[];by.forEach((list,id)=>{if(list.length<2)return;const s=svc(id);if(!s)return;/* último cambio de precio (mismo cuadro de moneda) y solo si fue un aumento dentro de los últimos 12 meses */let ch=null;for(let i=1;i<list.length;i++){const a=num(list[i-1].amount),b=num(list[i].amount);if((list[i].currency||'DOP')===(list[i-1].currency||'DOP')&&Math.abs(b-a)>.004)ch={from:a,to:b,cur:list[i].currency||'DOP',date:list[i].date}}if(ch&&ch.from>0&&ch.to>ch.from*1.001&&ch.date>=addDays(today(),-366))out.push({r:s,from:ch.from,to:ch.to,cur:ch.cur,pct:(ch.to-ch.from)/ch.from,date:ch.date})});
+  return out.sort((a,b)=>b.pct-a.pct);
+ }
+ function suggestions(act,total){
+  const out=[],rises=priceRises();
+  rises.slice(0,2).forEach(x=>out.push({title:x.r.name,main:'Subió '+pct(x.pct,1),sub:`${money(x.from,x.cur,2)} → ${money(x.to,x.cur,2)}`,id:x.r.id,why:'Su precio subió frente al cobro anterior'}));
+  const byCat=new Map();act.forEach(r=>{const k=catOf(r);if(!byCat.has(k))byCat.set(k,[]);byCat.get(k).push(r)});
+  [...byCat].filter(([,l])=>l.length>=3).sort((a,b)=>b[1].length-a[1].length).slice(0,1).forEach(([k,l])=>out.push({title:k,main:l.length+' servicios',sub:rd(l.reduce((n,r)=>n+monthlyDop(r),0))+'/mes',id:l[0].id,why:'Varios servicios de la misma categoría: revisa si se solapan'}));
+  const ranked=act.slice().sort((a,b)=>monthlyDop(b)-monthlyDop(a));
+  if(ranked.length>=3&&total>0&&monthlyDop(ranked[0])/total>=.4)out.push({title:ranked[0].name,main:pct(monthlyDop(ranked[0])/total),sub:'del gasto recurrente',id:ranked[0].id,why:'Un solo servicio concentra gran parte del gasto'});
+  const t=today(),recent=new Set(charges().filter(c=>c.date>=addDays(t,-95)).map(c=>String(c.recurringId)));
+  if(charges().length>=3)act.filter(r=>!recent.has(String(r.id))&&(r.frequency==='monthly'||r.frequency==='weekly')).slice(0,1).forEach(r=>out.push({title:r.name,main:'Sin cobros',sub:'en 3 meses',id:r.id,why:'Activa pero sin cobros registrados en 3 meses'}));
+  if(!out.length&&ranked.length)out.push({title:ranked[0].name,main:rd(monthlyDop(ranked[0]))+'/mes',sub:'el servicio más caro',id:ranked[0].id,why:'Punto de partida para revisar tus suscripciones'});
+  return out;
+ }
+ function chartSvg(s,sel){
+  const W=320,H=150,pl=44,pr=10,pt=14,pb=24,vals=s.map(o=>o.v),max=Math.max(...vals,1),min=Math.min(...vals.filter(v=>v>0),max);
+  const lo=Math.max(0,min*.85),hi=max*1.08||1,sx=i=>pl+i*(W-pl-pr)/Math.max(1,s.length-1),sy=v=>pt+(1-(v-lo)/(hi-lo||1))*(H-pt-pb);
+  const pts=s.map((o,i)=>o.n>0?[sx(i),sy(o.v),o,i]:null).filter(Boolean);
+  const ticks=[0,1,2,3].map(k=>{const v=lo+(hi-lo)*k/3;return `<g><line x1="${pl}" x2="${W-pr}" y1="${sy(v).toFixed(1)}" y2="${sy(v).toFixed(1)}" class="v911-grid"/><text x="${pl-5}" y="${(sy(v)+3).toFixed(1)}" text-anchor="end">${esc(rd(v))}</text></g>`}).join('');
+  const line=pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const area=pts.length>1?`<path d="M${pts[0][0].toFixed(1)},${H-pb} L${line.replace(/ /g,' L')} L${pts[pts.length-1][0].toFixed(1)},${H-pb} Z" fill="url(#v911-grad)"/>`:'';
+  const dots=pts.map(p=>`<circle class="v911-pt${sel===p[3]?' is-sel':''}" data-v911-point="${p[3]}" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${sel===p[3]?5:3.6}" tabindex="0" role="button" aria-label="${esc(p[2].label)} ${esc(rd(p[2].v))}"/>`).join('');
+  const labels=s.map((o,i)=>`<text x="${sx(i).toFixed(1)}" y="${H-7}" text-anchor="middle">${esc(o.label)}</text>`).join('');
+  const sp=pts.find(p=>p[3]===sel);const tip=sp?`<g class="v911-tip"><rect x="${Math.min(W-pr-64,Math.max(pl,sp[0]-32)).toFixed(1)}" y="${Math.max(0,sp[1]-27).toFixed(1)}" width="64" height="18" rx="9"/><text x="${Math.min(W-pr-32,Math.max(pl+32,sp[0])).toFixed(1)}" y="${Math.max(12,sp[1]-14).toFixed(1)}" text-anchor="middle">${esc(rd(sp[2].v))}</text></g>`:'';
+  return `<svg class="v911-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución mensual de cobros recurrentes"><defs><linearGradient id="v911-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--v424-accent-strong,#5b57d6)" stop-opacity=".28"/><stop offset="1" stop-color="var(--v424-accent-strong,#5b57d6)" stop-opacity="0"/></linearGradient></defs>${ticks}${area}${pts.length>1?`<polyline points="${line}" class="v911-line"/>`:''}${dots}${labels}${tip}</svg>`;
+ }
+ function inteligencia(){
+  const st=S(),act=activeList(),total=act.reduce((n,r)=>n+monthlyDop(r),0),s=series(6),withData=s.map((o,i)=>o.n>0?i:-1).filter(i=>i>=0);
+  const sel=st.point!==''&&s[+st.point]&&s[+st.point].n>0?+st.point:(withData.length?withData[withData.length-1]:-1);
+  const chart=withData.length>=1?chartSvg(s,sel):'';
+  const last=withData.length?s[withData[withData.length-1]]:null,prev=withData.length>1?s[withData[withData.length-2]]:null;
+  const mom=last&&prev&&prev.v>0?(last.v-prev.v)/prev.v:null;
+  const ly=last?(()=>{const [y,m]=last.key.split('-').map(Number);const k=(y-1)+'-'+String(m).padStart(2,'0');const v=charges().filter(t=>t.date.slice(0,7)===k).reduce((n,t)=>n+txDop(t),0);return v>0?(last.v-v)/v:null})():null;
+  const [cy,cm]=(ui.month||today().slice(0,7)).split('-').map(Number),exp=monthlyTotals(cy,cm).expense||0;
+  const press=exp>0&&total>0?total/Math.max(exp,total):null;
+  const sug=suggestions(act,total),top=sug[0];
+  const prevName=prev?dateObj(prev.key+'-01').toLocaleDateString('es-DO',{month:'long'}):'';
+  const cards=`<div class="v911-kpis"><article><span class="v911-ic">${ico2('bar-chart')}</span><h4>Variación mensual</h4><b class="${mom==null?'':mom>0?'up':mom<0?'down':''}">${mom==null?'—':(mom>0?'+':'')+pct(mom,1)}</b><small>${mom==null?'Necesita 2 meses con cobros':'vs. '+esc(prevName)}${ly!=null?` · ${ly>0?'+':''}${pct(ly,1)} interanual`:''}</small></article>
+   <article><span class="v911-ic">${ico2('refresh')}</span><h4>Presión recurrente</h4><b>${press==null?'—':pct(press)}</b><small>${press==null?'Sin egresos del mes':'del gasto total'}</small></article>
+   <article><span class="v911-ic">${ico2('tag')}</span><h4>Revisión sugerida</h4><b class="accent">${top?esc(top.title):'—'}</b><small>${top?esc(top.main+' · '+top.sub):'Sin sugerencias'}</small></article></div>`;
+  const more=sug.slice(0,4).map(x=>`<li><button type="button" data-v911-open="${esc(x.id)}"><strong>${esc(x.title)}</strong><span>${esc(x.why)}</span><b>${esc(x.main)}</b></button></li>`).join('');
+  const simSel=new Set(st.sim.map(String)),saveM=act.filter(r=>simSel.has(String(r.id))).reduce((n,r)=>n+monthlyDop(r),0);
+  const sim=st.simOpen?`<div class="v911-sim"><p>Marca los servicios que dejarías de pagar. Es solo una simulación: no cambia tus registros.</p><ul>${act.slice().sort((a,b)=>monthlyDop(b)-monthlyDop(a)).map(r=>`<li><label><input type="checkbox" data-v911-sim="${esc(r.id)}"${simSel.has(String(r.id))?' checked':''}/><span class="v911-logo">${ico(r,'tiny')}</span><span class="v911-row-info"><strong>${esc(r.name)}</strong><small>${esc(freq(r))}</small></span><b>${rd(monthlyDop(r),0)}/mes</b></label></li>`).join('')}</ul>
+   <div class="v911-sim-out"><div><span>Ahorro mensual</span><b>${rd(saveM)}</b></div><div><span>Ahorro anual</span><b>${rd(saveM*12)}</b></div><div><span>Nuevo gasto mensual</span><b>${rd(total-saveM)}</b></div><div><span>Reducción</span><b>${total>0?pct(saveM/total,1):'0%'}</b></div></div></div>`:'';
+  return `<section class="v911-intel"><h2 class="v911-h2">Tu gasto bajo la lupa</h2>
+   ${withData.length?`<div class="v911-chartbox">${chart}</div>`:`<p class="v911-empty">Aún no hay cobros registrados para dibujar la evolución. Cuando registres pagos de tus suscripciones aparecerá aquí mes a mes.</p>`}
+   ${cards}${more?`<h3 class="v911-h3">Por qué revisarlas</h3><ul class="v911-why">${more}</ul>`:''}
+   <button type="button" class="v911-simbtn" data-v911-simtoggle="1" aria-expanded="${st.simOpen}"><span class="v911-ic">${ico2('sliders')}</span><span>Simular reducción de gastos</span>${chev}</button>${sim}</section>`;
+ }
+ function analisis(){
+  const st=S();
+  const seg=`<div class="v911-seg v911-seg-sub" role="tablist" aria-label="Perspectiva del análisis">${SUBS.map(([k,l])=>`<button type="button" role="tab" aria-selected="${st.sub===k}" class="${st.sub===k?'is-on':''}" data-v911-sub="${k}">${l}</button>`).join('')}</div>`;
+  return seg+({radiografia,concentracion,inteligencia}[st.sub]||radiografia)();
+ }
+ const ICON_FALLBACK=n=>n;
+ function page(){
+  const st=S();if(!TABS.some(t=>t[0]===st.tab))st.tab='agenda';
+  const body=({agenda,cartera,historial,analisis})[st.tab]();
+  const tabs=`<div class="v911-seg" role="tablist" aria-label="Secciones de Suscripciones">${TABS.map(([k,l])=>`<button type="button" role="tab" aria-selected="${st.tab===k}" class="${st.tab===k?'is-on':''}" data-v911-tab="${k}">${l}</button>`).join('')}</div>`;
+  requestAnimationFrame(()=>{const strip=document.querySelector('.v911-strip'),on=strip?.querySelector('.is-on');if(strip&&on)strip.scrollLeft=on.offsetLeft-strip.clientWidth/2+on.clientWidth/2;const q=S().query;if(q)filter(q)});
+  return `<div class="v911" data-v911="${st.tab}"><header class="v911-head"><h1>Suscripciones</h1><button type="button" class="v911-add" data-act="addRecurring" aria-label="Añadir suscripción" title="Añadir suscripción">${icon('plus')}</button></header>${tabs}<div class="v911-body">${body}</div></div>`;
+ }
+ function filter(q){
+  const query=String(q||'').trim().toLowerCase();let any=false;
+  document.querySelectorAll('#v911-list [data-v911-group]').forEach(g=>{let vis=0;g.querySelectorAll('[data-v911-svc]').forEach(d=>{const ok=!query||d.dataset.q.includes(query);d.hidden=!ok;if(ok)vis++});g.hidden=!vis;if(vis)any=true});
+  const none=document.getElementById('v911-noresult');if(none)none.hidden=any||!document.querySelector('#v911-list [data-v911-svc]');
+ }
+ const original=pages.recurring;
+ pages.recurring=page;
+ window.__v911Original=original;
+ document.addEventListener('click',e=>{
+  const t=e.target.closest?.('[data-v911-tab],[data-v911-sub],[data-v911-day],[data-v911-open],[data-v911-review],[data-v911-seg],[data-v911-pick],[data-v911-point],[data-v911-simtoggle]');
+  if(!t||!t.closest('.v911'))return;const st=S();
+  if(t.dataset.v911Tab){st.tab=t.dataset.v911Tab;if(st.tab==='historial')st.review=''}
+  else if(t.dataset.v911Sub)st.sub=t.dataset.v911Sub;
+  else if(t.dataset.v911Day)st.day=t.dataset.v911Day;
+  else if(t.dataset.v911Open){st.tab='cartera';st.open=t.dataset.v911Open}
+  else if(t.dataset.v911Review)st.review=t.dataset.v911Review;
+  else if(t.dataset.v911Seg!==undefined)st.cat=st.cat===t.dataset.v911Seg?'':t.dataset.v911Seg;
+  else if(t.dataset.v911Pick)st.pick=st.pick===t.dataset.v911Pick?'':t.dataset.v911Pick;
+  else if(t.dataset.v911Point!==undefined)st.point=t.dataset.v911Point;
+  else if(t.dataset.v911Simtoggle)st.simOpen=!st.simOpen;
+  e.preventDefault();render();
+  if(st.open&&st.tab==='cartera')requestAnimationFrame(()=>{document.querySelector(`[data-v911-svc="${CSS.escape(st.open)}"]`)?.scrollIntoView({block:'center'});st.open=''});
+ },true);
+ document.addEventListener('change',e=>{const c=e.target;if(c?.dataset?.v911Sim===undefined||!c.closest?.('.v911'))return;const st=S(),id=String(c.dataset.v911Sim);st.sim=c.checked?[...new Set([...st.sim.map(String),id])]:st.sim.map(String).filter(x=>x!==id);render()});
+ document.addEventListener('input',e=>{if(e.target?.id==='v911-search'){S().query=e.target.value;filter(e.target.value)}});
+ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target?.matches?.('.v911-arc,.v911-pt')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
+})();
+
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
 /* VIVE_SCORE (experimental): puente de SOLO LECTURA hacia los datos existentes; no escribe nada. */
 if(window.VIVE_SCORE_EXPERIMENTAL)window.__viveScoreBridge=Object.freeze({db:()=>db,today,card,bank,cardStatus,loanStatus,loanAccounting,fullOriginalLoan,xconvert,acquiredOnOf,balanceAt:(a,d)=>getAccountBalance(a,d),isFinancial:b=>v40IsFinancial(b),monthlyFactor:f=>v80MonthlyFactor(f),account,activeRecurring:()=>v339ActiveRecurring(),monthlyEquivalent:(a,c,f)=>v339MonthlyEquivalent(a,c,f),upcoming:()=>upcoming(),payroll:(s,d)=>v40Payroll(s,d),theme:()=>db.settings.theme,go:id=>{ui.page=id;render();window.scrollTo(0,0)},rerender:()=>render()});
