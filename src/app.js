@@ -4605,6 +4605,25 @@ function recurringForm(id){
  }
 }
 
+/* Asignación guiada del presupuesto con el selector universal: 1) categoría (con lo gastado y su límite), 2) «toda la categoría» o una subcategoría, 3) importe. */
+function v918BudgetAssign(cat){
+ const period=ui.month,rows=budgetRowsAt(period),m=monthlyTotals(Number(period.slice(0,4)),Number(period.slice(5,7)));
+ const limitOf=(c,sub)=>num(rows.find(b=>b.category===c&&(b.subcategory||'')===(sub||''))?.amount);
+ const spentOf=(c,sub)=>sub?num(m.expenseSubBy[c+'||'+sub]):num(m.expenseBy[c]);
+ const detail=(c,sub)=>'Gastado '+money(spentOf(c,sub))+' · '+(limitOf(c,sub)?'Límite '+money(limitOf(c,sub)):'Sin límite');
+ const ico=(c,sub)=>`<span class="v918-cat-ico">${icon(v255TaxonomyIconName('gasto',c,sub||''))}</span>`;
+ const subsOf=c=>[...new Set([...(categoryMap('gasto')[c]||[]),...rows.filter(b=>b.category===c&&b.subcategory).map(b=>b.subcategory),...Object.keys(m.expenseSubBy||{}).filter(k=>k.startsWith(c+'||')).map(k=>k.split('||')[1])])];
+ const stepSub=c=>{
+  const subs=subsOf(c);
+  if(!subs.length||typeof window.openItemPicker!=='function'){budgetForm(c,'');return}
+  const items=[{value:'__general',name:'Toda la categoría',detail:'Incluye sus subcategorías · '+detail(c,''),iconHtml:ico(c,'')},...subs.map(sb=>({value:sb,name:sb,detail:detail(c,sb),iconHtml:ico(c,sb)}))];
+  window.openItemPicker('¿Dónde asignas el presupuesto de '+c+'?',items,v=>budgetForm(c,v==='__general'?'':v));
+ };
+ if(cat){stepSub(cat);return}
+ if(typeof window.openItemPicker!=='function'){budgetForm();return}
+ const cats=[...new Set([...EXP,...rows.map(b=>b.category),...Object.keys(m.expenseBy||{})])].filter(c=>categoryMap('gasto')[c]||EXP.includes(c)||limitOf(c,'')||spentOf(c,''));
+ window.openItemPicker('Selecciona la categoría',cats.map(c=>({value:c,name:c,detail:detail(c,''),iconHtml:ico(c,'')})),stepSub);
+}
 function budgetForm(cat,sub){let category=cat||Object.keys(categoryMap('gasto'))[0]||'',subcategory=sub||'',row=budgetRowsAt(ui.month).find(b=>b.category===category&&(b.subcategory||'')===subcategory)||{};modal('Presupuesto por categoría y subcategoría',`${formItem('effectiveMonth','Mes de vigencia',ui.month,'month','required')}${formSelect('category','Categoría de gasto',categoryOptions('gasto'),category,'id="budgetCategory"')}${subSelect('gasto',category,subcategory)}${formItem('amount','Presupuesto de este mes (RD$)',row.amount||0,'number','min="0" step="0.01" required')}${para('La edición rige desde el mes elegido y no reescribe períodos anteriores. Un límite global ya incluye sus subcategorías. Para retirar un límite, registra cero.')}`,'budgetForm')}
 let draft={};
 function legacyTransactionForm(partial={},editId=null){let o={type:'expense',date:today(),accountId:db.accounts[0]?.id||'',toAccountId:db.accounts[1]?.id||'',cardId:db.cards[0]?.id||'',loanId:db.loans[0]?.id||'',certificateId:db.certificates[0]?.id||'',currency:'DOP',amount:'',sourceAmount:'',targetAmount:'',category:'Alimentación',subcategory:'',note:'',tags:'',principal:'',interest:'',fee:0,insurance:0,paymentKind:'regular',installmentPeriod:'',...partial};let type=o.type;if(type==='loan_payment'&&!editId){if(partial.insurance===undefined)o.insurance='';if(partial.fee===undefined)o.fee='';}draft=o;
@@ -6386,8 +6405,8 @@ case 'v41PickServiceIcon':{const f=document.getElementById('recurringForm');if(f
 case 'editRecurring':recurringForm(id);break;
 case 'toggleRecurring':{let r=db.recurring.find(r=>r.id===id);if(r){r.active=r.active===false;persist();render()}break}
 case 'payRecurring':payRecurring(id);break;
-case 'addBudget':budgetForm();break;
-case 'editBudget':budgetForm(el.dataset.cat,el.dataset.sub||'');break;
+case 'addBudget':v918BudgetAssign();break;
+case 'editBudget':if(el.dataset.sub)budgetForm(el.dataset.cat,el.dataset.sub);else v918BudgetAssign(el.dataset.cat);break;
 
 case 'closeModal':closeModal();break;
 case 'prevYear':ui.year--;render();break;
