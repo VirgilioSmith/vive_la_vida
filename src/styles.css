@@ -55193,3 +55193,26 @@ html body #app#app #page .v911 .v911-seg button.is-on{background:var(--v424-acce
  html body #app#app #page .v911.v919 .v911-head{justify-content:flex-end;margin:0 0 4px}
 }
 @media(max-width:790px){html body #app#app #page .v911 .v911-top .v911-head{margin-bottom:12px}}
+
+/* v1135 · Web: distancias cortas entre cabecera, barra de navegación y contenido */
+@media(min-width:791px){
+ html body #app#app .main{padding-top:12px!important}
+ html body #app#app .main>.topbar{min-height:56px!important;height:56px!important;margin-bottom:2px!important;padding-bottom:4px!important}
+ html body #app#app .main>:is(.universe-switch-wrap,.module-switch-shell,.module-switch-wrap){margin-bottom:6px!important;padding-top:2px!important;padding-bottom:2px!important}
+ html body #app#app .main>:is(.universe-switch-wrap,.module-switch-shell,.module-switch-wrap) :is(.universe-switch,.module-switch,.module-tabs){padding-top:1px!important;padding-bottom:1px!important}
+ html body #app#app .main>:is(.universe-switch-wrap,.module-switch-shell,.module-switch-wrap) button{min-height:38px!important;padding-top:7px!important;padding-bottom:7px!important}
+ /* Patrimonio: el selector de cierre sube a la fila de pestañas, a la derecha */
+ html body #app#app #page .v1133-compact{position:relative;z-index:3;height:0!important;margin:0!important;overflow:visible}
+ html body #app#app #page .v1133-compact .v137-wealth-top-tools{position:absolute;right:0;top:-48px;display:flex;align-items:center}
+ html body #app#app #page .v1133-compact .v137-wealth-month-control{display:flex;align-items:center;gap:8px}
+ html body #app#app #page .v1133-compact .v137-wealth-month-control span{display:none}
+ /* Presupuesto, Suscripciones y Categorías: el contenido arranca pegado a la barra */
+ html body #app#app #page .v1131-web{margin-top:0}
+ html body #app#app #page .v1131-side{padding-top:0}
+ html body #app#app #page .v911{gap:10px}
+ html body #app#app #page .v911.v919{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:10px;align-items:center}
+ html body #app#app #page .v911.v919>*{grid-column:1/-1}
+ html body #app#app #page .v911.v919>.v911-head{grid-column:2;grid-row:1;margin:0}
+ html body #app#app #page .v911.v919>.v919-define{grid-column:1;grid-row:1}
+}
+@media(min-width:791px){html body #app#app #page .v1131-web{margin-top:-14px}}
