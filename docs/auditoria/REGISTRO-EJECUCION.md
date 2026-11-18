@@ -30,5 +30,19 @@ Cobertura de CSS de Chromium recorriendo 17 pantallas: `styles.css` pesa ~4 MB y
 ### Corrección de método
 Los recorridos de cobertura de CSS y de píxeles de las microtareas 5 usaron al principio identificadores de página inexistentes (`expenses`, `transactions`, `budgets`, `subscriptions`, `wallet`, `analysis`, `goals`); esas visitas repetían la pantalla anterior. La comparación de píxeles se repitió con los 19 identificadores válidos de `pageName` y el resultado se mantuvo. Cifras de cobertura del CSS (~8–9 %) provienen del recorrido original y deben considerarse una cota aproximada.
 
+## Fase red team (ver `RED-TEAM-MATRIZ.md`)
+| # | Microtarea | Estado | Evidencia |
+|---|------------|--------|-----------|
+| 7 | Monkey/fuzz con semilla (`red-team-monkey.js`) | ✔ | 8 semillas × 2 anchos × 500 pasos, 0 hallazgos reales |
+| 8 | Ataque financiero (`red-team-financiero.js`) | ✔ tras D1 | 28 comprobaciones |
+| 9 | Caos y concurrencia con servidor simulado (`red-team-caos.js`, `lib-servidor.js`, `mock-servidor.js`) | ✔ tras D2–D4 | 43 comprobaciones |
+| 10 | Carga y larga duración (`red-team-carga.js`) | ✔ tras D6 | 20 000 movimientos; 30 ciclos sin crecimiento de DOM/oyentes |
+| 11 | Visual extremo (`red-team-visual.js`) | ✔ tras D7 | 4 anchos × 2 temas × 2 tamaños de texto |
+| 12 | Seguridad de cliente (`red-team-seguridad.js`) | ✔ tras D1/D5 | 17 comprobaciones |
+
+### Corrección de método (red team)
+- La primera versión de `red-team-seguridad.js` aprobaba todo porque la importación no se ejecutaba realmente (el diálogo de confirmación propio V1011 exige pulsar «Sí, continuar»). Un control positivo («un respaldo válido SÍ se importa») lo destapó y reveló además el defecto D5, que existía en la aplicación.
+- La medición de desborde horizontal por `scrollWidth` era ciega (la página recorta con `overflow-x`): un elemento de 900 px no la alteraba. Se sustituyó por posiciones de elementos y se validó con un control positivo.
+
 ## Próxima acción
 Microtarea 7: fase 5 (financiera) con pruebas de propiedades: conservación de saldos en transferencias, idempotencia de pagos repetidos y redondeo en 10 000 operaciones aleatorias con semilla; después caos de red con mock extendido.

@@ -2710,6 +2710,8 @@ function v30ValidateImport(d){
   const seen=new Set();
   for(const x of items){
    if(!x||typeof x!=='object'||Array.isArray(x))throw Error('Hay registros inválidos en '+name+'.');
+   for(const k of ['amount','sourceAmount','targetAmount'])if(x[k]!==undefined&&x[k]!==''&&x[k]!==null&&!(Math.abs(Number(x[k]))<=MAX_MONEY))throw Error('Importe fuera de rango en '+name+'.');
+   for(const k of ['opening','limit','principal','balance'])if(x[k]!==undefined&&x[k]!==''&&x[k]!==null&&!(Math.abs(Number(x[k]))<=1e12))throw Error('Importe fuera de rango en '+name+'.');
    if(x.id!==undefined){const id=String(x.id);if(!/^[a-z\d_.:-]{1,120}$/i.test(id))throw Error('Identificador no válido en '+name+'.');if(seen.has(id))throw Error('Hay identificadores duplicados en '+name+'.');seen.add(id)}
    if(name==='transactions'){
     if(typeof x.type!=='string'||!/^[a-z][a-z0-9_]*$/i.test(x.type))throw Error('Hay un tipo de operación no válido.');
@@ -5249,7 +5251,8 @@ function v1028UniversalPicker(f,mode){
   ['input','change'].forEach(t=>sel.dispatchEvent(new Event(t,{bubbles:true})));
   setOpen(false);render();
  });
- document.addEventListener('click',e=>{if(!wrap.contains(e.target))setOpen(false)});
+ /* El oyente vive en el modal (no en document): al cerrarse el modal se libera con él; en document retenía todo el formulario en cada apertura. */
+ (f.closest('.modal')||f).addEventListener('click',e=>{if(!wrap.contains(e.target))setOpen(false)});
  f.addEventListener('keydown',e=>{if(e.key==='Escape'&&!list.hidden){e.stopPropagation();setOpen(false);btn.focus()}},true);
  f.addEventListener('change',e=>{if(['accountId','cardId','paymentSource'].includes(e.target.name))render()});
  render();
@@ -6634,7 +6637,7 @@ if(t.id==='loanPaymentKind'&&t.form?.id==='transactionForm'){let f=t.form;if(t.v
 if(t.id==='txCard'&&t.form?.id==='transactionForm')return;
 if(t.id==='txCategory'||t.id==='recCategory'||t.id==='budgetCategory'){let kind=t.id==='txCategory'&&t.form.elements.type?.value==='income'?'ingreso':'gasto';let selector=t.form.querySelector('#subCategory');if(selector){selector.innerHTML='<option value="">Sin subcategoría</option>'+subcategoryOptions(kind,t.value).map(sub=>`<option value="${sanitize(sub)}">${sanitize(v255TaxonomyOptionLabel(kind,t.value,sub))}</option>`).join('')}return}
 if(t.id==='customKind'){let selector=t.form.querySelector('#customParent');if(selector){selector.innerHTML='<option value="">Crear categoría nueva</option>'+categoryOptions(t.value).map(([v,l])=>`<option value="${sanitize(v)}">${sanitize(l)}</option>`).join('')}return}
-if(t.id==='importFile'){let file=t.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{let imported=JSON.parse(reader.result);if(!imported||!Array.isArray(imported.accounts)||!Array.isArray(imported.cards)||!Array.isArray(imported.loans)||!Array.isArray(imported.transactions)||!Array.isArray(imported.recurring))throw Error('El archivo no contiene una copia de vive el hoy válido.');v30ValidateImport(imported);if(!confirm('¿Restaurar este respaldo? REEMPLAZARÁ todos tus datos actuales.'))return;if(!v30SavePoint('Antes de importar un respaldo JSON'))return;const beforeImport=db;try{db=migrateData({...init(),...imported,settings:{...init().settings,...(imported.settings||{})}});delete db.exportedAt;if(!persist())throw Error('No se pudo guardar el respaldo importado.');}catch(e){db=beforeImport;persist();throw e}ui.page='overview';ui.cardId=null;ui.loanId=null;ui.accountId=null;render();toast('Respaldo restaurado correctamente.')}catch(err){toast('Error al importar: '+(err.message||'archivo inválido'))}};reader.readAsText(file,'utf-8');t.value='';return}
+if(t.id==='importFile'){/* El diálogo de confirmación (V1011) repite este evento tras aceptar, pero aquí se vacía el campo: se conserva el archivo hasta terminar. */let file=t.files[0]||window.__v30PendingImport;if(!file)return;window.__v30PendingImport=file;const reader=new FileReader();reader.onload=()=>{try{let imported=JSON.parse(reader.result);if(!imported||!Array.isArray(imported.accounts)||!Array.isArray(imported.cards)||!Array.isArray(imported.loans)||!Array.isArray(imported.transactions)||!Array.isArray(imported.recurring))throw Error('El archivo no contiene una copia de vive el hoy válido.');v30ValidateImport(imported);if(!confirm('¿Restaurar este respaldo? REEMPLAZARÁ todos tus datos actuales.'))return;if(!v30SavePoint('Antes de importar un respaldo JSON'))return;const beforeImport=db;try{db=migrateData({...init(),...imported,settings:{...init().settings,...(imported.settings||{})}});delete db.exportedAt;if(!persist())throw Error('No se pudo guardar el respaldo importado.');}catch(e){db=beforeImport;persist();throw e}window.__v30PendingImport=null;ui.page='overview';ui.cardId=null;ui.loanId=null;ui.accountId=null;render();toast('Respaldo restaurado correctamente.')}catch(err){window.__v30PendingImport=null;toast('Error al importar: '+(err.message||'archivo inválido'))}};reader.readAsText(file,'utf-8');t.value='';return}
 });
 document.addEventListener('input',e=>{let t=e.target;
 if(t.id==='searchTx'){let start=t.selectionStart??t.value.length;ui.search=t.value;render();let n=document.getElementById('searchTx');if(n){n.focus();n.setSelectionRange(start,start)}return}
