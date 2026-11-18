@@ -3,7 +3,7 @@
 const KEY='finanzas360.v1'; // Mismo almacenamiento para conservar los registros anteriores
 const APP_BRAND='vive el hoy'; // Identidad única en componentes JavaScript; los metadatos PWA son estáticos.
 // Wordmark: la "y" de «hoy» es un trazo SVG cuya cola se curva bajo «ho» y forma la sonrisa (sale de la y, no de un lado).
-const BRAND_Y='<svg class="v908-y" viewBox="0 0 90 100" focusable="false" aria-hidden="true"><path d="M8 12 L44 66"/><path d="M84 12 L50 76 Q42 96 18 99 C-14 104 -62 100 -92 73"/></svg>';
+const BRAND_Y='<svg class="v908-y" viewBox="0 0 90 100" focusable="false" aria-hidden="true"><path d="M8 12 L44 66"/><path d="M84 12 L53 72 C47 88 34 98 12 99 C-10 100 -30 92 -44 78"/></svg>';
 const brandMark=(compact)=>`<span class="v908-wm${compact?' is-compact':''}" aria-hidden="true">${compact?'':'<span class="v908-a">vive el</span>'}<span class="v908-b">ho${BRAND_Y}</span></span>`;
 const EXP=['Alimentación','Vivienda','Servicios básicos','Transporte','Salud','Educación','Familia e hijos','Entretenimiento','Viajes','Compras personales','Tecnología','Seguros','Mascotas','Regalos y donaciones','Suscripciones','Deudas e intereses','Impuestos y comisiones','Negocio','Otros gastos'];
 const INC=['Salario y nómina','Joseo e ingresos adicionales','Negocios y ventas','Servicios profesionales','Inversiones','Ingresos pasivos','Reembolsos','Otros ingresos'];
