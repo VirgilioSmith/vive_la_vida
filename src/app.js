@@ -2273,6 +2273,14 @@ function loans(){
 
 
 
+function loanExportCsv(id){
+  let l=loan(id);if(!l)return;let b=loanBundle(l),rows=loanWorkspace.plan==='original'?b.original.rows:loanWorkspace.plan==='strategy'?[...b.actual.rows,...b.scenario.rows]:[...b.actual.rows,...b.baseline.rows];
+  let h=['Período','Fecha','Tipo','Saldo inicial','Capital regular','Intereses','Seguro','Comisiones','Abono extraordinario','Pago total','Saldo final'];
+  let data=[h,...rows.map(r=>[r.period,r.date,r.kind,r.opening,r.principal,r.interest,r.insurance,r.fee,r.extra,r.payment,r.balance])];
+  download('\uFEFF'+data.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n'),`prestamo-${String(l.name).replace(/[^\w-]/g,'-')}-amortizacion.csv`,'text/csv;charset=utf-8');
+}
+
+
 const TRANSACTION_EDITABLE=new Set(['income','expense','card_charge','card_refund','card_payment','card_reward','bank_reward','loan_payment','transfer','adjustment','certificate_funding','certificate_redemption']);
 function openTransactionEditor(id){let t=db.transactions.find(x=>x.id===id);if(!t){toast('Movimiento no encontrado.');return}
  if(t.type==='card_advance')return v900AdvanceForm(t.cardId,t.id);
@@ -6371,7 +6379,15 @@ case 'payCard':{let c=card(id),a=db.accounts.find(x=>!x.archived&&x.kind!=='cash
 case 'addLoan':loanForm(null,id);break;
 case 'editLoan':loanForm(id);break;
 case 'loanDetails':ui.loanId=id;ui.innerViews.loans='overview';loanWorkspace.tab='vision';render();setTimeout(()=>document.getElementById('loan-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),40);break;
+case 'closeLoanDetails':ui.loanId=null;render();break;
 case 'payLoan':{let l=loan(id),a=db.accounts.find(a=>a.currency===l?.currency)||db.accounts[0];transactionForm({type:'loan_payment',loanId:id,accountId:a?.id||'',amount:'',principal:'',interest:'',insurance:'',fee:'',paymentKind:'regular'});break}
+ case 'extraLoan':{let l=loan(id),a=db.accounts.find(a=>a.currency===l?.currency)||db.accounts[0];transactionForm({type:'loan_payment',loanId:id,accountId:a?.id||'',amount:'',principal:'',interest:0,insurance:0,fee:0,paymentKind:'extra',note:'Abono extraordinario a capital'});break}
+ case 'loanTab':loanWorkspace.tab=id;render();document.getElementById('loan-workspace')?.scrollIntoView({block:'start'});break;
+ case 'loanPeriod':loanWorkspace.period=Number(id);render();break;
+ case 'loanPlan':loanWorkspace.plan=id;render();break;
+ case 'loanCsv':loanExportCsv(id);break;
+ case 'loanSimReset':{if(ui.loanId){let l=loan(ui.loanId);loanWorkspace.sim[l.id]={amount:0,frequency:1,start:today(),mode:'term'};render();}break}
+ case 'loanCalculate':{let l=loan(ui.loanId);if(l){loanWorkspace.sim[l.id]={amount:Math.max(0,num(document.getElementById('loanSimAmount')?.value)),frequency:Number(document.getElementById('loanSimFrequency')?.value||1),start:document.getElementById('loanSimStart')?.value||today(),mode:document.getElementById('loanSimMode')?.value||'term'};render();}break}
 case 'v41PickServiceIcon':{const f=document.getElementById('recurringForm');if(f){v41SetServiceIcon(f,id);f.dataset.v41IconManual='1';}break} case 'addRecurring':recurringForm();break;
 case 'editRecurring':recurringForm(id);break;
 case 'toggleRecurring':{let r=db.recurring.find(r=>r.id===id);if(r){r.active=r.active===false;persist();render()}break}
