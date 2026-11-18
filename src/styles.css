@@ -55161,3 +55161,14 @@ html body #app#app .main .v239-loan-deep .loan-compare-header strong{font-size:1
 }
 #modal-root .v1110-pick.open .v1110-chev{transform:rotate(90deg)}
 #modal-root .v1110-pickitem.on{background:var(--k-soft);font-weight:700}
+/* v1131b · Web: acento dinámico en la columna lateral y proporciones a pantalla completa */
+html body #app#app #page .v1131-web{--ac:var(--v424-accent-strong,#5b57d6)}
+@media(min-width:1100px){
+ html body #app#app #page .v1131-web{grid-template-columns:minmax(0,1fr) 400px;gap:32px;max-width:1560px;width:100%;margin:0 auto;padding:0 12px;zoom:1.12}
+ html body #app#app #page .v1131-web>.v1131-main{min-width:0}
+ html body #app#app #page .v1131-web .v911-kpis:has(>.v911-kpi:nth-child(4)){grid-template-columns:repeat(4,minmax(0,1fr))}
+ html body #app#app #page .v1131-web .v920-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;background:none!important;border:0!important;box-shadow:none!important}
+ html body #app#app #page .v1131-web .v920-list>.v911-row{border:1px solid var(--s-line)!important;border-radius:16px!important;background:var(--s-surface,#fff)!important}
+ html body #app#app #page .v1131-web .v919-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+}
+@media(min-width:1500px){html body #app#app #page .v1131-web{zoom:1.22}}
