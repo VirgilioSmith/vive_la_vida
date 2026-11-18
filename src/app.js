@@ -6835,6 +6835,7 @@ for(const pg of ['income','expenses']){INNER_PAGES[pg].tabs=INNER_PAGES[pg].tabs
 const v26OldInnerWrap=innerWrap;
 innerWrap=function(page,view){
  if(page==='payments')return view(); // V301: Visión global has no redundant inner navigator
+ if(page==='accounts'){ui.innerViews.accounts='overview';return view()} // Cuentas: sin sub-pestañas (Resumen/Bancarias/Efectivo/Movimientos); siempre el resumen
  if(page==='expenses')return view(); // Egresos ya no tiene sub-pestañas: sin la segunda píldora «Egresos»
  if(page==='income')return v26OldInnerWrap(page,view); // Restore original analysis and recurring income tabs
  if(page==='budget'){
