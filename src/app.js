@@ -90,7 +90,7 @@ const ICONS={search:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.8 4.
 ICONS.cashAdvance='<rect x="3" y="9" width="18" height="12" rx="2.5"/><path d="M3 13h18"/><path d="M12 9V2m-4 4 4-4 4 4"/>';
 ICONS.landmark='<path d="M3 9 12 3l9 6"/><path d="M4 9h16M4 21h16M6 11v8m4-8v8m4-8v8m4-8v8"/>';
 ICONS.puzzle='<path d="M9 3h3a2 2 0 0 0 4 0h3v6h-2a2 2 0 0 0 0 4h2v6h-6v-2a2 2 0 0 0-4 0v2H3v-6h2a2 2 0 0 0 0-4H3V3h6Z"/>';
-const icon=(k)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]||ICONS.wallet}</svg>`;
+const icon=(k)=>typeof k==='string'&&k.startsWith('emoji:')?`<span class="v920-emoji" aria-hidden="true">${String(k.slice(6)).replace(/[<>&"']/g,'')}</span>`:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]||ICONS.wallet}</svg>`;
 /* V803 · Registrar icon vocabulary: one meaning, one symbol, original icon() renderer. */
 Object.assign(ICONS,{
  'r803-receive':'<path d="M17 3v10H7"/><path d="m12 8-5 5 5 5"/><path d="M4 21h16"/>',
@@ -115,8 +115,8 @@ Object.assign(ICONS,{cart:'<circle cx="9" cy="20" r="1.35"/><circle cx="18" cy="
 const V255_TAXONOMY={gasto:{categories:{'Alimentación':'utensils','Vivienda':'home2','Servicios básicos':'bolt2','Transporte':'car2','Salud':'heart2','Educación':'book2','Familia e hijos':'badge2','Entretenimiento':'ticket','Viajes':'plane2','Compras personales':'bag','Tecnología':'monitor2','Seguros':'shield3','Mascotas':'paw2','Regalos y donaciones':'gift2','Suscripciones':'refresh2','Deudas e intereses':'percent2','Impuestos y comisiones':'receipt','Negocio':'building','Otros gastos':'sparkles'},subcategories:{'Alimentación||Supermercado':'cart','Alimentación||Restaurantes':'utensils','Alimentación||Delivery':'truck2','Alimentación||Café y meriendas':'coffee','Alimentación||Comida en el trabajo':'briefcase','Alimentación||Otros alimentos':'cup2','Vivienda||Alquiler':'home2','Vivienda||Hipoteca (intereses)':'building','Vivienda||Mantenimiento':'wrench','Vivienda||Muebles':'sofa','Vivienda||Reparaciones':'tools2','Vivienda||Condominio':'building','Servicios básicos||Electricidad':'bolt2','Servicios básicos||Agua':'droplet2','Servicios básicos||Internet hogar':'wifi2','Servicios básicos||Teléfono móvil':'smartphone','Servicios básicos||Gas':'flame2','Servicios básicos||Otros servicios':'settings','Transporte||Combustible':'fuel','Transporte||Uber y taxi':'car2','Transporte||Pasajes':'bus2','Transporte||Mantenimiento vehículo':'wrench','Transporte||Parqueo y peajes':'receipt','Transporte||Repuestos':'tools2','Salud||Consultas médicas':'heart2','Salud||Farmacia':'pills','Salud||Laboratorios':'microscope','Salud||Odontología':'tooth','Salud||Gimnasio':'dumbbell','Salud||Otros cuidados':'heart2','Educación||Cursos':'book2','Educación||Universidad':'graduation','Educación||Libros':'book2','Educación||Certificaciones':'badge2','Educación||Materiales':'box2','Educación||Matrícula':'graduation','Familia e hijos||Colegio':'graduation','Familia e hijos||Manutención':'handHeart','Familia e hijos||Ropa infantil':'shirt','Familia e hijos||Actividades':'gamepad','Familia e hijos||Otros familiares':'users','Entretenimiento||Cine':'film2','Entretenimiento||Eventos':'ticket','Entretenimiento||Salidas':'sparkles','Entretenimiento||Videojuegos':'gamepad','Entretenimiento||Hobbies':'star','Entretenimiento||Streaming':'play','Viajes||Vuelos':'plane2','Viajes||Hospedaje':'bed2','Viajes||Excursiones':'map','Viajes||Comidas en viaje':'utensils','Viajes||Traslados':'bus2','Compras personales||Ropa':'shirt','Compras personales||Calzado':'bag','Compras personales||Cuidado personal':'sparkles','Compras personales||Accesorios':'gift2','Compras personales||Compras varias':'bag','Tecnología||Celulares':'smartphone','Tecnología||Computadoras':'laptop2','Tecnología||Software':'monitor2','Tecnología||Dispositivos':'cpu','Tecnología||Accesorios':'headphones','Tecnología||Software y aplicaciones':'cloud2','Seguros||Médico':'shield3','Seguros||Vehículo':'car2','Seguros||Vida':'heart2','Seguros||Hogar':'home2','Seguros||Otros seguros':'shield3','Seguros||Pago de seguro':'receipt','Mascotas||Alimento':'paw2','Mascotas||Veterinario':'heart2','Mascotas||Accesorios':'gift2','Regalos y donaciones||Regalos':'gift2','Regalos y donaciones||Donaciones':'handHeart','Regalos y donaciones||Celebraciones':'sparkles','Suscripciones||Streaming':'play','Suscripciones||Música':'music2','Suscripciones||Almacenamiento en nube':'cloud2','Suscripciones||Aplicaciones':'smartphone','Suscripciones||Membresías':'refresh2','Deudas e intereses||Intereses de préstamo':'percent2','Deudas e intereses||Intereses de tarjeta':'card','Deudas e intereses||Comisiones de deuda':'receipt','Deudas e intereses||Mora':'alert2','Impuestos y comisiones||Impuestos':'receipt','Impuestos y comisiones||Comisión bancaria':'building','Impuestos y comisiones||Cargos por servicio':'receipt','Impuestos y comisiones||Impuesto de tarjeta':'card','Negocio||Publicidad':'megaphone2','Negocio||Inventario':'box2','Negocio||Logística':'truck2','Negocio||Herramientas':'tools2','Negocio||Operaciones':'building','Otros gastos||Imprevistos':'alert2','Otros gastos||Misceláneos':'sparkles'}},ingreso:{categories:{'Salario y nómina':'briefcase','Joseo e ingresos adicionales':'sparkles','Negocios y ventas':'bag','Servicios profesionales':'handshake2','Inversiones':'trend2','Ingresos pasivos':'coins2','Reembolsos':'refresh2','Otros ingresos':'banknote2','Beneficios bancarios':'banknote2'},subcategories:{'Salario y nómina||Sueldo base':'briefcase','Salario y nómina||Bonos':'gift2','Salario y nómina||Comisiones':'percent2','Salario y nómina||Horas extras':'clock','Salario y nómina||Incentivos':'sparkles','Joseo e ingresos adicionales||Ventas ocasionales':'bag','Joseo e ingresos adicionales||Trabajos independientes':'handshake2','Joseo e ingresos adicionales||Ingresos por comisión':'percent2','Joseo e ingresos adicionales||Actividades extra':'sparkles','Negocios y ventas||Venta de productos':'box2','Negocios y ventas||Ventas por internet':'wifi2','Negocios y ventas||Servicios comerciales':'building','Negocios y ventas||Otros negocios':'bag','Servicios profesionales||Consultoría':'handshake2','Servicios profesionales||Freelance':'briefcase','Servicios profesionales||Proyectos':'tools2','Inversiones||Dividendos':'coins2','Inversiones||Intereses ganados':'percent2','Inversiones||Ganancias realizadas':'trend2','Ingresos pasivos||Alquiler recibido':'home2','Ingresos pasivos||Regalías':'star','Ingresos pasivos||Otros pasivos':'coins2','Reembolsos||Devolución de compra':'refresh2','Reembolsos||Reintegro laboral':'briefcase','Reembolsos||Otros reintegros':'refresh2','Otros ingresos||Regalos recibidos':'gift2','Otros ingresos||Otros':'banknote2','Beneficios bancarios||Cashback':'banknote2','Beneficios bancarios||Intereses de cuentas':'percent2','Beneficios bancarios||Intereses de certificados':'coins2','Beneficios bancarios||Recompensas':'gift2','Beneficios bancarios||Promociones':'sparkles','Beneficios bancarios||Cashback acreditado':'banknote2'}}};
 const V255_ICON_TEXT={cart:'⌂',utensils:'⌁',coffee:'◌',bag:'◈',home2:'⌂',wrench:'⌘',sofa:'◫',bolt2:'⌁',droplet2:'◍',wifi2:'◔',smartphone:'▣',flame2:'◇',car2:'▤',bus2:'▥',fuel:'▧',heart2:'♡',pills:'◍',microscope:'◔',tooth:'◌',dumbbell:'▭',book2:'▤',graduation:'◫',badge2:'◉',shirt:'◈',gift2:'✦',ticket:'◭',gamepad:'◪',plane2:'△',bed2:'▤',box2:'▣',monitor2:'▥',laptop2:'▦',cloud2:'◔',shield3:'⬒',paw2:'✣',handHeart:'♡',refresh2:'◌',alert2:'△',sparkles:'✦',percent2:'％',megaphone2:'◍',truck2:'▧',tools2:'⌘',coins2:'◎',banknote2:'▤',trend2:'↗',handshake2:'◈',cup2:'◌',music2:'♪',film2:'◫',briefcase:'▣',play:'▷',map:'◇',cpu:'▦',headphones:'◖'};
 function v255TaxonomyKindForCategory(name){if(name&&categoryMap('gasto')[name])return 'gasto';if(name&&categoryMap('ingreso')[name])return 'ingreso';return 'gasto'}
-function v255TaxonomyIconName(kind,category='',subcategory=''){const pack=V255_TAXONOMY[kind]||{};const key=`${category}||${subcategory}`;return (subcategory&&pack.subcategories&&pack.subcategories[key])||((pack.categories||{})[category])||(kind==='ingreso'?'banknote2':'receipt')}
-function v255TaxonomyOptionLabel(kind,category,subcategory=''){const iconName=v255TaxonomyIconName(kind,category,subcategory);const label=subcategory||category||'';return `${V255_ICON_TEXT[iconName]||'•'} ${label}`.trim()}
+function v255TaxonomyIconName(kind,category='',subcategory=''){const pack=V255_TAXONOMY[kind]||{};const key=`${category}||${subcategory}`;const em=db&&db.categoryEmoji||{};const own=subcategory&&em[`${kind}||${category}||${subcategory}`],parent=em[`${kind}||${category}`];if(own)return 'emoji:'+own;const builtin=(subcategory&&pack.subcategories&&pack.subcategories[key]);if(!builtin&&parent)return 'emoji:'+parent;return builtin||((pack.categories||{})[category])||(kind==='ingreso'?'banknote2':'receipt')}
+function v255TaxonomyOptionLabel(kind,category,subcategory=''){const iconName=v255TaxonomyIconName(kind,category,subcategory);const label=subcategory||category||'';return `${String(iconName).startsWith('emoji:')?String(iconName).slice(6):(V255_ICON_TEXT[iconName]||'•')} ${label}`.trim()}
 function v255TaxonomyBadge(kind,category,subcategory='',opts={}){const label=(opts.subOnly&&subcategory)?subcategory:(subcategory||category||'Sin categoría');const iconName=v255TaxonomyIconName(kind,category,subcategory);const cls=`v255-tax-badge${subcategory?' sub':''}${opts.compact?' compact':''}`;const title=subcategory?`${category} / ${subcategory}`:category||label;return `<span class="${cls}" title="${sanitize(title)}"><span class="v255-tax-ico">${icon(iconName)}</span><span class="v255-tax-label">${sanitize(label)}</span></span>`}
 function v255TransactionCategoryCell(t){const kind=['income','bank_reward','card_reward'].includes(t.type)?'ingreso':'gasto';const cat=t.category||(['income','bank_reward','card_reward'].includes(t.type)?'Otros ingresos':'Otros gastos');return `${v255TaxonomyBadge(kind,cat,'',{compact:true})}${v5NeedsAppleCategory(t)?`<button type="button" class="v5-apple-cat-action" data-v5-apple="categorize" data-id="${sanitize(String(t.id))}">Cambiar categoría</button>`:''}${t.subcategory?`<div class="subtitle">${v255TaxonomyBadge(kind,cat,t.subcategory,{compact:true,subOnly:true})}</div>`:''}`}
 function v255TransactionMetaLine(t,prefix=''){const kind=['income','bank_reward','card_reward'].includes(t.type)?'ingreso':'gasto';const cat=t.category||(TRANSL[t.type]||(['income','bank_reward','card_reward'].includes(t.type)?'Otros ingresos':'Otros gastos'));const pre=prefix?`<span class="v255-tax-prefix">${sanitize(prefix)}</span><span class="v255-tax-sep">·</span>`:'';const sub=t.subcategory?`<span class="v255-tax-sep">/</span>${v255TaxonomyBadge(kind,cat,t.subcategory,{compact:true,subOnly:true})}`:'';return `<span class="v255-tax-inline">${pre}${v255TaxonomyBadge(kind,cat,'',{compact:true})}${sub}</span>`}
@@ -310,7 +310,7 @@ const init=()=>({version:4,settings:{fx:60,fxAcknowledged:false,menuLayout:'rail
 let db=(()=>{try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.accounts)&&Array.isArray(x.transactions))return {...init(),...x,settings:{...init().settings,...(x.settings||{})}}}catch(e){}return init()})();
 let privacyMode=false;
 const ui={projectionMenu:false,movementTab:'all',navExpanded:null,showHidden:false,kpiBank:'',kpiEditing:false,page:'overview',expenseRange:'month',bankId:null,bankScope:'all',month:today().slice(0,7),year:nowYear(),search:'',transType:'all',txPeriod:'all',reviewFilter:'all',v361Category:'all',cardId:null,cardDetailTab:'status',cardHistoryCurrency:'DOP',cardHistoryYear:nowYear(),accountId:null,loanId:null,annualDetails:true,annualCurrency:'DOP',forecastScenario:'base',forecastHorizon:12,mobile:false};
-function migrateData(d){d.banks=Array.isArray(d.banks)?d.banks:[];d.ruleVersions=Array.isArray(d.ruleVersions)?d.ruleVersions:[];d.recordSnapshots=Array.isArray(d.recordSnapshots)?d.recordSnapshots:[];d.auditLog=Array.isArray(d.auditLog)?d.auditLog:[];d.customCategories=Array.isArray(d.customCategories)?d.customCategories:[];
+function migrateData(d){d.categoryEmoji=d.categoryEmoji&&typeof d.categoryEmoji==='object'&&!Array.isArray(d.categoryEmoji)?d.categoryEmoji:{};d.banks=Array.isArray(d.banks)?d.banks:[];d.ruleVersions=Array.isArray(d.ruleVersions)?d.ruleVersions:[];d.recordSnapshots=Array.isArray(d.recordSnapshots)?d.recordSnapshots:[];d.auditLog=Array.isArray(d.auditLog)?d.auditLog:[];d.customCategories=Array.isArray(d.customCategories)?d.customCategories:[];
   d.hiddenTaxonomy=(d.hiddenTaxonomy&&typeof d.hiddenTaxonomy==='object'&&!Array.isArray(d.hiddenTaxonomy))?d.hiddenTaxonomy:{};
   d.hiddenTaxonomy.categories=Array.isArray(d.hiddenTaxonomy.categories)?d.hiddenTaxonomy.categories:[];
   d.hiddenTaxonomy.subcategories=Array.isArray(d.hiddenTaxonomy.subcategories)?d.hiddenTaxonomy.subcategories:[];d.certificates=Array.isArray(d.certificates)?d.certificates:[];d.perkUses=Array.isArray(d.perkUses)?d.perkUses:[];d.txRevisions=Array.isArray(d.txRevisions)?d.txRevisions:[];d.rewardBalances=Array.isArray(d.rewardBalances)?d.rewardBalances:[];d.personalLoans=Array.isArray(d.personalLoans)?d.personalLoans:[];d.personalContacts=Array.isArray(d.personalContacts)?d.personalContacts:[];
@@ -1649,6 +1649,7 @@ function categoryForm(){
   <div class="v900-seg" role="radiogroup" aria-label="Qué quieres crear" data-v900-seg="what"><button type="button" role="radio" aria-checked="true" data-val="categoria" class="on">Categoría</button><button type="button" role="radio" aria-checked="false" data-val="subcategoria">Subcategoría</button></div>
   <div class="v900-pane" data-v900-pane="subcategoria" hidden><label class="v900-lbl" for="customParent">Categoría existente</label>${parentSel}</div>
   <div class="v900-pane" data-v900-pane="categoria"><label class="v900-lbl" for="v900-name">Nombre de la categoría</label><input id="v900-name" class="field" name="name" type="text" maxlength="55" placeholder="Ej. Actividades deportivas" autocomplete="off"></div>
+  <div class="v900-lbl">Emoji (opcional)</div><div class="v920-emoji-field"><button type="button" class="v920-emoji-btn" data-v920-form-emoji="1" aria-label="Elegir emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2M9 9.5h.01M15 9.5h.01"/></svg></button><input type="hidden" name="emoji" value=""><span class="v920-emoji-hint">Se verá junto al nombre en toda la app.</span></div>
   <label class="v900-lbl" for="v900-sub" id="v900-sub-lbl">Subcategoría (opcional)</label><input id="v900-sub" class="field" name="subcategory" type="text" maxlength="55" placeholder="Ej. Tenis" autocomplete="off">
   <aside class="v900-side"><div class="v900-lbl">Vista previa</div>
   <div class="v900-preview" id="v900-preview" aria-live="polite"></div>
@@ -6488,7 +6489,7 @@ if(form.id==='benefitLedgerForm'){
  switch(form.id){
 case 'bankForm':{let name=String(v.name||'').trim();if(!name)throw Error('Indica el nombre de la institución.');if(db.banks.some(b=>b.id!==id&&b.name.toLocaleLowerCase('es')===name.toLocaleLowerCase('es')))throw Error('Ya hay una institución con ese nombre.');let entry={id:id||uuid(),name,kind:v.kind||'Banco',color:v.color||'#376bea',logo:bankLogoSafe(form.dataset.logo),notes:String(v.notes||'').trim(),scope:v.scope==='negocio'?'negocio':'personal'};if(id){let previous=bank(id);if(previous.name!==name||previous.kind!==entry.kind){previous.identityHistory=Array.isArray(previous.identityHistory)?previous.identityHistory:[];previous.identityHistory.push({at:new Date().toISOString(),beforeName:previous.name,beforeKind:previous.kind,nextName:name,nextKind:entry.kind});}const history=previous.identityHistory||[];Object.assign(previous,entry,{identityHistory:history});for(let x of [...db.accounts,...db.cards,...db.loans])if(x.bankId===id)x.bank=name}else{db.banks.push(entry);ui.bankId=entry.id}break;}
 case 'categoryForm':{
- const kind=v.kind==='ingreso'?'ingreso':'gasto',chosen=String(v.category||'').trim(),newName=String(v.name||'').trim(),sub=String(v.subcategory||'').trim();
+ const emoji=String(v.emoji||'').trim(),kind=v.kind==='ingreso'?'ingreso':'gasto',chosen=String(v.category||'').trim(),newName=String(v.name||'').trim(),sub=String(v.subcategory||'').trim();
  if(chosen){
   if(!sub)throw Error('Escribe la subcategoría a agregar.');
   if(subcategoryOptions(kind,chosen).some(x=>x.toLocaleLowerCase('es')===sub.toLocaleLowerCase('es')))throw Error('Esa subcategoría ya existe.');
@@ -6504,6 +6505,7 @@ case 'categoryForm':{
   if(!defined)db.customCategories.push({kind,name:newName,subcategories:[]});
   if(sub){let custom=db.customCategories.find(c=>c.kind===kind&&c.name===newName);if(!custom)db.customCategories.push(custom={kind,name:newName,subcategories:[]});if(!(CATALOG[kind]?.[newName]||[]).includes(sub)&&!(custom.subcategories||[]).includes(sub))custom.subcategories.push(sub);v191RemoveSubHide(kind,newName,sub)}
  }
+ if(emoji&&typeof window.v920SaveEmoji==='function')window.v920SaveEmoji(kind,chosen||newName,chosen?sub:'',emoji);
  break;
 }
 case 'accountForm':{let prev=account(id),use=prev&&db.transactions.some(t=>t.accountId===id||t.toAccountId===id);if(use&&prev.currency!==v.currency)throw Error('No cambies la moneda de una cuenta con movimientos; crea otra cuenta para evitar distorsión histórica.');let entry={id:id||uuid(),name:v.name.trim(),bankId:v.bankId,bank:bank(v.bankId)?.name||'',kind:v.kind,currency:v.currency,opening:rnd(v.opening),opened:v.opened,last4:v.last4||'',annualRate:num(v.annualRate),acquiredOn:validAcquiredOn(v.acquiredOn)};if(!entry.name||!bank(entry.bankId))throw Error('Indica el nombre y banco de la cuenta.');if(id){financeAuditDiff('cuenta',prev.id,prev,entry,['name','kind','annualRate','last4','acquiredOn']);Object.assign(prev,entry)}else{db.accounts.push(entry);try{financeSnapshot('cuenta',entry.id,{currency:entry.currency,kind:entry.kind,opened:entry.opened,annualRate:num(entry.annualRate)},{opening:rnd(entry.opening)})}catch(_){}}break}
@@ -18488,6 +18490,98 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  }
  pages.budget=page;
  document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v919-month]');if(!b||!b.closest('.v919'))return;e.preventDefault();ui.month=b.dataset.v919Month;ui.year=Number(ui.month.slice(0,4));render()},true);
+})();
+
+/* V920 · Categorías: lista por tipo, detalle de cada categoría (ver, añadir y eliminar subcategorías, eliminar la categoría) y emoji propio
+   para categorías y subcategorías. El emoji se guarda en db.categoryEmoji ('tipo||categoría[||subcategoría]') y se muestra en toda la app. */
+(()=>{
+ const esc=v=>sanitize(String(v??''));
+ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+ const chev=G('<path d="m9 6 6 6-6 6"/>').replace('<svg','<svg class="v911-chev"');
+ const EMOJIS=[['Dinero','💰💵💳🏦🧾💸📈📉🪙💎🧮📊'],['Comida','🍽️🍔🍕🥗🍎☕🍺🛒🥖🍰🍷🥩'],['Hogar','🏠🛋️💡🚿🔧🧹🛏️🔑🪴🧺📦🔥'],['Transporte','🚗⛽🚌🚕🛵🚲✈️🚢🛞🅿️🚆🧳'],['Salud','❤️💊🩺🦷🏥🧘🏋️👓💪🧠🩹🧴'],['Estudio y trabajo','📚🎓✏️💼💻📱🖨️📞🗂️🎯💡🧑‍💻'],['Familia','👨‍👩‍👧👶🐶🐱🎁🎂💍👪🧸🍼🌳🎒'],['Ocio','🎬🎮🎵🎧🎟️🏖️⚽🎨📺🎤🎳🏕️'],['Compras','🛍️👕👟👜💄💅🕶️⌚🧥👗🪞🎀'],['Otros','⭐🔥🌱🔒🧩📌🏷️🔔🌎♻️✅❓']];
+ const key=(k,c,s)=>k+'||'+c+(s?'||'+s:'');
+ const valid=e=>typeof e==='string'&&e.length>0&&e.length<=16&&/\p{Extended_Pictographic}/u.test(e);
+ const store=()=>{if(!db.categoryEmoji||typeof db.categoryEmoji!=='object'||Array.isArray(db.categoryEmoji))db.categoryEmoji={};return db.categoryEmoji};
+ const setEmoji=(k,c,s,e)=>{const m=store(),kk=key(k,c,s);if(valid(e))m[kk]=e;else delete m[kk]};
+ const kindName=k=>k==='ingreso'?'ingresos':'gastos';
+ const S=()=>ui.v920||(ui.v920={kind:'gasto',q:''});
+ const usos=(k,c)=>(db.transactions||[]).filter(t=>t.category===c&&(k==='ingreso'?['income','bank_reward','card_reward'].includes(t.type):!['income','bank_reward','card_reward'].includes(t.type))).length;
+ function chip(k,c,s){return `<span class="v920-chip">${icon(v255TaxonomyIconName(k,c,s||''))}</span>`}
+ /* ---------- hojas ---------- */
+ function capa(id,titulo,cuerpo,alCerrar){
+  document.getElementById(id)?.remove();
+  const el=document.createElement('div');el.id=id;el.className='v920-layer';el.innerHTML=`<div class="v920-back" data-v920-close="${id}"></div><section class="v920-sheet" role="dialog" aria-modal="true" aria-label="${esc(titulo)}"><i class="v920-grip"></i><header><h2>${esc(titulo)}</h2><button type="button" class="v920-x" data-v920-close="${id}" aria-label="Cerrar">${G('<path d="M6 6l12 12M18 6 6 18"/>')}</button></header><div class="v920-body">${cuerpo}</div></section>`;
+  el.__alCerrar=alCerrar;document.body.appendChild(el);
+  const key=e=>{if(e.key==='Escape'&&document.body.lastElementChild===el){e.stopPropagation();cerrar(id)}};el.__key=key;document.addEventListener('keydown',key,true);
+  requestAnimationFrame(()=>el.classList.add('is-in'));el.querySelector('input,button.v920-x')?.focus?.({preventScroll:true});return el;
+ }
+ function cerrar(id){const el=document.getElementById(id);if(!el)return;document.removeEventListener('keydown',el.__key,true);el.remove();el.__alCerrar&&el.__alCerrar()}
+ function selectorEmoji(actual,alElegir){
+  const grupos=EMOJIS.map(([n,l])=>`<h3>${esc(n)}</h3><div class="v920-grid">${[...new Intl.Segmenter('es',{granularity:'grapheme'}).segment(l)].map(x=>x.segment).map(e=>`<button type="button" data-v920-pick="${esc(e)}" aria-label="Emoji ${esc(e)}"${e===actual?' class="is-on"':''}>${esc(e)}</button>`).join('')}</div>`).join('');
+  const el=capa('v920-emoji','Elegir emoji',`<div class="v920-custom"><input type="text" id="v920-emoji-input" maxlength="16" inputmode="text" placeholder="Escribe o pega un emoji" aria-label="Emoji propio" value="${esc(actual||'')}"/><button type="button" data-v920-use="1">Usar</button></div><button type="button" class="v920-clear" data-v920-pick="">Quitar emoji (usar el ícono)</button>${grupos}`);
+  el.__elegir=alElegir;
+ }
+ /* ---------- detalle de una categoría ---------- */
+ function detalle(k,c){
+  const subs=subcategoryOptions(k,c);if(!Object.prototype.hasOwnProperty.call(categoryMap(k),c)){cerrar('v920-detail');return}
+  const filas=subs.map(sb=>`<li><button type="button" class="v920-sub" data-v920-emoji="${esc(k)}|${esc(c)}|${esc(sb)}" aria-label="Cambiar emoji de ${esc(sb)}">${chip(k,c,sb)}</button><span>${esc(sb)}</span><button type="button" class="v920-del" data-v920-del="${esc(k)}|${esc(c)}|${esc(sb)}" aria-label="Eliminar ${esc(sb)}">${G('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3"/>')}</button></li>`).join('');
+  const cuerpo=`<div class="v920-head"><button type="button" class="v920-big" data-v920-emoji="${esc(k)}|${esc(c)}|" aria-label="Cambiar emoji de ${esc(c)}">${chip(k,c,'')}<small>Cambiar</small></button><div><strong>${esc(c)}</strong><span>${subs.length} ${subs.length===1?'subcategoría':'subcategorías'} · ${usos(k,c)} ${usos(k,c)===1?'movimiento':'movimientos'}</span></div></div>
+   <p class="v920-eyebrow">Subcategorías</p><ul class="v920-subs">${filas||'<li class="v920-none">Aún no tiene subcategorías.</li>'}</ul>
+   <form class="v920-add" data-v920-add="${esc(k)}|${esc(c)}"><input type="text" name="sub" maxlength="55" placeholder="Nueva subcategoría" aria-label="Nueva subcategoría" autocomplete="off"/><button type="submit">Añadir</button></form>
+   <button type="button" class="v920-danger" data-v920-del="${esc(k)}|${esc(c)}|">Eliminar categoría</button><p class="v920-note">Los movimientos anteriores conservan su clasificación.</p>`;
+  const previo=document.getElementById('v920-detail');
+  if(previo){previo.querySelector('.v920-body').innerHTML=cuerpo;return}
+  capa('v920-detail','Categoría',cuerpo);
+ }
+ /* ---------- página ---------- */
+ function pagina(){
+  const st=S(),k=st.kind,mapa=categoryMap(k),cats=Object.entries(mapa);
+  const nsub=cats.reduce((n,[,s])=>n+s.length,0);
+  const kpi=(ic,et,v,n)=>`<article class="v911-kpi"><header><span class="v911-kpi-ic">${ic}</span><h4>${et}</h4></header><b>${v}</b><small>${n}</small></article>`;
+  const q=String(st.q||'').toLowerCase();
+  const filas=cats.map(([c,subs])=>`<button type="button" class="v911-row v920-row" data-v920-open="${esc(k)}|${esc(c)}" data-q="${esc((c+' '+subs.join(' ')).toLowerCase())}"${q&&!(c+' '+subs.join(' ')).toLowerCase().includes(q)?' hidden':''}><span class="v920-chip">${icon(v255TaxonomyIconName(k,c,''))}</span><span class="v911-row-info"><strong>${esc(c)}</strong><small>${subs.length} ${subs.length===1?'subcategoría':'subcategorías'}</small></span>${chev}</button>`).join('');
+  return `<div class="v911 v920" data-v920="1"><header class="v911-head"><h1>Categorías</h1><button type="button" class="v911-add" data-act="addCategory" aria-label="Nueva categoría" title="Nueva categoría">${G('<path d="M12 5v14M5 12h14"/>')}</button></header>
+   <div class="v911-seg" role="tablist" aria-label="Tipo de categoría"><button type="button" role="tab" aria-selected="${k==='gasto'}" class="${k==='gasto'?'is-on':''}" data-v920-kind="gasto">Gastos</button><button type="button" role="tab" aria-selected="${k==='ingreso'}" class="${k==='ingreso'?'is-on':''}" data-v920-kind="ingreso">Ingresos</button></div>
+   <div class="v911-kpis">${kpi(G('<path d="M4 6h16M4 12h16M4 18h10"/>'),'Categorías de '+kindName(k),String(cats.length),'En tu catálogo')}${kpi(G('<path d="M5 7h14M8 12h11M11 17h8"/>'),'Subcategorías',String(nsub),'Dentro de ellas')}</div>
+   <label class="v911-search"><span class="v911-ic">${G('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}</span><input type="search" id="v920-search" value="${esc(st.q)}" placeholder="Buscar categoría" aria-label="Buscar categoría" autocomplete="off"/></label>
+   <p class="v911-eyebrow">Toca una categoría para ver, editar o eliminar</p>
+   <div class="v911-card v920-list" id="v920-list">${filas||'<p class="v911-empty">No hay categorías. Crea la primera con el botón +.</p>'}</div></div>`;
+ }
+ pages.categories=pagina;
+ /* ---------- acciones ---------- */
+ const partes=s=>String(s||'').split('|');
+ const refrescar=(k,c)=>{persist();render();if(k&&c)detalle(k,c)};
+ document.addEventListener('click',e=>{
+  const t=e.target.closest?.('[data-v920-kind],[data-v920-open],[data-v920-close],[data-v920-emoji],[data-v920-pick],[data-v920-use],[data-v920-del],[data-v920-form-emoji]');if(!t)return;
+  if(t.dataset.v920Kind){S().kind=t.dataset.v920Kind==='ingreso'?'ingreso':'gasto';e.preventDefault();render();return}
+  if(t.dataset.v920Open){const [k,c]=partes(t.dataset.v920Open);e.preventDefault();detalle(k,c);return}
+  if(t.dataset.v920Close){e.preventDefault();cerrar(t.dataset.v920Close);return}
+  if(t.dataset.v920FormEmoji!==undefined){e.preventDefault();const campo=t.closest('form').querySelector('input[name=emoji]');selectorEmoji(campo.value,em=>{campo.value=em||'';t.innerHTML=em?esc(em):G('<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2M9 9.5h.01M15 9.5h.01"/>')});return}
+  if(t.dataset.v920Emoji!==undefined){e.preventDefault();const [k,c,s]=partes(t.dataset.v920Emoji);const act=(db.categoryEmoji||{})[key(k,c,s)]||'';selectorEmoji(act,em=>{setEmoji(k,c,s,em);refrescar(k,c)});return}
+  if(t.dataset.v920Pick!==undefined||t.dataset.v920Use){e.preventDefault();const capaEl=document.getElementById('v920-emoji');const em=t.dataset.v920Use?document.getElementById('v920-emoji-input').value.trim():t.dataset.v920Pick;if(em&&!valid(em)){toast('Escribe un emoji válido.');return}const f=capaEl.__elegir;cerrar('v920-emoji');f&&f(em);return}
+  if(t.dataset.v920Del!==undefined){
+   e.preventDefault();const [k,c,s]=partes(t.dataset.v920Del);
+   if(s){
+    const usado=(db.transactions||[]).some(x=>x.category===c&&x.subcategory===s)||(db.recurring||[]).some(r=>r.category===c&&r.subcategory===s)||(db.budgetVersions||[]).some(b=>b.category===c&&b.subcategory===s);
+    if(!window.confirm(`¿Eliminar la subcategoría «${s}» de «${c}»?\n\n${usado?'Los movimientos anteriores seguirán conservando su clasificación.\n':''}La categoría principal y los demás datos no se modificarán.`))return;
+    v191Taxonomy().subcategories.push({kind:k,category:c,name:s});delete store()[key(k,c,s)];refrescar(k,c);toast('Subcategoría eliminada del catálogo.');
+   }else{
+    const usado=usos(k,c)>0||(db.recurring||[]).some(r=>r.category===c)||(db.budgetVersions||[]).some(b=>b.category===c);
+    if(!window.confirm(`¿Eliminar del catálogo la categoría «${c}» y sus subcategorías?\n\n${usado?'Tiene registros asociados, que permanecerán intactos.\n':''}`))return;
+    v191Taxonomy().categories.push({kind:k,name:c});persist();cerrar('v920-detail');render();toast('Categoría eliminada del catálogo.');
+   }
+  }
+ });
+ document.addEventListener('submit',e=>{const f=e.target.closest?.('form[data-v920-add]');if(!f)return;e.preventDefault();e.stopImmediatePropagation();
+  const [k,c]=partes(f.dataset.v920Add),nombre=String(f.elements.sub.value||'').trim();
+  if(!nombre){toast('Escribe la subcategoría a agregar.');return}
+  if(subcategoryOptions(k,c).some(x=>x.toLocaleLowerCase('es')===nombre.toLocaleLowerCase('es'))){toast('Esa subcategoría ya existe.');return}
+  if(v191SubHidden(k,c,nombre))v191RemoveSubHide(k,c,nombre);
+  if(!(CATALOG[k]?.[c]||[]).includes(nombre)){let cu=db.customCategories.find(x=>x.kind===k&&x.name===c);if(!cu)db.customCategories.push(cu={kind:k,name:c,subcategories:[]});if(!cu.subcategories.includes(nombre))cu.subcategories.push(nombre)}
+  refrescar(k,c);toast('Subcategoría añadida.');
+ },true);
+ document.addEventListener('input',e=>{if(e.target?.id!=='v920-search')return;S().q=e.target.value;const q=e.target.value.trim().toLowerCase();document.querySelectorAll('#v920-list [data-q]').forEach(b=>{b.hidden=!!q&&!b.dataset.q.includes(q)})});
+ window.v920SaveEmoji=(kind,cat,sub,emoji)=>setEmoji(kind,cat,sub,emoji);
 })();
 
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
