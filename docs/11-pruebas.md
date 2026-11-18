@@ -18,3 +18,6 @@
 
 ## Lo que falta
 Pruebas unitarias de reglas financieras; pruebas de integración con una rama de Supabase; pruebas de RLS y de idempotencia de Apple Pay; CI en GitHub Actions; pruebas visuales.
+
+## Actualización (remediación 03)
+Hoy existen, además de las anteriores: pruebas de Edge Functions (`supabase/tests/*.test.mjs`, 32), prueba SQL de vigencias (`supabase/tests/reglas_vigentes.sql`, ejecutada en Postgres local), prueba SQL de `finance_apply_changes` (`supabase/tests/finance_apply_changes.sql`: revisión, idempotencia, atomicidad, aislamiento y límites), pruebas de navegador (`flujos-ingresos`, `adversarial`, `remediacion-03`, `rendimiento*`, `auditoria-*`) y análisis estático (`docs/auditoria/analisis-ast.js`). Siguen sin pruebas automáticas la reconciliación del cliente ante conflictos (necesita un Supabase simulado con revisiones) y la ejecución contra una rama real de Supabase.
