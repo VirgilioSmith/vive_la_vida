@@ -1,6 +1,7 @@
 /* ==== script: main ==== */
 (()=>{'use strict';
 const KEY='finanzas360.v1'; // Mismo almacenamiento para conservar los registros anteriores
+const MAX_MONEY=9999999999; // tope por importe (el servidor rechaza |valor| > 1e13): evita datos que luego no sincronicen
 const APP_BRAND='vive el hoy'; // Identidad única en componentes JavaScript; los metadatos PWA son estáticos.
 // Wordmark: la "y" de «hoy» es un trazo SVG cuya cola se curva bajo «ho» y forma la sonrisa (sale de la y, no de un lado).
 const BRAND_Y='<svg class="v908-y" viewBox="0 0 90 100" focusable="false" aria-hidden="true"><path d="M8 12 L44 66"/><path d="M84 12 L53 72 C47 88 34 98 12 99 C-10 100 -30 92 -44 78"/></svg>';
@@ -5863,7 +5864,7 @@ function saveTx(v,editId=''){let oldIndex=editId?db.transactions.findIndex(x=>x.
  if(v.flowMode==='spend'||v.flowMode==='service'||v.flowMode==='cardpay'||v.flowMode==='outgoing'){
   if(!isTaxableBankPayment(account(v.accountId),v.paymentChannel,v.paymentSource==='card',false))v.paymentTaxable='no';
  }
- if(v.flowMode==='spend'||v.flowMode==='service'){v.type=v.paymentSource==='card'?'card_charge':'expense';if(v.type==='expense')v.cardId='';else v.accountId=''}if(v.flowMode==='outgoing'){v.type='expense';v.paymentSource='account';v.cardId='';}validReferences(v,v.type);let amount=num(v.amount);if(v.type==='adjustment'){if(!amount)throw Error('El ajuste debe ser distinto de cero.')}else if(!(amount>0))throw Error('El monto debe ser mayor que cero.');let base={id:previous?.id||uuid(),created:previous?.created||new Date().toISOString(),...(previous?{editedAt:new Date().toISOString()}:{}),type:v.type,date:v.date,note:String(v.note||'').trim().slice(0,180),tags:String(v.tags||'').trim().slice(0,100),reviewed:previous?.reviewed===true&&!previous?.editedAt&&num(previous.amount)===num(v.amount)&&previous.date===v.date,amount:rnd(amount),category:v.category||'',subcategory:v.subcategory||'',accountId:v.accountId||'',toAccountId:v.toAccountId||'',cardId:v.cardId||'',loanId:v.loanId||'',currency:v.currency||'DOP',flowMode:v.flowMode||previous?.flowMode||'',paymentFlowMode:v.flowMode||previous?.paymentFlowMode||'',paymentChannel:normalizePaymentChannel(v.paymentChannel||previous?.paymentChannel)||'',paymentService:SERVICE_PRESETS[v.servicePreset]?.label||previous?.paymentService||'',servicePreset:v.servicePreset||'',payee:String(v.payee||previous?.payee||'').trim().slice(0,100),cardOnly:v.cardOnly||'no',transferSpeed:v.transferSpeed||'normal',paymentSpeed:v.flowMode==='outgoing'?(v.transferSpeed||'normal'):'normal',extraChargeMode:v.extraChargeMode||'none',extraBankFee:rnd(v.extraBankFee||0),fxRateSnapshot:num(previous?.fxRateSnapshot||db.settings.fx)};
+ if(v.flowMode==='spend'||v.flowMode==='service'){v.type=v.paymentSource==='card'?'card_charge':'expense';if(v.type==='expense')v.cardId='';else v.accountId=''}if(v.flowMode==='outgoing'){v.type='expense';v.paymentSource='account';v.cardId='';}validReferences(v,v.type);for(const k of ['amount','sourceAmount','targetAmount','paymentFee','extraBankFee','transferFixedFee','principal','interest','insurance','fee'])if(v[k]!==undefined&&v[k]!==''&&Math.abs(Number(v[k]))>MAX_MONEY)throw Error('El importe supera el máximo permitido ('+MAX_MONEY.toLocaleString('en-US')+'.99).');let amount=num(v.amount);if(v.type==='adjustment'){if(!amount)throw Error('El ajuste debe ser distinto de cero.')}else if(!(amount>0))throw Error('El monto debe ser mayor que cero.');let base={id:previous?.id||uuid(),created:previous?.created||new Date().toISOString(),...(previous?{editedAt:new Date().toISOString()}:{}),type:v.type,date:v.date,note:String(v.note||'').trim().slice(0,180),tags:String(v.tags||'').trim().slice(0,100),reviewed:previous?.reviewed===true&&!previous?.editedAt&&num(previous.amount)===num(v.amount)&&previous.date===v.date,amount:rnd(amount),category:v.category||'',subcategory:v.subcategory||'',accountId:v.accountId||'',toAccountId:v.toAccountId||'',cardId:v.cardId||'',loanId:v.loanId||'',currency:v.currency||'DOP',flowMode:v.flowMode||previous?.flowMode||'',paymentFlowMode:v.flowMode||previous?.paymentFlowMode||'',paymentChannel:normalizePaymentChannel(v.paymentChannel||previous?.paymentChannel)||'',paymentService:SERVICE_PRESETS[v.servicePreset]?.label||previous?.paymentService||'',servicePreset:v.servicePreset||'',payee:String(v.payee||previous?.payee||'').trim().slice(0,100),cardOnly:v.cardOnly||'no',transferSpeed:v.transferSpeed||'normal',paymentSpeed:v.flowMode==='outgoing'?(v.transferSpeed||'normal'):'normal',extraChargeMode:v.extraChargeMode||'none',extraBankFee:rnd(v.extraBankFee||0),fxRateSnapshot:num(previous?.fxRateSnapshot||db.settings.fx)};
 if(v.type==='card_refund'){
  const purchaseId=String(v.originalPurchaseId||'').trim();
  if(purchaseId){
@@ -7503,7 +7504,11 @@ function v360BaseFromStorage(){
 }
 function v360ThreeWayMerge(base,local,remote){
  if(!base||!local||!remote)return null;
- const eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+ /* Las listas vacías no existen como filas en el servidor: al releer faltan; se tratan como [] para no inventar conflictos. */
+ {const fill=d=>{const o={...d};for(const k of v405ArrayCollections)if(o[k]===undefined)o[k]=[];return o};base=fill(base);local=fill(local);remote=fill(remote)}
+ /* Igualdad estructural sin depender del orden de las claves: tras pasar por el servidor las claves se reordenan y no es un cambio. */
+ const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(q=>[q,x[q]])):x);
+ const eq=(a,b)=>canon(a)===canon(b);
  const merge=(b,l,r,path='')=>{
   if(eq(l,r))return l;
   if(eq(l,b))return r;
@@ -7728,7 +7733,7 @@ function f33SetStatus(state,label){
   else if(state==='ok'&&!f33Dirty&&!f33Saving&&!f33Conflict)v10Protect('ok');
  }
 }
-function f33Prepare(doc){if(!doc||typeof doc!=='object'||!Array.isArray(doc.accounts)||!Array.isArray(doc.transactions))throw Error('El contenido almacenado no tiene el formato de vive el hoy.');
+function f33Prepare(doc){/* Las listas vacías no se guardan como filas: al releer faltan y equivalen a []. */if(doc&&typeof doc==='object'&&!Array.isArray(doc)){doc={...doc};for(const k of ['accounts','transactions'])if(doc[k]===undefined)doc[k]=[]}if(!doc||typeof doc!=='object'||!Array.isArray(doc.accounts)||!Array.isArray(doc.transactions))throw Error('El contenido almacenado no tiene el formato de vive el hoy.');
  return migrateData({...init(),...doc,settings:{...init().settings,...(doc.settings||{})}});
 }
 async function f33LoadUser(user){
