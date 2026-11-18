@@ -15,4 +15,5 @@ for T in light black; do
 done
 unset THEME
 correr "flujos-ingresos (claro, Black y escritorio)" node tests/flujos-ingresos.js
+correr "editar-movimientos" node tests/editar-movimientos.js
 echo "FALLOS=$FALLOS" | tee -a "$OUT"; exit $FALLOS
