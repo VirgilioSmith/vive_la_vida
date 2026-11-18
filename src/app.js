@@ -887,7 +887,7 @@ function v1121Pay(kind){
   }else if(kind==='recurring'){
    const list=(typeof v339ActiveRecurring==='function'?v339ActiveRecurring():(db.recurring||[]).filter(r=>r.active!==false&&!r.archived));
    if(!list.length)return nav('recurring','No tienes suscripciones activas.');
-   window.openItemPicker('Selecciona la suscripción a pagar',list.map(r=>({value:r.id,name:r.name,detail:[r.nextDue?prettyDate(r.nextDue):'',r.category].filter(Boolean).join(' · '),amount:money(num(r.amount),r.currency||'DOP',2)})),id=>v1121Go('payRecurring',id));
+   window.openItemPicker('Selecciona la suscripción a pagar',list.map(r=>({value:r.id,name:r.name,iconHtml:v45SubIcon(r,'small'),detail:[r.nextDue?prettyDate(r.nextDue):'',r.category].filter(Boolean).join(' · '),amount:money(num(r.amount),r.currency||'DOP',2)})),id=>v1121Go('payRecurring',id));
   }else{
    const list=(db.personalLoans||[]).filter(l=>l&&!l.archived&&personalBalance(l)>.005);
    if(!list.length)return nav('personal','No tienes saldos pendientes con personas.');
@@ -922,7 +922,7 @@ function v1125PayUpcoming(){
  let list=[];try{list=(upcoming()||[]).filter(u=>u&&u.action&&u.ref).slice(0,40)}catch(e){}
  if(!list.length){toast('No tienes pagos próximos.');return}
  const map=new Map(list.map((u,i)=>[String(i),u]));
- window.openItemPicker('Selecciona qué pagar',list.map((u,i)=>({value:String(i),name:u.name,detail:prettyDate(u.date)+(u.kind==='card'?' · Tarjeta':u.kind==='loan'?' · Préstamo':u.kind==='recurring'?' · Suscripción':''),amount:money(num(u.amount),u.currency||'DOP',2)})),i=>{const u=map.get(String(i));if(u)v1121Go(u.action,u.ref,u.ccy)});
+ window.openItemPicker('Selecciona qué pagar',list.map((u,i)=>({value:String(i),name:u.name,...(u.kind==='recurring'&&(db.recurring||[]).find(r=>String(r.id)===String(u.ref))?{iconHtml:v45SubIcon((db.recurring||[]).find(r=>String(r.id)===String(u.ref)),'small')}:{}),detail:prettyDate(u.date)+(u.kind==='card'?' · Tarjeta':u.kind==='loan'?' · Préstamo':u.kind==='recurring'?' · Suscripción':''),amount:money(num(u.amount),u.currency||'DOP',2)})),i=>{const u=map.get(String(i));if(u)v1121Go(u.action,u.ref,u.ccy)});
 }
 document.addEventListener('click',e=>{if(!e.target.closest?.('[data-v1125-pay]'))return;e.preventDefault();e.stopPropagation();v1125PayUpcoming()},true);
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1121-pay]');if(!b)return;e.preventDefault();e.stopPropagation();v1121Pay(b.dataset.v1121Pay)},true);
@@ -17727,9 +17727,11 @@ window.openItemPicker=(title,items,onConfirm)=>open('item',items.map(i=>({kind:'
    Un mismo renderizador pinta iconos dentro del picker y en la selección exterior. */
 function paintProductIdentity(node,opt){
   if(!node)return;
-  node.classList.remove('v869-credit','v869-visa','v869-mastercard','v869-account','v869-cash','v869-loan');
+  node.classList.remove('v869-credit','v869-visa','v869-mastercard','v869-account','v869-cash','v869-loan','v869-service');
   node.replaceChildren();
   node.setAttribute('aria-hidden','true');
+  /* Servicios y suscripciones: su propio ícono (o el logo cargado), no el genérico de banco. */
+  if(opt?.iconHtml){node.classList.add('v869-service');node.innerHTML=opt.iconHtml;return}
   if(opt?.kind==='credit'){
     node.classList.add('v869-credit');
     if(opt.brand==='visa'){
