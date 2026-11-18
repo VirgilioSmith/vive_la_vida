@@ -1,13 +1,13 @@
 # IMPLEMENTACION-03-TECNICA · remediación controlada
 
 Fuentes de verdad: [AUDITORIA-01-TECNICA](AUDITORIA-01-TECNICA.md) y [AUDITORIA-02-EXPERIENCIA](AUDITORIA-02-EXPERIENCIA.md). Respaldo previo: rama `respaldo-antes-de-remediacion` (el servidor rechaza subir etiquetas). Método por hallazgo: reproducir → causa raíz → prueba de regresión que **falla antes** → corrección mínima → ejecución de pruebas → dependencias → evidencia. Todo cambio es un commit pequeño y reversible (`git revert <commit>`).
-Regla de la fase: **no se aplicó nada en producción** (ni migraciones ni despliegues de funciones).
+Regla inicial: no tocar producción sin autorización. **Autorización recibida después ("para todo en adelante")**; las acciones en producción se registran en la sección 7.
 
 ## 1. Resumen
 | Resultado | Hallazgos |
 |---|---|
 | Corregido en el cliente y verificado | H-09, H-15, UX-01, UX-02, UX-03 |
-| Preparado, probado en Postgres local y **sin aplicar** | H-01 (migración + reversión) |
+| Aplicado en producción tras pruebas locales | H-01 (migración), H-04 (receptor y adaptador de Apple Pay) |
 | Reclasificado: no es defecto | H-07 (regla de redondeo documentada) |
 | Verificado como correcto (antes «no verificado») | prueba SQL de vigencias (H-20 parcial) |
 | Pendiente (requiere decisión o acceso) | H-02, H-03, H-04, H-08, H-10, H-11, H-12 (parte cliente), H-14, H-16, H-17, H-18 |
@@ -91,3 +91,18 @@ Comando de la prueba nueva: `node tests/remediacion-03.js` (acepta `TZID` y `FRE
 | H-12 sincronización | Parcial | El servidor ya tiene pruebas de revisión, conflicto, idempotencia y atomicidad; falta un Supabase simulado con revisiones para probar la reconciliación del cliente |
 | H-02, H-08, H-10, H-11, H-14, H-16, H-17, H-18 | No hecho | Cambios grandes (centavos enteros, empaquetado y minificación, limpieza de capas, cifrado local, CI); no caben en modificaciones pequeñas y reversibles |
 | UX-02 residual | 2 de 2 255 paradas | Campo de búsqueda móvil |
+
+## 7. Acciones en producción (con autorización del usuario)
+| Acción | Detalle | Verificación | Reversión |
+|---|---|---|---|
+| Migración `validacion_cambios_finanzas` | `finance_apply_changes` con límites de 10 000 cambios, 16 MB y ±1e13 | Consulta posterior a `pg_proc`: `SECURITY DEFINER`, `search_path` vacío, `lock_timeout=5s`, contiene la validación, `authenticated` puede ejecutar y `anon` no. Datos reales: máximo guardado 867 123, 0 valores sobre el límite | `supabase/rollback/20261118000000_validacion_cambios_finanzas.down.sql` |
+| Despliegue `apple-pay-ingest` (v12 → **v13**) | Código del repositorio: límite de 30 eventos por minuto por vínculo, límite de 20 fallos de autenticación por minuto por origen, errores genéricos, sin CORS abierto | `get_edge_function` confirma que la versión 13 contiene el código nuevo | `supabase/rollback/apple-pay-ingest.v12.ts` |
+| Despliegue `apple-pay-shortcuts` (v4 → **v5**) | Reenvía `X-Forwarded-For` del cliente original al receptor | Prueba nueva en `supabase/tests/shortcuts.test.mjs` (10/10) | `supabase/rollback/apple-pay-shortcuts.v4.ts` |
+| `apple-pay-link` | **No desplegada** (v8 sigue activa) | — | — |
+Hallazgos nuevos durante el despliegue:
+* **Deriva confirmada**: el repositorio tenía versiones de las tres funciones distintas de las desplegadas (v8, v12 y v4); las del repositorio incluían límites de tasa y errores genéricos que no estaban en producción.
+* **Fallo de diseño evitado antes de publicar**: el limitador de fallos del receptor agrupa por IP; las llamadas por el adaptador llegan con la IP de salida de Supabase, así que un atacante con tokens bien formados e inexistentes podía bloquear a todos los usuarios del adaptador. Se corrigió reenviando la IP original (despliegue del adaptador) y se probó.
+* **Cambio de contrato visible**: el receptor responde `unauthorized` (antes `invalid_token`/`link_revoked`). La aplicación ya muestra el mensaje de vínculo revocado también para `unauthorized` (`src/app.js`).
+* **Por qué `apple-pay-link` no se desplegó**: la versión del repositorio restringe CORS a `https://virgiliosmith.github.io`; el origen real de la aplicación no figura en el repositorio y, si fuera otro, «Vincular tarjeta» dejaría de funcionar. Confirma el origen y se despliega.
+* **Verificación en vivo no realizada**: el proxy de esta sesión bloquea el tráfico saliente a `supabase.co`, así que no se pudieron enviar peticiones de humo a las funciones desplegadas; la verificación se hizo por el código desplegado y las pruebas locales (17 + 6 + 10). Recomendación: enviar una compra de prueba desde el iPhone y comprobar que llega a la bandeja.
+* **Límite de la mejora**: el contador de fallos vive en la memoria de cada instancia de la función (mejor esfuerzo); no sustituye un limitador compartido.

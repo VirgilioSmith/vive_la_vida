@@ -39,3 +39,7 @@ test('excepción inesperada → 500 JSON', async () => {
   const r = await handle(bad, { ...base, fetch: okFetch() }); assert.equal(r.status, 500); await r.json();
 });
 test('sin CORS abierto', async () => { const r = await handle(req({}, { 'x-vive-token': TOKEN }), { ...base, fetch: okFetch() }); assert.equal(r.headers.get('access-control-allow-origin'), null); });
+test('el adaptador reenvía la IP original para que el límite de fallos del receptor no se agrupe en una sola dirección', async () => {
+  let headers; await handle(req({ amount: '10', currency: 'DOP', merchant: 'T', event_id: 'e9' }, { 'x-vive-token': TOKEN, 'x-forwarded-for': '203.0.113.7, 10.0.0.1' }), { ...base, fetch: async (u, o) => { headers = o.headers; return new Response('{"ok":true}'); } });
+  assert.equal(headers['X-Forwarded-For'], '203.0.113.7, 10.0.0.1');
+});

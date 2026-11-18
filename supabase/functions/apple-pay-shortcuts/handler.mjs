@@ -27,7 +27,7 @@ export async function handle(request, deps) {
       if (endpoint.protocol !== 'https:' && endpoint.hostname !== 'localhost') throw Error('insecure_origin');
     } catch { log('server_configuration', {}); return respond({ ok: false, saved: false, code: 'internal_error' }, 503); }
     try {
-      const response = await (deps.fetch ?? fetch)(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Vive-Token': token }, body: JSON.stringify(normalized), signal: AbortSignal.timeout(14000) });
+      const response = await (deps.fetch ?? fetch)(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Vive-Token': token, 'X-Forwarded-For': request.headers.get('x-forwarded-for') || '' }, body: JSON.stringify(normalized), signal: AbortSignal.timeout(14000) });
       let data;
       try { const parsed = await response.json(); data = parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null; } catch { data = null; }
       if (!data) return respond({ ok: false, saved: false, code: 'upstream_invalid_response' }, 502);

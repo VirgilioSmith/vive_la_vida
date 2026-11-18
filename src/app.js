@@ -13669,7 +13669,7 @@ async function v274ProbeAppleIngest(silent=false){
    let message=String(payload?.error||'').trim()||('HTTP '+resp.status);
    if(resp.status===404)message='No existe apple-pay-shortcuts en Supabase: publica apple-pay-shortcuts (conserva apple-pay-ingest).';
    else if(resp.status===401&&!(payload&&payload.code))message='El gateway bloquea Atajos (401): comprueba Verify JWT en apple-pay-shortcuts y apple-pay-ingest. Ambas validan X-Vive-Token en el código.';
-   else if(payload?.code==='link_revoked')message='El token no coincide con el vínculo activo. Vuelve a vincular y actualiza Atajos.';
+   else if(payload?.code==='link_revoked'||payload?.code==='unauthorized')message='El token no coincide con el vínculo activo. Vuelve a vincular y actualiza Atajos.';
    throw Error(message);
   }
   v212State.health='ok';v212State.healthMessage='Conexión de prueba correcta: dry_run=true y saved=false. No se registró una compra. El disparador de Wallet, la persistencia real y la importación requieren verificaciones separadas.';
