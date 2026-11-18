@@ -1528,6 +1528,14 @@ document.addEventListener('focusin',function(e){
  if(!tip||el.getAttribute('aria-label')||(el.textContent||'').trim())return;
  el.setAttribute('aria-label',String(tip).replace(/\|/g,', '));if(!el.getAttribute('role'))el.setAttribute('role','img');
 },true);
+/* Estado de la conexión: aviso accesible (role=status) mientras no hay red; los cambios siguen guardándose en el dispositivo. */
+(function v906NetBanner(){
+ const get=()=>{let e=document.querySelector('[data-net-banner]');if(!e){e=document.createElement('div');e.setAttribute('data-net-banner','');e.setAttribute('role','status');e.setAttribute('aria-live','polite');e.hidden=true;document.body.appendChild(e)}return e};
+ const show=()=>{const e=get();e.textContent='Sin conexión: tus cambios se guardan en este dispositivo y se sincronizarán al reconectar.';e.hidden=false};
+ const hide=()=>{const e=document.querySelector('[data-net-banner]');if(e&&!e.hidden){e.hidden=true;try{toast('Conexión restablecida')}catch(_){}}};
+ window.addEventListener('offline',show);window.addEventListener('online',hide);
+ if(navigator.onLine===false)show();
+})();
 function v905ShortDate(d){return String(prettyDate(d)).replace(/ de (\d{4})/,' $1')}
 function v903AddBack(modalEl,onBack){
  if(!modalEl||modalEl.querySelector('.v903-back'))return null;
@@ -7938,6 +7946,8 @@ async function f33Logout(){
  v10LiveStop();v10ManualConflict=false;v10Protect('ok');
  ++f151CloudLoadToken; // invalida cargas remotas aún pendientes antes de cambiar de sesión
  try{if(f33Api)await f33Api.auth.signOut({scope:'local'})}catch(err){console.warn('No se pudo cerrar completamente la sesión:',err)}
+ /* Sin cambios pendientes (se comprobó arriba): se borran del dispositivo las copias locales de los datos financieros de esta cuenta. */
+ try{const uid=f33User&&f33User.id;if(uid)Object.keys(localStorage).filter(k=>k.startsWith('finanzas360.')&&k.indexOf(uid)>-1).forEach(k=>localStorage.removeItem(k))}catch(_){}
  f33User=null;v360BaseDoc=null;v360BaseUserId=null;window.__f360LastPersistPromise=null;f33Stamp=null;f33Active=false;f33Dirty=false;f33Conflict=false;window.__f360CloudUid=null;window.__f360BaseStamp=null;window.__f360CloudPersist=null;
  db=init();document.getElementById('app').innerHTML='';const badge=document.getElementById('f33-cloud-badge');if(badge)badge.hidden=true;
  f33LoginScreen();
@@ -19897,9 +19907,19 @@ document.addEventListener('click',function(ev){
       if(m) el.textContent='-'+m[1]+m[2];
     });
   }
+  /* Tablas que se desplazan en horizontal: una línea de pista indica que hay más columnas (se crea solo cuando hay desbordamiento). */
+  function scrollHints(){
+    document.querySelectorAll('#page .table-wrap').forEach(w=>{
+      const next=w.nextElementSibling,has=next&&next.classList&&next.classList.contains('v906-scroll-hint');
+      const over=w.clientWidth>0&&w.scrollWidth>w.clientWidth+2;
+      if(over&&!has){const h=document.createElement('div');h.className='v906-scroll-hint';h.setAttribute('aria-hidden','true');h.textContent='Desliza para ver más columnas →';w.after(h);w.setAttribute('data-scroll-hint','1')}
+      else if(!over&&has){next.remove();w.removeAttribute('data-scroll-hint')}
+    });
+  }
   function applyPageHints(){
     const main=document.querySelector('main.main');
     if(!main) return;
+    scrollHints();
     document.body.classList.toggle('v377-mobile-world', window.innerWidth<=790);
     const hasDock=!!document.querySelector('.vive-mobile-dock');
     document.body.classList.toggle('v377-has-dock', hasDock);

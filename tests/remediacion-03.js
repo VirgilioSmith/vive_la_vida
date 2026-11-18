@@ -46,5 +46,12 @@ const check = (id, name, ok, extra = '') => { if (!ok) fails++; R[id] = !!ok; co
     check('UX-02', 'Cada parada de teclado en Proyección, Patrimonio, Inicio y Avanzado tiene indicador de foco visible', sinInd === 0, `sin indicador=${sinInd} ${det.filter(x => !x.startsWith('sin-')).slice(0, 4).join(',')}`);
     check('UX-03', 'Cada parada de teclado tiene nombre accesible', sinNom === 0, `sin nombre=${sinNom} ${det.filter(x => x.startsWith('sin-')).slice(0, 4).join(',')}`);
     await p.close(); }
+  /* H-14 · al cerrar sesión se borran del dispositivo las copias locales de los datos financieros */
+  { const { p } = await open(b, 1440, 900); await p.waitForTimeout(1200);
+    const ant = await p.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('finanzas360.baseline.')).length);
+    await p.evaluate(() => { const e = document.createElement('button'); e.dataset.f33 = 'logout'; e.hidden = true; document.body.append(e); e.click(); }); await p.waitForTimeout(2200);
+    const des = await p.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('finanzas360.') && /[0-9a-f]{8}-[0-9a-f]{4}-/.test(k)).length);
+    check('H-14', 'Cerrar sesión elimina la copia local del documento financiero de la cuenta', ant >= 1 && des === 0, `antes=${ant} después=${des}`);
+    await p.close(); }
   await b.close(); console.log(fails ? `\nFALLAN: ${fails}` : '\nOK: sin regresiones'); process.exit(fails ? 1 : 0);
 })();

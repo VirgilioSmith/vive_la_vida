@@ -1,0 +1,41 @@
+name: pruebas
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  navegador-y-logica:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Instalar Playwright y Chromium
+        run: npm i --no-save playwright@1 && npx playwright install --with-deps chromium
+      - name: Lógica y Edge Functions (sin navegador)
+        run: |
+          node --test supabase/tests/ingest.test.mjs supabase/tests/link.test.mjs supabase/tests/shortcuts.test.mjs
+          node --test tests/logica/reglas.test.js tests/logica/red.test.js
+      - name: Navegador
+        run: |
+          node tests/smoke.js
+          node tests/csp.js
+          node tests/xss.js
+          node tests/adversarial.js
+          node tests/remediacion-03.js
+          node tests/experiencia-04.js
+          node tests/rendimiento.js
+          node tests/vive-score.js
+          node tests/flujos-ingresos.js
+          node tests/logica/run.js
+  sql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Postgres local
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -v ON_ERROR_STOP=1 -q -f supabase/tests/reglas_vigentes.sql
+          sudo -u postgres psql -v ON_ERROR_STOP=1 -q -f supabase/tests/finance_apply_changes.sql
