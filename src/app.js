@@ -6808,6 +6808,8 @@ innerView=function(page,selection){
 // V301: This category exists in the parent navigation and inside the analysis charts.
 // Remove only the redundant internal tab, without losing the financial content.
 INNER_PAGES.expenses.tabs=INNER_PAGES.expenses.tabs.filter(([view])=>view!=='category');
+// Ingresos y Egresos no repiten el historial: esas operaciones se consultan en Movimientos.
+for(const pg of ['income','expenses']){INNER_PAGES[pg].tabs=INNER_PAGES[pg].tabs.filter(([view])=>view!=='activity');if(ui.innerViews[pg]==='activity')ui.innerViews[pg]='overview'}
 const v26OldInnerWrap=innerWrap;
 innerWrap=function(page,view){
  if(page==='payments')return view(); // V301: Visión global has no redundant inner navigator
@@ -9641,7 +9643,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  });
  const info=INNER_PAGES.income;
  info.label='Dentro de Ingresos';
- info.tabs=[['overview','Ingresos'],['recurring','Ingresos recurrentes'],['activity','Movimientos']];
+ info.tabs=[['overview','Ingresos'],['recurring','Ingresos recurrentes']];
  if(!ui.innerViews.income)ui.innerViews.income='overview';
  ui.v55RecurringTab=ui.v55RecurringTab||'general';
  ui.v55RecurringRange=ui.v55RecurringRange||'month';
