@@ -56215,3 +56215,5 @@ html body #app#app :is(header>div>span,header>div>p,.v318-chart-note,.v266-overl
 @media(min-width:791px){[data-net-banner]{bottom:24px}}
 /* Puntos del wallet: el punto visible conserva 7 px también en Black (la caja de 24 px es solo el área táctil). */
 html body:is(.theme-black,.theme-dark) #app#app#app .v266-wallet .v266-dots.v68-wallet-dots button,html body:is(.theme-black,.theme-dark) #app#app#app .v266-wallet .v266-dots.v68-wallet-dots button.active{background-clip:content-box!important;-webkit-background-clip:content-box!important;border:0!important;box-shadow:none!important;outline-offset:-2px}
+/* Edición de un movimiento con la pantalla nueva: el tipo no se cambia (sin selector de tipo ni «Más operaciones»). */
+.v749-layer[data-v749-edit="1"] :is(.v749-segment,.v795-operations-rail,.v749-impact){display:none!important}

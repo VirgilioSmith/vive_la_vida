@@ -7,7 +7,7 @@ const open = require('./harness.js');
 const W = +(process.env.W || 390), H = +(process.env.H || 844), CAP = +(process.env.CAP || 20), FUZZ = process.env.FUZZ !== '0';
 const PAGES = (process.env.PAGES || 'overview,register,income,expenses,wallet,banks,accounts,cards,loans,certificates,benefits,personal,payments,transactions,recurring,budget,annual,analytics,categories,advanced,patrimony,projection,pressure,mobilehub,mobilesearch,settings').split(',');
 const EVID = process.env.EVID || 'docs/auditoria/evidencias';
-const out = { vista: `${W}x${H}`, paginas: [], hallazgos: [] };
+const out = { vista: `${W}x${H}`, paginas: [], hallazgos: [], formularios: {}, noLocalizados: [] };
 const find = (tipo, pg, detalle, extra) => out.hallazgos.push({ tipo, pagina: pg, detalle: String(detalle).slice(0, 220), ...extra });
 
 const PARTS = {
@@ -42,13 +42,13 @@ const PARTS = {
       const ok = await p.evaluate(clave => { const vis = e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && !e.closest('#modal-root'); };
         const el = [...document.querySelectorAll('#page button,#page [data-act],#page summary,#page [role=button],#page a[href],#page select,#page input[type=checkbox],#page input[type=radio]')].filter(vis).find(e => (e.tagName + '|' + (e.dataset.act || '') + '|' + (e.getAttribute('aria-label') || e.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 36) + '|' + (e.className && String(e.className).split(' ')[0])) === clave);
         if (!el) return false; if (el.tagName === 'A') el.addEventListener('click', ev => ev.preventDefault(), { once: true }); el.click(); return true; }, clave).catch(() => false);
-      if (!ok) continue; reg.probados++; await p.waitForTimeout(380);
+      if (!ok) { out.noLocalizados.push(pg + ': ' + clave.slice(0, 60)); continue; } reg.probados++; await p.waitForTimeout(380);
       const m = await p.evaluate(() => { const mo = document.querySelector('#modal-root .modal'); if (!mo) return null; const r = mo.getBoundingClientRect(); const scr = [...mo.querySelectorAll('*')].concat(mo).some(x => x.scrollHeight > x.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(x).overflowY)); const form = mo.querySelector('form'); return { titulo: (mo.querySelector('h2,h3') || {}).textContent, h: Math.round(r.height), vh: innerHeight, w: Math.round(r.width), hov: mo.scrollWidth > mo.clientWidth + 2, scroll: scr, form: form ? form.id || 'form' : '', inputs: form ? form.querySelectorAll('input:not([type=hidden]),select,textarea').length : 0, cerrar: !!mo.querySelector('.close,[data-act=closeModal],[aria-label*=errar]'), dialog: !!mo.closest('[role=dialog]') || mo.getAttribute('role') === 'dialog' || mo.getAttribute('aria-modal') === 'true' }; });
       if (errs.length > e0) find('error-js', pg, errs.slice(e0).join(' | '), { control: clave });
       if (cons.length > c0) find('error-consola', pg, cons.slice(c0).join(' | '), { control: clave });
       const tm = await textoMalo(); if (tm) find('texto-invalido', pg, tm, { control: clave });
       if (m) {
-        reg.modales++;
+        reg.modales++; if (m.form) out.formularios[m.form] = (out.formularios[m.form] || 0) + 1;
         if (m.hov) find('modal-desborda-ancho', pg, `${m.titulo} ancho ${m.w}`, { control: clave });
         if (m.h > m.vh + 1) find('modal-mas-alto-que-pantalla', pg, `${m.titulo} ${m.h}>${m.vh}`, { control: clave });
         if (!m.cerrar) find('modal-sin-cierre-visible', pg, m.titulo, { control: clave });
