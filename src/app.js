@@ -3729,11 +3729,6 @@ function quickPaymentPicker(){
  modal('¿Qué obligación vas a pagar?',`<div class="v12-modal-choices">${choices.map(x=>`<button type="button" data-act="quickPaySpecific" data-kind="${x.action}" data-id="${x.id}"><span>${icon(x.ico)}</span><strong>${sanitize(x.name)}</strong><small>${sanitize(x.group)}</small>${icon('arrow')}</button>`).join('')}</div>`,'v12Picker',true);
 }
 function quickPaySpecific(kind,id){closeModal();if(kind==='payPersonal'){personalPaymentForm(id);return}if(kind==='payRecurring'){payRecurring(id);return}if(kind==='payLoan'){let l=loan(id),a=db.accounts.find(a=>a.currency===l?.currency);transactionForm({type:'loan_payment',loanId:id,accountId:a?.id||'',amount:'',principal:'',interest:'',insurance:'',fee:'',paymentKind:'regular'});return}if(kind==='payCard'){let a=db.accounts.find(x=>!x.archived&&x.kind!=='cash')||db.accounts.find(x=>!x.archived)||db.accounts[0];transactionForm({type:'card_payment',cardId:id,currency:'DOP',accountId:a?.id||'',paymentChannel:a?.kind==='cash'?'presencial':'internet_banking'});}}
-function quickOnlinePicker(){
- const accounts=db.accounts.filter(a=>!a.archived),cards=db.cards.filter(c=>!c.archived);
- if(!accounts.length&&!cards.length){toast('Registra primero una cuenta o tarjeta para contabilizar la compra por internet.');return}
- modal('Pago o compra por internet',`<p class="form-note form-full">Selecciona de dónde salió el dinero. El gasto se registrará una sola vez, tanto si pagas desde una cuenta como si utilizas una tarjeta.</p><div class="v12-modal-choices">${cards.map(c=>`<button type="button" data-act="quickOnlineCard" data-id="${c.id}"><span>${icon('card')}</span><strong>${sanitize(c.name)}</strong><small>Compra con tarjeta · ${sanitize(bankOf(c))}</small>${icon('arrow')}</button>`).join('')}${accounts.map(a=>`<button type="button" data-act="quickOnlineAccount" data-id="${a.id}"><span>${icon('wallet')}</span><strong>${sanitize(a.name)}</strong><small>Pago directo · ${sanitize(a.currency)}</small>${icon('arrow')}</button>`).join('')}</div>`,'v12Picker',true);
-}
 function refreshTransferFee(){
  const node=document.getElementById('transferLiveFee'),f=document.getElementById('transactionForm');if(!node||!f)return;
  const a=account(f.elements.accountId?.value),b=account(f.elements.toAccountId?.value),amount=Math.max(0,num(f.elements.amount?.value)),cur=a?.currency||'DOP';
@@ -6190,7 +6185,7 @@ case 'v68WalletSelect':v139WalletChooseCard(id);break;
 case 'v30Go':ui.page=el.dataset.page||'register';if(ui.page==='register'){ui.movementTab=el.dataset.tab||'all';ui.reviewFilter=el.dataset.issue==='unreviewed'?'pending':'all';}render();window.scrollTo(0,0);break;
 case 'v30NewPoint':if(v30SavePoint('Punto de recuperación manual')){render();toast('Punto local de recuperación creado. Descarga también un respaldo JSON.')}break;
 case 'v30RestorePoint':v30RestorePoint(id);break;
-case 'v30DownloadPoint':v30DownloadPoint(id);break;case 'projectionMenu':ui.projectionMenu=!ui.projectionMenu;render();break;
+case 'v30DownloadPoint':v30DownloadPoint(id);break;
 case 'kpiEditor':{ui.kpiEditing=!ui.kpiEditing;let cfg=dashboardConfig();if(ui.kpiEditing&&cfg.mode!=='custom'){cfg.selected=[...dashboardEnabled(cfg)];cfg.mode='custom';saveDashboardConfig(cfg)}render();break}
 case 'addPersonal':personalForm();break;
  case 'personalFilter':ui.personalFilter=id;render();break;
@@ -6201,7 +6196,6 @@ case 'addPersonal':personalForm();break;
 case 'toggleHidden':ui.showHidden=!ui.showHidden;render();break;
 case 'productArchive':manageProduct(el.dataset.kind,id,'toggle');break;
 case 'productDelete':manageProduct(el.dataset.kind,id,'delete');break;
-case 'menuLayout':db.settings.menuLayout='rail';render();break;
 case 'toggleTheme':db.settings.theme=['dark','black'].includes(db.settings.theme)?'light':'dark';persist();render();break;
 case 'visualDesign':db.settings.visualDesign='claridad';persist();render();break;
 case 'setTheme':if(['light','black'].includes(id)){db.settings.visualDesign='claridad';db.settings.theme=id;v333RememberTheme();persist();render()}break;
@@ -6270,32 +6264,10 @@ case 'goAccount':ui.accountId=id;ui.page='accounts';render();setTimeout(()=>docu
 case 'goCard':ui.cardId=id;ui.page='cards';render();setTimeout(()=>document.querySelector('.card-detail')?.scrollIntoView({behavior:'smooth'}),50);break;
 case 'goLoan':ui.loanId=id;ui.page='loans';ui.innerViews.loans='overview';loanWorkspace.tab='vision';render();break;
 case 'addCategory':categoryForm();break;
-case 'v191DeleteCategory':{
- const kind=el.dataset.kind==='ingreso'?'ingreso':'gasto',name=decodeURIComponent(el.dataset.cat||'');
- if(!Object.prototype.hasOwnProperty.call(categoryMap(kind),name))break;
- const used=(db.transactions||[]).some(t=>t.category===name)||(db.recurring||[]).some(r=>r.category===name)||(db.budgets||[]).some(b=>b.category===name)||(db.budgetVersions||[]).some(b=>b.category===name);
- const message=`¿Eliminar del catálogo la categoría «${name}» y sus subcategorías?\n\n${used?'Tiene registros asociados, que permanecerán intactos.\n':''}No se borrarán movimientos, deudas ni presupuestos históricos.`;
- if(window.confirm(message)){
-  const h=v191Taxonomy();h.categories.push({kind,name});
-  persist();render();toast('Categoría eliminada del catálogo.');
- }
- break;
-}
-case 'v191DeleteSubcategory':{
- const kind=el.dataset.kind==='ingreso'?'ingreso':'gasto',cat=decodeURIComponent(el.dataset.cat||''),sub=decodeURIComponent(el.dataset.sub||'');
- if(!subcategoryOptions(kind,cat).includes(sub))break;
- const used=(db.transactions||[]).some(t=>t.category===cat&&t.subcategory===sub)||(db.recurring||[]).some(r=>r.category===cat&&r.subcategory===sub)||(db.budgets||[]).some(b=>b.category===cat&&b.subcategory===sub)||(db.budgetVersions||[]).some(b=>b.category===cat&&b.subcategory===sub);
- const message=`¿Eliminar la subcategoría «${sub}» de «${cat}»?\n\n${used?'Los movimientos anteriores seguirán conservando su clasificación.\n':''}La categoría principal y los demás datos no se modificarán.`;
- if(window.confirm(message)){
-  const h=v191Taxonomy();h.subcategories.push({kind,category:cat,name:sub});
-  persist();render();toast('Subcategoría eliminada del catálogo.');
- }
- break;
-}
 case 'matrixCategory':{ui.matrixExpanded||={};const key=(el.dataset.kind||'expense')+':'+(el.dataset.cat||'');ui.matrixExpanded[key]=!ui.matrixExpanded[key];render();break;}
 case 'mobile':ui.mobile=!ui.mobile;render();break;
 case 'registrationGroup':ui.registrationGroup=['receive','pay','move','other'].includes(id)?id:'pay';if(document.querySelector('#modal-root .v235-register-dialog'))openRegisterAssistant();else render();break;
-case 'v196PayKind':ui.v196PayKind=['all','card','loan','recurring','personal'].includes(id)?id:'all';ui.v176PayView='agenda';render();break; case 'v145PayFilter':ui.v145PayFilter=['all','overdue','upcoming'].includes(id)?id:'all';render();break; case 'guidedFlow':{
+case 'guidedFlow':{
   const mode=el.dataset.mode;
   // V753: Todos los accesos móviles de ingreso/gasto/transferencia comparten
   // el registro visual V749; servicios, tarjetas y préstamos conservan su flujo.
@@ -6329,9 +6301,6 @@ case 'quickBenefit':quickBenefitPicker();break;
 case 'quickBenefitCard':closeModal();manualBenefitForm(id);break;
 case 'quickPay':quickPaymentPicker();break;
 case 'quickPaySpecific':quickPaySpecific(el.dataset.kind,id);break;
-case 'quickOnline':quickOnlinePicker();break;
-case 'quickOnlineCard':closeModal();transactionForm({type:'card_charge',cardId:id||db.cards[0]?.id,paymentChannel:'internet_banking',paymentSource:'card',note:'Compra por internet'});break;
-case 'quickOnlineAccount':closeModal();transactionForm({type:'expense',accountId:id||db.accounts[0]?.id,paymentChannel:'internet_banking',paymentSource:'account',note:'Compra por internet'});break;
 case 'v6WalletTransactionDetail':v6WalletTransactionDetail(id);break;
 case 'v6WalletEditTransaction':closeModal();openTransactionEditor(id);break;
 case 'editTransaction':openTransactionEditor(id);break;
@@ -6344,7 +6313,6 @@ case 'closeAccountDetails':ui.accountId=null;render();break;
 case 'addCard':cardForm(null,id);break;
  case 'rewardCard':manualBenefitForm(id,ccy);break;case 'benefitLedger':manualBenefitForm(id,ccy);break;
  case 'annualFee':annualFeeForm(id);break;
- case 'perkUsage':manualBenefitForm(id,ccy);break;
 case 'editCard':cardForm(id);break;
 case 'cardDetails':ui.cardId=id;ui.cardDetailTab='status';render();setTimeout(()=>document.querySelector('.card-detail')?.scrollIntoView({behavior:'smooth',block:'start'}),50);break;
 case 'cardHistory':ui.cardId=id;ui.cardDetailTab='history';ui.cardHistoryCurrency='DOP';ui.cardHistoryYear=nowYear();render();setTimeout(()=>document.getElementById('card-history-detail')?.scrollIntoView({behavior:'smooth',block:'start'}),50);break;
