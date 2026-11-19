@@ -71,12 +71,19 @@ function read(){
  // las compras con tarjeta se reflejan en su pago, las transferencias entre cuentas propias no son gasto y lo recurrente ya está en gastos fijos.
  const ESSENTIAL=new Set(['Alimentación','Vivienda','Servicios básicos','Transporte','Salud','Educación','Familia e hijos','Seguros','Impuestos y comisiones']);
  const monthsBack=(n)=>{const [y,m]=today.slice(0,7).split('-').map(Number);const out=[];for(let i=1;i<=n;i++){const d=new Date(Date.UTC(y,m-1-i,1));out.push(d.toISOString().slice(0,7))}return out};
- const win=monthsBack(3),inWin=t=>win.includes(ym(t.date));
+ const spendTypes=new Set(['expense','card_charge']);
+ let win=monthsBack(3);
+ /* Si ninguno de los últimos 3 meses cerrados tiene gastos (p. ej. la app se empezó a usar este mes), se usa el mes en curso hasta hoy. */
+ if(!(db.transactions||[]).some(t=>t&&!t.deleted&&spendTypes.has(t.type)&&win.includes(ym(t.date))))win=[today.slice(0,7)];
+ const inWin=t=>win.includes(ym(t.date));
  const isCashAcc=a=>!!a&&(a.kind==='cash'||/efectivo/i.test(String(a.name||'')));
- const cat={},used=new Set(),excl={cardCharges:0,cardPayments:0,loanPayments:0,transfers:0,recurring:0,debtInterest:0};
+ const cardCat={},cat={},used=new Set(),excl={cardCharges:0,cardPayments:0,loanPayments:0,transfers:0,recurring:0,debtInterest:0};
  for(const t of db.transactions||[]){
   if(!t||t.deleted||!inWin(t))continue;const amt=b.xconvert(num(t.amount),t.currency||'DOP','DOP');
-  if(t.type==='card_charge'){excl.cardCharges+=amt;continue}
+  if(t.type==='card_charge'){
+   if(t.recurringId||String(t.scheduleKey||'').startsWith('recurring:')||t.category==='Suscripciones'){excl.recurring+=amt;continue}
+   if(t.category==='Deudas e intereses'){excl.debtInterest+=amt;continue}
+   const c=t.category||'Otros gastos',row=cardCat[c]||(cardCat[c]={category:c,kind:ESSENTIAL.has(c)?'essential':'variable',total:0,n:0});row.total+=amt;row.n++;used.add(ym(t.date));continue}
   if(t.type==='card_payment'){excl.cardPayments+=amt;continue}
   if(t.type==='loan_payment'){excl.loanPayments+=amt;continue}
   if(t.type==='transfer'){excl.transfers+=amt;continue}
@@ -87,8 +94,9 @@ function read(){
   if(isCashAcc(b.account?b.account(t.accountId):null))row.cash+=amt;else row.bank+=amt;row.n++;used.add(ym(t.date));
  }
  const k=Math.max(1,used.size),rows=Object.values(cat).map(r=>({category:r.category,kind:r.kind,cash:r.cash/k,bank:r.bank/k,total:(r.cash+r.bank)/k,count:r.n})).sort((a,c)=>c.total-a.total);
+ const cardRows=Object.values(cardCat).map(r=>({category:r.category,kind:r.kind,total:r.total/k,count:r.n})).sort((a,c)=>c.total-a.total);
  const sum=(f)=>rows.filter(f).reduce((a,r)=>a+r.total,0);
- const spending={months:win,monthsUsed:used.size,categories:rows,essentialMonthly:sum(r=>r.kind==='essential'),variableMonthly:sum(r=>r.kind!=='essential'),cashMonthly:rows.reduce((a,r)=>a+r.cash,0),bankMonthly:rows.reduce((a,r)=>a+r.bank,0),excluded:Object.fromEntries(Object.entries(excl).map(([n,v])=>[n,v/k]))};
+ const spending={months:win,monthsUsed:used.size,categories:rows,essentialMonthly:sum(r=>r.kind==='essential'),variableMonthly:sum(r=>r.kind!=='essential'),cardCategories:cardRows,cardMonthly:cardRows.reduce((a,r)=>a+r.total,0),cashMonthly:rows.reduce((a,r)=>a+r.cash,0),bankMonthly:rows.reduce((a,r)=>a+r.bank,0),excluded:Object.fromEntries(Object.entries(excl).map(([n,v])=>[n,v/k]))};
  /* Liquidez estable (solo capacidad): lo que se ha mantenido en cuentas y efectivo durante los últimos 30 días = el saldo más bajo de ese periodo
     en cada cuenta (si lo sacaste o lo gastaste, deja de contar). Se convierte a pesos con el tipo de cambio de la app. */
  let liquidity=null;

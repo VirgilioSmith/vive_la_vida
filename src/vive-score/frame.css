@@ -132,3 +132,11 @@ body:not(.compact) .tabs{background:rgba(255,255,255,var(--nav-shell-alpha,0));b
 body.night:not(.compact) .tabs{background:rgba(24,30,41,.3);border-color:rgba(115,130,160,.17)}
 body:not(.compact) .tabs button{background:transparent;border:0;color:var(--muted)}
 body:not(.compact) .tabs button.selected{background:var(--teal);color:#fff;box-shadow:0 5px 15px color-mix(in srgb,var(--teal) 18%,transparent)}
+/* Barra de desplazamiento fina y discreta (en vez de la barra gruesa y oscura del sistema) */
+html{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--teal) 38%,transparent) transparent;color-scheme:light}
+body.night,html:has(body.night){color-scheme:dark}
+::-webkit-scrollbar{width:8px;height:8px;background:transparent}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--teal) 38%,transparent);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--teal) 60%,transparent);background-clip:padding-box}
+::-webkit-scrollbar-button{display:none;width:0;height:0}
