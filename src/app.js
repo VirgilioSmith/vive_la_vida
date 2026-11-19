@@ -6272,6 +6272,7 @@ case 'bankDetails':{
     ui.bankId=id;
   }
   render();
+  if(desktopBank&&ui.bankId)setTimeout(()=>document.querySelector('.bank-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),60);
   if(!desktopBank && !window.matchMedia?.('(min-width: 791px)').matches){
     setTimeout(()=>document.querySelector('.bank-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),50);
   }
@@ -18759,41 +18760,6 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   return g?detalle(g):lista();
  };
  document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1200-p]');if(!b)return;e.preventDefault();ui.v1200p=b.dataset.v1200P||'';ui.v56ContactId='';ui.v56LoanId='';render();window.scrollTo(0,0)},true);
-})();
-
-/* V1210 · Instituciones (web y móvil): inventario de productos por institución — Cuentas, Tarjetas, Préstamos y Certificados.
-   Sin KPIs globales ni resúmenes: se entra, se identifica el banco y se accede al producto. Reutiliza goAccount/goCard/goLoan/goCertificate. */
-(()=>{
- const esc=v=>sanitize(String(v??''));
- const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
- const CH=G('<path d="m9 6 6 6-6 6"/>');
- const KINDS=[['aa','Cuentas','wallet','addAccount'],['cc','Tarjetas','card','addCard'],['ll','Préstamos','receipt','addLoan'],['certs','Certificados','analytics','addCertificate']];
- const logo=b=>bankLogoMark(b,'institution-logo');
- const vis=()=>db.banks.filter(b=>ui.showHidden||!b.archived);
- function tarjeta(b){
-  const f=bankFigures(b);
-  return `<button type="button" class="v1210-bank" data-v1210-bank="${esc(b.id)}"><span class="v1210-head">${logo(b)}<span class="v1210-name"><strong>${esc(b.name)}</strong><small>${esc(b.kind||'Institución')}${b.archived?' · archivada':''}</small></span>${CH}</span><span class="v1210-kinds">${KINDS.map(([k,l,ic])=>`<span class="v1210-kind${f[k].length?'':' is-zero'}">${icon(ic)}<b>${f[k].length}</b><small>${l}</small></span>`).join('')}</span></button>`;
- }
- function fila(kind,b,x){
-  if(kind==='aa')return `<button type="button" class="v1210-prod" data-act="goAccount" data-id="${esc(x.id)}"><span><strong>${esc(x.name)}</strong><small>${esc(x.currency)}${x.kind==='savings'?' · Ahorros':x.kind==='checking'||x.kind==='current'?' · Corriente':''}</small></span><b>${money(getAccountBalance(x),x.currency,2)}</b>${CH}</button>`;
-  if(kind==='cc'){const d=cardStatus(x,'DOP').debt,u=cardStatus(x,'USD').debt;return `<button type="button" class="v1210-prod" data-act="goCard" data-id="${esc(x.id)}"><span><strong>${esc(x.name)}</strong><small>•••• ${esc(x.last4||'—')}</small></span><b>${num(u)>.004?money(d,'DOP',2)+' · '+money(u,'USD',2):money(d,'DOP',2)}</b>${CH}</button>`}
-  if(kind==='ll')return `<button type="button" class="v1210-prod" data-act="goLoan" data-id="${esc(x.id)}"><span><strong>${esc(x.name)}</strong><small>Saldo pendiente</small></span><b>${money(loanStatus(x).balance,x.currency,2)}</b>${CH}</button>`;
-  return `<button type="button" class="v1210-prod" data-act="goCertificate" data-id="${esc(x.id)}"><span><strong>${esc(x.name)}</strong><small>Capital invertido</small></span><b>${money(certificateCapital(x),x.currency,2)}</b>${CH}</button>`;
- }
- function detalle(b){
-  const f=bankFigures(b);
-  return `<div class="v1210"><button type="button" class="v1210-back" data-v1210-bank="">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>Instituciones</span></button>
-   <section class="v1210-hero">${logo(b)}<div><h2>${esc(b.name)}</h2><small>${esc(b.kind||'Institución')}${b.archived?' · archivada':''}</small></div></section>
-   <div class="v1210-secs">${KINDS.map(([k,l,ic,add])=>`<section class="v1210-sec"><header><h3>${icon(ic)}<span>${l}</span><em>${f[k].length}</em></h3><button type="button" class="v1210-add" data-act="${add}" data-id="${esc(b.id)}" aria-label="Agregar ${l.toLowerCase()}">${G('<path d="M12 5v14M5 12h14"/>')}</button></header>${f[k].length?f[k].map(x=>fila(k,b,x)).join(''):`<p class="v1210-none">Sin ${l.toLowerCase()} en esta institución.</p>`}</section>`).join('')}</div>
-   <details class="v1210-more"><summary>Administrar institución</summary><div class="v1210-body"><button type="button" data-act="editBank" data-id="${esc(b.id)}">Editar institución</button><button type="button" data-act="productArchive" data-kind="bank" data-id="${esc(b.id)}">Archivar</button><button type="button" class="danger" data-act="productDelete" data-kind="bank" data-id="${esc(b.id)}">Eliminar sin historial</button></div></details></div>`;
- }
- function lista(){
-  const bs=vis(),arch=db.banks.filter(b=>b.archived).length;
-  return `<div class="v1210"><div class="v1210-top"><button type="button" class="v1210-primary" data-act="addBank">${G('<path d="M12 5v14M5 12h14"/>')}<span>Agregar institución</span></button>${arch?`<button type="button" class="v1210-link" data-act="toggleHidden">${ui.showHidden?'Ocultar archivadas':'Ver archivadas ('+arch+')'}</button>`:''}</div>
-   ${bs.length?`<div class="v1210-grid">${bs.map(tarjeta).join('')}</div>`:'<p class="v1210-none">Aún no tienes instituciones. Agrega la primera.</p>'}</div>`;
- }
- pages.banks=function(){const b=ui.bankId?bank(ui.bankId):null;return b?detalle(b):lista()};
- document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1210-bank]');if(!t)return;e.preventDefault();ui.bankId=t.dataset.v1210Bank||null;render();window.scrollTo(0,0)},true);
 })();
 
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
