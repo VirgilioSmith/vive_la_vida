@@ -55278,3 +55278,21 @@ html body #app#app #page .v1200-adm button.danger{color:#d6283d}
  html body #app#app #page .v46-institution-grid,html body #app#app #page .institution-grid{gap:14px!important}
  html body #app#app #page .bank-workspace{margin-top:6px}
 }
+/* v1220 · Instituciones: detalle del banco ordenado (web y móvil) */
+html body #app#app #page .bank-workspace .v220-products-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:18px 0 12px!important}
+html body #app#app #page .bank-workspace .v220-products-head h2{font-size:20px!important;line-height:1.2!important;margin:0!important}
+html body #app#app #page .bank-workspace .v220-products-head p{font-size:13px!important;margin:2px 0 0!important;opacity:.7}
+html body #app#app #page .bank-workspace .v220-products-head .hstack{display:flex;flex-wrap:wrap;gap:8px}
+html body #app#app #page .bank-workspace .v220-product-columns{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start!important}
+html body #app#app #page .bank-workspace .v220-product-lane{min-height:0!important;height:auto!important;overflow:hidden}
+html body #app#app #page .bank-workspace .v220-product-lane .lane-head{display:flex;align-items:center;gap:8px;padding:12px 16px!important;font-size:14px!important;font-weight:700}
+html body #app#app #page .bank-workspace .v220-product-lane .lane-head span{margin-left:auto}
+html body #app#app #page .bank-workspace .v220-product-lane .product-item{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:0!important;height:auto!important;padding:12px 16px!important;text-align:left}
+html body #app#app #page .bank-workspace .v220-product-lane .product-item strong{display:block;font-size:14px!important}
+html body #app#app #page .bank-workspace .v220-product-lane .product-item small{display:block;font-size:12px!important;margin-top:2px;opacity:.7}
+html body #app#app #page .bank-workspace .v220-product-lane .product-item b{font-size:14px!important;white-space:nowrap}
+html body #app#app #page .bank-workspace .v220-product-lane .lane-empty{padding:14px 16px!important;min-height:0!important;font-size:13px!important;text-align:left!important}
+@media(max-width:790px){
+ html body #app#app #page .bank-workspace .v220-products-head{flex-direction:column;align-items:stretch}
+ html body #app#app #page .bank-workspace .v220-product-columns{grid-template-columns:1fr}
+}
