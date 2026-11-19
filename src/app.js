@@ -1403,7 +1403,6 @@ function main(){
 }
 function shellKpi(title,v,foot,ico,tone=''){return `<div class="kpi"><div class="kpi-head">${sanitize(title)}<span class="kpi-icon">${icon(ico)}</span></div><div class="kpi-value ${tone}">${v}</div><div class="kpi-foot">${foot}</div></div>`}
 
-function recentList(limit=7){let t=recentTx().slice(0,limit);return t.length?t.map(x=>`<div class="listitem"><span class="activity-icon">${x.type==='income'?'↗':x.type==='transfer'?'⇄':x.type==='card_payment'?'▣':x.type==='loan_payment'?'⌂':'↘'}</span><div class="listitem-content"><div class="listitem-title">${sanitize(transactionTitle(x))} ${v213ApplePayBadge(x)}</div><div class="listitem-sub">${prettyDate(x.date)} · ${TRANSL[x.type]||x.type}</div></div><div class="money ${x.type==='income'?'positive':''}" style="font-size:12px">${txDisplay(x)} <button type="button" class="v54-permadelete" data-act="deleteTransaction" data-id="${x.id}" aria-label="Eliminar movimiento definitivamente">${icon('trash')}</button></div></div>`).join(''):`<div class="empty"><span class="empty-icon">◇</span>Aún no hay movimientos.<br/>Registra tu primer ingreso o gasto.</div>`}
 
 const MONTHS_FULL=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 function smoothPath(points){if(!points.length)return '';let path=`M ${points[0][0]} ${points[0][1]}`;for(let i=1;i<points.length;i++){let prev=points[i-1],cur=points[i],mid=(prev[0]+cur[0])/2;path+=` C ${mid} ${prev[1]}, ${mid} ${cur[1]}, ${cur[0]} ${cur[1]}`}return path}
@@ -1579,15 +1578,6 @@ function bankForm(id){
  <details class="form-full smart-fold"><summary><span class="smart-fold-icon">＋</span><span><strong>Nota adicional</strong><small>Uso interno, opcional</small></span><span class="smart-chevron">⌄</span></summary><div class="smart-fold-grid">${formItem('notes','Nota interna',o.notes,'text','maxlength="120" placeholder="Ej. Principal / nómina"')}</div></details>
  `,'bankForm',true);
  const f=document.getElementById('bankForm');f.dataset.id=id||'';f.dataset.logo=logo;
-}
-function categories(){
- const collection=[['gasto','GASTOS'],['ingreso','INGRESOS']];
- const n=db.transactions.filter(t=>t.category).length;
- return ` <div class="taxonomy-grid section">${collection.map(([kind,label])=>`<div class="panel"><div class="panel-head"><h3>${label}</h3><span class="pill">${Object.keys(categoryMap(kind)).length} categorías</span></div>
- ${Object.entries(categoryMap(kind)).map(([cat,subs])=>`<details class="taxonomy-item v191-taxonomy-item"><summary><strong class="v255-tax-strong">${v255TaxonomyBadge(kind,cat)}</strong><span>${subs.length} subcategorías <b>⌄</b></span></summary>
- <div class="taxonomy-sub v191-taxonomy-sub">${subs.map(sub=>`<span class="v191-taxonomy-subitem"><span>${v255TaxonomyBadge(kind,cat,sub,{subOnly:true})}</span><button type="button" class="v191-taxonomy-delete v191-sub-delete" data-act="v191DeleteSubcategory" data-kind="${kind}" data-cat="${sanitize(encodeURIComponent(cat))}" data-sub="${sanitize(encodeURIComponent(sub))}" aria-label="Eliminar subcategoría ${sanitize(sub)} de ${sanitize(cat)}" title="Eliminar esta subcategoría">${icon('trash')}</button></span>`).join('')||'<span>Sin subcategorías</span>'}</div>
- <div class="v191-taxonomy-footer"><button type="button" class="v191-taxonomy-delete v191-category-delete" data-act="v191DeleteCategory" data-kind="${kind}" data-cat="${sanitize(encodeURIComponent(cat))}">${icon('trash')} Eliminar categoría</button></div>
- </details>`).join('')}</div>`).join('')}</div>`;
 }
 /* Flecha circular de retroceso (misma forma que el botón X) en la cabecera de Ampliar catálogo, Registrar cobro/salario e Ingreso recurrente. */
 /* Vista de fecha legible (móvil): «15 nov 2026» o «15/12/2026». El input date real sigue siendo la fuente de verdad. */
@@ -2845,42 +2835,6 @@ ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div 
 <div class="settings-group-title" id="v176-setting-06"><div><span class="summary-tag">06 / HISTORIAL Y PRIVACIDAD</span><h3>Control de productos y registros</h3></div></div>
 <div class="grid columns equal"><div class="panel"><div class="panel-head"><h3>Productos archivados</h3></div><p class="form-note">Desactivar una relación financiera no debe eliminar sus transacciones. Los productos archivados permanecen en cálculos históricos, aunque se oculten de los listados habituales.</p>${visibilityControl()}<p class="form-note">Archivados: ${[...db.banks,...db.accounts,...db.cards,...db.loans,...db.certificates].filter(x=>x.archived).length}. La eliminación definitiva solo se permite cuando no hay operaciones ni saldos iniciales o dependencias.</p></div><div class="panel"><div class="panel-head"><h3>Protección y respaldo</h3></div><p class="form-note">Respalda tus datos JSON antes de modificar contratos o importar versiones nuevas. El respaldo local no está cifrado.</p><div class="hstack"><button class="btn soft" data-act="export" title="Descargar una copia de seguridad de todos tus registros en JSON">${icon('download')} Descargar respaldo JSON</button><button class="btn ghost" data-act="import">${icon('upload')} Importar JSON</button></div><div class="mini-divider"></div><div class="hstack"><button class="btn ghost" data-act="demo">Demostración</button><button class="btn danger" data-act="clear">Eliminar todos los datos</button></div><input id="importFile" type="file" accept="application/json,.json" class="hidden" /></div></div>
 <div class="panel section"><div class="panel-head"><h3>Información guardada</h3></div><div class="settings-counts">${[['Instituciones',db.banks.length],['Cuentas',db.accounts.length],['Tarjetas',db.cards.length],['Préstamos',db.loans.length],['Certificados',db.certificates.length],['Movimientos',db.transactions.length],['Suscripciones',db.recurring.length]].map(([l,n])=>`<div><span>${l}</span><strong>${n}</strong></div>`).join('')}</div><div class="notification warning">vive el hoy es local: no consulta bancos en tiempo real, no ejecuta pagos ni comprueba automáticamente impuestos. No guardes CVV, PIN, contraseñas ni números completos.</div></div></div>`}
-function moneyRegister(mode="page"){
- const m=monthStats(),incomeOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['income','bank_reward','card_reward'].includes(t.type)),expenseOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['expense','card_charge','card_refund','loan_payment'].includes(t.type));
- const op=(glyph,name,description,action,type='')=>`<button class="money-register-tile" data-act="${action}" ${action==='navigate'?`data-id="${type}"`:type?`data-type="${type}"`:''}><span class="money-register-icon">${icon(glyph)}</span><strong>${name}</strong><small>${description}</small><span class="register-tile-arrow">${icon('arrow')}</span></button>`;
- const pending=db.pendingOperations||[],active=ui.movementTab==='pending'?'all':ui.movementTab;
- const summary=`<div class="v221-status-summary" aria-label="Estado de movimientos"><span>Registrados <b>${db.transactions.length}</b></span><span>Por revisar <b>${db.transactions.filter(t=>t.reviewed!==true).length}</b></span><span>Conciliados <b>${db.transactions.filter(t=>t.reviewed===true).length}</b></span><span>Borradores <b>${pending.length}</b></span></div>`;
- const selector=active==='register'?`<div class="vr-register-top-nav"><span>OPERACIONES / REGISTRO</span><nav class="movement-tabs" aria-label="Vistas del centro">${[['all','Movimientos','cycle']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`:`<div class="movement-tabs-shell"><div class="movement-title"><span class="summary-tag">REGISTRO Y CONTROL</span><h2>Centro de operaciones inteligente.</h2><p>Ingresos, gastos, tarjetas, transferencias, efectivo y pagos: cada flujo muestra solamente lo necesario.</p></div><nav class="movement-tabs" aria-label="Vistas del centro de movimientos">${[['all','Movimientos','cycle']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`;
-  const cashD=db.accounts.find(a=>a.kind==='cash'&&a.currency==='DOP'),cashU=db.accounts.find(a=>a.kind==='cash'&&a.currency==='USD');
-  const cashDValue=cashD?getAccountBalance(cashD):0,cashUValue=cashU?getAccountBalance(cashU):0;
-  const rg=ui.registrationGroup||'pay';
- const registerGroups={
-  receive:{label:'Recibir',sub:'Ingresos que llegan a tus saldos',modes:['income'],sideTitle:'Cada ingreso, a su cuenta.',sideCopy:'Elige la cuenta de destino, la fuente del dinero y el importe. Tu efectivo en pesos y dólares también está disponible.',accent:'mint',symbol:'↙'},
-  pay:{label:'Pagar',sub:'Compras, servicios y tarjetas',modes:['spend','service','cardpay'],sideTitle:'Registra una vez. Todo cuadra.',sideCopy:'Una compra con tarjeta se registra como gasto y deuda. Cuando pagas esa tarjeta, disminuye la deuda sin duplicar el gasto.',accent:'lilac',symbol:'↗'},
-  move:{label:'Mover',sub:'Transferencias y cambios de moneda',modes:['own','outgoing'],sideTitle:'De un saldo a otro.',sideCopy:'Las transferencias normales y Pago al instante son modalidades distintas. La tasa de cambio aparece solo al cruzar RD$ y US$.',accent:'sky',symbol:'⇄'},
-  other:{label:'Otros',sub:'Devoluciones, ajustes y abonos',modes:[],sideTitle:'Gestiones que completan tu registro.',sideCopy:'Devuelve un consumo, concilia un saldo, registra un beneficio o abona a un préstamo. Cada operación abre su formulario específico.',accent:'amber',symbol:'✦'}
- };
- const group=registerGroups[rg]||registerGroups.pay;
- const operationIcon={income:'r803-income',spend:'r803-spend',service:'r803-service',own:'r803-own',outgoing:'r803-outgoing',cardpay:'r803-cardpay'};
- const amountCashD=cashD?getAccountBalance(cashD):0,amountCashU=cashU?getAccountBalance(cashU):0;
- const actionTile=(mode)=>{const c=FLOW_CATALOG[mode];return `<button class="vr-operation" type="button" data-act="guidedFlow" data-mode="${mode}"><span class="vr-operation-icon">${icon(operationIcon[mode])}</span><span class="vr-operation-copy"><strong>${c.name}</strong><small>${c.subtitle}</small></span><span class="vr-chevron">${icon('arrow')}</span></button>`};
- const formTiles=`<div class="vr-register">
-  <section class="vr-hero"><div class="vr-hero-content"><div class="vr-eyebrow"><span class="vr-star">✦</span> vive el hoy <span class="vr-hero-divider"></span> CENTRO DE REGISTRO</div><h2>Un movimiento.<br><em>Todo bajo control.</em></h2><p>Registra lo importante en pocos pasos. Sin formularios interminables, sin cargos escondidos y con cada saldo en su moneda.</p><div class="vr-hero-actions"><button type="button" class="vr-hero-primary" data-act="newTransaction">${icon('plus')} Nueva operación</button><span>Registro inteligente · RD$ y US$</span></div></div><div class="vr-hero-art"><span class="vr-orbit vr-orbit-1"></span><span class="vr-orbit vr-orbit-2"></span><div class="vr-art-card"><span>DISPONIBLE EN EFECTIVO</span><strong>${money(amountCashD,'DOP',2)}</strong><div class="vr-art-bottom"><span>También en US$</span><b>${money(amountCashU,'USD',2)}</b></div></div><div class="vr-art-chip">✓&nbsp; Registro organizado</div></div></section>
-  <section class="vr-workspace"><header class="vr-workspace-head"><div><span class="vr-small-kicker">EMPEZAR</span><h3>${rg==='other'?'Gestiones avanzadas':'¿Qué necesitas hacer?'}</h3><p>${rg==='other'?'Operaciones especiales, ajustes y correcciones.':'Selecciona una categoría y elige tu operación.'}</p></div><span class="vr-timehint">ELIGE UNA OPERACIÓN</span></header>
-   <nav class="vr-switcher" aria-label="Tipo de movimiento">${Object.entries(registerGroups).map(([key,g])=>`<button type="button" class="vr-switch ${rg===key?'selected':''}" data-group="${key}" data-act="registrationGroup" data-id="${key}" aria-pressed="${rg===key}" ${rg===key?'aria-current="true"':''}><span class="vr-switch-symbol">${icon(({receive:'down',pay:'up',move:'cycle',other:'sparkles'})[key])}</span><span><strong>${g.label}</strong><small>${g.sub}</small></span></button>`).join('')}</nav>
-   <div class="vr-content"><div class="vr-action-stack"><span class="vr-group-heading">${group.label.toUpperCase()} <span>${rg==='other'?4:group.modes.length} ${rg==='other'||group.modes.length!==1?'OPCIONES':'OPCIÓN'}</span></span>${rg==='other'?`<div class="vr-other-operations" role="group" aria-label="Otras gestiones">
-    <button class="vr-operation v29-other-action" type="button" data-act="otherRefund"><span class="vr-operation-icon v29-other-icon refund">${icon('refresh2')}</span><span class="vr-operation-copy v29-other-copy"><strong>Devolución de compra</strong><small>Revertir un consumo de tarjeta</small></span><span class="vr-chevron v29-other-arrow">${icon('arrow')}</span></button>
-    <button class="vr-operation v29-other-action" type="button" data-act="otherAdjust"><span class="vr-operation-icon v29-other-icon adjustment">${icon('r803-adjustment')}</span><span class="vr-operation-copy v29-other-copy"><strong>Ajuste de saldo</strong><small>Corrige una diferencia en tu cuenta o efectivo</small></span><span class="vr-chevron v29-other-arrow">${icon('arrow')}</span></button>
-    <button class="vr-operation v29-other-action" type="button" data-act="otherBenefitPicker"><span class="vr-operation-icon v29-other-icon benefit">${icon('r803-benefit')}</span><span class="vr-operation-copy v29-other-copy"><strong>Beneficios bancarios</strong><small>Cashback y beneficios recibidos</small></span><span class="vr-chevron v29-other-arrow">${icon('arrow')}</span></button>
-    <button class="vr-operation v29-other-action" type="button" data-act="otherLoanPicker"><span class="vr-operation-icon v29-other-icon loan">${icon('coins2')}</span><span class="vr-operation-copy v29-other-copy"><strong>Abonar a un préstamo</strong><small>Cuota o pago adicional al capital</small></span><span class="vr-chevron v29-other-arrow">${icon('arrow')}</span></button>
-</div>`:group.modes.map(actionTile).join('')}</div><aside class="vr-guidance ${group.accent}"><span class="vr-guidance-glyph">${group.symbol}</span><span class="vr-guidance-label">TU ASISTENTE</span><h4>${group.sideTitle}</h4><p>${group.sideCopy}</p><div class="vr-guidance-bottom"><span class="vr-dot"></span> Los saldos se actualizan al confirmar</div></aside></div>
-  </section>
- </div>`;
- if(mode==='assistant')return formTiles;
- if(mode==='page')return transactions(true);
- let content=active==='review'?v30ReviewContent(false):active==='all'?`${summary}${transactions(true)}`:active==='pending'?pendingOperationsView():`${formTiles}<section class="movement-recent panel"><div class="panel-head"><div><h3>Actividad reciente</h3><p class="subtle">Últimos movimientos confirmados</p></div><button class="btn sm soft v51-manage-movements" data-act="movementTab" data-id="all">Gestionar · Editar / Eliminar ${icon('arrow')}</button></div>${recentList(6)}</section>`;
- return `${active==='register'||active==='all'?'':`<div class="world-intro"><span class="summary-tag">vive el hoy</span><h2>Control total. Cada peso en su lugar.</h2><p>Centro financiero contextual para cuentas, efectivo, tarjetas y transferencias; mantiene separados el principal, los impuestos y los cargos.</p></div>`}${selector}${content}${duplicateAlerts()}<p class="footnote">Una operación pendiente no afecta saldos ni ingresos. Una operación confirmada puede quedar «por revisar» hasta que concilies el comprobante. Los pagos de tarjetas, préstamos y transferencias no duplican gastos.</p>`;
-}
 /* V235: Registrar es un asistente flotante, separado del libro de Movimientos. */
 function openRegisterAssistant(){
  const root=document.getElementById('modal-root');if(!root)return;
@@ -2906,10 +2860,6 @@ document.addEventListener('keydown',e=>{
  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
 },true);
-function pendingOperationsView(){let items=db.pendingOperations||[];
- const row=q=>{const type=q.values?.type||q.formId,kind=TRANSL[type]||({personalPaymentForm:'Abono entre personas',annualFeeForm:'Anualidad',rewardReceivedForm:'Beneficio recibido',benefitLedgerForm:'Beneficio o recompensa'})[q.formId]||'Operación',val=num(q.values?.amount||q.values?.principal||0),name=q.values?.note||q.values?.description||q.values?.merchant||kind;return `<tr><td>${sanitize(prettyDate(q.values?.date||q.created.slice(0,10)))}</td><td><strong>${sanitize(name)}</strong><div class="subtitle">${sanitize(kind)}</div></td><td class="right">${val>0?money(val,q.values?.currency||'DOP',2):'A verificar'}</td><td><span class="pending-pill">Pendiente de confirmar</span></td><td class="right"><div class="tx-actions"><button class="btn sm" data-act="pendingConfirm" data-id="${q.id}">Revisar y confirmar</button><button class="btn sm ghost danger-link" data-act="pendingRemove" data-id="${q.id}" title="Descartar registro">Descartar</button></div></td></tr>`};
- return `<section class="pending-world"><div class="grid kpis movement-kpis">${shellKpi('Por confirmar',String(items.length),'No se contabilizan todavía','clock')}${shellKpi('Confirmados',String(db.transactions.length),'Movimientos del libro','cycle')}${shellKpi('Por conciliar',String(db.transactions.filter(t=>t.reviewed!==true).length),'Contabilizados, aún por revisar','shield')}${shellKpi('Conciliados',String(db.transactions.filter(t=>t.reviewed===true).length),'Verificados en el historial','wallet')}</div><div class="panel no-pad"><div class="pending-header"><h3>Operaciones pendientes</h3><p>Son borradores. Para completar el registro, revisa sus datos y confirma el formulario original.</p></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Concepto</th><th class="right">Importe</th><th>Estado</th><th class="right">Acciones</th></tr></thead><tbody>${items.length?items.map(row).join(''):'<tr><td colspan="5"><div class="empty">No tienes operaciones esperando confirmación.</div></td></tr>'}</tbody></table></div></div></section>`;
-}
 
 /* ─── vive el hoy · ANÁLISIS DE EGRESOS ─────────────────────────────────
    Reconoce gastos, no movimiento bruto de efectivo. Es consistente con
@@ -3732,13 +3682,6 @@ function annualSplitTables(){
  return `<div class="v12-year-sections v14-year-sections">${table('income')}${table('expense')}</div>`;
 }
 
-function duplicateAlerts(){
- const key=t=>[t.date,t.type,t.currency||'DOP',num(t.amount).toFixed(2),t.accountId||'',t.cardId||'',(t.note||'').trim().toLocaleLowerCase('es')].join('|');
- const groups={};for(let t of db.transactions){if(['transfer','certificate_funding','certificate_redemption'].includes(t.type))continue;let id=key(t);(groups[id]??=[]).push(t)}
- const pairs=Object.values(groups).filter(list=>list.length>1),count=pairs.reduce((a,x)=>a+x.length,0);
- if(!pairs.length)return '';
- return `<aside class="v12-duplicate-warning panel" aria-label="Revisión de registros potencialmente repetidos"><span>${icon('receipt')}</span><div><strong>Revisa ${count} registros potencialmente repetidos</strong><p>Misma fecha, importe, producto y descripción. Pueden ser operaciones legítimas: revísalas antes de eliminar alguna.</p></div><button class="btn sm soft" data-act="movementTab" data-id="all">Abrir libro</button></aside>`;
-}
 function quickBenefitPicker(){
  if(!db.cards.length){toast('Primero registra una tarjeta para asociar el beneficio.');return}
  if(db.cards.length===1){manualBenefitForm(db.cards[0].id);return}
@@ -3983,7 +3926,7 @@ document.addEventListener('change', event=>{
  ui.month=p;ui.year=Number(p.slice(0,4));render();
 });
 
-const pages={score:()=>(window.ViveScoreHost&&!isMobileViewport()?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,categories,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
+const pages={score:()=>(window.ViveScoreHost&&!isMobileViewport()?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,income:incomeAnalysis,expenses:expensesAnalysis,banks,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -16698,8 +16641,12 @@ window.__f360RecurringVisualAdapter={
     document.getElementById('modal-root')?.querySelectorAll('.v6-wallet-detail-layer').forEach(n=>n.remove());
     redraw();
   };
-  const oldRegister=pages.register;
-  pages.register=function(...args){return (isMobileViewport()||(state.view==='detail'&&state.selected))?v708Movements():oldRegister.apply(this,args);};
+  const v1131MovSide=()=>{
+    const m=ui.month||today().slice(0,7),[y,mo]=m.split('-').map(Number),t=monthlyTotals(y,mo),n=(db.transactions||[]).filter(x=>String(x.date||'').startsWith(m)).length;
+    const top=Object.entries(t.expenseBy||{}).map(([c,v])=>[c,num(v)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    return v1131Card('Movimientos del mes',v1131Row('Ingresos',money(num(t.income)))+v1131Row('Egresos',money(num(t.expense)))+v1131Row('Neto',money(num(t.net)))+v1131Row('Operaciones',String(n)))+v1131Card('Mayor gasto del mes',v1131Bars(top,v=>money(v)));
+  };
+  pages.register=function(){return (!isMobileViewport()&&window.matchMedia('(min-width:1100px)').matches&&state.view!=='detail')?v1131Web(v708Movements(),v1131MovSide()):v708Movements();};
   // Mantener intacta la navegación de cinco pestañas; insertar solo un botón auxiliar encima del +.
   const oldDock=mobileBottomNavigation;
   mobileBottomNavigation=function(...args){

@@ -55216,3 +55216,47 @@ html body #app#app #page .v911 .v911-seg button.is-on{background:var(--v424-acce
  html body #app#app #page .v911.v919>.v919-define{grid-column:1;grid-row:1}
 }
 @media(min-width:791px){html body #app#app #page .v1131-web{margin-top:-14px}}
+
+/* v1136 · Escala tipográfica única (móvil y web): título de vista, titular, título de sección y etiqueta */
+html body #app#app #page{--t-eyebrow:11px;--t-section:17px;--t-hero:34px;--t-page:28px}
+@media(max-width:790px){
+ html body #app#app #page{--t-section:16px}
+ html body #app#app #page :is(.v708-head h1,.v248-intro h2,.v911-head h1,.v252-module-heading h2,.v203-header h1,.v239-intro h2,.v362-pressure-heading h1,.v295-global-overview>h2:first-child){font-size:var(--t-page)!important;font-weight:820!important;letter-spacing:-.04em!important;line-height:1.1!important}
+}
+@media(min-width:791px){
+ html body #app#app #page :is(.v58-exec h2,.v46-bank-intro h2,.v252-module-heading-copy h2,.v295-global-overview>h2,.ledger-world>header h2,.ledger-world h2:first-of-type){font-size:var(--t-hero)!important;font-weight:820!important;letter-spacing:-.045em!important;line-height:1.08!important}
+}
+html body #app#app #page :is(h3:not([class]),.panel-head h3,.v189-table-head h3,.v42-bank-section h3,.ff-obligations h2,.ff-personal h2,.ff-health-card h2,.ff-expense-card h2,.ff-upcoming h2,.v290-budget-web h2){font-size:var(--t-section)!important;font-weight:780!important;letter-spacing:-.03em!important;line-height:1.15!important}
+/* Etiquetas (eyebrow) uniformes */
+html body #app#app #page :is(.v911-eyebrow,.v911-kicker,.v56-section-label,.summary-tag,.v134-eyebrow,.analyst-label,.vive-mobile-eyebrow,.v203-hero-tag){font-size:var(--t-eyebrow)!important;font-weight:800!important;letter-spacing:.13em!important;text-transform:uppercase}
+/* Menús de fecha siempre a la derecha */
+html body #app#app #page .v911-month{align-self:flex-end;margin-left:auto}
+html body #app#app #page .v911-agenda{display:flex;flex-direction:column}
+html body #app#app #page .v911-tl-group h3{font-size:14.5px!important;font-weight:700!important;letter-spacing:-.01em!important}
+@media(min-width:791px){html body #app#app #page .v295-global-overview h2:not(.panel-head h2){font-size:var(--t-hero)!important;font-weight:820!important;letter-spacing:-.045em!important}}
+html body #app#app #page .v252-hero-title{font-size:26px!important;font-weight:820!important;letter-spacing:-.04em!important}
+/* v1136 · Cuentas: efectivo (RD$/US$) con la misma tipografía, color y alto que las cuentas bancarias */
+html body #app#app #page .account-product-card.v258-cash-product .name{color:var(--v424-ink,#17243b)!important;font-size:15px!important;font-weight:750!important}
+html body:is(.theme-black,.theme-dark) #app#app #page .account-product-card.v258-cash-product .name{color:#f4f6fb!important}
+html body #app#app #page .account-product-card .account-balance-link{color:var(--v424-accent-strong,#615dd5)!important;font-size:26px!important;font-weight:780!important;letter-spacing:-.03em!important}
+html body #app#app #page .account-product-card .type{font-size:12px!important}
+html body #app#app #page .cards-grid:has(.account-product-card){align-items:stretch}
+html body #app#app #page .account-product-card{display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+/* v1137 · Movimientos web: la misma vista oficial que en móvil, a ancho de página con columna lateral */
+@media(min-width:791px){
+ html body #app#app #page .v708-movements{max-width:none!important;width:100%!important;margin:0!important}
+ html body #app#app #page .v708-movements .v708-head:not(:has(button.v708-back,.v708-back)){justify-content:flex-end;min-height:0}
+ html body #app#app #page .v708-movements .v708-head:not(:has(button.v708-back,.v708-back)) .v708-heading{display:none}
+ html body #app#app #page .v708-movements .v708-tabstrip{justify-content:flex-start;margin-left:0}
+}
+html body #app#app #page .v1131-card h3{font-size:11px!important;font-weight:750!important;letter-spacing:.12em!important;text-transform:uppercase;line-height:1.2!important;color:var(--ac,#5b57d6)!important}
+@media(min-width:791px){
+ html body #app#app #page .v708-movements{position:relative}
+ html body #app#app #page .v708-movements .v708-head:not(:has(button.v708-back,.v708-back)){position:absolute;right:0;top:0;z-index:2;margin:0;padding:0}
+ html body #app#app #page .v708-movements .v708-tabstrip{padding-right:64px}
+}
+@media(min-width:791px){
+ html body #app#app #page .v708-movements .v708-tabstrip{max-width:calc(100% - 56px);gap:6px;overflow-x:auto}
+ html body #app#app #page .v708-movements .v708-tabstrip button{padding:0 12px!important;min-height:40px!important;font-size:13px!important;white-space:nowrap}
+ html body #app#app #page .v708-movements .v708-head:not(:has(button.v708-back,.v708-back)){top:2px}
+}
