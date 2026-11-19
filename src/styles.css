@@ -55317,3 +55317,14 @@ html body #app#app #page .bank-workspace .v220-product-lane .lane-empty{padding:
 
 /* v1223 · Bancos móvil: un solo botón «Añadir producto» a todo el ancho */
 @media(max-width:790px){html body #app#app #page .v203-expand-actions{display:grid!important;grid-template-columns:1fr!important}html body #app#app #page .v203-expand-actions>button{width:100%;justify-content:center}}
+/* v1224 · Web: selector de mes sin recortes; Presupuestos al punto de Resumen; menú interno de Ingresos con el estilo de Instituciones */
+@media(min-width:791px){
+ html body #app#app #page .v1170-date,html body #app#app #page .v137-wealth-month-control{width:auto!important;min-width:150px;flex:none}
+ html body #app#app #page .v1170-date input[type=month],html body #app#app #page .v137-wealth-month-control input[type=month]{width:128px!important;max-width:none!important;font-size:10px!important}
+ html body #app#app #page .v1170-bud{margin-top:-31px!important}
+ html body #app#app #page#page:has(.v58-exec)>.inner-menu{display:inline-flex!important;align-items:center;width:auto!important;padding:3px!important;gap:4px;border-radius:14px!important;background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:0 5px 16px rgba(4,18,37,.13)!important}
+ html body #app#app #page#page:has(.v58-exec)>.inner-menu .inner-menu-caption{display:none!important}
+ html body #app#app #page#page:has(.v58-exec)>.inner-menu .inner-menu-tabs{display:flex!important;gap:4px!important;padding:0!important;margin:0!important;width:auto!important}
+ html body #app#app #page#page:has(.v58-exec)>.inner-menu .inner-menu-tab{height:30px!important;min-height:0!important;padding:5px 12px!important;border-radius:11px!important;font-size:10px!important;font-weight:780!important;line-height:1!important;background:transparent!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:none!important;border:0!important;white-space:nowrap}
+ html body #app#app #page#page:has(.v58-exec)>.inner-menu .inner-menu-tab.active{background:#fff!important;color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important;box-shadow:0 4px 12px rgba(38,61,95,.07)!important}
+}
