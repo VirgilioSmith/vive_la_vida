@@ -41,7 +41,7 @@ const todayPeriod=()=>(PAYLOAD?.today||new Date().toISOString().slice(0,10)).sli
 /* ---------- hechos observados (solo lo que existe en la app) ---------- */
 function factsFromPayload(P){
  if(!P)return {fx:60,cards:[],loans:[],unrated:[],incomes:[],fixed:[]};
- return {fx:P.fx,cards:clone(P.cards||[]),loans:clone(P.loans||[]),unrated:clone(P.unrated||[]),incomes:clone(P.incomes||[]),fixed:clone(P.fixed||[]),spending:clone(P.spending||null),liquidity:clone(P.liquidity||null)};
+ return {fx:P.fx,cards:clone(P.cards||[]),loans:clone(P.loans||[]),unrated:clone(P.unrated||[]),incomes:clone(P.incomes||[]),fixed:clone(P.fixed||[]),spending:clone(P.spending||null),liquidity:clone(P.liquidity||null),duplicates:clone(P.duplicates||[])};
 }
 function withOverrides(list){return list.map(x=>{const o=ST.overrides[x.productId||x.id]||{};return {...x,openedSource:validPeriod(x.opened)?'app':(validPeriod(o.opened)?'usuario':'falta'),...((!validPeriod(x.opened)&&validPeriod(o.opened))?{opened:o.opened}:{}),...(o.status?{status:o.status}:{}),source:o.source||(x.source||'app'),evidenceVerified:!!o.evidenceVerified,evidenceNote:o.note||''}})}
 
@@ -123,7 +123,7 @@ function materialize(period,idxInList){
  for(const e of (A.closed?.answer==='yes'?A.closed.items||[]:[]))add('close',e.period,'Producto cerrado · '+(e.productLabel||'producto'),`${e.reason||'motivo no indicado'} · ${e.state||'—'} · declaración personal`);
  for(const e of (A.other?.answer==='yes'?A.other.items||[]:[]))add('other',e.period,'Acontecimiento declarado · '+(OTHER_TYPES[e.type]||e.type),`${e.note||'sin nota'} · declaración personal`);
  return {
-  period,txRate:facts.fx,formal:formalInc.reduce((a,i)=>a+i.net,0),formalMonths:maxRec(formalInc),formalVerified:formalInc.length>0&&formalInc.every(i=>i.verified),otherFormal:extraMonthly(formalInc),payroll,
+  period,duplicates:facts.duplicates||[],txRate:facts.fx,formal:formalInc.reduce((a,i)=>a+i.net,0),formalMonths:maxRec(formalInc),formalVerified:formalInc.length>0&&formalInc.every(i=>i.verified),otherFormal:extraMonthly(formalInc),payroll,
   informal:informalInc.reduce((a,i)=>a+i.net,0)+extraMonthly(informalInc),informalQuality:!informalInc.length?'none':informalVerified?'verified':'declared',informalMonths:maxRec(informalInc),paid:0,
   lateShort:dc.lateShort,late30:dc.late30,late60:dc.late60,late90:dc.late90,late120:dc.late120,lateOlder:dc.lateOlder+0,
   collections:0,chargeOffs:0,judicial:0,historyMonths,avgHistoryMonths,avgEstimated,recordMonths,

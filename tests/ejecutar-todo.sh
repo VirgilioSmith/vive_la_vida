@@ -9,7 +9,7 @@ correr "Reglas financieras (unitarias)" node --test tests/logica/reglas.test.js 
 correr "Paridad app/biblioteca, recorridos de lógica" node tests/logica/run.js
 for T in light black; do
   export THEME=$T
-  for s in smoke csp xss adversarial remediacion-03 experiencia-04 rendimiento vive-score vive-score-reglas; do correr "$s [$T]" node tests/$s.js; done
+  for s in smoke csp xss adversarial remediacion-03 experiencia-04 rendimiento vive-score vive-score-propiedades vive-score-reglas; do correr "$s [$T]" node tests/$s.js; done
   for d in "390 844" "430 932" "768 1024" "1440 900"; do set -- $d; W=$1 H=$2 correr "pantallas-sin-scroll $1x$2 [$T]" node tests/pantallas-sin-scroll.js; done
   [ -n "$AXE" ] && correr "auditoria-recorrido + axe [$T]" env AXE="$AXE" node tests/auditoria-recorrido.js /tmp/recorrido-$T.json
 done

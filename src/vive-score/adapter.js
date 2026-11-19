@@ -105,7 +105,12 @@ function read(){
    for(const d of days){if(a.opened&&a.opened>d)continue;const v=num(b.balanceAt(a,d))*f;if(d===today)cur=v;low=Math.min(low,v)}
    if(!Number.isFinite(low))continue;held+=Math.max(0,low);now+=Math.max(0,cur);n++}
   liquidity={held30:Math.round(held),now:Math.round(now),accounts:n,days:30}}}catch(_){liquidity=null}
- return {version:1,today,fx:fx>0?fx:60,cards,loans,unrated,incomes,fixed,spending,liquidity};
+ /* Posibles movimientos duplicados en tarjetas (mismo producto, fecha, importe y descripción) en los últimos 90 días. Solo se avisa: nunca se corrige ni se omite un movimiento. */
+ const dupMap=new Map();
+ for(const t of db.transactions||[]){if(!t||t.deleted||!t.cardId||!(t.type==='card_charge'||t.type==='card_payment')||t.date<since90||t.date>today)continue;
+  const k=[t.type,t.cardId,t.date,num(t.amount),String(t.merchant||t.note||'').trim().toLowerCase()].join('|');dupMap.set(k,(dupMap.get(k)||0)+1)}
+ const duplicates=[...dupMap.entries()].filter(([,n])=>n>1).slice(0,10).map(([k,n])=>{const [type,card,date,amount]=k.split('|');return {type,cardId:card,date,amount:Number(amount),count:n}});
+ return {version:1,today,fx:fx>0?fx:60,cards,loans,unrated,incomes,fixed,spending,liquidity,duplicates};
 }
 window.ViveScoreAdapter=Object.freeze({read});
 })();
