@@ -61,3 +61,13 @@ Autorización para **Fase 1** (A1 a A5). Indica además si las capacidades A3 de
 1. `wc -l` de `app.js` y `styles.css` antes y después, anotado en el mensaje del commit.
 2. `node tests/regresion-visual.js` (67 huellas idénticas) y `smoke`, `csp`, `detalles` más las pruebas de la vista tocada.
 3. Si algo cambia, se revierte el lote y se investiga; no se arrastra una regresión a la fase siguiente.
+
+## 6. Avance ejecutado
+| Intervención | Resultado | Verificación |
+|---|---|---|
+| Bucle de reescritura de textos (`normalizeTitleBadges`, `stripCounterEyebrows`) y reordenado de botones de Wallet | Hilo principal en reposo: 2.941 ms por cada 3 s → 0 ms; 0 mutaciones por segundo en 21 vistas × web/móvil | `/tmp`-scripts de mutación en reposo; 64 capturas idénticas |
+| Caché de `today()`, `isMobileViewport()`, formateadores de fecha | Mostrar Resumen móvil (CPU 4× más lenta): 657 → 99 ms | perfil de CPU antes/después |
+| CSS: 112 reglas con clases que ningún código genera | −208 líneas | 64 capturas idénticas |
+| Intento de 427 reglas: 1 selector `:is(...)` con clases vivas y muertas hacía falsa la regla | Se descartó el lote entero y se filtraron los selectores con `:is/:not/:has/:where` | bisección contra la línea base |
+
+Lección: la «limpieza» de CSS por clases inexistentes es segura solo para selectores simples; los listados `:is()` requieren eliminar alternativas, no reglas. Pendiente (con tu autorización): variables/funciones JS sin uso (~210 líneas) y CSS dudoso (B1/B2).
