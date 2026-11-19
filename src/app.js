@@ -1955,7 +1955,7 @@ function originalCards(){
  <div class="v148-benefit-detail"><span>Cashback recibido <b>${money(z.realizedCashback,'DOP',2)}</b></span><span>Costo pagado <b>${money(z.paidAmount,'DOP',2)}</b></span></div>
  <div class="v148-meta"><span>Rentabilidad <strong>${v144RoiText(z.roi)}</strong></span>${z.billedAmount>0?`<span class="v148-pending">Por conciliar <strong>${money(z.billedAmount,'DOP',2)}</strong></span>`:''}</div>
  <div class="v148-card-due"><span>Corte: día ${c.cutDay} · Pago: día ${c.dueDay}</span>${closest?dueChip(closest.nextDue):'<span class="pill green">Sin pago facturado</span>'}</div>
- </section><div class="product-mini-actions">${productControls('card',c.id,c.archived)}</div><div class="card-footer"><button class="btn sm ghost" data-act="cardDetails" data-id="${c.id}">Estado y corte</button><button class="btn sm ghost" data-act="cardHistory" data-id="${c.id}">${icon('chart')} Histórico</button><button class="btn sm soft" data-act="payCard" data-id="${c.id}">Registrar pago</button></div><button class="v149-lifecycle-link" data-act="cardDetails" data-id="${c.id}">${icon('chart')} Explorar el ciclo de vida completo ${icon('arrow')}</button></div></details></div>`}).join(''):`<div class="panel"><div class="empty"><span class="empty-icon">▣</span>No hay tarjetas registradas.<br/><button class="btn sm soft" data-act="addCard">Agregar tarjeta</button></div></div>`}</div>${ui.cardId&&card(ui.cardId)?cardDetail(card(ui.cardId)):''}<details class="v256-cards-methodology"><summary>${icon('shield')} Cómo se calculan las cifras y los beneficios <span aria-hidden="true">⌄</span></summary><p>Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</p><p>Los cortes se calculan a partir de las fechas de cada tarjeta y sus movimientos. Los importes y mínimos son estimaciones y pueden diferir de los confirmados por el banco.</p></details>`}
+ </section><div class="product-mini-actions">${productControls('card',c.id,c.archived)}</div><div class="card-footer"><button class="btn sm ghost" data-act="cardDetails" data-id="${c.id}">${icon('chart')} Explorar el ciclo</button><button class="btn sm soft" data-act="payCard" data-id="${c.id}">Registrar pago</button></div></div></details></div>`}).join(''):`<div class="panel"><div class="empty"><span class="empty-icon">▣</span>No hay tarjetas registradas.<br/><button class="btn sm soft" data-act="addCard">Agregar tarjeta</button></div></div>`}</div>${ui.cardId&&card(ui.cardId)?cardDetail(card(ui.cardId)):''}<details class="v256-cards-methodology"><summary>${icon('shield')} Cómo se calculan las cifras y los beneficios <span aria-hidden="true">⌄</span></summary><p>Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</p><p>Los cortes se calculan a partir de las fechas de cada tarjeta y sus movimientos. Los importes y mínimos son estimaciones y pueden diferir de los confirmados por el banco.</p></details>`}
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -6227,6 +6227,7 @@ case 'pendingConfirm':openPendingOperation(id);break;
    v8SearchDestination=null;
    if(id==='settings' && ui.page!=='settings')v242SettingsPane='home';
   ui.page=id==='kpis'?'overview':id==='transactions'?'register':id==='projection'?'patrimony':id==='vision'?'payments':id;
+  if(id==='accounts')ui.accountId=null;if(id==='loans')ui.loanId=null;if(id==='cards'){ui.cardId=null;ui.cardDetailTab='status'} // volver a la lista al entrar desde el menú
   if(ui.page==='register')ui.movementTab='all'; // Movimientos conserva su historial; el botón Registrar abre el asistente.
   if(ui.page==='banks' && window.matchMedia?.('(min-width: 791px)').matches){
     v225DesktopBankOpened=false;
@@ -15390,7 +15391,7 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
         <div><small>Deuda utilizada</small><b>${money(debt)}</b></div>
         <div><small>Disponible</small><b>${money(Math.max(0,available))}</b></div>
       </div>
-      <div class="v244-product-foot"><span>${utilization===null?'Sin límite definido':utilization.toFixed(1)+'% utilizado'}${next?' · Próximo pago '+prettyDate(next.date):''}</span><button type="button" data-act="cardDetails" data-id="${sanitize(cardItem.id)}">Ver tarjeta ${icon('arrow')}</button></div>
+      <div class="v244-product-foot"><span>${utilization===null?'Sin límite definido':utilization.toFixed(1)+'% utilizado'}${next?' · Próximo pago '+prettyDate(next.date):''}</span><button type="button" data-act="cardDetails" data-id="${sanitize(cardItem.id)}">Explorar el ciclo ${icon('arrow')}</button><button type="button" data-act="payCard" data-id="${sanitize(cardItem.id)}">Registrar pago</button></div>
     </article>`;
   }
   function v244CardsTx(tx){
@@ -18581,6 +18582,144 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  },true);
  document.addEventListener('input',e=>{if(e.target?.id!=='v920-search')return;S().q=e.target.value;const q=e.target.value.trim().toLowerCase();document.querySelectorAll('#v920-list [data-q]').forEach(b=>{b.hidden=!!q&&!b.dataset.q.includes(q)})});
  window.v920SaveEmoji=(kind,cat,sub,emoji)=>setEmoji(kind,cat,sub,emoji);
+})();
+
+/* V1190 · Tarjeta (web y móvil): detalle único «Explorar el ciclo» — estado del ciclo, fechas importantes y movimientos del ciclo.
+   Beneficios, cierres anteriores y administración quedan como divulgación progresiva. No cambia cálculos ni registros. */
+(()=>{
+ const esc=v=>sanitize(String(v??''));
+ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+ const sym=c=>c==='USD'?'US$':'RD$';
+ const days=d=>{if(!d)return null;return diffDays(d,today())};
+ const dueChip=d=>{const n=days(d);if(n===null)return '';return n<0?`<em class="bad">Vencida hace ${-n} d</em>`:n===0?'<em class="warn">Vence hoy</em>':`<em>en ${n} d</em>`};
+ function bloque(c,ccy){
+  const st=cardStatus(c,ccy);
+  const limit=ccy==='USD'?num(c.limitUSD):num(c.limitDOP);
+  if(!(num(st.debt)||num(st.billed)||limit||st.cut))return '';
+  const paid=rnd(db.transactions.filter(t=>t.cardId===c.id&&t.type==='card_payment'&&(t.currency||'DOP')===ccy&&(!st.cut||String(t.date)>String(st.cut))).reduce((n,t)=>n+num(t.amount),0));
+  const util=limit>0?Math.min(100,num(st.debt)/limit*100):null;
+  const row=(l,v,cls='')=>`<div class="v1190-row"><span>${l}</span><b class="${cls}">${v}</b></div>`;
+  return `<section class="v1190-panel" aria-label="Estado del ciclo en ${ccy==='USD'?'dólares':'pesos'}">
+   <header><h3>Estado del ciclo</h3><span class="v1190-ccy">${sym(ccy)}</span></header>
+   <div class="v1190-debt"><small>Deuda total</small><strong>${money(st.debt,ccy,2)}</strong>${util!==null?`<span class="v1190-gauge" role="img" aria-label="Utilización ${util.toFixed(1)}%"><i style="width:${util}%"></i></span><em>${util.toFixed(1)}% del límite · disponible ${money(Math.max(0,num(st.availableWithOverdraft)),ccy,2)}</em>`:''}</div>
+   ${row('Facturado al corte',money(st.billed,ccy,2),num(st.overdue)>0.005?'bad':'')}${row('Consumo sin corte',money(st.unbilled,ccy,2))}${row('Pagado en este ciclo',money(paid,ccy,2))}${row('Pago mínimo',money(st.minimum,ccy,2))}
+   <div class="v1190-dates" aria-label="Fechas importantes"><div><small>Último corte</small><b>${st.cut?esc(prettyDate(st.cut)):'—'}</b></div><div><small>Próximo corte</small><b>${st.nextCut?esc(prettyDate(st.nextCut)):'—'}</b>${st.nextCut?dueChip(st.nextCut):''}</div><div><small>Fecha límite de pago</small><b>${st.nextDue?esc(prettyDate(st.nextDue)):'—'}</b>${st.nextDue?dueChip(st.nextDue):''}</div></div>
+  </section>`;
+ }
+ function movimientos(c){
+  const cuts=['DOP','USD'].map(k=>cardStatus(c,k).cut).filter(Boolean).sort();
+  const from=cuts[0]||'';
+  const all=recentTx().filter(t=>t.cardId===c.id);
+  const inCycle=all.filter(t=>!from||String(t.date)>String(from));
+  const list=(inCycle.length?inCycle:all).slice(0,10);
+  const rows=list.map(t=>`<button type="button" class="v1190-tx" data-act="v6WalletTransactionDetail" data-id="${esc(t.id)}"><span><strong>${esc(typeof v1180Concept==='function'?v1180Concept(t):transactionTitle(t))}</strong><small>${esc(prettyDate(t.date))}${t.category?' · '+esc(t.category):''}</small></span><b>${txDisplay(t)}</b></button>`).join('');
+  return `<section class="v1190-panel"><header><h3>Movimientos del ciclo</h3><span class="v1190-count">${inCycle.length||all.length}</span></header>${rows||'<p class="v1190-empty">Sin movimientos en este ciclo.</p>'}${all.length>list.length?`<button type="button" class="v1190-link" data-act="navigate" data-id="register">Ver todos en Movimientos ${icon('arrow')}</button>`:''}</section>`;
+ }
+ function beneficios(c){
+  const d=benefitBreakdown(c,'DOP'),u=benefitBreakdown(c,'USD');
+  const cr=num(d.credited)+fx(num(u.credited),'USD'),cost=num(d.costs)+fx(num(u.costs),'USD');
+  const prog=c.rewardsName||c.rewardsProgram||(num(c.cashbackPct)>0?'Cashback '+c.cashbackPct+'%':'');
+  if(!prog&&!cr&&!cost)return '';
+  return `<details class="v1190-more"><summary>Beneficios y costos<span>${money(cr)} acreditados</span></summary><div class="v1190-body">${prog?`<div class="v1190-row"><span>Programa</span><b>${esc(prog)}</b></div>`:''}<div class="v1190-row"><span>Beneficios acreditados</span><b>${money(cr)}</b></div><div class="v1190-row"><span>Costos de la tarjeta</span><b>${money(cost)}</b></div></div></details>`;
+ }
+ function cierres(c){
+  const rows=[];
+  for(const ccy of ['DOP','USD']){try{for(const r of cardHistoryData(c,nowYear(),ccy)){if(r.recorded&&!r.future&&r.official)rows.push({k:r.key,ccy,amt:r.balance,paid:r.official.paidInPeriod,st:r.official.status})}}catch(_){}}
+  rows.sort((a,b)=>b.k.localeCompare(a.k));
+  const sh=rows.filter(r=>num(r.amt)||num(r.paid)).slice(0,6);
+  if(!sh.length)return '';
+  return `<details class="v1190-more"><summary>Cierres anteriores<span>${sh.length}</span></summary><div class="v1190-body">${sh.map(r=>`<div class="v1190-row"><span>${esc(r.k)} · ${sym(r.ccy)}${r.st?' · '+esc(r.st):''}</span><b>${money(r.amt,r.ccy,2)}</b></div>`).join('')}</div></details>`;
+ }
+ function admin(c){
+  const id=esc(c.id);
+  return `<details class="v1190-more"><summary>Administrar esta tarjeta</summary><div class="v1190-body v1190-admin"><button type="button" data-act="editCard" data-id="${id}">Editar tarjeta</button><button type="button" data-act="manualBenefit" data-id="${id}">Registrar beneficio</button><button type="button" data-act="annualFee" data-id="${id}">Registrar anualidad cobrada</button><button type="button" data-act="productArchive" data-kind="card" data-id="${id}" class="danger">Cancelar tarjeta</button></div></details>`;
+ }
+ function detalle(c){
+  const tier=CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
+  return `<div class="v1190 v1190-card"><button type="button" class="v1190-back" data-act="closeCardDetails">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>Tarjetas</span></button>
+   <section class="v1190-hero"><div><span class="v1190-kick">${esc(bankOf(c))}</span><h2>${esc(c.name)}</h2><p>${esc(tier)} · •••• ${esc(c.last4||'—')}</p></div><button type="button" class="v1190-primary" data-act="payCard" data-id="${esc(c.id)}">${G('<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 11h18"/>')}<span>Registrar pago</span></button></section>
+   <div class="v1190-grid">${bloque(c,'DOP')}${bloque(c,'USD')}</div>
+   ${movimientos(c)}${beneficios(c)}${cierres(c)}${admin(c)}</div>`;
+ }
+ const prev=pages.cards;
+ pages.cards=function(...a){const c=ui.cardId?card(ui.cardId):null;return c?detalle(c):prev.apply(this,a)};
+})();
+
+/* V1191 · Cuenta → «Ver evolución»: un único gráfico interactivo del saldo (cierres mensuales reales calculados de tus registros). */
+(()=>{
+ const esc=v=>sanitize(String(v??''));
+ const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+ const St=()=>ui.v1191||(ui.v1191={range:12});
+ const short=n=>{const a=Math.abs(n);return (n<0?'-':'')+(a>=1e6?(a/1e6).toFixed(a>=1e7?0:1)+'M':a>=1e3?Math.round(a/1e3)+'K':String(Math.round(a)))};
+ function serie(a){
+  const t0=today(),ends=[];
+  const first=[a.opened,...db.transactions.filter(t=>t.accountId===a.id||t.toAccountId===a.id).map(t=>t.date)].filter(Boolean).sort()[0]||t0;
+  let y=+first.slice(0,4),m=+first.slice(5,7);const cy=+t0.slice(0,4),cm=+t0.slice(5,7);
+  while(y<cy||(y===cy&&m<=cm)){const last=new Date(y,m,0);const d=(y===cy&&m===cm)?t0:dateStr(last);ends.push({d,lab:MS[m-1]+' '+String(y).slice(2),v:getAccountBalance(a,d)});m++;if(m>12){m=1;y++}}
+  const r=St().range;return r==='all'?ends:ends.slice(-r);
+ }
+ function grafico(a,pts){
+  const W=760,H=300,L=58,R=18,T=18,B=34,cw=W-L-R,ch=H-T-B;
+  const vals=pts.map(x=>x.v),mx=Math.max(...vals,0),mn=Math.min(...vals,0),span=Math.max(1,mx-mn);
+  const X=i=>L+(pts.length===1?cw/2:i*cw/(pts.length-1)),Y=v=>T+(mx-v)/span*ch;
+  const line=pts.map((q,i)=>(i?'L':'M')+X(i).toFixed(1)+','+Y(q.v).toFixed(1)).join(' ');
+  const area=line+` L${X(pts.length-1).toFixed(1)},${(T+ch).toFixed(1)} L${X(0).toFixed(1)},${(T+ch).toFixed(1)} Z`;
+  const ticks=[0,1,2,3].map(i=>mx-span*i/3);
+  const grid=ticks.map(v=>`<line x1="${L}" x2="${W-R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" class="v1191-grid"/><text x="${L-8}" y="${(Y(v)+4).toFixed(1)}" text-anchor="end" class="v1191-ax">${short(v)}</text>`).join('');
+  const step=Math.ceil(pts.length/8);
+  const xl=pts.map((q,i)=>i%step===0||i===pts.length-1?`<text x="${X(i).toFixed(1)}" y="${H-10}" text-anchor="middle" class="v1191-ax">${esc(q.lab)}</text>`:'').join('');
+  const hit=pts.map((q,i)=>{const w=pts.length===1?cw:cw/(pts.length-1);return `<rect x="${(X(i)-w/2).toFixed(1)}" y="${T}" width="${w.toFixed(1)}" height="${ch}" fill="transparent" data-i="${i}"/>`}).join('');
+  const data=esc(JSON.stringify(pts.map((q,i)=>({x:+X(i).toFixed(1),y:+Y(q.v).toFixed(1),d:q.d,v:q.v,lab:q.lab}))));
+  return `<svg class="v1191-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución del saldo" data-pts="${data}" data-cur="${esc(a.currency)}"><defs><linearGradient id="v1191a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--ac)" stop-opacity=".28"/><stop offset="1" stop-color="var(--ac)" stop-opacity="0"/></linearGradient></defs>${grid}<path d="${area}" fill="url(#v1191a)"/><path d="${line}" class="v1191-line"/>${xl}<line class="v1191-cur" x1="0" x2="0" y1="${T}" y2="${T+ch}"/><circle class="v1191-dot" r="5.5" cx="${X(pts.length-1).toFixed(1)}" cy="${Y(pts.at(-1).v).toFixed(1)}"/>${hit}</svg>`;
+ }
+ function vista(a){
+  const pts=serie(a),r=St().range,last=pts.at(-1),prev=pts.length>1?pts.at(-2):null;
+  const btn=(k,l)=>`<button type="button" class="${r===k?'is-on':''}" data-v1191-range="${k}">${l}</button>`;
+  const cur=a.currency;
+  return `<div class="v1191"><header class="v1191-head"><button type="button" class="v1191-back" data-act="closeAccountDetails" aria-label="Volver a cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><h2>${esc(a.name)}</h2><small>${esc(cur)}${a.kind==='cash'?' · Efectivo':''}</small></div><div class="v1191-ranges" role="group" aria-label="Período">${btn(6,'6M')}${btn(12,'12M')}${btn('all','Todo')}</div></header>
+   <div class="v1191-read" aria-live="polite"><small id="v1191-d">${esc(prettyDate(last.d))}</small><strong id="v1191-v">${money(last.v,cur,2)}</strong><em id="v1191-c">${prev?(last.v-prev.v>=0?'+':'−')+money(Math.abs(last.v-prev.v),cur,2)+' frente al cierre anterior':'Primer cierre registrado'}</em></div>
+   ${pts.length>1?grafico(a,pts):`<p class="v1191-empty">Todavía no hay suficientes cierres para trazar la evolución.</p>`}</div>`;
+ }
+ accountDetail=function(a){return vista(a)};
+ const prevAcc=pages.accounts;pages.accounts=function(...x){const a=ui.accountId?account(ui.accountId):null;return a?vista(a):prevAcc.apply(this,x)};
+ document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1191-range]');if(!b)return;e.preventDefault();const v=b.dataset.v1191Range;St().range=v==='all'?'all':+v;render()});
+ const show=(svg,i)=>{try{const pts=JSON.parse(svg.dataset.pts);const q=pts[i];if(!q)return;const cur=svg.dataset.cur;const l=svg.querySelector('.v1191-cur'),d=svg.querySelector('.v1191-dot');l.setAttribute('x1',q.x);l.setAttribute('x2',q.x);d.setAttribute('cx',q.x);d.setAttribute('cy',q.y);
+  const root=svg.closest('.v1191');root.querySelector('#v1191-d').textContent=prettyDate(q.d);root.querySelector('#v1191-v').textContent=money(q.v,cur,2);const pv=pts[i-1];root.querySelector('#v1191-c').textContent=pv?((q.v-pv.v>=0?'+':'−')+money(Math.abs(q.v-pv.v),cur,2)+' frente al cierre anterior'):'Primer cierre del período'}catch(_){}};
+ document.addEventListener('pointermove',e=>{const r=e.target.closest?.('.v1191-svg rect[data-i]');if(r)show(r.closest('svg'),+r.dataset.i)});
+ document.addEventListener('click',e=>{const r=e.target.closest?.('.v1191-svg rect[data-i]');if(r)show(r.closest('svg'),+r.dataset.i)});
+})();
+
+/* V1192 · Préstamo (web y móvil): nivel 1 esencial (saldo, cuota, vencimiento, progreso), nivel 2 detalle en divulgación progresiva
+   y nivel 3 gestión (una sola fila de acciones). Sin «Próximo paso» ni «Principio contable». Reutiliza el motor de cálculo existente. */
+(()=>{
+ const esc=v=>sanitize(String(v??''));
+ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+ const St=()=>ui.v1192||(ui.v1192={open:[]});
+ const sec=(k,t,hint,body)=>{const o=St().open.includes(k);return `<details class="v1192-more" data-v1192="${k}"${o?' open':''}><summary>${t}<span>${hint||''}</span></summary><div class="v1192-body">${body}</div></details>`};
+ function vista(l){
+  const b=loanBundle(l),a=b.actual,cur=l.currency||'DOP',orig=b.original;
+  const pr=num(a.openingPrincipal||l.principal),paid=num(a.paidPrincipal)+num(a.historicReduction||0);
+  const pct=pr>0?Math.max(0,Math.min(100,paid/pr*100)):0;
+  const done=!!a.settled,n=a.next?diffDays(a.next,today()):null;
+  const status=done?'<em class="ok">Liquidado</em>':n===null?'':n<0?`<em class="bad">Vencida hace ${-n} d</em>`:n===0?'<em class="warn">Vence hoy</em>':`<em>en ${n} d</em>`;
+  const done_n=num(a.periods)+num(a.historicPeriods||0),left=Math.max(0,num(l.months)-done_n);
+  const f=(k,v)=>`<div class="v1192-fact"><span>${k}</span><b>${v}</b></div>`;
+  const facts=[f('Monto original',money(l.principal,cur,2)),f('Tasa de interés',(l.rate!==undefined?num(l.rate).toFixed(2)+'% anual':'—')),f('Plazo',num(l.months)+' meses'),f('Cuotas pagadas / restantes',done_n+' / '+left),f('Primera cuota',l.firstDue?esc(prettyDate(l.firstDue)):'—'),f('Vencimiento final',orig.end?esc(prettyDate(orig.end)):'—'),f('Capital pagado',money(paid,cur,2)),f('Intereses pagados',money(num(a.interest)+num(a.estimatedHistoricInterest||0),cur,2)),num(a.insurance)?f('Seguro',money(a.insurance,cur,2)):'',num(a.fees)?f('Comisiones',money(a.fees,cur,2)):''].join('');
+  const antig=typeof antiguedadRow==='function'?`<div class="v1192-antig">${antiguedadRow(l,'loan')}</div>`:'';
+  return `<div class="v1192"><button type="button" class="v1192-back" data-act="closeLoanDetails">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>Préstamos</span></button>
+   <section class="v1192-hero"><div class="v1192-top"><div><span class="v1192-kick">${esc(bankOf(l))}</span><h2>${esc(l.name)}</h2></div></div>
+    <div class="v1192-main"><div><small>Saldo pendiente</small><strong>${money(a.balance,cur,2)}</strong></div><div class="v1192-next"><small>Próxima cuota</small><b>${done?'—':money(orig.installment,cur,2)}</b><span>${done?'Sin cuotas pendientes':esc(prettyDate(a.next))} ${status}</span></div></div>
+    <div class="v1192-prog" role="img" aria-label="Amortización ${pct.toFixed(1)}%"><i style="width:${pct}%"></i></div><div class="v1192-progtxt"><span>${pct.toFixed(1)}% amortizado</span><span>${left} ${left===1?'cuota restante':'cuotas restantes'}</span></div>
+    <div class="v1192-acts"><button type="button" class="v1192-primary" data-act="payLoan" data-id="${esc(l.id)}">Registrar cuota</button><button type="button" class="v1192-sec" data-act="extraLoan" data-id="${esc(l.id)}">Abono extraordinario</button></div></section>
+   ${sec('detalle','Detalle del préstamo',esc(num(l.rate).toFixed(2))+'% · '+num(l.months)+' meses',`<div class="v1192-facts">${facts}</div>${antig}`)}
+   ${sec('pagos','Pagos y abonos realizados',done_n+' cuotas',loanPaymentHistory(l,b))}
+   ${sec('amort','Amortización','tabla y exportación',loanAmortView(l,b))}
+   ${sec('sim','Simular un abono','efecto en plazo e intereses',loanSimulator(l,b))}
+   ${sec('admin','Administrar este préstamo','',`<div class="v1192-admin"><button type="button" data-act="editLoan" data-id="${esc(l.id)}">Editar ficha</button><button type="button" class="danger" data-act="productArchive" data-kind="loan" data-id="${esc(l.id)}">Cancelar préstamo</button></div>`)}</div>`;
+ }
+ loanDetail=function(l){return vista(l)};
+ const prev=pages.loans;pages.loans=function(...x){const l=ui.loanId?loan(ui.loanId):null;return l?vista(l):prev.apply(this,x)};
+ document.addEventListener('toggle',e=>{const d=e.target;if(!d?.matches?.('details.v1192-more'))return;const k=d.dataset.v1192,st=St();st.open=d.open?[...new Set([...st.open,k])]:st.open.filter(x=>x!==k)},true);
 })();
 
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
