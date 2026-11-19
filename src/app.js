@@ -330,7 +330,7 @@ const bankTx=(t,bid)=>[account(t.accountId),account(t.toAccountId),card(t.cardId
 const ensureBanks=()=>{if(db.banks.some(b=>!b.archived))return true;toast('Primero registra una institución en el módulo Bancos.');ui.page='banks';render();return false};
 const persist=()=>{
  v99Invalidate();
- try{for(const t of db.transactions||[])if(t.reviewed!==true&&!t.recurringId)t.reviewed=true}catch(_){}
+ try{for(const t of db.transactions||[])if(t.reviewed!==true&&(!t.recurringId||t.postingOrigin==='manual'||String(t.postingOrigin||'').startsWith('autom')))t.reviewed=true}catch(_){}
  try{
   if(typeof v31BeforePersist==='function')v31BeforePersist();
   if(!window.__f360CloudUid){return false;}
@@ -5919,7 +5919,7 @@ if(v.recurringId||previous?.recurringId){
  const linkedId=String(v.recurringId||previous?.recurringId||'');
  const recurring=db.recurring.find(x=>x.id===linkedId);
  if(!recurring)throw Error('La suscripción vinculada ya no existe. Selecciona un servicio vigente.');
- base.recurringId=linkedId;
+ base.recurringId=linkedId;if(!previous)base.reviewed=true;
  base.scheduleKey=previous?.scheduleKey||(editId?'':`recurring:${linkedId}:${recurring.nextDue}`);
  if(!previous&&db.transactions.some(t=>t.scheduleKey&&t.scheduleKey===base.scheduleKey))throw Error('Este vencimiento ya está registrado como pagado. Actualiza Próximos pagos.');
 }
@@ -5932,7 +5932,7 @@ function payRecurring(id){
  if(db.transactions.some(t=>t.scheduleKey===`recurring:${r.id}:${r.nextDue}`)){toast('Este vencimiento ya fue registrado. Revisa el historial de pagos.');return;}
  guidedTransactionForm({flowMode:'service',type:src==='card'?'card_charge':'expense',paymentSource:src==='card'?'card':'account',cardId:c?.id||'',accountId:a?.id||'',amount:r.amount,currency:r.currency,category:r.category,subcategory:r.subcategory||'',servicePreset:'other',note:r.name,recurringId:r.id,paymentChannel:'internet_banking'});
 }
-function executeRecurringPayment(v){let r=db.recurring.find(a=>a.id===v.recurringId);if(!r||r.active===false)throw Error('La suscripción no está disponible.');let [type,ref]=String(r.source||'').split(':');let a=type==='account'?account(ref):null,c=type==='card'?card(ref):null;if(!a&&!c||a?.archived||c?.archived||a&&bank(a.bankId)?.archived||c&&bank(c.bankId)?.archived)throw Error('Edita la suscripción y selecciona una cuenta o tarjeta activa.');if(db.transactions.some(t=>t.scheduleKey===`recurring:${r.id}:${r.nextDue}`))throw Error('Este vencimiento ya consta como registrado.');if(a&&a.currency!==r.currency)throw Error('La moneda del cargo debe coincidir con la cuenta.');let amount=num(v.amount),date=v.date||today();if(!(amount>0))throw Error('El importe de pago debe ser positivo.');if(date>today())throw Error('No registres un cargo futuro como confirmado.');db.transactions.push({id:uuid(),created:new Date().toISOString(),date,type:a?'expense':'card_charge',note:r.name+' · Pago recurrente',category:r.category,subcategory:r.subcategory||'',accountId:a?a.id:'',cardId:c?c.id:'',currency:r.currency,amount:rnd(amount),recurringId:r.id,scheduleKey:`recurring:${r.id}:${r.nextDue}`,postingOrigin:'manual'});r.nextDue=nextRecurringDate(r);}
+function executeRecurringPayment(v){let r=db.recurring.find(a=>a.id===v.recurringId);if(!r||r.active===false)throw Error('La suscripción no está disponible.');let [type,ref]=String(r.source||'').split(':');let a=type==='account'?account(ref):null,c=type==='card'?card(ref):null;if(!a&&!c||a?.archived||c?.archived||a&&bank(a.bankId)?.archived||c&&bank(c.bankId)?.archived)throw Error('Edita la suscripción y selecciona una cuenta o tarjeta activa.');if(db.transactions.some(t=>t.scheduleKey===`recurring:${r.id}:${r.nextDue}`))throw Error('Este vencimiento ya consta como registrado.');if(a&&a.currency!==r.currency)throw Error('La moneda del cargo debe coincidir con la cuenta.');let amount=num(v.amount),date=v.date||today();if(!(amount>0))throw Error('El importe de pago debe ser positivo.');if(date>today())throw Error('No registres un cargo futuro como confirmado.');db.transactions.push({id:uuid(),created:new Date().toISOString(),date,type:a?'expense':'card_charge',note:r.name+' · Pago recurrente',category:r.category,subcategory:r.subcategory||'',accountId:a?a.id:'',cardId:c?c.id:'',currency:r.currency,amount:rnd(amount),recurringId:r.id,scheduleKey:`recurring:${r.id}:${r.nextDue}`,postingOrigin:'manual',reviewed:true});r.nextDue=nextRecurringDate(r);}
 function download(text,file,type){let blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)}
 function exportJson(){download(JSON.stringify({...db,exportedAt:new Date().toISOString()},null,2),`vive-el-hoy-respaldo-${today()}.json`,'application/json')}
 function csv(){
@@ -8234,8 +8234,8 @@ function v40PostRecurring(r,due){
  if(a&&a.currency!==r.currency)throw Error('Moneda incompatible en '+r.name);
  const amount=rnd(r.amount);if(!(amount>0))throw Error('Importe inválido en '+r.name);
  if(a&&getAccountBalance(a,due)<amount-.001)throw Error('Saldo insuficiente para '+r.name);
- db.transactions.push({id:uuid(),created:new Date().toISOString(),date:due,type:a?'expense':'card_charge',note:(r.name+' · Cargo programado (por conciliar)').slice(0,180),category:r.category||'Servicios básicos',subcategory:r.subcategory||'',accountId:a?.id||'',cardId:c?.id||'',currency:r.currency,amount,recurringId:r.id,scheduleKey:key,postingOrigin:'automático estimado',reviewed:false,fxRateSnapshot:num(db.settings.fx),scheduleSnapshot:{name:r.name,amount,source:r.source,kind:'recurring',frequency:r.frequency,postingMode:r.postingMode,expectedDate:due}});
- r.nextDue=nextRecurringDate(r);v40RecordEvent('recurring',r.name,due,'Cargo programado pendiente de conciliar');return true;
+ db.transactions.push({id:uuid(),created:new Date().toISOString(),date:due,type:a?'expense':'card_charge',note:(r.name+' · Cargo programado').slice(0,180),category:r.category||'Servicios básicos',subcategory:r.subcategory||'',accountId:a?.id||'',cardId:c?.id||'',currency:r.currency,amount,recurringId:r.id,scheduleKey:key,postingOrigin:'automático estimado',reviewed:true,fxRateSnapshot:num(db.settings.fx),scheduleSnapshot:{name:r.name,amount,source:r.source,kind:'recurring',frequency:r.frequency,postingMode:r.postingMode,expectedDate:due}});
+ r.nextDue=nextRecurringDate(r);v40RecordEvent('recurring',r.name,due,'Cargo programado registrado');return true;
 }
 function v40PostLoan(l,due){
  const key=`loan:${l.id}:${due}`;
@@ -8249,8 +8249,8 @@ function v40PostLoan(l,due){
  const principal=rnd(Math.min(st.balance,Math.max(0,installment-interest)));
  const insurance=v49LoanPeriodInsurance(l,st.periods),fee=v49LoanPeriodFee(l,st.periods),amount=rnd(principal+interest+insurance+fee);
  if(getAccountBalance(a,due)<amount-.001)throw Error('Saldo insuficiente para '+l.name);
- db.transactions.push({id:uuid(),created:new Date().toISOString(),date:due,type:'loan_payment',note:(l.name+' · Cuota automática (por conciliar)').slice(0,180),category:'Deudas e intereses',loanId:l.id,accountId:a.id,currency:l.currency,principal,interest,insurance,fee,amount,sourceAmount:amount,paymentKind:'regular',installmentPeriod:v49LoanPeriodKey(l,due),paymentChannel:'presencial',paymentTax:0,paymentFee:0,scheduleKey:key,postingOrigin:'automático estimado',reviewed:false,fxRateSnapshot:num(db.settings.fx),scheduleSnapshot:{name:l.name,currentRate:rate,installment,insurance,fee,bankName:bankOf(l),accountName:a.name,expectedDate:due}});
- v40RecordEvent('loan',l.name,due,'Cuota calculada y asiento pendiente de conciliar');return true;
+ db.transactions.push({id:uuid(),created:new Date().toISOString(),date:due,type:'loan_payment',note:(l.name+' · Cuota automática').slice(0,180),category:'Deudas e intereses',loanId:l.id,accountId:a.id,currency:l.currency,principal,interest,insurance,fee,amount,sourceAmount:amount,paymentKind:'regular',installmentPeriod:v49LoanPeriodKey(l,due),paymentChannel:'presencial',paymentTax:0,paymentFee:0,scheduleKey:key,postingOrigin:'automático estimado',reviewed:true,fxRateSnapshot:num(db.settings.fx),scheduleSnapshot:{name:l.name,currentRate:rate,installment,insurance,fee,bankName:bankOf(l),accountName:a.name,expectedDate:due}});
+ v40RecordEvent('loan',l.name,due,'Cuota automática registrada');return true;
 }
 let v40Processing=false;
 function v40ProcessDue(){

@@ -55345,3 +55345,13 @@ html body #app#app #page .loan-vision-v2>.loan-visual svg{max-height:230px;width
 html body #app#app #page .cards-grid:has(.account-product-card){grid-auto-rows:1fr;align-items:stretch!important}
 html body #app#app #page .cards-grid .account-product-card{height:100%!important;min-height:0!important;align-self:stretch!important;margin:0!important;transform:none!important;display:flex!important;flex-direction:column;justify-content:space-between}
 @media(min-width:791px){html body #app#app #page .loan-vision-v2{align-items:stretch}html body #app#app #page .loan-vision-v2>.loan-compare{height:auto}}
+/* v1227 · Hojas móviles: el botón principal ocupa todo el ancho, en una sola línea y centrado */
+@media(max-width:790px){
+ html body #app#app .mobile-native-modal .form-foot,html body .mobile-native-modal .form-foot{display:grid!important;grid-template-columns:1fr!important}
+ html body .mobile-native-modal .form-foot>.btn,html body .mobile-native-modal .form-foot>button{width:100%!important;max-width:none!important;justify-self:stretch!important;display:flex!important;align-items:center;justify-content:center;text-align:center;white-space:nowrap!important;padding-left:12px!important;padding-right:12px!important}
+}
+@media(max-width:790px){
+ html body #modal-root#modal-root#modal-root .mobile-native-modal form .form-foot{display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+ html body #modal-root#modal-root#modal-root .mobile-native-modal form .form-foot>.btn:not([hidden]){width:100%!important;min-width:0!important;max-width:none!important;justify-self:stretch!important;display:flex!important;justify-content:center!important;align-items:center;text-align:center!important;white-space:nowrap!important;padding:0 12px!important;font-size:15px!important}
+}
+@media(max-width:790px){html body #modal-root#modal-root#modal-root .mobile-native-modal form .form-foot:has(>[type=submit])>.btn:not([type=submit]){display:none!important}}
