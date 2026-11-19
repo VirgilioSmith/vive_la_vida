@@ -18725,6 +18725,45 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1200-p]');if(!b)return;e.preventDefault();ui.v1200p=b.dataset.v1200P||'';ui.v56ContactId='';ui.v56LoanId='';render();window.scrollTo(0,0)},true);
 })();
 
+/* V1231 · Pagar tarjeta: la moneda (pesos / dólares) se elige a la vista. Cada opción muestra su deuda; al cambiar se recalcula el importe
+   (corte, total u otro monto) y, si hace falta, se propone una cuenta en esa moneda. Solo aparece si la tarjeta tiene cupo o deuda en dólares. */
+(()=>{
+ 'use strict';
+ let queued=false;
+ const opts=c=>['DOP','USD'].map(k=>{const st=cardStatus(c,k)||{};return {k,debt:Number(st.debt)||0,limit:Number(st.limit)||0}}).filter(o=>o.k==='DOP'||o.limit>0||o.debt>0);
+ function mount(f){
+  const sel=f.elements.cardId,cur=f.elements.currency;
+  if(!sel||!cur||!f.elements.cardPaymentMode)return;
+  const c=card(sel.value),list=c?opts(c):[];
+  let host=f.querySelector('.v1231-ccy');
+  if(list.length<2){host?.remove();return}
+  const val=cur.value==='USD'?'USD':'DOP';
+  const html=`<span class="v1231-ccy-label">Moneda a pagar</span><div class="v1231-ccy-seg" role="radiogroup" aria-label="Moneda a pagar">${list.map(o=>`<button type="button" role="radio" aria-checked="${o.k===val}" class="${o.k===val?'is-on':''}" data-v1231-ccy="${o.k}"><b>${o.k==='USD'?'US$ · Dólares':'RD$ · Pesos'}</b><small>${o.debt>0.004?'Deuda '+money(o.debt,o.k,2):'Sin deuda'}</small></button>`).join('')}</div>`;
+  if(!host){host=document.createElement('div');host.className='v1231-ccy';
+   const fields=f.querySelector('.studio-fields');let at=f.elements.cardPaymentMode;while(at&&at.parentElement&&at.parentElement!==fields)at=at.parentElement;
+   if(fields&&at&&at.parentElement===fields){const prev=at.previousElementSibling;at=prev&&/cu[aá]nto|monto/i.test(prev.textContent||'')&&!prev.querySelector('select,input')?prev:at;at.before(host)}
+   else (sel.closest('label')||sel).after(host)}
+  if(host.dataset.sig!==html){host.dataset.sig=html;host.innerHTML=html}
+ }
+ function scan(){queued=false;const f=document.querySelector('#modal-root form#transactionForm');if(f&&f.querySelector('#cardPaymentPreview,[name=cardPaymentMode]'))mount(f)}
+ const queue=()=>{if(queued)return;queued=true;requestAnimationFrame(scan)};
+ const root=document.getElementById('modal-root');
+ if(root)new MutationObserver(queue).observe(root,{childList:true,subtree:true});
+ document.addEventListener('change',e=>{if(e.target?.name==='cardId'||e.target?.name==='currency')queue()},true);
+ document.addEventListener('click',e=>{
+  const b=e.target.closest?.('[data-v1231-ccy]');if(!b)return;
+  e.preventDefault();e.stopPropagation();
+  const f=b.closest('form'),cur=f?.elements.currency,k=b.dataset.v1231Ccy;if(!f||!cur)return;
+  cur.value=k;
+  const acc=f.elements.accountId;
+  if(acc){const a=account(acc.value);if(!a||a.currency!==k){const m=db.accounts.find(x=>!x.archived&&x.kind!=='cash'&&x.currency===k);if(m){acc.value=m.id;acc.dispatchEvent(new Event('change',{bubbles:true}))}}}
+  cur.dispatchEvent(new Event('input',{bubbles:true}));cur.dispatchEvent(new Event('change',{bubbles:true}));
+  try{refreshCardPaymentPreview(true)}catch(_){}
+  queue();
+ },true);
+ queue();
+})();
+
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
 /* VIVE_SCORE (experimental): puente de SOLO LECTURA hacia los datos existentes; no escribe nada. */
 if(window.VIVE_SCORE_EXPERIMENTAL)window.__viveScoreBridge=Object.freeze({db:()=>db,today,card,bank,cardStatus,loanStatus,loanAccounting,fullOriginalLoan,xconvert,acquiredOnOf,balanceAt:(a,d)=>getAccountBalance(a,d),isFinancial:b=>v40IsFinancial(b),monthlyFactor:f=>v80MonthlyFactor(f),account,activeRecurring:()=>v339ActiveRecurring(),monthlyEquivalent:(a,c,f)=>v339MonthlyEquivalent(a,c,f),upcoming:()=>upcoming(),payroll:(s,d)=>v40Payroll(s,d),theme:()=>db.settings.theme,go:id=>{ui.page=id;render();window.scrollTo(0,0)},rerender:()=>render()});

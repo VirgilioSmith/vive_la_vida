@@ -55398,3 +55398,14 @@ html body #app#app #page .v708-row small,html body #app#app #page .v708-row [cla
  html body #app#app .vive-mobile-home>[data-v105-widget="futureWaterfall"],html body #app#app .vive-mobile-home>[data-v105-widget="spendingFingerprint"]{margin:0!important}
  html body #app#app .vive-mobile-home{padding-bottom:132px!important}
 }
+/* v1231 · Pagar tarjeta: selector de moneda */
+.v1231-ccy{display:grid;gap:8px;margin:12px 0 4px}
+.v1231-ccy-label{font-size:12px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:var(--v-mut,#68778e)}
+.v1231-ccy-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.v1231-ccy-seg button{display:grid;gap:2px;justify-items:center;padding:12px 10px;border-radius:16px;border:1px solid rgba(120,140,170,.28);background:rgba(255,255,255,.72);color:inherit;font:inherit;cursor:pointer;min-height:56px}
+.v1231-ccy-seg button b{font-size:14px;font-weight:800}
+.v1231-ccy-seg button small{font-size:11px;opacity:.7}
+.v1231-ccy-seg button.is-on{background:var(--v424-accent-strong,#5b57d6);border-color:transparent;color:#fff;box-shadow:0 8px 20px color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 30%,transparent)}
+body.theme-black .v1231-ccy-seg button:not(.is-on){background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14)}
+html body #modal-root .studio-fields>.v1231-ccy{order:25!important;margin:2px 0 6px}
+html body #modal-root#modal-root form.studio-form.vop-cardpay .studio-step[data-step="1"] .studio-fields>.v1231-ccy{order:25!important}
