@@ -39,7 +39,7 @@ const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.htm
     const edad = m => mk(s => { s.historyMonths = m; }).parts.age.find(q => q.id === 'a_old').points;
     const nuevo = k => mk(s => { s.new0to6 = k; }).parts.new.find(q => q.id === 'n_new').points;
     const solic = k => mk(s => { s.limitReq0to6 = k; }).parts.new.find(q => q.id === 'n_limit').points;
-    const mora = (campo, k) => mk(s => { s[campo] = k; }).parts.payment.find(q => q.id === 'p_recent').points;
+    const mora = (campo, k) => mk(s => { s.cards.forEach(c => c.daysPastDue = 0); s.loans.forEach(l => l.daysPastDue = 0); s[campo] = k; }).parts.payment.find(q => q.id === 'p_recent').points;
     return {
       util: [0, .01, .09, .29, .49, .75, 1, 1.2].map(util),
       edad: [0, 60, 120, 240].map(edad), nuevo: [0, 1, 2, 4, 5].map(nuevo), solic: [0, 1, 5, 6].map(solic),
@@ -48,7 +48,7 @@ const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.htm
   });
   const okU = JSON.stringify(anc.util) === JSON.stringify([180, 180, 177, 148, 110, 60, 12, 0]);
   const okE = JSON.stringify(anc.edad) === JSON.stringify([0, 38, 75, 75]) || JSON.stringify(anc.edad) === JSON.stringify([0, 37, 75, 75]);
-  check(2, 'Anclas de las fórmulas publicadas: utilización (≤1 % 180 · 9 % 177 · 29 % 148 · 49 % 110 · 75 % 60 · 100 % 12 · ≥120 % 0), antigüedad (75 × min(m/120, 1)), crédito reciente (60 − 15 por apertura; 40 − 8 por aumento solicitado) y moras (235 − 18/75/100/135/165)',
+  check(2, 'Anclas de las fórmulas publicadas: utilización (≤1 % 180 · 9 % 177 · 29 % 148 · 49 % 110 · 75 % 60 · 100 % 12 · ≥120 % 0), antigüedad (75 × min(m/120, 1)), crédito reciente (60 − 15 por apertura; 40 − 8 por aumento solicitado) y moras declaradas (235 − 18/75/100/135/165; la mora vigente usa la misma escala desde el motor 5.1)',
     okU && okE && JSON.stringify(anc.nuevo) === JSON.stringify([60, 45, 30, 0, 0]) && JSON.stringify(anc.solic) === JSON.stringify([40, 32, 0, 0]) && JSON.stringify(anc.mora) === JSON.stringify([217, 160, 135, 100, 70, 0]), JSON.stringify(anc));
 
   /* 3 · propiedades sobre 600 perfiles aleatorios (semilla fija) */
@@ -191,7 +191,7 @@ const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.htm
   /* 12 · pantallas: todas las pestañas y secciones en tres estados (normal, sin productos y con datos inválidos) sin textos rotos ni errores */
   const errsPage = []; p.on('pageerror', e => errsPage.push(e.message)); f.page().on('console', m => { if (m.type() === 'error') errsPage.push(m.text().slice(0, 120)); });
   const pant = await f.evaluate(() => {
-    const secciones = ['antecedentes', 'productos', 'cortes', 'auditoria', 'variables', 'metodologia'], tabs = ['summary', 'evolution', 'detail', 'transunion', 'control'], malos = [], vistas = [];
+    const secciones = ['antecedentes', 'productos', 'cortes', 'auditoria', 'variables', 'metodologia'], tabs = ['summary', 'detail', 'transunion', 'control'], malos = [], vistas = [];
     const guardado = { months: DB.months, idx, tab, open: { ...ccOpen } };
     const estados = {
       normal: () => {},
@@ -208,7 +208,7 @@ const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.htm
     DB.months = guardado.months; idx = guardado.idx; tab = guardado.tab; Object.assign(ccOpen, guardado.open); render();
     return { malos: malos.slice(0, 10), nMalos: malos.length, vistas: vistas.length };
   });
-  check(12, 'Pantallas: 5 pestañas (con las 6 secciones del Centro de control abiertas) × 3 estados (normal, sin productos, datos inválidos) se dibujan completas, sin «undefined», «NaN», «Infinity» ni «[object», y sin errores de consola', pant.nMalos === 0 && pant.vistas === 15 && errsPage.length === 0, JSON.stringify({ ...pant, consola: errsPage.slice(0, 3) }));
+  check(12, 'Pantallas: 4 pestañas (con las 6 secciones del Centro de control abiertas) × 3 estados (normal, sin productos, datos inválidos) se dibujan completas, sin «undefined», «NaN», «Infinity» ni «[object», y sin errores de consola', pant.nMalos === 0 && pant.vistas === 12 && errsPage.length === 0, JSON.stringify({ ...pant, consola: errsPage.slice(0, 3) }));
 
   await b.close();
   const fallos = results.filter(r => !r.ok);
