@@ -6,7 +6,7 @@
 (function(){
 'use strict';
 if(!window.VIVE_SCORE_EXPERIMENTAL)return;
-const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=2';
+const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=5';
 const newStore=()=>({v:1,startedOn:'2026-11',answers:null,overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
 let store=null,frame=null,ready=false,height=Math.max(560,innerHeight-170),payloadSent=false;
 function load(){if(store)return store;try{const x=JSON.parse(localStorage.getItem(KEY)||'null');store=x&&x.v===1?{...newStore(),...x}:newStore()}catch(_){store=newStore()}return store}
@@ -16,7 +16,7 @@ function env(){
  const cs=getComputedStyle(document.body),body=document.body.classList;
  const accent=(cs.getPropertyValue('--v424-accent-strong')||'').trim()||'#159b81';
  const mode=body.contains('theme-black')?'black':body.contains('theme-dark')?'dark':'light';
- return {mode,accent};
+ return {mode,accent,compact:mobile()};
 }
 function post(type,data){try{frame?.contentWindow?.postMessage({vs:1,type,...data},location.origin)}catch(_){}}
 let lastSig='',pollTimer=0,refreshTimer=0;
@@ -34,10 +34,10 @@ function ensureFrame(){
 function slot(){return document.querySelector('[data-vs-slot]')}
 function place(){
  const s=slot();
- if(!s||mobile()){frame?.classList.remove('vs-on');return}
+ if(!s){frame?.classList.remove('vs-on');return}
  ensureFrame();
  const r=s.getBoundingClientRect();
- height=Math.max(560,Math.round(innerHeight-r.top-14));
+ height=Math.max(mobile()?440:560,Math.round(innerHeight-r.top-(mobile()?96:14)));
  Object.assign(frame.style,{left:(r.left+scrollX)+'px',top:(r.top+scrollY)+'px',width:r.width+'px',height:height+'px'});
  s.style.height=height+'px';
  if(!frame.classList.contains('vs-on')){frame.classList.add('vs-on');if(ready)sendInit()}

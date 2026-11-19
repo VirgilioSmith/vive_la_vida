@@ -3974,7 +3974,7 @@ document.addEventListener('change', event=>{
  ui.month=p;ui.year=Number(p.slice(0,4));render();
 });
 
-const pages={score:()=>(window.ViveScoreHost&&!isMobileViewport()?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
+const pages={score:()=>(window.ViveScoreHost?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -16228,7 +16228,7 @@ document.addEventListener('input',function(event){
       {tag:'TU VISIÓN',heading:'Planifica y mantén el control integral',desc:'Una mirada completa de tus finanzas, compromisos y próximos pasos.',items:[
        ['payments','Visión global','Estrategia','eye','blue','',true],
        ['pressure','Presión financiera','Próximos 30 días','calendar','violet',fmtShort(v89DebtCapacity(monthKey()).monthly)],
-       ['cards','Tarjetas','Créditos','card','blue',cards.filter(c=>num(cardStatus(c,'DOP').debt)>0.005||num(cardStatus(c,'USD').debt)>0.005).length+' de '+cards.length+' con balance'],
+       ['score','Score','Crédito','analytics','blue',(()=>{const v=window.ViveScoreHost?.badge?.();return Number.isFinite(v)?v+' / 1,000':'Ver mi score'})()],
        ['projection','Planificación','Escenarios','analytics','violet','']
       ]}
     ];
@@ -16237,7 +16237,8 @@ document.addEventListener('input',function(event){
       const isBudget=id==='budget';
       const isCategory=id==='categories';
       const isPeople=id==='personal';
-      const isCard=id==='cards';
+      if(id==='score'&&!window.ViveScoreHost)return '';
+      const isCard=id==='score';
       const isCommitment=id==='pressure';
       const indicator=val?`<span class="v431-value" title="${esc(id==='recurring'?subs.length+' suscripciones activas · '+fmt(v80RecurringMonthly())+' por mes':val)}">${esc(val)}</span>`:'';
       const variance=isCompare?`<span class="v431-compare ${change?'v431-compare-'+change.dir:'v431-compare-neutral'}" aria-label="${change?'Variación '+esc(change.pct):'Sin datos comparables'} frente al mes anterior"><span class="v431-compare-chip"><span aria-hidden="true">${change?(change.dir==='up'?'↗':change.dir==='down'?'↘':'→'):'—'}</span> ${change?esc(change.pct):'—'}</span><span class="v431-compare-label">vs. mes anterior</span></span>`:'';

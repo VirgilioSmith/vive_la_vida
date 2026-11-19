@@ -99,3 +99,26 @@ html,body{background:transparent!important}
 #view>:is(.grid,.card,.callout)+:is(.grid,.card,.callout),.ccbody>:is(.grid,.card,.callout)+:is(.grid,.card,.callout){margin-top:15px}
 .card>.metricList+:is(.btn,.smallbtn,.actionLine,.links,.callout),.callout+.metricList{margin-top:16px}
 @media(min-width:761px){.grid.stats{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}}
+
+/* Modo compacto (móvil): solo «Mi score» resumido — anillo, estado y los cinco factores en una línea cada uno */
+body.compact{padding:0}
+body.compact .herohead,body.compact #tabs,body.compact .footer,body.compact #view>.grid.stats,body.compact #view>.sectionTop,body.compact #view>.grid.pair,body.compact #view>.card,body.compact #view>.grid.heroGrid>.card:not(.scoreHero){display:none!important}
+body.compact .shell{padding:4px 2px 16px;gap:10px;max-width:none}
+body.compact #view>.grid.heroGrid,body.compact #view>.grid.factors{display:flex;flex-direction:column;gap:10px;margin:0}
+body.compact .scoreHero{display:grid!important;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:16px!important}
+body.compact .scoreHero .ring{width:112px!important;height:112px!important}
+body.compact .scoreHero .bigNumber{font-size:34px!important;letter-spacing:-.04em}
+body.compact .scoreHero .bigSub{font-size:10px!important}
+body.compact .scoreHero .caps{font-size:10px!important;letter-spacing:.1em}
+body.compact .scoreHero h2{font-size:19px!important;line-height:1.15;margin:4px 0 8px!important;text-align:left}
+body.compact .scoreHero .movement,body.compact .scoreHero p,body.compact .scoreHero .chipRow{display:none!important}
+body.compact .scoreHero .heroDetails>div[style]{margin:0!important}
+body.compact .factorcard{padding:13px 14px!important;min-height:0!important}
+body.compact .factorcard .hrow h3{font-size:14px!important}
+body.compact .factorcard .hrow b{font-size:15px!important}
+body.compact .factorcard .fmeta,body.compact .factorcard>.muted.sm{display:none!important}
+body.compact .factorcard .meter{margin-top:9px!important}
+body.compact .scoreHero .bigSub{display:none!important}
+body.compact .factorcard{height:auto!important;display:block!important;align-self:stretch}
+body.compact .factorcard .hrow{margin:0!important}
+body.compact .scoreHero .caps{white-space:normal}

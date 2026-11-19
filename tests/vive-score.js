@@ -319,7 +319,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const moff = await open(b, 390, 844); const offErr = []; moff.p.on('pageerror', e => offErr.push(e.message));
   const mobileOff = await moff.p.evaluate(() => ({ html: (a => a.innerText.replace(/\d{1,2}:\d{2}/g, '') + '|' + a.querySelectorAll('*').length + '|' + [...a.querySelectorAll('*')].map(e => e.tagName + '.' + e.className).join(' '))(document.getElementById('app')) }));
   await moff.ctx.close();
-  check(2, 'Score solo existe en la versión web (no hay ítem ni página en móvil)', !mobileOn.score && !mobileOn.badge && !mobileScore.frame);
+  check(2, 'En móvil no hay ítem ni insignia en el menú inferior; Score se abre solo desde Explorar, en versión resumida', !mobileOn.score && !mobileOn.badge);
   check(16, 'La versión móvil no presenta cambios (texto, elementos y clases idénticos con el módulo apagado)', mobileOn.html === mobileOff.html, mobileOn.html === mobileOff.html ? 'idéntico' : `${mobileOn.html.length} vs ${mobileOff.html.length}`);
   delete process.env.TOUCH;
   const off = await open(b, 1440, 900); const offErr2 = []; off.p.on('pageerror', e => offErr2.push(e.message));
