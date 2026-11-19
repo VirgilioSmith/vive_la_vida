@@ -55383,3 +55383,12 @@ html body #app#app #page .cards-grid .account-product-card{height:100%!important
 html body:not(.theme-black):not(.theme-dark) #app#app #page#page .v46-bank-filters{display:inline-flex;gap:6px;padding:6px!important;border-radius:999px!important;background:linear-gradient(150deg,rgba(255,255,255,.72),rgba(255,255,255,.38))!important;border:1px solid rgba(255,255,255,.85)!important;box-shadow:0 12px 32px color-mix(in srgb,var(--v424-accent-strong) 16%,transparent),inset 0 1px 0 rgba(255,255,255,.95)!important}
 html body #app#app #page#page .v46-bank-filters>button{min-height:46px!important;padding:0 22px!important;border-radius:999px!important;font-size:15px!important;font-weight:800!important;letter-spacing:-.01em}
 html body #app#app #page#page .v46-bank-filters>button.active{background:linear-gradient(135deg,var(--v424-accent-strong),color-mix(in srgb,var(--v424-accent-strong) 70%,#fff))!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:0 10px 24px color-mix(in srgb,var(--v424-accent-strong) 38%,transparent)!important;border-color:transparent!important}
+/* Dirección de arte · Black: las tablas de Analítica no muestran bordes ni fondos claros */
+html body.theme-black #app#app #page .v12-table-scroller,html body.theme-dark #app#app #page .v12-table-scroller{background:transparent!important;border-color:rgba(255,255,255,.12)!important;box-shadow:none!important}
+html body.theme-black #app#app #page .v12-table-scroller table,html body.theme-dark #app#app #page .v12-table-scroller table{border-color:rgba(255,255,255,.12)!important}
+html body.theme-black #app#app #page .v12-table-scroller :is(th,td){border-color:rgba(255,255,255,.1)!important}
+/* Legibilidad: ninguna etiqueta por debajo de 10.5 px */
+#page small,#page .v64-subdebt{font-size:max(10.5px,1em)}
+html body #app#app #page .v708-row small,html body #app#app #page .v708-row [class*=status],html body #app#app #page .v708-row .conciliado{font-size:10.5px}
+/* Dirección de arte · Geometría: un solo radio (28 px) para todos los banners principales en web */
+@media(min-width:791px){html body #app#app #page :is(.bank-hero.v46-bank-hero,.v1170-hero,.v58-exec,.v134-hero.v187-wealth-hero){border-radius:28px!important}}
