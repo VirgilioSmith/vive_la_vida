@@ -18579,15 +18579,6 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
    <div class="v1190-dates" aria-label="Fechas importantes"><div><small>Último corte</small><b>${st.cut?esc(prettyDate(st.cut)):'—'}</b></div><div><small>Próximo corte</small><b>${st.nextCut?esc(prettyDate(st.nextCut)):'—'}</b>${st.nextCut?dueChip(st.nextCut):''}</div><div><small>Fecha límite de pago</small><b>${st.nextDue?esc(prettyDate(st.nextDue)):'—'}</b>${st.nextDue?dueChip(st.nextDue):''}</div></div>
   </section>`;
  }
- function movimientos(c){
-  const cuts=['DOP','USD'].map(k=>cardStatus(c,k).cut).filter(Boolean).sort();
-  const from=cuts[0]||'';
-  const all=recentTx().filter(t=>t.cardId===c.id);
-  const inCycle=all.filter(t=>!from||String(t.date)>String(from));
-  const list=(inCycle.length?inCycle:all).slice(0,10);
-  const rows=list.map(t=>`<button type="button" class="v1190-tx" data-act="v6WalletTransactionDetail" data-id="${esc(t.id)}"><span><strong>${esc(typeof v1180Concept==='function'?v1180Concept(t):transactionTitle(t))}</strong><small>${esc(prettyDate(t.date))}${t.category?' · '+esc(t.category):''}</small></span><b>${txDisplay(t)}</b></button>`).join('');
-  return `<section class="v1190-panel"><header><h3>Movimientos del ciclo</h3><span class="v1190-count">${inCycle.length||all.length}</span></header>${rows||'<p class="v1190-empty">Sin movimientos en este ciclo.</p>'}${all.length>list.length?`<button type="button" class="v1190-link" data-act="navigate" data-id="register">Ver todos en Movimientos ${icon('arrow')}</button>`:''}</section>`;
- }
  function beneficios(c){
   const d=benefitBreakdown(c,'DOP'),u=benefitBreakdown(c,'USD');
   const cr=num(d.credited)+fx(num(u.credited),'USD'),cost=num(d.costs)+fx(num(u.costs),'USD');
@@ -18612,7 +18603,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   return `<div class="v1190 v1190-card"><button type="button" class="v1190-back" data-act="closeCardDetails">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>Tarjetas</span></button>
    <section class="v1190-hero"><div><span class="v1190-kick">${esc(bankOf(c))}</span><h2>${esc(c.name)}</h2><p>${esc(tier)} · •••• ${esc(c.last4||'—')}</p></div><button type="button" class="v1190-primary" data-act="payCard" data-id="${esc(c.id)}">${G('<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 11h18"/>')}<span>Registrar pago</span></button></section>
    <div class="v1190-grid">${bloque(c,'DOP')}${bloque(c,'USD')}</div>
-   ${movimientos(c)}${beneficios(c)}${cierres(c)}${admin(c)}</div>`;
+   ${beneficios(c)}${cierres(c)}${admin(c)}</div>`;
  }
  const prev=pages.cards;
  pages.cards=function(...a){const c=ui.cardId?card(ui.cardId):null;return c?detalle(c):prev.apply(this,a)};
