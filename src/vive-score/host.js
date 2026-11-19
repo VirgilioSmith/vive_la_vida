@@ -6,7 +6,7 @@
 (function(){
 'use strict';
 if(!window.VIVE_SCORE_EXPERIMENTAL)return;
-const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=7';
+const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=11';
 const newStore=()=>({v:1,startedOn:'2026-11',answers:null,overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
 let store=null,frame=null,ready=false,height=Math.max(560,innerHeight-170),payloadSent=false;
 function load(){if(store)return store;try{const x=JSON.parse(localStorage.getItem(KEY)||'null');store=x&&x.v===1?{...newStore(),...x}:newStore()}catch(_){store=newStore()}return store}
