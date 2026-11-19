@@ -3402,7 +3402,7 @@ function widgetPicture(id){
 
 
 
-const VIVE_CHART_KEYS=new Set(['futureCostKpi','futureCalendar','creditUtil','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureWaterfall','futureMap','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
+const VIVE_CHART_KEYS=new Set(['futureCostKpi','futureCalendar','creditUtil','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureWaterfall','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
 /* V326 · contenido de los doce módulos que Personalización ya ofrece,
    sin crear métricas ficticias ni duplicar datos contables. */
 /* V560 · Conciliación de compromisos contra el libro real.
@@ -11625,14 +11625,14 @@ const V105_WIDGETS=[
    Otros widgets funcionales siguen disponibles desde el editor. */
 const V316_ESSENTIAL_GRAPHS=['creditUtil','patrimonyTrend','budgetPulse'];
 const V317_NEW_GRAPHS=['cashPressure','spendingFingerprint'];
-const V318_NEW_GRAPHS=['futureCalendar','futureFlow','futureWaterfall','futureMap','futureBubbles'];
+const V318_NEW_GRAPHS=['futureCalendar','futureFlow','futureWaterfall','futureBubbles'];
 const V317_FEATURE_GRAPHS=[...V316_ESSENTIAL_GRAPHS,...V317_NEW_GRAPHS,...V318_NEW_GRAPHS];
 /* V332 · Una sola organización para Personalización móvil y Mis indicadores web.
    Ambos consumen V105_WIDGETS y el orden persistido de v105Config(). */
 const V332_PERSONALIZATION_AREAS=[
  {key:'position',title:'01 · TU POSICIÓN FINANCIERA',label:'Posición financiera',ids:['applePayInbox','simplification','premiumCredit','creditUtil','patrimonyTrend','capacity','net','accounts','banks','certificates']},
- {key:'budget',title:'02 · INGRESOS Y PRESUPUESTO',label:'Ingresos y presupuesto',ids:['budgetPulse','spendingFingerprint','chart','budgetTrend','activity']},
- {key:'future',title:'03 · COMPROMISOS Y PROYECCIONES',label:'Compromisos y proyecciones',ids:['premiumCommitments','futureCalendar','cashPressure','futureFlow','futureWaterfall','futureMap','futureBubbles','commitments','payments','loans']},
+ {key:'budget',title:'02 · INGRESOS Y PRESUPUESTO',label:'Ingresos y presupuesto',ids:['budgetPulse','spendingFingerprint','chart','activity']},
+ {key:'future',title:'03 · COMPROMISOS Y PROYECCIONES',label:'Compromisos y proyecciones',ids:['premiumCommitments','futureCalendar','cashPressure','futureFlow','futureWaterfall','futureBubbles','commitments','payments','loans']},
  {key:'other',title:'04 · RELACIONES Y OTROS MÓDULOS',label:'Relaciones',ids:['people']}
 ];
 function v332PersonalizationGroups(cfg){
@@ -11649,10 +11649,10 @@ function v332PersonalizationGroups(cfg){
 
 
 const V1123_TOP=['applePayInbox','patrimonyTrend','capacity','commitments'];
-const V1123_ORDER=[...V1123_TOP,'salaryAdvance','budgetPulse','cashPressure','futureCalendar','futureWaterfall','futureMap','spendingFingerprint','budgetTrend','net','creditUtil','futureFlow','futureBubbles'];
+const V1123_ORDER=[...V1123_TOP,'salaryAdvance','budgetPulse','cashPressure','futureCalendar','futureWaterfall','spendingFingerprint','net','creditUtil','futureFlow','futureBubbles'];
 function v316OrderDefaults(ids){const pri=V1123_ORDER.filter(id=>ids.includes(id));return [...pri,...ids.filter(id=>!pri.includes(id))]}
 function v316VisibleDefaults(ids){
- const hidden=new Set(['simplification','premiumCredit','premiumCommitments','activity','subscriptions','cardsDue','budget','budgetTrend','chart','banks','accounts','cards','loans','certificates']);
+ const hidden=new Set(['simplification','premiumCredit','premiumCommitments','activity','subscriptions','cardsDue','budget','chart','banks','accounts','cards','loans','certificates']);
  return ids.filter(id=>!hidden.has(id));
 }
 function v105Config(){
@@ -11695,7 +11695,7 @@ function v105ConfigBase(){
  if(!originalOrder.includes('budgetPulse')){
   for(const id of V316_ESSENTIAL_GRAPHS)if(!visible.includes(id))visible.push(id);
   // Evitar redundancia con el nuevo pulso, sin borrar los módulos históricos.
-  for(const oldId of ['budget','budgetTrend','chart']){
+  for(const oldId of ['budget','chart']){
    const i=visible.indexOf(oldId);if(i>=0)visible.splice(i,1);
   }
  }
@@ -14185,7 +14185,7 @@ function v242SettingsPreview(){
 /* V752: each premium illustration has its own scene and reserved grid cell.
    SVG resources are inline and local; capacity value comes from the existing
    financial engine. No fetches, generated illustrations, or mock figures. */
-const V752_PREMIUM_IDS=new Set(['applePayInbox','patrimonyTrend','capacity','payments','budgetTrend','commitments','chart','net','premiumCredit','premiumCommitments','creditUtil','budgetPulse','cashPressure','futureCalendar','futureCostKpi']);
+const V752_PREMIUM_IDS=new Set(['applePayInbox','patrimonyTrend','capacity','payments','commitments','chart','net','premiumCredit','premiumCommitments','creditUtil','budgetPulse','cashPressure','futureCalendar','futureCostKpi']);
 function v752PremiumWidgetArt(id){
  const g=`v752-${id}`;
  const defs=`<defs>
@@ -14218,9 +14218,6 @@ function v752PremiumWidgetArt(id){
  case 'payments': case 'premiumCommitments': case 'futureCalendar':
    art=`<ellipse cx="92" cy="68" rx="56" ry="50" fill="url(#${g}-halo)" opacity=".45"/><g transform="rotate(8 95 59)" filter="url(#${g}-shadow)"><rect x="42" y="15" width="103" height="94" rx="14" fill="#110f28" stroke="#a591ff" stroke-opacity=".65" stroke-width="2"/><rect x="45" y="18" width="98" height="90" rx="13" fill="url(#${g}-glass)"/><path d="M46 47h97" stroke="#b4a8f8" stroke-opacity=".55" stroke-width="1.6"/><g fill="#dcd9ff" font-size="9.5" font-weight="600">${['L','M','M','J','V','S','D'].map((c,i)=>`<text x="${56+i*12.5}" y="39">${c}</text>`).join('')}</g>${Array.from({length:14},(_,i)=>`<circle cx="${56+(i%7)*12.5}" cy="${60+Math.floor(i/7)*22}" r="2.4" fill="#f8f4ff" opacity="${i===8?1:.55}"/>`).join('')}<rect x="55" y="74" width="17" height="15" rx="4" fill="url(#${g}-pink)"/><path d="m59 81 3 3 5-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>`;
    break;
- case 'budgetTrend':
-   art=`<ellipse cx="92" cy="93" rx="70" ry="19" fill="url(#${g}-halo)" opacity=".35"/>${[25,45,28,62,51,81].map((h,i)=>{const x=16+i*24,y=104-h;return `<g filter="url(#${g}-shadow)"><rect x="${x}" y="${y}" width="16" height="${h}" rx="3" fill="url(#${g}-${i%2?'pink':'glass'})"/><path d="M${x} ${y}l5-5h16l-5 5Z" fill="#cabfff" opacity=".8"/><path d="M${x+16} ${y}l5-5v${h}l-5 5Z" fill="#322659" opacity=".85"/></g>`}).join('')}`;
-   break;
  case 'commitments': case 'premiumCredit':
    art=`<ellipse cx="97" cy="80" rx="69" ry="32" fill="url(#${g}-halo)" opacity=".45"/>${card(32,27,102,65,-16,`url(#${g}-steel)`)}${card(54,37,107,64,10,`url(#${g}-glass)`)}<g transform="translate(109 68)" stroke="#fff" stroke-opacity=".7" fill="none" stroke-width="2"><path d="m0 9 7 7 13-17"/></g>`;
    break;
@@ -14238,7 +14235,7 @@ function v752PremiumWidgetArt(id){
    drag-and-drop y la escritura de las preferencias permanecen originales. */
 const V755_EXTRA_PREMIUM_IDS=new Set([
  'people','activity','banks','accounts','loans','certificates',
- 'spendingFingerprint','futureFlow','futureWaterfall','futureMap','futureBubbles'
+ 'spendingFingerprint','futureFlow','futureWaterfall','futureBubbles'
 ]);
 function v755ExtraPremiumVisual(id){
  const g='v755-'+id;
@@ -14276,8 +14273,6 @@ function v755ExtraPremiumVisual(id){
    art=`<ellipse cx="90" cy="67" rx="71" ry="49" fill="url(#${g}-halo)"/><path d="M18 35C43 18 67 19 84 46S128 73 151 35" stroke="#76e6cb" stroke-width="12" fill="none" opacity=".28" filter="url(#${g}-soft)"/><path d="M18 35C43 18 67 19 84 46S128 73 151 35" stroke="url(#${g}-mint)" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M18 83C49 101 68 92 88 72S124 42 151 78" stroke="url(#${g}-pink)" stroke-width="7" fill="none" stroke-linecap="round"/>${coin(26,35,9,`url(#${g}-mint)`)}${coin(141,78,9,`url(#${g}-pink)`)} `;break;
   case 'futureWaterfall':
    art=`<ellipse cx="92" cy="91" rx="73" ry="27" fill="url(#${g}-halo)"/>${[0,1,2,3].map((i)=>{const x=24+i*34,y=33+i*12;return `<g ${shadow}><rect x="${x}" y="${y}" width="28" height="${78-y}" rx="5" fill="url(#${g}-${i%2?'pink':'glass'})" stroke="#d7ceff" stroke-opacity=".6"/><path d="M${x+5} ${y+6}h17" stroke="#fff" stroke-opacity=".4" stroke-width="2.5"/></g>`}).join('')}<path d="M24 24h38v17h33v12h34" stroke="#b2e9ff" stroke-width="3" fill="none" stroke-linecap="round"/>`;break;
-  case 'futureMap':
-   art=`<ellipse cx="88" cy="69" rx="70" ry="47" fill="url(#${g}-halo)"/><g transform="rotate(-8 88 63)" ${shadow}><path d="M23 33 64 17 103 34 145 18V95l-42 15-39-17-41 16Z" fill="url(#${g}-glass)" stroke="#d3c9ff" stroke-width="1.5"/><path d="M64 17v76m39-59v76" stroke="#f5ecff" opacity=".37" stroke-width="2"/><path d="M36 89 62 68 85 72 113 44 133 55" stroke="#b3fff1" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 6" fill="none"/><circle cx="36" cy="89" r="7" fill="#56f0c8"/><circle cx="133" cy="55" r="7" fill="#ffe1ff"/></g>`;break;
   case 'futureBubbles':
    art=`<ellipse cx="92" cy="75" rx="74" ry="42" fill="url(#${g}-halo)"/>${coin(62,68,33,`url(#${g}-ice)`)}${coin(113,47,35,`url(#${g}-pink)`)}${coin(116,94,20,`url(#${g}-mint)`)}<circle cx="108" cy="32" r="10" fill="#fff" opacity=".29"/>`;break;
   default: return '';
@@ -14305,7 +14300,6 @@ function v747WidgetVisual(id){
  const motifs={
   applePayInbox:`${card(57,15,73,97,12)}<path d="M74 39c9-10 23-10 32 0m-26 6c6-6 15-6 21 0m-16 7c3-3 7-3 10 0" stroke="#fff" opacity=".75" fill="none" stroke-width="3" stroke-linecap="round"/><rect x="43" y="78" width="76" height="28" rx="7" fill="url(#${g}-line)" opacity=".72"/>`,
   capacity:`${ring(98,58,36)}<circle cx="98" cy="58" r="22" fill="rgba(20,33,37,.37)"/>${path('M88 68l10-22 10 22M91 60h14',.82,3)}`,
-  budgetTrend:`${bars([16,31,24,41,36,53],26,98,12,8)}${line('26,76 47,68 67,73 88,51 109,56 135,31',.95,2.6)}`,
   commitments:`${card(30,35,70,54,-8)}${card(67,19,70,63,8)}${path('M95 43l8 8 17-19',1,4)}`,
   chart:`${bars([22,39,25,51,57],30,104,15,10)}${line('30,69 53,64 81,73 109,39 137,26')}`,
   net:`${bars([46,25,61,35],35,101,18,13)}${path('M25 56h99m-19-12 19 12-19 12',.92,3.7)}`,
@@ -14327,7 +14321,6 @@ function v747WidgetVisual(id){
   futureCalendar:`${cal(50,16)}${dots([[119,39,6],[119,57,6],[119,75,6]])}`,
   futureFlow:`${path('M24 30C68 30 61 59 84 59S108 89 142 89',1,8)}${path('M24 90C49 90 54 57 84 57S121 31 143 31',.54,6)}`,
   futureWaterfall:`${bars([22,53,32,71,40],27,103,16,10)}${path('M27 34h27v23h26v-27h26v33h27',.65,3)}`,
-  futureMap:`${path('M36 39 85 24 125 64 88 96 36 39',.68,3)}${dots([[36,39,12],[85,24,10],[125,64,12],[88,96,10]])}`,
   futureBubbles:`${dots([[46,61,22],[101,38,28],[116,88,20]])}`
  };
  const graphic=motifs[id]||money;
@@ -14339,7 +14332,6 @@ function v767Icon(id){
  applePayInbox:`<g transform="rotate(-12 50 50)"><rect x="19" y="13" width="74" height="81" rx="14" fill="url(#glass)" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)" stroke-width="1.5"/><path d="M29 38h52" stroke="#eee8ff" opacity=".18"/><g transform="translate(35 31) scale(.86)" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.33 3.51 7.8 8.77 7.52c1.27.07 2.16.7 2.9.75 1.1-.22 2.16-.86 3.34-.78 1.42.11 2.49.68 3.19 1.7-2.93 1.76-2.24 5.63.45 6.71-.51 1.34-1.17 2.67-1.61 3.39h.01ZM12.03 7.43c-.15-2.13 1.59-3.88 3.57-4.05.28 2.45-2.23 4.27-3.57 4.05Z"/></g><text x="64" y="52" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Pay</text><path d="M44 65q12 10 24 0M49 71q7 5 14 0" fill="none" stroke="#eee6ff" stroke-width="2" stroke-linecap="round"/></g>`,
  patrimonyTrend:`<path d="M10 88V72L30 59 46 65 65 38 80 45 101 13v75Z" fill="url(#area)" opacity=".75"/><path d="M10 72 30 59 46 65 65 38 80 45 101 13" fill="none" stroke="url(#stroke)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="101" cy="13" r="4" fill="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)" filter="url(#glow)"/>`,
  capacity:`<circle cx="55" cy="55" r="38" fill="none" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 65%,#27263c)" stroke-width="13"/><circle cx="55" cy="55" r="38" fill="none" stroke="url(#stroke)" stroke-width="13" stroke-linecap="round" stroke-dasharray="164 239" transform="rotate(143 55 55)"/><circle class="v782-capacity-center" cx="55" cy="55" r="25" fill="#202336"/><text class="v782-capacity-value" x="55" y="63" text-anchor="middle" fill="#fff" font-weight="800" font-size="26">38%</text>`,
- budgetTrend:`${[18,29,42,53,65].map((h,i)=>`<rect x="${13+i*19}" y="${92-h}" width="13" height="${h}" rx="3" fill="url(#stroke)" opacity="${.65+i*.07}"/>`).join('')}`,
  commitments:`<g transform="rotate(-15 48 54)"><rect x="10" y="37" width="77" height="45" rx="8" fill="url(#glass)" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)"/><path d="M18 52h61" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)" stroke-width="5" opacity=".5"/></g><g transform="rotate(12 58 46)"><rect x="28" y="19" width="74" height="47" rx="8" fill="url(#glass)" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)"/><rect x="40" y="43" width="16" height="11" rx="3" fill="#eda5b1"/><path d="M70 51h22" stroke="#e9dbff" opacity=".7"/></g>`,
  chart:`<rect x="9" y="25" width="53" height="53" rx="11" fill="url(#mint)" stroke="#71d8cf" opacity=".95"/><path d="M23 58 46 37m-15 0h15v15" stroke="#f7ffff" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect x="49" y="48" width="53" height="53" rx="11" fill="url(#pink)" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)"/><path d="M64 64 87 87m-15 0h15V72" stroke="#fff" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`,
  net:`${[0,1,2,3].map(i=>`<ellipse cx="39" cy="${77-i*14}" rx="27" ry="9" fill="url(#glass)" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)"/><path d="M12 ${77-i*14}v8q27 18 54 0v-8" fill="url(#glass)" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)"/>`).join('')}<circle cx="78" cy="78" r="26" fill="url(#pink)" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)" stroke-width="2"/><text x="78" y="88" fill="#fff" text-anchor="middle" font-size="32" font-weight="750">$</text>`,
@@ -14359,7 +14351,6 @@ function v767Icon(id){
   futureCalendar:`<rect x="17" y="22" width="79" height="72" rx="12" fill="url(#glass)" stroke="url(#stroke)" stroke-width="2"/><path d="M17 42h79M38 15v16m38-16v16" stroke="#e0d7ff" stroke-width="4"/>${[0,1,2].map((y)=>[0,1,2,3].map(x=>`<circle cx="${31+17*x}" cy="${56+14*y}" r="3.6" fill="${(x+y)%3===0?'color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)':'color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)'}"/>`).join('')).join('')}`, 
   futureFlow:`<path d="M8 75C36 15 62 96 101 34" fill="none" stroke="url(#stroke)" stroke-width="7" stroke-linecap="round"/><path d="M8 39C36 97 66 15 101 77" fill="none" stroke="url(#pink)" stroke-width="5" stroke-linecap="round"/><circle cx="9" cy="75" r="6" fill="#83e8dd"/><circle cx="101" cy="77" r="6" fill="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)"/>`,
   futureWaterfall:`${[21,37,28,49,41].map((h,i)=>`<rect x="${12+i*19}" y="${94-h}" width="13" height="${h}" rx="3" fill="url(#stroke)" opacity="${.6+i*.09}"/>`).join('')}<path d="M10 100h93" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 65%,#27263c)" stroke-width="2"/>`,
-  futureMap:`<circle cx="54" cy="56" r="35" fill="none" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 65%,#27263c)" stroke-width="14"/><path d="M54 21A35 35 0 0 1 89 56" fill="none" stroke="url(#stroke)" stroke-width="14"/><path d="M89 56A35 35 0 0 1 44 90" fill="none" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)" stroke-width="14"/><circle cx="54" cy="56" r="9" fill="url(#pink)"/>`,
   futureBubbles:`${[[24,33,10],[54,28,17],[82,49,13],[33,78,20],[74,81,15]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="url(#glass)" stroke="url(#stroke)" stroke-width="2"/>`).join('')}`,
   people:`<circle cx="39" cy="35" r="14" fill="url(#glass)" stroke="url(#stroke)" stroke-width="3"/><circle cx="77" cy="40" r="12" fill="url(#pink)" stroke="url(#stroke)" stroke-width="2"/><path d="M14 89c0-37 49-39 50 0m-1-2c0-29 34-31 36 0" fill="none" stroke="url(#stroke)" stroke-width="6"/>`,
   activity:`<rect x="25" y="16" width="61" height="80" rx="9" fill="url(#glass)" stroke="url(#stroke)" stroke-width="2"/><path d="M37 38h38M37 55h38M37 72h26" stroke="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)" stroke-width="4" stroke-linecap="round"/><circle cx="30" cy="38" r="3" fill="#b5f4ed"/>`,
@@ -14373,8 +14364,8 @@ function v767Icon(id){
  return `<svg viewBox="0 0 110 110" class="v767-icon-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="${unique}-glass" x1="0" x2="1" y1="0" y2="1"><stop stop-color="var(--vive-theme-color,color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white))"/><stop offset=".55" stop-color="color-mix(in srgb,var(--vive-theme-color,#a881ff) 24%,#080814)"/><stop offset="1" stop-color="color-mix(in srgb,var(--vive-theme-color,#a881ff) 24%,#080814)"/></linearGradient><linearGradient id="${unique}-stroke" x1="0" y1="1" x2="1" y2="0"><stop stop-color="var(--vive-theme-color,color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white))"/><stop offset=".55" stop-color="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)"/><stop offset="1" stop-color="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)"/></linearGradient><linearGradient id="${unique}-area" x1="0" x2=".1" y1="0" y2="1"><stop stop-color="color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white)" stop-opacity=".8"/><stop offset="1" stop-color="color-mix(in srgb,var(--vive-theme-color,#a881ff) 65%,#27263c)" stop-opacity=".13"/></linearGradient><linearGradient id="${unique}-mint" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#48dfbe"/><stop offset="1" stop-color="color-mix(in srgb,var(--vive-theme-color,#a881ff) 65%,#27263c)"/></linearGradient><linearGradient id="${unique}-pink" x1="0" x2="1" y1="0" y2="1"><stop stop-color="var(--vive-theme-color,color-mix(in srgb,var(--vive-theme-color,#a881ff) 64%,white))"/><stop offset="1" stop-color="color-mix(in srgb,var(--vive-theme-color,#a881ff) 65%,#27263c)"/></linearGradient><filter id="${unique}-glow"><feGaussianBlur stdDeviation="2"/></filter></defs>${scoped}</svg>`;
 }
 function v747PersonalizationCard(w,id,index,enabled,total){
- const descriptions={applePayInbox:'Compras Wallet pendientes: clasifica desde Inicio',patrimonyTrend:'Evolución real de activos menos obligaciones por mes',capacity:'Ingresos, cuotas y disponible',budgetTrend:'Seis meses de utilización y disciplina',commitments:'Tarjetas, préstamos y obligaciones',chart:'Evolución de cinco meses',net:'Ingresos menos egresos',payments:'Vencimientos y pago directo'};
- const v784ShortTitles={"applePayInbox": "Apple Pay", "capacity": "Endeudamiento", "budgetTrend": "Presupuesto", "commitments": "Compromisos", "chart": "Ingresos / gastos", "net": "Neto del mes", "payments": "Próximos pagos", "people": "Entre personas", "activity": "Actividad", "banks": "Bancos", "accounts": "Cuentas", "loans": "Préstamos", "certificates": "Certificados", "premiumCredit": "Uso de tarjetas Pro", "premiumCommitments": "Compromisos Pro", "creditUtil": "Uso de tarjetas", "patrimonyTrend": "Patrimonio", "budgetPulse": "Pulso presupuestario", "cashPressure": "Vencimientos", "spendingFingerprint": "Huella de gastos", "futureCostKpi": "Costo de mañana", "futureCalendar": "Calendario financiero", "futureFlow": "Flujo de dinero", "futureWaterfall": "Dinero reservado", "futureMap": "Mapa de compromisos", "futureBubbles": "Importes urgentes"};
+ const descriptions={applePayInbox:'Compras Wallet pendientes: clasifica desde Inicio',patrimonyTrend:'Evolución real de activos menos obligaciones por mes',capacity:'Ingresos, cuotas y disponible',commitments:'Tarjetas, préstamos y obligaciones',chart:'Evolución de cinco meses',net:'Ingresos menos egresos',payments:'Vencimientos y pago directo'};
+ const v784ShortTitles={"applePayInbox": "Apple Pay", "capacity": "Endeudamiento", "commitments": "Compromisos", "chart": "Ingresos / gastos", "net": "Neto del mes", "payments": "Próximos pagos", "people": "Entre personas", "activity": "Actividad", "banks": "Bancos", "accounts": "Cuentas", "loans": "Préstamos", "certificates": "Certificados", "premiumCredit": "Uso de tarjetas Pro", "premiumCommitments": "Compromisos Pro", "creditUtil": "Uso de tarjetas", "patrimonyTrend": "Patrimonio", "budgetPulse": "Pulso presupuestario", "cashPressure": "Vencimientos", "spendingFingerprint": "Huella de gastos", "futureCostKpi": "Costo de mañana", "futureCalendar": "Calendario financiero", "futureFlow": "Flujo de dinero", "futureWaterfall": "Dinero reservado", "futureBubbles": "Importes urgentes"};
  const title=sanitize(v784ShortTitles[id]||w.title), hint=sanitize(descriptions[id]||w.hint||'');
  const dots='<i></i>'.repeat(6);
  const arrow=(up)=>`<button type="button" class="v766-move-btn v767-arrow" data-act="${up?'v273-up':'v273-down'}" data-id="${id}" ${up&&index===0||!up&&index===total-1?'disabled':''} aria-label="Mover ${title} ${up?'arriba':'abajo'}"><svg class="v782-direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" aria-hidden="true"><path d="${up?'M12 19V5 M5 12l7-7 7 7':'M12 5v14 M5 12l7 7 7-7'}"/></svg></button>`;
@@ -14997,11 +14988,6 @@ function v318Graph(id){const c=v318Context(),t=c.thirty,Y=c.year;
   const road=v318LoanRoadmap(c);if(!road.hasLoan&&!c.otherDebt)return v318Empty('Agrega tarjetas, deudas personales o préstamos para analizar tu saldo pendiente.');
   return v318ChartFrame(v318SmallStats([['Deuda de referencia',v318Money(road.current)],['En 12 meses*',v318Money(road.last)],['Cambio estimado',v318Money(road.last-road.current),(road.last-road.current)<0?'v318-good':'']])+road.markup,'*Solo los préstamos con plan contractual se amortizan. Se mantiene constante la deuda actual de tarjetas y personas; no se anticipan compras nuevas.');
  }
- if(id==='futureMap'){
-  const a=c.reference.a,types=[['Tarjetas',v318N(a.cards),'blue'],['Préstamos',v318N(a.loans),'cyan'],['Suscripciones',v318N(a.recurring),'amber'],['Entre personas',v318N(a.personal),'rose']];const total=types.reduce((s,x)=>s+x[1],0);
-  if(!(total>0))return v318Empty('No hay compromisos cuantificados para el mes actual.');
-  return v318ChartFrame(`<div class="v318-treemap">${types.filter(x=>x[1]>0).map(([name,amount,color])=>`<div class="v318-tree-cell ${color}" style="flex-grow:${Math.max(.04,amount/total).toFixed(4)}" ${v318Tip(name,'Cuota mensual: '+v318Money(amount),'Peso: '+v318Pct(amount/total*100))}><span>${sanitize(name)}</span><strong>${v318Pct(amount/total*100)}</strong><small>${v318Money(amount)}</small></div>`).join('')}</div>`+v318SmallStats([['Total mes',v318Money(total)],['Grupos activos',types.filter(x=>x[1]>0).length+'']]),'Cada bloque representa el peso relativo de una categoría en las obligaciones del mes. Se usan cuotas, no capital total.');
- }
  if(id==='futureBubbles'){
   const first=new Map();for(const e of c.dueEvents){const name=e.name||'Compromiso';if(!first.has(name))first.set(name,e)}
   const events=[...first.values()].filter(e=>e.date<=v119DateAfter(90)).sort((a,b)=>b.amount-a.amount).slice(0,12);
@@ -15029,7 +15015,7 @@ const V328_CHART_KICKERS={
  futureCalendar:'VENCIMIENTOS · PRÓXIMOS 30 DÍAS',
  futureFlow:'FLUJO DE DINERO',
  futureWaterfall:'DINERO COMPROMETIDO',
- futureMap:'DISTRIBUCIÓN DE OBLIGACIONES',
+
  futureBubbles:'IMPORTES Y URGENCIA',
  futureCoverage:'PROTECCIÓN DEL MES',
  futurePulse:'COBROS Y PAGOS',
