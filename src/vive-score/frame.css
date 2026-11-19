@@ -139,3 +139,6 @@ html{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--teal) 38%,tran
 ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--teal) 38%,transparent);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
 ::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--teal) 60%,transparent);background-clip:padding-box}
 ::-webkit-scrollbar-button{display:none;width:0;height:0}
+/* Sin barra de desplazamiento visible dentro del marco (el navegador ya tiene la suya); la rueda y el táctil siguen funcionando */
+html,body{scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0}
