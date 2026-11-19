@@ -18689,37 +18689,111 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  document.addEventListener('click',e=>{const r=e.target.closest?.('.v1191-svg rect[data-i]');if(r)show(r.closest('svg'),+r.dataset.i)});
 })();
 
-/* V1192 · Préstamo (web y móvil): nivel 1 esencial (saldo, cuota, vencimiento, progreso), nivel 2 detalle en divulgación progresiva
-   y nivel 3 gestión (una sola fila de acciones). Sin «Próximo paso» ni «Principio contable». Reutiliza el motor de cálculo existente. */
+/* V1200 · Entre personas (web y móvil): una sola experiencia. Posición neta protagonista → personas con su saldo → historia financiera de la persona.
+   Reutiliza los formularios y operaciones existentes (data-v56: loanNew, payment, editLoan, deleteLoan, editContact). No cambia saldos ni registros. */
 (()=>{
  const esc=v=>sanitize(String(v??''));
  const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
- const St=()=>ui.v1192||(ui.v1192={open:[]});
- const sec=(k,t,hint,body)=>{const o=St().open.includes(k);return `<details class="v1192-more" data-v1192="${k}"${o?' open':''}><summary>${t}<span>${hint||''}</span></summary><div class="v1192-body">${body}</div></details>`};
- function vista(l){
-  const b=loanBundle(l),a=b.actual,cur=l.currency||'DOP',orig=b.original;
-  const pr=num(a.openingPrincipal||l.principal),paid=num(a.paidPrincipal)+num(a.historicReduction||0);
-  const pct=pr>0?Math.max(0,Math.min(100,paid/pr*100)):0;
-  const done=!!a.settled,n=a.next?diffDays(a.next,today()):null;
-  const status=done?'<em class="ok">Liquidado</em>':n===null?'':n<0?`<em class="bad">Vencida hace ${-n} d</em>`:n===0?'<em class="warn">Vence hoy</em>':`<em>en ${n} d</em>`;
-  const done_n=num(a.periods)+num(a.historicPeriods||0),left=Math.max(0,num(l.months)-done_n);
-  const f=(k,v)=>`<div class="v1192-fact"><span>${k}</span><b>${v}</b></div>`;
-  const facts=[f('Monto original',money(l.principal,cur,2)),f('Tasa de interés',(l.rate!==undefined?num(l.rate).toFixed(2)+'% anual':'—')),f('Plazo',num(l.months)+' meses'),f('Cuotas pagadas / restantes',done_n+' / '+left),f('Primera cuota',l.firstDue?esc(prettyDate(l.firstDue)):'—'),f('Vencimiento final',orig.end?esc(prettyDate(orig.end)):'—'),f('Capital pagado',money(paid,cur,2)),f('Intereses pagados',money(num(a.interest)+num(a.estimatedHistoricInterest||0),cur,2)),num(a.insurance)?f('Seguro',money(a.insurance,cur,2)):'',num(a.fees)?f('Comisiones',money(a.fees,cur,2)):''].join('');
-  const antig=typeof antiguedadRow==='function'?`<div class="v1192-antig">${antiguedadRow(l,'loan')}</div>`:'';
-  return `<div class="v1192"><button type="button" class="v1192-back" data-act="closeLoanDetails">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>Préstamos</span></button>
-   <section class="v1192-hero"><div class="v1192-top"><div><span class="v1192-kick">${esc(bankOf(l))}</span><h2>${esc(l.name)}</h2></div></div>
-    <div class="v1192-main"><div><small>Saldo pendiente</small><strong>${money(a.balance,cur,2)}</strong></div><div class="v1192-next"><small>Próxima cuota</small><b>${done?'—':money(orig.installment,cur,2)}</b><span>${done?'Sin cuotas pendientes':esc(prettyDate(a.next))} ${status}</span></div></div>
-    <div class="v1192-prog" role="img" aria-label="Amortización ${pct.toFixed(1)}%"><i style="width:${pct}%"></i></div><div class="v1192-progtxt"><span>${pct.toFixed(1)}% amortizado</span><span>${left} ${left===1?'cuota restante':'cuotas restantes'}</span></div>
-    <div class="v1192-acts"><button type="button" class="v1192-primary" data-act="payLoan" data-id="${esc(l.id)}">Registrar cuota</button><button type="button" class="v1192-sec" data-act="extraLoan" data-id="${esc(l.id)}">Abono extraordinario</button></div></section>
-   ${sec('detalle','Detalle del préstamo',esc(num(l.rate).toFixed(2))+'% · '+num(l.months)+' meses',`<div class="v1192-facts">${facts}</div>${antig}`)}
-   ${sec('pagos','Pagos y abonos realizados',done_n+' cuotas',loanPaymentHistory(l,b))}
-   ${sec('amort','Amortización','tabla y exportación',loanAmortView(l,b))}
-   ${sec('sim','Simular un abono','efecto en plazo e intereses',loanSimulator(l,b))}
-   ${sec('admin','Administrar este préstamo','',`<div class="v1192-admin"><button type="button" data-act="editLoan" data-id="${esc(l.id)}">Editar ficha</button><button type="button" class="danger" data-act="productArchive" data-kind="loan" data-id="${esc(l.id)}">Cancelar préstamo</button></div>`)}</div>`;
+ const norm=v=>String(v||'').trim().toLowerCase().replace(/\s+/g,' ');
+ const cname=c=>[c?.firstName,c?.lastName].filter(Boolean).join(' ').trim();
+ const contactOf=l=>{const cs=db.personalContacts||[];return cs.find(c=>c.id===l.contactId)||cs.find(c=>norm(cname(c))===norm(l.person))||null};
+ const eq=(l,v)=>fx(num(v),l.currency||'DOP');
+ function grupos(){
+  const m=new Map();
+  for(const l of (db.personalLoans||[])){
+   const c=contactOf(l),key=c?'c:'+c.id:'p:'+norm(l.person||'sin nombre');
+   if(!m.has(key))m.set(key,{key,contact:c,name:c?cname(c):(l.person||'Sin nombre'),loans:[]});
+   m.get(key).loans.push(l);
+  }
+  const t0=today();
+  return [...m.values()].map(g=>{
+   const open=g.loans.filter(l=>personalBalance(l)>.005);
+   const lent=open.filter(l=>l.direction==='lent').reduce((n,l)=>n+eq(l,personalBalance(l)),0);
+   const owed=open.filter(l=>l.direction!=='lent').reduce((n,l)=>n+eq(l,personalBalance(l)),0);
+   const late=open.some(l=>l.dueDate&&l.dueDate<t0);
+   const next=open.map(l=>l.dueDate).filter(Boolean).sort()[0]||'';
+   return {...g,open,lent,owed,net:lent-owed,late,next};
+  }).sort((a,b)=>(b.open.length>0)-(a.open.length>0)||Math.abs(b.net)-Math.abs(a.net)||a.name.localeCompare(b.name,'es'));
  }
- loanDetail=function(l){return vista(l)};
- const prev=pages.loans;pages.loans=function(...x){const l=ui.loanId?loan(ui.loanId):null;return l?vista(l):prev.apply(this,x)};
- document.addEventListener('toggle',e=>{const d=e.target;if(!d?.matches?.('details.v1192-more'))return;const k=d.dataset.v1192,st=St();st.open=d.open?[...new Set([...st.open,k])]:st.open.filter(x=>x!==k)},true);
+ const ini=n=>String(n).trim().split(/\s+/).filter(Boolean).slice(0,2).map(w=>Array.from(w)[0]).join('').toUpperCase()||'?';
+ const estado=g=>!g.open.length?'<em class="ok">Liquidado</em>':g.late?'<em class="bad">Vencido</em>':g.next?`<em>Vence ${esc(prettyDate(g.next))}</em>`:'<em>Pendiente</em>';
+ function fila(g){
+  const dir=g.net>0.005?'Me debe':g.net<-0.005?'Le debo':'',amt=Math.abs(g.net);
+  const both=g.lent>.005&&g.owed>.005;
+  return `<button type="button" class="v1200-row${g.open.length?'':' is-done'}" data-v1200-p="${esc(g.key)}"><span class="v1200-av">${esc(ini(g.name))}</span><span class="v1200-main"><strong>${esc(g.name)}</strong><small>${estado(g)}${both?` · ${money(g.lent)} por cobrar · ${money(g.owed)} por pagar`:''}</small></span><span class="v1200-amt ${g.net>0.005?'in':g.net<-0.005?'out':''}">${g.open.length?`<b>${money(amt)}</b><small>${dir}</small>`:'<b>—</b>'}</span>${G('<path d="m9 6 6 6-6 6"/>')}</button>`;
+ }
+ function eventos(g){
+  const ev=[];
+  for(const l of g.loans){
+   const lent=l.direction==='lent',cur=l.currency||'DOP',cc=l.concept||l.note||'';
+   let bal=num(l.principal);
+   ev.push({d:l.date||'',k:lent?'Le prestaste':'Te prestó',cc,amt:num(l.principal),cur,sign:lent?-1:1,bal,order:0});
+   const st=v233PersonalSettlements(l).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+   for(const t of st){bal=rnd(bal-Math.max(0,num(t.principal)));ev.push({d:t.date||'',k:lent?'Abono recibido':'Abono pagado',cc,amt:Math.max(0,num(t.principal)),cur,sign:lent?1:-1,bal,extra:num(t.interest)>0?'incluye '+money(t.interest,cur,2)+' de intereses':'',order:1})}
+   const fg=v233PersonalForgiven(l);if(fg>0){bal=rnd(bal-fg);ev.push({d:l.forgiveness?.date||l.forgiveness?.at||l.date||'',k:'Deuda perdonada',cc,amt:fg,cur,sign:0,bal,order:2})}
+  }
+  return ev.sort((a,b)=>String(b.d).localeCompare(String(a.d))||b.order-a.order);
+ }
+ function detalle(g){
+  const dir=g.net>0.005?'Te debe':g.net<-0.005?'Le debes':'Sin saldo pendiente';
+  const ev=eventos(g),cid=g.contact?.id||'';
+  const abiertos=g.open.map(l=>`<div class="v1200-ag"><span><strong>${esc(l.concept||l.note||'Acuerdo')}</strong><small>${l.direction==='lent'?'Me debe':'Le debo'}${l.dueDate?' · vence '+esc(prettyDate(l.dueDate)):''}</small></span><b>${money(personalBalance(l),l.currency||'DOP',2)}</b><button type="button" data-v56="payment" data-id="${esc(l.id)}">${l.direction==='lent'?'Registrar abono':'Abonar'}</button></div>`).join('');
+  const hist=ev.map(e=>`<div class="v1200-ev"><span class="v1200-dot ${e.sign>0?'in':e.sign<0?'out':''}"></span><span class="v1200-evmain"><strong>${esc(e.k)}</strong><small>${esc(prettyDate(e.d))}${e.cc?' · '+esc(e.cc):''}${e.extra?' · '+esc(e.extra):''}</small></span><span class="v1200-evamt"><b class="${e.sign>0?'in':''}">${e.sign>0?'+':e.sign<0?'−':''}${money(e.amt,e.cur,2)}</b><small>saldo ${money(e.bal,e.cur,2)}</small></span></div>`).join('');
+  const admin=g.loans.map(l=>`<div class="v1200-adm"><span>${esc(l.concept||l.note||'Acuerdo')} · ${money(l.principal,l.currency||'DOP',2)}</span><button type="button" data-v56="editLoan" data-id="${esc(l.id)}">Editar</button><button type="button" class="danger" data-v56="deleteLoan" data-id="${esc(l.id)}">Eliminar</button></div>`).join('');
+  return `<div class="v1200"><button type="button" class="v1200-back" data-v1200-p="">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>Entre personas</span></button>
+   <section class="v1200-hero v1200-hero-p"><div><span class="v1200-kick">${esc(dir)}</span><h2>${esc(g.name)}</h2></div><strong class="v1200-big">${g.open.length?money(Math.abs(g.net)):'RD$0'}</strong>${g.lent>.005&&g.owed>.005?`<p>${money(g.lent)} por cobrar · ${money(g.owed)} por pagar</p>`:''}<div class="v1200-acts"><button type="button" class="v1200-primary" data-v56="loanNew" data-id="${esc(cid)}">Nuevo concepto</button>${cid?`<button type="button" class="v1200-sec" data-v56="editContact" data-id="${esc(cid)}">Editar contacto</button>`:''}</div></section>
+   ${abiertos?`<section class="v1200-panel"><h3>Pendiente</h3>${abiertos}</section>`:''}
+   <section class="v1200-panel"><h3>Historia financiera</h3>${hist||'<p class="v1200-empty">Sin movimientos.</p>'}</section>
+   <details class="v1200-more"><summary>Administrar acuerdos</summary><div class="v1200-body">${admin}</div></details></div>`;
+ }
+ function lista(){
+  const gs=grupos(),lent=gs.reduce((n,g)=>n+g.lent,0),owed=gs.reduce((n,g)=>n+g.owed,0),net=lent-owed;
+  const dir=net>.005?'Te deben más de lo que debes':net<-.005?'Debes más de lo que te deben':'Estás a mano';
+  return `<div class="v1200"><section class="v1200-hero"><div class="v1200-top"><span class="v1200-kick">ENTRE PERSONAS · BALANCE NETO</span><button type="button" class="v1200-primary" data-v56="loanNew" data-id="">Nueva relación</button></div>
+    <strong class="v1200-big">${net<-.005?'−':''}${money(Math.abs(net))}</strong><p class="v1200-dir">${dir}</p>
+    <div class="v1200-split"><div><small>Me deben</small><b>${money(lent)}</b></div><div><small>Debo</small><b>${money(owed)}</b></div></div></section>
+   ${gs.length?`<section class="v1200-list" aria-label="Personas">${gs.map(fila).join('')}</section>`:'<p class="v1200-empty">Aún no tienes relaciones. Crea la primera con «Nueva relación».</p>'}</div>`;
+ }
+ pages.personal=function(){
+  const k=ui.v1200p,g=k?grupos().find(x=>x.key===k):null;
+  return g?detalle(g):lista();
+ };
+ document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1200-p]');if(!b)return;e.preventDefault();ui.v1200p=b.dataset.v1200P||'';ui.v56ContactId='';ui.v56LoanId='';render();window.scrollTo(0,0)},true);
+})();
+
+/* V1210 · Instituciones (web y móvil): inventario de productos por institución — Cuentas, Tarjetas, Préstamos y Certificados.
+   Sin KPIs globales ni resúmenes: se entra, se identifica el banco y se accede al producto. Reutiliza goAccount/goCard/goLoan/goCertificate. */
+(()=>{
+ const esc=v=>sanitize(String(v??''));
+ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+ const CH=G('<path d="m9 6 6 6-6 6"/>');
+ const KINDS=[['aa','Cuentas','wallet','addAccount'],['cc','Tarjetas','card','addCard'],['ll','Préstamos','receipt','addLoan'],['certs','Certificados','analytics','addCertificate']];
+ const logo=b=>bankLogoMark(b,'institution-logo');
+ const vis=()=>db.banks.filter(b=>ui.showHidden||!b.archived);
+ function tarjeta(b){
+  const f=bankFigures(b);
+  return `<button type="button" class="v1210-bank" data-v1210-bank="${esc(b.id)}"><span class="v1210-head">${logo(b)}<span class="v1210-name"><strong>${esc(b.name)}</strong><small>${esc(b.kind||'Institución')}${b.archived?' · archivada':''}</small></span>${CH}</span><span class="v1210-kinds">${KINDS.map(([k,l,ic])=>`<span class="v1210-kind${f[k].length?'':' is-zero'}">${icon(ic)}<b>${f[k].length}</b><small>${l}</small></span>`).join('')}</span></button>`;
+ }
+ function fila(kind,b,x){
+  if(kind==='aa')return `<button type="button" class="v1210-prod" data-act="goAccount" data-id="${esc(x.id)}"><span><strong>${esc(x.name)}</strong><small>${esc(x.currency)}${x.kind==='savings'?' · Ahorros':x.kind==='checking'||x.kind==='current'?' · Corriente':''}</small></span><b>${money(getAccountBalance(x),x.currency,2)}</b>${CH}</button>`;
+  if(kind==='cc'){const d=cardStatus(x,'DOP').debt,u=cardStatus(x,'USD').debt;return `<button type="button" class="v1210-prod" data-act="goCard" data-id="${esc(x.id)}"><span><strong>${esc(x.name)}</strong><small>•••• ${esc(x.last4||'—')}</small></span><b>${num(u)>.004?money(d,'DOP',2)+' · '+money(u,'USD',2):money(d,'DOP',2)}</b>${CH}</button>`}
+  if(kind==='ll')return `<button type="button" class="v1210-prod" data-act="goLoan" data-id="${esc(x.id)}"><span><strong>${esc(x.name)}</strong><small>Saldo pendiente</small></span><b>${money(loanStatus(x).balance,x.currency,2)}</b>${CH}</button>`;
+  return `<button type="button" class="v1210-prod" data-act="goCertificate" data-id="${esc(x.id)}"><span><strong>${esc(x.name)}</strong><small>Capital invertido</small></span><b>${money(certificateCapital(x),x.currency,2)}</b>${CH}</button>`;
+ }
+ function detalle(b){
+  const f=bankFigures(b);
+  return `<div class="v1210"><button type="button" class="v1210-back" data-v1210-bank="">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>Instituciones</span></button>
+   <section class="v1210-hero">${logo(b)}<div><h2>${esc(b.name)}</h2><small>${esc(b.kind||'Institución')}${b.archived?' · archivada':''}</small></div></section>
+   <div class="v1210-secs">${KINDS.map(([k,l,ic,add])=>`<section class="v1210-sec"><header><h3>${icon(ic)}<span>${l}</span><em>${f[k].length}</em></h3><button type="button" class="v1210-add" data-act="${add}" data-id="${esc(b.id)}" aria-label="Agregar ${l.toLowerCase()}">${G('<path d="M12 5v14M5 12h14"/>')}</button></header>${f[k].length?f[k].map(x=>fila(k,b,x)).join(''):`<p class="v1210-none">Sin ${l.toLowerCase()} en esta institución.</p>`}</section>`).join('')}</div>
+   <details class="v1210-more"><summary>Administrar institución</summary><div class="v1210-body"><button type="button" data-act="editBank" data-id="${esc(b.id)}">Editar institución</button><button type="button" data-act="productArchive" data-kind="bank" data-id="${esc(b.id)}">Archivar</button><button type="button" class="danger" data-act="productDelete" data-kind="bank" data-id="${esc(b.id)}">Eliminar sin historial</button></div></details></div>`;
+ }
+ function lista(){
+  const bs=vis(),arch=db.banks.filter(b=>b.archived).length;
+  return `<div class="v1210"><div class="v1210-top"><button type="button" class="v1210-primary" data-act="addBank">${G('<path d="M12 5v14M5 12h14"/>')}<span>Agregar institución</span></button>${arch?`<button type="button" class="v1210-link" data-act="toggleHidden">${ui.showHidden?'Ocultar archivadas':'Ver archivadas ('+arch+')'}</button>`:''}</div>
+   ${bs.length?`<div class="v1210-grid">${bs.map(tarjeta).join('')}</div>`:'<p class="v1210-none">Aún no tienes instituciones. Agrega la primera.</p>'}</div>`;
+ }
+ pages.banks=function(){const b=ui.bankId?bank(ui.bankId):null;return b?detalle(b):lista()};
+ document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1210-bank]');if(!t)return;e.preventDefault();ui.bankId=t.dataset.v1210Bank||null;render();window.scrollTo(0,0)},true);
 })();
 
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
