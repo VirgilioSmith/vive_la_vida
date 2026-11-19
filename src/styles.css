@@ -10100,21 +10100,6 @@ body.theme-black .v213-apple-badge{background:#17282d;border-color:#38636b;color
 .v220-meta-chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#eef4ff;border:1px solid #dbe6fb;color:#456697;padding:6px 10px;font-size:10px;font-weight:760;line-height:1.2}
 .v220-meta-chip.strong{background:#f1f6ff;color:#274a85;border-color:#cddcf7}
 .v220-bank-actions{justify-content:flex-end!important;flex-wrap:wrap!important;gap:7px!important}
-.v220-bank-overview{display:grid;grid-template-columns:minmax(270px,1.02fr) minmax(0,1.5fr);gap:14px;align-items:start}
-.v220-bank-focus{background:linear-gradient(180deg,#f8fbff,#f3f7fe);border:1px solid #e3ebf7;border-radius:22px;padding:17px 17px 16px;min-width:0}
-.v220-bank-focus-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.v220-bank-focus-top h3{margin:0;font-size:17px;letter-spacing:-.03em;color:#1f3458}
-.v220-bank-focus-top p{margin:4px 0 0;font-size:11px;line-height:1.5;color:#7487a0}
-.v220-focus-caption{display:inline-flex;align-items:center;border-radius:999px;background:#fff;border:1px solid #e2eaf8;color:#6f82a1;padding:6px 10px;font-size:10px;font-weight:760;white-space:nowrap}
-.v220-focus-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
-.v220-focus-card{background:#fff;border:1px solid #e8eef8;border-radius:16px;padding:12px 12px 11px;min-width:0}
-.v220-focus-card small{display:block;font-size:10px;line-height:1.3;color:#6f84a1;margin-bottom:6px}
-.v220-focus-card strong{display:block;font-size:18px;line-height:1.1;letter-spacing:-.04em;color:#1c355d;overflow-wrap:anywhere}
-.v220-focus-card span{display:block;font-size:10px;line-height:1.4;color:#8696ad;margin-top:6px}
-.v220-bank-kpi-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
-.v220-bank-kpi-grid .kpi{padding:16px!important;border-radius:18px!important;background:#fff!important;border:1px solid #e7edf6!important;height:100%}
-.v220-bank-kpi-grid .kpi-head{font-size:11px!important}
-.v220-bank-kpi-grid .kpi-value{font-size:clamp(18px,1.55vw,24px)!important;line-height:1.08!important;overflow-wrap:anywhere!important}
 .world-banks .v204-bank-detail .v220-products-head{margin-top:18px!important;margin-bottom:0!important}
 .world-banks .v204-bank-detail .v220-products-head h2{font-size:18px!important}
 .world-banks .v204-bank-detail .v220-products-head p{font-size:11px!important;line-height:1.55!important}
@@ -10127,11 +10112,7 @@ body.theme-black .v213-apple-badge{background:#17282d;border-color:#38636b;color
 .world-banks .v204-bank-detail .product-lane.v220-product-lane .product-item small{font-size:10px!important;line-height:1.45!important}
 .world-banks .v204-bank-detail .product-lane.v220-product-lane .product-item b{max-width:none!important;font-size:11px!important;white-space:nowrap!important}
 .world-banks .v204-bank-detail .product-lane.v220-product-lane .lane-empty{padding:18px 14px!important;min-height:72px!important;display:grid!important;place-items:center!important;line-height:1.5!important}
-.world-banks .v204-bank-detail .v220-bank-insights{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;align-items:start!important}
-.world-banks .v204-bank-detail .v220-bank-insights .panel{border-radius:18px!important}
-.world-banks .v204-bank-detail .v220-bank-insights .mini-row{padding:10px 0!important}
 @media(max-width:1320px){
-  .v220-bank-overview{grid-template-columns:1fr!important}
 }
 @media(max-width:1120px){
   .world-banks .v204-desktop-layout{grid-template-columns:1fr!important}
@@ -10144,7 +10125,6 @@ body.theme-black .v213-apple-badge{background:#17282d;border-color:#38636b;color
   .account-product-card{padding:15px!important}
   .world-banks .v204-bank-detail .bank-workspace.v220-bank-workspace{padding:14px!important}
   .v220-bank-identity{gap:11px!important}
-  .v220-focus-card strong{font-size:17px!important}
 }
 /* ==== v221-movimientos-unificados ==== */
 /* V221 — Estados integrados, sin segunda pantalla de confirmación. */
@@ -22635,8 +22615,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   .world-banks .v204-bank-detail .bank-workspace{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important}
   /* Todos los detalles originales siguen presentes solo cuando existe selección. */
   .world-banks .v204-desktop-layout:not(:has(.v204-bank-detail)){padding-bottom:0!important;min-height:0!important}
-  .world-banks .v204-bank-detail .v220-bank-overview{min-width:0;max-width:100%}
-  .world-banks .v204-bank-detail .v220-bank-overview>*{min-width:0}
   .world-banks .v204-bank-detail .v220-products-head{flex-wrap:wrap;gap:12px}
   .world-banks .v204-bank-detail .v220-products-head .hstack{flex-wrap:wrap;justify-content:flex-end}
 }
@@ -22841,7 +22819,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   outline:2px solid var(--blue,#547dd5);outline-offset:2px;
 }
 @media(max-width:767px){
-  .world-banks .v220-bank-overview .v220-focus-grid{grid-template-columns:1fr;}
   .main:not(.world-overview) #page :is(.v220-bank-actions,.hero-actions){flex-wrap:wrap;}
 }
 @media(prefers-reduced-motion:reduce){
@@ -51938,9 +51915,6 @@ html body:not(.theme-black):not(.theme-dark) #app#app .v61-profile-switch button
 html body:not(.theme-black):not(.theme-dark) #app#app .v61-profile-switch button:not(.active) :is(b,small,span,i){color:var(--v424-accent-strong)!important;background:color-mix(in srgb,var(--v424-accent-strong) 12%,#fff)!important}
 html body:not(.theme-black):not(.theme-dark) #app#app .v61-profile-switch button.active{color:var(--v424-accent-strong)!important}
 html body:not(.theme-black):not(.theme-dark) #app#app .bank-workspace :is(.v220-meta-chip,.v220-focus-caption .pill,.pill){background:color-mix(in srgb,var(--v424-accent-strong) 10%,#fff)!important;color:var(--v424-accent-strong)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 24%,transparent)!important}
-html body:not(.theme-black):not(.theme-dark) #app#app .bank-workspace :is(.v220-bank-focus,.v220-focus-card){border-color:color-mix(in srgb,var(--v424-accent-strong) 16%,transparent)!important}
-html body:not(.theme-black):not(.theme-dark) #app#app .bank-workspace .v220-bank-focus{background:color-mix(in srgb,var(--v424-accent-strong) 5%,#fff)!important}
-html body:not(.theme-black):not(.theme-dark) #app#app .bank-workspace :is(.v220-focus-card,.v220-bank-overview) svg{color:var(--v424-accent-strong)!important;stroke:currentColor}
 html body:not(.theme-black):not(.theme-dark) #app#app .bank-workspace .workspace-title .btn:not(.primary){color:var(--v424-accent-strong)!important;border-color:color-mix(in srgb,var(--v424-accent-strong) 26%,transparent)!important;background:color-mix(in srgb,var(--v424-accent-strong) 6%,#fff)!important}
 html body:not(.theme-black):not(.theme-dark) #app#app .v61-profile-switch .v61-profile-option:not(.active){color:var(--v424-accent-strong)!important;background:transparent!important}
 html body:not(.theme-black):not(.theme-dark) #app#app .v61-profile-switch .v61-profile-option:not(.active) span{color:var(--v424-accent-strong)!important;background:color-mix(in srgb,var(--v424-accent-strong) 12%,#fff)!important}
