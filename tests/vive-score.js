@@ -115,8 +115,10 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
 
   /* 14 · texto explicativo coincide con el cálculo */
   await fclick(p, '[data-tab="summary"]');
-  const sum = await frameOf(p).evaluate(() => { const c = evaluate(current()); return { text: document.getElementById('view').innerText, score: c.score, util: pct(c.util) }; });
-  check(14, 'El texto «Tu score, explicado» coincide con los cálculos', sum.text.includes(String(sum.score)) && sum.text.includes(sum.util) && /en construcción/.test(sum.text), `${sum.score} · utilización ${sum.util}`);
+  await fclick(p, '[data-why]'); await p.waitForTimeout(200);
+  const sum = await frameOf(p).evaluate(() => { const c = evaluate(current()); return { text: document.getElementById('view').innerText + ' ' + document.getElementById('drawer').innerText, score: c.score, util: pct(c.util) }; });
+  await frameOf(p).evaluate(() => drawerClose());
+  check(14, 'La explicación «¿Por qué este puntaje?» coincide con los cálculos', sum.text.includes(String(sum.score)) && sum.text.includes(sum.util) && /en construcción/.test(sum.text), `${sum.score} · utilización ${sum.util}`);
 
   /* 15 · las modificaciones se conservan tras recargar */
   await frameOf(p).evaluate(() => { qEditing = false; setOverride(ST.overrides ? Object.keys(ST.overrides)[0] || current().cards[0].productId : current().cards[0].productId, { opened: '2019-08' }); });
