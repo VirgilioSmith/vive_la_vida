@@ -6,7 +6,7 @@
 (function(){
 'use strict';
 if(!window.VIVE_SCORE_EXPERIMENTAL)return;
-const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=6';
+const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=7';
 const newStore=()=>({v:1,startedOn:'2026-11',answers:null,overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
 let store=null,frame=null,ready=false,height=Math.max(560,innerHeight-170),payloadSent=false;
 function load(){if(store)return store;try{const x=JSON.parse(localStorage.getItem(KEY)||'null');store=x&&x.v===1?{...newStore(),...x}:newStore()}catch(_){store=newStore()}return store}
@@ -20,7 +20,7 @@ function env(){
 }
 function post(type,data){try{frame?.contentWindow?.postMessage({vs:1,type,...data},location.origin)}catch(_){}}
 let lastSig='',pollTimer=0,refreshTimer=0;
-function sendInit(){const p=window.ViveScoreAdapter?.read();lastSig=JSON.stringify(p||null);post('init',{payload:p,store:load(),env:env()});payloadSent=true}
+function sendInit(){const p=window.ViveScoreAdapter?.read();lastSig=JSON.stringify(p||null);post('init',{payload:p,store:load(),env:env()});payloadSent=true;/* se muestra solo con el tema y el acento ya aplicados (sin destello verde de arranque) */setTimeout(()=>{if(frame)frame.style.opacity='1'},160)}
 /* Alimentación automática: lee (solo lectura, en memoria) los datos de la app y avisa al módulo únicamente si cambiaron. No hay consultas a Supabase. */
 function refreshIfChanged(){if(!frame||!ready||!frame.classList.contains('vs-on'))return;const p=window.ViveScoreAdapter?.read(),sig=JSON.stringify(p||null);if(sig===lastSig)return;lastSig=sig;post('data',{payload:p})}
 const queueRefresh=()=>{if(refreshTimer)return;refreshTimer=setTimeout(()=>{refreshTimer=0;refreshIfChanged()},350)};
@@ -29,7 +29,7 @@ setInterval(()=>{if(document.visibilityState==='visible'&&frame?.classList.conta
 function ensureFrame(){
  if(frame)return frame;
  frame=document.createElement('iframe');frame.className='vs-frame';frame.title='VIVE SCORE CRÉDITO';frame.setAttribute('aria-label','VIVE SCORE CRÉDITO');
- frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-downloads allow-popups allow-popups-to-escape-sandbox');frame.src=FRAME_SRC;document.body.appendChild(frame);return frame;
+ frame.style.opacity='0';frame.style.transition='opacity .15s';frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-downloads allow-popups allow-popups-to-escape-sandbox');frame.src=FRAME_SRC;document.body.appendChild(frame);return frame;
 }
 function slot(){return document.querySelector('[data-vs-slot]')}
 function place(){
