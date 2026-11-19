@@ -986,11 +986,6 @@ function v290BudgetRing(p){
 /* V291 · Resumen web: presupuesto junto a Próximos pagos.
    Cuatro datos, sin categorías. Las métricas provienen del mismo snapshot
    que utiliza Ejecución, y no se modifica el Resumen móvil. */
-/* V1130 · Utilización de tarjetas también en el Resumen web (mismos datos que el widget móvil, con más espacio). */
-function v1130CreditWeb(){
- try{const t=document.createElement('template');t.innerHTML=v309ExtraCharts();const e=t.content.querySelector('[data-v105-widget="creditUtil"]');if(!e)return '';
-  e.className='ff-tile v1130-credit-web';e.querySelector('.vive-mobile-view-all')?.classList.replace('vive-mobile-view-all','ff-outline-pill');return e.outerHTML}catch(_){return ''}
-}
 function v290BudgetWeb(){
  const p=v290BudgetSnapshot();
  const remainingClass=p.remaining<-.005?'v290-negative':'';
@@ -3162,7 +3157,6 @@ function overview(){
      </section>
      ${v290BudgetWeb()}
    </div>
-   ${v1130CreditWeb()}
    <section data-v105-widget="payments" class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="pressure">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
   </div>
  </div>`;
@@ -6800,7 +6794,8 @@ for(const pg of ['income','expenses']){INNER_PAGES[pg].tabs=INNER_PAGES[pg].tabs
 const v26OldInnerWrap=innerWrap;
 innerWrap=function(page,view){
  if(page==='payments')return view(); // V301: Visión global has no redundant inner navigator
- if(page==='accounts'){ui.innerViews.accounts='overview';return view()} // Cuentas: sin sub-pestañas (Resumen/Bancarias/Efectivo/Movimientos); siempre el resumen
+ if(page==='accounts'){ui.innerViews.accounts='overview';return view()}
+ if((page==='loans'||page==='certificates')&&!isMobileViewport()){ui.innerViews[page]='overview';return view()} // Web: Préstamos abre en Cartera y Certificados en Posiciones, sin barra interna // Cuentas: sin sub-pestañas (Resumen/Bancarias/Efectivo/Movimientos); siempre el resumen
  if(page==='expenses')return view(); // Egresos ya no tiene sub-pestañas: sin la segunda píldora «Egresos»
  if(page==='income')return v26OldInnerWrap(page,view); // Restore original analysis and recurring income tabs
  if(page==='budget'){
