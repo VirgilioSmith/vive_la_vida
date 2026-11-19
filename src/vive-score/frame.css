@@ -127,3 +127,8 @@ body.compact .scoreHero .caps{white-space:normal}
 /* Móvil refinado: estado compacto en el anillo */
 body.compact .scoreHero .movement{font-size:11px!important;padding:5px 10px!important;border-radius:999px;display:inline-flex!important;white-space:normal;line-height:1.25}
 body.compact .scoreHero h2{font-size:18px!important}
+/* Barra de pestañas: mismo tema y misma intensidad que las barras superiores de la app (web) */
+body:not(.compact) .tabs{background:rgba(255,255,255,var(--nav-shell-alpha,0));border:1px solid rgba(255,255,255,var(--nav-shell-border-alpha,0));box-shadow:0 7px 22px rgba(40,60,100,var(--nav-shell-shadow-alpha,0));backdrop-filter:blur(var(--nav-shell-blur,0px));-webkit-backdrop-filter:blur(var(--nav-shell-blur,0px))}
+body.night:not(.compact) .tabs{background:rgba(24,30,41,.3);border-color:rgba(115,130,160,.17)}
+body:not(.compact) .tabs button{background:transparent;border:0;color:var(--muted)}
+body:not(.compact) .tabs button.selected{background:var(--teal);color:#fff;box-shadow:0 5px 15px color-mix(in srgb,var(--teal) 18%,transparent)}

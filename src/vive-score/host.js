@@ -6,7 +6,7 @@
 (function(){
 'use strict';
 if(!window.VIVE_SCORE_EXPERIMENTAL)return;
-const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=14';
+const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=15';
 const newStore=()=>({v:1,startedOn:'2026-11',answers:null,overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
 let store=null,frame=null,ready=false,height=Math.max(560,innerHeight-170),payloadSent=false;
 function load(){if(store)return store;try{const x=JSON.parse(localStorage.getItem(KEY)||'null');store=x&&x.v===1?{...newStore(),...x}:newStore()}catch(_){store=newStore()}return store}
@@ -16,7 +16,8 @@ function env(){
  const cs=getComputedStyle(document.body),body=document.body.classList;
  const accent=(cs.getPropertyValue('--v424-accent-strong')||'').trim()||'#159b81';
  const mode=body.contains('theme-black')?'black':body.contains('theme-dark')?'dark':'light';
- return {mode,accent,compact:mobile()};
+ const root=getComputedStyle(document.documentElement),nav={};for(const k of ['shell-alpha','shell-border-alpha','shell-shadow-alpha','shell-blur'])nav[k]=(root.getPropertyValue('--v443-nav-'+k)||'').trim();
+ return {mode,accent,compact:mobile(),nav};
 }
 function post(type,data){try{frame?.contentWindow?.postMessage({vs:1,type,...data},location.origin)}catch(_){}}
 let lastSig='',pollTimer=0,refreshTimer=0;
