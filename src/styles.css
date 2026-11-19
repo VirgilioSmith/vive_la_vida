@@ -55288,3 +55288,21 @@ html body #app#app #page .v1234-hero .advanced-gap *{color:#fff!important}
 html body #app#app #page .v1234-hero .v1234-main>p{color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:.92}
 html body #app#app #page .v1234-hero .advanced-gap{display:inline-flex;gap:6px;padding:5px 10px!important;border-radius:999px}
 html body #app#app #page .v1234-hero .advanced-gap :is(b,i,span,em){background:transparent!important}
+/* v1236 · Entre personas: banner como Suscripciones (balance a la izquierda, KPIs en cristal a la derecha) */
+html body #app#app #page .v1200-hero2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.3fr);gap:0;align-items:stretch;padding:0;overflow:hidden}
+html body #app#app #page .v1200-hero2 .v1200-hmain{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:26px 30px;border-right:1px solid rgba(255,255,255,.22)}
+html body #app#app #page .v1200-hero2 .v1200-primary{display:inline-flex;align-items:center;gap:8px;margin-top:6px}
+html body #app#app #page .v1200-hero2 .v1200-primary svg{width:16px;height:16px}
+html body #app#app #page .v1200-kpis{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:22px 26px;align-content:center}
+html body #app#app #page .v1200-kpi{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24)}
+html body #app#app #page .v1200-kpi-ic{display:grid;place-items:center;width:44px;height:44px;flex:none;border-radius:14px;background:rgba(255,255,255,.18)}
+html body #app#app #page .v1200-kpi small{display:block;font-size:13px;opacity:.9}
+html body #app#app #page .v1200-kpi b{display:block;font-size:24px;font-weight:850;letter-spacing:-.03em;line-height:1.15}
+html body #app#app #page .v1200-kpi em{display:block;font-style:normal;font-size:12px;opacity:.8}
+@media(max-width:790px){
+ html body #app#app #page .v1200-hero2{grid-template-columns:1fr}
+ html body #app#app #page .v1200-hero2 .v1200-hmain{border-right:0;border-bottom:1px solid rgba(255,255,255,.22);padding:20px}
+ html body #app#app #page .v1200-kpis{grid-template-columns:1fr 1fr;padding:16px;gap:10px}
+ html body #app#app #page .v1200-kpi{flex-direction:column;align-items:flex-start;gap:8px;padding:14px}
+ html body #app#app #page .v1200-kpi b{font-size:20px}
+}

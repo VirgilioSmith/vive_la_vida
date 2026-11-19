@@ -18718,9 +18718,10 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  function lista(){
   const gs=grupos(),lent=gs.reduce((n,g)=>n+g.lent,0),owed=gs.reduce((n,g)=>n+g.owed,0),net=lent-owed;
   const dir=net>.005?'Te deben más de lo que debes':net<-.005?'Debes más de lo que te deben':'Estás a mano';
-  return `<div class="v1200"><section class="v1200-hero"><div class="v1200-top"><span class="v1200-kick">ENTRE PERSONAS · BALANCE NETO</span><button type="button" class="v1200-primary" data-v56="loanNew" data-id="">Nueva relación</button></div>
-    <strong class="v1200-big">${net<-.005?'−':''}${money(Math.abs(net))}</strong><p class="v1200-dir">${dir}</p>
-    <div class="v1200-split"><div><small>Me deben</small><b>${money(lent)}</b></div><div><small>Debo</small><b>${money(owed)}</b></div></div></section>
+  const ic=d=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const nOwe=gs.filter(g=>g.lent>.005).length,nDebt=gs.filter(g=>g.owed>.005).length;
+  return `<div class="v1200"><section class="v1200-hero v1200-hero2"><div class="v1200-hmain"><span class="v1200-kick">ENTRE PERSONAS · BALANCE NETO</span><strong class="v1200-big">${net<-.005?'−':''}${money(Math.abs(net))}</strong><p class="v1200-dir">${dir}</p><button type="button" class="v1200-primary" data-v56="loanNew" data-id="">${ic('<path d="M12 5v14M5 12h14"/>')}<span>Nueva relación</span></button></div>
+    <div class="v1200-kpis"><div class="v1200-kpi"><span class="v1200-kpi-ic">${ic('<path d="M12 19V5M5 12l7-7 7 7"/>')}</span><div><small>Me deben</small><b>${money(lent)}</b><em>${nOwe} persona${nOwe===1?'':'s'}</em></div></div><div class="v1200-kpi"><span class="v1200-kpi-ic">${ic('<path d="M12 5v14M5 12l7 7 7-7"/>')}</span><div><small>Debo</small><b>${money(owed)}</b><em>${nDebt} persona${nDebt===1?'':'s'}</em></div></div></div></section>
    ${gs.length?`<section class="v1200-list" aria-label="Personas">${gs.map(fila).join('')}</section>`:'<p class="v1200-empty">Aún no tienes relaciones. Crea la primera con «Nueva relación».</p>'}</div>`;
  }
  pages.personal=function(){
