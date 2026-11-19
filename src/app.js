@@ -21589,7 +21589,8 @@ window.__v866Runners.v865=run;
       });
       const by={};
       Array.from(row.querySelectorAll('button')).forEach(btn=>{ const k=(btn.querySelector('b')?.textContent||btn.textContent||'').trim(); by[k]=btn; });
-      ['Pagar','Corte','Avance','Editar'].forEach(k=>{ if(by[k]) row.appendChild(by[k]); });
+      const want=['Pagar','Corte','Avance','Editar'].map(k=>by[k]).filter(Boolean),have=Array.from(row.querySelectorAll('button'));
+      if(want.length&&want.some((el,i)=>have.indexOf(el)!==i))want.forEach(el=>row.appendChild(el));
     });
   }
   
@@ -21606,7 +21607,7 @@ window.__v866Runners.v865=run;
   }
   function markHistoricalButtons(){
     document.querySelectorAll('[data-act="cardHistory"]').forEach(btn=>{
-      btn.classList.add('v913-history-ready');
+      if(!btn.classList.contains('v913-history-ready')){btn.classList.add('v913-history-ready');}
       btn.style.borderColor='color-mix(in srgb, var(--accent, #6d6af8) 20%, #dbe4ee)';
     });
   }
