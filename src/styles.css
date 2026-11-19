@@ -55297,10 +55297,54 @@ html body #app#app #page .v1200-adm button{height:34px;padding:0 14px;border-rad
 html body #app#app #page .v1200-adm button.danger{color:#d6283d}
 @media(max-width:790px){html body #app#app #page .v1200-list{grid-template-columns:1fr}html body #app#app #page .v1200-big{font-size:36px}html body #app#app #page .v1200-hero{padding:18px}html body #app#app #page .v1200-top{flex-direction:column;align-items:flex-start}html body #app#app #page .v1200-ag{flex-wrap:wrap}}
 
-/* Instituciones (web): misma distribución de antes, más compacta y alineada */
-@media(min-width:791px){
- html body #app#app #page .bank-hero.v46-bank-hero{min-height:0!important;padding-top:22px!important;padding-bottom:22px!important}
- html body #app#app #page .v46-bank-intro h2{font-size:30px!important;line-height:1.08!important}
- html body #app#app #page .v46-institution-grid,html body #app#app #page .institution-grid{gap:14px!important}
- html body #app#app #page .bank-workspace{margin-top:6px}
-}
+/* v1210 · Instituciones: inventario por institución */
+html body #app#app #page .v1210{--v-ink:#0f1115;--v-mut:#6b7385;--v-line:rgba(120,140,170,.2);--v-sur:#fff;--ac:var(--v424-accent-strong,#5b57d6);display:flex;flex-direction:column;gap:14px;width:100%;max-width:1100px;margin:0 auto;color:var(--v-ink)}
+html body:is(.theme-black,.theme-dark) #app#app #page .v1210{--v-ink:#f4f6fb;--v-mut:#9aa3b2;--v-line:rgba(255,255,255,.14);--v-sur:#050506}
+html body.theme-black #app#app #page .v1210{--v-sur:#000}
+html body #app#app #page .v1210-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+html body #app#app #page .v1210-primary{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 18px;border-radius:13px;border:0;background:var(--ac);color:#fff;font-weight:800;font-size:13.5px}
+html body #app#app #page .v1210-primary svg{width:16px;height:16px}
+html body #app#app #page .v1210-link{border:0;background:transparent;color:var(--ac);font-weight:750;font-size:13.5px}
+html body #app#app #page .v1210-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+html body #app#app #page .v1210-bank{display:flex;flex-direction:column;gap:14px;padding:16px 18px;border-radius:24px;background:var(--v-sur);border:1px solid var(--v-line);color:var(--v-ink);text-align:left;box-shadow:0 10px 28px rgba(32,53,99,.055);width:100%}
+html body:is(.theme-black,.theme-dark) #app#app #page .v1210-bank{box-shadow:none}
+html body #app#app #page .v1210-head{display:flex;align-items:center;gap:12px}
+html body #app#app #page .v1210-head>svg{width:18px;height:18px;color:var(--ac);margin-left:auto;flex:none}
+html body #app#app #page .v1210-head .institution-logo{width:44px;height:44px;flex:none}
+html body #app#app #page .v1210-name{display:flex;flex-direction:column;gap:1px;min-width:0}
+html body #app#app #page .v1210-name strong{font-size:17px;font-weight:850;letter-spacing:-.02em}
+html body #app#app #page .v1210-name small{font-size:12.5px;color:var(--v-mut)}
+html body #app#app #page .v1210-kinds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+html body #app#app #page .v1210-kind{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;border-radius:14px;background:color-mix(in srgb,var(--ac) 8%,transparent);color:var(--ac)}
+html body #app#app #page .v1210-kind svg{width:18px;height:18px}
+html body #app#app #page .v1210-kind b{font-size:18px;font-weight:850;color:var(--v-ink);line-height:1.1}
+html body #app#app #page .v1210-kind small{font-size:11px;color:var(--v-mut)}
+html body #app#app #page .v1210-kind.is-zero{opacity:.45}
+html body #app#app #page .v1210-back{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 10px;border-radius:12px;border:1px solid var(--v-line);background:var(--v-sur);color:var(--ac);font-weight:700;font-size:14px}
+html body #app#app #page .v1210-back svg{width:16px;height:16px}
+html body #app#app #page .v1210-hero{display:flex;align-items:center;gap:14px;padding:4px 2px}
+html body #app#app #page .v1210-hero .institution-logo{width:52px;height:52px}
+html body #app#app #page .v1210-hero h2{margin:0;font-size:26px;font-weight:850;letter-spacing:-.03em}
+html body #app#app #page .v1210-hero small{color:var(--v-mut);font-size:13px}
+html body #app#app #page .v1210-secs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+html body #app#app #page .v1210-sec{padding:14px 18px 8px;border-radius:24px;background:var(--v-sur);border:1px solid var(--v-line)}
+html body #app#app #page .v1210-sec header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+html body #app#app #page .v1210-sec h3{display:flex;align-items:center;gap:8px;margin:0;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ac)}
+html body #app#app #page .v1210-sec h3 svg{width:18px;height:18px}
+html body #app#app #page .v1210-sec h3 em{font-style:normal;font-size:11.5px;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--ac) 11%,transparent)}
+html body #app#app #page .v1210-add{width:32px;height:32px;border-radius:10px;border:1px solid var(--v-line);background:transparent;color:var(--ac);display:grid;place-items:center}
+html body #app#app #page .v1210-add svg{width:16px;height:16px}
+html body #app#app #page .v1210-prod{display:flex;align-items:center;gap:12px;width:100%;padding:11px 0;border:0;border-top:1px solid var(--v-line);background:transparent;color:var(--v-ink);text-align:left}
+html body #app#app #page .v1210-prod span{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
+html body #app#app #page .v1210-prod strong{font-size:15px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body #app#app #page .v1210-prod small{font-size:12.5px;color:var(--v-mut)}
+html body #app#app #page .v1210-prod b{font-size:15px;font-weight:850;white-space:nowrap}
+html body #app#app #page .v1210-prod>svg{width:16px;height:16px;color:var(--ac);flex:none}
+html body #app#app #page .v1210-none{margin:0;padding:12px 0 14px;color:var(--v-mut);font-size:13.5px}
+html body #app#app #page .v1210-more{border-radius:20px;border:1px solid var(--v-line);background:var(--v-sur);padding:0 18px}
+html body #app#app #page .v1210-more summary{list-style:none;min-height:50px;display:flex;align-items:center;cursor:pointer;font-weight:750;font-size:14.5px}
+html body #app#app #page .v1210-more summary::-webkit-details-marker{display:none}
+html body #app#app #page .v1210-body{display:flex;gap:8px;flex-wrap:wrap;padding:4px 0 14px}
+html body #app#app #page .v1210-body button{height:38px;padding:0 16px;border-radius:12px;border:1px solid var(--v-line);background:transparent;color:var(--v-ink);font-weight:700;font-size:13.5px}
+html body #app#app #page .v1210-body button.danger{color:#d6283d}
+@media(max-width:790px){html body #app#app #page .v1210-secs{grid-template-columns:1fr}html body #app#app #page .v1210-grid{grid-template-columns:1fr}}
