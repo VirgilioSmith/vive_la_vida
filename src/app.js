@@ -18534,15 +18534,20 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
    <p class="v911-eyebrow">Categorías · toca una para ver o editar</p>
    <div class="v911-card v920-list" id="v920-list">${filas||'<p class="v911-empty">No hay categorías. Crea la primera con el botón +.</p>'}</div></div>`;
  }
-    const side=()=>{
-     const k=S().kind,cats=Object.entries(categoryMap(k)),us=cats.map(([c])=>[c,usos(k,c)]);
-     const top=us.filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6),sinUso=us.filter(x=>!x[1]).length;
-     const conEmoji=Object.keys(db.categoryEmoji||{}).filter(x=>x.startsWith(k+'||')).length;
-     const per=ui.month||today().slice(0,7);
-     return v1131Card('Actividad de categorías',v1131Row('Con movimientos',String(cats.length-sinUso))+v1131Row('Sin movimientos',String(sinUso))+v1131Row('Con emoji propio',String(conEmoji)))
-      +v1131Card('Más utilizadas',v1131Bars(top,v=>v+(v===1?' mov.':' movs.')));
-    };
-    pages.categories=()=>v1131Web(pagina(),side());
+    function webPage(){
+     const st=S(),k=st.kind,cats=Object.entries(categoryMap(k)),nsub=cats.reduce((n,[,s])=>n+s.length,0);
+     const per=ui.month||today().slice(0,7),mt=monthlyTotals(+per.slice(0,4),+per.slice(5,7)),by=(k==='ingreso'?mt.incomeBy:mt.expenseBy)||{};
+     const q=String(st.q||'').toLowerCase();
+     const arrow=G(k==='ingreso'?'<path d="M12 19V5M6 11l6-6 6 6"/>':'<path d="M12 5v14M6 13l6 6 6-6"/>');
+     const kpi=(t,v,n)=>`<article class="v1170-kpi v1170-kpi-big"><div><small>${t}</small><b>${v}</b><em>${n}</em></div></article>`;
+     const rows=cats.map(([c,subs])=>`<button type="button" class="v1170-card v920-row" data-v920-open="${esc(k)}|${esc(c)}" data-q="${esc((c+' '+subs.join(' ')).toLowerCase())}"${q&&!(c+' '+subs.join(' ')).toLowerCase().includes(q)?' hidden':''}><span class="v1170-ic">${icon(v255TaxonomyIconName(k,c,''))}</span><span class="v1170-main"><strong>${esc(c)}</strong><small>${subs.length} ${subs.length===1?'subcategoría':'subcategorías'}</small></span>${num(by[c])>0?`<b class="v920-amt">${money(num(by[c]))}</b>`:''}${chev}</button>`).join('');
+     return `<div class="v911 v920 v1170 v1170-cat" data-v920="1" data-v1170="cat"><section class="v1170-hero v1170-hero-cat"><div class="v1170-seg" role="tablist" aria-label="Tipo de categoría"><button type="button" role="tab" aria-selected="${k==='ingreso'}" class="${k==='ingreso'?'is-on':''}" data-v920-kind="ingreso">${G('<path d="M12 19V5M6 11l6-6 6 6"/>')}Ingresos</button><button type="button" role="tab" aria-selected="${k==='gasto'}" class="${k==='gasto'?'is-on':''}" data-v920-kind="gasto">${G('<path d="M12 5v14M6 13l6 6 6-6"/>')}Gastos</button></div>
+       <div class="v1170-hero-main"><h2 class="v1170-hero-h">Categorías</h2><p>Organiza, crea y define tus categorías y subcategorías.</p><button type="button" class="v1170-add v1170-add-hero" data-act="addCategory">${G('<path d="M12 5v14M5 12h14"/>')}<span>Nueva categoría</span></button></div>
+       <div class="v1170-kpis v1170-k2">${kpi('CATEGORÍAS',String(cats.length),k==='ingreso'?'Categorías de ingreso':'Categorías principales')}${kpi('SUBCATEGORÍAS',String(nsub),'Dentro de todas las categorías')}</div></section>
+      <div class="v1170-listhead"><h2 class="v1170-eyebrow">CATEGORÍAS · TOCA UNA PARA VER O EDITAR</h2><label class="v1170-search"><span>${G('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.500-3.500"/>')}</span><input type="search" id="v920-search" value="${esc(st.q)}" placeholder="Buscar categoría…" aria-label="Buscar categoría" autocomplete="off"/></label></div>
+      <div class="v1170-grid" id="v920-list">${rows||'<p class="v911-empty">No hay categorías. Crea la primera con «Nueva categoría».</p>'}</div></div>`;
+    }
+    pages.categories=()=>isMobileViewport()?pagina():webPage();
  /* ---------- acciones ---------- */
  const partes=s=>String(s||'').split('|');
  const refrescar=(k,c)=>{persist();render();if(k&&c)detalle(k,c)};
@@ -21479,6 +21484,7 @@ window.__v866Runners.v865=run;
  const ink='var(--v916-nav-muted,#607a9d)';
  function paint(group, selected){
   if(!group || matchMedia('(max-width:790px)').matches)return;
+  if(group.closest('#page:has(.v58-exec)'))return; /* Ingresos web: la barra vive dentro del banner con estilo propio (CSS) */
   for(const el of group.querySelectorAll(buttons)){
    const on=el===selected;
    el.style.setProperty('transition','none','important');

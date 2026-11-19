@@ -9,8 +9,8 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     process.env.TOUCH = t; const { p } = await open(b, w, h); const errs = []; p.on('pageerror', e => errs.push(e.message.slice(0, 160)));
     const confirmar = async () => { for (let i = 0; i < 20; i++) { await wait(100); const ok = await p.evaluate(() => { const x = document.querySelector('.v1011-ok'); if (x) { x.click(); return true } return false }); if (ok) return true } return false };
     await p.evaluate(() => window.__T.go('categories')); await wait(500);
-    const l = await p.evaluate(() => ({ rows: document.querySelectorAll('#v920-list .v920-row').length, kpis: document.querySelectorAll('.v911-kpi').length, seg: [...document.querySelectorAll('.v911-seg button')].map(e => e.textContent).join(','), esp: Object.keys(window.__T.dbg().categoryEmoji || {}).length, n: window.__T.cats('gasto').length }));
-    check('K1-' + w, 'Lista de categorías por tipo (Gastos/Ingresos) con tarjetas de resumen y una fila por categoría', l.rows === l.n && l.kpis === 2 && l.seg === 'Gastos,Ingresos', JSON.stringify(l));
+    const l = await p.evaluate(() => ({ rows: document.querySelectorAll('#v920-list .v920-row').length, kpis: document.querySelectorAll('.v911-kpi,.v1170-kpi').length, seg: [...document.querySelectorAll('.v911-seg button,.v1170-seg button')].map(e => e.textContent).join(','), esp: Object.keys(window.__T.dbg().categoryEmoji || {}).length, n: window.__T.cats('gasto').length }));
+    check('K1-' + w, 'Lista de categorías por tipo (Gastos/Ingresos) con tarjetas de resumen y una fila por categoría', l.rows === l.n && l.kpis === 2 && /^(Gastos,Ingresos|Ingresos,Gastos)$/.test(l.seg), JSON.stringify(l));
     await p.evaluate(() => document.querySelector('[data-v920-kind=ingreso]').click()); await wait(300);
     const li = await p.evaluate(() => ({ rows: document.querySelectorAll('#v920-list .v920-row').length, n: window.__T.cats('ingreso').length })); check('K2-' + w, 'La pestaña Ingresos lista las categorías de ingreso', li.rows === li.n && li.n > 0, JSON.stringify(li));
     await p.evaluate(() => document.querySelector('[data-v920-kind=gasto]').click()); await wait(300);
@@ -23,7 +23,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     /* emoji de la categoría */
     await p.evaluate(() => document.querySelector('#v920-detail .v920-big').click()); await wait(400);
     await p.evaluate(() => [...document.querySelectorAll('#v920-emoji [data-v920-pick]')].find(e => e.dataset.v920Pick === '🚗').click()); await wait(500);
-    const e1 = await p.evaluate(() => ({ db: window.__T.dbg().categoryEmoji['gasto||Transporte'], ico: window.__T.catIcon('gasto', 'Transporte', ''), sub: window.__T.catIcon('gasto', 'Transporte', 'Pasajes'), fila: document.querySelector('[data-v920-open^="gasto|Transporte"] .v920-chip')?.textContent.trim(), sheet: !!document.querySelector('#v920-emoji') }));
+    const e1 = await p.evaluate(() => ({ db: window.__T.dbg().categoryEmoji['gasto||Transporte'], ico: window.__T.catIcon('gasto', 'Transporte', ''), sub: window.__T.catIcon('gasto', 'Transporte', 'Pasajes'), fila: document.querySelector('[data-v920-open^="gasto|Transporte"] .v920-chip,[data-v920-open^="gasto|Transporte"] .v1170-ic')?.textContent.trim(), sheet: !!document.querySelector('#v920-emoji') }));
     check('K5-' + w, 'Asignar emoji a una categoría: se guarda, se muestra en la lista y lo usa el resto de la app (ícono = emoji)', e1.db === '🚗' && e1.ico === 'emoji:🚗' && e1.fila === '🚗' && !e1.sheet, JSON.stringify(e1));
     /* emoji de una subcategoría propio */
     await p.evaluate(() => document.querySelector('#v920-detail .v920-sub').click()); await wait(300);
@@ -45,7 +45,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     await p.evaluate(() => { const f = document.querySelector('#modal-root form#categoryForm'); f.querySelector('[data-v920-form-emoji]').click() }); await wait(400);
     await p.evaluate(() => [...document.querySelectorAll('#v920-emoji [data-v920-pick]')].find(e => e.dataset.v920Pick === '🎾' || e.dataset.v920Pick === '⚽').click()); await wait(300);
     await p.evaluate(() => { const f = document.querySelector('#modal-root form#categoryForm'); f.elements.name.value = 'Deportes'; f.requestSubmit() }); await wait(700);
-    const nc = await p.evaluate(() => ({ en: window.__T.cats('gasto').includes('Deportes'), em: window.__T.dbg().categoryEmoji['gasto||Deportes'], fila: document.querySelector('[data-v920-open^="gasto|Deportes"] .v920-chip')?.textContent.trim() })); check('K11-' + w, 'Crear una categoría nueva con emoji desde el formulario: aparece en la lista con su emoji', nc.en && nc.em === '⚽' && nc.fila === '⚽', JSON.stringify(nc));
+    const nc = await p.evaluate(() => ({ en: window.__T.cats('gasto').includes('Deportes'), em: window.__T.dbg().categoryEmoji['gasto||Deportes'], fila: document.querySelector('[data-v920-open^="gasto|Deportes"] :is(.v920-chip,.v1170-ic),[data-v920-open^="gasto|Transporte"] .v1170-ic')?.textContent.trim() })); check('K11-' + w, 'Crear una categoría nueva con emoji desde el formulario: aparece en la lista con su emoji', nc.en && nc.em === '⚽' && nc.fila === '⚽', JSON.stringify(nc));
     check('K12-' + w, 'Sin errores de página', errs.length === 0, errs.join('|')); await p.context().close();
   }
   console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); await b.close(); process.exit(fails ? 1 : 0);

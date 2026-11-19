@@ -55103,3 +55103,43 @@ html body #modal-root#modal-root#modal-root#modal-root .v235-register-dialog .vr
 html body #app#app .rail-top .v908-wm.is-compact .v908-b{font-size:30px;font-weight:850;letter-spacing:-.04em;line-height:1}
 @media(min-width:791px){html body #app#app .rail-top .vive-p-brand{position:relative;top:-39px}}
 @media(min-width:791px){html body #app#app .rail-top .vive-p-brand{top:auto!important;transform:translateY(-39px)!important}}
+
+/* Ingresos (web): la barra Ingresos / Ingresos recurrentes vive dentro del banner, arriba a la izquierda, con estilo de cristal */
+@media(min-width:791px){
+ html body #app#app #page:has(.v58-exec){position:relative}
+ html body #app#app #page:has(.v58-exec)>.inner-menu{position:absolute!important;top:18px!important;left:26px!important;z-index:4;margin:0!important;padding:0!important;height:auto;width:auto}
+ html body #app#app #page:has(.v58-exec)>.inner-menu .inner-menu-tabs{display:inline-flex!important;gap:2px!important;padding:3px!important;border-radius:999px!important;background:rgba(255,255,255,.16)!important;border:1px solid rgba(255,255,255,.34)!important;box-shadow:none!important;width:auto!important}
+ html body #app#app #page:has(.v58-exec)>.inner-menu .inner-menu-tab{height:34px;padding:0 16px!important;border-radius:999px!important;font-size:13px!important;font-weight:750!important;color:#fff!important;background:transparent!important;box-shadow:none!important;-webkit-text-fill-color:#fff!important;min-height:0!important}
+ html body #app#app #page:has(.v58-exec)>.inner-menu .inner-menu-tab.active{background:#fff!important;color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 88%,#000)!important;-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 88%,#000)!important}
+ html body #app#app #page:has(.v58-exec) .v58-exec{padding-top:78px!important}
+}
+@media(min-width:791px){
+ html body #app#app #page:has(.v58-exec)>.inner-menu .inner-menu-tabs{background:rgba(255,255,255,.16)!important;border-color:rgba(255,255,255,.34)!important;-webkit-mask-image:none!important;mask-image:none!important}
+ html body #app#app #page:has(.v58-exec)>.inner-menu .inner-menu-tabs>button:not(.active){color:#fff!important;-webkit-text-fill-color:#fff!important;background:transparent!important;opacity:1!important}
+ html body #app#app #page:has(.v58-exec)>.inner-menu .inner-menu-tabs>button.active{background:#fff!important;color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 88%,#000)!important;-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 88%,#000)!important}
+}
+@media(min-width:791px){
+ html body #app#app#app#app #page:has(.v58-exec)>.inner-menu .inner-menu-tabs>button:not(.active){color:#fff!important;-webkit-text-fill-color:#fff!important;background:transparent!important;opacity:1!important}
+ html body #app#app#app#app #page:has(.v58-exec)>.inner-menu .inner-menu-tabs>button.active{background:#fff!important;color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 88%,#000)!important;-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 88%,#000)!important;box-shadow:none!important}
+}
+
+/* v1170 · Categorías (web): banner con acento, pestañas Ingresos/Gastos dentro, KPIs grandes y lista en dos columnas */
+@media(min-width:791px){
+ html body #app#app #page .v1170-card[hidden]{display:none!important}
+ html body #app#app #page .v1170-hero-cat{position:relative;padding:72px 34px 30px}
+ html body #app#app #page .v1170-seg{position:absolute;top:18px;left:26px;display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.34)}
+ html body #app#app #page .v1170-seg button{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 16px;border-radius:999px;border:0;background:transparent!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:13px;font-weight:750;box-shadow:none!important}
+ html body #app#app #page .v1170-seg button svg{width:15px;height:15px}
+ html body #app#app #page .v1170-seg button.is-on{background:#fff!important;color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 88%,#000)!important;-webkit-text-fill-color:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 88%,#000)!important}
+ html body #app#app #page .v1170-hero-h{margin:0;font-size:52px;line-height:1;font-weight:850;letter-spacing:-.045em;color:#fff!important}
+ html body #app#app #page .v1170-kpis.v1170-k2{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+ html body #app#app #page .v1170-kpi-big{padding:20px 24px;border-radius:24px}
+ html body #app#app #page .v1170-kpi-big small{font-size:13px;font-weight:800;letter-spacing:.1em}
+ html body #app#app #page .v1170-kpi-big b{font-size:44px;line-height:1}
+ html body #app#app #page .v1170-kpi-big em{font-size:14px}
+ html body #app#app #page .v1170-listhead{display:flex;justify-content:space-between;align-items:center;gap:16px}
+ html body #app#app #page .v1170-search{display:flex;align-items:center;gap:10px;height:44px;width:min(420px,40%);padding:0 14px;border-radius:14px;border:1px solid var(--v-line);background:var(--v-sur);color:var(--v-ink)}
+ html body #app#app #page .v1170-search svg{width:18px;height:18px;color:var(--v-mut)}
+ html body #app#app #page .v1170-search input{flex:1;border:0!important;background:transparent!important;outline:0;font:inherit;color:inherit;min-width:0;box-shadow:none!important}
+ html body #app#app #page .v1170-card .v920-amt{font-size:16px;font-weight:850;color:var(--ac);white-space:nowrap}
+}
