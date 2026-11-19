@@ -4074,11 +4074,13 @@ function advanced(){
  const income=tot(valid,'income'),expense=tot(valid,'expense'),net=income-expense;
  const previous=Array.from({length:observed},(_,i)=>monthlyTotals(y-1,i+1));
  const priorIncome=tot(previous,'income'),priorExpense=tot(previous,'expense'),priorNet=priorIncome-priorExpense;
+ const esc1234=t=>String(t).replace(/^./,x=>x.toUpperCase());
+ const ending=observed?Number(monthly[observed-1].ending)||0:0,priorEnding=observed?(()=>{try{const v=monthlyTotals(y-1,observed).ending;return Number.isFinite(Number(v))?Number(v):null}catch(_){return null}})():null;
  const indicator=(label,value,earlier,favorable,tone)=>`<div class="advanced-stat v16-annual-clean ${tone}"><span>${label}</span><strong>${money(value)}</strong>${observed?annualGap(value,earlier,y-1,favorable):'<small class="advanced-gap neutral">Sin meses registrados</small>'}</div>`;
  const period=observed===12?'Enero–diciembre':observed>0?`Enero–${new Date(y,observed-1,1).toLocaleDateString('es-DO',{month:'long'})}`:'Sin meses cerrados';
  return `<div class="v142-advanced" id="v142Advanced">
   <header class="advanced-hero v142-advanced-hero"><div><span class="hero-eyebrow">ANALÍTICA AVANZADA · ${y}</span><h2>Tu año, con otra perspectiva.</h2><p>Ingresos, egresos y neto. Comparación ${period.toLowerCase()} ${y} frente al mismo tramo de ${y-1}.</p></div><button class="btn light" data-act="advancedCsv">Exportar Excel ${icon('download')}</button></header>
-  <div class="advanced-quick advanced-gaps v14-advanced-three v142-advanced-stats">${indicator('Ingresos del año',income,priorIncome,true,'v14-income')}${indicator('Egresos del año',expense,priorExpense,false,'v14-expense')}${indicator('Neto del año',net,priorNet,true,'v14-net')}</div>
+  <section class="v1234-hero" aria-label="Saldo final y balance del año"><div class="v1234-main"><span class="v1234-eyebrow">SALDO FINAL · ${observed?esc1234(new Date(y,observed-1,1).toLocaleDateString('es-DO',{month:'long',year:'numeric'})):y}</span><strong class="v1234-amount">${observed?money(ending):'—'}</strong><p>Dinero disponible al cierre del último mes registrado de ${y}.</p>${observed&&priorEnding!==null?annualGap(ending,priorEnding,y-1,true):''}</div><div class="v1234-tiles">${indicator('Ingresos del año',income,priorIncome,true,'v14-income')}${indicator('Egresos del año',expense,priorExpense,false,'v14-expense')}${indicator('Neto del año',net,priorNet,true,'v14-net')}</div></section>
   <div class="v142-advanced-section-title v142-advanced-table-heading"><div><span>01 / BALANCE ANUAL</span><h3>Cuatro cifras. Una lectura del año completo.</h3></div></div>
   ${compactAnnualSummary({inAdvanced:true})}
   <div class="v142-advanced-section-title v142-advanced-table-heading"><div><span>02 / DETALLE POR CATEGORÍA</span><h3>De dónde viene y adónde va el dinero</h3><p>12 meses visibles en escritorio · K = miles, M = millones · cifra exacta al señalar una celda.</p></div></div>
