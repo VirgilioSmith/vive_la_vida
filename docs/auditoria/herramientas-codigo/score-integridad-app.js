@@ -1,0 +1,14 @@
+const { chromium } = require('playwright');const open=require('/home/user/vive_la_vida/tests/harness.js');
+(async()=>{const b=await chromium.launch();process.env.TOUCH='';const {p}=await open(b,1440,900);
+const r=await p.evaluate(()=>{const d=window.__T.dbg();const A=()=>JSON.stringify(window.ViveScoreAdapter.read().cards.map(c=>[c.id,c.balance,c.limit,c.daysPastDue]));
+ const base=A();const accs=d.accounts.filter(a=>!a.archived&&a.currency==='DOP');
+ d.transactions.push({id:'tr1',date:'2026-11-19',type:'transfer',amount:50000,currency:'DOP',accountId:accs[0].id,toAccountId:accs[1].id,note:'t'});
+ window.__T.inv();const afterTransfer=A();
+ const card=d.cards[0];const cid=card.id;
+ const dbt=()=>{window.__T.inv();return window.__T.cs(cid,'DOP').debt};const d0=dbt();
+ d.transactions.push({id:'ch1',date:'2026-11-18',type:'card_charge',amount:10000,currency:'DOP',cardId:cid,category:'Otros gastos',note:'x'});const d1=dbt();
+ d.transactions.push({id:'ch1b',date:'2026-11-18',type:'card_charge',amount:10000,currency:'DOP',cardId:cid,category:'Otros gastos',note:'x'});const d2=dbt();
+ d.transactions.push({id:'pay1',date:'2026-11-19',type:'card_payment',amount:20000,currency:'DOP',cardId:cid,accountId:accs[0].id,note:'p'});const d3=dbt();
+ const m=window.__T.mt?window.__T.mt():null;
+ return {transferChangesCards:base!==afterTransfer,debt:[d0,d1,d2,d3],hasTypeFlag:!!d.cards[0].limitDOP,dueStale:window.ViveScoreAdapter.read().cards.map(c=>c.daysPastDue)}});
+console.log(JSON.stringify(r));await b.close()})();
