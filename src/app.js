@@ -13623,30 +13623,12 @@ window.addEventListener('load',()=>{v8AppleDock();}, {once:true});
 function v5IsApplePay(t){return !!(t&&(t.applePaySource==='wallet-shortcuts'||t.applePayEventId||String(t.tags||'').split(',').includes('apple-pay')));}
 function v5NeedsAppleCategory(t){return !t?.deleted&&v5IsApplePay(t)&&String(t.category||'').trim()==='Apple Pay';}
 function v5ApplePayPending(){return (db?.transactions||[]).filter(v5NeedsAppleCategory).sort((a,b)=>String(b.created||b.date||'').localeCompare(String(a.created||a.date||'')));}
-let v5AppleNoticeTimer=0;
-function v5ApplePayNotice(t,arrival=false){
- if(!t||!v5NeedsAppleCategory(t))return;
- const pending=v5ApplePayPending();
- let tray=document.getElementById('v5-apple-tray');
- if(!tray){tray=document.createElement('aside');tray.id='v5-apple-tray';tray.className='v5-apple-tray';tray.setAttribute('role','status');tray.setAttribute('aria-live','polite');document.body.appendChild(tray);}
- const title=String(t.payee||'Compra Apple Pay');
- tray.innerHTML=`<div class="v5-apple-tray-top"><span class="v5-apple-brand">${icon('apple')} Pay</span><button type="button" data-v5-apple="dismiss" aria-label="Cerrar aviso">×</button></div><strong>¿En qué categoría va esta compra?</strong><p>${sanitize(title)} · ${money(num(t.amount),t.currency||'DOP',2)}</p><small>Registrada en Apple Pay temporalmente${pending.length>1?' · '+pending.length+' compras por clasificar':''}. No cambia tus saldos.</small><div class="v5-apple-actions"><button type="button" class="v5-apple-primary" data-v5-apple="categorize" data-id="${sanitize(String(t.id))}">Cambiar categoría</button><button type="button" class="v5-apple-later" data-v5-apple="dismiss">Después</button></div>`;
- tray.hidden=false;
- clearTimeout(v5AppleNoticeTimer);
-}
-function v5ApplePayArrival(t){v5ApplePayNotice(t,true);v8AppleDock();}
+function v5ApplePayArrival(t){v8AppleDock();}
 
 document.addEventListener('click',ev=>{
  const btn=ev.target.closest('[data-v5-apple]');if(!btn)return;
- const action=btn.dataset.v5Apple;
- if(action==='categorize')v7OpenAppleClassifier(btn.dataset.id);
- if(action==='dismiss'){const tray=document.getElementById('v5-apple-tray');if(tray)tray.hidden=true;}
+ if(btn.dataset.v5Apple==='categorize')v7OpenAppleClassifier(btn.dataset.id);
 });
-// Al reabrir la app, ofrece recordar UNA compra que continúe en categoría temporal.
-window.addEventListener('load',()=>setTimeout(()=>{
- if(typeof f33Active!=='undefined'&&!f33Active)return;
- const pending=v5ApplePayPending();if(pending.length)v5ApplePayNotice(pending[0],false);
-},4500),{once:true});
 
 async function v212ImportEvent(e,forced=false){
  if(!v212Enabled()||f33Dirty||f33Saving||f33Conflict)return false;
@@ -18365,13 +18347,11 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const rows=pend.filter(p=>p.date>=sel);const groups=new Map();rows.forEach(p=>{if(!groups.has(p.date))groups.set(p.date,[]);groups.get(p.date).push(p)});
   const line=p=>{const r=svc(p.ref)||{name:p.name,currency:p.currency,amount:p.amount};return `<button type="button" class="v911-row" data-v911-open="${esc(p.ref)}"><span class="v911-logo">${ico(r)}</span><span class="v911-row-info"><strong>${esc(p.name||r.name)}</strong><small>${esc(r.frequency?freq(r):'')}${p.estimated?' · estimado':''}</small></span><b>${money(p.amount,p.currency||'DOP',2)}</b>${chev}</button>`};
   const tl=groups.size?[...groups].map(([d,list])=>`<section class="v911-tl-group"><h3><i></i>${esc(dayHead(d))}</h3><div class="v911-card">${list.map(line).join('')}</div></section>`).join(''):`<p class="v911-empty">${pend.length?'No hay más vencimientos desde esta fecha.':'No tienes vencimientos de suscripciones este mes.'}</p>`;
-  const review=charges().filter(t=>t.reviewed!==true).length;
   return `<div class="v911-agenda"><label class="v911-month"><span class="v911-ic">${icon('calendar')}</span><span>${esc(monthTitle())}</span>${ico2('chevron-down')}<input id="monthFilter" type="month" value="${esc(month)}" aria-label="Mes de la agenda" /></label>
    <p class="v911-kicker">Por pagar este mes</p><p class="v911-big" id="v911-due-total">${rd(total)}</p>
    <p class="v911-ytd" id="v911-ytd"><span>Pagado en ${Y}</span><b>${rd(pagadoAnio,0)}</b></p>
    <div class="v911-strip" role="group" aria-label="Días del mes">${strip}</div>
-   <div class="v911-timeline">${tl}</div>
-   ${review?`<button type="button" class="v911-link" data-v911-tab="historial">Revisar cobros${review>0?` <em>${review}</em>`:''}${chev}</button>`:''}</div>`;
+   <div class="v911-timeline">${tl}</div></div>`;
  }
 
  /* ---------- Cartera ---------- */
@@ -18404,20 +18384,13 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 
  /* ---------- Historial ---------- */
  function historial(){
-  const st=S(),all=charges(),pending=all.filter(t=>t.reviewed!==true),done=all.filter(t=>t.reviewed===true);
+  const all=charges();
   if(!all.length)return `<div class="v911-hist"><p class="v911-empty">Todavía no hay cobros de suscripciones. Registra un pago desde Agenda o Cartera y aparecerá aquí, vinculado a Movimientos.</p></div>`;
-  const feat=pending.find(t=>t.id===st.review)||pending[0];
-  const diffText=(t)=>{const d=rnd(num(t.amount)-expected(t));return d===0?'Sin diferencia':(d>0?'+':'−')+money(Math.abs(d),t.currency||'DOP',2)};
+  const diffText=t=>{const d=rnd(num(t.amount)-expected(t));return d===0?'Sin diferencia':(d>0?'+':'−')+money(Math.abs(d),t.currency||'DOP',2)};
   const diffCls=t=>{const d=rnd(num(t.amount)-expected(t));return d>0?'up':d<0?'down':'zero'};
   const nameOf=t=>svc(t.recurringId)?.name||t.note||'Cobro recurrente';
-  const featCard=feat?`<article class="v911-feat"><header><span class="v911-logo">${ico(svc(feat.recurringId)||{name:nameOf(feat)},'small')}</span><div><strong>${esc(nameOf(feat))}</strong><small>${esc(prettyDate(feat.date))}</small></div><span class="v911-pill">Por revisar</span></header>
-    <p class="v911-feat-amt">${money(feat.amount,feat.currency||'DOP',2)}</p>
-    <dl><div><dt>Importe previsto</dt><dd>${money(expected(feat),feat.currency||'DOP',2)}</dd></div><div><dt>Importe registrado</dt><dd>${money(feat.amount,feat.currency||'DOP',2)}</dd></div><div class="${diffCls(feat)}"><dt>Diferencia</dt><dd>${diffText(feat)}</dd></div></dl>
-    <button type="button" class="v911-primary" data-act="toggleReview" data-id="${esc(feat.id)}">Confirmar importe</button><button type="button" class="v911-ghost" data-act="editTransaction" data-id="${esc(feat.id)}">Editar</button></article>`:`<p class="v911-empty">No tienes cobros pendientes de revisión.</p>`;
-  const small=t=>`<button type="button" class="v911-row" data-v911-review="${esc(t.id)}"><span class="v911-logo">${ico(svc(t.recurringId)||{name:nameOf(t)})}</span><span class="v911-row-info"><strong>${esc(nameOf(t))}</strong><small>${esc(prettyDate(t.date))}</small></span><b>${money(t.amount,t.currency||'DOP',2)}</b>${chev}</button>`;
-  const others=pending.filter(t=>!feat||t.id!==feat.id);
-  const doneRows=done.slice(0,25).map(t=>`<button type="button" class="v911-row" data-act="editTransaction" data-id="${esc(t.id)}"><span class="v911-logo">${ico(svc(t.recurringId)||{name:nameOf(t)})}</span><span class="v911-row-info"><strong>${esc(nameOf(t))}</strong><small>${esc(prettyDate(t.date))} · <i class="v911-d ${diffCls(t)}">${esc(diffText(t))}</i></small></span><b>${money(t.amount,t.currency||'DOP',2)}</b>${chev}</button>`).join('');
-  return `<div class="v911-hist">${featCard}${others.length?`<h3 class="v911-h3">Otros pendientes de revisión</h3><div class="v911-card">${others.map(small).join('')}</div>`:''}${done.length?`<h3 class="v911-h3">Cobros confirmados</h3><div class="v911-card">${doneRows}</div>`:''}</div>`;
+  const rows=all.slice(0,40).map(t=>`<button type="button" class="v911-row" data-act="editTransaction" data-id="${esc(t.id)}"><span class="v911-logo">${ico(svc(t.recurringId)||{name:nameOf(t)})}</span><span class="v911-row-info"><strong>${esc(nameOf(t))}</strong><small>${esc(prettyDate(t.date))} · <i class="v911-d ${diffCls(t)}">${esc(diffText(t))}</i></small></span><b>${money(t.amount,t.currency||'DOP',2)}</b>${chev}</button>`).join('');
+  return `<div class="v911-hist"><div class="v911-card">${rows}</div></div>`;
  }
 
  function page(){
