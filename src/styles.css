@@ -55392,3 +55392,9 @@ html body.theme-black #app#app #page .v12-table-scroller :is(th,td){border-color
 html body #app#app #page .v708-row small,html body #app#app #page .v708-row [class*=status],html body #app#app #page .v708-row .conciliado{font-size:10.5px}
 /* Dirección de arte · Geometría: un solo radio (28 px) para todos los banners principales en web */
 @media(min-width:791px){html body #app#app #page :is(.bank-hero.v46-bank-hero,.v1170-hero,.v58-exec,.v134-hero.v187-wealth-hero){border-radius:28px!important}}
+/* Dirección de arte · Resumen móvil: ritmo vertical uniforme entre widgets (12 px) y menos vacío al final */
+@media(max-width:790px){
+ html body #app#app .vive-mobile-home>[data-v105-widget]{margin-top:0!important;margin-bottom:0!important}
+ html body #app#app .vive-mobile-home>[data-v105-widget="futureWaterfall"],html body #app#app .vive-mobile-home>[data-v105-widget="spendingFingerprint"]{margin:0!important}
+ html body #app#app .vive-mobile-home{padding-bottom:132px!important}
+}
