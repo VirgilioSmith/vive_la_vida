@@ -11718,7 +11718,7 @@ function v105SaveConfig(c){
  v105ApplyWidgetPreferences();
 }
 let v105DraftConfig=null;
-const V1118_MOBILE_REMOVED=['chart','premiumCredit','futureFlow','banks','accounts','loans','certificates','futureBubbles','payments','people','activity','premiumCommitments','futureCostKpi'];
+const V1118_MOBILE_REMOVED=['chart','premiumCredit','futureFlow','banks','accounts','loans','certificates','futureBubbles','payments','people','activity','futureCostKpi'];
 function v1118Skip(id){return V1118_MOBILE_REMOVED.includes(id)&&isMobileViewport()}
 function v105Customizer(){
  const cfg=v105DraftConfig||v105Config(),enabled=new Set(cfg.visible);
@@ -14345,7 +14345,7 @@ function v767Icon(id){
 }
 function v747PersonalizationCard(w,id,index,enabled,total){
  const descriptions={applePayInbox:'Compras Wallet pendientes: clasifica desde Inicio',patrimonyTrend:'Evolución real de activos menos obligaciones por mes',capacity:'Ingresos, cuotas y disponible',commitments:'Tarjetas, préstamos y obligaciones',chart:'Evolución de cinco meses',net:'Ingresos menos egresos',payments:'Vencimientos y pago directo'};
- const v784ShortTitles={"applePayInbox": "Apple Pay", "capacity": "Endeudamiento", "commitments": "Compromisos", "chart": "Ingresos / gastos", "net": "Neto del mes", "payments": "Próximos pagos", "people": "Entre personas", "activity": "Actividad", "banks": "Bancos", "accounts": "Cuentas", "loans": "Préstamos", "certificates": "Certificados", "premiumCredit": "Uso de tarjetas Pro", "premiumCommitments": "Compromisos Pro", "creditUtil": "Uso de tarjetas", "patrimonyTrend": "Patrimonio", "budgetPulse": "Pulso presupuestario", "cashPressure": "Vencimientos", "spendingFingerprint": "Huella de gastos", "futureCostKpi": "Costo de mañana", "futureCalendar": "Calendario financiero", "futureFlow": "Flujo de dinero", "futureWaterfall": "Dinero reservado", "futureBubbles": "Importes urgentes"};
+ const v784ShortTitles={"applePayInbox": "Apple Pay", "capacity": "Endeudamiento", "commitments": "Compromisos", "chart": "Ingresos / gastos", "net": "Neto del mes", "payments": "Próximos pagos", "people": "Entre personas", "activity": "Actividad", "banks": "Bancos", "accounts": "Cuentas", "loans": "Préstamos", "certificates": "Certificados", "premiumCredit": "Uso de tarjetas Pro", "premiumCommitments": "Compromisos del mes", "creditUtil": "Uso de tarjetas", "patrimonyTrend": "Patrimonio", "budgetPulse": "Pulso presupuestario", "cashPressure": "Vencimientos", "spendingFingerprint": "Huella de gastos", "futureCostKpi": "Costo de mañana", "futureCalendar": "Calendario financiero", "futureFlow": "Flujo de dinero", "futureWaterfall": "Dinero reservado", "futureBubbles": "Importes urgentes"};
  const title=sanitize(v784ShortTitles[id]||w.title), hint=sanitize(descriptions[id]||w.hint||'');
  const dots='<i></i>'.repeat(6);
  const arrow=(up)=>`<button type="button" class="v766-move-btn v767-arrow" data-act="${up?'v273-up':'v273-down'}" data-id="${id}" ${up&&index===0||!up&&index===total-1?'disabled':''} aria-label="Mover ${title} ${up?'arriba':'abajo'}"><svg class="v782-direction-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" aria-hidden="true"><path d="${up?'M12 19V5 M5 12l7-7 7 7':'M12 5v14 M5 12l7 7 7-7'}"/></svg></button>`;
