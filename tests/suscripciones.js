@@ -53,18 +53,9 @@ if (require.main === module) (async () => {
   await p.evaluate(() => { const i = document.getElementById('v911-search'); i.value = ''; i.dispatchEvent(new Event('input', { bubbles: true })) });
   /* 4 · Historial */
   await click(p, '[data-v911-tab=historial]'); await p.waitForTimeout(250);
-  const h = await p.evaluate(() => ({ txt: document.querySelector('.v911-feat')?.innerText || '', pend: document.querySelectorAll('.v911-hist [data-v911-review]').length }));
-  check('H1', 'Historial: tarjeta de revisión con importe previsto, registrado y diferencia', /Importe previsto/.test(h.txt) && /Importe registrado/.test(h.txt) && /Diferencia/.test(h.txt) && /Confirmar importe/.test(h.txt), h.txt.replace(/\s+/g, ' ').slice(0, 160));
-  await p.evaluate(() => { const b = [...document.querySelectorAll('[data-v911-review]')].find(e => /Barbería/.test(e.textContent)); b && b.click() }); await p.waitForTimeout(300);
-  const hb = await txt(p, '.v911-feat'); check('H2', 'Diferencia calculada: Barbería previsto RD$800 vs registrado RD$900 = +RD$100.00', /Barbería/.test(hb) && /\+RD\$100\.00/.test(hb), hb.replace(/\s+/g, ' ').slice(0, 220));
-  await click(p, '.v911-feat [data-act=editTransaction]'); await p.waitForTimeout(700);
-  check('H4', 'Editar abre el editor de movimientos existente', await p.evaluate(() => !!document.querySelector('#modal-root .modal,#modal-root form,#modal-root .v749-layer')));
-  await p.evaluate(() => { try { closeModal() } catch (_) { } }); await p.waitForTimeout(300);
-  const t0 = await p.evaluate(() => window.__T.dbg().transactions.length);
-  await click(p, '.v911-feat [data-act=toggleReview]'); await p.waitForTimeout(400);
-  const t1 = await p.evaluate(() => ({ n: window.__T.dbg().transactions.length, rev: window.__T.dbg().transactions.filter(t => t.recurringId && t.reviewed !== true).length }));
-  check('H3', 'Confirmar importe marca el cobro como revisado y NO crea movimientos duplicados', t1.n === t0, `movimientos ${t0}→${t1.n}, pendientes ${t1.rev}`);
-  await p.evaluate(() => { try { closeModal() } catch (_) { } });
+  const h = await p.evaluate(() => ({ feat: !!document.querySelector('.v911-feat'), txt: document.querySelector('.v911-hist')?.innerText || '', pend: window.__T.dbg().transactions.filter(t => t.recurringId && t.reviewed !== true).length }));
+  check('H1', 'Historial: todos los cobros entran confirmados (sin tarjeta «Por revisar», sin botón «Confirmar importe» y sin pendientes)', !h.feat && !/Por revisar|Confirmar importe/.test(h.txt) && h.pend === 0, `pendientes ${h.pend}`);
+  check('H2', 'La diferencia de Barbería (+RD$100.00) se muestra en su fila ya confirmada', /Barbería/.test(h.txt) && /RD\$100\.00/.test(h.txt), h.txt.replace(/\s+/g, ' ').slice(0, 200));
   check('X1', 'Sin errores de página', errs.length === 0, errs.join('|'));
   await p.context().close();
   /* 8 · Claro / Black / acento / desborde */

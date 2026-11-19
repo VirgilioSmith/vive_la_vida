@@ -18263,7 +18263,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  const dayHead=s=>{const d=local(s);return d?`${WD[d.getDay()]} ${d.getDate()} ${MS[d.getMonth()]}`:'—'};
  const sourceName=r=>{const [k,id]=String(r.source||'').split(':');const x=k==='card'?card(id):k==='account'?account(id):null;return x?x.name:'Sin fuente'};
  const svc=id=>(db.recurring||[]).find(r=>String(r.id)===String(id));
- const charges=()=>(db.transactions||[]).filter(t=>t&&t.recurringId&&['expense','card_charge'].includes(t.type)&&t.date).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.created||'').localeCompare(String(a.created||'')));
+ const charges=()=>(db.transactions||[]).filter(t=>t&&t.recurringId&&['expense','card_charge'].includes(t.type)&&t.date).map(t=>{if(t.reviewed!==true)t.reviewed=true;return t}).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.created||'').localeCompare(String(a.created||'')));
  const expected=t=>{const s=svc(t.recurringId);const e=t.scheduleSnapshot&&Number.isFinite(Number(t.scheduleSnapshot.amount))?Number(t.scheduleSnapshot.amount):(s?num(s.amount):num(t.amount));return rnd(e)};
  const ico=(r,size='small')=>v45SubIcon(r,size);
  const chev='<svg class="v911-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -18319,7 +18319,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 
  /* ---------- Historial ---------- */
  function historial(){
-  const st=S(),all=charges(),pending=all.filter(t=>t.reviewed!==true),done=all.filter(t=>t.reviewed===true);
+  const st=S(),all=charges(),pending=[],done=all;
   if(!all.length)return `<div class="v911-hist"><p class="v911-empty">Todavía no hay cobros de suscripciones. Registra un pago desde Agenda o Cartera y aparecerá aquí, vinculado a Movimientos.</p></div>`;
   const feat=pending.find(t=>t.id===st.review)||pending[0];
   const diffText=(t)=>{const d=rnd(num(t.amount)-expected(t));return d===0?'Sin diferencia':(d>0?'+':'−')+money(Math.abs(d),t.currency||'DOP',2)};
