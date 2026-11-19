@@ -1008,25 +1008,6 @@ function v290BudgetWeb(){
  </section>`;
 }
 
-function v290BudgetHistory(){
- const base=ui.month||today().slice(0,7);const months=[];
- for(let i=5;i>=0;i--){const date=dateObj(base+'-01');date.setMonth(date.getMonth()-i);
-  const month=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0');const p=v290BudgetSnapshot(month);
-  months.push({month,p});
- }
- const any=months.some(x=>x.p.allocated>0),max=Math.max(100,...months.map(x=>x.p.percent||0));
- const bars=months.map(x=>`<div class="v290-history-month" tabindex="0" data-chart-tip="${sanitize(x.month)}|Asignado: ${money(x.p.allocated)}|Ejecutado: ${money(x.p.spent)}|Utilización: ${v290BudgetPct(x.p.percent)}"><div class="v290-history-column"><i class="${x.p.percent!==null&&x.p.percent>100?'over':''}" style="height:${x.p.percent===null?0:Math.max(2,Math.min(100,x.p.percent/max*100))}%"></i><span class="v290-history-target" aria-hidden="true" style="bottom:${100/max*100}%"></span></div><small>${sanitize(x.month.slice(5))}</small></div>`).join('');
- return `<section data-v105-widget="budgetTrend" class="v290-budget-trend" aria-label="Evolución histórica del presupuesto"><header class="v290-mobile-header"><div><span class="v290-eyebrow">PLANIFICACIÓN · HISTÓRICO</span><h2>Tu disciplina en seis meses</h2></div><button type="button" data-v290-budget-open="execution" aria-label="Abrir presupuesto">${icon('arrow')}</button></header>${any?`<div class="v290-history-chart" role="img" aria-label="Porcentaje de presupuesto utilizado en los últimos seis meses">${bars}</div><p class="v290-history-note">Cada barra es el porcentaje gastado respecto al límite de ese mes. La línea marca el 100%.</p>`:'<div class="v290-no-categories">Cuando definas un presupuesto, aquí verás cómo evoluciona mes a mes.</div>'}</section>`;
-}
-
-document.addEventListener('click',function(e){
- const button=e.target.closest?.('[data-v290-budget-open]');if(!button)return;
- e.preventDefault();e.stopImmediatePropagation();
- ui.innerViews=ui.innerViews||{};ui.innerViews.budget='status';ui.page='budget';
- render();window.scrollTo({top:0,behavior:'instant'});
-},true);
-
-/* V342 · Cuarto KPI. Usa exclusivamente fuentes de cálculo existentes. */
 function v342CreativePositionMobile(liquid,debt,net){
  const p=v290BudgetSnapshot(),capacity=v89DebtCapacity(),m=monthStats();
  const pct=Number.isFinite(p.percent)?p.percent:null;
@@ -1146,7 +1127,6 @@ function mobileHome(){
    <section data-v105-widget="chart" class="v105-mobile-extra" aria-label="Gráfico de ingresos y egresos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">EVOLUCIÓN</span><h2>Ingresos y egresos</h2></div></div>${mobileMiniTrend()}</section>
    <section data-v105-widget="people" class="v105-mobile-extra" aria-label="Compromisos entre personas"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RELACIONES</span><h2>Entre personas</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="personal">Ver relaciones ${icon('up')}</button></div><div class="v105-mobile-people"><span><small>Por cobrar</small><strong>${money(personalTotals().receivable)}</strong></span><span><small>Por devolver</small><strong>${money(personalTotals().payable)}</strong></span></div></section>
    ${v273OverviewExtraWidgets()}
-   ${v290BudgetHistory()}
   </div>`;
 }
 /* V243 · Contextual return, only when a module was opened from Explorar. */
@@ -11622,7 +11602,6 @@ const V105_WIDGETS=[
  {id:'applePayInbox',title:'Apple Pay · Por clasificar',hint:'Compras Wallet pendientes: asigna categoría y subcategoría desde Inicio'},
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
  {id:'creditUtil',title:'Utilización de tarjetas',hint:'Monto usado, límite y porcentaje por tarjeta y en conjunto'},
- {id:'budgetTrend',title:'Tendencia presupuestaria',hint:'Seis meses de utilización y disciplina'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
  {id:'salaryAdvance',title:'Salario anticipado',hint:'Registra tu salario o cobro recurrente antes de su fecha'},
  {id:'premiumCommitments',title:'Compromisos del mes · Premium',hint:'Tarjeta compacta con programado, pagos vinculados y pendiente · opcional'},
@@ -11633,7 +11612,6 @@ const V105_WIDGETS=[
  {id:'spendingFingerprint',title:'Huella de gastos · 28 días',hint:'Calendario visual de importes registrados, sin contar pagos de tarjetas dos veces'},
  {id:'futureCalendar',title:'Calendario de presión financiera',hint:'Mapa de vencimientos diarios en los próximos 30 días'},
  {id:'futureWaterfall',title:'Dinero comprometido · 30 días',hint:'Cascada de saldos, ingresos programados y pagos'},
- {id:'futureMap',title:'Mapa de compromisos',hint:'Peso mensual de tarjetas, préstamos y suscripciones'},
 
 ];
 /* V316: cuatro gráficos financieros esenciales, compatibles con preferencias previas.
@@ -14844,7 +14822,6 @@ const V318_GRAPH_META=[
  ['futureCalendar','Calendario de presión financiera','Mapa de vencimientos diarios en los próximos 30 días','decisions'],
  ['futureFlow','El río de tu dinero','Origen, obligaciones y saldo previsto en 30 días','activity'],
  ['futureWaterfall','Dinero comprometido · 30 días','Cascada de liquidez, ingresos y compromisos','decisions'],
- ['futureMap','Mapa de compromisos','Peso relativo por tipo de obligación mensual','breakdown'],
  ['futureBubbles','Matriz de importes y urgencia','Relación entre importe y días hasta vencer','decisions'],
 ];
 const V318_GRAPH_IDS=new Set(V318_GRAPH_META.map(x=>x[0]));
