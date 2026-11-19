@@ -55359,3 +55359,23 @@ html body #app#app #page .cards-grid .account-product-card{height:100%!important
 @media(min-width:791px){
  html body #app#app #page .v1190,html body #app#app #page .v1191{max-width:none!important;width:100%!important;margin:0!important}
 }
+/* v1229 · Compromisos del mes: conciliación solo con totales por tipo + widget Huella más compacto */
+.v560-commitment-summary{display:grid;gap:0;margin-top:12px;border-top:1px solid color-mix(in srgb,currentColor 12%,transparent);padding-top:10px}
+.v560-cs-head,.v560-cs-row{display:grid;grid-template-columns:minmax(78px,1.15fr) repeat(3,minmax(0,1fr));column-gap:8px;align-items:baseline}
+.v560-cs-head{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.62;padding-bottom:6px}
+.v560-cs-head span:not(:first-child),.v560-cs-row span{text-align:right}
+.v560-cs-row{padding:9px 0 0;font-size:12.5px;font-variant-numeric:tabular-nums}
+.v560-cs-row b{font-size:13px;font-weight:750}
+.v560-cs-row span{font-weight:700;white-space:nowrap}
+.v560-cs-row span.is-pending{color:var(--v424-accent-strong,#5b57d6)}
+.v560-cs-bar{grid-column:1/-1;display:block;height:4px;margin:7px 0 9px;border-radius:4px;background:color-mix(in srgb,currentColor 12%,transparent);overflow:hidden}
+.v560-cs-bar u{display:block;height:100%;border-radius:4px;background:var(--v424-accent-strong,#5b57d6)}
+.v560-cs-row:last-child .v560-cs-bar{margin-bottom:2px}
+@media(max-width:790px){
+ .v317-chart-widget{padding:14px 14px 16px!important}
+ .v317-chart-widget .v317-heat-summary{padding:10px 12px!important;gap:8px!important}
+ .v317-chart-widget .v317-heat-summary small{font-size:10px!important;letter-spacing:.06em!important;white-space:nowrap}
+ .v317-chart-widget .v317-heat-summary strong{font-size:19px!important}
+}
+.v560-cs-head,.v560-cs-row{grid-template-columns:minmax(92px,1.35fr) repeat(3,minmax(0,1fr))}
+.v560-cs-row{font-size:12px}.v560-cs-row b{font-size:12.5px;white-space:nowrap}

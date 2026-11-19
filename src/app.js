@@ -3564,7 +3564,8 @@ function v412PremiumWidget(id){
  const route=isCredit?'cards':'payments';
  const note=isCredit?'Consolidado en RD$ según la tasa de referencia configurada.':'Conciliación reconstruida según vencimiento, moneda e historial disponible. Los pagos no vinculados o cortes bancarios sin registro oficial pueden requerir revisión.';
  const detail=!isCredit?(()=>{const groups=v560ReconcileCommitments(v99Period(ui.month)).groups;const labels={card:'Tarjetas',loan:'Préstamos',recurring:'Suscripciones',personal:'Entre personas'};
- return `<details class="v560-commitment-detail"><summary>Ver conciliación por compromiso ${icon('chevron-down')}</summary><div class="v560-commitment-groups">${groups.map(g=>`<section class="v560-commitment-group"><h3>${labels[g.kind]} <small>${g.count}</small></h3><div class="v560-commitment-totals"><span>Programado <b>${money(g.scheduled)}</b></span><span>Abonado <b>${money(g.paid)}</b></span><span>Pendiente <b>${money(Math.max(0,g.scheduled-g.paid))}</b></span></div>${g.list.map(r=>`<div class="v560-commitment-row"><span>${sanitize(r.name)}</span><small>${money(r.paid,r.ccy,2)} / ${money(r.scheduled,r.ccy,2)}</small></div>`).join('')}</section>`).join('')}</div></details>`;})():'';
+ const rowsHtml=groups.filter(g=>g.scheduled>0||g.paid>0).map(g=>{const pend=Math.max(0,g.scheduled-g.paid),pc=g.scheduled>0?Math.min(100,100*g.paid/g.scheduled):0;return `<div class="v560-cs-row"><b>${labels[g.kind]}</b><span>${money(g.scheduled)}</span><span>${money(g.paid)}</span><span class="${pend>0?'is-pending':''}">${money(pend)}</span><i class="v560-cs-bar" role="img" aria-label="${pc.toFixed(0)}% cubierto"><u style="width:${pc.toFixed(1)}%"></u></i></div>`}).join('');
+ return `<div class="v560-commitment-summary" aria-label="Conciliación por compromiso"><div class="v560-cs-head"><span>Tipo</span><span>Programado</span><span>Abonado</span><span>Pendiente</span></div>${rowsHtml}</div>`;})():'';
  return `<div class="v412-premium v410-credit-widget ${isCredit?'v412-premium-credit':'v412-premium-commitments'}" aria-label="${title}">
   <header class="v410-credit-head"><div><span class="v410-kicker">${isCredit?'CRÉDITO · LÍMITES':'PAGOS · MES'}</span><h2>${title}</h2><p>${subtitle}</p></div><button type="button" data-act="navigate" data-id="${route}">${isCredit?'Ver tarjetas':'Ver pagos'} ${icon('arrow')}</button></header>
   <div class="v410-credit-kpis"><div><small>${fields[0]}</small><strong>${money(a)}</strong></div><div><small>${fields[1]}</small><strong>${money(b)}</strong></div><div><small>${fields[2]}</small><strong>${money(c)}</strong></div></div>
@@ -11591,7 +11592,7 @@ const V105_WIDGETS=[
  {id:'creditUtil',title:'Utilización de tarjetas',hint:'Monto usado, límite y porcentaje por tarjeta y en conjunto'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
  {id:'salaryAdvance',title:'Salario anticipado',hint:'Registra tu salario o cobro recurrente antes de su fecha'},
- {id:'premiumCommitments',title:'Compromisos del mes · Premium',hint:'Tarjeta compacta con programado, pagos vinculados y pendiente · opcional'},
+ {id:'premiumCommitments',title:'Compromisos del mes',hint:'Programado, pagado y pendiente, con el total por tarjetas, préstamos y suscripciones'},
  {id:'net',title:'Neto del mes',hint:'Ingresos menos egresos'},
  {id:'patrimonyTrend',title:'Tendencia de patrimonio',hint:'Evolución real de activos menos obligaciones por mes'},
  {id:'budgetPulse',title:'Cumplimiento de presupuesto · Pulso',hint:'Utilización, ritmo mensual, disponible y categorías'},
@@ -14781,7 +14782,7 @@ function v309ExtraCharts(){
  }).join('');
  const fingerprintSection=`<section class="v105-mobile-extra v273-overview-widget v315-chart-widget v317-chart-widget" data-v105-widget="spendingFingerprint" aria-label="Huella del gasto registrado durante veintiocho días">
   <div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">PANORAMA · PATRÓN · 28 DÍAS</span><h2>Huella de tus gastos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="register" aria-label="Ver movimientos">Movimientos ${icon('arrow')}</button></div>
-  <div class="v317-heat-summary"><div><small>TOTAL REGISTRADO · 28 DÍAS</small><strong>${displayMoney(v317Spent)}</strong></div><div><small>DÍAS CON GASTOS</small><strong>${v317ActiveDays} / 28</strong></div></div>
+  <div class="v317-heat-summary"><div><small>TOTAL · 28 DÍAS</small><strong>${displayMoney(v317Spent)}</strong></div><div><small>DÍAS CON GASTOS</small><strong>${v317ActiveDays} / 28</strong></div></div>
   <div class="v317-heat-label"><span>${sanitize(prettyDate(v317Start))}</span><span>${sanitize(prettyDate(v317Today))}</span></div>
   <div class="v317-heat-grid" aria-label="Gastos diarios. Toca un día para ver los movimientos">${v317Cells}</div>
   <div class="v317-heat-foot"><span>Sin gasto registrado</span><div class="v317-heat-legend"><i class="heat-0"></i><i class="heat-1"></i><i class="heat-2"></i><i class="heat-3"></i><i class="heat-4"></i></div><span>Mayor gasto</span></div>
