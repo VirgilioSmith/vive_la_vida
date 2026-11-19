@@ -14009,7 +14009,6 @@ let v242SettingsPane='home';
 const V242_PANES=[
  ['appearance','Apariencia y colores','Temas Claro y Black oscuro, acentos y fondos','sun','Visual'],
  ['profile','Perfil y sincronización','Conexión privada y estado de tu cuenta','wallet','Cuenta'],
- ['notifications','Notificaciones','Alertas internas, recordatorios y vencimientos','receipt','Alertas'],
  ['integrations','Integraciones y automatizaciones','Apple Pay y Atajos de iPhone','card','Servicios'],
  ['financial','Configuración financiera','Tasa de cambio, impuestos y cargos','chart','Finanzas'],
  ['security','Seguridad y privacidad','Revisión, recuperación y respaldos','shield','Privacidad'],
@@ -14456,6 +14455,33 @@ function v296PersonalizePage(){
 
 /* V300 · One shared appearance controller for desktop and mobile. All fields
    reuse the original persisted db.settings values and data-act events. */
+/* V1237 · Escalas de color del acento vigente: diez familias derivadas de un solo tono (misma matemática que la guía de color). */
+function v1237Palettes(){
+ let base=v726AccentColor();if(!/^#[0-9a-f]{6}$/i.test(base||''))base='#1c7a64';
+ try{const c=getComputedStyle(document.body).getPropertyValue('--v424-accent-strong').trim();if(/^#[0-9a-f]{6}$/i.test(c))base=c}catch(_){}
+ const h2s=h=>{let r=parseInt(h.slice(1,3),16)/255,g=parseInt(h.slice(3,5),16)/255,b=parseInt(h.slice(5,7),16)/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,sat=0,H=0;if(mx!==mn){const d=mx-mn;sat=l>.5?d/(2-mx-mn):d/(mx+mn);H=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;H*=60}return[H,sat*100,l*100]};
+ const x2h=(h,sa,l)=>{h=((h%360)+360)%360;sa=Math.max(0,Math.min(100,sa))/100;l=Math.max(0,Math.min(100,l))/100;const a=sa*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12;return l-a*Math.max(-1,Math.min(k-3,9-k,1))};return'#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('')};
+ const mx=(a,b,t)=>{const q=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),A=q(a),B=q(b);return'#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')};
+ const [H,S,L]=h2s(base),cl=Math.min(S+6,90);
+ return {base,fam:[
+  ['Monocromática','Un solo tono, de claro a oscuro: la escala de la interfaz.',[96,90,80,68,56,44,L,32,22,13].map((l,i)=>[x2h(H,i===6?S:cl,l),['50','100','200','300','400','500','Base','700','800','900'][i]])],
+  ['Tintes y sombras','La base mezclada con blanco y con negro.',[.9,.75,.55,.3].map(t=>[mx(base,'#ffffff',t),Math.round(t*100)+'%']).concat([[base,'Base']],[.2,.4,.6,.8].map(t=>[mx(base,'#000000',t),Math.round(t*100)+'%']))],
+  ['Análoga','Matices vecinos en la rueda de color.',[-60,-40,-20,0,20,40,60].map(d=>[x2h(H+d,S,L),(d>0?'+':'')+d+'°'])],
+  ['Complementaria','El acento frente a su opuesto: alertas y contraste.',[[x2h(H,S,L+22),'Claro'],[base,'Base'],[x2h(H,S,L-12),'Oscuro'],[x2h(H+180,S+8,L+30),'Op. claro'],[x2h(H+180,S+8,L+8),'Opuesto'],[x2h(H+180,S+8,L-10),'Op. oscuro']]],
+  ['Complementaria dividida','El acento y los dos vecinos de su opuesto.',[[x2h(H,S,L+22),'Claro'],[base,'Base'],[x2h(H+150,S+4,L+8),'+150°'],[x2h(H+210,S+4,L+8),'+210°'],[x2h(H+150,S+4,L-8),'+150° osc.'],[x2h(H+210,S+4,L-8),'+210° osc.']]],
+  ['Triádica','Tres matices a 120°.',[0,120,240].flatMap(d=>[[x2h(H+d,S,L+20),d?'+'+d+'° claro':'Base claro'],[x2h(H+d,S,L),d?'+'+d+'°':'Base']])],
+  ['Tetrádica','Cuatro matices a 90°, para gráficos con varias series.',[0,90,180,270].map(d=>[x2h(H+d,S,L+4),d?'+'+d+'°':'Base'])],
+  ['Secuencial','Ocho pasos para mapas de calor y barras.',Array.from({length:8},(_,i)=>[x2h(H-8+i*1.5,Math.min(S+10,88)-i*1.2,92-i*9.4),String(i+1)])],
+  ['Divergente','Positivo, neutro y negativo.',[[x2h(H+180,S+8,L-8),'−3'],[x2h(H+180,S+8,L+10),'−2'],[x2h(H+180,S,L+32),'−1'],['#eef1f0','0'],[x2h(H,S,L+30),'+1'],[x2h(H,S,L+10),'+2'],[x2h(H,S,L-8),'+3']]],
+  ['Neutros con tinte','Grises que llevan un poco del acento.',[97,93,86,72,55,40,28,18,10].map((l,i)=>[x2h(H,i<2?18:12,l),['50','100','200','300','400','500','600','700','800'][i]])]
+ ]};
+}
+function v1237PalettePanel(){
+ const P=v1237Palettes(),ink=h=>{const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return (.2126*c[0]+.7152*c[1]+.0722*c[2])>.42?'#10201b':'#fff'};
+ return `<div class="settings-group-title" id="v176-setting-05"><div><span class="summary-tag">${isMobileViewport()?'05':'04'} / ESCALAS DE TU ACENTO</span><h3>Diez familias de color con tu acento ${sanitize(P.base.toUpperCase())}</h3></div></div>
+ <div class="panel v1237-scales">${P.fam.map(([t,d,c])=>`<section class="v1237-scale"><div class="v1237-scale-head"><strong>${sanitize(t)}</strong><small>${sanitize(d)}</small></div><div class="v1237-row">${c.map(([h,n])=>`<button type="button" class="v1237-sw" data-v1237-copy="${h.toUpperCase()}" style="background:${h}!important;color:${ink(h)}!important;-webkit-text-fill-color:${ink(h)}!important" aria-label="Copiar ${h.toUpperCase()}"><b>${h.toUpperCase()}</b><small>${sanitize(n)}</small></button>`).join('')}</div></section>`).join('')}</div>`;
+}
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1237-copy]');if(!b)return;const v=b.dataset.v1237Copy;const done=()=>toast('Copiado '+v);try{navigator.clipboard.writeText(v).then(done,done)}catch(_){done()}});
 function v300AppearancePane(){
  const s=db.settings;
  return `<div class="v300-appearance-pane" aria-label="Apariencia y colores"><div class="settings-group-title" id="v176-setting-01"><div><span class="summary-tag">01 / APARIENCIA</span><h3>Tema de la aplicación</h3></div></div>
@@ -14475,7 +14501,7 @@ function v300AppearancePane(){
  ['original','Nube original','#d9e7fa','#f4f6fd','La atmósfera original'],['glacier','Glaciar','#bceaf0','#dbf5e8','Azul hielo y agua marina'],['sunset','Atardecer','#f1cadd','#f8c4cd','Rosa suave y arena']
 ].map(([key,name,a,b,desc])=>`<button type="button" class="vive-palette-choice v15-bg-choice ${((s.backgroundChoice||'original')===key)?'selected':''}" data-act="backgroundTheme" data-id="${key}" aria-pressed="${(s.backgroundChoice||'original')===key}"><span class="v15-bg-art" style="background:linear-gradient(135deg,${a},${b})"><i class="v15-bg-rail"></i><i class="v15-bg-card"></i><i class="v15-bg-card small"></i></span><strong>${name}</strong><small>${desc}</small></button>`).join('')}</div>
 <div class="vive-custom-palette"><div><strong>Fondo personalizado</strong><small>Escoge el tono de la atmósfera; el sistema conservará el contraste y el degradado.</small></div><label for="viveBackgroundColor">Color</label><input type="color" id="viveBackgroundColor" value="${/^#[0-9a-f]{6}$/i.test(s.backgroundHex||'')?s.backgroundHex:'#9db8ef'}" aria-label="Color personalizado del fondo"><button class="btn sm soft" type="button" data-act="backgroundCustom">Aplicar fondo</button></div></div>
-${isMobileViewport()?`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN MÓVIL</span><h3>Liquid Glass · barra inferior</h3></div></div>${v250DockGlassPanel()}`:`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN WEB</span><h3>Intensidad de las barras superiores</h3></div></div>${v443NavPanel()}`}</div>`;
+${isMobileViewport()?`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN MÓVIL</span><h3>Liquid Glass · barra inferior</h3></div></div>${v250DockGlassPanel()}`:`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN WEB</span><h3>Intensidad de las barras superiores</h3></div></div>${v443NavPanel()}`}</div>${v1237PalettePanel()}`;
 }
 
 
@@ -14535,7 +14561,6 @@ function v726LinkedPage(){
  <div class="v726-linked-list">${visible.length?visible.map(x=>`<article class="v726-linked-record"><span class="v726-linked-icon">${x.kind==='bank'?bankLogoMark((db.banks||[]).find(b=>String(b.id)===x.id),'v726-record-logo'):icon(x.ico)}</span><div class="v726-linked-detail"><strong>${sanitize(x.name)}</strong><small>${x.kind==='bank'?sanitize(x.type):sanitize(x.type)+' · '+sanitize(v726CleanText(x.bank,70))}</small><span class="v726-linked-status ${x.archived?'is-archived':''}">${x.archived?'Archivada':'Activa'}</span></div><div class="v726-linked-actions"><button type="button" data-v726-linked-open="${x.kind}" data-v726-id="${sanitize(x.id)}" aria-label="Consultar ${sanitize(x.name)}">Ver</button><button type="button" data-v726-linked-toggle="${x.kind}" data-v726-id="${sanitize(x.id)}">${x.archived?'Reactivar':'Archivar'}</button></div></article>`).join(''):`<div class="v726-linked-empty">No hay productos en esta categoría.</div>`}</div>
  <p class="v726-linked-note">«Vinculadas» significa registradas en tus finanzas. No implica que exista una conexión bancaria o sincronización bancaria automática.</p></div>`;
 }
-function v726NotificationsPane(){return `<section class="v726-notifications-panel"><div class="v726-kicker">AVISOS DE LA APLICACIÓN</div><h2>Notificaciones</h2><p>Las alertas de vencimientos y compromisos se muestran dentro de la aplicación. No se reactivará el sistema antiguo de notificaciones push.</p><button type="button" class="btn soft" data-v726-open-bell="1">${icon('receipt')} Consultar avisos de la campanita</button></section>`}
 function v726ProfilePane(){
  const p=v726ProfileInfo();
  return `<div class="v726-profile-pane">${v726ProfileCard()}${v726ProfileEditing?`<form id="v726ProfileForm" class="v726-profile-form"><label>Nombre para mostrar<input name="name" type="text" maxlength="75" required value="${sanitize(p.name)}" autocomplete="name"></label><label>Foto de perfil (URL HTTPS, opcional)<input name="avatar" type="url" maxlength="1700" placeholder="https://..." value="${sanitize(p.avatar)}"></label><div class="v726-profile-form-actions"><button type="submit" class="btn">Guardar perfil</button><button type="button" class="btn soft" data-v726-profile-cancel="1">Cancelar</button></div><p>Los datos de perfil se guardan en tu cuenta de Supabase Auth; no alteran movimientos ni saldos.</p></form>`:`<div class="v726-profile-quick"><button type="button" data-v726-profile-edit="1">${icon('edit')} Editar nombre y fotografía</button><button type="button" data-v242-section="linked">${icon('building')} Gestionar productos registrados</button></div>`}${f34CloudPanel()}</div>`;
@@ -14550,7 +14575,6 @@ function v242Settings(){
  const content={
   appearance:()=>`${v300AppearancePane()}`,
   profile:()=>`${v726ProfilePane()}`,
-  notifications:()=>`${v726NotificationsPane()}`,
   linked:()=>`${v726LinkedPage()}`,
   integrations:()=>`${v212SettingsPanel()}`,
   financial:()=>`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / REGLAS FINANCIERAS</span><h3>Tasas, transferencias y cargos</h3></div></div>
@@ -14571,7 +14595,7 @@ ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div 
  const title=paneInfo?.[1]||'Configuración';
  if(desktopSettings){
   const desktopTile=(entry)=>`<button type="button" class="v439-mac-item ${activeDesktopPane===entry[0]?'is-active':''}" data-v242-section="${entry[0]}" aria-current="${activeDesktopPane===entry[0]?'page':'false'}"><span class="v439-mac-item-icon v242-settings-symbol v242-symbol-${entry[0]}">${icon(entry[3])}</span><span class="v439-mac-item-copy"><strong>${entry[1]}</strong><small>${entry[4]}</small></span><span class="v439-mac-item-arrow" aria-hidden="true">›</span></button>`;
-  const groups=[['CUENTA',['profile']],['PERSONALIZACIÓN',['appearance','notifications']],['SERVICIOS',['integrations','financial']],['PRIVACIDAD Y AYUDA',['security','about']],['CUENTAS VINCULADAS',['linked']]];
+  const groups=[['CUENTA',['profile']],['PERSONALIZACIÓN',['appearance']],['SERVICIOS',['integrations','financial']],['PRIVACIDAD Y AYUDA',['security','about']],['CUENTAS VINCULADAS',['linked']]];
   return `<div class="settings-layout v242-ios-settings v439-macos-settings" style="--v726-accent:${v726AccentColor()}" data-v242-settings="${activeDesktopPane}">
     <header class="v439-mac-top"><div><span class="v439-mac-eyebrow">vive el hoy</span><h1>Configuración</h1><p>Tus preferencias, organizadas en un solo lugar.</p></div></header>
     <div class="v439-mac-workspace"><aside class="v439-mac-sidebar" aria-label="Secciones de Configuración"><div class="v439-mac-sidehead"><span class="v439-mac-avatar">${icon('wallet')}</span><span><strong>${sanitize(v726ProfileInfo().name)}</strong><small>Ajustes y preferencias</small></span></div><nav aria-label="Categorías de Configuración">${groups.map(([label,ids])=>`<div class="v439-mac-group"><p>${label}</p>${V242_PANES.filter(x=>ids.includes(x[0])).map(desktopTile).join('')}</div>`).join('')}</nav><div class="v439-mac-sidefoot">${icon('shield')} Datos vinculados a tu sesión</div></aside>
@@ -14579,7 +14603,7 @@ ${f34FxPanel()}<div class="panel settings-finance"><form id="settingsForm"><div 
   </div>`;
  }
  return `<div class="settings-layout v242-ios-settings" style="--v726-accent:${v726AccentColor()}" data-v242-settings="${pane}">
- ${pane==='home'?`<div class="v242-settings-home"><header class="v242-settings-intro"><span class="v242-settings-eyebrow">vive el hoy</span><h1>Configuración</h1><p>Todo a tu manera, con la claridad de Ajustes de iPhone.</p></header>${v726ProfileCard()}<div class="v242-settings-section"><span class="v242-group-caption">APARIENCIA</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='appearance').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">NOTIFICACIONES</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='notifications').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">CONEXIONES Y FINANZAS</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['integrations','financial'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">PRIVACIDAD Y SOPORTE</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['security','about'].includes(x[0])).map(tile).join('')}</div></div>${v726LinkedStrip()}<p class="v242-settings-footer">Tus registros y operaciones financieras se mantienen protegidos por las reglas actuales de la aplicación.</p></div>`:
+ ${pane==='home'?`<div class="v242-settings-home"><header class="v242-settings-intro"><span class="v242-settings-eyebrow">vive el hoy</span><h1>Configuración</h1><p>Todo a tu manera, con la claridad de Ajustes de iPhone.</p></header>${v726ProfileCard()}<div class="v242-settings-section"><span class="v242-group-caption">APARIENCIA</span><div class="v242-settings-rows">${V242_PANES.filter(x=>x[0]==='appearance').map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">CONEXIONES Y FINANZAS</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['integrations','financial'].includes(x[0])).map(tile).join('')}</div></div><div class="v242-settings-section"><span class="v242-group-caption">PRIVACIDAD Y SOPORTE</span><div class="v242-settings-rows">${V242_PANES.filter(x=>['security','about'].includes(x[0])).map(tile).join('')}</div></div>${v726LinkedStrip()}<p class="v242-settings-footer">Tus registros y operaciones financieras se mantienen protegidos por las reglas actuales de la aplicación.</p></div>`:
  `<div class="v242-settings-subpage"><header class="v242-settings-subhead"><button type="button" class="v242-settings-back" data-v242-back="1">‹ <span>Configuración</span></button><span class="v242-settings-eyebrow">${paneInfo?.[4]||'Preferencias'}</span><h1>${title}</h1><p>${paneInfo?.[2]||''}</p></header><div class="v242-settings-inner">${sectionBody}</div></div>`}
  </div>`;
 }
