@@ -1,0 +1,10 @@
+create index if not exists apple_pay_events_inbox_idx on public.apple_pay_events using btree (user_id, status, received_at);
+create unique index if not exists apple_pay_links_token_hash_unique on public.apple_pay_links using btree (token_hash) where (token_hash is not null);
+create index if not exists apple_pay_links_user_idx on public.apple_pay_links using btree (user_id);
+create index if not exists apple_pay_links_user_active_idx on public.apple_pay_links using btree (user_id, active, instrument_id, currency);
+drop policy if exists finance_items_select_own on public.finance_items;
+create policy finance_items_owner on public.finance_items for all to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+drop policy if exists finance_values_select_own on public.finance_values;
+create policy finance_values_owner on public.finance_values for all to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+drop policy if exists finance_revision_select_own on public.finance_revision;
+create policy finance_revision_owner on public.finance_revision for all to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
