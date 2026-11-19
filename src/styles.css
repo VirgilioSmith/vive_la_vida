@@ -55458,3 +55458,18 @@ html body #app#app .v206-banks-pill.active *{color:#fff!important;-webkit-text-f
  html body #app#app .v730-apple-access small{font-size:12.5px!important}
  html body #app#app .v726-linked-tabs button{min-height:44px;font-size:14px}
 }
+/* v1233 · Apple Pay y Atajos (móvil): panel ordenado y selector de tarjeta universal */
+.v1233-hidden{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important}
+.v1233-card-pick{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:52px;padding:0 16px;border-radius:16px;border:1px solid rgba(120,140,170,.3);background:#fff;color:inherit;font:inherit;font-weight:700;text-align:left}
+.v1233-pick-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v1233-pick-chev{color:var(--v424-accent-strong);font-size:18px}
+body.theme-black .v1233-card-pick{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16)}
+@media(max-width:790px){
+ html body #app#app .v212-panel{border-radius:24px!important;padding:18px 16px!important}
+ html body #app#app .v212-setup{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}
+ html body #app#app .v212-setup .btn.primary{width:100%;min-height:52px;border-radius:16px;background:var(--v424-accent-strong)!important;background-image:none!important;box-shadow:none!important}
+ html body #app#app .v212-panel select.field{min-height:52px;border-radius:16px}
+ html body #app#app .v212-panel .filter-label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin-bottom:6px;display:block}
+ html body #app#app .v212-panel details summary{font-size:15px;color:var(--v424-accent-strong);padding:12px 0}
+ html body #app#app .v212-panel details ol{padding-left:18px;font-size:14px;line-height:1.55}
+}
