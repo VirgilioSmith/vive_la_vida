@@ -43,14 +43,18 @@ function factsFromPayload(P){
  if(!P)return {fx:60,cards:[],loans:[],unrated:[],incomes:[],fixed:[]};
  return {fx:P.fx,cards:clone(P.cards||[]),loans:clone(P.loans||[]),unrated:clone(P.unrated||[]),incomes:clone(P.incomes||[]),fixed:clone(P.fixed||[]),spending:clone(P.spending||null),liquidity:clone(P.liquidity||null),duplicates:clone(P.duplicates||[])};
 }
-function withOverrides(list){return list.map(x=>{const o=ST.overrides[x.productId||x.id]||{};return {...x,openedSource:validPeriod(x.opened)?'app':(validPeriod(o.opened)?'usuario':'falta'),...((!validPeriod(x.opened)&&validPeriod(o.opened))?{opened:o.opened}:{}),...(o.status?{status:o.status}:{}),source:o.source||(x.source||'app'),evidenceVerified:!!o.evidenceVerified,evidenceNote:o.note||''}})}
+/* E6 (v5.1): un atraso que sale de «vencimiento sin pago registrado» puede marcarse como «no es mora» (ya se pagó pero no se concilió en la app). La marca se ata al vencimiento concreto: si aparece otro atraso, vuelve a contar. */
+function lateKey(x,at){const d=Number(x.daysPastDue)||0;if(d<=0)return '';const t=new Date((at||PAYLOAD?.today||new Date().toISOString().slice(0,10))+'T00:00:00Z');t.setUTCDate(t.getUTCDate()-d);return (x.productId||x.id)+'|'+t.toISOString().slice(0,10)}
+function lateDismissed(x,at){const k=lateKey(x,at);return !!(k&&(ST.dismissedLate||{})[k])}
+function withOverrides(list){return list.map(x=>{const o=ST.overrides[x.productId||x.id]||{};if(lateDismissed(x,x.reportedAt))x={...x,daysPastDue:0,lateDismissed:true};return {...x,openedSource:validPeriod(x.opened)?'app':(validPeriod(o.opened)?'usuario':'falta'),...((!validPeriod(x.opened)&&validPeriod(o.opened))?{opened:o.opened}:{}),...(o.status?{status:o.status}:{}),source:o.source||(x.source||'app'),evidenceVerified:!!o.evidenceVerified,evidenceNote:o.note||''}})}
 
 /* ---------- contadores a partir de antecedentes declarados + observación ---------- */
 function declaredCounters(period,observedLate){
  const A=ST.answers||{},c={lateShort:0,late30:0,late60:0,late90:0,late120:0,lateOlder:0,new0to6:0,new7to12:0,limitReq0to6:0,limitReq7to12:0,limitAuto:0,restructure:0,refinance:0,sources:{}};
+ /* E7 (v5.1): recuperación progresiva. Un atraso fuera de su ventana (12 meses los cortos, 24 los demás) deja un descuento que decrece linealmente hasta 0 a los 60 meses de salir de la ventana, en vez de un descuento fijo permanente. */
  const bump=(dur,age,mult)=>{
   const key={'<30':'lateShort','30-59':'late30','60-89':'late60','90-119':'late90','120+':'late120'}[dur]||'late30';
-  const limit=key==='lateShort'?12:24;if(age>=limit)c.lateOlder+=mult;else c[key]+=mult;
+  const limit=key==='lateShort'?12:24;if(age>=limit)c.lateOlder+=mult*Math.max(0,1-(age-limit)/60);else c[key]+=mult;
  };
  if(A.late?.answer==='yes')for(const e of A.late.events||[]){if(!validPeriod(e.period))continue;const age=monthsFrom(e.period,period);if(age<0)continue;bump(e.duration,age,e.repeated?2:1)}
  for(const x of ST.cancelled||[]){const d=Number(x.maxLate)||0;if(d<1||!validPeriod(x.closed))continue;const age=monthsFrom(x.closed,period);if(age<0)continue;bump(d===1?'30-59':d===2?'60-89':d===3?'90-119':'120+',age,1)}
@@ -85,7 +89,7 @@ function materialize(period,idxInList){
  const allCards=withOverrides(facts.cards),allLoans=withOverrides(facts.loans),cards=allCards.filter(x=>x.reported!==false),loans=allLoans.filter(x=>x.reported!==false);
  // mora observada en cortes anteriores (se guarda solo lo que la app registró)
  const observedLate=[];
- for(const p of Object.keys(ST.observed).sort()){if(p>=period)continue;const f=ST.observed[p].facts;const worst=Math.max(0,...f.cards.concat(f.loans).filter(x=>x.reported!==false).map(x=>Number(x.daysPastDue)||0));if(worst>0)observedLate.push({period:p,duration:dpdBucket(worst)})}
+ for(const p of Object.keys(ST.observed).sort()){if(p>=period)continue;const f=ST.observed[p].facts;const at=ST.observed[p].observedAt;const worst=Math.max(0,...f.cards.concat(f.loans).filter(x=>x.reported!==false).map(x=>lateDismissed(x,at)?0:(Number(x.daysPastDue)||0)));if(worst>0)observedLate.push({period:p,duration:dpdBucket(worst)})}
  const dc=declaredCounters(period,observedLate),ao=appOpenings(facts,period),canc=effCancelled(facts,period);
  for(const x of canc){const age=monthsFrom(x.opened,period);if(age>=0&&age<=6){ao.n0to6++;ao.list.push({key:'x:'+x.id,name:x.inst,kind:x.kind,bank:x.inst,opened:x.opened,age,window:'0–6 meses',source:'historial de cancelados',unrated:false,closed:true})}}
  // antigüedad: apertura registrada en la app o declarada, en mes y año
@@ -141,8 +145,8 @@ function rebuildDB(){
  if(!PAYLOAD){DB.months=[];return}
  const cur=todayPeriod(),facts=factsFromPayload(PAYLOAD);
  const prev=ST.observed[cur];
- if(!prev||JSON.stringify(prev.facts)!==JSON.stringify(facts)){ST.observed[cur]={facts,observedAt:PAYLOAD.today,closed:false};saveStore()}
- for(const p of Object.keys(ST.observed))if(p<cur&&!ST.observed[p].closed){ST.observed[p].closed=true;saveStore()}
+ if(!prev||JSON.stringify(prev.facts)!==JSON.stringify(facts)){ST.observed[cur]={facts,observedAt:PAYLOAD.today,closed:false,engine:ENGINE};saveStore()}
+ for(const p of Object.keys(ST.observed))if(p<cur&&!ST.observed[p].closed){ST.observed[p].closed=true;ST.observed[p].closedEngine=ENGINE;saveStore()}
  const periods=Object.keys(ST.observed).filter(p=>p>=VS_START||p===cur).sort();
  DB.months=periods.map((p,i)=>materialize(p,i));
  DB.settings={...clone(CAP_DEFAULT),...(ST.settings||{})};DB.seals=ST.seals=Array.isArray(ST.seals)?ST.seals:[];DB.metadata={source:'datos reales de vive el hoy',startedOn:VS_START};

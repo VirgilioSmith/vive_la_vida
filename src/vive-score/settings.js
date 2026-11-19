@@ -52,9 +52,16 @@ function cancelledView(s){
  ${app.length||mine.length?`<div class="metricList">${app.map(x=>row(x.name.replace(/ · (DOP|USD)$/,''),'Cerrado · leído de vive el hoy',safe(validPeriod(x.opened)?'abierto '+myLabel(x.opened):'sin fecha de apertura'),'')).join('')}${mine.map(x=>row(x.inst||'Producto',`${x.kind==='loan'?'Préstamo':'Tarjeta'}${x.limit?' · '+safe(x.limit):''} · ${x.seed?'reporte de crédito':'declarado'}${x.vector?' · últimos 12 meses '+safe(x.vector):''}`,`<div>abierto ${safe(myLabel(x.opened))}</div><div>${x.state==='saldado'?'saldado':x.state==='castigado'?'castigado':'cancelado'} ${safe(myLabel(x.closed))}</div><div><span class="${(x.maxLate||0)>0?'neg':'pos'}">${(x.maxLate||0)>0?'Atraso '+(['','30','60','90','120+'][Math.min(4,x.maxLate)])+' días':'Sin atrasos'}</span></div>`,`<button class="smallbtn" data-cancel-del="${safe(x.id)}">Quitar</button>`)).join('')}</div>`:'<p class="muted">Todavía no hay productos cancelados.</p>'}
  <div class="qmyrow" style="flex-wrap:wrap;gap:8px;margin-top:14px"><input class="formInput" id="cx-inst" placeholder="Institución o producto" aria-label="Institución o producto" style="max-width:220px"><select class="formSelect" id="cx-kind" aria-label="Tipo"><option value="card">Tarjeta</option><option value="loan">Préstamo</option></select><span class="xs muted">Apertura</span>${mSel('cx-o')}${ySel('cx-o')}<span class="xs muted">Cierre</span>${mSel('cx-c')}${ySel('cx-c')}<select class="formSelect" id="cx-state" aria-label="Estado final"><option value="cancelado sin saldo">Cancelado sin saldo</option><option value="saldado">Saldado (completado)</option><option value="castigado">Castigado (no suma)</option></select><select class="formSelect" id="cx-late" aria-label="Atraso"><option value="0">Sin atrasos</option><option value="1">Atraso 30 días</option><option value="2">Atraso 60 días</option><option value="3">Atraso 90 días</option><option value="4">Atraso 120+ días</option></select><button class="smallbtn" data-cancel-add="1">+ Agregar</button></div></div>`;
 }
+function lateConfirmView(s){
+ const rows=[...s.cards,...s.loans].filter(x=>x.status!=='closed'&&(Number(x.daysPastDue)>0||x.lateDismissed));
+ if(!rows.length)return '';
+ const line=x=>{const k=lateKey({...x,daysPastDue:Number(x.daysPastDue)||0},PAYLOAD?.today),dis=!!x.lateDismissed;
+  return `<div class="metricLine"><span><b>${safe(x.name)}</b><div class="muted xs">${dis?'Marcado como «no es mora» (pagado y sin conciliar en la app)':'vive el hoy lo deduce de un vencimiento sin pago registrado: '+x.daysPastDue+' día(s)'}</div></span><span>${dis?`<button class="smallbtn" data-late-restore="${safe(x.__lateKey||'')}" data-late-pid="${safe(x.productId||x.id)}">Volver a contar</button>`:`<button class="smallbtn" data-late-dismiss="${safe(k)}">No es mora · ya pagué</button>`}</span></div>`};
+ return `<div class="card" style="margin-top:12px"><div class="caps">ATRASOS DETECTADOS · CONFIRMACIÓN</div><p class="muted sm" style="margin:6px 0 10px">El atraso vigente se deduce de vencimientos sin pago registrado, no de un reporte bancario. Si ya lo pagaste y solo falta conciliarlo en la app, márcalo para que no cuente como mora. La marca es de ese vencimiento: si aparece otro atraso, vuelve a contar.</p><div class="metricList">${rows.map(line).join('')}</div></div>`;
+}
 function configuracionView(){
  const s=current();
- return `<p class="muted sm" style="margin:0 0 12px">Se leen de vive el hoy y nunca se modifican. Solo completas el mes y año de apertura cuando la app no lo tiene.</p>${instrumentRows(s)}${cancelledView(s)}`;
+ return `<p class="muted sm" style="margin:0 0 12px">Se leen de vive el hoy y nunca se modifican. Solo completas el mes y año de apertura cuando la app no lo tiene.</p>${instrumentRows(s)}${lateConfirmView(s)}${cancelledView(s)}`;
 }
 /* Centro de control: una sola página, sin menú. Cada apartado es una sección plegable; los datos no se repiten. */
 const CC_SECTIONS=[['antecedentes','Antecedentes y procedencia'],['productos','Productos y cancelados'],['cortes','Cortes guardados'],['auditoria','Auditoría y pruebas'],['variables','Variables'],['metodologia','Metodología']];
@@ -76,6 +83,9 @@ document.addEventListener('change',e=>{
  if(m&&y){setOverride(id,{opened:`${y}-${m}`});auditLog(`Completó la apertura de ${id} (${y}-${m}) dentro de VIVE SCORE`);rebuildDB();render()}
 });
 document.addEventListener('click',e=>{
+ const ld=e.target.closest('[data-late-dismiss]'),lr=e.target.closest('[data-late-restore]');
+ if(ld&&ld.dataset.lateDismiss){(ST.dismissedLate=ST.dismissedLate||{})[ld.dataset.lateDismiss]=true;ST.declVersion++;auditLog('Marcó un atraso como «no es mora» (pagado y sin conciliar).');saveStore();rebuildDB();render();notify('Atraso marcado como pagado.');return}
+ if(lr){const pid=lr.dataset.latePid;for(const k of Object.keys(ST.dismissedLate||{}))if(k.startsWith(pid+'|'))delete ST.dismissedLate[k];ST.declVersion++;saveStore();rebuildDB();render();return}
  const lk=e.target.closest('[data-limit-kind]');
  if(lk){const ev=(ST.answers?.limit?.events||[]).find(x=>x.id===lk.dataset.limitKind);if(ev){ev.kind=ev.kind==='requested'?'automatic':'requested';ST.declVersion++;saveStore();rebuildDB();render()}return}
  const ca=e.target.closest('[data-cancel-add]'),cd=e.target.closest('[data-cancel-del]');

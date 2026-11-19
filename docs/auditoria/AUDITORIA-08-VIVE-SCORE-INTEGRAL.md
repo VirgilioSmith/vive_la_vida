@@ -114,3 +114,34 @@ Cada uno cambia puntajes. Presento qué, por qué, evidencia, impacto, riesgo y 
 
 ## 12. Riesgos pendientes y confiabilidad
 **Nivel de confiabilidad: parcial.** El motor es consistente matemáticamente (rango, determinismo, monotonía, multimoneda, ausencia de errores con entradas hostiles), pero **no puede defenderse todavía como medida de comportamiento** por H1 y H2 y por la falta de validación empírica. No está validado al 100 %: faltan datos de resultados, calibración de curvas, una auditoría externa y la decisión sobre E1–E10. La revisión del comité fue una revisión cruzada interna de un solo ejecutor.
+
+---
+
+## 13. Implementación autorizada (motor 5.1.0)
+Con tu autorización de E1–E10 se implementó lo siguiente. El motor pasó de `5.0.0` a `5.1.0`; los sellos y cortes nuevos guardan esa versión.
+
+| # | Cambio | Dónde | Verificación |
+|---|---|---|---|
+| E1 | La mora **vigente** usa la escala de severidad del atraso declarado (18/75/100/135/165, peor producto); ya no se satura en 35 | `score.js` (`evaluateRaw`) | Prueba E1: 0 d → 866; 15 d → 837; 45 d → 766; 75 d → 735; 100 d → 696; 200 d → 666; 672 d → 666 |
+| E2 | Etiqueta «**Perfil en desarrollo**» mientras haya < 12 meses de evidencia o de antigüedad promedio, y la **confianza** se muestra bajo el título (web y móvil) | `score.js` (`isDeveloping`, `confidenceOf`, `scoreName`) | Prueba E2 + captura web |
+| E3 | «Tarjetas tensionadas» sin escalones: rampas lineales 60 %→75 % (6 pts) y 100 %→110 % (12 pts) | `score.js` | Prueba R5: ≤ 4 puntos por punto porcentual en toda la curva, sin escalones |
+| E4 | Neutros al 50 % cuando no hay evidencia (sin tarjetas: 90/180, 22/45, 8/15; sin préstamos: 18/35); composición de «gestión» proporcional a la antigüedad promedio (÷ 24 meses) | `score.js` | Prueba E4: 2 meses de historia 756 frente a 10 años 961 |
+| E5 | Utilización medida con el **saldo del estado de cuenta** cuando existe | `adapter.js` (`statementKnown`), `score.js` | Prueba E5. **Límite:** si la app reduce el saldo facturado al registrar el pago, el efecto se reflejará al siguiente corte |
+| E6 | **Confirmación de atrasos** en Centro de control → «Productos y cancelados»: «No es mora · ya pagué» (atada al vencimiento concreto; si aparece otro, vuelve a contar) | `state.js`, `settings.js` | Prueba E6 + comprobación en pantalla |
+| E7 | **Recuperación progresiva** de atrasos antiguos: el descuento decrece linealmente y llega a 0 a los 60 meses de salir de su ventana | `state.js` (`declaredCounters`) | Prueba E7: 1, 0,8, 0,6, 0,2, 0, 0 |
+| E8 | Simulador con **abonar 20 % del capital**, **regularizar atrasos** y **consolidar saldos** (12 escenarios en total, todos por `evaluate()`) | `transunion.js` | Prueba E8 |
+| E9 | **Parcial.** No se unificó el cálculo: se rotuló la definición y se explica por qué difiere de la del Resumen. Unificar exige decidir qué incluye «capacidad» | `score.js` | — |
+| E10 | **Parcial.** Cada corte guarda `engine` y, al cerrarse, `closedEngine`. No se guarda el puntaje de cada corte (se recalcula) | `state.js` | Prueba E10 |
+| D-5/duplicados | Alerta de duplicados (ya hecha) | — | Prueba R10 |
+
+**Antes y después sobre el perfil de demostración** (con datos sintéticos; sus atrasos de 650–672 días provienen de vencimientos sin pago registrado): **831 → 666**. La caída se debe sobre todo a E1 (mora vigente) y E4/E2 (expediente de un mes). Marcar el atraso como «no es mora» lo devuelve al nivel anterior; el puntaje sigue etiquetado «Perfil en desarrollo» hasta reunir 12 meses de evidencia.
+
+**Pruebas:** `tests/vive-score.js` 39/39 (se actualizaron dos expectativas: 12 escenarios en vez de 9 y el neutro de amortización 18 en vez de 26); `tests/vive-score-propiedades.js` 20/20 (rango y enteros en 2.885 cortes de 6.000 con valores hostiles, determinismo, monotonía, multimoneda, extremos y E1–E10).
+
+**Pendiente y riesgos residuales**
+- **Código sin uso:** `scenario()` y sus controladores de `sim` en `score.js` quedaron huérfanos (la pantalla que los usaba ya no existe; el simulador vigente es `tuScenarios()`). No se eliminaron: se lista aquí para decidir su borrado.
+- **D-2** (dos capacidades) solo etiquetado (E9).
+- **Calibración:** las curvas, topes y el factor 60 meses de E7 son decisiones de política, no estimaciones estadísticas.
+- **Subir el límite artificialmente** sigue mejorando la utilización (la matriz lo muestra); no se penaliza. Es una decisión de diseño pendiente.
+- El puntaje por corte histórico se recalcula con el motor vigente; solo se conserva la versión del motor, no el puntaje original.
+- No hay validación predictiva ni auditoría externa. **Confiabilidad: media** (consistente y reproducible, pero sin calibración empírica).

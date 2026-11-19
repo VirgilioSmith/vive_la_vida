@@ -28,7 +28,7 @@ function read(){
    const debt=Math.max(0,num(st.debt));if(!(limit>0)&&!(debt>0))continue;
    const adv=(db.transactions||[]).filter(t=>t.type==='card_advance'&&t.cardId===c.id&&(t.currency||'DOP')===ccy&&t.date>=since90&&t.date<=today).reduce((a,t)=>a+num(t.amount),0);
    cards.push({id:c.id+'-'+ccy,productId:c.id,name:(c.name||'Tarjeta')+((c.limitDOP>0&&c.limitUSD>0)?' · '+ccy:''),bank:b.bank(c.bankId)?.name||'',network:c.network||'',currency:ccy,limit,balance:debt,
-    min:Math.max(0,num(st.minimum)),statementBalance:Math.max(0,num(st.billed)||debt),advance:Math.min(debt,adv),daysPastDue:dpd('card',c.id),
+    min:Math.max(0,num(st.minimum)),statementBalance:Math.max(0,num(st.billed)||debt),statementKnown:num(st.billed)>0.004,advance:Math.min(debt,adv),daysPastDue:dpd('card',c.id),
     status:'active',reported:reported(c),opened:ym(b.acquiredOnOf(c,'card')),apr:num(ccy==='USD'?c.aprUSD:c.aprDOP),reportedAt:today});
   }
   // Tarjeta sin límite ni saldo todavía: no puede puntuar utilización, pero SÍ cuenta como apertura y como antigüedad.

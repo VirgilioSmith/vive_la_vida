@@ -69,6 +69,24 @@ const res = []; const check = (n, name, ok, extra = '') => { res.push(ok); conso
     row('Préstamo nuevo de RD$100,000 sin amortizar', s => { s.loans.push({ id: 'N', name: 'N', currency: 'DOP', type: 'personal', original: 100000, balance: 100000, due: 3000, status: 'active', daysPastDue: 0 }); });
     row('Avance de efectivo del 25 % del límite', s => { s.cards.forEach(c => { c.advance = Math.min(c.balance, c.limit * .25); }); });
     row('Tipo de cambio +20 %', s => { s.txRate *= 1.2; }); row('Ingresos ×10', s => { s.formal *= 10; }); row('Liquidez ×100', s => { s.liquidity = { held30: 1e8, now: 1e8 }; });
+    // E1 · severidad de la mora vigente
+    const live = d => sc(mut(x => { x.cards.forEach(c => c.daysPastDue = 0); x.loans.forEach(l => l.daysPastDue = 0); x.late30 = x.late60 = x.late90 = x.late120 = x.lateShort = 0; x.cards[0].daysPastDue = d; }));
+    O.live = [0, 15, 45, 75, 100, 200, 672].map(live);
+    // E2 · confianza y etiqueta
+    const dev = mut(x => { x.recordMonths = 1; x.avgHistoryMonths = 5; }), ok = mut(x => { x.recordMonths = 24; x.avgHistoryMonths = 40; });
+    O.devLabel = scoreName(sc(mut(x => { x.cards.forEach(c => c.daysPastDue = 0); x.loans.forEach(l => l.daysPastDue = 0); x.recordMonths = 1; x.avgHistoryMonths = 5; })), dev); O.okLabelIsNotDev = scoreName(900, ok) !== 'Perfil en desarrollo'; O.conf = confidenceOf(dev);
+    // E4 · expediente delgado ya no sale igual que uno maduro
+    O.thin = sc(mut(x => { x.cards.forEach(c => c.daysPastDue = 0); x.loans.forEach(l => l.daysPastDue = 0); x.historyMonths = 2; x.avgHistoryMonths = 2; x.recordMonths = 1; })); O.mature = sc(mut(x => { x.cards.forEach(c => c.daysPastDue = 0); x.loans.forEach(l => l.daysPastDue = 0); x.historyMonths = 120; x.avgHistoryMonths = 80; x.recordMonths = 24; }));
+    // E5 · pagar el saldo después del corte no cambia la utilización medida al corte
+    O.stmt = (() => { const a = oneCard(.5); a.cards[0].statementKnown = true; a.cards[0].statementBalance = a.cards[0].balance; const b2 = JSON.parse(JSON.stringify(a)); b2.cards[0].balance = 0; return [sc(a), sc(b2)]; })();
+    // E7 · recuperación progresiva
+    O.decay = [24, 36, 48, 72, 84, 120].map(age => { const c = declaredCounters('2026-11', [{ period: monthShift('2026-11', -age), duration: '60-89' }]); return +c.lateOlder.toFixed(2); });
+    // E8 · escenarios del simulador
+    O.scen = tuScenarios().map(x => x.label);
+    // E6 · confirmar mora
+    O.dismiss = (() => { const keep = ST.dismissedLate; const x = { productId: 'zz', daysPastDue: 50 }; ST.dismissedLate = { [lateKey(x, PAYLOAD.today)]: true }; const a = withOverrides([x])[0].daysPastDue, bb = withOverrides([{ productId: 'zz', daysPastDue: 51 }])[0].daysPastDue; ST.dismissedLate = keep; return [a, bb]; })();
+    // E10 · versión del motor por corte
+    O.engine = [ENGINE, Object.values(ST.observed).every(r => r.engine === ENGINE || r.engine === undefined), Object.values(ST.observed).some(r => r.engine === ENGINE)];
     O.matrix = M; O.base = b0;
     return O;
   });
@@ -76,13 +94,21 @@ const res = []; const check = (n, name, ok, extra = '') => { res.push(ok); conso
   check('R2', 'Determinismo: misma entrada produce exactamente la misma salida', R.det);
   check('R3', 'Las ponderaciones suman 1000 y cada factor suma el máximo de sus subreglas', R.weights === 1000 && Object.keys(R.factorMax).every(k => R.factorMax[k] === R.partsMax[k]), JSON.stringify(R.partsMax));
   check('R4', 'Monotonía: más utilización, más moras o más días de atraso nunca suben el puntaje; más antigüedad nunca lo baja', R.utilMono && R.lateMono && R.dpdMono && R.ageMono);
-  check('R5', 'Continuidad: salvo en los umbrales de «tarjeta tensionada» (75 %) y «sobrelímite» (100 %), un punto porcentual de utilización mueve el puntaje como máximo 4 puntos; los saltos en esos umbrales quedan registrados como defecto conocido D-1 (AUDITORIA-08)', R.maxJump1pp <= 4 && R.steps.every(x => /^(7[3-6]|9[89]|100|101)%/.test(x)), 'saltos conocidos: ' + R.steps.join(', '));
+  check('R5', 'Continuidad (E3, motor 5.1): un punto porcentual de utilización mueve el puntaje como máximo 4 puntos en toda la curva, sin escalones', R.maxJump1pp <= 4 && R.steps.length === 0, 'salto máximo ' + R.maxJump1pp + (R.steps.length ? ' · escalones: ' + R.steps.join(', ') : ''));
   check('R6', 'Sin obligaciones el puntaje es «sin datos» (null), no 0 ni 1000', R.noHistory === null && R.closedOnly === null, JSON.stringify([R.noHistory, R.closedOnly]));
   check('R7', 'Perfiles extremos se calculan sin error y dentro de rango (sin tarjetas, sin préstamos, 100 %, sobregiro, sin atrasos, atrasos recurrentes, refinanciado; una tarjeta con límite 0 y saldo suprime el puntaje en vez de inventar uno)', [R.noCards, R.noLoans, R.util100, R.overlimit, R.neverLate, R.recurrentLate, R.refinanced].every(v => Number.isInteger(v) && v >= 0 && v <= 1000) && R.zeroLimit === null, JSON.stringify([R.noCards, R.noLoans, R.util100, R.overlimit, R.zeroLimit, R.neverLate, R.recurrentLate, R.refinanced]));
   check('R8', 'Atrasos recurrentes puntúan peor que una mora aislada y que ninguna', R.recurrentLate < R.neverLate);
   check('R9', 'Multimoneda: la misma utilización en USD que en DOP da el mismo puntaje y el tipo de cambio no altera un producto de una sola moneda', new Set(R.fxInvariance).size === 1, JSON.stringify(R.fxInvariance));
   check('R10', 'Un movimiento de tarjeta duplicado genera una advertencia de calidad de datos', R.dupWarn);
   check('R11', 'Ingresos, liquidez y tipo de cambio de la matriz no mueven el puntaje de comportamiento (excepto vía utilización mixta)', R.matrix.filter(m => /Ingresos|Liquidez/.test(m.lbl)).every(m => m.d === 0));
+  check('E1', 'Mora vigente con la escala de severidad: crece con los días y deja de saturarse en 35 puntos (0, 15, 45, 75, 100, 200 y 672 días)', R.live.every((v, i) => i === 0 || v <= R.live[i - 1]) && R.live[0] - R.live[6] >= 150, JSON.stringify(R.live));
+  check('E2', 'Con menos de 12 meses de evidencia el índice no puede llamarse «sólido» y muestra su confianza; con evidencia suficiente sí puede', R.devLabel === 'Perfil en desarrollo' && R.okLabelIsNotDev && /Confianza de los datos \d+\/100/.test(R.conf.text), R.conf.text);
+  check('E4', 'Un expediente de 2 meses puntúa menos que uno de 10 años con el mismo comportamiento', R.thin < R.mature, JSON.stringify([R.thin, R.mature]));
+  check('E5', 'Con saldo del corte conocido, pagar después del corte no mejora la utilización medida', R.stmt[0] === R.stmt[1], JSON.stringify(R.stmt));
+  check('E7', 'Recuperación progresiva: el descuento de un atraso antiguo decrece con los meses y llega a 0', R.decay.every((v, i) => i === 0 || v <= R.decay[i - 1]) && R.decay.at(-1) === 0 && R.decay[0] > 0, JSON.stringify(R.decay));
+  check('E8', 'El simulador incluye abonar capital, regularizar atrasos y consolidar saldos, además de cancelar tarjeta (usan el motor real)', ['Abonar', 'Regularizar', 'Consolidar', 'Cancelar'].every(w => R.scen.some(l => l.startsWith(w))), R.scen.length + ' escenarios');
+  check('E6', 'Un atraso marcado como «no es mora» deja de contar; otro vencimiento distinto vuelve a contar', R.dismiss[0] === 0 && R.dismiss[1] === 51, JSON.stringify(R.dismiss));
+  check('E10', 'Cada corte observado guarda la versión del motor con que se creó', R.engine[0] === '5.1.0' && R.engine[2], JSON.stringify(R.engine));
   check('R12', 'Sin errores de página', errs.length === 0, errs.slice(0, 2).join('|'));
   if (process.env.MATRIZ) {
     const rows = R.matrix.map(m => `| ${m.lbl} | ${m.d === null ? 'n/d' : (m.d > 0 ? '+' : '') + m.d} | ${Object.entries(m.f).map(([k, v]) => typeof v === 'number' ? `${k} ${v > 0 ? '+' : ''}${v}` : `${k} ${v}`).join(' · ')} |`).join('\n');

@@ -17,7 +17,10 @@ function tuScenarios(){
   mk('Un préstamo nuevo de RD$250,000','Apertura reciente y nueva deuda.',s=>{s.loans.push({id:'tu-sim',name:'Préstamo hipotético',currency:'DOP',type:'personal',original:250000,balance:250000,due:loanQuota(250000,20,36),status:'active',daysPastDue:0,variable:false});s.new0to6=N(s.new0to6)+1}),
   mk('Un atraso de 30 a 59 días','Golpea el historial de pagos.',s=>{s.late30=N(s.late30)+1}),
   mk('Cancelar la tarjeta con más límite','Baja el límite total (sube la utilización) pero su antigüedad sigue sumando.',s=>{const big=s.cards.slice().sort((a,b)=>N(b.limit)-N(a.limit))[0];if(big)big.status='closed'}),
-  mk('Un atraso de 90 a 119 días','Golpe mayor al historial de pagos.',s=>{s.late90=N(s.late90)+1}),
+  mk('Abonar el 20 % del capital del préstamo mayor','Sube la amortización de capital.',s=>{const l=s.loans.filter(x=>x.status!=='closed').sort((a,b)=>N(b.balance)-N(a.balance))[0];if(l)l.balance=N(l.balance)*.8}),
+   mk('Regularizar todos los atrasos vigentes','Pone al día los vencimientos; los atrasos ya cerrados siguen en el historial.',s=>{s.cards.concat(s.loans).forEach(x=>{x.daysPastDue=0})}),
+   mk('Consolidar los saldos de tarjetas en un préstamo','Baja la utilización pero crea deuda a plazo y una apertura reciente.',s=>{const tot=s.cards.filter(c=>c.status!=='closed').reduce((a,c)=>a+conversion(c.balance,c.currency,s),0);if(tot>0){s.cards.forEach(c=>{if(c.status!=='closed'){c.balance=0;c.statementBalance=0;c.min=0;c.advance=0}});s.loans.push({id:'tu-cons',name:'Préstamo de consolidación hipotético',currency:'DOP',type:'personal',original:tot,balance:tot,due:loanQuota(tot,20,36),status:'active',daysPastDue:0,variable:false});s.new0to6=N(s.new0to6)+1}}),
+   mk('Un atraso de 90 a 119 días','Golpe mayor al historial de pagos.',s=>{s.late90=N(s.late90)+1}),
   mk('Un aumento de límite que yo solicite','Cuenta como solicitud reciente.',s=>{s.cards.forEach(c=>{c.limit=N(c.limit)*1.5});s.limitReq0to6=N(s.limitReq0to6)+1})
  ];
 }
