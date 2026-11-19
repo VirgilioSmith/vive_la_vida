@@ -8599,8 +8599,7 @@ function v203MobileBanks(){
         <nav class="v203-product-types" aria-label="Tipos de productos de ${sanitize(b.name)}">${categoryButtons}</nav>
         <div class="v203-items-list" aria-live="polite">${items||`<div class="v203-empty-product">No tienes ${groupLabel.toLowerCase()} registrados en esta institución.</div>`}</div>
         <div class="v203-expand-actions">
-          <button type="button" data-v202-expand="1" aria-expanded="${v202ShowBankDetail}">${icon('building')}${v202ShowBankDetail?'Ocultar expediente':'Expediente completo'}</button>
-          <button type="button" data-act="${addKind}" data-id="${sanitize(b.id)}" aria-label="Agregar ${groupLabel.toLowerCase()} en ${sanitize(b.name)}">${icon('plus')} Añadir</button>
+          <button type="button" data-act="${addKind}" data-id="${sanitize(b.id)}" aria-label="Agregar ${groupLabel.toLowerCase()} en ${sanitize(b.name)}">${icon('plus')} Añadir producto</button>
         </div>
         ${v202ShowBankDetail?`<div class="v203-full-detail">${bankDetail(b)}</div>`:''}
       </div>`:''}
@@ -16303,7 +16302,7 @@ window.__f360RecurringVisualAdapter={
   const state={view:'list',previous:'list',query:'',flow:'all',category:'all',otherCategories:[],product:'all',period:'all',month:null,openFilters:false,selected:null,productType:'cards',limit:35};
   const INCOMING=new Set(['income','card_refund','card_reward','bank_reward','certificate_interest','certificate_redemption']);
   const OUTGOING=new Set(['expense','card_charge','card_payment','loan_payment','personal_issue','certificate_funding']);
-  const SHOW_TABS=[['list','Historial','list'],['advanced','Avanzado','settings'],['summary','Resumen','chart'],['categories','Categorías','grid'],['products','Tarjetas y bancos','card']];
+  const SHOW_TABS=[['list','Historial','list'],['summary','Resumen','chart'],['categories','Categorías','grid'],['products','Tarjetas y bancos','card']];
   const safe=x=>sanitize(String(x??''));
   const number=n=>Number.isFinite(Number(n))?Number(n):0;
   const month=()=>state.month||today().slice(0,7);
@@ -16361,11 +16360,6 @@ window.__f360RecurringVisualAdapter={
   function searchBar(){return `<label class="v708-search"><span>${icon('search')}</span><input id="v708-search-input" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Comercio, tarjeta, categoría o monto…" value="${safe(state.query)}" aria-label="Buscar movimientos"/><button type="button" data-v708="filters" class="v708-search-filter" title="Filtros" aria-label="Abrir filtros">${icon('settings')}</button></label>`;}
   // V722: accesos visuales compactos al estilo de la referencia móvil.
   // Cada acceso utiliza las mismas vistas y datos existentes; sin solicitudes extra.
-  function quickActions(){return `<nav class="v722-movement-actions" aria-label="Accesos rápidos a movimientos">
-    <button type="button" class="v722-movement-action" data-v708="quickCards" aria-label="Ver movimientos por tarjeta"><span class="v722-action-icon">${icon('card')}</span><span>Tarjetas</span></button>
-    <button type="button" class="v722-movement-action" data-v708="quickServices" aria-label="Filtrar servicios"><span class="v722-action-icon">${icon('receipt')}</span><span>Servicios</span></button>
-    <button type="button" class="v722-movement-action" data-v708="quickMore" aria-label="Más filtros"><span class="v722-action-icon">${icon('settings')}</span><span>Más</span></button>
-  </nav>`;}
   function quickFilters(){return `<nav class="v708-chips v725-history-pills" aria-label="Filtrar por tipo de movimiento">${labelChip('Todos',state.flow==='all','flow','data-value="all"')}${labelChip('Entradas',state.flow==='in','flow','data-value="in"')}${labelChip('Salidas',state.flow==='out','flow','data-value="out"')}</nav>`;}
   function selectItems(items,selected){return items.map(([value,label])=>`<option value="${safe(value)}" ${String(selected)===String(value)?'selected':''}>${safe(label)}</option>`).join('');}
   function filterPanel(){
@@ -16375,7 +16369,7 @@ window.__f360RecurringVisualAdapter={
       ...db.accounts.map(a=>[a.id,`Cuenta · ${a.name}`]),
       ...db.loans.map(l=>[l.id,`Préstamo · ${l.name}`]),
       ...(db.certificates||[]).map(c=>[c.id,`Certificado · ${c.name}`])];
-    return `<section class="v708-filters" aria-label="Filtros de movimientos"><div class="v708-panel-head"><strong>${state.view==='advanced'?'Filtros avanzados':'Filtrar historial'}</strong><button type="button" data-v708="reset" aria-label="Restablecer filtros">Restablecer</button></div><div class="v708-filter-grid"><label><span>Período</span><select id="v708-filter-period">${selectItems([['month','Este mes'],['30','Últimos 30 días'],['all','Todo el historial']],state.period)}</select></label>${state.period==='month'?`<label><span>Mes</span><input type="month" id="v708-filter-month" value="${safe(month())}"/></label>`:''}<label><span>Producto</span><select id="v708-filter-product">${selectItems([['all','Todos los productos financieros'],...products],state.product)}</select></label><label><span>Categoría</span><select id="v708-filter-category">${selectItems([['all','Todas las categorías'],...categories],state.category)}</select></label></div><button type="button" class="v708-apply" data-v708="filters">Listo ${icon('check')}</button></section>`;
+    return `<section class="v708-filters" aria-label="Filtros de movimientos"><div class="v708-panel-head"><strong>Filtrar historial</strong><button type="button" data-v708="reset" aria-label="Restablecer filtros">Restablecer</button></div><div class="v708-filter-grid"><label><span>Período</span><select id="v708-filter-period">${selectItems([['month','Este mes'],['30','Últimos 30 días'],['all','Todo el historial']],state.period)}</select></label>${state.period==='month'?`<label><span>Mes</span><input type="month" id="v708-filter-month" value="${safe(month())}"/></label>`:''}<label><span>Producto</span><select id="v708-filter-product">${selectItems([['all','Todos los productos financieros'],...products],state.product)}</select></label><label><span>Categoría</span><select id="v708-filter-category">${selectItems([['all','Todas las categorías'],...categories],state.category)}</select></label></div><button type="button" class="v708-apply" data-v708="filters">Listo ${icon('check')}</button></section>`;
   }
   function row(t){
     const title=v922MovementHeading(t),positive=direction(t)>0,apple=isApple(t),pending=typeof v5NeedsAppleCategory==='function'&&v5NeedsAppleCategory(t);
@@ -16400,15 +16394,9 @@ window.__f360RecurringVisualAdapter={
     if(!candidates.length)return '';
     return `<section class="v708-drafts"><div class="v708-subheading"><strong>Borradores sin contabilizar</strong><small>${candidates.length}</small></div><div class="v708-row-stack">${candidates.slice(0,20).map(q=>{const v=q.values||{};return `<div class="v708-draft-row"><span class="v708-row-icon">${icon('clock')}</span><span><strong>${safe(v.note||v.description||v.merchant||v.category||'Operación pendiente')}</strong><small>Sin registrar · no afecta tus saldos</small></span><button type="button" data-act="pendingConfirm" data-id="${safe(q.id)}">Completar ${icon('arrow')}</button></div>`}).join('')}</div></section>`;
   }
-  // V725: Historial conserva las píldoras clásicas. Avanzado tiene su propia vista
-  // de accesos Liquid Glass y filtros; ambos leen las mismas transacciones locales.
-  function listView(){
+    function listView(){
     const data=filtered();
     return `${header('Movimientos','Consulta, filtra y gestiona tus transacciones.')}${searchBar()}${quickFilters()}${filterPanel()}<div class="v708-list-top"><strong>${data.length} resultado${data.length===1?'':'s'}</strong><button type="button" data-v708="view" data-value="summary">Ver resumen ${icon('arrow')}</button></div>${rows(data,{max:state.limit})}${draftsView()}`;
-  }
-  function advancedView(){
-    const data=filtered();
-    return `${header('Filtros avanzados','Encuentra operaciones por producto, servicio o categoría.')}${searchBar()}${quickActions()}${filterPanel()}<div class="v708-list-top"><strong>${data.length} resultado${data.length===1?'':'s'}</strong><button type="button" data-v708="reset" aria-label="Limpiar filtros">Restablecer ${icon('arrow')}</button></div>${rows(data,{max:state.limit})}`;
   }
   function summaryView(){
     const data=base(),t=totals(data);
@@ -16569,7 +16557,7 @@ window.__f360RecurringVisualAdapter={
   }
   function view(){
     if(state.view==='detail')return detailView();
-    const content=state.view==='list'?listView():state.view==='advanced'?advancedView():state.view==='summary'?summaryView():state.view==='categories'?categoriesView():state.view==='products'?productView():listView();
+    const content=state.view==='list'?listView():state.view==='summary'?summaryView():state.view==='categories'?categoriesView():state.view==='products'?productView():listView();
     return `${tabs()}${content}`;
   }
   function moreOptions(){
@@ -16631,19 +16619,11 @@ window.__f360RecurringVisualAdapter={
     const op=button.dataset.v708,value=button.dataset.value||'',id=button.dataset.id||'';
     switch(op){
       case 'open':openMovements(value||'list');break;
-      case 'view':state.view=value==='search'?'advanced':value;state.selected=null;state.limit=35;state.openFilters=false;redraw({focus:value==='search'});break;
+      case 'view':state.view=value==='search'?'list':value;state.selected=null;state.limit=35;state.openFilters=false;redraw({focus:value==='search'});break;
       case 'back':if(state.view==='detail'&&state.origin){const o=state.origin;state.origin=null;state.view=state.previous||'list';state.selected=null;ui.page=o;redraw();break}if(state.view==='detail'){state.view=state.previous||'list';state.selected=null;}else {state.view='list';state.query='';}redraw();break;
       case 'detail':state.origin=null;state.previous=state.view;state.view='detail';state.selected=id;redraw();break;
       case 'calendar':if(!['list','search'].includes(state.view)){state.view='list';state.selected=null;state.openFilters=true;redraw();}else{state.openFilters=!state.openFilters;redraw({keepScroll:true});}break;
       case 'filters':state.openFilters=!state.openFilters;redraw({keepScroll:true});break;
-      case 'quickCards':state.productType='cards';state.view='products';state.selected=null;redraw();break;
-      case 'quickServices':{
-        const options=[...new Set(all().map(t=>String(t.category||'')))];
-        const match=options.find(c=>/^servicios?$/i.test(c.trim()));
-        state.category=match||'all';state.product='all';state.flow='all';state.view='advanced';
-        state.query=match?'':'servicio';state.period='all';redraw();break;
-      }
-      case 'quickMore':state.openFilters=!state.openFilters;state.view='advanced';redraw({keepScroll:true});break;
       case 'flow':state.flow=value;state.limit=35;redraw({keepScroll:true});break;
       case 'reset':Object.assign(state,{query:'',flow:'all',category:'all',otherCategories:[],product:'all',period:'all',month:null,limit:35,openFilters:false});redraw();break;
       case 'more':if(state.view==='detail')moreOptions();else{state.limit+=35;redraw({keepScroll:true})}break;
