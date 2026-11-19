@@ -55340,3 +55340,8 @@ html body #app#app #page .v58-exec .v58-range{display:inline-flex;gap:3px;paddin
 html body #app#app #page .v58-exec .v58-range button{border:0;background:transparent;color:#fff;font:inherit;font-weight:750;font-size:12.5px;padding:6px 16px;border-radius:999px;cursor:pointer}
 html body #app#app #page .v58-exec .v58-range button.active{background:#fff;color:var(--v424-accent-strong)}
 @media(max-width:790px){html body #app#app #page .v58-exec .v58-range{margin-top:10px}}
+/* Egresos: Mes/Año en la esquina superior izquierda del banner */
+@media(min-width:791px){
+ html body #app#app #page .v58-exec[data-v58-page="expenses"]{position:relative;grid-template-areas:"feat grid" "hint hint";padding-top:66px!important}
+ html body #app#app #page .v58-exec[data-v58-page="expenses"] .v58-range{position:absolute;top:18px;left:26px;grid-area:auto;justify-self:auto}
+}
