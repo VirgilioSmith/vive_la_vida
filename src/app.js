@@ -18252,7 +18252,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  IC.layers=G('<path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/>');IC.clock=G('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');IC.target=G('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>');IC.search=icon('search');
  const ico2=k=>IC[k]||icon(k);
  const TABS=[['agenda','Agenda'],['cartera','Cartera'],['historial','Historial']];
- const S=()=>ui.v911||(ui.v911={tab:'agenda',day:'',open:'',grp:[],query:'',review:''});
+ const S=()=>ui.v911||(ui.v911={tab:isMobileViewport()?'agenda':'cartera',day:'',open:'',grp:[],query:'',review:''});
  const esc=v=>sanitize(String(v??''));
  const activeList=()=>v339ActiveRecurring();
  const monthlyDop=r=>v339MonthlyEquivalent(r.amount,r.currency,r.frequency);
@@ -18316,7 +18316,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const body=ordered.map(([k,l])=>grupo(k,l,false)).join('')+(paused.length?grupo('En pausa',paused,true):'');
   const kpi=(icono,etiqueta,valor,nota)=>`<article class="v911-kpi"><header><span class="v911-kpi-ic">${ico2(icono)}</span><h4>${etiqueta}</h4></header><b>${valor}</b><small>${nota}</small></article>`;
   return `<div class="v911-cartera">
-   <div class="v911-kpis">${kpi('refresh','Gasto mensual',rd(mes,0),'Equivalente de servicios activos')}${kpi('calendar','Gasto anual',rd(mes*12,0),'Proyección a 12 meses')}${kpi('layers','Servicios activos',String(act.length),groups.size+(groups.size===1?' categoría':' categorías'))}${kpi('clock','Próximo cobro',proximo?esc(prettyDate(proximo.nextDue).replace(/\s+de\s+\d{4}$/i,'')):'—',proximo?esc(proximo.name):'Sin vencimientos')}</div>
+   <div class="v911-kpis">${kpi('refresh','Gasto mensual',rd(mes,0),'Equivalente de servicios activos')}${kpi('calendar','Gasto anual',rd(mes*12,0),'Proyección a 12 meses')}${kpi('layers','Servicios activos',String(act.length),groups.size+(groups.size===1?' categoría':' categorías'))}${kpi('clock','Próximo cobro',proximo?esc(prettyDate(proximo.nextDue).replace(/\s+de\s+\d{4}$/i,'')):'—',proximo?esc(proximo.name):'Sin vencimientos').replace('class="v911-kpi"','class="v911-kpi v1150-next"')}</div>
    <p class="v911-eyebrow">Tus servicios por categoría</p>
    <label class="v911-search"><span class="v911-ic">${ico2('search')}</span><input type="search" id="v911-search" value="${esc(st.query)}" placeholder="Buscar servicio" aria-label="Buscar servicio" autocomplete="off" /></label>
    <div id="v911-list">${body||'<p class="v911-empty">Aún no tienes suscripciones. Añade la primera con el botón +.</p>'}<p class="v911-empty" id="v911-noresult" hidden>Ningún servicio coincide con la búsqueda.</p></div></div>`;
@@ -18343,7 +18343,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  function page(){
   const st=S();if(!TABS.some(t=>t[0]===st.tab))st.tab='agenda';
   const body=({agenda,cartera,historial})[st.tab]();
-  const tabs=`<div class="v911-seg" role="tablist" aria-label="Secciones de Suscripciones">${TABS.map(([k,l])=>`<button type="button" role="tab" aria-selected="${st.tab===k}" class="${st.tab===k?'is-on':''}" data-v911-tab="${k}">${l}</button>`).join('')}</div>`;
+  const tabs=`<div class="v911-seg" role="tablist" aria-label="Secciones de Suscripciones">${(isMobileViewport()?TABS:[TABS[1],TABS[0],TABS[2]]).map(([k,l])=>`<button type="button" role="tab" aria-selected="${st.tab===k}" class="${st.tab===k?'is-on':''}" data-v911-tab="${k}">${l}</button>`).join('')}</div>`;
   requestAnimationFrame(()=>{const strip=document.querySelector('.v911-strip'),on=strip?.querySelector('.is-on');if(strip&&on)strip.scrollLeft=on.offsetLeft-strip.clientWidth/2+on.clientWidth/2;const q=S().query;if(q)filter(q)});
   return `<div class="v911" data-v911="${st.tab}"><div class="v911-top"><header class="v911-head"><h1>Suscripciones</h1><button type="button" class="v911-add" data-act="addRecurring" aria-label="Añadir suscripción" title="Añadir suscripción">${icon('plus')}</button></header>${tabs}</div><div class="v911-body">${body}</div></div>`;
  }
@@ -18353,14 +18353,9 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const none=document.getElementById('v911-noresult');if(none)none.hidden=any||!document.querySelector('#v911-list [data-v911-svc]');
  }
     const side=()=>{
-     const act=activeList(),mensual=act.reduce((n,r)=>n+monthlyDop(r),0),t0=today();
-     const nm=new Date(+t0.slice(0,4),+t0.slice(5,7),1),nxt=nm.getFullYear()+'-'+String(nm.getMonth()+1).padStart(2,'0');
-     const next=[...pendingMonth(t0.slice(0,7)),...pendingMonth(nxt)].find(p=>p.date>=t0);
-     const by=new Map();act.forEach(r=>by.set(catOf(r),(by.get(catOf(r))||0)+monthlyDop(r)));
-     const top=[...by].sort((a,b)=>b[1]-a[1]).slice(0,6);
-     return v1131Card('Tu gasto en suscripciones',v1131Row('Mensual',rd(mensual))+v1131Row('Anual estimado',rd(mensual*12))+v1131Row('Servicios activos',String(act.length))+(act.length?v1131Row('Promedio por servicio',rd(mensual/act.length)):''))
-      +v1131Card('Próximo pago',next?v1131Row(esc(next.name||'Suscripción'),money(next.amount,next.currency||'DOP',2),esc(dayHead(next.date))):'<p class="v1131-empty">No hay pagos próximos programados.</p>')
-      +v1131Card('Por categoría · mensual',v1131Bars(top,v=>rd(v)));
+     const t0=today(),nm=new Date(+t0.slice(0,4),+t0.slice(5,7),1),nxt=nm.getFullYear()+'-'+String(nm.getMonth()+1).padStart(2,'0');
+     const next=[...pendingMonth(t0.slice(0,7)),...pendingMonth(nxt)].filter(p=>p.date>=t0).slice(0,5);
+     return v1131Card('Próximos pagos',next.length?next.map(n=>v1131Row(esc(n.name||'Suscripción'),money(n.amount,n.currency||'DOP',2),esc(dayHead(n.date)))).join(''):'<p class="v1131-empty">No hay pagos próximos programados.</p>');
     };
     pages.recurring=()=>v1131Web(page(),side());
  document.addEventListener('click',e=>{
@@ -18418,7 +18413,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const filas=d.groups.map(g=>fila(g,period,d.totals)).join('');
   return `<div class="v911 v919" data-v919="1"><header class="v911-head"><h1>Presupuesto</h1><label class="v911-month v919-month"><span class="v911-ic">${IC.cal}</span><span>${esc(mesTxt)}</span><input id="monthFilter" type="month" value="${esc(period)}" aria-label="Mes del presupuesto" /></label></header>
    <button type="button" class="v919-define" data-act="addBudget">${IC.plus}<span>Definir presupuesto</span></button>
-   ${d.groups.length?`<div class="v911-kpis">${kpi(IC.target,'Presupuesto asignado',money(d.total),d.groups.length+(d.groups.length===1?' categoría':' categorías'))}${kpi(IC.spent,'Gastado',money(d.spent),'En categorías con límite')}${kpi(IC.left,d.left<0?'Excedido':'Disponible',money(Math.abs(d.left)),d.left<0?'Sobre el presupuesto':'Margen del mes',d.left<0?'v919-neg':'')}${kpi(IC.pct,'Ejecución',pc(d.pct),LBL[stat(d.pct)])}</div>
+   ${d.groups.length?`<div class="v911-kpis">${kpi(IC.target,'Asignado',money(d.total),d.groups.length+(d.groups.length===1?' categoría':' categorías'))}${kpi(IC.spent,'Gastado',money(d.spent),'En categorías con límite')}${kpi(IC.left,d.left<0?'Excedido':'Disponible',money(Math.abs(d.left)),d.left<0?'Sobre el presupuesto':'Margen del mes',d.left<0?'v919-neg':'')}${kpi(IC.pct,'Ejecución',pc(d.pct),LBL[stat(d.pct)]+`<span class="v1150-gauge ${stat(d.pct)}" aria-hidden="true"><i style="width:${Math.max(0,Math.min(100,d.pct||0))}%"></i></span>`)}</div>
    <p class="v911-eyebrow">Ejecución por categoría</p><div class="v919-list">${filas}</div>`:`<p class="v911-empty v919-empty">Aún no hay límites para ${esc(mesTxt)}. Usa «Definir presupuesto» para asignar un límite a una categoría o a una subcategoría.</p>`}
    ${sinLimite.length?`<p class="v911-eyebrow">Gasto sin límite</p><div class="v911-card">${sinLimite.map(([c,v])=>`<button type="button" class="v911-row" data-act="editBudget" data-cat="${esc(c)}"><span class="v911-row-info"><strong>${esc(c)}</strong><small>Sin límite asignado</small></span><b>${money(v)}</b>${IC.chev.replace('<svg','<svg class="v911-chev"')}</button>`).join('')}</div>`:''}
    <p class="v911-eyebrow">Cumplimiento mensual · ${y}</p>${mensual(y,period)}</div>`;
@@ -18428,7 +18423,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
      const dim=new Date(d.y,d.m,0).getDate(),dia=t0.slice(0,7)===period?Number(t0.slice(8,10)):(period<t0.slice(0,7)?dim:0),resta=Math.max(0,dim-dia);
      const top=Object.entries(d.totals.expenseBy||{}).map(([c,v])=>[c,num(v)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6);
      const cnt={good:0,near:0,over:0};d.groups.forEach(g=>{const k=stat(g.pct);if(cnt[k]!==undefined)cnt[k]++});
-     return v1131Card('Ritmo del mes',v1131Row('Días restantes',String(resta))+(d.total>0?v1131Row(d.left<0?'Exceso sobre presupuesto':'Disponible por día',money(resta>0?Math.max(0,d.left)/resta:Math.abs(d.left))):'')+v1131Row('Gastado en el mes',money(num(d.totals.expense))))
+     return v1131Card('Ritmo del mes',v1131Row('Días restantes',String(resta))+(d.total>0?v1131Row(d.left<0?'Exceso sobre presupuesto':'Disponible por día',money(resta>0?Math.max(0,d.left)/resta:Math.abs(d.left))):''))
       +(d.groups.length?v1131Card('Estado de las categorías',v1131Row(LBL.good,String(cnt.good))+v1131Row(LBL.near,String(cnt.near))+v1131Row(LBL.over,String(cnt.over))):'')
       +v1131Card('Mayor gasto del mes',v1131Bars(top,v=>money(v)));
     };
@@ -18483,19 +18478,21 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const nsub=cats.reduce((n,[,s])=>n+s.length,0);
   const kpi=(ic,et,v,n)=>`<article class="v911-kpi"><header><span class="v911-kpi-ic">${ic}</span><h4>${et}</h4></header><b>${v}</b><small>${n}</small></article>`;
   const q=String(st.q||'').toLowerCase();
-  const filas=cats.map(([c,subs])=>`<button type="button" class="v911-row v920-row" data-v920-open="${esc(k)}|${esc(c)}" data-q="${esc((c+' '+subs.join(' ')).toLowerCase())}"${q&&!(c+' '+subs.join(' ')).toLowerCase().includes(q)?' hidden':''}><span class="v920-chip">${icon(v255TaxonomyIconName(k,c,''))}</span><span class="v911-row-info"><strong>${esc(c)}</strong><small>${subs.length} ${subs.length===1?'subcategoría':'subcategorías'}</small></span>${chev}</button>`).join('');
+  const per=ui.month||today().slice(0,7),mt=monthlyTotals(+per.slice(0,4),+per.slice(5,7)),by=(k==='ingreso'?mt.incomeBy:mt.expenseBy)||{};
+  const filas=cats.map(([c,subs])=>`<button type="button" class="v911-row v920-row" data-v920-open="${esc(k)}|${esc(c)}" data-q="${esc((c+' '+subs.join(' ')).toLowerCase())}"${q&&!(c+' '+subs.join(' ')).toLowerCase().includes(q)?' hidden':''}><span class="v920-chip">${icon(v255TaxonomyIconName(k,c,''))}</span><span class="v911-row-info"><strong>${esc(c)}</strong><small>${subs.length} ${subs.length===1?'subcategoría':'subcategorías'}</small></span>${num(by[c])>0?`<b class="v920-amt">${money(num(by[c]))}</b>`:''}${chev}</button>`).join('');
   return `<div class="v911 v920" data-v920="1"><div class="v911-top"><header class="v911-head"><h1>Categorías</h1><button type="button" class="v911-add" data-act="addCategory" aria-label="Nueva categoría" title="Nueva categoría">${G('<path d="M12 5v14M5 12h14"/>')}</button></header>
    <div class="v911-seg" role="tablist" aria-label="Tipo de categoría"><button type="button" role="tab" aria-selected="${k==='gasto'}" class="${k==='gasto'?'is-on':''}" data-v920-kind="gasto">Gastos</button><button type="button" role="tab" aria-selected="${k==='ingreso'}" class="${k==='ingreso'?'is-on':''}" data-v920-kind="ingreso">Ingresos</button></div></div>
    <div class="v911-kpis">${kpi(G('<path d="M4 6h16M4 12h16M4 18h10"/>'),'Categorías de '+kindName(k),String(cats.length),'En tu catálogo')}${kpi(G('<path d="M5 7h14M8 12h11M11 17h8"/>'),'Subcategorías',String(nsub),'Dentro de ellas')}</div>
    <label class="v911-search"><span class="v911-ic">${G('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}</span><input type="search" id="v920-search" value="${esc(st.q)}" placeholder="Buscar categoría" aria-label="Buscar categoría" autocomplete="off"/></label>
-   <p class="v911-eyebrow">Toca una categoría para ver, editar o eliminar</p>
+   <p class="v911-eyebrow">Categorías · toca una para ver o editar</p>
    <div class="v911-card v920-list" id="v920-list">${filas||'<p class="v911-empty">No hay categorías. Crea la primera con el botón +.</p>'}</div></div>`;
  }
     const side=()=>{
      const k=S().kind,cats=Object.entries(categoryMap(k)),us=cats.map(([c])=>[c,usos(k,c)]);
      const top=us.filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6),sinUso=us.filter(x=>!x[1]).length;
      const conEmoji=Object.keys(db.categoryEmoji||{}).filter(x=>x.startsWith(k+'||')).length;
-     return v1131Card('Resumen del catálogo',v1131Row('Categorías',String(cats.length))+v1131Row('Subcategorías',String(cats.reduce((n,[,s])=>n+s.length,0)))+v1131Row('Sin movimientos',String(sinUso))+v1131Row('Con emoji propio',String(conEmoji)))
+     const per=ui.month||today().slice(0,7);
+     return v1131Card('Actividad de categorías',v1131Row('Con movimientos',String(cats.length-sinUso))+v1131Row('Sin movimientos',String(sinUso))+v1131Row('Con emoji propio',String(conEmoji)))
       +v1131Card('Más utilizadas',v1131Bars(top,v=>v+(v===1?' mov.':' movs.')));
     };
     pages.categories=()=>v1131Web(pagina(),side());

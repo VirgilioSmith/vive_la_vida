@@ -54915,3 +54915,73 @@ html body #app#app .v1149-pct{display:block;font-size:11px;font-weight:750;lette
  html body #app#app #page :is(.bank-hero.v57-product-hero,.v58-exec) h2{font-size:28px!important;line-height:1.1!important;margin-bottom:6px!important}
  html body #app#app #page :is(.bank-hero.v57-product-hero,.v58-exec) :is(.v46-bank-intro,.v58-left)>p{display:none!important}
 }
+
+/* v1150 · Suscripciones, Categorías y Presupuestos (web): proporciones de Resumen / Analítica / Patrimonio.
+   Tarjetas blancas limpias (Black: negro), radio 24, relleno 20, sombra suave; el acento solo en detalles. */
+.v1150-gauge{display:block;height:5px;border-radius:5px;margin-top:8px;background:color-mix(in srgb,currentColor 12%,transparent);overflow:hidden}
+.v1150-gauge i{display:block;height:100%;border-radius:5px;background:var(--v424-accent-strong,#5b57d6)}
+.v1150-gauge.near i{background:#d99a1e}.v1150-gauge.over i{background:#d6455d}
+@media(min-width:791px){
+ html body #app#app #page :is(.v911,.v1131-side){--v1150-r:24px;--v1150-pad:18px 20px}
+ /* Selector de fecha: esquina superior derecha, igual que en Resumen (píldora translúcida con borde fino) */
+ html body #app#app #page :is(.v911-month,.v919-month){position:absolute;top:0;right:0;margin:0!important;min-height:36px;height:36px;padding:0 12px!important;border-radius:12px!important;font-size:13px!important;font-weight:650;border:1px solid rgba(255,255,255,.64)!important;background:rgba(255,255,255,.6)!important;box-shadow:none!important;display:inline-flex;align-items:center;gap:8px;z-index:3}
+ html body:is(.theme-black,.theme-dark) #app#app #page :is(.v911-month,.v919-month){background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.16)!important}
+ html body #app#app #page .v911{position:relative}
+ html body #app#app #page .v911 .v911-agenda{padding-top:0}
+ html body #app#app #page .v911-agenda>.v911-month{top:-62px;right:58px}
+ html body #app#app #page .v911-top{padding-right:0}
+ /* KPI y tarjetas: radio, relleno y sombra de las vistas maestras */
+ html body #app#app #page :is(.v911-card,.v911-kpi,.v1131-card,.v911-feat){border-radius:var(--v1150-r,24px)!important;box-shadow:0 10px 28px rgba(32,53,99,.055)!important;border:1px solid rgba(120,140,170,.2)}
+ html body #app#app #page .v911-kpi{padding:16px 18px!important;min-height:0!important;gap:4px}
+ html body #app#app #page .v911-kpi b{font-size:22px!important;letter-spacing:-.03em}
+ html body #app#app #page .v911-kpi h4{font-size:13px!important}
+ html body #app#app #page .v911-kpi small{font-size:12px!important}
+ html body #app#app #page .v1131-card{padding:var(--v1150-pad)}
+ html body:is(.theme-black,.theme-dark) #app#app #page :is(.v911-card,.v911-kpi,.v1131-card){box-shadow:none!important;border-color:rgba(255,255,255,.12)}
+ /* Presupuesto: «Definir presupuesto» más compacto, a la izquierda; fecha a la derecha */
+ html body #app#app #page .v911.v919{padding-top:0}
+ html body #app#app #page .v919-define{min-height:44px!important;max-width:320px;border-radius:14px!important;font-size:14px!important;justify-self:start}
+ html body #app#app #page .v911.v919>.v911-head{display:none}
+ html body #app#app #page .v911.v919>.v919-define{grid-column:1;grid-row:1}
+ html body #app#app #page .v919-list{gap:10px}
+ html body #app#app #page .v911-row{min-height:60px}
+ /* Categorías: importe del mes por categoría y filas en tarjeta de dos columnas con alturas parejas */
+ html body #app#app #page .v920-row{min-height:64px!important}
+ html body #app#app #page .v920-amt{font-size:14px;font-weight:750;color:var(--v424-accent-strong,#5b57d6);margin-right:4px;white-space:nowrap}
+ html body #app#app #page .v911.v920 .v911-top{padding-right:0}
+ html body #app#app #page .v1131-web{align-items:start}
+ /* Suscripciones web: columna de próximos pagos más angosta */
+ html body #app#app #page .v1131-web{grid-template-columns:minmax(0,1fr) 340px;gap:24px}
+}
+@media(min-width:1100px){
+ html body #app#app #page .v911 .v911-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
+ html body #app#app #page .v911.v919 .v911-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ html body #app#app #page .v911 .v1150-next{display:none!important}
+ html body #app#app #page .v911.v920 .v911-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(min-width:791px){html body #app#app #page .v911.v919>.v911-head{display:flex!important;position:static;margin:0}}
+@media(min-width:791px){
+ html body #app#app #page .v911 .v911-kpis article{min-height:0!important;padding:14px 18px!important}
+ html body #app#app #page .v1131-main .v911-top{margin-top:6px}
+ html body #app#app #page .v1131-side{padding-top:6px}
+}
+@media(min-width:791px){
+ html body #app#app #page .v911 .v911-kpi{min-height:0!important;padding:14px 18px!important;background:var(--s-surface)!important;gap:3px}
+ html body:is(.theme-black,.theme-dark) #app#app #page .v911 .v911-kpi{background:#000!important}
+}
+/* v1150 · Fecha en la esquina superior derecha, a la altura de las pestañas y junto a «Registrar» (como Resumen) */
+@media(min-width:791px){
+ html body #app#app #page{position:relative}
+ html body #app#app #page .v911{position:static}
+ html body #app#app #page :is(.v911-month,.v919-month){top:-50px!important;right:0!important}
+ html body #app#app #page .v911-agenda>.v911-month{top:-50px!important;right:0!important}
+ html body #app#app #page .v911-month input,html body #app#app #page .v919-month input{font-size:13px}
+}
+/* v1150 · Ingresos y Egresos: el selector de mes también va arriba a la derecha, en la fila de pestañas */
+@media(min-width:791px){
+ html body #app#app #page .v287-analysis-controls label:has(input[type=month]){position:absolute;top:-50px;right:0;margin:0!important;min-height:36px;height:36px;padding:0 12px!important;border-radius:12px!important;font-size:13px!important;border:1px solid rgba(255,255,255,.64)!important;background:rgba(255,255,255,.6)!important;display:inline-flex;align-items:center;gap:8px;z-index:3;width:auto!important}
+ html body:is(.theme-black,.theme-dark) #app#app #page .v287-analysis-controls label:has(input[type=month]){background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.16)!important}
+ html body #app#app #page .v287-analysis-controls label:has(input[type=month]) span{font-size:12px}
+}
+@media(min-width:791px){html body #app#app #page .v287-analysis-controls label:has(input[type=month]) input{border:0!important;background:transparent!important;box-shadow:none!important;height:34px;padding:0 4px!important}}
+@media(min-width:791px){html body #app#app #page :is(.v911-month,.v919-month) span{font-size:13px!important;font-weight:650!important}}
