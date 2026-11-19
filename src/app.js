@@ -18262,6 +18262,9 @@ const v1131Web=(main,aside)=>`<div class="v1131-web"><div class="v1131-main">${m
 const v1131Card=(title,body)=>`<section class="v1131-card"><h3>${title}</h3>${body}</section>`;
 const v1131Row=(label,value,sub)=>`<div class="v1131-row"><span>${label}${sub?`<small>${sub}</small>`:''}</span><b>${value}</b></div>`;
 const v1131Bars=(rows,fmt)=>{const max=Math.max(1,...rows.map(r=>r[1]));return rows.length?`<div class="v1131-bars">${rows.map(([n,v])=>`<div class="v1131-bar"><div><span>${sanitize(String(n))}</span><b>${fmt(v)}</b></div><i style="--w:${Math.max(3,Math.round(v/max*100))}%"></i></div>`).join('')}</div>`:'<p class="v1131-empty">Sin datos todavía.</p>'};
+/* V1170 · Vistas web (PC) de Suscripciones y Presupuestos: banner con acento + tarjetas en dos columnas. Móvil intacto. */
+const v1170Date=(period)=>{const t=dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'});return `<label class="v1170-date" title="Cambiar mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg><input id="monthFilter" type="month" value="${sanitize(period)}" aria-label="Mes (${sanitize(t)})"/></label>`};
+const v1170Chip=(cur,prev,goodWhenDown)=>{if(!(prev>0))return '<span class="v1170-vs-none">Sin mes anterior para comparar</span>';const d=cur-prev,pct=d/prev*100,up=d>0,good=goodWhenDown?!up:up;return `<span class="v1170-chip ${good?'good':'bad'}">${up?'↑':'↓'} ${up?'+':''}${(Math.round(pct*10)/10).toFixed(1)}%</span><b>${d>0?'+':'-'}${money(Math.abs(d))}</b>`};
 /* V911 · Suscripciones: Agenda · Cartera · Historial · Análisis (Radiografía · Concentración · Inteligencia).
    Una sola vista sobre db.recurring y los movimientos con recurringId (sin tabla ni consulta nuevas): pagar, editar y confirmar reutilizan
    las acciones existentes (payRecurring, editRecurring, toggleRecurring, editTransaction, toggleReview). Importes en su moneda; totales en RD$ con fx(). */
@@ -18371,12 +18374,29 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   document.querySelectorAll('#v911-list [data-v911-group]').forEach(g=>{let vis=0;g.querySelectorAll('[data-v911-svc]').forEach(d=>{const ok=!query||d.dataset.q.includes(query);d.hidden=!ok;if(ok)vis++});g.hidden=!vis;if(query&&vis)g.open=true;if(vis)any=true});
   const none=document.getElementById('v911-noresult');if(none)none.hidden=any||!document.querySelector('#v911-list [data-v911-svc]');
  }
-    const side=()=>{
-     const t0=today(),nm=new Date(+t0.slice(0,4),+t0.slice(5,7),1),nxt=nm.getFullYear()+'-'+String(nm.getMonth()+1).padStart(2,'0');
-     const next=[...pendingMonth(t0.slice(0,7)),...pendingMonth(nxt)].filter(p=>p.date>=t0).slice(0,5);
-     return v1131Card('Próximos pagos',next.length?next.map(n=>v1131Row(esc(n.name||'Suscripción'),money(n.amount,n.currency||'DOP',2),esc(dayHead(n.date)))).join(''):'<p class="v1131-empty">No hay pagos próximos programados.</p>');
-    };
-    pages.recurring=()=>v1131Web(page(),side());
+    const monthKey=()=>ui.month||today().slice(0,7);
+    const prevKey=m=>{const [y,mo]=m.split('-').map(Number);const d=new Date(y,mo-2,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+    const paidIn=m=>charges().filter(t=>String(t.date).startsWith(m)).reduce((n,t)=>n+txDop(t),0);
+    function webPage(){
+     const m=monthKey(),act=activeList(),mes=act.reduce((n,r)=>n+monthlyDop(r),0),paid=paidIn(m),prev=paidIn(prevKey(m));
+     const inactive=(db.recurring||[]).filter(r=>r&&(r.archived||r.active===false)).length;
+     const groups=new Map();act.forEach(r=>{const k=catOf(r);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(r)});
+     const paused=(db.recurring||[]).filter(r=>r&&!r.archived&&r.active===false);if(paused.length)groups.set('En pausa',paused);
+     const ordered=[...groups].sort((a,b)=>b[1].reduce((n,r)=>n+monthlyDop(r),0)-a[1].reduce((n,r)=>n+monthlyDop(r),0));
+     const open=ui.v1170open&&groups.has(ui.v1170open)?ui.v1170open:'';
+     const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+     const kpi=(ic,t,v,n)=>`<article class="v1170-kpi"><span class="v1170-kic">${ic}</span><div><small>${t}</small><b>${v}</b><em>${n}</em></div></article>`;
+     const cards=ordered.map(([k,l])=>{const mo=l.reduce((n,r)=>n+monthlyDop(r),0);const ic=k==='En pausa'?'cycle':v255TaxonomyIconName('gasto',k,'');return `<button type="button" class="v1170-card${open===k?' is-open':''}" data-v1170-cat="${esc(k)}" aria-expanded="${open===k}"><span class="v1170-ic">${icon(ic||'cycle')}</span><span class="v1170-main"><strong>${esc(k)}</strong><small>${l.length} ${l.length===1?'servicio':'servicios'}${k==='En pausa'?' en pausa':''}</small></span><span class="v1170-amt"><b>${rd(mo,0)}<i>/mes</i></b><small>${rd(mo*12,0)}/año</small></span>${chev}</button>`}).join('');
+     const detail=open?`<section class="v1170-detail"><header><h3>${esc(open)}</h3><button type="button" class="v1170-close" data-v1170-cat="${esc(open)}" aria-label="Cerrar">${G('<path d="M6 6l12 12M18 6 6 18"/>')}</button></header>${groups.get(open).map(r=>serviceItem(r,open==='En pausa')).join('')}</section>`:'';
+     return `<div class="v911 v1170 v1170-sub" data-v1170="sub"><div class="v1170-tools">${v1170Date(m)}</div>
+      <section class="v1170-hero"><div class="v1170-hero-main"><div class="v1170-hero-title"><span class="v1170-hero-ic">${G('<path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/>')}</span><span>SUSCRIPCIONES</span></div><strong class="v1170-big">${rd(paid,0)}</strong><p>Lo que has pagado en suscripciones durante el período seleccionado.</p><div class="v1170-vs"><span>Frente al mes anterior:</span> ${v1170Chip(paid,prev,true)}</div><button type="button" class="v1170-add v1170-add-hero" data-act="addRecurring">${G('<path d="M12 5v14M5 12h14"/>')}<span>Nueva suscripción</span></button></div>
+       <div class="v1170-kpis">${kpi(G('<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>','Pago mensual'),'Pago mensual',rd(mes,0),'Compromiso mensual actual')}${kpi(G('<path d="M5 20v-6M12 20V6M19 20v-10"/>'),'Proyección anual',rd(mes*12,0),'Equivalente a 12 meses')}${kpi(G('<path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/>'),'Activas',String(act.length),'Suscripciones vigentes')}${kpi(G('<circle cx="12" cy="12" r="9"/><path d="m5.600 5.600 12.800 12.800"/>'),'Canceladas',String(inactive),'Pausadas o terminadas')}</div></section>
+      <h2 class="v1170-eyebrow">TUS SUSCRIPCIONES POR CATEGORÍA</h2>
+      ${cards?`<div class="v1170-grid">${cards}</div>`:'<p class="v911-empty">Aún no tienes suscripciones. Añade la primera con «Nueva suscripción».</p>'}${detail}</div>`;
+    }
+    pages.recurring=()=>isMobileViewport()?page():webPage();
+    document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1170-cat]');if(!t)return;e.preventDefault();ui.v1170open=ui.v1170open===t.dataset.v1170Cat?'':t.dataset.v1170Cat;render();requestAnimationFrame(()=>document.querySelector('.v1170-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'}))});
+
  document.addEventListener('click',e=>{
   const t=e.target.closest?.('[data-v911-tab],[data-v911-day],[data-v911-open],[data-v911-review]');
   if(!t||!t.closest('.v911'))return;const st=S();
@@ -18422,7 +18442,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const hoy=today().slice(0,7);
   const cols=MES.map((nm,i)=>{const p2=y+'-'+String(i+1).padStart(2,'0');if(p2>hoy)return {nm,p2,pct:null,fut:true};const d=datos(p2);return {nm,p2,pct:d.total>0?d.pct:null,fut:false}});
   return `<div class="v919-year" role="group" aria-label="Cumplimiento mensual ${y}">${cols.map(c=>{const st=c.pct===null?'free':stat(c.pct),h=c.pct===null?4:Math.max(6,Math.min(100,c.pct/120*100));return `<button type="button" class="v919-col ${st}${c.p2===period?' is-sel':''}" data-v919-month="${c.p2}" aria-label="${c.nm} ${y}: ${c.pct===null?(c.fut?'aún no':'sin presupuesto'):pc(c.pct)}" aria-pressed="${c.p2===period}"><em>${c.pct===null?'—':Math.round(c.pct)+'%'}</em><span class="v919-colbar"><u style="height:${h}%"></u></span><small>${c.nm}</small></button>`}).join('')}</div>
-   <p class="v919-legend"><i class="good"></i>Menos de 80 % <i class="near"></i>80–100 % <i class="over"></i>Más del 100 %</p>`;
+   <p class="v919-legend"><span><i class="good"></i>Menos de 80 %</span> <span><i class="near"></i>80–100 %</span> <span><i class="over"></i>Más del 100 %</span></p>`;
  }
  function page(){
   const period=ui.month||today().slice(0,7),d=datos(period),y=d.y;
@@ -18437,16 +18457,24 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
    ${sinLimite.length?`<p class="v911-eyebrow">Gasto sin límite</p><div class="v911-card">${sinLimite.map(([c,v])=>`<button type="button" class="v911-row" data-act="editBudget" data-cat="${esc(c)}"><span class="v911-row-info"><strong>${esc(c)}</strong><small>Sin límite asignado</small></span><b>${money(v)}</b>${IC.chev.replace('<svg','<svg class="v911-chev"')}</button>`).join('')}</div>`:''}
    <p class="v911-eyebrow">Cumplimiento mensual · ${y}</p>${mensual(y,period)}</div>`;
  }
-    const side=()=>{
-     const period=ui.month||today().slice(0,7),d=datos(period),t0=today();
-     const dim=new Date(d.y,d.m,0).getDate(),dia=t0.slice(0,7)===period?Number(t0.slice(8,10)):(period<t0.slice(0,7)?dim:0),resta=Math.max(0,dim-dia);
-     const top=Object.entries(d.totals.expenseBy||{}).map(([c,v])=>[c,num(v)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6);
-     const cnt={good:0,near:0,over:0};d.groups.forEach(g=>{const k=stat(g.pct);if(cnt[k]!==undefined)cnt[k]++});
-     return v1131Card('Ritmo del mes',v1131Row('Días restantes',String(resta))+(d.total>0?v1131Row(d.left<0?'Exceso sobre presupuesto':'Disponible por día',money(resta>0?Math.max(0,d.left)/resta:Math.abs(d.left))):''))
-      +(d.groups.length?v1131Card('Estado de las categorías',v1131Row(LBL.good,String(cnt.good))+v1131Row(LBL.near,String(cnt.near))+v1131Row(LBL.over,String(cnt.over))):'')
-      +v1131Card('Mayor gasto del mes',v1131Bars(top,v=>money(v)));
-    };
-    pages.budget=()=>v1131Web(page(),side());
+    function webPage(){
+     const period=ui.month||today().slice(0,7),d=datos(period);
+     const [py,pm]=period.split('-').map(Number),pd=new Date(py,pm-2,1),prevP=pd.getFullYear()+'-'+String(pd.getMonth()+1).padStart(2,'0');
+     const prev=datos(prevP).spent;
+     const sinLimite=Object.entries(d.totals.expenseBy||{}).filter(([c,v])=>num(v)>0&&!d.plan.groups.some(g=>g.category===c)).sort((a,b)=>b[1]-a[1]);
+     const ico=c=>icon(v255TaxonomyIconName('gasto',c,'')||'chart');
+     const kpi=(ic,t,v,n,extra='')=>`<article class="v1170-kpi"><span class="v1170-kic">${ic}</span><div><small>${t}</small><b>${v}</b><em>${n}</em>${extra}</div></article>`;
+     const st=stat(d.pct);
+     const cards=d.groups.map(g=>{const s2=stat(g.pct),w=Math.max(0,Math.min(100,g.pct||0));return `<button type="button" class="v1170-bcard ${s2}" data-act="editBudget" data-cat="${esc(g.category)}"><span class="v1170-ic">${ico(g.category)}</span><span class="v1170-main"><strong>${esc(g.category)}</strong><small>${money(g.spent)} de ${money(g.amount)}</small></span><span class="v1170-bbar"><em class="v1170-pill ${s2}">${pc(g.pct)}</em><i class="${s2}"><u style="width:${w}%"></u></i></span>${IC.chev}</button>`}).join('');
+     const free=sinLimite.map(([c,v])=>`<button type="button" class="v1170-bcard free" data-act="editBudget" data-cat="${esc(c)}"><span class="v1170-ic">${ico(c)}</span><span class="v1170-main"><strong>${esc(c)}</strong><small>Sin límite asignado</small></span><span class="v1170-amt"><b>${money(v)}</b></span>${IC.chev}</button>`).join('');
+     return `<div class="v911 v919 v1170 v1170-bud" data-v919="1" data-v1170="bud"><div class="v1170-tools">${v1170Date(period)}</div>
+      <section class="v1170-hero"><div class="v1170-hero-main"><div class="v1170-hero-title"><span class="v1170-hero-ic">${IC.target}</span><span>EJECUCIÓN DEL PRESUPUESTO</span></div><strong class="v1170-big">${money(d.spent)}</strong><p>${d.total>0?'De '+money(d.total)+' asignados':'Sin presupuesto asignado este mes'}</p><div class="v1170-vs"><span>Vs. mes anterior:</span> ${v1170Chip(d.spent,prev,true)}</div><button type="button" class="v1170-add v1170-add-hero" data-act="addBudget">${IC.plus}<span>Definir presupuesto</span></button></div>
+       <div class="v1170-kpis v1170-k3">${kpi(IC.cal,'Asignado',money(d.total),d.groups.length+(d.groups.length===1?' categoría':' categorías'))}${kpi(IC.left,d.left<0?'Excedido':'Disponible',money(Math.abs(d.left)),d.left<0?'Sobre el presupuesto':'Margen del mes')}${kpi(IC.pct,'Ejecución',pc(d.pct),LBL[st],`<span class="v1170-gauge ${st}" aria-hidden="true"><i style="width:${Math.max(0,Math.min(100,d.pct||0))}%"></i></span>`)}</div></section>
+      ${d.groups.length?`<h2 class="v1170-eyebrow">EJECUCIÓN POR CATEGORÍA</h2><div class="v1170-grid">${cards}</div>`:`<p class="v911-empty v919-empty">Aún no hay límites para este mes. Usa «Definir presupuesto» para asignar un límite a una categoría o subcategoría.</p>`}
+      ${free?`<h2 class="v1170-eyebrow">GASTO SIN LÍMITE</h2><div class="v1170-grid">${free}</div>`:''}
+      <section class="v1170-panel"><h3><span class="v1170-pic">${G('<path d="M5 20v-6M12 20V6M19 20v-10"/>')}</span>Cumplimiento mensual · ${d.y}</h3><div class="v1170-year">${mensual(d.y,period)}</div></section></div>`;
+    }
+    pages.budget=()=>isMobileViewport()?page():webPage();
  document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v919-month]');if(!b||!b.closest('.v919'))return;e.preventDefault();ui.month=b.dataset.v919Month;ui.year=Number(ui.month.slice(0,4));render()},true);
 })();
 

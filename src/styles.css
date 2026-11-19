@@ -55009,3 +55009,93 @@ html body #modal-root#modal-root#modal-root .v235-register-dialog .vr-other-oper
 html body #modal-root#modal-root#modal-root .v235-register-dialog .vr-operation-icon.v1160-art{display:block!important}
 html body #modal-root#modal-root#modal-root .v235-register-dialog .vr-operation-icon.v1160-art svg.v1160-svg{display:block!important;height:100%!important;width:100%!important}
 html body #modal-root#modal-root#modal-root#modal-root .v235-register-dialog .vr-action-stack .vr-operation .vr-operation-icon.v1160-art>svg.v1160-svg{width:100%!important;height:100%!important;min-height:100%!important;max-height:none!important;flex:none}}
+
+/* v1170 · Suscripciones y Presupuestos (web PC): banner con acento + tarjetas en dos columnas */
+@media(min-width:791px){
+ html body #app#app #page .v1170{--ac:var(--v424-accent-strong,#5b57d6);--v-ink:#0f1115;--v-mut:#6b7385;--v-line:rgba(120,140,170,.2);--v-sur:#fff;max-width:none!important;width:100%!important;margin:0!important;display:flex;flex-direction:column;gap:14px;padding:0;position:static}
+ html body:is(.theme-black,.theme-dark) #app#app #page .v1170{--v-ink:#f4f6fb;--v-mut:#9aa3b2;--v-line:rgba(255,255,255,.14);--v-sur:#050506}
+ html body.theme-black #app#app #page .v1170{--v-sur:#000}
+ /* fila superior: acción a la izquierda, mes a la derecha (como Resumen) */
+ html body #app#app #page .v1170-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:33px}
+ html body #app#app #page .v1170-date{display:inline-flex;align-items:center;gap:6px;height:33px;padding:0 9px;border-radius:12px;border:1px solid rgba(255,255,255,.64);background:rgba(255,255,255,.47);color:var(--v-ink);font-size:14px;margin-left:auto}
+ html body:is(.theme-black,.theme-dark) #app#app #page .v1170-date{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16)}
+ html body #app#app #page .v1170-date svg{width:16px;height:16px;color:var(--v-mut);flex:none}
+ html body #app#app #page .v1170-date input{border:0!important;background:transparent!important;color:inherit;font:inherit;height:31px;padding:0!important;box-shadow:none!important;min-width:0}
+ html body #app#app #page .v1170-add{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 16px;border-radius:12px;border:0;background:var(--ac);color:#fff;font-size:13.5px;font-weight:700;box-shadow:0 8px 18px -10px var(--ac)}
+ html body #app#app #page .v1170-add svg{width:16px;height:16px}
+ /* banner */
+ html body #app#app #page .v1170-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:26px;align-items:center;padding:26px 30px;border-radius:30px;color:#fff;background:linear-gradient(118deg,color-mix(in srgb,var(--ac) 52%,#14000b) 0%,color-mix(in srgb,var(--ac) 82%,#000) 55%,var(--ac) 100%);box-shadow:0 18px 40px -22px var(--ac)}
+ html body #app#app #page .v1170-hero-main{position:relative;display:flex;flex-direction:column;gap:6px;padding-right:26px;border-right:1px solid rgba(255,255,255,.28);min-height:170px;justify-content:center}
+ html body #app#app #page .v1170-hero-title{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:800;letter-spacing:.2em}
+ html body #app#app #page .v1170-hero-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.2)}
+ html body #app#app #page .v1170-hero-ic svg{width:22px;height:22px}
+ html body #app#app #page .v1170-lab{font-size:12px;font-weight:800;letter-spacing:.12em;opacity:.92;margin-top:8px}
+ html body #app#app #page .v1170-big{font-size:44px;line-height:1;font-weight:850;letter-spacing:-.04em}
+ html body #app#app #page .v1170-hero-main p{margin:0;font-size:13px;opacity:.9}
+ html body #app#app #page .v1170-vs{display:flex;align-items:center;gap:10px;font-size:13px;flex-wrap:wrap}
+ html body #app#app #page .v1170-vs b{font-size:14px}
+ html body #app#app #page .v1170-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-weight:800;font-size:13px;background:#fff}
+ html body #app#app #page .v1170-chip.good{color:#0f9d58}html body #app#app #page .v1170-chip.bad{color:#d6283d}
+ html body #app#app #page .v1170-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ html body #app#app #page .v1170-kpis.v1170-k3{grid-template-columns:repeat(3,minmax(0,1fr))}
+ html body #app#app #page .v1170-kpi{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2)}
+ html body #app#app #page .v1170-kic{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.2)}
+ html body #app#app #page .v1170-kic svg{width:20px;height:20px}
+ html body #app#app #page .v1170-kpi>div{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+ html body #app#app #page .v1170-kpi small{font-size:13px;font-weight:650;opacity:.95}
+ html body #app#app #page .v1170-kpi b{font-size:24px;font-weight:850;letter-spacing:-.03em;line-height:1.1;white-space:nowrap}
+ html body #app#app #page .v1170-kpi em{font-style:normal;font-size:12.5px;opacity:.9}
+ html body #app#app #page .v1170-gauge{display:block;height:6px;border-radius:6px;background:rgba(255,255,255,.28);margin-top:8px;overflow:hidden}
+ html body #app#app #page .v1170-gauge i{display:block;height:100%;border-radius:6px;background:#fff}
+ /* títulos de sección */
+ html body #app#app #page .v1170-eyebrow{margin:6px 0 0;font-size:13px;font-weight:800;letter-spacing:.16em;color:var(--ac)}
+ /* tarjetas */
+ html body #app#app #page .v1170-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ html body #app#app #page :is(.v1170-card,.v1170-bcard){display:flex;align-items:center;gap:14px;padding:12px 18px;min-height:76px;border-radius:22px;background:var(--v-sur);border:1px solid var(--v-line);color:var(--v-ink);text-align:left;box-shadow:0 10px 28px rgba(32,53,99,.055);width:100%}
+ html body:is(.theme-black,.theme-dark) #app#app #page :is(.v1170-card,.v1170-bcard){box-shadow:none}
+ html body #app#app #page .v1170-ic{display:grid;place-items:center;flex:none;width:48px;height:48px;border-radius:14px;background:color-mix(in srgb,var(--ac) 11%,transparent);color:var(--ac)}
+ html body #app#app #page .v1170-ic svg{width:24px;height:24px}
+ html body #app#app #page .v1170-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto}
+ html body #app#app #page .v1170-main strong{font-size:16px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ html body #app#app #page .v1170-main small{font-size:13px;color:var(--v-mut)}
+ html body #app#app #page .v1170-amt{display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding-left:16px;border-left:1px solid var(--v-line);white-space:nowrap}
+ html body #app#app #page .v1170-amt b{font-size:17px;font-weight:850}
+ html body #app#app #page .v1170-amt b i{font-style:normal;font-size:12px;font-weight:650;color:var(--v-mut)}
+ html body #app#app #page .v1170-amt small{font-size:12.5px;color:var(--v-mut)}
+ html body #app#app #page :is(.v1170-card,.v1170-bcard)>svg{width:20px;height:20px;color:var(--ac);flex:none}
+ html body #app#app #page .v1170-card.is-open{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac)}
+ html body #app#app #page .v1170-detail{border-radius:22px;border:1px solid var(--v-line);background:var(--v-sur);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+ html body #app#app #page .v1170-detail header{display:flex;justify-content:space-between;align-items:center}
+ html body #app#app #page .v1170-detail h3{margin:0;font-size:17px;font-weight:800;color:var(--v-ink)}
+ html body #app#app #page .v1170-close{width:34px;height:34px;border-radius:50%;border:1px solid var(--v-line);background:transparent;color:var(--v-ink);display:grid;place-items:center}
+ html body #app#app #page .v1170-close svg{width:16px;height:16px}
+ /* presupuesto: barra + píldora */
+ html body #app#app #page .v1170-bbar{display:flex;flex-direction:column;align-items:flex-end;gap:7px;min-width:44%;flex:0 0 44%}
+ html body #app#app #page .v1170-bbar i{display:block;width:100%;height:9px;border-radius:9px;background:color-mix(in srgb,var(--v-mut) 18%,transparent);overflow:hidden}
+ html body #app#app #page .v1170-bbar u{display:block;height:100%;border-radius:9px;background:#16a34a}
+ html body #app#app #page .v1170-bbar i.near u{background:#e0951a}html body #app#app #page .v1170-bbar i.over u{background:var(--ac)}
+ html body #app#app #page .v1170-pill{font-style:normal;font-size:12.5px;font-weight:800;padding:3px 10px;border-radius:999px;background:rgba(22,163,74,.12);color:#15803d}
+ html body #app#app #page .v1170-pill.near{background:rgba(224,149,26,.15);color:#b86e00}html body #app#app #page .v1170-pill.over{background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac)}
+ html body #app#app #page .v1170-bcard.free .v1170-amt{border-left:0}
+ /* cumplimiento mensual */
+ html body #app#app #page .v1170-panel{border-radius:24px;background:var(--v-sur);border:1px solid var(--v-line);padding:18px 24px;box-shadow:0 10px 28px rgba(32,53,99,.055)}
+ html body:is(.theme-black,.theme-dark) #app#app #page .v1170-panel{box-shadow:none}
+ html body #app#app #page .v1170-panel h3{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ac)}
+ html body #app#app #page .v1170-pic{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--ac) 11%,transparent)}
+ html body #app#app #page .v1170-pic svg{width:18px;height:18px}
+ html body #app#app #page .v1170-year{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:24px;align-items:center}
+ html body #app#app #page .v1170-year .v919-legend{display:flex;flex-direction:column;gap:12px;margin:0;padding-left:24px;border-left:1px solid var(--v-line);font-size:14px;color:var(--v-mut)}
+ html body #app#app #page .v1170-year .v919-legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px}
+ html body #app#app #page .v1170 .v911-svc,html body #app#app #page .v1170 .v911-row{color:var(--v-ink)}
+ /* Patrimonio: el selector de cierre pasa a una fila propia con el mismo tamaño que el de Resumen */
+ html body #app#app #page .v1133-compact{height:auto!important;display:flex!important;justify-content:flex-end!important;margin:0 0 10px!important;overflow:visible}
+ html body #app#app #page .v1133-compact .v137-wealth-top-tools{position:static!important;top:auto!important;right:auto!important}
+ html body #app#app #page .v1133-compact input[type=month]{height:33px!important;border-radius:12px!important;font-size:14px!important;padding:0 9px!important;width:auto!important;min-width:150px;border:1px solid rgba(255,255,255,.64)!important;background:rgba(255,255,255,.47)!important}
+ html body:is(.theme-black,.theme-dark) #app#app #page .v1133-compact input[type=month]{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.16)!important}
+}
+@media(min-width:791px){
+ html body #app#app #page .v1170-add-hero{align-self:flex-start;margin-top:12px;background:#fff;color:color-mix(in srgb,var(--ac) 88%,#000);box-shadow:none;height:40px;padding:0 18px}
+ html body #app#app #page .v1170-hero-main{gap:4px}
+ html body #app#app #page .v1170-big{margin-top:10px}
+ html body #app#app #page .v1170-tools{min-height:33px;justify-content:flex-end}
+}
