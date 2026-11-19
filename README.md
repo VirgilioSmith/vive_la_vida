@@ -28,26 +28,25 @@ Todo se adapta al **color de acento** que elijas y a los temas claro y oscuro.
 
 ---
 
-## Estructura del repositorio
+## Estructura del repositorio · matriz 2×2
+
+Todo el repositorio cabe en cuatro cuadrantes: **dónde corre** (cliente o servidor) y **qué hace** (se ejecuta o se comprueba y explica).
+
+|  | **Cliente** (web y móvil) | **Servidor** (Supabase) |
+|---|---|---|
+| **Se ejecuta** | `index.html` · `manifest.webmanifest` · `src/` (`app.js`, `styles.css`, `early.js`, `lib/finanzas/`, `vive-score/`) · `assets/icons/` · `vendor/` | `supabase/migrations/` · `supabase/functions/` · `supabase/rollback/` |
+| **Se comprueba y explica** | `tests/` (Playwright y Node) · `docs/` (arquitectura, lógica, UI, auditorías) | `supabase/tests/` · `docs/security/` · `docs/SUPABASE.md` |
+
+Regla de oro: **una carpeta, un cuadrante.** Si un archivo nuevo no encaja en uno, probablemente no hace falta.
 
 ```text
-.
-├── index.html                  Cascarón de la PWA (meta, CSP, carga de scripts y estilos)
-├── manifest.webmanifest        Instalación como app (iconos, colores)
-├── src/                        Código de la aplicación
-│   ├── app.js                  Lógica y vistas (se carga en el navegador)
-│   ├── styles.css              Todos los estilos (cascada por versiones)
-│   ├── early.js                Montaje temprano y síncrono de las vistas
-│   ├── lib/finanzas/reglas.js  Reglas de cálculo puras, sin DOM (también usadas por las pruebas)
-│   └── vive-score/             Módulo experimental VIVE SCORE CRÉDITO (aislado y reversible)
-├── assets/icons/               Iconos de la PWA y favicon
-├── vendor/                     Biblioteca de Supabase fijada y su huella SHA-384
-├── supabase/                   Backend: migraciones, funciones edge, pruebas y reversiones
-├── tests/                      Pruebas automáticas (Playwright, Node)
-│   ├── smoke.js · csp.js · xss.js
-│   ├── harness.js · mock.js    Arnés con Supabase simulado
-│   └── logica/                 Reglas, paridad con la app, recorridos y casos de negocio
-└── docs/                       Documentación técnica, decisiones, seguridad y lógica financiera
+src/app.js              lógica y vistas (se carga en el navegador)
+src/styles.css          estilos (cascada por versiones)
+src/early.js            montaje temprano de las vistas
+src/lib/finanzas/       reglas de cálculo puras, sin DOM
+src/vive-score/         módulo VIVE SCORE (aislado y reversible)
+tests/                  smoke · csp · xss · regresion-visual · pruebas por vista · logica/
+docs/                   01…12 (visión) · adr/ · logica/ · security/ · ui/ · auditoria/
 ```
 
 ---
@@ -63,6 +62,8 @@ python3 -m http.server 8000
 Abre `http://localhost:8000`. La conexión a Supabase es opcional para explorar la interfaz.
 
 ## Pruebas
+
+`node tests/regresion-visual.js` compara 64 capturas (vistas × web/móvil × Claro/Black) contra su línea base; úsalo antes y después de cualquier limpieza o cambio de estilos.
 
 Requieren Node y Playwright (Chromium).
 
@@ -116,3 +117,9 @@ Los cálculos importantes (vigencias de límites y tasas, antigüedad, cortes de
 - `src/styles.css` es una cascada larga por versiones (`V…`); los cambios nuevos se añaden al final con selectores más específicos y `!important` cuando hace falta.
 - Los widgets de Inicio se definen en `V105_WIDGETS` (`src/app.js`) y su orden y visibilidad se guardan en los ajustes del usuario.
 - Para nombrar o mover archivos, mantén `index.html`, `manifest.webmanifest` y `tests/` apuntando a las rutas de `src/` y `assets/`.
+
+## Rendimiento (guía rápida)
+
+- Los observadores del DOM (`MutationObserver`) **nunca deben escribir sobre lo que observan sin comprobar que algo cambió**: dos de ellos lo hacían y mantenían el hilo principal ocupado en reposo (corregido; ahora 0 mutaciones por segundo en las 21 vistas).
+- Formateadores de fecha y consultas de ancho de pantalla se guardan en caché (`today()`, `isMobileViewport()`, `prettyDate`).
+- Para medir: perfil de CPU (Chrome DevTools → Performance) con CPU 4× más lenta y revisar que la vista en reposo no muestre actividad.
