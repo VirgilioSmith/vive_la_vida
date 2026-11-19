@@ -21,8 +21,9 @@
     return new Date(y, m - 1, d || 1);
   };
   /* Fecha de hoy en la zona del producto, independiente de la zona del dispositivo. */
+  let fmtHoy = null;
   const hoy = (ahora = new Date()) => {
-    const p = new Intl.DateTimeFormat('en-CA', { timeZone: ZONA, year: 'numeric', month: '2-digit', day: '2-digit' }).format(ahora);
+    const p = (fmtHoy || (fmtHoy = new Intl.DateTimeFormat('en-CA', { timeZone: ZONA, year: 'numeric', month: '2-digit', day: '2-digit' }))).format(ahora);
     return p;
   };
   /* Día del mes limitado al último día válido (29, 30 y 31 en meses cortos y bisiestos). */

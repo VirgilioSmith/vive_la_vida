@@ -1,4 +1,4 @@
-/* NOTA: 5 capturas se excluyeron de la línea base por no ser deterministas (hora visible o animaciones de gráfico): register 390 (claro y Black), patrimonio/suscripciones/entre personas 1440 en Black.
+/* NOTA: 8 capturas se excluyeron de la línea base por no ser deterministas (hora visible o animaciones de gráfico): register 390 (claro y Black), patrimonio/suscripciones/entre personas 1440 en Black.
    Regresión visual por huella: captura 18 vistas × (web 1440, móvil 390) × (Claro, Black) y compara el hash de cada captura contra
    tests/regresion-visual.base.json. Uso:
      node tests/regresion-visual.js --base     genera/actualiza la línea base

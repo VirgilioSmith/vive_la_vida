@@ -122,7 +122,8 @@ function v255TransactionCategoryCell(t){const kind=['income','bank_reward','card
 function v255TransactionMetaLine(t,prefix=''){const kind=['income','bank_reward','card_reward'].includes(t.type)?'ingreso':'gasto';const cat=t.category||(TRANSL[t.type]||(['income','bank_reward','card_reward'].includes(t.type)?'Otros ingresos':'Otros gastos'));const pre=prefix?`<span class="v255-tax-prefix">${sanitize(prefix)}</span><span class="v255-tax-sep">·</span>`:'';const sub=t.subcategory?`<span class="v255-tax-sep">/</span>${v255TaxonomyBadge(kind,cat,t.subcategory,{compact:true,subOnly:true})}`:'';return `<span class="v255-tax-inline">${pre}${v255TaxonomyBadge(kind,cat,'',{compact:true})}${sub}</span>`}
 function v255DecorateTaxonomyUI(){const root=document.getElementById('app');if(!root)return;root.querySelectorAll('label').forEach(label=>{const catSel=label.querySelector('select[name="category"]');if(catSel){const parentForm=catSel.form||label.closest('form');let preview=label.querySelector('.v255-tax-select-preview');if(!preview){preview=document.createElement('div');preview.className='v255-tax-select-preview';label.appendChild(preview)}const kind=()=>{if(catSel.id==='customParent')return document.getElementById('customKind')?.value||'gasto';if(catSel.id==='txCategory')return parentForm?.elements?.type?.value==='income'?'ingreso':'gasto';if(['recCategory','budgetCategory'].includes(catSel.id))return 'gasto';if(parentForm?.elements?.kind?.value==='ingreso')return 'ingreso';return v255TaxonomyKindForCategory(catSel.value)};const paint=()=>{preview.innerHTML=catSel.value?`<span class="v255-tax-select-note">Categoría</span>${v255TaxonomyBadge(kind(),catSel.value)}`:''};paint();catSel.addEventListener('change',paint)}const subSel=label.querySelector('select[name="subcategory"]');if(subSel){const parentForm=subSel.form||label.closest('form');const catSel=parentForm?.querySelector('select[name="category"]');let preview=label.querySelector('.v255-tax-select-preview');if(!preview){preview=document.createElement('div');preview.className='v255-tax-select-preview';label.appendChild(preview)}const kind=()=>{if(catSel?.id==='txCategory')return parentForm?.elements?.type?.value==='income'?'ingreso':'gasto';if(['recCategory','budgetCategory'].includes(catSel?.id))return 'gasto';if(parentForm?.elements?.kind?.value==='ingreso')return 'ingreso';return v255TaxonomyKindForCategory(catSel?.value)};const paint=()=>{preview.innerHTML=(subSel.value&&catSel?.value)?`<span class="v255-tax-select-note">Subcategoría</span>${v255TaxonomyBadge(kind(),catSel.value,subSel.value,{subOnly:true})}`:''};paint();subSel.addEventListener('change',paint);if(catSel)catSel.addEventListener('change',paint)}})}
 
-const today=()=>{try{return window.FinanzasReglas.hoy()}catch(_){const d=new Date();return dateStr(d)}};
+let v1235TodayAt=0,v1235Today='';
+const today=()=>{const n=Date.now();if(n-v1235TodayAt<1000&&v1235Today)return v1235Today;let r;try{r=window.FinanzasReglas.hoy()}catch(_){r=dateStr(new Date())}v1235TodayAt=n;v1235Today=r;return r};
 /* Año y mes actuales salen del mismo «hoy» del producto (America/Santo_Domingo), no de la zona del dispositivo. */
 const nowYear=()=>Number(today().slice(0,4)),nowMonth=()=>Number(today().slice(5,7));
 const dateStr=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -133,7 +134,8 @@ const plusMonths=(s,n)=>{let d=dateObj(s);return monthDay(d.getFullYear(),d.getM
 const periodStart=(y,m)=>`${y}-${String(m).padStart(2,'0')}-01`;
 const periodEnd=(y,m)=>dateStr(new Date(y,m,0));
 const diffDays=(a,b)=>Math.round((dateObj(a)-dateObj(b))/86400000);
-const prettyDate=s=>s?dateObj(s).toLocaleDateString('es-DO',{day:'2-digit',month:'short',year:'numeric'}):'—';
+const v1235PrettyFmt=new Intl.DateTimeFormat('es-DO',{day:'2-digit',month:'short',year:'numeric'});
+const prettyDate=s=>s?v1235PrettyFmt.format(dateObj(s)):'—';
 const num=v=>Number.isFinite(+v)?+v:0;const rnd=v=>Math.round((num(v)+Number.EPSILON)*100)/100;
 /* Reglas con vigencia e instantáneas: solo se agrega, nunca se edita ni se borra (ver docs/logica/METODOLOGIA.md). */
 function financeRuleAt(key,subject,date){try{return window.FinanzasReglas.reglaVigente(db.ruleVersions||[],key,date||today(),subject||'*')}catch(_){return undefined}}
@@ -4781,7 +4783,8 @@ const MQR_PRESETS={
  income:[['Salario y nómina','Nómina'],['Negocios y ventas','Ventas'],['Joseo e ingresos adicionales','Joseo']],
  spend:[['Alimentación','Comida'],['Transporte','Transporte'],['Servicios básicos','Servicios']]
 };
-function isMobileViewport(){return window.innerWidth<=790}
+let v1235Mobile=window.innerWidth<=790;window.addEventListener('resize',()=>{v1235Mobile=window.innerWidth<=790},{passive:true});
+function isMobileViewport(){return v1235Mobile}
 function mqrState(){
  if(!ui.mobileQuickRegister)ui.mobileQuickRegister={mode:'income',amount:'',preset:'Salario y nómina',transferKind:'own'};
  return ui.mobileQuickRegister;
@@ -21575,7 +21578,7 @@ window.__v866Runners.v865=run;
       const raw=el.textContent||'';
       let txt=raw.replace(/^\s*\d+\s*\/\s*\d+\s*·\s*/,'').trim();
       txt=txt.replace(/^FINANZAS\s*360$/i,'vive el hoy');
-      if(txt!==raw.trim()) el.textContent=txt;
+      if(txt!==raw.trim()&&txt!==raw) el.textContent=txt;
     });
   }
   function removeWalletDetailsButton(){
@@ -21598,7 +21601,7 @@ window.__v866Runners.v865=run;
     document.querySelectorAll('.vive-mobile-card-head .vive-mobile-eyebrow, .v266-overline, .eyebrow, .module-switch-kicker').forEach(el=>{
       const raw=(el.textContent||'').trim();
       const cleaned=raw.replace(/^\d+\s*\/\s*\d+\s*·\s*/,'').replace(/\bFINANZAS\s*360\b/ig,'vive el hoy').trim();
-      if(cleaned) el.textContent=cleaned;
+      if(cleaned&&cleaned!==(el.textContent||''))el.textContent=cleaned;
     });
   }
   function markHistoricalButtons(){
