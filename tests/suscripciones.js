@@ -57,12 +57,13 @@ if (require.main === module) (async () => {
   check('H1', 'Historial: tarjeta de revisión con importe previsto, registrado y diferencia', /Importe previsto/.test(h.txt) && /Importe registrado/.test(h.txt) && /Diferencia/.test(h.txt) && /Confirmar importe/.test(h.txt), h.txt.replace(/\s+/g, ' ').slice(0, 160));
   await p.evaluate(() => { const b = [...document.querySelectorAll('[data-v911-review]')].find(e => /Barbería/.test(e.textContent)); b && b.click() }); await p.waitForTimeout(300);
   const hb = await txt(p, '.v911-feat'); check('H2', 'Diferencia calculada: Barbería previsto RD$800 vs registrado RD$900 = +RD$100.00', /Barbería/.test(hb) && /\+RD\$100\.00/.test(hb), hb.replace(/\s+/g, ' ').slice(0, 220));
+  await click(p, '.v911-feat [data-act=editTransaction]'); await p.waitForTimeout(700);
+  check('H4', 'Editar abre el editor de movimientos existente', await p.evaluate(() => !!document.querySelector('#modal-root .modal,#modal-root form,#modal-root .v749-layer')));
+  await p.evaluate(() => { try { closeModal() } catch (_) { } }); await p.waitForTimeout(300);
   const t0 = await p.evaluate(() => window.__T.dbg().transactions.length);
   await click(p, '.v911-feat [data-act=toggleReview]'); await p.waitForTimeout(400);
   const t1 = await p.evaluate(() => ({ n: window.__T.dbg().transactions.length, rev: window.__T.dbg().transactions.filter(t => t.recurringId && t.reviewed !== true).length }));
   check('H3', 'Confirmar importe marca el cobro como revisado y NO crea movimientos duplicados', t1.n === t0, `movimientos ${t0}→${t1.n}, pendientes ${t1.rev}`);
-  await click(p, '.v911-feat [data-act=editTransaction]'); await p.waitForTimeout(700);
-  check('H4', 'Editar abre el editor de movimientos existente', await p.evaluate(() => !!document.querySelector('#modal-root .modal,#modal-root form,#modal-root .v749-layer')));
   await p.evaluate(() => { try { closeModal() } catch (_) { } });
   check('X1', 'Sin errores de página', errs.length === 0, errs.join('|'));
   await p.context().close();
