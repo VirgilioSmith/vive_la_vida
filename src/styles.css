@@ -55300,3 +55300,30 @@ html body #app#app #page .bank-workspace .v220-product-lane .lane-empty{padding:
 @media(max-width:790px){
  html body #app#app #page .bank-workspace{display:none!important}
 }
+/* v1222 · Web: selector de mes compacto en la fila de pestañas (como Resumen) + Entre personas alineado */
+@media(min-width:791px){
+ html body #app#app #page .v1170-tools,
+ html body #app#app #page .v187-wealth-top{position:static;height:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible}
+ html body #app#app #page .v1170-date,
+ html body #app#app #page .v137-wealth-month-control{position:absolute;top:-47px;right:0;z-index:5;display:inline-flex;align-items:center;gap:6px;height:33px;padding:0 9px;border-radius:12px;width:auto}
+ html body #app#app #page .v1170-date svg,
+ html body #app#app #page .v137-wealth-month-control svg{width:14px;height:14px}
+ html body #app#app #page .v1170-date input,
+ html body #app#app #page .v137-wealth-month-control input{font-size:10px!important;height:31px;max-width:117px;width:auto;cursor:pointer}
+ html body #app#app #page .v1200{max-width:none!important;width:100%!important;margin:0!important}
+}
+@media(min-width:791px){
+ html body #app#app #page .v1170-tools,html body #app#app #page .v187-wealth-top{margin-bottom:-14px!important}
+ html body #app#app #page .v911.v1170-sub{margin-top:-17px!important}
+ html body #app#app #page .v1170-date,html body #app#app #page .v137-wealth-month-control{margin:0!important;right:0!important;left:auto!important}
+ html body #app#app #page .v1170-date input[type=month],html body #app#app #page .v137-wealth-month-control input[type=month]{font-size:10px!important;width:auto!important;min-width:0!important}
+}
+@media(min-width:791px){html body #app#app #page .v142-wealth-complete{margin-top:-14px!important}}
+@media(min-width:791px){html body #app#app #page .v137-wealth-month-control{top:-33px!important}}
+/* v1222 final · el selector de mes queda justo bajo la barra de pestañas (mismo punto que Resumen) */
+@media(min-width:791px){
+ html body #app#app #page .v1170-tools,html body #app#app #page .v187-wealth-top,html body #app#app #page .v137-wealth-top-tools{height:33px!important;min-height:33px!important;margin:0 0 -6px!important;display:flex!important;justify-content:flex-end!important;align-items:center}
+ html body #app#app #page .v1170-date,html body #app#app #page .v137-wealth-month-control{position:static!important;top:auto!important;width:150px!important;margin:0!important}
+ html body #app#app #page .v911.v1170-sub,html body #app#app #page .v142-wealth-complete{margin-top:-12px!important}
+}
+@media(min-width:791px){html body #app#app #page .v911.v1170-sub{margin-top:-29px!important}html body #app#app #page .v137-wealth-month-control{width:150px!important;flex:none}}
