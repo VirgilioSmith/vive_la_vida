@@ -665,7 +665,7 @@ const v153DockIcon=(name)=>`<svg viewBox="0 0 24 24" fill="none" stroke="current
 function nav(){
  const one=([id,label,ic,description])=>{let active=id==='overview'?navFamilyForPage(ui.page)==='overview':navFamilyForPage(ui.page)===id;return `<button type="button" class="rail-action ${active?'active':''}" data-act="navigate" data-id="${id}" title="${label}" aria-label="${label}: ${description}" ${active?'aria-current="page"':''}><span class="rail-symbol">${v153RailIcon(ic)}${id==='score'?`<b class="vive-score-badge">${sanitize(String(window.ViveScoreHost?.badge?.()??'—'))}</b>`:''}</span><span class="rail-tooltip" role="presentation"><strong>${label}</strong><small>${description}</small></span></button>`};
  return `<aside class="sidebar rail-sidebar ${ui.mobile?'open':''}" aria-label="Navegación principal">
-   <div class="rail-top"><button type="button" class="vive-p-brand" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="El costo de mañana"><span class="v908-wm is-compact" aria-hidden="true"><span class="v908-b">hoy</span></span></button></div>
+   <div class="rail-top"><button type="button" class="vive-p-brand" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="El costo de mañana"><span class="v908-wm is-compact" aria-hidden="true"><span class="v908-b">V</span></span></button></div>
    <div class="rail-main" role="navigation" aria-label="Módulos financieros">${RAIL_DESTINATIONS.filter(d=>d[0]!=='score'||!isMobileViewport()).map(one).join('')}</div>
    <div class="rail-bottom">
      <div class="rail-hairline"></div>
