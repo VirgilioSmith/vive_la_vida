@@ -330,7 +330,7 @@ const bankTx=(t,bid)=>[account(t.accountId),account(t.toAccountId),card(t.cardId
 const ensureBanks=()=>{if(db.banks.some(b=>!b.archived))return true;toast('Primero registra una institución en el módulo Bancos.');ui.page='banks';render();return false};
 const persist=()=>{
  v99Invalidate();
- try{for(const t of db.transactions||[])if(t.reviewed!==true&&(!t.recurringId||t.postingOrigin==='manual'||String(t.postingOrigin||'').startsWith('autom')))t.reviewed=true}catch(_){}
+ try{for(const t of db.transactions||[])if(t.reviewed!==true)t.reviewed=true}catch(_){}
  try{
   if(typeof v31BeforePersist==='function')v31BeforePersist();
   if(!window.__f360CloudUid){return false;}
@@ -18281,13 +18281,12 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const rows=pend.filter(p=>p.date>=sel);const groups=new Map();rows.forEach(p=>{if(!groups.has(p.date))groups.set(p.date,[]);groups.get(p.date).push(p)});
   const line=p=>{const r=svc(p.ref)||{name:p.name,currency:p.currency,amount:p.amount};return `<button type="button" class="v911-row" data-v911-open="${esc(p.ref)}"><span class="v911-logo">${ico(r)}</span><span class="v911-row-info"><strong>${esc(p.name||r.name)}</strong><small>${esc(r.frequency?freq(r):'')}${p.estimated?' · estimado':''}</small></span><b>${money(p.amount,p.currency||'DOP',2)}</b>${chev}</button>`};
   const tl=groups.size?[...groups].map(([d,list])=>`<section class="v911-tl-group"><h3><i></i>${esc(dayHead(d))}</h3><div class="v911-card">${list.map(line).join('')}</div></section>`).join(''):`<p class="v911-empty">${pend.length?'No hay más vencimientos desde esta fecha.':'No tienes vencimientos de suscripciones este mes.'}</p>`;
-  const review=charges().filter(t=>t.reviewed!==true).length;
   return `<div class="v911-agenda"><label class="v911-month"><span class="v911-ic">${icon('calendar')}</span><span>${esc(monthTitle())}</span>${ico2('chevron-down')}<input id="monthFilter" type="month" value="${esc(month)}" aria-label="Mes de la agenda" /></label>
    <p class="v911-kicker">Por pagar este mes</p><p class="v911-big" id="v911-due-total">${rd(total)}</p>
    <p class="v911-ytd" id="v911-ytd"><span>Pagado en ${Y}</span><b>${rd(pagadoAnio,0)}</b></p>
    <div class="v911-strip" role="group" aria-label="Días del mes">${strip}</div>
    <div class="v911-timeline">${tl}</div>
-   ${review?`<button type="button" class="v911-link" data-v911-tab="historial">Revisar cobros${review>0?` <em>${review}</em>`:''}${chev}</button>`:''}</div>`;
+   </div>`;
  }
 
  /* ---------- Cartera ---------- */

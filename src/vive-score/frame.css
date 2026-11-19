@@ -102,7 +102,7 @@ html,body{background:transparent!important}
 
 /* Modo compacto (móvil): solo «Mi score» resumido — anillo, estado y los cinco factores en una línea cada uno */
 body.compact{padding:0}
-body.compact .herohead,body.compact #tabs{display:none!important}
+body.compact .herohead,body.compact #tabs,body.compact .footer{display:none!important}
 body.compact .shell{padding:4px 2px 16px;gap:10px;max-width:none}
 body.compact #view>.grid.heroGrid,body.compact #view>.grid.factors{display:flex;flex-direction:column;gap:10px;margin:0}
 body.compact .scoreHero{display:grid!important;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:16px!important}
@@ -124,3 +124,6 @@ body.compact .factorcard .hrow{margin:0!important}
 body.compact .scoreHero .caps{white-space:normal}
 /* Web: el contenido del Score se alinea con el borde de las demás vistas (sin relleno lateral propio) */
 @media(min-width:791px){body:not(.compact) .shell{padding:0 0 40px!important;max-width:none!important}body:not(.compact) .herohead{margin-top:0!important}}
+/* Móvil refinado: estado compacto en el anillo */
+body.compact .scoreHero .movement{font-size:11px!important;padding:5px 10px!important;border-radius:999px;display:inline-flex!important;white-space:normal;line-height:1.25}
+body.compact .scoreHero h2{font-size:18px!important}
