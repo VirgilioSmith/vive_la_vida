@@ -142,3 +142,18 @@ html{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--teal) 38%,tran
 /* Sin barra de desplazamiento visible dentro del marco (el navegador ya tiene la suya); la rueda y el táctil siguen funcionando */
 html,body{scrollbar-width:none;-ms-overflow-style:none}
 html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0}
+/* Móvil: factores y mejoras */
+.vsConf{margin:6px 0 0;font-size:12px;color:var(--muted)}
+.vsFactors{display:grid;gap:4px;padding:6px 8px}
+.vsFactor{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;width:100%;text-align:left;background:transparent;border:0;padding:10px 8px;border-radius:12px;color:inherit;font:inherit}
+.vsFactor:active{background:color-mix(in srgb,var(--teal) 8%,transparent)}
+.vsFname{font-weight:700;font-size:14px}.vsFpts{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.vsFpts b{color:var(--ink);font-size:15px}
+.vsBar{grid-column:1/-1;display:block;height:7px;border-radius:7px;background:color-mix(in srgb,var(--teal) 14%,transparent);overflow:hidden}
+.vsBar u{display:block;height:100%;border-radius:7px;background:var(--teal)}
+.vsTips{display:grid;gap:4px;padding:6px 8px}
+.vsTip{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:transparent;border:0;padding:10px 8px;border-radius:12px;color:inherit;font:inherit}
+.vsTipGap{flex:none;min-width:48px;text-align:center;padding:6px 8px;border-radius:999px;background:color-mix(in srgb,var(--teal) 14%,transparent);color:var(--teal);font-weight:800;font-size:13px}
+.vsTip b{display:block;font-size:14px}.vsTip small{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+.vsFirst p{margin:6px 0 0;font-size:13.5px;color:var(--muted)}
+body.compact .shell{padding-bottom:28px}
+body.compact .scoreHero p.vsConf{display:block!important;font-size:12px;margin:6px 0 0}
