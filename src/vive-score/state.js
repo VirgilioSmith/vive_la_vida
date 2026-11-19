@@ -14,8 +14,11 @@ const VSHost={
  send(type,data={}){try{parent.postMessage({vs:1,type,...data},location.origin)}catch(_){}},
  go(page){this.send('go',{page})},
  refresh(){this.send('refreshRequest')},
- afterRender(){const c=DB.months.length?evaluate(current()):null;this.send('score',{score:c&&c.score!==null?c.score:null,period:current()?.period||null})},
+ afterRender(){this.reportHeight();const c=DB.months.length?evaluate(current()):null;this.send('score',{score:c&&c.score!==null?c.score:null,period:current()?.period||null})},
+ /* Altura propia: el marco crece con su contenido y la página (el desplazamiento del navegador) hace el scroll; el marco no tiene barra interna. */
+ reportHeight(){const el=document.getElementById('app')||document.body;const h=Math.ceil(Math.max(el.getBoundingClientRect().height,el.scrollHeight)+(parseFloat(getComputedStyle(document.body).paddingTop)||0)+(parseFloat(getComputedStyle(document.body).paddingBottom)||0)+2);if(h!==this._h){this._h=h;this.send('height',{h})}},
  boot(){
+  try{new ResizeObserver(()=>this.reportHeight()).observe(document.getElementById('app')||document.body)}catch(_){}
   window.addEventListener('message',e=>{
    if(e.origin!==location.origin||e.source!==parent)return;const m=e.data;if(!m||m.vs!==1)return;
    if(m.type==='init'){ST=restoreStore(m.store);PAYLOAD=m.payload||null;applyEnv(m.env);auditHistory=Array.isArray(ST.audit)?ST.audit.slice(0,200):[];if(ST.settings)DB.settings={...clone(CAP_DEFAULT),...ST.settings};applySeeds();rebuildDB();render()}

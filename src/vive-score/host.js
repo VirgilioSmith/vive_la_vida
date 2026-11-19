@@ -6,9 +6,9 @@
 (function(){
 'use strict';
 if(!window.VIVE_SCORE_EXPERIMENTAL)return;
-const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=20';
+const KEY='vive-score:v1',FRAME_SRC='./src/vive-score/frame.html?v=21';
 const newStore=()=>({v:1,startedOn:'2026-11',answers:null,overrides:{},observed:{},settings:null,audit:[],seals:[],declVersion:0,lastScore:null,lastPeriod:null});
-let store=null,frame=null,ready=false,height=Math.max(560,innerHeight-170),payloadSent=false;
+let store=null,frame=null,ready=false,height=Math.max(560,innerHeight-170),payloadSent=false,frameH=0;
 function load(){if(store)return store;try{const x=JSON.parse(localStorage.getItem(KEY)||'null');store=x&&x.v===1?{...newStore(),...x}:newStore()}catch(_){store=newStore()}return store}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){console.warn('VIVE SCORE: no se pudo guardar',e)}}
 const mobile=()=>window.innerWidth<=790;
@@ -38,7 +38,7 @@ function place(){
  if(!s){frame?.classList.remove('vs-on');return}
  ensureFrame();
  const r=s.getBoundingClientRect();
- height=Math.max(mobile()?440:560,Math.round(innerHeight-r.top-(mobile()?96:14)));
+ height=frameH?Math.max(mobile()?440:560,frameH):Math.max(mobile()?440:560,Math.round(innerHeight-r.top-(mobile()?96:14)));
  Object.assign(frame.style,{left:(r.left+scrollX)+'px',top:(r.top+scrollY)+'px',width:r.width+'px',height:height+'px'});
  s.style.height=height+'px';
  if(!frame.classList.contains('vs-on')){frame.classList.add('vs-on');if(ready)sendInit()}
@@ -55,6 +55,7 @@ window.addEventListener('message',e=>{
  if(m.type==='ready'){ready=true;if(slot())sendInit();}
  else if(m.type==='save'&&m.store&&m.store.v===1){store={...newStore(),...m.store};persist()}
  else if(m.type==='refreshRequest'){sendInit()}
+ else if(m.type==='height'&&Number.isFinite(m.h)&&m.h>0){const h=Math.min(20000,Math.round(m.h));if(h!==frameH){frameH=h;schedule()}}
  else if(m.type==='score'){load();store.lastScore=Number.isFinite(m.score)?m.score:null;store.lastPeriod=m.period||null;persist();document.querySelectorAll('.vive-score-badge').forEach(b=>b.textContent=store.lastScore??'—')}
  else if(m.type==='go'&&typeof m.page==='string'&&/^[a-z]+$/.test(m.page)){window.__viveScoreBridge?.go(m.page)}
 });
