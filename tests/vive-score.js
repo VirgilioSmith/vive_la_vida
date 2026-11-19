@@ -223,7 +223,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const fondoOk = {};
   for (const scheme of ['light', 'dark']) {
     await p.emulateMedia({ colorScheme: scheme }); await p.evaluate(() => window.scrollTo(0, 0)); await p.waitForTimeout(400);
-    const r = await p.evaluate(() => { const f = document.querySelector('.vs-frame').getBoundingClientRect(); return { x: Math.round(f.right - 70), y: Math.round(f.top + 6), width: 50, height: 24 }; });
+    const r = await p.evaluate(() => { const f = document.querySelector('.vs-frame').getBoundingClientRect(); return { x: Math.round(f.right - 70), y: Math.round(f.top + 60), width: 50, height: 6 }; });
     const a = await p.screenshot({ clip: r }); await p.evaluate(() => { document.querySelector('.vs-frame').style.visibility = 'hidden'; }); await p.waitForTimeout(150);
     const b2 = await p.screenshot({ clip: r }); await p.evaluate(() => { document.querySelector('.vs-frame').style.visibility = ''; });
     fondoOk[scheme] = a.equals(b2);
