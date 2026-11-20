@@ -55303,3 +55303,30 @@ html body #app#app #page .loan-compare .loan-compare-table .loan-compare-row{dis
 html body #app#app #page .loan-compare .loan-compare-table .loan-compare-row>b{display:flex!important;justify-content:space-between!important;width:100%!important;position:static!important;white-space:normal}
 html body #app#app #page .loan-compare .loan-compare-table{display:grid!important;gap:10px!important;min-width:0!important;width:100%!important}
 }
+
+/* V1249 · Análisis de costos comparativo (web): columnas con tarjetas, como la referencia */
+html body #app#app .v1249-cmp{padding:26px 22px 24px!important;border-radius:32px}
+html body #app#app .v1249-cmp>h3{text-align:center;font-size:clamp(22px,2.2vw,30px);letter-spacing:-.04em;margin:0 0 4px}
+html body #app#app .v1249-cmp>p{text-align:center;margin:0 auto 22px;max-width:720px;font-size:13px;opacity:.7}
+html body #app#app .v1249-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+html body #app#app .v1249-col{position:relative;display:grid;align-content:start;gap:10px;padding:16px 14px 14px;border-radius:26px;border:1.5px solid var(--v1249-b);background:var(--v1249-bg)}
+html body #app#app .v1249-col.is-orig{--v1249-b:rgba(120,130,150,.22);--v1249-bg:rgba(120,130,150,.07);--v1249-t:#5a6478}
+html body #app#app .v1249-col.is-curr{--v1249-b:color-mix(in srgb,var(--v424-accent-strong) 26%,transparent);--v1249-bg:color-mix(in srgb,var(--v424-accent-strong) 6%,transparent);--v1249-t:var(--v424-accent-strong)}
+html body #app#app .v1249-col.is-fast{--v1249-b:rgba(232,150,30,.35);--v1249-bg:rgba(250,190,70,.09);--v1249-t:#d98410}
+html body #app#app .v1249-col.is-diff{--v1249-b:rgba(20,170,120,.35);--v1249-bg:rgba(30,200,140,.08);--v1249-t:#0f9a6c}
+html body #app#app .v1249-col>h4{margin:2px 0 6px;text-align:center;font-size:12px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;color:var(--v1249-t)}
+html body #app#app .v1249-badge{position:absolute;top:-12px;right:-6px;transform:rotate(4deg);padding:5px 12px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#fff;background:var(--v1249-t);box-shadow:0 6px 14px rgba(0,0,0,.14)}
+html body #app#app .v1249-item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;align-items:center;padding:11px 12px;border-radius:16px;background:var(--v1249-card,#fff);box-shadow:0 2px 10px rgba(20,30,60,.06)}
+html body.theme-black #app#app .v1249-item,html body.theme-dark #app#app .v1249-item{--v1249-card:rgba(255,255,255,.06);box-shadow:none}
+html body #app#app .v1249-ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--v1249-t) 14%,transparent);color:var(--v1249-t)}
+html body #app#app .v1249-ic svg{width:18px;height:18px}
+html body #app#app .v1249-item small{display:block;font-size:9.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;opacity:.6}
+html body #app#app .v1249-item strong{display:block;font-size:17px;font-weight:850;letter-spacing:-.03em;margin-top:1px;color:var(--v1249-t);word-break:break-word}
+html body #app#app .v1249-item strong i{display:block;font-style:normal;font-size:11px;font-weight:650;opacity:.65;letter-spacing:0;margin-top:1px}
+html body #app#app .v1249-col:not(.is-diff) .v1249-item strong.cost{color:#e0314f}
+html body #app#app .v1249-col:not(.is-diff) .v1249-item strong.ins{color:#1b87c9}
+html body #app#app .v1249-col.is-fast .v1249-item strong.cost,html body #app#app .v1249-col.is-fast .v1249-item strong.ins,html body #app#app .v1249-col.is-fast .v1249-item strong{color:#d98410}
+html body #app#app .v1249-col.is-orig .v1249-item:nth-child(n+3):nth-child(-n+6) strong:not(.ins){color:#e0314f}
+@media(max-width:1180px){html body #app#app .v1249-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:790px){html body #app#app .v1249-cmp{display:none!important}}
+@media(min-width:791px){html body #app#app .v1249-old{display:none!important}}
