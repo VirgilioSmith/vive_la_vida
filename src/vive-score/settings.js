@@ -67,14 +67,35 @@ function configuracionView(){
 const CC_SECTIONS=[['antecedentes','Antecedentes y procedencia'],['productos','Productos y cancelados'],['cortes','Cortes guardados'],['auditoria','Auditoría y pruebas'],['variables','Variables'],['metodologia','Metodología']];
 const TAB_ALIAS={observatory:'antecedentes',snapshots:'cortes',audit:'auditoria',data:'antecedentes',capacity:'__detail',matrix:'variables',patterns:'metodologia',method:'metodologia'};   // enlaces de las páginas anteriores
 const ccOpen={antecedentes:false,productos:false,cortes:false,auditoria:false,variables:false,metodologia:false};
+/* Revisión guiada: al pulsar «Iniciar recorrido» el Centro de control se convierte en una interfaz distinta, paso a paso. */
+let tourStep=null;
+const TOUR_STEPS=[
+ ['Calidad de los datos','¿Tu perfil tiene los datos completos y al día?',()=>tourQuality()],
+ ['Antecedentes y procedencia','¿Tus antecedentes declarados son correctos?',()=>antecedentesView()],
+ ['Productos y cancelados','¿Tus productos, fechas de apertura y atrasos son correctos?',()=>configuracionView()],
+ ['Cortes guardados','Así se ha guardado tu historial, mes a mes.',()=>snapshotView()],
+ ['Auditoría y pruebas','¿El motor se comporta de forma coherente?',()=>audits()],
+ ['Variables','Estos son los datos que alimentan el puntaje.',()=>matrixView()],
+ ['Metodología','Así se calcula cada punto.',()=>methodView()]
+];
+function tourQuality(){
+ const s=current(),q=qualityReport(s),c=evaluate(s),cal=!s.missing.length;
+ const al=q.alerts.filter(a=>a.severity!=='info');
+ return `<div class="tourQ"><div class="tourQNum"><strong>${q.reliability}</strong><span>/100</span></div><div><b>${cal?'Calibrado':'Incompleto'}</b><p class="muted sm" style="margin:2px 0 0">${cal?'Todos los datos esenciales están disponibles; el puntaje se calcula.':'Falta información esencial; el puntaje no se calcula hasta completarla.'}</p></div></div>${s.missing.length?`<div class="warnings">${s.missing.map(m=>`<div class="witem critical"><span>!</span><div>${safe(m)}</div></div>`).join('')}</div>`:''}${al.length?`<div class="metricList" style="margin-top:12px">${al.map(a=>`<div class="metricLine"><span>${safe(a.what)}</span><b>−${a.penalty}</b></div>`).join('')}</div>`:'<p class="muted sm">Sin alertas de calidad.</p>'}<p class="muted xs" style="margin-top:10px">${DB.months.length} ${DB.months.length===1?'corte observado':'cortes observados'}.</p>`;
+}
+function tourView(){
+ const n=TOUR_STEPS.length,[title,ask,body]=TOUR_STEPS[tourStep],last=tourStep===n-1;
+ return `<div class="tour" role="dialog" aria-label="Revisión guiada"><div class="tourTop"><span class="caps">REVISIÓN GUIADA · PASO ${tourStep+1} DE ${n}</span><button type="button" class="smallbtn" data-tour="close">Salir</button></div><i class="tourBar"><u style="width:${Math.round(100*(tourStep+1)/n)}%"></u></i><div class="tourPanel"><span class="tourStepName">${safe(title)}</span><h2>${safe(ask)}</h2><div class="tourBody">${body()}</div></div><div class="tourNav"><button type="button" class="smallbtn" data-tour="prev" ${tourStep===0?'disabled':''}>Anterior</button><span class="tourDots">${TOUR_STEPS.map((_,i)=>`<i class="${i===tourStep?'on':i<tourStep?'done':''}"></i>`).join('')}</span><button type="button" class="tourNext" data-tour="${last?'close':'next'}">${last?'Finalizar':'Siguiente'}</button></div></div>`;
+}
 function controlView(){
  const s=current(),q=qualityReport(s),tests=modelAuditSuite(),passed=tests.filter(z=>z.ok).length,c=evaluate(s),warn=c.errors.filter(z=>z.level!=='info').length,cal=!s.missing.length,last=(DB.seals||[]).filter(z=>z.auto).slice(-1)[0];
  const bodies={antecedentes:antecedentesView,productos:configuracionView,cortes:snapshotView,auditoria:audits,variables:matrixView,metodologia:methodView};
- return `${sec('Centro de control','Todo se lee y se guarda solo. Aquí solo ves lo importante.')}
- <div class="grid stats">${kpi('Confianza de evidencia',`${q.reliability}/100`,'Calidad de los datos, no es score')}${kpi('Cortes observados',DB.months.length,'Desde el 15 de noviembre de 2026')}${kpi('Pruebas del motor',`${passed}/${tests.length}`,'Coherencia algorítmica local')}${kpi('Advertencias',warn,'Datos por revisar',warn?'neg':'')}</div>
- <div class="card" style="margin:15px 0 12px"><div class="hrow wrapMobile"><div><div class="caps">ESTADO</div><h2 style="margin:6px 0 2px">${cal?'Calibrado':'Incompleto'}</h2><p class="sm">${cal?'Todos los datos esenciales están disponibles; el score se calcula.':'Falta información esencial; el score no se calcula hasta completarla.'}</p></div><div class="links"><span class="tag good">● Guardado automático${last?' · '+safe(last.period):''}</span><button class="smallbtn" data-q-act="edit">Editar antecedentes</button></div></div>${s.missing.length?`<div class="warnings">${s.missing.map(m=>`<div class="witem critical"><span>!</span><div>${safe(m)}</div></div>`).join('')}</div>`:''}</div>
- ${CC_SECTIONS.map(([k,l])=>`<details class="ccdet" data-cc="${k}" ${ccOpen[k]?'open':''}><summary>${l}</summary><div class="ccbody">${bodies[k]()}</div></details>`).join('')}`;
+ return `${sec('Centro de control','Todo se lee y se guarda solo.')}
+ <div class="card tourCta"><div><div class="caps">REVISIÓN GUIADA</div><h2 style="margin:6px 0 4px">Recorre tu perfil paso a paso</h2><p class="sm" style="margin:0">Calidad de los datos, antecedentes, productos y más, uno por uno.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="smallbtn" data-q-act="edit">Editar cuestionario</button><button type="button" class="tourNext" data-tour="start">Iniciar recorrido</button></div></div>
+ <div class="grid stats">${kpi('Calidad de los datos',`${q.reliability}/100`,cal?'Calibrado':'Incompleto')}${kpi('Cortes observados',DB.months.length,'')}${kpi('Pruebas del motor',`${passed}/${tests.length}`,'')}${kpi('Advertencias',warn,'',warn?'neg':'')}</div>
+ <details class="ccAll" ${CC_SECTIONS.some(([k])=>ccOpen[k])?"open":""}><summary>Ver todo sin recorrido</summary>${CC_SECTIONS.map(([k,l])=>`<details class="ccdet" data-cc="${k}" ${ccOpen[k]?'open':''}><summary>${l}</summary><div class="ccbody">${bodies[k]()}</div></details>`).join('')}</details>`;
 }
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-tour]');if(!b)return;const a=b.dataset.tour;if(a==='start')tourStep=0;else if(a==='next')tourStep=Math.min(TOUR_STEPS.length-1,tourStep+1);else if(a==='prev')tourStep=Math.max(0,tourStep-1);else tourStep=null;render();window.scrollTo({top:0})});
 document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.classList?.contains('ccdet')&&d.dataset.cc)ccOpen[d.dataset.cc]=d.open},true);
 document.addEventListener('change',e=>{
  const t=e.target;if(!t.dataset?.ov)return;

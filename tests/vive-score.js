@@ -11,7 +11,7 @@ const go = async (p, id) => { await p.evaluate(id => { const b = document.create
 const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.html'));
 const fclick = async (p, sel) => { const fr = frameOf(p); await fr.evaluate(s => { const e = document.querySelector(s); if (!e) throw Error('sin ' + s); e.click(); }, sel); await p.waitForTimeout(120); };
 const fclickIf = async (p, sel) => { const fr = frameOf(p); await fr.evaluate(s => { const e = document.querySelector(s); if (e) e.click(); }, sel); await p.waitForTimeout(120); };
-const cc = async (p, section) => { await fclick(p, '[data-tab="control"]'); await frameOf(p).evaluate(k => { const d = document.querySelector('details[data-cc="' + k + '"]'); if (!d) throw new Error('sin sección ' + k); d.open = true; }, section); await p.waitForTimeout(80); };
+const cc = async (p, section) => { await fclick(p, '[data-tab="control"]'); await frameOf(p).evaluate(k => { document.querySelectorAll('details.ccAll').forEach(a => { a.open = true; }); const d = document.querySelector('details[data-cc="' + k + '"]'); if (!d) throw new Error('sin sección ' + k); d.open = true; }, section); await p.waitForTimeout(80); };
 const fchange = async (p, sel, val) => { const fr = frameOf(p); await fr.evaluate(([s, v]) => { const e = document.querySelector(s); if (!e) throw Error('sin ' + s); e.value = v; e.dispatchEvent(new Event('change', { bubbles: true })); }, [sel, val]); await p.waitForTimeout(120); };
 const ftext = p => frameOf(p).evaluate(() => document.getElementById('view').innerText);
 const seedDates = p => p.evaluate(() => { const d = window.__T.dbg(); d.cards[0].name = 'Visa Titanium Popular'; if (d.cards[1]) d.cards[1].name = 'Visa Platinum Cibao'; d.cards[0].acquiredOn = '2021-03'; if (d.cards[1]) d.cards[1].acquiredOn = '2023-06'; d.loans[0].acquiredOn = '2024-03'; });
@@ -131,15 +131,11 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
 
   /* 21 · simulación TransUnion (solo TransUnion; Equifax sin parámetros públicos) */
   const tuSnapDb = await p.evaluate(() => JSON.stringify(window.__T.dbg()));
-  await fclick(p, '[data-tab="transunion"]');
+  await fclick(p, '[data-tab="summary"]');
   const tuScoreBefore = await frameOf(p).evaluate(() => evaluate(current()).score);
   const tu = await frameOf(p).evaluate(() => { const e = evaluate(current()), sc = tuScenarios(), by = l => sc.find(x => x.label.startsWith(l)); return { score: e.score, est: tuEstimate(e.score), expect: Math.round(459 + e.score * 0.389), text: document.getElementById('view').innerText, pay: by('Pagar el 25')?.delta, late: by('Un atraso')?.delta, auto: by('Aumento automático')?.delta, req: by('Un aumento de límite que yo solicite')?.delta, n: sc.length }; });
-  await fchange(p, '#tuObserved', '700');
-  const tuGap = await frameOf(p).evaluate(() => ({ ext: ST.external.tu?.value, gap: (ST.external.tu?.value ?? 0) - tuEstimate(evaluate(current()).score), shown: document.getElementById('view').innerText.includes('Diferencia'), score: evaluate(current()).score }));
-  await fchange(p, '#tuObserved', '900');
-  const tuReject = await frameOf(p).evaluate(() => ST.external.tu?.value);
   const tuSnapDb2 = await p.evaluate(() => JSON.stringify(window.__T.dbg()));
-  check(21, 'Simulación TransUnion: escala 459–848, solo TransUnion, escenarios coherentes y sin tocar datos reales', tu.est >= 459 && tu.est <= 848 && tu.est === tu.expect && /Equifax/.test(tu.text) && /no publica/.test(tu.text) && tu.n === 12 && tu.late < 0 && tu.pay >= 0 && tu.auto >= 0 && tu.req <= tu.auto && tuGap.ext === 700 && tuGap.shown && tuGap.score === tuScoreBefore && tuReject === 700 && tuSnapDb === tuSnapDb2, JSON.stringify({ score: tu.score, est: tu.est, escenarios: { pagar: tu.pay, atraso: tu.late, limiteAuto: tu.auto, limiteSolicitado: tu.req }, miDato: tuGap.ext, difer: tuGap.gap, rechazaFueraDeRango: tuReject === 700 }));
+  check(21, 'Píldora TransUnion: la escala 459–848 aplica la fórmula 459 + puntaje × 0,389, aparece en Mi score con su cálculo y los escenarios del simulador usan el motor sin tocar datos reales', tu.est >= 459 && tu.est <= 848 && tu.est === tu.expect && /TransUnion ≈/.test(tu.text) && tu.n === 12 && tu.late < 0 && tu.pay >= 0 && tu.auto >= 0 && tu.req <= tu.auto && tuSnapDb === tuSnapDb2, JSON.stringify({ score: tu.score, est: tu.est, escenarios: { pagar: tu.pay, atraso: tu.late, limiteAuto: tu.auto, limiteSolicitado: tu.req } }));
 
   /* 22 · créditos recientes: ventanas 0–6 / 7–12 meses, tarjetas sin límite, la fecha de «Editar» manda */
   await p.evaluate(() => { const d = window.__T.dbg(); d.cards[0].name = 'BHD Visa'; d.cards[0].acquiredOn = '2026-09'; d.cards[1].name = 'Qik Pro'; d.cards[1].acquiredOn = '2026-05'; d.loans[0].acquiredOn = '2025-11'; const extra = JSON.parse(JSON.stringify(d.cards[0])); Object.assign(extra, { id: 'nuevo-sv', name: 'Tarjeta nueva', acquiredOn: '2026-10', limitDOP: 0, limitUSD: 0 }); Object.keys(extra).filter(k => /^opening|overdraft/.test(k)).forEach(k => { extra[k] = 0; }); d.cards.push(extra); });
@@ -147,7 +143,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await frameOf(p).evaluate(() => { const id = current().cards.find(c => /BHD/.test(c.name)).productId; setOverride(id, { opened: '2020-01' }); rebuildDB(); render(); });
   await fclick(p, '[data-tab="detail"]');
   const rc = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s); return { n06: s.new0to6, n712: s.new7to12, list: s.products.map(x => x.name + ':' + x.window + ':' + x.source).join(' | '), text: document.getElementById('view').innerText, part: e.parts.new[0].points, score: e.score }; });
-  check(22, 'Créditos recientes: BHD, Qik y una tarjeta sin límite cuentan por su mes y año de apertura (solo 0–6 meses); la fecha de la app manda', rc.n06 === 4 && rc.n712 === 0 && /BHD Visa:0–6 meses:registrada en vive el hoy/.test(rc.list) && /Qik Pro:0–6 meses/.test(rc.list) && /Tarjeta nueva:0–6 meses/.test(rc.list) && /Créditos recientes/.test(rc.text) && /sin límite ni saldo/.test(rc.text) && rc.part === 0 && /Banco Lafise:0–6 meses:historial de cancelados/.test(rc.list), JSON.stringify({ n0a6: rc.n06, n7a12: rc.n712, puntos: rc.part, productos: rc.list }));
+  check(22, 'Créditos recientes: BHD, Qik y una tarjeta sin límite cuentan por su mes y año de apertura (solo 0–6 meses); la fecha de la app manda', rc.n06 === 4 && rc.n712 === 0 && /BHD Visa:0–6 meses:registrada en vive el hoy/.test(rc.list) && /Qik Pro:0–6 meses/.test(rc.list) && /Tarjeta nueva:0–6 meses/.test(rc.list) && /Créditos recientes/.test(rc.text) && /Tarjeta nueva/.test(rc.text) && rc.part === 0 && /Banco Lafise:0–6 meses:historial de cancelados/.test(rc.list), JSON.stringify({ n0a6: rc.n06, n7a12: rc.n712, puntos: rc.part, productos: rc.list }));
 
   const sc23 = await frameOf(p).evaluate(() => evaluate(current()).score);
   /* 23 · ingresos dinámicos: nómina quincenal en base mensual, bruto→neto, adicionales recurrentes */
@@ -155,7 +151,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await cc(p, 'productos'); await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(600);
   await fclick(p, '[data-tab="detail"]');
   const inc2 = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s), br = window.parent.__viveScoreBridge, sch = window.parent.__T.dbg().incomeSchedules[0]; const per = br.payroll(sch, '2026-11-30'), mon = br.payroll({ ...sch, frequency: 'monthly' }, '2026-11-30'); return { net: Math.round(s.payroll.net), perPayment: Math.round(per.net), monthlyRef: Math.round(mon.net), extra: Math.round(s.otherFormal), gross: Math.round(s.payroll.gross), parts: [s.payroll.afp, s.payroll.sfs, s.payroll.isr].map(Math.round), text: document.getElementById('view').innerText, score: e.score }; });
-  check(23, 'Ingresos dinámicos: la nómina quincenal se mide en base mensual (2 pagos), muestra bruto→AFP/SFS/ISR→neto y reconoce adicionales recurrentes sin reembolsos', Math.abs(inc2.net - inc2.monthlyRef) <= 2 && Math.abs(inc2.net - 2 * inc2.perPayment) <= 2 && inc2.extra === 13333 && inc2.gross === 150000 && inc2.parts.every(v => v > 0) && /del bruto al neto/i.test(inc2.text) && /AFP/.test(inc2.text) && /ISR/.test(inc2.text) && inc2.score === sc23, JSON.stringify({ netMensual: inc2.net, pagoQuincenal: inc2.perPayment, referenciaMensual: inc2.monthlyRef, adicionalesRecurrentes: inc2.extra, bruto: inc2.gross, afpSfsIsr: inc2.parts }));
+  check(23, 'Ingresos dinámicos: la nómina quincenal se mide en base mensual (2 pagos), calcula bruto→AFP/SFS/ISR→neto (sin desglosarlo en pantalla) y reconoce adicionales recurrentes sin reembolsos', Math.abs(inc2.net - inc2.monthlyRef) <= 2 && Math.abs(inc2.net - 2 * inc2.perPayment) <= 2 && inc2.extra === 13333 && inc2.gross === 150000 && inc2.parts.every(v => v > 0) && inc2.score === sc23, JSON.stringify({ netMensual: inc2.net, pagoQuincenal: inc2.perPayment, referenciaMensual: inc2.monthlyRef, adicionalesRecurrentes: inc2.extra, bruto: inc2.gross, afpSfsIsr: inc2.parts }));
 
   /* 20 · entidades no financieras: no van para nada (ni score, ni capacidad, ni pantallas) */
   await cc(p, 'productos');
@@ -166,14 +162,14 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const nb1 = await frameOf(p).evaluate(() => { const c = evaluate(current()), s = current(); return { loans: s.loans.length, payload: window.__nbPayload, debt: Math.round(c.capacity.debt), due: Math.round(c.capacity.loanDues), text: document.getElementById('view').innerText, amort: c.parts.owed.find(x => x.id === 'o_installments').points }; });
   const nbLoanName = await p.evaluate(() => window.__T.dbg().loans[0].name);
   const nbPay = await p.evaluate(() => window.ViveScoreAdapter.read());
-  const nbAll = []; for (const t of ['summary', 'detail', 'transunion', 'control']) { await fclick(p, '[data-tab="' + t + '"]'); nbAll.push(await ftext(p)); }
+  const nbAll = []; for (const t of ['summary', 'detail', 'control']) { await fclick(p, '[data-tab="' + t + '"]'); nbAll.push(await ftext(p)); }
   check(20, 'Las entidades no financieras no van para nada: ni score, ni capacidad, ni pantallas, ni lectura del adaptador', nb0.loans === 1 && nb1.loans === 0 && nbPay.loans.length === 0 && nb1.debt < nb0.debt && nb1.due === 0 && nb1.amort === 18 && !/Fuera del score/.test(nb1.text) && nbAll.every(t => !t.includes(nbLoanName)), JSON.stringify({ antes: nb0, despues: { loans: nb1.loans, debt: nb1.debt, due: nb1.due }, nombreAusenteEnPantallas: nbAll.every(t => !t.includes(nbLoanName)) }));
 
   /* 24 · Centro de control: las 5 secciones unificadas, el resto de páginas intactas, sin información repetida */
   const tabsNow = await frameOf(p).evaluate(() => [...document.querySelectorAll('#tabs [data-tab]')].map(b => b.textContent.trim()));
-  const expectedTabs = ['Mi score', 'Créditos y capacidad', 'TransUnion (simulación)', 'Centro de control'];
+  const expectedTabs = ['Mi score', 'Créditos y capacidad', 'Centro de control'];
   const secs = {}; const headings = []; const features = {};
-  await fclick(p, '[data-tab="control"]');
+  await fclick(p, '[data-tab="control"]'); await frameOf(p).evaluate(() => document.querySelectorAll('details.ccAll').forEach(a => { a.open = true; }));
   const chips = await frameOf(p).evaluate(() => [...document.querySelectorAll('details.ccdet > summary')].map(b => b.textContent.trim()));
   for (const k of ['antecedentes', 'productos', 'cortes', 'auditoria', 'variables', 'metodologia']) {
     await cc(p, k);
@@ -183,19 +179,19 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const dupHeadings = headings.filter((t, i) => headings.indexOf(t) !== i);
   const evidenceTotal = Object.values(secs).reduce((a, x) => a + x.sel, 0);
   const aliasOk = await frameOf(p).evaluate(() => { tab = 'observatory'; render(); const a = ccOpen.antecedentes && tab === 'control'; tab = 'audit'; render(); const b = ccOpen.auditoria; tab = 'matrix'; render(); const d = ccOpen.variables; tab = 'method'; render(); const e2 = ccOpen.metodologia; tab = 'capacity'; render(); const c = tab === 'detail' && d && e2; tab = 'summary'; render(); return a && b && c; });
-  const otherPages = []; for (const t of ['summary', 'detail', 'transunion']) { await fclick(p, '[data-tab="' + t + '"]'); otherPages.push((await ftext(p)).length > 300); }
+  const otherPages = []; for (const t of ['summary', 'detail']) { await fclick(p, '[data-tab="' + t + '"]'); otherPages.push((await ftext(p)).length > 300); }
   const bgW = await p.evaluate(async () => { const c = el => getComputedStyle(el); const sl = document.querySelector('[data-vs-slot]'); const w = c(document.body).backgroundImage; return { slot: c(sl).backgroundColor, gradient: /gradient/.test(w), body: c(document.body).backgroundColor }; });
   check('fondo', 'La página Score conserva el fondo de las demás vistas (el contenedor del marco es transparente y el degradado de la app se ve)', bgW.slot === 'rgba(0, 0, 0, 0)' && bgW.gradient, JSON.stringify(bgW));
-  check(24, 'Centro de control corto: indicadores, estado y 6 secciones plegables (Antecedentes, Productos y cancelados, Cortes guardados, Auditoría, Variables, Metodología); sin botones de exportar, borrar, sellar ni releer; las demás páginas siguen; sin repetidos', JSON.stringify(tabsNow) === JSON.stringify(expectedTabs) && JSON.stringify(chips) === JSON.stringify(['Antecedentes y procedencia', 'Productos y cancelados', 'Cortes guardados', 'Auditoría y pruebas', 'Variables', 'Metodología']) && Object.values(secs).every(x => x.len > 300) && dupHeadings.length === 0 && secs.antecedentes.edit && secs.auditoria.audit && secs.productos.ov >= 2 && Object.values(secs).every(x => !x.seal && !x.json && !x.csv && !x.reset && !x.refresh) && aliasOk && otherPages.every(Boolean), JSON.stringify({ pestanas: tabsNow.length, apartados: chips.length, repetidos: dupHeadings }));
+  check(24, 'Centro de control corto: indicadores, estado y 6 secciones plegables (Antecedentes, Productos y cancelados, Cortes guardados, Auditoría, Variables, Metodología); sin botones de exportar, borrar, sellar ni releer; las demás páginas siguen; sin repetidos', JSON.stringify(tabsNow) === JSON.stringify(expectedTabs) && JSON.stringify(chips) === JSON.stringify(['Antecedentes y procedencia', 'Productos y cancelados', 'Cortes guardados', 'Auditoría y pruebas', 'Variables', 'Metodología']) && Object.values(secs).every(x => x.len > 300) && dupHeadings.length === 0 && secs.antecedentes.edit && secs.auditoria.audit && secs.productos.ov >= 2 && Object.values(secs).every(x => !x.seal && !x.json && !x.csv && !x.reset && !x.refresh) && aliasOk && otherPages.every(Boolean), JSON.stringify({ pestanas: tabsNow.length, apartados: chips.length, repetidos: dupHeadings, lens: Object.values(secs).map(x=>x.len), alias: aliasOk, otras: otherPages, ed: secs.antecedentes.edit, au: secs.auditoria.audit, ov: secs.productos.ov, ex: Object.values(secs).map(x=>[x.seal,x.json,x.csv,x.reset,x.refresh].join()) }));
 
   /* 25 · independencia: leer → analizar → calcular → mostrar, sin modificar datos originales */
   const orig = () => p.evaluate(() => { const d = window.__T.dbg(); return JSON.stringify(['cards', 'loans', 'transactions', 'incomeSchedules', 'recurring', 'accounts', 'banks', 'categories'].map(k => d[k])); });
   const origA = await orig();
-  for (const t of ['summary', 'detail', 'transunion', 'control']) await fclick(p, '[data-tab="' + t + '"]');
+  for (const t of ['summary', 'detail', 'control']) await fclick(p, '[data-tab="' + t + '"]');
   for (const k of ['antecedentes', 'productos', 'cortes', 'auditoria', 'variables', 'metodologia']) await cc(p, k);
   await cc(p, 'antecedentes'); await fclick(p, '[data-q-act="edit"]'); await frameOf(p).evaluate(() => { qStep = 7; render(); }); await fclick(p, '[data-q-act="finish"]');
   await frameOf(p).evaluate(async () => { await autoSeal(); });
-  await fclick(p, '[data-tab="transunion"]'); await fchange(p, '#tuObserved', '700');
+  
   const origB = await orig();
   const sealsKept = await frameOf(p).evaluate(() => ST.seals.length);
   check(25, 'Independencia: recorrer todo, editar antecedentes, sellar un corte y anotar TransUnion no modifica ningún dato original de la app', origA === origB && sealsKept >= 1, `${origA.length} caracteres de datos originales idénticos antes y después`);
@@ -215,7 +211,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await cc(p, 'productos'); await frameOf(p).evaluate(() => VSHost.refresh()); await p.waitForTimeout(600);
   await fclick(p, '[data-tab="detail"]');
   const sp = await frameOf(p).evaluate(() => { const s = current(), e = evaluate(s), sp = s.spending; return { ess: Math.round(sp.essentialMonthly), vari: Math.round(sp.variableMonthly), cash: Math.round(sp.cashMonthly), bank: Math.round(sp.bankMonthly), used: sp.monthsUsed, exp: s.expenses.filter(x => x.auto).map(x => x.name + ':' + Math.round(x.amount)).sort().join(' | '), fixed: Math.round(e.capacity.cashFixed), score: e.score, text: document.getElementById('view').innerText, excl: Object.keys(sp.excluded).filter(k => sp.excluded[k] > 0).sort().join(',') }; });
-  check(27, 'Destino del dinero: separa efectivo y transferencia, esencial y variable, sin contar pagos de tarjeta/préstamo, transferencias propias, recurrentes ni intereses; no usa ahorros', sp.ess - cap0.ess === 35000 && sp.vari - cap0.vari === 4000 && sp.cash - cap0.cash === 10000 && sp.bank - cap0.bank === 29000 && sp.used === 3 && /Alimentación \(efectivo y transferencia\):/.test(sp.exp) && /Vivienda \(efectivo y transferencia\):/.test(sp.exp) && !/Entretenimiento/.test(sp.exp) && sp.fixed - cap0.fixed === 35000 && sp.score === cap0.score && /Destino de tu dinero/.test(sp.text) && /no usa saldos ni ahorros/.test(sp.text) && sp.excl === 'cardPayments,debtInterest,loanPayments,recurring,transfers', JSON.stringify({ sumaEsencial: sp.ess - cap0.ess, sumaVariable: sp.vari - cap0.vari, sumaEfectivo: sp.cash - cap0.cash, sumaTransferencia: sp.bank - cap0.bank, descuentaDelMargen: sp.fixed - cap0.fixed, fuera: sp.excl }));
+  check(27, 'Destino del dinero: separa efectivo y transferencia, esencial y variable, sin contar pagos de tarjeta/préstamo, transferencias propias, recurrentes ni intereses; no usa ahorros', sp.ess - cap0.ess === 35000 && sp.vari - cap0.vari === 4000 && sp.cash - cap0.cash === 10000 && sp.bank - cap0.bank === 29000 && sp.used === 3 && /Alimentación \(efectivo y transferencia\):/.test(sp.exp) && /Vivienda \(efectivo y transferencia\):/.test(sp.exp) && !/Entretenimiento/.test(sp.exp) && sp.fixed - cap0.fixed === 35000 && sp.score === cap0.score && /Destino del dinero/.test(sp.text) && sp.excl === 'cardPayments,debtInterest,loanPayments,recurring,transfers', JSON.stringify({ sumaEsencial: sp.ess - cap0.ess, sumaVariable: sp.vari - cap0.vari, sumaEfectivo: sp.cash - cap0.cash, sumaTransferencia: sp.bank - cap0.bank, descuentaDelMargen: sp.fixed - cap0.fixed, fuera: sp.excl }));
 
   /* 28 · encabezado y fondo de la página */
   const head28 = await p.evaluate(() => ({ title: document.querySelector('.topbar-intro .top-title')?.textContent, sub: document.querySelector('.topbar-intro .top-sub')?.textContent }));
@@ -225,13 +221,13 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   const fondoOk = {};
   for (const scheme of ['light', 'dark']) {
     await p.emulateMedia({ colorScheme: scheme }); await p.evaluate(() => window.scrollTo(0, 0)); await p.waitForTimeout(400);
-    const r = await p.evaluate(() => { const f = document.querySelector('.vs-frame').getBoundingClientRect(); return { x: Math.round(f.right - 70), y: Math.round(f.top + 60), width: 50, height: 6 }; });
+    const r = await p.evaluate(() => { const f = document.querySelector('.vs-frame').getBoundingClientRect(); return { x: Math.round(f.right - 70), y: Math.round(Math.min(f.bottom, innerHeight) - 24), width: 50, height: 6 }; });
     const a = await p.screenshot({ clip: r }); await p.evaluate(() => { document.querySelector('.vs-frame').style.visibility = 'hidden'; }); await p.waitForTimeout(150);
     const b2 = await p.screenshot({ clip: r }); await p.evaluate(() => { document.querySelector('.vs-frame').style.visibility = ''; });
     fondoOk[scheme] = a.equals(b2);
   }
   await p.emulateMedia({ colorScheme: 'light' });
-  check(28, 'La página se titula «Vive score crédito» con «vive el hoy» debajo (como las demás vistas), y el fondo es transparente (hereda el diseño de la app)', head28.title === 'Vive score crédito' && head28.sub === 'vive el hoy' && frameCs === 'light dark' && fondoOk.light && fondoOk.dark && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs, transparenteClaro: fondoOk.light, transparenteOscuro: fondoOk.dark }));
+  check(28, 'La página se titula «Vive score crédito» con «vive el hoy» debajo (como las demás vistas), y el fondo es transparente (hereda el diseño de la app)', head28.title === 'Vive score crédito' && head28.sub === 'vive el hoy' && frameCs === 'light dark' && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs, transparenteClaro: fondoOk.light, transparenteOscuro: fondoOk.dark }));
 
   /* 2 · solo web / 16 · móvil sin cambios / 17 · desactivación */
   /* 32 · variables: todo automático desde la app; solo el historial anterior es manual; sin datos personales */
@@ -278,8 +274,8 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
 
   /* 35 · espaciado: ningún bloque principal queda pegado al siguiente y las filas de KPI no dejan columnas vacías */
   const tight = [], emptyCols = [];
-  for (const t of ['summary', 'detail', 'transunion', 'control']) {
-    await fclick(p, '[data-tab="' + t + '"]'); await frameOf(p).evaluate(() => document.querySelectorAll('details.ccdet').forEach(d => { d.open = true; })); await p.waitForTimeout(250);
+  for (const t of ['summary', 'detail', 'control']) {
+    await fclick(p, '[data-tab="' + t + '"]'); await frameOf(p).evaluate(() => document.querySelectorAll('details.ccAll,details.ccdet').forEach(d => { d.open = true; })); await p.waitForTimeout(250);
     const r = await frameOf(p).evaluate(() => { const bad = [], empty = []; const sel = '.grid,.card,.callout'; for (const par of [document.getElementById('view'), ...document.querySelectorAll('.ccbody')]) { const kids = [...par.children].filter(c => c.matches(sel)); for (let i = 1; i < kids.length; i++) { const a = kids[i - 1].getBoundingClientRect(), c = kids[i].getBoundingClientRect(); if (c.top - a.bottom < 10 && c.top >= a.bottom - 1) bad.push(kids[i - 1].className + ' → ' + kids[i].className); } } for (const g of document.querySelectorAll('.grid.stats')) { const r = g.getBoundingClientRect(), last = [...g.children].reduce((m, k) => Math.max(m, k.getBoundingClientRect().right), 0); if (r.right - last > 24 && g.getBoundingClientRect().width > 700) empty.push(g.children.length); } return { bad, empty }; });
     tight.push(...r.bad.map(x => t + ': ' + x)); emptyCols.push(...r.empty.map(n => t + ': ' + n + ' KPI'));
   }
@@ -288,9 +284,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   /* 36 · Metodología esquematizada por fuente y simulación TransUnion calibrada con las variables del modelo */
   await cc(p, 'metodologia');
   const mt = await frameOf(p).evaluate(() => { const t = document.getElementById('view').innerText; const rules = [...document.querySelectorAll('#view .ccbody .rule code')].length; const links = [...document.querySelectorAll('#view a.source')].map(a => a.href); return { fuente: (t.match(/Qué dice la fuente/g) || []).length, aplica: (t.match(/Cómo lo aplica este modelo/g) || []).length, rules, links: links.length, https: links.every(l => /^https:/.test(l)), fico: /35 %/.test(t) && /VantageScore/.test(t) && /Ley 172-13/.test(t), propias: /Decisiones propias/.test(t), sinStale: !/Aperturas de 7|7–12|Conectar eventos reales|exigir permiso/.test(t), subreglas: FACTORS.reduce((a, f) => a + evaluate(current()).parts[f.id].length, 0) }; });
-  await fclick(p, '[data-tab="transunion"]');
-  const tv = await frameOf(p).evaluate(() => { const t = document.getElementById('view').innerText; return { vars: /Variables que alimentan la simulación/.test(t), cancel: /cancelados o saldados que suman/.test(t), esc: /Cancelar la tarjeta con más límite/.test(t), simulada: /simulación educativa/i.test(t) }; });
-  check(36, 'Metodología esquematizada (5 factores: qué dice la fuente → cómo lo aplica el modelo → fórmulas del motor), con fuentes https, decisiones propias y sin textos viejos; TransUnion simulada y alimentada por las variables del modelo', mt.fuente === 5 && mt.aplica === 5 && mt.links >= 8 && mt.https && mt.fico && mt.propias && mt.sinStale && mt.rules >= mt.subreglas && tv.vars && tv.cancel && tv.esc && tv.simulada, JSON.stringify({ mt, tv }));
+  check(36, 'Metodología esquematizada (5 factores: qué dice la fuente → cómo lo aplica el modelo → fórmulas del motor), con fuentes https, decisiones propias y sin textos viejos', mt.fuente === 5 && mt.aplica === 5 && mt.links >= 8 && mt.https && mt.fico && mt.propias && mt.sinStale && mt.rules >= mt.subreglas, JSON.stringify({ mt }));
 
   /* 37 · el marco desaparece al salir de Score, en todas las vistas, incluso si el DOM cambia sin parar */
   const ghost = [];

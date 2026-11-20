@@ -102,7 +102,7 @@ const res = []; const check = (n, name, ok, extra = '') => { res.push(ok); conso
   check('R10', 'Un movimiento de tarjeta duplicado genera una advertencia de calidad de datos', R.dupWarn);
   check('R11', 'Ingresos, liquidez y tipo de cambio de la matriz no mueven el puntaje de comportamiento (excepto vía utilización mixta)', R.matrix.filter(m => /Ingresos|Liquidez/.test(m.lbl)).every(m => m.d === 0));
   check('E1', 'Mora vigente con la escala de severidad: crece con los días y deja de saturarse en 35 puntos (0, 15, 45, 75, 100, 200 y 672 días)', R.live.every((v, i) => i === 0 || v <= R.live[i - 1]) && R.live[0] - R.live[6] >= 150, JSON.stringify(R.live));
-  check('E2', 'Con menos de 12 meses de evidencia el índice no puede llamarse «sólido» y muestra su confianza; con evidencia suficiente sí puede', R.devLabel === 'Perfil en desarrollo' && R.okLabelIsNotDev && /Confianza de los datos \d+\/100/.test(R.conf.text), R.conf.text);
+  check('E2', 'Con menos de 12 meses de evidencia el índice no puede llamarse «sólido» y muestra su confianza; con evidencia suficiente sí puede', R.devLabel === 'Perfil en desarrollo' && R.okLabelIsNotDev && /Calidad \d+\/100/.test(R.conf.text), R.conf.text);
   check('E4', 'Un expediente de 2 meses puntúa menos que uno de 10 años con el mismo comportamiento', R.thin < R.mature, JSON.stringify([R.thin, R.mature]));
   check('E5', 'Con saldo del corte conocido, pagar después del corte no mejora la utilización medida', R.stmt[0] === R.stmt[1], JSON.stringify(R.stmt));
   check('E7', 'Recuperación progresiva: el descuento de un atraso antiguo decrece con los meses y llega a 0', R.decay.every((v, i) => i === 0 || v <= R.decay[i - 1]) && R.decay.at(-1) === 0 && R.decay[0] > 0, JSON.stringify(R.decay));
