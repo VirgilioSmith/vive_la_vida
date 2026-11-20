@@ -284,7 +284,7 @@ function loanStat(label,value,note,iconName,tone=''){
 }
 {const _accountDetail=accountDetail,_loanDetail=loanDetail;
  accountDetail=function(a){const html=_accountDetail(a);return a&&a.kind!=='cash'?html+`<div class="panel section v1400-antiguedad-panel"><div class="panel-head"><h3>Antigüedad de la cuenta</h3></div>${antiguedadRow(a,'account')}</div>`:html};
- loanDetail=function(l){const html=_loanDetail(l);return html+`<div class="panel section v1400-antiguedad-panel"><div class="panel-head"><h3>Antigüedad del préstamo</h3></div>${antiguedadRow(l,'loan')}</div>`}}
+ loanDetail=function(l){return _loanDetail(l)}}
 function financeSnapshot(type,recordId,rules,results){
  db.recordSnapshots=Array.isArray(db.recordSnapshots)?db.recordSnapshots:[];
  const s=window.FinanzasReglas.instantanea({tipo:type,idRegistro:String(recordId),fecha:today(),reglas:rules,resultados:results});
