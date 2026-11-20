@@ -55442,3 +55442,26 @@ html body #app#app #page button.v1244-pill.is-none .v1244-pill-title{color:var(-
 
 html body #app#app #page button.v1244-pill .v1244-pill-top{margin-top:4px}
 html body #app#app #page button.v1244-pill .v1244-pill-sub{margin-top:1px;font-size:12px}
+
+/* V1254 · Corte: encabezado de estado + dos píldoras negras con flecha (un toque = pagar) */
+html body #app#app #page .v1244-cuthead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:0 0 12px}
+html body #app#app #page .v1244-cuthead strong{font-size:13px;font-weight:900;letter-spacing:.1em}
+html body #app#app #page .v1244-cuthead span{font-size:13.5px;opacity:.7;font-weight:600}
+html body #app#app #page .v1244-cuthead.is-late strong{color:#d4525e}
+html body #app#app #page .v1244-cuthead.is-soon strong{color:#c97a0a}
+html body #app#app #page .v1244-cuthead.is-ok strong{color:var(--v424-accent-strong)}
+html body #app#app #page button.v1244-pill{position:relative;display:flex!important;align-items:center!important;flex-wrap:wrap;gap:0 8px!important;padding:15px 44px 15px 16px!important;background:#0b0b0e!important;border:0!important;border-radius:999px!important;box-shadow:0 8px 18px rgba(0,0,0,.16)!important;color:#fff!important;text-align:left}
+html body.theme-black #app#app #page button.v1244-pill,html body.theme-dark #app#app #page button.v1244-pill{background:#1b1b22!important;box-shadow:none!important}
+html body #app#app #page button.v1244-pill,html body #app#app #page button.v1244-pill *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body #app#app #page button.v1244-pill .v1244-pill-top{display:flex!important;align-items:baseline;gap:7px;margin:0!important;width:auto}
+html body #app#app #page button.v1244-pill .v1244-pill-top b{font-size:13px;font-weight:800;opacity:.6;letter-spacing:0}
+html body #app#app #page button.v1244-pill .v1244-pill-top em{font-style:normal;font-size:19px;font-weight:850;letter-spacing:-.03em;margin:0;white-space:nowrap}
+html body #app#app #page button.v1244-pill small{flex-basis:100%;font-size:10.5px;opacity:.55;margin-top:2px}
+html body #app#app #page button.v1244-pill .v1244-pill-go{position:absolute;right:15px;top:50%;transform:translateY(-50%);display:grid}
+html body #app#app #page button.v1244-pill .v1244-pill-go svg{width:18px;height:18px;opacity:.55}
+html body #app#app #page button.v1244-pill:disabled{opacity:.5}
+html body #app#app #page button.v1244-pill:disabled .v1244-pill-go{display:none}
+html body #app#app #page button.v1244-pill{justify-content:flex-start!important;align-content:center;padding:14px 40px 14px 18px!important;min-height:64px}
+html body #app#app #page button.v1244-pill .v1244-pill-top em{font-size:17px}
+html body #app#app #page button.v1244-pill .v1244-pill-top b{font-size:12px}
+html body #app#app #page button.v1244-pill .v1244-pill-go{right:12px}
