@@ -8397,8 +8397,8 @@ banks=function(){
     <div class="v46-hero-foot"><span>${scoped.length} instituciones</span><span>${scopeAcctCount} cuentas</span><span>${scopeCardCount} tarjetas</span></div>
    </div>
    <div class="v46-global-financials">
-    <div class="v46-global-main"><span>DEUDA TOTAL</span><strong>${money(debt)}</strong><small>Tarjetas y préstamos registrados</small></div>
-    <div class="v46-global-secondary"><div><span>FONDOS DISPONIBLES</span><strong>${money(liq)}</strong></div><div><span>POSICIÓN NETA*</span><strong>${money(liq+invested-debt)}</strong></div><div><span>DEUDA EN TARJETAS</span><strong>${money(cardDebt)}</strong></div><div><span>PRÉSTAMOS</span><strong>${money(loanDebt)}</strong></div></div>
+    <div class="v46-global-main"><span>NETO</span><strong>${money(liq+invested-debt)}</strong></div>
+    <div class="v46-global-secondary"><div><span>FONDOS DISPONIBLES</span><strong>${money(liq)}</strong></div><div><span>DEUDA TOTAL</span><strong>${money(debt)}</strong></div><div><span>DEUDA EN TARJETAS</span><strong>${money(cardDebt)}</strong></div><div><span>PRÉSTAMOS</span><strong>${money(loanDebt)}</strong></div></div>
     <div class="v46-global-note">*Fondos + certificados − deuda registrada. Excluye otros activos sin valorar. ${v61InstitutionProfile==='all'?'Vista global.':'Solo instituciones del perfil seleccionado; el efectivo sin institución queda fuera.'}</div>
    </div>
  </div>
