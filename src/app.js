@@ -18702,7 +18702,14 @@ function v1243Apply(root){
   pick('toAccountId','account',form.elements.accountId?.value);
  }
 }
-new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1)try{v1243Apply(n)}catch(_){}}).observe(document.body,{childList:true,subtree:true});
+{const pend=new Set();let tm=0;
+ /* Solo se miran ventanas y formularios recién añadidos; las repintadas de página completa no se recorren. Se agrupa todo en un único turno. */
+ new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1&&(n.tagName==='FORM'||n.classList.contains('modal-layer')||n.getAttribute('role')==='dialog'))pend.add(n);
+  if(pend.size&&!tm)tm=setTimeout(()=>{tm=0;const l=[...pend];pend.clear();for(const n of l)if(n.isConnected)try{v1243Apply(n)}catch(_){}},0)}).observe(document.body,{childList:true,subtree:true});}
+/* Prueba de reposo: window.viveIdleTest(30) mide durante 30 s el tiempo ocupado del hilo principal (tareas largas, >50 ms) y los temporizadores creados. Debe dar ≈0 %. */
+window.viveIdleTest=(sec=30)=>new Promise(res=>{let busy=0,n=0;const ob='PerformanceObserver' in window?new PerformanceObserver(l=>{for(const e of l.getEntries()){busy+=e.duration;n++}}):null;try{ob?.observe({type:'longtask',buffered:false})}catch(_){}
+ const t0=performance.now(),i0=window.__viveTimers||0;setTimeout(()=>{ob?.disconnect();const el=performance.now()-t0,r={segundos:Math.round(el/1000),tareasLargas:n,msOcupado:Math.round(busy),porcentajeOcupado:+(100*busy/el).toFixed(2),pestanaVisible:!document.hidden};console.table(r);toast?.('Reposo '+r.segundos+' s: '+r.porcentajeOcupado+' % del hilo en tareas largas ('+r.tareasLargas+')');res(r)},sec*1000)});
+
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
 /* VIVE_SCORE (experimental): puente de SOLO LECTURA hacia los datos existentes; no escribe nada. */
 if(window.VIVE_SCORE_EXPERIMENTAL)window.__viveScoreBridge=Object.freeze({db:()=>db,today,card,bank,cardStatus,loanStatus,loanAccounting,fullOriginalLoan,xconvert,acquiredOnOf,balanceAt:(a,d)=>getAccountBalance(a,d),isFinancial:b=>v40IsFinancial(b),monthlyFactor:f=>v80MonthlyFactor(f),account,activeRecurring:()=>v339ActiveRecurring(),monthlyEquivalent:(a,c,f)=>v339MonthlyEquivalent(a,c,f),upcoming:()=>upcoming(),payroll:(s,d)=>v40Payroll(s,d),theme:()=>db.settings.theme,go:id=>{ui.page=id;render();window.scrollTo(0,0)},rerender:()=>render()});
