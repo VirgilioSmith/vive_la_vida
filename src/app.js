@@ -119,7 +119,6 @@ function v255TaxonomyIconName(kind,category='',subcategory=''){const pack=V255_T
 function v255TaxonomyOptionLabel(kind,category,subcategory=''){const iconName=v255TaxonomyIconName(kind,category,subcategory);const label=subcategory||category||'';return `${String(iconName).startsWith('emoji:')?String(iconName).slice(6):(V255_ICON_TEXT[iconName]||'•')} ${label}`.trim()}
 function v255TaxonomyBadge(kind,category,subcategory='',opts={}){const label=(opts.subOnly&&subcategory)?subcategory:(subcategory||category||'Sin categoría');const iconName=v255TaxonomyIconName(kind,category,subcategory);const cls=`v255-tax-badge${subcategory?' sub':''}${opts.compact?' compact':''}`;const title=subcategory?`${category} / ${subcategory}`:category||label;return `<span class="${cls}" title="${sanitize(title)}"><span class="v255-tax-ico">${icon(iconName)}</span><span class="v255-tax-label">${sanitize(label)}</span></span>`}
 function v255TransactionCategoryCell(t){const kind=['income','bank_reward','card_reward'].includes(t.type)?'ingreso':'gasto';const cat=t.category||(['income','bank_reward','card_reward'].includes(t.type)?'Otros ingresos':(['loan_payment','card_payment'].includes(t.type)?'Deudas e intereses':'Otros gastos'));return `${v255TaxonomyBadge(kind,cat,'',{compact:true})}${v5NeedsAppleCategory(t)?`<button type="button" class="v5-apple-cat-action" data-v5-apple="categorize" data-id="${sanitize(String(t.id))}">Cambiar categoría</button>`:''}${t.subcategory?`<div class="subtitle">${v255TaxonomyBadge(kind,cat,t.subcategory,{compact:true,subOnly:true})}</div>`:''}`}
-function v255TransactionMetaLine(t,prefix=''){const kind=['income','bank_reward','card_reward'].includes(t.type)?'ingreso':'gasto';const cat=t.category||(TRANSL[t.type]||(['income','bank_reward','card_reward'].includes(t.type)?'Otros ingresos':'Otros gastos'));const pre=prefix?`<span class="v255-tax-prefix">${sanitize(prefix)}</span><span class="v255-tax-sep">·</span>`:'';const sub=t.subcategory?`<span class="v255-tax-sep">/</span>${v255TaxonomyBadge(kind,cat,t.subcategory,{compact:true,subOnly:true})}`:'';return `<span class="v255-tax-inline">${pre}${v255TaxonomyBadge(kind,cat,'',{compact:true})}${sub}</span>`}
 function v255DecorateTaxonomyUI(){const root=document.getElementById('app');if(!root)return;root.querySelectorAll('label').forEach(label=>{const catSel=label.querySelector('select[name="category"]');if(catSel){const parentForm=catSel.form||label.closest('form');let preview=label.querySelector('.v255-tax-select-preview');if(!preview){preview=document.createElement('div');preview.className='v255-tax-select-preview';label.appendChild(preview)}const kind=()=>{if(catSel.id==='customParent')return document.getElementById('customKind')?.value||'gasto';if(catSel.id==='txCategory')return parentForm?.elements?.type?.value==='income'?'ingreso':'gasto';if(['recCategory','budgetCategory'].includes(catSel.id))return 'gasto';if(parentForm?.elements?.kind?.value==='ingreso')return 'ingreso';return v255TaxonomyKindForCategory(catSel.value)};const paint=()=>{preview.innerHTML=catSel.value?`<span class="v255-tax-select-note">Categoría</span>${v255TaxonomyBadge(kind(),catSel.value)}`:''};paint();catSel.addEventListener('change',paint)}const subSel=label.querySelector('select[name="subcategory"]');if(subSel){const parentForm=subSel.form||label.closest('form');const catSel=parentForm?.querySelector('select[name="category"]');let preview=label.querySelector('.v255-tax-select-preview');if(!preview){preview=document.createElement('div');preview.className='v255-tax-select-preview';label.appendChild(preview)}const kind=()=>{if(catSel?.id==='txCategory')return parentForm?.elements?.type?.value==='income'?'ingreso':'gasto';if(['recCategory','budgetCategory'].includes(catSel?.id))return 'gasto';if(parentForm?.elements?.kind?.value==='ingreso')return 'ingreso';return v255TaxonomyKindForCategory(catSel?.value)};const paint=()=>{preview.innerHTML=(subSel.value&&catSel?.value)?`<span class="v255-tax-select-note">Subcategoría</span>${v255TaxonomyBadge(kind(),catSel.value,subSel.value,{subOnly:true})}`:''};paint();subSel.addEventListener('change',paint);if(catSel)catSel.addEventListener('change',paint)}})}
 
 let v1235TodayAt=0,v1235Today='';
@@ -1686,7 +1685,6 @@ function smallTxTable(tx){return tx.length?`<div class="table-wrap"><table><thea
    Cuando una promoción y el cashback general coinciden, se usa solo la regla más específica.
    Los beneficios no monetarios se visualizan aparte, sin imputarlos como ingreso.
 */
-const rewardTiers=[['cashback','Cashback (%)'],['points','Puntos / cada 100 unidades'],['discount','Descuento (%) · informativo'],['perk','Beneficio cualitativo · sin estimación']];
 const rewardKindName={cashback:'Cashback',points:'Puntos',discount:'Descuento',perk:'Beneficio'};
 const rewardExpense=t=>t.type==='card_charge'&&!['annual_fee','interest','commission'].includes(t.chargeKind||'');
 const rwNorm=v=>String(v||'').trim().toLocaleLowerCase('es');
@@ -2958,7 +2956,6 @@ const KPI_IDS=Object.values(KPI_DEFS).flat().map(x=>x[0]);
 function dashboardConfig(){const c=db.settings.kpiDashboard||{};let order=Array.isArray(c.groupOrder)?c.groupOrder.filter(x=>KPI_GROUPS.some(g=>g.id===x.id||g.id===x)):[];order=order.map(x=>typeof x==='string'?x:x.id);for(let g of KPI_GROUPS)if(!order.includes(g.id))order.push(g.id);
 return {mode:['all','essential','custom'].includes(c.mode)?c.mode:'all',selected:Array.isArray(c.selected)?c.selected.filter(x=>KPI_IDS.includes(x)):KPI_ESSENTIAL.slice(),groupOrder:order};}
 function saveDashboardConfig(c){db.settings.kpiDashboard={mode:c.mode,selected:[...new Set(c.selected)],groupOrder:c.groupOrder.slice()};persist();}
-function dashboardEnabled(c){return new Set(c.mode==='all'?KPI_IDS:c.mode==='essential'?KPI_ESSENTIAL:c.selected)}
 
 
 /* V176: caja y cuentas agrupadas sin sumar divisas nominales. */
@@ -3309,52 +3306,7 @@ function v195ExtraMetric(id){
  prevD=new Date(y,mm-2,1),prev=monthlyTotals(prevD.getFullYear(),prevD.getMonth()+1);
  const out=(value,foot,route,tone='neutral',raw=null)=>({value,foot,route,tone,raw});
  switch(id){
-  case 'executiveSnapshot': return out(money(m.income),'Ingresos, neto y proyección en un mismo vistazo','income','positive',m.income);
-  case 'incomeProjection':return out(proj.value>0?money(proj.value):'Sin datos',
-   proj.kind+' · '+String(Math.round(proj.coverage))+'% ya registrado','income', 'positive',proj.value);
-  case 'incomeToReceive':return out(fc?.expectedIncome>0?money(fc.expectedIncome):'Sin cobros programados',
-    'Solo pagos recurrentes futuros con fecha definida','income','neutral',num(fc?.expectedIncome));
-  case 'dailyIncomeAverage':return out(m.income>0?money(m.income/elapsed):'Sin ingresos',
-    'Ingreso registrado / '+elapsed+' días del período','income','positive',m.income/elapsed);
-  case 'incomeVsLastMonth':{
-   const change=prev.income>0?(m.income-prev.income)/prev.income*100:null;
-   return out(change===null?'Sin base':(change>0?'+':'')+change.toFixed(1)+'%',
-    prev.income>0?'Comparación con '+money(prev.income)+' del mes anterior':'No hay ingresos previos comparables',
-    'income',change===null?'neutral':change>=0?'positive':'negative',change);
-  }
-  case 'regularIncome':{
-   const expected=v99IncomeMonth(period),val=num(expected?.income);
-   return out(val>0?money(val):'Sin ingresos recurrentes',
-    'Importe mensual considerado por el motor de ingresos','income','positive',val);
-  }
-  case 'netProjection':{
-   const val=fc?fc.net:m.net;
-   return out(money(val),fc?.hasSchedule?'Resultado registrado + entradas y costes programados':'Sin programación adicional; resultado registrado',
-   'income',val>=0?'positive':'negative',val);
-  }
-  case 'savingRate':{
-   const ratio=m.income>0?100*m.net/m.income:null;
-   return out(ratio===null?'Sin base':ratio.toFixed(1)+'%',
-    'Neto del mes / ingresos registrados','advanced',ratio===null?'neutral':ratio>=0?'positive':'negative',ratio);
-  }
-  case 'liquidityCoverage':{
-   const prev3=Array.from({length:3},(_,i)=>{const d=new Date(y,mm-2-i,1);return monthlyTotals(d.getFullYear(),d.getMonth()+1).expense;});
-   const avg=prev3.reduce((a,b)=>a+b,0)/3,ratio=avg>0?cash/avg:null;
-   return out(ratio===null?'Sin base':ratio.toFixed(1)+' meses',
-    'Fondos líquidos / gasto promedio de 3 meses','accounts',ratio===null?'neutral':ratio>=3?'positive':ratio<1?'negative':'neutral',ratio);
-  }
-  case 'commitmentMargin':return out(debts.balance===null?'Sin ingresos base':money(debts.balance),
-    'Ingresos considerados menos compromisos contratados','payments',
-    debts.balance===null?'neutral':debts.balance>=0?'positive':'negative',debts.balance);
-  case 'availableCredit':return out(db.cards.length?money(Math.max(0,limit-cardUsed)):'Sin tarjetas',
-    'Límite total menos crédito utilizado · RD$ equivalente','cards','neutral',Math.max(0,limit-cardUsed));
-  case 'payments30d':{
-   const end=v119DateAfter(30),items=upcoming().filter(x=>x.kind!=='personal_recv'&&x.date>=now&&x.date<=end),
-   val=items.reduce((a,b)=>a+fx(num(b.amount),b.currency||'DOP'),0);
-   return out(items.length?money(val):'Sin vencimientos',
-    items.length+' pago(s) programado(s) en los próximos 30 días','payments','neutral',val);
-  }
- }
+}
  return null;
 }
 
@@ -6195,7 +6147,6 @@ case 'v30Go':ui.page=el.dataset.page||'register';if(ui.page==='register'){ui.mov
 case 'v30NewPoint':if(v30SavePoint('Punto de recuperación manual')){render();toast('Punto local de recuperación creado. Descarga también un respaldo JSON.')}break;
 case 'v30RestorePoint':v30RestorePoint(id);break;
 case 'v30DownloadPoint':v30DownloadPoint(id);break;
-case 'kpiEditor':{ui.kpiEditing=!ui.kpiEditing;let cfg=dashboardConfig();if(ui.kpiEditing&&cfg.mode!=='custom'){cfg.selected=[...dashboardEnabled(cfg)];cfg.mode='custom';saveDashboardConfig(cfg)}render();break}
 case 'addPersonal':personalForm();break;
  case 'personalFilter':ui.personalFilter=id;render();break;
  case 'viewActivity':ui.page='register';ui.movementTab='all';render();window.scrollTo(0,0);break;
@@ -6206,7 +6157,6 @@ case 'toggleHidden':ui.showHidden=!ui.showHidden;render();break;
 case 'productArchive':manageProduct(el.dataset.kind,id,'toggle');break;
 case 'productDelete':manageProduct(el.dataset.kind,id,'delete');break;
 case 'toggleTheme':db.settings.theme=['dark','black'].includes(db.settings.theme)?'light':'dark';persist();render();break;
-case 'visualDesign':db.settings.visualDesign='claridad';persist();render();break;
 case 'setTheme':if(['light','black'].includes(id)){db.settings.visualDesign='claridad';db.settings.theme=id;v333RememberTheme();persist();render()}break;
 case 'paletteTheme':if(['original','emerald','coral'].includes(id)){db.settings.paletteChoice=id;persist();render();toast('Color de acento actualizado.');}break;
 case 'paletteCustom':{const c=document.getElementById('viveCustomColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.paletteHex=c;db.settings.paletteChoice='custom';persist();render();toast('Color de acento personalizado aplicado.')}break;}
@@ -6242,7 +6192,6 @@ case 'pendingConfirm':openPendingOperation(id);break;
  }
  break;
 }
-case 'navigateBankTransactions':ui.bankScope=id;ui.page='register';render();document.getElementById('ledger-world')?.scrollIntoView({behavior:'smooth',block:'start'});break;
 case 'addBank':bankForm();break;
  case 'goCertificate':ui.page='certificates';render();window.scrollTo(0,0);break;
  case 'addCertificate':certificateForm(null,id);break;
@@ -6322,8 +6271,7 @@ case 'accountBreakdown':ui.accountBreakdown=el.dataset.view||'';render();break;
 case 'accountDetails':ui.accountId=id;render();break;
 case 'closeAccountDetails':ui.accountId=null;render();break;
 case 'addCard':cardForm(null,id);break;
- case 'rewardCard':manualBenefitForm(id,ccy);break;case 'benefitLedger':manualBenefitForm(id,ccy);break;
- case 'annualFee':annualFeeForm(id);break;
+ case 'rewardCard':manualBenefitForm(id,ccy);break;case 'annualFee':annualFeeForm(id);break;
 case 'editCard':cardForm(id);break;
 case 'cardDetails':ui.cardId=id;ui.cardDetailTab='status';render();setTimeout(()=>document.querySelector('.card-detail')?.scrollIntoView({behavior:'smooth',block:'start'}),50);break;
 case 'cardHistory':ui.cardId=id;ui.cardDetailTab='history';ui.cardHistoryCurrency='DOP';ui.cardHistoryYear=nowYear();render();setTimeout(()=>document.getElementById('card-history-detail')?.scrollIntoView({behavior:'smooth',block:'start'}),50);break;
@@ -6910,10 +6858,7 @@ v31Ensure();
 ui.decisionTab='pulse';ui.v31Horizon=90;ui.v31Account='';ui.v31CardCurrency='DOP';ui.v31CardId='';ui.v31CardAmount=0;ui.v31Extra=1000;ui.v31TxLink='';ui.v31ReconcileFilter='pending';ui.v31DocTx='';
 /* V32: sin navegación de Decisiones */
 /* V32: herramientas dentro de páginas existentes */
-const v31E=sanitize;
 const v31Days=(s,t)=>Math.round((dateObj(t)-dateObj(s))/86400000);
-const v31Fmt=(n,ccy='DOP')=>money(n,ccy,2);
-const v31Title=(t)=>String(transactionTitle(t)||TRANSL[t.type]||t.type||'Movimiento');
 
 
 
@@ -6931,13 +6876,8 @@ function v31BankImpact(t,a){if(!t||!a)return 0;if(t.type==='card_advance')return
  if(t.type==='transfer'&&t.toAccountId===id)return num(t.targetAmount||v);
  return 0;
 }
-function v31PossibleMatches(row,includeLinked=false){const a=account(row.accountId);if(!a)return [];
- let booked=new Set(v31Ensure().bankRows.filter(r=>r.status==='matched'&&r.id!==row.id).map(r=>r.txId));
- return db.transactions.map(t=>({t,impact:v31BankImpact(t,a)})).filter(x=>Math.abs(x.impact)>0.005&&Math.abs(x.impact-num(row.amount))<=.06&&Math.abs(v31Days(x.t.date,row.date))<=3&&(includeLinked||!booked.has(x.t.id))).sort((x,y)=>Math.abs(v31Days(x.t.date,row.date))-Math.abs(v31Days(y.t.date,row.date)));
-}
 
 
-function v31MatchDialog(rowId){const row=v31Ensure().bankRows.find(r=>r.id===rowId);if(!row)return;const a=account(row.accountId),matches=v31PossibleMatches(row,true).slice(0,30),opts=matches.map(({t,impact})=>[t.id,`${t.date} · ${v31Title(t)} · ${v31Fmt(impact,a.currency)}`]);modal('Conciliar movimiento',`<div class="form-full v31-form-note"><strong>${v31E(row.description)}</strong><p>${row.date} · ${v31Fmt(row.amount,row.currency)} · ${v31E(a?.name||'')}</p></div>${formSelect('txId','Movimiento en la aplicación',[['','Seleccionar coincidencia'],...opts],'','required')}${para('Vincular no cambia saldos ni crea transacciones. La coincidencia debe validarse contra el comprobante.')}`,'v31MatchForm');document.getElementById('v31MatchForm').dataset.rowId=row.id}
 function v31ParseCSV(data){const text=String(data).replace(/^\uFEFF/,'');const first=(text.split(/\r?\n/).find(Boolean)||'');const delimiters=[';',',','\t'];const d=delimiters.map(d=>[d,(first.match(new RegExp(d==='\t'?'\\t':d===';'?';':',','g'))||[]).length]).sort((a,b)=>b[1]-a[1])[0][0];let rows=[],row=[],field='',quote=false;
  for(let i=0;i<text.length;i++){let c=text[i];if(c==='"'){if(quote&&text[i+1]==='"'){field+='"';i++;}else quote=!quote;}else if(c===d&&!quote){row.push(field);field='';}else if((c==='\n'||c==='\r')&&!quote){if(c==='\r'&&text[i+1]==='\n')i++;row.push(field);if(row.some(x=>x.trim()))rows.push(row);row=[];field='';}else field+=c;}
  if(quote)throw Error('El CSV tiene comillas sin cerrar.');row.push(field);if(row.some(x=>x.trim()))rows.push(row);return rows;
@@ -6956,7 +6896,6 @@ async function v31UnzipXml(file){const buffer=await file.arrayBuffer(),dv=new Da
  let sheet=await get('xl/worksheets/sheet1.xml');if(!sheet){let paths=Object.keys(entries).filter(n=>/^xl\/worksheets\/sheet\d+\.xml$/.test(n));if(paths.length)sheet=await get(paths[0]);}if(!sheet)throw Error('El Excel no tiene una primera hoja reconocible.');const doc=new DOMParser().parseFromString(sheet,'text/xml'),rows=[];for(let r of doc.getElementsByTagName('row')){let out=[];for(let c of r.getElementsByTagName('c')){const ref=c.getAttribute('r')||'A1',letters=(ref.match(/[A-Z]+/)||[])[0]||'A';let idx=0;for(const letter of letters)idx=idx*26+letter.charCodeAt(0)-64;idx--;let val=c.getElementsByTagName('v')[0]?.textContent||'',type=c.getAttribute('t');if(type==='s')val=shared[Number(val)]||'';else if(type==='inlineStr')val=[...c.getElementsByTagName('t')].map(x=>x.textContent||'').join('');out[idx]=val;}rows.push(out);}return rows;
 }
 async function v31ImportBankFile(file){if(!file)return;const accountId=ui.v31Account;if(!account(accountId)){toast('Selecciona la cuenta que corresponde al extracto.');return}try{if(file.size>12*1024*1024)throw Error('El extracto excede 12 MB.');let mat=file.name.toLowerCase().endsWith('.xlsx')?await v31UnzipXml(file):v31ParseCSV(await file.text());let incoming=v31RowsFromMatrix(mat,accountId),s=v31Ensure(),known=new Set(s.bankRows.map(r=>[r.accountId,r.date,r.description.toLowerCase(),r.amount].join('|'))),added=0;for(let r of incoming){let key=[r.accountId,r.date,r.description.toLowerCase(),r.amount].join('|');if(!known.has(key)){s.bankRows.push(r);known.add(key);added++}}v31LogAudit('Importación de extracto','Conciliación',file.name+' · '+added+' filas nuevas');persist();render();toast(`Extracto leído: ${added} movimientos nuevos; ${incoming.length-added} repetidos omitidos.`)}catch(e){toast('No se pudo importar: '+e.message)}}
-function v31AutoMatch(){let assigned=0;const s=v31Ensure();for(const row of s.bankRows.filter(x=>x.status==='pending')){let candidates=v31PossibleMatches(row);if(candidates.length===1){row.status='matched';row.txId=candidates[0].t.id;candidates[0].t.reviewed=true;assigned++;}}v31LogAudit('Conciliación automática','Extractos',assigned+' coincidencias únicas');persist();render();toast(`${assigned} coincidencias únicas vinculadas. Revisa el resultado.`)}
 function v31ReconcileAction(action,id){const s=v31Ensure(),r=s.bankRows.find(x=>x.id===id);if(!r)return;switch(action){case 'v31Ignore':r.status='ignored';r.txId='';break;case 'v31Unmatch':r.status='pending';r.txId='';break;case 'v31PostBank':if(!confirm('El importe del extracto puede incluir impuesto y cargos. Revisa y separa el principal y los costos antes de guardar; después vuelve a conciliar.'))return;transactionForm({type:r.amount>=0?'income':'expense',accountId:r.accountId,date:r.date,amount:Math.abs(r.amount),note:r.description,category:r.amount>=0?'Otros ingresos':'Otros gastos'});return;}v31LogAudit('Revisión de extracto','Movimiento bancario',r.description+' · '+r.status);persist();render()}
 
 
@@ -6972,14 +6911,10 @@ function v31OpenDocs(){return new Promise((resolve,reject)=>{if(!('indexedDB' in
 const V31_DOC_FALLBACK='vivehoy360.doc.';
 async function v31PutDoc(id,blob){try{let dbi=await v31OpenDocs();return await new Promise((resolve,reject)=>{let tr=dbi.transaction('files','readwrite'),req=tr.objectStore('files').put({id,blob});tr.oncomplete=()=>{dbi.close();resolve(true)};tr.onerror=()=>{dbi.close();reject(tr.error)};req.onerror=()=>reject(req.error)});}catch(err){if(blob.size>512*1024)throw Error('El navegador no permite guardar este comprobante en IndexedDB. Para documentos de más de 512 KB utiliza un navegador que permita almacenamiento local.');let data=v31DataString(await blob.arrayBuffer());localStorage.setItem(V31_DOC_FALLBACK+id,JSON.stringify({type:blob.type,data}));return true;}}
 async function v31GetDoc(id){try{let dbi=await v31OpenDocs();let blob=await new Promise((resolve,reject)=>{let tr=dbi.transaction('files','readonly'),req=tr.objectStore('files').get(id);req.onsuccess=()=>{dbi.close();resolve(req.result?.blob||null)};req.onerror=()=>{dbi.close();reject(req.error)}});if(blob)return blob;}catch(err){}let raw=localStorage.getItem(V31_DOC_FALLBACK+id);if(!raw)return null;let item=JSON.parse(raw);return new Blob([v31FromB64(item.data)],{type:item.type||'application/octet-stream'});}
-async function v31DeleteDoc(id){try{let dbi=await v31OpenDocs();await new Promise((resolve,reject)=>{let tr=dbi.transaction('files','readwrite'),req=tr.objectStore('files').delete(id);tr.oncomplete=()=>{dbi.close();resolve()};tr.onerror=()=>{dbi.close();reject(tr.error)}});}catch(err){}localStorage.removeItem(V31_DOC_FALLBACK+id);}
 function v31DataString(bytes){const u=bytes instanceof Uint8Array?bytes:new Uint8Array(bytes);let chunks=[];for(let i=0;i<u.length;i+=16384)chunks.push(String.fromCharCode(...u.subarray(i,i+16384)));return btoa(chunks.join(''))}
 function v31FromB64(input){let txt=atob(String(input)),out=new Uint8Array(txt.length);for(let i=0;i<out.length;i++)out[i]=txt.charCodeAt(i);return out}
-async function v31Sha(blob){if(!crypto?.subtle)return '';return [...new Uint8Array(await crypto.subtle.digest('SHA-256',await blob.arrayBuffer()))].map(b=>b.toString(16).padStart(2,'0')).join('')}
 
 
-async function v31OpenReceipt(id){try{const meta=v31Ensure().docs.find(x=>x.id===id);if(!meta)throw Error('Comprobante no encontrado.');const blob=await v31GetDoc(id);if(!blob)throw Error('El archivo no está en este navegador. Restaura un respaldo que incluya comprobantes.');if(meta.sha&&await v31Sha(blob)!==meta.sha)throw Error('El archivo no supera la verificación de integridad.');const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=meta.filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);}catch(e){toast(e.message)}}
-async function v31RemoveReceipt(id){let meta=v31Ensure().docs.find(x=>x.id===id);if(!meta||!confirm('¿Eliminar este comprobante? Esta acción no modifica el movimiento asociado.'))return;try{await v31DeleteDoc(id);v31Ensure().docs=v31Ensure().docs.filter(x=>x.id!==id);v31LogAudit('Eliminación','Comprobante',meta.title);persist();render();toast('Comprobante eliminado.')}catch(e){toast('No pudo eliminarse el archivo: '+e.message)}}
 
 function v31CipherForm(mode){modal(mode==='export'?'Crear respaldo cifrado':'Restaurar respaldo cifrado',`<div class="form-full v31-form-note"><strong>Contraseña de protección</strong><p>Mínimo 10 caracteres. No la guardes en una nota pública; si la pierdes, no será posible descifrar el respaldo.</p></div>${mode==='import'?`<label class="form-full"><span class="filter-label">Archivo cifrado V31</span><input type="file" class="field" name="file" required accept=".v360,.json,application/json"></label>`:''}${formItem('password','Contraseña','','password','required minlength="10" autocomplete="new-password"')}${mode==='export'?formItem('confirmPassword','Repetir contraseña','','password','required minlength="10" autocomplete="new-password"'):''}<p class="form-full v31-note">${mode==='export'?'Se guardarán tus productos, movimientos y adjuntos que estén disponibles en este dispositivo.':'Se creará un punto de recuperación antes de sustituir la información. Comprueba que el archivo proviene de una fuente confiable.'}</p>`,mode==='export'?'v31EncryptedExportForm':'v31EncryptedImportForm',true)}
 function v31SecureSupported(){if(!crypto||!crypto.subtle||!crypto.getRandomValues)throw Error('El navegador no ofrece criptografía segura en este contexto. Abre la aplicación en un navegador actualizado.')}
@@ -6992,13 +6927,8 @@ async function v31RestoreEncrypted(form){try{v31SecureSupported();let file=form.
 /* Acciones delegadas del nuevo centro: no cambian los formularios y rutas existentes. */
 const v31OriginalOnAction=onAction;
 onAction=function(action,el){const id=el?.dataset?.id||'';switch(action){
- case 'v31Horizon':ui.v31Horizon=Number(id);render();return;
- case 'v31AutoMatch':return v31AutoMatch();
- case 'v31MatchDialog':return v31MatchDialog(id);
- case 'v31PostBank':case 'v31Ignore':case 'v31Unmatch':return v31ReconcileAction(action,id);
- case 'v31OpenDoc':v31OpenReceipt(id);return;
- case 'v31DeleteDoc':v31RemoveReceipt(id);return;
- case 'v31EncryptedExport':v31CipherForm('export');return;
+case 'v31PostBank':case 'v31Ignore':case 'v31Unmatch':return v31ReconcileAction(action,id);
+case 'v31EncryptedExport':v31CipherForm('export');return;
  case 'v31EncryptedImport':v31CipherForm('import');return;
  }return v31OriginalOnAction(action,el)};
 function v31VForm(e){let form=e.target;if(!form?.id?.startsWith('v31'))return;e.preventDefault();e.stopImmediatePropagation();try{let f=form.elements,s=v31Ensure();switch(form.id){
@@ -17234,7 +17164,6 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheetContainer()&&!
 (()=>{'use strict';
 // All entries come from existing form controls and already loaded entities, never remote requests.
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 let active=null;
 function updateImpact(form){
  const spec=form.dataset.special;if(!['refund','adjustment'].includes(spec))return;
@@ -17313,25 +17242,6 @@ function startObserver(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startObserver,{once:true});else startObserver();
 function closePicker(){document.getElementById('v756-product-layer')?.remove();active=null;document.body.classList.remove('v756-picker-open')}
-function productRows(){if(!active)return [];const s=active.select;
- return [...s.options].filter(o=>o.value&&!o.disabled).map(o=>{
-  const item=(active.kind==='cardId'?db.cards:active.kind==='loanId'?db.loans:db.accounts).find(x=>String(x.id)===o.value);
-  const typ=active.kind==='cardId'?norm([item?.type,item?.cardType,item?.kind].filter(Boolean).join(' ')):'all';
-  const brand=active.kind==='cardId'?(/master|mc/.test(norm(item?.name+' '+item?.network))?'Mastercard':/visa/.test(norm(item?.name+' '+item?.network))?'VISA':'Tarjeta'):active.kind==='loanId'?'Préstamo':'Cuenta';
-  const last4=(item?.last4||item?.lastFour||item?.lastFourDigits||'').toString().replace(/\D/g,'').slice(-4);
-  let caption=active.kind==='loanId'?'':active.kind==='cardId'?'Tarjeta':item?.currency||'Cuenta';
-  let details='';
-  try{if(active.kind==='loanId'&&item){const st=loanStatus(item);details='Saldo pendiente: '+money(st.balance,item.currency||'DOP',2)+(st.installment>0?' · Cuota: '+money(st.installment,item.currency||'DOP',2):'');}}
-  catch(_){}
-  return {value:o.value,title:item?.name||o.textContent,caption,brand,last4,typ,details};
- });
-}
-function draw(){if(!active)return;const layer=document.getElementById('v756-product-layer');if(!layer)return;
- layer.querySelectorAll('[data-v756="filter"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.value===active.filter)));
- const list=layer.querySelector('.v756-sheet-items');const rows=productRows().filter(r=>(active.filter==='all'||active.filter==='credit'&&!/debit/.test(r.typ)||active.filter==='debit'&&/debit/.test(r.typ))&&norm(r.title+' '+r.caption+' '+r.last4+' '+r.details).includes(norm(active.q)));
- list.innerHTML=rows.length?rows.map(r=>`<button type="button" class="v756-item" data-v756="choose" data-value="${esc(r.value)}" aria-pressed="${r.value===active.provisional}"><span class="v756-card-preview ${r.brand==='Mastercard'?'mc':''}">${esc(r.brand)}</span><span class="v756-item-copy"><strong>${esc(r.title)}</strong><small>${esc(r.details||r.caption)}${r.last4?' ·•••• '+esc(r.last4):''}</small></span><span class="v756-item-check">${r.value===active.provisional?'✓':''}</span></button>`).join(''):'<div class="v756-empty">No hay productos registrados que coincidan con este filtro.</div>';
- layer.querySelector('.v756-use').disabled=!active.provisional;
-}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active){e.preventDefault();closePicker();}});
 })();
 
@@ -19672,8 +19582,7 @@ document.addEventListener('click',function(ev){
 (()=>{'use strict';
   /* Only presentation and confirmation review. Never write data here. */
   const eligible=new Set(['transactionForm','recurringPaymentConfirmForm','rewardReceivedForm','manualBenefitForm','benefitLedgerForm','personalPaymentForm','annualFeeForm','v144CashbackForm']);
-  let pendingReview=null;
-  // V393: fingerprint the values shown at review time; never approve a changed form.
+    // V393: fingerprint the values shown at review time; never approve a changed form.
   const snapshot=form=>{
     const fd=new FormData(form), pairs=[];
     for(const [key,value] of fd.entries())pairs.push([key,typeof value==='string'?value:(value?.name||'archivo')]);
