@@ -55390,3 +55390,46 @@ html body #app#app .v1244-cutbox>h3{font-size:11px!important;letter-spacing:.16e
 html body #app#app .v1244-pill summary{gap:6px;padding:13px 12px}
 html body #app#app .v1244-pill summary em{font-size:14px;margin-left:auto;padding-right:4px}
 html body #app#app .v1244-pill summary b{font-size:11.5px}
+
+/* V1252 · píldoras de corte: un toque abre el pago */
+html body #app#app button.v1244-pill{display:grid;gap:3px;text-align:left;border:0;width:100%;padding:12px 14px;cursor:pointer;font:inherit}
+html body #app#app button.v1244-pill:disabled{opacity:.55;cursor:default}
+html body #app#app button.v1244-pill:not(:disabled):active{transform:scale(.98)}
+html body #app#app .v1244-pill-top{display:flex;align-items:center;gap:7px}
+html body #app#app .v1244-pill-top i{width:9px;height:9px;border-radius:50%;background:#7c86a2;flex:none}
+html body #app#app .v1244-pill.is-late .v1244-pill-top i{background:#ff5b6e}
+html body #app#app .v1244-pill.is-soon .v1244-pill-top i{background:#ffb13b}
+html body #app#app .v1244-pill.is-ok .v1244-pill-top i{background:#3ddc97}
+html body #app#app .v1244-pill-top b{font-size:11.5px;font-weight:800;opacity:.75}
+html body #app#app .v1244-pill-top em{font-style:normal;margin-left:auto;font-size:15px;font-weight:850;letter-spacing:-.02em;white-space:nowrap}
+html body #app#app .v1244-pill-sub{font-size:10.5px;font-weight:700;opacity:.65;padding-left:16px;white-space:nowrap}
+html body #app#app #page button.v1244-pill{display:grid!important;grid-template-columns:1fr!important;gap:3px!important;background:#0b0b0e!important;background-image:none!important;border:0!important;border-radius:24px!important;box-shadow:0 8px 18px rgba(0,0,0,.16)!important;height:auto!important;min-height:0!important;padding:12px 14px!important;color:#fff!important}
+html body.theme-black #app#app #page button.v1244-pill,html body.theme-dark #app#app #page button.v1244-pill{background:#1b1b22!important;box-shadow:none!important}
+html body #app#app #page button.v1244-pill .v1244-pill-top{display:flex!important;align-items:center;gap:7px;width:100%}
+html body #app#app #page button.v1244-pill .v1244-pill-sub{display:block!important;padding-left:16px;font-size:10.5px}
+html body #app#app #page button.v1244-pill *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+
+/* V1253 · píldoras de corte con color de estado (no negras) */
+html body #app#app #page button.v1244-pill{background:color-mix(in srgb,var(--v424-accent-strong) 9%,#fff)!important;box-shadow:none!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 18%,transparent)!important;border-radius:22px!important;color:inherit!important;padding:12px 13px!important}
+html body #app#app #page button.v1244-pill.is-late{background:rgba(212,82,94,.11)!important;border-color:rgba(212,82,94,.3)!important}
+html body #app#app #page button.v1244-pill.is-soon{background:rgba(232,150,30,.13)!important;border-color:rgba(232,150,30,.35)!important}
+html body #app#app #page button.v1244-pill.is-none{background:rgba(120,130,150,.1)!important;border-color:rgba(120,130,150,.2)!important}
+html body #app#app #page button.v1244-pill *{color:var(--v1253-c,#15192b)!important;-webkit-text-fill-color:var(--v1253-c,#15192b)!important}
+html body.theme-black #app#app #page button.v1244-pill,html body.theme-dark #app#app #page button.v1244-pill{--v1253-c:#f2f4fa}
+html body #app#app #page button.v1244-pill .v1244-pill-title{font-size:9.5px;font-weight:850;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+html body #app#app #page button.v1244-pill.is-late .v1244-pill-title{color:#d4525e!important;-webkit-text-fill-color:#d4525e!important}
+html body #app#app #page button.v1244-pill.is-soon .v1244-pill-title{color:#c97a0a!important;-webkit-text-fill-color:#c97a0a!important}
+html body #app#app #page button.v1244-pill.is-ok .v1244-pill-title{color:var(--v424-accent-strong)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important}
+html body #app#app #page button.v1244-pill .v1244-pill-top{margin-top:2px}
+html body #app#app #page button.v1244-pill .v1244-pill-top b{font-size:10.5px;font-weight:800;letter-spacing:.08em;opacity:.7}
+html body #app#app #page button.v1244-pill .v1244-pill-top em{font-size:16px}
+html body #app#app #page button.v1244-pill .v1244-pill-sub{padding-left:0;font-size:11.5px;font-weight:700;opacity:.7}
+html body #app#app #page button.v1244-pill .v1244-pill-top i{display:none}
+html body #app#app #page button.v1244-pill{padding:12px 12px!important}
+html body #app#app #page button.v1244-pill .v1244-pill-title{font-size:8.5px;letter-spacing:.06em}
+html body #app#app #page button.v1244-pill .v1244-pill-top{gap:4px}
+html body #app#app #page button.v1244-pill .v1244-pill-top b{white-space:nowrap;font-size:10px;letter-spacing:.04em}
+html body #app#app #page button.v1244-pill .v1244-pill-top em{font-size:15px}
+html body #app#app #page button.v1244-pill .v1244-pill-sub{font-size:11px}
+html body #app#app #page .v1244-cutbox>h3{font-size:11px!important;line-height:1.2!important;letter-spacing:.16em!important;margin:0 0 10px!important}
+html body #app#app #page button.v1244-pill .v1244-pill-top em{font-size:14px;margin-left:6px}
