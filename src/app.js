@@ -637,8 +637,7 @@ const RAIL_DESTINATIONS=[
  ['overview','Resumen','home','Inicio, suscripciones y entre personas'],
  ['banks','Bancos','landmark','Instituciones y productos bancarios'],
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
- ['payments','Visión global','eye','Visión integral de tus obligaciones'],
- ['pressure','Presión financiera','calendar','Calendario de 30 días y detalle de vencimientos']
+ ['payments','Visión global','eye','Visión integral de tus obligaciones']
 ];
 /* VIVE_SCORE (experimental · solo web): ítem «Score» bajo Presión financiera. Retirar: ver src/vive-score/README.md */
 if(window.VIVE_SCORE_EXPERIMENTAL)RAIL_DESTINATIONS.push(['score','Score','score','Tu comportamiento crediticio, explicado']);
@@ -741,7 +740,7 @@ function v36Bell(){
  const v994Reports=(()=>{try{return v246ReportEvents()}catch(_){return []}})();const v994AllRead=v994Reports.length>0&&v994Reports.every(r=>v994.r.has(r.id));
  const totalAlerts=urgent+spendAlerts.length+(v994AllRead?0:v246UnreadReportCount());
  const v994HasAny=items||spendingItems||(!v994AllRead&&v994Reports.length>0);
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><div><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v994HasAny?'<button type="button" class="v994-clear" data-v994-clear="1">Limpiar todo</button>':''}</div>${v994AllRead?'':v216BellItems()}${spendingItems}${items}${v994HasAny?'':'<p class="v994-empty">No tienes notificaciones pendientes.</p>'}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="pressure">Ver calendario de vencimientos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><div><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v994HasAny?'<button type="button" class="v994-clear" data-v994-clear="1">Limpiar todo</button>':''}</div>${v994AllRead?'':v216BellItems()}${spendingItems}${items}${v994HasAny?'':'<p class="v994-empty">No tienes notificaciones pendientes.</p>'}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver calendario de vencimientos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
@@ -1123,7 +1122,7 @@ function mobileHome(){
    ${v105CapacityWidget(true)}
    <!-- V319: tarjeta resumen redundante eliminada; presupuesto sigue en su módulo. -->
    <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
-   <section data-v105-widget="payments" class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="pressure">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
+   <section data-v105-widget="payments" class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
    <section data-v105-widget="net" class="vive-mobile-net-card v36-month-capsule" aria-label="Balance del mes"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RESUMEN MENSUAL</span><h2>Balance del mes</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="advanced">Ver análisis ${icon('up')}</button></div><div class="v36-month-columns"><span><small>Ingresos</small><strong class="v36-income">${money(m.income)}</strong></span><span><small>Egresos</small><strong class="v36-expense">${money(m.expense)}</strong></span></div><div class="v36-month-net"><span><small>Neto</small><strong class="vive-mobile-net-value ${m.net<0?'negative':''}" title="Ingresos menos egresos: ${money(m.net,'DOP',2)}">${money(m.net)}</strong></span><small>${netLabel}</small></div></section>
    <section data-v105-widget="chart" class="v105-mobile-extra" aria-label="Gráfico de ingresos y egresos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">EVOLUCIÓN</span><h2>Ingresos y egresos</h2></div></div>${mobileMiniTrend()}</section>
    <section data-v105-widget="people" class="v105-mobile-extra" aria-label="Compromisos entre personas"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RELACIONES</span><h2>Entre personas</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="personal">Ver relaciones ${icon('up')}</button></div><div class="v105-mobile-people"><span><small>Por cobrar</small><strong>${money(personalTotals().receivable)}</strong></span><span><small>Por devolver</small><strong>${money(personalTotals().payable)}</strong></span></div></section>
@@ -1153,8 +1152,7 @@ function mobileHub(){
    ['payments','Visión global','Vencimientos y pagos','eye']]},
   {eyebrow:'MÁS PERSPECTIVA',title:'Tu inteligencia financiera',subtitle:'Información con profundidad, cuando la necesites',entries:[
    ['patrimony','Patrimonio','Activos y obligaciones','wallet'],
-   ['advanced','Analítica avanzada','Tendencias y decisiones','chart']]},
-  {eyebrow:'TU CALENDARIO',title:'Presión financiera',subtitle:'Tus próximos 30 días de un vistazo',entries:[['pressure','Presión financiera','Consultar calendario completo','calendar']]} 
+   ['advanced','Analítica avanzada','Tendencias y decisiones','chart']]}
  ];
  const link=([id,name,description,ic])=>`<button type="button" class="v205-explore-link" data-act="navigate" data-id="${id}" aria-label="Abrir ${name}"><span class="v205-explore-link-icon">${icon(ic)}</span><span class="v205-explore-link-copy"><strong>${name}</strong><small>${description}</small></span><span class="v205-explore-arrow" aria-hidden="true">${icon('arrow')}</span></button>`;
  return `<div class="vive-mobile-hub v205-explore v243-explore">
@@ -3145,7 +3143,7 @@ function overview(){
    <aside role="region" data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} pendientes de revisión <span>${icon('arrow')}</span></button></aside>
    <div class="v297-net-row" aria-label="Neto del mes y relaciones personales">
     <section data-v105-widget="net" class="ff-health-card ff-tile"><div class="ff-panel-top"><div><h2>Neto del mes</h2><p>Ingresos − egresos</p></div></div><div class="ff-health-number ff-net-hover" tabindex="0" data-chart-tip="${monthlyNetTip}" aria-label="Porcentaje neto mensual. Consulta la comparación con el año anterior">${ratioText}</div><div class="ff-health-caption">${ratio===null?'Sin ingresos registrados':'Del ingreso que queda después de gastos'}</div>${spark}<div class="ff-health-foot"><span>Resultado neto</span><strong tabindex="0" data-chart-tip="${monthlyNetTip}">${money(m.net)}</strong></div></section>
-   <section data-v105-widget="people" class="ff-personal ff-tile"><div class="ff-panel-top"><div><h2>Entre personas</h2><p>Dinero prestado y recibido</p></div><button class="ff-outline-pill" data-act="navigate" data-id="personal">Ver relaciones</button></div><div class="ff-person-sums"><div><small>Por cobrar</small><strong>${money(receivable)}</strong></div><div><small>Por devolver</small><strong>${money(owed)}</strong></div></div><div class="ff-people-list">${peopleRows||'<div class="ff-no-people">No hay préstamos personales activos.</div>'}</div><button class="ff-person-cta" data-act="addPersonal">${icon('plus')} Nueva relación</button></section>
+   <section data-v105-widget="people" class="ff-personal ff-tile v1240-cal" aria-label="Calendario de vencimientos de los próximos 30 días"><div class="ff-panel-top"><div><h2>Próximos 30 días</h2><p>Calendario financiero</p></div><button class="ff-outline-pill" data-act="navigate" data-id="payments">Ver pagos</button></div>${v318Graph('futureCalendar')}</section>
    </div>
    <div class="v297-summary-trio" aria-label="Ingresos, egresos y cumplimiento de presupuesto">
      <section data-v105-widget="incomeExpense" class="ff-expense-card ff-tile v298-flow-dual" aria-label="Ingresos y egresos del período">
@@ -3155,7 +3153,7 @@ function overview(){
      </section>
      ${v290BudgetWeb()}
    </div>
-   <section data-v105-widget="payments" class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="pressure">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
+   <section data-v105-widget="payments" class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
   </div>
  </div>`;
 }
@@ -7435,7 +7433,7 @@ function v360RestoreUI(){
   const r=JSON.parse(localStorage.getItem(v360ResumeKey())||'null');
   if(!r||Date.now()-r.at>30*86400000)return;
   const allowed=['overview','recurring','personal','pressure','banks','accounts','cards','loans','certificates','budget','expenses','income','register','payments','wallet','mobilehub','mobilesearch','advanced','patrimony','categories','settings','analytics'];
-  if(allowed.includes(r.page))ui.page=r.page;
+  if(allowed.includes(r.page))ui.page=r.page==='pressure'?'payments':r.page;
   if(/^\d{4}-\d{2}$/.test(r.month||''))ui.month=r.month;
   if(Number.isInteger(r.year)&&r.year>=2000&&r.year<=2100)ui.year=r.year;
   if(r.selectedPressure&&/^\d{4}-\d{2}-\d{2}$/.test(r.selectedPressure))ui.v360PressureDate=r.selectedPressure;
@@ -12483,7 +12481,7 @@ function v149CardLifecycle(c){
 }
 /* Spotlight — real local data, ranked and grouped. No network calls, no demo results. */
 const V149_NAV=[
- ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Visión global','Vencimientos y obligaciones','calendar'],['pressure','Presión financiera','Calendario de compromisos próximos 30 días','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['settings','Ajustes','Configuración y privacidad','settings']
+ ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Visión global','Vencimientos y obligaciones','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['settings','Ajustes','Configuración y privacidad','settings']
 ];
 const V149_SEARCH_LABELS={section:'Navegación',bank:'Instituciones',account:'Cuentas',card:'Tarjetas',loan:'Préstamos',certificate:'Certificados',recurring:'Suscripciones y servicios',transaction:'Movimientos',contact:'Entre personas',budget:'Presupuestos',incomeSchedule:'Ingresos recurrentes',benefit:'Beneficios',statement:'Estados históricos',category:'Categorías'};
 function v71SearchEntries(){
@@ -15033,7 +15031,7 @@ function v295GlobalVisionAndPayments(){
   // a pagos llevan ahora al calendario real de Presión financiera.
   const globalContents=analytics().replace(
     /data-act="navigate" data-id="payments"/g,
-    'data-act="navigate" data-id="pressure"'
+    'data-act="navigate" data-id="payments"'
   );
   return `<div class="v295-global-payments">
     <section class="v295-global-overview" aria-label="Visión global de tus finanzas">
@@ -16161,9 +16159,8 @@ document.addEventListener('input',function(event){
       ]},
       {tag:'TU VISIÓN',heading:'Planifica y mantén el control integral',desc:'Una mirada completa de tus finanzas, compromisos y próximos pasos.',items:[
        ['payments','Visión global','Estrategia','eye','blue','',true],
-       ['pressure','Presión financiera','Próximos 30 días','calendar','violet',fmtShort(v89DebtCapacity(monthKey()).monthly)],
-       ['score','Score','Crédito','analytics','blue',(()=>{const v=window.ViveScoreHost?.badge?.();return Number.isFinite(v)?v+' / 1,000':'Ver mi score'})()],
-       ['projection','Planificación','Escenarios','analytics','violet','']
+       ['projection','Planificación','Escenarios','analytics','violet',''],
+       ['score','Score','Crédito','analytics','blue',(()=>{const v=window.ViveScoreHost?.badge?.();return Number.isFinite(v)?v+' / 1,000':'Ver mi score'})()]
       ]}
     ];
     const tile=([id,name,desc,ic,tone,val,featured,change])=>{

@@ -31,8 +31,8 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   await seedDates(p);
 
   /* 1 · ubicación en la barra lateral */
-  const ids = await rail(p), i = ids.indexOf('pressure');
-  check(1, 'Score está exactamente debajo de Presión financiera', i >= 0 && ids[i + 1] === 'score', ids.join(' › '));
+  const ids = await rail(p), i = ids.indexOf('payments');
+  check(1, 'Score está exactamente debajo de Visión global', i >= 0 && ids[i + 1] === 'score', ids.join(' › '));
   /* 3 · indicador pequeño sin puntaje */
   check(3, 'El indicador muestra «—» si no hay puntaje', (await p.evaluate(() => document.querySelector('.rail-action[data-id="score"] .vive-score-badge')?.textContent)) === '—');
   await reopenScore(p);

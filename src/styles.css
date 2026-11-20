@@ -55345,3 +55345,33 @@ html body #app#app #page .v58-exec .v58-range button.active{background:#fff;colo
  html body #app#app #page .v58-exec[data-v58-page="expenses"]{position:relative;grid-template-areas:"feat grid" "hint hint";padding-top:66px!important}
  html body #app#app #page .v58-exec[data-v58-page="expenses"] .v58-range{position:absolute;top:18px;left:26px;grid-area:auto;justify-self:auto}
 }
+/* V1240 · Resumen web: calendario de 30 días en lugar de «Entre personas» */
+@media(min-width:791px){
+html body #app#app .v1240-cal{display:flex!important;flex-direction:column!important;padding:18px 22px!important;overflow:hidden!important;min-height:0!important}
+html body #app#app .v1240-cal .ff-panel-top{margin-bottom:6px!important}
+html body #app#app .v1240-cal .v318-chart-content{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
+html body #app#app .v1240-cal .v318-stat-row{display:flex!important;gap:10px!important;margin:0!important}
+html body #app#app .v1240-cal .v318-stat-row>div{flex:1;padding:6px 10px!important;min-height:0!important}
+html body #app#app .v1240-cal .v318-stat-row small{font-size:10.5px!important}
+html body #app#app .v1240-cal .v318-stat-row strong{font-size:15px!important}
+html body #app#app .v1240-cal .v322-cal-grid{display:grid!important;grid-template-columns:repeat(10,minmax(0,1fr))!important;gap:5px!important;margin:0!important;flex:1;min-height:0;align-content:stretch}
+html body #app#app .v1240-cal .v322-cal-cell{min-height:0!important;height:100%!important;padding:0!important;border-radius:9px!important;font-size:12px!important;font-weight:760!important;display:grid;place-items:center}
+html body #app#app .v1240-cal .v318-chart-note{display:none!important}
+html body #app#app .v1240-cal [class*="legend"],html body #app#app .v1240-cal .v705-scale{margin:0!important;font-size:10.5px!important}
+}
+@media(min-width:791px){
+html body #app#app .v1240-cal .v318-stat-row{display:none!important}
+html body #app#app .v1240-cal .v318-chart-content{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;gap:12px;justify-content:space-between}
+html body #app#app .v1240-cal .v322-cal-grid{grid-template-columns:repeat(10,minmax(0,1fr))!important;grid-auto-rows:1fr;gap:6px!important;flex:1}
+html body #app#app .v1240-cal .v322-cal-cell{border-radius:10px!important;font-size:12.5px!important}
+}
+@media(min-width:791px){
+html body #app#app .v1240-cal .v322-cal-grid{grid-auto-rows:44px!important;flex:none!important;gap:7px!important}
+html body #app#app .v1240-cal .v322-cal-cell{height:44px!important;min-height:44px!important;width:100%!important;border-radius:12px!important}
+}
+/* V1241 · Dock móvil: sin borde ni sombra en la pestaña activa; el color vive dentro del icono, con un reflejo suave */
+@media(max-width:790px){
+html body:not(.x):not(.y):not(.z) #app#app nav.vive-mobile-dock>.vive-mobile-dock-item.active,html body #app#app nav.vive-mobile-dock>.vive-mobile-dock-item.active{background:none!important;background-image:none!important;border:0!important;box-shadow:none!important;outline:0!important}
+html body #app#app nav.vive-mobile-dock>.vive-mobile-dock-item.active .vive-mobile-dock-icon{display:grid!important;place-items:center;width:52px!important;min-width:52px!important;max-width:52px!important;height:32px!important;align-self:center!important;margin-inline:auto!important;border-radius:16px;border:0!important;box-shadow:none!important;background:linear-gradient(180deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,0) 52%),color-mix(in srgb,var(--v424-accent-strong,#4f46e5) 17%,transparent)!important}
+html body:is(.theme-black,.theme-dark) #app#app nav.vive-mobile-dock>.vive-mobile-dock-item.active .vive-mobile-dock-icon{background:linear-gradient(180deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 52%),color-mix(in srgb,var(--v424-accent-strong,#4f46e5) 28%,transparent)!important}
+}
