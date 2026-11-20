@@ -1344,8 +1344,8 @@ function v68Wallet(){
    </div>
   </div>
  <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" data-act="payCard" data-id="${sanitize(active.id)}"><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" data-act="goCard" data-id="${sanitize(active.id)}"><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" data-v900-action="advance" data-id="${sanitize(active.id)}" aria-label="Solicitar avance de efectivo"><span>${icon('cashAdvance')}</span><b>Avance</b></button><button type="button" data-act="editCard" data-id="${sanitize(active.id)}"><span>${icon('settings')}</span><b>Editar</b></button></div>
- ${v371CardReturnWidget(active)}
  <details class="v266-wallet-detail v935-wallet-accordion"><summary><span>${icon('receipt')} Cortes por moneda <small>Pesos y dólares</small></span>${icon('arrow')}</summary><div class="v266-currency-row"><span>Facturado · RD$</span><b>${money(dop.billed,'DOP',2)}</b></div><div class="v266-currency-row"><span>Facturado · US$</span><b>${money(usd.billed,'USD',2)}</b></div><p>Los importes son registros internos. Consulta el estado oficial de tu entidad para conciliar.</p></details>
+ ${v371CardReturnWidget(active)}
  ${v921WalletAdvanceDetails(active)}
  <section class="v266-wallet-panel v266-activity"><div class="v266-panel-heading"><div><span class="v266-overline">TUS ÚLTIMOS CONSUMOS</span><h2>Actividad reciente</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Ver todos los movimientos">${icon('arrow')}</button></div>${rows||'<p class="v266-empty-activity">Sin movimientos recientes en esta tarjeta.</p>'}</section>
  <p class="v266-wallet-note">Una compra con tarjeta aumenta tu deuda; pagarla reduce el saldo pendiente sin duplicar el gasto.</p></section>`;
