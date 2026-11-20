@@ -1542,10 +1542,18 @@ async function compressBankImage(file){
  const image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('No se pudo abrir la imagen.'));reader.onload=()=>{const el=new Image();el.onload=()=>resolve(el);el.onerror=()=>reject(Error('La imagen no se pudo interpretar.'));el.src=String(reader.result)};reader.readAsDataURL(file)});
  const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
  if(!ctx)throw Error('No fue posible preparar la imagen.');
- const ratio=Math.min(1,192/Math.max(image.naturalWidth||image.width,image.naturalHeight||image.height));
- canvas.width=Math.max(1,Math.round((image.naturalWidth||image.width)*ratio));canvas.height=Math.max(1,Math.round((image.naturalHeight||image.height)*ratio));
- ctx.drawImage(image,0,0,canvas.width,canvas.height);
- const data=canvas.toDataURL('image/webp',.78);
+ /* Adaptación de logos sin fondo (PNG/WebP con transparencia): se recorta al contenido visible, se centra en un lienzo cuadrado y se deja un margen parejo, conservando la transparencia. */
+ const iw=image.naturalWidth||image.width,ih=image.naturalHeight||image.height;
+ let sx=0,sy=0,sw=iw,sh=ih;
+ try{const pr=Math.min(1,256/Math.max(iw,ih)),pw=Math.max(1,Math.round(iw*pr)),ph=Math.max(1,Math.round(ih*pr)),pc=document.createElement('canvas');pc.width=pw;pc.height=ph;const px=pc.getContext('2d',{willReadFrequently:true});px.drawImage(image,0,0,pw,ph);const d=px.getImageData(0,0,pw,ph).data;let x0=pw,y0=ph,x1=-1,y1=-1,transparent=0;
+  for(let y=0;y<ph;y++)for(let x=0;x<pw;x++){const al=d[(y*pw+x)*4+3];if(al<12){transparent++;continue}if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+  if(transparent>pw*ph*.04&&x1>=x0&&y1>=y0){sx=Math.floor(x0/pr);sy=Math.floor(y0/pr);sw=Math.min(iw-sx,Math.ceil((x1-x0+1)/pr));sh=Math.min(ih-sy,Math.ceil((y1-y0+1)/pr))}
+ }catch(_){sx=0;sy=0;sw=iw;sh=ih}
+ const side=192,inner=Math.round(side*(sw===iw&&sh===ih?1:.78)),k=Math.min(inner/sw,inner/sh);
+ canvas.width=side;canvas.height=side;
+ const dw=Math.max(1,Math.round(sw*k)),dh=Math.max(1,Math.round(sh*k));
+ ctx.drawImage(image,sx,sy,sw,sh,Math.round((side-dw)/2),Math.round((side-dh)/2),dw,dh);
+ const data=canvas.toDataURL('image/webp',.82);
  if(!bankLogoSafe(data))throw Error('El logo excede el tamaño permitido. Usa una imagen más pequeña.');
  return data;
 }
@@ -8381,7 +8389,7 @@ banks=function(){
  return `<div class="v42-institutions v46-institutions v61-institutions v236-institution-view" data-profile="${v61InstitutionProfile}">
  <div class="bank-hero v46-bank-hero">
    <div class="v46-bank-intro">
-    <div class="hero-eyebrow">TU CARTERA FINANCIERA</div>
+    <div class="hero-eyebrow">BANCOS Y PRODUCTOS</div>
     ${v61ProfileSwitch(all)}
     <h2>Bancos y productos</h2>
     <p>Todo lo que tienes y debes, organizado por institución.</p>

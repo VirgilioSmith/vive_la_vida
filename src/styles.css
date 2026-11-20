@@ -55563,3 +55563,30 @@ html body #app#app .v242-settings-inner .v975-tab>div{display:grid;justify-items
 html body #app#app .v242-settings-inner .v975-tab strong,html body #app#app .v242-settings-inner .v975-tab small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 html body #app#app .v212-panel>.v975-tabs{margin:0 0 12px}
 }
+/* V1261 · Banners de Bancos (web): mismo formato en las 5 vistas, con toda la información.
+   Izquierda: etiqueta, título, NÚMERO GRANDE, descripción, botones y conteos. Derecha: recuadros de datos y nota. */
+@media(min-width:791px){
+html body #app#app #page .bank-hero.v46-bank-hero{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)!important;column-gap:40px!important;row-gap:0!important;align-items:start!important;padding:26px 32px!important;min-height:0!important;height:auto!important}
+html body #app#app #page .bank-hero .v46-bank-intro,html body #app#app #page .bank-hero .v46-global-financials{display:contents!important}
+html body #app#app #page .bank-hero .hero-eyebrow{grid-column:1;grid-row:1;margin:0 0 6px!important}
+html body #app#app #page .bank-hero .v61-profile-switch{grid-column:1;grid-row:2;justify-self:start;margin:0 0 8px!important}
+html body #app#app #page .bank-hero .v46-bank-intro>h2{grid-column:1;grid-row:3;margin:0 0 10px!important;font-size:clamp(20px,2vw,26px)!important;line-height:1.1!important}
+html body #app#app #page .bank-hero .v46-global-main{grid-column:1;grid-row:4;margin:0 0 10px!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+html body #app#app #page .bank-hero .v46-global-main>strong{display:block;font-size:clamp(40px,4.6vw,64px)!important;line-height:1.02!important;letter-spacing:-.05em;margin:2px 0!important}
+html body #app#app #page .bank-hero .v46-global-main>span{display:block;font-size:11px!important;letter-spacing:.14em}
+html body #app#app #page .bank-hero .v46-bank-intro>p{grid-column:1;grid-row:5;margin:0 0 14px!important;max-width:520px}
+html body #app#app #page .bank-hero .hero-actions{grid-column:1;grid-row:6;margin:0 0 10px!important}
+html body #app#app #page .bank-hero .v46-hero-foot{grid-column:1;grid-row:7;margin:0!important}
+html body #app#app #page .bank-hero .v46-global-secondary{grid-column:2;grid-row:1/span 6;align-self:center;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin:0!important}
+html body #app#app #page .bank-hero .v46-global-note{grid-column:2;grid-row:7;margin:12px 0 0!important}
+html body #app#app #page .bank-hero .v46-global-secondary>.v187-interactive-kpi{min-height:0!important}
+}
+@media(min-width:791px){
+html body #app#app #page .bank-hero .v61-profile-switch{position:static!important;inset:auto!important;transform:none!important;margin:0 0 10px!important}
+html body #app#app #page .bank-hero .v46-global-main>span{margin-top:6px}
+}
+/* V1262 · Banners de Bancos: solo la etiqueta como título; sin eslogan */
+@media(min-width:791px){
+html body #app#app #page .bank-hero .v46-bank-intro>h2{display:none!important}
+html body #app#app #page .bank-hero .hero-eyebrow{font-size:13px!important;letter-spacing:.16em!important;font-weight:850!important;margin-bottom:10px!important}
+}
