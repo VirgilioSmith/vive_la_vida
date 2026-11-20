@@ -55154,3 +55154,52 @@ html body #app#app .v1245-figs>strong{font-size:22px;white-space:nowrap}
 html body #app#app .v1245-sub{gap:4px 12px;font-size:12.5px}
 html body #app#app .v1245-sub span{white-space:nowrap}
 }
+
+/* V1246 · Detalle de préstamo rediseñado (web y móvil) */
+html body #app#app .v1246{display:grid;gap:14px}
+html body #app#app .v1246-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+html body #app#app .v1246-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+html body #app#app .v1246-more{position:relative}
+html body #app#app .v1246-more summary{list-style:none;cursor:pointer;width:38px;height:38px;display:grid;place-items:center;border-radius:50%;font-weight:900;letter-spacing:1px;background:color-mix(in srgb,var(--v424-accent-strong) 10%,transparent)}
+html body #app#app .v1246-more summary::-webkit-details-marker{display:none}
+html body #app#app .v1246-more>div{position:absolute;right:0;top:44px;z-index:5;display:grid;gap:6px;padding:10px;border-radius:16px;background:var(--v1246-pop,#fff);box-shadow:0 14px 34px rgba(0,0,0,.16);min-width:150px}
+html body.theme-black #app#app .v1246-more>div,html body.theme-dark #app#app .v1246-more>div{--v1246-pop:#16161a}
+html body #app#app .v1246-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;padding:24px 26px;border-radius:28px;color:#fff;background:linear-gradient(120deg,color-mix(in srgb,var(--v424-accent-strong) 58%,#0a0a1f),var(--v424-accent-strong));box-shadow:0 16px 36px color-mix(in srgb,var(--v424-accent-strong) 26%,transparent)}
+html body #app#app .v1246-hero *{color:inherit}
+html body #app#app .v1246-micro{font-size:12.5px;font-weight:700;opacity:.85;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+html body #app#app .v1246-chip{padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.2);font-size:11.5px;font-weight:800}
+html body #app#app .v1246-chip.is-late{background:#d4525e}
+html body #app#app .v1246-lead h2{margin:6px 0 4px;font-size:clamp(26px,3vw,34px);letter-spacing:-.045em;line-height:1.05}
+html body #app#app .v1246-lead p{margin:0;font-size:13px;opacity:.85}
+html body #app#app .v1246-lead .v83-loan-snapshot{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12px;opacity:.9}
+html body #app#app .v1246-balance{display:flex;gap:18px;align-items:center;margin-top:18px}
+html body #app#app .v1246-ring{flex:none;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#fff calc(var(--p)*1%),rgba(255,255,255,.22) 0)}
+html body #app#app .v1246-ring>div{width:80px;height:80px;border-radius:50%;display:grid;place-content:center;text-align:center;background:color-mix(in srgb,var(--v424-accent-strong) 78%,#0a0a1f)}
+html body #app#app .v1246-ring b{font-size:19px;font-weight:850;letter-spacing:-.04em;line-height:1}
+html body #app#app .v1246-ring small{font-size:10px;opacity:.8;margin-top:2px}
+html body #app#app .v1246-balance small{font-size:10.5px;font-weight:800;letter-spacing:.14em;opacity:.8}
+html body #app#app .v1246-balance strong{display:block;font-size:clamp(28px,3.4vw,40px);font-weight:850;letter-spacing:-.05em;line-height:1.05;margin:2px 0}
+html body #app#app .v1246-balance em{font-style:normal;font-size:12.5px;opacity:.85}
+html body #app#app .v1246-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:center}
+html body #app#app .v1246-stat{padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);min-width:0}
+html body #app#app .v1246-stat small{display:block;font-size:9.5px;font-weight:800;letter-spacing:.12em;opacity:.8}
+html body #app#app .v1246-stat strong{display:block;font-size:16px;font-weight:850;letter-spacing:-.03em;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body #app#app .v1246-stat strong i{font-style:normal;opacity:.7;font-weight:700}
+html body #app#app .v1246-stat em{display:block;font-style:normal;font-size:11px;opacity:.8;margin-top:2px}
+html body #app#app .v1246 .loan-tabs{position:sticky;top:0;z-index:4}
+@media(max-width:1100px){html body #app#app .v1246-hero{grid-template-columns:1fr}}
+@media(max-width:790px){
+html body #app#app .v1246-hero{padding:18px 16px;border-radius:24px;gap:16px}
+html body #app#app .v1246-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+html body #app#app .v1246-ring{width:88px;height:88px}html body #app#app .v1246-ring>div{width:66px;height:66px}
+html body #app#app .v1246-balance{gap:14px;margin-top:14px}
+html body #app#app .v1246-actions{width:100%}html body #app#app .v1246-actions .btn{flex:1}
+html body #app#app .v1246-actions .loan-primary{flex:1.4}
+}
+html body #app#app .v1246 .v1246-actions .loan-primary{background:var(--v424-accent-strong)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important;font-weight:800}
+@media(max-width:790px){
+html body #app#app .v1246-stat{padding:9px 11px;border-radius:15px}
+html body #app#app .v1246-stat strong{font-size:15px;margin-top:2px}
+html body #app#app .v1246-stat small{font-size:9px}
+html body #app#app .v1246-stat em{font-size:10.5px}
+}
