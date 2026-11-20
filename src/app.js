@@ -18187,20 +18187,20 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
    <div class="v911-det"><div><span>Precio</span><b>${money(r.amount,r.currency||'DOP',2)} · ${esc(freq(r))}</b></div><div><span>Categoría</span><b>${esc(catOf(r))}</b></div><div><span>Próximo cargo</span><b>${pausedFlag?'Pausado':esc(prettyDate(r.nextDue))}</b></div><div><span>Fuente</span><b>${esc(sourceName(r))}</b></div>
    <div class="v911-acts"><button type="button" data-act="editRecurring" data-id="${esc(r.id)}">${ico2('edit')} Editar</button>${pausedFlag?'':`<button type="button" data-act="payRecurring" data-id="${esc(r.id)}">Registrar pago</button><button type="button" data-act="postponeRecurring" data-id="${esc(r.id)}">Posponer</button>`}<button type="button" data-act="toggleRecurring" data-id="${esc(r.id)}">${pausedFlag?'Reactivar':'Pausar'}</button></div></div></details>`;
  }
- function grupo(nombre,lista,pausa){
-  const st=S(),mo=lista.reduce((n,r)=>n+monthlyDop(r),0),n=lista.length;
+ function grupo(nombre,lista,pausa,total){
+  const st=S(),mo=lista.reduce((n,r)=>n+monthlyDop(r),0),n=lista.length,share=total>0&&!pausa?Math.round(mo/total*100):0;
   const abierto=st.grp.includes(nombre)||(!!st.query&&true);
-  return `<details class="v911-grp" data-v911-group data-v911-grp="${esc(nombre)}"${abierto?' open':''}><summary><span class="v911-grp-main"><strong>${esc(nombre)}</strong><small>${n} ${n===1?'servicio':'servicios'}${pausa?' en pausa':''}</small></span><span class="v911-amt"><b>${rd(mo,0)}<i>/mes</i></b><small>${rd(mo*12,0)} /año</small></span>${chev}</summary><div class="v911-card">${lista.slice().sort((a,b)=>monthlyDop(b)-monthlyDop(a)).map(r=>serviceItem(r,pausa)).join('')}</div></details>`;
+  return `<details class="v911-grp" data-v911-group data-v911-grp="${esc(nombre)}"${abierto?' open':''}><summary><span class="v911-grp-main"><strong>${esc(nombre)}</strong><small>${n} ${n===1?'servicio':'servicios'}${pausa?' en pausa':share?' · '+share+'% del gasto':''}</small></span><span class="v911-amt"><b>${rd(mo,0)}<i>/mes</i></b><small>${rd(mo*12,0)} /año</small></span>${chev}${share?`<i class="v1247-share" style="--w:${share}%" aria-hidden="true"></i>`:''}</summary><div class="v911-card">${lista.slice().sort((a,b)=>monthlyDop(b)-monthlyDop(a)).map(r=>serviceItem(r,pausa)).join('')}</div></details>`;
  }
  function cartera(){
   const st=S(),act=activeList(),paused=(db.recurring||[]).filter(r=>r&&!r.archived&&r.active===false);
   const mes=act.reduce((n,r)=>n+monthlyDop(r),0),proximo=act.filter(r=>r.nextDue&&r.nextDue>=today()).sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
   const groups=new Map();act.forEach(r=>{const k=catOf(r);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(r)});
   const ordered=[...groups].sort((a,b)=>b[1].reduce((n,r)=>n+monthlyDop(r),0)-a[1].reduce((n,r)=>n+monthlyDop(r),0));
-  const body=ordered.map(([k,l])=>grupo(k,l,false)).join('')+(paused.length?grupo('En pausa',paused,true):'');
+  const body=ordered.map(([k,l])=>grupo(k,l,false,mes)).join('')+(paused.length?grupo('En pausa',paused,true,mes):'');
   const kpi=(icono,etiqueta,valor,nota)=>`<article class="v911-kpi"><header><span class="v911-kpi-ic">${ico2(icono)}</span><h4>${etiqueta}</h4></header><b>${valor}</b><small>${nota}</small></article>`;
   return `<div class="v911-cartera">
-   <div class="v911-kpis">${kpi('refresh','Gasto mensual',rd(mes,0),'Equivalente de servicios activos')}${kpi('calendar','Gasto anual',rd(mes*12,0),'Proyección a 12 meses')}${kpi('layers','Servicios activos',String(act.length),groups.size+(groups.size===1?' categoría':' categorías'))}${kpi('clock','Próximo cobro',proximo?esc(prettyDate(proximo.nextDue).replace(/\s+de\s+\d{4}$/i,'')):'—',proximo?esc(proximo.name):'Sin vencimientos').replace('class="v911-kpi"','class="v911-kpi v1150-next"')}</div>
+   <section class="v1247-hero" aria-label="Resumen de suscripciones"><div class="v1247-main"><small>GASTO MENSUAL</small><strong>${rd(mes,0)}</strong><span>${rd(mes*12,0)} al año · ${act.length} ${act.length===1?'servicio':'servicios'} en ${groups.size} ${groups.size===1?'categoría':'categorías'}</span></div>${proximo?`<div class="v1247-next"><span class="v1247-dot">${ico2('clock')}</span><div><small>PRÓXIMO COBRO</small><strong>${esc(proximo.name)}</strong></div><b>${esc(prettyDate(proximo.nextDue).replace(/\s+de\s+\d{4}$/i,''))}</b></div>`:''}</section>
    <p class="v911-eyebrow">Tus servicios por categoría</p>
    <label class="v911-search"><span class="v911-ic">${ico2('search')}</span><input type="search" id="v911-search" value="${esc(st.query)}" placeholder="Buscar servicio" aria-label="Buscar servicio" autocomplete="off" /></label>
    <div id="v911-list">${body||'<p class="v911-empty">Aún no tienes suscripciones. Añade la primera con el botón +.</p>'}<p class="v911-empty" id="v911-noresult" hidden>Ningún servicio coincide con la búsqueda.</p></div></div>`;
