@@ -1332,8 +1332,7 @@ function v68Wallet(){
   return `<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v266-physical-card v277-physical-card tier-${sanitize(tier)}"><span class="v277-card-head"><span class="v277-card-bank">${bankLogoInline(c.bankId)}<b>${sanitize(bankName||c.name)}</b></span><small>${sanitize(tierName(c))}</small></span><strong class="v277-card-title">${sanitize(c.name)}</strong><span class="v277-card-number">•••• ${sanitize(last4(c)||'••••')}</span><span class="v277-card-footer"><small>CRÉDITO · ${num(c.limitDOP)>0?'RD$':''}${num(c.limitDOP)>0&&num(c.limitUSD)>0?' / ':''}${num(c.limitUSD)>0?'US$':''}${num(c.limitDOP)<=0&&num(c.limitUSD)<=0?'RD$ / US$':''}</small>${cardNetworkMark(c)}</span></span></button>`;
  }).join('');
  const rows=history.map(t=>`<button type="button" class="v266-activity-row v6-wallet-tx-trigger" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalles de ${sanitize(transactionTitle(t))}, ${sanitize(String(txDisplay(t)).replace(/<[^>]*>/g,''))}"><span class="v266-activity-ico">${icon(['card_payment','card_refund','card_reward'].includes(t.type)?'up':'card')}</span><span class="v266-activity-info"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b><span class="v6-wallet-tx-chevron" aria-hidden="true">${icon('arrow')}</span></button>`).join('');
- const metric=(label,value,sub='')=>`<div class="v266-metric"><small>${label}</small><strong>${value}</strong>${sub?`<span>${sub}</span>`:''}</div>`;
- const accent=String(bank(active.bankId)?.color||db.settings.paletteHex||'').trim();
+  const accent=String(bank(active.bankId)?.color||db.settings.paletteHex||'').trim();
  const walletAccent=/^#[0-9a-fA-F]{6}$/.test(accent)?accent:'#6964ea';
  return `<section class="v68-wallet v266-wallet v279-wallet" style="--v900-wallet-tone:${walletAccent}" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
  <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${cards.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
@@ -1475,7 +1474,6 @@ return `<section class="bank-workspace v176-bank-workspace v220-bank-workspace">
 <div class="product-columns v220-product-columns"><div class="product-lane v220-product-lane"><div class="lane-head">${icon('wallet')} Cuentas <span>${f.aa.length}</span></div>${f.aa.length?f.aa.map(a=>`<button class="product-item" data-act="goAccount" data-id="${a.id}"><span><strong>${sanitize(a.name)}</strong><small>${a.kind==='savings'?'Ahorros':'Corriente'} · ${a.currency} · ${sanitize(bankOf(a))}</small></span><b>${money(getAccountBalance(a),a.currency,2)}</b></button>`).join(''):'<div class="lane-empty">Sin cuentas registradas</div>'}</div><div class="product-lane v220-product-lane"><div class="lane-head">${icon('card')} Tarjetas <span>${f.cc.length}</span></div>${f.cc.length?f.cc.map(c=>`<button class="product-item" data-act="goCard" data-id="${c.id}"><span><strong>${sanitize(c.name)}</strong><small>RD$ ${shorten(cardStatus(c,'DOP').debt)} · US$ ${shorten(cardStatus(c,'USD').debt)}</small></span><b>Ver corte ↗</b></button>`).join(''):'<div class="lane-empty">Sin tarjetas registradas</div>'}</div><div class="product-lane v220-product-lane"><div class="lane-head">${icon('building')} Préstamos <span>${f.ll.length}</span></div>${f.ll.length?f.ll.map(l=>`<button class="product-item" data-act="goLoan" data-id="${l.id}"><span><strong>${sanitize(l.name)}</strong><small>${num(loanStatus(l).progress)}% completado · ${l.currency}</small></span><b>${money(loanStatus(l).balance,l.currency)}</b></button>`).join(''):'<div class="lane-empty">Sin préstamos registrados</div>'}</div><div class="product-lane v220-product-lane"><div class="lane-head">${icon('analytics')} Certificados <span>${f.certs.length}</span></div>${f.certs.length?f.certs.map(c=>`<button class="product-item" data-act="goCertificate" data-id="${c.id}"><span><strong>${sanitize(c.name)}</strong><small>${num(c.rate)}% anual · ${c.currency}</small></span><b>${money(certificateCapital(c),c.currency)}</b></button>`).join(''):'<div class="lane-empty">Sin certificados registrados</div>'}</div></div>
 </section>`}
 
-function recentListFor(trans){return trans.map(t=>`<div class="mini-row"><div><div class="mini-title">${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</div><div class="mini-sub">${v255TransactionMetaLine(t,prettyDate(t.date))}</div></div><strong class="money">${txDisplay(t)}</strong></div>`).join('')}
 
 /* V28 · Identidad visual: logos bancarios personales y tarjetas por categoría. */
 const bankLogoSafe=(logo)=> typeof logo==='string' && logo.length<240000 && /^data:image\/(?:webp|png|jpeg);base64,[a-z0-9+/=]+$/i.test(logo) ? logo : '';
@@ -1675,8 +1673,7 @@ function originalAccounts(){
    </div>
    <div class="bottom"><span class="subtle">Cuenta permanente · no se archiva ni se elimina</span></div>
  </article>`).join('');
- const btn=(label,value,desc,view,iconName)=>`<button type="button" class="kpi account-drill-kpi ${ui.accountBreakdown===view?'is-active':''}" data-act="accountBreakdown" data-view="${view}" aria-label="Ver evolución de ${label}"><span class="kpi-head">${label}<span class="kpi-icon">${icon(iconName)}</span></span><span class="kpi-value">${value}</span><span class="kpi-foot">${desc} · Ver evolución ↗</span></button>`;
- return `<div class="grid cards-grid section">${cashCard}${all.length?all.map(a=>`<article class="bank-card account-product-card"><div class="split"><div><div class="name">${sanitize(a.name)}</div><div class="type v28-account-bankline">${bankLogoInline(a.bankId)}<span>${sanitize(bankOf(a))} · ${a.kind==='savings'?'Ahorros':a.kind==='checking'?'Corriente':'Efectivo'}</span></div></div><span class="pill">${a.currency}</span></div><button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver evolución de ${sanitize(a.name)}">${money(getAccountBalance(a),a.currency,2)} <span>↗</span></button><div class="product-mini-actions v176-account-actions">${productControls('account',a.id,a.archived)}<button class="btn sm ghost" data-act="accountDetails" data-id="${a.id}">Ver evolución</button></div><div class="bottom"><span class="subtle">${a.last4?'•••• '+sanitize(a.last4):'Sin terminación registrada'}</span></div></article>`).join(''):`<div class="panel"><div class="empty">No hay cuentas bancarias adicionales. El efectivo se gestiona desde la ficha anterior. <button class="btn sm soft" data-act="addAccount">Crear cuenta</button></div></div>`}</div>
+  return `<div class="grid cards-grid section">${cashCard}${all.length?all.map(a=>`<article class="bank-card account-product-card"><div class="split"><div><div class="name">${sanitize(a.name)}</div><div class="type v28-account-bankline">${bankLogoInline(a.bankId)}<span>${sanitize(bankOf(a))} · ${a.kind==='savings'?'Ahorros':a.kind==='checking'?'Corriente':'Efectivo'}</span></div></div><span class="pill">${a.currency}</span></div><button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver evolución de ${sanitize(a.name)}">${money(getAccountBalance(a),a.currency,2)} <span>↗</span></button><div class="product-mini-actions v176-account-actions">${productControls('account',a.id,a.archived)}<button class="btn sm ghost" data-act="accountDetails" data-id="${a.id}">Ver evolución</button></div><div class="bottom"><span class="subtle">${a.last4?'•••• '+sanitize(a.last4):'Sin terminación registrada'}</span></div></article>`).join(''):`<div class="panel"><div class="empty">No hay cuentas bancarias adicionales. El efectivo se gestiona desde la ficha anterior. <button class="btn sm soft" data-act="addAccount">Crear cuenta</button></div></div>`}</div>
  ${ui.accountId&&account(ui.accountId)?accountDetail(account(ui.accountId)):''}`;
 }
 
@@ -1914,10 +1911,8 @@ function benefits(){
  const rows=cards.map(c=>{const d=benefitBreakdown(c,'DOP',year),u=benefitBreakdown(c,'USD',year);const more=(db.perkUses||[]).filter(x=>x.cardId===c.id&&x.date.startsWith(String(year))).length;return `<div class="benefits-simple-row"><div><strong>${sanitize(c.name)}</strong><small>${sanitize(bankOf(c))} · ${more} beneficio${more===1?'':'s'} adicional${more===1?'':'es'}</small></div><div><small>CASHBACK RD$</small><b>${money(d.credited,'DOP',2)}</b></div><div><small>CASHBACK US$</small><b>${money(u.credited,'USD',2)}</b></div><div><small>NETO RD$</small><b class="${d.net<0?'negative':'positive'}">${money(d.net,'DOP',2)}</b></div><button class="btn sm soft" data-act="manualBenefit" data-id="${c.id}">+ Beneficio</button><button class="btn sm ghost" data-act="goCard" data-id="${c.id}">Ver tarjeta ${icon('arrow')}</button></div>`}).join('');
  return `<div class="section-title"><div><h2>Beneficios y cashback</h2><p>Un registro manual por tarjeta. Sin programas ni estimaciones automáticas.</p></div>${cards.length?`<button class="btn" data-act="manualBenefit" data-id="${cards[0].id}">${icon('plus')} Registrar beneficio</button>`:'<button class="btn" data-act="navigate" data-id="cards">Registrar tarjeta</button>'}</div><div class="grid kpis">${shellKpi('Cashback recibido RD$',money(chargedD,'DOP',2),'Acreditaciones confirmadas','wallet','positive')}${shellKpi('Cashback recibido US$',money(chargedU,'USD',2),'Sin conversión de moneda','wallet','positive')}${shellKpi('Costos cobrados RD$',money(spentD,'DOP',2),'Cargos realmente registrados','receipt')}${shellKpi('Retorno neto RD$',money(chargedD-spentD,'DOP',2),'Cashback menos costos cobrados','chart',chargedD-spentD<0?'negative':'positive')}</div><div class="benefits-manual-totals"><span>Costos en dólares: <b>${money(spentU,'USD',2)}</b></span><span>Retorno neto US$: <b>${money(chargedU-spentU,'USD',2)}</b></span><span>Las anualidades contratadas se muestran en cada tarjeta y no cuentan como gasto hasta cobrarse.</span></div><section class="panel section"><div class="panel-head"><h3>Beneficios por tarjeta</h3><span class="pill">${cards.length} tarjetas</span></div><div class="benefits-simple-list">${rows||'<div class="empty">Registra una tarjeta para empezar a llevar tus beneficios reales.</div>'}</div></section><p class="footnote">Si el cashback se acredita a una tarjeta, disminuye su deuda. Si se deposita en una cuenta, aumenta el saldo de esa cuenta. Los beneficios no monetarios quedan como notas, no como ingresos.</p>`;
 }
-function benefitRuleForm(id){let c=card(id);if(!c)return;let categories=categoryOptions('gasto');modal('Nueva regla de beneficios · '+c.name,`<input type="hidden" name="cardId" value="${sanitize(c.id)}">${formItem('name','Nombre de promoción (Ej. Supermercado 5%)','','text','required maxlength="70"')}${formSelect('kind','Tipo de beneficio',rewardTiers,'cashback')}${formSelect('currency','Aplica a',['ALL','DOP','USD'],'ALL')}${formSelect('category','Categoría',['',...categories.map(x=>x[0])],'')}${formItem('subcategory','Subcategoría específica (opcional)','','text','maxlength="80"')}${formItem('merchant','Comercio (texto a buscar en concepto)','','text','maxlength="90"')}${formSelect('calc','Cálculo',[['percent','Porcentaje o puntos / 100'],['fixed','Importe fijo por compra (solo cashback)']],'percent')}${formItem('value','Porcentaje, puntos o importe fijo',1,'number','required min="0" max="100000" step="0.01"')}${formItem('monthlyCap','Tope mensual del beneficio (0 = sin tope)',0,'number','min="0" step="0.01"')}${formItem('validFrom','Válida desde',today(),'date','required')}${formItem('validUntil','Válida hasta (opcional)','','date')}${para('Una regla por tipo se elige según especificidad: comercio > subcategoría > categoría > cashback general. Los importes no se acreditan automáticamente. Para beneficios no monetarios, usa el campo nombre y descripción; ningún valor se sumará como ingreso.')}`,'benefitRuleForm',true)}
 function annualFeeForm(id){let c=card(id);if(!c)return;modal('Registrar anualidad · '+c.name,`<input type="hidden" name="cardId" value="${sanitize(id)}">${formSelect('currency','Moneda del cargo',['DOP','USD'],c.annualFeeCurrency||(num(c.annualFeeUSD)&&!num(c.annualFeeDOP)?'USD':'DOP'))}${formItem('date','Fecha del cargo real',today(),'date','required max="'+today()+'"')}${formItem('amount','Monto de la anualidad',num(c.annualFeeAmount??(num(c.annualFeeDOP)||num(c.annualFeeUSD))),'number','required min="0.01" step="0.01"')}${para('Esto añade una deuda y un gasto por membresía una única vez, con fecha confirmada. La anualidad configurada en el contrato no genera gastos por sí sola.')}`,'annualFeeForm')}
 function rewardReceivedForm(id,cur){let c=card(id);if(!c)return;let accounts=db.accounts.filter(a=>!a.archived).map(a=>[a.id,isMobileViewport()?v116AccountLabel(a):a.name+' · '+a.currency+' · '+bankOf(a)]);modal('Acreditar beneficio confirmado · '+c.name,`<input type="hidden" name="cardId" value="${sanitize(id)}">${formSelect('destination','¿Dónde se acreditó?',[['card','Reducción de deuda en tarjeta'],['account','Depósito efectivo en cuenta bancaria']],'card')}${formSelect('currency','Moneda del beneficio',['DOP','USD'],cur||'DOP')}${formSelect('ruleId','Programa asociado (opcional)',[['','Cashback general / sin programa'],...(c.benefitRules||[]).map(r=>[r.id,r.name])],'')}${formSelect('accountId','Cuenta receptora (solo si eliges depósito)',[['','Seleccionar cuenta'],...accounts],'')}${formItem('date','Fecha del abono real',today(),'date','required max="'+today()+'"')}${formItem('amount','Importe efectivamente recibido','','number','required min="0.01" step="0.01"')}${formItem('note','Motivo / período / comprobante','Cashback acreditado','text','maxlength="160"')}${para('El cashback en tarjeta reduce la deuda sin tocar cuentas bancarias. El depositado incrementa la cuenta, sin reducir la deuda. No sumes una estimación como cobro confirmado.')}`,'rewardReceivedForm',true)}
-function perkUsageForm(id){let c=card(id);if(!c)return;modal('Beneficio no monetario utilizado · '+c.name,`<input type="hidden" name="cardId" value="${sanitize(id)}">${formItem('date','Fecha de uso',today(),'date','required max="'+today()+'"')}${formItem('name','Beneficio (Ej. Sala VIP, seguro de viaje)','','text','required maxlength="85"')}${formSelect('currency','Moneda referencial',['DOP','USD'],'DOP')}${formItem('value','Valor referencial (opcional, no es ingreso)',0,'number','min="0" step="0.01"')}${formItem('note','Observaciones','','text','maxlength="150"')}${para('Registro descriptivo. El valor estimado de un beneficio utilizado NO aumenta el efectivo, ni el cashback cobrado, ni el retorno monetario.')}`,'perkUsageForm')}
 
 
 
@@ -2365,10 +2360,6 @@ function v143CostDesktop(t){
  return v143BankCostLines(t).map(x=>`<tr class="v143-cost-desktop-row"><td>${prettyDate(t.date)}</td><td><strong>↳ ${sanitize(x.title)}</strong>${x.percent>0?`<small>Tarifa aplicada: ${x.percent.toFixed(3)}%</small>`:''}<small>Vinculado a ${sanitize(transactionTitle(t))}</small></td><td>Costo bancario</td><td>${sanitize(account(t.accountId)?.name||'Cuenta origen')}</td><td>Impuestos y comisiones</td><td>—</td><td>—</td><td class="right money">−${money(x.amount,x.currency,2)}</td><td class="v265-linked-balance" title="Desglose vinculado: el balance corresponde al movimiento principal">—</td><td class="right"><span class="v143-cost-linked">Incluido en operación</span></td></tr>`).join('');
 }
 function v143CostSearch(t){return v143BankCostLines(t).map(x=>[x.title,x.category,x.subcategory,x.percent>0?x.percent.toFixed(3)+'%':''].join(' ')).join(' ')}
-function v143CostOnlyChannel(t){
- const type=t.paymentChannel==='internet_banking'?'Internet Banking':t.paymentChannel==='presencial'?'Presencial':'';
- return type?`<div class="tx-ledger-cost">Canal · ${type}</div>`:'';
-}
 
 /* V265 · SALDO POSTERIOR, por cuenta/moneda y crédito de cada tarjeta.
    Motor de lectura exclusivamente: no registra movimientos, ni ajusta saldos.
@@ -2969,7 +2960,6 @@ function saveDashboardConfig(c){db.settings.kpiDashboard={mode:c.mode,selected:[
 function dashboardEnabled(c){return new Set(c.mode==='all'?KPI_IDS:c.mode==='essential'?KPI_ESSENTIAL:c.selected)}
 
 
-function kpiEditor(c){return `<section class="kpi-editor" aria-label="Personalizar indicadores"><div class="kpi-editor-head"><div><h3>Elige lo que quieres ver</h3><p>Marca indicadores y organiza las secciones. Tus preferencias quedan guardadas en este dispositivo.</p></div><button type="button" class="btn sm soft" data-act="kpiEditor">Cerrar editor</button></div><div class="kpi-editor-grid">${KPI_GROUPS.map(g=>`<div class="kpi-editor-group"><h4>${sanitize(g.title)}</h4>${KPI_DEFS[g.id].map(([id,label])=>`<label><input type="checkbox" data-kpi-id="${id}" ${c.selected.includes(id)?'checked':''}><span>${sanitize(label)}</span></label>`).join('')}</div>`).join('')}</div></section>`}
 /* V176: caja y cuentas agrupadas sin sumar divisas nominales. */
 
 
@@ -3177,8 +3167,7 @@ function v1160Art(name){
 }
 function moneyRegister(mode="page"){
  const m=monthStats(),incomeOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['income','bank_reward','card_reward'].includes(t.type)),expenseOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['expense','card_charge','card_refund','loan_payment'].includes(t.type));
- const op=(glyph,name,description,action,type='')=>`<button class="money-register-tile" data-act="${action}" ${action==='navigate'?`data-id="${type}"`:type?`data-type="${type}"`:''}><span class="money-register-icon">${icon(glyph)}</span><strong>${name}</strong><small>${description}</small><span class="register-tile-arrow">${icon('arrow')}</span></button>`;
- const pending=db.pendingOperations||[],active=ui.movementTab==='pending'?'all':ui.movementTab;
+  const pending=db.pendingOperations||[],active=ui.movementTab==='pending'?'all':ui.movementTab;
  const summary=`<div class="v221-status-summary" aria-label="Estado de movimientos"><span>Registrados <b>${db.transactions.length}</b></span><span>Borradores <b>${pending.length}</b></span></div>`;
  const selector=active==='register'?`<div class="vr-register-top-nav"><span>OPERACIONES / REGISTRO</span><nav class="movement-tabs" aria-label="Vistas del centro">${[['all','Movimientos','cycle']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`:`<div class="movement-tabs-shell"><div class="movement-title"><span class="summary-tag">REGISTRO Y CONTROL</span><h2>Centro de operaciones inteligente.</h2><p>Ingresos, gastos, tarjetas, transferencias, efectivo y pagos: cada flujo muestra solamente lo necesario.</p></div><nav class="movement-tabs" aria-label="Vistas del centro de movimientos">${[['all','Movimientos','cycle']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`;
   const cashD=db.accounts.find(a=>a.kind==='cash'&&a.currency==='DOP'),cashU=db.accounts.find(a=>a.kind==='cash'&&a.currency==='USD');
@@ -3436,8 +3425,7 @@ function v560ReconcileCommitments(period=ui.month){
  // dueMap de hoy, porque éste ya tiene descontados los pagos de todo el pasado.
  for(const card of db.cards||[]){
   for(const ccy of ['DOP','USD']){
-   const rows=[];
-   const opened=validDate(card.opened)?card.opened:cutoff;
+      const opened=validDate(card.opened)?card.opened:cutoff;
    const opening=amount(ccy==='USD'?card.openingUSD:card.openingDOP);
    const billed=ccy==='USD'?card.openingBilledUSD:card.openingBilledDOP;
    // Si el saldo inicial carece de clasificación de corte, se asigna al ciclo
@@ -4594,7 +4582,6 @@ function v918BudgetAssign(cat){
  window.openItemPicker('Selecciona la categoría',cats.map(c=>({value:c,name:c,detail:detail(c,''),iconHtml:ico(c,'')})),stepSub);
 }
 function budgetForm(cat,sub){let category=cat||Object.keys(categoryMap('gasto'))[0]||'',subcategory=sub||'',row=budgetRowsAt(ui.month).find(b=>b.category===category&&(b.subcategory||'')===subcategory)||{};modal('Presupuesto por categoría y subcategoría',`${formItem('effectiveMonth','Mes de vigencia',ui.month,'month','required')}${formSelect('category','Categoría de gasto',categoryOptions('gasto'),category,'id="budgetCategory"')}${subSelect('gasto',category,subcategory)}${formItem('amount','Presupuesto de este mes (RD$)',row.amount||0,'number','min="0" step="0.01" required')}${para('La edición rige desde el mes elegido y no reescribe períodos anteriores. Un límite global ya incluye sus subcategorías. Para retirar un límite, registra cero.')}`,'budgetForm')}
-let draft={};
 function legacyTransactionForm(partial={},editId=null){let o={type:'expense',date:today(),accountId:db.accounts[0]?.id||'',toAccountId:db.accounts[1]?.id||'',cardId:db.cards[0]?.id||'',loanId:db.loans[0]?.id||'',certificateId:db.certificates[0]?.id||'',currency:'DOP',amount:'',sourceAmount:'',targetAmount:'',category:'Alimentación',subcategory:'',note:'',tags:'',principal:'',interest:'',fee:0,insurance:0,paymentKind:'regular',installmentPeriod:'',...partial};let type=o.type;if(type==='loan_payment'&&!editId){if(partial.insurance===undefined)o.insurance='';if(partial.fee===undefined)o.fee='';}draft=o;
 if(editId&&/^\d{4}-\d{4}$/.test(o.date))o.date=o.date.slice(0,7)+'-'+o.date.slice(7);let typeOptions=Object.entries(TRANSL).filter(([k])=>k!=='bank_reward'||!!editId).map(([k,v])=>[k,v]);let ac=db.accounts.map(a=>[a.id,`${a.name} (${a.currency})`]);let ca=db.cards.map(c=>[c.id,`${c.name} · ${bankOf(c)}`]);let lo=db.loans.map(l=>[l.id,`${l.name} (${l.currency})`]);
 let body=`${editId?`<input type="hidden" name="type" value="${sanitize(type)}"><div class="form-full tx-type-frozen">Tipo: <strong>${sanitize(TRANSL[type]||type)}</strong><small>Para proteger la contabilidad, la naturaleza de una operación existente no se cambia desde el editor.</small></div>`:formSelect('type','Tipo de operación',typeOptions,type,'id="txType"')}${formItem('date','Fecha de operación',o.date,'date','required max="'+today()+'"')}`;
@@ -8670,7 +8657,6 @@ document.addEventListener('click',function(event){
  });
 },true);
 
-const v42OrigBankForm=bankForm;
 bankForm=function(id){const b=bank(id)||{};const o={name:'',kind:'Banco',notes:'',color:'#376bea',scope:'personal',...b};if(!v40IsFinancial(o))o.kind='Entidad no bancaria';const logo=bankLogoSafe(o.logo);
 const upload=`<div class="form-full v28-bank-upload"><div id="bankLogoPreview">${bankLogoMark(o,'bank-logo-upload-preview')}</div><div class="v28-bank-upload-copy"><strong>Identidad visual de la institución</strong><small>Imagen opcional. El color que elijas también identifica la entidad en las listas.</small><div class="v28-upload-actions"><button type="button" class="btn sm soft" data-act="bankLogoChoose">${icon('plus')} ${logo?'Cambiar':'Subir'} logo</button><button type="button" class="btn sm ghost" data-act="bankLogoRemove" id="bankLogoRemove" ${logo?'':'hidden'}>Quitar logo</button></div></div><input id="bankLogoFile" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" hidden aria-label="Seleccionar logo"></div>`;
 const kinds=['Banco','Asociación de ahorros y préstamos','Cooperativa','Financiera','Entidad no bancaria','Aseguradora','Institución de servicios','Otra institución','Otro'];
@@ -8794,7 +8780,6 @@ function v45NextPayDate(due,s){
  }
  return v40IncomeNext(due,s.frequency);
 }
-const v45PreviousPayroll=v40Payroll;
 // Annual payments represent twelve months of a configured monthly gross salary.
 const v45PreviousIncomePost=v40IncomePost;
 v40IncomePost=function(s,due,net,date,note,mode,accountId){
@@ -9242,8 +9227,7 @@ function v48RefreshSummary(form){
   const schedule={kind,frequency,currency:f.currency.value,grossMonthly:gross,otherDeduction:Number(f.otherDeduction.value)||0,companyDeductions:JSON.parse(f.companyDeductionsJSON?.value||'[]'),nextDue:f.nextDue.value,withholdingPct:0};
   const pay=v40Payroll(schedule,f.nextDue.value),factor=v80MonthlyFactor(frequency);
   const monthNet=pay.net*factor, monthGross=pay.gross*factor;
-  const line=(label,number,emph=false)=>`<div class="v48-review-line ${emph?'major':''}"><span>${label}</span><strong>${money(number,schedule.currency,2)}</strong></div>`;
-  const accountNm=account(f.accountId.value),bk=accountNm&&bank(accountNm.bankId),srcName=f.name.value.trim()||'Ingreso recurrente';
+    const accountNm=account(f.accountId.value),bk=accountNm&&bank(accountNm.bankId),srcName=f.name.value.trim()||'Ingreso recurrente';
   const dayTxt=frequency==='monthly'?'Día '+(Number((f.nextDue.value||'').slice(8,10))||''):'';
   const dl=(k,v,cls='')=>`<div class="v902-r ${cls}"><span>${k}</span><strong>${v}</strong></div>`;
   target.innerHTML=`<section class="v902-card"><div class="v902-card-head"><span class="v902-ico" aria-hidden="true">${icon('briefcase')}</span><div><strong>${sanitize(srcName)}</strong><small>${kind==='formal'?'Trabajo formal':'Trabajo informal'}</small></div><button type="button" class="v902-edit" data-v902-goto="1">Editar</button></div>
@@ -9365,7 +9349,7 @@ function v902RemapIncomeWizard(form,wizard,id){
  wizard.querySelectorAll('.v48-step-track span').forEach((sp,i)=>sp.dataset.label=labels[i]);
  if(false){
   const live=document.createElement('aside');live.className='v902-live';live.setAttribute('aria-live','polite');wizard.appendChild(live);form.classList.add('v902-desktop');
-  const paint=()=>{const body=document.createElement('div');body.className='v48-confirm-body';try{const old=wizard.querySelector('.v48-confirm-body');const tmp=old;v48RefreshSummary(form);live.innerHTML='<div class="v902-live-title">Resumen en vivo</div>'+old.innerHTML.replace(/<button[^>]*data-v902-goto[^>]*>[^<]*<\/button>/g,'')}catch(_){}};
+  const paint=()=>{const body=document.createElement('div');body.className='v48-confirm-body';try{const old=wizard.querySelector('.v48-confirm-body');v48RefreshSummary(form);live.innerHTML='<div class="v902-live-title">Resumen en vivo</div>'+old.innerHTML.replace(/<button[^>]*data-v902-goto[^>]*>[^<]*<\/button>/g,'')}catch(_){}};
   form.addEventListener('input',paint);form.addEventListener('change',paint);form.addEventListener('click',()=>setTimeout(paint,0));paint();
  }
  if(!id){form.querySelector('[data-v48-kind="formal"]')?.click();try{const as=form.elements.accountId;if(as&&!as.value){const o=[...as.options].find(x=>x.value&&account(x.value)&&account(x.value).kind!=='cash')||[...as.options].find(x=>x.value);if(o){as.value=o.value;as.dispatchEvent(new Event('change',{bubbles:true}))}}}catch(_){}}
@@ -10599,8 +10583,7 @@ function deletePersonalLoan(id){
   const pctIncome=income>.005?spending/income*100:null;
   const comparison=last>.005?(spending-last)/Math.abs(last)*100:null;
   const vsMonth=lastMonth>.005?(monthSpend-lastMonth)/Math.abs(lastMonth)*100:null;
-  const change=x=>x===null?'Sin base':(x>=0?'+':'')+pct(x);
-  const currentBudget=budgetPlan(selected),monthTotal=monthly(selected),budgetSpent=budgetCoveredSpend(monthTotal,selected);
+    const currentBudget=budgetPlan(selected),monthTotal=monthly(selected),budgetSpent=budgetCoveredSpend(monthTotal,selected);
   const budgetUsed=currentBudget.total>0?budgetSpent/currentBudget.total*100:null;
   const expenseCategoryCount=ranked.filter(x=>Math.abs(x.amount)>.005).length;
 
@@ -13212,11 +13195,6 @@ function v213ApplePayBadge(t){
  return `<span class="v213-apple-badge v216-apple-pay-brand" title="Compra registrada por Apple Pay / Atajos" aria-label="Origen Apple Pay"><span class="v216-apple-mark" aria-hidden="true">${icon('apple')}</span><span>Pay</span></span>`;
 }
 /* Si la nota empieza por «Apple Pay · comercio», el ícono de Apple Pay reemplaza ese texto y queda en la misma línea del comercio (una línea menos por movimiento). */
-function v213ApplePayNote(t){
- const note=String(t&&t.note||''),badge=v213ApplePayBadge(t),m=badge&&note.match(/^\s*apple\s*pay\s*[·•\-–:|]\s*(.*)$/i);
- if(m)return {badgeInNote:true,html:`<div class="subtitle v213-note-apple">${badge}<span>${sanitize(m[1])}</span></div>`};
- return {badgeInNote:false,html:note?`<div class="subtitle">${sanitize(note)}</div>`:''};
-}
 function v423VisibleTagMarkup(t){
  const raw=String(t?.tags||'').split(',').map(x=>x.trim()).filter(Boolean).filter(x=>x.toLowerCase()!=='apple-pay');
  return raw.length?`<span class="tx-label">${sanitize(raw.join(' · '))}</span>`:'';
@@ -15253,8 +15231,7 @@ function v243NotificationReport(kind,reportEnd=''){
  if(kind==='cierre')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('analytics')}</span><div><h3>Cómo terminó el mes</h3><p>${dayCount} ${dayCount===1?'día':'días'} contabilizados, según lo registrado</p></div></div><div class="v243-report-dual">${compared}</div><div class="v243-report-categories"><h4>Principales categorías</h4>${categories}</div></section>`;
  if(kind==='semanal')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('chart')}</span><div><h3>Así evolucionó tu semana</h3><p>Balance de lunes a domingo · ${dayCount} ${dayCount===1?'día':'días'}</p></div></div><div class="v243-report-dual">${compared}</div><div class="v243-report-categories"><h4>En qué se concentraron los gastos</h4>${categories}</div></section>`;
  const insights=v216Insights(a,b,currentClosed,dues,liquid);
- const tabs='';
- document.getElementById('v216-layer')?.remove();
+  document.getElementById('v216-layer')?.remove();
  const layer=document.createElement('div');layer.id='v216-layer';layer.className='v216-overlay v243-report-overlay';
  layer.innerHTML=`<section class="v216-report v243-report" role="dialog" aria-modal="true" aria-labelledby="v216-title" tabindex="-1"><header class="v243-report-head"><div class="v243-report-brand">${icon(classification.icon)}<span>vive el hoy · INFORMES FINANCIEROS</span></div><button type="button" class="v216-close" data-v216="close" aria-label="Cerrar informe">×</button><div class="v243-report-head-copy"><span>${classification.label}</span><h2 id="v216-title">${classification.title}</h2><p>${classification.desc}</p></div><div class="v243-report-dates"><span>${icon('calendar')} ${prettyDate(p.start)}${p.start===p.end?'':' — '+prettyDate(p.end)}</span><small>Corte 7:00 p. m. · República Dominicana</small></div></header><div class="v246-report-context"><span>${icon('check')} Informe liberado el ${prettyDate(closed)} · 7:00 p. m.</span><small>Período cerrado · RD</small></div><div class="v216-report-body v243-report-content"><div class="v243-report-hero"><span>BALANCE DEL PERÍODO</span><strong class="${a.net<0?'v216-negative':'v216-positive'}">${v216Currency(a.net)}</strong><p>Ingresos registrados menos egresos del período</p></div><div class="v243-report-core">${stat('Ingresos',v216Currency(a.income))}${stat('Egresos',v216Currency(a.expense))}${stat('Movimientos',String(a.count),'Registrados')}</div>${special}<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('calendar')}</span><div><h3>Compromisos y fechas</h3><p>${overdue.length} vencidos · ${due7.length} próximos 7 días</p></div></div>${dueRows||'<p class="v243-report-empty">No hay vencimientos próximos registrados.</p>'}<button type="button" class="v216-link" data-v216="payments">Ver centro de pagos ${icon('arrow')}</button></section><section class="v243-report-block v243-report-advice"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('shield')}</span><div><h3>Lo que merece atención</h3><p>Observaciones calculadas con tus registros</p></div></div><ul class="v216-insights">${insights.slice(0,2).map(x=>`<li class="${x.danger?'v216-critical':''}">${sanitize(x.text)}</li>`).join('')}</ul></section><footer class="v216-report-foot"><span>${a.appleCount} movimiento(s) Apple Pay · ${a.count} movimiento(s) totales</span><span>Vista dinámica: no modifica tus registros.</span></footer></div></section>`;
  document.body.append(layer);layer.querySelector('.v216-report')?.focus();document.body.classList.add('v216-modal-open');
@@ -16118,8 +16095,7 @@ document.addEventListener('input',function(event){
   'use strict';
   const fmt=(n)=>money(Number(n)||0,'DOP',0);
   const esc=v=>sanitize(String(v??''));
-  const number=n=>Number.isFinite(Number(n))?Number(n):0;
-  const monthText=()=>dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'});
+    const monthText=()=>dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'});
   const monthKey=()=>String(ui.month||today().slice(0,7));
     const activeRecurring=()=>v339ActiveRecurring();
 
@@ -17192,7 +17168,6 @@ try{const submit=f.querySelector('button[type=submit]');if(typeof f.requestSubmi
 // A rejected native submission leaves the form and error in place; do not pretend success.
 queueMicrotask(()=>{if(!f.isConnected){confirmationBusy=false;return}const msg=f.querySelector('#formError')?.textContent?.trim();if(msg){setError(msg,true)}else{setError('La operación no se ha confirmado. Revisa los campos obligatorios antes de reintentar.',true)}confirmationBusy=false;if(b){b.disabled=false;b.textContent='✓ Confirmar movimiento'}});
 }catch(e){setError(e.message||'No se pudo enviar el movimiento.',true);confirmationBusy=false;if(b){b.disabled=false;b.textContent='✓ Confirmar movimiento'}}}
-const priorOpen=openMobileQuickRegister;
 openMobileQuickRegister=function(mode='income',amount=''){const chosen=mode==='expense'||mode==='card_charge'?'spend':mode==='transfer'||mode==='outgoing'?'transfer':mode;ui.mobileQuickRegister={mode:['income','spend','transfer'].includes(chosen)?chosen:'income',amount:String(amount||''),preset:'',transferKind:mode==='outgoing'?'outgoing':'own',v749Source:'account',v749Currency:'DOP',v749Date:today(),v749Note:'',v749Subcategory:'',v749Account:db.accounts.find(a=>!a.archived)?.id||'',v749Card:db.cards.find(c=>!c.archived)?.id||'',v749ToAccount:'',v749Payee:''};const s=state();s.v749ToAccount=db.accounts.find(a=>!a.archived&&a.id!==s.v749Account)?.id||'';renderEntry()};
 /* Editar un movimiento con la misma pantalla nueva de captura (teclado, categorías y revisión). Devuelve false si el movimiento
    tiene datos que esta pantalla no puede representar sin perderlos; entonces se usa el editor especializado de siempre. */
@@ -17344,19 +17319,6 @@ function productRows(){if(!active)return [];const s=active.select;
   return {value:o.value,title:item?.name||o.textContent,caption,brand,last4,typ,details};
  });
 }
-function openPicker(select){closePicker();active={select,kind:select.name,provisional:select.value,filter:'all',q:''};
- const layer=document.createElement('div');layer.id='v756-product-layer';
- const isCard=select.name==='cardId';const title=isCard?'Selecciona una tarjeta':select.name==='loanId'?'Selecciona el préstamo':'Selecciona la cuenta';
- layer.innerHTML=`<section class="v756-sheet" role="dialog" aria-modal="true" aria-label="${title}"><span class="v756-sheet-handle"></span><header class="v756-sheet-head"><div><h2>${title}</h2><p>Elige un producto registrado para esta operación.</p></div><button type="button" class="v756-sheet-close" data-v756="close" aria-label="Cancelar">×</button></header><input type="search" class="v756-sheet-search" id="v756-search" aria-label="Buscar producto" placeholder="Buscar ${isCard?'tarjeta':select.name==='loanId'?'préstamo':'cuenta'}…">${isCard?'<div class="v756-sheet-tabs" role="group" aria-label="Filtrar tarjetas"><button data-v756="filter" data-value="all" aria-pressed="true">Todas</button><button data-v756="filter" data-value="credit" aria-pressed="false">Crédito</button><button data-v756="filter" data-value="debit" aria-pressed="false">Débito</button></div>':''}<div class="v756-sheet-items"></div><button type="button" class="v756-use" data-v756="use">Usar ${isCard?'esta tarjeta':select.name==='loanId'?'este préstamo':'esta cuenta'}</button></section>`;
- document.body.appendChild(layer);document.body.classList.add('v756-picker-open');
- layer.addEventListener('click',e=>{if(e.target===layer||e.target.closest('[data-v756="close"]')){closePicker();return}
- const filter=e.target.closest('[data-v756="filter"]');if(filter){active.filter=filter.dataset.value;draw();return}
- const item=e.target.closest('[data-v756="choose"]');if(item){active.provisional=item.dataset.value;draw();return}
- if(e.target.closest('[data-v756="use"]')){if(active.provisional&&[...select.options].some(o=>o.value===active.provisional)){select.value=active.provisional;select.dispatchEvent(new Event('change',{bubbles:true}));}closePicker();return}
- });
- layer.querySelector('#v756-search').addEventListener('input',e=>{active.q=e.target.value;draw()});
- draw();
-}
 function draw(){if(!active)return;const layer=document.getElementById('v756-product-layer');if(!layer)return;
  layer.querySelectorAll('[data-v756="filter"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.value===active.filter)));
  const list=layer.querySelector('.v756-sheet-items');const rows=productRows().filter(r=>(active.filter==='all'||active.filter==='credit'&&!/debit/.test(r.typ)||active.filter==='debit'&&/debit/.test(r.typ))&&norm(r.title+' '+r.caption+' '+r.last4+' '+r.details).includes(norm(active.q)));
@@ -17368,8 +17330,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active){e.preventDe
 
 
 (()=>{'use strict';
- const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let queued=false;
+  let queued=false;
  function reconcileEnhancement(form){
   if(form.dataset.special!=='adjustment'||form.dataset.v768Adjustment==='yes')return;
   form.dataset.v768Adjustment='yes';
@@ -18062,7 +18023,6 @@ document.addEventListener('submit',async ev=>{
 /* V917 — Servicio registrado -> confirmación editable directa.
    Un único flujo contable para los accesos: Compromisos, Próximos pagos, Servicios y Registrar.
    No abre el catálogo de categorías ni el wizard de 3 pasos para pagos ya configurados. */
-const v917OriginalPayRecurring=payRecurring;
 function v917ServiceSourceOptions(currency){
  const accounts=(db.accounts||[]).filter(a=>!a.archived&&a.currency===currency&&(!a.bankId||!bank(a.bankId)?.archived));
  const cards=(db.cards||[]).filter(c=>!c.archived&&(!c.bankId||!bank(c.bankId)?.archived));
@@ -18231,10 +18191,6 @@ document.addEventListener('submit',function(e){
 
 /* V951: puente de solo lectura para controladores externos (p. ej. V383 · abono a préstamo), que no ven las funciones internas de este bloque. */
 /* V1131 · Experiencia web: la misma vista móvil se completa con una columna lateral de información adicional (≥1100 px). */
-const v1131Web=(main,aside)=>`<div class="v1131-web"><div class="v1131-main">${main}</div><aside class="v1131-side" aria-label="Información adicional">${aside}</aside></div>`;
-const v1131Card=(title,body)=>`<section class="v1131-card"><h3>${title}</h3>${body}</section>`;
-const v1131Row=(label,value,sub)=>`<div class="v1131-row"><span>${label}${sub?`<small>${sub}</small>`:''}</span><b>${value}</b></div>`;
-const v1131Bars=(rows,fmt)=>{const max=Math.max(1,...rows.map(r=>r[1]));return rows.length?`<div class="v1131-bars">${rows.map(([n,v])=>`<div class="v1131-bar"><div><span>${sanitize(String(n))}</span><b>${fmt(v)}</b></div><i style="--w:${Math.max(3,Math.round(v/max*100))}%"></i></div>`).join('')}</div>`:'<p class="v1131-empty">Sin datos todavía.</p>'};
 /* V1170 · Vistas web (PC) de Suscripciones y Presupuestos: banner con acento + tarjetas en dos columnas. Móvil intacto. */
 const v1170Date=(period)=>{const t=dateObj(period+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'});return `<label class="v1170-date" title="Cambiar mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg><input id="monthFilter" type="month" value="${sanitize(period)}" aria-label="Mes (${sanitize(t)})"/></label>`};
 const v1170Chip=(cur,prev,goodWhenDown)=>{if(!(prev>0))return '<span class="v1170-vs-none">Sin mes anterior para comparar</span>';const d=cur-prev,pct=d/prev*100,up=d>0,good=goodWhenDown?!up:up;return `<span class="v1170-chip ${good?'good':'bad'}">${up?'↑':'↓'} ${up?'+':''}${(Math.round(pct*10)/10).toFixed(1)}%</span><b>${d>0?'+':'-'}${money(Math.abs(d))}</b>`};
@@ -19229,9 +19185,7 @@ document.addEventListener('click',function(ev){
 (function viveV272ExperienceLayer() {
   'use strict';
 
-  const scope = '[data-v272-experience]';
-  let lastModal = null;
-  let lastFocusedElement = null;
+      let lastFocusedElement = null;
   let activeModal = null;
   let activePageName = '';
   let scheduled = false;
@@ -19710,21 +19664,12 @@ document.addEventListener('click',function(ev){
   const eligible=new Set(['transactionForm','recurringPaymentConfirmForm','rewardReceivedForm','manualBenefitForm','benefitLedgerForm','personalPaymentForm','annualFeeForm','v144CashbackForm']);
   let pendingReview=null;
   // V393: fingerprint the values shown at review time; never approve a changed form.
-  const snapshot=form=>{
-    const fd=new FormData(form), pairs=[];
-    for(const [key,value] of fd.entries())pairs.push([key,typeof value==='string'?value:(value?.name||'archivo')]);
-    return JSON.stringify(pairs);
-  };
-  let confirmationBusy=false;
-
-  const val=(form,name)=>{const field=form.elements?.namedItem(name);if(!field)return '';if(typeof field.value==='string'){if(field.tagName==='SELECT')return field.selectedOptions?.[0]?.textContent?.trim()||field.value;return field.value.trim()}if(field.length){const chosen=[...field].find(x=>x.checked);return chosen?.value||''}return ''};
-  const raw=(form,name)=>{const el=form.elements?.namedItem(name);return el&&typeof el.value==='string'?el.value.trim():''};
-  
+    
+      
   function isRelevant(form){return form instanceof HTMLFormElement&&!!form.closest('#modal-root')&&(eligible.has(form.id)||form.classList.contains('other-studio-form')||form.dataset.v83Loan==='yes')}
   
   
-  function dismiss(restore=true){const node=document.querySelector('#modal-root .v349-review-screen');node?.remove();if(pendingReview){const original=pendingReview.form.closest('.modal');original?.removeAttribute('aria-hidden');if(restore&&pendingReview.submitter?.isConnected)pendingReview.submitter.focus();pendingReview=null}}
-  
+    
   /* V614: El guardado directo no añade un segundo listener de submit.
      La capa de revisión ya no intercepta; validación y persistencia pertenecen
      enteramente al controlador contable que funciona tanto en web como en móvil. */
@@ -20061,8 +20006,7 @@ document.addEventListener('click',function(ev){
  'use strict';
  const escape=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const val=(f,n)=>String(f.elements.namedItem(n)?.value??'').trim();
- const field=(f,n)=>f.elements.namedItem(n);
- const number=(f,n)=>{const raw=val(f,n);return raw===''?NaN:Number(raw)};
+  const number=(f,n)=>{const raw=val(f,n);return raw===''?NaN:Number(raw)};
  const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLocaleLowerCase('es');
  const cash=(n,c)=>{const a=Number(n);if(!Number.isFinite(a))return 'Por indicar';return (a<0?'−':'')+(c==='USD'?'US$':'RD$')+new Intl.NumberFormat('es-DO',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.abs(a));};
  const banks=()=>Array.isArray(db?.banks)?db.banks:[];
@@ -20260,8 +20204,7 @@ document.addEventListener('click',function(ev){
  const {account,card,bank,prettyDate,today}=hooks||{};
  const moneyText=(n,c)=>`${c==='USD'?'US$':'RD$'}${Math.max(0,Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
  const read=(f,key)=>String(f.elements.namedItem(key)?.value??'');
- const safe=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
- const validDay=s=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T12:00:00Z'));
+  const validDay=s=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T12:00:00Z'));
  const sourceOf=(value)=>{const [k,id]=String(value).split(':');return k==='account'?account(id):k==='card'?card(id):null;};
  function inspect(f){
   const current=hooks?.readState();
@@ -20330,8 +20273,7 @@ document.addEventListener('click',function(ev){
 (()=>{'use strict';
  const root=document.getElementById('modal-root');if(!root)return;
  const names={transactionForm:'Movimiento',accountForm:'Cuenta',cardForm:'Tarjeta',loanForm:'Préstamo',certificateForm:'Certificado',personalLoanForm:'Acuerdo',personalPaymentForm:'Abono',recurringForm:'Servicio',annualFeeForm:'Anualidad',rewardReceivedForm:'Beneficio',benefitLedgerForm:'Beneficio',manualBenefitForm:'Beneficio',v144CashbackForm:'Cashback',bankForm:'Institución',categoryForm:'Categoría',budgetForm:'Presupuesto',cashWalletForm:'Efectivo'};
- const escape=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let processing=false;
+  let processing=false;
  function decorate(){
   if(processing)return;processing=true;
   try{
@@ -20377,8 +20319,7 @@ document.addEventListener('click',function(ev){
  cashWalletForm:['Efectivo','Identifica moneda, fecha y operación del efectivo.','EF','movement'],
  personalDebtForm:['Entre personas','Confirma el acuerdo y el sentido de la obligación.','EP','people']
  };
- const normalize=v=>String(v||'').trim();
- let busy=false;
+  let busy=false;
  function apply(){if(busy)return;busy=true;try{
   for(const dialog of root.querySelectorAll('.modal.v204-form-dialog')){
    if(dialog.dataset.v399Ready==='1')continue;
@@ -20853,8 +20794,7 @@ new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=
 /* UX components reuse the original product selectors and financial form controls. */
 (()=>{'use strict';
  const root=document.getElementById('modal-root');if(!root)return;
- const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let queued=false;
+  let queued=false;
  function enhanceBenefit(form){
   if(form.dataset.f834Benefit==='1')return;
   const kind=form.elements.namedItem('kind'), amount=form.elements.namedItem('amount');
