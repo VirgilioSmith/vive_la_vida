@@ -1350,10 +1350,10 @@ function v68Wallet(){
  return `<section class="v68-wallet v266-wallet v279-wallet" style="--v900-wallet-tone:${walletAccent}" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
  <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${cards.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
  <div class="v266-selected-balance v550-currency-balance v565-credit-dashboard" aria-label="Resumen de crédito por moneda de la tarjeta seleccionada">
-   <div class="v550-balance-column v565-primary"><span>CRÉDITO DISPONIBLE</span><strong>${money(available)}</strong><small>RD$ equivalentes</small>
+   <div class="v550-balance-column v565-primary"><span>CRÉDITO DISPONIBLE</span><strong>${money(available)}</strong>
     <div class="v550-currency-breakdown" aria-label="Disponible en pesos y dólares"><span><i>RD$</i><b>${num(availableDOP).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span><span><i>US$</i><b>${num(availableUSD).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span></div>
    </div>
-   <div class="v266-selected-debt v550-balance-column v565-secondary"><small>DEUDA UTILIZADA</small><b>${money(debt)}</b><small>RD$ equivalentes</small>
+   <div class="v266-selected-debt v550-balance-column v565-secondary"><small>DEUDA UTILIZADA</small><b>${money(debt)}</b>
     <div class="v550-currency-breakdown" aria-label="Deuda en pesos y dólares"><span><i>RD$</i><b>${num(dop.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span><span><i>US$</i><b>${num(usd.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span></div>
    </div>
   </div>
