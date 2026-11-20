@@ -55089,3 +55089,27 @@ html body #app#app .v291-budget-compact .v291-budget-metrics{display:grid!import
 html body #app#app .v291-budget-compact .v291-budget-line{padding:13px 0!important;font-size:14px!important}
 html body #app#app .v291-budget-compact .v291-budget-line strong{font-size:20px!important;font-weight:820!important;letter-spacing:-.02em}
 }
+
+/* V1244 · Wallet móvil: Estado de tu tarjeta refinado (medidor circular + límites + vencimiento) */
+@media(max-width:790px){
+html body #app#app .v1244-state{padding:18px 18px 16px!important}
+html body #app#app .v1244-main{display:grid;grid-template-columns:112px minmax(0,1fr);gap:18px;align-items:center;margin:14px 0 12px}
+html body #app#app .v1244-gauge{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--v424-accent-strong) calc(var(--u)*1%),color-mix(in srgb,var(--v424-accent-strong) 14%,transparent) 0)}
+html body #app#app .v1244-gauge.is-mid{background:conic-gradient(#d99a2b calc(var(--u)*1%),rgba(217,154,43,.16) 0)}
+html body #app#app .v1244-gauge.is-high{background:conic-gradient(#d4525e calc(var(--u)*1%),rgba(212,82,94,.16) 0)}
+html body #app#app .v1244-gauge>div{width:84px;height:84px;border-radius:50%;display:grid;place-content:center;text-align:center;background:var(--v1244-in,#fff)}
+html body.theme-black #app#app .v1244-gauge>div,html body.theme-dark #app#app .v1244-gauge>div{--v1244-in:#0b0b0e}
+html body #app#app .v1244-gauge b{font-size:21px;font-weight:850;letter-spacing:-.04em;line-height:1}
+html body #app#app .v1244-gauge small{font-size:10.5px;opacity:.65;margin-top:3px}
+html body #app#app .v1244-limits{display:grid;gap:3px;min-width:0}
+html body #app#app .v1244-limits small{font-size:10.5px;font-weight:800;letter-spacing:.14em;opacity:.6}
+html body #app#app .v1244-limits strong{font-size:27px;font-weight:850;letter-spacing:-.04em;line-height:1.05}
+html body #app#app .v1244-ccy{display:grid;gap:3px;margin-top:6px;font-size:13px;font-weight:700}
+html body #app#app .v1244-ccy i{font-style:normal;font-size:10.5px;font-weight:800;opacity:.55;margin-right:6px}
+html body #app#app .v1244-due{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--v424-accent-strong) 8%,transparent)}
+html body #app#app .v1244-due.is-late{background:rgba(212,82,94,.1)}
+html body #app#app .v1244-due small{display:block;font-size:10px;font-weight:800;letter-spacing:.13em;opacity:.65}
+html body #app#app .v1244-due strong{font-size:14.5px}
+html body #app#app .v1244-due>b{font-size:17px;font-weight:850;text-align:right}
+html body #app#app .v1244-due button{grid-column:1/-1;justify-self:end;margin-top:8px;padding:9px 18px;border:0;border-radius:999px;background:var(--v424-accent-strong);color:#fff;font-weight:800;font-size:13px;display:inline-flex;gap:6px;align-items:center}
+}
