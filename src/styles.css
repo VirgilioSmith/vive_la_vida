@@ -55527,3 +55527,39 @@ html body #app#app #page .vive-palette-choice small{font-size:10.5px!important;l
 html body #app#app #page .vive-custom-palette{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:10px!important}
 html body #app#app #page .vive-custom-palette>div:first-child{grid-column:1/-1}
 }
+
+/* V1260 · Ajustes móvil (Financiera e Integraciones): pestañas tipo cápsula + hojas, una sola tarea por pantalla */
+@media(max-width:790px){
+html body #app#app .v242-settings-inner .v975-tabs{position:sticky;top:8px;z-index:6;display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:4px;padding:5px;margin:0 0 14px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.34));-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid rgba(255,255,255,.7);box-shadow:0 8px 22px color-mix(in srgb,var(--v424-accent-strong) 14%,transparent)}
+html body #app#app .v242-settings-inner .v975-tab{display:grid;gap:0;justify-items:center;padding:8px 4px;border-radius:999px;border:0;background:transparent;min-width:0;color:inherit}
+html body #app#app .v242-settings-inner .v975-tab>span{display:none}
+html body #app#app .v242-settings-inner .v975-tab strong{font-size:13px;font-weight:800;letter-spacing:-.01em}
+html body #app#app .v242-settings-inner .v975-tab small{font-size:10px;opacity:.6;font-weight:600}
+html body #app#app .v242-settings-inner .v975-tab.is-on{background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 55%),color-mix(in srgb,var(--v424-accent-strong) 22%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.6);color:color-mix(in srgb,var(--v424-accent-strong) 75%,#0c1030)}
+html body.theme-black #app#app .v242-settings-inner .v975-tabs,html body.theme-dark #app#app .v242-settings-inner .v975-tabs{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);box-shadow:none}
+html body.theme-black #app#app .v242-settings-inner .v975-tab.is-on,html body.theme-dark #app#app .v242-settings-inner .v975-tab.is-on{color:#fff}
+html body #app#app .v242-settings-inner .v975-panel{display:none}
+html body #app#app .v242-settings-inner .v975-panel.is-on{display:grid;gap:14px;animation:v1260-in .22s ease-out}
+@keyframes v1260-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+html body #app#app .v242-settings-inner .v975-panel .settings-group-title{display:none}
+/* tasa de cambio: cifra protagonista */
+html body #app#app .f34-fx-panel{padding:20px!important;border-radius:28px!important;background:linear-gradient(120deg,color-mix(in srgb,var(--v424-accent-strong) 58%,#0a0a1f),var(--v424-accent-strong))!important;color:#fff!important;border:0!important}
+html body #app#app .f34-fx-panel *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body #app#app .f34-fx-panel a{text-decoration:underline}
+html body #app#app .f34-fx-panel [class*=value],html body #app#app .f34-fx-panel strong{font-size:clamp(26px,8vw,34px);letter-spacing:-.04em}
+html body #app#app .f34-fx-panel button{background:rgba(255,255,255,.2)!important;border:1px solid rgba(255,255,255,.3)!important;border-radius:999px!important}
+/* formularios: tarjetas de campo a una columna */
+html body #app#app .settings-finance{padding:16px!important}
+html body #app#app .settings-finance .form-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+html body #app#app .settings-finance .form-note{font-size:12px;line-height:1.45;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--v424-accent-strong) 7%,transparent)}
+/* Apple Pay: guía en pasos compactos */
+html body #app#app .v212-guide{padding:16px!important}
+html body #app#app .v212-guide ol{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:10px}
+html body #app#app .v212-guide ol>li{counter-increment:s;position:relative;padding:12px 12px 12px 46px;border-radius:16px;background:color-mix(in srgb,var(--v424-accent-strong) 7%,transparent);font-size:13px;line-height:1.45}
+html body #app#app .v212-guide ol>li::before{content:counter(s);position:absolute;left:12px;top:12px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--v424-accent-strong);color:#fff;font-weight:800;font-size:12px}
+}
+@media(max-width:790px){
+html body #app#app .v242-settings-inner .v975-tab>div{display:grid;justify-items:center;gap:0;min-width:0}
+html body #app#app .v242-settings-inner .v975-tab strong,html body #app#app .v242-settings-inner .v975-tab small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+html body #app#app .v212-panel>.v975-tabs{margin:0 0 12px}
+}

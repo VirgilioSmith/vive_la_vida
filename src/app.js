@@ -21895,7 +21895,15 @@ window.__v866Runners.v865=run;
   pager.innerHTML=`<button type="button" data-v976-page="-1" ${cur===0?'disabled':''} aria-label="Anterior">‹</button><span>${cur*per+1}–${Math.min(recs.length,(cur+1)*per)} de ${recs.length}</span><button type="button" data-v976-page="1" ${cur>=pages-1?'disabled':''} aria-label="Siguiente">›</button>`;
  }
  function enhance(){
-  queued=false;if(!wide())return;
+  queued=false;
+  if(!wide()){
+   const mi=document.querySelector('.v242-settings-inner>.v212-panel,.v242-settings-inner .v212-panel');
+   if(mi)build(mi,'integrations',[['Vincular','Tarjeta'],['Guía','Atajos'],['Conexiones','Actividad']],k=>has(k,'v212-guide')?1:has(k,'v212-sections','v212-error')?2:0);
+   const inner=document.querySelector('.v242-settings-inner');
+   const mf=inner&&inner.querySelector(':scope>.f34-fx-panel')?inner:null;
+   if(mf)build(mf,'financial',[['Cambio','Tasa'],['Cargos','Impuestos'],['Nómina','Reglas']],k=>has(k,'settings-finance')?1:has(k,'v40-shell')?2:0);
+   return;
+  }
   const ap=document.querySelector('.v300-appearance-pane');
   if(ap&&!ap.dataset.v975){
    const groups=[];let cur=null;for(const k of [...ap.children]){if(has(k,'settings-group-title')){cur={title:k,items:[]};groups.push(cur);}else if(cur)cur.items.push(k);}
