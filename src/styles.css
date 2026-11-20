@@ -55643,3 +55643,71 @@ html body #app#app .v1264-row strong{grid-column:1/-1;text-align:right}
 html body #app#app .v1264-head strong{display:none}
 }
 html body #app#app .v1264-row b{text-transform:none!important}html body #app#app .v1264-row b::first-letter{text-transform:uppercase}
+
+/* V1265 · Tarjetas de préstamo (web PC) */
+@media(min-width:791px){
+html body #app#app #page .loan-card-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(380px,1fr))!important;gap:18px!important}
+html body #app#app #page .v1265-loan{display:grid!important;gap:16px;padding:22px!important;border-radius:28px!important;align-content:start}
+html body #app#app #page .v1265-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+html body #app#app #page .v1265-logo{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:color-mix(in srgb,var(--v424-accent-strong) 10%,#fff);overflow:hidden}
+html body #app#app #page .v1265-logo img,html body #app#app #page .v1265-logo .bank-photo-mark{width:100%;height:100%;object-fit:contain}
+html body #app#app #page .v1265-head h4{margin:0;font-size:18px;letter-spacing:-.03em}
+html body #app#app #page .v1265-head p{margin:2px 0 0;font-size:12.5px;opacity:.65}
+html body #app#app #page .v1265-body{display:grid;grid-template-columns:104px minmax(0,1fr);gap:18px;align-items:center}
+html body #app#app #page .v1265-ring{width:104px;height:104px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--v424-accent-strong) calc(var(--p)*1%),color-mix(in srgb,var(--v424-accent-strong) 14%,transparent) 0)}
+html body #app#app #page .v1265-ring>div{width:80px;height:80px;border-radius:50%;display:grid;place-content:center;text-align:center;background:var(--v1265-in,#fff)}
+html body.theme-black #app#app #page .v1265-ring>div,html body.theme-dark #app#app #page .v1265-ring>div{--v1265-in:#0b0b0e}
+html body #app#app #page .v1265-ring b{font-size:20px;font-weight:850;letter-spacing:-.04em;line-height:1}
+html body #app#app #page .v1265-ring small{font-size:10px;opacity:.6;margin-top:2px}
+html body #app#app #page .v1265-fig small{font-size:10.5px;font-weight:800;letter-spacing:.14em;opacity:.6}
+html body #app#app #page .v1265-fig strong{display:block;font-size:clamp(24px,2.2vw,30px);font-weight:850;letter-spacing:-.04em;line-height:1.05;margin:2px 0;white-space:nowrap}
+html body #app#app #page .v1265-fig em{font-style:normal;font-size:12.5px;opacity:.7}
+html body #app#app #page .v1265-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+html body #app#app #page .v1265-stats span{padding:10px 12px;border-radius:16px;background:color-mix(in srgb,var(--v424-accent-strong) 7%,transparent);min-width:0}
+html body #app#app #page .v1265-stats small{display:block;font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+html body #app#app #page .v1265-stats b{display:block;font-size:14px;font-weight:850;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body #app#app #page .v1265-next{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--v424-accent-strong) 9%,transparent)}
+html body #app#app #page .v1265-next small{display:block;font-size:10px;font-weight:800;letter-spacing:.13em;opacity:.6}
+html body #app#app #page .v1265-next strong{font-size:15px}
+html body #app#app #page .v1265-next>span{font-size:12px;font-weight:800;padding:5px 11px;border-radius:999px;background:color-mix(in srgb,var(--v424-accent-strong) 16%,transparent);white-space:nowrap}
+html body #app#app #page .v1265-next.is-late{background:rgba(212,82,94,.1)}html body #app#app #page .v1265-next.is-late>span{background:rgba(212,82,94,.18);color:#c23d4b}
+html body #app#app #page .v1265-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+html body #app#app #page .v1265-btns{display:flex;gap:8px;margin-left:auto}
+html body #app#app #page .v1265-btns .loan-primary{background:var(--v424-accent-strong)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important;font-weight:800}
+}
+@media(min-width:791px){
+html body #app#app .main.world-loans #page .loans-world .loan-card-grid{grid-template-columns:repeat(auto-fill,minmax(400px,1fr))!important}
+html body #app#app .main.world-loans #page .loans-world .loan-card-grid>.loan-product.v1265-loan{max-width:560px!important;width:100%!important}
+html body #app#app #page .v1265-stats b{white-space:normal;overflow:visible;font-size:13.5px}
+html body #app#app #page .v1265-fig strong{font-size:clamp(22px,2vw,28px)}
+}
+/* V1266 · Web PC: el selector de mes sube a la fila de pestañas (a la derecha) y todas las vistas arrancan a la misma altura */
+@media(min-width:791px){
+html body #app#app .main #page{position:relative}
+html body #app#app .main #page :is(.v137-wealth-top-tools,.v1170-tools,.ff-dashboard-tools){position:absolute!important;top:-40px!important;right:0!important;margin:0!important;z-index:5;width:auto!important}
+}
+@media(min-width:791px){
+html body #app#app .main.world-patrimony #page{margin-top:-29px!important}
+html body #app#app .main.world-recurring #page,html body #app#app .main.world-budget #page{margin-top:12px!important}
+html body #app#app .main.world-income #page,html body #app#app .main.world-expenses #page{margin-top:-23px!important}
+html body #app#app .main.world-overview #page{margin-top:9px!important}
+html body #app#app .main #page :is(.v137-wealth-top-tools,.v1170-tools,.ff-dashboard-tools){top:-48px!important}
+html body #app#app .main.world-patrimony #page :is(.v137-wealth-top-tools){top:-19px!important}
+html body #app#app .main.world-recurring #page :is(.v1170-tools),html body #app#app .main.world-budget #page :is(.v1170-tools){top:-48px!important}
+}
+@media(min-width:791px){
+html body #app#app .main.world-patrimony #page{margin-top:-41px!important}
+html body #app#app .main.world-recurring #page,html body #app#app .main.world-budget #page{margin-top:6px!important}
+html body #app#app .main.world-overview #page{margin-top:15px!important}
+html body #app#app .main.world-patrimony #page .v137-wealth-top-tools{top:-7px!important}
+html body #app#app .main.world-recurring #page .v1170-tools,html body #app#app .main.world-budget #page .v1170-tools{top:-42px!important}
+html body #app#app .main.world-income #page .inner-view{}
+}
+@media(min-width:791px){
+html body #app#app .main.world-recurring #page,html body #app#app .main.world-budget #page{margin-top:18px!important}
+html body #app#app .main.world-recurring #page .v1170-tools,html body #app#app .main.world-budget #page .v1170-tools{top:-60px!important}
+html body #app#app .main.world-income #page :is(.v58-range,.ff-month-filter,label[class*=month],[class*=month-filter]){}
+}
+@media(min-width:791px){
+html body #app#app .main.world-overview #page{margin-left:9px!important;margin-right:8px!important;width:1278px!important;max-width:calc(100% - 17px)!important}
+}
