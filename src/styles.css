@@ -55599,3 +55599,47 @@ html body #app#app #page .bank-hero .v46-global-main>small,html body #app#app #p
 @media(min-width:791px){
 html body #app#app #page .bank-hero .v61-profile-switch{grid-row:7!important;margin:12px 0 0!important}
 }
+
+/* V1264 · Historial de institución */
+html body #app#app .v1264-hist{display:grid;gap:16px;padding:22px 24px;border-radius:28px;margin:0 0 16px;background:var(--v1264-bg,rgba(255,255,255,.78));border:1px solid color-mix(in srgb,var(--v424-accent-strong) 16%,transparent);box-shadow:0 14px 34px color-mix(in srgb,var(--v424-accent-strong) 10%,transparent)}
+html body.theme-black #app#app .v1264-hist,html body.theme-dark #app#app .v1264-hist{--v1264-bg:rgba(255,255,255,.05)}
+html body #app#app .v1264-hist header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+html body #app#app .v1264-hist header small{font-size:10.5px;font-weight:850;letter-spacing:.16em;color:var(--v424-accent-strong)}
+html body #app#app .v1264-hist header h3{margin:4px 0 0;font-size:clamp(18px,2vw,24px);letter-spacing:-.04em}
+html body #app#app .v1264-range{display:flex;gap:4px;padding:4px;border-radius:999px;background:color-mix(in srgb,var(--v424-accent-strong) 9%,transparent)}
+html body #app#app .v1264-range button{border:0;background:transparent;padding:7px 14px;border-radius:999px;font-weight:750;font-size:12.5px;color:inherit;cursor:pointer}
+html body #app#app .v1264-range button.is-on{background:var(--v424-accent-strong);color:#fff}
+html body #app#app .v1264-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+html body #app#app .v1264-kpi{padding:13px 14px;border-radius:18px;background:color-mix(in srgb,var(--v424-accent-strong) 7%,transparent);min-width:0}
+html body #app#app .v1264-kpi small{display:block;font-size:9.5px;font-weight:850;letter-spacing:.12em;opacity:.65}
+html body #app#app .v1264-kpi strong{display:block;font-size:clamp(15px,1.5vw,20px);font-weight:850;letter-spacing:-.03em;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body #app#app .v1264-kpi em{display:block;font-style:normal;font-size:11px;opacity:.65;margin-top:2px}
+html body #app#app .v1264-kpi.in strong{color:var(--v424-accent-strong)}html body #app#app .v1264-kpi.out strong{color:#d4525e}html body #app#app .v1264-kpi.neg strong{color:#d4525e}
+html body #app#app .v1264-chart{position:relative;padding:14px 12px 6px;border-radius:22px;background:color-mix(in srgb,var(--v424-accent-strong) 4%,transparent)}
+html body #app#app .v1264-leg{display:flex;gap:16px;padding:0 6px 6px;font-size:12px;font-weight:750}
+html body #app#app .v1264-leg span::before{content:"";display:inline-block;width:18px;height:4px;border-radius:4px;margin-right:7px;vertical-align:middle;background:var(--v424-accent-strong)}
+html body #app#app .v1264-leg .out::before{background:#d4525e}
+html body #app#app .v1264-svg{width:100%;height:auto;display:block}
+html body #app#app .v1264-grid{stroke:currentColor;stroke-opacity:.12;stroke-dasharray:3 5}
+html body #app#app .v1264-ax{font-size:10.5px;fill:currentColor;opacity:.55}
+html body #app#app .v1264-lin{fill:none;stroke:var(--v424-accent-strong);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+html body #app#app .v1264-lout{fill:none;stroke:#d4525e;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 0}
+html body #app#app .v1264-din{fill:var(--v424-accent-strong);stroke:#fff;stroke-width:2}html body #app#app .v1264-dout{fill:#d4525e;stroke:#fff;stroke-width:2}
+html body #app#app .v1264-table{display:grid;border-radius:20px;overflow:hidden;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 12%,transparent)}
+html body #app#app .v1264-row{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:10px;padding:11px 16px;align-items:center;font-size:13.5px;border-top:1px solid color-mix(in srgb,var(--v424-accent-strong) 10%,transparent);text-transform:none}
+html body #app#app .v1264-row:first-child{border-top:0}
+html body #app#app .v1264-row b{text-transform:capitalize;font-weight:750}
+html body #app#app .v1264-row .in{color:var(--v424-accent-strong);font-weight:750}html body #app#app .v1264-row .out{color:#d4525e;font-weight:750}
+html body #app#app .v1264-row strong.neg{color:#d4525e}
+html body #app#app .v1264-head{font-size:10.5px;font-weight:850;letter-spacing:.1em;text-transform:uppercase;opacity:.6;background:color-mix(in srgb,var(--v424-accent-strong) 6%,transparent)}
+html body #app#app .v1264-note,html body #app#app .v1264-empty{margin:0;font-size:12px;opacity:.65;line-height:1.5}
+html body #app#app .v1264-empty{padding:30px;text-align:center}
+@media(max-width:790px){
+html body #app#app .v1264-hist{padding:16px 14px;border-radius:24px}
+html body #app#app .v1264-kpis{grid-template-columns:1fr 1fr}
+html body #app#app .v1264-kpis .v1264-kpi:first-child{grid-column:1/-1}
+html body #app#app .v1264-row{grid-template-columns:1.2fr 1fr 1fr;font-size:12.5px}
+html body #app#app .v1264-row strong{grid-column:1/-1;text-align:right}
+html body #app#app .v1264-head strong{display:none}
+}
+html body #app#app .v1264-row b{text-transform:none!important}html body #app#app .v1264-row b::first-letter{text-transform:uppercase}
