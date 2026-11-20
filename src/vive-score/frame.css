@@ -312,3 +312,14 @@ body.compact .sec,body.compact #view>h2{margin:14px 2px 8px}
 body.compact .drawer>.hrow{margin-bottom:6px!important;align-items:center}
 body.compact .drawer .close{width:34px;height:34px;font-size:20px}
 body.compact .drawer{padding-top:8px}
+/* Corrige: tarjetas estiradas y texto largo que ensanchaba la tarjeta */
+body.compact .dwRules{flex:none;align-content:start;grid-auto-rows:min-content;min-width:0}
+body.compact .dwRule{min-width:0;overflow:hidden;align-self:start}
+body.compact .dwRule>summary{min-width:0}
+body.compact .dwRule>summary header{min-width:0;gap:10px}
+body.compact .dwRule>summary header b{min-width:0}
+body.compact .dwData{min-width:0;display:block}
+body.compact .dwData span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.compact .dwBody{min-width:0;overflow-x:hidden}
+.dwRule,.dwHero,.dwWhy{max-width:100%}
+body.compact .dwData span{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3}
