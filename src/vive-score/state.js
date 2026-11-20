@@ -26,7 +26,7 @@ const VSHost={
  }
 };
 function applyEnv(env){
- if(!env)return;if(env.nav)for(const k in env.nav)if(env.nav[k])document.documentElement.style.setProperty('--nav-'+k,env.nav[k]);document.body.classList.toggle('compact',!!env.compact);dark=env.mode!=='light';document.body.classList.toggle('night',dark);document.body.classList.toggle('black',env.mode==='black');
+ if(!env)return;if(env.nav)for(const k in env.nav)if(env.nav[k])document.documentElement.style.setProperty('--nav-'+k,env.nav[k]);{const was=document.body.classList.contains('compact');document.body.classList.toggle('compact',!!env.compact);if(was!==!!env.compact&&typeof render==='function')setTimeout(()=>{try{render()}catch(_){}},0)}dark=env.mode!=='light';document.body.classList.toggle('night',dark);document.body.classList.toggle('black',env.mode==='black');
  const a=/^#[0-9a-f]{6}$/i.test(env.accent||'')?env.accent:(/^rgb/i.test(env.accent||'')?env.accent:'#159b81');
  document.body.style.setProperty('--teal',a);document.body.style.setProperty('--teal-dark',`color-mix(in srgb,${a} ${dark?'62%':'78%'},${dark?'#fff':'#000'})`);
 }
