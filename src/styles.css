@@ -55499,3 +55499,17 @@ html body #app#app #page#page .v266-wallet-actions>button>span{width:52px!import
 html body #app#app #page#page .v266-wallet-actions>button>b{color:#364454!important;-webkit-text-fill-color:#364454!important}
 html body.theme-black #app#app #page#page .v266-wallet-actions>button>b,html body.theme-dark #app#app #page#page .v266-wallet-actions>button>b{color:#e6e9f2!important;-webkit-text-fill-color:#e6e9f2!important}
 }
+/* V1257 · Wallet: puntos del carrusel sin recorte */
+html body #app#app #page .v266-wallet .v266-dots.v68-wallet-dots{height:auto!important;max-height:none!important;min-height:24px!important;overflow:visible!important;display:flex!important;justify-content:center;align-items:center;gap:7px!important;padding:6px 0!important}
+html body #app#app #page .v266-wallet .v266-dots.v68-wallet-dots button{width:8px!important;min-width:8px!important;height:8px!important;max-height:8px!important;padding:0!important;border-radius:999px!important;flex:none}
+html body #app#app #page .v266-wallet .v266-dots.v68-wallet-dots button.active{width:22px!important;min-width:22px!important}
+/* V1258 · barra de módulos móvil (Bancos/Cuentas/Tarjetas/Préstamos): cristal con pestaña activa translúcida, como el dock */
+@media(max-width:790px){
+html body #app#app nav.v206-banks-switch{background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.34))!important;-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);border:1px solid rgba(255,255,255,.7)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 10px 26px color-mix(in srgb,var(--v424-accent-strong) 14%,transparent)!important}
+html body #app#app nav.v206-banks-switch .v206-banks-pill.active{background:linear-gradient(180deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,0) 55%),color-mix(in srgb,var(--v424-accent-strong) 20%,transparent)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 22%,transparent)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)!important;color:color-mix(in srgb,var(--v424-accent-strong) 75%,#0c1030)!important}
+html body #app#app nav.v206-banks-switch .v206-banks-pill.active *{color:inherit!important;-webkit-text-fill-color:currentColor!important}
+html body.theme-black #app#app nav.v206-banks-switch,html body.theme-dark #app#app nav.v206-banks-switch{background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04))!important;border-color:rgba(255,255,255,.12)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.14)!important}
+html body.theme-black #app#app nav.v206-banks-switch .v206-banks-pill.active,html body.theme-dark #app#app nav.v206-banks-switch .v206-banks-pill.active{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,0) 55%),color-mix(in srgb,var(--v424-accent-strong) 32%,transparent)!important;color:#fff!important}
+}
+html body #app#app#app #page .v266-wallet .v266-dots.v68-wallet-dots button:not(.active){width:8px!important;min-width:8px!important;height:8px!important;max-height:8px!important;min-height:8px!important;padding:0!important;border-radius:999px!important}
+html body #app#app#app #page .v266-wallet .v266-dots.v68-wallet-dots button.active{height:8px!important;min-height:8px!important;max-height:8px!important}
