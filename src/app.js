@@ -5042,6 +5042,12 @@ function guidedTransactionForm(partial={},editId=null){
  if(mode==='cardpay'&&!db.cards.length){toast('Agrega una tarjeta para registrar su pago.');ui.page='cards';render();return}
  if(['own'].includes(mode)&&db.accounts.length<2){toast('Registra al menos dos cuentas para efectuar un traslado.');ui.page='accounts';render();return}
  if(['spend','service'].includes(mode)&&!db.accounts.length&&!db.cards.length){toast('Crea una cuenta o tarjeta.');ui.page='accounts';render();return}
+ if(!editId){
+  const act=db.accounts.filter(x=>!x.archived&&(mode!=='outgoing'||x.kind!=='cash')&&(mode==='cardpay'||mode==='service'?x.kind!=='cash':true)),sameCcy=act.filter(x=>x.currency===o.currency),pool=(sameCcy.length?sameCcy:act).map(x=>x.id);
+  if(!('accountId' in partial)&&pool.length)o.accountId=v1243Top('account',pool);
+  if(!('cardId' in partial)){const cs=db.cards.filter(x=>!x.archived).map(x=>x.id);if(cs.length)o.cardId=v1243Top('card',cs)}
+  if(!('toAccountId' in partial)&&mode==='own'&&pool.length>1)o.toAccountId=v1243Top('account',pool,o.accountId);
+ }
  const p=FLOW_CATALOG[mode],editing=Boolean(editId),cards=sourceOptions('card'),accounts=sourceOptions('account').filter(([id])=>mode!=='outgoing'||account(id)?.kind!=='cash');
  const source=(mode==='spend'||mode==='service')?(o.type==='card_charge'||o.paymentSource==='card'?'card':'account'):'account';
  const isExpense=mode==='spend'||mode==='service',isTransfer=mode==='own'||mode==='outgoing',isPay=mode==='cardpay';
@@ -16916,7 +16922,7 @@ const catIcon=(mode,cat,sub='')=>`<span class="v953-cat-ico">${icon(v255Taxonomy
 const moreIcon='<span class="v953-cat-ico"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/></svg></span>';
 const realCategories=mode=>Object.keys(categoryMap(mode==='income'?'ingreso':'gasto'));
 const subcategories=(mode,cat)=>categoryMap(mode==='income'?'ingreso':'gasto')[cat]||[];
-const state=()=>{const s=mqrState();s.v749Source||='account';s.v749Currency||='DOP';s.v749Date||=today();s.v749Note??='';s.v749Subcategory??='';s.v749Payee??='';s.v749Account||=db.accounts.find(a=>!a.archived)?.id||'';s.v749Card||=db.cards.find(c=>!c.archived)?.id||'';s.v749ToAccount||=db.accounts.find(a=>!a.archived&&a.id!==s.v749Account)?.id||'';if(!s.editId&&(s.mode==='income'||s.mode==='spend')&&!realCategories(s.mode).includes(s.preset))s.preset=mostUsedCategories(s.mode)[0]||'';return s};
+const state=()=>{const s=mqrState();s.v749Source||='account';s.v749Currency||='DOP';s.v749Date||=today();s.v749Note??='';s.v749Subcategory??='';s.v749Payee??='';s.v749Account||=v1243Top('account',db.accounts.filter(a=>!a.archived).map(a=>a.id));s.v749Card||=v1243Top('card',db.cards.filter(c=>!c.archived).map(c=>c.id));s.v749ToAccount||=v1243Top('account',db.accounts.filter(a=>!a.archived).map(a=>a.id),s.v749Account);if(!s.editId&&(s.mode==='income'||s.mode==='spend')&&!realCategories(s.mode).includes(s.preset))s.preset=mostUsedCategories(s.mode)[0]||'';return s};
 const acc=(id)=>db.accounts.find(a=>a.id===id);const cardRef=id=>db.cards.find(c=>c.id===id);
 const displaySource=s=>s.mode==='transfer'?(acc(s.v749Account)?.name||'Seleccionar origen'):s.mode==='income'?(acc(s.v749Account)?.name||'Seleccionar cuenta'):s.v749Source==='card'?(cardRef(s.v749Card)?.name||'Seleccionar tarjeta'):(acc(s.v749Account)?.name||'Seleccionar cuenta');
 const cur=s=>s.v749Source==='card'&&s.mode==='spend'?s.v749Currency:(acc(s.v749Account)?.currency||'DOP');
@@ -18653,6 +18659,40 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  sync();
 })();
 
+/* V1243 · Origen predeterminado: en todo registro nuevo (pago, egreso, ingreso, transferencia) se propone la cuenta o tarjeta de mayor uso.
+   Uso = movimientos que la tocan + servicios/préstamos que la tienen vinculada. Nunca pisa una elección explícita ni un registro en edición. */
+function v1243Usage(){
+ const a=new Map(),c=new Map(),bump=(m,k)=>{if(k)m.set(k,(m.get(k)||0)+1)};
+ for(const t of db.transactions||[]){bump(a,t.accountId);bump(a,t.toAccountId);bump(c,t.cardId)}
+ for(const r of db.recurring||[]){bump(a,r.accountId);bump(c,r.cardId)}
+ for(const l of db.loans||[])bump(a,l.autoAccountId);
+ return {account:a,card:c};
+}
+function v1243Top(kind,ids,exclude){
+ const m=v1243Usage()[kind],list=ids.filter(id=>id&&id!==exclude);let best=null,n=0;
+ for(const id of list){const k=m.get(id)||0;if(k>n){n=k;best=id}}
+ return best||list[0]||'';
+}
+function v1243Apply(root){
+ const forms=root.matches?.('form')?[root]:[...(root.querySelectorAll?.('form')||[])];
+ for(const form of forms){
+  if(form.dataset.v1243==='1'||form.dataset.editId||form.dataset.id||form.dataset.editing==='yes'||/Editar/.test(form.querySelector('.fastx-title')?.textContent||''))continue;
+  form.dataset.v1243='1';
+  const pick=(name,kind,exclude)=>{
+   const sel=form.elements?.namedItem?.(name);if(!sel||sel.tagName!=='SELECT')return;
+   const opts=[...sel.options].filter(o=>o.value&&!o.disabled);if(opts.length<2)return;
+   const ids=opts.map(o=>o.value),cur=sel.value;
+   const natural=!cur||cur===ids[0]||cur===exclude;
+   if(!natural||(ui.accountId&&cur===ui.accountId))return;
+   const top=v1243Top(kind,ids,exclude);
+   if(top&&top!==cur){sel.value=top;sel.dispatchEvent(new Event('change',{bubbles:true}))}
+  };
+  pick('accountId','account');
+  pick('cardId','card');
+  pick('toAccountId','account',form.elements.accountId?.value);
+ }
+}
+new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1)try{v1243Apply(n)}catch(_){}}).observe(document.body,{childList:true,subtree:true});
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
 /* VIVE_SCORE (experimental): puente de SOLO LECTURA hacia los datos existentes; no escribe nada. */
 if(window.VIVE_SCORE_EXPERIMENTAL)window.__viveScoreBridge=Object.freeze({db:()=>db,today,card,bank,cardStatus,loanStatus,loanAccounting,fullOriginalLoan,xconvert,acquiredOnOf,balanceAt:(a,d)=>getAccountBalance(a,d),isFinancial:b=>v40IsFinancial(b),monthlyFactor:f=>v80MonthlyFactor(f),account,activeRecurring:()=>v339ActiveRecurring(),monthlyEquivalent:(a,c,f)=>v339MonthlyEquivalent(a,c,f),upcoming:()=>upcoming(),payroll:(s,d)=>v40Payroll(s,d),theme:()=>db.settings.theme,go:id=>{ui.page=id;render();window.scrollTo(0,0)},rerender:()=>render()});
