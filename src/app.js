@@ -1673,7 +1673,8 @@ function originalAccounts(){
    </div>
    <div class="bottom"><span class="subtle">Cuenta permanente · no se archiva ni se elimina</span></div>
  </article>`).join('');
-  return `<div class="grid cards-grid section">${cashCard}${all.length?all.map(a=>`<article class="bank-card account-product-card"><div class="split"><div><div class="name">${sanitize(a.name)}</div><div class="type v28-account-bankline">${bankLogoInline(a.bankId)}<span>${sanitize(bankOf(a))} · ${a.kind==='savings'?'Ahorros':a.kind==='checking'?'Corriente':'Efectivo'}</span></div></div><span class="pill">${a.currency}</span></div><button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver evolución de ${sanitize(a.name)}">${money(getAccountBalance(a),a.currency,2)} <span>↗</span></button><div class="product-mini-actions v176-account-actions">${productControls('account',a.id,a.archived)}<button class="btn sm ghost" data-act="accountDetails" data-id="${a.id}">Ver evolución</button></div><div class="bottom"><span class="subtle">${a.last4?'•••• '+sanitize(a.last4):'Sin terminación registrada'}</span></div></article>`).join(''):`<div class="panel"><div class="empty">No hay cuentas bancarias adicionales. El efectivo se gestiona desde la ficha anterior. <button class="btn sm soft" data-act="addAccount">Crear cuenta</button></div></div>`}</div>
+ const btn=(label,value,desc,view,iconName)=>`<button type="button" class="kpi account-drill-kpi ${ui.accountBreakdown===view?'is-active':''}" data-act="accountBreakdown" data-view="${view}" aria-label="Ver evolución de ${label}"><span class="kpi-head">${label}<span class="kpi-icon">${icon(iconName)}</span></span><span class="kpi-value">${value}</span><span class="kpi-foot">${desc} · Ver evolución ↗</span></button>`;
+ return `<div class="grid cards-grid section">${cashCard}${all.length?all.map(a=>`<article class="bank-card account-product-card"><div class="split"><div><div class="name">${sanitize(a.name)}</div><div class="type v28-account-bankline">${bankLogoInline(a.bankId)}<span>${sanitize(bankOf(a))} · ${a.kind==='savings'?'Ahorros':a.kind==='checking'?'Corriente':'Efectivo'}</span></div></div><span class="pill">${a.currency}</span></div><button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver evolución de ${sanitize(a.name)}">${money(getAccountBalance(a),a.currency,2)} <span>↗</span></button><div class="product-mini-actions v176-account-actions">${productControls('account',a.id,a.archived)}<button class="btn sm ghost" data-act="accountDetails" data-id="${a.id}">Ver evolución</button></div><div class="bottom"><span class="subtle">${a.last4?'•••• '+sanitize(a.last4):'Sin terminación registrada'}</span></div></article>`).join(''):`<div class="panel"><div class="empty">No hay cuentas bancarias adicionales. El efectivo se gestiona desde la ficha anterior. <button class="btn sm soft" data-act="addAccount">Crear cuenta</button></div></div>`}</div>
  ${ui.accountId&&account(ui.accountId)?accountDetail(account(ui.accountId)):''}`;
 }
 
@@ -3167,7 +3168,8 @@ function v1160Art(name){
 }
 function moneyRegister(mode="page"){
  const m=monthStats(),incomeOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['income','bank_reward','card_reward'].includes(t.type)),expenseOps=db.transactions.filter(t=>t.date.startsWith(ui.month)&&['expense','card_charge','card_refund','loan_payment'].includes(t.type));
-  const pending=db.pendingOperations||[],active=ui.movementTab==='pending'?'all':ui.movementTab;
+ const op=(glyph,name,description,action,type='')=>`<button class="money-register-tile" data-act="${action}" ${action==='navigate'?`data-id="${type}"`:type?`data-type="${type}"`:''}><span class="money-register-icon">${icon(glyph)}</span><strong>${name}</strong><small>${description}</small><span class="register-tile-arrow">${icon('arrow')}</span></button>`;
+ const pending=db.pendingOperations||[],active=ui.movementTab==='pending'?'all':ui.movementTab;
  const summary=`<div class="v221-status-summary" aria-label="Estado de movimientos"><span>Registrados <b>${db.transactions.length}</b></span><span>Borradores <b>${pending.length}</b></span></div>`;
  const selector=active==='register'?`<div class="vr-register-top-nav"><span>OPERACIONES / REGISTRO</span><nav class="movement-tabs" aria-label="Vistas del centro">${[['all','Movimientos','cycle']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`:`<div class="movement-tabs-shell"><div class="movement-title"><span class="summary-tag">REGISTRO Y CONTROL</span><h2>Centro de operaciones inteligente.</h2><p>Ingresos, gastos, tarjetas, transferencias, efectivo y pagos: cada flujo muestra solamente lo necesario.</p></div><nav class="movement-tabs" aria-label="Vistas del centro de movimientos">${[['all','Movimientos','cycle']].map(([id,name,ic])=>`<button class="movement-tab ${active===id?'active':''}" data-act="movementTab" data-id="${id}" ${active===id?'aria-current="page"':''}>${icon(ic)}<span>${name}</span>${id==='pending'?`<i>${pending.length}</i>`:''}</button>`).join('')}</nav></div>`;
   const cashD=db.accounts.find(a=>a.kind==='cash'&&a.currency==='DOP'),cashU=db.accounts.find(a=>a.kind==='cash'&&a.currency==='USD');
@@ -3425,7 +3427,8 @@ function v560ReconcileCommitments(period=ui.month){
  // dueMap de hoy, porque éste ya tiene descontados los pagos de todo el pasado.
  for(const card of db.cards||[]){
   for(const ccy of ['DOP','USD']){
-      const opened=validDate(card.opened)?card.opened:cutoff;
+   const rows=[];
+   const opened=validDate(card.opened)?card.opened:cutoff;
    const opening=amount(ccy==='USD'?card.openingUSD:card.openingDOP);
    const billed=ccy==='USD'?card.openingBilledUSD:card.openingBilledDOP;
    // Si el saldo inicial carece de clasificación de corte, se asigna al ciclo
@@ -4582,6 +4585,7 @@ function v918BudgetAssign(cat){
  window.openItemPicker('Selecciona la categoría',cats.map(c=>({value:c,name:c,detail:detail(c,''),iconHtml:ico(c,'')})),stepSub);
 }
 function budgetForm(cat,sub){let category=cat||Object.keys(categoryMap('gasto'))[0]||'',subcategory=sub||'',row=budgetRowsAt(ui.month).find(b=>b.category===category&&(b.subcategory||'')===subcategory)||{};modal('Presupuesto por categoría y subcategoría',`${formItem('effectiveMonth','Mes de vigencia',ui.month,'month','required')}${formSelect('category','Categoría de gasto',categoryOptions('gasto'),category,'id="budgetCategory"')}${subSelect('gasto',category,subcategory)}${formItem('amount','Presupuesto de este mes (RD$)',row.amount||0,'number','min="0" step="0.01" required')}${para('La edición rige desde el mes elegido y no reescribe períodos anteriores. Un límite global ya incluye sus subcategorías. Para retirar un límite, registra cero.')}`,'budgetForm')}
+let draft={};
 function legacyTransactionForm(partial={},editId=null){let o={type:'expense',date:today(),accountId:db.accounts[0]?.id||'',toAccountId:db.accounts[1]?.id||'',cardId:db.cards[0]?.id||'',loanId:db.loans[0]?.id||'',certificateId:db.certificates[0]?.id||'',currency:'DOP',amount:'',sourceAmount:'',targetAmount:'',category:'Alimentación',subcategory:'',note:'',tags:'',principal:'',interest:'',fee:0,insurance:0,paymentKind:'regular',installmentPeriod:'',...partial};let type=o.type;if(type==='loan_payment'&&!editId){if(partial.insurance===undefined)o.insurance='';if(partial.fee===undefined)o.fee='';}draft=o;
 if(editId&&/^\d{4}-\d{4}$/.test(o.date))o.date=o.date.slice(0,7)+'-'+o.date.slice(7);let typeOptions=Object.entries(TRANSL).filter(([k])=>k!=='bank_reward'||!!editId).map(([k,v])=>[k,v]);let ac=db.accounts.map(a=>[a.id,`${a.name} (${a.currency})`]);let ca=db.cards.map(c=>[c.id,`${c.name} · ${bankOf(c)}`]);let lo=db.loans.map(l=>[l.id,`${l.name} (${l.currency})`]);
 let body=`${editId?`<input type="hidden" name="type" value="${sanitize(type)}"><div class="form-full tx-type-frozen">Tipo: <strong>${sanitize(TRANSL[type]||type)}</strong><small>Para proteger la contabilidad, la naturaleza de una operación existente no se cambia desde el editor.</small></div>`:formSelect('type','Tipo de operación',typeOptions,type,'id="txType"')}${formItem('date','Fecha de operación',o.date,'date','required max="'+today()+'"')}`;
@@ -9227,7 +9231,8 @@ function v48RefreshSummary(form){
   const schedule={kind,frequency,currency:f.currency.value,grossMonthly:gross,otherDeduction:Number(f.otherDeduction.value)||0,companyDeductions:JSON.parse(f.companyDeductionsJSON?.value||'[]'),nextDue:f.nextDue.value,withholdingPct:0};
   const pay=v40Payroll(schedule,f.nextDue.value),factor=v80MonthlyFactor(frequency);
   const monthNet=pay.net*factor, monthGross=pay.gross*factor;
-    const accountNm=account(f.accountId.value),bk=accountNm&&bank(accountNm.bankId),srcName=f.name.value.trim()||'Ingreso recurrente';
+  const line=(label,number,emph=false)=>`<div class="v48-review-line ${emph?'major':''}"><span>${label}</span><strong>${money(number,schedule.currency,2)}</strong></div>`;
+  const accountNm=account(f.accountId.value),bk=accountNm&&bank(accountNm.bankId),srcName=f.name.value.trim()||'Ingreso recurrente';
   const dayTxt=frequency==='monthly'?'Día '+(Number((f.nextDue.value||'').slice(8,10))||''):'';
   const dl=(k,v,cls='')=>`<div class="v902-r ${cls}"><span>${k}</span><strong>${v}</strong></div>`;
   target.innerHTML=`<section class="v902-card"><div class="v902-card-head"><span class="v902-ico" aria-hidden="true">${icon('briefcase')}</span><div><strong>${sanitize(srcName)}</strong><small>${kind==='formal'?'Trabajo formal':'Trabajo informal'}</small></div><button type="button" class="v902-edit" data-v902-goto="1">Editar</button></div>
@@ -15231,7 +15236,8 @@ function v243NotificationReport(kind,reportEnd=''){
  if(kind==='cierre')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('analytics')}</span><div><h3>Cómo terminó el mes</h3><p>${dayCount} ${dayCount===1?'día':'días'} contabilizados, según lo registrado</p></div></div><div class="v243-report-dual">${compared}</div><div class="v243-report-categories"><h4>Principales categorías</h4>${categories}</div></section>`;
  if(kind==='semanal')special=`<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('chart')}</span><div><h3>Así evolucionó tu semana</h3><p>Balance de lunes a domingo · ${dayCount} ${dayCount===1?'día':'días'}</p></div></div><div class="v243-report-dual">${compared}</div><div class="v243-report-categories"><h4>En qué se concentraron los gastos</h4>${categories}</div></section>`;
  const insights=v216Insights(a,b,currentClosed,dues,liquid);
-  document.getElementById('v216-layer')?.remove();
+ const tabs='';
+ document.getElementById('v216-layer')?.remove();
  const layer=document.createElement('div');layer.id='v216-layer';layer.className='v216-overlay v243-report-overlay';
  layer.innerHTML=`<section class="v216-report v243-report" role="dialog" aria-modal="true" aria-labelledby="v216-title" tabindex="-1"><header class="v243-report-head"><div class="v243-report-brand">${icon(classification.icon)}<span>vive el hoy · INFORMES FINANCIEROS</span></div><button type="button" class="v216-close" data-v216="close" aria-label="Cerrar informe">×</button><div class="v243-report-head-copy"><span>${classification.label}</span><h2 id="v216-title">${classification.title}</h2><p>${classification.desc}</p></div><div class="v243-report-dates"><span>${icon('calendar')} ${prettyDate(p.start)}${p.start===p.end?'':' — '+prettyDate(p.end)}</span><small>Corte 7:00 p. m. · República Dominicana</small></div></header><div class="v246-report-context"><span>${icon('check')} Informe liberado el ${prettyDate(closed)} · 7:00 p. m.</span><small>Período cerrado · RD</small></div><div class="v216-report-body v243-report-content"><div class="v243-report-hero"><span>BALANCE DEL PERÍODO</span><strong class="${a.net<0?'v216-negative':'v216-positive'}">${v216Currency(a.net)}</strong><p>Ingresos registrados menos egresos del período</p></div><div class="v243-report-core">${stat('Ingresos',v216Currency(a.income))}${stat('Egresos',v216Currency(a.expense))}${stat('Movimientos',String(a.count),'Registrados')}</div>${special}<section class="v243-report-block"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('calendar')}</span><div><h3>Compromisos y fechas</h3><p>${overdue.length} vencidos · ${due7.length} próximos 7 días</p></div></div>${dueRows||'<p class="v243-report-empty">No hay vencimientos próximos registrados.</p>'}<button type="button" class="v216-link" data-v216="payments">Ver centro de pagos ${icon('arrow')}</button></section><section class="v243-report-block v243-report-advice"><div class="v243-report-block-head"><span class="v243-report-block-icon">${icon('shield')}</span><div><h3>Lo que merece atención</h3><p>Observaciones calculadas con tus registros</p></div></div><ul class="v216-insights">${insights.slice(0,2).map(x=>`<li class="${x.danger?'v216-critical':''}">${sanitize(x.text)}</li>`).join('')}</ul></section><footer class="v216-report-foot"><span>${a.appleCount} movimiento(s) Apple Pay · ${a.count} movimiento(s) totales</span><span>Vista dinámica: no modifica tus registros.</span></footer></div></section>`;
  document.body.append(layer);layer.querySelector('.v216-report')?.focus();document.body.classList.add('v216-modal-open');
@@ -17330,7 +17336,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&active){e.preventDe
 
 
 (()=>{'use strict';
-  let queued=false;
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ let queued=false;
  function reconcileEnhancement(form){
   if(form.dataset.special!=='adjustment'||form.dataset.v768Adjustment==='yes')return;
   form.dataset.v768Adjustment='yes';
@@ -19185,7 +19192,9 @@ document.addEventListener('click',function(ev){
 (function viveV272ExperienceLayer() {
   'use strict';
 
-      let lastFocusedElement = null;
+  const scope = '[data-v272-experience]';
+  let lastModal = null;
+  let lastFocusedElement = null;
   let activeModal = null;
   let activePageName = '';
   let scheduled = false;
@@ -19664,8 +19673,16 @@ document.addEventListener('click',function(ev){
   const eligible=new Set(['transactionForm','recurringPaymentConfirmForm','rewardReceivedForm','manualBenefitForm','benefitLedgerForm','personalPaymentForm','annualFeeForm','v144CashbackForm']);
   let pendingReview=null;
   // V393: fingerprint the values shown at review time; never approve a changed form.
-    
-      
+  const snapshot=form=>{
+    const fd=new FormData(form), pairs=[];
+    for(const [key,value] of fd.entries())pairs.push([key,typeof value==='string'?value:(value?.name||'archivo')]);
+    return JSON.stringify(pairs);
+  };
+  let confirmationBusy=false;
+
+  const val=(form,name)=>{const field=form.elements?.namedItem(name);if(!field)return '';if(typeof field.value==='string'){if(field.tagName==='SELECT')return field.selectedOptions?.[0]?.textContent?.trim()||field.value;return field.value.trim()}if(field.length){const chosen=[...field].find(x=>x.checked);return chosen?.value||''}return ''};
+  const raw=(form,name)=>{const el=form.elements?.namedItem(name);return el&&typeof el.value==='string'?el.value.trim():''};
+  
   function isRelevant(form){return form instanceof HTMLFormElement&&!!form.closest('#modal-root')&&(eligible.has(form.id)||form.classList.contains('other-studio-form')||form.dataset.v83Loan==='yes')}
   
   
@@ -20006,7 +20023,8 @@ document.addEventListener('click',function(ev){
  'use strict';
  const escape=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const val=(f,n)=>String(f.elements.namedItem(n)?.value??'').trim();
-  const number=(f,n)=>{const raw=val(f,n);return raw===''?NaN:Number(raw)};
+ const field=(f,n)=>f.elements.namedItem(n);
+ const number=(f,n)=>{const raw=val(f,n);return raw===''?NaN:Number(raw)};
  const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLocaleLowerCase('es');
  const cash=(n,c)=>{const a=Number(n);if(!Number.isFinite(a))return 'Por indicar';return (a<0?'−':'')+(c==='USD'?'US$':'RD$')+new Intl.NumberFormat('es-DO',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.abs(a));};
  const banks=()=>Array.isArray(db?.banks)?db.banks:[];
@@ -20204,7 +20222,8 @@ document.addEventListener('click',function(ev){
  const {account,card,bank,prettyDate,today}=hooks||{};
  const moneyText=(n,c)=>`${c==='USD'?'US$':'RD$'}${Math.max(0,Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
  const read=(f,key)=>String(f.elements.namedItem(key)?.value??'');
-  const validDay=s=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T12:00:00Z'));
+ const safe=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+ const validDay=s=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T12:00:00Z'));
  const sourceOf=(value)=>{const [k,id]=String(value).split(':');return k==='account'?account(id):k==='card'?card(id):null;};
  function inspect(f){
   const current=hooks?.readState();
@@ -20794,7 +20813,8 @@ new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=
 /* UX components reuse the original product selectors and financial form controls. */
 (()=>{'use strict';
  const root=document.getElementById('modal-root');if(!root)return;
-  let queued=false;
+ const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ let queued=false;
  function enhanceBenefit(form){
   if(form.dataset.f834Benefit==='1')return;
   const kind=form.elements.namedItem('kind'), amount=form.elements.namedItem('amount');
