@@ -18671,7 +18671,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const nOwe=gs.filter(g=>g.lent>.005).length,nDebt=gs.filter(g=>g.owed>.005).length;
   return `<div class="v1200"><section class="v1200-hero v1200-hero2"><div class="v1200-hmain"><span class="v1200-kick">ENTRE PERSONAS · BALANCE NETO</span><strong class="v1200-big">${net<-.005?'−':''}${money(Math.abs(net))}</strong><p class="v1200-dir">${dir}</p><button type="button" class="v1200-primary" data-v56="loanNew" data-id="">${ic('<path d="M12 5v14M5 12h14"/>')}<span>Nueva relación</span></button></div>
     <div class="v1200-kpis"><div class="v1200-kpi"><span class="v1200-kpi-ic">${ic('<path d="M12 19V5M5 12l7-7 7 7"/>')}</span><div><small>Me deben</small><b>${money(lent)}</b><em>${nOwe} persona${nOwe===1?'':'s'}</em></div></div><div class="v1200-kpi"><span class="v1200-kpi-ic">${ic('<path d="M12 5v14M5 12l7 7 7-7"/>')}</span><div><small>Debo</small><b>${money(owed)}</b><em>${nDebt} persona${nDebt===1?'':'s'}</em></div></div></div></section>
-   ${gs.length?`<section class="v1200-list" aria-label="Personas">${gs.map(fila).join('')}</section>`:'<p class="v1200-empty">Aún no tienes relaciones. Crea la primera con «Nueva relación».</p>'}</div>`;
+   ${gs.length?`<section class="v1200-list" aria-label="Personas">${gs.map(fila).join('')}</section>`:`<section class="v1272-empty" aria-label="Sin relaciones"><span class="v1272-empty-ic">${icon('wallet')}</span><h3>Todavía no hay nadie aquí</h3><p>Anota quién te debe y a quién le debes. Cada abono queda en su historial, sin perder la cuenta.</p><button type="button" class="v1272-empty-cta" data-act="addPersonal">${icon('plus')} Nueva relación</button></section>`}</div>`;
  }
  pages.personal=function(){
   const k=ui.v1200p,g=k?grupos().find(x=>x.key===k):null;
@@ -18775,6 +18775,11 @@ function v1243Apply(root){
 window.viveIdleTest=(sec=30)=>new Promise(res=>{let busy=0,n=0;const ob='PerformanceObserver' in window?new PerformanceObserver(l=>{for(const e of l.getEntries()){busy+=e.duration;n++}}):null;try{ob?.observe({type:'longtask',buffered:false})}catch(_){}
  const t0=performance.now(),i0=window.__viveTimers||0;setTimeout(()=>{ob?.disconnect();const el=performance.now()-t0,r={segundos:Math.round(el/1000),tareasLargas:n,msOcupado:Math.round(busy),porcentajeOcupado:+(100*busy/el).toFixed(2),pestanaVisible:!document.hidden};console.table(r);toast?.('Reposo '+r.segundos+' s: '+r.porcentajeOcupado+' % del hilo en tareas largas ('+r.tareasLargas+')');res(r)},sec*1000)});
 
+/* V1273 · Botones flotantes (móvil): se atenúan al bajar y reaparecen al subir, para no tapar cifras. */
+{let last=window.scrollY||0,tick=false,hid=false;
+ const set=h=>{if(h===hid)return;hid=h;document.body.classList.toggle('v1273-fab-hide',h)};
+ window.addEventListener('scroll',()=>{if(tick)return;tick=true;requestAnimationFrame(()=>{tick=false;const y=window.scrollY||0,d=y-last;if(Math.abs(d)<8)return;set(d>0&&y>120);last=y})},{passive:true});
+ document.addEventListener('touchstart',()=>{if(hid)setTimeout(()=>set(false),600)},{passive:true})}
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
 /* VIVE_SCORE (experimental): puente de SOLO LECTURA hacia los datos existentes; no escribe nada. */
 if(window.VIVE_SCORE_EXPERIMENTAL)window.__viveScoreBridge=Object.freeze({db:()=>db,today,card,bank,cardStatus,loanStatus,loanAccounting,fullOriginalLoan,xconvert,acquiredOnOf,balanceAt:(a,d)=>getAccountBalance(a,d),isFinancial:b=>v40IsFinancial(b),monthlyFactor:f=>v80MonthlyFactor(f),account,activeRecurring:()=>v339ActiveRecurring(),monthlyEquivalent:(a,c,f)=>v339MonthlyEquivalent(a,c,f),upcoming:()=>upcoming(),payroll:(s,d)=>v40Payroll(s,d),theme:()=>db.settings.theme,go:id=>{ui.page=id;render();window.scrollTo(0,0)},rerender:()=>render()});
