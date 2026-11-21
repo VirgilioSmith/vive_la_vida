@@ -55830,3 +55830,23 @@ html body:is(.theme-black,.theme-dark) #app#app #page table.annual-table :is(tr,
 html body:is(.theme-black,.theme-dark) #app#app #page table.annual-table tr:is(.v27-balance-net,.v27-balance-final,:nth-child(n+3)) :is(td,th){background:#0c0c10!important;color:#f4f6fb!important}
 html body:is(.theme-black,.theme-dark) #app#app #page :is(.v1265-loan,.v1246,.loan-workspace) .btn:is(.ghost,.soft,.sm):not(.loan-primary){background:color-mix(in srgb,var(--v424-accent-strong) 22%,#000)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:color-mix(in srgb,var(--v424-accent-strong) 45%,transparent)!important}
 html body:is(.theme-black,.theme-dark) #app#app #page .v256-hero-benefits{background:rgba(255,255,255,.1)!important;color:#fff!important;border:1px solid rgba(255,255,255,.25)!important}
+
+/* V1278 · Galería La vida que quiero */
+.v1278-gal{margin:22px 0 8px}
+.v1278-gal header span{font-size:10.5px;font-weight:850;letter-spacing:.16em;color:var(--v424-accent-strong)}
+.v1278-gal header h2{margin:4px 0 2px;font-size:clamp(22px,3vw,30px);letter-spacing:-.04em}
+.v1278-gal header p{margin:0 0 14px;font-size:13px;opacity:.7}
+.v1278-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.v1278-card{position:relative;text-align:left;border:0;padding:0 0 14px;border-radius:22px;overflow:hidden;background:var(--v1278-bg,#fff);box-shadow:0 8px 22px rgba(20,30,60,.08);cursor:pointer;display:grid;align-content:start;gap:3px;font:inherit;color:inherit;transition:transform .2s ease,box-shadow .2s ease}
+.v1278-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,30,60,.14)}
+.v1278-art{display:block;height:110px;position:relative;background:linear-gradient(160deg,var(--b),color-mix(in srgb,var(--a) 70%,var(--b)));margin-bottom:10px;overflow:hidden}
+.v1278-art i:first-child{position:absolute;right:18px;top:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,246,214,.85)}
+.v1278-art i:last-child{position:absolute;left:-10%;right:-10%;bottom:-18px;height:58px;border-radius:50% 50% 0 0;background:var(--a);opacity:.85}
+.v1278-card strong{padding:0 14px;font-size:16px;letter-spacing:-.02em}
+.v1278-card small{padding:0 14px;font-size:12px;opacity:.7;line-height:1.35}
+.v1278-card em{display:none;padding:8px 14px 0;font-style:normal;font-size:12.5px;font-weight:700;color:var(--a);line-height:1.35}
+.v1278-card.is-on em{display:block}
+.v1278-card.is-on{box-shadow:0 0 0 2px var(--a),0 14px 30px rgba(20,30,60,.14)}
+body.theme-black .v1278-card,body.theme-dark .v1278-card{--v1278-bg:#111116;box-shadow:none;border:1px solid rgba(255,255,255,.08)}
+@media(max-width:790px){.v1278-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.v1278-art{height:84px}}
+@media(prefers-reduced-motion:reduce){.v1278-card{transition:none}.v1278-card:hover{transform:none}}
