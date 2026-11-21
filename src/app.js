@@ -194,7 +194,7 @@ function accountDetail(a){
 function loanDetail(l){
   let b=loanBundle(l),a=b.actual,status=a.settled?'Liquidado':diffDays(a.next,today())<0?'Cuota vencida':'Activo',next=a.settled?'Sin cuotas pendientes':prettyDate(a.next);
   let tabs=[['vision','Visión general'],['amort','Amortización'],['payments','Historial real'],['simulate','Simulador de abonos']];
-  let tab='vision';loanWorkspace.tab='vision';
+  let tab=isMobileViewport()?'vision':loanWorkspace.tab;
   let body=tab==='vision'?loanVision(l,b)+loanConditions(l):tab==='amort'?loanAmortView(l,b):tab==='payments'?loanPaymentHistory(l,b):loanSimulator(l,b);
   const pct=num(l.principal)>0?Math.max(0,Math.min(100,a.paidPrincipal/num(l.principal)*100)):0,dis=a.settled||l.archived?'disabled':'';
   const stat=(k,v,sub)=>`<div class="v1246-stat"><small>${k}</small><strong>${v}</strong>${sub?`<em>${sub}</em>`:''}</div>`;
@@ -202,6 +202,7 @@ function loanDetail(l){
     <section class="v1246-hero" aria-label="Resumen del préstamo"><div class="v1246-lead"><div class="v1246-micro">${sanitize(bankOf(l))} <span>·</span> ${sanitize(l.currency)} <span class="v1246-chip ${status==='Cuota vencida'?'is-late':a.settled?'is-done':''}">${status}</span></div><h2>${sanitize(l.name)}</h2><p>Capital original ${money(l.principal,l.currency,2)} · ${num(l.rate).toFixed(2)}% anual · ${v49LoanPeriodCount(l)} ${v49LoanPeriodsPerMonth(l)===2?'quincenas':'cuotas mensuales'}${l.originationDate?' · desde '+prettyDate(l.originationDate):''}</p>
     <div class="v1246-balance"><div class="v1246-ring" role="progressbar" aria-label="Capital amortizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(1)}" style="--p:${pct.toFixed(2)}"><div><b>${pct.toFixed(1)}%</b><small>pagado</small></div></div><div><small>SALDO PENDIENTE</small><strong>${money(a.balance,l.currency,2)}</strong><em>Capital reducido ${money(a.paidPrincipal,l.currency)}</em></div></div></div>
     <div class="v1246-stats">${stat('PRÓXIMO VENCIMIENTO',next,a.settled?'':whenTxt(a.next))}${stat('CUOTA CONTRACTUAL',money(loanStatus(l).installment,l.currency,2))}${stat('CUOTAS',a.periods+' <i>/ '+v49LoanPeriodCount(l)+'</i>','registradas / pactadas')}${stat('INTERESES Y CARGOS A LA FECHA',money(a.interest+a.insurance+a.fees+a.estimatedHistoricInterest+a.estimatedHistoricInsurance+a.estimatedHistoricFees,l.currency,2),'Confirmados '+money(a.interest,l.currency,2))}${stat('INTERESES FUTUROS ESTIMADOS',money(l.archived?0:b.baseline.interest,l.currency,2))}${stat('ABONOS EXTRAORDINARIOS',money(a.extras,l.currency,2),'Reducen capital')}</div></section>
+    <nav class="loan-tabs v1267-tabs" aria-label="Detalle de préstamo">${tabs.map(([key,title])=>`<button class="loan-tab ${key===tab?'on':''}" data-act="loanTab" data-id="${key}">${title}</button>`).join('')}</nav>
     <div class="loan-tab-content">${body}</div>
     ${num(l.reportedBalance)>0?`<div class="loan-alert"><span>${icon('shield')}</span><div><strong>Saldo confirmado por banco (${prettyDate(l.balanceAsOf||today())}): ${money(l.reportedBalance,l.currency,2)}. Diferencia frente al registro: ${money(a.balance-num(l.reportedBalance),l.currency,2)}.</strong></div></div>`:''}</section>`;
 }
@@ -284,7 +285,7 @@ function loanStat(label,value,note,iconName,tone=''){
 }
 {const _accountDetail=accountDetail,_loanDetail=loanDetail;
  accountDetail=function(a){const html=_accountDetail(a);return a&&a.kind!=='cash'?html+`<div class="panel section v1400-antiguedad-panel"><div class="panel-head"><h3>Antigüedad de la cuenta</h3></div>${antiguedadRow(a,'account')}</div>`:html};
- loanDetail=function(l){return _loanDetail(l)}}
+ loanDetail=function(l){const html=_loanDetail(l);return isMobileViewport()?html:html+`<div class="panel section v1400-antiguedad-panel"><div class="panel-head"><h3>Antigüedad del préstamo</h3></div>${antiguedadRow(l,'loan')}</div>`}}
 function financeSnapshot(type,recordId,rules,results){
  db.recordSnapshots=Array.isArray(db.recordSnapshots)?db.recordSnapshots:[];
  const s=window.FinanzasReglas.instantanea({tipo:type,idRegistro:String(recordId),fecha:today(),reglas:rules,resultados:results});
