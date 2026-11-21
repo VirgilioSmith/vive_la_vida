@@ -55803,3 +55803,10 @@ html body:is(.theme-black,.theme-dark) #app#app #page#page#page#page .v726-profi
 html body:is(.theme-black,.theme-dark) #app#app #page#page#page#page .v726-profile-card *{color:#f1f4fb!important;-webkit-text-fill-color:#f1f4fb!important}
 html body:is(.theme-black,.theme-dark) #app#app #page#page#page#page .v726-profile-card :is(small,p,.v726-profile-copy span){color:rgba(235,240,252,.7)!important;-webkit-text-fill-color:rgba(235,240,252,.7)!important}
 html body:is(.theme-black,.theme-dark) #app#app #page#page#page#page .v726-profile-avatar{background:linear-gradient(140deg,color-mix(in srgb,var(--v424-accent-strong) 55%,#000),color-mix(in srgb,var(--v424-accent-strong) 30%,#000))!important}
+/* V1275 · Web PC: no repetir el título de página (ya está en la barra superior) */
+@media(min-width:791px){
+html body #app#app #page .v439-mac-top>div:first-child>:is(h1,span){display:none!important}
+html body #app#app #page .v439-mac-top{min-height:0!important;margin-bottom:6px!important;padding-block:0!important}
+html body #app#app #page .v410-explore-head h1,html body #app#app #page .v410-explore-head>div>p{display:none!important}
+html body #app#app #page .v410-explore-head{min-height:0!important;margin-bottom:4px!important}
+}
