@@ -12741,6 +12741,32 @@ function v877SyncMobileSearchFilters(){
   button.setAttribute('aria-pressed',String(selected));
  });
 }
+/* V1288 · Buscar con fichas: al escribir el nombre de un banco, producto o servicio, se muestra su resumen y desglose (no solo un enlace). */
+function v1288Entities(terms){
+ if(!terms.length)return '';
+ const nz=v71SearchNormalize,hit=t=>{const x=nz(t||'');return terms.every(w=>x.includes(w))};
+ const M=(v,c)=>money(v,c||'DOP',2),e=sanitize,out=[];
+ const row=(ico,name,sub,val,act,id,extra)=>`<button type="button" class="v1288-row" data-act="${act}" data-id="${e(id)}" ${extra||''}><span class="v1288-ri">${icon(ico)}</span><span class="v1288-rt"><strong>${e(name)}</strong><small>${e(sub)}</small></span><b>${val}</b></button>`;
+ for(const b of (db.banks||[]).filter(b=>!b.archived&&(hit(b.name)||hit(b.kind)))){
+  const acc=(db.accounts||[]).filter(a=>a.bankId===b.id&&!a.archived),crd=(db.cards||[]).filter(c=>c.bankId===b.id&&!c.archived),lns=(db.loans||[]).filter(l=>l.bankId===b.id&&!l.archived),cts=(db.certificates||[]).filter(c=>c.bankId===b.id&&!c.archived);
+  const funds=acc.reduce((n,a)=>n+xconvert?.(getAccountBalance(a),a.currency,'DOP')||0,0),debt=crd.reduce((n,c)=>n+cardStatus(c,'DOP').debt+(xconvert?xconvert(cardStatus(c,'USD').debt,'USD','DOP'):0),0)+lns.reduce((n,l)=>n+(xconvert?xconvert(loanStatus(l).balance,l.currency,'DOP'):loanStatus(l).balance),0);
+  const rows=[...acc.map(a=>row('wallet',a.name,(a.kind==='savings'?'Cuenta de ahorros':'Cuenta')+' · '+a.currency,M(getAccountBalance(a),a.currency),'goAccount',a.id)),...crd.map(c=>row('card',c.name,'Tarjeta · deuda RD$ '+shorten(cardStatus(c,'DOP').debt)+' · US$ '+shorten(cardStatus(c,'USD').debt),'Ver','goCard',c.id)),...lns.map(l=>row('receipt',l.name,'Préstamo · '+(num(l.principal)?Math.round(loanAccounting(l).paidPrincipal/num(l.principal)*100):0)+'% pagado',M(loanStatus(l).balance,l.currency),'goLoan',l.id)),...cts.map(c=>row('analytics',c.name,'Certificado · vence '+prettyDate(c.maturityDate),M(c.principal||c.amount,c.currency),'goCertificate',c.id))].join('');
+  out.push(`<article class="v1288-card"><header><span class="v1288-logo">${bankLogoMark(b,'v1288-logomark')}</span><div><strong>${e(b.name)}</strong><small>${e(b.kind||'Banco')} · ${acc.length+crd.length+lns.length+cts.length} productos</small></div><button type="button" class="v1288-open" data-act="bankDetails" data-id="${e(b.id)}" aria-label="Abrir ${e(b.name)}">${icon('arrow')}</button></header><div class="v1288-kpis"><span><small>Fondos</small><b>${M(funds)}</b></span><span><small>Deuda</small><b>${M(debt)}</b></span></div><div class="v1288-rows">${rows||'<p class="v1288-none">Sin productos registrados.</p>'}</div></article>`);
+ }
+ const t0=today(),ym=t0.slice(0,7);
+ for(const r of (db.recurring||[]).filter(r=>!r.archived&&hit(r.name))){
+  const paidTx=(db.transactions||[]).filter(t=>t.recurringId===r.id).sort((a,b)=>String(b.date).localeCompare(String(a.date)));const last=paidTx[0];
+  const paidNow=last&&String(last.date).slice(0,7)===ym,paused=r.active===false,due=r.nextDue,late=!paidNow&&due&&due<t0&&!paused;
+  const st=paused?['Pausada','is-pause']:paidNow?['Pagado este mes','is-paid']:late?['Vencido','is-late']:['Pendiente','is-soon'];
+  const per=({monthly:'Mensual',weekly:'Semanal',quarterly:'Trimestral',annual:'Anual'})[r.frequency]||r.frequency||'';
+  out.push(`<article class="v1288-card"><header><span class="v1288-logo v1288-sv">${icon('cycle')}</span><div><strong>${e(r.name)}</strong><small>Suscripción · ${e(per)}</small></div><span class="v1288-state ${st[1]}">${st[0]}</span></header><div class="v1288-kpis"><span><small>Monto</small><b>${M(r.amount,r.currency)}</b></span><span><small>${paidNow?'Último pago':'Próximo cobro'}</small><b>${paidNow?prettyDate(last.date):(due?prettyDate(due):'—')}</b></span></div>${last?`<div class="v1288-rows"><div class="v1288-line"><span>Último pago registrado</span><b>${prettyDate(last.date)} · ${M(last.amount,last.currency||r.currency)}</b></div></div>`:''}<button type="button" class="v1288-link" data-act="navigate" data-id="recurring">Ver en Suscripciones ${icon('arrow')}</button></article>`);
+ }
+ for(const c of (db.cards||[]).filter(c=>!c.archived&&hit(c.name)&&!out.length)){
+  const d=cardStatus(c,'DOP'),u=cardStatus(c,'USD');
+  out.push(`<article class="v1288-card"><header><span class="v1288-logo v1288-sv">${icon('card')}</span><div><strong>${e(c.name)}</strong><small>Tarjeta · ${e(bankOf(c))}</small></div><button type="button" class="v1288-open" data-act="goCard" data-id="${e(c.id)}" aria-label="Abrir ${e(c.name)}">${icon('arrow')}</button></header><div class="v1288-kpis"><span><small>Deuda RD$</small><b>${M(d.debt)}</b></span><span><small>Deuda US$</small><b>${M(u.debt,'USD')}</b></span></div></article>`);
+ }
+ return out.length?`<div class="v1288-wrap" aria-label="Resumen de coincidencias">${out.slice(0,4).join('')}</div>`:'';
+}
 function v154SearchResultsUpdate(){
  v877SyncMobileSearchFilters();
  const input=document.getElementById('v154-mobile-search-input');
@@ -12766,6 +12792,7 @@ function v154SearchResultsUpdate(){
  const resultCount=found.length;
  const label=category?category.title:'Resultados';
  let html=`<div class="v154-results-heading"><div><span class="v154-search-eyebrow">${category?'EXPLORAR CATEGORÍA':'BÚSQUEDA GLOBAL'}</span><h2>${sanitize(label)}</h2><small>${resultCount} coincidencia${resultCount===1?'':'s'}${query?' · '+sanitize(raw):''}</small></div><button type="button" data-v154-clear="1">Ver todo</button></div>`;
+ if(!category)try{html+=v1288Entities(terms)}catch(_){}
  if(category)html+=`<div class="v154-active-filter"><span>${icon(category.ico)} ${sanitize(category.title)}</span><button type="button" data-v154-clear-category="1" aria-label="Quitar filtro de ${sanitize(category.title)}">×</button></div>`;
  if(!resultCount){html+=`<div class="v154-empty">${icon('search')}<strong>Sin resultados</strong><p>Prueba otro nombre o explora otra categoría.</p></div>`}
  else {
