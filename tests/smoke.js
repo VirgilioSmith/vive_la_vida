@@ -17,8 +17,7 @@ const PAGES = ['overview','accounts','cards','loans','banks','categories','incom
     }
     // Regresión V1283/V1285: el botón inferior de «Nueva tarjeta» y el scroll del formulario deben ser accesibles.
     try {
-      await page.evaluate(() => window.__T.go('cards'));
-      await page.locator('[data-act="addCard"]').first().click({timeout:5000});
+      await page.evaluate(() => window.__T.openCardForm());
       await page.waitForTimeout(650);
       const formCheck = await page.evaluate(() => {
         const f=document.getElementById('cardForm'),g=f?.querySelector('.form-grid'),foot=f?.querySelector('.form-foot');
