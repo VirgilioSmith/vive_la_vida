@@ -18775,6 +18775,7 @@ function v1243Apply(root){
 window.viveIdleTest=(sec=30)=>new Promise(res=>{let busy=0,n=0;const ob='PerformanceObserver' in window?new PerformanceObserver(l=>{for(const e of l.getEntries()){busy+=e.duration;n++}}):null;try{ob?.observe({type:'longtask',buffered:false})}catch(_){}
  const t0=performance.now(),i0=window.__viveTimers||0;setTimeout(()=>{ob?.disconnect();const el=performance.now()-t0,r={segundos:Math.round(el/1000),tareasLargas:n,msOcupado:Math.round(busy),porcentajeOcupado:+(100*busy/el).toFixed(2),pestanaVisible:!document.hidden};console.table(r);toast?.('Reposo '+r.segundos+' s: '+r.porcentajeOcupado+' % del hilo en tareas largas ('+r.tareasLargas+')');res(r)},sec*1000)});
 
+{const _ov=pages.overview;pages.overview=function(){const h=_ov.apply(this,arguments);try{return isMobileViewport()?h:h+(window.ViveModule?.corner?.()||'')}catch(_){return h}}}
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
 /* VIVE_SCORE (experimental): puente de SOLO LECTURA hacia los datos existentes; no escribe nada. */
 if(window.VIVE_SCORE_EXPERIMENTAL)window.__viveScoreBridge=Object.freeze({db:()=>db,today,card,bank,cardStatus,loanStatus,loanAccounting,fullOriginalLoan,xconvert,acquiredOnOf,balanceAt:(a,d)=>getAccountBalance(a,d),isFinancial:b=>v40IsFinancial(b),monthlyFactor:f=>v80MonthlyFactor(f),account,activeRecurring:()=>v339ActiveRecurring(),monthlyEquivalent:(a,c,f)=>v339MonthlyEquivalent(a,c,f),upcoming:()=>upcoming(),payroll:(s,d)=>v40Payroll(s,d),theme:()=>db.settings.theme,go:id=>{ui.page=id;render();window.scrollTo(0,0)},rerender:()=>render()});
@@ -21819,6 +21820,13 @@ window.__v866Runners.v865=run;
   const k=free[rnd(free.length)];(bienSeen[sub]=bienSeen[sub]||[]).push(k);bienSave();
   return {text:list[k],kind:'reflection',theme:'bienestar',repeatable:false};
  }
+ /* V1269 · Tarjeta «Recuerda vivir»: una frase breve y un subtítulo del mismo banco, para el lector Vive y la esquina de Resumen. */
+ function rememberPair(){let t='',u='';for(let i=0;i<12;i++){t=bienPiece().text;if(t.length<=95)break}for(let i=0;i<12;i++){u=bienPiece().text;if(u!==t&&u.length<=125)break}return {t,u}}
+ let cornerCache=null,cornerAt=0;
+ function cardHtml(kind,pair){const c=pair||rememberPair(),e=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  return `<aside class="v1269-remember ${kind}" aria-label="Recuerda vivir"><div class="v1269-copy"><span>RECUERDA VIVIR</span><strong>«${e(c.t.replace(/[.]$/,''))}».</strong><p>${e(c.u)}</p></div><svg class="v1269-art" viewBox="0 0 200 90" aria-hidden="true"><circle cx="150" cy="22" r="14" class="sun"/><path d="M0 70c20-8 40-8 60 0s40 8 60 0 40-8 80 0v20H0z" class="w1"/><path d="M0 78c20-6 40-6 60 0s40 6 60 0 40-6 80 0v12H0z" class="w2"/><path d="M92 58h60l-8 10H88z" class="hull"/><path d="M104 58l6-10h28l6 10z" class="cab"/></svg>${kind==='is-corner'?'<button type="button" class="v1269-x" data-v1269-close aria-label="Cerrar frase">×</button>':''}</aside>`}
+ function cornerHtml(){try{if(sessionStorage.getItem('v1269.off')==='1')return '';}catch(_){}if(!cornerCache||Date.now()-cornerAt>90000){cornerCache=rememberPair();cornerAt=Date.now()}return cardHtml('is-corner',cornerCache)}
+ document.addEventListener('click',e=>{const x=e.target.closest?.('[data-v1269-close]');if(!x)return;try{sessionStorage.setItem('v1269.off','1')}catch(_){}x.closest('.v1269-remember')?.remove()});
  const THEMES=[...Object.keys(DATA),'bienestar'];
  const COMBOS=BIEN_TOTAL+Object.keys(DATA).reduce((n,t)=>n+DATA[t].v.length*DATA[t].o.length,0)*(OPEN.length+1)*(MOD.length+1)*(CLOSE.length+1);
  const SEEN_KEY='vive.seen.v2',SEEN_MAX=4000;
@@ -21884,7 +21892,8 @@ window.__v866Runners.v865=run;
    const c=r.querySelector('.vive-reader-category');if(c)c.textContent='Guardadas · '+favs.length;
   }else if(piece){
    body.className='vive-reader-body vive-kind-'+piece.kind;
-   body.innerHTML=`<div class="vive-reader-copy">${safe(piece.text)}</div>`;
+   piece.card=piece.card||rememberPair();
+   body.innerHTML=`<div class="vive-reader-copy">${safe(piece.text)}</div>${cardHtml('in-reader',piece.card)}`;
    const c=r.querySelector('.vive-reader-category');if(c)c.textContent=CAT[piece.theme]||'Presente';
   }
   const prev=r.querySelector('[data-vive-prev]');if(prev)prev.disabled=state.view==='saved'?false:state.pos<=0;
@@ -21950,7 +21959,7 @@ window.__v866Runners.v865=run;
    if(!state.open)return;if(e.key==='Escape'){e.preventDefault();close();return;}
    if(e.key==='Tab'){const r=document.getElementById(rootId);if(!r)return;const controls=[...r.querySelectorAll('button:not([disabled])')];const first=controls[0],last=controls[controls.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
  });
- window.ViveModule=Object.freeze({open:()=>open(document.activeElement),close,stats:()=>({themes:THEMES.length,combinations:COMBOS})});
+ window.ViveModule=Object.freeze({open:()=>open(document.activeElement),close,corner:cornerHtml,stats:()=>({themes:THEMES.length,combinations:COMBOS})});
 })();
 ;
 /* ==== script: v974-settings-tabs ==== */

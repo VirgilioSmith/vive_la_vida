@@ -55729,3 +55729,23 @@ html body #app#app .loan-workspace :is(.loan-back,.loan-link,.loan-right-panel a
 @media(min-width:791px){
 html body #app#app .main.world-overview #page{margin-left:9px!important;margin-right:0!important;width:auto!important;max-width:100%!important}
 }
+
+/* V1269 · Recuerda vivir */
+.v1269-remember{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 150px;align-items:center;gap:8px;overflow:hidden;border-radius:22px;padding:16px 18px;background:linear-gradient(110deg,color-mix(in srgb,var(--v424-accent-strong) 9%,#fff),color-mix(in srgb,var(--v424-accent-strong) 4%,#fff) 60%);border:1px solid color-mix(in srgb,var(--v424-accent-strong) 14%,transparent);color:#1b2b27}
+.v1269-copy span{display:block;font-size:10px;font-weight:850;letter-spacing:.16em;color:var(--v424-accent-strong)}
+.v1269-copy strong{display:block;margin:5px 0 3px;font-size:14.5px;line-height:1.3;letter-spacing:-.01em}
+.v1269-copy p{margin:0;font-size:12px;line-height:1.4;opacity:.72}
+.v1269-art{width:150px;height:auto;align-self:end;margin:-6px -18px -16px 0}
+.v1269-art .sun{fill:color-mix(in srgb,#f3dc9a 80%,#fff)}.v1269-art .w1{fill:color-mix(in srgb,var(--v424-accent-strong) 38%,#fff)}.v1269-art .w2{fill:var(--v424-accent-strong);opacity:.85}.v1269-art .hull{fill:#fff}.v1269-art .cab{fill:color-mix(in srgb,var(--v424-accent-strong) 20%,#fff)}
+body.theme-black .v1269-remember,body.theme-dark .v1269-remember{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f2f4f8}
+.v1269-remember.in-reader{margin-top:18px}
+.v1269-remember.is-corner{position:fixed;right:22px;bottom:20px;width:min(400px,calc(100vw - 120px));z-index:30;box-shadow:0 14px 34px rgba(0,0,0,.14);animation:v1269-in .4s ease-out}
+.v1269-x{position:absolute;top:8px;right:10px;width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:inherit;opacity:.5;font-size:17px;line-height:1;cursor:pointer}
+.v1269-x:hover{opacity:1;background:color-mix(in srgb,var(--v424-accent-strong) 12%,transparent)}
+@keyframes v1269-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.v1269-remember.is-corner{animation:none}}
+@media(max-width:790px){.v1269-remember.is-corner{display:none}.v1269-remember{grid-template-columns:1fr}.v1269-art{display:none}}
+.v1269-remember.is-corner{position:static!important;width:auto!important;margin:16px 0 8px!important;box-shadow:none!important;animation:none!important;grid-template-columns:minmax(0,1fr) 220px;padding:20px 26px}
+.v1269-remember.is-corner .v1269-x{display:none}
+.v1269-remember.is-corner .v1269-copy strong{font-size:16px}
+.v1269-remember.is-corner .v1269-art{width:220px;margin:-10px -26px -20px 0}
