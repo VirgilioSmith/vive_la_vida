@@ -21831,7 +21831,7 @@ window.__v866Runners.v865=run;
  function rememberPair(m){if(m==='joseo'){let t=joseoText(80),u=joseoText(90);return {t,u,joseo:true}}let t='',u='';for(let i=0;i<12;i++){t=bienPiece().text;if(t.length<=95)break}for(let i=0;i<12;i++){u=bienPiece().text;if(u!==t&&u.length<=125)break}return {t,u}}
  let cornerCache=null,cornerAt=0;
  function cardHtml(kind,pair,mode){const c=pair||rememberPair(mode),e=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  return `<aside class="v1269-remember ${kind}" aria-label="Recuerda vivir"><div class="v1269-copy"><span>${c.joseo?'JOSEANDO':'RECUERDA VIVIR'}</span><strong>«${e(c.t.replace(/[.]$/,''))}».</strong><p>${e(c.u)}</p></div><svg class="v1269-art" viewBox="0 0 200 90" aria-hidden="true"><circle cx="150" cy="22" r="14" class="sun"/><path d="M0 70c20-8 40-8 60 0s40 8 60 0 40-8 80 0v20H0z" class="w1"/><path d="M0 78c20-6 40-6 60 0s40 6 60 0 40-6 80 0v12H0z" class="w2"/><path d="M92 58h60l-8 10H88z" class="hull"/><path d="M104 58l6-10h28l6 10z" class="cab"/></svg>${kind==='is-corner'?'<button type="button" class="v1269-x" data-v1269-close aria-label="Cerrar frase">×</button>':''}</aside>`}
+  return `<aside class="v1269-remember ${kind}" aria-label="Recuerda vivir"><div class="v1269-copy"><span>${c.label||(c.joseo?'JOSEANDO':'RECUERDA VIVIR')}</span><strong>${c.raw?e(c.t):'«'+e(c.t.replace(/[.]$/,''))+'».'}</strong>${c.u?'<p>'+e(c.u)+'</p>':''}</div><svg class="v1269-art" viewBox="0 0 200 90" aria-hidden="true"><circle cx="150" cy="22" r="14" class="sun"/><path d="M0 70c20-8 40-8 60 0s40 8 60 0 40-8 80 0v20H0z" class="w1"/><path d="M0 78c20-6 40-6 60 0s40 6 60 0 40-6 80 0v12H0z" class="w2"/><path d="M92 58h60l-8 10H88z" class="hull"/><path d="M104 58l6-10h28l6 10z" class="cab"/></svg>${kind==='is-corner'?'<button type="button" class="v1269-x" data-v1269-close aria-label="Cerrar frase">×</button>':''}</aside>`}
  function cornerHtml(){try{if(sessionStorage.getItem('v1269.off')==='1')return '';}catch(_){}if(!cornerCache||Date.now()-cornerAt>90000){cornerCache=rememberPair('joseo');cornerAt=Date.now()}return cardHtml('is-corner',cornerCache)}
  document.addEventListener('click',e=>{const m=e.target.closest?.('[data-vive-mode]');if(m){const v=m.dataset.viveMode==='joseo'?'joseo':'vive';if(v!==viveMode){viveMode=v;try{localStorage.setItem(MODE_KEY,v)}catch(_){}state.history=[];state.pos=-1;next()}else paint();return}const x=e.target.closest?.('[data-v1269-close]');if(!x)return;try{sessionStorage.setItem('v1269.off','1')}catch(_){}x.closest('.v1269-remember')?.remove()});
  const THEMES=[...Object.keys(DATA),'bienestar'];
@@ -21900,8 +21900,7 @@ window.__v866Runners.v865=run;
    const c=r.querySelector('.vive-reader-category');if(c)c.textContent='Guardadas · '+favs.length;
   }else if(piece){
    body.className='vive-reader-body vive-kind-'+piece.kind;
-   piece.card=piece.card||rememberPair(piece.theme==='joseo'?'joseo':'');
-   body.innerHTML=`<div class="vive-reader-copy">${safe(piece.text)}</div>${cardHtml('in-reader',piece.card)}`;
+   body.innerHTML=cardHtml('in-reader',{t:piece.text,u:'',raw:true,label:(piece.theme==='joseo'?'JOSEANDO':(CAT[piece.theme]||'Presente').toUpperCase())});
    r.querySelectorAll('[data-vive-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.viveMode===viveMode)));
    const c=r.querySelector('.vive-reader-category');if(c)c.textContent=CAT[piece.theme]||'Presente';
   }
