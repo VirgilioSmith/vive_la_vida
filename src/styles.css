@@ -55850,3 +55850,13 @@ html body:is(.theme-black,.theme-dark) #app#app #page .v256-hero-benefits{backgr
 body.theme-black .v1278-card,body.theme-dark .v1278-card{--v1278-bg:#111116;box-shadow:none;border:1px solid rgba(255,255,255,.08)}
 @media(max-width:790px){.v1278-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.v1278-art{height:84px}}
 @media(prefers-reduced-motion:reduce){.v1278-card{transition:none}.v1278-card:hover{transform:none}}
+
+/* V1279 · UX */
+.v1279-skip{position:fixed;left:12px;top:-60px;z-index:99999;padding:10px 16px;border-radius:999px;background:var(--v424-accent-strong,#4f46e5);color:#fff;font-weight:800;text-decoration:none;transition:top .15s}
+.v1279-skip:focus{top:12px}
+@media(max-width:790px){
+html body #app#app #page :is(button,a,[data-act]):not(.v1244-pill):not(.v1278-card){min-height:40px}
+html body #app#app #page .v919-col{min-height:0}
+}
+html body #app#app :is(button,a,[role=button],input,select,textarea):focus-visible{outline:2.5px solid var(--v424-accent-strong,#4f46e5)!important;outline-offset:3px!important}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
