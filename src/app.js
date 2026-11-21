@@ -18793,6 +18793,21 @@ window.viveIdleTest=(sec=30)=>new Promise(res=>{let busy=0,n=0;const ob='Perform
  render=function(){const prev=lastPage,cur=ui.page;const out=_r.apply(this,arguments);try{if(cur!==lastPage){lastPage=cur;document.title=(NAMES[cur]?NAMES[cur]+' · ':'')+'vive el hoy';if(prev!==null&&!document.querySelector('#modal-root .modal'))window.scrollTo({top:0,behavior:'auto'})}}catch(_){}return out};
  const tr=document.getElementById('toast-root');if(tr){tr.setAttribute('role','status');tr.setAttribute('aria-live','polite')}
  if(!document.querySelector('.v1279-skip')){const a=document.createElement('a');a.className='v1279-skip';a.href='#page';a.textContent='Saltar al contenido';a.addEventListener('click',e=>{e.preventDefault();const t=document.getElementById('page');if(t){t.setAttribute('tabindex','-1');t.focus({preventScroll:false})}});document.body.prepend(a)}}
+/* V1285 · Registros: al abrir cualquier formulario se unifica la tipografía (mínimo 11,5 px, misma familia) y se ajusta la altura para que no haya scroll interno. */
+{const root=()=>document.getElementById('modal-root');let busy=false,t=0;
+ const SCROLLERS='.form-grid,.v749-scroll,.studio-main,.v135-simple-form,.v26-simple-form,.v134-simple-form';
+ function fit(){const r=root();if(!r||!r.children.length)return;busy=true;
+  try{for(const e of r.querySelectorAll('*')){if(e.children.length||!(e.textContent||'').trim()||e.closest('svg'))continue;const c=getComputedStyle(e);const fs=parseFloat(c.fontSize);if(fs>0&&fs<11.5)e.style.setProperty('font-size','11.5px','important');if(!/apple-system|BlinkMac|Segoe|Inter|SF Pro/i.test(c.fontFamily.split(',')[0]))e.style.setProperty('font-family','var(--v397-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif)','important')}
+   const m=r.querySelector('.modal,[role=dialog],.v749-sheet')||r.firstElementChild;
+   const over=()=>[...r.querySelectorAll('*')].filter(e=>e.scrollHeight>e.clientHeight+3&&e.clientHeight>60&&/(auto|scroll)/.test(getComputedStyle(e).overflowY)&&!e.closest('.v41-service-grid,.v789-picker-list,.v787-product-list,[class*=picker-list]')&&!/modal-layer|v749-sheet-wrap/.test(e.className));
+   if(m&&over().length){m.classList.add('v1285-tight');if(over().length){m.classList.add('v1285-tighter')}}
+   if(m&&m.getBoundingClientRect().height>innerHeight-8){m.classList.add('v1285-tight','v1285-tighter','v1285-tightest')}
+   for(const e of over()){e.style.setProperty('overflow','visible','important');e.style.setProperty('max-height','none','important');e.style.setProperty('height','auto','important')}
+   if(m){const lay=m.closest('.modal-layer');for(let x=m;x&&x!==lay;x=x.parentElement){if(x.scrollHeight>x.clientHeight+3&&getComputedStyle(x).overflowY==='hidden'){x.style.setProperty('overflow','visible','important');x.style.setProperty('max-height','none','important')}}}
+  }catch(_){}busy=false}
+ const q=()=>{if(busy||t)return;t=setTimeout(()=>{t=0;fit();setTimeout(fit,350)},60)};
+ const start=()=>{const r=root();if(r)new MutationObserver(q).observe(r,{childList:true,subtree:true})};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start()}
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
 /* VIVE_SCORE (experimental): puente de SOLO LECTURA hacia los datos existentes; no escribe nada. */
 if(window.VIVE_SCORE_EXPERIMENTAL)window.__viveScoreBridge=Object.freeze({db:()=>db,today,card,bank,cardStatus,loanStatus,loanAccounting,fullOriginalLoan,xconvert,acquiredOnOf,balanceAt:(a,d)=>getAccountBalance(a,d),isFinancial:b=>v40IsFinancial(b),monthlyFactor:f=>v80MonthlyFactor(f),account,activeRecurring:()=>v339ActiveRecurring(),monthlyEquivalent:(a,c,f)=>v339MonthlyEquivalent(a,c,f),upcoming:()=>upcoming(),payroll:(s,d)=>v40Payroll(s,d),theme:()=>db.settings.theme,go:id=>{ui.page=id;render();window.scrollTo(0,0)},rerender:()=>render()});

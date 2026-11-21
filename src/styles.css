@@ -55936,3 +55936,32 @@ html body #modal-root#modal-root :is(small,label>span,.filter-label,span[class*=
 html body #modal-root#modal-root :is(.fastx-category-grid span,.fastx-category-grid small){font-size:11.5px!important}
 html body #app#app #modal-root#modal-root :is(.v135-simple-form,.v26-simple-form,.fastx) span:not([class*=icon]):not(svg *){font-size:max(11.5px,1em)!important}
 html body #modal-root#modal-root :is(select,input,textarea,button){font-family:var(--v397-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif)!important}
+/* V1284 · Formularios: tamaños mínimos reales y ajuste de alturas para que no haya scroll */
+html body #modal-root#modal-root :is(.studio-step-number,.v261-number,.v769-mode-text,.v749-subtitle,.form-section small,.smart-mini,.smart-mini *,.form-full small,p,li){font-size:max(11.5px,1em)!important}
+html body #modal-root#modal-root :is(.v749-subtitle,.v769-mode-text,.studio-step-number){font-size:12px!important}
+html body #modal-root#modal-root :is(.form-full.form-section,.form-section) small,html body #modal-root#modal-root .form-section{font-size:11.5px!important}
+html body #modal-root .modal-layer{padding:12px!important;overflow-y:auto}
+html body #modal-root .modal{margin:0 auto}
+@media(min-width:791px){
+html body #modal-root .form-grid{gap:10px 14px!important}
+html body #modal-root :is(.v26-simple-form,.v135-simple-form,.v134-simple-form) .form-grid label{margin:0}
+html body #modal-root .studio-main{padding-block:14px!important;gap:10px!important}
+html body #modal-root .modal-head,html body #modal-root .modal>header{padding-block:12px!important}
+}
+@media(max-width:790px){
+html body #modal-root .form-grid{gap:9px!important}
+html body #modal-root .v749-scroll{padding-bottom:10px!important;gap:10px!important}
+html body #modal-root :is(.v135-simple-form,.v26-simple-form) .form-grid{padding-bottom:0!important}
+html body #modal-root .v135-simple-form{gap:8px!important}
+}
+
+html body #modal-root .v1285-tight :is(.form-grid,.v749-scroll,.studio-main,.v135-simple-form,.v26-simple-form){gap:8px!important}
+html body #modal-root .v1285-tight :is(label,.field-group){margin-bottom:0!important}
+html body #modal-root .v1285-tight :is(input,select,.field){padding-block:9px!important;min-height:0!important}
+html body #modal-root .v1285-tighter :is(.form-note,.form-section,h3,.studio-top-pill){margin-block:2px!important;padding-block:2px!important}
+html body #modal-root .v1285-tighter .modal-head,html body #modal-root .v1285-tighter header{padding-block:8px!important}
+
+html body #modal-root .v1285-tightest :is(.form-grid,.v135-simple-form,.v26-simple-form){gap:6px 12px!important}
+html body #modal-root .v1285-tightest :is(input,select,.field){padding-block:7px!important}
+html body #modal-root .v1285-tightest :is(.modal-head,header,.form-actions,footer){padding-block:6px!important}
+html body #modal-root .v1285-tightest :is(h2,h3){margin-block:2px!important}
