@@ -37,7 +37,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
   check(3, 'El indicador muestra «—» si no hay puntaje', (await p.evaluate(() => document.querySelector('.rail-action[data-id="score"] .vive-score-badge')?.textContent)) === '—');
   await reopenScore(p);
   const fr = frameOf(p);
-  check('p', 'La página VIVE SCORE CRÉDITO abre en un marco aislado', !!fr && /Vive score crédito/i.test(await p.evaluate(() => document.getElementById('app').innerText)));
+  check('p', 'La página VIVE SCORE CRÉDITO abre en un marco aislado', !!fr && /Vive Score/i.test(await p.evaluate(() => document.getElementById('app').innerText)));
 
   /* 4 · cuestionario, 5 · mes y año, 6 · sin buró */
   const steps = []; for (let k = 0; k < 8; k++) { steps.push(await ftext(p)); if (k < 7) await fclickIf(p, '[data-q-act="next"]'); }
@@ -227,7 +227,7 @@ async function finishQuestionnaire(p) { for (let i = 0; i < 7; i++) await fclick
     fondoOk[scheme] = a.equals(b2);
   }
   await p.emulateMedia({ colorScheme: 'light' });
-  check(28, 'La página se titula «Vive score crédito» con «vive el hoy» debajo (como las demás vistas), y el fondo es transparente (hereda el diseño de la app)', head28.title === 'Vive score crédito' && head28.sub === 'vive el hoy' && frameCs === 'light dark' && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs, transparenteClaro: fondoOk.light, transparenteOscuro: fondoOk.dark }));
+  check(28, 'La página se titula «Vive Score» con «vive el hoy» debajo (como las demás vistas), y el fondo es transparente (hereda el diseño de la app)', head28.title === 'Vive Score' && head28.sub === 'vive el hoy' && frameCs === 'light dark' && bg28.html === 'rgba(0, 0, 0, 0)' && bg28.body === 'rgba(0, 0, 0, 0)', JSON.stringify({ ...head28, ...bg28, marco: frameCs, transparenteClaro: fondoOk.light, transparenteOscuro: fondoOk.dark }));
 
   /* 2 · solo web / 16 · móvil sin cambios / 17 · desactivación */
   /* 32 · variables: todo automático desde la app; solo el historial anterior es manual; sin datos personales */

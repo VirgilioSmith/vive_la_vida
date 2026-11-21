@@ -55860,3 +55860,36 @@ html body #app#app #page .v919-col{min-height:0}
 }
 html body #app#app :is(button,a,[role=button],input,select,textarea):focus-visible{outline:2.5px solid var(--v424-accent-strong,#4f46e5)!important;outline-offset:3px!important}
 @media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* V1280 · Notificaciones rediseñadas: icono por tipo, secciones y estados */
+html body #app#app .v36-notice-pop{width:min(420px,calc(100vw - 24px))!important;padding:14px!important;border-radius:26px!important}
+html body #app#app .v36-notice-head{padding:2px 4px 10px!important}
+html body #app#app .v36-notice-head strong{font-size:18px;letter-spacing:-.03em}
+html body #app#app .v36-notice-head small{font-size:12px;opacity:.65}
+html body #app#app .v1280-sec{margin:12px 4px 6px;font-size:10.5px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;color:var(--v424-accent-strong)}
+html body #app#app .v36-notice-pop :is(.v36-notice,.v988-notice){display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important;align-items:center!important;padding:11px 12px!important;border-radius:18px!important;margin:0 0 6px!important;background:color-mix(in srgb,var(--v424-accent-strong) 6%,transparent)!important;border:0!important;text-align:left}
+html body #app#app .v36-notice-pop .v1280-ico{width:40px;height:40px;border-radius:13px;display:grid!important;place-items:center;background:color-mix(in srgb,var(--v424-accent-strong) 14%,transparent);color:var(--v424-accent-strong);flex:none}
+html body #app#app .v36-notice-pop .v1280-ico::before,html body #app#app .v36-notice-pop .v1280-ico::after{content:none!important}
+html body #app#app .v36-notice-pop .v1280-ico svg{width:20px;height:20px}
+html body #app#app .v36-notice-pop .v988-loan .v1280-ico{background:rgba(232,150,30,.16);color:#c97a0a}
+html body #app#app .v36-notice-pop .v988-personal .v1280-ico{background:rgba(20,170,120,.16);color:#0f9a6c}
+html body #app#app .v36-notice-pop .v1280-spend{background:rgba(212,82,94,.14);color:#d4525e}
+html body #app#app .v36-notice-pop .v36-expired .v1280-ico{background:rgba(212,82,94,.16);color:#d4525e}
+html body #app#app .v36-notice-pop .v36-expired small{color:#d4525e;opacity:1;font-weight:700}
+html body #app#app .v36-notice-pop strong{font-size:14px}
+html body #app#app .v36-notice-pop small{font-size:12px;opacity:.7;display:block;margin-top:1px}
+html body #app#app .v36-notice-pop .v988-amt b{font-size:14px;display:block}
+html body #app#app .v36-notice-pop .v988-amt em{font-style:normal;font-size:11px;font-weight:800;color:var(--v424-accent-strong)}
+html body #app#app .v36-notice-footer{margin-top:8px;border-radius:999px!important;padding:11px 16px!important;font-weight:800!important}
+html body #app#app .v36-notice-disclaimer{font-size:11px!important;opacity:.55;line-height:1.4;margin:10px 4px 0!important}
+html body #app#app .v36-notice-pop .v36-notice-head{background:none!important;color:inherit!important;border-radius:0!important;padding:4px 4px 8px!important;box-shadow:none!important}
+html body #app#app .v36-notice-pop .v36-notice-head strong{color:inherit!important;font-size:20px}
+html body #app#app .v36-notice-pop .v36-notice-head small{color:inherit!important;opacity:.6}
+html body #app#app .v36-notice-pop .v36-notice-head .v994-clear{background:color-mix(in srgb,var(--v424-accent-strong) 12%,transparent)!important;color:var(--v424-accent-strong)!important;border:0!important;border-radius:999px!important;padding:7px 14px!important;font-weight:800}
+html body #app#app .v36-notice-pop .v988-notice>.v988-nico.v1280-ico{background:color-mix(in srgb,var(--v424-accent-strong) 14%,transparent)!important;background-image:none!important;box-shadow:none!important;color:var(--v424-accent-strong)!important;width:40px!important;height:40px!important;border-radius:13px!important}
+html body #app#app .v36-notice-pop .v988-notice.v988-loan>.v988-nico.v1280-ico{background:rgba(232,150,30,.16)!important;color:#c97a0a!important}
+html body #app#app .v36-notice-pop .v988-notice.v988-personal>.v988-nico.v1280-ico{background:rgba(20,170,120,.16)!important;color:#0f9a6c!important}
+html body #app#app .v36-notice-pop .v988-notice.v36-expired>.v988-nico.v1280-ico{background:rgba(212,82,94,.16)!important;color:#d4525e!important}
+html body #app#app .v36-notice-pop .v988-amt em{background:var(--v424-accent-strong);color:#fff!important;border-radius:999px;padding:3px 10px;display:inline-block;margin-top:3px}
+html body #app#app .v36-notice-pop .v988-notice .v988-amt>em{background:var(--v424-accent-strong)!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:1!important;font-weight:800!important}
+html body #app#app .v36-notice-pop .v988-notice{box-shadow:none!important}

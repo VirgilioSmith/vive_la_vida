@@ -29,7 +29,7 @@ window.addEventListener('focus',queueRefresh);document.addEventListener('visibil
 setInterval(()=>{if(document.visibilityState==='visible'&&frame?.classList.contains('vs-on'))refreshIfChanged()},5000);
 function ensureFrame(){
  if(frame)return frame;
- frame=document.createElement('iframe');frame.className='vs-frame';frame.title='VIVE SCORE CRÉDITO';frame.setAttribute('aria-label','VIVE SCORE CRÉDITO');
+ frame=document.createElement('iframe');frame.className='vs-frame';frame.title='Vive Score';frame.setAttribute('aria-label','VIVE SCORE CRÉDITO');
  frame.style.opacity='0';frame.style.transition='opacity .15s';frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-downloads allow-popups allow-popups-to-escape-sandbox');frame.src=FRAME_SRC;document.body.appendChild(frame);return frame;
 }
 function slot(){return document.querySelector('[data-vs-slot]')}
@@ -60,7 +60,7 @@ window.addEventListener('message',e=>{
 });
 window.ViveScoreHost=Object.freeze({
  badge:()=>{const v=load().lastScore;return Number.isFinite(v)?v:'—'},
- pageHtml:()=>'<section class="vs-slot" data-vs-slot aria-label="VIVE SCORE CRÉDITO" style="height:'+height+'px"></section>',
+ pageHtml:()=>'<section class="vs-slot" data-vs-slot aria-label="Vive Score" style="height:'+height+'px"></section>',
  /* Reversión de datos: borra SOLO la persistencia experimental. */
  reset:()=>{store=newStore();try{localStorage.removeItem(KEY)}catch(_){}post('init',{payload:window.ViveScoreAdapter?.read(),store,env:env()})}
 });
