@@ -18775,7 +18775,6 @@ function v1243Apply(root){
 window.viveIdleTest=(sec=30)=>new Promise(res=>{let busy=0,n=0;const ob='PerformanceObserver' in window?new PerformanceObserver(l=>{for(const e of l.getEntries()){busy+=e.duration;n++}}):null;try{ob?.observe({type:'longtask',buffered:false})}catch(_){}
  const t0=performance.now(),i0=window.__viveTimers||0;setTimeout(()=>{ob?.disconnect();const el=performance.now()-t0,r={segundos:Math.round(el/1000),tareasLargas:n,msOcupado:Math.round(busy),porcentajeOcupado:+(100*busy/el).toFixed(2),pestanaVisible:!document.hidden};console.table(r);toast?.('Reposo '+r.segundos+' s: '+r.porcentajeOcupado+' % del hilo en tareas largas ('+r.tareasLargas+')');res(r)},sec*1000)});
 
-{const _ov=pages.overview;pages.overview=function(){const h=_ov.apply(this,arguments);try{return isMobileViewport()?h:h+(window.ViveModule?.corner?.()||'')}catch(_){return h}}}
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
 /* VIVE_SCORE (experimental): puente de SOLO LECTURA hacia los datos existentes; no escribe nada. */
 if(window.VIVE_SCORE_EXPERIMENTAL)window.__viveScoreBridge=Object.freeze({db:()=>db,today,card,bank,cardStatus,loanStatus,loanAccounting,fullOriginalLoan,xconvert,acquiredOnOf,balanceAt:(a,d)=>getAccountBalance(a,d),isFinancial:b=>v40IsFinancial(b),monthlyFactor:f=>v80MonthlyFactor(f),account,activeRecurring:()=>v339ActiveRecurring(),monthlyEquivalent:(a,c,f)=>v339MonthlyEquivalent(a,c,f),upcoming:()=>upcoming(),payroll:(s,d)=>v40Payroll(s,d),theme:()=>db.settings.theme,go:id=>{ui.page=id;render();window.scrollTo(0,0)},rerender:()=>render()});
@@ -21819,7 +21818,7 @@ window.__v866Runners.v865=run;
  const BIEN_SUBS=Object.keys(BIEN),BIEN_TOTAL=BIEN_SUBS.reduce((n,k)=>n+BIEN[k].length,0);
  let bienBag=[];const bienRecent=[];
  function bienPiece(){
-  if(!bienBag.length)bienBag=shuffle([...BIEN_SUBS]);
+  if(!bienBag.length)bienBag=shuffle([...BIEN_SUBS,'joseo','joseo','joseo','joseo','joseo2','joseo2','joseo2','joseo2']);
   let i=bienBag.findIndex(k=>!bienRecent.includes(k));if(i<0)i=0;
   const sub=bienBag.splice(i,1)[0];bienRecent.push(sub);if(bienRecent.length>3)bienRecent.shift();
   const list=BIEN[sub],used=new Set(bienSeen[sub]||[]);let free=list.map((_,k)=>k).filter(k=>!used.has(k));
@@ -21853,6 +21852,7 @@ window.__v866Runners.v865=run;
  }
  function newPiece(){
   if(viveMode==='joseo')return {text:joseoText(),kind:'reflection',theme:'joseo',repeatable:false};
+  if(state.theme==='all')return bienPiece();
   if(state.theme==='bienestar')return bienPiece();
   let piece=null;
   for(let attempt=0;attempt<60&&!piece;attempt++){
