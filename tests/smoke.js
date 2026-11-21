@@ -22,7 +22,7 @@ const PAGES = ['overview','accounts','cards','loans','banks','categories','incom
       const formCheck = await page.evaluate(() => {
         const f=document.getElementById('cardForm'),g=f?.querySelector('.form-grid'),foot=f?.querySelector('.form-foot');
         const b=[...(foot?.querySelectorAll('button')||[])].find(el=>!el.hidden&&getComputedStyle(el).display!=='none');
-        if(!f||!g||!b)return {missing:true,html:document.getElementById('modal-root')?.innerHTML.slice(0,450),forms:[...document.querySelectorAll('#modal-root form')].map(e=>e.id),banks:window.__T.dbg().banks?.length,viewport:innerWidth};
+        if(!f||!g||!b)return {missing:true,html:document.getElementById('modal-root')?.innerHTML.slice(0,450),forms:[...document.querySelectorAll('#modal-root form')].map(e=>e.id),hasF:!!f,hasG:!!g,hasFoot:!!foot,buttons:[...(foot?.querySelectorAll('button')||[])].map(x=>({text:x.textContent.trim().slice(0,40),class:x.className,hidden:x.hidden,style:getComputedStyle(x).display,top:x.getBoundingClientRect().top,bottom:x.getBoundingClientRect().bottom})),banks:window.__T.dbg().banks?.length,viewport:innerWidth};
         const box=b.getBoundingClientRect(),needsScroll=g.scrollHeight>g.clientHeight+3;
         g.scrollTop=g.scrollHeight;
         const hit=document.elementFromPoint(box.left+box.width/2,box.top+box.height/2);
