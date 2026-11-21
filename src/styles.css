@@ -55772,3 +55772,9 @@ html body #app#app .vive-mobile-hub :is(.v431-compare-chip span,[class*=compare]
 @media(min-width:791px){html body #app#app #page .v9-ledger-detail{min-height:32px}}
 html body #app#app #page .v266-selected-balance :is(.v550-balance-column>span,.v550-balance-column small,.v550-currency-breakdown i){font-size:10.5px!important}
 html body #app#app #page .v431-compare-chip>span{font-size:10.5px!important}
+/* V1272 · Pestañas con contador (móvil): el contador no pisa la etiqueta */
+@media(max-width:790px){
+html body #app#app .v239-segment{display:inline-flex!important;align-items:center;justify-content:center;gap:6px;white-space:nowrap;font-size:13px;padding-inline:8px;min-width:0}
+html body #app#app .v239-segment>span,html body #app#app .v239-segment>small,html body #app#app .v239-segment>b{position:static!important;margin:0!important;flex:none}
+html body #app#app .v239-segments{gap:4px}
+}
