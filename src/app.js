@@ -21900,7 +21900,7 @@ window.__v866Runners.v865=run;
    const c=r.querySelector('.vive-reader-category');if(c)c.textContent='Guardadas · '+favs.length;
   }else if(piece){
    body.className='vive-reader-body vive-kind-'+piece.kind;
-   body.innerHTML=cardHtml('in-reader',{t:piece.text,u:'',raw:true,label:(piece.theme==='joseo'?'JOSEANDO':(CAT[piece.theme]||'Presente').toUpperCase())});
+   body.innerHTML=`<div class="vive-reader-copy">${safe(piece.text)}</div>`;
    r.querySelectorAll('[data-vive-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.viveMode===viveMode)));
    const c=r.querySelector('.vive-reader-category');if(c)c.textContent=CAT[piece.theme]||'Presente';
   }
