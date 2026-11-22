@@ -44,7 +44,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.deepEqual(await cardOrder(),[GLOBAL,fixture.second,fixture.first]);
     assert.deepEqual(await dotOrder(),await cardOrder());
     assert.equal(await p.locator('.v68-wallet-dots button').count(),3);
-    assert.equal(await p.locator('.v266-activity').count(),1);
+    assert.equal(await p.locator('.v266-activity').count(),0);
     await noConsumptionHistory();
     // Simula el deslizamiento del carrusel hacia la primera tarjeta.
     // Desplazamiento horizontal del navegador, sin forzar la selección mediante JS.
@@ -78,7 +78,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     // Volver a una tarjeta real conserva sus acciones y su historial.
     await p.locator('.v68-wallet-dots button').nth(2).click();
     await waitSelected(fixture.first);
-    await p.locator('.v266-activity').waitFor();
+    assert.equal(await p.locator('.v266-activity').count(),0);
     assert.equal(await p.locator('.v266-wallet-actions button').count(),4);
     // Corte conserva el detalle del ciclo, bajo Wallet, y permite regresar.
     await p.locator('.v266-wallet-actions [data-act="goCard"]').click();
@@ -295,10 +295,8 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
      assert.equal(await state.locator('h2').innerText(),'Estado del crédito');
      assert.equal(await limits.count(),0);
      assert.equal(await state.locator('.v1244-cutbox').count(),1);
-     const activity=p.locator('.v266-activity');
-     assert.equal(await activity.evaluate(el=>el.previousElementSibling.classList.contains('v371-card-return')),true,'Actividad sin espacio reservado');
-     assert.ok(await activity.locator('.v266-activity-row').count()>0);
-     assert.equal(await activity.getByRole('button',{name:'Ver todos los movimientos'}).count(),1);
+     assert.equal(await p.locator('.v266-activity').count(),0);
+     assert.equal(await p.locator('.v371-card-return + .v266-wallet-note').count(),1,'Sin espacio reservado para actividad');
     }
     assert.equal(await p.evaluate(()=>JSON.stringify(window.__T.dbg().transactions)),historicMovements,'Conserva todos los movimientos históricos');
     assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);

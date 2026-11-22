@@ -1685,13 +1685,11 @@ function v68Wallet(){
  const last4=c=>String(c.last4||c.number||'').replace(/\D/g,'').slice(-4);
  const tierName=c=>CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
  const due=[{...dop,ccy:'DOP'},{...usd,ccy:'USD'}].filter(s=>s.nextDue&&num(s.billed)>0.005).sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
- const history=global?[]:recentTx().filter(t=>t.cardId===active.id).slice(0,4);
  const globalFace=`<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${global?'selected':''}" data-act="v68WalletSelect" data-id="${V68_GLOBAL_ID}" aria-pressed="${global}" aria-label="Seleccionar Créditos generales"><span class="v266-physical-card v277-physical-card" style="background:linear-gradient(125deg,color-mix(in srgb,var(--accent,#087b72) 48%,#10252d),color-mix(in srgb,var(--accent,#087b72) 80%,#142c36))!important"><span class="v277-card-head"><span class="v277-card-bank">${icon('wallet')}<b>Mi crédito</b></span><small>CONSOLIDADO</small></span><strong class="v277-card-title">Créditos generales</strong><span class="v277-card-number">${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}</span><span class="v277-card-footer"><small>CRÉDITO · RD$ / US$</small>${icon('card')}</span></span></button>`;
  const gallery=globalFace+cards.map(c=>{
   const selected=c.id===active.id,bankName=bankOf(c),tier=cardTierKey(c);
   return `<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v266-physical-card v277-physical-card tier-${sanitize(tier)}"><span class="v277-card-head"><span class="v277-card-bank">${bankLogoInline(c.bankId)}<b>${sanitize(bankName||c.name)}</b></span><small>${sanitize(tierName(c))}</small></span><strong class="v277-card-title">${sanitize(c.name)}</strong><span class="v277-card-number">•••• ${sanitize(last4(c)||'••••')}</span><span class="v277-card-footer"><small>CRÉDITO · ${num(c.limitDOP)>0?'RD$':''}${num(c.limitDOP)>0&&num(c.limitUSD)>0?' / ':''}${num(c.limitUSD)>0?'US$':''}${num(c.limitDOP)<=0&&num(c.limitUSD)<=0?'RD$ / US$':''}</small>${cardNetworkMark(c)}</span></span></button>`;
  }).join('');
- const rows=history.map(t=>`<button type="button" class="v266-activity-row v6-wallet-tx-trigger" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalles de ${sanitize(transactionTitle(t))}, ${sanitize(String(txDisplay(t)).replace(/<[^>]*>/g,''))}"><span class="v266-activity-ico">${icon(['card_payment','card_refund','card_reward'].includes(t.type)?'up':'card')}</span><span class="v266-activity-info"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b><span class="v6-wallet-tx-chevron" aria-hidden="true">${icon('arrow')}</span></button>`).join('');
   const accent=String(global?'':bank(active.bankId)?.color||db.settings.paletteHex||'').trim();
  const walletAccent=global?'var(--accent,#6964ea)':/^#[0-9a-fA-F]{6}$/.test(accent)?accent:'#6964ea';
  const dots=[{id:V68_GLOBAL_ID,name:'Créditos generales'},...cards];
@@ -1716,9 +1714,6 @@ function v68Wallet(){
 </section>
  ${v371CardReturnWidget(active,global?cards:null)}
  ${global?v1301WalletDistribution(cards,v1301WalletConsumption(cards)):''}
- ${global?'':`
- <section class="v266-wallet-panel v266-activity"><div class="v266-panel-heading"><div><span class="v266-overline">TUS ÚLTIMOS CONSUMOS</span><h2>Actividad reciente</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Ver todos los movimientos">${icon('arrow')}</button></div>${rows||'<p class="v266-empty-activity">Sin movimientos recientes en esta tarjeta.</p>'}</section>
-`}
  <p class="v266-wallet-note">Una compra con tarjeta aumenta tu deuda; pagarla reduce el saldo pendiente sin duplicar el gasto.</p></section>`;
 }
 
