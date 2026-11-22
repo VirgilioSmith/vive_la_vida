@@ -2022,12 +2022,12 @@ function vBanksProductRows(key,items,bankId,total=items.length){
    const limit=vWalletPcEquivalent(item.limitDOP,item.limitUSD);
    const debt=vWalletPcEquivalent(cardStatus(item,'DOP').debt,cardStatus(item,'USD').debt);
    const use=limit>0?vWalletPcUsage(debt,limit):null, last4=String(item.last4||'').replace(/\D/g,'').slice(-4);
-   note=`${institution}${last4?'•••• '+last4+' · ':''}${vWalletPcSplit(item.limitDOP,item.limitUSD,0)}`;
-   value=`<span title="Límite equivalente en pesos">${money(limit)}</span>`;mark=cardNetworkMark(item);
+   note=`${institution}${last4?'•••• '+last4:''}${institution||last4?'<br>':''}${vWalletPcSplit(item.limitDOP,item.limitUSD,0)}`;
+   value=`<span title="Límite equivalente en pesos">${money(limit)}</span>`;
    if(use!==null)meter=`<span class="vBanksPc-usage">${vBanksMeter(use)}<small>${use.toFixed(1)}%</small></span>`;
   }
   if(key==='loans'){const ls=loanStatus(item),done=num(ls.payments),total=done+num(ls.remaining),prog=total>0?Math.min(100,done/total*100):0;
-   note=`${institution}Cuota ${money(ls.installment,item.currency,2)}${ls.next?' · Próx. '+prettyDate(ls.next):''}<br>Cuota ${done} de ${total} · Avance ${prog.toFixed(0)}%`;
+   note=`${institution}${sanitize(item.currency)}<br>Cuota ${money(ls.installment,item.currency,2)}<br>Pago ${done} de ${total}`;
    value=money(ls.balance,item.currency,2);meter=`<span class="vBanksPc-usage">${vBanksMeter(prog)}<small>${prog.toFixed(0)}%</small></span>`;}
   if(key==='certificates'){
    const projection=certProjection(item),current=item.rate!=null&&item.rate!==''?num(item.rate).toFixed(2)+'% anual':'Sin tasa';
