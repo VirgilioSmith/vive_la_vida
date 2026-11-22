@@ -26,7 +26,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     });
     const faces=p.locator('.v68-wallet-gallery .v68-wallet-face');
     const selected=p.locator('.v68-wallet-gallery .v68-wallet-face.selected');
-    const waitSelected=id=>p.waitForFunction(id=>document.querySelector('.v68-wallet-gallery .v68-wallet-face.selected')?.dataset.id===id,id);
+    const waitSelected=async id=>{try{await p.waitForFunction(id=>document.querySelector('.v68-wallet-gallery .v68-wallet-face.selected')?.dataset.id===id,id,{timeout:10000})}catch(e){console.log('Carrusel:',await p.locator('.v68-wallet-gallery').evaluate(el=>({scrollLeft:el.scrollLeft,width:el.clientWidth,scrollWidth:el.scrollWidth,selected:[...el.children].map(c=>({id:c.dataset.id,left:c.getBoundingClientRect().left,selected:c.classList.contains('selected')}))})));throw e}};
     await waitSelected(fixture.first);
     await p.waitForTimeout(700);
     assert.equal(await selected.getAttribute('data-id'),fixture.first,'Apertura habitual');
@@ -35,7 +35,8 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.equal(await p.locator('.v68-wallet-dots button').count(),3);
     assert.equal(await p.locator('.v266-activity').count(),1);
     // Simula el deslizamiento del carrusel hacia la primera tarjeta.
-    await p.locator('.v68-wallet-gallery').evaluate(el=>{el.scrollLeft=0});
+    // scrollIntoView utiliza el desplazamiento nativo y respeta el snap de Safari.
+    await faces.first().evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center',behavior:'auto'}));
     await waitSelected(GLOBAL);
     const read=async s=>moneyText(await p.locator(s).innerText());
     const parts=async s=>p.locator(s).allTextContents().then(v=>v.map(moneyText));

@@ -13230,11 +13230,11 @@ document.addEventListener('focusout',e=>{
   if(initial){
    status.textContent=initial.getAttribute('aria-label')||'Tarjeta seleccionada';
    // Al anteponer Crédito Global, centrar la selección real antes del primer scroll.
-   const r=rail.getBoundingClientRect(),c=initial.getBoundingClientRect();
    const snap=rail.style.getPropertyValue('scroll-snap-type'),priority=rail.style.getPropertyPriority('scroll-snap-type');
    rail.style.setProperty('scroll-snap-type','none','important');
-   rail.scrollLeft=Math.max(0,Math.min(rail.scrollWidth-rail.clientWidth,rail.scrollLeft+c.left-r.left+(c.width-r.width)/2));
-   requestAnimationFrame(()=>{if(!rail.isConnected)return;if(snap)rail.style.setProperty('scroll-snap-type',snap,priority);else rail.style.removeProperty('scroll-snap-type');requestAnimationFrame(()=>{aligning=false})});
+   const center=()=>{const r=rail.getBoundingClientRect(),c=initial.getBoundingClientRect();const target=Math.max(0,Math.min(rail.scrollWidth-rail.clientWidth,rail.scrollLeft+c.left-r.left+(c.width-r.width)/2));rail.scrollLeft=target;};
+   center();
+   requestAnimationFrame(()=>{if(!rail.isConnected)return;center();if(snap)rail.style.setProperty('scroll-snap-type',snap,priority);else rail.style.removeProperty('scroll-snap-type');requestAnimationFrame(()=>{if(!rail.isConnected)return;center();aligning=false})});
   }else{
    aligning=false;
   }
