@@ -12955,13 +12955,21 @@ function v389BenefitsKPIsUnused(cards){
    <div><small>RETORNO %</small><strong class="${net>=0?'positive':'negative'}">${fmtRatio}</strong></div>
  </section><p class="v389-benefit-definition">${year} · Retorno = beneficios monetarios recibidos − anualidades pagadas. Porcentaje = retorno ÷ anualidades pagadas. Si no hay anualidades pagadas, el porcentaje no aplica. No incluye beneficios pendientes ni puntos.</p>`;
 }
+
+/* Selector PC de anualidad: reutiliza annualFeeForm sin duplicar lógica ni afectar móvil. */
+function vBanksAnnualBenefitsAction(cards){
+ if(isMobileViewport()||!cards.length)return '';
+ const item=(c)=>'<button type="button" data-act="annualFee" data-id="'+sanitize(c.id)+'">'+sanitize(c.name)+(c.last4?' · •••• '+sanitize(c.last4):'')+'</button>';
+ if(cards.length===1)return '<button type="button" class="v187-benefits-add" data-act="annualFee" data-id="'+sanitize(cards[0].id)+'">'+icon('receipt')+' Registrar anualidad y seguros</button>';
+ return '<details class="vBanks-annual-chooser"><summary class="v187-benefits-add">'+icon('receipt')+' Registrar anualidad y seguros</summary><div class="vBanks-annual-list" aria-label="Seleccionar tarjeta para anualidad">'+cards.map(item).join('')+'</div></details>';
+}
 function v144BenefitsPage(scope=null){
  v144Ready();const cards=(scope||db.cards).filter(c=>ui.showHidden||!isHidden(c));
  const selected=ui.v144BenefitsCard||'all',shown=cards.filter(c=>selected==='all'||c.id===selected);
  if(cards.length&&!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage(scope)}
  const hero=typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():'';
  return `<div class="v144-benefit-world v180-benefits-clean v187-benefits-only" id="v144Benefits">${hero}${v389BenefitsKPIs(shown)}
- <section class="v187-benefits-ledger" aria-label="Tabla de beneficios por tarjeta"><div class="v187-benefits-ledger-head"><div><span>RESULTADO POR TARJETA</span><h3>Beneficios y costos</h3><p>Solo beneficio acreditado y costo efectivamente pagado forman el resultado neto.</p></div>${cards.length?`<div class="${!isMobileViewport()&&ui.page==='wallet'&&ui.vWalletPcBenefits?'vWalletPc-benefit-actions':''}"><button type="button" class="v187-benefits-add" data-v144-action="new-cashback" data-id="${sanitize(shown[0]?.id||cards[0].id)}">${icon('plus')} Registrar beneficio</button>${!isMobileViewport()&&ui.page==='wallet'&&ui.vWalletPcBenefits?`<button type="button" class="v187-benefits-add" data-act="annualFee" data-id="${shown.length===1?sanitize(shown[0].id):''}" ${shown.length===1?'':'disabled title="Selecciona una tarjeta para registrar anualidad y seguros"'}>${icon('receipt')} Registrar anualidad y seguros</button>`:''}</div>`:''}</div>
+ <section class="v187-benefits-ledger" aria-label="Tabla de beneficios por tarjeta"><div class="v187-benefits-ledger-head"><div><span>RESULTADO POR TARJETA</span><h3>Beneficios y costos</h3><p>Solo beneficio acreditado y costo efectivamente pagado forman el resultado neto.</p></div>${cards.length?`<div class="${!isMobileViewport()&&ui.page==='wallet'&&ui.vWalletPcBenefits?'vWalletPc-benefit-actions':''}"><button type="button" class="v187-benefits-add" data-v144-action="new-cashback" data-id="${sanitize(shown[0]?.id||cards[0].id)}">${icon('plus')} Registrar beneficio</button>${vBanksAnnualBenefitsAction(shown)}</div>`:''}</div>
  ${cards.length?`${scope?v144CardFilterUI([['all','Tarjetas de esta selección'],...cards.map(c=>[c.id,c.name])]):v144CardFilterUI()}${v144BenefitsTable(shown)}`:'<div class="v187-benefits-empty">No tienes tarjetas registradas. <button type="button" data-act="addCard">Añadir tarjeta</button></div>'}
  </section></div>`;
 }
