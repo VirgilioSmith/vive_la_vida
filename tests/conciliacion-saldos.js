@@ -5,12 +5,13 @@ process.env.NOBOOT='1';
 process.env.MOCKFILE='mock-servidor.js';
 process.env.TOUCH='1';
 process.env.RECONCILIATION_AUDIT='1';
-const {chromium}=require('playwright');
+const {chromium,webkit}=require('playwright');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path');
 const open=require('./harness');
 const {Servidor}=require('./lib-servidor');
-const dir=path.resolve(__dirname,'../test-results/conciliacion');
+const engine=process.env.RECONCILIATION_BROWSER||'chromium';
+const dir=path.resolve(__dirname,'../test-results/conciliacion',engine);
 fs.mkdirSync(dir,{recursive:true});
 const checks=[];
 function check(label,actual,expected=true){assert.deepEqual(actual,expected,label);checks.push(label);console.log('✓ '+label)}
@@ -48,7 +49,7 @@ async function confirm(p){
  await until(async()=>{if(!(await form(p).count()))return true;if(await form(p).locator('.v-reconcile-error').isVisible())throw Error(await form(p).locator('.v-reconcile-error').innerText());return false},'cierre de conciliación');await flush(p);await wait(200);
 }
 (async()=>{
- const browser=await chromium.launch(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{});
+ const browser=await (engine==='webkit'?webkit:chromium).launch(engine==='chromium'&&process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{});
  const srv=new Servidor();
  try{
   const A=await session(browser,srv,'A'),p=A.p;
@@ -123,7 +124,8 @@ async function confirm(p){
   check('Edición mismo ID y delta recalculado',(await txs(p,'recon-8')).map(t=>[t.id,t.amount]),[[edit.id,-50]]);
   check('Fecha histórica editada',await balance(p,'recon-8',days.earlier),950);
   check('Saldo posterior editado',await balance(p,'recon-8'),1250);
-  await clickAct(p,'deleteTransaction',edit.id);p.once('dialog',d=>d.accept());await p.locator('[data-act=v54ConfirmPermanent]').click();await flush(p);
+  await clickAct(p,'deleteTransaction',edit.id);await p.locator('[data-act=v54ConfirmPermanent]').click();await p.locator('.v1011-ok').click();
+  await until(async()=>!(await txs(p,'recon-8')).length,'eliminación del libro');await flush(p);
   check('Eliminación revierte solo diferencia',await balance(p,'recon-8'),1300);check('Eliminación persistida',(srv.doc().transactions||[]).some(t=>t.id===edit.id),false);
   // Verify persistence following a real reload and on another independent context.
   await p.reload({waitUntil:'load'});await until(async()=>(await sync(p)).active,'recarga');
@@ -141,6 +143,6 @@ async function confirm(p){
   check('Servidor: solo ajustes reales',(srv.doc().transactions||[]).filter(t=>t.type==='adjustment'&&t.accountId==='recon-6').map(t=>t.amount),[-70.17,200,100,-50]);
   check('Sin excepciones JavaScript',A.errors.concat(B.errors),[]);
   await B.ctx.close();await A.ctx.close();
-  console.log('AUDITORÍA CONCILIACIÓN: '+checks.length+' verificaciones aprobadas');
+  console.log('AUDITORÍA CONCILIACIÓN '+engine+': '+checks.length+' verificaciones aprobadas');
  }finally{fs.writeFileSync(path.join(dir,'resultados.json'),JSON.stringify(checks,null,2));await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

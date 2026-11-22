@@ -57,19 +57,25 @@ jobs:
   conciliacion-saldos:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - name: Preparar Playwright y Chromium
-        run: npm i --no-save playwright@1 && npx playwright install --with-deps chromium
+        run: npm i --no-save playwright@1 && npx playwright install --with-deps ${{ matrix.browser }}
       - name: Auditar conciliación de cuentas
         run: node tests/conciliacion-saldos.js
+        env:
+          RECONCILIATION_BROWSER: ${{ matrix.browser }}
       - name: Capturas y resultados de conciliación
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vive-conciliacion-saldos
+          name: vive-conciliacion-saldos-${{ matrix.browser }}
           path: test-results/conciliacion/
           if-no-files-found: ignore
   sql:
