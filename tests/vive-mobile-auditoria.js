@@ -7,7 +7,7 @@ const open=require('./harness.js');
 const fs=require('node:fs'),path=require('node:path');
 const screenshotDir=path.resolve(__dirname,'../test-results/vive-mobile');
 fs.mkdirSync(screenshotDir,{recursive:true});
-const shot=(p,name)=>p.screenshot({path:path.join(screenshotDir,name+'.png'),fullPage:true});
+const shot=(p,name)=>p.screenshot({path:path.join(screenshotDir,name+'.png'),fullPage:false});
 const checks=[];
 function check(label,actual,expected=true){assert.deepEqual(actual,expected,label);checks.push(label);console.log('✓ '+label)}
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -44,8 +44,10 @@ async function thirdParty(p,purchase,received,mode,paidAmount,first,source='card
  check('Avance del saldo pendiente',await p.locator('#v354-owed-preview').innerText().then(v=>v.includes(String(Math.abs(purchase-received)))),true);
  await p.locator('#v354-form').evaluate(f=>f.requestSubmit());
  check('Confirmación financiera',await p.locator('[data-v354-act=confirm]').count(),1);
- if(received>purchase)check('Sobrante como dinero por devolver',(await p.locator('.v355-review-hero').innerText()).includes('Por devolver'),true);
+ const reviewTitle=await p.locator('.v355-review-hero').innerText();
+ console.log('REVISIÓN '+first+': '+JSON.stringify(reviewTitle));
  await shot(p,'confirmacion-'+first);
+ if(received>purchase)check('Sobrante como dinero por devolver',reviewTitle.includes('Por devolver'),true);
  await p.locator('[data-v354-act=confirm]').click();
  await sleep(300);
  return p.evaluate(name=>{
