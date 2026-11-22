@@ -111,3 +111,18 @@
  html body #app#app #page .vWalletPc-consumption .vWalletPc-chart-layout{grid-template-columns:minmax(88px,clamp(92px,6.8vw,112px)) minmax(0,1fr)!important}
  html body #app#app #page .vWalletPc-cuts p{margin:6px 0 8px!important}
 }
+/* Bancos PC · que nada quede cortado: filas y tarjetas laterales más compactas (mismo tamaño legible, menos aire) */
+@media(min-width:791px){
+ html body #app#app #page .vBanksPc-insights{gap:10px!important}
+ html body #app#app #page .vBanksPc-insights>:is(section,details){padding-block:10px!important}
+ html body #app#app #page .vBanksPc-insights .v371-return-tile{padding:5px 14px!important;gap:1px!important}
+ html body #app#app #page .vBanksPc-insights .v371-return-note{margin:4px 0 0!important}
+ html body #app#app #page .vBanksPc-insights .v371-return-heading{margin-bottom:0!important}
+ html body #app#app #page .vBanksPc-consumption-total{padding:2px 2px 8px!important;margin-bottom:2px!important}
+ html body #app#app #page .vBanksPc-consumption-rows>div{min-height:34px!important;padding-block:2px!important}
+ html body #app#app #page .vBanksPc-lane .vBanksPc-product{min-height:0!important;padding:7px 14px!important;gap:2px 12px!important}
+ html body #app#app #page .vBanksPc-lane .vBanksPc-product strong{font-size:clamp(15px,1.08vw,17px)!important;line-height:1.2!important}
+ html body #app#app #page .vBanksPc-lane .vBanksPc-product small{font-size:clamp(12.5px,.88vw,14px)!important;line-height:1.3!important}
+ html body #app#app #page .vBanksPc-lane .vBanksPc-product b{font-size:clamp(16px,1.2vw,19px)!important}
+ html body #app#app #page .vBanksPc-lane .vBanksPc-usage{margin-top:2px}
+}
