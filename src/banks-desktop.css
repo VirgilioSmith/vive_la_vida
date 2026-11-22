@@ -838,3 +838,77 @@
    min-height:96px!important;
  }
 }
+
+
+/* Bancos PC · Productos utiliza filas del catálogo, no cuatro tarjetones KPI.
+   Sólo cambia la representación del filtro Productos; conserva cifras y acciones. */
+@media (min-width:791px){
+  html body #app#app main.vBanksPc-world .vBanksPc-overview{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:0;min-width:0;padding:4px clamp(10px,.95vw,16px);
+    border:1px solid var(--bank-line);
+    border-radius:clamp(16px,1.4vw,23px);
+    background:var(--bank-glass);box-shadow:var(--bank-shadow);
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-tile{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(105px,auto);
+    grid-template-rows:auto auto;align-items:center;
+    column-gap:clamp(8px,.9vw,16px);row-gap:3px;
+    min-width:0;min-height:clamp(71px,5.8vw,88px);
+    padding:clamp(9px,.8vw,13px) 3px;
+    border:0;border-bottom:1px solid var(--bank-line);
+    border-radius:0;background:transparent;box-shadow:none;
+    transform:none!important;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-tile:last-child{border-bottom:0}
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-tile:hover{
+    border-color:var(--bank-line);
+    background:color-mix(in srgb,var(--bank-hover) 48%,transparent);
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-top{
+    grid-column:1;grid-row:1;gap:9px;align-self:center;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-icon{
+    width:clamp(30px,2.8vw,39px);height:clamp(30px,2.8vw,39px);
+    border-radius:11px;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-name{
+    font-size:clamp(12px,1.05vw,16px);
+    font-weight:750;line-height:1.16;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-top > svg{
+    display:none;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-metric{
+    grid-column:2;grid-row:1;justify-items:end;text-align:right;
+    gap:2px;margin:0;min-width:0;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-metric small{
+    font-size:clamp(9px,.76vw,11px);
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-metric strong{
+    font-size:clamp(16px,1.4vw,22px);
+    line-height:1.12;letter-spacing:-.03em;
+    white-space:nowrap;overflow-wrap:normal;
+    font-variant-numeric:tabular-nums;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-foot{
+    grid-column:1/-1;grid-row:2;margin:0;
+    padding-left:clamp(39px,3.5vw,48px);
+    font-size:clamp(10px,.76vw,12px);line-height:1.22;
+  }
+}
+@media (min-width:791px) and (max-width:1240px){
+  html body #app#app main.vBanksPc-world .vBanksPc-overview{
+    gap:0;padding:3px 9px;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-tile{
+    min-height:70px;padding:9px 2px;
+    grid-template-columns:minmax(0,1fr) minmax(90px,auto);
+    gap:3px 6px;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-metric strong{
+    font-size:clamp(14px,1.45vw,18px);
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-overview-foot{padding-left:36px}
+}
