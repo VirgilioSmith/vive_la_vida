@@ -220,6 +220,9 @@ async function testBanks(browser,width){
   const ledger=root.getByRole('region',{name:'Tabla de beneficios por tarjeta'});
   assert.equal(await ledger.locator('table').count(),1);
   if(!mobile){
+    const heroAnnual=root.locator('.v57-benefits .hero-actions [data-act="annualFee"]');
+    assert.equal(await heroAnnual.count(),1,'La cabecera ejecutiva de Beneficios incluye el acceso a anualidades.');
+    assert.match(await root.locator('.v57-benefits .v46-global-secondary').innerText(),/1/,'El encabezado respeta el banco elegido.');
     const annual=ledger.locator('button[data-act="annualFee"]');
     assert.equal(await annual.count(),1,'Anualidad accesible con una tarjeta seleccionada en Bancos PC.');
     if(evidence&&[1440,1024].includes(width))await p.screenshot({path:path.join(evidence,'bancos-beneficios-'+width+'.png'),animations:'disabled'});
