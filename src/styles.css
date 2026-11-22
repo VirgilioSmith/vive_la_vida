@@ -56053,3 +56053,26 @@ html body #app#app #page#page .v410-explore-sec>header>.v410-kicker{display:bloc
  #modal-root .mqr-amount-native:focus-within{outline:2px solid rgba(15,121,107,.12);outline-offset:5px;border-radius:10px}
  #modal-root .mqr-bottom{position:sticky!important;bottom:0!important;flex:none!important;z-index:5!important;padding-bottom:max(14px,env(safe-area-inset-bottom))!important;background:rgba(255,255,255,.94)!important;backdrop-filter:blur(20px)}
 }
+
+/* V1293 · Selector de contactos y devolución de sobrantes: exclusivamente web móvil. */
+#modal-root #v355-paid-label[hidden],#modal-root .v354-person-row[hidden],#modal-root #v354-person-empty[hidden]{display:none!important}
+@media (max-width:790px){
+ #modal-root .v354-dialog{background:#fff!important}
+ #modal-root .v354-person-trigger{width:100%;display:flex;align-items:center;gap:12px;padding:13px 14px;text-align:left;background:rgba(255,255,255,.94);border:1px solid rgba(19,100,86,.16);border-radius:20px;box-shadow:0 7px 28px rgba(9,64,54,.045);color:#173c36}
+ #modal-root .v354-person-trigger>span:nth-child(2),#modal-root .v354-person-row>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+ #modal-root .v354-person-trigger strong,#modal-root .v354-person-row strong{font-size:15px;font-weight:720;color:#172f2b}
+ #modal-root .v354-person-trigger small,#modal-root .v354-person-row small{font-size:11px;color:#69817b}
+ #modal-root .v354-person-trigger svg,#modal-root .v354-person-row svg{width:18px;height:18px;flex:none;color:#73958d}
+ #modal-root .v354-person-avatar{width:42px;height:42px;min-width:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(140deg,#e6f5ef,#d3ebe6);border:1px solid #c8e2da;color:#116b5d;font-size:14px;font-weight:800;letter-spacing:.02em}
+ #modal-root .v354-people{display:flex;flex-direction:column;gap:14px;padding:15px 0;min-height:0}
+ #modal-root .v354-people-search{display:flex;align-items:center;gap:10px;min-height:50px;padding:0 14px;background:#fff;border:1px solid #dbe9e4;border-radius:16px}
+ #modal-root .v354-people-search svg{width:19px;height:19px;color:#628d80}
+ #modal-root .v354-people-search input{min-width:0;flex:1;border:0!important;background:transparent!important;box-shadow:none!important;outline:none!important;font-size:15px;color:#193f35}
+ #modal-root .v354-people-list{display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:0}
+ #modal-root .v354-person-row{width:100%;display:flex;align-items:center;gap:12px;padding:11px 13px;text-align:left;background:#fff;border:1px solid #e1ebe7;border-radius:18px;box-shadow:0 3px 15px rgba(15,85,72,.025)}
+ #modal-root .v354-person-row:active,#modal-root .v354-person-trigger:active{background:#f0faf6}
+ #modal-root .v354-person-empty{font-size:13px;color:#6e837d;padding:12px}
+ #modal-root .v354-new-person{padding-top:10px}
+ #modal-root .v354-new-person p{font-size:13px;line-height:1.5;color:#627e75}
+ #modal-root .v354-foot{padding-bottom:max(14px,env(safe-area-inset-bottom))!important;position:sticky;bottom:0;background:rgba(255,255,255,.95)!important;backdrop-filter:blur(20px)}
+}
