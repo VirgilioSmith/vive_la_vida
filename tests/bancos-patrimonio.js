@@ -219,6 +219,16 @@ async function testBanks(browser,width){
   await root.getByRole('button',{name:'Beneficios y retorno'}).click();
   const ledger=root.getByRole('region',{name:'Tabla de beneficios por tarjeta'});
   assert.equal(await ledger.locator('table').count(),1);
+  if(!mobile){
+    const annual=ledger.locator('button[data-act="annualFee"]');
+    assert.equal(await annual.count(),1,'Anualidad accesible con una tarjeta seleccionada en Bancos PC.');
+    if(evidence&&[1440,1024].includes(width))await p.screenshot({path:path.join(evidence,'bancos-beneficios-'+width+'.png'),animations:'disabled'});
+    await annual.click();
+    await p.locator('#annualFeeForm').waitFor();
+    assert.match(await p.locator('#annualFeeForm').innerText(),/Anualidad y seguros/);
+    await p.keyboard.press('Escape');
+  }
+
   assert.equal(await ledger.locator('option[value="card-b"]').count(),0);
   await ledger.getByRole('button',{name:'Registrar beneficio'}).click();
   await p.locator('#v144CashbackForm').waitFor();
