@@ -438,6 +438,7 @@ function v169CardCycleLedger(c,ccy,asOf=today()){
  }
  for(const t of v115CardTransactions(c.id,ccy)){
   if(!dateOK(t.date)||t.date>asOf)continue;
+  if(t.type==='adjustment'&&!t.accountId){push(t.id,t.date,cutFor(t.date,cutDay),num(t.amount)>0?'charge':'credit',Math.abs(num(t.amount)),t.type);continue;}
   let type='';
   if(t.type==='card_charge'||t.type==='card_advance')type='charge';
   if(['card_payment','card_refund','card_reward'].includes(t.type))type='credit';
@@ -474,8 +475,8 @@ function v169CardCycleLedger(c,ccy,asOf=today()){
   let newCharges=0,paidInPeriod=0;
   while(index<events.length&&events[index].date<=cut){
    const e=events[index++];
-   if(e.type==='charge'&&e.cut===cut)newCharges+=e.amount;
-   if(e.type==='credit')paidInPeriod+=e.amount;
+   if(e.type==='charge'&&e.cut===cut&&e.kind!=='adjustment')newCharges+=e.amount;
+   if(e.type==='credit'&&e.kind!=='adjustment')paidInPeriod+=e.amount;
    apply(e);
   }
   const pending=rnd(lots.filter(x=>x.cut===cut).reduce((n,x)=>n+x.remaining,0));
@@ -512,6 +513,7 @@ setInterval(()=>{if(!document.hidden)v169UpdateOnDateChange()},60000);
 
 function v102CardStatusRaw(c,ccy){let events=[];let opening=ccy==='USD'?num(c.openingUSD):num(c.openingDOP);if(opening>0){let importedBilled=ccy==='USD'?c.openingBilledUSD:c.openingBilledDOP;let reference=c.opened||today();if(importedBilled===undefined||importedBilled===null){events.push({id:'opening',date:reference,type:'charge',amount:opening})}else{let billedOpening=Math.min(opening,Math.max(0,num(importedBilled)));if(billedOpening>0)events.push({id:'opening-billed',date:reference,cut:lastCutAt(reference,c.cutDay),type:'charge',amount:billedOpening});if(opening-billedOpening>0)events.push({id:'opening-unbilled',date:reference,cut:cutFor(addDays(lastCutAt(reference,c.cutDay),1),c.cutDay),type:'charge',amount:rnd(opening-billedOpening)})}}
 for(let t of v115CardTransactions(c.id,ccy)){
+ if(t.type==='adjustment'&&!t.accountId)events.push({id:t.id,date:t.date,type:num(t.amount)>0?'charge':'credit',amount:Math.abs(num(t.amount))});
  if(t.type==='card_charge'||t.type==='card_advance')events.push({id:t.id,date:t.date,type:'charge',amount:num(t.amount)});
  if(t.type==='card_payment'||t.type==='card_refund'||t.type==='card_reward')events.push({id:t.id,date:t.date,type:'credit',amount:num(t.amount)});
  if(t.type==='personal_issue'||t.type==='personal_settlement'){
@@ -524,7 +526,7 @@ events.sort((a,b)=>a.date.localeCompare(b.date)||(a.type===b.type?0:a.type==='ch
 for(const e of events){if(e.date>today())continue;if(e.type==='charge'){let v=e.amount;running+=v;if(credit>0){let x=Math.min(v,credit);v-=x;credit-=x}if(v>0)remaining.push({date:e.date,cut:e.cut||cutFor(e.date,c.cutDay),rem:v})}else{let v=e.amount;running-=v;for(let item of remaining){if(!v)break;if(item.date>e.date)continue;let x=Math.min(item.rem,v);item.rem=rnd(item.rem-x);v=rnd(v-x)}if(v>0)credit+=v}}
 const asOf=events.filter(e=>e.date<=lc||(e.id==='opening-billed'&&e.cut<=lc)).reduce((s,e)=>s+(e.type==='charge'?e.amount:-e.amount),0);statementAtCut=Math.max(0,rnd(asOf));
 let billed=0,unbilled=0,overdue=0,dueMap={};for(const item of remaining){if(item.rem<=.001)continue;let due=cardDue(item.cut,c.dueDay);if(item.cut<=lc){billed+=item.rem;dueMap[due]=(dueMap[due]||0)+item.rem;if(due<today())overdue+=item.rem}else unbilled+=item.rem}
-const nextDue=Object.keys(dueMap).sort()[0]||null;let limit=ccy==='USD'?num(c.limitUSD):num(c.limitDOP),overdraft=ccy==='USD'?num(c.overdraftUSD):num(c.overdraftDOP),debt=Math.max(0,rnd(billed+unbilled-credit));let statements=db.statements.filter(s=>s.cardId===c.id&&s.currency===ccy).sort((a,b)=>b.cutDate.localeCompare(a.cutDate));let official=statements.find(s=>s.cutDate===lc)||null;let asOfOfficial=official?num(official.amount):null;let paidAfter=official?v115CardTransactions(c.id,ccy).filter(t=>t.date>lc&&t.date<=today()&&(['card_payment','card_reward','card_refund'].includes(t.type)||((t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed')||(t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent')))).reduce((s,t)=>s+num(t.amount),0):0;
+const nextDue=Object.keys(dueMap).sort()[0]||null;let limit=ccy==='USD'?num(c.limitUSD):num(c.limitDOP),overdraft=ccy==='USD'?num(c.overdraftUSD):num(c.overdraftDOP),debt=Math.max(0,rnd(billed+unbilled-credit));let statements=db.statements.filter(s=>s.cardId===c.id&&s.currency===ccy).sort((a,b)=>b.cutDate.localeCompare(a.cutDate));let official=statements.find(s=>s.cutDate===lc)||null;let asOfOfficial=official?num(official.amount):null;let paidAfter=official?v115CardTransactions(c.id,ccy).filter(t=>t.date>lc&&t.date<=today()&&(['card_payment','card_reward','card_refund'].includes(t.type)||((t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed')||(t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent'))||(t.type==='adjustment'&&!t.accountId&&num(t.amount)<0))).reduce((s,t)=>s+(t.type==='adjustment'?-num(t.amount):num(t.amount)),0):0;
 return {debt,billed:rnd(Math.max(0,billed)),unbilled:rnd(Math.max(0,unbilled)),overdue:rnd(overdue),limit,overdraft,overdraftUsed:rnd(Math.min(overdraft,Math.max(0,debt-limit))),excess:rnd(Math.max(0,debt-limit-overdraft)),available:rnd(Math.max(0,limit-debt)),availableWithOverdraft:rnd(Math.max(0,limit+overdraft-debt)),util:limit?100*debt/limit:0,cut:lc,nextCut:nextCut(c.cutDay),nextDue,statementAtCut,official,officialAmount:asOfOfficial,officialRemaining:official?Math.max(0,rnd(asOfOfficial-paidAfter)):null,credit:rnd(credit),dueMap,minimum:Math.max(0,rnd(billed*num(c.minPct||5)/100)),automatic:true,cycleLedger:v169CardCycleLedger(c,ccy)};}
 function v102MonthlyTotalsRaw(year,month){const start=periodStart(year,month),end=periodEnd(year,month);let income=0,expense=0,incomeBy={},expenseBy={},incomeSubBy={},expenseSubBy={},cashIn=0,cashOut=0,cardPay=0,principal=0,interest=0;
 for(const t of db.transactions){if(t.date<start||t.date>end)continue;const fx=(n,c)=>num(n)*(c==='USD'?num(t.fxRateSnapshot||db.settings.fx):1);let v=fx(t.amount,t.currency||'DOP');if(['expense','card_payment'].includes(t.type)){let fee=fx(num(t.paymentTax)+num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP');if(fee>0){expense+=fee;cashOut+=fee;expenseBy['Impuestos y comisiones']=(expenseBy['Impuestos y comisiones']||0)+fee;for(const [name,val] of [['Impuesto bancario',fx(num(t.paymentTax),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')],[t.paymentSpeed==='instant'?'Pago al instante':'Otros cargos bancarios',fx(num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')]])if(val>0)expenseSubBy['Impuestos y comisiones||'+name]=(expenseSubBy['Impuestos y comisiones||'+name]||0)+val;}}if(['income','card_reward','bank_reward'].includes(t.type)){income+=v;if(['income','bank_reward'].includes(t.type))cashIn+=v;incomeBy[t.category||'Otros ingresos']=(incomeBy[t.category||'Otros ingresos']||0)+v;if(t.subcategory){let key=(t.category||'Otros ingresos')+'||'+t.subcategory;incomeSubBy[key]=(incomeSubBy[key]||0)+v}}
@@ -2537,7 +2539,7 @@ function v265LedgerModel(){
   if(dst&&t.type==='card_advance')r.push({state:dst,delta:n(t.advanceNet),kind:'account',role:'avance recibido'});
   if(card){
    let delta=0,affected=false;
-   if(t.type==='card_charge'||t.type==='card_advance'){delta=amt;affected=true;}
+   if(t.type==='card_charge'||t.type==='card_advance'||(t.type==='adjustment'&&!t.accountId)){delta=amt;affected=true;}
    if(['card_payment','card_refund','card_reward'].includes(t.type)){delta=-amt;affected=true;}
    if(t.type==='personal_issue'||t.type==='personal_settlement'){
     const p=personalLoan(t.personalLoanId);
@@ -2846,7 +2848,7 @@ function v392FinancialIntegrity(){
   if(!validDate(t.date))put('date','Fecha inválida','La fecha no es una fecha calendario válida.',id);
   const amount=Number(t.amount);
   if(!Number.isFinite(amount)||(nonnegative.has(t.type)&&amount<=0)||(t.type==='adjustment'&&amount===0))put('amount','Importe inválido','Comprueba el importe del movimiento.',id);
-  if(accountTypes.has(t.type)&&!account(t.accountId))put('reference','Cuenta de origen faltante','El movimiento referencia una cuenta inexistente.',id);
+  if(accountTypes.has(t.type)&&!(t.type==='adjustment'&&!t.accountId&&card(t.cardId))&&!account(t.accountId))put('reference','Cuenta de origen faltante','El movimiento referencia una cuenta inexistente.',id);
   if(t.type==='transfer'&&(!account(t.toAccountId)||t.accountId===t.toAccountId))put('reference','Destino de transferencia inválido','Comprueba que existan dos cuentas diferentes.',id);
   if(cardTypes.has(t.type)&&!card(t.cardId))put('reference','Tarjeta faltante','El movimiento referencia una tarjeta inexistente.',id);
   if(t.type==='loan_payment'&&!loan(t.loanId))put('reference','Préstamo faltante','El pago referencia un préstamo inexistente.',id);
@@ -3077,7 +3079,7 @@ function historicalPosition(date){
   const current=['DOP','USD'].reduce((total,cur)=>{
    const op=cur==='USD'?num(c.openingUSD):num(c.openingDOP);
    const changes=db.transactions.filter(t=>t.cardId===c.id&&t.currency===cur&&t.date<=date).reduce((acc,t)=>{
-    if(t.type==='card_charge'||t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='lent'||t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='borrowed')return acc+num(t.amount);
+    if(t.type==='card_charge'||(t.type==='adjustment'&&!t.accountId)||t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='lent'||t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='borrowed')return acc+num(t.amount);
     if(['card_payment','card_refund','card_reward'].includes(t.type)||t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed'||t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent')return acc-num(t.amount);
     return acc;
    },0);
@@ -3647,7 +3649,7 @@ function v12CardHistorical(c,cur,end){
  const change=db.transactions.filter(t=>t.cardId===c.id&&t.currency===cur&&t.date<=end).reduce((v,t)=>{
   const l=personalLoan(t.personalLoanId);
   const issue=t.type==='personal_issue',pay=t.type==='personal_settlement';
-  const plus=['card_charge','card_advance'].includes(t.type)||(issue&&l?.direction==='lent')||(pay&&l?.direction==='borrowed');
+  const plus=['card_charge','card_advance'].includes(t.type)||(t.type==='adjustment'&&!t.accountId)||(issue&&l?.direction==='lent')||(pay&&l?.direction==='borrowed');
   const minus=['card_payment','card_refund','card_reward'].includes(t.type)||(issue&&l?.direction==='borrowed')||(pay&&l?.direction==='lent');
   return v+(plus?num(t.amount):minus?-num(t.amount):0);
  },0);
@@ -4640,10 +4642,19 @@ function v918BudgetAssign(cat){
 }
 function budgetForm(cat,sub){let category=cat||Object.keys(categoryMap('gasto'))[0]||'',subcategory=sub||'',row=budgetRowsAt(ui.month).find(b=>b.category===category&&(b.subcategory||'')===subcategory)||{};modal('Presupuesto por categoría y subcategoría',`${formItem('effectiveMonth','Mes de vigencia',ui.month,'month','required')}${formSelect('category','Categoría de gasto',categoryOptions('gasto'),category,'id="budgetCategory"')}${subSelect('gasto',category,subcategory)}${formItem('amount','Presupuesto de este mes (RD$)',row.amount||0,'number','min="0" step="0.01" required')}${para('La edición rige desde el mes elegido y no reescribe períodos anteriores. Un límite global ya incluye sus subcategorías. Para retirar un límite, registra cero.')}`,'budgetForm')}
 let draft={};
+// A card reconciliation is a signed liability adjustment, not a purchase or payment.
+function adjustmentCard(value){return String(value||'').startsWith('card:')?card(String(value).slice(5)):null;}
+function adjustmentCurrencies(c){const available=['DOP','USD'].filter(k=>num(c['limit'+k])||num(c['opening'+k])||db.transactions.some(t=>t.cardId===c.id&&t.currency===k));return available.length?available:[c.currency==='USD'?'USD':'DOP'];}
+function adjustmentCardBalance(c,ccy){const s=cardStatus(c,ccy);return rnd(s.debt-s.credit);}
 function legacyTransactionForm(partial={},editId=null){let o={type:'expense',date:today(),accountId:db.accounts[0]?.id||'',toAccountId:db.accounts[1]?.id||'',cardId:db.cards[0]?.id||'',loanId:db.loans[0]?.id||'',certificateId:db.certificates[0]?.id||'',currency:'DOP',amount:'',sourceAmount:'',targetAmount:'',category:'Alimentación',subcategory:'',note:'',tags:'',principal:'',interest:'',fee:0,insurance:0,paymentKind:'regular',installmentPeriod:'',...partial};let type=o.type;if(type==='loan_payment'&&!editId){if(partial.insurance===undefined)o.insurance='';if(partial.fee===undefined)o.fee='';}draft=o;
 if(editId&&/^\d{4}-\d{4}$/.test(o.date))o.date=o.date.slice(0,7)+'-'+o.date.slice(7);let typeOptions=Object.entries(TRANSL).filter(([k])=>k!=='bank_reward'||!!editId).map(([k,v])=>[k,v]);let ac=db.accounts.map(a=>[a.id,`${a.name} (${a.currency})`]);let ca=db.cards.map(c=>[c.id,`${c.name} · ${bankOf(c)}`]);let lo=db.loans.map(l=>[l.id,`${l.name} (${l.currency})`]);
 let body=`${editId?`<input type="hidden" name="type" value="${sanitize(type)}"><div class="form-full tx-type-frozen">Tipo: <strong>${sanitize(TRANSL[type]||type)}</strong><small>Para proteger la contabilidad, la naturaleza de una operación existente no se cambia desde el editor.</small></div>`:formSelect('type','Tipo de operación',typeOptions,type,'id="txType"')}${formItem('date','Fecha de operación',o.date,'date','required max="'+today()+'"')}`;
-if(['income','bank_reward','expense','card_payment','loan_payment','transfer','adjustment','certificate_funding','certificate_redemption'].includes(type))body+=formSelect('accountId',type==='transfer'?'Cuenta de origen':'Cuenta bancaria',ac,o.accountId,'required id="txAccount"');
+if(['income','bank_reward','expense','card_payment','loan_payment','transfer','adjustment','certificate_funding','certificate_redemption'].includes(type)){
+ const adjustment=type==='adjustment';const selected=adjustment&&partial.cardId&&!partial.accountId?'card:'+partial.cardId:o.accountId;
+ const opts=adjustment?[...ac,...db.cards.filter(c=>!isHidden(c)).map(c=>['card:'+c.id,c.name+' · '+bankOf(c)])]:ac;
+ body+=formSelect('accountId',type==='transfer'?'Cuenta de origen':'Cuenta bancaria',opts,selected,'required id="txAccount"');
+ if(adjustment)body+=formSelect('currency','Saldo de la tarjeta',['DOP','USD'],o.currency);
+}
 if(type==='transfer')body+=formSelect('toAccountId','Cuenta de destino',ac,o.toAccountId,'required id="txTargetAccount"');
 if(['card_charge','card_refund','card_payment','card_reward','bank_reward'].includes(type))body+=formSelect('cardId','Tarjeta de crédito',ca,o.cardId,'required id="txCard"');
 if(type==='loan_payment'){
@@ -5903,7 +5914,20 @@ function openPendingOperation(id){const op=db.pendingOperations.find(p=>p.id===i
 }
 function showError(msg){let el=document.getElementById('formError');if(el){el.textContent=msg;el.scrollIntoView({block:'nearest'})}else toast(msg)}
 function fromForm(form){return Object.fromEntries(new FormData(form).entries())}
-function validReferences(v,type){if(['income','bank_reward','expense','card_payment','loan_payment','transfer','adjustment','certificate_funding','certificate_redemption'].includes(type)&&!account(v.accountId))throw Error('Debes crear o seleccionar una cuenta bancaria válida.');if(type==='transfer'&&(!account(v.toAccountId)||v.accountId===v.toAccountId))throw Error('Selecciona una cuenta de destino distinta.');if(['card_charge','card_refund','card_payment','card_reward','bank_reward'].includes(type)&&!card(v.cardId))throw Error('Debes crear o seleccionar una tarjeta válida.');if(['certificate_funding','certificate_redemption'].includes(type)&&(!certificate(v.certificateId)||!account(v.accountId)))throw Error('Asocia un certificado y una cuenta válida.');if(type==='loan_payment'&&!loan(v.loanId))throw Error('Debes crear o seleccionar un préstamo válido.');if(v.date>today())throw Error('No registres movimientos futuros. Utiliza el módulo de pagos recurrentes para programarlos.');}
+function validReferences(v,type){
+ if(type==='adjustment'){
+  const c=adjustmentCard(v.accountId)||(!v.accountId&&v.cardId?card(v.cardId):null);
+  if(String(v.accountId||'').startsWith('card:')||(!v.accountId&&v.cardId)){
+   if(!c||isHidden(c))throw Error('Selecciona una tarjeta activa.');
+   if(!adjustmentCurrencies(c).includes(v.currency))throw Error('Selecciona una moneda habilitada para la tarjeta.');
+   if(!v.date||v.date<(c.opened||v.date))throw Error('La fecha no puede ser anterior a la apertura de la tarjeta.');
+   if(String(v.note||'').trim().length<6)throw Error('Describe el motivo del ajuste.');
+   if(!Number.isFinite(Number(v.amount))||Math.abs(rnd(v.amount))<.01)throw Error('El ajuste debe ser distinto de cero.');
+   v.accountId='';v.cardId=c.id;
+  }else{if(!account(v.accountId))throw Error('Debes crear o seleccionar una cuenta bancaria válida.');v.cardId='';}
+  v.toAccountId='';
+ }
+ if(['income','bank_reward','expense','card_payment','loan_payment','transfer','certificate_funding','certificate_redemption'].includes(type)&&!account(v.accountId))throw Error('Debes crear o seleccionar una cuenta bancaria válida.');if(type==='transfer'&&(!account(v.toAccountId)||v.accountId===v.toAccountId))throw Error('Selecciona una cuenta de destino distinta.');if(['card_charge','card_refund','card_payment','card_reward','bank_reward'].includes(type)&&!card(v.cardId))throw Error('Debes crear o seleccionar una tarjeta válida.');if(['certificate_funding','certificate_redemption'].includes(type)&&(!certificate(v.certificateId)||!account(v.accountId)))throw Error('Asocia un certificado y una cuenta válida.');if(type==='loan_payment'&&!loan(v.loanId))throw Error('Debes crear o seleccionar un préstamo válido.');if(v.date>today())throw Error('No registres movimientos futuros. Utiliza el módulo de pagos recurrentes para programarlos.');}
 function saveTx(v,editId=''){let oldIndex=editId?db.transactions.findIndex(x=>x.id===editId):-1,previous=oldIndex>=0?db.transactions[oldIndex]:null;if(editId&&!previous)throw Error('No se encontró el movimiento que quieres editar.');if(previous&&previous.type!==v.type)throw Error('No se puede cambiar la naturaleza de un movimiento ya contabilizado.');/* V392: instantánea transaccional; ninguna vista anuncia éxito si la preparación de guardado falla. */const v392Before={transactions:db.transactions.slice(),recurring:(db.recurring||[]).map(r=>({id:r.id,nextDue:r.nextDue})),txRevisions:(db.txRevisions||[]).slice(),pendingOperations:(db.pendingOperations||[]).slice()};if(previous)db.transactions.splice(oldIndex,1);try{if(v.flowMode==='service'&&v.cardOnly==='yes'&&v.paymentSource!=='card')throw Error('Este servicio requiere una tarjeta. Agrega o selecciona una tarjeta de crédito.');if(v.flowMode==='cardpay'&&account(v.accountId)?.kind==='cash'&&v.paymentChannel==='internet_banking')throw Error('El efectivo no permite Internet Banking. Selecciona pago presencial o una cuenta bancaria.');
  if(v.flowMode==='outgoing'&&account(v.accountId)?.kind==='cash')throw Error('Para transferir a terceros selecciona una cuenta bancaria, no efectivo físico.');
  if(v.paymentChannel&& !['internet_banking','presencial','web','debito','efectivo'].includes(v.paymentChannel))throw Error('El canal solo puede ser Internet Banking o Presencial.');
@@ -5925,7 +5949,7 @@ if(v.type==='card_refund'){
   base.subcategory=original.subcategory||base.subcategory;
  }else base.originalPurchaseId='';
 }
-if(['income','bank_reward','expense','adjustment','certificate_funding','certificate_redemption'].includes(v.type))base.currency=account(v.accountId).currency;
+if(['income','bank_reward','expense','certificate_funding','certificate_redemption'].includes(v.type)||(v.type==='adjustment'&&v.accountId))base.currency=account(v.accountId).currency;
 if(v.type==='card_payment'){
  /* El pago debe ser positivo y no superar la deuda de la tarjeta en esa moneda (al editar se devuelve primero el importe anterior). */
  {const pagoNum=Number(v.amount),tarjetaPago=card(v.cardId);
@@ -6924,7 +6948,7 @@ function otherStudioApply(kind){
  
  const core=section('DATOS DE LA OPERACIÓN');
  if(kind==='refund'){['cardId','currency','category','subcategory','date'].forEach(k=>pull(k,core))}
- if(kind==='adjustment'){['accountId','date'].forEach(k=>pull(k,core))}
+ if(kind==='adjustment'){['accountId','currency','date'].forEach(k=>pull(k,core))}
  if(kind==='benefit'){['cardId','kind','name','currency','date'].forEach(k=>pull(k,core));pullElement('.benefit-only-cash',core)}
  if(kind==='loan'){pullElement('.v359-mode-picker',core);['loanId','accountId','paymentKind','paymentChannel','date','installmentPeriod'].forEach(k=>pull(k,core));pullElement('#v359BankRecon',core);const b=section('DESGLOSE DEL PAGO');b.classList.add('other-studio-breakdown');['principal','interest','insurance','fee'].forEach(k=>pull(k,b));}
  const fold=document.createElement('details');fold.className='other-studio-fold';fold.innerHTML='<summary>Más detalles y estado <span>⌄</span></summary>';const foldBody=document.createElement('div');foldBody.className='other-studio-fold-body';fold.appendChild(foldBody);body.appendChild(fold);
@@ -6946,12 +6970,12 @@ function otherStudioApply(kind){
  const sync=()=>{if(!f.isConnected)return;
   if(kind==='benefit'){const isCash=f.elements.kind?.value==='cashback';const block=f.querySelector('.benefit-only-cash');if(block)block.hidden=!isCash;const dest=f.elements.destination?.value;const accLab=f.elements.accountId?.closest('label');if(accLab)accLab.hidden=!isCash||dest!=='account';}
   if(kind==='loan'){const period=f.elements.installmentPeriod?.closest('label');if(period)period.hidden=f.elements.paymentKind?.value==='extra';refreshLegacyLoanPayment();}
-  const amount=num(f.elements.amount?.value),acc=account(f.elements.accountId?.value),cardObj=card(f.elements.cardId?.value),ln=loan(f.elements.loanId?.value),ccy=(kind==='adjustment'?acc?.currency:kind==='loan'?ln?.currency:f.elements.currency?.value)||'DOP';
+  const amount=num(f.elements.amount?.value),acc=account(f.elements.accountId?.value),cardObj=card(f.elements.cardId?.value)||adjustmentCard(f.elements.accountId?.value),ln=loan(f.elements.loanId?.value),ccy=(kind==='adjustment'?(cardObj?f.elements.currency?.value:acc?.currency):kind==='loan'?ln?.currency:f.elements.currency?.value)||'DOP';
   const line=(label,val)=>`<div class="other-studio-line"><span>${sanitize(label)}</span><b>${sanitize(String(val))}</b></div>`;
   const moneyVal=(kind==='adjustment'&&amount>0?'+':'')+money(amount,ccy,2);const val=f.querySelector('#otherLiveValue');if(val)val.textContent=moneyVal;
   let lines='';
   if(kind==='refund'){lines+=line('Tarjeta',cardObj?.name||'Seleccionar tarjeta');lines+=line('Saldo',ccy);lines+=line('Efecto','Reduce deuda y gasto');}
-  if(kind==='adjustment'){lines+=line('Cuenta',acc?.name||'Seleccionar cuenta');lines+=line('Movimiento',amount<0?'Disminuye saldo':amount>0?'Aumenta saldo':'Sin cambio');lines+=line('Resultado económico','No es ingreso ni gasto');}
+  if(kind==='adjustment'){lines+=line(cardObj?'Tarjeta':'Cuenta',cardObj?.name||acc?.name||'Seleccionar cuenta');lines+=line('Movimiento',amount<0?(cardObj?'Disminuye deuda':'Disminuye saldo'):amount>0?(cardObj?'Aumenta deuda':'Aumenta saldo'):'Sin cambio');lines+=line('Resultado económico','No es ingreso ni gasto');}
   if(kind==='benefit'){const isCash=f.elements.kind?.value==='cashback';lines+=line('Tipo',isCash?'Cashback acreditado':'Beneficio informativo');lines+=line('Destino',isCash?(f.elements.destination?.value==='account'?'Cuenta bancaria':'Tarjeta de crédito'):'Sin movimiento monetario');}
   if(kind==='loan'){let principal=num(f.elements.principal?.value),interest=num(f.elements.interest?.value),insurance=num(f.elements.insurance?.value),fee=num(f.elements.fee?.value);lines+=line('Préstamo',ln?.name||'Seleccionar préstamo');lines+=line('A capital',money(principal,ccy,2));lines+=line('Intereses, seguro y cargos',money(interest+insurance+fee,ccy,2));const sourceAmount=num(f.elements.sourceAmount?.value||amount);const eligible=isTaxableBankPayment(acc,f.elements.paymentChannel?.value),pct=eligible&&f.elements.paymentTaxable?.value==='yes'?num(f.elements.paymentTaxPct?.value):0;lines+=line('Impuesto estimado',money(sourceAmount*pct/100,acc?.currency||ccy,2));}
   const holder=f.querySelector('#otherLiveLines');if(holder)holder.innerHTML=lines;
@@ -16962,10 +16986,11 @@ window.__f360RecurringVisualAdapter={
    current=Number(stat?.debt??stat?.balance??NaN);
    after=current-value;
   }else{
-   asset=account(raw(f,'accountId'));ccy=asset?.currency||'DOP';
-   if(!asset||asset.archived||asset.bankId&&bank(asset.bankId)?.archived)errors.push('Selecciona una cuenta o efectivo activos.');
+   const credit=adjustmentCard(raw(f,'accountId'));asset=credit||account(raw(f,'accountId'));ccy=credit?raw(f,'currency'):asset?.currency||'DOP';
+   if(!asset||isHidden(asset))errors.push('Selecciona una cuenta, tarjeta o efectivo activos.');
+   if(credit&&!adjustmentCurrencies(credit).includes(ccy))errors.push('Selecciona una moneda habilitada para la tarjeta.');
    if(note.length<6)errors.push('Describe el motivo de la conciliación (mínimo 6 caracteres).');
-   current=asset?Number(getAccountBalance(asset)):NaN;
+   current=asset?Number(credit?adjustmentCardBalance(credit,ccy):getAccountBalance(asset)):NaN;
    after=current+value;
   }
   return {kind,isRefund,value,date,note,editing,errors,asset,ccy,current,after,purchase,linked};
@@ -17326,8 +17351,11 @@ function updateImpact(form){
  let prior=null,after=null,label='Saldo actual',currency='DOP',subtitle='Sin información de un producto seleccionado';
  try{
   if(spec==='adjustment'){
-   const chosen=db.accounts.find(a=>String(a.id)===String(form.elements.accountId?.value));
-   if(chosen){currency=chosen.currency||'DOP';prior=getAccountBalance(chosen);after=prior+safeAmt;subtitle='Ajuste documentado; no crea ingresos o gastos ordinarios'}
+   const credit=adjustmentCard(form.elements.accountId?.value),chosen=account(form.elements.accountId?.value);
+   if(credit){currency=form.elements.currency?.value||'DOP';prior=adjustmentCardBalance(credit,currency);after=prior+safeAmt;label='Saldo adeudado actual';subtitle='Ajuste documentado de deuda; no es compra, pago ni ingreso.';}
+   else if(chosen){currency=chosen.currency||'DOP';prior=getAccountBalance(chosen);after=prior+safeAmt;subtitle='Ajuste documentado; no crea ingresos o gastos ordinarios'}
+   const original=db.transactions.find(t=>t.id===form.dataset.id&&t.type==='adjustment');
+   if(original&&prior!==null&&(credit?original.cardId===credit.id&&!original.accountId&&original.currency===currency:original.accountId===chosen?.id)){after=prior-num(original.amount)+safeAmt;}
   }else{
    const chosen=db.cards.find(c=>String(c.id)===String(form.elements.cardId?.value));
    if(chosen){currency=form.elements.currency?.value||'DOP';if(!['DOP','USD'].includes(currency))currency='DOP';prior=cardStatus(chosen,currency).debt;after=Math.max(0,prior-Math.max(0,safeAmt));label='Deuda actual';subtitle='Estimación de saldo de tarjeta tras el reintegro'}
@@ -17625,14 +17653,13 @@ function optionsOf(field){
  const date=form.elements.date?.value;
  const eligible=id=>!canRefund||db.transactions.some(t=>t.cardId===id&&t.type==='card_charge'&&(!date||t.date<=date)&&
   num(t.amount)-db.transactions.filter(r=>r.type==='card_refund'&&r.originalPurchaseId===t.id).reduce((sum,r)=>sum+num(r.amount),0)>.005);
- const accountOptions=[...field.options].filter(o=>o.value&&!o.disabled&&eligible(o.value)).map(o=>productOption(pn,lookup(o.value)||{id:o.value},o.textContent.trim()));
- // V862: Reveal the real credit cards in the SAME universal bottom sheet.
- // Account adjustment storage is account-only; never persist a card id as accountId.
+ const accountOptions=[...field.options].filter(o=>o.value&&!o.disabled&&eligible(o.value)&&!(form.dataset.special==='adjustment'&&String(o.value).startsWith('card:'))).map(o=>productOption(pn,lookup(o.value)||{id:o.value},o.textContent.trim()));
+ // Card selection is scoped to reconciliation; the transaction stores cardId separately.
  if(pn==='accountId'&&form.dataset.special==='adjustment'){
-   const creditOptions=(db.cards||[]).filter(c=>!c.archived).map(c=>({
+   const creditOptions=(db.cards||[]).filter(c=>!isHidden(c)).map(c=>({
      ...productOption('cardId',c),value:'card:'+String(c.id),
      detail:[bankOf(c),c.last4?'•••• '+c.last4:'', 'Tarjeta de crédito'].filter(Boolean).join(' · '),
-     amount:'Seleccionable cuando se habilite el ajuste contable de tarjetas'
+     amount:adjustmentCurrencies(c).map(ccy=>money(adjustmentCardBalance(c,ccy),ccy,2)).join(' · ')
    }));
    return [...accountOptions,...creditOptions];
  }
@@ -17692,8 +17719,11 @@ function updateTrigger(field){
   const value=details?.querySelector('strong');
   const text=field.selectedOptions?.[0]?.textContent.trim()||'Seleccionar';
   const pn=pname(field);
-  const product=pn==='cardId'?card(field.value):pn==='accountId'?account(field.value):pn==='loanId'?loan(field.value):null;
-  const option=product?productOption(pn,product):null;
+  const adjustment=pn==='accountId'&&field.form?.dataset.special==='adjustment';
+  const credit=adjustment?adjustmentCard(field.value):null;
+  const product=credit||(pn==='cardId'?card(field.value):pn==='accountId'?account(field.value):pn==='loanId'?loan(field.value):null);
+  const option=product?productOption(credit?'cardId':pn,product):null;
+  if(adjustment){const caption=label?.querySelector('.filter-label');if(caption)caption.textContent=credit?'Tarjeta de crédito':'Cuenta bancaria';}
   if(value)value.textContent=option?.name||text;
   const icon=label?.querySelector('.v789-select-ico');
   if(icon){
@@ -17723,10 +17753,6 @@ function enhance(){for(const form of root.querySelectorAll('form')){
  const details=document.createElement('span');details.className='v789-select-details';const strong=document.createElement('strong');details.append(strong);
  const arrow=document.createElement('span');arrow.className='v789-select-chevron';arrow.textContent='⌄';button.append(ico,details,arrow);label.append(button);
  field.addEventListener('change',()=>updateTrigger(field));updateTrigger(field);button.addEventListener('focus',()=>updateTrigger(field));button.addEventListener('click',()=>open(pn,optionsOf(field),field.value,selected=>{
-  if(form.dataset.special==='adjustment'&&pn==='accountId'&&String(selected).startsWith('card:')){
-    toast('Esta tarjeta existe, pero el ajuste contable de tarjetas todavía no está conectado a este formulario. No se registró ningún movimiento.');
-    return;
-  }
   if(field.value===selected)return;
   if(pn==='loanId'&&form.dataset.special==='loan'){otherLoanSelect(selected,form);return;}
   field.value=selected;
@@ -17747,7 +17773,7 @@ function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels
  const content=document.createElement('span');content.className='v789-picker-text v787-product-main';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.detail;content.append(strong,small);if(opt.amount){const amount=document.createElement('em');amount.textContent=opt.amount;content.append(amount);}const mark=document.createElement('span');mark.className='v789-picker-mark v787-product-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);if(opt.disabled){row.disabled=true;row.classList.add('is-unavailable');row.setAttribute('aria-disabled','true')}list.append(row);rows.push(row);row.addEventListener('click',()=>{if(opt.disabled)return;selected=opt.value;refresh()});}
  const empty=document.createElement('p');empty.className='v827-picker-empty';empty.textContent=all.length?'No se encontraron coincidencias.':'No hay productos disponibles para esta operación.';list.append(empty);
  const actions=document.createElement('div');actions.className='v827-picker-actions';const cancel=document.createElement('button');cancel.type='button';cancel.className='v827-picker-cancel';cancel.textContent='Cancelar';const confirm=document.createElement('button');confirm.type='button';confirm.className='v789-picker-confirm';const confirmLabel={loanId:'Usar este préstamo',purchase:'Usar esta compra',cardId:'Usar esta tarjeta',accountId:'Usar esta cuenta',item:'Continuar'};actions.append(cancel,confirm);
- function refresh(){const q=normalize(search.value);let visible=0;for(const row of rows){const match=(filter==='all'||row.dataset.kind===filter)&&(!q||normalize([...row.querySelector('.v789-picker-text').children].map(node=>node.textContent).join(' ')).includes(q));row.hidden=!match;if(match)visible++;const yes=row.dataset.value===selected;row.setAttribute('aria-pressed',String(yes));row.querySelector('.v789-picker-mark').textContent=yes?'✓':'›';}empty.hidden=visible>0;const chosen=all.find(o=>o.value===selected);const cardUnsupported=name==='accountId'&&String(selected).startsWith('card:');confirm.disabled=!chosen||cardUnsupported;confirm.title=cardUnsupported?'La conciliación contable de tarjetas requiere integración financiera segura':'';confirm.textContent=cardUnsupported?'Ajuste de tarjeta no disponible':(confirmLabel[name]||(chosen?.kind==='credit'?confirmLabel.cardId:chosen?.kind==='account'?confirmLabel.accountId:'Usar producto'))}
+ function refresh(){const q=normalize(search.value);let visible=0;for(const row of rows){const match=(filter==='all'||row.dataset.kind===filter)&&(!q||normalize([...row.querySelector('.v789-picker-text').children].map(node=>node.textContent).join(' ')).includes(q));row.hidden=!match;if(match)visible++;const yes=row.dataset.value===selected;row.setAttribute('aria-pressed',String(yes));row.querySelector('.v789-picker-mark').textContent=yes?'✓':'›';}empty.hidden=visible>0;const chosen=all.find(o=>o.value===selected);const cardAdjustment=name==='accountId'&&String(selected).startsWith('card:');confirm.disabled=!chosen||!!chosen.disabled;confirm.textContent=cardAdjustment?'Usar esta tarjeta':(confirmLabel[name]||(chosen?.kind==='credit'?confirmLabel.cardId:chosen?.kind==='account'?confirmLabel.accountId:'Usar producto'))}
  const previous=document.activeElement;function dismiss(){layer.remove();document.removeEventListener('keydown',keyHandler,true);active=null;if(previous?.isConnected)previous.focus({preventScroll:true})}
  function keyHandler(e){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();dismiss()}if(e.key==='Tab'){const focusables=[...sheet.querySelectorAll('button:not([disabled]),input')].filter(x=>!x.hidden);if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}
  close.onclick=dismiss;cancel.onclick=dismiss;layer.onclick=e=>{if(e.target===layer)dismiss()};layer.addEventListener('cancel',e=>{e.preventDefault();dismiss()});search.oninput=refresh;document.addEventListener('keydown',keyHandler,true);
@@ -17870,10 +17896,14 @@ function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels
    }
   }
   if (kindOf(form) === 'adjustment') {
-   const unit = form.querySelector('.v790-money-symbol');
-   const setUnit = () => {if(unit) unit.textContent=account(control(form,'accountId')?.value)?.currency==='USD'?'US$':'RD$';};
-   control(form,'accountId')?.addEventListener('change',setUnit);
-   setUnit();
+   const unit = form.querySelector('.v790-money-symbol'),product=control(form,'accountId'),currency=control(form,'currency');
+   const syncAdjustment = () => {
+    const c=adjustmentCard(product?.value),a=account(product?.value),choices=c?adjustmentCurrencies(c):[a?.currency||'DOP'];
+    if(currency){for(const opt of currency.options)opt.disabled=!choices.includes(opt.value);if(!choices.includes(currency.value))currency.value=choices[0];const label=currency.closest('label');if(label){label.style.setProperty('display',c&&choices.length>1?'':'none','important');if(c&&choices.length>1)label.style.setProperty('grid-column','1/-1','important');}}
+    if(unit)unit.textContent=(currency?.value||choices[0])==='USD'?'US$':'RD$';
+    const heading=form.querySelector('.v768-adjust-heading>strong');if(heading)heading.textContent=c?'Ajuste de deuda':'Ajuste de saldo';
+   };
+   product?.addEventListener('change',syncAdjustment);currency?.addEventListener('change',syncAdjustment);syncAdjustment();
   }
   if (['refund','benefit'].includes(kindOf(form))) syncCurrency(form);
  }
@@ -20709,7 +20739,7 @@ function v401FinancialLogicSection(){
  const amount=content.querySelector('.other-studio-amount');
  const rowField=(name,classname)=>{const elem=fields.querySelector(`[name="${name}"]`);const label=elem?.closest('label');if(label){label.classList.add(...classname.split(/\s+/));if(classname.includes('v790-full'))label.style.setProperty('grid-column','1/-1','important');for(const p of ['background','background-color','color','border','border-color','box-shadow'])label.style.removeProperty(p)}return label};
  const card=rowField('cardId','v790-card-field v790-full');rowField('accountId',kind==='loan'?'v790-account-field':'v790-account-field v790-full');rowField('loanId','v790-full');rowField('kind','v790-full');rowField('name','v790-full');rowField('paymentKind','v790-full');
- const currency=rowField('currency','v790-currency');if(['refund','benefit'].includes(kind)&&currency){amount.appendChild(currency);for(const [prop,val] of [['position','absolute'],['left','auto'],['right','12px'],['top','12px'],['width','100px'],['max-width','100px'],['min-height','0px'],['height','39px'],['margin','0px'],['padding','0px'],['background','transparent'],['transform','none']])currency.style.setProperty(prop,val,'important')}
+ const currency=rowField('currency',kind==='adjustment'?'v790-full v1291-adjust-currency':'v790-currency');if(['refund','benefit'].includes(kind)&&currency){amount.appendChild(currency);for(const [prop,val] of [['position','absolute'],['left','auto'],['right','12px'],['top','12px'],['width','100px'],['max-width','100px'],['min-height','0px'],['height','39px'],['margin','0px'],['padding','0px'],['background','transparent'],['transform','none']])currency.style.setProperty(prop,val,'important')}
  for(const n of ['category','subcategory']){const label=rowField(n,'v790-'+n);if(label)label.style.setProperty('grid-column','auto','important')}const dateLabel=rowField('date','v790-date');if(dateLabel)dateLabel.style.setProperty('grid-column',kind==='refund'?'auto':'1/-1','important');
  const note=content.querySelector('.v768-refund-reason,.v768-reason');if(note){note.classList.add(kind==='refund'?'v790-note':'v790-note','v790-full');for(const p of ['background','background-color','color','border','border-color','box-shadow'])note.style.removeProperty(p);fields.appendChild(note);if(kind==='refund'){note.style.setProperty('grid-column','auto','important');const txt=note.querySelector('.filter-label');if(txt)txt.textContent='Comercio / concepto (opcional)';}}
  // Keep update subscriptions/inputs and original IDs. Move live summary ONLY; no copy of balances.
