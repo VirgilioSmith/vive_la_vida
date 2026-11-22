@@ -16238,9 +16238,9 @@ document.addEventListener('input',function(event){
  };
  const quickSheet=(title,html,footer='')=>{
   $('.vQuick-sheet')?.remove();
-  const layer=document.createElement('div');layer.className='vQuick-sheet';
+  const layer=document.createElement('dialog');layer.className='vQuick-sheet';layer.setAttribute('aria-label',title);
   layer.innerHTML='<section role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><div class="vQuick-grip"></div><header><h2>'+esc(title)+'</h2><button type="button" data-v354-act="sheetClose" aria-label="Cerrar selector">×</button></header>'+html+(footer?'<footer>'+footer+'</footer>':'')+'</section>';
-  root().append(layer);
+  root().append(layer);layer.showModal();layer.addEventListener('cancel',e=>{e.preventDefault();layer.remove()});layer.querySelector('header button').focus({preventScroll:true});
  };
  const makeShell=(title,step,amount,inner,footer)=>{
   const dark=document.body.classList.contains('theme-black')||document.body.classList.contains('theme-dark');

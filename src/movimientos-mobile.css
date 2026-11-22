@@ -47,7 +47,8 @@
  #modal-root .vQuick-mobile .v354-foot{display:grid!important;grid-template-columns:1fr 1.5fr!important;gap:8px!important;padding:9px 16px max(12px,env(safe-area-inset-bottom))!important;background:white!important}
  #modal-root .vQuick-mobile .v354-foot button{min-height:46px!important;border-radius:24px!important;font-weight:700!important}
  #modal-root .vQuick-mobile .v354-foot .primary{background:#111!important;color:white!important}
- #modal-root .vQuick-sheet{position:fixed;inset:0;z-index:99999;background:#0007;display:flex;align-items:flex-end;justify-content:center;padding:0;}
+ #modal-root .vQuick-sheet[open]{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;border:0!important;z-index:99999;background:#0007!important;display:flex!important;align-items:flex-end!important;justify-content:center!important;padding:0!important;}
+ #modal-root .vQuick-sheet::backdrop{background:transparent}
  #modal-root .vQuick-sheet>section{width:100%;max-height:90dvh;overflow-y:auto;background:white;color:#131617;border-radius:22px 22px 0 0;padding:10px 16px max(18px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:11px;box-shadow:0 -8px 24px #0002}
  #modal-root .vQuick-grip{width:42px;height:4px;border-radius:4px;background:#bcbfc1;align-self:center}
  #modal-root .vQuick-sheet header{display:flex;align-items:center;justify-content:space-between;gap:8px}
