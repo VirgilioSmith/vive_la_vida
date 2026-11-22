@@ -11165,8 +11165,8 @@ function deletePersonalLoan(id){
   const limit=limitD+fx(limitU,'USD'),used=debtD+fx(debtU,'USD'),available=Math.max(0,limit-used),pct=limit>0?used/limit*100:null;
   return hero({page:'cards',kicker:'CRÉDITO / CARTERA DE TARJETAS',title:'Tus tarjetas.<br><em>Tu capacidad de consumo.</em>',subtitle:'Un vistazo al límite contractual conjunto, la utilización y lo que aún queda disponible, con RD$ y US$ siempre identificados.',mainTitle:'LÍMITE DE CONSUMO',main:currency(limit),mainNote:'Suma de límites en pesos y dólares · sin sobregiro autorizado',items:[['UTILIZACIÓN DEL LÍMITE',pct===null?'Sin límite':nf(pct)+'%'],['DEUDA UTILIZADA',currency(used)],['CRÉDITO DISPONIBLE',currency(available)],['LÍMITES POR MONEDA',currency(limitD)+' · '+currency(limitU,'USD')]],foot:`Utilización ordinaria: ${pct===null?'Sin límite configurado':nf(pct)+'%'}. Se excluye todo sobregiro autorizado; el disponible equivale a límite menos deuda registrada (mínimo cero). ${fxNote()}`,buttons:action('Nueva tarjeta','addCard','plus')+benefitsButton,mini:[`${list.length} tarjetas registradas`,`${pct===null?'Sin capacidad definida':nf(pct)+'% utilizado'}`]});
  }
- function benefitsHero(){
-  const cards=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
+ function benefitsHero(scope=null){
+  const cards=(scope||db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
   const year=Number(ui.v144BenefitYear)||nowYear();
   const y=v183YearBenefitMetrics(cards,year);
   const fees=y.feeConfigured;
@@ -11176,7 +11176,7 @@ function deletePersonalLoan(id){
    mainNote:'Cashback + beneficios monetarios cobrados − costos efectivamente pagados',
    items:[['BENEFICIOS RECIBIDOS',currency(y.earned)],['COSTO REAL PAGADO',currency(y.paid)],['ANUALIDAD CONFIGURADA',currency(fees)],['TARJETAS ANALIZADAS',String(cards.length)]],
    foot:`La anualidad configurada es informativa, no un gasto realizado hasta que se registre y pague. Los cargos aún sin conciliar aparecen en la tabla sin duplicar pagos. ${fxNote()}`,
-   buttons:mainBtn,mini:[`${cards.length} tarjetas`,'Enero · diciembre']});
+   buttons:mainBtn+vBanksAnnualBenefitsAction(cards,true),mini:[`${cards.length} tarjetas`,'Enero · diciembre']});
  }
  function loansHero(){
   const list=db.loans||[];const stat=list.map(l=>({l,a:loanAccounting(l)}));
@@ -12957,17 +12957,18 @@ function v389BenefitsKPIsUnused(cards){
 }
 
 /* Selector PC de anualidad: reutiliza annualFeeForm sin duplicar lógica ni afectar móvil. */
-function vBanksAnnualBenefitsAction(cards){
+function vBanksAnnualBenefitsAction(cards,hero=false){
  if(isMobileViewport()||!cards.length)return '';
+ const style=hero?'btn light':'v187-benefits-add';
  const item=(c)=>'<button type="button" data-act="annualFee" data-id="'+sanitize(c.id)+'">'+sanitize(c.name)+(c.last4?' · •••• '+sanitize(c.last4):'')+'</button>';
- if(cards.length===1)return '<button type="button" class="v187-benefits-add" data-act="annualFee" data-id="'+sanitize(cards[0].id)+'">'+icon('receipt')+' Registrar anualidad y seguros</button>';
- return '<details class="vBanks-annual-chooser"><summary class="v187-benefits-add">'+icon('receipt')+' Registrar anualidad y seguros</summary><div class="vBanks-annual-list" aria-label="Seleccionar tarjeta para anualidad">'+cards.map(item).join('')+'</div></details>';
+ if(cards.length===1)return '<button type="button" class="'+style+'" data-act="annualFee" data-id="'+sanitize(cards[0].id)+'">'+icon('receipt')+' Registrar anualidad y seguros</button>';
+ return '<details class="vBanks-annual-chooser"><summary class="'+style+'">'+icon('receipt')+' Registrar anualidad y seguros</summary><div class="vBanks-annual-list" aria-label="Seleccionar tarjeta para anualidad">'+cards.map(item).join('')+'</div></details>';
 }
 function v144BenefitsPage(scope=null){
  v144Ready();const cards=(scope||db.cards).filter(c=>ui.showHidden||!isHidden(c));
  const selected=ui.v144BenefitsCard||'all',shown=cards.filter(c=>selected==='all'||c.id===selected);
  if(cards.length&&!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage(scope)}
- const hero=typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():'';
+ const hero=typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero(!isMobileViewport()?scope:null):'';
  return `<div class="v144-benefit-world v180-benefits-clean v187-benefits-only" id="v144Benefits">${hero}${v389BenefitsKPIs(shown)}
  <section class="v187-benefits-ledger" aria-label="Tabla de beneficios por tarjeta"><div class="v187-benefits-ledger-head"><div><span>RESULTADO POR TARJETA</span><h3>Beneficios y costos</h3><p>Solo beneficio acreditado y costo efectivamente pagado forman el resultado neto.</p></div>${cards.length?`<div class="${!isMobileViewport()&&ui.page==='wallet'&&ui.vWalletPcBenefits?'vWalletPc-benefit-actions':''}"><button type="button" class="v187-benefits-add" data-v144-action="new-cashback" data-id="${sanitize(shown[0]?.id||cards[0].id)}">${icon('plus')} Registrar beneficio</button>${vBanksAnnualBenefitsAction(shown)}</div>`:''}</div>
  ${cards.length?`${scope?v144CardFilterUI([['all','Tarjetas de esta selección'],...cards.map(c=>[c.id,c.name])]):v144CardFilterUI()}${v144BenefitsTable(shown)}`:'<div class="v187-benefits-empty">No tienes tarjetas registradas. <button type="button" data-act="addCard">Añadir tarjeta</button></div>'}
