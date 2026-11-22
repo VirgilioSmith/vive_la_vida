@@ -1,0 +1,73 @@
+/* Isolated account reconciliation surface. Existing registration styles remain untouched. */
+.v-reconcile-dialog.modal{width:min(100%,460px);max-width:460px;max-height:calc(100dvh - 28px);padding:0!important;border-radius:28px;background:var(--surface,#fff);color:var(--text,#14213d);overflow:auto}
+#vReconcileForm{--recon-accent:#006c68;--recon-muted:#57647b;--recon-border:rgba(100,116,145,.19);--recon-soft:#f5f7fa;display:flex;flex-direction:column;gap:11px;padding:15px 16px 20px;box-sizing:border-box;min-width:0;font-family:inherit;color:inherit}
+#vReconcileForm *{box-sizing:border-box}
+#vReconcileForm button,#vReconcileForm input{font-family:inherit}
+.v-reconcile-head{display:flex;align-items:center;gap:14px;padding:3px 0 7px;background:radial-gradient(ellipse at 92% 24%,rgba(0,155,144,.12),transparent 42%);border-radius:21px}
+.v-reconcile-head h2{font-size:23px;letter-spacing:-.65px;margin:0;font-weight:750;line-height:1.16}
+.v-reconcile-back{border:1px solid var(--recon-border);border-radius:50%;width:44px;height:44px;background:rgba(0,108,104,.06);color:inherit;font-size:25px;line-height:1;flex:none}
+.v-reconcile-account,.v-reconcile-reason,.v-reconcile-date,.v-reconcile-observed,.v-reconcile-preview{border:1px solid var(--recon-border);border-radius:20px;background:transparent;color:inherit}
+.v-reconcile-account{display:flex;text-align:left;align-items:center;gap:13px;padding:11px 13px;min-height:75px;width:100%;cursor:pointer}
+.v-reconcile-account>span:nth-last-child(2){display:grid;gap:4px;flex:1;min-width:0}
+.v-reconcile-account>span:nth-last-child(2) strong{font-size:18px;line-height:1.15}
+.v-reconcile-account small,#vReconcileForm small{font-size:12px;font-weight:500;color:var(--recon-muted);line-height:1.25}
+.v-reconcile-account>span:nth-last-child(2) small{font-size:13px}
+.v-reconcile-account>b,.v-reconcile-reason>b{font-size:22px;font-weight:500}
+.v-reconcile-logo{width:57px!important;height:57px!important;flex:0 0 57px;display:grid;place-items:center;border-radius:17px;background:rgba(105,110,210,.10);overflow:hidden}
+.v-reconcile-logo img{width:100%;height:100%;object-fit:contain;padding:5px}
+.v-reconcile-logo svg{width:25px;height:25px}
+.v-reconcile-recorded{background:var(--recon-soft);padding:10px 17px;border:1px solid var(--recon-border);border-radius:18px;display:grid;gap:3px}
+.v-reconcile-recorded strong{font-size:22px;font-weight:760;letter-spacing:-.5px}
+.v-reconcile-observed{padding:10px 12px;display:grid;gap:6px}
+.v-reconcile-observed label{font-size:13px;color:var(--recon-muted);padding-left:3px}
+.v-reconcile-input{display:flex;align-items:center;border:1px solid var(--recon-border);border-radius:13px;min-width:0;padding:9px 10px;gap:3px;font-size:clamp(25px,7.8vw,35px);font-weight:760;letter-spacing:-1.1px;line-height:1.15}
+.v-reconcile-input:focus-within{border-color:var(--recon-accent);box-shadow:0 0 0 2px rgba(0,108,104,.12)}
+.v-reconcile-input input{min-width:0;width:100%;border:0!important;background:transparent!important;color:inherit!important;font:inherit;outline:none!important;padding:0!important;box-shadow:none!important;border-radius:0}
+.v-reconcile-observed small{display:flex;gap:6px;align-items:center}
+#vReconcileForm svg,.v-reconcile-reason-sheet svg{width:18px;height:18px;color:var(--recon-accent,#006c68);flex:none}
+.v-reconcile-fields{display:grid;grid-template-columns:1fr 1.17fr;gap:8px}
+.v-reconcile-date,.v-reconcile-reason{min-width:0;min-height:64px;display:flex;align-items:center;gap:8px;padding:9px;text-align:left}
+.v-reconcile-fields>label>span,.v-reconcile-fields>button>span{display:grid;place-items:center;flex:none}
+.v-reconcile-fields>label>div,.v-reconcile-fields>button>div{display:grid;gap:4px;flex:1;min-width:0}
+.v-reconcile-fields small{font-size:11px!important;white-space:nowrap}
+.v-reconcile-date input{font-size:13px;font-weight:700;min-width:0;width:100%;color:inherit;border:0;background:transparent;padding:0;outline:none}
+.v-reconcile-reason strong{font-size:12px;font-weight:730;line-height:1.2;overflow-wrap:anywhere}
+.v-reconcile-preview{display:grid;gap:10px;padding:13px 14px;background:linear-gradient(145deg,rgba(100,116,145,.035),transparent)}
+.v-reconcile-preview h3{display:flex;align-items:center;gap:8px;font-size:17px;letter-spacing:-.2px;margin:0}
+.v-reconcile-balances{display:grid;grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr);align-items:center;gap:8px;padding:0 1px}
+.v-reconcile-balances>div{display:grid;gap:4px;min-width:0}
+.v-reconcile-balances>div:last-child{text-align:right}
+.v-reconcile-balances>span{color:var(--recon-accent);font-size:24px;text-align:center}
+.v-reconcile-balances strong{font-size:clamp(13px,4vw,18px);letter-spacing:-.35px;overflow-wrap:anywhere}
+.v-reconcile-delta{display:flex;justify-content:space-between;gap:6px;align-items:center;border-top:1px solid var(--recon-border);padding-top:10px;font-size:13px;color:var(--recon-muted)}
+.v-reconcile-delta strong{font-size:16px;color:inherit;white-space:nowrap}
+.v-reconcile-delta strong.negative{color:#d04739!important}
+.v-reconcile-delta strong.positive{color:#00816e!important}
+.v-reconcile-submit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;margin-top:6px;border:0;border-radius:20px;background:linear-gradient(115deg,#006b66,#00716c);color:white;font-size:16px;font-weight:730;cursor:pointer}
+.v-reconcile-submit svg{color:white!important}.v-reconcile-submit:disabled{opacity:.48;cursor:default}
+.v-reconcile-error{margin:0!important;font-size:13px;color:#d04739;line-height:1.35}
+.v-reconcile-error[hidden]{display:none}
+.v-reconcile-reason-sheet{position:fixed;inset:auto 0 0;margin:0 auto;width:min(100%,460px);max-width:100%;max-height:85dvh;overflow:auto;padding:0;border:1px solid rgba(100,116,145,.18);border-radius:27px 27px 0 0;background:#fff;color:#18243e;box-shadow:0 -15px 60px rgba(18,35,50,.14)}
+.v-reconcile-reason-sheet::backdrop{background:rgba(22,34,52,.43)}
+.v-reconcile-reason-sheet>section{padding:10px 17px max(23px,env(safe-area-inset-bottom));display:grid;gap:9px}
+.v-reconcile-grip{height:5px;width:54px;border-radius:10px;background:#b9c0ce;margin:0 auto 7px}
+.v-reconcile-reason-sheet header{display:flex;justify-content:space-between;align-items:center}
+.v-reconcile-reason-sheet h3{font-size:23px;letter-spacing:-.6px;margin:0}
+.v-reconcile-reason-sheet header button{border:1px solid #e1e8ec;background:#ebf5f3;color:#14213d;width:39px;height:39px;border-radius:50%;font-size:25px}
+.v-reconcile-reason-sheet p{font-size:14px;color:#57647b;margin:0 0 4px}
+.v-reconcile-reason-list{display:grid;gap:5px}
+.v-reconcile-reason-list button{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid #dfe4ea;background:transparent;color:inherit;padding:12px;border-radius:14px;min-height:49px}
+.v-reconcile-reason-list button[aria-pressed=true]{background:#e8f5f3;border-color:#d5e8e6}
+.v-reconcile-reason-list strong{flex:1;font-size:14px}
+.v-reconcile-reason-list button>span{width:24px;height:24px;display:grid;place-items:center;flex:none;border-radius:50%;color:white}
+.v-reconcile-reason-list button[aria-pressed=true]>span{background:#006c68}
+@media(max-width:790px){
+ .v-reconcile-layer.modal-layer{align-items:flex-start!important;justify-content:center!important;padding:0!important;inset:0!important;background:#fff!important}
+ .v-reconcile-dialog.modal{width:100%!important;max-width:none!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important;background:#fff!important;color:#14213d!important;box-shadow:none!important}
+ #vReconcileForm{max-width:480px;margin:auto;padding-top:max(14px,env(safe-area-inset-top));padding-bottom:max(18px,env(safe-area-inset-bottom))}
+}
+@media(max-height:740px) and (max-width:790px){
+ #vReconcileForm{gap:8px;padding-top:9px;padding-bottom:10px}
+ .v-reconcile-account{min-height:63px;padding:8px 12px}.v-reconcile-logo{width:47px!important;height:47px!important;flex-basis:47px}
+ .v-reconcile-recorded{padding:8px 12px}.v-reconcile-preview{padding:9px 12px;gap:8px}.v-reconcile-submit{margin-top:2px;min-height:45px}
+}

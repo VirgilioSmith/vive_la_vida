@@ -2558,6 +2558,7 @@ function v265LedgerModel(){
  };
  const items=all.map((t,i)=>({t,i,trueAt:trueTime(t)}));
  items.sort((a,b)=>String(a.t.date||'').localeCompare(String(b.t.date||''))||
+  ((a.t.reconciliationOrderAt||b.t.reconciliationOrderAt)?String(a.t.reconciliationOrderAt||a.t.created||'').localeCompare(String(b.t.reconciliationOrderAt||b.t.created||'')):0)||
   (a.trueAt&&b.trueAt?a.trueAt.localeCompare(b.trueAt):0)||
   String(a.t.created||'').localeCompare(String(b.t.created||''))||a.i-b.i);
  // Ambiguity: several operations on one product on the same date without
@@ -5902,9 +5903,123 @@ document.addEventListener('input',e=>{const f=e.target.form;if(f?.id==='transact
 
 function transactionForm(partial={},editId=null){
  const t=partial?.type||'expense';
+ if(t==='adjustment'&&!String(partial.accountId||'').startsWith('card:')&&(!partial.cardId||partial.accountId))return vReconcileAccountForm(partial,editId);
  if((t==='card_charge'&&['annual_fee','interest','commission'].includes(partial?.chargeKind))||(t==='income'&&partial?.certificateId))return legacyTransactionForm(partial,editId);
  if(['income','expense','card_charge','card_payment','transfer'].includes(t))return guidedTransactionForm({...partial,flowMode:partial.flowMode||({income:'income',expense:'spend',card_charge:'spend',card_payment:'cardpay',transfer:'own'}[t])},editId);
  return legacyTransactionForm(partial,editId);
+}
+/* Account reconciliation: a bank observation is a target balance, never a
+   transaction amount. Read the existing ledger at the selected date, excluding
+   the adjustment being replaced. Opening balances remain immutable. */
+const vReconcileReasons=['Diferencia de saldo','Corrección de registro','Ajuste bancario','Regularización contable','Otro motivo documentado'];
+function vReconcileCents(value){
+ const s=String(value??'').trim().replace(',','.');
+ if(!/^-?\d+(?:\.\d{0,2})?$/.test(s))return null;
+ const [whole,decimal='']=s.replace('-','').split('.');
+ const cents=(Number(whole)*100+Number(decimal.padEnd(2,'0')))*(s.startsWith('-')?-1:1);
+ return Number.isSafeInteger(cents)&&Math.abs(cents)<=MAX_MONEY*100?cents:null;
+}
+function vReconcileQuote(a,date,observed,previous=null){
+ if(!a||isHidden(a)||!['DOP','USD'].includes(a.currency))throw Error('Selecciona una cuenta activa.');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!a.opened||date<a.opened||date>today())throw Error('Selecciona una fecha entre la apertura de la cuenta y hoy.');
+ v99Invalidate();
+ const excluded=previous?.accountId===a.id&&previous.date<=date?Math.round(Number(previous.amount)*100):0;
+ const before=Math.round(getAccountBalance(a,date)*100)-excluded;
+ const target=vReconcileCents(observed);
+ if(target===null)throw Error('Introduce un saldo válido con hasta dos decimales.');
+ const delta=target-before;
+ if(!Number.isSafeInteger(delta)||Math.abs(delta)>MAX_MONEY*100)throw Error('La diferencia supera el importe permitido.');
+ return {before,target,delta,currency:a.currency};
+}
+function vReconcileAccountForm(partial={},editId=null){
+ const previous=editId?db.transactions.find(t=>t.id===editId&&t.type==='adjustment'&&t.accountId):null;
+ if(editId&&!previous)return toast('No se encontró la conciliación.');
+ const active=()=>db.accounts.filter(a=>!isHidden(a)&&['DOP','USD'].includes(a.currency));
+ let selected=active().find(a=>a.id===(previous?.accountId||partial.accountId))?.id||active()[0]?.id||'';
+ let reason=vReconcileReasons.includes(previous?.note)?previous.note:vReconcileReasons[0];
+ const date=previous?.date||partial.date||today();
+ const root=document.getElementById('modal-root');
+ root.innerHTML=`<div class="modal-layer v-reconcile-layer" data-backdrop="true"><section class="modal v-reconcile-dialog" role="dialog" aria-modal="true" aria-label="Conciliar un saldo">
+ <form id="vReconcileForm" novalidate><header class="v-reconcile-head"><button type="button" class="v-reconcile-back" aria-label="Volver">←</button><h2>${editId?'Editar conciliación':'Conciliar un saldo'}</h2></header>
+ <button type="button" class="v-reconcile-account" aria-haspopup="dialog" aria-label="Seleccionar cuenta"></button>
+ <section class="v-reconcile-recorded"><small>Saldo registrado en Vive</small><strong data-reconcile="registered">—</strong></section>
+ <section class="v-reconcile-observed"><label for="vReconcileObserved">Saldo que visualizas</label><div class="v-reconcile-input"><span data-reconcile="symbol">RD$</span><input id="vReconcileObserved" name="observed" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-label="Saldo real observado"></div><small>${icon('edit')} Ingresa el saldo real de tu cuenta en esa fecha</small></section>
+ <div class="v-reconcile-fields"><label class="v-reconcile-date"><span>${icon('calendar')}</span><div><small>Fecha de operación</small><input name="date" type="date" value="${sanitize(date)}" max="${today()}" aria-label="Fecha de operación"></div></label>
+ <button type="button" class="v-reconcile-reason" aria-haspopup="dialog"><span>${icon('receipt')}</span><div><small>Motivo del ajuste</small><strong></strong></div><b>›</b></button></div>
+ <section class="v-reconcile-preview" aria-live="polite"><h3>${icon('chart')} Vista previa del ajuste</h3><div class="v-reconcile-balances"><div><small>Antes</small><strong data-reconcile="before">—</strong></div><span>→</span><div><small>Después</small><strong data-reconcile="after">—</strong></div></div><div class="v-reconcile-delta"><span>Ajuste automático</span><strong data-reconcile="delta">—</strong></div><small>No modifica tus ingresos ni gastos ordinarios.</small></section>
+ <p class="v-reconcile-error" role="alert" hidden></p><button type="submit" class="v-reconcile-submit">${icon('check')} ${editId?'Guardar conciliación':'Confirmar conciliación'}</button></form></section></div>`;
+ const form=root.querySelector('#vReconcileForm'),observed=form.elements.observed,when=form.elements.date,accountButton=form.querySelector('.v-reconcile-account'),reasonButton=form.querySelector('.v-reconcile-reason'),submit=form.querySelector('.v-reconcile-submit'),error=form.querySelector('.v-reconcile-error');
+ let busy=false,shown=null;
+ function message(s=''){error.textContent=s;error.hidden=!s}
+ const cash=(n,c)=>money(n/100,c,2);
+ function refresh(){
+  const a=account(selected),old=editId?db.transactions.find(t=>t.id===editId):null,c=a?.currency||'DOP';
+  const logo=a?(bank(a.bankId)&&a.kind!=='cash'?bankLogoMark(bank(a.bankId),'v-reconcile-logo'):`<span class="v-reconcile-logo">${icon(a.kind==='cash'?'wallet':'building')}</span>`):'';
+  accountButton.innerHTML=`${logo}<span><strong>${sanitize(a?.name||'Seleccionar cuenta')}</strong><small>${sanitize(a?bankOf(a)+' · '+c:'Elige una cuenta activa')}</small></span><b>›</b>`;
+  reasonButton.querySelector('strong').textContent=reason;
+  when.min=a?.opened||'';form.querySelector('[data-reconcile=symbol]').textContent=c==='USD'?'US$':'RD$';
+  const view=(key,value)=>{form.querySelector('[data-reconcile='+key+']').textContent=value};
+  shown=null;let before=null;
+  try{before=vReconcileQuote(a,when.value,'0',old).before}catch(_){}
+  view('registered',before===null?'—':cash(before,c));view('before',before===null?'—':cash(before,c));
+  try{shown=vReconcileQuote(a,when.value,observed.value,old)}catch(_){}
+  view('after',shown?cash(shown.target,c):'—');
+  const deltaEl=form.querySelector('[data-reconcile=delta]');
+  deltaEl.textContent=shown?(shown.delta===0?'Sin ajuste':(shown.delta<0?'−':'+')+cash(Math.abs(shown.delta),c)):'—';
+  deltaEl.classList.toggle('negative',!!shown&&shown.delta<0);deltaEl.classList.toggle('positive',!!shown&&shown.delta>0);
+  submit.disabled=busy||!shown;
+ }
+ if(previous){
+  try{const a=account(selected),q=vReconcileQuote(a,date,'0',previous);observed.value=((q.before+Math.round(previous.amount*100))/100).toFixed(2)}catch(_){}
+  if(Number.isFinite(previous.reconciliationObserved))observed.value=previous.reconciliationObserved.toFixed(2);
+ }
+ form.querySelector('.v-reconcile-back').onclick=()=>{if(!busy){closeModal();if(!editId)openRegisterAssistant()}};
+ accountButton.onclick=()=>window.openFinancialProductPicker('accountId',active(),id=>{
+  if(id!==selected){selected=id;observed.value='';message('');refresh()}
+ },{direct:true,selected});
+ reasonButton.onclick=()=>{
+  const sheet=document.createElement('dialog');sheet.className='v-reconcile-reason-sheet';sheet.setAttribute('aria-label','Motivo del ajuste');
+  const glyphs=['shield','cycle','wallet','receipt','more'];
+  sheet.innerHTML=`<section><div class="v-reconcile-grip"></div><header><h3>Motivo del ajuste</h3><button type="button" aria-label="Cerrar selector">×</button></header><p>Selecciona el motivo de la conciliación</p><div class="v-reconcile-reason-list">${vReconcileReasons.map((r,i)=>`<button type="button" data-reason="${i}" aria-pressed="${r===reason}">${icon(glyphs[i])}<strong>${r}</strong><span>${r===reason?'✓':''}</span></button>`).join('')}</div></section>`;
+  const close=()=>{sheet.remove();reasonButton.focus({preventScroll:true})};
+  sheet.querySelector('header button').onclick=close;sheet.addEventListener('cancel',e=>{e.preventDefault();close()});
+  sheet.onclick=e=>{if(e.target===sheet)close();const b=e.target.closest('[data-reason]');if(b){reason=vReconcileReasons[Number(b.dataset.reason)];message('');refresh();close()}};
+  root.append(sheet);sheet.showModal();
+ };
+ observed.addEventListener('input',()=>{observed.value=observed.value.replace(',','.');message('');refresh()});
+ when.addEventListener('change',()=>{message('');refresh()});
+ form.addEventListener('submit',async e=>{
+  e.preventDefault();e.stopImmediatePropagation();if(busy||!shown)return;
+  const preview={...shown},id=selected,day=when.value,raw=observed.value,motive=reason;
+  busy=true;submit.disabled=true;message('');
+  try{
+   // Check the revision in the existing authenticated sync channel. Do not
+   // silently post a stale bank observation, even when another device changed it.
+   if(f33Active&&f33Api&&f33User){
+    if(f33Dirty&&!f33Saving)await f33Flush();
+    if(f33Dirty||f33Saving||f33Conflict)throw Error('Espera a que termine la sincronización antes de conciliar.');
+    const {data,error:readError}=await f33Api.from('finance_revision').select('revision').eq('user_id',f33User.id).maybeSingle();
+    if(readError)throw Error('No pudimos verificar el saldo actualizado. Intenta nuevamente.');
+    if(data&&Number(data.revision)!==v405Revision){
+     v715LastRevisionCheck=0;await v10PullRemote();
+     if(Number(data.revision)!==v405Revision)throw Error('No pudimos actualizar el saldo desde el servidor. Intenta nuevamente.');
+    }
+   }
+   if(!form.isConnected)return;
+   if(id!==selected||day!==when.value||raw!==observed.value||motive!==reason)throw Error('Revisa la vista previa antes de confirmar.');
+   const old=editId?db.transactions.find(t=>t.id===editId&&t.type==='adjustment'):null;
+   if(editId&&!old)throw Error('La conciliación ya no existe.');
+   const q=vReconcileQuote(account(id),day,raw,old);
+   if(q.before!==preview.before||q.currency!==preview.currency){refresh();throw Error('El saldo registrado cambió. Revisa el nuevo ajuste y confirma nuevamente.')}
+   if(q.delta===0){
+    if(old)throw Error('No queda diferencia. Elimina la conciliación anterior desde Movimientos para retirarla.');
+    closeModal();toast('El saldo coincide. No se registró ningún ajuste.');return;
+   }
+   saveTx({type:'adjustment',accountId:id,currency:q.currency,date:day,amount:q.delta/100,note:motive,reconciliationObserved:q.target/100,reconciliationBefore:q.before/100},editId||'');
+  }catch(err){if(form.isConnected)message(err.message||'No se pudo confirmar la conciliación.')}
+  finally{busy=false;if(form.isConnected)refresh()}
+ });
+ refresh();
 }
 function openPendingOperation(id){const op=db.pendingOperations.find(p=>p.id===id);if(!op)return toast('No se encontró la operación pendiente.');
  ui.page='register';ui.movementTab='all';ui.reviewFilter='drafts';render();
@@ -5957,6 +6072,12 @@ if(v.type==='card_refund'){
  }else base.originalPurchaseId='';
 }
 if(['income','bank_reward','expense','certificate_funding','certificate_redemption'].includes(v.type)||(v.type==='adjustment'&&v.accountId))base.currency=account(v.accountId).currency;
+if(v.type==='adjustment'&&v.accountId&&v.reconciliationObserved!==undefined){
+ const q=vReconcileQuote(account(v.accountId),v.date,v.reconciliationObserved);
+ if(q.before!==Math.round(v.reconciliationBefore*100)||q.delta!==Math.round(base.amount*100)||q.currency!==v.currency||!vReconcileReasons.includes(v.note))throw Error('La conciliación cambió. Verifica el saldo y la fecha.');
+ base.reconciliationObserved=q.target/100;base.reconciliationBefore=q.before/100;
+ base.reconciliationOrderAt=new Date().toISOString();
+}
 if(v.type==='card_payment'){
  /* El pago debe ser positivo y no superar la deuda de la tarjeta en esa moneda (al editar se devuelve primero el importe anterior). */
  {const pagoNum=Number(v.amount),tarjetaPago=card(v.cardId);
@@ -6995,7 +7116,7 @@ function otherStudioApply(kind){
  queueMicrotask(sync);
 }
 const v29TransactionOriginal=transactionForm;
-transactionForm=function(partial={},editId=null){v29TransactionOriginal(partial,editId);const t=partial?.type;if(t==='card_refund')otherStudioApply('refund');else if(t==='adjustment')otherStudioApply('adjustment');else if(t==='loan_payment')otherStudioApply('loan')};
+transactionForm=function(partial={},editId=null){v29TransactionOriginal(partial,editId);const t=partial?.type;if(t==='card_refund')otherStudioApply('refund');else if(t==='adjustment'&&document.getElementById('transactionForm'))otherStudioApply('adjustment');else if(t==='loan_payment')otherStudioApply('loan')};
 const v29BenefitOriginal=manualBenefitForm;
 manualBenefitForm=function(...args){v29BenefitOriginal(...args);otherStudioApply('benefit');window.__v866Compose?.()};
 
@@ -7451,6 +7572,24 @@ function v360ThreeWayMerge(base,local,remote){
  /* Igualdad estructural sin depender del orden de las claves: tras pasar por el servidor las claves se reordenan y no es un cambio. */
  const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(q=>[q,x[q]])):x);
  const eq=(a,b)=>canon(a)===canon(b);
+ // A reconciliation depends on the observed ledger, not merely on its own ID.
+ // Concurrent edits of separate rows on that account must not merge a stale
+ // delta (e.g. two devices both adjusting the same RD$70.17 difference).
+ const changed=(a,b)=>{
+  const am=new Map((a||[]).map(x=>[x.id,x])),bm=new Map((b||[]).map(x=>[x.id,x]));
+  return [...new Set([...am.keys(),...bm.keys()])].filter(id=>!eq(am.get(id),bm.get(id))).map(id=>[am.get(id),bm.get(id)]);
+ };
+ const lc=changed(base.transactions,local.transactions),rc=changed(base.transactions,remote.transactions);
+ const stale=(own,other,otherDoc,ownDoc)=>own.some(([prev,next])=>{
+  if(!next||next.type!=='adjustment'||!next.accountId||next.reconciliationObserved===undefined)return false;
+  const id=next.accountId,day=next.date;
+  if(other.some(([a,b])=>b?.id===next.id&&eq(b,next)))return false; // already committed, response was lost
+  const accountBasis=d=>(d.accounts||[]).find(a=>a.id===id);
+  const basis=a=>a&&[a.opening,a.opened,a.currency,a.archived,a.bankId];
+  if(!eq(basis(accountBasis(base)),basis(accountBasis(otherDoc)))&&!eq(basis(accountBasis(ownDoc)),basis(accountBasis(otherDoc))))return true;
+  return other.some(([a,b])=>[a,b].some(t=>t&&t.date<=day&&(t.accountId===id||t.toAccountId===id))&&!eq(b,(ownDoc.transactions||[]).find(t=>t.id===(b||a).id)));
+ });
+ if(stale(lc,rc,remote,local)||stale(rc,lc,local,remote))return null;
  const merge=(b,l,r,path='')=>{
   if(eq(l,r))return l;
   if(eq(l,b))return r;
@@ -17749,7 +17888,7 @@ function optionsOf(field){
  const unavailable=universe.filter(x=>!have.has(String(x.id))).map(x=>{const o=productOption(pn,x);const diff=x.currency&&formCurrency&&x.currency!==formCurrency;return {...o,disabled:true,detail:[o.detail,diff?'No disponible: esta operación es en '+formCurrency:'No disponible para esta operación'].filter(Boolean).join(' · ')}});
  return [...accountOptions,...unavailable];
 }
-window.openFinancialProductPicker=(name,products,onConfirm)=>open(name,products.map(item=>productOption(name,item)),'',onConfirm);
+window.openFinancialProductPicker=(name,products,onConfirm,options={})=>open(name,products.map(item=>productOption(name,item)),options.selected||'',onConfirm,undefined,options);
 window.openRegisterProductPicker=(title,products,selected,onConfirm)=>open('product',products.map(({type,item,disabled,reason})=>{const o=productOption(type,item);return disabled?{...o,disabled:true,detail:[o.detail,reason||'No disponible para esta operación'].filter(Boolean).join(' · ')}:o}),selected,id=>{
  const product=products.find(({item})=>String(item.id)===id);
  if(product)onConfirm(productOption(product.type,product.item));
@@ -17838,7 +17977,7 @@ function enhance(){for(const form of root.querySelectorAll('form')){
  }));
  }
 }}
-function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels[name]){if(active)active.dismiss();selected=String(selected||'');const product=productLabels[name]||'producto';
+function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels[name],options={}){if(active)active.dismiss();selected=String(selected||'');const product=productLabels[name]||'producto';
  const layer=document.createElement('dialog');layer.className='v789-product-backdrop v827-picker-backdrop';layer.setAttribute('aria-label',titleText);
  const sheet=document.createElement('section');sheet.className='v789-product-sheet v827-picker-sheet v787-product-picker';
  const grip=document.createElement('div');grip.className='v789-sheet-grip v787-sheet-handle';grip.setAttribute('aria-hidden','true');
@@ -17856,7 +17995,12 @@ function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels
  function keyHandler(e){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();dismiss()}if(e.key==='Tab'){const focusables=[...sheet.querySelectorAll('button:not([disabled]),input')].filter(x=>!x.hidden);if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}
  close.onclick=dismiss;cancel.onclick=dismiss;layer.onclick=e=>{if(e.target===layer)dismiss()};layer.addEventListener('cancel',e=>{e.preventDefault();dismiss()});search.oninput=refresh;document.addEventListener('keydown',keyHandler,true);
  confirm.onclick=()=>{if(!all.some(o=>o.value===selected))return;dismiss();onConfirm(selected);};
- sheet.append(grip,header,search);if(tabs.children.length>1)sheet.append(tabs);sheet.append(list,actions);layer.append(sheet);root.append(layer);if(typeof layer.showModal==='function')layer.showModal();active={dismiss,layer};refresh();close.focus({preventScroll:true});}
+ if(options.direct){
+  layer.classList.add('v-reconcile-account-picker');
+  sheet.append(grip,header,list);
+  list.addEventListener('click',e=>{const row=e.target.closest('.v789-picker-row');if(row&&!row.disabled){dismiss();onConfirm(row.dataset.value)}});
+ }else{sheet.append(grip,header,search);if(tabs.children.length>1)sheet.append(tabs);sheet.append(list,actions)}
+ layer.append(sheet);root.append(layer);if(typeof layer.showModal==='function')layer.showModal();active={dismiss,layer};refresh();close.focus({preventScroll:true});}
  let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;if(active&&!active.layer.isConnected)active.dismiss();enhance()})};new MutationObserver(schedule).observe(root,{childList:true,subtree:true});enhance();
 })();
 
