@@ -40,7 +40,10 @@ async function enter(p,id,amount,date){
  await clickAct(p,'otherAdjust');
  await form(p).waitFor();
  await form(p).locator('.v-reconcile-account').click();
- await p.locator('.v-reconcile-account-picker [data-value="'+id+'"]').click();
+ const picker=p.locator('.v789-product-backdrop:visible');
+ await picker.getByRole('button',{name:String(id).startsWith('card:')?'Tarjetas':'Cuentas',exact:true}).click();
+ await picker.locator('[data-value="'+id+'"]').click();
+ await picker.locator('.v789-picker-confirm').click();
  if(date)await form(p).locator('[name=date]').fill(date);
  await form(p).locator('[name=observed]').fill(String(amount));
 }
@@ -144,7 +147,7 @@ async function confirm(p){
   await confirm(p);await clickAct(p,'closeModal');check('USD exacto',await balance(p,'recon-7'),99.99);
   check('Cuenta en moneda correcta',(await txs(p,'recon-7'))[0].currency,'USD');
   await enter(p,'recon-9',90);
-  await form(p).locator('.v-reconcile-account').click();await p.locator('.v-reconcile-account-picker [data-value="recon-10"]').click();
+  await form(p).locator('.v-reconcile-account').click();await p.locator('.v789-product-backdrop:visible [data-value="recon-10"]').click();await p.locator('.v789-product-backdrop:visible .v789-picker-confirm').click();
   check('Cambio de cuenta limpia importe',await form(p).locator('[name=observed]').inputValue(),'');
   await form(p).locator('[name=observed]').fill('90,25');
   check('Coma decimal',await capture(p,'after'),'RD$90.25');
