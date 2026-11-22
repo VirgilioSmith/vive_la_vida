@@ -1520,6 +1520,7 @@ function vWalletPc(){
  };
  const walletAction=(label,act,attrs='')=>`<button type="button" data-act="${act}" ${attrs}>${label}</button>`;
  const activeId=active?`data-id="${sanitize(active.id)}"`:'';
+ if(ui.page==='wallet')requestAnimationFrame(vWalletPcFitMoney);
  return `<div class="vWalletPc" aria-label="Wallet PC">
   <section class="vWalletPc-stats" aria-label="Indicadores de crédito">
    ${stat('Crédito disponible',vWalletPcAmount(vWalletPcEquivalent(sum('dop','available'),sum('usd','available'))),icon('wallet'),split(sum('dop','available'),sum('usd','available')),'is-available')}
@@ -1561,7 +1562,7 @@ function vWalletPc(){
      return `<button type="button" class="vWalletPc-limit-row" data-act="walletPcSelect" data-id="${sanitize(c.id)}"><span class="vWalletPc-product-mark" aria-hidden="true">${v1002BankGlyph(c,'card')}</span><span><strong>${sanitize(c.name)}</strong><small>${vWalletPcSplit(c.limitDOP,c.limitUSD,0)}</small><span class="vWalletPc-row-meter">${bar(used,'Utilización de la tarjeta')}<small>${percent(used)}</small></span></span><b>${vWalletPcAmount(equivalent)}</b></button>`;
     }).join('')}</div>`:`<p class="vWalletPc-note">Añade una tarjeta para consultar sus límites y cortes.</p>`}
     ${bankScope!==null&&list.length?vBanksCreditTrend(list):''}
-    ${vWalletPcRecentActivity(list)}
+    ${ui.page==='wallet'?(active?vWalletPcRecentActivity([active],5):''):vWalletPcRecentActivity(list)}
    </section>
    <div class="vWalletPc-right">
     ${v371CardReturnWidget(active||{name:'tus tarjetas'},active?null:list,false,true)}
@@ -1576,10 +1577,46 @@ function vWalletPc(){
  </div>`;
 }
 
-function vWalletPcRecentActivity(cards){
+/* Ajuste óptico de importes exclusivamente en Wallet PC.
+   Primero respeta el tamaño diseñado; reduce solo cuando el valor real no cabe. */
+function vWalletPcFitMoney(){
+ const root=document.querySelector('main.vWalletPc-world .vWalletPc');
+ if(!root)return;
+ const targets=root.querySelectorAll(
+  '.vWalletPc-stat strong,.vWalletPc-stat small,'+
+  '.vWalletPc-limit > strong,.vWalletPc-limit > small,.vWalletPc-limit-row > b,'+
+  '.vWalletPc-return .v371-return-tile strong,'+
+  '.vWalletPc-cuts button b,.vWalletPc-chart-total strong,.vWalletPc-recent-list button > b'
+ );
+ for(const el of targets){
+  const txt=(el.textContent||'').trim();
+  if(!txt||txt==='—')continue;
+  el.style.removeProperty('font-size');
+  el.style.setProperty('white-space','nowrap','important');
+  el.style.setProperty('overflow-wrap','normal','important');
+  el.style.setProperty('max-width','100%','important');
+  const width=el.clientWidth;
+  const original=parseFloat(getComputedStyle(el).fontSize);
+  if(!width||!original)continue;
+  let measured=el.scrollWidth;
+  if(measured<=width+1)continue;
+  // Una reducción proporcional evita truncamiento y no cambia el dato original.
+  const floor=txt.includes('RD$')||txt.includes('US$')?12:13;
+  let size=Math.max(floor,Math.min(original,original*(width-3)/measured));
+  el.style.setProperty('font-size',size.toFixed(2)+'px','important');
+  measured=el.scrollWidth;
+  if(measured>width+1&&size>floor){
+   size=Math.max(floor,size*(width-2)/measured);
+   el.style.setProperty('font-size',size.toFixed(2)+'px','important');
+  }
+ }
+}
+window.addEventListener('resize',()=>requestAnimationFrame(vWalletPcFitMoney));
+
+function vWalletPcRecentActivity(cards,maxRows=3){
  const ids=new Set(cards.map(c=>String(c.id)));
  const allowed=new Set(['card_charge','card_refund','card_payment','card_advance','card_reward','annual_fee','card_annual_fee']);
- const rows=recentTx().filter(t=>t.cardId&&ids.has(String(t.cardId))&&allowed.has(t.type)).slice(0,3);
+ const rows=recentTx().filter(t=>t.cardId&&ids.has(String(t.cardId))&&allowed.has(t.type)).slice(0,maxRows);
  if(!cards.length)return '';
  return `<section class="vWalletPc-recent" aria-label="Movimientos recientes de tarjetas">
    <div class="vWalletPc-recent-title"><h3>Movimientos recientes</h3><small>Últimos registros</small></div>
@@ -1705,7 +1742,7 @@ function main(){
  const heads={score:['Vive Score','Tu comportamiento crediticio, explicado.'],pressure:['Presión financiera','El mismo calendario de Inicio, ampliado'],wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
  let h=heads[ui.page]||heads.overview;
  // V363: marca unificada en la segunda línea del encabezado de cada sección.
- h=desktopWallet?['Tu universo financiero','Todo tu crédito y sus beneficios, en un solo lugar.']:desktopBanks?['Tu posición bancaria','Tus bancos y productos, en una sola vista.']:[h[0],'vive el hoy'];
+ h=desktopWallet?['Tu universo financiero','Todos tus créditos y sus beneficios, en un solo lugar.']:desktopBanks?['Tu posición bancaria','Tus bancos y productos, en una sola vista.']:[h[0],'vive el hoy'];
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong class="v908-bar-brand" aria-label="${APP_BRAND}">${brandMark()}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}${desktopWallet?' vWalletPc-world':''}${desktopBanks?' vBanksPc-world':bankView?' vBanksMobile-world':''}">
   <header class="topbar"><div class="topbar-intro">${desktopWallet?'<span class="vWalletPc-kicker">WALLET</span>':desktopBanks?'<span class="vBanksPc-kicker">BANCOS</span>':''}${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<div class="v363-vision-identity"><span class="v363-vision-brand">vive el hoy</span><label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label></div>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v402SyncButton()}${(desktopWallet||desktopBanks)?`<button type="button" class="btn ghost v165-search-icon ${desktopWallet?'vWalletPc-search':'vBanksPc-search'}" data-v71-search-open="1" aria-label="${desktopBanks?'Buscar cuentas, tarjetas, préstamos o certificados':'Buscar movimientos, tarjetas o comercios'}">${icon('search')}<span>${desktopBanks?'Buscar cuentas, tarjetas, préstamos o certificados...':'Buscar movimientos, tarjetas o comercios...'}</span></button>`:v165SearchAction()}${v36Bell()}${window.VIVE_ENABLED===false?'':`<button type="button" class="v934-web-vive" data-vive-open="web" aria-label="Abrir Vive" title="Vive"><span class="v934-vive-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span></button>`}<button type="button" class="v936-web-settings" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.52V20h-3v-.08a1.65 1.65 0 0 0-1-1.52 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.6 15a1.65 1.65 0 0 0-1.52-1H6v-3h.08A1.65 1.65 0 0 0 7.6 10a1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06A1.65 1.65 0 0 0 11 6.6a1.65 1.65 0 0 0 1-1.52V5h3v.08A1.65 1.65 0 0 0 16 6.6a1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.52 1H21v3h-.08A1.65 1.65 0 0 0 19.4 15Z" transform="translate(-1.5 -0.5) scale(1.05)"/></svg></button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
  
@@ -12909,7 +12946,7 @@ function v144BenefitsPage(scope=null){
  if(cards.length&&!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage(scope)}
  const hero=typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():'';
  return `<div class="v144-benefit-world v180-benefits-clean v187-benefits-only" id="v144Benefits">${hero}${v389BenefitsKPIs(shown)}
- <section class="v187-benefits-ledger" aria-label="Tabla de beneficios por tarjeta"><div class="v187-benefits-ledger-head"><div><span>RESULTADO POR TARJETA</span><h3>Beneficios y costos</h3><p>Solo beneficio acreditado y costo efectivamente pagado forman el resultado neto.</p></div>${cards.length?`<button type="button" class="v187-benefits-add" data-v144-action="new-cashback" data-id="${sanitize(shown[0]?.id||cards[0].id)}">${icon('plus')} Registrar beneficio</button>`:''}</div>
+ <section class="v187-benefits-ledger" aria-label="Tabla de beneficios por tarjeta"><div class="v187-benefits-ledger-head"><div><span>RESULTADO POR TARJETA</span><h3>Beneficios y costos</h3><p>Solo beneficio acreditado y costo efectivamente pagado forman el resultado neto.</p></div>${cards.length?`<div class="${!isMobileViewport()&&ui.page==='wallet'&&ui.vWalletPcBenefits?'vWalletPc-benefit-actions':''}"><button type="button" class="v187-benefits-add" data-v144-action="new-cashback" data-id="${sanitize(shown[0]?.id||cards[0].id)}">${icon('plus')} Registrar beneficio</button>${!isMobileViewport()&&ui.page==='wallet'&&ui.vWalletPcBenefits?`<button type="button" class="v187-benefits-add" data-act="annualFee" data-id="${shown.length===1?sanitize(shown[0].id):''}" ${shown.length===1?'':'disabled title="Selecciona una tarjeta para registrar anualidad y seguros"'}>${icon('receipt')} Registrar anualidad y seguros</button>`:''}</div>`:''}</div>
  ${cards.length?`${scope?v144CardFilterUI([['all','Tarjetas de esta selección'],...cards.map(c=>[c.id,c.name])]):v144CardFilterUI()}${v144BenefitsTable(shown)}`:'<div class="v187-benefits-empty">No tienes tarjetas registradas. <button type="button" data-act="addCard">Añadir tarjeta</button></div>'}
  </section></div>`;
 }
