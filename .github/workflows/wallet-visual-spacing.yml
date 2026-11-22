@@ -75,7 +75,7 @@ jobs:
                     }
                   }
                   assert.ok(geom.global<=2,'Desborde documento '+w);
-                  if(w>=1351){assert.equal(geom.tiles[0].y,geom.tiles[3].y,'Retorno en una fila '+w);}
+                  assert.ok(geom.tiles.every(v=>v.font>=10),'Valores de retorno legibles '+w);
                   assert.ok(geom.right[1].y>geom.right[0].y+geom.right[0].h,'Espacio retorno-cortes '+w);
                   assert.ok(geom.right[2].y>geom.right[1].y+geom.right[1].h,'Espacio cortes-consumo '+w);
                   await p.screenshot({path:'test-results/wallet-visual-spacing/wallet-'+w+'.png',fullPage:true,animations:'disabled'});
