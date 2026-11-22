@@ -27,11 +27,15 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     const faces=p.locator('.v68-wallet-gallery .v68-wallet-face');
     const selected=p.locator('.v68-wallet-gallery .v68-wallet-face.selected');
     const waitSelected=async id=>{try{await p.waitForFunction(id=>document.querySelector('.v68-wallet-gallery .v68-wallet-face.selected')?.dataset.id===id,id,{timeout:10000})}catch(e){console.log('Carrusel:',await p.locator('.v68-wallet-gallery').evaluate(el=>({scrollLeft:el.scrollLeft,width:el.clientWidth,scrollWidth:el.scrollWidth,selected:[...el.children].map(c=>({id:c.dataset.id,left:c.getBoundingClientRect().left,selected:c.classList.contains('selected')}))})));throw e}};
-    await waitSelected(fixture.first);
+    await waitSelected(fixture.second);
     await p.waitForTimeout(700);
-    assert.equal(await selected.getAttribute('data-id'),fixture.first,'Apertura habitual');
+    assert.equal(await selected.getAttribute('data-id'),fixture.second,'Apertura en tarjeta individual de mayor límite');
     assert.equal(await faces.count(),3);
     assert.equal(await faces.first().getAttribute('data-id'),GLOBAL);
+    const cardOrder=()=>faces.evaluateAll(els=>els.map(el=>el.dataset.id));
+    const dotOrder=()=>p.locator('.v68-wallet-dots button').evaluateAll(els=>els.map(el=>el.dataset.id));
+    assert.deepEqual(await cardOrder(),[GLOBAL,fixture.second,fixture.first]);
+    assert.deepEqual(await dotOrder(),await cardOrder());
     assert.equal(await p.locator('.v68-wallet-dots button').count(),3);
     assert.equal(await p.locator('.v266-activity').count(),1);
     // Simula el deslizamiento del carrusel hacia la primera tarjeta.
@@ -61,15 +65,15 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     if(process.env.WALLET_SCREENSHOT)await p.screenshot({path:process.env.WALLET_SCREENSHOT+'-'+theme+'.png'});
     // Volver a una tarjeta real conserva sus acciones y su historial.
     await p.locator('.v68-wallet-dots button').nth(2).click();
-    await waitSelected(fixture.second);
+    await waitSelected(fixture.first);
     await p.locator('.v266-activity').waitFor();
     assert.equal(await p.locator('.v266-wallet-actions button').count(),4);
     await p.waitForTimeout(400);
     await p.evaluate(()=>window.__T.go('overview'));
     await p.evaluate(()=>window.__T.go('wallet'));
-    await waitSelected(fixture.second);
+    await waitSelected(fixture.first);
     await p.waitForTimeout(400);
-    assert.equal(await selected.getAttribute('data-id'),fixture.second);
+    assert.equal(await selected.getAttribute('data-id'),fixture.first);
     await p.locator('.v68-wallet-dots button').first().click();
     await waitSelected(GLOBAL);
     // El saldo cambia automáticamente al actualizar los datos de una tarjeta.
@@ -83,6 +87,18 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.equal(await read('.v565-secondary > b'),224000);
     assert.deepEqual(await parts('.v565-primary .v550-currency-breakdown b'),[150000,2600]);
     assert.equal(await read('.v565-primary > strong'),306000);
+    // Mayor límite en RD$ no equivale necesariamente a mayor límite consolidado.
+    await p.evaluate(()=>{const t=window.__T;t.dbg().cards[0].limitDOP=250000;t.inv();t.go('wallet')});
+    assert.deepEqual(await cardOrder(),[GLOBAL,fixture.second,fixture.first]);
+    await p.locator('.v68-wallet-dots button').nth(1).click();
+    await waitSelected(fixture.second);
+    // Si cambia el límite, se actualiza el orden sin cambiar la tarjeta seleccionada.
+    await p.evaluate(()=>{const t=window.__T;t.dbg().cards[0].limitDOP=270000;t.inv();t.go('wallet')});
+    assert.deepEqual(await cardOrder(),[GLOBAL,fixture.first,fixture.second]);
+    assert.deepEqual(await dotOrder(),await cardOrder());
+    await p.waitForTimeout(400);
+    assert.equal(await selected.getAttribute('data-id'),fixture.second);
+    assert.deepEqual(await p.evaluate(()=>window.__T.dbg().cards.map(c=>c.id)),[fixture.first,fixture.second],'No reordena los registros originales');
     assert.deepEqual(errors,[]);
     console.log('OK Crédito Global '+theme+' · carrusel, importes, utilización, actualización y navegación');
    }finally{await ctx.close()}

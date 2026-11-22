@@ -1344,7 +1344,9 @@ function v6WalletTransactionDetail(id){
 /* V68 — Wallet independiente y estrictamente visual. No genera movimientos por sí sola. */
 const V68_GLOBAL_ID='__vive_wallet_credit_global__';
 function v68Wallet(){
- const cards=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
+ // Orden visual por límite contractual equivalente en RD$; no modifica db.cards.
+ const creditLimit=c=>num(c.limitDOP)+fx(num(c.limitUSD),'USD');
+ const cards=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c)).sort((a,b)=>creditLimit(b)-creditLimit(a));
  if(!cards.length)return `<section class="v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">TU CARTERA</span><h1>Mis tarjetas</h1></div><button class="v266-wallet-add" data-act="addCard" aria-label="Añadir tarjeta">${icon('plus')}</button></header><div class="v266-empty"><strong>Tu Wallet comienza aquí.</strong><p>Agrega una tarjeta para consultar crédito, cortes, pagos y actividad.</p><button class="btn" data-act="addCard">Añadir tarjeta</button></div></section>`;
  // La tarjeta virtual no forma parte de db.cards ni de ningún selector de operaciones.
  const global=ui.v68WalletId===V68_GLOBAL_ID;
