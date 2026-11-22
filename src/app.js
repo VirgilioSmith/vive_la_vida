@@ -1420,7 +1420,6 @@ function v68Wallet(){
  return `<div class="v1244-cuthead ${isLate?'is-late':act.length?'is-soon':'is-ok'}"><strong>${title}</strong><span>${sub}</span></div><div class="v1244-pills">${L.map(x=>{const amt=num(x.bill).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return `<button type="button" class="v1244-pill" ${x.has?`${action('pay-cut',`data-act="payCard" data-id="${sanitize(active.id)}"`)} data-ccy="${x.cc}"`:'disabled'} title="${x.has?(x.late?'Venció ':'Vence ')+prettyDate(x.date):''}" aria-label="${x.has?'Pagar corte en '+x.sym+' '+amt+' · '+prettyDate(x.date):'Sin saldo facturado en '+x.sym}"><span class="v1244-pill-top"><b>${x.sym}</b><em>${amt}</em></span><span class="v1244-pill-go">${icon('arrow')}</span></button>`}).join('')}</div>`})()}</div>
 </section>
  ${v371CardReturnWidget(active,global?cards:null)}
- ${v921WalletAdvanceDetails(active,global?cards:null)}
  ${global?'':`
  <section class="v266-wallet-panel v266-activity"><div class="v266-panel-heading"><div><span class="v266-overline">TUS ÚLTIMOS CONSUMOS</span><h2>Actividad reciente</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Ver todos los movimientos">${icon('arrow')}</button></div>${rows||'<p class="v266-empty-activity">Sin movimientos recientes en esta tarjeta.</p>'}</section>
 `}
@@ -18409,19 +18408,6 @@ function v900AdvanceMonthly(c,month=ui.month||today().slice(0,7),currency=null){
 
 
 
-function v921WalletAdvanceDetails(c,consolidatedCards=null){
- const d=consolidatedCards?consolidatedCards.map(card=>v900AdvanceMonthly(card)).reduce((s,x)=>({count:s.count+x.count,net:rnd(s.net+x.net),fee:rnd(s.fee+x.fee),gross:rnd(s.gross+x.gross)}),{count:0,net:0,fee:0,gross:0}):v900AdvanceMonthly(c);
- const count=d.count;
- // Use the actual Cortes por moneda structure and classes: identical summary, rows, footer.
- // Do not create an extra card, inner grid, faux boxes or secondary shell.
- return `<details class="v266-wallet-detail v933-wallet-advance v935-wallet-accordion" aria-label="Avance de efectivo del mes">
-  <summary><span>${icon('cashAdvance')} Avance de efectivo <small>${count} avance${count===1?'':'s'}</small></span>${icon('arrow')}</summary>
-  <div class="v266-currency-row"><span>Efectivo recibido</span><b>${money(d.net,'DOP',2)}</b></div>
-  <div class="v266-currency-row"><span>Comisiones cobradas</span><b>${money(d.fee,'DOP',2)}</b></div>
-  <div class="v266-currency-row"><span>Deuda originada</span><b>${money(d.gross,'DOP',2)}</b></div>
-  <p>RD$ equivalentes · Sin impuestos añadidos.</p>
- </details>`;
-}
 function v900CardDetailPanel(c){
  const a=v900AdvanceMonthly(c),pct=Number.isFinite(Number(c.advanceFeePct))?num(c.advanceFeePct):6.5;
  return `<div class="panel section v900-advance-card"><div class="panel-head"><div><h3>Avances de efectivo</h3><p class="subtle">Comisión configurada: ${pct.toFixed(2)}% · solo para nuevos avances</p></div><button type="button" class="v900-open-advance" data-v900-action="advance" data-id="${sanitize(c.id)}">Registrar avance</button></div><div class="v900-advance-summary-grid"><div><small>Efectivo recibido este mes</small><strong>${money(a.net,'DOP',2)}</strong></div><div><small>Comisiones del mes</small><strong>${money(a.fee,'DOP',2)}</strong></div><div><small>Deuda generada</small><strong>${money(a.gross,'DOP',2)}</strong></div></div><p class="footnote">Los cambios de comisión no alteran movimientos ya registrados. Los pagos posteriores disminuyen la deuda habitual de la tarjeta; no vuelven a descontar el efectivo recibido.</p></div>`;

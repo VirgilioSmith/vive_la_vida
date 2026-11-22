@@ -61,7 +61,8 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.equal(await read('.v1244-gauge b'),19.6);
     assert.equal(await p.locator('.v266-activity').count(),0);
     assert.equal(await p.locator('.v266-wallet-actions button').count(),4);
-    for(const section of ['.v1244-cutbox','.v371-card-return','.v933-wallet-advance','.v266-wallet-note'])assert.equal(await p.locator(section).count(),1);
+    for(const section of ['.v1244-cutbox','.v371-card-return','.v266-wallet-note'])assert.equal(await p.locator(section).count(),1);
+    assert.equal(await p.locator('.v933-wallet-advance').count(),0,'Widget eliminado del DOM');
     assert.equal(await p.evaluate(()=>window.__T.dbg().cards.length),2,'No crea producto financiero');
     assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
     if(process.env.WALLET_SCREENSHOT)await p.screenshot({path:process.env.WALLET_SCREENSHOT+'-'+theme+'.png'});
@@ -123,9 +124,18 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.deepEqual(await parts('.v1244-pill em'),cuts);
     assert.match(await p.locator('.v1244-cuthead strong').innerText(),/CORTES ATRASADOS/);
     assert.deepEqual(await parts('.v371-return-tile strong'),[2400,3000,600,25]);
-    assert.match(await p.locator('.v933-wallet-advance summary').innerText(),/2 avances/);
-    await p.locator('.v933-wallet-advance summary').click();
-    assert.deepEqual(await parts('.v933-wallet-advance .v266-currency-row b'),[7000,455,7455]);
+    // El widget informativo ya no existe, incluso con avances registrados.
+    const absent=async()=>assert.equal(await p.locator('.v933-wallet-advance,[aria-label="Avance de efectivo del mes"]').count(),0);
+    await absent();
+    for(const id of [fixture.first,fixture.second]){
+     await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();
+     await waitSelected(id);
+     await absent();
+     assert.equal(await p.locator('.v266-wallet-actions [data-v900-action="advance"]').count(),1,'Conserva la acción operativa');
+    }
+    await p.locator('.v68-wallet-dots button').first().click();
+    await waitSelected(GLOBAL);
+    await absent();
     assert.equal(await p.locator('.v266-activity').count(),0);
     // El corte global abre el desglose real por tarjeta y moneda.
     await p.locator('.v266-wallet-actions [data-mode="cuts"]').click();
