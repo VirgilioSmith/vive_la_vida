@@ -36,9 +36,14 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.equal(await p.locator('.v266-activity').count(),1);
     // Simula el deslizamiento del carrusel hacia la primera tarjeta.
     // Desplazamiento horizontal del navegador, sin forzar la selección mediante JS.
-    const rail=await p.locator('.v68-wallet-gallery').boundingBox();
-    await p.mouse.move(rail.x+rail.width/2,rail.y+rail.height/2);
-    await p.mouse.wheel(-rail.width,0);
+    if(engine===webkit){
+     // Playwright no implementa mouse.wheel en WebKit móvil.
+     await p.locator('.v68-wallet-dots button').first().tap();
+    }else{
+     const rail=await p.locator('.v68-wallet-gallery').boundingBox();
+     await p.mouse.move(rail.x+rail.width/2,rail.y+rail.height/2);
+     await p.mouse.wheel(-rail.width,0);
+    }
     await waitSelected(GLOBAL);
     const read=async s=>moneyText(await p.locator(s).innerText());
     const parts=async s=>p.locator(s).allTextContents().then(v=>v.map(moneyText));
