@@ -1947,6 +1947,7 @@ function vBanksPicker(){
   if(id==='__banks_tools__'){ui.vBanksMobileChrome=!ui.vBanksMobileChrome;render();return;}
   vBanksSelect(id);render();document.querySelector('.vBanks-mobile-selector')?.focus({preventScroll:true});
  },scope.selected?.id||V_BANKS_ALL);
+ if(isMobileViewport())setTimeout(()=>document.querySelector('dialog.v827-picker-backdrop')?.classList.add('vBanks-picker'),0);
 }
 function vBanksFlags(f){
  return f.usage===null?'—':f.usage.toFixed(1)+'%';
@@ -2137,7 +2138,7 @@ function vBanksMobileKpi(kind,f,groups){
  }
  if(kind==='certificates'){
   const t=vBanksCertificateTotals(groups.certificates,f.invested);
-  return `<section class="vBanks-kpi" aria-label="Total invertido"><small class="vBanks-kpi-label">${t[0][0]}</small><strong ${vBanksAmountSize(t[0][1])}>${t[0][1]}</strong><dl class="vBanks-kpi-row is-three">${t.slice(1,4).map(([l,v])=>cell(l,v)).join('')}</dl></section>`;
+  return `<section class="vBanks-kpi" aria-label="Total invertido"><small class="vBanks-kpi-label">${t[0][0]}</small><strong ${vBanksAmountSize(t[0][1])}>${t[0][1]}</strong><dl class="vBanks-kpi-row is-three">${t.slice(1,4).map(([l,v])=>cell(l.replace('Intereses netos','Int. netos').replace('Intereses cobrados','Cobrados'),v)).join('')}</dl></section>`;
  }
  return '';
 }
@@ -2189,7 +2190,8 @@ function vBanksDashboard(){
    :`<header class="vBanks-mobile-head"><h1>Bancos</h1><p>Tu posición bancaria consolidada</p>${addBtn}</header>`;
   const filterOn=ui.vBanksMobileFilters||v42InstitutionFilter!=='all'||v61InstitutionProfile!=='all';
   const selector=`<div class="vBanks-selwrap"><button type="button" class="vBanks-mobile-selector" data-act="banksPicker" aria-haspopup="dialog">${logo}<span><strong>${name}</strong><small>${selected?'Vista individual':`${institutions.length} ${institutions.length===1?'institución':'instituciones'}`}</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><button type="button" class="vBanks-filter-btn${filterOn?' is-on':''}" data-act="banksMobileFilters" aria-label="Filtrar instituciones" aria-pressed="${!!filterOn}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></svg></button></div>`;
-  const tools=ui.vBanksMobileFilters||filterOn||controls?`<div class="vBanks-mobile-tools">${filters}${controls}</div>`:'';
+  const mControls=controls.replace(`${icon('arrow')}</summary>`,`<span>Opciones de la institución</span>${icon('arrow')}</summary>`);
+  const tools=`${filterOn?`<div class="vBanks-mobile-tools">${filters}</div>`:''}${controls?`<div class="vBanks-bankopts">${mControls}</div>`:''}`;
   let body;
   if(sKey==='benefits')body=`${ledger}`;
   else if(sKey){

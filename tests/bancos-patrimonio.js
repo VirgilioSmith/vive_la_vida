@@ -171,8 +171,8 @@ async function testBanks(browser,width,theme='light'){
   if(!mobile&&width>=1280)assert.ok(await p.evaluate(()=>document.scrollingElement.scrollHeight<=innerHeight+3),'Bancos PC debe caber sin scroll general a '+width+'px.');
   if(!mobile)assert.ok(await p.evaluate(()=>{
    const el=document.querySelector('main.vBanksPc-world .v371-return-values');
-   return !!el&&getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length===4;
-  }),'El mockup PC conserva cuatro columnas de retorno en una fila.');
+   return !!el&&getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length===2;
+  }),'Beneficios y retorno PC usa cuadrícula 2×2 sin cifras superpuestas.');
   if(!mobile)assert.ok(await p.evaluate(()=>{
    const subtitle=document.querySelector('main.vBanksPc-world .topbar .top-sub');
    const tiles=document.querySelector('main.vBanksPc-world .v371-return-tile');
@@ -292,6 +292,7 @@ async function testBanks(browser,width,theme='light'){
   await p.keyboard.press('Escape');
   await root.getByRole('button',{name:'Volver al resumen'}).click();
   const openProduct=async (kind,id)=>{
+   if(mobile&&await root.locator('.vBanks-back').count())await root.locator('.vBanks-back').click();
    await root.locator(`[data-act="banksPcProducts"][data-id="${kind}"]`).first().click();
    if(!mobile){
     assert.equal(await root.locator('.vBanksPc-bank-list').count(),1,'El filtro conserva el tablero de tres columnas.');
