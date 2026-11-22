@@ -28,7 +28,7 @@ async function scenario(p,s,i,srv){
  await quick(p).locator('[name=purchase]').fill(String(s.p));await quick(p).locator('[name=received]').fill(String(s.r));
  check('Teclado decimal '+i,await quick(p).locator('[name=purchase]').getAttribute('inputmode'),'decimal');
  if(i===0)await shot(p,'03-compra');
- await p.locator('[data-v354-act=pickReceipt]').click();await p.locator('[data-v354-act=chooseReceipt]').first().waitFor({state:'visible'});if(i===0){check('Cuatro situaciones del dinero',await p.locator('[data-v354-act=chooseReceipt]').count(),4);await shot(p,'06-destino-dinero')}
+ await p.locator('[data-v354-act=pickReceipt]').tap();await p.locator('[data-v354-act=chooseReceipt]').first().waitFor({state:'visible'});if(i===0){check('Cuatro situaciones del dinero',await p.locator('[data-v354-act=chooseReceipt]').count(),4);await shot(p,'06-destino-dinero')}
  await p.locator('[data-v354-act=chooseReceipt][data-id="'+s.mode+'"]').click();
  if(['account','account_and_paid'].includes(s.mode)){
   await p.locator('#v354-account-label .v789-select-open').click();await chooseProduct(p,'audit-receiver');
@@ -59,7 +59,7 @@ async function scenario(p,s,i,srv){
 }
 (async()=>{const browser=await (engine==='webkit'?webkit:chromium).launch();const srv=new Servidor();let ctx;
  try{
-  const session=await open(browser,390,844,c=>c.exposeFunction('__srv',(op,payload)=>op==='rpc'?srv.rpc(payload,'A'):srv.read(payload)));ctx=session.ctx;const p=session.p;const errors=[];p.on('pageerror',e=>errors.push(e.message));
+  const session=await open(browser,390,844,c=>c.exposeFunction('__srv',(op,payload)=>op==='rpc'?srv.rpc(payload,'A'):srv.read(payload)));ctx=session.ctx;const p=session.p;const errors=[];p.on('pageerror',e=>{errors.push(e.message);console.error(e.message)});
   await until(async()=>(await sync(p)).active,'sesión');await flush(p);
   await p.evaluate(()=>{const T=window.__T,d=T.dbg(),old=T.fn.plusMonths(T.fn.today(),-1);d.banks.push({id:'audit-bank',name:'Banco Popular',archived:false});for(const [id,name] of [['audit-source','Cuenta origen'],['audit-receiver','Cuenta Digital']])d.accounts.push({id,name,bankId:'audit-bank',kind:'checking',currency:'DOP',opening:50000,opened:old,archived:false});d.cards.push({id:'audit-card',name:'Visa Titanium Popular',bankId:'audit-bank',network:'visa',limitDOP:150000,limitUSD:1000,openingDOP:10000,openingUSD:0,opened:old,cutDay:20,dueDay:15,archived:false});T.inv();T.persist()});await flush(p);
   // Ordinary movement: exact mobile structure and actual native form submission.
