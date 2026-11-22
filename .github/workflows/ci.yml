@@ -128,3 +128,28 @@ jobs:
           name: vive-teclado-numerico-playwright
           path: test-results/native-numeric-input/
           if-no-files-found: ignore
+
+  anualidad-seguros-movil:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Instalar Playwright y navegador
+        run: npm i --no-save playwright@1 && npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Verificar anualidad y seguros en móvil
+        run: node tests/anualidad-seguros-mobile.js
+        env:
+          ANNUAL_BROWSER: ${{ matrix.browser }}
+      - name: Evidencia visual
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vive-anualidad-seguros-${{ matrix.browser }}
+          path: test-results/anualidad-seguros/
+          if-no-files-found: ignore
