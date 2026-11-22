@@ -173,3 +173,34 @@
   body.theme-black #app .vBanksPc-metric:first-child { background: linear-gradient(25deg,#183832,var(--bank-glass) 60%); }
   #app .vBanksPc .vBanksPc-bank-totals .negative { background: color-mix(in srgb, var(--bank-negative) 12%, transparent); border-radius: 14px; width: fit-content; padding: 2px 5px; }
 }
+
+@media (min-width:1350px){
+  html body[data-menu-layout="rail"] #app#app:has(.vBanksPc-world) {--bank-rail-width:clamp(186px,14.35vw,244px)}
+  html body[data-menu-layout="rail"] #app#app main.vBanksPc-world {
+    margin-left:var(--bank-rail-width)!important;width:calc(100% - var(--bank-rail-width))!important;
+  }
+  html body[data-menu-layout="rail"] #app#app:has(.vBanksPc-world) .sidebar.rail-sidebar {
+    width:var(--bank-rail-width)!important;max-width:none!important;padding-inline:clamp(12px,1.4vw,24px)!important;
+    align-items:stretch!important;background:linear-gradient(155deg,#f9fafc,#f3f7f9 74%,#cee9e3)!important;
+  }
+  html body[data-menu-layout="rail"] #app#app:has(.vBanksPc-world) .sidebar.rail-sidebar :is(.rail-main,.rail-bottom) {
+    width:100%!important;align-items:stretch!important;
+  }
+  html body[data-menu-layout="rail"] #app#app:has(.vBanksPc-world) .rail-action[data-wallet-label] {
+    display:flex!important;justify-content:flex-start!important;align-items:center;gap:12px;width:100%!important;
+    padding-inline:10px!important;color:#172039!important;text-align:left;
+  }
+  #app:has(.vBanksPc-world) .rail-action[data-wallet-label]::after {content:attr(data-wallet-label);font-size:14px;font-weight:650;white-space:nowrap}
+  #app:has(.vBanksPc-world) .rail-action[data-wallet-label] .rail-tooltip {display:none!important}
+  html body[data-menu-layout="rail"] #app#app:has(.vBanksPc-world) .rail-action[data-id="banks"].active {background:#d4ebe6!important;color:#005b55!important}
+  html body #app#app:has(.vBanksPc-world) .rail-action[data-id="banks"].active::before {display:none!important}
+  html body.theme-black[data-menu-layout="rail"] #app#app:has(.vBanksPc-world) .sidebar.rail-sidebar {background:#0e1719!important}
+  html body.theme-black[data-menu-layout="rail"] #app#app:has(.vBanksPc-world) .rail-action[data-wallet-label] {color:#eff7f7!important}
+  html body.theme-black[data-menu-layout="rail"] #app#app:has(.vBanksPc-world) .rail-action[data-id="banks"].active {background:#1a423b!important}
+}
+@media (min-width:791px) {
+  #app .vBanksPc-metric .vBanksPc-change span:last-child {color:var(--bank-muted);font-weight:400}
+  #app .vBanksPc-metric .vBanksPc-change {font-weight:650}
+  #app .vBanksPc-metric .vBanksPc-change.positive {color:var(--bank-positive)}
+  #app .vBanksPc-metric .vBanksPc-change.negative {color:var(--bank-negative)}
+}

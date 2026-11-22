@@ -1310,7 +1310,7 @@ function v371CardReturnWidget(c,consolidatedCards=null,bankView=false){
  <div class="v371-return-heading"><div><span class="v266-overline">BENEFICIOS · ${d.year}</span>${title}</div>${bankView?'':`<button type="button" class="v371-return-action" data-v144-action="open-benefits" data-id="${benefitId}" aria-label="Abrir beneficios de ${sanitize(c.name)}">${icon('arrow')}</button>`}</div>
  <div class="v371-return-values">
  <div class="v371-return-tile"><small>${bankView?'Anualidad configurada':'Anualidad'}</small><strong>${bankView?(d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'):cost}</strong></div>
- <div class="v371-return-tile"><small>Beneficios recibidos</small><strong>${benefit}</strong></div>
+ <div class="v371-return-tile${bankView&&d.benefit>0?' positive':''}"><small>Beneficios recibidos</small><strong>${benefit}</strong></div>
  <div class="v371-return-tile ${tone}"><small>${bankView?'Retorno neto':'Retorno'}</small><strong>${net}</strong></div>
  <div class="v371-return-tile ${tone}"><small>Retorno %</small><strong>${percentage}</strong></div>
  </div>
@@ -9089,11 +9089,22 @@ banks=function(){
  const scopedCards=v68WalletCards().filter(c=>v61InstitutionProfile==='all'||scoped.some(b=>linkedBank(c,b.id)));
  const limits=scopedCards.reduce((sum,c)=>[sum[0]+num(c.limitDOP),sum[1]+num(c.limitUSD)],[0,0]);
  const metrics=[['Patrimonio neto',liq+invested-debt,'wallet'],['Fondos',liq,'coins2'],['Deudas totales',debt,'card'],['Límite total',vWalletPcEquivalent(...limits),'landmark']];
+ const date=dateObj(today()),lastMonth=dateStr(new Date(date.getFullYear(),date.getMonth(),0)).slice(0,7);
+ const previous=v61InstitutionProfile==='all'?v134WealthMonth(lastMonth).snapshot:null;
+ const earlierDebt=previous?previous.cards+previous.loans:0;
+ const earlier=previous?[previous.liquid+previous.certificates-earlierDebt,previous.liquid,earlierDebt]:[];
+ const change=(value,i)=>{
+  const base=earlier[i];
+  if(!Number.isFinite(base)||Math.abs(base)<.01)return '';
+  const percent=(value-base)/Math.abs(base)*100,shown=percent.toFixed(1);
+  const tone=Math.abs(percent)<.05?'':(i===2?percent<0:percent>0)?'positive':'negative';
+  return `<small class="vBanksPc-change ${tone}"><span aria-hidden="true">${tone?(percent>0?'▲':'▼'):'·'}</span> ${percent>=.05?'+':''}${shown}% <span>vs. mes anterior</span></small>`;
+ };
  const activeCards=activeBank?bankFigures(activeBank).cc:scopedCards;
  const activeCard=activeCards.find(c=>c.id===ui.vBanksPcCardId);
  return `<div class="vBanksPc">
  <div class="vBanksPc-metrics" aria-label="Situación global">
-  ${metrics.map(([name,value,symbol],i)=>`<div class="vBanksPc-metric"><span class="vBanksPc-stat-icon">${icon(symbol)}</span><div><span>${name}</span><strong>${money(value,'DOP',0)}</strong>${i===3?`<small>${vWalletPcSplit(...limits,0)}</small>`:''}</div></div>`).join('')}
+  ${metrics.map(([name,value,symbol],i)=>`<div class="vBanksPc-metric"><span class="vBanksPc-stat-icon">${icon(symbol)}</span><div><span>${name}</span><strong>${money(value,'DOP',0)}</strong>${i===3?`<small>${vWalletPcSplit(...limits,0)}</small>`:change(value,i)}</div></div>`).join('')}
  </div>
  <div class="vBanksPc-grid" aria-label="Instituciones y sus productos">
   <aside class="vBanksPc-bank-list" aria-label="Seleccionar institución">

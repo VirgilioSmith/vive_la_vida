@@ -54,6 +54,12 @@ async function testBanks(browser){
   for(const [width,height] of [[1672,941],[1440,900],[1280,800],[1024,768],[820,900]]){
    await p.setViewportSize({width,height});
    assert.ok(await bank.evaluate(root=>root.scrollWidth<=root.clientWidth+2 && document.documentElement.scrollWidth<=innerWidth+2),'Desborde a '+width+' px');
+   if(width===1672)assert.ok(await bank.evaluate(root=>{
+    const [institutions,products,analysis]=[...root.querySelector('.vBanksPc-grid').children].map(el=>el.getBoundingClientRect());
+    const kpis=root.querySelector('.vBanksPc-metrics').getBoundingClientRect();
+    const rail=document.querySelector('.rail-sidebar').getBoundingClientRect();
+    return kpis.bottom<institutions.top && rail.width>=180 && institutions.right<products.left && products.right<analysis.left && Math.abs(institutions.top-analysis.top)<2;
+   }),'Los cuatro KPI deben preceder a la fila de instituciones, productos y análisis');
    if(screenshots)await p.screenshot({path:path.join(screenshots,'bancos-'+width+'.png'),animations:'disabled'});
   }
   await p.setViewportSize({width:1440,height:900});
