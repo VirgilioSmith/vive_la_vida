@@ -4,6 +4,10 @@
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const open=require('./harness.js');
+const fs=require('node:fs'),path=require('node:path');
+const screenshotDir=path.resolve(__dirname,'../test-results/vive-mobile');
+fs.mkdirSync(screenshotDir,{recursive:true});
+const shot=(p,name)=>p.screenshot({path:path.join(screenshotDir,name+'.png'),fullPage:true});
 const checks=[];
 function check(label,actual,expected=true){assert.deepEqual(actual,expected,label);checks.push(label);console.log('✓ '+label)}
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -12,6 +16,7 @@ async function fastOpen(p){await p.evaluate(()=>{const b=document.createElement(
 async function chooseNewContact(p,first,last){
  await p.locator('.v354-person-trigger').click();
  check('Selector de contactos visible',await p.locator('#v354-person-search').count(),1);
+ await shot(p,'selector-contactos');
  await p.locator('[data-v354-act="newPerson"]').click();
  check('Crear contacto sin perder compra',await p.locator('#v354-new-person').count(),1);
  await p.locator('#v354-new-person [name=firstName]').fill(first);
@@ -32,6 +37,7 @@ async function thirdParty(p,purchase,received,mode,paidAmount,first){
  await p.locator('#v354-form').evaluate(f=>f.requestSubmit());
  check('Confirmación financiera',await p.locator('[data-v354-act=confirm]').count(),1);
  if(received>purchase)check('Sobrante como dinero por devolver',(await p.locator('.v355-review-hero').innerText()).includes('Por devolver'),true);
+ await shot(p,'confirmacion-'+first);
  await p.locator('[data-v354-act=confirm]').click();
  await sleep(300);
  return p.evaluate(name=>{
@@ -58,6 +64,7 @@ async function thirdParty(p,purchase,received,mode,paidAmount,first){
     await amount.fill('2500,75');
     check('Admite coma decimal '+w,await amount.inputValue(),'2500.75');
     check('No ofrece categoría eliminada '+w,await p.locator('[data-v749=quick][data-value=Transporte],[data-mqr-act=preset][data-id=Transporte]').count(),0);
+    await shot(p,'nuevo-movimiento-'+w);
     check('Sin error de JavaScript '+w,errors.length,0);
     if(w===390){
      const r1=await thirdParty(p,400,500,'account',0,'AnaVive');
