@@ -38,7 +38,8 @@ async function thirdParty(p,purchase,received,mode,paidAmount,first,source='card
  }
  await p.locator('#v354-form [name=purchase]').fill(String(purchase));
  await p.locator('#v354-form [name=received]').fill(String(received));
- await p.locator('#v354-form [name=receiptMode]').selectOption(mode);
+ await p.locator('[data-v354-act=pickReceipt]').click();
+ await p.locator('[data-v354-act=chooseReceipt][data-id="'+mode+'"]').click();
  await p.locator('#v354-form [name=channel]').selectOption('presencial');
  if(mode==='account_and_paid')await p.locator('#v354-form [name=paidAmount]').fill(String(paidAmount));
  check('Avance del saldo pendiente',await p.locator('#v354-owed-preview').innerText().then(v=>v.includes(String(Math.abs(purchase-received)))),true);
