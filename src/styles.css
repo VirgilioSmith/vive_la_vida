@@ -56038,3 +56038,18 @@ html body #app#app .v911-logo *{color:inherit!important;stroke:currentColor}
 
 /* V1291 · Explorar: solo la etiqueta de sección, sin títulos descriptivos */
 html body #app#app #page#page .v410-explore-sec>header>.v410-kicker{display:block!important;margin:8px 2px 10px!important;font-size:12px!important;font-weight:750!important;letter-spacing:.09em!important;color:var(--v424-accent-strong,var(--accent))!important}
+
+/* V1292 · Entrada monetaria nativa y safe area en el registro móvil web.
+   No altera el diseño de escritorio ni presenta teclado HTML. */
+@media (max-width:790px){
+ #modal-root .mqr-modal{max-height:100dvh!important;height:100dvh!important;display:flex!important;flex-direction:column!important}
+ #modal-root .mqr-scroll{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain}
+ #modal-root .mqr-display{padding:16px 18px 14px!important;border-radius:23px!important;background:rgba(255,255,255,.96)!important;border:1px solid rgba(21,92,83,.13)!important;box-shadow:0 10px 35px rgba(18,65,58,.045)!important}
+ #modal-root .mqr-amount-native{display:flex;align-items:center;gap:8px;max-width:100%;margin:8px 0}
+ #modal-root .mqr-amount-native>span{font-size:clamp(25px,8vw,38px)!important;font-weight:760!important;color:#173b35!important;line-height:1.14}
+ #modal-root .mqr-amount-native input{flex:1 1 auto;min-width:0;width:100%;padding:5px 0;font:750 clamp(31px,10vw,48px)/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,sans-serif;letter-spacing:-.045em;color:#163c35;background:transparent!important;border:0!important;border-bottom:2px solid transparent!important;box-shadow:none!important;outline:0!important;border-radius:0!important;appearance:none!important}
+ #modal-root .mqr-amount-native input::placeholder{color:#a9b7b4;opacity:1}
+ #modal-root .mqr-amount-native:focus-within input{border-bottom-color:#0f796b!important}
+ #modal-root .mqr-amount-native:focus-within{outline:2px solid rgba(15,121,107,.12);outline-offset:5px;border-radius:10px}
+ #modal-root .mqr-bottom{position:sticky!important;bottom:0!important;flex:none!important;z-index:5!important;padding-bottom:max(14px,env(safe-area-inset-bottom))!important;background:rgba(255,255,255,.94)!important;backdrop-filter:blur(20px)}
+}
