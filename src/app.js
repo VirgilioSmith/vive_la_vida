@@ -702,7 +702,6 @@ function v206BankSwitch(page){
  const tabs=[
   ['banks','Bancos','landmark'],
   ['accounts','Cuentas','wallet'],
-  ['cards','Tarjetas','card'],
   ['loans','Préstamos','receipt'],
   ['certificates','Certificados','chart'],
  ];
@@ -711,7 +710,8 @@ function v206BankSwitch(page){
 function moduleSwitch(page){
  const root=navFamilyForPage(page),section=NAV_SECTIONS[root];if(!section||root==='payments')return '';
  // V299: contextual navigation must stay available across all six Movimientos pages.
- if(root==='banks'&&window.matchMedia?.('(max-width:767px)').matches){
+ if(root==='banks'&&isMobileViewport()){
+  if(page==='cards')return '';
   return v206BankSwitch(page);
  }
  return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${root==='payments'?'Visión global':section.title}</strong><small>${root==='payments'&&isMobileViewport()?'Consulta y gestiona tus pagos, suscripciones y acuerdos personales.':section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic,view])=>{const on=page===id&&(!view||(ui.v176PayView||'agenda')===view);return `<button type="button" class="module-switch-tab ${on?'active':''}" ${on?'aria-current="page"':''} data-act="navigate" data-id="${id}"${view?` data-v176-pay-view="${view}"`:''}>${icon(ic)}<span>${root==='payments'&&id==='payments'&&!isMobileViewport()?'Visión global':name}</span></button>`}).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
@@ -775,7 +775,7 @@ function mobileHeader(){
 function mobileBottomNavigation(){
  // Cada producto bancario pertenece al espacio Bancos; no debe marcar Explorar por error.
  const bankingPages=['banks','accounts','cards','loans','certificates','benefits'];
- const current=bankingPages.includes(ui.page)?'banks':(['overview','wallet','mobilehub','mobilesearch'].includes(ui.page)?ui.page:'mobilehub');
+ const current=ui.page==='cards'?'wallet':bankingPages.includes(ui.page)?'banks':(['overview','wallet','mobilehub','mobilesearch'].includes(ui.page)?ui.page:'mobilehub');
  const items=[['overview','Inicio','home'],['wallet','Wallet','card'],['banks','Bancos','landmark'],['mobilehub','Explorar','grid'],['mobilesearch','Buscar','search']];
  return `<nav class="vive-mobile-dock" aria-label="Navegación móvil">${items.map(([id,label,ic])=>`<button type="button" class="vive-mobile-dock-item ${current===id?'active':''}" data-act="navigate" data-id="${id}" ${current===id?'aria-current="page"':''} aria-label="${label}" title="${label}"><span class="vive-mobile-dock-icon">${icon(ic)}</span><span class="vive-mobile-dock-label">${label}</span></button>`).join('')}</nav><button type="button" class="v249-register-fab" data-act="newTransaction" aria-label="Registrar una operación" title="Registrar ingresos, egresos, transferencias y pagos"><span class="v249-fab-surface" aria-hidden="true">${icon('plus')}</span></button>`;
 }
@@ -1440,6 +1440,12 @@ function v165SearchAction(){
 
 function main(){
  if(!isMobileViewport()&&ui.page==='wallet')ui.page='cards';
+ // Wallet is the mobile portfolio; cards remains a route for cycle/benefit details.
+ if(isMobileViewport()&&ui.page==='cards'&&!card(ui.cardId)&&!ui.v230BenefitComparison){
+  ui.cardId=null;ui.page='wallet';
+  if(v8SearchDestination==='cards')v8SearchDestination='wallet';
+  if(v243ExploreDestination==='cards')v243ExploreDestination='wallet';
+ }
  if(isMobileViewport()&&ui.page==='kpis')ui.page='overview';
  if(ui.page==='personalize' && !isMobileViewport()){ui.page='settings';v242SettingsPane='home';}
  const heads={score:['Vive Score','Tu comportamiento crediticio, explicado.'],pressure:['Presión financiera','El mismo calendario de Inicio, ampliado'],wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Visión global','Obligaciones, suscripciones y entre personas'],vision:['Visión global','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
@@ -6652,7 +6658,7 @@ case 'cardHistoryBack':ui.cardDetailTab='status';render();setTimeout(()=>documen
 case 'cardHistoryCurrency':ui.cardHistoryCurrency=id==='USD'?'USD':'DOP';render();break;
 case 'cardHistoryYearPrev':ui.cardHistoryYear=Math.max(2015,Number(ui.cardHistoryYear||nowYear())-1);render();break;
 case 'cardHistoryYearNext':ui.cardHistoryYear=Math.min(nowYear(),Number(ui.cardHistoryYear||nowYear())+1);render();break;
-case 'closeCardDetails':ui.cardId=null;ui.cardDetailTab='status';render();break;
+case 'closeCardDetails':ui.cardId=null;ui.cardDetailTab='status';if(isMobileViewport()){ui.page='wallet';v8SearchDestination=null;render();window.scrollTo(0,0);break;}render();break;
 case 'payCard':{let c=card(id),a=db.accounts.find(x=>!x.archived&&x.kind!=='cash')||db.accounts.find(x=>!x.archived)||db.accounts[0];const d1015=v1015CardPayDefaults(c,ccy||'DOP','cut');transactionForm({type:'card_payment',cardId:id,currency:d1015.ccy,accountId:a?.id||'',paymentChannel:a?.kind==='cash'?'presencial':'internet_banking',amount:'',cardPaymentMode:d1015.mode,category:''});if(d1015.note)toast(d1015.note);break}
 case 'addLoan':loanForm(null,id);break;
 case 'editLoan':loanForm(id);break;
@@ -14217,7 +14223,7 @@ function v230BenefitsWorkspace(){
       <div><span class="v230-benefits-eyebrow">TARJETAS / ANÁLISIS DE BENEFICIOS</span>
         <h2>Comparar beneficios</h2>
         <p>Cashback acreditado, anualidades y costos reales de tus tarjetas.</p></div>
-      <button type="button" class="btn soft v230-back" data-act="closeBenefitComparison">${icon('arrow')} Volver a Tarjetas</button>
+      <button type="button" class="btn soft v230-back" data-act="closeBenefitComparison">${icon('arrow')} ${isMobileViewport()?'Volver a Wallet':'Volver a Tarjetas'}</button>
     </header>
     ${v144BenefitsPage()}
   </div>`;
@@ -14244,7 +14250,7 @@ document.addEventListener('click',function(event){
   }
   if(act==='closeBenefitComparison'){
     event.preventDefault();event.stopImmediatePropagation();
-    ui.v230BenefitComparison=false;ui.page='cards';render();window.scrollTo(0,0);return;
+    ui.v230BenefitComparison=false;ui.page=isMobileViewport()?'wallet':'cards';if(isMobileViewport())ui.cardId=null;render();window.scrollTo(0,0);return;
   }
   if(ui.v230BenefitComparison && ((act==='navigate'&&id!=='benefits')||act==='goCard')){
     ui.v230BenefitComparison=false;
@@ -15732,32 +15738,6 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
    Objetivo: igualar la claridad de Cuentas y efectivo en iPhone sin tocar los cálculos. */
 (function(){
   const v244DesktopCards = pages.cards;
-  function v244CardProduct(cardItem){
-    const dop = cardStatus(cardItem,'DOP');
-    const usd = cardStatus(cardItem,'USD');
-    const limit = num(cardItem.limitDOP) + fx(num(cardItem.limitUSD),'USD');
-    const debt = num(dop.debt) + fx(num(usd.debt),'USD');
-    const available = Math.max(0,num(dop.availableWithOverdraft)) + Math.max(0,fx(Math.max(0,num(usd.availableWithOverdraft)),'USD'));
-    const utilization = limit>0 ? (debt/limit)*100 : null;
-    const nexts = [
-      dop.nextDue ? {date:dop.nextDue, billed:dop.billed, ccy:'DOP'} : null,
-      usd.nextDue ? {date:usd.nextDue, billed:usd.billed, ccy:'USD'} : null
-    ].filter(Boolean).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
-    const next = nexts[0] || null;
-    return `<article class="v244-product v244-card-item">
-      <div class="v244-product-top">
-        <span class="v244-logo v997-bank">${bankLogoInline(cardItem.bankId)||icon('card')}</span>
-        <span class="v244-product-meta"><strong>${sanitize(cardItem.name)}</strong><small>${sanitize(bankOf(cardItem))} · ${sanitize(CARD_TIER_NAMES[cardTierKey(cardItem)] || 'Tarjeta')}</small></span>
-        <span class="v244-currency">•••• ${sanitize(cardItem.last4||'—')}</span>
-      </div>
-      <div class="v244-product-value"><small>LÍMITE TOTAL</small><strong>${money(limit)}</strong></div>
-      <div class="v244-inline-metrics">
-        <div><small>Deuda utilizada</small><b>${money(debt)}</b></div>
-        <div><small>Disponible</small><b>${money(Math.max(0,available))}</b></div>
-      </div>
-      <div class="v244-product-foot"><span>${utilization===null?'Sin límite definido':utilization.toFixed(1)+'% utilizado'}${next?' · Próximo pago '+prettyDate(next.date):''}</span><button type="button" data-act="cardDetails" data-id="${sanitize(cardItem.id)}">Explorar el ciclo ${icon('arrow')}</button><button type="button" data-act="payCard" data-id="${sanitize(cardItem.id)}">Registrar pago</button></div>
-    </article>`;
-  }
   function v244CardsTx(tx){
     return tx.length ? `<div class="v244-history">${tx.slice(0,10).map(t=>{
       const incoming = ['card_payment','card_refund','card_reward'].includes(t.type);
@@ -15765,12 +15745,7 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
     }).join('')}</div>` : '<p class="v244-no-data">Aún no hay movimientos registrados en esta tarjeta.</p>';
   }
   function v244CardsMobile(){
-    const visible = (db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
     const selected = ui.cardId ? card(ui.cardId) : null;
-    const totalLimit = visible.reduce((s,c)=>s + num(c.limitDOP) + fx(num(c.limitUSD),'USD'),0);
-    const totalDebt = visible.reduce((s,c)=>s + num(cardStatus(c,'DOP').debt) + fx(num(cardStatus(c,'USD').debt),'USD'),0);
-    const totalAvailable = Math.max(0,totalLimit-totalDebt);
-    const overallUtil = totalLimit>0 ? (totalDebt/totalLimit)*100 : null;
     if(selected&&ui.cardDetailTab==='history')return `<div class="v244-mobile-root v244-cards v244-detail-mode v1003-history">${cardHistoricalView(selected)}</div>`;
     if(selected){
       const dop = cardStatus(selected,'DOP');
@@ -15787,7 +15762,7 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
         {ccy:'US$', cut:usd.cut, due:usd.nextDue, billed:usd.billed, debt:usd.debt, currency:'USD'}
       ].filter(x=>num(x.debt)||num(x.billed)||x.cut||x.due);
       return `<div class="v244-mobile-root v244-cards v244-detail-mode">
-        <button class="v244-back" data-act="closeCardDetails" aria-label="Volver a todas mis tarjetas"><span class="v373-back-glyph">${icon('arrow')}</span><span>Todas mis tarjetas</span></button>
+        <button class="v244-back" data-act="closeCardDetails" aria-label="Volver a Wallet"><span class="v373-back-glyph">${icon('arrow')}</span><span>Volver a Wallet</span></button>
         <section class="v244-hero v244-detail-hero"><span class="v244-hero-label">CRÉDITO PERSONAL · ${sanitize(bankOf(selected))}</span><h2>${sanitize(selected.name)}</h2><p>${sanitize(CARD_TIER_NAMES[cardTierKey(selected)]||'Tarjeta')} · •••• ${sanitize(selected.last4||'—')}</p><small>DEUDA UTILIZADA</small><strong>${money(debt)}</strong><div class="v244-hero-bottom"><span>${utilization===null?'Sin límite definido':utilization.toFixed(1)+'% del límite'}</span><span>${selected.network?sanitize(selected.network):'Crédito registrado'}</span></div></section>
         <div class="v244-actions"><button class="v244-action-primary" data-act="payCard" data-id="${sanitize(selected.id)}">${icon('card')} Registrar pago</button><button class="v244-action" data-act="cardHistory" data-id="${sanitize(selected.id)}">${icon('chart')} Ver histórico</button></div>
         <section class="v244-sheet"><h3>Resumen de crédito</h3><div class="v244-facts">${['Límite total|'+money(limit),'Disponible|'+money(Math.max(0,avail)),'Deuda RD$|'+money(dop.debt,'DOP',2),'Deuda US$|'+money(usd.debt,'USD',2)].map(x=>{const p=x.split('|');return `<div class="v244-fact"><span>${p[0]}</span><strong>${p[1]}</strong></div>`;}).join('')}</div><p class="v244-disclaimer">La deuda utilizada se calcula con tus movimientos registrados. Los montos en US$ se convierten a RD$ según la tasa configurada.</p></section>
@@ -15806,28 +15781,9 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
         <details class="v244-more v373-card-manage"><summary><span class="v373-manage-mark">${icon('settings')}</span><span>Administrar esta tarjeta</span><span class="v373-manage-chevron">${icon('arrow')}</span></summary><div class="v244-more-body">${productControls('card',selected.id,selected.archived)}</div></details>
       </div>`;
     }
-    const scope = ui.v244Cards || 'all';
-    const shown = visible.filter(c=> scope==='all' ? true : scope==='used' ? (num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))>0.005 : (num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))<=0.005);
-    const visibility = db.cards.some(c=>c.archived) && typeof visibilityControl==='function' ? visibilityControl() : '';
-    return `<div class="v244-mobile-root v244-cards v375-cards-bank">
-      <header class="v203-header"><div><span class="v203-kicker">TU CRÉDITO, MÁS CLARO</span><h1>Tarjetas</h1></div><button class="v203-header-action" type="button" data-act="addCard" aria-label="Nueva tarjeta">${icon('plus')}<span>Nueva</span></button></header>
-      <section class="v203-hero" aria-label="Resumen de tarjetas"><div class="v203-hero-top"><span class="v203-hero-tag">LÍMITE TOTAL · RD$ EQUIVALENTES</span><span class="v203-hero-mark">${icon('card')}</span></div><strong class="v203-hero-value">${money(totalLimit)}</strong><div class="v203-hero-grid"><div><small>Deuda utilizada</small><strong>${money(totalDebt)}</strong></div><div><small>Crédito disponible</small><strong>${money(totalAvailable)}</strong></div></div><p class="v244-hero-footnote">${overallUtil===null?'Sin límites suficientes para calcular uso.':overallUtil.toFixed(1)+'% del límite comprometido'} · ${visible.length} ${visible.length===1?'tarjeta registrada':'tarjetas registradas'}.</p></section>
-
-
-      <div class="v244-segments" role="group" aria-label="Filtrar tarjetas"><button type="button" class="${scope==='all'?'selected':''}" data-v244-cards="all">Todas <small>${visible.length}</small></button><button type="button" class="${scope==='used'?'selected':''}" data-v244-cards="used">Con deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))>0.005).length}</small></button><button type="button" class="${scope==='free'?'selected':''}" data-v244-cards="free">Sin deuda <small>${visible.filter(c=>(num(cardStatus(c,'DOP').debt)+num(cardStatus(c,'USD').debt))<=0.005).length}</small></button></div>
-      <div class="v244-list-head"><div><span class="v203-kicker">MIS PRODUCTOS</span><h3 role="heading" aria-level="2">Mis tarjetas <small>${visible.length}</small></h3></div>${visibility}<button type="button" class="v375-pay" data-act="guidedFlow" data-mode="cardpay">${icon('card')} Pagar</button></div>
-      <div class="v244-product-list">${shown.length?shown.map(v244CardProduct).join(''):'<section class="v244-empty"><span>'+icon('card')+'</span><h3>No hay tarjetas para este filtro</h3><p>Prueba otro filtro o registra una nueva tarjeta.</p><button class="btn" data-act="addCard">Crear tarjeta</button></section>'}</div>
-
-    </div>`;
+    return v68Wallet();
   }
-  document.addEventListener('click',function(e){
-    const seg = e.target.closest('[data-v244-cards]');
-    if(!seg) return;
-    e.preventDefault();
-    ui.v244Cards = seg.dataset.v244Cards || 'all';
-    render();
-  },true);
-  pages.cards = () => isMobileViewport() ? v244CardsMobile() : v244DesktopCards();
+  pages.cards = () => isMobileViewport() ? (ui.v230BenefitComparison?v230BenefitsWorkspace():v244CardsMobile()) : v244DesktopCards();
 })();
 
 (function(){
@@ -19101,14 +19057,14 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  }
  function detalle(c){
   const tier=CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
-  return `<div class="v1190 v1190-card"><button type="button" class="v1190-back" data-act="closeCardDetails">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>Tarjetas</span></button>
+  return `<div class="v1190 v1190-card"><button type="button" class="v1190-back" data-act="closeCardDetails">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>${isMobileViewport()?'Volver a Wallet':'Tarjetas'}</span></button>
    <section class="v1190-hero"><div><span class="v1190-kick">${esc(bankOf(c))}</span><h2>${esc(c.name)}</h2><p>${esc(tier)} · •••• ${esc(c.last4||'—')}</p></div><div class="v1290-actions"><button type="button" class="v1190-primary" data-act="payCard" data-id="${esc(c.id)}">${G('<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 11h18"/>')}<span>Registrar pago</span></button><button type="button" class="v1290-secondary" data-act="annualFee" data-id="${esc(c.id)}">Anualidad y seguros</button></div></section>
    <div class="v1190-grid">${bloque(c,'DOP')}${bloque(c,'USD')}</div>
    ${v1290AnnualLedger(c)}
    ${beneficios(c)}${cierres(c)}${admin(c)}</div>`;
  }
  const prev=pages.cards;
- pages.cards=function(...a){const c=ui.cardId?card(ui.cardId):null;return c?detalle(c):prev.apply(this,a)};
+ pages.cards=function(...a){const c=ui.cardId?card(ui.cardId):null;return c&&!(isMobileViewport()&&ui.v230BenefitComparison)?detalle(c):prev.apply(this,a)};
 })();
 
 /* V1191 · Cuenta → «Ver evolución»: un único gráfico interactivo del saldo (cierres mensuales reales calculados de tus registros). */

@@ -23,8 +23,8 @@ const results = [];
         const errors = [];
         p.on('pageerror', e => errors.push(e.message));
         try {
-          await p.evaluate(() => window.__T.go('cards'));
-          const card = p.locator('#app [data-act="cardDetails"]').first();
+          await p.evaluate(() => window.__T.go('wallet'));
+          const card = p.locator('.v266-wallet-actions [data-act="goCard"]');
           await card.waitFor({state:'visible'});
           await card.click();
           const openAnnual = p.locator('#app [data-act="annualFee"]').first();
