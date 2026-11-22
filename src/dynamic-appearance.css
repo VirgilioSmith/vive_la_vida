@@ -1,0 +1,86 @@
+/* Shared appearance: one ambient canvas; module colours inherit personalization.
+   Financial signs, risk warnings, chart categories and institution marks are not accents. */
+html body[data-vive-bg][data-vive-bg] {
+  --ui-accent:var(--vive-theme-color,#6d69f1);
+  --ui-solid:var(--v424-accent-strong,var(--ui-accent));
+  --ui-readable:var(--f360-accent-readable,var(--ui-solid));
+  --ui-surface:rgba(255,255,255,.72);
+  --ui-base:#f6f7fa;
+  --ui-line:color-mix(in srgb,var(--ui-accent) 13%,#dce2e9);
+  --ui-tint:color-mix(in srgb,var(--ui-accent) 12%,var(--ui-surface));
+  --ui-track:color-mix(in srgb,var(--ui-accent) 16%,var(--ui-surface));
+  --ui-hero:linear-gradient(125deg,var(--ui-solid),color-mix(in srgb,var(--ui-solid) 70%,#101322));
+  --ui-ambient:radial-gradient(ellipse 92% 82% at -14% -6%,color-mix(in srgb,var(--ui-accent) 30%,transparent),transparent 74%),radial-gradient(ellipse 110% 92% at 112% 18%,color-mix(in srgb,var(--ui-accent) 13%,transparent),transparent 76%),linear-gradient(136deg,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 16%,#fffafb),var(--ui-base) 52%,color-mix(in srgb,var(--ui-accent) 6%,#eef2f8));
+  background:var(--ui-ambient) fixed!important;
+}
+html body[data-vive-bg][data-vive-bg]:is(.theme-black,.theme-dark) {
+  --ui-surface:rgba(15,15,19,.82);
+  --ui-base:#000;
+  --ui-line:color-mix(in srgb,var(--ui-accent) 20%,#28282d);
+  --ui-tint:color-mix(in srgb,var(--ui-accent) 19%,var(--ui-surface));
+  --ui-track:color-mix(in srgb,var(--ui-accent) 24%,#17171b);
+  --ui-ambient:radial-gradient(ellipse 92% 65% at -14% -6%,color-mix(in srgb,var(--ui-accent) 12%,transparent),transparent 74%),radial-gradient(ellipse 95% 76% at 112% 18%,color-mix(in srgb,var(--ui-accent) 7%,transparent),transparent 76%),#000;
+}
+/* The body owns the gradient, including the space behind the navigation. */
+html body[data-vive-bg][data-vive-bg]::before {background:none!important;}
+html body[data-vive-bg][data-vive-bg] #app#app,
+html body[data-vive-bg][data-vive-bg] #app#app .shell,
+html body[data-vive-bg][data-vive-bg] #app#app main.main,
+html body[data-vive-bg][data-vive-bg] #app#app main.main #page#page {
+  background:transparent!important;background-image:none!important;
+}
+html body[data-vive-bg][data-vive-bg] #app#app main.main > .topbar,
+html body[data-vive-bg][data-vive-bg] #app#app > .vive-mobile-top {
+  background-color:transparent!important;background-image:none!important;border-color:transparent!important;
+}
+/* Banks: shared tokens in both responsive worlds. */
+html body[data-vive-bg] #app#app main:is(.vBanksPc-world,.vBanksMobile-world) {
+  --bank-accent:var(--ui-readable);--bank-hover:var(--ui-tint);--bank-track:var(--ui-track);
+  --bank-glass:var(--ui-surface);--bank-line:var(--ui-line);
+}
+html body[data-vive-bg] #app#app #page :is(.vBanksPc-kicker,.vBanksPc-stat-icon,.vBanksPc-category-icon,.vBanks-mobile-head > span,.vBanks-mobile-head button,.vBanks-mobile-tiles > button > svg,.vBanks-mobile-tiles > button > small,.vBanksPc-benefits-link svg:first-child) {
+  color:var(--ui-readable)!important;-webkit-text-fill-color:currentColor!important;
+}
+html body[data-vive-bg] #app#app #page .vBanksPc-stat-icon {background:var(--ui-tint)!important;}
+html body[data-vive-bg] #app#app #page :is(.vBanks-mobile-selector,.vBanks-consolidated-mark),
+html body[data-vive-bg] #app#app main.vBanksPc-world .vBanksPc-product-filter button[aria-pressed="true"] {
+  background:var(--ui-hero)!important;color:white!important;
+}
+html body[data-vive-bg] #app#app #page .vBanks-mobile-selector .vBanks-consolidated-mark {background:none!important;}
+html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-mobile-hero {
+  background:radial-gradient(ellipse at 86% 13%,color-mix(in srgb,var(--ui-accent) 60%,transparent),transparent 45%),var(--ui-hero)!important;
+  border-color:color-mix(in srgb,var(--ui-accent) 55%,transparent)!important;
+  box-shadow:0 5px 14px color-mix(in srgb,var(--ui-solid) 20%,transparent),inset 0 1px 0 #ffffff19;
+}
+html body[data-vive-bg] #app#app #page .vBanks-net-art i {background:linear-gradient(180deg,color-mix(in srgb,var(--ui-accent) 52%,white),color-mix(in srgb,var(--ui-accent) 38%,transparent) 65%,transparent);}
+html body[data-vive-bg] #app#app #page .vBanks-mobile-net .vBanksPc-change {background:color-mix(in srgb,var(--ui-accent) 8%,white)!important;color:var(--ui-solid)!important;}
+html body[data-vive-bg] #app#app #page .vBanks-mobile-net .vBanksPc-change > span:last-child {color:var(--ui-solid)!important;}
+html body[data-vive-bg] #app#app #page .vBanks-mobile-utilization .vBanksPc-meter i {background:#fff!important;}
+html body[data-vive-bg] #app#app main.vBanksPc-world :is(.vBanksPc-meter i,.vBanks-credit-track i:not(.negative)) {background:var(--ui-solid)!important;}
+html body[data-vive-bg] #app#app main.vBanksPc-world .vBanksPc-metric:first-child {background:linear-gradient(25deg,var(--ui-tint),var(--bank-glass) 60%);}
+html body[data-vive-bg] #app#app main.vBanksPc-world .vBanks-credit-track {background:var(--ui-track);}
+/* Wallet: PC and mobile use the same accent, not the selected institution's color. */
+html body[data-vive-bg] #app#app :is(.vWalletPc-world,.vBanksPc-workspace > .vWalletPc) {
+  --wallet-accent:var(--ui-solid);--wallet-deep:var(--ui-readable);--wallet-mint:var(--ui-tint);
+  --wallet-line:var(--ui-line);--wallet-track:var(--ui-track);--wallet-glass:var(--ui-surface);--wallet-hover:var(--ui-tint);
+}
+html body[data-vive-bg]:is(.theme-black,.theme-dark) #app#app :is(.vWalletPc-world,.vBanksPc-workspace > .vWalletPc) {
+  --wallet-ink:#f2f4f8;--wallet-muted:#b6c0ce;--wallet-shadow:0 7px 18px #0003;
+}
+html body[data-vive-bg] #app#app #page .vWalletPc :is(.vWalletPc-stat.is-available,.vWalletPc-stat.is-debt,.vWalletPc-stat.is-limit,.vWalletPc-product-list button[aria-pressed="true"]) {background:linear-gradient(145deg,var(--ui-surface),var(--ui-tint))!important;}
+html body[data-vive-bg] #app#app #page .vWalletPc :is(.vWalletPc-symbol,.vWalletPc-product-mark.is-global,.vWalletPc-card-actions button,.vWalletPc-round,.vWalletPc-cuts button,.vWalletPc-consumption-toggle,.vWalletPc-legend button[aria-pressed="true"]) {background:var(--ui-tint)!important;color:var(--ui-readable)!important;}
+html body[data-vive-bg] #app#app #page .vWalletPc :is(.vWalletPc-product-list button,.vWalletPc-product-links button,.vWalletPc-limit-row,.vWalletPc-legend button):hover {background:var(--ui-tint);}
+html body[data-vive-bg] #app#app #page .vWalletPc :is(.vWalletPc-ring > div,.vWalletPc-menu > div,.vWalletPc-chart) {background:var(--ui-surface)!important;}
+html body[data-vive-bg] #app#app #page .vWalletPc .vWalletPc-symbol > .vWalletPc-ring::after {background:var(--ui-base);}
+html body[data-vive-bg] #app#app #page .vWalletPc .vWalletPc-chart-track {stroke:var(--ui-track);}
+html body[data-vive-bg] #app#app #page .v68-wallet {--v900-wallet-tone:var(--ui-readable)!important;--v1301-accent:var(--ui-readable);--v1301-tint:color-mix(in srgb,var(--ui-accent) 23%,var(--ui-base));}
+html body[data-vive-bg] #app#app #page .v68-wallet [aria-label="Seleccionar Créditos generales"] {--accent:var(--ui-solid)!important;}
+html body[data-vive-bg] #app#app #page .v68-wallet [data-id="__vive_wallet_credit_global__"] .v266-physical-card,
+html body[data-vive-bg] #app#app #page .v68-wallet [aria-label="Seleccionar Créditos generales"] .v266-physical-card {background:var(--ui-hero)!important;}
+html body[data-vive-bg] #app#app #page#page .v68-wallet :is(.v266-wallet-panel,.v371-card-return,.v371-return-widget,.v266-selected-balance) {background-color:var(--ui-surface)!important;}
+html body[data-vive-bg] #app#app #page#page .v68-wallet .v266-wallet-actions > button > span {background:var(--ui-tint)!important;color:var(--ui-readable)!important;border-color:var(--ui-line)!important;}
+html body[data-vive-bg] #app#app #page .v68-wallet .v266-dots button.active {background-color:var(--ui-readable)!important;}
+html body[data-vive-bg] #app#app #page .v68-wallet .v1244-gauge:not(.is-mid,.is-high) {background:conic-gradient(var(--ui-solid) calc(var(--u)*1%),var(--ui-track) 0)!important;}
+html body[data-vive-bg] #app#app #page .v68-wallet .v1244-gauge > div {background:var(--ui-base)!important;}
+html body[data-vive-bg]:is(.theme-black,.theme-dark) #app#app :is(.vWalletPc-world,.vBanksPc-workspace > .vWalletPc) {--wallet-accent:var(--ui-readable);}
+html body[data-vive-bg]:is(.theme-black,.theme-dark) #app#app #page .v68-wallet .v1244-gauge:not(.is-mid,.is-high) {background:conic-gradient(var(--ui-readable) calc(var(--u)*1%),var(--ui-track) 0)!important;}
