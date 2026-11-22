@@ -20,6 +20,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Recuperar referencia móvil anterior a la unificación
+        run: |
+          mkdir -p /tmp/vive-bancos-previo
+          git archive 27d500767a5c index.html src assets vendor manifest.webmanifest | tar -xf - -C /tmp/vive-bancos-previo
+      - name: Guardar la referencia histórica
+        uses: actions/upload-artifact@v4
+        with:
+          name: bancos-movil-original-27d5007
+          path: /tmp/vive-bancos-previo/
+          if-no-files-found: error
       - name: Preparar Node.js
         uses: actions/setup-node@v4
         with:
