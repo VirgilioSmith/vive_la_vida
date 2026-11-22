@@ -59,7 +59,9 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.deepEqual(await parts('.v565-secondary .v550-currency-breakdown b'),[70000,400]);
     assert.deepEqual(await parts('.v1244-ccy > span'),[300000,3000]);
     assert.equal(await read('.v1244-gauge b'),19.6);
-    assert.equal(await p.locator('.v266-activity,.v266-wallet-actions,.v1244-cutbox,.v371-card-return,.v933-wallet-advance').count(),0);
+    assert.equal(await p.locator('.v266-activity').count(),0);
+    assert.equal(await p.locator('.v266-wallet-actions button').count(),4);
+    for(const section of ['.v1244-cutbox','.v371-card-return','.v933-wallet-advance','.v266-wallet-note'])assert.equal(await p.locator(section).count(),1);
     assert.equal(await p.evaluate(()=>window.__T.dbg().cards.length),2,'No crea producto financiero');
     assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
     if(process.env.WALLET_SCREENSHOT)await p.screenshot({path:process.env.WALLET_SCREENSHOT+'-'+theme+'.png'});
@@ -99,6 +101,64 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     await p.waitForTimeout(400);
     assert.equal(await selected.getAttribute('data-id'),fixture.second);
     assert.deepEqual(await p.evaluate(()=>window.__T.dbg().cards.map(c=>c.id)),[fixture.first,fixture.second],'No reordena los registros originales');
+    // Cortes, beneficios y avances globales calculados con dos tarjetas y ambas monedas.
+    const cuts=await p.evaluate(()=>{
+     const t=window.__T,d=t.dbg(),[a,b]=d.cards,date=t.fn.today(),accountId=d.accounts[0].id;
+     d.settings.fx=60;t.ui().month=date.slice(0,7);
+     Object.assign(a,{annualFeeAmount:1000,annualFeeCurrency:'DOP',openingBilledDOP:a.openingDOP,openingBilledUSD:a.openingUSD});
+     Object.assign(b,{annualFeeAmount:20,annualFeeCurrency:'USD',openingBilledDOP:b.openingDOP,openingBilledUSD:b.openingUSD});
+     const tx=(id,type,cardId,currency,amount,extra={})=>({id,type,cardId,currency,amount,date,created:date+'T12:00:00Z',note:'Prueba Wallet',...extra});
+     d.transactions=[
+      tx('wallet-fee-a','card_charge',a.id,'DOP',1200,{chargeKind:'annual_fee'}),
+      tx('wallet-reward-a','bank_reward',a.id,'DOP',600,{accountId}),
+      tx('wallet-reward-b','bank_reward',b.id,'USD',40,{accountId}),
+      tx('wallet-advance-a','card_advance',a.id,'DOP',1065,{advanceNet:1000,advanceFee:65,advanceFeePct:6.5,toAccountId:accountId}),
+      tx('wallet-advance-b','card_advance',b.id,'USD',106.5,{advanceNet:100,advanceFee:6.5,advanceFeePct:6.5,toAccountId:d.accounts.find(x=>x.currency==='USD')?.id||accountId})
+     ];
+     t.inv();t.go('wallet');
+     return ['DOP','USD'].map(ccy=>d.cards.reduce((s,c)=>s+t.cs(c.id,ccy).billed,0));
+    });
+    await p.locator('.v68-wallet-dots button').first().click();
+    await waitSelected(GLOBAL);
+    assert.deepEqual(await parts('.v1244-pill em'),cuts);
+    assert.match(await p.locator('.v1244-cuthead strong').innerText(),/CORTES ATRASADOS/);
+    assert.deepEqual(await parts('.v371-return-tile strong'),[2400,3000,600,25]);
+    assert.match(await p.locator('.v933-wallet-advance summary').innerText(),/2 avances/);
+    await p.locator('.v933-wallet-advance summary').click();
+    assert.deepEqual(await parts('.v933-wallet-advance .v266-currency-row b'),[7000,455,7455]);
+    assert.equal(await p.locator('.v266-activity').count(),0);
+    // El corte global abre el desglose real por tarjeta y moneda.
+    await p.locator('.v266-wallet-actions [data-mode="cuts"]').click();
+    const cutDialog=p.locator('.v176-card-insight-modal');
+    await cutDialog.waitFor();
+    assert.equal(await cutDialog.locator('.v176-credit-row').count(),4);
+    await cutDialog.locator('.close').click();
+    const picker=p.locator('.v789-product-backdrop');
+    const choose=async id=>{await picker.waitFor();assert.equal(await picker.locator('.v789-picker-row').count(),2);assert.equal(await picker.locator('[data-value="'+GLOBAL+'"]').count(),0);await picker.locator('[data-value="'+id+'"]').click();await picker.locator('.v789-picker-confirm').click()};
+    const closeForm=async()=>{await p.locator('#modal-root [data-act="closeModal"]').first().evaluate(el=>el.click());await p.waitForTimeout(200)};
+    await p.locator('.v1244-pill[data-ccy="USD"]').click();
+    await choose(fixture.first);
+    await p.locator('#modal-root form [name="cardId"]').first().waitFor({state:'attached'});
+    assert.equal(await p.locator('#modal-root form [name="cardId"]').first().inputValue(),fixture.first);
+    await closeForm();
+    await p.locator('.v266-wallet-actions [data-mode="pay"]').click();
+    await choose(fixture.second);
+    await p.locator('#modal-root form [name="cardId"]').first().waitFor({state:'attached'});
+    assert.equal(await p.locator('#modal-root form [name="cardId"]').first().inputValue(),fixture.second);
+    await closeForm();
+    await p.locator('.v266-wallet-actions [data-mode="advance"]').click();
+    await choose(fixture.second);
+    await p.locator('#v900AdvanceForm').waitFor();
+    assert.equal(await p.locator('#v900AdvanceForm [name="cardId"]').inputValue(),fixture.second);
+    await closeForm();
+    await p.locator('.v266-wallet-actions [data-mode="edit"]').click();
+    await choose(fixture.first);
+    await p.locator('#cardForm').waitFor();
+    assert.equal(await p.locator('#cardForm [name="name"]').inputValue(),await p.evaluate(()=>window.__T.dbg().cards[0].name));
+    await closeForm();
+    assert.equal(await p.evaluate(()=>window.__T.dbg().transactions.length),5,'Las consultas y formularios sin confirmar no crean transacciones');
+    await p.locator('.v371-return-action').click();
+    assert.equal(await p.evaluate(()=>window.__T.ui().v144BenefitsCard),'all');
     assert.deepEqual(errors,[]);
     console.log('OK Crédito Global '+theme+' · carrusel, importes, utilización, actualización y navegación');
    }finally{await ctx.close()}
