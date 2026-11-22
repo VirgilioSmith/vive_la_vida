@@ -38,6 +38,19 @@ async function themeMatrix(browser,width,mode){
      const amount=await p.locator(financial).first().innerText();
      const key=`${route}-${width}-${mode}`;values??={};if(values[key])assert.equal(amount,values[key]);else values[key]=amount;
      if(evidence)await p.screenshot({path:path.join(evidence,`${route}-${width}-${mode}-${palette}.png`),fullPage:true,animations:'disabled'});
+     if(route==='banks'&&mobile){
+      const sel=p.locator('.vBanks-mobile-selector'),colour=await style(p,'.vBanks-mobile-hero','backgroundImage');
+      await sel.click();const picker=p.getByRole('dialog',{name:'Seleccionar institución'});await picker.locator('.v789-picker-row').nth(1).click();
+      if(await picker.locator('.v789-picker-confirm').isVisible())await picker.locator('.v789-picker-confirm').click();
+      assert.equal(await style(p,'.vBanks-mobile-hero','backgroundImage'),colour,'Selected bank retains user accent');
+      await sel.click();await picker.locator('.v789-picker-row').first().click();if(await picker.locator('.v789-picker-confirm').isVisible())await picker.locator('.v789-picker-confirm').click();
+     }
+     if(route==='wallet'&&mobile){
+      const control='.v266-wallet-actions button > span',colour=await style(p,control,'color');
+      await p.locator('.v266-dots button').first().click();assert.equal(await style(p,control,'color'),colour,'Global credit retains user accent');
+      if(evidence)await p.screenshot({path:path.join(evidence,`wallet-global-${width}-${mode}-${palette}.png`),fullPage:true,animations:'disabled'});
+      await p.locator('.v266-dots button').nth(1).click();
+     }
     }
    }
   }

@@ -41,6 +41,7 @@ html body[data-vive-bg] #app#app main:is(.vBanksPc-world,.vBanksMobile-world) {
 html body[data-vive-bg] #app#app #page :is(.vBanksPc-kicker,.vBanksPc-stat-icon,.vBanksPc-category-icon,.vBanks-mobile-head > span,.vBanks-mobile-head button,.vBanks-mobile-tiles > button > svg,.vBanks-mobile-tiles > button > small,.vBanksPc-benefits-link svg:first-child) {
   color:var(--ui-readable)!important;-webkit-text-fill-color:currentColor!important;
 }
+html body[data-vive-bg] #app#app main :is(.vBanksPc-kicker,.vWalletPc-kicker) {color:var(--ui-readable)!important;-webkit-text-fill-color:currentColor!important;}
 html body[data-vive-bg] #app#app #page .vBanksPc-stat-icon {background:var(--ui-tint)!important;}
 html body[data-vive-bg] #app#app #page :is(.vBanks-mobile-selector,.vBanks-consolidated-mark),
 html body[data-vive-bg] #app#app main.vBanksPc-world .vBanksPc-product-filter button[aria-pressed="true"] {
@@ -48,7 +49,7 @@ html body[data-vive-bg] #app#app main.vBanksPc-world .vBanksPc-product-filter bu
 }
 html body[data-vive-bg] #app#app #page .vBanks-mobile-selector .vBanks-consolidated-mark {background:none!important;}
 html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-mobile-hero {
-  background:radial-gradient(ellipse at 86% 13%,color-mix(in srgb,var(--ui-accent) 60%,transparent),transparent 45%),var(--ui-hero)!important;
+  background:radial-gradient(ellipse at 86% 13%,color-mix(in srgb,var(--ui-solid) 80%,transparent),transparent 45%),var(--ui-hero)!important;
   border-color:color-mix(in srgb,var(--ui-accent) 55%,transparent)!important;
   box-shadow:0 5px 14px color-mix(in srgb,var(--ui-solid) 20%,transparent),inset 0 1px 0 #ffffff19;
 }
@@ -56,7 +57,8 @@ html body[data-vive-bg] #app#app #page .vBanks-net-art i {background:linear-grad
 html body[data-vive-bg] #app#app #page .vBanks-mobile-net .vBanksPc-change {background:color-mix(in srgb,var(--ui-accent) 8%,white)!important;color:var(--ui-solid)!important;}
 html body[data-vive-bg] #app#app #page .vBanks-mobile-net .vBanksPc-change > span:last-child {color:var(--ui-solid)!important;}
 html body[data-vive-bg] #app#app #page .vBanks-mobile-utilization .vBanksPc-meter i {background:#fff!important;}
-html body[data-vive-bg] #app#app main.vBanksPc-world :is(.vBanksPc-meter i,.vBanks-credit-track i:not(.negative)) {background:var(--ui-solid)!important;}
+html body[data-vive-bg] #app#app main.vBanksPc-world .vBanksPc-meter i {background:linear-gradient(90deg,var(--ui-solid),var(--ui-readable))!important;}
+html body[data-vive-bg] #app#app main.vBanksPc-world .vBanks-credit-track i:not(.negative) {background:var(--ui-readable)!important;}
 html body[data-vive-bg] #app#app main.vBanksPc-world .vBanksPc-metric:first-child {background:linear-gradient(25deg,var(--ui-tint),var(--bank-glass) 60%);}
 html body[data-vive-bg] #app#app main.vBanksPc-world .vBanks-credit-track {background:var(--ui-track);}
 /* Wallet: PC and mobile use the same accent, not the selected institution's color. */
@@ -78,7 +80,9 @@ html body[data-vive-bg] #app#app #page .v68-wallet :is(.v1301-insight,.v1301-lim
 html body[data-vive-bg] #app#app #page .v68-wallet [aria-label="Seleccionar Créditos generales"] {--accent:var(--ui-solid)!important;}
 html body[data-vive-bg] #app#app #page .v68-wallet [data-id="__vive_wallet_credit_global__"] .v266-physical-card,
 html body[data-vive-bg] #app#app #page .v68-wallet [aria-label="Seleccionar Créditos generales"] .v266-physical-card {background:var(--ui-hero)!important;}
-html body[data-vive-bg] #app#app #page#page .v68-wallet :is(.v266-wallet-panel,.v371-card-return,.v371-return-widget,.v266-selected-balance) {background-color:var(--ui-surface)!important;}
+html body[data-vive-bg] #app#app #page#page .v68-wallet :is(.v266-wallet-panel,.v371-card-return,.v371-return-widget) {background-color:var(--ui-surface)!important;}
+html body[data-vive-bg] #app#app #page#page .v68-wallet .v266-selected-balance {background:transparent!important;}
+html body[data-vive-bg] #app#app #page#page .v68-wallet .v266-wallet-add {color:var(--ui-readable)!important;-webkit-text-fill-color:currentColor!important;}
 html body[data-vive-bg] #app#app #page#page .v68-wallet .v266-wallet-actions > button > span {background:var(--ui-tint)!important;color:var(--ui-readable)!important;border-color:var(--ui-line)!important;}
 html body[data-vive-bg] #app#app #page .v68-wallet .v266-dots button.active {background-color:var(--ui-readable)!important;}
 html body[data-vive-bg] #app#app #page .v68-wallet .v1244-gauge:not(.is-mid,.is-high) {background:conic-gradient(var(--ui-solid) calc(var(--u)*1%),var(--ui-track) 0)!important;}
