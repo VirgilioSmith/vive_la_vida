@@ -52,16 +52,23 @@ const v191Taxonomy=()=>{
   if(!Array.isArray(db.hiddenTaxonomy.subcategories))db.hiddenTaxonomy.subcategories=[];
   return db.hiddenTaxonomy;
 };
-const v191CategoryHidden=(kind,name)=>v191Taxonomy().categories.some(x=>x.kind===kind&&x.name===name);
-const v191SubHidden=(kind,cat,name)=>v191Taxonomy().subcategories.some(x=>x.kind===kind&&x.category===cat&&x.name===name);
-const v191RemoveCategoryHide=(kind,name)=>{const h=v191Taxonomy();h.categories=h.categories.filter(x=>!(x.kind===kind&&x.name===name))};
-const v191RemoveSubHide=(kind,cat,name)=>{const h=v191Taxonomy();h.subcategories=h.subcategories.filter(x=>!(x.kind===kind&&x.category===cat&&x.name===name))};
+/* V1292: normalización canónica para impedir duplicados al eliminar/reactivar. */
+const v1292TaxKey=value=>String(value||'').trim().replace(/\s+/g,' ').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es');
+const v191CategoryHidden=(kind,name)=>v191Taxonomy().categories.some(x=>x.kind===kind&&v1292TaxKey(x.name)===v1292TaxKey(name));
+const v191SubHidden=(kind,cat,name)=>v191Taxonomy().subcategories.some(x=>x.kind===kind&&v1292TaxKey(x.category)===v1292TaxKey(cat)&&v1292TaxKey(x.name)===v1292TaxKey(name));
+const v191RemoveCategoryHide=(kind,name)=>{const h=v191Taxonomy();h.categories=h.categories.filter(x=>!(x.kind===kind&&v1292TaxKey(x.name)===v1292TaxKey(name)))};
+const v191RemoveSubHide=(kind,cat,name)=>{const h=v191Taxonomy();h.subcategories=h.subcategories.filter(x=>!(x.kind===kind&&v1292TaxKey(x.category)===v1292TaxKey(cat)&&v1292TaxKey(x.name)===v1292TaxKey(name)))};
 const categoryMap=kind=>{
  const out=Object.fromEntries(Object.entries(CATALOG[kind]||{}).map(([name,subs])=>[name,[...subs]]));
- for(const c of db.customCategories||[]){if(c.kind!==kind||!c.name)continue;if(!out[c.name])out[c.name]=[];for(const sub of c.subcategories||[])if(!out[c.name].includes(sub))out[c.name].push(sub)}
+ for(const c of db.customCategories||[]){
+  if(c.kind!==kind||!String(c.name||'').trim())continue;
+  const canonical=Object.keys(out).find(name=>v1292TaxKey(name)===v1292TaxKey(c.name))||c.name.trim();
+  if(!out[canonical])out[canonical]=[];
+  for(const sub of c.subcategories||[])if(sub&&!out[canonical].some(x=>v1292TaxKey(x)===v1292TaxKey(sub)))out[canonical].push(sub);
+ }
  for(const name of Object.keys(out)){
-   if(v191CategoryHidden(kind,name)){delete out[name];continue}
-   out[name]=out[name].filter(sub=>!v191SubHidden(kind,name,sub));
+  if(v191CategoryHidden(kind,name)){delete out[name];continue}
+  out[name]=out[name].filter(sub=>!v191SubHidden(kind,name,sub));
  }
  return out;
 };
@@ -4637,7 +4644,7 @@ function v918BudgetAssign(cat){
  };
  if(cat){stepSub(cat);return}
  if(typeof window.openItemPicker!=='function'){budgetForm();return}
- const cats=[...new Set([...EXP,...rows.map(b=>b.category),...Object.keys(m.expenseBy||{})])].filter(c=>categoryMap('gasto')[c]||EXP.includes(c)||limitOf(c,'')||spentOf(c,''));
+ const cats=Object.keys(categoryMap('gasto')); // Excluye categorías ocultas de nuevos presupuestos.
  window.openItemPicker('Selecciona la categoría',cats.map(c=>({value:c,name:c,detail:detail(c,''),iconHtml:ico(c,'')})),stepSub);
 }
 function budgetForm(cat,sub){let category=cat||Object.keys(categoryMap('gasto'))[0]||'',subcategory=sub||'',row=budgetRowsAt(ui.month).find(b=>b.category===category&&(b.subcategory||'')===subcategory)||{};modal('Presupuesto por categoría y subcategoría',`${formItem('effectiveMonth','Mes de vigencia',ui.month,'month','required')}${formSelect('category','Categoría de gasto',categoryOptions('gasto'),category,'id="budgetCategory"')}${subSelect('gasto',category,subcategory)}${formItem('amount','Presupuesto de este mes (RD$)',row.amount||0,'number','min="0" step="0.01" required')}${para('La edición rige desde el mes elegido y no reescribe períodos anteriores. Un límite global ya incluye sus subcategorías. Para retirar un límite, registra cero.')}`,'budgetForm')}
@@ -6560,7 +6567,7 @@ if(form.id==='benefitLedgerForm'){
  switch(form.id){
 case 'bankForm':{let name=String(v.name||'').trim();if(!name)throw Error('Indica el nombre de la institución.');if(db.banks.some(b=>b.id!==id&&b.name.toLocaleLowerCase('es')===name.toLocaleLowerCase('es')))throw Error('Ya hay una institución con ese nombre.');let entry={id:id||uuid(),name,kind:v.kind||'Banco',color:v.color||'#376bea',logo:bankLogoSafe(form.dataset.logo),notes:String(v.notes||'').trim(),scope:v.scope==='negocio'?'negocio':'personal'};if(id){let previous=bank(id);if(previous.name!==name||previous.kind!==entry.kind){previous.identityHistory=Array.isArray(previous.identityHistory)?previous.identityHistory:[];previous.identityHistory.push({at:new Date().toISOString(),beforeName:previous.name,beforeKind:previous.kind,nextName:name,nextKind:entry.kind});}const history=previous.identityHistory||[];Object.assign(previous,entry,{identityHistory:history});for(let x of [...db.accounts,...db.cards,...db.loans])if(x.bankId===id)x.bank=name}else{db.banks.push(entry);ui.bankId=entry.id}break;}
 case 'categoryForm':{
- const emoji=String(v.emoji||'').trim(),kind=v.kind==='ingreso'?'ingreso':'gasto',chosen=String(v.category||'').trim(),newName=String(v.name||'').trim(),sub=String(v.subcategory||'').trim();
+ const emoji=String(v.emoji||'').trim(),kind=v.kind==='ingreso'?'ingreso':'gasto',chosen=String(v.category||'').trim();let newName=String(v.name||'').trim();const sub=String(v.subcategory||'').trim();
  if(chosen){
   if(!sub)throw Error('Escribe la subcategoría a agregar.');
   if(subcategoryOptions(kind,chosen).some(x=>x.toLocaleLowerCase('es')===sub.toLocaleLowerCase('es')))throw Error('Esa subcategoría ya existe.');
@@ -6570,7 +6577,9 @@ case 'categoryForm':{
   if(!defined){let custom=db.customCategories.find(c=>c.kind===kind&&c.name===chosen);if(!custom)db.customCategories.push(custom={kind,name:chosen,subcategories:[]});custom.subcategories.push(sub)}
  }else{
   if(!newName)throw Error('Escribe el nombre de la categoría nueva.');
-  if(Object.keys(categoryMap(kind)).some(x=>x.toLocaleLowerCase('es')===newName.toLocaleLowerCase('es')))throw Error('Esa categoría ya existe. Selecciónala para agregarle una subcategoría.');
+  const existingName=[...Object.keys(CATALOG[kind]||{}),...(db.customCategories||[]).filter(x=>x.kind===kind).map(x=>x.name)].find(x=>v1292TaxKey(x)===v1292TaxKey(newName));
+  if(existingName&&!v191CategoryHidden(kind,existingName))throw Error('Esa categoría ya existe. Selecciónala para agregarle una subcategoría.');
+  if(existingName)newName=existingName;
   const wasHidden=v191CategoryHidden(kind,newName);if(wasHidden)v191RemoveCategoryHide(kind,newName);
   let defined=Object.prototype.hasOwnProperty.call(CATALOG[kind]||{},newName)||(db.customCategories||[]).some(c=>c.kind===kind&&c.name===newName);
   if(!defined)db.customCategories.push({kind,name:newName,subcategories:[]});
@@ -18592,11 +18601,17 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
    if(s){
     const usado=(db.transactions||[]).some(x=>x.category===c&&x.subcategory===s)||(db.recurring||[]).some(r=>r.category===c&&r.subcategory===s)||(db.budgetVersions||[]).some(b=>b.category===c&&b.subcategory===s);
     if(!window.confirm(`¿Eliminar la subcategoría «${s}» de «${c}»?\n\n${usado?'Los movimientos anteriores seguirán conservando su clasificación.\n':''}La categoría principal y los demás datos no se modificarán.`))return;
-    v191Taxonomy().subcategories.push({kind:k,category:c,name:s});delete store()[key(k,c,s)];refrescar(k,c);toast('Subcategoría eliminada del catálogo.');
+    const before=JSON.stringify(v191Taxonomy());
+     if(!v191SubHidden(k,c,s))v191Taxonomy().subcategories.push({kind:k,category:c,name:s});
+     if(persist()===false){db.hiddenTaxonomy=JSON.parse(before);toast('No se pudo guardar la eliminación. Comprueba tu sesión o conexión.');return;}
+     delete store()[key(k,c,s)];render();detalle(k,c);toast('Subcategoría eliminada del catálogo.');
    }else{
     const usado=usos(k,c)>0||(db.recurring||[]).some(r=>r.category===c)||(db.budgetVersions||[]).some(b=>b.category===c);
     if(!window.confirm(`¿Eliminar del catálogo la categoría «${c}» y sus subcategorías?\n\n${usado?'Tiene registros asociados, que permanecerán intactos.\n':''}`))return;
-    v191Taxonomy().categories.push({kind:k,name:c});persist();cerrar('v920-detail');render();toast('Categoría eliminada del catálogo.');
+    const before=JSON.stringify(v191Taxonomy());
+     if(!v191CategoryHidden(k,c))v191Taxonomy().categories.push({kind:k,name:c});
+     if(persist()===false){db.hiddenTaxonomy=JSON.parse(before);toast('No se pudo guardar la eliminación. Comprueba tu sesión o conexión.');return;}
+     cerrar('v920-detail');render();toast('Categoría eliminada del catálogo.');
    }
   }
  });
