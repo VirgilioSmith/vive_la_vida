@@ -1,0 +1,239 @@
+@media (min-width:791px){
+  html body #app#app main.vWalletPc-world {
+    --wallet-ink:#10182e;
+    --wallet-muted:#465673;
+    --wallet-accent:#08786d;
+    --wallet-deep:#005b55;
+    --wallet-mint:#cde8e4;
+    --wallet-line:#d9e2e7;
+    --wallet-track:#dae1e6;
+    --wallet-glass:#ffffffb8;
+    --wallet-shadow:0 7px 18px #25415412,inset 0 1px 0 #fff;
+    min-height:100vh;
+    padding:clamp(22px,2.5vw,42px) clamp(16px,1.65vw,28px) 32px!important;
+    color:var(--wallet-ink);
+    background:radial-gradient(ellipse at 57% 0,#aad5cc 0,transparent 39%),radial-gradient(ellipse at 11% 100%,#d9ebe7 0,transparent 46%),linear-gradient(135deg,#f0f4fa,#f8faf9 54%,#eef2fa)!important;
+  }
+  #app .vWalletPc-world > .topbar {
+    align-items:center;gap:18px;margin:0 0 clamp(18px,1.65vw,28px);background:none;box-shadow:none;
+  }
+  html body #app#app main.vWalletPc-world .topbar .top-title {
+    color:var(--wallet-ink)!important;-webkit-text-fill-color:var(--wallet-ink)!important;
+  }
+  html body #app#app main.vWalletPc-world .topbar .top-sub {
+    margin-top:5px!important;color:var(--wallet-muted)!important;-webkit-text-fill-color:var(--wallet-muted)!important;
+  }
+  #app .vWalletPc-kicker {
+    display:block;margin-bottom:4px;color:var(--wallet-deep);font-size:11px;font-weight:800;letter-spacing:.16em;
+  }
+  html body #app#app .vWalletPc-world .vWalletPc-search {
+    display:flex!important;align-items:center;gap:10px;width:clamp(165px,23vw,440px)!important;min-height:44px;padding:0 15px!important;
+    border:1px solid #cddde1!important;border-radius:999px!important;background:#ffffffd4!important;
+    box-shadow:0 4px 11px #25415413!important;color:var(--wallet-muted)!important;text-align:left;white-space:nowrap;
+  }
+  #app .vWalletPc-search span {overflow:hidden;text-overflow:ellipsis}
+  #app .vWalletPc-search svg {width:21px;height:21px;flex:none;color:var(--wallet-ink)}
+  #app .vWalletPc-world .date-chip {display:none!important}
+  #app .vWalletPc {font-variant-numeric:tabular-nums}
+  #app .vWalletPc :where(button,summary) {font-family:inherit;color:inherit}
+  #app .vWalletPc :is(button,summary,circle[tabindex]):focus-visible {outline:2px solid var(--wallet-accent);outline-offset:2px}
+  #app .vWalletPc-panel {
+    min-width:0;border:1px solid var(--wallet-line);border-radius:clamp(18px,1.7vw,29px);
+    background:var(--wallet-glass);box-shadow:var(--wallet-shadow);
+  }
+  #app .vWalletPc-panel h2 {
+    margin:0;color:var(--wallet-ink);font-size:clamp(20px,1.8vw,27px);font-weight:700;line-height:1.1;letter-spacing:-.04em;
+  }
+  #app .vWalletPc-stats {
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1vw,16px);margin-bottom:clamp(18px,2vw,34px);
+  }
+  #app .vWalletPc-stat {
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(7px,1vw,16px);
+    min-height:clamp(100px,8vw,134px);padding:clamp(10px,1.05vw,19px);align-items:start;
+  }
+  #app .vWalletPc-stat.is-available {background:linear-gradient(145deg,#fff9,#fff9 30%,#ddf6edc9 72%,#f7fffae8)}
+  #app .vWalletPc-stat.is-debt {background:linear-gradient(145deg,#fffc,#fff7edc5 50%,#fff9)}
+  #app .vWalletPc-stat.is-limit {background:linear-gradient(145deg,#fffe,#e9f0ffd1 75%,#fff9)}
+  #app .vWalletPc-stat div {min-width:0}
+  #app .vWalletPc-stat div > span:first-child {
+    display:block;padding-top:3px;color:var(--wallet-ink);font-size:clamp(12px,1vw,16px);line-height:1.25;
+  }
+  #app .vWalletPc-stat strong {
+    display:block;margin:5px 0 8px;color:var(--wallet-ink);font-size:clamp(17px,2.1vw,31px);
+    font-weight:820;line-height:1.05;letter-spacing:-.55px;overflow-wrap:anywhere;
+  }
+  #app .vWalletPc-stat small {
+    display:block;color:var(--wallet-muted);font-size:clamp(10px,.95vw,14px);line-height:1.4;overflow-wrap:anywhere;
+  }
+  #app .vWalletPc-symbol {
+    display:grid;place-items:center;width:clamp(32px,3.25vw,54px);aspect-ratio:1;border-radius:50%;
+    background:#d8f3ee;color:var(--wallet-deep);
+  }
+  #app .vWalletPc-symbol svg {width:54%;height:54%}
+  #app .is-debt .vWalletPc-symbol {background:#fcead7;color:#162039}
+  #app .is-limit .vWalletPc-symbol {background:#e2ebff;color:#193fc7}
+  #app .is-usage .vWalletPc-symbol {background:#e4f6ed}
+  #app .vWalletPc-grid {
+    display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,2.22fr) minmax(0,1.76fr);gap:clamp(10px,.85vw,15px);align-items:stretch;
+  }
+  #app .vWalletPc-grid .vWalletPc-panel {padding:clamp(12px,1.55vw,26px)}
+  #app .vWalletPc-panel header {display:flex;align-items:center;justify-content:space-between;gap:8px}
+  #app .vWalletPc-products {display:flex;flex-direction:column}
+  #app .vWalletPc-product-list {display:grid;gap:3px;margin:clamp(16px,1.55vw,26px) -8px 16px}
+  #app .vWalletPc-product-list button,#app .vWalletPc-product-links button {
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:clamp(7px,.8vw,14px);
+    width:100%;min-height:clamp(46px,3.8vw,64px);padding:6px 8px;border:0;border-radius:15px;
+    background:transparent;text-align:left;cursor:pointer;
+  }
+  #app .vWalletPc-product-list button[aria-pressed="true"] {
+    background:linear-gradient(135deg,#e1f3ec,#cde8e5);color:var(--wallet-deep);
+  }
+  #app .vWalletPc-product-list button:hover,#app .vWalletPc-product-links button:hover {background:#dcedeb}
+  #app .vWalletPc-product-list strong,#app .vWalletPc-limit-row strong {
+    display:block;font-size:clamp(12px,1.02vw,16px);font-weight:770;letter-spacing:-.025em;overflow-wrap:anywhere;
+  }
+  #app .vWalletPc-product-list small,#app .vWalletPc-limit-row small {
+    display:block;margin-top:3px;color:var(--wallet-muted);font-size:clamp(10px,.96vw,14px);line-height:1.25;
+  }
+  #app .vWalletPc-product-list button > svg,#app .vWalletPc-product-links button > svg:last-child {width:16px;height:16px}
+  #app .vWalletPc-product-mark {
+    display:grid;place-items:center;width:clamp(31px,2.9vw,48px);aspect-ratio:1;overflow:hidden;
+    border-radius:12px;background:#ffffffb0;color:var(--wallet-deep);
+  }
+  #app .vWalletPc-product-mark.is-global {
+    border-radius:50%;background:linear-gradient(135deg,#d6fae8,#fff);box-shadow:0 3px 8px #27625626;
+  }
+  #app .vWalletPc-product-mark > svg {width:62%;height:62%}
+  #app .vWalletPc-product-mark .bank-photo-mark {
+    display:grid;place-items:center;width:100%;height:100%;background:transparent;border:0;box-shadow:none;
+  }
+  #app .vWalletPc-product-mark .bank-photo-mark img {width:100%;height:100%;object-fit:contain}
+  #app .vWalletPc-product-links {margin-top:auto}
+  #app .vWalletPc-product-links button {padding-inline:0;border-top:1px solid var(--wallet-line);border-radius:0;font-size:14px}
+  #app .vWalletPc-product-links svg:first-child {width:24px;height:24px}
+  #app .vWalletPc-menu {position:relative}
+  #app .vWalletPc-menu summary {display:grid;list-style:none;font-weight:820;cursor:pointer}
+  #app .vWalletPc-menu summary::-webkit-details-marker {display:none}
+  #app .vWalletPc-menu > div {
+    position:absolute;inset:calc(100% + 6px) 0 auto auto;z-index:4;min-width:max-content;padding:5px;
+    border:1px solid var(--wallet-line);border-radius:12px;background:white;box-shadow:var(--wallet-shadow);
+  }
+  #app .vWalletPc-menu button,#app .vWalletPc-card-actions button {
+    display:block;padding:8px 10px;border:0;border-radius:8px;background:none;text-align:left;cursor:pointer;
+  }
+  #app .vWalletPc-menu button:hover,#app .vWalletPc-card-actions button:hover {background:var(--wallet-mint)}
+  #app .vWalletPc-state-main {
+    display:grid;grid-template-columns:minmax(76px,.86fr) minmax(0,1.35fr);
+    align-items:center;gap:clamp(10px,1.7vw,30px);padding:clamp(14px,1.1vw,20px) 0;
+  }
+  #app .vWalletPc-ring {
+    display:grid;place-items:center;aspect-ratio:1;border-radius:50%;
+    background:conic-gradient(var(--wallet-accent) var(--use),var(--wallet-mint) 0);
+  }
+  #app .vWalletPc-symbol > .vWalletPc-ring {width:60%}
+  #app .vWalletPc-symbol > .vWalletPc-ring::after {content:"";width:68%;aspect-ratio:1;border-radius:50%;background:#e4f6ed}
+  #app .vWalletPc-state-main > .vWalletPc-ring {width:min(100%,166px);justify-self:center}
+  #app .vWalletPc-state-main > .vWalletPc-ring > div {
+    display:grid;place-content:center;width:78%;height:78%;border-radius:50%;background:#fbfdfd;text-align:center;
+  }
+  #app .vWalletPc-ring strong,#app .vWalletPc-limit strong {
+    display:block;color:var(--wallet-ink);font-size:clamp(22px,2.9vw,50px);font-weight:850;line-height:1.02;letter-spacing:-.05em;
+  }
+  #app .vWalletPc-ring strong {font-size:clamp(18px,2.25vw,38px)}
+  #app .vWalletPc-ring span {margin-top:4px;color:var(--wallet-muted)}
+  #app .vWalletPc-limit {min-width:0;padding-left:clamp(9px,1.6vw,26px);border-left:1px solid var(--wallet-line)}
+  #app .vWalletPc-limit > span,#app .vWalletPc-limit small {
+    display:block;color:var(--wallet-muted);font-size:clamp(12px,1.22vw,20px);line-height:1.4;
+  }
+  #app .vWalletPc-limit strong {margin:5px 0 9px;overflow-wrap:anywhere}
+  #app .vWalletPc-limits,#app .vWalletPc-card-actions {border-top:1px solid var(--wallet-line)}
+  #app .vWalletPc-limit-row {
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:clamp(6px,.95vw,16px);
+    width:100%;min-height:clamp(54px,4.45vw,75px);padding:6px 0;border:0;border-bottom:1px solid var(--wallet-line);
+    background:none;text-align:left;cursor:pointer;
+  }
+  #app .vWalletPc-limit-row:hover {background:#e9f6f399}
+  #app .vWalletPc-limit-row > b {font-size:clamp(13px,1.45vw,23px);font-weight:820;letter-spacing:-.55px;white-space:nowrap}
+  #app .vWalletPc-row-meter {display:grid;grid-template-columns:minmax(10px,1fr) auto;gap:7px;align-items:center}
+  #app .vWalletPc-meter {display:block;width:100%;height:8px;overflow:hidden;border-radius:999px;background:var(--wallet-track)}
+  #app .vWalletPc-meter i {display:block;height:100%;border-radius:inherit;background:var(--wallet-accent)}
+  #app .vWalletPc-stat .vWalletPc-meter {height:12px;margin-top:11px}
+  #app .vWalletPc-card-actions {display:flex;flex-wrap:wrap;gap:6px;padding-top:14px}
+  #app .vWalletPc-card-actions button {background:#e3f3ef;color:var(--wallet-deep);font-size:12px;font-weight:650}
+  #app .vWalletPc-right {display:grid;grid-template-rows:auto 1fr;gap:clamp(14px,1.45vw,24px);min-width:0}
+  #app .vWalletPc-cuts header {justify-content:flex-start}
+  #app .vWalletPc-cuts p {margin:9px 0 18px;padding-left:calc(clamp(32px,3.25vw,54px) + 8px);color:var(--wallet-muted)}
+  #app .vWalletPc-cuts > div {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  #app .vWalletPc-cuts button {
+    display:flex;align-items:center;justify-content:center;gap:6px;min-height:clamp(38px,3.55vw,59px);padding:5px 8px;
+    border:1px solid #c9e4e1;border-radius:999px;background:linear-gradient(#f7fdfd,#cce8e3);color:var(--wallet-deep);
+    font-size:clamp(11px,1.12vw,18px);font-weight:760;white-space:nowrap;cursor:pointer;
+  }
+  #app .vWalletPc-cuts button:disabled {opacity:.63;cursor:default}
+  #app .vWalletPc-cuts button svg,#app .vWalletPc-round svg {width:17px;height:17px;flex:none}
+  #app .vWalletPc-round {
+    display:grid;place-items:center;width:32px;height:32px;flex:none;padding:0;border:0;border-radius:50%;
+    background:#e3f3ef;color:var(--wallet-deep);cursor:pointer;
+  }
+  #app .vWalletPc-chart-layout {
+    display:grid;grid-template-columns:minmax(0,.96fr) minmax(0,1fr);align-items:center;gap:clamp(8px,1.1vw,19px);margin-top:clamp(10px,1.05vw,18px);
+  }
+  #app .vWalletPc-chart {
+    position:relative;min-width:0;aspect-ratio:1;border-radius:50%;background:#ffffffd9;box-shadow:0 3px 12px #24436c16;
+  }
+  #app .vWalletPc-chart svg {display:block;width:100%;height:auto}
+  #app .vWalletPc-chart circle {fill:none;stroke-width:13}
+  #app .vWalletPc-chart-track {stroke:#e3ebe9}
+  #app .vWalletPc-chart circle[role="button"] {cursor:pointer;pointer-events:stroke}
+  #app .vWalletPc-chart circle:is(:hover,[aria-pressed="true"])[role="button"] {stroke-width:15}
+  #app .vWalletPc-chart-total {
+    position:absolute;inset:19%;display:grid;place-content:center;gap:4px;text-align:center;pointer-events:none;
+  }
+  #app .vWalletPc-chart-total strong {font-size:clamp(11px,1.28vw,22px);font-weight:850;line-height:1.05;letter-spacing:-.04em;overflow-wrap:anywhere}
+  #app .vWalletPc-chart-total span {color:var(--wallet-muted);font-size:clamp(10px,1.05vw,16px);overflow-wrap:anywhere}
+  #app .vWalletPc-legend button {
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;
+    padding:clamp(5px,.72vw,12px) 0;border:0;border-bottom:1px solid var(--wallet-line);
+    background:none;text-align:left;font-size:clamp(10px,1.05vw,16px);cursor:pointer;
+  }
+  #app .vWalletPc-legend button:last-child {border-bottom:0}
+  #app .vWalletPc-legend button:is(:hover,[aria-pressed="true"]) {color:var(--wallet-deep);background:#e5f4f0}
+  #app .vWalletPc-legend button i {width:clamp(8px,.88vw,15px);aspect-ratio:1;border-radius:50%;background:var(--slice)}
+  #app .vWalletPc-legend button span {overflow-wrap:anywhere}
+  #app .vWalletPc-legend button b {font-weight:650;white-space:nowrap}
+  #app .vWalletPc-note {margin:12px 0 0;color:var(--wallet-muted);font-size:12px}
+  body.privacy-finanzas #app .vWalletPc :is(.vWalletPc-stat strong,.vWalletPc-stat small,.vWalletPc-limit strong,.vWalletPc-limit small,.vWalletPc-limit-row > b,.vWalletPc-limit-row small,.vWalletPc-chart-total strong,.vWalletPc-cuts button b) {filter:blur(7px);user-select:none}
+  html body #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active {color:#08786d!important}
+  html body #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active svg {color:#08786d!important;stroke:#08786d!important}
+  html body #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active::before {background:#08786d!important}
+}
+@media (min-width:1350px){
+  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) {--wallet-rail-width:clamp(186px,15vw,252px)}
+  html body[data-menu-layout="rail"] #app#app main.vWalletPc-world {
+    margin-left:var(--wallet-rail-width)!important;width:calc(100% - var(--wallet-rail-width))!important;
+  }
+  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) .sidebar.rail-sidebar {
+    width:var(--wallet-rail-width)!important;max-width:none!important;padding-inline:clamp(12px,1.4vw,24px)!important;
+    align-items:stretch!important;background:linear-gradient(155deg,#f9fafc,#f3f7f9 74%,#cee9e3)!important;
+  }
+  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) .sidebar.rail-sidebar :is(.rail-main,.rail-bottom) {
+    width:100%!important;align-items:stretch!important;
+  }
+  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) .rail-action[data-wallet-label] {
+    display:flex!important;justify-content:flex-start!important;align-items:center;gap:12px;width:100%!important;
+    padding-inline:10px!important;color:#172039!important;text-align:left;
+  }
+  #app:has(.vWalletPc-world) .rail-action[data-wallet-label]::after {content:attr(data-wallet-label);font-size:14px;font-weight:650;white-space:nowrap}
+  #app:has(.vWalletPc-world) .rail-action[data-wallet-label] .rail-tooltip {display:none!important}
+  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active {background:#d4ebe6!important;color:#005b55!important}
+  html body #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active::before {display:none!important}
+}
+@media (min-width:791px) and (max-width:1120px){
+  #app .vWalletPc-grid {grid-template-columns:minmax(146px,.78fr) minmax(0,1.7fr)}
+  #app .vWalletPc-right {grid-column:1/-1;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}
+  #app .vWalletPc-chart-layout {grid-template-columns:minmax(0,145px) minmax(0,1fr)}
+}
+@media (min-width:791px) and (max-width:950px){
+  html body #app#app .vWalletPc-world .vWalletPc-search {width:44px!important;justify-content:center;padding:0!important}
+  #app .vWalletPc-search span {display:none}
+}
