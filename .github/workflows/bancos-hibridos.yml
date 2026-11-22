@@ -28,6 +28,19 @@ jobs:
         run: |
           npm i --no-save playwright@1
           npx playwright install --with-deps chromium
+      - name: Diagnóstico de estructura Bancos y Wallet (sin datos privados)
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const s=fs.readFileSync('src/app.js','utf8');
+          const terms=['vBanksPc-world','vBanksPc-grid','vBanksPc-bank-list','Tus instituciones','Tu posición bancaria','Productos y movimientos','banksPcProducts','vBanks-mobile-head','vBanksPc-benefits','Tu universo financiero','Tu posición financiera'];
+          for(const t of terms) {
+            let p=-1,n=0;
+            while((p=s.indexOf(t,p+1))!==-1 && n++<2) {
+              console.log('\\n=== '+t+' ('+p+') ===\\n'+s.slice(Math.max(0,p-800),Math.min(s.length,p+1500)));
+            }
+          }
+          NODE
       - name: Validar Bancos PC y móvil web
         run: node tests/bancos-patrimonio.js
         env:
