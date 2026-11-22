@@ -123,6 +123,16 @@ async function testBanks(browser,width){
    const top=seq.map(k=>el.querySelector(k).getBoundingClientRect().top);
    return top.every((y,i)=>!i||y>top[i-1]);
   }),'El orden móvil coincide con la referencia.');
+  if(!mobile&&width>=1280)assert.ok(await p.evaluate(()=>document.scrollingElement.scrollHeight<=innerHeight+3),'Bancos PC debe caber sin scroll general a '+width+'px.');
+  if(!mobile)assert.ok(await p.evaluate(()=>{
+   const subtitle=document.querySelector('main.vBanksPc-world .topbar .top-sub');
+   const tiles=document.querySelector('main.vBanksPc-world .v371-return-tile');
+   return (!subtitle||getComputedStyle(subtitle).display==='none')&&(!tiles||getComputedStyle(tiles).backgroundColor==='rgba(0, 0, 0, 0)');
+  }),'La cabecera no debe duplicarse y el retorno usa divisores sin rellenos en PC.');
+  if(mobile)assert.ok(await root.locator('.vBanks-mobile-tiles').evaluate(el=>{
+   const cols=getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean);
+   return cols.length===2&&[...el.querySelectorAll('strong')].every(x=>getComputedStyle(x).whiteSpace==='nowrap');
+  }),'Los importes móviles deben ser legibles en un mosaico de dos columnas.');
   if(evidence)await p.screenshot({path:path.join(evidence,`bancos-${width}.png`),fullPage:true,animations:'disabled'});
   const usage=root.locator('.v1301-insight');
   assert.match(await usage.innerText(),/Alimentación/);
