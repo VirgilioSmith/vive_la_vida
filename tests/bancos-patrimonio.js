@@ -125,6 +125,10 @@ async function testBanks(browser,width){
   }),'El orden móvil coincide con la referencia.');
   if(!mobile&&width>=1280)assert.ok(await p.evaluate(()=>document.scrollingElement.scrollHeight<=innerHeight+3),'Bancos PC debe caber sin scroll general a '+width+'px.');
   if(!mobile)assert.ok(await p.evaluate(()=>{
+   const el=document.querySelector('main.vBanksPc-world .v371-return-values');
+   return !!el&&getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length===4;
+  }),'El mockup PC conserva cuatro columnas de retorno en una fila.');
+  if(!mobile)assert.ok(await p.evaluate(()=>{
    const subtitle=document.querySelector('main.vBanksPc-world .topbar .top-sub');
    const tiles=document.querySelector('main.vBanksPc-world .v371-return-tile');
    return (!subtitle||getComputedStyle(subtitle).display==='none')&&(!tiles||getComputedStyle(tiles).backgroundColor==='rgba(0, 0, 0, 0)');
