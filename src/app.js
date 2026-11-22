@@ -16201,6 +16201,8 @@ document.addEventListener('input',function(event){
 
 
 
+const quickOriginChoiceKey=(id,currency)=>id+':'+currency;
+
 /* Registro de compra realizada para un tercero. Reutiliza el motor existente:
    personal_issue(lent,card) => cargo patrimonial a tarjeta, no gasto propio.
    personal_settlement(lent,account/card) => anticipo recibido, no ingreso propio.
@@ -16213,7 +16215,12 @@ document.addEventListener('input',function(event){
  const moneyIn=(n,c)=>money(Math.max(0,Math.round((Number(n)||0)*100)/100),c,2);
  const fmt=(n,c)=>moneyIn(n,c||'DOP');
  const activeCards=()=>db.cards.filter(c=>!c.archived);
- const activeAccounts=ccy=>db.accounts.filter(a=>!a.archived&&a.currency===ccy);
+ const activeAccounts=ccy=>db.accounts.filter(a=>!a.archived&&(!ccy||a.currency===ccy));
+ const cardCurrency=(c,preferred)=>{
+  if(!c)return 'DOP';
+  const currencies=adjustmentCurrencies(c);
+  return currencies.includes(preferred)?preferred:currencies.includes(c.currency)?c.currency:currencies[0];
+ };
  const rows=x=>x.map(([key,value])=>'<div class="v354-review-row"><span>'+esc(key)+'</span><strong>'+esc(value)+'</strong></div>').join('');
  /* Ley 30-26: tasa referencial 0.20% desde 03/07/2026; antes 0.15%.
     El impuesto corresponde al emisor de la transferencia; no se carga al receptor.
@@ -16247,16 +16254,18 @@ document.addEventListener('input',function(event){
   const dark=document.body.classList.contains('theme-black')||document.body.classList.contains('theme-dark');
   const mobile=matchMedia('(max-width:790px)').matches;
   const modalStyle='background:'+ (dark?'#000000':'#f6f8fc')+'!important;padding:0!important;'+(mobile?'height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;width:100vw!important;':'');
-  root().innerHTML='<div class="modal-layer v354-layer" data-backdrop="true"><section class="modal v354-dialog" style="'+modalStyle+'" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><header class="v354-top"><div><span class="v354-eyebrow">vive el hoy · MOVIMIENTO RÁPIDO</span><h2>'+esc(title)+'</h2></div><button type="button" class="v354-close" data-v354-act="close" aria-label="Cerrar">×</button></header><div class="v354-scroll"><div class="v354-progress"><small>'+esc(step)+'</small><strong>'+esc(amount)+'</strong></div>'+inner+'</div><footer class="v354-foot">'+footer+'</footer></section></div>';
+  root().innerHTML='<div class="modal-layer v354-layer" data-backdrop="true"><section class="modal v354-dialog" style="'+modalStyle+'" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><header class="v354-top"><div><span class="v354-eyebrow">vive el hoy · MOVIMIENTO RÁPIDO</span><h2>'+esc(title)+'</h2></div><button type="button" class="v354-close" data-v354-act="close" aria-label="Cerrar">×</button></header><div class="v354-scroll">'+(step?'<div class="v354-progress"><small>'+esc(step)+'</small><strong>'+esc(amount)+'</strong></div>':'')+inner+'</div><footer class="v354-foot">'+footer+'</footer></section></div>';
  };
  const close=()=>{draft=null;pickerData=null;pendingContact=null;processing=false;closeModal()};
  const selectOptions=(arr,selected)=>arr.map(([id,name])=>'<option value="'+esc(id)+'" '+(String(selected)===String(id)?'selected':'')+'>'+esc(name)+'</option>').join('');
  function formScreen(initial={}){
   if(!activeCards().length&&!db.accounts.some(a=>!a.archived)){toast('Primero registra una tarjeta o cuenta en Bancos.');return;}
-  const c=activeCards().find(x=>x.id===initial.cardId)||activeCards()[0]||null,cc=initial.currency||'DOP';
-  const ac=activeAccounts(cc),accountId=ac.some(a=>a.id===initial.accountId)?initial.accountId:(ac[0]?.id||'');
+  const mobile=mobileQuick(),c=activeCards().find(x=>x.id===initial.cardId)||activeCards()[0]||null;
   const purchaseSource=initial.purchaseSource==='account'||!c?'account':'card';
-  const purchaseAcc=ac.find(a=>a.id===initial.purchaseAccountId)||ac[0]||null;
+  const purchaseAccounts=activeAccounts(mobile?null:initial.currency||'DOP');
+  const purchaseAcc=purchaseAccounts.find(a=>a.id===initial.purchaseAccountId)||purchaseAccounts[0]||null;
+  const cc=mobile?(purchaseSource==='account'?purchaseAcc?.currency||'DOP':cardCurrency(c,initial.currency)):initial.currency||'DOP';
+  const ac=activeAccounts(cc),accountId=ac.some(a=>a.id===initial.accountId)?initial.accountId:(ac[0]?.id||'');
   const sourceProduct=purchaseSource==='account'?purchaseAcc:c;
   const selectedPerson=String(initial.person||'').trim(),personInitials=selectedPerson.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toLocaleUpperCase('es')||'?';
   const personOptions=[...new Set([...(db.personalContacts||[]).map(x=>[x.firstName,x.lastName].filter(Boolean).join(' ').trim()),...(db.personalLoans||[]).map(x=>x.person)].filter(Boolean))];
@@ -16265,7 +16274,7 @@ document.addEventListener('input',function(event){
    '<div class="v355-person"><span>¿Para quién fue?</span><input type="hidden" name="person" value="'+esc(selectedPerson)+'"><input type="hidden" name="contactId" value="'+esc(initial.contactId||'')+'"><button type="button" class="v354-person-trigger" data-v354-act="pickPerson" aria-label="Abrir selector de contactos"><span class="v354-person-avatar">'+esc(personInitials)+'</span><span><strong>'+esc(selectedPerson||'Seleccionar una persona')+'</strong><small>Contactos de Entre personas · seleccionar o crear</small></span>'+icon('chevron-right')+'</button></div>':
    '<label class="v355-person">¿Para quién fue?<input name="person" list="v354-people" maxlength="85" required placeholder="Ej. Mi hermano" value="'+esc(selectedPerson)+'"></label>';
   const instrumentField=matchMedia('(max-width:790px)').matches?
-   '<div class="v355-person v354-purchase-field"><span>¿Con qué realizaste la compra?</span><input type="hidden" name="purchaseSource" value="'+esc(purchaseSource)+'"><input type="hidden" name="purchaseAccountId" value="'+esc(purchaseAcc?.id||'')+'"><button type="button" class="v354-person-trigger v354-instrument-trigger" data-v354-act="pickPurchase" aria-label="Seleccionar tarjeta o cuenta utilizada"><span class="v354-person-avatar v354-instrument-icon">'+icon(purchaseSource==='card'?'card':'wallet')+'</span><span><strong>'+esc(sourceProduct?.name||'Seleccionar tarjeta o cuenta')+'</strong><small>'+esc(sourceProduct?bankOf(sourceProduct)||'':'Sin institución')+' · '+esc(purchaseSource==='card'?'Tarjeta':'Cuenta')+(sourceProduct?.last4?' · •••• '+esc(sourceProduct.last4):'')+'</small></span>'+icon('chevron-right')+'</button></div>':
+   '<div class="v355-person v354-purchase-field"><span>¿Con qué realizaste la compra?</span><input type="hidden" name="purchaseSource" value="'+esc(purchaseSource)+'"><input type="hidden" name="purchaseAccountId" value="'+esc(purchaseAcc?.id||'')+'"><button type="button" class="v354-person-trigger v354-instrument-trigger" data-v354-act="pickPurchase" aria-label="Seleccionar tarjeta o cuenta utilizada"><span class="v354-person-avatar v354-instrument-icon">'+icon(purchaseSource==='card'?'card':'wallet')+'</span><span><strong>'+esc(sourceProduct?.name||'Seleccionar tarjeta o cuenta')+'</strong><small>'+esc(sourceProduct?bankOf(sourceProduct)||'':'Sin institución')+' · '+esc(purchaseSource==='card'?'Tarjeta':'Cuenta')+(sourceProduct?.last4?' · •••• '+esc(sourceProduct.last4):'')+(sourceProduct?' · '+esc(cc):'')+'</small></span>'+icon('chevron-right')+'</button></div>':
    '<input type="hidden" name="purchaseSource" value="card"><input type="hidden" name="purchaseAccountId" value="">';
   const content='<div class="v355-intro"><strong>Una compra para alguien</strong><span>Registra el instrumento y lo que te entregaron.</span></div>'+
    '<div id="v354-error" class="v354-error" role="alert" aria-live="polite"></div>'+
@@ -16279,13 +16288,13 @@ document.addEventListener('input',function(event){
    '<div class="v355-compact-note" id="v354-cut-note">Si el dinero no llegó a la tarjeta, el pendiente del corte no disminuye.</div>'+
    '<details class="v355-extra" '+(initial.showExtra?'open':'')+'><summary><span>Instrumento: <strong id="v355-card-label">'+esc(sourceProduct?.name||'Seleccionar')+'</strong></span><span aria-hidden="true">Editar ⌄</span></summary><div class="v354-fields v355-extra-fields">'+
    '<label>Tarjeta utilizada<select name="cardId" '+(purchaseSource==='card'?'required':'')+'>'+selectOptions(activeCards().map(x=>[x.id,x.name+' · '+bankOf(x)]),c?.id||'')+'</select></label>'+
-   '<label>Moneda<select name="currency"><option value="DOP" '+(cc==='DOP'?'selected':'')+'>RD$ · Pesos</option><option value="USD" '+(cc==='USD'?'selected':'')+'>US$ · Dólares</option></select></label>'+
+   (mobile?'<input type="hidden" name="currency" value="'+esc(cc)+'">':'<label>Moneda<select name="currency"><option value="DOP" '+(cc==='DOP'?'selected':'')+'>RD$ · Pesos</option><option value="USD" '+(cc==='USD'?'selected':'')+'>US$ · Dólares</option></select></label>')+
    '<label id="v354-account-label" hidden>Cuenta en la que recibiste el dinero<select name="accountId">'+selectOptions(ac.map(a=>[a.id,a.name+' · '+fmt(getAccountBalance(a),cc)]),accountId)+'</select></label>'+
    '<label>Fecha de la compra<input type="date" name="date" max="'+esc(today())+'" required value="'+esc(initial.date||today())+'"></label>'+
    '<label>Fecha para cobrar la diferencia<input type="date" name="dueDate" required value="'+esc(initial.dueDate||plusMonths(today(),1))+'"></label>'+
    '<label>Nota opcional<input name="note" maxlength="120" placeholder="Ej. Compra de supermercado" value="'+esc(initial.note||'')+'"></label></div></details></form>';
-  const footer='<button type="button" data-v354-act="close">Cancelar</button><button class="primary" type="submit" form="v354-form">Revisar →</button>';
-  makeShell('Movimiento rápido','PASO 1 DE 2 · DATOS',fmt(initial.purchase,cc),content,footer);
+  const footer='<button type="button" data-v354-act="close">Cancelar</button><button class="primary" type="submit" form="v354-form">Revisar</button>';
+  makeShell('Movimiento rápido',mobile?'':'PASO 1 DE 2 · DATOS',fmt(initial.purchase,cc),content,footer);
   const f=$('#v354-form');f.elements.receiptMode.value=initial.receiptMode||'';
   if(mobileQuick()){
    const $f=s=>f.querySelector(s),make=(html)=>{const el=document.createElement('div');el.innerHTML=html;return el.firstElementChild};
@@ -16304,7 +16313,6 @@ document.addEventListener('input',function(event){
    // The existing universal account selector owns accountId. Keep only one purchase instrument selector.
    const paid=$f('#v355-paid-label');origin.append(paid);
    for(const name of ['purchase','received','paidAmount']){const input=f.elements[name];input.type='text';input.inputMode='decimal';input.autocomplete='off';}
-   const currency=f.elements.currency;currency.closest('label').hidden=purchaseSource!=='card';if(purchaseSource==='card')origin.append(currency.closest('label'));
    const date=f.elements.date;date.closest('label').hidden=true;
    $f('.v355-result').append(make('<small>'+esc(selectedPerson||'Selecciona una persona')+' · Entre personas</small>'));
    $f('.v355-result').append(make('<div class="vQuick-track"><i></i></div>'));
@@ -16365,14 +16373,14 @@ document.addEventListener('input',function(event){
   if(!person||person.length>85)throw Error('Indica quién te debe el dinero.');
   if(source==='card'&&(!c||c.archived))throw Error('Selecciona una tarjeta activa.');
    if(source==='account'&&(!purchaseAcc||purchaseAcc.archived||purchaseAcc.currency!==ccy))throw Error('Selecciona una cuenta activa en la moneda de la compra.');
-  if(!['DOP','USD'].includes(ccy))throw Error('Selecciona una moneda válida.');
+  if(!['DOP','USD'].includes(ccy)||(mobileQuick()&&source==='card'&&!adjustmentCurrencies(c).includes(ccy)))throw Error('Selecciona un origen con una moneda válida.');
   if(!['presencial','internet'].includes(channel))throw Error('Selecciona Presencial o Internet Banking.');
   const validCents=n=>Number.isFinite(n)&&Number.isSafeInteger(Math.round(n*100))&&Math.abs(n*100-Math.round(n*100))<0.000001;
   if(!validCents(p)||p<=0)throw Error('La compra debe ser mayor que cero y tener como máximo dos decimales.');
   if(!validCents(r)||r<0)throw Error('El dinero recibido debe ser válido, no negativo y tener máximo dos decimales.');
   if(!['card','account','account_and_paid','none'].includes(mode))throw Error('Indica qué pasó con el dinero: tu tarjeta, tu cuenta o pendiente.');
    if(source==='account'&&['card','account_and_paid'].includes(mode))throw Error('La compra desde cuenta no puede aplicarse directamente a una tarjeta.');
-  if(mode==='none'&&r>0.00001)throw Error('Si no has recibido dinero, escribe RD$0 o selecciona su destino real.');
+  if(mode==='none'&&r>0.00001)throw Error('Si no has recibido dinero, escribe '+fmt(0,ccy)+' o selecciona su destino real.');
   if(mode!=='none'&&r<.005)throw Error('Si todavía no ha entregado dinero, selecciona «Todavía no recibido».');
   const paidRaw=String(raw.paidAmount??'').trim(),paid=mode==='account_and_paid'?Number(paidRaw):0;
    if(mode==='account_and_paid'&&(!paidRaw||!validCents(paid)||paid<=0))throw Error('Indica el pago real efectuado a la tarjeta. No se supone que pagaste todo lo recibido.');
@@ -16403,7 +16411,7 @@ document.addEventListener('input',function(event){
     item('<span class="vQuick-mark">'+icon('users')+'</span>','Entre personas',(surplus>0?'Cuenta por pagar':due>0?'Cuenta por cobrar':'Sin pendiente')+' · '+v.person,fmt(surplus||due,v.currency))+'</div>'+
     '<div class="v354-review-row"><span>Canal de recepción</span><strong>'+esc(v.channel==='internet'?'Internet Banking':'Presencial')+'</strong></div><div class="v354-review-row"><span>Impuesto informativo</span><strong>'+esc(tax)+'</strong></div><div class="v355-compact-note">'+esc(v.receiptMode==='account'&&isCard?'El dinero recibido no reduce el saldo de la tarjeta hasta realizar el pago.':payLabel)+'. '+(v.channel==='internet'?'El impuesto estimado corresponde al emisor; no se carga a tu cuenta.':'')+'</div>';
   }
-  makeShell(mobileQuick()?'Confirma tu movimiento':'Revisar movimiento','PASO 2 DE 2 · REVISIÓN',fmt(v.purchase,v.currency),summary,'<button type="button" data-v354-act="back">Editar</button><button class="primary" type="button" data-v354-act="confirm">Confirmar y guardar</button>');
+  makeShell(mobileQuick()?'Confirma tu movimiento':'Revisar movimiento',mobileQuick()?'':'PASO 2 DE 2 · REVISIÓN',fmt(v.purchase,v.currency),summary,'<button type="button" data-v354-act="back">Editar</button><button class="primary" type="button" data-v354-act="confirm">Confirmar y guardar</button>');
   if(mobileQuick())$('.v354-dialog').classList.add('vQuick-mobile','vQuick-review');
  }
  function save(v){
@@ -16445,13 +16453,16 @@ document.addEventListener('input',function(event){
   else if(action==='chooseReceipt'){const f=$('#v354-form');f.elements.receiptMode.value=b.dataset.id;if(b.dataset.id==='none')f.elements.received.value='0';$('.vQuick-sheet')?.remove();recalc(f);}
    else if(action==='pickPerson'){personPicker();}
    else if(action==='pickPurchase'){
-    const current=snapshot(),cc=current.currency||'DOP';
-    const products=[...activeCards().map(item=>({type:'cardId',item})),...activeAccounts(cc).map(item=>({type:'accountId',item}))];
+    const current=snapshot();
+    const products=[
+     ...activeCards().flatMap(item=>adjustmentCurrencies(item).map(currency=>({type:'cardId',item,currency}))),
+     ...activeAccounts().map(item=>({type:'accountId',item}))
+    ];
     if(typeof window.openRegisterProductPicker!=='function'){toast('No se pudo abrir el selector de productos.');return;}
-    const selected=current.purchaseSource==='account'?current.purchaseAccountId:current.cardId;
+    const selected=current.purchaseSource==='account'?current.purchaseAccountId:quickOriginChoiceKey(current.cardId,current.currency);
     window.openRegisterProductPicker('Selecciona tarjeta o cuenta para la compra',products,selected,choice=>{
      const isAccount=choice.kind==='account';
-     formScreen({...current,purchaseSource:isAccount?'account':'card',purchaseAccountId:isAccount?choice.value:current.purchaseAccountId,cardId:isAccount?current.cardId:choice.value,receiptMode:isAccount&&['card','account_and_paid'].includes(current.receiptMode)?'':current.receiptMode});
+     formScreen({...current,currency:choice.currency,purchaseSource:isAccount?'account':'card',purchaseAccountId:isAccount?choice.value:current.purchaseAccountId,cardId:isAccount?current.cardId:choice.value,receiptMode:isAccount&&['card','account_and_paid'].includes(current.receiptMode)?'':current.receiptMode});
     });
    }
    else if(action==='pickerBack'){formScreen(pickerData||{});}
@@ -17970,10 +17981,16 @@ window.openReconciliationProductPicker=(accounts,selected,onConfirm,allowCards)=
  [...accounts.map(item=>productOption('accountId',item)),...(allowCards?reconciliationCards():[])],
  selected,onConfirm,allowCards?'Seleccionar cuenta o tarjeta':'Seleccionar cuenta',{direct:true,reconciliation:allowCards});
 window.openFinancialProductPicker=(name,products,onConfirm,options={})=>open(name,products.map(item=>productOption(name,item)),options.selected||'',onConfirm,undefined,options);
-window.openRegisterProductPicker=(title,products,selected,onConfirm)=>open('product',products.map(({type,item,disabled,reason})=>{const o=productOption(type,item);return disabled?{...o,disabled:true,detail:[o.detail,reason||'No disponible para esta operación'].filter(Boolean).join(' · ')}:o}),selected,id=>{
- const product=products.find(({item})=>String(item.id)===id);
- if(product)onConfirm(productOption(product.type,product.item));
-},title);
+window.openRegisterProductPicker=(title,products,selected,onConfirm)=>{
+ const choices=new Map(),options=products.map(({type,item,currency,disabled,reason})=>{
+  const product=productOption(type,item);
+  const value=currency?quickOriginChoiceKey(product.value,currency):product.value;
+  choices.set(value,currency||type==='accountId'?{...product,currency:currency||item.currency}:product);
+  const detail=[product.detail,currency,disabled?(reason||'No disponible para esta operación'):''].filter(Boolean).join(' · ');
+  return {...product,value,detail,disabled};
+ });
+ open('product',options,selected,id=>{const choice=choices.get(id);if(choice)onConfirm(choice)},title);
+};
 window.openRefundPurchasePicker=(purchases,selected,onConfirm)=>open('purchase',purchases,selected,onConfirm);
 window.openItemPicker=(title,items,onConfirm)=>open('item',items.map(i=>({kind:'account',brand:'',institutionLogo:'',accountIsCash:false,amount:'',detail:'',institutionLabel:String(i.name||'?').replace(/[^\p{L}\p{N} ]/gu,'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3),...i,value:String(i.value)})),'',onConfirm,title);
 /* V869 · Identidad bancaria unificada: marca de tarjeta en crédito, institución en cuentas.
