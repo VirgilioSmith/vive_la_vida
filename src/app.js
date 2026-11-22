@@ -16227,6 +16227,21 @@ document.addEventListener('input',function(event){
  };
 
  const root=()=>document.getElementById('modal-root');
+ const mobileQuick=()=>matchMedia('(max-width:790px)').matches;
+ const receiptLabels={account:'Lo recibí en cuenta o efectivo',card:'Abonado directamente a la tarjeta',account_and_paid:'Lo recibí y luego pagué la tarjeta',none:'Aún no lo he recibido'};
+ const productMark=(p,isCard=false)=>{
+  const brand=String(p?.network||p?.brand||'').toLowerCase(),institution=bank(p?.bankId),logo=bankLogoSafe(institution?.logo);
+  if(isCard&&brand.includes('visa'))return '<span class="vQuick-mark visa">VISA</span>';
+  if(isCard&&/master|\bmc\b/.test(brand))return '<span class="vQuick-mark mastercard" aria-label="Mastercard"><i></i><i></i></span>';
+  if(typeof logo==='string'&&/^data:image\/(?:png|jpeg|webp);base64,/.test(logo))return '<span class="vQuick-mark"><img alt="" src="'+esc(logo)+'"></span>';
+  return '<span class="vQuick-mark">'+icon(isCard?'card':'wallet')+'</span>';
+ };
+ const quickSheet=(title,html,footer='')=>{
+  $('.vQuick-sheet')?.remove();
+  const layer=document.createElement('div');layer.className='vQuick-sheet';
+  layer.innerHTML='<section role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><div class="vQuick-grip"></div><header><h2>'+esc(title)+'</h2><button type="button" data-v354-act="sheetClose" aria-label="Cerrar selector">×</button></header>'+html+(footer?'<footer>'+footer+'</footer>':'')+'</section>';
+  root().append(layer);
+ };
  const makeShell=(title,step,amount,inner,footer)=>{
   const dark=document.body.classList.contains('theme-black')||document.body.classList.contains('theme-dark');
   const mobile=matchMedia('(max-width:790px)').matches;
@@ -16271,6 +16286,28 @@ document.addEventListener('input',function(event){
   const footer='<button type="button" data-v354-act="close">Cancelar</button><button class="primary" type="submit" form="v354-form">Revisar →</button>';
   makeShell('Movimiento rápido','PASO 1 DE 2 · DATOS',fmt(initial.purchase,cc),content,footer);
   const f=$('#v354-form');f.elements.receiptMode.value=initial.receiptMode||'';
+  if(mobileQuick()){
+   const $f=s=>f.querySelector(s),make=(html)=>{const el=document.createElement('div');el.innerHTML=html;return el.firstElementChild};
+   $('.v354-dialog').classList.add('vQuick-mobile');
+   $('.v355-intro').innerHTML='<span>Registra una compra para alguien.</span>';
+   $f('.v355-person small').textContent='Entre personas';
+   const instrument=$f('.v354-purchase-field'),origin=make('<section class="vQuick-origin"><h3>Origen y destino</h3></section>');
+   $f('.v355-result').after(origin);origin.append(instrument);instrument.querySelector(':scope > span').remove();
+   instrument.querySelector('.v354-person-avatar').outerHTML=productMark(sourceProduct,purchaseSource==='card');
+   const receipt=f.elements.receiptMode;receipt.closest('label').hidden=true;
+   const receiptButton=make('<button type="button" class="vQuick-line" data-v354-act="pickReceipt"><span>'+icon('wallet')+'</span><b id="vQuick-receipt-text">¿Qué pasó con el dinero?</b><span>›</span></button>');origin.append(receiptButton);
+   const accountLabel=$f('#v354-account-label');origin.append(accountLabel);
+   const channel=$f('.v356-channel');origin.append(channel);
+   const extras=$f('.v355-extra');extras.hidden=true;
+   $f('#v355-card-label').closest('summary').hidden=true;
+   // The existing universal account selector owns accountId. Keep only one purchase instrument selector.
+   const paid=$f('#v355-paid-label');origin.append(paid);
+   for(const name of ['purchase','received','paidAmount']){const input=f.elements[name];input.type='text';input.inputMode='decimal';input.autocomplete='off';}
+   const currency=f.elements.currency;currency.closest('label').hidden=purchaseSource!=='card';if(purchaseSource==='card')origin.append(currency.closest('label'));
+   const date=f.elements.date;date.closest('label').hidden=true;
+   $f('.v355-result').append(make('<small>'+esc(selectedPerson||'Selecciona una persona')+' · Entre personas</small>'));
+   $f('.v355-result').append(make('<div class="vQuick-track"><i></i></div>'));
+  }
   recalc(f); // Sin foco automático en campos numéricos o texto.
  }
  const nameOf=c=>[c?.firstName,c?.lastName].filter(Boolean).join(' ').trim();
@@ -16283,11 +16320,13 @@ document.addEventListener('input',function(event){
   for(const l of db.personalLoans||[]){const name=String(l.person||'').trim();if(name&&!seen.has(name.toLocaleLowerCase('es'))){saved.push({id:'',name,detail:'Relación existente'});seen.add(name.toLocaleLowerCase('es'));}}
   saved.sort((a,b)=>a.name.localeCompare(b.name,'es'));
   const content='<div class="v354-people"><label class="v354-people-search">'+icon('search')+'<input id="v354-person-search" type="search" autocomplete="off" placeholder="Buscar contacto por nombre" aria-label="Buscar contactos"></label><div class="v354-people-list">'+saved.map(c=>'<button type="button" class="v354-person-row" data-v354-act="choosePerson" data-id="'+esc(c.id)+'" data-name="'+esc(c.name)+'" data-person-search="'+esc(c.name.toLocaleLowerCase('es'))+'"><span class="v354-person-avatar">'+esc(initialsOf(c.name))+'</span><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.detail)+'</small></span>'+icon('chevron-right')+'</button>').join('')+'</div><p id="v354-person-empty" class="v354-person-empty" '+(saved.length?'hidden':'')+'>No hay coincidencias. Puedes añadir un contacto.</p></div>';
-  makeShell('Seleccionar persona','CONTACTOS · ENTRE PERSONAS',fmt(pickerData.purchase,pickerData.currency),content,'<button type="button" data-v354-act="pickerBack">Volver</button><button class="primary" type="button" data-v354-act="newPerson">+ Nuevo contacto</button>');
+  if(mobileQuick())quickSheet('Seleccionar persona',content,'<button class="primary" type="button" data-v354-act="newPerson">Registrar nuevo contacto</button>');
+  else makeShell('Seleccionar persona','CONTACTOS · ENTRE PERSONAS',fmt(pickerData.purchase,pickerData.currency),content,'<button type="button" data-v354-act="pickerBack">Volver</button><button class="primary" type="button" data-v354-act="newPerson">+ Nuevo contacto</button>');
  }
  function newPersonScreen(){
-  const content='<form id="v354-new-person" class="v354-fields v354-new-person" autocomplete="off"><p>Este contacto se guardará junto al movimiento confirmado, sin perder los datos de la compra.</p><label>Nombre<input name="firstName" maxlength="60" required autocomplete="given-name" placeholder="Nombre"></label><label>Apellido<input name="lastName" maxlength="65" required autocomplete="family-name" placeholder="Apellido"></label></form>';
-  makeShell('Nuevo contacto','CONTACTOS · NUEVA PERSONA',fmt(pickerData?.purchase,pickerData?.currency),content,'<button type="button" data-v354-act="pickPerson">Volver</button><button class="primary" type="submit" form="v354-new-person">Usar contacto</button>');
+  const content='<form id="v354-new-person" class="v354-fields v354-new-person" autocomplete="off"><label>Nombre<input name="firstName" maxlength="60" required autocomplete="given-name" placeholder="Escribe el nombre"></label><label>Apellido<input name="lastName" maxlength="65" required autocomplete="family-name" placeholder="Escribe el apellido"></label><label>Apodo (opcional)<input name="alias" maxlength="60" placeholder="Ej. Virgiliito"></label><label>Teléfono (opcional)<input name="phone" type="tel" maxlength="40" placeholder="Escribe el teléfono"></label></form>';
+  if(mobileQuick())quickSheet('Nuevo contacto',content,'<button class="primary" type="submit" form="v354-new-person">Guardar nuevo contacto</button>');
+  else makeShell('Nuevo contacto','CONTACTOS · NUEVA PERSONA',fmt(pickerData?.purchase,pickerData?.currency),content,'<button type="button" data-v354-act="pickPerson">Volver</button><button class="primary" type="submit" form="v354-new-person">Usar contacto</button>');
  }
  function recalc(form){
   if(!form)return;
@@ -16298,7 +16337,9 @@ document.addEventListener('input',function(event){
   if(fromAccount&&['card','account_and_paid'].includes(mode)){form.elements.receiptMode.value='';mode='';}
   const needAcc=mode==='account'||mode==='account_and_paid';
   const label=$('#v354-account-label');if(label)label.hidden=!needAcc;
-  if(needAcc)form.querySelector('.v355-extra')?.setAttribute('open','');
+  if(needAcc&&!mobileQuick())form.querySelector('.v355-extra')?.setAttribute('open','');
+  const receiptText=$('#vQuick-receipt-text');if(receiptText)receiptText.textContent=receiptLabels[mode]||'¿Qué pasó con el dinero?';
+  const bar=$('.vQuick-track i');if(bar)bar.style.width=(p>0?Math.min(100,Math.max(0,r/p*100)):0)+'%';
   const owed=$('#v354-owed-preview'),caption=$('#v354-balance-caption'),hint=$('#v354-cut-note'),amountLabel=$('.v354-progress strong'),cardLabel=$('#v355-card-label');
    const paidLabel=$('#v355-paid-label');if(paidLabel)paidLabel.hidden=mode!=='account_and_paid';
   if(cardLabel)cardLabel.textContent=fromAccount?account(v.purchaseAccountId)?.name||'Seleccionar cuenta':card(v.cardId)?.name||'Seleccionar tarjeta';
@@ -16325,14 +16366,15 @@ document.addEventListener('input',function(event){
    if(source==='account'&&(!purchaseAcc||purchaseAcc.archived||purchaseAcc.currency!==ccy))throw Error('Selecciona una cuenta activa en la moneda de la compra.');
   if(!['DOP','USD'].includes(ccy))throw Error('Selecciona una moneda válida.');
   if(!['presencial','internet'].includes(channel))throw Error('Selecciona Presencial o Internet Banking.');
-  if(!Number.isFinite(p)||p<=0||Math.round(p*100)/100!==Number(p.toFixed(2)))throw Error('La compra debe ser mayor que cero y tener como máximo dos decimales.');
-  if(!Number.isFinite(r)||r<0||Math.round(r*100)/100!==Number(r.toFixed(2)))throw Error('El dinero recibido debe ser válido, no negativo y tener máximo dos decimales.');
+  const validCents=n=>Number.isFinite(n)&&Number.isSafeInteger(Math.round(n*100))&&Math.abs(n*100-Math.round(n*100))<0.000001;
+  if(!validCents(p)||p<=0)throw Error('La compra debe ser mayor que cero y tener como máximo dos decimales.');
+  if(!validCents(r)||r<0)throw Error('El dinero recibido debe ser válido, no negativo y tener máximo dos decimales.');
   if(!['card','account','account_and_paid','none'].includes(mode))throw Error('Indica qué pasó con el dinero: tu tarjeta, tu cuenta o pendiente.');
    if(source==='account'&&['card','account_and_paid'].includes(mode))throw Error('La compra desde cuenta no puede aplicarse directamente a una tarjeta.');
   if(mode==='none'&&r>0.00001)throw Error('Si no has recibido dinero, escribe RD$0 o selecciona su destino real.');
   if(mode!=='none'&&r<.005)throw Error('Si todavía no ha entregado dinero, selecciona «Todavía no recibido».');
   const paidRaw=String(raw.paidAmount??'').trim(),paid=mode==='account_and_paid'?Number(paidRaw):0;
-   if(mode==='account_and_paid'&&(!paidRaw||!Number.isFinite(paid)||paid<=0||Math.round(paid*100)/100!==Number(paid.toFixed(2))))throw Error('Indica el pago real efectuado a la tarjeta. No se supone que pagaste todo lo recibido.');
+   if(mode==='account_and_paid'&&(!paidRaw||!validCents(paid)||paid<=0))throw Error('Indica el pago real efectuado a la tarjeta. No se supone que pagaste todo lo recibido.');
    const a=['account','account_and_paid'].includes(mode)?account(raw.accountId):null;
   if(['account','account_and_paid'].includes(mode)&&(!a||a.archived||a.currency!==ccy))throw Error('Elige una cuenta o efectivo activo en la misma moneda.');
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date>today())throw Error('Indica la fecha real de la compra.');
@@ -16344,10 +16386,24 @@ document.addEventListener('input',function(event){
   draft={...v};
   const due=Math.max(0,Math.round((v.purchase-v.received)*100)/100),surplus=Math.max(0,Math.round((v.received-v.purchase)*100)/100);
   const payLabel=v.receiptMode==='card'?'Abono directo a tarjeta':v.receiptMode==='account_and_paid'?'Recibido y pagado a tarjeta':v.receiptMode==='account'?'Recibido en '+v.accountName:'Todavía no recibido';
-  const summary='<div class="v355-review-hero"><span>'+(surplus>0?'Por devolver · Yo debo':due>0?'Por cobrar · Me deben':'Sin saldo pendiente')+'</span><strong>'+fmt(surplus||due,v.currency)+'</strong><small>'+esc(v.person)+'</small></div>'+
+  let summary='<div class="v355-review-hero"><span>'+(surplus>0?'Por devolver · Yo debo':due>0?'Por cobrar · Me deben':'Sin saldo pendiente')+'</span><strong>'+fmt(surplus||due,v.currency)+'</strong><small>'+esc(v.person)+'</small></div>'+
    '<div class="v354-panel v355-review-panel"><h3>Revisa el movimiento</h3>'+rows([[v.purchaseSource==='account'?'Compra desde cuenta':'Compra con tarjeta',fmt(v.purchase,v.currency)],['Me entregó',fmt(v.received,v.currency)],[v.purchaseSource==='account'?'Cuenta de origen':'Tarjeta',v.purchaseSource==='account'?v.purchaseAccountName:v.cardName],['Dinero',payLabel],...(v.receiptMode==='account_and_paid'?[['Pago real a tarjeta',fmt(v.paidAmount,v.currency)]]:[]),['Por devolver',fmt(surplus,v.currency)],['Canal',v.channel==='internet'?'Internet Banking':'Presencial'],['Impuesto de transferencia',v.channel==='internet'&&v.received>0?(v.transferTaxEstimable?fmt(v.transferTaxEstimate,'DOP')+' · estimado':'No calculable · verificar con banco'):(v.received>0?'Sin estimar':'No aplica')]])+'</div>'+
    '<div class="v355-compact-note">Revisa y pulsa <strong>Confirmar y guardar</strong>. El impuesto mostrado es informativo, normalmente corresponde a quien envía y no se debita de tu cuenta. El corte solo baja con un pago real.</div>';
-  makeShell('Revisar movimiento','PASO 2 DE 2 · REVISIÓN',fmt(v.purchase,v.currency),summary,'<button type="button" data-v354-act="back">Editar</button><button class="primary" type="button" data-v354-act="confirm">Confirmar y guardar</button>');
+  if(mobileQuick()){
+   const item=(mark,title,detail,value,cls='')=>'<div class="vQuick-review-row">'+mark+'<span><b>'+esc(title)+'</b><small>'+esc(detail)+'</small></span><strong class="'+cls+'">'+esc(value)+'</strong></div>';
+   const isCard=v.purchaseSource==='card',source=isCard?card(v.cardId):account(v.purchaseAccountId),receivedInAccount=['account','account_and_paid'].includes(v.receiptMode);
+   const tax=v.channel==='internet'&&v.received>0?(v.transferTaxEstimable?fmt(v.transferTaxEstimate,'DOP'):'Verifica con el banco'):'No aplica';
+   summary='<div class="v355-review-hero"><span>'+(surplus>0?'Por devolver':due>0?'Por cobrar':'Sin saldo pendiente')+'</span><strong>'+fmt(surplus||due,v.currency)+'</strong><small>'+esc(v.person)+(surplus>0?' · Saldo a devolver':due>0?' tiene un saldo pendiente contigo':' · Compra saldada')+'</small></div>'+
+    '<div class="vQuick-review-sums"><span>Compra total<b>'+fmt(v.purchase,v.currency)+'</b></span><span>Dinero recibido<b>+'+fmt(v.received,v.currency)+'</b></span></div><h3 class="vQuick-review-heading">Así quedan tus finanzas</h3><div class="vQuick-review-list">'+
+    item(productMark(source,isCard),source?.name||'Origen',isCard?'Consumo en tarjeta':'Compra desde cuenta',(isCard?'+':'−')+fmt(v.purchase,v.currency),'debit')+
+    (receivedInAccount?item(productMark(account(v.accountId)),v.accountName,'Dinero recibido','+'+fmt(v.received,v.currency),'credit'):'')+
+    (v.receiptMode==='card'?item(productMark(source,true),v.cardName,'Abono directo','−'+fmt(v.received,v.currency),'credit'):'')+
+    (v.receiptMode==='account_and_paid'?item(productMark(account(v.accountId)),v.accountName,'Pago real a tarjeta','−'+fmt(v.paidAmount,v.currency),'debit')+item(productMark(source,true),v.cardName,'Pago aplicado','−'+fmt(v.paidAmount,v.currency),'credit'):'')+
+    item('<span class="vQuick-mark">'+icon('users')+'</span>','Entre personas',(surplus>0?'Cuenta por pagar':due>0?'Cuenta por cobrar':'Sin pendiente')+' · '+v.person,fmt(surplus||due,v.currency))+'</div>'+
+    '<div class="v354-review-row"><span>Canal de recepción</span><strong>'+esc(v.channel==='internet'?'Internet Banking':'Presencial')+'</strong></div><div class="v354-review-row"><span>Impuesto informativo</span><strong>'+esc(tax)+'</strong></div><div class="v355-compact-note">'+esc(v.receiptMode==='account'&&isCard?'El dinero recibido no reduce el saldo de la tarjeta hasta realizar el pago.':payLabel)+'. '+(v.channel==='internet'?'El impuesto estimado corresponde al emisor; no se carga a tu cuenta.':'')+'</div>';
+  }
+  makeShell(mobileQuick()?'Confirma tu movimiento':'Revisar movimiento','PASO 2 DE 2 · REVISIÓN',fmt(v.purchase,v.currency),summary,'<button type="button" data-v354-act="back">Editar</button><button class="primary" type="button" data-v354-act="confirm">Confirmar y guardar</button>');
+  if(mobileQuick())$('.v354-dialog').classList.add('vQuick-mobile','vQuick-review');
  }
  function save(v){
   if(processing)return;processing=true;
@@ -16372,14 +16428,20 @@ document.addEventListener('input',function(event){
     db.personalLoans.push(...relations);db.transactions.push(...entries);
    const saved=persist();
    if(saved===false){db.transactions.splice(db.transactions.length-entries.length,entries.length);db.personalLoans.splice(db.personalLoans.length-relations.length,relations.length);if(createdContact)db.personalContacts=db.personalContacts.filter(c=>c.id!==createdContact.id);if(typeof v99Invalidate==='function')v99Invalidate();throw Error('No se pudo guardar. Inicia sesión y vuelve a intentarlo; no se registró ningún movimiento.');}
-   draft=null;closeModal();render();toast('Movimiento rápido guardado. '+(surplus>.005?'Por devolver ':due>.005?'Por cobrar ':'Sin saldo pendiente · ')+fmt(surplus||due,x.currency)+'.');
-  }catch(e){processing=false;if(button)button.disabled=false;toast(e.message||'No se pudo registrar la compra.');}
+   close();render();toast('Movimiento rápido guardado. '+(surplus>.005?'Por devolver ':due>.005?'Por cobrar ':'Sin saldo pendiente · ')+fmt(surplus||due,x.currency)+'.');
+  }catch(e){if(button)button.disabled=false;toast(e.message||'No se pudo registrar la compra.');}finally{processing=false;}
  }
  document.addEventListener('click',function(e){
   const b=e.target.closest?.('[data-v354-act]');if(!b)return;
   e.preventDefault();e.stopPropagation();const action=b.dataset.v354Act;
   if(action==='open'){draft=null;pickerData=null;pendingContact=null;formScreen({cardId:b.dataset.cardId||''});}
   else if(action==='close'){close();}
+  else if(action==='sheetClose'){$('.vQuick-sheet')?.remove();}
+  else if(action==='pickReceipt'){
+   const f=$('#v354-form'),mode=f.elements.receiptMode.value,fromAccount=f.elements.purchaseSource.value==='account';
+   quickSheet('¿Qué pasó con el dinero?',Object.entries(receiptLabels).filter(([key])=>!fromAccount||!['card','account_and_paid'].includes(key)).map(([key,label])=>'<button type="button" class="vQuick-option" data-v354-act="chooseReceipt" data-id="'+key+'" aria-pressed="'+(mode===key)+'">'+icon(key==='card'?'card':key==='none'?'clock':'wallet')+'<b>'+esc(label)+'</b><span>'+(mode===key?'✓':'○')+'</span></button>').join(''));
+  }
+  else if(action==='chooseReceipt'){const f=$('#v354-form');f.elements.receiptMode.value=b.dataset.id;if(b.dataset.id==='none')f.elements.received.value='0';$('.vQuick-sheet')?.remove();recalc(f);}
    else if(action==='pickPerson'){personPicker();}
    else if(action==='pickPurchase'){
     const current=snapshot(),cc=current.currency||'DOP';
@@ -16404,7 +16466,7 @@ document.addEventListener('input',function(event){
    const firstName=String(f.elements.firstName.value||'').trim(),lastName=String(f.elements.lastName.value||'').trim(),name=[firstName,lastName].filter(Boolean).join(' ');
    if(!firstName||!lastName||name.length>85){toast('Indica nombre y apellido del contacto.');return;}
    const existing=(db.personalContacts||[]).find(c=>nameOf(c).toLocaleLowerCase('es')===name.toLocaleLowerCase('es'));
-   pendingContact=existing?null:{firstName,lastName};
+   pendingContact=existing?null:{firstName,lastName,alias:String(f.elements.alias?.value||'').trim(),phone:String(f.elements.phone?.value||'').trim()};
    formScreen({...pickerData,person:name,contactId:existing?.id||''});return;
   }
   try{const x=validated(Object.fromEntries(new FormData(f).entries()));x.showExtra=!!f.querySelector('.v355-extra')?.open;review(x)}
@@ -16412,7 +16474,7 @@ document.addEventListener('input',function(event){
  },true);
  document.addEventListener('input',function(e){
    if(e.target.id==='v354-person-search'){const q=e.target.value.trim().toLocaleLowerCase('es');let shown=0;document.querySelectorAll('.v354-person-row').forEach(row=>{row.hidden=!!q&&!row.dataset.personSearch.includes(q);if(!row.hidden)shown++});const empty=$('#v354-person-empty');if(empty)empty.hidden=shown>0;return;}
-   const f=e.target.closest?.('#v354-form');if(f)recalc(f)
+   const f=e.target.closest?.('#v354-form');if(f){if(['purchase','received','paidAmount'].includes(e.target.name)&&e.target.type==='text'){e.target.value=e.target.value.replace(/,/g,'.').replace(/[^0-9.]/g,'');}recalc(f)}
   },true);
  document.addEventListener('change',function(e){const f=e.target.closest?.('#v354-form');if(!f)return;
   if(e.target.name==='currency'){
@@ -17381,6 +17443,11 @@ function renderEntry(){
  const root=document.getElementById('modal-root');if(!root)return;
  const already=!!root.querySelector('.v749-layer');
  root.innerHTML=entry();
+ if(matchMedia('(max-width:790px)').matches){
+  const screen=root.querySelector('.v749-screen');
+  screen.querySelectorAll('.v749-fieldline').forEach(row=>{if(row.querySelector('[data-v749=category],[data-v749=subcategory],#v749Date'))row.remove()});
+  const amount=screen.querySelector('.v749-amount');if(amount){amount.dataset.currency=cur(state())==='USD'?'US$':'RD$';amount.querySelector('small')?.remove()}
+ }
  if(already)root.querySelector('.v749-layer')?.classList.add('v956-no-anim');
  // V1294 · El importe usa solo inputmode=decimal; la vista no simula el teclado.
  // Mantener origen, destino, fecha y categorías accesibles antes de continuar.
@@ -17400,6 +17467,7 @@ const chooseCategory=(cat)=>{const s=state();s.preset=cat;s.v749Subcategory='';
  const chips=document.querySelectorAll('#modal-root .v749-layer[data-v749-stage="entry"] .v749-quick [data-v749="quick"]');
  if(!chips.length){freshEntry();return}
  chips.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.value===cat)));
+ const more=document.querySelector('#modal-root .v749-layer[data-v749-stage="entry"] .v770-quick-more');if(more){const selected=![...chips].some(b=>b.dataset.value===cat);more.setAttribute('aria-pressed',String(selected));more.querySelector('.v770-quick-label').textContent=selected?cat:'Más';}
  setError('');};
 const sheetContainer=()=>document.querySelector('#modal-root .v749-review-overlay .v749-sheet')||document.querySelector('#modal-root .v749-layer[data-v749-stage="entry"] .v749-sheet');
 const closeSheet=()=>{const host=sheetContainer();if(host){host.hidden=true;host.replaceChildren()}};
@@ -17455,6 +17523,7 @@ for(const [name,val] of Object.entries({category:s.preset,subcategory:s.v749Subc
 if(f.elements.currency)setNative(f,'currency',cur(s));
 try{refreshGuidedForm(f)}catch(e){console.warn('Vista previa contable',e)}
 const review=document.createElement('div');review.className='v749-review-overlay';review.innerHTML=renderReview(s,f);document.getElementById('modal-root').appendChild(review);
+if(matchMedia('(max-width:790px)').matches)review.querySelector('.v1295-confirm-products')?.remove();
 }
 
 function v768Illustrate(label){
@@ -17485,6 +17554,7 @@ function refreshReview(){
  for(const [key,val] of Object.entries({category:s.preset,subcategory:s.v749Subcategory,date:s.v749Date,note:s.v749Note}))if(f.elements.namedItem(key))setNative(f,key,val);
  try{refreshGuidedForm(f)}catch(e){console.warn('Sincronización de detalles',e)}
  overlay.innerHTML=renderReview(s,f);
+ if(matchMedia('(max-width:790px)').matches)overlay.querySelector('.v1295-confirm-products')?.remove();
 }
 function syncReviewInputs(){
  const s=state(),note=document.getElementById('v749Note'),date=document.getElementById('v749ReviewDate');

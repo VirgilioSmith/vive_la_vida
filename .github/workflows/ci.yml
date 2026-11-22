@@ -54,6 +54,27 @@ jobs:
           name: vive-mobile-playwright
           path: test-results/vive-mobile/
           if-no-files-found: ignore
+  movimientos-movil:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm i --no-save playwright@1 && npx playwright install --with-deps ${{ matrix.browser }}
+      - run: node tests/movimientos-mobile.js
+        env:
+          MOVEMENTS_BROWSER: ${{ matrix.browser }}
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vive-movimientos-${{ matrix.browser }}
+          path: test-results/movimientos/
+          if-no-files-found: ignore
   conciliacion-saldos:
     runs-on: ubuntu-latest
     timeout-minutes: 15
