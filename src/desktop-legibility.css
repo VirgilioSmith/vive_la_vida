@@ -97,3 +97,17 @@
  html body #app#app #page .vWalletPc-consumption .vWalletPc-legend button i{width:13px!important;height:13px!important;box-shadow:0 0 0 2px rgba(255,255,255,.9)}
  body.theme-black #app#app #page .vWalletPc-consumption .vWalletPc-legend button,body.theme-black #app#app #page .vWalletPc-consumption .vWalletPc-legend button b,body.theme-dark #app#app #page .vWalletPc-consumption .vWalletPc-legend button b{color:#f2f6fa!important}
 }
+/* Wallet PC · columna derecha: las tres tarjetas del mismo tamaño y ocupando todo el alto disponible */
+@media(min-width:791px){
+ html body #app#app #page .vWalletPc-grid{align-items:stretch!important}
+ html body #app#app #page .vWalletPc-right{display:flex!important;flex-direction:column!important;height:auto!important;align-self:stretch!important;gap:14px!important}
+ html body #app#app #page .vWalletPc-right>section{flex:1 1 auto!important;min-height:auto!important;overflow:visible!important;margin:0!important;display:flex;flex-direction:column;justify-content:center}
+ html body #app#app #page .vWalletPc-right .vWalletPc-cuts>div{margin-top:4px}
+}
+@media(min-width:791px){
+ html body #app#app #page .vWalletPc-right .v371-return-tile{padding:6px 14px!important;gap:2px!important}
+ html body #app#app #page .vWalletPc-right>section{padding-block:10px!important}
+ html body #app#app #page .vWalletPc-right{gap:10px!important}
+ html body #app#app #page .vWalletPc-consumption .vWalletPc-chart-layout{grid-template-columns:minmax(88px,clamp(92px,6.8vw,112px)) minmax(0,1fr)!important}
+ html body #app#app #page .vWalletPc-cuts p{margin:6px 0 8px!important}
+}
