@@ -82,3 +82,22 @@
  /* Keep the button as the touch target when amount validation updates its label. */
  #modal-root .vQuick-line > *{pointer-events:none}
 }
+
+/* Nuevo movimiento: el tipo de operación tiene prioridad sobre el acento personal. */
+@media(max-width:790px){
+ html body #modal-root .v749-layer[data-v749-stage=entry]{--vMov-operation:#087c73;--v749-accent:var(--vMov-operation)!important;--v749-accent-strong:var(--vMov-operation)!important;--v953-accent:var(--vMov-operation)!important;--v424-accent-strong:var(--vMov-operation)!important}
+ html body #modal-root .v749-layer[data-v749-stage=entry]:has([data-v749=mode][data-value=spend][aria-pressed=true]){--vMov-operation:#b42335}
+ html body #modal-root .v749-layer[data-v749-stage=entry]:has([data-v749=mode][data-value=transfer][aria-pressed=true]){--vMov-operation:#2563b8}
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-foot button.v749-primary[data-v749=continue]:not(:disabled),
+ html body:not(.theme-dark):not(.theme-black) #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-foot button.v749-primary:not(:disabled){background:var(--vMov-operation)!important;border-color:var(--vMov-operation)!important;color:#fff!important;box-shadow:none!important}
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen :is(.v749-segment,.v749-quick) button[aria-pressed=true]{background:color-mix(in srgb,var(--vMov-operation) 12%,#fff)!important;border-color:var(--vMov-operation)!important;color:var(--vMov-operation)!important;box-shadow:none!important}
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen :is(.v749-segment,.v749-quick) button[aria-pressed=true] svg,
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-quick button :is(svg,.v953-cat-ico),
+ html body:not(.theme-dark):not(.theme-black) #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-quick button .v953-cat-ico{color:var(--vMov-operation)!important;stroke:currentColor!important}
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-amount:after{background:radial-gradient(ellipse,color-mix(in srgb,var(--vMov-operation) 44%,transparent),transparent 65%)!important}
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-amount input:focus{border-color:var(--vMov-operation)!important;outline-color:color-mix(in srgb,var(--vMov-operation) 20%,transparent)!important}
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-impact-track{background:color-mix(in srgb,var(--vMov-operation) 12%,#fff)!important}
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-impact-track i{background:var(--vMov-operation)!important}
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen :is(.v749-mid,.v1295-product-arrow){color:var(--vMov-operation)!important}
+ html body #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v1295-product-icon:not(.is-card){background:color-mix(in srgb,var(--vMov-operation) 13%,#fff)!important;color:var(--vMov-operation)!important}
+}

@@ -64,7 +64,16 @@ async function scenario(p,s,i,srv){
   await p.evaluate(()=>{const T=window.__T,d=T.dbg(),old=T.fn.plusMonths(T.fn.today(),-1);d.banks.push({id:'audit-bank',name:'Banco Popular',archived:false});for(const [id,name] of [['audit-source','Cuenta origen'],['audit-receiver','Cuenta Digital']])d.accounts.push({id,name,bankId:'audit-bank',kind:'checking',currency:'DOP',opening:50000,opened:old,archived:false});d.cards.push({id:'audit-card',name:'Visa Titanium Popular',bankId:'audit-bank',network:'visa',limitDOP:150000,limitUSD:1000,openingDOP:10000,openingUSD:0,opened:old,cutDay:20,dueDay:15,archived:false});T.inv();T.persist()});await flush(p);
   // Ordinary movement: exact mobile structure and actual native form submission.
   await p.evaluate(()=>{const b=document.createElement('button');b.dataset.act='newTransaction';b.dataset.type='income';document.body.append(b);b.click();b.remove()});
-  await p.locator('[data-v749=mode][data-value=income]').click();await p.locator('[data-v749=source]').click();await chooseProduct(p,'audit-receiver');
+  for(const [mode,color] of [['spend','rgb(180, 35, 53)'],['transfer','rgb(37, 99, 184)'],['income','rgb(8, 124, 115)']]){
+   await p.locator('[data-v749=mode][data-value='+mode+']').click();
+   const layer=p.locator('.v749-layer[data-v749-stage=entry]');
+   check('Color semántico del botón '+mode,await layer.locator('[data-v749=continue]').evaluate(el=>getComputedStyle(el).backgroundColor),color);
+   check('Borde del selector '+mode,await layer.locator('[data-v749=mode][aria-pressed=true]').evaluate(el=>getComputedStyle(el).borderTopColor),color);
+   check('Icono del selector '+mode,await layer.locator('[data-v749=mode][aria-pressed=true] svg').evaluate(el=>getComputedStyle(el).color),color);
+   check('Barra de impacto '+mode,await layer.locator('.v749-impact-track i').evaluate(el=>getComputedStyle(el).backgroundColor),color);
+   check('Degradado presente '+mode,await layer.locator('.v749-amount').evaluate(el=>getComputedStyle(el,'::after').backgroundImage.startsWith('radial-gradient')),true);
+  }
+  await p.locator('[data-v749=source]').click();await chooseProduct(p,'audit-receiver');
   await p.locator('#v749Amount').fill('2500,00');check('Importe nativo ingreso',await p.locator('#v749Amount').getAttribute('inputmode'),'decimal');
   check('Tres accesos rápidos',await p.locator('[data-v749=quick]').count(),3);check('Campos redundantes eliminados',await p.locator('.v749-fieldline [data-v749=category],.v749-fieldline [data-v749=subcategory],#v749Date').count(),0);
   await shot(p,'01-nuevo-movimiento');const before=await state(p);await p.locator('[data-v749=continue]').click();await p.locator('[data-v749=confirm]').waitFor();check('Sin bloque duplicado de instrumentos',await p.locator('.v749-review-overlay .v1295-confirm-products').count(),0);await shot(p,'02-confirma-movimiento');await p.locator('[data-v749=confirm]').click();await until(async()=>!(await p.locator('[data-v749=confirm]').count()),'ingreso confirmado');await flush(p);check('Ingreso real guardado',cents((await state(p)).receiver-before.receiver),250000);
