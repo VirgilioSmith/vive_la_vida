@@ -126,3 +126,30 @@
  html body #app#app #page .vBanksPc-lane .vBanksPc-product b{font-size:clamp(16px,1.2vw,19px)!important}
  html body #app#app #page .vBanksPc-lane .vBanksPc-usage{margin-top:2px}
 }
+/* Bancos PC · las tres columnas terminan a la misma altura que «Mis bancos»; el contenido se reparte solo, sin vacíos ni desbordes */
+@media(min-width:1100px){
+ html body #app#app main.vBanksPc-world .vBanksPc-center{display:flex!important;flex-direction:column;gap:0}
+ html body #app#app main.vBanksPc-world .vBanksPc-center>.vBanksPc-institution{flex:1 1 auto;min-height:0;display:flex!important;flex-direction:column}
+ html body #app#app main.vBanksPc-world .vBanksPc-institution>:is(.vBanksPc-overview,.vBanksPc-lanes){flex:1 1 auto;min-height:0}
+ html body #app#app main.vBanksPc-world .vBanksPc-overview{display:grid!important;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+ html body #app#app main.vBanksPc-world .vBanksPc-overview-tile{align-content:center}
+ html body #app#app main.vBanksPc-world .vBanksPc-lanes{display:flex;flex-direction:column}
+ html body #app#app main.vBanksPc-world .vBanksPc-lanes>.vBanksPc-lane{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+ html body #app#app main.vBanksPc-world .vBanksPc-lane .vBanksPc-product{flex:1 1 auto;align-items:center}
+ html body #app#app main.vBanksPc-world .vBanksPc-insights{display:flex!important;flex-direction:column;align-content:stretch}
+ html body #app#app main.vBanksPc-world .vBanksPc-insights>:is(section,details){flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;min-height:0}
+ html body #app#app main.vBanksPc-world .vBanksPc-insights>details>.vBanks-consumption-body{flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-evenly}
+}
+@media(min-width:1100px){
+ /* Pocas filas: la fila crece con el espacio disponible en lugar de dejar un hueco */
+ html body #app#app main.vBanksPc-world .vBanksPc-lane:not(:has(.vBanksPc-product:nth-of-type(4))) .vBanksPc-product{padding-block:14px!important;gap:6px 16px!important}
+ html body #app#app main.vBanksPc-world .vBanksPc-lane:not(:has(.vBanksPc-product:nth-of-type(3))) .vBanksPc-product-mark{transform:scale(1.35);transform-origin:left center;margin-right:12px}
+ html body #app#app main.vBanksPc-world .vBanksPc-lane:not(:has(.vBanksPc-product:nth-of-type(3))) .vBanksPc-product strong{font-size:clamp(19px,1.45vw,24px)!important}
+ html body #app#app main.vBanksPc-world .vBanksPc-lane:not(:has(.vBanksPc-product:nth-of-type(3))) .vBanksPc-product small{font-size:clamp(14px,1.05vw,16px)!important}
+ html body #app#app main.vBanksPc-world .vBanksPc-lane:not(:has(.vBanksPc-product:nth-of-type(3))) .vBanksPc-product b{font-size:clamp(22px,1.8vw,30px)!important}
+ html body #app#app main.vBanksPc-world .vBanksPc-lane:not(:has(.vBanksPc-product:nth-of-type(3))) .vBanksPc-usage{margin-top:8px}
+ html body #app#app main.vBanksPc-world .vBanksPc-lane .vBanksPc-empty{flex:1;display:grid;place-items:center}
+}
+@media(min-width:1100px){
+ html body #app#app main.vBanksPc-world .vBanksPc-lane:not(:has(.vBanksPc-product:nth-of-type(3))) .vBanksPc-product{flex:0 0 auto!important;min-height:clamp(120px,14vh,170px)!important}
+}

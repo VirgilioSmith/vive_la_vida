@@ -2023,7 +2023,7 @@ function vBanksProductRows(key,items,bankId,total=items.length){
    const limit=vWalletPcEquivalent(item.limitDOP,item.limitUSD);
    const debt=vWalletPcEquivalent(cardStatus(item,'DOP').debt,cardStatus(item,'USD').debt);
    const use=limit>0?vWalletPcUsage(debt,limit):null, last4=String(item.last4||'').replace(/\D/g,'').slice(-4);
-   note=`${institution}${last4?'•••• '+last4:''}${institution||last4?'<br>':''}${vWalletPcSplit(item.limitDOP,item.limitUSD,0)}`;
+   note=last4?'•••• '+last4:'';
    value=`<span title="Límite equivalente en pesos">${money(limit)}</span>`;
    if(use!==null)meter=`<span class="vBanksPc-usage">${vBanksMeter(use)}<small>${use.toFixed(1)}%</small></span>`;
   }
@@ -2148,6 +2148,19 @@ function vBanksMobileActivity(groups){
  if(!rows.length)return '';
  return `<section class="vBanks-activity" aria-label="Actividad reciente"><h2><button type="button" class="vBanksPc-benefits-link" data-act="navigate" data-id="register">${icon('calendar')}Actividad reciente ${icon('arrow')}</button></h2>${rows.map(t=>`<button type="button" class="vBanks-activity-row" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}"><span class="vBanks-activity-ico">${icon(['income','card_refund','card_reward','bank_reward'].includes(t.type)?'up':'card')}</span><span><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b></button>`).join('')}</section>`;
 }
+
+function vBanksMobileBenefitsTop(cards){
+ const rows=cards.map(v371CardReturn);
+ const annual=rnd(rows.reduce((n,x)=>n+x.annual,0)),benefit=rnd(rows.reduce((n,x)=>n+x.benefit,0)),net=rnd(benefit-annual);
+ const miss=rows.some(x=>x.missingRate),has=rows.some(x=>x.hasAnnual);
+ const roi=!miss&&annual>0?rnd(net/annual*100):null;
+ const netTxt=miss||!has?'—':`${net>0?'+':''}${money(net)}`;
+ const pct=roi===null?'—':`${roi>0?'+':''}${new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(roi)}%`;
+ const first=cards[0];
+ return `<section class="vBanks-kpi vBanks-kpi-benefit" aria-label="Retorno neto"><small class="vBanks-kpi-label">Retorno neto</small><strong ${vBanksAmountSize(netTxt)}>${netTxt}</strong>${roi!==null?`<span class="vBanks-kpi-pill">${roi<0?'▼':'▲'} ${pct}</span>`:''}</section>
+ <section class="vBanks-ben-grid" aria-label="Anualidad y beneficios"><div><small>Anualidad</small><strong>${miss||!has?'—':money(annual)}</strong></div><div><small>Beneficios</small><strong class="${benefit>0?'positive':''}">${miss?'—':money(benefit)}</strong></div></section>
+ ${first?`<div class="vBanks-ben-actions"><button type="button" data-v144-action="new-cashback" data-id="${sanitize(first.id)}">${icon('gift2')}<span>Registrar beneficio</span>${icon('arrow')}</button>${cards.length===1?`<button type="button" data-act="annualFee" data-id="${sanitize(first.id)}">${icon('shield')}<span>Anualidad y seguros</span>${icon('arrow')}</button>`:`<details class="vBanks-annual-chooser"><summary>${icon('shield')}<span>Anualidad y seguros</span>${icon('arrow')}</summary><div class="vBanks-annual-list" aria-label="Seleccionar tarjeta para anualidad">${cards.map(c=>`<button type="button" data-act="annualFee" data-id="${sanitize(c.id)}">${sanitize(c.name)}${c.last4?' · •••• '+sanitize(c.last4):''}</button>`).join('')}</div></details>`}</div>`:''}`;
+}
 function vBanksDashboard(){
  v40Ensure();
  const mobile=isMobileViewport();
@@ -2193,7 +2206,7 @@ function vBanksDashboard(){
   const mControls=controls.replace(`${icon('arrow')}</summary>`,`<span>Opciones de la institución</span>${icon('arrow')}</summary>`);
   const tools=`${filterOn?`<div class="vBanks-mobile-tools">${filters}</div>`:''}${controls?`<div class="vBanks-bankopts">${mControls}</div>`:''}`;
   let body;
-  if(sKey==='benefits')body=`${ledger}`;
+  if(sKey==='benefits')body=`${active.cards.length&&!ui.vBanksProductDetail?vBanksMobileBenefitsTop(active.cards):''}${ledger}`;
   else if(sKey){
    const items=active[sKey]||[];
    body=`${vBanksMobileKpi(sKey,f,active)}<div class="vBanks-sub-body">${items.length?vBanksProductRows(sKey,items,bankId):`<div class="vBanks-empty"><p>Sin ${sc[0].toLowerCase()} registrad${sKey==='cards'||sKey==='accounts'?'as':'os'}.</p></div>`}<button type="button" class="vBanks-sub-cta" data-act="${sc[2]}"${bankId?` data-id="${sanitize(bankId)}"`:''}>${icon('plus')}${sc[3]}</button></div>`;

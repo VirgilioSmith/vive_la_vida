@@ -118,3 +118,21 @@
  body:is(.theme-black,.theme-dark) #modal-root dialog.vBanks-picker .v789-product-sheet{background:rgba(24,24,30,.62)!important;box-shadow:0 -14px 44px rgba(0,0,0,.6)!important}
  body:is(.theme-black,.theme-dark) #modal-root dialog.vBanks-picker .v789-picker-row,body:is(.theme-black,.theme-dark) #modal-root dialog.vBanks-picker .v789-picker-search{background:rgba(255,255,255,.08)!important}
 }
+@media(max-width:790px){
+ /* Beneficios y retorno: cabecera «Retorno neto» + tarjeta de datos + acciones; el detalle anterior queda debajo */
+ html body #app#app #page .vBanks-kpi-pill{justify-self:start;display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.22);font-size:14px;font-weight:750}
+ html body #app#app #page .vBanks-ben-grid{display:grid;grid-template-columns:1fr 1fr;border-radius:22px;background:var(--g-surface);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);box-shadow:var(--g-shadow);padding:14px 16px}
+ html body #app#app #page .vBanks-ben-grid>div{display:grid;gap:3px;min-width:0}
+ html body #app#app #page .vBanks-ben-grid small{font-size:14px;color:var(--g-muted)}
+ html body #app#app #page .vBanks-ben-grid strong{font-size:clamp(19px,5.6vw,24px);font-weight:800;color:var(--g-ink);white-space:nowrap}
+ html body #app#app #page .vBanks-ben-grid strong.positive{color:#0f8a5a}
+ html body #app#app #page .vBanks-ben-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ html body #app#app #page .vBanks-ben-actions>button,html body #app#app #page .vBanks-ben-actions summary{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;min-height:64px;padding:10px 12px;border:0;border-radius:20px;background:var(--g-surface);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);box-shadow:var(--g-shadow);color:var(--g-ink);font-size:15px;font-weight:700;text-align:left;cursor:pointer;list-style:none}
+ html body #app#app #page .vBanks-ben-actions summary::-webkit-details-marker{display:none}
+ html body #app#app #page .vBanks-ben-actions svg{width:20px;height:20px;color:var(--g-accent)}
+ html body #app#app #page .vBanks-ben-actions svg:last-child{color:var(--g-muted);width:16px;height:16px}
+ html body #app#app #page .vBanks-ben-actions .vBanks-annual-chooser{display:block}
+ html body #app#app #page .vBanks-ben-actions .vBanks-annual-list{display:grid;gap:6px;margin-top:6px}
+ html body #app#app #page .vBanks-ben-actions .vBanks-annual-list button{border:0;border-radius:14px;background:var(--g-surface);padding:10px 12px;text-align:left;color:var(--g-ink);font-weight:650}
+ html body #app#app #page .vBanks-screen-benefits .v180-benefits-hero,html body #app#app #page .vBanks-screen-benefits #v144Benefits>.bank-hero{display:none!important}
+}
