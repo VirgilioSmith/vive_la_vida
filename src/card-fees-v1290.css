@@ -1,0 +1,30 @@
+/* Tarjetas · V1290. Solo esta vista, sin alterar Bancos, Cuentas ni Préstamos. */
+html body #modal-root#modal-root .modal.v1110-modal:has(#cardForm){
+ max-height:calc(100dvh - 6px)!important;
+}
+@media(max-width:790px){
+ html body #modal-root#modal-root .modal.v1110-modal:has(#cardForm){
+  max-height:calc(100dvh - env(safe-area-inset-top,0px) - 4px)!important;
+ }
+}
+html body #app#app #page .v1190 .v1290-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+html body #app#app #page .v1190 .v1290-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border:1px solid rgba(255,255,255,.68);border-radius:14px;background:rgba(255,255,255,.12);color:#fff;font-size:13px;font-weight:750;cursor:pointer}
+html body #app#app #page .v1190 .v1290-secondary:hover{background:rgba(255,255,255,.2)}
+html body #app#app #page .v1190 .v1290-secondary:focus-visible{outline:2px solid #fff;outline-offset:2px}
+html body #app#app #page .v1190 .v1290-ledger{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 18px;border:1px solid var(--v-line,rgba(120,140,170,.2));border-radius:18px;background:var(--v-sur,#fff)}
+html body #app#app #page .v1190 .v1290-ledger>div:first-child{flex:1;min-width:190px}
+html body #app#app #page .v1190 .v1290-ledger>div{display:flex;flex-direction:column;gap:3px;min-width:0}
+html body #app#app #page .v1190 .v1290-ledger strong{font-size:14px;font-weight:800;color:var(--v-ink)}
+html body #app#app #page .v1190 .v1290-ledger>div:not(:first-child)>strong{font-size:18px;white-space:nowrap}
+html body #app#app #page .v1190 .v1290-ledger small,html body #app#app #page .v1190 .v1290-ledger span{font-size:11.5px;color:var(--v-mut)}
+html body #modal-root .modal[data-v204-form="annualFeeForm"] .v1290-intro{display:flex;flex-direction:column;gap:5px;padding:10px 12px;background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 7%,transparent);border-radius:14px}
+html body #modal-root .modal[data-v204-form="annualFeeForm"] .v1290-intro strong{font-size:16px}
+html body #modal-root .modal[data-v204-form="annualFeeForm"] .v1290-intro p{margin:0;font-size:12.5px;line-height:1.4}
+html body #modal-root .modal[data-v204-form="annualFeeForm"] .v1290-total{display:flex;flex-direction:column;gap:5px;padding:14px 16px;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 18%,transparent);border-radius:15px}
+html body #modal-root .modal[data-v204-form="annualFeeForm"] .v1290-total strong{font-size:23px;line-height:1.1;font-weight:800;font-variant-numeric:tabular-nums}
+html body #modal-root .modal[data-v204-form="annualFeeForm"] .v1290-total small,html body #modal-root .modal[data-v204-form="annualFeeForm"] .v1290-total span{font-size:12px;line-height:1.5}
+@media(max-width:790px){
+ html body #app#app #page .v1190 .v1290-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);width:100%}
+ html body #app#app #page .v1190 .v1290-actions button{width:100%;min-width:0;font-size:12px!important;line-height:1.15;white-space:normal;padding:0 8px;text-align:center}
+ html body #app#app #page .v1190 .v1290-ledger{align-items:stretch}
+}
