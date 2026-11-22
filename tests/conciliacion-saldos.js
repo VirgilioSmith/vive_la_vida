@@ -30,8 +30,9 @@ const form=p=>p.locator('#vReconcileForm');
 const shot=(p,name)=>p.screenshot({path:path.join(dir,name+'.png')});
 const txs=(p,id)=>p.evaluate(id=>window.__T.dbg().transactions.filter(t=>t.type==='adjustment'&&t.accountId===id),id);
 const balance=(p,id,day)=>p.evaluate(([id,day])=>{const d=window.__T.dbg();return window.__T.fn.getAccountBalance(d.accounts.find(a=>a.id===id),day||undefined)},[id,day]);
-const ledger=(p,id)=>p.evaluate(id=>{const t=window.__T.dbg().transactions.find(x=>x.id===id);return v265BalanceHTML(t)},id);
-const totals=p=>p.evaluate(()=>{const m=window.__T.mt();return [m.income,m.expense]});
+async function ledger(p,id){await clickAct(p,'v6WalletTransactionDetail',id);const value=await p.locator('#modal-root .v265-balance-value').innerText();await clickAct(p,'closeModal');return value}
+const totals=p=>p.evaluate(()=>{const m=window.__T.mt();return [m.income,m.expense,m.cashIn,m.cashOut]});
+const ending=p=>p.evaluate(()=>window.__T.mt().ending);
 const capture=(p,key)=>form(p).locator('[data-reconcile='+key+']').innerText();
 async function enter(p,id,amount,date){
  await clickAct(p,'otherAdjust');
@@ -64,6 +65,7 @@ async function confirm(p){
   const fmt=(n,c='RD$')=>c+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   for(let i=0;i<pairs.length;i++){
    const [target,delta]=pairs[i],id='recon-'+i;
+   const endingBefore=await ending(p);
    await enter(p,id,target);
    check('Saldo registrado '+i,await capture(p,'registered'),fmt([1570.17,1570.17,1570.17,1570.17,0,100][i]));
    check('Vista previa '+i,await capture(p,'after'),fmt(target));
@@ -88,7 +90,8 @@ async function confirm(p){
    }
    check('Saldo de apertura intacto '+i,await p.evaluate(id=>window.__T.dbg().accounts.find(a=>a.id===id).opening,id),[1570.17,1570.17,1570.17,1570.17,0,100][i]);
    check('Ingresos/egresos intactos '+i,await totals(p),initial);
-   await clickAct(p,'closeModal'); 
+   check('Liquidez patrimonial cambia solo por la diferencia '+i,Math.round(((await ending(p))-endingBefore)*100),Math.round(delta*100));
+   await clickAct(p,'closeModal');
   }
   await enter(p,'recon-6',1500);await confirm(p);await clickAct(p,'closeModal');
   await enter(p,'recon-6',1700);await confirm(p);await clickAct(p,'closeModal');
@@ -117,7 +120,7 @@ async function confirm(p){
   check('Edición mismo ID y delta recalculado',(await txs(p,'recon-8')).map(t=>[t.id,t.amount]),[[edit.id,-50]]);
   check('Fecha histórica editada',await balance(p,'recon-8',days.earlier),950);
   check('Saldo posterior editado',await balance(p,'recon-8'),1250);
-  await clickAct(p,'deleteTransaction',edit.id);await p.locator('[data-act=v54ConfirmPermanent]').click();await flush(p);
+  await clickAct(p,'deleteTransaction',edit.id);p.once('dialog',d=>d.accept());await p.locator('[data-act=v54ConfirmPermanent]').click();await flush(p);
   check('Eliminación revierte solo diferencia',await balance(p,'recon-8'),1300);check('Eliminación persistida',(srv.doc().transactions||[]).some(t=>t.id===edit.id),false);
   // Verify persistence following a real reload and on another independent context.
   await p.reload({waitUntil:'load'});await until(async()=>(await sync(p)).active,'recarga');
