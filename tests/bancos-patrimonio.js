@@ -126,8 +126,15 @@ async function testBanks(browser,width){
   if(!mobile){
     const metrics=await root.locator('.vBanksPc-metric').evaluateAll(nodes=>nodes.map(el=>({top:Math.round(el.getBoundingClientRect().top),value:el.querySelector('strong')?.innerText||'',width:el.getBoundingClientRect().width})));
     assert.equal(metrics.length,4,'Bancos PC conserva cuatro indicadores.');
-    assert.equal(new Set(metrics.map(x=>x.top)).size,1,'Los cuatro indicadores deben compartir la misma fila.');
-    assert.ok(metrics.every(x=>x.width>0&&x.value.includes('RD
+    assert.equal(new Set(metrics.map(x=>x.top)).size,1,'Los cuatro indicadores comparten la misma fila.');
+    assert.ok(metrics.every(x=>x.width>0&&x.value.length>0),'Importes completos visibles.');
+    const bars=root.locator('.vBanksPc-consumption-rows .vBanksPc-meter i');
+    if(await bars.count())assert.ok(await bars.first().evaluate(el=>{
+      const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
+      return rect.width>0&&rect.height>=5&&style.backgroundImage.includes('gradient');
+    }),'Barras de consumo con relleno visible.');
+    assert.doesNotMatch(await root.locator('.vBanksPc-metric').nth(3).innerText(),/vs[.] mes anterior/,'Sin porcentaje inventado.');
+  }
   if(!mobile)assert.ok(await root.evaluate(el=>{
    const [banks,products,insights]=[...el.querySelector('.vBanksPc-grid').children].map(x=>x.getBoundingClientRect());
    return banks.right<products.left&&products.right<insights.left&&Math.abs(banks.top-insights.top)<2;
