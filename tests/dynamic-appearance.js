@@ -21,7 +21,7 @@ async function themeMatrix(browser,width,mode){
    await p.evaluate(palette=>{const t=window.__T;t.dbg().settings.paletteChoice=palette;t.go('overview');},palette);
    const ambient=await style(p,'body','backgroundImage');
    assert.match(ambient,/radial-gradient/);assert.notEqual(ambient,seen.ambient);seen.ambient=ambient;
-   for(const route of ['overview','banks','wallet','explore']){
+   for(const route of ['overview','banks','wallet',mobile?'mobilehub':'register']){
     await go(p,route);
     assert.equal(await style(p,'body','backgroundImage'),ambient,`${route}: same ambient`);
     assert.equal(await style(p,'main.main','backgroundImage'),'none',`${route}: no local gradient`);
