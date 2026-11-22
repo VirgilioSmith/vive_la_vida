@@ -24,10 +24,18 @@ async function chooseNewContact(p,first,last){
  await p.locator('#v354-new-person').evaluate(f=>f.requestSubmit());
  check('Contacto seleccionado',await p.locator('#v354-form [name=person]').inputValue(),first+' '+last);
 }
-async function thirdParty(p,purchase,received,mode,paidAmount,first){
+async function thirdParty(p,purchase,received,mode,paidAmount,first,source='card'){
  await fastOpen(p);
  check('Formulario Movimiento rápido',await p.locator('#v354-form').count(),1);
  await chooseNewContact(p,first,'Prueba');
+ if(source==='account'){
+  await p.locator('[data-v354-act=pickPurchase]').click();
+  const accountOption=p.locator('.v789-picker-row[data-kind=account]').first();
+  check('Cuenta disponible en selector universal',await accountOption.count(),1);
+  await accountOption.click();
+  await p.locator('.v789-picker-confirm').click();
+  check('Compra desde cuenta seleccionada',await p.locator('#v354-form [name=purchaseSource]').inputValue(),'account');
+ }
  await p.locator('#v354-form [name=purchase]').fill(String(purchase));
  await p.locator('#v354-form [name=received]').fill(String(received));
  await p.locator('#v354-form [name=receiptMode]').selectOption(mode);
@@ -44,7 +52,7 @@ async function thirdParty(p,purchase,received,mode,paidAmount,first){
   const d=window.__T.dbg(),rels=d.personalLoans.filter(l=>l.person===name+' Prueba'&&String(l.source||'').startsWith('third_party_'));
   const ids=new Set(rels.map(l=>l.id));
   const tx=d.transactions.filter(t=>ids.has(t.personalLoanId)||ids.has(t.thirdPartyRelationId));
-  return {rels:rels.map(l=>({direction:l.direction,principal:l.principal,source:l.source})),tx:tx.map(t=>({type:t.type,amount:t.amount,principal:t.principal})),contacts:d.personalContacts.filter(c=>c.firstName===name&&c.lastName==='Prueba').length};
+  return {rels:rels.map(l=>({direction:l.direction,principal:l.principal,source:l.source})),tx:tx.map(t=>({type:t.type,amount:t.amount,principal:t.principal,accountId:t.accountId,cardId:t.cardId})),contacts:d.personalContacts.filter(c=>c.firstName===name&&c.lastName==='Prueba').length};
  },first);
 }
 (async()=>{
@@ -76,6 +84,9 @@ async function thirdParty(p,purchase,received,mode,paidAmount,first){
      check('Faltante por cobrar RD$300',r2.rels.some(l=>l.direction==='lent'&&l.principal===800));
      check('Pago real a tarjeta RD$150',r2.tx.filter(t=>t.type==='card_payment').map(t=>t.amount),[150]);
      check('Sin segunda cuenta por pagar',r2.rels.some(l=>l.direction==='borrowed'),false);
+     const r3=await thirdParty(p,800,500,'account',0,'MartaVive','account');
+     check('Compra desde cuenta crea obligación por cobrar',r3.rels.some(l=>l.direction==='lent'&&l.principal===800));
+     check('Cargo patrimonial exclusivo a cuenta',r3.tx.some(t=>t.type==='personal_issue'&&t.amount===800&&!!t.accountId&&!t.cardId));
     }
    }finally{await ctx.close()}
   }
