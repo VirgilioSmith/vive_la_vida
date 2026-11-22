@@ -1,0 +1,175 @@
+@media (min-width: 791px) {
+  html body #app#app main.vBanksPc-world {
+    --bank-ink: #10182e;
+    --bank-muted: #455670;
+    --bank-accent: #08786d;
+    --bank-positive: #116747;
+    --bank-negative: #b82f35;
+    --bank-glass: #ffffffc9;
+    --bank-line: #dce6ea;
+    --bank-hover: #e0f3ee;
+    --bank-track: #e7edf0;
+    --bank-shadow: 0 6px 17px #213a5a11, inset 0 1px 0 #ffffffca;
+    min-height: 100vh;
+    padding: clamp(20px, 2vw, 36px) clamp(14px, 1.65vw, 28px) 36px !important;
+    color: var(--bank-ink);
+    background: radial-gradient(ellipse at 61% 0, #c2e6de 0, transparent 38%),
+      radial-gradient(ellipse at 3% 100%, #d1ece6 0, transparent 32%),
+      linear-gradient(135deg, #f5f7fa, #fcfdfd 56%, #eef4f7) !important;
+  }
+
+  html body.theme-black #app#app main.vBanksPc-world {
+    --bank-ink: #f2f6fa;
+    --bank-muted: #b7c6d1;
+    --bank-accent: #75d6c6;
+    --bank-positive: #82d8b9;
+    --bank-negative: #ff9d9a;
+    --bank-glass: #10191ced;
+    --bank-line: #29393e;
+    --bank-hover: #183832;
+    --bank-track: #2c3b3e;
+    --bank-shadow: 0 6px 17px #0003;
+    background: radial-gradient(ellipse at 61% 0, #162e2b 0, transparent 45%), #090e11 !important;
+  }
+
+  #app .vBanksPc-world > .topbar { align-items: center; gap: 16px; margin: 0 0 clamp(14px, 1.5vw, 24px); background: none; box-shadow: none; }
+  html body #app#app main.vBanksPc-world .topbar .top-title { color: var(--bank-ink) !important; -webkit-text-fill-color: var(--bank-ink) !important; }
+  html body #app#app main.vBanksPc-world .topbar .top-sub { color: var(--bank-muted) !important; -webkit-text-fill-color: var(--bank-muted) !important; margin-top: 5px !important; }
+  #app .vBanksPc-kicker { color: var(--bank-positive); display: block; font-size: 11px; font-weight: 800; letter-spacing: .16em; margin-bottom: 4px; }
+  #app .vBanksPc-world .date-chip { display: none !important; }
+  html body #app#app .vBanksPc-world .vBanksPc-search {
+    display: flex !important; align-items: center; gap: 10px; width: clamp(162px, 27vw, 435px) !important; min-height: 44px;
+    padding: 0 15px !important; border: 1px solid var(--bank-line) !important; border-radius: 999px !important;
+    background: var(--bank-glass) !important; color: var(--bank-muted) !important; text-align: left;
+  }
+  #app .vBanksPc-search span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #app .vBanksPc-search svg { width: 20px; height: 20px; flex: none; }
+
+  #app .vBanksPc { font-variant-numeric: tabular-nums; }
+  #app .vBanksPc :where(button,summary) { color: inherit; font: inherit; }
+  #app .vBanksPc :where(h2,h3,p,dl,dd) { margin: 0; }
+  #app .vBanksPc :where(h2,h3) { color: var(--bank-ink); line-height: 1.18; letter-spacing: -.025em; }
+  #app .vBanksPc h2 { font-size: clamp(18px, 1.56vw, 25px); }
+  #app .vBanksPc h3 { font-size: clamp(15px, 1.2vw, 19px); }
+  #app .vBanksPc :where(small,dt,p) { color: var(--bank-muted); }
+  #app .vBanksPc :where(.positive) { color: var(--bank-positive); }
+  #app .vBanksPc :where(.negative) { color: var(--bank-negative); }
+  #app .vBanksPc :where(button,summary):focus-visible { outline: 2px solid var(--bank-accent); outline-offset: -2px; }
+
+  #app .vBanksPc-metrics, #app .vBanksPc-grid { display: grid; gap: clamp(12px, 1.12vw, 19px); }
+  #app .vBanksPc-metrics { grid-template-columns: 1.12fr repeat(3,minmax(0,1fr)); margin-bottom: clamp(16px, 1.8vw, 30px); }
+  #app .vBanksPc :is(.vBanksPc-metric,.vBanksPc-bank-list,.vBanksPc-institution-summary,.vBanksPc-lane,.vBanksPc-consolidated,.vBanksPc-benefits,.v371-card-return,.v1301-insight) {
+    min-width: 0; border: 1px solid var(--bank-line); border-radius: clamp(17px, 1.7vw, 28px);
+    background: var(--bank-glass); box-shadow: var(--bank-shadow);
+  }
+  #app .vBanksPc-metric { display: flex; align-items: flex-start; gap: clamp(8px, 1vw, 16px); padding: clamp(13px, 1.15vw, 22px); min-height: clamp(94px, 8vw, 134px); }
+  #app .vBanksPc-metric > div { min-width: 0; }
+  #app .vBanksPc-metric > div > span { display: block; font-size: clamp(13px, 1.2vw, 19px); font-weight: 650; }
+  #app .vBanksPc-metric strong { display: block; margin-top: 4px; font-size: clamp(19px, 2vw, 34px); line-height: 1.13; letter-spacing: -.045em; overflow-wrap: anywhere; }
+  #app .vBanksPc-metric small { display: block; margin-top: 6px; }
+  #app .vBanksPc-stat-icon, #app .vBanksPc-category-icon { width: clamp(30px, 3.5vw, 56px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--bank-hover); color: var(--bank-positive); flex: none; }
+  #app .vBanksPc-stat-icon svg { width: 55%; height: 55%; }
+  #app .vBanksPc-metric:nth-child(2) .vBanksPc-stat-icon { background: color-mix(in srgb, #d69951 18%, var(--bank-glass)); }
+  #app .vBanksPc-metric:nth-child(3) .vBanksPc-stat-icon { background: color-mix(in srgb, #e45858 16%, var(--bank-glass)); color: var(--bank-negative); }
+  #app .vBanksPc-metric:nth-child(4) .vBanksPc-stat-icon { background: color-mix(in srgb, #648ac8 20%, var(--bank-glass)); }
+
+  #app .vBanksPc-grid { grid-template-columns: minmax(188px,.84fr) minmax(320px,1.41fr) minmax(310px,1.36fr); align-items: start; }
+  #app .vBanksPc-center, #app .vBanksPc-insights { min-width: 0; }
+  #app .vBanksPc-institution, #app .vBanksPc-insights { display: grid; gap: clamp(11px, 1.05vw, 17px); }
+  #app .vBanksPc :is(.vBanksPc-bank-list > header,.vBanksPc-institution-head,.vBanksPc-lane > header) { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 15px 18px 12px; }
+  #app .vBanksPc-bank-list > header small { color: inherit; font: inherit; }
+  #app .vBanksPc-bank, #app .vBanksPc-product {
+    width: 100%; display: grid; grid-template-columns: auto minmax(0,1fr) auto auto; align-items: center; gap: clamp(5px, .7vw, 13px);
+    border: 0; background: none; padding: 11px clamp(8px, 1.15vw, 19px); text-align: left; cursor: pointer;
+  }
+  #app .vBanksPc-bank { min-height: 62px; border-radius: clamp(14px, 1.4vw, 24px); }
+  #app .vBanksPc-bank:is(:hover,.is-selected), #app .vBanksPc-product:hover { background: var(--bank-hover); }
+  #app .vBanksPc :is(.vBanksPc-bank,.vBanksPc-product) > svg { width: 14px; height: 14px; }
+  #app .vBanksPc :is(.vBanksPc-bank,.vBanksPc-product) :is(strong,small) { display: block; overflow-wrap: anywhere; }
+  #app .vBanksPc :is(.vBanksPc-bank,.vBanksPc-product) b { white-space: nowrap; font-size: clamp(12px, 1.02vw, 17px); }
+  #app .vBanksPc :is(.vBanksPc-bank,.vBanksPc-institution-head) .institution-logo { width: clamp(28px, 2.7vw, 45px); height: clamp(28px, 2.7vw, 45px); margin: 0; }
+  #app .vBanksPc-institution-head > div { display: flex; gap: 12px; align-items: center; }
+  #app .vBanksPc-institution-head .institution-logo { width: 49px; height: 49px; }
+  #app .vBanksPc-institution-head p { margin-top: 3px; }
+  #app .vBanksPc-filters { padding: 10px 16px 14px; border-top: 1px solid var(--bank-line); font-size: 12px; color: var(--bank-muted); }
+  #app .vBanksPc-filters[open] summary { margin-bottom: 10px; }
+  #app .vBanksPc-filters :is(.v61-profile-switch,.v42-filters) { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+  #app .vBanksPc-controls { position: relative; }
+  #app .vBanksPc-controls summary { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--bank-line); border-radius: 50%; cursor: pointer; list-style: none; }
+  #app .vBanksPc-controls summary::-webkit-details-marker { display: none; }
+  #app .vBanksPc-controls summary svg { width: 16px; height: 16px; }
+  #app .vBanksPc-controls > div { display: flex; flex-direction: column; gap: 4px; position: absolute; z-index: 3; right: 0; margin-top: 6px; padding: 8px; border: 1px solid var(--bank-line); border-radius: 12px; background: var(--bank-glass); backdrop-filter: blur(12px); }
+  #app .vBanksPc-bank-totals { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); padding: 14px 18px 16px; border-top: 1px solid var(--bank-line); }
+  #app .vBanksPc-bank-totals > div { min-width: 0; }
+  #app .vBanksPc-bank-totals > div + div { border-left: 1px solid var(--bank-line); padding-left: 10px; }
+  #app .vBanksPc-bank-totals dd { margin-top: 4px; font-size: clamp(15px, 1.4vw, 23px); font-weight: 750; letter-spacing: -.035em; overflow-wrap: anywhere; }
+
+  #app .vBanksPc-product-filter { display: flex; flex-wrap: wrap; gap: 3px; padding: 3px; border-radius: 20px; border: 1px solid var(--bank-line); background: var(--bank-glass); }
+  #app .vBanksPc-product-filter button { flex: 1 1 auto; border: 0; background: transparent; border-radius: 16px; padding: 8px 6px; font-size: clamp(12px, .96vw, 15px); cursor: pointer; }
+  #app .vBanksPc-product-filter button[aria-pressed=true] { color: #fff; background: #08786d; font-weight: 700; }
+  #app .vBanksPc-lane { padding-bottom: 7px; }
+  #app .vBanksPc-lane h3 { display: flex; align-items: center; gap: 8px; }
+  #app .vBanksPc-lane h3 svg { width: 20px; height: 20px; }
+  #app .vBanksPc-product { min-height: 64px; border-radius: 12px; }
+  #app .vBanksPc-product-mark { display: grid; place-items: center; min-width: 39px; color: var(--bank-accent); }
+  #app .vBanksPc-product-mark > svg { width: 24px; height: 24px; }
+  #app .vBanksPc-product-mark .v-logo-svg { max-width: 40px; }
+  #app .vBanksPc-usage { display: flex; align-items: center; gap: 8px; max-width: 190px; margin-top: 4px; }
+  #app .vBanksPc-meter { height: 7px; flex: 1; display: block; min-width: 14px; border-radius: 99px; background: var(--bank-track); overflow: hidden; }
+  #app .vBanksPc-meter i { display: block; height: 100%; width: var(--use); border-radius: inherit; background: linear-gradient(90deg,#076c62,#0e9280); }
+
+  #app .vBanksPc :is(.v371-card-return,.v1301-insight,.vBanksPc-consolidated,.vBanksPc-benefits) { padding: clamp(12px, 1.25vw, 21px); margin: 0; }
+  #app .vBanksPc .v371-return-heading > div, #app .vBanksPc .v371-return-heading h2 { width: 100%; }
+  #app .vBanksPc .v371-return-heading .v266-overline { display: none; }
+  #app .vBanksPc-benefits-link { display: flex; align-items: center; gap: 9px; width: 100%; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; }
+  #app .vBanksPc-benefits-link svg:first-child { color: var(--bank-positive); width: 26px; height: 26px; }
+  #app .vBanksPc-benefits-link svg:last-child { margin-left: auto; width: 17px; height: 17px; }
+  #app .vBanksPc .v371-return-values { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 0; margin-top: 12px; border-top: 1px solid var(--bank-line); padding-top: 12px; }
+  #app .vBanksPc .v371-return-tile { display: grid; gap: 3px; min-width: 0; padding: 2px 5px; border: 0; border-radius: 0; background: none; align-content: start; }
+  #app .vBanksPc .v371-return-tile + .v371-return-tile { border-left: 1px solid var(--bank-line); }
+  #app .vBanksPc .v371-return-tile strong { font-size: clamp(13px, 1.25vw, 21px); letter-spacing: -.035em; white-space: normal; overflow-wrap: anywhere; }
+  #app .vBanksPc .v371-return-tile.positive strong { color: var(--bank-positive); }
+  #app .vBanksPc .v371-return-tile.negative strong { color: var(--bank-negative); }
+  #app .vBanksPc .v371-return-note { margin: 10px 0 0; font-size: 11px; line-height: 1.35; }
+  #app .vBanksPc .v1301-insight > summary { padding: 0; }
+  #app .vBanksPc .v1301-insight :is(.v1301-kicker,summary p):empty { display: none; }
+  #app .vBanksPc .v1301-insight h2 { font-size: clamp(18px, 1.56vw, 25px); }
+  #app .vBanksPc-consumption-rows { border-top: 1px solid var(--bank-line); margin-top: 12px; padding-top: 7px; }
+  #app .vBanksPc-consumption-rows > div { display: grid; grid-template-columns: auto minmax(0,1fr) minmax(18px,.72fr) minmax(66px,auto) auto; gap: 7px; align-items: center; min-height: 44px; font-size: clamp(12px, 1vw, 16px); }
+  #app .vBanksPc-consumption-rows > div:has(.vBanksPc-meter) small { text-align: right; }
+  #app .vBanksPc-consumption-rows > div:not(:has(.vBanksPc-meter)) { grid-template-columns: auto minmax(0,1fr) auto; }
+  #app .vBanksPc-category-icon { width: 30px; color: var(--bank-ink); }
+  #app .vBanksPc-category-icon svg { width: 17px; height: 17px; }
+  #app .vBanksPc-consumption-rows strong { font-weight: 600; overflow-wrap: anywhere; }
+  #app .vBanksPc-consumption-amount { text-align: right; }
+  #app .vBanksPc-consumption-amount small { display: block; font-size: 9px; }
+  #app .vBanksPc-benefits { grid-column: 2 / -1; }
+  #app .vBanksPc-benefits button > svg { width: 16px; height: 16px; }
+  #app .vBanksPc-card-detail .v1190-grid { grid-template-columns: minmax(0,1fr); }
+  #app .vBanksPc-empty, #app .vBanksPc-consolidated p { padding: 12px 16px; font-size: 13px; }
+
+  @media (max-width: 1240px) {
+    #app .vBanksPc-grid { grid-template-columns: minmax(158px,.72fr) minmax(275px,1.28fr); }
+    #app .vBanksPc-insights { grid-column: 2; }
+    #app .vBanksPc-benefits { grid-column: 1 / -1; }
+    #app .vBanksPc-bank-list { grid-row: 1 / span 2; }
+  }
+  @media (max-width: 980px) {
+    #app .vBanksPc-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    #app .vBanksPc-world .topbar { flex-wrap: wrap; }
+  }
+}
+@media (min-width: 791px) {
+  #app .vBanksPc .v1301-insight > summary { display: flex; align-items: center; justify-content: space-between; list-style: none; cursor: pointer; gap: 8px; }
+  #app .vBanksPc .v1301-insight > summary::-webkit-details-marker { display: none; }
+  #app .vBanksPc .v1301-insight h2 { display: flex; align-items: center; gap: 8px; }
+  #app .vBanksPc .v1301-insight h2 svg { width: 24px; height: 24px; }
+  #app .vBanksPc .v1301-disclose-arrow { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--bank-hover); flex: none; }
+  #app .vBanksPc .v1301-disclose-arrow svg { width: 15px; height: 15px; transform: rotate(90deg); }
+  #app .vBanksPc .v1301-insight[open] .v1301-disclose-arrow svg { transform: rotate(-90deg); }
+  #app .vBanksPc .credit-network-mastercard b { display: none; }
+  #app .vBanksPc .credit-network { max-width: 43px; white-space: normal; }
+  #app .vBanksPc-metric:first-child { background: linear-gradient(25deg,#dcf5ecc4,var(--bank-glass) 60%); }
+  body.theme-black #app .vBanksPc-metric:first-child { background: linear-gradient(25deg,#183832,var(--bank-glass) 60%); }
+  #app .vBanksPc .vBanksPc-bank-totals .negative { background: color-mix(in srgb, var(--bank-negative) 12%, transparent); border-radius: 14px; width: fit-content; padding: 2px 5px; }
+}

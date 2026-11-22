@@ -643,7 +643,6 @@ const NAV_FAMILIES=[
  {label:'GESTIÓN FINANCIERA',items:[
   {id:'banks',name:'Bancos',ico:'landmark',children:[['banks','Instituciones','landmark'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
   {id:'register',name:'Movimientos',ico:'cycle',children:[['register','Registro de ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
-  {id:'payments',name:'Visión global',ico:'eye',children:[['payments','Visión global','eye']]}
  ]},
  {label:'SISTEMA',items:[
   {id:'settings',name:'Configuración',ico:'settings',children:[]}
@@ -652,16 +651,15 @@ const NAV_FAMILIES=[
 const NAV_SECTIONS={
  banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','landmark'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
  register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
- payments:{title:'Visión global',hint:'Tus obligaciones y situación financiera.',tabs:[['payments','Visión global','eye']]}
 };
-function navFamilyForPage(page){if(['recurring','personal'].includes(page))return 'overview';if(page==='vision')return 'payments';if(['overview','analytics','kpis','advanced','patrimony','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
+function navFamilyForPage(page){if(['recurring','personal'].includes(page))return 'overview';if(page==='patrimony')return 'patrimony';if(['overview','analytics','kpis','advanced','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
 /* Four clear navigation worlds; contextual horizontal switches remain unchanged. */
 const RAIL_DESTINATIONS=[
  ['overview','Resumen','home','Inicio, suscripciones y entre personas'],
  ['wallet','Wallet','wallet','Tu universo financiero'],
  ['banks','Bancos','landmark','Instituciones y productos bancarios'],
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
- ['payments','Visión global','eye','Visión integral de tus obligaciones']
+ ['patrimony','Patrimonio','wallet','Posición neta, crédito y compromisos']
 ];
 /* VIVE_SCORE (experimental · solo web): ítem «Score» bajo Presión financiera. Retirar: ver src/vive-score/README.md */
 if(window.VIVE_SCORE_EXPERIMENTAL)RAIL_DESTINATIONS.push(['score','Score','score','Tu comportamiento crediticio, explicado']);
@@ -709,13 +707,13 @@ function v206BankSwitch(page){
  return `<nav class="v206-banks-switch" aria-label="Cambiar entre bancos y productos" data-v206-switch="1">${tabs.map(([id,label,ico])=>`<button type="button" data-v206-tab="${id}" class="v206-banks-pill ${page===id?'active':''}" aria-pressed="${page===id}" ${page===id?'aria-current="page"':''}>${icon(ico)}<span>${label}</span></button>`).join('')}</nav>`;
 }
 function moduleSwitch(page){
- const root=navFamilyForPage(page),section=NAV_SECTIONS[root];if(!section||root==='payments')return '';
+ const root=navFamilyForPage(page),section=NAV_SECTIONS[root];if(!section)return '';
  // V299: contextual navigation must stay available across all six Movimientos pages.
  if(root==='banks'&&isMobileViewport()){
   if(page==='cards')return '';
   return v206BankSwitch(page);
  }
- return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${root==='payments'?'Visión global':section.title}</strong><small>${root==='payments'&&isMobileViewport()?'Consulta y gestiona tus pagos, suscripciones y acuerdos personales.':section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic,view])=>{const on=page===id&&(!view||(ui.v176PayView||'agenda')===view);return `<button type="button" class="module-switch-tab ${on?'active':''}" ${on?'aria-current="page"':''} data-act="navigate" data-id="${id}"${view?` data-v176-pay-view="${view}"`:''}>${icon(ic)}<span>${root==='payments'&&id==='payments'&&!isMobileViewport()?'Visión global':name}</span></button>`}).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
+ return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${section.title}</strong><small>${section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic,view])=>{const on=page===id&&(!view||(ui.v176PayView||'agenda')===view);return `<button type="button" class="module-switch-tab ${on?'active':''}" ${on?'aria-current="page"':''} data-act="navigate" data-id="${id}"${view?` data-v176-pay-view="${view}"`:''}>${icon(ic)}<span>${name}</span></button>`}).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
 }
 
 /* MOBILE FIRST EXPERIENCE: Same underlying finances, new responsive screens. */
@@ -767,7 +765,7 @@ function v36Bell(){
  const v994Reports=(()=>{try{return v246ReportEvents()}catch(_){return []}})();const v994AllRead=v994Reports.length>0&&v994Reports.every(r=>v994.r.has(r.id));
  const totalAlerts=urgent+spendAlerts.length+(v994AllRead?0:v246UnreadReportCount());
  const v994HasAny=items||spendingItems||(!v994AllRead&&v994Reports.length>0);
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><div><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v994HasAny?'<button type="button" class="v994-clear" data-v994-clear="1">Limpiar todo</button>':''}</div>${v994AllRead?'':'<div class="v1280-sec">Informes</div>'+v216BellItems()}${spendingItems?'<div class="v1280-sec">Alertas de gasto</div>'+spendingItems:''}${items?'<div class="v1280-sec">Próximos vencimientos</div>'+items:''}${v994HasAny?'':'<p class="v994-empty">No tienes notificaciones pendientes.</p>'}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="payments">Ver calendario de vencimientos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><div><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v994HasAny?'<button type="button" class="v994-clear" data-v994-clear="1">Limpiar todo</button>':''}</div>${v994AllRead?'':'<div class="v1280-sec">Informes</div>'+v216BellItems()}${spendingItems?'<div class="v1280-sec">Alertas de gasto</div>'+spendingItems:''}${items?'<div class="v1280-sec">Próximos vencimientos</div>'+items:''}${v994HasAny?'':'<p class="v994-empty">No tienes notificaciones pendientes.</p>'}<button type="button" class="v36-notice-footer" data-act="navigate" data-id="pressure">Ver calendario de vencimientos →</button><p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
@@ -888,8 +886,8 @@ function v985SimplificationWidget(asKpi){
    <div class="v985-body"><small class="v985-cap">Patrimonio neto</small><div class="v985-figure"><strong>${money(net)}</strong></div>${delta===null?'':`<span class="v985-delta ${delta<0?'down':'up'}">${delta>=0?'▲ ':'▼ '}${deltaTxt}</span>`}${spark}</div>
    <div class="v985-stats">${stat('layers','Activos',assets)}${stat('layers','Pasivos',debt)}</div></article>
   <article class="v985-card v985-blue">${head('blue','Actuar','¿Qué necesito registrar o pagar?','02','data-act="newTransaction"')}
-   <div class="v985-list">${row('plusC','Ingresos',inc,'data-act="newTransaction" data-type="income"')}${row('minusC','Gastos',exp,'data-act="newTransaction" data-type="expense"')}${row('swap','Transferir',trf,'data-act="newTransaction" data-type="transfer"')}${row('card','Pagos',pay,'data-act="navigate" data-id="payments"')}</div></article>
-  <article class="v985-card v985-orange">${head('orange','Anticipar','¿Qué viene y qué debo pagar?','03','data-act="navigate" data-id="payments"')}
+   <div class="v985-list">${row('plusC','Ingresos',inc,'data-act="newTransaction" data-type="income"')}${row('minusC','Gastos',exp,'data-act="newTransaction" data-type="expense"')}${row('swap','Transferir',trf,'data-act="newTransaction" data-type="transfer"')}${row('card','Pagos',pay,'data-act="navigate" data-id="pressure"')}</div></article>
+  <article class="v985-card v985-orange">${head('orange','Anticipar','¿Qué viene y qué debo pagar?','03','data-act="navigate" data-id="pressure"')}
    <div class="v985-body"><div class="v985-figure"><strong>${money(pending)}</strong></div><small class="v985-cap">Compromisos</small><div class="v985-bar" role="img" aria-label="Compromisos pagados ${dotted}%"><i style="width:${Math.max(0,Math.min(100,dotted))}%"></i><span>${dotted}% pagado</span></div></div>
    <div class="v985-list">${row('card','Tarjetas',sumKind('card'),'data-v1121-pay="card"')}${row('bank','Préstamos',sumKind('loan'),'data-v1121-pay="loan"')}${row('grid4','Suscripciones',sumKind('recurring'),'data-v1121-pay="recurring"')}${row('people','Personas',sumKind('personal'),'data-v1121-pay="personal"')}</div></article>
   <article class="v985-card v985-purple">${head('purple','Decidir','¿Qué puedo hacer con mi dinero?','04','data-act="navigate" data-id="projection"')}
@@ -1064,11 +1062,11 @@ function v342CreativePositionMobile(liquid,debt,net){
     </div>
     <div class="v421-meter-grid" aria-label="Presupuesto y compromisos del mes">
       ${meter('Presupuesto',pctLabel(pct),budgetLine,budgetState,'data-v290-budget-open="execution"','Abrir presupuesto mensual',pct,p.percent===null?'Aún no has definido un límite':`Gastado ${money(p.spent)} · ${p.remaining<0?'Exceso':'Libre'} ${freeBudget}`)}
-      ${meter('Compromisos del mes',money(capacity.monthly),pressure.detail,pressure.tone,'data-act="navigate" data-id="payments"','Abrir compromisos del mes',debtRatio===null?0:debtRatio,debtRatio===null?'Sin ingresos de referencia':`${pctLabel(debtRatio)} de tus ingresos comprometidos`)}
+      ${meter('Compromisos del mes',money(capacity.monthly),pressure.detail,pressure.tone,'data-act="navigate" data-id="pressure"','Abrir compromisos del mes',debtRatio===null?0:debtRatio,debtRatio===null?'Sin ingresos de referencia':`${pctLabel(debtRatio)} de tus ingresos comprometidos`)}
     </div>
     <div class="v421-bottom-strip" aria-label="Resumen complementario">
       ${mini('Balance del mes',bubbleMoney(m.net),'Ingresos − egresos','balance','cycle','data-act="navigate" data-id="advanced"')}
-      ${mini('El costo del mañana',money(nextDue),'Próximo mes · estimación','tomorrow','calendar','data-act="navigate" data-id="payments"')}
+      ${mini('El costo del mañana',money(nextDue),'Próximo mes · estimación','tomorrow','calendar','data-act="navigate" data-id="pressure"')}
     </div>
   </section>`;
 }
@@ -1147,8 +1145,8 @@ function mobileHome(){
    ${v105Config().visible.includes('applePayInbox')&&v5ApplePayPending().length?v7ApplePayMobileWidget():''}
    ${v105CapacityWidget(true)}
    <!-- V319: tarjeta resumen redundante eliminada; presupuesto sigue en su módulo. -->
-   <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
-   <section data-v105-widget="payments" class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="payments">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
+   <section data-v105-widget="commitments" class="vive-mobile-commitments" aria-label="Desglose de compromisos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TUS OBLIGACIONES</span><h2>Compromisos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="pressure">Ver todos ${icon('up')}</button></div><div class="vive-mobile-commitment-value" title="Carga mensual total: ${money(monthlyBurden,'DOP',2)}">${money(monthlyBurden)}</div><div class="vive-mobile-commitment-foot"><span>Carga mensual · ${v82CapacityBadge(monthlyBurden)}</span><span>${commitments.length} pago${commitments.length===1?'':'s'} sin confirmar</span></div>${late.length?`<p class="vive-mobile-commitment-alert">${late.length} pago${late.length===1?'':'s'} vencido${late.length===1?'':'s'} · revisa si ya lo pagaste</p>`:''}<div class="v36-commitment-list" aria-label="Pagos desglosados por tipo">${commitmentBreakdown}</div><p class="v36-commitment-note">Cada fila presenta vencimientos y el saldo total pendiente del producto. Las suscripciones muestran su costo mensual equivalente, no una deuda acumulada.</p></section>
+   <section data-v105-widget="payments" class="vive-mobile-dues" aria-label="Próximos pagos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">TU CALENDARIO</span><h2>Próximos pagos</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="pressure">Ver todos ${icon('up')}</button></div>${paymentsHtml||'<p class="vive-mobile-empty-dues">No tienes pagos pendientes registrados.</p>'}</section>
    <section data-v105-widget="net" class="vive-mobile-net-card v36-month-capsule" aria-label="Balance del mes"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RESUMEN MENSUAL</span><h2>Balance del mes</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="advanced">Ver análisis ${icon('up')}</button></div><div class="v36-month-columns"><span><small>Ingresos</small><strong class="v36-income">${money(m.income)}</strong></span><span><small>Egresos</small><strong class="v36-expense">${money(m.expense)}</strong></span></div><div class="v36-month-net"><span><small>Neto</small><strong class="vive-mobile-net-value ${m.net<0?'negative':''}" title="Ingresos menos egresos: ${money(m.net,'DOP',2)}">${money(m.net)}</strong></span><small>${netLabel}</small></div></section>
    <section data-v105-widget="chart" class="v105-mobile-extra" aria-label="Gráfico de ingresos y egresos"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">EVOLUCIÓN</span><h2>Ingresos y egresos</h2></div></div>${mobileMiniTrend()}</section>
    <section data-v105-widget="people" class="v105-mobile-extra" aria-label="Compromisos entre personas"><div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">RELACIONES</span><h2>Entre personas</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="personal">Ver relaciones ${icon('up')}</button></div><div class="v105-mobile-people"><span><small>Por cobrar</small><strong>${money(personalTotals().receivable)}</strong></span><span><small>Por devolver</small><strong>${money(personalTotals().payable)}</strong></span></div></section>
@@ -1181,8 +1179,6 @@ function mobileHub(){
   {eyebrow:'TU ACTIVIDAD',title:'Cada movimiento, en su lugar',subtitle:'Registros, análisis y planificación',entries:[
    ['income','Ingresos','Recibes','up'],['expenses','Egresos','Gastas','down'],
    ['budget','Presupuesto','Ejecución','chart'],['categories','Categorías','Organización','grid']]},
-  {eyebrow:'TU VISIÓN',title:'Visión global',subtitle:'Tu panorama integral sin menús duplicados',entries:[
-   ['payments','Visión global','Vencimientos y pagos','eye']]},
   {eyebrow:'MÁS PERSPECTIVA',title:'Tu inteligencia financiera',subtitle:'Información con profundidad, cuando la necesites',entries:[
    ['patrimony','Patrimonio','Activos y obligaciones','wallet'],
    ['advanced','Analítica avanzada','Tendencias y decisiones','chart']]}
@@ -1293,26 +1289,29 @@ function v371CardReturn(c){
  const benefit=rnd(rewardRows.reduce((sum,t)=>sum+asDop(t),0));
  const net=rnd(benefit-annual);
  const roi=!missingRate&&annual>0?rnd(net/annual*100):null;
- return {year,annual,benefit,net,roi,missingRate,feeConfirmed:feeActual>0,hasAnnual:configuredAmount>0||feeActual>0};
+ return {year,annual,configured,hasConfigured:configuredAmount>0,benefit,net,roi,missingRate,feeConfirmed:feeActual>0,hasAnnual:configuredAmount>0||feeActual>0};
 }
-function v371CardReturnWidget(c,consolidatedCards=null){
+function v371CardReturnWidget(c,consolidatedCards=null,bankView=false){
  const d=consolidatedCards?(()=>{
   const rows=consolidatedCards.map(v371CardReturn);
   const annual=rnd(rows.reduce((s,x)=>s+x.annual,0)),benefit=rnd(rows.reduce((s,x)=>s+x.benefit,0)),net=rnd(benefit-annual);
   const missingRate=rows.some(x=>x.missingRate),hasAnnual=rows.some(x=>x.hasAnnual);
-  return {year:String(today()).slice(0,4),annual,benefit,net,roi:!missingRate&&annual>0?rnd(net/annual*100):null,missingRate,hasAnnual,feeConfirmed:rows.every(x=>x.hasAnnual&&x.feeConfirmed),unconfigured:rows.filter(x=>!x.hasAnnual).length};
+  const configured=rnd(rows.reduce((sum,row)=>sum+row.configured,0));
+  return {year:String(today()).slice(0,4),annual,configured,hasConfigured:rows.some(x=>x.hasConfigured),benefit,net,roi:!missingRate&&annual>0?rnd(net/annual*100):null,missingRate,feeConfirmed:rows.every(x=>x.hasAnnual&&x.feeConfirmed),unconfigured:rows.filter(x=>!x.hasAnnual).length};
  })():v371CardReturn(c);
  const cost=d.missingRate?'—':d.hasAnnual?money(d.annual,'DOP',2):'Sin definir';
  const benefit=d.missingRate?'—':money(d.benefit,'DOP',2);
  const net=d.missingRate||!d.hasAnnual?'—':`${d.net>0?'+':''}${money(d.net,'DOP',2)}`;
  const percentage=d.roi===null?'—':`${d.roi>0?'+':''}${new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(d.roi)}%`;
  const tone=d.missingRate||!d.hasAnnual?'':(d.net>0?'positive':d.net<0?'negative':'');
+ const benefitId=consolidatedCards?'all':sanitize(c.id);
+ const title=bankView?`<h2><button type="button" class="vBanksPc-benefits-link" data-v144-action="open-benefits" data-id="${benefitId}">${icon('gift2')}Beneficios y retorno ${icon('arrow')}</button></h2>`:'<h2>Beneficios y retorno</h2>';
  return `<section class="v266-wallet-panel v371-card-return" aria-label="Retorno anual de beneficios de ${sanitize(c.name)}">
- <div class="v371-return-heading"><div><span class="v266-overline">BENEFICIOS · ${d.year}</span><h2>Beneficios y retorno</h2></div><button type="button" class="v371-return-action" data-v144-action="open-benefits" data-id="${consolidatedCards?'all':sanitize(c.id)}" aria-label="Abrir beneficios de ${sanitize(c.name)}">${icon('arrow')}</button></div>
+ <div class="v371-return-heading"><div><span class="v266-overline">BENEFICIOS · ${d.year}</span>${title}</div>${bankView?'':`<button type="button" class="v371-return-action" data-v144-action="open-benefits" data-id="${benefitId}" aria-label="Abrir beneficios de ${sanitize(c.name)}">${icon('arrow')}</button>`}</div>
  <div class="v371-return-values">
- <div class="v371-return-tile"><small>Anualidad</small><strong>${cost}</strong></div>
+ <div class="v371-return-tile"><small>${bankView?'Anualidad configurada':'Anualidad'}</small><strong>${bankView?(d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'):cost}</strong></div>
  <div class="v371-return-tile"><small>Beneficios recibidos</small><strong>${benefit}</strong></div>
- <div class="v371-return-tile ${tone}"><small>Retorno</small><strong>${net}</strong></div>
+ <div class="v371-return-tile ${tone}"><small>${bankView?'Retorno neto':'Retorno'}</small><strong>${net}</strong></div>
  <div class="v371-return-tile ${tone}"><small>Retorno %</small><strong>${percentage}</strong></div>
  </div>
  <p class="v371-return-note">${d.missingRate?'Falta la tasa RD$/US$ para calcular el retorno.':!d.hasAnnual?'Configura la anualidad desde Gestionar para calcular el retorno.':consolidatedCards&&d.unconfigured?'Retorno sobre anualidades conocidas · '+d.unconfigured+' sin definir.':d.feeConfirmed?'Retorno = beneficios monetarios acreditados − anualidad cobrada.':consolidatedCards?'Retorno consolidado sobre anualidades cobradas o configuradas; no implica un cargo realizado.':'Retorno estimado respecto a la anualidad configurada; no implica un cargo realizado.'}</p>
@@ -1354,7 +1353,7 @@ function v68WalletCards(){
  return (db.cards||[]).filter(c=>ui.showHidden||!isHidden(c)).sort((a,b)=>creditLimit(b)-creditLimit(a));
 }
 /* Wallet · Consumo de compras registrado y distribución de capacidad, sin modificar el libro. */
-function v1301WalletConsumption(cards){
+function v1301WalletConsumption(cards,byType=null){
  const now=today(),zero=()=>({DOP:0,USD:0,equivalent:0,missingFx:false}),byCard=new Map(cards.map(c=>[c.id,zero()])),months=new Map(),totals=zero();
  const transactions=v1303CardTransactions(),originals=new Map(transactions.map(t=>[t.id,t]));
  const isCost=t=>!!t.v144CardCost||['annual_fee','interest','commission','insurance','issuance','renewal'].includes(t.chargeKind)||(!t.chargeKind&&t.category==='Deudas e intereses'&&/anualidad|membres[ií]a|seguro|comisi[oó]n|inter[eé]s/i.test(t.subcategory||''));
@@ -1372,6 +1371,11 @@ function v1301WalletConsumption(cards){
   if(!months.has(key))months.set(key,zero());
   accumulate(months.get(key),ccy,signed,rate);
   accumulate(totals,ccy,signed,rate);
+   if(byType){
+    const type=String((refund&&original?original.category:t.category)||'Sin categoría').trim()||'Sin categoría';
+    if(!byType.has(type))byType.set(type,zero());
+    accumulate(byType.get(type),ccy,signed,rate);
+   }
  }
  return {byCard,months,totals};
 }
@@ -1398,6 +1402,9 @@ function v1301WalletLimitRows(cards){
  const shade=i=>`color-mix(in srgb,var(--v1301-accent) ${100-76*i/Math.max(1,rows.length-1)}%,var(--v1301-tint))`;
  return `<div class="v1301-limit-breakdown" role="group" aria-label="Desglose de límites por tarjeta">${v1301WalletRanked(rows,share,(_r,i)=>shade(i))}</div>`;
 }
+function v1301ConsumptionDisclosure(title,kicker,subtitle,body,options={}){
+ return `<details class="v266-wallet-panel v1301-insight v1301-distribution" data-v1301-kind="consumption"${options.open?' open':''}><summary><div><span class="v1301-kicker">${kicker}</span><h2>${options.glyph?icon(options.glyph):''}${title}</h2><p>${subtitle}</p></div><span class="v1301-disclose-arrow" aria-hidden="true">${icon('arrow')}</span></summary>${body}</details>`;
+}
 function v1301WalletDistribution(cards,consumption){
  const rows=cards.map(c=>{const a=consumption.byCard.get(c.id);return {c,DOP:a.DOP,USD:a.USD,total:a.equivalent,missingFx:a.missingFx}}).sort((a,b)=>b.total-a.total);
  const total=consumption.totals,equivalent=total.equivalent;
@@ -1410,7 +1417,7 @@ function v1301WalletDistribution(cards,consumption){
  const split=(d,u)=>`<span>${amount(d)}</span><span>${amount(u,'USD')}</span>`;
  let offset=0;
  const donut=`<svg class="v1301-donut" viewBox="0 0 128 128" role="img" aria-label="Participación del consumo de ${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}"><circle class="v1301-donut-track" cx="64" cy="64" r="46" fill="none" stroke-width="18"/>${rows.map((r,i)=>{const portion=share(r);if(!portion)return '';const start=offset;offset+=portion;return `<circle class="v1301-donut-segment" data-card-id="${sanitize(r.c.id)}" cx="64" cy="64" r="46" pathLength="100" fill="none" stroke-width="18" stroke-dasharray="${portion} ${100-portion}" stroke-dashoffset="${-start}" transform="rotate(-90 64 64)" style="stroke:${cardColor(r,i)}"/>`}).join('')}<text class="v1301-donut-count" x="64" y="59" text-anchor="middle">${cards.length}</text><text class="v1301-donut-caption" x="64" y="78" text-anchor="middle">${cards.length===1?'tarjeta':'tarjetas'}</text></svg>`;
- return `<details class="v266-wallet-panel v1301-insight v1301-distribution" data-v1301-kind="consumption"><summary><div><span class="v1301-kicker">HISTÓRICO · CRÉDITOS GENERALES</span><h2>Consumo por tarjeta</h2><p>Todas tus tarjetas · Histórico completo</p></div><span class="v1301-disclose-arrow" aria-hidden="true">${icon('arrow')}</span></summary><div class="v1301-distribution-body"><div class="v1301-total"><small>CONSUMO HISTÓRICO TOTAL</small><strong>${total.missingFx?'—':amount(equivalent)}</strong><span title="Compras menos devoluciones; USD convertido a la tasa registrada de cada movimiento (o tasa configurada si no existe)">Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div>${donut}${!representable?`<p>${total.missingFx?'Falta una tasa de cambio para calcular la participación.':'No se representa la participación cuando alguna tarjeta tiene consumo neto negativo.'}</p>`:''}<h3>Consumo por tarjeta</h3>${v1301WalletRanked(rows,share,cardColor)}</div></details>`;
+ return v1301ConsumptionDisclosure('Consumo por tarjeta','HISTÓRICO · CRÉDITOS GENERALES','Todas tus tarjetas · Histórico completo',`<div class="v1301-distribution-body"><div class="v1301-total"><small>CONSUMO HISTÓRICO TOTAL</small><strong>${total.missingFx?'—':amount(equivalent)}</strong><span title="Compras menos devoluciones; USD convertido a la tasa registrada de cada movimiento (o tasa configurada si no existe)">Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div>${donut}${!representable?`<p>${total.missingFx?'Falta una tasa de cambio para calcular la participación.':'No se representa la participación cuando alguna tarjeta tiene consumo neto negativo.'}</p>`:''}<h3>Consumo por tarjeta</h3>${v1301WalletRanked(rows,share,cardColor)}</div>`);
 }
 document.addEventListener('keydown',event=>{
  const segment=event.target.closest?.('.vWalletPc-chart circle[data-act="walletPcConsumption"]');
@@ -1642,6 +1649,7 @@ function v165SearchAction(){
 
 function main(){
  const desktopWallet=!isMobileViewport()&&ui.page==='wallet';
+ const desktopBanks=!isMobileViewport()&&ui.page==='banks';
  // Wallet is the mobile portfolio; cards remains a route for cycle/benefit details.
  if(isMobileViewport()&&ui.page==='cards'&&!card(ui.cardId)&&!ui.v230BenefitComparison){
   ui.cardId=null;ui.page='wallet';
@@ -1650,14 +1658,14 @@ function main(){
  }
  if(isMobileViewport()&&ui.page==='kpis')ui.page='overview';
  if(ui.page==='personalize' && !isMobileViewport()){ui.page='settings';v242SettingsPane='home';}
- const heads={score:['Vive Score','Tu comportamiento crediticio, explicado.'],pressure:['Presión financiera','El mismo calendario de Inicio, ampliado'],wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],payments:['Visión global','Obligaciones, suscripciones y entre personas'],vision:['Visión global','Tu panorama financiero, cuentas y evolución'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
+ const heads={score:['Vive Score','Tu comportamiento crediticio, explicado.'],pressure:['Presión financiera','El mismo calendario de Inicio, ampliado'],wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
  let h=heads[ui.page]||heads.overview;
  // V363: marca unificada en la segunda línea del encabezado de cada sección.
- h=desktopWallet?['Tu universo financiero','Todos tus productos, en una sola vista.']:[h[0],'vive el hoy'];
- return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong class="v908-bar-brand" aria-label="${APP_BRAND}">${brandMark()}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}${desktopWallet?' vWalletPc-world':''}">
-  <header class="topbar"><div class="topbar-intro">${desktopWallet?'<span class="vWalletPc-kicker">WALLET</span>':''}${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<div class="v363-vision-identity"><span class="v363-vision-brand">vive el hoy</span><label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label></div>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v402SyncButton()}${desktopWallet?`<button type="button" class="btn ghost v165-search-icon vWalletPc-search" data-v71-search-open="1" aria-label="Buscar movimientos, tarjetas o comercios">${icon('search')}<span>Buscar movimientos, tarjetas o comercios...</span></button>`:v165SearchAction()}${v36Bell()}${window.VIVE_ENABLED===false?'':`<button type="button" class="v934-web-vive" data-vive-open="web" aria-label="Abrir Vive" title="Vive"><span class="v934-vive-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span></button>`}<button type="button" class="v936-web-settings" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.52V20h-3v-.08a1.65 1.65 0 0 0-1-1.52 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.6 15a1.65 1.65 0 0 0-1.52-1H6v-3h.08A1.65 1.65 0 0 0 7.6 10a1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06A1.65 1.65 0 0 0 11 6.6a1.65 1.65 0 0 0 1-1.52V5h3v.08A1.65 1.65 0 0 0 16 6.6a1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.52 1H21v3h-.08A1.65 1.65 0 0 0 19.4 15Z" transform="translate(-1.5 -0.5) scale(1.05)"/></svg></button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
+ h=desktopWallet?['Tu universo financiero','Todos tus productos, en una sola vista.']:desktopBanks?['Tu posición bancaria','Todos tus productos, en una sola vista.']:[h[0],'vive el hoy'];
+ return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong class="v908-bar-brand" aria-label="${APP_BRAND}">${brandMark()}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}${desktopWallet?' vWalletPc-world':''}${desktopBanks?' vBanksPc-world':''}">
+  <header class="topbar"><div class="topbar-intro">${desktopWallet?'<span class="vWalletPc-kicker">WALLET</span>':desktopBanks?'<span class="vBanksPc-kicker">BANCOS</span>':''}${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<div class="v363-vision-identity"><span class="v363-vision-brand">vive el hoy</span><label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label></div>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v402SyncButton()}${(desktopWallet||desktopBanks)?`<button type="button" class="btn ghost v165-search-icon ${desktopWallet?'vWalletPc-search':'vBanksPc-search'}" data-v71-search-open="1" aria-label="${desktopBanks?'Buscar cuentas, tarjetas o préstamos':'Buscar movimientos, tarjetas o comercios'}">${icon('search')}<span>${desktopBanks?'Buscar cuentas, tarjetas o préstamos...':'Buscar movimientos, tarjetas o comercios...'}</span></button>`:v165SearchAction()}${v36Bell()}${window.VIVE_ENABLED===false?'':`<button type="button" class="v934-web-vive" data-vive-open="web" aria-label="Abrir Vive" title="Vive"><span class="v934-vive-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span></button>`}<button type="button" class="v936-web-settings" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.52V20h-3v-.08a1.65 1.65 0 0 0-1-1.52 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.6 15a1.65 1.65 0 0 0-1.52-1H6v-3h.08A1.65 1.65 0 0 0 7.6 10a1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06A1.65 1.65 0 0 0 11 6.6a1.65 1.65 0 0 0 1-1.52V5h3v.08A1.65 1.65 0 0 0 16 6.6a1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.52 1H21v3h-.08A1.65 1.65 0 0 0 19.4 15Z" transform="translate(-1.5 -0.5) scale(1.05)"/></svg></button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
  
- ${ui.page==='wallet'||ui.page==='pressure'?'':['overview','recurring','personal','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
+ ${desktopBanks||ui.page==='wallet'||ui.page==='pressure'?'':['overview','recurring','personal','analytics','kpis','advanced','patrimony','projection'].includes(ui.page)?universeSwitch(ui.page):moduleSwitch(ui.page)}
  ${ui.page==='overview'?mobileHome():''}<section id="page" aria-label="${sanitize(h[0])}">${v243ExploreReturn()}${ui.page==='mobilehub'?mobileHub():ui.page==='mobilesearch'?v154MobileSearchPage():ui.page==='wallet'?(desktopWallet?vWalletPc():v68Wallet()):pages[ui.page]()}</section></main></div>${mobileBottomNavigation()}`;
 }
 function shellKpi(title,v,foot,ico,tone=''){return `<div class="kpi"><div class="kpi-head">${sanitize(title)}<span class="kpi-icon">${icon(ico)}</span></div><div class="kpi-value ${tone}">${v}</div><div class="kpi-foot">${foot}</div></div>`}
@@ -1784,9 +1792,57 @@ function v1264BankHistory(b){
  ${rows.length?`<div class="v1264-table"><div class="v1264-row v1264-head"><b>Mes</b><span>Entró</span><span>Salió</span><strong>Neto</strong></div>${table}</div>`:''}
  <p class="v1264-note">Incluye ingresos y transferencias de las cuentas de esta institución, gastos, pagos de préstamos y consumos con sus tarjetas. Los pagos a tarjeta no se cuentan para no duplicar el consumo.</p></section>`;
 }
-function bankDetail(b){
+function vBanksPcCardConsumption(cards){
+ const byType=new Map();
+ const {totals}=v1301WalletConsumption(cards,byType);
+ const rows=[...byType].sort((a,b)=>b[1].equivalent-a[1].equivalent||a[0].localeCompare(b[0],'es'));
+ const comparable=!totals.missingFx&&totals.equivalent>0&&rows.every(([,amount])=>amount.equivalent>=0);
+ const body=rows.length?`<div class="vBanksPc-consumption-rows">${rows.map(([type,amount])=>{
+  const share=comparable?100*amount.equivalent/totals.equivalent:0;
+  return `<div><span class="vBanksPc-category-icon">${icon(V255_TAXONOMY.gasto.categories[type]||'bag')}</span><strong>${sanitize(type)}</strong>${comparable?`<span class="vBanksPc-meter" aria-hidden="true"><i style="--use:${Math.min(100,share)}%"></i></span>`:''}<span class="vBanksPc-consumption-amount"><b>${amount.missingFx?'—':money(amount.equivalent,'DOP',0)}</b>${amount.USD?`<small>${vWalletPcSplit(amount.DOP,amount.USD)}</small>`:''}</span>${comparable?`<small>${share.toFixed(1)}%</small>`:''}</div>`;
+ }).join('')}</div>`:'<p class="vBanksPc-empty">Sin consumos registrados.</p>';
+ return v1301ConsumptionDisclosure('Consumo por tipo','','',body,{glyph:'analytics',open:ui.vBanksPcConsumptionOpen!==false});
+}
+let vBanksPcCardCycle;
+function vBanksPcInstitution(b,f){
+ const id=sanitize(b.id),selected=f.cc.find(c=>c.id===ui.vBanksPcCardId);
+ const product=(name,note,value,act,item,mark,meter='')=>`<button type="button" class="vBanksPc-product" data-act="${act}" data-id="${sanitize(item.id)}"><span class="vBanksPc-product-mark">${mark}</span><span><strong>${sanitize(name)}</strong><small>${note}</small>${meter}</span><b>${value}</b>${icon('arrow')}</button>`;
+ const rows=[
+  ['cards','Tarjetas','Tarjetas de crédito','addCard','card',f.cc.map(c=>{
+   const total=vWalletPcEquivalent(c.limitDOP,c.limitUSD);
+   const debt=vWalletPcEquivalent(cardStatus(c,'DOP').debt,cardStatus(c,'USD').debt);
+   const use=vWalletPcUsage(debt,total);
+   const last4=String(c.last4||c.number||'').replace(/\D/g,'').slice(-4);
+   const meter=total>0?`<span class="vBanksPc-usage"><span class="vBanksPc-meter" aria-hidden="true"><i style="--use:${Math.min(100,use)}%"></i></span><small>${use.toFixed(1)}%</small></span>`:'';
+   return product(c.name,`${last4?'•••• '+last4+' · ':''}${vWalletPcSplit(c.limitDOP,c.limitUSD,0)}`,`<span title="Límite equivalente en pesos">${money(total,'DOP',0)}</span>`,'banksPcOpenCard',c,cardNetworkMark(c)||icon('card'),meter);
+  })],
+  ['accounts','Cuentas','Cuentas','addAccount','wallet',f.aa.map(a=>product(a.name,`${a.kind==='savings'?'Ahorros':'Corriente'} · ${sanitize(a.currency)}`,money(getAccountBalance(a),a.currency,2),'goAccount',a,icon('wallet')))],
+  ['loans','Préstamos','Préstamos','addLoan','building',f.ll.map(l=>product(l.name,sanitize(l.currency),money(loanStatus(l).balance,l.currency,2),'goLoan',l,icon('building')))],
+ ];
+ if(f.certs.length)rows.push(['certificates','Certificados','Certificados','addCertificate','analytics',f.certs.map(c=>product(c.name,`${num(c.rate)}% anual · ${sanitize(c.currency)}`,money(certificateCapital(c),c.currency,2),'banksPcOpenCertificate',c,icon('analytics')))]);
+ const tab=ui.vBanksPcProduct||'all',count=rows.reduce((sum,row)=>sum+row[5].length,0);
+ const tabs=[['all','Productos',count],...rows.map(([key,label,,,,items])=>[key,label,items.length])];
+ return `<section class="vBanksPc-institution">
+  <div class="vBanksPc-institution-summary"><header class="vBanksPc-institution-head"><div>${bankLogoMark(b,'institution-logo')}<div><h2>${sanitize(b.name)}</h2><p>Vista consolidada</p></div></div><details class="vBanksPc-controls"><summary aria-label="Opciones de la institución">${icon('arrow')}</summary><div>${productControls('bank',b.id,b.archived)}<button type="button" class="btn ghost sm" data-act="editBank" data-id="${id}">Editar</button><button type="button" class="btn ghost sm" data-act="addCertificate" data-id="${id}">Añadir certificado</button><button type="button" class="btn ghost sm" data-act="bankHistory" data-id="${id}" aria-pressed="${ui.bankHistory===b.id}">Historial</button><button type="button" class="btn ghost sm" data-act="closeBank">Cerrar</button></div></details></header>
+  <dl class="vBanksPc-bank-totals"><div><dt>Fondos</dt><dd>${money(f.liquidity,'DOP',0)}</dd></div><div><dt>Deudas</dt><dd>${money(f.credit+f.loansDue,'DOP',0)}</dd></div><div><dt>Posición neta</dt><dd class="${f.net<0?'negative':f.net>0?'positive':''}">${money(f.net,'DOP',0)}</dd></div></dl></div>
+  ${selected?`<div class="vBanksPc-card-detail" tabindex="-1">${vBanksPcCardCycle(selected,true)}</div>`:`
+  <nav class="vBanksPc-product-filter" aria-label="Filtrar productos del banco">${tabs.map(([key,name,n])=>`<button type="button" data-act="banksPcProducts" data-id="${key}" aria-pressed="${tab===key}">${name} (${n})</button>`).join('')}</nav>
+  ${rows.filter(([key,,,,,items])=>key===tab||(tab==='all'&&items.length)).map(([, ,title,add,glyph,items])=>`<section class="vBanksPc-lane"><header><h3>${icon(glyph)} ${title} (${items.length})</h3><button type="button" class="btn ghost sm" data-act="${add}" data-id="${id}" aria-label="Añadir en ${title.toLowerCase()}">${icon('plus')}</button></header>${items.join('')||'<p class="vBanksPc-empty">Sin productos registrados.</p>'}</section>`).join('')}`}
+  ${ui.bankHistory===b.id?v1264BankHistory(b):''}
+ </section>`;
+}
+document.addEventListener('toggle',event=>{
+ const detail=event.target;
+ if(detail.isConnected&&detail.matches?.('.vBanksPc .v1301-insight'))ui.vBanksPcConsumptionOpen=detail.open;
+},true);
+function vBanksPcBenefits(cards){
+ return `<div class="vBanksPc-benefits" tabindex="-1"><button type="button" class="btn ghost sm" data-act="banksPcCloseBenefits">${icon('arrow')} ${ui.vBanksPcCardId?'Volver a la tarjeta':'Volver al resumen'}</button>${v144BenefitsPage(cards)}</div>`;
+}
+
+function bankDetail(b,desktop=false){
 if(!v40IsFinancial(b))return v40NonbankDetail(b);
 let f=bankFigures(b);
+if(desktop)return vBanksPcInstitution(b,f);
 return `<section class="bank-workspace v176-bank-workspace v220-bank-workspace"><div class="workspace-title v220-workspace-title"><div class="v220-bank-identity">${bankLogoMark(b,'institution-logo large')}<div class="v220-bank-copy"><div class="eyebrow">VISTA POR INSTITUCIÓN</div><h2>${sanitize(b.name)}</h2><p>${sanitize(b.kind||'Banco')}${b.notes?' · '+sanitize(b.notes):''}</p></div></div><div class="hstack v176-bank-actions v220-bank-actions">${productControls('bank',b.id,b.archived)}<button class="btn ghost sm" data-act="editBank" data-id="${b.id}">Editar banco</button><button class="btn ghost sm" data-act="closeBank">Cerrar</button><button class="btn soft sm ${ui.bankHistory===b.id?'is-on':''}" data-act="bankHistory" data-id="${b.id}" aria-pressed="${ui.bankHistory===b.id}">${icon('analytics')} Historial</button></div></div>
 ${ui.bankHistory===b.id?v1264BankHistory(b):''}
 <div class="section-title section v220-products-head"><div><h2>Detalle de productos</h2><p>Toca un producto para abrir su detalle.</p></div><div class="hstack"><button class="btn sm soft" data-act="addAccount" data-id="${b.id}">+ Cuenta</button><button class="btn sm soft" data-act="addCard" data-id="${b.id}">+ Tarjeta</button><button class="btn sm soft" data-act="addLoan" data-id="${b.id}">+ Préstamo</button><button class="btn sm soft" data-act="addCertificate" data-id="${b.id}">+ Certificado</button></div></div>
@@ -3029,8 +3085,19 @@ function annual(embedded=false){
  <tr class="matrix-group"><td colspan="15">EGRESOS <span>${expenses.length} categorías</span></td></tr>${categoryRows('expense',expenses)}${totalRow('TOTAL EGRESOS','expense')}${totalRow('NETO','net')}${totalRow('SALDO FINAL','ending',true)}
  </tbody></table></div><p class="matrix-footnote">Las cifras no repiten el símbolo de pesos. Toca cualquier categoría con una flecha para abrir solo su detalle. Los meses sin movimiento muestran «—»; el promedio de ingresos y gastos divide entre los 12 meses.</p></section></div>`;
 }
-function analytics(){let personalExposure=personalTotals();let y=ui.year,monthly=Array.from({length:12},(_,i)=>monthlyTotals(y,i+1)),last=(y===nowYear()?nowMonth():y<nowYear()?12:0),selected=monthly.slice(0,last),avg=(key)=>selected.length?selected.reduce((s,v)=>s+v[key],0)/selected.length:0,liquid=totalLiquid(),cardDebt=totalCardDebt(),loanDebt=totalLoanDebt(),debt=cardDebt+loanDebt,expenseCats={};for(let m of selected)for(let [k,v] of Object.entries(m.expenseBy))expenseCats[k]=(expenseCats[k]||0)+v;let catEntries=Object.entries(expenseCats).filter(([k,v])=>v>0).sort((a,b)=>b[1]-a[1]),total=catEntries.reduce((s,x)=>s+x[1],0),colors=['#3879e9','#20a58e','#ef8092','#a488e6','#72c1d3','#c77d89','#8994b6'];let angle=0,grad=catEntries.map(([k,v],i)=>{let prev=angle;angle+=v/Math.max(total,1)*360;return `${colors[i%colors.length]} ${prev}deg ${angle}deg`}).join(',');let limitDop=db.cards.reduce((s,c)=>s+num(c.limitDOP),0),limitUsd=db.cards.reduce((s,c)=>s+num(c.limitUSD),0),utilDop=limitDop?db.cards.reduce((s,c)=>s+cardStatus(c,'DOP').debt,0)/limitDop*100:0,utilUsd=limitUsd?db.cards.reduce((s,c)=>s+cardStatus(c,'USD').debt,0)/limitUsd*100:0,ratio=avg('income')>0?debt/avg('income'):null,savingsRate=avg('income')>0?(avg('income')-avg('expense'))/avg('income')*100:null,bankRows=db.banks.map(b=>({b,...bankFigures(b)})).sort((a,b)=>(b.credit+b.loansDue)-(a.credit+a.loansDue));
-return `<div class="analytics-world"><div class="analytic-hero"><div class="analytic-hero-top"><div><span class="analyst-label">PERSPECTIVA COMPLETA</span><h2>Detrás de cada número,<br/><em>una decisión mejor.</em></h2><p>Patrimonio, flujo, estructura de deuda, categorías y próximos riesgos en un espacio dedicado al análisis.</p></div><div class="year-switcher contrast"><button class="year-btn" data-act="prevYear" aria-label="Año anterior">‹</button><span>${y}</span><button class="year-btn" data-act="nextYear" aria-label="Año siguiente">›</button></div></div><div class="analytic-hero-strip"><div><small>LIQUIDEZ</small><strong>${money(liquid)}</strong></div><div><small>DEUDA TOTAL</small><strong>${money(debt)}</strong></div><div><small>POSICIÓN NETA*</small><strong>${money(liquid-debt)}</strong></div></div><small class="hero-explainer">* Solo saldos bancarios y deudas registradas; no incluye otros activos. Valores consolidados en RD$.</small></div><div class="analytics-label-row"><div><span class="summary-tag">01 / FLUJO Y CAPACIDAD</span><h3>Indicadores de desempeño</h3></div><button class="btn sm ghost" data-act="navigate" data-id="annual">Balance anual ${icon('arrow')}</button></div><div class="grid kpis">${shellKpi('Ingreso medio mensual',money(avg('income')),'Promedio de meses transcurridos','up')}${shellKpi('Egreso medio mensual',money(avg('expense')),'Gasto reconocido promedio','down')}${shellKpi('Tasa de ahorro',savingsRate===null?'N/D':savingsRate.toFixed(1)+'%','Neto / ingresos medios','wallet',savingsRate!=null&&savingsRate<0?'negative':'positive')}${shellKpi('Cobertura de liquidez',avg('expense')?`${(liquid/avg('expense')).toFixed(1)} meses`:'N/D','Liquidez / egresos medios','analytics')}</div><div class="grid columns section"><div class="panel"><div class="panel-head"><h3>Evolución de ingresos y egresos</h3><span class="pill">${y}</span></div>${glassTrend(y)}</div><div class="panel"><div class="panel-head"><h3>¿En qué se va tu dinero?</h3></div>${catEntries.length?`<div class="donut" style="background:conic-gradient(${grad})"></div><div style="margin-top:18px">${catEntries.slice(0,7).map(([k,v],i)=>`<div class="category-row" tabindex="0" data-chart-tip="${sanitize(k)}|Gasto: ${money(v)}|Participación: ${(v/total*100).toFixed(1)}%"><span class="dot" style="background:${colors[i%colors.length]}"></span><span style="width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${sanitize(k)}</span><div class="bar"><span style="width:${100*v/total}%;background:${colors[i%colors.length]}"></span></div><strong>${(v/total*100).toFixed(1)}%</strong></div>`).join('')}</div>`:'<div class="empty">Registra egresos para analizar la distribución del gasto.</div>'}</div></div><div class="analytics-label-row"><div><span class="summary-tag">02 / CRÉDITO Y PATRIMONIO</span><h3>Exposición financiera</h3></div></div><div class="grid kpis">${shellKpi('Tarjetas pendientes',money(cardDebt),'Deudas RD$ y US$ consolidadas','card')}${shellKpi('Préstamos pendientes',money(loanDebt),'Capital registrado no amortizado','building')}${shellKpi('Deuda / ingreso',ratio==null?'N/D':ratio.toFixed(1)+'×','Deuda / ingreso mensual promedio','analytics')}${shellKpi('Compromisos próximos 30 días',money(upcoming().filter(x=>x.date>=today()&&x.date<=addDays(today(),30)).reduce((s,x)=>s+fx(x.amount,x.currency),0)),'Pagos pendientes conocidos','calendar')}</div><div class="grid columns equal section"><div class="panel"><div class="panel-head"><h3>Utilización de crédito por moneda</h3></div><div class="mini-row"><div><strong>Tarjetas en pesos (RD$)</strong><div class="mini-sub">Saldo utilizado sobre el límite configurado</div></div><strong>${utilDop.toFixed(1)}%</strong></div><div class="progress"><span class="${utilDop>90?'high':utilDop>70?'warn':''}" style="width:${Math.min(100,Math.max(0,utilDop))}%"></span></div><div class="mini-row" style="margin-top:12px"><div><strong>Tarjetas en dólares (US$)</strong><div class="mini-sub">Saldo utilizado sobre el límite configurado</div></div><strong>${utilUsd.toFixed(1)}%</strong></div><div class="progress"><span class="${utilUsd>90?'high':utilUsd>70?'warn':''}" style="width:${Math.min(100,Math.max(0,utilUsd))}%"></span></div><div class="mini-divider"></div><div class="mini-row"><span>Total en tarjetas</span><strong>${money(cardDebt)}</strong></div><div class="mini-row"><span>Total en préstamos</span><strong>${money(loanDebt)}</strong></div><div class="mini-row"><span>Pasivos registrados</span><strong>${money(debt)}</strong></div><p class="footnote">No es un puntaje crediticio. El saldo al corte real se registra en cada tarjeta.</p></div><div class="panel"><div class="panel-head"><h3>Calendario y exposición a vencimientos</h3></div>${[7,15,30,60].map(d=>{let items=upcoming().filter(x=>diffDays(x.date,today())>=0&&diffDays(x.date,today())<=d);return `<div class="mini-row"><div><div class="mini-title">Próximos ${d} días</div><div class="mini-sub">${items.length} compromiso(s) identificado(s)</div></div><strong>${money(items.reduce((s,x)=>s+fx(x.amount,x.currency),0))}</strong></div>`}).join('')}<p class="footnote">Ventanas de 60 días: solo el próximo vencimiento conocido de cada obligación, no todas sus futuras renovaciones.</p></div></div><div class="grid columns equal section"><div class="panel"><div class="panel-head"><h3>Radiografía por institución</h3><button class="linkish" data-act="navigate" data-id="banks">Ir a mis bancos →</button></div>${bankRows.length?bankRows.slice(0,6).map(x=>`<div class="mini-row"><div><div class="mini-title">${sanitize(x.b.name)}</div><div class="mini-sub">${x.aa.length} cuenta(s) · ${x.cc.length} tarjeta(s) · ${x.ll.length} préstamo(s)</div></div><div style="text-align:right"><strong class="money">${money(x.credit+x.loansDue)}</strong><div class="mini-sub">Deuda · Liquidez ${money(x.liquidity)}</div></div></div>`).join(''):'<div class="empty">Añade instituciones para comparar tu posición por banco.</div>'}</div><div class="panel"><div class="panel-head"><h3>Lecturas inteligentes</h3></div>${insights(selected,liquid,debt,catEntries,total)}</div></div></div>`}
+function vPatrimonyExposure(averageIncome){
+ const cardDebt=totalCardDebt(),loanDebt=totalLoanDebt(),debt=cardDebt+loanDebt;
+ const utilization=currency=>{
+  const limit=db.cards.reduce((sum,c)=>sum+num(currency==='USD'?c.limitUSD:c.limitDOP),0);
+  return limit>0?db.cards.reduce((sum,c)=>sum+cardStatus(c,currency).debt,0)/limit*100:0;
+ };
+ const utilDop=utilization('DOP'),utilUsd=utilization('USD'),ratio=averageIncome>0?debt/averageIncome:null;
+ const now=today(),obligations=upcoming();
+ const within=days=>obligations.filter(x=>x.date>=now&&x.date<=addDays(now,days));
+ return `<section class="vPatrimony-exposure" aria-label="Créditos y patrimonio"><div class="analytics-label-row"><div><span class="summary-tag">02 / CRÉDITOS Y PATRIMONIO</span><h3>Exposición financiera</h3></div><button type="button" class="btn sm ghost" data-act="navigate" data-id="pressure">Abrir calendario ${icon('arrow')}</button></div><div class="grid kpis">${shellKpi('Tarjetas pendientes',money(cardDebt),'Deudas RD$ y US$ consolidadas','card')}${shellKpi('Préstamos pendientes',money(loanDebt),'Capital registrado no amortizado','building')}${shellKpi('Deuda / ingreso',ratio==null?'N/D':ratio.toFixed(1)+'×','Deuda / ingreso mensual promedio','analytics')}${shellKpi('Compromisos próximos 30 días',money(within(30).reduce((s,x)=>s+fx(x.amount,x.currency),0)),'Pagos pendientes conocidos','calendar')}</div><div class="grid columns equal section"><div class="panel"><div class="panel-head"><h3>Utilización de crédito por moneda</h3></div><div class="mini-row"><div><strong>Tarjetas en pesos (RD$)</strong><div class="mini-sub">Saldo utilizado sobre el límite configurado</div></div><strong>${utilDop.toFixed(1)}%</strong></div><div class="progress"><span class="${utilDop>90?'high':utilDop>70?'warn':''}" style="width:${Math.min(100,Math.max(0,utilDop))}%"></span></div><div class="mini-row" style="margin-top:12px"><div><strong>Tarjetas en dólares (US$)</strong><div class="mini-sub">Saldo utilizado sobre el límite configurado</div></div><strong>${utilUsd.toFixed(1)}%</strong></div><div class="progress"><span class="${utilUsd>90?'high':utilUsd>70?'warn':''}" style="width:${Math.min(100,Math.max(0,utilUsd))}%"></span></div><div class="mini-divider"></div><div class="mini-row"><span>Total en tarjetas</span><strong>${money(cardDebt)}</strong></div><div class="mini-row"><span>Total en préstamos</span><strong>${money(loanDebt)}</strong></div><div class="mini-row"><span>Pasivos registrados</span><strong>${money(debt)}</strong></div><p class="footnote">No es un puntaje crediticio. El saldo al corte real se registra en cada tarjeta.</p></div><div class="panel"><div class="panel-head"><h3>Calendario y exposición a vencimientos</h3></div>${[7,15,30,60].map(d=>{let items=within(d);return `<div class="mini-row"><div><div class="mini-title">Próximos ${d} días</div><div class="mini-sub">${items.length} compromiso(s) identificado(s)</div></div><strong>${money(items.reduce((s,x)=>s+fx(x.amount,x.currency),0))}</strong></div>`}).join('')}<p class="footnote">Ventanas de 60 días: solo el próximo vencimiento conocido de cada obligación, no todas sus futuras renovaciones.</p></div></div></section>`;
+}
+function analytics(){let personalExposure=personalTotals();let y=ui.year,monthly=Array.from({length:12},(_,i)=>monthlyTotals(y,i+1)),last=(y===nowYear()?nowMonth():y<nowYear()?12:0),selected=monthly.slice(0,last),avg=(key)=>selected.length?selected.reduce((s,v)=>s+v[key],0)/selected.length:0,liquid=totalLiquid(),cardDebt=totalCardDebt(),loanDebt=totalLoanDebt(),debt=cardDebt+loanDebt,expenseCats={};for(let m of selected)for(let [k,v] of Object.entries(m.expenseBy))expenseCats[k]=(expenseCats[k]||0)+v;let catEntries=Object.entries(expenseCats).filter(([k,v])=>v>0).sort((a,b)=>b[1]-a[1]),total=catEntries.reduce((s,x)=>s+x[1],0),colors=['#3879e9','#20a58e','#ef8092','#a488e6','#72c1d3','#c77d89','#8994b6'];let angle=0,grad=catEntries.map(([k,v],i)=>{let prev=angle;angle+=v/Math.max(total,1)*360;return `${colors[i%colors.length]} ${prev}deg ${angle}deg`}).join(',');let savingsRate=avg('income')>0?(avg('income')-avg('expense'))/avg('income')*100:null,bankRows=db.banks.map(b=>({b,...bankFigures(b)})).sort((a,b)=>(b.credit+b.loansDue)-(a.credit+a.loansDue));
+return `<div class="analytics-world"><div class="analytic-hero"><div class="analytic-hero-top"><div><span class="analyst-label">PERSPECTIVA COMPLETA</span><h2>Detrás de cada número,<br/><em>una decisión mejor.</em></h2><p>Patrimonio, flujo, estructura de deuda, categorías y próximos riesgos en un espacio dedicado al análisis.</p></div><div class="year-switcher contrast"><button class="year-btn" data-act="prevYear" aria-label="Año anterior">‹</button><span>${y}</span><button class="year-btn" data-act="nextYear" aria-label="Año siguiente">›</button></div></div><div class="analytic-hero-strip"><div><small>LIQUIDEZ</small><strong>${money(liquid)}</strong></div><div><small>DEUDA TOTAL</small><strong>${money(debt)}</strong></div><div><small>POSICIÓN NETA*</small><strong>${money(liquid-debt)}</strong></div></div><small class="hero-explainer">* Solo saldos bancarios y deudas registradas; no incluye otros activos. Valores consolidados en RD$.</small></div><div class="analytics-label-row"><div><span class="summary-tag">01 / FLUJO Y CAPACIDAD</span><h3>Indicadores de desempeño</h3></div><button class="btn sm ghost" data-act="navigate" data-id="annual">Balance anual ${icon('arrow')}</button></div><div class="grid kpis">${shellKpi('Ingreso medio mensual',money(avg('income')),'Promedio de meses transcurridos','up')}${shellKpi('Egreso medio mensual',money(avg('expense')),'Gasto reconocido promedio','down')}${shellKpi('Tasa de ahorro',savingsRate===null?'N/D':savingsRate.toFixed(1)+'%','Neto / ingresos medios','wallet',savingsRate!=null&&savingsRate<0?'negative':'positive')}${shellKpi('Cobertura de liquidez',avg('expense')?`${(liquid/avg('expense')).toFixed(1)} meses`:'N/D','Liquidez / egresos medios','analytics')}</div><div class="grid columns section"><div class="panel"><div class="panel-head"><h3>Evolución de ingresos y egresos</h3><span class="pill">${y}</span></div>${glassTrend(y)}</div><div class="panel"><div class="panel-head"><h3>¿En qué se va tu dinero?</h3></div>${catEntries.length?`<div class="donut" style="background:conic-gradient(${grad})"></div><div style="margin-top:18px">${catEntries.slice(0,7).map(([k,v],i)=>`<div class="category-row" tabindex="0" data-chart-tip="${sanitize(k)}|Gasto: ${money(v)}|Participación: ${(v/total*100).toFixed(1)}%"><span class="dot" style="background:${colors[i%colors.length]}"></span><span style="width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${sanitize(k)}</span><div class="bar"><span style="width:${100*v/total}%;background:${colors[i%colors.length]}"></span></div><strong>${(v/total*100).toFixed(1)}%</strong></div>`).join('')}</div>`:'<div class="empty">Registra egresos para analizar la distribución del gasto.</div>'}</div></div>${vPatrimonyExposure(avg('income'))}<div class="grid columns equal section"><div class="panel"><div class="panel-head"><h3>Radiografía por institución</h3><button class="linkish" data-act="navigate" data-id="banks">Ir a mis bancos →</button></div>${bankRows.length?bankRows.slice(0,6).map(x=>`<div class="mini-row"><div><div class="mini-title">${sanitize(x.b.name)}</div><div class="mini-sub">${x.aa.length} cuenta(s) · ${x.cc.length} tarjeta(s) · ${x.ll.length} préstamo(s)</div></div><div style="text-align:right"><strong class="money">${money(x.credit+x.loansDue)}</strong><div class="mini-sub">Deuda · Liquidez ${money(x.liquidity)}</div></div></div>`).join(''):'<div class="empty">Añade instituciones para comparar tu posición por banco.</div>'}</div><div class="panel"><div class="panel-head"><h3>Lecturas inteligentes</h3></div>${insights(selected,liquid,debt,catEntries,total)}</div></div></div>`}
 function insights(monthly,liquid,debt,cats,total){let msg=[];let avInc=monthly.length?monthly.reduce((s,v)=>s+v.income,0)/monthly.length:0,avExp=monthly.length?monthly.reduce((s,v)=>s+v.expense,0)/monthly.length:0;if(!db.transactions.length)msg.push('No hay historial suficiente. Empieza por registrar tus ingresos, gastos y consumos para construir las tendencias.');if(avInc>0){let pct=(avInc-avExp)/avInc*100;msg.push(`Tu ahorro medio equivale al ${pct.toFixed(1)}% de tus ingresos. ${pct<0?'Los gastos están superando los ingresos reconocidos.':'La diferencia entre ingresos y gastos es positiva.'}`)}if(avExp>0)msg.push(`Con tu gasto mensual promedio registrado, la liquidez cubre aproximadamente ${(liquid/avExp).toFixed(1)} meses.`);if(cats.length&&total>0)msg.push(`La principal categoría de gasto es ${cats[0][0]}, con ${(cats[0][1]/total*100).toFixed(1)}% del total del período.`);if(debt>liquid)msg.push('El saldo de deuda registrado supera tus saldos bancarios. Revisa las cuotas y el calendario antes de comprometer nuevos pagos.');let late=upcoming().filter(x=>x.date<today());if(late.length)msg.push(`Existen ${late.length} obligaciones con fecha vencida que todavía no figuran como pagadas.`);return msg.length?msg.map(s=>`<div class="listitem"><span class="activity-icon">◎</span><div class="listitem-content" style="line-height:1.6">${sanitize(s)}</div></div>`).join(''):'<div class="empty">Aún no hay patrones destacados.</div>'}
 /* V30 · Centro de integridad y recuperación. No altera la contabilidad. */
 const V30_RECOVERY_KEY=KEY+'.recovery.v30';
@@ -3524,10 +3591,10 @@ function overview(){
   <div class="ff-dashboard-tools"><div class="ff-dashboard-filters"><label class="ff-month-filter" title="Cambiar mes de análisis">${icon('calendar')} <input id="monthFilterDash" data-month-filter type="month" value="${ui.month}" aria-label="Mes de análisis"></label></div></div>
   <div class="ff-dashboard-grid v105-grid">
    <section class="ff-balance ff-tile v152-position-reference" aria-label="Tu posición financiera"><div class="ff-balance-header ff-executive-header"><div><div class="ff-label">Tu posición financiera</div><button type="button" data-act="v186Deep" data-id="net" class="ff-pos-amount v186-position-trigger ${allNet<-.005?'v176-net-negative':allNet>.005?'v176-net-positive':''}">${money(allNet,'DOP',2)}</button><p>Liquidez + certificados + préstamos por cobrar − todas las deudas. RD$/US$ ${db.settings.fxAcknowledged?'al cambio configurado':'a un cambio sin confirmar'}.</p></div></div><div class="ff-position-divider"></div><div class="ff-bubbles ff-executive-bubbles"><button class="ff-bubble" data-act="v186Deep" data-id="liquidity" data-chart-tip="LIQUIDEZ|Valor exacto: ${money(totalFunds,'DOP',2)}|Cuentas y efectivo RD$: ${money(fundsDOP,'DOP',2)}|Cuentas y efectivo US$: ${money(fundsUSD,'USD',2)}|Equivalente US$ en RD$: ${money(fx(fundsUSD,'USD'),'DOP',2)}"><span class="bubble-amount">${bubbleMoney(totalFunds)}</span>${v105BubblePercent(totalFunds,yoy.position?.liquid,yoy)}<small>Liquidez</small></button><button class="ff-bubble featured" data-act="v186Deep" data-id="debt" data-chart-tip="DEUDAS TOTALES|Valor exacto: ${money(allDebt,'DOP',2)}|Tarjetas RD$: ${money(cardDebtDOP,'DOP',2)}|Tarjetas US$: ${money(cardDebtUSD,'USD',2)}|Préstamos y otras deudas: ${money(totalLoanDebt()+personalDue,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allDebt)}</span>${v105BubblePercent(allDebt,yoy.position?.debt,yoy,true)}<small>Deudas totales</small></button><button class="ff-bubble ${allNet<0?'ff-bubble-negative':''}" data-act="v186Deep" data-id="net" data-chart-tip="POSICIÓN NETA|Valor exacto: ${money(allNet,'DOP',2)}|Liquidez: ${money(totalFunds,'DOP',2)}|Certificados y por cobrar: ${money(totalCertificates()+personalReceivable,'DOP',2)}|Deudas totales: ${money(allDebt,'DOP',2)}"><span class="bubble-amount">${bubbleMoney(allNet)}</span>${v105BubblePercent(allNet,yoy.position?.net,yoy)}<small>Posición neta</small></button></div><div class="ff-balance-actions"><button data-act="newTransaction" data-type="income">${icon('up')} Recibir dinero</button><button class="dark" data-act="newTransaction" data-type="expense">${icon('down')} Registrar egreso</button></div></section>
-   <aside role="region" data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} pendientes de revisión <span>${icon('arrow')}</span></button></aside>
+   <aside role="region" data-v105-widget="commitments" class="ff-activity ff-obligations" aria-label="Desglose de compromisos"><div class="ff-panel-top"><div><h2>Compromisos</h2><p>¿Cuánto tienes por pagar?</p></div><button class="ff-black-btn" data-act="navigate" data-id="pressure">Ver todo ${icon('arrow')}</button></div><div class="ff-obligation-total"><div class="v82-total-top"><small>TOTAL PROGRAMADO · RD$ EQUIVALENTE</small>${v82CapacityBadge(monthlyTotal)}</div><strong title="Compromisos mensuales: ${money(monthlyTotal,'DOP',2)}">${money(monthlyTotal)}</strong></div><div class="ff-obligation-list">${dueRows}</div>${qPopover}<button class="ff-activity-foot" data-act="movementTab" data-id="pending">${icon('clock')} ${(db.pendingOperations||[]).length} pendientes de revisión <span>${icon('arrow')}</span></button></aside>
    <div class="v297-net-row" aria-label="Neto del mes y relaciones personales">
     <section data-v105-widget="net" class="ff-health-card ff-tile"><div class="ff-panel-top"><div><h2>Neto del mes</h2><p>Ingresos − egresos</p></div></div><div class="ff-health-number ff-net-hover" tabindex="0" data-chart-tip="${monthlyNetTip}" aria-label="Porcentaje neto mensual. Consulta la comparación con el año anterior">${ratioText}</div><div class="ff-health-caption">${ratio===null?'Sin ingresos registrados':'Del ingreso que queda después de gastos'}</div>${spark}<div class="ff-health-foot"><span>Resultado neto</span><strong tabindex="0" data-chart-tip="${monthlyNetTip}">${money(m.net)}</strong></div></section>
-   <section data-v105-widget="people" class="ff-personal ff-tile v1240-cal" aria-label="Calendario de vencimientos de los próximos 30 días"><div class="ff-panel-top"><div><h2>Próximos 30 días</h2><p>Calendario financiero</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver pagos ${icon('arrow')}</button></div>${v318Graph('futureCalendar')}</section>
+   <section data-v105-widget="people" class="ff-personal ff-tile v1240-cal" aria-label="Calendario de vencimientos de los próximos 30 días"><div class="ff-panel-top"><div><h2>Próximos 30 días</h2><p>Calendario financiero</p></div><button class="ff-black-btn" data-act="navigate" data-id="pressure">Ver pagos ${icon('arrow')}</button></div>${v318Graph('futureCalendar')}</section>
    </div>
    <div class="v297-summary-trio" aria-label="Ingresos, egresos y cumplimiento de presupuesto">
      <section data-v105-widget="incomeExpense" class="ff-expense-card ff-tile v298-flow-dual" aria-label="Ingresos y egresos del período">
@@ -3537,7 +3604,7 @@ function overview(){
      </section>
      ${v290BudgetWeb()}
    </div>
-   <section data-v105-widget="payments" class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="payments">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
+   <section data-v105-widget="payments" class="ff-upcoming ff-tile"><div class="ff-panel-top"><div><h2>Próximos pagos</h2><p>Compromisos por atender</p></div><button class="ff-black-btn" data-act="navigate" data-id="pressure">Ver todo ${icon('arrow')}</button></div><div class="ff-payment-list">${obligationsHtml||'<div class="ff-empty-payment"><span>✓</span><strong>Todo al día</strong><small>No tienes obligaciones pendientes registradas.</small></div>'}</div></section>
   </div>
  </div>`;
 }
@@ -3900,7 +3967,7 @@ function v412PremiumWidget(id){
  const title=isCredit?'Utilización por tarjeta':'Compromisos del mes';
  const subtitle=isCredit?'Controla límites, consumos y disponibilidad.':'Programado del mes menos pagos efectivamente registrados.';
  const fields=isCredit?['LÍMITE TOTAL','UTILIZADO','DISPONIBLE']:['PROGRAMADO','PAGADO','PENDIENTE'];
- const route=isCredit?'cards':'payments';
+ const route=isCredit?'cards':'pressure';
  const note=isCredit?'Consolidado en RD$ según la tasa de referencia configurada.':'Conciliación reconstruida según vencimiento, moneda e historial disponible. Los pagos no vinculados o cortes bancarios sin registro oficial pueden requerir revisión.';
  const detail=!isCredit?(()=>{const groups=v560ReconcileCommitments(v99Period(ui.month)).groups;const labels={card:'Tarjetas',loan:'Préstamos',recurring:'Suscripciones',personal:'Entre personas'};
  const rowsHtml=groups.filter(g=>g.scheduled>0||g.paid>0).map(g=>{const pend=Math.max(0,g.scheduled-g.paid),pc=g.scheduled>0?Math.min(100,100*g.paid/g.scheduled):0;return `<div class="v560-cs-row"><b>${labels[g.kind]}</b><span>${money(g.scheduled)}</span><span>${money(g.paid)}</span><span class="${pend>0?'is-pending':''}">${money(pend)}</span><i class="v560-cs-bar" role="img" aria-label="${pc.toFixed(0)}% cubierto"><u style="width:${pc.toFixed(1)}%"></u></i></div>`}).join('');
@@ -4222,6 +4289,16 @@ function v187CompositionChart(items,total,variant){
   return `<button type="button" class="v187-composition-item" data-act="v187WealthDetail" data-id="${sanitize(item.id)}" title="${sanitize(item.label)}: ${money(item.value,'DOP',2)}" aria-label="Ver composición de ${sanitize(item.label)}"><span class="v187-composition-top"><span class="v187-comp-number">0${i+1}</span><span class="v187-comp-label">${sanitize(item.label)}</span><b>${money(item.value)}</b></span><span class="v187-comp-track"><i style="width:${pct.toFixed(3)}%;--comp-color:${item.color}"></i></span><span class="v187-composition-foot"><span>${total>0?share.toFixed(1)+'%':'Sin participación'}</span><span aria-hidden="true">↗</span></span></button>`;
  }).join('')}</div>`;
 }
+function vPatrimonyPositionHero(snapshot,previous,cut){
+ const metrics=[['net','Posición neta',snapshot?.net],['assets','Activos',snapshot?.assets],['liabilities','Pasivos',snapshot?.liabilities]];
+ const value=amount=>snapshot?money(amount,'DOP',2):'—';
+ const change=snapshot&&previous?v134WealthChange(snapshot,previous):'';
+ return `<section class="analytic-hero vPatrimony-vision" aria-label="Posición neta en Patrimonio">
+ <header class="analytic-hero-top"><div><span class="analyst-label">PATRIMONIO</span><h2>Tu posición neta</h2><p>Activos menos obligaciones registradas.</p></div></header>
+ <div class="analytic-hero-strip">${metrics.map(([id,label,amount])=>`<button type="button" class="vPatrimony-position-part" data-act="v187WealthDetail" data-id="${id}" aria-label="Abrir desglose de ${label.toLowerCase()}"><small>${label}</small><strong>${value(amount)}</strong></button>`).join('')}</div>
+ <small class="hero-explainer">${snapshot?'Cifras al '+prettyDate(cut):'Período sin corte confirmado'}${change?' · Frente al mes anterior: '+change:''}${snapshot?.estimatedLoan?' · Préstamo histórico parcialmente estimado':''} · RD$ equivalentes</small>
+ </section>`;
+}
 function v134WealthWorld(){
  const m=v134WealthMonth(ui.month),s=m.snapshot,cut=m.cut,p=m.period;
  const pastEnd=new Date(Number(p.slice(0,4)),Number(p.slice(5,7))-1,0);
@@ -4235,14 +4312,12 @@ function v134WealthWorld(){
  const debts=[{label:'Tarjetas',value:s?.cards||0,id:'cards',color:'#d37b8a'},
   {label:'Préstamos',value:s?.loans||0,id:'loans',color:'#a28adf'},
   {label:'Entre personas',value:s?.payable||0,id:'payable',color:'#e17e8f'}];
- const metric=(id,label,value,sub)=>`<button type="button" class="v187-wealth-part v187-wealth-${id}" data-act="v187WealthDetail" data-id="${id}" aria-label="Abrir desglose de ${label}"><span>${label}</span><strong>${val(value)}</strong><small>${sub}</small></button>`;
+ const elapsed=year===nowYear()?nowMonth():year<nowYear()?12:0;
+ const averageIncome=elapsed?Array.from({length:elapsed},(_,i)=>monthlyTotals(year,i+1).income).reduce((sum,amount)=>sum+amount,0)/elapsed:0;
  return `<div class="v134-patrimony v142-wealth-complete v187-patrimony" id="v134Patrimony">
   <header class="v134-top v187-wealth-top v1133-compact"><div class="v137-wealth-top-tools"><label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></div></header>
-  <section class="v134-hero v187-wealth-hero" aria-label="Balance patrimonial principal">
-   <div class="v187-hero-layout"><button type="button" class="v187-hero-primary" data-act="v187WealthDetail" data-id="net" aria-label="Abrir desglose del patrimonio neto"><span class="v187-hero-eyebrow">PATRIMONIO NETO</span><strong>${val(s?.net)}</strong><span class="v187-hero-explain">Lo que realmente es tuyo, después de tus obligaciones</span><span class="v187-hero-change">${s?'Frente al mes anterior: '+(previous?v134WealthChange(s,previous):'sin comparación registrada'):'Sin historial suficiente para este cierre'}</span></button>
-   <div class="v187-hero-sides">${metric('assets','Activos',s?.assets,'Dinero en cuentas, certificados y por cobrar')}${metric('liabilities','Pasivos',s?.liabilities,'Tarjetas, préstamos y cuentas por pagar')}</div></div>
-   <div class="v187-hero-meta"><span>${s?'Cifras al '+prettyDate(cut):'Período sin corte confirmado'}${s?.estimatedLoan?' · Préstamo histórico parcialmente estimado':''}</span><span>RD$ equivalentes · Pulsa cada cifra para profundizar</span></div>
-  </section>
+  ${vPatrimonyPositionHero(s,previous,cut)}
+  ${vPatrimonyExposure(averageIncome)}
   <section class="v187-charts" aria-label="Tres gráficos del patrimonio">
    <article class="v134-panel v187-chart-card v187-timeline"><header><div><span>01 / EVOLUCIÓN</span><h3>Tu patrimonio en el tiempo</h3><p>${year} frente a ${year-1} · cierres registrados</p></div><button type="button" class="v187-history-launch" data-act="v187History">${icon('chart')} Histórico ${icon('arrow')}</button></header><div class="v187-mini-chart">${v134WealthHistory(p)}</div><p class="v187-graph-foot">Sin valores futuros simulados</p></article>
    <article class="v134-panel v187-chart-card v187-assets"><header><div><span>02 / ACTIVOS</span><h3>De dónde viene</h3><p>Composición al cierre elegido</p></div></header><div class="v187-chart-total">${val(s?.assets)}</div>${v187CompositionChart(assets,s?.assets||0,'assets')}</article>
@@ -6545,7 +6620,7 @@ document.addEventListener('pointerleave',hideChartTip);
 
 document.addEventListener('input',event=>{if(event.target.id!=='visionQuickSearch')return;const value=event.target.value.toLocaleLowerCase('es').trim();document.querySelectorAll('.vision-ledger-row,.vision-cat-item').forEach(el=>{el.hidden=!!value&&!el.textContent.toLocaleLowerCase('es').includes(value)});});
 /* V394 · Pila de navegación de interfaz, sin mutaciones financieras. */
-const V394_TITLES={score:'Score',overview:'Inicio',banks:'Instituciones',accounts:'Cuentas',cards:'Tarjetas',loans:'Préstamos',certificates:'Certificados',register:'Movimientos',income:'Ingresos',expenses:'Egresos',budget:'Presupuestos',categories:'Categorías',payments:'Visión global',recurring:'Suscripciones',personal:'Entre personas',pressure:'Presión financiera',advanced:'Analítica',patrimony:'Patrimonio',settings:'Configuración',mobilehub:'Explorar',mobilesearch:'Buscar',wallet:'Wallet',analytics:'Análisis',vision:'Visión global'};
+const V394_TITLES={score:'Score',overview:'Inicio',banks:'Instituciones',accounts:'Cuentas',cards:'Tarjetas',loans:'Préstamos',certificates:'Certificados',register:'Movimientos',income:'Ingresos',expenses:'Egresos',budget:'Presupuestos',categories:'Categorías',recurring:'Suscripciones',personal:'Entre personas',pressure:'Presión financiera',advanced:'Analítica',patrimony:'Patrimonio',settings:'Configuración',mobilehub:'Explorar',mobilesearch:'Buscar',wallet:'Wallet',analytics:'Análisis',vision:'Visión global'};
 let v394PreviousPage=null;
 let v394Stack=[];
 let v394SkipNext=false;
@@ -6573,6 +6648,7 @@ function v394DecorateNavigation(){
  }
 }
 function render(){
+ if(['vision','payments'].includes(ui.page))ui.page='patrimony';
  v394TrackPage();
  if(ui.page==='kpis')ui.page='overview'; // V357: vista retirada sin borrar los datos del catálogo
  // V238: remember the interactive control before replacing the rendered page.
@@ -6775,12 +6851,12 @@ case 'pendingConfirm':openPendingOperation(id);break;
    ui.vWalletPcOpenedCard=false;
    if(id==='wallet'&&!isMobileViewport()){ui.vWalletPcCard=null;ui.vWalletPcConsumption=null;}
    if(id==='settings' && ui.page!=='settings')v242SettingsPane='home';
-  ui.page=id==='kpis'?'overview':id==='transactions'?'register':id==='projection'?'patrimony':id==='vision'?'payments':id;
+  ui.page=id==='kpis'?'overview':id==='transactions'?'register':['projection','vision','payments'].includes(id)?'patrimony':id;
   if(id==='accounts')ui.accountId=null;if(id==='loans')ui.loanId=null;if(id==='cards'){ui.cardId=null;ui.cardDetailTab='status'} // volver a la lista al entrar desde el menú
   if(ui.page==='register')ui.movementTab='all'; // Movimientos conserva su historial; el botón Registrar abre el asistente.
   if(ui.page==='banks' && window.matchMedia?.('(min-width: 791px)').matches){
-    v225DesktopBankOpened=false;
-    ui.bankId=null;
+    v225DesktopBankOpened=null;
+    ui.bankId=null;ui.vBanksPcCardId=null;ui.vBanksPcBenefits=false;ui.vBanksPcProduct='all';ui.vBanksPcConsumptionOpen=true;
   }
  if(ui.page==='income')ui.innerViews.income='overview';
  if(id==='projection')ui.projectionMenu=false;
@@ -6813,6 +6889,7 @@ case 'bankDetails':{
   if(desktopBank){
     // Un segundo clic sobre la misma institución cierra todo el detalle.
     const alreadyOpen=v225DesktopBankOpened && String(ui.bankId)===String(id);
+    ui.vBanksPcCardId=null;ui.vBanksPcBenefits=false;ui.vBanksPcProduct='all';ui.vBanksPcConsumptionOpen=true;
     v225DesktopBankOpened=!alreadyOpen;
     ui.bankId=alreadyOpen?null:id;
   }else{
@@ -6820,7 +6897,6 @@ case 'bankDetails':{
     ui.bankId=id;
   }
   render();
-  if(desktopBank&&ui.bankId)setTimeout(()=>document.querySelector('.bank-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),60);
   if(!desktopBank && !window.matchMedia?.('(min-width: 791px)').matches){
     setTimeout(()=>document.querySelector('.bank-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),50);
   }
@@ -6828,7 +6904,24 @@ case 'bankDetails':{
 }
 case 'bankHistory':ui.bankHistory=ui.bankHistory===id?null:id;render();break;
 case 'bankHistoryRange':ui.bankHistoryRange=Number(id)||12;render();break;
-case 'closeBank':v225DesktopBankOpened=false;ui.bankId=null;render();break;
+case 'closeBank':v225DesktopBankOpened=false;ui.bankId=null;ui.vBanksPcCardId=null;ui.vBanksPcBenefits=false;render();break;
+case 'banksPcOpenCertificate':
+  ui.v239CertificateId=id;ui.page='certificates';render();window.scrollTo(0,0);break;
+case 'banksPcProducts':
+  ui.vBanksPcProduct=id;render();break;
+case 'banksPcOpenCard':
+  ui.vBanksPcCardId=id;ui.vBanksPcBenefits=false;
+  render();document.querySelector('.vBanksPc-card-detail')?.focus();break;
+case 'banksPcCloseCard':{
+  const cardId=ui.vBanksPcCardId;
+  ui.vBanksPcCardId=null;ui.vBanksPcBenefits=false;
+  render();
+  document.querySelector(`.vBanksPc [data-act="banksPcOpenCard"][data-id="${CSS.escape(cardId)}"]`)?.focus();
+  break;
+}
+case 'banksPcCloseBenefits':
+  ui.vBanksPcBenefits=false;
+  render();document.querySelector('.vBanksPc-benefits-link')?.focus();break;
 case 'goAccount':ui.accountId=id;ui.page='accounts';render();setTimeout(()=>document.querySelector('.panel.section')?.scrollIntoView({behavior:'smooth'}),50);break;
 case 'goCard':ui.vWalletPcOpenedCard=!isMobileViewport()&&ui.page==='wallet';ui.cardId=id;ui.page='cards';render();setTimeout(()=>document.querySelector('.card-detail')?.scrollIntoView({behavior:'smooth'}),50);break;
 case 'goLoan':ui.loanId=id;ui.page='loans';ui.innerViews.loans='overview';loanWorkspace.tab='vision';render();break;
@@ -7361,7 +7454,6 @@ INNER_PAGES.expenses.tabs=INNER_PAGES.expenses.tabs.filter(([view])=>view!=='cat
 for(const pg of ['income','expenses']){INNER_PAGES[pg].tabs=INNER_PAGES[pg].tabs.filter(([view])=>view!=='activity');if(ui.innerViews[pg]==='activity')ui.innerViews[pg]='overview'}
 const v26OldInnerWrap=innerWrap;
 innerWrap=function(page,view){
- if(page==='payments')return view(); // V301: Visión global has no redundant inner navigator
  if(page==='accounts'){ui.innerViews.accounts='overview';return view()}
  if((page==='loans'||page==='certificates')&&!isMobileViewport()){ui.innerViews[page]='overview';return view()} // Web: Préstamos abre en Cartera y Certificados en Posiciones, sin barra interna // Cuentas: sin sub-pestañas (Resumen/Bancarias/Efectivo/Movimientos); siempre el resumen
  if(page==='expenses')return view(); // Egresos ya no tiene sub-pestañas: sin la segunda píldora «Egresos»
@@ -8978,60 +9070,47 @@ const v42OldFiscal=v40FiscalSection;
 v40FiscalSection=function(){const out=v42OldFiscal();const cur=v42TaxRule(today());return out.replace('<div class="v40-note">',v42TaxInfo(cur)+'<div class="v40-note">');};
 const v42OldNonbank=v40NonbankDetail;
 v40NonbankDetail=function(b){let html=v42OldNonbank(b).replace(/INSTITUCIÓN NO BANCARIA/g,'ENTIDAD NO BANCARIA').replace(/Empresa \/ Empleador/g,'Entidad no bancaria');const linked=db.incomeSchedules.filter(x=>x.institutionId===b.id&&x.active!==false);if(linked.length){const cards=`<div class="v42-linked-payroll"><div class="v40-head"><h3>Nóminas e ingresos vinculados</h3><button class="btn sm soft" data-act="navigate" data-id="income">Abrir Ingresos</button></div>${linked.map(x=>v42PayrollCard(x)).join('')}</div>`;html=html.replace('</section>',cards+'</section>');}return html;};
-// V225 · Instituciones web: no abrir detalles hasta la seleccion explícita.
-let v225DesktopBankOpened=false;
+let v225DesktopBankOpened=null;
 // The institution page is still the existing Banks module, with all original product destinations.
 banks=function(){
  v40Ensure();
- const all=db.banks.filter(b=>ui.showHidden||!b.archived),financial=all.filter(v40IsFinancial),nonbank=all.filter(b=>!v40IsFinancial(b));
- const selected=bank(ui.bankId);
+ const all=db.banks.filter(b=>ui.showHidden||!b.archived);
  const scoped=all.filter(v61InstitutionMatches);
  const shown=scoped.filter(b=>v42InstitutionFilter==='all'||(v42InstitutionFilter==='financial'?v40IsFinancial(b):v42InstitutionFilter==='nonbank'?!v40IsFinancial(b):true));
+ if(v225DesktopBankOpened===null&&shown.length){
+  ui.bankId=(shown.find(v40IsFinancial)||shown[0]).id;
+  v225DesktopBankOpened=true;
+ }
+ const selected=bank(ui.bankId);
  const filters=[['all',`Todas (${scoped.length})`],['financial',`Bancos (${scoped.filter(v40IsFinancial).length})`],['nonbank',`No bancarias (${scoped.filter(b=>!v40IsFinancial(b)).length})`]];
  const profile=v61ProfileSummary(scoped),liq=v61InstitutionProfile==='all'?totalLiquid():profile.liquid,cardDebt=v61InstitutionProfile==='all'?totalCardDebt():profile.credit,loanDebt=v61InstitutionProfile==='all'?totalLoanDebt():profile.loanDebt,invested=v61InstitutionProfile==='all'?totalCertificates():profile.invested,debt=cardDebt+loanDebt;
  const selectedVisible=selected&&shown.some(b=>b.id===selected.id);
   const activeBank=(v225DesktopBankOpened && selectedVisible)?selected:null;
- const scopeTitle=v61InstitutionProfile==='negocio'?'PATRIMONIO / NEGOCIO':v61InstitutionProfile==='personal'?'PATRIMONIO / PERSONAL':'PATRIMONIO / INSTITUCIONES';
- const scopeHeadline=v61InstitutionProfile==='negocio'?'Tus instituciones de negocio,':v61InstitutionProfile==='personal'?'Tus instituciones personales,':'Todo tu ecosistema bancario,';
- const scopeDescription=v61InstitutionProfile==='all'?'La foto completa de tus fondos y obligaciones, con el detalle de cada banco y entidad vinculada.':'La información de las instituciones asignadas a este perfil, con sus productos vinculados y sin mezclar los otros perfiles.';
- const scopeAcctCount=v61InstitutionProfile==='all'?db.accounts.filter(a=>!a.archived&&a.kind!=='cash').length:profile.accounts.length;
- const scopeCardCount=v61InstitutionProfile==='all'?db.cards.filter(x=>!x.archived).length:profile.cards.length;
- return `<div class="v42-institutions v46-institutions v61-institutions v236-institution-view" data-profile="${v61InstitutionProfile}">
- <div class="bank-hero v46-bank-hero">
-   <div class="v46-bank-intro">
-    <div class="hero-eyebrow">BANCOS Y PRODUCTOS</div>
-    ${v61ProfileSwitch(all)}
-    <h2>Bancos y productos</h2>
-    <p>Todo lo que tienes y debes, organizado por institución.</p>
-    <div class="hero-actions"><button class="btn light" data-act="addBank">${icon('plus')} Agregar institución</button></div>
-    <div class="v46-hero-foot"><span>${scoped.length} instituciones</span><span>${scopeAcctCount} cuentas</span><span>${scopeCardCount} tarjetas</span></div>
-   </div>
-   <div class="v46-global-financials">
-    <div class="v46-global-main"><span>NETO</span><strong>${money(liq+invested-debt)}</strong></div>
-    <div class="v46-global-secondary"><div><span>FONDOS DISPONIBLES</span><strong>${money(liq)}</strong></div><div><span>DEUDA TOTAL</span><strong>${money(debt)}</strong></div><div><span>DEUDA EN TARJETAS</span><strong>${money(cardDebt)}</strong></div><div><span>PRÉSTAMOS</span><strong>${money(loanDebt)}</strong></div></div>
-    <div class="v46-global-note">*Fondos + certificados − deuda registrada. Excluye otros activos sin valorar. ${v61InstitutionProfile==='all'?'Vista global.':'Solo instituciones del perfil seleccionado; el efectivo sin institución queda fuera.'}</div>
-   </div>
+ const scopedCards=v68WalletCards().filter(c=>v61InstitutionProfile==='all'||scoped.some(b=>linkedBank(c,b.id)));
+ const limits=scopedCards.reduce((sum,c)=>[sum[0]+num(c.limitDOP),sum[1]+num(c.limitUSD)],[0,0]);
+ const metrics=[['Patrimonio neto',liq+invested-debt,'wallet'],['Fondos',liq,'coins2'],['Deudas totales',debt,'card'],['Límite total',vWalletPcEquivalent(...limits),'landmark']];
+ const activeCards=activeBank?bankFigures(activeBank).cc:scopedCards;
+ const activeCard=activeCards.find(c=>c.id===ui.vBanksPcCardId);
+ return `<div class="vBanksPc">
+ <div class="vBanksPc-metrics" aria-label="Situación global">
+  ${metrics.map(([name,value,symbol],i)=>`<div class="vBanksPc-metric"><span class="vBanksPc-stat-icon">${icon(symbol)}</span><div><span>${name}</span><strong>${money(value,'DOP',0)}</strong>${i===3?`<small>${vWalletPcSplit(...limits,0)}</small>`:''}</div></div>`).join('')}
  </div>
- <div class="v204-desktop-layout" aria-label="Instituciones y sus productos">
-  <aside role="region" class="v204-bank-sidebar" aria-label="Seleccionar institución">
-  <section class="v42-bank-section v46-bank-list">
-  <div class="v42-bank-top v236-institution-heading"><div><h3>Tus instituciones</h3><p>Fondos y deudas individuales, sin perder el panorama global.</p></div><div class="v42-filters v46-bank-filters">${filters.map(([key,label])=>`<button type="button" data-v42-filter="${key}" class="${v42InstitutionFilter===key?'active':''}" aria-pressed="${v42InstitutionFilter===key}">${label}</button>`).join('')}</div></div>
-  <div class="v42-entities v46-bank-cards v225-institution-cards v236-institution-cards">${shown.length?shown.map(b=>{const f=bankFigures(b),products=f.aa.length+f.cc.length+f.ll.length+f.certs.length,nonBank=!v40IsFinancial(b),benefits=(db.institutionBenefits||[]).filter(x=>x.institutionId===b.id&&x.active!==false).length,incomes=(db.incomeSchedules||[]).filter(x=>x.institutionId===b.id&&x.active!==false).length,scope=v42ScopeLabel(b);return `<button type="button" class="v46-bank-card v225-institution-card v236-institution-card ${activeBank?.id===b.id?'selected':''}" data-act="bankDetails" data-id="${b.id}" aria-pressed="${activeBank?.id===b.id}" aria-expanded="${activeBank?.id===b.id}" aria-controls="v226-bank-expanded" aria-label="${activeBank?.id===b.id?'Ocultar información de':'Ver información de'} ${sanitize(b.name)}">
-      <span class="v236-card-top">
-        <span class="v236-bank-logo">${bankLogoMark(b,'institution-logo')}</span>
-        <span class="v236-card-identity"><strong class="v46-bank-card-name">${sanitize(b.name)}</strong><span class="v236-kind">${sanitize(v42KindLabel(b))} <span aria-hidden="true">·</span> <span class="v236-scope ${scope==='Negocio'?'is-business':'is-personal'}">${scope}</span></span><span class="v236-products">${products} producto${products===1?'':'s'}${nonBank?` · ${benefits} beneficio${benefits===1?'':'s'} · ${incomes} ingreso${incomes===1?'':'s'}`:''}${b.archived?' · ARCHIVADA':''}</span></span>
-        <span class="v225-institution-chevron" aria-hidden="true">${icon('arrow')}</span>
-      </span>
-      <span class="v236-card-metrics"><span><small>Fondos</small><strong>${money(f.liquidity)}</strong></span><span><small>Deudas</small><strong>${money(f.credit+f.loansDue)}</strong></span></span>
-    </button>`}).join(''):`<div class="v42-empty">No hay instituciones para este filtro. Puedes cambiarlo o añadir una institución.</div>`}</div>
-  <p class="v236-institution-note">Los beneficios no monetarios no aumentan los fondos bancarios y los movimientos anteriores conservan sus importes.</p>
- </section>
+ <div class="vBanksPc-grid" aria-label="Instituciones y sus productos">
+  <aside class="vBanksPc-bank-list" aria-label="Seleccionar institución">
+   <header><h2>Mis bancos <small>(${shown.length})</small></h2><button type="button" class="btn ghost sm" data-act="addBank" aria-label="Agregar institución">${icon('plus')}</button></header>
+   <div class="vBanksPc-bank-options">
+    ${shown.map(b=>{const f=bankFigures(b),count=f.aa.length+f.cc.length+f.ll.length+f.certs.length;return `<button type="button" class="vBanksPc-bank${activeBank?.id===b.id?' is-selected':''}" data-act="bankDetails" data-id="${sanitize(b.id)}" aria-pressed="${activeBank?.id===b.id}">${bankLogoMark(b,'institution-logo')}<span><strong>${sanitize(b.name)}</strong><small>${count} ${count===1?'producto':'productos'}${b.archived?' · Archivada':''}</small></span><b class="${f.net>0?'positive':''}">${f.net>0?'+':''}${money(f.net,'DOP',0)}</b>${icon('arrow')}</button>`;}).join('')||'<p class="vBanksPc-empty">Sin instituciones para este filtro.</p>'}
+   </div>
+   <details class="vBanksPc-filters"${v42InstitutionFilter!=='all'||v61InstitutionProfile!=='all'?' open':''}><summary>Filtrar instituciones</summary>${v61ProfileSwitch(all)}<div class="v42-filters">${filters.map(([key,label])=>`<button type="button" data-v42-filter="${key}" class="${v42InstitutionFilter===key?'active':''}" aria-pressed="${v42InstitutionFilter===key}">${label}</button>`).join('')}</div></details>
   </aside>
-  ${activeBank?`<div class="v204-bank-detail" id="v226-bank-expanded" aria-label="Productos de la institución seleccionada">
-    ${bankDetail(activeBank)}
-  </div>`:''}
-  </div>
-  </div>`;
+  <div class="vBanksPc-center">${activeBank?bankDetail(activeBank,true):'<section class="vBanksPc-consolidated"><h2>Vista consolidada</h2><p>Selecciona una institución para consultar sus productos.</p></section>'}</div>
+  <aside class="vBanksPc-insights" aria-label="Detalle financiero">
+   ${activeCards.length?v371CardReturnWidget(activeCard||activeBank||{name:'Créditos generales'},activeCard?null:activeCards,true):''}
+   ${activeBank&&activeCards.length?vBanksPcCardConsumption(activeCard?[activeCard]:activeCards):''}
+  </aside>
+  ${ui.vBanksPcBenefits&&activeCards.length?vBanksPcBenefits(activeCards):''}
+ </div>
+ </div>`;
 };
 pages.banks=banks;
 /* V202 · Bancos móvil: interfaz nativa, una tarea por pantalla.
@@ -9240,8 +9319,8 @@ modal(id?'Editar institución':'Añadir institución',`<div class="v42-form-kick
 const f=document.getElementById('bankForm');f.dataset.id=id||'';f.dataset.logo=logo;};
 document.addEventListener('click',e=>{const target=e.target.closest?.('[data-v42-filter], [data-v42-color]');if(!target)return;if(target.dataset.v42Filter){e.preventDefault();e.stopImmediatePropagation();v42InstitutionFilter=target.dataset.v42Filter;
     if(window.matchMedia?.('(min-width: 791px)').matches){
-      v225DesktopBankOpened=false;
-      ui.bankId=null;
+      v225DesktopBankOpened=null;
+      ui.bankId=null;ui.vBanksPcCardId=null;ui.vBanksPcBenefits=false;ui.vBanksPcProduct='all';
     }
     render();return;}if(target.dataset.v42Color){e.preventDefault();e.stopImmediatePropagation();const form=target.closest('form');if(!form)return;const i=form.querySelector('#v42ColorInput');if(i){i.value=target.dataset.v42Color;form.querySelectorAll('[data-v42-color]').forEach(b=>b.setAttribute('aria-pressed',String(b===target)));const preview=form.querySelector('.bank-photo-mark');if(preview)preview.style.setProperty('--bank-color',i.value);}}},true);
 document.addEventListener('input',e=>{if(e.target.id==='v42ColorInput'){const form=e.target.closest('form'),mark=form?.querySelector('.bank-photo-mark');if(mark)mark.style.setProperty('--bank-color',e.target.value);}},true);
@@ -9251,8 +9330,8 @@ document.addEventListener('click',event=>{
  const next=option.dataset.v61Profile;if(!['all','personal','negocio'].includes(next))return;
  v61InstitutionProfile=next;v42InstitutionFilter='all';
   if(window.matchMedia?.('(min-width: 791px)').matches){
-    v225DesktopBankOpened=false;
-    ui.bankId=null;
+    v225DesktopBankOpened=null;
+    ui.bankId=null;ui.vBanksPcCardId=null;ui.vBanksPcBenefits=false;ui.vBanksPcProduct='all';
   }
   if(ui.bankId&&!db.banks.some(b=>b.id===ui.bankId&&v61InstitutionMatches(b)))ui.bankId='';
  render();
@@ -12714,9 +12793,9 @@ function v144CardExecutive(c,opts={}){
 
 
 function v144BenefitOptionsCards(){return [['all','Todas mis tarjetas'],...db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>[c.id,c.name])];}
-function v144CardFilterUI(){const year=String(ui.v144BenefitYear||nowYear()),month=ui.v144BenefitMonth||'all',selected=ui.v144BenefitsCard||'all';
+function v144CardFilterUI(options=v144BenefitOptionsCards()){const year=String(ui.v144BenefitYear||nowYear()),month=ui.v144BenefitMonth||'all',selected=ui.v144BenefitsCard||'all';
  const months=[['all','Año completo'],...['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((x,i)=>[String(i+1).padStart(2,'0'),x])];
- return `<div class="v144-filter-row"><label>Tarjeta<select data-v144-filter="card">${v144BenefitOptionsCards().map(([v,t])=>`<option value="${sanitize(v)}" ${selected===v?'selected':''}>${sanitize(t)}</option>`).join('')}</select></label><label>Año<select data-v144-filter="year">${Array.from({length:6},(_,i)=>nowYear()+1-i).map(y=>`<option value="${y}" ${year===String(y)?'selected':''}>${y}</option>`).join('')}</select></label><label>Período<select data-v144-filter="month">${months.map(([v,t])=>`<option value="${v}" ${month===v?'selected':''}>${t}</option>`).join('')}</select></label></div>`;
+ return `<div class="v144-filter-row"><label>Tarjeta<select data-v144-filter="card">${options.map(([v,t])=>`<option value="${sanitize(v)}" ${selected===v?'selected':''}>${sanitize(t)}</option>`).join('')}</select></label><label>Año<select data-v144-filter="year">${Array.from({length:6},(_,i)=>nowYear()+1-i).map(y=>`<option value="${y}" ${year===String(y)?'selected':''}>${y}</option>`).join('')}</select></label><label>Período<select data-v144-filter="month">${months.map(([v,t])=>`<option value="${v}" ${month===v?'selected':''}>${t}</option>`).join('')}</select></label></div>`;
 }
 /* V183 · Consistencia anual: solo beneficios confirmados y costos pagados.
    La anualidad configurada es informativa; no se mezcla con pagos reales. */
@@ -12792,14 +12871,14 @@ function v389BenefitsKPIsUnused(cards){
    <div><small>RETORNO %</small><strong class="${net>=0?'positive':'negative'}">${fmtRatio}</strong></div>
  </section><p class="v389-benefit-definition">${year} · Retorno = beneficios monetarios recibidos − anualidades pagadas. Porcentaje = retorno ÷ anualidades pagadas. Si no hay anualidades pagadas, el porcentaje no aplica. No incluye beneficios pendientes ni puntos.</p>`;
 }
-function v144BenefitsPage(){
- v144Ready();const cards=db.cards.filter(c=>ui.showHidden||!isHidden(c));
+function v144BenefitsPage(scope=null){
+ v144Ready();const cards=(scope||db.cards).filter(c=>ui.showHidden||!isHidden(c));
  const selected=ui.v144BenefitsCard||'all',shown=cards.filter(c=>selected==='all'||c.id===selected);
- if(cards.length&&!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage()}
+ if(cards.length&&!shown.length){ui.v144BenefitsCard='all';return v144BenefitsPage(scope)}
  const hero=typeof window.v180BenefitsHero==='function'?window.v180BenefitsHero():'';
  return `<div class="v144-benefit-world v180-benefits-clean v187-benefits-only" id="v144Benefits">${hero}${v389BenefitsKPIs(shown)}
  <section class="v187-benefits-ledger" aria-label="Tabla de beneficios por tarjeta"><div class="v187-benefits-ledger-head"><div><span>RESULTADO POR TARJETA</span><h3>Beneficios y costos</h3><p>Solo beneficio acreditado y costo efectivamente pagado forman el resultado neto.</p></div>${cards.length?`<button type="button" class="v187-benefits-add" data-v144-action="new-cashback" data-id="${sanitize(shown[0]?.id||cards[0].id)}">${icon('plus')} Registrar beneficio</button>`:''}</div>
- ${cards.length?`${v144CardFilterUI()}${v144BenefitsTable(shown)}`:'<div class="v187-benefits-empty">No tienes tarjetas registradas. <button type="button" data-act="addCard">Añadir tarjeta</button></div>'}
+ ${cards.length?`${scope?v144CardFilterUI([['all','Tarjetas de esta selección'],...cards.map(c=>[c.id,c.name])]):v144CardFilterUI()}${v144BenefitsTable(shown)}`:'<div class="v187-benefits-empty">No tienes tarjetas registradas. <button type="button" data-act="addCard">Añadir tarjeta</button></div>'}
  </section></div>`;
 }
 function v144FormCategories(){return ['Supermercado','Combustible','Restaurantes','Compras','Promociones','Servicios','Otros'];}
@@ -12909,7 +12988,14 @@ function v144DeleteReward(c,ref,source){v144Ready();let records=source==='pendin
  persist();render();toast('Registro eliminado.');}
 function v144RunAction(act,el){v144Ready();const id=el.dataset.id,ref=el.dataset.ref,source=el.dataset.source;
  if(act==='select-card'){ui.v144CardSelected=id;const target=el.closest('.v144-card-center');if(target){target.querySelectorAll('.v144-card-face').forEach(x=>{const selected=x.dataset.id===id;x.classList.toggle('selected',selected);x.setAttribute('aria-pressed',String(selected))});const panel=target.querySelector('.v144-center-detail');if(panel){panel.innerHTML=v144CardExecutive(card(id));panel.classList.remove('v144-panel-enter');void panel.offsetWidth;panel.classList.add('v144-panel-enter');panel.dataset.v144CardDetail=id;}el.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest',inline:'center'});}return;}
- if(act==='open-benefits'){ui.v144BenefitsCard=id||'all';ui.v230BenefitComparison=true;ui.page='cards';render();window.scrollTo({top:0,behavior:'instant'});return;}
+ if(act==='open-benefits'){
+  ui.v144BenefitsCard=id||'all';
+  if(el.closest('.vBanksPc')){
+   if(!ui.vBanksPcBenefits){ui.v144BenefitYear=nowYear();ui.v144BenefitMonth='all';}
+   ui.vBanksPcBenefits=true;render();document.querySelector('.vBanksPc-benefits')?.focus();return;
+  }
+  ui.v230BenefitComparison=true;ui.page='cards';render();window.scrollTo({top:0,behavior:'instant'});return;
+ }
  if(act==='new-cashback')return v144CashbackForm(id);
  if(act==='edit-cashback')return v144CashbackForm(id,ref,source);
  if(act==='delete-cashback')return v144DeleteReward(card(id),ref,source);
@@ -13053,7 +13139,7 @@ function v149CardLifecycle(c){
 }
 /* Spotlight — real local data, ranked and grouped. No network calls, no demo results. */
 const V149_NAV=[
- ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['payments','Visión global','Vencimientos y obligaciones','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['settings','Ajustes','Configuración y privacidad','settings']
+ ['overview','Resumen','Posición financiera y compromisos','home'],['wallet','Wallet','Tarjetas visuales','card'],['banks','Instituciones','Bancos y entidades','building'],['accounts','Cuentas y efectivo','Balances por moneda','wallet'],['cards','Tarjetas','Crédito, cortes y beneficios','card'],['loans','Préstamos bancarios','Créditos y amortización','receipt'],['certificates','Certificados','Capital y vencimientos','building'],['income','Ingresos','Ingresos formales e informales','up'],['expenses','Egresos','Gastos y categorías','down'],['register','Movimientos','Libro de operaciones','cycle'],['pressure','Presión financiera','Vencimientos y obligaciones','calendar'],['recurring','Suscripciones y servicios','Gestión de pagos recurrentes','calendar'],['personal','Entre personas','Préstamos por cobrar y por pagar','wallet'],['budget','Presupuestos','Control y evolución','chart'],['advanced','Analítica avanzada','Análisis y comparaciones','analytics'],['patrimony','Patrimonio','Activos y pasivos','wallet'],['categories','Categorías','Ingresos y egresos','chart'],['settings','Ajustes','Configuración y privacidad','settings']
 ];
 const V149_SEARCH_LABELS={section:'Navegación',bank:'Instituciones',account:'Cuentas',card:'Tarjetas',loan:'Préstamos',certificate:'Certificados',recurring:'Suscripciones y servicios',transaction:'Movimientos',contact:'Entre personas',budget:'Presupuestos',incomeSchedule:'Ingresos recurrentes',benefit:'Beneficios',statement:'Estados históricos',category:'Categorías'};
 function v71SearchEntries(){
@@ -13286,7 +13372,7 @@ document.addEventListener('click',function(e){const q=e.target.closest('[data-v2
 const V154_MOBILE_CATEGORIES=[
  {id:'dinero',title:'Mi dinero',sub:'Bancos y cuentas',ico:'money',tone:'ocean',pages:['banks','accounts','certificates']},
  {id:'tarjetas',title:'Tarjetas',sub:'Crédito y beneficios',ico:'card',tone:'violet',pages:['cards','benefits']},
- {id:'pagos',title:'Pagos',sub:'Cuotas y vencimientos',ico:'calendar',tone:'coral',pages:['payments','loans','personal']},
+ {id:'pagos',title:'Pagos',sub:'Cuotas y vencimientos',ico:'calendar',tone:'coral',pages:['pressure','loans','personal']},
  {id:'servicios',title:'Servicios',sub:'Suscripciones',ico:'cycle',tone:'amber',pages:['recurring']},
  {id:'movimientos',title:'Movimientos',sub:'Ingresos y egresos',ico:'chart',tone:'teal',pages:['register','income','expenses','categories']},
  {id:'analitica',title:'Analítica',sub:'Indicadores y evolución',ico:'analytics',tone:'blue',pages:['advanced','patrimony','budget','analytics']}
@@ -15625,53 +15711,8 @@ document.addEventListener('click',event=>{const ctl=event.target.closest?.('[dat
 const v318LegacyExtraCharts=v309ExtraCharts;
 v309ExtraCharts=function(){return v318LegacyExtraCharts()+v318MobileCharts()};
 
-/* V312: una única Visión global; compatibilidad para enlaces antiguos.
-   No contiene una segunda pantalla ni altera los datos financieros. */
-pages.vision=()=>pages.payments();
-
-/* V295 · Visión global ocupa la entrada principal de Compromisos.
- * Centro de pagos permanece DEBAJO, dentro de la misma vista.
- * Se reutilizan analytics() y payments() sin cambiar sus cálculos.
- * Suscripciones (recurring) y Entre personas (personal) siguen intactos.
- */
-function v295GlobalVisionAndPayments(){
-  // Reusar Analítica; el antiguo Centro de pagos fue eliminado. Sus accesos
-  // a pagos llevan ahora al calendario real de Presión financiera.
-  const globalContents=analytics().replace(
-    /data-act="navigate" data-id="payments"/g,
-    'data-act="navigate" data-id="payments"'
-  );
-  return `<div class="v295-global-payments">
-    <section class="v295-global-overview" aria-label="Visión global de tus finanzas">
-      <div class="v295-global-top">
-        <div><span class="v295-eye">vive el hoy · PANORAMA FINANCIERO</span>
-        <h2>Visión global</h2>
-        <p>Tus indicadores y análisis, en un solo lugar.</p></div>
-
-      </div>
-      ${globalContents}
-    </section>
-    <!-- V347: Centro de pagos duplicado retirado de Visión global; suscripciones y movimientos permanecen en sus módulos. -->
-  </div>`;
-}
-/* V297: El Centro de pagos WEB reutiliza los componentes existentes.
-   No renombra el route móvil Vision ni altera sus datos; las otras dos
-   secciones se navegan con NAV_SECTIONS.payments y sus páginas originales. */
-function v297DesktopPaymentCenter(){
- // V306: escritorio reutiliza el mismo panel analítico que la referencia móvil.
- // Se elimina el acordeón de pagos responsable de los SVG gigantes.
- // No se modifican cálculos, datos, ni los formularios de pago de otros módulos.
- const globalContents=analytics();
- return `<div class="v306-global-desktop" aria-label="Visión global web">
-   <div class="v306-global-content">${globalContents}</div>
- </div>`;
-}
-pages.payments=function(){
- // Visión global del iPhone conserva íntegra la estructura V295.
- return isMobileViewport()?v295GlobalVisionAndPayments():v297DesktopPaymentCenter();
-};
-/* V942: retirado el listener de una sección que dejó de existir; los accesos
-   conservan data-act='navigate' y usan la ruta de Presión financiera. */
+// Legacy links resolve to Patrimonio on desktop and mobile.
+pages.vision=pages.payments=()=>pages.patrimony();
 
 /* V302 | Mobile Subscriptions, reference-grounded. Existing financial
    functions and all editing/payment/history routes are deliberately reused. */
@@ -15801,7 +15842,7 @@ document.addEventListener('click',function(e){
  const link=e.target.closest?.('.v243-explore [data-act="navigate"][data-id],.v410-explore.v431-explore [data-act="navigate"][data-id]');
  if(link){
   const route=link.dataset.id;
-  v243ExploreDestination=({'projection':'patrimony','transactions':'register','vision':'payments'}[route]||route);
+  v243ExploreDestination=({'projection':'patrimony','transactions':'register','vision':'patrimony','payments':'patrimony'}[route]||route);
   v243ExploreScrollY=window.scrollY;
   v8SearchDestination=null;
   return;
@@ -16857,8 +16898,7 @@ const quickOriginChoiceKey=(id,currency)=>id+':'+currency;
        ['personal','Entre personas','Cobros y pagos','users','violet',personalLabel]
       ]},
       {tag:'TU VISIÓN',heading:'Planifica y mantén el control integral',desc:'Una mirada completa de tus finanzas, compromisos y próximos pasos.',items:[
-       ['payments','Visión global','Estrategia','eye','blue','',true],
-       ['projection','Planificación','Escenarios','analytics','violet',''],
+       ['patrimony','Patrimonio','Posición neta, crédito y compromisos','wallet','blue','',true],
        ['score','Score','Crédito','analytics','blue',(()=>{const v=window.ViveScoreHost?.badge?.();return Number.isFinite(v)?v+' / 1,000':'Ver mi score'})()]
       ]}
     ];
@@ -19286,14 +19326,15 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   const id=esc(c.id);
   return `<details class="v1190-more"><summary>Administrar esta tarjeta</summary><div class="v1190-body v1190-admin"><button type="button" data-act="editCard" data-id="${id}">Editar tarjeta</button><button type="button" data-act="manualBenefit" data-id="${id}">Registrar beneficio</button><button type="button" data-act="annualFee" data-id="${id}">Registrar anualidad y seguros</button><button type="button" data-act="productArchive" data-kind="card" data-id="${id}" class="danger">Cancelar tarjeta</button></div></details>`;
  }
- function detalle(c){
+ function detalle(c,bankView=false){
   const tier=CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
-  return `<div class="v1190 v1190-card"><button type="button" class="v1190-back" data-act="closeCardDetails">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>${(isMobileViewport()||ui.vWalletPcOpenedCard)?'Volver a Wallet':'Tarjetas'}</span></button>
+  return `<div class="v1190 v1190-card"><button type="button" class="v1190-back" data-act="${bankView?'banksPcCloseCard':'closeCardDetails'}">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>${bankView?'Volver a '+esc(bankOf(c)):(isMobileViewport()||ui.vWalletPcOpenedCard)?'Volver a Wallet':'Tarjetas'}</span></button>
    <section class="v1190-hero"><div><span class="v1190-kick">${esc(bankOf(c))}</span><h2>${esc(c.name)}</h2><p>${esc(tier)} · •••• ${esc(c.last4||'—')}</p></div><div class="v1290-actions"><button type="button" class="v1190-primary" data-act="payCard" data-id="${esc(c.id)}">${G('<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 11h18"/>')}<span>Registrar pago</span></button><button type="button" class="v1290-secondary" data-act="annualFee" data-id="${esc(c.id)}">Anualidad y seguros</button></div></section>
    <div class="v1190-grid">${bloque(c,'DOP')}${bloque(c,'USD')}</div>
    ${v1290AnnualLedger(c)}
-   ${beneficios(c)}${cierres(c)}${admin(c)}</div>`;
+   ${bankView?'':beneficios(c)}${cierres(c)}${admin(c)}</div>`;
  }
+  vBanksPcCardCycle=detalle;
  const prev=pages.cards;
  pages.cards=function(...a){const c=ui.cardId?card(ui.cardId):null;return c&&!(isMobileViewport()&&ui.v230BenefitComparison)?detalle(c):prev.apply(this,a)};
 })();
@@ -19516,7 +19557,7 @@ window.viveIdleTest=(sec=30)=>new Promise(res=>{let busy=0,n=0;const ob='Perform
  window.addEventListener('scroll',()=>{if(tick)return;tick=true;requestAnimationFrame(()=>{tick=false;const y=window.scrollY||0,d=y-last;if(Math.abs(d)<8)return;set(d>0&&y>120);last=y})},{passive:true});
  document.addEventListener('touchstart',()=>{if(hid)setTimeout(()=>set(false),600)},{passive:true})}
 /* V1279 · UX: título de pestaña por pantalla, inicio de pantalla al cambiar de vista, avisos accesibles y salto al contenido. */
-{const NAMES={overview:'Resumen',advanced:'Analítica avanzada',patrimony:'Patrimonio',recurring:'Suscripciones',personal:'Entre personas',banks:'Instituciones',accounts:'Cuentas',cards:'Tarjetas',loans:'Préstamos',certificates:'Certificados',register:'Movimientos',income:'Ingresos',expenses:'Egresos',budget:'Presupuestos',categories:'Categorías',payments:'Visión global',wallet:'Wallet',score:'Score',settings:'Configuración',mobilehub:'Explorar',mobilesearch:'Buscar'};
+{const NAMES={overview:'Resumen',advanced:'Analítica avanzada',patrimony:'Patrimonio',recurring:'Suscripciones',personal:'Entre personas',banks:'Instituciones',accounts:'Cuentas',cards:'Tarjetas',loans:'Préstamos',certificates:'Certificados',register:'Movimientos',income:'Ingresos',expenses:'Egresos',budget:'Presupuestos',categories:'Categorías',wallet:'Wallet',score:'Score',settings:'Configuración',mobilehub:'Explorar',mobilesearch:'Buscar'};
  let lastPage=null;const _r=render;
  render=function(){const prev=lastPage,cur=ui.page;const out=_r.apply(this,arguments);try{if(cur!==lastPage){lastPage=cur;document.title=(NAMES[cur]?NAMES[cur]+' · ':'')+'vive el hoy';if(prev!==null&&!document.querySelector('#modal-root .modal'))window.scrollTo({top:0,behavior:'auto'})}}catch(_){}return out};
  const tr=document.getElementById('toast-root');if(tr){tr.setAttribute('role','status');tr.setAttribute('aria-live','polite')}

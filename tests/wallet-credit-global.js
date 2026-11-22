@@ -11,6 +11,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
  const browser=await engine.launch({headless:true,...(process.env.WALLET_EXECUTABLE?{executablePath:process.env.WALLET_EXECUTABLE}:{})});
  try{
   await require('./wallet-desktop')(browser);
+  if(engine===chromium)await require('./bancos-patrimonio')(browser);
   for(const theme of ['light','black']){
    process.env.TOUCH='1';process.env.THEME=theme;process.env.PALHEX='#087b72';
    const {ctx,p}=await open(browser,390,844);
