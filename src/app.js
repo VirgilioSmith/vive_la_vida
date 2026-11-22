@@ -1349,6 +1349,7 @@ function v68Wallet(){
  // La tarjeta virtual no forma parte de db.cards ni de ningún selector de operaciones.
  const global=ui.v68WalletId===V68_GLOBAL_ID;
  const active=global?{id:V68_GLOBAL_ID,name:'Crédito Global',limitDOP:rnd(cards.reduce((s,c)=>s+num(c.limitDOP),0)),limitUSD:rnd(cards.reduce((s,c)=>s+num(c.limitUSD),0))}:cards.find(c=>c.id===ui.v68WalletId)||cards[0];
+ ui.v68WalletId=active.id;
  const globalStatus=ccy=>{const sum=cards.reduce((s,c)=>{const st=cardStatus(c,ccy);return {debt:s.debt+num(st.debt),available:s.available+num(st.available)}},{debt:0,available:0});return {debt:rnd(sum.debt),available:rnd(sum.available)}};
  const dop=global?globalStatus('DOP'):cardStatus(active,'DOP'),usd=global?globalStatus('USD'):cardStatus(active,'USD');
  const debt=dop.debt+fx(usd.debt,'USD');
@@ -6440,6 +6441,8 @@ function v139WalletChooseCard(id){
  const card=[...rail.querySelectorAll('.v68-wallet-face[data-id]')].find(x=>x.dataset.id===id);
  const reduced=!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
  if(wallet && !reduced)wallet.classList.add('v139-wallet-switch');
+ // La Wallet compacta tiene un único controlador de carrusel (V158).
+ if(wallet?.classList.contains('v266-wallet'))return;
  // El render recrea el carrusel: recupera primero su posición anterior.
  rail.scrollLeft=previousX;
  // V268: en la Wallet compacta alinear el carrusel antes de disparar eventos
@@ -13209,16 +13212,16 @@ document.addEventListener('focusout',e=>{
    status.setAttribute('role','status');status.setAttribute('aria-live','polite');
    rail.insertAdjacentElement('afterend',status);
   }
-  let frame=0,prevId=ui.v68WalletId;
+  let frame=0,settleTimer=0,prevId=ui.v68WalletId,aligning=true;
   function update(){
-   if(!rail.isConnected)return;
+   if(!rail.isConnected||aligning)return;
    const face=nearestCard(rail);
    if(!face)return;
    setVisualCard(rail,face);
    const id=face.dataset.id;
    if(prevId!==id){prevId=id;syncDetails(rail,id)}
   }
-  const schedule=()=>{if(frame||!rail.isConnected)return;frame=requestAnimationFrame(()=>{frame=0;update()})};
+  const schedule=()=>{if(aligning||!rail.isConnected)return;clearTimeout(settleTimer);settleTimer=setTimeout(()=>{if(!frame)frame=requestAnimationFrame(()=>{frame=0;update()})},120)};
   rail.addEventListener('scroll',schedule,{passive:true});
   rail.addEventListener('scrollend',schedule,{passive:true});
   // The browser may not dispatch scrollend; the regular scroll path is sufficient.
@@ -13228,7 +13231,12 @@ document.addEventListener('focusout',e=>{
    status.textContent=initial.getAttribute('aria-label')||'Tarjeta seleccionada';
    // Al anteponer Crédito Global, centrar la selección real antes del primer scroll.
    const r=rail.getBoundingClientRect(),c=initial.getBoundingClientRect();
+   const snap=rail.style.getPropertyValue('scroll-snap-type'),priority=rail.style.getPropertyPriority('scroll-snap-type');
+   rail.style.setProperty('scroll-snap-type','none','important');
    rail.scrollLeft=Math.max(0,Math.min(rail.scrollWidth-rail.clientWidth,rail.scrollLeft+c.left-r.left+(c.width-r.width)/2));
+   requestAnimationFrame(()=>{if(!rail.isConnected)return;if(snap)rail.style.setProperty('scroll-snap-type',snap,priority);else rail.style.removeProperty('scroll-snap-type');requestAnimationFrame(()=>{aligning=false})});
+  }else{
+   aligning=false;
   }
  }
  const priorRender=render;
@@ -19737,6 +19745,7 @@ document.addEventListener('click',function(ev){
  }
  function init(){
    const rail=document.querySelector('#page .v279-wallet .v266-gallery-track');
+   if(rail?.closest('.v144-wallet-shell'))return; // V158 ya gestiona esta galería.
    if(!rail||rail===activeRail)return;
    activeRail=rail;
    guardUntil=performance.now()+400;
