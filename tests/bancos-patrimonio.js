@@ -83,6 +83,13 @@ async function testBanks(browser,width){
   assert.equal(seeded.account,60000,'La constitución se descuenta de los fondos.');
   const root=p.locator('.vBanksPc');
   await root.waitFor();
+  assert.equal(await p.locator('main.world-banks .inner-menu').count(),0,'No debe repetirse el menú interno de Bancos.');
+  if(!mobile){
+   assert.equal(await root.locator('.vBanks-certificates [data-act="addCertificate"]').count(),1,'Se puede crear un certificado desde Bancos.');
+   assert.equal(await root.locator('.vBanksPc-bank-totals dt').allTextContents().then(x=>x.join('|')),'Fondos|Deudas|Posición neta');
+   assert.ok(await root.locator('.vBanksPc-consumption-rows > div').count()<=4,'Tres categorías destacadas y Otros.');
+   if(width>=1280)assert.ok(await p.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+3),'Bancos PC no debe tener scrolling general.');
+  }
   const selector=root.locator('.vBanks-mobile-selector');
   const choose=async id=>{
    if(mobile){

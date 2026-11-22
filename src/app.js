@@ -1471,6 +1471,19 @@ function vWalletPcConsumption(list){
  </section>`;
 }
 
+function vBanksCreditTrend(cards){
+ const {months}=v1301WalletConsumption(cards);
+ const now=dateObj(today()),keys=Array.from({length:6},(_,i)=>{
+  const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);
+  return {key:dateStr(d).slice(0,7),label:d.toLocaleDateString('es-DO',{month:'short'})};
+ });
+ const values=keys.map(x=>months.get(x.key));
+ const valid=values.every(v=>!v?.missingFx),raw=values.map(v=>v?.equivalent||0);
+ const max=Math.max(1,...raw.map(Math.abs));
+ const total=raw.reduce((sum,v)=>sum+v,0);
+ const bars=keys.map((m,i)=>`<div class="vBanks-credit-month" title="${sanitize(m.key)} · ${valid?money(raw[i]):'Conversión no disponible'}"><span class="vBanks-credit-track"><i class="${raw[i]<0?'negative':''}" style="--bar:${Math.max(0,Math.min(100,Math.abs(raw[i])/max*100))}%"></i></span><small>${sanitize(m.label)}</small></div>`).join('');
+ return `<section class="vBanks-credit-trend" aria-label="Evolución mensual del consumo bancario"><header><strong>Consumo mensual</strong><span>${valid?money(total):'—'} · 6 meses</span></header><div class="vBanks-credit-chart">${bars}</div><p>Compras menos devoluciones registradas; no equivale al saldo de deuda.</p></section>`;
+}
 function vWalletPcBankScope(){
  if(isMobileViewport()||ui.page!=='banks'||ui.vBanksDesktopSection!=='cards')return null;
  return vBanksScope().active.cards;
@@ -1548,15 +1561,16 @@ function vWalletPc(){
      const equivalent=vWalletPcEquivalent(c.limitDOP,c.limitUSD),used=vWalletPcUsage(vWalletPcEquivalent(dop.debt,usd.debt),equivalent);
      return `<button type="button" class="vWalletPc-limit-row" data-act="walletPcSelect" data-id="${sanitize(c.id)}"><span class="vWalletPc-product-mark" aria-hidden="true">${v1002BankGlyph(c,'card')}</span><span><strong>${sanitize(c.name)}</strong><small>${vWalletPcSplit(c.limitDOP,c.limitUSD,0)}</small><span class="vWalletPc-row-meter">${bar(used,'Utilización de la tarjeta')}<small>${percent(used)}</small></span></span><b>${vWalletPcAmount(equivalent)}</b></button>`;
     }).join('')}</div>`:`<p class="vWalletPc-note">Añade una tarjeta para consultar sus límites y cortes.</p>`}
+    ${bankScope!==null&&list.length?vBanksCreditTrend(list):''}
    </section>
    <div class="vWalletPc-right">
+    ${v371CardReturnWidget(active||{name:'tus tarjetas'},active?null:list,false,true)}
     <section class="vWalletPc-panel vWalletPc-cuts" aria-labelledby="vWalletPc-cuts-title">
      <header><span class="vWalletPc-symbol" aria-hidden="true">${icon('calendar')}</span><h2 id="vWalletPc-cuts-title">Cortes pendientes</h2></header>
      <p>${due?(due<today()?'Venció el ':'Próximo vence el ')+prettyDate(due):'Sin vencimientos pendientes'}</p>
      <div>${cutButton('DOP','dop')}${cutButton('USD','usd')}</div>
     </section>
     ${vWalletPcConsumption(list)}
-    ${v371CardReturnWidget(active||{name:'tus tarjetas'},active?null:list,false,true)}
    </div>
   </div>
  </div>`;
@@ -1676,7 +1690,7 @@ function main(){
  const heads={score:['Vive Score','Tu comportamiento crediticio, explicado.'],pressure:['Presión financiera','El mismo calendario de Inicio, ampliado'],wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
  let h=heads[ui.page]||heads.overview;
  // V363: marca unificada en la segunda línea del encabezado de cada sección.
- h=desktopWallet?['Tu universo financiero','Todos tus productos, en una sola vista.']:desktopBanks?['Tu posición bancaria','Todos tus productos, en una sola vista.']:[h[0],'vive el hoy'];
+ h=desktopWallet?['Tu universo financiero','Todo tu crédito y sus beneficios, en un solo lugar.']:desktopBanks?['Tu posición bancaria','Tus bancos y productos, en una sola vista.']:[h[0],'vive el hoy'];
  return `${mobileHeader()}<div class="mobile-bar"><button data-act="mobile" aria-label="Abrir menú">☰</button><strong class="v908-bar-brand" aria-label="${APP_BRAND}">${brandMark()}</strong><span class="mobile-status">Tu vida financiera</span></div><div class="shell">${nav()}<main class="main world-${ui.page}${desktopWallet?' vWalletPc-world':''}${desktopBanks?' vBanksPc-world':bankView?' vBanksMobile-world':''}">
   <header class="topbar"><div class="topbar-intro">${desktopWallet?'<span class="vWalletPc-kicker">WALLET</span>':desktopBanks?'<span class="vBanksPc-kicker">BANCOS</span>':''}${db.settings.visualDesign==='vision'&&ui.page==='overview'?`<div class="v363-vision-identity"><span class="v363-vision-brand">vive el hoy</span><label class="vision-global-search"><svg class="vision-search-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.4"/><path d="m15.5 15.5 4.9 4.9"/></svg><input id="visionQuickSearch" type="search" placeholder="Buscar movimientos o categorías" aria-label="Buscar movimientos o categorías"></label></div>`:`<h1 class="top-title" ${db.settings.theme==='black'?'style="color:#f5f7ff!important"':''}>${h[0]}</h1><p class="top-sub">${h[1]}</p>`}</div>${v164HeaderDock()}<div class="top-actions v146-header-actions"><span class="date-chip v146-header-date">${prettyDate(today())}</span>${v402SyncButton()}${(desktopWallet||desktopBanks)?`<button type="button" class="btn ghost v165-search-icon ${desktopWallet?'vWalletPc-search':'vBanksPc-search'}" data-v71-search-open="1" aria-label="${desktopBanks?'Buscar cuentas, tarjetas, préstamos o certificados':'Buscar movimientos, tarjetas o comercios'}">${icon('search')}<span>${desktopBanks?'Buscar cuentas, tarjetas, préstamos o certificados...':'Buscar movimientos, tarjetas o comercios...'}</span></button>`:v165SearchAction()}${v36Bell()}${window.VIVE_ENABLED===false?'':`<button type="button" class="v934-web-vive" data-vive-open="web" aria-label="Abrir Vive" title="Vive"><span class="v934-vive-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></span></button>`}<button type="button" class="v936-web-settings" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.52V20h-3v-.08a1.65 1.65 0 0 0-1-1.52 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.6 15a1.65 1.65 0 0 0-1.52-1H6v-3h.08A1.65 1.65 0 0 0 7.6 10a1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06A1.65 1.65 0 0 0 11 6.6a1.65 1.65 0 0 0 1-1.52V5h3v.08A1.65 1.65 0 0 0 16 6.6a1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.52 1H21v3h-.08A1.65 1.65 0 0 0 19.4 15Z" transform="translate(-1.5 -0.5) scale(1.05)"/></svg></button><button class="btn ff-header-new" data-act="newTransaction">${icon('plus')} Registrar</button></div></header>
  
@@ -1793,7 +1807,14 @@ function v1264BankHistory(b){
 function vBanksPcCardConsumption(cards,mobile=false){
  const byType=new Map();
  const {totals}=v1301WalletConsumption(cards,byType);
- const rows=[...byType].sort((a,b)=>b[1].equivalent-a[1].equivalent||a[0].localeCompare(b[0],'es'));
+ const detailRows=[...byType].sort((a,b)=>b[1].equivalent-a[1].equivalent||a[0].localeCompare(b[0],'es'));
+ const rows=detailRows.length<=4?detailRows:(()=>{
+  const primary=detailRows.filter(([type])=>type!=='Otros').slice(0,3);
+  const names=new Set(primary.map(([type])=>type));
+  const remaining=detailRows.filter(([type])=>!names.has(type));
+  const other=remaining.reduce((a,[,v])=>({DOP:a.DOP+v.DOP,USD:a.USD+v.USD,equivalent:a.equivalent+v.equivalent,missingFx:a.missingFx||v.missingFx}),{DOP:0,USD:0,equivalent:0,missingFx:false});
+  return [...primary,['Otros',other]];
+ })();
  const comparable=!totals.missingFx&&totals.equivalent>0&&rows.every(([,amount])=>amount.equivalent>=0);
  const palette=['#008c6e','#187bd7','#9143d8','#d99402','#7286a1'];
  const chart=mobile&&comparable?`<div class="vBanks-consumption-chart" role="img" aria-label="Consumo total ${money(totals.equivalent)}"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="48" fill="none" stroke="var(--bank-track)" stroke-width="13"/>${rows.reduce((state,[,amount],i)=>{
@@ -1883,7 +1904,7 @@ function vBanksPrior(groups){
  const prior=v134WealthSnapshot(cut,groups),debt=prior.cards+prior.loans;
  return {net:prior.liquid+prior.certificates-debt,funds:prior.liquid,debt};
 }
-function vBanksCertificates(certificates,invested){
+function vBanksCertificates(certificates,invested,bankId=null){
  const entries=certificates.map(c=>({c,p:certProjection(c)}));
  const estimated=entries.filter(({c})=>c.startDate&&c.maturityDate&&c.rate!=null&&c.rate!==''&&Number.isFinite(Number(c.rate)));
  const investedAtKnownRates=estimated.reduce((sum,{c,p})=>sum+fx(p.capital,c.currency),0);
@@ -1894,7 +1915,7 @@ function vBanksCertificates(certificates,invested){
   ['Intereses netos estimados',estimated.length?money(estimated.reduce((sum,{c,p})=>sum+fx(p.net,c.currency),0)):'—'],
   ['Intereses cobrados',entries.length?money(entries.reduce((sum,{c,p})=>sum+fx(p.collected,c.currency),0)):'—']
  ];
- return `<section class="vBanks-certificates"><h2><button class="vBanksPc-benefits-link" type="button" data-act="banksPcProducts" data-id="certificates">${icon('layers')}Certificados financieros ${icon('arrow')}</button></h2>
+ return `<section class="vBanks-certificates"><header class="vBanks-certificates-head"><h2><button class="vBanksPc-benefits-link" type="button" data-act="banksPcProducts" data-id="certificates">${icon('layers')}Certificados financieros ${icon('arrow')}</button></h2><button type="button" class="btn ghost sm" data-act="addCertificate"${bankId?` data-id="${sanitize(bankId)}"`:''} aria-label="Añadir certificado">${icon('plus')}</button></header>
  <dl>${totals.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>
  ${certificates.length?'<p>Estimación neta al vencimiento. Los cobros corresponden a movimientos registrados.</p>':'<p>Sin certificados registrados en esta selección.</p>'}</section>`;
 }
@@ -1962,7 +1983,8 @@ function vBanksOpenDesktopProduct(kind,id){
 function vBanksProducts(groups,bankId,f,mobile){
  if(!mobile){
   const links=V_BANKS_GROUPS.map(([key,label,glyph])=>`<button type="button" data-act="banksPcProducts" data-id="${key}">${icon(glyph)} ${label} (${groups[key].length})</button>`).join('');
-  return `<nav class="vBanksPc-product-filter" aria-label="Productos bancarios">${links}</nav>${groups.cards.length?vBanksProductRows('cards',groups.cards.slice(0,3),bankId,groups.cards.length):''}`;
+  const featured=groups.cards.length?'cards':groups.accounts.length?'accounts':groups.loans.length?'loans':'certificates';
+  return `<nav class="vBanksPc-product-filter" aria-label="Productos bancarios">${links}</nav>${vBanksProductRows(featured,groups[featured].slice(0,3),bankId,groups[featured].length)}`;
  }
  const detail=vBanksOpenDetail(groups);
  if(detail)return detail;
@@ -1997,11 +2019,11 @@ function vBanksDashboard(){
  const detail=ui.vBanksProductDetail;
  const activeCard=detail?.kind==='cards'?active.cards.find(c=>c.id===detail.id):null;
  const financial=[['Patrimonio neto',f.net,'wallet',prior.net],['Fondos',f.funds,'coins2',prior.funds],['Deudas totales',f.debt,'card',prior.debt],['Límite total',f.limit,'landmark',null]];
- const totals=`<dl class="vBanksPc-bank-totals"><div><dt>Fondos</dt><dd>${money(f.funds)}</dd></div><div><dt>Deudas</dt><dd>${money(f.debt)}</dd></div><div><dt>Límite total</dt><dd>${money(f.limit)}</dd></div><div><dt>Utilización</dt><dd>${vBanksFlags(f)}</dd>${vBanksMeter(f.usage)}</div></dl>`;
+ const totals=`<dl class="vBanksPc-bank-totals"><div><dt>Fondos</dt><dd>${money(f.funds)}</dd></div><div><dt>Deudas</dt><dd>${money(f.debt)}</dd></div><div><dt>Posición neta</dt><dd class="${f.net<0?'negative':'positive'}">${f.net>0?'+':''}${money(f.net)}</dd></div></dl>`;
  const insights=`<aside class="vBanksPc-insights" aria-label="Detalle financiero">
  ${active.cards.length?v371CardReturnWidget(activeCard||selected||{name:'Todos los bancos'},activeCard?null:active.cards,true):'<section class="vBanks-certificates"><h2>Beneficios y retorno</h2><p>Sin tarjetas registradas en esta selección.</p></section>'}
- ${vBanksCertificates(active.certificates,f.invested)}
  ${vBanksPcCardConsumption(activeCard?[activeCard]:active.cards,mobile)}
+ ${vBanksCertificates(active.certificates,f.invested,selected?.id)}
  </aside>`;
  const ledger=ui.vBanksPcBenefits&&active.cards.length?vBanksPcBenefits(active.cards):'';
  const products=vBanksProducts(active,bankId,f,mobile);
@@ -7580,6 +7602,7 @@ function innerWrap(page,view){const cfg=INNER_PAGES[page];if(!cfg)return view();
  return `<div class="inner-menu" aria-label="Menú interno de ${sanitize(page)}"><div class="inner-menu-caption"><b>${cfg.label}</b><small>Vistas y acciones rápidas</small></div><nav class="inner-menu-tabs" aria-label="Vistas de esta página">${cfg.tabs.map(([id,name])=>`<button type="button" class="inner-menu-tab ${selected===id?'active':''}" data-act="innerView" data-page="${page}" data-view="${id}" ${selected===id?'aria-current="page"':''}>${name}</button>`).join('')}</nav></div><div class="inner-view">${selected==='overview'?view():innerView(page,selected)}</div>`;
 }
 for(const name of Object.keys(INNER_PAGES)){
+ if(name==='banks')continue; // Bancos usa su propio selector y no necesita otra cabecera ni tabs.
  if(typeof pages[name]!=='function')continue;
  const prev=pages[name];pages[name]=()=>innerWrap(name,prev);
 }
