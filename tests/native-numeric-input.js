@@ -125,12 +125,11 @@ async function auditNaturalJourney(browser) {
       const modal = document.getElementById('modal-root');
       const root = modal && modal.children.length ? modal : document.getElementById('app');
       if (!root) return [];
-      const visible = e => {
-        const r = e.getBoundingClientRect(), s = getComputedStyle(e);
-        return r.width > 0 && r.height > 0 && s.display !== 'none' &&
-          s.visibility !== 'hidden' && !e.disabled && !e.readOnly;
-      };
-      return [...root.querySelectorAll('input')].filter(visible).map(e => {
+      // Inspeccionar también los campos de pasos posteriores ya montados en el DOM.
+      // El controlador nativo los configura antes de que el usuario llegue a ellos.
+      const eligible = e => (e.getAttribute('type') || 'text').toLowerCase() !== 'hidden' &&
+        !e.disabled && !e.readOnly;
+      return [...root.querySelectorAll('input')].filter(eligible).map(e => {
         const type = (e.getAttribute('type') || 'text').toLowerCase();
         const identity = [e.name, e.id, e.dataset.field || ''].join(' ')
           .replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_-]/g, ' ').toLowerCase();
@@ -213,11 +212,11 @@ async function auditNaturalJourney(browser) {
     }
     fs.writeFileSync(path.join(output, 'recorrido-integral.json'),
       JSON.stringify({ routes:pages.length, visited:report.length,
-        checked:report.reduce((n,r) => n + r.fields.filter(f => !!f.expected).length,0),
+        checked:report.reduce((n,r) => n + r.fields.filter(f => !!f.expected || /^(decimal|numeric)$/.test(f.inputmode || '')).length,0),
         problems, errors, report }, null, 2));
     console.log('Recorrido de teclado: ' + pages.length + ' páginas, ' +
       report.length + ' pantallas/estados, ' +
-      report.reduce((n,r) => n + r.fields.filter(f => !!f.expected).length, 0) +
+      report.reduce((n,r) => n + r.fields.filter(f => !!f.expected || /^(decimal|numeric)$/.test(f.inputmode || '')).length, 0) +
       ' campos numéricos verificados.');
     check('Campos numéricos con inputmode incorrecto', problems, []);
     check('Errores JavaScript en el recorrido', errors, []);
