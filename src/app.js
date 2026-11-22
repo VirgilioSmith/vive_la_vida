@@ -1940,9 +1940,10 @@ function vBanksPicker(){
  const items=[{value:V_BANKS_ALL,name:'Todos los bancos',detail:'Vista consolidada',iconHtml:icon('layers'),amount:money(vBanksPosition(scope.groups).net)},...scope.institutions.map(b=>({
   value:b.id,name:b.name,detail:b.kind||'Banco',institutionLogo:bankLogoSafe(b.logo),amount:money(vBanksPosition(scope.byId.get(b.id)).net)
  }))];
- if(isMobileViewport())items.push({value:'__banks_filters__',name:'Filtrar instituciones',detail:'Perfiles, tipos y visibilidad',iconHtml:icon('layers')});
+ if(isMobileViewport())items.push({value:'__banks_filters__',name:'Filtrar instituciones',detail:'Perfiles, tipos y visibilidad',iconHtml:icon('layers')},{value:'__banks_tools__',name:ui.vBanksMobileChrome?'Ocultar herramientas generales':'Mostrar herramientas generales',detail:'Registro, movimientos, sincronización y configuración',iconHtml:icon('settings')});
  window.openItemPicker('Seleccionar institución',items,id=>{
   if(id==='__banks_filters__'){ui.vBanksMobileFilters=!ui.vBanksMobileFilters;render();return;}
+  if(id==='__banks_tools__'){ui.vBanksMobileChrome=!ui.vBanksMobileChrome;render();return;}
   vBanksSelect(id);render();document.querySelector('.vBanks-mobile-selector')?.focus({preventScroll:true});
  },scope.selected?.id||V_BANKS_ALL);
 }
@@ -2145,9 +2146,9 @@ function vBanksDashboard(){
  const products=vBanksProducts(active,bankId,f,mobile);
  const history=selected&&ui.bankHistory===selected.id?v1264BankHistory(selected):'';
  const nonbank=selected&&!v40IsFinancial(selected)?v40NonbankDetail(selected):'';
- if(mobile)return `<div class="vBanksPc vBanks-mobile">
+ if(mobile)return `<div class="vBanksPc vBanks-mobile${!ui.vBanksMobileChrome&&!ui.vBanksMobileProducts&&!detail&&!ledger&&!history&&!nonbank?' vBanks-mobile-dashboard':''}">
   <header class="vBanks-mobile-head"><span>BANCOS</span><h1>Tu posición bancaria</h1><p>Todos tus productos, en una sola vista.</p><button type="button" class="btn ghost sm" data-act="addBank" aria-label="Agregar institución">${icon('plus')}</button></header>
-  <button type="button" class="vBanks-mobile-selector" data-act="banksPicker" aria-haspopup="dialog">${logo}<span><strong>${name}</strong><small>${selected?info:`${institutions.length} ${institutions.length===1?'institución':'instituciones'}`}</small></span>${icon('chevron-down')}</button>
+  <button type="button" class="vBanks-mobile-selector" data-act="banksPicker" aria-haspopup="dialog">${logo}<span><strong>${name}</strong><small>${selected?info:`${institutions.length} ${institutions.length===1?'institución':'instituciones'}`}</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button>
   ${ui.vBanksMobileFilters||v42InstitutionFilter!=='all'||v61InstitutionProfile!=='all'||controls?`<div class="vBanks-mobile-tools">${filters}${controls}</div>`:''}
   ${vBanksMobilePosition(f,prior)}
   ${products}${history}${nonbank}${insights}${ledger}

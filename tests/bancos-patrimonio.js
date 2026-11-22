@@ -130,6 +130,15 @@ async function testBanks(browser,width,theme='light'){
    assert.match(await root.locator('.vBanks-limit-split').innerText(),/RD\$300,000.*US\$1,000/);
    assert.equal(await p.getByRole('navigation',{name:'Navegación móvil'}).getByRole('button').count(),5);
    assert.equal(await p.getByRole('navigation',{name:'Navegación móvil'}).getByRole('button',{name:'Bancos'}).getAttribute('aria-current'),'page');
+   assert.equal(await p.locator('.vive-mobile-top').isVisible(),false,'Portada sin cabecera duplicada.');
+   assert.equal(await p.locator('.v249-register-fab').isVisible(),false,'El registro flotante no tapa el retorno.');
+   assert.equal(await p.locator('.v708-movements-fab').isVisible(),false,'Movimientos flotantes no tapan los productos.');
+   assert.equal(await root.locator('.vBanks-mobile-net > div > small').first().evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
+   await choose('__banks_tools__');
+   assert.equal(await p.locator('.vive-mobile-top').isVisible(),true,'Las herramientas generales siguen disponibles.');
+   await choose('__banks_tools__');
+   assert.equal(await p.locator('.vive-mobile-top').isVisible(),false);
+   await p.evaluate(()=>window.scrollTo(0,0));
   }else{
    assert.equal(await root.locator('.vBanks-certificates dl dd').first().innerText(),'RD$70,000');
    assert.equal(await root.locator('.vBanks-certificates dl dd').nth(1).innerText(),'8.00%');
