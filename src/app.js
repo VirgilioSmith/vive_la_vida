@@ -4844,6 +4844,9 @@ const MQR_PRESETS={
  income:[['Salario y nómina','Nómina'],['Negocios y ventas','Ventas'],['Joseo e ingresos adicionales','Joseo']],
  spend:[['Alimentación','Comida'],['Transporte','Transporte'],['Servicios básicos','Servicios']]
 };
+const mqrKind=mode=>mode==='income'?'ingreso':mode==='spend'?'gasto':null;
+const mqrActivePresets=mode=>{const kind=mqrKind(mode);return kind?(MQR_PRESETS[mode]||[]).filter(([name])=>Object.prototype.hasOwnProperty.call(categoryMap(kind),name)):[]};
+const mqrFirstCategory=mode=>mqrActivePresets(mode)[0]?.[0]||Object.keys(categoryMap(mqrKind(mode))||{})[0]||'';
 let v1235Mobile=window.innerWidth<=790;window.addEventListener('resize',()=>{v1235Mobile=window.innerWidth<=790},{passive:true});
 function isMobileViewport(){return v1235Mobile}
 function mqrState(){
@@ -4858,34 +4861,30 @@ function mqrAmountText(raw){
 function openMobileQuickRegister(mode='income',amount=''){
  const chosen=mode==='expense'?'spend':mode==='transfer'||mode==='outgoing'?'transfer':mode==='card_charge'?'spend':mode;
  const valid=MQR_MODES[chosen]?chosen:'income';
- ui.mobileQuickRegister={mode:valid,amount:String(amount||''),preset:MQR_PRESETS[valid]?.[0]?.[0]||'',transferKind:mode==='outgoing'?'outgoing':'own'};
+ ui.mobileQuickRegister={mode:valid,amount:String(amount||''),preset:mqrFirstCategory(valid),transferKind:mode==='outgoing'?'outgoing':'own'};
  renderMobileQuickRegister();
 }
 function renderMobileQuickRegister(){
- const state=mqrState(),presets=MQR_PRESETS[state.mode]||[],isTransfer=state.mode==='transfer';
+ const state=mqrState(),presets=mqrActivePresets(state.mode),isTransfer=state.mode==='transfer';
+ const kind=mqrKind(state.mode),active=kind?categoryMap(kind):{};
+ if(kind&&!Object.prototype.hasOwnProperty.call(active,state.preset))state.preset=mqrFirstCategory(state.mode);
  const kinds=Object.entries(MQR_MODES).map(([id,c])=>`<button type="button" class="mqr-mode ${id===state.mode?'active':''}" data-mqr-act="mode" data-id="${id}" aria-pressed="${id===state.mode}"><span class="mqr-mode-icon">${icon(c.icon)}</span><strong>${c.title}</strong></button>`).join('');
  const sub=isTransfer?`<div class="mqr-transfer-kinds"><button type="button" class="${state.transferKind==='own'?'selected':''}" data-mqr-act="transferKind" data-id="own">Entre mis cuentas</button><button type="button" class="${state.transferKind==='outgoing'?'selected':''}" data-mqr-act="transferKind" data-id="outgoing">A terceros</button></div>`:'';
- const restCategory=state.mode==='income'?'ingreso':state.mode==='spend'?'gasto':null;
+ const restCategory=mqrKind(state.mode);
  const extra=restCategory?Object.keys(categoryMap(restCategory)).filter(k=>!presets.some(([id])=>id===k)):[];
  const chosenExtra=state.preset&&extra.includes(state.preset);
  const presetsHtml=presets.length?`<div class="mqr-presets">${presets.map(([k,t])=>`<button type="button" class="mqr-chip ${state.preset===k?'active':''}" data-mqr-act="preset" data-id="${sanitize(k)}">${t}</button>`).join('')}${chosenExtra?`<button type="button" class="mqr-chip active" data-mqr-act="moreCategories" aria-label="Elegir otra categoría">${sanitize(state.preset)}</button>`:`<button type="button" class="mqr-chip mqr-plus" data-mqr-act="moreCategories" aria-label="Más categorías">+</button>`}</div>`:'';
  const extraPanel=state.showCategories&&extra.length?`<div class="mqr-extra-categories" role="group" aria-label="Más categorías">${extra.map(k=>`<button type="button" class="mqr-extra-category ${state.preset===k?'active':''}" data-mqr-act="preset" data-id="${sanitize(k)}">${sanitize(k)}</button>`).join('')}</div>`:'';
- const keypad=['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(n=>`<button class="mqr-key ${n==='⌫'||n==='.'?'soft':''}" type="button" data-mqr-act="key" data-id="${n}" aria-label="${n==='⌫'?'Borrar último dígito':n}">${n}</button>`).join('');
  document.querySelectorAll('.v36-notifications[open]').forEach(el=>el.open=false);
- document.getElementById('modal-root').innerHTML=`<div class="modal-layer mqr-layer" data-backdrop="true"><section class="modal mqr-modal" role="dialog" aria-modal="true" aria-label="Registrar un movimiento"><header class="modal-head mqr-header"><h2>Nuevo movimiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="mqr-scroll"><div class="mqr-shell"><div class="v141-quick-heading"><div class="mqr-step-caption">PASO 1 DE 3 · IMPORTE</div><details class="v141-quick-operations"><summary aria-label="Abrir más operaciones">Más operaciones <span aria-hidden="true">⌄</span></summary><div class="v141-quick-operations-menu" role="group" aria-label="Otros tipos de registro"><button type="button" data-act="guidedFlow" data-mode="service">${icon('receipt')}<span><strong>Pagar servicio</strong><small>Facturas y servicios</small></span>${icon('arrow')}</button><button type="button" data-act="guidedFlow" data-mode="cardpay">${icon('card')}<span><strong>Pagar tarjeta</strong><small>Corte, total o abono</small></span>${icon('arrow')}</button><button type="button" data-v354-act="open" data-v355="fast">${icon('users')}<span><strong>Movimiento rápido</strong><small>Compré para alguien · cuánto me dio</small></span>${icon('arrow')}</button></div></details></div><nav class="mqr-segment" aria-label="Qué deseas registrar">${kinds}</nav>${sub}<div class="mqr-display"><small>¿Cuánto ${state.mode==='income'?'recibiste':state.mode==='spend'?'gastaste':'vas a transferir'}?</small><strong id="mqrAmountValue" aria-live="polite">${mqrAmountText(state.amount)}</strong><span>Escribe el importe en el teclado</span></div>${state.mode==='spend'?'<div id="v80QuickAssessment" aria-live="polite"></div>':''}${presetsHtml}${extraPanel}<div class="mqr-keypad">${keypad}</div></div></div><footer class="mqr-bottom"><button class="mqr-primary" type="button" data-mqr-act="continue">Siguiente ${icon('arrow')}</button></footer></section></div>`;
+ document.getElementById('modal-root').innerHTML=`<div class="modal-layer mqr-layer" data-backdrop="true"><section class="modal mqr-modal" role="dialog" aria-modal="true" aria-label="Registrar un movimiento"><header class="modal-head mqr-header"><h2>Nuevo movimiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="mqr-scroll"><div class="mqr-shell"><div class="v141-quick-heading"><div class="mqr-step-caption">PASO 1 DE 3 · IMPORTE</div><details class="v141-quick-operations"><summary aria-label="Abrir más operaciones">Más operaciones <span aria-hidden="true">⌄</span></summary><div class="v141-quick-operations-menu" role="group" aria-label="Otros tipos de registro"><button type="button" data-act="guidedFlow" data-mode="service">${icon('receipt')}<span><strong>Pagar servicio</strong><small>Facturas y servicios</small></span>${icon('arrow')}</button><button type="button" data-act="guidedFlow" data-mode="cardpay">${icon('card')}<span><strong>Pagar tarjeta</strong><small>Corte, total o abono</small></span>${icon('arrow')}</button><button type="button" data-v354-act="open" data-v355="fast">${icon('users')}<span><strong>Movimiento rápido</strong><small>Compré para alguien · cuánto me dio</small></span>${icon('arrow')}</button></div></details></div><nav class="mqr-segment" aria-label="Qué deseas registrar">${kinds}</nav>${sub}<div class="mqr-display"><small>¿Cuánto ${state.mode==='income'?'recibiste':state.mode==='spend'?'gastaste':'vas a transferir'}?</small><div class="mqr-amount-native"><span aria-hidden="true">RD$</span><input id="mqrAmountInput" aria-label="Importe del movimiento" type="text" inputmode="decimal" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="0.00" value="${sanitize(state.amount)}"></div><span>Toca el importe para usar el teclado del teléfono</span></div>${state.mode==='spend'?'<div id="v80QuickAssessment" aria-live="polite"></div>':''}${presetsHtml}${extraPanel}</div></div><footer class="mqr-bottom"><button class="mqr-primary" type="button" data-mqr-act="continue">Siguiente ${icon('arrow')}</button></footer></section></div>`;
  v80RefreshQuickAdvisor();
 }
-function mqrApplyKey(key){
- const st=mqrState(),current=String(st.amount||'');
- if(key==='⌫')st.amount=current.slice(0,-1);
- else if(key==='.') {if(!current.includes('.'))st.amount=(current||'0')+'.';}
- else if(/^\d$/.test(key)){
-  const p=current.split('.');
-  if((p.length===1||p[1].length<2)&&current.replace(/\D/g,'').length<10){st.amount=current==='0'?key:current+key;}
- }
- // Change only the number; don't rebuild the entire modal on every keystroke.
- const number=document.getElementById('mqrAmountValue');if(number)number.textContent=mqrAmountText(st.amount);
+function mqrAcceptAmount(value){
+ const st=mqrState(),clean=String(value||'').trim().replace(',', '.');
+ if(!/^\d{0,10}(\.\d{0,2})?$/.test(clean))return false;
+ st.amount=clean;
  v80RefreshQuickAdvisor();
+ return true;
 }
 /* V129 · Orden narrativo por operación, idéntico para la versión web y móvil.
    Solo reorganiza nodos del mismo formulario. Nunca recalcula importes ni crea registros. */
@@ -5077,6 +5076,7 @@ function v134RefineStudio(f,mode){
 
 function mqrContinue(){
  const st=mqrState(),amount=Number(st.amount);
+ if(mqrKind(st.mode)&&!Object.prototype.hasOwnProperty.call(categoryMap(mqrKind(st.mode)),st.preset)){toast('Selecciona una categoría activa.');return;}
  if(!Number.isFinite(amount)||amount<=0){toast('Introduce un importe mayor que cero.');return;}
  const payload={amount,date:today()};
  if(st.mode==='income'){Object.assign(payload,{flowMode:'income',type:'income',category:st.preset||'Salario y nómina'});}
@@ -6490,7 +6490,8 @@ case 'v51RestoreTransaction':{
 }}
 document.addEventListener('click',e=>{let b=e.target.closest('[data-act]');if(b){e.preventDefault();onAction(b.dataset.act,b)}else if(e.target.matches('[data-backdrop]'))closeModal()});
 
-document.addEventListener('click',e=>{const el=e.target.closest('[data-mqr-act]');if(!el)return;e.preventDefault();const act=el.dataset.mqrAct,st=mqrState();if(act==='mode'){st.mode=el.dataset.id;st.preset=MQR_PRESETS[st.mode]?.[0]?.[0]||'';st.showCategories=false;renderMobileQuickRegister();}else if(act==='transferKind'){st.transferKind=el.dataset.id;renderMobileQuickRegister();}else if(act==='moreCategories'){st.showCategories=!st.showCategories;renderMobileQuickRegister();}else if(act==='preset'){st.preset=el.dataset.id;st.showCategories=false;renderMobileQuickRegister();}else if(act==='key')mqrApplyKey(el.dataset.id||'');else if(act==='continue')mqrContinue();else if(act==='back')renderMobileQuickRegister();});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-mqr-act]');if(!el)return;e.preventDefault();const act=el.dataset.mqrAct,st=mqrState();if(act==='mode'){st.mode=el.dataset.id;st.preset=mqrFirstCategory(st.mode);st.showCategories=false;renderMobileQuickRegister();}else if(act==='transferKind'){st.transferKind=el.dataset.id;renderMobileQuickRegister();}else if(act==='moreCategories'){st.showCategories=!st.showCategories;renderMobileQuickRegister();}else if(act==='preset'){st.preset=el.dataset.id;st.showCategories=false;renderMobileQuickRegister();}else if(act==='continue')mqrContinue();else if(act==='back')renderMobileQuickRegister();});
+document.addEventListener('input',e=>{if(e.target?.id!=='mqrAmountInput')return;if(!mqrAcceptAmount(e.target.value))e.target.value=mqrState().amount;});
 document.addEventListener('submit',e=>{
  const form=e.target,selector=form.querySelector('[name="postingStatus"]');
  if(!selector)return;
