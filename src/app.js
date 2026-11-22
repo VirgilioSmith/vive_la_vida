@@ -2003,11 +2003,26 @@ function vBanksProducts(groups,bankId,f,mobile){
   const total=V_BANKS_GROUPS.reduce((count,[key])=>count+groups[key].length,0);
   const filters=[['all','Productos','layers',total],...V_BANKS_GROUPS.map(([key,label,glyph])=>[key,label,glyph,groups[key].length])];
   const links=filters.map(([key,label,glyph,count])=>`<button type="button" data-act="banksPcProducts" data-id="${key}" aria-pressed="${current===key}" class="${current===key?'is-active':''}">${icon(glyph)}<span>${label}</span><small>${count}</small></button>`).join('');
-  // Productos consolida todo, sin navegar a otra página ni ocultar categorías.
-  const kinds=current==='all'?['cards','accounts','loans','certificates']: [current];
-  const present=current==='all'?kinds.filter(key=>groups[key].length):kinds;
-  const lanes=present.length?present.map(key=>vBanksProductRows(key,groups[key],bankId)).join(''):
-   `<section class="vBanksPc-lane" aria-live="polite"><p class="vBanksPc-empty">No hay productos registrados en esta selección. Puedes crear uno desde el botón + de la categoría correspondiente.</p></section>`;
+  // La vista general es un resumen de categorías, no una segunda lista de productos.
+  // Los importes provienen de la misma posición financiera calculada para los KPI.
+  if(current==='all'){
+   const rows=[
+    ['cards','Tarjetas','card',f.limit,'Límite total',`Deuda utilizada ${money(f.cardDebt)} · ${vBanksFlags(f)}`],
+    ['accounts','Cuentas','wallet',f.funds,'Balance total','Fondos en cuentas · equivalente RD$'],
+    ['loans','Préstamos','landmark',f.loanDebt,'Deuda pendiente','Saldo de préstamos vigente'],
+    ['certificates','Certificados','layers',f.invested,'Capital invertido','Certificados financieros vigentes']
+   ];
+   const tiles=rows.map(([key,label,glyph,value,metric,description])=>{
+    const count=groups[key].length;
+    return `<button type="button" class="vBanksPc-overview-tile${value<0?' is-negative':''}" data-act="banksPcProducts" data-id="${key}" aria-label="Ver ${label.toLowerCase()}: ${count} ${count===1?'producto':'productos'}">
+      <span class="vBanksPc-overview-top"><span class="vBanksPc-overview-icon">${icon(glyph)}</span><span class="vBanksPc-overview-name">${label}<small>${count} ${count===1?'producto':'productos'}</small></span>${icon('arrow')}</span>
+      <span class="vBanksPc-overview-metric"><small>${metric}</small><strong>${money(value)}</strong></span>
+      <span class="vBanksPc-overview-foot">${count?description:'Sin productos registrados'}</span>
+     </button>`;
+   }).join('');
+   return `<nav class="vBanksPc-product-filter" aria-label="Tipos de productos bancarios">${links}</nav><section class="vBanksPc-overview" aria-label="Resumen por tipo de producto" aria-live="polite">${tiles}</section>`;
+  }
+  const lanes=vBanksProductRows(current,groups[current],bankId);
   return `<nav class="vBanksPc-product-filter" aria-label="Tipos de productos bancarios">${links}</nav><div class="vBanksPc-lanes" aria-live="polite">${lanes}</div>`;
  }
  const detail=vBanksOpenDetail(groups);

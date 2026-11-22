@@ -89,7 +89,12 @@ async function testBanks(browser,width){
    assert.equal(await root.locator('.vBanksPc-product-filter button').count(),5,'El selector PC debe ofrecer Productos, Cuentas, Tarjetas, Préstamos y Certificados.');
    assert.equal(await root.locator('.vBanksPc-product-filter [aria-pressed="true"]').getAttribute('data-id'),'all');
    assert.match(await root.locator('.vBanksPc-bank').first().innerText(),/Todos \(Consolidado\)/);
-   assert.equal(await root.locator('.vBanksPc-lanes .vBanksPc-product').count(),8,'Productos muestra todos los registros, sin recortes.');
+   assert.equal(await root.locator('.vBanksPc-overview-tile').count(),4,'Productos resume cuatro categorías sin listar productos individuales.');
+   assert.equal(await root.locator('.vBanksPc-lanes').count(),0,'Productos no debe repetir los listados de detalle.');
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="cards"]').innerText(),/RD\$360,002/);
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="accounts"]').innerText(),/RD\$120,000/);
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="loans"]').innerText(),/RD\$24,000/);
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="certificates"]').innerText(),/RD\$70,000/);
    assert.equal(await root.locator('.vBanksPc-bank-totals dt').allTextContents().then(x=>x.join('|')),'Fondos|Deudas|Posición neta');
    assert.ok(await root.locator('.vBanksPc-consumption-rows > div').count()<=4,'Tres categorías destacadas y Otros.');
    if(width>=1280)assert.ok(await p.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+3),'Bancos PC no debe tener scrolling general.');
@@ -151,6 +156,10 @@ async function testBanks(browser,width){
   assert.equal(await usage.evaluate(el=>el.open),true);
   await choose('bank-a');
   const a=await view();
+  if(!mobile){
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="accounts"]').innerText(),/RD\$60,000/);
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="cards"]').innerText(),/RD\$160,002/);
+  }
   assert.equal(a[1],60000);
   assert.equal(a[0],100000-a[2]);
   assert.equal(await root.locator('.vBanks-certificates dl dd').first().innerText(),'RD$40,000');
@@ -181,7 +190,14 @@ async function testBanks(browser,width){
    await choose('bank-a');
    assert.equal(await root.locator('.vBanksPc-product-filter [aria-pressed="true"]').getAttribute('data-id'),'cards');
    await selectCategory('all');
-   assert.equal(await root.locator('.vBanksPc-lanes .vBanksPc-product').count(),4);
+   assert.equal(await root.locator('.vBanksPc-overview-tile').count(),4);
+   assert.equal(await root.locator('.vBanksPc-lanes .vBanksPc-product').count(),0);
+   // Desde las tarjetas-resumen se entra a la lista real y sus opciones de alta y detalle.
+   await root.locator('.vBanksPc-overview-tile[data-id="cards"]').click();
+   assert.equal(await root.locator('.vBanksPc-product-filter [aria-pressed="true"]').getAttribute('data-id'),'cards');
+   assert.equal(await root.locator('.vBanksPc-lanes .vBanksPc-product').count(),1);
+   assert.equal(await root.locator('.vBanksPc-lane [data-act="addCard"]').count(),1);
+   await selectCategory('all');
   }
   await root.getByRole('button',{name:'Beneficios y retorno'}).click();
   const ledger=root.getByRole('region',{name:'Tabla de beneficios por tarjeta'});
