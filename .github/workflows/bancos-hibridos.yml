@@ -30,6 +30,18 @@ jobs:
           name: bancos-movil-original-27d5007
           path: /tmp/vive-bancos-previo/
           if-no-files-found: error
+      - name: Snapshot de fuentes para reparación visual controlada
+        uses: actions/upload-artifact@v4
+        with:
+          name: bancos-src-snapshot
+          path: |
+            src/
+            tests/
+            index.html
+            vendor/
+            assets/
+            manifest.webmanifest
+          if-no-files-found: error
       - name: Preparar Node.js
         uses: actions/setup-node@v4
         with:
