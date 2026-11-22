@@ -71,12 +71,15 @@ async function fixture(page){
   return {account:t.fn.getAccountBalance(db.accounts[0]),ledger:JSON.stringify(db.transactions)};
  });
 }
-async function testBanks(browser,width){
+async function testBanks(browser,width,theme='light'){
  const mobile=width<791;
  const previousTouch=process.env.TOUCH;
+ const previousTheme=process.env.THEME;
+ process.env.THEME=theme;
  if(mobile)process.env.TOUCH='1';else delete process.env.TOUCH;
  const {ctx,p}=await open(browser,width,mobile?844:941);
  if(previousTouch===undefined)delete process.env.TOUCH;else process.env.TOUCH=previousTouch;
+ if(previousTheme===undefined)delete process.env.THEME;else process.env.THEME=previousTheme;
  try{
   const errors=[];p.on('pageerror',err=>errors.push(err.message));
   const seeded=await fixture(p);
@@ -111,14 +114,26 @@ async function testBanks(browser,width){
   };
   const view=async()=>{
    const fs=mobile?root.locator('.vBanks-mobile-hero dl dd'):root.locator('.vBanksPc-metric strong');
-   return mobile?[await money(root.locator('.vBanks-mobile-net > div:first-child strong')),...await Promise.all([0,1,2].map(i=>money(fs.nth(i))))]:Promise.all([0,1,2,3].map(i=>money(fs.nth(i))));
+   return mobile?[await money(root.locator('.vBanks-mobile-net > div:first-child strong')),...await Promise.all([0,1,3].map(i=>money(fs.nth(i))))]:Promise.all([0,1,2,3].map(i=>money(fs.nth(i))));
   };
   const netTotal=await view();
   assert.equal(netTotal[1],120000);
   assert.equal(netTotal[3],360002);
   assert.equal(netTotal[0],netTotal[1]+70000-netTotal[2]);
-  assert.equal(await root.locator('.vBanks-certificates dl dd').first().innerText(),'RD$70,000');
-  assert.equal(await root.locator('.vBanks-certificates dl dd').nth(1).innerText(),'8.00%');
+  if(mobile){
+   assert.equal(await root.locator('.vBanks-mobile-hero dl dd').nth(2).innerText(),'RD$70,000');
+   assert.equal(await root.locator('.vBanks-mobile-tiles > button').count(),4);
+   assert.deepEqual(await root.locator('.vBanks-mobile-tiles > button > small').allTextContents(),['2','2','2','2']);
+   assert.deepEqual(await root.locator('.vBanks-mobile-tiles > button > strong').allTextContents(),['RD$120,000',await root.locator('.vBanks-mobile-tiles > button[data-id="cards"] strong').innerText(),'RD$24,000','RD$70,000']);
+   assert.equal(await root.locator('.vBanks-certificates,.v1301-insight').count(),0);
+   assert.doesNotMatch(await root.innerText(),/Movimientos recientes|Actividad reciente|Consumo por tipo/);
+   assert.match(await root.locator('.vBanks-limit-split').innerText(),/RD\$300,000.*US\$1,000/);
+   assert.equal(await p.getByRole('navigation',{name:'Navegación móvil'}).getByRole('button').count(),5);
+   assert.equal(await p.getByRole('navigation',{name:'Navegación móvil'}).getByRole('button',{name:'Bancos'}).getAttribute('aria-current'),'page');
+  }else{
+   assert.equal(await root.locator('.vBanks-certificates dl dd').first().innerText(),'RD$70,000');
+   assert.equal(await root.locator('.vBanks-certificates dl dd').nth(1).innerText(),'8.00%');
+  }
   if(mobile)assert.match(await selector.innerText(),/Todos los bancos/);
   else assert.equal(await root.locator('.vBanksPc-bank').first().getAttribute('aria-pressed'),'true');
   const checkFit=()=>root.evaluate(el=>el.scrollWidth<=el.clientWidth+2&&document.documentElement.scrollWidth<=innerWidth+2);
@@ -140,7 +155,7 @@ async function testBanks(browser,width){
    return banks.right<products.left&&products.right<insights.left&&Math.abs(banks.top-insights.top)<2;
   }),'El mockup PC muestra tres columnas debajo de los KPI.');
   if(mobile)assert.ok(await root.evaluate(el=>{
-   const seq=['.vBanks-mobile-head','.vBanks-mobile-selector','.vBanks-mobile-hero','.vBanks-mobile-products','.v371-card-return','.v1301-insight','.vBanks-certificates'];
+   const seq=['.vBanks-mobile-head','.vBanks-mobile-selector','.vBanks-mobile-hero','.vBanks-mobile-products','.vBanks-mobile-return'];
    const top=seq.map(k=>el.querySelector(k).getBoundingClientRect().top);
    return top.every((y,i)=>!i||y>top[i-1]);
   }),'El orden móvil coincide con la referencia.');
@@ -156,16 +171,34 @@ async function testBanks(browser,width){
   }),'La cabecera no debe duplicarse y el retorno usa divisores sin rellenos en PC.');
   if(mobile)assert.ok(await root.locator('.vBanks-mobile-tiles').evaluate(el=>{
    const cols=getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean);
-   return cols.length===2&&[...el.querySelectorAll('strong')].every(x=>getComputedStyle(x).whiteSpace==='nowrap');
+   return cols.length===2&&[...el.querySelectorAll('strong')].every(x=>getComputedStyle(x).textOverflow!=='ellipsis'&&x.scrollWidth<=x.clientWidth+1);
   }),'Los importes móviles deben ser legibles en un mosaico de dos columnas.');
-  if(evidence)await p.screenshot({path:path.join(evidence,`bancos-${width}.png`),fullPage:true,animations:'disabled'});
+  const checkUsage=async bankId=>{
+   const expected=await p.evaluate(bankId=>{
+    const t=window.__T,db=t.dbg(),cards=db.cards.filter(c=>!bankId||c.bankId===bankId),rate=db.settings.fx;
+    const debt=cards.reduce((s,c)=>s+t.cs(c.id,'DOP').debt+t.cs(c.id,'USD').debt*rate,0);
+    const limit=cards.reduce((s,c)=>s+c.limitDOP+c.limitUSD*rate,0);
+    return {debt,percent:limit>0?Math.max(0,debt/limit*100):null};
+   },bankId);
+   assert.equal(await root.locator('.vBanks-mobile-utilization strong').innerText(),expected.percent===null?'—':expected.percent.toFixed(1)+'%');
+   assert.equal(await money(root.locator('.vBanks-mobile-tiles [data-id="cards"] strong')),Math.round(expected.debt));
+   if(expected.percent!==null)assert.ok(await root.locator('.vBanks-mobile-utilization .vBanksPc-meter').evaluate((el,percent)=>Math.abs(el.firstElementChild.getBoundingClientRect().width/el.getBoundingClientRect().width*100-Math.min(100,percent))<.6,expected.percent));
+  };
+  const checkAmounts=()=>root.evaluate(el=>[...el.querySelectorAll('.vBanks-mobile-hero :is(dd,strong,.vBanks-limit-split), .vBanks-mobile-tiles strong, .vBanks-mobile-return strong, .vBanks-return-percent')].every(x=>{
+   const r=document.createRange();r.selectNodeContents(x);const a=x.getBoundingClientRect(),b=r.getBoundingClientRect();
+   return getComputedStyle(x).textOverflow!=='ellipsis'&&x.scrollWidth<=x.clientWidth+2&&b.right<=a.right+2&&b.left>=a.left-2;
+  }));
+  if(mobile){await checkUsage(null);assert.ok(await checkAmounts(),'Importes completos y visibles.');}
+  if(evidence)await p.screenshot({path:path.join(evidence,`bancos-${width}${theme==='black'?'-black':''}.png`),fullPage:true,animations:'disabled'});
   const usage=root.locator('.v1301-insight');
+  if(!mobile){
   assert.match(await usage.innerText(),/Alimentación/);
   assert.match(await usage.innerText(),/Transporte/);
   await usage.locator('summary').click();
   assert.equal(await usage.evaluate(el=>el.open),false);
   await usage.locator('summary').press('Enter');
   assert.equal(await usage.evaluate(el=>el.open),true);
+  }
   await choose('bank-a');
   const a=await view();
   if(!mobile){
@@ -179,11 +212,18 @@ async function testBanks(browser,width){
   }
   assert.equal(a[1],60000);
   assert.equal(a[0],100000-a[2]);
+  if(mobile){
+   assert.equal(await root.locator('.vBanks-mobile-hero dl dd').nth(2).innerText(),'RD$40,000');
+   await checkUsage('bank-a');
+   assert.deepEqual(await root.locator('.vBanks-return-main strong,.vBanks-return-percent,.vBanks-return-secondary strong').allTextContents(),['+RD$6,820.00','+151.6%','RD$4,500.00','RD$11,320.00']);
+   assert.equal(await root.locator('.vBanks-return-main.positive').count(),1);
+  }else{
   assert.equal(await root.locator('.vBanks-certificates dl dd').first().innerText(),'RD$40,000');
   assert.match(await usage.locator('.vBanksPc-consumption-amount').innerText(),/6,600/);
   assert.match(await usage.locator('.vBanksPc-consumption-amount small').innerText(),/800\.00.*100\.00/);
   assert.doesNotMatch(await usage.innerText(),/Transporte/);
   assert.deepEqual(await root.locator('.v371-return-tile strong').allTextContents(),['RD$4,500.00','RD$11,320.00','+RD$6,820.00','+151.6%']);
+  }
   if(!mobile){
    const selectCategory=key=>root.locator(`.vBanksPc-product-filter button[data-id="${key}"]`).click();
    const shown=()=>root.locator('.vBanksPc-lanes .vBanksPc-product').allTextContents();
@@ -231,6 +271,11 @@ async function testBanks(browser,width){
     assert.match(await p.locator('#annualFeeForm').innerText(),/Anualidad y seguros/);
     await p.keyboard.press('Escape');
   }
+  if(mobile){
+   await ledger.getByRole('button',{name:'Registrar anualidad y seguros'}).click();
+   await p.locator('#annualFeeForm').waitFor();
+   await p.keyboard.press('Escape');
+  }
 
   assert.equal(await ledger.locator('option[value="card-b"]').count(),0);
   await ledger.getByRole('button',{name:'Registrar beneficio'}).click();
@@ -269,7 +314,11 @@ async function testBanks(browser,width){
   const b=await view();
   assert.equal(b[1],60000);
   assert.equal(b[0],90000-b[2]);
-  assert.equal(await root.locator('.vBanks-certificates dl dd').nth(1).innerText(),'—');
+  if(mobile){
+   assert.equal(await root.locator('.vBanks-mobile-hero dl dd').nth(2).innerText(),'RD$30,000');
+   assert.equal(await root.locator('.vBanks-return-main.negative').count(),1);
+   await checkUsage('bank-b');
+  }else assert.equal(await root.locator('.vBanks-certificates dl dd').nth(1).innerText(),'—');
   const detail=await openProduct('loans','loan-b');
   await detail.getByRole('heading',{name:'Préstamo General',exact:true}).waitFor();
   if(!mobile){
@@ -284,6 +333,17 @@ async function testBanks(browser,width){
   const back=await view();
   assert.deepEqual(back,netTotal);
   assert.ok(netTotal.every((n,i)=>Math.abs(n-a[i]-b[i])<=1),'Consolidado igual a la suma de instituciones, con redondeo visual.');
+  if(mobile){
+   await p.evaluate(()=>{
+    const t=window.__T,db=t.dbg();db.accounts[0].opening=9876543210;db.cards[0].limitDOP=123456789;db.cards[0].openingDOP=234567890;t.inv();t.go('banks');
+   });
+   await checkUsage(null);
+   assert.ok(await checkFit()&&await checkAmounts(),'Los montos grandes no se cortan a '+width+'px.');
+   if(evidence)await p.screenshot({path:path.join(evidence,`bancos-importes-${width}-${theme}.png`),fullPage:true,animations:'disabled'});
+   await p.evaluate(()=>{const t=window.__T,db=t.dbg();db.cards.forEach(c=>{c.limitDOP=0;c.limitUSD=0});t.inv();t.go('banks');});
+   await checkUsage(null);
+   assert.equal(await root.locator('.vBanks-mobile-utilization .vBanksPc-meter i').count(),0);
+  }
   if(!mobile){
     await p.evaluate(()=>{
       const t=window.__T,db=t.dbg(),date=t.fn.today(),prior=t.fn.plusMonths(date,-1);
@@ -330,7 +390,8 @@ async function testPatrimony(browser,width){
 async function banksAndPatrimony(browser){
  if(evidence)fs.mkdirSync(evidence,{recursive:true});
  await inspectPrevious(browser);
- for(const width of [1672,1440,1280,1024,390,320])await testBanks(browser,width);
+ for(const width of [1672,1440,1280,1024,390,320,430])await testBanks(browser,width);
+ await testBanks(browser,390,'black');
  await testPatrimony(browser,1440);
  await testPatrimony(browser,390);
  console.log('Bancos PC y Patrimonio móvil/web validados con Playwright.');

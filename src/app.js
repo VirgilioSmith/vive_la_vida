@@ -1305,6 +1305,13 @@ function v371CardReturnWidget(c,consolidatedCards=null,bankView=false,walletPc=f
  const percentage=d.roi===null?'—':`${d.roi>0?'+':''}${new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(d.roi)}%`;
  const tone=d.missingRate||!d.hasAnnual?'':(d.net>0?'positive':d.net<0?'negative':'');
  const benefitId=consolidatedCards?'all':sanitize(c.id);
+ // El resumen móvil de Bancos tiene su propia jerarquía, sin alterar Wallet ni PC.
+ if(bankView&&isMobileViewport()&&ui.page==='banks')return `<section class="v371-card-return vBanks-mobile-return" aria-label="Beneficios y retorno">
+  <h2><button type="button" class="vBanksPc-benefits-link" data-v144-action="open-benefits" data-id="${benefitId}">${icon('gift2')}Beneficios y retorno ${icon('arrow')}</button></h2>
+  <div class="vBanks-return-main ${tone}"><div><small>Retorno neto</small><strong ${vBanksAmountSize(net)}>${net}</strong></div><span class="vBanks-return-percent">${percentage}</span></div>
+  <div class="vBanks-return-secondary"><div><small>Anualidad configurada</small><strong ${vBanksAmountSize(d.hasConfigured?money(d.configured,'DOP',2):'Sin definir')}>${d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'}</strong></div><div class="${d.benefit>0?'positive':''}"><small>Beneficios recibidos</small><strong ${vBanksAmountSize(benefit)}>${benefit}</strong></div></div>
+  <p class="v371-return-note">${d.missingRate?'Falta la tasa RD$/US$ para calcular el retorno.':!d.hasAnnual?'Configura la anualidad para calcular el retorno.':d.feeConfirmed?'Retorno sobre anualidades cobradas.':d.unconfigured?'Retorno sobre anualidades conocidas · '+d.unconfigured+' sin definir.':d.annual!==d.configured?'Retorno sobre anualidades cobradas o configuradas.':'Retorno estimado sobre anualidades configuradas.'}</p>
+ </section>`;
  const title=compact?`<h2><button type="button" class="vBanksPc-benefits-link" data-v144-action="open-benefits" data-id="${benefitId}">${icon('gift2')}Beneficios y retorno ${icon('arrow')}</button></h2>`:'<h2>Beneficios y retorno</h2>';
  return `<section class="v266-wallet-panel v371-card-return${walletPc?' vWalletPc-panel vWalletPc-return':''}" aria-label="Retorno anual de beneficios de ${sanitize(c.name)}">
  <div class="v371-return-heading"><div><span class="v266-overline">BENEFICIOS · ${d.year}</span>${title}</div>${compact?'':`<button type="button" class="v371-return-action" data-v144-action="open-benefits" data-id="${benefitId}" aria-label="Abrir beneficios de ${sanitize(c.name)}">${icon('arrow')}</button>`}</div>
@@ -1933,7 +1940,9 @@ function vBanksPicker(){
  const items=[{value:V_BANKS_ALL,name:'Todos los bancos',detail:'Vista consolidada',iconHtml:icon('layers'),amount:money(vBanksPosition(scope.groups).net)},...scope.institutions.map(b=>({
   value:b.id,name:b.name,detail:b.kind||'Banco',institutionLogo:bankLogoSafe(b.logo),amount:money(vBanksPosition(scope.byId.get(b.id)).net)
  }))];
+ if(isMobileViewport())items.push({value:'__banks_filters__',name:'Filtrar instituciones',detail:'Perfiles, tipos y visibilidad',iconHtml:icon('layers')});
  window.openItemPicker('Seleccionar institución',items,id=>{
+  if(id==='__banks_filters__'){ui.vBanksMobileFilters=!ui.vBanksMobileFilters;render();return;}
   vBanksSelect(id);render();document.querySelector('.vBanks-mobile-selector')?.focus({preventScroll:true});
  },scope.selected?.id||V_BANKS_ALL);
 }
@@ -1942,6 +1951,16 @@ function vBanksFlags(f){
 }
 function vBanksMeter(usage){
  return usage===null?'':`<span class="vBanksPc-meter" aria-hidden="true"><i style="--use:${Math.min(100,usage)}%"></i></span>`;
+}
+function vBanksAmountSize(value){return `style="--bank-chars:${String(value).length}"`;}
+function vBanksMobilePosition(f,prior){
+ const metrics=[['Fondos',f.funds,'coins2'],['Deudas totales',f.debt,'card'],['Inversiones',f.invested,'trending-up'],['Límite total',f.limit,'landmark']];
+ const change=vBanksChange(f.net,prior.net);
+ return `<section class="vBanks-mobile-hero" aria-label="Posición bancaria">
+  <div class="vBanks-mobile-net"><div><small>Patrimonio neto</small><strong ${vBanksAmountSize(money(f.net))}>${money(f.net)}</strong>${change||'<small class="vBanks-change-empty">Sin comparación mensual disponible</small>'}</div><span class="vBanks-net-art" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+  <dl>${metrics.map(([label,value,glyph],i)=>`<div><dt>${icon(glyph)}${label}</dt><dd ${vBanksAmountSize(money(value))}>${money(value)}</dd>${i===3?`<small class="vBanks-limit-split">${money(f.limits[0])} · ${money(f.limits[1],'USD')}</small>`:''}</div>`).join('')}</dl>
+  <div class="vBanks-mobile-utilization"><span>Utilización del crédito <strong>${vBanksFlags(f)}</strong></span>${f.usage===null?'<span class="vBanksPc-meter" aria-hidden="true"></span>':vBanksMeter(f.usage)}</div>
+ </section>`;
 }
 function vBanksChange(now,previous,isDebt=false){
  if(!Number.isFinite(previous)||Math.abs(previous)<.01)return '';
@@ -1973,17 +1992,20 @@ function vBanksPriorLimit(groups){
  }
  return known?vWalletPcEquivalent(dop,usd):null;
 }
-function vBanksCertificates(certificates,invested,bankId=null){
+function vBanksCertificateTotals(certificates,invested){
  const entries=certificates.map(c=>({c,p:certProjection(c)}));
  const estimated=entries.filter(({c})=>c.startDate&&c.maturityDate&&c.rate!=null&&c.rate!==''&&Number.isFinite(Number(c.rate)));
  const investedAtKnownRates=estimated.reduce((sum,{c,p})=>sum+fx(p.capital,c.currency),0);
  const yieldRate=investedAtKnownRates>0?estimated.reduce((sum,{c,p})=>sum+fx(p.capital,c.currency)*num(c.rate),0)/investedAtKnownRates:null;
- const totals=[
+ return [
   ['Total invertido',money(invested)],
   ['Tasa anual ponderada',yieldRate===null?'—':yieldRate.toFixed(2)+'%'],
   ['Intereses netos estimados',estimated.length?money(estimated.reduce((sum,{c,p})=>sum+fx(p.net,c.currency),0)):'—'],
   ['Intereses cobrados',entries.length?money(entries.reduce((sum,{c,p})=>sum+fx(p.collected,c.currency),0)):'—']
  ];
+}
+function vBanksCertificates(certificates,invested,bankId=null){
+ const totals=vBanksCertificateTotals(certificates,invested);
  return `<section class="vBanks-certificates"><header class="vBanks-certificates-head"><h2><button class="vBanksPc-benefits-link" type="button" data-act="banksPcProducts" data-id="certificates">${icon('layers')}Certificados financieros ${icon('arrow')}</button></h2><button type="button" class="btn ghost sm" data-act="addCertificate"${bankId?` data-id="${sanitize(bankId)}"`:''} aria-label="Añadir certificado">${icon('plus')}</button></header>
  <dl>${totals.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>
  ${certificates.length?'<p>Estimación neta al vencimiento. Los cobros corresponden a movimientos registrados.</p>':'<p>Sin certificados registrados en esta selección.</p>'}</section>`;
@@ -2010,7 +2032,8 @@ function vBanksProductRows(key,items,bankId,total=items.length){
   }
   return `<button type="button" class="vBanksPc-product" data-act="banksOpenProduct" data-kind="${key}" data-id="${sanitize(item.id)}"><span class="vBanksPc-product-mark">${mark}</span><span><strong>${sanitize(item.name)}</strong><small>${note}</small>${meter}</span><b>${value}</b>${icon('arrow')}</button>`;
  }).join('');
- return `<section class="vBanksPc-lane"><header><h3>${icon(glyph)} ${key==='cards'?'Tarjetas de crédito':label} (${total})</h3><button type="button" class="btn ghost sm" data-act="${add}"${bankId?` data-id="${sanitize(bankId)}"`:''} aria-label="Añadir en ${label.toLowerCase()}">${icon('plus')}</button></header>${rows||'<p class="vBanksPc-empty">Sin productos registrados.</p>'}</section>`;
+ const certificateTotals=isMobileViewport()&&key==='certificates'&&items.length?`<dl class="vBanks-mobile-certificate-totals">${vBanksCertificateTotals(items,items.reduce((s,c)=>s+fx(certificateCapital(c),c.currency),0)).map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>`:'';
+ return `<section class="vBanksPc-lane"><header><h3>${icon(glyph)} ${key==='cards'?'Tarjetas de crédito':label} (${total})</h3><button type="button" class="btn ghost sm" data-act="${add}"${bankId?` data-id="${sanitize(bankId)}"`:''} aria-label="Añadir en ${label.toLowerCase()}">${icon('plus')}</button></header>${certificateTotals}${rows||'<p class="vBanksPc-empty">Sin productos registrados.</p>'}</section>`;
 }
 function vBanksOpenDetail(groups){
  const detail=ui.vBanksProductDetail;
@@ -2085,7 +2108,7 @@ function vBanksProducts(groups,bankId,f,mobile){
   .map(([key])=>vBanksProductRows(key,groups[key],bankId)).join('');
  const values={accounts:f.funds,cards:f.cardDebt,loans:f.loanDebt,certificates:f.invested};
  return `<section class="vBanks-mobile-products"><h2><button class="vBanksPc-benefits-link" type="button" data-act="banksMobileProducts" aria-expanded="${!!ui.vBanksMobileProducts}">${icon('layers')}Mis productos ${icon('arrow')}</button></h2>
-  <div class="vBanks-mobile-tiles">${V_BANKS_GROUPS.map(([key,label,glyph])=>`<button type="button" data-act="banksPcProducts" data-id="${key}" aria-pressed="${!!ui.vBanksMobileProducts&&current===key}">${icon(glyph)}<small>${groups[key].length}</small><span>${label}</span><strong>${money(values[key])}</strong></button>`).join('')}</div></section>
+  <div class="vBanks-mobile-tiles">${V_BANKS_GROUPS.map(([key,label,glyph])=>`<button type="button" data-act="banksPcProducts" data-id="${key}" aria-pressed="${!!ui.vBanksMobileProducts&&current===key}">${icon(glyph)}<small aria-label="${groups[key].length} productos">${groups[key].length}</small><span>${label}</span><strong ${vBanksAmountSize(money(values[key]))}>${money(values[key])}</strong></button>`).join('')}</div></section>
   ${ui.vBanksMobileProducts?lanes:''}`;
 }
 function vBanksDashboard(){
@@ -2113,22 +2136,20 @@ function vBanksDashboard(){
  const totals=`<dl class="vBanksPc-bank-totals"><div><dt>Fondos</dt><dd>${money(f.funds)}</dd></div><div><dt>Deudas</dt><dd>${money(f.debt)}</dd></div><div><dt>Posición neta</dt><dd class="${f.net<0?'negative':'positive'}">${f.net>0?'+':''}${money(f.net)}</dd></div></dl>`;
  // Contexto de crédito únicamente en el resumen PC; los indicadores originales se conservan arriba.
  const creditContext=!mobile&&active.cards.length?`<p class="vBanksPc-credit-context"><span>Límite ${money(f.limit)}</span><span>Utilización ${vBanksFlags(f)}</span></p>`:'';
- const insights=`<aside class="vBanksPc-insights" aria-label="Detalle financiero">
+ const insights=mobile?v371CardReturnWidget(activeCard||selected||{name:'Todos los bancos'},activeCard?null:active.cards,true):`<aside class="vBanksPc-insights" aria-label="Detalle financiero">
  ${active.cards.length?v371CardReturnWidget(activeCard||selected||{name:'Todos los bancos'},activeCard?null:active.cards,true):'<section class="vBanks-certificates"><h2>Beneficios y retorno</h2><p>Sin tarjetas registradas en esta selección.</p></section>'}
- ${!mobile?vBanksCertificates(active.certificates,f.invested,selected?.id):''}
+ ${vBanksCertificates(active.certificates,f.invested,selected?.id)}
  ${vBanksPcCardConsumption(activeCard?[activeCard]:active.cards,mobile)}
- ${mobile?vBanksCertificates(active.certificates,f.invested,selected?.id):''}
  </aside>`;
- const ledger=ui.vBanksPcBenefits&&active.cards.length?vBanksPcBenefits(active.cards):'';
+ const ledger=ui.vBanksPcBenefits&&(mobile||active.cards.length)?vBanksPcBenefits(active.cards):'';
  const products=vBanksProducts(active,bankId,f,mobile);
  const history=selected&&ui.bankHistory===selected.id?v1264BankHistory(selected):'';
  const nonbank=selected&&!v40IsFinancial(selected)?v40NonbankDetail(selected):'';
  if(mobile)return `<div class="vBanksPc vBanks-mobile">
   <header class="vBanks-mobile-head"><span>BANCOS</span><h1>Tu posición bancaria</h1><p>Todos tus productos, en una sola vista.</p><button type="button" class="btn ghost sm" data-act="addBank" aria-label="Agregar institución">${icon('plus')}</button></header>
-  <button type="button" class="vBanks-mobile-selector" data-act="banksPicker" aria-haspopup="dialog">${logo}<span><strong>${name}</strong><small>${info}</small></span>${icon('chevron-down')}</button>
-  <div class="vBanks-mobile-tools">${filters}${controls}</div>
-  <section class="vBanks-mobile-hero" aria-label="Posición bancaria"><div class="vBanks-mobile-net"><div><small>Patrimonio neto</small><strong>${money(f.net)}</strong>${vBanksChange(f.net,prior.net)}</div><div><small>Utilización</small><strong>${vBanksFlags(f)}</strong>${vBanksMeter(f.usage)}</div></div>
-  <dl>${financial.slice(1).map(([label,value,glyph,previous],i)=>`<div><dt>${icon(glyph)}${label}</dt><dd>${money(value)}</dd>${i===2?`<small>${vWalletPcSplit(...f.limits,0)}</small>`:vBanksChange(value,previous,i===1)}</div>`).join('')}</dl></section>
+  <button type="button" class="vBanks-mobile-selector" data-act="banksPicker" aria-haspopup="dialog">${logo}<span><strong>${name}</strong><small>${selected?info:`${institutions.length} ${institutions.length===1?'institución':'instituciones'}`}</small></span>${icon('chevron-down')}</button>
+  ${ui.vBanksMobileFilters||v42InstitutionFilter!=='all'||v61InstitutionProfile!=='all'||controls?`<div class="vBanks-mobile-tools">${filters}${controls}</div>`:''}
+  ${vBanksMobilePosition(f,prior)}
   ${products}${history}${nonbank}${insights}${ledger}
  </div>`;
  return `<div class="vBanksPc">
@@ -7204,7 +7225,7 @@ case 'banksPcProducts':
   break;
  }
  ui.vBanksPcProduct=id;ui.vBanksProductDetail=null;ui.vBanksMobileProducts=true;render();
- if(el.closest('.vBanks-certificates'))document.querySelector('.vBanksPc-lane')?.scrollIntoView({block:'nearest'});
+ document.querySelector('.vBanks-mobile .vBanksPc-lane')?.scrollIntoView({block:'nearest'});
  break;
 case 'banksDesktopBack':{
  const previous=ui.vBanksDesktopSection;
@@ -12958,7 +12979,7 @@ function v389BenefitsKPIsUnused(cards){
 
 /* Selector PC de anualidad: reutiliza annualFeeForm sin duplicar lógica ni afectar móvil. */
 function vBanksAnnualBenefitsAction(cards,hero=false){
- if(isMobileViewport()||!cards.length)return '';
+ if((isMobileViewport()&&ui.page!=='banks')||!cards.length)return '';
  const style=hero?'btn light':'v187-benefits-add';
  const item=(c)=>'<button type="button" data-act="annualFee" data-id="'+sanitize(c.id)+'">'+sanitize(c.name)+(c.last4?' · •••• '+sanitize(c.last4):'')+'</button>';
  if(cards.length===1)return '<button type="button" class="'+style+'" data-act="annualFee" data-id="'+sanitize(cards[0].id)+'">'+icon('receipt')+' Registrar anualidad y seguros</button>';
