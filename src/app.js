@@ -1883,7 +1883,9 @@ function vBanksPosition(groups){
 }
 function vBanksSelect(id){
  ui.bankId=id===V_BANKS_ALL?null:id;
- ui.vBanksPcProduct='all';
+ // Solo Bancos PC: institución y categoría son filtros independientes.
+ // En móvil se conserva íntegramente el comportamiento existente.
+ if(isMobileViewport()||!['all',...V_BANKS_GROUPS.map(([key])=>key)].includes(ui.vBanksPcProduct))ui.vBanksPcProduct='all';
  ui.vBanksDesktopSection=null;
  ui.vBanksProductDetail=null;
  ui.vBanksPcBenefits=false;
@@ -1997,9 +1999,16 @@ function vBanksOpenDesktopProduct(kind,id){
 }
 function vBanksProducts(groups,bankId,f,mobile){
  if(!mobile){
-  const links=V_BANKS_GROUPS.map(([key,label,glyph])=>`<button type="button" data-act="banksPcProducts" data-id="${key}">${icon(glyph)} ${label} (${groups[key].length})</button>`).join('');
-  const featured=groups.cards.length?'cards':groups.accounts.length?'accounts':groups.loans.length?'loans':'certificates';
-  return `<nav class="vBanksPc-product-filter" aria-label="Productos bancarios">${links}</nav>${vBanksProductRows(featured,groups[featured].slice(0,3),bankId,groups[featured].length)}`;
+  const current=['all',...V_BANKS_GROUPS.map(([key])=>key)].includes(ui.vBanksPcProduct)?ui.vBanksPcProduct:'all';
+  const total=V_BANKS_GROUPS.reduce((count,[key])=>count+groups[key].length,0);
+  const filters=[['all','Productos','layers',total],...V_BANKS_GROUPS.map(([key,label,glyph])=>[key,label,glyph,groups[key].length])];
+  const links=filters.map(([key,label,glyph,count])=>`<button type="button" data-act="banksPcProducts" data-id="${key}" aria-pressed="${current===key}" class="${current===key?'is-active':''}">${icon(glyph)}<span>${label}</span><small>${count}</small></button>`).join('');
+  // Productos consolida todo, sin navegar a otra página ni ocultar categorías.
+  const kinds=current==='all'?['cards','accounts','loans','certificates']: [current];
+  const present=current==='all'?kinds.filter(key=>groups[key].length):kinds;
+  const lanes=present.length?present.map(key=>vBanksProductRows(key,groups[key],bankId)).join(''):
+   `<section class="vBanksPc-lane" aria-live="polite"><p class="vBanksPc-empty">No hay productos registrados en esta selección. Puedes crear uno desde el botón + de la categoría correspondiente.</p></section>`;
+  return `<nav class="vBanksPc-product-filter" aria-label="Tipos de productos bancarios">${links}</nav><div class="vBanksPc-lanes" aria-live="polite">${lanes}</div>`;
  }
  const detail=vBanksOpenDetail(groups);
  if(detail)return detail;
@@ -2025,7 +2034,7 @@ function vBanksDashboard(){
  const info=selected?sanitize(selected.kind||'Banco'):`Vista consolidada · ${institutions.length} ${institutions.length===1?'institución':'instituciones'}`;
  const logo=selected?bankLogoMark(selected,'institution-logo'):`<span class="vBanks-consolidated-mark">${icon('layers')}</span>`;
  const filters=`<details class="vBanksPc-filters"${v42InstitutionFilter!=='all'||v61InstitutionProfile!=='all'?' open':''}><summary>Filtrar instituciones</summary>${v61ProfileSwitch(db.banks.filter(x=>ui.showHidden||!isHidden(x)))}<div class="v42-filters">${[['all','Todas'],['financial','Bancos'],['nonbank','No bancarias']].map(([key,label])=>`<button type="button" data-v42-filter="${key}" aria-pressed="${v42InstitutionFilter===key}">${label}</button>`).join('')}</div>${visibilityControl()}</details>`;
- const options=[{id:V_BANKS_ALL,name:'Todos los bancos',mark:`<span class="vBanks-consolidated-mark">${icon('layers')}</span>`,note:'Vista consolidada',net:all.net},...institutions.map(b=>{
+ const options=[{id:V_BANKS_ALL,name:mobile?'Todos los bancos':'Todos (Consolidado)',mark:`<span class="vBanks-consolidated-mark">${icon('layers')}</span>`,note:'Vista consolidada',net:all.net},...institutions.map(b=>{
   const items=byId.get(b.id),n=Object.values(items).reduce((sum, list)=>sum+list.length,0);
   return {id:b.id,name:b.name,mark:bankLogoMark(b,'institution-logo'),note:`${n} ${n===1?'producto':'productos'}${b.archived?' · Archivada':''}`,net:vBanksPosition(items).net};
  })];
@@ -2035,6 +2044,8 @@ function vBanksDashboard(){
  const activeCard=detail?.kind==='cards'?active.cards.find(c=>c.id===detail.id):null;
  const financial=[['Patrimonio neto',f.net,'wallet',prior.net],['Fondos',f.funds,'coins2',prior.funds],['Deudas totales',f.debt,'card',prior.debt],['Límite total',f.limit,'landmark',null]];
  const totals=`<dl class="vBanksPc-bank-totals"><div><dt>Fondos</dt><dd>${money(f.funds)}</dd></div><div><dt>Deudas</dt><dd>${money(f.debt)}</dd></div><div><dt>Posición neta</dt><dd class="${f.net<0?'negative':'positive'}">${f.net>0?'+':''}${money(f.net)}</dd></div></dl>`;
+ // Contexto de crédito únicamente en el resumen PC; los indicadores originales se conservan arriba.
+ const creditContext=!mobile&&active.cards.length?`<p class="vBanksPc-credit-context"><span>Límite ${money(f.limit)}</span><span>Utilización ${vBanksFlags(f)}</span></p>`:'';
  const insights=`<aside class="vBanksPc-insights" aria-label="Detalle financiero">
  ${active.cards.length?v371CardReturnWidget(activeCard||selected||{name:'Todos los bancos'},activeCard?null:active.cards,true):'<section class="vBanks-certificates"><h2>Beneficios y retorno</h2><p>Sin tarjetas registradas en esta selección.</p></section>'}
  ${!mobile?vBanksCertificates(active.certificates,f.invested,selected?.id):''}
@@ -2057,7 +2068,7 @@ function vBanksDashboard(){
  <div class="vBanksPc-metrics" aria-label="Situación bancaria">${financial.map(([label,value,glyph,previous],i)=>`<div class="vBanksPc-metric"><span class="vBanksPc-stat-icon">${icon(glyph)}</span><div><span>${label}</span><strong>${money(value)}</strong>${i===3?`<small>${vWalletPcSplit(...f.limits,0)}</small>`:vBanksChange(value,previous,i===2)}</div></div>`).join('')}</div>
  <div class="vBanksPc-grid" aria-label="Instituciones y sus productos">
   <aside class="vBanksPc-bank-list" aria-label="Seleccionar institución"><header><h2>Mis bancos <small>(${institutions.length})</small></h2><button type="button" class="btn ghost sm" data-act="addBank" aria-label="Agregar institución">${icon('plus')}</button></header><div class="vBanksPc-bank-options">${options.map(x=>`<button type="button" class="vBanksPc-bank${(bankId||V_BANKS_ALL)===x.id?' is-selected':''}" data-act="bankDetails" data-id="${sanitize(x.id)}" aria-pressed="${(bankId||V_BANKS_ALL)===x.id}">${x.mark}<span><strong>${sanitize(x.name)}</strong><small>${sanitize(x.note)}</small></span><b class="${x.net>0?'positive':''}">${x.net>0?'+':''}${money(x.net)}</b>${icon('arrow')}</button>`).join('')}</div>${filters}</aside>
-  <div class="vBanksPc-center"><section class="vBanksPc-institution"><div class="vBanksPc-institution-summary"><header class="vBanksPc-institution-head"><div>${logo}<div><h2>${name}</h2><p>${info}</p></div></div>${controls}</header>${totals}</div>${products}${history}${nonbank}</section></div>
+  <div class="vBanksPc-center"><section class="vBanksPc-institution"><div class="vBanksPc-institution-summary"><header class="vBanksPc-institution-head"><div>${logo}<div><h2>${name}</h2><p>${info}</p></div></div>${controls}</header>${totals}${creditContext}</div>${products}${history}${nonbank}</section></div>
   ${insights}
  </div></div>`;
 }
@@ -7081,7 +7092,7 @@ case 'pendingConfirm':openPendingOperation(id);break;
   ui.page=id==='kpis'?'overview':id==='transactions'?'register':['projection','vision','payments'].includes(id)?'patrimony':id;
   if(id==='accounts')ui.accountId=null;if(id==='loans')ui.loanId=null;if(id==='cards'){ui.cardId=null;ui.cardDetailTab='status'} // volver a la lista al entrar desde el menú
   if(ui.page==='register')ui.movementTab='all'; // Movimientos conserva su historial; el botón Registrar abre el asistente.
-  if(ui.page==='banks')vBanksSelect(V_BANKS_ALL);
+  if(ui.page==='banks'){ui.vBanksPcProduct='all';vBanksSelect(V_BANKS_ALL);}
  if(ui.page==='income')ui.innerViews.income='overview';
  if(id==='projection')ui.projectionMenu=false;
  ui.quickCommitment=null;ui.mobile=false;
@@ -7117,10 +7128,12 @@ case 'banksMobileProducts':
  ui.vBanksMobileProducts=!ui.vBanksMobileProducts;ui.vBanksPcProduct='all';render();break;
 case 'banksPcProducts':
  if(!isMobileViewport()){
-  ui.vBanksDesktopSection=id;ui.vBanksProductDetail=null;ui.vBanksPcBenefits=false;
-  ui.vWalletPcCard=null;ui.vWalletPcConsumption=null;
-  render();window.scrollTo(0,0);
-  document.querySelector('.vBanksPc-workspace-head')?.focus({preventScroll:true});
+  if(!['all',...V_BANKS_GROUPS.map(([key])=>key)].includes(id))break;
+  ui.vBanksPcProduct=id;
+  ui.vBanksDesktopSection=null;ui.vBanksProductDetail=null;ui.vBanksPcBenefits=false;
+  render();
+  document.querySelector('.vBanksPc-center')?.scrollTo({top:0,behavior:'instant'});
+  document.querySelector(`.vBanksPc-product-filter [data-id="${CSS.escape(id)}"]`)?.focus({preventScroll:true});
   break;
  }
  ui.vBanksPcProduct=id;ui.vBanksProductDetail=null;ui.vBanksMobileProducts=true;render();
