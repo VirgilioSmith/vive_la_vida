@@ -1601,7 +1601,7 @@ function vWalletPcFitMoney(){
   let measured=el.scrollWidth;
   if(measured<=width+1)continue;
   // Una reducción proporcional evita truncamiento y no cambia el dato original.
-  const floor=txt.includes('RD$')||txt.includes('US$')?12:13;
+  const floor=el.closest('.vWalletPc-return')?10.5:(txt.includes('RD$')||txt.includes('US$')?12:13);
   let size=Math.max(floor,Math.min(original,original*(width-3)/measured));
   el.style.setProperty('font-size',size.toFixed(2)+'px','important');
   measured=el.scrollWidth;

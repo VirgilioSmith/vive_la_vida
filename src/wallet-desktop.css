@@ -385,3 +385,56 @@
    grid-column:3;grid-row:1;min-width:0;justify-self:end;
  }
 }
+
+/* Wallet PC · Separación real de cifras y ritmo vertical aprobado. */
+@media (min-width:791px){
+ html body #app#app main.vWalletPc-world .vWalletPc-right{
+   gap:clamp(12px,1vw,18px);
+   align-content:start;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return{
+   min-width:0;overflow:visible;
+   padding:clamp(12px,.95vw,17px)!important;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-values{
+   display:grid!important;
+   grid-template-columns:minmax(0,1.17fr) minmax(0,.96fr) minmax(0,1.2fr) minmax(0,.82fr)!important;
+   column-gap:clamp(5px,.53vw,9px)!important;
+   align-items:start;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile{
+   min-width:0;padding:3px 2px!important;
+   border-left:0!important;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile + .v371-return-tile{
+   border-left:1px solid var(--wallet-line)!important;
+   padding-left:clamp(5px,.55vw,10px)!important;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile small{
+   font-size:clamp(9px,.68vw,11px)!important;
+   line-height:1.22!important;letter-spacing:-.01em;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile strong{
+   font-size:clamp(11px,.75vw,13px)!important;
+   line-height:1.22;letter-spacing:-.025em;
+   white-space:nowrap!important;max-width:100%;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-note{
+   margin-top:11px!important;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-cuts{
+   margin-top:clamp(5px,.5vw,9px);
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-consumption{
+   margin-top:clamp(12px,1.2vw,22px);
+ }
+}
+@media (min-width:791px) and (max-width:1180px){
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-values{
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   row-gap:10px!important;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile:nth-child(3){
+   border-left:0!important;padding-left:2px!important;
+ }
+}
