@@ -88,3 +88,11 @@ html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-dialog>.v266
  .v-reconcile-account{min-height:63px;padding:8px 12px}.v-reconcile-logo{width:47px!important;height:47px!important;flex-basis:47px}
  .v-reconcile-recorded{padding:8px 12px}.v-reconcile-preview{padding:9px 12px;gap:8px}.v-reconcile-submit{margin-top:2px;min-height:45px}
 }
+
+/* Selector de moneda únicamente al conciliar una tarjeta en móvil. */
+.v-reconcile-currencies[hidden]{display:none!important}
+.v-reconcile-currencies{display:flex;gap:8px}
+.v-reconcile-currencies button{flex:1;min-width:0;min-height:39px;border:1px solid var(--recon-border);border-radius:13px;background:#fff;color:var(--recon-muted);font-size:13px;font-weight:650;cursor:pointer}
+.v-reconcile-currencies button[aria-pressed="true"]{color:var(--recon-accent);border-color:var(--recon-accent);background:rgba(0,108,104,.065)}
+.v-reconcile-card-logo .credit-network{max-width:100%;font-size:12px}
+.v-reconcile-card-logo .network-circles svg{max-width:32px}

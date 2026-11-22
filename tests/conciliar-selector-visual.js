@@ -42,45 +42,56 @@ async function run() {
   await launch.first().click();
 
   const accountForm = page.locator('#vReconcileForm');
-  const picker = page.locator('.v-reconcile-account-picker');
-  console.log('2. Abrir selector y comprobar Cuentas / Tarjetas');
+  const picker = page.locator('.v789-product-backdrop:visible');
+  console.log('2. Abrir selector universal y comprobar buscador y filtros');
   await accountForm.locator('.v-reconcile-account').click();
+  await picker.locator('.v789-picker-search').waitFor();
   assert.equal(await picker.getByRole('button', { name: 'Cuentas', exact: true }).getAttribute('aria-pressed'), 'true');
   await picker.getByRole('button', { name: 'Tarjetas', exact: true }).waitFor();
+  await picker.locator('.v789-picker-search').fill('Cuenta de prueba');
   const bankRow = picker.locator('[data-value=test-account]');
   await bankRow.locator('img').waitFor();
   assert.match(await bankRow.innerText(), /Banco de prueba.*USD/s);
   await shot(page, '01-cuentas');
 
-  console.log('3. Seleccionar cuenta y comprobar nombre y moneda');
+  console.log('3. Seleccionar cuenta y regresar al formulario de conciliación');
   await bankRow.click();
+  await picker.locator('.v789-picker-confirm').click();
   assert.match(await accountForm.locator('.v-reconcile-account').innerText(), /Cuenta de prueba USD/);
   assert.equal(await accountForm.locator('[data-reconcile=symbol]').innerText(), 'US$');
+  assert.equal(await page.locator('#transactionForm').count(), 0);
   await shot(page, '02-cuenta-seleccionada');
 
-  console.log('4. Cambiar a Tarjetas y comprobar Visa, terminación y moneda');
+  console.log('4. Cambiar a Tarjetas, con buscador y marca Visa');
   await accountForm.locator('.v-reconcile-account').click();
   await picker.getByRole('button', { name: 'Tarjetas', exact: true }).click();
+  await picker.locator('.v789-picker-search').fill('Visa de prueba');
   const cardRow = picker.locator('[data-value="card:test-card"]');
   await cardRow.locator('.v869-visa').waitFor();
   assert.match(await cardRow.innerText(), /2468.*RD\$/s);
   assert.equal(await bankRow.isVisible(), false);
   await shot(page, '03-tarjetas');
 
-  console.log('5. Seleccionar tarjeta y comprobar el formulario');
+  console.log('5. Seleccionar tarjeta sin abrir el formulario antiguo');
   await cardRow.click();
-  const cardForm = page.locator('#transactionForm');
-  assert.equal(await cardForm.locator('[name=accountId]').inputValue(), 'card:test-card');
-  assert.equal(await cardForm.locator('[name=currency]').inputValue(), 'DOP');
-  await cardForm.locator('.v789-select-open').filter({ hasText: 'Visa de prueba' }).waitFor();
+  await picker.locator('.v789-picker-confirm').click();
+  assert.equal(await page.locator('#transactionForm').count(), 0);
+  assert.equal(await accountForm.count(), 1);
+  assert.match(await accountForm.locator('.v-reconcile-account').innerText(), /Visa de prueba/);
+  assert.equal(await accountForm.locator('[data-reconcile=symbol]').innerText(), 'RD$');
+  await accountForm.locator('[name=observed]').fill('1250.75');
+  assert.equal(await accountForm.locator('[data-reconcile=after]').innerText(), 'RD$1,250.75');
   await shot(page, '04-tarjeta-seleccionada');
 
-  console.log('6. Volver a Cuentas desde la tarjeta');
-  await cardForm.locator('.v789-select-open').filter({ hasText: 'Visa de prueba' }).click();
+  console.log('6. Regresar de Tarjetas a Cuentas dentro del mismo formulario');
+  await accountForm.locator('.v-reconcile-account').click();
   assert.equal(await picker.getByRole('button', { name: 'Tarjetas', exact: true }).getAttribute('aria-pressed'), 'true');
   await picker.getByRole('button', { name: 'Cuentas', exact: true }).click();
+  await picker.locator('.v789-picker-search').fill('Cuenta de prueba');
   await bankRow.click();
+  await picker.locator('.v789-picker-confirm').click();
   assert.match(await accountForm.locator('.v-reconcile-account').innerText(), /Cuenta de prueba USD/);
+  assert.equal(await accountForm.locator('[name=observed]').inputValue(), '');
   console.log('Recorrido aprobado. No se confirmó ningún ajuste.');
   if (process.env.CI) await page.waitForTimeout(1000);
   else {

@@ -5903,7 +5903,7 @@ document.addEventListener('input',e=>{const f=e.target.form;if(f?.id==='transact
 
 function transactionForm(partial={},editId=null){
  const t=partial?.type||'expense';
- if(t==='adjustment'&&!String(partial.accountId||'').startsWith('card:')&&(!partial.cardId||partial.accountId))return vReconcileAccountForm(partial,editId);
+ if(t==='adjustment'&&(!String(partial.accountId||'').startsWith('card:')&&(!partial.cardId||partial.accountId)||isMobileViewport()&&!editId))return vReconcileAccountForm(partial,editId);
  if((t==='card_charge'&&['annual_fee','interest','commission'].includes(partial?.chargeKind))||(t==='income'&&partial?.certificateId))return legacyTransactionForm(partial,editId);
  if(['income','expense','card_charge','card_payment','transfer'].includes(t))return guidedTransactionForm({...partial,flowMode:partial.flowMode||({income:'income',expense:'spend',card_charge:'spend',card_payment:'cardpay',transfer:'own'}[t])},editId);
  return legacyTransactionForm(partial,editId);
@@ -5919,7 +5919,21 @@ function vReconcileCents(value){
  const cents=(Number(whole)*100+Number(decimal.padEnd(2,'0')))*(s.startsWith('-')?-1:1);
  return Number.isSafeInteger(cents)&&Math.abs(cents)<=MAX_MONEY*100?cents:null;
 }
-function vReconcileQuote(a,date,observed,previous=null){
+function vReconcileQuote(a,date,observed,previous=null,cardCurrency=''){
+ const credit=typeof a==='string'?adjustmentCard(a):null;
+ if(credit){
+  if(isHidden(credit)||!adjustmentCurrencies(credit).includes(cardCurrency))throw Error('Selecciona una tarjeta y moneda activas.');
+  // El motor expone el saldo actual de la tarjeta, no un saldo histórico.
+  if(date!==today()||(credit.opened&&date<credit.opened))throw Error('La conciliación de tarjeta utiliza el saldo de hoy.');
+  v99Invalidate();
+  const excluded=previous?.cardId===credit.id&&previous.currency===cardCurrency?Math.round(Number(previous.amount)*100):0;
+  const before=Math.round(adjustmentCardBalance(credit,cardCurrency)*100)-excluded;
+  const target=vReconcileCents(observed);
+  if(target===null)throw Error('Introduce un saldo válido con hasta dos decimales.');
+  const delta=target-before;
+  if(!Number.isSafeInteger(delta)||Math.abs(delta)>MAX_MONEY*100)throw Error('La diferencia supera el importe permitido.');
+  return {before,target,delta,currency:cardCurrency};
+ }
  if(!a||isHidden(a)||!['DOP','USD'].includes(a.currency))throw Error('Selecciona una cuenta activa.');
  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!a.opened||date<a.opened||date>today())throw Error('Selecciona una fecha entre la apertura de la cuenta y hoy.');
  v99Invalidate();
@@ -5935,37 +5949,45 @@ function vReconcileAccountForm(partial={},editId=null){
  const previous=editId?db.transactions.find(t=>t.id===editId&&t.type==='adjustment'&&t.accountId):null;
  if(editId&&!previous)return toast('No se encontró la conciliación.');
  const active=()=>db.accounts.filter(a=>!isHidden(a)&&['DOP','USD'].includes(a.currency));
- let selected=active().find(a=>a.id===(previous?.accountId||partial.accountId))?.id||active()[0]?.id||'';
+ let selected=isMobileViewport()&&adjustmentCard(partial.accountId)&&!isHidden(adjustmentCard(partial.accountId))?partial.accountId:(active().find(a=>a.id===(previous?.accountId||partial.accountId))?.id||active()[0]?.id||'');
+ let cardCurrency=adjustmentCard(selected)?adjustmentCurrencies(adjustmentCard(selected))[0]:'DOP';
  let reason=vReconcileReasons.includes(previous?.note)?previous.note:vReconcileReasons[0];
  const date=previous?.date||partial.date||today();
  const root=document.getElementById('modal-root');
  root.innerHTML=`<div class="modal-layer v-reconcile-layer" data-backdrop="true"><section class="v-reconcile-dialog" role="dialog" aria-modal="true" aria-label="Conciliar un saldo">
  <form id="vReconcileForm" novalidate><header class="v-reconcile-head"><button type="button" class="v-reconcile-back" aria-label="Volver">←</button><h2>${editId?'Editar conciliación':'Conciliar un saldo'}</h2></header>
  <button type="button" class="v-reconcile-account" aria-haspopup="dialog" aria-label="Seleccionar cuenta o tarjeta"></button>
+ <div class="v-reconcile-currencies" role="group" aria-label="Moneda de la tarjeta" hidden></div>
  <section class="v-reconcile-recorded"><small>Saldo registrado en Vive</small><strong data-reconcile="registered">—</strong></section>
  <section class="v-reconcile-observed"><label for="vReconcileObserved">Saldo que visualizas</label><div class="v-reconcile-input"><span data-reconcile="symbol">RD$</span><div class="v-reconcile-number"><span data-reconcile="formatted" aria-hidden="true">0.00</span><input id="vReconcileObserved" name="observed" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-label="Saldo real observado"></div></div><small>${icon('edit')} Ingresa el saldo real de tu cuenta en esa fecha</small></section>
  <div class="v-reconcile-fields"><label class="v-reconcile-date"><span>${icon('calendar')}</span><div><small>Fecha de operación</small><strong data-reconcile="date-text"></strong><input name="date" type="date" value="${sanitize(date)}" max="${today()}" aria-label="Fecha de operación"></div></label>
  <button type="button" class="v-reconcile-reason" aria-haspopup="dialog"><span>${icon('receipt')}</span><div><small>Motivo del ajuste</small><strong></strong></div><b>›</b></button></div>
  <section class="v-reconcile-preview" aria-live="polite"><h3>${icon('chart')} Vista previa del ajuste</h3><div class="v-reconcile-balances"><div><small>Antes</small><strong data-reconcile="before">—</strong></div><span>→</span><div><small>Después</small><strong data-reconcile="after">—</strong></div></div><div class="v-reconcile-delta"><span>Ajuste automático</span><strong data-reconcile="delta">—</strong></div><small>No modifica tus ingresos ni gastos ordinarios.</small></section>
  <p class="v-reconcile-error" role="alert" hidden></p><button type="submit" class="v-reconcile-submit">${icon('check')} ${editId?'Guardar conciliación':'Confirmar conciliación'}</button></form></section></div>`;
- const form=root.querySelector('#vReconcileForm'),observed=form.elements.observed,when=form.elements.date,accountButton=form.querySelector('.v-reconcile-account'),reasonButton=form.querySelector('.v-reconcile-reason'),submit=form.querySelector('.v-reconcile-submit'),error=form.querySelector('.v-reconcile-error');
+ const form=root.querySelector('#vReconcileForm'),observed=form.elements.observed,when=form.elements.date,accountButton=form.querySelector('.v-reconcile-account'),currencyPicker=form.querySelector('.v-reconcile-currencies'),reasonButton=form.querySelector('.v-reconcile-reason'),submit=form.querySelector('.v-reconcile-submit'),error=form.querySelector('.v-reconcile-error');
  let busy=false,shown=null;
  function message(s=''){error.textContent=s;error.hidden=!s}
  const cash=(n,c)=>money(n/100,c,2);
  function refresh(){
-  const a=account(selected),old=editId?db.transactions.find(t=>t.id===editId):null,c=a?.currency||'DOP';
-  const logo=a?(bank(a.bankId)&&a.kind!=='cash'?bankLogoMark(bank(a.bankId),'v-reconcile-logo'):`<span class="v-reconcile-logo">${icon(a.kind==='cash'?'wallet':'building')}</span>`):'';
+  const credit=adjustmentCard(selected),a=credit||account(selected),old=editId?db.transactions.find(t=>t.id===editId):null;
+  if(credit&&!adjustmentCurrencies(credit).includes(cardCurrency))cardCurrency=adjustmentCurrencies(credit)[0];
+  const c=credit?cardCurrency:a?.currency||'DOP';
+  const logo=credit?`<span class="v-reconcile-logo v-reconcile-card-logo">${cardNetworkMark(credit)}</span>`:a?(bank(a.bankId)&&a.kind!=='cash'?bankLogoMark(bank(a.bankId),'v-reconcile-logo'):`<span class="v-reconcile-logo">${icon(a.kind==='cash'?'wallet':'building')}</span>`):'';
   accountButton.innerHTML=`${logo}<span><strong>${sanitize(a?.name||'Seleccionar cuenta')}</strong><small>${sanitize(a?bankOf(a)+' · '+c:'Elige una cuenta activa')}</small></span><b>›</b>`;
+  const currencies=credit?adjustmentCurrencies(credit):[];
+  currencyPicker.hidden=currencies.length<2;
+  currencyPicker.innerHTML=currencies.length>1?currencies.map(x=>`<button type="button" data-currency="${x}" aria-pressed="${x===cardCurrency}">${x==='USD'?'US$ · Dólares':'RD$ · Pesos'}</button>`).join(''):'';
   reasonButton.querySelector('strong').textContent=reason;
-  when.min=a?.opened||'';form.querySelector('[data-reconcile=symbol]').textContent=c==='USD'?'US$':'RD$';
+  if(credit)when.value=today();
+  when.disabled=!!credit;when.min=a?.opened||'';form.querySelector('[data-reconcile=symbol]').textContent=c==='USD'?'US$':'RD$';
   const view=(key,value)=>{form.querySelector('[data-reconcile='+key+']').textContent=value};
   view('date-text',when.value?new Intl.DateTimeFormat('es-DO',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(when.value+'T12:00:00Z')).replaceAll('.',''):'Elegir fecha');
   const typed=vReconcileCents(observed.value);
   view('formatted',typed!==null?v115Formatter(2).format(typed/100):observed.value||'0.00');
   shown=null;let before=null;
-  try{before=vReconcileQuote(a,when.value,'0',old).before}catch(_){}
+  try{before=vReconcileQuote(credit?selected:a,when.value,'0',old,c).before}catch(_){}
   view('registered',before===null?'—':cash(before,c));view('before',before===null?'—':cash(before,c));
-  try{shown=vReconcileQuote(a,when.value,observed.value,old)}catch(_){}
+  try{shown=vReconcileQuote(credit?selected:a,when.value,observed.value,old,c)}catch(_){}
   view('after',shown?cash(shown.target,c):'—');
   const deltaEl=form.querySelector('[data-reconcile=delta]');
   deltaEl.textContent=shown?(shown.delta===0?'Sin ajuste':(shown.delta<0?'−':'+')+cash(Math.abs(shown.delta),c)):'—';
@@ -5978,9 +6000,15 @@ function vReconcileAccountForm(partial={},editId=null){
  }
  form.querySelector('.v-reconcile-back').onclick=()=>{if(!busy){closeModal();if(!editId)openRegisterAssistant()}};
  accountButton.onclick=()=>window.openReconciliationProductPicker(active(),selected,id=>{
-  if(adjustmentCard(id)){transactionForm({type:'adjustment',accountId:id,date:when.value});return}
-  if(id!==selected){selected=id;observed.value='';message('');refresh()}
+  const credit=adjustmentCard(id);
+  if(credit&&!isMobileViewport()){transactionForm({type:'adjustment',accountId:id,date:when.value});return}
+  if(id!==selected){
+   selected=id;
+   if(credit){const choices=adjustmentCurrencies(credit);cardCurrency=choices.includes(credit.currency)?credit.currency:choices[0];when.value=today();}
+   observed.value='';message('');refresh();
+  }
  },!editId);
+ currencyPicker.onclick=e=>{const b=e.target.closest('button[data-currency]');if(!b||b.dataset.currency===cardCurrency)return;cardCurrency=b.dataset.currency;observed.value='';message('');refresh()};
  reasonButton.onclick=()=>{
   const sheet=document.createElement('dialog');sheet.className='v-reconcile-reason-sheet';sheet.setAttribute('aria-label','Motivo del ajuste');
   const glyphs=['shield','cycle','wallet','receipt','more'];
@@ -6013,7 +6041,7 @@ function vReconcileAccountForm(partial={},editId=null){
    if(id!==selected||day!==when.value||raw!==observed.value||motive!==reason)throw Error('Revisa la vista previa antes de confirmar.');
    const old=editId?db.transactions.find(t=>t.id===editId&&t.type==='adjustment'):null;
    if(editId&&!old)throw Error('La conciliación ya no existe.');
-   const q=vReconcileQuote(account(id),day,raw,old);
+   const q=vReconcileQuote(adjustmentCard(id)?id:account(id),day,raw,old,cardCurrency);
    if(q.before!==preview.before||q.currency!==preview.currency){refresh();throw Error('El saldo registrado cambió. Revisa el nuevo ajuste y confirma nuevamente.')}
    if(q.delta===0){
     if(old)throw Error('No queda diferencia. Elimina la conciliación anterior desde Movimientos para retirarla.');
@@ -17988,7 +18016,7 @@ function reconciliationCards(){
 }
 window.openReconciliationProductPicker=(accounts,selected,onConfirm,allowCards)=>open('product',
  [...accounts.map(item=>productOption('accountId',item)),...(allowCards?reconciliationCards():[])],
- selected,onConfirm,allowCards?'Seleccionar cuenta o tarjeta':'Seleccionar cuenta',{direct:true,reconciliation:allowCards});
+ selected,onConfirm,allowCards?'Seleccionar cuenta o tarjeta':'Seleccionar cuenta',{direct:!isMobileViewport(),reconciliation:allowCards});
 window.openFinancialProductPicker=(name,products,onConfirm,options={})=>open(name,products.map(item=>productOption(name,item)),options.selected||'',onConfirm,undefined,options);
 window.openRegisterProductPicker=(title,products,selected,onConfirm)=>{
  const choices=new Map(),options=products.map(({type,item,currency,disabled,reason})=>{
