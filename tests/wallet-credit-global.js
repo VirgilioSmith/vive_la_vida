@@ -1,5 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
+const fs=require('node:fs');
 const {chromium,webkit}=require('playwright');
 const open=require('./harness');
 const GLOBAL='__vive_wallet_credit_global__';
@@ -249,6 +250,19 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     }
     assert.equal(await limits.locator('.v1301-donut').count(),0);
     assert.equal(await consumption.locator('.v1301-donut-segment').count(),2);
+    const donutColors=()=>consumption.locator('.v1301-rank').evaluateAll(rows=>Object.fromEntries(rows.map(row=>{
+     const id=row.dataset.cardId,meter=row.querySelector('.v1301-meter i'),segment=[...row.closest('details').querySelectorAll('.v1301-donut-segment')].find(s=>s.dataset.cardId===id);
+     return [id,{bar:getComputedStyle(meter).backgroundColor,segment:segment?getComputedStyle(segment).stroke:null}];
+    })));
+    const colors=await donutColors();
+    assert.equal(new Set(Object.values(colors).map(c=>c.bar)).size,2);
+    assert.ok(Object.values(colors).every(c=>c.bar===c.segment),'Mismo color en segmento y barra');
+    assert.equal(await consumption.locator('.v1301-donut-count').textContent(),'2');
+    assert.equal(await consumption.locator('.v1301-donut-caption').textContent(),'tarjetas');
+    assert.ok(await consumption.locator('.v1301-donut').evaluate(svg=>{
+     const count=svg.querySelector('.v1301-donut-count').getBBox(),caption=svg.querySelector('.v1301-donut-caption').getBBox();
+     return [count,caption].every(b=>Math.abs(b.x+b.width/2-64)<2&&b.x>=27&&b.x+b.width<=101&&b.y>=27&&b.y+b.height<=101)&&count.y+count.height<=caption.y+2;
+    }),'Contador centrado y dentro de la dona');
     const slices=await consumption.locator('.v1301-donut-segment').evaluateAll(els=>els.map(e=>({id:e.dataset.cardId,share:Number(e.getAttribute('stroke-dasharray').split(' ')[0])})));
     assert.deepEqual(slices.map(s=>s.id),[fixture.second,fixture.first]);
     assert.ok(Math.abs(slices[0].share-31000/48000*100)<1e-8);
@@ -272,6 +286,15 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.deepEqual(await limits.locator('.v1301-total .v1301-split span').allTextContents().then(a=>a.map(moneyText)),[470001,3000]);
     const share=Number((await consumption.locator('.v1301-donut-segment').first().getAttribute('stroke-dasharray')).split(' ')[0]);
     assert.ok(Math.abs(share-(31001.09/48002.18*100))<1e-8,'Participación calculada con los centavos');
+    assert.deepEqual(await donutColors(),colors);
+    const restored=await p.evaluate(()=>{
+     const t=window.__T,d=t.dbg(),tx=d.transactions.find(x=>x.id==='h2'),amount=tx.amount;
+     tx.amount+=50000;t.inv();t.go('wallet');return amount;
+    });
+    await consumption.locator('summary').tap();
+    assert.equal(await consumption.locator('.v1301-rank').first().getAttribute('data-card-id'),fixture.first);
+    assert.deepEqual(await donutColors(),colors,'El color permanece al cambiar la clasificación');
+    await p.evaluate(amount=>{const t=window.__T,d=t.dbg();d.transactions.find(x=>x.id==='h2').amount=amount;t.inv();t.go('wallet')},restored);
     assert.deepEqual(await p.evaluate(()=>window.__T.dbg().cards.map(c=>[c.limitDOP,c.limitUSD])),[[270000.49,1000.01],[200000.49,2000.01]]);
     for(const [id,amounts] of [[fixture.first,[11000.49,100.01]],[fixture.second,[1000.49,500.01]]]){
      await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();await waitSelected(id);
@@ -289,6 +312,35 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
      assert.equal(await graph.locator('title,[role="tooltip"],foreignObject').count(),0);
     }
     assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
+    assert.deepEqual(errors,[]);
+    // Cuatro emisores consumiendo: comprobar colores, proporciones y aspecto móvil.
+    await p.evaluate(()=>{
+     const t=window.__T,d=t.dbg(),base=d.cards[0],tx=d.transactions.find(x=>x.id==='h2');
+     for(const [i,amount] of [[3,21000],[4,9000]]){
+      const id='wallet-color-test-'+i;d.cards.push({...base,id,name:'Tarjeta '+i});
+      d.transactions.push({...tx,id:'wallet-color-tx-'+i,cardId:id,amount});
+     }
+     t.inv();t.go('wallet');
+    });
+    await p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]').tap();await waitSelected(GLOBAL);
+    await consumption.locator('summary').tap();
+    const four=await donutColors();
+    assert.equal(Object.keys(four).length,4);
+    assert.equal(new Set(Object.values(four).map(c=>c.bar)).size,4);
+    assert.ok(Object.values(four).every(c=>c.bar===c.segment));
+    assert.equal(await consumption.locator('.v1301-donut-count').textContent(),'4');
+    assert.equal(await consumption.locator('.v1301-donut-segment').count(),4);
+    assert.ok(await consumption.evaluate(el=>el.scrollWidth<=el.clientWidth+1));
+    if(process.env.WALLET_VISUAL_DIR){
+     fs.mkdirSync(process.env.WALLET_VISUAL_DIR,{recursive:true});
+     await consumption.screenshot({path:process.env.WALLET_VISUAL_DIR+'/'+theme+'.png',animations:'disabled'});
+    }
+    // Sin consumo también cuenta la tarjeta, pero no añade un segmento ficticio.
+    await p.evaluate(()=>{const t=window.__T,d=t.dbg();d.transactions=d.transactions.filter(x=>x.id!=='wallet-color-tx-4');t.inv();t.go('wallet')});
+    await consumption.locator('summary').tap();
+    assert.equal(await consumption.locator('.v1301-donut-count').textContent(),'4');
+    assert.equal(await consumption.locator('.v1301-donut-segment').count(),3);
+    assert.equal((await donutColors())['wallet-color-test-4'].bar,four['wallet-color-test-4'].bar);
     assert.deepEqual(errors,[]);
     console.log('OK Créditos generales '+theme+' · carrusel, importes, distribución, histórico, interacción y navegación');
    }finally{await ctx.close()}
