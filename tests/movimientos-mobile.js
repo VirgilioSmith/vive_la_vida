@@ -77,7 +77,10 @@ async function scenario(p,s,i,srv){
    await p.locator('#v749Amount').fill(String(amount));await p.locator('[data-v749=continue]').click();await p.locator('[data-v749=confirm]').click();await until(async()=>!(await p.locator('[data-v749=confirm]').count()),mode+' confirmado');await flush(p);await p.locator('#v156-feedback-layer').waitFor({state:'detached'});
   }
   let baseline=await state(p);await regular('expense','audit-card',null,125.75);check('Gasto real en tarjeta',cents((await state(p)).debt-baseline.debt),12575);
-  baseline=await state(p);await regular('expense','audit-source',null,78.42);check('Gasto real desde cuenta',cents(baseline.source-(await state(p)).source),7842);
+  baseline=await state(p);await regular('expense','audit-source',null,78.42);const purchase = await p.evaluate(()=>window.__T.dbg().transactions.find(t=>t.type==='expense' && t.accountId==='audit-source' && Number(t.amount)===78.42));
+  check('Principal de la compra desde cuenta',cents(purchase.amount),7842);
+  check('Cargo bancario contabilizado',cents(Number(purchase.paymentTax||0)+Number(purchase.paymentFee||0)),16);
+  check('Gasto real desde cuenta incluido el cargo',cents(baseline.source-(await state(p)).source),7858);
   baseline=await state(p);await regular('transfer','audit-source','audit-receiver',123.45);check('Transferencia real al destino',cents((await state(p)).receiver-baseline.receiver),12345);check('Transferencia con débito único',cents(baseline.source-(await state(p)).source),cents(123.45+await p.evaluate(()=>{const t=window.__T.dbg().transactions.filter(x=>x.type==='transfer'&&x.accountId==='audit-source').at(-1);return Number(t.transferFee||0)})));
   const scenarios=[{p:5656,r:550,mode:'account'},{p:5656,r:550,mode:'card'},{p:5656,r:550,mode:'account_and_paid',paid:200},{p:5656,r:0,mode:'none'},{p:5656,r:5656,mode:'account'},{p:5656,r:6000,mode:'account'},{p:5656,r:550,mode:'account',source:'account'},{p:99.99,r:.01,mode:'account'},{p:100,r:150,mode:'card'}];
   const all=[];for(let i=0;i<scenarios.length;i++)all.push(await scenario(p,scenarios[i],i,srv));
