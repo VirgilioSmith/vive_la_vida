@@ -160,3 +160,14 @@ html body #modal-root .modal[data-v204-form="annualFeeForm"] .v1290-total small,
  html body:is(.theme-black,.theme-dark) #modal-root #annualFeeForm .v1300-step,
  html body:is(.theme-black,.theme-dark) #modal-root #annualFeeForm .v1300-advice>span:first-child{background:rgba(118,207,185,.1)!important;border-color:rgba(118,207,185,.18)!important}
 }
+
+/* V1300 · Quitar la decoración heredada y evitar recuadros dobles en Black. */
+@media(max-width:790px){
+ html body #modal-root#modal-root #annualFeeForm .v378-form-identity{display:none!important}
+ html body #modal-root#modal-root #annualFeeForm .v1300-charge-fields>label,
+ html body #modal-root#modal-root #annualFeeForm .v1300-date-card>label{
+  display:flex!important;flex-direction:column!important;min-width:0!important;
+  padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+ }
+}
