@@ -2088,7 +2088,7 @@ function vBanksProducts(groups,bankId,f,mobile){
    const rows=[
     ['cards','Tarjetas','card',f.limit,'Límite total',`Deuda utilizada ${money(f.cardDebt)} · ${vBanksFlags(f)}`],
     ['accounts','Cuentas','wallet',f.funds,'Balance total','Fondos en cuentas · equivalente RD$'],
-    ['loans','Préstamos','landmark',f.loanDebt,'Deuda pendiente',(()=>{const ls=groups.loans.map(l=>{try{return loanStatus(l)}catch(_){return null}}).filter(Boolean);if(!ls.length)return 'Saldo de préstamos vigente';const q=ls.reduce((n,x)=>n+fx(num(x.installment),'DOP'),0),d=ls.reduce((n,x)=>n+num(x.payments),0),t=ls.reduce((n,x)=>n+num(x.payments)+num(x.remaining),0),nx=ls.map(x=>x.next).filter(Boolean).sort()[0];return `Cuota ${money(q)} · Avance ${t>0?Math.round(d/t*100):0}%${nx?' · Próx. '+prettyDate(nx):''}`})()],
+    ['loans','Préstamos','landmark',f.loanDebt,'Deuda pendiente',(()=>{const ls=groups.loans.map(l=>{try{return loanStatus(l)}catch(_){return null}}).filter(Boolean);if(!ls.length)return 'Saldo de préstamos vigente';const q=ls.reduce((n,x)=>n+fx(num(x.installment),'DOP'),0),d=ls.reduce((n,x)=>n+num(x.payments),0),t=ls.reduce((n,x)=>n+num(x.payments)+num(x.remaining),0);return `Cuota ${money(q)} · Avance ${t>0?Math.round(d/t*100):0}%`})()],
     ['certificates','Certificados','layers',f.invested,'Capital invertido','Certificados financieros vigentes']
    ];
    const tiles=rows.map(([key,label,glyph,value,metric,description])=>{
