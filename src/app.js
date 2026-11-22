@@ -16094,18 +16094,24 @@ document.addEventListener('input',function(event){
  const close=()=>{draft=null;pickerData=null;pendingContact=null;processing=false;closeModal()};
  const selectOptions=(arr,selected)=>arr.map(([id,name])=>'<option value="'+esc(id)+'" '+(String(selected)===String(id)?'selected':'')+'>'+esc(name)+'</option>').join('');
  function formScreen(initial={}){
-  if(!activeCards().length){toast('Primero registra una tarjeta de crédito en Bancos.');return;}
-  const c=activeCards().find(x=>x.id===initial.cardId)||activeCards()[0], cc=initial.currency||'DOP';
+  if(!activeCards().length&&!db.accounts.some(a=>!a.archived)){toast('Primero registra una tarjeta o cuenta en Bancos.');return;}
+  const c=activeCards().find(x=>x.id===initial.cardId)||activeCards()[0]||null,cc=initial.currency||'DOP';
   const ac=activeAccounts(cc),accountId=ac.some(a=>a.id===initial.accountId)?initial.accountId:(ac[0]?.id||'');
+  const purchaseSource=initial.purchaseSource==='account'||!c?'account':'card';
+  const purchaseAcc=ac.find(a=>a.id===initial.purchaseAccountId)||ac[0]||null;
+  const sourceProduct=purchaseSource==='account'?purchaseAcc:c;
   const selectedPerson=String(initial.person||'').trim(),personInitials=selectedPerson.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toLocaleUpperCase('es')||'?';
   const personOptions=[...new Set([...(db.personalContacts||[]).map(x=>[x.firstName,x.lastName].filter(Boolean).join(' ').trim()),...(db.personalLoans||[]).map(x=>x.person)].filter(Boolean))];
   const datalist='<datalist id="v354-people">'+personOptions.map(x=>'<option value="'+esc(x)+'"></option>').join('')+'</datalist>';
   const personField=matchMedia('(max-width:790px)').matches?
    '<div class="v355-person"><span>¿Para quién fue?</span><input type="hidden" name="person" value="'+esc(selectedPerson)+'"><input type="hidden" name="contactId" value="'+esc(initial.contactId||'')+'"><button type="button" class="v354-person-trigger" data-v354-act="pickPerson" aria-label="Abrir selector de contactos"><span class="v354-person-avatar">'+esc(personInitials)+'</span><span><strong>'+esc(selectedPerson||'Seleccionar una persona')+'</strong><small>Contactos de Entre personas · seleccionar o crear</small></span>'+icon('chevron-right')+'</button></div>':
    '<label class="v355-person">¿Para quién fue?<input name="person" list="v354-people" maxlength="85" required placeholder="Ej. Mi hermano" value="'+esc(selectedPerson)+'"></label>';
-  const content='<div class="v355-intro"><strong>Una compra para alguien</strong><span>Cuánto usaste de tu tarjeta y cuánto te entregaron.</span></div>'+
+  const instrumentField=matchMedia('(max-width:790px)').matches?
+   '<div class="v355-person v354-purchase-field"><span>¿Con qué realizaste la compra?</span><input type="hidden" name="purchaseSource" value="'+esc(purchaseSource)+'"><input type="hidden" name="purchaseAccountId" value="'+esc(purchaseAcc?.id||'')+'"><button type="button" class="v354-person-trigger v354-instrument-trigger" data-v354-act="pickPurchase" aria-label="Seleccionar tarjeta o cuenta utilizada"><span class="v354-person-avatar v354-instrument-icon">'+icon(purchaseSource==='card'?'card':'wallet')+'</span><span><strong>'+esc(sourceProduct?.name||'Seleccionar tarjeta o cuenta')+'</strong><small>'+esc(sourceProduct?bankOf(sourceProduct)||'':'Sin institución')+' · '+esc(purchaseSource==='card'?'Tarjeta':'Cuenta')+(sourceProduct?.last4?' · •••• '+esc(sourceProduct.last4):'')+'</small></span>'+icon('chevron-right')+'</button></div>':
+   '<input type="hidden" name="purchaseSource" value="card"><input type="hidden" name="purchaseAccountId" value="">';
+  const content='<div class="v355-intro"><strong>Una compra para alguien</strong><span>Registra el instrumento y lo que te entregaron.</span></div>'+
    '<div id="v354-error" class="v354-error" role="alert" aria-live="polite"></div>'+
-   '<form id="v354-form" class="v354-fields v355-fast-form" autocomplete="off">'+datalist+personField+
+   '<form id="v354-form" class="v354-fields v355-fast-form" autocomplete="off">'+datalist+personField+instrumentField+
    '<div class="v355-sums"><label>Compra total<input name="purchase" type="number" inputmode="decimal" step="0.01" min="0.01" required value="'+esc(initial.purchase??'')+'" placeholder="6000"></label><label>Me entregó<input name="received" type="number" inputmode="decimal" step="0.01" min="0" value="'+esc(initial.received??'')+'" placeholder="5000"></label></div>'+
    '<div class="v355-result" aria-live="polite"><span id="v354-balance-caption">Por cobrar · Me deben</span><strong id="v354-owed-preview">—</strong></div>'+
    '<label>¿Qué pasó con el dinero?<select name="receiptMode" required><option value="">Selecciona lo que ocurrió</option><option value="card">Abonó directamente a mi tarjeta</option><option value="account">Lo recibí en cuenta o efectivo</option><option value="account_and_paid">Lo recibí y ya pagué la tarjeta</option><option value="none">Aún no me ha entregado dinero</option></select></label>'+
@@ -16113,8 +16119,8 @@ document.addEventListener('input',function(event){
     '<label class="v356-channel">Canal del dinero<select name="channel" required><option value="presencial" '+((initial.channel||'presencial')==='presencial'?'selected':'')+'>Presencial</option><option value="internet" '+(initial.channel==='internet'?'selected':'')+'>Internet Banking</option></select></label>'+ 
    '<div class="v356-tax-indicator" id="v356-tax-indicator" aria-live="polite"><div><span>Impuesto de transferencia</span><strong id="v356-tax-amount">No aplica</strong></div><small id="v356-tax-explainer">No se añaden impuestos a esta operación.</small></div>'+ 
    '<div class="v355-compact-note" id="v354-cut-note">Si el dinero no llegó a la tarjeta, el pendiente del corte no disminuye.</div>'+
-   '<details class="v355-extra" '+(initial.showExtra?'open':'')+'><summary><span>Tarjeta: <strong id="v355-card-label">'+esc(c.name)+'</strong></span><span aria-hidden="true">Editar ⌄</span></summary><div class="v354-fields v355-extra-fields">'+
-   '<label>Tarjeta utilizada<select name="cardId" required>'+selectOptions(activeCards().map(x=>[x.id,x.name+' · '+bankOf(x)]),c.id)+'</select></label>'+
+   '<details class="v355-extra" '+(initial.showExtra?'open':'')+'><summary><span>Instrumento: <strong id="v355-card-label">'+esc(sourceProduct?.name||'Seleccionar')+'</strong></span><span aria-hidden="true">Editar ⌄</span></summary><div class="v354-fields v355-extra-fields">'+
+   '<label>Tarjeta utilizada<select name="cardId" '+(purchaseSource==='card'?'required':'')+'>'+selectOptions(activeCards().map(x=>[x.id,x.name+' · '+bankOf(x)]),c?.id||'')+'</select></label>'+
    '<label>Moneda<select name="currency"><option value="DOP" '+(cc==='DOP'?'selected':'')+'>RD$ · Pesos</option><option value="USD" '+(cc==='USD'?'selected':'')+'>US$ · Dólares</option></select></label>'+
    '<label id="v354-account-label" hidden>Cuenta en la que recibiste el dinero<select name="accountId">'+selectOptions(ac.map(a=>[a.id,a.name+' · '+fmt(getAccountBalance(a),cc)]),accountId)+'</select></label>'+
    '<label>Fecha de la compra<input type="date" name="date" max="'+esc(today())+'" required value="'+esc(initial.date||today())+'"></label>'+
@@ -16144,18 +16150,22 @@ document.addEventListener('input',function(event){
  function recalc(form){
   if(!form)return;
   const v=Object.fromEntries(new FormData(form).entries()),p=Number(v.purchase)||0,r=Number(v.received)||0,cc=v.currency||'DOP';
-  const mode=v.receiptMode||'',needAcc=mode==='account'||mode==='account_and_paid';
+  let mode=v.receiptMode||'';
+  const fromAccount=v.purchaseSource==='account';
+  for(const opt of form.elements.receiptMode?.options||[]){if(['card','account_and_paid'].includes(opt.value)){opt.hidden=fromAccount;opt.disabled=fromAccount}}
+  if(fromAccount&&['card','account_and_paid'].includes(mode)){form.elements.receiptMode.value='';mode='';}
+  const needAcc=mode==='account'||mode==='account_and_paid';
   const label=$('#v354-account-label');if(label)label.hidden=!needAcc;
   if(needAcc)form.querySelector('.v355-extra')?.setAttribute('open','');
   const owed=$('#v354-owed-preview'),caption=$('#v354-balance-caption'),hint=$('#v354-cut-note'),amountLabel=$('.v354-progress strong'),cardLabel=$('#v355-card-label');
    const paidLabel=$('#v355-paid-label');if(paidLabel)paidLabel.hidden=mode!=='account_and_paid';
-  if(cardLabel)cardLabel.textContent=card(v.cardId)?.name||'Seleccionar tarjeta';
+  if(cardLabel)cardLabel.textContent=fromAccount?account(v.purchaseAccountId)?.name||'Seleccionar cuenta':card(v.cardId)?.name||'Seleccionar tarjeta';
   if(amountLabel)amountLabel.textContent=p>0?fmt(p,cc):fmt(0,cc);
   if(owed)owed.textContent=p>0?fmt(Math.abs(p-r),cc):'—';
    if(caption)caption.textContent=r>p?'Por devolver · Yo debo':p>r?'Por cobrar · Me deben':'Sin saldo pendiente';
   const modeHint={
    card:'El abono a la tarjeta reduce el corte pendiente cuando el banco lo aplicó.',
-   account:'El dinero llegó a tu cuenta; el corte sigue pendiente hasta pagar la tarjeta.',
+   account:fromAccount?'El dinero llegó a tu cuenta y se concilia con la compra desde la cuenta de origen.':'El dinero llegó a tu cuenta; el corte sigue pendiente hasta pagar la tarjeta.',
    account_and_paid:'El dinero entró en tu cuenta y ya hiciste un pago real a la tarjeta.',
    none:'Aún no has recibido dinero; quedará por cobrar a esta persona.'
   };
@@ -16227,6 +16237,16 @@ document.addEventListener('input',function(event){
   if(action==='open'){draft=null;pickerData=null;pendingContact=null;formScreen({cardId:b.dataset.cardId||''});}
   else if(action==='close'){close();}
    else if(action==='pickPerson'){personPicker();}
+   else if(action==='pickPurchase'){
+    const current=snapshot(),cc=current.currency||'DOP';
+    const products=[...activeCards().map(item=>({type:'cardId',item})),...activeAccounts(cc).map(item=>({type:'accountId',item}))];
+    if(typeof window.openRegisterProductPicker!=='function'){toast('No se pudo abrir el selector de productos.');return;}
+    const selected=current.purchaseSource==='account'?current.purchaseAccountId:current.cardId;
+    window.openRegisterProductPicker('Selecciona tarjeta o cuenta para la compra',products,selected,choice=>{
+     const isAccount=choice.kind==='account';
+     formScreen({...current,purchaseSource:isAccount?'account':'card',purchaseAccountId:isAccount?choice.value:current.purchaseAccountId,cardId:isAccount?current.cardId:choice.value,receiptMode:isAccount&&['card','account_and_paid'].includes(current.receiptMode)?'':current.receiptMode});
+    });
+   }
    else if(action==='pickerBack'){formScreen(pickerData||{});}
    else if(action==='newPerson'){newPersonScreen();}
    else if(action==='choosePerson'){const c=(db.personalContacts||[]).find(c=>c.id===b.dataset.id),chosen=c?nameOf(c):String(b.dataset.name||'').trim();if(!chosen)return;pendingContact=null;formScreen({...pickerData,person:chosen,contactId:c?.id||''});}
