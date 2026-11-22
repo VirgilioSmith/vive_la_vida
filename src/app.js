@@ -12893,6 +12893,7 @@ function v71SearchClose(restoreFocus=true){document.getElementById('v71-search-o
   v149SearchRecent=[{kind:entry.kind,id:entry.id,page:entry.page},...v149SearchRecent.filter(x=>!(x.kind===entry.kind&&x.id===entry.id&&x.page===entry.page))].slice(0,5);
  v71SearchClose(false);
  ui.page=entry.page;
+ if(isMobileViewport()&&entry.page==='cards'&&entry.kind==='section'){ui.cardId=null;ui.v230BenefitComparison=false;}
  if(entry.kind==='bank')ui.bankId=entry.id;
  if(entry.kind==='account')ui.accountId=entry.id;
  if(entry.kind==='card')ui.cardId=entry.id;

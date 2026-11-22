@@ -31,7 +31,7 @@ const check = (id, name, ok, extra = '') => { if (!ok) fails++; console.log(`${o
   /* Prevención y recuperación de errores · mensajes de formulario anunciados */
   { const { p } = await open(b, 390, 844); const res = [];
     for (const [pg, re] of [['accounts', /Agregar|Nueva/], ['cards', /Agregar|Nueva/], ['income', /Agregar fuente/]]) { await p.evaluate(pg => window.__T.go(pg), pg); await p.waitForTimeout(450); if (pg === 'income') { await p.evaluate(() => { const b = [...document.querySelectorAll('button')].find(e => /Ingresos recurrentes/.test(e.textContent) && e.offsetParent); b && b.click(); }); await p.waitForTimeout(800); }
-      await p.evaluate(re => { const bt = [...document.querySelectorAll('#page button')].find(e => new RegExp(re).test(e.textContent) && e.offsetParent); bt && bt.click(); }, re.source); await p.waitForTimeout(600);
+      await p.evaluate(re => { const bt = [...document.querySelectorAll('#page button')].find(e => new RegExp(re).test((e.getAttribute('aria-label')||'')+' '+e.textContent) && e.offsetParent); bt && bt.click(); }, re.source); await p.waitForTimeout(600);
       res.push(await p.evaluate(() => { const e = document.querySelector('#modal-root .input-error,#modal-root #formError'); return e ? (e.getAttribute('role') === 'alert' || e.getAttribute('aria-live') != null) : 'sin-contenedor'; })); await p.evaluate(() => { try { closeModal(); } catch (_) {} }); }
     check('ERR-01', 'El contenedor de errores de cada formulario se anuncia a lectores de pantalla (role=alert / aria-live)', res.every(x => x === true), JSON.stringify(res));
     await p.close(); }
