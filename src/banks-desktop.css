@@ -1006,3 +1006,34 @@
     grid-template-columns:24px minmax(0,1fr) minmax(24px,.45fr) minmax(0,auto) minmax(0,auto);
   }
 }
+
+
+/* Bancos PC · no recortar las cifras de retorno ni las etiquetas de navegación. */
+@media (min-width:791px) {
+  html body #app#app main.vBanksPc-world .vBanksPc .v371-return-tile strong {
+    min-width:0;max-width:100%;white-space:normal!important;
+    overflow:visible!important;text-overflow:clip!important;
+    overflow-wrap:anywhere!important;line-height:1.18;
+    font-size:clamp(10px,.84vw,12px)!important;
+    font-variant-numeric:tabular-nums;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc .v371-return-values {
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-bank-list .vBanksPc-bank strong {
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+    white-space:normal;overflow:hidden;text-overflow:clip;
+    line-height:1.13;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-product-filter button span {
+    text-overflow:clip;
+  }
+}
+@media (min-width:791px) and (max-width:1500px) {
+  html body #app#app main.vBanksPc-world .vBanksPc-product-filter button svg {
+    display:none;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-product-filter button {
+    gap:2px;padding-inline:2px;font-size:clamp(9px,.85vw,12px);
+  }
+}
