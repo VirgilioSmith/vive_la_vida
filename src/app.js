@@ -652,14 +652,13 @@ const NAV_SECTIONS={
  banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','landmark'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
  register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
 };
-function navFamilyForPage(page){if(['recurring','personal'].includes(page))return 'overview';if(page==='patrimony')return 'patrimony';if(['overview','analytics','kpis','advanced','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
+function navFamilyForPage(page){if(['recurring','personal'].includes(page))return 'overview';if(page==='patrimony')return 'overview';if(['overview','analytics','kpis','advanced','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
 /* Four clear navigation worlds; contextual horizontal switches remain unchanged. */
 const RAIL_DESTINATIONS=[
  ['overview','Resumen','home','Inicio, suscripciones y entre personas'],
  ['wallet','Wallet','wallet','Tu universo financiero'],
  ['banks','Bancos','landmark','Instituciones y productos bancarios'],
  ['register','Movimientos','cycle','Registrar y consultar operaciones'],
- ['patrimony','Patrimonio','wallet','Posición neta, crédito y compromisos']
 ];
 /* VIVE_SCORE (experimental · solo web): ítem «Score» bajo Presión financiera. Retirar: ver src/vive-score/README.md */
 if(window.VIVE_SCORE_EXPERIMENTAL)RAIL_DESTINATIONS.push(['score','Score','score','Tu comportamiento crediticio, explicado']);
@@ -1562,6 +1561,7 @@ function vWalletPc(){
      return `<button type="button" class="vWalletPc-limit-row" data-act="walletPcSelect" data-id="${sanitize(c.id)}"><span class="vWalletPc-product-mark" aria-hidden="true">${v1002BankGlyph(c,'card')}</span><span><strong>${sanitize(c.name)}</strong><small>${vWalletPcSplit(c.limitDOP,c.limitUSD,0)}</small><span class="vWalletPc-row-meter">${bar(used,'Utilización de la tarjeta')}<small>${percent(used)}</small></span></span><b>${vWalletPcAmount(equivalent)}</b></button>`;
     }).join('')}</div>`:`<p class="vWalletPc-note">Añade una tarjeta para consultar sus límites y cortes.</p>`}
     ${bankScope!==null&&list.length?vBanksCreditTrend(list):''}
+    ${vWalletPcRecentActivity(list)}
    </section>
    <div class="vWalletPc-right">
     ${v371CardReturnWidget(active||{name:'tus tarjetas'},active?null:list,false,true)}
@@ -1574,6 +1574,21 @@ function vWalletPc(){
    </div>
   </div>
  </div>`;
+}
+
+function vWalletPcRecentActivity(cards){
+ const ids=new Set(cards.map(c=>String(c.id)));
+ const allowed=new Set(['card_charge','card_refund','card_payment','card_advance','card_reward','annual_fee','card_annual_fee']);
+ const rows=recentTx().filter(t=>t.cardId&&ids.has(String(t.cardId))&&allowed.has(t.type)).slice(0,3);
+ if(!cards.length)return '';
+ return `<section class="vWalletPc-recent" aria-label="Movimientos recientes de tarjetas">
+   <div class="vWalletPc-recent-title"><h3>Movimientos recientes</h3><small>Últimos registros</small></div>
+   ${rows.length?`<div class="vWalletPc-recent-list">${rows.map(t=>`<button type="button" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalle del movimiento ${sanitize(transactionTitle(t))}">
+     <span class="vWalletPc-recent-glyph">${icon(t.type==='card_refund'||t.type==='card_reward'?'up':'card')}</span>
+     <span class="vWalletPc-recent-copy"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(card(t.cardId)?.name||'Tarjeta')}</small></span>
+     <b>${txDisplay(t)}</b>${icon('arrow')}
+    </button>`).join('')}</div>`:'<p class="vWalletPc-note">Sin movimientos recientes de estas tarjetas.</p>'}
+ </section>`;
 }
 
 function vWalletPcRefresh(el){
@@ -2022,8 +2037,9 @@ function vBanksDashboard(){
  const totals=`<dl class="vBanksPc-bank-totals"><div><dt>Fondos</dt><dd>${money(f.funds)}</dd></div><div><dt>Deudas</dt><dd>${money(f.debt)}</dd></div><div><dt>Posición neta</dt><dd class="${f.net<0?'negative':'positive'}">${f.net>0?'+':''}${money(f.net)}</dd></div></dl>`;
  const insights=`<aside class="vBanksPc-insights" aria-label="Detalle financiero">
  ${active.cards.length?v371CardReturnWidget(activeCard||selected||{name:'Todos los bancos'},activeCard?null:active.cards,true):'<section class="vBanks-certificates"><h2>Beneficios y retorno</h2><p>Sin tarjetas registradas en esta selección.</p></section>'}
+ ${!mobile?vBanksCertificates(active.certificates,f.invested,selected?.id):''}
  ${vBanksPcCardConsumption(activeCard?[activeCard]:active.cards,mobile)}
- ${vBanksCertificates(active.certificates,f.invested,selected?.id)}
+ ${mobile?vBanksCertificates(active.certificates,f.invested,selected?.id):''}
  </aside>`;
  const ledger=ui.vBanksPcBenefits&&active.cards.length?vBanksPcBenefits(active.cards):'';
  const products=vBanksProducts(active,bankId,f,mobile);

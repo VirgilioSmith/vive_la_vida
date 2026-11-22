@@ -229,3 +229,28 @@
  #app .vWalletPc-legend button{font-size:clamp(10px,.88vw,13px);padding:4px 0}
  #app .vWalletPc-consumption h2{font-size:clamp(17px,1.45vw,22px)}
 }
+
+/* Ajuste focalizado: consumo compacto y actividad real del crédito, sin historial duplicado. */
+@media(min-width:791px){
+ #app main.vWalletPc-world .vWalletPc-consumption {padding:clamp(11px,.9vw,16px)}
+ #app main.vWalletPc-world .vWalletPc-consumption h2 {font-size:clamp(16px,1.2vw,20px)}
+ #app main.vWalletPc-world .vWalletPc-chart-layout {grid-template-columns:minmax(80px,clamp(87px,7vw,112px)) minmax(0,1fr);gap:9px}
+ #app main.vWalletPc-world .vWalletPc-legend {max-height:112px;overflow:auto}
+ #app main.vWalletPc-world .vWalletPc-legend button {font-size:clamp(10px,.8vw,12px);padding:3px 2px}
+ #app main.vWalletPc-world .vWalletPc-state {min-width:0}
+ #app main.vWalletPc-world .vWalletPc-recent {border-top:1px solid var(--wallet-line);margin-top:clamp(10px,1.1vw,18px);padding-top:clamp(8px,.85vw,13px);min-width:0}
+ #app main.vWalletPc-world .vWalletPc-recent-title {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}
+ #app main.vWalletPc-world .vWalletPc-recent-title h3 {margin:0;color:var(--wallet-ink);font-size:clamp(14px,1.12vw,18px)}
+ #app main.vWalletPc-world .vWalletPc-recent-title small {color:var(--wallet-muted);font-size:11px}
+ #app main.vWalletPc-world .vWalletPc-recent-list {display:grid;min-width:0}
+ #app main.vWalletPc-world .vWalletPc-recent-list button {display:grid;grid-template-columns:30px minmax(0,1fr) auto 14px;align-items:center;gap:9px;min-width:0;padding:9px 3px;background:transparent;border:0;border-bottom:1px solid var(--wallet-line);color:var(--wallet-ink);text-align:left;cursor:pointer}
+ #app main.vWalletPc-world .vWalletPc-recent-list button:last-child{border-bottom:none}
+ #app main.vWalletPc-world .vWalletPc-recent-list button:hover {background:color-mix(in srgb,var(--wallet-deep) 7%,transparent)}
+ #app main.vWalletPc-world .vWalletPc-recent-glyph {width:28px;height:28px;display:grid;place-items:center;border-radius:11px;background:var(--wallet-hover,#e5f4f0);color:var(--wallet-deep)}
+ #app main.vWalletPc-world .vWalletPc-recent-glyph svg{width:15px;height:15px}
+ #app main.vWalletPc-world .vWalletPc-recent-copy {display:grid;gap:3px;min-width:0}
+ #app main.vWalletPc-world .vWalletPc-recent-copy strong {font-size:clamp(11px,.88vw,14px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ #app main.vWalletPc-world .vWalletPc-recent-copy small {font-size:10px;color:var(--wallet-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ #app main.vWalletPc-world .vWalletPc-recent-list button>b {font-size:clamp(11px,.9vw,14px);white-space:nowrap}
+ #app main.vWalletPc-world .vWalletPc-recent-list button>svg {width:14px;height:14px;opacity:.6}
+}

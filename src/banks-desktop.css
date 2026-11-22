@@ -518,3 +518,66 @@
     gap: 0 !important;
   }
 }
+
+/* Refinamiento híbrido · KPI visibles únicamente en Bancos PC. */
+@media (min-width:791px) {
+  html body #app#app main.vBanksPc-world .vBanksPc-metrics {
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    flex:none; min-width:0; gap:clamp(7px,.7vw,12px); margin:0 0 clamp(7px,.75vw,12px);
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-metric {
+    min-width:0; min-height:clamp(78px,6.9vw,108px); gap:clamp(5px,.65vw,10px);
+    padding:clamp(10px,.9vw,15px); border-radius:clamp(15px,1.25vw,22px);
+    box-sizing:border-box;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-metric strong {
+    font-size:clamp(16px,1.65vw,28px);overflow-wrap:anywhere;line-height:1.13;
+  }
+  html body #app#app main.vBanksPc-world .vBanksPc-metric > div > span {font-size:clamp(11px,.98vw,15px)}
+  html body #app#app main.vBanksPc-world .vBanksPc-metric small {font-size:clamp(10px,.79vw,12px);line-height:1.3}
+  html body #app#app main.vBanksPc-world .vBanksPc-stat-icon {width:clamp(28px,2.5vw,40px)}
+  html body #app#app main.vBanksPc-world .vBanksPc-grid {min-height:0}
+  html body #app#app main.vBanksPc-world .vBanksPc-insights > .vBanks-certificates {order:1}
+  html body #app#app main.vBanksPc-world .vBanksPc-insights > .v1301-insight {order:2}
+  html body #app#app main.vBanksPc-world .vBanksPc-insights > .v371-card-return {order:0}
+}
+@media (min-width:791px) and (max-width:1100px) {
+ html body #app#app main.vBanksPc-world .vBanksPc-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ html body #app#app main.vBanksPc-world .vBanksPc-metric{min-height:65px;padding:8px 11px}
+ html body #app#app main.vBanksPc-world .vBanksPc-metric strong{font-size:clamp(16px,2vw,22px)}
+}
+/* Wallet comparte el componente de Beneficios de Bancos PC, sin las antiguas píldoras 2×2. */
+@media(min-width:791px){
+ html body #app#app main.vWalletPc-world .vWalletPc-return {
+  --return-ink:#10182e;--return-muted:#455670;--return-line:#dce6ea;
+  --return-positive:#116747;--return-negative:#b82f35;
+  background:rgba(255,255,255,.83);border-color:var(--return-line);
+  border-radius:clamp(17px,1.7vw,28px);min-width:0;overflow:hidden;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-heading h2 {font-size:clamp(17px,1.4vw,23px)}
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-heading h2 button {font-size:inherit;letter-spacing:-.025em}
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-values {
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:0!important;padding-top:9px;margin-top:9px;border-top:1px solid var(--return-line);
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile {
+  min-width:0;display:grid;align-content:start;gap:4px;padding:3px 6px!important;
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile + .v371-return-tile {border-left:1px solid var(--return-line)!important}
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile small {
+  color:var(--return-muted);font-size:clamp(10px,.83vw,13px);font-weight:600;text-transform:none;letter-spacing:0;line-height:1.2;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile strong {
+  color:var(--return-ink);font-size:clamp(12px,1.12vw,19px);line-height:1.2;letter-spacing:-.025em;
+  white-space:normal;overflow-wrap:anywhere;
+ }
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile.positive strong {color:var(--return-positive)}
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile.negative strong {color:var(--return-negative)}
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-note {color:var(--return-muted);font-size:10px;line-height:1.35}
+ body.theme-black #app main.vWalletPc-world .vWalletPc-return {
+  --return-ink:#f2f6fa;--return-muted:#b7c6d1;--return-line:#29393e;
+  --return-positive:#82d8b9;--return-negative:#ff9d9a;background:#10191ced;
+ }
+}
