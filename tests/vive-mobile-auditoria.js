@@ -14,7 +14,7 @@ const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function showQuick(p){await p.evaluate(()=>{const b=document.createElement('button');b.dataset.act='newTransaction';b.dataset.type='expense';document.body.append(b);b.click();b.remove()})}
 async function fastOpen(p){await p.evaluate(()=>{const b=document.createElement('button');b.dataset.v354Act='open';document.body.append(b);b.click();b.remove()})}
 async function chooseNewContact(p,first,last){
- await p.locator('.v354-person-trigger').click();
+ await p.locator('[data-v354-act=pickPerson]').click();
  check('Selector de contactos visible',await p.locator('#v354-person-search').count(),1);
  await shot(p,'selector-contactos');
  await p.locator('[data-v354-act="newPerson"]').click();
