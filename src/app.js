@@ -1353,6 +1353,65 @@ function v68WalletCards(){
  const creditLimit=c=>num(c.limitDOP)+fx(num(c.limitUSD),'USD');
  return (db.cards||[]).filter(c=>ui.showHidden||!isHidden(c)).sort((a,b)=>creditLimit(b)-creditLimit(a));
 }
+/* Wallet · Consumo de compras registrado y distribución de capacidad, sin modificar el libro. */
+function v1301WalletConsumption(cards){
+ const now=today(),current=now.slice(0,7),byCard=new Map(cards.map(c=>[c.id,{DOP:0,USD:0}])),months=new Map();
+ // Reutiliza la clasificación de compras de beneficios; seguros y demás costos tampoco son consumo.
+ for(const t of db.transactions||[]){
+  if(!byCard.has(t.cardId)||!rewardExpense(t)||t.chargeKind==='insurance'||t.v144CardCost||!/^\d{4}-\d{2}-\d{2}$/.test(t.date||'')||t.date>now)continue;
+  const ccy=t.currency||'DOP',amount=num(t.amount),key=t.date.slice(0,7);
+  if(!['DOP','USD'].includes(ccy)||amount<=0||Number(key.slice(0,4))<1000||Number(key.slice(5))<1||Number(key.slice(5))>12)continue;
+  byCard.get(t.cardId)[ccy]+=amount;
+  if(!months.has(key))months.set(key,{DOP:0,USD:0});
+  months.get(key)[ccy]+=amount;
+ }
+ const first=[...months.keys()].sort()[0]||current,series=[];
+ for(let key=first;key<=current;key=plusMonths(key+'-01',1).slice(0,7)){
+  const value=months.get(key)||{DOP:0,USD:0};
+  series.push({key,DOP:rnd(value.DOP),USD:rnd(value.USD)});
+ }
+ const totals=series.reduce((s,m)=>({DOP:rnd(s.DOP+m.DOP),USD:rnd(s.USD+m.USD)}),{DOP:0,USD:0});
+ return {byCard,series,totals};
+}
+function v1301WalletDistribution(cards,consumption,kind){
+ const limits=kind==='limits',title=limits?'Distribución del crédito':'Consumo por tarjeta';
+ const rows=cards.map(c=>{const a=limits?{DOP:num(c.limitDOP),USD:num(c.limitUSD)}:consumption.byCard.get(c.id);return {c,DOP:rnd(a.DOP),USD:rnd(a.USD),total:rnd(a.DOP+fx(a.USD,'USD'))}}).sort((a,b)=>b.total-a.total);
+ const total=rows.reduce((s,r)=>({DOP:rnd(s.DOP+r.DOP),USD:rnd(s.USD+r.USD)}),{DOP:0,USD:0}),equivalent=rnd(total.DOP+fx(total.USD,'USD'));
+ const weight=rows.reduce((s,r)=>s+Math.max(0,r.total),0),share=r=>weight?100*Math.max(0,r.total)/weight:0;
+ const shade=i=>`color-mix(in srgb,var(--v1301-accent) ${100-76*i/Math.max(1,rows.length-1)}%,var(--v1301-tint))`;
+ const amount=(v,ccy='DOP')=>money(v,ccy,limits&&Number.isInteger(v)?0:2);
+ const split=(d,u)=>`<span>${amount(d)}</span><span>${amount(u,'USD')}</span>`;
+ return `<details class="v266-wallet-panel v1301-insight v1301-distribution" data-v1301-kind="${kind}"><summary><div><span class="v1301-kicker">${limits?'CAPACIDAD':'HISTÓRICO'} · CRÉDITOS GENERALES</span><h2>${title}</h2><p>Todas tus tarjetas${limits?'':' · Histórico completo'}</p></div><span class="v1301-disclose-arrow" aria-hidden="true">${icon('arrow')}</span></summary><div class="v1301-distribution-body"><div class="v1301-total"><small>${limits?'LÍMITE TOTAL':'CONSUMO HISTÓRICO TOTAL'}</small><strong>${amount(equivalent)}</strong><span>Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div><div class="v1301-stack" aria-hidden="true">${rows.filter(r=>r.total>0).map(r=>`<i style="flex-basis:${share(r)}%;background:${shade(rows.indexOf(r))}"></i>`).join('')}</div><h3>${limits?'Límite por tarjeta':'Consumo por tarjeta'}</h3><div class="v1301-ranked">${rows.map((r,i)=>`<div class="v1301-rank" data-card-id="${sanitize(r.c.id)}"><span class="v1301-mini v266-physical-card tier-${sanitize(cardTierKey(r.c))}" aria-hidden="true">${cardNetworkMark(r.c)}</span><div class="v1301-rank-info"><strong>${sanitize(r.c.name)}</strong><div class="v1301-split">${split(r.DOP,r.USD)}</div><div class="v1301-meter" aria-hidden="true"><i style="width:${share(r)}%;background:${shade(i)}"></i></div></div><b class="v1301-equivalent">${amount(r.total)}</b></div>`).join('')}</div></div></details>`;
+}
+function v1301WalletHistory(active,global,consumption){
+ const {series,totals}=consumption,n=series.length,last=n-1,selected=series[last];
+ const average={DOP:rnd(totals.DOP/n),USD:rnd(totals.USD/n)};
+ const values=series.map(m=>m.DOP+fx(m.USD,'USD')),max=Math.max(0,...values),step=max?Math.pow(10,Math.floor(Math.log10(max))):1;
+ const ceiling=Math.max(1,Math.ceil(max/step)*step),left=44,right=310,top=12,bottom=144;
+ const points=series.map((m,i)=>({x:n===1?right:left+(right-left)*i/last,y:bottom-(bottom-top)*values[i]/ceiling,label:dateObj(m.key+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}),DOP:money(m.DOP,'DOP',2),USD:money(m.USD,'USD',2)}));
+ const p=points[last],path=points.map((q,i)=>{if(!i)return `M${q.x},${q.y}`;const a=points[i-1],mid=(a.x+q.x)/2;return `C${mid},${a.y} ${mid},${q.y} ${q.x},${q.y}`}).join(' ');
+ const tick=v=>v>=1e6?'RD$'+(v/1e6).toLocaleString('en-US',{maximumFractionDigits:1})+' M':v>=1000?'RD$'+(v/1000).toLocaleString('en-US',{maximumFractionDigits:1})+' k':money(v);
+ const ticks=[...new Set([0,Math.floor(last/2),last])],monthLabel=i=>dateObj(series[i].key+'-01').toLocaleDateString('es-DO',{month:'short',...(series[0].key.slice(0,4)!==selected.key.slice(0,4)?{year:'2-digit'}:{})});
+ return `<section class="v266-wallet-panel v1301-insight v1301-history" aria-label="Histórico de consumo"><span class="v1301-kicker">INTELIGENCIA DE CONSUMO</span><h2>Histórico de consumo</h2><p>${sanitize(active.name)}${global?' · Todas tus tarjetas':''}</p><div class="v1301-history-total"><small>CONSUMO HISTÓRICO TOTAL</small><strong>${money(totals.DOP,'DOP',2)}</strong><b>${money(totals.USD,'USD',2)}</b></div><div class="v1301-history-stats"><div><span data-v1301-month>Este mes · ${sanitize(p.label)}</span><strong data-v1301-dop>${p.DOP}</strong><b data-v1301-usd>${p.USD}</b></div><div><span>Promedio mensual</span><strong>${money(average.DOP,'DOP',2)}</strong><b>${money(average.USD,'USD',2)}</b></div></div><h3>Evolución del consumo</h3><svg class="v1301-chart" data-v1301-points="${sanitize(JSON.stringify(points))}" viewBox="0 0 320 177" role="slider" tabindex="0" aria-label="Mes del histórico de consumo, equivalente en pesos" aria-valuemin="0" aria-valuemax="${last}" aria-valuenow="${last}" aria-valuetext="${sanitize(p.label+' · '+p.DOP+' · '+p.USD)}">${[0,1,2,3,4].map(i=>`<line class="v1301-gridline" x1="${left}" x2="${right}" y1="${top+i*(bottom-top)/4}" y2="${top+i*(bottom-top)/4}"/>`).join('')}<text x="2" y="${top+3}">${tick(ceiling)}</text><text x="2" y="${bottom+3}">${tick(0)}</text>${ticks.map(i=>`<text x="${points[i].x}" y="164" text-anchor="${i===last?'end':i===0?'start':'middle'}">${sanitize(monthLabel(i))}</text>`).join('')}<path class="v1301-line" d="${path}"/><line class="v1301-guide" x1="${p.x}" x2="${p.x}" y1="${top}" y2="${bottom}"/><circle class="v1301-dot" cx="${p.x}" cy="${p.y}" r="4.5"/></svg><footer>Desliza o toca un mes para explorar</footer></section>`;
+}
+function v1301WalletSelectMonth(graph,index){
+ const points=JSON.parse(graph.dataset.v1301Points),last=points.length-1,i=Math.max(0,Math.min(last,index)),p=points[i],section=graph.closest('.v1301-history');
+ section.querySelector('[data-v1301-month]').textContent=(i===last?'Este mes · ':'')+p.label;
+ section.querySelector('[data-v1301-dop]').textContent=p.DOP;section.querySelector('[data-v1301-usd]').textContent=p.USD;
+ graph.setAttribute('aria-valuenow',i);graph.setAttribute('aria-valuetext',p.label+' · '+p.DOP+' · '+p.USD);
+ const guide=graph.querySelector('.v1301-guide'),dot=graph.querySelector('.v1301-dot');guide.setAttribute('x1',p.x);guide.setAttribute('x2',p.x);dot.setAttribute('cx',p.x);dot.setAttribute('cy',p.y);
+}
+function v1301WalletGraphPointer(e){
+ const graph=e.target.closest?.('.v1301-chart');if(!graph||ui.page!=='wallet')return;
+ if(e.type==='pointerdown'){if(e.button!==0)return;graph.setPointerCapture?.(e.pointerId);graph.dataset.v1301Pointer=String(e.pointerId);}
+ else if(graph.dataset.v1301Pointer!==String(e.pointerId))return;
+ if(e.type==='pointercancel'){delete graph.dataset.v1301Pointer;return;}
+ const rect=graph.getBoundingClientRect(),last=Number(graph.getAttribute('aria-valuemax'));
+ v1301WalletSelectMonth(graph,Math.round(((e.clientX-rect.left)*320/rect.width-44)/266*last));
+ if(e.type==='pointerup')delete graph.dataset.v1301Pointer;
+}
+for(const event of ['pointerdown','pointermove','pointerup','pointercancel'])document.addEventListener(event,v1301WalletGraphPointer);
+document.addEventListener('keydown',e=>{const graph=e.target.closest?.('.v1301-chart');if(!graph||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const i=Number(graph.getAttribute('aria-valuenow'));v1301WalletSelectMonth(graph,e.key==='Home'?0:e.key==='End'?Number(graph.getAttribute('aria-valuemax')):i+(e.key==='ArrowLeft'?-1:1));});
 function v68GlobalWalletAction(mode,ccy,id){
  const cards=v68WalletCards();
  if(mode==='cuts'){v176CardInsight(cards);return;}
@@ -1374,8 +1433,9 @@ function v68Wallet(){
  if(!cards.length)return `<section class="v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">TU CARTERA</span><h1>Mis tarjetas</h1></div><button class="v266-wallet-add" data-act="addCard" aria-label="Añadir tarjeta">${icon('plus')}</button></header><div class="v266-empty"><strong>Tu Wallet comienza aquí.</strong><p>Agrega una tarjeta para consultar crédito, cortes, pagos y actividad.</p><button class="btn" data-act="addCard">Añadir tarjeta</button></div></section>`;
  // La tarjeta virtual no forma parte de db.cards ni de ningún selector de operaciones.
  const global=ui.v68WalletId===V68_GLOBAL_ID;
- const active=global?{id:V68_GLOBAL_ID,name:'Crédito Global',limitDOP:rnd(cards.reduce((s,c)=>s+num(c.limitDOP),0)),limitUSD:rnd(cards.reduce((s,c)=>s+num(c.limitUSD),0))}:cards.find(c=>c.id===ui.v68WalletId)||cards[0];
+ const active=global?{id:V68_GLOBAL_ID,name:'Créditos generales',limitDOP:rnd(cards.reduce((s,c)=>s+num(c.limitDOP),0)),limitUSD:rnd(cards.reduce((s,c)=>s+num(c.limitUSD),0))}:cards.find(c=>c.id===ui.v68WalletId)||cards[0];
  ui.v68WalletId=active.id;
+ const consumption=v1301WalletConsumption(global?cards:[active]);
  const globalStatus=ccy=>{
   const rows=cards.map(c=>cardStatus(c,ccy)),sum=key=>rnd(rows.reduce((s,st)=>s+num(st[key]),0));
   const nextDue=rows.filter(st=>num(st.billed)>.005&&st.nextDue).map(st=>st.nextDue).sort()[0]||null;
@@ -1392,7 +1452,7 @@ function v68Wallet(){
  const tierName=c=>CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
  const due=[{...dop,ccy:'DOP'},{...usd,ccy:'USD'}].filter(s=>s.nextDue&&num(s.billed)>0.005).sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
  const history=global?[]:recentTx().filter(t=>t.cardId===active.id).slice(0,4);
- const globalFace=`<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${global?'selected':''}" data-act="v68WalletSelect" data-id="${V68_GLOBAL_ID}" aria-pressed="${global}" aria-label="Seleccionar Crédito Global"><span class="v266-physical-card v277-physical-card" style="background:linear-gradient(125deg,color-mix(in srgb,var(--accent,#087b72) 48%,#10252d),color-mix(in srgb,var(--accent,#087b72) 80%,#142c36))!important"><span class="v277-card-head"><span class="v277-card-bank">${icon('wallet')}<b>Mi crédito</b></span><small>CONSOLIDADO</small></span><strong class="v277-card-title">Crédito Global</strong><span class="v277-card-number">${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}</span><span class="v277-card-footer"><small>CRÉDITO · RD$ / US$</small>${icon('card')}</span></span></button>`;
+ const globalFace=`<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${global?'selected':''}" data-act="v68WalletSelect" data-id="${V68_GLOBAL_ID}" aria-pressed="${global}" aria-label="Seleccionar Créditos generales"><span class="v266-physical-card v277-physical-card" style="background:linear-gradient(125deg,color-mix(in srgb,var(--accent,#087b72) 48%,#10252d),color-mix(in srgb,var(--accent,#087b72) 80%,#142c36))!important"><span class="v277-card-head"><span class="v277-card-bank">${icon('wallet')}<b>Mi crédito</b></span><small>CONSOLIDADO</small></span><strong class="v277-card-title">Créditos generales</strong><span class="v277-card-number">${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}</span><span class="v277-card-footer"><small>CRÉDITO · RD$ / US$</small>${icon('card')}</span></span></button>`;
  const gallery=globalFace+cards.map(c=>{
   const selected=c.id===active.id,bankName=bankOf(c),tier=cardTierKey(c);
   return `<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v266-physical-card v277-physical-card tier-${sanitize(tier)}"><span class="v277-card-head"><span class="v277-card-bank">${bankLogoInline(c.bankId)}<b>${sanitize(bankName||c.name)}</b></span><small>${sanitize(tierName(c))}</small></span><strong class="v277-card-title">${sanitize(c.name)}</strong><span class="v277-card-number">•••• ${sanitize(last4(c)||'••••')}</span><span class="v277-card-footer"><small>CRÉDITO · ${num(c.limitDOP)>0?'RD$':''}${num(c.limitDOP)>0&&num(c.limitUSD)>0?' / ':''}${num(c.limitUSD)>0?'US$':''}${num(c.limitDOP)<=0&&num(c.limitUSD)<=0?'RD$ / US$':''}</small>${cardNetworkMark(c)}</span></span></button>`;
@@ -1400,7 +1460,7 @@ function v68Wallet(){
  const rows=history.map(t=>`<button type="button" class="v266-activity-row v6-wallet-tx-trigger" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalles de ${sanitize(transactionTitle(t))}, ${sanitize(String(txDisplay(t)).replace(/<[^>]*>/g,''))}"><span class="v266-activity-ico">${icon(['card_payment','card_refund','card_reward'].includes(t.type)?'up':'card')}</span><span class="v266-activity-info"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b><span class="v6-wallet-tx-chevron" aria-hidden="true">${icon('arrow')}</span></button>`).join('');
   const accent=String(global?'':bank(active.bankId)?.color||db.settings.paletteHex||'').trim();
  const walletAccent=global?'var(--accent,#6964ea)':/^#[0-9a-fA-F]{6}$/.test(accent)?accent:'#6964ea';
- const dots=[{id:V68_GLOBAL_ID,name:'Crédito Global'},...cards];
+ const dots=[{id:V68_GLOBAL_ID,name:'Créditos generales'},...cards];
  const action=(mode,original)=>global?`data-act="v68WalletGlobalAction" data-mode="${mode}"`:original;
  return `<section class="v68-wallet v266-wallet v279-wallet" style="--v900-wallet-tone:${walletAccent}" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
  <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${dots.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
@@ -1413,13 +1473,15 @@ function v68Wallet(){
    </div>
   </div>
  <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" ${action('pay',`data-act="payCard" data-id="${sanitize(active.id)}"`)}><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" ${action('cuts',`data-act="goCard" data-id="${sanitize(active.id)}"`)}><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" ${action('advance',`data-v900-action="advance" data-id="${sanitize(active.id)}"`)} aria-label="Solicitar avance de efectivo"><span>${icon('cashAdvance')}</span><b>Avance</b></button><button type="button" ${action('edit',`data-act="editCard" data-id="${sanitize(active.id)}"`)}><span>${icon('settings')}</span><b>Editar</b></button></div>
- <section class="v266-wallet-panel v1244-state" aria-label="${global?'Estado de tu crédito global':'Estado de tu tarjeta'}"><div class="v266-panel-heading"><div><span class="v266-overline">CONTROL DE CRÉDITO</span><h2>${global?'Estado de tu crédito global':'Estado de tu tarjeta'}</h2></div><button type="button" ${action('cuts',`data-act="goCard" data-id="${sanitize(active.id)}"`)} aria-label="Abrir detalles">${icon('arrow')}</button></div>
+ <section class="v266-wallet-panel v1244-state" aria-label="${global?'Estado de tus créditos generales':'Estado de tu tarjeta'}"><div class="v266-panel-heading"><div><span class="v266-overline">CONTROL DE CRÉDITO</span><h2>${global?'Estado de tus créditos generales':'Estado de tu tarjeta'}</h2></div><button type="button" ${action('cuts',`data-act="goCard" data-id="${sanitize(active.id)}"`)} aria-label="Abrir detalles">${icon('arrow')}</button></div>
  <div class="v1244-main"><div class="v1244-gauge ${usage>=75?'is-high':usage>=50?'is-mid':''}" role="meter" aria-label="Porcentaje utilizado del límite" aria-valuemin="0" aria-valuemax="${Math.max(100,usage).toFixed(1)}" aria-valuenow="${usage.toFixed(1)}" style="--u:${Math.min(100,usage)}"><div><b>${usage.toFixed(1)}%</b><small>utilizado</small></div></div>
  <div class="v1244-limits"><small>LÍMITE TOTAL</small><strong>${money(totalLimit)}</strong><div class="v1244-ccy"><span><i>RD$</i>${num(active.limitDOP).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span><span><i>US$</i>${num(active.limitUSD).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div></div></div>
   <div class="v1244-cutbox">${(()=>{const L=[[dop,'DOP','RD$'],[usd,'USD','US$']].map(([st,cc,sym])=>{const bill=num(st.billed),has=bill>.005&&!!st.nextDue;return {st,cc,sym,bill,has,late:has&&st.nextDue<today(),date:has?st.nextDue:''}});const act=L.filter(x=>x.has),lateL=act.filter(x=>x.late),ref=(lateL.length?lateL:act).map(x=>x.date).sort()[0],isLate=lateL.length>0,title=global?(isLate?'CORTES ATRASADOS':act.length?'CORTES PENDIENTES':'CORTES AL DÍA'):(isLate?'CORTE ATRASADO':act.length?'CORTE PENDIENTE':'CORTE AL DÍA'),sub=isLate?(global?'Desde el ':'Venció el ')+prettyDate(ref):act.length?(global?'Próximo vence el ':'Vence el ')+prettyDate(ref):'Nada por pagar';
  return `<div class="v1244-cuthead ${isLate?'is-late':act.length?'is-soon':'is-ok'}"><strong>${title}</strong><span>${sub}</span></div><div class="v1244-pills">${L.map(x=>{const amt=num(x.bill).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return `<button type="button" class="v1244-pill" ${x.has?`${action('pay-cut',`data-act="payCard" data-id="${sanitize(active.id)}"`)} data-ccy="${x.cc}"`:'disabled'} title="${x.has?(x.late?'Venció ':'Vence ')+prettyDate(x.date):''}" aria-label="${x.has?'Pagar corte en '+x.sym+' '+amt+' · '+prettyDate(x.date):'Sin saldo facturado en '+x.sym}"><span class="v1244-pill-top"><b>${x.sym}</b><em>${amt}</em></span><span class="v1244-pill-go">${icon('arrow')}</span></button>`}).join('')}</div>`})()}</div>
 </section>
  ${v371CardReturnWidget(active,global?cards:null)}
+ ${v1301WalletHistory(active,global,consumption)}
+ ${global?v1301WalletDistribution(cards,consumption,'consumption')+v1301WalletDistribution(cards,consumption,'limits'):''}
  ${global?'':`
  <section class="v266-wallet-panel v266-activity"><div class="v266-panel-heading"><div><span class="v266-overline">TUS ÚLTIMOS CONSUMOS</span><h2>Actividad reciente</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Ver todos los movimientos">${icon('arrow')}</button></div>${rows||'<p class="v266-empty-activity">Sin movimientos recientes en esta tarjeta.</p>'}</section>
 `}
@@ -13268,7 +13330,7 @@ document.addEventListener('focusout',e=>{
   const initial=rail.querySelector('.v68-wallet-face.selected[data-id]');
   if(initial){
    status.textContent=initial.getAttribute('aria-label')||'Tarjeta seleccionada';
-   // Al anteponer Crédito Global, centrar la selección real antes del primer scroll.
+   // Al anteponer Créditos generales, centrar la selección real antes del primer scroll.
    const snap=rail.style.getPropertyValue('scroll-snap-type'),priority=rail.style.getPropertyPriority('scroll-snap-type');
    rail.style.setProperty('scroll-snap-type','none','important');
    const center=()=>{const r=rail.getBoundingClientRect(),c=initial.getBoundingClientRect();const target=Math.max(0,Math.min(rail.scrollWidth-rail.clientWidth,rail.scrollLeft+c.left-r.left+(c.width-r.width)/2));rail.scrollLeft=target;};

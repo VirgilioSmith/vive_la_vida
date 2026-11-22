@@ -51,7 +51,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     await waitSelected(GLOBAL);
     const read=async s=>moneyText(await p.locator(s).innerText());
     const parts=async s=>p.locator(s).allTextContents().then(v=>v.map(moneyText));
-    await p.getByRole('heading',{name:'Estado de tu crédito global'}).waitFor();
+    await p.getByRole('heading',{name:'Estado de tus créditos generales'}).waitFor();
     assert.equal(await read('.v565-primary > strong'),386000);
     assert.equal(await read('.v565-secondary > b'),94000);
     assert.equal(await read('.v1244-limits > strong'),480000);
@@ -96,7 +96,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     await waitSelected(GLOBAL);
     // El saldo cambia automáticamente al actualizar los datos de una tarjeta.
     await p.evaluate(()=>{const t=window.__T;t.dbg().cards[0].openingDOP+=10000;t.inv();t.go('wallet')});
-    await p.getByRole('heading',{name:'Estado de tu crédito global'}).waitFor();
+    await p.getByRole('heading',{name:'Estado de tus créditos generales'}).waitFor();
     assert.equal(await read('.v565-secondary > b'),104000);
     assert.equal(await read('.v565-primary > strong'),376000);
     assert.equal(await p.locator('.v266-activity').count(),0);
@@ -191,8 +191,59 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     await p.locator('#v230BenefitsWorkspace').waitFor();
     await p.getByRole('button',{name:'Volver a Wallet'}).click();
     await waitSelected(GLOBAL);
+    // Consumo real: compras históricas, meses sin actividad y cargos no computables.
+    await p.evaluate(()=>{
+     const t=window.__T,d=t.dbg(),[a,b]=d.cards,now=t.fn.today();
+     const first=t.fn.plusMonths(now.slice(0,7)+'-01',-14),previous=t.fn.plusMonths(now.slice(0,7)+'-01',-2);
+     const row=(id,type,c,currency,amount,date=now,extra={})=>({id,type,cardId:c.id,currency,amount,date,created:date+'T12:00:00Z',...extra});
+     d.transactions=[row('h1','card_charge',a,'DOP',10000,first),row('h2','card_charge',a,'DOP',1000),row('h3','card_charge',a,'USD',100),row('h4','card_charge',b,'USD',500,previous),row('h5','card_charge',b,'DOP',1000),row('payment','card_payment',a,'DOP',50000),row('fee','card_charge',a,'DOP',2000,now,{chargeKind:'annual_fee'}),row('insurance','card_charge',b,'USD',25,now,{chargeKind:'insurance'}),row('interest','card_charge',a,'USD',20,now,{chargeKind:'interest'}),row('advance','card_advance',b,'DOP',10000),row('refund','card_refund',b,'DOP',50),row('reward','card_reward',a,'DOP',100)];
+     t.inv();t.go('wallet');
+    });
+    assert.equal(await faces.first().getAttribute('aria-label'),'Seleccionar Créditos generales');
+    const hist=p.locator('.v1301-history'),graph=hist.locator('.v1301-chart');
+    assert.deepEqual(await parts('.v1301-history-total strong,.v1301-history-total b'),[12000,600]);
+    assert.deepEqual(await parts('.v1301-history-stats > div:nth-child(2) strong,.v1301-history-stats > div:nth-child(2) b'),[800,40]);
+    assert.deepEqual(await parts('[data-v1301-dop],[data-v1301-usd]'),[2000,100]);
+    assert.equal(await graph.getAttribute('aria-valuemax'),'14','Incluye todos los meses y cruza años');
+    assert.equal(await graph.getAttribute('aria-valuenow'),'14');
+    assert.equal(await hist.locator('.v1301-dot').count(),1);
+    assert.equal(await graph.locator('.v1301-line').evaluate(el=>getComputedStyle(el).fill),'none');
+    assert.equal(await hist.evaluate(el=>el.previousElementSibling.classList.contains('v371-card-return')),true);
+    await graph.scrollIntoViewIfNeeded();
+    const box=await graph.boundingBox();
+    await graph.tap({position:{x:box.width*44/320+1,y:box.height/2}});
+    assert.equal(await graph.getAttribute('aria-valuenow'),'0');
+    assert.deepEqual(await parts('[data-v1301-dop],[data-v1301-usd]'),[10000,0]);
+    await p.mouse.move(box.x+box.width*44/320+1,box.y+box.height/2);await p.mouse.down();
+    await p.mouse.move(box.x+box.width*310/320,box.y+box.height/2,{steps:10});await p.mouse.up();
+    assert.equal(await graph.getAttribute('aria-valuenow'),'14');
+    assert.deepEqual(await parts('[data-v1301-dop],[data-v1301-usd]'),[2000,100]);
+    await graph.focus();await p.keyboard.press('ArrowLeft');
+    assert.deepEqual(await parts('[data-v1301-dop],[data-v1301-usd]'),[0,0]);
+    await p.keyboard.press('End');
+    const consumption=p.locator('.v1301-distribution[data-v1301-kind="consumption"]'),limits=p.locator('.v1301-distribution[data-v1301-kind="limits"]');
+    assert.equal(await consumption.getAttribute('open'),null);
+    for(const item of [consumption,limits]){
+     await item.locator('summary').tap();assert.notEqual(await item.getAttribute('open'),null);
+     assert.equal(await item.locator('.v1301-stack i').count(),2);
+     assert.equal(await item.locator('.v1301-mini .credit-network').count(),2);
+     assert.equal(await item.evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
+     assert.equal(await item.locator('.v1301-distribution-body').innerText().then(t=>t.includes('%')),false);
+    }
+    assert.deepEqual(await consumption.locator('.v1301-rank').evaluateAll(els=>els.map(e=>e.dataset.cardId)),[fixture.second,fixture.first]);
+    assert.deepEqual(await limits.locator('.v1301-rank').evaluateAll(els=>els.map(e=>e.dataset.cardId)),[fixture.first,fixture.second]);
+    assert.equal(moneyText(await consumption.locator('.v1301-total strong').innerText()),48000);
+    assert.deepEqual(await consumption.locator('.v1301-equivalent').allTextContents().then(a=>a.map(moneyText)),[31000,17000]);
+    assert.equal(moneyText(await limits.locator('.v1301-total strong').innerText()),650000);
+    for(const item of [consumption,limits]){await item.locator('summary').tap();assert.equal(await item.getAttribute('open'),null)}
+    for(const [id,amounts] of [[fixture.first,[11000,100]],[fixture.second,[1000,500]]]){
+     await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();await waitSelected(id);
+     assert.deepEqual(await parts('.v1301-history-total strong,.v1301-history-total b'),amounts);
+     assert.equal(await p.locator('.v1301-distribution').count(),0);
+    }
+    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
     assert.deepEqual(errors,[]);
-    console.log('OK Crédito Global '+theme+' · carrusel, importes, utilización, actualización y navegación');
+    console.log('OK Créditos generales '+theme+' · carrusel, importes, distribución, histórico, interacción y navegación');
    }finally{await ctx.close()}
   }
  }finally{await browser.close()}
