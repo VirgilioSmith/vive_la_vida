@@ -17446,7 +17446,9 @@ function renderEntry(){
  if(matchMedia('(max-width:790px)').matches){
   const screen=root.querySelector('.v749-screen');
   screen.querySelectorAll('.v749-fieldline').forEach(row=>{if(row.querySelector('[data-v749=category],[data-v749=subcategory],#v749Date'))row.remove()});
-  const amount=screen.querySelector('.v749-amount');if(amount){amount.dataset.currency=cur(state())==='USD'?'US$':'RD$';amount.querySelector('small')?.remove()}
+  const amount=screen.querySelector('.v749-amount');if(amount){const input=amount.querySelector('input');const line=document.createElement('div');line.className='vMov-amount-line';const prefix=document.createElement('span');prefix.textContent=cur(state())==='USD'?'US$':'RD$';prefix.setAttribute('aria-hidden','true');input.before(line);line.append(prefix,input);amount.querySelector('small')?.remove()}
+  const shortLabel=c=>/^salario/i.test(c)?'Salario':/^joseo/i.test(c)?'Joseo':c;
+  screen.querySelectorAll('.v770-quick-label').forEach(el=>el.textContent=shortLabel(el.textContent));
  }
  if(already)root.querySelector('.v749-layer')?.classList.add('v956-no-anim');
  // V1294 · El importe usa solo inputmode=decimal; la vista no simula el teclado.

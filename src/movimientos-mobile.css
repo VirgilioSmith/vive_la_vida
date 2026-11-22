@@ -1,9 +1,12 @@
 /* Mobile-only registration and third-party purchase, isolated from other forms. */
 @media(max-width:790px){
- #modal-root .v749-amount[data-currency]{position:relative}
- #modal-root .v749-amount[data-currency]::before{content:attr(data-currency);position:absolute;left:16px;bottom:15px;font-size:clamp(24px,7vw,35px);font-weight:800;line-height:1.25;z-index:2;pointer-events:none;color:var(--v749-ink)}
- html body #modal-root .v749-layer[data-v749-stage=entry] .v749-amount[data-currency] input#v749Amount{padding-left:clamp(59px,17vw,80px)!important;font-size:clamp(28px,8vw,39px)!important}
- #modal-root .v749-layer .v749-fieldline:has([data-v749=source]),#modal-root .v749-layer .v749-fieldline:has([data-v749=destination]){min-height:0!important;flex-direction:row!important;align-items:center!important;gap:6px!important}
+ #modal-root .vMov-amount-line{display:flex;align-items:center;gap:0;color:#141919;font-size:clamp(26px,8vw,39px);font-weight:800;line-height:1.15}
+ html body:not(.theme-dark):not(.theme-black) #modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-amount .vMov-amount-line input#v749Amount{flex:1;min-width:0;padding:0!important;font-size:inherit!important;font-weight:800!important;background:transparent!important;border:0!important;box-shadow:none!important;color:#141919!important;margin:0!important}
+ html body:not(.theme-dark):not(.theme-black) #modal-root .v749-layer[data-v749-stage] .v749-screen .v749-foot button.v749-primary:not(:disabled){background:#087c73!important;border-color:#087c73!important;color:#fff!important;box-shadow:none!important}
+ html body:not(.theme-dark):not(.theme-black) #modal-root .v749-layer[data-v749-stage] .v749-screen :is(.v749-amount,.v749-impact,.v749-confirm-rows,.v749-illustrated,.v749-fieldline){background:#fff!important;background-image:none!important;border:1px solid #dddfe0!important;box-shadow:none!important}
+ html body:not(.theme-dark):not(.theme-black) #modal-root .v749-layer[data-v749-stage] .v749-screen .v749-quick button .v770-quick-label{white-space:normal!important;overflow-wrap:anywhere!important;font-size:12px!important;line-height:1.15!important}
+ html body:not(.theme-dark):not(.theme-black) #modal-root .v749-layer[data-v749-stage] .v749-screen .v749-quick button .v953-cat-ico{color:#087c73!important}
+ html body #modal-root .v749-layer[data-v749-stage] .v749-screen .v749-fieldline:has([data-v749=source]),html body #modal-root .v749-layer[data-v749-stage] .v749-screen .v749-fieldline:has([data-v749=destination]){min-height:0!important;flex-direction:row!important;align-items:center!important;gap:6px!important}
  html body #modal-root .v749-layer .v749-fieldline [data-v749=source],html body #modal-root .v749-layer .v749-fieldline [data-v749=destination]{width:auto!important;min-width:0!important;flex:1!important}
  #modal-root .v749-layer .v1295-product-chip{padding:5px!important;border:0!important;box-shadow:none!important;background:transparent!important;gap:6px!important}
  #modal-root .v749-layer .v1295-product-icon{width:30px!important;height:30px!important;flex-basis:30px!important}

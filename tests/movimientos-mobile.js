@@ -9,7 +9,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 async function until(fn,label){for(let i=0;i<80;i++){if(await fn())return;await wait(250)}throw Error('Tiempo agotado: '+label)}
 const sync=p=>p.evaluate(()=>window.__T.sync());
 async function flush(p){await until(async()=>{let s=await sync(p);if(s.dirty&&!s.saving&&!s.conflict)await p.evaluate(()=>{window.__T.unbackoff();return window.__T.flush()});s=await sync(p);return s.active&&!s.dirty&&!s.saving&&!s.conflict},'guardado confirmado')}
-const shot=(p,name)=>p.screenshot({path:path.join(dir,name+'.png')});
+const shot=async(p,name)=>{await p.waitForTimeout(650);await p.screenshot({path:path.join(dir,name+'.png'),animations:'disabled'})};
 const quick=p=>p.locator('#v354-form');
 const action=(p,key)=>p.evaluate(key=>{const b=document.createElement('button');b.dataset.v354Act=key;document.body.append(b);b.click();b.remove()},key);
 const total=p=>p.evaluate(()=>{const m=window.__T.mt();return [m.income,m.expense]});
@@ -68,6 +68,17 @@ async function scenario(p,s,i,srv){
   await p.locator('#v749Amount').fill('2500,00');check('Importe nativo ingreso',await p.locator('#v749Amount').getAttribute('inputmode'),'decimal');
   check('Tres accesos rápidos',await p.locator('[data-v749=quick]').count(),3);check('Campos redundantes eliminados',await p.locator('.v749-fieldline [data-v749=category],.v749-fieldline [data-v749=subcategory],#v749Date').count(),0);
   await shot(p,'01-nuevo-movimiento');const before=await state(p);await p.locator('[data-v749=continue]').click();await p.locator('[data-v749=confirm]').waitFor();check('Sin bloque duplicado de instrumentos',await p.locator('.v749-review-overlay .v1295-confirm-products').count(),0);await shot(p,'02-confirma-movimiento');await p.locator('[data-v749=confirm]').click();await until(async()=>!(await p.locator('[data-v749=confirm]').count()),'ingreso confirmado');await flush(p);check('Ingreso real guardado',cents((await state(p)).receiver-before.receiver),250000);
+  await p.locator('#v156-feedback-layer').waitFor({state:'detached'});
+  // Confirm expense and own-account transfer through the same actual native save path.
+  async function regular(mode,source,destination,amount){
+   await p.evaluate(mode=>{const b=document.createElement('button');b.dataset.act='newTransaction';b.dataset.type=mode;document.body.append(b);b.click();b.remove()},mode);
+   await p.locator('[data-v749=mode][data-value="'+(mode==='expense'?'spend':mode)+'"]').click();await p.locator('[data-v749=source]').click();await chooseProduct(p,source);
+   if(destination){await p.locator('[data-v749=destination]').click();await chooseProduct(p,destination)}
+   await p.locator('#v749Amount').fill(String(amount));await p.locator('[data-v749=continue]').click();await p.locator('[data-v749=confirm]').click();await until(async()=>!(await p.locator('[data-v749=confirm]').count()),mode+' confirmado');await flush(p);await p.locator('#v156-feedback-layer').waitFor({state:'detached'});
+  }
+  let baseline=await state(p);await regular('expense','audit-card',null,125.75);check('Gasto real en tarjeta',cents((await state(p)).debt-baseline.debt),12575);
+  baseline=await state(p);await regular('expense','audit-source',null,78.42);check('Gasto real desde cuenta',cents(baseline.source-(await state(p)).source),7842);
+  baseline=await state(p);await regular('transfer','audit-source','audit-receiver',123.45);check('Transferencia real al destino',cents((await state(p)).receiver-baseline.receiver),12345);check('Transferencia con débito único',cents(baseline.source-(await state(p)).source),cents(123.45+await p.evaluate(()=>{const t=window.__T.dbg().transactions.filter(x=>x.type==='transfer'&&x.accountId==='audit-source').at(-1);return Number(t.transferFee||0)})));
   const scenarios=[{p:5656,r:550,mode:'account'},{p:5656,r:550,mode:'card'},{p:5656,r:550,mode:'account_and_paid',paid:200},{p:5656,r:0,mode:'none'},{p:5656,r:5656,mode:'account'},{p:5656,r:6000,mode:'account'},{p:5656,r:550,mode:'account',source:'account'},{p:99.99,r:.01,mode:'account'},{p:100,r:150,mode:'card'}];
   const all=[];for(let i=0;i<scenarios.length;i++)all.push(await scenario(p,scenarios[i],i,srv));
   const final=await state(p);await p.reload({waitUntil:'load'});await until(async()=>(await sync(p)).active,'recarga');check('Saldos persistentes tras recargar',await state(p),final);
