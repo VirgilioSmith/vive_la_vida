@@ -28,7 +28,7 @@ async function scenario(p,s,i,srv){
  await quick(p).locator('[name=purchase]').fill(String(s.p));await quick(p).locator('[name=received]').fill(String(s.r));
  check('Teclado decimal '+i,await quick(p).locator('[name=purchase]').getAttribute('inputmode'),'decimal');
  if(i===0)await shot(p,'03-compra');
- await p.locator('[data-v354-act=pickReceipt]').click();if(i===0){check('Cuatro situaciones del dinero',await p.locator('[data-v354-act=chooseReceipt]').count(),4);await shot(p,'06-destino-dinero')}
+ await p.locator('[data-v354-act=pickReceipt]').click();await p.locator('[data-v354-act=chooseReceipt]').first().waitFor({state:'visible'});if(i===0){check('Cuatro situaciones del dinero',await p.locator('[data-v354-act=chooseReceipt]').count(),4);await shot(p,'06-destino-dinero')}
  await p.locator('[data-v354-act=chooseReceipt][data-id="'+s.mode+'"]').click();
  if(['account','account_and_paid'].includes(s.mode)){
   await p.locator('#v354-account-label .v789-select-open').click();await chooseProduct(p,'audit-receiver');
