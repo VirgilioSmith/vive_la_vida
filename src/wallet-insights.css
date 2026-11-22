@@ -1,16 +1,18 @@
 /* V1301 · Wallet móvil: lecturas de consumo y distribución, coherentes con Liquid Glass. */
 @media (max-width:790px){
-  html body #app #page .v68-wallet .v1301-insight{
+  html body #app #page .v68-wallet :is(.v1301-insight,.v1301-limit-breakdown){
     --v1301-accent:var(--vive-theme-color,var(--accent,#087b72));
     --v1301-tint:#d5f1ea;
     --v1301-ink:var(--text,#192842);
     --v1301-muted:#637086;
     --v1301-border:color-mix(in srgb,var(--v1301-accent) 18%,#dce4ec);
     --v1301-inset:color-mix(in srgb,var(--v1301-accent) 4%,rgba(255,255,255,.48));
+  }
+  html body #app #page .v68-wallet .v1301-insight{
     box-sizing:border-box;min-width:0;width:100%;padding:16px!important;border-radius:24px!important;
     color:var(--v1301-ink);font-variant-numeric:tabular-nums;overflow:hidden;
   }
-  html body:is(.theme-black,.theme-dark) #app #page .v68-wallet .v1301-insight{
+  html body:is(.theme-black,.theme-dark) #app #page .v68-wallet :is(.v1301-insight,.v1301-limit-breakdown){
     --v1301-accent:color-mix(in srgb,var(--vive-theme-color,var(--accent,#087b72)) 76%,#fff);
     --v1301-tint:#d2f1e9;--v1301-ink:#f3f5f7;--v1301-muted:#b1bac6;
     --v1301-border:color-mix(in srgb,var(--v1301-accent) 24%,#24272c);
@@ -42,6 +44,7 @@
   #app #page .v1301-donut-count{fill:var(--v1301-ink);font-size:29px;font-weight:850;letter-spacing:-.04em}
   #app #page .v1301-donut-caption{fill:var(--v1301-muted);font-size:11px;font-weight:650}
   #app #page .v1301-distribution[data-v1301-kind="consumption"] .v1301-donut+h3{margin-top:3px}
+  #app #page .v1244-state .v1301-limit-breakdown{margin:4px 0 0;min-width:0;font-variant-numeric:tabular-nums}
   #app #page .v1301-ranked{display:grid;gap:6px;min-width:0}
   #app #page .v1301-rank{display:grid;grid-template-columns:34px minmax(0,1fr) minmax(0,36%);gap:8px;align-items:center;padding:8px 7px;border:1px solid var(--v1301-border);border-radius:13px;background:var(--v1301-inset);min-width:0}
   #app #page .v1301-bank{display:grid;place-items:center;width:34px;height:34px;min-width:0;color:var(--v1301-accent)}
