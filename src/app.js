@@ -1297,7 +1297,7 @@ function v371CardReturnWidget(c,consolidatedCards=null,bankView=false){
   const annual=rnd(rows.reduce((s,x)=>s+x.annual,0)),benefit=rnd(rows.reduce((s,x)=>s+x.benefit,0)),net=rnd(benefit-annual);
   const missingRate=rows.some(x=>x.missingRate),hasAnnual=rows.some(x=>x.hasAnnual);
   const configured=rnd(rows.reduce((sum,row)=>sum+row.configured,0));
-  return {year:String(today()).slice(0,4),annual,configured,hasConfigured:rows.some(x=>x.hasConfigured),benefit,net,roi:!missingRate&&annual>0?rnd(net/annual*100):null,missingRate,feeConfirmed:rows.every(x=>x.hasAnnual&&x.feeConfirmed),unconfigured:rows.filter(x=>!x.hasAnnual).length};
+  return {year:String(today()).slice(0,4),annual,configured,hasConfigured:rows.some(x=>x.hasConfigured),benefit,net,roi:!missingRate&&annual>0?rnd(net/annual*100):null,missingRate,hasAnnual,feeConfirmed:rows.every(x=>x.hasAnnual&&x.feeConfirmed),unconfigured:rows.filter(x=>!x.hasAnnual).length};
  })():v371CardReturn(c);
  const cost=d.missingRate?'—':d.hasAnnual?money(d.annual,'DOP',2):'Sin definir';
  const benefit=d.missingRate?'—':money(d.benefit,'DOP',2);
