@@ -16065,7 +16065,7 @@ document.addEventListener('input',function(event){
    No se modifica el importe histórico del corte. */
 (function(){
  'use strict';
- let draft=null,processing=false;
+ let draft=null,processing=false,pickerData=null,pendingContact=null;
  const $=s=>document.querySelector(s), esc=s=>sanitize(String(s??''));
  const moneyIn=(n,c)=>money(Math.max(0,Math.round((Number(n)||0)*100)/100),c,2);
  const fmt=(n,c)=>moneyIn(n,c||'DOP');
@@ -16091,18 +16091,21 @@ document.addEventListener('input',function(event){
   const modalStyle='background:'+ (dark?'#000000':'#f6f8fc')+'!important;padding:0!important;'+(mobile?'height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;width:100vw!important;':'');
   root().innerHTML='<div class="modal-layer v354-layer" data-backdrop="true"><section class="modal v354-dialog" style="'+modalStyle+'" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><header class="v354-top"><div><span class="v354-eyebrow">vive el hoy · MOVIMIENTO RÁPIDO</span><h2>'+esc(title)+'</h2></div><button type="button" class="v354-close" data-v354-act="close" aria-label="Cerrar">×</button></header><div class="v354-scroll"><div class="v354-progress"><small>'+esc(step)+'</small><strong>'+esc(amount)+'</strong></div>'+inner+'</div><footer class="v354-foot">'+footer+'</footer></section></div>';
  };
- const close=()=>{draft=null;processing=false;closeModal()};
+ const close=()=>{draft=null;pickerData=null;pendingContact=null;processing=false;closeModal()};
  const selectOptions=(arr,selected)=>arr.map(([id,name])=>'<option value="'+esc(id)+'" '+(String(selected)===String(id)?'selected':'')+'>'+esc(name)+'</option>').join('');
  function formScreen(initial={}){
   if(!activeCards().length){toast('Primero registra una tarjeta de crédito en Bancos.');return;}
   const c=activeCards().find(x=>x.id===initial.cardId)||activeCards()[0], cc=initial.currency||'DOP';
   const ac=activeAccounts(cc),accountId=ac.some(a=>a.id===initial.accountId)?initial.accountId:(ac[0]?.id||'');
+  const selectedPerson=String(initial.person||'').trim(),personInitials=selectedPerson.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toLocaleUpperCase('es')||'?';
   const personOptions=[...new Set([...(db.personalContacts||[]).map(x=>[x.firstName,x.lastName].filter(Boolean).join(' ').trim()),...(db.personalLoans||[]).map(x=>x.person)].filter(Boolean))];
   const datalist='<datalist id="v354-people">'+personOptions.map(x=>'<option value="'+esc(x)+'"></option>').join('')+'</datalist>';
+  const personField=matchMedia('(max-width:790px)').matches?
+   '<div class="v355-person"><span>¿Para quién fue?</span><input type="hidden" name="person" value="'+esc(selectedPerson)+'"><input type="hidden" name="contactId" value="'+esc(initial.contactId||'')+'"><button type="button" class="v354-person-trigger" data-v354-act="pickPerson" aria-label="Abrir selector de contactos"><span class="v354-person-avatar">'+esc(personInitials)+'</span><span><strong>'+esc(selectedPerson||'Seleccionar una persona')+'</strong><small>Contactos de Entre personas · seleccionar o crear</small></span>'+icon('chevron-right')+'</button></div>':
+   '<label class="v355-person">¿Para quién fue?<input name="person" list="v354-people" maxlength="85" required placeholder="Ej. Mi hermano" value="'+esc(selectedPerson)+'"></label>';
   const content='<div class="v355-intro"><strong>Una compra para alguien</strong><span>Cuánto usaste de tu tarjeta y cuánto te entregaron.</span></div>'+
    '<div id="v354-error" class="v354-error" role="alert" aria-live="polite"></div>'+
-   '<form id="v354-form" class="v354-fields v355-fast-form" autocomplete="off">'+datalist+
-   '<label class="v355-person">¿Para quién fue?<input name="person" list="v354-people" maxlength="85" required placeholder="Ej. Mi hermano" value="'+esc(initial.person||'')+'"></label>'+
+   '<form id="v354-form" class="v354-fields v355-fast-form" autocomplete="off">'+datalist+personField+
    '<div class="v355-sums"><label>Compra total<input name="purchase" type="number" inputmode="decimal" step="0.01" min="0.01" required value="'+esc(initial.purchase??'')+'" placeholder="6000"></label><label>Me entregó<input name="received" type="number" inputmode="decimal" step="0.01" min="0" value="'+esc(initial.received??'')+'" placeholder="5000"></label></div>'+
    '<div class="v355-result" aria-live="polite"><span id="v354-balance-caption">Por cobrar · Me deben</span><strong id="v354-owed-preview">—</strong></div>'+
    '<label>¿Qué pasó con el dinero?<select name="receiptMode" required><option value="">Selecciona lo que ocurrió</option><option value="card">Abonó directamente a mi tarjeta</option><option value="account">Lo recibí en cuenta o efectivo</option><option value="account_and_paid">Lo recibí y ya pagué la tarjeta</option><option value="none">Aún no me ha entregado dinero</option></select></label>'+
@@ -16120,7 +16123,23 @@ document.addEventListener('input',function(event){
   const footer='<button type="button" data-v354-act="close">Cancelar</button><button class="primary" type="submit" form="v354-form">Revisar →</button>';
   makeShell('Movimiento rápido','PASO 1 DE 2 · DATOS',fmt(initial.purchase,cc),content,footer);
   const f=$('#v354-form');f.elements.receiptMode.value=initial.receiptMode||'';
-  recalc(f);f.elements.person.focus({preventScroll:true});
+  recalc(f); // Sin foco automático en campos numéricos o texto.
+ }
+ const nameOf=c=>[c?.firstName,c?.lastName].filter(Boolean).join(' ').trim();
+ const initialsOf=n=>String(n||'').trim().split(/\s+/).filter(Boolean).slice(0,2).map(v=>v[0]).join('').toLocaleUpperCase('es')||'?';
+ const snapshot=()=>{const f=$('#v354-form');return f?{...Object.fromEntries(new FormData(f).entries()),showExtra:!!f.querySelector('.v355-extra')?.open}:pickerData||{};};
+ function personPicker(){
+  pickerData=snapshot();
+  const saved=(db.personalContacts||[]).map(c=>({id:c.id,name:nameOf(c),detail:c.alias||c.phone||'Contacto guardado'})).filter(c=>c.name);
+  const seen=new Set(saved.map(c=>c.name.toLocaleLowerCase('es')));
+  for(const l of db.personalLoans||[]){const name=String(l.person||'').trim();if(name&&!seen.has(name.toLocaleLowerCase('es'))){saved.push({id:'',name,detail:'Relación existente'});seen.add(name.toLocaleLowerCase('es'));}}
+  saved.sort((a,b)=>a.name.localeCompare(b.name,'es'));
+  const content='<div class="v354-people"><label class="v354-people-search">'+icon('search')+'<input id="v354-person-search" type="search" autocomplete="off" placeholder="Buscar contacto por nombre" aria-label="Buscar contactos"></label><div class="v354-people-list">'+saved.map(c=>'<button type="button" class="v354-person-row" data-v354-act="choosePerson" data-id="'+esc(c.id)+'" data-name="'+esc(c.name)+'" data-person-search="'+esc(c.name.toLocaleLowerCase('es'))+'"><span class="v354-person-avatar">'+esc(initialsOf(c.name))+'</span><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.detail)+'</small></span>'+icon('chevron-right')+'</button>').join('')+'</div><p id="v354-person-empty" class="v354-person-empty" '+(saved.length?'hidden':'')+'>No hay coincidencias. Puedes añadir un contacto.</p></div>';
+  makeShell('Seleccionar persona','CONTACTOS · ENTRE PERSONAS',fmt(pickerData.purchase,pickerData.currency),content,'<button type="button" data-v354-act="pickerBack">Volver</button><button class="primary" type="button" data-v354-act="newPerson">+ Nuevo contacto</button>');
+ }
+ function newPersonScreen(){
+  const content='<form id="v354-new-person" class="v354-fields v354-new-person" autocomplete="off"><p>Este contacto se guardará junto al movimiento confirmado, sin perder los datos de la compra.</p><label>Nombre<input name="firstName" maxlength="60" required autocomplete="given-name" placeholder="Nombre"></label><label>Apellido<input name="lastName" maxlength="65" required autocomplete="family-name" placeholder="Apellido"></label></form>';
+  makeShell('Nuevo contacto','CONTACTOS · NUEVA PERSONA',fmt(pickerData?.purchase,pickerData?.currency),content,'<button type="button" data-v354-act="pickPerson">Volver</button><button class="primary" type="submit" form="v354-new-person">Usar contacto</button>');
  }
  function recalc(form){
   if(!form)return;
@@ -16165,7 +16184,7 @@ document.addEventListener('input',function(event){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date>today())throw Error('Indica la fecha real de la compra.');
   if(!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)||dueDate<date)throw Error('La fecha para cobrarle debe ser igual o posterior a la compra.');
   const tax=v356TaxInfo(channel,r,ccy,date);
-  return {person,cardId:c.id,cardName:c.name,currency:ccy,purchase:Math.round(p*100)/100,received:Math.round(r*100)/100,receiptMode:mode,channel,transferTaxEstimate:tax.amount,transferTaxRate:tax.applicable?tax.rate:0,transferTaxEstimable:tax.estimable,accountId:a?.id||'',accountName:a?.name||'',paidAmount:Math.round(paid*100)/100,date,dueDate,note:String(raw.note||'').trim().slice(0,120)};
+  return {person,contactId:String(raw.contactId||''),cardId:c.id,cardName:c.name,currency:ccy,purchase:Math.round(p*100)/100,received:Math.round(r*100)/100,receiptMode:mode,channel,transferTaxEstimate:tax.amount,transferTaxRate:tax.applicable?tax.rate:0,transferTaxEstimable:tax.estimable,accountId:a?.id||'',accountName:a?.name||'',paidAmount:Math.round(paid*100)/100,date,dueDate,note:String(raw.note||'').trim().slice(0,120)};
  }
  function review(v){
   draft={...v};
@@ -16182,7 +16201,10 @@ document.addEventListener('input',function(event){
   try{
    const x=validated(v),now=new Date().toISOString(),relationId=uuid();
     const receivedForPurchase=Math.min(x.purchase,x.received),surplus=Math.max(0,Math.round((x.received-x.purchase)*100)/100),due=Math.max(0,Math.round((x.purchase-x.received)*100)/100);
-    const contact=(db.personalContacts||[]).find(c=>[c.firstName,c.lastName].filter(Boolean).join(' ').trim().toLocaleLowerCase('es')===x.person.toLocaleLowerCase('es'));
+    db.personalContacts=Array.isArray(db.personalContacts)?db.personalContacts:[];
+    let contact=db.personalContacts.find(c=>c.id===x.contactId)||db.personalContacts.find(c=>nameOf(c).toLocaleLowerCase('es')===x.person.toLocaleLowerCase('es'));
+    let createdContact=null;
+    if(!contact&&pendingContact&&nameOf(pendingContact).toLocaleLowerCase('es')===x.person.toLocaleLowerCase('es')){createdContact={...pendingContact,id:uuid(),createdAt:now};contact=createdContact;}
    const relation={id:relationId,person:x.person,contactId:contact?.id||'',direction:'lent',principal:x.purchase,currency:x.currency,cardId:x.cardId,accountId:'',date:x.date,dueDate:x.dueDate,note:'Compra para tercero · Canal: '+(x.channel==='internet'?'Internet Banking':'Presencial')+(x.note?' · '+x.note:''),openingMode:'new',source:'third_party_card_purchase',quickChannel:x.channel,estimatedTransferTax:x.transferTaxEstimate,taxRate:x.transferTaxRate,taxOwner:'sender',createdAt:now};
    const common={created:now,date:x.date,currency:x.currency,personalLoanId:relationId,thirdPartyPurchase:true,quickChannel:x.channel,estimatedTransferTax:x.transferTaxEstimate,taxRate:x.transferTaxRate,taxOwner:'sender'};
    const entries=[{...common,id:uuid(),type:'personal_issue',cardId:x.cardId,amount:x.purchase,category:'Movimiento patrimonial',note:'Compra para '+x.person+' · '+(x.channel==='internet'?'Internet Banking':'Presencial')+(x.note?' · '+x.note:'')}];
@@ -16192,17 +16214,22 @@ document.addEventListener('input',function(event){
      entries.push({...common,id:uuid(),personalLoanId:extraId,type:'personal_issue',cardId:x.receiptMode==='card'?x.cardId:'',accountId:x.receiptMode==='card'?'':x.accountId,amount:surplus,category:'Movimiento patrimonial',note:'Sobrante por devolver a '+x.person});}
    if(x.receiptMode==='account_and_paid')entries.push({id:uuid(),created:now,type:'card_payment',date:x.date,cardId:x.cardId,accountId:x.accountId,currency:x.currency,amount:x.paidAmount,sourceAmount:x.paidAmount,paymentTax:0,paymentFee:0,category:'Movimiento patrimonial',thirdPartyPurchase:true,thirdPartyRelationId:relationId,note:'Pago real a tarjeta con dinero de '+x.person});
    // All local changes and their source link are appended together. No duplicate expense/income.
-   db.personalLoans.push(...relations);db.transactions.push(...entries);
+   if(createdContact)db.personalContacts.push(createdContact);
+    db.personalLoans.push(...relations);db.transactions.push(...entries);
    const saved=persist();
-   if(saved===false){db.transactions.splice(db.transactions.length-entries.length,entries.length);db.personalLoans.splice(db.personalLoans.length-relations.length,relations.length);if(typeof v99Invalidate==='function')v99Invalidate();throw Error('No se pudo guardar. Inicia sesión y vuelve a intentarlo; no se registró ningún movimiento.');}
+   if(saved===false){db.transactions.splice(db.transactions.length-entries.length,entries.length);db.personalLoans.splice(db.personalLoans.length-relations.length,relations.length);if(createdContact)db.personalContacts=db.personalContacts.filter(c=>c.id!==createdContact.id);if(typeof v99Invalidate==='function')v99Invalidate();throw Error('No se pudo guardar. Inicia sesión y vuelve a intentarlo; no se registró ningún movimiento.');}
    draft=null;closeModal();render();toast('Movimiento rápido guardado. '+(surplus>.005?'Por devolver ':due>.005?'Por cobrar ':'Sin saldo pendiente · ')+fmt(surplus||due,x.currency)+'.');
   }catch(e){processing=false;if(button)button.disabled=false;toast(e.message||'No se pudo registrar la compra.');}
  }
  document.addEventListener('click',function(e){
   const b=e.target.closest?.('[data-v354-act]');if(!b)return;
   e.preventDefault();e.stopPropagation();const action=b.dataset.v354Act;
-  if(action==='open'){draft=null;formScreen({cardId:b.dataset.cardId||''});}
+  if(action==='open'){draft=null;pickerData=null;pendingContact=null;formScreen({cardId:b.dataset.cardId||''});}
   else if(action==='close'){close();}
+   else if(action==='pickPerson'){personPicker();}
+   else if(action==='pickerBack'){formScreen(pickerData||{});}
+   else if(action==='newPerson'){newPersonScreen();}
+   else if(action==='choosePerson'){const c=(db.personalContacts||[]).find(c=>c.id===b.dataset.id),chosen=c?nameOf(c):String(b.dataset.name||'').trim();if(!chosen)return;pendingContact=null;formScreen({...pickerData,person:chosen,contactId:c?.id||''});}
   else if(action==='back'){const v=draft;draft=null;formScreen(v||{});}
   else if(action==='confirm'){if(draft)save(draft);}
  },true);
