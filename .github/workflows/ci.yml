@@ -28,8 +28,25 @@ jobs:
           node tests/rendimiento.js
           node tests/vive-score.js
           node tests/flujos-ingresos.js
-          node tests/vive-mobile-auditoria.js
           node tests/logica/run.js
+      - name: Capturas de auditoría móvil
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vive-mobile-playwright
+          path: test-results/vive-mobile/
+          if-no-files-found: ignore
+  auditoria-vive-movil:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Preparar Playwright y Chromium
+        run: npm i --no-save playwright@1 && npx playwright install --with-deps chromium
+      - name: Auditoría de categorías y movimientos móviles
+        run: node tests/vive-mobile-auditoria.js
       - name: Capturas de auditoría móvil
         if: always()
         uses: actions/upload-artifact@v4
