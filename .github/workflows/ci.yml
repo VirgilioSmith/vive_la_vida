@@ -109,3 +109,22 @@ jobs:
           sudo systemctl start postgresql
           sudo -u postgres psql -v ON_ERROR_STOP=1 -q -f supabase/tests/reglas_vigentes.sql
           sudo -u postgres psql -v ON_ERROR_STOP=1 -q -f supabase/tests/finance_apply_changes.sql
+
+  teclado-numerico-movil:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Instalar navegador y Playwright
+        run: npm i --no-save playwright@1 && npx playwright install --with-deps chromium
+      - name: Playwright visible en pantalla virtual y grabación de trazas
+        run: xvfb-run -a env PW_VISIBLE=1 node tests/native-numeric-input.js
+      - name: Evidencias interactivas Playwright Trace Viewer
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vive-teclado-numerico-playwright
+          path: test-results/native-numeric-input/
+          if-no-files-found: ignore
