@@ -99,6 +99,21 @@ jobs:
           name: vive-conciliacion-saldos-${{ matrix.browser }}
           path: test-results/conciliacion/
           if-no-files-found: ignore
+  wallet-credit-global:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm i --no-save playwright@1 && npx playwright install --with-deps ${{ matrix.browser }}
+      - run: node tests/wallet-credit-global.js
+        env:
+          WALLET_BROWSER: ${{ matrix.browser }}
   sql:
     runs-on: ubuntu-latest
     timeout-minutes: 10
