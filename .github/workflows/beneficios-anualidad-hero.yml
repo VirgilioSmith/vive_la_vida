@@ -52,8 +52,8 @@ jobs:
         run: |
           npm i --no-save playwright@1
           npx playwright install --with-deps chromium
-                - name: Probar registro de anualidad y seguros con Playwright
-                  run: |
+      - name: Probar registro de anualidad y seguros con Playwright
+        run: |
           node <<'NODE'
           const {chromium}=require('playwright'),assert=require('node:assert/strict'),open=require('./tests/harness');
           (async()=>{
@@ -82,8 +82,8 @@ jobs:
             }finally{await b.close()}
           })().catch(e=>{console.error(e);process.exitCode=1});
           NODE
-                - name: Commit directo en main
-                  run: |
+      - name: Commit directo en main
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/app.js src/styles.css index.html
