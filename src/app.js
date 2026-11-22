@@ -5941,7 +5941,7 @@ function vReconcileAccountForm(partial={},editId=null){
  const root=document.getElementById('modal-root');
  root.innerHTML=`<div class="modal-layer v-reconcile-layer" data-backdrop="true"><section class="v-reconcile-dialog" role="dialog" aria-modal="true" aria-label="Conciliar un saldo">
  <form id="vReconcileForm" novalidate><header class="v-reconcile-head"><button type="button" class="v-reconcile-back" aria-label="Volver">←</button><h2>${editId?'Editar conciliación':'Conciliar un saldo'}</h2></header>
- <button type="button" class="v-reconcile-account" aria-haspopup="dialog" aria-label="Seleccionar cuenta"></button>
+ <button type="button" class="v-reconcile-account" aria-haspopup="dialog" aria-label="Seleccionar cuenta o tarjeta"></button>
  <section class="v-reconcile-recorded"><small>Saldo registrado en Vive</small><strong data-reconcile="registered">—</strong></section>
  <section class="v-reconcile-observed"><label for="vReconcileObserved">Saldo que visualizas</label><div class="v-reconcile-input"><span data-reconcile="symbol">RD$</span><div class="v-reconcile-number"><span data-reconcile="formatted" aria-hidden="true">0.00</span><input id="vReconcileObserved" name="observed" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-label="Saldo real observado"></div></div><small>${icon('edit')} Ingresa el saldo real de tu cuenta en esa fecha</small></section>
  <div class="v-reconcile-fields"><label class="v-reconcile-date"><span>${icon('calendar')}</span><div><small>Fecha de operación</small><strong data-reconcile="date-text"></strong><input name="date" type="date" value="${sanitize(date)}" max="${today()}" aria-label="Fecha de operación"></div></label>
@@ -5977,9 +5977,10 @@ function vReconcileAccountForm(partial={},editId=null){
   if(Number.isFinite(previous.reconciliationObserved))observed.value=previous.reconciliationObserved.toFixed(2);
  }
  form.querySelector('.v-reconcile-back').onclick=()=>{if(!busy){closeModal();if(!editId)openRegisterAssistant()}};
- accountButton.onclick=()=>window.openFinancialProductPicker('accountId',active(),id=>{
+ accountButton.onclick=()=>window.openReconciliationProductPicker(active(),selected,id=>{
+  if(adjustmentCard(id)){transactionForm({type:'adjustment',accountId:id,date:when.value});return}
   if(id!==selected){selected=id;observed.value='';message('');refresh()}
- },{direct:true,selected});
+ },!editId);
  reasonButton.onclick=()=>{
   const sheet=document.createElement('dialog');sheet.className='v-reconcile-reason-sheet';sheet.setAttribute('aria-label','Motivo del ajuste');
   const glyphs=['shield','cycle','wallet','receipt','more'];
@@ -17948,12 +17949,7 @@ function optionsOf(field){
  const accountOptions=[...field.options].filter(o=>o.value&&!o.disabled&&eligible(o.value)&&!(form.dataset.special==='adjustment'&&String(o.value).startsWith('card:'))).map(o=>productOption(pn,lookup(o.value)||{id:o.value},o.textContent.trim()));
  // Card selection is scoped to reconciliation; the transaction stores cardId separately.
  if(pn==='accountId'&&form.dataset.special==='adjustment'){
-   const creditOptions=(db.cards||[]).filter(c=>!isHidden(c)).map(c=>({
-     ...productOption('cardId',c),value:'card:'+String(c.id),
-     detail:[bankOf(c),c.last4?'•••• '+c.last4:'', 'Tarjeta de crédito'].filter(Boolean).join(' · '),
-     amount:adjustmentCurrencies(c).map(ccy=>money(adjustmentCardBalance(c,ccy),ccy,2)).join(' · ')
-   }));
-   return [...accountOptions,...creditOptions];
+   return [...accountOptions,...reconciliationCards()];
  }
  /* Selector universal: siempre se muestran TODOS los productos activos (pesos y dólares). Los que esta operación no admite
     (otra moneda, sin compras reembolsables…) aparecen atenuados con su motivo, en lugar de desaparecer de la lista. */
@@ -17963,6 +17959,16 @@ function optionsOf(field){
  const unavailable=universe.filter(x=>!have.has(String(x.id))).map(x=>{const o=productOption(pn,x);const diff=x.currency&&formCurrency&&x.currency!==formCurrency;return {...o,disabled:true,detail:[o.detail,diff?'No disponible: esta operación es en '+formCurrency:'No disponible para esta operación'].filter(Boolean).join(' · ')}});
  return [...accountOptions,...unavailable];
 }
+function reconciliationCards(){
+ return (db.cards||[]).filter(c=>!isHidden(c)).map(c=>({
+   ...productOption('cardId',c),value:'card:'+String(c.id),
+   detail:[bankOf(c),c.last4?'•••• '+c.last4:'', 'Tarjeta de crédito'].filter(Boolean).join(' · '),
+   amount:adjustmentCurrencies(c).map(ccy=>money(adjustmentCardBalance(c,ccy),ccy,2)).join(' · ')
+ }));
+}
+window.openReconciliationProductPicker=(accounts,selected,onConfirm,allowCards)=>open('product',
+ [...accounts.map(item=>productOption('accountId',item)),...(allowCards?reconciliationCards():[])],
+ selected,onConfirm,allowCards?'Seleccionar cuenta o tarjeta':'Seleccionar cuenta',{direct:true,reconciliation:allowCards});
 window.openFinancialProductPicker=(name,products,onConfirm,options={})=>open(name,products.map(item=>productOption(name,item)),options.selected||'',onConfirm,undefined,options);
 window.openRegisterProductPicker=(title,products,selected,onConfirm)=>open('product',products.map(({type,item,disabled,reason})=>{const o=productOption(type,item);return disabled?{...o,disabled:true,detail:[o.detail,reason||'No disponible para esta operación'].filter(Boolean).join(' · ')}:o}),selected,id=>{
  const product=products.find(({item})=>String(item.id)===id);
@@ -18044,12 +18050,15 @@ function enhance(){for(const form of root.querySelectorAll('form')){
  const ico=document.createElement('span');ico.className='v789-select-ico';ico.innerHTML=pn==='cardId'?cardSvg:bankSvg;
  const details=document.createElement('span');details.className='v789-select-details';const strong=document.createElement('strong');details.append(strong);
  const arrow=document.createElement('span');arrow.className='v789-select-chevron';arrow.textContent='⌄';button.append(ico,details,arrow);label.append(button);
- field.addEventListener('change',()=>updateTrigger(field));updateTrigger(field);button.addEventListener('focus',()=>updateTrigger(field));button.addEventListener('click',()=>open(pn,optionsOf(field),field.value,selected=>{
+ field.addEventListener('change',()=>updateTrigger(field));updateTrigger(field);button.addEventListener('focus',()=>updateTrigger(field));button.addEventListener('click',()=>{
+ const reconciliation=pn==='accountId'&&form.dataset.special==='adjustment'&&!form.dataset.id;
+ open(pn,optionsOf(field),field.value,selected=>{
+  if(reconciliation&&!adjustmentCard(selected)){transactionForm({type:'adjustment',accountId:selected,date:form.elements.date?.value});return;}
   if(field.value===selected)return;
   if(pn==='loanId'&&form.dataset.special==='loan'){otherLoanSelect(selected,form);return;}
   field.value=selected;
   field.dispatchEvent(new Event('change',{bubbles:true}));
- }));
+ },reconciliation?'Seleccionar cuenta o tarjeta':undefined,reconciliation?{direct:true,reconciliation:true}:{});});
  }
 }}
 function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels[name],options={}){if(active)active.dismiss();selected=String(selected||'');const product=productLabels[name]||'producto';
@@ -18059,7 +18068,7 @@ function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels
  const header=document.createElement('header');header.className='v827-picker-head v749-sheet-head';const title=document.createElement('h3');title.textContent=titleText;const close=document.createElement('button');close.type='button';close.className='v789-picker-close';close.setAttribute('aria-label','Cerrar selector');close.textContent='×';header.append(title,close);
  const search=document.createElement('input');search.type='search';search.className='v789-picker-search';search.placeholder=name==='item'?'Buscar por nombre…':name==='purchase'?'Buscar comercio, categoría o fecha…':name==='product'?'Buscar por nombre o institución…':'Buscar '+product+' o institución…';search.setAttribute('aria-label',search.placeholder);
  const tabs=document.createElement('div');tabs.className='v827-picker-tabs v787-product-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Filtrar productos');
- let filter='all';for(const [key,label] of (name==='loanId'?[['all','Todos'],['personal','Personales'],['mortgage','Hipotecarios']]:[['all','Todas'],['credit','Crédito'],['account','Cuentas']].filter(([key])=>key==='all'||(name!=='purchase'&&name!=='item')))){const btn=document.createElement('button');btn.type='button';btn.textContent=label+' ('+all.filter(o=>key==='all'||o.kind===key).length+')';btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key==='all'));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
+ let filter=options.reconciliation?(selected.startsWith('card:')?'credit':'account'):'all';const filters=options.reconciliation?[['account','Cuentas'],['credit','Tarjetas']]:(name==='loanId'?[['all','Todos'],['personal','Personales'],['mortgage','Hipotecarios']]:[['all','Todas'],['credit','Crédito'],['account','Cuentas']].filter(([key])=>key==='all'||(name!=='purchase'&&name!=='item')));for(const [key,label] of filters){const btn=document.createElement('button');btn.type='button';btn.textContent=options.reconciliation?label:label+' ('+all.filter(o=>key==='all'||o.kind===key).length+')';btn.dataset.filter=key;btn.setAttribute('aria-pressed',String(key===filter));tabs.append(btn);btn.onclick=()=>{filter=key;tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));refresh()};}
  const list=document.createElement('div');list.className='v789-picker-list v787-product-scroll';const rows=[];
  for(const opt of all){const row=document.createElement('button');row.type='button';row.className='v789-picker-row v787-product-row';row.dataset.value=opt.value;row.dataset.kind=opt.kind;const ico=document.createElement('span');ico.className='v789-picker-mini v787-product-brand '+(opt.kind==='credit'&&opt.brand?'is-card '+opt.brand:opt.kind==='account'?'is-account':'');paintProductIdentity(ico,opt);
  const content=document.createElement('span');content.className='v789-picker-text v787-product-main';const strong=document.createElement('strong');strong.textContent=opt.name;const small=document.createElement('small');small.textContent=opt.detail;content.append(strong,small);if(opt.amount){const amount=document.createElement('em');amount.textContent=opt.amount;content.append(amount);}const mark=document.createElement('span');mark.className='v789-picker-mark v787-product-mark';mark.setAttribute('aria-hidden','true');row.append(ico,content,mark);if(opt.disabled){row.disabled=true;row.classList.add('is-unavailable');row.setAttribute('aria-disabled','true')}list.append(row);rows.push(row);row.addEventListener('click',()=>{if(opt.disabled)return;selected=opt.value;refresh()});}
@@ -18072,7 +18081,9 @@ function open(name,all,selected,onConfirm,titleText='Seleccionar '+productLabels
  confirm.onclick=()=>{if(!all.some(o=>o.value===selected))return;dismiss();onConfirm(selected);};
  if(options.direct){
   layer.classList.add('v-reconcile-account-picker');
-  sheet.append(grip,header,list);
+  sheet.append(grip,header);
+  if(options.reconciliation)sheet.append(tabs);
+  sheet.append(list);
   list.addEventListener('click',e=>{const row=e.target.closest('.v789-picker-row');if(row&&!row.disabled){dismiss();onConfirm(row.dataset.value)}});
  }else{sheet.append(grip,header,search);if(tabs.children.length>1)sheet.append(tabs);sheet.append(list,actions)}
  layer.append(sheet);root.append(layer);if(typeof layer.showModal==='function')layer.showModal();active={dismiss,layer};refresh();close.focus({preventScroll:true});}
