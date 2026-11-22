@@ -1,0 +1,77 @@
+/* Legibilidad y coherencia · Wallet PC y Bancos PC.
+   Mismos tamaños de título, icono, etiqueta y cifra en todas las tarjetas laterales. */
+@media(min-width:791px){
+ html body #app#app #page{--lg-title:clamp(20px,1.5vw,26px);--lg-label:clamp(13px,.95vw,15px);--lg-value:clamp(18px,1.4vw,24px);--lg-text:clamp(13px,.95vw,15px)}
+ /* Títulos: icono a la izquierda en el mismo lugar y del mismo tamaño */
+ html body #app#app #page :is(.vWalletPc-right,.vBanksPc-insights) :is(.v371-return-heading h2,.vWalletPc-cuts h2,.vWalletPc-consumption h2,.vBanks-certificates-head h2,.v1301-insight summary h2){
+  display:flex!important;align-items:center;gap:12px;margin:0!important;font-size:var(--lg-title)!important;font-weight:750!important;letter-spacing:-.025em!important;line-height:1.15!important}
+ html body #app#app #page :is(.vWalletPc-right,.vBanksPc-insights) :is(.v371-return-heading h2,.vWalletPc-cuts h2,.vWalletPc-consumption h2,.vBanks-certificates-head h2,.v1301-insight summary h2) button{display:inline-flex!important;align-items:center;gap:12px;font:inherit!important;letter-spacing:inherit!important}
+ html body #app#app #page :is(.vWalletPc-right,.vBanksPc-insights) :is(.v371-return-heading h2,.vWalletPc-cuts h2,.vWalletPc-consumption h2,.vBanks-certificates-head h2,.v1301-insight summary h2) svg:first-child{width:28px!important;height:28px!important;flex:none;color:var(--wallet-accent,var(--v424-accent-strong,currentColor))}
+ html body #app#app #page .vWalletPc-cuts header{display:flex;align-items:center;padding:0!important}
+ html body #app#app #page .vWalletPc-cuts .vWalletPc-symbol{display:none!important}
+ html body #app#app #page .vWalletPc-cuts p{padding-left:0!important;margin:12px 0 14px!important;font-size:var(--lg-text)!important;font-weight:550}
+ html body #app#app #page .vWalletPc-cuts button b{font-size:clamp(17px,1.3vw,22px)!important}
+ /* Beneficios y retorno */
+ html body #app#app #page :is(.vWalletPc-return,.vBanksPc-insights .v371-card-return) .v371-return-tile{padding:6px 10px!important;gap:6px!important}
+ html body #app#app #page :is(.vWalletPc-return,.vBanksPc-insights .v371-card-return) .v371-return-tile small{font-size:var(--lg-label)!important;font-weight:650!important;line-height:1.2!important;white-space:nowrap}
+ html body #app#app #page :is(.vWalletPc-return,.vBanksPc-insights .v371-card-return) .v371-return-tile strong{font-size:var(--lg-value)!important;line-height:1.15!important}
+ html body #app#app #page :is(.vWalletPc-return,.vBanksPc-insights .v371-card-return) .v371-return-note{font-size:clamp(12px,.88vw,14px)!important;line-height:1.4!important}
+ /* Consumo por tarjeta */
+ html body #app#app #page .vWalletPc-consumption .vWalletPc-chart-layout{grid-template-columns:minmax(120px,clamp(130px,11vw,180px)) minmax(0,1fr)!important;gap:16px!important;align-items:center}
+ html body #app#app #page .vWalletPc-consumption .vWalletPc-chart-total strong{font-size:clamp(14px,1.15vw,20px)!important}
+ html body #app#app #page .vWalletPc-consumption .vWalletPc-chart-total span{font-size:clamp(12px,.9vw,15px)!important}
+ html body #app#app #page .vWalletPc-consumption .vWalletPc-legend{max-height:none!important;overflow:visible!important}
+ html body #app#app #page .vWalletPc-consumption .vWalletPc-legend button{font-size:var(--lg-text)!important;padding:7px 2px!important;gap:10px}
+ html body #app#app #page .vWalletPc-consumption .vWalletPc-legend button i{width:12px!important}
+ /* Certificados */
+ html body #app#app #page .vBanks-certificates dt{font-size:var(--lg-label)!important;font-weight:600}
+ html body #app#app #page .vBanks-certificates dd{font-size:var(--lg-value)!important;font-weight:800}
+ html body #app#app #page .vBanks-certificates p{font-size:clamp(12px,.88vw,14px)!important}
+ /* Consumo por tipo */
+ html body #app#app #page .vBanksPc-consumption-total{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:4px 2px 12px;margin-bottom:6px;border-bottom:1px solid rgba(120,130,150,.22)}
+ html body #app#app #page .vBanksPc-consumption-total span{font-size:var(--lg-label);font-weight:650;color:var(--wallet-muted,#516078)}
+ html body #app#app #page .vBanksPc-consumption-total strong{font-size:clamp(22px,1.7vw,30px);font-weight:800;letter-spacing:-.03em}
+ html body #app#app #page .vBanksPc-consumption-rows>div>strong{font-size:var(--lg-text)!important;font-weight:650!important}
+ html body #app#app #page .vBanksPc-consumption-rows .vBanksPc-consumption-amount b{font-size:var(--lg-text)!important}
+ html body #app#app #page .vBanksPc-consumption-rows .vBanksPc-consumption-amount small{font-size:12px!important}
+ html body #app#app #page .vBanksPc-consumption-rows .vBanksPc-consumption-amount{font-size:var(--lg-text)!important}
+ /* Productos (Bancos): lista más amplia */
+ html body #app#app #page .vBanksPc-overview-tile{padding:16px 18px!important}
+ html body #app#app #page .vBanksPc-overview-name{font-size:clamp(17px,1.25vw,21px)!important}
+ html body #app#app #page .vBanksPc-overview-name small,html body #app#app #page .vBanksPc-overview-metric small{font-size:var(--lg-label)!important}
+ html body #app#app #page .vBanksPc-overview-metric strong{font-size:clamp(20px,1.55vw,26px)!important}
+ html body #app#app #page .vBanksPc-overview-foot{font-size:var(--lg-text)!important;line-height:1.4}
+ html body #app#app #page .vBanksPc-product small{font-size:var(--lg-text)!important;line-height:1.4}
+ html body #app#app #page .vBanksPc-product strong{font-size:clamp(16px,1.2vw,19px)!important}
+ html body #app#app #page .vBanksPc-product b{font-size:clamp(17px,1.3vw,21px)!important}
+ /* Lista de bancos / productos de la izquierda */
+ html body #app#app #page .vBanksPc-bank small{font-size:var(--lg-text)!important}
+
+ /* Las etiquetas ya vienen cortas desde el contenido: se anula el relleno por pseudo-elemento */
+ html body #app#app #page :is(.vWalletPc-return,.vBanksPc-insights .v371-card-return) .v371-return-tile small::after{content:none!important;display:none!important}
+ html body #app#app #page :is(.vWalletPc-return,.vBanksPc-insights .v371-card-return) .v371-return-tile strong{font-size:clamp(16px,1.25vw,21px)!important;white-space:nowrap!important;overflow-wrap:normal!important}
+ html body #app#app #page :is(.vWalletPc-return,.vBanksPc-insights .v371-card-return){overflow:visible!important;height:auto!important;max-height:none!important}
+ html body #app#app #page .vBanksPc-overview-name small{display:block;font-size:var(--lg-label)!important;font-weight:550!important;margin-top:2px}
+ html body #app#app #page .vBanksPc-overview-metric small{font-weight:600!important}
+ html body #app#app #page .vBanksPc-bank-totals :is(dd,strong,b){white-space:nowrap!important;font-size:clamp(17px,1.3vw,22px)!important}
+}
+@media(min-width:791px){
+ html body #app#app #page .vBanks-certificates dl{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 14px}
+ html body #app#app #page .vBanks-certificates dt{white-space:nowrap;font-size:clamp(12.5px,.92vw,14.5px)!important}
+ html body #app#app #page .vBanks-certificates dd{white-space:nowrap;font-size:clamp(17px,1.3vw,22px)!important}
+ /* Productos: filas más compactas para que todo entre sin scroll */
+ html body #app#app #page .vBanksPc-overview-tile{padding:10px 16px!important;gap:2px!important}
+ html body #app#app #page .vBanksPc-overview-name{font-size:clamp(16px,1.2vw,19px)!important}
+ html body #app#app #page .vBanksPc-overview-metric strong{font-size:clamp(18px,1.4vw,23px)!important}
+ html body #app#app #page .vBanksPc-overview-foot{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(12.5px,.9vw,14.5px)!important}
+}
+@media(min-width:791px){
+ html body #app#app #page .vWalletPc-consumption .vWalletPc-chart-layout{grid-template-columns:minmax(104px,clamp(108px,8.6vw,140px)) minmax(0,1fr)!important;gap:14px!important}
+ html body #app#app #page .vWalletPc-consumption .vWalletPc-legend button{padding:4px 2px!important}
+ html body #app#app #page .vWalletPc-cuts p{margin:8px 0 10px!important}
+ html body #app#app #page .vWalletPc-right{gap:14px!important}
+ html body #app#app #page .vWalletPc-right>section{padding-block:14px!important}
+}
+@media(min-width:791px){
+ html body #app#app #page .vWalletPc-right .vWalletPc-consumption{min-height:0!important;margin-top:0!important}
+}

@@ -1316,9 +1316,9 @@ function v371CardReturnWidget(c,consolidatedCards=null,bankView=false,walletPc=f
  return `<section class="v266-wallet-panel v371-card-return${walletPc?' vWalletPc-panel vWalletPc-return':''}" aria-label="Retorno anual de beneficios de ${sanitize(c.name)}">
  <div class="v371-return-heading"><div><span class="v266-overline">BENEFICIOS · ${d.year}</span>${title}</div>${compact?'':`<button type="button" class="v371-return-action" data-v144-action="open-benefits" data-id="${benefitId}" aria-label="Abrir beneficios de ${sanitize(c.name)}">${icon('arrow')}</button>`}</div>
  <div class="v371-return-values">
- <div class="v371-return-tile"><small>${compact?'Anualidad configurada':'Anualidad'}</small><strong>${compact?(d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'):cost}</strong></div>
- <div class="v371-return-tile${compact&&d.benefit>0?' positive':''}"><small>Beneficios recibidos</small><strong>${benefit}</strong></div>
- <div class="v371-return-tile ${tone}"><small>${compact?'Retorno neto':'Retorno'}</small><strong>${net}</strong></div>
+ <div class="v371-return-tile"><small>Anualidad</small><strong>${compact?(d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'):cost}</strong></div>
+ <div class="v371-return-tile${compact&&d.benefit>0?' positive':''}"><small>Beneficios</small><strong>${benefit}</strong></div>
+ <div class="v371-return-tile ${tone}"><small>Retorno</small><strong>${net}</strong></div>
  <div class="v371-return-tile ${tone}"><small>Retorno %</small><strong>${percentage}</strong></div>
  </div>
  <p class="v371-return-note">${d.missingRate?'Falta la tasa RD$/US$ para calcular el retorno.':!d.hasAnnual?'Configura la anualidad desde Gestionar para calcular el retorno.':consolidatedCards&&d.unconfigured?'Retorno sobre anualidades conocidas · '+d.unconfigured+' sin definir.':d.feeConfirmed?'Retorno = beneficios monetarios acreditados − anualidad cobrada.':consolidatedCards?'Retorno consolidado sobre anualidades cobradas o configuradas; no implica un cargo realizado.':'Retorno estimado respecto a la anualidad configurada; no implica un cargo realizado.'}</p>
@@ -1456,7 +1456,7 @@ function vWalletPcConsumption(list){
  const select=r=>`data-act="walletPcConsumption" data-id="${sanitize(r.c.id)}"`;
  let offset=0;
  return `<section class="vWalletPc-panel vWalletPc-consumption" aria-labelledby="vWalletPc-consumption-title">
-  <header><h2 id="vWalletPc-consumption-title">Consumo por tarjeta</h2>
+  <header><h2 id="vWalletPc-consumption-title">${icon('analytics')}Consumo por tarjeta</h2>
    <button type="button" class="vWalletPc-round" data-act="walletPcConsumptionDetail" aria-label="Ver importes de consumo histórico" title="Consumo histórico">${icon('arrow')}</button>
   </header>
   <div class="vWalletPc-chart-layout">
@@ -1574,7 +1574,7 @@ function vWalletPc(){
    <div class="vWalletPc-right">
     ${v371CardReturnWidget(active||{name:'tus tarjetas'},active?null:list,false,true)}
     <section class="vWalletPc-panel vWalletPc-cuts" aria-labelledby="vWalletPc-cuts-title">
-     <header><span class="vWalletPc-symbol" aria-hidden="true">${icon('calendar')}</span><h2 id="vWalletPc-cuts-title">Cortes pendientes</h2></header>
+     <header><h2 id="vWalletPc-cuts-title">${icon('calendar')}Cortes pendientes</h2></header>
      <p>${due?(due<today()?'Venció el ':'Próximo vence el ')+prettyDate(due):'Sin vencimientos pendientes'}</p>
      <div>${cutButton('DOP','dop')}${cutButton('USD','usd')}</div>
     </section>
@@ -1881,7 +1881,8 @@ function vBanksPcCardConsumption(cards,mobile=false){
   state.html+=`<circle cx="60" cy="60" r="48" fill="none" stroke="${palette[i%palette.length]}" stroke-width="13" pathLength="100" stroke-dasharray="${share} 100" stroke-dashoffset="${-state.offset}" transform="rotate(-90 60 60)"/>`;
   state.offset+=share;return state;
  },{offset:0,html:''}).html}</svg><span><b>${money(totals.equivalent)}</b><small>Consumo total</small></span></div>`:'';
- const body=rows.length?`<div class="vBanks-consumption-body${chart?' with-chart':''}">${chart}<div class="vBanksPc-consumption-rows">${rows.map(([type,amount],index)=>{
+ const totalLine=!chart?`<div class="vBanksPc-consumption-total"><span>Consumo total</span><strong>${totals.missingFx?'—':money(totals.equivalent)}</strong></div>`:'';
+ const body=rows.length?`<div class="vBanks-consumption-body${chart?' with-chart':''}">${chart}${totalLine}<div class="vBanksPc-consumption-rows">${rows.map(([type,amount],index)=>{
   const share=comparable?100*amount.equivalent/totals.equivalent:0;
   return `<div><span class="vBanksPc-category-icon">${mobile&&chart?`<i style="--swatch:${palette[index%palette.length]}"></i>`:icon(V255_TAXONOMY.gasto.categories[type]||'bag')}</span><strong>${sanitize(type)}</strong>${comparable?`<span class="vBanksPc-meter" aria-hidden="true"><i style="--use:${Math.min(100,share)}%"></i></span>`:''}<span class="vBanksPc-consumption-amount"><b>${amount.missingFx?'—':money(amount.equivalent,'DOP',0)}</b>${amount.USD?`<small>${vWalletPcSplit(amount.DOP,amount.USD)}</small>`:''}</span>${comparable?`<small>${share.toFixed(1)}%</small>`:''}</div>`;
  }).join('')}</div></div>`:'<p class="vBanksPc-empty">Sin consumos registrados.</p>';
@@ -2000,8 +2001,8 @@ function vBanksCertificateTotals(certificates,invested){
  const yieldRate=investedAtKnownRates>0?estimated.reduce((sum,{c,p})=>sum+fx(p.capital,c.currency)*num(c.rate),0)/investedAtKnownRates:null;
  return [
   ['Total invertido',money(invested)],
-  ['Tasa anual ponderada',yieldRate===null?'—':yieldRate.toFixed(2)+'%'],
-  ['Intereses netos estimados',estimated.length?money(estimated.reduce((sum,{c,p})=>sum+fx(p.net,c.currency),0)):'—'],
+  ['Tasa anual',yieldRate===null?'—':yieldRate.toFixed(2)+'%'],
+  ['Intereses netos',estimated.length?money(estimated.reduce((sum,{c,p})=>sum+fx(p.net,c.currency),0)):'—'],
   ['Intereses cobrados',entries.length?money(entries.reduce((sum,{c,p})=>sum+fx(p.collected,c.currency),0)):'—']
  ];
 }
@@ -2025,7 +2026,9 @@ function vBanksProductRows(key,items,bankId,total=items.length){
    value=`<span title="Límite equivalente en pesos">${money(limit)}</span>`;mark=cardNetworkMark(item);
    if(use!==null)meter=`<span class="vBanksPc-usage">${vBanksMeter(use)}<small>${use.toFixed(1)}%</small></span>`;
   }
-  if(key==='loans'){note=institution+sanitize(item.currency);value=money(loanStatus(item).balance,item.currency,2);}
+  if(key==='loans'){const ls=loanStatus(item),done=num(ls.payments),total=done+num(ls.remaining),prog=total>0?Math.min(100,done/total*100):0;
+   note=`${institution}Cuota ${money(ls.installment,item.currency,2)}${ls.next?' · Próx. '+prettyDate(ls.next):''}<br>Cuota ${done} de ${total} · Avance ${prog.toFixed(0)}%`;
+   value=money(ls.balance,item.currency,2);meter=`<span class="vBanksPc-usage">${vBanksMeter(prog)}<small>${prog.toFixed(0)}%</small></span>`;}
   if(key==='certificates'){
    const projection=certProjection(item),current=item.rate!=null&&item.rate!==''?num(item.rate).toFixed(2)+'% anual':'Sin tasa';
    note=`${sanitize(name)} · ${current} · ${item.maturityDate?'Vence '+prettyDate(item.maturityDate):'Sin vencimiento'}<br>Interés cobrado ${money(projection.collected,item.currency,2)}${item.rate!=null&&item.rate!==''&&item.startDate&&item.maturityDate?' · Neto estimado '+money(projection.net,item.currency,2):''}`;
@@ -2085,7 +2088,7 @@ function vBanksProducts(groups,bankId,f,mobile){
    const rows=[
     ['cards','Tarjetas','card',f.limit,'Límite total',`Deuda utilizada ${money(f.cardDebt)} · ${vBanksFlags(f)}`],
     ['accounts','Cuentas','wallet',f.funds,'Balance total','Fondos en cuentas · equivalente RD$'],
-    ['loans','Préstamos','landmark',f.loanDebt,'Deuda pendiente','Saldo de préstamos vigente'],
+    ['loans','Préstamos','landmark',f.loanDebt,'Deuda pendiente',(()=>{const ls=groups.loans.map(l=>{try{return loanStatus(l)}catch(_){return null}}).filter(Boolean);if(!ls.length)return 'Saldo de préstamos vigente';const q=ls.reduce((n,x)=>n+fx(num(x.installment),'DOP'),0),d=ls.reduce((n,x)=>n+num(x.payments),0),t=ls.reduce((n,x)=>n+num(x.payments)+num(x.remaining),0),nx=ls.map(x=>x.next).filter(Boolean).sort()[0];return `Cuota ${money(q)} · Avance ${t>0?Math.round(d/t*100):0}%${nx?' · Próx. '+prettyDate(nx):''}`})()],
     ['certificates','Certificados','layers',f.invested,'Capital invertido','Certificados financieros vigentes']
    ];
    const tiles=rows.map(([key,label,glyph,value,metric,description])=>{
