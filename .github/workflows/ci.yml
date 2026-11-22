@@ -114,6 +114,10 @@ jobs:
       - run: node tests/wallet-credit-global.js
         env:
           WALLET_BROWSER: ${{ matrix.browser }}
+      - name: Verificar encabezado compacto de Inicio móvil
+        run: node tests/home-mobile-header.js
+        env:
+          HOME_BROWSER: ${{ matrix.browser }}
   sql:
     runs-on: ubuntu-latest
     timeout-minutes: 10

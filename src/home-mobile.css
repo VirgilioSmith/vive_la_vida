@@ -1,0 +1,19 @@
+/* Inicio móvil · Personalización y mes en una sola fila, sin encabezado redundante. */
+@media (max-width:790px){
+  html body #app main.world-overview .vive-mobile-home .v1302-home-controls{
+    display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+    justify-content:space-between!important;gap:8px!important;width:100%;min-width:0;
+  }
+  html body #app main.world-overview .vive-mobile-home .v1302-home-controls .v273-personalize-link{
+    align-self:center!important;flex:0 0 auto;margin:0!important;padding-inline:3px!important;
+  }
+  html body #app main.world-overview .vive-mobile-home .v1302-home-controls .v732-period{
+    flex:0 1 auto;min-width:0;margin:0!important;white-space:nowrap;
+  }
+  html body #app main.world-overview .vive-mobile-home .v1302-home-controls .v732-period span{
+    min-width:0;overflow:hidden;text-overflow:ellipsis;
+  }
+  @media(max-width:359px){
+    html body #app#app .vive-mobile-home .v1302-home-controls .v732-period{padding:10px!important;font-size:11px!important;gap:4px!important}
+  }
+}
