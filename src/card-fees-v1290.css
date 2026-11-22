@@ -28,3 +28,135 @@ html body #modal-root .modal[data-v204-form="annualFeeForm"] .v1290-total small,
  html body #app#app #page .v1190 .v1290-actions button{width:100%;min-width:0;font-size:12px!important;line-height:1.15;white-space:normal;padding:0 8px;text-align:center}
  html body #app#app #page .v1190 .v1290-ledger{align-items:stretch}
 }
+
+/* V1300 · Cargos de anualidad y seguro: estructura Liquid Glass móvil.
+   Solo presentación; valores, nombres de campos y contabilización sin cambios. */
+@media(max-width:790px){
+ html body #modal-root .modal-layer:has(>.modal[data-v204-form="annualFeeForm"]){
+  padding:0!important;align-items:stretch!important;justify-content:center!important;
+ }
+ html body #modal-root#modal-root .modal[data-v204-form="annualFeeForm"]{
+  --v1300-ink:#17322d;--v1300-muted:#60726f;--v1300-line:#dbe6e2;
+  --v1300-accent:#087766;--v1300-card:#fff;--v1300-field:#fff;
+  box-sizing:border-box!important;width:100%!important;max-width:none!important;
+  height:100dvh!important;max-height:100dvh!important;min-height:0!important;
+  margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+  display:flex!important;flex-direction:column!important;overflow:hidden!important;
+  background:#fff!important;color:var(--v1300-ink)!important;box-shadow:none!important;
+ }
+ html body #modal-root#modal-root .modal[data-v204-form="annualFeeForm"] .modal-head{
+  position:relative!important;z-index:2!important;display:flex!important;align-items:center!important;
+  flex:0 0 auto!important;min-height:64px!important;gap:12px!important;
+  padding:calc(9px + env(safe-area-inset-top,0px)) 18px 10px!important;
+  margin:0!important;background:rgba(255,255,255,.96)!important;border:0!important;
+  border-bottom:1px solid var(--v1300-line)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(1.2);backdrop-filter:blur(24px) saturate(1.2);
+ }
+ html body #modal-root#modal-root .modal[data-v204-form="annualFeeForm"] .modal-head h2{
+  flex:1!important;min-width:0!important;margin:0!important;font-size:18px!important;
+  font-weight:750!important;line-height:1.2!important;letter-spacing:-.02em!important;
+  color:var(--v1300-ink)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ }
+ html body #modal-root#modal-root .modal[data-v204-form="annualFeeForm"] .modal-head .close{
+  order:2!important;flex:0 0 44px!important;width:44px!important;height:44px!important;min-height:44px!important;
+  display:grid!important;place-items:center!important;padding:0!important;border-radius:50%!important;
+  border:1px solid var(--v1300-line)!important;background:var(--v1300-card)!important;
+  color:var(--v1300-ink)!important;font-size:24px!important;line-height:1!important;
+ }
+ html body #modal-root#modal-root #annualFeeForm{
+  flex:1 1 auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;
+  overflow:hidden!important;background:transparent!important;padding:0!important;margin:0!important;
+ }
+ html body #modal-root#modal-root #annualFeeForm>.form-grid{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-content:start!important;
+  flex:1 1 auto!important;min-height:0!important;min-width:0!important;
+  overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
+  gap:12px!important;padding:17px 18px 22px!important;margin:0!important;
+  scrollbar-width:none!important;
+ }
+ html body #modal-root #annualFeeForm>.form-grid::-webkit-scrollbar{display:none}
+ html body #modal-root #annualFeeForm .form-grid>.form-full{min-width:0!important;grid-column:1/-1!important}
+ html body #modal-root #annualFeeForm .v1300-intro{
+  display:flex!important;flex-direction:column!important;gap:4px!important;padding:2px 2px 4px!important;
+  background:transparent!important;border:0!important;
+ }
+ html body #modal-root #annualFeeForm .v1300-kicker{
+  display:flex!important;align-items:center!important;gap:6px!important;
+  font-size:10.5px!important;font-weight:800!important;letter-spacing:.09em!important;color:var(--v1300-accent)!important;
+ }
+ html body #modal-root #annualFeeForm .v1300-intro h3{margin:3px 0 0!important;font-size:26px!important;line-height:1.1!important;font-weight:780!important;letter-spacing:-.045em!important;color:var(--v1300-ink)!important}
+ html body #modal-root #annualFeeForm .v1300-intro p{margin:0!important;font-size:14px!important;font-weight:700!important;color:var(--v1300-ink)!important;overflow-wrap:anywhere}
+ html body #modal-root #annualFeeForm .v1300-intro small{font-size:12px!important;color:var(--v1300-muted)!important;line-height:1.35!important}
+ html body #modal-root #annualFeeForm :is(.v1300-charge-card,.v1300-date-card,.v1300-summary){
+  box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+  border:1px solid var(--v1300-line)!important;border-radius:21px!important;
+  background:var(--v1300-card)!important;box-shadow:0 7px 22px rgba(15,75,62,.035),inset 0 1px 0 rgba(255,255,255,.7)!important;
+ }
+ html body #modal-root #annualFeeForm .v1300-charge-card{display:flex!important;flex-direction:column!important;gap:13px!important;padding:16px!important}
+ html body #modal-root #annualFeeForm .v1300-charge-heading{display:flex!important;align-items:center!important;gap:10px!important}
+ html body #modal-root #annualFeeForm .v1300-step{
+  flex:0 0 36px!important;width:36px!important;height:36px!important;display:grid!important;place-items:center!important;
+  border:1px solid rgba(8,119,102,.14)!important;border-radius:13px!important;background:rgba(8,119,102,.055)!important;
+  color:var(--v1300-accent)!important;font-size:12px!important;font-weight:800!important;
+ }
+ html body #modal-root #annualFeeForm .v1300-charge-heading>div{display:flex!important;flex-direction:column!important;gap:2px!important;min-width:0!important}
+ html body #modal-root #annualFeeForm .v1300-charge-heading strong{font-size:15.5px!important;font-weight:800!important;color:var(--v1300-ink)!important}
+ html body #modal-root #annualFeeForm .v1300-charge-heading small{font-size:11.5px!important;line-height:1.3!important;color:var(--v1300-muted)!important}
+ html body #modal-root #annualFeeForm .v1300-charge-fields{display:grid!important;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)!important;align-items:end!important;gap:9px!important}
+ html body #modal-root #annualFeeForm .v1300-charge-fields>label,
+ html body #modal-root #annualFeeForm .v1300-date-card>label{display:flex!important;flex-direction:column!important;gap:6px!important;min-width:0!important;margin:0!important}
+ html body #modal-root #annualFeeForm :is(.v1300-charge-fields,.v1300-date-card)>label>.filter-label{
+  display:block!important;margin:0!important;font-size:12px!important;line-height:1.2!important;
+  font-weight:650!important;color:var(--v1300-muted)!important;letter-spacing:0!important;
+ }
+ html body #modal-root#modal-root #annualFeeForm :is(.v1300-charge-fields,.v1300-date-card) :is(input.field,select.field){
+  display:block!important;width:100%!important;min-width:0!important;min-height:48px!important;height:48px!important;
+  box-sizing:border-box!important;margin:0!important;padding:0 12px!important;border-radius:13px!important;
+  border:1px solid var(--v1300-line)!important;background:var(--v1300-field)!important;
+  color:var(--v1300-ink)!important;-webkit-text-fill-color:var(--v1300-ink)!important;
+  box-shadow:none!important;font-size:16px!important;font-weight:650!important;font-variant-numeric:tabular-nums!important;
+ }
+ html body #modal-root #annualFeeForm :is(input.field,select.field):focus-visible{outline:2px solid var(--v1300-accent)!important;outline-offset:2px!important}
+ html body #modal-root #annualFeeForm .v1300-already{margin:0!important;color:var(--v1300-muted)!important;font-size:11.5px!important;line-height:1.35!important}
+ html body #modal-root #annualFeeForm .v1300-date-card{padding:14px 16px!important;display:flex!important;flex-direction:column!important;gap:10px!important}
+ html body #modal-root #annualFeeForm .v1300-date-heading{display:flex!important;flex-direction:column!important;gap:2px!important}
+ html body #modal-root #annualFeeForm .v1300-date-heading strong{font-size:13px!important;font-weight:750!important;color:var(--v1300-ink)!important}
+ html body #modal-root #annualFeeForm .v1300-date-heading small{font-size:11.5px!important;color:var(--v1300-muted)!important}
+ html body #modal-root #annualFeeForm .v1300-date-card>label>.filter-label{display:none!important}
+ html body #modal-root #annualFeeForm .v1300-summary{
+  padding:15px 17px!important;display:flex!important;flex-direction:column!important;gap:7px!important;
+ }
+ html body #modal-root #annualFeeForm .v1300-summary>small{
+  font-size:10.5px!important;letter-spacing:.09em!important;font-weight:800!important;color:var(--v1300-muted)!important;
+ }
+ html body #modal-root #annualFeeForm .v1300-currencies{display:flex!important;flex-wrap:wrap!important;gap:6px 15px!important;font-size:clamp(19px,6vw,25px)!important;line-height:1.15!important;font-weight:800!important;color:var(--v1300-ink)!important;font-variant-numeric:tabular-nums!important}
+ html body #modal-root #annualFeeForm .v1300-currencies>span{font-size:inherit!important;line-height:inherit!important;color:inherit!important;white-space:nowrap!important}
+ html body #modal-root #annualFeeForm .v1300-summary>span{display:block!important;line-height:1.35!important;font-size:11.5px!important;color:var(--v1300-muted)!important}
+ html body #modal-root #annualFeeForm .v1300-advice{display:flex!important;gap:9px!important;margin:0!important;padding:3px 4px 9px!important;font-size:12px!important;line-height:1.45!important;color:var(--v1300-muted)!important}
+ html body #modal-root #annualFeeForm .v1300-advice>span:first-child{display:grid!important;place-items:center!important;flex:0 0 20px!important;width:20px!important;height:20px!important;border-radius:50%!important;background:rgba(8,119,102,.085)!important;color:var(--v1300-accent)!important;font-size:12px!important;font-weight:850!important}
+ html body #modal-root #annualFeeForm .v1300-advice b{color:var(--v1300-ink)!important}
+ html body #modal-root#modal-root #annualFeeForm>.form-foot{
+  flex:0 0 auto!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  margin:0!important;padding:10px 18px calc(12px + env(safe-area-inset-bottom,0px))!important;
+  background:rgba(255,255,255,.96)!important;border-top:1px solid var(--v1300-line)!important;
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+ }
+ html body #modal-root#modal-root #annualFeeForm>.form-foot>.btn.ghost{display:none!important}
+ html body #modal-root#modal-root #annualFeeForm>.form-foot>[type="submit"]{
+  width:100%!important;min-height:52px!important;border:0!important;border-radius:16px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;
+  background:linear-gradient(135deg,#075e51,#0b8a73)!important;color:#fff!important;
+  -webkit-text-fill-color:#fff!important;font-size:15px!important;font-weight:780!important;
+  box-shadow:0 8px 20px rgba(4,107,88,.15)!important;
+ }
+ html body #modal-root #annualFeeForm>#formError:not(:empty){margin:5px 18px!important;font-size:12px!important;color:#bd3d48!important}
+ html body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal[data-v204-form="annualFeeForm"]{
+  --v1300-ink:#f4f8f6;--v1300-muted:#a5b8b2;--v1300-line:#2b3632;--v1300-accent:#76cfb9;
+  --v1300-card:#101513;--v1300-field:#0b100e;background:#000!important;color:#f4f8f6!important;
+ }
+ html body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal[data-v204-form="annualFeeForm"] .modal-head,
+ html body:is(.theme-black,.theme-dark) #modal-root#modal-root #annualFeeForm>.form-foot{background:rgba(0,0,0,.94)!important}
+ html body:is(.theme-black,.theme-dark) #modal-root#modal-root .modal[data-v204-form="annualFeeForm"] .modal-head .close{background:#101513!important;color:#f4f8f6!important}
+ html body:is(.theme-black,.theme-dark) #modal-root #annualFeeForm .v1300-step,
+ html body:is(.theme-black,.theme-dark) #modal-root #annualFeeForm .v1300-advice>span:first-child{background:rgba(118,207,185,.1)!important;border-color:rgba(118,207,185,.18)!important}
+}

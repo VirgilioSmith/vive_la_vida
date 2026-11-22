@@ -1995,15 +1995,116 @@ function annualFeeForm(id){
  const c=card(id);if(!c)return;
  const year=String(nowYear()),already=db.transactions.some(x=>x.cardId===c.id&&x.chargeKind==='annual_fee'&&['card_charge','expense'].includes(x.type)&&String(x.date||'').startsWith(year));
  const cc=c.annualFeeCurrency||(num(c.annualFeeUSD)&&!num(c.annualFeeDOP)?'USD':'DOP'),amount=already?0:num(c.annualFeeAmount??(num(c.annualFeeDOP)||num(c.annualFeeUSD)));
- modal('Anualidad y seguros · '+c.name,`<div class="form-full v1290-intro"><strong>Anualidad y seguros</strong><p>Se registran separados y se suman en el total anual.</p></div>
+ const chargeBody=isMobileViewport()?`<div class="form-full v1300-intro">
+ <span class="v1300-kicker">TARJETAS <span aria-hidden="true">/</span> CARGOS REALES</span>
+ <h3>Costos de tu tarjeta</h3>
+ <p>${sanitize(c.name)}</p>
+ <small>Anualidad y seguro se contabilizan por separado.</small>
+ </div>
+ <input type="hidden" name="cardId" value="${sanitize(c.id)}">
+ <section class="form-full v1300-charge-card" aria-label="Anualidad de tarjeta">
+  <div class="v1300-charge-heading"><span class="v1300-step">01</span><div><strong>Anualidad</strong><small>Un solo cargo anual por tarjeta</small></div></div>
+  <div class="v1300-charge-fields">
+   ${formItem('annualAmount','Importe de anualidad',amount,'number','required min="0" step="0.01"')}
+   ${formSelect('annualCurrency','Moneda',[['DOP','RD
+ const f=document.getElementById('annualFeeForm');if(!f)return;
+ f.querySelector('.confirm-status')?.remove();
+ if(isMobileViewport()){
+  f.classList.add('v1300-annual-form');
+  const action=f.querySelector('.form-foot button[type="submit"]');
+  if(action)action.innerHTML=`${icon('check')} Registrar cargos`;
+ }
+ const update=()=>{const a=Math.max(0,num(f.elements.annualAmount.value)),b=Math.max(0,num(f.elements.insuranceAmount.value)),ac=f.elements.annualCurrency.value,bc=f.elements.insuranceCurrency.value;
+ const dop=(ac==='DOP'?a:0)+(bc==='DOP'?b:0),usd=(ac==='USD'?a:0)+(bc==='USD'?b:0),el=f.querySelector('#v1290Total');
+ if(el)el.innerHTML=`<small>Total anualidad + seguros</small><strong>${money(dop,'DOP',2)}${usd?' · '+money(usd,'USD',2):''}</strong><span>Anualidad ${money(a,ac,2)} · Seguro ${money(b,bc,2)}${already?' · anualidad de '+year+' ya cargada':''}</span>`;
+ if(el&&isMobileViewport()){
+  const total=el.querySelector('strong');
+  if(total){total.classList.add('v1300-currencies');total.innerHTML=`<span>${money(dop,'DOP',2)}</span>${usd?'<span>'+money(usd,'USD',2)+'</span>':''}`;}
+ }
+ };f.addEventListener('input',update);f.addEventListener('change',update);update();
+}
+],['USD','US
+ const f=document.getElementById('annualFeeForm');if(!f)return;
+ f.querySelector('.confirm-status')?.remove();
+ const update=()=>{const a=Math.max(0,num(f.elements.annualAmount.value)),b=Math.max(0,num(f.elements.insuranceAmount.value)),ac=f.elements.annualCurrency.value,bc=f.elements.insuranceCurrency.value;
+ const dop=(ac==='DOP'?a:0)+(bc==='DOP'?b:0),usd=(ac==='USD'?a:0)+(bc==='USD'?b:0),el=f.querySelector('#v1290Total');
+ if(el)el.innerHTML=`<small>Total anualidad + seguros</small><strong>${money(dop,'DOP',2)}${usd?' · '+money(usd,'USD',2):''}</strong><span>Anualidad ${money(a,ac,2)} · Seguro ${money(b,bc,2)}${already?' · anualidad de '+year+' ya cargada':''}</span>`;
+ };f.addEventListener('input',update);f.addEventListener('change',update);update();
+}
+]],cc)}
+  </div>
+  ${already?'<p class="v1300-already">Anualidad de '+year+' ya registrada. Puedes registrar solo el seguro.</p>':''}
+ </section>
+ <section class="form-full v1300-charge-card" aria-label="Seguro de tarjeta">
+  <div class="v1300-charge-heading"><span class="v1300-step">02</span><div><strong>Seguro</strong><small>Registra cada cobro cuando se produzca</small></div></div>
+  <div class="v1300-charge-fields">
+   ${formItem('insuranceAmount','Importe del seguro',0,'number','required min="0" step="0.01"')}
+   ${formSelect('insuranceCurrency','Moneda',[['DOP','RD
+ const f=document.getElementById('annualFeeForm');if(!f)return;
+ f.querySelector('.confirm-status')?.remove();
+ const update=()=>{const a=Math.max(0,num(f.elements.annualAmount.value)),b=Math.max(0,num(f.elements.insuranceAmount.value)),ac=f.elements.annualCurrency.value,bc=f.elements.insuranceCurrency.value;
+ const dop=(ac==='DOP'?a:0)+(bc==='DOP'?b:0),usd=(ac==='USD'?a:0)+(bc==='USD'?b:0),el=f.querySelector('#v1290Total');
+ if(el)el.innerHTML=`<small>Total anualidad + seguros</small><strong>${money(dop,'DOP',2)}${usd?' · '+money(usd,'USD',2):''}</strong><span>Anualidad ${money(a,ac,2)} · Seguro ${money(b,bc,2)}${already?' · anualidad de '+year+' ya cargada':''}</span>`;
+ };f.addEventListener('input',update);f.addEventListener('change',update);update();
+}
+],['USD','US
+ const f=document.getElementById('annualFeeForm');if(!f)return;
+ f.querySelector('.confirm-status')?.remove();
+ const update=()=>{const a=Math.max(0,num(f.elements.annualAmount.value)),b=Math.max(0,num(f.elements.insuranceAmount.value)),ac=f.elements.annualCurrency.value,bc=f.elements.insuranceCurrency.value;
+ const dop=(ac==='DOP'?a:0)+(bc==='DOP'?b:0),usd=(ac==='USD'?a:0)+(bc==='USD'?b:0),el=f.querySelector('#v1290Total');
+ if(el)el.innerHTML=`<small>Total anualidad + seguros</small><strong>${money(dop,'DOP',2)}${usd?' · '+money(usd,'USD',2):''}</strong><span>Anualidad ${money(a,ac,2)} · Seguro ${money(b,bc,2)}${already?' · anualidad de '+year+' ya cargada':''}</span>`;
+ };f.addEventListener('input',update);f.addEventListener('change',update);update();
+}
+]],cc)}
+  </div>
+ </section>
+ <div class="form-full v1300-date-card">
+  <div class="v1300-date-heading"><strong>Fecha del cargo</strong><small>Fecha en que se generó la deuda</small></div>
+  ${formItem('date','Fecha del cargo real',today(),'date','required max="'+today()+'"')}
+ </div>
+ <div class="form-full v1290-total v1300-summary" id="v1290Total" aria-live="polite"></div>
+ <p class="form-full v1300-advice"><span aria-hidden="true">i</span><span>Estos cargos aumentan la deuda y registran el gasto. Después utiliza <b>Registrar pago</b> para reducirla sin duplicar gastos.</span></p>`:`<div class="form-full v1290-intro"><strong>Anualidad y seguros</strong><p>Se registran separados y se suman en el total anual.</p></div>
  <input type="hidden" name="cardId" value="${sanitize(c.id)}">
  ${formItem('annualAmount','Anualidad de la tarjeta',amount,'number','required min="0" step="0.01"')}
- ${formSelect('annualCurrency','Moneda de anualidad',[['DOP','RD$'],['USD','US$']],cc)}
+ ${formSelect('annualCurrency','Moneda de anualidad',[['DOP','RD
+ const f=document.getElementById('annualFeeForm');if(!f)return;
+ f.querySelector('.confirm-status')?.remove();
+ const update=()=>{const a=Math.max(0,num(f.elements.annualAmount.value)),b=Math.max(0,num(f.elements.insuranceAmount.value)),ac=f.elements.annualCurrency.value,bc=f.elements.insuranceCurrency.value;
+ const dop=(ac==='DOP'?a:0)+(bc==='DOP'?b:0),usd=(ac==='USD'?a:0)+(bc==='USD'?b:0),el=f.querySelector('#v1290Total');
+ if(el)el.innerHTML=`<small>Total anualidad + seguros</small><strong>${money(dop,'DOP',2)}${usd?' · '+money(usd,'USD',2):''}</strong><span>Anualidad ${money(a,ac,2)} · Seguro ${money(b,bc,2)}${already?' · anualidad de '+year+' ya cargada':''}</span>`;
+ };f.addEventListener('input',update);f.addEventListener('change',update);update();
+}
+],['USD','US
+ const f=document.getElementById('annualFeeForm');if(!f)return;
+ f.querySelector('.confirm-status')?.remove();
+ const update=()=>{const a=Math.max(0,num(f.elements.annualAmount.value)),b=Math.max(0,num(f.elements.insuranceAmount.value)),ac=f.elements.annualCurrency.value,bc=f.elements.insuranceCurrency.value;
+ const dop=(ac==='DOP'?a:0)+(bc==='DOP'?b:0),usd=(ac==='USD'?a:0)+(bc==='USD'?b:0),el=f.querySelector('#v1290Total');
+ if(el)el.innerHTML=`<small>Total anualidad + seguros</small><strong>${money(dop,'DOP',2)}${usd?' · '+money(usd,'USD',2):''}</strong><span>Anualidad ${money(a,ac,2)} · Seguro ${money(b,bc,2)}${already?' · anualidad de '+year+' ya cargada':''}</span>`;
+ };f.addEventListener('input',update);f.addEventListener('change',update);update();
+}
+]],cc)}
  ${formItem('insuranceAmount','Seguro de la tarjeta',0,'number','required min="0" step="0.01"')}
- ${formSelect('insuranceCurrency','Moneda de seguro',[['DOP','RD$'],['USD','US$']],cc)}
+ ${formSelect('insuranceCurrency','Moneda de seguro',[['DOP','RD
+ const f=document.getElementById('annualFeeForm');if(!f)return;
+ f.querySelector('.confirm-status')?.remove();
+ const update=()=>{const a=Math.max(0,num(f.elements.annualAmount.value)),b=Math.max(0,num(f.elements.insuranceAmount.value)),ac=f.elements.annualCurrency.value,bc=f.elements.insuranceCurrency.value;
+ const dop=(ac==='DOP'?a:0)+(bc==='DOP'?b:0),usd=(ac==='USD'?a:0)+(bc==='USD'?b:0),el=f.querySelector('#v1290Total');
+ if(el)el.innerHTML=`<small>Total anualidad + seguros</small><strong>${money(dop,'DOP',2)}${usd?' · '+money(usd,'USD',2):''}</strong><span>Anualidad ${money(a,ac,2)} · Seguro ${money(b,bc,2)}${already?' · anualidad de '+year+' ya cargada':''}</span>`;
+ };f.addEventListener('input',update);f.addEventListener('change',update);update();
+}
+],['USD','US
+ const f=document.getElementById('annualFeeForm');if(!f)return;
+ f.querySelector('.confirm-status')?.remove();
+ const update=()=>{const a=Math.max(0,num(f.elements.annualAmount.value)),b=Math.max(0,num(f.elements.insuranceAmount.value)),ac=f.elements.annualCurrency.value,bc=f.elements.insuranceCurrency.value;
+ const dop=(ac==='DOP'?a:0)+(bc==='DOP'?b:0),usd=(ac==='USD'?a:0)+(bc==='USD'?b:0),el=f.querySelector('#v1290Total');
+ if(el)el.innerHTML=`<small>Total anualidad + seguros</small><strong>${money(dop,'DOP',2)}${usd?' · '+money(usd,'USD',2):''}</strong><span>Anualidad ${money(a,ac,2)} · Seguro ${money(b,bc,2)}${already?' · anualidad de '+year+' ya cargada':''}</span>`;
+ };f.addEventListener('input',update);f.addEventListener('change',update);update();
+}
+]],cc)}
  ${formItem('date','Fecha del cargo real',today(),'date','required max="'+today()+'"')}
  <div class="form-full v1290-total" id="v1290Total" aria-live="polite"></div>
- ${para('El cargo aumenta la deuda y registra el gasto. Al pagarlo, utiliza Registrar pago para reducir la deuda sin duplicar gastos. Si el seguro es mensual, registra cada cobro en su fecha.')}`,'annualFeeForm',true);
+ ${para('El cargo aumenta la deuda y registra el gasto. Al pagarlo, utiliza Registrar pago para reducir la deuda sin duplicar gastos. Si el seguro es mensual, registra cada cobro en su fecha.')}`;
+ modal(isMobileViewport()?'Anualidad y seguros':'Anualidad y seguros · '+c.name,chargeBody,'annualFeeForm',true);
  const f=document.getElementById('annualFeeForm');if(!f)return;
  f.querySelector('.confirm-status')?.remove();
  const update=()=>{const a=Math.max(0,num(f.elements.annualAmount.value)),b=Math.max(0,num(f.elements.insuranceAmount.value)),ac=f.elements.annualCurrency.value,bc=f.elements.insuranceCurrency.value;
