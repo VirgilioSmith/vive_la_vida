@@ -1,5 +1,5 @@
 @media (min-width:791px){
-  html body #app#app main.vWalletPc-world {
+  #app :is(.vWalletPc-world,.vBanksPc-workspace > .vWalletPc) {
     --wallet-ink:#10182e;
     --wallet-muted:#465673;
     --wallet-accent:#08786d;
@@ -9,6 +9,8 @@
     --wallet-track:#dae1e6;
     --wallet-glass:#ffffffb8;
     --wallet-shadow:0 7px 18px #25415412,inset 0 1px 0 #fff;
+  }
+  html body #app#app main.vWalletPc-world {
     min-height:100vh;
     padding:clamp(22px,2.5vw,42px) clamp(16px,1.65vw,28px) 32px!important;
     color:var(--wallet-ink);
@@ -41,7 +43,7 @@
     min-width:0;border:1px solid var(--wallet-line);border-radius:clamp(18px,1.7vw,29px);
     background:var(--wallet-glass);box-shadow:var(--wallet-shadow);
   }
-  #app .vWalletPc-panel h2 {
+  #app :is(.vWalletPc-panel h2,.vBanksPc-workspace > .vWalletPc .vWalletPc-panel h2) {
     margin:0;color:var(--wallet-ink);font-size:clamp(20px,1.8vw,27px);font-weight:700;line-height:1.1;letter-spacing:-.04em;
   }
   #app .vWalletPc-stats {
@@ -160,7 +162,8 @@
   #app .vWalletPc-stat .vWalletPc-meter {height:12px;margin-top:11px}
   #app .vWalletPc-card-actions {display:flex;flex-wrap:wrap;gap:6px;padding-top:14px}
   #app .vWalletPc-card-actions button {background:#e3f3ef;color:var(--wallet-deep);font-size:12px;font-weight:650}
-  #app .vWalletPc-right {display:grid;grid-template-rows:auto 1fr;gap:clamp(14px,1.45vw,24px);min-width:0}
+  #app .vWalletPc-right {display:grid;align-content:start;gap:clamp(10px,1.05vw,17px);min-width:0}
+  #app .vWalletPc-grid .vWalletPc-consumption {padding:clamp(12px,1.05vw,18px)}
   #app .vWalletPc-cuts header {justify-content:flex-start}
   #app .vWalletPc-cuts p {margin:9px 0 18px;padding-left:calc(clamp(32px,3.25vw,54px) + 8px);color:var(--wallet-muted)}
   #app .vWalletPc-cuts > div {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
@@ -176,7 +179,7 @@
     background:#e3f3ef;color:var(--wallet-deep);cursor:pointer;
   }
   #app .vWalletPc-chart-layout {
-    display:grid;grid-template-columns:minmax(0,.96fr) minmax(0,1fr);align-items:center;gap:clamp(8px,1.1vw,19px);margin-top:clamp(10px,1.05vw,18px);
+    display:grid;grid-template-columns:minmax(0,clamp(95px,9.2vw,150px)) minmax(0,1fr);align-items:center;gap:clamp(8px,1vw,16px);margin-top:9px;
   }
   #app .vWalletPc-chart {
     position:relative;min-width:0;aspect-ratio:1;border-radius:50%;background:#ffffffd9;box-shadow:0 3px 12px #24436c16;
@@ -191,9 +194,10 @@
   }
   #app .vWalletPc-chart-total strong {font-size:clamp(11px,1.28vw,22px);font-weight:850;line-height:1.05;letter-spacing:-.04em;overflow-wrap:anywhere}
   #app .vWalletPc-chart-total span {color:var(--wallet-muted);font-size:clamp(10px,1.05vw,16px);overflow-wrap:anywhere}
+  #app .vWalletPc-legend {max-height:144px;overflow-y:auto}
   #app .vWalletPc-legend button {
     display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;
-    padding:clamp(5px,.72vw,12px) 0;border:0;border-bottom:1px solid var(--wallet-line);
+    padding:6px 0;border:0;border-bottom:1px solid var(--wallet-line);
     background:none;text-align:left;font-size:clamp(10px,1.05vw,16px);cursor:pointer;
   }
   #app .vWalletPc-legend button:last-child {border-bottom:0}
@@ -202,11 +206,12 @@
   #app .vWalletPc-legend button span {overflow-wrap:anywhere}
   #app .vWalletPc-legend button b {font-weight:650;white-space:nowrap}
   #app .vWalletPc-note {margin:12px 0 0;color:var(--wallet-muted);font-size:12px}
-  body.privacy-finanzas #app .vWalletPc :is(.vWalletPc-stat strong,.vWalletPc-stat small,.vWalletPc-limit strong,.vWalletPc-limit small,.vWalletPc-limit-row > b,.vWalletPc-limit-row small,.vWalletPc-chart-total strong,.vWalletPc-cuts button b) {filter:blur(7px);user-select:none}
+  body.privacy-finanzas #app .vWalletPc :is(.v371-return-tile strong,.vWalletPc-stat strong,.vWalletPc-stat small,.vWalletPc-limit strong,.vWalletPc-limit small,.vWalletPc-limit-row > b,.vWalletPc-limit-row small,.vWalletPc-chart-total strong,.vWalletPc-cuts button b) {filter:blur(7px);user-select:none}
 }
 @media (min-width:791px) and (max-width:1120px){
   #app .vWalletPc-grid {grid-template-columns:minmax(146px,.78fr) minmax(0,1.7fr)}
-  #app .vWalletPc-right {grid-column:1/-1;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}
+  #app .vWalletPc-right {grid-column:1/-1;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);align-items:start}
+  #app .vWalletPc-return {grid-column:1/-1}
   #app .vWalletPc-chart-layout {grid-template-columns:minmax(0,145px) minmax(0,1fr)}
 }
 @media (min-width:791px) and (max-width:950px){

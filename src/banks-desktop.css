@@ -105,8 +105,9 @@
   #app .vBanksPc-bank-totals dd { margin-top: 4px; font-size: clamp(15px, 1.4vw, 23px); font-weight: 750; letter-spacing: -.035em; overflow-wrap: anywhere; }
 
   #app .vBanksPc-product-filter { display: flex; flex-wrap: wrap; gap: 3px; padding: 3px; border-radius: 20px; border: 1px solid var(--bank-line); background: var(--bank-glass); }
-  #app .vBanksPc-product-filter button { flex: 1 1 auto; border: 0; background: transparent; border-radius: 16px; padding: 8px 6px; font-size: clamp(12px, .96vw, 15px); cursor: pointer; }
-  #app .vBanksPc-product-filter button[aria-pressed=true] { color: #fff; background: #08786d; font-weight: 700; }
+  #app .vBanksPc-product-filter button { flex: 1 1 auto; display: inline-flex; justify-content: center; align-items: center; gap: 5px; border: 0; background: transparent; border-radius: 16px; padding: 8px 6px; font-size: clamp(12px, .96vw, 15px); cursor: pointer; }
+  #app .vBanksPc-product-filter button:hover { background: var(--bank-hover); color: var(--bank-positive); }
+  #app .vBanksPc-product-filter svg { width: 15px; height: 15px; flex: none; }
   #app .vBanksPc-lane { padding-bottom: 7px; }
   #app .vBanksPc-lane h3 { display: flex; align-items: center; gap: 8px; }
   #app .vBanksPc-lane h3 svg { width: 20px; height: 20px; }
@@ -124,13 +125,6 @@
   #app .vBanksPc-benefits-link { display: flex; align-items: center; gap: 9px; width: 100%; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; }
   #app .vBanksPc-benefits-link svg:first-child { color: var(--bank-positive); width: 26px; height: 26px; }
   #app .vBanksPc-benefits-link svg:last-child { margin-left: auto; width: 17px; height: 17px; }
-  #app .vBanksPc .v371-return-values { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 0; margin-top: 12px; border-top: 1px solid var(--bank-line); padding-top: 12px; }
-  #app .vBanksPc .v371-return-tile { display: grid; gap: 3px; min-width: 0; padding: 2px 5px; border: 0; border-radius: 0; background: none; align-content: start; }
-  #app .vBanksPc .v371-return-tile + .v371-return-tile { border-left: 1px solid var(--bank-line); }
-  #app .vBanksPc .v371-return-tile strong { font-size: clamp(13px, 1.25vw, 21px); letter-spacing: -.035em; white-space: normal; overflow-wrap: anywhere; }
-  #app .vBanksPc .v371-return-tile.positive strong { color: var(--bank-positive); }
-  #app .vBanksPc .v371-return-tile.negative strong { color: var(--bank-negative); }
-  #app .vBanksPc .v371-return-note { margin: 10px 0 0; font-size: 11px; line-height: 1.35; }
   #app .vBanksPc .v1301-insight > summary { padding: 0; }
   #app .vBanksPc .v1301-insight :is(.v1301-kicker,summary p):empty { display: none; }
   #app .vBanksPc .v1301-insight h2 { font-size: clamp(18px, 1.56vw, 25px); }
@@ -323,4 +317,51 @@
   #app .vBanks-mobile .vBanksPc-benefits svg { width:16px; height:16px; }
   #app .vBanks-mobile .vBanksPc-empty { padding:8px 0; font-size:12px; }
   #app .vBanks-mobile .vBanks-detail .v1190-grid { grid-template-columns:minmax(0,1fr); }
+}
+
+@media (min-width: 791px) {
+  #app .vBanksPc-workspace { display: grid; min-width: 0; gap: 15px; }
+  #app .vBanksPc-workspace-head {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px;
+    padding: 12px 16px; border: 1px solid var(--bank-line); border-radius: 18px;
+    background: var(--bank-glass); box-shadow: var(--bank-shadow);
+  }
+  #app .vBanksPc-workspace-head > div { display: flex; align-items: center; flex: 1; gap: 10px; min-width: 180px; }
+  #app .vBanksPc-workspace-head > div span { color: var(--bank-muted); overflow-wrap: anywhere; }
+  #app .vBanksPc-workspace-head svg { width: 17px; height: 17px; color: var(--bank-accent); flex: none; }
+  #app .vBanksPc-workspace .vBanksPc-card-detail .v1190-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  #app .vBanks-account-workspace { display: grid; gap: 14px; }
+  #app .vBanks-account-evolution { padding: 12px 16px; border: 1px solid var(--bank-line); border-radius: 16px; background: var(--bank-glass); }
+  #app .vBanks-account-evolution summary { cursor: pointer; color: var(--bank-accent); font-weight: 700; }
+  #app .vBanks-account-evolution .v1191-back { display: none; }
+
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) {
+    --return-ink: var(--wallet-ink,var(--bank-ink));
+    --return-muted: var(--wallet-muted,var(--bank-muted));
+    --return-line: var(--wallet-line,var(--bank-line));
+    --return-positive: var(--bank-positive,#116747);
+    --return-negative: var(--bank-negative,#a93245);
+  }
+  #app .vWalletPc-grid .vWalletPc-return { margin: 0; padding: clamp(12px,1.05vw,18px); }
+  #app .vWalletPc-return .v371-return-heading > div { width: 100%; }
+  #app .vWalletPc-return .v266-overline { display: none; }
+  #app .vWalletPc-return h2 button { color: var(--return-ink); font: inherit; }
+  #app .vWalletPc-return h2 button svg:first-child { color: var(--wallet-deep); }
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-values {
+    display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 0;
+    padding-top: 9px; margin-top: 9px; border-top: 1px solid var(--return-line);
+  }
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-tile {
+    display: grid; gap: 3px; align-content: start; min-width: 0;
+    padding: 2px 5px; border: 0; border-radius: 0; background: none; box-shadow: none;
+  }
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-tile + .v371-return-tile { border-left: 1px solid var(--return-line); }
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-tile small { color: var(--return-muted); }
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-tile strong {
+    color: var(--return-ink); font-size: clamp(13px,1.15vw,18px); line-height: 1.22;
+    letter-spacing: -.035em; white-space: normal; overflow-wrap: anywhere;
+  }
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-tile.positive strong { color: var(--return-positive); }
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-tile.negative strong { color: var(--return-negative); }
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-note { margin: 8px 0 0; color: var(--return-muted); font-size: 11px; line-height: 1.35; }
 }

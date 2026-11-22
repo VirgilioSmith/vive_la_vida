@@ -24,12 +24,14 @@ module.exports=async function walletDesktop(browser){
   const baseHeading=await font('.v256-cards-list-head h2');
   const expected=await p.evaluate(()=>{
    const t=window.__T,d=t.dbg();
-   const [a]=d.cards,first={...a,id:'pc-card-a',name:'Tarjeta A',last4:'1234',limitDOP:100000,limitUSD:1000,openingDOP:0,openingUSD:0,cutDay:1,dueDay:28,archived:false};
+   const [a]=d.cards,first={...a,id:'pc-card-a',name:'Tarjeta A',last4:'1234',limitDOP:100000,limitUSD:1000,openingDOP:0,openingUSD:0,annualFeeAmount:4500,annualFeeCurrency:'DOP',cutDay:1,dueDay:28,archived:false};
    const second={...first,id:'pc-card-b',name:'Tarjeta B',last4:'5678',limitDOP:200000,limitUSD:2000};
    d.cards=[first,second];d.statements=[];d.settings.fx=60;
    const charge=(id,card,currency,amount,extra={})=>({id,cardId:card.id,type:'card_charge',currency,amount,date:'2021-01-01',created:'2021-01-01T12:00:00Z',...extra});
    const aDop=charge('pc-tx-1',first,'DOP',10000);
-   d.transactions=[aDop,{...aDop},charge('pc-tx-2',first,'USD',100,{fxRateSnapshot:58}),charge('pc-tx-3',second,'DOP',4000)];
+   d.transactions=[aDop,{...aDop},charge('pc-tx-2',first,'USD',100,{fxRateSnapshot:58}),charge('pc-tx-3',second,'DOP',4000),{
+    id:'pc-reward',cardId:first.id,type:'card_reward',amount:11320,currency:'DOP',date:t.fn.today()
+   }];
    t.inv();
    return d.cards.map(c=>{
     const dop=t.cs(c.id,'DOP'),usd=t.cs(c.id,'USD');
@@ -80,6 +82,16 @@ module.exports=async function walletDesktop(browser){
    assert.ok(await fit(),'Desborde en escritorio a '+width+'px');
    if(evidence)await p.screenshot({path:path.join(evidence,'wallet-pc-'+width+'.png'),fullPage:true,animations:'disabled'});
   }
+  const benefits=wallet.locator('.vWalletPc-return');
+  const benefitLink=benefits.getByRole('button',{name:'Beneficios y retorno'});
+  const returnValues=()=>benefits.locator('.v371-return-tile strong').allTextContents();
+  assert.deepEqual(await returnValues(),['RD$9,000.00','RD$11,320.00','+RD$2,320.00','+25.8%']);
+  await benefitLink.click();
+  const benefitsLedger=p.getByRole('region',{name:'Tabla de beneficios por tarjeta'});
+  await benefitsLedger.waitFor();
+  assert.equal(await benefitsLedger.locator('table').count(),1);
+  await p.getByRole('button',{name:'Volver a Wallet'}).click();
+  await benefitLink.waitFor();
   await p.locator('.vWalletPc-chart').scrollIntoViewIfNeeded();
   const arc=await slices.first().evaluate(el=>{
    const svg=el.ownerSVGElement,point=svg.createSVGPoint(),angle=2*Math.PI*parseFloat(el.getAttribute('stroke-dasharray'))/200;
@@ -101,6 +113,13 @@ module.exports=async function walletDesktop(browser){
    assert.equal(await amount('.vWalletPc-stat.is-available strong'),Math.round(available));
    assert.equal(await p.locator('.vWalletPc-limit-row').count(),0);
   }
+  await wallet.getByRole('button',{name:'Seleccionar Tarjeta A',exact:true}).click();
+  assert.deepEqual(await returnValues(),['RD$4,500.00','RD$11,320.00','+RD$6,820.00','+151.6%']);
+  await benefitLink.click();
+  assert.equal(await benefitsLedger.locator('select[data-v144-filter="card"]').inputValue(),'pc-card-a');
+  await p.getByRole('button',{name:'Volver a Wallet'}).click();
+  assert.equal(await wallet.getByRole('button',{name:'Seleccionar Tarjeta A',exact:true}).getAttribute('aria-pressed'),'true');
+  await wallet.getByRole('button',{name:'Seleccionar Tarjeta B',exact:true}).click();
   await wallet.getByRole('button',{name:'Explorar el ciclo',exact:true}).click();
   await p.getByRole('button',{name:'Volver a Wallet'}).click();
   assert.equal(await wallet.getByRole('button',{name:'Seleccionar Tarjeta B',exact:true}).getAttribute('aria-pressed'),'true');

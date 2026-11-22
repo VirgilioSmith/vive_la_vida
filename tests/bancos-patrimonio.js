@@ -13,7 +13,7 @@ const money=async locator=>Number((await locator.innerText()).replace(/[^0-9.\-]
 async function inspectPrevious(browser){
  if(!process.env.CI||!evidence)return;
  // Captura de referencia a partir del código publicado antes del rediseño universal.
- const sha='27d500767a5cb6fda5ba3fe85dc7a41c8431599b';
+ const sha='9ae7ffb51bdef591f46f5cdf8c73b623f47050b8';
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'vive-bancos-previo-'));
  const previous=process.env.ROOT;
  try{
@@ -25,7 +25,7 @@ async function inspectPrevious(browser){
    const {ctx,p}=await open(browser,width,height);
    try{
     await go(p,'banks');
-    await p.locator(width<791?'.v203-mobile-banks':'.vBanksPc').waitFor();
+    await p.locator(width<791?'.vBanks-mobile':'.vBanksPc').waitFor();
     await p.screenshot({path:path.join(evidence,`antes-bancos-${width}.png`)});
     await go(p,'wallet');
     await p.locator(width<791?'.v68-wallet':'.vWalletPc').waitFor();
@@ -142,14 +142,41 @@ async function testBanks(browser,width){
   await root.getByRole('button',{name:'Volver al resumen'}).click();
   const openProduct=async (kind,id)=>{
    await root.locator(`[data-act="banksPcProducts"][data-id="${kind}"]`).first().click();
-   await root.locator(`[data-act="banksOpenProduct"][data-id="${id}"]`).click();
+   if(!mobile){
+    assert.equal(await root.locator('.vBanksPc-bank-list').count(),0,'La sección reemplaza el tablero.');
+    if(kind==='cards'){
+     assert.equal(await root.locator('.vWalletPc').count(),1);
+     assert.equal(await root.getByRole('button',{name:'Seleccionar Mastercard General'}).count(),0);
+     await root.locator(`[data-act="walletPcSelect"][data-id="${id}"]`).first().click();
+     await root.getByRole('button',{name:'Explorar el ciclo',exact:true}).click();
+    }else if(kind==='loans'){
+     const loan=root.locator('.v1265-loan');
+     assert.match(await loan.innerText(),/Capital original/i);
+     assert.match(await loan.innerText(),/Cuota/i);
+     assert.equal(await root.getByText('Tu cartera de préstamos',{exact:true}).count(),0);
+     await loan.locator(`[data-act="loanDetails"][data-id="${id}"]`).click();
+    }else await root.locator(`[data-act="banksOpenProduct"][data-id="${id}"]`).click();
+   }else await root.locator(`[data-act="banksOpenProduct"][data-id="${id}"]`).click();
    assert.equal(await p.evaluate(()=>window.__T.ui().page),'banks');
    return root.getByRole('region',{name:'Detalle del producto'});
+  };
+  const closeProduct=async(detail,bankId)=>{
+   await detail.locator('[data-act="banksCloseProduct"]').click();
+   if(!mobile){
+    await root.getByRole('button',{name:'Volver al resumen'}).click();
+    assert.equal(await root.locator(`.vBanksPc-bank[data-id="${bankId}"]`).getAttribute('aria-pressed'),'true');
+   }
   };
   for(const [kind,id,title] of [['accounts','acc-a','Ahorros Alfa'],['cards','card-a','Visa Alfa'],['certificates','cert-a','Certificado Alfa']]){
    const detail=await openProduct(kind,id);
    await detail.getByRole('heading',{name:title,exact:true}).waitFor();
-   await detail.locator('[data-act="banksCloseProduct"]').click();
+   if(!mobile&&kind==='accounts'){
+    await detail.getByText('Evolución del saldo',{exact:true}).click();
+    await detail.getByRole('img',{name:'Evolución del saldo'}).waitFor();
+    await detail.getByRole('heading',{name:'Actividad reciente'}).waitFor();
+   }
+   if(!mobile&&kind==='certificates')await detail.getByRole('heading',{name:'Rendimiento y vencimiento'}).waitFor();
+   await closeProduct(detail,'bank-a');
   }
   await choose('bank-b');
   const b=await view();
@@ -158,7 +185,14 @@ async function testBanks(browser,width){
   assert.equal(await root.locator('.vBanks-certificates dl dd').nth(1).innerText(),'—');
   const detail=await openProduct('loans','loan-b');
   await detail.getByRole('heading',{name:'Préstamo General',exact:true}).waitFor();
-  await detail.locator('[data-act="banksCloseProduct"]').click();
+  if(!mobile){
+   await detail.getByRole('button',{name:'Amortización',exact:true}).click();
+   await detail.getByRole('heading',{name:'Amortización inteligente'}).waitFor();
+   await detail.getByRole('button',{name:'Historial real',exact:true}).click();
+   await detail.getByRole('button',{name:'Simulador de abonos',exact:true}).click();
+   await detail.locator('#loanSimAmount').waitFor();
+  }
+  await closeProduct(detail,'bank-b');
   await choose('__all_banks__');
   const back=await view();
   assert.deepEqual(back,netTotal);
