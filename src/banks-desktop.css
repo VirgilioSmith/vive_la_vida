@@ -509,3 +509,12 @@
     flex: none;
   }
 }
+
+/* Cuatro KPI de retorno en una sola fila, con divisores del mockup PC. */
+@media (min-width: 791px) {
+  html body #app#app main.vBanksPc-world .vBanksPc .v371-return-values {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+  }
+}
