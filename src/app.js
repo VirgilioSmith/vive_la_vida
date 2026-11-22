@@ -6491,7 +6491,7 @@ case 'v51RestoreTransaction':{
 document.addEventListener('click',e=>{let b=e.target.closest('[data-act]');if(b){e.preventDefault();onAction(b.dataset.act,b)}else if(e.target.matches('[data-backdrop]'))closeModal()});
 
 document.addEventListener('click',e=>{const el=e.target.closest('[data-mqr-act]');if(!el)return;e.preventDefault();const act=el.dataset.mqrAct,st=mqrState();if(act==='mode'){st.mode=el.dataset.id;st.preset=mqrFirstCategory(st.mode);st.showCategories=false;renderMobileQuickRegister();}else if(act==='transferKind'){st.transferKind=el.dataset.id;renderMobileQuickRegister();}else if(act==='moreCategories'){st.showCategories=!st.showCategories;renderMobileQuickRegister();}else if(act==='preset'){st.preset=el.dataset.id;st.showCategories=false;renderMobileQuickRegister();}else if(act==='continue')mqrContinue();else if(act==='back')renderMobileQuickRegister();});
-document.addEventListener('input',e=>{if(e.target?.id!=='mqrAmountInput')return;if(!mqrAcceptAmount(e.target.value))e.target.value=mqrState().amount;});
+document.addEventListener('input',e=>{if(e.target?.id!=='mqrAmountInput')return;mqrAcceptAmount(e.target.value);if(e.target.value!==mqrState().amount)e.target.value=mqrState().amount;});
 document.addEventListener('submit',e=>{
  const form=e.target,selector=form.querySelector('[name="postingStatus"]');
  if(!selector)return;
