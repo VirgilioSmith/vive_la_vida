@@ -56126,3 +56126,27 @@ html body #app#app #page#page .v410-explore-sec>header>.v410-kicker{display:bloc
  html body #modal-root .v749-layer .v749-fieldline{background:#fff!important;border-color:rgba(19,97,82,.13)!important}
  html body #modal-root .v749-layer .v749-quick button,html body #modal-root .v749-layer .v749-segment button{box-shadow:none!important}
 }
+
+/* V1298 · Selector móvil de operaciones: tres botones con icono y texto alineados. */
+@media (max-width:790px){
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-segment{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;align-items:stretch!important;width:100%!important;
+ }
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-segment>button{
+  width:100%!important;min-width:0!important;height:52px!important;min-height:52px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;gap:3px!important;padding:6px 3px!important;line-height:1!important;
+ }
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-segment .v771-mode-icon{
+  display:grid!important;place-items:center!important;flex:0 0 20px!important;
+  width:20px!important;height:20px!important;
+ }
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-segment .v771-mode-icon svg{
+  width:20px!important;height:20px!important;
+ }
+ html body #modal-root .v749-layer[data-v749-stage="entry"] .v749-segment .v769-mode-text{
+  display:block!important;max-width:100%!important;line-height:14px!important;
+  text-align:center!important;white-space:nowrap!important;
+ }
+}
