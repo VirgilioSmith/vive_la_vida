@@ -1452,7 +1452,7 @@ function vWalletPcConsumption(list){
      ${rows.map(r=>{
       if(!r.share)return '';
       const start=offset;offset+=r.share;
-      return `<circle ${select(r)} cx="60" cy="60" r="50" pathLength="100" stroke="${r.color}" stroke-dasharray="${r.share} ${100-r.share}" stroke-dashoffset="${-start}" transform="rotate(-90 60 60)" role="button" tabindex="0" aria-label="${sanitize(rowLabel(r))}" aria-pressed="${r===selected}"><title>${sanitize(rowLabel(r))}</title></circle>`;
+      return `<circle ${select(r)} cx="60" cy="60" r="50" pathLength="100" stroke="${r.color}" stroke-dasharray="${r.share} ${100-r.share}" stroke-dashoffset="${-start}" transform="rotate(-90 60 60)" role="button" tabindex="0" aria-label="${sanitize(rowLabel(r))}" aria-pressed="${r===selected}" data-chart-tip="${sanitize(rowLabel(r))}"></circle>`;
      }).join('')}
     </svg>
     <div class="vWalletPc-chart-total" aria-live="polite"><strong>${selected?(selected.data.missingFx?'—':vWalletPcAmount(selected.total)):total}</strong><span>${selected?sanitize(bankOf(selected.c)||selected.c.name):'consumo'}</span></div>
