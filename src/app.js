@@ -11962,7 +11962,7 @@ const v83TransactionBefore=transactionForm;
 transactionForm=function(partial={},editId=null){v83TransactionBefore(partial,editId);if(partial?.type==='loan_payment')v83LoanPaymentSteps(document.getElementById('transactionForm'));window.__v866Compose?.();};
 
 const v83LegacyLoans=loans;
-loans=function(){const selected=ui.loanId&&loan(ui.loanId);return selected?`<div class="loans-world v83-loans-detail-only">${loanDetail(selected)}</div>`:v83LegacyLoans()};
+loans=function(scope){const selected=!scope&&ui.loanId&&loan(ui.loanId);return selected?`<div class="loans-world v83-loans-detail-only">${loanDetail(selected)}</div>`:v83LegacyLoans(scope)};
 document.addEventListener('click',function(e){const btn=e.target.closest?.('[data-act="v83SimulateLoan"]');if(!btn)return;e.preventDefault();e.stopImmediatePropagation();ui.page='loans';ui.innerViews.loans='overview';ui.loanId=btn.dataset.id;loanWorkspace.tab='simulate';render();},true);
 
 

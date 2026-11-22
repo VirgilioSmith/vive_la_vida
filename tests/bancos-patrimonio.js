@@ -52,7 +52,8 @@ async function fixture(page){
    {...card,id:'card-a',bankId:'bank-a',name:'Visa Alfa',last4:'1234',network:'Visa',opened,limitDOP:100000.37,limitUSD:1000.02,openingDOP:0,openingUSD:0,annualFeeAmount:4500,annualFeeCurrency:'DOP',archived:false},
    {...card,id:'card-b',bankId:'bank-b',name:'Mastercard General',last4:'5678',network:'Mastercard',opened,limitDOP:200000,limitUSD:0,openingDOP:0,openingUSD:0,annualFeeAmount:3000,annualFeeCurrency:'DOP',archived:false}
   ];
-  db.loans=[{...loan,id:'loan-b',name:'Préstamo General',bankId:'bank-b',currency:'DOP',principal:12000,rate:5,firstDue:t.fn.plusMonths(date,1),originationDate:date,term:12,archived:false}];
+  const sampleLoan={...loan,currency:'DOP',principal:12000,rate:5,firstDue:t.fn.plusMonths(date,1),originationDate:date,term:12,archived:false};
+  db.loans=[{...sampleLoan,id:'loan-a',name:'Préstamo Alfa',bankId:'bank-a'},{...sampleLoan,id:'loan-b',name:'Préstamo General',bankId:'bank-b'}];
   db.certificates=[
    {id:'cert-a',bankId:'bank-a',name:'Certificado Alfa',currency:'DOP',principal:40000,rate:8,startDate:date,maturityDate:maturity,taxPct:0,capitalMode:'pending',archived:false},
    {id:'cert-b',bankId:'bank-b',name:'Certificado General',currency:'USD',principal:500,startDate:date,maturityDate:maturity,taxPct:0,capitalMode:'already',archived:false}
