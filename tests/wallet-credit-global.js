@@ -194,6 +194,9 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     // Consumo real: compras históricas, meses sin actividad y cargos no computables.
     await p.evaluate(()=>{
      const t=window.__T,d=t.dbg(),[a,b]=d.cards,now=t.fn.today();
+     // Logos reales se leen de las entidades emisoras, nunca del diseño de la tarjeta.
+     const logo='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jT6sAAAAASUVORK5CYII=';
+     for(const c of [a,b]){const bank=d.banks.find(x=>x.id===c.bankId);if(bank)bank.logo=logo;}
      const first=t.fn.plusMonths(now.slice(0,7)+'-01',-14),previous=t.fn.plusMonths(now.slice(0,7)+'-01',-2);
      const row=(id,type,c,currency,amount,date=now,extra={})=>({id,type,cardId:c.id,currency,amount,date,created:date+'T12:00:00Z',...extra});
      d.transactions=[row('h1','card_charge',a,'DOP',10000,first),row('h2','card_charge',a,'DOP',1000),row('h3','card_charge',a,'USD',100),row('h4','card_charge',b,'USD',500,previous),row('h5','card_charge',b,'DOP',1000),row('payment','card_payment',a,'DOP',50000),row('fee','card_charge',a,'DOP',2000,now,{chargeKind:'annual_fee'}),row('insurance','card_charge',b,'USD',25,now,{chargeKind:'insurance'}),row('interest','card_charge',a,'USD',20,now,{chargeKind:'interest'}),row('advance','card_advance',b,'DOP',10000),row('refund','card_refund',b,'DOP',50),row('reward','card_reward',a,'DOP',100)];
@@ -225,18 +228,41 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.equal(await consumption.getAttribute('open'),null);
     for(const item of [consumption,limits]){
      await item.locator('summary').tap();assert.notEqual(await item.getAttribute('open'),null);
-     assert.equal(await item.locator('.v1301-stack i').count(),2);
-     assert.equal(await item.locator('.v1301-mini .credit-network').count(),2);
+     assert.equal(await item.locator('.v1301-stack').count(),0);
+     assert.equal(await item.locator('.v1301-bank .bank-photo-mark img').count(),2);
+     assert.equal(await item.locator('.v1301-mini,.credit-network').count(),0);
      assert.equal(await item.evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
      assert.equal(await item.locator('.v1301-distribution-body').innerText().then(t=>t.includes('%')),false);
+     const columns=await item.locator('.v1301-equivalent').evaluateAll(els=>els.map(el=>({x:el.getBoundingClientRect().x,right:el.getBoundingClientRect().right})));
+     assert.ok(columns.every(c=>Math.abs(c.x-columns[0].x)<1&&Math.abs(c.right-columns[0].right)<1),'Equivalentes alineados');
     }
+    assert.equal(await limits.locator('.v1301-donut').count(),0);
+    assert.equal(await consumption.locator('.v1301-donut-segment').count(),2);
+    const slices=await consumption.locator('.v1301-donut-segment').evaluateAll(els=>els.map(e=>({id:e.dataset.cardId,share:Number(e.getAttribute('stroke-dasharray').split(' ')[0])})));
+    assert.deepEqual(slices.map(s=>s.id),[fixture.second,fixture.first]);
+    assert.ok(Math.abs(slices[0].share-31000/48000*100)<1e-8);
+    assert.ok(Math.abs(slices.reduce((s,x)=>s+x.share,0)-100)<1e-8);
     assert.deepEqual(await consumption.locator('.v1301-rank').evaluateAll(els=>els.map(e=>e.dataset.cardId)),[fixture.second,fixture.first]);
     assert.deepEqual(await limits.locator('.v1301-rank').evaluateAll(els=>els.map(e=>e.dataset.cardId)),[fixture.first,fixture.second]);
     assert.equal(moneyText(await consumption.locator('.v1301-total strong').innerText()),48000);
     assert.deepEqual(await consumption.locator('.v1301-equivalent').allTextContents().then(a=>a.map(moneyText)),[31000,17000]);
     assert.equal(moneyText(await limits.locator('.v1301-total strong').innerText()),650000);
     for(const item of [consumption,limits]){await item.locator('summary').tap();assert.equal(await item.getAttribute('open'),null)}
-    for(const [id,amounts] of [[fixture.first,[11000,100]],[fixture.second,[1000,500]]]){
+    // Importes fraccionarios: redondear solo al mostrar, sin modificar datos ni proporciones.
+    await p.evaluate(()=>{const t=window.__T,d=t.dbg();for(const c of d.cards){c.limitDOP+=.49;c.limitUSD+=.01}for(const tx of d.transactions){if(['h2','h5'].includes(tx.id))tx.amount+=.49;if(['h3','h4'].includes(tx.id))tx.amount+=.01}t.inv();t.go('wallet')});
+    for(const item of [consumption,limits]){
+     await item.locator('summary').tap();
+     const amounts=await item.locator('.v1301-total strong,.v1301-split span,.v1301-equivalent').allTextContents();
+     assert.ok(amounts.every(v=>/^(RD\$|US\$)[\d,]+$/.test(v)),'Sin decimales en ningún importe');
+    }
+    assert.equal(moneyText(await consumption.locator('.v1301-total strong').innerText()),48002);
+    assert.equal(moneyText(await limits.locator('.v1301-total strong').innerText()),650002);
+    assert.deepEqual(await consumption.locator('.v1301-total .v1301-split span').allTextContents().then(a=>a.map(moneyText)),[12001,600]);
+    assert.deepEqual(await limits.locator('.v1301-total .v1301-split span').allTextContents().then(a=>a.map(moneyText)),[470001,3000]);
+    const share=Number((await consumption.locator('.v1301-donut-segment').first().getAttribute('stroke-dasharray')).split(' ')[0]);
+    assert.ok(Math.abs(share-(31001.09/48002.18*100))<1e-8,'Participación calculada con los centavos');
+    assert.deepEqual(await p.evaluate(()=>window.__T.dbg().cards.map(c=>[c.limitDOP,c.limitUSD])),[[270000.49,1000.01],[200000.49,2000.01]]);
+    for(const [id,amounts] of [[fixture.first,[11000.49,100.01]],[fixture.second,[1000.49,500.01]]]){
      await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();await waitSelected(id);
      assert.deepEqual(await parts('.v1301-history-total strong,.v1301-history-total b'),amounts);
      assert.equal(await p.locator('.v1301-distribution').count(),0);
