@@ -11,12 +11,13 @@
   const words = value => String(value || '')
     .replace(/([a-záéíóúñ])([A-Z])/g, '$1 $2')
     .replace(/[_-]+/g, ' ')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase();
 
-  const integerIdentity = /\b(day|days|dia|dias|pay day|cut day|due day|month|months|mes|meses|year|years|años|ano|term count|termcount|duration|duracion|period|periods|periodos|installment count|installments count|cantidad|quantity|qty|count|numero de cuotas|número de cuotas|quincenas|fortnights)\b/;
-  const decimalIdentity = /\b(amount|importe|monto|principal|capital|balance|saldo|debt|deuda|rate|tasa|fx|interest|interes|interés|fee|commission|comision|comisión|cost|costo|price|precio|limit|limite|límite|income|ingreso|deduction|deduccion|deducción|tax|impuesto|gross|net|neto|anualidad|cuota|benefit value)\b/;
-  const labelInteger = /\b(día de (pago|corte|cobro)|número de (cuotas|meses|días)|cantidad de (cuotas|pagos)|duración en (meses|días)|plazo en (meses|días))\b/;
-  const labelDecimal = /\b(importe|monto|saldo|balance|capital|inter[eé]s|tasa|comisi[oó]n|costo|precio|l[ií]mite|deuda|anualidad|cuota|porcentaje)\b|%|RD\$|US\$/i;
+  const integerIdentity = /\b(day|days|dia|dias|pay day|cut day|due day|month|months|mes|meses|year|years|anos|ano|term count|termcount|duration|duracion|period|periods|periodos|installment count|installments count|cantidad|quantity|qty|count|numero de cuotas|quincenas|fortnights|last4|last 4|last four|last digits|ultimos 4|ultimos cuatro)\b/;
+  const decimalIdentity = /\b(amount|importe|monto|principal|capital|balance|saldo|debt|deuda|rate|tasa|fx|interest|interes|fee|commission|comision|cost|costo|price|precio|limit|limite|income|ingreso|deduction|deduccion|tax|impuesto|gross|net|neto|anualidad|cuota|benefit value|pct|percent|percentage|porcentaje|apr|insurance|seguro|withholding|retencion|salary|sueldo|threshold|tope|discount|descuento|deposit|deposito)\b/;
+  const labelInteger = /\b(dia de (pago|corte|cobro)|numero de (cuotas|meses|dias)|cantidad de (cuotas|pagos)|duracion en (meses|dias)|plazo en (meses|dias)|ultimos (cuatro|4) digitos)\b/;
+  const labelDecimal = /\b(importe|monto|saldo|balance|capital|interes|tasa|comision|costo|precio|limite|deuda|anualidad|cuota|porcentaje|valor referencial|seguro|retencion|deduccion)\b|%|RD\$|US\$/i;
   const nonFinancial = /\b(pin|otp|clave|código|codigo|contraseña|password|telefono|teléfono|phone|busqueda|búsqueda|search)\b/;
 
   function classify(input) {
@@ -79,11 +80,12 @@
     scan(document.body);
     const watcher = new MutationObserver(mutations => {
       if (mutations.some(m => m.type === 'childList' || m.attributeName === 'type' ||
-        m.attributeName === 'name' || m.attributeName === 'step')) refresh();
+        m.attributeName === 'name' || m.attributeName === 'step' ||
+        m.attributeName === 'id' || m.attributeName === 'aria-label' || m.attributeName === 'placeholder')) refresh();
     });
     watcher.observe(document.body, {
       subtree: true, childList: true, attributes: true,
-      attributeFilter: ['type', 'name', 'step']
+      attributeFilter: ['type', 'name', 'step', 'id', 'aria-label', 'placeholder']
     });
     window.addEventListener('resize', refresh, { passive: true });
     window.addEventListener('orientationchange', refresh, { passive: true });
