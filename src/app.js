@@ -1398,35 +1398,6 @@ function v1301WalletDistribution(cards,consumption){
  const donut=`<svg class="v1301-donut" viewBox="0 0 128 128" role="img" aria-label="Participación del consumo de ${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}"><circle class="v1301-donut-track" cx="64" cy="64" r="46" fill="none" stroke-width="18"/>${rows.map((r,i)=>{const portion=share(r);if(!portion)return '';const start=offset;offset+=portion;return `<circle class="v1301-donut-segment" data-card-id="${sanitize(r.c.id)}" cx="64" cy="64" r="46" pathLength="100" fill="none" stroke-width="18" stroke-dasharray="${portion} ${100-portion}" stroke-dashoffset="${-start}" transform="rotate(-90 64 64)" style="stroke:${cardColor(r,i)}"/>`}).join('')}<text class="v1301-donut-count" x="64" y="59" text-anchor="middle">${cards.length}</text><text class="v1301-donut-caption" x="64" y="78" text-anchor="middle">${cards.length===1?'tarjeta':'tarjetas'}</text></svg>`;
  return `<details class="v266-wallet-panel v1301-insight v1301-distribution" data-v1301-kind="consumption"><summary><div><span class="v1301-kicker">HISTÓRICO · CRÉDITOS GENERALES</span><h2>Consumo por tarjeta</h2><p>Todas tus tarjetas · Histórico completo</p></div><span class="v1301-disclose-arrow" aria-hidden="true">${icon('arrow')}</span></summary><div class="v1301-distribution-body"><div class="v1301-total"><small>CONSUMO HISTÓRICO TOTAL</small><strong>${amount(equivalent)}</strong><span>Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div>${donut}<h3>Consumo por tarjeta</h3>${v1301WalletRanked(rows,share,cardColor)}</div></details>`;
 }
-function v1301WalletHistory(active,global,consumption){
- const {series,totals}=consumption,n=series.length,last=n-1,selected=series[last];
- const average={DOP:rnd(totals.DOP/n),USD:rnd(totals.USD/n)};
- const values=series.map(m=>m.DOP+fx(m.USD,'USD')),max=Math.max(0,...values),step=max?Math.pow(10,Math.floor(Math.log10(max))):1;
- const ceiling=Math.max(1,Math.ceil(max/step)*step),left=44,right=310,top=12,bottom=144;
- const points=series.map((m,i)=>({x:n===1?right:left+(right-left)*i/last,y:bottom-(bottom-top)*values[i]/ceiling,label:dateObj(m.key+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}),DOP:money(m.DOP,'DOP',2),USD:money(m.USD,'USD',2)}));
- const p=points[last],path=points.map((q,i)=>{if(!i)return `M${q.x},${q.y}`;const a=points[i-1],mid=(a.x+q.x)/2;return `C${mid},${a.y} ${mid},${q.y} ${q.x},${q.y}`}).join(' ');
- const tick=v=>v>=1e6?'RD$'+(v/1e6).toLocaleString('en-US',{maximumFractionDigits:1})+' M':v>=1000?'RD$'+(v/1000).toLocaleString('en-US',{maximumFractionDigits:1})+' k':money(v);
- const ticks=[...new Set([0,Math.floor(last/2),last])],monthLabel=i=>dateObj(series[i].key+'-01').toLocaleDateString('es-DO',{month:'short',...(series[0].key.slice(0,4)!==selected.key.slice(0,4)?{year:'2-digit'}:{})});
- return `<section class="v266-wallet-panel v1301-insight v1301-history" aria-label="Histórico de consumo"><span class="v1301-kicker">INTELIGENCIA DE CONSUMO</span><h2>Histórico de consumo</h2><p>${sanitize(active.name)}${global?' · Todas tus tarjetas':''}</p><div class="v1301-history-total"><small>CONSUMO HISTÓRICO TOTAL</small><strong>${money(totals.DOP,'DOP',2)}</strong><b>${money(totals.USD,'USD',2)}</b></div><div class="v1301-history-stats"><div><span data-v1301-month>Este mes</span><strong data-v1301-dop>${p.DOP}</strong><b data-v1301-usd>${p.USD}</b></div><div><span>Promedio mensual</span><strong>${money(average.DOP,'DOP',2)}</strong><b>${money(average.USD,'USD',2)}</b></div></div><h3>Evolución del consumo</h3><svg class="v1301-chart" data-v1301-points="${sanitize(JSON.stringify(points))}" viewBox="0 0 320 177" role="slider" tabindex="0" aria-label="Mes del histórico de consumo, equivalente en pesos" aria-valuemin="0" aria-valuemax="${last}" aria-valuenow="${last}" aria-valuetext="${sanitize(p.label+' · '+p.DOP+' · '+p.USD)}">${[0,1,2,3,4].map(i=>`<line class="v1301-gridline" x1="${left}" x2="${right}" y1="${top+i*(bottom-top)/4}" y2="${top+i*(bottom-top)/4}"/>`).join('')}<text x="2" y="${top+3}">${tick(ceiling)}</text><text x="2" y="${bottom+3}">${tick(0)}</text>${ticks.map(i=>`<text x="${points[i].x}" y="164" text-anchor="${i===last?'end':i===0?'start':'middle'}">${sanitize(monthLabel(i))}</text>`).join('')}<path class="v1301-line" d="${path}"/><line class="v1301-guide" x1="${p.x}" x2="${p.x}" y1="${top}" y2="${bottom}"/><circle class="v1301-dot" cx="${p.x}" cy="${p.y}" r="4.5"/></svg><footer>Desliza o toca un mes para explorar</footer></section>`;
-}
-function v1301WalletSelectMonth(graph,index){
- const points=JSON.parse(graph.dataset.v1301Points),last=points.length-1,i=Math.max(0,Math.min(last,index)),p=points[i],section=graph.closest('.v1301-history');
- section.querySelector('[data-v1301-month]').textContent=i===last?'Este mes':p.label;
- section.querySelector('[data-v1301-dop]').textContent=p.DOP;section.querySelector('[data-v1301-usd]').textContent=p.USD;
- graph.setAttribute('aria-valuenow',i);graph.setAttribute('aria-valuetext',p.label+' · '+p.DOP+' · '+p.USD);
- const guide=graph.querySelector('.v1301-guide'),dot=graph.querySelector('.v1301-dot');guide.setAttribute('x1',p.x);guide.setAttribute('x2',p.x);dot.setAttribute('cx',p.x);dot.setAttribute('cy',p.y);
-}
-function v1301WalletGraphPointer(e){
- const graph=e.target.closest?.('.v1301-chart');if(!graph||ui.page!=='wallet')return;
- if(e.type==='pointerdown'){if(e.button!==0)return;graph.setPointerCapture?.(e.pointerId);graph.dataset.v1301Pointer=String(e.pointerId);}
- else if(graph.dataset.v1301Pointer!==String(e.pointerId))return;
- if(e.type==='pointercancel'){delete graph.dataset.v1301Pointer;return;}
- const rect=graph.getBoundingClientRect(),last=Number(graph.getAttribute('aria-valuemax'));
- v1301WalletSelectMonth(graph,Math.round(((e.clientX-rect.left)*320/rect.width-44)/266*last));
- if(e.type==='pointerup')delete graph.dataset.v1301Pointer;
-}
-for(const event of ['pointerdown','pointermove','pointerup','pointercancel'])document.addEventListener(event,v1301WalletGraphPointer);
-document.addEventListener('keydown',e=>{const graph=e.target.closest?.('.v1301-chart');if(!graph||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const i=Number(graph.getAttribute('aria-valuenow'));v1301WalletSelectMonth(graph,e.key==='Home'?0:e.key==='End'?Number(graph.getAttribute('aria-valuemax')):i+(e.key==='ArrowLeft'?-1:1));});
 function v68GlobalWalletAction(mode,ccy,id){
  const cards=v68WalletCards();
  if(mode==='cuts'){v176CardInsight(cards);return;}
@@ -1450,7 +1421,6 @@ function v68Wallet(){
  const global=ui.v68WalletId===V68_GLOBAL_ID;
  const active=global?{id:V68_GLOBAL_ID,name:'Créditos generales',limitDOP:rnd(cards.reduce((s,c)=>s+num(c.limitDOP),0)),limitUSD:rnd(cards.reduce((s,c)=>s+num(c.limitUSD),0))}:cards.find(c=>c.id===ui.v68WalletId)||cards[0];
  ui.v68WalletId=active.id;
- const consumption=v1301WalletConsumption(global?cards:[active]);
  const globalStatus=ccy=>{
   const rows=cards.map(c=>cardStatus(c,ccy)),sum=key=>rnd(rows.reduce((s,st)=>s+num(st[key]),0));
   const nextDue=rows.filter(st=>num(st.billed)>.005&&st.nextDue).map(st=>st.nextDue).sort()[0]||null;
@@ -1496,8 +1466,7 @@ function v68Wallet(){
  return `<div class="v1244-cuthead ${isLate?'is-late':act.length?'is-soon':'is-ok'}"><strong>${title}</strong><span>${sub}</span></div><div class="v1244-pills">${L.map(x=>{const amt=num(x.bill).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return `<button type="button" class="v1244-pill" ${x.has?`${action('pay-cut',`data-act="payCard" data-id="${sanitize(active.id)}"`)} data-ccy="${x.cc}"`:'disabled'} title="${x.has?(x.late?'Venció ':'Vence ')+prettyDate(x.date):''}" aria-label="${x.has?'Pagar corte en '+x.sym+' '+amt+' · '+prettyDate(x.date):'Sin saldo facturado en '+x.sym}"><span class="v1244-pill-top"><b>${x.sym}</b><em>${amt}</em></span><span class="v1244-pill-go">${icon('arrow')}</span></button>`}).join('')}</div>`})()}</div>
 </section>
  ${v371CardReturnWidget(active,global?cards:null)}
- ${v1301WalletHistory(active,global,consumption)}
- ${global?v1301WalletDistribution(cards,consumption):''}
+ ${global?v1301WalletDistribution(cards,v1301WalletConsumption(cards)):''}
  ${global?'':`
  <section class="v266-wallet-panel v266-activity"><div class="v266-panel-heading"><div><span class="v266-overline">TUS ÚLTIMOS CONSUMOS</span><h2>Actividad reciente</h2></div><button type="button" data-act="goCard" data-id="${sanitize(active.id)}" aria-label="Ver todos los movimientos">${icon('arrow')}</button></div>${rows||'<p class="v266-empty-activity">Sin movimientos recientes en esta tarjeta.</p>'}</section>
 `}
