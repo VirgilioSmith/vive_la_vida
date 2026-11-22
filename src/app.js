@@ -16234,12 +16234,22 @@ document.addEventListener('input',function(event){
   else if(action==='confirm'){if(draft)save(draft);}
  },true);
  document.addEventListener('submit',function(e){
-  const f=e.target;if(f.id!=='v354-form')return;
+  const f=e.target;if(f.id!=='v354-form'&&f.id!=='v354-new-person')return;
   e.preventDefault();e.stopPropagation();
+  if(f.id==='v354-new-person'){
+   const firstName=String(f.elements.firstName.value||'').trim(),lastName=String(f.elements.lastName.value||'').trim(),name=[firstName,lastName].filter(Boolean).join(' ');
+   if(!firstName||!lastName||name.length>85){toast('Indica nombre y apellido del contacto.');return;}
+   const existing=(db.personalContacts||[]).find(c=>nameOf(c).toLocaleLowerCase('es')===name.toLocaleLowerCase('es'));
+   pendingContact=existing?null:{firstName,lastName};
+   formScreen({...pickerData,person:name,contactId:existing?.id||''});return;
+  }
   try{const x=validated(Object.fromEntries(new FormData(f).entries()));x.showExtra=!!f.querySelector('.v355-extra')?.open;review(x)}
   catch(err){const el=$('#v354-error');if(el){el.textContent=err.message;el.scrollIntoView({behavior:'smooth',block:'nearest'});}else toast(err.message);}
  },true);
- document.addEventListener('input',function(e){const f=e.target.closest?.('#v354-form');if(f)recalc(f)},true);
+ document.addEventListener('input',function(e){
+   if(e.target.id==='v354-person-search'){const q=e.target.value.trim().toLocaleLowerCase('es');let shown=0;document.querySelectorAll('.v354-person-row').forEach(row=>{row.hidden=!!q&&!row.dataset.personSearch.includes(q);if(!row.hidden)shown++});const empty=$('#v354-person-empty');if(empty)empty.hidden=shown>0;return;}
+   const f=e.target.closest?.('#v354-form');if(f)recalc(f)
+  },true);
  document.addEventListener('change',function(e){const f=e.target.closest?.('#v354-form');if(!f)return;
   if(e.target.name==='currency'){
    const cc=f.elements.currency.value,a=activeAccounts(cc),select=f.elements.accountId;
