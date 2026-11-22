@@ -10240,6 +10240,15 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  function v1110Day(f,n,label){
   const inp=v1110El(f,n),box=v1110Box(f,n);if(!inp||!box)return null;
   const wrap=document.createElement('div');wrap.className='v1110-field';wrap.dataset.field=n;
+  // Móvil: introduce el día con teclado nativo sin selector intermedio.
+  // Preserva el selector en escritorio, las restricciones y el valor original.
+  if(isMobileViewport()){
+   inp.setAttribute('inputmode','numeric');
+   inp.setAttribute('aria-label',label);
+   inp.removeAttribute('tabindex');
+   wrap.innerHTML='<span class="v1110-lab">'+v1110Esc(label)+'</span>';
+   wrap.append(inp);box.remove();return wrap;
+  }
   const s=document.createElement('select');s.className='field';s.setAttribute('aria-label',label);
   s.innerHTML=Array.from({length:31},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
   const sync=()=>{const v=Math.max(1,Math.min(31,Math.round(num(inp.value)||1)));s.value=String(v)};sync();
