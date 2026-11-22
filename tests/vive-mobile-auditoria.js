@@ -47,7 +47,7 @@ async function thirdParty(p,purchase,received,mode,paidAmount,first,source='card
  const reviewTitle=await p.locator('.v355-review-hero').innerText();
  console.log('REVISIÓN '+first+': '+JSON.stringify(reviewTitle));
  await shot(p,'confirmacion-'+first);
- if(received>purchase)check('Sobrante como dinero por devolver',reviewTitle.includes('Por devolver'),true);
+ if(received>purchase)check('Sobrante como dinero por devolver',reviewTitle.toLocaleLowerCase('es').includes('por devolver'),true);
  await p.locator('[data-v354-act=confirm]').click();
  await sleep(300);
  return p.evaluate(name=>{
