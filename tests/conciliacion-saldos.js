@@ -4,6 +4,7 @@
 process.env.NOBOOT='1';
 process.env.MOCKFILE='mock-servidor.js';
 process.env.TOUCH='1';
+process.env.RECONCILIATION_AUDIT='1';
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path');
@@ -30,9 +31,9 @@ const form=p=>p.locator('#vReconcileForm');
 const shot=(p,name)=>p.screenshot({path:path.join(dir,name+'.png')});
 const txs=(p,id)=>p.evaluate(id=>window.__T.dbg().transactions.filter(t=>t.type==='adjustment'&&t.accountId===id),id);
 const balance=(p,id,day)=>p.evaluate(([id,day])=>{const d=window.__T.dbg();return window.__T.fn.getAccountBalance(d.accounts.find(a=>a.id===id),day||undefined)},[id,day]);
-async function ledger(p,id){await clickAct(p,'v6WalletTransactionDetail',id);const value=await p.locator('#modal-root .v265-balance-value').innerText();await clickAct(p,'closeModal');return value}
+const ledger=(p,id)=>p.evaluate(id=>window.__T.ledger(id),id);
 const totals=p=>p.evaluate(()=>{const m=window.__T.mt();return [m.income,m.expense,m.cashIn,m.cashOut]});
-const ending=p=>p.evaluate(()=>window.__T.mt().ending);
+const ending=p=>p.evaluate(()=>window.__T.wealth().net);
 const capture=(p,key)=>form(p).locator('[data-reconcile='+key+']').innerText();
 async function enter(p,id,amount,date){
  await clickAct(p,'otherAdjust');
@@ -44,7 +45,7 @@ async function enter(p,id,amount,date){
 }
 async function confirm(p){
  await form(p).locator('button[type=submit]').click();
- await until(async()=>{if(!(await form(p).count()))return true;if(await form(p).locator('.v-reconcile-error').isVisible())throw Error(await form(p).locator('.v-reconcile-error').innerText());return false},'cierre de conciliación');await flush(p);
+ await until(async()=>{if(!(await form(p).count()))return true;if(await form(p).locator('.v-reconcile-error').isVisible())throw Error(await form(p).locator('.v-reconcile-error').innerText());return false},'cierre de conciliación');await flush(p);await wait(200);
 }
 (async()=>{
  const browser=await chromium.launch(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{});
@@ -92,7 +93,7 @@ async function confirm(p){
    }
    check('Saldo de apertura intacto '+i,await p.evaluate(id=>window.__T.dbg().accounts.find(a=>a.id===id).opening,id),[1570.17,1570.17,1570.17,1570.17,0,100][i]);
    check('Ingresos/egresos intactos '+i,await totals(p),initial);
-   check('Liquidez patrimonial cambia solo por la diferencia '+i,Math.round(((await ending(p))-endingBefore)*100),Math.round(delta*100));
+   check('Patrimonio cambia solo por la diferencia '+i,Math.round(((await ending(p))-endingBefore)*100),Math.round(delta*100));
    await clickAct(p,'closeModal');
   }
   await enter(p,'recon-6',1500);await confirm(p);await clickAct(p,'closeModal');
