@@ -1142,7 +1142,6 @@ function mobileHome(){
    <div class="vive-mobile-greeting v51-executive-greeting"><div class="v732-heading-line v1302-home-controls"><button type="button" class="v273-personalize-link" data-v273-open-personalization="1" aria-label="Personalizar estilo y secciones del Resumen"><span class="v309-personalize-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="8" height="8" rx="2"/><rect x="13.5" y="2.5" width="8" height="5.5" rx="1.6"/><rect x="2.5" y="13.5" width="8" height="8" rx="2"/><rect x="13.5" y="10.5" width="8" height="11" rx="2"/></svg></span>Personalizar</button><label class="v732-period"><span>${sanitize(dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}))}</span><input id="monthFilter" type="month" value="${sanitize(ui.month||today().slice(0,7))}" aria-label="Período de análisis"></label></div></div>
    ${v360HomeLinks()}
    ${v242BalancePanel}
-   <div class="vive-mobile-quick-actions"><button type="button" data-act="newTransaction" data-type="income">${icon('up')}<span>Recibir</span></button><button type="button" data-act="newTransaction" data-type="expense">${icon('cycle')}<span>Gastar</span></button><button type="button" data-act="newTransaction" data-type="transfer">${icon('wallet')}<span>Transferir</span></button></div>
    ${v412PremiumMobileWidgets()}
    ${v105Config().visible.includes('applePayInbox')&&v5ApplePayPending().length?v7ApplePayMobileWidget():''}
    ${v105CapacityWidget(true)}
@@ -1355,39 +1354,53 @@ function v68WalletCards(){
 }
 /* Wallet · Consumo de compras registrado y distribución de capacidad, sin modificar el libro. */
 function v1301WalletConsumption(cards){
- const now=today(),current=now.slice(0,7),byCard=new Map(cards.map(c=>[c.id,{DOP:0,USD:0}])),months=new Map();
- // Reutiliza la clasificación de compras de beneficios; seguros y demás costos tampoco son consumo.
- for(const t of db.transactions||[]){
-  if(!byCard.has(t.cardId)||!rewardExpense(t)||t.chargeKind==='insurance'||t.v144CardCost||!/^\d{4}-\d{2}-\d{2}$/.test(t.date||'')||t.date>now)continue;
+ const now=today(),zero=()=>({DOP:0,USD:0,equivalent:0,missingFx:false}),byCard=new Map(cards.map(c=>[c.id,zero()])),months=new Map(),totals=zero();
+ const transactions=v1303CardTransactions(),originals=new Map(transactions.map(t=>[t.id,t]));
+ const isCost=t=>!!t.v144CardCost||['annual_fee','interest','commission','insurance','issuance','renewal'].includes(t.chargeKind)||(!t.chargeKind&&t.category==='Deudas e intereses'&&/anualidad|membres[ií]a|seguro|comisi[oó]n|inter[eé]s/i.test(t.subcategory||''));
+ const purchase=t=>t.type==='card_charge'&&!isCost(t);
+ const accumulate=(row,ccy,amount,rate)=>{row[ccy]+=amount;if(rate>0)row.equivalent+=amount*rate;else row.missingFx=true};
+ for(const t of transactions){
+  if(!byCard.has(t.cardId)||!/^\d{4}-\d{2}-\d{2}$/.test(t.date||'')||t.date>now||dateStr(dateObj(t.date))!==t.date)continue;
   const ccy=t.currency||'DOP',amount=num(t.amount),key=t.date.slice(0,7);
-  if(!['DOP','USD'].includes(ccy)||amount<=0||Number(key.slice(0,4))<1000||Number(key.slice(5))<1||Number(key.slice(5))>12)continue;
-  byCard.get(t.cardId)[ccy]+=amount;
-  if(!months.has(key))months.set(key,{DOP:0,USD:0});
-  months.get(key)[ccy]+=amount;
+  if(!['DOP','USD'].includes(ccy)||amount<=0)continue;
+  const original=t.originalPurchaseId?originals.get(t.originalPurchaseId):null;
+  const refund=t.type==='card_refund'&&!isCost(t)&&(!original||(purchase(original)&&original.cardId===t.cardId&&(original.currency||'DOP')===ccy));
+  if(!purchase(t)&&!refund)continue;
+  const signed=refund?-amount:amount,rate=ccy==='USD'?(num(t.fxRateSnapshot)>0?num(t.fxRateSnapshot):num(db.settings.fx)):1;
+  accumulate(byCard.get(t.cardId),ccy,signed,rate);
+  if(!months.has(key))months.set(key,zero());
+  accumulate(months.get(key),ccy,signed,rate);
+  accumulate(totals,ccy,signed,rate);
  }
- const first=[...months.keys()].sort()[0]||current,series=[];
- for(let key=first;key<=current;key=plusMonths(key+'-01',1).slice(0,7)){
-  const value=months.get(key)||{DOP:0,USD:0};
-  series.push({key,DOP:rnd(value.DOP),USD:rnd(value.USD)});
- }
- const totals=series.reduce((s,m)=>({DOP:rnd(s.DOP+m.DOP),USD:rnd(s.USD+m.USD)}),{DOP:0,USD:0});
- return {byCard,series,totals};
+ return {byCard,months,totals};
 }
+/* Idempotencia de lectura: una identidad financiera repetida no vuelve a sumar.
+   Nunca se fusionan compras distintas por coincidir en comercio, fecha e importe. */
+function v1303CardTransactions(){return v99Memo('wallet:canonical-card-transactions',()=>{
+ const ids=new Map(),appleEvents=new Map(),rows=[];
+ for(const t of db.transactions||[]){if(!t.cardId)continue;
+  const previous=(t.id&&ids.get(t.id))||(t.applePayEventId&&appleEvents.get(t.applePayEventId));
+  if(previous){if(['cardId','type','currency','amount','date','chargeKind','originalPurchaseId','fxRateSnapshot'].some(k=>previous[k]!==t[k]))console.warn('Wallet: identidad de movimiento duplicada con datos distintos',t.id);continue;}
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(t.date||'')||dateStr(dateObj(t.date))!==t.date||!['DOP','USD'].includes(t.currency||'DOP')){console.warn('Wallet: movimiento con fecha o moneda inválida',t.id);continue;}
+  if(t.id)ids.set(t.id,t);if(t.applePayEventId)appleEvents.set(t.applePayEventId,t);rows.push(t);
+ }
+ return rows;
+})}
 function v1301WalletRanked(rows,share,cardColor){
  const amount=(v,ccy='DOP')=>money(v,ccy,0); // Redondeo exclusivamente de presentación.
  const split=(d,u)=>`<span>${amount(d)}</span><span>${amount(u,'USD')}</span>`;
- return `<div class="v1301-ranked">${rows.map((r,i)=>`<div class="v1301-rank" data-card-id="${sanitize(r.c.id)}"><span class="v1301-bank">${v1002BankGlyph(r.c,'building')}</span><div class="v1301-rank-info"><strong>${sanitize(r.c.name)}</strong><div class="v1301-split">${split(r.DOP,r.USD)}</div><div class="v1301-meter" aria-hidden="true"><i style="width:${share(r)}%;background:${cardColor(r,i)}"></i></div></div><b class="v1301-equivalent">${amount(r.total)}</b></div>`).join('')}</div>`;
+ return `<div class="v1301-ranked">${rows.map((r,i)=>`<div class="v1301-rank" data-card-id="${sanitize(r.c.id)}"><span class="v1301-bank">${v1002BankGlyph(r.c,'building')}</span><div class="v1301-rank-info"><strong>${sanitize(r.c.name)}</strong><div class="v1301-split">${split(r.DOP,r.USD)}</div><div class="v1301-meter" aria-hidden="true"><i style="width:${share(r)}%;background:${cardColor(r,i)}"></i></div></div><b class="v1301-equivalent">${r.missingFx?'—':amount(r.total)}</b></div>`).join('')}</div>`;
 }
 function v1301WalletLimitRows(cards){
- const rows=cards.map(c=>({c,DOP:rnd(num(c.limitDOP)),USD:rnd(num(c.limitUSD)),total:rnd(num(c.limitDOP)+fx(num(c.limitUSD),'USD'))})).sort((a,b)=>b.total-a.total);
+ const rows=cards.map(c=>({c,DOP:num(c.limitDOP),USD:num(c.limitUSD),total:num(c.limitDOP)+fx(num(c.limitUSD),'USD')})).sort((a,b)=>b.total-a.total);
  const weight=rows.reduce((s,r)=>s+Math.max(0,r.total),0),share=r=>weight?100*Math.max(0,r.total)/weight:0;
  const shade=i=>`color-mix(in srgb,var(--v1301-accent) ${100-76*i/Math.max(1,rows.length-1)}%,var(--v1301-tint))`;
  return `<div class="v1301-limit-breakdown" role="group" aria-label="Desglose de límites por tarjeta">${v1301WalletRanked(rows,share,(_r,i)=>shade(i))}</div>`;
 }
 function v1301WalletDistribution(cards,consumption){
- const rows=cards.map(c=>{const a=consumption.byCard.get(c.id);return {c,DOP:rnd(a.DOP),USD:rnd(a.USD),total:rnd(a.DOP+fx(a.USD,'USD'))}}).sort((a,b)=>b.total-a.total);
- const total=rows.reduce((s,r)=>({DOP:rnd(s.DOP+r.DOP),USD:rnd(s.USD+r.USD)}),{DOP:0,USD:0}),equivalent=rnd(total.DOP+fx(total.USD,'USD'));
- const weight=rows.reduce((s,r)=>s+Math.max(0,r.total),0),share=r=>weight?100*Math.max(0,r.total)/weight:0;
+ const rows=cards.map(c=>{const a=consumption.byCard.get(c.id);return {c,DOP:a.DOP,USD:a.USD,total:a.equivalent,missingFx:a.missingFx}}).sort((a,b)=>b.total-a.total);
+ const total=consumption.totals,equivalent=total.equivalent;
+ const representable=!total.missingFx&&rows.every(r=>r.total>=0),weight=representable?equivalent:0,share=r=>weight>0?100*r.total/weight:0;
  // Los colores se asignan por identidad, nunca por posición en el ranking.
  const palette=['#168C79','#3873D9','#C47B20','#9154C5','#D44861','#169CB7','#788A2D','#BE5193','#5262AB','#A65C36','#617C85','#BA9A24'];
  const cardColors=new Map(cards.map(c=>c.id).sort().map((id,i)=>[id,palette[i]||`hsl(${(i*137.508)%360} 65% 48%)`]));
@@ -1396,7 +1409,7 @@ function v1301WalletDistribution(cards,consumption){
  const split=(d,u)=>`<span>${amount(d)}</span><span>${amount(u,'USD')}</span>`;
  let offset=0;
  const donut=`<svg class="v1301-donut" viewBox="0 0 128 128" role="img" aria-label="Participación del consumo de ${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}"><circle class="v1301-donut-track" cx="64" cy="64" r="46" fill="none" stroke-width="18"/>${rows.map((r,i)=>{const portion=share(r);if(!portion)return '';const start=offset;offset+=portion;return `<circle class="v1301-donut-segment" data-card-id="${sanitize(r.c.id)}" cx="64" cy="64" r="46" pathLength="100" fill="none" stroke-width="18" stroke-dasharray="${portion} ${100-portion}" stroke-dashoffset="${-start}" transform="rotate(-90 64 64)" style="stroke:${cardColor(r,i)}"/>`}).join('')}<text class="v1301-donut-count" x="64" y="59" text-anchor="middle">${cards.length}</text><text class="v1301-donut-caption" x="64" y="78" text-anchor="middle">${cards.length===1?'tarjeta':'tarjetas'}</text></svg>`;
- return `<details class="v266-wallet-panel v1301-insight v1301-distribution" data-v1301-kind="consumption"><summary><div><span class="v1301-kicker">HISTÓRICO · CRÉDITOS GENERALES</span><h2>Consumo por tarjeta</h2><p>Todas tus tarjetas · Histórico completo</p></div><span class="v1301-disclose-arrow" aria-hidden="true">${icon('arrow')}</span></summary><div class="v1301-distribution-body"><div class="v1301-total"><small>CONSUMO HISTÓRICO TOTAL</small><strong>${amount(equivalent)}</strong><span>Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div>${donut}<h3>Consumo por tarjeta</h3>${v1301WalletRanked(rows,share,cardColor)}</div></details>`;
+ return `<details class="v266-wallet-panel v1301-insight v1301-distribution" data-v1301-kind="consumption"><summary><div><span class="v1301-kicker">HISTÓRICO · CRÉDITOS GENERALES</span><h2>Consumo por tarjeta</h2><p>Todas tus tarjetas · Histórico completo</p></div><span class="v1301-disclose-arrow" aria-hidden="true">${icon('arrow')}</span></summary><div class="v1301-distribution-body"><div class="v1301-total"><small>CONSUMO HISTÓRICO TOTAL</small><strong>${total.missingFx?'—':amount(equivalent)}</strong><span title="Compras menos devoluciones; USD convertido a la tasa registrada de cada movimiento (o tasa configurada si no existe)">Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div>${donut}${!representable?`<p>${total.missingFx?'Falta una tasa de cambio para calcular la participación.':'No se representa la participación cuando alguna tarjeta tiene consumo neto negativo.'}</p>`:''}<h3>Consumo por tarjeta</h3>${v1301WalletRanked(rows,share,cardColor)}</div></details>`;
 }
 function v68GlobalWalletAction(mode,ccy,id){
  const cards=v68WalletCards();
@@ -1429,10 +1442,10 @@ function v68Wallet(){
  const dop=global?globalStatus('DOP'):cardStatus(active,'DOP'),usd=global?globalStatus('USD'):cardStatus(active,'USD');
  const debt=dop.debt+fx(usd.debt,'USD');
  const totalLimit=num(active.limitDOP)+fx(num(active.limitUSD),'USD');
- const availableDOP=global?dop.available:Math.max(0,num(active.limitDOP)-num(dop.debt));
- const availableUSD=global?usd.available:Math.max(0,num(active.limitUSD)-num(usd.debt));
- const available=global?availableDOP+fx(availableUSD,'USD'):Math.max(0,totalLimit-debt);
- const usage=totalLimit>0?Math.max(0,global?100*debt/totalLimit:Math.min(100,100*debt/totalLimit)):0;
+ const availableDOP=dop.available;
+ const availableUSD=usd.available;
+ const available=availableDOP+fx(availableUSD,'USD');
+ const usage=totalLimit>0?Math.max(0,100*debt/totalLimit):0;
  const last4=c=>String(c.last4||c.number||'').replace(/\D/g,'').slice(-4);
  const tierName=c=>CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
  const due=[{...dop,ccy:'DOP'},{...usd,ccy:'USD'}].filter(s=>s.nextDue&&num(s.billed)>0.005).sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
@@ -11095,8 +11108,8 @@ function v115TransactionIndex(){return v99Memo('transactions:index',()=>{
  for(const tx of db.transactions||[]){
   if(tx.accountId)push(byAccount,tx.accountId,tx);
   if(tx.toAccountId&&tx.toAccountId!==tx.accountId)push(byAccount,tx.toAccountId,tx);
-  if(tx.cardId)push(byCardCurrency,tx.cardId+'|'+tx.currency,tx);
  }
+ for(const tx of v1303CardTransactions())push(byCardCurrency,tx.cardId+'|'+(tx.currency||'DOP'),tx);
  return {byAccount,byCardCurrency};
 })}
 function v115AccountTransactions(id){return v115TransactionIndex().byAccount.get(id)||[]}

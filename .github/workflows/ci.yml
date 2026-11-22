@@ -115,15 +115,18 @@ jobs:
         env:
           WALLET_BROWSER: ${{ matrix.browser }}
           WALLET_VISUAL_DIR: test-results/wallet-consumption
+      - name: Verificar matemáticas de consumo histórico y mensual
+        run: node --test tests/logica/wallet-consumo.test.js
+      - name: Verificar encabezado compacto de Inicio móvil
+        run: node tests/home-mobile-header.js
+        env:
+          HOME_BROWSER: ${{ matrix.browser }}
+          HOME_VISUAL_DIR: test-results/wallet-consumption
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: wallet-consumption-${{ matrix.browser }}
           path: test-results/wallet-consumption
-      - name: Verificar encabezado compacto de Inicio móvil
-        run: node tests/home-mobile-header.js
-        env:
-          HOME_BROWSER: ${{ matrix.browser }}
   sql:
     runs-on: ubuntu-latest
     timeout-minutes: 10

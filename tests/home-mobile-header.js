@@ -1,5 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
+const fs=require('node:fs');
 const {chromium,webkit}=require('playwright');
 const open=require('./harness');
 const engine=process.env.HOME_BROWSER==='webkit'?webkit:chromium;
@@ -21,6 +22,12 @@ const engine=process.env.HOME_BROWSER==='webkit'?webkit:chromium;
     assert.ok(Math.abs(a.y+a.height/2-b.y-b.height/2)<=2,'Controles centrados en la misma fila');
     assert.ok(a.x+a.width<=b.x,'Controles sin solapamiento');
     assert.ok(c.y>=b.y+b.height-1&&c.y-b.y-b.height<40,'Matriz inmediatamente debajo');
+    assert.equal(await p.locator('.vive-mobile-home .vive-mobile-quick-actions').count(),0,'Acciones eliminadas del DOM');
+    const trend=p.locator('.vive-mobile-home [data-v105-widget="patrimonyTrend"]');
+    await trend.waitFor({state:'visible'});
+    const [matrixBox,trendBox]=await Promise.all([p.locator('.v742-primary-kpi').boundingBox(),trend.boundingBox()]);
+    assert.ok(trendBox.y>=matrixBox.y+matrixBox.height-1&&trendBox.y-matrixBox.y-matrixBox.height<40,'Tendencia inmediatamente después de la matriz, sin hueco');
+    if(process.env.HOME_VISUAL_DIR){fs.mkdirSync(process.env.HOME_VISUAL_DIR,{recursive:true});await p.screenshot({path:`${process.env.HOME_VISUAL_DIR}/inicio-${theme}-${width}.png`,animations:'disabled'});}
     assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
     const month=await p.evaluate(()=>window.__T.ui().month),target=month==='2026-10'?'2026-09':'2026-10';
     await period.locator('input').fill(target);
