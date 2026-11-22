@@ -204,3 +204,147 @@
   #app .vBanksPc-metric .vBanksPc-change.positive {color:var(--bank-positive)}
   #app .vBanksPc-metric .vBanksPc-change.negative {color:var(--bank-negative)}
 }
+
+/* Bancos · identidad y productos compartidos por ambos tamaños. */
+#app .vBanks-consolidated-mark {
+  display: grid; place-items: center; flex: none; width: 42px; aspect-ratio: 1;
+  border-radius: 37%; color: #fff; background: linear-gradient(145deg,#12a782,#006456);
+}
+#app .vBanks-consolidated-mark svg { width: 68%; height: 68%; }
+#app .vBanksPc .vBanks-certificates {
+  min-width: 0; padding: clamp(12px,1.15vw,19px); border-radius: clamp(16px,1.5vw,24px);
+  border: 1px solid var(--bank-line); background: var(--bank-glass); box-shadow: var(--bank-shadow);
+}
+#app .vBanks-certificates dl { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; border-top: 1px solid var(--bank-line); padding-top: 10px; margin-top: 9px; }
+#app .vBanks-certificates dd { color: var(--bank-positive); font-size: clamp(13px,1.28vw,21px); font-weight: 800; overflow-wrap: anywhere; }
+#app .vBanks-certificates dt,#app .vBanks-certificates p { color: var(--bank-muted); font-size: 11px; line-height: 1.35; }
+#app .vBanks-certificates dt { margin-bottom: 4px; }
+#app .vBanks-certificates p { margin-top: 9px; }
+#app .vBanks-certificates dl > div:nth-child(4) { grid-column: 1/-1; display: flex; justify-content: space-between; gap: 10px; border-top: 1px solid var(--bank-line); padding-top: 7px; }
+#app .vBanks-certificates dl > div:nth-child(4) dd { font-size: 13px; }
+#app .vBanksPc .vBanks-detail { min-width: 0; }
+#app .vBanksPc .vBanks-detail .v239-detail-mode { display: grid; gap: 9px; padding: 10px; border: 1px solid var(--bank-line); border-radius: 17px; background: var(--bank-glass); }
+#app .vBanksPc .vBanks-detail .v239-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+#app .vBanksPc .vBanks-detail .v239-actions svg,#app .vBanksPc .vBanks-detail .v239-back svg { width: 17px; height: 17px; }
+#app .vBanksPc .vBanks-detail .v239-hero-bottom { display: flex; flex-wrap: wrap; gap: 7px; }
+#app .vBanksPc .vBanks-detail .v239-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+#app .vBanksPc .vBanks-detail .v239-fact { display: grid; overflow-wrap: anywhere; }
+@media(min-width:791px){
+  #app .vBanksPc-institution-head .vBanks-consolidated-mark { width: 57px; }
+  #app .vBanksPc-bank-totals { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  #app .vBanksPc-bank-totals .vBanksPc-meter { margin-top: 7px; max-width: 80px; }
+  #app .vBanksPc-bank-options .vBanks-consolidated-mark { width: clamp(28px,2.7vw,45px); }
+  #app .vBanksPc-bank-options .vBanksPc-bank { min-height: clamp(48px,3.65vw,64px); }
+  #app .vBanksPc-bank-options .vBanksPc-bank > span:nth-child(2) strong { line-height: 1.15; }
+  #app .vBanksPc-bank-options .vBanksPc-bank > span:nth-child(2) small { margin-top: 4px; }
+  #app .vBanksPc .vBanks-certificates h2 { margin: 0; }
+}
+@media(max-width:790px){
+  html body #app#app main.vBanksMobile-world {
+    --bank-ink:#10182e; --bank-muted:#475a72; --bank-accent:#08786d; --bank-positive:#067753; --bank-negative:#b42e3a;
+    --bank-glass:#ffffffe0; --bank-line:#deeaec; --bank-hover:#e2f4ee; --bank-track:#dfe8ec; --bank-shadow:0 4px 12px #15385717;
+    background:radial-gradient(ellipse at 96% 3%,#c0eae1,transparent 35%),linear-gradient(155deg,#f9fbfc,#edf3f8) !important;
+  }
+  html body:is(.theme-black,.theme-dark) #app#app main.vBanksMobile-world {
+    --bank-ink:#eef6f8; --bank-muted:#bfd2d8; --bank-accent:#6fddc6; --bank-positive:#7fe0bd; --bank-negative:#ff9399;
+    --bank-glass:#141e22f2; --bank-line:#2d4449; --bank-hover:#183632; --bank-track:#314448; --bank-shadow:0 4px 12px #0005;
+    background:radial-gradient(ellipse at 95% 4%,#143b36,transparent 35%),#05090b !important;
+  }
+  #app .vBanksMobile-world > .topbar { display:none !important; }
+  #app #page .vBanks-mobile { display:grid; gap:10px; padding:5px 10px max(30px,env(safe-area-inset-bottom)); font-variant-numeric:tabular-nums; color:var(--bank-ink); }
+  #app .vBanks-mobile :is(h1,h2,h3,dl,dd,p) { margin:0; color:var(--bank-ink); }
+  #app .vBanks-mobile :is(small,dt,p) { color:var(--bank-muted); }
+  #app .vBanks-mobile :is(button,summary) { color:inherit; font-family:inherit; }
+  #app .vBanks-mobile :is(button,summary):focus-visible { outline:2px solid var(--bank-accent); outline-offset:-2px; }
+  #app .vBanks-mobile-head { position:relative; padding:3px 38px 3px 2px; }
+  #app .vBanks-mobile-head > span { color:var(--bank-positive); font-size:11px; font-weight:800; letter-spacing:.1em; }
+  #app .vBanks-mobile-head h1 { font-size:clamp(22px,6.35vw,34px); letter-spacing:-.055em; line-height:1.08; margin:3px 0; }
+  #app .vBanks-mobile-head p { font-size:13px; }
+  #app .vBanks-mobile-head button { position:absolute; top:9px; right:0; }
+  #app .vBanks-mobile-head svg { width:18px; height:18px; }
+  #app .vBanks-mobile-selector {
+    min-width:0; width:100%; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:9px;
+    padding:6px 12px 6px 6px; border:1px solid #ffffffb0; border-radius:999px; background:linear-gradient(120deg,#08775f,#13525b);
+    color:#fff!important; box-shadow:0 5px 12px #083d5937; text-align:left;
+  }
+  #app .vBanks-mobile-selector .institution-logo,#app .vBanks-mobile-selector .vBanks-consolidated-mark { width:39px; height:39px; margin:0; }
+  #app .vBanks-mobile-selector strong,#app .vBanks-mobile-selector small { display:block; color:#fff!important; }
+  #app .vBanks-mobile-selector strong { font-size:16px; line-height:1.1; }
+  #app .vBanks-mobile-selector small { font-size:11px; margin-top:3px; }
+  #app .vBanks-mobile-selector > svg { width:16px; height:16px; }
+  #app .vBanks-mobile-tools { display:flex; justify-content:space-between; gap:6px; align-items:flex-start; color:var(--bank-muted); font-size:11px; }
+  #app .vBanks-mobile-tools > details { min-width:0; }
+  #app .vBanks-mobile-tools .v42-filters { display:flex; flex-wrap:wrap; gap:4px; margin:5px 0; }
+  #app .vBanks-mobile-tools .vBanksPc-controls svg { width:17px; height:17px; }
+  #app .vBanks-mobile-tools .vBanksPc-controls > div { display:grid; gap:4px; }
+  #app .vBanks-mobile :is(.vBanks-mobile-hero,.vBanks-mobile-products,.vBanksPc-lane,.v371-card-return,.v1301-insight,.vBanksPc-benefits) {
+    min-width:0; border:1px solid var(--bank-line); border-radius:19px; background:var(--bank-glass); box-shadow:var(--bank-shadow); padding:11px; margin:0;
+  }
+  #app .vBanks-mobile-net { display:grid; grid-template-columns:1.5fr 1fr; gap:12px; padding:0 0 9px; }
+  #app .vBanks-mobile-net > div + div { border-left:1px solid var(--bank-line); padding-left:10px; }
+  #app .vBanks-mobile-net strong { display:block; font-weight:850; font-size:clamp(17px,5.25vw,26px); line-height:1.11; overflow-wrap:anywhere; }
+  #app .vBanks-mobile-net small { font-size:11px; }
+  #app .vBanks-mobile .vBanksPc-meter { min-width:10px; height:6px; display:block; border-radius:99px; background:var(--bank-track); overflow:hidden; margin-top:5px; }
+  #app .vBanks-mobile .vBanksPc-meter i { display:block; height:100%; width:var(--use); border-radius:inherit; background:linear-gradient(90deg,#008160,#13af8a); }
+  #app .vBanks-mobile-hero dl { border-top:1px solid var(--bank-line); padding:8px 0 0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+  #app .vBanks-mobile-hero dt { display:flex; align-items:center; gap:4px; font-size:10px; }
+  #app .vBanks-mobile-hero dt svg { width:15px; height:15px; color:var(--bank-accent); }
+  #app .vBanks-mobile-hero dd { font-size:clamp(12px,3.7vw,17px); font-weight:800; overflow-wrap:anywhere; }
+  #app .vBanks-mobile-hero dl small { font-size:9px; line-height:1.2; }
+  #app .vBanks-mobile-hero .vBanksPc-change.positive { color:var(--bank-positive); }
+  #app .vBanks-mobile-hero .vBanksPc-change.negative { color:var(--bank-negative); }
+  #app .vBanks-mobile h2,#app .vBanks-mobile h3 { font-size:17px; line-height:1.16; letter-spacing:-.025em; }
+  #app .vBanks-mobile .vBanksPc-benefits-link { display:flex; width:100%; gap:6px; align-items:center; padding:0; border:0; background:none; font:inherit; text-align:left; }
+  #app .vBanks-mobile .vBanksPc-benefits-link svg { width:19px; height:19px; flex:none; }
+  #app .vBanks-mobile .vBanksPc-benefits-link svg:first-child { color:var(--bank-positive); }
+  #app .vBanks-mobile .vBanksPc-benefits-link svg:last-child { margin-left:auto; color:var(--bank-muted); }
+  #app .vBanks-mobile-tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-top:8px; }
+  #app .vBanks-mobile-tiles button { position:relative; display:grid; align-content:start; gap:3px; min-width:0; padding:6px 4px; border:1px solid var(--bank-line); border-radius:12px; background:var(--bank-glass); text-align:left; }
+  #app .vBanks-mobile-tiles button[aria-pressed=true] { background:var(--bank-hover); border-color:var(--bank-accent); }
+  #app .vBanks-mobile-tiles svg { width:17px; height:17px; color:var(--bank-accent); }
+  #app .vBanks-mobile-tiles small { position:absolute; top:4px; right:4px; min-width:17px; text-align:center; font-size:9px; border-radius:30px; background:var(--bank-hover); }
+  #app .vBanks-mobile-tiles span { font-size:clamp(8px,2.55vw,12px); line-height:1.25; }
+  #app .vBanks-mobile-tiles strong { font-size:clamp(9px,2.8vw,13px); overflow-wrap:anywhere; }
+  #app .vBanks-mobile .vBanksPc-lane > header { display:flex; align-items:center; justify-content:space-between; }
+  #app .vBanks-mobile .vBanksPc-lane > header svg,#app .vBanks-mobile .vBanksPc-product > svg { width:16px; height:16px; vertical-align:middle; }
+  #app .vBanks-mobile .vBanksPc-product { width:100%; display:grid; grid-template-columns:auto minmax(0,1fr) minmax(0,auto) auto; align-items:center; gap:5px; border:none; background:transparent; text-align:left; padding:9px 0; border-bottom:1px solid var(--bank-line); }
+  #app .vBanks-mobile .vBanksPc-product:last-child { border-bottom:none; }
+  #app .vBanks-mobile .vBanksPc-product-mark { max-width:31px; overflow:hidden; }
+  #app .vBanks-mobile .vBanksPc-product-mark .institution-logo { max-width:27px; }
+  #app .vBanks-mobile .vBanksPc-product :is(strong,b) { display:block; overflow-wrap:anywhere; font-size:12px; }
+  #app .vBanks-mobile .vBanksPc-product small { display:block; font-size:10px; }
+  #app .vBanks-mobile .vBanksPc-insights { display:grid; gap:10px; }
+  #app .vBanks-mobile .v371-return-heading .v266-overline { display:none; }
+  #app .vBanks-mobile .v371-return-values { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-top:8px; padding-top:8px; border-top:1px solid var(--bank-line); }
+  #app .vBanks-mobile .v371-return-tile { min-width:0; background:none!important; box-shadow:none; border:0; border-radius:0; padding:0 3px; }
+  #app .vBanks-mobile .v371-return-tile + div { border-left:1px solid var(--bank-line); }
+  #app .vBanks-mobile .v371-return-tile small { font-size:10px; line-height:1.2; }
+  #app .vBanks-mobile .v371-return-tile strong { display:block; font-size:clamp(10px,3.25vw,15px); overflow-wrap:anywhere; white-space:normal; font-weight:850; }
+  #app .vBanks-mobile .v371-return-tile.positive strong { color:var(--bank-positive); }
+  #app .vBanks-mobile .v371-return-tile.negative strong { color:var(--bank-negative); }
+  #app .vBanks-mobile .v371-return-note { font-size:10px; margin-top:6px; }
+  #app .vBanks-mobile .v1301-insight summary { display:flex; align-items:center; justify-content:space-between; gap:6px; list-style:none; cursor:pointer; }
+  #app .vBanks-mobile .v1301-insight summary::-webkit-details-marker { display:none; }
+  #app .vBanks-mobile .v1301-insight :is(.v1301-kicker,summary p):empty { display:none; }
+  #app .vBanks-mobile .v1301-insight summary h2 { display:flex; align-items:center; gap:5px; }
+  #app .vBanks-mobile .v1301-insight summary svg { width:17px; height:17px; flex:none; }
+  #app .vBanks-mobile .v1301-disclose-arrow { display:grid; place-items:center; width:27px; height:27px; border-radius:50%; background:var(--bank-hover); }
+  #app .vBanks-mobile .v1301-disclose-arrow svg { transform:rotate(90deg); }
+  #app .vBanks-mobile .v1301-insight[open] .v1301-disclose-arrow svg { transform:rotate(-90deg); }
+  #app .vBanks-mobile .vBanks-consumption-body { display:grid; align-items:start; gap:6px; margin-top:6px; padding-top:7px; border-top:1px solid var(--bank-line); }
+  #app .vBanks-mobile .vBanks-consumption-body.with-chart { grid-template-columns:minmax(60px,.82fr) minmax(0,1.58fr); align-items:center; }
+  #app .vBanks-mobile .vBanks-consumption-chart { position:relative; text-align:center; }
+  #app .vBanks-mobile .vBanks-consumption-chart svg { display:block; width:100%; }
+  #app .vBanks-mobile .vBanks-consumption-chart > span { position:absolute; inset:0; display:grid; place-content:center; gap:3px; font-size:clamp(8px,2.6vw,13px); }
+  #app .vBanks-mobile .vBanks-consumption-chart small { font-size:.86em; }
+  #app .vBanks-mobile .vBanksPc-consumption-rows > div { display:grid; grid-template-columns:10px minmax(0,1fr) minmax(0,auto) auto; align-items:center; gap:4px; border-bottom:1px solid var(--bank-line); padding:5px 0; font-size:clamp(9px,2.65vw,12px); }
+  #app .vBanks-mobile .vBanksPc-consumption-rows .vBanksPc-meter { display:none; }
+  #app .vBanks-mobile .vBanksPc-consumption-rows strong { overflow-wrap:anywhere; }
+  #app .vBanks-mobile .vBanksPc-category-icon svg { width:10px; height:10px; }
+  #app .vBanks-mobile .vBanksPc-category-icon i { display:block; width:8px; height:8px; border-radius:50%; background:var(--swatch); }
+  #app .vBanks-mobile .vBanksPc-consumption-amount { text-align:right; }
+  #app .vBanks-mobile .vBanksPc-consumption-amount small { display:block; font-size:8px; }
+  #app .vBanks-mobile .vBanksPc-benefits svg { width:16px; height:16px; }
+  #app .vBanks-mobile .vBanksPc-empty { padding:8px 0; font-size:12px; }
+  #app .vBanks-mobile .vBanks-detail .v1190-grid { grid-template-columns:minmax(0,1fr); }
+}
