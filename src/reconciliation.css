@@ -1,5 +1,5 @@
 /* Isolated account reconciliation surface. Existing registration styles remain untouched. */
-.v-reconcile-dialog.modal{width:min(100%,460px);max-width:460px;max-height:calc(100dvh - 28px);padding:0!important;border-radius:28px;background:var(--surface,#fff);color:var(--text,#14213d);overflow:auto}
+.v-reconcile-dialog{position:relative;width:min(100%,460px);max-width:460px;max-height:calc(100dvh - 28px);padding:0!important;border-radius:28px;background:#fff;color:#14213d;overflow:auto}
 #vReconcileForm{--recon-accent:#006c68;--recon-muted:#57647b;--recon-border:rgba(100,116,145,.19);--recon-soft:#f5f7fa;display:flex;flex-direction:column;gap:11px;padding:15px 16px 20px;box-sizing:border-box;min-width:0;font-family:inherit;color:inherit}
 #vReconcileForm *{box-sizing:border-box}
 #vReconcileForm button,#vReconcileForm input{font-family:inherit}
@@ -23,6 +23,11 @@
 .v-reconcile-input{display:flex;align-items:center;border:1px solid var(--recon-border);border-radius:13px;min-width:0;padding:9px 10px;gap:3px;font-size:clamp(25px,7.8vw,35px);font-weight:760;letter-spacing:-1.1px;line-height:1.15}
 .v-reconcile-input:focus-within{border-color:var(--recon-accent);box-shadow:0 0 0 2px rgba(0,108,104,.12)}
 .v-reconcile-input input{min-width:0;width:100%;border:0!important;background:transparent!important;color:inherit!important;font:inherit;outline:none!important;padding:0!important;box-shadow:none!important;border-radius:0}
+.v-reconcile-number{position:relative;min-width:0;flex:1;display:flex;align-items:center}
+.v-reconcile-number>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.v-reconcile-number input{position:absolute;inset:0;opacity:0}
+.v-reconcile-number:focus-within>span{visibility:hidden}
+.v-reconcile-number:focus-within input{opacity:1}
 .v-reconcile-observed small{display:flex;gap:6px;align-items:center}
 #vReconcileForm svg,.v-reconcile-reason-sheet svg{width:18px;height:18px;color:var(--recon-accent,#006c68);flex:none}
 .v-reconcile-fields{display:grid;grid-template-columns:1fr 1.17fr;gap:8px}
@@ -30,7 +35,9 @@
 .v-reconcile-fields>label>span,.v-reconcile-fields>button>span{display:grid;place-items:center;flex:none}
 .v-reconcile-fields>label>div,.v-reconcile-fields>button>div{display:grid;gap:4px;flex:1;min-width:0}
 .v-reconcile-fields small{font-size:11px!important;white-space:nowrap}
-.v-reconcile-date input{font-size:13px;font-weight:700;min-width:0;width:100%;color:inherit;border:0;background:transparent;padding:0;outline:none}
+.v-reconcile-date{position:relative}
+.v-reconcile-date input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.v-reconcile-date strong{font-size:13px;white-space:nowrap}
 .v-reconcile-reason strong{font-size:12px;font-weight:730;line-height:1.2;overflow-wrap:anywhere}
 .v-reconcile-preview{display:grid;gap:10px;padding:13px 14px;background:linear-gradient(145deg,rgba(100,116,145,.035),transparent)}
 .v-reconcile-preview h3{display:flex;align-items:center;gap:8px;font-size:17px;letter-spacing:-.2px;margin:0}
@@ -62,10 +69,19 @@
 .v-reconcile-reason-list button>span{width:24px;height:24px;display:grid;place-items:center;flex:none;border-radius:50%;color:white}
 .v-reconcile-reason-list button[aria-pressed=true]>span{background:#006c68}
 @media(max-width:790px){
- .v-reconcile-layer.modal-layer{align-items:flex-start!important;justify-content:center!important;padding:0!important;inset:0!important;background:#fff!important}
- .v-reconcile-dialog.modal{width:100%!important;max-width:none!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important;background:#fff!important;color:#14213d!important;box-shadow:none!important}
+ html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-layer.modal-layer{position:fixed!important;display:block!important;align-items:flex-start!important;justify-content:center!important;padding:0!important;margin:0!important;inset:0!important;width:100vw!important;height:100dvh!important;max-height:none!important;background:#fff!important;overflow:auto!important}
+ html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-dialog{position:relative!important;display:block!important;width:100%!important;max-width:none!important;height:auto!important;min-height:100dvh!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;background:#fff!important;color:#14213d!important;box-shadow:none!important;overflow:visible!important}
  #vReconcileForm{max-width:480px;margin:auto;padding-top:max(14px,env(safe-area-inset-top));padding-bottom:max(18px,env(safe-area-inset-bottom))}
 }
+/* The global modal typography uses important declarations; scope our override
+   to this surface so the amount is not reduced to a generic 16px input. */
+html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-head h2{font-size:23px!important;font-weight:750!important}
+html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-input input{font-size:inherit!important;font-weight:inherit!important;letter-spacing:inherit!important;line-height:inherit!important;height:100%!important;outline:0!important;box-shadow:none!important;border:0!important}
+html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-submit{font-size:16px!important;font-weight:730!important}
+html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-back{font-size:25px!important}
+html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-preview h3{font-size:17px!important}
+html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-reason-sheet h3{font-size:23px!important}
+html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-layer>.v68-mobile-dismiss{display:none!important}
 @media(max-height:740px) and (max-width:790px){
  #vReconcileForm{gap:8px;padding-top:9px;padding-bottom:10px}
  .v-reconcile-account{min-height:63px;padding:8px 12px}.v-reconcile-logo{width:47px!important;height:47px!important;flex-basis:47px}

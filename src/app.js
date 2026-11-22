@@ -5939,12 +5939,12 @@ function vReconcileAccountForm(partial={},editId=null){
  let reason=vReconcileReasons.includes(previous?.note)?previous.note:vReconcileReasons[0];
  const date=previous?.date||partial.date||today();
  const root=document.getElementById('modal-root');
- root.innerHTML=`<div class="modal-layer v-reconcile-layer" data-backdrop="true"><section class="modal v-reconcile-dialog" role="dialog" aria-modal="true" aria-label="Conciliar un saldo">
+ root.innerHTML=`<div class="modal-layer v-reconcile-layer" data-backdrop="true"><section class="v-reconcile-dialog" role="dialog" aria-modal="true" aria-label="Conciliar un saldo">
  <form id="vReconcileForm" novalidate><header class="v-reconcile-head"><button type="button" class="v-reconcile-back" aria-label="Volver">←</button><h2>${editId?'Editar conciliación':'Conciliar un saldo'}</h2></header>
  <button type="button" class="v-reconcile-account" aria-haspopup="dialog" aria-label="Seleccionar cuenta"></button>
  <section class="v-reconcile-recorded"><small>Saldo registrado en Vive</small><strong data-reconcile="registered">—</strong></section>
- <section class="v-reconcile-observed"><label for="vReconcileObserved">Saldo que visualizas</label><div class="v-reconcile-input"><span data-reconcile="symbol">RD$</span><input id="vReconcileObserved" name="observed" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-label="Saldo real observado"></div><small>${icon('edit')} Ingresa el saldo real de tu cuenta en esa fecha</small></section>
- <div class="v-reconcile-fields"><label class="v-reconcile-date"><span>${icon('calendar')}</span><div><small>Fecha de operación</small><input name="date" type="date" value="${sanitize(date)}" max="${today()}" aria-label="Fecha de operación"></div></label>
+ <section class="v-reconcile-observed"><label for="vReconcileObserved">Saldo que visualizas</label><div class="v-reconcile-input"><span data-reconcile="symbol">RD$</span><div class="v-reconcile-number"><span data-reconcile="formatted" aria-hidden="true">0.00</span><input id="vReconcileObserved" name="observed" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-label="Saldo real observado"></div></div><small>${icon('edit')} Ingresa el saldo real de tu cuenta en esa fecha</small></section>
+ <div class="v-reconcile-fields"><label class="v-reconcile-date"><span>${icon('calendar')}</span><div><small>Fecha de operación</small><strong data-reconcile="date-text"></strong><input name="date" type="date" value="${sanitize(date)}" max="${today()}" aria-label="Fecha de operación"></div></label>
  <button type="button" class="v-reconcile-reason" aria-haspopup="dialog"><span>${icon('receipt')}</span><div><small>Motivo del ajuste</small><strong></strong></div><b>›</b></button></div>
  <section class="v-reconcile-preview" aria-live="polite"><h3>${icon('chart')} Vista previa del ajuste</h3><div class="v-reconcile-balances"><div><small>Antes</small><strong data-reconcile="before">—</strong></div><span>→</span><div><small>Después</small><strong data-reconcile="after">—</strong></div></div><div class="v-reconcile-delta"><span>Ajuste automático</span><strong data-reconcile="delta">—</strong></div><small>No modifica tus ingresos ni gastos ordinarios.</small></section>
  <p class="v-reconcile-error" role="alert" hidden></p><button type="submit" class="v-reconcile-submit">${icon('check')} ${editId?'Guardar conciliación':'Confirmar conciliación'}</button></form></section></div>`;
@@ -5959,6 +5959,9 @@ function vReconcileAccountForm(partial={},editId=null){
   reasonButton.querySelector('strong').textContent=reason;
   when.min=a?.opened||'';form.querySelector('[data-reconcile=symbol]').textContent=c==='USD'?'US$':'RD$';
   const view=(key,value)=>{form.querySelector('[data-reconcile='+key+']').textContent=value};
+  view('date-text',when.value?new Intl.DateTimeFormat('es-DO',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(when.value+'T12:00:00Z')).replaceAll('.',''):'Elegir fecha');
+  const typed=vReconcileCents(observed.value);
+  view('formatted',typed!==null?v115Formatter(2).format(typed/100):observed.value||'0.00');
   shown=null;let before=null;
   try{before=vReconcileQuote(a,when.value,'0',old).before}catch(_){}
   view('registered',before===null?'—':cash(before,c));view('before',before===null?'—':cash(before,c));
@@ -6343,7 +6346,7 @@ function render(){
 (function(){
  const root=document.getElementById('modal-root');
  if(!root||typeof MutationObserver==='undefined')return;
- const sync=()=>{const layer=root.querySelector('.modal-layer');if(!layer||layer.querySelector('.v68-mobile-dismiss'))return;
+ const sync=()=>{const layer=root.querySelector('.modal-layer');if(!layer||layer.classList.contains('v-reconcile-layer')||layer.querySelector('.v68-mobile-dismiss'))return;
   const btn=document.createElement('button');btn.type='button';btn.className='v68-mobile-dismiss';btn.setAttribute('aria-label','Cerrar formulario');btn.innerHTML='×';
   btn.addEventListener('click',()=>{if(typeof closeModal==='function')closeModal();else root.innerHTML='';});
   layer.appendChild(btn);

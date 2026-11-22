@@ -73,6 +73,8 @@ async function confirm(p){
    if(i===0){
     check('Teclado decimal nativo',await form(p).locator('[name=observed]').getAttribute('inputmode'),'decimal');
     check('Sin campos antiguos',/Aumentar|Disminuir|Personal\/Negocio|Guardar motivo|Tipo de operación/.test(await form(p).innerText()),false);
+    await form(p).locator('h2').click();
+    check('Confirmación visible sin scroll',await form(p).locator('.v-reconcile-submit').evaluate(b=>b.getBoundingClientRect().bottom<=innerHeight));
     await shot(p,'01-formulario');
     await form(p).locator('.v-reconcile-reason').click();
     check('Cinco motivos directos',await p.locator('.v-reconcile-reason-list button').count(),5);
