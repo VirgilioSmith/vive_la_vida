@@ -112,7 +112,7 @@ async function testBanks(browser,width){
    return banks.right<products.left&&products.right<insights.left&&Math.abs(banks.top-insights.top)<2;
   }),'El mockup PC muestra tres columnas debajo de los KPI.');
   if(mobile)assert.ok(await root.evaluate(el=>{
-   const seq=['.vBanks-mobile-head','.vBanks-mobile-selector','.vBanks-mobile-hero','.vBanks-mobile-products','.v371-card-return','.vBanks-certificates','.v1301-insight'];
+   const seq=['.vBanks-mobile-head','.vBanks-mobile-selector','.vBanks-mobile-hero','.vBanks-mobile-products','.v371-card-return','.v1301-insight','.vBanks-certificates'];
    const top=seq.map(k=>el.querySelector(k).getBoundingClientRect().top);
    return top.every((y,i)=>!i||y>top[i-1]);
   }),'El orden móvil coincide con la referencia.');
