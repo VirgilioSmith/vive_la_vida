@@ -2113,7 +2113,39 @@ function vBanksProducts(groups,bankId,f,mobile){
  const values={accounts:f.funds,cards:f.cardDebt,loans:f.loanDebt,certificates:f.invested};
  return `<section class="vBanks-mobile-products"><h2><button class="vBanksPc-benefits-link" type="button" data-act="banksMobileProducts" aria-expanded="${!!ui.vBanksMobileProducts}">${icon('layers')}Mis productos ${icon('arrow')}</button></h2>
   <div class="vBanks-mobile-tiles">${V_BANKS_GROUPS.map(([key,label,glyph])=>`<button type="button" data-act="banksPcProducts" data-id="${key}" aria-pressed="${!!ui.vBanksMobileProducts&&current===key}">${icon(glyph)}<small aria-label="${groups[key].length} productos">${groups[key].length}</small><span>${label}</span><strong ${vBanksAmountSize(money(values[key]))}>${money(values[key])}</strong></button>`).join('')}</div></section>
-  ${ui.vBanksMobileProducts?lanes:''}`;
+  ${ui.vBanksMobileProducts&&current==='all'?lanes:''}`;
+}
+
+/* Bancos móvil · pantallas: cada producto tiene su propia vista con encabezado, selector y KPI. */
+const V_BANKS_MOBILE_SCREENS={
+ accounts:['Cuentas','Selecciona una cuenta para ver sus detalles','addAccount','Agregar cuenta'],
+ cards:['Tarjetas','Selecciona una tarjeta para ver sus detalles','addCard','Otra tarjeta'],
+ loans:['Préstamos','Selecciona un préstamo para ver sus detalles','addLoan','Solicitar préstamo'],
+ certificates:['Certificados','Selecciona un certificado para ver sus detalles','addCertificate','Registrar certificado'],
+ benefits:['Beneficios y retorno','Resumen de anualidades y beneficios','','']
+};
+function vBanksMobileKpi(kind,f,groups){
+ const cell=(label,value,sub='')=>`<div><dt>${label}</dt><dd ${vBanksAmountSize(value)}>${value}</dd>${sub?`<small>${sub}</small>`:''}</div>`;
+ if(kind==='accounts'){
+  const usd=groups.accounts.filter(a=>a.currency==='USD').reduce((n,a)=>n+num(getAccountBalance(a)),0);
+  return `<section class="vBanks-kpi" aria-label="Fondos disponibles"><small class="vBanks-kpi-label">Fondos disponibles</small><strong ${vBanksAmountSize(money(f.funds))}>${money(f.funds)}</strong>${usd?`<small class="vBanks-kpi-sub">${money(usd,'USD')}</small>`:''}</section>`;
+ }
+ if(kind==='cards')return `<section class="vBanks-kpi" aria-label="Deuda de tarjetas"><dl class="vBanks-kpi-row">${cell(icon('card')+'Deuda utilizada',money(f.cardDebt))}${cell(icon('landmark')+'Límite total',money(f.limit))}</dl><div class="vBanks-mobile-utilization"><span>Utilización del crédito <strong>${vBanksFlags(f)}</strong></span>${f.usage===null?'<span class="vBanksPc-meter" aria-hidden="true"></span>':vBanksMeter(f.usage)}</div></section>`;
+ if(kind==='loans'){
+  let q=0,i=0;for(const l of groups.loans){try{const ls=loanStatus(l);q+=fx(num(ls.installment),l.currency||'DOP');i+=fx(num(ls.estimatedInterest),l.currency||'DOP')}catch(_){}}
+  return `<section class="vBanks-kpi" aria-label="Capital pendiente"><small class="vBanks-kpi-label">Capital pendiente</small><strong ${vBanksAmountSize(money(f.loanDebt))}>${money(f.loanDebt)}</strong><dl class="vBanks-kpi-row">${cell(icon('calendar')+'Cuota',q>0?money(q):'—')}${cell(icon('percent')+'Interés',i>0?money(i):'—')}</dl></section>`;
+ }
+ if(kind==='certificates'){
+  const t=vBanksCertificateTotals(groups.certificates,f.invested);
+  return `<section class="vBanks-kpi" aria-label="Total invertido"><small class="vBanks-kpi-label">${t[0][0]}</small><strong ${vBanksAmountSize(t[0][1])}>${t[0][1]}</strong><dl class="vBanks-kpi-row is-three">${t.slice(1,4).map(([l,v])=>cell(l,v)).join('')}</dl></section>`;
+ }
+ return '';
+}
+function vBanksMobileActivity(groups){
+ const acc=new Set(groups.accounts.map(x=>x.id)),crd=new Set(groups.cards.map(x=>x.id)),lns=new Set(groups.loans.map(x=>x.id));
+ const rows=recentTx().filter(t=>acc.has(t.accountId)||acc.has(t.toAccountId)||crd.has(t.cardId)||lns.has(t.loanId)).slice(0,3);
+ if(!rows.length)return '';
+ return `<section class="vBanks-activity" aria-label="Actividad reciente"><h2><button type="button" class="vBanksPc-benefits-link" data-act="navigate" data-id="register">${icon('calendar')}Actividad reciente ${icon('arrow')}</button></h2>${rows.map(t=>`<button type="button" class="vBanks-activity-row" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}"><span class="vBanks-activity-ico">${icon(['income','card_refund','card_reward','bank_reward'].includes(t.type)?'up':'card')}</span><span><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)}</small></span><b>${txDisplay(t)}</b></button>`).join('')}</section>`;
 }
 function vBanksDashboard(){
  v40Ensure();
@@ -2149,13 +2181,25 @@ function vBanksDashboard(){
  const products=vBanksProducts(active,bankId,f,mobile);
  const history=selected&&ui.bankHistory===selected.id?v1264BankHistory(selected):'';
  const nonbank=selected&&!v40IsFinancial(selected)?v40NonbankDetail(selected):'';
- if(mobile)return `<div class="vBanksPc vBanks-mobile${!ui.vBanksMobileChrome&&!ui.vBanksMobileProducts&&!detail&&!ledger&&!history&&!nonbank?' vBanks-mobile-dashboard':''}">
-  <header class="vBanks-mobile-head"><span>BANCOS</span><h1>Tu posición bancaria</h1><p>Todos tus productos, en una sola vista.</p><button type="button" class="btn ghost sm" data-act="addBank" aria-label="Agregar institución">${icon('plus')}</button></header>
-  <button type="button" class="vBanks-mobile-selector" data-act="banksPicker" aria-haspopup="dialog">${logo}<span><strong>${name}</strong><small>${selected?info:`${institutions.length} ${institutions.length===1?'institución':'instituciones'}`}</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button>
-  ${ui.vBanksMobileFilters||v42InstitutionFilter!=='all'||v61InstitutionProfile!=='all'||controls?`<div class="vBanks-mobile-tools">${filters}${controls}</div>`:''}
-  ${vBanksMobilePosition(f,prior)}
-  ${products}${history}${nonbank}${insights}${ledger}
- </div>`;
+ if(mobile){
+  const sKey=ledger?'benefits':(!detail&&!history&&!nonbank&&ui.vBanksMobileProducts&&V_BANKS_MOBILE_SCREENS[ui.vBanksPcProduct]?ui.vBanksPcProduct:null);
+  const sc=sKey?V_BANKS_MOBILE_SCREENS[sKey]:null;
+  const addBtn=sc?(sc[2]?`<button type="button" class="btn ghost sm" data-act="${sc[2]}"${bankId?` data-id="${sanitize(bankId)}"`:''} aria-label="${sc[3]}">${icon('plus')}</button>`:''):`<button type="button" class="btn ghost sm" data-act="addBank" aria-label="Agregar institución">${icon('plus')}</button>`;
+  const head=sc?`<header class="vBanks-mobile-head is-sub"><button type="button" class="vBanks-back" data-act="banksMobileBack" aria-label="Volver a Bancos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>Bancos</button><h1>${sc[0]}</h1><p>${sc[1]}</p>${addBtn}</header>`
+   :`<header class="vBanks-mobile-head"><h1>Bancos</h1><p>Tu posición bancaria consolidada</p>${addBtn}</header>`;
+  const filterOn=ui.vBanksMobileFilters||v42InstitutionFilter!=='all'||v61InstitutionProfile!=='all';
+  const selector=`<div class="vBanks-selwrap"><button type="button" class="vBanks-mobile-selector" data-act="banksPicker" aria-haspopup="dialog">${logo}<span><strong>${name}</strong><small>${selected?'Vista individual':`${institutions.length} ${institutions.length===1?'institución':'instituciones'}`}</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><button type="button" class="vBanks-filter-btn${filterOn?' is-on':''}" data-act="banksMobileFilters" aria-label="Filtrar instituciones" aria-pressed="${!!filterOn}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></svg></button></div>`;
+  const tools=ui.vBanksMobileFilters||filterOn||controls?`<div class="vBanks-mobile-tools">${filters}${controls}</div>`:'';
+  let body;
+  if(sKey==='benefits')body=`${ledger}`;
+  else if(sKey){
+   const items=active[sKey]||[];
+   body=`${vBanksMobileKpi(sKey,f,active)}<div class="vBanks-sub-body">${items.length?vBanksProductRows(sKey,items,bankId):`<div class="vBanks-empty"><p>Sin ${sc[0].toLowerCase()} registrad${sKey==='cards'||sKey==='accounts'?'as':'os'}.</p></div>`}<button type="button" class="vBanks-sub-cta" data-act="${sc[2]}"${bankId?` data-id="${sanitize(bankId)}"`:''}>${icon('plus')}${sc[3]}</button></div>`;
+  }else body=`${vBanksMobilePosition(f,prior)}${products}${history}${nonbank}${selected&&!detail?vBanksMobileActivity(active):''}${insights}`;
+  return `<div class="vBanksPc vBanks-mobile${sKey?' vBanks-mobile-screen vBanks-screen-'+sKey:''}${!ui.vBanksMobileChrome&&!ui.vBanksMobileProducts&&!detail&&!ledger&&!history&&!nonbank?' vBanks-mobile-dashboard':''}">
+  ${head}${selector}${tools}${body}
+ </div>`;}
+
  return `<div class="vBanksPc">
  <div class="vBanksPc-metrics" aria-label="Situación bancaria">${financial.map(([label,value,glyph,previous],i)=>`<div class="vBanksPc-metric"><span class="vBanksPc-stat-icon">${icon(glyph)}</span><div><span>${label}</span><strong>${money(value)}</strong>${i===3?`<small>${vWalletPcSplit(...f.limits,0)}</small>${vBanksChange(value,previous)}`:vBanksChange(value,previous,i===2)}</div></div>`).join('')}</div>
  <div class="vBanksPc-grid" aria-label="Instituciones y sus productos">
@@ -7216,6 +7260,10 @@ case 'banksPicker':vBanksPicker();break;
 case 'bankHistory':ui.bankHistory=ui.bankHistory===id?null:id;render();break;
 case 'bankHistoryRange':ui.bankHistoryRange=Number(id)||12;render();break;
 case 'closeBank':vBanksSelect(V_BANKS_ALL);render();break;
+case 'banksMobileFilters':ui.vBanksMobileFilters=!ui.vBanksMobileFilters;render();break;
+case 'banksMobileBack':
+ ui.vBanksMobileProducts=false;ui.vBanksPcProduct='all';ui.vBanksPcBenefits=false;ui.vBanksProductDetail=null;ui.bankHistory=null;
+ render();window.scrollTo(0,0);break;
 case 'banksMobileProducts':
  ui.vBanksMobileProducts=!ui.vBanksMobileProducts;ui.vBanksPcProduct='all';render();break;
 case 'banksPcProducts':

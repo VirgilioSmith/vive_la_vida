@@ -1,0 +1,87 @@
+/* Bancos móvil · rediseño Liquid Glass (solo móvil). Hereda acento, fondo ambiental y modo Claro/Black. */
+@media(max-width:790px){
+ html body #app#app #page .vBanks-mobile{
+  --g-surface:rgba(255,255,255,.40);--g-surface-2:rgba(255,255,255,.52);--g-ink:#10182e;--g-muted:#58657d;
+  --g-shadow:0 10px 28px rgba(30,40,90,.08),inset 0 1px 0 rgba(255,255,255,.7);--g-accent:var(--ui-solid,var(--v424-accent-strong,#5b57d6));
+  display:grid;gap:12px;align-content:start;padding:0 2px 12px}
+ body:is(.theme-black,.theme-dark) #app#app #page .vBanks-mobile{--g-surface:rgba(255,255,255,.07);--g-surface-2:rgba(255,255,255,.11);--g-ink:#f4f6fb;--g-muted:#a9b2c4;--g-shadow:0 10px 28px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.10)}
+ /* Encabezado */
+ html body #app#app #page .vBanks-mobile-head{position:relative;display:grid;gap:2px;padding:2px 52px 0 4px!important;text-align:left}
+ html body #app#app #page .vBanks-mobile-head h1{margin:0!important;font-size:32px!important;font-weight:800!important;letter-spacing:-.04em!important;line-height:1.08;color:var(--g-ink)!important}
+ html body #app#app #page .vBanks-mobile-head p{margin:0!important;font-size:15px!important;font-weight:500;color:var(--g-muted)!important}
+ html body #app#app #page .vBanks-mobile-head>button.btn{position:absolute!important;right:2px;top:4px;width:44px;height:44px;border:0!important;border-radius:50%!important;background:var(--g-surface)!important;backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);box-shadow:var(--g-shadow);color:var(--g-accent)!important;display:grid;place-items:center}
+ html body #app#app #page .vBanks-mobile-head>button.btn svg{width:20px;height:20px}
+ html body #app#app #page .vBanks-mobile-head.is-sub .vBanks-back{justify-self:start;display:inline-flex;align-items:center;gap:2px;margin:0 0 6px -4px;padding:4px 8px 4px 0;border:0;background:none;color:var(--g-accent);font-size:16px;font-weight:650}
+ html body #app#app #page .vBanks-mobile-head.is-sub .vBanks-back svg{width:22px;height:22px}
+ /* Selector de institución + filtro */
+ html body #app#app #page .vBanks-selwrap{display:flex;align-items:center;gap:10px}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-mobile-selector{flex:1 1 auto;min-width:0;width:auto;padding:7px 14px 7px 8px!important;border:0!important;border-radius:999px!important;background:var(--g-surface)!important;color:var(--g-ink)!important;backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);box-shadow:var(--g-shadow)!important;gap:10px}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile-selector strong{color:var(--g-ink)!important;font-size:16px!important;font-weight:750}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile-selector small{color:var(--g-muted)!important;font-size:13px!important;font-weight:500}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile-selector>svg{color:var(--g-muted)}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile-selector .vBanks-consolidated-mark{width:38px;height:38px;border-radius:12px;background:var(--g-accent)!important;color:#fff;display:grid;place-items:center}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile-selector .vBanks-consolidated-mark svg{width:22px;height:22px}
+ html body #app#app #page .vBanks-mobile-selector .institution-logo{width:38px;height:38px;border-radius:12px;overflow:hidden}
+ html body #app#app #page .vBanks-filter-btn{flex:none;width:46px;height:46px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--g-surface);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);box-shadow:var(--g-shadow);color:var(--g-muted);cursor:pointer}
+ html body #app#app #page .vBanks-filter-btn svg{width:20px;height:20px}
+ html body #app#app #page .vBanks-filter-btn.is-on{color:var(--g-accent)}
+ html body #app#app #page .vBanks-mobile-tools{padding:10px 12px;border-radius:18px;background:var(--g-surface);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:var(--g-shadow);color:var(--g-ink)}
+ /* KPI principal: totalmente coloreado con el acento */
+ html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-mobile-hero,
+ html body #app#app #page .vBanks-mobile .vBanks-kpi{position:relative;overflow:hidden;border:0!important;border-radius:24px!important;color:#fff;padding:16px 18px!important;
+  background:radial-gradient(ellipse 80% 90% at 100% 0%,color-mix(in srgb,var(--ui-accent,#6d69f1) 55%,#fff),transparent 60%),var(--ui-hero,linear-gradient(125deg,#5b57d6,#3b3aa0))!important;
+  box-shadow:0 16px 34px color-mix(in srgb,var(--ui-solid,#5b57d6) 32%,transparent),inset 0 1px 0 rgba(255,255,255,.28)!important}
+ html body #app#app #page .vBanks-mobile .vBanks-kpi *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+ html body #app#app #page .vBanks-kpi{display:grid;gap:6px}
+ html body #app#app #page .vBanks-kpi-label{font-size:16px;font-weight:700;opacity:.92}
+ html body #app#app #page .vBanks-kpi>strong{font-size:clamp(28px,8.6vw,36px);font-weight:850;letter-spacing:-.04em;line-height:1.05}
+ html body #app#app #page .vBanks-kpi-sub{font-size:15px;font-weight:600;opacity:.9}
+ html body #app#app #page .vBanks-kpi-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:4px 0 0;padding:0;border:0}
+ html body #app#app #page .vBanks-kpi-row.is-three{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ html body #app#app #page .vBanks-kpi-row>div{min-width:0;display:grid;gap:2px;border:0!important;padding:0!important}
+ html body #app#app #page .vBanks-kpi-row dt{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;opacity:.92}
+ html body #app#app #page .vBanks-kpi-row dt svg{width:17px;height:17px;flex:none}
+ html body #app#app #page .vBanks-kpi-row dd{margin:0;font-size:clamp(15px,4.6vw,20px);font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+ html body #app#app #page .vBanks-kpi-row.is-three dd{font-size:clamp(13px,4vw,17px)}
+ html body #app#app #page .vBanks-mobile-hero dl,html body #app#app #page .vBanks-mobile-hero dl>div{border-color:rgba(255,255,255,.22)!important}
+ html body #app#app #page .vBanks-mobile-utilization{display:grid;gap:6px;font-size:14px;font-weight:600}
+ /* Superficies de cristal: sin blanco opaco, sin bordes ni líneas */
+ html body[data-vive-bg] #app#app #page .vBanks-mobile :is(.vBanks-mobile-products,.vBanksPc-lane,.v371-card-return,.v1301-insight,.vBanksPc-benefits,.vBanks-activity,.vBanks-empty){
+  background:var(--g-surface)!important;border:0!important;border-radius:24px!important;box-shadow:var(--g-shadow)!important;
+  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);padding:14px 14px 12px!important}
+ html body #app#app #page .vBanks-mobile :is(.vBanks-mobile-products,.vBanks-activity,.v371-card-return) h2{border:0!important;padding:0 2px 8px!important;margin:0!important;font-size:19px!important;font-weight:750!important;color:var(--g-ink)!important}
+ html body #app#app #page .vBanks-mobile :is(.vBanks-mobile-products,.vBanks-activity,.v371-card-return) h2 svg:first-child{color:var(--g-accent);width:22px;height:22px}
+ html body #app#app #page .vBanks-mobile-tiles{gap:10px!important}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile-tiles>button{background:var(--g-surface-2)!important;border:0!important;border-radius:18px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)!important;color:var(--g-ink)!important;min-height:64px}
+ html body #app#app #page .vBanks-mobile-tiles>button *{color:inherit}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile-tiles>button>svg,html body[data-vive-bg] #app#app #page .vBanks-mobile-tiles>button>small{color:var(--g-accent)!important}
+ /* Beneficios y retorno */
+ html body #app#app #page .vBanks-mobile-return :is(.vBanks-return-main,.vBanks-return-secondary){border:0!important;border-top:0!important}
+ html body #app#app #page .vBanks-mobile-return .vBanks-return-secondary>div+div::before{display:none}
+ html body #app#app #page .vBanks-mobile-return :is(small){color:var(--g-muted)!important;font-size:14px!important}
+ html body #app#app #page .vBanks-mobile-return strong{color:var(--g-ink);font-size:clamp(20px,6vw,26px)!important}
+ html body #app#app #page .vBanks-mobile-return :is(.positive strong){color:#0f8a5a}
+ html body #app#app #page .vBanks-mobile-return .vBanks-return-main.negative strong,html body #app#app #page .vBanks-mobile-return .negative strong{color:#c9303a}
+ /* Listas: cada producto es una pastilla de cristal */
+ html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-sub-body{display:grid;gap:10px}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-sub-body .vBanksPc-lane{background:none!important;box-shadow:none!important;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0!important;display:grid;gap:10px}
+ html body #app#app #page .vBanks-sub-body .vBanksPc-lane>header,html body #app#app #page .vBanks-sub-body .vBanks-mobile-certificate-totals{display:none!important}
+ html body #app#app #page .vBanks-sub-body .vBanksPc-product,html body #app#app #page .vBanks-activity .vBanks-activity-row{background:var(--g-surface)!important;border:0!important;border-bottom:0!important;border-radius:20px!important;box-shadow:var(--g-shadow);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);padding:12px 14px!important;color:var(--g-ink)}
+ html body #app#app #page .vBanks-sub-body .vBanksPc-product small{color:var(--g-muted)!important}
+ html body #app#app #page .vBanks-sub-body .vBanksPc-product strong,html body #app#app #page .vBanks-sub-body .vBanksPc-product>b{color:var(--g-ink)!important}
+ html body #app#app #page .vBanks-sub-body .vBanksPc-product-mark{border:0!important;background:rgba(255,255,255,.85)!important;border-radius:14px!important}
+ html body #app#app #page .vBanks-sub-body .vBanksPc-product>svg:last-child{color:var(--g-muted)}
+ html body #app#app #page .vBanks-sub-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border:0;border-radius:999px;background:var(--g-surface);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:var(--g-shadow);color:var(--g-accent);font-size:16px;font-weight:700;cursor:pointer}
+ html body #app#app #page .vBanks-sub-cta svg{width:19px;height:19px}
+ html body #app#app #page .vBanks-empty{text-align:center;color:var(--g-muted);padding:26px 16px!important}
+ /* Actividad reciente */
+ html body #app#app #page .vBanks-activity{display:grid;gap:8px}
+ html body #app#app #page .vBanks-activity-row{display:grid!important;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:12px;text-align:left;width:100%;cursor:pointer;background:var(--g-surface-2)!important;box-shadow:none!important}
+ html body #app#app #page .vBanks-activity-ico{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--g-accent) 14%,transparent);color:var(--g-accent)}
+ html body #app#app #page .vBanks-activity-ico svg{width:19px;height:19px}
+ html body #app#app #page .vBanks-activity-row strong{display:block;font-size:15px;font-weight:650;color:var(--g-ink)}
+ html body #app#app #page .vBanks-activity-row small{display:block;font-size:13px;color:var(--g-muted)}
+ html body #app#app #page .vBanks-activity-row b{font-size:15px;font-weight:800;white-space:nowrap;color:var(--g-ink)}
+ /* Hoja de selección de institución */
+ #modal-root .v827-picker-backdrop :is(.v827-picker,.v789-picker,[role=dialog]>div){background:rgba(255,255,255,.62)!important;backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);border:0!important;box-shadow:0 -12px 40px rgba(30,40,90,.18)}
+}
