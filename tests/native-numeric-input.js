@@ -83,6 +83,8 @@ async function auditMobile(browser, width, height) {
     const limit = p.locator('#cardForm [name="limitDOP"]').first();
     await cutDay.waitFor({ state: 'attached' });
     check('Tarjeta: día entero ' + width, await cutDay.getAttribute('inputmode'), 'numeric');
+    check('Tarjeta: día editable sin selector intermedio ' + width,
+      await cutDay.evaluate(i => !i.classList.contains('v1110-native') && !i.parentElement.querySelector('select')), true);
     check('Tarjeta: límite decimal ' + width, await limit.getAttribute('inputmode'), 'decimal');
     const inventory = await p.locator('input').evaluateAll(inputs => inputs
       .filter(i => i.type === 'number' || /decimal|numeric/.test(i.inputMode))
