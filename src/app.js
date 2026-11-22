@@ -16104,9 +16104,10 @@ document.addEventListener('input',function(event){
    '<form id="v354-form" class="v354-fields v355-fast-form" autocomplete="off">'+datalist+
    '<label class="v355-person">¿Para quién fue?<input name="person" list="v354-people" maxlength="85" required placeholder="Ej. Mi hermano" value="'+esc(initial.person||'')+'"></label>'+
    '<div class="v355-sums"><label>Compra total<input name="purchase" type="number" inputmode="decimal" step="0.01" min="0.01" required value="'+esc(initial.purchase??'')+'" placeholder="6000"></label><label>Me entregó<input name="received" type="number" inputmode="decimal" step="0.01" min="0" value="'+esc(initial.received??'')+'" placeholder="5000"></label></div>'+
-   '<div class="v355-result" aria-live="polite"><span>Me debe · Otros</span><strong id="v354-owed-preview">—</strong></div>'+
+   '<div class="v355-result" aria-live="polite"><span id="v354-balance-caption">Por cobrar · Me deben</span><strong id="v354-owed-preview">—</strong></div>'+
    '<label>¿Qué pasó con el dinero?<select name="receiptMode" required><option value="">Selecciona lo que ocurrió</option><option value="card">Abonó directamente a mi tarjeta</option><option value="account">Lo recibí en cuenta o efectivo</option><option value="account_and_paid">Lo recibí y ya pagué la tarjeta</option><option value="none">Aún no me ha entregado dinero</option></select></label>'+
-   '<label class="v356-channel">Canal del dinero<select name="channel" required><option value="presencial" '+((initial.channel||'presencial')==='presencial'?'selected':'')+'>Presencial</option><option value="internet" '+(initial.channel==='internet'?'selected':'')+'>Internet Banking</option></select></label>'+ 
+   '<label id="v355-paid-label" hidden>Pago real realizado a la tarjeta<input name="paidAmount" type="number" inputmode="decimal" step="0.01" min="0" value="'+esc(initial.paidAmount??'')+'" placeholder="Importe realmente pagado"></label>'+
+    '<label class="v356-channel">Canal del dinero<select name="channel" required><option value="presencial" '+((initial.channel||'presencial')==='presencial'?'selected':'')+'>Presencial</option><option value="internet" '+(initial.channel==='internet'?'selected':'')+'>Internet Banking</option></select></label>'+ 
    '<div class="v356-tax-indicator" id="v356-tax-indicator" aria-live="polite"><div><span>Impuesto de transferencia</span><strong id="v356-tax-amount">No aplica</strong></div><small id="v356-tax-explainer">No se añaden impuestos a esta operación.</small></div>'+ 
    '<div class="v355-compact-note" id="v354-cut-note">Si el dinero no llegó a la tarjeta, el pendiente del corte no disminuye.</div>'+
    '<details class="v355-extra" '+(initial.showExtra?'open':'')+'><summary><span>Tarjeta: <strong id="v355-card-label">'+esc(c.name)+'</strong></span><span aria-hidden="true">Editar ⌄</span></summary><div class="v354-fields v355-extra-fields">'+
@@ -16127,10 +16128,12 @@ document.addEventListener('input',function(event){
   const mode=v.receiptMode||'',needAcc=mode==='account'||mode==='account_and_paid';
   const label=$('#v354-account-label');if(label)label.hidden=!needAcc;
   if(needAcc)form.querySelector('.v355-extra')?.setAttribute('open','');
-  const owed=$('#v354-owed-preview'),hint=$('#v354-cut-note'),amountLabel=$('.v354-progress strong'),cardLabel=$('#v355-card-label');
+  const owed=$('#v354-owed-preview'),caption=$('#v354-balance-caption'),hint=$('#v354-cut-note'),amountLabel=$('.v354-progress strong'),cardLabel=$('#v355-card-label');
+   const paidLabel=$('#v355-paid-label');if(paidLabel)paidLabel.hidden=mode!=='account_and_paid';
   if(cardLabel)cardLabel.textContent=card(v.cardId)?.name||'Seleccionar tarjeta';
   if(amountLabel)amountLabel.textContent=p>0?fmt(p,cc):fmt(0,cc);
-  if(owed)owed.textContent=p>0?fmt(Math.max(0,p-r),cc):'—';
+  if(owed)owed.textContent=p>0?fmt(Math.abs(p-r),cc):'—';
+   if(caption)caption.textContent=r>p?'Por devolver · Yo debo':p>r?'Por cobrar · Me deben':'Sin saldo pendiente';
   const modeHint={
    card:'El abono a la tarjeta reduce el corte pendiente cuando el banco lo aplicó.',
    account:'El dinero llegó a tu cuenta; el corte sigue pendiente hasta pagar la tarjeta.',
@@ -16151,23 +16154,25 @@ document.addEventListener('input',function(event){
   if(!['DOP','USD'].includes(ccy))throw Error('Selecciona una moneda válida.');
   if(!['presencial','internet'].includes(channel))throw Error('Selecciona Presencial o Internet Banking.');
   if(!Number.isFinite(p)||p<=0||Math.round(p*100)/100!==Number(p.toFixed(2)))throw Error('La compra debe ser mayor que cero y tener como máximo dos decimales.');
-  if(!Number.isFinite(r)||r<0||r>p+0.00001||Math.round(r*100)/100!==Number(r.toFixed(2)))throw Error('El dinero recibido debe estar entre cero y el valor de la compra.');
+  if(!Number.isFinite(r)||r<0||Math.round(r*100)/100!==Number(r.toFixed(2)))throw Error('El dinero recibido debe ser válido, no negativo y tener máximo dos decimales.');
   if(!['card','account','account_and_paid','none'].includes(mode))throw Error('Indica qué pasó con el dinero: tu tarjeta, tu cuenta o pendiente.');
   if(mode==='none'&&r>0.00001)throw Error('Si no has recibido dinero, escribe RD$0 o selecciona su destino real.');
   if(mode!=='none'&&r<.005)throw Error('Si todavía no ha entregado dinero, selecciona «Todavía no recibido».');
-  const a=['account','account_and_paid'].includes(mode)?account(raw.accountId):null;
+  const paidRaw=String(raw.paidAmount??'').trim(),paid=mode==='account_and_paid'?Number(paidRaw):0;
+   if(mode==='account_and_paid'&&(!paidRaw||!Number.isFinite(paid)||paid<=0||Math.round(paid*100)/100!==Number(paid.toFixed(2))))throw Error('Indica el pago real efectuado a la tarjeta. No se supone que pagaste todo lo recibido.');
+   const a=['account','account_and_paid'].includes(mode)?account(raw.accountId):null;
   if(['account','account_and_paid'].includes(mode)&&(!a||a.archived||a.currency!==ccy))throw Error('Elige una cuenta o efectivo activo en la misma moneda.');
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date>today())throw Error('Indica la fecha real de la compra.');
   if(!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)||dueDate<date)throw Error('La fecha para cobrarle debe ser igual o posterior a la compra.');
   const tax=v356TaxInfo(channel,r,ccy,date);
-  return {person,cardId:c.id,cardName:c.name,currency:ccy,purchase:Math.round(p*100)/100,received:Math.round(r*100)/100,receiptMode:mode,channel,transferTaxEstimate:tax.amount,transferTaxRate:tax.applicable?tax.rate:0,transferTaxEstimable:tax.estimable,accountId:a?.id||'',accountName:a?.name||'',date,dueDate,note:String(raw.note||'').trim().slice(0,120)};
+  return {person,cardId:c.id,cardName:c.name,currency:ccy,purchase:Math.round(p*100)/100,received:Math.round(r*100)/100,receiptMode:mode,channel,transferTaxEstimate:tax.amount,transferTaxRate:tax.applicable?tax.rate:0,transferTaxEstimable:tax.estimable,accountId:a?.id||'',accountName:a?.name||'',paidAmount:Math.round(paid*100)/100,date,dueDate,note:String(raw.note||'').trim().slice(0,120)};
  }
  function review(v){
   draft={...v};
-  const cardPayment=v.received>0&&['card','account_and_paid'].includes(v.receiptMode),due=Math.max(0,Math.round((v.purchase-v.received)*100)/100);
+  const due=Math.max(0,Math.round((v.purchase-v.received)*100)/100),surplus=Math.max(0,Math.round((v.received-v.purchase)*100)/100);
   const payLabel=v.receiptMode==='card'?'Abono directo a tarjeta':v.receiptMode==='account_and_paid'?'Recibido y pagado a tarjeta':v.receiptMode==='account'?'Recibido en '+v.accountName:'Todavía no recibido';
-  const summary='<div class="v355-review-hero"><span>Por cobrar · Me deben</span><strong>'+fmt(due,v.currency)+'</strong><small>'+esc(v.person)+'</small></div>'+
-   '<div class="v354-panel v355-review-panel"><h3>Revisa el movimiento</h3>'+rows([['Compra con tarjeta',fmt(v.purchase,v.currency)],['Me entregó',fmt(v.received,v.currency)],['Tarjeta',v.cardName],['Dinero',payLabel],['Canal',v.channel==='internet'?'Internet Banking':'Presencial'],['Impuesto de transferencia',v.channel==='internet'&&v.received>0?(v.transferTaxEstimable?fmt(v.transferTaxEstimate,'DOP')+' · estimado':'No calculable · verificar con banco'):(v.received>0?'Sin estimar':'No aplica')]])+'</div>'+
+  const summary='<div class="v355-review-hero"><span>'+(surplus>0?'Por devolver · Yo debo':due>0?'Por cobrar · Me deben':'Sin saldo pendiente')+'</span><strong>'+fmt(surplus||due,v.currency)+'</strong><small>'+esc(v.person)+'</small></div>'+
+   '<div class="v354-panel v355-review-panel"><h3>Revisa el movimiento</h3>'+rows([['Compra con tarjeta',fmt(v.purchase,v.currency)],['Me entregó',fmt(v.received,v.currency)],['Tarjeta',v.cardName],['Dinero',payLabel],...(v.receiptMode==='account_and_paid'?[['Pago real a tarjeta',fmt(v.paidAmount,v.currency)]]:[]),['Por devolver',fmt(surplus,v.currency)],['Canal',v.channel==='internet'?'Internet Banking':'Presencial'],['Impuesto de transferencia',v.channel==='internet'&&v.received>0?(v.transferTaxEstimable?fmt(v.transferTaxEstimate,'DOP')+' · estimado':'No calculable · verificar con banco'):(v.received>0?'Sin estimar':'No aplica')]])+'</div>'+
    '<div class="v355-compact-note">Revisa y pulsa <strong>Confirmar y guardar</strong>. El impuesto mostrado es informativo, normalmente corresponde a quien envía y no se debita de tu cuenta. El corte solo baja con un pago real.</div>';
   makeShell('Revisar movimiento','PASO 2 DE 2 · REVISIÓN',fmt(v.purchase,v.currency),summary,'<button type="button" data-v354-act="back">Editar</button><button class="primary" type="button" data-v354-act="confirm">Confirmar y guardar</button>');
  }
@@ -16176,16 +16181,21 @@ document.addEventListener('input',function(event){
   const button=$('[data-v354-act="confirm"]');if(button)button.disabled=true;
   try{
    const x=validated(v),now=new Date().toISOString(),relationId=uuid();
-   const relation={id:relationId,person:x.person,direction:'lent',principal:x.purchase,currency:x.currency,cardId:x.cardId,accountId:'',date:x.date,dueDate:x.dueDate,note:'Compra para tercero · Canal: '+(x.channel==='internet'?'Internet Banking':'Presencial')+(x.note?' · '+x.note:''),openingMode:'new',source:'third_party_card_purchase',quickChannel:x.channel,estimatedTransferTax:x.transferTaxEstimate,taxRate:x.transferTaxRate,taxOwner:'sender',createdAt:now};
+    const receivedForPurchase=Math.min(x.purchase,x.received),surplus=Math.max(0,Math.round((x.received-x.purchase)*100)/100),due=Math.max(0,Math.round((x.purchase-x.received)*100)/100);
+    const contact=(db.personalContacts||[]).find(c=>[c.firstName,c.lastName].filter(Boolean).join(' ').trim().toLocaleLowerCase('es')===x.person.toLocaleLowerCase('es'));
+   const relation={id:relationId,person:x.person,contactId:contact?.id||'',direction:'lent',principal:x.purchase,currency:x.currency,cardId:x.cardId,accountId:'',date:x.date,dueDate:x.dueDate,note:'Compra para tercero · Canal: '+(x.channel==='internet'?'Internet Banking':'Presencial')+(x.note?' · '+x.note:''),openingMode:'new',source:'third_party_card_purchase',quickChannel:x.channel,estimatedTransferTax:x.transferTaxEstimate,taxRate:x.transferTaxRate,taxOwner:'sender',createdAt:now};
    const common={created:now,date:x.date,currency:x.currency,personalLoanId:relationId,thirdPartyPurchase:true,quickChannel:x.channel,estimatedTransferTax:x.transferTaxEstimate,taxRate:x.transferTaxRate,taxOwner:'sender'};
    const entries=[{...common,id:uuid(),type:'personal_issue',cardId:x.cardId,amount:x.purchase,category:'Movimiento patrimonial',note:'Compra para '+x.person+' · '+(x.channel==='internet'?'Internet Banking':'Presencial')+(x.note?' · '+x.note:'')}];
-   if(x.received>.005){entries.push({...common,id:uuid(),type:'personal_settlement',cardId:x.receiptMode==='card'?x.cardId:'',accountId:x.receiptMode==='card'?'':x.accountId,principal:x.received,interest:0,amount:x.received,category:'Movimiento patrimonial',note:'Dinero recibido de '+x.person+' · '+(x.channel==='internet'?'Internet Banking':'Presencial')});}
-   if(x.received>.005&&x.receiptMode==='account_and_paid')entries.push({id:uuid(),created:now,type:'card_payment',date:x.date,cardId:x.cardId,accountId:x.accountId,currency:x.currency,amount:x.received,sourceAmount:x.received,paymentTax:0,paymentFee:0,category:'Movimiento patrimonial',thirdPartyPurchase:true,thirdPartyRelationId:relationId,note:'Pago real a tarjeta con dinero de '+x.person});
+   if(receivedForPurchase>.005)entries.push({...common,id:uuid(),type:'personal_settlement',cardId:x.receiptMode==='card'?x.cardId:'',accountId:x.receiptMode==='card'?'':x.accountId,principal:receivedForPurchase,interest:0,amount:receivedForPurchase,category:'Movimiento patrimonial',note:'Dinero recibido de '+x.person+' para la compra'});
+    const relations=[relation];
+    if(surplus>.005){const extraId=uuid();relations.push({id:extraId,person:x.person,contactId:contact?.id||'',direction:'borrowed',principal:surplus,currency:x.currency,cardId:x.receiptMode==='card'?x.cardId:'',accountId:x.receiptMode==='card'?'':x.accountId,date:x.date,dueDate:x.dueDate,note:'Sobrante de la compra · por devolver',openingMode:'new',source:'third_party_purchase_surplus',createdAt:now});
+     entries.push({...common,id:uuid(),personalLoanId:extraId,type:'personal_issue',cardId:x.receiptMode==='card'?x.cardId:'',accountId:x.receiptMode==='card'?'':x.accountId,amount:surplus,category:'Movimiento patrimonial',note:'Sobrante por devolver a '+x.person});}
+   if(x.receiptMode==='account_and_paid')entries.push({id:uuid(),created:now,type:'card_payment',date:x.date,cardId:x.cardId,accountId:x.accountId,currency:x.currency,amount:x.paidAmount,sourceAmount:x.paidAmount,paymentTax:0,paymentFee:0,category:'Movimiento patrimonial',thirdPartyPurchase:true,thirdPartyRelationId:relationId,note:'Pago real a tarjeta con dinero de '+x.person});
    // All local changes and their source link are appended together. No duplicate expense/income.
-   db.personalLoans.push(relation);db.transactions.push(...entries);
+   db.personalLoans.push(...relations);db.transactions.push(...entries);
    const saved=persist();
-   if(saved===false){db.transactions.splice(db.transactions.length-entries.length,entries.length);db.personalLoans.pop();if(typeof v99Invalidate==='function')v99Invalidate();throw Error('No se pudo guardar. Inicia sesión y vuelve a intentarlo; no se registró ningún movimiento.');}
-   draft=null;closeModal();render();toast('Movimiento rápido guardado. Te deben '+fmt(Math.max(0,x.purchase-x.received),x.currency)+'.');
+   if(saved===false){db.transactions.splice(db.transactions.length-entries.length,entries.length);db.personalLoans.splice(db.personalLoans.length-relations.length,relations.length);if(typeof v99Invalidate==='function')v99Invalidate();throw Error('No se pudo guardar. Inicia sesión y vuelve a intentarlo; no se registró ningún movimiento.');}
+   draft=null;closeModal();render();toast('Movimiento rápido guardado. '+(surplus>.005?'Por devolver ':due>.005?'Por cobrar ':'Sin saldo pendiente · ')+fmt(surplus||due,x.currency)+'.');
   }catch(e){processing=false;if(button)button.disabled=false;toast(e.message||'No se pudo registrar la compra.');}
  }
  document.addEventListener('click',function(e){
