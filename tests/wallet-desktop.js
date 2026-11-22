@@ -59,8 +59,24 @@ module.exports=async function walletDesktop(browser){
 
   const evidence=process.env.WALLET_VISUAL_DIR;
   if(evidence)fs.mkdirSync(evidence,{recursive:true});
+  const navigation=p.getByRole('navigation',{name:'Módulos financieros'});
+  const destination=id=>navigation.locator(`button[data-id="${id}"]`);
+  const railGeometry=()=>navigation.evaluate(el=>{
+   const rail=el.closest('aside').getBoundingClientRect();
+   const main=document.querySelector('main.main').getBoundingClientRect();
+   return {left:rail.left,width:rail.width,mainLeft:main.left};
+  });
   for(const [width,height] of [[1672,941],[1440,900],[1280,800],[1024,768]]){
    await p.setViewportSize({width,height});
+   await destination('overview').click();
+   const compactRail=await railGeometry();
+   assert.ok(compactRail.width>0&&compactRail.width<110,'Inicio usa la barra lateral compacta');
+   for(const page of ['register','banks','wallet']){
+    await destination(page).click();
+    await p.locator(`main.world-${page}`).waitFor();
+    assert.equal(await destination(page).getAttribute('aria-current'),'page');
+    assert.deepEqual(await railGeometry(),compactRail,`Navegación de ${page} a ${width}px`);
+   }
    assert.ok(await fit(),'Desborde en escritorio a '+width+'px');
    if(evidence)await p.screenshot({path:path.join(evidence,'wallet-pc-'+width+'.png'),fullPage:true,animations:'disabled'});
   }

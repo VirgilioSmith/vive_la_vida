@@ -203,30 +203,6 @@
   #app .vWalletPc-legend button b {font-weight:650;white-space:nowrap}
   #app .vWalletPc-note {margin:12px 0 0;color:var(--wallet-muted);font-size:12px}
   body.privacy-finanzas #app .vWalletPc :is(.vWalletPc-stat strong,.vWalletPc-stat small,.vWalletPc-limit strong,.vWalletPc-limit small,.vWalletPc-limit-row > b,.vWalletPc-limit-row small,.vWalletPc-chart-total strong,.vWalletPc-cuts button b) {filter:blur(7px);user-select:none}
-  html body #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active {color:#08786d!important}
-  html body #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active svg {color:#08786d!important;stroke:#08786d!important}
-  html body #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active::before {background:#08786d!important}
-}
-@media (min-width:1350px){
-  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) {--wallet-rail-width:clamp(186px,15vw,252px)}
-  html body[data-menu-layout="rail"] #app#app main.vWalletPc-world {
-    margin-left:var(--wallet-rail-width)!important;width:calc(100% - var(--wallet-rail-width))!important;
-  }
-  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) .sidebar.rail-sidebar {
-    width:var(--wallet-rail-width)!important;max-width:none!important;padding-inline:clamp(12px,1.4vw,24px)!important;
-    align-items:stretch!important;background:linear-gradient(155deg,#f9fafc,#f3f7f9 74%,#cee9e3)!important;
-  }
-  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) .sidebar.rail-sidebar :is(.rail-main,.rail-bottom) {
-    width:100%!important;align-items:stretch!important;
-  }
-  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) .rail-action[data-wallet-label] {
-    display:flex!important;justify-content:flex-start!important;align-items:center;gap:12px;width:100%!important;
-    padding-inline:10px!important;color:#172039!important;text-align:left;
-  }
-  #app:has(.vWalletPc-world) .rail-action[data-wallet-label]::after {content:attr(data-wallet-label);font-size:14px;font-weight:650;white-space:nowrap}
-  #app:has(.vWalletPc-world) .rail-action[data-wallet-label] .rail-tooltip {display:none!important}
-  html body[data-menu-layout="rail"] #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active {background:#d4ebe6!important;color:#005b55!important}
-  html body #app#app:has(.vWalletPc-world) .rail-action[data-id="wallet"].active::before {display:none!important}
 }
 @media (min-width:791px) and (max-width:1120px){
   #app .vWalletPc-grid {grid-template-columns:minmax(146px,.78fr) minmax(0,1.7fr)}
