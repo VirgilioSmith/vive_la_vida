@@ -1958,6 +1958,21 @@ function vBanksPrior(groups){
  const prior=v134WealthSnapshot(cut,groups),debt=prior.cards+prior.loans;
  return {net:prior.liquid+prior.certificates-debt,funds:prior.liquid,debt};
 }
+/* Comparación del límite sólo con condiciones históricas realmente registradas. */
+function vBanksPriorLimit(groups){
+ const date=dateObj(today()),cut=dateStr(new Date(date.getFullYear(),date.getMonth(),0));
+ let dop=0,usd=0,known=false;
+ for(const card of groups.cards){
+  const started=[card.acquiredOn,card.opened].filter(day=>typeof day==='string'&&/^\d{4}-\d{2}-\d{2}/.test(day)).sort()[0];
+  if(started&&started>cut)continue;
+  const version=financeRuleList('tarjeta.condiciones',card.id).filter(v=>v.desde<=cut).at(-1);
+  const values=version?.valor;
+  if(!values||!Number.isFinite(Number(values.limitDOP))||!Number.isFinite(Number(values.limitUSD)))return null;
+  dop+=Math.max(0,num(values.limitDOP));usd+=Math.max(0,num(values.limitUSD));
+  known=true;
+ }
+ return known?vWalletPcEquivalent(dop,usd):null;
+}
 function vBanksCertificates(certificates,invested,bankId=null){
  const entries=certificates.map(c=>({c,p:certProjection(c)}));
  const estimated=entries.filter(({c})=>c.startDate&&c.maturityDate&&c.rate!=null&&c.rate!==''&&Number.isFinite(Number(c.rate)));
@@ -2094,7 +2109,7 @@ function vBanksDashboard(){
  const controls=selected?`<details class="vBanksPc-controls"><summary aria-label="Opciones de la institución">${icon('arrow')}</summary><div>${productControls('bank',bankId,selected.archived)}<button type="button" class="btn ghost sm" data-act="editBank" data-id="${sanitize(bankId)}">Editar</button><button type="button" class="btn ghost sm" data-act="bankHistory" data-id="${sanitize(bankId)}">Historial</button></div></details>`:'';
  const detail=ui.vBanksProductDetail;
  const activeCard=detail?.kind==='cards'?active.cards.find(c=>c.id===detail.id):null;
- const financial=[['Patrimonio neto',f.net,'wallet',prior.net],['Fondos',f.funds,'coins2',prior.funds],['Deudas totales',f.debt,'card',prior.debt],['Límite total',f.limit,'landmark',null]];
+ const financial=[['Patrimonio neto',f.net,'wallet',prior.net],['Fondos',f.funds,'coins2',prior.funds],['Deudas totales',f.debt,'card',prior.debt],['Límite total',f.limit,'landmark',!mobile?vBanksPriorLimit(active):null]];
  const totals=`<dl class="vBanksPc-bank-totals"><div><dt>Fondos</dt><dd>${money(f.funds)}</dd></div><div><dt>Deudas</dt><dd>${money(f.debt)}</dd></div><div><dt>Posición neta</dt><dd class="${f.net<0?'negative':'positive'}">${f.net>0?'+':''}${money(f.net)}</dd></div></dl>`;
  // Contexto de crédito únicamente en el resumen PC; los indicadores originales se conservan arriba.
  const creditContext=!mobile&&active.cards.length?`<p class="vBanksPc-credit-context"><span>Límite ${money(f.limit)}</span><span>Utilización ${vBanksFlags(f)}</span></p>`:'';
@@ -2117,7 +2132,7 @@ function vBanksDashboard(){
   ${products}${history}${nonbank}${insights}${ledger}
  </div>`;
  return `<div class="vBanksPc">
- <div class="vBanksPc-metrics" aria-label="Situación bancaria">${financial.map(([label,value,glyph,previous],i)=>`<div class="vBanksPc-metric"><span class="vBanksPc-stat-icon">${icon(glyph)}</span><div><span>${label}</span><strong>${money(value)}</strong>${i===3?`<small>${vWalletPcSplit(...f.limits,0)}</small>`:vBanksChange(value,previous,i===2)}</div></div>`).join('')}</div>
+ <div class="vBanksPc-metrics" aria-label="Situación bancaria">${financial.map(([label,value,glyph,previous],i)=>`<div class="vBanksPc-metric"><span class="vBanksPc-stat-icon">${icon(glyph)}</span><div><span>${label}</span><strong>${money(value)}</strong>${i===3?`<small>${vWalletPcSplit(...f.limits,0)}</small>${vBanksChange(value,previous)}`:vBanksChange(value,previous,i===2)}</div></div>`).join('')}</div>
  <div class="vBanksPc-grid" aria-label="Instituciones y sus productos">
   <aside class="vBanksPc-bank-list" aria-label="Seleccionar institución"><header><h2>Mis bancos <small>(${institutions.length})</small></h2><button type="button" class="btn ghost sm" data-act="addBank" aria-label="Agregar institución">${icon('plus')}</button></header><div class="vBanksPc-bank-options">${options.map(x=>`<button type="button" class="vBanksPc-bank${(bankId||V_BANKS_ALL)===x.id?' is-selected':''}" data-act="bankDetails" data-id="${sanitize(x.id)}" aria-pressed="${(bankId||V_BANKS_ALL)===x.id}">${x.mark}<span><strong>${sanitize(x.name)}</strong><small>${sanitize(x.note)}</small></span><b class="${x.net>0?'positive':''}">${x.net>0?'+':''}${money(x.net)}</b>${icon('arrow')}</button>`).join('')}</div>${filters}</aside>
   <div class="vBanksPc-center"><section class="vBanksPc-institution"><div class="vBanksPc-institution-summary"><header class="vBanksPc-institution-head"><div>${logo}<div><h2>${name}</h2><p>${info}</p></div></div>${controls}</header>${totals}${creditContext}</div>${products}${history}${nonbank}</section></div>
