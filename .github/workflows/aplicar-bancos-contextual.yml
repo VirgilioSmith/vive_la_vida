@@ -1,0 +1,70 @@
+name: Bancos PC — centralizador contextual y Playwright
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/aplicar-bancos-contextual.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: bancos-contextual-main
+  cancel-in-progress: false
+jobs:
+  validar-y-publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Preparar y verificar parche acotado
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs'),zlib=require('node:zlib');
+          const raw=fs.readFileSync('scripts/banks-contextual.patch.br.b64','utf8').trim();
+          const patch=zlib.brotliDecompressSync(Buffer.from(raw,'base64')).toString('utf8');
+          const paths=[...patch.matchAll(/^\+\+\+ b\/(.+)$/gm)].map(x=>x[1].trim());
+          const expected=['src/app.js','src/banks-desktop.css','tests/bancos-patrimonio.js','index.html'];
+          if(JSON.stringify(paths)!==JSON.stringify(expected))throw Error('Archivos fuera de alcance: '+JSON.stringify(paths));
+          fs.writeFileSync('/tmp/banks-contextual.patch',patch);
+          console.log('Parche íntegro, sólo Bancos PC, pruebas y caché:',patch.length,'caracteres');
+          NODE
+          git apply --check /tmp/banks-contextual.patch
+          git apply /tmp/banks-contextual.patch
+          node --check src/app.js
+          node --check tests/bancos-patrimonio.js
+          git diff --check
+          git diff --name-only
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar Playwright y Chromium
+        run: |
+          npm i --no-save playwright@1
+          npx playwright install --with-deps chromium
+      - name: Playwright Bancos PC y regresión móvil
+        run: node tests/bancos-patrimonio.js
+        env:
+          BANKS_VISUAL_DIR: test-results/bancos-contextual
+      - name: Playwright Wallet PC para verificar aislamiento
+        run: |
+          node -e "(async()=>{const {chromium}=require('playwright');const b=await chromium.launch();try{await require('./tests/wallet-desktop')(b)}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1})"
+      - name: Evidencias visuales Playwright
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bancos-pc-contextual-playwright
+          path: test-results/bancos-contextual/
+          if-no-files-found: ignore
+      - name: Commit sólo en main tras pruebas aprobadas
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/app.js src/banks-desktop.css tests/bancos-patrimonio.js index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "feat(bancos): selector contextual de instituciones y cinco categorías PC"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD^)" || { echo "main cambió; no sobrescribir commits ajenos"; exit 1; }
+          git push origin HEAD:main
