@@ -3,7 +3,7 @@
     --movement-accent:var(--ui-readable,#08786d);
     --movement-ink:var(--ui-ink,#10182e);
     --movement-muted:var(--ui-muted,#465673);
-    --movement-line:var(--ui-line,#dbe7ec);
+    --movement-line:color-mix(in srgb,var(--movement-ink) 9%,transparent);
     --movement-edge:rgba(255,255,255,.78);
     --movement-surface:linear-gradient(135deg,rgba(255,255,255,.62),rgba(240,248,252,.28));
     --movement-control:rgba(255,255,255,.48);
@@ -44,41 +44,44 @@
     display:none!important;
   }
   .movement-summary{margin-bottom:16px}
-  .movement-summary-period{
-    display:flex;align-items:baseline;gap:8px;margin:0 4px 7px;
-    font-size:12px;font-weight:700;
-  }
-  .movement-summary-period > span::first-letter{text-transform:uppercase}
-  .movement-summary-period small{color:var(--movement-muted);font-weight:500;text-transform:none}
   .movement-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
   .movement-metric{
     --movement-series:var(--movement-accent);
-    display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:start;gap:9px;
-    min-width:0;min-height:100px;padding:14px;border:1px solid var(--movement-edge);
+    display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:10px;
+    min-width:0;min-height:105px;padding:14px 16px;border:1px solid var(--movement-edge);
     border-radius:22px;background:var(--movement-surface);box-shadow:var(--movement-shadow);
     backdrop-filter:blur(28px) saturate(140%);
   }
   .movement-metric-income{--movement-series:var(--movement-up)}
   .movement-metric-expense{--movement-series:var(--movement-down)}
   .movement-metric-icon{
-    display:grid;place-items:center;width:38px;aspect-ratio:1;border-radius:50%;
+    display:grid;place-items:center;width:40px;aspect-ratio:1;border-radius:50%;
     border:1px solid var(--movement-edge);color:var(--movement-series);
     background:color-mix(in srgb,var(--movement-series) 16%,transparent);
   }
   .movement-metric-icon svg{width:20px;height:20px}
+  .movement-metric > div{align-self:start;min-width:0}
   .movement-metric div>span{display:block;font-size:13px;font-weight:680;line-height:1.25}
   .movement-metric strong{
     display:block;margin:3px 0 4px;font-size:clamp(18px,1.8vw,29px);font-weight:820;
     line-height:1.08;letter-spacing:-.035em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
   }
   .movement-metric small{display:block;color:var(--movement-muted);font-size:11px;line-height:1.25}
+  .movement-metric-count small::first-letter{text-transform:uppercase}
   .movement-metric small .positive{color:var(--movement-up);font-weight:750}
   .movement-metric small .negative{color:var(--movement-down);font-weight:750}
-  .movement-bars,.movement-trend{width:clamp(36px,5vw,80px);height:36px;align-self:end;color:var(--movement-series)}
-  .movement-bars{display:flex;align-items:end;gap:4px}
-  .movement-bars i{width:100%;height:var(--bar);border-radius:4px 4px 1px 1px;background:linear-gradient(to top,currentColor,transparent)}
-  .movement-trend polygon{fill:color-mix(in srgb,currentColor 12%,transparent);stroke:none}
-  .movement-trend polyline{fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+  .movement-bars{
+    display:flex;align-items:end;justify-content:flex-end;gap:4px;
+    width:clamp(42px,5vw,78px);height:34px;align-self:center;color:var(--movement-series);
+  }
+  .movement-bars i{
+    flex:1;max-width:10px;height:var(--bar);border-radius:4px 4px 1px 1px;
+    background:linear-gradient(to top,currentColor,color-mix(in srgb,currentColor 35%,transparent));
+  }
+  .movement-bars-net .is-negative{color:var(--movement-down)}
+  .movement-bars.mixed i{align-self:flex-end;height:calc(var(--bar) / 2);margin-bottom:17px}
+  .movement-bars.mixed i.is-negative{align-self:flex-start;margin:17px 0 0;border-radius:1px 1px 4px 4px}
+  body.privacy-finanzas .movement-metric:not(.movement-metric-count) .movement-bars{visibility:hidden}
   html body #app#app #page #ledger-world.movement-desktop .ledger-card{
     padding:14px!important;background:var(--movement-surface)!important;
     border:1px solid var(--movement-edge)!important;border-radius:26px!important;
@@ -142,6 +145,9 @@
   }
   html body #app#app #page #ledger-world.movement-desktop .ledger-scroll tbody tr:hover td{
     background:color-mix(in srgb,var(--movement-accent) 4%,transparent);
+  }
+  html body #app#app #page #ledger-world.movement-desktop .ledger-scroll tbody tr:last-child td{
+    border-bottom:0!important;
   }
   html body #app#app #page #ledger-world.movement-desktop .v9-ledger-detail{
     display:flex!important;align-items:center!important;gap:6px;max-width:100%;

@@ -535,8 +535,8 @@ const asOf=events.filter(e=>e.date<=lc||(e.id==='opening-billed'&&e.cut<=lc)).re
 let billed=0,unbilled=0,overdue=0,dueMap={};for(const item of remaining){if(item.rem<=.001)continue;let due=cardDue(item.cut,c.dueDay);if(item.cut<=lc){billed+=item.rem;dueMap[due]=(dueMap[due]||0)+item.rem;if(due<today())overdue+=item.rem}else unbilled+=item.rem}
 const nextDue=Object.keys(dueMap).sort()[0]||null;let limit=ccy==='USD'?num(c.limitUSD):num(c.limitDOP),overdraft=ccy==='USD'?num(c.overdraftUSD):num(c.overdraftDOP),debt=Math.max(0,rnd(billed+unbilled-credit));let statements=db.statements.filter(s=>s.cardId===c.id&&s.currency===ccy).sort((a,b)=>b.cutDate.localeCompare(a.cutDate));let official=statements.find(s=>s.cutDate===lc)||null;let asOfOfficial=official?num(official.amount):null;let paidAfter=official?v115CardTransactions(c.id,ccy).filter(t=>t.date>lc&&t.date<=today()&&(['card_payment','card_reward','card_refund'].includes(t.type)||((t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed')||(t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent'))||(t.type==='adjustment'&&!t.accountId&&num(t.amount)<0))).reduce((s,t)=>s+(t.type==='adjustment'?-num(t.amount):num(t.amount)),0):0;
 return {debt,billed:rnd(Math.max(0,billed)),unbilled:rnd(Math.max(0,unbilled)),overdue:rnd(overdue),limit,overdraft,overdraftUsed:rnd(Math.min(overdraft,Math.max(0,debt-limit))),excess:rnd(Math.max(0,debt-limit-overdraft)),available:rnd(Math.max(0,limit-debt)),availableWithOverdraft:rnd(Math.max(0,limit+overdraft-debt)),util:limit?100*debt/limit:0,cut:lc,nextCut:nextCut(c.cutDay),nextDue,statementAtCut,official,officialAmount:asOfOfficial,officialRemaining:official?Math.max(0,rnd(asOfOfficial-paidAfter)):null,credit:rnd(credit),dueMap,minimum:Math.max(0,rnd(billed*num(c.minPct||5)/100)),automatic:true,cycleLedger:v169CardCycleLedger(c,ccy)};}
-function v102MonthlyTotalsRaw(year,month){const start=periodStart(year,month),end=periodEnd(year,month);let income=0,expense=0,incomeBy={},expenseBy={},incomeSubBy={},expenseSubBy={},cashIn=0,cashOut=0,cardPay=0,principal=0,interest=0;
-for(const t of db.transactions){if(t.date<start||t.date>end)continue;const fx=(n,c)=>num(n)*(c==='USD'?num(t.fxRateSnapshot||db.settings.fx):1);let v=fx(t.amount,t.currency||'DOP');if(['expense','card_payment'].includes(t.type)){let fee=fx(num(t.paymentTax)+num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP');if(fee>0){expense+=fee;cashOut+=fee;expenseBy['Impuestos y comisiones']=(expenseBy['Impuestos y comisiones']||0)+fee;for(const [name,val] of [['Impuesto bancario',fx(num(t.paymentTax),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')],[t.paymentSpeed==='instant'?'Pago al instante':'Otros cargos bancarios',fx(num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')]])if(val>0)expenseSubBy['Impuestos y comisiones||'+name]=(expenseSubBy['Impuestos y comisiones||'+name]||0)+val;}}if(['income','card_reward','bank_reward'].includes(t.type)){income+=v;if(['income','bank_reward'].includes(t.type))cashIn+=v;incomeBy[t.category||'Otros ingresos']=(incomeBy[t.category||'Otros ingresos']||0)+v;if(t.subcategory){let key=(t.category||'Otros ingresos')+'||'+t.subcategory;incomeSubBy[key]=(incomeSubBy[key]||0)+v}}
+function v102MonthlyTotalsRaw(year,month,transactions=db.transactions,includeEnding=true){const start=periodStart(year,month),end=periodEnd(year,month);let income=0,expense=0,incomeBy={},expenseBy={},incomeSubBy={},expenseSubBy={},cashIn=0,cashOut=0,cardPay=0,principal=0,interest=0;
+for(const t of transactions){if(t.date<start||t.date>end)continue;const fx=(n,c)=>num(n)*(c==='USD'?num(t.fxRateSnapshot||db.settings.fx):1);let v=fx(t.amount,t.currency||'DOP');if(['expense','card_payment'].includes(t.type)){let fee=fx(num(t.paymentTax)+num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP');if(fee>0){expense+=fee;cashOut+=fee;expenseBy['Impuestos y comisiones']=(expenseBy['Impuestos y comisiones']||0)+fee;for(const [name,val] of [['Impuesto bancario',fx(num(t.paymentTax),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')],[t.paymentSpeed==='instant'?'Pago al instante':'Otros cargos bancarios',fx(num(t.paymentFee),t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency||'DOP')]])if(val>0)expenseSubBy['Impuestos y comisiones||'+name]=(expenseSubBy['Impuestos y comisiones||'+name]||0)+val;}}if(['income','card_reward','bank_reward'].includes(t.type)){income+=v;if(['income','bank_reward'].includes(t.type))cashIn+=v;incomeBy[t.category||'Otros ingresos']=(incomeBy[t.category||'Otros ingresos']||0)+v;if(t.subcategory){let key=(t.category||'Otros ingresos')+'||'+t.subcategory;incomeSubBy[key]=(incomeSubBy[key]||0)+v}}
 if(t.type==='expense'||t.type==='card_charge'||t.type==='card_refund'){let delta=t.type==='card_refund'?-v:v;expense+=delta;expenseBy[t.category||'Otros gastos']=(expenseBy[t.category||'Otros gastos']||0)+delta;if(t.subcategory){let key=(t.category||'Otros gastos')+'||'+t.subcategory;expenseSubBy[key]=(expenseSubBy[key]||0)+delta};if(t.type==='expense')cashOut+=delta}
 if(t.type==='loan_payment'){let amount=fx(t.interest||0,t.currency||'DOP')+fx(t.fee||0,t.currency||'DOP')+fx(t.insurance||0,t.currency||'DOP');expense+=amount;expenseBy['Deudas e intereses']=(expenseBy['Deudas e intereses']||0)+amount;interest+=amount;const ccy=t.paymentFeeCurrency||account(t.accountId)?.currency||t.currency;const taxCost=fx(num(t.paymentTax)+num(t.paymentFee),ccy);if(taxCost){expense+=taxCost;expenseBy['Impuestos y comisiones']=(expenseBy['Impuestos y comisiones']||0)+taxCost;for(const [sub,cost] of [['Impuesto bancario',fx(num(t.paymentTax),ccy)],['Otros cargos bancarios',fx(num(t.paymentFee),ccy)]])if(cost>0)expenseSubBy['Impuestos y comisiones||'+sub]=(expenseSubBy['Impuestos y comisiones||'+sub]||0)+cost;}cashOut+=fx(t.sourceAmount||t.amount,account(t.accountId)?.currency||t.currency)+taxCost}
 if(t.type==='personal_issue'){let l=personalLoan(t.personalLoanId);if(l&&!t.cardId){if(l.direction==='borrowed')cashIn+=v;else cashOut+=v}}
@@ -547,7 +547,7 @@ if(t.type==='transfer'){let src=account(t.accountId),fee=fx(num(t.transferFee),s
  if(t.type==='certificate_funding')cashOut+=fx(t.amount,t.currency);
  if(t.type==='certificate_redemption')cashIn+=fx(t.amount,t.currency)
 }
-let ending=db.accounts.reduce((s,a)=>s+fx(getAccountBalance(a,end),a.currency),0);
+let ending=includeEnding?db.accounts.reduce((s,a)=>s+fx(getAccountBalance(a,end),a.currency),0):0;
 return {income:rnd(income),expense:rnd(expense),net:rnd(income-expense),ending:rnd(ending),cashIn:rnd(cashIn),cashOut:rnd(cashOut),cardPay:rnd(cardPay),interest:rnd(interest),incomeBy,expenseBy,incomeSubBy,expenseSubBy};}
 const monthStats=()=>{let [y,m]=ui.month.split('-').map(Number);return monthlyTotals(y,m)};
 const totalLiquid=()=>db.accounts.reduce((v,a)=>v+fx(getAccountBalance(a),a.currency),0);
@@ -3383,35 +3383,38 @@ function v265BalanceHTML(tx,mode='desktop'){
 function v265LedgerModelCached(){return v99Memo('v265:transaction:post-balance',v265LedgerModel)}
 
 function movementMonthSummary(){
- const period=v99Period();
- const counts=new Map();
- for(const t of db.transactions){
-  const month=String(t.date||'').slice(0,7);
-  counts.set(month,(counts.get(month)||0)+1);
- }
- const months=Array.from({length:6},(_,i)=>{
-  const month=plusMonths(period+'-01',i-5).slice(0,7);
-  const [year,number]=month.split('-').map(Number);
-  return {...monthlyTotals(year,number),count:counts.get(month)||0};
- });
- const [previous,current]=months.slice(-2);
+ const period=v99Period(),date=dateObj(period+'-01');
+ const [year,month]=period.split('-').map(Number);
+ const previousDate=dateObj(plusMonths(period+'-01',-1));
+ const previousPeriod=dateStr(previousDate).slice(0,7);
+ const movements=db.transactions.filter(t=>t.date.startsWith(period+'-'));
+ const previousCount=db.transactions.filter(t=>t.date.startsWith(previousPeriod+'-')).length;
+ const current={...monthlyTotals(year,month),count:movements.length};
+ const previous={...monthlyTotals(previousDate.getFullYear(),previousDate.getMonth()+1),count:previousCount};
+
+ const days=new Set(movements.map(t=>Number(t.date.slice(8,10))));
+ const first=days.size?Math.min(...days):1;
+ const last=days.size?Math.max(...days):first;
+ const step=Math.ceil((last-first+1)/6);
+ const buckets=Array.from({length:Math.ceil((last-first+1)/step)},()=>[]);
+ for(const t of movements)buckets[Math.floor((Number(t.date.slice(8,10))-first)/step)].push(t);
+ const series=buckets.map(list=>({...v102MonthlyTotalsRaw(year,month,list,false),count:list.length}));
+ const title=date.toLocaleDateString('es-DO',{month:'long',year:'numeric'});
  const bars=key=>{
-  const limit=Math.max(1,...months.map(month=>Math.abs(month[key])));
-  return `<span class="movement-bars" aria-hidden="true">${months.map(month=>`<i style="--bar:${100*Math.abs(month[key])/limit}%"></i>`).join('')}</span>`;
+  const values=series.map(item=>item[key]);
+  const max=Math.max(1,...values.map(Math.abs));
+  if(values.length<2||values.every(value=>value===0))return '';
+  const mixed=values.some(value=>value<0)&&values.some(value=>value>0);
+  return `<span class="movement-bars${key==='net'?' movement-bars-net':''}${mixed?' mixed':''}" aria-hidden="true">${values.map(value=>`<i class="${value<0?'is-negative':''}" style="--bar:${Math.abs(value)/max*100}%"></i>`).join('')}</span>`;
  };
- const net=months.map(month=>month.net);
- const floor=Math.min(0,...net),range=Math.max(0,...net)-floor||1;
- const points=net.map((value,i)=>`${2+i*15},${(30-25*(value-floor)/range).toFixed(1)}`).join(' ');
- const trend=`<svg class="movement-trend" viewBox="0 0 80 34" aria-hidden="true"><polygon points="2,34 ${points} 77,34"/><polyline points="${points}"/></svg>`;
  const render=([key,label,glyph])=>{
   const value=key==='count'?current[key].toLocaleString('es-DO'):money(current[key]);
   const delta=previous[key]>0?(current[key]/previous[key]-1)*100:null;
-  const prior=key==='net'?'Ingresos menos egresos':delta===null?'Sin base de comparación':`<span class="${delta===0?'':(key==='expense'?delta<0:delta>0)?'positive':'negative'}">${delta>0?'+':''}${delta.toFixed(1)}%</span> vs. mes anterior`;
-  return `<article class="movement-metric movement-metric-${key}"><span class="movement-metric-icon">${icon(glyph)}</span><div><span>${label}</span><strong class="${key==='count'?'':'money'}">${value}</strong><small>${prior}</small></div>${key==='net'?trend:bars(key)}</article>`;
+  const variation=delta===null?'':`<span class="${delta===0?'':(key==='expense'?delta<0:delta>0)?'positive':'negative'}">${delta>0?'+':''}${delta.toFixed(1)}%</span> vs. mes anterior`;
+  const caption=key==='count'?[title,variation].filter(Boolean).join(' · '):key==='net'?'Ingresos menos egresos':variation;
+  return `<article class="movement-metric movement-metric-${key}"><span class="movement-metric-icon">${icon(glyph)}</span><div><span>${label}</span><strong class="${key==='count'?'':'money'}">${value}</strong>${caption?`<small>${caption}</small>`:''}</div>${bars(key)}</article>`;
  };
- const date=dateObj(period+'-01');
- const title=date.toLocaleDateString('es-DO',{month:'long',year:'numeric'});
- return `<section class="movement-summary" aria-label="Resumen mensual"><div class="movement-summary-period"><span>${title}</span><small>RD$ equivalentes</small></div><div class="movement-metrics">${[
+ return `<section class="movement-summary" aria-label="Resumen de ${title}"><div class="movement-metrics">${[
   ['count','Total movimientos','layers'],['income','Ingresos','up'],['expense','Egresos','down'],['net','Balance neto','wallet']
  ].map(render).join('')}</div></section>`;
 }
