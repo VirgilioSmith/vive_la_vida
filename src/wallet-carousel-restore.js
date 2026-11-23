@@ -91,6 +91,20 @@
       if(Math.abs(next-rail.scrollLeft)>1)rail.scrollTo({left:next,behavior:'instant'});
     }
   }
+
+  // Also override the old global chooser used by delegated handlers and V158.
+  // All entry points must update the same in-place selection, never render().
+  if(typeof v139WalletChooseCard==='function'){
+    const legacyChoose=v139WalletChooseCard;
+    v139WalletChooseCard=function(id){
+      const rail=app.querySelector('main.world-wallet .wallet-summary-external .v68-wallet-gallery');
+      if(mobile.matches && rail?.isConnected){
+        selectInPlace(rail,id,true);
+        return;
+      }
+      return legacyChoose(id);
+    };
+  }
   function nearestVisible(rail){
     const x=rail.getBoundingClientRect().left;
     let chosen=null,score=Infinity;
