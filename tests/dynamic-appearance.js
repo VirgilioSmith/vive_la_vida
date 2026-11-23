@@ -13,16 +13,16 @@ const appRoutes=['overview','register','income','expenses','wallet','banks','acc
 async function checkApplicationRoutes(browser,width,mode){
  process.env.THEME=mode;
  delete process.env.TOUCH;
- const {ctx,p}=await open(browser,width,900);
+ const {ctx,p}=await open(browser,width,width<791?844:900);
  const overflow=[],shortControls=[],tinyText=new Map(),errors=[];
  p.on('pageerror',error=>errors.push(error.message));
  try{
   for(const route of appRoutes){
    await go(p,route);
-   const audit=await p.locator('#page').evaluate(page=>{
+   const audit=await p.locator('#app').evaluate(app=>{
     const sizeError=document.documentElement.scrollWidth>innerWidth;
     const smallControls=[],smallLabels=[];
-    for(const element of page.querySelectorAll('*')){
+    for(const element of app.querySelectorAll('*')){
      const {width,height}=element.getBoundingClientRect();
      const css=getComputedStyle(element);
      if(!width||!height||css.visibility==='hidden')continue;
@@ -30,7 +30,8 @@ async function checkApplicationRoutes(browser,width,mode){
       smallControls.push([element.tagName,element.id||element.classList[0]||element.getAttribute('type'),Math.round(width),Math.round(height)]);
      }
      if(!element.children.length&&element.textContent.trim().length>1&&parseFloat(css.fontSize)<11){
-      smallLabels.push([element.tagName,element.classList[0]||element.parentElement.classList[0]||''].join('.'));
+      const label=[element,element.parentElement,element.parentElement?.parentElement].map(node=>node?.classList[0]).find(Boolean)||element.tagName;
+      smallLabels.push(label);
      }
     }
     return {sizeError,smallControls,smallLabels};
@@ -123,10 +124,10 @@ async function themeMatrix(browser,width,mode,activePalettes){
  const browser=await chromium.launch();
  try{
   for(const width of [390,1440])for(const mode of ['light','black'])await checkApplicationRoutes(browser,width,mode);
-  for(const width of [320,390,430,768,1024,1280,1440,1920]){
+  for(const width of [320,360,390,430,768,1024,1280,1440,1920]){
    const activePalettes=[390,1440].includes(width)?palettes:['ocean'];
    for(const mode of ['light','black'])await themeMatrix(browser,width,mode,activePalettes);
   }
-  console.log('Apariencia: ocho anchos en Claro y Black, con cuatro acentos a 390 y 1440 px.');
+  console.log('Apariencia: nueve anchos en Claro y Black, con cuatro acentos a 390 y 1440 px.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
