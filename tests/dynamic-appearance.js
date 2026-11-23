@@ -9,17 +9,19 @@ const go=(p,route)=>p.evaluate(route=>window.__T.go(route),route);
 const style=(p,selector,prop)=>p.locator(selector).first().evaluate((el,prop)=>getComputedStyle(el)[prop],prop);
 const token=(p,selector,name)=>p.locator(selector).first().evaluate((el,name)=>getComputedStyle(el).getPropertyValue(name).trim(),name);
 const palettes=['coral','ocean','emerald','amber'];
-async function checkSharedGlass(page,mobile){
+async function checkSharedGlass(page,width,mode){
+ const mobile=width<791;
  const surfaces=[
   ['income','.income-distribution'],
   ['expenses','.expenses-distribution'],
-  ['register','.ledger-card'],
+  ['register',mobile?'.v708-movements :is(.v708-row-stack,.v708-empty)':'.ledger-card'],
   mobile?['mobilehub','.v431-tile']:['overview','.ff-balance']
  ];
  for(const [route,selector] of surfaces){
   await go(page,route);
   assert.equal(await style(page,selector,'backdropFilter'),'blur(28px) saturate(1.4)',`${route}: shared glass`);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${route}: page fits the viewport`);
+  if(evidence)await page.screenshot({path:path.join(evidence,`glass-${route}-${width}-${mode}.png`),animations:'disabled'});
  }
  if(mobile){
   await go(page,'wallet');
@@ -30,7 +32,7 @@ async function checkSharedGlass(page,mobile){
   assert.ok(targets.length&&targets.every(size=>size>=24),'Wallet carousel: touch targets of at least 24px');
  }
 }
-async function themeMatrix(browser,width,mode){
+async function themeMatrix(browser,width,mode,activePalettes){
  const mobile=width<791;
  process.env.THEME=mode;
  if(mobile)process.env.TOUCH='1';else delete process.env.TOUCH;
@@ -38,7 +40,7 @@ async function themeMatrix(browser,width,mode){
  const errors=[];p.on('pageerror',e=>errors.push(e.message));
  try{
   const seen={};let values;
-  for(const palette of palettes){
+  for(const palette of activePalettes){
    await p.evaluate(palette=>{const t=window.__T;t.dbg().settings.paletteChoice=palette;t.go('overview');},palette);
    const ambient=await style(p,'body','backgroundImage');
    assert.match(ambient,/radial-gradient/);assert.notEqual(ambient,seen.ambient);seen.ambient=ambient;
@@ -75,8 +77,18 @@ async function themeMatrix(browser,width,mode){
     }
    }
   }
-  await checkSharedGlass(p,mobile);
+  await checkSharedGlass(p,width,mode);
   assert.deepEqual(errors,[]);
  }finally{await ctx.close();}
 }
-(async()=>{if(evidence)fs.mkdirSync(evidence,{recursive:true});const browser=await chromium.launch();try{for(const width of [320,390,1280,1672])for(const mode of ['light','black'])await themeMatrix(browser,width,mode);console.log('Dynamic appearance: 4 accents, 2 modes, 4 widths, four routes.');}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+(async()=>{
+ if(evidence)fs.mkdirSync(evidence,{recursive:true});
+ const browser=await chromium.launch();
+ try{
+  for(const width of [320,390,430,768,1024,1280,1440,1920]){
+   const activePalettes=[390,1440].includes(width)?palettes:['ocean'];
+   for(const mode of ['light','black'])await themeMatrix(browser,width,mode,activePalettes);
+  }
+  console.log('Apariencia: ocho anchos en Claro y Black, con cuatro acentos a 390 y 1440 px.');
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});
