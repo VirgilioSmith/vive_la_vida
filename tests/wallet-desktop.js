@@ -59,9 +59,30 @@ module.exports=async function walletDesktop(browser){
   assert.equal(await wallet.locator('.wallet-consumption-split').innerText(),'RD$14,000.00 · US$100.00');
   const slices=p.locator('.vWalletPc-chart circle[role="button"]');
   assert.equal(await slices.count(),2);
+  assert.deepEqual(await slices.evaluateAll(all=>all.map(el=>getComputedStyle(el).stroke)),['rgb(0, 121, 110)','rgb(50, 98, 239)']);
   const portions=await slices.evaluateAll(all=>all.map(el=>parseFloat(el.getAttribute('stroke-dasharray'))));
   assert.ok(Math.abs(portions[0]-100*15800/19800)<1e-8);
   assert.ok(Math.abs(portions[0]+portions[1]-100)<1e-8);
+  const shares=wallet.locator('.wallet-consumption-share');
+  assert.deepEqual(await shares.allTextContents(),['79.8%','20.2%']);
+  await p.evaluate(()=>{
+   const t=window.__T,d=t.dbg();
+   d.cards.push({...d.cards[0],id:'pc-card-refund',name:'Tarjeta con devolución'});
+   d.transactions.push({id:'pc-refund-only',cardId:'pc-card-refund',type:'card_refund',currency:'DOP',amount:500,date:'2021-01-01'});
+   t.inv();
+   t.go('wallet');
+  });
+  assert.equal(await amount('.vWalletPc-chart-total strong'),19300);
+  assert.equal(await slices.count(),2,'Una devolución neta no debe ocultar el consumo positivo');
+  assert.deepEqual(await shares.allTextContents(),['79.8%','20.2%','—']);
+  assert.match(await wallet.locator('.vWalletPc-consumption .vWalletPc-note').innerText(),/devoluciones se incluyen en el total/);
+  await p.evaluate(()=>{
+   const t=window.__T,d=t.dbg();
+   d.cards.pop();
+   d.transactions.pop();
+   t.inv();
+   t.go('wallet');
+  });
 
   const evidence=process.env.WALLET_VISUAL_DIR;
   if(evidence)fs.mkdirSync(evidence,{recursive:true});

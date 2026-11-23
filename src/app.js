@@ -1453,19 +1453,23 @@ const vWalletPcUsage=(debt,limit)=>limit>0?Math.max(0,100*debt/limit):0;
 
 function vWalletPcConsumption(list, inWallet){
  const {byCard,totals}=v1301WalletConsumption(list);
- const representable=!totals.missingFx&&list.every(c=>byCard.get(c.id).equivalent>=0);
+ const hasNegative=list.some(c=>byCard.get(c.id).equivalent<0);
+ const chartTotal=totals.missingFx?0:inWallet
+  ?list.reduce((sum,c)=>sum+Math.max(0,byCard.get(c.id).equivalent),0)
+  :hasNegative?0:totals.equivalent;
  const palette=['#00796e','#3262ef','#9361f0','#d9a929','#d85671','#2294aa','#728b35','#a9548e'];
  const colors=new Map(list.map(c=>String(c.id)).sort().map((id,i)=>[id,palette[i]||`hsl(${(i*137.508)%360} 65% 43%)`]));
  const rows=list.map(c=>{
   const data=byCard.get(c.id);
-  const total=data.equivalent,share=representable&&totals.equivalent>0?100*total/totals.equivalent:0;
+  const total=data.equivalent,share=chartTotal>0?Math.min(100,100*Math.max(0,total)/chartTotal):0;
   return {c,data,share,total,color:colors.get(String(c.id))};
  }).sort((a,b)=>b.total-a.total);
 
  const total=totals.missingFx?'—':vWalletPcAmount(totals.equivalent);
  const selected=rows.find(r=>String(r.c.id)===ui.vWalletPcConsumption);
  const detail=r=>r?`${r.data.missingFx?'—':vWalletPcAmount(r.total)} · ${vWalletPcSplit(r.data.DOP,r.data.USD)}`:vWalletPcSplit(totals.DOP,totals.USD);
- const rowLabel=r=>`${bankOf(r.c)||r.c.name} · ${r.c.name} · ${detail(r)}`;
+ const shareText=r=>chartTotal>0&&r.total>=0?(r.share>0&&r.share<.1?'<0.1%':r.share.toFixed(1)+'%'):'—';
+ const rowLabel=r=>`${bankOf(r.c)||r.c.name} · ${r.c.name} · ${detail(r)}${inWallet&&shareText(r)!=='—'?' · '+shareText(r):''}`;
  const select=r=>`data-act="walletPcConsumption" data-id="${sanitize(r.c.id)}"`;
  let offset=0;
  return `<section class="vWalletPc-panel vWalletPc-consumption" aria-labelledby="vWalletPc-consumption-title">
@@ -1479,16 +1483,18 @@ function vWalletPcConsumption(list, inWallet){
      ${rows.map(r=>{
       if(!r.share)return '';
       const start=offset;offset+=r.share;
-      return `<circle ${select(r)} cx="60" cy="60" r="50" pathLength="100" stroke="${r.color}" stroke-dasharray="${r.share} ${100-r.share}" stroke-dashoffset="${-start}" transform="rotate(-90 60 60)" role="button" tabindex="0" aria-label="${sanitize(rowLabel(r))}" aria-pressed="${r===selected}" data-chart-tip="${sanitize(rowLabel(r))}"></circle>`;
+      return `<circle ${select(r)} cx="60" cy="60" r="50" pathLength="100" style="stroke:${r.color}" stroke-dasharray="${r.share} ${100-r.share}" stroke-dashoffset="${-start}" transform="rotate(-90 60 60)" role="button" tabindex="0" aria-label="${sanitize(rowLabel(r))}" aria-pressed="${r===selected}" data-chart-tip="${sanitize(rowLabel(r))}"></circle>`;
      }).join('')}
     </svg>
     ${inWallet?`<div class="wallet-chart-count"><strong>${list.length}</strong><span>${list.length===1?'tarjeta':'tarjetas'}</span></div>`:`<div class="vWalletPc-chart-total" aria-live="polite"><strong>${selected?(selected.data.missingFx?'—':vWalletPcAmount(selected.total)):total}</strong><span>${selected?sanitize(bankOf(selected.c)||selected.c.name):'consumo'}</span></div>`}
    </div>
    ${inWallet?`<div class="wallet-chart-data"><div class="vWalletPc-chart-total" aria-live="polite"><strong>${selected?(selected.data.missingFx?'—':vWalletPcAmount(selected.total)):total}</strong>${selected?`<span>${sanitize(bankOf(selected.c)||selected.c.name)}</span>`:''}</div><div class="wallet-consumption-split" aria-live="polite" aria-label="Consumo por moneda">${vWalletPcSplit((selected?.data||totals).DOP,(selected?.data||totals).USD)}</div>`:''}
-   <div class="vWalletPc-legend">${rows.map(r=>`<button type="button" ${select(r)} title="${sanitize(rowLabel(r))}" aria-label="${sanitize(rowLabel(r))}" aria-pressed="${r===selected}"><i style="--slice:${r.color}"></i>${inWallet?`<span class="vWalletPc-product-mark" aria-hidden="true">${v1002BankGlyph(r.c,'card')}</span>`:''}<span>${sanitize(bankOf(r.c)||r.c.name)}</span><b>${inWallet?r.data.missingFx?'—':vWalletPcAmount(r.total):representable?r.share.toFixed(1)+'%':'—'}</b></button>`).join('')}</div>
+   <div class="vWalletPc-legend">${rows.map(r=>`<button type="button" ${select(r)} title="${sanitize(rowLabel(r))}" aria-label="${sanitize(rowLabel(r))}" aria-pressed="${r===selected}"><i style="--slice:${r.color}"></i>${inWallet?`<span class="vWalletPc-product-mark" aria-hidden="true">${v1002BankGlyph(r.c,'card')}</span>`:''}<span>${sanitize(bankOf(r.c)||r.c.name)}</span><b>${inWallet?r.data.missingFx?'—':vWalletPcAmount(r.total):!totals.missingFx&&!hasNegative?r.share.toFixed(1)+'%':'—'}</b>${inWallet?`<span class="wallet-consumption-share">${sanitize(shareText(r))}</span>`:''}</button>`).join('')}</div>
    ${inWallet?'</div>':''}
   </div>
-  ${!representable?`<p class="vWalletPc-note">${totals.missingFx?'Falta una tasa de cambio para calcular el consumo equivalente.':'Hay tarjetas con consumo histórico neto negativo.'}</p>`:list.length?'':'<p class="vWalletPc-note">Aún no hay tarjetas registradas.</p>'}
+  ${totals.missingFx?'<p class="vWalletPc-note">Falta una tasa de cambio para calcular el consumo equivalente.</p>':''}
+  ${!totals.missingFx&&hasNegative?`<p class="vWalletPc-note">${inWallet&&chartTotal>0?'El gráfico distribuye el consumo neto positivo. Los importes negativos por devoluciones se incluyen en el total.':'Hay tarjetas con consumo histórico neto negativo.'}</p>`:''}
+  ${!list.length?'<p class="vWalletPc-note">Aún no hay tarjetas registradas.</p>':inWallet&&!totals.missingFx&&!hasNegative&&!chartTotal?'<p class="vWalletPc-note">Sin consumo neto registrado.</p>':''}
  </section>`;
 }
 

@@ -264,9 +264,16 @@ html body #app#app main.world-wallet #page#page .v371-return-note {font-size:10p
   html body #app#app main.vWalletPc-world #page#page .wallet-chart-data .vWalletPc-chart-total strong {font-size:clamp(20px,1.9vw,29px)!important;}
   html body #app#app main.vWalletPc-world #page#page .wallet-consumption-split {margin:3px 0 7px!important;font-size:11px!important;}
   html body #app#app main.vWalletPc-world #page#page .vWalletPc-legend {max-height:none!important;overflow:visible!important;}
-  html body #app#app main.vWalletPc-world #page#page .vWalletPc-legend button {min-height:30px!important;gap:4px!important;font-size:clamp(10px,.83vw,13px)!important;grid-template-columns:6px 20px minmax(0,1fr) auto!important;}
+  html body #app#app main.vWalletPc-world #page#page .vWalletPc-legend button {
+    display:grid!important;grid-template-columns:6px 20px minmax(0,1fr) auto 6ch!important;
+    align-items:center;min-height:30px!important;gap:6px!important;font-size:clamp(10px,.83vw,13px)!important;
+  }
   html body #app#app main.vWalletPc-world #page#page .vWalletPc-legend button i {width:6px!important;box-shadow:none!important;}
   html body #app#app main.vWalletPc-world #page#page .vWalletPc-legend button b {font-weight:800;}
+  #app#app main.vWalletPc-world #page#page .wallet-consumption-share {
+    color:var(--ui-muted,var(--wallet-muted));font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;
+  }
+  body.privacy-finanzas #app#app main.vWalletPc-world #page#page .wallet-consumption-share {filter:blur(7px);user-select:none;}
   html body #app#app main.vWalletPc-world #page#page .vWalletPc-cuts > div > button {border-radius:13px!important;min-height:40px!important;}
   @media(min-width:1121px){html body #app#app main.vWalletPc-world #page#page .vWalletPc-grid {grid-template-columns:minmax(150px,.96fr) minmax(0,2.1fr) minmax(0,1.72fr)!important;}}
 }
