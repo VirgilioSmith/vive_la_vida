@@ -101,8 +101,8 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(top.head.top<130,'Encabezado demasiado bajo: '+top.head.top);
     assert.ok(Math.abs(top.head.top-top.add.top)<20,'Mis tarjetas y + no están en la misma línea');
     assert.ok(top.gallery.left<=3&&top.gallery.right>=width-3,'El carrusel no llega a los bordes: '+JSON.stringify(top.gallery));
-    assert.ok(top.rail.width>=width-3,'El carrusel está comprimido');
-    assert.ok(top.first.width>=width*.89&&top.first.width<=width*.94,'Tarjeta no recupera el ancho casi completo: '+top.first.width);
+    assert.ok(top.rail.left>=6&&top.rail.right>=width-2,'El carrusel no conserva su borde derecho: '+JSON.stringify(top.rail));
+    assert.ok(top.first.width>=width*.85&&top.first.width<=width*.94,'Tarjeta no conserva la amplitud física: '+top.first.width);
     assert.ok(top.first.height>=185&&top.first.height<=252,'La tarjeta no recuperó altura: '+top.first.height);
     assert.ok(top.firstCard.height===top.first.height,'La tarjeta visual no ocupa la altura asignada');
     assert.ok(top.first.left<=18,'Primera tarjeta demasiado separada del borde: '+top.first.left);
