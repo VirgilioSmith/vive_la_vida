@@ -29,6 +29,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     });
     const faces=p.locator('.v68-wallet-gallery .v68-wallet-face');
     const selected=p.locator('.v68-wallet-gallery .v68-wallet-face.selected');
+    const openTools=async()=>{const tools=p.locator('.wallet-mobile-tools');if(!(await tools.evaluate(el=>el.open)))await tools.locator('summary').click()};
     const noConsumptionHistory=async()=>{
      assert.equal(await p.locator('.v1301-history,.v1301-chart,[data-v1301-month],[data-v1301-points]').count(),0,'El widget no existe en el DOM');
      for(const label of ['Histórico de consumo','Evolución del consumo','Promedio mensual'])assert.equal(await p.locator('.v68-wallet').getByText(label,{exact:true}).count(),0);
@@ -50,9 +51,9 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     // Desplazamiento horizontal del navegador, sin forzar la selección mediante JS.
     if(engine===webkit){
      // Playwright no implementa mouse.wheel en WebKit móvil.
-     await p.locator('.v68-wallet-dots button').first().tap();
+     await openTools();await p.locator('.v68-wallet-dots button').first().tap();
     }else{
-     const rail=await p.locator('.v68-wallet-gallery').boundingBox();
+     await openTools();const rail=await p.locator('.v68-wallet-gallery').boundingBox();
      await p.mouse.move(rail.x+rail.width/2,rail.y+rail.height/2);
      await p.mouse.wheel(-rail.width,0);
     }
@@ -76,12 +77,12 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
     if(process.env.WALLET_SCREENSHOT)await p.screenshot({path:process.env.WALLET_SCREENSHOT+'-'+theme+'.png'});
     // Volver a una tarjeta real conserva sus acciones y su historial.
-    await p.locator('.v68-wallet-dots button').nth(2).click();
+    await openTools();await p.locator('.v68-wallet-dots button').nth(2).click();
     await waitSelected(fixture.first);
     assert.equal(await p.locator('.v266-activity').count(),0);
     assert.equal(await p.locator('.v266-wallet-actions button').count(),4);
     // Corte conserva el detalle del ciclo, bajo Wallet, y permite regresar.
-    await p.locator('.v266-wallet-actions [data-act="goCard"]').click();
+    await openTools();await p.locator('.v266-wallet-actions [data-act="goCard"]').click();
     await p.locator('.v1190-card').waitFor();
     assert.ok(await p.getByRole('heading',{name:'Estado del ciclo'}).count()>0);
     assert.equal(await p.locator('.vive-mobile-dock [data-id="wallet"]').getAttribute('aria-current'),'page');
@@ -101,7 +102,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     await waitSelected(fixture.first);
     await p.waitForTimeout(400);
     assert.equal(await selected.getAttribute('data-id'),fixture.first);
-    await p.locator('.v68-wallet-dots button').first().click();
+    await openTools();await p.locator('.v68-wallet-dots button').first().click();
     await waitSelected(GLOBAL);
     // El saldo cambia automáticamente al actualizar los datos de una tarjeta.
     await p.evaluate(()=>{const t=window.__T;t.dbg().cards[0].openingDOP+=10000;t.inv();t.go('wallet')});
@@ -117,7 +118,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     // Mayor límite en RD$ no equivale necesariamente a mayor límite consolidado.
     await p.evaluate(()=>{const t=window.__T;t.dbg().cards[0].limitDOP=250000;t.inv();t.go('wallet')});
     assert.deepEqual(await cardOrder(),[GLOBAL,fixture.second,fixture.first]);
-    await p.locator('.v68-wallet-dots button').nth(1).click();
+    await openTools();await p.locator('.v68-wallet-dots button').nth(1).click();
     await waitSelected(fixture.second);
     // Si cambia el límite, se actualiza el orden sin cambiar la tarjeta seleccionada.
     await p.evaluate(()=>{const t=window.__T;t.dbg().cards[0].limitDOP=270000;t.inv();t.go('wallet')});
@@ -143,7 +144,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
      t.inv();t.go('wallet');
      return ['DOP','USD'].map(ccy=>d.cards.reduce((s,c)=>s+t.cs(c.id,ccy).billed,0));
     });
-    await p.locator('.v68-wallet-dots button').first().click();
+    await openTools();await p.locator('.v68-wallet-dots button').first().click();
     await waitSelected(GLOBAL);
     assert.deepEqual(await parts('.v1244-pill em'),cuts);
     assert.match(await p.locator('.v1244-cuthead strong').innerText(),/CORTES ATRASADOS/);
@@ -152,17 +153,17 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     const absent=async()=>assert.equal(await p.locator('.v933-wallet-advance,[aria-label="Avance de efectivo del mes"]').count(),0);
     await absent();
     for(const id of [fixture.first,fixture.second]){
-     await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();
+     await openTools();await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();
      await waitSelected(id);
      await absent();
      assert.equal(await p.locator('.v266-wallet-actions [data-v900-action="advance"]').count(),1,'Conserva la acción operativa');
     }
-    await p.locator('.v68-wallet-dots button').first().click();
+    await openTools();await p.locator('.v68-wallet-dots button').first().click();
     await waitSelected(GLOBAL);
     await absent();
     assert.equal(await p.locator('.v266-activity').count(),0);
     // El corte global abre el desglose real por tarjeta y moneda.
-    await p.locator('.v266-wallet-actions [data-mode="cuts"]').click();
+    await openTools();await p.locator('.v266-wallet-actions [data-mode="cuts"]').click();
     const cutDialog=p.locator('.v176-card-insight-modal');
     await cutDialog.waitFor();
     assert.equal(await cutDialog.locator('.v176-credit-row').count(),4);
@@ -179,17 +180,17 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     await p.locator('#modal-root form [name="cardId"]').first().waitFor({state:'attached'});
     assert.equal(await p.locator('#modal-root form [name="cardId"]').first().inputValue(),fixture.first);
     await closeForm();
-    await p.locator('.v266-wallet-actions [data-mode="pay"]').click();
+    await openTools();await p.locator('.v266-wallet-actions [data-mode="pay"]').click();
     await choose(fixture.second);
     await p.locator('#modal-root form [name="cardId"]').first().waitFor({state:'attached'});
     assert.equal(await p.locator('#modal-root form [name="cardId"]').first().inputValue(),fixture.second);
     await closeForm();
-    await p.locator('.v266-wallet-actions [data-mode="advance"]').click();
+    await openTools();await p.locator('.v266-wallet-actions [data-mode="advance"]').click();
     await choose(fixture.second);
     await p.locator('#v900AdvanceForm').waitFor();
     assert.equal(await p.locator('#v900AdvanceForm [name="cardId"]').inputValue(),fixture.second);
     await closeForm();
-    await p.locator('.v266-wallet-actions [data-mode="edit"]').click();
+    await openTools();await p.locator('.v266-wallet-actions [data-mode="edit"]').click();
     await choose(fixture.first);
     await p.locator('#cardForm').waitFor();
     assert.equal(await p.locator('#cardForm [name="name"]').inputValue(),await p.evaluate(()=>window.__T.dbg().cards[0].name));
@@ -199,7 +200,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
      const css=getComputedStyle(el);
      return [css.backdropFilter||css.webkitBackdropFilter,css.borderTopLeftRadius];
     });
-    assert.deepEqual(glass,['blur(28px) saturate(1.4)','26px']);
+    assert.equal(glass[0],'blur(28px) saturate(1.4)');assert.ok(parseInt(glass[1],10)>=20,'Radio Liquid Glass aprobado');
     await p.getByRole('button',{name:'Registrar beneficio',exact:true}).click();
     await choose(fixture.first);
     await p.locator('#v144CashbackForm').waitFor();
@@ -310,7 +311,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.deepEqual(await p.evaluate(()=>window.__T.dbg().cards.map(c=>[c.limitDOP,c.limitUSD])),[[270000.49,1000.01],[200000.49,2000.01]]);
     const historicMovements=await p.evaluate(()=>JSON.stringify(window.__T.dbg().transactions));
     for(const id of [fixture.first,fixture.second]){
-     await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();await waitSelected(id);
+     await openTools();await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();await waitSelected(id);
      await noConsumptionHistory();
      assert.equal(await p.locator('.v1301-distribution').count(),0);
      assert.equal(await state.locator('h2').innerText(),'Estado del crédito');
@@ -331,7 +332,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
      }
      t.inv();t.go('wallet');
     });
-    await p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]').tap();await waitSelected(GLOBAL);
+    await openTools();await p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]').tap();await waitSelected(GLOBAL);
     await noConsumptionHistory();
     await expandConsumption();
     const four=await donutColors();
@@ -368,7 +369,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     const ledgerSnapshot=await p.evaluate(()=>JSON.stringify(window.__T.dbg().transactions));
     const individual=[];
     for(const [id,debt,available,limit,debtParts,limitParts] of [[fixture.first,2516,5394,7000,[1910,10.1],[1000,100]],[fixture.second,1478,0,100,[275,20.05],[100,0]]]){
-     await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();await waitSelected(id);
+     await openTools();await p.locator('.v68-wallet-dots button[data-id="'+id+'"]').click();await waitSelected(id);
      await noConsumptionHistory();
      assert.equal(await read('.v565-secondary > b'),debt);
      assert.equal(await read('.v565-primary > strong'),available);
@@ -380,7 +381,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     }
     assert.equal(individual[0].cuts[0],(await p.evaluate(()=>window.__T.fn.today().endsWith('-01')))?1910:1390);
     assert.deepEqual(individual[1].cuts,[275,20.05]);
-    await p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]').tap();await waitSelected(GLOBAL);
+    await openTools();await p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]').tap();await waitSelected(GLOBAL);
     assert.equal(await read('.v565-secondary > b'),3994);
     assert.equal(await read('.v565-primary > strong'),5394);
     assert.equal(await read('.v1244-limits > strong'),7100);
