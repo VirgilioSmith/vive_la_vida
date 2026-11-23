@@ -15,19 +15,25 @@
       const controls = wallet.querySelector('.wallet-mobile-tools-content');
       const header = controls?.querySelector(':scope > .v266-wallet-header');
       const gallery = controls?.querySelector(':scope > .v266-gallery');
-      if (!state || !header || !gallery) continue;
+      const balance = controls?.querySelector(':scope > .v266-selected-balance');
+      const actions = controls?.querySelector(':scope > .v266-wallet-actions');
+      if (!state || !header || !gallery || !balance || !actions) continue;
 
-      // Mantener los manejadores originales y sus data-act: no clonar ni recrear.
+      // Reubicar los mismos nodos y controles: NO duplicar sus cálculos,
+      // acciones ni los datos de la tarjeta elegida.
+      const summary = document.createElement('section');
+      summary.className = 'wallet-mobile-summary';
+      summary.setAttribute('aria-label', 'Crédito disponible y deuda utilizada');
+      summary.append(balance, actions);
       const fragment = document.createDocumentFragment();
-      fragment.append(header, gallery);
+      fragment.append(header, gallery, summary);
       wallet.insertBefore(fragment, state);
-      wallet.classList.add('wallet-carousel-restored');
+      wallet.classList.add('wallet-carousel-restored', 'wallet-summary-external');
 
-      const toggle = wallet.querySelector('.wallet-mobile-tools > summary');
-      if (toggle) {
-        toggle.setAttribute('aria-label', 'Mostrar saldo y operaciones de tarjeta');
-        toggle.setAttribute('title', 'Saldo y operaciones');
-      }
+      // El disclosure queda vacío y oculto, pero su nodo permanece para que
+      // el controlador nativo de swipe invoque la actualización de la tarjeta.
+      const legacyDisclosure = wallet.querySelector('.wallet-mobile-tools');
+      legacyDisclosure?.setAttribute('aria-hidden', 'true');
     }
   }
 

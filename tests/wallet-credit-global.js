@@ -29,7 +29,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     });
     const faces=p.locator('.v68-wallet-gallery .v68-wallet-face');
     const selected=p.locator('.v68-wallet-gallery .v68-wallet-face.selected');
-    const openTools=async()=>{const tools=p.locator('.wallet-mobile-tools');if(!(await tools.evaluate(el=>el.open)))await tools.locator('summary').click()};
+    const openTools=async()=>{assert.ok(await p.locator('.wallet-mobile-summary .v266-wallet-actions').isVisible(),'Acciones superiores ocultas')};
     const noConsumptionHistory=async()=>{
      assert.equal(await p.locator('.v1301-history,.v1301-chart,[data-v1301-month],[data-v1301-points]').count(),0,'El widget no existe en el DOM');
      for(const label of ['Histórico de consumo','Evolución del consumo','Promedio mensual'])assert.equal(await p.locator('.v68-wallet').getByText(label,{exact:true}).count(),0);

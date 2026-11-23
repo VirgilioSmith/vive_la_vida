@@ -17,7 +17,7 @@ const readGeometry=async page=>page.evaluate(()=>{
  const rect=e=>{let r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
  const isVisible=e=>{let c=getComputedStyle(e),r=e.getBoundingClientRect();return c.display!=='none'&&c.visibility!=='hidden'&&r.width>0&&r.height>0};
  const wallet=document.querySelector('.v68-wallet'),dock=document.querySelector('.vive-mobile-dock');
- const panels=wallet?[...wallet.children].filter(e=>e.matches('.v1244-state,.v1244-cutpanel,.v371-card-return,.v1301-distribution,.wallet-benefits-cards')).filter(isVisible):[];
+ const panels=wallet?[...wallet.children].filter(e=>e.matches('.wallet-mobile-summary,.v1244-state,.v1244-cutpanel,.v371-card-return,.v1301-distribution,.wallet-benefits-cards')).filter(isVisible):[];
  /* scrollWidth en .v1301-rank incluye una decoración de 9px;
     sus tres hijos están íntegramente dentro del renglón. Validar contenido real. */
  const overflowing=e=>{
@@ -70,7 +70,12 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(await visible(p.locator('.v68-wallet > .v266-gallery')),'El carrusel de tarjetas está oculto');
     assert.ok(await visible(p.locator('.v68-wallet-face.selected')),'La tarjeta seleccionada no está visible');
     assert.equal(await p.locator('.v68-wallet > .v266-gallery .v68-wallet-face').first().getAttribute('data-id'),GLOBAL,'Crédito Global debe ir primero');
-    assert.equal(await p.locator('.wallet-mobile-tools').evaluate(el=>el.open),false,'Herramientas no colapsadas');
+    assert.equal(await p.locator('.wallet-mobile-tools').isVisible(),false,'El disclosure duplicado debe ocultarse');
+    assert.equal(await p.locator('.wallet-mobile-summary > .v266-selected-balance').count(),1,'Falta resumen superior independiente');
+    assert.equal(await p.locator('.wallet-mobile-summary > .v266-wallet-actions button').count(),4,'Faltan las operaciones reales arriba');
+    assert.equal(await p.locator('.v1244-state .v266-selected-balance').count(),0,'El resumen sigue dentro de Estado del crédito');
+    const topOrder=await p.evaluate(()=>[...document.querySelector('.v68-wallet').children].map(e=>e.classList[0]));
+    assert.ok(topOrder.indexOf('wallet-mobile-summary')<topOrder.indexOf('v266-wallet-panel'),'Resumen no está sobre Estado del crédito');
     /* Portada sin cabecera universal, como Bancos móvil. */
     // El carrusel suspende temporalmente el snap para centrar la tarjeta
     // inicial. Esperar al segundo frame antes de verificar el estilo final.
@@ -98,7 +103,7 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(top.gallery.left<=3&&top.gallery.right>=width-3,'El carrusel no llega a los bordes: '+JSON.stringify(top.gallery));
     assert.ok(top.rail.width>=width-3,'El carrusel está comprimido');
     assert.ok(top.first.width>=width*.89&&top.first.width<=width*.94,'Tarjeta no recupera el ancho casi completo: '+top.first.width);
-    assert.ok(top.first.height>=157&&top.first.height<=187,'Altura del carrusel incorrecta: '+top.first.height);
+    assert.ok(top.first.height>=185&&top.first.height<=252,'La tarjeta no recuperó altura: '+top.first.height);
     assert.ok(top.firstCard.height===top.first.height,'La tarjeta visual no ocupa la altura asignada');
     assert.ok(top.first.left<=18,'Primera tarjeta demasiado separada del borde: '+top.first.left);
     assert.ok(top.second.left<width-4,'No asoma la segunda tarjeta');
@@ -142,11 +147,10 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     await p.waitForTimeout(250);
     assert.equal(await p.locator('.v68-wallet-face.selected').getAttribute('data-id'),cardId);
     await screenshot(p,dir,'02-tarjeta-individual');
-    /* El + debe revelar y conservar todas las operaciones reales. */
-    const tools=p.locator('.wallet-mobile-tools');await tools.locator('summary').click();
-    assert.equal(await tools.evaluate(el=>el.open),true);
-    assert.ok(await visible(p.locator('.v266-gallery')),'El selector de tarjetas no abre');
-    assert.equal(await p.locator('.v266-wallet-actions button').count(),4);
+    /* Las operaciones ahora están siempre visibles en el resumen superior. */
+    assert.equal(await p.locator('.wallet-mobile-tools').isVisible(),false);
+    assert.ok(await visible(p.locator('.v266-gallery')),'El carrusel desapareció');
+    assert.equal(await p.locator('.wallet-mobile-summary .v266-wallet-actions button').count(),4);
     const back=p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]');await back.click();
     await p.waitForTimeout(250);
     assert.equal(await p.locator('.v68-wallet-face.selected').getAttribute('data-id'),GLOBAL);
