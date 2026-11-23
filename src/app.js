@@ -1405,16 +1405,22 @@ function v1303CardTransactions(){return v99Memo('wallet:canonical-card-transacti
  }
  return rows;
 })}
-function v1301WalletRanked(rows,share,cardColor){
- const amount=(v,ccy='DOP')=>money(v,ccy,0); // Redondeo exclusivamente de presentación.
+function v1301WalletRanked(rows,share,cardColor,options={}){
+ const amount=(v,ccy='DOP')=>money(v,ccy,0); // Sólo presentación; no altera valores financieros.
  const split=(d,u)=>`<span>${amount(d)}</span><span>${amount(u,'USD')}</span>`;
- return `<div class="v1301-ranked">${rows.map((r,i)=>`<div class="v1301-rank" data-card-id="${sanitize(r.c.id)}"><span class="v1301-bank">${v1002BankGlyph(r.c,'building')}</span><div class="v1301-rank-info"><strong>${sanitize(r.c.name)}</strong><div class="v1301-split">${split(r.DOP,r.USD)}</div><div class="v1301-meter" aria-hidden="true"><i style="width:${share(r)}%;background:${cardColor(r,i)}"></i></div></div><b class="v1301-equivalent">${r.missingFx?'—':amount(r.total)}</b></div>`).join('')}</div>`;
+ return `<div class="v1301-ranked">${rows.map((r,i)=>{
+  const percent=share(r);
+  const tag=options.selectable?'button':'div';
+  const actionAttrs=options.selectable?` type="button" data-act="v68WalletSelect" data-id="${sanitize(r.c.id)}" aria-label="Ver crédito de ${sanitize(r.c.name)}"`:'';
+  const shareText=options.showPercent?`<span class="v1301-share" aria-label="Participación del consumo ${percent.toFixed(1)} por ciento">${percent.toFixed(1)}%</span>`:'';
+  return `<${tag}${actionAttrs} class="v1301-rank${options.selectable?' wallet-mobile-select-card':''}" data-card-id="${sanitize(r.c.id)}"><span class="v1301-bank">${v1002BankGlyph(r.c,'building')}</span><div class="v1301-rank-info"><strong>${sanitize(r.c.name)}</strong><div class="v1301-split">${split(r.DOP,r.USD)}</div><div class="v1301-meter" aria-hidden="true"><i style="width:${percent}%;background:${cardColor(r,i)}"></i></div></div><b class="v1301-equivalent">${r.missingFx?'—':amount(r.total)}${shareText}</b></${tag}>`;
+ }).join('')}</div>`;
 }
 function v1301WalletLimitRows(cards){
  const rows=cards.map(c=>({c,DOP:num(c.limitDOP),USD:num(c.limitUSD),total:num(c.limitDOP)+fx(num(c.limitUSD),'USD')})).sort((a,b)=>b.total-a.total);
  const weight=rows.reduce((s,r)=>s+Math.max(0,r.total),0),share=r=>weight?100*Math.max(0,r.total)/weight:0;
  const shade=i=>`color-mix(in srgb,var(--v1301-accent) ${100-76*i/Math.max(1,rows.length-1)}%,var(--v1301-tint))`;
- return `<div class="v1301-limit-breakdown" role="group" aria-label="Desglose de límites por tarjeta">${v1301WalletRanked(rows,share,(_r,i)=>shade(i))}</div>`;
+ return `<div class="v1301-limit-breakdown" role="group" aria-label="Desglose de límites por tarjeta">${v1301WalletRanked(rows,share,(_r,i)=>shade(i),{selectable:isMobileViewport()&&ui.page==='wallet'})}</div>`;
 }
 function v1301ConsumptionDisclosure(title,kicker,subtitle,body,options={}){
  return `<details class="v266-wallet-panel v1301-insight v1301-distribution" data-v1301-kind="consumption"${options.open?' open':''}><summary><div><span class="v1301-kicker">${kicker}</span><h2>${options.glyph?icon(options.glyph):''}${title}</h2><p>${subtitle}</p></div><span class="v1301-disclose-arrow" aria-hidden="true">${icon('arrow')}</span></summary>${body}</details>`;
@@ -1431,7 +1437,7 @@ function v1301WalletDistribution(cards,consumption){
  const split=(d,u)=>`<span>${amount(d)}</span><span>${amount(u,'USD')}</span>`;
  let offset=0;
  const donut=`<svg class="v1301-donut" viewBox="0 0 128 128" role="img" aria-label="Participación del consumo de ${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}"><circle class="v1301-donut-track" cx="64" cy="64" r="46" fill="none" stroke-width="18"/>${rows.map((r,i)=>{const portion=share(r);if(!portion)return '';const start=offset;offset+=portion;return `<circle class="v1301-donut-segment" data-card-id="${sanitize(r.c.id)}" cx="64" cy="64" r="46" pathLength="100" fill="none" stroke-width="18" stroke-dasharray="${portion} ${100-portion}" stroke-dashoffset="${-start}" transform="rotate(-90 64 64)" style="stroke:${cardColor(r,i)}"/>`}).join('')}<text class="v1301-donut-count" x="64" y="59" text-anchor="middle">${cards.length}</text><text class="v1301-donut-caption" x="64" y="78" text-anchor="middle">${cards.length===1?'tarjeta':'tarjetas'}</text></svg>`;
- return v1301ConsumptionDisclosure(isMobileViewport()?'Histórico total':'Consumo por tarjeta','CONSUMO POR TARJETA','Histórico total',`<div class="v1301-distribution-body"><div class="wallet-consumption-hero">${donut}<div class="v1301-total"><strong>${total.missingFx?'—':amount(equivalent)}</strong><span title="Compras menos devoluciones; USD convertido a la tasa registrada de cada movimiento (o tasa configurada si no existe)">Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div></div>${!representable?`<p>${total.missingFx?'Falta una tasa de cambio para calcular la participación.':'No se representa la participación cuando alguna tarjeta tiene consumo neto negativo.'}</p>`:''}${v1301WalletRanked(rows,share,cardColor)}</div>`,{glyph:'analytics',open:true});
+ return v1301ConsumptionDisclosure(isMobileViewport()?'Histórico total':'Consumo por tarjeta','CONSUMO POR TARJETA','Histórico total',`<div class="v1301-distribution-body"><div class="wallet-consumption-hero">${donut}<div class="v1301-total"><strong>${total.missingFx?'—':amount(equivalent)}</strong><span title="Compras menos devoluciones; USD convertido a la tasa registrada de cada movimiento (o tasa configurada si no existe)">Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div></div>${!representable?`<p>${total.missingFx?'Falta una tasa de cambio para calcular la participación.':'No se representa la participación cuando alguna tarjeta tiene consumo neto negativo.'}</p>`:''}${weight<=0&&!total.missingFx?'<p class="wallet-mobile-empty-consumption">Sin consumo histórico registrado.</p>':''}${v1301WalletRanked(rows,share,cardColor,{showPercent:representable&&weight>0})}</div>`,{glyph:'analytics',open:true});
 }
 document.addEventListener('keydown',event=>{
  const segment=event.target.closest?.('.vWalletPc-chart circle[data-act="walletPcConsumption"]');
@@ -1702,7 +1708,7 @@ function v68Wallet(){
  }).join('');
  const dots=[{id:V68_GLOBAL_ID,name:'Créditos generales'},...cards];
  const action=(mode,original)=>global?`data-act="v68WalletGlobalAction" data-mode="${mode}"`:original;
- return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
+ const walletMobileControls=`<header class="v266-wallet-header"><div><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
  <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${dots.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
  <div class="v266-selected-balance v550-currency-balance v565-credit-dashboard" aria-label="Resumen de crédito por moneda de la tarjeta seleccionada">
    <div class="v550-balance-column v565-primary"><span>CRÉDITO DISPONIBLE</span><strong>${money(available)}</strong>
@@ -1712,8 +1718,13 @@ function v68Wallet(){
     <div class="v550-currency-breakdown" aria-label="Deuda en pesos y dólares"><span><i>RD$</i><b>${num(dop.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span><span><i>US$</i><b>${num(usd.debt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></span></div>
    </div>
   </div>
- <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" ${action('pay',`data-act="payCard" data-id="${sanitize(active.id)}"`)}><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" ${action('cuts',`data-act="goCard" data-id="${sanitize(active.id)}"`)}><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" ${action('advance',`data-v900-action="advance" data-id="${sanitize(active.id)}"`)} aria-label="Solicitar avance de efectivo"><span>${icon('cashAdvance')}</span><b>Avance</b></button><button type="button" ${action('edit',`data-act="editCard" data-id="${sanitize(active.id)}"`)}><span>${icon('settings')}</span><b>Editar</b></button></div>
+ <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" ${action('pay',`data-act="payCard" data-id="${sanitize(active.id)}"`)}><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" ${action('cuts',`data-act="goCard" data-id="${sanitize(active.id)}"`)}><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" ${action('advance',`data-v900-action="advance" data-id="${sanitize(active.id)}"`)} aria-label="Solicitar avance de efectivo"><span>${icon('cashAdvance')}</span><b>Avance</b></button><button type="button" ${action('edit',`data-act="editCard" data-id="${sanitize(active.id)}"`)}><span>${icon('settings')}</span><b>Editar</b></button></div>`;
+ return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil">
  <section class="v266-wallet-panel v1244-state" aria-label="Estado del crédito"><div class="v266-panel-heading"><div><span class="wallet-section-kicker">CONTROL DE CRÉDITO</span><h2>Estado del crédito</h2></div><button type="button" ${action('cuts',`data-act="goCard" data-id="${sanitize(active.id)}"`)} aria-label="Abrir detalles">${icon('arrow')}</button></div>
+ <details class="wallet-mobile-tools">
+  <summary aria-label="Mostrar tarjetas y operaciones" title="Mostrar tarjetas y operaciones"><span aria-hidden="true">${icon('plus')}</span></summary>
+  <div class="wallet-mobile-tools-content">${walletMobileControls}</div>
+ </details>
  <div class="v1244-main"><div class="v1244-gauge ${usage>=75?'is-high':usage>=50?'is-mid':''}" role="meter" aria-label="Porcentaje utilizado del límite" aria-valuemin="0" aria-valuemax="${Math.max(100,usage).toFixed(1)}" aria-valuenow="${usage.toFixed(1)}" style="--u:${Math.min(100,usage)}"><div><b>${usage.toFixed(1)}%</b><small>utilizado</small></div></div>
  <div class="v1244-limits"><small>LÍMITE TOTAL</small><strong>${global?money(totalLimit,'DOP',0):money(totalLimit)}</strong><div class="v1244-ccy"><span><i>RD$</i>${num(active.limitDOP).toLocaleString('en-US',{minimumFractionDigits:global?0:2,maximumFractionDigits:global?0:2})}</span><span><i>US$</i>${num(active.limitUSD).toLocaleString('en-US',{minimumFractionDigits:global?0:2,maximumFractionDigits:global?0:2})}</span></div></div></div>
  ${global?v1301WalletLimitRows(cards):''}
