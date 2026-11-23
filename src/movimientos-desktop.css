@@ -204,3 +204,163 @@
     grid-template-columns:repeat(3,minmax(0,1fr))!important;
   }
 }
+
+
+/* V864 · Movimientos PC: fidelidad visual, variación mensual y primera pantalla sin scroll. */
+@media (min-width:791px){
+ html body #app#app main.world-register:has(#ledger-world.movement-desktop){
+  --movement-up:#07975f;
+  --movement-down:#cf2b64;
+  --movement-glow:color-mix(in srgb,var(--movement-accent) 20%,transparent);
+  padding-bottom:8px!important;
+ }
+ html body #app#app main.world-register:has(#ledger-world.movement-desktop) .module-switch-shell{margin-bottom:9px!important}
+ html body #app#app #page #ledger-world.movement-desktop .movement-summary{margin:0 0 10px!important}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metrics{gap:12px}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric{
+  grid-template-columns:47px minmax(0,1fr) minmax(54px,81px);
+  gap:10px;min-height:92px;padding:11px 14px;border-radius:23px;
+  background:linear-gradient(112deg,rgba(255,255,255,.67),rgba(238,250,252,.36))!important;
+  border:1px solid rgba(255,255,255,.77)!important;
+  box-shadow:0 10px 26px rgba(46,99,115,.08),inset 0 1px 0 rgba(255,255,255,.93)!important;
+  overflow:hidden;
+ }
+ html body:is(.theme-black,.theme-dark) #app#app #page #ledger-world.movement-desktop .movement-metric{
+  background:linear-gradient(115deg,rgba(56,62,72,.56),rgba(16,23,30,.54))!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.10)!important;
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-icon{
+  position:relative;isolation:isolate;display:grid;place-items:center;
+  width:44px;height:44px;border-radius:17px;
+  background:radial-gradient(circle at 28% 20%,rgba(255,255,255,.96),transparent 42%),linear-gradient(145deg,color-mix(in srgb,var(--movement-series) 46%,white),color-mix(in srgb,var(--movement-series) 85%,#028e96))!important;
+  color:#fff!important;border:1px solid rgba(255,255,255,.80)!important;
+  box-shadow:0 5px 13px color-mix(in srgb,var(--movement-series) 24%,transparent),inset 0 2px 3px rgba(255,255,255,.78),inset 0 -3px 5px rgba(0,67,81,.14);
+  transform:rotate(-4deg);
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-icon:after{
+  content:"";position:absolute;inset:3px;border-radius:13px;border:1px solid rgba(255,255,255,.25);pointer-events:none
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-icon svg{
+  width:23px;height:23px;stroke-width:2.5;filter:drop-shadow(0 2px 2px rgba(0,48,54,.20));
+  position:relative;z-index:1
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-income .movement-metric-icon{border-radius:50%;transform:rotate(-7deg)}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-expense .movement-metric-icon{border-radius:50%;transform:rotate(7deg)}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-net .movement-metric-icon{border-radius:15px}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-content{align-self:center;min-width:0}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-content>span{display:block;font-size:12px!important;font-weight:730!important;letter-spacing:0;line-height:1.16}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-content>strong{
+  margin:4px 0 5px!important;line-height:1!important;font-size:clamp(19px,1.65vw,28px)!important;
+  letter-spacing:-.045em!important;font-weight:820!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation{
+  display:flex!important;align-items:center;gap:4px;flex-wrap:wrap;
+  font-size:11px!important;line-height:1.1!important;color:var(--movement-muted)!important
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:790}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation.positive{color:var(--movement-up)!important}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation.negative{color:var(--movement-down)!important}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation.is-flat{color:var(--movement-muted)!important;font-weight:650}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation-label{color:var(--movement-muted);font-weight:500;white-space:nowrap}
+ html body #app#app #page #ledger-world.movement-desktop .movement-bars{
+  width:100%;max-width:82px;height:41px;gap:4px;align-self:end;margin-bottom:6px;
+  filter:drop-shadow(0 5px 4px color-mix(in srgb,var(--movement-series) 14%,transparent))
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-bars i{
+  max-width:11px;min-height:3px;border-radius:5px 5px 2px 2px;
+  background:linear-gradient(0deg,color-mix(in srgb,var(--movement-series) 95%,#007566),color-mix(in srgb,var(--movement-series) 50%,white))!important;
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-net-sparkline{
+  width:100%;height:46px;max-width:118px;justify-self:end;align-self:end;margin-bottom:1px;
+  color:var(--movement-accent);overflow:visible;filter:drop-shadow(0 2px 3px color-mix(in srgb,var(--movement-accent) 18%,transparent))
+ }
+ html body #app#app #page #ledger-world.movement-desktop .ledger-card{
+  padding:11px 13px 12px!important;border-radius:25px!important;
+  background:linear-gradient(120deg,rgba(255,255,255,.57),rgba(239,251,252,.37))!important
+ }
+ html body:is(.theme-black,.theme-dark) #app#app #page #ledger-world.movement-desktop .ledger-card{background:linear-gradient(120deg,rgba(42,45,55,.65),rgba(23,26,34,.58))!important}
+ html body #app#app #page #ledger-world.movement-desktop .ledger-controls{
+  padding:0 0 10px!important;gap:8px!important;min-height:0!important
+ }
+ html body #app#app #page #ledger-world.movement-desktop .ledger-control{
+  min-height:47px!important;border-radius:16px!important;padding:5px 7px 3px 36px!important;
+  box-shadow:0 2px 10px rgba(29,93,110,.07),inset 0 1px 0 rgba(255,255,255,.7)
+ }
+ html body #app#app #page #ledger-world.movement-desktop .ledger-control:has(#ledgerMonth){padding-left:9px!important}
+ html body #app#app #page #ledger-world.movement-desktop .ledger-controls>.btn{min-height:39px!important;padding:5px 12px!important}
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll{
+  max-height:calc(100dvh - 395px)!important;
+  min-height:0!important;overflow-x:auto!important;overflow-y:auto!important;
+  overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--movement-accent) 25%,transparent) transparent
+ }
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll table{border-collapse:separate!important;border-spacing:0!important}
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll th{
+  height:31px!important;padding:5px 7px!important;line-height:1.08!important;
+  font-size:10px!important;letter-spacing:.015em!important
+ }
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll td{
+  height:34px!important;padding:5px 7px!important;
+  font-size:clamp(11px,.8vw,13px)!important;line-height:1.12!important;
+  vertical-align:middle!important
+ }
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll td:nth-child(2) .v9-ledger-detail strong{
+  display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap!important;
+  font-weight:740!important
+ }
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll td:nth-child(3){
+  white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis
+ }
+ html body #app#app #page #ledger-world.movement-desktop .v9-ledger-detail{gap:7px!important}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon{
+  --movement-row-color:var(--movement-accent);
+  display:grid;place-items:center;width:26px;height:26px;flex:0 0 26px;
+  color:white!important;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--movement-row-color) 52%,white),var(--movement-row-color))!important;
+  border:1px solid rgba(255,255,255,.67);
+  border-radius:50%;box-shadow:0 3px 8px color-mix(in srgb,var(--movement-row-color) 22%,transparent),inset 0 1px 3px rgba(255,255,255,.70)
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon svg{width:14px;height:14px;stroke-width:2.35;filter:drop-shadow(0 1px 1px rgba(0,0,0,.14))}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon-income{--movement-row-color:#21ae6e}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon-technology{--movement-row-color:#209de0}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon-gifts{--movement-row-color:#804ee6}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon-coral{--movement-row-color:#ec4a52}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon-rose{--movement-row-color:#ed428a}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon-amber{--movement-row-color:#ef8621}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon-violet{--movement-row-color:#9561e7}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon-teal{--movement-row-color:#13a7a0}
+ html body #app#app #page #ledger-world.movement-desktop .movement-row-icon-transfer{--movement-row-color:#327bd1}
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll .v255-tax-badge{
+  border-radius:999px!important;padding:2px 6px!important;box-shadow:0 2px 5px color-mix(in srgb,var(--category-ink,var(--movement-accent)) 12%,transparent)
+ }
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll .v255-tax-ico svg{width:13px!important;height:13px!important}
+ html body #app#app #page #ledger-world.movement-desktop .tx-actions{gap:5px!important}
+ html body #app#app #page #ledger-world.movement-desktop .tx-actions .btn:is([data-act="editTransaction"],[data-act="deleteTransaction"]){
+  width:28px!important;height:28px!important;min-height:28px!important
+ }
+ html body #app#app #page #ledger-world.movement-desktop .v51-desk-more{
+  min-height:37px!important;padding:7px 23px!important;margin:9px auto 0!important;
+  font-size:12px!important;line-height:1.1!important;
+  box-shadow:0 7px 16px color-mix(in srgb,var(--movement-accent) 18%,transparent)!important
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-notes{
+  width:max-content;max-width:100%;margin:4px auto 0;color:var(--movement-muted)
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-notes summary{
+  cursor:pointer;list-style:none;font-size:10px;opacity:.65;text-align:center
+ }
+ html body #app#app #page #ledger-world.movement-desktop .movement-notes summary::-webkit-details-marker{display:none}
+ html body #app#app #page #ledger-world.movement-desktop .movement-notes .footnote{
+  display:block!important;max-width:700px;font-size:11px;line-height:1.35;margin:6px 0 0
+ }
+}
+@media (min-width:791px) and (max-width:1140px){
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric{min-height:82px}
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll{max-height:calc(100dvh - 495px)!important}
+}
+@media (min-width:791px) and (max-height:720px){
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric{min-height:78px!important;padding:8px 12px!important}
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll td{padding:3px 6px!important;height:31px!important}
+ html body #app#app #page #ledger-world.movement-desktop .ledger-scroll{max-height:calc(100dvh - 355px)!important}
+ html body #app#app #page #ledger-world.movement-desktop .movement-notes{display:none}
+}
