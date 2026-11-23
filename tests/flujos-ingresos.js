@@ -73,6 +73,8 @@ const count = p => p.evaluate(() => window.__T.dbg().transactions.filter(t => t.
     await p.evaluate(() => { document.querySelector('#modal-root .v903-back').click(); }); await p.waitForTimeout(300);
     check(10, 'La flecha de retroceso vuelve al paso anterior', await p.evaluate(() => document.querySelector('#v40IncomeForm').dataset.v48Step === '2'));
     await p.click('#v40IncomeForm [data-v48-next]'); await p.waitForTimeout(300); await p.click('#v40IncomeForm [data-v48-next]'); await p.waitForTimeout(500);
+    await p.locator('.v48-confirm-body').waitFor({ state: 'visible' });
+    await p.waitForFunction(() => Boolean(document.querySelector('.v48-confirm-body')?.innerText.trim()));
     const w4 = await p.evaluate(() => ({ titulo: document.querySelector('.v48-step-title')?.textContent, txt: document.querySelector('.v48-confirm-body')?.innerText.replace(/\s+/g, ' ') }));
     check(11, 'Confirmación: «Revisa tu programación» con bruto, deducciones y neto', /Revisa tu programación/.test(w4.titulo) && /Bruto mensual/.test(w4.txt) && /AFP/.test(w4.txt) && /Neto por cobro/.test(w4.txt), w4.txt.slice(0, 120));
     const sAntes = await p.evaluate(() => window.__T.dbg().incomeSchedules.length), txAntes = await p.evaluate(() => window.__T.dbg().transactions.length);
