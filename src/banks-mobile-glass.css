@@ -3,7 +3,13 @@
  html body #app#app #page .vBanks-mobile{
   --g-surface:rgba(255,255,255,.40);--g-surface-2:rgba(255,255,255,.52);--g-ink:#10182e;--g-muted:#58657d;
   --g-shadow:0 10px 28px rgba(30,40,90,.08),inset 0 1px 0 rgba(255,255,255,.7);--g-accent:var(--ui-solid,var(--v424-accent-strong,#5b57d6));
-  display:grid;gap:12px;align-content:start;padding:0 2px 12px}
+  display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-content:start;padding:0 2px 12px}
+ /* El resumen toma el mismo margen y ritmo que los paneles de Wallet móvil. */
+ html body #app#app main.vBanksMobile-world #page>.vBanks-mobile:has(>.vBanks-mobile-hero){
+  box-sizing:border-box;width:100vw!important;max-width:100vw!important;
+  margin-inline:calc(50% - 50vw)!important;
+  padding-inline:clamp(8px,2.5vw,11px);
+  gap:clamp(12px,3.3vw,16px)}
  body:is(.theme-black,.theme-dark) #app#app #page .vBanks-mobile{--g-surface:rgba(255,255,255,.07);--g-surface-2:rgba(255,255,255,.11);--g-ink:#f4f6fb;--g-muted:#a9b2c4;--g-shadow:0 10px 28px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.10)}
  /* Encabezado */
  html body #app#app #page .vBanks-mobile-head{position:relative;display:grid;gap:2px;padding:2px 52px 0 4px!important;text-align:left}
@@ -58,10 +64,15 @@
  /* Beneficios y retorno */
  html body #app#app #page .vBanks-mobile-return :is(.vBanks-return-main,.vBanks-return-secondary){border:0!important;border-top:0!important}
  html body #app#app #page .vBanks-mobile-return .vBanks-return-secondary>div+div::before{display:none}
- html body #app#app #page .vBanks-mobile-return :is(small){color:var(--g-muted)!important;font-size:14px!important}
- html body #app#app #page .vBanks-mobile-return strong{color:var(--g-ink);font-size:clamp(20px,6vw,26px)!important}
+ html body #app#app #page .vBanks-mobile-return small{color:var(--g-muted)!important}
+ html body #app#app #page .vBanks-mobile-return strong{color:var(--g-ink)}
  html body #app#app #page .vBanks-mobile-return :is(.positive strong){color:#0f8a5a}
  html body #app#app #page .vBanks-mobile-return .vBanks-return-main.negative strong,html body #app#app #page .vBanks-mobile-return .negative strong{color:#c9303a}
+ html body[data-vive-bg] #app#app #page .vBanks-mobile > :is(.vBanks-mobile-hero,.vBanks-mobile-products,.vBanks-mobile-return){
+  box-sizing:border-box;width:100%;min-width:0;margin:0!important;
+  padding:clamp(16px,4.4vw,19px)!important;border-radius:22px!important}
+ html body #app#app #page .vBanks-mobile :is(.vBanks-mobile-products,.vBanks-mobile-return) h2{
+  padding-inline:0!important;font-size:clamp(16px,4.45vw,19px)!important;line-height:1.15}
  /* Listas: cada producto es una pastilla de cristal */
  html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-sub-body{display:grid;gap:10px}
  html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-sub-body .vBanksPc-lane{background:none!important;box-shadow:none!important;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0!important;display:grid;gap:10px}
