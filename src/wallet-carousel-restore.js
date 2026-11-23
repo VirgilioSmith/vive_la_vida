@@ -141,6 +141,29 @@
   function bindCarousel(rail){
     if(!rail || rail.dataset.walletStableBound)return;
     rail.dataset.walletStableBound='1';
+    // The legacy V158 install checks this flag. The modern Wallet has its
+    // own selection and touch handling, so prevent two competing listeners.
+    rail.dataset.v158Bound='true';
+    let status=rail.parentElement?.querySelector('.v158-wallet-selection-status');
+    if(!status){
+      status=document.createElement('span');
+      status.className='v158-wallet-selection-status';
+      status.setAttribute('role','status');
+      status.setAttribute('aria-live','polite');
+      rail.insertAdjacentElement('afterend',status);
+    }
+    const firstSelected=rail.querySelector('.v68-wallet-face.selected[data-id]');
+    if(firstSelected){
+      status.textContent=firstSelected.getAttribute('aria-label')||'Tarjeta seleccionada';
+      // When navigating back to Wallet, honor the selected card, not Global.
+      requestAnimationFrame(()=>{
+        if(!rail.isConnected)return;
+        const outer=rail.getBoundingClientRect();
+        const inner=firstSelected.getBoundingClientRect();
+        const next=Math.max(0,Math.min(rail.scrollWidth-rail.clientWidth,rail.scrollLeft+inner.left-outer.left));
+        rail.scrollLeft=next;
+      });
+    }
     let timer=0;
     const settle=()=>{
       clearTimeout(timer);

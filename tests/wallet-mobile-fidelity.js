@@ -172,7 +172,16 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(await row.count()>0,'La lista no permite seleccionar tarjetas');
     const cardId=await row.getAttribute('data-id');await row.click();
     await p.waitForTimeout(250);
-    assert.equal(await p.locator('.v68-wallet-face.selected').getAttribute('data-id'),cardId);
+    const selectedId=await p.locator('.v68-wallet-face.selected').getAttribute('data-id');
+    const selectionDebug=await p.evaluate(()=>{
+      const rail=document.querySelector('.wallet-summary-external .v68-wallet-gallery');
+      return {uiCard:typeof ui!=='undefined'?ui.v68WalletId:null,
+        selected:[...document.querySelectorAll('.v68-wallet-face.selected')].map(el=>el.dataset.id),
+        scrollLeft:rail?.scrollLeft,clientWidth:rail?.clientWidth,scrollWidth:rail?.scrollWidth,
+        stableBound:rail?.dataset.walletStableBound,v158Bound:rail?.dataset.v158Bound,
+        summaryValue:document.querySelector('.wallet-mobile-summary .v565-primary > strong')?.textContent};
+    });
+    assert.equal(selectedId,cardId,'La selección regresó a Crédito Global: '+JSON.stringify(selectionDebug));
     await screenshot(p,dir,'02-tarjeta-individual');
     /* Las operaciones ahora están siempre visibles en el resumen superior. */
     assert.equal(await p.locator('.wallet-mobile-tools').isVisible(),false);
