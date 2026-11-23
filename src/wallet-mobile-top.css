@@ -136,13 +136,13 @@
 /* Proporciones recuperadas de la Wallet previa a la compactación y alineadas
    al gutter de Inicio/Bancos: un solo margen, no dos. Exclusivamente móvil. */
 @media (max-width:790px){
- html body #app#app main.world-wallet #page#page > .v144-wallet-shell{
+ html body #app#app main.world-wallet #page#page > .v144-wallet-shell:has(.wallet-carousel-restored){
    display:block!important;box-sizing:border-box!important;
    width:100vw!important;max-width:100vw!important;min-width:0!important;
    margin-inline:calc(50% - 50vw)!important;padding:0!important;
    overflow:visible!important;transform:none!important;
  }
- html body #app#app main.world-wallet #page#page .v68-wallet.v266-wallet.v279-wallet{
+ html body #app#app main.world-wallet #page#page .v68-wallet.v266-wallet.v279-wallet.wallet-carousel-restored{
    --wallet-mobile-gutter:clamp(14px,4vw,18px);
    --wallet-carousel-edge:clamp(7px,2vw,10px);
    --wallet-card-peek:clamp(32px,8.5vw,38px);

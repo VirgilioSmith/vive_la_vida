@@ -30,7 +30,7 @@ const readGeometry=async page=>page.evaluate(()=>{
  };
  const clipping=[...document.querySelectorAll('.v1244-limits,.v1301-rank,.v1301-rank-info,.v1301-equivalent,.v371-return-tile,.v1244-pill,.wallet-return-actions button')].filter(isVisible).filter(overflowing).map(e=>({className:e.className,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,text:e.innerText.slice(0,60)}));
  return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,
-  wallet:wallet&&rect(wallet),panels:panels.map(e=>({name:e.className,box:rect(e)})),
+  wallet:wallet&&rect(wallet),mainCarousel:!!wallet?.classList.contains('wallet-carousel-restored'),panels:panels.map(e=>({name:e.className,box:rect(e)})),
   dock:dock&&rect(dock),clipping,
   mobileToolsOpen:!!wallet?.querySelector('.wallet-mobile-tools')?.open,
   navigation:[...document.querySelectorAll('.vive-mobile-dock-item')].map(e=>e.getAttribute('aria-label'))};
@@ -38,9 +38,11 @@ const readGeometry=async page=>page.evaluate(()=>{
 const assertGeometry=(g,label,width)=>{
  assert.ok(g.wallet,'Wallet inexistente '+label);
  assert.ok(g.scrollWidth<=width+2,'Scroll horizontal '+label+': '+JSON.stringify(g));
- assert.ok(g.wallet.left>=-2&&g.wallet.right<=width+2,'La estructura de Wallet excede el viewport '+label+': '+JSON.stringify(g.wallet));
+ if(g.mainCarousel)assert.ok(g.wallet.left>=-2&&g.wallet.right<=width+2,'La portada Wallet excede viewport '+label+': '+JSON.stringify(g.wallet));
+ else assert.ok(g.wallet.left>=12&&g.wallet.right<=width-12,'La subvista Wallet excede viewport '+label+': '+JSON.stringify(g.wallet));
  assert.ok(g.panels.length>=2,'Paneles principales ausentes '+label);
- for(const p of g.panels)assert.ok(p.box.left>=12&&p.box.right<=width-12&&p.box.width>=width-45,'Panel debe igualar el ancho de Bancos móvil '+label+': '+JSON.stringify(p));
+ for(const p of g.panels){if(g.mainCarousel)assert.ok(p.box.left>=12&&p.box.right<=width-12&&p.box.width>=width-45,'Panel principal más estrecho que Bancos móvil '+label+': '+JSON.stringify(p));
+ else assert.ok(p.box.left>=12&&p.box.right<=width-12,'Panel de subvista fuera de márgenes '+label+': '+JSON.stringify(p));}
  for(let i=1;i<g.panels.length;i++)assert.ok(g.panels[i].box.top>=g.panels[i-1].box.bottom+7,'Paneles solapados '+label+': '+g.panels[i].name);
  assert.deepEqual(g.clipping,[],'Texto recortado '+label);
  assert.deepEqual(g.navigation,['Inicio','Wallet','Bancos','Explorar','Buscar']);
