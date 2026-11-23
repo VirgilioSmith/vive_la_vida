@@ -9151,7 +9151,12 @@ f33Flush=async function(){
     f33Dirty=true;
     // V1134: si los conflictos se repiten seguidos, esperar con retroceso en lugar de reintentar sin pausa.
     v1134ConflictStreak++;
-    if(v1134ConflictStreak>=3){v714WriteRetryCount++;v714NextWriteAt=Math.max(v714NextWriteAt,Date.now()+v714Backoff(v714WriteRetryCount,5000,300000));}
+    if(v1134ConflictStreak>=3){
+     // Evitar ciclos de escritura indefinidos si otra pestaña mantiene una revisión obsoleta.
+     f33Conflict=true;v360WritePending();
+     f33SetStatus('conflict','Sincronización automática pausada por conflictos repetidos. Los cambios locales están protegidos.');
+     return;
+    }
     const reconciled=await v405Reconcile();
     if(!reconciled)return;
     return;
@@ -9172,6 +9177,13 @@ f33Flush=async function(){
   v714WriteRetryCount++;
   v719MarkBusy(err);
   v714NextWriteAt=Math.max(v719BusyUntil(),Date.now()+v714Backoff(v714WriteRetryCount,15000,300000));
+  if(v714WriteRetryCount>=3){
+   // Tres fallos seguidos: proteger la copia local y detener reintentos automáticos.
+   f33Conflict=true;v360WritePending();
+   f33SetStatus('error','Sincronización pausada tras fallos repetidos. Tus datos locales están protegidos.');
+   console.warn('[V1490] Circuit breaker de sincronización activado:',err?.message||err);
+   return;
+  }
   f33SetStatus('error','Guardado pendiente; reintentaremos de forma gradual. '+(err.message||err));
   console.error('[V714] Escritura pendiente protegida:',err);
  }
@@ -9224,30 +9236,9 @@ v10PullRemote=async function(){
 };
 let v720RealtimeFailures=0;
 v10LiveStart=function(){
- if(!f33Active||!f33Api||!f33User)return;
- if(v10WatchedUser===f33User.id&&v10Channel)return;
- v10LiveStop();const uid=f33User.id;v10WatchedUser=uid;
- v10Channel=f33Api.channel('finanzas360-relational-'+uid)
-  .on('postgres_changes',{event:'UPDATE',schema:'public',table:'finance_revision',filter:'user_id=eq.'+uid},()=>v10SchedulePull(0))
-  .on('postgres_changes',{event:'INSERT',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},()=>v11ScheduleAppleSync(50))
-  .on('postgres_changes',{event:'UPDATE',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},payload=>{if(payload.new?.status==='pending')v11ScheduleAppleSync(50);})
-  .on('postgres_changes',{event:'DELETE',schema:'public',table:'apple_pay_events'},()=>{if(typeof v212Load==='function'&&v212Enabled())void v212Load();})
-  .subscribe(status=>{
-   v402RealtimeStatus(status);
-   if(status==='SUBSCRIBED'){v720RealtimeFailures=0;clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=0;v11ScheduleAppleSync(100);}
-   else if(['TIMED_OUT','CHANNEL_ERROR','CLOSED'].includes(status)){
-    // V720: un solo temporizador de reconexión, con espera progresiva y pausa entre pestañas.
-    v720RealtimeFailures=Math.min(10,v720RealtimeFailures+1);
-    if(v11LiveRetryTimer)return;
-    const wait=Math.max(30000,v719BusyUntil()-Date.now(),Math.min(300000,30000*Math.pow(2,Math.min(4,v720RealtimeFailures-1))));
-    v11LiveRetryTimer=setTimeout(()=>{
-      v11LiveRetryTimer=0;
-      if(f33Active&&navigator.onLine&&!document.hidden)v10LiveStartForce();
-    },wait);
-   }
-  });
- v10ProbeTimer=setInterval(()=>{if(f33Active&&navigator.onLine&&!document.hidden&&!f33Saving&&!f33Dirty&&Date.now()>=v714NextReadAt)v10SchedulePull(0)},300000);
- v10SchedulePull(0);
+ // V1490: no se mantienen WebSockets ni suscripciones Realtime de fondo.
+ // Sincronización de lectura al abrir/enfocar la app y escritura por acción de usuario.
+ v10LiveStop();
 };
 
 /* Gestión única de la sesión (Supabase Auth). Un solo cliente; la sesión vive en localStorage (persistSession) y se renueva sola (autoRefreshToken).
@@ -14741,7 +14732,7 @@ window.addEventListener('online',()=>{if(v212Enabled())v212Sync();});
 // Este intervalo es solo rescate ante eventos perdidos: 3 min en vez de 45 s.
 // Se conserva además sincronización al volver online, visible y al recibir eventos.
 /* V1044 · Apple Pay: el evento llega por Realtime en cuanto el atajo lo envía (la función apple-pay-ingest lo inserta). El sondeo es solo una red de seguridad: con Realtime conectado se hace cada 30 min; sin él, cada 3 min. */
-setInterval(()=>{if(document.hidden||!v212Enabled()||Date.now()<v719BusyUntil())return;const now=Date.now(),gap=v402Realtime?1800000:180000;if(now-(window.__v1044LastApple||0)<gap)return;window.__v1044LastApple=now;void v212Sync();},60000);
+// V1490: eliminado el sondeo periódico de Apple Pay. La bandeja conserva su sincronización al abrirla o solicitarla explícitamente.
 
 /* V219 | Informes internos de solo lectura. Los datos financieros no se mutan.
    Cada período queda habilitado a las 19:00 de America/Santo_Domingo.
