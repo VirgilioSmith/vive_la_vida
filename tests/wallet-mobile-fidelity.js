@@ -18,7 +18,17 @@ const readGeometry=async page=>page.evaluate(()=>{
  const isVisible=e=>{let c=getComputedStyle(e),r=e.getBoundingClientRect();return c.display!=='none'&&c.visibility!=='hidden'&&r.width>0&&r.height>0};
  const wallet=document.querySelector('.v68-wallet'),dock=document.querySelector('.vive-mobile-dock');
  const panels=wallet?[...wallet.children].filter(e=>e.matches('.v1244-state,.v1244-cutpanel,.v371-card-return,.v1301-distribution,.wallet-benefits-cards')).filter(isVisible):[];
- const clipping=[...document.querySelectorAll('.v1244-limits,.v1301-rank,.v1301-rank-info,.v1301-equivalent,.v371-return-tile,.v1244-pill,.wallet-return-actions button')].filter(isVisible).filter(e=>e.scrollWidth>e.clientWidth+3).map(e=>({className:e.className,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,text:e.innerText.slice(0,60),grid:getComputedStyle(e).gridTemplateColumns,children:[...e.children].map(c=>({className:c.className,width:c.getBoundingClientRect().width,right:c.getBoundingClientRect().right-e.getBoundingClientRect().left,scrollWidth:c.scrollWidth,clientWidth:c.clientWidth,position:getComputedStyle(c).position}))}));
+ /* scrollWidth en .v1301-rank incluye una decoración de 9px;
+    sus tres hijos están íntegramente dentro del renglón. Validar contenido real. */
+ const overflowing=e=>{
+   if(!e.matches('.v1301-rank'))return e.scrollWidth>e.clientWidth+3;
+   const bounds=e.getBoundingClientRect();
+   return [...e.children].some(c=>{
+     const r=c.getBoundingClientRect();
+     return c.scrollWidth>c.clientWidth+3||r.left<bounds.left-3||r.right>bounds.right+3;
+   });
+ };
+ const clipping=[...document.querySelectorAll('.v1244-limits,.v1301-rank,.v1301-rank-info,.v1301-equivalent,.v371-return-tile,.v1244-pill,.wallet-return-actions button')].filter(isVisible).filter(overflow).map(e=>({className:e.className,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,text:e.innerText.slice(0,60)}));
  return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,
   wallet:wallet&&rect(wallet),panels:panels.map(e=>({name:e.className,box:rect(e)})),
   dock:dock&&rect(dock),clipping,
@@ -94,6 +104,21 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(glass.includes('blur(28px)'),'Cristal sin desenfoque');
     let g=await readGeometry(p);assertGeometry(g,theme+' '+width+' inicio',width);run.checks.push({screen:'estado',gauge,glass,geometry:g});
     await screenshot(p,dir,'01-estado-credito');
+    /* Verificar desplazamiento nativo hasta la última tarjeta y retorno global.
+       La selección y los puntos deben seguir sincronizados. */
+    if(width===390&&theme==='light'){
+      const rail=p.locator('.v68-wallet > .v266-gallery .v68-wallet-gallery');
+      const lastId=await rail.locator('.v68-wallet-face').last().getAttribute('data-id');
+      await rail.evaluate(el=>el.scrollTo({left:el.scrollWidth-el.clientWidth,behavior:'instant'}));
+      await p.waitForFunction(id=>document.querySelector('.v68-wallet-face.selected')?.dataset.id===id,lastId,{timeout:10000});
+      assert.equal(await p.locator('.v68-wallet-dots .active').getAttribute('data-id'),lastId,'Punto final desincronizado');
+      await screenshot(p,dir,'01b-carrusel-ultima');
+      await p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]').click();
+      await p.waitForFunction(id=>document.querySelector('.v68-wallet-face.selected')?.dataset.id===id,GLOBAL,{timeout:10000});
+      assert.equal(await p.locator('.v68-wallet-dots .active').getAttribute('data-id'),GLOBAL,'Punto global desincronizado');
+      await screenshot(p,dir,'01c-carrusel-regreso');
+    }
+
     /* La participación de consumo es distinta de la utilización del límite. */
     const shares=await p.locator('.v1301-share').allTextContents();
     const segments=await p.locator('.v1301-donut-segment').count();
