@@ -350,3 +350,17 @@
     margin-top:9px!important;
   }
 }
+
+/* Corrección del desborde de 9px detectado por Playwright en el desglose de límites.
+   Conserva la tipografía y el importe íntegro, con menor espacio entre columnas. */
+@media(max-width:790px){
+ html body #app#app main.world-wallet #page#page .v1244-state .v1301-limit-breakdown .v1301-rank{
+   column-gap:3px!important;
+   grid-template-columns:28px minmax(0,1fr) minmax(0,auto)!important;
+   box-sizing:border-box!important;
+ }
+ html body #app#app main.world-wallet #page#page .v1244-state .v1301-limit-breakdown .v1301-rank-info,
+ html body #app#app main.world-wallet #page#page .v1244-state .v1301-limit-breakdown .v1301-equivalent{
+   min-width:0!important;overflow-wrap:anywhere!important;
+ }
+}
