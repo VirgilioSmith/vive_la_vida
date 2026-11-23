@@ -131,3 +131,55 @@
     min-width:0!important;gap:7px!important;
   }
 }
+
+
+/* Proporciones recuperadas de la Wallet previa a la compactación y alineadas
+   al gutter de Inicio/Bancos: un solo margen, no dos. Exclusivamente móvil. */
+@media (max-width:790px){
+ html body #app#app main.world-wallet #page#page > .v144-wallet-shell{
+   display:block!important;box-sizing:border-box!important;
+   width:100vw!important;max-width:100vw!important;min-width:0!important;
+   margin-inline:calc(50% - 50vw)!important;padding:0!important;
+   overflow:visible!important;transform:none!important;
+ }
+ html body #app#app main.world-wallet #page#page .v68-wallet.v266-wallet.v279-wallet{
+   --wallet-mobile-gutter:clamp(14px,4vw,18px);
+   --wallet-carousel-edge:clamp(7px,2vw,10px);
+   --wallet-card-peek:clamp(32px,8.5vw,38px);
+   --v279-card-width:calc(100vw - var(--wallet-card-peek));
+   box-sizing:border-box!important;
+   width:100vw!important;min-width:0!important;max-width:100vw!important;
+   margin:0!important;
+   padding:0 var(--wallet-mobile-gutter) calc(158px + env(safe-area-inset-bottom,0px))!important;
+   gap:clamp(14px,4vw,17px)!important;
+ }
+ html body #app#app main.world-wallet #page#page .v68-wallet.v279-wallet.wallet-carousel-restored > .v266-wallet-header{
+   width:100%!important;min-width:0!important;max-width:100%!important;
+   margin:0!important;padding:2px 0!important;
+ }
+ html body #app#app main.world-wallet #page#page .v68-wallet.v279-wallet.wallet-carousel-restored > .v266-gallery{
+   width:100vw!important;max-width:100vw!important;
+   margin:0 0 1px calc(50% - 50vw)!important;
+ }
+ html body #app#app main.world-wallet #page#page .v68-wallet.v279-wallet.wallet-carousel-restored > :is(.v1244-state,.v1244-cutpanel,.v371-card-return,.v1301-distribution){
+   box-sizing:border-box!important;width:100%!important;max-width:100%!important;
+   margin:0!important;padding:clamp(16px,4.4vw,19px)!important;
+   border-radius:22px!important;
+ }
+ /* La lista individual gana aire sin introducir un scroll horizontal propio. */
+ html body #app#app main.world-wallet #page#page .v1244-state .v1301-limit-breakdown .v1301-ranked{
+   width:100%!important;min-width:0!important;box-sizing:border-box!important;
+   padding:4px 5px!important;
+ }
+ html body #app#app main.world-wallet #page#page .v1244-state .v1301-limit-breakdown .v1301-rank{
+   display:grid!important;box-sizing:border-box!important;
+   width:100%!important;min-width:0!important;
+   grid-template-columns:28px minmax(0,1fr) minmax(0,34%)!important;
+   column-gap:5px!important;padding:6px 0!important;
+ }
+ html body #app#app main.world-wallet #page#page .v1244-state .v1301-limit-breakdown .v1301-equivalent{
+   max-width:100%!important;min-width:0!important;
+   font-size:clamp(10px,2.8vw,12px)!important;
+   overflow-wrap:anywhere!important;word-break:normal!important;
+ }
+}

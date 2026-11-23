@@ -38,9 +38,9 @@ const readGeometry=async page=>page.evaluate(()=>{
 const assertGeometry=(g,label,width)=>{
  assert.ok(g.wallet,'Wallet inexistente '+label);
  assert.ok(g.scrollWidth<=width+2,'Scroll horizontal '+label+': '+JSON.stringify(g));
- assert.ok(g.wallet.left>=15&&g.wallet.right<=width-15,'Wallet pegada al borde '+label+': '+JSON.stringify(g.wallet));
+ assert.ok(g.wallet.left>=-2&&g.wallet.right<=width+2,'La estructura de Wallet excede el viewport '+label+': '+JSON.stringify(g.wallet));
  assert.ok(g.panels.length>=2,'Paneles principales ausentes '+label);
- for(const p of g.panels)assert.ok(p.box.left>=15&&p.box.right<=width-15,'Panel fuera de márgenes '+label+': '+p.name);
+ for(const p of g.panels)assert.ok(p.box.left>=12&&p.box.right<=width-12&&p.box.width>=width-45,'Panel debe igualar el ancho de Bancos móvil '+label+': '+JSON.stringify(p));
  for(let i=1;i<g.panels.length;i++)assert.ok(g.panels[i].box.top>=g.panels[i-1].box.bottom+7,'Paneles solapados '+label+': '+g.panels[i].name);
  assert.deepEqual(g.clipping,[],'Texto recortado '+label);
  assert.deepEqual(g.navigation,['Inicio','Wallet','Bancos','Explorar','Buscar']);
@@ -70,6 +70,11 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.equal(await p.locator('.v68-wallet > .v266-gallery .v68-wallet-face').first().getAttribute('data-id'),GLOBAL,'Crédito Global debe ir primero');
     assert.equal(await p.locator('.wallet-mobile-tools').evaluate(el=>el.open),false,'Herramientas no colapsadas');
     /* Portada sin cabecera universal, como Bancos móvil. */
+    // El carrusel suspende temporalmente el snap para centrar la tarjeta
+    // inicial. Esperar al segundo frame antes de verificar el estilo final.
+    await p.waitForFunction(()=>{const e=document.querySelector('.v68-wallet-gallery');
+      return !!e && getComputedStyle(e).scrollSnapType.includes('mandatory');
+    },null,{timeout:9000});
     const top=await p.evaluate(()=>{
       const box=s=>{const e=document.querySelector(s),r=e?.getBoundingClientRect();return r?{left:r.left,right:r.right,top:r.top,width:r.width,height:r.height}:null};
       const nav=document.querySelector('#app > .vive-mobile-top');
@@ -90,7 +95,7 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(Math.abs(top.head.top-top.add.top)<20,'Mis tarjetas y + no están en la misma línea');
     assert.ok(top.gallery.left<=3&&top.gallery.right>=width-3,'El carrusel no llega a los bordes: '+JSON.stringify(top.gallery));
     assert.ok(top.rail.width>=width-3,'El carrusel está comprimido');
-    assert.ok(top.first.width>=width*.80&&top.first.width<=width*.92,'Ancho de tarjeta incorrecto: '+top.first.width);
+    assert.ok(top.first.width>=width*.89&&top.first.width<=width*.94,'Tarjeta no recupera el ancho casi completo: '+top.first.width);
     assert.ok(top.first.height>=157&&top.first.height<=187,'Altura del carrusel incorrecta: '+top.first.height);
     assert.ok(top.firstCard.height===top.first.height,'La tarjeta visual no ocupa la altura asignada');
     assert.ok(top.first.left<=18,'Primera tarjeta demasiado separada del borde: '+top.first.left);
