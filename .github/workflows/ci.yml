@@ -127,6 +127,30 @@ jobs:
         with:
           name: wallet-consumption-${{ matrix.browser }}
           path: test-results/wallet-consumption
+  wallet-mobile-fidelity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Preparar Playwright
+        run: npm i --no-save playwright@1 && npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Auditar Wallet móvil a 320, 375, 390 y 430 px (Claro y Black)
+        run: node tests/wallet-mobile-fidelity.js
+        env:
+          WALLET_BROWSER: ${{ matrix.browser }}
+      - name: Subir capturas y resultados aunque fallen pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wallet-mobile-fidelity-${{ matrix.browser }}
+          path: test-results/wallet-mobile-fidelity/
+          if-no-files-found: warn
   sql:
     runs-on: ubuntu-latest
     timeout-minutes: 10
