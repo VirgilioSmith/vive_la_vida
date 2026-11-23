@@ -9,6 +9,40 @@ const go=(p,route)=>p.evaluate(route=>window.__T.go(route),route);
 const style=(p,selector,prop)=>p.locator(selector).first().evaluate((el,prop)=>getComputedStyle(el)[prop],prop);
 const token=(p,selector,name)=>p.locator(selector).first().evaluate((el,name)=>getComputedStyle(el).getPropertyValue(name).trim(),name);
 const palettes=['coral','ocean','emerald','amber'];
+const appRoutes=['overview','register','income','expenses','wallet','banks','accounts','cards','loans','certificates','benefits','personal','payments','transactions','recurring','budget','annual','analytics','categories','advanced','patrimony','projection','pressure','mobilehub','mobilesearch','settings','score'];
+async function checkApplicationRoutes(browser,width,mode){
+ process.env.THEME=mode;
+ delete process.env.TOUCH;
+ const {ctx,p}=await open(browser,width,900);
+ const overflow=[],shortControls=[],tinyText=new Map(),errors=[];
+ p.on('pageerror',error=>errors.push(error.message));
+ try{
+  for(const route of appRoutes){
+   await go(p,route);
+   const audit=await p.locator('#page').evaluate(page=>{
+    const sizeError=document.documentElement.scrollWidth>innerWidth;
+    const smallControls=[],smallLabels=[];
+    for(const element of page.querySelectorAll('*')){
+     const {width,height}=element.getBoundingClientRect();
+     const css=getComputedStyle(element);
+     if(!width||!height||css.visibility==='hidden')continue;
+     if(element.matches('button,a[href],[role=button],input:not([type=hidden]),select,summary')&&(width<24||height<24)){
+      smallControls.push([element.tagName,element.id||element.classList[0]||element.getAttribute('type'),Math.round(width),Math.round(height)]);
+     }
+     if(!element.children.length&&element.textContent.trim().length>1&&parseFloat(css.fontSize)<11){
+      smallLabels.push([element.tagName,element.classList[0]||element.parentElement.classList[0]||''].join('.'));
+     }
+    }
+    return {sizeError,smallControls,smallLabels};
+   });
+   if(audit.sizeError)overflow.push(route);
+   for(const control of audit.smallControls)shortControls.push([route,...control]);
+   for(const label of audit.smallLabels)tinyText.set(label,(tinyText.get(label)||0)+1);
+  }
+  console.log('Recorrido',JSON.stringify({width,mode,routes:appRoutes.length,overflow,shortControls,smallLabels:[...tinyText].sort((a,b)=>b[1]-a[1]).slice(0,18)}));
+  assert.deepEqual(errors,[]);
+ }finally{await ctx.close();}
+}
 async function checkSharedGlass(page,width,mode){
  const mobile=width<791;
  const surfaces=[
@@ -85,6 +119,7 @@ async function themeMatrix(browser,width,mode,activePalettes){
  if(evidence)fs.mkdirSync(evidence,{recursive:true});
  const browser=await chromium.launch();
  try{
+  for(const width of [390,1440])for(const mode of ['light','black'])await checkApplicationRoutes(browser,width,mode);
   for(const width of [320,390,430,768,1024,1280,1440,1920]){
    const activePalettes=[390,1440].includes(width)?palettes:['ocean'];
    for(const mode of ['light','black'])await themeMatrix(browser,width,mode,activePalettes);
