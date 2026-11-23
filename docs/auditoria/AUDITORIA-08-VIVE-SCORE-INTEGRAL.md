@@ -122,7 +122,7 @@ Con tu autorización de E1–E10 se implementó lo siguiente. El motor pasó de 
 
 | # | Cambio | Dónde | Verificación |
 |---|---|---|---|
-| E1 | La mora **vigente** usa la escala de severidad del atraso declarado (18/75/100/135/165, peor producto); ya no se satura en 35 | `score.js` (`evaluateRaw`) | Prueba E1: 0 d → 866; 15 d → 837; 45 d → 766; 75 d → 735; 100 d → 696; 200 d → 666; 672 d → 666 |
+| E1 | La mora **vigente** usa la escala de severidad del atraso declarado (18/75/100/135/165, peor producto); ya no se satura en 35 | `score.js` (`evaluateRaw`) | Prueba E1: 0 d → 866; 15 d → 837; 45 d → 766; 75 d → 735; 100 d → 696; 200 d → 600; 672 d → 600 |
 | E2 | Etiqueta «**Perfil en desarrollo**» mientras haya < 12 meses de evidencia o de antigüedad promedio, y la **confianza** se muestra bajo el título (web y móvil) | `score.js` (`isDeveloping`, `confidenceOf`, `scoreName`) | Prueba E2 + captura web |
 | E3 | «Tarjetas tensionadas» sin escalones: rampas lineales 60 %→75 % (6 pts) y 100 %→110 % (12 pts) | `score.js` | Prueba R5: ≤ 4 puntos por punto porcentual en toda la curva, sin escalones |
 | E4 | Neutros al 50 % cuando no hay evidencia (sin tarjetas: 90/180, 22/45, 8/15; sin préstamos: 18/35); composición de «gestión» proporcional a la antigüedad promedio (÷ 24 meses) | `score.js` | Prueba E4: 2 meses de historia 756 frente a 10 años 961 |
@@ -134,7 +134,7 @@ Con tu autorización de E1–E10 se implementó lo siguiente. El motor pasó de 
 | E10 | **Parcial.** Cada corte guarda `engine` y, al cerrarse, `closedEngine`. No se guarda el puntaje de cada corte (se recalcula) | `state.js` | Prueba E10 |
 | D-5/duplicados | Alerta de duplicados (ya hecha) | — | Prueba R10 |
 
-**Antes y después sobre el perfil de demostración** (con datos sintéticos; sus atrasos de 650–672 días provienen de vencimientos sin pago registrado): **831 → 666**. La caída se debe sobre todo a E1 (mora vigente) y E4/E2 (expediente de un mes). Marcar el atraso como «no es mora» lo devuelve al nivel anterior; el puntaje sigue etiquetado «Perfil en desarrollo» hasta reunir 12 meses de evidencia.
+**Antes y después sobre el perfil de demostración** (con datos sintéticos; sus atrasos de 650–672 días provienen de vencimientos sin pago registrado): **831 → 600**. La caída se debe sobre todo a E1 (mora vigente) y E4/E2 (expediente de un mes). Marcar el atraso como «no es mora» lo devuelve al nivel anterior; el puntaje sigue etiquetado «Perfil en desarrollo» hasta reunir 12 meses de evidencia.
 
 **Pruebas:** `tests/vive-score.js` 39/39 (se actualizaron dos expectativas: 12 escenarios en vez de 9 y el neutro de amortización 18 en vez de 26); `tests/vive-score-propiedades.js` 20/20 (rango y enteros en 2.885 cortes de 6.000 con valores hostiles, determinismo, monotonía, multimoneda, extremos y E1–E10).
 
