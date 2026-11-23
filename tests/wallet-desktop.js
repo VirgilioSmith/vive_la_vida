@@ -53,6 +53,8 @@ module.exports=async function walletDesktop(browser){
   assert.equal(await amount('.vWalletPc-stat.is-usage strong'),Number((100*sum('debt')/480000).toFixed(1)));
   assert.equal(await amount('.vWalletPc-chart-total strong'),19800);
   assert.equal(await p.locator('.vWalletPc-limit-row').count(),2);
+  assert.equal(await wallet.locator('.vWalletPc-legend .vWalletPc-product-mark').count(),2);
+  assert.equal(await wallet.locator('.wallet-consumption-split').innerText(),'RD$14,000.00 · US$100.00');
   const slices=p.locator('.vWalletPc-chart circle[role="button"]');
   assert.equal(await slices.count(),2);
   const portions=await slices.evaluateAll(all=>all.map(el=>parseFloat(el.getAttribute('stroke-dasharray'))));
@@ -120,10 +122,19 @@ module.exports=async function walletDesktop(browser){
   await p.getByRole('button',{name:'Volver a Wallet'}).click();
   assert.equal(await wallet.getByRole('button',{name:'Seleccionar Tarjeta A',exact:true}).getAttribute('aria-pressed'),'true');
   await wallet.getByRole('button',{name:'Seleccionar Tarjeta B',exact:true}).click();
+  await wallet.getByRole('button',{name:'Registrar beneficio',exact:true}).click();
+  await p.locator('#v144CashbackForm').waitFor();
+  await p.locator('#modal-root [data-act="closeModal"]').first().click();
+  await wallet.getByRole('button',{name:'Anualidad y seguros',exact:true}).click();
+  await p.locator('#annualFeeForm').waitFor();
+  await p.locator('#modal-root [data-act="closeModal"]').first().click();
   await wallet.getByRole('button',{name:'Explorar el ciclo',exact:true}).click();
   await p.getByRole('button',{name:'Volver a Wallet'}).click();
   assert.equal(await wallet.getByRole('button',{name:'Seleccionar Tarjeta B',exact:true}).getAttribute('aria-pressed'),'true');
   await wallet.getByRole('button',{name:/Créditos generales/}).click();
+  assert.equal(await wallet.locator('.vWalletPc-cuts > p').count(),0);
+  await wallet.getByRole('button',{name:'Ver estado consolidado del crédito'}).click();
+  await p.locator('.v176-card-insight-modal .close').click();
   for(const [key,label] of [['dop','pesos'],['usd','dólares']]){
    const button=wallet.getByRole('button',{name:'Ver cortes pendientes en '+label});
    assert.equal(Number((await button.innerText()).replace(/[^\d.\-]/g,'')),Number(sum(key).toFixed(2)));
@@ -140,7 +151,7 @@ module.exports=async function walletDesktop(browser){
   await p.getByRole('button',{name:'Buscar movimientos, tarjetas o comercios'}).click();
   await p.getByRole('dialog',{name:'Buscador global vive el hoy'}).waitFor();
   await p.keyboard.press('Escape');
-  for(const [label,page] of [['Cuentas','accounts'],['Préstamos','loans']]){
+  for(const [label,page] of [['Cuentas','accounts'],['Préstamos','loans'],['Certificados','certificates']]){
    await wallet.getByRole('button',{name:label,exact:true}).click();
    assert.equal(await p.evaluate(()=>window.__T.ui().page),page);
    await p.getByRole('button',{name:/^Wallet:/}).click();

@@ -1305,6 +1305,12 @@ function v371CardReturnWidget(c,consolidatedCards=null,bankView=false,walletPc=f
  const percentage=d.roi===null?'—':`${d.roi>0?'+':''}${new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(d.roi)}%`;
  const tone=d.missingRate||!d.hasAnnual?'':(d.net>0?'positive':d.net<0?'negative':'');
  const benefitId=consolidatedCards?'all':sanitize(c.id);
+ const inWallet=ui.page==='wallet'&&!bankView;
+ const walletCards=consolidatedCards||[c];
+ const walletActions=inWallet&&walletCards.length?`<div class="wallet-return-actions">
+  <button type="button" data-act="walletReturnEntry" data-mode="benefit" data-id="${benefitId}">${icon('gift2')}<span>Registrar beneficio</span>${icon('arrow')}</button>
+  <button type="button" data-act="walletReturnEntry" data-mode="annual" data-id="${benefitId}">${icon('shield')}<span>Anualidad y seguros</span>${icon('arrow')}</button>
+ </div>`:'';
  // El resumen móvil de Bancos tiene su propia jerarquía, sin alterar Wallet ni PC.
  if(bankView&&isMobileViewport()&&ui.page==='banks')return `<section class="v371-card-return vBanks-mobile-return" aria-label="Beneficios y retorno">
   <h2><button type="button" class="vBanksPc-benefits-link" data-v144-action="open-benefits" data-id="${benefitId}">${icon('gift2')}Beneficios y retorno ${icon('arrow')}</button></h2>
@@ -1312,15 +1318,16 @@ function v371CardReturnWidget(c,consolidatedCards=null,bankView=false,walletPc=f
   <div class="vBanks-return-secondary"><div><small>Anualidad configurada</small><strong ${vBanksAmountSize(d.hasConfigured?money(d.configured,'DOP',2):'Sin definir')}>${d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'}</strong></div><div class="${d.benefit>0?'positive':''}"><small>Beneficios recibidos</small><strong ${vBanksAmountSize(benefit)}>${benefit}</strong></div></div>
   <p class="v371-return-note">${d.missingRate?'Falta la tasa RD$/US$ para calcular el retorno.':!d.hasAnnual?'Configura la anualidad para calcular el retorno.':d.feeConfirmed?'Retorno sobre anualidades cobradas.':d.unconfigured?'Retorno sobre anualidades conocidas · '+d.unconfigured+' sin definir.':d.annual!==d.configured?'Retorno sobre anualidades cobradas o configuradas.':'Retorno estimado sobre anualidades configuradas.'}</p>
  </section>`;
- const title=compact?`<h2><button type="button" class="vBanksPc-benefits-link" data-v144-action="open-benefits" data-id="${benefitId}">${icon('gift2')}Beneficios y retorno ${icon('arrow')}</button></h2>`:'<h2>Beneficios y retorno</h2>';
+ const title=compact?`<h2><button type="button" class="vBanksPc-benefits-link" data-v144-action="open-benefits" data-id="${benefitId}">${icon('gift2')}Beneficios y retorno ${icon('arrow')}</button></h2>`:`<h2>${inWallet?icon('gift2'):''}Beneficios y retorno</h2>`;
  return `<section class="v266-wallet-panel v371-card-return${walletPc?' vWalletPc-panel vWalletPc-return':''}" aria-label="Retorno anual de beneficios de ${sanitize(c.name)}">
- <div class="v371-return-heading"><div><span class="v266-overline">BENEFICIOS · ${d.year}</span>${title}</div>${compact?'':`<button type="button" class="v371-return-action" data-v144-action="open-benefits" data-id="${benefitId}" aria-label="Abrir beneficios de ${sanitize(c.name)}">${icon('arrow')}</button>`}</div>
+ <div class="v371-return-heading"><div>${inWallet?'':`<span class="v266-overline">BENEFICIOS · ${d.year}</span>`}${title}</div>${compact?'':`<button type="button" class="v371-return-action" data-v144-action="open-benefits" data-id="${benefitId}" aria-label="Abrir beneficios de ${sanitize(c.name)}">${icon('arrow')}</button>`}</div>
  <div class="v371-return-values">
- <div class="v371-return-tile"><small>Anualidad</small><strong>${compact?(d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'):cost}</strong></div>
+ <div class="v371-return-tile"><small>Anualidad</small><strong>${compact&&!inWallet?(d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'):cost}</strong></div>
  <div class="v371-return-tile${compact&&d.benefit>0?' positive':''}"><small>Beneficios</small><strong>${benefit}</strong></div>
  <div class="v371-return-tile ${tone}"><small>Retorno</small><strong>${net}</strong></div>
  <div class="v371-return-tile ${tone}"><small>Retorno %</small><strong>${percentage}</strong></div>
  </div>
+ ${walletActions}
  <p class="v371-return-note">${d.missingRate?'Falta la tasa RD$/US$ para calcular el retorno.':!d.hasAnnual?'Configura la anualidad desde Gestionar para calcular el retorno.':consolidatedCards&&d.unconfigured?'Retorno sobre anualidades conocidas · '+d.unconfigured+' sin definir.':d.feeConfirmed?'Retorno = beneficios monetarios acreditados − anualidad cobrada.':consolidatedCards?'Retorno consolidado sobre anualidades cobradas o configuradas; no implica un cargo realizado.':'Retorno estimado respecto a la anualidad configurada; no implica un cargo realizado.'}</p>
  </section>`;
 }
@@ -1424,7 +1431,7 @@ function v1301WalletDistribution(cards,consumption){
  const split=(d,u)=>`<span>${amount(d)}</span><span>${amount(u,'USD')}</span>`;
  let offset=0;
  const donut=`<svg class="v1301-donut" viewBox="0 0 128 128" role="img" aria-label="Participación del consumo de ${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}"><circle class="v1301-donut-track" cx="64" cy="64" r="46" fill="none" stroke-width="18"/>${rows.map((r,i)=>{const portion=share(r);if(!portion)return '';const start=offset;offset+=portion;return `<circle class="v1301-donut-segment" data-card-id="${sanitize(r.c.id)}" cx="64" cy="64" r="46" pathLength="100" fill="none" stroke-width="18" stroke-dasharray="${portion} ${100-portion}" stroke-dashoffset="${-start}" transform="rotate(-90 64 64)" style="stroke:${cardColor(r,i)}"/>`}).join('')}<text class="v1301-donut-count" x="64" y="59" text-anchor="middle">${cards.length}</text><text class="v1301-donut-caption" x="64" y="78" text-anchor="middle">${cards.length===1?'tarjeta':'tarjetas'}</text></svg>`;
- return v1301ConsumptionDisclosure('Consumo por tarjeta','HISTÓRICO · CRÉDITOS GENERALES','Todas tus tarjetas · Histórico completo',`<div class="v1301-distribution-body"><div class="v1301-total"><small>CONSUMO HISTÓRICO TOTAL</small><strong>${total.missingFx?'—':amount(equivalent)}</strong><span title="Compras menos devoluciones; USD convertido a la tasa registrada de cada movimiento (o tasa configurada si no existe)">Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div>${donut}${!representable?`<p>${total.missingFx?'Falta una tasa de cambio para calcular la participación.':'No se representa la participación cuando alguna tarjeta tiene consumo neto negativo.'}</p>`:''}<h3>Consumo por tarjeta</h3>${v1301WalletRanked(rows,share,cardColor)}</div>`);
+ return v1301ConsumptionDisclosure('Consumo por tarjeta','HISTÓRICO · CRÉDITOS GENERALES','Todas tus tarjetas · Histórico completo',`<div class="v1301-distribution-body"><div class="v1301-total"><small>CONSUMO HISTÓRICO TOTAL</small><strong>${total.missingFx?'—':amount(equivalent)}</strong><span title="Compras menos devoluciones; USD convertido a la tasa registrada de cada movimiento (o tasa configurada si no existe)">Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div>${donut}${!representable?`<p>${total.missingFx?'Falta una tasa de cambio para calcular la participación.':'No se representa la participación cuando alguna tarjeta tiene consumo neto negativo.'}</p>`:''}${v1301WalletRanked(rows,share,cardColor)}</div>`,{glyph:'analytics'});
 }
 document.addEventListener('keydown',event=>{
  const segment=event.target.closest?.('.vWalletPc-chart circle[data-act="walletPcConsumption"]');
@@ -1438,7 +1445,7 @@ const vWalletPcSplit=(dop,usd,digits=2)=>`${vWalletPcAmount(dop,'DOP',digits)} �
 const vWalletPcEquivalent=(dop,usd)=>num(dop)+fx(usd,'USD');
 const vWalletPcUsage=(debt,limit)=>limit>0?Math.max(0,100*debt/limit):0;
 
-function vWalletPcConsumption(list){
+function vWalletPcConsumption(list, inWallet){
  const {byCard,totals}=v1301WalletConsumption(list);
  const representable=!totals.missingFx&&list.every(c=>byCard.get(c.id).equivalent>=0);
  const palette=['#00796e','#3262ef','#9361f0','#d9a929','#d85671','#2294aa','#728b35','#a9548e'];
@@ -1471,8 +1478,9 @@ function vWalletPcConsumption(list){
     </svg>
     <div class="vWalletPc-chart-total" aria-live="polite"><strong>${selected?(selected.data.missingFx?'—':vWalletPcAmount(selected.total)):total}</strong><span>${selected?sanitize(bankOf(selected.c)||selected.c.name):'consumo'}</span></div>
    </div>
-   <div class="vWalletPc-legend">${rows.map(r=>`<button type="button" ${select(r)} title="${sanitize(rowLabel(r))}" aria-pressed="${r===selected}"><i style="--slice:${r.color}"></i><span>${sanitize(bankOf(r.c)||r.c.name)}</span><b>${representable?r.share.toFixed(1)+'%':'—'}</b></button>`).join('')}</div>
+   <div class="vWalletPc-legend">${rows.map(r=>`<button type="button" ${select(r)} title="${sanitize(rowLabel(r))}" aria-label="${sanitize(rowLabel(r))}" aria-pressed="${r===selected}"><i style="--slice:${r.color}"></i>${inWallet?`<span class="vWalletPc-product-mark" aria-hidden="true">${v1002BankGlyph(r.c,'card')}</span>`:''}<span>${sanitize(bankOf(r.c)||r.c.name)}</span><b>${inWallet?r.data.missingFx?'—':vWalletPcAmount(r.total):representable?r.share.toFixed(1)+'%':'—'}</b></button>`).join('')}</div>
   </div>
+  ${inWallet?`<div class="wallet-consumption-split" aria-live="polite" aria-label="Consumo por moneda">${vWalletPcSplit((selected?.data||totals).DOP,(selected?.data||totals).USD)}</div>`:''}
   ${!representable?`<p class="vWalletPc-note">${totals.missingFx?'Falta una tasa de cambio para calcular el consumo equivalente.':'Hay tarjetas con consumo histórico neto negativo.'}</p>`:list.length?'':'<p class="vWalletPc-note">Aún no hay tarjetas registradas.</p>'}
  </section>`;
 }
@@ -1523,7 +1531,7 @@ function vWalletPc(){
  const due=cuts[0];
  const cutButton=(ccy,key)=>{
   const billed=sum(key,'billed');
-  return `<button type="button" data-act="walletPcCuts" data-ccy="${ccy}" ${billed>.005?'':'disabled'} aria-label="Ver cortes pendientes en ${ccy==='DOP'?'pesos':'dólares'}"><b>${vWalletPcAmount(billed,ccy,2)}</b>${icon('arrow')}</button>`;
+  return `<button type="button" data-act="walletPcCuts" data-ccy="${ccy}" ${billed>.005?'':'disabled'} aria-label="Ver cortes pendientes en ${ccy==='DOP'?'pesos':'dólares'}">${bankScope===null?icon(ccy==='DOP'?'wallet':'card'):''}<b>${vWalletPcAmount(billed,ccy,2)}</b>${icon('arrow')}</button>`;
  };
  const walletAction=(label,act,attrs='')=>`<button type="button" data-act="${act}" ${attrs}>${label}</button>`;
  const activeId=active?`data-id="${sanitize(active.id)}"`:'';
@@ -1551,10 +1559,11 @@ function vWalletPc(){
     ${bankScope===null?`<nav class="vWalletPc-product-links" aria-label="Otros productos financieros">
      <button type="button" data-act="navigate" data-id="accounts">${icon('wallet')}<span>Cuentas</span>${icon('arrow')}</button>
      <button type="button" data-act="navigate" data-id="loans">${icon('receipt')}<span>Préstamos</span>${icon('arrow')}</button>
+     <button type="button" data-act="navigate" data-id="certificates">${icon('landmark')}<span>Certificados</span>${icon('arrow')}</button>
     </nav>`:''}
    </section>
    <section class="vWalletPc-panel vWalletPc-state" aria-labelledby="vWalletPc-state-title">
-    <header><h2 id="vWalletPc-state-title">Estado del crédito</h2>${active?`<button type="button" class="vWalletPc-round" data-act="goCard" ${activeId} aria-label="Administrar la tarjeta">${icon('arrow')}</button>`:''}</header>
+    <header><h2 id="vWalletPc-state-title">${bankScope===null?icon('card'):''}Estado del crédito</h2>${active?`<button type="button" class="vWalletPc-round" data-act="goCard" ${activeId} aria-label="Administrar la tarjeta">${icon('arrow')}</button>`:bankScope===null&&list.length?`<button type="button" class="vWalletPc-round" data-act="walletPcCuts" aria-label="Ver estado consolidado del crédito">${icon('arrow')}</button>`:''}</header>
     <div class="vWalletPc-state-main">
      <div class="vWalletPc-ring" style="--use:${Math.min(100,usage)}%" aria-label="${percent(usage)} utilizado"><div><strong>${percent(usage)}</strong><span>utilizado</span></div></div>
      <div class="vWalletPc-limit"><span>Límite total</span><strong>${vWalletPcAmount(limit)}</strong><small>${vWalletPcAmount(limitDop,'DOP',2)}</small><small>${vWalletPcAmount(limitUsd,'USD',2)}</small></div>
@@ -1574,11 +1583,11 @@ function vWalletPc(){
    <div class="vWalletPc-right">
     ${v371CardReturnWidget(active||{name:'tus tarjetas'},active?null:list,false,true)}
     <section class="vWalletPc-panel vWalletPc-cuts" aria-labelledby="vWalletPc-cuts-title">
-     <header><h2 id="vWalletPc-cuts-title">${icon('calendar')}Cortes pendientes</h2></header>
-     <p>${due?(due<today()?'Venció el ':'Próximo vence el ')+prettyDate(due):'Sin vencimientos pendientes'}</p>
+     <header><h2 id="vWalletPc-cuts-title">${icon('calendar')}Cortes pendientes</h2>${bankScope===null&&sum('dop','billed')+sum('usd','billed')>.005?`<button type="button" class="vWalletPc-round" data-act="walletPcCuts" data-mode="pending" aria-label="Ver todos los cortes pendientes">${icon('arrow')}</button>`:''}</header>
+     ${bankScope!==null?`<p>${due?(due<today()?'Venció el ':'Próximo vence el ')+prettyDate(due):'Sin vencimientos pendientes'}</p>`:''}
      <div>${cutButton('DOP','dop')}${cutButton('USD','usd')}</div>
     </section>
-    ${vWalletPcConsumption(list)}
+    ${vWalletPcConsumption(list,bankScope===null)}
    </div>
   </div>
  </div>`;
@@ -1665,7 +1674,7 @@ function v68GlobalWalletAction(mode,ccy,id){
 }
 function v68Wallet(){
  const cards=v68WalletCards();
- if(!cards.length)return `<section class="v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">TU CARTERA</span><h1>Mis tarjetas</h1></div><button class="v266-wallet-add" data-act="addCard" aria-label="Añadir tarjeta">${icon('plus')}</button></header><div class="v266-empty"><strong>Tu Wallet comienza aquí.</strong><p>Agrega una tarjeta para consultar crédito, cortes, pagos y actividad.</p><button class="btn" data-act="addCard">Añadir tarjeta</button></div></section>`;
+ if(!cards.length)return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">TU CARTERA</span><h1>Mis tarjetas</h1></div><button class="v266-wallet-add" data-act="addCard" aria-label="Añadir tarjeta">${icon('plus')}</button></header><div class="v266-empty"><strong>Tu Wallet comienza aquí.</strong><p>Agrega una tarjeta para consultar crédito, cortes, pagos y actividad.</p><button class="btn" data-act="addCard">Añadir tarjeta</button></div></section>`;
  // La tarjeta virtual no forma parte de db.cards ni de ningún selector de operaciones.
  const global=ui.v68WalletId===V68_GLOBAL_ID;
  const active=global?{id:V68_GLOBAL_ID,name:'Créditos generales',limitDOP:rnd(cards.reduce((s,c)=>s+num(c.limitDOP),0)),limitUSD:rnd(cards.reduce((s,c)=>s+num(c.limitUSD),0))}:cards.find(c=>c.id===ui.v68WalletId)||cards[0];
@@ -1684,17 +1693,14 @@ function v68Wallet(){
  const usage=totalLimit>0?Math.max(0,100*debt/totalLimit):0;
  const last4=c=>String(c.last4||c.number||'').replace(/\D/g,'').slice(-4);
  const tierName=c=>CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
- const due=[{...dop,ccy:'DOP'},{...usd,ccy:'USD'}].filter(s=>s.nextDue&&num(s.billed)>0.005).sort((a,b)=>String(a.nextDue).localeCompare(String(b.nextDue)))[0];
  const globalFace=`<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${global?'selected':''}" data-act="v68WalletSelect" data-id="${V68_GLOBAL_ID}" aria-pressed="${global}" aria-label="Seleccionar Créditos generales"><span class="v266-physical-card v277-physical-card" style="background:linear-gradient(125deg,color-mix(in srgb,var(--accent,#087b72) 48%,#10252d),color-mix(in srgb,var(--accent,#087b72) 80%,#142c36))!important"><span class="v277-card-head"><span class="v277-card-bank">${icon('wallet')}<b>Mi crédito</b></span><small>CONSOLIDADO</small></span><strong class="v277-card-title">Créditos generales</strong><span class="v277-card-number">${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}</span><span class="v277-card-footer"><small>CRÉDITO · RD$ / US$</small>${icon('card')}</span></span></button>`;
  const gallery=globalFace+cards.map(c=>{
   const selected=c.id===active.id,bankName=bankOf(c),tier=cardTierKey(c);
   return `<button type="button" class="v68-wallet-face v266-wallet-face v277-wallet-face ${selected?'selected':''}" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" aria-pressed="${selected}" aria-label="Seleccionar ${sanitize(c.name)}"><span class="v266-physical-card v277-physical-card tier-${sanitize(tier)}"><span class="v277-card-head"><span class="v277-card-bank">${bankLogoInline(c.bankId)}<b>${sanitize(bankName||c.name)}</b></span><small>${sanitize(tierName(c))}</small></span><strong class="v277-card-title">${sanitize(c.name)}</strong><span class="v277-card-number">•••• ${sanitize(last4(c)||'••••')}</span><span class="v277-card-footer"><small>CRÉDITO · ${num(c.limitDOP)>0?'RD$':''}${num(c.limitDOP)>0&&num(c.limitUSD)>0?' / ':''}${num(c.limitUSD)>0?'US$':''}${num(c.limitDOP)<=0&&num(c.limitUSD)<=0?'RD$ / US$':''}</small>${cardNetworkMark(c)}</span></span></button>`;
  }).join('');
-  const accent=String(global?'':bank(active.bankId)?.color||db.settings.paletteHex||'').trim();
- const walletAccent=global?'var(--accent,#6964ea)':/^#[0-9a-fA-F]{6}$/.test(accent)?accent:'#6964ea';
  const dots=[{id:V68_GLOBAL_ID,name:'Créditos generales'},...cards];
  const action=(mode,original)=>global?`data-act="v68WalletGlobalAction" data-mode="${mode}"`:original;
- return `<section class="v68-wallet v266-wallet v279-wallet" style="--v900-wallet-tone:${walletAccent}" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
+ return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
  <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${dots.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
  <div class="v266-selected-balance v550-currency-balance v565-credit-dashboard" aria-label="Resumen de crédito por moneda de la tarjeta seleccionada">
    <div class="v550-balance-column v565-primary"><span>CRÉDITO DISPONIBLE</span><strong>${money(available)}</strong>
@@ -1705,12 +1711,12 @@ function v68Wallet(){
    </div>
   </div>
  <div class="v266-wallet-actions" aria-label="Acciones de tarjeta"><button type="button" ${action('pay',`data-act="payCard" data-id="${sanitize(active.id)}"`)}><span>${icon('wallet')}</span><b>Pagar</b></button><button type="button" ${action('cuts',`data-act="goCard" data-id="${sanitize(active.id)}"`)}><span>${icon('calendar')}</span><b>Corte</b></button><button type="button" ${action('advance',`data-v900-action="advance" data-id="${sanitize(active.id)}"`)} aria-label="Solicitar avance de efectivo"><span>${icon('cashAdvance')}</span><b>Avance</b></button><button type="button" ${action('edit',`data-act="editCard" data-id="${sanitize(active.id)}"`)}><span>${icon('settings')}</span><b>Editar</b></button></div>
- <section class="v266-wallet-panel v1244-state" aria-label="Estado del crédito"><div class="v266-panel-heading"><div><span class="v266-overline">CONTROL DE CRÉDITO</span><h2>Estado del crédito</h2></div><button type="button" ${action('cuts',`data-act="goCard" data-id="${sanitize(active.id)}"`)} aria-label="Abrir detalles">${icon('arrow')}</button></div>
+ <section class="v266-wallet-panel v1244-state" aria-label="Estado del crédito"><div class="v266-panel-heading"><div><h2>${icon('card')}Estado del crédito</h2></div><button type="button" ${action('cuts',`data-act="goCard" data-id="${sanitize(active.id)}"`)} aria-label="Abrir detalles">${icon('arrow')}</button></div>
  <div class="v1244-main"><div class="v1244-gauge ${usage>=75?'is-high':usage>=50?'is-mid':''}" role="meter" aria-label="Porcentaje utilizado del límite" aria-valuemin="0" aria-valuemax="${Math.max(100,usage).toFixed(1)}" aria-valuenow="${usage.toFixed(1)}" style="--u:${Math.min(100,usage)}"><div><b>${usage.toFixed(1)}%</b><small>utilizado</small></div></div>
  <div class="v1244-limits"><small>LÍMITE TOTAL</small><strong>${global?money(totalLimit,'DOP',0):money(totalLimit)}</strong><div class="v1244-ccy"><span><i>RD$</i>${num(active.limitDOP).toLocaleString('en-US',{minimumFractionDigits:global?0:2,maximumFractionDigits:global?0:2})}</span><span><i>US$</i>${num(active.limitUSD).toLocaleString('en-US',{minimumFractionDigits:global?0:2,maximumFractionDigits:global?0:2})}</span></div></div></div>
  ${global?v1301WalletLimitRows(cards):''}
-  <div class="v1244-cutbox">${(()=>{const L=[[dop,'DOP','RD$'],[usd,'USD','US$']].map(([st,cc,sym])=>{const bill=num(st.billed),has=bill>.005&&!!st.nextDue;return {st,cc,sym,bill,has,late:has&&st.nextDue<today(),date:has?st.nextDue:''}});const act=L.filter(x=>x.has),lateL=act.filter(x=>x.late),ref=(lateL.length?lateL:act).map(x=>x.date).sort()[0],isLate=lateL.length>0,title=global?(isLate?'CORTES ATRASADOS':act.length?'CORTES PENDIENTES':'CORTES AL DÍA'):(isLate?'CORTE ATRASADO':act.length?'CORTE PENDIENTE':'CORTE AL DÍA'),sub=isLate?(global?'Desde el ':'Venció el ')+prettyDate(ref):act.length?(global?'Próximo vence el ':'Vence el ')+prettyDate(ref):'Nada por pagar';
- return `<div class="v1244-cuthead ${isLate?'is-late':act.length?'is-soon':'is-ok'}"><strong>${title}</strong><span>${sub}</span></div><div class="v1244-pills">${L.map(x=>{const amt=num(x.bill).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return `<button type="button" class="v1244-pill" ${x.has?`${action('pay-cut',`data-act="payCard" data-id="${sanitize(active.id)}"`)} data-ccy="${x.cc}"`:'disabled'} title="${x.has?(x.late?'Venció ':'Vence ')+prettyDate(x.date):''}" aria-label="${x.has?'Pagar corte en '+x.sym+' '+amt+' · '+prettyDate(x.date):'Sin saldo facturado en '+x.sym}"><span class="v1244-pill-top"><b>${x.sym}</b><em>${amt}</em></span><span class="v1244-pill-go">${icon('arrow')}</span></button>`}).join('')}</div>`})()}</div>
+  <div class="v1244-cutbox">${(()=>{const L=[[dop,'DOP','RD$'],[usd,'USD','US$']].map(([st,cc,sym])=>{const bill=num(st.billed),has=bill>.005&&!!st.nextDue;return {st,cc,sym,bill,has,late:has&&st.nextDue<today(),date:has?st.nextDue:''}});const act=L.filter(x=>x.has),lateL=act.filter(x=>x.late),isLate=lateL.length>0,title=global?(isLate?'CORTES ATRASADOS':act.length?'CORTES PENDIENTES':'CORTES AL DÍA'):(isLate?'CORTE ATRASADO':act.length?'CORTE PENDIENTE':'CORTE AL DÍA');
+ return `<div class="v1244-cuthead ${isLate?'is-late':act.length?'is-soon':'is-ok'}"><strong>${icon('calendar')}${title}</strong></div><div class="v1244-pills">${L.map(x=>{const amt=num(x.bill).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return `<button type="button" class="v1244-pill" ${x.has?`${action('pay-cut',`data-act="payCard" data-id="${sanitize(active.id)}"`)} data-ccy="${x.cc}"`:'disabled'} title="${x.has?(x.late?'Venció ':'Vence ')+prettyDate(x.date):''}" aria-label="${x.has?'Pagar corte en '+x.sym+' '+amt+' · '+prettyDate(x.date):'Sin saldo facturado en '+x.sym}"><span class="v1244-pill-top">${icon(x.cc==='DOP'?'wallet':'card')}<b>${x.sym}</b><em>${amt}</em></span><span class="v1244-pill-go">${icon('arrow')}</span></button>`}).join('')}</div>`})()}</div>
 </section>
  ${v371CardReturnWidget(active,global?cards:null)}
  ${global?v1301WalletDistribution(cards,v1301WalletConsumption(cards)):''}
@@ -2747,9 +2753,9 @@ function rewardReceivedForm(id,cur){let c=card(id);if(!c)return;let accounts=db.
 
 /* V176: consulta explicativa de la composición de KPIs del portafolio. */
 
-function v176CardInsight(cardList=db.cards,currency){
+function v176CardInsight(cardList=db.cards,currency,pendingOnly=false){
  const el=document.getElementById('modal-root');if(!el)return;
- const list=cardList.flatMap(c=>(currency?[currency]:['DOP','USD']).map(ccy=>{const s=cardStatus(c,ccy);return {c,ccy,s}})).filter(x=>num(x.s.billed)>0.005||(!currency&&num(x.s.debt)>0.005));
+ const list=cardList.flatMap(c=>(currency?[currency]:['DOP','USD']).map(ccy=>{const s=cardStatus(c,ccy);return {c,ccy,s}})).filter(x=>num(x.s.billed)>0.005||(!currency&&!pendingOnly&&num(x.s.debt)>0.005));
  const totalBilled=list.reduce((n,x)=>n+fx(x.s.billed,x.ccy),0);
  const totalDebt=list.reduce((n,x)=>n+fx(x.s.debt,x.ccy),0);
  el.innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v176-card-insight-modal" role="dialog" aria-modal="true" aria-label="Composición del portafolio de tarjetas"><div class="modal-head"><div><h2>Tu crédito, por producto</h2><p>Saldo total y facturado con fecha de corte, sin duplicar deuda.</p></div><button type="button" class="close" data-act="closeModal">×</button></div><div class="v176-credit-total"><span><small>DEUDA TOTAL</small><b>${money(totalDebt)}</b></span><span><small>ESTADOS FACTURADOS PENDIENTES</small><b>${money(totalBilled)}</b></span></div><div class="v176-credit-rows">${list.map(({c,ccy,s})=>`<button type="button" class="v176-credit-row" data-act="${cardList===db.cards?'goCard':'v68WalletGlobalAction'}" ${cardList===db.cards?'':'data-mode="card-cut"'} data-id="${sanitize(c.id)}"><span><strong>${sanitize(c.name)}</strong><small>${sanitize(ccy)} · corte ${prettyDate(s.cut)} · vencimiento ${prettyDate(s.nextDue||s.due||s.cut)}</small></span><span><b>${money(s.debt,ccy,2)}</b><small>Facturado ${money(s.billed,ccy,2)}</small></span>${icon('arrow')}</button>`).join('')||'<p>Sin saldos de tarjeta registrados.</p>'}</div><p class="form-note">El importe facturado es parte de la deuda total, no una deuda adicional. Las anualidades y el cashback se consultan por separado en Beneficios.</p></section></div>`;
@@ -7195,7 +7201,8 @@ case 'walletPcConsumptionDetail':{
  if(isMobileViewport()||(ui.page!=='wallet'&&vWalletPcBankScope()===null))break;
  const all=vWalletPcCards(),active=all.find(c=>String(c.id)===ui.vWalletPcCard),list=active?[active]:all;
  if(action==='walletPcCuts'){
-  if(['DOP','USD'].includes(ccy))v176CardInsight(list,ccy);
+  v176CardInsight(list,['DOP','USD'].includes(ccy)?ccy:undefined,el.dataset.mode==='pending');
+  if(ui.page==='wallet')document.querySelector('.v176-card-insight-modal .close')?.focus({preventScroll:true});
   break;
  }
  const {byCard,totals}=v1301WalletConsumption(list);
@@ -7204,6 +7211,17 @@ case 'walletPcConsumptionDetail':{
  const dialog=document.getElementById('modal-root');
  dialog.innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v176-card-insight-modal" role="dialog" aria-modal="true" aria-label="Consumo histórico"><header class="modal-head"><h2>Consumo histórico</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="v176-credit-total"><span><small>Consumo total</small><b>${equivalent(totals)}</b></span></div><div class="v176-credit-rows">${items||'<p>Aún no hay tarjetas registradas.</p>'}</div></section></div>`;
  dialog.querySelector('.close')?.focus();
+ break;
+}
+case 'walletReturnEntry':{
+ if(ui.page!=='wallet')break;
+ const cards=v68WalletCards(),annual=el.dataset.mode==='annual';
+ const open=cardId=>annual?annualFeeForm(cardId):v144CashbackForm(cardId);
+ if(id!=='all'){if(cards.some(c=>String(c.id)===id))open(id);break;}
+ if(cards.length===1)open(cards[0].id);
+ else if(cards.length)window.openRegisterProductPicker(annual?'Anualidad y seguros':'Registrar beneficio',cards.map(item=>({type:'cardId',item})),'',choice=>{
+  if(cards.some(c=>String(c.id)===choice.value))open(choice.value);
+ });
  break;
 }
 case 'v68WalletGlobalAction':v68GlobalWalletAction(el.dataset.mode,ccy,id);break;

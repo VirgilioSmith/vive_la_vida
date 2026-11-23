@@ -1,0 +1,158 @@
+/* Wallet uses the ambient canvas and personalization tokens owned by the app. */
+html body #app#app main.world-wallet {
+  --wallet-glass-accent: var(--ui-readable, var(--vive-theme-color, #087b72));
+  --wallet-glass-tint: color-mix(in srgb, var(--wallet-glass-accent) 11%, transparent);
+  --wallet-glass-edge: rgba(255, 255, 255, .78);
+  --wallet-glass-fill: rgba(255, 255, 255, .35);
+  --wallet-glass-shadow: 0 9px 25px rgba(29, 63, 80, .09), inset 0 1px 0 rgba(255, 255, 255, .58);
+  --wallet-glass-reflection: radial-gradient(ellipse at 93% 0%, rgba(255, 255, 255, .48), transparent 56%);
+}
+
+html body:is(.theme-black, .theme-dark) #app#app main.world-wallet {
+  --wallet-glass-tint: color-mix(in srgb, var(--wallet-glass-accent) 17%, transparent);
+  --wallet-glass-edge: rgba(255, 255, 255, .17);
+  --wallet-glass-fill: rgba(35, 37, 45, .39);
+  --wallet-glass-shadow: 0 9px 25px rgba(0, 0, 0, .26), inset 0 1px 0 rgba(255, 255, 255, .09);
+  --wallet-glass-reflection: radial-gradient(ellipse at 93% 0%, rgba(255, 255, 255, .09), transparent 56%);
+}
+
+html body[data-vive-bg] #app#app main.world-wallet #page#page :is(.vWalletPc-panel, .v266-wallet-panel, .v266-selected-balance, .v266-empty) {
+  background: var(--wallet-glass-reflection), var(--wallet-glass-fill) !important;
+  border: 1px solid var(--wallet-glass-edge) !important;
+  border-radius: 26px !important;
+  box-shadow: var(--wallet-glass-shadow) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(140%) !important;
+  backdrop-filter: blur(28px) saturate(140%) !important;
+}
+
+html body[data-vive-bg] #app#app main.world-wallet #page#page .vWalletPc-stat.is-available {
+  background: var(--wallet-glass-reflection), linear-gradient(26deg, var(--wallet-glass-tint), transparent 74%), var(--wallet-glass-fill) !important;
+}
+
+#app#app main.world-wallet #page :is(.v266-panel-heading h2, .vWalletPc-state h2, .v371-return-heading h2, .v1301-insight summary h2, .v1244-cuthead strong, .vWalletPc-cuts h2, .vWalletPc-consumption h2) {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+#app#app main.world-wallet #page :is(.v266-panel-heading h2, .vWalletPc-state h2, .v371-return-heading h2, .v1301-insight summary h2, .v1244-cuthead strong, .vWalletPc-cuts h2, .vWalletPc-consumption h2) > svg:first-child {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  color: var(--wallet-glass-accent);
+}
+
+#app#app main.world-wallet #page .wallet-return-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 12px;
+}
+
+#app#app main.world-wallet #page .wallet-return-actions button {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) 13px;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  min-height: 44px;
+  border: 1px solid var(--wallet-glass-edge);
+  border-radius: 15px;
+  background: var(--wallet-glass-tint);
+  color: var(--wallet-glass-accent);
+  text-align: left;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.24;
+  cursor: pointer;
+}
+
+#app#app main.world-wallet #page .wallet-return-actions button svg { width: 100%; height: auto; }
+#app#app main.world-wallet #page .wallet-return-actions button:focus-visible { outline: 2px solid var(--wallet-glass-accent); outline-offset: 2px; }
+
+@media (min-width: 791px) {
+  html body[data-vive-bg] #app#app main.vWalletPc-world .vWalletPc-search {
+    background: var(--wallet-glass-reflection), var(--wallet-glass-fill) !important;
+    border-color: var(--wallet-glass-edge) !important;
+    box-shadow: var(--wallet-glass-shadow) !important;
+    backdrop-filter: blur(28px) saturate(140%);
+  }
+
+  html body #app#app main.vWalletPc-world #page .vWalletPc-right,
+  html body #app#app main.vWalletPc-world #page .vWalletPc-right > :is(.vWalletPc-cuts, .vWalletPc-consumption) {
+    margin-top: 0;
+  }
+
+  html body #app#app main.vWalletPc-world #page .vWalletPc-consumption {
+    min-height: 0 !important;
+    padding-bottom: 14px !important;
+  }
+
+  html body #app#app main.vWalletPc-world #page .vWalletPc-cuts header {
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  #app#app main.vWalletPc-world #page .vWalletPc-cuts header .vWalletPc-round { min-height: 32px; }
+  #app#app main.vWalletPc-world #page .vWalletPc-cuts > div > button { gap: 5px; min-width: 0; }
+  #app#app main.vWalletPc-world #page .vWalletPc-cuts > div > button > svg { width: 14px; height: 14px; }
+
+  html body #app#app main.vWalletPc-world #page .vWalletPc-return .v371-return-tile small {
+    font-size: clamp(10px, .83vw, 13px) !important;
+  }
+  html body #app#app main.vWalletPc-world #page .vWalletPc-return .v371-return-tile small::after { content: none; }
+
+  html body #app#app main.vWalletPc-world #page .vWalletPc-legend button {
+    grid-template-columns: 7px 22px minmax(0, 1fr) auto;
+    gap: 5px;
+    font-size: clamp(10px, .84vw, 13px) !important;
+    min-height: 32px;
+  }
+  #app#app main.vWalletPc-world #page .vWalletPc-legend button i { width: 7px; }
+  #app#app main.vWalletPc-world #page .vWalletPc-legend .vWalletPc-product-mark { width: 22px; border-radius: 50%; }
+  #app#app main.vWalletPc-world #page .vWalletPc-legend button b { white-space: normal; overflow-wrap: anywhere; text-align: right; }
+
+  #app#app main.vWalletPc-world #page .wallet-consumption-split {
+    margin-top: 10px;
+    color: var(--wallet-muted);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  body.privacy-finanzas #app#app main.vWalletPc-world #page :is(.wallet-consumption-split, .vWalletPc-legend button b) {
+    filter: blur(7px);
+    user-select: none;
+  }
+
+  @media (min-width: 1181px) {
+    html body #app#app main.vWalletPc-world #page .vWalletPc-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+
+  @media (min-width: 1121px) {
+    html body #app#app main.vWalletPc-world #page .vWalletPc-grid {
+      grid-template-columns: minmax(155px, 1fr) minmax(0, 2.05fr) minmax(0, 2.18fr);
+    }
+  }
+
+  @container wallet-return (max-width: 335px) {
+    html body #app#app main.vWalletPc-world #page .vWalletPc-return .v371-return-values {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      row-gap: 6px !important;
+    }
+  }
+}
+
+@media (max-width: 790px) {
+  html body #app#app main.world-wallet #page .v68-wallet .v1301-distribution-body { margin-top: 10px; }
+  html body #app#app main.world-wallet #page .v68-wallet .v1301-ranked { margin-top: 8px; }
+  html body #app#app main.world-wallet #page .v68-wallet .v1301-rank { background: var(--wallet-glass-tint); }
+  html body #app#app main.world-wallet #page .v68-wallet .v1244-pill-top { align-items: center !important; }
+  #app#app main.world-wallet #page .v1244-pill-top svg { width: 14px; height: 14px; flex: none; color: var(--wallet-glass-accent); }
+  #app#app main.world-wallet #page .v68-wallet .v371-return-heading { margin-bottom: 10px; }
+  #app#app main.world-wallet #page .v68-wallet .v1244-cuthead strong { text-transform: none; letter-spacing: -.01em; }
+}
+
+@media (max-width: 360px) {
+  #app#app main.world-wallet #page .v1244-pill-top svg { display: none; }
+}
