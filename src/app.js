@@ -13757,6 +13757,9 @@ document.addEventListener('focusout',e=>{
   const current=host?.querySelector('.v68-wallet');
   if(!current)return;
   const oldActions=current.querySelector(':scope > .v266-selected-balance, :scope > .v68-wallet-actions');
+  // La composición móvil aprobada guarda esos controles en el desplegable.
+  // Al deslizar el carrusel abierto, renderizamos la tarjeta elegida completa.
+  if(!oldActions && current.querySelector('.wallet-mobile-tools')){v139WalletChooseCard(id);return;}
   if(!oldActions)return;
   // Set only the selected view state. No database mutation and no persistence.
   ui.v68WalletId=id;
