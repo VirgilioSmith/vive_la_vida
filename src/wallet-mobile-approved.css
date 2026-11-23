@@ -1,0 +1,328 @@
+/* VIVE Wallet móvil · composición aprobada. Exclusivo <=790px.
+   Los datos, la navegación funcional y Wallet PC permanecen en sus motores originales. */
+@media (max-width:790px){
+  html body #app#app main.world-wallet #page#page{
+    --wallet-mobile-gutter:clamp(18px,5.1vw,22px);
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    padding-inline:var(--wallet-mobile-gutter)!important;
+    padding-bottom:calc(156px + env(safe-area-inset-bottom,0px))!important;
+  }
+  html body #app#app main.world-wallet #page#page .v144-wallet-shell,
+  html body #app#app main.world-wallet #page#page .v68-wallet{
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin-inline:auto!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet{
+    display:flex!important;flex-direction:column!important;
+    gap:clamp(12px,3.6vw,16px)!important;
+    padding:0 0 calc(165px + env(safe-area-inset-bottom,0px))!important;
+    overflow:visible!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet > :is(.v1244-state,.v1244-cutpanel,.v371-card-return,.v1301-distribution,.wallet-benefits-cards,.wallet-benefits-ledger){
+    box-sizing:border-box!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    margin:0!important;
+    padding:clamp(14px,4vw,18px)!important;
+    border-radius:23px!important;
+    overflow:visible!important;
+  }
+  html body[data-vive-bg] #app#app main.world-wallet #page#page .v68-wallet > :is(.v1244-state,.v1244-cutpanel,.v371-card-return,.v1301-distribution,.wallet-benefits-cards,.wallet-benefits-ledger){
+    background:var(--wallet-ref-highlight),var(--wallet-ref-surface)!important;
+    border:1px solid var(--wallet-glass-edge,rgba(255,255,255,.75))!important;
+    box-shadow:var(--wallet-ref-shadow)!important;
+    -webkit-backdrop-filter:blur(28px) saturate(140%)!important;
+    backdrop-filter:blur(28px) saturate(140%)!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-state{position:relative!important;}
+  html body #app#app main.world-wallet #page#page .v266-panel-heading{
+    display:flex!important;justify-content:space-between!important;
+    gap:12px!important;align-items:flex-start!important;
+    padding-right:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .v266-panel-heading h2{
+    font-size:clamp(18px,4.8vw,20px)!important;line-height:1.14!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-section-kicker{
+    font-size:10px!important;letter-spacing:.12em!important;
+  }
+  /* El selector y las operaciones reales siguen existiendo bajo el + del mockup. */
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools{
+    position:static!important;
+    height:0;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools > summary{
+    position:absolute!important;
+    z-index:3;
+    top:60px;right:16px;
+    display:grid!important;place-items:center!important;
+    width:34px!important;height:34px!important;
+    margin:0!important;padding:0!important;
+    list-style:none;cursor:pointer;
+    border-radius:50%!important;
+    border:1px solid var(--wallet-glass-edge,rgba(255,255,255,.8))!important;
+    color:var(--wallet-glass-accent,var(--ui-readable))!important;
+    background:var(--wallet-ref-highlight),var(--wallet-ref-inset)!important;
+    box-shadow:0 3px 10px rgba(19,38,59,.08)!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools > summary::-webkit-details-marker{display:none!important;}
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools > summary::marker{content:'';}
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools > summary svg{width:19px;height:19px;}
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools[open]{
+    height:auto;
+    margin-top:48px!important;
+    margin-bottom:12px!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools-content{
+    display:grid;gap:12px;min-width:0;
+    padding:12px;border-radius:18px;
+    background:var(--wallet-ref-inset);
+    border:1px solid var(--wallet-ref-line);
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools-content .v266-wallet-header{
+    display:flex!important;padding:0 2px!important;
+    align-items:center!important;justify-content:space-between!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools-content .v266-wallet-header h1{
+    font-size:18px!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools-content .v266-gallery{
+    min-width:0!important;max-width:100%!important;
+    margin:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools-content .v266-gallery-track{
+    max-width:100%!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools-content .v266-selected-balance{
+    min-width:0!important;max-width:100%!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools-content .v266-wallet-actions{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:6px!important;margin:0!important;padding:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools-content .v266-wallet-actions button{
+    min-width:0!important;min-height:56px!important;
+    gap:5px!important;padding:5px 2px!important;
+    font-size:10px!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-tools-content .v266-wallet-actions button > span{
+    width:32px!important;height:32px!important;min-width:32px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-main{
+    display:grid!important;
+    grid-template-columns:clamp(86px,26vw,104px) minmax(0,1fr)!important;
+    gap:clamp(10px,3vw,16px)!important;
+    align-items:center!important;margin:14px 0 10px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-gauge{
+    width:clamp(86px,26vw,104px)!important;height:clamp(86px,26vw,104px)!important;
+    aspect-ratio:1!important;flex:none!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-gauge b{
+    font-size:clamp(18px,5.3vw,22px)!important;
+    line-height:1.1!important;white-space:nowrap!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-limits{
+    min-width:0!important;padding:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-limits strong{
+    font-size:clamp(17px,5.25vw,26px)!important;
+    line-height:1.16!important;letter-spacing:-.04em!important;
+    white-space:normal!important;overflow-wrap:break-word!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-ccy{
+    font-size:clamp(10px,2.7vw,12px)!important;
+    line-height:1.35!important;
+  }
+  html body #app#app main.world-wallet #page#page :is(.v1301-limit-breakdown,.v1301-distribution) .v1301-ranked{
+    min-width:0!important;
+    padding:4px 8px!important;
+    border-radius:15px!important;
+    background:var(--wallet-ref-inset)!important;
+  }
+  html body #app#app main.world-wallet #page#page :is(.v1301-limit-breakdown,.v1301-distribution) .v1301-rank{
+    display:grid!important;
+    grid-template-columns:28px minmax(0,1fr) minmax(0,auto)!important;
+    align-items:center!important;
+    gap:8px!important;
+    width:100%!important;min-width:0!important;
+    min-height:44px!important;
+    padding:6px 1px!important;
+    margin:0!important;
+    border:0!important;
+    border-bottom:1px solid var(--wallet-ref-line)!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  html body #app#app main.world-wallet #page#page :is(.v1301-limit-breakdown,.v1301-distribution) .v1301-rank:last-child{
+    border-bottom:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-select-card{
+    appearance:none;text-align:left;color:inherit;font:inherit;
+    cursor:pointer;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-select-card:focus-visible{
+    outline:2px solid var(--wallet-glass-accent)!important;
+    outline-offset:-2px;
+  }
+  html body #app#app main.world-wallet #page#page :is(.v1301-limit-breakdown,.v1301-distribution) .v1301-rank .v1301-bank,
+  html body #app#app main.world-wallet #page#page :is(.v1301-limit-breakdown,.v1301-distribution) .v1301-rank .v1301-bank .bank-photo-mark{
+    width:28px!important;height:28px!important;
+    min-width:28px!important;min-height:28px!important;
+    max-width:28px!important;max-height:28px!important;
+  }
+  html body #app#app main.world-wallet #page#page :is(.v1301-limit-breakdown,.v1301-distribution) .v1301-rank-info{
+    min-width:0!important;gap:2px!important;
+  }
+  html body #app#app main.world-wallet #page#page :is(.v1301-limit-breakdown,.v1301-distribution) .v1301-rank-info > strong{
+    font-size:clamp(10.5px,2.9vw,12.5px)!important;
+    line-height:1.15!important;
+    white-space:normal!important;overflow-wrap:break-word!important;
+  }
+  html body #app#app main.world-wallet #page#page :is(.v1301-limit-breakdown,.v1301-distribution) .v1301-split{
+    font-size:clamp(9px,2.6vw,11px)!important;
+    line-height:1.25!important;gap:2px 4px!important;
+    flex-wrap:wrap!important;
+  }
+  html body #app#app main.world-wallet #page#page :is(.v1301-limit-breakdown,.v1301-distribution) .v1301-equivalent{
+    min-width:0!important;
+    padding:0!important;border:0!important;
+    font-size:clamp(10px,2.85vw,12.5px)!important;
+    line-height:1.2!important;
+    text-align:right!important;
+    white-space:normal!important;overflow-wrap:break-word!important;
+    font-variant-numeric:tabular-nums;
+  }
+  html body #app#app main.world-wallet #page#page .v1301-share{
+    display:block;font-size:10px;line-height:1.15;
+    font-weight:750;margin-top:3px;
+    color:var(--wallet-glass-accent,var(--ui-readable));
+  }
+  html body #app#app main.world-wallet #page#page .v1244-cutpanel{
+    padding-block:12px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-cuthead{
+    margin-bottom:7px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-cutpanel .v1244-pills{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-cutpanel .v1244-pill{
+    min-width:0!important;min-height:34px!important;
+    padding:6px 4px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-cutpanel .v1244-pill-top{
+    display:flex!important;align-items:center!important;
+    justify-content:center!important;gap:3px!important;
+    min-width:0!important;flex-wrap:wrap!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-cutpanel .v1244-pill-top :is(b,em){
+    font-size:clamp(10px,2.75vw,12px)!important;
+    line-height:1.2!important;white-space:normal!important;
+  }
+  /* El resumen de retorno coloca neto/% arriba y anualidad/beneficios abajo. */
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-heading{
+    margin-bottom:7px!important;gap:8px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-heading h2{
+    font-size:clamp(16px,4.45vw,19px)!important;
+    line-height:1.15!important;
+  }
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-values{
+    display:grid!important;
+    grid-template-columns:minmax(0,1.22fr) minmax(0,.78fr)!important;
+    grid-auto-rows:auto!important;
+    gap:4px 8px!important;
+    min-width:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-tile{
+    min-width:0!important;
+    padding:6px 4px!important;
+    gap:3px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-tile:nth-child(1){grid-row:2;grid-column:1;}
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-tile:nth-child(2){grid-row:2;grid-column:2;}
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-tile:nth-child(3){grid-row:1;grid-column:1;}
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-tile:nth-child(4){grid-row:1;grid-column:2;align-self:center;}
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-tile:nth-child(3) strong{
+    font-size:clamp(19px,5.4vw,27px)!important;
+    line-height:1.15!important;
+    white-space:normal!important;overflow-wrap:break-word!important;
+  }
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-tile:nth-child(4) strong{
+    font-size:clamp(11px,3.15vw,14px)!important;
+    line-height:1.15!important;
+    white-space:normal!important;
+  }
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-tile:nth-child(-n+2) strong{
+    font-size:clamp(10px,2.85vw,12px)!important;
+    overflow-wrap:break-word!important;
+  }
+  html body #app#app main.world-wallet #page#page .v371-card-return .v371-return-tile > small{
+    font-size:10px!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-consumption-hero{
+    display:grid!important;grid-template-columns:minmax(88px,35%) minmax(0,1fr)!important;
+    gap:clamp(10px,3vw,16px)!important;align-items:center!important;
+    margin:10px 0!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1301-distribution .v1301-donut{
+    width:min(100%,122px)!important;height:auto!important;
+    aspect-ratio:1!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1301-distribution .v1301-total strong{
+    font-size:clamp(19px,5.6vw,27px)!important;
+    line-height:1.18!important;
+    white-space:normal!important;overflow-wrap:break-word!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-mobile-empty-consumption{
+    margin:9px 0;color:var(--wallet-ref-muted);font-size:12px;
+  }
+  /* Detalle de beneficios: botones iguales y lista de productos alineada. */
+  html body #app#app main.world-wallet #page#page .wallet-benefits-mobile .wallet-benefits-mobile-header{
+    display:flex!important;align-items:center!important;gap:10px!important;
+    padding:0 0 2px!important;margin:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-benefits-mobile .wallet-benefits-mobile-header h1{
+    font-size:clamp(18px,5vw,21px)!important;
+    line-height:1.2!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-benefits-mobile .wallet-return-actions{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:9px!important;margin-top:10px!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-benefits-mobile .wallet-return-actions button{
+    min-height:46px!important;padding:8px!important;
+    font-size:clamp(10px,2.9vw,12px)!important;line-height:1.25!important;
+    border-radius:16px!important;
+  }
+  html body #app#app main.world-wallet #page#page .wallet-benefits-cards > button{
+    min-width:0!important;
+    min-height:47px!important;gap:8px!important;
+  }
+  /* Ninguna pantalla finaliza debajo de la barra inferior. */
+  html body:has(#app main.world-wallet) #app .v249-register-fab{
+    bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
+  }
+  html body:has(#app main.world-wallet) #app .v708-movements-fab{
+    bottom:calc(157px + env(safe-area-inset-bottom,0px))!important;
+  }
+}
+@media (max-width:350px){
+  html body #app#app main.world-wallet #page#page .v1244-main{
+    grid-template-columns:82px minmax(0,1fr)!important;gap:8px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-gauge{
+    width:82px!important;height:82px!important;
+  }
+}
