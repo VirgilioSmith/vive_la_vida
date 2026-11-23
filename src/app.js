@@ -10600,7 +10600,7 @@ document.addEventListener('change',event=>{const form=event.target.closest?.('#v
 document.addEventListener('click',event=>{const el=event.target.closest?.('[data-v45-freq],[data-v45-mode]');if(!el)return;const form=el.closest('#v40IncomeForm');if(form)queueMicrotask(()=>v50IncomeRefresh(form));},false);
 
 
-/* V55 · Ingresos recurrentes: navegación anidada, nómina, joseo y evolución.
+/* V55 · Ingresos recurrentes: navegación anidada, nómina y joseo.
    Lectura sin duplicaciones: cobros contabilizados frente a programación estimada. */
 (function(){
  Object.assign(ICONS,{
@@ -10612,7 +10612,6 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   'store':'<path d="M3 10h18v11H3zM2 10l2-7h16l2 7M8 21v-7h7v7"/>',
   'history':'<path d="M3 12a9 9 0 1 0 3-7M3 3v6h6M12 7v5l4 2"/>',
   'layout-dashboard':'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
-  'chart-no-axes-combined':'<path d="M3 20h18M5 15l5-5 4 4 6-7M5 3v17"/>',
   'chevron-right':'<path d="m9 18 6-6-6-6"/>',
   'arrow-down-left':'<path d="M17 7 7 17m0-8v8h8"/>',
   'pencil':'<path d="m4 20 4-.5L20 7l-4-4L4 16.5V20ZM14.5 4.5l4 4"/>'
@@ -10621,7 +10620,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  info.label='Dentro de Ingresos';
  info.tabs=[['overview','Ingresos'],['recurring','Ingresos recurrentes']];
  if(!ui.innerViews.income)ui.innerViews.income='overview';
- ui.v55RecurringTab=ui.v55RecurringTab||'general';
+ ui.v55RecurringTab=['general','formal','informal'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
  ui.v55RecurringRange=ui.v55RecurringRange||'month';
  const oldInnerView=innerView;
  innerView=function(page,selection){
@@ -10636,7 +10635,6 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
  const dop=(v,t)=>t.currency==='USD'?(num(v)*num(t.fxRateSnapshot||db.settings.fx)):num(v);
  const sum=(a,f)=>a.reduce((s,v)=>s+f(v),0);
  const ym=()=>/^\d{4}-\d{2}$/.test(ui.month||'')?ui.month:today().slice(0,7);
- const fmtPct=n=>!Number.isFinite(n)?'Sin base':`${n>=0?'+':''}${n.toFixed(1)}%`;
  const monthNames=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
  const periodDescription=()=>ui.v55RecurringRange==='year'?`Enero – diciembre ${ym().slice(0,4)}`:ui.v55RecurringRange==='all'?'Desde el primer ingreso registrado':MONTHS_FULL[+ym().slice(5)-1]+' '+ym().slice(0,4);
  const payFactor=s=>v80MonthlyFactor(s.frequency);
@@ -10732,25 +10730,17 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   <section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">¿QUÉ GENERA EL JOSEO?</span><h3>Composición de ingresos independientes</h3><p>Clasificación por categoría del movimiento</p></div></div>${parts.length?parts.map(([cat,v])=>`<div class="v55-cat"><div><b>${txt(cat)}</b><strong>${cash(v)}</strong></div>${fullBar(v,amount,'informal')}<small>${amount?(v/amount*100).toFixed(1):0}% del total informal</small></div>`).join(''):empty('Todavía no hay cobros este período','Las ventas y servicios aparecerán cuando se registren.')}</section></div>
   ${selected?`<section class="v55-panel v55-informal-detail"><div class="v55-panel-head"><div><span class="v55-overline">DESGLOSE DE ACTIVIDAD</span><h3>${txt(selected.name)}</h3><p>${selected._manual?'Ingresos registrados sin programación; no son una mensualidad garantizada.':'Importes por frecuencia y depósitos confirmados.'}</p></div>${selected._manual?tag('SIN PROGRAMAR','amber'):`<div class="v940-source-actions"><button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(selected.id)}">${icon('pencil')} Editar fuente</button><button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(selected.id)}">Registrar cobro anticipado</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(selected.id)}">+ Ingreso adicional</button></div>`}</div>${(()=>{const data=sourceTotals(m,selected);let p=null;if(!selected._manual)try{p=v40Payroll({...selected,frequency:'monthly'},today())}catch(e){}return `<div class="v55-informal-stats"><div><small>INGRESADO EN EL PERÍODO</small><b>${cash(data.currentAmount)}</b></div><div><small>ACUMULADO DE ESTA FUENTE</small><b>${cash(data.total)}</b></div><div><small>BRUTO PREVISTO / MES</small><b>${p?cash(p.gross,selected.currency,2):'No aplica'}</b></div><div><small>NETO PREVISTO / MES</small><b>${p?cash(p.net,selected.currency,2):'No aplica'}</b></div></div>${!selected._manual?`<div class="v55-informal-info"><span>Cuenta receptora: <b>${txt(account(selected.accountId)?.name||'Sin cuenta vinculada')}</b></span><span>Próximo cobro: <b>${prettyDate(selected.nextDue)}</b></span><span>Registro: <b>${selected.postingMode==='auto'?'Automático al sincronizar':'Confirmación manual'}</b></span></div>`:''}<div class="v55-two"><div><h4>Cobros por mes</h4>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(pm)))}}))}</div><div><h4>Últimos cobros de esta actividad</h4>${txList(data.arr,6)}</div></div>`;})()}</section>`:''}`;
  }
- function evolution(m){const rows=m.timeline.map(x=>({...x,total:x.formal+x.informal})),year=+ym().slice(0,4),cutoff=year===+today().slice(0,4)?Math.min(+ym().slice(5),+today().slice(5,7)):12,total=sum(rows.filter((x,i)=>i<cutoff),x=>x.total),prior=sum(rows.filter((x,i)=>i<cutoff),x=>x.previous),acc=[];
-  let run=0,runPrior=0;for(const x of rows){run+=x.total;runPrior+=x.previous;acc.push({...x,total:run,previous:runPrior});}
-  const f=m.sumAmount(m.movements.filter(x=>x.t.date.slice(0,4)===String(year)&&Number(x.t.date.slice(5,7))<=cutoff&&m.sources.find(s=>s.id===x.sourceId)?.kind==='formal'));const i=total-f;
-  return `<section class="v55-section-lead"><span class="v55-overline">ANALÍTICA DEL INGRESO RECURRENTE</span><h2>Evolución, crecimiento y acumulado.</h2><p>Compara ${year} con ${year-1}; únicamente depósitos registrados, nunca estimados.</p></section><section class="v55-metrics">${metric('wallet','Ingresos comparables del año',cash(total),'Enero a '+monthNames[cutoff-1]+' de '+year)}${metric('history','Año anterior comparable',cash(prior),'Enero a '+monthNames[cutoff-1]+' de '+(year-1))}${metric('trending-up','Crecimiento interanual',prior?fmtPct((total/prior-1)*100):'Sin base','Mismo tramo de meses registrados','accent')}${metric('layers','Acumulado de toda la vida',cash(m.sumAmount(m.movements)),'Todas las fuentes identificadas')}</section>
-  <section class="v55-panel v55-chart-panel"><div class="v55-panel-head"><div><span class="v55-overline">EVOLUCIÓN AÑO CONTRA AÑO</span><h3>Ingresos mensuales · ${year} vs. ${year-1}</h3><p>Dos series de movimientos efectivamente ingresados</p></div><div class="v55-legends"><span><i class="v55-leg formal"></i>${year}</span><span><i class="v55-leg prior"></i>${year-1}</span></div></div>${lineChart(rows,'total','previous')}</section>
-  <section class="v55-panel v55-chart-panel"><div class="v55-panel-head"><div><span class="v55-overline">DINERO ACUMULADO</span><h3>Cómo crece tu ingreso durante el año</h3><p>Sumatoria progresiva, mes a mes, sin adelantar cobros futuros</p></div></div>${lineChart(acc,'total','previous')}<p class="v55-muted-note">La suma acumulada representa ingresos contabilizados, no el saldo actual ni el dinero disponible tras gastos.</p></section>
-  <section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">DESGLOSE POR MODALIDAD</span><h3>Comparación de la composición anual</h3><p>El mismo dinero analizado por categoría de trabajo</p></div></div><div class="v55-origin-list"><div class="v55-origin-row"><span class="v55-origin-symbol formal">${icon('briefcase')}</span><div><b>Trabajo formal · ${year}</b><small>${total?(f/total*100).toFixed(1):'0.0'}% del año</small>${fullBar(f,total,'formal')}</div><strong>${cash(f)}</strong></div><div class="v55-origin-row"><span class="v55-origin-symbol informal">${icon('trending-up')}</span><div><b>Trabajo informal / joseo · ${year}</b><small>${total?(i/total*100).toFixed(1):'0.0'}% del año</small>${fullBar(i,total,'informal')}</div><strong>${cash(i)}</strong></div></div></section>`;
- }
  function v55RecurringWorkspace(){
-  const m=model(),tab=['general','formal','informal','evolution'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
-  const tabs=[['general','Visión general','layout-dashboard'],['formal','Trabajo formal','briefcase'],['informal','Trabajo informal · Joseo','trending-up'],['evolution','Evolución y acumulado','chart-no-axes-combined']];
+  const m=model(),tab=['general','formal','informal'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
+  const tabs=[['general','Visión general','layout-dashboard'],['formal','Trabajo formal','briefcase'],['informal','Trabajo informal · Joseo','trending-up']];
   return `<div class="v55-shell"><header class="v55-hero"><div class="v55-hero-left"><div class="v55-eyebrow">INGRESOS <span>›</span> INGRESOS RECURRENTES</div><h1>Todo lo que genera tu trabajo<span class="v55-h1-dot">.</span></h1><p>Nómina, negocios, joseo y otras fuentes. Cada peso en su lugar, desde su origen hasta el acumulado.</p></div><div class="v55-hero-right">${tag('PANEL DE INGRESOS','blue')}${addButton('Agregar fuente')}<button type="button" class="btn ghost" data-v40-action="v940Advance">Registrar cobro anticipado</button></div></header>
   <nav class="v55-subnav" aria-label="Módulos dentro de ingresos recurrentes">${tabs.map(([id,label,ico])=>`<button type="button" class="v55-subtab ${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}" data-v55-tab="${id}">${icon(ico)}<span>${label}</span></button>`).join('')}</nav>
   <div class="v55-workspace-toolbar"><div><span class="v55-workspace-label">${txt(periodDescription())}</span><small>Cifras reales vs. programación futura, siempre diferenciadas</small></div><div class="v55-controls"><div class="v55-period-tabs">${[['month','Mes'],['year','Año'],['all','Histórico']].map(([id,label])=>`<button type="button" data-v55-period="${id}" class="${ui.v55RecurringRange===id?'selected':''}">${label}</button>`).join('')}</div><label class="v55-month-label">Período <input type="month" aria-label="Elegir período de ingresos recurrentes" class="v55-month" value="${ym()}"></label></div></div>
-  <div class="v55-body">${tab==='general'?general(m):tab==='formal'?formal(m):tab==='informal'?informal(m):evolution(m)}</div></div>`;
+  <div class="v55-body">${tab==='general'?general(m):tab==='formal'?formal(m):informal(m)}</div></div>`;
  }
  document.addEventListener('click',function(e){const btn=e.target.closest('[data-v55-tab],[data-v55-period],[data-v55-formal],[data-v55-informal],[data-v55-source]');if(!btn)return;
   e.preventDefault();e.stopImmediatePropagation();
-  if(btn.dataset.v55Tab)ui.v55RecurringTab=btn.dataset.v55Tab;
+  if(btn.dataset.v55Tab){if(!['general','formal','informal'].includes(btn.dataset.v55Tab))return;ui.v55RecurringTab=btn.dataset.v55Tab;}
   else if(btn.dataset.v55Period)ui.v55RecurringRange=btn.dataset.v55Period;
   else if(btn.dataset.v55Formal){ui.v55FormalId=btn.dataset.v55Formal;ui.v55RecurringTab='formal';}
   else if(btn.dataset.v55Informal){ui.v55InformalId=btn.dataset.v55Informal;ui.v55RecurringTab='informal';}
