@@ -1,0 +1,114 @@
+/* VIVE · Wallet móvil · fidelidad al encabezado de Bancos y al carrusel de tarjetas.
+   Sólo <=790px. Nunca modifica Wallet PC, Bancos ni la navegación compartida. */
+@media (max-width:790px) {
+  /* Bancos móvil ya oculta esta barra en su propia portada. Aplicar la misma
+     regla SOLAMENTE mientras está montada la vista principal de Wallet. */
+  html body #app#app:has(main.world-wallet .v68-wallet) > .vive-mobile-top {
+    display:none!important;
+  }
+  html body #app#app:has(main.world-wallet .v68-wallet) .shell {
+    padding-top:var(--v954-safe-top,env(safe-area-inset-top,0px))!important;
+  }
+  html body #app#app main.world-wallet:has(.v68-wallet){
+    padding-top:7px!important;
+  }
+  html body #app#app main.world-wallet #page#page{
+    padding-top:0!important;
+  }
+  /* La sección analítica conserva su margen de lectura. Sólo el carrusel
+     rompe ese margen para usar el ancho físico disponible. */
+  html body #app#app main.world-wallet #page#page .v68-wallet{
+    --wallet-carousel-edge:clamp(8px,2.6vw,12px);
+    --wallet-card-peek:clamp(38px,10.7vw,52px);
+    --v279-card-width:calc(100vw - var(--wallet-card-peek));
+    gap:10px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet > .v266-wallet-header{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    width:100%!important;min-height:48px!important;
+    margin:0!important;padding:2px 0!important;gap:12px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet > .v266-wallet-header h1{
+    font-size:clamp(27px,7.8vw,32px)!important;
+    font-weight:800!important;line-height:1.08!important;
+    letter-spacing:-.04em!important;margin:0!important;
+    color:var(--ui-ink,var(--text,#17243a))!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet > .v266-wallet-header .v266-wallet-add{
+    flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+    height:44px!important;min-height:44px!important;
+    margin:0!important;padding:0!important;border-radius:50%!important;
+    border:1px solid var(--wallet-glass-edge,rgba(255,255,255,.78))!important;
+    background:var(--wallet-ref-highlight),var(--wallet-ref-surface)!important;
+    box-shadow:var(--wallet-ref-shadow)!important;
+    color:var(--wallet-glass-accent,var(--ui-readable,#087b72))!important;
+    -webkit-backdrop-filter:blur(20px) saturate(150%)!important;
+    backdrop-filter:blur(20px) saturate(150%)!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet > .v266-wallet-header .v266-wallet-add svg{
+    width:21px!important;height:21px!important;
+  }
+  /* Una galería casi de borde a borde, con la tarjeta siguiente asomándose. */
+  html body #app#app main.world-wallet #page#page .v68-wallet > .v266-gallery{
+    display:block!important;
+    width:100vw!important;max-width:100vw!important;min-width:0!important;
+    margin:0 0 1px calc(-1 * var(--wallet-mobile-gutter))!important;
+    padding:0!important;overflow:hidden!important;
+    border:0!important;background:transparent!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet > .v266-gallery > .v68-wallet-gallery{
+    display:flex!important;flex-wrap:nowrap!important;align-items:flex-start!important;
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    margin:0!important;
+    padding:3px var(--wallet-carousel-edge) 7px!important;
+    gap:10px!important;
+    overflow-x:auto!important;overflow-y:hidden!important;
+    scroll-snap-type:x mandatory!important;
+    scroll-padding-inline:var(--wallet-carousel-edge)!important;
+    overscroll-behavior-x:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet > .v266-gallery > .v68-wallet-gallery::-webkit-scrollbar{
+    display:none!important;width:0!important;height:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet-gallery > button.v68-wallet-face{
+    flex:0 0 var(--v279-card-width)!important;
+    width:var(--v279-card-width)!important;
+    min-width:var(--v279-card-width)!important;
+    max-width:var(--v279-card-width)!important;
+    aspect-ratio:auto!important;
+    height:clamp(162px,44.6vw,181px)!important;min-height:0!important;
+    scroll-snap-align:center!important;scroll-snap-stop:always!important;
+    margin:0!important;padding:0!important;transform:none!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet-gallery > button.v68-wallet-face > .v266-physical-card.v277-physical-card{
+    display:flex!important;
+    width:100%!important;height:100%!important;min-height:0!important;
+    aspect-ratio:auto!important;
+    padding:clamp(13px,3.75vw,18px)!important;
+    border-radius:22px 22px 16px 16px!important;
+    overflow:hidden!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet > .v266-gallery > .v68-wallet-dots{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    gap:7px!important;min-height:15px!important;
+    margin:7px 0 0!important;padding:0!important;
+  }
+  /* El botón de operaciones dentro del Estado del crédito sigue siendo
+     funcional y no reemplaza el + del nuevo encabezado. */
+  html body #app#app main.world-wallet #page#page .v68-wallet > .v1244-state{
+    margin-top:2px!important;
+  }
+  /* Prevenir los 9px de desborde que Playwright detectó previamente en los
+     renglones de límites, sin ocultar ni abreviar los importes. */
+  html body #app#app main.world-wallet #page#page .v1244-state .v1301-limit-breakdown .v1301-rank{
+    display:grid!important;
+    grid-template-columns:28px minmax(0,1fr) minmax(0,37%)!important;
+    column-gap:4px!important;
+    box-sizing:border-box!important;width:100%!important;
+  }
+  html body #app#app main.world-wallet #page#page .v1244-state .v1301-limit-breakdown :is(.v1301-rank-info,.v1301-equivalent,.v1301-split){
+    min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;
+  }
+}

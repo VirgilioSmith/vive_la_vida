@@ -59,6 +59,36 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(await visible(p.locator('.v68-wallet-face.selected')),'La tarjeta seleccionada no está visible');
     assert.equal(await p.locator('.v68-wallet > .v266-gallery .v68-wallet-face').first().getAttribute('data-id'),GLOBAL,'Crédito Global debe ir primero');
     assert.equal(await p.locator('.wallet-mobile-tools').evaluate(el=>el.open),false,'Herramientas no colapsadas');
+    /* Portada sin cabecera universal, como Bancos móvil. */
+    const top=await p.evaluate(()=>{
+      const box=s=>{const e=document.querySelector(s),r=e?.getBoundingClientRect();return r?{left:r.left,right:r.right,top:r.top,width:r.width,height:r.height}:null};
+      const nav=document.querySelector('#app > .vive-mobile-top');
+      const css=nav?getComputedStyle(nav):null;
+      const rail=document.querySelector('.v68-wallet > .v266-gallery .v68-wallet-gallery');
+      const faces=[...(rail?.querySelectorAll('.v68-wallet-face')||[])];
+      return {head:box('.v68-wallet > .v266-wallet-header'),add:box('.v68-wallet > .v266-wallet-header .v266-wallet-add'),
+        gallery:box('.v68-wallet > .v266-gallery'),rail:box('.v68-wallet > .v266-gallery .v68-wallet-gallery'),
+        first:box('.v68-wallet-gallery > .v68-wallet-face:first-child'),
+        second:box('.v68-wallet-gallery > .v68-wallet-face:nth-child(2)'),
+        firstCard:box('.v68-wallet-gallery > .v68-wallet-face:first-child .v266-physical-card'),
+        snap:rail&&getComputedStyle(rail).scrollSnapType,
+        headerHidden:!nav||css.display==='none',faceCount:faces.length};
+    });
+    assert.equal(top.headerHidden,true,'Sigue visible el header vive el hoy en Wallet');
+    assert.ok(top.head&&top.add&&top.gallery&&top.rail,'Falta encabezado, botón o carrusel');
+    assert.ok(top.head.top<130,'Encabezado demasiado bajo: '+top.head.top);
+    assert.ok(Math.abs(top.head.top-top.add.top)<20,'Mis tarjetas y + no están en la misma línea');
+    assert.ok(top.gallery.left<=3&&top.gallery.right>=width-3,'El carrusel no llega a los bordes: '+JSON.stringify(top.gallery));
+    assert.ok(top.rail.width>=width-3,'El carrusel está comprimido');
+    assert.ok(top.first.width>=width*.80&&top.first.width<=width*.92,'Ancho de tarjeta incorrecto: '+top.first.width);
+    assert.ok(top.first.height>=157&&top.first.height<=187,'Altura del carrusel incorrecta: '+top.first.height);
+    assert.ok(top.firstCard.height===top.first.height,'La tarjeta visual no ocupa la altura asignada');
+    assert.ok(top.first.left<=18,'Primera tarjeta demasiado separada del borde: '+top.first.left);
+    assert.ok(top.second.left<width-4,'No asoma la segunda tarjeta');
+    assert.ok(top.second.left>=top.first.right+5,'Las tarjetas se superponen');
+    assert.ok((top.snap||'').includes('mandatory'),'Falta scroll-snap obligatorio');
+    run.checks.push({screen:'encabezado-carrusel',top});
+
     const gauge=await p.locator('.v1244-gauge b').innerText();assert.match(gauge,/^-?\d+(\.\d+)?%$/);
     const glass=await p.locator('.v1244-state').evaluate(el=>{const x=getComputedStyle(el);return x.backdropFilter||x.webkitBackdropFilter});
     assert.ok(glass.includes('blur(28px)'),'Cristal sin desenfoque');
