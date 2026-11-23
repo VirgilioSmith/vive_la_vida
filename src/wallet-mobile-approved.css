@@ -326,3 +326,27 @@
     width:82px!important;height:82px!important;
   }
 }
+
+
+/* Restauración del carrusel original visible: Crédito Global primero.
+   Sólo Wallet móvil; no se alteran las cuatro fichas analíticas ni Wallet PC. */
+@media (max-width:790px){
+  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-carousel-restored > .v266-wallet-header{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    width:100%!important;min-width:0!important;margin:0!important;padding:0 2px!important;
+    gap:10px!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-carousel-restored > .v266-wallet-header h1{
+    font-size:clamp(18px,4.8vw,21px)!important;line-height:1.2!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-carousel-restored > .v266-gallery{
+    display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;
+    margin:0 0 3px!important;padding:0!important;box-sizing:border-box!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-carousel-restored > .v266-gallery .v266-gallery-track{
+    max-width:100%!important;min-width:0!important;
+  }
+  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-carousel-restored > .v266-gallery .v266-dots{
+    margin-top:9px!important;
+  }
+}

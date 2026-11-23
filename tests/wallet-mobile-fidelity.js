@@ -54,7 +54,10 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.equal(await p.locator('.v68-wallet > .v371-card-return').count(),1);
     assert.equal(await p.locator('.v68-wallet > .v1301-distribution').count(),1);
     await p.getByRole('heading',{name:'Estado del crédito',exact:true}).waitFor();
-    assert.equal(await visible(p.locator('.v266-gallery')),false,'El carrusel anterior sigue ocupando la cabecera');
+    assert.equal(await p.locator('.v68-wallet > .v266-gallery').count(),1,'El carrusel debe ser visible fuera del menú +');
+    assert.ok(await visible(p.locator('.v68-wallet > .v266-gallery')),'El carrusel de tarjetas está oculto');
+    assert.ok(await visible(p.locator('.v68-wallet-face.selected')),'La tarjeta seleccionada no está visible');
+    assert.equal(await p.locator('.v68-wallet > .v266-gallery .v68-wallet-face').first().getAttribute('data-id'),GLOBAL,'Crédito Global debe ir primero');
     assert.equal(await p.locator('.wallet-mobile-tools').evaluate(el=>el.open),false,'Herramientas no colapsadas');
     const gauge=await p.locator('.v1244-gauge b').innerText();assert.match(gauge,/^-?\d+(\.\d+)?%$/);
     const glass=await p.locator('.v1244-state').evaluate(el=>{const x=getComputedStyle(el);return x.backdropFilter||x.webkitBackdropFilter});
@@ -70,7 +73,7 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
      assert.ok(Math.abs(total-100)<=shares.length*.051,'Participación no suma 100%: '+total);
     }else assert.ok(await p.locator('.wallet-mobile-empty-consumption').count()||await p.locator('.v1301-distribution p').count(),'Falta estado de consumo sin datos');
     run.checks.push({screen:'consumo',shares,segments});
-    /* Selección individual sin rescatar el antiguo carrusel gigante. */
+    /* Selección individual con carrusel restaurado, además de acceso por lista. */
     const row=p.locator('.wallet-mobile-select-card').first();
     assert.ok(await row.count()>0,'La lista no permite seleccionar tarjetas');
     const cardId=await row.getAttribute('data-id');await row.click();
