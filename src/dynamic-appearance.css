@@ -60,6 +60,9 @@ html body[data-vive-bg] #app#app main.vBanksPc-world .vBanksPc-product-filter bu
   background:var(--ui-hero)!important;color:white!important;
 }
 html body[data-vive-bg] #app#app #page .vBanks-mobile-selector .vBanks-consolidated-mark {background:none!important;}
+html body[data-vive-bg] #app#app #page#page .vBanks-mobile-selector {
+  background-image:linear-gradient(145deg,var(--ui-glass-tint),transparent 70%)!important;
+}
 html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-mobile-hero {
   background:radial-gradient(ellipse at 86% 13%,color-mix(in srgb,var(--ui-solid) 80%,transparent),transparent 45%),var(--ui-hero)!important;
   border-color:color-mix(in srgb,var(--ui-accent) 55%,transparent)!important;
@@ -114,8 +117,8 @@ html body[data-vive-bg] #app#app main.vBanksPc-world #page#page :is(.vBanksPc-ov
   background-image:var(--ui-glass-image)!important;
   border-color:var(--ui-glass-edge)!important;
   box-shadow:var(--ui-glass-shadow),inset 0 1px 0 var(--ui-glass-reflection)!important;
-  -webkit-backdrop-filter:blur(28px) saturate(140%);
-  backdrop-filter:blur(28px) saturate(140%);
+  -webkit-backdrop-filter:blur(28px) saturate(140%)!important;
+  backdrop-filter:blur(28px) saturate(140%)!important;
 }
 
 html body[data-vive-bg] #modal-root#modal-root#modal-root .modal.v235-register-dialog {
@@ -126,7 +129,26 @@ html body[data-vive-bg] #modal-root#modal-root#modal-root .modal.v235-register-d
   backdrop-filter:blur(28px) saturate(140%)!important;
 }
 
+html body[data-vive-bg] #app#app main.world-overview #page#page .ff-obligations small,
+html body[data-vive-bg] #app#app #page#page :is(.v64-subdebt,.tx-edited,.v143-cost-linked),
+html body[data-vive-bg] #app#app #page#page .v911 .v911-day small,
+html body[data-vive-bg] #app#app #page#page .v919 :is(.v919-col > small,.v919-col > em,.v919-pill) {
+  font-size:11px!important;
+}
+
 @media (max-width:790px) {
+  html body[data-vive-bg] #app#app .v985-matrix .v985-grid .v985-card .v985-head {
+    grid-template-columns:minmax(0,1fr) 24px;
+  }
+  html body[data-vive-bg] #app#app .v985-matrix .v985-grid .v985-card .v985-go {
+    width:24px!important;
+    height:24px!important;
+    flex-basis:24px!important;
+  }
+  html body[data-vive-bg] #app#app .v985-matrix :is(.v985-row-lbl,.v985-row-item strong,.v985-stat small,.v985-delta),
+  html body[data-vive-bg] #app#app .v315-credit-row-foot > span {
+    font-size:11px!important;
+  }
   html body[data-vive-bg] #app#app#app #page .v266-wallet .v266-dots.v68-wallet-dots {
     flex-wrap:wrap;
     gap:0!important;
