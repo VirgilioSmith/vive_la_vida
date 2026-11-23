@@ -7159,8 +7159,70 @@ function render(){
 })();
 
 
+/* VIVE Wallet móvil: el carrusel se mantiene conectado al DOM durante
+   selección por tarjeta, indicadores y deslizamiento. Evita que render()
+   restablezca la posición horizontal a Créditos generales.
+   Datos: exactamente el mismo v68Wallet(), sin cálculos alternativos. */
+function vWalletMobileSelectInPlace(rail,id,align){
+ if(!rail?.isConnected||!id||ui.page!=='wallet')return false;
+ const wallet=rail.closest('.v68-wallet.wallet-summary-external');
+ const face=[...rail.querySelectorAll('.v68-wallet-face[data-id]')].find(el=>el.dataset.id===id);
+ if(!wallet||!face)return false;
+ if(ui.v68WalletId!==id){
+  ui.v68WalletId=id;
+  ui.v144WalletExpanded=true;
+  const scratch=document.createElement('div');
+  scratch.innerHTML=v68Wallet();
+  const fresh=scratch.querySelector('.v68-wallet');
+  const controls=fresh?.querySelector('.wallet-mobile-tools-content');
+  const balance=controls?.querySelector(':scope > .v266-selected-balance');
+  const actions=controls?.querySelector(':scope > .v266-wallet-actions');
+  const updatedState=fresh?.querySelector(':scope > .v1244-state');
+  const currentState=wallet.querySelector(':scope > .v1244-state');
+  const summary=wallet.querySelector(':scope > .wallet-mobile-summary');
+  if(!balance||!actions||!updatedState||!currentState||!summary)return false;
+  summary.replaceChildren(balance,actions);
+  const disclosure=currentState.querySelector(':scope > .wallet-mobile-tools');
+  const emptyDisclosure=updatedState.querySelector(':scope > .wallet-mobile-tools');
+  if(disclosure&&emptyDisclosure)emptyDisclosure.replaceWith(disclosure);
+  currentState.replaceWith(updatedState);
+  const tail='.v1244-cutpanel,.v371-card-return,.v1301-distribution,.v266-wallet-note';
+  [...wallet.children].filter(el=>el.matches(tail)).forEach(el=>el.remove());
+  [...fresh.children].filter(el=>el.matches(tail)).forEach(el=>wallet.appendChild(el));
+ }
+ rail.querySelectorAll('.v68-wallet-face[data-id]').forEach(el=>{
+  const selected=el.dataset.id===id;
+  el.classList.toggle('selected',selected);
+  el.setAttribute('aria-pressed',String(selected));
+ });
+ wallet.querySelectorAll('.v68-wallet-dots button[data-id]').forEach(el=>{
+  const selected=el.dataset.id===id;
+  el.classList.toggle('active',selected);
+  el.setAttribute('aria-current',String(selected));
+ });
+ const status=rail.parentElement?.querySelector('.v158-wallet-selection-status');
+ if(status)status.textContent=face.getAttribute('aria-label')||'Tarjeta seleccionada';
+ if(align){
+  const rect=rail.getBoundingClientRect(),target=face.getBoundingClientRect();
+  const next=Math.max(0,Math.min(rail.scrollWidth-rail.clientWidth,rail.scrollLeft+target.left-rect.left));
+  const old=rail.style.getPropertyValue('scroll-snap-type');
+  const priority=rail.style.getPropertyPriority('scroll-snap-type');
+  rail.style.setProperty('scroll-snap-type','none','important');
+  rail.scrollLeft=next;
+  requestAnimationFrame(()=>{
+   if(!rail.isConnected)return;
+   rail.scrollLeft=next;
+   if(old)rail.style.setProperty('scroll-snap-type',old,priority);
+   else rail.style.removeProperty('scroll-snap-type');
+  });
+ }
+ return true;
+}
+
 /* V139: animación del carrusel Wallet, sin operaciones ni cambios en saldos. */
 function v139WalletChooseCard(id){
+ const liveRail=document.querySelector('main.world-wallet .wallet-summary-external .v68-wallet-gallery');
+ if(isMobileViewport()&&vWalletMobileSelectInPlace(liveRail,id,true))return;
  const previous=document.querySelector('.v68-wallet-gallery');
  const previousX=previous?previous.scrollLeft:0;
  ui.v68WalletId=id;
@@ -13729,10 +13791,11 @@ document.addEventListener('focusout',e=>{
  const reduce=()=>!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
  function nearestCard(rail){
   const box=rail.getBoundingClientRect(),center=box.left+box.width/2;
+  const startAligned=!!rail.closest('.wallet-summary-external');
   let nearest=null,distance=Infinity;
   for(const face of rail.querySelectorAll('.v68-wallet-face[data-id]')){
    const rect=face.getBoundingClientRect();
-   const gap=Math.abs(rect.left+rect.width/2-center);
+   const gap=startAligned?Math.abs(rect.left-box.left):Math.abs(rect.left+rect.width/2-center);
    if(gap<distance){distance=gap;nearest=face}
   }
   return nearest;
@@ -13756,6 +13819,7 @@ document.addEventListener('focusout',e=>{
   const host=rail.closest('.v144-wallet-shell');
   const current=host?.querySelector('.v68-wallet');
   if(!current)return;
+  if(current.classList.contains('wallet-summary-external')&&vWalletMobileSelectInPlace(rail,id,false))return;
   const oldActions=current.querySelector(':scope > .v266-selected-balance, :scope > .v68-wallet-actions');
   // La composición móvil aprobada guarda esos controles en el desplegable.
   // Al deslizar el carrusel abierto, renderizamos la tarjeta elegida completa.
@@ -13818,7 +13882,7 @@ document.addEventListener('focusout',e=>{
    // Al anteponer Créditos generales, centrar la selección real antes del primer scroll.
    const snap=rail.style.getPropertyValue('scroll-snap-type'),priority=rail.style.getPropertyPriority('scroll-snap-type');
    rail.style.setProperty('scroll-snap-type','none','important');
-   const center=()=>{const r=rail.getBoundingClientRect(),c=initial.getBoundingClientRect();const target=Math.max(0,Math.min(rail.scrollWidth-rail.clientWidth,rail.scrollLeft+c.left-r.left+(c.width-r.width)/2));rail.scrollLeft=target;};
+   const center=()=>{const r=rail.getBoundingClientRect(),c=initial.getBoundingClientRect();const offset=rail.closest('.wallet-summary-external')?0:(c.width-r.width)/2;const target=Math.max(0,Math.min(rail.scrollWidth-rail.clientWidth,rail.scrollLeft+c.left-r.left+offset));rail.scrollLeft=target;};
    center();
    requestAnimationFrame(()=>{if(!rail.isConnected)return;center();if(snap)rail.style.setProperty('scroll-snap-type',snap,priority);else rail.style.removeProperty('scroll-snap-type');requestAnimationFrame(()=>{if(!rail.isConnected)return;center();aligning=false})});
   }else{
