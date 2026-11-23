@@ -118,6 +118,11 @@
     v139WalletChooseCard=function(id){
       const rail=app.querySelector('main.world-wallet .wallet-summary-external .v68-wallet-gallery');
       if(mobile.matches && rail?.isConnected){
+        const lock=selectionLocks.get(rail);
+        if(lock && performance.now()<lock.until && id!==lock.id){
+          selectInPlace(rail,lock.id,true);
+          return;
+        }
         selectInPlace(rail,id,true);
         return;
       }
