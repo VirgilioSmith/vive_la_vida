@@ -158,8 +158,28 @@ module.exports=async function walletDesktop(browser){
    assert.equal(await p.evaluate(()=>window.__T.ui().page),page);
    await p.getByRole('button',{name:/^Wallet:/}).click();
   }
+  const limitPanel=wallet.locator('.vWalletPc-stat.is-limit');
+  const appearance=()=>limitPanel.evaluate(el=>{
+   const s=getComputedStyle(el);
+   return {background:s.backgroundImage,fill:s.backgroundColor,blur:s.backdropFilter||s.webkitBackdropFilter};
+  });
+  for(const theme of ['light','black']){
+   const set=palette=>p.evaluate(({theme,palette})=>{
+    const t=window.__T,d=t.dbg();
+    Object.assign(d.settings,{theme,paletteChoice:'custom',paletteHex:palette});
+    t.go('wallet');
+   },{theme,palette});
+   await set('#087b72');
+   const teal=await appearance();
+   await set('#a63758');
+   const coral=await appearance();
+   assert.notEqual(coral.background,teal.background,'El acento actualiza el cristal de Wallet');
+   assert.equal(coral.fill,theme==='light'?'rgba(255, 255, 255, 0.35)':'rgba(35, 37, 45, 0.39)');
+   assert.equal(coral.blur,'blur(28px) saturate(1.4)');
+   assert.equal(await amount('.vWalletPc-stat.is-limit strong'),480000);
+  }
   assert.deepEqual(errors,[]);
-  console.log('OK Wallet PC · 4 resoluciones, tipografía, consolidación, gráficos, cortes y navegación');
+  console.log('OK Wallet PC · 4 resoluciones, Claro y Black, acentos, gráficos, cortes y navegación');
  }finally{
   await ctx.close();
  }

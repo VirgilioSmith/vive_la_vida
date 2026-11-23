@@ -25,8 +25,15 @@ html body[data-vive-bg] #app#app main.world-wallet #page#page :is(.vWalletPc-pan
   backdrop-filter: blur(28px) saturate(140%) !important;
 }
 
+html body[data-vive-bg] #app#app main.world-wallet #page#page .vWalletPc-stat {
+  --wallet-stat-strength: 58%;
+  background: var(--wallet-glass-reflection),
+    linear-gradient(26deg, color-mix(in srgb, var(--wallet-glass-tint) var(--wallet-stat-strength), transparent), transparent 74%),
+    var(--wallet-glass-fill) !important;
+}
+
 html body[data-vive-bg] #app#app main.world-wallet #page#page .vWalletPc-stat.is-available {
-  background: var(--wallet-glass-reflection), linear-gradient(26deg, var(--wallet-glass-tint), transparent 74%), var(--wallet-glass-fill) !important;
+  --wallet-stat-strength: 100%;
 }
 
 #app#app main.world-wallet #page :is(.v266-panel-heading h2, .vWalletPc-state h2, .v371-return-heading h2, .v1301-insight summary h2, .v1244-cuthead strong, .vWalletPc-cuts h2, .vWalletPc-consumption h2) {
