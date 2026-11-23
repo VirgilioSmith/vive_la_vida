@@ -41,7 +41,7 @@ const assertGeometry=(g,label,width)=>{
  if(g.mainCarousel)assert.ok(g.wallet.left>=-2&&g.wallet.right<=width+2,'La portada Wallet excede viewport '+label+': '+JSON.stringify(g.wallet));
  else assert.ok(g.wallet.left>=12&&g.wallet.right<=width-12,'La subvista Wallet excede viewport '+label+': '+JSON.stringify(g.wallet));
  assert.ok(g.panels.length>=2,'Paneles principales ausentes '+label);
- for(const p of g.panels){if(g.mainCarousel)assert.ok(p.box.left>=12&&p.box.right<=width-12&&p.box.width>=width-45,'Panel principal más estrecho que Bancos móvil '+label+': '+JSON.stringify(p));
+ for(const p of g.panels){if(g.mainCarousel)assert.ok(p.box.left>=6&&p.box.right<=width-6&&p.box.width>=width-28,'Panel no aprovecha los bordes de Wallet '+label+': '+JSON.stringify(p));
  else assert.ok(p.box.left>=12&&p.box.right<=width-12,'Panel de subvista fuera de márgenes '+label+': '+JSON.stringify(p));}
  for(let i=1;i<g.panels.length;i++)assert.ok(g.panels[i].box.top>=g.panels[i-1].box.bottom+7,'Paneles solapados '+label+': '+g.panels[i].name);
  assert.deepEqual(g.clipping,[],'Texto recortado '+label);
