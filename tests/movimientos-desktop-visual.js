@@ -40,6 +40,7 @@ const open=require('./harness');
       count:el('count')?.querySelector('.movement-variation')?.textContent.trim(),
       sparkline:!!root.querySelector('.movement-net-sparkline path[stroke]'),
       iconos:root.querySelectorAll('tbody .movement-row-icon svg').length,
+      visibleRows:root.querySelectorAll('tbody tr[data-movement-type]').length,
       more:!!more,
       moreBottom:more?.getBoundingClientRect().bottom||0,
       documentHeight:document.scrollingElement.scrollHeight,
@@ -55,7 +56,8 @@ const open=require('./harness');
     assert.match(k.net||'',/37\.1%/,'Neto comparado incluso si tiene signo distinto');
     assert.match(k.count||'',/600\.0%/,'Cantidad comparada');
     assert.ok(k.sparkline,'Gráfico del balance');
-    assert.ok(k.iconos>=10,'Pictogramas por movimiento');
+    assert.equal(k.iconos,k.visibleRows,'Un pictograma por cada movimiento visible');
+    assert.ok(k.documentHeight<=height+3,'El documento completo cabe sin scroll inicial');
     assert.ok(k.more,'Acceso a más movimientos');
     assert.ok(k.moreBottom<=height+3,'Botón Ver más visible sin desplazar la pantalla');
     assert.ok(k.bodyWidth<=width+3,'Sin desbordamiento horizontal');

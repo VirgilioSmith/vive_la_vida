@@ -30,6 +30,13 @@ jobs:
           node tests/vive-score.js
           node tests/flujos-ingresos.js
           node tests/logica/run.js
+      - name: Evidencias Playwright de Movimientos PC
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vive-movimientos-desktop
+          path: test-results/movimientos-desktop/
+          if-no-files-found: ignore
       - name: Capturas de auditoría móvil
         if: always()
         uses: actions/upload-artifact@v4
