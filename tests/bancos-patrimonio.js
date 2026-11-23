@@ -399,9 +399,48 @@ async function testPatrimony(browser,width){
  } finally { await ctx.close(); }
 }
 
+async function testDesktopDashboardScroll(browser){
+ const {ctx,p}=await open(browser,1784,956);
+ try{
+  await fixture(p);
+  await p.evaluate(()=>{
+   const t=window.__T,db=t.dbg(),date=t.fn.today();
+   for(const [index,category] of ['Hogar','Transporte','Servicios básicos'].entries()){
+    db.transactions.push({id:'scroll-purchase-'+index,type:'card_charge',cardId:'card-a',category,amount:12,currency:'USD',fxRateSnapshot:61,date});
+   }
+   t.inv();
+   t.go('banks');
+  });
+  await p.locator('.vBanksPc-bank[data-id="bank-a"]').click();
+  const insights=p.locator('.vBanksPc-insights');
+  const rows=insights.locator('.vBanksPc-consumption-rows > div');
+  assert.equal(await rows.count(),4);
+  const geometry=()=>insights.evaluate(el=>({
+   overflow:getComputedStyle(el).overflowY,
+   bottom:el.getBoundingClientRect().bottom,
+   last:el.querySelector('.vBanksPc-consumption-rows > div:last-child').getBoundingClientRect().bottom,
+   innerHeight,
+   scrollHeight:document.scrollingElement.scrollHeight,
+   scrollTop:document.scrollingElement.scrollTop
+  }));
+  const tall=await geometry();
+  assert.equal(tall.overflow,'visible','La columna derecha carece de scroll interno.');
+  assert.ok(tall.last<=tall.bottom&&tall.bottom<=tall.innerHeight+1,'El panel de consumo se ve completo en PC.');
+  assert.ok(tall.scrollHeight<=tall.innerHeight+1,'La página cabe en el alto disponible.');
+  await p.setViewportSize({width:1280,height:600});
+  const short=await geometry();
+  assert.ok(short.scrollHeight>short.innerHeight,'La página puede desplazarse cuando falta espacio.');
+  await rows.last().scrollIntoViewIfNeeded();
+  const scrolled=await geometry();
+  assert.equal(scrolled.overflow,'visible');
+  assert.ok(scrolled.scrollTop>0&&scrolled.last<=scrolled.innerHeight,'La última categoría se alcanza con el scroll general.');
+ }finally{await ctx.close();}
+}
+
 async function banksAndPatrimony(browser){
  if(evidence)fs.mkdirSync(evidence,{recursive:true});
  await inspectPrevious(browser);
+ await testDesktopDashboardScroll(browser);
  for(const width of [1672,1440,1280,1024,390,320,430])await testBanks(browser,width);
  await testBanks(browser,390,'black');
  await testPatrimony(browser,1440);

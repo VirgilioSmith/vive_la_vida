@@ -555,6 +555,16 @@ html body #app#app main.world-wallet #page#page :is(.v1301-insight,.v371-card-re
 
 /* Bancos PC comparte las proporciones, la jerarquía tipográfica y el cristal de Wallet PC. */
 @media (min-width:791px){
+  /* El tablero crece con sus paneles y usa el desplazamiento de la página. */
+  html body #app#app main.vBanksPc-world:has(#page > .vBanksPc > .vBanksPc-grid){
+    height:auto;max-height:none;min-height:100dvh;overflow:visible;
+  }
+  html body #app#app main.vBanksPc-world #page#page .vBanksPc-grid{
+    height:auto;flex:none;
+  }
+  html body #app#app main.vBanksPc-world #page#page .vBanksPc-grid :is(.vBanksPc-bank-options,.vBanksPc-center,.vBanksPc-insights){
+    height:auto;overflow:visible;
+  }
   html body #app#app main.vBanksPc-world .topbar .top-sub{
     display:block!important;
   }
@@ -600,6 +610,9 @@ html body #app#app main.world-wallet #page#page :is(.v1301-insight,.v371-card-re
   }
   html body #app#app main.vBanksPc-world #page#page :is(.vBanksPc-bank-list,.vBanksPc-insights > section,.vBanksPc-insights > details){
     padding:16px!important;min-width:0;
+  }
+  html body #app#app main.vBanksPc-world #page#page .vBanksPc-insights > :is(section,details){
+    padding-block:11px!important;
   }
   html body #app#app main.vBanksPc-world #page#page .vBanksPc-bank-list > header{
     padding:0;
@@ -693,8 +706,7 @@ html body #app#app main.world-wallet #page#page :is(.v1301-insight,.v371-card-re
 }
 @media (min-width:1121px){
   html body #app#app main.vBanksPc-world #page#page .vBanksPc-grid{
-    flex:0 1 auto;
-    height:clamp(560px,min(calc(100dvh - 296px),calc(11vw + 461px)),760px);
+    min-height:clamp(560px,min(calc(100dvh - 296px),calc(11vw + 461px)),760px);
   }
 }
 @media (min-width:791px) and (max-width:1180px){
@@ -707,13 +719,10 @@ html body #app#app main.world-wallet #page#page :is(.v1301-insight,.v371-card-re
     height:auto;max-height:none;min-height:100dvh;overflow:visible;
   }
   html body #app#app main.vBanksPc-world #page#page .vBanksPc-grid{
-    height:auto;grid-template-columns:minmax(146px,.78fr) minmax(0,1.7fr)!important;
+    grid-template-columns:minmax(146px,.78fr) minmax(0,1.7fr)!important;
   }
   html body #app#app main.vBanksPc-world #page#page :is(.vBanksPc-bank-list,.vBanksPc-center){
     min-height:560px;
-  }
-  html body #app#app main.vBanksPc-world #page#page :is(.vBanksPc-bank-list,.vBanksPc-center,.vBanksPc-insights){
-    height:auto;
   }
   html body #app#app main.vBanksPc-world #page#page .vBanksPc-insights{
     grid-column:1/-1;display:flex!important;flex-direction:column;
