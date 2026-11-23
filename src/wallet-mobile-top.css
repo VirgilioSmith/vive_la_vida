@@ -383,3 +383,54 @@
     font-weight:650!important;letter-spacing:.045em!important;
   }
 }
+
+
+/* Wallet mobile · debt KPI typography on one glass layer (no inset rectangle).
+   Target the data-vive-bg form too, whose original glass specificity was higher. */
+@media(max-width:790px){
+ html body[data-vive-bg] #app#app main.world-wallet #page#page .v68-wallet.wallet-summary-external > .wallet-mobile-summary .v266-selected-balance.v565-credit-dashboard,
+ html body #app#app main.world-wallet #page#page .v68-wallet.wallet-summary-external > .wallet-mobile-summary .v266-selected-balance.v565-credit-dashboard{
+   background:transparent!important;background-image:none!important;
+   border:0!important;outline:0!important;border-radius:0!important;
+   box-shadow:none!important;filter:none!important;
+   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+   padding:0!important;margin:0!important;
+   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+   gap:clamp(10px,3vw,16px)!important;align-items:start!important;
+ }
+ html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v266-selected-balance::before,
+ html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v266-selected-balance::after,
+ html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v565-secondary::before,
+ html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v565-secondary::after{
+   content:none!important;display:none!important;
+ }
+ html body[data-vive-bg] #app#app main.world-wallet #page#page .wallet-mobile-summary :is(.v565-primary,.v565-secondary,.v550-currency-breakdown){
+   background:transparent!important;background-image:none!important;
+   border:0!important;border-radius:0!important;outline:0!important;
+   box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v565-secondary{
+   align-items:flex-end!important;text-align:right!important;
+   justify-content:flex-start!important;
+ }
+ html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v565-secondary > small{
+   width:100%!important;max-width:100%!important;
+   margin:0!important;min-height:0!important;text-align:right!important;
+ }
+ html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v565-secondary > b{
+   margin:0!important;padding:0!important;
+   width:100%!important;max-width:100%!important;
+   height:auto!important;min-height:0!important;
+   text-align:right!important;display:block!important;
+   line-height:1.14!important;
+ }
+ html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v565-secondary .v550-currency-breakdown{
+   display:flex!important;align-items:flex-end!important;
+   margin:4px 0 0 auto!important;padding:0!important;
+   width:100%!important;max-width:100%!important;
+ }
+ html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v565-secondary .v550-currency-breakdown > span{
+   display:flex!important;justify-content:flex-end!important;
+   gap:5px!important;width:100%!important;text-align:right!important;
+ }
+}

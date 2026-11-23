@@ -138,6 +138,19 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
       await rail.evaluate(el=>el.scrollTo({left:el.scrollWidth-el.clientWidth,behavior:'instant'}));
       await p.waitForFunction(id=>document.querySelector('.v68-wallet-face.selected')?.dataset.id===id,lastId,{timeout:10000});
       assert.equal(await p.locator('.v68-wallet-dots .active').getAttribute('data-id'),lastId,'Punto final desincronizado');
+      const preservedRail=await rail.evaluate(el=>{el.dataset.keepAlive='1';return el.scrollLeft});
+      // Clicking the already selected physical card must not remount the rail.
+      await rail.locator('.v68-wallet-face.selected').click();
+      await p.waitForTimeout(250);
+      assert.equal(await rail.getAttribute('data-keep-alive'),'1','Click recreated the carousel');
+      assert.equal(await p.locator('.v68-wallet-face.selected').getAttribute('data-id'),lastId,'Click returned to first card');
+      assert.ok((await rail.evaluate(el=>el.scrollLeft))>0,'Click reset horizontal scroll');
+      assert.equal(await p.locator('.wallet-mobile-summary .v266-selected-balance').count(),1);
+      const debtCss=await p.locator('.wallet-mobile-summary .v266-selected-balance').evaluate(el=>({bg:getComputedStyle(el).backgroundImage,border:getComputedStyle(el).borderTopWidth}));
+      assert.equal(debtCss.bg,'none','Nested financial KPI box remains');
+      assert.equal(debtCss.border,'0px','Nested financial KPI border remains');
+      run.checks.push({screen:'selected-card-click',previousLeft:preservedRail,afterLeft:await rail.evaluate(el=>el.scrollLeft)});
+
       await screenshot(p,dir,'01b-carrusel-ultima');
       await p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]').click();
       await p.waitForFunction(id=>document.querySelector('.v68-wallet-face.selected')?.dataset.id===id,GLOBAL,{timeout:10000});
