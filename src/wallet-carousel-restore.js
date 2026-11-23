@@ -42,8 +42,12 @@
   // VIVE Wallet mobile: selection-in-place. The legacy data-act handler
   // rerendered the entire gallery on click, resetting its scroll position.
   // Preserve the rail and replace only financial data panels.
+  const selectionLocks = new WeakMap();
   function selectInPlace(rail, id, moveRail) {
     if (!mobile.matches || !rail?.isConnected || !id || typeof ui==='undefined' || ui.page!=='wallet') return;
+    const activeLock=selectionLocks.get(rail);
+    if(!moveRail && activeLock && performance.now()<activeLock.until && id!==activeLock.id)return;
+    if(moveRail)selectionLocks.set(rail,{id,until:performance.now()+800});
     const wallet=rail.closest('.v68-wallet.wallet-summary-external');
     const target=[...rail.querySelectorAll('.v68-wallet-face[data-id]')].find(f=>f.dataset.id===id);
     if(!wallet || !target)return;
@@ -88,7 +92,22 @@
       const railBox=rail.getBoundingClientRect(),faceBox=target.getBoundingClientRect();
       const dx=faceBox.left-railBox.left;
       const next=Math.max(0,Math.min(rail.scrollWidth-rail.clientWidth,rail.scrollLeft+dx));
-      if(Math.abs(next-rail.scrollLeft)>1)rail.scrollTo({left:next,behavior:'instant'});
+      // Disable native snapping for the two frames needed to commit a manual
+      // choice, otherwise a previous scrollend can snap it back to Global.
+      const oldSnap=rail.style.getPropertyValue('scroll-snap-type');
+      const oldPriority=rail.style.getPropertyPriority('scroll-snap-type');
+      rail.style.setProperty('scroll-snap-type','none','important');
+      rail.scrollLeft=next;
+      requestAnimationFrame(()=>{
+        if(!rail.isConnected)return;
+        rail.scrollLeft=next;
+        requestAnimationFrame(()=>{
+          if(!rail.isConnected)return;
+          if(oldSnap)rail.style.setProperty('scroll-snap-type',oldSnap,oldPriority);
+          else rail.style.removeProperty('scroll-snap-type');
+          rail.scrollLeft=next;
+        });
+      });
     }
   }
 
@@ -121,6 +140,8 @@
     const settle=()=>{
       clearTimeout(timer);
       if(!rail.isConnected || !rail.closest('.wallet-summary-external'))return;
+      const lock=selectionLocks.get(rail);
+      if(lock && performance.now()<lock.until)return;
       const face=nearestVisible(rail);
       if(face)selectInPlace(rail,face.dataset.id,false);
     };
