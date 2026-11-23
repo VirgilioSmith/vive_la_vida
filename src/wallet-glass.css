@@ -1,5 +1,5 @@
 /* Wallet uses the ambient canvas and personalization tokens owned by the app. */
-html body #app#app main.world-wallet {
+html body #app#app main:is(.world-wallet,.vBanksPc-world) {
   --wallet-glass-accent: var(--ui-readable, var(--vive-theme-color, #087b72));
   --wallet-glass-tint: color-mix(in srgb, var(--wallet-glass-accent) 11%, transparent);
   --wallet-glass-edge: rgba(255, 255, 255, .78);
@@ -8,7 +8,7 @@ html body #app#app main.world-wallet {
   --wallet-glass-reflection: radial-gradient(ellipse at 93% 0%, rgba(255, 255, 255, .48), transparent 56%);
 }
 
-html body:is(.theme-black, .theme-dark) #app#app main.world-wallet {
+html body:is(.theme-black, .theme-dark) #app#app main:is(.world-wallet,.vBanksPc-world) {
   --wallet-glass-tint: color-mix(in srgb, var(--wallet-glass-accent) 17%, transparent);
   --wallet-glass-edge: rgba(255, 255, 255, .17);
   --wallet-glass-fill: rgba(35, 37, 45, .39);

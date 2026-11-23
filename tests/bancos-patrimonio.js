@@ -150,7 +150,7 @@ async function testBanks(browser,width,theme='light'){
   if(!mobile){
     const metrics=await root.locator('.vBanksPc-metric').evaluateAll(nodes=>nodes.map(el=>({top:Math.round(el.getBoundingClientRect().top),value:el.querySelector('strong')?.innerText||'',width:el.getBoundingClientRect().width})));
     assert.equal(metrics.length,4,'Bancos PC conserva cuatro indicadores.');
-    assert.equal(new Set(metrics.map(x=>x.top)).size,1,'Los cuatro indicadores comparten la misma fila.');
+    assert.equal(new Set(metrics.map(x=>x.top)).size,width>=1181?1:2,'Las filas de indicadores coinciden con Wallet PC.');
     assert.ok(metrics.every(x=>x.width>0&&x.value.length>0),'Importes completos visibles.');
     const bars=root.locator('.vBanksPc-consumption-rows .vBanksPc-meter i');
     if(await bars.count())assert.ok(await bars.first().evaluate(el=>{
@@ -159,10 +159,12 @@ async function testBanks(browser,width,theme='light'){
     }),'Barras de consumo con relleno visible.');
     assert.doesNotMatch(await root.locator('.vBanksPc-metric').nth(3).innerText(),/vs[.] mes anterior/,'Sin porcentaje inventado.');
   }
-  if(!mobile)assert.ok(await root.evaluate(el=>{
+  if(!mobile)assert.ok(await root.evaluate((el,wide)=>{
    const [banks,products,insights]=[...el.querySelector('.vBanksPc-grid').children].map(x=>x.getBoundingClientRect());
-   return banks.right<products.left&&products.right<insights.left&&Math.abs(banks.top-insights.top)<2;
-  }),'El mockup PC muestra tres columnas debajo de los KPI.');
+   return banks.right<products.left&&Math.abs(banks.top-products.top)<2&&(wide
+    ?products.right<insights.left&&Math.abs(banks.top-insights.top)<2
+    :Math.abs(banks.left-insights.left)<2&&insights.top>=Math.max(banks.bottom,products.bottom));
+  },width>=1121),'Las columnas responden como Wallet PC.');
   if(mobile)assert.ok(await root.evaluate(el=>{
    const seq=['.vBanks-mobile-head','.vBanks-mobile-selector','.vBanks-mobile-hero','.vBanks-mobile-products','.vBanks-mobile-return'];
    const top=seq.map(k=>el.querySelector(k).getBoundingClientRect().top);
@@ -176,8 +178,8 @@ async function testBanks(browser,width,theme='light'){
   if(!mobile)assert.ok(await p.evaluate(()=>{
    const subtitle=document.querySelector('main.vBanksPc-world .topbar .top-sub');
    const tiles=document.querySelector('main.vBanksPc-world .v371-return-tile');
-   return (!subtitle||getComputedStyle(subtitle).display==='none')&&(!tiles||getComputedStyle(tiles).backgroundColor==='rgba(0, 0, 0, 0)');
-  }),'La cabecera no debe duplicarse y el retorno usa divisores sin rellenos en PC.');
+   return !!subtitle&&getComputedStyle(subtitle).display!=='none'&&(!tiles||getComputedStyle(tiles).backgroundColor==='rgba(0, 0, 0, 0)');
+  }),'Bancos PC muestra su subtítulo y las celdas de retorno usan fondo transparente.');
   if(mobile)assert.ok(await root.locator('.vBanks-mobile-tiles').evaluate(el=>{
    const cols=getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean);
    return cols.length===2&&[...el.querySelectorAll('strong')].every(x=>getComputedStyle(x).textOverflow!=='ellipsis'&&x.scrollWidth<=x.clientWidth+1);
@@ -211,8 +213,8 @@ async function testBanks(browser,width,theme='light'){
   await choose('bank-a');
   const a=await view();
   if(!mobile){
-    const sameRow=await root.locator('.vBanksPc-metric').evaluateAll(nodes=>new Set(nodes.map(el=>Math.round(el.getBoundingClientRect().top))).size===1);
-    assert.ok(sameRow,'Cambiar de banco no debe romper la alineación de los KPI.');
+    const rows=await root.locator('.vBanksPc-metric').evaluateAll(nodes=>new Set(nodes.map(el=>Math.round(el.getBoundingClientRect().top))).size);
+    assert.equal(rows,width>=1181?1:2,'Cambiar de banco conserva las filas de KPI.');
   }
 
   if(!mobile){
