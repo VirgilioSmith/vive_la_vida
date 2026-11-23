@@ -108,6 +108,20 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(top.first.left<=18,'Primera tarjeta demasiado separada del borde: '+top.first.left);
     assert.ok(top.second.left<width-4,'No asoma la segunda tarjeta');
     assert.ok(top.second.left>=top.first.right+5,'Las tarjetas se superponen');
+    const aligned=await p.evaluate(()=>{
+      const r=s=>document.querySelector(s)?.getBoundingClientRect();
+      const first=r('.v68-wallet-gallery > .v68-wallet-face:first-child');
+      const summary=r('.v68-wallet > .wallet-mobile-summary');
+      const state=r('.v68-wallet > .v1244-state');
+      const paint=document.querySelector('.v68-wallet-gallery > .v68-wallet-face:first-child .v277-physical-card');
+      return {firstLeft:first?.left,firstRight:first?.right,summaryLeft:summary?.left,
+        stateLeft:state?.left,chip:getComputedStyle(paint,'::after').content};
+    });
+    assert.ok(Math.abs(aligned.firstLeft-aligned.summaryLeft)<=2,'El CARRUSEL no arranca alineado con Resumen: '+JSON.stringify(aligned));
+    assert.ok(Math.abs(aligned.firstLeft-aligned.stateLeft)<=2,'El CARRUSEL no arranca alineado con Estado del crédito: '+JSON.stringify(aligned));
+    assert.ok(aligned.firstRight>=width-43&&aligned.firstRight<=width-22,'Se alteró el borde derecho aprobado: '+JSON.stringify(aligned));
+    assert.ok(aligned.chip&&aligned.chip!=='none','Falta el detalle físico de la tarjeta');
+    run.checks.push({screen:'alineacion-izquierda-carrusel',aligned});
     assert.ok((top.snap||'').includes('mandatory'),'Falta scroll-snap obligatorio');
     run.checks.push({screen:'encabezado-carrusel',top});
 
