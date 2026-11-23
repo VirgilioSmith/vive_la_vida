@@ -40,6 +40,8 @@ async function checkApplicationRoutes(browser,width,mode){
    for(const label of audit.smallLabels)tinyText.set(label,(tinyText.get(label)||0)+1);
   }
   console.log('Recorrido',JSON.stringify({width,mode,routes:appRoutes.length,overflow,shortControls,smallLabels:[...tinyText].sort((a,b)=>b[1]-a[1]).slice(0,18)}));
+  assert.deepEqual(overflow,[]);
+  assert.deepEqual(shortControls,[]);
   assert.deepEqual(errors,[]);
  }finally{await ctx.close();}
 }
@@ -48,6 +50,7 @@ async function checkSharedGlass(page,width,mode){
  const surfaces=[
   ['income','.income-distribution'],
   ['expenses','.expenses-distribution'],
+  ['pressure','.v360-pressure-calendar'],
   ['register',mobile?'.v708-movements :is(.v708-row-stack,.v708-empty)':'.ledger-card'],
   mobile?['mobilehub','.v431-tile']:['overview','.ff-balance']
  ];

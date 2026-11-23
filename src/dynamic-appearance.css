@@ -106,7 +106,9 @@ html body[data-vive-bg]:is(.theme-black,.theme-dark) #app#app :is(.vWalletPc-wor
 html body[data-vive-bg]:is(.theme-black,.theme-dark) #app#app #page .v68-wallet .v1244-gauge:not(.is-mid,.is-high) {background:conic-gradient(var(--ui-readable) calc(var(--u)*1%),var(--ui-track) 0)!important;}
 
 /* Primary panels share the Wallet treatment across layouts. */
-html body[data-vive-bg] #app#app main:is(.world-income,.world-expenses,.world-advanced,.world-patrimony,.world-register,.world-transactions) #page#page :is(.panel,.summary-glass),
+html body[data-vive-bg] #app#app main:is(.world-income,.world-expenses,.world-advanced,.world-patrimony,.world-projection,.world-analytics,.world-annual,.world-register,.world-transactions) #page#page :is(.panel,.summary-glass),
+html body[data-vive-bg] #app#app main.world-patrimony #page#page .v134-panel,
+html body[data-vive-bg] #app#app main.world-pressure #page#page .v360-pressure-calendar,
 html body[data-vive-bg] #app#app main.world-register #page#page .v708-movements :is(.v708-row-stack,.v708-empty,.v708-category-card,.v708-detail-lines),
 html body[data-vive-bg] #app#app main.world-overview #page#page :is(.ff-tile:not(.ff-health-card),.vive-mobile-commitments,.vive-mobile-dues,.vive-mobile-net-card,.v105-mobile-extra),
 html body[data-vive-bg] #app#app main:is(.world-budget,.world-categories,.world-recurring) #page#page .v911 :is(.v911-kpi,.v911-grp,.v911-card:not(.v911-grp > .v911-card)),
@@ -125,6 +127,9 @@ html body[data-vive-bg] #app#app main.vBanksPc-world #page#page :is(.vBanksPc-ov
 
 html body[data-vive-bg] #modal-root#modal-root#modal-root .modal.v235-register-dialog {
   --g-card:var(--ui-glass-fill);
+}
+html body[data-vive-bg] #modal-root#modal-root#modal-root .modal.v235-register-dialog,
+html body[data-vive-bg] #v361-pressure-day-dialog .v361-pressure-sheet {
   background:var(--ui-glass-image),var(--ui-glass-modal)!important;
   border-color:var(--ui-glass-edge)!important;
   -webkit-backdrop-filter:blur(28px) saturate(140%)!important;
@@ -138,7 +143,15 @@ html body[data-vive-bg] #app#app #page#page .v919 :is(.v919-col > small,.v919-co
   font-size:11px!important;
 }
 
+html body[data-vive-bg] #app#app #page #v920-search {
+  min-height:28px!important;
+}
+
 @media (max-width:790px) {
+  html body[data-vive-bg] #app#app #page#page :is(.v708-row-right > small,.v371-return-tile > small,.v550-balance-column > span,.v550-balance-column > small,.v1244-limits > small,.v1245-figs > small,.vBanks-limit-split > small,.v266-wallet-note,.v46-hero-foot > span),
+  html body[data-vive-bg] #app#app #page#page .v279-wallet :is(.v277-card-head > small,.v277-card-footer > small) {
+    font-size:11px!important;
+  }
   html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanksPc-benefits-link {
     min-height:28px!important;
   }

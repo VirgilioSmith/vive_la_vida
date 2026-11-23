@@ -364,3 +364,25 @@ body:not(.compact) .scoreBanner .sbRight>*:not(.sbLabel):not(.sbNum){grid-column
 .cpRow span{font-size:13.5px}.cpRow span small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}.cpRow b{font-size:14.5px;white-space:nowrap}
 .cpWide{margin-top:14px}.cpCols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}
 @media(max-width:900px){.cpHero{grid-template-columns:1fr;gap:16px}.cpGauge{justify-self:start}.cpGrid,.cpCols{grid-template-columns:1fr}.rcList{grid-template-columns:1fr}}
+
+/* Secondary credit panels use translucent glass with the existing score colours. */
+body {
+  --score-glass-fill:rgba(255,255,255,.42);
+  --score-glass-edge:rgba(255,255,255,.78);
+  --score-glass-reflection:rgba(255,255,255,.38);
+}
+body.night {
+  --score-glass-fill:rgba(31,33,42,.48);
+  --score-glass-edge:rgba(255,255,255,.15);
+  --score-glass-reflection:rgba(255,255,255,.055);
+}
+#view :is(.card,.rcItem,.cpCard,.ccdet) {
+  background:radial-gradient(ellipse at 92% 0%,var(--score-glass-reflection),transparent 57%),var(--score-glass-fill);
+  border-color:var(--score-glass-edge);
+  -webkit-backdrop-filter:blur(28px) saturate(140%);
+  backdrop-filter:blur(28px) saturate(140%);
+}
+body.compact .drawer .close:focus-visible {
+  outline:2px solid var(--teal);
+  outline-offset:2px;
+}
