@@ -9,6 +9,13 @@ html body[data-vive-bg][data-vive-bg] {
   --ui-line:color-mix(in srgb,var(--ui-accent) 13%,#dce2e9);
   --ui-tint:color-mix(in srgb,var(--ui-accent) 12%,var(--ui-surface));
   --ui-track:color-mix(in srgb,var(--ui-accent) 16%,var(--ui-surface));
+  --ui-glass-fill:rgba(255,255,255,.42);
+  --ui-glass-edge:rgba(255,255,255,.78);
+  --ui-glass-reflection:rgba(255,255,255,.38);
+  --ui-glass-shadow:0 8px 24px rgba(29,46,85,.07);
+  --ui-glass-modal:rgba(248,250,255,.85);
+  --ui-glass-tint:color-mix(in srgb,var(--ui-accent) 8%,transparent);
+  --ui-glass-image:radial-gradient(ellipse at 92% 0%,var(--ui-glass-reflection),transparent 57%),linear-gradient(145deg,transparent 44%,var(--ui-glass-tint));
   --ui-hero:linear-gradient(125deg,var(--ui-solid),color-mix(in srgb,var(--ui-solid) 70%,#101322));
   --ui-ambient:radial-gradient(ellipse 92% 82% at -14% -6%,color-mix(in srgb,var(--ui-accent) 30%,transparent),transparent 74%),radial-gradient(ellipse 110% 92% at 112% 18%,color-mix(in srgb,var(--ui-accent) 13%,transparent),transparent 76%),linear-gradient(136deg,color-mix(in srgb,var(--vive-bg-color,#d9e7fa) 16%,#fffafb),var(--ui-base) 52%,color-mix(in srgb,var(--ui-accent) 6%,#eef2f8));
   background:var(--ui-ambient) fixed!important;
@@ -19,6 +26,11 @@ html body[data-vive-bg][data-vive-bg]:is(.theme-black,.theme-dark) {
   --ui-line:color-mix(in srgb,var(--ui-accent) 20%,#28282d);
   --ui-tint:color-mix(in srgb,var(--ui-accent) 19%,var(--ui-surface));
   --ui-track:color-mix(in srgb,var(--ui-accent) 24%,#17171b);
+  --ui-glass-fill:rgba(31,33,42,.48);
+  --ui-glass-edge:rgba(255,255,255,.15);
+  --ui-glass-reflection:rgba(255,255,255,.055);
+  --ui-glass-shadow:0 8px 22px rgba(0,0,0,.2);
+  --ui-glass-modal:rgba(16,17,22,.89);
   --ui-ambient:radial-gradient(ellipse 92% 65% at -14% -6%,color-mix(in srgb,var(--ui-accent) 12%,transparent),transparent 74%),radial-gradient(ellipse 95% 76% at 112% 18%,color-mix(in srgb,var(--ui-accent) 7%,transparent),transparent 76%),#000;
 }
 /* The body owns the gradient, including the space behind the navigation. */
@@ -89,3 +101,58 @@ html body[data-vive-bg] #app#app #page .v68-wallet .v1244-gauge:not(.is-mid,.is-
 html body[data-vive-bg] #app#app #page .v68-wallet .v1244-gauge > div {background:var(--ui-base)!important;}
 html body[data-vive-bg]:is(.theme-black,.theme-dark) #app#app :is(.vWalletPc-world,.vBanksPc-workspace > .vWalletPc) {--wallet-accent:var(--ui-readable);}
 html body[data-vive-bg]:is(.theme-black,.theme-dark) #app#app #page .v68-wallet .v1244-gauge:not(.is-mid,.is-high) {background:conic-gradient(var(--ui-readable) calc(var(--u)*1%),var(--ui-track) 0)!important;}
+
+/* Primary panels share the Wallet treatment across layouts. */
+html body[data-vive-bg] #app#app main:is(.world-income,.world-expenses,.world-advanced,.world-patrimony,.world-register,.world-transactions) #page#page :is(.panel,.summary-glass),
+html body[data-vive-bg] #app#app main.world-overview #page#page :is(.ff-tile:not(.ff-health-card),.vive-mobile-commitments,.vive-mobile-dues,.vive-mobile-net-card,.v105-mobile-extra),
+html body[data-vive-bg] #app#app main:is(.world-budget,.world-categories,.world-recurring) #page#page .v911 :is(.v911-kpi,.v911-grp,.v911-card:not(.v911-grp > .v911-card)),
+html body[data-vive-bg] #app#app main.world-recurring #page#page :is(.v1170-panel,.v1170-bcard,.v1170-card:not(.is-open)),
+html body[data-vive-bg] #app#app main.world-personal #page#page .v1200-row,
+html body[data-vive-bg] #app#app main.world-mobilehub #page#page .v431-tile,
+html body[data-vive-bg] #app#app main.vBanksPc-world #page#page :is(.vBanksPc-overview,.vBanksPc-metric,.vBanks-certificates,.vBanksPc-insights > .v371-card-return) {
+  background-color:var(--ui-glass-fill)!important;
+  background-image:var(--ui-glass-image)!important;
+  border-color:var(--ui-glass-edge)!important;
+  box-shadow:var(--ui-glass-shadow),inset 0 1px 0 var(--ui-glass-reflection)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(140%);
+  backdrop-filter:blur(28px) saturate(140%);
+}
+
+html body[data-vive-bg] #modal-root#modal-root#modal-root .modal.v235-register-dialog {
+  --g-card:var(--ui-glass-fill);
+  background:var(--ui-glass-image),var(--ui-glass-modal)!important;
+  border-color:var(--ui-glass-edge)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(140%)!important;
+  backdrop-filter:blur(28px) saturate(140%)!important;
+}
+
+@media (max-width:790px) {
+  html body[data-vive-bg] #app#app#app #page .v266-wallet .v266-dots.v68-wallet-dots {
+    flex-wrap:wrap;
+    gap:0!important;
+  }
+  html body[data-vive-bg] #app#app#app #page .v266-wallet .v266-dots.v68-wallet-dots button:not([hidden]) {
+    display:grid!important;
+    place-items:center;
+    width:24px!important;
+    min-width:24px!important;
+    height:24px!important;
+    min-height:24px!important;
+    max-height:24px!important;
+    flex:0 0 24px!important;
+    padding:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  html body[data-vive-bg] #app#app#app #page .v266-wallet .v266-dots.v68-wallet-dots button::before {
+    content:"";
+    width:8px;
+    height:8px;
+    border-radius:999px;
+    background:color-mix(in srgb,var(--ui-readable) 45%,transparent);
+  }
+  html body[data-vive-bg] #app#app#app #page .v266-wallet .v266-dots.v68-wallet-dots button.active::before {
+    width:18px;
+    background:var(--ui-readable);
+  }
+}

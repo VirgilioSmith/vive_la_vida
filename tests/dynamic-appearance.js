@@ -9,6 +9,27 @@ const go=(p,route)=>p.evaluate(route=>window.__T.go(route),route);
 const style=(p,selector,prop)=>p.locator(selector).first().evaluate((el,prop)=>getComputedStyle(el)[prop],prop);
 const token=(p,selector,name)=>p.locator(selector).first().evaluate((el,name)=>getComputedStyle(el).getPropertyValue(name).trim(),name);
 const palettes=['coral','ocean','emerald','amber'];
+async function checkSharedGlass(page,mobile){
+ const surfaces=[
+  ['income','.income-distribution'],
+  ['expenses','.expenses-distribution'],
+  ['register','.ledger-card'],
+  mobile?['mobilehub','.v431-tile']:['overview','.ff-balance']
+ ];
+ for(const [route,selector] of surfaces){
+  await go(page,route);
+  assert.equal(await style(page,selector,'backdropFilter'),'blur(28px) saturate(1.4)',`${route}: shared glass`);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${route}: page fits the viewport`);
+ }
+ if(mobile){
+  await go(page,'wallet');
+  const targets=await page.locator('.v68-wallet-dots button').evaluateAll(buttons=>buttons.map(button=>{
+   const {width,height}=button.getBoundingClientRect();
+   return Math.min(width,height);
+  }));
+  assert.ok(targets.length&&targets.every(size=>size>=24),'Wallet carousel: touch targets of at least 24px');
+ }
+}
 async function themeMatrix(browser,width,mode){
  const mobile=width<791;
  process.env.THEME=mode;
@@ -54,6 +75,7 @@ async function themeMatrix(browser,width,mode){
     }
    }
   }
+  await checkSharedGlass(p,mobile);
   assert.deepEqual(errors,[]);
  }finally{await ctx.close();}
 }

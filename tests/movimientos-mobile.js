@@ -24,7 +24,7 @@ async function scenario(p,s,i,srv){
  await p.locator('#v354-new-person [name=firstName]').fill(name);await p.locator('#v354-new-person [name=lastName]').fill('Persona');
  await p.locator('button[form=v354-new-person]').click();
  check('Contacto elegido '+i,await quick(p).locator('[name=person]').inputValue(),name+' Persona');
- await p.locator('[data-v354-act=pickPurchase]').click();await chooseProduct(p,s.source==='account'?'audit-source':'audit-card');
+ await p.locator('[data-v354-act=pickPurchase]').click();await chooseProduct(p,s.source==='account'?'audit-source':'audit-card:DOP');
  await quick(p).locator('[name=purchase]').fill(String(s.p));await quick(p).locator('[name=received]').fill(String(s.r));
  check('Teclado decimal '+i,await quick(p).locator('[name=purchase]').getAttribute('inputmode'),'decimal');
  if(i===0)await shot(p,'03-compra');
