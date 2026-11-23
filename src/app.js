@@ -1602,7 +1602,7 @@ function vWalletPcFitMoney(){
   '.vWalletPc-stat strong,.vWalletPc-stat small,'+
   '.vWalletPc-limit > strong,.vWalletPc-limit > small,.vWalletPc-limit-row > b,'+
   '.vWalletPc-return .v371-return-tile strong,'+
-  '.vWalletPc-cuts button b,.vWalletPc-chart-total strong,.vWalletPc-recent-list button > b'
+  '.vWalletPc-chart-total strong,.vWalletPc-recent-list button > b'
  );
  for(const el of targets){
   const txt=(el.textContent||'').trim();

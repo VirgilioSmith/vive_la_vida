@@ -15,8 +15,10 @@ module.exports=async function walletDesktop(browser){
   return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing];
  });
  const amount=async selector=>Number((await p.locator(selector).innerText()).replace(/[^\d.\-]/g,''));
- const fit=()=>p.evaluate(()=>{
-  return document.documentElement.scrollWidth<=innerWidth+1 && [...document.querySelectorAll('.vWalletPc-stat,.vWalletPc-grid > section,.vWalletPc-right > section')].every(el=>el.scrollWidth<=el.clientWidth+2);
+ const overflow=()=>p.evaluate(()=>{
+  const root=document.documentElement,panels=document.querySelectorAll('.vWalletPc-stat,.vWalletPc-grid > section,.vWalletPc-right > section');
+  return [...(root.scrollWidth>innerWidth+1?[['documento',root.scrollWidth,innerWidth]]:[]),
+   ...Array.from(panels).filter(el=>el.scrollWidth>el.clientWidth+2).map(el=>[el.className,el.scrollWidth,el.clientWidth])];
  });
  try{
   await p.evaluate(()=>window.__T.go('cards'));
@@ -81,7 +83,7 @@ module.exports=async function walletDesktop(browser){
     assert.equal(await destination(page).getAttribute('aria-current'),'page');
     assert.deepEqual(await railGeometry(),compactRail,`Navegación de ${page} a ${width}px`);
    }
-   assert.ok(await fit(),'Desborde en escritorio a '+width+'px');
+   assert.deepEqual(await overflow(),[],'Desborde en escritorio a '+width+'px');
    if(evidence)await p.screenshot({path:path.join(evidence,'wallet-pc-'+width+'.png'),fullPage:true,animations:'disabled'});
   }
   const benefits=wallet.locator('.vWalletPc-return');
