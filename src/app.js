@@ -1591,7 +1591,7 @@ function vWalletPc(){
      return `<button type="button" class="vWalletPc-limit-row" data-act="walletPcSelect" data-id="${sanitize(c.id)}"><span class="vWalletPc-product-mark" aria-hidden="true">${v1002BankGlyph(c,'card')}</span><span><strong>${sanitize(c.name)}</strong><small>${vWalletPcSplit(c.limitDOP,c.limitUSD,0)}</small><span class="vWalletPc-row-meter">${bar(used,'Utilización de la tarjeta')}<small>${percent(used)}</small></span></span><b>${vWalletPcAmount(equivalent)}</b></button>`;
     }).join('')}</div>`:`<p class="vWalletPc-note">Añade una tarjeta para consultar sus límites y cortes.</p>`}
     ${bankScope!==null&&list.length?vBanksCreditTrend(list):''}
-    ${ui.page==='wallet'?'':vWalletPcRecentActivity(list)}
+    ${ui.page!=='wallet'||active?vWalletPcRecentActivity(list,ui.page==='wallet'?5:3):''}
    </section>
    <div class="vWalletPc-right">
     ${v371CardReturnWidget(active||{name:'tus tarjetas'},active?null:list,false,true)}
