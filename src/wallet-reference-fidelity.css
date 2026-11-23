@@ -614,6 +614,9 @@ html body #app#app main.world-wallet #page#page :is(.v1301-insight,.v371-card-re
     background:var(--wallet-glass-reflection),var(--wallet-glass-tint)!important;
     box-shadow:var(--wallet-glass-shadow)!important;border:1px solid var(--wallet-glass-edge);
   }
+  html body #app#app main.vBanksPc-world #page#page :is(.vBanksPc-bank,.vBanksPc-overview-tile):not(:hover,[aria-pressed="true"]){
+    background:transparent!important;
+  }
   html body #app#app main.vBanksPc-world #page#page .vBanksPc-bank strong{
     font-size:12px;font-weight:770;letter-spacing:-.025em;
     overflow-wrap:anywhere;
@@ -654,6 +657,12 @@ html body #app#app main.world-wallet #page#page :is(.v1301-insight,.v371-card-re
   }
   html body #app#app main.vBanksPc-world #page#page .vBanksPc-insights h2{
     font-weight:800!important;letter-spacing:-.04em;
+  }
+  html body #app#app main.vBanksPc-world #page#page .vBanksPc-insights h2 .vBanksPc-benefits-link{
+    background:transparent!important;
+  }
+  html body #app#app main.vBanksPc-world #page#page .vBanksPc-consumption-total > span{
+    color:var(--bank-muted);
   }
   html body #app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-values{
     grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr)!important;
