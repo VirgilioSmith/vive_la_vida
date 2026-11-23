@@ -28,7 +28,7 @@ const readGeometry=async page=>page.evaluate(()=>{
      return c.scrollWidth>c.clientWidth+3||r.left<bounds.left-3||r.right>bounds.right+3;
    });
  };
- const clipping=[...document.querySelectorAll('.v1244-limits,.v1301-rank,.v1301-rank-info,.v1301-equivalent,.v371-return-tile,.v1244-pill,.wallet-return-actions button')].filter(isVisible).filter(overflow).map(e=>({className:e.className,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,text:e.innerText.slice(0,60)}));
+ const clipping=[...document.querySelectorAll('.v1244-limits,.v1301-rank,.v1301-rank-info,.v1301-equivalent,.v371-return-tile,.v1244-pill,.wallet-return-actions button')].filter(isVisible).filter(overflowing).map(e=>({className:e.className,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,text:e.innerText.slice(0,60)}));
  return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,
   wallet:wallet&&rect(wallet),panels:panels.map(e=>({name:e.className,box:rect(e)})),
   dock:dock&&rect(dock),clipping,
