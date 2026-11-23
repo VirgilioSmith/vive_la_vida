@@ -18,7 +18,7 @@ const readGeometry=async page=>page.evaluate(()=>{
  const isVisible=e=>{let c=getComputedStyle(e),r=e.getBoundingClientRect();return c.display!=='none'&&c.visibility!=='hidden'&&r.width>0&&r.height>0};
  const wallet=document.querySelector('.v68-wallet'),dock=document.querySelector('.vive-mobile-dock');
  const panels=wallet?[...wallet.children].filter(e=>e.matches('.v1244-state,.v1244-cutpanel,.v371-card-return,.v1301-distribution,.wallet-benefits-cards')).filter(isVisible):[];
- const clipping=[...document.querySelectorAll('.v1244-limits,.v1301-rank,.v1301-rank-info,.v1301-equivalent,.v371-return-tile,.v1244-pill,.wallet-return-actions button')].filter(isVisible).filter(e=>e.scrollWidth>e.clientWidth+3).map(e=>({className:e.className,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,text:e.innerText.slice(0,60)}));
+ const clipping=[...document.querySelectorAll('.v1244-limits,.v1301-rank,.v1301-rank-info,.v1301-equivalent,.v371-return-tile,.v1244-pill,.wallet-return-actions button')].filter(isVisible).filter(e=>e.scrollWidth>e.clientWidth+3).map(e=>({className:e.className,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,text:e.innerText.slice(0,60),grid:getComputedStyle(e).gridTemplateColumns,children:[...e.children].map(c=>({className:c.className,width:c.getBoundingClientRect().width,right:c.getBoundingClientRect().right-e.getBoundingClientRect().left,scrollWidth:c.scrollWidth,clientWidth:c.clientWidth,position:getComputedStyle(c).position}))}));
  return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,
   wallet:wallet&&rect(wallet),panels:panels.map(e=>({name:e.className,box:rect(e)})),
   dock:dock&&rect(dock),clipping,
