@@ -417,12 +417,15 @@
    width:100%!important;max-width:100%!important;
    margin:0!important;min-height:0!important;text-align:right!important;
  }
+ /* Respeta las filas de 40px definidas en V964 para ambos importes.
+    La deuda había perdido esta altura y subía por encima del disponible. */
  html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v565-secondary > b{
-   margin:0!important;padding:0!important;
+   margin:6px 0 3px!important;padding:0!important;
    width:100%!important;max-width:100%!important;
-   height:auto!important;min-height:0!important;
-   text-align:right!important;display:block!important;
-   line-height:1.14!important;
+   height:var(--v964-row,40px)!important;min-height:var(--v964-row,40px)!important;
+   text-align:right!important;display:flex!important;
+   align-items:flex-end!important;justify-content:flex-end!important;
+   line-height:1!important;
  }
  html body #app#app main.world-wallet #page#page .wallet-mobile-summary .v565-secondary .v550-currency-breakdown{
    display:flex!important;align-items:flex-end!important;
@@ -433,33 +436,4 @@
    display:flex!important;justify-content:flex-end!important;
    gap:5px!important;width:100%!important;text-align:right!important;
  }
-}
-
-/* Wallet móvil: una misma línea base para los importes de Crédito disponible y Deuda utilizada.
-   La cabecera ocupa la misma fila de ambas columnas; los totales comparten
-   fila y baseline, y los desgloses RD$/US$ arrancan a la misma altura.
-   No cambiar tamaños, datos, acciones ni la composición de Wallet PC. */
-@media (max-width:790px){
-  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-summary-external > .wallet-mobile-summary .v266-selected-balance :is(.v565-primary,.v565-secondary){
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr)!important;
-    grid-template-rows:clamp(55px,15vw,64px) minmax(30px,auto) auto!important;
-    align-content:start!important;
-    row-gap:0!important;column-gap:0!important;
-  }
-  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-summary-external > .wallet-mobile-summary .v266-selected-balance .v565-primary > span,
-  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-summary-external > .wallet-mobile-summary .v266-selected-balance .v565-secondary > small{
-    grid-row:1!important;align-self:start!important;
-    margin:0!important;padding:0!important;
-  }
-  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-summary-external > .wallet-mobile-summary .v266-selected-balance .v565-primary > strong,
-  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-summary-external > .wallet-mobile-summary .v266-selected-balance .v565-secondary > b{
-    grid-row:2!important;align-self:end!important;
-    height:auto!important;min-height:0!important;
-    margin:0!important;padding:0!important;
-  }
-  html body #app#app main.world-wallet #page#page .v68-wallet.wallet-summary-external > .wallet-mobile-summary .v266-selected-balance :is(.v565-primary,.v565-secondary) > .v550-currency-breakdown{
-    grid-row:3!important;align-self:start!important;
-    margin-top:9px!important;
-  }
 }
