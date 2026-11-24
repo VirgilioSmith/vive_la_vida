@@ -7571,7 +7571,7 @@ case 'paletteTheme':if(['original','emerald','coral'].includes(id)){db.settings.
 case 'paletteCustom':{const c=document.getElementById('viveCustomColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.paletteHex=c;db.settings.paletteChoice='custom';persist();render();toast('Color de acento personalizado aplicado.')}break;}
 case 'backgroundTheme':if(['original','glacier','sunset'].includes(id)){db.settings.backgroundChoice=id;persist();render();toast('Fondo actualizado.');}break;
 case 'backgroundCustom':{const c=document.getElementById('viveBackgroundColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.backgroundHex=c;db.settings.backgroundChoice='custom';persist();render();toast('Fondo personalizado aplicado.')}break;}
-case 'expenseRange':ui.expenseRange=id==='year'?'year':'month';render();break; case 'movementTab':ui.movementTab=id==='pending'?'all':id;if(id==='pending')ui.reviewFilter='drafts';render();break;
+case 'expenseRange':ui.expenseRange=id==='year'?'year':id==='all'?'all':'month';render();break; case 'expKind':ui.vExpKind=['fixed','var'].includes(id)?id:'all';render();break; case 'movementTab':ui.movementTab=id==='pending'?'all':id;if(id==='pending')ui.reviewFilter='drafts';render();break;
 case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break;if(!v30SavePoint('Antes de descartar operación pendiente'))break;db.pendingOperations=db.pendingOperations.filter(q=>q.id!==id);persist();render();toast('Operación pendiente descartada; puedes recuperarla desde Configuración.');break;
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navigate':{
@@ -10206,6 +10206,110 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
 function v45PayrollExpensePanel(){const m=ui.month||today().slice(0,7),rows=v45PayrollHistoricalRows().filter(x=>x.date.startsWith(m)),groups={};for(const x of rows)groups[x.category]=(groups[x.category]||0)+fx(x.amount,x.currency);const tot=Object.values(groups).reduce((a,b)=>a+b,0);return `<section class="v45-payroll-expense"><div class="v45-block-head"><div><span class="v45-kicker">NÓMINA · CLASIFICACIÓN</span><h3>Deducciones en categorías de gastos</h3><p>${m} · Importes retenidos del salario bruto antes de su depósito.</p></div><strong>${money(tot)}</strong></div><div class="v45-expense-chips">${Object.entries(groups).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div><span>${sanitize(k)}</span><b>${money(v)}</b></div>`).join('')||'<p>Sin deducciones de nómina registradas este mes.</p>'}</div><p>No se incluyen otra vez en los egresos bancarios: el banco recibió únicamente el neto y no debe descontarse dos veces.</p></section>`;}
 const v45PrevExpenses=pages.expenses;
 pages.expenses=function(){return v45PrevExpenses()+v45PayrollExpensePanel();};
+
+/* ===== Egresos PC · Premium Liquid Glass ===== 
+   Lógica central única: gasto reconocido = monthlyTotals().expenseBy + deducciones de nómina (retenciones del bruto, congeladas en
+   payrollSnapshot). Las deducciones NO crean movimientos bancarios ni alteran saldos: el neto depositado ya excluye lo retenido,
+   por eso solo se reconocen aquí, una vez, desde su comprobante. Los pagos de tarjeta y el capital de préstamos no se suman. */
+const V_EXP_FIXED=new Set(['Vivienda','Servicios básicos','Seguros','Educación','Suscripciones','Deudas e intereses','Impuestos y comisiones']);
+const V_EXP_PAYROLL_NAME={'AFP (Pensiones)':'AFP · pensiones','SFS (Salud)':'Seguro médico (SFS / ARS)','ISR (Impuesto)':'ISR · impuesto sobre la renta'};
+const V_EXP_METHOD_MAP={'Tarjetas de crédito':'Tarjetas de crédito','Cuentas y efectivo':'Cuentas y efectivo','Costos de tarjetas':'Costos de tarjetas','Costos de préstamos':'Costos de préstamos','Costos del pago de préstamo':'Costos de préstamos','Costos del pago de tarjeta':'Costos del pago de tarjeta','Costos de la operación':'Costos de la operación','Costos de transferencia':'Costos de la operación'};
+const V_EXP_MEMO=new Map();
+function vExpMonth(m){
+ const key=m+'|'+(db.transactions||[]).length+'|'+(db.incomeSchedules||[]).length;
+ if(V_EXP_MEMO.has(key))return V_EXP_MEMO.get(key);
+ const t=monthlyTotals(Number(m.slice(0,4)),Number(m.slice(5,7)));
+ const by={...t.expenseBy},sub={...t.expenseSubBy},payFixed={},paySubs={};let pay=0;
+ for(const r of v45PayrollHistoricalRows()){if(!String(r.date||'').startsWith(m))continue;
+  const v=fx(r.amount,r.currency),nm=V_EXP_PAYROLL_NAME[r.name]||r.name;
+  by[r.category]=(by[r.category]||0)+v;sub[r.category+'||'+nm]=(sub[r.category+'||'+nm]||0)+v;payFixed[r.category]=(payFixed[r.category]||0)+v;paySubs[r.category+'||'+nm]=1;pay+=v}
+ const out={by,sub,payFixed,paySubs,pay,total:rnd(Object.values(by).reduce((a,v)=>a+num(v),0))};
+ if(V_EXP_MEMO.size>400)V_EXP_MEMO.clear();V_EXP_MEMO.set(key,out);return out;
+}
+function vExpScope(){
+ const picked=ui.month||today().slice(0,7),mode=ui.expenseRange==='year'?'year':ui.expenseRange==='all'?'all':'month';
+ const y=Number(picked.slice(0,4)),thisY=nowYear(),thisM=nowMonth(),ym=(a,b)=>a+'-'+String(b).padStart(2,'0');
+ const firstTx=(db.transactions||[]).map(t=>String(t.date||'').slice(0,7)).filter(x=>/^\d{4}-\d{2}$/.test(x)).sort()[0]||picked;
+ let months,prior=null,label,priorLabel='';
+ if(mode==='month'){months=[picked];prior=[plusMonths(picked+'-01',-1).slice(0,7)];label=picked;priorLabel='vs mes ant.'}
+ else if(mode==='year'){const end=y<thisY?12:y===thisY?thisM:0;months=Array.from({length:end},(_,i)=>ym(y,i+1));prior=months.map(x=>ym(y-1,Number(x.slice(5))));label='Año '+y;priorLabel='vs año ant.'}
+ else{months=[];let c=firstTx<=picked?firstTx:picked;while(c<=picked&&months.length<600){months.push(c);c=plusMonths(c+'-01',1).slice(0,7)}label='Histórico';}
+ return {mode,picked,y,months,prior,label,priorLabel,firstTx};
+}
+function vExpModel(){
+ const S=vExpScope(),cats=new Map();let total=0,fixedTotal=0;
+ for(const m of S.months){const d=vExpMonth(m);
+  for(const [cat,val] of Object.entries(d.by)){const v=num(val);const c=cats.get(cat)||{cat,total:0,fixed:0,subs:new Map()};
+   const fixedPart=V_EXP_FIXED.has(cat)?v:num(d.payFixed[cat]||0);c.total+=v;c.fixed+=fixedPart;cats.set(cat,c);total+=v;fixedTotal+=fixedPart}
+  for(const [k,val] of Object.entries(d.sub)){const [cat,name]=k.split('||');const c=cats.get(cat);if(!c)continue;const s=c.subs.get(name)||{name,amount:0,fixed:V_EXP_FIXED.has(cat)||!!d.paySubs[k]};s.amount+=num(val);c.subs.set(name,s)}
+ }
+ for(const c of cats.values()){const sum=[...c.subs.values()].reduce((a,s)=>a+s.amount,0);const rest=rnd(c.total-sum);if(Math.abs(rest)>.005)c.subs.set('Sin subcategoría',{name:'Sin subcategoría',amount:rest,fixed:V_EXP_FIXED.has(c.cat)})}
+ const priorTotal=S.prior?S.prior.reduce((a,m)=>a+vExpMonth(m).total,0):null;
+ let budget=0,covered=0;for(const m of S.months){const d=vExpMonth(m);budget+=budgetPlan(m).total;covered+=budgetCoveredSpend({expenseBy:d.by,expenseSubBy:d.sub},m)}
+ const items=(db.transactions||[]).filter(t=>S.months.some(m=>String(t.date||'').startsWith(m))).flatMap(expenseTransactionItems);
+ const inst={};for(const it of items){const k=V_EXP_METHOD_MAP[it.method];if(k)inst[k]=(inst[k]||0)+it.amount}
+ const thisY=nowYear(),thisM=nowMonth();
+ let series;
+ if(S.mode==='month'){series=Array.from({length:6},(_,i)=>{const m=plusMonths(S.picked+'-01',i-5).slice(0,7);return {label:MON[Number(m.slice(5))-1],value:m<S.firstTx?null:rnd(vExpMonth(m).total),m}})}
+ else if(S.mode==='year'){series=Array.from({length:12},(_,i)=>{const m=S.y+'-'+String(i+1).padStart(2,'0');const future=S.y>thisY||S.y===thisY&&i+1>thisM||m<S.firstTx;return {label:MON[i],value:future?null:rnd(vExpMonth(m).total),m}})}
+ else{const ys=[...new Set(S.months.map(m=>m.slice(0,4)))];series=ys.map(yy=>({label:yy,value:rnd(S.months.filter(m=>m.startsWith(yy)).reduce((a,m)=>a+vExpMonth(m).total,0)),m:yy}))}
+ const rows=[...cats.values()].filter(c=>Math.abs(c.total)>.005).sort((a,b)=>b.total-a.total);
+ return {S,rows,total:rnd(total),fixed:rnd(fixedTotal),variable:rnd(total-fixedTotal),priorTotal,budget:rnd(budget),covered:rnd(covered),inst,series,items:items.length};
+}
+function vExpVar(now,prev,label){
+ if(prev===null||!Number.isFinite(prev)||Math.abs(prev)<.01)return `<div class="vexp-var-row"><span class="vexp-var is-flat"><i>Sin base comparable</i></span></div>`;
+ const abs=rnd(now-prev),pct=(now-prev)/Math.abs(prev)*100,tone=Math.abs(abs)<.005?'flat':abs>0?'bad':'good';
+ return `<div class="vexp-var-row"><span class="vexp-var ${tone}"><b>${pct>0?'+':''}${pct.toFixed(1)}%</b><i>${label}</i></span><span class="vexp-var-abs ${tone}">${abs>0?'+':''}${money(abs)}</span></div>`;
+}
+function vExpLine(series){
+ const pts=series.filter(p=>p.value!==null);if(!pts.length)return '<p class="vexp-empty">Sin gastos registrados en este período.</p>';
+ const W=560,H=190,L=50,R=22,T=34,B=30,inner=W-L-R,ih=H-T-B,max=Math.max(1,...pts.map(p=>Math.max(0,p.value)))*1.3;
+ const xs=i=>series.length===1?L+inner/2:L+i*(inner/(series.length-1)),ys=v=>T+ih-Math.max(0,v)/max*ih;
+ const vis=series.map((p,i)=>p.value===null?null:{x:xs(i),y:ys(p.value),p});const live=vis.filter(Boolean);
+ const path=live.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1)).join(' ');
+ const area=live.length>1?path+` L${live[live.length-1].x.toFixed(1)} ${T+ih} L${live[0].x.toFixed(1)} ${T+ih} Z`:'';
+ const grid=[0,.33,.66,1].map(f=>{const v=max*f,y=T+ih-f*ih;return `<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" class="vexp-grid"/><text x="${L-8}" y="${y+4}" text-anchor="end" class="vexp-ax">${shorten(v)}</text>`}).join('');
+ const dots=live.map((q,i)=>{const last=i===live.length-1;return `<circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${last?5:3.6}" class="vexp-dot${last?' is-last':''}" data-chart-tip="${sanitize(q.p.label)}|Egresos: ${money(q.p.value)}" tabindex="0"/>`+(last?'':`<text x="${q.x.toFixed(1)}" y="${(q.y-10).toFixed(1)}" text-anchor="middle" class="vexp-pt">${shorten(q.p.value)}</text>`)}).join('');
+ const lastQ=live[live.length-1],lt=shorten(lastQ.p.value),bw=lt.length*8.5+18;
+ const bubble=`<g><rect x="${Math.min(W-R+8-bw,lastQ.x-bw/2).toFixed(1)}" y="${(lastQ.y-34).toFixed(1)}" width="${bw}" height="22" rx="11" class="vexp-bub"/><text x="${(Math.min(W-R+8-bw,lastQ.x-bw/2)+bw/2).toFixed(1)}" y="${(lastQ.y-19).toFixed(1)}" text-anchor="middle" class="vexp-bubt">${lt}</text></g>`;
+ const xl=series.map((p,i)=>`<text x="${xs(i).toFixed(1)}" y="${H-8}" text-anchor="middle" class="vexp-ax">${sanitize(p.label)}</text>`).join('');
+ return `<svg class="vexp-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de egresos"><defs><linearGradient id="vexpArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--vexp-acc)" stop-opacity=".32"/><stop offset="1" stop-color="var(--vexp-acc)" stop-opacity="0"/></linearGradient></defs>${grid}${area?`<path d="${area}" fill="url(#vexpArea)"/>`:''}<path d="${path}" class="vexp-line" fill="none"/>${dots}${bubble}${xl}</svg>`;
+}
+const vExpFmtMonth=m=>{const [y,mo]=m.split('-').map(Number);const t=new Date(y,mo-1,1).toLocaleDateString('es-DO',{month:'long',year:'numeric'});return t.charAt(0).toUpperCase()+t.slice(1)};
+function vExpensesPc(){
+ const M=vExpModel(),S=M.S,kind=ui.vExpKind||'all',total=M.total||0;
+ const share=v=>total>.005?Math.max(0,Math.min(100,v/total*100)):0;
+ const seg=[['month','Mes'],['year','Año'],['all','Histórico']].map(([k,l])=>`<button type="button" data-act="expenseRange" data-id="${k}" aria-pressed="${S.mode===k}" class="${S.mode===k?'is-on':''}">${l}</button>`).join('');
+ const budgetLeft=M.budget>0?rnd(M.budget-M.covered):null;
+ const kpis=[
+  ['Total gastado',money(total),'layers',vExpVar(total,M.priorTotal,S.priorLabel||''),''],
+  ['Gastos fijos',money(M.fixed),'home',`<small>${share(M.fixed).toFixed(1)}% del total</small>`,`<span class="vexp-bar"><i style="width:${share(M.fixed).toFixed(1)}%"></i></span>`],
+  ['Gastos variables',money(M.variable),'chart',`<small>${share(M.variable).toFixed(1)}% del total</small>`,`<span class="vexp-bar"><i style="width:${share(M.variable).toFixed(1)}%"></i></span>`],
+  ['Presupuesto restante',budgetLeft===null?'—':money(budgetLeft),'wallet',budgetLeft===null?'<small>Sin presupuesto configurado</small>':`<small>De ${money(M.budget)}</small>`,budgetLeft===null?'':`<span class="vexp-bar"><i style="width:${Math.max(0,Math.min(100,M.covered/M.budget*100)).toFixed(1)}%"></i></span>`]
+ ].map(([l,v,g,sub,bar],i)=>`<article class="vexp-kpi vexp-kpi-${i+1}"><span class="vexp-ico">${icon(g)}</span><div><span>${l}</span><strong>${v}</strong>${sub}${bar}</div></article>`).join('');
+ const shown=M.rows.map(c=>{const v=kind==='fixed'?c.fixed:kind==='var'?c.total-c.fixed:c.total;return {c,v}}).filter(x=>Math.abs(x.v)>.005).sort((a,b)=>b.v-a.v);
+ const base=shown.reduce((a,x)=>a+Math.max(0,x.v),0);
+ const cats=shown.length?shown.map(({c,v},i)=>{const pct=base>.005?Math.max(0,v)/base*100:0;
+  const subs=[...c.subs.values()].filter(s=>kind==='all'||(kind==='fixed')===!!s.fixed).filter(s=>Math.abs(s.amount)>.005).sort((a,b)=>b.amount-a.amount);
+  const subBase=subs.reduce((a,s)=>a+Math.max(0,s.amount),0);
+  return `<details class="vexp-cat"><summary><span class="vexp-n">${String(i+1).padStart(2,'0')}</span><span class="vexp-cico">${icon(V255_TAXONOMY.gasto.categories[c.cat]||'bag')}</span><strong>${sanitize(c.cat)}</strong><span class="vexp-bar"><i style="width:${pct.toFixed(1)}%"></i></span><b>${money(v)}</b><em>${pct.toFixed(1)}%</em><span class="vexp-chev" aria-hidden="true">${icon('arrow')}</span></summary>
+   <div class="vexp-subs"><div class="vexp-subhead"><span>Subcategorías</span><span>% dentro de ${sanitize(c.cat)}</span></div>${subs.map(s=>`<div class="vexp-sub"><span>${sanitize(s.name)}</span><span class="vexp-bar"><i style="width:${subBase>.005?(Math.max(0,s.amount)/subBase*100).toFixed(1):0}%"></i></span><b>${money(s.amount)}</b><em>${subBase>.005?(s.amount/subBase*100).toFixed(1):'0.0'}%</em></div>`).join('')||'<p class="vexp-empty">Sin subcategorías.</p>'}</div></details>`}).join(''):'<p class="vexp-empty">Sin gastos registrados en este período.</p>';
+ const last=M.series.filter(p=>p.value!==null),cur=last[last.length-1],prv=last[last.length-2];
+ const evoVar=S.mode==='all'?'':(cur&&prv?vExpVar(cur.value,prv.value,S.mode==='year'?'vs mes ant.':'vs mes ant.'):'');
+ const order=['Tarjetas de crédito','Cuentas y efectivo','Costos de tarjetas','Costos de préstamos','Costos del pago de tarjeta','Costos de la operación'];
+ const icons={'Tarjetas de crédito':'card','Cuentas y efectivo':'wallet','Costos de tarjetas':'card','Costos de préstamos':'landmark','Costos del pago de tarjeta':'receipt','Costos de la operación':'settings'};
+ const inst=order.map(k=>`<button type="button" class="vexp-inst" data-act="navigate" data-id="register"><span class="vexp-iico">${icon(icons[k])}</span><span>${k}</span><b>${money(M.inst[k]||0)}</b></button>`).join('');
+ return `<div class="vexp" aria-label="Egresos">
+  <div class="vexp-top"><div class="vexp-seg" role="group" aria-label="Alcance temporal">${seg}</div><span class="vexp-scope">${S.mode==='all'?'Desde '+vExpFmtMonth(S.firstTx):S.mode==='year'?'Enero – '+(S.months.length?MON[S.months.length-1]:'—')+' '+S.y:vExpFmtMonth(S.picked)}</span></div>
+  <section class="vexp-kpis" aria-label="Indicadores de egresos">${kpis}</section>
+  <div class="vexp-grid"><section class="vexp-panel vexp-detail"><header><span class="vexp-ico">${icon('layers')}</span><div><h2>Detalle de categoría</h2><p>Desglose de tus gastos en el período (${money(total)})</p></div>
+    <div class="vexp-kind" role="group" aria-label="Tipo de gasto">${[['all','Todas'],['fixed','Fijas'],['var','Variables']].map(([k,l])=>`<button type="button" data-act="expKind" data-id="${k}" aria-pressed="${kind===k}" class="${kind===k?'is-on':''}">${l}</button>`).join('')}</div></header>
+    <div class="vexp-cathead"><span>#</span><span></span><span>Categoría / Subcategoría</span><span></span><span>Monto</span><span>Part.</span><span></span></div>${cats}</section>
+   <div class="vexp-side"><section class="vexp-panel vexp-evo"><header><span class="vexp-ico">${icon('analytics')}</span><div><h2>Evolución de egresos</h2><p>${S.mode==='all'?'Total por año':S.mode==='year'?'Tendencia mensual del año':'Tendencia mensual de tus gastos'}</p></div>${evoVar}</header>${vExpLine(M.series)}</section>
+    <section class="vexp-panel vexp-where"><header><span class="vexp-ico">${icon('wallet')}</span><div><h2>¿Dónde y cómo gastas?</h2><p>Conceptos e instrumentos de pago registrados</p></div></header><h3>Por instrumento o tipo de costo</h3>${inst}</section></div></div></div>`;
+}
+const vExpPrevPage=pages.expenses;
+pages.expenses=function(){return isMobileViewport()?vExpPrevPage():vExpensesPc()};
 
 
 

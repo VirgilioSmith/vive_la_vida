@@ -1,0 +1,110 @@
+/* Egresos PC · Premium Liquid Glass. Hereda acento (--lg-accent / --ui-solid) y modo Claro/Black. */
+@media(min-width:791px){
+ html body #app#app #page .vexp{--vexp-acc:var(--lg-accent,var(--ui-solid,#6d69f1));--vexp-ink:var(--vive-text-primary,#111b2e);--vexp-mut:var(--vive-text-secondary,#526078);--vexp-glass:rgba(255,255,255,.3);--vexp-edge:rgba(255,255,255,.75);--vexp-good:#0f8a5a;--vexp-bad:#c9303a;
+  display:grid;gap:14px;color:var(--vexp-ink)}
+ body.theme-black #app#app #page .vexp,body.theme-dark #app#app #page .vexp{--vexp-ink:#f4f6fb;--vexp-mut:#aab4c6;--vexp-glass:rgba(255,255,255,.06);--vexp-edge:rgba(255,255,255,.14);--vexp-good:#5fe0a6;--vexp-bad:#ff8a90}
+ #page .vexp-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+ #page .vexp-seg,#page .vexp-kind{display:inline-flex;padding:4px;gap:2px;border-radius:999px;background:var(--vexp-glass);border:1px solid var(--vexp-edge);box-shadow:inset 0 1px 1px rgba(255,255,255,.6);backdrop-filter:blur(18px)}
+ #page .vexp-seg button,#page .vexp-kind button{border:0;background:transparent;color:var(--vexp-ink);font:inherit;font-weight:650;font-size:14px;padding:8px 18px;border-radius:999px;cursor:pointer;transition:background 160ms,color 160ms}
+ #page .vexp-seg button.is-on,#page .vexp-kind button.is-on{background:var(--vexp-acc);color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--vexp-acc) 35%,transparent)}
+ #page .vexp-kind button{padding:6px 14px;font-size:13.5px}
+ #page .vexp-scope{font-size:15px;font-weight:650;color:var(--vexp-mut)}
+ #page .vexp-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+ #page .vexp-kpi,#page .vexp-panel{background:var(--vexp-glass)!important;border:1px solid var(--vexp-edge);border-radius:24px;box-shadow:inset 0 1px 1px rgba(255,255,255,.7),0 8px 24px rgba(30,40,80,.06);backdrop-filter:blur(24px) saturate(145%);-webkit-backdrop-filter:blur(24px) saturate(145%);min-width:0}
+ #page .vexp-kpi{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:16px 20px;min-height:128px}
+ #page .vexp-kpi-1{background:linear-gradient(135deg,color-mix(in srgb,var(--vexp-acc) 22%,transparent),var(--vexp-glass) 62%)!important}
+ #page .vexp-kpi-2{background:linear-gradient(135deg,rgba(250,90,100,.2),var(--vexp-glass) 62%)!important}
+ #page .vexp-kpi-3{background:linear-gradient(135deg,rgba(70,140,250,.2),var(--vexp-glass) 62%)!important}
+ #page .vexp-kpi-4{background:linear-gradient(135deg,rgba(60,200,150,.22),var(--vexp-glass) 62%)!important}
+ #page .vexp-ico,#page .vexp-cico,#page .vexp-iico{display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.78);box-shadow:0 4px 12px rgba(30,60,110,.12),inset 0 1px 0 #fff;color:var(--vexp-acc);flex:none}
+ body.theme-black #page .vexp-ico,body.theme-black #page .vexp-cico,body.theme-black #page .vexp-iico{background:rgba(255,255,255,.12)}
+ #page .vexp-ico{width:52px;height:52px}#page .vexp-ico svg{width:26px;height:26px}
+ #page .vexp-kpi>div{display:grid;gap:3px;min-width:0}
+ #page .vexp-kpi>div>span:first-child{font-size:clamp(15px,1.05vw,17px);font-weight:650}
+ #page .vexp-kpi strong{font-size:clamp(24px,2vw,34px);font-weight:800;letter-spacing:-.035em;line-height:1.08;white-space:nowrap;font-variant-numeric:tabular-nums}
+ #page .vexp-kpi small{font-size:clamp(13px,.9vw,14.5px);color:var(--vexp-mut);font-weight:550}
+ #page .vexp-bar{display:block;height:8px;border-radius:99px;background:color-mix(in srgb,var(--vexp-acc) 14%,transparent);overflow:hidden}
+ #page .vexp-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,color-mix(in srgb,var(--vexp-acc) 70%,#fff),var(--vexp-acc))}
+ #page .vexp-kpi .vexp-bar{margin-top:6px}
+ #page .vexp-var-row{display:flex;gap:6px;flex-wrap:nowrap;margin-top:6px}
+ #page .vexp-var,#page .vexp-var-abs{display:inline-flex;align-items:baseline;gap:5px;padding:3px 9px;border-radius:999px;font-size:12.5px;white-space:nowrap;background:rgba(100,116,140,.16);color:#5c6a82;font-weight:800}
+ #page .vexp-var i{font-style:normal;font-weight:500;color:var(--vexp-mut);padding-left:5px;border-left:1px solid rgba(100,116,140,.3)}
+ #page .vexp-var.good,#page .vexp-var-abs.good{background:rgba(40,190,110,.26);color:var(--vexp-good)}
+ #page .vexp-var.bad,#page .vexp-var-abs.bad{background:rgba(250,80,95,.22);color:var(--vexp-bad)}
+ #page .vexp-grid{display:grid;grid-template-columns:minmax(0,11fr) minmax(0,9fr);gap:14px;align-items:start}
+ #page .vexp-side{display:grid;gap:14px;min-width:0}
+ #page .vexp-panel{padding:18px 20px}
+ #page .vexp-panel>header{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+ #page .vexp-panel>header>div{flex:1;min-width:0}
+ #page .vexp-panel h2{margin:0;font-size:clamp(19px,1.5vw,24px);font-weight:800;letter-spacing:-.025em}
+ #page .vexp-panel header p{margin:2px 0 0;font-size:14px;color:var(--vexp-mut)}
+ #page .vexp-panel h3{margin:10px 0 4px;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--vexp-mut);font-weight:750}
+ #page .vexp-cathead,#page .vexp-cat>summary{display:grid;grid-template-columns:34px 40px minmax(120px,1.1fr) minmax(80px,1.2fr) minmax(104px,auto) 62px 18px;align-items:center;gap:10px}
+ #page .vexp-cathead{grid-template-columns:34px minmax(0,1fr) minmax(104px,auto) 62px;font-size:12.5px;font-weight:750;color:var(--vexp-mut);padding:4px 4px 6px;border-bottom:1px solid rgba(120,130,160,.18)}
+ #page .vexp-cathead span:nth-child(3),#page .vexp-cathead span:nth-child(4){text-align:right}
+ #page .vexp-cat{border-bottom:1px solid rgba(120,130,160,.14)}
+ #page .vexp-cat>summary{list-style:none;cursor:pointer;padding:9px 4px;font-size:15px}
+ #page .vexp-cat>summary::-webkit-details-marker{display:none}
+ #page .vexp-cat>summary:hover{background:rgba(255,255,255,.3);border-radius:14px}
+ #page .vexp-n{font-size:13px;color:var(--vexp-mut);font-variant-numeric:tabular-nums}
+ #page .vexp-cico{width:38px;height:38px}#page .vexp-cico svg{width:20px;height:20px}
+ #page .vexp-cat strong{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ #page .vexp-cat b,#page .vexp-sub b{font-weight:800;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+ #page .vexp-cat em,#page .vexp-sub em{font-style:normal;font-weight:700;text-align:right;font-size:13.5px;font-variant-numeric:tabular-nums;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.5)}
+ #page .vexp-chev svg{width:15px;height:15px;transition:transform 180ms}#page .vexp-cat[open] .vexp-chev svg{transform:rotate(90deg)}
+ #page .vexp-subs{margin:2px 0 10px 44px;padding:8px 12px;border-radius:16px;background:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.55)}
+ #page .vexp-subhead{display:flex;justify-content:space-between;font-size:12px;color:var(--vexp-mut);font-weight:700;padding-bottom:4px}
+ #page .vexp-sub{display:grid;grid-template-columns:minmax(120px,1.4fr) minmax(60px,1fr) minmax(104px,auto) 62px;align-items:center;gap:10px;padding:5px 0;font-size:14px}
+ #page .vexp-sub .vexp-bar{height:6px}
+ #page .vexp-svg{width:100%;height:auto;display:block;margin-top:2px}
+ #page .vexp-grid line.vexp-grid,#page .vexp-svg .vexp-grid{stroke:rgba(120,130,160,.22);stroke-dasharray:3 5}
+ #page .vexp-ax{font-size:12px;fill:var(--vexp-mut);font-weight:600}
+ #page .vexp-pt{font-size:12.5px;font-weight:800;fill:var(--vexp-ink)}
+ #page .vexp-line{stroke:var(--vexp-acc);stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}
+ #page .vexp-dot{fill:#fff;stroke:var(--vexp-acc);stroke-width:2.2}#page .vexp-dot.is-last{fill:var(--vexp-acc)}
+ #page .vexp-bub{fill:var(--vexp-acc)}#page .vexp-bubt{fill:#fff;font-size:13px;font-weight:800}
+ #page .vexp-inst{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:12px;width:100%;padding:8px 4px;border:0;border-bottom:1px solid rgba(120,130,160,.14);background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer}
+ #page .vexp-inst:last-child{border-bottom:0}
+ #page .vexp-inst:hover{background:rgba(255,255,255,.3);border-radius:12px}
+ #page .vexp-iico{width:30px;height:30px;background:transparent;box-shadow:none}#page .vexp-iico svg{width:20px;height:20px}
+ #page .vexp-inst b{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+ #page .vexp-empty{padding:18px 4px;color:var(--vexp-mut)}
+ #page .vexp-evo>header .vexp-var-row{margin:0}
+}
+@media(min-width:791px) and (max-width:1180px){
+ #page .vexp-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #page .vexp-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){#page .vexp *{transition:none!important}}
+@media(min-width:791px){
+ /* El resumen ejecutivo anterior (con su propio Mes/Año) queda sustituido por la píldora Mes | Año | Histórico */
+ html body #app#app #page .v58-exec[data-v58-page="expenses"]{display:none!important}
+ html body #app#app #page .vexp-seg button.is-on,html body #app#app #page .vexp-kind button.is-on{background:var(--vexp-acc)!important;color:#fff!important}
+ html body #app#app #page .vexp-seg button:not(.is-on),html body #app#app #page .vexp-kind button:not(.is-on){background:transparent!important;color:var(--vexp-ink)!important}
+ html body #app#app #page .vexp-grid{align-items:stretch}
+ html body #app#app #page .vexp-panel h3{font-size:12.5px!important;letter-spacing:.06em!important;margin:8px 0 4px!important;text-transform:uppercase}
+ html body #app#app #page .vexp-kind{margin-left:auto;flex:none}
+}
+@media(min-width:791px){
+ html body #app#app #page .vexp-grid{align-items:start}
+ html body #app#app #page .vexp-cat>summary strong{color:var(--vexp-ink)!important}
+ html body #app#app #page .vexp-cat>summary{color:var(--vexp-ink)}
+}
+
+@media(min-width:791px){
+ html body #app#app #page .vexp-kpi .vexp-var-row{flex-wrap:wrap}
+ html body #app#app #page .vexp-cat>summary,html body #app#app #page .vexp-cathead{grid-template-columns:30px 38px minmax(150px,1.5fr) minmax(48px,.8fr) minmax(100px,auto) 62px 16px}
+ html body #app#app #page .vexp-cathead{grid-template-columns:30px minmax(0,1fr) minmax(100px,auto) 62px}
+ html body #app#app #page .vexp-cat>summary strong{white-space:normal;line-height:1.15;overflow:visible;text-overflow:clip}
+}
+
+@media(min-width:791px){
+ html body #app#app #page .vexp-cathead{grid-template-columns:30px 38px minmax(150px,1.5fr) minmax(48px,.8fr) minmax(100px,auto) 62px 16px}
+ html body #app#app #page .vexp-cathead span:nth-child(5),html body #app#app #page .vexp-cathead span:nth-child(6){text-align:right}
+ html body #app#app #page .vexp-cathead span:nth-child(3){text-align:left}
+ body.theme-black #app#app #page .vexp-cat em,body.theme-dark #app#app #page .vexp-cat em,body.theme-black #app#app #page .vexp-sub em{background:rgba(255,255,255,.1)!important;color:var(--vexp-ink)!important}
+ html body #app#app #page .vexp-evo>header{flex-wrap:wrap}
+}
+@media(min-width:791px) and (max-width:1500px){
+ html body #app#app #page .vexp-evo>header .vexp-var-row{flex-basis:100%;margin-top:4px}
+}
