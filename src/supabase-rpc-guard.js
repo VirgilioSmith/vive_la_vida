@@ -13,6 +13,7 @@
 
     const nativeRpc = client.rpc.bind(client);
     const active = new Set();
+    const transientUntil = new Map();
     const rejectedUntil = new Map();
     const delayedErrors = new Map();
     const SUPPRESSION_MS = 20 * 60 * 1000;
@@ -58,6 +59,10 @@
       if (active.has(key) || (rejectedUntil.get(key) || 0) > Date.now()) {
         return delayedConflict(key);
       }
+      if ((transientUntil.get(key) || 0) > Date.now()) {
+        return new Promise(resolve => setTimeout(() => resolve({data:null,error:{code:'57014',message:'Supabase temporalmente ocupado; guardado pendiente.'},count:null,status:503,statusText:'Service Unavailable'}), RETRY_RESPONSE_DELAY_MS));
+      }
+      transientUntil.delete(key);
       active.add(key);
       let request;
       try {
@@ -73,6 +78,10 @@
           || /CONFLICT:\s*la revisión remota cambió/i.test(String(result?.error?.message || ''));
         const consumed = !result?.error && Number(result?.data) > expected;
         if (conflict || consumed) rejectedUntil.set(key, Date.now() + SUPPRESSION_MS);
+        // Backoff for transient overload: do not resend the same revision immediately.
+        else if ([429, 502, 503, 504].includes(Number(result?.status)) || ['57014','55P03','53300'].includes(String(result?.error?.code || ''))) {
+          transientUntil.set(key, Date.now() + 60000);
+        }
         // Mantener el historial acotado incluso en una sesión prolongada.
         if (rejectedUntil.size > 64) {
           for (const [revision, until] of rejectedUntil) {
@@ -97,6 +106,7 @@
           rejectedUntil.clear();
           delayedErrors.clear();
           active.clear();
+          transientUntil.clear();
         }
       });
     }
