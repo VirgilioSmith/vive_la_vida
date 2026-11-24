@@ -5013,6 +5013,17 @@ const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
 function modal(title,body,formid,wide=false){document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false);const support=['transactionForm','personalPaymentForm','annualFeeForm','rewardReceivedForm','benefitLedgerForm','recurringPaymentConfirmForm'].includes(formid);const mobileNative=['transactionForm','accountForm','cardForm','loanForm','certificateForm','personalLoanForm','personalPaymentForm','manualBenefitForm','benefitLedgerForm','benefitRuleForm','annualFeeForm','rewardReceivedForm','perkUsageForm','cashWalletForm'].includes(formid);const submitLabel=mobileNative&&isMobileViewport()?'Completar':'Guardar registro';const statusBlock=support?`<div class="form-full confirm-status"><label for="postingStatus">ESTADO DEL REGISTRO</label><select class="field" id="postingStatus" name="postingStatus"><option value="confirmed">Confirmado · contabilizar ahora</option><option value="pending">Pendiente de confirmar · no afectar saldos</option></select><small>Los pendientes permanecerán en Movimientos / Por confirmar. No reducen cuentas ni deudas hasta su confirmación.</small></div>`:'';document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><div class="modal v204-form-dialog ${wide?'wide':''} ${mobileNative?'mobile-native-modal':''}" data-v204-form="${sanitize(formid)}" role="dialog" aria-modal="true" aria-label="${sanitize(title)}"><div class="modal-head"><h2>${sanitize(title)}</h2><button class="close" data-act="closeModal" type="button" aria-label="Cerrar">×</button></div><form id="${formid}"><div class="form-grid">${body}${statusBlock}</div><div id="formError" class="input-error"></div><div class="form-foot"><button class="btn ghost" type="button" data-act="closeModal">Cancelar</button><button class="btn" type="submit">${icon('check')} ${submitLabel}</button></div></form></div></div>`}
+/* F02 · Accesibilidad: campos de modal sin <label> asociado reciben aria-label tomado del rótulo visible inmediato. */
+function f02LabelOrphans(root){
+ if(!root)return;
+ root.querySelectorAll('input:not([type=hidden]):not([aria-label]),select:not([aria-label]),textarea:not([aria-label])').forEach(e=>{
+  if((e.labels&&e.labels.length)||e.closest('label')||e.getAttribute('aria-labelledby'))return;
+  let n=e.previousElementSibling,t='';while(n&&!t){t=(n.matches('label,span,small,strong,legend,p,div')?n.textContent:'').trim();n=n.previousElementSibling}
+  if(!t&&e.parentElement)t=[...e.parentElement.children].filter(x=>x!==e&&x.matches('label,span,small,legend')).map(x=>x.textContent.trim()).find(Boolean)||'';
+  t=t.replace(/\s+/g,' ').slice(0,80);if(t)e.setAttribute('aria-label',t);else if(e.name)e.setAttribute('aria-label',e.name);
+ });
+}
+{const root=document.getElementById('modal-root');if(root&&window.MutationObserver)new MutationObserver(()=>f02LabelOrphans(root)).observe(root,{childList:true,subtree:true})}
 function accountForm(id,preBank){
  if(account(id)?.kind==='cash')return cashWalletForm();
  if(!ensureBanks())return;
@@ -7310,8 +7321,8 @@ function render(){
  const v424Luminance=c=>c.map(n=>{let x=n/255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4}).reduce((a,x,i)=>a+x*[.2126,.7152,.0722][i],0);
  // El acento saturado se atenúa con azul profundo cuando es muy claro (ámbar, amarillo, etc.).
  let v424Strength=v424Luminance(v424Base)>.25? v424Mix(v424Base,[21,37,69],.36):v424Accent;
- /* V1014: contraste AA (>=5:1 con blanco) para texto blanco sobre el acento y acento sobre fondos claros; solo oscurece lo minimo necesario. */
- for(let i=0;i<14&&1.05/(v424Luminance(v424RGB(v424Strength))+.05)<5;i++)v424Strength=v424Mix(v424RGB(v424Strength),[0,0,0],.04);
+ /* V1014/F02: contraste >=7:1 con blanco: el mismo acento sirve de relleno con texto blanco y de texto sobre vidrio claro (AA 4.5:1). Antes: contraste AA (>=5:1 con blanco) para texto blanco sobre el acento y acento sobre fondos claros; solo oscurece lo minimo necesario. */
+ for(let i=0;i<24&&1.05/(v424Luminance(v424RGB(v424Strength))+.05)<7;i++)v424Strength=v424Mix(v424RGB(v424Strength),[0,0,0],.04);
  document.body.style.setProperty('--v424-accent-strong',v424Strength);
  document.body.style.setProperty('--v424-accent-soft',v424Mix(v424RGB(v424Strength),[255,255,255],.64));
  document.body.style.setProperty('--v424-accent-contrast','#ffffff');
@@ -7323,7 +7334,7 @@ function render(){
   for(let i=0;i<9 && v424Luminance(v706Readable)<.45;i++)
    v706Readable=v706Readable.map(c=>Math.round(c*.76+255*.24));
  }else{
-  for(let i=0;i<9 && v424Luminance(v706Readable)>.15;i++)
+  for(let i=0;i<16 && v424Luminance(v706Readable)>.085;i++)
    v706Readable=v706Readable.map(c=>Math.round(c*.78));
  }
  document.body.style.setProperty('--f360-accent-readable','#'+v706Readable.map(x=>x.toString(16).padStart(2,'0')).join(''));

@@ -55,6 +55,8 @@
  --vx-selected:var(--vx-accent-strong);
  --vx-focus:0 0 0 3px color-mix(in srgb,var(--vx-accent) 45%,transparent);
  --vx-disabled-fg:rgba(15,32,56,.42); --vx-disabled-bg:rgba(15,32,56,.06);
+ /* 9 · Texto atenuado heredado: sustituye grises literales de módulos antiguos (#6b7385, #607a9d, #566480…) con contraste AA por tema */
+ --vx-mute:#435269;
 }
 /* Black auténtico: fondo #000, superficies oscuras translúcidas, reflejos controlados (paleta propia, no inversión) */
 body.theme-black,body.theme-dark{
@@ -71,6 +73,7 @@ body.theme-black,body.theme-dark{
  --vx-income:#3ddc97; --vx-expense:#ff7a9c; --vx-positive:#3ddc97; --vx-negative:#ff7a9c; --vx-warning:#f4b740; --vx-info:#6aa7ff;
  --vx-income-soft:rgba(61,220,151,.14); --vx-expense-soft:rgba(255,122,156,.14); --vx-warning-soft:rgba(244,183,64,.16);
  --vx-disabled-fg:rgba(245,248,252,.38); --vx-disabled-bg:rgba(255,255,255,.06);
+ --vx-mute:#aab8cd;
 }
 /* Móvil: dimensiones propias (no se copian las de PC) */
 @media (max-width:790px){
@@ -81,3 +84,15 @@ body.theme-black,body.theme-dark{
  --lg-accent:var(--vx-accent);
  --lg-edge:var(--vx-edge);--lg-edge-soft:var(--vx-edge-soft);
 }
+
+/* ============================================================================
+   10 · GUARDAS DE CONTRASTE (compatibilidad). Cada regla corrige un texto de un módulo heredado que la medición WCAG
+   (tests/contraste-app.js) detectó ilegible. Se retiran cuando su módulo migre a los componentes .vx-* (Fase 03+).
+   ========================================================================== */
+html body.theme-black #app #page .movement-metric span,html body.theme-dark #app #page .movement-metric span,
+html body.theme-black #app #page .vinc-list span,html body.theme-dark #app #page .vinc-list span,
+html body.theme-black #app #page .vflow-rows span,html body.theme-dark #app #page .vflow-rows span{color:var(--vx-text-2)}
+html body.theme-black #app #page .v154-category-title,html body.theme-dark #app #page .v154-category-title{color:var(--vx-text)}
+html body.theme-black #app #page .v154-category-sub,html body.theme-dark #app #page .v154-category-sub{color:var(--vx-text-2)}
+html body.theme-black #app #page small.v1149-pct,html body.theme-dark #app #page small.v1149-pct{color:var(--vx-accent-text)}
+html body:not(.theme-black):not(.theme-dark) #app #page .v187-comp-number,html body:not(.theme-black):not(.theme-dark) #app #page .ff-bar-label{color:var(--vx-text-3)}
