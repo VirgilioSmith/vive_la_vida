@@ -35,7 +35,7 @@
   #app .vBanksPc-world > .topbar { align-items: center; gap: 16px; margin: 0 0 clamp(14px, 1.5vw, 24px); background: none; box-shadow: none; }
   html body #app#app main.vBanksPc-world .topbar .top-title { color: var(--bank-ink) !important; -webkit-text-fill-color: var(--bank-ink) !important; }
   html body #app#app main.vBanksPc-world .topbar .top-sub { color: var(--bank-muted) !important; -webkit-text-fill-color: var(--bank-muted) !important; margin-top: 5px !important; }
-  #app .vBanksPc-kicker { color: var(--bank-positive); display: block; font-size: 11px; font-weight: 800; letter-spacing: .16em; margin-bottom: 4px; }
+  #app .vBanksPc-kicker { color: var(--bank-positive); display: block; font-size: 12px; font-weight: 700; letter-spacing: .16em; margin-bottom: 4px; }
   #app .vBanksPc-world .date-chip { display: none !important; }
   html body #app#app .vBanksPc-world .vBanksPc-search {
     display: flex !important; align-items: center; gap: 10px; width: clamp(162px, 27vw, 435px) !important; min-height: 44px;
@@ -64,7 +64,7 @@
   }
   #app .vBanksPc-metric { display: flex; align-items: flex-start; gap: clamp(8px, 1vw, 16px); padding: clamp(13px, 1.15vw, 22px); min-height: clamp(94px, 8vw, 134px); }
   #app .vBanksPc-metric > div { min-width: 0; }
-  #app .vBanksPc-metric > div > span { display: block; font-size: clamp(13px, 1.2vw, 19px); font-weight: 650; }
+  #app .vBanksPc-metric > div > span { display: block; font-size: clamp(13px, 1.2vw, 19px); font-weight: 600; }
   #app .vBanksPc-metric strong { display: block; margin-top: 4px; font-size: clamp(19px, 2vw, 34px); line-height: 1.13; letter-spacing: -.045em; overflow-wrap: anywhere; }
   #app .vBanksPc-metric small { display: block; margin-top: 6px; }
   #app .vBanksPc-stat-icon, #app .vBanksPc-category-icon { width: clamp(30px, 3.5vw, 56px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--bank-hover); color: var(--bank-positive); flex: none; }
@@ -102,7 +102,7 @@
   #app .vBanksPc-bank-totals { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); padding: 14px 18px 16px; border-top: 1px solid var(--bank-line); }
   #app .vBanksPc-bank-totals > div { min-width: 0; }
   #app .vBanksPc-bank-totals > div + div { border-left: 1px solid var(--bank-line); padding-left: 10px; }
-  #app .vBanksPc-bank-totals dd { margin-top: 4px; font-size: clamp(15px, 1.4vw, 23px); font-weight: 750; letter-spacing: -.035em; overflow-wrap: anywhere; }
+  #app .vBanksPc-bank-totals dd { margin-top: 4px; font-size: clamp(15px, 1.4vw, 23px); font-weight: 700; letter-spacing: -.035em; overflow-wrap: anywhere; }
 
   #app .vBanksPc-product-filter { display: flex; flex-wrap: wrap; gap: 3px; padding: 3px; border-radius: 20px; border: 1px solid var(--bank-line); background: var(--bank-glass); }
   #app .vBanksPc-product-filter button { flex: 1 1 auto; display: inline-flex; justify-content: center; align-items: center; gap: 5px; border: 0; background: transparent; border-radius: 16px; padding: 8px 6px; font-size: clamp(12px, .96vw, 15px); cursor: pointer; }
@@ -135,7 +135,7 @@
   #app .vBanksPc-category-icon svg { width: 17px; height: 17px; }
   #app .vBanksPc-consumption-rows strong { font-weight: 600; overflow-wrap: anywhere; }
   #app .vBanksPc-consumption-amount { text-align: right; }
-  #app .vBanksPc-consumption-amount small { display: block; font-size: 9px; }
+  #app .vBanksPc-consumption-amount small { display: block; font-size: 12px; }
   #app .vBanksPc-benefits { grid-column: 2 / -1; }
   #app .vBanksPc-benefits button > svg { width: 16px; height: 16px; }
   #app .vBanksPc-card-detail .v1190-grid { grid-template-columns: minmax(0,1fr); }
@@ -169,7 +169,7 @@
 
 @media (min-width:791px) {
   #app .vBanksPc-metric .vBanksPc-change span:last-child {color:var(--bank-muted);font-weight:400}
-  #app .vBanksPc-metric .vBanksPc-change {font-weight:650}
+  #app .vBanksPc-metric .vBanksPc-change {font-weight:600}
   #app .vBanksPc-metric .vBanksPc-change.positive {color:var(--bank-positive)}
   #app .vBanksPc-metric .vBanksPc-change.negative {color:var(--bank-negative)}
 }
@@ -185,8 +185,8 @@
   border: 1px solid var(--bank-line); background: var(--bank-glass); box-shadow: var(--bank-shadow);
 }
 #app .vBanks-certificates dl { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; border-top: 1px solid var(--bank-line); padding-top: 10px; margin-top: 9px; }
-#app .vBanks-certificates dd { color: var(--bank-positive); font-size: clamp(13px,1.28vw,21px); font-weight: 800; overflow-wrap: anywhere; }
-#app .vBanks-certificates dt,#app .vBanks-certificates p { color: var(--bank-muted); font-size: 11px; line-height: 1.35; }
+#app .vBanks-certificates dd { color: var(--bank-positive); font-size: clamp(13px,1.28vw,21px); font-weight: 700; overflow-wrap: anywhere; }
+#app .vBanks-certificates dt,#app .vBanks-certificates p { color: var(--bank-muted); font-size: 12px; line-height: 1.35; }
 #app .vBanks-certificates dt { margin-bottom: 4px; }
 #app .vBanks-certificates p { margin-top: 9px; }
 #app .vBanks-certificates dl > div:nth-child(4) { grid-column: 1/-1; display: flex; justify-content: space-between; gap: 10px; border-top: 1px solid var(--bank-line); padding-top: 7px; }
@@ -226,7 +226,7 @@
   #app .vBanks-mobile :is(button,summary) { color:inherit; font-family:inherit; }
   #app .vBanks-mobile :is(button,summary):focus-visible { outline:2px solid var(--bank-accent); outline-offset:-2px; }
   #app .vBanks-mobile-head { position:relative; padding:3px 38px 3px 2px; }
-  #app .vBanks-mobile-head > span { color:var(--bank-positive); font-size:11px; font-weight:800; letter-spacing:.1em; }
+  #app .vBanks-mobile-head > span { color:var(--bank-positive); font-size:12px; font-weight:700; letter-spacing:.1em; }
   #app .vBanks-mobile-head h1 { font-size:clamp(22px,6.35vw,34px); letter-spacing:-.055em; line-height:1.08; margin:3px 0; }
   #app .vBanks-mobile-head p { font-size:13px; }
   #app .vBanks-mobile-head button { position:absolute; top:9px; right:0; }
@@ -239,9 +239,9 @@
   #app .vBanks-mobile-selector .institution-logo,#app .vBanks-mobile-selector .vBanks-consolidated-mark { width:39px; height:39px; margin:0; }
   #app .vBanks-mobile-selector strong,#app .vBanks-mobile-selector small { display:block; color:#fff!important; }
   #app .vBanks-mobile-selector strong { font-size:16px; line-height:1.1; }
-  #app .vBanks-mobile-selector small { font-size:11px; margin-top:3px; }
+  #app .vBanks-mobile-selector small { font-size:12px; margin-top:3px; }
   #app .vBanks-mobile-selector > svg { width:16px; height:16px; }
-  #app .vBanks-mobile-tools { display:flex; justify-content:space-between; gap:6px; align-items:flex-start; color:var(--bank-muted); font-size:11px; }
+  #app .vBanks-mobile-tools { display:flex; justify-content:space-between; gap:6px; align-items:flex-start; color:var(--bank-muted); font-size:12px; }
   #app .vBanks-mobile-tools > details { min-width:0; }
   #app .vBanks-mobile-tools .v42-filters { display:flex; flex-wrap:wrap; gap:4px; margin:5px 0; }
   #app .vBanks-mobile-tools .vBanksPc-controls svg { width:17px; height:17px; }
@@ -251,15 +251,15 @@
   }
   #app .vBanks-mobile-net { display:grid; grid-template-columns:1.5fr 1fr; gap:12px; padding:0 0 9px; }
   #app .vBanks-mobile-net > div + div { border-left:1px solid var(--bank-line); padding-left:10px; }
-  #app .vBanks-mobile-net strong { display:block; font-weight:850; font-size:clamp(17px,5.25vw,26px); line-height:1.11; overflow-wrap:anywhere; }
-  #app .vBanks-mobile-net small { font-size:11px; }
+  #app .vBanks-mobile-net strong { display:block; font-weight:700; font-size:clamp(17px,5.25vw,26px); line-height:1.11; overflow-wrap:anywhere; }
+  #app .vBanks-mobile-net small { font-size:12px; }
   #app .vBanks-mobile .vBanksPc-meter { min-width:10px; height:6px; display:block; border-radius:99px; background:var(--bank-track); overflow:hidden; margin-top:5px; }
   #app .vBanks-mobile .vBanksPc-meter i { display:block; height:100%; width:var(--use); border-radius:inherit; background:linear-gradient(90deg,#008160,#13af8a); }
   #app .vBanks-mobile-hero dl { border-top:1px solid var(--bank-line); padding:8px 0 0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
-  #app .vBanks-mobile-hero dt { display:flex; align-items:center; gap:4px; font-size:10px; }
+  #app .vBanks-mobile-hero dt { display:flex; align-items:center; gap:4px; font-size:12px; }
   #app .vBanks-mobile-hero dt svg { width:15px; height:15px; color:var(--bank-accent); }
-  #app .vBanks-mobile-hero dd { font-size:clamp(12px,3.7vw,17px); font-weight:800; overflow-wrap:anywhere; }
-  #app .vBanks-mobile-hero dl small { font-size:9px; line-height:1.2; }
+  #app .vBanks-mobile-hero dd { font-size:clamp(12px,3.7vw,17px); font-weight:700; overflow-wrap:anywhere; }
+  #app .vBanks-mobile-hero dl small { font-size:12px; line-height:1.2; }
   #app .vBanks-mobile-hero .vBanksPc-change.positive { color:var(--bank-positive); }
   #app .vBanks-mobile-hero .vBanksPc-change.negative { color:var(--bank-negative); }
   #app .vBanks-mobile h2,#app .vBanks-mobile h3 { font-size:17px; line-height:1.16; letter-spacing:-.025em; }
@@ -271,9 +271,9 @@
   #app .vBanks-mobile-tiles button { position:relative; display:grid; align-content:start; gap:3px; min-width:0; padding:6px 4px; border:1px solid var(--bank-line); border-radius:12px; background:var(--bank-glass); text-align:left; }
   #app .vBanks-mobile-tiles button[aria-pressed=true] { background:var(--bank-hover); border-color:var(--bank-accent); }
   #app .vBanks-mobile-tiles svg { width:17px; height:17px; color:var(--bank-accent); }
-  #app .vBanks-mobile-tiles small { position:absolute; top:4px; right:4px; min-width:17px; text-align:center; font-size:9px; border-radius:30px; background:var(--bank-hover); }
-  #app .vBanks-mobile-tiles span { font-size:clamp(8px,2.55vw,12px); line-height:1.25; }
-  #app .vBanks-mobile-tiles strong { font-size:clamp(9px,2.8vw,13px); overflow-wrap:anywhere; }
+  #app .vBanks-mobile-tiles small { position:absolute; top:4px; right:4px; min-width:17px; text-align:center; font-size:12px; border-radius:30px; background:var(--bank-hover); }
+  #app .vBanks-mobile-tiles span { font-size:clamp(12px,2.55vw,12px); line-height:1.25; }
+  #app .vBanks-mobile-tiles strong { font-size:clamp(12px,2.8vw,13px); overflow-wrap:anywhere; }
   #app .vBanks-mobile .vBanksPc-lane > header { display:flex; align-items:center; justify-content:space-between; }
   #app .vBanks-mobile .vBanksPc-lane > header svg,#app .vBanks-mobile .vBanksPc-product > svg { width:16px; height:16px; vertical-align:middle; }
   #app .vBanks-mobile .vBanksPc-product { width:100%; display:grid; grid-template-columns:auto minmax(0,1fr) minmax(0,auto) auto; align-items:center; gap:5px; border:none; background:transparent; text-align:left; padding:9px 0; border-bottom:1px solid var(--bank-line); }
@@ -281,17 +281,17 @@
   #app .vBanks-mobile .vBanksPc-product-mark { max-width:31px; overflow:hidden; }
   #app .vBanks-mobile .vBanksPc-product-mark .institution-logo { max-width:27px; }
   #app .vBanks-mobile .vBanksPc-product :is(strong,b) { display:block; overflow-wrap:anywhere; font-size:12px; }
-  #app .vBanks-mobile .vBanksPc-product small { display:block; font-size:10px; }
+  #app .vBanks-mobile .vBanksPc-product small { display:block; font-size:12px; }
   #app .vBanks-mobile .vBanksPc-insights { display:grid; gap:10px; }
   #app .vBanks-mobile .v371-return-heading .v266-overline { display:none; }
   #app .vBanks-mobile .v371-return-values { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-top:8px; padding-top:8px; border-top:1px solid var(--bank-line); }
   #app .vBanks-mobile .v371-return-tile { min-width:0; background:none!important; box-shadow:none; border:0; border-radius:0; padding:0 3px; }
   #app .vBanks-mobile .v371-return-tile + div { border-left:1px solid var(--bank-line); }
-  #app .vBanks-mobile .v371-return-tile small { font-size:10px; line-height:1.2; }
-  #app .vBanks-mobile .v371-return-tile strong { display:block; font-size:clamp(10px,3.25vw,15px); overflow-wrap:anywhere; white-space:normal; font-weight:850; }
+  #app .vBanks-mobile .v371-return-tile small { font-size:12px; line-height:1.2; }
+  #app .vBanks-mobile .v371-return-tile strong { display:block; font-size:clamp(12px,3.25vw,15px); overflow-wrap:anywhere; white-space:normal; font-weight:700; }
   #app .vBanks-mobile .v371-return-tile.positive strong { color:var(--bank-positive); }
   #app .vBanks-mobile .v371-return-tile.negative strong { color:var(--bank-negative); }
-  #app .vBanks-mobile .v371-return-note { font-size:10px; margin-top:6px; }
+  #app .vBanks-mobile .v371-return-note { font-size:12px; margin-top:6px; }
   #app .vBanks-mobile .v1301-insight summary { display:flex; align-items:center; justify-content:space-between; gap:6px; list-style:none; cursor:pointer; }
   #app .vBanks-mobile .v1301-insight summary::-webkit-details-marker { display:none; }
   #app .vBanks-mobile .v1301-insight :is(.v1301-kicker,summary p):empty { display:none; }
@@ -304,15 +304,15 @@
   #app .vBanks-mobile .vBanks-consumption-body.with-chart { grid-template-columns:minmax(60px,.82fr) minmax(0,1.58fr); align-items:center; }
   #app .vBanks-mobile .vBanks-consumption-chart { position:relative; text-align:center; }
   #app .vBanks-mobile .vBanks-consumption-chart svg { display:block; width:100%; }
-  #app .vBanks-mobile .vBanks-consumption-chart > span { position:absolute; inset:0; display:grid; place-content:center; gap:3px; font-size:clamp(8px,2.6vw,13px); }
+  #app .vBanks-mobile .vBanks-consumption-chart > span { position:absolute; inset:0; display:grid; place-content:center; gap:3px; font-size:clamp(12px,2.6vw,13px); }
   #app .vBanks-mobile .vBanks-consumption-chart small { font-size:.86em; }
-  #app .vBanks-mobile .vBanksPc-consumption-rows > div { display:grid; grid-template-columns:10px minmax(0,1fr) minmax(0,auto) auto; align-items:center; gap:4px; border-bottom:1px solid var(--bank-line); padding:5px 0; font-size:clamp(9px,2.65vw,12px); }
+  #app .vBanks-mobile .vBanksPc-consumption-rows > div { display:grid; grid-template-columns:10px minmax(0,1fr) minmax(0,auto) auto; align-items:center; gap:4px; border-bottom:1px solid var(--bank-line); padding:5px 0; font-size:clamp(12px,2.65vw,12px); }
   #app .vBanks-mobile .vBanksPc-consumption-rows .vBanksPc-meter { display:none; }
   #app .vBanks-mobile .vBanksPc-consumption-rows strong { overflow-wrap:anywhere; }
   #app .vBanks-mobile .vBanksPc-category-icon svg { width:10px; height:10px; }
   #app .vBanks-mobile .vBanksPc-category-icon i { display:block; width:8px; height:8px; border-radius:50%; background:var(--swatch); }
   #app .vBanks-mobile .vBanksPc-consumption-amount { text-align:right; }
-  #app .vBanks-mobile .vBanksPc-consumption-amount small { display:block; font-size:8px; }
+  #app .vBanks-mobile .vBanksPc-consumption-amount small { display:block; font-size:12px; }
   #app .vBanks-mobile .vBanksPc-benefits svg { width:16px; height:16px; }
   #app .vBanks-mobile .vBanksPc-empty { padding:8px 0; font-size:12px; }
   #app .vBanks-mobile .vBanks-detail .v1190-grid { grid-template-columns:minmax(0,1fr); }
@@ -362,7 +362,7 @@
   }
   #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-tile.positive strong { color: var(--return-positive); }
   #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-tile.negative strong { color: var(--return-negative); }
-  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-note { margin: 8px 0 0; color: var(--return-muted); font-size: 11px; line-height: 1.35; }
+  #app :is(.vWalletPc-return,.vBanksPc .v371-card-return) .v371-return-note { margin: 8px 0 0; color: var(--return-muted); font-size: 12px; line-height: 1.35; }
 }
 
 @media(min-width:791px){
@@ -376,13 +376,13 @@
  #app main.vBanksPc-world .vBanksPc-bank-list>header{padding:13px 14px 11px}
  #app main.vBanksPc-world .vBanksPc-bank-options{flex:1;min-height:0;overflow:auto;scrollbar-width:thin}
  #app main.vBanksPc-world .vBanksPc-bank{min-height:56px;padding:8px 11px;gap:6px}
- #app main.vBanksPc-world .vBanksPc-bank b{font-size:clamp(11px,.98vw,15px)}
+ #app main.vBanksPc-world .vBanksPc-bank b{font-size:clamp(12px,.98vw,15px)}
  #app main.vBanksPc-world .vBanksPc-center,#app main.vBanksPc-world .vBanksPc-insights{min-height:0;overflow:auto;scrollbar-width:thin}
  #app main.vBanksPc-world .vBanksPc-institution{gap:clamp(8px,.7vw,12px)}
  #app main.vBanksPc-world .vBanksPc-institution-head{padding:12px 14px 10px}
  #app main.vBanksPc-world .vBanksPc-bank-totals{grid-template-columns:repeat(3,minmax(0,1fr));padding:11px 14px 14px}
  #app main.vBanksPc-world .vBanksPc-bank-totals dd{font-size:clamp(16px,1.45vw,24px)}
- #app main.vBanksPc-world .vBanksPc-product-filter button{padding:9px 4px;font-size:clamp(10px,.93vw,14px)}
+ #app main.vBanksPc-world .vBanksPc-product-filter button{padding:9px 4px;font-size:clamp(12px,.93vw,14px)}
  #app main.vBanksPc-world .vBanksPc-lane>header{padding:12px 14px}
  #app main.vBanksPc-world .vBanksPc-product{padding:9px 14px;min-height:67px}
  #app main.vBanksPc-world .vBanksPc-product b{font-size:clamp(12px,1.1vw,16px)}
@@ -390,27 +390,27 @@
  #app main.vBanksPc-world .vBanksPc .v371-card-return,#app main.vBanksPc-world .vBanksPc .v1301-insight{padding:clamp(11px,1vw,17px)}
  #app main.vBanksPc-world .vBanksPc .v371-return-tile{min-width:0;border:0;box-shadow:none;border-radius:0;padding:4px 6px;background:transparent!important}
  #app main.vBanksPc-world .vBanksPc .v371-return-tile+.v371-return-tile{border-left:1px solid var(--bank-line)}
- #app main.vBanksPc-world .vBanksPc .v371-return-tile small{font-size:clamp(10px,.84vw,13px)}
+ #app main.vBanksPc-world .vBanksPc .v371-return-tile small{font-size:clamp(12px,.84vw,13px)}
  #app main.vBanksPc-world .vBanksPc .v371-return-tile strong{font-size:clamp(13px,1.18vw,19px);white-space:nowrap}
- #app main.vBanksPc-world .vBanksPc .v371-return-note{font-size:10px;margin-top:6px}
+ #app main.vBanksPc-world .vBanksPc .v371-return-note{font-size:12px;margin-top:6px}
  #app main.vBanksPc-world .vBanksPc .v1301-insight h2{font-size:clamp(16px,1.35vw,21px)}
- #app main.vBanksPc-world .vBanksPc-consumption-rows>div{min-height:39px;gap:5px;font-size:clamp(11px,.91vw,14px)}
- #app main.vBanksPc-world .vBanksPc-consumption-rows b{font-size:clamp(11px,.93vw,14px)}
+ #app main.vBanksPc-world .vBanksPc-consumption-rows>div{min-height:39px;gap:5px;font-size:clamp(12px,.91vw,14px)}
+ #app main.vBanksPc-world .vBanksPc-consumption-rows b{font-size:clamp(12px,.93vw,14px)}
  #app main.vBanksPc-world .vBanks-certificates{padding:clamp(11px,1vw,17px)}
  #app main.vBanksPc-world .vBanks-certificates-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
  #app main.vBanksPc-world .vBanks-certificates-head h2{flex:1;min-width:0}
  #app main.vBanksPc-world .vBanks-certificates dl{gap:8px}
- #app main.vBanksPc-world .vBanks-certificates p{font-size:10px}
+ #app main.vBanksPc-world .vBanks-certificates p{font-size:12px}
  #app main.vBanksPc-world .vBanksPc-workspace{min-height:0;overflow:auto}
  #app main.vBanksPc-world .vBanks-credit-trend{border-top:1px solid var(--wallet-line,var(--bank-line));margin-top:12px;padding-top:11px}
  #app main.vBanksPc-world .vBanks-credit-trend header{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:12px}
- #app main.vBanksPc-world .vBanks-credit-trend header span,#app main.vBanksPc-world .vBanks-credit-trend p{color:var(--wallet-muted,var(--bank-muted));font-size:10px}
+ #app main.vBanksPc-world .vBanks-credit-trend header span,#app main.vBanksPc-world .vBanks-credit-trend p{color:var(--wallet-muted,var(--bank-muted));font-size:12px}
  #app main.vBanksPc-world .vBanks-credit-chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;gap:8px;height:82px;margin:9px 0 5px}
  #app main.vBanksPc-world .vBanks-credit-month{display:grid;grid-template-rows:1fr auto;height:100%;gap:4px;justify-items:center}
  #app main.vBanksPc-world .vBanks-credit-track{display:flex;align-items:end;justify-content:center;min-width:16px;width:52%;height:100%;background:#e9f0ee;border-radius:5px;overflow:hidden}
  #app main.vBanksPc-world .vBanks-credit-track i{display:block;height:var(--bar);width:100%;min-height:2px;background:var(--bank-accent);border-radius:5px}
  #app main.vBanksPc-world .vBanks-credit-track i.negative{background:var(--bank-negative)}
- #app main.vBanksPc-world .vBanks-credit-month small{font-size:10px}
+ #app main.vBanksPc-world .vBanks-credit-month small{font-size:12px}
  @media(max-width:1240px){#app main.vBanksPc-world .vBanksPc-grid{grid-template-columns:minmax(170px,.68fr) minmax(270px,1.24fr)}#app main.vBanksPc-world .vBanksPc-insights{grid-column:2}#app main.vBanksPc-world .vBanksPc-bank-list{grid-row:1/span 2}}
 }
 
@@ -430,7 +430,7 @@
     border-left: 1px solid var(--bank-line) !important;
   }
   html body #app#app main.vBanksPc-world .vBanksPc .v371-return-tile small {
-    font-size: clamp(10px, .83vw, 13px) !important;
+    font-size: clamp(12px, .83vw, 13px) !important;
     font-weight: 600 !important;
     letter-spacing: 0 !important;
     text-transform: none !important;
@@ -530,8 +530,8 @@
   html body #app#app main.vBanksPc-world .vBanksPc-metric strong {
     font-size:clamp(16px,1.65vw,28px);overflow-wrap:anywhere;line-height:1.13;
   }
-  html body #app#app main.vBanksPc-world .vBanksPc-metric > div > span {font-size:clamp(11px,.98vw,15px)}
-  html body #app#app main.vBanksPc-world .vBanksPc-metric small {font-size:clamp(10px,.79vw,12px);line-height:1.3}
+  html body #app#app main.vBanksPc-world .vBanksPc-metric > div > span {font-size:clamp(12px,.98vw,15px)}
+  html body #app#app main.vBanksPc-world .vBanksPc-metric small {font-size:clamp(12px,.79vw,12px);line-height:1.3}
   html body #app#app main.vBanksPc-world .vBanksPc-stat-icon {width:clamp(28px,2.5vw,40px)}
   html body #app#app main.vBanksPc-world .vBanksPc-grid {min-height:0}
   html body #app#app main.vBanksPc-world .vBanksPc-insights > .vBanks-certificates {order:1}
@@ -563,7 +563,7 @@
  }
  html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile + .v371-return-tile {border-left:1px solid var(--return-line)!important}
  html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile small {
-  color:var(--return-muted);font-size:clamp(10px,.83vw,13px);font-weight:600;text-transform:none;letter-spacing:0;line-height:1.2;
+  color:var(--return-muted);font-size:clamp(12px,.83vw,13px);font-weight:600;text-transform:none;letter-spacing:0;line-height:1.2;
  }
  html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile strong {
   color:var(--return-ink);font-size:clamp(12px,1.12vw,19px);line-height:1.2;letter-spacing:-.025em;
@@ -571,7 +571,7 @@
  }
  html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile.positive strong {color:var(--return-positive)}
  html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-tile.negative strong {color:var(--return-negative)}
- html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-note {color:var(--return-muted);font-size:10px;line-height:1.35}
+ html body #app#app main.vWalletPc-world .vWalletPc-return .v371-return-note {color:var(--return-muted);font-size:12px;line-height:1.35}
  body.theme-black #app main.vWalletPc-world .vWalletPc-return {
   --return-ink:#f2f6fa;--return-muted:#b7c6d1;--return-line:#29393e;
   --return-positive:#82d8b9;--return-negative:#ff9d9a;background:#10191ced;
@@ -597,7 +597,7 @@
   html body #app#app main.vBanksPc-world .vBanksPc-product-filter button {
     display:flex; flex:initial; align-items:center; justify-content:center; gap:3px;
     min-width:0; padding:9px 3px; border-radius:999px;
-    font-weight:650; color:var(--bank-ink); font-size:clamp(10px,.89vw,14px);
+    font-weight:600; color:var(--bank-ink); font-size:clamp(12px,.89vw,14px);
     transition:background .16s ease,color .16s ease,box-shadow .16s ease;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-product-filter button svg {
@@ -607,7 +607,7 @@
     min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-product-filter button small {
-    flex:none; font-size:.8em; font-weight:650; opacity:.8; color:inherit;
+    flex:none; font-size:.8em; font-weight:600; opacity:.8; color:inherit;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-product-filter button[aria-pressed="true"] {
     background:linear-gradient(130deg,#057c68,#00957e);
@@ -625,7 +625,7 @@
   }
   html body #app#app main.vBanksPc-world .vBanksPc-credit-context {
     display:flex; flex-wrap:wrap; justify-content:flex-end; gap:4px 11px;
-    margin:0 14px 11px; color:var(--bank-muted);font-size:clamp(10px,.85vw,12px);font-weight:600;
+    margin:0 14px 11px; color:var(--bank-muted);font-size:clamp(12px,.85vw,12px);font-weight:600;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-credit-context span+span {
     border-left:1px solid var(--bank-line);padding-left:11px;
@@ -661,7 +661,7 @@
     grid-row:auto;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-product-filter button {
-    font-size:10px; gap:2px;
+    font-size:12px; gap:2px;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-product-filter button svg {
     width:12px;height:12px;
@@ -670,7 +670,7 @@
     display:none;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-bank-list .vBanksPc-bank b {
-    font-size:10px;
+    font-size:12px;
   }
 }
 @media (min-width:791px) and (max-width:1100px) {
@@ -690,7 +690,7 @@
     display:none;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-product-filter button {
-    font-size:clamp(9px,1vw,11px);padding:8px 1px;
+    font-size:clamp(12px,1vw,12px);padding:8px 1px;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-product-filter button span {
     text-overflow:clip;
@@ -699,21 +699,21 @@
     font-size:clamp(12px,1.25vw,16px);letter-spacing:-.045em;
   }
   html body #app#app main.vBanksPc-world .v371-return-tile strong {
-    font-size:clamp(10px,1vw,13px) !important;
+    font-size:clamp(12px,1vw,13px) !important;
     white-space:normal !important;
     overflow-wrap:anywhere;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-bank-list .vBanksPc-bank strong {
     white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
-    line-height:1.14;font-size:clamp(11px,1.03vw,13px);
+    line-height:1.14;font-size:clamp(12px,1.03vw,13px);
   }
   html body #app#app main.vBanksPc-world .vBanksPc-bank-list .vBanksPc-bank b {
-    font-size:clamp(9px,.88vw,11px);letter-spacing:-.04em;
+    font-size:clamp(12px,.88vw,12px);letter-spacing:-.04em;
   }
 }
 @media (min-width:791px) and (max-width:1240px) {
   html body #app#app main.vBanksPc-world .vBanksPc .v371-return-tile strong {
-    font-size:10px !important;white-space:normal !important;
+    font-size:12px !important;white-space:normal !important;
     overflow:visible !important;text-overflow:clip !important;
     overflow-wrap:anywhere !important;line-height:1.18;
   }
@@ -763,20 +763,20 @@
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-name {
     display:grid;gap:3px;min-width:0;font-size:clamp(13px,1.06vw,17px);
-    line-height:1.1;font-weight:750;
+    line-height:1.1;font-weight:700;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-name small {
-    font-size:clamp(10px,.78vw,12px);font-weight:500;color:var(--bank-muted);
+    font-size:clamp(12px,.78vw,12px);font-weight:500;color:var(--bank-muted);
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-metric {
     display:grid;gap:3px;margin-top:10px;min-width:0;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-metric small {
-    color:var(--bank-muted);font-size:clamp(10px,.82vw,13px);
+    color:var(--bank-muted);font-size:clamp(12px,.82vw,13px);
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-metric strong {
     font-size:clamp(19px,1.7vw,28px);line-height:1.07;
-    letter-spacing:-.04em;font-weight:800;overflow-wrap:anywhere;
+    letter-spacing:-.04em;font-weight:700;overflow-wrap:anywhere;
     font-variant-numeric:tabular-nums;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-tile.is-negative .vBanksPc-overview-metric strong {
@@ -865,7 +865,7 @@
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-name{
     font-size:clamp(12px,1.05vw,16px);
-    font-weight:750;line-height:1.16;
+    font-weight:700;line-height:1.16;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-top > svg{
     display:none;
@@ -875,7 +875,7 @@
     gap:2px;margin:0;min-width:0;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-metric small{
-    font-size:clamp(9px,.76vw,11px);
+    font-size:clamp(12px,.76vw,12px);
   }
   html body #app#app main.vBanksPc-world .vBanksPc-overview-metric strong{
     font-size:clamp(16px,1.4vw,22px);
@@ -929,7 +929,7 @@
   html body #app#app main.vBanksPc-world .vBanksPc-change {
     display:inline-flex;align-items:baseline;flex-wrap:wrap;
     gap:3px 5px;max-width:100%;margin-top:4px;
-    color:var(--bank-muted);font-size:clamp(10px,.8vw,12px);line-height:1.2;
+    color:var(--bank-muted);font-size:clamp(12px,.8vw,12px);line-height:1.2;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-change.positive {color:var(--bank-positive)}
   html body #app#app main.vBanksPc-world .vBanksPc-change.negative {color:var(--bank-negative)}
@@ -968,12 +968,12 @@
   }
   html body #app#app main.vBanksPc-world .vBanksPc-consumption-amount,
   html body #app#app main.vBanksPc-world .vBanksPc-consumption-rows b {
-    max-width:100%;font-size:clamp(10px,.87vw,13px);
+    max-width:100%;font-size:clamp(12px,.87vw,13px);
     white-space:normal;overflow:visible;overflow-wrap:anywhere;
     font-variant-numeric:tabular-nums;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-consumption-amount small {
-    font-size:9px;white-space:normal;overflow-wrap:anywhere;
+    font-size:12px;white-space:normal;overflow-wrap:anywhere;
   }
 }
 @media (min-width:791px) and (max-width:1100px) {
@@ -984,7 +984,7 @@
     font-size:clamp(12px,1.4vw,16px)!important;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-metric > div > span {
-    font-size:clamp(10px,.92vw,12px);
+    font-size:clamp(12px,.92vw,12px);
   }
   html body #app#app main.vBanksPc-world .vBanksPc-stat-icon {width:24px}
   html body #app#app main.vBanksPc-world .vBanksPc-consumption-rows > div:has(.vBanksPc-meter) {
@@ -999,7 +999,7 @@
     min-width:0;max-width:100%;white-space:normal!important;
     overflow:visible!important;text-overflow:clip!important;
     overflow-wrap:anywhere!important;line-height:1.18;
-    font-size:clamp(10px,.84vw,12px)!important;
+    font-size:clamp(12px,.84vw,12px)!important;
     font-variant-numeric:tabular-nums;
   }
   html body #app#app main.vBanksPc-world .vBanksPc .v371-return-values {
@@ -1019,7 +1019,7 @@
     display:none;
   }
   html body #app#app main.vBanksPc-world .vBanksPc-product-filter button {
-    gap:2px;padding-inline:2px;font-size:clamp(9px,.85vw,12px);
+    gap:2px;padding-inline:2px;font-size:clamp(12px,.85vw,12px);
   }
 }
 
@@ -1064,7 +1064,7 @@
       height:auto;max-height:none;overflow:visible;scrollbar-gutter:auto;
     }
     .vBanksPc-metric {align-items:flex-start}
-    .vBanksPc-metric > div > span {font-size:13px;font-weight:650}
+    .vBanksPc-metric > div > span {font-size:13px;font-weight:600}
     .vBanksPc-metric small,.vBanksPc-change {font-size:12px;line-height:1.35}
     .vBanksPc-bank-list .vBanksPc-bank {
       display:grid;grid-template-columns:auto minmax(0,1fr) auto;

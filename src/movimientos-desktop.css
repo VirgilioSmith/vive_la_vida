@@ -61,15 +61,15 @@
   }
   .movement-metric-icon svg{width:20px;height:20px}
   .movement-metric > div{align-self:start;min-width:0}
-  .movement-metric div>span{display:block;font-size:13px;font-weight:680;line-height:1.25}
+  .movement-metric div>span{display:block;font-size:13px;font-weight:700;line-height:1.25}
   .movement-metric strong{
-    display:block;margin:3px 0 4px;font-size:clamp(18px,1.8vw,29px);font-weight:820;
+    display:block;margin:3px 0 4px;font-size:clamp(18px,1.8vw,29px);font-weight:700;
     line-height:1.08;letter-spacing:-.035em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
   }
-  .movement-metric small{display:block;color:var(--movement-muted);font-size:11px;line-height:1.25}
+  .movement-metric small{display:block;color:var(--movement-muted);font-size:12px;line-height:1.25}
   .movement-metric-count small::first-letter{text-transform:uppercase}
-  .movement-metric small .positive{color:var(--movement-up);font-weight:750}
-  .movement-metric small .negative{color:var(--movement-down);font-weight:750}
+  .movement-metric small .positive{color:var(--movement-up);font-weight:700}
+  .movement-metric small .negative{color:var(--movement-down);font-weight:700}
   .movement-bars{
     display:flex;align-items:end;justify-content:flex-end;gap:4px;
     width:clamp(42px,5vw,78px);height:34px;align-self:center;color:var(--movement-series);
@@ -99,7 +99,7 @@
     position:relative;gap:0;border:1px solid var(--movement-edge);border-radius:16px;
     padding:6px 5px 4px 35px;background:var(--movement-control);box-shadow:0 3px 10px rgba(35,62,88,.07);
   }
-  .movement-desktop .ledger-control label{font-size:11px;font-weight:750;color:var(--movement-ink)}
+  .movement-desktop .ledger-control label{font-size:12px;font-weight:700;color:var(--movement-ink)}
   .movement-desktop .ledger-control label svg{
     position:absolute;left:10px;top:50%;width:17px;height:17px;transform:translateY(-50%);color:var(--movement-accent);
   }
@@ -127,10 +127,10 @@
   }
   html body #app#app #page #ledger-world.movement-desktop .ledger-scroll th{
     position:static!important;height:39px;color:var(--movement-muted)!important;
-    background:var(--movement-control)!important;font-size:11px!important;font-weight:760!important;
+    background:var(--movement-control)!important;font-size:12px!important;font-weight:700!important;
   }
   html body #app#app #page #ledger-world.movement-desktop .ledger-scroll td{
-    height:42px;font-size:clamp(11px,.85vw,14px)!important;color:var(--movement-ink);
+    height:42px;font-size:clamp(12px,.85vw,14px)!important;color:var(--movement-ink);
     overflow-wrap:anywhere;min-width:0!important;
   }
   html body #app#app #page #ledger-world.movement-desktop .ledger-scroll :is(th,td):first-child{width:8%!important}
@@ -141,7 +141,7 @@
   html body #app#app #page #ledger-world.movement-desktop .ledger-scroll :is(th,td):nth-child(8),
   html body #app#app #page #ledger-world.movement-desktop .ledger-scroll :is(th,td):nth-child(9){width:10%!important;text-align:right}
   html body #app#app #page #ledger-world.movement-desktop .ledger-scroll :is(td.money,td.v265-balance-cell){
-    font-weight:780;font-variant-numeric:tabular-nums;
+    font-weight:700;font-variant-numeric:tabular-nums;
   }
   html body #app#app #page #ledger-world.movement-desktop .ledger-scroll tbody tr:hover td{
     background:color-mix(in srgb,var(--movement-accent) 4%,transparent);
@@ -249,19 +249,19 @@
  html body #app#app #page #ledger-world.movement-desktop .movement-metric-expense .movement-metric-icon{border-radius:50%;transform:rotate(7deg)}
  html body #app#app #page #ledger-world.movement-desktop .movement-metric-net .movement-metric-icon{border-radius:15px}
  html body #app#app #page #ledger-world.movement-desktop .movement-metric-content{align-self:center;min-width:0}
- html body #app#app #page #ledger-world.movement-desktop .movement-metric-content>span{display:block;font-size:12px!important;font-weight:730!important;letter-spacing:0;line-height:1.16}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-content>span{display:block;font-size:12px!important;font-weight:700!important;letter-spacing:0;line-height:1.16}
  html body #app#app #page #ledger-world.movement-desktop .movement-metric-content>strong{
   margin:4px 0 5px!important;line-height:1!important;font-size:clamp(19px,1.65vw,28px)!important;
-  letter-spacing:-.045em!important;font-weight:820!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  letter-spacing:-.045em!important;font-weight:700!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
  }
  html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation{
   display:flex!important;align-items:center;gap:4px;flex-wrap:wrap;
-  font-size:11px!important;line-height:1.1!important;color:var(--movement-muted)!important
+  font-size:12px!important;line-height:1.1!important;color:var(--movement-muted)!important
  }
- html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:790}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700}
  html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation.positive{color:var(--movement-up)!important}
  html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation.negative{color:var(--movement-down)!important}
- html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation.is-flat{color:var(--movement-muted)!important;font-weight:650}
+ html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation.is-flat{color:var(--movement-muted)!important;font-weight:600}
  html body #app#app #page #ledger-world.movement-desktop .movement-metric-variation .movement-variation-label{color:var(--movement-muted);font-weight:500;white-space:nowrap}
  html body #app#app #page #ledger-world.movement-desktop .movement-bars{
   width:100%;max-width:82px;height:41px;gap:4px;align-self:end;margin-bottom:6px;
@@ -297,16 +297,16 @@
  html body #app#app #page #ledger-world.movement-desktop .ledger-scroll table{border-collapse:separate!important;border-spacing:0!important}
  html body #app#app #page #ledger-world.movement-desktop .ledger-scroll th{
   height:31px!important;padding:5px 7px!important;line-height:1.08!important;
-  font-size:10px!important;letter-spacing:.015em!important
+  font-size:12px!important;letter-spacing:.015em!important
  }
  html body #app#app #page #ledger-world.movement-desktop .ledger-scroll td{
   height:34px!important;padding:5px 7px!important;
-  font-size:clamp(11px,.8vw,13px)!important;line-height:1.12!important;
+  font-size:clamp(12px,.8vw,13px)!important;line-height:1.12!important;
   vertical-align:middle!important
  }
  html body #app#app #page #ledger-world.movement-desktop .ledger-scroll td:nth-child(2) .v9-ledger-detail strong{
   display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap!important;
-  font-weight:740!important
+  font-weight:700!important
  }
  html body #app#app #page #ledger-world.movement-desktop .ledger-scroll td:nth-child(3){
   white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis
@@ -347,11 +347,11 @@
   width:max-content;max-width:100%;margin:4px auto 0;color:var(--movement-muted)
  }
  html body #app#app #page #ledger-world.movement-desktop .movement-notes summary{
-  cursor:pointer;list-style:none;font-size:10px;opacity:.65;text-align:center
+  cursor:pointer;list-style:none;font-size:12px;opacity:.65;text-align:center
  }
  html body #app#app #page #ledger-world.movement-desktop .movement-notes summary::-webkit-details-marker{display:none}
  html body #app#app #page #ledger-world.movement-desktop .movement-notes .footnote{
-  display:block!important;max-width:700px;font-size:11px;line-height:1.35;margin:6px 0 0
+  display:block!important;max-width:700px;font-size:12px;line-height:1.35;margin:6px 0 0
  }
 }
 @media (min-width:791px) and (max-width:1140px){
@@ -386,7 +386,7 @@
     .movement-metric-content > span {padding-right:24%}
     .ledger-scroll {max-height:none!important;overflow:visible!important}
     .ledger-scroll table {min-width:0!important}
-    .ledger-scroll th {font-size:11px!important}
+    .ledger-scroll th {font-size:12px!important}
     .ledger-scroll td {padding:6px!important;font-size:clamp(12px,.85vw,14px)!important;line-height:1.28!important}
     .ledger-scroll td:nth-child(2) .v9-ledger-detail strong,
     .ledger-scroll td:nth-child(3) {white-space:normal!important;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
@@ -419,7 +419,7 @@
       }
       & > td::before {
         display:block;margin-bottom:3px;color:var(--movement-muted);font-weight:600;
-        font-size:11px;line-height:1.2;
+        font-size:12px;line-height:1.2;
       }
       & > td:nth-child(1) {grid-area:date;&::before {content:"Fecha"}}
       & > td:nth-child(2) {grid-area:concept;&::before {content:"Concepto"}}

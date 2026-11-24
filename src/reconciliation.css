@@ -4,7 +4,7 @@
 #vReconcileForm *{box-sizing:border-box}
 #vReconcileForm button,#vReconcileForm input{font-family:inherit}
 .v-reconcile-head{display:flex;align-items:center;gap:14px;padding:3px 0 7px;background:radial-gradient(ellipse at 92% 24%,rgba(0,155,144,.12),transparent 42%);border-radius:21px}
-.v-reconcile-head h2{font-size:23px;letter-spacing:-.65px;margin:0;font-weight:750;line-height:1.16}
+.v-reconcile-head h2{font-size:23px;letter-spacing:-.65px;margin:0;font-weight:700;line-height:1.16}
 .v-reconcile-back{border:1px solid var(--recon-border);border-radius:50%;width:44px;height:44px;background:rgba(0,108,104,.06);color:inherit;font-size:25px;line-height:1;flex:none}
 .v-reconcile-account,.v-reconcile-reason,.v-reconcile-date,.v-reconcile-observed,.v-reconcile-preview{border:1px solid var(--recon-border);border-radius:20px;background:transparent;color:inherit}
 .v-reconcile-account{display:flex;text-align:left;align-items:center;gap:13px;padding:11px 13px;min-height:75px;width:100%;cursor:pointer}
@@ -17,10 +17,10 @@
 .v-reconcile-logo img{width:100%;height:100%;object-fit:contain;padding:5px}
 .v-reconcile-logo svg{width:25px;height:25px}
 .v-reconcile-recorded{background:var(--recon-soft);padding:10px 17px;border:1px solid var(--recon-border);border-radius:18px;display:grid;gap:3px}
-.v-reconcile-recorded strong{font-size:22px;font-weight:760;letter-spacing:-.5px}
+.v-reconcile-recorded strong{font-size:22px;font-weight:700;letter-spacing:-.5px}
 .v-reconcile-observed{padding:10px 12px;display:grid;gap:6px}
 .v-reconcile-observed label{font-size:13px;color:var(--recon-muted);padding-left:3px}
-.v-reconcile-input{display:flex;align-items:center;border:1px solid var(--recon-border);border-radius:13px;min-width:0;padding:9px 10px;gap:3px;font-size:clamp(25px,7.8vw,35px);font-weight:760;letter-spacing:-1.1px;line-height:1.15}
+.v-reconcile-input{display:flex;align-items:center;border:1px solid var(--recon-border);border-radius:13px;min-width:0;padding:9px 10px;gap:3px;font-size:clamp(25px,7.8vw,35px);font-weight:700;letter-spacing:-1.1px;line-height:1.15}
 .v-reconcile-input:focus-within{border-color:var(--recon-accent);box-shadow:0 0 0 2px rgba(0,108,104,.12)}
 .v-reconcile-input input{min-width:0;width:100%;border:0!important;background:transparent!important;color:inherit!important;font:inherit;outline:none!important;padding:0!important;box-shadow:none!important;border-radius:0}
 .v-reconcile-number{position:relative;min-width:0;flex:1;display:flex;align-items:center}
@@ -34,11 +34,11 @@
 .v-reconcile-date,.v-reconcile-reason{min-width:0;min-height:64px;display:flex;align-items:center;gap:8px;padding:9px;text-align:left}
 .v-reconcile-fields>label>span,.v-reconcile-fields>button>span{display:grid;place-items:center;flex:none}
 .v-reconcile-fields>label>div,.v-reconcile-fields>button>div{display:grid;gap:4px;flex:1;min-width:0}
-.v-reconcile-fields small{font-size:11px!important;white-space:nowrap}
+.v-reconcile-fields small{font-size:12px!important;white-space:nowrap}
 .v-reconcile-date{position:relative}
 .v-reconcile-date input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
 .v-reconcile-date strong{font-size:13px;white-space:nowrap}
-.v-reconcile-reason strong{font-size:12px;font-weight:730;line-height:1.2;overflow-wrap:anywhere}
+.v-reconcile-reason strong{font-size:12px;font-weight:700;line-height:1.2;overflow-wrap:anywhere}
 .v-reconcile-preview{display:grid;gap:10px;padding:13px 14px;background:linear-gradient(145deg,rgba(100,116,145,.035),transparent)}
 .v-reconcile-preview h3{display:flex;align-items:center;gap:8px;font-size:17px;letter-spacing:-.2px;margin:0}
 .v-reconcile-balances{display:grid;grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr);align-items:center;gap:8px;padding:0 1px}
@@ -50,7 +50,7 @@
 .v-reconcile-delta strong{font-size:16px;color:inherit;white-space:nowrap}
 .v-reconcile-delta strong.negative{color:#d04739!important}
 .v-reconcile-delta strong.positive{color:#00816e!important}
-.v-reconcile-submit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;margin-top:6px;border:0;border-radius:20px;background:linear-gradient(115deg,#006b66,#00716c);color:white;font-size:16px;font-weight:730;cursor:pointer}
+.v-reconcile-submit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;margin-top:6px;border:0;border-radius:20px;background:linear-gradient(115deg,#006b66,#00716c);color:white;font-size:16px;font-weight:700;cursor:pointer}
 .v-reconcile-submit svg{color:white!important}.v-reconcile-submit:disabled{opacity:.48;cursor:default}
 .v-reconcile-error{margin:0!important;font-size:13px;color:#d04739;line-height:1.35}
 .v-reconcile-error[hidden]{display:none}
@@ -75,9 +75,9 @@
 }
 /* The global modal typography uses important declarations; scope our override
    to this surface so the amount is not reduced to a generic 16px input. */
-html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-head h2{font-size:23px!important;font-weight:750!important}
+html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-head h2{font-size:23px!important;font-weight:700!important}
 html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-input input{font-size:inherit!important;font-weight:inherit!important;letter-spacing:inherit!important;line-height:inherit!important;height:100%!important;outline:0!important;box-shadow:none!important;border:0!important}
-html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-submit{font-size:16px!important;font-weight:730!important}
+html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-submit{font-size:16px!important;font-weight:700!important}
 html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-back{font-size:25px!important}
 html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-preview h3{font-size:17px!important}
 html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-reason-sheet h3{font-size:23px!important}
@@ -92,7 +92,7 @@ html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-dialog>.v266
 /* Selector de moneda únicamente al conciliar una tarjeta en móvil. */
 .v-reconcile-currencies[hidden]{display:none!important}
 .v-reconcile-currencies{display:flex;gap:8px}
-.v-reconcile-currencies button{flex:1;min-width:0;min-height:39px;border:1px solid var(--recon-border);border-radius:13px;background:#fff;color:var(--recon-muted);font-size:13px;font-weight:650;cursor:pointer}
+.v-reconcile-currencies button{flex:1;min-width:0;min-height:39px;border:1px solid var(--recon-border);border-radius:13px;background:#fff;color:var(--recon-muted);font-size:13px;font-weight:600;cursor:pointer}
 .v-reconcile-currencies button[aria-pressed="true"]{color:var(--recon-accent);border-color:var(--recon-accent);background:rgba(0,108,104,.065)}
 .v-reconcile-card-logo .credit-network{max-width:100%;font-size:12px}
 .v-reconcile-card-logo .network-circles svg{max-width:32px}

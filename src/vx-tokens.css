@@ -43,12 +43,12 @@
  --vx-card-min:104px; --vx-kpi-min:96px; --vx-col-side:340px;
  --vx-dock-clear:112px;   /* separación inferior reservada para la barra flotante móvil */
  /* 6 · Tipografía (4 pesos) */
- --vx-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+ --vx-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,"Segoe UI",Arial,sans-serif;
  --vx-fw-regular:400; --vx-fw-medium:500; --vx-fw-semibold:600; --vx-fw-bold:700;
  --vx-fs-caption:12px; --vx-fs-label:12px; --vx-fs-body:14px; --vx-fs-sub:15px; --vx-fs-title:18px; --vx-fs-kpi:24px; --vx-fs-display:32px;
  --vx-lh-tight:1.15; --vx-lh-body:1.45;
  /* 7 · Colores financieros semánticos (independientes del acento) */
- --vx-income:#0b7f4f; --vx-expense:#c42b5a; --vx-positive:#0b7f4f; --vx-negative:#c42b5a; --vx-warning:#9a5b00; --vx-info:#1d5fc4;
+ --vx-income:#045f37; --vx-expense:#a31d49; --vx-positive:#045f37; --vx-negative:#a31d49; --vx-warning:#9a5b00; --vx-info:#1d5fc4;
  --vx-income-soft:rgba(15,154,99,.14); --vx-expense-soft:rgba(214,58,104,.14); --vx-warning-soft:rgba(232,163,23,.18);
  /* 8 · Estados */
  --vx-hover:color-mix(in srgb,var(--vx-accent) 8%,transparent);
@@ -57,6 +57,8 @@
  --vx-disabled-fg:rgba(15,32,56,.42); --vx-disabled-bg:rgba(15,32,56,.06);
  /* 9 · Texto atenuado heredado: sustituye grises literales de módulos antiguos (#6b7385, #607a9d, #566480…) con contraste AA por tema */
  --vx-mute:#435269;
+ /* Acento como TEXTO (distinto del acento de RELLENO): Claro = acento fuerte oscuro; Black = acento legible claro */
+ --vx-accent-ink:var(--v424-accent-strong,#4b47b8);
 }
 /* Black auténtico: fondo #000, superficies oscuras translúcidas, reflejos controlados (paleta propia, no inversión) */
 body.theme-black,body.theme-dark{
@@ -74,6 +76,7 @@ body.theme-black,body.theme-dark{
  --vx-income-soft:rgba(61,220,151,.14); --vx-expense-soft:rgba(255,122,156,.14); --vx-warning-soft:rgba(244,183,64,.16);
  --vx-disabled-fg:rgba(245,248,252,.38); --vx-disabled-bg:rgba(255,255,255,.06);
  --vx-mute:#aab8cd;
+ --vx-accent-ink:var(--f360-accent-readable,#b9b6ff);
 }
 /* Móvil: dimensiones propias (no se copian las de PC) */
 @media (max-width:790px){
@@ -96,3 +99,19 @@ html body.theme-black #app #page .v154-category-title,html body.theme-dark #app 
 html body.theme-black #app #page .v154-category-sub,html body.theme-dark #app #page .v154-category-sub{color:var(--vx-text-2)}
 html body.theme-black #app #page small.v1149-pct,html body.theme-dark #app #page small.v1149-pct{color:var(--vx-accent-text)}
 html body:not(.theme-black):not(.theme-dark) #app #page .v187-comp-number,html body:not(.theme-black):not(.theme-dark) #app #page .ff-bar-label{color:var(--vx-text-3)}
+
+/* ============================================================================
+   11 · TIPOGRAFÍA UNIVERSAL (Fase 04)
+   Una familia (--vx-font, la misma pila que usa la app), escala de tamaños y 4 pesos (400/500/600/700).
+   Los CSS heredados ya se normalizaron a esa escala en origen (peso → 400/500/600/700; tamaño mínimo 12 px).
+   Cifras tabulares en toda la app para que importes, porcentajes y tablas se alineen.
+   ========================================================================== */
+body{font-variant-numeric:tabular-nums;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+:root,body{
+ --vx-type-display:var(--vx-fs-display);--vx-type-title:var(--vx-fs-title);--vx-type-kpi:var(--vx-fs-kpi);--vx-type-body:var(--vx-fs-body);--vx-type-label:var(--vx-fs-label);
+}
+
+/* Importes: la cifra completa siempre es visible (no se encoge ni se corta); el contenedor se adapta a ella */
+:root body #app#app#app .vx-money,.vx-money{white-space:nowrap!important;flex-shrink:0!important;min-width:max-content!important;overflow:visible!important;text-overflow:clip!important;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+/* «bolder» del navegador convertía <b>/<strong> dentro de textos en 700 en peso 900: se fija a la escala */
+b,strong{font-weight:var(--vx-fw-bold)}

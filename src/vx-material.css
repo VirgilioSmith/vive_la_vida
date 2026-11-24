@@ -77,3 +77,25 @@ html body.theme-black #app#app #page .pill,html body.theme-dark #app#app #page .
 @media (prefers-reduced-motion:reduce){
  html body *,html body *::before,html body *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
 }
+
+/* ============================================================================
+   Fase 04 · Contraste de componentes compartidos (una regla por componente, no por pantalla)
+   ========================================================================== */
+/* Insignia de notificaciones: rojo semántico con texto blanco ≥ 4.5:1 */
+html body #app#app#app#app#app#app#app#app .v36-notification-count{background:#b3123f!important;color:#fff!important}
+/* Variaciones (positivo / negativo): texto y fondo semánticos por tema, independientes del acento */
+html body #app#app#app#app#app#app#app#app :is(.vexp-var.good,.vBanksPc-var.good,.vBanksPc-var-abs.good,.vflow-pp.good){color:var(--vx-positive)!important;background-color:var(--vx-income-soft)!important}
+html body #app#app#app#app#app#app#app#app :is(.vexp-var.bad,.vBanksPc-var.bad,.vBanksPc-var-abs.bad,.vflow-pp.bad){color:var(--vx-negative)!important;background-color:var(--vx-expense-soft)!important}
+html body #app#app#app#app#app#app#app#app :is(.vexp-var,.vBanksPc-var,.vflow-pp) :is(b,i,small){color:inherit!important}
+/* Mosaicos de KPI dentro de héroes de color: vidrio oscuro translúcido para que el texto blanco cumpla AA */
+html body #app#app#app#app#app#app#app#app :is(.bank-hero,.v1170-hero,.analytic-hero,.v1200-hero,.v1234-hero,.v12-wealth-hero) :is(.vPatrimony-position-part,.v187-interactive-kpi,.v1170-kpi,.vBanks-kpi){background-color:rgba(12,14,48,.26)!important;background-image:none!important}
+/* Textos atenuados (Black): jerarquía legible sobre vidrio oscuro */
+html body.theme-black #app#app#app#app#app#app#app#app :is(small,.vBanksPc-var i,.hint,.muted){color:var(--vx-text-2)}
+html body #app#app#app#app#app#app#app#app :is(.module-switch-tab.active,.module-switch-tab[aria-current=page]){background-color:var(--vx-accent-strong)!important;color:#fff!important}
+html body #app#app#app#app#app#app#app#app .v154-category-title{color:var(--vx-text)!important}
+html body.theme-black #app#app#app#app#app#app#app#app :is(.v1170-hero,.bank-hero,.analytic-hero) small{color:rgba(255,255,255,.92)!important}
+
+/* Iconos dentro de botones: nunca se comprimen (el buscador de Wallet PC mostraba su lupa de 10×19 px) */
+html body #app#app#app#app button>svg,html body #app#app#app#app .btn>svg,html body #app#app#app#app summary>svg{flex:0 0 auto!important;min-width:0}
+html body #app#app#app#app .vWalletPc-search svg{width:20px!important;height:20px!important;padding:0!important;margin:0!important}
+html body #app#app#app#app .vWalletPc-search{padding:0!important;gap:0!important;justify-content:center!important}
