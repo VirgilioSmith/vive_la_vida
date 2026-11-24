@@ -839,3 +839,41 @@ html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWallet
 html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWalletPc-consumption-row .vWalletPc-product-mark{width:19px!important}
 html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWalletPc-consumption-row{font-size:10px!important}
 }
+
+
+/* Bancos PC — referencia posición bancaria */
+@media(min-width:1121px){
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) minmax(0,1.32fr)!important;gap:12px!important;align-items:stretch!important;min-height:0!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-metrics{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;margin-bottom:12px!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-metric{min-height:clamp(86px,7.6vw,126px)!important;padding:12px!important;align-items:center!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-metric strong{font-size:clamp(17px,1.85vw,32px)!important;margin:3px 0!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-metric .vBanksPc-change{width:fit-content;padding:3px 8px;border-radius:99px;background:color-mix(in srgb,currentColor 9%,transparent)}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank{grid-template-columns:auto minmax(0,1fr) auto auto!important;grid-template-rows:auto!important;min-height:clamp(39px,3.5vw,55px)!important;gap:6px!important;padding:5px!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-bank>:first-child{grid-column:1;grid-row:1!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-bank>span:nth-child(2){grid-column:2;grid-row:1!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank b{grid-column:3;grid-row:1!important;justify-self:end;text-align:right;font-size:clamp(10px,.9vw,15px)!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-bank>svg:last-child{grid-column:4;grid-row:1!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank strong{font-size:clamp(11px,1vw,16px)!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-bank-options{margin:8px -4px!important}
+}
+@media(min-width:791px){
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-center:has(.vBanksPc-overview):not(:has(.v40-nonbank-detail)){border:1px solid var(--wallet-glass-edge,var(--bank-line));border-radius:24px;background:var(--wallet-ref-highlight),var(--wallet-ref-surface);box-shadow:var(--wallet-ref-shadow);backdrop-filter:blur(28px) saturate(140%);padding:10px}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview{border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;gap:9px!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile:not(:hover,[aria-pressed="true"]),html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile{position:relative;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto auto!important;min-height:clamp(68px,5.8vw,100px)!important;padding:9px 13px!important;border:1px solid var(--wallet-glass-edge,var(--bank-line))!important;border-radius:19px!important;background:var(--wallet-ref-highlight),var(--wallet-ref-surface,var(--bank-glass))!important;box-shadow:var(--wallet-glass-shadow,var(--bank-shadow))!important;gap:3px 8px!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-top{grid-column:1;grid-row:1;gap:12px!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-top>svg{display:none!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile::after{content:"›";grid-column:2;grid-row:1/4;align-self:center;font-size:27px;color:var(--bank-ink)}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-icon{width:clamp(36px,3.8vw,63px)!important;height:clamp(36px,3.8vw,63px)!important;border-radius:50%!important;background:color-mix(in srgb,var(--product-tint,var(--bank-accent)) 15%,transparent)!important;color:var(--product-tint,var(--bank-accent))!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-icon svg{width:55%!important;height:55%!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile[data-id="cards"]{--product-tint:#7955e9}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile[data-id="accounts"]{--product-tint:#07965f}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile[data-id="loans"]{--product-tint:#e87825}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile[data-id="certificates"]{--product-tint:#247de8}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-name{font-size:clamp(15px,1.4vw,24px)!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-metric{grid-column:1;grid-row:2;display:flex!important;flex-wrap:wrap;justify-content:flex-start;align-items:baseline;gap:4px!important;text-align:left!important;padding-left:clamp(48px,4.6vw,75px)}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-metric strong{font-size:clamp(12px,1.05vw,17px)!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-overview-foot{grid-column:1;grid-row:3;padding-left:clamp(48px,4.6vw,75px)!important;white-space:normal!important;overflow:visible!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile:nth-child(4).negative strong{background:color-mix(in srgb,var(--bank-negative) 13%,transparent)!important;color:var(--bank-negative)!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-consumption-rows>div{min-height:clamp(32px,3vw,46px)!important}
+html body #app#app main.vBanksPc-world #page#page .vBanksPc-consumption-rows .vBanksPc-meter{height:9px!important}
+}
