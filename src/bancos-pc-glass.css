@@ -249,7 +249,8 @@
  html body #app#app#app main.vBanksPc-world>.topbar{padding-bottom:10px!important;margin-bottom:18px!important}
  html body #app#app#app main.vBanksPc-world>.topbar .top-sub{line-height:1.4!important;margin-top:4px!important}
 }
-/* Si la tarjeta es angosta: las dos cápsulas se apilan SIEMPRE, en las cuatro por igual */
+/* Siempre en una sola fila (porcentaje + variación absoluta). Si no cabe, se quita «vs. mes anterior» en las cuatro por igual. */
 @container (max-width:470px){
- html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-row{flex-direction:column!important;align-items:flex-start!important;gap:5px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var i{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-row{flex-direction:row!important;flex-wrap:nowrap!important}
 }
