@@ -1322,8 +1322,8 @@ function v371CardReturnWidget(c,consolidatedCards=null,bankView=false,walletPc=f
  return `<section class="v266-wallet-panel v371-card-return${walletPc?' vWalletPc-panel vWalletPc-return':''}" aria-label="Retorno anual de beneficios de ${sanitize(c.name)}">
  <div class="v371-return-heading"><div>${inWallet?'':`<span class="v266-overline">BENEFICIOS · ${d.year}</span>`}${title}</div>${compact?'':`<button type="button" class="v371-return-action" data-v144-action="open-benefits" data-id="${benefitId}" aria-label="Abrir beneficios de ${sanitize(c.name)}">${icon('arrow')}</button>`}</div>
  <div class="v371-return-values">
- <div class="v371-return-tile">${inWallet?icon('card'):''}<small>Anualidad</small><strong>${compact&&!inWallet?(d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'):cost}</strong></div>
- <div class="v371-return-tile${inWallet&&d.benefit>0||compact&&d.benefit>0?' positive':''}">${inWallet?icon('gift2'):''}<small>Beneficios</small><strong>${benefit}</strong></div>
+ <div class="v371-return-tile">${inWallet?icon('card'):compact?`<span class="v371-rt-ico is-card">${icon('card')}</span>`:''}<small>Anualidad</small><strong>${compact&&!inWallet?(d.missingRate?'—':d.hasConfigured?money(d.configured,'DOP',2):'Sin definir'):cost}</strong></div>
+ <div class="v371-return-tile${inWallet&&d.benefit>0||compact&&d.benefit>0?' positive':''}">${inWallet?icon('gift2'):compact?`<span class="v371-rt-ico is-gift">${icon('gift2')}</span>`:''}<small>Beneficios</small><strong>${benefit}</strong></div>
  <div class="v371-return-tile ${tone}"><small>${bankView?'Retorno neto':'Retorno'}</small><strong>${net}</strong></div>
  <div class="v371-return-tile ${tone}"><small>Retorno %</small><strong>${percentage}</strong></div>
  </div>
