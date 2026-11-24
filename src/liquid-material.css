@@ -37,7 +37,7 @@ html body.theme-black[data-vive-bg][data-vive-bg],html body.theme-dark[data-vive
   radial-gradient(ellipse 80% 60% at 112% 22%,color-mix(in srgb,var(--lg-complement) 11%,transparent),transparent 74%),#000;
 }
 /* Nivel 02 · cristal translúcido (superficies principales) */
-html body #app#app #page :is(.panel,.v134-panel,.bank-card,.loan-product,.cert-card,.vWalletPc-panel,.v266-wallet-panel,.vBanksPc-bank-list,.vBanksPc-institution,.ff-tile,.v431-tile,.movement-metric,.summary-glass,.kpi,.v1170-panel,.v1170-bcard,.v290-budget-web,.v1301-insight,.vWalletPc-stat,.theme-settings){
+html body #app#app #page :is(.panel,.v134-panel,.bank-card,.loan-product,.cert-card,.vWalletPc-panel,.v266-wallet-panel,.vBanksPc-bank-list,.vBanksPc-institution,.ff-tile:not(.ff-health-card),.v431-tile,.movement-metric,.summary-glass,.kpi,.v1170-panel,.v1170-bcard,.v290-budget-web,.v1301-insight,.vWalletPc-stat,.theme-settings){
  background-image:var(--lg-shine),var(--lg-refract)!important;
  border-color:var(--lg-edge)!important;
  box-shadow:var(--lg-in-top),var(--lg-in-bot),var(--lg-shadow-1),var(--lg-shadow-2)!important;
@@ -77,3 +77,18 @@ html body #app#app :is(.v421-net,.v881-metric,.v421-mini-card,.v881-mini,.v421-m
  background-image:var(--lg-shine-soft)!important;border-color:var(--lg-edge-soft)!important;box-shadow:var(--lg-in-top),0 2px 8px rgba(28,39,59,.03)!important}
 body.theme-black #app#app :is(.v421-net,.v881-metric,.v421-mini-card,.v881-mini,.v421-meter,.v362-detail-stat,.v89-debt-breakdown,.v317-heat-summary,.vive-mobile-view-all),body.theme-dark #app#app :is(.v421-net,.v881-metric,.v421-mini-card,.v881-mini,.v421-meter,.v362-detail-stat,.v89-debt-breakdown,.v317-heat-summary,.vive-mobile-view-all){box-shadow:var(--lg-in-top),0 4px 12px rgba(0,0,0,.35)!important}
 html body #app#app .vive-mobile-dock{background-image:var(--lg-shine),var(--lg-refract)!important}
+
+/* Nivel 04 · cristal cromático en Neto del mes (conserva su degradado de acento; añade reflejo superior y profundidad) */
+html body #app#app #page .ff-health-card{position:relative;overflow:hidden;border-color:rgba(255,255,255,.5)!important;
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.6),inset 0 -1px 1px rgba(255,255,255,.12),0 14px 34px color-mix(in srgb,var(--lg-accent) 28%,transparent)!important}
+html body #app#app #page .ff-health-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+ background:radial-gradient(ellipse 70% 55% at 88% 0%,rgba(255,255,255,.22),transparent 62%),linear-gradient(180deg,rgba(255,255,255,.14),transparent 38%)}
+/* Resumen PC (referencia maestra): círculos, cápsulas y botones con material de cristal */
+html body #app#app #page .ff-bubble:not(.featured){background-image:radial-gradient(circle at 30% 20%,rgba(255,255,255,.7),rgba(255,255,255,.12) 62%),var(--lg-refract)!important;
+ border-color:var(--lg-edge)!important;box-shadow:var(--lg-in-top),0 10px 26px color-mix(in srgb,var(--lg-accent) 12%,rgba(28,39,59,.06))!important}
+html body #app#app #page .ff-bubble.featured{box-shadow:inset 0 1px 1px rgba(255,255,255,.6),inset 0 -2px 6px rgba(0,0,0,.12),0 16px 34px color-mix(in srgb,var(--lg-accent) 34%,transparent)!important;border:1px solid rgba(255,255,255,.4)!important}
+html body #app#app #page :is(.ff-bubble,.ff-bubbles button){transition:transform var(--vive-transition,200ms) ease,box-shadow 200ms ease}
+@media(hover:hover){html body #app#app #page .ff-bubble:hover{transform:translateY(-2px)}}
+html body #app#app #page :is(.ff-tile,.ff-balance) :is(a.btn,button.btn,.ff-link,.ff-actions button){border-color:var(--lg-edge)!important;box-shadow:var(--lg-in-top),0 3px 10px color-mix(in srgb,var(--lg-accent) 12%,rgba(28,39,59,.05))!important}
+/* Interactive Glass: iluminación localizada al pasar el cursor sobre superficies interactivas */
+@media(hover:hover){html body #app#app #page :is(button.vBanksPc-product,button.vBanksPc-bank,button.v431-tile,button.vWalletPc-limit-row,.ff-tile button):hover{box-shadow:var(--lg-in-top),0 8px 22px color-mix(in srgb,var(--lg-accent) 16%,rgba(28,39,59,.06))!important}}
