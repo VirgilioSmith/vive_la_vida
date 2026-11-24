@@ -251,6 +251,8 @@
 }
 /* Siempre en una sola fila (porcentaje + variación absoluta). Si no cabe, se quita «vs. mes anterior» en las cuatro por igual. */
 @container (max-width:470px){
- html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var i{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page :is(.vBanksPc-var,.vBanksPc-var-abs){font-size:11.5px!important;padding:3px 7px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var{gap:4px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var i{padding-left:4px!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-row{flex-direction:row!important;flex-wrap:nowrap!important}
 }

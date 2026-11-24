@@ -2297,7 +2297,7 @@ function vBanksPcVariation(now,prev,{inverse=false}={}){
  const abs=rnd(now-prev),pct=Math.abs(prev)>=.01?(now-prev)/Math.abs(prev)*100:null;
  const tone=Math.abs(abs)<.005?'flat':((abs>0)!==inverse)?'good':'bad';
  const pctText=pct===null?'—':`${pct>0?'+':''}${pct.toFixed(1)}%`;
- return `<span class="vBanksPc-var ${tone}"><b>${pctText}</b><i>vs. mes anterior</i></span><span class="vBanksPc-var-abs ${tone}">${abs>0?'+':''}${money(abs)}</span>`;
+ return `<span class="vBanksPc-var ${tone}"><b>${pctText}</b><i>vs mes ant.</i></span><span class="vBanksPc-var-abs ${tone}">${abs>0?'+':''}${money(abs)}</span>`;
 }
 function vBanksPcScopedTx(active,selected){
  const filtered=selected||v42InstitutionFilter!=='all'||v61InstitutionProfile!=='all';
