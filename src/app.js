@@ -2197,6 +2197,14 @@ function vBanksOpenDesktopProduct(kind,id){
  render();window.scrollTo(0,0);
  document.querySelector('.vBanks-detail')?.focus({preventScroll:true});
 }
+
+/* Bancos PC · ilustraciones de producto (maqueta): tarjetas, cuentas, préstamos y certificados. */
+const V_BANKS_ART={
+ cards:'<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="vbaC1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8f7bff"/><stop offset="1" stop-color="#5b3fe0"/></linearGradient><linearGradient id="vbaC2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5aa8ff"/><stop offset="1" stop-color="#2f6fe8"/></linearGradient></defs><rect x="20" y="8" width="38" height="26" rx="6" fill="url(#vbaC1)" transform="rotate(8 39 21)"/><rect x="6" y="22" width="40" height="28" rx="6" fill="url(#vbaC2)" stroke="#fff" stroke-opacity=".6"/><rect x="6" y="29" width="40" height="6" fill="#1d3fa8" opacity=".55"/><rect x="12" y="41" width="12" height="4" rx="2" fill="#fff" opacity=".85"/><rect x="28" y="41" width="8" height="4" rx="2" fill="#fff" opacity=".5"/></svg>',
+ accounts:'<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="vbaB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#43d08c"/><stop offset="1" stop-color="#14934f"/></linearGradient></defs><path d="M32 6 6 20v6h52v-6z" fill="url(#vbaB)"/><circle cx="32" cy="18" r="3" fill="#fff" opacity=".9"/><g fill="url(#vbaB)"><rect x="10" y="30" width="7" height="18" rx="1.5"/><rect x="21" y="30" width="7" height="18" rx="1.5"/><rect x="36" y="30" width="7" height="18" rx="1.5"/><rect x="47" y="30" width="7" height="18" rx="1.5"/></g><rect x="6" y="51" width="52" height="6" rx="2" fill="#0f7d42"/></svg>',
+ loans:'<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="vbaL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc468"/><stop offset="1" stop-color="#f08a24"/></linearGradient></defs><path d="M22 14c0-3 3-6 10-6s10 3 10 6c0 2-2 3-3 4 6 3 10 9 10 15 0 8-7 11-17 11s-17-3-17-11c0-6 4-12 10-15-1-1-3-2-3-4z" fill="url(#vbaL)"/><text x="32" y="38" text-anchor="middle" font-size="18" font-weight="800" fill="#fff" font-family="Inter,system-ui,sans-serif">$</text><path d="M4 46c6-4 12-5 18-3l10 3c3 1 3 4 0 4h-9" fill="none" stroke="#f08a24" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 56c8 0 14-1 22-4l22-8c3-1 6 2 3 5l-12 8c-4 2-9 3-14 3H4" fill="#ffd9a8" stroke="#f08a24" stroke-width="2.4" stroke-linejoin="round"/></svg>',
+ certificates:'<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="vbaS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6db4ff"/><stop offset="1" stop-color="#2f6fe8"/></linearGradient></defs><rect x="8" y="8" width="44" height="40" rx="5" fill="#fff" stroke="url(#vbaS)" stroke-width="3.2"/><rect x="15" y="16" width="24" height="3.5" rx="1.7" fill="#2f6fe8"/><rect x="15" y="24" width="30" height="3" rx="1.5" fill="#9ec4ff"/><rect x="15" y="31" width="18" height="3" rx="1.5" fill="#9ec4ff"/><path d="M40 44l-4 14 8-4 8 4-4-14z" fill="#f4a53a"/><circle cx="44" cy="40" r="9" fill="url(#vbaS)" stroke="#fff" stroke-width="2"/><path d="m40 40 3 3 6-6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
 function vBanksProducts(groups,bankId,f,mobile){
  if(!mobile){
   const current=['all',...V_BANKS_GROUPS.map(([key])=>key)].includes(ui.vBanksPcProduct)?ui.vBanksPcProduct:'all';
@@ -2217,7 +2225,7 @@ function vBanksProducts(groups,bankId,f,mobile){
     const count=groups[key].length;
     const body=count?(metric?`<small>${metric}</small><strong>${valueHtml}</strong>`:`<strong class="is-line">${valueHtml}</strong>`):`<strong class="is-line is-muted">Sin productos registrados</strong>`;
     return `<button type="button" class="vBanksPc-overview-tile vBanksPc-tile-${key}${value<0?' is-negative':''}" data-act="banksPcProducts" data-id="${key}" aria-label="Ver ${label.toLowerCase()}: ${count} ${count===1?'producto':'productos'}">
-      <span class="vBanksPc-overview-top"><span class="vBanksPc-overview-icon">${icon(glyph)}</span><span class="vBanksPc-overview-name">${label}<small>${count} ${count===1?'producto':'productos'}</small></span></span>
+      <span class="vBanksPc-overview-top"><span class="vBanksPc-overview-icon">${V_BANKS_ART[key]||icon(glyph)}</span><span class="vBanksPc-overview-name">${label}<small>${count} ${count===1?'producto':'productos'}</small></span></span>
       <span class="vBanksPc-overview-metric">${body}</span>${icon('arrow')}
      </button>`;
    }).join('');
