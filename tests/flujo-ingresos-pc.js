@@ -45,10 +45,10 @@ async function run(browser,{theme,palhex,width=1440,height=900,shot}){
  ok(await p.locator('.vflow-tabs .is-on').innerText()==='Flujo','Flujo es la vista predeterminada');
  // Flujo: consistencia contable
  let k=await p.locator('.vflow-kpi strong').allInnerTexts();
- assert.equal(num(k[0]),111578,`[${tag}] Flujo·Ingresos = 101,000 neto + 10,578 retenido: ${k[0]}`);
- assert.equal(num(k[1]),23578,`[${tag}] Flujo·Egresos = 13,000 + 10,578: ${k[1]}`);
+ assert.equal(num(k[0]),110578,`[${tag}] Flujo·Ingresos = 101,000 neto + 9,578 retenido: ${k[0]}`);
+ assert.equal(num(k[1]),22578,`[${tag}] Flujo·Egresos = 13,000 + 9,578: ${k[1]}`);
  assert.equal(num(k[2]),88000,`[${tag}] Resultado neto = efectivo recibido − gasto en efectivo = 88,000: ${k[2]}`);
- ok(/78\.9%/.test(await p.locator('.vflow-donut strong').innerText()),'tasa de ahorro = 88,000 / 111,578 = 78.9%');
+ ok(/79.6%/.test(await p.locator('.vflow-donut strong').innerText()),'tasa de ahorro = 88,000 / 110,578 = 79.6%');
  await p.locator('.vflow-evo .vexp-kind button',{hasText:'Tendencia'}).click();ok(await p.locator('.vflow-ln.is-inc').count()===1,'Tendencia dibuja líneas');
  await p.locator('.vflow-evo .vexp-kind button',{hasText:'Montos'}).click();ok(await p.locator('.vflow-inc').count()>=1,'Montos dibuja columnas');
  // período compartido: Año en Flujo se conserva en Ingresos y Egresos

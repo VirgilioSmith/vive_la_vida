@@ -49,14 +49,14 @@ async function run(browser,{theme,palhex,width=1440,height=900,shot}){
  ok(await p.locator('.vexp-inst').count()===6,'seis filas de instrumento/costo');
  // mes: nómina integrada
  let k=await kpiVals(p);
- assert.equal(num(k[0]),23578,`[${tag}] total gastado = 13,000 + 10,578 de nómina: ${k[0]}`);
- assert.equal(num(k[1]),20578,`[${tag}] fijos = alquiler 10,000 + nómina 10,578: ${k[1]}`);
+ assert.equal(num(k[0]),22578,`[${tag}] total gastado = 13,000 + 9,578 de nómina (AFP no es gasto): ${k[0]}`);
+ assert.equal(num(k[1]),19578,`[${tag}] fijos = alquiler 10,000 + nómina 9,578: ${k[1]}`);
  assert.equal(num(k[2]),3000,`[${tag}] variables = 3,000: ${k[2]}`);
- ok(Math.abs(await catTotal(p)-23578)<1,'las categorías reconcilian con el total');
- assert.equal(k[3],'26.0%',`[${tag}] peso sobre ingresos = 23,578 / (80,000 neto + 10,578 retenido) = 26.0%: ${k[3]}`);
+ ok(Math.abs(await catTotal(p)-22578)<1,'las categorías reconcilian con el total');
+ assert.equal(k[3],'25.2%',`[${tag}] peso sobre ingresos = 22,578 / (80,000 neto + 9,578 retenido) = 26.0%: ${k[3]}`);
  ok(/Gasto reconocido \/ ingreso reconocido/.test(await p.locator('.vexp-kpi-4').innerText()),'texto del KPI');
  const cat=n=>p.locator('.vexp-cat',{hasText:n}).first();
- for(const [c,amt] of [['Impuestos y comisiones',7268],['Salud',1677],['Otros gastos',1633]]){
+ for(const [c,amt] of [['Impuestos y comisiones',7268],['Salud',1677],['Otros gastos',633]]){
   const row=cat(c);ok(await row.count()===1,`categoría ${c} presente`);
   assert.equal(num(await row.locator('summary b').innerText()),amt,`[${tag}] ${c} = ${amt}`);
  }
@@ -67,7 +67,7 @@ async function run(browser,{theme,palhex,width=1440,height=900,shot}){
  ok(/100\.0%/.test(await cat('Salud').locator('.vexp-sub em').first().innerText()),'subcategoría única = 100% de su categoría');
  await cat('Salud').locator('summary').click();ok(!(await cat('Salud').evaluate(e=>e.open)),'contrae');
  await cat('Otros gastos').locator('summary').click();
- ok(/AFP/.test(await cat('Otros gastos').innerText()),'AFP dentro de Otros gastos');
+ ok(!/AFP/.test(await p.locator('#page').innerText()),'AFP es ahorro previsional: no aparece como gasto');
  // filtros fijas / variables
  await p.locator('.vexp-kind button',{hasText:'Fijas'}).click();
  ok(await cat('Vivienda').count()===1&&await cat('Alimentación').count()===0,'Fijas: Vivienda sí, Alimentación no');
@@ -78,14 +78,14 @@ async function run(browser,{theme,palhex,width=1440,height=900,shot}){
  const varText=await p.locator('.vexp-kpi-1 .vexp-var-row').innerText();ok(/vs mes ant\./.test(varText)&&!/[▲▼↑↓]/.test(varText),'variación sin flechas');
  // año
  await p.locator('.vexp-seg button',{hasText:'Año'}).click();await p.waitForTimeout(150);
- k=await kpiVals(p);assert.equal(num(k[0]),23578+8000,`[${tag}] año = mes actual + mes anterior (si es mismo año) o solo actual`.replace('mes anterior (si es mismo año) o solo actual','mes anterior')) ;
+ k=await kpiVals(p);assert.equal(num(k[0]),22578+8000,`[${tag}] año = mes actual + mes anterior (si es mismo año) o solo actual`.replace('mes anterior (si es mismo año) o solo actual','mes anterior')) ;
  ok(/vs año ant\.|Sin base/.test(await p.locator('.vexp-kpi-1 .vexp-var-row').innerText()),'comparación anual');
  ok(await p.locator('.vexp-seg button.is-on').innerText()==='Año','segmento activo = Año');
  // histórico
  await p.locator('.vexp-seg button',{hasText:'Histórico'}).click();await p.waitForTimeout(150);
- k=await kpiVals(p);assert.equal(num(k[0]),31578,`[${tag}] histórico incluye todo lo registrado`);
+ k=await kpiVals(p);assert.equal(num(k[0]),30578,`[${tag}] histórico incluye todo lo registrado`);
  ok(/Sin base comparable/.test(await p.locator('.vexp-kpi-1 .vexp-var-row').innerText()),'histórico sin variación inventada');
- ok(Math.abs(await catTotal(p)-31578)<1,'histórico reconcilia');
+ ok(Math.abs(await catTotal(p)-30578)<1,'histórico reconcilia');
  ok(!/NaN|undefined|Infinity/.test(await p.locator('#page').innerText()),'sin NaN/undefined');
  await p.locator('.vexp-seg button',{hasText:'Mes'}).click();
  // integridad: no se alteraron movimientos ni saldos

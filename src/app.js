@@ -9574,7 +9574,7 @@ function v40Payroll(schedule,date){
   isr=rnd(tax/12);
  }else isr=0;
  const monthNet=Math.max(0,rnd(grossMonthly-afp-sfs-isr-other));
- return {gross:rnd(grossMonthly*f),net:rnd(monthNet*f),afp:rnd(afp*f),sfs:rnd(sfs*f),isr:rnd(isr*f),other:rnd(other*f),generalOther:rnd(generalOther*f),companyOther:rnd(companyOther*f),companyItems:companyItems.map(x=>({...x,amount:rnd(x.amount*f),monthlyAmount:x.amount})),frequency:schedule.frequency,kind:mode,currency:schedule.currency,rateVersion:rule?.id||null,ruleEffectiveFrom:rule?.effectiveFrom||null,ruleTaxYear:rule?.taxYear||null,calculation:'Estimación mensualizada; verifica el comprobante de pago.',staleRule:mode==='formal'&&Number(date.slice(0,4))>Number(rule?.taxYear||0)};
+ return {gross:rnd(grossMonthly*f),net:rnd(monthNet*f),afp:rnd(afp*f),sfs:rnd(sfs*f),isr:rnd(isr*f),other:rnd(other*f),generalOther:rnd(generalOther*f),companyOther:rnd(companyOther*f),companyItems:companyItems.map(x=>({...x,amount:rnd(x.amount*f),...(x.interest!=null?{interest:rnd(x.interest*f)}:{}),monthlyAmount:x.amount})),frequency:schedule.frequency,kind:mode,currency:schedule.currency,rateVersion:rule?.id||null,ruleEffectiveFrom:rule?.effectiveFrom||null,ruleTaxYear:rule?.taxYear||null,calculation:'Estimación mensualizada; verifica el comprobante de pago.',staleRule:mode==='formal'&&Number(date.slice(0,4))>Number(rule?.taxYear||0)};
 }
 function v40NextDate(date,frequency){
  if(frequency==='weekly')return addDays(date,7);
@@ -9655,7 +9655,7 @@ function v40IncomePost(s,due,actualNet,actualDate='',note='',mode='auto',targetA
  const scaled={...snap};
  for(const fld of ['gross','afp','sfs','isr','other','generalOther','companyOther'])scaled[fld]=rnd(num(snap[fld])*ratio);
  scaled.net=value;
- scaled.companyItems=(snap.companyItems||[]).map(x=>({...x,amount:rnd(num(x.amount)*ratio)}));
+ scaled.companyItems=(snap.companyItems||[]).map(x=>({...x,amount:rnd(num(x.amount)*ratio),...(x.interest!=null?{interest:rnd(num(x.interest)*ratio)}:{})}));
  const tx={id:uuid(),created:new Date().toISOString(),type:'income',date:day,amount:value,currency:s.currency,
   accountId:a.id,category:s.kind==='formal'?'Salario y nómina':'Negocios y ventas',
   subcategory:s.kind==='formal'?'Sueldo recurrente':'Ingreso recurrente',note:(note||s.name).slice(0,180),
@@ -9919,9 +9919,9 @@ function v43NormalizeCompanyDeductions(raw){
   try{arr=JSON.parse(raw||'[]');}catch(_){throw Error('Revisa las deducciones de empresa.');}
  }
  if(!Array.isArray(arr)||arr.length>12)throw Error('Puedes registrar hasta 12 conceptos de deducción por empresa.');
- return arr.map(item=>({name:String(item?.name||'').trim().slice(0,75),amount:Number(item?.amount)}))
+ return arr.map(item=>({name:String(item?.name||'').trim().slice(0,75),amount:Number(item?.amount),interest:item?.interest===undefined||item?.interest===null||item?.interest===''?null:Number(item.interest)}))
   .filter(item=>item.name||item.amount)
-  .map(item=>{if(!item.name||!Number.isFinite(item.amount)||item.amount<0||item.amount>1e9)throw Error('Cada deducción de empresa debe tener concepto e importe válido.');return {name:item.name,amount:rnd(item.amount)};});
+  .map(item=>{if(!item.name||!Number.isFinite(item.amount)||item.amount<0||item.amount>1e9)throw Error('Cada deducción de empresa debe tener concepto e importe válido.');if(item.interest!==null&&(!Number.isFinite(item.interest)||item.interest<0||item.interest>item.amount))throw Error('El interés de una deducción no puede superar su importe.');return item.interest===null?{name:item.name,amount:rnd(item.amount)}:{name:item.name,amount:rnd(item.amount),interest:rnd(item.interest)};});
 }
 function v43DeductionsRow(item={name:'',amount:0}){
  const opts=V43_EMPLOYER_CONCEPTS.map(n=>`<option value="${sanitize(n)}" ${n===item.name?'selected':''}>${sanitize(n)}</option>`).join('');
@@ -10192,14 +10192,22 @@ pages.analytics=v45PriorAnalytics; // V47: sin gráficos añadidos al resumen de
 const v45PriorAdvanced=pages.advanced;
 pages.advanced=v45PriorAdvanced; // V47: sin duplicar módulos analíticos.
 function v45PayrollHistoricalRows(){
- const result=[];
+ /* kind: 'expense' (gasto real), 'savings' (AFP: ahorro previsional, no es consumo) o 'capital' (amortización de préstamo de nómina: reduce deuda, no es gasto). */
+ const result=[],isLoan=n=>/pr[eé]stamo|cuota\s*(de\s*)?pr[eé]stamo/i.test(String(n||''));
  for(const t of db.transactions||[]){if(!t.incomeScheduleId||!t.payrollSnapshot)continue;
-  const s=t.payrollSnapshot,items=[
-   ['AFP (Pensiones)','Otros gastos',s.afp],['SFS (Salud)','Salud',s.sfs],['ISR (Impuesto)','Impuestos y comisiones',s.isr],
-   ['Descuento general',db.incomeSchedules.find(x=>x.id===t.incomeScheduleId)?.generalDeductionCategory||'Otros gastos',s.generalOther||0],
-   ...(s.companyItems||[]).map(c=>[c.name,c.category||'Otros gastos',c.amount])
-  ];
-  for(const [name,category,amount] of items){if(Number(amount)>0)result.push({id:t.id,sourceId:t.incomeScheduleId,date:t.date,category,name,amount:Number(amount),currency:t.currency});}
+  const s=t.payrollSnapshot,sch=db.incomeSchedules.find(x=>x.id===t.incomeScheduleId);
+  const push=(name,category,amount,kind='expense',extra={})=>{if(Number(amount)>0)result.push({id:t.id,sourceId:t.incomeScheduleId,date:t.date,category,name,amount:Number(amount),currency:t.currency,kind,...extra})};
+  push('AFP (Pensiones)','Ahorro previsional',s.afp,'savings');
+  push('SFS (Salud)','Salud',s.sfs);
+  push('ISR (Impuesto)','Impuestos y comisiones',s.isr);
+  push('Descuento general',sch?.generalDeductionCategory||'Otros gastos',s.generalOther||0);
+  for(const c of s.companyItems||[]){
+   if(isLoan(c.name)||c.category==='Deudas e intereses'){
+    const total=Number(c.amount)||0,hasSplit=c.interest!=null&&Number.isFinite(Number(c.interest)),interest=hasSplit?Math.min(total,Math.max(0,Number(c.interest))):total;
+    push(c.name+(hasSplit?' · intereses y cargos':''),'Deudas e intereses',interest,'expense',{unsplit:!hasSplit});
+    if(hasSplit)push(c.name+' · capital','Deudas e intereses',rnd(total-interest),'capital');
+   }else push(c.name,c.category||'Otros gastos',c.amount);
+  }
  }
  return result;
 }
@@ -10236,14 +10244,16 @@ const V_EXP_PAYROLL_NAME={'AFP (Pensiones)':'AFP · pensiones','SFS (Salud)':'Se
 const V_EXP_METHOD_MAP={'Tarjetas de crédito':'Tarjetas de crédito','Cuentas y efectivo':'Cuentas y efectivo','Costos de tarjetas':'Costos de tarjetas','Costos de préstamos':'Costos de préstamos','Costos del pago de préstamo':'Costos de préstamos','Costos del pago de tarjeta':'Costos del pago de tarjeta','Costos de la operación':'Costos de la operación','Costos de transferencia':'Costos de la operación'};
 const V_EXP_MEMO=new Map();
 function vExpMonth(m){
- const key=m+'|'+(db.transactions||[]).length+'|'+(db.incomeSchedules||[]).length;
+ let sig=0;for(const t of db.transactions||[]){const ps=t.payrollSnapshot;if(ps&&String(t.date||'').startsWith(m))sig+=num(t.amount)+num(ps.afp)*3+num(ps.sfs)*5+num(ps.isr)*7+num(ps.generalOther)*11+(ps.companyItems||[]).reduce((a,c)=>a+num(c.amount)*13+num(c.interest)*17,0)}
+ const key=m+'|'+(db.transactions||[]).length+'|'+(db.incomeSchedules||[]).length+'|'+sig;
  if(V_EXP_MEMO.has(key))return V_EXP_MEMO.get(key);
  const t=monthlyTotals(Number(m.slice(0,4)),Number(m.slice(5,7)));
- const by={...t.expenseBy},sub={...t.expenseSubBy},payFixed={},paySubs={};let pay=0;
+ const by={...t.expenseBy},sub={...t.expenseSubBy},payFixed={},paySubs={};let pay=0,prev=0,cap=0;
  for(const r of v45PayrollHistoricalRows()){if(!String(r.date||'').startsWith(m))continue;
   const v=fx(r.amount,r.currency),nm=V_EXP_PAYROLL_NAME[r.name]||r.name;
+  if(r.kind==='savings'){prev+=v;continue}if(r.kind==='capital'){cap+=v;continue}
   by[r.category]=(by[r.category]||0)+v;sub[r.category+'||'+nm]=(sub[r.category+'||'+nm]||0)+v;payFixed[r.category]=(payFixed[r.category]||0)+v;paySubs[r.category+'||'+nm]=1;pay+=v}
- const out={by,sub,payFixed,paySubs,pay,total:rnd(Object.values(by).reduce((a,v)=>a+num(v),0))};
+ const out={by,sub,payFixed,paySubs,pay,prev,cap,total:rnd(Object.values(by).reduce((a,v)=>a+num(v),0))};
  if(V_EXP_MEMO.size>400)V_EXP_MEMO.clear();V_EXP_MEMO.set(key,out);return out;
 }
 function vExpScope(){
@@ -10374,6 +10384,7 @@ function vFlowPage(){
  const pInc=S.prior?S.prior.reduce((a,m)=>a+vFlowIncomeMonth(m),0):null,pExp=S.prior?S.prior.reduce((a,m)=>a+vExpMonth(m).total,0):null,pNet=pInc===null?null:pInc-pExp;
  const pl=S.mode==='month'?'vs. '+vExpFmtMonth(S.prior[0]).toLowerCase():S.mode==='year'?'vs. mismo tramo '+(S.y-1):'';
  const rate=cur>.005?net/cur*100:null,pRate=pInc!==null&&pInc>.005?pNet/pInc*100:null;
+ const prevT=rnd(S.months.reduce((a,m)=>a+vExpMonth(m).prev,0)),capT=rnd(S.months.reduce((a,m)=>a+vExpMonth(m).cap,0));
  const mode=ui.vFlowChart==='trend'?'trend':'amounts';
  const series=vFlowSeries();
  const kp=[['Ingresos',cur,pInc,'coins2',false,'is-inc'],['Egresos',exp,pExp,'wallet',true,'is-exp'],['Resultado neto',net,pNet,'chart',false,'is-net']].map(([l,v,pv,g,inv,c])=>`<article class="vflow-kpi ${c}"><span class="vexp-ico">${icon(g)}</span><div><span>${l}</span><strong>${money(v)}</strong>${vFlowKpiVar(v,pv,pl,inv)}</div></article>`).join('');
@@ -10385,7 +10396,7 @@ function vFlowPage(){
   <div class="vflow-grid"><section class="vexp-panel vflow-evo"><header><span class="vexp-ico">${icon('chart')}</span><div><h2>Evolución ${S.mode==='all'?'anual':'mensual'}</h2><p>Ingresos, egresos y resultado • ${S.mode==='all'?'Histórico':S.y}</p></div><div class="vexp-kind" role="group" aria-label="Tipo de gráfico">${[['amounts','Montos'],['trend','Tendencia']].map(([k,l])=>`<button type="button" data-act="flowChart" data-id="${k}" aria-pressed="${mode===k}" class="${mode===k?'is-on':''}">${l}</button>`).join('')}</div></header>${vFlowChart(series,mode)}</section>
    <section class="vexp-panel vflow-rate"><div class="vflow-donut" role="img" aria-label="Tasa de ahorro ${rate===null?'sin datos':rate.toFixed(1)+'%'}"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="vflow-track"/><circle cx="60" cy="60" r="50" class="vflow-arc" pathLength="100" stroke-dasharray="${arc.toFixed(1)} 100" transform="rotate(-90 60 60)"/></svg><div><small>Tasa de ahorro</small><strong>${rate===null?'—':rate.toFixed(1)+'%'}</strong></div></div>
     <div class="vflow-rows"><div><span>${icon('analytics')}Ahorro ${noun}</span><b>${money(net)}</b></div>${S.mode==='all'?'':`<div><span>${icon('calendar')}${S.mode==='month'?'Mes anterior':'Mismo tramo '+(S.y-1)}</span><b>${pRate===null?'—':pRate.toFixed(1)+'%'}</b></div>`}${pp===null?'':`<div class="vflow-pp ${pp>=0?'good':'bad'}"><span>${pp>=0?'+':''}${pp.toFixed(1)} pp</span><small>${pl}</small></div>`}</div></section></div>
-  <p class="vflow-note">Los ingresos incluyen las retenciones de nómina (salario bruto reconocido) porque los egresos las incluyen; así el resultado neto coincide con el efectivo recibido menos el gasto en efectivo. No se cuentan transferencias propias, pagos de tarjeta ni capital de préstamos.</p></div>`;
+  <p class="vflow-note"><b>Flujo efectivo:</b> ${money(net)} (neto depositado − gasto en efectivo). <b>Resultado económico:</b> ${money(net+prevT+capT)} al sumar lo retenido que no es gasto (AFP ${money(prevT)} y capital de préstamos de nómina ${money(capT)}), que va a ahorro previsional y reducción de deuda. Los ingresos incluyen las retenciones tratadas como gasto (ISR, ARS/SFS, intereses y otras) para no restarlas dos veces; no se cuentan transferencias propias, pagos de tarjeta ni capital de préstamos.</p></div>`;
 }
 const vFlowPrevExpenses=pages.expenses;
 pages.expenses=function(){return isMobileViewport()?vFlowPrevExpenses():vExpensesPc()};
