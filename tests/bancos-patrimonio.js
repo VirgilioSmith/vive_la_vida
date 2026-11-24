@@ -397,13 +397,8 @@ async function testPatrimony(browser,width){
   await go(p,'vision');
   assert.equal(await p.evaluate(()=>window.__T.ui().page),'patrimony');
   await p.getByRole('heading',{name:'Tu posición neta',exact:true}).waitFor();
-  const exposure=p.getByRole('region',{name:'Créditos y patrimonio'});
-  assert.equal(await exposure.getByText('Exposición financiera',{exact:true}).count(),1);
-  assert.equal(await exposure.getByText('Utilización de crédito por moneda',{exact:true}).count(),1);
-  assert.equal(await exposure.getByText('Calendario y exposición a vencimientos',{exact:true}).count(),1);
+  assert.equal(await p.getByRole('region',{name:'Créditos y patrimonio'}).count(),0,'Patrimonio ya no incluye «Exposición financiera».');
   assert.equal(await p.locator('[data-act="navigate"][data-id="payments"]').count(),0);
-  await exposure.getByRole('button',{name:'Abrir calendario'}).click();
-  assert.equal(await p.evaluate(()=>window.__T.ui().page),'pressure');
   await go(p,'payments');
   assert.equal(await p.evaluate(()=>window.__T.ui().page),'patrimony');
   const screenshots=process.env.BANKS_VISUAL_DIR||process.env.WALLET_VISUAL_DIR;
