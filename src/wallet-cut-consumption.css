@@ -1,0 +1,28 @@
+/* Wallet: shared status, flat cutoff amounts and compact consumption. */
+html body #app#app #page#page :is(.v1244-cutpanel,.vWalletPc-strategic .vWalletPc-cuts) .wallet-cut-status{display:inline-flex!important;align-items:center;justify-content:center;flex:none;padding:4px 9px!important;border-radius:999px!important;line-height:1.2!important;font-size:clamp(10px,.8vw,12px)!important;font-weight:750!important;white-space:nowrap;color:var(--wallet-deep,var(--wallet-glass-accent,var(--ui-readable,var(--text))))!important;background:color-mix(in srgb,var(--vive-theme-color,var(--accent,#087b72)) 13%,transparent)!important;border:1px solid color-mix(in srgb,var(--vive-theme-color,var(--accent,#087b72)) 24%,transparent)!important}
+html body #app#app #page#page :is(.v1244-cutpanel,.vWalletPc-strategic .vWalletPc-cuts) .wallet-cut-status.negative{color:var(--negative,#b42336)!important;border-color:color-mix(in srgb,var(--negative,#b42336) 28%,transparent)!important;background:color-mix(in srgb,var(--negative,#b42336) 9%,transparent)!important}
+@media(max-width:790px){
+html body #app#app main.world-wallet #page#page .v1244-cutpanel .v1244-cuthead{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:5px!important;flex-wrap:wrap!important}
+html body #app#app main.world-wallet #page#page .v1244-cutpanel .v1244-cuthead strong{display:flex!important;align-items:center!important;min-width:0!important;gap:5px!important}
+html body #app#app main.world-wallet #page#page .v1301-distribution summary .v1301-kicker:empty,html body #app#app main.world-wallet #page#page .v1301-distribution summary p:empty{display:none!important}
+html body #app#app main.world-wallet #page#page .v1301-distribution .wallet-consumption-hero{display:block!important;margin:5px 0 9px!important}
+html body #app#app main.world-wallet #page#page .v1301-distribution .v1301-total{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:3px 7px!important;align-items:center!important;background:transparent!important;box-shadow:none!important}
+html body #app#app main.world-wallet #page#page .v1301-distribution .v1301-total>small{font-size:11px!important}
+html body #app#app main.world-wallet #page#page .v1301-distribution .v1301-total>strong{font-size:clamp(17px,4.8vw,23px)!important;white-space:nowrap!important;text-align:right!important}
+html body #app#app main.world-wallet #page#page .v1301-distribution .v1301-total>.v1301-split{grid-column:1/-1;justify-content:flex-end}
+html body #app#app main.world-wallet #page#page .wallet-consumption-list .wallet-mobile-consumption-head,html body #app#app main.world-wallet #page#page .wallet-consumption-list .v1301-rank{display:grid!important;grid-template-columns:24px minmax(0,1fr) minmax(65px,auto) 66px!important;gap:5px!important;align-items:center!important;min-width:0!important}
+html body #app#app main.world-wallet #page#page .wallet-mobile-consumption-head{font-size:clamp(8px,2.5vw,10px)!important;color:var(--wallet-ref-muted,var(--muted))!important;padding:3px 2px 5px!important}
+html body #app#app main.world-wallet #page#page .wallet-mobile-consumption-head>span:first-child{grid-column:1/3}
+html body #app#app main.world-wallet #page#page .wallet-mobile-consumption-head>span:not(:first-child){text-align:right}
+html body #app#app main.world-wallet #page#page .wallet-consumption-list .v1301-ranked{background:transparent!important;padding:0!important;gap:0!important}
+html body #app#app main.world-wallet #page#page .wallet-consumption-list .v1301-rank{min-height:35px!important;padding:5px 2px!important;background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important}
+html body #app#app main.world-wallet #page#page .wallet-consumption-list .v1301-rank-info>.v1301-split{display:none!important}
+html body #app#app main.world-wallet #page#page .wallet-consumption-list .v1301-equivalent{border:0!important;padding:0!important;text-align:right!important;font-size:clamp(10px,2.8vw,12px)!important}
+html body #app#app main.world-wallet #page#page .wallet-consumption-list .v1301-share{margin:0!important;text-align:right!important;color:var(--v1301-ink,var(--text))!important;font-size:clamp(10px,2.8vw,12px)!important}
+}
+@media(min-width:791px){
+html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWalletPc-cuts>div{gap:0!important}
+html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWalletPc-cuts>div>button{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;justify-content:center!important}
+html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWalletPc-cuts>div>button+button{border-left:1px solid var(--wallet-glass-edge,rgba(120,140,160,.2))!important}
+html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWalletPc-cuts>div>button>svg:last-child{display:none!important}
+}

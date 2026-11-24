@@ -195,7 +195,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     await p.locator('#cardForm').waitFor();
     assert.equal(await p.locator('#cardForm [name="name"]').inputValue(),await p.evaluate(()=>window.__T.dbg().cards[0].name));
     await closeForm();
-    assert.equal(await p.locator('.v1244-cuthead > span').count(),0);
+    assert.equal(await p.locator('.v1244-cuthead > .wallet-cut-status').count(),1);
     const glass=await p.locator('.v1244-state').evaluate(el=>{
      const css=getComputedStyle(el);
      return [css.backdropFilter||css.webkitBackdropFilter,css.borderTopLeftRadius];
@@ -253,26 +253,15 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
      assert.equal(await item.locator('.v1301-bank .bank-photo-mark img').count(),2);
      assert.equal(await item.locator('.v1301-mini,.credit-network').count(),0);
      assert.equal(await item.evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
-     assert.equal(await item.locator('.v1301-ranked').innerText().then(t=>t.includes('%')),false);
+     assert.equal(await item.locator('.v1301-ranked').innerText().then(t=>t.includes('%')),item===consumption);
      const columns=await item.locator('.v1301-equivalent').evaluateAll(els=>els.map(el=>({x:el.getBoundingClientRect().x,right:el.getBoundingClientRect().right})));
      assert.ok(columns.every(c=>Math.abs(c.x-columns[0].x)<1&&Math.abs(c.right-columns[0].right)<1),'Equivalentes alineados');
     }
     assert.equal(await limits.locator('.v1301-donut').count(),0);
-    assert.equal(await consumption.locator('.v1301-donut-segment').count(),2);
-    const donutColors=()=>consumption.locator('.v1301-rank').evaluateAll(rows=>Object.fromEntries(rows.map(row=>{
-     const id=row.dataset.cardId,meter=row.querySelector('.v1301-meter i'),segment=[...row.closest('details').querySelectorAll('.v1301-donut-segment')].find(s=>s.dataset.cardId===id);
-     return [id,{bar:getComputedStyle(meter).backgroundColor,segment:segment?getComputedStyle(segment).stroke:null}];
-    })));
+    assert.equal(await consumption.locator('.v1301-donut').count(),0);
+    const donutColors=()=>consumption.locator('.v1301-rank').evaluateAll(rows=>Object.fromEntries(rows.map(row=>[row.dataset.cardId,{bar:getComputedStyle(row.querySelector('.v1301-meter i')).backgroundColor}])));
     const colors=await donutColors();
-    assert.equal(new Set(Object.values(colors).map(c=>c.bar)).size,2);
-    assert.ok(Object.values(colors).every(c=>c.bar===c.segment),'Mismo color en segmento y barra');
-    assert.equal(await consumption.locator('.v1301-donut-count').textContent(),'2');
-    assert.equal(await consumption.locator('.v1301-donut-caption').textContent(),'tarjetas');
-    assert.ok(await consumption.locator('.v1301-donut').evaluate(svg=>{
-     const count=svg.querySelector('.v1301-donut-count').getBBox(),caption=svg.querySelector('.v1301-donut-caption').getBBox();
-     return [count,caption].every(b=>Math.abs(b.x+b.width/2-64)<2&&b.x>=27&&b.x+b.width<=101&&b.y>=27&&b.y+b.height<=101)&&count.y+count.height<=caption.y+2;
-    }),'Contador centrado y dentro de la dona');
-    const slices=await consumption.locator('.v1301-donut-segment').evaluateAll(els=>els.map(e=>({id:e.dataset.cardId,share:Number(e.getAttribute('stroke-dasharray').split(' ')[0])})));
+    const slices=await consumption.locator('.v1301-rank').evaluateAll(els=>els.map(e=>({id:e.dataset.cardId,share:parseFloat(e.querySelector('.v1301-meter i').style.width)})));
     assert.deepEqual(slices.map(s=>s.id),[fixture.second,fixture.first]);
     assert.ok(Math.abs(slices[0].share-30950/47950*100)<1e-8);
     assert.ok(Math.abs(slices.reduce((s,x)=>s+x.share,0)-100)<1e-8);
@@ -297,7 +286,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.deepEqual(await consumption.locator('.v1301-total .v1301-split span').allTextContents().then(a=>a.map(moneyText)),[11951,600]);
     assert.deepEqual(await state.locator('.v1244-ccy span').allTextContents().then(a=>a.map(moneyText)),[470001,3000]);
     assert.deepEqual(await limits.locator('.v1301-equivalent').allTextContents().then(a=>a.map(moneyText)),[330001,320001]);
-    const share=Number((await consumption.locator('.v1301-donut-segment').first().getAttribute('stroke-dasharray')).split(' ')[0]);
+    const share=await consumption.locator('.v1301-rank .v1301-meter i').first().evaluate(el=>parseFloat(el.style.width));
     assert.ok(Math.abs(share-(30951.09/47952.18*100))<1e-8,'Participación calculada con los centavos');
     assert.deepEqual(await donutColors(),colors);
     const restored=await p.evaluate(()=>{
@@ -338,9 +327,9 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     const four=await donutColors();
     assert.equal(Object.keys(four).length,4);
     assert.equal(new Set(Object.values(four).map(c=>c.bar)).size,4);
-    assert.ok(Object.values(four).every(c=>c.bar===c.segment));
-    assert.equal(await consumption.locator('.v1301-donut-count').textContent(),'4');
-    assert.equal(await consumption.locator('.v1301-donut-segment').count(),4);
+    assert.equal(await consumption.locator('.v1301-donut').count(),0);
+    assert.equal(await consumption.locator('.v1301-rank').count(),4);
+    assert.equal(await consumption.locator('.v1301-share').count(),4);
     assert.equal(await limits.locator('.v1301-rank').count(),4);
     assert.ok(await consumption.evaluate(el=>el.scrollWidth<=el.clientWidth+1));
     if(process.env.WALLET_VISUAL_DIR){
@@ -351,8 +340,8 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     // Sin consumo también cuenta la tarjeta, pero no añade un segmento ficticio.
     await p.evaluate(()=>{const t=window.__T,d=t.dbg();d.transactions=d.transactions.filter(x=>x.id!=='wallet-color-tx-4');t.inv();t.go('wallet')});
     await expandConsumption();
-    assert.equal(await consumption.locator('.v1301-donut-count').textContent(),'4');
-    assert.equal(await consumption.locator('.v1301-donut-segment').count(),3);
+    assert.equal(await consumption.locator('.v1301-rank').count(),4);
+    assert.equal(await consumption.locator('.v1301-share').last().innerText(),'0.0%');
     assert.equal((await donutColors())['wallet-color-test-4'].bar,four['wallet-color-test-4'].bar);
     // Auditoría independiente: importes conocidos, fechas antiguas, tasas históricas y duplicados.
     await p.evaluate(()=>{
@@ -389,7 +378,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     await expandConsumption();
     assert.deepEqual(await parts('.v1301-total .v1301-split span'),[1975,30]);
     assert.equal(await read('.v1301-total strong'),3816);
-    const auditSlices=await consumption.locator('.v1301-donut-segment').evaluateAll(els=>els.map(e=>Number(e.getAttribute('stroke-dasharray').split(' ')[0])));
+    const auditSlices=await consumption.locator('.v1301-rank .v1301-meter i').evaluateAll(els=>els.map(e=>parseFloat(e.style.width)));
     assert.ok(Math.abs(auditSlices[0]-100*(1700+10.1*58.5)/(1975+10.1*58.5+20.05*62.33))<1e-8);
     assert.ok(Math.abs(auditSlices.reduce((s,x)=>s+x,0)-100)<1e-8);
     assert.equal(await p.evaluate(()=>JSON.stringify(window.__T.dbg().transactions)),ledgerSnapshot,'Auditoría no altera los movimientos originales');

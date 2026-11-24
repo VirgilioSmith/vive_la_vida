@@ -1412,8 +1412,8 @@ function v1301WalletRanked(rows,share,cardColor,options={}){
   const percent=share(r);
   const tag=options.selectable?'button':'div';
   const actionAttrs=options.selectable?` type="button" data-act="v68WalletSelect" data-id="${sanitize(r.c.id)}" aria-label="Ver crédito de ${sanitize(r.c.name)}"`:'';
-  const shareText=options.showPercent?`<span class="v1301-share" aria-label="Participación del consumo ${percent.toFixed(1)} por ciento">${percent.toFixed(1)}%</span>`:'';
-  return `<${tag}${actionAttrs} class="v1301-rank${options.selectable?' wallet-mobile-select-card':''}" data-card-id="${sanitize(r.c.id)}"><span class="v1301-bank">${v1002BankGlyph(r.c,'building')}</span><div class="v1301-rank-info"><strong>${sanitize(r.c.name)}</strong><div class="v1301-split">${split(r.DOP,r.USD)}</div><div class="v1301-meter" aria-hidden="true"><i style="width:${percent}%;background:${cardColor(r,i)}"></i></div></div><b class="v1301-equivalent">${r.missingFx?'—':amount(r.total)}${shareText}</b></${tag}>`;
+  const shareText=options.showPercent?`<span class="v1301-share" aria-label="Participación del consumo ${percent.toFixed(1)} por ciento">${percent.toFixed(1)}%</span>`:options.table?'<span class="v1301-share">—</span>':'';
+  return `<${tag}${actionAttrs} class="v1301-rank${options.selectable?' wallet-mobile-select-card':''}" data-card-id="${sanitize(r.c.id)}"><span class="v1301-bank">${v1002BankGlyph(r.c,'building')}</span><div class="v1301-rank-info"><strong>${sanitize(r.c.name)}</strong><div class="v1301-split">${split(r.DOP,r.USD)}</div><div class="v1301-meter" aria-hidden="true"><i style="width:${percent}%;background:${cardColor(r,i)}"></i></div></div><b class="v1301-equivalent">${r.missingFx?'—':amount(r.total)}${options.table?'':shareText}</b>${options.table?shareText:''}</${tag}>`;
  }).join('')}</div>`;
 }
 function v1301WalletLimitRows(cards){
@@ -1435,9 +1435,7 @@ function v1301WalletDistribution(cards,consumption){
  const cardColor=r=>cardColors.get(r.c.id);
  const amount=(v,ccy='DOP')=>money(v,ccy,0); // Redondeo exclusivamente de presentación.
  const split=(d,u)=>`<span>${amount(d)}</span><span>${amount(u,'USD')}</span>`;
- let offset=0;
- const donut=`<svg class="v1301-donut" viewBox="0 0 128 128" role="img" aria-label="Participación del consumo de ${cards.length} ${cards.length===1?'tarjeta':'tarjetas'}"><circle class="v1301-donut-track" cx="64" cy="64" r="46" fill="none" stroke-width="18"/>${rows.map((r,i)=>{const portion=share(r);if(!portion)return '';const start=offset;offset+=portion;return `<circle class="v1301-donut-segment" data-card-id="${sanitize(r.c.id)}" cx="64" cy="64" r="46" pathLength="100" fill="none" stroke-width="18" stroke-dasharray="${portion} ${100-portion}" stroke-dashoffset="${-start}" transform="rotate(-90 64 64)" style="stroke:${cardColor(r,i)}"/>`}).join('')}<text class="v1301-donut-count" x="64" y="59" text-anchor="middle">${cards.length}</text><text class="v1301-donut-caption" x="64" y="78" text-anchor="middle">${cards.length===1?'tarjeta':'tarjetas'}</text></svg>`;
- return v1301ConsumptionDisclosure(isMobileViewport()?'Histórico total':'Consumo por tarjeta','CONSUMO POR TARJETA','Histórico total',`<div class="v1301-distribution-body"><div class="wallet-consumption-hero">${donut}<div class="v1301-total"><strong>${total.missingFx?'—':amount(equivalent)}</strong><span title="Compras menos devoluciones; USD convertido a la tasa registrada de cada movimiento (o tasa configurada si no existe)">Equivalente en pesos</span><div class="v1301-split">${split(total.DOP,total.USD)}</div></div></div>${!representable?`<p>${total.missingFx?'Falta una tasa de cambio para calcular la participación.':'No se representa la participación cuando alguna tarjeta tiene consumo neto negativo.'}</p>`:''}${weight<=0&&!total.missingFx?'<p class="wallet-mobile-empty-consumption">Sin consumo histórico registrado.</p>':''}${v1301WalletRanked(rows,share,cardColor,{showPercent:representable&&weight>0})}</div>`,{glyph:'analytics',open:true});
+ return v1301ConsumptionDisclosure('Consumo por tarjeta','','',`<div class="v1301-distribution-body wallet-consumption-list"><div class="wallet-consumption-hero"><div class="v1301-total"><small>Histórico total · equivalente en pesos</small><strong>${total.missingFx?'—':amount(equivalent)}</strong><div class="v1301-split">${split(total.DOP,total.USD)}</div></div></div>${!representable?`<p>${total.missingFx?'Falta una tasa de cambio para calcular la participación.':'No se representa la participación cuando alguna tarjeta tiene consumo neto negativo.'}</p>`:''}${weight<=0&&!total.missingFx?'<p class="wallet-mobile-empty-consumption">Sin consumo histórico registrado.</p>':''}<div class="wallet-mobile-consumption-head" aria-hidden="true"><span>Tarjeta</span><span>Consumo</span><span>Participación</span></div>${v1301WalletRanked(rows,share,cardColor,{showPercent:representable&&weight>0,table:true})}</div>`,{glyph:'analytics',open:true});
 }
 document.addEventListener('keydown',event=>{
  const segment=event.target.closest?.('.vWalletPc-chart circle[data-act="walletPcConsumption"]');
@@ -1530,6 +1528,15 @@ function vWalletPcSelectedCards(all){
  const group=all.filter(c=>vWalletPcGroupKey(c)===key);
  return group.length?group:all;
 }
+// Wallet: shared cutoff badge for both viewports; amounts, not dates, determine paid status.
+function vWalletCutStatus(dop,usd,due){
+ const pending=num(dop)>.005||num(usd)>.005;
+ const days=pending&&due?diffDays(due,today()):null;
+ return {days,label:!pending?'Cortes pagados':days===null?'Sin fecha de pago':days<0?'Vencido':days===0?'Vence hoy':days===1?'Falta 1 día':`Faltan ${days} días`,tone:!pending?'is-paid':days!==null&&days<0?'negative':'is-pending'};
+}
+function vWalletCutBadge(status){
+ return `<span class="vWalletPc-due-label wallet-cut-status ${status.tone}" role="status">${status.label}</span>`;
+}
 function vWalletPcStrategic(){
  const all=vWalletPcCards(),list=vWalletPcSelectedCards(all);
  const selected=all.some(c=>vWalletPcGroupKey(c)===ui.vWalletPcCard);
@@ -1557,8 +1564,7 @@ function vWalletPcStrategic(){
   return `<button type="button" data-act="walletPcSelect" data-id="${sanitize(key)}" aria-pressed="${selected&&ui.vWalletPcCard===key}" aria-label="Seleccionar ${sanitize(bankOf(c))}">${mark(c)}<span><strong>${sanitize(bankOf(c))}</strong><small>${cards.length>1?`${cards.length} tarjetas`:ending?'•••• '+sanitize(ending):'1 tarjeta'}</small></span>${icon('arrow')}</button>`;
  };
  const due=rows.flatMap(r=>[r.dop,r.usd]).filter(s=>num(s.billed)>.005&&s.nextDue).map(s=>s.nextDue).sort()[0];
- const days=due?diffDays(due,today()):null;
- const dueLabel=days===null?'':days<0?'Vencido':days===0?'Vence hoy':days===1?'Falta 1 día':`Faltan ${days} días`;
+ const cutStatus=vWalletCutStatus(sum('dop','billed'),sum('usd','billed'),due);
  const cutButton=(ccy,key)=>{
   const billed=sum(key,'billed');
   return `<button type="button" data-act="walletPcCuts" data-ccy="${ccy}" ${billed>.005?'':'disabled'} aria-label="Ver cortes pendientes en ${ccy==='DOP'?'pesos':'dólares'}">${icon('card')}<b>${vWalletPcAmount(billed,ccy,2)}</b>${icon('arrow')}</button>`;
@@ -1599,7 +1605,7 @@ function vWalletPcStrategic(){
    </section>
    <div class="vWalletPc-right">
     ${v371CardReturnWidget(list[0]||{name:'tus tarjetas'},list.length===1?null:list,false,true)}
-    <section class="vWalletPc-panel vWalletPc-cuts" aria-labelledby="vWalletPc-cuts-title"><header><h2 id="vWalletPc-cuts-title">${icon('calendar')}Cortes pendientes</h2>${dueLabel?`<span class="vWalletPc-due-label${days<0?' negative':''}">${dueLabel}</span>`:''}</header><div>${cutButton('DOP','dop')}${cutButton('USD','usd')}</div></section>
+    <section class="vWalletPc-panel vWalletPc-cuts" aria-labelledby="vWalletPc-cuts-title"><header><h2 id="vWalletPc-cuts-title">${icon('calendar')}Cortes pendientes</h2>${vWalletCutBadge(cutStatus)}</header><div>${cutButton('DOP','dop')}${cutButton('USD','usd')}</div></section>
     <section class="vWalletPc-panel vWalletPc-consumption" aria-labelledby="vWalletPc-consumption-title"><header><h2 id="vWalletPc-consumption-title">${icon('analytics')}Consumo por tarjeta</h2><button type="button" class="vWalletPc-round" data-act="walletPcConsumptionDetail" aria-label="Ver importes de consumo histórico">${icon('arrow')}</button></header>
      <div class="vWalletPc-consumption-table" role="table" aria-label="Participación en consumo histórico"><div class="vWalletPc-consumption-head" role="row"><span role="columnheader">Tarjeta</span><span role="columnheader">Consumo</span><span role="columnheader">Participación</span></div>${consumptionRows.map(r=>`<div class="vWalletPc-consumption-row" role="row"><span role="cell">${mark(r.c)}<span>${sanitize(bankOf(r.c))}${groups.get(vWalletPcGroupKey(r.c))?.length>1?`<small>${sanitize(r.c.name)}</small>`:''}</span></span><b role="cell">${r.data.missingFx?'—':vWalletPcAmount(r.data.equivalent)}</b><span class="wallet-consumption-share" role="cell">${share(r)}</span></div>`).join('')}</div>
      ${totals.missingFx?'<p class="vWalletPc-note">Falta una tasa de cambio para calcular el consumo equivalente.</p>':consumptionRows.some(r=>r.data.equivalent<0)?'<p class="vWalletPc-note">El consumo neto incluye las devoluciones.</p>':!list.length?'<p class="vWalletPc-note">Aún no hay tarjetas registradas.</p>':''}
@@ -1824,8 +1830,8 @@ function v68Wallet(){
  ${global?v1301WalletLimitRows(cards):''}
 </section>
  <section class="v266-wallet-panel v1244-cutpanel" aria-label="Cortes pendientes">
- <div class="v1244-cutbox">${(()=>{const L=[[dop,'DOP','RD$'],[usd,'USD','US$']].map(([st,cc,sym])=>{const bill=num(st.billed),has=bill>.005&&!!st.nextDue;return {st,cc,sym,bill,has,late:has&&st.nextDue<today(),date:has?st.nextDue:''}});const act=L.filter(x=>x.has),lateL=act.filter(x=>x.late),isLate=lateL.length>0,title=global?(isLate?'CORTES ATRASADOS':act.length?'CORTES PENDIENTES':'CORTES AL DÍA'):(isLate?'CORTE ATRASADO':act.length?'CORTE PENDIENTE':'CORTE AL DÍA');
- return `<div class="v1244-cuthead ${isLate?'is-late':act.length?'is-soon':'is-ok'}"><strong>${icon('calendar')}${title}</strong></div><div class="v1244-pills">${L.map(x=>{const amt=num(x.bill).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return `<button type="button" class="v1244-pill" ${x.has?`${action('pay-cut',`data-act="payCard" data-id="${sanitize(active.id)}"`)} data-ccy="${x.cc}"`:'disabled'} title="${x.has?(x.late?'Venció ':'Vence ')+prettyDate(x.date):''}" aria-label="${x.has?'Pagar corte en '+x.sym+' '+amt+' · '+prettyDate(x.date):'Sin saldo facturado en '+x.sym}"><span class="v1244-pill-top">${icon(x.cc==='DOP'?'wallet':'card')}<b>${x.sym}</b><em>${amt}</em></span><span class="v1244-pill-go">${icon('arrow')}</span></button>`}).join('')}</div>`})()}</div>
+ <div class="v1244-cutbox">${(()=>{const L=[[dop,'DOP','RD$'],[usd,'USD','US$']].map(([st,cc,sym])=>{const bill=num(st.billed),has=bill>.005&&!!st.nextDue;return {st,cc,sym,bill,has,late:has&&st.nextDue<today(),date:has?st.nextDue:''}});const act=L.filter(x=>x.has),lateL=act.filter(x=>x.late),isLate=lateL.length>0,cutStatus=vWalletCutStatus(dop.billed,usd.billed,act.map(x=>x.date).sort()[0]),title=global?(isLate?'CORTES ATRASADOS':'CORTES PENDIENTES'):(isLate?'CORTE ATRASADO':'CORTE PENDIENTE');
+ return `<div class="v1244-cuthead ${isLate?'is-late':act.length?'is-soon':'is-ok'}"><strong>${icon('calendar')}${title}</strong>${vWalletCutBadge(cutStatus)}</div><div class="v1244-pills">${L.map(x=>{const amt=num(x.bill).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return `<button type="button" class="v1244-pill" ${x.has?`${action('pay-cut',`data-act="payCard" data-id="${sanitize(active.id)}"`)} data-ccy="${x.cc}"`:'disabled'} title="${x.has?(x.late?'Venció ':'Vence ')+prettyDate(x.date):''}" aria-label="${x.has?'Pagar corte en '+x.sym+' '+amt+' · '+prettyDate(x.date):'Sin saldo facturado en '+x.sym}"><span class="v1244-pill-top">${icon(x.cc==='DOP'?'wallet':'card')}<b>${x.sym}</b><em>${amt}</em></span><span class="v1244-pill-go">${icon('arrow')}</span></button>`}).join('')}</div>`})()}</div>
 </section>
  ${v371CardReturnWidget(active,global?cards:null)}
  ${global?v1301WalletDistribution(cards,v1301WalletConsumption(cards)):''}

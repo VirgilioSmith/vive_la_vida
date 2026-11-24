@@ -161,7 +161,8 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     /* La participación de consumo es distinta de la utilización del límite. */
     const shares=await p.locator('.v1301-share').allTextContents();
     const segments=await p.locator('.v1301-donut-segment').count();
-    if(segments){
+    assert.equal(segments,0,'Sin gráfica circular');
+    if(shares.some(s=>parseFloat(s)>0)){
      assert.ok(shares.length>0,'Faltan porcentajes individuales de consumo');
      const total=shares.map(t=>parseFloat(t)).reduce((a,b)=>a+b,0);
      assert.ok(Math.abs(total-100)<=shares.length*.051,'Participación no suma 100%: '+total);
