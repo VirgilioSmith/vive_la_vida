@@ -54,7 +54,7 @@
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-head h2{display:flex!important;align-items:center!important;gap:12px!important;margin:0!important;font-size:clamp(22px,1.7vw,28px)!important;font-weight:800!important;letter-spacing:-.03em!important;color:var(--bg-ink)!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-head h2 svg{width:30px!important;height:30px!important;color:var(--bg-acc)!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-total{padding:6px 14px!important;border-radius:999px!important;background:color-mix(in srgb,var(--bg-acc) 14%,var(--bg-glass-2))!important;color:var(--bg-acc)!important;font-weight:750!important;font-size:14px!important;white-space:nowrap!important}
- html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-product-filter{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-all .vBanksPc-product-filter{display:none!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview{display:grid!important;gap:12px!important;grid-auto-rows:minmax(min-content,1fr)!important;flex:1 1 auto!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile{display:grid!important;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr) 18px!important;align-items:center!important;gap:16px!important;padding:14px 20px!important;border:1px solid var(--bg-edge)!important;border-radius:22px!important;background:var(--bg-glass-2)!important;box-shadow:var(--bg-shadow)!important;color:var(--bg-ink)!important;text-align:left!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-top{display:flex!important;align-items:center!important;gap:14px!important;min-width:0!important}
@@ -255,4 +255,35 @@
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var{gap:4px!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var i{padding-left:4px!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-row{flex-direction:row!important;flex-wrap:nowrap!important}
+}
+/* Vista de producto (Tarjetas, Cuentas, Préstamos, Certificados) con el mismo lenguaje de cristal */
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter{display:flex!important;gap:4px;padding:4px!important;border:0!important;border-radius:999px!important;background:var(--bg-glass-2)!important;box-shadow:var(--bg-shadow)}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button{border:0!important;background:transparent!important;color:var(--bg-ink)!important;border-radius:999px!important;font-weight:650;box-shadow:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button.is-active,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button[aria-pressed="true"]{background:color-mix(in srgb,var(--bg-acc) 85%,#000 0%)!important;color:#fff!important;box-shadow:0 6px 16px color-mix(in srgb,var(--bg-acc) 35%,transparent)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-lane{background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-lane>header{border:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-lane>header h3{font-size:clamp(17px,1.3vw,21px);color:var(--bg-ink)}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product{background:var(--bg-glass-2)!important;border:1px solid var(--bg-edge)!important;border-radius:20px!important;box-shadow:var(--bg-shadow);margin-bottom:8px;color:var(--bg-ink)}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-mark{background:rgba(255,255,255,.85);border-radius:50%;width:52px;height:52px;display:grid;place-items:center;overflow:hidden}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-mark .institution-logo,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-mark img{width:44px;height:44px;object-fit:contain;border-radius:50%}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product small{color:var(--bg-muted)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-meter i{background:linear-gradient(90deg,#16a05a,#4fd08a)!important}
+}
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-totals-strip{display:flex!important;align-items:stretch;gap:12px;flex-wrap:wrap;padding:0!important;margin-top:auto}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-totals-strip>div{flex:1 1 180px;display:grid;gap:2px;padding:12px 18px;border-radius:20px;background:var(--bg-glass-2);border:1px solid var(--bg-edge);box-shadow:var(--bg-shadow)}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-totals-strip span{font-size:14px;font-weight:650;color:var(--bg-muted)}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-totals-strip strong{font-size:clamp(20px,1.6vw,27px);font-weight:800;letter-spacing:-.03em;color:var(--bg-ink)}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-totals-strip small{font-size:13px;color:var(--bg-muted)}
+}
+/* Menú de productos (inicio) también en la vista de detalle: mismas ilustraciones, en fila, el activo resaltado */
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter{display:grid!important;grid-template-columns:.8fr repeat(4,1fr);gap:8px!important;padding:8px!important;border-radius:24px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button{display:grid!important;grid-template-columns:1fr;justify-items:center;align-content:center;gap:2px;padding:8px 4px!important;border-radius:18px!important;font-size:clamp(14px,1vw,16px)!important;font-weight:750!important;position:relative}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button svg{width:46px!important;height:46px!important;filter:drop-shadow(0 4px 6px rgba(40,60,120,.22))}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button[data-id="all"] svg{width:24px!important;height:24px!important;filter:none}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button small{position:absolute;top:6px;right:8px;font-size:12px;font-weight:800;opacity:.8}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button.is-active,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button[aria-pressed="true"]{background:var(--bg-glass-2)!important;color:var(--bg-ink)!important;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--bg-acc) 65%,transparent),0 6px 16px color-mix(in srgb,var(--bg-acc) 22%,transparent)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button[data-id="all"].is-active{box-shadow:none!important}
 }
