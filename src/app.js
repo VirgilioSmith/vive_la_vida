@@ -1307,7 +1307,7 @@ function v371CardReturnWidget(c,consolidatedCards=null,bankView=false,walletPc=f
  const benefitId=consolidatedCards?'all':sanitize(c.id);
  const inWallet=ui.page==='wallet'&&!bankView;
  const walletCards=consolidatedCards||[c];
- const walletActions=inWallet&&walletCards.length?`<div class="wallet-return-actions">
+ const walletActions=inWallet&&walletCards.length&&!(walletPc&&!isMobileViewport())?`<div class="wallet-return-actions">
   <button type="button" data-act="walletReturnEntry" data-mode="benefit" data-id="${benefitId}">${icon('gift2')}<span>Registrar beneficio</span>${icon('arrow')}</button>
   <button type="button" data-act="walletReturnEntry" data-mode="annual" data-id="${benefitId}">${icon('shield')}<span>Anualidad y seguros</span>${icon('arrow')}</button>
  </div>`:'';
@@ -1521,7 +1521,95 @@ function vWalletPcCards(){
  const ids=new Set(scoped.map(c=>c.id));
  return v68WalletCards().filter(c=>ids.has(c.id));
 }
+function vWalletPcGroupKey(c){
+ return c.bankId?'bank:'+String(c.bankId):'name:'+String(bankOf(c));
+}
+function vWalletPcSelectedCards(all){
+ const key=ui.vWalletPcCard;
+ if(!key)return all;
+ const group=all.filter(c=>vWalletPcGroupKey(c)===key);
+ return group.length?group:all;
+}
+function vWalletPcStrategic(){
+ const all=vWalletPcCards(),list=vWalletPcSelectedCards(all);
+ const selected=all.some(c=>vWalletPcGroupKey(c)===ui.vWalletPcCard);
+ const active=selected?list[0]:null;
+ if(ui.vWalletPcBenefits)return v230BenefitsWorkspace(list,'Volver a Wallet','walletPcCloseBenefits');
+ const groups=new Map();
+ for(const c of all){const key=vWalletPcGroupKey(c);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(c);}
+ const rows=list.map(c=>({c,dop:cardStatus(c,'DOP'),usd:cardStatus(c,'USD')}));
+ const sum=(ccy,key)=>rows.reduce((value,r)=>value+num(r[ccy][key]),0);
+ const limitDop=list.reduce((value,c)=>value+num(c.limitDOP),0),limitUsd=list.reduce((value,c)=>value+num(c.limitUSD),0);
+ const limit=vWalletPcEquivalent(limitDop,limitUsd),debt=vWalletPcEquivalent(sum('dop','debt'),sum('usd','debt'));
+ const available=vWalletPcEquivalent(sum('dop','available'),sum('usd','available'));
+ const accounts=(db.accounts||[]).filter(a=>a.kind!=='cash'&&!isHidden(a)&&(!active||vWalletPcGroupKey(a)===vWalletPcGroupKey(active)));
+ const funds=ccy=>accounts.filter(a=>a.currency===ccy).reduce((s,a)=>s+num(getAccountBalance(a)),0);
+ const fundDop=funds('DOP'),fundUsd=funds('USD');
+ const amount=(d,u)=>u!==0&&!(num(db.settings.fx)>0)?'—':vWalletPcAmount(vWalletPcEquivalent(d,u));
+ const percent=value=>value.toFixed(1)+'%';
+ const usage=vWalletPcUsage(debt,limit);
+ const stat=(label,value,mark,d,u,tone)=>`<article class="vWalletPc-panel vWalletPc-stat ${tone}"><span class="vWalletPc-symbol" aria-hidden="true">${mark}</span><div><span>${label}</span><strong>${value}</strong><small>${vWalletPcSplit(d,u)}</small></div></article>`;
+ const mark=c=>`<span class="vWalletPc-product-mark" aria-hidden="true">${v1002BankGlyph(c,'card')}</span>`;
+ const bar=(value,label)=>`<span class="vWalletPc-meter" role="meter" aria-label="${label}" aria-valuemin="0" aria-valuemax="${Math.max(100,value)}" aria-valuenow="${value}"><i style="width:${Math.max(0,Math.min(100,value))}%"></i></span>`;
+ const action=(label,act,c)=>`<button type="button" data-act="${act}"${c?` data-id="${sanitize(c.id)}"`:''}>${label}</button>`;
+ const groupButton=([key,cards])=>{
+  const c=cards[0],ending=String(c.last4||c.number||'').replace(/\D/g,'').slice(-4);
+  return `<button type="button" data-act="walletPcSelect" data-id="${sanitize(key)}" aria-pressed="${selected&&ui.vWalletPcCard===key}" aria-label="Seleccionar ${sanitize(bankOf(c))}">${mark(c)}<span><strong>${sanitize(bankOf(c))}</strong><small>${cards.length>1?`${cards.length} tarjetas`:ending?'•••• '+sanitize(ending):'1 tarjeta'}</small></span>${icon('arrow')}</button>`;
+ };
+ const due=rows.flatMap(r=>[r.dop,r.usd]).filter(s=>num(s.billed)>.005&&s.nextDue).map(s=>s.nextDue).sort()[0];
+ const days=due?diffDays(due,today()):null;
+ const dueLabel=days===null?'':days<0?'Vencido':days===0?'Vence hoy':days===1?'Falta 1 día':`Faltan ${days} días`;
+ const cutButton=(ccy,key)=>{
+  const billed=sum(key,'billed');
+  return `<button type="button" data-act="walletPcCuts" data-ccy="${ccy}" ${billed>.005?'':'disabled'} aria-label="Ver cortes pendientes en ${ccy==='DOP'?'pesos':'dólares'}">${icon('card')}<b>${vWalletPcAmount(billed,ccy,2)}</b>${icon('arrow')}</button>`;
+ };
+ const {byCard,totals}=v1301WalletConsumption(list);
+ const consumptionRows=list.map(c=>({c,data:byCard.get(c.id)})).sort((a,b)=>b.data.equivalent-a.data.equivalent);
+ const share=r=>totals.missingFx||totals.equivalent<=0?'—':percent(100*r.data.equivalent/totals.equivalent);
+ const seen=new Set(),ids=new Set(list.map(c=>String(c.id)));
+ const recent=selected?recentTx().filter(t=>t.cardId&&ids.has(String(t.cardId))&&!seen.has(String(t.id))&&seen.add(String(t.id))).slice(0,5):[];
+ requestAnimationFrame(vWalletPcFitMoney);
+ return `<div class="vWalletPc vWalletPc-strategic" aria-label="Wallet PC">
+  <section class="vWalletPc-stats" aria-label="Indicadores financieros">
+   ${stat('Balance disponible',amount(fundDop,fundUsd),icon('wallet'),fundDop,fundUsd,'is-available')}
+   ${stat('Deuda utilizada',amount(sum('dop','debt'),sum('usd','debt')),icon('card'),sum('dop','debt'),sum('usd','debt'),'is-debt')}
+   ${stat('Límite total',amount(limitDop,limitUsd),icon('landmark'),limitDop,limitUsd,'is-limit')}
+  </section>
+  <div class="vWalletPc-grid">
+   <section class="vWalletPc-panel vWalletPc-products" aria-labelledby="vWalletPc-products-title">
+    <header><h2 id="vWalletPc-products-title">${v153DockIcon('layers')}Mis productos</h2><details class="vWalletPc-menu"><summary class="vWalletPc-round" aria-label="Administrar tarjetas">···</summary><div>${action('Añadir tarjeta','addCard')}${action('Comparar beneficios','openBenefitComparison')}${action(ui.showHidden?'Ocultar archivados':'Ver archivados','toggleHidden')}</div></details></header>
+    <div class="vWalletPc-product-list">
+     <button type="button" data-act="walletPcSelect" aria-pressed="${!selected}"><span class="vWalletPc-product-mark is-global" aria-hidden="true">${v153DockIcon('layers')}</span><span><strong>Créditos generales</strong><small>Todas tus tarjetas</small></span>${icon('arrow')}</button>
+     ${Array.from(groups).map(groupButton).join('')}
+    </div>
+   </section>
+   <section class="vWalletPc-panel vWalletPc-state" aria-labelledby="vWalletPc-state-title">
+    <header><h2 id="vWalletPc-state-title">${icon('card')}Estado del crédito</h2>${list.length?`<button type="button" class="vWalletPc-round" data-act="walletPcCuts" aria-label="Ver ${selected?'estado del banco':'estado consolidado del crédito'}">${icon('arrow')}</button>`:''}</header>
+    ${active?`<div class="vWalletPc-bank-context">${mark(active)}<div><strong>${sanitize(bankOf(active))}</strong><small>${list.length} ${list.length===1?'tarjeta':'tarjetas'}</small></div></div>`:''}
+    <div class="vWalletPc-state-main">
+     <div class="vWalletPc-ring" style="--use:${Math.min(100,usage)}%" aria-label="${percent(usage)} utilizado"><div><strong>${limitUsd!==0&&!(num(db.settings.fx)>0)?'—':percent(usage)}</strong><span>utilizado</span></div></div>
+     <div class="vWalletPc-limit"><span>Límite total</span><strong>${amount(limitDop,limitUsd)}</strong><small>${vWalletPcAmount(limitDop,'DOP',2)}</small><small>${vWalletPcAmount(limitUsd,'USD',2)}</small>${active?`<small class="vWalletPc-context-available">Crédito disponible: <b>${amount(sum('dop','available'),sum('usd','available'))}</b></small>`:''}</div>
+    </div>
+    ${rows.length?`<div class="vWalletPc-limits" aria-label="Desglose de límites por tarjeta">${rows.map(({c,dop,usd})=>{
+     const equivalent=vWalletPcEquivalent(c.limitDOP,c.limitUSD),used=vWalletPcUsage(vWalletPcEquivalent(dop.debt,usd.debt),equivalent);
+     return `<button type="button" class="vWalletPc-limit-row" data-act="goCard" data-id="${sanitize(c.id)}" aria-label="Ver detalle de ${sanitize(c.name)}">${mark(c)}<span><strong>${sanitize(c.name)}</strong><small>${vWalletPcSplit(c.limitDOP,c.limitUSD,0)}</small><span class="vWalletPc-row-meter">${bar(used,'Utilización de la tarjeta')}<small>${percent(used)}</small></span></span><b>${amount(num(c.limitDOP),num(c.limitUSD))}</b>${icon('arrow')}</button>`;
+    }).join('')}</div>`:'<p class="vWalletPc-note">Añade una tarjeta para consultar sus límites y cortes.</p>'}
+    ${active&&list.length===1?`<div class="vWalletPc-card-actions">${action('Explorar el ciclo','goCard',active)}${action('Registrar pago','payCard',active)}<button type="button" data-v900-action="advance" data-id="${sanitize(active.id)}">Avance</button>${action('Editar','editCard',active)}</div>`:''}
+    ${active?`<section class="vWalletPc-recent" aria-label="Movimientos recientes de tarjetas"><div class="vWalletPc-recent-title"><h3>Movimientos recientes</h3>${active.bankId&&bank(active.bankId)?`<button type="button" data-act="walletPcBankHistory" data-id="${sanitize(active.bankId)}">Ver todos ${icon('arrow')}</button>`:''}</div>${recent.length?`<div class="vWalletPc-recent-list">${recent.map(t=>`<button type="button" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Ver detalle del movimiento ${sanitize(transactionTitle(t))}"><span class="vWalletPc-recent-glyph">${icon(t.type==='card_refund'||t.type==='card_reward'?'up':'card')}</span><span class="vWalletPc-recent-copy"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(card(t.cardId)?.name||'Tarjeta')}</small></span><b>${txDisplay(t)}</b>${icon('arrow')}</button>`).join('')}</div>`:'<p class="vWalletPc-note">Sin movimientos recientes de estas tarjetas.</p>'}</section>`:''}
+   </section>
+   <div class="vWalletPc-right">
+    ${v371CardReturnWidget(list[0]||{name:'tus tarjetas'},list.length===1?null:list,false,true)}
+    <section class="vWalletPc-panel vWalletPc-cuts" aria-labelledby="vWalletPc-cuts-title"><header><h2 id="vWalletPc-cuts-title">${icon('calendar')}Cortes pendientes</h2>${dueLabel?`<span class="vWalletPc-due-label${days<0?' negative':''}">${dueLabel}</span>`:''}</header><div>${cutButton('DOP','dop')}${cutButton('USD','usd')}</div></section>
+    <section class="vWalletPc-panel vWalletPc-consumption" aria-labelledby="vWalletPc-consumption-title"><header><h2 id="vWalletPc-consumption-title">${icon('analytics')}Consumo por tarjeta</h2><button type="button" class="vWalletPc-round" data-act="walletPcConsumptionDetail" aria-label="Ver importes de consumo histórico">${icon('arrow')}</button></header>
+     <div class="vWalletPc-consumption-table" role="table" aria-label="Participación en consumo histórico"><div class="vWalletPc-consumption-head" role="row"><span role="columnheader">Tarjeta</span><span role="columnheader">Consumo</span><span role="columnheader">Participación</span></div>${consumptionRows.map(r=>`<div class="vWalletPc-consumption-row" role="row"><span role="cell">${mark(r.c)}<span>${sanitize(bankOf(r.c))}${groups.get(vWalletPcGroupKey(r.c))?.length>1?`<small>${sanitize(r.c.name)}</small>`:''}</span></span><b role="cell">${r.data.missingFx?'—':vWalletPcAmount(r.data.equivalent)}</b><span class="wallet-consumption-share" role="cell">${share(r)}</span></div>`).join('')}</div>
+     ${totals.missingFx?'<p class="vWalletPc-note">Falta una tasa de cambio para calcular el consumo equivalente.</p>':consumptionRows.some(r=>r.data.equivalent<0)?'<p class="vWalletPc-note">El consumo neto incluye las devoluciones.</p>':!list.length?'<p class="vWalletPc-note">Aún no hay tarjetas registradas.</p>':''}
+    </section>
+   </div>
+  </div>
+ </div>`;
+}
 function vWalletPc(){
+ if(ui.page==='wallet')return vWalletPcStrategic();
  const bankScope=vWalletPcBankScope();
  const all=vWalletPcCards();
  if(ui.page==='wallet'&&ui.vWalletPcBenefits)return v230BenefitsWorkspace(all,'Volver a Wallet','walletPcCloseBenefits');
@@ -7363,6 +7451,9 @@ case 'walletPcSelect':
   ui.vWalletPcCard=id||null;ui.vWalletPcConsumption=null;vWalletPcRefresh(el);
  }
  break;
+case 'walletPcBankHistory':
+ if(!isMobileViewport()&&ui.page==='wallet'&&bank(id)){Object.assign(ui,{page:'register',bankScope:id,movementTab:'all',transType:'all',search:'',reviewFilter:'all',txPeriod:'all',v361Category:'all'});render();window.scrollTo(0,0);}
+ break;
 case 'walletPcConsumption':
  if(!isMobileViewport()&&(ui.page==='wallet'||vWalletPcBankScope()!==null)){
   ui.vWalletPcConsumption=ui.vWalletPcConsumption===id?null:id;vWalletPcRefresh(el);
@@ -7371,7 +7462,7 @@ case 'walletPcConsumption':
 case 'walletPcCuts':
 case 'walletPcConsumptionDetail':{
  if(isMobileViewport()||(ui.page!=='wallet'&&vWalletPcBankScope()===null))break;
- const all=vWalletPcCards(),active=all.find(c=>String(c.id)===ui.vWalletPcCard),list=active?[active]:all;
+ const all=vWalletPcCards(),active=all.find(c=>String(c.id)===ui.vWalletPcCard),list=ui.page==='wallet'?vWalletPcSelectedCards(all):active?[active]:all;
  if(action==='walletPcCuts'){
   v176CardInsight(list,['DOP','USD'].includes(ccy)?ccy:undefined,el.dataset.mode==='pending');
   if(ui.page==='wallet')document.querySelector('.v176-card-insight-modal .close')?.focus({preventScroll:true});
