@@ -4968,7 +4968,7 @@ function v134WealthWorld(){
  return `<div class="v134-patrimony v142-wealth-complete v187-patrimony" id="v134Patrimony">
   <header class="v134-top v187-wealth-top v1133-compact"><div class="v137-wealth-top-tools"><label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></div></header>
   ${vPatrimonyPositionHero(s,previous,cut)}
-  ${vPatrimonyExposure(averageIncome)}
+ 
   <section class="v187-charts" aria-label="Tres gráficos del patrimonio">
    <article class="v134-panel v187-chart-card v187-timeline"><header><div><span>01 / EVOLUCIÓN</span><h3>Tu patrimonio en el tiempo</h3><p>${year} frente a ${year-1} · cierres registrados</p></div><button type="button" class="v187-history-launch" data-act="v187History">${icon('chart')} Histórico ${icon('arrow')}</button></header><div class="v187-mini-chart">${v134WealthHistory(p)}</div><p class="v187-graph-foot">Sin valores futuros simulados</p></article>
    <article class="v134-panel v187-chart-card v187-assets"><header><div><span>02 / ACTIVOS</span><h3>De dónde viene</h3><p>Composición al cierre elegido</p></div></header><div class="v187-chart-total">${val(s?.assets)}</div>${v187CompositionChart(assets,s?.assets||0,'assets')}</article>
