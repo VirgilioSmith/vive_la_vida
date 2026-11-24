@@ -3,7 +3,6 @@
  html body #app#app #page .vexp{--vexp-acc:var(--lg-accent,var(--ui-solid,#6d69f1));--vexp-ink:var(--vive-text-primary,#111b2e);--vexp-mut:var(--vive-text-secondary,#526078);--vexp-glass:rgba(255,255,255,.3);--vexp-edge:rgba(255,255,255,.75);--vexp-good:#0f8a5a;--vexp-bad:#c9303a;
   display:grid;gap:14px;color:var(--vexp-ink)}
  body.theme-black #app#app #page .vexp,body.theme-dark #app#app #page .vexp{--vexp-ink:#f4f6fb;--vexp-mut:#aab4c6;--vexp-glass:rgba(255,255,255,.06);--vexp-edge:rgba(255,255,255,.14);--vexp-good:#5fe0a6;--vexp-bad:#ff8a90}
- #page .vexp-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
  #page .vexp-seg,#page .vexp-kind{display:inline-flex;padding:4px;gap:2px;border-radius:999px;background:var(--vexp-glass);border:1px solid var(--vexp-edge);box-shadow:inset 0 1px 1px rgba(255,255,255,.6);backdrop-filter:blur(18px)}
  #page .vexp-seg button,#page .vexp-kind button{border:0;background:transparent;color:var(--vexp-ink);font:inherit;font-weight:650;font-size:14px;padding:8px 18px;border-radius:999px;cursor:pointer;transition:background 160ms,color 160ms}
  #page .vexp-seg button.is-on,#page .vexp-kind button.is-on{background:var(--vexp-acc);color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--vexp-acc) 35%,transparent)}
@@ -158,10 +157,6 @@ html body #app#app #page .vflow-tabs button.is-on{background:var(--lg-accent,var
  #page .vinc-title h1{margin:0;font-size:clamp(28px,2.6vw,42px);font-weight:800;letter-spacing:-.035em;line-height:1.08}
  #page .vinc-title p{margin:6px 0 0;font-size:clamp(15px,1.1vw,18px);color:var(--vive-text-secondary,#526078)}
  html body #app#app #page .vinc-reg{background:var(--lg-accent,#6d69f1)!important;color:#fff!important;border:0!important;border-radius:999px;padding:12px 22px;font-weight:700;box-shadow:0 8px 20px color-mix(in srgb,var(--lg-accent,#6d69f1) 35%,transparent)}
- #page .vinc-tabs{display:flex;gap:4px;padding:5px;border-radius:999px;background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.75);box-shadow:inset 0 1px 1px rgba(255,255,255,.6);backdrop-filter:blur(18px)}
- #page .vinc-tabs button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:transparent!important;color:var(--vive-text-primary,#111b2e);font:inherit;font-weight:650;font-size:14.5px;padding:10px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
- #page .vinc-tabs button svg{width:18px;height:18px}
- html body #app#app #page .vinc-tabs button.is-on{background:var(--lg-accent,#6d69f1)!important;color:#fff!important;box-shadow:0 6px 16px color-mix(in srgb,var(--lg-accent,#6d69f1) 35%,transparent)}
  #page .vinc-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
  #page .vinc-kpi{position:relative;overflow:hidden;display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:16px 20px;min-height:128px;border-radius:24px;background:rgba(255,255,255,.3)!important;border:1px solid rgba(255,255,255,.75);box-shadow:inset 0 1px 1px rgba(255,255,255,.7),0 8px 24px rgba(30,40,80,.06);backdrop-filter:blur(24px)}
  #page .vinc-kpi>div{display:grid;gap:3px;min-width:0;position:relative;z-index:1}
@@ -191,8 +186,6 @@ html body #app#app #page .vflow-tabs button.is-on{background:var(--lg-accent,var
  #page .vinc-card>header{display:flex;align-items:center;gap:12px;margin-bottom:6px}
  #page .vinc-card>header .vexp-ico{width:44px;height:44px}#page .vinc-card>header .vexp-ico svg{width:22px;height:22px}
  #page .vinc-card>header h2{flex:1;font-size:clamp(18px,1.4vw,22px)}
- #page .vinc-more{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.8);background:rgba(255,255,255,.4);color:var(--vive-text-primary,#111b2e);font:inherit;font-size:13px;font-weight:650;padding:6px 12px;border-radius:999px;cursor:pointer}
- #page .vinc-more svg{width:13px;height:13px}
  #page .vinc-big{display:flex;align-items:center;justify-content:space-between;gap:10px}
  #page .vinc-big strong{font-size:clamp(24px,2vw,32px);font-weight:800;letter-spacing:-.035em;white-space:nowrap}
  #page .vinc-pill{font-size:12px;font-weight:800;letter-spacing:.04em;padding:4px 12px;border-radius:999px;background:rgba(120,130,160,.18);color:#5c6a82}
@@ -209,20 +202,14 @@ html body #app#app #page .vflow-tabs button.is-on{background:var(--lg-accent,var
  #page .vinc-act small{display:block;font-size:12.5px;color:var(--vive-text-secondary,#526078)}
  #page .vinc-act b{color:#0f8a5a;font-weight:800;white-space:nowrap}
  #page .vinc-hact{display:flex;gap:8px;flex-wrap:wrap}
- #page .vinc-search{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.8);min-width:260px}
- #page .vinc-search svg{width:18px;height:18px}#page .vinc-search input{border:0;background:transparent;outline:0;font:inherit;width:100%;color:inherit}
- #page .vinc-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:800;white-space:nowrap}
- #page .vinc-edit{border:0;background:rgba(255,255,255,.6);border-radius:50%;width:32px;height:32px;display:grid;place-items:center;cursor:pointer}
- #page .vinc-edit svg{width:14px;height:14px}
 }
-@media(min-width:791px) and (max-width:1280px){#page .vinc-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#page .vinc-bottom{grid-template-columns:repeat(2,minmax(0,1fr))}#page .vinc-tabs button{font-size:13px;padding:9px 8px}}
+@media(min-width:791px) and (max-width:1280px){#page .vinc-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#page .vinc-bottom{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:791px) and (max-width:1100px){#page .vinc-grid{grid-template-columns:minmax(0,1fr)}}
 @media(min-width:791px){
  html body #app#app #page .v58-exec[data-v58-page="income"]{display:none!important}
  html body #app#app #page .vinc .vexp-seg button.is-on,html body #app#app #page .vinc .vexp-kind button.is-on{background:var(--lg-accent,#6d69f1)!important;color:#fff!important}
  html body #app#app #page .vinc-title p{font-size:clamp(15px,1.1vw,18px)!important}
 }
-@media(min-width:791px){#page .vinc-sources>header .vinc-hact{margin-left:auto}}
 
 /* Ingresos · KPI como acceso a la vista completa (Trabajo formal / Joseo) y flecha de regreso */
 @media (min-width:791px){

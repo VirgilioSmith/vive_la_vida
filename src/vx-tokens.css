@@ -1,0 +1,83 @@
+/* ============================================================================
+   VIVE · Design System universal — TOKENS (fuente única de verdad)
+   Todo módulo nuevo o rediseñado consume SOLO estas variables (--vx-*).
+   Capas: 1 acento dinámico · 2 color y texto · 3 superficies Liquid Glass · 4 materiales · 5 dimensiones · 6 tipografía · 7 semánticos · 8 estados
+   Claro y Black son dos paletas independientes (no hay inversión automática). El acento viene de Personalización
+   (--ui-accent ← --vive-theme-color); los colores financieros semánticos NO dependen del acento.
+   ========================================================================== */
+:root,body{
+ /* 1 · Acento dinámico */
+ --vx-accent:var(--ui-accent,var(--vive-theme-color,#6d69f1));
+ --vx-accent-strong:var(--v424-accent-strong,color-mix(in srgb,var(--vx-accent) 82%,#000));   /* relleno con texto blanco ≥ 5:1 */
+ --vx-accent-text:var(--f360-accent-readable,var(--vx-accent-strong));                          /* acento como texto sobre vidrio */
+ --vx-accent-soft:color-mix(in srgb,var(--vx-accent) 14%,transparent);
+ --vx-accent-line:color-mix(in srgb,var(--vx-accent) 26%,transparent);
+ --vx-on-accent:#fff;
+ /* 2 · Texto y fondos (Claro) */
+ --vx-bg:#d9e7fa;
+ --vx-ambient:radial-gradient(ellipse 90% 70% at -10% -10%,color-mix(in srgb,var(--vx-accent) 26%,transparent),transparent 70%),radial-gradient(ellipse 80% 60% at 110% 0%,rgba(120,200,255,.35),transparent 70%);
+ --vx-text:#0f2038;          /* 15:1 sobre vidrio claro */
+ --vx-text-2:#3b4e69;        /* ≥ 7:1 */
+ --vx-text-3:#485c78;        /* ≥ 5:1 (texto tenue accesible) */
+ /* 3 · Superficies Liquid Glass */
+ --vx-glass-1:rgba(255,255,255,.64);    /* primaria: tarjetas con importes */
+ --vx-glass-2:rgba(255,255,255,.42);    /* secundaria: subtarjetas, filas */
+ --vx-glass-raised:rgba(255,255,255,.82);/* elevada: menús, modales */
+ --vx-glass-nav:rgba(255,255,255,.55);  /* navegación flotante */
+ --vx-edge:rgba(255,255,255,.85);       /* contorno luminoso */
+ --vx-edge-soft:rgba(255,255,255,.55);
+ --vx-hairline:rgba(30,50,80,.10);      /* separador sutil (no negro) */
+ --vx-highlight:inset 0 1px 0 rgba(255,255,255,.9);
+ /* 4 · Materiales */
+ --vx-blur-card:14px; --vx-blur-sub:10px; --vx-blur-raised:22px; --vx-blur-nav:30px;
+ --vx-sat:1.45;
+ --vx-shadow-1:0 6px 18px rgba(40,70,110,.10);
+ --vx-shadow-2:0 16px 40px rgba(40,70,110,.14);
+ --vx-glow:0 0 0 1px var(--vx-accent-line),0 8px 24px color-mix(in srgb,var(--vx-accent) 16%,transparent);
+ --vx-refract:linear-gradient(150deg,rgba(255,255,255,.55),rgba(255,255,255,.08) 45%,transparent 62%);
+ /* 5 · Dimensiones */
+ --vx-gutter:24px; --vx-gap-section:20px; --vx-gap-card:14px; --vx-pad:18px; --vx-pad-sm:12px;
+ --vx-h-control:40px; --vx-h-btn:40px; --vx-h-select:40px; --vx-h-pill:32px;
+ --vx-icon-sm:16px; --vx-icon:20px; --vx-icon-lg:24px; --vx-icon-stroke:1.75;
+ --vx-r-sm:12px; --vx-r-md:18px; --vx-r-lg:24px; --vx-r-pill:999px;
+ --vx-card-min:104px; --vx-kpi-min:96px; --vx-col-side:340px;
+ --vx-dock-clear:112px;   /* separación inferior reservada para la barra flotante móvil */
+ /* 6 · Tipografía (4 pesos) */
+ --vx-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+ --vx-fw-regular:400; --vx-fw-medium:500; --vx-fw-semibold:600; --vx-fw-bold:700;
+ --vx-fs-caption:12px; --vx-fs-label:12px; --vx-fs-body:14px; --vx-fs-sub:15px; --vx-fs-title:18px; --vx-fs-kpi:24px; --vx-fs-display:32px;
+ --vx-lh-tight:1.15; --vx-lh-body:1.45;
+ /* 7 · Colores financieros semánticos (independientes del acento) */
+ --vx-income:#0b7f4f; --vx-expense:#c42b5a; --vx-positive:#0b7f4f; --vx-negative:#c42b5a; --vx-warning:#9a5b00; --vx-info:#1d5fc4;
+ --vx-income-soft:rgba(15,154,99,.14); --vx-expense-soft:rgba(214,58,104,.14); --vx-warning-soft:rgba(232,163,23,.18);
+ /* 8 · Estados */
+ --vx-hover:color-mix(in srgb,var(--vx-accent) 8%,transparent);
+ --vx-selected:var(--vx-accent-strong);
+ --vx-focus:0 0 0 3px color-mix(in srgb,var(--vx-accent) 45%,transparent);
+ --vx-disabled-fg:rgba(15,32,56,.42); --vx-disabled-bg:rgba(15,32,56,.06);
+}
+/* Black auténtico: fondo #000, superficies oscuras translúcidas, reflejos controlados (paleta propia, no inversión) */
+body.theme-black,body.theme-dark{
+ --vx-bg:#000;
+ --vx-ambient:radial-gradient(ellipse 80% 55% at -10% -10%,color-mix(in srgb,var(--vx-accent) 22%,transparent),transparent 70%);
+ --vx-text:#f5f8fc; --vx-text-2:#c2cddc; --vx-text-3:#97a5b9;
+ --vx-glass-1:rgba(255,255,255,.075); --vx-glass-2:rgba(255,255,255,.045); --vx-glass-raised:rgba(30,32,38,.82); --vx-glass-nav:rgba(18,20,26,.62);
+ --vx-edge:rgba(255,255,255,.16); --vx-edge-soft:rgba(255,255,255,.09); --vx-hairline:rgba(255,255,255,.09);
+ --vx-highlight:inset 0 1px 0 rgba(255,255,255,.14);
+ --vx-shadow-1:0 8px 22px rgba(0,0,0,.5); --vx-shadow-2:0 18px 44px rgba(0,0,0,.55);
+ --vx-refract:linear-gradient(150deg,rgba(255,255,255,.10),rgba(255,255,255,.02) 45%,transparent 62%);
+ --vx-sat:1.25;
+ --vx-accent-text:color-mix(in srgb,var(--vx-accent) 62%,#fff);
+ --vx-income:#3ddc97; --vx-expense:#ff7a9c; --vx-positive:#3ddc97; --vx-negative:#ff7a9c; --vx-warning:#f4b740; --vx-info:#6aa7ff;
+ --vx-income-soft:rgba(61,220,151,.14); --vx-expense-soft:rgba(255,122,156,.14); --vx-warning-soft:rgba(244,183,64,.16);
+ --vx-disabled-fg:rgba(245,248,252,.38); --vx-disabled-bg:rgba(255,255,255,.06);
+}
+/* Móvil: dimensiones propias (no se copian las de PC) */
+@media (max-width:790px){
+ :root,body{--vx-gutter:16px;--vx-gap-section:18px;--vx-gap-card:12px;--vx-pad:14px;--vx-h-control:44px;--vx-h-btn:48px;--vx-h-select:48px;--vx-h-pill:36px;--vx-card-min:128px;--vx-fs-display:30px}
+}
+/* Capa de compatibilidad: variables antiguas que aún leen los módulos heredados apuntan al sistema */
+:root,body{
+ --lg-accent:var(--vx-accent);
+ --lg-edge:var(--vx-edge);--lg-edge-soft:var(--vx-edge-soft);
+}

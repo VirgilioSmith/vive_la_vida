@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VIVE · Design System</title>
+<link rel="stylesheet" href="./src/vx-tokens.css?v=2"/><link rel="stylesheet" href="./src/vx-components.css?v=1"/>
+<style>
+html,body{margin:0}body{background:var(--vx-ambient),var(--vx-bg);min-height:100vh;color:var(--vx-text);font-family:var(--vx-font)}
+.ds{max-width:1180px;margin:0 auto;padding:var(--vx-gutter);display:flex;flex-direction:column;gap:var(--vx-gap-section)}
+.ds section{display:flex;flex-direction:column;gap:var(--vx-gap-card)}
+.ds-row{display:flex;flex-wrap:wrap;gap:var(--vx-gap-card);align-items:center}
+.ds-sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ds-sw div{padding:10px;border-radius:var(--vx-r-sm);border:1px solid var(--vx-hairline);font-size:12px}
+.ds-sw i{display:block;height:28px;border-radius:8px;margin-bottom:6px;border:1px solid var(--vx-hairline)}
+.ds-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--vx-gap-card)}
+.ds-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+</style></head>
+<body><main class="ds vx" id="ds">
+<header class="ds-ctl"><h1 class="vx-h1">Design System</h1>
+ <div class="vx-seg" role="group" aria-label="Tema"><button class="vx-pill is-on" data-theme="light">Claro</button><button class="vx-pill" data-theme="black">Black</button></div>
+ <label class="vx-muted">Acento <input id="accent" type="color" value="#6d69f1" aria-label="Acento"></label>
+ <span class="vx-muted" id="accent-name">violeta</span></header>
+<p class="vx-sub">Tokens <code>--vx-*</code> en <code>src/vx-tokens.css</code> · componentes en <code>src/vx-components.css</code>. Claro y Black son paletas propias; el acento sigue a Personalización; los colores financieros no cambian con el acento.</p>
+
+<section id="colores"><h2 class="vx-h2">Colores</h2>
+ <div class="ds-sw">
+  <div><i style="background:var(--vx-accent)"></i>acento</div><div><i style="background:var(--vx-accent-strong)"></i>acento fuerte</div><div><i style="background:var(--vx-accent-soft)"></i>acento suave</div>
+  <div><i style="background:var(--vx-glass-1)"></i>vidrio primario</div><div><i style="background:var(--vx-glass-2)"></i>vidrio secundario</div><div><i style="background:var(--vx-glass-raised)"></i>elevada</div>
+  <div><i style="background:var(--vx-income)"></i>ingresos</div><div><i style="background:var(--vx-expense)"></i>egresos</div><div><i style="background:var(--vx-warning)"></i>advertencia</div>
+  <div><i style="background:var(--vx-text)"></i>texto</div><div><i style="background:var(--vx-text-2)"></i>texto 2</div><div><i style="background:var(--vx-text-3)"></i>texto tenue</div>
+ </div></section>
+
+<section id="tipografia"><h2 class="vx-h2">Tipografía</h2>
+ <div class="vx-glass vx-card"><p class="vx-h1">Display 32 · 700</p><p class="vx-h2">Título 18 · 600</p><p class="vx-sub">Subtítulo 15 · 400</p><p>Cuerpo 14 · 400. RD$1,234,567.89 · US$8,000.00</p><p class="vx-label">Etiqueta 12 · 600</p><p class="vx-muted">Descripción tenue 12 · 400</p><p class="vx-amount">RD$118,000</p></div></section>
+
+<section id="kpi"><h2 class="vx-h2">KPI y tarjetas</h2>
+ <div class="ds-3">
+  <article class="vx-glass vx-kpi"><span class="vx-label">Ingresos</span><strong class="vx-amount vx-pos">RD$118,000</strong><span class="vx-muted">+12.4% vs. mes ant.</span></article>
+  <article class="vx-glass vx-kpi"><span class="vx-label">Egresos</span><strong class="vx-amount vx-neg">RD$92,727</strong><span class="vx-muted">−3.1% vs. mes ant.</span></article>
+  <article class="vx-glass vx-kpi"><span class="vx-label">Resultado neto</span><strong class="vx-amount vx-neg">−RD$4,200</strong><span class="vx-muted">negativo sigue en rojo con cualquier acento</span></article>
+ </div></section>
+
+<section id="liquid"><h2 class="vx-h2">Liquid Glass · niveles</h2>
+ <div class="ds-3">
+  <div class="vx-glass vx-card"><strong>Primaria</strong><p class="vx-muted">blur 14 · para importes</p></div>
+  <div class="vx-glass-2 vx-card"><strong>Secundaria</strong><p class="vx-muted">blur 10 · subtarjetas</p></div>
+  <div class="vx-raised vx-card"><strong>Elevada</strong><p class="vx-muted">blur 22 · menús y modales</p></div>
+ </div><nav class="vx-nav ds-row" style="padding:8px 14px"><span class="vx-pill is-on">Inicio</span><span class="vx-pill">Wallet</span><span class="vx-pill">Bancos</span><span class="vx-pill">Explorar</span></nav></section>
+
+<section id="botones"><h2 class="vx-h2">Botones y selectores</h2>
+ <div class="ds-row"><button class="vx-btn is-primary">Primario</button><button class="vx-btn">Secundario</button><button class="vx-btn" disabled>Desactivado</button>
+  <div class="vx-seg" role="group" aria-label="Período"><button class="vx-pill">Mes</button><button class="vx-pill is-on">Año</button><button class="vx-pill">Histórico</button></div></div></section>
+
+<section id="iconos"><h2 class="vx-h2">Iconos</h2>
+ <div class="ds-row">
+  <span class="vx-chip-ic"><svg class="vx-icon" viewBox="0 0 24 24" aria-label="Wallet"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/></svg></span>
+  <span class="vx-chip-ic"><svg class="vx-icon" viewBox="0 0 24 24" aria-label="Gráfico"><path d="M4 19V9m6 10V5m6 14v-7"/></svg></span>
+  <span class="vx-chip-ic"><svg class="vx-icon is-lg" viewBox="0 0 24 24" aria-label="Calendario"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4m8-4v4M3.5 10h17"/></svg></span>
+  <span class="vx-muted">16 · 20 · 24 px · trazo 1,75</span></div></section>
+
+<section id="formularios"><h2 class="vx-h2">Formularios</h2>
+ <form class="ds-3" onsubmit="return false">
+  <label><span class="vx-label">Importe</span><input class="vx-field" placeholder="RD$0.00" inputmode="decimal"></label>
+  <label><span class="vx-label">Con error</span><input class="vx-field" aria-invalid="true" value="abc"><div class="vx-error">Escribe un importe válido.</div></label>
+  <label><span class="vx-label">Desactivado</span><input class="vx-field" disabled value="Bloqueado"></label>
+ </form></section>
+</main>
+<script>
+const b=document.body,$=s=>document.querySelectorAll(s);
+$('[data-theme]').forEach(x=>x.addEventListener('click',()=>{b.classList.toggle('theme-black',x.dataset.theme==='black');$('[data-theme]').forEach(y=>y.classList.toggle('is-on',y===x))}));
+document.getElementById('accent').addEventListener('input',e=>{b.style.setProperty('--vive-theme-color',e.target.value)});
+</script></body></html>

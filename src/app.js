@@ -233,29 +233,8 @@ function loanSimulator(l,b){
   return `<div class="loan-simulator"><div class="glass-loan loan-sim-inputs"><span class="loan-overline">LABORATORIO DE ABONOS</span><h3>Diseña otro final para tu préstamo.</h3><p>Modifica importes y frecuencia sin tocar el historial financiero real. Para reducir la cuota, el banco debe aprobar la reamortización.</p><div class="loan-sim-fields"><label>Abono adicional (${l.currency})<input id="loanSimAmount" class="field" type="number" min="0" step="0.01" value="${s.amount}"/></label><label>Frecuencia<select id="loanSimFrequency" class="field">${[[0,'Una sola vez'],[1,'Mensual'],[2,'Cada 2 meses'],[3,'Trimestral'],[6,'Semestral'],[12,'Anual']].map(([v,t])=>`<option value="${v}" ${num(s.frequency)===v?'selected':''}>${t}</option>`).join('')}</select></label><label>Comenzar en<input id="loanSimStart" class="field" type="date" value="${s.start||b.actual.next}" min="${today()}"/></label><label>Objetivo<select id="loanSimMode" class="field"><option value="term" ${s.mode==='term'?'selected':''}>Reducir plazo</option><option value="payment" ${s.mode==='payment'?'selected':''}>Reducir cuota (requiere banco)</option></select></label></div><div class="loan-sim-actions"><button class="btn loan-primary" data-act="loanCalculate">Calcular impacto ${icon('arrow')}</button><button class="btn sm ghost" data-act="loanSimReset">Restablecer</button></div></div>
   <div class="glass-loan loan-sim-results"><span class="loan-overline">IMPACTO PROYECTADO</span><h3>${bad?'Revisa la simulación':'El ahorro posible.'}</h3>${bad?`<p class="loan-error">${sanitize(bad)}</p>`:`<div class="loan-saving">${fmt(b.projectedInterestSavings+b.projectedInsuranceSavings)}</div><p>Menos intereses y seguros futuros respecto a continuar sin nuevos abonos.</p><div class="loan-sim-facts"><div><span>Intereses evitados</span><strong>${fmt(b.projectedInterestSavings)}</strong></div><div><span>Seguros evitados</span><strong>${fmt(b.projectedInsuranceSavings)}</strong></div><div><span>Abonos extra previstos</span><strong>${fmt(b.scenario.extra)}</strong></div><div><span>Meses adelantados</span><strong>${b.monthsAdvanced>0?b.monthsAdvanced+' meses':'Sin cambio'}</strong></div><div><span>Liquidación sin estrategia</span><strong>${prettyDate(b.baseline.end)}</strong></div><div><span>Liquidación con estrategia</span><strong>${prettyDate(b.scenario.end)}</strong></div></div>`}<div class="loan-small-note">La cifra no incluye rendimientos alternativos del dinero ni penalidades de prepago. Las condiciones reales pueden diferir.</div></div></div>${loanComparison(l,b)}`;
 }
-function loanKpis(l,b){
-  const a=b.actual,pct=num(l.principal)>0?a.paidPrincipal/num(l.principal)*100:0;
-  return `<div class="loan-detail-kpis">${loanStat('Saldo pendiente',money(a.balance,l.currency,2),'Capital real según pagos','wallet','violet')}${loanStat('Avance de capital',pct.toFixed(1)+'%','Reducción de capital: '+money(a.paidPrincipal,l.currency),'check','teal')}${loanStat('Intereses a la fecha',money(a.interest+a.estimatedHistoricInterest,l.currency,2),'Confirmados: '+money(a.interest,l.currency,2)+' · históricos estimados: '+money(a.estimatedHistoricInterest,l.currency,2),'chart','blue')}${loanStat('Abonos extraordinarios',money(a.extras,l.currency,2),'Reducen principal directamente','up','amber')}</div>`;
-}
-function loanCurves(bundle,l){
-  const original=bundle.original.rows,actual=bundle.actual.rows,forecast=bundle.baseline.rows,sc=bundle.scenario.rows;
-  const O=[[0,num(l.principal)],...original.map((p,i)=>[i+1,p.balance])];
-  const nActual=bundle.actual.periods;const A=[[0,bundle.actual.openingPrincipal],...actual.map((p,i)=>[i+1,p.balance])];
-  const B=[[Math.max(0,actual.length),bundle.actual.balance],...forecast.map((p,i)=>[actual.length+i+1,p.balance])];
-  const S=[[Math.max(0,actual.length),bundle.actual.balance],...sc.map((p,i)=>[actual.length+i+1,p.balance])];
-  let count=Math.max(12,O.at(-1)?.[0]||0,B.at(-1)?.[0]||0,S.at(-1)?.[0]||0),w=920,h=280,x0=30,y0=218,cw=858,ch=188;
-  const pos=([i,v])=>[x0+i/count*cw,y0-v/Math.max(1,num(l.principal))*ch];
-  const path=pts=>pts.length?pts.map((p,i)=>`${i?'L':'M'}${pos(p)[0].toFixed(1)} ${pos(p)[1].toFixed(1)}`).join(' '):'';
-  const gr=[0,.25,.5,.75,1].map(v=>`<line x1="${x0}" x2="${x0+cw}" y1="${y0-v*ch}" y2="${y0-v*ch}" stroke="#c1cfe1" stroke-opacity=".4" stroke-dasharray="3 5"/><text x="${x0+cw+9}" y="${y0-v*ch+4}" font-size="10" fill="#8293aa">${Math.round(v*100)}%</text>`).join('');
-  return `<div class="loan-line-chart"><svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Curvas de amortización del plan original, capital registrado y proyecciones"><defs><linearGradient id="loanArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d81cb" stop-opacity=".14"/><stop offset="1" stop-color="#5d81cb" stop-opacity="0"/></linearGradient></defs>${gr}
-   <path d="${path(O)}" stroke="#9aabc7" stroke-width="3" stroke-dasharray="7 6" fill="none"/>
-   <path d="${path(B)}" stroke="#4a76c7" stroke-width="3.5" fill="none"/>
-   ${bundle.simOpt.amount>0?`<path d="${path(S)}" stroke="#d8586d" stroke-width="3.5" fill="none"/>`:''}
-   <path d="${path(A)}" stroke="#138c79" stroke-width="4" fill="none"/>
-   ${A.length>1?`<circle cx="${pos(A.at(-1))[0]}" cy="${pos(A.at(-1))[1]}" r="6" fill="#138c79" stroke="#fff" stroke-width="3"/>`:''}
-   <text x="${x0}" y="${h-24}" font-size="11" fill="#8797ae">Inicio</text><text x="${x0+cw}" y="${h-24}" text-anchor="end" font-size="11" fill="#8797ae">${count} períodos</text></svg></div>
-   <div class="loan-legend"><span><i style="background:#9aabc7"></i> Original</span><span><i style="background:#138c79"></i> Histórico estimado + registrado</span><span><i style="background:#4a76c7"></i> Proyección vigente</span>${bundle.simOpt.amount>0?'<span><i style="background:#d8586d"></i> Estrategia</span>':''}</div>`;
-}
+
+
 function loanComparison(l,b){
   let curr=b.actual.interest+b.actual.estimatedHistoricInterest+b.baseline.interest,currIns=b.actual.insurance+b.actual.estimatedHistoricInsurance+b.baseline.insurance,currFee=b.actual.fees+b.actual.estimatedHistoricFees+b.baseline.fees;
   let sim=b.actual.interest+b.actual.estimatedHistoricInterest+b.scenario.interest,simIns=b.actual.insurance+b.actual.estimatedHistoricInsurance+b.scenario.insurance,simFee=b.actual.fees+b.actual.estimatedHistoricFees+b.scenario.fees;
@@ -287,9 +266,7 @@ function loanGroupedRows(rows,size){
     g.principal+=r.principal;g.interest+=r.interest;g.insurance+=r.insurance;g.fee+=r.fee;g.extra+=r.extra;g.payment+=r.payment;g.balance=r.balance;g.date=r.date;
   }return groups;
 }
-function loanStat(label,value,note,iconName,tone=''){
-  return `<div class="loan-stat glass-loan"><span class="loan-stat-icon ${tone}">${icon(iconName)}</span><div class="loan-stat-label">${label}</div><strong>${value}</strong><small>${note}</small></div>`;
-}
+
 {const _accountDetail=accountDetail,_loanDetail=loanDetail;
  accountDetail=function(a){const html=_accountDetail(a);return a&&a.kind!=='cash'?html+`<div class="panel section v1400-antiguedad-panel"><div class="panel-head"><h3>Antigüedad de la cuenta</h3></div>${antiguedadRow(a,'account')}</div>`:html};
  loanDetail=function(l){const html=_loanDetail(l);return isMobileViewport()?html:html+`<div class="panel section v1400-antiguedad-panel"><div class="panel-head"><h3>Antigüedad del préstamo</h3></div>${antiguedadRow(l,'loan')}</div>`}}
@@ -1070,26 +1047,7 @@ function v342CreativePositionMobile(liquid,debt,net){
   </section>`;
 }
 /* V732: tres refinamientos visuales en Inicio; solo datos ya sincronizados. */
-function v732HomeKpi(liquid,debt,net,compact=false){
- const prior=v64PositionComparison();
- const previous=prior.valid?Number(prior.position?.net):NaN;
- const valid=prior.valid&&Number.isFinite(previous)&&Math.abs(previous)>0.005;
- const change=valid?100*(net-previous)/Math.abs(previous):null;
- const delta=valid?(change>0?'+':'')+new Intl.NumberFormat('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1}).format(change)+'%':'—';
- const tone=!valid?'neutral':change>=0?'up':'down';
- const diffText=valid?'vs. mes anterior':'Sin base comparable';
- return `<section class="v732-home-kpi ${compact?'v742-kpi-clean':''}" aria-label="Resumen de posición financiera">
-  <div class="v732-kpi-head"><span>Posición financiera actual</span><span class="v732-kpi-mark" aria-hidden="true">${icon('chart')}</span></div>
-  <strong class="v732-kpi-value ${net<0?'v968-neg':'v968-pos'}">${money(net,'DOP',2)}</strong>
-  <div class="v732-kpi-variance ${tone}"><b>${delta}</b><span>${diffText}</span></div>
-  <div class="v732-kpi-ornament" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-  <div class="v732-kpi-stats">
-   <button type="button" data-act="v186Deep" data-id="liquidity">${compact?'':`<span class="v732-kpi-stat-icon">${icon('wallet')}</span>`}<span><strong class="v968-up">${money(liquid)}</strong><small>Fondos</small></span></button>
-   <button type="button" data-act="v186Deep" data-id="debt">${compact?'':`<span class="v732-kpi-stat-icon">${icon('card')}</span>`}<span><strong class="v968-down">${money(debt)}</strong><small>Deudas</small></span></button>
-${compact?'':`   <button type="button" data-act="v186Deep" data-id="net"><span class="v732-kpi-stat-icon">${icon('analytics')}</span><span><strong>${money(net)}</strong><small>Posición neta</small></span></button>`}
-  </div>
- </section>`;
-}
+
 
 /* V1149 · % de participación de cada tipo de compromiso sobre lo pendiente del mes (se muestra bajo el importe de cada fila). */
 function v1149Pct(){
@@ -1167,10 +1125,7 @@ function v243ExploreReturn(){
 }
 /* V1278 · Galería «La vida que quiero»: 20 metas con su frase. Solo lectura; se muestra en Explorar. */
 const V1278_METAS=[["El océano", "Libertad, calma y momentos por vivir.", "Joseando por mi próximo amanecer frente al mar.", "#2f8f9d", "#a7d8d9", "waves"], ["Miami", "Un apartamento con vista al mar.", "El apartamento frente al mar no se paga solo.", "#3a7ca5", "#e8c4a0", "sun"], ["Constanza", "Un lugar entre montañas y naturaleza.", "Joseando por Constanza.", "#5b8c5a", "#c9dcb4", "leaf"], ["Mi papá", "Cuidarlo y compartir más tiempo.", "Que papá disfrute el resultado de tanto joseo.", "#6b8e6b", "#d9e5c8", "users"], ["Mi mamá", "Dar amor, bienestar y tranquilidad.", "Que mamá nunca vuelva a preocuparse por dinero.", "#b66a7e", "#f0cdd3", "heart"], ["Egipto", "Pirámides, historia y un viaje que cambia la mirada.", "Hoy lo estamos construyendo.", "#c58b3a", "#f1dba8", "sun"], ["Londres", "Calles con historia y una ciudad que nunca duerme.", "De soñarlo a vivirlo.", "#5a6b8c", "#c9d1e3", "building"], ["China", "Una cultura milenaria por descubrir paso a paso.", "Cada joseo me acerca a la meta.", "#b5443f", "#f0c9a8", "star"], ["Joseo", "La vuelta es progresar.", "Siempre joseando, siempre evolucionando.", "#6d69f1", "#cfcbf7", "chart"], ["Salud", "Energía para seguir joseando y disfrutar.", "Salud para seguir joseando.", "#2f9a68", "#cdeedd", "cross"], ["Mi libertad", "Ser dueño de mi tiempo.", "Joseando para ser dueño de mi tiempo.", "#3f6fb5", "#cddbf2", "unlock"], ["Mi familia", "Que en casa nunca falte nada.", "Mi familia es el motivo del joseo.", "#a8643c", "#f0d6c3", "home"], ["Mi negocio", "Facturar con mentalidad de dueño.", "Facturando con mentalidad de dueño.", "#3b5b7a", "#c9d6e4", "briefcase"], ["Aprender", "Cursos, libros y conversaciones que me hacen crecer.", "Invertir en lo que aprendes es invertir en quien serás.", "#7a5aa8", "#ddd0f0", "book"], ["Descanso", "Dormir bien y tener tardes sin pendientes.", "Descansar no es perder tiempo; es recuperar el que vas a vivir.", "#4a7f9e", "#cfe3ef", "moon"], ["Alimentación", "Comer mejor. Vivir mejor.", "Alimentarme bien también es invertir.", "#7aa14a", "#e0edc6", "apple"], ["Generosidad", "Compartir con quienes necesitan de ti.", "Compartir también es una forma de prosperar.", "#c0627a", "#f3cfd8", "gift"], ["Mi casa", "Un hogar propio, tranquilo y mío.", "Que en casa nunca falte nada.", "#8a6a4a", "#e6d8c6", "home"], ["Un viaje", "Un recuerdo que valga más que cualquier objeto.", "Invierte en recuerdos, no solamente en posesiones.", "#3a8fb5", "#cde6f1", "plane"], ["Mi futuro", "Hoy construyo, mañana decido.", "Hoy construyo, mañana decido.", "#555fa8", "#d5d8f0", "target"]];
-function v1278Gallery(){
- const e=x=>String(x).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
- return `<section class="v1278-gal" aria-label="La vida que quiero"><header><span>MIS RAZONES PARA CONSTRUIR</span><h2>La vida que quiero.</h2><p>Lo que me inspira, lo que deseo vivir y las personas que quiero cuidar.</p></header><div class="v1278-grid">${V1278_METAS.map((m,i)=>`<button type="button" class="v1278-card" data-v1278="${i}" style="--a:${m[3]};--b:${m[4]}" aria-label="${e(m[0])}: ${e(m[1])}"><span class="v1278-art"><i></i><i></i></span><strong>${e(m[0])}</strong><small>${e(m[1])}</small><em>${e(m[2])}</em></button>`).join('')}</div></section>`;
-}
+
 document.addEventListener('click',ev=>{const c=ev.target.closest?.('[data-v1278]');if(!c)return;const on=c.classList.contains('is-on');document.querySelectorAll('.v1278-card.is-on').forEach(x=>x.classList.remove('is-on'));if(!on)c.classList.add('is-on')});
 function mobileHub(){
  const period=ui.month||today().slice(0,7);
@@ -3906,10 +3861,7 @@ function v30ReviewContent(embedded=false){
  const summary=`<div class="v30-overview"><div><small>ALERTAS IMPORTANTES</small><strong class="${a.alerts?'v30-warn':''}">${a.alerts}</strong><span>Posibles inconsistencias</span></div><div><small>SIN CONCILIAR</small><strong>${a.unreconciled}</strong><span>Movimientos por verificar</span></div><div><small>OPERACIONES PENDIENTES</small><strong>${a.pending}</strong><span>No modifican los saldos</span></div></div>`;
  return `<section class="v30-control ${embedded?'v30-embedded':''}"><div class="v30-control-head"><div><span class="summary-tag">CONTROL DE CALIDAD · vive el hoy</span><h3>Todo claro, antes de avanzar.</h3><p>Una revisión automática de tus datos locales. Las alertas son indicios para comprobar, no errores confirmados.</p></div>${embedded?`<button type="button" class="btn sm soft" data-act="v30Go" data-page="register" data-tab="review">Abrir revisión ${icon('arrow')}</button>`:''}</div>${summary}<div class="v30-issues">${buttons||'<div class="v30-good">✓ No se detectaron observaciones con las reglas de control actuales.</div>'}</div>${v339IntegritySection()}</section>`;
 }
-function v30RecoveryContent(){
- const snaps=v30Snapshots();
- return `<section class="v30-control v30-recovery"><div class="v30-control-head"><div><span class="summary-tag">PROTECCIÓN LOCAL · COPIAS DE SEGURIDAD</span><h3>Puntos de recuperación</h3><p>Se crean antes de importar, reemplazar o eliminar información. Están en este navegador: también debes exportar un JSON fuera de él.</p></div><button type="button" class="btn sm soft" data-act="v30NewPoint">Guardar punto ahora</button></div>${snaps.length?`<div class="v30-recovery-items">${snaps.map(x=>`<div class="v30-recovery-row"><div><strong>${sanitize(x.reason)}</strong><small>${sanitize(new Date(x.at).toLocaleString('es-DO'))}</small></div><div class="v30-recovery-actions"><button class="btn sm ghost" type="button" data-act="v30DownloadPoint" data-id="${sanitize(x.id)}">Descargar</button><button class="btn sm soft" type="button" data-act="v30RestorePoint" data-id="${sanitize(x.id)}">Restaurar</button></div></div>`).join('')}</div>`:'<p class="v30-empty">Todavía no hay puntos de recuperación. Puedes crear el primero ahora.</p>'}</section>`;
-}
+
 
 function settings(){let s=db.settings;return `<div class="settings-layout">
 <section class="settings-hero"><div class="summary-tag">vive el hoy / PREFERENCIAS</div><h2>vive el hoy, a tu manera.</h2><p>Una navegación clara, tres temas y todas tus reglas financieras en un solo lugar. Tus datos se sincronizan con tu cuenta privada de Supabase.</p></section><nav class="v176-settings-jump" aria-label="Secciones de configuración"><a href="#v176-setting-00">Cuenta</a><a href="#v176-setting-01">Apariencia</a><a href="#v176-setting-02">Color</a><a href="#v176-setting-03">Fondo</a><a href="#v176-setting-04">Finanzas</a><a href="#v176-setting-05">Revisión</a><a href="#v176-setting-06">Privacidad</a></nav>
@@ -9809,8 +9761,8 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 /* V42 · Instituciones sencillas / Personal o Negocio / Identidad en color / Nómina legible */
 let v42InstitutionFilter='all';
 const v42Colors=['#376bea','#111827','#64748b','#0f766e','#8b5cf6','#db2777','#ef4444','#f50b32','#f9163c','#4b8dcd'];
-const v42KindLabel=b=>!v40IsFinancial(b)?'Entidad no bancaria':(b.kind||'Banco');
-const v42ScopeLabel=b=>b.scope==='negocio'?'Negocio':'Personal';
+
+
 /* V61 · Switch de cartera por perfil: usa el scope existente, no modifica saldos ni operaciones. */
 let v61InstitutionProfile='all';
 const v61InstitutionMatches=b=>v61InstitutionProfile==='all'||(v61InstitutionProfile==='negocio'?b.scope==='negocio':b.scope!=='negocio');
@@ -13707,22 +13659,7 @@ function v144BenefitsTable(cards){
 function v389BenefitsKPIs(cards){
  return '';
 }
-function v389BenefitsKPIsUnused(cards){
- const year=Number(ui.v144BenefitYear)||nowYear();
- const cardIds=new Set(cards.map(c=>c.id));
- const benefits=(db.transactions||[]).filter(t=>cardIds.has(t.cardId)&&['card_reward','bank_reward'].includes(t.type)&&String(t.date||'').startsWith(String(year)));
- const credited=rnd(benefits.reduce((sum,t)=>sum+v144CurrentFx(t),0));
- const annualFees=rnd(cards.reduce((sum,c)=>sum+v144AllCosts(c).filter(t=>v144CostPaid(t)&&String(v144CostPaidDate(t)||'').startsWith(String(year))&&(t.chargeKind==='annual_fee'||/anualidad|membres[ií]a/i.test(t.subcategory||''))).reduce((v,t)=>v+v144CurrentFx(t),0),0));
- const net=rnd(credited-annualFees);
- const ratio=annualFees>0?(net/annualFees*100):null;
- const fmtRatio=ratio===null?'—':new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(ratio)+' %';
- return `<section class="v389-benefit-kpis" aria-label="Resumen de beneficios reales de ${year}">
-   <div><small>ANUALIDADES PAGADAS</small><strong>${v144Value(annualFees)}</strong></div>
-   <div><small>BENEFICIOS RECIBIDOS</small><strong>${v144Value(credited)}</strong></div>
-   <div><small>RETORNO</small><strong class="${net>=0?'positive':'negative'}">${v144Value(net)}</strong></div>
-   <div><small>RETORNO %</small><strong class="${net>=0?'positive':'negative'}">${fmtRatio}</strong></div>
- </section><p class="v389-benefit-definition">${year} · Retorno = beneficios monetarios recibidos − anualidades pagadas. Porcentaje = retorno ÷ anualidades pagadas. Si no hay anualidades pagadas, el porcentaje no aplica. No incluye beneficios pendientes ni puntos.</p>`;
-}
+
 
 /* Selector PC de anualidad: reutiliza annualFeeForm sin duplicar lógica ni afectar móvil. */
 function vBanksAnnualBenefitsAction(cards,hero=false){
@@ -18643,7 +18580,7 @@ const realCategories=mode=>Object.keys(categoryMap(mode==='income'?'ingreso':'ga
 const subcategories=(mode,cat)=>categoryMap(mode==='income'?'ingreso':'gasto')[cat]||[];
 const state=()=>{const s=mqrState();s.v749Source||='account';s.v749Currency||='DOP';s.v749Date||=today();s.v749Note??='';s.v749Subcategory??='';s.v749Payee??='';s.v749Account||=v1243Top('account',db.accounts.filter(a=>!a.archived).map(a=>a.id));s.v749Card||=v1243Top('card',db.cards.filter(c=>!c.archived).map(c=>c.id));s.v749ToAccount||=v1243Top('account',db.accounts.filter(a=>!a.archived).map(a=>a.id),s.v749Account);if(!s.editId&&(s.mode==='income'||s.mode==='spend')&&!realCategories(s.mode).includes(s.preset))s.preset=mostUsedCategories(s.mode)[0]||'';return s};
 const acc=(id)=>db.accounts.find(a=>a.id===id);const cardRef=id=>db.cards.find(c=>c.id===id);
-const displaySource=s=>s.mode==='transfer'?(acc(s.v749Account)?.name||'Seleccionar origen'):s.mode==='income'?(acc(s.v749Account)?.name||'Seleccionar cuenta'):s.v749Source==='card'?(cardRef(s.v749Card)?.name||'Seleccionar tarjeta'):(acc(s.v749Account)?.name||'Seleccionar cuenta');
+
 const v1295ProductChip=(s,destination=false)=>{
  const isCard=!destination&&s.mode==='spend'&&s.v749Source==='card';
  const product=destination?acc(s.v749ToAccount):isCard?cardRef(s.v749Card):acc(s.v749Account);
@@ -23609,10 +23546,7 @@ window.__v866Runners.v865=run;
   const sv=r.querySelector('[data-vive-saved]');if(sv)sv.textContent=favs.length?`Guardadas (${favs.length})`:'Guardadas';
   r.querySelectorAll('[data-vive-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.viveTheme===state.theme)));
  }
- function buildChips(r){
-  const nav=r.querySelector('.vive-reader-themes');if(!nav)return;
-  nav.innerHTML=[['all','Todos'],...THEMES.map(t=>[t,THEME_LABEL[t]||t])].map(([k,l])=>`<button type="button" class="vive-chip" data-vive-theme="${k}" aria-pressed="${k===state.theme}">${safe(l)}</button>`).join('');
- }
+ 
  function next(){
   if(!state.open||state.busy)return;const r=rootEl();if(!r)return;state.busy=true;
   const b=r.querySelector('[data-vive-next]');if(b)b.disabled=true;
