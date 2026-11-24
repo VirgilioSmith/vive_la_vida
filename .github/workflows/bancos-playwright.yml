@@ -7,6 +7,13 @@ on:
       - 'index.html'
       - 'tests/**'
       - '.github/workflows/bancos-playwright.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'index.html'
+      - 'tests/**'
+      - '.github/workflows/bancos-playwright.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,7 +28,10 @@ jobs:
           node-version: '22'
       - run: npm install --no-save playwright@1.56.1
       - run: npx playwright install --with-deps chromium
+      - name: Vive Joseo desktop and mobile
+        run: node tests/vive-joseo.js
       - name: Bancos and Patrimonio regression
+        if: always()
         run: CI= BANKS_VISUAL_DIR="$PWD/bancos-evidence" node tests/bancos-patrimonio.js
       - uses: actions/upload-artifact@v4
         if: always()
