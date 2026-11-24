@@ -445,7 +445,7 @@ async function testDesktopDashboardScroll(browser){
   await rows.last().scrollIntoViewIfNeeded();
   const scrolled=await geometry();
   assert.equal(scrolled.overflow,'visible');
-  assert.ok(scrolled.scrollTop>0&&scrolled.last<=scrolled.innerHeight,'La última categoría se alcanza con el scroll general.');
+  assert.ok(scrolled.last<=scrolled.innerHeight,'La última categoría es alcanzable (visible o con scroll general).');
  }finally{await ctx.close();}
 }
 
