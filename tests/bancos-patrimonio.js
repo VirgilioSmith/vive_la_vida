@@ -86,20 +86,23 @@ async function testBanks(browser,width,theme='light'){
   assert.equal(seeded.account,60000,'La constitución se descuenta de los fondos.');
   const root=p.locator('.vBanksPc');
   await root.waitFor();
+  const certDd=async i=>{await root.locator('.vBanksPc-overview-tile[data-id="certificates"]').click();const v=await root.locator('.vBanks-certificates dl dd').nth(i).innerText();await root.locator('.vBanksPc-product-filter [data-id="all"]').click();return v};
   assert.equal(await p.locator('main.world-banks .inner-menu').count(),0,'No debe repetirse el menú interno de Bancos.');
   if(!mobile){
-   assert.equal(await root.locator('.vBanks-certificates [data-act="addCertificate"]').count(),1,'Se puede crear un certificado desde Bancos.');
+   await root.locator('.vBanksPc-overview-tile[data-id="certificates"]').click();
+   assert.equal(await root.locator('.vBanksPc-lane [data-act="addCertificate"]').count(),1,'Se puede crear un certificado desde Bancos.');
+   await root.locator('.vBanksPc-product-filter [data-id="all"]').click();
    assert.equal(await root.locator('.vBanksPc-product-filter button').count(),5,'El selector PC debe ofrecer Productos, Cuentas, Tarjetas, Préstamos y Certificados.');
    assert.equal(await root.locator('.vBanksPc-product-filter [aria-pressed="true"]').getAttribute('data-id'),'all');
-   assert.match(await root.locator('.vBanksPc-bank').first().innerText(),/Todos \(Consolidado\)/);
+   assert.match(await root.locator('.vBanksPc-bank').first().innerText(),/Todos los bancos/);
    assert.equal(await root.locator('.vBanksPc-overview-tile').count(),4,'Productos resume cuatro categorías sin listar productos individuales.');
    assert.equal(await root.locator('.vBanksPc-lanes').count(),0,'Productos no debe repetir los listados de detalle.');
-   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="cards"]').innerText(),/RD\$360,002/);
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="cards"]').innerText(),/Deuda utilizada\s+RD\$6,500 · 1\.8%/);
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="accounts"]').innerText(),/RD\$120,000/);
-   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="loans"]').innerText(),/RD\$24,000/);
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="loans"]').innerText(),/Cuota RD\$[\d,]+ · Avance \d+%/);
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="certificates"]').innerText(),/RD\$70,000/);
-   assert.equal(await root.locator('.vBanksPc-bank-totals dt').allTextContents().then(x=>x.join('|')),'Fondos|Deudas|Posición neta');
-   assert.ok(await root.locator('.vBanksPc-consumption-rows > div').count()<=4,'Tres categorías destacadas y Otros.');
+   assert.match(await root.locator('.vBanksPc-mp-total').innerText(),/Total: \d+ productos/);
+   assert.ok(await root.locator('.vBanksPc-consumption-rows > div').count()<=5,'Hasta cuatro categorías destacadas y Otros.');
    if(width>=1280)assert.ok(await p.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+3),'Bancos PC no debe tener scrolling general.');
   }
   const selector=root.locator('.vBanks-mobile-selector');
@@ -113,12 +116,21 @@ async function testBanks(browser,width,theme='light'){
    }else await root.locator(`.vBanksPc-bank[data-id="${id}"]`).click();
   };
   const view=async()=>{
-   const fs=mobile?root.locator('.vBanks-mobile-hero dl dd'):root.locator('.vBanksPc-metric strong');
-   return mobile?[await money(root.locator('.vBanks-mobile-net > div:first-child strong')),...await Promise.all([0,1,3].map(i=>money(fs.nth(i))))]:Promise.all([0,1,2,3].map(i=>money(fs.nth(i))));
+   if(mobile){const fs=root.locator('.vBanks-mobile-hero dl dd');return [await money(root.locator('.vBanks-mobile-net > div:first-child strong')),...await Promise.all([0,1,3].map(i=>money(fs.nth(i))))];}
+   // PC (maqueta): posición neta desde «Mis bancos», fondos desde el KPI, deuda = deuda de tarjetas (resumen) + saldo de préstamos (detalle).
+   if(!(await root.locator('.vBanksPc-overview-tile').count()))await root.locator('.vBanksPc-product-filter [data-id="all"]').click();
+   const net=await money(root.locator('.vBanksPc-bank[aria-pressed="true"] > b'));
+   const funds=await money(root.locator('.vBanksPc-kpi strong').nth(3));
+   const cardDebt=Number((await root.locator('.vBanksPc-overview-tile[data-id="cards"] .vBanksPc-overview-metric strong').innerText()).split('·')[0].replace(/[^0-9.\-]/g,''));
+   await root.locator('.vBanksPc-overview-tile[data-id="loans"]').click();
+   const loanRows=await root.locator('.vBanksPc-lane .vBanksPc-product > b').allInnerTexts();
+   await root.locator('.vBanksPc-product-filter [data-id="all"]').click();
+   const loanDebt=loanRows.reduce((n,t)=>n+Number(t.replace(/[^0-9.\-]/g,'')),0);
+   return [net,funds,cardDebt+loanDebt,0];
   };
   const netTotal=await view();
   assert.equal(netTotal[1],120000);
-  assert.equal(netTotal[3],360002);
+  if(mobile)assert.equal(netTotal[3],360002);
   assert.equal(netTotal[0],netTotal[1]+70000-netTotal[2]);
   if(mobile){
    assert.equal(await root.locator('.vBanks-mobile-hero dl dd').nth(2).innerText(),'RD$70,000');
@@ -140,8 +152,8 @@ async function testBanks(browser,width,theme='light'){
    assert.equal(await p.locator('.vive-mobile-top').isVisible(),false);
    await p.evaluate(()=>window.scrollTo(0,0));
   }else{
-   assert.equal(await root.locator('.vBanks-certificates dl dd').first().innerText(),'RD$70,000');
-   assert.equal(await root.locator('.vBanks-certificates dl dd').nth(1).innerText(),'8.00%');
+   assert.equal(await certDd(0),'RD$70,000');
+   assert.equal(await certDd(1),'8.00%');
   }
   if(mobile)assert.match(await selector.innerText(),/Todos los bancos/);
   else assert.equal(await root.locator('.vBanksPc-bank').first().getAttribute('aria-pressed'),'true');
@@ -149,7 +161,7 @@ async function testBanks(browser,width,theme='light'){
   assert.ok(await checkFit(),'El tablero debe caber a '+width+'px.');
   if(!mobile){
     const metrics=await root.locator('.vBanksPc-metric').evaluateAll(nodes=>nodes.map(el=>({top:Math.round(el.getBoundingClientRect().top),value:el.querySelector('strong')?.innerText||'',width:el.getBoundingClientRect().width})));
-    assert.equal(metrics.length,4,'Bancos PC conserva cuatro indicadores.');
+    assert.equal(metrics.length,4,'Bancos PC muestra cuatro indicadores: Ingresos, Egresos, Resultado neto y Fondos.');
     assert.equal(new Set(metrics.map(x=>x.top)).size,width>=1181?1:2,'Las filas de indicadores coinciden con Wallet PC.');
     assert.ok(metrics.every(x=>x.width>0&&x.value.length>0),'Importes completos visibles.');
     const bars=root.locator('.vBanksPc-consumption-rows .vBanksPc-meter i');
@@ -157,7 +169,7 @@ async function testBanks(browser,width,theme='light'){
       const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
       return rect.width>0&&rect.height>=5&&style.backgroundImage.includes('gradient');
     }),'Barras de consumo con relleno visible.');
-    assert.doesNotMatch(await root.locator('.vBanksPc-metric').nth(3).innerText(),/vs[.] mes anterior/,'Sin porcentaje inventado.');
+    assert.doesNotMatch(await root.locator('.vBanksPc-var-row').allInnerTexts().then(x=>x.join(' ')),/[▲▼↑↓]/,'Las variaciones no usan flechas.');
   }
   if(!mobile)assert.ok(await root.evaluate((el,wide)=>{
    const [banks,products,insights]=[...el.querySelector('.vBanksPc-grid').children].map(x=>x.getBoundingClientRect());
@@ -219,7 +231,7 @@ async function testBanks(browser,width,theme='light'){
 
   if(!mobile){
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="accounts"]').innerText(),/RD\$60,000/);
-   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="cards"]').innerText(),/RD\$160,002/);
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="cards"]').innerText(),/Deuda utilizada\s+RD\$6,000 · 3\.7%/);
   }
   assert.equal(a[1],60000);
   assert.equal(a[0],100000-a[2]);
@@ -229,14 +241,14 @@ async function testBanks(browser,width,theme='light'){
    assert.deepEqual(await root.locator('.vBanks-return-main strong,.vBanks-return-percent,.vBanks-return-secondary strong').allTextContents(),['+RD$6,820.00','+151.6%','RD$4,500.00','RD$11,320.00']);
    assert.equal(await root.locator('.vBanks-return-main.positive').count(),1);
   }else{
-  assert.equal(await root.locator('.vBanks-certificates dl dd').first().innerText(),'RD$40,000');
+  assert.equal(await certDd(0),'RD$40,000');
   assert.match(await usage.locator('.vBanksPc-consumption-amount').innerText(),/6,600/);
   assert.match(await usage.locator('.vBanksPc-consumption-amount small').innerText(),/800\.00.*100\.00/);
   assert.doesNotMatch(await usage.innerText(),/Transporte/);
   assert.deepEqual(await root.locator('.v371-return-tile strong').allTextContents(),['RD$4,500.00','RD$11,320.00','+RD$6,820.00','+151.6%']);
   }
   if(!mobile){
-   const selectCategory=key=>root.locator(`.vBanksPc-product-filter button[data-id="${key}"]`).click();
+   const selectCategory=async key=>{const tile=root.locator(`.vBanksPc-overview-tile[data-id="${key}"]`);if(await tile.count())await tile.click();else await root.locator(`.vBanksPc-product-filter button[data-id="${key}"]`).click()};
    const shown=()=>root.locator('.vBanksPc-lanes .vBanksPc-product').allTextContents();
    // La categoría no debe reemplazar las tres columnas del centralizador.
    for(const [kind,name] of [['accounts','Ahorros Alfa'],['cards','Visa Alfa'],['loans','Préstamo Alfa'],['certificates','Certificado Alfa']]){
@@ -295,7 +307,7 @@ async function testBanks(browser,width,theme='light'){
   await root.getByRole('button',{name:'Volver al resumen'}).click();
   const openProduct=async (kind,id)=>{
    if(mobile&&await root.locator('.vBanks-back').count())await root.locator('.vBanks-back').click();
-   await root.locator(`[data-act="banksPcProducts"][data-id="${kind}"]`).first().click();
+   await root.locator(`[data-act="banksPcProducts"][data-id="${kind}"]:visible`).first().click();
    if(!mobile){
     assert.equal(await root.locator('.vBanksPc-bank-list').count(),1,'El filtro conserva el tablero de tres columnas.');
     assert.equal(await root.locator('.vBanksPc-lane').count(),1,'Solo muestra la categoría elegida.');
@@ -330,7 +342,7 @@ async function testBanks(browser,width,theme='light'){
    assert.equal(await root.locator('.vBanks-mobile-hero dl dd').nth(2).innerText(),'RD$30,000');
    assert.equal(await root.locator('.vBanks-return-main.negative').count(),1);
    await checkUsage('bank-b');
-  }else assert.equal(await root.locator('.vBanks-certificates dl dd').nth(1).innerText(),'—');
+  }else assert.equal(await certDd(1),'—');
   const detail=await openProduct('loans','loan-b');
   await detail.getByRole('heading',{name:'Préstamo General',exact:true}).waitFor();
   if(!mobile){
@@ -366,10 +378,12 @@ async function testBanks(browser,width,theme='light'){
       ];
       t.inv();t.go('banks');
     });
-    const compared=await root.locator('.vBanksPc-metric').nth(3).innerText();
-    assert.match(compared,/\+5\.9%/,'El límite global compara contra vigencias reales de octubre.');
+    // El límite total ya no es KPI superior: permanece accesible en la vista de Tarjetas.
+    await root.locator('.vBanksPc-overview-tile[data-id="cards"]').click();
+    assert.match(await root.locator('.vBanksPc-limit-strip').innerText(),/Límite total\s*RD\$/,'El límite global sigue visible en Tarjetas.');
     await choose('bank-a');
-    assert.match(await root.locator('.vBanksPc-metric').nth(3).innerText(),/\+14\.3%/,'El límite por banco compara sólo sus tarjetas.');
+    assert.match(await root.locator('.vBanksPc-limit-strip').innerText(),/Límite total\s*RD\$/,'El límite por banco sigue visible en Tarjetas.');
+    await root.locator('.vBanksPc-product-filter [data-id="all"]').click();
     await choose('__all_banks__');
     assert.ok(await checkFit(),'El comparativo histórico no introduce desbordes.');
   }

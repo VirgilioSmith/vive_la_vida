@@ -1,0 +1,179 @@
+/* Bancos PC · Premium Liquid Glass (maqueta aprobada): 4 KPI, Mis bancos, Mis productos, Beneficios y Consumo.
+   Todo hereda el acento (--ui-*) y funciona en Claro y Black. Solo escritorio. */
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world{
+  --bg-glass:rgba(255,255,255,.34);--bg-glass-2:rgba(255,255,255,.5);--bg-edge:rgba(255,255,255,.6);--bg-ink:#10182e;--bg-muted:#55637c;
+  --bg-good:#0f8a5a;--bg-good-bg:rgba(34,170,110,.15);--bg-bad:#c9303a;--bg-bad-bg:rgba(222,64,76,.13);--bg-flat:#5c6a82;--bg-flat-bg:rgba(100,116,140,.14);
+  --bg-acc:var(--ui-solid,var(--v424-accent-strong,#4f5bd5));
+  --bg-shadow:0 12px 32px rgba(25,65,110,.08),inset 0 1px 0 rgba(255,255,255,.65)}
+ html body.theme-black #app#app#app main.vBanksPc-world,html body.theme-dark #app#app#app main.vBanksPc-world{
+  --bg-glass:rgba(255,255,255,.06);--bg-glass-2:rgba(255,255,255,.10);--bg-edge:rgba(255,255,255,.12);--bg-ink:#f3f6fb;--bg-muted:#aab4c6;
+  --bg-good:#5fe0a6;--bg-good-bg:rgba(60,200,140,.16);--bg-bad:#ff8a90;--bg-bad-bg:rgba(255,100,110,.16);--bg-flat:#b9c3d4;--bg-flat-bg:rgba(255,255,255,.10);
+  --bg-shadow:0 12px 32px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08)}
+ /* Reflejo ambiental suave integrado con el fondo */
+ html body #app#app#app main.vBanksPc-world::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 78% 0%,color-mix(in srgb,var(--ui-accent,#6d69f1) 16%,transparent),transparent 70%),radial-gradient(ellipse 50% 35% at 18% 100%,rgba(70,190,210,.14),transparent 70%)}
+ html body #app#app#app main.vBanksPc-world>*{position:relative;z-index:1}
+ /* Superficies de cristal */
+ html body #app#app#app main.vBanksPc-world #page#page :is(.vBanksPc-metric,.vBanksPc-bank-list,.vBanksPc-center>.vBanksPc-institution,.vBanksPc-insights>section,.vBanksPc-insights>details){background:var(--bg-glass)!important;border:1px solid var(--bg-edge)!important;border-radius:24px!important;box-shadow:var(--bg-shadow)!important;backdrop-filter:blur(28px) saturate(145%)!important;-webkit-backdrop-filter:blur(28px) saturate(145%)!important}
+ /* KPI */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metrics{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:clamp(10px,1vw,18px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;align-items:center!important;gap:14px!important;padding:16px 20px!important;min-width:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric:nth-child(1){background:linear-gradient(135deg,rgba(34,170,110,.18),var(--bg-glass) 60%)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric:nth-child(2){background:linear-gradient(135deg,rgba(222,64,76,.15),var(--bg-glass) 60%)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric:nth-child(3){background:linear-gradient(135deg,color-mix(in srgb,var(--ui-accent,#6d69f1) 22%,transparent),var(--bg-glass) 60%)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric:nth-child(4){background:linear-gradient(135deg,rgba(60,190,200,.18),var(--bg-glass) 60%)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-stat-icon{width:54px!important;height:54px!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:var(--bg-glass-2)!important;color:var(--bg-acc)!important;box-shadow:inset 0 1px 0 var(--bg-edge)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-stat-icon svg{width:26px!important;height:26px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric>div{min-width:0!important;display:grid!important;gap:2px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric>div>span:first-child{font-size:clamp(15px,1.05vw,17px)!important;font-weight:650!important;color:var(--bg-ink)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric>div>strong{font-size:clamp(26px,2.2vw,36px)!important;font-weight:800!important;letter-spacing:-.035em!important;line-height:1.08!important;color:var(--bg-ink)!important;white-space:nowrap!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-row{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;margin-top:6px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var{display:inline-flex!important;align-items:baseline!important;gap:6px!important;padding:3px 10px!important;border-radius:999px!important;font-size:clamp(12.5px,.88vw,14px)!important;white-space:nowrap!important;background:var(--bg-flat-bg)!important;color:var(--bg-flat)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var b{font-weight:800!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var i{font-style:normal!important;font-weight:500!important;color:var(--bg-muted)!important;padding-left:6px!important;border-left:1px solid color-mix(in srgb,currentColor 25%,transparent)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var.good{background:var(--bg-good-bg)!important;color:var(--bg-good)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var.bad{background:var(--bg-bad-bg)!important;color:var(--bg-bad)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-abs{display:inline-flex!important;padding:3px 10px!important;border-radius:999px!important;font-size:clamp(12.5px,.88vw,14px)!important;font-weight:800!important;white-space:nowrap!important;background:var(--bg-flat-bg)!important;color:var(--bg-flat)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-abs.good{background:var(--bg-good-bg)!important;color:var(--bg-good)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-abs.bad{background:var(--bg-bad-bg)!important;color:var(--bg-bad)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var.is-empty{background:none!important;padding:3px 0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var.is-empty i{border:0!important;padding:0!important}
+ /* Mis bancos */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list>header h2{font-size:clamp(22px,1.7vw,28px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank{display:grid!important;grid-template-columns:44px minmax(0,1fr) auto auto 14px!important;align-items:center!important;gap:10px!important;min-height:60px!important;padding:8px 12px!important;border:0!important;border-radius:18px!important;background:transparent!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank:hover{background:var(--bg-glass-2)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank.is-selected{background:color-mix(in srgb,var(--bg-acc) 16%,var(--bg-glass-2))!important;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bg-acc) 45%,transparent)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank strong{font-size:clamp(15px,1.05vw,17px)!important;font-weight:700!important;color:var(--bg-ink)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank small{font-size:clamp(12.5px,.88vw,14px)!important;color:var(--bg-muted)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank>b{font-size:clamp(14px,1vw,16.5px)!important;font-weight:800!important;text-align:right!important;white-space:nowrap!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-share{font-style:normal!important;font-size:12.5px!important;font-weight:750!important;padding:3px 9px!important;border-radius:999px!important;background:var(--bg-glass-2)!important;color:var(--bg-ink)!important;box-shadow:inset 0 1px 0 var(--bg-edge)!important;min-width:46px!important;text-align:center!important}
+ /* Mis productos (columna central) */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup{padding:18px!important;display:flex!important;flex-direction:column!important;gap:12px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-head h2{display:flex!important;align-items:center!important;gap:12px!important;margin:0!important;font-size:clamp(22px,1.7vw,28px)!important;font-weight:800!important;letter-spacing:-.03em!important;color:var(--bg-ink)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-head h2 svg{width:30px!important;height:30px!important;color:var(--bg-acc)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-total{padding:6px 14px!important;border-radius:999px!important;background:color-mix(in srgb,var(--bg-acc) 14%,var(--bg-glass-2))!important;color:var(--bg-acc)!important;font-weight:750!important;font-size:14px!important;white-space:nowrap!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-product-filter{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview{display:grid!important;gap:12px!important;grid-auto-rows:minmax(min-content,1fr)!important;flex:1 1 auto!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile{display:grid!important;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr) 18px!important;align-items:center!important;gap:16px!important;padding:14px 20px!important;border:1px solid var(--bg-edge)!important;border-radius:22px!important;background:var(--bg-glass-2)!important;box-shadow:var(--bg-shadow)!important;color:var(--bg-ink)!important;text-align:left!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-top{display:flex!important;align-items:center!important;gap:14px!important;min-width:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-icon{flex:none!important;width:60px!important;height:60px!important;border-radius:20px!important;display:grid!important;place-items:center!important;background:color-mix(in srgb,var(--bg-acc) 16%,transparent)!important;color:var(--bg-acc)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-icon svg{width:30px!important;height:30px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-tile-accounts .vBanksPc-overview-icon{background:rgba(34,170,110,.16);color:#16995f}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-tile-loans .vBanksPc-overview-icon{background:rgba(240,150,40,.18);color:#d98314}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-tile-certificates .vBanksPc-overview-icon{background:rgba(60,140,230,.16);color:#2f7be0}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-name{display:grid!important;gap:2px!important;font-size:clamp(19px,1.5vw,24px)!important;font-weight:800!important;letter-spacing:-.02em!important;color:var(--bg-ink)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-name small{font-size:clamp(14px,1vw,16px)!important;font-weight:500!important;color:var(--bg-muted)!important;display:block!important;margin:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric{display:grid!important;gap:2px!important;min-width:0!important;padding-left:18px!important;border-left:1px solid color-mix(in srgb,var(--bg-muted) 25%,transparent)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric small{font-size:clamp(13px,.95vw,15px)!important;font-weight:600!important;color:var(--bg-muted)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric strong{font-size:clamp(20px,1.7vw,28px)!important;font-weight:800!important;letter-spacing:-.03em!important;line-height:1.1!important;white-space:nowrap!important;color:var(--bg-ink)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric strong em{font-style:normal!important;font-weight:650!important;font-size:.62em!important;color:var(--bg-muted)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric strong.is-line{font-size:clamp(15px,1.15vw,19px)!important;font-weight:700!important;white-space:normal!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric strong.is-muted{color:var(--bg-acc)!important;font-weight:600!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile>svg{width:18px!important;height:18px!important;color:var(--bg-ink)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-foot{display:none!important}
+ /* Beneficios y retorno · Retorno neto, Retorno %, Anualidad, Beneficios */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-values{display:grid!important;grid-template-columns:1.25fr 1fr!important;gap:6px 0!important;border:0!important;padding-top:4px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile{border:0!important;background:none!important;padding:6px 14px!important;display:grid!important;gap:2px!important;min-width:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile:nth-child(3){order:1!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile:nth-child(4){order:2!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile:nth-child(1){order:3!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile:nth-child(2){order:4!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile:nth-child(3) strong{font-size:clamp(24px,1.9vw,32px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile:nth-child(4) strong{display:inline-block!important;width:fit-content!important;padding:2px 14px!important;border-radius:999px!important;font-size:clamp(18px,1.4vw,24px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile.negative strong{color:var(--bg-bad)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile.positive strong{color:var(--bg-good)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile.negative:nth-child(4) strong{background:var(--bg-bad-bg)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile.positive:nth-child(4) strong{background:var(--bg-good-bg)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile:nth-child(2).positive strong{color:var(--bg-good)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-note{border:0!important;color:var(--bg-muted)!important}
+ /* Consumo por tipo */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-consumption-rows>div{border:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-consumption-total{border:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-meter{height:7px!important;border-radius:99px!important;background:color-mix(in srgb,var(--bg-acc) 14%,transparent)!important}
+}
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile{grid-template-columns:minmax(0,.95fr) minmax(0,1.25fr)!important;padding-right:44px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-top{grid-column:1!important;grid-row:1!important;align-self:center!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric{grid-column:2!important;grid-row:1!important;align-self:center!important;margin:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile>svg{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-name{white-space:nowrap!important}
+ /* Mis bancos: filas sin recortes */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank{grid-template-columns:44px minmax(0,1fr) auto auto!important;padding:8px 14px 8px 10px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank>svg{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank>span:nth-child(2){min-width:0}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank strong,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank>b{font-size:clamp(13.5px,.95vw,16px)!important}
+ /* Beneficios y retorno: etiquetas legibles */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile small{font-size:clamp(13px,.95vw,15px)!important;font-weight:600!important;color:var(--bg-muted)!important;white-space:nowrap}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile strong{font-size:clamp(20px,1.5vw,26px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-note{font-size:clamp(12px,.88vw,14px)!important;opacity:.9}
+}
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank strong{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.15!important;font-size:clamp(14.5px,1vw,16.5px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank small{font-size:clamp(12px,.82vw,13.5px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank{gap:8px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-share{padding:3px 7px!important;min-width:0!important;font-size:12px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile{grid-template-columns:minmax(0,1.05fr) minmax(0,1.2fr)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-name{font-size:clamp(18px,1.4vw,23px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric{text-align:left!important;justify-items:start!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-row{flex-wrap:wrap!important;gap:6px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-abs{padding:3px 8px!important;font-size:clamp(11.5px,.8vw,13.5px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var i{padding-left:5px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-stat-icon{width:48px!important;height:48px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric{gap:12px!important;padding:14px 16px!important}
+ html body #app#app#app main.vBanksPc-world>.topbar{margin-bottom:16px!important}
+}
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile{align-content:center!important;padding-block:16px!important;align-items:center!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric strong.is-line{white-space:nowrap!important;font-size:clamp(15px,1.1vw,18px)!important}
+}
+@media(min-width:791px){
+ html body.theme-black #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-total,html body.theme-dark #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-total{color:var(--bg-ink)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric strong.is-line{font-size:clamp(14.5px,1vw,17px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile{padding-right:48px!important}
+}
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-limit-strip{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;padding:12px 20px 6px;color:var(--bg-ink)}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-limit-strip span{font-weight:650;color:var(--bg-muted)}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-limit-strip strong{font-size:clamp(20px,1.6vw,26px);font-weight:800}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-limit-strip small{color:var(--bg-muted);font-size:14px}
+}
+@media(min-width:791px) and (max-width:1180px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(min-width:1181px) and (max-width:1439px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric>div>strong{font-size:clamp(22px,2vw,28px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-stat-icon{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metrics{flex:0 0 auto!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-grid{flex:1 1 0!important;min-height:0!important;height:auto!important;margin-top:clamp(10px,1vw,16px)!important}
+}
+@media(min-width:791px) and (max-width:1439px){
+ /* anchos reducidos: lista de bancos más ancha, sin porcentajes y filas de producto apiladas */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-grid{grid-template-columns:minmax(250px,.9fr) minmax(300px,1.3fr) minmax(250px,1fr)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-share{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-bank-list .vBanksPc-bank{grid-template-columns:40px minmax(0,1fr) auto!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile{grid-template-columns:1fr!important;gap:8px!important;padding-right:20px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric{padding-left:0!important;border-left:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-top,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric{grid-column:1!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric{grid-row:2!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-icon{width:46px!important;height:46px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup{padding:14px!important}
+}
+@media(min-width:791px) and (max-width:1439px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile{grid-template-columns:minmax(0,1fr) auto!important;gap:10px!important;padding:8px 14px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric{grid-column:2!important;grid-row:1!important;text-align:right!important;justify-items:end!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric strong{font-size:clamp(16px,1.5vw,20px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-name{font-size:clamp(16px,1.3vw,19px)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-icon{width:40px!important;height:40px!important;border-radius:14px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-icon svg{width:22px!important;height:22px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile>svg{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup{gap:8px!important}
+}
+@media(min-width:791px) and (max-width:1439px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-metric strong.is-line{font-size:13.5px!important;white-space:normal!important;max-width:150px;text-align:right}
+}
