@@ -1,0 +1,79 @@
+/* VIVE · Material Premium Liquid Glass (solo tratamiento estético).
+   No cambia distribución, tamaños ni tipografía: solo background-image (refracción/reflejos), box-shadow
+   (iluminación interior y sombra ambiental), border-color luminoso y backdrop-filter en superficies principales.
+   Todo se deriva del acento activo (--ui-accent / --vive-theme-color) y funciona en Claro y Black. */
+:root,body{
+ --lg-accent:var(--ui-accent,var(--vive-theme-color,#6d69f1));
+ --lg-accent-deep:color-mix(in srgb,var(--lg-accent) 78%,#000);
+ --lg-accent-glow:color-mix(in srgb,var(--lg-accent) 34%,#fff);
+ --lg-complement:color-mix(in srgb,var(--lg-accent) 38%,#8fd0ff);
+ --lg-edge:rgba(255,255,255,.72);
+ --lg-edge-soft:rgba(255,255,255,.5);
+ --lg-in-top:inset 0 1px 1px rgba(255,255,255,.8);
+ --lg-in-bot:inset 0 -1px 1px rgba(255,255,255,.24);
+ --lg-shadow-1:0 6px 18px color-mix(in srgb,var(--lg-accent) 8%,rgba(28,39,59,.05));
+ --lg-shadow-2:0 16px 36px rgba(30,40,60,.035);
+ --lg-refract:linear-gradient(145deg,rgba(255,255,255,.46) 0%,rgba(255,255,255,.1) 42%,rgba(255,255,255,0) 60%,color-mix(in srgb,var(--lg-accent) 7%,transparent) 100%);
+ --lg-shine:radial-gradient(ellipse 70% 60% at 90% 0%,rgba(255,255,255,.55),rgba(255,255,255,0) 62%);
+ --lg-shine-soft:radial-gradient(ellipse 70% 70% at 92% 0%,rgba(255,255,255,.3),rgba(255,255,255,0) 60%);
+}
+body.theme-black,body.theme-dark{
+ --lg-edge:rgba(255,255,255,.14);--lg-edge-soft:rgba(255,255,255,.09);
+ --lg-in-top:inset 0 1px 1px rgba(255,255,255,.14);--lg-in-bot:inset 0 -1px 1px rgba(255,255,255,.04);
+ --lg-shadow-1:0 8px 24px rgba(0,0,0,.45);--lg-shadow-2:0 18px 40px rgba(0,0,0,.3);
+ --lg-refract:linear-gradient(145deg,rgba(255,255,255,.1) 0%,rgba(255,255,255,.03) 42%,rgba(255,255,255,0) 60%,color-mix(in srgb,var(--lg-accent) 10%,transparent) 100%);
+ --lg-shine:radial-gradient(ellipse 70% 60% at 90% 0%,rgba(255,255,255,.16),rgba(255,255,255,0) 62%);
+ --lg-shine-soft:radial-gradient(ellipse 70% 70% at 92% 0%,rgba(255,255,255,.08),rgba(255,255,255,0) 60%);
+}
+/* Nivel 01 · fondo ambiental: más profundidad cromática, siempre derivado del acento */
+html body[data-vive-bg][data-vive-bg]{
+ --ui-ambient:radial-gradient(ellipse 95% 80% at -12% -8%,color-mix(in srgb,var(--lg-accent) 34%,transparent),transparent 72%),
+  radial-gradient(ellipse 80% 70% at 112% 22%,color-mix(in srgb,var(--lg-complement) 34%,transparent),transparent 74%),
+  radial-gradient(ellipse 90% 60% at 40% 118%,color-mix(in srgb,var(--lg-accent) 12%,transparent),transparent 70%),
+  linear-gradient(135deg,#fbf6fa,#f1f2fb 55%,#ecf4fb);
+}
+html body.theme-black[data-vive-bg][data-vive-bg],html body.theme-dark[data-vive-bg][data-vive-bg]{
+ --ui-ambient:radial-gradient(ellipse 90% 62% at -12% -8%,color-mix(in srgb,var(--lg-accent) 20%,transparent),transparent 72%),
+  radial-gradient(ellipse 80% 60% at 112% 22%,color-mix(in srgb,var(--lg-complement) 11%,transparent),transparent 74%),#000;
+}
+/* Nivel 02 · cristal translúcido (superficies principales) */
+html body #app#app #page :is(.panel,.v134-panel,.bank-card,.loan-product,.cert-card,.vWalletPc-panel,.v266-wallet-panel,.vBanksPc-bank-list,.vBanksPc-institution,.ff-tile,.v431-tile,.movement-metric,.summary-glass,.kpi,.v1170-panel,.v1170-bcard,.v290-budget-web,.v1301-insight,.vWalletPc-stat,.theme-settings){
+ background-image:var(--lg-shine),var(--lg-refract)!important;
+ border-color:var(--lg-edge)!important;
+ box-shadow:var(--lg-in-top),var(--lg-in-bot),var(--lg-shadow-1),var(--lg-shadow-2)!important;
+ -webkit-backdrop-filter:blur(26px) saturate(140%);backdrop-filter:blur(26px) saturate(140%)}
+/* KPI de Bancos PC (conservan su tinte propio): solo iluminación y borde */
+html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric{border-color:var(--lg-edge)!important;box-shadow:var(--lg-in-top),var(--lg-in-bot),var(--lg-shadow-1),var(--lg-shadow-2)!important}
+/* Nivel 03 · cristal ligero (filas y desgloses): sin desenfoque propio */
+html body #app#app #page :is(.v1170-card,.v187-interactive-kpi,.v58-metric,.v1170-kpi,.vPatrimony-position-part,.vBanksPc-product,.vBanksPc-overview-tile,.v919-row,.advanced-stat,.vBanksPc-bank,.v12-table-scroller,.table-wrap.matrix-scroll,.v61-profile-switch,.annual-focus-insight){
+ background-image:var(--lg-shine-soft)!important;
+ border-color:var(--lg-edge-soft)!important;
+ box-shadow:var(--lg-in-top),0 2px 8px rgba(28,39,59,.03)!important}
+body.theme-black #app#app #page :is(.v1170-card,.v187-interactive-kpi,.v58-metric,.v1170-kpi,.vPatrimony-position-part,.vBanksPc-product,.vBanksPc-overview-tile,.v919-row,.advanced-stat,.vBanksPc-bank,.v12-table-scroller,.table-wrap.matrix-scroll,.v61-profile-switch,.annual-focus-insight),
+body.theme-dark #app#app #page :is(.v1170-card,.v187-interactive-kpi,.v58-metric,.v1170-kpi,.vPatrimony-position-part,.vBanksPc-product,.vBanksPc-overview-tile,.v919-row,.advanced-stat,.vBanksPc-bank,.v12-table-scroller,.table-wrap.matrix-scroll,.v61-profile-switch,.annual-focus-insight){box-shadow:var(--lg-in-top),0 4px 12px rgba(0,0,0,.35)!important}
+/* Nivel 04 · cristal cromático (protagonistas): refracción y reflejo superior sobre el degradado del acento */
+html body #app#app #page :is(.bank-hero,.v1170-hero,.v1200-hero,.v1234-hero,.v58-exec,.analytic-hero,.vBanks-mobile-hero,.vBanks-kpi,.v148-benefit-hero,.v12-wealth-hero){
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.55),inset 0 -1px 1px rgba(255,255,255,.12),0 14px 34px color-mix(in srgb,var(--lg-accent) 26%,transparent)!important;
+ border-color:rgba(255,255,255,.4)!important}
+/* Nivel 05 · cristal flotante (navegación móvil, menús, modales, FAB) */
+html body #app#app :is(.vive-mobile-dock,.v789-product-sheet,.v749-screen){
+ border-color:var(--lg-edge)!important;
+ box-shadow:var(--lg-in-top),var(--lg-in-bot),0 12px 34px color-mix(in srgb,var(--lg-accent) 12%,rgba(28,39,59,.12))!important;
+ -webkit-backdrop-filter:blur(30px) saturate(160%);backdrop-filter:blur(30px) saturate(160%)}
+html body #app#app :is(.v249-register-fab,.v708-movements-fab){box-shadow:var(--lg-in-top),0 10px 24px color-mix(in srgb,var(--lg-accent) 22%,rgba(28,39,59,.12))!important}
+body.theme-black #app#app :is(.vive-mobile-dock,.v789-product-sheet,.v749-screen),body.theme-dark #app#app :is(.vive-mobile-dock,.v789-product-sheet,.v749-screen){box-shadow:var(--lg-in-top),0 14px 40px rgba(0,0,0,.55)!important}
+/* Degradación progresiva y movimiento reducido */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ html body #app#app #page :is(.panel,.v134-panel,.bank-card,.vWalletPc-panel,.v266-wallet-panel,.ff-tile,.v431-tile){background-color:rgba(255,255,255,.9)!important}
+ body.theme-black #app#app #page :is(.panel,.v134-panel,.bank-card,.vWalletPc-panel,.v266-wallet-panel,.ff-tile,.v431-tile){background-color:rgba(24,27,34,.95)!important}
+}
+@media(prefers-reduced-motion:reduce){html body #app#app *{transition-duration:0s!important}}
+/* Inicio móvil y Matriz Jobs (viven fuera de #page) */
+html body #app#app :is(.v344-creative,.v342-creative-position,.v105-mobile-extra,.v273-overview-widget,.v105-capacity-widget,.vive-mobile-commitments,.vive-mobile-net-card,.v36-month-capsule,.v317-due-overview,.v316-budget-orbit){
+ background-image:var(--lg-shine),var(--lg-refract)!important;border-color:var(--lg-edge)!important;
+ box-shadow:var(--lg-in-top),var(--lg-in-bot),var(--lg-shadow-1),var(--lg-shadow-2)!important;
+ -webkit-backdrop-filter:blur(24px) saturate(140%);backdrop-filter:blur(24px) saturate(140%)}
+html body #app#app :is(.v421-net,.v881-metric,.v421-mini-card,.v881-mini,.v421-meter,.v362-detail-stat,.v89-debt-breakdown,.v317-heat-summary,.vive-mobile-view-all){
+ background-image:var(--lg-shine-soft)!important;border-color:var(--lg-edge-soft)!important;box-shadow:var(--lg-in-top),0 2px 8px rgba(28,39,59,.03)!important}
+body.theme-black #app#app :is(.v421-net,.v881-metric,.v421-mini-card,.v881-mini,.v421-meter,.v362-detail-stat,.v89-debt-breakdown,.v317-heat-summary,.vive-mobile-view-all),body.theme-dark #app#app :is(.v421-net,.v881-metric,.v421-mini-card,.v881-mini,.v421-meter,.v362-detail-stat,.v89-debt-breakdown,.v317-heat-summary,.vive-mobile-view-all){box-shadow:var(--lg-in-top),0 4px 12px rgba(0,0,0,.35)!important}
+html body #app#app .vive-mobile-dock{background-image:var(--lg-shine),var(--lg-refract)!important}
