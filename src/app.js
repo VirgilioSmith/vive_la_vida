@@ -3358,6 +3358,18 @@ function v143CostDesktop(t){
 }
 function v143CostSearch(t){return v143BankCostLines(t).map(x=>[x.title,x.category,x.subcategory,x.percent>0?x.percent.toFixed(3)+'%':''].join(' ')).join(' ')}
 
+/* F05 · Búsqueda universal de Movimientos (PC y móvil comparten estas funciones).
+   Texto normalizado (sin acentos ni plurales) sobre el movimiento y sobre su desglose contable compartido (expenseTransactionItems:
+   intereses, seguros, comisiones, costos de préstamos/tarjetas/operación). «Costos de préstamos», «interés», «comisión» o «seguro de
+   préstamo» encuentran las cuotas aunque esos conceptos no estén escritos en el registro; no se devuelven operaciones sin ese costo. */
+const F05_STOP=new Set(['de','del','la','el','los','las','en','por','con','y','a','un','una']);
+function f05Norm(x){return String(x??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es')}
+function f05Stems(q){return f05Norm(q).split(/[^a-z0-9$.,]+/).filter(w=>w&&!F05_STOP.has(w)).map(w=>/^[a-z]{4,}$/.test(w)?w.replace(/(es|s)$/,''):w)}
+function f05CostTerms(t){let items=[];try{items=expenseTransactionItems(t)||[]}catch(_){}
+ const extra=t.type==='loan_payment'?'prestamo cuota pago de prestamo amortizacion capital':t.type==='card_advance'?'avance de efectivo':t.type==='card_payment'?'pago de tarjeta':'';
+ return [...items.flatMap(i=>[i.method,i.subcategory,i.category,i.detail]),extra].filter(Boolean).join(' ')}
+function f05Matches(hay,query){const h=f05Norm(hay);return f05Stems(query).every(w=>h.includes(w))}
+
 /* V265 · SALDO POSTERIOR, por cuenta/moneda y crédito de cada tarjeta.
    Motor de lectura exclusivamente: no registra movimientos, ni ajusta saldos.
    Preserva el tratamiento de tipos, tasas y costos del libro original.
@@ -3584,7 +3596,7 @@ function movementRowTone(t){
  return 'neutral';
 }
 
-function transactions(embedded=false){let tr=recentTx().filter(t=>(ui.bankScope==='all'||bankTx(t,ui.bankScope))&&(ui.transType==='all'||t.type===ui.transType)&&(!ui.search||`${v922MovementHeading(t)} ${transactionTitle(t)} ${t.type} ${t.category||''} ${t.subcategory||''} ${t.tags||''} ${t.merchant||''} ${t.payee||''} ${t.description||''} ${t.note||''} ${t.amount||''} ${t.date||''} ${t.currency||''} ${v922MovementProduct(t)} ${v143CostSearch(t)}`.toLowerCase().includes(ui.search.toLowerCase()))&&(ui.reviewFilter==='all'||(ui.reviewFilter==='reviewed')===(t.reviewed===true))&&(ui.txPeriod!=='month'||t.date.startsWith(ui.month))&&ui.reviewFilter!=='drafts'&&(ui.v361Category==='all'||String(t.category||'').trim()===ui.v361Category)).sort(v265SortLedgerRecent);
+function transactions(embedded=false){let tr=recentTx().filter(t=>(ui.bankScope==='all'||bankTx(t,ui.bankScope))&&(ui.transType==='all'||t.type===ui.transType)&&(!ui.search||`${v922MovementHeading(t)} ${transactionTitle(t)} ${t.type} ${t.category||''} ${t.subcategory||''} ${t.tags||''} ${t.merchant||''} ${t.payee||''} ${t.description||''} ${t.note||''} ${t.amount||''} ${t.date||''} ${t.currency||''} ${v922MovementProduct(t)} ${v143CostSearch(t)} ${f05CostTerms(t)}`.length>0&&f05Matches(`${v922MovementHeading(t)} ${transactionTitle(t)} ${t.type} ${t.category||''} ${t.subcategory||''} ${t.tags||''} ${t.merchant||''} ${t.payee||''} ${t.description||''} ${t.note||''} ${t.amount||''} ${t.date||''} ${t.currency||''} ${v922MovementProduct(t)} ${v143CostSearch(t)} ${f05CostTerms(t)}`,ui.search))&&(ui.reviewFilter==='all'||(ui.reviewFilter==='reviewed')===(t.reviewed===true))&&(ui.txPeriod!=='month'||t.date.startsWith(ui.month))&&ui.reviewFilter!=='drafts'&&(ui.v361Category==='all'||String(t.category||'').trim()===ui.v361Category)).sort(v265SortLedgerRecent);
 const v221Drafts=(db.pendingOperations||[]).filter(q=>{const vals=q.values||{};const date=String(vals.date||q.created||'').slice(0,10);const haystack=`${vals.note||''} ${vals.description||''} ${vals.merchant||''} ${vals.category||''} ${vals.name||''} ${vals.type||''}`.toLowerCase();return (ui.reviewFilter==='all'||ui.reviewFilter==='drafts')&&(!ui.search||haystack.includes(ui.search.toLowerCase()))&&(ui.txPeriod!=='month'||date.startsWith(ui.month))&&(ui.bankScope==='all'||vals.bankId===ui.bankScope||vals.accountId&&account(vals.accountId)?.bankId===ui.bankScope)&&(ui.transType==='all'||vals.type===ui.transType)&&(ui.v361Category==='all'||String(vals.category||'').trim()===ui.v361Category)});
 const v361Cats=[...new Set([...(db.transactions||[]).map(t=>t.category),...(db.pendingOperations||[]).map(q=>q.values?.category)].map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
 const desktop=!isMobileViewport();
@@ -17889,12 +17901,12 @@ window.__f360RecurringVisualAdapter={
     .filter(Boolean).map(String);
   const productId=t=>productIds(t)[0]||'';
   const fullName=t=>String(transactionTitle(t)||'Movimiento');
-  const searchText=t=>[fullName(t),TRANSL[t.type]||t.type,t.category,t.subcategory,
+  const searchText=t=>f05Norm([fullName(t),TRANSL[t.type]||t.type,t.category,t.subcategory,
     t.note,t.description,t.merchant,t.payee,t.tags,t.date,t.currency,t.amount,
     Number(t.amount||0).toLocaleString('es-DO',{maximumFractionDigits:2}),txDisplay(t),
     card(t.cardId)?.name,account(t.accountId)?.name,account(t.toAccountId)?.name,
-    loan(t.loanId)?.name,certificate(t.certificateId)?.name,bankName(t)]
-    .filter(x=>x!==undefined&&x!==null&&x!=='').join(' ').toLocaleLowerCase('es');
+    loan(t.loanId)?.name,certificate(t.certificateId)?.name,bankName(t),f05CostTerms(t)]
+    .filter(x=>x!==undefined&&x!==null&&x!=='').join(' '));
   function bankName(t){const p=card(t.cardId)||account(t.accountId)||loan(t.loanId);return db.banks?.find(b=>b.id===p?.bankId)?.name||'';}
   const amountDOP=t=>Math.abs(number(txDop(t)));
   const moneyDOP=n=>money(n,'DOP',2);
@@ -17907,13 +17919,13 @@ window.__f360RecurringVisualAdapter={
   const iconMark=t=>isApple(t)?`<span class="v708-brand-apple">${icon('apple')}<small>Pay</small></span>`:t.cardId?icon('card'):t.loanId?icon('building'):direction(t)===1?icon('up'):t.type==='transfer'?icon('cycle'):icon('wallet');
   function all(){const unique=new Map();for(const t of db.transactions||[]){if(movement(t))unique.set(String(t.id),t);}return [...unique.values()].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.created||'').localeCompare(String(a.created||'')));}
   function filtered(opts={}){
-    const needle=state.query.trim().toLocaleLowerCase('es');
+    const needle=state.query.trim().toLocaleLowerCase('es'),stemList=f05Stems(needle);
     return all().filter(t=>{
       if(!periodPass(t))return false;
       if(state.flow==='in'&&direction(t)!==1||state.flow==='out'&&direction(t)!==-1||state.flow==='apple'&&!isApple(t))return false;
       if(state.category==='__v710_otros__'){if(!state.otherCategories.includes(String(t.category||'Sin categoría')))return false;}else if(state.category!=='all'&&String(t.category||'Sin categoría')!==state.category)return false;
       if(state.product!=='all'&&!productIds(t).includes(String(state.product)))return false;
-      if(needle&&!searchText(t).includes(needle))return false;
+      if(needle){const hay=searchText(t);if(!stemList.every(w=>hay.includes(w)))return false;}
       return !opts.applePending||v5NeedsAppleCategory(t);
     });
   }
