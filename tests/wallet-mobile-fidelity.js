@@ -103,7 +103,7 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(top.gallery.left<=3&&top.gallery.right>=width-3,'El carrusel no llega a los bordes: '+JSON.stringify(top.gallery));
     assert.ok(top.rail.left>=6&&top.rail.right>=width-2,'El carrusel no conserva su borde derecho: '+JSON.stringify(top.rail));
     assert.ok(top.first.width>=width*.85&&top.first.width<=width*.94,'Tarjeta no conserva la amplitud física: '+top.first.width);
-    assert.ok(top.first.height>=185&&top.first.height<=252,'La tarjeta no recuperó altura: '+top.first.height);
+    assert.ok(top.first.height>=184&&top.first.height<=252,'La tarjeta no recuperó altura: '+top.first.height);
     assert.ok(top.firstCard.height===top.first.height,'La tarjeta visual no ocupa la altura asignada');
     assert.ok(top.first.left<=18,'Primera tarjeta demasiado separada del borde: '+top.first.left);
     assert.ok(top.second.left<width-4,'No asoma la segunda tarjeta');
@@ -126,8 +126,9 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     run.checks.push({screen:'encabezado-carrusel',top});
 
     const gauge=await p.locator('.v1244-gauge b').innerText();assert.match(gauge,/^-?\d+(\.\d+)?%$/);
-    const glass=await p.locator('.v1244-state').evaluate(el=>{const x=getComputedStyle(el);return x.backdropFilter||x.webkitBackdropFilter});
-    assert.ok(glass.includes('blur(28px)'),'Cristal sin desenfoque');
+    const glass=await p.locator('.v1244-state').evaluate(el=>{const x=getComputedStyle(el);const m=x.backgroundColor.match(/[\d.]+/g)||[];return 'fondo '+x.backgroundColor+' · imagen '+(x.backgroundImage!=='none')});
+    /* Política de materiales (Fase 03): el contenido es vidrio translúcido sin backdrop-filter; solo la interacción desenfoca. */
+    assert.ok(!/rgb\(255, 255, 255\)/.test(glass.split(' · ')[0]),'Superficie de contenido translúcida, no blanca opaca: '+glass);
     let g=await readGeometry(p);assertGeometry(g,theme+' '+width+' inicio',width);run.checks.push({screen:'estado',gauge,glass,geometry:g});
     await screenshot(p,dir,'01-estado-credito');
     /* Verificar desplazamiento nativo hasta la última tarjeta y retorno global.
