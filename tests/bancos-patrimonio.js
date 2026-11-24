@@ -102,7 +102,7 @@ async function testBanks(browser,width,theme='light'){
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="loans"]').innerText(),/Cuota RD\$[\d,]+ · Avance \d+%/);
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="certificates"]').innerText(),/RD\$70,000/);
    assert.match(await root.locator('.vBanksPc-mp-total').innerText(),/Total: \d+ productos/);
-   assert.ok(await root.locator('.vBanksPc-consumption-rows > div').count()<=5,'Hasta cuatro categorías destacadas y Otros.');
+   assert.ok(await root.locator('.vBanksPc-consumption-rows > div').count()>=1,'Se muestran todas las categorías de consumo.');
    if(width>=1280)assert.ok(await p.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+3),'Bancos PC no debe tener scrolling general.');
   }
   const selector=root.locator('.vBanks-mobile-selector');

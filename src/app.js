@@ -1994,7 +1994,7 @@ function vBanksPcCardConsumption(cards,mobile=false){
  const byType=new Map();
  const {totals}=v1301WalletConsumption(cards,byType);
  const detailRows=[...byType].sort((a,b)=>b[1].equivalent-a[1].equivalent||a[0].localeCompare(b[0],'es'));
- const rows=detailRows.length<=5?detailRows:(()=>{
+ const rows=true?detailRows:(()=>{
   const primary=detailRows.filter(([type])=>type!=='Otros').slice(0,4);
   const names=new Set(primary.map(([type])=>type));
   const remaining=detailRows.filter(([type])=>!names.has(type));
