@@ -2,7 +2,7 @@
 
 Base: `main` tras `df9eaff`. Método: `tests/auditoria-fase01.js` (Playwright real) + `docs/auditoria/fase01/acento-hardcodeado.json` + lectura de CSS/JS.
 Datos crudos: `docs/auditoria/fase01/datos.json` (PC 1440×900 y móvil 390×844, Claro y Black, 21 rutas) y `datos-acentos.json`.
-Capturas de referencia: `docs/auditoria/fase01/pc/` y `docs/auditoria/fase01/movil/` (≈130 PNG: viewport y página completa en móvil; Claro, Black y acento).
+Capturas de referencia: `docs/auditoria/fase01/pc/` y `docs/auditoria/fase01/movil/` (≈130 JPG: viewport y página completa en móvil; Claro, Black y acento).
 No se modificó ningún dato financiero ni función; solo se añadieron el script, la documentación y las capturas.
 
 ## 0. Hallazgo de proceso (corrección de pruebas anteriores)
