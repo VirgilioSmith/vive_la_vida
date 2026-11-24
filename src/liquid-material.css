@@ -52,9 +52,6 @@ html body #app#app #page :is(.v1170-card,.v187-interactive-kpi,.v58-metric,.v117
 body.theme-black #app#app #page :is(.v1170-card,.v187-interactive-kpi,.v58-metric,.v1170-kpi,.vPatrimony-position-part,.vBanksPc-product,.vBanksPc-overview-tile,.v919-row,.advanced-stat,.vBanksPc-bank,.v12-table-scroller,.table-wrap.matrix-scroll,.v61-profile-switch,.annual-focus-insight),
 body.theme-dark #app#app #page :is(.v1170-card,.v187-interactive-kpi,.v58-metric,.v1170-kpi,.vPatrimony-position-part,.vBanksPc-product,.vBanksPc-overview-tile,.v919-row,.advanced-stat,.vBanksPc-bank,.v12-table-scroller,.table-wrap.matrix-scroll,.v61-profile-switch,.annual-focus-insight){box-shadow:var(--lg-in-top),0 4px 12px rgba(0,0,0,.35)!important}
 /* Nivel 04 · cristal cromático (protagonistas): refracción y reflejo superior sobre el degradado del acento */
-html body #app#app #page :is(.bank-hero,.v1170-hero,.v1200-hero,.v1234-hero,.v58-exec,.analytic-hero,.vBanks-mobile-hero,.vBanks-kpi,.v148-benefit-hero,.v12-wealth-hero){
- box-shadow:inset 0 1px 1px rgba(255,255,255,.55),inset 0 -1px 1px rgba(255,255,255,.12),0 14px 34px color-mix(in srgb,var(--lg-accent) 26%,transparent)!important;
- border-color:rgba(255,255,255,.4)!important}
 /* Nivel 05 · cristal flotante (navegación móvil, menús, modales, FAB) */
 html body #app#app :is(.vive-mobile-dock,.v789-product-sheet,.v749-screen){
  border-color:var(--lg-edge)!important;
@@ -115,9 +112,8 @@ html body[data-vive-bg] #app#app#app :is(.v344-creative,.v342-creative-position,
  -webkit-backdrop-filter:blur(22px) saturate(150%);backdrop-filter:blur(22px) saturate(150%)}
 body.theme-black #app#app #page :is(.panel,.v134-panel,.bank-card,.vWalletPc-panel,.v266-wallet-panel,.ff-tile:not(.ff-health-card),.v431-tile,.kpi),body.theme-dark #app#app #page :is(.panel,.v134-panel,.bank-card,.vWalletPc-panel,.v266-wallet-panel,.ff-tile:not(.ff-health-card),.v431-tile,.kpi){background-color:rgba(255,255,255,.03)!important}
 /* Cristal cromático: reflejo diagonal amplio como en la referencia */
-html body #app#app #page :is(.ff-health-card,.vBanksPc-metric:nth-child(3))::after,html body #app#app :is(.vBanks-kpi,.vBanks-mobile-hero)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+html body #app#app #page :is(.ff-health-card,.vBanksPc-metric:nth-child(3))::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
  background:linear-gradient(115deg,transparent 0 55%,rgba(255,255,255,.16) 55% 100%),radial-gradient(ellipse 75% 55% at 88% 0%,rgba(255,255,255,.3),transparent 62%);clip-path:inset(0 round inherit)}
-html body #app#app :is(.vBanks-kpi,.vBanks-mobile-hero){position:relative}
 html body[data-vive-bg][data-vive-bg][data-vive-bg]:not(.theme-black):not(.theme-dark):not(.x){background:var(--ui-ambient) fixed!important;background-color:#f3eef8!important}
 html body.theme-black[data-vive-bg][data-vive-bg][data-vive-bg],html body.theme-dark[data-vive-bg][data-vive-bg][data-vive-bg]{background:var(--ui-ambient) fixed!important;background-color:#000!important}
 body.theme-black #app#app #page .ff-health-card::after,body.theme-dark #app#app #page .ff-health-card::after{background:linear-gradient(115deg,transparent 0 55%,rgba(255,255,255,.05) 55% 100%),radial-gradient(ellipse 75% 55% at 88% 0%,rgba(255,255,255,.12),transparent 62%)}

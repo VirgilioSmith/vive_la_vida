@@ -5,11 +5,6 @@
   --g-shadow:0 10px 28px rgba(30,40,90,.08),inset 0 1px 0 rgba(255,255,255,.7);--g-accent:var(--ui-solid,var(--v424-accent-strong,#5b57d6));
   display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-content:start;padding:0 2px 12px}
  /* El resumen toma el mismo margen y ritmo que los paneles de Wallet móvil. */
- html body #app#app main.vBanksMobile-world #page>.vBanks-mobile:has(>.vBanks-mobile-hero){
-  box-sizing:border-box;width:100vw!important;max-width:100vw!important;
-  margin-inline:calc(50% - 50vw)!important;
-  padding-inline:clamp(8px,2.5vw,11px);
-  gap:clamp(12px,3.3vw,16px)}
  body:is(.theme-black,.theme-dark) #app#app #page .vBanks-mobile{--g-surface:rgba(255,255,255,.07);--g-surface-2:rgba(255,255,255,.11);--g-ink:#f4f6fb;--g-muted:#a9b2c4;--g-shadow:0 10px 28px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.10)}
  /* Encabezado */
  html body #app#app #page .vBanks-mobile-head{position:relative;display:grid;gap:2px;padding:2px 52px 0 4px!important;text-align:left}
@@ -33,7 +28,6 @@
  html body #app#app #page .vBanks-filter-btn.is-on{color:var(--g-accent)}
  html body #app#app #page .vBanks-mobile-tools{padding:10px 12px;border-radius:18px;background:var(--g-surface);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:var(--g-shadow);color:var(--g-ink)}
  /* KPI principal: totalmente coloreado con el acento */
- html body[data-vive-bg] #app#app #page .vBanks-mobile .vBanks-mobile-hero,
  html body #app#app #page .vBanks-mobile .vBanks-kpi{position:relative;overflow:hidden;border:0!important;border-radius:24px!important;color:#fff;padding:16px 18px!important;
   background:radial-gradient(ellipse 80% 90% at 100% 0%,color-mix(in srgb,var(--ui-accent,#6d69f1) 55%,#fff),transparent 60%),var(--ui-hero,linear-gradient(125deg,#5b57d6,#3b3aa0))!important;
   box-shadow:0 16px 34px color-mix(in srgb,var(--ui-solid,#5b57d6) 32%,transparent),inset 0 1px 0 rgba(255,255,255,.28)!important}
@@ -49,8 +43,6 @@
  html body #app#app #page .vBanks-kpi-row dt svg{width:17px;height:17px;flex:none}
  html body #app#app #page .vBanks-kpi-row dd{margin:0;font-size:clamp(15px,4.6vw,20px);font-weight:700;letter-spacing:-.02em;white-space:nowrap}
  html body #app#app #page .vBanks-kpi-row.is-three dd{font-size:clamp(13px,4vw,17px)}
- html body #app#app #page .vBanks-mobile-hero dl,html body #app#app #page .vBanks-mobile-hero dl>div{border-color:rgba(255,255,255,.22)!important}
- html body #app#app #page .vBanks-mobile-utilization{display:grid;gap:6px;font-size:14px;font-weight:600}
  /* Superficies de cristal: sin blanco opaco, sin bordes ni líneas */
  html body[data-vive-bg] #app#app #page .vBanks-mobile :is(.vBanks-mobile-products,.vBanksPc-lane,.v371-card-return,.v1301-insight,.vBanksPc-benefits,.vBanks-activity,.vBanks-empty){
   background:var(--g-surface)!important;border:0!important;border-radius:24px!important;box-shadow:var(--g-shadow)!important;
@@ -68,9 +60,6 @@
  html body #app#app #page .vBanks-mobile-return strong{color:var(--g-ink)}
  html body #app#app #page .vBanks-mobile-return :is(.positive strong){color:#0f8a5a}
  html body #app#app #page .vBanks-mobile-return .vBanks-return-main.negative strong,html body #app#app #page .vBanks-mobile-return .negative strong{color:#c9303a}
- html body[data-vive-bg] #app#app #page .vBanks-mobile > :is(.vBanks-mobile-hero,.vBanks-mobile-products,.vBanks-mobile-return){
-  box-sizing:border-box;width:100%;min-width:0;margin:0!important;
-  padding:clamp(16px,4.4vw,19px)!important;border-radius:22px!important}
  html body #app#app #page .vBanks-mobile :is(.vBanks-mobile-products,.vBanks-mobile-return) h2{
   padding-inline:0!important;font-size:clamp(16px,4.45vw,19px)!important;line-height:1.15}
  /* Listas: cada producto es una pastilla de cristal */
@@ -146,4 +135,108 @@
  html body #app#app #page .vBanks-ben-actions .vBanks-annual-list{display:grid;gap:6px;margin-top:6px}
  html body #app#app #page .vBanks-ben-actions .vBanks-annual-list button{border:0;border-radius:14px;background:var(--g-surface);padding:10px 12px;text-align:left;color:var(--g-ink);font-weight:600}
  html body #app#app #page .vBanks-screen-benefits #v144Benefits>.bank-hero{display:none!important}
+}
+
+/* ============================================================================
+   Bancos móvil · PORTADA (referencia aprobada): vidrio turquesa/acento claro, texto oscuro, ilustración arquitectónica,
+   indicadores 2×2 integrados, Mis productos 2×2 con contador y Beneficios y retorno. Hereda acento, fondo y Claro/Black.
+   ========================================================================== */
+@media(max-width:790px){
+ html body[data-vive-bg] #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero){
+  --bm-a:var(--ui-accent,var(--vive-theme-color,#14b8a6));
+  --bm-ink:#0d2230;--bm-mut:#46606d;--bm-line:color-mix(in srgb,var(--bm-a) 24%,rgba(70,100,110,.16));
+  --bm-ico:rgba(255,255,255,.74);--bm-edge:rgba(255,255,255,.92);
+  --g-ink:var(--bm-ink);--g-muted:var(--bm-mut);
+  --g-surface:linear-gradient(158deg,rgba(255,255,255,.8),color-mix(in srgb,var(--bm-a) 9%,rgba(255,255,255,.58)));
+  --g-surface-2:linear-gradient(158deg,rgba(255,255,255,.86),color-mix(in srgb,var(--bm-a) 7%,rgba(255,255,255,.66)));
+  --g-shadow:0 12px 30px color-mix(in srgb,var(--bm-a) 12%,rgba(30,60,80,.10)),inset 0 0 0 1px var(--bm-edge),inset 0 1px 0 #fff}
+ html body.theme-black[data-vive-bg] #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero),
+ html body.theme-dark[data-vive-bg] #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero){
+  --bm-ink:#eef7f8;--bm-mut:#a9bfc6;--bm-line:color-mix(in srgb,var(--bm-a) 26%,rgba(255,255,255,.10));--bm-ico:rgba(255,255,255,.08);--bm-edge:rgba(255,255,255,.14);
+  --g-surface:linear-gradient(158deg,rgba(255,255,255,.085),color-mix(in srgb,var(--bm-a) 10%,rgba(255,255,255,.035)));
+  --g-surface-2:linear-gradient(158deg,rgba(255,255,255,.11),color-mix(in srgb,var(--bm-a) 8%,rgba(255,255,255,.05)));
+  --g-shadow:0 12px 30px rgba(0,0,0,.5),inset 0 0 0 1px var(--bm-edge),inset 0 1px 0 rgba(255,255,255,.12)}
+ /* Héroe: patrimonio neto */
+ html body[data-vive-bg] #app#app#app #page#page .vBanks-mobile>.vBanks-mobile-hero{position:relative;isolation:isolate;overflow:hidden;border:0!important;border-radius:26px!important;color:var(--bm-ink);
+  background:radial-gradient(140% 100% at 112% -18%,color-mix(in srgb,var(--bm-a) 34%,#fff),transparent 56%),radial-gradient(120% 60% at 70% 18%,rgba(255,255,255,.55),transparent 60%),radial-gradient(90% 70% at -12% 112%,color-mix(in srgb,var(--bm-a) 16%,#fff),transparent 60%),var(--g-surface)!important;
+  box-shadow:var(--g-shadow)!important;padding:clamp(16px,4.6vw,20px) clamp(16px,4.6vw,20px) 16px!important}
+ html body.theme-black[data-vive-bg] #app#app#app #page#page .vBanks-mobile>.vBanks-mobile-hero,html body.theme-dark[data-vive-bg] #app#app#app #page#page .vBanks-mobile>.vBanks-mobile-hero{
+  background:radial-gradient(120% 90% at 108% -12%,color-mix(in srgb,var(--bm-a) 26%,transparent),transparent 58%),var(--g-surface)!important}
+ .vBanks-mobile-hero .vBanks-net-art{position:absolute;right:-17%;top:3%;width:64%;max-width:260px;z-index:-1;pointer-events:none;display:block;transform:perspective(700px) rotateY(-16deg) rotateX(4deg);transform-origin:100% 40%;-webkit-mask-image:linear-gradient(to left,#000 62%,transparent 98%);mask-image:linear-gradient(to left,#000 62%,transparent 98%)}
+ .vBanks-mobile-hero .vBanks-net-art svg{display:block;width:100%;height:auto;filter:drop-shadow(-6px 12px 14px color-mix(in srgb,var(--bm-a) 30%,transparent))}
+ .vBanks-mobile-hero .vBanks-net-art :is(path,rect){stroke:rgba(255,255,255,.75);stroke-width:1}
+ .vBanks-mobile-hero .vBanks-net-art{color:var(--bm-a)}
+ .vBanks-mobile-hero .vBanks-mobile-net{display:block;position:relative;z-index:1;padding:0 0 12px}
+ .vBanks-mobile-hero .vBanks-mobile-net>div{container-type:inline-size;min-width:0}
+ .vBanks-mobile-hero .vBanks-mobile-net>div>small:first-child{display:block;font-size:clamp(16px,4.6vw,19px);font-weight:600;color:var(--vx-accent-ink)}
+ .vBanks-mobile-hero .vBanks-mobile-net strong{display:block;margin:2px 0 8px;color:var(--bm-ink);font-weight:700;letter-spacing:-.03em;line-height:1.1;white-space:nowrap;font-size:clamp(24px,calc(100cqi / (var(--bank-chars,12) * .6)),40px)}
+ .vBanks-mobile-hero .vBanksPc-change{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:7px 14px;border-radius:999px;font-size:clamp(14px,3.9vw,16px);font-weight:600;line-height:1.2;border:0}
+ .vBanks-mobile-hero .vBanksPc-change>span{color:inherit!important;font-weight:500}
+ .vBanks-mobile-hero .vBanksPc-change.negative{background:rgba(255,200,212,.62)!important;color:#c1102d!important}
+ .vBanks-mobile-hero .vBanksPc-change.positive{background:rgba(180,242,208,.68)!important;color:#08703f!important}
+ .vBanks-mobile-hero .vBanksPc-change:not(.negative):not(.positive){background:rgba(255,255,255,.6)!important;color:var(--bm-mut)!important}
+ html body.theme-black .vBanks-mobile-hero .vBanksPc-change.negative,html body.theme-dark .vBanks-mobile-hero .vBanksPc-change.negative{background:rgba(255,122,156,.16)!important;color:#ff8fab!important}
+ html body.theme-black .vBanks-mobile-hero .vBanksPc-change.positive,html body.theme-dark .vBanks-mobile-hero .vBanksPc-change.positive{background:rgba(61,220,151,.16)!important;color:#5ae8ab!important}
+ .vBanks-mobile-hero .vBanks-change-empty{display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.55);color:var(--bm-mut);font-size:13px}
+ /* Cuatro indicadores 2×2 integrados, con divisores sutiles */
+ .vBanks-mobile-hero dl{container-type:inline-size;position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:2px 0 0;padding:0;border:0}
+ .vBanks-mobile-hero dl>div{display:grid;grid-template-columns:40px minmax(0,1fr);grid-template-areas:"ico dt" "ico dd" "sp sp";column-gap:9px;align-items:center;padding:11px 0;margin:0;border:0}
+ .vBanks-mobile-hero dl>div:nth-child(-n+2){border-bottom:1px solid var(--bm-line)}
+ .vBanks-mobile-hero dl>div:nth-child(even){border-left:1px solid var(--bm-line);padding-left:12px}
+ .vBanks-mobile-hero dl>div:nth-child(odd){padding-right:8px}
+ .vBanks-ind-ico{grid-area:ico;align-self:center;display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:var(--bm-ico);box-shadow:inset 0 0 0 1px var(--bm-edge),0 6px 14px color-mix(in srgb,var(--bm-a) 12%,rgba(30,60,80,.08));color:var(--vx-accent-ink)}
+ .vBanks-ind-ico svg{width:21px;height:21px}
+ .vBanks-mobile-hero dt{grid-area:dt;display:block;margin:0;font-size:clamp(13px,3.6vw,15px);font-weight:400;color:var(--bm-mut);line-height:1.2;white-space:nowrap}
+ .vBanks-mobile-hero dd{grid-area:dd;margin:1px 0 0;color:var(--bm-ink);font-weight:700;letter-spacing:-.025em;line-height:1.15;white-space:nowrap;font-size:clamp(13px,calc((50cqi - 58px) / (var(--ind-chars,10) * .58)),20px)}
+ .vBanks-mobile-hero .vBanks-limit-split{grid-area:sp;display:block;margin:6px 0 0;font-size:12px;font-weight:400;color:var(--bm-mut);white-space:nowrap;overflow:visible}
+ /* Utilización del crédito */
+ .vBanks-mobile-hero .vBanks-mobile-utilization{position:relative;z-index:1;display:grid;gap:8px;margin-top:6px;padding-top:12px;border-top:1px solid var(--bm-line);font-size:clamp(15px,4.2vw,17px);font-weight:400;color:var(--bm-ink)}
+ .vBanks-mobile-hero .vBanks-mobile-utilization strong{color:var(--vx-accent-ink);font-weight:700;font-size:1.12em}
+ .vBanks-mobile-hero .vBanksPc-meter{display:block;height:12px;border-radius:99px;background:color-mix(in srgb,var(--bm-a) 18%,rgba(255,255,255,.55));overflow:hidden}
+ .vBanks-mobile-hero .vBanksPc-meter i{display:block;height:100%;width:var(--use,0%);border-radius:99px;background:linear-gradient(90deg,var(--bm-a),color-mix(in srgb,var(--bm-a) 62%,#fff))!important}
+ /* Mis productos y Beneficios y retorno: tarjetas de cristal de la referencia */
+ html body[data-vive-bg] #app#app#app #page#page .vBanks-mobile>:is(.vBanks-mobile-products,.vBanks-mobile-return){box-sizing:border-box;width:100%;min-width:0;margin:0!important;padding:clamp(15px,4.2vw,18px)!important;border-radius:26px!important;background:var(--g-surface)!important;box-shadow:var(--g-shadow)!important;border:0!important;color:var(--bm-ink)}
+ .vBanks-mobile:has(>.vBanks-mobile-hero) :is(.vBanks-mobile-products,.vBanks-mobile-return) h2{margin:0 0 10px!important;padding:0!important;font-size:clamp(19px,5.3vw,22px)!important;font-weight:700!important;color:var(--bm-ink)!important}
+ .vBanks-mobile:has(>.vBanks-mobile-hero) :is(.vBanks-mobile-products,.vBanks-mobile-return) h2 button{display:flex;align-items:center;gap:10px;width:100%;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+ .vBanks-mobile:has(>.vBanks-mobile-hero) :is(.vBanks-mobile-products,.vBanks-mobile-return) h2 button svg:first-child{width:24px;height:24px;color:var(--vx-accent-ink);flex:none}
+ .vBanks-mobile:has(>.vBanks-mobile-hero) :is(.vBanks-mobile-products,.vBanks-mobile-return) h2 button svg:last-child{width:22px;height:22px;margin-left:auto;color:var(--bm-mut);flex:none}
+ .vBanks-mobile-products .vBanks-mobile-tiles{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important}
+ html body[data-vive-bg] #app#app#app #page#page .vBanks-mobile-tiles>button{position:relative;container-type:inline-size;display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;grid-template-areas:"ico lab" "ico val"!important;column-gap:9px;align-items:center;min-height:68px;padding:10px 10px 10px 10px!important;border-radius:20px!important;background:var(--g-surface-2)!important;box-shadow:inset 0 0 0 1px var(--bm-edge),0 6px 16px color-mix(in srgb,var(--bm-a) 8%,rgba(30,60,80,.06))!important;color:var(--bm-ink)!important;text-align:left}
+ html body[data-vive-bg] #app#app#app #page#page .vBanks-mobile-tiles>button>svg{grid-area:ico;box-sizing:content-box!important;width:20px!important;height:20px!important;padding:9px!important;border-radius:13px;background:color-mix(in srgb,var(--bm-a) 15%,var(--bm-ico));color:var(--vx-accent-ink)!important}
+ html body[data-vive-bg] #app#app#app #page#page .vBanks-mobile-tiles>button>small{position:absolute;top:7px;right:8px;display:grid;place-items:center;min-width:24px;height:24px;padding:0 5px;border-radius:99px;background:color-mix(in srgb,var(--bm-a) 20%,transparent);color:var(--vx-accent-ink)!important;font-size:13px;font-weight:600;line-height:1}
+ .vBanks-mobile-tiles>button>span{grid-area:lab;padding-right:26px;font-size:clamp(13px,3.7vw,15px);font-weight:400;color:var(--bm-mut);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .vBanks-mobile-tiles>button>strong{grid-area:val;color:var(--bm-ink);font-weight:700;letter-spacing:-.025em;white-space:nowrap;line-height:1.15;font-size:clamp(13px,calc((100cqi - 64px) / (var(--bank-chars,10) * .62)),19px)}
+ /* Beneficios y retorno */
+ .vBanks-mobile-return .vBanks-return-main{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 0 12px;border:0}
+ .vBanks-mobile-return .vBanks-return-main>div{min-width:0;container-type:inline-size;flex:1 1 auto}
+ .vBanks-mobile-return .vBanks-return-main small{display:block;font-size:clamp(14px,3.9vw,16px);color:var(--bm-mut)}
+ .vBanks-mobile-return .vBanks-return-main strong{display:block;font-weight:700;letter-spacing:-.03em;white-space:nowrap;color:var(--bm-ink);font-size:clamp(22px,calc(100cqi / (var(--bank-chars,12) * .6)),32px)}
+ .vBanks-mobile-return .vBanks-return-percent{flex:none;padding:8px 15px;border-radius:999px;font-size:clamp(15px,4.2vw,18px);font-weight:600;background:rgba(255,255,255,.6)}
+ .vBanks-mobile-return .vBanks-return-main.negative :is(strong,.vBanks-return-percent){color:#c1102d!important}
+ .vBanks-mobile-return .vBanks-return-main.negative .vBanks-return-percent{background:rgba(255,200,212,.62)!important}
+ .vBanks-mobile-return .vBanks-return-main.positive :is(strong,.vBanks-return-percent){color:#08703f!important}
+ .vBanks-mobile-return .vBanks-return-main.positive .vBanks-return-percent{background:rgba(180,242,208,.68)!important}
+ html body.theme-black .vBanks-mobile-return .vBanks-return-main.negative :is(strong,.vBanks-return-percent),html body.theme-dark .vBanks-mobile-return .vBanks-return-main.negative :is(strong,.vBanks-return-percent){color:#ff8fab!important}
+ html body.theme-black .vBanks-mobile-return .vBanks-return-main.negative .vBanks-return-percent,html body.theme-dark .vBanks-mobile-return .vBanks-return-main.negative .vBanks-return-percent{background:rgba(255,122,156,.16)!important}
+ .vBanks-mobile-return .vBanks-return-secondary{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;padding-top:12px;border:0;border-top:1px solid var(--bm-line)}
+ .vBanks-mobile-return .vBanks-return-secondary>div{min-width:0;container-type:inline-size}
+ .vBanks-mobile-return .vBanks-return-secondary>div+div{border-left:1px solid var(--bm-line);padding-left:14px}
+ .vBanks-mobile-return .vBanks-return-secondary small{display:block;font-size:clamp(13px,3.7vw,15px);color:var(--bm-mut)}
+ .vBanks-mobile-return .vBanks-return-secondary strong{display:block;font-weight:700;letter-spacing:-.025em;white-space:nowrap;color:var(--bm-ink);font-size:clamp(15px,calc(100cqi / (var(--bank-chars,12) * .6)),20px)}
+ .vBanks-mobile-return .vBanks-return-secondary .positive strong{color:#08703f!important}
+ html body.theme-black .vBanks-mobile-return .vBanks-return-secondary .positive strong,html body.theme-dark .vBanks-mobile-return .vBanks-return-secondary .positive strong{color:#5ae8ab!important}
+ .vBanks-mobile-return .v371-return-note{margin:10px 0 0;font-size:12px;color:var(--bm-mut)}
+}
+@media(max-width:790px){
+ html body.theme-black .vBanks-mobile-hero .vBanks-net-art,html body.theme-dark .vBanks-mobile-hero .vBanks-net-art{opacity:.5}
+ html body #app#app#app #page#page .vBanks-mobile-return .vBanks-return-secondary strong{font-size:clamp(15px,calc(100cqi / (var(--bank-chars,12) * .6)),20px)!important}
+}
+@media(max-width:790px){
+ /* Importes extremos: la cifra baja de línea en vez de cortarse o empujar la tarjeta */
+ .vBanks-mobile-hero dd,.vBanks-mobile-tiles>button>strong{white-space:normal;overflow-wrap:anywhere;min-width:0}
+ .vBanks-mobile-hero .vBanks-limit-split{white-space:normal;overflow-wrap:anywhere}
+ .vBanks-mobile-hero dl>div{min-width:0}
+}
+@media(max-width:790px){
+ html body #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero) :is(.vBanks-mobile-hero dl,.vBanks-mobile-tiles) .vx-money{min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important}
 }

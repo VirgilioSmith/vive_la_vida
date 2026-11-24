@@ -145,11 +145,7 @@ async function testBanks(browser,width,theme='light'){
    assert.equal(await p.locator('.vive-mobile-top').isVisible(),false,'Portada sin cabecera duplicada.');
    assert.equal(await p.locator('.v249-register-fab').isVisible(),false,'El registro flotante no tapa el retorno.');
    assert.equal(await p.locator('.v708-movements-fab').isVisible(),false,'Movimientos flotantes no tapan los productos.');
-   assert.equal(await root.locator('.vBanks-mobile-net > div > small').first().evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
-   await choose('__banks_tools__');
-   assert.equal(await p.locator('.vive-mobile-top').isVisible(),true,'Las herramientas generales siguen disponibles.');
-   await choose('__banks_tools__');
-   assert.equal(await p.locator('.vive-mobile-top').isVisible(),false);
+   assert.ok(await root.locator('.vBanks-mobile-net > div > small').first().evaluate(el=>{const c=getComputedStyle(el).color.match(/\d+/g).map(Number);return c[0]+c[1]+c[2]<520}),'Patrimonio neto: etiqueta con tinta de acento sobre cristal claro (no blanca)');
    await p.evaluate(()=>window.scrollTo(0,0));
   }else{
    assert.equal(await certDd(0),'RD$70,000');

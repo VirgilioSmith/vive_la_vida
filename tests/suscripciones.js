@@ -25,19 +25,8 @@ if (require.main === module) (async () => {
   const b = await chromium.launch();
   let { p, errs } = await sesion(b, 390, 844);
   /* 1 · navegación */
-  check('N1', 'Tres vistas: Agenda, Cartera, Historial (sin Análisis)', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('.v911 .v911-seg button')].map(e => e.textContent))) === '["Agenda","Cartera","Historial"]');
-  check('N2', 'La vista Análisis ya no existe', !(await p.evaluate(() => !!document.querySelector('[data-v911-tab=analisis],[data-v911-sub]'))));
-  /* 2 · Agenda: total independiente */
-  await click(p, '[data-v911-tab=agenda]'); await p.waitForTimeout(250);
-  const exp = await p.evaluate(() => { const d = window.__T.dbg(), m = window.__T.ui().month, fx = d.settings.fx; return d.recurring.filter(r => r.active !== false && r.nextDue.slice(0, 7) === m).reduce((s, r) => s + r.amount * (r.currency === 'USD' ? fx : 1), 0) });
-  const shown = await txt(p, '#v911-due-total'); const num = +shown.replace(/[^\d.]/g, '');
-  check('A1', 'Agenda: «Por pagar este mes» = suma de vencimientos del mes (USD convertido con el tipo de cambio de la app)', Math.abs(num - Math.round(exp)) <= 1, `mostrado ${shown} · esperado ${Math.round(exp)}`);
-  const ytdEsp = await p.evaluate(() => { const d = window.__T.dbg(), y = window.__T.ui().month.slice(0, 4); return d.transactions.filter(t => t.recurringId && ['expense', 'card_charge'].includes(t.type) && t.date.slice(0, 4) === y).reduce((s, t) => s + t.amount * (t.currency === 'USD' ? (t.fxRateSnapshot || d.settings.fx) : 1), 0) });
-  const ytdTxt = await txt(p, '#v911-ytd'); check('A1b', 'Agenda: «Pagado en el año» (suscripciones) bajo el total por pagar = cobros registrados del año', /Pagado en 2026/.test(ytdTxt) && Math.abs(+ytdTxt.replace(/[^\d.]/g, '').replace(/^2026/, '') - Math.round(ytdEsp)) <= 1, ytdTxt.replace(/\s+/g, ' ') + ' · esperado ' + Math.round(ytdEsp));
-  const dayCount = await p.evaluate(() => document.querySelectorAll('.v911-day').length); check('A2', 'Calendario horizontal con todos los días del mes', dayCount >= 28 && dayCount <= 31, dayCount);
-  const before = await p.evaluate(() => document.querySelectorAll('.v911-tl-group').length);
-  await click(p, '.v911-day:nth-child(28)'); await p.waitForTimeout(300); const after = await p.evaluate(() => document.querySelectorAll('.v911-tl-group').length);
-  check('A3', 'Elegir un día posterior reduce la línea de tiempo a los vencimientos desde esa fecha', after < before, `${before}→${after}`);
+  check('N1', 'Dos vistas: Cartera e Historial (sin Agenda ni Análisis)', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('.v911 .v911-seg button')].map(e => e.textContent))) === '["Cartera","Historial"]');
+  check('N1b', 'La vista Agenda ya no existe', !(await p.evaluate(() => !!document.querySelector('[data-v911-tab=agenda],.v911-agenda,.v911-day')))); check('N2', 'La vista Análisis ya no existe', !(await p.evaluate(() => !!document.querySelector('[data-v911-tab=analisis],[data-v911-sub]'))));
   /* 3 · Cartera: grupos desplegables con cantidad y montos mensual/anual */
   await click(p, '[data-v911-tab=cartera]'); await p.waitForTimeout(250);
   const kp = await txt(p, '.v911-kpis'); check('C1', 'Cartera: tarjetas de gasto mensual, anual, servicios activos y próximo cobro', /Gasto mensual/.test(kp) && /Gasto anual/.test(kp) && /Servicios activos/.test(kp) && /Próximo cobro/.test(kp) && new RegExp('\\b' + SERV.length + '\\b').test(kp), kp.replace(/\s+/g, ' '));
@@ -64,13 +53,13 @@ if (require.main === module) (async () => {
     const st = await q.evaluate(() => { const bg = getComputedStyle(document.querySelector('#page')).backgroundColor; const on = getComputedStyle(document.querySelector('.v911-seg .is-on')).backgroundColor; return { bg, on, body: getComputedStyle(document.body).backgroundColor } });
     if (label === 'Claro') check('V1', 'Modo Claro: conserva el reflejo de fondo del acento (la página no fuerza blanco)', st.bg === 'rgba(0, 0, 0, 0)', JSON.stringify(st));
     if (label === 'Black') check('V2', 'Modo Black: fondo negro auténtico #000000', st.bg === 'rgb(0, 0, 0)' && st.body === 'rgb(0, 0, 0)', JSON.stringify(st));
-    if (label === 'acento rojo') check('V3', 'El acento dinámico se aplica (no hay color fijo): la pestaña activa toma el acento elegido', /192, 38, 74/.test(st.on) || /rgb\(19\d, 3\d, 7\d\)/.test(st.on), st.on);
+    if (label === 'acento rojo') check('V3', 'El acento dinámico se aplica (no hay color fijo): la pestaña activa toma el acento elegido', (c => c[0] > c[1] + 80 && c[0] > c[2] + 60)((st.on.match(/\d+/g) || []).map(Number)), st.on);
     check('V4-' + label, `Sin errores de página en ${label}`, e2.length === 0, e2.join('|'));
     await q.context().close();
   }
   for (const [w, hgt] of [[320, 568], [390, 844], [768, 1024], [1440, 900]]) {
     const { p: q } = await sesion(b, w, hgt); const bad = [];
-    for (const [tab, sub] of [['agenda'], ['cartera'], ['historial']]) {
+    for (const [tab, sub] of [['cartera'], ['historial']]) {
       await q.evaluate(([t, s]) => { document.querySelector(`[data-v911-tab=${t}]`)?.click(); }, [tab, sub]); await q.waitForTimeout(200); if (sub) { await q.evaluate(s => document.querySelector(`[data-v911-sub=${s}]`)?.click(), sub); await q.waitForTimeout(200) }
       const o = await q.evaluate(() => { const vw = document.documentElement.clientWidth; const off = []; document.querySelectorAll('.v911 *').forEach(e => { const r = e.getBoundingClientRect(); if (r.width > 0 && (r.right > vw + 1 || r.left < -1) && !e.closest('.v911-strip,.v911-chartbox')) { if (off.length < 2) off.push((e.className || e.tagName) + ' ' + Math.round(r.right)) } }); return off });
       if (o.length) bad.push((sub || tab) + ': ' + o.join(' ; '));

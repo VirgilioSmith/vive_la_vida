@@ -1209,7 +1209,7 @@ margin-bottom:21px}
 .loan-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:630px){
-.loan-detail-kpis,.loan-card-grid{grid-template-columns:1fr}
+.loan-card-grid{grid-template-columns:1fr}
 
 .loan-product{padding:20px}
 .loan-section-bar .loan-soft-tag{display:none}
@@ -11275,43 +11275,12 @@ body.theme-black .v726-profile-state{color:color-mix(in srgb,var(--v726-accent,#
  .vive-mobile-home .v732-heading-line h1{margin:0!important;letter-spacing:-.7px}
  .vive-mobile-home .v732-period{position:relative;border:1px solid rgba(180,196,220,.42);border-radius:28px;background:rgba(255,255,255,.58);padding:10px 13px;font-size:12px;font-weight:700;text-transform:capitalize;color:inherit;white-space:nowrap;overflow:hidden;box-shadow:0 6px 18px rgba(19,44,81,.05)}
  .vive-mobile-home .v732-period input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
- .vive-mobile-home .v732-home-kpi{position:relative;overflow:hidden;isolation:isolate;border-radius:26px;border:1px solid rgba(255,255,255,.73);padding:20px 17px 16px;background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(226,234,255,.55) 55%,rgba(239,231,255,.72));box-shadow:0 14px 33px rgba(44,72,121,.10);color:#172944}
- .vive-mobile-home .v732-kpi-head{display:flex;justify-content:space-between;gap:8px;color:#61718d;font-size:12px;font-weight:600}
- .vive-mobile-home .v732-kpi-value{display:block;position:relative;z-index:1;font-size:clamp(29px,8.0vw,42px);letter-spacing:-1.4px;font-weight:700;line-height:1.25;margin:7px 0 1px;max-width:100%;overflow-wrap:anywhere}
- .vive-mobile-home .v732-kpi-variance{display:flex;align-items:center;gap:9px;position:relative;z-index:1;font-size:12px;color:#77839a}
- .vive-mobile-home .v732-kpi-variance b{font-weight:700;color:#059669}.vive-mobile-home .v732-kpi-variance.down b{color:#dd5067}.vive-mobile-home .v732-kpi-variance.neutral b{color:#718299}
- .vive-mobile-home .v732-kpi-ornament{position:absolute;right:16px;top:31px;height:111px;display:flex;align-items:flex-end;gap:7px;opacity:.36;pointer-events:none;z-index:0}
- .vive-mobile-home .v732-kpi-ornament i{display:block;width:20px;height:40%;border-radius:14px;background:linear-gradient(to bottom,#9895ef,rgba(173,163,243,.02))}
- .vive-mobile-home .v732-kpi-ornament i:nth-child(2){height:54%}.vive-mobile-home .v732-kpi-ornament i:nth-child(3){height:69%}.vive-mobile-home .v732-kpi-ornament i:nth-child(4){height:83%}.vive-mobile-home .v732-kpi-ornament i:nth-child(5){height:98%}
- .vive-mobile-home .v732-kpi-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:30px;border-top:1px solid rgba(134,157,191,.17);padding-top:14px}
- .vive-mobile-home .v732-kpi-stats button{border:0;background:transparent;color:inherit;display:flex;align-items:center;gap:6px;min-width:0;padding:2px 5px;text-align:left}
- .vive-mobile-home .v732-kpi-stats button+button{border-left:1px solid rgba(134,157,191,.22);padding-left:10px}
- .vive-mobile-home .v732-kpi-stats button span:last-child{min-width:0;display:flex;flex-direction:column;gap:4px}
- .vive-mobile-home .v732-kpi-stats strong{font-weight:700;font-size:clamp(12px,2.7vw,14px);letter-spacing:-.4px;overflow-wrap:anywhere;line-height:1.2}
- .vive-mobile-home .v732-kpi-stats small{font-size:12px;color:#71829a}
- .vive-mobile-home .v732-kpi-stat-icon{width:30px;height:30px;display:grid;place-items:center;flex:0 0 30px;border-radius:9px;background:rgba(149,130,236,.14)}
- .vive-mobile-home .v732-kpi-stats button:nth-child(1) .v732-kpi-stat-icon{background:rgba(53,187,145,.15);color:#16a17b}
- .vive-mobile-home .v732-kpi-stats button:nth-child(2) .v732-kpi-stat-icon{background:rgba(227,97,139,.15);color:#c7507c}
- body.theme-black .vive-mobile-home .v732-home-kpi,body.theme-dark .vive-mobile-home .v732-home-kpi{background:linear-gradient(135deg,#12141e,#0a0c14);border-color:rgba(255,255,255,.14);color:#f8faff}
  body.theme-black .vive-mobile-home .v732-period,body.theme-dark .vive-mobile-home .v732-period{background:rgba(24,27,40,.82);border-color:rgba(255,255,255,.14);color:#f8faff}
- body.theme-black .vive-mobile-home .v732-kpi-head,body.theme-dark .vive-mobile-home .v732-kpi-head,body.theme-black .vive-mobile-home .v732-kpi-stats small,body.theme-dark .vive-mobile-home .v732-kpi-stats small{color:#bac3d6}
 }
-@media(max-width:370px){.vive-mobile-home .v732-kpi-stat-icon{width:24px;height:24px;flex-basis:24px}.vive-mobile-home .v732-kpi-stats button{gap:3px;padding:0 2px}.vive-mobile-home .v732-kpi-stats button+button{padding-left:5px}}
 /* ==== v742-personalization-balance-style ==== */
 /* Cuarta opción del selector de estilos iPhone; no modifica las tres anteriores. */
 /* Mismo dimensionamiento compacto cuando se usa como KPI principal. */
 .vive-mobile-home .v742-primary-kpi{display:block;width:100%;min-width:0;max-width:100%;margin:0 0 16px;box-sizing:border-box}
-.vive-mobile-home .v742-primary-kpi .v732-home-kpi{padding-bottom:15px}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin-top:24px;padding-top:12px;border-top:1px solid rgba(134,157,191,.17)}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button{min-width:0;overflow:hidden;padding:2px 6px;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button+button{border-left:1px solid rgba(134,157,191,.22)!important;padding-left:12px}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button strong{font-size:clamp(14px,3.8vw,18px);white-space:nowrap}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button small{font-size:12px;letter-spacing:.01em}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-stat-icon{width:28px;height:28px;flex-basis:28px;border-radius:9px}
-.vive-mobile-home .v742-primary-kpi .v732-kpi-value{font-size:clamp(23px,6vw,35px);white-space:nowrap;letter-spacing:-.04em}
-body.theme-black .vive-mobile-home .v742-primary-kpi .v732-kpi-stats,body.theme-dark .vive-mobile-home .v742-primary-kpi .v732-kpi-stats{border-top-color:#ffffff18}
-body.theme-black .vive-mobile-home .v742-primary-kpi .v732-kpi-stats button+button,body.theme-dark .vive-mobile-home .v742-primary-kpi .v732-kpi-stats button+button{border-left-color:#ffffff20!important}
-@media(max-width:360px){.vive-mobile-home .v742-primary-kpi .v732-kpi-stats{gap:0}.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button{padding:2px 4px}.vive-mobile-home .v742-primary-kpi .v732-kpi-stats button+button{padding-left:8px}}
 /* ==== v747-unified-personalization-design ==== */
 /* One component, one exact structure for every indicator.  No nth-child designs.
    Scoped strictly to Personalización editor. All interactive controls and data remain as-is. */
@@ -13076,40 +13045,11 @@ body.theme-dark #page .inner-category strong {
 .v30-go:hover {
   background: #dce8f9;
 }
-.v30-good,.v30-empty {
+.v30-good {
   padding: 22px 10px;
   color: #608a7e;
   font-size: 12px;
   line-height: 1.6;
-}
-.v30-recovery-items {
-  display: flex;
-  flex-direction: column;
-}
-.v30-recovery-row {
-  padding: 14px 0;
-  border-top: 1px solid rgba(160,183,212,.13);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-}
-.v30-recovery-row>div:first-child {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.v30-recovery-row strong {
-  font-size: 12px;
-  color: #384f6b;
-}
-.v30-recovery-row small {
-  font-size: 12px;
-  color: #90a0b1;
-}
-.v30-recovery-actions {
-  display: flex;
-  gap: 7px;
 }
 .v30-embedded .v30-issues {
   max-height: 470px;
@@ -13123,7 +13063,7 @@ body.theme-dark #page .inner-category strong {
 .theme-dark .v30-overview>div {
   background: rgba(96,121,166,.10);
 }
-.theme-dark .v30-control-head h3,.theme-dark .v30-issue-body strong,.theme-dark .v30-overview strong,.theme-dark .v30-recovery-row strong {
+.theme-dark .v30-control-head h3,.theme-dark .v30-issue-body strong,.theme-dark .v30-overview strong {
   color: #e4ebf8;
 }
 .theme-dark .v30-control-head p,.theme-dark .v30-issue-body p,.theme-dark .v30-overview span {
@@ -13166,14 +13106,6 @@ body.theme-dark #page .inner-category strong {
   }
   .v30-go {
     margin-left: auto;
-  }
-  .v30-recovery-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .v30-recovery-actions {
-    width: 100%;
-    justify-content: flex-end;
   }
 }
 /*V52 · Analítica avanzada accesible, sin añadir paneles al Resumen.*/
@@ -14198,9 +14130,7 @@ body:has(.modal-layer) .v36-notifications {
 .theme-black :is(.v360-pressure-calendar,.v360-pressure-details),.theme-dark :is(.v360-pressure-calendar,.v360-pressure-details){background:#0c0c0c!important;border-color:#333!important;color:#f7f7f7!important}
 .theme-black .v360-home-links button,.theme-dark .v360-home-links button{background:#101010!important;border-color:#333!important;color:#f1f1f1!important}
 /* Acciones de exportación/revisión manual fuera de la interfaz, sin destruir las copias locales. */
-[data-f34="backup"],[data-f34="reloadCloud"],[data-f34="retryCloud"],
-[data-f33="recover"],[data-f33="exportPending"],[data-f33="discardPending"],
-[data-act="export"],[data-f33="export"],.v30-recovery-items{display:none!important}
+[data-f34="backup"],[data-f34="reloadCloud"],[data-f34="retryCloud"],[data-f33="recover"],[data-f33="exportPending"],[data-f33="discardPending"],[data-act="export"],[data-f33="export"]{display:none!important}
 /* Contraste de modo Claro móvil sin alterar color semántico de los importes. */
 @media(max-width:790px){
  body:not(.theme-black):not(.theme-dark) .vive-mobile-balance :is(.vive-mobile-balance-top,.vive-mobile-balance-amount,.vive-mobile-balance-foot b){color:#172946!important;text-shadow:none!important}
@@ -31720,21 +31650,12 @@ body:is(.theme-black,.theme-dark) #modal-root .v388-review{background:#090909;co
 body:is(.theme-black,.theme-dark) #modal-root .v388-review p{color:#aaa}
 @media(max-width:790px){#modal-root .v388-panel{padding:13px;border-radius:16px;margin-top:8px}#modal-root .v388-hero strong{font-size:22px}#modal-root .v388-line{font-size:12px}#modal-root .v388-line strong{font-size:12px}}
 /* ==== v389-benefits-cashback ==== */
-.v389-benefit-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 2px;}
-.v389-benefit-kpis>div{min-width:0;border:1px solid var(--line,#dce3eb);border-radius:16px;padding:12px 15px;background:var(--panel,#fff);display:grid;gap:6px;align-content:center;text-align:center;}
-.v389-benefit-kpis small{font-size:12px;letter-spacing:.09em;font-weight:700;color:var(--muted,#67768c);}
-.v389-benefit-kpis strong{font-size:clamp(15px,1.65vw,23px);font-weight:700;letter-spacing:-.04em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;}
-.v389-benefit-definition{font-size:12px;line-height:1.5;color:var(--muted,#758198);margin:2px 0 8px!important;text-align:center;}
 #modal-root #v144CashbackForm .v389-benefit-preview{grid-column:1/-1;display:grid;gap:7px;padding:15px;border-radius:16px;background:#edf7f3;border:1px solid #c4e9d8;color:#133c30;margin:4px 0;}
 #modal-root #v144CashbackForm .v389-benefit-preview>span{font-size:12px;font-weight:700;letter-spacing:.1em;}
 #modal-root #v144CashbackForm .v389-benefit-preview strong{font-size:25px;letter-spacing:-.05em;font-variant-numeric:tabular-nums;}
 #modal-root #v144CashbackForm .v389-benefit-preview p{font-size:12px;line-height:1.55;margin:0;opacity:.9;}
-body.theme-black .v389-benefit-kpis>div{background:#080808!important;border-color:#292929!important;}
-body.theme-black .v389-benefit-kpis small,body.theme-black .v389-benefit-definition{color:#adb4bf!important;}
-body.theme-black .v389-benefit-kpis strong{color:#f4f5f7!important;}
 body.theme-black #modal-root #v144CashbackForm .v389-benefit-preview{background:#071610!important;border-color:#244537!important;color:#e1f6e9!important;}
 body.theme-dark:not(.theme-black) #modal-root #v144CashbackForm .v389-benefit-preview{background:#102820!important;border-color:#305b4c!important;color:#e0f7ed!important;}
-@media(max-width:800px){.v389-benefit-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.v389-benefit-kpis>div{padding:12px 9px}.v389-benefit-kpis strong{font-size:17px}.v389-benefit-definition{text-align:left}}
 @media(min-width:801px){.v144-benefit-world .v187-benefits-ledger{margin-top:10px!important}.v144-benefit-world .v187-benefits-ledger-head{padding-block:7px!important}}
 /* ==== v390-personal-design ==== */
 /* V390 · Entre personas. Conserva motor contable, cabeceras y formularios. */
@@ -47472,25 +47393,10 @@ html body #app#app .v144-card-face.tier-titanium{background:linear-gradient(125d
 }
 /* ==== v965-kpi-balance ==== */
 /* V965 · KPI de posición (Balance y posición neta, ahora el estándar móvil): sin la línea divisoria horizontal sobre las barras */
-html body #app#app .v732-home-kpi .v732-kpi-stats{border-top:0!important;border-top-width:0!important;box-shadow:none!important}
-html body #app#app .v732-home-kpi .v732-kpi-stats::before,html body #app#app .v732-home-kpi .v732-kpi-stats::after{display:none!important}
-html body #app#app .v732-home-kpi .v732-kpi-stats{padding-top:6px!important}
 /* ==== v966-quick-actions ==== */
 /* V966/V970 · Recibir / Gastar / Transferir (Resumen móvil): limpios, planos y sobrios; solo el icono lleva el acento */
 /* ==== v967-kpi-premium ==== */
 /* V967/V968 · KPI Balance y posición neta: rótulos visibles, sin iconos ni barras; color en la cifra (verde fondos, rojo deudas); cifra principal en grafito o rojo según el patrimonio; fila elevada */
-html body #app#app .v742-primary-kpi .v732-kpi-stats{margin-top:16px!important;padding-top:4px!important}
-html body #app#app .v742-primary-kpi .v732-home-kpi{padding-bottom:22px!important}
-html body #app#app .v742-primary-kpi .v732-kpi-stats button{align-items:center!important;gap:0!important}
-html body #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-up{color:#0f9a73!important;font-weight:700!important}
-html body #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-down{color:#c9355c!important;font-weight:700!important}
-html body #app#app .v742-primary-kpi .v732-kpi-value.v968-pos{color:#262a32!important}
-html body #app#app .v742-primary-kpi .v732-kpi-value.v968-neg{color:#b8324f!important}
-html body.theme-black #app#app .v742-primary-kpi .v732-kpi-value.v968-pos,html body.theme-dark #app#app .v742-primary-kpi .v732-kpi-value.v968-pos{color:#f2f4f8!important}
-html body.theme-black #app#app .v742-primary-kpi .v732-kpi-value.v968-neg,html body.theme-dark #app#app .v742-primary-kpi .v732-kpi-value.v968-neg{color:#ff8da5!important}
-html body.theme-black #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-up,html body.theme-dark #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-up{color:#4fdcb0!important}
-html body.theme-black #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-down,html body.theme-dark #app#app .v742-primary-kpi .v732-kpi-stats button strong.v968-down{color:#ff8da5!important}
-html body #app#app .v742-primary-kpi .v732-kpi-ornament i{background:linear-gradient(180deg,color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 26%,#fff),transparent)!important}
 /* ==== v969-status-scrim ==== */
 /* V969 · Zona de la barra de estado / isla dinámica: el contenido que se desplaza por debajo queda difuminado y velado, nunca legible */
 @media (max-width:790px){
@@ -50302,21 +50208,9 @@ html body #app#app .v911 .v911-logo .v41-service-mark{width:38px;height:38px;min
 html body #app#app .v911 .v911-logo svg{width:20px;height:20px}
 html body #app#app .v911 .v911-ic{display:inline-grid;place-items:center;color:var(--s-muted)}
 html body #app#app .v911 .v911-ic svg{width:19px;height:19px}
-html body #app#app .v911 .v911-kicker{margin:2px 0 0}
-html body #app#app .v911 .v911-big{margin:0;font-size:clamp(40px,12.5vw,54px);line-height:1;font-weight:700;letter-spacing:-.055em;color:var(--s-ink);font-variant-numeric:tabular-nums}
 html body #app#app .v911 .v911-month{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;position:relative;min-height:36px;font-size:18px;font-weight:600}
 html body #app#app .v911 .v911-month input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
 html body #app#app .v911 .v911-month svg{width:16px;height:16px;color:var(--s-muted)}
-html body #app#app .v911 .v911-strip{display:flex;gap:9px;overflow-x:auto;padding:4px 2px 8px;margin:0 -2px;scroll-snap-type:x proximity;scrollbar-width:none}
-html body #app#app .v911 .v911-strip::-webkit-scrollbar{display:none}
-html body #app#app .v911 .v911-day{flex:0 0 56px;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:14px;border:1px solid var(--s-line);background:var(--s-surface);scroll-snap-align:center;position:relative}
-html body #app#app .v911 .v911-day small{font-size:12px;color:var(--s-muted)}html body #app#app .v911 .v911-day b{font-size:21px;font-weight:700}
-html body #app#app .v911 .v911-day.has-due:after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:var(--ac)}
-html body #app#app .v911 .v911-day.is-today:not(.is-on){border-color:var(--ac)}
-html body #app#app .v911 .v911-day.is-on{background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 8px 18px color-mix(in srgb,var(--ac) 34%,transparent)}html body #app#app .v911 .v911-day.is-on.has-due:after{background:#fff}
-html body #app#app .v911 .v911-timeline{display:flex;flex-direction:column;gap:14px;position:relative}
-html body #app#app .v911 .v911-tl-group h3{display:flex;align-items:center;gap:10px;margin:0 0 8px;font-size:19px;font-weight:700}
-html body #app#app .v911 .v911-tl-group h3 i{width:14px;height:14px;border-radius:50%;border:3px solid var(--ac);background:var(--s-surface)}
 
 
 html body #app#app .v911 .v911-search{display:flex;align-items:center;gap:10px;min-height:46px;padding:0 14px;border-radius:14px;background:var(--s-soft);border:1px solid var(--s-line)}
@@ -50352,15 +50246,10 @@ html body #app#app .v911 button:focus-visible,html body #app#app .v911 summary:f
 /* v911 · ajustes de fidelidad: fondo puro (Claro blanco / Black negro), colores de texto no heredados del acento global y holgura para los botones flotantes */
 html body:not(.theme-black):not(.theme-dark):has(.v911) :is(#app,.shell,.main,#page,.world-recurring){background:transparent!important;background-image:none!important}
 html body:is(.theme-black,.theme-dark):has(.v911) :is(#app,.shell,.main,#page,.world-recurring){background:#000!important;background-image:none!important}
-html body #app#app .v911 .v911-kicker{color:var(--s-muted)!important;font-weight:500!important;font-size:17px}
 html body #app#app .v911{padding-bottom:104px}
-html body #app#app .v911 .v911-strip{margin-top:4px}
-html body #app#app .v911 .v911-big{margin-bottom:4px}
 html body #app#app .v911 .v911-kpis b.accent{color:var(--ac)!important}
 /* v911 · Black: reglas globales de botones/títulos oscuros no deben anular el acento ni los bloques del mosaico */
 html body #app#app #page .v911 .v911-add{background:var(--ac)!important;color:#fff!important}
-html body #app#app #page .v911 .v911-day{background:var(--s-surface)!important;color:var(--s-ink)!important}
-html body #app#app #page .v911 .v911-day.is-on{background:var(--ac)!important;color:#fff!important}
 html body #app#app #page .v911 .v911-primary{background:var(--ac)!important;color:#fff!important}
 html body #app#app #page .v911 .v911-ghost{background:transparent!important;color:var(--s-ink)!important;border-color:var(--s-ink)!important}
 html body #app#app #page .v911 :is(.v911-hero,.v911-big,.v911-h2,.v911-head h1,.v911-count,.v911-stats b,.v911-feat-amt,.v911-kpis b:not(.accent)){color:var(--s-ink)!important}
@@ -50391,7 +50280,6 @@ html body #app#app .rail-top .v908-wm{font-size:22px!important;font-family:-appl
 .f33-gate.v329-splash:not(.v331-splash-light) .v329-wordmark{color:#f8fafc!important}
 .f33-gate.v329-splash .v329-wordmark .v329-hoy{color:var(--v980-accent,#6d69f1)!important}
 .f33-gate.v329-splash:not(.v331-splash-light) .v329-wordmark .v329-hoy{color:color-mix(in srgb,var(--v980-accent,#6d69f1) 62%,#fff)!important}/* v914 · Contraste WCAG 2.2 AA (axe): textos pequeños que quedaban entre 3,7:1 y 4,45:1 */
-html body #app#app .v911 .v911-day.is-on small{color:#fff!important}
 html body #app#app .v975-tab:not([aria-selected="true"]):not(.is-on):not(.active)>span:first-child,html body #app#app .v410-credit-head>button[data-act="navigate"]{color:color-mix(in srgb,var(--vx-accent-ink) 86%,#000)!important}
 /* v915 · Acceso clásico: tarjeta blanca centrada, marca arriba, campos con borde, botón de acento. Claro #FFF / Black #000. */
 .sr-only{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
@@ -50460,13 +50348,7 @@ html body #app#app #page .v911 .v911-head h1{font-size:clamp(25px,7.2vw,29px)!im
 html body #app#app #page .v911 .v911-add{width:40px;height:40px}
 html body #app#app #page .v911 .v911-add svg{width:20px;height:20px}
 html body #app#app #page .v911 :is(.v911-kicker,.v911-h3,.v911-eyebrow){font-size:12px!important;letter-spacing:.14em!important;margin-top:6px!important}
-html body #app#app #page .v911 .v911-big{font-size:clamp(28px,8.4vw,34px)!important;letter-spacing:-.045em}
 html body #app#app #page .v911 .v911-month{font-size:15px;min-height:30px}
-html body #app#app #page .v911 .v911-day{flex-basis:48px;height:56px;border-radius:12px}
-html body #app#app #page .v911 .v911-day small{font-size:12px}
-html body #app#app #page .v911 .v911-day b{font-size:17px}
-html body #app#app #page .v911 .v911-tl-group h3{font-size:14.5px;margin-bottom:6px}
-html body #app#app #page .v911 .v911-tl-group h3 i{width:11px;height:11px;border-width:2.5px}
 html body #app#app #page .v911 .v911-row{min-height:50px;padding:7px 12px;gap:10px}
 html body #app#app #page .v911 .v911-row-info strong{font-size:14px;font-weight:700}
 html body #app#app #page .v911 .v911-row-info small{font-size:12px}
@@ -50501,11 +50383,6 @@ html body #app#app #page .v911 .v911-feat-amt{font-size:28px}
 html body #app#app #page .v911 .v911-feat dl>div{font-size:13.5px}
 html body #app#app #page .v911 .v911-pill{font-size:12px;padding:4px 10px}
 html body #app#app #page .v911 :is(.v911-primary,.v911-ghost){min-height:44px;font-size:15px;border-radius:12px}
-html body #app#app #page .v911 .v911-ytd{display:flex;align-items:baseline;gap:8px;font-size:12px;color:var(--s-muted)}
-html body #app#app #page .v911 .v911-ytd span{color:var(--s-muted)!important;-webkit-text-fill-color:var(--s-muted)!important}
-html body #app#app #page .v911 .v911-ytd b{font-size:14px;font-weight:700;letter-spacing:-.02em;color:var(--s-ink)!important;-webkit-text-fill-color:var(--s-ink)!important}
-html body #app#app #page .v911 .v911-ytd{margin:-2px 0 8px}
-html body #app#app #page .v911 .v911-strip{margin-top:2px}
 /* Selector universal: servicios y suscripciones con su propio ícono */
 #modal-root .v827-picker-sheet .v789-picker-mini.v869-service{display:grid!important;place-items:center;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
 #modal-root .v827-picker-sheet .v789-picker-mini.v869-service .v41-service-mark{width:100%;height:100%;min-width:0;border-radius:14px}
@@ -50666,44 +50543,6 @@ html body #app#app #page .v252-person-ledger .v189-table{display:block!important
 
 
 /* v1132 · Préstamos: reglas restauradas (una limpieza de CSS las consideró sin uso) */
-
-.loan-detail-kpis{display:grid;
-grid-template-columns:repeat(4,minmax(0,1fr));
-gap:15px}
-.loan-stat{padding:19px 21px;
-min-width:0}
-.loan-stat-icon{display:grid;
-place-items:center;
-height:34px;
-width:34px;
-background:#e6eaff;
-color:#647aca;
-border-radius:11px;
-margin-bottom:18px}
-.loan-stat-icon svg{width:18px;
-height:18px}
-.loan-stat-icon.teal{background:#ddf5ee;
-color:#128570}
-.loan-stat-icon.amber{background:#ffdfe4;
-color:#bc5364}
-.loan-stat-icon.blue{background:#e4edff;
-color:#597bba}
-.loan-stat-icon.violet{background:#ece7fa;
-color:#8063ac}
-.loan-stat-label{font-size:12px;
-font-weight:600;
-color:#8190a6;
-margin-bottom:10px}
-.loan-stat strong{display:block;
-font-size:clamp(18px,2vw,28px);
-white-space:nowrap;
-letter-spacing:-.85px;
-font-variant-numeric:tabular-nums}
-.loan-stat small{display:block;
-font-size:12px;
-color:#8a9bb0;
-line-height:1.45;
-margin-top:11px}
 .loan-tabs{display:flex;
 gap:7px;
 border-bottom:1px solid rgba(153,167,191,.23);
@@ -50735,22 +50574,6 @@ margin:0 0 5px}
 color:var(--loan-dim);
 margin:0;
 line-height:1.6}
-.loan-line-chart{margin-top:23px}
-.loan-line-chart svg{width:100%;
-height:auto}
-.loan-legend{display:flex;
-flex-wrap:wrap;
-gap:15px;
-font-size:12px;
-color:#8190a6;
-margin-top:8px}
-.loan-legend span{display:flex;
-align-items:center;
-gap:6px}
-.loan-legend i{display:block;
-height:7px;
-width:16px;
-border-radius:3px}
 .loan-big-progress{font-size:55px;
 font-weight:700;
 letter-spacing:-2px;
@@ -50953,16 +50776,11 @@ color:#7890a7}
 .loan-sim-facts strong{color:#2b4b64;
 font-size:12px;
 white-space:nowrap}
-@media (max-width:1250px){
-.loan-detail-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
 @media (max-width:980px){
 .loan-simulator{grid-template-columns:1fr}
 
 }
 @media (max-width:630px){
-.loan-stat{padding:17px}
-.loan-stat strong{font-size:25px}
 .loan-right-panel,.loan-compare,.loan-amort-panel,.loan-history,.loan-sim-inputs,.loan-sim-results{padding:19px}
 .loan-sim-fields{grid-template-columns:1fr}
 .loan-mini-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -50988,25 +50806,7 @@ flex-wrap:nowrap}
 }
 .account-history .panel-head{display:flex;justify-content:space-between;align-items:center}
 .account-history .panel-head h3{font-size:15px;margin:0 0 5px}
-
-@media (max-width:767px){
-.world-loans .loan-stat{padding:12px!important;border-radius:16px!important;min-width:0!important}
-.world-loans .loan-stat strong{font-size:clamp(17px,5.5vw,23px)!important;overflow-wrap:anywhere!important}
-}
 @media (max-width:790px){
-.main .v239-loan-deep .loan-detail-kpis {
-    display: grid;
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    gap: 8px;
-  }
-.main .v239-loan-deep .loan-stat {
-    padding: 13px;
-    min-width: 0;
-  }
-.main .v239-loan-deep .loan-stat strong {
-    overflow-wrap: anywhere;
-    font-size: clamp(16px,4.5vw,22px);
-  }
 .main .v239-loan-deep .loan-tabs {
     display: flex;
     gap: 7px;
@@ -51108,8 +50908,6 @@ html body #app#app #page :is(h3:not([class]),.panel-head h3,.v189-table-head h3,
 html body #app#app #page :is(.v911-eyebrow,.v911-kicker,.v56-section-label,.summary-tag,.v134-eyebrow,.analyst-label,.vive-mobile-eyebrow,.v203-hero-tag){font-size:var(--t-eyebrow)!important;font-weight:700!important;letter-spacing:.13em!important;text-transform:uppercase}
 /* Menús de fecha siempre a la derecha */
 html body #app#app #page .v911-month{align-self:flex-end;margin-left:auto}
-html body #app#app #page .v911-agenda{display:flex;flex-direction:column}
-html body #app#app #page .v911-tl-group h3{font-size:14.5px!important;font-weight:700!important;letter-spacing:-.01em!important}
 html body #app#app #page .v252-hero-title{font-size:26px!important;font-weight:700!important;letter-spacing:-.04em!important}
 /* v1136 · Cuentas: efectivo (RD$/US$) con la misma tipografía, color y alto que las cuentas bancarias */
 html body #app#app #page .account-product-card.v258-cash-product .name{color:var(--v424-ink,#17243b)!important;font-size:15px!important;font-weight:700!important}
@@ -51141,8 +50939,6 @@ html body #app#app .v1149-pct{display:block;font-size:12px;font-weight:700;lette
  html body #app#app #page :is(.v911-month,.v919-month){position:absolute;top:0;right:0;margin:0!important;min-height:36px;height:36px;padding:0 12px!important;border-radius:12px!important;font-size:13px!important;font-weight:600;border:1px solid rgba(255,255,255,.64)!important;background:rgba(255,255,255,.6)!important;box-shadow:none!important;display:inline-flex;align-items:center;gap:8px;z-index:3}
  html body:is(.theme-black,.theme-dark) #app#app #page :is(.v911-month,.v919-month){background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.16)!important}
  html body #app#app #page .v911{position:relative}
- html body #app#app #page .v911 .v911-agenda{padding-top:0}
- html body #app#app #page .v911-agenda>.v911-month{top:-62px;right:58px}
  html body #app#app #page .v911-top{padding-right:0}
  /* KPI y tarjetas: radio, relleno y sombra de las vistas maestras */
  html body #app#app #page :is(.v911-card,.v911-kpi,.v1131-card,.v911-feat){border-radius:var(--v1150-r,24px)!important;box-shadow:0 10px 28px rgba(32,53,99,.055)!important;border:1px solid rgba(120,140,170,.2)}
@@ -51187,7 +50983,6 @@ html body #app#app .v1149-pct{display:block;font-size:12px;font-weight:700;lette
  html body #app#app #page{position:relative}
  html body #app#app #page .v911{position:static}
  html body #app#app #page :is(.v911-month,.v919-month){top:-50px!important;right:0!important}
- html body #app#app #page .v911-agenda>.v911-month{top:-50px!important;right:0!important}
  html body #app#app #page .v911-month input,html body #app#app #page .v919-month input{font-size:13px}
 }
 /* v1150 · Ingresos y Egresos: el selector de mes también va arriba a la derecha, en la fila de pestañas */
@@ -52576,23 +52371,14 @@ html body:is(.theme-black,.theme-dark) #app#app #page :is(.v1265-loan,.v1246,.lo
 html body:is(.theme-black,.theme-dark) #app#app #page .v256-hero-benefits{background:rgba(255,255,255,.1)!important;color:#fff!important;border:1px solid rgba(255,255,255,.25)!important}
 
 /* V1278 · Galería La vida que quiero */
-.v1278-gal{margin:22px 0 8px}
-.v1278-gal header span{font-size:12px;font-weight:700;letter-spacing:.16em;color:var(--vx-accent-ink)}
-.v1278-gal header h2{margin:4px 0 2px;font-size:clamp(22px,3vw,30px);letter-spacing:-.04em}
-.v1278-gal header p{margin:0 0 14px;font-size:13px;opacity:.7}
-.v1278-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
 .v1278-card{position:relative;text-align:left;border:0;padding:0 0 14px;border-radius:22px;overflow:hidden;background:var(--v1278-bg,#fff);box-shadow:0 8px 22px rgba(20,30,60,.08);cursor:pointer;display:grid;align-content:start;gap:3px;font:inherit;color:inherit;transition:transform .2s ease,box-shadow .2s ease}
 .v1278-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,30,60,.14)}
-.v1278-art{display:block;height:110px;position:relative;background:linear-gradient(160deg,var(--b),color-mix(in srgb,var(--a) 70%,var(--b)));margin-bottom:10px;overflow:hidden}
-.v1278-art i:first-child{position:absolute;right:18px;top:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,246,214,.85)}
-.v1278-art i:last-child{position:absolute;left:-10%;right:-10%;bottom:-18px;height:58px;border-radius:50% 50% 0 0;background:var(--a);opacity:.85}
 .v1278-card strong{padding:0 14px;font-size:16px;letter-spacing:-.02em}
 .v1278-card small{padding:0 14px;font-size:12px;opacity:.7;line-height:1.35}
 .v1278-card em{display:none;padding:8px 14px 0;font-style:normal;font-size:12.5px;font-weight:700;color:var(--a);line-height:1.35}
 .v1278-card.is-on em{display:block}
 .v1278-card.is-on{box-shadow:0 0 0 2px var(--a),0 14px 30px rgba(20,30,60,.14)}
 body.theme-black .v1278-card,body.theme-dark .v1278-card{--v1278-bg:#111116;box-shadow:none;border:1px solid rgba(255,255,255,.08)}
-@media(max-width:790px){.v1278-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.v1278-art{height:84px}}
 @media(prefers-reduced-motion:reduce){.v1278-card{transition:none}.v1278-card:hover{transform:none}}
 
 /* V1279 · UX */

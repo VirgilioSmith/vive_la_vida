@@ -26,39 +26,6 @@
   #app .vBanks-mobile-selector small{font-size:clamp(12px,3.2vw,17px);font-weight:500;}
   #app .vBanks-mobile-selector .vBanks-consolidated-mark{background:none;color:#fff;width:34px;height:34px;}
   #app .vBanks-mobile-selector .vBanks-consolidated-mark svg{width:29px;height:29px;}
-  html body #app#app #page .vBanks-mobile .vBanks-mobile-hero{
-    position:relative;isolation:isolate;min-width:0;overflow:hidden;padding:9px 14px 11px;
-    background:radial-gradient(ellipse at 86% 13%,#10a24999,transparent 45%),radial-gradient(ellipse at 5% 48%,#0a954e88,transparent 65%),linear-gradient(125deg,#008344,#006a2d 68%,#038343) !important;
-    border:1px solid #19a36566;border-radius:19px;box-shadow:0 5px 14px #00613524,inset 0 1px 0 #ffffff19;color:#fff;
-  }
-  html body #app#app #page .vBanks-mobile .vBanks-mobile-hero :is(dt,dd,small,strong){color:#fff!important;-webkit-text-fill-color:currentColor!important;}
-  #app .vBanks-mobile .vBanks-mobile-net{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:5px;padding:0 0 6px;}
-  #app .vBanks-mobile-net > div:first-child{min-width:0;container-type:inline-size;}
-  #app .vBanks-mobile-net > div:first-child > small:first-child{font-size:14px;font-weight:700;line-height:1.2;display:block;}
-  #app .vBanks-mobile-net strong{font-size:clamp(18px,calc(169cqi / var(--bank-chars,12)),30px);line-height:1.13;letter-spacing:-.045em;font-weight:700;white-space:normal;overflow-wrap:anywhere;}
-  html body #app#app #page .vBanks-mobile .vBanks-mobile-net .vBanksPc-change{display:inline-block;max-width:100%;margin-top:4px;padding:2px 7px;border-radius:99px;background:#eaffef;color:#006c37!important;-webkit-text-fill-color:currentColor!important;font-size:clamp(12px,2.88vw,14px);font-weight:700;line-height:1.25;white-space:normal;}
-  html body #app#app #page .vBanks-mobile-net .vBanksPc-change.negative > span:first-child{color:#d6000d!important;}
-  html body #app#app #page .vBanks-mobile-net .vBanksPc-change.positive > span:first-child{color:#008b49!important;}
-  html body #app#app #page .vBanks-mobile-net .vBanksPc-change > span:last-child{color:#006c37!important;}
-  #app .vBanks-mobile-net .vBanks-change-empty{display:block;margin-top:4px;font-size:12px;opacity:.9;}
-  #app .vBanks-net-art{display:flex;align-items:end;gap:4px;width:clamp(48px,18vw,89px);height:64px;padding-top:4px;opacity:.8;}
-  #app .vBanks-net-art i{flex:1;min-width:0;border-radius:14px 14px 0 0;background:linear-gradient(180deg,#38f282,#1bc25b82 65%,transparent);height:36%;}
-  #app .vBanks-net-art i:nth-child(2){height:55%;}
-  #app .vBanks-net-art i:nth-child(3){height:75%;}
-  #app .vBanks-net-art i:nth-child(4){height:100%;}
-  #app .vBanks-mobile .vBanks-mobile-hero dl{grid-template-columns:repeat(2,minmax(0,1fr));padding:0;gap:0;border-top:1px solid #ffffff50;}
-  #app .vBanks-mobile-hero dl > div{min-width:0;container-type:inline-size;position:relative;padding:5px 0 6px;border-bottom:1px solid #ffffff50;}
-  #app .vBanks-mobile-hero dl > div:nth-child(odd){padding-right:10px;}
-  #app .vBanks-mobile-hero dl > div:nth-child(even){padding-left:12px;}
-  #app .vBanks-mobile-hero dl > div:nth-child(even)::before{content:'';position:absolute;left:0;top:7px;bottom:7px;width:1px;background:#ffffff48;}
-  #app .vBanks-mobile-hero dt{font-size:clamp(12px,3.05vw,15px);line-height:1.2;gap:6px;}
-  #app .vBanks-mobile-hero dt svg{color:#fff;width:19px;height:19px;flex:none;}
-  #app .vBanks-mobile-hero dd{margin-top:2px;line-height:1.14;font-size:clamp(12px,calc(168cqi / var(--bank-chars,12)),20px);font-weight:700;letter-spacing:-.025em;white-space:normal;overflow-wrap:anywhere;}
-  #app .vBanks-mobile-hero .vBanks-limit-split{display:block;margin-top:3px;font-size:clamp(12px,2.6vw,12px);font-weight:600;line-height:1.2;overflow-wrap:anywhere;}
-  #app .vBanks-mobile-utilization{padding-top:6px;font-size:clamp(12px,3.15vw,15px);line-height:1.2;}
-  #app .vBanks-mobile-utilization strong{font-size:1.12em;font-weight:700;}
-  #app .vBanks-mobile-utilization .vBanksPc-meter{height:9px;background:#ffffff5c;margin-top:4px;}
-  #app .vBanks-mobile-utilization .vBanksPc-meter i{background:#f3fff7;}
   html body #app#app #page .vBanks-mobile :is(.vBanks-mobile-products,.vBanks-mobile-return){
     padding:10px 10px 11px!important;border-radius:19px!important;border:1px solid var(--bank-line);background:var(--bank-glass)!important;box-shadow:0 5px 14px #1f3a5520,inset 0 1px 0 #ffffff25;backdrop-filter:blur(14px);
   }
@@ -97,8 +64,6 @@
   #app .vBanks-mobile .vBanks-annual-list > button{padding:8px;border:1px solid var(--bank-line);border-radius:10px;background:var(--bank-glass);text-align:left;}
   @media(max-width:350px){
     html body #app#app #page .vBanks-mobile{padding-inline:5px;}
-    html body #app#app #page .vBanks-mobile .vBanks-mobile-hero{padding-inline:11px;}
-    #app .vBanks-net-art{width:48px;}
     html body #app#app #page .vBanks-mobile-tiles > button{grid-template-columns:16px minmax(0,1fr)!important;padding-inline:5px!important;gap:2px 4px!important;}
     html body #app#app #page .vBanks-mobile-tiles > button > svg{width:16px!important;height:16px!important;}
     html body #app#app #page .vBanks-mobile-tiles > button > strong{font-size:clamp(12px,calc((100cqi - 20px) * 1.68 / var(--bank-chars,12)),16px)!important;}

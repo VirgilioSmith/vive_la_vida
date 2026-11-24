@@ -17,3 +17,8 @@
     html body #app#app .vive-mobile-home .v1302-home-controls .v732-period{padding:10px!important;font-size:12px!important;gap:4px!important}
   }
 }
+
+/* Sin cabecera móvil (solo existe en Inicio): no se reserva su altura */
+@media(max-width:790px){
+ html body #app#app:not(:has(.vive-mobile-top)) .shell{padding-top:calc(env(safe-area-inset-top,0px) + 14px)!important}
+}
