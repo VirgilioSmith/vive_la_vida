@@ -7591,11 +7591,11 @@ case 'paletteTheme':if(['original','emerald','coral'].includes(id)){db.settings.
 case 'paletteCustom':{const c=document.getElementById('viveCustomColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.paletteHex=c;db.settings.paletteChoice='custom';persist();render();toast('Color de acento personalizado aplicado.')}break;}
 case 'backgroundTheme':if(['original','glacier','sunset'].includes(id)){db.settings.backgroundChoice=id;persist();render();toast('Fondo actualizado.');}break;
 case 'backgroundCustom':{const c=document.getElementById('viveBackgroundColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.backgroundHex=c;db.settings.backgroundChoice='custom';persist();render();toast('Fondo personalizado aplicado.')}break;}
-case 'expenseRange':ui.expenseRange=id==='year'?'year':id==='all'?'all':'month';render();break; case 'flowChart':ui.vFlowChart=id==='trend'?'trend':'amounts';render();break; case 'incTab':ui.vIncTab=['formal','informal','evolution','history'].includes(id)?id:'summary';render();break; case 'incChart':ui.vIncChart=['cum','yoy'].includes(id)?id:'monthly';render();break; case 'expKind':ui.vExpKind=['fixed','var'].includes(id)?id:'all';render();break; case 'movementTab':ui.movementTab=id==='pending'?'all':id;if(id==='pending')ui.reviewFilter='drafts';render();break;
+case 'incDetail':ui.incDetail=id==='informal'?'informal':'formal';try{history.pushState({incDetail:ui.incDetail},'')}catch(_){}render();try{document.getElementById('page')?.scrollTo?.(0,0);window.scrollTo(0,0)}catch(_){}break; case 'incBack':if(history.state&&history.state.incDetail){history.back()}else{ui.incDetail=null;render()}break; case 'expenseRange':ui.expenseRange=id==='year'?'year':id==='all'?'all':'month';render();break; case 'flowChart':ui.vFlowChart=id==='trend'?'trend':'amounts';render();break; case 'incTab':ui.vIncTab=['formal','informal','evolution','history'].includes(id)?id:'summary';render();break; case 'incChart':ui.vIncChart=['cum','yoy'].includes(id)?id:'monthly';render();break; case 'expKind':ui.vExpKind=['fixed','var'].includes(id)?id:'all';render();break; case 'movementTab':ui.movementTab=id==='pending'?'all':id;if(id==='pending')ui.reviewFilter='drafts';render();break;
 case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break;if(!v30SavePoint('Antes de descartar operación pendiente'))break;db.pendingOperations=db.pendingOperations.filter(q=>q.id!==id);persist();render();toast('Operación pendiente descartada; puedes recuperarla desde Configuración.');break;
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navigate':{
-   v8SearchDestination=null;
+   v8SearchDestination=null;if(ui.incDetail&&history.state&&history.state.incDetail){try{history.back()}catch(_){}}ui.incDetail=null;
    ui.vWalletPcOpenedCard=false;
    ui.vWalletPcBenefits=false;
    if(id==='wallet'&&!isMobileViewport()){ui.vWalletPcCard=null;ui.vWalletPcConsumption=null;}
@@ -10483,7 +10483,7 @@ function vIncSummary(S,d,exp){
   ['Trabajo formal',money(d.formal,'DOP',2),'briefcase',`<small>${pc(d.formal)}</small>`,'vinc-k2'],
   ['Trabajo informal · Joseo',money(d.informal,'DOP',2),'chart',`<small>${pc(d.informal)}</small>`,'vinc-k3'],
   ['Previsto / mes',money(exp.net,'DOP',2),'target','<small>Proyección mensual</small>','vinc-k4']
- ].map(([l,v,g,sub,c])=>`<article class="vinc-kpi ${c}"><span class="vexp-ico">${icon(g)}</span><div><span>${l}</span><strong>${v}</strong>${sub}</div><i class="vinc-wave" aria-hidden="true"></i></article>`).join('');
+ ].map(([l,v,g,sub,c],ix)=>{const kind=ix===1?'formal':ix===2?'informal':'';return kind?`<button type="button" class="vinc-kpi vinc-kpi-link ${c}" data-act="incDetail" data-id="${kind}" aria-label="Abrir ${l}: ${v}"><span class="vexp-ico">${icon(g)}</span><div><span>${l}</span><strong>${v}</strong>${sub}</div><span class="vinc-kpi-go" aria-hidden="true">${icon('arrow')}</span><i class="vinc-wave" aria-hidden="true"></i></button>`:`<article class="vinc-kpi ${c}"><span class="vexp-ico">${icon(g)}</span><div><span>${l}</span><strong>${v}</strong>${sub}</div><i class="vinc-wave" aria-hidden="true"></i></article>`}).join('');
  const formalScheds=(db.incomeSchedules||[]).filter(s=>s.kind==='formal'),infScheds=(db.incomeSchedules||[]).filter(s=>s.kind!=='formal');
  const lastInf=d.txs.filter(x=>x.c==='informal').map(x=>x.t.date).sort().pop()||(db.transactions||[]).filter(t=>t.type==='income'&&vIncClass(t)==='informal').map(t=>t.date).sort().pop();
  const informalCount=db.transactions.filter(t=>t.type==='income'&&vIncClass(t)==='informal'&&S.months.some(m=>String(t.date).startsWith(m))).length;
@@ -10498,13 +10498,21 @@ function vIncSummary(S,d,exp){
    <div class="vinc-list"><div><span>${icon('layers')}Actividades registradas</span><b>${informalCount}</b></div><div><span>${icon('target')}Previsto mensual</span><b>${money(exp.informalNet,'DOP',2)}</b></div><div><span>${icon('calendar')}Último ingreso</span><b>${lastInf?prettyDate(lastInf):'—'}</b></div></div></section>
   <section class="vexp-panel vinc-card vinc-activity"><header><span class="vexp-ico">${icon('receipt')}</span><h2>Actividad reciente</h2></header>${vIncRecent(S,3)}</section></div>`;
 }
+function vIncDetailPage(kind){
+ const title=kind==='formal'?'Trabajo formal':'Trabajo informal · Joseo';
+ return `<div class="vexp vinc vincd" aria-label="${title}">${vFlowTop('income')}
+  <div class="vincd-bar"><button type="button" class="vincd-back" data-act="incBack" aria-label="Volver a Ingresos">${icon('arrow')}<span>Volver a Ingresos</span></button><span class="vincd-crumb">${title}</span></div>
+  <div class="v55-shell vincd-body" data-kind="${kind}">${v55DetailHtml?v55DetailHtml(kind):''}</div></div>`;
+}
 function vIncomePc(){
+ if(ui.incDetail==='formal'||ui.incDetail==='informal')return vIncDetailPage(ui.incDetail);
  const S=vExpScope(),d=vIncAgg(S.months),exp=vIncExpected();
  const early=(db.incomeSchedules||[]).some(x=>x.active!==false);
  return `<div class="vexp vinc" aria-label="Ingresos">${vFlowTop('income')}
   <header class="vinc-title"><div><h1>Todo lo que genera tu trabajo.</h1><p>Lo recibido, lo esperado y cómo evoluciona tu dinero.</p></div><div class="vinc-hact"><button type="button" class="btn soft" data-v40-action="addIncome">+ Agregar fuente</button>${early?`<button type="button" class="btn soft" data-v1129-start="1">Registrar cobro anticipado</button>`:''}<button type="button" class="btn vinc-reg" data-act="newTransaction" data-type="income">+ Registrar ingreso</button></div></header>
   ${vIncSummary(S,d,exp)}</div>`;
 }
+window.addEventListener('popstate',()=>{const want=(history.state&&history.state.incDetail)||null;if(ui.page==='income'&&(ui.incDetail||null)!==want){ui.incDetail=want;render()}});
 const vIncPrevPage=pages.income;
 pages.income=function(){return isMobileViewport()?vIncPrevPage():vIncomePc()};
 
@@ -11106,6 +11114,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
 
 /* V55 · Ingresos recurrentes: navegación anidada, nómina y joseo.
    Lectura sin duplicaciones: cobros contabilizados frente a programación estimada. */
+let v55DetailHtml=null;
 (function(){
  Object.assign(ICONS,{
   'briefcase':'<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3M3 12h18"/>',
@@ -11234,6 +11243,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
   <section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">¿QUÉ GENERA EL JOSEO?</span><h3>Composición de ingresos independientes</h3><p>Clasificación por categoría del movimiento</p></div></div>${parts.length?parts.map(([cat,v])=>`<div class="v55-cat"><div><b>${txt(cat)}</b><strong>${cash(v)}</strong></div>${fullBar(v,amount,'informal')}<small>${amount?(v/amount*100).toFixed(1):0}% del total informal</small></div>`).join(''):empty('Todavía no hay cobros este período','Las ventas y servicios aparecerán cuando se registren.')}</section></div>
   ${selected?`<section class="v55-panel v55-informal-detail"><div class="v55-panel-head"><div><span class="v55-overline">DESGLOSE DE ACTIVIDAD</span><h3>${txt(selected.name)}</h3><p>${selected._manual?'Ingresos registrados sin programación; no son una mensualidad garantizada.':'Importes por frecuencia y depósitos confirmados.'}</p></div>${selected._manual?tag('SIN PROGRAMAR','amber'):`<div class="v940-source-actions"><button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(selected.id)}">${icon('pencil')} Editar fuente</button><button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(selected.id)}">Registrar cobro anticipado</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(selected.id)}">+ Ingreso adicional</button></div>`}</div>${(()=>{const data=sourceTotals(m,selected);let p=null;if(!selected._manual)try{p=v40Payroll({...selected,frequency:'monthly'},today())}catch(e){}return `<div class="v55-informal-stats"><div><small>INGRESADO EN EL PERÍODO</small><b>${cash(data.currentAmount)}</b></div><div><small>ACUMULADO DE ESTA FUENTE</small><b>${cash(data.total)}</b></div><div><small>BRUTO PREVISTO / MES</small><b>${p?cash(p.gross,selected.currency,2):'No aplica'}</b></div><div><small>NETO PREVISTO / MES</small><b>${p?cash(p.net,selected.currency,2):'No aplica'}</b></div></div>${!selected._manual?`<div class="v55-informal-info"><span>Cuenta receptora: <b>${txt(account(selected.accountId)?.name||'Sin cuenta vinculada')}</b></span><span>Próximo cobro: <b>${prettyDate(selected.nextDue)}</b></span><span>Registro: <b>${selected.postingMode==='auto'?'Automático al sincronizar':'Confirmación manual'}</b></span></div>`:''}<div class="v55-two"><div><h4>Cobros por mes</h4>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(pm)))}}))}</div><div><h4>Últimos cobros de esta actividad</h4>${txList(data.arr,6)}</div></div>`;})()}</section>`:''}`;
  }
+ v55DetailHtml=kind=>{const m=model();ui.v55RecurringRange=ui.expenseRange==='year'?'year':ui.expenseRange==='all'?'all':'month';return kind==='formal'?formal(m):informal(m)};
  function v55RecurringWorkspace(){
   const m=model(),tab=['general','formal','informal'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
   const tabs=[['general','Visión general','layout-dashboard'],['formal','Trabajo formal','briefcase'],['informal','Trabajo informal · Joseo','trending-up']];
