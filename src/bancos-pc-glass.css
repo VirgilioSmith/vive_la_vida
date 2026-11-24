@@ -287,3 +287,26 @@
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button.is-active,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button[aria-pressed="true"]{background:var(--bg-glass-2)!important;color:var(--bg-ink)!important;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--bg-acc) 65%,transparent),0 6px 16px color-mix(in srgb,var(--bg-acc) 22%,transparent)!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button[data-id="all"].is-active{box-shadow:none!important}
 }
+/* Refinamiento: Beneficios y retorno + Consumo por tipo compactos, alto dinámico, 8 px entre módulos */
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-content:flex-start!important;gap:8px!important;height:auto!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights>:is(section,details){flex:0 0 auto!important;min-height:0!important;height:auto!important;justify-content:flex-start!important;padding:10px 16px 12px!important;margin:0!important}
+ /* Beneficios y retorno */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-card-return{gap:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-heading{margin:0!important;padding:0!important;min-height:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-heading .v266-overline{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-values{margin:0!important;padding:0!important;gap:0 !important;row-gap:2px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile{padding-block:2px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-tile .v371-rt-ico{width:34px;height:34px}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-note{margin:2px 0 0!important;font-size:12px!important;line-height:1.3!important}
+ /* Consumo por tipo: siempre visible, sin flecha de plegado */
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v1301-insight>summary{pointer-events:none;cursor:default;padding:0!important;margin:0!important;min-height:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v1301-insight .v1301-disclose-arrow,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v1301-insight>summary>:is(button,span):not(:first-child){display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v1301-insight>summary h2{margin:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .vBanks-consumption-body{flex:0 0 auto!important;justify-content:flex-start!important;gap:0!important;padding:0!important;margin:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-consumption-total{padding:2px 2px 6px!important;margin:0 0 2px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-consumption-rows>div{min-height:32px!important;padding-block:1px!important}
+}
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .v371-return-heading{margin-bottom:6px!important}
+}

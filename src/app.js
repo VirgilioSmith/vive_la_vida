@@ -2013,7 +2013,7 @@ function vBanksPcCardConsumption(cards,mobile=false){
   const share=comparable?100*amount.equivalent/totals.equivalent:0;
   return `<div><span class="vBanksPc-category-icon">${mobile&&chart?`<i style="--swatch:${palette[index%palette.length]}"></i>`:icon(V255_TAXONOMY.gasto.categories[type]||'bag')}</span><strong>${sanitize(type)}</strong>${comparable?`<span class="vBanksPc-meter" aria-hidden="true"><i style="--use:${Math.min(100,share)}%"></i></span>`:''}<span class="vBanksPc-consumption-amount"><b>${amount.missingFx?'—':money(amount.equivalent,'DOP',0)}</b>${amount.USD?`<small>${vWalletPcSplit(amount.DOP,amount.USD)}</small>`:''}</span>${comparable?`<small>${share.toFixed(1)}%</small>`:''}</div>`;
  }).join('')}</div></div>`:'<p class="vBanksPc-empty">Sin consumos registrados.</p>';
- return v1301ConsumptionDisclosure('Consumo por tipo','','',body,{glyph:'analytics',open:ui.vBanksPcConsumptionOpen!==false});
+ return v1301ConsumptionDisclosure('Consumo por tipo','','',body,{glyph:'analytics',open:true});
 }
 let vBanksPcCardCycle;
 const V_BANKS_ALL='__all_banks__';
@@ -2210,7 +2210,7 @@ function vBanksProducts(groups,bankId,f,mobile){
   const current=['all',...V_BANKS_GROUPS.map(([key])=>key)].includes(ui.vBanksPcProduct)?ui.vBanksPcProduct:'all';
   const total=V_BANKS_GROUPS.reduce((count,[key])=>count+groups[key].length,0);
   const filters=[['all','Productos','layers',total],...V_BANKS_GROUPS.map(([key,label,glyph])=>[key,label,glyph,groups[key].length])];
-  const links=filters.map(([key,label,glyph,count])=>`<button type="button" data-act="banksPcProducts" data-id="${key}" aria-pressed="${current===key}" class="${current===key?'is-active':''}">${V_BANKS_ART[key]||icon(glyph)}<span>${label}</span><small>${count}</small></button>`).join('');
+  const links=filters.map(([key,label,glyph,count])=>`<button type="button" data-act="banksPcProducts" data-id="${key}" aria-pressed="${current===key}" class="${current===key?'is-active':''}">${V_BANKS_ART[key]?V_BANKS_ART[key].replace(/vba(\w+)/g,'vbaN$1'):icon(glyph)}<span>${label}</span><small>${count}</small></button>`).join('');
   // La vista general es un resumen de categorías, no una segunda lista de productos.
   // Los importes provienen de la misma posición financiera calculada para los KPI.
   if(current==='all'){

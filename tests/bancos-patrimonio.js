@@ -217,10 +217,8 @@ async function testBanks(browser,width,theme='light'){
   if(!mobile){
   assert.match(await usage.innerText(),/Alimentación/);
   assert.match(await usage.innerText(),/Transporte/);
-  await usage.locator('summary').click();
-  assert.equal(await usage.evaluate(el=>el.open),false);
-  await usage.locator('summary').press('Enter');
-  assert.equal(await usage.evaluate(el=>el.open),true);
+  assert.equal(await usage.evaluate(el=>el.open),true,'Consumo por tipo permanece siempre visible.');
+  assert.equal(await usage.locator('.v1301-disclose-arrow').isVisible(),false,'Sin flecha de plegado.');
   }
   await choose('bank-a');
   const a=await view();
