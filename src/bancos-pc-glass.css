@@ -238,3 +238,18 @@
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-icon{background:radial-gradient(circle at 50% 60%,rgba(255,255,255,.75),rgba(255,255,255,.25) 70%)!important;padding:0!important;width:76px!important;height:76px!important}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-icon svg{width:62px!important;height:62px!important;filter:drop-shadow(0 4px 6px rgba(40,60,120,.25))}
 }
+/* KPI: alturas idénticas en las cuatro tarjetas, icono centrado y cápsulas que no se parten por separado */
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metrics{align-items:stretch!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric{container-type:inline-size;align-items:center!important;align-content:center!important;min-height:132px}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric>.vBanksPc-stat-icon{align-self:center!important;margin:0!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric>div{align-self:center!important;align-content:center}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-row{display:flex!important;flex-wrap:nowrap!important;gap:6px!important;margin-top:8px!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-abs{flex:0 0 auto;font-size:clamp(12px,.82vw,13.5px)!important;padding:3px 9px!important;line-height:1.3}
+ html body #app#app#app main.vBanksPc-world>.topbar{padding-bottom:10px!important;margin-bottom:18px!important}
+ html body #app#app#app main.vBanksPc-world>.topbar .top-sub{line-height:1.4!important;margin-top:4px!important}
+}
+/* Si la tarjeta es angosta: las dos cápsulas se apilan SIEMPRE, en las cuatro por igual */
+@container (max-width:470px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-row{flex-direction:column!important;align-items:flex-start!important;gap:5px!important}
+}
