@@ -8598,7 +8598,7 @@ function v11ScheduleAppleSync(delay=80){
 function v10LiveStartForce(){
  if(!f33Active||!f33User)return;
  // Reset socket/channel, keep server-state validation and polling active.
- v10WatchedUser='';v10LiveStart();
+ v10LiveStart();
 }
 window.addEventListener('focus',()=>{v10SchedulePull(0);v11ScheduleAppleSync(100);void v403DeleteAppleEvents();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){v10SchedulePull(0);v11ScheduleAppleSync(100);void v403DeleteAppleEvents();}});
@@ -9332,11 +9332,59 @@ v10PullRemote=async function(){
  finally{v10Pulling=false;v10LastPull=Date.now();v10RemoteQueued=false;}
 };
 let v720RealtimeFailures=0;
+// VIVE: un canal de primer plano, con recuperación tras desconexión.
+let v720CatchupTimer=0;
+function v720Catchup(){
+ if(document.hidden||!f33Active||!f33User||!navigator.onLine)return;
+ clearTimeout(v720CatchupTimer);
+ const wait=Math.max(0,v714NextReadAt-Date.now(),v719BusyUntil()-Date.now(),15000-(Date.now()-v715LastRevisionCheck));
+ v720CatchupTimer=setTimeout(()=>{
+  v720CatchupTimer=0;
+  if(document.hidden||!f33Active||!f33User||!navigator.onLine)return;
+  if(v10Pulling||f33Saving||f33Dirty){v10RemoteQueued=true;v720CatchupTimer=setTimeout(v720Catchup,2000);return;}
+  if(!f33Conflict)void v10PullRemote();
+ },Math.max(1500,wait+100));
+}
 v10LiveStart=function(){
- // V1490: no se mantienen WebSockets ni suscripciones Realtime de fondo.
- // Sincronización de lectura al abrir/enfocar la app y escritura por acción de usuario.
- v10LiveStop();
+ if(!f33Active||!f33User||!f33Api||document.hidden||!navigator.onLine)return;
+ const uid=f33User.id;
+ if(v10Channel&&v10WatchedUser===uid)return;
+ if(v10Channel)v10LiveStop();
+ clearTimeout(v11LiveRetryTimer);v11LiveRetryTimer=0;
+ const cooloff=Math.max(0,v719BusyUntil()-Date.now());
+ if(cooloff){v11LiveRetryTimer=setTimeout(()=>{v11LiveRetryTimer=0;v10LiveStart()},cooloff+1000);return;}
+ v10WatchedUser=uid;
+ const c=f33Api.channel('vive-live-'+uid);
+ v10Channel=c;
+ const current=()=>v10Channel===c&&f33Active&&f33User?.id===uid&&!document.hidden&&navigator.onLine;
+ c.on('postgres_changes',{event:'*',schema:'public',table:'finance_revision',filter:'user_id=eq.'+uid},payload=>{
+  if(!current())return;
+  if(Number(payload.new?.revision)===v405Revision)return;
+  v720Catchup();
+ }).on('postgres_changes',{event:'INSERT',schema:'public',table:'apple_pay_events',filter:'user_id=eq.'+uid},()=>{
+  if(current())v11ScheduleAppleSync(1000);
+ }).subscribe(status=>{
+  if(!current())return;
+  v402RealtimeStatus(status);
+  if(status==='SUBSCRIBED'){v720RealtimeFailures=0;v720Catchup();v11ScheduleAppleSync(1500);return;}
+  if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)){
+   if(v11LiveRetryTimer)return;
+   const delay=Math.min(120000,5000*2**Math.min(v720RealtimeFailures++,5));
+   v10LiveStop();
+   v11LiveRetryTimer=setTimeout(()=>{v11LiveRetryTimer=0;v10LiveStart()},delay);
+  }
+ });
 };
+function v720PauseLive(){
+ clearTimeout(v720CatchupTimer);v720CatchupTimer=0;
+ v10LiveStop();
+ if(f33Api?.realtime?.disconnect)f33Api.realtime.disconnect();
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)v720PauseLive();else v10LiveStart()});
+window.addEventListener('pagehide',v720PauseLive);
+window.addEventListener('pageshow',()=>{if(!document.hidden)v10LiveStart()});
+window.addEventListener('offline',v720PauseLive);
+
 
 /* Gestión única de la sesión (Supabase Auth). Un solo cliente; la sesión vive en localStorage (persistSession) y se renueva sola (autoRefreshToken).
    La sesión solo termina por decisión de la persona (Cerrar sesión) o porque el servidor la revoca; un fallo de red o un servicio caído
