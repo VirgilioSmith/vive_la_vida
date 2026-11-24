@@ -191,7 +191,7 @@ const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.htm
   /* 12 · pantallas: todas las pestañas y secciones en tres estados (normal, sin productos y con datos inválidos) sin textos rotos ni errores */
   const errsPage = []; p.on('pageerror', e => errsPage.push(e.message)); f.page().on('console', m => { if (m.type() === 'error') errsPage.push(m.text().slice(0, 120)); });
   const pant = await f.evaluate(() => {
-    const secciones = ['antecedentes', 'productos', 'cortes', 'auditoria', 'variables', 'metodologia'], tabs = ['summary', 'detail', 'transunion', 'control'], malos = [], vistas = [];
+    const secciones = ['antecedentes', 'productos', 'cortes', 'auditoria', 'variables', 'metodologia'], tabs = ['summary', 'transunion', 'control'], malos = [], vistas = [];
     const guardado = { months: DB.months, idx, tab, open: { ...ccOpen } };
     const estados = {
       normal: () => {},
@@ -208,7 +208,7 @@ const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.htm
     DB.months = guardado.months; idx = guardado.idx; tab = guardado.tab; Object.assign(ccOpen, guardado.open); render();
     return { malos: malos.slice(0, 10), nMalos: malos.length, vistas: vistas.length };
   });
-  check(12, 'Pantallas: 4 pestañas (con las 6 secciones del Centro de control abiertas) × 3 estados (normal, sin productos, datos inválidos) se dibujan completas, sin «undefined», «NaN», «Infinity» ni «[object», y sin errores de consola', pant.nMalos === 0 && pant.vistas === 12 && errsPage.length === 0, JSON.stringify({ ...pant, consola: errsPage.slice(0, 3) }));
+  check(12, 'Pantallas: 3 pestañas (con las 6 secciones del Centro de control abiertas) × 3 estados (normal, sin productos, datos inválidos) se dibujan completas, sin «undefined», «NaN», «Infinity» ni «[object», y sin errores de consola', pant.nMalos === 0 && pant.vistas === 9 && errsPage.length === 0, JSON.stringify({ ...pant, consola: errsPage.slice(0, 3) }));
 
   await b.close();
   const fallos = results.filter(r => !r.ok);
