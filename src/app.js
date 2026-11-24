@@ -2011,7 +2011,7 @@ function vBanksPcCardConsumption(cards,mobile=false){
  const totalLine=!chart?`<div class="vBanksPc-consumption-total"><span>Consumo total</span><strong>${totals.missingFx?'—':money(totals.equivalent)}</strong></div>`:'';
  const body=rows.length?`<div class="vBanks-consumption-body${chart?' with-chart':''}">${chart}${totalLine}<div class="vBanksPc-consumption-rows">${rows.map(([type,amount],index)=>{
   const share=comparable?100*amount.equivalent/totals.equivalent:0;
-  return `<div><span class="vBanksPc-category-icon">${mobile&&chart?`<i style="--swatch:${palette[index%palette.length]}"></i>`:icon(V255_TAXONOMY.gasto.categories[type]||'bag')}</span><strong>${sanitize(type)}</strong>${comparable?`<span class="vBanksPc-meter" aria-hidden="true"><i style="--use:${Math.min(100,share)}%"></i></span>`:''}<span class="vBanksPc-consumption-amount"><b>${amount.missingFx?'—':money(amount.equivalent,'DOP',0)}</b>${amount.USD?`<small>${vWalletPcSplit(amount.DOP,amount.USD)}</small>`:''}</span>${comparable?`<small>${share.toFixed(1)}%</small>`:''}</div>`;
+  return `<div class="vBanksPc-crow" data-eq="${num(amount.equivalent)}" data-dop="${num(amount.DOP)}" data-usd="${num(amount.USD)}"><span class="vBanksPc-category-icon">${mobile&&chart?`<i style="--swatch:${palette[index%palette.length]}"></i>`:icon(V255_TAXONOMY.gasto.categories[type]||'bag')}</span><strong>${sanitize(type)}</strong>${comparable?`<span class="vBanksPc-meter" aria-hidden="true"><i style="--use:${Math.min(100,share)}%"></i></span>`:''}<span class="vBanksPc-consumption-amount"><b>${amount.missingFx?'—':money(amount.equivalent,'DOP',0)}</b>${amount.USD?`<small>${vWalletPcSplit(amount.DOP,amount.USD)}</small>`:''}</span>${comparable?`<small>${share.toFixed(1)}%</small>`:''}</div>`;
  }).join('')}</div></div>`:'<p class="vBanksPc-empty">Sin consumos registrados.</p>';
  return v1301ConsumptionDisclosure('Consumo por tipo','','',body,{glyph:'analytics',open:true});
 }
@@ -2337,6 +2337,24 @@ function vBanksPcTotalsStrip(kind,active,f){
  }
  return `<div class="vBanksPc-limit-strip vBanksPc-totals-strip is-${kind}">${cells}</div>`;
 }
+
+/* Bancos PC · «Consumo por tipo» se ajusta al alto de «Mis productos»: si las categorías no caben, las de menor consumo se agrupan dinámicamente en «Otros». */
+function vBanksFitConsumption(){
+ const card=document.querySelector('.vBanksPc-world .vBanksPc-insights .v1301-insight');if(!card)return;
+ const box=card.querySelector('.vBanksPc-consumption-rows');if(!box)return;
+ box.querySelectorAll('.is-gen').forEach(e=>e.remove());box.querySelectorAll('.vBanksPc-crow').forEach(e=>{e.hidden=false;e.style.removeProperty('display')});
+ const rows=[...box.querySelectorAll('.vBanksPc-crow')];if(rows.length<3)return;
+ const over=()=>card.scrollHeight>card.clientHeight+1;
+ if(!over())return;
+ const total=rows.reduce((n,r)=>n+num(r.dataset.eq),0)||1;
+ const gen=document.createElement('div');gen.className='vBanksPc-crow is-gen';
+ let hid=0,eq=0,dop=0,usd=0;
+ const render=()=>{const share=eq/total*100;gen.innerHTML=`<span class="vBanksPc-category-icon">${icon('bag')}</span><strong>Otros</strong><span class="vBanksPc-meter" aria-hidden="true"><i style="--use:${Math.min(100,share)}%"></i></span><span class="vBanksPc-consumption-amount"><b>${money(eq,'DOP',0)}</b>${usd?`<small>${vWalletPcSplit(dop,usd)}</small>`:''}</span><small>${share.toFixed(1)}%</small>`};
+ box.appendChild(gen);
+ for(let i=rows.length-1;i>=2&&over();i--){const r=rows[i];r.hidden=true;r.style.setProperty('display','none','important');hid++;eq+=num(r.dataset.eq);dop+=num(r.dataset.dop);usd+=num(r.dataset.usd);render()}
+ if(!hid)gen.remove();
+}
+window.addEventListener('resize',()=>requestAnimationFrame(vBanksFitConsumption));window.__vBanksFit=vBanksFitConsumption;
 function vBanksDashboard(){
  v40Ensure();
  const mobile=isMobileViewport();
@@ -2400,6 +2418,7 @@ function vBanksDashboard(){
   ${head}${selector}${tools}${body}
  </div>`;}
 
+ if(!mobile){requestAnimationFrame(()=>requestAnimationFrame(vBanksFitConsumption))}
  return `<div class="vBanksPc">
  <div class="vBanksPc-metrics" aria-label="Situación bancaria">${vBanksPcKpis(active,selected,f,prior)}</div>
  <div class="vBanksPc-grid" aria-label="Instituciones y sus productos">
@@ -10245,6 +10264,7 @@ function vExpModel(){
  }
  for(const c of cats.values()){const sum=[...c.subs.values()].reduce((a,s)=>a+s.amount,0);const rest=rnd(c.total-sum);if(Math.abs(rest)>.005)c.subs.set('Sin subcategoría',{name:'Sin subcategoría',amount:rest,fixed:V_EXP_FIXED.has(c.cat)})}
  const priorTotal=S.prior?S.prior.reduce((a,m)=>a+vExpMonth(m).total,0):null;
+ let incomeRec=0;for(const m of S.months){const d=vExpMonth(m);incomeRec+=num(monthlyTotals(Number(m.slice(0,4)),Number(m.slice(5,7))).income)+d.pay}
  let budget=0,covered=0;for(const m of S.months){const d=vExpMonth(m);budget+=budgetPlan(m).total;covered+=budgetCoveredSpend({expenseBy:d.by,expenseSubBy:d.sub},m)}
  const items=(db.transactions||[]).filter(t=>S.months.some(m=>String(t.date||'').startsWith(m))).flatMap(expenseTransactionItems);
  const inst={};for(const it of items){const k=V_EXP_METHOD_MAP[it.method];if(k)inst[k]=(inst[k]||0)+it.amount}
@@ -10254,7 +10274,7 @@ function vExpModel(){
  else if(S.mode==='year'){series=Array.from({length:12},(_,i)=>{const m=S.y+'-'+String(i+1).padStart(2,'0');const future=S.y>thisY||S.y===thisY&&i+1>thisM||m<S.firstTx;return {label:MON[i],value:future?null:rnd(vExpMonth(m).total),m}})}
  else{const ys=[...new Set(S.months.map(m=>m.slice(0,4)))];series=ys.map(yy=>({label:yy,value:rnd(S.months.filter(m=>m.startsWith(yy)).reduce((a,m)=>a+vExpMonth(m).total,0)),m:yy}))}
  const rows=[...cats.values()].filter(c=>Math.abs(c.total)>.005).sort((a,b)=>b.total-a.total);
- return {S,rows,total:rnd(total),fixed:rnd(fixedTotal),variable:rnd(total-fixedTotal),priorTotal,budget:rnd(budget),covered:rnd(covered),inst,series,items:items.length};
+ return {S,incomeRec:rnd(incomeRec),rows,total:rnd(total),fixed:rnd(fixedTotal),variable:rnd(total-fixedTotal),priorTotal,budget:rnd(budget),covered:rnd(covered),inst,series,items:items.length};
 }
 function vExpVar(now,prev,label){
  if(prev===null||!Number.isFinite(prev)||Math.abs(prev)<.01)return `<div class="vexp-var-row"><span class="vexp-var is-flat"><i>Sin base comparable</i></span></div>`;
@@ -10280,12 +10300,12 @@ function vExpensesPc(){
  const M=vExpModel(),S=M.S,kind=ui.vExpKind||'all',total=M.total||0;
  const share=v=>total>.005?Math.max(0,Math.min(100,v/total*100)):0;
  const seg=[['month','Mes'],['year','Año'],['all','Histórico']].map(([k,l])=>`<button type="button" data-act="expenseRange" data-id="${k}" aria-pressed="${S.mode===k}" class="${S.mode===k?'is-on':''}">${l}</button>`).join('');
- const budgetLeft=M.budget>0?rnd(M.budget-M.covered):null;
+ const weight=M.incomeRec>.005?total/M.incomeRec*100:null;
  const kpis=[
   ['Total gastado',money(total),'layers',vExpVar(total,M.priorTotal,S.priorLabel||''),''],
   ['Gastos fijos',money(M.fixed),'home',`<small>${share(M.fixed).toFixed(1)}% del total</small>`,`<span class="vexp-bar"><i style="width:${share(M.fixed).toFixed(1)}%"></i></span>`],
   ['Gastos variables',money(M.variable),'chart',`<small>${share(M.variable).toFixed(1)}% del total</small>`,`<span class="vexp-bar"><i style="width:${share(M.variable).toFixed(1)}%"></i></span>`],
-  ['Presupuesto restante',budgetLeft===null?'—':money(budgetLeft),'wallet',budgetLeft===null?'<small>Sin presupuesto configurado</small>':`<small>De ${money(M.budget)}</small>`,budgetLeft===null?'':`<span class="vexp-bar"><i style="width:${Math.max(0,Math.min(100,M.covered/M.budget*100)).toFixed(1)}%"></i></span>`]
+  ['Peso sobre ingresos',weight===null?'—':weight.toFixed(1)+'%','analytics','<small>Gasto reconocido / ingreso reconocido</small>',weight===null?'':`<span class="vexp-bar"><i style="width:${Math.min(100,weight).toFixed(1)}%"></i></span>`]
  ].map(([l,v,g,sub,bar],i)=>`<article class="vexp-kpi vexp-kpi-${i+1}"><span class="vexp-ico">${icon(g)}</span><div><span>${l}</span><strong>${v}</strong>${sub}${bar}</div></article>`).join('');
  const shown=M.rows.map(c=>{const v=kind==='fixed'?c.fixed:kind==='var'?c.total-c.fixed:c.total;return {c,v}}).filter(x=>Math.abs(x.v)>.005).sort((a,b)=>b.v-a.v);
  const base=shown.reduce((a,x)=>a+Math.max(0,x.v),0);

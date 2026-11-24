@@ -90,6 +90,20 @@ async function run(browser,{theme,palhex,width,height,shot}){
  await ctx.close();
 }
 
+
+async function dinamicoOtros(browser){
+ delete process.env.TOUCH;process.env.THEME='light';delete process.env.PALHEX;
+ const {ctx,p}=await open(browser,1440,900);const errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await p.evaluate(()=>{const t=window.__T,d=t.dbg();const cats=['Hogar','Transporte','Alimentación','Servicios básicos','Salud','Educación','Ocio','Ropa','Mascotas','Viajes'];const card=d.cards[0];d.transactions=cats.map((c,i)=>({id:'m'+i,type:'card_charge',cardId:card.id,amount:1000*(10-i)+100,currency:'DOP',category:c,date:t.fn.today(),created:t.fn.today()+'T10:00:00Z'}));t.inv();t.go('overview');t.go('banks')});
+ await p.waitForSelector('.vBanksPc-crow');await p.waitForTimeout(500);
+ const r=await p.evaluate(()=>{const c=document.querySelector('.v1301-insight'),i=document.querySelector('.vBanksPc-institution').getBoundingClientRect(),cb=c.getBoundingClientRect();const vis=[...document.querySelectorAll('.vBanksPc-crow')].filter(x=>x.offsetParent);const total=[...document.querySelectorAll('.vBanksPc-crow')].filter(x=>!x.classList.contains('is-gen')).reduce((n,x)=>n+Number(x.dataset.eq),0);const shown=vis.reduce((n,x)=>n+(x.classList.contains('is-gen')?0:Number(x.dataset.eq)),0);const gen=document.querySelector('.is-gen b');return {over:c.scrollHeight-c.clientHeight,bottomDiff:Math.abs(cb.bottom-i.bottom),gen:!!gen,genAmt:gen?Number(gen.textContent.replace(/[^0-9.]/g,'')):0,hiddenAmt:total-shown}});
+ assert.equal(r.over<=1,true,'Consumo por tipo cabe sin desbordar');assert.ok(r.bottomDiff<=2,'Consumo por tipo termina alineado con Mis productos');
+ assert.ok(r.gen,'las categorías que no caben se agrupan en «Otros»');assert.ok(Math.abs(r.genAmt-r.hiddenAmt)<1,'«Otros» suma exactamente las categorías agrupadas');
+ await p.click('.vBanksPc-overview-tile[data-id="cards"]');await p.waitForTimeout(300);
+ assert.equal(await p.locator('.vBanksPc-mp-detail>.vBanksPc-mp-head').isVisible(),false,'la vista de producto no repite el encabezado «Mis productos»');
+ assert.ok(await p.locator('.vBanksPc-mp-detail .vBanksPc-product-filter').isVisible(),'el menú de productos sube y permanece');
+ assert.deepEqual(errors,[]);await ctx.close();
+}
 module.exports=async function bancosPcGlass(browser){
  const base=[{theme:'light',width:1672,height:941,shot:'claro-1672.png'},{theme:'black',width:1672,height:941,shot:'black-1672.png'},
   {theme:'light',palhex:'#e0457b',width:1672,height:941,shot:'claro-rosa-1672.png'},{theme:'black',palhex:'#16a085',width:1672,height:941,shot:'black-verde-1672.png'}];
@@ -107,6 +121,7 @@ module.exports=async function bancosPcGlass(browser){
   assert.ok(await p.locator('.vBanks-mobile-hero').count()===1,'Bancos móvil conserva su hero');
   await p.screenshot({path:path.join(OUT,'bancos-movil-intacto.png')});await ctx.close()}
  delete process.env.TOUCH;
+ await dinamicoOtros(browser);
  console.log('Bancos PC Premium Liquid Glass validado con Playwright (Claro/Black, acentos, 5 resoluciones, Wallet PC y Bancos móvil intactos).');
 };
 if(require.main===module)(async()=>{const b=await chromium.launch();try{await module.exports(b)}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

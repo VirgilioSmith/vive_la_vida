@@ -42,7 +42,7 @@ async function run(browser,{theme,palhex,width=1440,height=900,shot}){
  // estructura
  ok(await p.locator('.vexp-seg button').count()===3,'píldora con Mes | Año | Histórico');
  assert.deepEqual(await p.locator('.vexp-seg button').allInnerTexts(),['Mes','Año','Histórico']);
- assert.deepEqual(await p.locator('.vexp-kpi>div>span:first-child').allInnerTexts(),['Total gastado','Gastos fijos','Gastos variables','Presupuesto restante']);
+ assert.deepEqual(await p.locator('.vexp-kpi>div>span:first-child').allInnerTexts(),['Total gastado','Gastos fijos','Gastos variables','Peso sobre ingresos']);
  const body=await p.locator('#page').innerText();
  ok(!/Pareto|Composición del gasto|Principales comercios|Deducciones en categorías de gastos/i.test(body),'sin Pareto, dona, comercios ni tarjeta de deducciones');
  ok(await p.locator('.v58-exec[data-v58-page="expenses"]').isVisible().catch(()=>false)===false,'resumen anterior oculto (sin controles duplicados)');
@@ -53,6 +53,8 @@ async function run(browser,{theme,palhex,width=1440,height=900,shot}){
  assert.equal(num(k[1]),20578,`[${tag}] fijos = alquiler 10,000 + nómina 10,578: ${k[1]}`);
  assert.equal(num(k[2]),3000,`[${tag}] variables = 3,000: ${k[2]}`);
  ok(Math.abs(await catTotal(p)-23578)<1,'las categorías reconcilian con el total');
+ assert.equal(k[3],'26.0%',`[${tag}] peso sobre ingresos = 23,578 / (80,000 neto + 10,578 retenido) = 26.0%: ${k[3]}`);
+ ok(/Gasto reconocido \/ ingreso reconocido/.test(await p.locator('.vexp-kpi-4').innerText()),'texto del KPI');
  const cat=n=>p.locator('.vexp-cat',{hasText:n}).first();
  for(const [c,amt] of [['Impuestos y comisiones',7268],['Salud',1677],['Otros gastos',1633]]){
   const row=cat(c);ok(await row.count()===1,`categoría ${c} presente`);
