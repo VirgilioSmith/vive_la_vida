@@ -370,3 +370,14 @@ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-center>.vBanksPc
 html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-insights .vBanksPc-consumption-rows>.vBanksPc-crow{max-height:68px!important}
 html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product,html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-totals-strip>div{background:rgba(255,255,255,.05)!important;background-image:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.02) 62%,rgba(255,255,255,.08))!important}
 html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBanksPc-product-filter button small{display:none!important}
+/* Institución no bancaria: solo la entidad y los productos que realmente tiene; sin filtros, resúmenes vacíos ni tarjetas sin datos */
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-grid:has(.v40-nonbank-detail) .vBanksPc-insights{display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-grid:has(.v40-nonbank-detail){grid-template-columns:minmax(260px,.9fr) minmax(0,2.4fr)!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-institution:has(.v40-nonbank-detail) :is(.vBanksPc-institution-summary,.vBanksPc-product-filter,.vBanksPc-overview,.vBanksPc-mp-head){display:none!important}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-institution:has(.v40-nonbank-detail) .vBanksPc-lane{margin-top:10px}
+}
+@media(min-width:791px){
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-institution:has(.v40-nonbank-detail){display:flex!important;flex-direction:column}
+ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-institution:has(.v40-nonbank-detail) .v40-nonbank-detail{order:-1;flex:0 0 auto!important}
+}

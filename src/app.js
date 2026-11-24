@@ -642,7 +642,7 @@ const NAV_FAMILIES=[
  ]},
  {label:'GESTIÓN FINANCIERA',items:[
   {id:'banks',name:'Bancos',ico:'landmark',children:[['banks','Instituciones','landmark'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
-  {id:'register',name:'Movimientos',ico:'cycle',children:[['register','Registro de ingresos y egresos','cycle'],['income','Análisis de ingresos','up'],['expenses','Análisis de egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
+  {id:'register',name:'Movimientos',ico:'cycle',children:[['register','Registro de ingresos y egresos','cycle'],['flow','Flujo','analytics'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
  ]},
  {label:'SISTEMA',items:[
   {id:'settings',name:'Configuración',ico:'settings',children:[]}
@@ -650,9 +650,9 @@ const NAV_FAMILIES=[
 ];
 const NAV_SECTIONS={
  banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','landmark'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
- register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['income','Ingresos','up'],['expenses','Egresos','down'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
+ register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['flow','Flujo','analytics'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
 };
-function navFamilyForPage(page){if(['recurring','personal'].includes(page))return 'overview';if(page==='patrimony')return 'overview';if(['overview','analytics','kpis','advanced','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
+function navFamilyForPage(page){if(['flow','income','expenses'].includes(page))return 'register';if(['recurring','personal'].includes(page))return 'overview';if(page==='patrimony')return 'overview';if(['overview','analytics','kpis','advanced','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
 /* Four clear navigation worlds; contextual horizontal switches remain unchanged. */
 const RAIL_DESTINATIONS=[
  ['overview','Resumen','home','Inicio, suscripciones y entre personas'],
@@ -712,7 +712,7 @@ function moduleSwitch(page){
   if(page==='cards')return '';
   return v206BankSwitch(page);
  }
- return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${section.title}</strong><small>${section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic,view])=>{const on=page===id&&(!view||(ui.v176PayView||'agenda')===view);return `<button type="button" class="module-switch-tab ${on?'active':''}" ${on?'aria-current="page"':''} data-act="navigate" data-id="${id}"${view?` data-v176-pay-view="${view}"`:''}>${icon(ic)}<span>${name}</span></button>`}).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
+ return `<div class="module-switch-shell"><div class="module-switch-title"><span class="module-switch-kicker">NAVEGACIÓN DEL MÓDULO</span><strong>${section.title}</strong><small>${section.hint}</small></div><nav class="module-switch-tabs" aria-label="Secciones de ${section.title}">${section.tabs.map(([id,name,ic,view])=>{const on=(page===id||(id==='flow'&&['income','expenses'].includes(page)))&&(!view||(ui.v176PayView||'agenda')===view);return `<button type="button" class="module-switch-tab ${on?'active':''}" ${on?'aria-current="page"':''} data-act="navigate" data-id="${id}"${view?` data-v176-pay-view="${view}"`:''}>${icon(ic)}<span>${name}</span></button>`}).join('')}</nav><span class="module-switch-swipe">Desliza la barra para explorar más opciones ↔</span></div>`;
 }
 
 /* MOBILE FIRST EXPERIENCE: Same underlying finances, new responsive screens. */
@@ -1873,7 +1873,7 @@ function main(){
  }
  if(isMobileViewport()&&ui.page==='kpis')ui.page='overview';
  if(ui.page==='personalize' && !isMobileViewport()){ui.page='settings';v242SettingsPane='home';}
- const heads={score:['Vive Score','Tu comportamiento crediticio, explicado.'],pressure:['Presión financiera','El mismo calendario de Inicio, ampliado'],wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
+ const heads={flow:['Flujo','Ingresos, egresos y resultado neto'],score:['Vive Score','Tu comportamiento crediticio, explicado.'],pressure:['Presión financiera','El mismo calendario de Inicio, ampliado'],wallet:['Wallet','Tus tarjetas, sin distracciones'],mobilehub:['Explorar','Tus módulos financieros'],antExpenses:['Gastos hormiga','Hábitos, recurrencias y proyecciones'],mobilesearch:['Buscar','Busca tus registros y explora tus finanzas'],projection:['Proyección','Escenarios orientativos del patrimonio'],patrimony:['Patrimonio','Activos, obligaciones y posición neta'],register:['Movimientos','Registro, historial y conciliación de operaciones'],income:['Origen de ingresos','Trabajo, emprendimiento, joseo y beneficios'],expenses:['Análisis de egresos','Categorías, Pareto, tendencias y gastos reales'],personal:['Entre personas','Préstamos y devoluciones de capital'],benefits:['Beneficios y cashback','Beneficios realmente registrados por tarjeta'],certificates:['Certificados','Capital, vencimientos y rendimientos'],advanced:['Analítica avanzada','Matriz anual, categorías y análisis'],banks:['Instituciones','Productos y balances por entidad'],categories:['Categorías','Organización de tus registros'],overview:['Resumen','Tu vida financiera, en claro'],accounts:['Cuentas bancarias','Saldo y disponibilidad'],cards:['Tarjetas','Crédito, cortes y beneficios registrados'],loans:['Préstamos bancarios','Contratos, pagos y amortizaciones'],transactions:['Actividad','Libro de operaciones'],recurring:['Suscripciones','Servicios y pagos recurrentes'],budget:['Presupuestos','Control de cumplimiento'],annual:['Resumen anual','Ingresos, egresos, neto y saldo'],kpis:['Indicadores avanzados','Métricas detalladas'],analytics:['Resumen detallado','Visión financiera completa'],settings:['Configuración','Privacidad y reglas'],personalize:['Personalización','Tu Resumen y Liquid Glass móvil']};
  let h=heads[ui.page]||heads.overview;
  // V363: marca unificada en la segunda línea del encabezado de cada sección.
  h=desktopWallet?['Tu universo financiero','Todos tus créditos y sus beneficios, en un solo lugar.']:desktopBanks?['Tu posición bancaria','Tus bancos y productos, en una sola vista.']:[h[0],'vive el hoy'];
@@ -2395,7 +2395,8 @@ function vBanksDashboard(){
  const totalProducts=V_BANKS_GROUPS.reduce((n,[key])=>n+active[key].length,0);
  const mockup=!mobile&&!(selected&&!v40IsFinancial(selected))&&!(selected&&ui.bankHistory===selected.id);
  const curProd=['all',...V_BANKS_GROUPS.map(([k])=>k)].includes(ui.vBanksPcProduct)?ui.vBanksPcProduct:'all';
- const products=vBanksProducts(active,bankId,f,mobile);
+ const isNonbank=!!(selected&&!v40IsFinancial(selected));
+ const products=(!mobile&&isNonbank)?V_BANKS_GROUPS.filter(([key])=>active[key].length).map(([key])=>vBanksProductRows(key,active[key],bankId)).join(''):vBanksProducts(active,bankId,f,mobile);
  const history=selected&&ui.bankHistory===selected.id?v1264BankHistory(selected):'';
  const nonbank=selected&&!v40IsFinancial(selected)?v40NonbankDetail(selected):'';
  if(mobile){
@@ -7290,7 +7291,7 @@ document.addEventListener('pointerleave',hideChartTip);
 
 document.addEventListener('input',event=>{if(event.target.id!=='visionQuickSearch')return;const value=event.target.value.toLocaleLowerCase('es').trim();document.querySelectorAll('.vision-ledger-row,.vision-cat-item').forEach(el=>{el.hidden=!!value&&!el.textContent.toLocaleLowerCase('es').includes(value)});});
 /* V394 · Pila de navegación de interfaz, sin mutaciones financieras. */
-const V394_TITLES={score:'Score',overview:'Inicio',banks:'Instituciones',accounts:'Cuentas',cards:'Tarjetas',loans:'Préstamos',certificates:'Certificados',register:'Movimientos',income:'Ingresos',expenses:'Egresos',budget:'Presupuestos',categories:'Categorías',recurring:'Suscripciones',personal:'Entre personas',pressure:'Presión financiera',advanced:'Analítica',patrimony:'Patrimonio',settings:'Configuración',mobilehub:'Explorar',mobilesearch:'Buscar',wallet:'Wallet',analytics:'Análisis',vision:'Visión global'};
+const V394_TITLES={flow:'Flujo',score:'Score',overview:'Inicio',banks:'Instituciones',accounts:'Cuentas',cards:'Tarjetas',loans:'Préstamos',certificates:'Certificados',register:'Movimientos',income:'Ingresos',expenses:'Egresos',budget:'Presupuestos',categories:'Categorías',recurring:'Suscripciones',personal:'Entre personas',pressure:'Presión financiera',advanced:'Analítica',patrimony:'Patrimonio',settings:'Configuración',mobilehub:'Explorar',mobilesearch:'Buscar',wallet:'Wallet',analytics:'Análisis',vision:'Visión global'};
 let v394PreviousPage=null;
 let v394Stack=[];
 let v394SkipNext=false;
@@ -7590,7 +7591,7 @@ case 'paletteTheme':if(['original','emerald','coral'].includes(id)){db.settings.
 case 'paletteCustom':{const c=document.getElementById('viveCustomColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.paletteHex=c;db.settings.paletteChoice='custom';persist();render();toast('Color de acento personalizado aplicado.')}break;}
 case 'backgroundTheme':if(['original','glacier','sunset'].includes(id)){db.settings.backgroundChoice=id;persist();render();toast('Fondo actualizado.');}break;
 case 'backgroundCustom':{const c=document.getElementById('viveBackgroundColor')?.value;if(/^#[0-9a-f]{6}$/i.test(c||'')){db.settings.backgroundHex=c;db.settings.backgroundChoice='custom';persist();render();toast('Fondo personalizado aplicado.')}break;}
-case 'expenseRange':ui.expenseRange=id==='year'?'year':id==='all'?'all':'month';render();break; case 'expKind':ui.vExpKind=['fixed','var'].includes(id)?id:'all';render();break; case 'movementTab':ui.movementTab=id==='pending'?'all':id;if(id==='pending')ui.reviewFilter='drafts';render();break;
+case 'expenseRange':ui.expenseRange=id==='year'?'year':id==='all'?'all':'month';render();break; case 'flowChart':ui.vFlowChart=id==='trend'?'trend':'amounts';render();break; case 'incTab':ui.vIncTab=['formal','informal','evolution','history'].includes(id)?id:'summary';render();break; case 'incChart':ui.vIncChart=['cum','yoy'].includes(id)?id:'monthly';render();break; case 'expKind':ui.vExpKind=['fixed','var'].includes(id)?id:'all';render();break; case 'movementTab':ui.movementTab=id==='pending'?'all':id;if(id==='pending')ui.reviewFilter='drafts';render();break;
 case 'pendingRemove':if(!confirm('¿Descartar esta operación pendiente?'))break;if(!v30SavePoint('Antes de descartar operación pendiente'))break;db.pendingOperations=db.pendingOperations.filter(q=>q.id!==id);persist();render();toast('Operación pendiente descartada; puedes recuperarla desde Configuración.');break;
 case 'pendingConfirm':openPendingOperation(id);break;
  case 'navigate':{
@@ -10320,7 +10321,7 @@ function vExpensesPc(){
  const icons={'Tarjetas de crédito':'card','Cuentas y efectivo':'wallet','Costos de tarjetas':'card','Costos de préstamos':'landmark','Costos del pago de tarjeta':'receipt','Costos de la operación':'settings'};
  const inst=order.map(k=>`<button type="button" class="vexp-inst" data-act="navigate" data-id="register"><span class="vexp-iico">${icon(icons[k])}</span><span>${k}</span><b>${money(M.inst[k]||0)}</b></button>`).join('');
  return `<div class="vexp" aria-label="Egresos">
-  <div class="vexp-top"><div class="vexp-seg" role="group" aria-label="Alcance temporal">${seg}</div><span class="vexp-scope">${S.mode==='all'?'Desde '+vExpFmtMonth(S.firstTx):S.mode==='year'?'Enero – '+(S.months.length?MON[S.months.length-1]:'—')+' '+S.y:vExpFmtMonth(S.picked)}</span></div>
+  ${vFlowTop('expenses')}
   <section class="vexp-kpis" aria-label="Indicadores de egresos">${kpis}</section>
   <div class="vexp-grid"><section class="vexp-panel vexp-detail"><header><span class="vexp-ico">${icon('layers')}</span><div><h2>Detalle de categoría</h2><p>Desglose de tus gastos en el período (${money(total)})</p></div>
     <div class="vexp-kind" role="group" aria-label="Tipo de gasto">${[['all','Todas'],['fixed','Fijas'],['var','Variables']].map(([k,l])=>`<button type="button" data-act="expKind" data-id="${k}" aria-pressed="${kind===k}" class="${kind===k?'is-on':''}">${l}</button>`).join('')}</div></header>
@@ -10330,6 +10331,171 @@ function vExpensesPc(){
 }
 const vExpPrevPage=pages.expenses;
 pages.expenses=function(){return isMobileViewport()?vExpPrevPage():vExpensesPc()};
+
+/* ===== Flujo (Movimientos → Flujo → Flujo | Ingresos | Egresos) · motor compartido ===== */
+function vFlowIncomeMonth(m){const t=monthlyTotals(Number(m.slice(0,4)),Number(m.slice(5,7)));const d=vExpMonth(m);return rnd(num(t.income)+d.pay)}
+function vFlowTabs(active){
+ const tabs=[['flow','Flujo','analytics'],['income','Ingresos','up'],['expenses','Egresos','down']];
+ return `<nav class="vflow-tabs" aria-label="Flujo de dinero">${tabs.map(([id,l,g])=>`<button type="button" data-act="navigate" data-id="${id}" class="${active===id?'is-on':''}" ${active===id?'aria-current="page"':''}>${icon(g)}<span>${l}</span></button>`).join('')}</nav>`;
+}
+function vFlowPill(){
+ const mode=ui.expenseRange==='year'?'year':ui.expenseRange==='all'?'all':'month';
+ return `<div class="vexp-seg" role="group" aria-label="Alcance temporal">${[['month','Mes'],['year','Año'],['all','Histórico']].map(([k,l])=>`<button type="button" data-act="expenseRange" data-id="${k}" aria-pressed="${mode===k}" class="${mode===k?'is-on':''}">${l}</button>`).join('')}</div>`;
+}
+function vFlowScopeLabel(S){return S.mode==='all'?'Desde '+vExpFmtMonth(S.firstTx):S.mode==='year'?'Enero – '+(S.months.length?MON[S.months.length-1]:'—')+' '+S.y:vExpFmtMonth(S.picked)}
+function vFlowTop(active){const S=vExpScope();return `<div class="vflow-head">${vFlowTabs(active)}<div class="vflow-period">${vFlowPill()}<span class="vexp-scope">${vFlowScopeLabel(S)}</span></div></div>`}
+function vFlowSeries(){
+ const S=vExpScope(),thisY=nowYear(),thisM=nowMonth();
+ if(S.mode==='all'){const ys=[...new Set(S.months.map(m=>m.slice(0,4)))];return ys.map(yy=>{const ms=S.months.filter(m=>m.startsWith(yy));const inc=ms.reduce((a,m)=>a+vFlowIncomeMonth(m),0),exp=ms.reduce((a,m)=>a+vExpMonth(m).total,0);return {label:yy,inc:rnd(inc),exp:rnd(exp),net:rnd(inc-exp)}})}
+ return Array.from({length:12},(_,i)=>{const m=S.y+'-'+String(i+1).padStart(2,'0');const future=S.y>thisY||S.y===thisY&&i+1>thisM||m<S.firstTx;if(future)return {label:MON[i],inc:null,exp:null,net:null,m};const inc=vFlowIncomeMonth(m),exp=vExpMonth(m).total;return {label:MON[i],inc,exp,net:rnd(inc-exp),m}});
+}
+function vFlowKpiVar(now,prev,priorLabel,inverse){
+ if(prev===null||Math.abs(prev)<.01)return `<div class="vexp-var-row"><span class="vexp-var is-flat"><i>Sin base comparable</i></span></div>`;
+ const abs=rnd(now-prev),pct=(now-prev)/Math.abs(prev)*100,tone=Math.abs(abs)<.005?'flat':((abs>0)!==inverse)?'good':'bad';
+ return `<div class="vexp-var-row"><span class="vexp-var ${tone}"><b>${pct>0?'+':''}${pct.toFixed(1)}%</b></span><span class="vflow-vs">${priorLabel} (${money(prev)})</span></div>`;
+}
+function vFlowChart(series,mode){
+ const live=series.filter(x=>x.inc!==null);if(!live.length)return '<p class="vexp-empty">Sin movimientos registrados en este período.</p>';
+ const W=760,H=250,L=52,R=14,T=14,B=36,iw=W-L-R,ih=H-T-B,n=series.length,step=iw/n;
+ const vals=live.flatMap(x=>[x.inc,x.exp,x.net]);const max=Math.max(1,...vals.map(v=>Math.max(0,v)))*1.12,min=Math.min(0,...vals.map(v=>v));
+ const lo=min<0?min*1.12:0,span=max-lo;const Y=v=>T+ih-(v-lo)/span*ih;
+ const grid=[0,.25,.5,.75,1].map(f=>{const v=lo+span*f,y=Y(v);return `<line x1="${L}" x2="${W-R}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" class="vflow-g"/><text x="${L-8}" y="${(y+4).toFixed(1)}" text-anchor="end" class="vexp-ax">${shorten(v)}</text>`}).join('');
+ const cx=i=>L+step*(i+.5);
+ let body='';
+ if(mode==='amounts'){const bw=Math.min(20,step*.28);body=series.map((x,i)=>x.inc===null?'':`<g><rect x="${(cx(i)-bw-1.5).toFixed(1)}" y="${Y(Math.max(0,x.inc)).toFixed(1)}" width="${bw}" height="${Math.max(1,Y(0)-Y(Math.max(0,x.inc))).toFixed(1)}" rx="4" class="vflow-inc" data-chart-tip="${sanitize(x.label)}|Ingresos: ${money(x.inc)}|Egresos: ${money(x.exp)}|Neto: ${money(x.net)}" tabindex="0"/><rect x="${(cx(i)+1.5).toFixed(1)}" y="${Y(Math.max(0,x.exp)).toFixed(1)}" width="${bw}" height="${Math.max(1,Y(0)-Y(Math.max(0,x.exp))).toFixed(1)}" rx="4" class="vflow-exp" data-chart-tip="${sanitize(x.label)}|Ingresos: ${money(x.inc)}|Egresos: ${money(x.exp)}|Neto: ${money(x.net)}" tabindex="0"/></g>`).join('')}
+ const line=(key,cls)=>{const pts=series.map((x,i)=>x[key]===null?null:[cx(i),Y(x[key])]).filter(Boolean);if(!pts.length)return '';return `<path d="${pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ')}" class="vflow-ln ${cls}" fill="none"/>`+pts.map(q=>`<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="3.6" class="vflow-pt ${cls}"/>`).join('')};
+ body+=mode==='amounts'?line('net','is-net'):line('inc','is-inc')+line('exp','is-exp')+line('net','is-net');
+ const xl=series.map((x,i)=>`<text x="${cx(i).toFixed(1)}" y="${H-12}" text-anchor="middle" class="vexp-ax">${sanitize(x.label)}</text>`).join('');
+ const legend=`<div class="vflow-legend"><span><i class="is-inc"></i>Ingresos</span><span><i class="is-exp"></i>Egresos</span><span><i class="is-net"></i>Resultado (neto)</span></div>`;
+ return `<svg class="vexp-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ingresos, egresos y resultado">${grid}${body}${xl}</svg>${legend}`;
+}
+function vFlowPage(){
+ const S=vExpScope(),cur=S.months.reduce((a,m)=>a+vFlowIncomeMonth(m),0),exp=S.months.reduce((a,m)=>a+vExpMonth(m).total,0),net=cur-exp;
+ const pInc=S.prior?S.prior.reduce((a,m)=>a+vFlowIncomeMonth(m),0):null,pExp=S.prior?S.prior.reduce((a,m)=>a+vExpMonth(m).total,0):null,pNet=pInc===null?null:pInc-pExp;
+ const pl=S.mode==='month'?'vs. '+vExpFmtMonth(S.prior[0]).toLowerCase():S.mode==='year'?'vs. mismo tramo '+(S.y-1):'';
+ const rate=cur>.005?net/cur*100:null,pRate=pInc!==null&&pInc>.005?pNet/pInc*100:null;
+ const mode=ui.vFlowChart==='trend'?'trend':'amounts';
+ const series=vFlowSeries();
+ const kp=[['Ingresos',cur,pInc,'coins2',false,'is-inc'],['Egresos',exp,pExp,'wallet',true,'is-exp'],['Resultado neto',net,pNet,'chart',false,'is-net']].map(([l,v,pv,g,inv,c])=>`<article class="vflow-kpi ${c}"><span class="vexp-ico">${icon(g)}</span><div><span>${l}</span><strong>${money(v)}</strong>${vFlowKpiVar(v,pv,pl,inv)}</div></article>`).join('');
+ const noun=S.mode==='month'?'del mes':S.mode==='year'?'del año':'histórico';
+ const pp=rate!==null&&pRate!==null?rnd(rate-pRate):null;
+ const arc=rate===null?0:Math.max(0,Math.min(100,rate));
+ return `<div class="vexp vflow" aria-label="Flujo">${vFlowTop('flow')}
+  <section class="vflow-kpis">${kp}</section>
+  <div class="vflow-grid"><section class="vexp-panel vflow-evo"><header><span class="vexp-ico">${icon('chart')}</span><div><h2>Evolución ${S.mode==='all'?'anual':'mensual'}</h2><p>Ingresos, egresos y resultado • ${S.mode==='all'?'Histórico':S.y}</p></div><div class="vexp-kind" role="group" aria-label="Tipo de gráfico">${[['amounts','Montos'],['trend','Tendencia']].map(([k,l])=>`<button type="button" data-act="flowChart" data-id="${k}" aria-pressed="${mode===k}" class="${mode===k?'is-on':''}">${l}</button>`).join('')}</div></header>${vFlowChart(series,mode)}</section>
+   <section class="vexp-panel vflow-rate"><div class="vflow-donut" role="img" aria-label="Tasa de ahorro ${rate===null?'sin datos':rate.toFixed(1)+'%'}"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="vflow-track"/><circle cx="60" cy="60" r="50" class="vflow-arc" pathLength="100" stroke-dasharray="${arc.toFixed(1)} 100" transform="rotate(-90 60 60)"/></svg><div><small>Tasa de ahorro</small><strong>${rate===null?'—':rate.toFixed(1)+'%'}</strong></div></div>
+    <div class="vflow-rows"><div><span>${icon('analytics')}Ahorro ${noun}</span><b>${money(net)}</b></div>${S.mode==='all'?'':`<div><span>${icon('calendar')}${S.mode==='month'?'Mes anterior':'Mismo tramo '+(S.y-1)}</span><b>${pRate===null?'—':pRate.toFixed(1)+'%'}</b></div>`}${pp===null?'':`<div class="vflow-pp ${pp>=0?'good':'bad'}"><span>${pp>=0?'+':''}${pp.toFixed(1)} pp</span><small>${pl}</small></div>`}</div></section></div>
+  <p class="vflow-note">Los ingresos incluyen las retenciones de nómina (salario bruto reconocido) porque los egresos las incluyen; así el resultado neto coincide con el efectivo recibido menos el gasto en efectivo. No se cuentan transferencias propias, pagos de tarjeta ni capital de préstamos.</p></div>`;
+}
+const vFlowPrevExpenses=pages.expenses;
+pages.expenses=function(){return isMobileViewport()?vFlowPrevExpenses():vExpensesPc()};
+pages.flow=vFlowPage;
+
+/* ===== Ingresos PC · Premium Liquid Glass (Flujo → Ingresos) ===== 
+   Ingreso reconocido = ingresos, cashback/beneficios e intereses efectivamente registrados. Trabajo formal = neto depositado (no el bruto).
+   «Previsto / mes» se calcula de las fuentes programadas y NUNCA se suma a lo recibido. */
+const V_INC_COLORS={formal:'var(--lg-accent,#8b2a5b)',informal:'color-mix(in srgb,var(--lg-accent,#8b2a5b) 38%,#fff)',other:'#a77ff0',interest:'#3b82f0',benefits:'#17a06a'};
+const V_INC_NAMES={formal:'Trabajo formal',informal:'Trabajo informal · Joseo',other:'Otros ingresos',interest:'Intereses e inversiones',benefits:'Beneficios y cashback'};
+const V_INC_MEMO=new Map();
+function vIncClass(t){
+ if(['card_reward','bank_reward'].includes(t.type)||t.category==='Beneficios bancarios')return 'benefits';
+ if(t.type==='personal_settlement')return 'interest';
+ const sch=t.incomeScheduleId&&(db.incomeSchedules||[]).find(x=>x.id===t.incomeScheduleId);
+ const cat=String(t.category||'');
+ if(t.payrollSnapshot?.kind==='formal'||sch?.kind==='formal'||/salario|nómina|nomina|sueldo/i.test(cat))return 'formal';
+ if(sch||/joseo|adicional|negocio|ventas|servicios profesionales|independ/i.test(cat))return 'informal';
+ if(/inversion|inversión|interés|interes|dividend/i.test(cat))return 'interest';
+ return 'other';
+}
+function vIncAmount(t){
+ if(t.type==='personal_settlement'){const l=personalLoan(t.personalLoanId);return l?.direction==='lent'?fx(num(t.interest),t.currency):0}
+ return fx(num(t.amount),t.currency);
+}
+function vIncMonth(m){
+ const key=m+'|'+(db.transactions||[]).length;if(V_INC_MEMO.has(key))return V_INC_MEMO.get(key);
+ const out={formal:0,informal:0,other:0,interest:0,benefits:0,total:0,txs:[]};
+ for(const t of db.transactions||[]){if(!String(t.date||'').startsWith(m)||!['income','card_reward','bank_reward','personal_settlement'].includes(t.type))continue;
+  const a=vIncAmount(t);if(a<=0)continue;const c=vIncClass(t);out[c]+=a;out.total+=a;out.txs.push({t,c,a})}
+ for(const k of ['formal','informal','other','interest','benefits','total'])out[k]=rnd(out[k]);
+ if(V_INC_MEMO.size>400)V_INC_MEMO.clear();V_INC_MEMO.set(key,out);return out;
+}
+function vIncAgg(months){const o={formal:0,informal:0,other:0,interest:0,benefits:0,total:0,txs:[]};for(const m of months){const d=vIncMonth(m);for(const k of ['formal','informal','other','interest','benefits','total'])o[k]+=d[k];o.txs.push(...d.txs)}for(const k of ['formal','informal','other','interest','benefits','total'])o[k]=rnd(o[k]);return o}
+function vIncExpected(){
+ let net=0,gross=0,formalNet=0,formalGross=0,informalNet=0;
+ for(const s of db.incomeSchedules||[]){if(s.active===false)continue;try{const p=v40Payroll(s,today()),f=v80MonthlyFactor(s.frequency);const n=fx(p.net*f,s.currency),g=fx(p.gross*f,s.currency);net+=n;if(s.kind==='formal'){formalNet+=n;formalGross+=g}else informalNet+=n}catch(e){}}
+ return {net:rnd(net),formalNet:rnd(formalNet),formalGross:rnd(formalGross),informalNet:rnd(informalNet),ded:rnd(formalGross-formalNet)};
+}
+function vIncSeries(S,mode){
+ const thisY=nowYear(),thisM=nowMonth();
+ const monthsOfYear=y=>Array.from({length:12},(_,i)=>({m:y+'-'+String(i+1).padStart(2,'0'),label:MON[i],future:y>thisY||y===thisY&&i+1>thisM}));
+ if(S.mode==='all'&&mode!=='yoy'){const ys=[...new Set(S.months.map(m=>m.slice(0,4)))];let cf=0,ci=0;return ys.map(yy=>{const d=vIncAgg(S.months.filter(m=>m.startsWith(yy)));if(mode==='cum'){cf+=d.formal;ci+=d.informal;return {label:yy,formal:rnd(cf),informal:rnd(ci)}}return {label:yy,formal:d.formal,informal:d.informal}})}
+ if(mode==='yoy'){return monthsOfYear(S.y).map((x,i)=>{const prev=vIncMonth((S.y-1)+'-'+String(i+1).padStart(2,'0'));const cur=x.future?null:vIncMonth(x.m);return {label:x.label,cur:cur?cur.total:null,prev:prev.total,curF:cur?cur.formal:0,curI:cur?cur.informal:0}})}
+ let cf=0,ci=0;
+ return monthsOfYear(S.y).map(x=>{if(x.future||x.m<S.firstTx)return {label:x.label,formal:null,informal:null,m:x.m};const d=vIncMonth(x.m);if(mode==='cum'){cf+=d.formal;ci+=d.informal;return {label:x.label,formal:rnd(cf),informal:rnd(ci),m:x.m,total:rnd(cf+ci)}}return {label:x.label,formal:d.formal,informal:d.informal,m:x.m,total:d.total}});
+}
+function vIncChart(S,mode){
+ const ser=vIncSeries(S,mode);
+ const live=ser.filter(x=>mode==='yoy'?x.prev>0||x.cur>0:x.formal!==null&&(x.formal+x.informal>0||true));
+ if(!ser.some(x=>mode==='yoy'?(x.cur||x.prev):(x.formal||x.informal)))return '<p class="vexp-empty">Sin ingresos registrados en este período.</p>';
+ const W=760,H=250,L=52,R=14,T=26,B=36,iw=W-L-R,ih=H-T-B,n=ser.length,step=iw/n;
+ const tops=ser.map(x=>mode==='yoy'?Math.max(x.cur||0,x.prev||0):(x.formal||0)+(x.informal||0));const max=Math.max(1,...tops)*1.15;const Y=v=>T+ih-v/max*ih;
+ const grid=[0,.25,.5,.75,1].map(f=>{const v=max*f,y=Y(v);return `<line x1="${L}" x2="${W-R}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" class="vflow-g"/><text x="${L-8}" y="${(y+4).toFixed(1)}" text-anchor="end" class="vexp-ax">${shorten(v)}</text>`}).join('');
+ const cx=i=>L+step*(i+.5),bw=Math.min(mode==='yoy'?16:34,step*.5);
+ let bars='';
+ ser.forEach((x,i)=>{
+  if(mode==='yoy'){const tip=`${x.label} ${S.y}|${S.y}: ${x.cur===null?'—':money(x.cur)}|${S.y-1}: ${money(x.prev)}`;
+   bars+=`<g><rect x="${(cx(i)-bw-1.5).toFixed(1)}" y="${Y(x.prev).toFixed(1)}" width="${bw}" height="${Math.max(0,Y(0)-Y(x.prev)).toFixed(1)}" rx="4" class="vinc-prev" data-chart-tip="${sanitize(tip)}" tabindex="0"/>${x.cur===null?'':`<rect x="${(cx(i)+1.5).toFixed(1)}" y="${Y(x.cur).toFixed(1)}" width="${bw}" height="${Math.max(0,Y(0)-Y(x.cur)).toFixed(1)}" rx="4" class="vinc-f" data-chart-tip="${sanitize(tip)}" tabindex="0"/>`}</g>`;return}
+  if(x.formal===null)return;const f=x.formal,j=x.informal,tip=`${x.label}${S.mode==='all'?'':' '+S.y}|Trabajo formal: ${money(f)}|Informal · Joseo: ${money(j)}|Total: ${money(f+j)}`;
+  bars+=`<g><rect x="${(cx(i)-bw/2).toFixed(1)}" y="${Y(f).toFixed(1)}" width="${bw}" height="${Math.max(0,Y(0)-Y(f)).toFixed(1)}" rx="${j>0?0:5}" class="vinc-f" data-chart-tip="${sanitize(tip)}" tabindex="0"/>${j>0?`<rect x="${(cx(i)-bw/2).toFixed(1)}" y="${Y(f+j).toFixed(1)}" width="${bw}" height="${Math.max(0,Y(f)-Y(f+j)).toFixed(1)}" rx="5" class="vinc-i" data-chart-tip="${sanitize(tip)}" tabindex="0"/>`:''}</g>`;
+ });
+ const lastIdx=(()=>{for(let i=ser.length-1;i>=0;i--){const x=ser[i];if(mode==='yoy'?x.cur!==null&&x.cur>0:x.formal!==null&&x.formal+x.informal>0)return i}return -1})();
+ let bubble='';if(lastIdx>=0){const x=ser[lastIdx],v=mode==='yoy'?x.cur:x.formal+x.informal,t=shorten(v),bw2=t.length*8.4+22,bx=Math.min(W-R-bw2/2,Math.max(L+bw2/2,cx(lastIdx)));bubble=`<g><rect x="${(bx-bw2/2).toFixed(1)}" y="${(Y(v)-30).toFixed(1)}" width="${bw2.toFixed(1)}" height="22" rx="11" class="vexp-bub"/><text x="${bx.toFixed(1)}" y="${(Y(v)-15).toFixed(1)}" text-anchor="middle" class="vexp-bubt">RD$${t}</text></g>`}
+ const xl=ser.map((x,i)=>`<text x="${cx(i).toFixed(1)}" y="${H-12}" text-anchor="middle" class="vexp-ax">${sanitize(x.label)}</text>`).join('');
+ const legend=mode==='yoy'?`<div class="vflow-legend"><span><i class="vinc-lp"></i>${S.y-1}</span><span><i class="vinc-lf"></i>${S.y}</span></div>`:`<div class="vflow-legend"><span><i class="vinc-lf"></i>Trabajo formal</span><span><i class="vinc-li"></i>Trabajo informal · Joseo</span></div>`;
+ return `<svg class="vexp-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ingresos">${grid}${bars}${bubble}${xl}</svg>${legend}`;
+}
+function vIncDonut(d){
+ const keys=['formal','informal','other','interest','benefits'].filter(k=>d[k]>.005);const total=keys.reduce((a,k)=>a+d[k],0);
+ if(!total)return '<p class="vexp-empty">Sin ingresos reconocidos en este período.</p>';
+ let off=0;const R=70;const segs=keys.map(k=>{const pct=d[k]/total*100,seg=`<circle cx="90" cy="90" r="${R}" class="vinc-seg" style="stroke:${V_INC_COLORS[k]}" pathLength="100" stroke-dasharray="${Math.max(0,pct-(keys.length>1?.6:0)).toFixed(2)} 100" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 90 90)" data-chart-tip="${sanitize(V_INC_NAMES[k])}|${money(d[k])}|${pct.toFixed(1)}%"/>`;off+=pct;return seg}).join('');
+ const rows=keys.map(k=>`<div class="vinc-crow"><i style="background:${V_INC_COLORS[k]}"></i><span>${V_INC_NAMES[k]}</span><em>${(d[k]/total*100).toFixed(1)}%</em><b>${money(d[k])}</b></div>`).join('');
+ return `<div class="vinc-comp"><div class="vinc-donut"><svg viewBox="0 0 180 180"><circle cx="90" cy="90" r="${R}" class="vinc-trk"/>${segs}</svg><div><strong>${money(total)}</strong><small>Ingresos</small></div></div><div class="vinc-crows">${rows}</div></div>`;
+}
+function vIncRecent(S,limit=3){
+ const all=db.transactions.filter(t=>['income','card_reward','bank_reward','personal_settlement'].includes(t.type)&&vIncAmount(t)>0).sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.created||'').localeCompare(String(a.created||''))).slice(0,limit);
+ return all.map(t=>`<button type="button" class="vinc-act" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}"><span class="vinc-ai">${icon('up')}</span><span><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${V_INC_NAMES[vIncClass(t)]}</small></span><b>+${money(vIncAmount(t),'DOP',2)}</b></button>`).join('')||'<p class="vexp-empty">Aún no hay ingresos registrados.</p>';
+}
+function vIncSummary(S,d,exp){
+ const mode=ui.vIncChart||'monthly';
+ const pc=v=>d.total>.005?(v/d.total*100).toFixed(1)+'% del total':'—';
+ const kp=[['Ingresos del período',money(d.total,'DOP',2),'wallet','<small>≈ '+vFlowScopeLabel(S)+'</small>','vinc-k1'],
+  ['Trabajo formal',money(d.formal,'DOP',2),'briefcase',`<small>${pc(d.formal)}</small>`,'vinc-k2'],
+  ['Trabajo informal · Joseo',money(d.informal,'DOP',2),'chart',`<small>${pc(d.informal)}</small>`,'vinc-k3'],
+  ['Previsto / mes',money(exp.net,'DOP',2),'target','<small>Proyección mensual</small>','vinc-k4']
+ ].map(([l,v,g,sub,c])=>`<article class="vinc-kpi ${c}"><span class="vexp-ico">${icon(g)}</span><div><span>${l}</span><strong>${v}</strong>${sub}</div><i class="vinc-wave" aria-hidden="true"></i></article>`).join('');
+ const formalScheds=(db.incomeSchedules||[]).filter(s=>s.kind==='formal'),infScheds=(db.incomeSchedules||[]).filter(s=>s.kind!=='formal');
+ const lastInf=d.txs.filter(x=>x.c==='informal').map(x=>x.t.date).sort().pop()||(db.transactions||[]).filter(t=>t.type==='income'&&vIncClass(t)==='informal').map(t=>t.date).sort().pop();
+ const informalCount=db.transactions.filter(t=>t.type==='income'&&vIncClass(t)==='informal'&&S.months.some(m=>String(t.date).startsWith(m))).length;
+ const ded=exp.formalGross>0?(exp.ded/exp.formalGross*100):null;
+ return `<section class="vinc-kpis">${kp}</section>
+ <div class="vinc-grid"><section class="vexp-panel vinc-evo"><header><div><h2>Evolución de ingresos</h2></div><div class="vexp-kind" role="group" aria-label="Tipo de gráfico">${[['monthly','Mensual'],['cum','Acumulado'],['yoy','Interanual']].map(([k,l])=>`<button type="button" data-act="incChart" data-id="${k}" aria-pressed="${mode===k}" class="${mode===k?'is-on':''}">${l}</button>`).join('')}</div></header>${vIncChart(S,mode)}</section>
+  <section class="vexp-panel vinc-compsec"><header><div><h2>Composición por origen</h2></div></header>${vIncDonut(d)}</section></div>
+ <div class="vinc-bottom">
+  <section class="vexp-panel vinc-card"><header><span class="vexp-ico">${icon('briefcase')}</span><h2>Trabajo formal</h2></header><div class="vinc-big"><strong>${money(d.formal,'DOP',2)}</strong><span class="vinc-pill ${formalScheds.some(s=>s.active!==false)?'on':''}">${formalScheds.some(s=>s.active!==false)?'ACTIVA':'SIN FUENTE'}</span></div><small>Nómina recibida</small>
+   <div class="vinc-list"><div><span>${icon('briefcase')}Bruto mensual</span><b>${money(exp.formalGross,'DOP',2)}</b></div><div><span>${icon('percent')}Neto mensual</span><b>${money(exp.formalNet,'DOP',2)}</b></div><div><span>${icon('shield')}Deducciones${ded===null?'':' ('+ded.toFixed(1)+'%)'}</span><b>${money(exp.ded,'DOP',2)}</b></div></div></section>
+  <section class="vexp-panel vinc-card"><header><span class="vexp-ico">${icon('up')}</span><h2>Trabajo informal · Joseo</h2></header><div class="vinc-big"><strong>${money(d.informal,'DOP',2)}</strong><span class="vinc-pill on">${infScheds.some(s=>s.active!==false)||d.informal>0?'ACTIVA':'SIN ACTIVIDAD'}</span></div><small>Ingresos adicionales (no garantizados)</small>
+   <div class="vinc-list"><div><span>${icon('layers')}Actividades registradas</span><b>${informalCount}</b></div><div><span>${icon('target')}Previsto mensual</span><b>${money(exp.informalNet,'DOP',2)}</b></div><div><span>${icon('calendar')}Último ingreso</span><b>${lastInf?prettyDate(lastInf):'—'}</b></div></div></section>
+  <section class="vexp-panel vinc-card vinc-activity"><header><span class="vexp-ico">${icon('receipt')}</span><h2>Actividad reciente</h2></header>${vIncRecent(S,3)}</section></div>`;
+}
+function vIncomePc(){
+ const S=vExpScope(),d=vIncAgg(S.months),exp=vIncExpected();
+ const early=(db.incomeSchedules||[]).some(x=>x.active!==false);
+ return `<div class="vexp vinc" aria-label="Ingresos">${vFlowTop('income')}
+  <header class="vinc-title"><div><h1>Todo lo que genera tu trabajo.</h1><p>Lo recibido, lo esperado y cómo evoluciona tu dinero.</p></div><div class="vinc-hact"><button type="button" class="btn soft" data-v40-action="addIncome">+ Agregar fuente</button>${early?`<button type="button" class="btn soft" data-v1129-start="1">Registrar cobro anticipado</button>`:''}<button type="button" class="btn vinc-reg" data-act="newTransaction" data-type="income">+ Registrar ingreso</button></div></header>
+  ${vIncSummary(S,d,exp)}</div>`;
+}
+const vIncPrevPage=pages.income;
+pages.income=function(){return isMobileViewport()?vIncPrevPage():vIncomePc()};
 
 
 
@@ -20250,7 +20416,7 @@ window.viveIdleTest=(sec=30)=>new Promise(res=>{let busy=0,n=0;const ob='Perform
  window.addEventListener('scroll',()=>{if(tick)return;tick=true;requestAnimationFrame(()=>{tick=false;const y=window.scrollY||0,d=y-last;if(Math.abs(d)<8)return;set(d>0&&y>120);last=y})},{passive:true});
  document.addEventListener('touchstart',()=>{if(hid)setTimeout(()=>set(false),600)},{passive:true})}
 /* V1279 · UX: título de pestaña por pantalla, inicio de pantalla al cambiar de vista, avisos accesibles y salto al contenido. */
-{const NAMES={overview:'Resumen',advanced:'Analítica avanzada',patrimony:'Patrimonio',recurring:'Suscripciones',personal:'Entre personas',banks:'Instituciones',accounts:'Cuentas',cards:'Tarjetas',loans:'Préstamos',certificates:'Certificados',register:'Movimientos',income:'Ingresos',expenses:'Egresos',budget:'Presupuestos',categories:'Categorías',wallet:'Wallet',score:'Score',settings:'Configuración',mobilehub:'Explorar',mobilesearch:'Buscar'};
+{const NAMES={flow:'Flujo',overview:'Resumen',advanced:'Analítica avanzada',patrimony:'Patrimonio',recurring:'Suscripciones',personal:'Entre personas',banks:'Instituciones',accounts:'Cuentas',cards:'Tarjetas',loans:'Préstamos',certificates:'Certificados',register:'Movimientos',income:'Ingresos',expenses:'Egresos',budget:'Presupuestos',categories:'Categorías',wallet:'Wallet',score:'Score',settings:'Configuración',mobilehub:'Explorar',mobilesearch:'Buscar'};
  let lastPage=null;const _r=render;
  render=function(){const prev=lastPage,cur=ui.page;const out=_r.apply(this,arguments);try{if(cur!==lastPage){lastPage=cur;document.title=(NAMES[cur]?NAMES[cur]+' · ':'')+'vive el hoy';if(prev!==null&&!document.querySelector('#modal-root .modal'))window.scrollTo({top:0,behavior:'auto'})}}catch(_){}return out};
  const tr=document.getElementById('toast-root');if(tr){tr.setAttribute('role','status');tr.setAttribute('aria-live','polite')}
