@@ -1,0 +1,79 @@
+/* ============================================================================
+   VIVE · MOTOR PREMIUM LIQUID GLASS (Fase 03) — se carga al final y es la ÚNICA política de materiales.
+   Tres niveles:
+     AMBIENTAL  → fondo de la app (gradientes + acento); no usa filtros.
+     CONTENIDO  → tarjetas, importes, gráficos, filas, productos: vidrio translúcido SIN backdrop-filter
+                  (el fondo ambiental es suave, un desenfoque no aporta nada visible y sí cuesta rendimiento y legibilidad).
+     INTERACCIÓN→ navegación, dock, filtros, selectores, menús, modales, botones flotantes: backdrop-filter real.
+   Reglas de rendimiento: nada de blur anidado, nada de blur por fila en listas, sin animaciones permanentes.
+   Fallbacks: sin soporte de backdrop-filter, reducción de transparencia, alto contraste y reducción de movimiento.
+   ========================================================================== */
+:root,body{
+ --vx-m-content-alpha:.62;      /* contenido: prioriza lectura */
+ --vx-m-interact-alpha:.55;     /* interacción: mayor presencia */
+ --vx-solid-1:#f6f8fd;          /* sustituto opaco accesible del vidrio primario (Claro) */
+ --vx-solid-2:#edf1f9;
+}
+body.theme-black,body.theme-dark{--vx-solid-1:#14161b;--vx-solid-2:#0d0f13}
+
+/* ── CONTENIDO: sin filtro de fondo (todo lo que vive dentro de <main>) ── */
+html body #app#app#app#app #page#page#page#page *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+html body #app#app#app#app main.main>:not(#page):not(.v708-movements-fab):not(.v249-register-fab):not(.v65-settings-button),html body #app#app#app#app main.main>:not(#page) *:not(.v708-movements-fab):not(.v249-register-fab):not(.v65-settings-button){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* ── INTERACCIÓN dentro de <main>: solo estos componentes llevan desenfoque real, uno por pieza y sin anidarse ── */
+html body #app#app#app#app #page#page#page#page :is(.vx-interact,.vflow-tabs,.vexp-seg,.module-switch-shell,.v975-tabs,details.vBanksPc-filters,.v206-banks-switch,.v708-movements-fab,.v249-register-fab,.v65-settings-button){
+ -webkit-backdrop-filter:blur(var(--vx-blur-sub)) saturate(var(--vx-sat))!important;backdrop-filter:blur(var(--vx-blur-sub)) saturate(var(--vx-sat))!important}
+html body #app#app#app#app #page#page#page#page :is(.vx-interact,.vflow-tabs,.vexp-seg,.module-switch-shell,.v975-tabs,.v206-banks-switch) *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* ── INTERACCIÓN global (fuera de la página): dock, navegación, modales, botones flotantes ── */
+html body #app#app :is(.vive-mobile-dock,.rail-sidebar){-webkit-backdrop-filter:blur(var(--vx-blur-nav)) saturate(var(--vx-sat))!important;backdrop-filter:blur(var(--vx-blur-nav)) saturate(var(--vx-sat))!important}
+html body #app#app#app#app :is(.vive-mobile-dock,.rail-sidebar) *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body #modal-root :is(.modal,.v789-product-sheet){-webkit-backdrop-filter:blur(var(--vx-blur-raised)) saturate(var(--vx-sat));backdrop-filter:blur(var(--vx-blur-raised)) saturate(var(--vx-sat))}
+
+/* ── Superficies de contenido que seguían opacas (auditoría F01/F03): ahora cristal translúcido legible ── */
+html body:not(.theme-black):not(.theme-dark) #app#app#app#app :is(.v105-capacity-rest,.v36-month-net,.v318-chart-content,.v421-meter,.v421-net,.v1170-card,.v919-row,.table-wrap,.v12-table-scroller,.v1170-search){
+ background-color:var(--vx-glass-1)!important;background-image:none!important;border-color:var(--vx-edge)!important}
+html body.theme-black #app#app#app#app :is(.v105-capacity-rest,.v36-month-net,.v318-chart-content,.v421-meter,.v421-net,.v1170-card,.v919-row,.table-wrap,.v12-table-scroller),
+html body.theme-dark #app#app#app#app :is(.v105-capacity-rest,.v36-month-net,.v318-chart-content,.v421-meter,.v421-net,.v1170-card,.v919-row,.table-wrap,.v12-table-scroller){
+ background-color:var(--vx-glass-1)!important;background-image:none!important;border-color:var(--vx-edge)!important;color:var(--vx-text)!important}
+html body.theme-black #app#app#app#app :is(.v421-meter,.v421-net,.v919-row) :is(strong,b,span,small,em,i){color:inherit!important}
+
+/* ── Black: envoltorios que conservaban un relleno #000 sólido dentro de superficies de cristal (rectángulos negros detrás del texto) ── */
+html body.theme-black #app#app#app#app :is(.v421-head,.v421-meter-grid,.v421-meter-top,.v421-bottom-strip,.v421-bottom-strip div,.v239-product-value,.v239-currency-tabs),
+html body.theme-dark #app#app#app#app :is(.v421-head,.v421-meter-grid,.v421-meter-top,.v421-bottom-strip,.v421-bottom-strip div,.v239-product-value,.v239-currency-tabs){background:transparent!important;background-image:none!important}
+
+/* ── Selector de período: cristal de interacción coherente en Claro y Black; «Noviembre de 2026» (solo la primera letra en mayúscula) ── */
+html body.theme-black #app#app#app#app :is(.v990-month,.v410-date),html body.theme-dark #app#app#app#app :is(.v990-month,.v410-date){background:var(--vx-glass-2)!important;border-color:var(--vx-edge)!important;color:var(--vx-text)!important}
+html body.theme-black #app#app#app#app :is(.v990-month,.v410-date) span,html body.theme-dark #app#app#app#app :is(.v990-month,.v410-date) span{color:var(--vx-accent-text)!important}
+html body #app#app#app#app :is(.v990-month,.v410-date) span{text-transform:lowercase!important}
+html body #app#app#app#app :is(.v990-month,.v410-date) span::first-letter{text-transform:uppercase!important}
+
+/* ── Texto sobre héroes de color: siempre claro y legible ── */
+html body #app#app #page :is(.bank-hero,.v1170-hero,.analytic-hero,.v1200-hero,.v1234-hero,.v12-wealth-hero) :is(p,small,.hero-explainer,.v134-delta,label,dt,em){color:rgba(255,255,255,.94)!important}
+html body #app#app #page :is(.bank-hero,.v1170-hero) :is(strong,.v187-interactive-kpi strong){color:#fff!important}
+html body #app#app #page :is(.bank-hero,.v1170-hero) .btn:not(.primary):not(.white):not([class*=primary]){color:#fff!important}
+html body #app#app #page .v290-budget-head>button{color:var(--vx-on-accent)!important}
+
+/* ── Textos atenuados heredados ── */
+html body:not(.theme-black):not(.theme-dark) #app#app #page :is(.cert-bank,.cert-metrics span,.v256-cards-list-head p,.v1265-foot,.loan-card-grid p){color:var(--vx-text-3)!important}
+html body:not(.theme-black):not(.theme-dark) #app#app #page .v82-burden-ok small,html body:not(.theme-black):not(.theme-dark) #app#app #page .v82-burden small{color:var(--vx-positive)!important}
+html body.theme-black #app#app #page :is(.v371-return-values small,.v1170-kpi small,.vflow-vs),html body.theme-dark #app#app #page :is(.v371-return-values small,.v1170-kpi small,.vflow-vs){color:var(--vx-text-2)!important}
+html body.theme-black #app#app #page .movement-metric :is(span,small),html body.theme-dark #app#app #page .movement-metric :is(span,small){color:var(--vx-text-2)!important}
+html body.theme-black #app#app :is(.v154-category-title),html body.theme-dark #app#app :is(.v154-category-title){color:var(--vx-text)!important}
+html body.theme-black #app#app :is(.v154-category-sub),html body.theme-dark #app#app :is(.v154-category-sub){color:var(--vx-text-2)!important}
+html body.theme-black #app#app #page :is(summary,.account-balance-link,details summary span){color:var(--vx-accent-text)!important}
+html body.theme-black #app#app #page .pill,html body.theme-dark #app#app #page .pill{background:var(--vx-glass-2)!important;color:var(--vx-text)!important}
+
+/* ── FALLBACKS ── */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ :root,body{--vx-glass-1:rgba(255,255,255,.88);--vx-glass-2:rgba(255,255,255,.78);--vx-glass-raised:rgba(250,252,255,.96);--vx-glass-nav:rgba(250,252,255,.92)}
+ body.theme-black,body.theme-dark{--vx-glass-1:rgba(24,26,32,.92);--vx-glass-2:rgba(24,26,32,.86);--vx-glass-raised:rgba(20,22,28,.97);--vx-glass-nav:rgba(18,20,26,.95)}
+}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ :root,body,body.theme-black,body.theme-dark{--vx-glass-1:var(--vx-solid-1);--vx-glass-2:var(--vx-solid-2);--vx-glass-raised:var(--vx-solid-1);--vx-glass-nav:var(--vx-solid-1);--vx-edge:var(--vx-hairline)}
+ html body #app#app#app#app#app#app#app#app#app#app *,html body #modal-root#modal-root#modal-root#modal-root *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
+@media (prefers-reduced-motion:reduce){
+ html body *,html body *::before,html body *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
