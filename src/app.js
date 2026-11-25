@@ -85,6 +85,7 @@ const subSelect=(kind,cat,value)=>{
 };
 
 function v922MovementHeading(t){
+ if(t&&t.type==='personal_settlement'){const l=personalLoan(t.personalLoanId);return (l?.direction==='borrowed'?'Abono pagado':'Abono recibido')+' · '+(l?.person||'Persona');}
  const category=String(t?.category||'').trim();
  const sub=String(t?.subcategory||'').trim();
  return category?(category+(sub?' · '+sub:'')):(typeof transactionTitle==='function'?transactionTitle(t):'Movimiento');
@@ -17931,7 +17932,7 @@ window.__f360RecurringVisualAdapter={
   }
   function row(t){
     const title=v922MovementHeading(t),positive=direction(t)>0,apple=isApple(t),pending=typeof v5NeedsAppleCategory==='function'&&v5NeedsAppleCategory(t);
-    return `<button class="v708-row" type="button" data-v708="detail" data-id="${safe(t.id)}" aria-label="Ver movimiento ${safe(title)}"><span class="v708-row-icon ${apple?'apple':positive?'in':''}">${iconMark(t)}</span><span class="v708-row-desc"><strong>${safe(title)}</strong><small>${safe(v922MovementProduct(t))}${createdTime(t)?' · '+safe(createdTime(t)):''}</small>${pending?'<em>Apple Pay · Sin categoría</em>':''}</span><span class="v708-row-right"><b class="${positive?'positive':''}">${safe(typedAmount(t))}</b>${t.reviewed===true?'<small>Conciliado</small>':''}</span><span class="v708-chevron">${icon('arrow')}</span></button>`;
+    return `<button class="v708-row" type="button" data-v708="detail" data-id="${safe(t.id)}" aria-label="Ver movimiento ${safe(title)}"><span class="v708-row-icon ${apple?'apple':positive?'in':''}">${iconMark(t)}</span><span class="v708-row-desc"><strong>${safe(title)}</strong><small>${safe(v922MovementProduct(t))}${createdTime(t)?' · '+safe(createdTime(t)):''}</small>${t.type==='personal_settlement'&&num(t.interest)>0?`<small>Capital ${safe(money(t.principal,t.currency,2))} + interés ${safe(money(t.interest,t.currency,2))}</small>`:''}${pending?'<em>Apple Pay · Sin categoría</em>':''}</span><span class="v708-row-right"><b class="${positive?'positive':''}">${safe(typedAmount(t))}</b>${t.reviewed===true?'<small>Conciliado</small>':''}</span><span class="v708-chevron">${icon('arrow')}</span></button>`;
   }
   function rows(arr,{max=35}={}){
     if(!arr.length)return `<div class="v708-empty">${icon('search')}<strong>No hay movimientos con estos filtros</strong><p>Prueba otro período o categoría. Aquí solo aparecen registros reales.</p><button type="button" data-v708="reset">Restablecer filtros</button></div>`;
@@ -20220,7 +20221,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
    let bal=num(l.principal);
    ev.push({d:l.date||'',k:lent?'Le prestaste':'Te prestó',cc,amt:num(l.principal),cur,sign:lent?-1:1,bal,order:0});
    const st=v233PersonalSettlements(l).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
-   for(const t of st){bal=rnd(bal-Math.max(0,num(t.principal)));ev.push({d:t.date||'',k:lent?'Abono recibido':'Abono pagado',cc,amt:Math.max(0,num(t.principal)),cur,sign:lent?1:-1,bal,extra:num(t.interest)>0?'incluye '+money(t.interest,cur,2)+' de intereses':'',order:1})}
+   for(const t of st){bal=rnd(bal-Math.max(0,num(t.principal)));ev.push({d:t.date||'',k:lent?'Abono recibido':'Abono pagado',cc,amt:Math.max(0,num(t.principal))+Math.max(0,num(t.interest)),cur,sign:lent?1:-1,bal,extra:num(t.interest)>0?'capital '+money(t.principal,cur,2)+' + interés '+money(t.interest,cur,2):'',order:1})}
    const fg=v233PersonalForgiven(l);if(fg>0){bal=rnd(bal-fg);ev.push({d:l.forgiveness?.date||l.forgiveness?.at||l.date||'',k:'Deuda perdonada',cc,amt:fg,cur,sign:0,bal,order:2})}
   }
   return ev.sort((a,b)=>String(b.d).localeCompare(String(a.d))||b.order-a.order);
