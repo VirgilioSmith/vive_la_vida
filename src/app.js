@@ -4960,7 +4960,8 @@ document.addEventListener('change', event=>{
  ui.month=p;ui.year=Number(p.slice(0,4));render();
 });
 
-const pages={score:()=>(window.ViveScoreHost?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:()=>'',expenses:()=>'',banks,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
+const vwmHead=t=>window.matchMedia&&window.matchMedia('(max-width:790px)').matches?`<header class="vwm-head"><h1>${t}</h1></header>`:'';
+const pages={score:()=>vwmHead('Vive Score')+(window.ViveScoreHost?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:()=>'',expenses:()=>'',banks,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -20163,7 +20164,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  }
  pages.personal=function(){
   const k=ui.v1200p,g=k?grupos().find(x=>x.key===k):null;
-  return g?detalle(g):lista();
+  return g?detalle(g):vwmHead('Entre personas')+lista();
  };
  document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1200-p]');if(!b)return;e.preventDefault();ui.v1200p=b.dataset.v1200P||'';ui.v56ContactId='';ui.v56LoanId='';render();window.scrollTo(0,0)},true);
 })();
@@ -23727,4 +23728,6 @@ window.__v866Runners.v865=run;
   a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);
   window.toast?.('Excel descargado: '+filename);
  };
+
 })();
+
