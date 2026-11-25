@@ -52386,3 +52386,18 @@ body:is(.theme-dark,.theme-black) #modal-root#modal-root#modal-root .v749-layer 
 html body #modal-root#modal-root#modal-root :is(.v1100-seg,.v900-seg,.v1110-seg,.v48-kind-pick,.v41-icon-tabs,.v1110-freqseg,.v147-frequencies,.flow-segment,.loan-segment,.mqr-segment,.fastx-segment){background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;gap:8px!important;border-radius:0!important}
 html body #modal-root#modal-root#modal-root :is(.v1100-seg,.v900-seg,.v1110-seg,.v48-kind-pick,.v41-icon-tabs,.v1110-freqseg,.v147-frequencies,.flow-segment,.loan-segment,.mqr-segment,.fastx-segment)>:is(button,label):not([aria-pressed=true]):not(.active):not(.selected):not(.is-on):not(.on){background:#fff!important;border:1px solid rgba(125,140,170,.28)!important;border-radius:16px!important;box-shadow:none!important}
 body:is(.theme-dark,.theme-black) #modal-root#modal-root#modal-root :is(.v1100-seg,.v900-seg,.v1110-seg,.v48-kind-pick,.v41-icon-tabs,.v1110-freqseg,.v147-frequencies,.flow-segment,.loan-segment,.mqr-segment,.fastx-segment)>:is(button,label):not([aria-pressed=true]):not(.active):not(.selected):not(.is-on):not(.on){background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.14)!important}
+/* Efectivo (RD$ y US$): pares pesos|dólares y fecha|fecha en dos columnas; nota compacta → sin espacios enormes */
+@media(max-width:790px){
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root form#cashWalletForm .form-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;align-content:start}
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root form#cashWalletForm .form-grid>.form-full,html body #modal-root#modal-root#modal-root#modal-root#modal-root form#cashWalletForm .form-grid>p{grid-column:1/-1!important}
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root form#cashWalletForm .v135-compact-field{min-width:0;padding:10px 11px!important;gap:6px!important}
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root form#cashWalletForm .v135-compact-field .filter-label{font-size:12px;line-height:1.2}
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root form#cashWalletForm .v135-compact-field .field{min-height:46px;padding:0 10px;font-size:16px}
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root form#cashWalletForm .form-note{font-size:12px!important;line-height:1.4!important;padding:2px 4px!important;opacity:1;color:var(--vx-text-3,#485c78)}
+}
+/* Anualidad y seguros: acento dinámico en lugar del verde fijo */
+html body #modal-root#modal-root#modal-root#modal-root#modal-root form.v1300-annual-form{--v1300-accent:var(--vx-accent-strong,var(--lg-accent,#6d69f1))}
+html body #modal-root#modal-root#modal-root#modal-root#modal-root form.v1300-annual-form :is(.v1300-kicker,small.kicker,.v1300-intro small:first-child){color:var(--vx-accent-text,var(--lg-accent,#6d69f1))!important}
+html body #modal-root#modal-root#modal-root#modal-root#modal-root form.v1300-annual-form .form-foot .btn:last-child{background:var(--vx-accent-strong,var(--lg-accent,#6d69f1))!important;color:#fff!important}
+@media(max-width:790px){html body #modal-root#modal-root#modal-root#modal-root#modal-root#modal-root form#cashWalletForm .form-grid>label.v135-compact-field{grid-column:auto!important}}
+@media(max-width:790px){html body #modal-root#modal-root#modal-root#modal-root#modal-root#modal-root form#cashWalletForm input[type=date].field{font-size:14px!important;padding:0 6px 0 8px!important;letter-spacing:-.2px}}
