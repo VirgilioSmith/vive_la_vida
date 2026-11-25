@@ -890,7 +890,7 @@ function v985SimplificationWidget(asKpi){
  const ratio=d&&Number.isFinite(d.ratio)?d.ratio:null,health=ratio===null?0:Math.max(0,Math.min(100,100-ratio));
  const room=d&&d.balance!==null?d.balance:0;
  let budgetTxt=null;try{const bs=v290BudgetSnapshot(period);if(bs&&bs.allocated>0)budgetTxt=Math.round(bs.percent)+'% usado';}catch(e){}
- const mini=(ico,label,val,attrs,cls='')=>`<button type="button" class="v985-mini ${cls}" ${attrs}><span class="v985-mini-ico">${v985Svg(V985_ICO[ico],22)}</span><strong>${sanitize(label)}</strong>${val===null?'':`<small>${typeof val==='string'?sanitize(val):money(val)}</small>`}</button>`;
+ const mini=(ico,label,val,attrs,cls='')=>`<button type="button" class="v985-mini ${cls}" ${attrs} aria-label="${sanitize(label)}" title="${sanitize(label)}"><span class="v985-mini-ico">${v985Svg(V985_ICO[ico],22)}</span><strong>${sanitize(label)}</strong>${val===null?'':`<small>${typeof val==='string'?sanitize(val):money(val)}</small>`}</button>`;
  const stat=(ico,label,val)=>`<div class="v985-stat"><span class="v985-stat-ico">${v985Svg(V985_ICO[ico],22)}</span><div><small>${sanitize(label)}</small><strong>${money(val)}</strong></div></div>`;
  const head=(tone,title,q,n,act)=>`<header class="v985-head"><div class="v985-head-copy"><div><h3>${title}</h3></div><p>${q}</p></div><button type="button" class="v985-go" ${act} aria-label="Abrir ${title}">${v985Svg(V985_ICO.chev,16)}</button></header>`;
  const row=(ico,label,val,attrs)=>`<button type="button" class="v985-row-item" ${attrs}><span class="v985-row-ico">${v985Svg(V985_ICO[ico],20)}</span><span class="v985-row-lbl">${sanitize(label)}</span><strong>${money(val)}</strong></button>`;
