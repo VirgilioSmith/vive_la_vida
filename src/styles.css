@@ -52421,3 +52421,9 @@ html body #modal-root#modal-root#modal-root .v986-seg>button{background:#fff!imp
 html body #modal-root#modal-root#modal-root .v986-seg>button[aria-pressed=true],html body #modal-root#modal-root#modal-root .v986-seg>button.active,html body #modal-root#modal-root#modal-root .v986-seg>button.is-on{border:1.5px solid var(--vg-accent,#6d69f1)!important;background:color-mix(in srgb,var(--vg-accent,#6d69f1) 12%,#fff)!important}
 body:is(.theme-dark,.theme-black) #modal-root#modal-root#modal-root .v986-seg>button:not([aria-pressed=true]):not(.active):not(.is-on){background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.14)!important}
 html body #modal-root#modal-root#modal-root .modal.v119-modal{padding-bottom:0!important}
+/* Inspector: controles segmentados de páginas (Cuentas, Préstamos, Suscripciones, Categorías, Ingresos, Egresos): sin franja gris; píldoras independientes */
+html body #app#app#app :is(.v239-segments,.v911-seg,.vexp-seg){background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;gap:8px!important}
+html body #app#app#app :is(.v239-segments,.v911-seg,.vexp-seg)>:is(button,label):not(.selected):not(.active):not([aria-pressed=true]):not(.is-on){background:rgba(255,255,255,.7)!important;border:1px solid rgba(125,140,170,.26)!important;box-shadow:none!important}
+body:is(.theme-dark,.theme-black) #app#app#app :is(.v239-segments,.v911-seg,.vexp-seg)>:is(button,label):not(.selected):not(.active):not([aria-pressed=true]):not(.is-on){background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.14)!important}
+/* Hojas con flecha atrás: sin «×» duplicada */
+@media(max-width:790px){html body #modal-root#modal-root .modal-head:has([class*=back]) .close{display:none!important}}
