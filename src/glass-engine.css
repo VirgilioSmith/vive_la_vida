@@ -183,7 +183,7 @@ html.vg-reduce-motion :is(*,*::before,*::after){animation-duration:.001ms!import
 /* ---------- 5 · Capa de migración: componentes existentes → motor -------- */
 /* Hojas y ventanas emergentes de detalle → GlassSheet (nivel 04). Los fondos opacos heredados
    se sustituyen por el cristal del motor; contenido y lógica no cambian. */
-html body :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog .v705-detail-sheet,#modal-root .vab-dialog,#modal-root .v-reconcile-dialog){
+html body :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog .v705-detail-sheet,#modal-root .vab-dialog,#modal-root .v-reconcile-dialog,[role="dialog"][aria-labelledby="v186-deep-title"],[role="dialog"][aria-labelledby="v187DetailTitle"],[role="dialog"][aria-labelledby="v187HistoryTitle"]){
  --_a:var(--vg-a4);--_b:var(--vg-b4);--_e:var(--vg-e4);--_sh:var(--vg-sh4);
  color:var(--vg-ink)!important;
  background:
@@ -196,7 +196,7 @@ html body :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog 
  -webkit-backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;
  backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;
 }
-body:is(.theme-dark,.theme-black) :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog .v705-detail-sheet,#modal-root .vab-dialog,#modal-root .v-reconcile-dialog){--vg-dark:1}
+body:is(.theme-dark,.theme-black) :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog .v705-detail-sheet,#modal-root .vab-dialog,#modal-root .v-reconcile-dialog,[role="dialog"][aria-labelledby="v186-deep-title"],[role="dialog"][aria-labelledby="v187DetailTitle"],[role="dialog"][aria-labelledby="v187HistoryTitle"]){--vg-dark:1}
 
 /* Preferencias de Apariencia (usa los propios componentes del motor) */
 .vg-prefs{display:grid;gap:12px}
@@ -284,7 +284,7 @@ body.theme-dark .vg-dense,body.theme-black .vg-dense{--_a:.1}
 }
 
 /* Mismas microfracturas en las hojas ya migradas */
-html body #v361-pressure-day-dialog .v361-pressure-sheet::after,html body #v705-spent-dialog .v705-detail-sheet::after,html body #modal-root .vab-dialog::after,html body #modal-root .v-reconcile-dialog::after{
+html body #v361-pressure-day-dialog .v361-pressure-sheet::after,html body #v705-spent-dialog .v705-detail-sheet::after,html body #modal-root .vab-dialog::after,html body #modal-root .v-reconcile-dialog::after,html body [role="dialog"][aria-labelledby="v186-deep-title"]::after,html body [role="dialog"][aria-labelledby="v187DetailTitle"]::after,html body [role="dialog"][aria-labelledby="v187HistoryTitle"]::after{
  content:"";position:absolute;top:0;right:0;width:min(66%,290px);aspect-ratio:3/2;pointer-events:none;z-index:0;border-radius:inherit;
  background:color-mix(in srgb,var(--vg-accent) calc(70% * var(--vg-ak)),#fff);
  opacity:calc(.26 * var(--vg-lk) * var(--vg-ak));
@@ -292,8 +292,8 @@ html body #v361-pressure-day-dialog .v361-pressure-sheet::after,html body #v705-
  mask-image:radial-gradient(circle at 100% 0%,#000 0%,rgba(0,0,0,.5) 36%,transparent 70%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round'><g stroke-width='.7'><path d='M300 0 L262 28 L244 24 L226 52 L203 60 L188 92 L160 104'/><path d='M262 28 L270 58 L252 80 L256 110'/><path d='M226 52 L238 78 L222 98 L214 132'/><path d='M244 24 L226 12 L214 18'/><path d='M203 60 L180 54 L166 36'/><path d='M188 92 L196 118 L180 140'/></g><g stroke-width='.45'><path d='M262 28 L284 44 L288 70'/><path d='M252 80 L272 96 L266 124'/><path d='M222 98 L204 108 L196 130'/><path d='M160 104 L140 100 L124 114'/><path d='M180 140 L170 160'/><path d='M270 58 L290 80'/></g><g stroke-width='.3'><path d='M284 44 L296 36'/><path d='M124 114 L112 108'/><path d='M214 132 L226 156'/></g></svg>");
  -webkit-mask-size:100% 100%,100% 100%;mask-size:100% 100%,100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
 }
-html body :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog .v705-detail-sheet,#modal-root .vab-dialog,#modal-root .v-reconcile-dialog)>*{position:relative;z-index:1}
-html body #v361-pressure-day-dialog .v361-pressure-sheet::after,html body #v705-spent-dialog .v705-detail-sheet::after,html body #modal-root .vab-dialog::after,html body #modal-root .v-reconcile-dialog::after{-webkit-mask-composite:source-in;mask-composite:intersect}
+html body :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog .v705-detail-sheet,#modal-root .vab-dialog,#modal-root .v-reconcile-dialog,[role="dialog"][aria-labelledby="v186-deep-title"],[role="dialog"][aria-labelledby="v187DetailTitle"],[role="dialog"][aria-labelledby="v187HistoryTitle"])>*{position:relative;z-index:1}
+html body #v361-pressure-day-dialog .v361-pressure-sheet::after,html body #v705-spent-dialog .v705-detail-sheet::after,html body #modal-root .vab-dialog::after,html body #modal-root .v-reconcile-dialog::after,html body [role="dialog"][aria-labelledby="v186-deep-title"]::after,html body [role="dialog"][aria-labelledby="v187DetailTitle"]::after,html body [role="dialog"][aria-labelledby="v187HistoryTitle"]::after{-webkit-mask-composite:source-in;mask-composite:intersect}
 /* El contenido queda por encima de la capa decorativa */
 :is(.vg-fracture,.vg-modal,.vg-sheet,.vg-strategic)>*{position:relative;z-index:1}
 /* Degradado de aparición: la rama se disuelve alejándose de la esquina iluminada */
@@ -313,3 +313,25 @@ html.vg-reduce-transparency :is(.vg-fracture,.vg-modal,.vg-sheet,.vg-strategic):
 :is(.vg-kpi strong,.vg-table td,.vg-money){opacity:1;-webkit-backdrop-filter:none;backdrop-filter:none;font-variant-numeric:tabular-nums}
 .vg-money.is-negative{color:var(--vx-negative,#a31d49)}
 .vg-money.is-positive{color:var(--vx-positive,#045f37)}
+
+/* ---------- R5 · Ventanas de «zoom» (desgloses patrimoniales, tarjetas, liquidez, deudas, histórico) ---------- */
+html body :is(.v186-deep-close,.v187-modal-close){width:38px;height:38px;border-radius:50%;display:grid;place-items:center;padding:0;font-size:22px;line-height:1;
+ border:1.5px solid color-mix(in srgb,var(--vg-accent) 32%,transparent);background:color-mix(in srgb,var(--vg-accent) 11%,transparent);color:var(--vg-accent);box-shadow:none;outline:0}
+html body :is(.v186-deep-close,.v187-modal-close):focus-visible{background:color-mix(in srgb,var(--vg-accent) 22%,transparent)}
+html body :is(.v186-deep-head,.v187-detail-dialog>header,[aria-labelledby="v187HistoryTitle"]>header) small,
+html body :is(.v186-deep-head,.v187-detail-dialog>header,[aria-labelledby="v187HistoryTitle"]>header) span:first-child{color:var(--vg-accent-strong)}
+html body :is(.v186-deep-dialog,.v187-detail-dialog,[aria-labelledby="v187HistoryTitle"]){max-height:min(88dvh,820px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+html body :is(.v186-deep-dialog,.v187-detail-dialog,[aria-labelledby="v187HistoryTitle"])::-webkit-scrollbar{display:none}
+html body :is(.v186-deep-rows,.v187-detail-list){border-color:color-mix(in srgb,var(--vg-accent) 14%,var(--vg-line))}
+html body :is(.v187-detail-big,.v186-deep-summary strong){color:var(--vg-ink)}
+html body :is(.v186-deep-close,.v187-modal-close){box-shadow:none!important;outline:0!important;border:1.5px solid color-mix(in srgb,var(--vg-accent) 32%,transparent)!important;background:color-mix(in srgb,var(--vg-accent) 11%,transparent)!important;color:var(--vg-accent)!important}
+body:is(.theme-black,.theme-dark) :is(.v186-deep-head,.v187-detail-dialog>header,[aria-labelledby="v187HistoryTitle"]>header) :is(small,span:first-child){color:var(--vx-accent-text,#b9b6ff)!important}
+body:is(.theme-black,.theme-dark) :is(.v187-detail-list,.v186-deep-rows){background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.12)!important}
+body:is(.theme-black,.theme-dark) :is(.v187-detail-line,.v187-detail-line *){background:transparent!important;color:var(--vg-ink)!important}
+body:is(.theme-black,.theme-dark) :is(.v187-detail-line small,.v187-detail-line span:not(:first-child)){color:var(--vg-ink-3)!important}
+body:is(.theme-black,.theme-dark) .v187-detail-line+.v187-detail-line{border-top:1px solid rgba(255,255,255,.1)!important}
+html body .v186-deep-layer .v186-deep-dialog .v186-deep-close,html body .v186-deep-layer .v186-deep-dialog .v186-deep-close:focus,html body .v186-deep-layer .v186-deep-dialog .v186-deep-close:focus-visible,
+html body .v187-modal-overlay .v187-detail-dialog .v187-modal-close,html body .v187-modal-overlay .v187-detail-dialog .v187-modal-close:focus,html body .v187-modal-overlay .v187-detail-dialog .v187-modal-close:focus-visible,
+html body .v187-modal-overlay [role="dialog"] .v187-modal-close:focus-visible{outline:0!important;box-shadow:none!important;border:1.5px solid color-mix(in srgb,var(--vg-accent) 32%,transparent)!important}
+html body #modal-root#modal-root :is(.v186-deep-close,.v187-modal-close),html body #modal-root#modal-root :is(.v186-deep-close,.v187-modal-close):focus-visible{outline:0!important;outline-width:0!important;outline-style:none!important;box-shadow:none!important}
+html body #modal-root#modal-root :is(.v186-deep-close,.v187-modal-close):focus-visible{background:color-mix(in srgb,var(--vg-accent) 22%,transparent)!important}
