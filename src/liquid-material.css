@@ -196,3 +196,23 @@ body.theme-black .vive-mobile-dock-center .vdc-ico,body.theme-dark .vive-mobile-
   box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(255,255,255,.06),0 10px 26px rgba(0,0,0,.45)!important}
  html body.theme-black #app#app#app#app .vive-mobile-dock:not(.is-compact) .vive-mobile-dock-item.active,html body.theme-dark #app#app#app#app .vive-mobile-dock:not(.is-compact) .vive-mobile-dock-item.active{background:linear-gradient(150deg,rgba(255,255,255,.22),rgba(255,255,255,.06))!important;border-color:rgba(255,255,255,.28)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)!important}
 }
+
+/* Dock: sin pastilla de selección ni brillos de color. La selección se indica con el color de acento en icono y texto. */
+@media (max-width:790px){
+ html body #app#app#app#app .vive-mobile-dock .vive-mobile-dock-item,html body #app#app#app#app .vive-mobile-dock .vive-mobile-dock-item.active{background:none!important;background-image:none!important;box-shadow:none!important;border-color:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ html body #app#app#app#app .vive-mobile-dock .vive-mobile-dock-item.active,html body #app#app#app#app .vive-mobile-dock .vive-mobile-dock-item.active :is(.vive-mobile-dock-icon,.vive-mobile-dock-label,svg){color:var(--vx-accent-ink,var(--lg-accent-deep,#4f5bd5))!important}
+ html body #app#app#app#app .vive-mobile-dock .vive-mobile-dock-item.active .vive-mobile-dock-label{font-weight:700}
+ html body #app#app#app#app .vive-mobile-dock .vive-mobile-dock-item::before,html body #app#app#app#app .vive-mobile-dock .vive-mobile-dock-item::after{display:none!important}
+ /* Dock compacto: cápsulas de cristal neutro (sin tinte rosa ni degradado) y sin estado "seleccionado" */
+ html body #app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center){background:rgba(255,255,255,.34)!important;background-image:none!important;border:1px solid rgba(255,255,255,.65)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 22px rgba(30,45,90,.14)!important;-webkit-backdrop-filter:blur(16px) saturate(190%)!important;backdrop-filter:blur(16px) saturate(190%)!important}
+ html body #app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]){color:var(--vx-text-1,#0b1220)!important}
+ html body.theme-black #app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center),html body.theme-dark #app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center){background:rgba(40,40,48,.55)!important;border-color:rgba(255,255,255,.22)!important;color:#f2f6fb!important}
+ html body #app#app#app#app .vive-mobile-dock.is-compact{background:none!important;background-image:none!important}
+}
+@media (max-width:790px){
+ html body #app#app#app#app#app .vive-mobile-dock .vive-mobile-dock-item.active,html body.theme-black #app#app#app#app#app .vive-mobile-dock .vive-mobile-dock-item.active,html body.theme-dark #app#app#app#app#app .vive-mobile-dock .vive-mobile-dock-item.active{background:none!important;background-image:none!important;box-shadow:none!important;border-color:transparent!important}
+ html body #app#app#app#app#app .vive-mobile-dock .vive-mobile-dock-item .vive-mobile-dock-icon{background:none!important;background-image:none!important;box-shadow:none!important;border:0!important}
+ html body #app#app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]) :is(.vive-mobile-dock-icon,svg){color:inherit!important}
+ html body #app#app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]){background:rgba(255,255,255,.34)!important;border:1px solid rgba(255,255,255,.65)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 22px rgba(30,45,90,.14)!important;-webkit-backdrop-filter:blur(16px) saturate(190%)!important;backdrop-filter:blur(16px) saturate(190%)!important}
+ html body.theme-black #app#app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]){background:rgba(40,40,48,.55)!important;border-color:rgba(255,255,255,.22)!important}
+}
