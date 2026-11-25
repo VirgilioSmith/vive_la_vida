@@ -2410,6 +2410,8 @@ function vBanksDashboard(){
    const items=active[sKey]||[];
    body=`${vBanksMobileKpi(sKey,f,active)}<div class="vBanks-sub-body">${items.length?vBanksProductRows(sKey,items,bankId):`<div class="vBanks-empty"><p>Sin ${sc[0].toLowerCase()} registrad${sKey==='cards'||sKey==='accounts'?'as':'os'}.</p></div>`}<button type="button" class="vBanks-sub-cta" data-act="${sc[2]}"${bankId?` data-id="${sanitize(bankId)}"`:''}>${icon('plus')}${sc[3]}</button></div>`;
   }else body=`${vBanksMobilePosition(f,prior)}${products}${history}${nonbank}${selected&&!detail?vBanksMobileActivity(active):''}${insights}`;
+  if(detail&&!ledger){const dsc=vBanksOpenDetail(active);if(dsc){const dl=({accounts:'Cuentas',cards:'Tarjetas',loans:'Préstamos',certificates:'Certificados'})[detail.kind]||'Bancos';
+   return `<div class="vBanksPc vBanks-mobile vBanks-mobile-screen vBanks-screen-detail"><header class="vBanks-mobile-head is-sub"><button type="button" class="vBanks-back" data-act="banksCloseProduct" aria-label="Volver a ${dl}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>${dl}</button></header>${dsc}</div>`}}
   if(bankScreen)return `<div class="vBanksPc vBanks-mobile vBanks-mobile-screen vBanks-screen-bank">${bankHead}${tools}${body}</div>`;
   return `<div class="vBanksPc vBanks-mobile${sKey?' vBanks-mobile-screen vBanks-screen-'+sKey:''}${!ui.vBanksMobileChrome&&!ui.vBanksMobileProducts&&!detail&&!ledger&&!history&&!nonbank?' vBanks-mobile-dashboard':''}">
   ${head}${selector}${tools}${body}
