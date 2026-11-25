@@ -79,3 +79,8 @@ dialog.vmo{touch-action:pan-y;will-change:transform}
 html.vmo-open{color-scheme:dark!important;background:var(--vmo-top,#000)!important}
 html.vmo-open body{background:var(--vmo-top,#000)!important;color-scheme:dark}
 dialog.vmo{color-scheme:dark;background-image:linear-gradient(180deg,var(--vmo-b) 0,var(--vmo-c) 78%);background-color:var(--vmo-b)}
+
+/* Franja superior plana (isla dinámica / hora / batería): sin degradado ni desplazamiento bajo la barra de estado.
+   El reproductor cabe en pantalla, así que no es un scroller → el sistema no dibuja su velo de «borde de desplazamiento». */
+@media(max-width:790px) and (min-height:700px){dialog.vmo{overflow:hidden!important;overscroll-behavior:none}}
+dialog.vmo::before{content:"";position:absolute;z-index:0;left:0;right:0;top:0;height:calc(env(safe-area-inset-top,0px) + 90px);pointer-events:none;background:linear-gradient(180deg,var(--vmo-top,var(--vmo-b)) 0,var(--vmo-top,var(--vmo-b)) calc(env(safe-area-inset-top,0px) + 30px),color-mix(in srgb,var(--vmo-top,var(--vmo-b)) 0%,transparent) 100%)}
