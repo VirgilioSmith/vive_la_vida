@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vive Glass Engine · Catálogo</title>
+<link rel="stylesheet" href="./src/vx-tokens.css">
+<link rel="stylesheet" href="./src/glass-engine.css">
+<style>
+ :root{--ui-accent:#6d69f1;--vive-theme-color:#6d69f1}
+ html,body{margin:0}
+ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,Arial,sans-serif;background:var(--vg-base);color:var(--vg-ink);min-height:100vh}
+ body:not(.theme-black){background:#fff}
+ /* Fondo ambiental para que el cristal tenga qué refractar (solo en el catálogo) */
+ .stage{position:relative;padding:20px 16px 80px;max-width:1100px;margin:0 auto;display:grid;gap:22px}
+ .stage::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 40% at 8% 6%,color-mix(in srgb,var(--vg-accent) 38%,transparent),transparent 70%),radial-gradient(50% 40% at 96% 20%,color-mix(in srgb,var(--vg-accent) 22%,#ffb86b),transparent 70%)}
+ body.theme-black .stage::before{opacity:.55}
+ h1{font-size:28px;margin:0;letter-spacing:-.03em} h2{font-size:15px;margin:0 0 10px;letter-spacing:.12em;text-transform:uppercase;color:var(--vg-ink-3)}
+ .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+ .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+ .lv{height:120px;border-radius:22px;display:grid;place-items:center;font-weight:700;text-align:center;padding:10px}
+ .lv small{display:block;font-weight:500;color:var(--vg-ink-3)}
+ label.k{display:grid;gap:4px;font-size:12px;color:var(--vg-ink-3)} input[type=range]{width:160px;accent-color:var(--vg-accent)}
+ .swatch{width:34px;height:34px;border-radius:50%;border:2px solid #fff;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
+ .vg-table th{font-size:12px;color:var(--vg-ink-3)}
+ .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+ svg{width:20px;height:20px}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+ <header class="vg-surface vg-l4" style="padding:16px;border-radius:24px;display:grid;gap:12px">
+  <div><h1>Vive Glass Engine</h1><small style="color:var(--vg-ink-3)">Un solo material · seis niveles · componentes universales</small></div>
+  <div class="bar">
+   <button class="vg-button" id="t-light" aria-pressed="true">Claro</button>
+   <button class="vg-button" id="t-black">Black</button>
+   <span class="row" id="accents" aria-label="Acento"></span>
+   <label class="k">Intensidad <input type="range" id="k-int" min="0" max="160" value="100"></label>
+   <label class="k">Acento <input type="range" id="k-acc" min="0" max="160" value="100"></label>
+   <label class="k">Iluminación <input type="range" id="k-light" min="0" max="160" value="100"></label>
+   <button class="vg-button" id="r-trans" aria-pressed="false">Reducir transparencia</button>
+   <button class="vg-button" id="r-motion" aria-pressed="false">Reducir movimiento</button>
+   <button class="vg-button" id="r-reset">Restaurar</button>
+  </div>
+ </header>
+
+ <section><h2>Niveles de profundidad</h2>
+  <div class="grid">
+   <div class="lv vg-surface vg-l0" style="background:var(--vg-base);border:1px dashed var(--vg-line)">Nivel 00<small>superficie base</small></div>
+   <div class="lv vg-surface vg-l1">Nivel 01<small>cristal ambiental</small></div>
+   <div class="lv vg-surface vg-l2">Nivel 02<small>cristal estructural</small></div>
+   <div class="lv vg-surface vg-l3">Nivel 03<small>cristal interactivo</small></div>
+   <div class="lv vg-surface vg-l4">Nivel 04<small>cristal flotante</small></div>
+   <div class="lv vg-surface vg-l5">Nivel 05<small>cristal prioritario</small></div>
+  </div>
+ </section>
+
+ <section><h2>Botones y controles</h2>
+  <div class="row">
+   <button class="vg-button">GlassButton</button>
+   <button class="vg-button is-primary">Primario</button>
+   <button class="vg-button" disabled>Deshabilitado</button>
+   <button class="vg-button is-loading" aria-busy="true">Cargando</button>
+   <button class="vg-icon-button" aria-label="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+  </div>
+  <div class="grid" style="margin-top:14px">
+   <input class="vg-input" placeholder="GlassInput" aria-label="Entrada">
+   <select class="vg-select" aria-label="Selector"><option>GlassSelect</option><option>Opción 2</option></select>
+  </div>
+  <div class="vg-segmented" style="margin-top:14px;max-width:460px" role="group" aria-label="Tipo">
+   <button aria-pressed="true">Gasto</button><button aria-pressed="false">Ingreso</button><button aria-pressed="false">Transferencia</button>
+  </div>
+ </section>
+
+ <section><h2>Tarjetas, KPI, tabla y gráfica</h2>
+  <div class="grid">
+   <div class="vg-card is-interactive" tabindex="0">GlassCard interactiva<br><small style="color:var(--vg-ink-3)">Pasa el cursor / toca</small></div>
+   <div class="vg-kpi"><small>Balance del mes</small><strong>RD$85,880</strong></div>
+   <div class="vg-chart"><svg viewBox="0 0 200 70" style="width:100%;height:70px"><path d="M0 55 C30 20 60 60 90 30 S150 10 200 25" fill="none" stroke="var(--vg-accent)" stroke-width="3"/></svg></div>
+  </div>
+  <table class="vg-table" style="margin-top:14px"><thead><tr><th>Concepto</th><th>Importe</th></tr></thead><tbody><tr><td>Alquiler</td><td>RD$25,000</td></tr><tr><td>Servicios</td><td>RD$4,300</td></tr></tbody></table>
+ </section>
+
+ <section><h2>Navegación, hoja, ventana, popover, tooltip, notificación, centro estratégico</h2>
+  <div class="grid">
+   <nav class="vg-nav" aria-label="Navegación"><button class="vg-icon-button" aria-label="Inicio">⌂</button><button class="vg-icon-button" aria-label="Wallet">▭</button><button class="vg-icon-button" aria-label="Buscar">⌕</button></nav>
+   <div class="vg-sheet">GlassSheet<br><small style="color:var(--vg-ink-3)">Hojas inferiores</small></div>
+   <div class="vg-modal">GlassModal</div>
+   <div class="vg-popover">GlassPopover</div>
+   <div><span class="vg-tooltip">GlassTooltip</span></div>
+   <div class="vg-notification"><strong>Pago registrado</strong><small style="color:var(--vg-ink-3)">GlassNotification</small></div>
+   <div class="vg-strategic"><strong>Atención requerida</strong><br><small style="color:var(--vg-ink-3)">GlassStrategicCenter</small></div>
+  </div>
+ </section>
+</div>
+<script src="./src/glass-engine.js"></script>
+<script>
+ const $=s=>document.querySelector(s),root=document.documentElement;
+ const accents=['#6d69f1','#0f9f8f','#e0527a','#d98a1c','#2d8cf0','#8a5cf6'];
+ accents.forEach(c=>{const b=document.createElement('button');b.className='swatch';b.style.background=c;b.setAttribute('aria-label','Acento '+c);b.onclick=()=>{root.style.setProperty('--ui-accent',c);root.style.setProperty('--vive-theme-color',c);document.body.style.setProperty('--vx-accent',c)};$('#accents').append(b)});
+ const theme=t=>{document.body.classList.toggle('theme-black',t==='black');document.body.classList.toggle('theme-dark',t==='black');$('#t-light').setAttribute('aria-pressed',t!=='black');$('#t-black').setAttribute('aria-pressed',t==='black')};
+ $('#t-light').onclick=()=>theme('light');$('#t-black').onclick=()=>theme('black');
+ const st={intensity:100,accent:100,light:100,reduceTransparency:false,reduceMotion:false};
+ const push=()=>ViveGlass.apply(st);
+ $('#k-int').oninput=e=>{st.intensity=+e.target.value;push()};$('#k-acc').oninput=e=>{st.accent=+e.target.value;push()};$('#k-light').oninput=e=>{st.light=+e.target.value;push()};
+ $('#r-trans').onclick=e=>{st.reduceTransparency=!st.reduceTransparency;e.target.setAttribute('aria-pressed',st.reduceTransparency);push()};
+ $('#r-motion').onclick=e=>{st.reduceMotion=!st.reduceMotion;e.target.setAttribute('aria-pressed',st.reduceMotion);push()};
+ $('#r-reset').onclick=()=>{Object.assign(st,ViveGlass.DEFAULTS);$('#k-int').value=$('#k-acc').value=$('#k-light').value=100;$('#r-trans').setAttribute('aria-pressed',false);$('#r-motion').setAttribute('aria-pressed',false);push()};
+ document.querySelectorAll('.vg-segmented>*').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('*').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+</script>
+</body>
+</html>

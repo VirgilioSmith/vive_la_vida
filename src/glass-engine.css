@@ -1,0 +1,211 @@
+/* ============================================================================
+   VIVE · GLASS ENGINE — un solo material, seis niveles de profundidad.
+   Capa final del sistema: consume los tokens --vx-* (acento, texto, tema) y
+   expone variables semánticas --vg-* + componentes .vg-* reutilizables.
+
+   Niveles oficiales
+     00 base · 01 cristal ambiental · 02 cristal estructural
+     03 cristal interactivo · 04 cristal flotante · 05 cristal prioritario
+
+   Controles globales (los escribe glass-engine.js sobre <html>)
+     --vg-k      intensidad general del cristal (0 … 1.6, defecto 1)
+     --vg-ak     intensidad del acento en el material (0 … 1.6)
+     --vg-lk     intensidad de iluminación (0 … 1.6)
+     .vg-reduce-transparency / prefers-reduced-transparency → superficies casi opacas, sin desenfoque
+     .vg-reduce-motion       / prefers-reduced-motion       → sin transiciones
+
+   Reglas del material
+     · El desenfoque solo lo llevan los niveles 02–05 (el 01 es pintura sin blur).
+     · Nunca se anida backdrop-filter dentro de otro backdrop-filter (los hijos de una
+       superficie con blur usan .vg-flat → sin blur propio).
+     · Los efectos decorativos son fondos (no capturan eventos) y solo se anima
+       transform / opacity.
+   ========================================================================== */
+
+/* ---------- 0 · Tokens por tema ---------------------------------------- */
+:root{--vg-k:1;--vg-ak:1;--vg-lk:1}
+:root,body{
+ --vg-accent:var(--vx-accent,var(--ui-accent,var(--vive-theme-color,#6d69f1)));
+ --vg-accent-strong:var(--vx-accent-strong,color-mix(in srgb,var(--vg-accent) 82%,#000));
+ --vg-on-accent:#fff;
+
+ /* Claro: base blanco puro */
+ --vg-base:#ffffff;
+ --vg-ink:#0f2038; --vg-ink-2:#3b4e69; --vg-ink-3:#485c78;
+ --vg-tint-rgb:255,255,255;           /* color del cristal */
+ --vg-shade-rgb:30,50,80;             /* color de sombras */
+ --vg-line:rgba(30,50,80,.10);
+ --vg-focus:0 0 0 3px color-mix(in srgb,var(--vg-accent) 40%,transparent);
+
+ /* alfa del relleno por nivel (se multiplica por --vg-k) */
+ --vg-a1:.34; --vg-a2:.54; --vg-a3:.68; --vg-a4:.80; --vg-a5:.86;
+ /* desenfoque por nivel (px) · el nivel 01 no desenfoca */
+ --vg-b1:0px; --vg-b2:14px; --vg-b3:12px; --vg-b4:24px; --vg-b5:28px;
+ --vg-sat:1.35;
+ /* borde óptico: luminosidad base por nivel */
+ --vg-e1:.45; --vg-e2:.62; --vg-e3:.72; --vg-e4:.82; --vg-e5:.9;
+ /* sombra ambiental por nivel */
+ --vg-sh1:0 1px 2px rgba(var(--vg-shade-rgb),.04);
+ --vg-sh2:0 6px 18px -6px rgba(var(--vg-shade-rgb),.10);
+ --vg-sh3:0 8px 22px -8px rgba(var(--vg-shade-rgb),.14);
+ --vg-sh4:0 18px 44px -14px rgba(var(--vg-shade-rgb),.22);
+ --vg-sh5:0 22px 56px -16px rgba(var(--vg-shade-rgb),.26);
+ --vg-radius-sm:14px; --vg-radius:20px; --vg-radius-lg:28px;
+ --vg-ease:cubic-bezier(.2,.8,.2,1);
+ --vg-t:.18s;
+}
+body.theme-dark,body.theme-black{
+ /* Black: base negro puro, cristal blanco de muy baja opacidad */
+ --vg-base:#000000;
+ --vg-ink:#f5f6f8; --vg-ink-2:#c3c9d6; --vg-ink-3:#a7b0c0;
+ --vg-tint-rgb:255,255,255;
+ --vg-shade-rgb:0,0,0;
+ --vg-line:rgba(255,255,255,.10);
+ --vg-a1:.035; --vg-a2:.06; --vg-a3:.09; --vg-a4:.13; --vg-a5:.17;
+ --vg-b1:0px; --vg-b2:16px; --vg-b3:12px; --vg-b4:26px; --vg-b5:30px;
+ --vg-sat:1.5;
+ --vg-e1:.07; --vg-e2:.10; --vg-e3:.13; --vg-e4:.17; --vg-e5:.22;
+ --vg-sh1:0 1px 2px rgba(0,0,0,.35);
+ --vg-sh2:0 8px 22px -8px rgba(0,0,0,.55);
+ --vg-sh3:0 10px 26px -8px rgba(0,0,0,.6);
+ --vg-sh4:0 22px 52px -14px rgba(0,0,0,.75);
+ --vg-sh5:0 26px 62px -16px rgba(0,0,0,.8);
+}
+
+/* ---------- 1 · Material: variables internas por nivel ------------------- */
+.vg-l0{--_a:0;--_b:0px;--_e:0;--_sh:none}
+.vg-l1{--_a:var(--vg-a1);--_b:var(--vg-b1);--_e:var(--vg-e1);--_sh:var(--vg-sh1)}
+.vg-l2{--_a:var(--vg-a2);--_b:var(--vg-b2);--_e:var(--vg-e2);--_sh:var(--vg-sh2)}
+.vg-l3{--_a:var(--vg-a3);--_b:var(--vg-b3);--_e:var(--vg-e3);--_sh:var(--vg-sh3)}
+.vg-l4{--_a:var(--vg-a4);--_b:var(--vg-b4);--_e:var(--vg-e4);--_sh:var(--vg-sh4)}
+.vg-l5{--_a:var(--vg-a5);--_b:var(--vg-b5);--_e:var(--vg-e5);--_sh:var(--vg-sh5)}
+
+/* Superficie base: toda la familia .vg-* la reutiliza */
+:is(.vg-surface,.vg-card,.vg-button,.vg-icon-button,.vg-input,.vg-select,.vg-nav,.vg-modal,.vg-sheet,.vg-tooltip,.vg-popover,.vg-segmented>*,.vg-notification,.vg-kpi,.vg-table,.vg-chart,.vg-strategic){
+ --_a:var(--vg-a2);--_b:var(--vg-b2);--_e:var(--vg-e2);--_sh:var(--vg-sh2);
+ position:relative;box-sizing:border-box;color:var(--vg-ink);
+ background:
+  /* reflejo superior localizado (no lineal) */
+  radial-gradient(120% 55% at 50% -12%,rgba(255,255,255,calc(.5 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .10 * var(--vg-lk) * var(--vg-dark,0))),transparent 60%),
+  /* iluminación sutil en la esquina superior derecha */
+  radial-gradient(70% 70% at 100% 0%,rgba(255,255,255,calc(.34 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .07 * var(--vg-lk) * var(--vg-dark,0))),transparent 62%),
+  /* acento integrado en el material (gradiente ambiental no lineal) */
+  linear-gradient(152deg,transparent 40%,color-mix(in srgb,var(--vg-accent) calc(9% * var(--vg-ak)),transparent) 100%),
+  /* cuerpo del cristal */
+  rgba(var(--vg-tint-rgb),calc(var(--_a) * var(--vg-k)));
+ border:1px solid rgba(var(--vg-tint-rgb),calc(var(--_e) * min(1,var(--vg-lk))));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.55 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .10 * var(--vg-lk) * var(--vg-dark,0))),var(--_sh);
+ -webkit-backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat));
+ backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat));
+ transition:background-color var(--vg-t) var(--vg-ease),border-color var(--vg-t) var(--vg-ease),box-shadow var(--vg-t) var(--vg-ease),transform var(--vg-t) var(--vg-ease),opacity var(--vg-t) var(--vg-ease);
+}
+body.theme-dark :is(.vg-surface,.vg-card,.vg-button,.vg-icon-button,.vg-input,.vg-select,.vg-nav,.vg-modal,.vg-sheet,.vg-tooltip,.vg-popover,.vg-segmented>*,.vg-notification,.vg-kpi,.vg-table,.vg-chart,.vg-strategic),
+body.theme-black :is(.vg-surface,.vg-card,.vg-button,.vg-icon-button,.vg-input,.vg-select,.vg-nav,.vg-modal,.vg-sheet,.vg-tooltip,.vg-popover,.vg-segmented>*,.vg-notification,.vg-kpi,.vg-table,.vg-chart,.vg-strategic){--vg-dark:1}
+/* Un hijo de superficie con blur no vuelve a desenfocar (rendimiento Safari/iOS) */
+.vg-flat,.vg-flat *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+/* En nivel 01 no hay blur */
+.vg-l1{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* ---------- 2 · Componentes: nivel por defecto y forma ------------------- */
+.vg-surface{border-radius:var(--vg-radius)}
+.vg-card{--_a:var(--vg-a2);--_b:var(--vg-b2);--_e:var(--vg-e2);--_sh:var(--vg-sh2);border-radius:var(--vg-radius);padding:16px}
+.vg-kpi{--_a:var(--vg-a2);--_b:var(--vg-b2);--_e:var(--vg-e2);--_sh:var(--vg-sh2);border-radius:var(--vg-radius);padding:14px 16px;display:grid;gap:4px}
+.vg-kpi>small{font-size:12px;color:var(--vg-ink-3)}
+.vg-kpi>strong{font-size:clamp(22px,5vw,30px);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.vg-table{--_a:var(--vg-a1);--_b:var(--vg-b1);--_e:var(--vg-e1);--_sh:var(--vg-sh1);border-radius:var(--vg-radius);overflow:hidden;width:100%;border-collapse:separate;border-spacing:0}
+.vg-table :is(th,td){padding:12px 14px;text-align:left;border-bottom:1px solid var(--vg-line)}
+.vg-table tr:last-child :is(td){border-bottom:0}
+.vg-chart{--_a:var(--vg-a1);--_b:var(--vg-b1);--_e:var(--vg-e1);--_sh:var(--vg-sh1);border-radius:var(--vg-radius);padding:14px}
+.vg-nav{--_a:var(--vg-a4);--_b:var(--vg-b4);--_e:var(--vg-e4);--_sh:var(--vg-sh4);border-radius:999px;padding:8px 10px;display:flex;align-items:center;gap:6px}
+.vg-modal,.vg-sheet{--_a:var(--vg-a4);--_b:var(--vg-b4);--_e:var(--vg-e4);--_sh:var(--vg-sh4);border-radius:var(--vg-radius-lg);padding:18px}
+.vg-sheet{border-bottom-left-radius:var(--vg-radius-lg);border-bottom-right-radius:var(--vg-radius-lg)}
+.vg-popover{--_a:var(--vg-a4);--_b:var(--vg-b4);--_e:var(--vg-e4);--_sh:var(--vg-sh4);border-radius:var(--vg-radius);padding:10px}
+.vg-tooltip{--_a:var(--vg-a4);--_b:var(--vg-b3);--_e:var(--vg-e3);--_sh:var(--vg-sh3);border-radius:12px;padding:7px 11px;font-size:12px;font-weight:600;pointer-events:none}
+.vg-notification{--_a:var(--vg-a4);--_b:var(--vg-b4);--_e:var(--vg-e4);--_sh:var(--vg-sh4);border-radius:var(--vg-radius);padding:12px 14px;display:flex;gap:10px;align-items:center}
+.vg-strategic{--_a:var(--vg-a5);--_b:var(--vg-b5);--_e:var(--vg-e5);--_sh:var(--vg-sh5);border-radius:var(--vg-radius-lg);padding:18px;
+ border-color:color-mix(in srgb,var(--vg-accent) calc(46% * var(--vg-ak)),rgba(var(--vg-tint-rgb),.4))}
+
+/* Controles */
+.vg-button,.vg-icon-button,.vg-input,.vg-select{--_a:var(--vg-a3);--_b:var(--vg-b3);--_e:var(--vg-e3);--_sh:var(--vg-sh1);font:inherit;font-weight:600}
+.vg-button{min-height:44px;padding:0 18px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.vg-button.is-primary{background:linear-gradient(180deg,color-mix(in srgb,var(--vg-accent) 92%,#fff),var(--vg-accent-strong));color:var(--vg-on-accent);border-color:color-mix(in srgb,var(--vg-accent) 60%,rgba(255,255,255,.4));-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 12px 24px -14px color-mix(in srgb,var(--vg-accent) 80%,#000)}
+.vg-icon-button{width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;padding:0;cursor:pointer;color:var(--vg-accent-strong)}
+body.theme-black .vg-icon-button,body.theme-dark .vg-icon-button{color:var(--vg-accent)}
+.vg-input,.vg-select{min-height:48px;width:100%;padding:0 14px;border-radius:16px;background-color:rgba(var(--vg-tint-rgb),calc(var(--_a) * var(--vg-k)))}
+.vg-input::placeholder{color:var(--vg-ink-3);opacity:.8}
+
+/* Segmented: contenedor sin fondo; cada opción es una píldora de cristal */
+.vg-segmented{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;background:transparent;border:0;padding:0}
+.vg-segmented>*{--_a:var(--vg-a3);--_b:0px;--_e:var(--vg-e3);--_sh:none;min-height:44px;padding:6px 10px;border-radius:16px;cursor:pointer;font:inherit;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;-webkit-backdrop-filter:none;backdrop-filter:none}
+.vg-segmented>[aria-pressed="true"],.vg-segmented>.is-selected{background:color-mix(in srgb,var(--vg-accent) calc(14% * var(--vg-ak)),rgba(var(--vg-tint-rgb),.5));border:1.5px solid var(--vg-accent);color:var(--vg-accent-strong)}
+body.theme-black .vg-segmented>[aria-pressed="true"],body.theme-dark .vg-segmented>[aria-pressed="true"]{background:color-mix(in srgb,var(--vg-accent) calc(30% * var(--vg-ak)),rgba(255,255,255,.04));color:#fff}
+
+/* ---------- 3 · Estados universales ------------------------------------- */
+@media (hover:hover) and (pointer:fine){
+ :is(.vg-button,.vg-icon-button,.vg-segmented>*,.vg-card.is-interactive,.vg-kpi.is-interactive,.vg-surface.is-interactive):hover{
+  border-color:color-mix(in srgb,var(--vg-accent) calc(34% * var(--vg-ak)),rgba(var(--vg-tint-rgb),.7));
+  background-image:
+   radial-gradient(180px 120px at var(--vg-px,50%) var(--vg-py,0%),color-mix(in srgb,var(--vg-accent) calc(16% * var(--vg-lk)),transparent),transparent 70%),
+   radial-gradient(120% 55% at 50% -12%,rgba(255,255,255,calc(.4 * var(--vg-lk))),transparent 60%);
+ }
+}
+:is(.vg-button,.vg-icon-button,.vg-segmented>*,.vg-card.is-interactive,.vg-kpi.is-interactive):active{transform:scale(.97);transition-duration:.08s}
+:is(.vg-button,.vg-icon-button,.vg-segmented>*,.vg-input,.vg-select,.vg-card.is-interactive):focus-visible{outline:0;box-shadow:var(--vg-focus),var(--_sh)}
+:is(.vg-button,.vg-icon-button,.vg-segmented>*,.vg-input,.vg-select)[disabled],.is-disabled{opacity:.45;pointer-events:none;filter:saturate(.6)}
+[aria-busy="true"].vg-card,[aria-busy="true"].vg-kpi,.vg-button.is-loading{animation:vg-breathe 1.4s ease-in-out infinite}
+@keyframes vg-breathe{0%,100%{opacity:1}50%{opacity:.6}}
+/* Entrada/salida de hojas y modales (solo transform + opacity) */
+.vg-enter{animation:vg-in .32s var(--vg-ease) both}
+.vg-exit{animation:vg-out .2s ease-in both}
+@keyframes vg-in{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes vg-out{to{opacity:0;transform:translateY(8px) scale(.99)}}
+
+/* ---------- 4 · Accesibilidad / degradación progresiva ------------------- */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ :is(.vg-l2,.vg-l3,.vg-l4,.vg-l5,.vg-nav,.vg-modal,.vg-sheet,.vg-popover,.vg-notification,.vg-strategic){background-color:color-mix(in srgb,var(--vg-base) 92%,transparent)}
+}
+html.vg-reduce-transparency body,html.vg-reduce-transparency body.theme-dark,html.vg-reduce-transparency body.theme-black{--vg-a1:.9;--vg-a2:.94;--vg-a3:.96;--vg-a4:.98;--vg-a5:.99;--vg-b2:0px;--vg-b3:0px;--vg-b4:0px;--vg-b5:0px}
+html.vg-reduce-transparency body.theme-dark,html.vg-reduce-transparency body.theme-black{--vg-tint-rgb:18,19,24}
+@media (prefers-reduced-transparency:reduce){
+ html body,html body.theme-dark,html body.theme-black{--vg-a1:.9;--vg-a2:.94;--vg-a3:.96;--vg-a4:.98;--vg-a5:.99;--vg-b2:0px;--vg-b3:0px;--vg-b4:0px;--vg-b5:0px}
+ html body.theme-dark,html body.theme-black{--vg-tint-rgb:18,19,24}
+}
+html.vg-reduce-motion :is(*,*::before,*::after){animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+@media (prefers-reduced-motion:reduce){
+ .vg-enter,.vg-exit,[aria-busy="true"].vg-card,[aria-busy="true"].vg-kpi,.vg-button.is-loading{animation:none}
+ :is(.vg-surface,.vg-card,.vg-button,.vg-icon-button,.vg-input,.vg-select,.vg-segmented>*){transition:none}
+}
+@media (forced-colors:active){
+ :is(.vg-surface,.vg-card,.vg-button,.vg-icon-button,.vg-input,.vg-select,.vg-nav,.vg-modal,.vg-sheet,.vg-popover,.vg-tooltip,.vg-notification,.vg-kpi,.vg-table,.vg-chart,.vg-strategic,.vg-segmented>*){border:1px solid CanvasText;background:Canvas;color:CanvasText;box-shadow:none;backdrop-filter:none}
+}
+/* Adaptación por dispositivo: en pantallas táctiles se reduce el desenfoque (menos CPU/GPU) */
+@media (hover:none) and (pointer:coarse){
+ :root{--vg-b4:20px;--vg-b5:22px}
+}
+
+/* ---------- 5 · Capa de migración: componentes existentes → motor -------- */
+/* Hojas y ventanas emergentes de detalle → GlassSheet (nivel 04). Los fondos opacos heredados
+   se sustituyen por el cristal del motor; contenido y lógica no cambian. */
+html body :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog .v705-detail-sheet,#modal-root .vab-dialog,#modal-root .v-reconcile-dialog){
+ --_a:var(--vg-a4);--_b:var(--vg-b4);--_e:var(--vg-e4);--_sh:var(--vg-sh4);
+ color:var(--vg-ink)!important;
+ background:
+  radial-gradient(120% 55% at 50% -12%,rgba(255,255,255,calc(.5 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .10 * var(--vg-lk) * var(--vg-dark,0))),transparent 60%),
+  radial-gradient(70% 70% at 100% 0%,rgba(255,255,255,calc(.34 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .07 * var(--vg-lk) * var(--vg-dark,0))),transparent 62%),
+  linear-gradient(152deg,transparent 40%,color-mix(in srgb,var(--vg-accent) calc(9% * var(--vg-ak)),transparent) 100%),
+  rgba(var(--vg-tint-rgb),calc(var(--_a) * var(--vg-k)))!important;
+ border:1px solid color-mix(in srgb,var(--vg-accent) calc(26% * var(--vg-ak)),rgba(var(--vg-tint-rgb),calc(var(--_e) * min(1,var(--vg-lk)))))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.55 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .10 * var(--vg-lk) * var(--vg-dark,0))),var(--_sh)!important;
+ -webkit-backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;
+ backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;
+}
+body:is(.theme-dark,.theme-black) :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog .v705-detail-sheet,#modal-root .vab-dialog,#modal-root .v-reconcile-dialog){--vg-dark:1}
+
+/* Preferencias de Apariencia (usa los propios componentes del motor) */
+.vg-prefs{display:grid;gap:12px}
+.vg-pref{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center}
+.vg-pref>span{display:grid;gap:2px}.vg-pref small,.vg-check small{font-size:12px;color:var(--vg-ink-3)}
+.vg-pref output{font-weight:700;font-variant-numeric:tabular-nums;color:var(--vg-accent-strong)}
+.vg-pref input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--vg-accent)}
+.vg-check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:16px;border:1px solid var(--vg-line)}
+.vg-check>span{display:grid;gap:2px}.vg-check input{width:22px;height:22px;margin-top:2px;accent-color:var(--vg-accent)}

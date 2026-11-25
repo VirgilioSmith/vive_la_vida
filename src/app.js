@@ -7396,6 +7396,7 @@ function render(){
  document.body.style.setProperty('--vive-bg-color',bgChoice==='custom'&&hex.test(db.settings.backgroundHex||'')?db.settings.backgroundHex:(backgrounds[bgChoice]||backgrounds.original));
  if(isMobileViewport())v250DockGlassApply(db.settings.mobileDockGlassLevel ?? 50);
  else v443NavApply(db.settings.webNavGlassLevel ?? 0);
+ window.ViveGlass?.apply(vGlassGet());
   document.getElementById('app').innerHTML=main();
   if(ui.page==='mobilesearch')v154SearchResultsUpdate();
   v402Paint();
@@ -15576,6 +15577,27 @@ function v250DockGlassPanel(){
   <p class="v250-dock-foot">El cambio se ve al instante y se guarda al soltar el control.</p>
  </section>`;
 }
+/* VIVE Glass Engine · panel de personalización global (Apariencia). Guarda UNA vez al soltar el control. */
+/* Preferencias planas en db.settings (compatibles con la tabla relacional existente). */
+function vGlassGet(){const st=db.settings||{},D=window.ViveGlass?.DEFAULTS||{};return {intensity:st.glassIntensity??D.intensity,accent:st.glassAccent??D.accent,light:st.glassLight??D.light,reduceTransparency:st.glassReduceTransparency===true,reduceMotion:st.glassReduceMotion===true}}
+function vGlassSet(g){const st=db.settings;st.glassIntensity=g.intensity;st.glassAccent=g.accent;st.glassLight=g.light;st.glassReduceTransparency=!!g.reduceTransparency;st.glassReduceMotion=!!g.reduceMotion}
+function vGlassPanel(){
+ const g=vGlassGet();
+ const row=(id,label,hint,val)=>`<label class="vg-pref" for="vg-${id}"><span><strong>${label}</strong><small>${hint}</small></span><output id="vg-${id}-out" for="vg-${id}">${val}%</output><input id="vg-${id}" data-vg-pref="${id}" type="range" min="0" max="160" step="5" value="${val}" aria-label="${label}"></label>`;
+ return `<section class="vg-prefs panel" aria-labelledby="vg-prefs-title"><div class="v250-dock-head"><div><span class="v250-dock-kicker">MATERIAL UNIVERSAL</span><h3 id="vg-prefs-title">Liquid Glass de toda la app</h3><p>Se aplica a todas las pantallas al instante y se guarda al soltar el control.</p></div></div>
+ ${row('intensity','Intensidad del cristal','Transparencia y cuerpo del material',g.intensity)}
+ ${row('accent','Intensidad del acento','Cuánto color toma el material',g.accent)}
+ ${row('light','Intensidad de iluminación','Reflejos y bordes luminosos',g.light)}
+ <label class="vg-check"><input type="checkbox" data-vg-pref="reduceTransparency" ${g.reduceTransparency?'checked':''}><span><strong>Reducir transparencia</strong><small>Superficies casi opacas y sin desenfoque</small></span></label>
+ <label class="vg-check"><input type="checkbox" data-vg-pref="reduceMotion" ${g.reduceMotion?'checked':''}><span><strong>Reducir movimiento</strong><small>Sin transiciones ni animaciones</small></span></label>
+ <button type="button" class="btn ghost" data-vg-restore="1">Restaurar valores esenciales</button></section>`;
+}
+(()=>{
+ const read=()=>{const o={};document.querySelectorAll('[data-vg-pref]').forEach(el=>{o[el.dataset.vgPref]=el.type==='checkbox'?el.checked:Number(el.value)});return Object.assign({},window.ViveGlass.DEFAULTS,o)};
+ document.addEventListener('input',e=>{const el=e.target;if(!el?.dataset?.vgPref||!window.ViveGlass)return;const g=read();window.ViveGlass.apply(g);if(el.type==='range'){const out=document.getElementById('vg-'+el.dataset.vgPref+'-out');if(out)out.textContent=el.value+'%'}});
+ document.addEventListener('change',e=>{const el=e.target;if(!el?.dataset?.vgPref||!window.ViveGlass)return;const prev=vGlassGet();vGlassSet(read());if(!persist()){vGlassSet(prev);window.ViveGlass.apply(prev);toast('No se pudo guardar el Liquid Glass. Comprueba la sincronización.')}});
+ document.addEventListener('click',e=>{const b=e.target.closest?.('[data-vg-restore]');if(!b||!window.ViveGlass)return;const prev=vGlassGet();vGlassSet(window.ViveGlass.DEFAULTS);window.ViveGlass.apply(vGlassGet());if(!persist()){vGlassSet(prev);window.ViveGlass.apply(prev)}else render()});
+})();
 document.addEventListener('input',event=>{
  const slider=event.target;
  if(slider?.id!=='v250-dock-slider')return;
@@ -16021,7 +16043,7 @@ function v300AppearancePane(){
  ['original','Nube original','#d9e7fa','#f4f6fd','La atmósfera original'],['glacier','Glaciar','#bceaf0','#dbf5e8','Azul hielo y agua marina'],['sunset','Atardecer','#f1cadd','#f8c4cd','Rosa suave y arena']
 ].map(([key,name,a,b,desc])=>`<button type="button" class="vive-palette-choice v15-bg-choice ${((s.backgroundChoice||'original')===key)?'selected':''}" data-act="backgroundTheme" data-id="${key}" aria-pressed="${(s.backgroundChoice||'original')===key}"><span class="v15-bg-art" style="background:linear-gradient(135deg,${a},${b})"><i class="v15-bg-rail"></i><i class="v15-bg-card"></i><i class="v15-bg-card small"></i></span><strong>${name}</strong><small>${desc}</small></button>`).join('')}</div>
 <div class="vive-custom-palette"><div><strong>Fondo personalizado</strong><small>Escoge el tono de la atmósfera; el sistema conservará el contraste y el degradado.</small></div><label for="viveBackgroundColor">Color</label><input type="color" id="viveBackgroundColor" value="${/^#[0-9a-f]{6}$/i.test(s.backgroundHex||'')?s.backgroundHex:'#9db8ef'}" aria-label="Color personalizado del fondo"><button class="btn sm soft" type="button" data-act="backgroundCustom">Aplicar fondo</button></div></div>
-${isMobileViewport()?`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN MÓVIL</span><h3>Liquid Glass · barra inferior</h3></div></div>${v250DockGlassPanel()}`:`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN WEB</span><h3>Intensidad de las barras superiores</h3></div></div>${v443NavPanel()}`}</div>`;
+${isMobileViewport()?`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN MÓVIL</span><h3>Liquid Glass · barra inferior</h3></div></div>${v250DockGlassPanel()}`:`<div class="settings-group-title" id="v176-setting-04"><div><span class="summary-tag">04 / NAVEGACIÓN WEB</span><h3>Intensidad de las barras superiores</h3></div></div>${v443NavPanel()}`}<div class="settings-group-title" id="v176-setting-05"><div><span class="summary-tag">05 / MATERIAL</span><h3>Liquid Glass universal</h3></div></div>${vGlassPanel()}</div>`;
 }
 
 
