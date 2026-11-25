@@ -1,0 +1,15 @@
+const {chromium}=require('playwright');const open=require('./harness.js');
+(async()=>{const b=await chromium.launch();const {p}=await open(b,390,844);
+const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.evaluate(()=>{const bk=db.banks[0]||{id:'b1',name:'Banco Popular'};if(!db.banks.length)db.banks.push(bk);db.cards.push({id:'c1',name:'Titanium Popular',bankId:bk.id,network:'visa',last4:'9844',currency:'DOP',limitDOP:300000,openingDOP:182751.84,cutDay:20,dueDay:15,opened:'2026-01-01'});db.accounts.push({id:'a1',name:'Efectivo',kind:'cash',currency:'DOP',opening:100,opened:'2026-01-01'});db.personalLoans.push({id:'L1',person:'Mother',direction:'lent',currency:'DOP',principal:2763.6,date:'2026-01-01',dueDate:'2026-12-01',accountId:'a1',openingMode:'existing'});});
+await p.evaluate(()=>window.__T.go('personal'));await p.waitForTimeout(500);
+await p.evaluate(()=>{const x=document.createElement('button');x.dataset.act='payPersonal';x.dataset.id='L1';document.body.appendChild(x);x.click()});await p.waitForTimeout(900);
+await p.screenshot({path:'/tmp/v1.png'});
+await p.click('[data-vab=product]');await p.waitForTimeout(700);await p.screenshot({path:'/tmp/v2.png'});
+await p.evaluate(()=>{const o=[...document.querySelectorAll('dialog [role=option],dialog button,dialog li')].find(e=>/Titanium/.test(e.innerText));o&&o.click()});await p.waitForTimeout(500);
+await p.evaluate(()=>{const c=[...document.querySelectorAll('dialog button')].find(e=>/Usar esta/.test(e.innerText)&&!/Cerrar/.test(e.getAttribute('aria-label')||''));c&&c.click()});await p.waitForTimeout(500);
+console.log(await p.evaluate(()=>document.querySelector('[name=instrumentId]').value+' | '+document.querySelector('.vab-effect,.v390-effect')?.innerText.replace(/\n/g,' / ')));
+await p.screenshot({path:'/tmp/v3.png'});
+await p.click('#personalPaymentForm [type=submit]');await p.waitForTimeout(900);
+console.log(JSON.stringify(await p.evaluate(()=>db.transactions.filter(t=>t.type==='personal_settlement').map(t=>({a:t.amount,p:t.principal,i:t.interest,c:t.cardId,acc:t.accountId})))),'modal:',await p.evaluate(()=>!!document.querySelector('.vab-layer')));
+console.log(errs.join('\n')||'sin errores');await b.close()})();

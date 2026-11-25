@@ -1,8 +1,8 @@
 /* Isolated account reconciliation surface. Existing registration styles remain untouched. */
 .v-reconcile-dialog{position:relative;width:min(100%,460px);max-width:460px;max-height:calc(100dvh - 28px);padding:0!important;border-radius:28px;background:#fff;color:#14213d;overflow:auto}
-#vReconcileForm{--recon-accent:#006c68;--recon-muted:#57647b;--recon-border:rgba(100,116,145,.19);--recon-soft:#f5f7fa;display:flex;flex-direction:column;gap:11px;padding:15px 16px 20px;box-sizing:border-box;min-width:0;font-family:inherit;color:inherit}
-#vReconcileForm *{box-sizing:border-box}
-#vReconcileForm button,#vReconcileForm input{font-family:inherit}
+:is(#vReconcileForm,#personalPaymentForm){--recon-accent:#006c68;--recon-muted:#57647b;--recon-border:rgba(100,116,145,.19);--recon-soft:#f5f7fa;display:flex;flex-direction:column;gap:11px;padding:15px 16px 20px;box-sizing:border-box;min-width:0;font-family:inherit;color:inherit}
+:is(#vReconcileForm,#personalPaymentForm) *{box-sizing:border-box}
+:is(#vReconcileForm,#personalPaymentForm) button,:is(#vReconcileForm,#personalPaymentForm) input{font-family:inherit}
 .v-reconcile-head{display:flex;align-items:center;gap:14px;padding:3px 0 7px;background:radial-gradient(ellipse at 92% 24%,rgba(0,155,144,.12),transparent 42%);border-radius:21px}
 .v-reconcile-head h2{font-size:23px;letter-spacing:-.65px;margin:0;font-weight:700;line-height:1.16}
 .v-reconcile-back{border:1px solid var(--recon-border);border-radius:50%;width:44px;height:44px;background:rgba(0,108,104,.06);color:inherit;font-size:25px;line-height:1;flex:none}
@@ -10,7 +10,7 @@
 .v-reconcile-account{display:flex;text-align:left;align-items:center;gap:13px;padding:11px 13px;min-height:75px;width:100%;cursor:pointer}
 .v-reconcile-account>span:nth-last-child(2){display:grid;gap:4px;flex:1;min-width:0}
 .v-reconcile-account>span:nth-last-child(2) strong{font-size:18px;line-height:1.15}
-.v-reconcile-account small,#vReconcileForm small{font-size:12px;font-weight:500;color:var(--recon-muted);line-height:1.25}
+.v-reconcile-account small,:is(#vReconcileForm,#personalPaymentForm) small{font-size:12px;font-weight:500;color:var(--recon-muted);line-height:1.25}
 .v-reconcile-account>span:nth-last-child(2) small{font-size:13px}
 .v-reconcile-account>b,.v-reconcile-reason>b{font-size:22px;font-weight:500}
 .v-reconcile-logo{width:57px!important;height:57px!important;flex:0 0 57px;display:grid;place-items:center;border-radius:17px;background:rgba(105,110,210,.10);overflow:hidden}
@@ -29,7 +29,7 @@
 .v-reconcile-number:focus-within>span{visibility:hidden}
 .v-reconcile-number:focus-within input{opacity:1}
 .v-reconcile-observed small{display:flex;gap:6px;align-items:center}
-#vReconcileForm svg,.v-reconcile-reason-sheet svg{width:18px;height:18px;color:var(--recon-accent,#006c68);flex:none}
+:is(#vReconcileForm,#personalPaymentForm) svg,.v-reconcile-reason-sheet svg{width:18px;height:18px;color:var(--recon-accent,#006c68);flex:none}
 .v-reconcile-fields{display:grid;grid-template-columns:1fr 1.17fr;gap:8px}
 .v-reconcile-date,.v-reconcile-reason{min-width:0;min-height:64px;display:flex;align-items:center;gap:8px;padding:9px;text-align:left}
 .v-reconcile-fields>label>span,.v-reconcile-fields>button>span{display:grid;place-items:center;flex:none}
@@ -71,11 +71,11 @@
 
 /* The global modal typography uses important declarations; scope our override
    to this surface so the amount is not reduced to a generic 16px input. */
-html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-head h2{font-size:23px!important;font-weight:700!important}
-html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-input input{font-size:inherit!important;font-weight:inherit!important;letter-spacing:inherit!important;line-height:inherit!important;height:100%!important;outline:0!important;box-shadow:none!important;border:0!important}
-html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-submit{font-size:16px!important;font-weight:700!important}
-html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-back{font-size:25px!important}
-html body #modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-preview h3{font-size:17px!important}
+html body #modal-root#modal-root#modal-root#modal-root :is(#vReconcileForm,#personalPaymentForm) .v-reconcile-head h2{font-size:23px!important;font-weight:700!important}
+html body #modal-root#modal-root#modal-root#modal-root :is(#vReconcileForm,#personalPaymentForm) .v-reconcile-input input{font-size:inherit!important;font-weight:inherit!important;letter-spacing:inherit!important;line-height:inherit!important;height:100%!important;outline:0!important;box-shadow:none!important;border:0!important}
+html body #modal-root#modal-root#modal-root#modal-root :is(#vReconcileForm,#personalPaymentForm) .v-reconcile-submit{font-size:16px!important;font-weight:700!important}
+html body #modal-root#modal-root#modal-root#modal-root :is(#vReconcileForm,#personalPaymentForm) .v-reconcile-back{font-size:25px!important}
+html body #modal-root#modal-root#modal-root#modal-root :is(#vReconcileForm,#personalPaymentForm) .v-reconcile-preview h3{font-size:17px!important}
 html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-reason-sheet h3{font-size:23px!important}
 html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-layer>.v68-mobile-dismiss{display:none!important}
 html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-dialog>.v266-fallback-close{display:none!important;float:none!important}
@@ -96,7 +96,7 @@ html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-dialog>.v266
 /* Conciliar un saldo = misma hoja que «Devolución de compra» (hoja inferior, tarjetas y botón) */
 html body #modal-root .modal-layer.v-reconcile-layer{background:rgba(9,18,33,.42)!important;-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);align-items:flex-end!important;justify-content:center!important;padding:calc(64px + env(safe-area-inset-top,0px)) 6px calc(6px + env(safe-area-inset-bottom,0px))!important}
 html body #modal-root .v-reconcile-layer .v-reconcile-dialog{width:100%!important;max-width:520px!important;max-height:100%!important;border-radius:28px!important;background:linear-gradient(#f8f9fd,#f2f4fa)!important;overflow:hidden!important;display:flex;flex-direction:column;box-shadow:0 -10px 50px -18px rgba(9,18,33,.45)}
-html body #modal-root .v-reconcile-layer #vReconcileForm{--recon-accent:var(--lg-accent,#006c68);--recon-border:rgba(125,140,170,.22);--recon-soft:rgba(125,140,170,.08);flex:1;min-height:0;display:flex;flex-direction:column;gap:0;padding:0;overflow:hidden}
+html body #modal-root .v-reconcile-layer :is(#vReconcileForm,#personalPaymentForm){--recon-accent:var(--lg-accent,#006c68);--recon-border:rgba(125,140,170,.22);--recon-soft:rgba(125,140,170,.08);flex:1;min-height:0;display:flex;flex-direction:column;gap:0;padding:0;overflow:hidden}
 html body #modal-root .v-reconcile-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:10px;padding:14px 14px 12px;scrollbar-width:none}
 html body #modal-root .v-reconcile-scroll::-webkit-scrollbar{display:none}
 html body #modal-root .v-reconcile-foot{flex:none;padding:8px 14px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(125,140,170,.16);background:linear-gradient(#f4f6fb,#f2f4fa)}
@@ -105,7 +105,8 @@ html body #modal-root .v-reconcile-layer .v-reconcile-head h2{font-size:21px;let
 html body #modal-root .v-reconcile-layer .v-reconcile-back{width:44px;height:44px;background:color-mix(in srgb,var(--lg-accent,#6d69f1) 10%,transparent);border-color:color-mix(in srgb,var(--lg-accent,#6d69f1) 30%,transparent);font-size:22px}
 html body #modal-root .v-reconcile-layer .v-reconcile-account,.v-reconcile-layer .v-reconcile-observed,.v-reconcile-layer .v-reconcile-date,.v-reconcile-layer .v-reconcile-reason,.v-reconcile-layer .v-reconcile-preview{border:1px solid rgba(125,140,170,.24);border-radius:22px;background:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.25));box-shadow:none}
 html body #modal-root .v-reconcile-layer .v-reconcile-account{padding:12px 16px;gap:13px;min-height:72px}
-html body #modal-root .v-reconcile-layer .v-reconcile-logo{width:50px!important;height:50px!important;flex-basis:50px;border-radius:15px;background:color-mix(in srgb,var(--lg-accent,#6d69f1) 11%,#fff)}
+html body #modal-root .v-reconcile-layer .v-reconcile-logo{width:50px!important;height:50px!important;flex-basis:50px;border-radius:15px}
+html body #modal-root .v-reconcile-layer .v-reconcile-logo:not(.v869-credit){background:color-mix(in srgb,var(--lg-accent,#6d69f1) 11%,#fff)}
 html body #modal-root .v-reconcile-layer .v-reconcile-logo svg{width:22px;height:22px;color:var(--lg-accent,#6d69f1)}
 html body #modal-root .v-reconcile-layer .v-reconcile-account>span:nth-last-child(2) strong{font-size:17px}
 html body #modal-root .v-reconcile-layer .v-reconcile-account>span:nth-last-child(2) small{font-size:13px}
@@ -117,7 +118,7 @@ html body #modal-root .v-reconcile-layer .v-reconcile-observed label{font-size:1
 html body #modal-root .v-reconcile-layer .v-reconcile-input{border-radius:14px;min-height:60px;background:#fff}
 html body #modal-root .v-reconcile-layer .v-reconcile-fields{gap:10px;grid-template-columns:1fr 1fr}
 html body #modal-root .v-reconcile-layer .v-reconcile-fields>label>span,.v-reconcile-layer .v-reconcile-fields>button>span{width:38px;height:38px;border-radius:12px;background:color-mix(in srgb,var(--lg-accent,#6d69f1) 11%,#fff)}
-html body #modal-root .v-reconcile-layer #vReconcileForm svg{color:var(--lg-accent,#6d69f1)}
+html body #modal-root .v-reconcile-layer :is(#vReconcileForm,#personalPaymentForm) svg{color:var(--lg-accent,#6d69f1)}
 html body #modal-root .v-reconcile-layer .v-reconcile-date,.v-reconcile-layer .v-reconcile-reason{min-height:70px;padding:10px 12px;gap:9px}
 html body #modal-root .v-reconcile-layer .v-reconcile-preview{padding:14px 16px;gap:11px}
 html body #modal-root .v-reconcile-layer .v-reconcile-preview h3{font-size:18px}
@@ -135,9 +136,9 @@ html body #modal-root .v-reconcile-layer .v-reconcile-date strong,html body #mod
 @media(max-height:700px){html body #modal-root .modal-layer.v-reconcile-layer{padding-top:calc(24px + env(safe-area-inset-top,0px))!important}html body #modal-root .v-reconcile-scroll{gap:8px;padding-top:10px}html body #modal-root .v-reconcile-layer .v-reconcile-date,html body #modal-root .v-reconcile-layer .v-reconcile-reason{min-height:58px}}
 /* Oscuro / negro */
 body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-dialog{background:linear-gradient(#101215,#0a0b0d)!important;color:#f5f6f8!important;box-shadow:0 -10px 50px -18px rgba(0,0,0,.8)}
-body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer #vReconcileForm{--recon-muted:#a7b0c0;--recon-border:rgba(255,255,255,.12);--recon-soft:rgba(255,255,255,.05);color:#f5f6f8}
-body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer #vReconcileForm :is(h2,h3,strong,label,b){color:#f5f6f8}
-body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer #vReconcileForm small{color:#a7b0c0}
+body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer :is(#vReconcileForm,#personalPaymentForm){--recon-muted:#a7b0c0;--recon-border:rgba(255,255,255,.12);--recon-soft:rgba(255,255,255,.05);color:#f5f6f8}
+body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer :is(#vReconcileForm,#personalPaymentForm) :is(h2,h3,strong,label,b){color:#f5f6f8}
+body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer :is(#vReconcileForm,#personalPaymentForm) small{color:#a7b0c0}
 body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-account,body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-observed,body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-date,body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-reason,body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-preview{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
 body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-recorded{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
 body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-input{background:#050607;border-color:rgba(255,255,255,.14)}
@@ -146,3 +147,33 @@ body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-recon
 body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-foot{background:#0a0b0d;border-top-color:rgba(255,255,255,.1)}
 body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-delta strong.positive{color:#4cd08a!important}body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-delta strong.negative{color:#ff7a6d!important}
 body:is(.theme-dark,.theme-black,.dark,[data-theme="dark"]) #modal-root .v-reconcile-layer .v-reconcile-submit{color:#fff!important}
+
+/* Registrar abono (rediseño total) */
+html body #modal-root .vab-layer .vab-title{display:grid;gap:2px;min-width:0}
+html body #modal-root .vab-layer .vab-title small{font-size:13px;color:var(--recon-muted,#57647b)}
+html body #modal-root .vab-layer .vab-back{display:grid;place-items:center;width:46px;height:46px}
+html body #modal-root .vab-layer .vab-back svg{width:22px;height:22px}
+html body #modal-root .vab-layer .vab-hero{display:grid;gap:4px;padding:16px 18px;border-radius:22px;background:color-mix(in srgb,var(--lg-accent,#006c68) 13%,transparent);border:1px solid color-mix(in srgb,var(--lg-accent,#006c68) 22%,transparent)}
+html body #modal-root .vab-layer .vab-hero small{font-size:13px;opacity:.75}
+html body #modal-root .vab-layer .vab-hero strong{font-size:clamp(28px,8vw,36px);letter-spacing:-.9px;font-variant-numeric:tabular-nums;line-height:1.1}
+html body #modal-root .vab-layer .vab-hero span{font-size:13px;font-weight:600;color:#098665}
+html body #modal-root .vab-layer .vab-hero span.bad{color:#d04739}
+html body #modal-root .vab-layer .vab-block{display:grid;gap:6px}
+html body #modal-root .vab-layer .vab-label{font-size:13px;font-weight:600;color:var(--recon-muted,#57647b);padding-left:3px}
+html body #modal-root .vab-layer .vab-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+html body #modal-root .vab-layer .vab-field{display:grid;gap:6px;min-width:0}
+html body #modal-root .vab-layer .vab-field .field{width:100%;min-width:0;max-width:100%;box-sizing:border-box;min-height:52px;border-radius:16px;font-size:17px;padding:0 14px}
+html body #modal-root .vab-layer .vab-impact{background:transparent!important;border:0!important;padding:2px 0 0!important}
+html body #modal-root .vab-layer .vab-product{width:100%}
+body:is(.theme-dark,.theme-black,.dark) #modal-root .vab-layer .vab-hero{background:color-mix(in srgb,var(--lg-accent,#006c68) 22%,#0a0b0d)}
+body:is(.theme-dark,.theme-black,.dark) #modal-root .vab-layer .vab-field .field{background:#050607;color:#f5f6f8;border-color:rgba(255,255,255,.14)}
+body:is(.theme-dark,.theme-black,.dark) #modal-root .vab-layer .vab-label{color:#a7b0c0}
+html body #modal-root .vab-layer .vab-field .field{background:#fff;border:1px solid rgba(125,140,170,.28);box-shadow:none}
+html body #modal-root .vab-layer .vab-field .field:focus{border-color:var(--lg-accent,#6d69f1);outline:0;box-shadow:0 0 0 3px color-mix(in srgb,var(--lg-accent,#6d69f1) 18%,transparent)}
+html body #modal-root .vab-layer .vab-logo.v869-credit{background:revert-layer}
+html body #modal-root .vab-layer .vab-logo.v869-credit{width:58px!important;flex-basis:58px;height:48px!important;border:1px solid #ffffff2e;box-shadow:inset 0 1px 0 #ffffff35,0 7px 18px #0003;color:#fff}
+html body #modal-root .vab-layer .vab-logo.v869-visa{background:linear-gradient(145deg,#2676c6 0%,#12447f 55%,#0b2148 100%)!important}
+html body #modal-root .vab-layer .vab-logo.v869-mastercard{background:linear-gradient(145deg,#35244c,#10142b)!important}
+html body #modal-root .vab-layer .vab-logo .v869-visa-word{color:#fff!important;font-style:italic;font-weight:700;font-family:Arial,Helvetica,sans-serif;font-size:18px;letter-spacing:-1.3px}
+html body #modal-root#modal-root#modal-root .vab-layer .vab-field .field{background:#fff!important;border:1px solid rgba(125,140,170,.3)!important}
+body:is(.theme-dark,.theme-black,.dark) #modal-root#modal-root#modal-root .vab-layer .vab-field .field{background:#050607!important;border-color:rgba(255,255,255,.14)!important}

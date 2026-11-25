@@ -2729,32 +2729,51 @@ function personalForm(){
  ${para('La persona no es una institución financiera. Si recibes un préstamo en una cuenta, el efectivo aumenta y se crea una obligación; si prestas a alguien, se descuenta del instrumento y se genera una cuenta por cobrar. En una tarjeta, la entrada se registra como crédito y la salida como disposición, nunca como compra ni ingreso. Si el movimiento ya estaba incluido en el saldo inicial, solo se crea la relación para evitar duplicarlo.')}`,'personalForm',true);
 }
 function personalPaymentForm(id){let l=personalLoan(id);if(!l)return;
- let currentInstrument=l.cardId?'card:'+l.cardId:l.accountId?'account:'+l.accountId:'';
+ /* Rediseño total (hoja inferior): flecha atrás, tarjeta de capital, selector universal de productos,
+    capital/interés, fecha, impacto y botón fijo. Todo abono entra confirmado. */
  const lent=l.direction==='lent';
- modal(lent?'Registrar abono':'Registrar pago',`
- <input type="hidden" name="personalLoanId" value="${sanitize(id)}">
- <div class="form-full v390-personal-hero" data-v390-hero="1" aria-live="polite"></div>
- ${formSelect('instrumentId',lent?'Recibido en':'Pagado desde',personalInstrumentOptions(l.currency),currentInstrument,'required')}
- <div class="form-full v390-two"><div>${formItem('principal',lent?'Capital recuperado':'Capital devuelto',personalBalance(l),'number','required min="0" step="0.01" inputmode="decimal"')}</div><div>${formItem('interest',lent?'Interés cobrado':'Interés pagado',0,'number','required min="0" step="0.01" inputmode="decimal"')}</div></div>
- ${formItem('date','Fecha real del pago',today(),'date','required max="'+today()+'"')}
- ${formItem('note','Referencia o comprobante (opcional)','','text','maxlength="140"')}
- <div class="form-full v390-personal-preview" data-v390-personal-preview="1" aria-live="polite"></div>`,  'personalPaymentForm',true);
- const f=document.getElementById('personalPaymentForm');
- if(f){
-  const sb=f.querySelector('.form-foot [type=submit]');if(sb)sb.innerHTML=icon('check')+' '+(lent?'Registrar abono':'Registrar pago');
-  const update=()=>{
-   const preview=f.querySelector('[data-v390-personal-preview]'),hero=f.querySelector('[data-v390-hero]');if(!preview||!hero)return;
-   const balance=personalBalance(l),capital=Math.max(0,Number(f.elements.principal?.value)||0),interest=Math.max(0,Number(f.elements.interest?.value)||0);
-   const valid=capital+interest>0&&capital<=balance+.005,after=Math.max(0,balance-capital);
-   const full=valid&&Math.abs(balance-capital)<.005;
-   hero.innerHTML=`<small>Capital pendiente · Entre personas · ${sanitize(l.person)}</small><strong>${money(balance,l.currency,2)}</strong><span>${!valid?'Revisa los importes':full?'Liquidación completa del capital':'Abono parcial · quedará '+money(after,l.currency,2)}</span>`;
-   const cardNote=l.cardId||String(f.elements.instrumentId?.value||'').startsWith('card:');
-   const isCard=String(f.elements.instrumentId?.value||'').startsWith('card:'),total=capital+interest;
-   const effect=lent?(isCard?'Reducción de deuda de tarjeta':'Aumento de saldo de la cuenta'):(isCard?'Aumento de deuda de tarjeta':'Salida de la cuenta');
-   preview.innerHTML=`<div class="v390-kicker">IMPACTO DEL ABONO</div><div class="v390-preview-grid"><div><small>Total ${lent?'recibido':'entregado'}</small><strong class="${lent?'v390-pos':''}">${money(total,l.currency,2)}</strong></div><div><small>Capital restante</small><strong>${money(after,l.currency,2)}</strong></div></div><div class="v390-preview-rows v390-effect"><span>${effect}</span><b>${money(total,l.currency,2)}</b><span>${lent?'Ingreso real por intereses':'Gasto real por intereses'}</span><b class="${lent&&interest>0?'v390-pos':''}">${lent&&interest>0?'+':''}${money(interest,l.currency,2)}</b></div>${valid?'':'<p class="v390-preview-error">El capital no debe superar el pendiente y el total debe ser positivo.</p>'}`;
-  };
-  f.addEventListener('input',update);f.addEventListener('change',update);update();
- }
+ let selected=l.cardId?'card:'+l.cardId:l.accountId?'account:'+l.accountId:'';
+ const root=document.getElementById('modal-root');
+ root.innerHTML=`<div class="modal-layer v-reconcile-layer vab-layer" data-backdrop="true"><section class="v-reconcile-dialog vab-dialog" role="dialog" aria-modal="true" aria-label="${lent?'Registrar abono':'Registrar pago'}">
+ <form id="personalPaymentForm" novalidate><div class="v-reconcile-scroll">
+ <header class="v-reconcile-head"><button type="button" class="v-reconcile-back vab-back" data-act="closeModal" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div class="vab-title"><h2>${lent?'Registrar abono':'Registrar pago'}</h2><small>Entre personas · ${sanitize(l.person)}</small></div></header>
+ <input type="hidden" name="personalLoanId" value="${sanitize(id)}"><input type="hidden" name="instrumentId" value="${sanitize(selected)}">
+ <section class="vab-hero" data-vab="hero" aria-live="polite"></section>
+ <div class="vab-block"><span class="vab-label">${lent?'Recibido en':'Pagado desde'}</span><button type="button" class="v-reconcile-account vab-product" data-vab="product" aria-haspopup="dialog" aria-label="Seleccionar cuenta o tarjeta"></button></div>
+ <div class="vab-two"><label class="vab-field"><span class="vab-label">${lent?'Capital recuperado':'Capital devuelto'}</span><input class="field" name="principal" type="number" inputmode="decimal" min="0" step="0.01" required value="${sanitize(personalBalance(l))}"></label><label class="vab-field"><span class="vab-label">${lent?'Interés cobrado':'Interés pagado'}</span><input class="field" name="interest" type="number" inputmode="decimal" min="0" step="0.01" required value="0"></label></div>
+ <label class="vab-field vab-date"><span class="vab-label">Fecha real del pago</span><input class="field" name="date" type="date" required max="${today()}" value="${today()}"></label>
+ <label class="vab-field"><span class="vab-label">Referencia o comprobante (opcional)</span><input class="field" name="note" type="text" maxlength="140" autocomplete="off"></label>
+ <section class="v390-personal-preview vab-impact" data-v390-personal-preview="1" aria-live="polite"></section>
+ <div id="formError" class="input-error" role="alert"></div>
+ </div><footer class="v-reconcile-foot"><button type="submit" class="v-reconcile-submit">${icon('check')} ${lent?'Registrar abono':'Registrar pago'}</button></footer></form></section></div>`;
+ const f=document.getElementById('personalPaymentForm');if(!f)return;
+ const hero=f.querySelector('[data-vab=hero]'),preview=f.querySelector('[data-v390-personal-preview]'),productBtn=f.querySelector('[data-vab=product]'),hidden=f.elements.instrumentId;
+ const productItem=()=>{const [k,i]=String(hidden.value||'').split(':');return k==='card'?card(i):k==='account'?account(i):null};
+ const paintProduct=()=>{
+  const item=productItem(),kind=String(hidden.value||'').startsWith('card:')?'cardId':'accountId';
+  if(!item){productBtn.innerHTML=`<span class="v-reconcile-logo vab-logo">${icon('wallet')}</span><span><strong>Selecciona cuenta o tarjeta</strong><small>${lent?'¿Dónde recibiste el dinero?':'¿Desde dónde pagaste?'}</small></span><b>›</b>`;return}
+  const opt=window.vProductIdentity(kind,item);
+  productBtn.innerHTML=`<span class="v-reconcile-logo vab-logo"></span><span><strong>${sanitize(item.name)}</strong><small>${sanitize(opt.detail||l.currency)}</small></span><b>›</b>`;
+  window.vPaintProductIdentity(productBtn.querySelector('.vab-logo'),opt);
+ };
+ const update=()=>{
+  const balance=personalBalance(l),capital=Math.max(0,Number(f.elements.principal.value)||0),interest=Math.max(0,Number(f.elements.interest.value)||0);
+  const valid=capital+interest>0&&capital<=balance+.005,after=Math.max(0,balance-capital),full=valid&&Math.abs(balance-capital)<.005,total=capital+interest;
+  hero.innerHTML=`<small>Capital pendiente</small><strong>${money(balance,l.currency,2)}</strong><span class="${valid?'':'bad'}">${!valid?'Revisa los importes':full?'Liquidación completa del capital':'Abono parcial · quedará '+money(after,l.currency,2)}</span>`;
+  const isCard=String(hidden.value||'').startsWith('card:');
+  const effect=lent?(isCard?'Reducción de deuda de tarjeta':'Aumento de saldo de la cuenta'):(isCard?'Aumento de deuda de tarjeta':'Salida de la cuenta');
+  preview.innerHTML=`<div class="v390-kicker">IMPACTO DEL ABONO</div><div class="v390-preview-grid"><div><small>Total ${lent?'recibido':'entregado'}</small><strong class="${lent?'v390-pos':''}">${money(total,l.currency,2)}</strong></div><div><small>Capital restante</small><strong>${money(after,l.currency,2)}</strong></div></div><div class="v390-preview-rows v390-effect"><span>${effect}</span><b>${money(total,l.currency,2)}</b><span>${lent?'Ingreso real por intereses':'Gasto real por intereses'}</span><b class="${lent&&interest>0?'v390-pos':''}">${lent&&interest>0?'+':''}${money(interest,l.currency,2)}</b></div>`;
+ };
+ productBtn.addEventListener('click',()=>{
+  const items=[...db.accounts.filter(a=>a.currency===l.currency&&!isHidden(a)).map(a=>({type:'accountId',item:a})),...db.cards.filter(c=>!isHidden(c)).map(c=>({type:'cardId',item:c}))];
+  const current=String(hidden.value||'').split(':')[1]||'';
+  window.openRegisterProductPicker(lent?'Recibido en':'Pagado desde',items,current,choice=>{
+   const key=String(choice.value),isC=!!card(key)&&!account(key);hidden.value=(isC?'card:':'account:')+key;paintProduct();update();
+  });
+ });
+ hidden.addEventListener('change',()=>{paintProduct();update()});
+ f.addEventListener('input',update);f.addEventListener('change',update);
+ paintProduct();update();
 }
 
 document.addEventListener('click',ev=>{const button=ev.target.closest?.('[data-v176-pay-view]');if(!button)return;ev.preventDefault();ui.v176PayView=button.dataset.v176PayView;const root=document.getElementById('v145-payment-center');if(!root)return;document.querySelectorAll('[data-v176-pay-view]').forEach(b=>{const active=b.dataset.v176PayView===ui.v176PayView;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});const agenda=root.querySelector('.v145-pay-lower'),services=root.querySelector('.v176-pay-services'),calendar=root.querySelector('.v186-service-calendar');if(agenda)agenda.hidden=ui.v176PayView!=='agenda';if(services)services.hidden=ui.v176PayView!=='services';if(calendar)calendar.hidden=ui.v176PayView!=='calendar';},true);
@@ -19157,6 +19176,8 @@ window.openReconciliationProductPicker=(accounts,selected,onConfirm,allowCards)=
  [...accounts.map(item=>productOption('accountId',item)),...(allowCards?reconciliationCards():[])],
  selected,onConfirm,allowCards?'Seleccionar cuenta o tarjeta':'Seleccionar cuenta',{direct:!isMobileViewport(),reconciliation:allowCards});
 window.openFinancialProductPicker=(name,products,onConfirm,options={})=>open(name,products.map(item=>productOption(name,item)),options.selected||'',onConfirm,undefined,options);
+window.vProductIdentity=(type,item)=>productOption(type,item);
+window.vPaintProductIdentity=(node,opt)=>paintProductIdentity(node,opt);
 window.openRegisterProductPicker=(title,products,selected,onConfirm)=>{
  const choices=new Map(),options=products.map(({type,item,currency,disabled,reason})=>{
   const product=productOption(type,item);
