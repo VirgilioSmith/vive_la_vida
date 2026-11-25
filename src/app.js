@@ -12603,14 +12603,16 @@ function v82ForgivePersonalForm(id){
  const l=(db.personalLoans||[]).find(x=>x.id===id);
  if(!l||l.direction!=='lent'||personalBalance(l)<=.005){toast('No existe una deuda por cobrar pendiente para perdonar.');return;}
  const bal=personalBalance(l);
- modal('Perdonar deuda · '+l.person,`
-  <input type="hidden" name="loanId" value="${sanitize(l.id)}">
-  <div class="form-full v82-forgive-intro"><span class="v82-kicker">CUENTA POR COBRAR · CONDONACIÓN</span><strong>${money(bal,l.currency,2)}</strong><small>El saldo pendiente dejará de figurar como por cobrar. No se crea una entrada de dinero ni se modifican cuentas, tarjetas o ingresos.</small></div>
-  ${formItem('date','Fecha de condonación',today(),'date','required max="'+today()+'"')}
-  ${formItem('note','Motivo (opcional)','','text','maxlength="180" placeholder="Ej. Decidí perdonar el saldo"')}
-  <label class="form-full v82-forgive-approval"><input type="checkbox" name="approval" value="yes" required><span>Confirmo que quiero perdonar el saldo completo pendiente, sin registrar ningún cobro.</span></label>`,
-  'v82ForgiveForm',true);
- const f=document.getElementById('v82ForgiveForm');if(f)f.querySelector('button[type="submit"]').textContent='Confirmar condonación';
+ document.getElementById('modal-root').innerHTML=`<div class="modal-layer v-reconcile-layer vab-layer" data-backdrop="true"><section class="v-reconcile-dialog vab-dialog" role="dialog" aria-modal="true" aria-label="Perdonar deuda">
+ <form id="v82ForgiveForm" novalidate><div class="v-reconcile-scroll">
+ <header class="v-reconcile-head"><button type="button" class="v-reconcile-back vab-back" data-act="closeModal" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div class="vab-title"><h2>Perdonar deuda</h2><small>Entre personas · ${sanitize(l.person)}</small></div></header>
+ <input type="hidden" name="loanId" value="${sanitize(l.id)}">
+ <section class="vab-hero"><small>Saldo que dejarás de cobrar</small><strong>${money(bal,l.currency,2)}</strong><span>No crea entrada de dinero ni modifica cuentas, tarjetas o ingresos.</span></section>
+ <label class="vab-field vab-date"><span class="vab-label">Fecha de condonación</span><input class="field" name="date" type="date" required max="${today()}" value="${today()}"></label>
+ <label class="vab-field"><span class="vab-label">Motivo (opcional)</span><input class="field" name="note" type="text" maxlength="180" autocomplete="off" placeholder="Ej. Decidí perdonar el saldo"></label>
+ <label class="vab-approval"><input type="checkbox" name="approval" value="yes" required><span>Confirmo que quiero perdonar el saldo completo pendiente, sin registrar ningún cobro.</span></label>
+ <div id="formError" class="input-error" role="alert"></div>
+ </div><footer class="v-reconcile-foot"><button type="submit" class="v-reconcile-submit">${icon('check')} Confirmar condonación</button></footer></form></section></div>`;
 }
 document.addEventListener('submit',event=>{
  const f=event.target;if(f?.id!=='v82ForgiveForm')return;
