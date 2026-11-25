@@ -16,3 +16,17 @@ html.vnav-dragging body::after{content:"";position:fixed;inset:0;z-index:1;point
 /* Sección de ajustes: tarjeta de cristal como el resto de Personalización */
 html body #app#app #page .vnav-settings{padding:18px;margin:16px 0 24px;border-radius:26px;background:var(--vx-glass-1,rgba(255,255,255,.55));border:1px solid var(--vx-edge,rgba(255,255,255,.7));box-shadow:0 8px 24px rgba(30,45,90,.08)}
 html body:is(.theme-black,.theme-dark) #app#app #page .vnav-settings{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14);box-shadow:none}
+/* Personalización móvil · selector de estilo de KPI: una columna a todo el ancho y miniaturas contenidas */
+@media(max-width:790px){
+ html body #app#app#app #page#page .v242-appearance-grid{grid-template-columns:1fr!important;gap:12px!important}
+ html body #app#app#app #page#page .v242-appearance-grid>.v242-style-option{width:100%!important;min-width:0!important;min-height:0!important;grid-column:auto!important}
+ html body #app#app#app #page#page .v242-style-option .v242-style-art{width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;overflow:hidden;justify-content:center}
+ html body #app#app#app #page#page .v242-style-option .v242-style-art svg{width:min(100%,260px)!important;height:auto!important}
+ html body #app#app#app #page#page .v342-mini-creative{padding:12px!important;box-sizing:border-box}
+ html body #app#app#app #page#page .v342-mini-creative .v421-mini-split{grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important}
+ html body #app#app#app #page#page .v342-mini-creative .v421-mini-split>*{min-width:0!important;overflow:hidden}
+ html body #app#app#app #page#page .v242-style-description{grid-template-columns:minmax(0,1fr) 24px!important}
+ html body #app#app#app #page#page .v242-preference-title,html body #app#app#app #page#page .v242-appearance-picker{box-sizing:border-box}
+}
+html body #app#app#app #page#page .vnav-settings{background:var(--vx-glass-1,rgba(255,255,255,.55))!important;border:1px solid var(--vx-edge,rgba(255,255,255,.7))!important;border-radius:26px!important;padding:18px!important;margin:16px 0 24px!important}
+@media(max-width:790px){html body #app#app#app #page#page .v1124-mini-matrix{justify-items:center!important;justify-content:center!important;grid-template-columns:1fr!important}html body #app#app#app #page#page .v1124-mini-matrix svg{margin:0 auto}}
