@@ -439,3 +439,9 @@
 }
 /* Mis tarjetas: subtítulo bajo el título, como Bancos */
 @media (max-width:790px){html body #app#app #page#page .v266-wallet-header .v266-wallet-sub{margin:2px 0 0;font-size:14px;font-weight:500;line-height:1.25;color:var(--vx-text-2,#5b6478)}}
+/* Resumen de crédito: ambos importes principales al mismo tamaño, misma línea base y alineados con su etiqueta */
+@media (max-width:790px){
+ html body #app#app#app #page#page .wallet-mobile-summary :is(strong,b).vx-money{font-size:clamp(18px,5.2vw,22px)!important;line-height:1.15!important;margin:0!important;padding:0!important;text-indent:0!important;min-width:0!important}
+ html body #app#app#app #page#page .wallet-mobile-summary strong.vx-money{text-align:left!important;justify-self:start!important;margin-left:0!important;align-self:flex-start!important;transform:none!important}
+ html body #app#app#app #page#page .wallet-mobile-summary b.vx-money{text-align:right!important;justify-self:end!important;align-self:flex-end!important;margin-top:5px!important;transform:none!important}
+}
