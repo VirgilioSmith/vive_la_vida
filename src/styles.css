@@ -52427,3 +52427,5 @@ html body #app#app#app :is(.v239-segments,.v911-seg,.vexp-seg)>:is(button,label)
 body:is(.theme-dark,.theme-black) #app#app#app :is(.v239-segments,.v911-seg,.vexp-seg)>:is(button,label):not(.selected):not(.active):not([aria-pressed=true]):not(.is-on){background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.14)!important}
 /* Hojas con flecha atrás: sin «×» duplicada */
 @media(max-width:790px){html body #modal-root#modal-root .modal-head:has([class*=back]) .close{display:none!important}}
+/* Hojas de pago (v261): flecha atrás sola, sin «×» duplicada */
+@media(max-width:790px){html body :is(.v261-header-back)~.v261-header-close,html body .v261-header-close{display:none!important}}
