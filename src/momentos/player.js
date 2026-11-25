@@ -98,8 +98,8 @@
  function toggle(){if(S.pb.state.playing){S.pb.pause();stopLoop()}else{S.pb.play();paintState();startLoop()}}
  /* La barra de estado del iPhone toma el color superior de la portada (y se restaura al cerrar). */
  let tcMeta=null,tcOrig=null;
- function themeColor(c){try{tcMeta=tcMeta||document.querySelector('meta[name=theme-color]');if(!tcMeta)return;if(tcOrig===null)tcOrig=tcMeta.getAttribute('content');if(S.dlg&&S.dlg.open)tcMeta.setAttribute('content',c)}catch(_){}}
- function themeColorRestore(){try{if(tcMeta&&tcOrig!==null){tcMeta.setAttribute('content',tcOrig);tcOrig=null}}catch(_){}}
+ function themeColor(c){try{if(S.dlg&&S.dlg.open){document.documentElement.style.setProperty('--vmo-top',c);document.documentElement.classList.add('vmo-open')}tcMeta=tcMeta||document.querySelector('meta[name=theme-color]');if(!tcMeta)return;if(tcOrig===null)tcOrig=tcMeta.getAttribute('content');if(S.dlg&&S.dlg.open)tcMeta.setAttribute('content',c)}catch(_){}}
+ function themeColorRestore(){try{document.documentElement.classList.remove('vmo-open');document.documentElement.style.removeProperty('--vmo-top');if(tcMeta&&tcOrig!==null){tcMeta.setAttribute('content',tcOrig);tcOrig=null}}catch(_){}}
  const T=(r,p)=>`translate(${r.left-p.left}px,${r.top-p.top}px) scale(${r.width/p.width},${r.height/p.height})`;
  function open(opener){
   if(S.closing||(S.dlg&&S.dlg.open))return;

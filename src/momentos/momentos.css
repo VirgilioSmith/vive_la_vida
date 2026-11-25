@@ -63,3 +63,10 @@ dialog.vmo{--vmo-art-h:57dvh}
 .vmo-art::after{display:none}
 .vmo-art-fade{position:absolute;left:0;right:0;bottom:0;height:38%;z-index:2;background:linear-gradient(transparent,color-mix(in srgb,var(--vmo-b) 27%,var(--vmo-c)));pointer-events:none}
 .vmo-x{background:rgba(0,0,0,.55)!important}
+
+/* Zona de la isla dinámica / barra de estado: la portada se extiende hacia arriba y el fondo de la página toma su color (nada claro visible) */
+html.vmo-open,html.vmo-open body{background:var(--vmo-top,#000)!important}
+.vmo-art{top:calc(-1 * env(safe-area-inset-top,0px) - 2px)!important;height:calc(var(--vmo-art-h) + env(safe-area-inset-top,0px) + 2px)!important}
+dialog.vmo{overflow-x:hidden;background-color:var(--vmo-top,var(--vmo-b))}
+.vmo-has-img .vmo-art{background-color:var(--vmo-top,#c7876f)}
+.vmo-art>img{top:0;height:100%}
