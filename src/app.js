@@ -9315,6 +9315,8 @@ f33Flush=async function(){
     f33Dirty=true;
     // V1134: si los conflictos se repiten seguidos, esperar con retroceso en lugar de reintentar sin pausa.
     v1134ConflictStreak++;
+    /* Retroceso tras cada conflicto (5 s, 10 s, 20 s… hasta 2 min): un cliente con revisión vieja nunca reintenta sin pausa. */
+    v714NextWriteAt=Math.max(v714NextWriteAt,Date.now()+Math.min(120000,5000*2**Math.min(v1134ConflictStreak-1,5)));
     if(v1134ConflictStreak>=3){
      // Evitar ciclos de escritura indefinidos si otra pestaña mantiene una revisión obsoleta.
      f33Conflict=true;v360WritePending();
