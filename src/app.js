@@ -748,26 +748,26 @@ function mobileHeader(){
  const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
  return `<header class="vive-mobile-top" aria-label="Encabezado móvil"><button class="vive-mobile-brand" type="button" data-v119-open="1" aria-label="vive el hoy · Abrir El costo de mañana" title="Abrir El costo de mañana">${brandMark()}</button><span class="vive-mobile-location">${ui.page==='cards'?'Wallet':ui.page==='banks'?'Bancos':(ui.page==='wallet'?'Wallet':pageName[ui.page])||'Tus finanzas'}</span><div class="v65-header-tools v146-mobile-actions">${v402SyncButton()}${v36Bell()}${window.VIVE_ENABLED===false?'':`<button type="button" class="vive-mobile-head-access" data-vive-open="mobile" aria-label="Abrir Vive" title="Vive"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg></button>`}<button type="button" class="v65-settings-button v271-settings-access ${ui.page==='settings'?'active':''}" data-act="navigate" data-id="settings" aria-label="Abrir Configuración" title="Configuración"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.52V20h-3v-.08a1.65 1.65 0 0 0-1-1.52 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.6 15a1.65 1.65 0 0 0-1.52-1H6v-3h.08A1.65 1.65 0 0 0 7.6 10a1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06A1.65 1.65 0 0 0 11 6.6a1.65 1.65 0 0 0 1-1.52V5h3v.08A1.65 1.65 0 0 0 16 6.6a1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.52 1H21v3h-.08A1.65 1.65 0 0 0 19.4 15Z" transform="translate(-1.5 -0.5) scale(1.05)"/></svg></button></div></header>`;
 }
-/* Centro Estratégico: un solo mensaje de dos palabras, elegido por prioridad con los datos ya cargados (sin consultas extra ni temporizadores).
-   P1 vencido · P2 corte/pago próximo · P3 gastos elevados · P4 mes positivo · P5 frase del día (sin acción). */
-function vStrategicMessage(){
- const day=Math.floor(Date.UTC(Number(today().slice(0,4)),Number(today().slice(5,7))-1,Number(today().slice(8,10)))/864e5);
- const short=u=>String(u.name||'').replace(/\s·\s(DOP|USD)$/,'');
- const left=d=>{const n=diffDays(d,today());return n<0?`${-n} d de atraso`:n===0?'vence hoy':`en ${n} d`};
- const phrases=[['Todo tranquilo','Tu centro estratégico','sparkles'],['Vive hoy','Un día a la vez','heart2'],['Sigue joseando','Cada paso suma','briefcase'],['Dios primero','Lo demás se acomoda','heart2'],['Agradece siempre','Hoy también cuenta','sparkles'],['Sigue avanzando','Vas por buen camino','trend2']];
+/* Momentos · adaptador: convierte el estado financiero ya cargado en un snapshot para el motor (sin red ni consultas). */
+function vMomentosSnapshot(){
+ const t=today(),s={verified:false,overdue:[],upcoming:[],cuts:[],pressure:null,improving:null,goals:[]};
  try{
-  const list=(upcoming()||[]).filter(u=>u&&u.date).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
-  const over=list.find(u=>diffDays(u.date,today())<0);
-  if(over)return {tone:'alert',icon:'alert2',title:'Pago vencido',sub:`${short(over)} · ${left(over.date)}`,go:over.kind==='card'?'wallet':'pressure'};
-  const soon=list.find(u=>{const n=diffDays(u.date,today());return n>=0&&n<=7});
-  if(soon)return soon.kind==='card'?{tone:'warn',icon:'calendar',title:'Corte cercano',sub:`${short(soon)} · ${left(soon.date)}`,go:'wallet'}:{tone:'warn',icon:'calendar',title:'Pago pendiente',sub:`${short(soon)} · ${left(soon.date)}`,go:'pressure'};
-  const t=monthlyTotals(Number(today().slice(0,4)),Number(today().slice(5,7)));
-  if(t&&num(t.income)>0&&num(t.expense)>num(t.income))return {tone:'warn',icon:'trend2',title:'Gastos elevados',sub:'Egresos superan ingresos',go:'expenses'};
-  if(t&&num(t.expense)>0&&num(t.income)>num(t.expense)*1.05&&Number(today().slice(8,10))>=15)return {tone:'good',icon:'check',title:'Mes positivo',sub:'Ingresos superan egresos',go:'flow'};
+  s.verified=!!(db&&((db.cards||[]).length||(db.accounts||[]).length||(db.loans||[]).length||(db.transactions||[]).length));
+  const short=u=>String(u.name||'Compromiso').replace(/\s·\s(DOP|USD)$/,'');
+  for(const u of (upcoming()||[]).filter(x=>x&&x.date&&num(x.amount)>0)){
+   const n=diffDays(u.date,t),it={id:u.id,name:short(u),days:n,go:u.kind==='card'?'wallet':'pressure'};
+   if(n<0)s.overdue.push(it);else if(n<=7)(u.kind==='card'?s.cuts:s.upcoming).push(it);
+  }
+  const y=Number(t.slice(0,4)),m=Number(t.slice(5,7)),cur=monthlyTotals(y,m),pm=m===1?[y-1,12]:[y,m-1],prev=monthlyTotals(pm[0],pm[1]);
+  const net=num(cur.income)-num(cur.expense),pnet=num(prev.income)-num(prev.expense);
+  if(num(cur.income)>0&&num(cur.expense)>num(cur.income))s.pressure={income:money(cur.income),expense:money(cur.expense)};
+  if((num(prev.income)||num(prev.expense))&&net>0&&net>pnet)s.improving={net:money(net),prev:money(pnet)};
+  /* Metas: VIVE aún no registra metas; se mostrarán aquí cuando existan datos reales. */
  }catch(err){}
- const p=phrases[((day%phrases.length)+phrases.length)%phrases.length];
- return {tone:'calm',icon:p[2],title:p[0],sub:p[1],go:''};
+ return s;
 }
+window.ViveMomentosHost={snapshot:vMomentosSnapshot,icon:name=>icon(name),go:id=>{const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=id;b.hidden=true;document.body.appendChild(b);b.click();b.remove()}};
+
 /* Dock tipo Apple Music: al desplazar hacia abajo se compacta en [Inicio] [pestaña activa] [Buscar]; al subir o tocar la pestaña activa se expande. */
 let vDockCompact=false;
 (function(){
@@ -780,54 +780,12 @@ let vDockCompact=false;
   acc=(d>0)===(acc>0)?acc+d:d;
   if(acc>14)set(true);else if(acc<-10)set(false);
  },{passive:true});
- document.addEventListener('click',e=>{
-  const b=e.target.closest?.('.vive-mobile-dock.is-compact [data-vdc-phrase]');
-  if(!b)return;
-  e.preventDefault();e.stopImmediatePropagation();set(false);
- },true);
 })();
-/* Centro Estratégico inmersivo: conserva el mensaje financiero y abre su reproductor visual. */
+/* Cápsula del Centro Estratégico (dock compacto): muestra el momento más relevante y abre Momentos. */
 function vDockCenter(){
- const m=vStrategicMessage();
- return `<button type="button" class="vive-mobile-dock-center vdc-${m.tone}" data-vsp-open="1" aria-label="Abrir centro estratégico: ${sanitize(m.title)}. ${sanitize(m.sub)}"><span class="vdc-ico">${icon(m.icon)}</span><span class="vdc-text"><strong>${sanitize(m.title)}</strong><small>${sanitize(m.sub)}</small></span><span class="vdc-chev">${icon('arrow')}</span></button>`;
+ const m=window.ViveMomentos?window.ViveMomentos.top():{title:'Todo tranquilo',icon:'sparkles',tone:'calm'};
+ return `<button type="button" class="vive-mobile-dock-center vdc-${m.tone}" data-momentos-open="1" aria-haspopup="dialog" aria-label="Abrir Momentos: ${sanitize(m.title)}. Tu centro estratégico"><span class="vdc-ico">${icon(m.icon)}</span><span class="vdc-text"><strong>${sanitize(m.title)}</strong><small>Tu centro estratégico</small></span><span class="vdc-chev">${icon('arrow')}</span></button>`;
 }
-/* Datos locales, bajo demanda: sin Realtime ni sondeos. */
-function vStrategicPlayerData(){
- const now=today(),featured=vStrategicMessage();
- const due=[];
- try{
-  for(const u of (upcoming()||[]).filter(x=>x&&x.date&&num(x.amount)>0).sort((a,b)=>String(a.date).localeCompare(String(b.date)))){
-   const days=diffDays(u.date,now);
-   if(days < -30 || days > 14)continue;
-   const late=days<0,card=u.kind==='card';
-   due.push({
-    title:late?'Pago vencido':card?'Corte cercano':'Pago pendiente',
-    sub:String(u.name||'Compromiso')+' · '+(late?'vencido hace '+(-days)+' días':days===0?'vence hoy':'vence en '+days+' días')+' · '+money(u.amount,u.currency||'DOP',2),
-    tone:late?'alert':'warn',icon:card?'calendar':'alert2',go:card?'wallet':'pressure'
-   });
-   if(due.length>=5)break;
-  }
- }catch(_){}
- const alerts=[];
- try{
-  for(const a of (v123CategoryAlerts()||[]).slice(0,2))alerts.push({
-   title:a.kind==='trend'?'Gasto creciendo':'Gastos elevados',
-   sub:String(a.category||'Categoría')+' · '+v123AlertText(a),
-   tone:'warn',icon:'trend2',go:'expenses'
-  });
- }catch(_){}
- let summary=null;
- try{
-  const p=ui.month||now.slice(0,7),t=monthlyTotals(Number(p.slice(0,4)),Number(p.slice(5,7)));
-  if(t&&(num(t.income)>0||num(t.expense)>0)){
-   const n=num(t.income)-num(t.expense);
-   summary={period:dateObj(p+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}),
-     income:money(t.income,'DOP',2),expense:money(t.expense,'DOP',2),net:money(n,'DOP',2),negative:n<0};
-  }
- }catch(_){}
- return {featured,due,alerts,summary};
-}
-window.vStrategicPlayerData=vStrategicPlayerData;
 function mobileBottomNavigation(){
  if((window.scrollY||0)<24)vDockCompact=false;
  // Cada producto bancario pertenece al espacio Bancos; no debe marcar Explorar por error.
