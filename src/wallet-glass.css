@@ -327,3 +327,10 @@ html body #app#app main.world-wallet #page#page .v371-return-note {font-size:12p
 /* Logos bancarios PNG sin fondo: en las listas de Wallet se muestran sobre la propia tarjeta, sin placa blanca */
 html body #app#app#app main.world-wallet #page#page .v1301-rank .v1301-bank .bank-photo-mark:has(img){background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important}
 html body #app#app#app main.world-wallet #page#page .v1301-rank .v1301-bank .bank-photo-mark img{background:transparent!important;padding:0!important;border-radius:0!important}
+
+/* Estado del crédito · detalle por tarjeta: integrado en la tarjeta, sin fondo, sin bordes y sin líneas separadoras */
+@media (max-width:790px){
+ html body #app#app#app main.world-wallet #page#page .v1301-limit-breakdown .v1301-ranked{background:none!important;background-image:none!important;box-shadow:none!important;border:0!important;padding:0!important;gap:2px!important}
+ html body #app#app#app main.world-wallet #page#page .v1301-limit-breakdown .v1301-rank{background:none!important;background-image:none!important;box-shadow:none!important;border:0!important;border-bottom:0!important;border-radius:0!important;padding:8px 0!important}
+ html body #app#app#app main.world-wallet #page#page .v1301-limit-breakdown .v1301-rank-info>*{border:0!important}
+}
