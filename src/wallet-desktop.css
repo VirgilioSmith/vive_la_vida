@@ -490,3 +490,8 @@
     min-height:25px;line-height:1.25;padding:4px 1px;
   }
 }
+/* Menú "⋯" de Mis productos: opciones en columna, ancho contenido y siempre dentro de la pantalla */
+@media (min-width:791px){
+  html body #app#app #page .vWalletPc-menu>div{display:flex!important;flex-direction:column;align-items:stretch;gap:2px;min-width:0!important;width:max-content;max-width:min(240px,calc(100vw - 24px));padding:6px}
+  html body #app#app #page .vWalletPc-menu>div>button{display:flex;align-items:center;justify-content:flex-start;width:100%;text-align:left;white-space:nowrap;min-height:40px;padding:0 12px}
+}
