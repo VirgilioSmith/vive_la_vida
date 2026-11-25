@@ -235,3 +235,22 @@ html body[data-vive-bg][data-vive-bg][data-vive-bg]:not(.theme-black):not(.theme
 html body[data-vive-bg][data-vive-bg]{--ui-ambient:var(--crack-img,none) var(--crack-pos,left top)/auto 78vh no-repeat,radial-gradient(ellipse 95% 62% at var(--amb-x) -8%,color-mix(in srgb,var(--lg-accent) 36%,transparent),transparent 72%),radial-gradient(ellipse 80% 55% at var(--amb-x2) 30%,color-mix(in srgb,var(--lg-complement) 16%,transparent),transparent 74%),linear-gradient(180deg,#faf8fc,#f3f2fa 60%,#eef3fa)}
 html body.theme-black[data-vive-bg][data-vive-bg],html body.theme-dark[data-vive-bg][data-vive-bg]{--ui-ambient:var(--crack-img,none) var(--crack-pos,left top)/auto 78vh no-repeat,radial-gradient(ellipse 95% 62% at var(--amb-x) -8%,color-mix(in srgb,var(--lg-accent) 26%,transparent),transparent 72%),radial-gradient(ellipse 80% 55% at var(--amb-x2) 30%,color-mix(in srgb,var(--lg-complement) 10%,transparent),transparent 74%),#000}
 @media(min-width:791px){html body[data-vive-bg][data-vive-bg]{--crack-size:90vh}}
+
+/* ═══ MODO BLACK · negro verdadero ═══
+   Fondo #000 sin velos de color apreciables, superficies de cristal casi negras (no grises) y controles oscuros con texto legible. */
+body.theme-black,body.theme-dark{--lg-glass:linear-gradient(145deg,rgba(255,255,255,.065) 0%,rgba(255,255,255,.012) 58%,rgba(255,255,255,.03) 100%);--lg-shine:radial-gradient(ellipse 70% 60% at 90% 0%,rgba(255,255,255,.045),rgba(255,255,255,0) 62%);--lg-shine-soft:radial-gradient(ellipse 70% 70% at 92% 0%,rgba(255,255,255,.025),rgba(255,255,255,0) 60%);--lg-edge:rgba(255,255,255,.14)}
+html body.theme-black[data-vive-bg][data-vive-bg],html body.theme-dark[data-vive-bg][data-vive-bg]{--ui-ambient:var(--crack-img,none) var(--crack-pos,left top)/auto 78vh no-repeat,radial-gradient(ellipse 90% 50% at var(--amb-x) -10%,color-mix(in srgb,var(--lg-accent) 9%,transparent),transparent 70%),#000}
+html body.theme-black[data-vive-bg][data-vive-bg][data-vive-bg],html body.theme-dark[data-vive-bg][data-vive-bg][data-vive-bg]{background-color:#000!important}
+html body.theme-black[data-vive-bg] #app#app#app main #page#page :is(.panel,.v134-panel,.bank-card,.loan-product,.cert-card,.vWalletPc-panel,.v266-wallet-panel,.v1301-insight,.vBanksPc-bank-list,.movement-metric,.summary-glass,.kpi,.v1170-panel,.v290-budget-web),
+html body.theme-black[data-vive-bg] #app#app#app :is(.v344-creative,.v342-creative-position,.v105-mobile-extra,.v273-overview-widget,.v105-capacity-widget,.vive-mobile-commitments,.vive-mobile-net-card,.v317-due-overview,.v316-budget-orbit),
+html body.theme-dark[data-vive-bg] #app#app#app main #page#page :is(.panel,.v134-panel,.bank-card,.loan-product,.cert-card,.vWalletPc-panel,.v266-wallet-panel,.v1301-insight,.vBanksPc-bank-list,.movement-metric,.summary-glass,.kpi,.v1170-panel,.v290-budget-web){background-color:rgba(255,255,255,.018)!important}
+/* Controles claros residuales (píldora de período, campana, flechas, variaciones) → cristal oscuro */
+html body:is(.theme-black,.theme-dark) #app#app#app :is(.v732-period,.vive-mobile-top button,.v711-category-arrow,.v36-month-capsule){background:rgba(255,255,255,.07)!important;background-image:none!important;border:1px solid rgba(255,255,255,.16)!important;box-shadow:none!important;color:#e9e8ff!important}
+html body:is(.theme-black,.theme-dark) #app#app#app :is(.v732-period,.v36-month-capsule) *{color:#e9e8ff!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .v134-change{background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.16)!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .v134-change.v134-change-up{color:#7ee8b0!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .v134-change.v134-change-down{color:#ff9aa6!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .vive-mobile-top .vive-mobile-brand{background:none!important;border:0!important}
+html body:is(.theme-black,.theme-dark) #app#app#app :is(.v36-notifications,.v36-notice,.v988-notice){background-image:none!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .v36-notifications>summary{background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.16)!important;box-shadow:none!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .v708-movements-fab{background:rgba(255,255,255,.08)!important;background-image:none!important;border:1px solid rgba(255,255,255,.18)!important;color:#e9e8ff!important}
