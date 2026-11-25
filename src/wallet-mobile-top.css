@@ -445,3 +445,9 @@
  html body #app#app#app #page#page .wallet-mobile-summary strong.vx-money{text-align:left!important;justify-self:start!important;margin-left:0!important;align-self:flex-start!important;transform:none!important}
  html body #app#app#app #page#page .wallet-mobile-summary b.vx-money{text-align:right!important;justify-self:end!important;align-self:flex-end!important;margin-top:5px!important;transform:none!important}
 }
+/* Espacio inferior: un solo relleno para el dock (antes se sumaban tres: Wallet + página + contenedor ≈ 480 px de vacío) */
+@media (max-width:790px){
+ html body #app#app#app main.world-wallet #page#page{padding-bottom:0!important;margin-bottom:0!important}
+ html body #app#app#app main.world-wallet #page#page .v68-wallet{padding-bottom:0!important;margin-bottom:0!important}
+ html body #app#app#app main.world-wallet{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}
+}
