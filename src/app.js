@@ -1186,7 +1186,7 @@ function v154MobileSearchPage(){
  v154PrepareMobileIndex();
  const chips=[['Todo','clear','bolt'],['Tarjetas','tarjetas','card'],['Bancos','dinero','building'],['Servicios','servicios','receipt']];
  return `<div class="vive-mobile-hub v154-search-hub v711-search-shell v721-search-shell">
-  <div class="v154-search-heading v711-search-heading"><div><span class="v154-search-eyebrow">EXPLORA, ENCUENTRA Y GESTIONA</span><h1>Buscar</h1><p>Accede rápido a tus finanzas, movimientos y más.</p></div></div>
+  <div class="v154-search-heading v711-search-heading"><div><h1>Buscar</h1><p>Accede rápido a tus finanzas, movimientos y más.</p></div></div>
   <div class="v154-search-box v711-search-box v721-search-box" role="search">${icon('search')}<input type="search" id="v154-mobile-search-input" placeholder="Bancos, tarjetas, servicios…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar en todas tus finanzas" aria-controls="v154-mobile-search-results" value="${sanitize(ui.v154MobileSearchQuery||'')}"><button type="button" class="v154-search-clear" data-v154-clear="1" aria-label="Limpiar búsqueda" hidden>×</button></div>
   <nav class="v711-search-pills v721-search-pills" aria-label="Filtros rápidos">${chips.map(([label,key,ic])=>key==='clear'?`<button type="button" class="active" data-v154-clear="1" data-v154-filter="all" aria-pressed="true">${icon(ic)}<span>${label}</span></button>`:`<button type="button" data-v154-category="${key}" data-v154-filter="${key}" aria-pressed="false">${icon(ic)}<span>${label}</span></button>`).join('')}</nav>
   <div class="v154-search-discover" id="v154-mobile-discover">
@@ -1738,7 +1738,7 @@ function v68GlobalWalletAction(mode,ccy,id){
 function v68Wallet(){
  const cards=v68WalletCards();
  if(ui.vWalletPcBenefits)return v68WalletBenefits(cards);
- if(!cards.length)return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><span class="v266-overline">TU CARTERA</span><h1>Mis tarjetas</h1></div><button class="v266-wallet-add" data-act="addCard" aria-label="Añadir tarjeta">${icon('plus')}</button></header><div class="v266-empty"><strong>Tu Wallet comienza aquí.</strong><p>Agrega una tarjeta para consultar crédito, cortes, pagos y actividad.</p><button class="btn" data-act="addCard">Añadir tarjeta</button></div></section>`;
+ if(!cards.length)return `<section class="v68-wallet v266-wallet v279-wallet" aria-label="Wallet móvil"><header class="v266-wallet-header"><div><h1>Mis tarjetas</h1><p class="v266-wallet-sub">Tu crédito consolidado, siempre a la mano</p></div><button class="v266-wallet-add" data-act="addCard" aria-label="Añadir tarjeta">${icon('plus')}</button></header><div class="v266-empty"><strong>Tu Wallet comienza aquí.</strong><p>Agrega una tarjeta para consultar crédito, cortes, pagos y actividad.</p><button class="btn" data-act="addCard">Añadir tarjeta</button></div></section>`;
  // La tarjeta virtual no forma parte de db.cards ni de ningún selector de operaciones.
  const global=ui.v68WalletId===V68_GLOBAL_ID || !ui.v68WalletId;
  const active=global?{id:V68_GLOBAL_ID,name:'Créditos generales',limitDOP:rnd(cards.reduce((s,c)=>s+num(c.limitDOP),0)),limitUSD:rnd(cards.reduce((s,c)=>s+num(c.limitUSD),0))}:cards.find(c=>c.id===ui.v68WalletId)||cards[0];
@@ -1764,7 +1764,7 @@ function v68Wallet(){
  }).join('');
  const dots=[{id:V68_GLOBAL_ID,name:'Créditos generales'},...cards];
  const action=(mode,original)=>global?`data-act="v68WalletGlobalAction" data-mode="${mode}"`:original;
- const walletMobileControls=`<header class="v266-wallet-header"><div><h1>Mis tarjetas</h1></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
+ const walletMobileControls=`<header class="v266-wallet-header"><div><h1>Mis tarjetas</h1><p class="v266-wallet-sub">Tu crédito consolidado, siempre a la mano</p></div><button type="button" class="v266-wallet-add" data-act="addCard" aria-label="Agregar tarjeta">${icon('plus')}</button></header>
  <div class="v266-gallery" aria-label="Selecciona una tarjeta"><div class="v68-wallet-gallery v266-gallery-track">${gallery}</div><div class="v68-wallet-dots v266-dots">${dots.map(c=>`<button type="button" data-act="v68WalletSelect" data-id="${sanitize(c.id)}" class="${c.id===active.id?'active':''}" aria-label="Seleccionar ${sanitize(c.name)}"></button>`).join('')}</div></div>
  <div class="v266-selected-balance v550-currency-balance v565-credit-dashboard" aria-label="Resumen de crédito por moneda de la tarjeta seleccionada">
    <div class="v550-balance-column v565-primary"><span>CRÉDITO DISPONIBLE</span><strong>${money(available)}</strong>
