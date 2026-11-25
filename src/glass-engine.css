@@ -25,6 +25,7 @@
 /* ---------- 0 · Tokens por tema ---------------------------------------- */
 :root{--vg-k:1;--vg-ak:1;--vg-lk:1}
 :root,body{
+ --vg-dense-add:.14;
  --vg-accent:var(--vx-accent,var(--ui-accent,var(--vive-theme-color,#6d69f1)));
  --vg-accent-strong:var(--vx-accent-strong,color-mix(in srgb,var(--vg-accent) 82%,#000));
  --vg-on-accent:#fff;
@@ -55,6 +56,7 @@
  --vg-t:.18s;
 }
 body.theme-dark,body.theme-black{
+ --vg-dense-add:.015;
  /* Black: base negro puro, cristal blanco de muy baja opacidad */
  --vg-base:#000000;
  --vg-ink:#f5f6f8; --vg-ink-2:#c3c9d6; --vg-ink-3:#a7b0c0;
@@ -335,3 +337,32 @@ html body .v187-modal-overlay .v187-detail-dialog .v187-modal-close,html body .v
 html body .v187-modal-overlay [role="dialog"] .v187-modal-close:focus-visible{outline:0!important;box-shadow:none!important;border:1.5px solid color-mix(in srgb,var(--vg-accent) 32%,transparent)!important}
 html body #modal-root#modal-root :is(.v186-deep-close,.v187-modal-close),html body #modal-root#modal-root :is(.v186-deep-close,.v187-modal-close):focus-visible{outline:0!important;outline-width:0!important;outline-style:none!important;box-shadow:none!important}
 html body #modal-root#modal-root :is(.v186-deep-close,.v187-modal-close):focus-visible{background:color-mix(in srgb,var(--vg-accent) 22%,transparent)!important}
+
+/* ============================================================================
+   R6 · Migración de módulos heredados al material (superficies de lectura y tarjetas)
+   Filas y listas = «cristal estructural denso» (relleno firme, SIN desenfoque: muchas por pantalla).
+   Tarjetas principales = nivel 02 (un desenfoque por tarjeta, pocas por pantalla).
+   Este bloque usa !important solo porque el CSS heredado lo usa; se retira módulo a módulo.
+   ========================================================================== */
+html body #app#app .v708-row,html body #app#app .v187-composition-item,html body #app#app .ff-obligation-row,html body #app#app .v242-settings-row,html body #app#app .v239-product,html body #app#app .vinc-act,html body #app#app .vinc-kpi,html body #app#app .v421-mini-card,html body #app#app .ff-bubble,html body #app#app .v89-debt-breakdown,html body #app#app .v317-heat-summary,html body #app#app .v316-budget-pace,html body #app#app .v239-segments,html body #app#app .v36-commitment-items,html body #app#app .vBanks-annual-list,html body #app#app .v144-table-wrap,html body #app#app .v239-product-list,html body #app#app .ledger-world,html body #app#app .v256-cards-methodology,html body #app#app .v61-profile-switch{
+ --_a:calc(var(--vg-a2) + var(--vg-dense-add,.14));--_b:0px;--_e:var(--vg-e2);--_sh:var(--vg-sh2);
+ background:
+  radial-gradient(70% 70% at 100% 0%,rgba(255,255,255,calc(.2 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .04 * var(--vg-lk) * var(--vg-dark,0))),transparent 62%),
+  linear-gradient(152deg,transparent 52%,color-mix(in srgb,var(--vg-accent) calc(5% * var(--vg-ak)),transparent) 100%),
+  rgba(var(--vg-tint-rgb),calc(var(--_a) * var(--vg-k)))!important;
+ border-color:rgba(var(--vg-tint-rgb),calc(var(--_e) * min(1,var(--vg-lk))))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.5 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .08 * var(--vg-lk) * var(--vg-dark,0))),var(--_sh)!important;
+ -webkit-backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;
+}
+body:is(.theme-dark,.theme-black) #app#app .v708-row,body:is(.theme-dark,.theme-black) #app#app .v187-composition-item,body:is(.theme-dark,.theme-black) #app#app .ff-obligation-row,body:is(.theme-dark,.theme-black) #app#app .v242-settings-row,body:is(.theme-dark,.theme-black) #app#app .v239-product,body:is(.theme-dark,.theme-black) #app#app .vinc-act,body:is(.theme-dark,.theme-black) #app#app .vinc-kpi,body:is(.theme-dark,.theme-black) #app#app .v421-mini-card,body:is(.theme-dark,.theme-black) #app#app .ff-bubble,body:is(.theme-dark,.theme-black) #app#app .v89-debt-breakdown,body:is(.theme-dark,.theme-black) #app#app .v317-heat-summary,body:is(.theme-dark,.theme-black) #app#app .v316-budget-pace,body:is(.theme-dark,.theme-black) #app#app .v239-segments,body:is(.theme-dark,.theme-black) #app#app .v36-commitment-items,body:is(.theme-dark,.theme-black) #app#app .vBanks-annual-list,body:is(.theme-dark,.theme-black) #app#app .v144-table-wrap,body:is(.theme-dark,.theme-black) #app#app .v239-product-list,body:is(.theme-dark,.theme-black) #app#app .ledger-world,body:is(.theme-dark,.theme-black) #app#app .v256-cards-methodology,body:is(.theme-dark,.theme-black) #app#app .v61-profile-switch{--vg-dark:1}
+html body #app#app .v726-profile-card,html body #app#app .ff-health-card,html body #app#app .v242-settings-home,html body #app#app .v300-appearance-pane,html body #app#app .v230-benefits-header,html body #app#app .v242-settings-intro{
+ --_a:var(--vg-a3);--_b:var(--vg-b2);--_e:var(--vg-e2);--_sh:var(--vg-sh2);
+ background:
+  radial-gradient(70% 70% at 100% 0%,rgba(255,255,255,calc(.2 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .04 * var(--vg-lk) * var(--vg-dark,0))),transparent 62%),
+  linear-gradient(152deg,transparent 52%,color-mix(in srgb,var(--vg-accent) calc(5% * var(--vg-ak)),transparent) 100%),
+  rgba(var(--vg-tint-rgb),calc(var(--_a) * var(--vg-k)))!important;
+ border-color:rgba(var(--vg-tint-rgb),calc(var(--_e) * min(1,var(--vg-lk))))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.5 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .08 * var(--vg-lk) * var(--vg-dark,0))),var(--_sh)!important;
+ -webkit-backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;
+}
+body:is(.theme-dark,.theme-black) #app#app .v726-profile-card,body:is(.theme-dark,.theme-black) #app#app .ff-health-card,body:is(.theme-dark,.theme-black) #app#app .v242-settings-home,body:is(.theme-dark,.theme-black) #app#app .v300-appearance-pane,body:is(.theme-dark,.theme-black) #app#app .v230-benefits-header,body:is(.theme-dark,.theme-black) #app#app .v242-settings-intro{--vg-dark:1}
