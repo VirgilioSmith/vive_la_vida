@@ -23842,3 +23842,20 @@ window.__v866Runners.v865=run;
 
 })();
 
+/* Refinación universal de formularios (móvil): flecha atrás circular en toda hoja que no la tenga,
+   sin «×» redundante y sin banners de identidad que repiten el título. */
+(()=>{'use strict';
+ const root=document.getElementById('modal-root');if(!root)return;
+ const arrow='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>';
+ const fix=()=>{
+  for(const own of root.querySelectorAll('.modal.vsheet .modal-head .vsheet-back')){if(own.parentElement.querySelector('[class*="back"]:not(.vsheet-back)'))own.remove()}
+  for(const modal of root.querySelectorAll('.modal.v204-form-dialog:not([data-vsheet])')){
+   const head=modal.querySelector(':scope>.modal-head');if(!head)continue;
+   modal.dataset.vsheet='1';modal.classList.add('vsheet');
+   if(!head.querySelector('[class*="back"]')){
+    const b=document.createElement('button');b.type='button';b.className='vsheet-back';b.dataset.act='closeModal';b.setAttribute('aria-label','Volver');b.innerHTML=arrow;head.prepend(b);
+   }
+  }
+ };
+ new MutationObserver(fix).observe(root,{childList:true,subtree:true});fix();
+})();
