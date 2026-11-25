@@ -4887,7 +4887,9 @@ function v134WealthWorld(){
  const elapsed=year===nowYear()?nowMonth():year<nowYear()?12:0;
  const averageIncome=elapsed?Array.from({length:elapsed},(_,i)=>monthlyTotals(year,i+1).income).reduce((sum,amount)=>sum+amount,0)/elapsed:0;
  return `<div class="v134-patrimony v142-wealth-complete v187-patrimony" id="v134Patrimony">
-  <header class="v134-top v187-wealth-top v1133-compact"><div class="v137-wealth-top-tools"><label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></div></header>
+  ${window.matchMedia&&window.matchMedia('(max-width:790px)').matches
+   ?`<header class="vwm-head"><h1>Patrimonio</h1><label class="vwm-month">${icon('calendar')}<span>${MONTHS_FULL[Number(p.slice(5,7))-1]} de ${p.slice(0,4)}</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></header>`
+   :`<header class="v134-top v187-wealth-top v1133-compact"><div class="v137-wealth-top-tools"><label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></div></header>`}
   ${vPatrimonyPositionHero(s,previous,cut)}
  
   <section class="v187-charts" aria-label="Tres gráficos del patrimonio">
@@ -4949,6 +4951,7 @@ function v187OpenWealthDetail(kind){
 }
 
 // Selector de corte, exclusivo de Patrimonio; no modifica saldos ni movimientos.
+document.addEventListener('click', event=>{const i=event.target?.closest?.('.vwm-month input');if(i&&i.showPicker){try{i.showPicker()}catch(_){}}});
 document.addEventListener('change', event=>{
  const element=event.target?.closest?.('[data-v137-wealth-month]');
  if(!element)return;
