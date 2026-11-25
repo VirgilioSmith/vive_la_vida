@@ -72,3 +72,10 @@ dialog.vmo{overflow-x:hidden;background-color:var(--vmo-top,var(--vmo-b))}
 .vmo-art>img{top:0;height:100%}
 dialog.vmo{touch-action:pan-y;will-change:transform}
 .vmo-drag{width:70%}
+
+/* Franja superior blancuzca: el iPhone pinta un degradado claro del sistema sobre la barra de estado cuando la página es «clara».
+   Mientras Momentos está abierto todo el documento declara esquema oscuro (hora, Wi‑Fi y batería en blanco; sin velo claro)
+   y el fondo continuo cubre desde y=0. */
+html.vmo-open{color-scheme:dark!important;background:var(--vmo-top,#000)!important}
+html.vmo-open body{background:var(--vmo-top,#000)!important;color-scheme:dark}
+dialog.vmo{color-scheme:dark;background-image:linear-gradient(180deg,var(--vmo-b) 0,var(--vmo-c) 78%);background-color:var(--vmo-b)}
