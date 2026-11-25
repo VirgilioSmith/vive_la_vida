@@ -968,19 +968,10 @@ function v1125PayUpcoming(){
 document.addEventListener('click',e=>{if(!e.target.closest?.('[data-v1125-pay]'))return;e.preventDefault();e.stopPropagation();v1125PayUpcoming()},true);
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1121-pay]');if(!b)return;e.preventDefault();e.stopPropagation();v1121Pay(b.dataset.v1121Pay)},true);
 /* V1129 · Widget «Salario anticipado»: registra desde Inicio el cobro de un ingreso recurrente (nómina) antes de su fecha. */
-function v1129SalaryWidget(){
- let sources=[];
- try{v40Ensure();sources=(db.incomeSchedules||[]).filter(x=>x&&x.active!==false&&x.nextDue).sort((a,b)=>(a.kind==='formal'?0:1)-(b.kind==='formal'?0:1)||String(a.nextDue).localeCompare(String(b.nextDue))).slice(0,3)}catch(e){}
- const head='<div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">INGRESOS RECURRENTES</span><h2>Salario anticipado</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="income">Ver ingresos '+icon('arrow')+'</button></div>';
- const rows=sources.map(s=>{let net=0;try{net=num(v40Payroll(s,s.nextDue).net)}catch(e){}
-  const future=s.nextDue>today();const label=future?(s.kind==='formal'?'Registrar salario anticipado':'Registrar cobro anticipado'):(s.kind==='formal'?'Confirmar salario':'Confirmar cobro');
-  return `<div class="v1129-income"><div class="v1129-income-info"><strong>${sanitize(s.name||'Ingreso')}</strong><small>${future?'Próximo cobro':'Cobro pendiente'} · ${sanitize(prettyDate(s.nextDue))}${s.postingMode==='auto'?' · automático':''}</small></div><b>${money(net,s.currency||'DOP')}</b><button type="button" class="v1129-income-btn" data-v40-action="${future?'v940Advance':'confirmIncome'}" data-id="${sanitize(String(s.id))}">${label}</button></div>`}).join('');
- const hint=rows?'<p class="v1129-hint">Si te pagan antes de la fecha prevista, regístralo aquí como salario anticipado; el cobro automático no se duplica.</p>':'';
- const body=rows?rows+hint:'<p class="v273-widget-empty">Para registrar un salario anticipado primero crea tu salario recurrente; luego podrás cobrarlo antes de su fecha desde aquí.</p><button type="button" class="v1129-income-btn v1129-add" data-v1129-start="1">Registrar salario anticipado</button>';
- return `<section data-v105-widget="salaryAdvance" class="v105-mobile-extra v273-overview-widget v1129-salary" aria-label="Salario anticipado">${head}${body}</section>`;
-}
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1129-start]');if(!b)return;e.preventDefault();e.stopPropagation();
- try{v40IncomeForm();const f=document.getElementById('v40IncomeForm');const k=f?.elements?.kind;if(k){k.value='formal';k.dispatchEvent(new Event('change',{bubbles:true}))}toast('Crea tu salario recurrente; después podrás registrarlo anticipado.')}catch(err){console.warn('V1129',err)}},true);
+ /* Registrar cobro anticipado: abre el registro del cobro de la fuente recurrente (formal primero, luego la de fecha más cercana); la fuente se puede cambiar dentro del formulario. */
+ try{v40Ensure();const list=(db.incomeSchedules||[]).filter(x=>x&&x.active!==false&&x.nextDue).sort((a,c)=>(a.kind==='formal'?0:1)-(c.kind==='formal'?0:1)||String(a.nextDue).localeCompare(String(c.nextDue)));
+  if(list.length)v940IncomeCaptureForm(list[0].id,'advance');else v40IncomeForm()}catch(err){console.warn('V1129',err)}},true);
 function v273OverviewExtraWidgets(){
  // V319: mobile only keeps Recent activity + remaining user-selected widgets.
  // Subscriptions, cards-to-pay and credit-card summaries are still available
@@ -988,7 +979,7 @@ function v273OverviewExtraWidgets(){
  const recent=(recentTx()||[]).slice(0,4);
  const activity=recent.map(t=>`<button type="button" class="v273-widget-row v8-activity-button" data-act="v6WalletTransactionDetail" data-id="${sanitize(String(t.id))}" aria-label="Abrir movimiento de ${sanitize(transactionTitle(t))}"><span class="v273-widget-symbol">${icon(['income','bank_reward','card_reward'].includes(t.type)?'up':'wallet')}</span><span class="v273-widget-copy"><strong>${sanitize(transactionTitle(t))} ${v213ApplePayBadge(t)}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b><span aria-hidden="true" class="v8-row-arrow">${icon('arrow')}</span></button>`).join('');
  const head=(eyebrow,title,link,text)=>`<div class="vive-mobile-card-head"><div><span class="vive-mobile-eyebrow">${eyebrow}</span><h2>${title}</h2></div><button type="button" class="vive-mobile-view-all" data-act="navigate" data-id="${link}">${text} ${icon('arrow')}</button></div>`;
- return `${v985SimplificationWidget()}${v1129SalaryWidget()}<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver historial')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
+ return `${v985SimplificationWidget()}<section data-v105-widget="activity" class="v105-mobile-extra v273-overview-widget" aria-label="Actividad reciente">${head('TUS MOVIMIENTOS','Actividad reciente','register','Ver historial')}${activity||'<p class="v273-widget-empty">Aún no hay movimientos registrados.</p>'}</section>
 ${v294BankingWidgets()}${v309ExtraCharts()}`;
 }
 
@@ -4431,7 +4422,7 @@ function widgetPicture(id){
 
 
 
-const VIVE_CHART_KEYS=new Set(['futureCostKpi','futureCalendar','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureWaterfall','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
+const VIVE_CHART_KEYS=new Set(['futureCostKpi','futureCalendar','patrimonyTrend','budgetPulse','cashPressure','spendingFingerprint',...['futureFlow','futureBubbles'],'referenceBalance','referenceCredit','referenceCashflow','referenceComparison',"incomeVsExpense", "creditVisual", "fundsVisual", "subscriptionVisual", "incomeYoYTrend", "expenseYoYTrend", "netYoYTrend", "incomeYtdYoY", "expenseYtdYoY", "netYtdYoY", "netTrendChart", "liquidityTrendChart", "incomeMixChart", "expenseMixChart", "subscriptionsParetoChart", "creditByCardChart", "loanBalancesChart", "assetMixChart"]);
 /* V326 · contenido de los doce módulos que Personalización ya ofrece,
    sin crear métricas ficticias ni duplicar datos contables. */
 /* V560 · Conciliación de compromisos contra el libro real.
@@ -13049,29 +13040,27 @@ const V105_WIDGETS=[
  {id:'applePayInbox',title:'Apple Pay · Por clasificar',hint:'Compras Wallet pendientes: asigna categoría y subcategoría desde Inicio'},
  {id:'capacity',title:'Capacidad de endeudamiento',hint:'Ingresos, cuotas y disponible'},
  {id:'commitments',title:'Compromisos',hint:'Tarjetas, préstamos y obligaciones'},
- {id:'salaryAdvance',title:'Salario anticipado',hint:'Registra tu salario o cobro recurrente antes de su fecha'},
- {id:'premiumCommitments',title:'Compromisos del mes',hint:'Programado, pagado y pendiente, con el total por tarjetas, préstamos y suscripciones'},
+  {id:'premiumCommitments',title:'Compromisos del mes',hint:'Programado, pagado y pendiente, con el total por tarjetas, préstamos y suscripciones'},
  {id:'net',title:'Neto del mes',hint:'Ingresos menos egresos'},
  {id:'patrimonyTrend',title:'Tendencia de patrimonio',hint:'Evolución real de activos menos obligaciones por mes'},
  {id:'budgetPulse',title:'Cumplimiento de presupuesto · Pulso',hint:'Utilización, ritmo mensual, disponible y categorías'},
  {id:'cashPressure',title:'Radar de vencimientos · 30 días',hint:'Distribución de compromisos futuros en tramos de 7, 15 y 30 días'},
  {id:'spendingFingerprint',title:'Huella de gastos · 28 días',hint:'Calendario visual de importes registrados, sin contar pagos de tarjetas dos veces'},
  {id:'futureCalendar',title:'Calendario de presión financiera',hint:'Mapa de vencimientos diarios en los próximos 30 días'},
- {id:'futureWaterfall',title:'Dinero comprometido · 30 días',hint:'Cascada de saldos, ingresos programados y pagos'},
-
+ 
 ];
 /* V316: cuatro gráficos financieros esenciales, compatibles con preferencias previas.
    Otros widgets funcionales siguen disponibles desde el editor. */
 const V316_ESSENTIAL_GRAPHS=['patrimonyTrend','budgetPulse'];
 const V317_NEW_GRAPHS=['cashPressure','spendingFingerprint'];
-const V318_NEW_GRAPHS=['futureCalendar','futureFlow','futureWaterfall','futureBubbles'];
+const V318_NEW_GRAPHS=['futureCalendar','futureFlow','futureBubbles'];
 const V317_FEATURE_GRAPHS=[...V316_ESSENTIAL_GRAPHS,...V317_NEW_GRAPHS,...V318_NEW_GRAPHS];
 /* V332 · Una sola organización para Personalización móvil y Mis indicadores web.
    Ambos consumen V105_WIDGETS y el orden persistido de v105Config(). */
 const V332_PERSONALIZATION_AREAS=[
  {key:'position',title:'01 · TU POSICIÓN FINANCIERA',label:'Posición financiera',ids:['applePayInbox','simplification','premiumCredit','patrimonyTrend','capacity','net','accounts','banks','certificates']},
  {key:'budget',title:'02 · INGRESOS Y PRESUPUESTO',label:'Ingresos y presupuesto',ids:['budgetPulse','spendingFingerprint','chart','activity']},
- {key:'future',title:'03 · COMPROMISOS Y PROYECCIONES',label:'Compromisos y proyecciones',ids:['premiumCommitments','futureCalendar','cashPressure','futureFlow','futureWaterfall','futureBubbles','commitments','payments','loans']},
+ {key:'future',title:'03 · COMPROMISOS Y PROYECCIONES',label:'Compromisos y proyecciones',ids:['premiumCommitments','futureCalendar','cashPressure','futureFlow','futureBubbles','commitments','payments','loans']},
  {key:'other',title:'04 · RELACIONES Y OTROS MÓDULOS',label:'Relaciones',ids:['people']}
 ];
 function v332PersonalizationGroups(cfg){
@@ -13088,7 +13077,7 @@ function v332PersonalizationGroups(cfg){
 
 
 const V1123_TOP=['applePayInbox','patrimonyTrend','capacity','commitments'];
-const V1123_ORDER=[...V1123_TOP,'salaryAdvance','budgetPulse','cashPressure','futureCalendar','futureWaterfall','spendingFingerprint','net','futureFlow','futureBubbles'];
+const V1123_ORDER=[...V1123_TOP,'budgetPulse','cashPressure','futureCalendar','spendingFingerprint','net','futureFlow','futureBubbles'];
 function v316OrderDefaults(ids){const pri=V1123_ORDER.filter(id=>ids.includes(id));return [...pri,...ids.filter(id=>!pri.includes(id))]}
 function v316VisibleDefaults(ids){
  const hidden=new Set(['simplification','premiumCredit','premiumCommitments','activity','subscriptions','cardsDue','budget','chart','banks','accounts','cards','loans','certificates']);
@@ -13097,9 +13086,9 @@ function v316VisibleDefaults(ids){
 function v105Config(){
  const cfg=v105ConfigBase();
  // V1129: el widget Salario anticipado se activa una sola vez.
- if(db.settings&&!db.settings.v1129Salary){db.settings.v1129Salary=true;if(!cfg.visible.includes('salaryAdvance'))cfg.visible.push('salaryAdvance');if(!cfg.order.includes('salaryAdvance'))cfg.order.splice(Math.min(4,cfg.order.length),0,'salaryAdvance');db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};}
+ if(db.settings&&!db.settings.v1129Salary){db.settings.v1129Salary=true;db.settings.v105OverviewWidgets={order:cfg.order.slice(),visible:cfg.visible.slice()};}
  // «Utilización de tarjetas» se eliminó del Inicio: se retira de las configuraciones guardadas.
- cfg.visible=cfg.visible.filter(id=>id!=='creditUtil');cfg.order=cfg.order.filter(id=>id!=='creditUtil');
+ const RETIRED=['creditUtil','futureWaterfall','salaryAdvance'];cfg.visible=cfg.visible.filter(id=>!RETIRED.includes(id));cfg.order=cfg.order.filter(id=>!RETIRED.includes(id));
  // V1128: «Compromisos del mes» se había quitado por error; se vuelve a mostrar una sola vez.
  if(db.settings&&!db.settings.v1128Commit){
   db.settings.v1128Commit=true;
@@ -15734,7 +15723,7 @@ function v752PremiumWidgetArt(id){
    drag-and-drop y la escritura de las preferencias permanecen originales. */
 const V755_EXTRA_PREMIUM_IDS=new Set([
  'people','activity','banks','accounts','loans','certificates',
- 'spendingFingerprint','futureFlow','futureWaterfall','futureBubbles'
+ 'spendingFingerprint','futureFlow','futureBubbles'
 ]);
 function v755ExtraPremiumVisual(id){
  const g='v755-'+id;
@@ -16302,7 +16291,6 @@ const V318_GRAPH_META=[
  ['futureCostKpi','Costo del mañana','Compromisos del próximo mes, presión y carga futura','decisions'],
  ['futureCalendar','Calendario de presión financiera','Mapa de vencimientos diarios en los próximos 30 días','decisions'],
  ['futureFlow','El río de tu dinero','Origen, obligaciones y saldo previsto en 30 días','activity'],
- ['futureWaterfall','Dinero comprometido · 30 días','Cascada de liquidez, ingresos y compromisos','decisions'],
  ['futureBubbles','Matriz de importes y urgencia','Relación entre importe y días hasta vencer','decisions'],
 ];
 const V318_GRAPH_IDS=new Set(V318_GRAPH_META.map(x=>x[0]));
