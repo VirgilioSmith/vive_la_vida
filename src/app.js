@@ -3956,71 +3956,9 @@ function expenseTransactionItems(t){
   }
   return [];
 }
-function expensesAnalysis(){
-  const picked=ui.month||today().slice(0,7),y=Number(picked.slice(0,4)),m=Number(picked.slice(5,7)),yearMode=ui.expenseRange==='year';
-  const thisYear=nowYear(),thisMonth=nowMonth();
-  const endMonth=yearMode?(y<thisYear?12:y===thisYear?thisMonth:0):m;
-  const chosenMonths=yearMode?Array.from({length:endMonth},(_,i)=>`${y}-${String(i+1).padStart(2,'0')}`):[picked];
-  const stats=chosenMonths.map(q=>monthlyTotals(Number(q.slice(0,4)),Number(q.slice(5,7))));
-  const priorStats=chosenMonths.map(q=>monthlyTotals(Number(q.slice(0,4))-1,Number(q.slice(5,7))));
-  const total=rnd(stats.reduce((a,v)=>a+v.expense,0)),priorTotal=rnd(priorStats.reduce((a,v)=>a+v.expense,0));
-  const lastM=plusMonths(picked+'-01',-1).slice(0,7),prevM=monthlyTotals(Number(lastM.slice(0,4)),Number(lastM.slice(5,7))).expense;
-  const group={},subgroup={};
-  stats.forEach(v=>{Object.entries(v.expenseBy).forEach(([k,n])=>group[k]=(group[k]||0)+n);Object.entries(v.expenseSubBy).forEach(([k,n])=>subgroup[k]=(subgroup[k]||0)+n)});
-  const ranked=Object.entries(group).filter(([,v])=>v>.005).sort((a,b)=>b[1]-a[1]);
-  const positiveTotal=ranked.reduce((a,[,v])=>a+v,0);let cumulative=0;
-  const entries=ranked.map(([cat,val],i)=>{cumulative+=val;return {cat,val,share:positiveTotal?val/positiveTotal*100:0,cumulative:positiveTotal?cumulative/positiveTotal*100:0,rank:i+1}});
-  const thresholdCount=entries.findIndex(x=>x.cumulative>=79.999)+1;
-  const top3=entries.slice(0,3).reduce((a,x)=>a+x.val,0),top3Share=positiveTotal?top3/positiveTotal*100:0;
-  const listItems=db.transactions.filter(t=>chosenMonths.some(month=>t.date?.startsWith(month))).flatMap(expenseTransactionItems);
-  const paymentMix={};listItems.forEach(item=>paymentMix[item.method]=(paymentMix[item.method]||0)+item.amount);
-  const merchants={};listItems.filter(x=>['expense','card_charge','card_refund'].includes(x.t.type)).forEach(x=>{let k=String(x.detail||'Sin concepto').trim();merchants[k]=(merchants[k]||0)+x.amount});
-  const merchantRank=Object.entries(merchants).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const palette=['#437ecb','#14a78c','#ed6178','#9a86e0','#da798a','#7d9fc0','#78b5a2','#d06678'];
-  let progress=0,segments=entries.map((e,i)=>{let start=progress;progress+=e.share;return `${palette[i%palette.length]} ${start.toFixed(2)}% ${progress.toFixed(2)}%`}).join(',');
-  
-  
-  let bTotal=0;
-  chosenMonths.forEach(month=>bTotal+=budgetPlan(month).total);
-  const usedBudget=bTotal>0?total/bTotal*100:null;
-  const rowList=entries.length?entries.map((e,i)=>`<details class="expenses-cat"><summary><span class="expenses-rank">${String(i+1).padStart(2,'0')}</span><span class="expenses-cat-name">${sanitize(e.cat)}</span><strong>${money(e.val)}</strong><small>${e.share.toFixed(1)}%</small></summary><div class="expenses-cat-sub">${Object.entries(subgroup).filter(([k,v])=>k.startsWith(e.cat+'||')&&v>.005).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div><span>${sanitize(k.slice(e.cat.length+2))}</span><b>${money(v)}</b></div>`).join('')||'<div><span>Sin subcategoría registrada</span></div>'}</div></details>`).join(''):'<div class="empty">Todavía no hay egresos confirmados para este período.</div>';
-  const maxCat=Math.max(positiveTotal,1);
-  const pareto=entries.length?`<div class="expenses-pareto-legend"><span>Categoría</span><span>Participación y acumulado</span><span>Importe</span></div>${entries.slice(0,9).map((e,i)=>`<div class="expenses-pareto-row" tabindex="0" data-chart-tip="${sanitize(e.cat)}|Gasto: ${money(e.val)}|Participación: ${e.share.toFixed(1)}%|Acumulado: ${e.cumulative.toFixed(1)}%"><div class="expenses-pareto-cat"><b>${sanitize(e.cat)}</b><small>${e.share.toFixed(1)}% del gasto</small></div><div class="expenses-pareto-tracks"><div class="expenses-pareto-track"><span style="width:${Math.max(1,e.share)}%;background:${palette[i%palette.length]}"></span></div><div class="expenses-pareto-cum"><span style="width:${e.cumulative.toFixed(2)}%"></span><small>${e.cumulative.toFixed(0)}%</small></div></div><strong>${money(e.val)}</strong></div>`).join('')}<div class="expenses-pareto-summary">${thresholdCount?`<b>${thresholdCount} ${thresholdCount===1?'categoría concentra':'categorías concentran'} aproximadamente el 80% de los gastos</b>`:'Sin distribución registrada'}<span>${entries.length} categorías con gasto</span></div>`:'<div class="empty">Registra gastos para ver el Pareto.</div>';
-  const trend=Array.from({length:12},(_,i)=>({month:MON[i],current:monthlyTotals(y,i+1).expense,previous:monthlyTotals(y-1,i+1).expense,visible:y<thisYear||y===thisYear&&i<thisMonth-0,prevVisible:y-1<=thisYear}));
-  const ceiling=Math.max(1,...trend.flatMap(d=>[d.visible?Math.max(0,d.current):0,Math.max(0,d.previous)]))*1.12;
-  const axis=(v)=>shorten(v);
-  const chartWidth=860,chartH=246,left=59,right=15,top=15,bottom=204,inner=chartWidth-left-right,gridHeight=bottom-top;
-  const ticks=[0,.25,.5,.75,1].map(v=>`<line x1="${left}" y1="${bottom-v*gridHeight}" x2="${chartWidth-right}" y2="${bottom-v*gridHeight}" stroke="currentColor" opacity=".13" stroke-dasharray="4 5"/><text x="${left-9}" y="${bottom-v*gridHeight+4}" text-anchor="end" class="expenses-axis">${axis(v*ceiling)}</text>`).join('');
-  const cols=trend.map((d,i)=>{let step=inner/12,center=left+(i+.5)*step,w=Math.min(17,step*.25),p1=Math.max(0,d.previous)/ceiling*gridHeight,p2=Math.max(0,d.current)/ceiling*gridHeight;
-    return `<g><rect x="${center-w-2}" y="${bottom-p1}" width="${w}" height="${p1}" rx="4" fill="var(--exp-prev)" data-chart-tip="${sanitize(d.month)} ${y-1}|Egresos: ${money(d.previous)}" tabindex="0"/><rect x="${center+2}" y="${bottom-p2}" width="${w}" height="${d.visible?p2:0}" rx="4" fill="var(--exp-current)" data-chart-tip="${sanitize(d.month)} ${y}|Egresos: ${money(d.visible?d.current:0)}|${d.visible?'Registrado':'Sin cierre'}" tabindex="0"/><text x="${center}" y="${bottom+22}" text-anchor="middle" class="expenses-axis">${d.month}</text></g>`;
-  }).join('');
-  const title=yearMode?`Enero a ${MON[Math.max(endMonth-1,0)]} de ${y}`:`${picked}`;
-  const allOpIds=[...new Set(listItems.map(x=>x.t.id))];
-  const expenseTxs=allOpIds.map(id=>db.transactions.find(t=>t.id===id)).filter(Boolean).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,40);
-  const paymentEntries=Object.entries(paymentMix).filter(([,v])=>v>.005).sort((a,b)=>b[1]-a[1]);
-    return `<div class="expenses-world v287-analysis v287-expenses-restored" aria-label="Análisis completo de egresos">
-  <div class="v287-analysis-controls"><strong>ANÁLISIS DE EGRESOS · ${sanitize(title)}</strong><div class="expenses-tools"><label>Período <input id="expenseMonthPicker" type="month" value="${picked}" aria-label="Seleccionar mes de análisis"/></label></div></div>  <div class="expenses-twocol section"><section class="panel expenses-distribution"><div class="panel-head"><div><h3>Composición del gasto</h3><p class="subtle">Peso de cada categoría · ${sanitize(title)}</p></div></div>${entries.length?`<div class="expenses-donut-layout"><div class="expenses-donut" style="background:conic-gradient(${segments})"><div><small>GASTO NETO</small><strong title="${money(total)}">${shorten(total)}</strong></div></div><div class="expenses-legend">${entries.slice(0,7).map((e,i)=>`<div tabindex="0" data-chart-tip="${sanitize(e.cat)}|Gasto: ${money(e.val)}|Peso: ${e.share.toFixed(1)}%"><span><i style="background:${palette[i%palette.length]}"></i>${sanitize(e.cat)}</span><b>${e.share.toFixed(1)}%</b></div>`).join('')}</div></div>`:'<div class="empty">Aquí aparecerá la composición al registrar gastos.</div>'}</section><section class="panel expenses-pareto"><div class="panel-head"><div><h3>Pareto · ¿qué se lleva el 80 %?</h3><p class="subtle">Ordenado del gasto más alto al más bajo</p></div><span class="expenses-eighty">80%</span></div>${pareto}</section></div>
-  <section class="panel section expenses-trend"><div class="panel-head"><div><h3>Evolución de egresos · ${y} vs. ${y-1}</h3><p class="subtle">Comparación del mismo mes entre dos años, en RD$</p></div><div class="expenses-series-legend"><span><i class="current"></i>${y}</span><span><i class="previous"></i>${y-1}</span></div></div><div class="expenses-svg-container"><svg viewBox="0 0 ${chartWidth} ${chartH}" role="img" aria-label="Gráfico de barras comparativo de egresos mensuales de ${y} y ${y-1}">${ticks}${cols}</svg></div><p class="footnote">Solo los meses registrados del año actual se presentan como resultado; el año anterior sirve como referencia.</p></section>
-  <div class="expenses-twocol section"><section class="panel"><div class="panel-head"><div><h3>Desglose por categoría</h3><p class="subtle">Pulsa una categoría para consultar las subcategorías</p></div></div><div class="expenses-categories">${rowList}</div></section><section class="panel"><div class="panel-head"><div><h3>¿Dónde y cómo gastas?</h3><p class="subtle">Conceptos e instrumentos de pago registrados</p></div></div><div class="expenses-source-title">Por instrumento o tipo de costo</div>${paymentEntries.map(([name,val])=>`<div class="expenses-method"><span>${sanitize(name)}</span><b>${money(val)}</b></div>`).join('')||'<div class="empty">Sin movimientos para clasificar.</div>'}<div class="expenses-source-title">Principales comercios o conceptos</div>${merchantRank.map(([name,val],i)=>`<div class="expenses-method"><span>${i+1}. ${sanitize(name)}</span><b>${money(val)}</b></div>`).join('')||'<div class="empty">No hay compras con concepto registrado.</div>'}</section></div>
-  <p class="footnote expenses-policy-note">Los pagos de tarjetas y el capital de los préstamos no vuelven a sumarse como gastos. Los reembolsos reducen el gasto de su categoría; los intereses, seguros y comisiones sí se contabilizan. Las conversiones a RD$ usan la tasa configurada.</p></div>`;
-}
 
-function incomeAnalysis(){
- const month=ui.month,y=Number(month.slice(0,4)),yearMonths=Array.from({length:12},(_,i)=>`${y}-${String(i+1).padStart(2,'0')}`);
- const classify=(t)=>{if(t.type==='card_reward'||t.type==='bank_reward'||t.category==='Beneficios bancarios')return 'Beneficios y cashback';let cat=t.category||'Otros ingresos';if(/salario|nómina|sueldo/i.test(cat))return 'Trabajo y nómina';if(/joseo|adicional/i.test(cat))return 'Joseo e ingresos adicionales';if(/negocio|venta|emprend/i.test(cat))return 'Negocios y emprendimientos';if(/servicio|profesional/i.test(cat))return 'Servicios profesionales';if(/inversion|rendimiento|intereses|dividendo|pasivo/i.test(cat))return 'Rendimientos e inversiones';return 'Otros ingresos'};
- const recognized=(m)=>db.transactions.filter(t=>t.date.startsWith(m)&&['income','card_reward','bank_reward','personal_settlement'].includes(t.type)).map(t=>({t,amount:t.type==='personal_settlement'?(personalLoan(t.personalLoanId)?.direction==='lent'?num(t.interest):0):num(t.amount)})).filter(x=>x.amount>0);
- const txs=recognized(month),by={},byCategory={},bySub={};for(let {t,amount} of txs){let v=fx(amount,t.currency),group=t.type==='personal_settlement'?'Rendimientos e inversiones':classify(t);by[group]=(by[group]||0)+v;let cat=t.type==='personal_settlement'?'Intereses personales':t.category||'Otros ingresos';byCategory[cat]=(byCategory[cat]||0)+v;let sub=cat+' / '+(t.subcategory||'Sin subcategoría');bySub[sub]=(bySub[sub]||0)+v}
- const groups=Object.entries(by).sort((a,b)=>b[1]-a[1]);const total=groups.reduce((a,[,v])=>a+v,0);let colors=['#668bea','#28a99a','#ad86cf','#d56376','#d17d8c','#81a0bd','#7388c9'];let cum=0;let slices=groups.map(([k,v],i)=>{let a=cum;cum+=v/total*100;return `${colors[i%colors.length]} ${a}% ${cum}%`}).join(',');
- 
- const borrowed=db.transactions.filter(t=>t.date.startsWith(month)&&t.type==='personal_issue'&&personalLoan(t.personalLoanId)?.direction==='borrowed').reduce((a,t)=>a+txDop(t),0);
- const interestPersonal=db.transactions.filter(t=>t.date.startsWith(month)&&t.type==='personal_settlement'&&personalLoan(t.personalLoanId)?.direction==='lent').reduce((a,t)=>a+fx(num(t.interest),t.currency),0);
- let trends=yearMonths.map(m=>recognized(m));let byMonth=trends.map(arr=>arr.reduce((a,{t,amount})=>a+fx(amount,t.currency),0));let max=Math.max(...byMonth,1);
- return `<div class="v287-analysis v287-income-restored" aria-label="Análisis completo de ingresos">
- <div class="v287-analysis-controls"><strong>ANÁLISIS DE INGRESOS · ${sanitize(month)}</strong><label>Mes <input type="month" id="monthFilter" value="${month}" aria-label="Mes de análisis de ingresos"></label></div> <div class="grid columns equal section"><section class="panel income-distribution"><div class="panel-head"><div><h3>Composición por origen</h3><p class="subtle">Participación del ingreso reconocido · ${sanitize(month)}</p></div></div>${total>0?`<div class="income-donut-layout"><div class="income-donut" style="background:conic-gradient(${slices})"><div><small>INGRESOS</small><strong>${money(total)}</strong></div></div><div class="income-legend">${groups.map(([name,val],i)=>`<div><span><i style="background:${colors[i%colors.length]}"></i>${sanitize(name)}</span><strong>${(val/total*100).toFixed(1)}%</strong></div>`).join('')}</div></div>`:'<div class="empty">Registra ingresos para conocer su distribución.</div>'}</section><section class="panel income-details"><div class="panel-head"><div><h3>Ranking de fuentes</h3><p class="subtle">Más dinero aportado primero</p></div></div>${groups.map(([name,val],i)=>`<div class="income-ranked" tabindex="0" data-chart-tip="${sanitize(name)}|Ingreso: ${money(val)}|Participación: ${(total?val/total*100:0).toFixed(1)}%"><div><b>${i+1}. ${sanitize(name)}</b><strong>${money(val)}</strong></div><div class="income-bar"><span style="width:${total?val/total*100:0}%;background:${colors[i%colors.length]}"></span></div><small>${total?(val/total*100).toFixed(1):'0'}% del total</small></div>`).join('')||'<div class="empty">No hay ingresos en este mes.</div>'}</section></div>
- <section class="panel section"><div class="panel-head"><div><h3>Evolución de ingresos · ${y}</h3><p class="subtle">Ingresos reconocidos, mes a mes</p></div><button class="btn sm soft" data-act="newTransaction" data-type="income">+ Registrar ingreso</button></div><div class="income-monthly-bars">${yearMonths.map((m,i)=>`<div class="income-month-bar"><div class="income-column"><span style="height:${(byMonth[i]/max*100).toFixed(2)}%" data-chart-tip="${MON[i]} ${y}|Ingresos: ${money(byMonth[i])}" tabindex="0"></span></div><small>${sanitize(MON[i])}</small></div>`).join('')}</div></section>
- <div class="grid columns equal section"><section class="panel"><div class="panel-head"><h3>Categorías de ingreso</h3><span class="pill">${groups.length} fuentes</span></div>${Object.entries(byCategory).sort((a,b)=>b[1]-a[1]).map(([cat,v])=>{const ss=Object.entries(bySub).filter(([name])=>name.startsWith(cat+' / '));return `<details class="income-cat-details"><summary><span>${sanitize(cat)} <small>${ss.length?ss.length+' subcategoría(s)':''}</small></span><strong>${money(v)}</strong></summary><div class="income-cat-children">${ss.length?ss.map(([name,val])=>`<div><span>${sanitize(name.slice(cat.length+3))}</span><b>${money(val)}</b></div>`).join(''):'<p class="footnote">Sin subcategorías asignadas.</p>'}</div></details>`}).join('')||'<div class="empty">Sin categorías activas</div>'}<p class="footnote">Intereses cobrados a personas: ${money(interestPersonal)}</p></section><section class="panel"><div class="panel-head"><h3>Entradas que NO son ingresos</h3><span class="pill orange">Control contable</span></div><div class="mini-row"><span>Préstamos recibidos de personas, registrados este mes</span><strong>${money(borrowed)}</strong></div><div class="mini-row"><span>Préstamos bancarios</span><strong>Financiación, no ingreso</strong></div><p class="footnote">El dinero de un préstamo aumenta el efectivo y al mismo tiempo genera una deuda. No aumenta tu riqueza ni tu ingreso ganado. Tampoco se suman transferencias internas ni capital prestado que te devuelven.</p><button class="btn sm ghost" data-act="navigate" data-id="personal">Ver préstamos entre personas</button></section></div>
- <section class="panel section"><div class="panel-head"><h3>Actividad de ingresos</h3><button class="btn sm ghost" data-act="navigate" data-id="transactions">Libro completo</button></div>${smallTxTable(txs.map(x=>x.t).slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,30))}</section>`;
-}
+
+
 
 
 /* ─────────────── vive el hoy · CENTRO PERSONALIZABLE DE INDICADORES ─────────────── */
@@ -5019,7 +4957,7 @@ document.addEventListener('change', event=>{
  ui.month=p;ui.year=Number(p.slice(0,4));render();
 });
 
-const pages={score:()=>(window.ViveScoreHost?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:incomeAnalysis,expenses:expensesAnalysis,banks,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
+const pages={score:()=>(window.ViveScoreHost?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:()=>'',expenses:()=>'',banks,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -10209,9 +10147,7 @@ v40IncomeSection=function(){return v45PriorIncomeSection()+v45PayrollAnalysis();
 const v45PrevIncomeRow=v40IncomeRow;
 v40IncomeRow=function(s){return v45PrevIncomeRow(s).replace(/<\/div>\s*$/,`<button type="button" class="v45-open-report" data-v45-open-payroll="${sanitize(s.id)}">Ver análisis y acumulado →</button></div>`);};
 document.addEventListener('click',event=>{const el=event.target.closest?.('[data-v45-open-payroll]');if(!el)return;event.preventDefault();event.stopImmediatePropagation();ui.v45PayrollId=el.dataset.v45OpenPayroll;render();document.getElementById('v45-payroll-analysis')?.scrollIntoView({behavior:'smooth',block:'start'});},true);
-function v45PayrollExpensePanel(){const m=ui.month||today().slice(0,7),rows=v45PayrollHistoricalRows().filter(x=>x.date.startsWith(m)),groups={};for(const x of rows)groups[x.category]=(groups[x.category]||0)+fx(x.amount,x.currency);const tot=Object.values(groups).reduce((a,b)=>a+b,0);return `<section class="v45-payroll-expense"><div class="v45-block-head"><div><span class="v45-kicker">NÓMINA · CLASIFICACIÓN</span><h3>Deducciones en categorías de gastos</h3><p>${m} · Importes retenidos del salario bruto antes de su depósito.</p></div><strong>${money(tot)}</strong></div><div class="v45-expense-chips">${Object.entries(groups).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div><span>${sanitize(k)}</span><b>${money(v)}</b></div>`).join('')||'<p>Sin deducciones de nómina registradas este mes.</p>'}</div><p>No se incluyen otra vez en los egresos bancarios: el banco recibió únicamente el neto y no debe descontarse dos veces.</p></section>`;}
-const v45PrevExpenses=pages.expenses;
-pages.expenses=function(){return v45PrevExpenses()+v45PayrollExpensePanel();};
+
 
 /* ===== Egresos PC · Premium Liquid Glass ===== 
    Lógica central única: gasto reconocido = monthlyTotals().expenseBy + deducciones de nómina (retenciones del bruto, congeladas en
@@ -10308,17 +10244,15 @@ function vExpensesPc(){
  const order=['Tarjetas de crédito','Cuentas y efectivo','Costos de tarjetas','Costos de préstamos','Costos del pago de tarjeta','Costos de la operación'];
  const icons={'Tarjetas de crédito':'card','Cuentas y efectivo':'wallet','Costos de tarjetas':'card','Costos de préstamos':'landmark','Costos del pago de tarjeta':'receipt','Costos de la operación':'settings'};
  const inst=order.map(k=>`<button type="button" class="vexp-inst" data-act="navigate" data-id="register"><span class="vexp-iico">${icon(icons[k])}</span><span>${k}</span><b>${money(M.inst[k]||0)}</b></button>`).join('');
- return `<div class="vexp" aria-label="Egresos">
+ return `<div class="vexp" aria-label="Egresos">${vFlowMobileTitle('Egresos','Todo lo que gastas, organizado y bajo control.')}
   ${vFlowTop('expenses')}
   <section class="vexp-kpis" aria-label="Indicadores de egresos">${kpis}</section>
   <div class="vexp-grid"><section class="vexp-panel vexp-detail"><header><span class="vexp-ico">${icon('layers')}</span><div><h2>Detalle de categoría</h2><p>Desglose de tus gastos en el período (${money(total)})</p></div>
     <div class="vexp-kind" role="group" aria-label="Tipo de gasto">${[['all','Todas'],['fixed','Fijas'],['var','Variables']].map(([k,l])=>`<button type="button" data-act="expKind" data-id="${k}" aria-pressed="${kind===k}" class="${kind===k?'is-on':''}">${l}</button>`).join('')}</div></header>
-    <div class="vexp-cathead"><span>#</span><span></span><span>Categoría / Subcategoría</span><span></span><span>Monto</span><span>Part.</span><span></span></div>${cats}</section>
+    ${isMobileViewport()?'':`<div class="vexp-cathead"><span>#</span><span></span><span>Categoría / Subcategoría</span><span></span><span>Monto</span><span>Part.</span><span></span></div>`}${cats}</section>
    <div class="vexp-side"><section class="vexp-panel vexp-evo"><header><span class="vexp-ico">${icon('analytics')}</span><div><h2>Evolución de egresos</h2><p>${S.mode==='all'?'Total por año':S.mode==='year'?'Tendencia mensual del año':'Tendencia mensual de tus gastos'}</p></div>${evoVar}</header>${vExpLine(M.series)}</section>
     <section class="vexp-panel vexp-where"><header><span class="vexp-ico">${icon('wallet')}</span><div><h2>¿Dónde y cómo gastas?</h2><p>Conceptos e instrumentos de pago registrados</p></div></header><h3>Por instrumento o tipo de costo</h3>${inst}</section></div></div></div>`;
 }
-const vExpPrevPage=pages.expenses;
-pages.expenses=function(){return isMobileViewport()?vExpPrevPage():vExpensesPc()};
 
 /* ===== Flujo (Movimientos → Flujo → Flujo | Ingresos | Egresos) · motor compartido ===== */
 function vFlowIncomeMonth(m){const t=monthlyTotals(Number(m.slice(0,4)),Number(m.slice(5,7)));const d=vExpMonth(m);return rnd(num(t.income)+d.pay)}
@@ -10331,6 +10265,7 @@ function vFlowPill(){
  return `<div class="vexp-seg" role="group" aria-label="Alcance temporal">${[['month','Mes'],['year','Año'],['all','Histórico']].map(([k,l])=>`<button type="button" data-act="expenseRange" data-id="${k}" aria-pressed="${mode===k}" class="${mode===k?'is-on':''}">${l}</button>`).join('')}</div>`;
 }
 function vFlowScopeLabel(S){return S.mode==='all'?'Desde '+vExpFmtMonth(S.firstTx):S.mode==='year'?'Enero – '+(S.months.length?MON[S.months.length-1]:'—')+' '+S.y:vExpFmtMonth(S.picked)}
+function vFlowMobileTitle(t,sub){return isMobileViewport()?`<header class="vflow-title"><h1>${t}</h1><p>${sub}</p></header>`:''}
 function vFlowTop(active){const S=vExpScope();return `<div class="vflow-head">${vFlowTabs(active)}<div class="vflow-period">${vFlowPill()}<span class="vexp-scope">${vFlowScopeLabel(S)}</span></div></div>`}
 function vFlowSeries(){
  const S=vExpScope(),thisY=nowYear(),thisM=nowMonth();
@@ -10369,15 +10304,14 @@ function vFlowPage(){
  const noun=S.mode==='month'?'del mes':S.mode==='year'?'del año':'histórico';
  const pp=rate!==null&&pRate!==null?rnd(rate-pRate):null;
  const arc=rate===null?0:Math.max(0,Math.min(100,rate));
- return `<div class="vexp vflow" aria-label="Flujo">${vFlowTop('flow')}
+ return `<div class="vexp vflow" aria-label="Flujo">${vFlowMobileTitle('Flujo','Así se mueve tu dinero.')}${vFlowTop('flow')}
   <section class="vflow-kpis">${kp}</section>
   <div class="vflow-grid"><section class="vexp-panel vflow-evo"><header><span class="vexp-ico">${icon('chart')}</span><div><h2>Evolución ${S.mode==='all'?'anual':'mensual'}</h2><p>Ingresos, egresos y resultado • ${S.mode==='all'?'Histórico':S.y}</p></div><div class="vexp-kind" role="group" aria-label="Tipo de gráfico">${[['amounts','Montos'],['trend','Tendencia']].map(([k,l])=>`<button type="button" data-act="flowChart" data-id="${k}" aria-pressed="${mode===k}" class="${mode===k?'is-on':''}">${l}</button>`).join('')}</div></header>${vFlowChart(series,mode)}</section>
    <section class="vexp-panel vflow-rate"><div class="vflow-donut" role="img" aria-label="Tasa de ahorro ${rate===null?'sin datos':rate.toFixed(1)+'%'}"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="vflow-track"/><circle cx="60" cy="60" r="50" class="vflow-arc" pathLength="100" stroke-dasharray="${arc.toFixed(1)} 100" transform="rotate(-90 60 60)"/></svg><div><small>Tasa de ahorro</small><strong>${rate===null?'—':rate.toFixed(1)+'%'}</strong></div></div>
     <div class="vflow-rows"><div><span>${icon('analytics')}Ahorro ${noun}</span><b>${money(net)}</b></div>${S.mode==='all'?'':`<div><span>${icon('calendar')}${S.mode==='month'?'Mes anterior':'Mismo tramo '+(S.y-1)}</span><b>${pRate===null?'—':pRate.toFixed(1)+'%'}</b></div>`}${pp===null?'':`<div class="vflow-pp ${pp>=0?'good':'bad'}"><span>${pp>=0?'+':''}${pp.toFixed(1)} pp</span><small>${pl}</small></div>`}</div></section></div>
   <p class="vflow-note"><b>Flujo efectivo:</b> ${money(net)} (neto depositado − gasto en efectivo). <b>Resultado económico:</b> ${money(net+prevT+capT)} al sumar lo retenido que no es gasto (AFP ${money(prevT)} y capital de préstamos de nómina ${money(capT)}), que va a ahorro previsional y reducción de deuda. Los ingresos incluyen las retenciones tratadas como gasto (ISR, ARS/SFS, intereses y otras) para no restarlas dos veces; no se cuentan transferencias propias, pagos de tarjeta ni capital de préstamos.</p></div>`;
 }
-const vFlowPrevExpenses=pages.expenses;
-pages.expenses=function(){return isMobileViewport()?vFlowPrevExpenses():vExpensesPc()};
+pages.expenses=vExpensesPc;
 pages.flow=vFlowPage;
 
 /* ===== Ingresos PC · Premium Liquid Glass (Flujo → Ingresos) ===== 
@@ -10491,8 +10425,7 @@ function vIncomePc(){
   ${vIncSummary(S,d,exp)}</div>`;
 }
 window.addEventListener('popstate',()=>{const want=(history.state&&history.state.incDetail)||null;if(ui.page==='income'&&(ui.incDetail||null)!==want){ui.incDetail=want;render()}});
-const vIncPrevPage=pages.income;
-pages.income=function(){return isMobileViewport()?vIncPrevPage():vIncomePc()};
+pages.income=vIncomePc;
 
 
 
@@ -11987,7 +11920,7 @@ function deletePersonalLoan(id){
  const metric=(label,value,note,items)=>({label,value,note,items});
  const fmtMonth=m=>{try{const [y,mo]=m.split('-').map(Number);return new Date(y,mo-1,1).toLocaleDateString('es-DO',{month:'long',year:'numeric'})}catch(e){return m}};
  const monthly=(m)=>monthlyTotals(Number(m.slice(0,4)),Number(m.slice(5,7)));
- const monthBefore=m=>plusMonths(m+'-01',-1).slice(0,7);
+ 
  const amounts=ls=>ls.reduce((s,x)=>s+num(x.amount),0);
  const sortRows=ls=>ls.slice().sort((a,b)=>num(b.amount)-num(a.amount));
  const eqNote=(amount,c)=>c==='USD'?`${display(amount,'USD')} · equivalente en RD$`:'Importe en RD$';
@@ -12042,47 +11975,8 @@ function deletePersonalLoan(id){
   const unbudgeted=Object.entries(monthData.expenseBy).filter(([name])=>!plan.groups.some(g=>g.category===name)).reduce((s,[,v])=>s+num(v),0);
   return {kicker:`PRESUPUESTO / ${safe(fmtMonth(period).toUpperCase())}`,title:'Tu margen de gasto,<br><em>sin perder el rumbo.</em>',subtitle:'Distingue cuánto asignaste, lo que se ejecutó y la velocidad de gasto frente a los días transcurridos del mes.',main:metric(remaining<0?'EXCESO DE PRESUPUESTO':'MARGEN DISPONIBLE',eq(Math.abs(remaining)),plan.total>0?`Ejecución ${pct(consumed)} del presupuesto del mes`:'Todavía no has definido un presupuesto.',details('Saldo presupuestario por categoría',remaining,sortRows(restRows),'El margen representa límites presupuestarios menos gastos asociados; no es saldo bancario.',{page:'budget',tab:'status'})),cards:[metric('PRESUPUESTO ASIGNADO',eq(plan.total),`${plan.groups.length} categorías`,details('Asignación presupuestaria',plan.total,sortRows(groupLines.map(g=>row(g.name,g.allowed,'Límite vigente del período'))),'Los límites de subcategorías no duplican el límite global de una categoría.',{page:'budget',tab:'overview'})),metric('GASTO PRESUPUESTADO',eq(spend),'Gastos dentro de las categorías cubiertas',details('Ejecución por categoría',spend,sortRows(spentRows),'Solo gastos asociados a los límites del plan seleccionado.',{page:'budget',tab:'status'})),metric('EJECUCIÓN',pct(consumed),`Avance del mes ${pct(elapsed)}`,details('Ritmo de ejecución',null,[row('Porcentaje de presupuesto ejecutado',null,pct(consumed)),row('Porcentaje del mes transcurrido',null,pct(elapsed))],'Las cuotas y pagos fijos pueden concentrarse al principio de mes; este ritmo no es por sí solo una anomalía.',{page:'budget',tab:'status'})),metric('GASTOS SIN LÍMITE',eq(unbudgeted),'Fuera de las categorías presupuestadas',details('Gastos de categorías sin límite',unbudgeted,detailRowsByCategory(Object.fromEntries(Object.entries(monthData.expenseBy).filter(([name])=>!plan.groups.some(g=>g.category===name)))),'Fuera del plan asignado para el período.',{page:'budget',tab:'overview'}))],footer:'Presupuesto disponible no significa efectivo disponible. El ritmo es informativo.',actions:[['Ver ejecución','budget','status'],['Mi presupuesto','budget','overview']]};
  }
- function buildIncome(){
-  const selected=ui.month||today().slice(0,7),y=Number(selected.slice(0,4)),m=Number(selected.slice(5,7));
-  const months=Array.from({length:m},(_,i)=>`${y}-${String(i+1).padStart(2,'0')}`),yearData=months.map(m=>({name:m,data:monthly(m)}));
-  const ytd=yearData.reduce((s,x)=>s+x.data.income,0),month=monthly(selected),prior=monthly(`${y-1}-${selected.slice(5,7)}`);
-  const earned=month.incomeBy||{},formal=Object.entries(earned).filter(([k])=>/sueldo|salario|n[oó]mina|trabajo formal/i.test(k)).reduce((s,[,v])=>s+num(v),0);
-  // V205: corte del mes para cobros informales efectivamente registrados. No impacta el acumulado anual (ytd).
-  const dateToday=today(),periodEndDay=new Date(y,m,0).getDate();
-  const cutDate=selected===dateToday.slice(0,7)?dateToday:(selected<dateToday.slice(0,7)?`${selected}-${String(periodEndDay).padStart(2,'0')}`:`${selected}-00`);
-  const informalTransactions=(db.transactions||[]).filter(t=>t.type==='income'&&String(t.date||'').slice(0,7)===selected&&t.date<=cutDate).filter(t=>{
-   const origin=(db.sources||[]).find(src=>src.id===t.sourceId);
-   return origin?.kind==='informal'||/joseo|venta|negocio|emprend|servicio|informal|adicional/i.test(`${t.category||''} ${t.subcategory||''}`);
-  });
-  const informalGroups={};
-  for(const t of informalTransactions){const group=t.category||'Ingresos informales',value=num(t.amount)*(t.currency==='USD'?num(t.fxRateSnapshot||db.settings.fx):1);informalGroups[group]=(informalGroups[group]||0)+value}
-  const informal=Object.values(informalGroups).reduce((sum,value)=>sum+value,0);
-  const informalDetail=detailRowsByCategory(informalGroups,'Cobros informales registrados hasta la fecha de corte');
-  const yoy=prior.income>.005?(month.income-prior.income)/Math.abs(prior.income)*100:null;
-  const formatDelta=yoy===null?'Sin base':(yoy>=0?'+':'')+pct(yoy);
-  const benefitsReceived=Object.entries(earned).filter(([name])=>/beneficio|cashback|recompensa|interes(es)? (cobrado|recibido)/i.test(name)).reduce((total,[,value])=>total+num(value),0);
-  const benefitsDetail=detailRowsByCategory(Object.fromEntries(Object.entries(earned).filter(([name])=>/beneficio|cashback|recompensa|interes(es)? (cobrado|recibido)/i.test(name))),'Importes efectivamente reconocidos en el mes');
-  const bySource=(pred)=>detailRowsByCategory(Object.fromEntries(Object.entries(earned).filter(([k])=>pred(k))), 'Ingreso cobrado, agrupado por categoría');
-  return {kicker:`INGRESOS / ${y}`,title:'Lo que has generado,<br><em>con origen claro.</em>',subtitle:'El acumulado reconoce ingresos registrados, nunca el capital recibido en préstamos. Distingue formal, joseo y otras fuentes.',main:metric('INGRESOS ACUMULADOS DEL AÑO',eq(ytd),`Enero a ${fmtMonth(selected)} · recibidos y contabilizados`,details('Evolución acumulada por mes',ytd,yearData.map(x=>row(fmtMonth(x.name),x.data.income,`Resultado neto de ingreso reconocido: ${eq(x.data.income)}`)),'Incluye beneficios acreditados e intereses personales efectivamente cobrados; excluye capital de préstamos.',{page:'income',tab:'overview'})),cards:[metric('INGRESO DEL MES',eq(month.income),fmtMonth(selected),details('Ingresos del mes por categoría',month.income,detailRowsByCategory(earned,'Importes de movimientos confirmados'),'Distribución por categoría desde el libro de movimientos.',{page:'income',tab:'category'})),metric('TRABAJO FORMAL',eq(formal),'Cobros de salario / nómina en el mes',details('Ingresos formales del mes',formal,bySource(k=>/sueldo|salario|n[oó]mina|trabajo formal/i.test(k)),'Clasificación basada en las categorías de los cobros reales, no en el calendario de pagos estimados.',{page:'income',tab:'category'})),metric('JOSEO · AL CORTE DEL MES',eq(informal),`Recibido hasta ${cutDate.endsWith('-00')?'el inicio del período':prettyDate(cutDate)}`,details('Joseo y negocios al corte del mes',informal,informalDetail,'Solo cobros informales confirmados hasta la fecha de corte. No incluye ingresos futuros ni cambia el acumulado anual.',{page:'income',tab:'category'})),metric('BENEFICIOS RECIBIDOS',eq(benefitsReceived),'Cashback, recompensas e intereses registrados',details('Beneficios recibidos',benefitsReceived,benefitsDetail,'Solo importes confirmados y clasificados; no incluye préstamos recibidos.',{page:'income',tab:'category'}))],footer:'Solo movimientos contabilizados. Los calendarios de nómina e ingresos informales estimados permanecen separados. '+fxFoot(),actions:[['Ver movimientos','income','activity']]};
- }
- function buildExpenses(){
-  const selected=ui.month||today().slice(0,7),y=Number(selected.slice(0,4)),m=Number(selected.slice(5,7)),annual=ui.expenseRange==='year';
-  const end=annual?(y<Number(today().slice(0,4))?12:y===Number(today().slice(0,4))?Number(today().slice(5,7)):0):m;
-  const months=annual?Array.from({length:end},(_,i)=>`${y}-${String(i+1).padStart(2,'0')}`):[selected];
-  const stats=months.map(m=>monthly(m)),prior=months.map(m=>monthly(`${Number(m.slice(0,4))-1}-${m.slice(5,7)}`));
-  const spending=stats.reduce((s,x)=>s+x.expense,0),income=stats.reduce((s,x)=>s+x.income,0),last=prior.reduce((s,x)=>s+x.expense,0);
-  const lastMonth=monthly(monthBefore(selected)).expense,monthSpend=monthly(selected).expense;
-  const groups={};stats.forEach(x=>Object.entries(x.expenseBy||{}).forEach(([k,v])=>groups[k]=(groups[k]||0)+num(v)));
-  const ranked=sortRows(Object.entries(groups).map(([k,v])=>row(k,v,'Gasto reconocido en el período'))),peak=ranked[0];
-  const pctIncome=income>.005?spending/income*100:null;
-  const comparison=last>.005?(spending-last)/Math.abs(last)*100:null;
-  const vsMonth=lastMonth>.005?(monthSpend-lastMonth)/Math.abs(lastMonth)*100:null;
-    const currentBudget=budgetPlan(selected),monthTotal=monthly(selected),budgetSpent=budgetCoveredSpend(monthTotal,selected);
-  const budgetUsed=currentBudget.total>0?budgetSpent/currentBudget.total*100:null;
-  const expenseCategoryCount=ranked.filter(x=>Math.abs(x.amount)>.005).length;
-
-  return {kicker:`EGRESOS / ${annual?'ACUMULADO '+y:fmtMonth(selected).toUpperCase()}`,title:'Cada gasto importa,<br><em>y debe tener explicación.</em>',subtitle:'Visualiza los consumos y costos reconocidos, sin volver a contar los pagos de tarjetas como nuevos gastos.',main:metric(annual?'GASTO ACUMULADO DEL AÑO':'EGRESOS DEL MES',eq(spending),annual?`${months.length} meses consolidados`:`${fmtMonth(selected)} · gastos reconocidos`,details('Gastos por categoría',spending,ranked,'Compras, comisiones e intereses registrados. Pagar una tarjeta no duplica la compra.',{page:'expenses',tab:'category'})),cards:[metric('MAYOR CATEGORÍA',peak?eq(peak.amount):eq(0),peak?.name||'Sin gastos',details('Concentración de egresos',spending,ranked,'Valores consolidados por categoría y período.',{page:'expenses',tab:'category'})),metric('PESO SOBRE INGRESOS',pct(pctIncome),'Gasto reconocido / ingreso reconocido',details('Relación ingresos y egresos',null,[row('Ingresos reconocidos',income,'En el período'),row('Gastos reconocidos',spending,'En el período')],'No representa un flujo de caja ni incluye abonos de capital como gasto.',{page:'expenses',tab:'overview'})),metric('PRESUPUESTO DEL MES',budgetUsed===null?'Sin asignar':pct(budgetUsed),`Límite: ${eq(currentBudget.total)}`,details('Ejecución del presupuesto mensual',null,[row('Límite asignado',currentBudget.total,'Presupuesto del mes seleccionado'),row('Gasto cubierto',budgetSpent,'Egresos imputables a los límites')],'La ejecución mensual se calcula con el presupuesto vigente del período.',{page:'budget',tab:'status'})),metric('CATEGORÍAS CON GASTOS',String(expenseCategoryCount),'Categorías activas del período',details('Gasto por categoría',spending,ranked,'Desglose de los gastos reconocidos según su categoría.',{page:'expenses',tab:'category'}))],footer:'Los pagos de capital no duplican egresos; sí pueden reconocerse sus intereses, impuestos y cargos.',actions:[['Categorías de gasto','expenses','category'],['Ver movimientos','expenses','activity']]};
- }
+ 
+ 
  function buildRegister(){
   const pending=(db.pendingOperations||[]),bad=(db.transactions||[]).filter(t=>['income','expense','card_charge','card_refund'].includes(t.type)&&!String(t.category||'').trim());
   const revisions=db.txRevisions||[],history=recentTx(),recent=history[0];
@@ -12092,7 +11986,7 @@ function deletePersonalLoan(id){
   const badRows=bad.map(t=>row(transactionTitle(t)||'Movimiento sin categoría',fxAmt(t.amount,t.currency),`${t.date} · ${display(t.amount,t.currency)}`,t.date));
   return {kicker:'MOVIMIENTOS / CONTROL DE CALIDAD',title:'Registros confiables,<br><em>decisiones claras.</em>',subtitle:'Detecta qué está pendiente de confirmar, qué requiere clasificación y cuándo se realizó el último registro.',main:metric('OPERACIONES POR CONFIRMAR',String(pending.length),'Los pendientes no afectan cuentas, ingresos ni egresos.',details('Operaciones pendientes',null,pendingRows,'Solo se contabilizan después de confirmar el registro.',{page:'register',tab:'pending'})),cards:[metric('SIN CATEGORÍA',String(bad.length),'Movimientos por clasificar',details('Movimientos sin categoría',null,badRows,'Las categorías de movimientos confirmados ayudan a la analítica, no alteran los saldos.',{page:'register',tab:'review'})),metric('CORRECCIONES',String(revisions.length),'Cambios auditados',details('Historial de correcciones',null,revisions.slice().reverse().map(r=>row(`${String(r.at||'').slice(0,10)} · Movimiento corregido`,null,`${r.before?.note||r.before?.category||'Antes'} → ${r.after?.note||r.after?.category||'Después'}`)),'Se conserva el historial de ajustes que registra la aplicación.',{page:'register',tab:'review'})),metric('OPERACIONES DEL MES',String(thisMonth.length),fmtMonth(ui.month||today().slice(0,7)),details('Movimientos del mes',null,thisMonth.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(t=>row(transactionTitle(t),fxAmt(t.amount,t.currency),`${t.date} · ${t.type} · ${display(t.amount,t.currency)}`,t.date)),'Historial confirmado, sin sumar importes de naturaleza diferente.',{page:'register',tab:'all'})),metric('ÚLTIMO MOVIMIENTO',recent?.date?prettyDate(recent.date):'—',recent?transactionTitle(recent):'Sin registros',details('Últimos movimientos',null,history.slice(0,30).map(t=>row(transactionTitle(t),fxAmt(t.amount,t.currency),`${t.date} · ${t.type} · ${display(t.amount,t.currency)}`,t.date)),'La fecha corresponde al último movimiento registrado en el libro.',{page:'register',tab:'all'}))],footer:'Control de calidad del registro, no un balance patrimonial.',actions:[['Revisar pendientes','register','pending'],['Toda la actividad','register','all']],compact:true};
  }
- const builders={payments:buildPayments,personal:buildPersonal,recurring:buildRecurring,budget:buildBudget,income:buildIncome,expenses:buildExpenses,register:buildRegister};
+ const builders={payments:buildPayments,personal:buildPersonal,recurring:buildRecurring,budget:buildBudget,register:buildRegister}; /* Ingresos y Egresos tienen su propio encabezado en Flujo: ya no se inyecta el resumen ejecutivo antiguo */
  const current=x=>{try{return builders[x]?.()}catch(err){console.warn('V58 cabecera ejecutiva:',x,err);return null}};
  const detailButton=(page,key,name)=>`data-v58="detail" data-v58-page="${page}" data-v58-key="${key}" aria-label="Ver desglose de ${safe(name)}" title="Pulsar para ver el desglose"`;
  const button=(name,page,tab,primary=false)=>`<button type="button" class="v58-action ${primary?'primary':''}" data-v58="jump" data-v58-go="${page}" data-v58-tab="${tab}">${safe(name)} →</button>`;
@@ -19817,15 +19711,15 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  const ymd=s=>{const m=/^(\d{4})-(\d\d)-(\d\d)/.exec(String(s||''));return m?{y:+m[1],m:+m[2],d:+m[3]}:null};
  const local=s=>{const p=ymd(s);return p?new Date(p.y,p.m-1,p.d):null};
  const WD=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
- const dayHead=s=>{const d=local(s);return d?`${WD[d.getDay()]} ${d.getDate()} ${MS[d.getMonth()]}`:'—'};
+ 
  const sourceName=r=>{const [k,id]=String(r.source||'').split(':');const x=k==='card'?card(id):k==='account'?account(id):null;return x?x.name:'Sin fuente'};
  const svc=id=>(db.recurring||[]).find(r=>String(r.id)===String(id));
  const charges=()=>(db.transactions||[]).filter(t=>t&&t.recurringId&&['expense','card_charge'].includes(t.type)&&t.date).map(t=>{if(t.reviewed!==true)t.reviewed=true;return t}).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.created||'').localeCompare(String(a.created||'')));
  const expected=t=>{const s=svc(t.recurringId);const e=t.scheduleSnapshot&&Number.isFinite(Number(t.scheduleSnapshot.amount))?Number(t.scheduleSnapshot.amount):(s?num(s.amount):num(t.amount));return rnd(e)};
  const ico=(r,size='small')=>v45SubIcon(r,size);
  const chev='<svg class="v911-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
- const pendingMonth=month=>v99PendingForPeriod(month).filter(p=>p.kind==='recurring').sort((a,b)=>String(a.date).localeCompare(String(b.date)));
- const monthTitle=()=>dateObj((ui.month||today().slice(0,7))+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
+ 
+ 
 
  /* ---------- Cartera ---------- */
   function serviceItem(r,pausedFlag){
