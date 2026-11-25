@@ -52274,3 +52274,11 @@ html body #app#app .v911-logo *{color:inherit!important;stroke:currentColor}
  html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-scroll>.v749-segment{flex:0 0 auto;min-height:56px}
  html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-amount input{font-size:clamp(40px,11vw,52px)}
 }
+
+/* Formularios en hoja (móvil): la hoja se ajusta a su contenido y se ancla abajo, con el botón pegado al final; si el contenido es largo se desplaza dentro */
+@media (max-width:790px){
+ html body #modal-root#modal-root#modal-root .modal-layer:has(>.v204-form-dialog:not(.v749-screen)){align-items:flex-end!important}
+ html body #modal-root#modal-root#modal-root .v204-form-dialog.v391-form-shell{height:auto!important;max-height:94dvh!important;min-height:0!important;border-radius:28px 28px 0 0!important}
+ html body #modal-root#modal-root#modal-root .v204-form-dialog.v391-form-shell>form{flex:0 1 auto!important;min-height:0;overflow-y:auto}
+ html body #modal-root#modal-root#modal-root .v204-form-dialog.v391-form-shell>form>.form-grid{flex:0 1 auto!important;min-height:0}
+}
