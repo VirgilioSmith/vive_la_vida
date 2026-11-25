@@ -52411,3 +52411,13 @@ html body #modal-root#modal-root#modal-root#modal-root#modal-root form.v1300-ann
 /* Gestiones «Otros» (devolución, ajuste, beneficio, préstamo): la cabecera propia ya trae flecha y título → se oculta la del contenedor (evita título y flecha duplicados) */
 html body #modal-root#modal-root#modal-root .modal:has(.other-studio-header)>.modal-head{display:none!important}
 html body #modal-root#modal-root#modal-root .modal:has(.other-studio-header)~.v68-mobile-dismiss{display:none!important}
+/* El costo de mañana: el contenido llena la hoja (sin banda vacía abajo) y el selector Gasto/Ingreso sin fondo gris */
+html body #modal-root#modal-root#modal-root .modal.v119-modal{display:flex!important;flex-direction:column;overflow:hidden!important}
+html body #modal-root#modal-root#modal-root .modal.v119-modal>div:not(.modal-head){flex:1 1 auto!important;min-height:0!important;max-height:none!important;height:auto!important;overflow-y:auto!important;overscroll-behavior:contain;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+html body #modal-root#modal-root#modal-root .modal.v119-modal .modal-head{flex:none;padding-top:max(14px,env(safe-area-inset-top,0px))}
+html body #modal-root#modal-root#modal-root .modal.v119-modal .modal-head h2{font-size:22px!important;line-height:1.15!important;margin:0!important;white-space:nowrap}
+html body #modal-root#modal-root#modal-root .v986-seg{background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important;gap:8px!important}
+html body #modal-root#modal-root#modal-root .v986-seg>button{background:#fff!important;border:1px solid rgba(125,140,170,.28)!important;border-radius:16px!important;box-shadow:none!important}
+html body #modal-root#modal-root#modal-root .v986-seg>button[aria-pressed=true],html body #modal-root#modal-root#modal-root .v986-seg>button.active,html body #modal-root#modal-root#modal-root .v986-seg>button.is-on{border:1.5px solid var(--vg-accent,#6d69f1)!important;background:color-mix(in srgb,var(--vg-accent,#6d69f1) 12%,#fff)!important}
+body:is(.theme-dark,.theme-black) #modal-root#modal-root#modal-root .v986-seg>button:not([aria-pressed=true]):not(.active):not(.is-on){background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.14)!important}
+html body #modal-root#modal-root#modal-root .modal.v119-modal{padding-bottom:0!important}
