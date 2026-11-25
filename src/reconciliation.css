@@ -96,3 +96,12 @@ html body #modal-root#modal-root#modal-root#modal-root .v-reconcile-dialog>.v266
 .v-reconcile-currencies button[aria-pressed="true"]{color:var(--recon-accent);border-color:var(--recon-accent);background:rgba(0,108,104,.065)}
 .v-reconcile-card-logo .credit-network{max-width:100%;font-size:12px}
 .v-reconcile-card-logo .network-circles svg{max-width:32px}
+
+/* Móvil: la pantalla se dimensiona al alto disponible; el contenido se reparte y el botón principal queda fijo abajo (sin desplazarse en vacío) */
+@media(max-width:790px){
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root .v-reconcile-dialog{display:flex!important;flex-direction:column;min-height:100dvh!important;box-sizing:border-box}
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root #vReconcileForm{display:flex!important;flex-direction:column;flex:1 1 auto;min-height:0;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));box-sizing:border-box;gap:clamp(8px,1.8dvh,16px)}
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root #vReconcileForm>*{flex:none}
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-error{margin:0}
+ html body #modal-root#modal-root#modal-root#modal-root#modal-root #vReconcileForm .v-reconcile-submit{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));margin-top:auto!important;min-height:54px;box-shadow:0 10px 24px rgba(0,107,102,.25)}
+}
