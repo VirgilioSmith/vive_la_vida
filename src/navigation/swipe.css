@@ -1,0 +1,15 @@
+/* Navegación universal: sombra de profundidad, indicador lateral (sólo durante el gesto) y estilos de la sección de ajustes. */
+html.vnav-dragging,html.vnav-dragging body{overscroll-behavior-x:none;user-select:none;-webkit-user-select:none}
+html.vnav-dragging #app main.main{box-shadow:calc(var(--vnav-p,0)*-1px) 0 0 transparent,0 0 42px rgba(0,0,0,calc(.10 + var(--vnav-p,0)*.28));position:relative;z-index:2}
+html.vnav-dragging body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:rgba(0,0,0,.06)}
+.vnav-ind{display:none;position:fixed;top:0;z-index:12000;pointer-events:none;width:52px;height:96px;margin-top:-48px;top:var(--vnav-y,50%);opacity:var(--vnav-o,0);color:var(--lg-accent,#6d69f1);transition:none}
+.vnav-ind[data-side=left]{left:0;transform:translate3d(calc(-52px + var(--vnav-bulge,0px)),0,0)}
+.vnav-ind[data-side=right]{right:0;transform:translate3d(calc(52px - var(--vnav-bulge,0px)),0,0) scaleX(-1)}
+.vnav-ind::before{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--lg-accent,#6d69f1) 22%,transparent);-webkit-backdrop-filter:blur(10px) saturate(160%);backdrop-filter:blur(10px) saturate(160%);border:1px solid color-mix(in srgb,var(--lg-accent,#6d69f1) 35%,rgba(255,255,255,.5));border-left:0;border-radius:0 48px 48px 0 / 0 50% 50% 0}
+.vnav-ind svg{position:absolute;left:18px;top:50%;width:22px;height:22px;margin-top:-11px}
+.vnav-settings{padding:16px;border-radius:22px;margin:16px 0}
+.vnav-settings header h3{margin:2px 0 4px;font-size:18px}.vnav-settings header p{margin:0 0 8px;font-size:13px;opacity:.75}
+.vnav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:8px 0;border-top:1px solid color-mix(in srgb,currentColor 10%,transparent)}
+.vnav-row strong{display:block;font-size:15px}.vnav-row small{display:block;font-size:12.5px;opacity:.7}
+.vnav-row select{min-height:44px;border-radius:12px;padding:0 10px;font:inherit}.vnav-row input[type=checkbox]{width:26px;height:26px;accent-color:var(--lg-accent,#6d69f1)}
+@media(prefers-reduced-motion:reduce){.vnav-ind{display:none!important}}

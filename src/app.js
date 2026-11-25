@@ -7266,6 +7266,12 @@ function v394TrackPage(){
  }
  v394SkipNext=false;
 }
+/* Anfitrión del motor de navegación universal (ViveUniversalNavigation): expone el historial interno sin duplicar el router. */
+window.ViveNavHost={
+ isRoot:()=>['overview','wallet','banks','mobilehub','mobilesearch'].includes(ui.page),
+ canPageBack:()=>!window.ViveNavHost.isRoot()&&v394Stack.length>0,
+ pageBack:()=>{if(!window.ViveNavHost.canPageBack())return false;const prev=v394Stack.pop();v394SkipNext=true;const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=prev;b.hidden=true;document.body.appendChild(b);b.click();b.remove();return true}
+};
 function v394DecorateNavigation(){
  // V4: removed the redundant automatic "Volver / Resumen / ..." breadcrumb.
  // The existing sidebar, tabs, page-level back controls and mobile dock
@@ -15950,6 +15956,18 @@ document.addEventListener('click',function v772PersonalizationActions(event){
    Reutiliza los controles originales, sus atributos data-act y los ajustes
    persistentes sin modificar lógica financiera. */
 
+/* Personalización → Navegación y gestos (preferencias locales; las lee ViveUniversalNavigation). */
+function vNavSettingsSection(){
+ const p=(window.ViveUniversalNavigation&&window.ViveUniversalNavigation.prefs())||{enabled:true,sides:'both',sensitivity:'normal',animations:true,reducedMotion:false};
+ const sel=(k,opts)=>`<select data-vnav-pref="${k}" aria-label="${k}">${opts.map(([v,l])=>`<option value="${v}"${p[k]===v?' selected':''}>${l}</option>`).join('')}</select>`;
+ const chk=(k,l,d)=>`<label class="vnav-row"><span><strong>${l}</strong><small>${d}</small></span><input type="checkbox" data-vnav-pref="${k}"${p[k]?' checked':''}></label>`;
+ return `<section id="vnav-settings" class="v296-block vnav-settings" aria-label="Navegación y gestos"><header><span class="summary-tag">NAVEGACIÓN Y GESTOS</span><h3>Regresar con un deslizamiento</h3><p>Desliza desde el borde de la pantalla hacia el centro para volver. El botón de regresar siempre permanece visible.</p></header>
+ ${chk('enabled','Gesto universal para regresar','Activado por defecto')}
+ <label class="vnav-row"><span><strong>Orientación</strong><small>Desde qué lateral se inicia</small></span>${sel('sides',[['both','Ambos laterales'],['left','Solo izquierda'],['right','Solo derecha']])}</label>
+ <label class="vnav-row"><span><strong>Sensibilidad</strong><small>Qué tan fácil se activa</small></span>${sel('sensitivity',[['low','Baja'],['normal','Normal'],['high','Alta']])}</label>
+ ${chk('animations','Animaciones de navegación','Arrastre y transición al regresar')}
+ ${chk('reducedMotion','Movimiento reducido','Sin animaciones; el gesto sigue funcionando')}</section>`;
+}
 function v296PersonalizePage(){
  // V778: una sola página de Personalización, encabezado único + cuatro KPI + indicadores.
  // Se conservan los controles, las preferencias y la persistencia existentes.
@@ -15957,6 +15975,7 @@ function v296PersonalizePage(){
  <section id="v296-kpi-styles" class="v296-block v776-kpi-block" aria-label="Seleccionar uno de los tres estilos del KPI">${v242SettingsPreview()}</section>
  <header class="v778-page-heading"><span class="v778-overline">TU INICIO · PERSONALIZACIÓN</span><h1>Tu espacio, a tu manera</h1><p>Mantén presionado el control de bloques para mover cualquier indicador, incluso entre áreas. También puedes usar las flechas. Tu orden se conserva en este Resumen.</p></header>
  <section id="v296-widgets" class="v296-block v776-widgets-block" aria-label="Organizar los indicadores de Inicio">${v273SettingsWidgetEditor()}</section>
+ ${vNavSettingsSection()}
  </div></div>`;
 }
 
