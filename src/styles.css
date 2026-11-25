@@ -52261,3 +52261,16 @@ html body #app#app .v911-logo *{color:inherit!important;stroke:currentColor}
  html body #app#app #page .v290-budget-web .v291-budget-line b,html body #app#app #page .v290-budget-web .v291-budget-line strong{white-space:nowrap;font-variant-numeric:tabular-nums}
  html body #app#app #page .v290-budget-web .v291-budget-metrics{min-width:0}
 }
+
+/* Nuevo movimiento (móvil): el contenido se reparte todo el alto disponible; no queda hueco en blanco antes de "Continuar" */
+@media (max-width:790px){
+ html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-scroll{display:flex!important;flex-direction:column;gap:clamp(10px,1.9dvh,18px);justify-content:stretch;overflow-y:auto}
+ html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-scroll>*{flex:0 0 auto}
+ html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-scroll>.v749-amount{flex:1.7 1 auto!important;min-height:112px!important;display:flex!important;flex-direction:column;justify-content:center}
+ html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-scroll>.v749-impact{flex:1.2 1 auto!important;display:flex!important;flex-direction:column;justify-content:center;min-height:118px}
+ html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-scroll>.v749-quick{flex:1 1 auto!important;min-height:64px;align-items:stretch}
+ html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-scroll>.v749-quick>*{height:auto;min-height:64px}
+ html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-scroll>.v749-fieldline{flex:.8 1 auto!important;min-height:68px;align-items:center}
+ html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-scroll>.v749-segment{flex:0 0 auto;min-height:56px}
+ html body #modal-root#modal-root .v749-layer[data-v749-stage=entry] .v749-screen .v749-amount input{font-size:clamp(40px,11vw,52px)}
+}
