@@ -278,7 +278,3 @@ html body #app#app#app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-her
 /* Detalle de producto (cuenta/tarjeta/préstamo/certificado): pantalla propia; el regreso lo da el encabezado */
 html body #app#app #page .vBanks-screen-detail .vBanks-detail [data-act="banksCloseProduct"]{display:none!important}
 html body #app#app #page .vBanks-screen-detail .vBanks-detail{padding:0!important;border:0!important;background:none!important;box-shadow:none!important;-webkit-backdrop-filter:none;backdrop-filter:none}
-/* Entrada a una interfaz nueva: zoom suave desde el centro con fundido (solo transform/opacity; respeta movimiento reducido) */
-@keyframes vbScreenIn{from{opacity:0;transform:scale(.94) translate3d(0,14px,0)}to{opacity:1;transform:none}}
-html body #app#app #page :is(.vBanks-screen-detail,.vBanks-screen-bank){animation:vbScreenIn .34s cubic-bezier(.2,.8,.2,1) both;transform-origin:50% 30%}
-@media(prefers-reduced-motion:reduce){html body #app#app #page :is(.vBanks-screen-detail,.vBanks-screen-bank){animation:none}}
