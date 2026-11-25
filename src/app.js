@@ -7280,30 +7280,32 @@ function v394DecorateNavigation(){
 function vAmbientSide(){const order=['overview','wallet','banks','mobilehub','mobilesearch'],i=order.indexOf(ui.page),n=i>=0?i:String(ui.page||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);const side=n%2?'right':'left';if(document.body&&document.body.dataset.viveSide!==side)document.body.dataset.viveSide=side;requestAnimationFrame(()=>vCrackPaint(document.body.dataset.viveSide||side))}
 /* Grietas sutiles en el color del acento, del mismo lado del brillo. Se regeneran sólo si cambia el acento, el lado o el tema. */
 let vCrackKey='';
-/* Agrietado: fisuras con grosor variable (más anchas en el origen, afinándose), con luz del acento filtrándose por dentro,
-   borde de cristal roto y esquirlas translúcidas. Se genera sólo si cambia el acento, el lado o el tema. */
+/* Desgaste del material (lado opuesto al acento): erosión mínima del borde, astillado muy fino y partículas que apenas se desprenden.
+   Sin líneas ni grietas; el lado del acento queda limpio. Se genera sólo si cambia el acento, el lado o el tema. */
 function vCrackSvg(c,dark,side){
- const R=(()=>{let x=7;return()=>{x=(x*16807)%2147483647;return x/2147483647}})();
- /* Cada grieta es una polilínea; el polígono se obtiene desplazando ±w(t) a lo largo de la normal. */
- const cracks=[
-  {p:[[0,24],[30,62],[26,108],[62,150],[56,204],[92,254],[84,310]],w:5},
-  {p:[[30,62],[66,52],[98,82],[112,76]],w:2.6},
-  {p:[[62,150],[104,144],[118,182]],w:2.4},
-  {p:[[56,204],[28,246],[40,298],[14,340]],w:3},
-  {p:[[92,254],[124,300],[114,352],[140,396]],w:2.8},
-  {p:[[0,430],[30,462],[26,512],[54,556]],w:3.6},
-  {p:[[26,108],[8,140]],w:1.8},{p:[[124,300],[160,312]],w:1.6}
- ];
- const poly=(pts,w0)=>{const n=pts.length,L=[],Rr=[];for(let i=0;i<n;i++){const a=pts[Math.max(0,i-1)],b=pts[Math.min(n-1,i+1)];let dx=b[0]-a[0],dy=b[1]-a[1];const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;const t=i/(n-1),w=Math.max(.25,w0*(1-t*.92))*(.7+.6*R());L.push([pts[i][0]-dy*w,pts[i][1]+dx*w]);Rr.push([pts[i][0]+dy*w,pts[i][1]-dx*w])}return 'M'+L.concat(Rr.reverse()).map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' L')+'Z'};
- const d=cracks.map(k=>poly(k.p,k.w)).join(' ');
- const line=cracks.map(k=>'M'+k.p.map(q=>q.join(' ')).join(' L')).join(' ');
- const shards='<path d="M0 24 L30 62 L26 108 L0 140Z"/><path d="M30 62 L66 52 L98 82 L62 150 L26 108Z"/><path d="M62 150 L118 182 L92 254 L56 204Z"/><path d="M0 430 L30 462 L26 512 L0 540Z"/>';
+ const R=(()=>{let x=11;return()=>{x=(x*16807)%2147483647;return x/2147483647}})();
+ let specks='',chips='',hi='';
+ /* Partículas finas: densidad decreciente desde el borde, concentradas en una franja vertical (muy localizado). */
+ for(let i=0;i<150;i++){
+  const y=70+R()*430,fall=Math.sin(Math.PI*Math.min(1,Math.max(0,(y-70)/430))),x=Math.pow(R(),2.4)*46;
+  if(R()>fall*(1-x/60))continue;
+  const r=.35+R()*1.15*(1-x/70);
+  specks+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill-opacity="${(.18+R()*.4).toFixed(2)}"/>`;
+ }
+ /* Astillas: pequeños desconchados irregulares pegados al borde, con un reflejo mínimo en su canto. */
+ const spots=[118,171,236,262,318,377,441];
+ for(const y0 of spots){
+  if(R()<.18)continue;const w=2.2+R()*5,h=3+R()*6;
+  const pts=[[0,y0],[w*.45,y0+h*.12],[w*(.7+R()*.3),y0+h*.38],[w*.55,y0+h*.62],[w*.8,y0+h*.8],[w*.2,y0+h]];
+  const d='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L')+'Z';
+  chips+=`<path d="${d}" fill-opacity="${(.09+R()*.09).toFixed(2)}"/>`;
+  hi+=`<path d="M${pts[1][0].toFixed(1)} ${pts[1][1].toFixed(1)} L${pts[2][0].toFixed(1)} ${pts[2][1].toFixed(1)} L${pts[3][0].toFixed(1)} ${pts[3][1].toFixed(1)}" fill="none" stroke-width=".5" stroke-linecap="round"/>`;
+ }
  const t=side==='right'?'transform="translate(180 0) scale(-1 1)"':'';
- const o=dark?.8:.85;
- return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 600"><defs><filter id="h" x="-30%" y="-10%" width="160%" height="120%"><feGaussianBlur stdDeviation="7"/></filter><filter id="s"><feGaussianBlur stdDeviation=".6"/></filter></defs><g ${t} opacity="${o}"><g fill="#fff" fill-opacity="${dark?.05:.16}">${shards}</g><path d="${d}" fill="${c}" fill-opacity=".5" filter="url(#h)" transform="scale(1.02)"/><path d="${d}" fill="${c}" fill-opacity="${dark?.75:.62}" filter="url(#s)"/><path d="${line}" fill="none" stroke="#fff" stroke-opacity="${dark?.55:.8}" stroke-width=".5" stroke-linecap="round" stroke-linejoin="round" transform="translate(.9 -.6)"/><path d="${line}" fill="none" stroke="#000" stroke-opacity="${dark?.5:.18}" stroke-width=".5" stroke-linecap="round" transform="translate(-.8 .7)"/></g></svg>`;
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 600"><defs><linearGradient id="v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".25" stop-color="#fff"/><stop offset=".7" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="e" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${c}" stop-opacity="${dark?.16:.09}"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient><mask id="m"><rect width="180" height="600" fill="url(#v)"/></mask><filter id="s"><feGaussianBlur stdDeviation=".35"/></filter></defs><g ${t} mask="url(#m)"><rect x="0" y="40" width="34" height="480" fill="url(#e)"/><g fill="${c}" filter="url(#s)">${specks}${chips}</g><g stroke="#fff" stroke-opacity="${dark?.28:.55}">${hi}</g></g></svg>`;
 }
 function vCrackPaint(side){try{const b=document.body,cs=getComputedStyle(b),c=(cs.getPropertyValue('--lg-accent')||'#6d69f1').trim(),dark=b.classList.contains('theme-black')||b.classList.contains('theme-dark'),key=c+side+dark;if(key===vCrackKey)return;vCrackKey=key;
- b.style.setProperty('--crack-img','url("data:image/svg+xml,'+encodeURIComponent(vCrackSvg(c,dark,side)).replace(/"/g,'%22')+'")');b.style.setProperty('--crack-pos',side==='right'?'right top':'left top')}catch(_){}}
+ const er=side==='left'?'right':'left';b.style.setProperty('--crack-img','url("data:image/svg+xml,'+encodeURIComponent(vCrackSvg(c,dark,er)).replace(/"/g,'%22')+'")');b.style.setProperty('--crack-pos',er+' top')}catch(_){}}
 function render(){
  vAmbientSide();
  if(['vision','payments'].includes(ui.page))ui.page='patrimony';
