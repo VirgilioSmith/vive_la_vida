@@ -6939,7 +6939,7 @@ function vReconcileAccountForm(partial={},editId=null){
  const date=previous?.date||partial.date||today();
  const root=document.getElementById('modal-root');
  root.innerHTML=`<div class="modal-layer v-reconcile-layer" data-backdrop="true"><section class="v-reconcile-dialog" role="dialog" aria-modal="true" aria-label="Conciliar un saldo">
- <form id="vReconcileForm" novalidate><header class="v-reconcile-head"><button type="button" class="v-reconcile-back" aria-label="Volver">←</button><h2>${editId?'Editar conciliación':'Conciliar un saldo'}</h2></header>
+ <form id="vReconcileForm" novalidate><div class="v-reconcile-scroll"><header class="v-reconcile-head"><button type="button" class="v-reconcile-back" aria-label="Volver">←</button><h2>${editId?'Editar conciliación':'Conciliar un saldo'}</h2></header>
  <button type="button" class="v-reconcile-account" aria-haspopup="dialog" aria-label="Seleccionar cuenta o tarjeta"></button>
  <div class="v-reconcile-currencies" role="group" aria-label="Moneda de la tarjeta" hidden></div>
  <section class="v-reconcile-recorded"><small>Saldo registrado en Vive</small><strong data-reconcile="registered">—</strong></section>
@@ -6947,7 +6947,7 @@ function vReconcileAccountForm(partial={},editId=null){
  <div class="v-reconcile-fields"><label class="v-reconcile-date"><span>${icon('calendar')}</span><div><small>Fecha de operación</small><strong data-reconcile="date-text"></strong><input name="date" type="date" value="${sanitize(date)}" max="${today()}" aria-label="Fecha de operación"></div></label>
  <button type="button" class="v-reconcile-reason" aria-haspopup="dialog"><span>${icon('receipt')}</span><div><small>Motivo del ajuste</small><strong></strong></div><b>›</b></button></div>
  <section class="v-reconcile-preview" aria-live="polite"><h3>${icon('chart')} Vista previa del ajuste</h3><div class="v-reconcile-balances"><div><small>Antes</small><strong data-reconcile="before">—</strong></div><span>→</span><div><small>Después</small><strong data-reconcile="after">—</strong></div></div><div class="v-reconcile-delta"><span>Ajuste automático</span><strong data-reconcile="delta">—</strong></div><small>No modifica tus ingresos ni gastos ordinarios.</small></section>
- <p class="v-reconcile-error" role="alert" hidden></p><button type="submit" class="v-reconcile-submit">${icon('check')} ${editId?'Guardar conciliación':'Confirmar conciliación'}</button></form></section></div>`;
+ <p class="v-reconcile-error" role="alert" hidden></p></div><footer class="v-reconcile-foot"><button type="submit" class="v-reconcile-submit">${icon('check')} ${editId?'Guardar conciliación':'Confirmar conciliación'}</button></footer></form></section></div>`;
  const form=root.querySelector('#vReconcileForm'),observed=form.elements.observed,when=form.elements.date,accountButton=form.querySelector('.v-reconcile-account'),currencyPicker=form.querySelector('.v-reconcile-currencies'),reasonButton=form.querySelector('.v-reconcile-reason'),submit=form.querySelector('.v-reconcile-submit'),error=form.querySelector('.v-reconcile-error');
  let busy=false,shown=null;
  function message(s=''){error.textContent=s;error.hidden=!s}
