@@ -786,10 +786,48 @@ let vDockCompact=false;
   e.preventDefault();e.stopImmediatePropagation();set(false);
  },true);
 })();
+/* Centro Estratégico inmersivo: conserva el mensaje financiero y abre su reproductor visual. */
 function vDockCenter(){
  const m=vStrategicMessage();
- return `<button type="button" class="vive-mobile-dock-center vdc-${m.tone}" ${m.go?`data-act="navigate" data-id="${m.go}"`:'data-vdc-phrase="1"'} aria-label="Centro estratégico: ${sanitize(m.title)}. ${sanitize(m.sub)}"><span class="vdc-ico">${icon(m.icon)}</span><span class="vdc-text"><strong>${sanitize(m.title)}</strong><small>${sanitize(m.sub)}</small></span>${m.go?`<span class="vdc-chev">${icon('arrow')}</span>`:''}</button>`;
+ return `<button type="button" class="vive-mobile-dock-center vdc-${m.tone}" data-vsp-open="1" aria-label="Abrir centro estratégico: ${sanitize(m.title)}. ${sanitize(m.sub)}"><span class="vdc-ico">${icon(m.icon)}</span><span class="vdc-text"><strong>${sanitize(m.title)}</strong><small>${sanitize(m.sub)}</small></span><span class="vdc-chev">${icon('arrow')}</span></button>`;
 }
+/* Datos locales, bajo demanda: sin Realtime ni sondeos. */
+function vStrategicPlayerData(){
+ const now=today(),featured=vStrategicMessage();
+ const due=[];
+ try{
+  for(const u of (upcoming()||[]).filter(x=>x&&x.date&&num(x.amount)>0).sort((a,b)=>String(a.date).localeCompare(String(b.date)))){
+   const days=diffDays(u.date,now);
+   if(days < -30 || days > 14)continue;
+   const late=days<0,card=u.kind==='card';
+   due.push({
+    title:late?'Pago vencido':card?'Corte cercano':'Pago pendiente',
+    sub:String(u.name||'Compromiso')+' · '+(late?'vencido hace '+(-days)+' días':days===0?'vence hoy':'vence en '+days+' días')+' · '+money(u.amount,u.currency||'DOP',2),
+    tone:late?'alert':'warn',icon:card?'calendar':'alert2',go:card?'wallet':'pressure'
+   });
+   if(due.length>=5)break;
+  }
+ }catch(_){}
+ const alerts=[];
+ try{
+  for(const a of (v123CategoryAlerts()||[]).slice(0,2))alerts.push({
+   title:a.kind==='trend'?'Gasto creciendo':'Gastos elevados',
+   sub:String(a.category||'Categoría')+' · '+v123AlertText(a),
+   tone:'warn',icon:'trend2',go:'expenses'
+  });
+ }catch(_){}
+ let summary=null;
+ try{
+  const p=ui.month||now.slice(0,7),t=monthlyTotals(Number(p.slice(0,4)),Number(p.slice(5,7)));
+  if(t&&(num(t.income)>0||num(t.expense)>0)){
+   const n=num(t.income)-num(t.expense);
+   summary={period:dateObj(p+'-01').toLocaleDateString('es-DO',{month:'long',year:'numeric'}),
+     income:money(t.income,'DOP',2),expense:money(t.expense,'DOP',2),net:money(n,'DOP',2),negative:n<0};
+  }
+ }catch(_){}
+ return {featured,due,alerts,summary};
+}
+window.vStrategicPlayerData=vStrategicPlayerData;
 function mobileBottomNavigation(){
  if((window.scrollY||0)<24)vDockCompact=false;
  // Cada producto bancario pertenece al espacio Bancos; no debe marcar Explorar por error.
