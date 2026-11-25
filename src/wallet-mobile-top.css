@@ -451,3 +451,21 @@
  html body #app#app#app main.world-wallet #page#page .v68-wallet{padding-bottom:0!important;margin-bottom:0!important}
  html body #app#app#app main.world-wallet{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}
 }
+/* Beneficios y retorno (detalle móvil): a todo el ancho, sin tarjetas anidadas con relleno acumulado, tracking de rótulos contenido */
+@media (max-width:790px){
+ html body #app#app#app main.world-wallet #page#page:has(.wallet-benefits-mobile){padding-left:0!important;padding-right:0!important}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile{width:100%!important;max-width:100%!important;margin:0!important;padding:0!important}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile>*{box-sizing:border-box}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .wallet-benefits-ledger{padding:0!important;background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .wallet-benefits-ledger>summary{padding:14px 16px;border-radius:22px;background:var(--vx-glass-1,rgba(255,255,255,.5));border:1px solid var(--vx-edge,rgba(255,255,255,.7));min-height:44px;display:flex;align-items:center}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .wallet-benefits-ledger[open]>summary{margin-bottom:12px}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .v144-benefit-world,html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .bank-hero{margin:0!important;width:100%!important;box-sizing:border-box}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .bank-hero{padding:18px!important;border-radius:26px!important}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .bank-hero :is(.hero-eyebrow,span,small){letter-spacing:.06em!important}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .bank-hero .v46-global-main{padding:0!important;background:none!important;border:0!important;box-shadow:none!important;margin:6px 0 10px}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .v187-benefits-ledger{padding:16px!important;border-radius:24px;width:100%;box-sizing:border-box;margin:12px 0 0}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .wallet-benefits-cards button small{letter-spacing:.01em!important;font-variant-numeric:tabular-nums}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .v187-benefits-ledger select{width:100%;min-width:0;text-overflow:ellipsis}
+ html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .v187-benefits-ledger table{width:100%;table-layout:auto}
+}
+@media (max-width:790px){html body #app#app#app#app main.world-wallet #page#page .wallet-benefits-mobile .v46-global-main.v187-interactive-kpi{background-color:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;padding:0!important}}
