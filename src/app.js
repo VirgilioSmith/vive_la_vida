@@ -7276,7 +7276,10 @@ function v394DecorateNavigation(){
   else if(el.getAttribute('aria-current')==='page')el.removeAttribute('aria-current');
  }
 }
+/* Fondo ambiental: el brillo del acento alterna de lado según la página (izquierda ↔ derecha). */
+function vAmbientSide(){const order=['overview','wallet','banks','mobilehub','mobilesearch'],i=order.indexOf(ui.page),n=i>=0?i:String(ui.page||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);const side=n%2?'right':'left';if(document.body&&document.body.dataset.viveSide!==side)document.body.dataset.viveSide=side}
 function render(){
+ vAmbientSide();
  if(['vision','payments'].includes(ui.page))ui.page='patrimony';
  v394TrackPage();
  if(ui.page==='kpis')ui.page='overview'; // V357: vista retirada sin borrar los datos del catálogo
