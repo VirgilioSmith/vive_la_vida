@@ -151,9 +151,6 @@ body.theme-black .vg-segmented>[aria-pressed="true"],body.theme-dark .vg-segment
 }
 :is(.vg-button,.vg-icon-button,.vg-segmented>*,.vg-card.is-interactive,.vg-kpi.is-interactive):active{transform:scale(.97);transition-duration:.08s}
 :is(.vg-button,.vg-icon-button,.vg-segmented>*,.vg-input,.vg-select,.vg-card.is-interactive):focus-visible{outline:0;box-shadow:var(--vg-focus),var(--_sh)}
-:is(.vg-button,.vg-icon-button,.vg-segmented>*,.vg-input,.vg-select)[disabled],.is-disabled{opacity:.45;pointer-events:none;filter:saturate(.6)}
-[aria-busy="true"].vg-card,[aria-busy="true"].vg-kpi,.vg-button.is-loading{animation:vg-breathe 1.4s ease-in-out infinite}
-@keyframes vg-breathe{0%,100%{opacity:1}50%{opacity:.6}}
 /* Entrada/salida de hojas y modales (solo transform + opacity) */
 .vg-enter{animation:vg-in .32s var(--vg-ease) both}
 .vg-exit{animation:vg-out .2s ease-in both}
@@ -172,7 +169,7 @@ html.vg-reduce-transparency body.theme-dark,html.vg-reduce-transparency body.the
 }
 html.vg-reduce-motion :is(*,*::before,*::after){animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 @media (prefers-reduced-motion:reduce){
- .vg-enter,.vg-exit,[aria-busy="true"].vg-card,[aria-busy="true"].vg-kpi,.vg-button.is-loading{animation:none}
+ .vg-enter,.vg-exit{animation:none}
  :is(.vg-surface,.vg-card,.vg-button,.vg-icon-button,.vg-input,.vg-select,.vg-segmented>*){transition:none}
 }
 @media (forced-colors:active){
@@ -209,3 +206,110 @@ body:is(.theme-dark,.theme-black) :is(#v361-pressure-day-dialog .v361-pressure-s
 .vg-pref input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--vg-accent)}
 .vg-check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:16px;border:1px solid var(--vg-line)}
 .vg-check>span{display:grid;gap:2px}.vg-check input{width:22px;height:22px;margin-top:2px;accent-color:var(--vg-accent)}
+
+/* ============================================================================
+   PROTOCOLO DE REFINAMIENTO UNIVERSAL
+   Principio: se corrige desde el sistema (tokens), sin !important y sin parches por pantalla.
+   ========================================================================== */
+
+/* ---------- R1 · Puente de tokens: el material heredado consume el motor ---------- */
+/* Todo lo que ya lee --vx-glass-* / --vx-edge / --ui-glass-* adopta los valores refinados y obedece
+   a las preferencias (intensidad, iluminación). Mismas capas de cascada que vx-tokens: gana por orden. */
+:root,body{
+ --vx-glass-1:rgba(255,255,255,min(.97,calc(.62 * var(--vg-k))));
+ --vx-glass-2:rgba(255,255,255,min(.95,calc(.40 * var(--vg-k))));
+ --vx-glass-raised:rgba(255,255,255,min(.98,calc(.82 * var(--vg-k))));
+ --vx-glass-nav:rgba(255,255,255,min(.96,calc(.56 * var(--vg-k))));
+ --vx-edge:rgba(255,255,255,min(.9,calc(.66 * var(--vg-lk))));
+ --vx-edge-soft:rgba(255,255,255,min(.7,calc(.42 * var(--vg-lk))));
+ --vx-highlight:inset 0 1px 0 rgba(255,255,255,min(.9,calc(.7 * var(--vg-lk))));
+ --vx-shadow-1:0 6px 18px -8px rgba(30,50,80,.13);
+ --vx-shadow-2:0 16px 40px -16px rgba(30,50,80,.18);
+}
+body.theme-black,body.theme-dark{
+ --vx-glass-1:rgba(255,255,255,min(.4,calc(.07 * var(--vg-k))));
+ --vx-glass-2:rgba(255,255,255,min(.3,calc(.042 * var(--vg-k))));
+ --vx-glass-raised:rgba(22,23,28,min(.98,calc(.84 * var(--vg-k))));
+ --vx-glass-nav:rgba(16,17,22,min(.96,calc(.64 * var(--vg-k))));
+ --vx-edge:rgba(255,255,255,min(.4,calc(.14 * var(--vg-lk))));
+ --vx-edge-soft:rgba(255,255,255,min(.3,calc(.085 * var(--vg-lk))));
+ --vx-highlight:inset 0 1px 0 rgba(255,255,255,min(.4,calc(.12 * var(--vg-lk))));
+ --vx-shadow-1:0 8px 22px -8px rgba(0,0,0,.55);
+ --vx-shadow-2:0 18px 44px -14px rgba(0,0,0,.65);
+}
+html body[data-vive-bg][data-vive-bg]{
+ --ui-glass-fill:rgba(255,255,255,min(.95,calc(.40 * var(--vg-k))));
+ --ui-glass-edge:rgba(255,255,255,min(.9,calc(.64 * var(--vg-lk))));
+ --ui-glass-reflection:rgba(255,255,255,min(.7,calc(.34 * var(--vg-lk))));
+ --ui-glass-shadow:0 8px 24px -10px rgba(29,46,85,.12);
+ --ui-glass-modal:rgba(250,251,255,min(.98,calc(.84 * var(--vg-k))));
+ --ui-glass-tint:color-mix(in srgb,var(--ui-accent) calc(7% * var(--vg-ak)),transparent);
+}
+html body[data-vive-bg][data-vive-bg]:is(.theme-black,.theme-dark){
+ --ui-glass-fill:rgba(31,33,42,min(.9,calc(.46 * var(--vg-k))));
+ --ui-glass-edge:rgba(255,255,255,min(.4,calc(.14 * var(--vg-lk))));
+ --ui-glass-reflection:rgba(255,255,255,min(.3,calc(.05 * var(--vg-lk))));
+ --ui-glass-shadow:0 8px 22px -10px rgba(0,0,0,.5);
+ --ui-glass-modal:rgba(14,15,20,min(.98,calc(.9 * var(--vg-k))));
+ --ui-glass-tint:color-mix(in srgb,var(--ui-accent) calc(15% * var(--vg-ak)),transparent);
+}
+
+/* ---------- R2 · Materiales adaptativos (variantes oficiales) -------------- */
+/* Contenido denso: estabilidad y lectura > transparencia. */
+.vg-dense{--_a:.9;--_b:0px;--_e:var(--vg-e2);--_sh:var(--vg-sh2)}
+body.theme-dark .vg-dense,body.theme-black .vg-dense{--_a:.1}
+/* Campos: luz mínima, sin reflejo superior; el foco es lo que brilla. */
+:is(.vg-input,.vg-select){background-image:linear-gradient(152deg,transparent 55%,color-mix(in srgb,var(--vg-accent) calc(5% * var(--vg-ak)),transparent) 100%)}
+/* Navegación flotante: claramente separada del contenido (borde y sombra de nivel 04). */
+.vg-nav{box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.5 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .1 * var(--vg-lk) * var(--vg-dark,0))),0 1px 0 rgba(var(--vg-shade-rgb),.05),var(--vg-sh4)}
+/* Componentes secundarios discretos: solo los interactivos y prioritarios reciben luz marcada. */
+:is(.vg-card,.vg-kpi,.vg-table,.vg-chart):not(.is-interactive):not(.is-priority){
+ background:
+  radial-gradient(70% 70% at 100% 0%,rgba(255,255,255,calc(.18 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .035 * var(--vg-lk) * var(--vg-dark,0))),transparent 62%),
+  linear-gradient(152deg,transparent 55%,color-mix(in srgb,var(--vg-accent) calc(5% * var(--vg-ak)),transparent) 100%),
+  rgba(var(--vg-tint-rgb),calc(var(--_a) * var(--vg-k)));
+}
+
+/* ---------- R3 · Microfracturas de acento (detalle óptico decorativo) ------ */
+/* Ramas finísimas, orgánicas y asimétricas, ancladas arriba a la derecha (dirección de luz) y
+   desvanecidas con máscara radial hacia las zonas de menor intensidad. Es una capa de pintura:
+   no recibe eventos, no se anima y se oculta con «Reducir transparencia». */
+.vg-fracture::after,.vg-modal::after,.vg-sheet::after,.vg-strategic::after{
+ content:"";position:absolute;top:0;right:0;width:min(66%,290px);aspect-ratio:3/2;pointer-events:none;z-index:0;border-radius:inherit;
+ background:color-mix(in srgb,var(--vg-accent) calc(70% * var(--vg-ak)),#fff);
+ opacity:calc(.26 * var(--vg-lk) * var(--vg-ak));
+ -webkit-mask-image:radial-gradient(circle at 100% 0%,#000 0%,rgba(0,0,0,.5) 36%,transparent 70%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round'><g stroke-width='.7'><path d='M300 0 L262 28 L244 24 L226 52 L203 60 L188 92 L160 104'/><path d='M262 28 L270 58 L252 80 L256 110'/><path d='M226 52 L238 78 L222 98 L214 132'/><path d='M244 24 L226 12 L214 18'/><path d='M203 60 L180 54 L166 36'/><path d='M188 92 L196 118 L180 140'/></g><g stroke-width='.45'><path d='M262 28 L284 44 L288 70'/><path d='M252 80 L272 96 L266 124'/><path d='M222 98 L204 108 L196 130'/><path d='M160 104 L140 100 L124 114'/><path d='M180 140 L170 160'/><path d='M270 58 L290 80'/></g><g stroke-width='.3'><path d='M284 44 L296 36'/><path d='M124 114 L112 108'/><path d='M214 132 L226 156'/></g></svg>");
+ mask-image:radial-gradient(circle at 100% 0%,#000 0%,rgba(0,0,0,.5) 36%,transparent 70%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round'><g stroke-width='.7'><path d='M300 0 L262 28 L244 24 L226 52 L203 60 L188 92 L160 104'/><path d='M262 28 L270 58 L252 80 L256 110'/><path d='M226 52 L238 78 L222 98 L214 132'/><path d='M244 24 L226 12 L214 18'/><path d='M203 60 L180 54 L166 36'/><path d='M188 92 L196 118 L180 140'/></g><g stroke-width='.45'><path d='M262 28 L284 44 L288 70'/><path d='M252 80 L272 96 L266 124'/><path d='M222 98 L204 108 L196 130'/><path d='M160 104 L140 100 L124 114'/><path d='M180 140 L170 160'/><path d='M270 58 L290 80'/></g><g stroke-width='.3'><path d='M284 44 L296 36'/><path d='M124 114 L112 108'/><path d='M214 132 L226 156'/></g></svg>");
+ -webkit-mask-size:100% 100%,100% 100%;mask-size:100% 100%,100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+}
+
+/* Mismas microfracturas en las hojas ya migradas */
+html body #v361-pressure-day-dialog .v361-pressure-sheet::after,html body #v705-spent-dialog .v705-detail-sheet::after,html body #modal-root .vab-dialog::after,html body #modal-root .v-reconcile-dialog::after{
+ content:"";position:absolute;top:0;right:0;width:min(66%,290px);aspect-ratio:3/2;pointer-events:none;z-index:0;border-radius:inherit;
+ background:color-mix(in srgb,var(--vg-accent) calc(70% * var(--vg-ak)),#fff);
+ opacity:calc(.26 * var(--vg-lk) * var(--vg-ak));
+ -webkit-mask-image:radial-gradient(circle at 100% 0%,#000 0%,rgba(0,0,0,.5) 36%,transparent 70%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round'><g stroke-width='.7'><path d='M300 0 L262 28 L244 24 L226 52 L203 60 L188 92 L160 104'/><path d='M262 28 L270 58 L252 80 L256 110'/><path d='M226 52 L238 78 L222 98 L214 132'/><path d='M244 24 L226 12 L214 18'/><path d='M203 60 L180 54 L166 36'/><path d='M188 92 L196 118 L180 140'/></g><g stroke-width='.45'><path d='M262 28 L284 44 L288 70'/><path d='M252 80 L272 96 L266 124'/><path d='M222 98 L204 108 L196 130'/><path d='M160 104 L140 100 L124 114'/><path d='M180 140 L170 160'/><path d='M270 58 L290 80'/></g><g stroke-width='.3'><path d='M284 44 L296 36'/><path d='M124 114 L112 108'/><path d='M214 132 L226 156'/></g></svg>");
+ mask-image:radial-gradient(circle at 100% 0%,#000 0%,rgba(0,0,0,.5) 36%,transparent 70%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round'><g stroke-width='.7'><path d='M300 0 L262 28 L244 24 L226 52 L203 60 L188 92 L160 104'/><path d='M262 28 L270 58 L252 80 L256 110'/><path d='M226 52 L238 78 L222 98 L214 132'/><path d='M244 24 L226 12 L214 18'/><path d='M203 60 L180 54 L166 36'/><path d='M188 92 L196 118 L180 140'/></g><g stroke-width='.45'><path d='M262 28 L284 44 L288 70'/><path d='M252 80 L272 96 L266 124'/><path d='M222 98 L204 108 L196 130'/><path d='M160 104 L140 100 L124 114'/><path d='M180 140 L170 160'/><path d='M270 58 L290 80'/></g><g stroke-width='.3'><path d='M284 44 L296 36'/><path d='M124 114 L112 108'/><path d='M214 132 L226 156'/></g></svg>");
+ -webkit-mask-size:100% 100%,100% 100%;mask-size:100% 100%,100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+}
+html body :is(#v361-pressure-day-dialog .v361-pressure-sheet,#v705-spent-dialog .v705-detail-sheet,#modal-root .vab-dialog,#modal-root .v-reconcile-dialog)>*{position:relative;z-index:1}
+html body #v361-pressure-day-dialog .v361-pressure-sheet::after,html body #v705-spent-dialog .v705-detail-sheet::after,html body #modal-root .vab-dialog::after,html body #modal-root .v-reconcile-dialog::after{-webkit-mask-composite:source-in;mask-composite:intersect}
+/* El contenido queda por encima de la capa decorativa */
+:is(.vg-fracture,.vg-modal,.vg-sheet,.vg-strategic)>*{position:relative;z-index:1}
+/* Degradado de aparición: la rama se disuelve alejándose de la esquina iluminada */
+.vg-fracture::after,.vg-modal::after,.vg-sheet::after,.vg-strategic::after{
+ -webkit-mask-composite:source-in;mask-composite:intersect;
+}
+html.vg-reduce-transparency :is(.vg-fracture,.vg-modal,.vg-sheet,.vg-strategic)::after{display:none}
+@media (forced-colors:active){:is(.vg-fracture,.vg-modal,.vg-sheet,.vg-strategic)::after{display:none}}
+
+/* ---------- R4 · Legibilidad: la opacidad del material nunca toca al contenido ---- */
+/* Deshabilitado y cargando: se atenúa el color/relleno, no el contenedor completo. */
+:is(.vg-button,.vg-icon-button,.vg-segmented>*,.vg-input,.vg-select)[disabled],.is-disabled{pointer-events:none;opacity:1;filter:none;color:var(--vg-ink-3);background-color:rgba(var(--vg-tint-rgb),calc(var(--vg-a1) * var(--vg-k)))}
+[aria-busy="true"].vg-card,[aria-busy="true"].vg-kpi,.vg-button.is-loading{animation:vg-glow 1.4s ease-in-out infinite}
+@keyframes vg-glow{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),var(--_sh)}50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),var(--_sh),0 0 0 3px color-mix(in srgb,var(--vg-accent) 22%,transparent)}}
+@media (prefers-reduced-motion:reduce){[aria-busy="true"].vg-card,[aria-busy="true"].vg-kpi,.vg-button.is-loading{animation:none}}
+/* Cifras financieras protegidas: nunca heredan transparencia ni desenfoque del contenedor */
+:is(.vg-kpi strong,.vg-table td,.vg-money){opacity:1;-webkit-backdrop-filter:none;backdrop-filter:none;font-variant-numeric:tabular-nums}
+.vg-money.is-negative{color:var(--vx-negative,#a31d49)}
+.vg-money.is-positive{color:var(--vx-positive,#045f37)}
