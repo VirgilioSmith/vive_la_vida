@@ -25,4 +25,10 @@ html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWallet
 html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWalletPc-cuts>div>button{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;justify-content:center!important}
 html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWalletPc-cuts>div>button+button{border-left:1px solid var(--wallet-glass-edge,rgba(120,140,160,.2))!important}
 html body #app#app main.vWalletPc-world #page#page .vWalletPc-strategic .vWalletPc-cuts>div>button>svg:last-child{display:none!important}
+}/* Consumo por tarjeta: la segregación RD$ / US$ en una sola línea bajo el total (menos altura) */
+@media(max-width:790px){
+html body #app#app#app main.world-wallet #page#page .v1301-distribution .v1301-total>.v1301-split{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;justify-content:flex-end!important;align-items:baseline!important;gap:12px!important;margin:0!important;white-space:nowrap}
+html body #app#app#app main.world-wallet #page#page .v1301-distribution .v1301-total>.v1301-split>span{display:inline!important;white-space:nowrap;font-size:13px!important;line-height:1.2!important}
+html body #app#app#app main.world-wallet #page#page .v1301-distribution .v1301-total>.v1301-split>span+span::before{content:"·";margin-right:12px;opacity:.55}
+html body #app#app#app main.world-wallet #page#page .v1301-distribution .wallet-consumption-hero{margin:2px 0 4px!important}
 }
