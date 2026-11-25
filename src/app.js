@@ -10425,7 +10425,7 @@ function vIncomePc(){
  const S=vExpScope(),d=vIncAgg(S.months),exp=vIncExpected();
  const early=(db.incomeSchedules||[]).some(x=>x.active!==false);
  return `<div class="vexp vinc" aria-label="Ingresos">${vFlowTop('income')}
-  <header class="vinc-title"><div><h1>Todo lo que genera tu trabajo.</h1><p>Lo recibido, lo esperado y cómo evoluciona tu dinero.</p></div><div class="vinc-hact"><button type="button" class="btn soft" data-v40-action="addIncome">+ Agregar fuente</button>${early?`<button type="button" class="btn soft" data-v1129-start="1">Registrar cobro anticipado</button>`:''}<button type="button" class="btn vinc-reg" data-act="newTransaction" data-type="income">+ Registrar ingreso</button></div></header>
+  <header class="vinc-title"><div><h1>Todo lo que genera tu trabajo.</h1><p>Lo recibido, lo esperado y cómo evoluciona tu dinero.</p></div><div class="vinc-hact"><button type="button" class="btn soft" data-v40-action="addIncome">+ Agregar fuente</button>${early?`<button type="button" class="btn soft" data-v1129-start="1">Registrar cobro anticipado</button>`:''}</div></header>
   ${vIncSummary(S,d,exp)}</div>`;
 }
 window.addEventListener('popstate',()=>{const want=(history.state&&history.state.incDetail)||null;if(ui.page==='income'&&(ui.incDetail||null)!==want){ui.incDetail=want;render()}});

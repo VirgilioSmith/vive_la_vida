@@ -87,7 +87,6 @@ async function run(browser,{theme,palhex,width=1440,height=900,shot}){
  ok(await p.locator('.vinc-hact').getByText('Registrar cobro anticipado').count()===1,'Registrar cobro anticipado en el encabezado');
  ok(await p.locator('.vinc-act').count()===3,'actividad reciente con los últimos ingresos');
  // acciones
- await p.locator('.vinc-reg').click();await p.waitForTimeout(500);ok(await p.evaluate(()=>document.querySelector('#modal-root').children.length>0),'Registrar ingreso abre el formulario');
  await p.evaluate(()=>{document.getElementById('modal-root').innerHTML=''});
  // integridad
  const after=await p.evaluate(()=>{const t=window.__T,d=t.dbg();return {ledger:JSON.stringify(d.transactions),balance:t.fn.getAccountBalance(d.accounts.find(a=>a.currency==='DOP')||d.accounts[0])}});
