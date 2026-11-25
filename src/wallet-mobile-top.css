@@ -469,3 +469,14 @@
  html body #app#app#app main.world-wallet #page#page .wallet-benefits-mobile .v187-benefits-ledger table{width:100%;table-layout:auto}
 }
 @media (max-width:790px){html body #app#app#app#app main.world-wallet #page#page .wallet-benefits-mobile .v46-global-main.v187-interactive-kpi{background-color:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;padding:0!important}}
+/* Resumen de crédito: importes principales alineados con su etiqueta en CUALQUIER tarjeta (general o individual), sin importar la cantidad */
+@media (max-width:790px){
+ html body #app#app#app#app#app #page#page .wallet-mobile-summary .v550-balance-column{align-items:flex-start!important}
+ html body #app#app#app#app#app #page#page .wallet-mobile-summary .v550-balance-column strong.vx-money{align-self:flex-start!important;justify-self:start!important;text-align:left!important;width:auto!important;max-width:100%;margin-left:0!important;padding-left:0!important;text-indent:0!important}
+ html body #app#app#app#app#app #page#page .wallet-mobile-summary :is(b.vx-money){align-self:flex-end!important;text-align:right!important;margin-right:0!important;padding-right:0!important}
+ html body #app#app#app#app#app #page#page .wallet-mobile-summary .v550-balance-column:not(.v565-primary){align-items:flex-end!important}
+ html body #app#app#app#app#app #page#page .wallet-mobile-summary .v550-balance-column:not(.v565-primary)>*{text-align:right!important;align-self:flex-end!important}
+}
+@media (max-width:790px){
+ html body #app#app#app#app#app #page#page .wallet-mobile-summary .v550-balance-column.v565-primary>strong{align-self:flex-start!important;text-align:left!important;margin-left:0!important;padding-left:0!important;width:auto!important;font-size:clamp(18px,5.2vw,22px)!important;line-height:1.15!important}
+}
