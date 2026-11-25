@@ -131,28 +131,36 @@ html body #app#app :is(.vBanks-kpi)::after{content:"";position:absolute;inset:0;
  background:linear-gradient(115deg,transparent 0 55%,rgba(255,255,255,.16) 55% 100%),radial-gradient(ellipse 75% 55% at 88% 0%,rgba(255,255,255,.3),transparent 62%);clip-path:inset(0 round inherit)}
 html body #app#app :is(.vBanks-kpi){position:relative}
 
-/* Dock compacto (estilo Apple Music): [Inicio] [pestaña activa] [Buscar], cada uno en su propia cápsula de cristal */
+/* Dock compacto (estilo Apple Music) con Centro Estratégico: [Inicio] [mensaje de dos palabras] [Buscar] */
 @media (max-width:790px){
+ html body #app#app#app .vive-mobile-dock{container-type:inline-size}
+ html body #app#app#app .vive-mobile-dock .vive-mobile-dock-center{display:none}
  html body #app#app#app .vive-mobile-dock .vive-mobile-dock-item{transition:flex-basis .32s cubic-bezier(.3,.9,.3,1),width .32s cubic-bezier(.3,.9,.3,1),opacity .22s ease,padding .32s ease,margin .32s ease}
- html body #app#app#app .vive-mobile-dock.is-compact{background:transparent!important;background-image:none!important;border-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0!important;gap:8px!important;justify-content:center;transition:background .25s ease}
+ html body #app#app#app .vive-mobile-dock.is-compact{background:transparent!important;background-image:none!important;border-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0!important;gap:8px!important;justify-content:center}
  html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item{flex:0 0 0!important;width:0!important;min-width:0!important;padding:0!important;margin:0 -4px!important;opacity:0;overflow:hidden;pointer-events:none;border:0!important}
- html body #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item.active,.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]){opacity:1;pointer-events:auto;margin:0!important;height:54px!important;min-height:54px!important;border-radius:999px!important;border:1px solid var(--lg-edge,rgba(255,255,255,.6))!important;background:color-mix(in srgb,#fff 58%,transparent)!important;box-shadow:var(--lg-in-top),0 10px 26px color-mix(in srgb,var(--lg-accent,#6d69f1) 14%,rgba(28,39,59,.14))!important;-webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%)}
- html body #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]){flex:0 0 54px!important;width:54px!important}
- html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item.active{flex:1 1 auto!important;width:auto!important;flex-direction:row!important;gap:10px;justify-content:flex-start;padding:0 18px!important}
- html body #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]):not(.active) .vive-mobile-dock-label{display:none!important}
- html body #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]):not(.active){justify-content:center;padding:0!important;color:var(--lg-accent-deep,#4f5bd5)}
- html body #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]):not(.active) svg{width:26px;height:26px}
- html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item.active .vive-mobile-dock-label{font-size:16px;font-weight:600;white-space:nowrap}
- html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item.active svg{width:24px;height:24px}
+ html body #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center){opacity:1;pointer-events:auto;margin:0!important;height:54px!important;min-height:54px!important;border-radius:999px!important;border:1px solid var(--lg-edge,rgba(255,255,255,.6))!important;background:color-mix(in srgb,#fff 58%,transparent)!important;box-shadow:var(--lg-in-top),0 10px 26px color-mix(in srgb,var(--lg-accent,#6d69f1) 14%,rgba(28,39,59,.14))!important;-webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%)}
+ html body #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]){flex:0 0 54px!important;width:54px!important;justify-content:center;padding:0!important;color:var(--lg-accent-deep,#4f5bd5)}
+ html body #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]) .vive-mobile-dock-label{display:none!important}
+ html body #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]) svg{width:26px;height:26px}
+ html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item::before,html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item::after{display:none!important}
+ html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-center{display:flex;flex:1 1 0;min-width:0;align-items:center;gap:10px;padding:0 14px 0 12px;text-align:left;color:var(--vx-text-1,#0b1220);cursor:pointer;animation:vdcIn .3s ease both}
+ .vive-mobile-dock-center .vdc-ico{flex:none;width:26px;height:26px;display:grid;place-items:center;color:var(--lg-accent-deep,#4f5bd5)}
+ .vive-mobile-dock-center .vdc-ico svg{width:24px;height:24px}
+ .vive-mobile-dock-center .vdc-text{flex:1;min-width:0;display:grid;gap:1px}
+ .vive-mobile-dock-center .vdc-text strong{font-size:clamp(13px,4.3cqi,16px);font-weight:600;line-height:1.15;white-space:nowrap;color:inherit}
+ .vive-mobile-dock-center .vdc-text small{display:none;font-size:12px;line-height:1.2;white-space:nowrap;color:var(--vx-text-2,#5b6478);overflow:hidden;text-overflow:ellipsis}
+ .vive-mobile-dock-center .vdc-chev{flex:none;display:none;width:18px;height:18px;color:var(--vx-text-2,#5b6478)}
+ .vive-mobile-dock-center .vdc-chev svg{width:18px;height:18px}
+ @container (min-width:335px){.vive-mobile-dock-center .vdc-chev{display:block}}
+ @container (min-width:360px){.vive-mobile-dock-center .vdc-text small{display:block}}
+ /* Señal semántica discreta: solo el icono y un fino acento, nunca toda la cápsula */
+ .vive-mobile-dock-center.vdc-alert .vdc-ico{color:var(--vx-danger,#c9303a)}
+ .vive-mobile-dock-center.vdc-warn .vdc-ico{color:#b86a00}
+ .vive-mobile-dock-center.vdc-good .vdc-ico{color:#0f8a5a}
+ html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-center.vdc-alert{border-color:color-mix(in srgb,#c9303a 38%,var(--lg-edge,#fff))!important}
 }
-@media (max-width:790px) and (prefers-reduced-motion:reduce){html body #app#app#app .vive-mobile-dock .vive-mobile-dock-item{transition:none}}
-body.theme-black #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item.active,.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]),body.theme-dark #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item.active,.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"]){background:rgba(44,44,52,.72)!important;color:#f2f6fb}
-@media (max-width:790px){
- html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item.active{justify-content:center!important}
- html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item.active :is(.vive-mobile-dock-icon,.vive-mobile-dock-label){background:transparent!important;box-shadow:none!important;width:auto!important;height:auto!important;padding:0!important}
-}
-@media (max-width:790px){
- html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item.active{display:flex!important;align-items:center!important;gap:10px!important}
- html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item.active :is(.vive-mobile-dock-icon,.vive-mobile-dock-label){flex:0 0 auto!important;margin:0!important;position:static!important;transform:none!important}
- html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item::after,html body #app#app#app .vive-mobile-dock.is-compact .vive-mobile-dock-item::before{display:none!important}
-}
+@keyframes vdcIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){html body #app#app#app .vive-mobile-dock .vive-mobile-dock-item,.vive-mobile-dock-center{transition:none;animation:none!important}}
+body.theme-black #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center),body.theme-dark #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center){background:rgba(34,34,42,.78)!important;color:#f2f6fb}
+body.theme-black .vive-mobile-dock-center .vdc-text small,body.theme-dark .vive-mobile-dock-center .vdc-text small{color:#aab4c6}
+body.theme-black .vive-mobile-dock-center .vdc-ico,body.theme-dark .vive-mobile-dock-center .vdc-ico{color:#b9b6ff}
