@@ -10,10 +10,10 @@
  const reducedOS=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const animOn=()=>prefs.animations&&!prefs.reducedMotion&&!reducedOS();
  const BACK_SEL='[data-v243-explore-back],[data-v8-search-back],[data-v708="back"],.vwm-back,[data-act="back"],button[aria-label^="Volver"],button[aria-label^="Regresar"]';
- const NOSWIPE='input,textarea,select,[contenteditable=""],[contenteditable="true"],[data-no-swipe-back],input[type=range],.vmo,[data-chart-tip],canvas';
+ const NOSWIPE='input,textarea,select,[contenteditable=""],[contenteditable="true"],[data-no-swipe-back],input[type=range],[data-chart-tip],canvas';
  const vis=e=>{if(!e||!e.isConnected)return false;const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&s.display!=='none'};
  const host=()=>window.ViveNavHost||{isRoot:()=>true,pageBack:()=>false,canPageBack:()=>false};
- const surface=()=>document.querySelector('#app main.main')||document.getElementById('page');
+ const surface=()=>{const m=document.querySelector('dialog.vmo[open]');return m||document.querySelector('#app main.main')||document.getElementById('page')};
  /* ── Capas: modal → Momentos → botón de regreso de la pantalla → historial interno ── */
  function topModalClose(){const m=document.getElementById('modal-root');if(!m||!m.children.length)return null;return [...m.querySelectorAll('[data-act="closeModal"],.fastx-close,[aria-label="Cerrar"]')].filter(vis).pop()||null}
  function dirty(root){for(const f of root.querySelectorAll('input,textarea,select')){if(f.type==='hidden'||f.disabled)continue;if(f.type==='checkbox'||f.type==='radio'){if(f.checked!==f.defaultChecked)return true}else if(f.tagName==='SELECT'){if([...f.options].some(o=>o.selected!==o.defaultSelected))return true}else if(String(f.value)!==String(f.defaultValue))return true}return false}

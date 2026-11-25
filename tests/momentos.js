@@ -58,7 +58,7 @@ for(const theme of ['light','black'])for(const w of [320,375,430]){process.env.T
  const reopen=async()=>{await compact(p);await p.tap('.vive-mobile-dock-center');await p.waitForTimeout(800)};
  await reopen();await p.tap('.vmo-ic[data-vmo=close]');await p.waitForTimeout(600);ok(!(await p.evaluate(()=>ViveMomentos.isOpen)),tag+' cierra con botón');
  await reopen();await p.keyboard.press('Escape');await p.waitForTimeout(600);ok(!(await p.evaluate(()=>ViveMomentos.isOpen)),tag+' cierra con Escape');
- await reopen();await p.evaluate(()=>{const g=document.querySelector('.vmo-grab');const o={bubbles:true,pointerId:1,clientX:100};g.dispatchEvent(new PointerEvent('pointerdown',Object.assign({clientY:100},o)));g.dispatchEvent(new PointerEvent('pointerup',Object.assign({clientY:200},o)))});await p.waitForTimeout(600);ok(!(await p.evaluate(()=>ViveMomentos.isOpen)),tag+' cierra deslizando');
+ await reopen();await p.evaluate(async()=>{const d=document.querySelector('dialog.vmo'),t=d.querySelector('.vmo-art');const f=(n,y)=>t.dispatchEvent(new PointerEvent(n,{pointerId:3,pointerType:'touch',isPrimary:true,clientX:200,clientY:y,bubbles:true,cancelable:true}));const raf=()=>new Promise(r=>requestAnimationFrame(r));f('pointerdown',300);await raf();f('pointermove',330);await raf();f('pointermove',420);await raf();f('pointermove',520);f('pointerup',520)});await p.waitForTimeout(600);ok(!(await p.evaluate(()=>ViveMomentos.isOpen)),tag+' cierra deslizando');
  await reopen();await p.evaluate(()=>history.back());await p.waitForTimeout(700);ok(!(await p.evaluate(()=>ViveMomentos.isOpen)),tag+' cierra con retroceso');
  ok(await p.evaluate(()=>!ViveMomentos.state.raf),tag+' sin rAF tras cerrar');
  /* 30 ciclos: sin red nueva, sin listeners nuevos, sin rAF residual */

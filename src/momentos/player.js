@@ -40,10 +40,19 @@
   d.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();step(1)}else if(e.key==='ArrowLeft'){e.preventDefault();step(-1)}});
   $('#vmoProg').addEventListener('input',e=>{S.pb.seek(Number(e.target.value)/100);paint()});
   $('#vmoMode').addEventListener('change',e=>{S.mode=e.target.value;save(K_MODE,S.mode);refresh(false);if(S.pb.state.playing)startLoop()});
-  let y0=null;const g=$('.vmo-grab');
-  g.addEventListener('pointerdown',e=>{y0=e.clientY;try{g.setPointerCapture(e.pointerId)}catch(_){}});
-  g.addEventListener('pointerup',e=>{if(y0!==null&&e.clientY-y0>45){e.preventDefault();close()}y0=null});
-  g.addEventListener('pointercancel',()=>{y0=null});
+  /* Cierre deslizando hacia abajo desde cualquier punto: la hoja sigue al dedo y se cierra al pasar el umbral o con velocidad. */
+  const D={on:false,lock:false,id:null,y0:0,x0:0,dy:0,t:[]};
+  const noDrag=t=>t.closest&&t.closest('input,select,textarea,.vmo-queue');
+  d.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'||S.closing||!e.isPrimary||noDrag(e.target)||d.scrollTop>1)return;Object.assign(D,{on:true,lock:false,id:e.pointerId,y0:e.clientY,x0:e.clientX,dy:0,t:[[performance.now(),0]]})},{passive:true});
+  d.addEventListener('pointermove',e=>{if(!D.on||e.pointerId!==D.id)return;const dy=e.clientY-D.y0,dx=e.clientX-D.x0;
+   if(!D.lock){if(Math.max(Math.abs(dx),Math.abs(dy))<10)return;if(dy>0&&dy>Math.abs(dx)*1.2){D.lock=true;d.style.transition='none'}else{D.on=false;return}}
+   D.dy=Math.max(0,dy);const n=performance.now();D.t.push([n,D.dy]);while(D.t.length>2&&n-D.t[0][0]>100)D.t.shift();
+   const k=Math.min(1,D.dy/innerHeight);d.style.transform=`translate3d(0,${D.dy}px,0) scale(${1-k*.06})`;d.style.borderRadius=Math.min(28,D.dy/4)+'px'});
+  const end=()=>{if(!D.on)return;const was=D.lock;D.on=false;if(!was)return;const a=D.t[0],n=performance.now(),v=n>a[0]?(D.dy-a[1])/(n-a[0]):0;
+   if(D.dy>Math.min(160,innerHeight*.2)||v>.6){d.style.transition='transform .26s cubic-bezier(.3,.7,.3,1),opacity .26s';d.style.transform=`translate3d(0,${innerHeight}px,0)`;d.style.opacity='.4';setTimeout(()=>{d.style.transition='';d.style.transform='';d.style.opacity='';d.style.borderRadius='';S.skipAnim=true;close()},240)}
+   else{d.style.transition='transform .3s cubic-bezier(.3,1.25,.5,1)';d.style.transform='';d.style.borderRadius='';setTimeout(()=>{d.style.transition=''},320)}};
+  d.addEventListener('pointerup',end);d.addEventListener('pointercancel',end);
+  d.addEventListener('touchmove',e=>{if(D.lock&&e.cancelable)e.preventDefault()},{passive:false});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.pb.state.playing){stopLoop(true)}paintState()});
   window.addEventListener('popstate',()=>{if(S.ignorePop>0){S.ignorePop--;return}if(S.dlg&&S.dlg.open){S.popped=true;close()}});
  }
@@ -120,7 +129,7 @@
   if(!S.dlg||!S.dlg.open||S.closing)return;
   S.closing=true;S.pb.pause();stopLoop();
   const r=S.opener&&S.opener.isConnected?S.opener.getBoundingClientRect():null;
-  if(r&&r.width&&!reduced()&&S.dlg.animate){try{await S.dlg.animate([{transform:'none',opacity:1},{transform:T(r,S.dlg.getBoundingClientRect()),opacity:.25}],{duration:330,easing:'ease-in',fill:'forwards'}).finished}catch(_){}}
+  if(S.skipAnim){S.skipAnim=false}else if(r&&r.width&&!reduced()&&S.dlg.animate){try{await S.dlg.animate([{transform:'none',opacity:1},{transform:T(r,S.dlg.getBoundingClientRect()),opacity:.25}],{duration:330,easing:'ease-in',fill:'forwards'}).finished}catch(_){}}
   S.dlg.getAnimations().forEach(a=>a.cancel());S.dlg.close();S.closing=false;themeColorRestore();paintState();
   if(!S.popped&&history.state&&history.state.vmo){S.ignorePop++;try{history.back()}catch(_){S.ignorePop--}}
   S.popped=false;
