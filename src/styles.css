@@ -52341,3 +52341,21 @@ html body #modal-root#modal-root #personalPaymentForm .v378-form-identity{displa
  html body #modal-root#modal-root#modal-root .modal.vsheet form#v12Picker .form-foot{display:none!important}
  html body #modal-root#modal-root#modal-root .modal.vsheet form#v12Picker .form-grid{padding-bottom:18px}
 }
+/* Final de página (móvil): sin hueco de más bajo la última tarjeta; solo lo que ocupa la barra inferior + aire */
+@media(max-width:790px){
+ html body#body #app#app main.main,html body #app#app#app main.main{padding-bottom:max(108px,calc(76px + env(safe-area-inset-bottom,0px)))!important}
+ html body #app#app#app .vive-mobile-home{padding-bottom:0!important}
+}
+/* «Ver pagos» y botones de cabecera de tarjeta: nunca se encogen a círculo */
+.v410-credit-head{gap:12px}
+.v410-credit-head>:is(button,a){flex:0 0 auto!important;min-width:max-content;white-space:nowrap;padding:10px 16px!important;height:auto!important;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.v410-credit-head>:first-child{min-width:0;flex:1 1 auto}
+.v410-credit-head>:is(button,a) svg{width:16px;height:16px;flex:none;margin-left:6px}
+
+/* Detalle del día (Presión financiera / Huella de gastos): acento dinámico */
+html body #v361-pressure-day-dialog .v361-pressure-sheet header small,html body #v705-spent-dialog .v705-detail-sheet>header small{color:var(--lg-accent,#6d69f1)!important;opacity:1!important}
+html body #v361-pressure-day-dialog .v361-pressure-sheet header button,html body #v705-spent-dialog .v705-detail-sheet>header button{background:color-mix(in srgb,var(--lg-accent,#6d69f1) 11%,transparent)!important;border-color:color-mix(in srgb,var(--lg-accent,#6d69f1) 32%,transparent)!important;color:var(--lg-accent,#6d69f1)!important}
+html body #v361-pressure-day-dialog .v361-pressure-main>strong,html body #v705-spent-dialog .v705-detail-total strong{color:var(--lg-accent,#6d69f1)!important}
+html body #v361-pressure-day-dialog .v361-pressure-sheet footer button,html body #v705-spent-dialog .v705-detail-sheet footer button{background:var(--lg-accent,#6d69f1)!important;color:#fff!important;border:0!important;min-height:52px;border-radius:20px!important;font-weight:700;box-shadow:0 12px 24px -14px color-mix(in srgb,var(--lg-accent,#6d69f1) 75%,#000)}
+html body #v361-pressure-day-dialog .v361-pressure-item b,html body #v705-spent-dialog .v705-detail-row b{color:var(--lg-accent,#6d69f1)}
+html body #v361-pressure-day-dialog .v361-pressure-item{border-top-color:color-mix(in srgb,var(--lg-accent,#6d69f1) 16%,transparent)}
