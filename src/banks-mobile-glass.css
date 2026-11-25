@@ -325,3 +325,39 @@ html body #app#app#app#app #page#page .vBanks-mobile-screen:not(.vBanks-screen-d
  html body #app#app#app #page#page .vBanks-screen-detail .v239-more{border-radius:22px}
 }
 html body #app#app#app#app #page#page .vBanks-screen-detail .vBanks-detail,html body #app#app#app#app #page#page .vBanks-screen-detail .vBanks-detail:focus,html body #app#app#app#app #page#page .vBanks-screen-detail .vBanks-detail:focus-visible{outline:none!important}
+
+/* ═══ Tarjeta dentro de Bancos · referencia: Wallet móvil (dimensiones, rótulos, cristal y cápsulas) ═══ */
+@media(max-width:790px){
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-card{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;display:grid;gap:14px}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-back{display:none!important}
+ /* cara de tarjeta: mismas proporciones que el carrusel de Wallet */
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero{position:relative;display:grid;align-content:space-between;gap:10px;min-height:clamp(184px,55.5vw,236px);padding:18px 20px!important;border-radius:28px!important;overflow:hidden;box-shadow:0 14px 30px color-mix(in srgb,var(--lg-accent,#6d69f1) 28%,transparent)}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 0 58%,rgba(255,255,255,.14) 58% 100%)}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero>*{position:relative;z-index:1}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero :is(small,span):not(button *){text-transform:uppercase;letter-spacing:.07em;font-size:12px;font-weight:700;opacity:.9}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero h1,html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero h2{margin:0;font-size:clamp(22px,6.4vw,26px);font-weight:700;letter-spacing:-.02em;line-height:1.15}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1290-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero button{min-height:46px;font-size:14px;font-weight:600;white-space:nowrap}
+ /* paneles: cristal de Wallet, 16 px de relleno, un solo nivel */
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-grid{display:grid;gap:14px}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-panel{padding:16px!important;border-radius:26px!important;display:grid;gap:12px}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-panel>header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-panel>header :is(h2,h3,strong){margin:0;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--vx-accent-ink,var(--vx-text-2,#5b6478))}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-panel>header :is(span,small,em,b){display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--vx-accent-ink,inherit);background:color-mix(in srgb,var(--lg-accent,#6d69f1) 13%,transparent);border:1px solid color-mix(in srgb,var(--lg-accent,#6d69f1) 24%,transparent)}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-debt strong,html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-debt>b{font-size:clamp(26px,7.6vw,32px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-debt small,html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-debt span{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--vx-text-2,#5b6478)}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;font-size:15px}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-row b,html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-row strong{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+}
+@media(max-width:790px){
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero{align-content:start!important;min-height:0!important;gap:6px!important;padding:20px!important}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero :is(p,small,span){color:rgba(255,255,255,.92)!important;opacity:1!important}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1290-actions{margin-top:14px}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-row{min-height:0!important;padding:11px 0!important}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-panel{gap:8px!important}
+}
+@media(max-width:790px){
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero button :is(span,small,svg){color:inherit!important}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero button.v1190-primary{color:var(--vx-accent-ink,#3d37a8)!important;background:#fff!important}
+ html body #app#app#app#app #page#page .vBanks-screen-detail .v1190-hero button.v1190-primary *{color:var(--vx-accent-ink,#3d37a8)!important;text-transform:none!important;letter-spacing:0!important;font-size:14px!important;font-weight:600!important}
+}
