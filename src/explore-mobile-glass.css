@@ -56,3 +56,9 @@ html body #app#app main.world-mobilehub #page#page .vxm button:focus-visible{out
 html body #app#app main.world-mobilehub #page#page{margin-top:-14px}
 /* Buscar: título a la misma altura que Explorar y Bancos */
 html body #app#app main.world-mobilesearch #page#page .v721-search-shell .v711-search-heading{margin-top:-18px!important}
+/* Héroe de Explorar: Ingresos y Egresos en dos columnas iguales que se encogen (nada recortado a 320 px) */
+html body #app#app main.world-mobilehub #page#page .vxm .vxm-hero-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;box-sizing:border-box}
+html body #app#app main.world-mobilehub #page#page .vxm .vxm-hero-row>.vxm-flow{min-width:0;width:100%;box-sizing:border-box;padding-inline:12px}
+html body #app#app main.world-mobilehub #page#page .vxm .vxm-hero-row .vx-money{font-size:clamp(14px,4.4vw,19px)!important;white-space:nowrap}
+@media(max-width:360px){html body #app#app main.world-mobilehub #page#page .vxm .vxm-hero-row .vxm-flow>:is(svg:last-child,.vxm-go,.vxm-arrow){display:none!important}html body #app#app main.world-mobilehub #page#page .vxm .vxm-hero-row .vxm-flow :is(.vxm-ico,.vxm-flow-ico){width:30px;height:30px;flex:none}}
+@media(max-width:360px){html body #app#app main.world-mobilehub #page#page .vxm .vxm-flow .vxm-arrow{display:none!important}}

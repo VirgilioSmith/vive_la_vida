@@ -52226,3 +52226,38 @@ html body #app#app .v911-logo *{color:inherit!important;stroke:currentColor}
  html body #app#app #page .vwm-month{flex:0 1 auto;min-width:0;max-width:62%}
  html body #app#app #page .vwm-month>span{overflow:hidden;text-overflow:ellipsis}
 }
+
+/* Beneficios y costos por tarjeta (móvil): cada fila de la tabla pasa a tarjeta con sus rótulos; ninguna columna queda fuera de pantalla */
+@media (max-width:790px){
+ html body #app#app #page .v144-table-wrap{overflow:visible!important;border:0!important;background:none!important;box-shadow:none!important;padding:0!important}
+ html body #app#app #page .v144-profit-table{display:block!important;width:100%!important;min-width:0!important;border:0;background:none}
+ html body #app#app #page .v144-profit-table thead{display:none!important}
+ html body #app#app #page .v144-profit-table tbody{display:grid;gap:12px}
+ html body #app#app #page .v144-profit-table tr{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;padding:16px;border-radius:22px;background:color-mix(in srgb,var(--lg-accent,#6d69f1) 6%,transparent);border:1px solid color-mix(in srgb,var(--lg-accent,#6d69f1) 16%,transparent)}
+ html body #app#app #page .v144-profit-table td{display:grid;align-content:start;gap:3px;min-width:0;padding:0!important;border:0!important;background:none!important;text-align:left!important;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+ html body #app#app #page .v144-profit-table td::before{content:attr(data-label);font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--vx-text-2,#5b6478)}
+ html body #app#app #page .v144-profit-table td:first-child{grid-column:1/-1;font-size:17px}
+ html body #app#app #page .v144-profit-table td:first-child::before{display:none}
+ html body #app#app #page .v144-profit-table td:nth-child(4),html body #app#app #page .v144-profit-table td:nth-child(5){min-width:0}
+ html body #app#app #page .v144-profit-table td small{font-size:12.5px;font-weight:500;color:var(--vx-text-2,#5b6478)}
+ html body #app#app #page .v144-profit-table td:last-child{grid-column:1/-1}
+ html body #app#app #page .v144-profit-table td:last-child::before{display:none}
+ html body #app#app #page .v144-profit-table td:last-child .v144-link{display:flex;align-items:center;justify-content:center;min-height:44px;width:100%;border-radius:14px}
+}
+@media (max-width:790px){
+ html body #app#app #page .v144-profit-table td::before{letter-spacing:.02em;font-size:11.5px;white-space:normal;overflow-wrap:anywhere}
+ /* Áreas táctiles mínimas de 44 px en controles pequeños */
+ html body #app#app #page :is(.v1244-pill,.vBanksPc-benefits-link,.v708-head-icon,.v708-chip,.v708-more){min-height:44px}
+ html body #app#app #page .vBanksPc-benefits-link{padding-block:8px}
+ html body #app#app #page .v144-profit-table tr{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+
+}
+@media (max-width:360px){html body #app#app #page .v144-profit-table tr{grid-template-columns:minmax(0,1fr)}html body #app#app #page .v144-profit-table td:first-child,html body #app#app #page .v144-profit-table td:last-child{grid-column:auto}}
+
+/* Presupuesto en Inicio (PC): si el widget es estrecho, etiqueta arriba e importe debajo; el anillo no empuja los importes fuera */
+@media (min-width:791px){
+ html body #app#app #page .v290-budget-web .v291-budget-content{grid-template-columns:minmax(0,auto) minmax(0,1fr)!important;gap:14px;align-items:center}
+ html body #app#app #page .v290-budget-web .v291-budget-line{display:grid!important;grid-template-columns:1fr;gap:1px;min-width:0}
+ html body #app#app #page .v290-budget-web .v291-budget-line b,html body #app#app #page .v290-budget-web .v291-budget-line strong{white-space:nowrap;font-variant-numeric:tabular-nums}
+ html body #app#app #page .v290-budget-web .v291-budget-metrics{min-width:0}
+}
