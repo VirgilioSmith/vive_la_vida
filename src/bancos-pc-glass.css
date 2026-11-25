@@ -381,3 +381,26 @@ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBank
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-institution:has(.v40-nonbank-detail){display:flex!important;flex-direction:column}
  html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-institution:has(.v40-nonbank-detail) .v40-nonbank-detail{order:-1;flex:0 0 auto!important}
 }
+
+/* Bancos PC en pantallas anchas (≥1440 px): columnas con el alto de su contenido (sin estirarse a la ventana) y tipografía/filas ampliadas */
+@media (min-width:1440px){
+ html body #app#app #page .vBanksPc-grid{align-items:start!important;height:auto!important;min-height:0!important}
+ html body #app#app #page .vBanksPc-grid>*{height:auto!important;align-self:start}
+ html body #app#app #page .vBanksPc-bank-options{flex:0 0 auto!important;min-height:0!important}
+ html body #app#app #page .vBanksPc-bank-list{min-height:0!important}
+ html body #app#app #page .vBanksPc-institution{flex:0 0 auto!important;min-height:0!important;height:auto!important}
+ html body #app#app #page .vBanksPc-insights>:is(.v1301-insight,.v266-wallet-panel){flex:0 0 auto!important;min-height:0!important}
+ html body #app#app #page .vBanksPc-institution :is(.vBanksPc-products,.vBanksPc-lanes,[class*=product-list],.vBanksPc-summary-rows){display:grid;grid-auto-rows:minmax(112px,auto);gap:14px;align-content:start}
+ html body #app#app #page .vBanksPc-institution :is(button.vBanksPc-category,.vBanksPc-product-card,.vBanksPc-category-row){min-height:112px;height:auto}
+ html body #app#app #page .vBanksPc-bank-list button,html body #app#app #page .vBanksPc-bank-list .vBanksPc-bank{min-height:64px}
+ html body #app#app #page .vBanksPc-bank-list strong{font-size:16px}
+ html body #app#app #page .vBanksPc-bank-list small{font-size:13.5px}
+ html body #app#app #page .vBanksPc-insights .v1301-ranked,html body #app#app #page .vBanksPc-insights .wallet-consumption-list{gap:6px}
+ html body #app#app #page .vBanksPc-insights .v1301-rank{min-height:56px}
+}
+@media (min-width:1440px){
+ html body #app#app#app#app #page#page .vBanksPc-insights{align-self:start!important;height:auto!important;min-height:0!important}
+ html body #app#app#app#app #page#page .vBanksPc-insights>details,html body #app#app#app#app #page#page .vBanksPc-insights>section{flex:0 0 auto!important;height:auto!important;min-height:0!important}
+ html body #app#app#app#app #page#page .vBanksPc-insights details>*{min-height:0}
+ html body #app#app#app#app #page#page .vBanksPc-insights :is(.v1301-ranked,.wallet-consumption-list,.vBanksPc-consumption-list,[class*=consumption] [class*=rows]){justify-content:flex-start!important;align-content:start!important;gap:10px!important;height:auto!important;flex:0 0 auto!important}
+}
