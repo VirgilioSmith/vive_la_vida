@@ -52408,3 +52408,6 @@ html body #modal-root#modal-root#modal-root#modal-root#modal-root form.v1300-ann
  html body #modal-root#modal-root#modal-root#modal-root form#transactionForm.v349-register-flow .form-grid>label :is(input.field,select.field,.v789-select-open){min-height:46px!important;height:auto!important}
  html body #modal-root#modal-root#modal-root#modal-root form#transactionForm.v349-register-flow .form-grid>label .filter-label{font-size:12px!important;line-height:1.2!important}
 }
+/* Gestiones «Otros» (devolución, ajuste, beneficio, préstamo): la cabecera propia ya trae flecha y título → se oculta la del contenedor (evita título y flecha duplicados) */
+html body #modal-root#modal-root#modal-root .modal:has(.other-studio-header)>.modal-head{display:none!important}
+html body #modal-root#modal-root#modal-root .modal:has(.other-studio-header)~.v68-mobile-dismiss{display:none!important}
