@@ -57,3 +57,9 @@ dialog.vmo{--vmo-art-h:57dvh}
 .vmo-play{width:84px;height:84px}.vmo-play svg{width:36px;height:36px}
 @media(min-width:791px){dialog.vmo{--vmo-art-h:52vh}}
 @media(max-height:720px){dialog.vmo{--vmo-art-h:46dvh}.vmo-play{width:64px;height:64px}.vmo-controls .vmo-ic{width:52px;height:52px}}
+
+/* Parte superior totalmente plana: sin degradados ni transparencias sobre la isla dinámica */
+.vmo-art{-webkit-mask-image:none!important;mask-image:none!important;-webkit-clip-path:inset(0 0 0 0);clip-path:inset(0 0 0 0)}
+.vmo-art::after{display:none}
+.vmo-art-fade{position:absolute;left:0;right:0;bottom:0;height:38%;z-index:2;background:linear-gradient(transparent,color-mix(in srgb,var(--vmo-b) 27%,var(--vmo-c)));pointer-events:none}
+.vmo-x{background:rgba(0,0,0,.55)!important}

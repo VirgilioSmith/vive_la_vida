@@ -12,7 +12,7 @@
   life:['#ffc4ce','#9a455f','#321b43','M50 85 C10 60 4 42 14 23 C24 5 42 10 50 26 C58 10 76 5 86 23 C96 42 90 60 50 85Z','heart2'],
   joseo:['#ffd19d','#80401b','#2c1429','M52 5 C65 35 91 47 78 77 C65 105 20 96 18 70 C16 49 39 30 40 20 C38 46 48 48 52 5Z','briefcase'],
   gratitude:['#ded0ff','#5b4c91','#201b3b','M50 25 A25 25 0 1 0 50 75 A25 25 0 1 0 50 25 M50 2 V14 M50 86 V98 M2 50 H14 M86 50 H98','sparkles'],
-  verano:['#ffd9a0','#b4531a','#3f1a0c','M50 85 C10 60 4 42 14 23 C24 5 42 10 50 26 C58 10 76 5 86 23 C96 42 90 60 50 85Z','heart2','./src/momentos/art/verano.jpg'],
+  verano:['#ffd9a0','#b4531a','#3f1a0c','M50 85 C10 60 4 42 14 23 C24 5 42 10 50 26 C58 10 76 5 86 23 C96 42 90 60 50 85Z','heart2','./src/momentos/art/verano.jpg','#c7876f'],
   goals:['#a9c8ff','#1d3f86','#0a1636','M8 70 H92 M20 70 C30 40 70 40 80 70 M50 18 V34 M22 30 L32 40 M78 30 L68 40','star']
  };
  const LABELS={finance:'TU REALIDAD FINANCIERA',joseo:'JOSEO',life:'VIVE EL HOY',gratitude:'GRATITUD',goals:'MIS METAS',important:'LO QUE IMPORTA'};

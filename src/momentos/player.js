@@ -21,7 +21,7 @@
  function build(){
   const d=document.createElement('dialog');d.className='vmo';d.setAttribute('aria-labelledby','vmoTitle');
   d.innerHTML=`<div class="vmo-inner" tabindex="-1">
-  <div class="vmo-art" id="vmoArt"><img id="vmoImg" alt="" hidden decoding="async"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path id="vmoSymbol" d=""/></svg><span class="vmo-scrim" aria-hidden="true"></span></div>
+  <div class="vmo-art" id="vmoArt"><img id="vmoImg" alt="" hidden decoding="async"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path id="vmoSymbol" d=""/></svg><span class="vmo-art-fade" aria-hidden="true"></span></div>
   <div class="vmo-grab"><button type="button" class="vmo-drag" data-vmo="close" aria-label="Minimizar Momentos"><span class="vmo-handle"></span></button></div>
   <button type="button" class="vmo-ic vmo-x" data-vmo="close" aria-label="Cerrar Momentos">${ico('down')}</button>
   <div class="vmo-sheet">
@@ -67,7 +67,7 @@
  function render(animate){
   const m=S.pb.current(),t=E.THEMES[m.theme]||E.THEMES.calm,st=S.dlg.style;
   st.setProperty('--vmo-a',t[0]);st.setProperty('--vmo-b',t[1]);st.setProperty('--vmo-c',t[2]);
-  $('#vmoSymbol').setAttribute('d',t[3]);const im=$('#vmoImg');if(t[5]){if(im.getAttribute('src')!==t[5])im.setAttribute('src',t[5]);im.hidden=false}else im.hidden=true;S.dlg.classList.toggle('vmo-has-img',!!t[5]);themeColor(t[1]);
+  $('#vmoSymbol').setAttribute('d',t[3]);const im=$('#vmoImg');if(t[5]){if(im.getAttribute('src')!==t[5])im.setAttribute('src',t[5]);im.hidden=false}else im.hidden=true;S.dlg.classList.toggle('vmo-has-img',!!t[5]);themeColor(t[6]||t[1]);
   $('#vmoCat').textContent=E.LABELS[m.mode]||'VIVE';$('#vmoTitle').textContent=m.title;$('#vmoText').textContent=m.text;
   $('#vmoCount').textContent=S.pb.state.queue.length?`${S.pb.state.idx+1} de ${S.pb.state.queue.length}`:'0 momentos';
   $('#vmoDur').textContent=m.hold?'Manual':fmt(m.seconds);
@@ -107,7 +107,7 @@
   S.opener=opener||document.querySelector('.vive-mobile-dock-center');
   const r=S.opener&&S.opener.getBoundingClientRect();
   refresh(false);recent(S.pb.current().id);
-  S.dlg.showModal();S.dlg.classList.remove('vmo-closing');themeColor((E.THEMES[S.pb.current().theme]||E.THEMES.calm)[1]);
+  S.dlg.showModal();S.dlg.classList.remove('vmo-closing');{const q=E.THEMES[S.pb.current().theme]||E.THEMES.calm;themeColor(q[6]||q[1])}
   try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}
   try{history.pushState({vmo:1},'');S.popped=false}catch(_){}
   if(r&&r.width&&!reduced()&&S.dlg.animate){const p=S.dlg.getBoundingClientRect();
