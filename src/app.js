@@ -7280,12 +7280,30 @@ function v394DecorateNavigation(){
 function vAmbientSide(){const order=['overview','wallet','banks','mobilehub','mobilesearch'],i=order.indexOf(ui.page),n=i>=0?i:String(ui.page||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);const side=n%2?'right':'left';if(document.body&&document.body.dataset.viveSide!==side)document.body.dataset.viveSide=side;requestAnimationFrame(()=>vCrackPaint(document.body.dataset.viveSide||side))}
 /* Grietas sutiles en el color del acento, del mismo lado del brillo. Se regeneran sólo si cambia el acento, el lado o el tema. */
 let vCrackKey='';
-function vCrackPaint(side){try{const b=document.body,cs=getComputedStyle(b),c=(cs.getPropertyValue('--lg-accent')||'#6d69f1').trim(),dark=b.classList.contains('theme-black')||b.classList.contains('theme-dark'),key=c+side+dark;if(key===vCrackKey)return;vCrackKey=key;
- const L=['M0 30 L38 70 L34 118 L74 160 L70 214 L104 262','M38 70 L78 58 L112 84','M74 160 L116 150 L132 188','M70 214 L40 252 L52 304 L22 350','M104 262 L96 318 L128 366 L116 420','M0 420 L34 456 L30 506 L58 548','M128 366 L170 380'].map(d=>`<path d="${d}"/>`).join('');
+/* Agrietado: fisuras con grosor variable (más anchas en el origen, afinándose), con luz del acento filtrándose por dentro,
+   borde de cristal roto y esquirlas translúcidas. Se genera sólo si cambia el acento, el lado o el tema. */
+function vCrackSvg(c,dark,side){
+ const R=(()=>{let x=7;return()=>{x=(x*16807)%2147483647;return x/2147483647}})();
+ /* Cada grieta es una polilínea; el polígono se obtiene desplazando ±w(t) a lo largo de la normal. */
+ const cracks=[
+  {p:[[0,24],[30,62],[26,108],[62,150],[56,204],[92,254],[84,310]],w:5},
+  {p:[[30,62],[66,52],[98,82],[112,76]],w:2.6},
+  {p:[[62,150],[104,144],[118,182]],w:2.4},
+  {p:[[56,204],[28,246],[40,298],[14,340]],w:3},
+  {p:[[92,254],[124,300],[114,352],[140,396]],w:2.8},
+  {p:[[0,430],[30,462],[26,512],[54,556]],w:3.6},
+  {p:[[26,108],[8,140]],w:1.8},{p:[[124,300],[160,312]],w:1.6}
+ ];
+ const poly=(pts,w0)=>{const n=pts.length,L=[],Rr=[];for(let i=0;i<n;i++){const a=pts[Math.max(0,i-1)],b=pts[Math.min(n-1,i+1)];let dx=b[0]-a[0],dy=b[1]-a[1];const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;const t=i/(n-1),w=Math.max(.25,w0*(1-t*.92))*(.7+.6*R());L.push([pts[i][0]-dy*w,pts[i][1]+dx*w]);Rr.push([pts[i][0]+dy*w,pts[i][1]-dx*w])}return 'M'+L.concat(Rr.reverse()).map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' L')+'Z'};
+ const d=cracks.map(k=>poly(k.p,k.w)).join(' ');
+ const line=cracks.map(k=>'M'+k.p.map(q=>q.join(' ')).join(' L')).join(' ');
+ const shards='<path d="M0 24 L30 62 L26 108 L0 140Z"/><path d="M30 62 L66 52 L98 82 L62 150 L26 108Z"/><path d="M62 150 L118 182 L92 254 L56 204Z"/><path d="M0 430 L30 462 L26 512 L0 540Z"/>';
  const t=side==='right'?'transform="translate(180 0) scale(-1 1)"':'';
- const op=dark?.5:.38;
- const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 600" fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><g ${t}>${L}</g></svg>`;
- b.style.setProperty('--crack-img','url("data:image/svg+xml,'+encodeURIComponent(svg).replace(/"/g,'%22')+'")');b.style.setProperty('--crack-pos',side==='right'?'right top':'left top')}catch(_){}}
+ const o=dark?.8:.85;
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 600"><defs><filter id="h" x="-30%" y="-10%" width="160%" height="120%"><feGaussianBlur stdDeviation="7"/></filter><filter id="s"><feGaussianBlur stdDeviation=".6"/></filter></defs><g ${t} opacity="${o}"><g fill="#fff" fill-opacity="${dark?.05:.16}">${shards}</g><path d="${d}" fill="${c}" fill-opacity=".5" filter="url(#h)" transform="scale(1.02)"/><path d="${d}" fill="${c}" fill-opacity="${dark?.75:.62}" filter="url(#s)"/><path d="${line}" fill="none" stroke="#fff" stroke-opacity="${dark?.55:.8}" stroke-width=".5" stroke-linecap="round" stroke-linejoin="round" transform="translate(.9 -.6)"/><path d="${line}" fill="none" stroke="#000" stroke-opacity="${dark?.5:.18}" stroke-width=".5" stroke-linecap="round" transform="translate(-.8 .7)"/></g></svg>`;
+}
+function vCrackPaint(side){try{const b=document.body,cs=getComputedStyle(b),c=(cs.getPropertyValue('--lg-accent')||'#6d69f1').trim(),dark=b.classList.contains('theme-black')||b.classList.contains('theme-dark'),key=c+side+dark;if(key===vCrackKey)return;vCrackKey=key;
+ b.style.setProperty('--crack-img','url("data:image/svg+xml,'+encodeURIComponent(vCrackSvg(c,dark,side)).replace(/"/g,'%22')+'")');b.style.setProperty('--crack-pos',side==='right'?'right top':'left top')}catch(_){}}
 function render(){
  vAmbientSide();
  if(['vision','payments'].includes(ui.page))ui.page='patrimony';
