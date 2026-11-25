@@ -12,6 +12,7 @@
   life:['#ffc4ce','#9a455f','#321b43','M50 85 C10 60 4 42 14 23 C24 5 42 10 50 26 C58 10 76 5 86 23 C96 42 90 60 50 85Z','heart2'],
   joseo:['#ffd19d','#80401b','#2c1429','M52 5 C65 35 91 47 78 77 C65 105 20 96 18 70 C16 49 39 30 40 20 C38 46 48 48 52 5Z','briefcase'],
   gratitude:['#ded0ff','#5b4c91','#201b3b','M50 25 A25 25 0 1 0 50 75 A25 25 0 1 0 50 25 M50 2 V14 M50 86 V98 M2 50 H14 M86 50 H98','sparkles'],
+  verano:['#ffd9a0','#b4531a','#3f1a0c','M50 85 C10 60 4 42 14 23 C24 5 42 10 50 26 C58 10 76 5 86 23 C96 42 90 60 50 85Z','heart2','./src/momentos/art/verano.jpg'],
   goals:['#a9c8ff','#1d3f86','#0a1636','M8 70 H92 M20 70 C30 40 70 40 80 70 M50 18 V34 M22 30 L32 40 M78 30 L68 40','star']
  };
  const LABELS={finance:'TU REALIDAD FINANCIERA',joseo:'JOSEO',life:'VIVE EL HOY',gratitude:'GRATITUD',goals:'MIS METAS',important:'LO QUE IMPORTA'};
@@ -28,11 +29,11 @@
   mk('j7','joseo','Da frutos','El joseo también da sus frutos.','joseo',35,10),
   mk('j8','joseo','Date gustos','Date tus gustos sin hipotecar tu tranquilidad.','joseo',35,10),
   mk('j9','joseo','Tener opciones','No todo es dinero, pero qué bueno es tener opciones.','joseo',35,10),
-  mk('l1','life','Vive hoy','La vida también sucede mientras construyes tu futuro.','life',40,10),
-  mk('l2','life','Disfruta proceso','No necesitas tenerlo todo resuelto para disfrutar lo que tienes.','life',40,10),
-  mk('l3','life','Valora presente','Hoy también es parte del plan.','life',40,10),
-  mk('l4','life','Haz recuerdos','Invierte también en experiencias que importan.','life',40,10),
-  mk('l5','life','Respira profundo','Que el ruido del día no te quite la calma.','life',40,10),
+  mk('l1','life','Vive hoy','La vida también sucede mientras construyes tu futuro.','verano',40,10),
+  mk('l2','life','Disfruta proceso','No necesitas tenerlo todo resuelto para disfrutar lo que tienes.','verano',40,10),
+  mk('l3','life','Valora presente','Hoy también es parte del plan.','verano',40,10),
+  mk('l4','life','Haz recuerdos','Invierte también en experiencias que importan.','verano',40,10),
+  mk('l5','life','Respira profundo','Que el ruido del día no te quite la calma.','verano',40,10),
   mk('g1','gratitude','Gracias, Dios','Agradece lo que tienes mientras trabajas por lo que sueñas.','gratitude',30,12),
   mk('g2','gratitude','Agradece siempre','Siempre hay algo por agradecer.','gratitude',30,12),
   mk('g3','gratitude','Valora familia','Celebra el tiempo que compartes con quienes amas.','gratitude',30,12),

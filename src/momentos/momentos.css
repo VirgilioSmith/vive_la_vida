@@ -1,40 +1,49 @@
-/* VIVE · Momentos — reproductor inmersivo. Sólo transform/opacity en animación; los anillos se detienen al cerrar o con la pestaña oculta. */
+/* VIVE · Momentos — reproductor inmersivo a pantalla completa (estilo Apple Music): la portada llega hasta el borde superior,
+   detrás de la barra de estado / Dynamic Island, y se funde con el fondo. Sólo transform/opacity en animación. */
 @property --vmo-a{syntax:'<color>';inherits:true;initial-value:#a5f1d0}
 @property --vmo-b{syntax:'<color>';inherits:true;initial-value:#174a3c}
 @property --vmo-c{syntax:'<color>';inherits:true;initial-value:#061c17}
-dialog.vmo{--vmo-a:#a5f1d0;--vmo-b:#174a3c;--vmo-c:#061c17;transition:--vmo-a .6s,--vmo-b .6s,--vmo-c .6s;position:fixed;inset:0;margin:auto;width:min(100%,540px);height:100dvh;max-height:none;max-width:none;border:0;padding:0;color:#fff;background:linear-gradient(155deg,var(--vmo-b),var(--vmo-c) 75%);overflow:auto;overscroll-behavior:contain;transform-origin:top left;border-radius:28px;box-sizing:border-box}
-dialog.vmo::backdrop{background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-@media(min-width:791px){dialog.vmo{height:min(900px,96vh);border-radius:32px;box-shadow:0 30px 90px rgba(0,0,0,.5)}.vmo-art{max-height:30vh;width:min(100%,30vh)}.vmo-inner{gap:10px}}
-.vmo-inner:focus{outline:none}
-.vmo-inner{min-height:100%;display:flex;flex-direction:column;gap:14px;padding:calc(10px + env(safe-area-inset-top,0px)) 26px calc(20px + env(safe-area-inset-bottom,0px));box-sizing:border-box}
-.vmo-grab{display:grid;place-items:center}
-.vmo-drag{width:100%;min-height:44px;display:grid;place-items:center;background:none;border:0;color:inherit;cursor:pointer;touch-action:none}
-.vmo-handle{width:42px;height:4px;border-radius:8px;background:rgba(255,255,255,.45)}
-.vmo-top,.vmo-line,.vmo-controls,.vmo-foot{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.vmo-brand{font-size:12px;letter-spacing:.14em;text-transform:lowercase;opacity:.85}.vmo-brand b{color:var(--vmo-a);letter-spacing:.2em;font-weight:700;text-transform:uppercase}
+dialog.vmo{--vmo-a:#a5f1d0;--vmo-b:#174a3c;--vmo-c:#061c17;--vmo-art-h:clamp(300px,54dvh,560px);transition:--vmo-a .6s,--vmo-b .6s,--vmo-c .6s;position:fixed;inset:0;margin:0;width:100%;height:100dvh;max-height:none;max-width:none;border:0;padding:0;color:#fff;background:linear-gradient(180deg,var(--vmo-b) 0,var(--vmo-c) 78%);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;transform-origin:top left;border-radius:0;box-sizing:border-box}
+dialog.vmo::backdrop{background:#000}
+@media(min-width:791px){dialog.vmo{inset:0;margin:auto;width:min(100%,540px);height:min(900px,96vh);border-radius:32px;box-shadow:0 30px 90px rgba(0,0,0,.5);--vmo-art-h:clamp(260px,46vh,420px)}dialog.vmo::backdrop{background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}}
+.vmo-inner{position:relative;min-height:100%;display:flex;flex-direction:column;box-sizing:border-box}.vmo-inner:focus{outline:none}
+/* Portada: ocupa desde y=0 (bajo la isla dinámica) y se desvanece hacia el fondo. */
+.vmo-art{position:absolute;top:0;left:0;right:0;height:var(--vmo-art-h);overflow:hidden;display:grid;place-items:center;isolation:isolate;background:radial-gradient(ellipse at 50% 38%,color-mix(in srgb,var(--vmo-a) 38%,var(--vmo-b)),var(--vmo-b) 62%,var(--vmo-c));-webkit-mask-image:linear-gradient(#000 74%,transparent);mask-image:linear-gradient(#000 74%,transparent)}
+.vmo-art>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%;z-index:0;transform:scale(1.04);animation:vmoDrift 14s ease-in-out infinite alternate;will-change:transform}
+.vmo-art>img[hidden]{display:none}
+.vmo-art>svg{position:relative;width:min(46%,230px);height:auto;aspect-ratio:1;z-index:1;color:var(--vmo-a);filter:drop-shadow(0 0 26px var(--vmo-a));margin-top:calc(env(safe-area-inset-top,0px) * .5)}
+.vmo-has-img .vmo-art>svg{display:none}
+.vmo-art::before,.vmo-art::after{content:'';position:absolute;left:50%;top:44%;width:130%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;border:1px solid var(--vmo-a);opacity:.16;box-shadow:0 0 0 40px rgba(255,255,255,.035),0 0 0 80px rgba(255,255,255,.025);animation:vmoBreathe 7s ease-in-out infinite alternate;will-change:transform;z-index:0}
+.vmo-art::after{width:78%;border:0;box-shadow:none;background:radial-gradient(circle,var(--vmo-a),transparent 68%);opacity:.2}
+.vmo-has-img .vmo-art::before,.vmo-has-img .vmo-art::after{display:none}
+.vmo-scrim{position:absolute;inset:0 0 auto 0;height:calc(env(safe-area-inset-top,0px) + 70px);z-index:2;background:linear-gradient(rgba(0,0,0,.38),transparent);pointer-events:none}
+.vmo-paused .vmo-art::before,.vmo-paused .vmo-art::after,.vmo-paused .vmo-art>img,dialog.vmo:not([open]) .vmo-art::before,dialog.vmo:not([open]) .vmo-art::after,dialog.vmo:not([open]) .vmo-art>img{animation-play-state:paused}
+@keyframes vmoBreathe{to{transform:scale(1.08);opacity:.3}}
+@keyframes vmoDrift{from{transform:scale(1.04) translate3d(0,0,0)}to{transform:scale(1.1) translate3d(0,-1.2%,0)}}
+.vmo-grab{position:absolute;top:calc(env(safe-area-inset-top,0px) + 2px);left:0;right:0;z-index:3;display:grid;place-items:center;pointer-events:none}
+.vmo-drag{width:56%;min-height:44px;display:grid;place-items:center;background:none;border:0;color:inherit;cursor:pointer;touch-action:none;pointer-events:auto}
+.vmo-handle{width:44px;height:5px;border-radius:8px;background:rgba(255,255,255,.55);box-shadow:0 1px 6px rgba(0,0,0,.25)}
 .vmo-ic,.vmo-play,.vmo-qbtn,.vmo-action,.vmo-fav{border:0;background:transparent;color:inherit;font:inherit;cursor:pointer;min-width:44px;min-height:44px;display:grid;place-items:center}
 .vmo-ic svg{width:26px;height:26px}.vmo button:focus-visible,.vmo select:focus-visible,.vmo input:focus-visible{outline:2px solid #fff;outline-offset:3px}
-.vmo-art{position:relative;isolation:isolate;overflow:hidden;display:grid;place-items:center;flex:1;min-height:170px;max-height:36dvh;aspect-ratio:1;align-self:center;width:min(100%,36dvh);border-radius:28px;background:radial-gradient(ellipse at 50% 42%,var(--vmo-b),var(--vmo-c));box-shadow:0 20px 70px rgba(0,0,0,.3)}
-.vmo-art::before,.vmo-art::after{content:'';position:absolute;inset:8%;border-radius:50%;border:1px solid var(--vmo-a);opacity:.2;box-shadow:0 0 0 24px rgba(255,255,255,.04),0 0 0 48px rgba(255,255,255,.03);animation:vmoBreathe 7s ease-in-out infinite alternate;will-change:transform}
-.vmo-art::after{inset:23%;background:radial-gradient(circle,var(--vmo-a),transparent 70%);border:0;box-shadow:none;opacity:.22}
-.vmo-art>svg{width:40%;height:40%;z-index:1;color:var(--vmo-a);filter:drop-shadow(0 0 22px var(--vmo-a))}
-.vmo-art em{position:absolute;bottom:16px;font-style:normal;letter-spacing:.3em;color:var(--vmo-a);font-size:10px;text-transform:uppercase;opacity:.9}
-.vmo-paused .vmo-art::before,.vmo-paused .vmo-art::after,dialog.vmo:not([open]) .vmo-art::before,dialog.vmo:not([open]) .vmo-art::after{animation-play-state:paused}
-@keyframes vmoBreathe{to{transform:scale(1.1);opacity:.34}}
-.vmo-cat{color:var(--vmo-a);letter-spacing:.18em;font-size:11px;font-weight:700}
-.vmo-info h2{margin:5px 0;font-size:clamp(28px,7vw,40px);letter-spacing:-.03em;line-height:1.08;font-weight:700}
-.vmo-info p{margin:0;color:rgba(255,255,255,.9);line-height:1.5;min-height:48px;font-size:16px}
+.vmo-x{position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + 8px);right:14px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%)}
+/* Hoja de contenido sobre el degradado */
+.vmo-sheet{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;margin-top:calc(var(--vmo-art-h) - 70px);padding:0 26px calc(20px + env(safe-area-inset-bottom,0px));box-sizing:border-box}
+.vmo-line,.vmo-controls,.vmo-foot{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.vmo-cat{color:var(--vmo-a);letter-spacing:.16em;font-size:11px;font-weight:700;margin-bottom:2px}
+.vmo-head h2{margin:0;font-size:clamp(26px,7vw,36px);letter-spacing:-.03em;line-height:1.08;font-weight:700;text-shadow:0 1px 14px rgba(0,0,0,.25)}
+.vmo-sheet p{margin:0;color:rgba(255,255,255,.92);line-height:1.45;min-height:46px;font-size:16px}
 .vmo-fav svg{width:28px;height:28px}.vmo-fav.on{color:var(--vmo-a)}.vmo-fav.on svg path{fill:currentColor}
 .vmo-progress{width:100%;accent-color:var(--vmo-a);height:6px;cursor:pointer;min-height:24px}
-.vmo-meta small{color:rgba(255,255,255,.72);font-size:12px}
-.vmo-controls{justify-content:center;gap:30px}.vmo-controls .vmo-ic{width:54px;height:54px}
-.vmo-play{width:70px;height:70px;border-radius:50%;background:var(--vmo-a);color:var(--vmo-c)}.vmo-play svg{width:30px;height:30px}
+.vmo-meta small{color:rgba(255,255,255,.75);font-size:12px}
+.vmo-controls{justify-content:center;gap:34px}.vmo-controls .vmo-ic{width:56px;height:56px}.vmo-controls .vmo-ic svg{width:32px;height:32px}
+.vmo-play{width:72px;height:72px;border-radius:50%;background:var(--vmo-a);color:var(--vmo-c)}.vmo-play svg{width:30px;height:30px}
 .vmo-action{align-self:stretch;min-height:48px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:18px;padding:8px 16px;font-weight:600;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .vmo-action[hidden],.vmo-queue[hidden]{display:none}
-.vmo-foot select{max-width:62%;min-height:44px;background:var(--vmo-c);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:14px;padding:9px 12px;font:inherit;font-size:15px}
+.vmo-foot select{max-width:62%;min-height:44px;background:rgba(0,0,0,.25);color:#fff;border:1px solid rgba(255,255,255,.28);border-radius:14px;padding:9px 12px;font:inherit;font-size:15px}
+.vmo-foot select option{color:#111}
 .vmo-qbtn{grid-auto-flow:column;gap:8px;font-size:14px;padding:0 10px}.vmo-qbtn svg{width:20px;height:20px}
-.vmo-queue{background:rgba(0,0,0,.22);border-radius:16px;padding:6px}
+.vmo-queue{background:rgba(0,0,0,.25);border-radius:16px;padding:6px}
 .vmo-queue button{display:block;width:100%;text-align:left;min-height:44px;padding:8px 12px;background:none;border:0;color:inherit;font:inherit;border-radius:12px;cursor:pointer}
 .vmo-queue button[aria-current=true]{color:var(--vmo-a);background:rgba(255,255,255,.08)}
-@media(max-height:720px){.vmo-inner{gap:9px;padding-left:20px;padding-right:20px}.vmo-art{max-height:30dvh;min-height:120px}.vmo-info p{min-height:0}.vmo-play{width:58px;height:58px}}
-@media(prefers-reduced-motion:reduce){.vmo-art::before,.vmo-art::after{animation:none!important}dialog.vmo{transition:none}}
+@media(max-height:720px){.vmo-sheet{gap:8px;padding-left:20px;padding-right:20px}.vmo-sheet p{min-height:0}.vmo-play{width:60px;height:60px}dialog.vmo{--vmo-art-h:clamp(220px,40dvh,420px)}}
+@media(prefers-reduced-motion:reduce){.vmo-art::before,.vmo-art::after,.vmo-art>img{animation:none!important}dialog.vmo{transition:none}}
