@@ -525,3 +525,11 @@ body:is(.theme-dark,.theme-black) #app#app#app :is(.vive-mobile-view-all,.v316-b
 html body #app#app#app .v316-budget-orbit>*{background:transparent!important;box-shadow:none!important}
 html body #app#app#app .vive-mobile-view-all{color:var(--vg-accent-strong)!important;font-weight:700}
 body:is(.theme-dark,.theme-black) #app#app#app .vive-mobile-view-all{color:var(--vx-accent-text,#b9b6ff)!important}
+/* Presupuesto excedido: el aro «Utilizado» se tiñe de rojo (borde, luz y cifra) para que el exceso se vea de inmediato */
+html body #app#app#app .v316-budget-orbit.over{
+ border:1.5px solid color-mix(in srgb,#d9374f 55%,rgba(255,255,255,.4))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 0 0 1px color-mix(in srgb,#d9374f 18%,transparent),0 0 0 4px color-mix(in srgb,#d9374f 10%,transparent),0 12px 28px -14px color-mix(in srgb,#d9374f 55%,transparent)!important}
+html body #app#app#app .v316-budget-orbit.over :is(strong,b,.v316-pct,span:nth-child(2)){color:#c62d45!important}
+html body #app#app#app .v316-budget-orbit.over small{color:#a7283d!important;font-weight:600}
+body:is(.theme-dark,.theme-black) #app#app#app .v316-budget-orbit.over :is(strong,b,.v316-pct,span:nth-child(2)){color:#ff7a8e!important}
+body:is(.theme-dark,.theme-black) #app#app#app .v316-budget-orbit.over small{color:#ff9aa9!important}
