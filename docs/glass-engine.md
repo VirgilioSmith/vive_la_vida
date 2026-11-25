@@ -66,6 +66,13 @@ Arrastrar un control no genera peticiones a Supabase (lo verifica la prueba). Co
 * **Formularios**: flecha atrás universal, sin «×» ni banners de identidad repetidos.
 * **Preferencias** de Apariencia (usa los componentes del motor).
 
+### Óptica v2 (R6–R7)
+
+Las filas y tarjetas heredadas migradas (Inicio, Movimientos, Ajustes, Ingresos, Cuentas, Préstamos, Explorar, Egresos, Buscar, Certificados, Beneficios, Personalizar)
+reciben cinco capas: franja especular diagonal, reflejo superior, luz de esquina con pigmento de acento, pigmento ambiental inferior y borde claro con arista
+superior brillante, más sombra de contacto con calor de acento. Tarjetas principales con desenfoque (nivel 02); filas sin desenfoque (relleno firme).
+En Black el relleno denso baja a +.015 (`--vg-dense-add`) para no convertirlo en gris.
+
 ## 4 · Pendiente (no se declara terminado)
 
 La app tiene 33 hojas CSS y ≈ 41 000 `!important`; migrar todos los módulos de una sola vez no es verificable ni seguro.

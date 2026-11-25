@@ -390,3 +390,53 @@ html body #app#app .v242-appearance-picker{
  -webkit-backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;backdrop-filter:blur(var(--_b)) saturate(var(--vg-sat))!important;
 }
 body:is(.theme-dark,.theme-black) #app#app .v242-appearance-picker{--vg-dark:1}
+
+/* ============================================================================
+   R7 · Óptica de cristal v2 — que se NOTE que es cristal
+   Capas: franja especular diagonal · reflejo superior · luz de esquina con pigmento de acento ·
+   pigmento ambiental inferior · borde claro con arista superior brillante · sombra de contacto con calor de acento.
+   Transparencia mayor que en R6 y desenfoque en tarjetas principales; las filas conservan relleno firme
+   sin desenfoque (muchas por pantalla) pero con las mismas capas ópticas.
+   ========================================================================== */
+html body #app#app .v708-row,html body #app#app .v187-composition-item,html body #app#app .ff-obligation-row,html body #app#app .v242-settings-row,html body #app#app .v239-product,html body #app#app .vinc-act,html body #app#app .vinc-kpi,html body #app#app .v421-mini-card,html body #app#app .ff-bubble,html body #app#app .v89-debt-breakdown,html body #app#app .v317-heat-summary,html body #app#app .v316-budget-pace,html body #app#app .v239-segments,html body #app#app .v36-commitment-items,html body #app#app .vBanks-annual-list,html body #app#app .v144-table-wrap,html body #app#app .v239-product-list,html body #app#app .ledger-world,html body #app#app .v256-cards-methodology,html body #app#app .v61-profile-switch,html body #app#app .vxm-tile,html body #app#app .vxm-vcard,html body #app#app .vxm-flow,html body #app#app .vexp-inst,html body #app#app .v154-search-box,html body #app#app .v1170-search,html body #app#app .v239-cert-info,html body #app#app .annual-focus-insight,html body #app#app .v242-style-option,html body #app#app table.v12-year-table,html body #app#app table.annual-table{
+ --_a:calc(var(--vg-a2) + var(--vg-dense-add,.14) - .08);--_b:0px;
+ background:
+  /* franja especular diagonal: luz que cruza el cristal */
+  linear-gradient(118deg,rgba(255,255,255,calc(.30 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .06 * var(--vg-lk) * var(--vg-dark,0))) 0%,rgba(255,255,255,0) 34%,rgba(255,255,255,0) 70%,rgba(255,255,255,calc(.12 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .03 * var(--vg-lk) * var(--vg-dark,0))) 100%),
+  /* reflejo superior localizado */
+  radial-gradient(120% 46% at 50% -10%,rgba(255,255,255,calc(.55 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .10 * var(--vg-lk) * var(--vg-dark,0))),transparent 62%),
+  /* luz de esquina superior derecha con pigmento de acento */
+  radial-gradient(64% 80% at 100% 0%,color-mix(in srgb,var(--vg-accent) calc(13% * var(--vg-ak)),rgba(255,255,255,.35)),transparent 64%),
+  /* pigmento ambiental de acento hacia abajo-izquierda */
+  linear-gradient(200deg,transparent 46%,color-mix(in srgb,var(--vg-accent) calc(8% * var(--vg-ak)),transparent) 100%),
+  rgba(var(--vg-tint-rgb),calc(var(--_a) * var(--vg-k)))!important;
+ border:1px solid rgba(255,255,255,calc(.62 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .13 * var(--vg-lk) * var(--vg-dark,0)))!important;
+ box-shadow:
+  inset 0 1px 0 rgba(255,255,255,calc(.95 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .16 * var(--vg-lk) * var(--vg-dark,0))),
+  inset 0 0 0 1px color-mix(in srgb,var(--vg-accent) calc(6% * var(--vg-ak)),transparent),
+  inset 0 -10px 18px -14px rgba(var(--vg-shade-rgb),.10),
+  0 10px 26px -14px rgba(var(--vg-shade-rgb),calc(.20 - .04 * var(--vg-dark,0))),
+  0 2px 6px -2px color-mix(in srgb,var(--vg-accent) calc(10% * var(--vg-ak)),transparent)!important;
+ -webkit-backdrop-filter:blur(var(--_b)) saturate(1.6) brightness(1.03)!important;backdrop-filter:blur(var(--_b)) saturate(1.6) brightness(1.03)!important;
+}
+html body #app#app .v726-profile-card,html body #app#app .ff-health-card,html body #app#app .v242-settings-home,html body #app#app .v300-appearance-pane,html body #app#app .v230-benefits-header,html body #app#app .v242-settings-intro,html body #app#app .v242-appearance-picker{
+ --_a:calc(var(--vg-a3) - .06);--_b:calc(var(--vg-b2) + 6px);
+ background:
+  /* franja especular diagonal: luz que cruza el cristal */
+  linear-gradient(118deg,rgba(255,255,255,calc(.30 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .06 * var(--vg-lk) * var(--vg-dark,0))) 0%,rgba(255,255,255,0) 34%,rgba(255,255,255,0) 70%,rgba(255,255,255,calc(.12 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .03 * var(--vg-lk) * var(--vg-dark,0))) 100%),
+  /* reflejo superior localizado */
+  radial-gradient(120% 46% at 50% -10%,rgba(255,255,255,calc(.55 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .10 * var(--vg-lk) * var(--vg-dark,0))),transparent 62%),
+  /* luz de esquina superior derecha con pigmento de acento */
+  radial-gradient(64% 80% at 100% 0%,color-mix(in srgb,var(--vg-accent) calc(13% * var(--vg-ak)),rgba(255,255,255,.35)),transparent 64%),
+  /* pigmento ambiental de acento hacia abajo-izquierda */
+  linear-gradient(200deg,transparent 46%,color-mix(in srgb,var(--vg-accent) calc(8% * var(--vg-ak)),transparent) 100%),
+  rgba(var(--vg-tint-rgb),calc(var(--_a) * var(--vg-k)))!important;
+ border:1px solid rgba(255,255,255,calc(.62 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .13 * var(--vg-lk) * var(--vg-dark,0)))!important;
+ box-shadow:
+  inset 0 1px 0 rgba(255,255,255,calc(.95 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .16 * var(--vg-lk) * var(--vg-dark,0))),
+  inset 0 0 0 1px color-mix(in srgb,var(--vg-accent) calc(6% * var(--vg-ak)),transparent),
+  inset 0 -10px 18px -14px rgba(var(--vg-shade-rgb),.10),
+  0 10px 26px -14px rgba(var(--vg-shade-rgb),calc(.20 - .04 * var(--vg-dark,0))),
+  0 2px 6px -2px color-mix(in srgb,var(--vg-accent) calc(10% * var(--vg-ak)),transparent)!important;
+ -webkit-backdrop-filter:blur(var(--_b)) saturate(1.6) brightness(1.03)!important;backdrop-filter:blur(var(--_b)) saturate(1.6) brightness(1.03)!important;
+}
