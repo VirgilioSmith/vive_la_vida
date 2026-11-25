@@ -2741,14 +2741,17 @@ function personalPaymentForm(id){let l=personalLoan(id);if(!l)return;
  <div class="form-full v390-personal-preview" data-v390-personal-preview="1" aria-live="polite"></div>`,  'personalPaymentForm',true);
  const f=document.getElementById('personalPaymentForm');
  if(f){
+  const sb=f.querySelector('.form-foot [type=submit]');if(sb)sb.innerHTML=icon('check')+' '+(lent?'Registrar abono':'Registrar pago');
   const update=()=>{
    const preview=f.querySelector('[data-v390-personal-preview]'),hero=f.querySelector('[data-v390-hero]');if(!preview||!hero)return;
    const balance=personalBalance(l),capital=Math.max(0,Number(f.elements.principal?.value)||0),interest=Math.max(0,Number(f.elements.interest?.value)||0);
    const valid=capital+interest>0&&capital<=balance+.005,after=Math.max(0,balance-capital);
    const full=valid&&Math.abs(balance-capital)<.005;
-   hero.innerHTML=`<small>Capital pendiente</small><strong>${money(balance,l.currency,2)}</strong><span>${!valid?'Revisa los importes':full?'Liquidación completa del capital':'Abono parcial · quedará '+money(after,l.currency,2)}</span>`;
+   hero.innerHTML=`<small>Capital pendiente · Entre personas · ${sanitize(l.person)}</small><strong>${money(balance,l.currency,2)}</strong><span>${!valid?'Revisa los importes':full?'Liquidación completa del capital':'Abono parcial · quedará '+money(after,l.currency,2)}</span>`;
    const cardNote=l.cardId||String(f.elements.instrumentId?.value||'').startsWith('card:');
-   preview.innerHTML=`<div class="v390-kicker">IMPACTO DEL ABONO</div><div class="v390-preview-grid"><div><small>Total ${lent?'recibido':'entregado'}</small><strong class="${lent?'v390-pos':''}">${money(capital+interest,l.currency,2)}</strong></div><div><small>Capital restante</small><strong>${money(after,l.currency,2)}</strong></div></div><div class="v390-preview-rows"><span>${lent?'Ingreso real por intereses':'Interés pagado (gasto)'}</span><b class="${lent&&interest>0?'v390-pos':''}">${lent&&interest>0?'+':''}${money(interest,l.currency,2)}</b></div>${valid?'':'<p class="v390-preview-error">El capital no debe superar el pendiente y el total debe ser positivo.</p>'}`;
+   const isCard=String(f.elements.instrumentId?.value||'').startsWith('card:'),total=capital+interest;
+   const effect=lent?(isCard?'Reducción de deuda de tarjeta':'Aumento de saldo de la cuenta'):(isCard?'Aumento de deuda de tarjeta':'Salida de la cuenta');
+   preview.innerHTML=`<div class="v390-kicker">IMPACTO DEL ABONO</div><div class="v390-preview-grid"><div><small>Total ${lent?'recibido':'entregado'}</small><strong class="${lent?'v390-pos':''}">${money(total,l.currency,2)}</strong></div><div><small>Capital restante</small><strong>${money(after,l.currency,2)}</strong></div></div><div class="v390-preview-rows v390-effect"><span>${effect}</span><b>${money(total,l.currency,2)}</b><span>${lent?'Ingreso real por intereses':'Gasto real por intereses'}</span><b class="${lent&&interest>0?'v390-pos':''}">${lent&&interest>0?'+':''}${money(interest,l.currency,2)}</b></div>${valid?'':'<p class="v390-preview-error">El capital no debe superar el pendiente y el total debe ser positivo.</p>'}`;
   };
   f.addEventListener('input',update);f.addEventListener('change',update);update();
  }
