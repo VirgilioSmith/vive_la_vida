@@ -753,7 +753,7 @@ function mobileHeader(){
 function vStrategicMessage(){
  const day=Math.floor(Date.UTC(Number(today().slice(0,4)),Number(today().slice(5,7))-1,Number(today().slice(8,10)))/864e5);
  const short=u=>String(u.name||'').replace(/\s·\s(DOP|USD)$/,'');
- const left=d=>{const n=diffDays(d,today());return n<0?`${-n} d vencido`:n===0?'vence hoy':`en ${n} d`};
+ const left=d=>{const n=diffDays(d,today());return n<0?`${-n} d de atraso`:n===0?'vence hoy':`en ${n} d`};
  const phrases=[['Todo tranquilo','Tu centro estratégico','sparkles'],['Vive hoy','Un día a la vez','heart2'],['Sigue joseando','Cada paso suma','briefcase'],['Dios primero','Lo demás se acomoda','heart2'],['Agradece siempre','Hoy también cuenta','sparkles'],['Sigue avanzando','Vas por buen camino','trend2']];
  try{
   const list=(upcoming()||[]).filter(u=>u&&u.date).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));

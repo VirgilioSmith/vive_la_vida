@@ -164,3 +164,19 @@ html body #app#app :is(.vBanks-kpi){position:relative}
 body.theme-black #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center),body.theme-dark #app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center){background:rgba(34,34,42,.78)!important;color:#f2f6fb}
 body.theme-black .vive-mobile-dock-center .vdc-text small,body.theme-dark .vive-mobile-dock-center .vdc-text small{color:#aab4c6}
 body.theme-black .vive-mobile-dock-center .vdc-ico,body.theme-dark .vive-mobile-dock-center .vdc-ico{color:#b9b6ff}
+
+/* Dock compacto: SIN fondo de contenedor (ni desenfoque ni brillo detrás). Cada cápsula es su propio Liquid Glass translúcido. */
+@media (max-width:790px){
+ html body #app#app#app#app .vive-mobile-dock.is-compact{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:none!important;box-shadow:none!important;border-color:transparent!important;filter:none!important}
+ html body #app#app#app#app .vive-mobile-dock.is-compact::before,html body #app#app#app#app .vive-mobile-dock.is-compact::after{display:none!important;content:none!important;background:none!important}
+ html body #app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center){
+  background:linear-gradient(150deg,rgba(255,255,255,.36),rgba(255,255,255,.10) 60%,rgba(255,255,255,.18))!important;
+  border:1px solid rgba(255,255,255,.62)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(190%) brightness(1.04)!important;backdrop-filter:blur(16px) saturate(190%) brightness(1.04)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.18),inset 0 0 14px rgba(255,255,255,.10),0 8px 22px rgba(30,45,90,.14)!important}
+ html body.theme-black #app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center),
+ html body.theme-dark #app#app#app#app .vive-mobile-dock.is-compact :is(.vive-mobile-dock-item[aria-label="Inicio"],.vive-mobile-dock-item[aria-label="Buscar"],.vive-mobile-dock-center){
+  background:linear-gradient(150deg,rgba(255,255,255,.16),rgba(255,255,255,.04) 60%,rgba(255,255,255,.08))!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(255,255,255,.06),0 10px 26px rgba(0,0,0,.45)!important}
+}
