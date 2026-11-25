@@ -7277,7 +7277,15 @@ function v394DecorateNavigation(){
  }
 }
 /* Fondo ambiental: el brillo del acento alterna de lado según la página (izquierda ↔ derecha). */
-function vAmbientSide(){const order=['overview','wallet','banks','mobilehub','mobilesearch'],i=order.indexOf(ui.page),n=i>=0?i:String(ui.page||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);const side=n%2?'right':'left';if(document.body&&document.body.dataset.viveSide!==side)document.body.dataset.viveSide=side}
+function vAmbientSide(){const order=['overview','wallet','banks','mobilehub','mobilesearch'],i=order.indexOf(ui.page),n=i>=0?i:String(ui.page||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);const side=n%2?'right':'left';if(document.body&&document.body.dataset.viveSide!==side)document.body.dataset.viveSide=side;requestAnimationFrame(()=>vCrackPaint(document.body.dataset.viveSide||side))}
+/* Grietas sutiles en el color del acento, del mismo lado del brillo. Se regeneran sólo si cambia el acento, el lado o el tema. */
+let vCrackKey='';
+function vCrackPaint(side){try{const b=document.body,cs=getComputedStyle(b),c=(cs.getPropertyValue('--lg-accent')||'#6d69f1').trim(),dark=b.classList.contains('theme-black')||b.classList.contains('theme-dark'),key=c+side+dark;if(key===vCrackKey)return;vCrackKey=key;
+ const L=['M0 30 L38 70 L34 118 L74 160 L70 214 L104 262','M38 70 L78 58 L112 84','M74 160 L116 150 L132 188','M70 214 L40 252 L52 304 L22 350','M104 262 L96 318 L128 366 L116 420','M0 420 L34 456 L30 506 L58 548','M128 366 L170 380'].map(d=>`<path d="${d}"/>`).join('');
+ const t=side==='right'?'transform="translate(180 0) scale(-1 1)"':'';
+ const op=dark?.5:.38;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 600" fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><g ${t}>${L}</g></svg>`;
+ b.style.setProperty('--crack-img','url("data:image/svg+xml,'+encodeURIComponent(svg).replace(/"/g,'%22')+'")');b.style.setProperty('--crack-pos',side==='right'?'right top':'left top')}catch(_){}}
 function render(){
  vAmbientSide();
  if(['vision','payments'].includes(ui.page))ui.page='patrimony';
