@@ -52429,3 +52429,15 @@ body:is(.theme-dark,.theme-black) #app#app#app :is(.v239-segments,.v911-seg,.vex
 @media(max-width:790px){html body #modal-root#modal-root .modal-head:has([class*=back]) .close{display:none!important}}
 /* Hojas de pago (v261): flecha atrás sola, sin «×» duplicada */
 @media(max-width:790px){html body :is(.v261-header-back)~.v261-header-close,html body .v261-header-close{display:none!important}}
+/* Filtro de instituciones: tira desplazable → sin barra visible y con desvanecido a la derecha que indica que hay más */
+html body #app#app nav.v206-banks-switch{scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x proximity;overscroll-behavior-x:contain;-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 26px),transparent 100%);mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 26px),transparent 100%);padding-right:26px}
+html body #app#app nav.v206-banks-switch::-webkit-scrollbar{display:none}
+html body #app#app nav.v206-banks-switch>*{scroll-snap-align:start;flex:0 0 auto}
+/* Escritorio: el título de página ya está en la barra superior → no se repite dentro del contenido */
+@media(min-width:791px){
+ html body #app#app .v362-pressure-heading{display:none!important}
+ html body #app#app .v1170-hero-h{display:none!important}
+ html body #app#app :is(.v1170-seg,.v975-tabs){background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;gap:8px!important}
+ html body #app#app :is(.v1170-seg,.v975-tabs)>:is(button,a,label):not(.active):not(.selected):not([aria-pressed=true]):not([aria-selected=true]){background:rgba(255,255,255,.7)!important;border:1px solid rgba(125,140,170,.26)!important;box-shadow:none!important}
+ body:is(.theme-dark,.theme-black) #app#app :is(.v1170-seg,.v975-tabs)>:is(button,a,label):not(.active):not(.selected):not([aria-pressed=true]):not([aria-selected=true]){background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.14)!important}
+}
