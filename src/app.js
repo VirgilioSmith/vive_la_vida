@@ -4574,15 +4574,12 @@ function v412PremiumWidget(id){
  const fields=isCredit?['LÍMITE TOTAL','UTILIZADO','DISPONIBLE']:['PROGRAMADO','PAGADO','PENDIENTE'];
  const route=isCredit?'cards':'pressure';
  const note=isCredit?'Consolidado en RD$ según la tasa de referencia configurada.':'Conciliación reconstruida según vencimiento, moneda e historial disponible. Los pagos no vinculados o cortes bancarios sin registro oficial pueden requerir revisión.';
- const detail=!isCredit?(()=>{const groups=v560ReconcileCommitments(v99Period(ui.month)).groups;const labels={card:'Tarjetas',loan:'Préstamos',recurring:'Suscripciones',personal:'Entre personas'};
- const rowsHtml=groups.filter(g=>g.scheduled>0||g.paid>0).map(g=>{const pend=Math.max(0,g.scheduled-g.paid),pc=g.scheduled>0?Math.min(100,100*g.paid/g.scheduled):0;return `<div class="v560-cs-row"><b>${labels[g.kind]}</b><span>${money(g.scheduled)}</span><span>${money(g.paid)}</span><span class="${pend>0?'is-pending':''}">${money(pend)}</span><i class="v560-cs-bar" role="img" aria-label="${pc.toFixed(0)}% cubierto"><u style="width:${pc.toFixed(1)}%"></u></i></div>`}).join('');
- return `<div class="v560-commitment-summary" aria-label="Conciliación por compromiso"><div class="v560-cs-head"><span>Tipo</span><span>Programado</span><span>Abonado</span><span>Pendiente</span></div>${rowsHtml}</div>`;})():'';
  return `<div class="v412-premium v410-credit-widget ${isCredit?'v412-premium-credit':'v412-premium-commitments'}" aria-label="${title}">
   <header class="v410-credit-head"><div><span class="v410-kicker">${isCredit?'CRÉDITO · LÍMITES':'PAGOS · MES'}</span><h2>${title}</h2><p>${subtitle}</p></div><button type="button" data-act="navigate" data-id="${route}">${isCredit?'Ver tarjetas':'Ver pagos'} ${icon('arrow')}</button></header>
   <div class="v410-credit-kpis"><div><small>${fields[0]}</small><strong>${money(a)}</strong></div><div><small>${fields[1]}</small><strong>${money(b)}</strong></div><div><small>${fields[2]}</small><strong>${money(c)}</strong></div></div>
   <div class="v410-credit-bar-row"><span>${isCredit?'Utilización total':'Compromisos cubiertos'}</span><strong>${pct}</strong></div>
   <div class="v410-credit-track" role="progressbar" aria-label="${title}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${width.toFixed(1)}"><i style="width:${width.toFixed(2)}%"></i></div>
-  <p class="v410-credit-note">${note}</p>${detail}
+  <p class="v410-credit-note">${note}</p>
  </div>`;
 }
 function v412PremiumMobileWidgets(){

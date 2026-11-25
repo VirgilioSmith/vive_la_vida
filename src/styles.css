@@ -49144,28 +49144,7 @@ html body #app#app .v317-next-pay.v1127-payable:active{background:color-mix(in s
 .v361-pressure-item.v1127-payable{cursor:pointer}
 
 /* V1129 · Widget Salario anticipado */
-html body #app#app .v1129-salary{display:grid}
-html body #app#app .v1129-income{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"info amt" "btn btn";align-items:center;background:color-mix(in srgb,var(--v424-accent-strong) 6%,#fff);border:1px solid color-mix(in srgb,var(--v424-accent-strong) 16%,transparent)}
-html body #app#app .v1129-income-info{grid-area:info;min-width:0;display:flex;flex-direction:column;gap:2px}
-html body #app#app .v1129-income-info strong{font-weight:700;letter-spacing:-.02em;color:#1c1f26;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-html body #app#app .v1129-income-info small{color:#5c6780}
-html body #app#app .v1129-income>b{grid-area:amt;font-weight:700;letter-spacing:-.03em;color:#1c1f26;white-space:nowrap}
-html body #app#app .v1129-income-btn{grid-area:btn;border:0;background:var(--v424-accent-strong);color:#fff;font:inherit;font-weight:700;cursor:pointer}
-html body #app#app .v1129-income-btn.v1129-add{width:100%}
-html body:is(.theme-black,.theme-dark) #app#app .v1129-income{background:color-mix(in srgb,var(--v424-accent-strong) 14%,#101116)}
-html body:is(.theme-black,.theme-dark) #app#app .v1129-income-info strong,html body:is(.theme-black,.theme-dark) #app#app .v1129-income>b{color:#f2f4f8}
-html body:is(.theme-black,.theme-dark) #app#app .v1129-income-info small{color:#aab4cc}
-html body #app#app .v1129-hint{margin:2px 2px 0;line-height:1.35;color:#5c6780}
-html body:is(.theme-black,.theme-dark) #app#app .v1129-hint{color:#aab4cc}
 /* V1130 · Salario anticipado: dimensiones compactas, acordes al resto de widgets. */
-html body #app#app .v1129-salary{gap:6px;padding:14px 14px 12px}
-html body #app#app .v1129-income{padding:10px 12px;border-radius:16px;gap:6px 8px}
-html body #app#app .v1129-income-info strong{font-size:13.5px}
-html body #app#app .v1129-income-info small{font-size:12px}
-html body #app#app .v1129-income>b{font-size:14px}
-html body #app#app .v1129-income-btn{min-height:38px;border-radius:12px;font-size:12.5px}
-html body #app#app .v1129-hint{font-size:12px}
-html body #app#app .v1129-salary .v273-widget-empty{font-size:12px;line-height:1.35;margin:0}
 
 /* V1131 · Barras de pestañas internas en móvil (Ingresos / Egresos / Movimientos, subpestañas de Ingresos recurrentes):
    compactas y desplazables, para que se note que hay más opciones al lado. */
@@ -51020,25 +50999,12 @@ html body #app#app #page .cards-grid .account-product-card{height:100%!important
  html body #app#app #page .v1190,html body #app#app #page .v1191{max-width:none!important;width:100%!important;margin:0!important}
 }
 /* v1229 · Compromisos del mes: conciliación solo con totales por tipo + widget Huella más compacto */
-.v560-commitment-summary{display:grid;gap:0;margin-top:12px;border-top:1px solid color-mix(in srgb,currentColor 12%,transparent);padding-top:10px}
-.v560-cs-head,.v560-cs-row{display:grid;grid-template-columns:minmax(78px,1.15fr) repeat(3,minmax(0,1fr));column-gap:8px;align-items:baseline}
-.v560-cs-head{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.62;padding-bottom:6px}
-.v560-cs-head span:not(:first-child),.v560-cs-row span{text-align:right}
-.v560-cs-row{padding:9px 0 0;font-size:12.5px;font-variant-numeric:tabular-nums}
-.v560-cs-row b{font-size:13px;font-weight:700}
-.v560-cs-row span{font-weight:700;white-space:nowrap}
-.v560-cs-row span.is-pending{color:var(--vx-accent-ink)}
-.v560-cs-bar{grid-column:1/-1;display:block;height:4px;margin:7px 0 9px;border-radius:4px;background:color-mix(in srgb,currentColor 12%,transparent);overflow:hidden}
-.v560-cs-bar u{display:block;height:100%;border-radius:4px;background:var(--v424-accent-strong,#5b57d6)}
-.v560-cs-row:last-child .v560-cs-bar{margin-bottom:2px}
 @media(max-width:790px){
  .v317-chart-widget{padding:14px 14px 16px!important}
  .v317-chart-widget .v317-heat-summary{padding:10px 12px!important;gap:8px!important}
  .v317-chart-widget .v317-heat-summary small{font-size:12px!important;letter-spacing:.06em!important;white-space:nowrap}
  .v317-chart-widget .v317-heat-summary strong{font-size:19px!important}
 }
-.v560-cs-head,.v560-cs-row{grid-template-columns:minmax(92px,1.35fr) repeat(3,minmax(0,1fr))}
-.v560-cs-row{font-size:12px}.v560-cs-row b{font-size:12.5px;white-space:nowrap}
 /* v1230 · Filtro de instituciones: cristal traslúcido, más imponente */
 /* Dirección de arte · Black: las tablas de Analítica no muestran bordes ni fondos claros */
 html body.theme-black #app#app #page .v12-table-scroller,html body.theme-dark #app#app #page .v12-table-scroller{background:transparent!important;border-color:rgba(255,255,255,.12)!important;box-shadow:none!important}
