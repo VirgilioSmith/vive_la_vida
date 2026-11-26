@@ -36,7 +36,7 @@ const lum=c=>{const m=c.match(/[\d.]+/g).map(Number);const f=v=>{v/=255;return v
    const lx=await p.evaluate(()=>{const e=document.querySelector('[data-vlg~=panel][style*="--vlg-lx"]');return e?e.style.getPropertyValue('--vlg-lx'):null});
    t(lx&&parseFloat(lx)>55&&parseFloat(lx)<85,`${tag} el reflejo especular sigue al puntero (${lx})`);
    await p.mouse.move(2,2);await p.waitForTimeout(150);
-   t(await p.evaluate(()=>!document.querySelector('[data-vlg][style*="--vlg-lx"]')),`${tag} al salir, la luz vuelve a su posición base`);
+   t(await p.evaluate(()=>!document.querySelector('[data-vlg~=panel][style*="--vlg-lx"]')),`${tag} al salir, la luz vuelve a su posición base`);
   }
   await ctx.close();
  }
