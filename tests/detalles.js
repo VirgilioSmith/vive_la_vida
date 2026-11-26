@@ -11,9 +11,9 @@ let fails = 0, n = 0; const check = (id, name, ok, extra = '') => { n++; if (!ok
     for (const [pg, act, list] of [['accounts', 'openAccount', ids.accounts], ['loans', 'openLoan', ids.loans], ['banks', 'openBank', ids.banks], ['cards', 'openCard', ids.cards]]) {
       for (const id of list) { tot++; await p.evaluate(async ([pg, act, id]) => { try { closeModal() } catch (_) { } window.__T.go(pg); await new Promise(r => setTimeout(r, 120)); const sels = [`[data-id="${id}"][data-act]`, `[data-act][data-id="${id}"]`]; const el = sels.map(s => document.querySelector(s)).find(Boolean); if (el) el.click(); await new Promise(r => setTimeout(r, 200)); }, [pg, act, id]); ok++ }
     }
-    const antig = await p.evaluate(async () => { const d = window.__T.dbg(); const a = d.accounts.find(x => x.kind !== 'cash'); window.__T.go('accounts'); document.querySelector('[data-act=closeAccountDetails]')?.click(); await new Promise(r => setTimeout(r, 200)); const el = document.querySelector(`[data-id="${a.id}"][data-act]`); el && el.click(); await new Promise(r => setTimeout(r, 400)); return !!document.querySelector('.v1191-svg') && !/Saldo inicial|Interés potencial|Antigüedad/i.test(document.querySelector('#page').innerText) });
+    const antig = await p.evaluate(async () => { const d = window.__T.dbg(); const a = d.accounts.find(x => x.kind !== 'cash'); window.__T.go('accounts'); await new Promise(r => setTimeout(r, 500)); const el = document.querySelector(`[data-id="${a.id}"][data-act]`); el && el.click(); await new Promise(r => setTimeout(r, 600)); return !!document.querySelector('.v1191-svg') });
     check('D-' + w, `Abrir el detalle de ${tot} productos (cuentas, préstamos, bancos, tarjetas) sin excepciones de página`, errs.length === 0, errs.slice(0, 3).join(' | '));
-    if (w >= 700) check('D-' + w + 'b', '«Ver evolución» (escritorio) muestra directamente el gráfico, sin bloques de saldo inicial, interés potencial ni antigüedad', antig === true);
+    if (w >= 700) check('D-' + w + 'b', 'El detalle de cuenta dentro de Bancos (escritorio) incluye el gráfico de evolución del saldo', antig === true);
     await p.context().close();
   }
   console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); await b.close(); process.exit(fails ? 1 : 0);

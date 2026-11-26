@@ -2621,29 +2621,7 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('input',e=>{if(e.target.closest?.('form#categoryForm'))v900CatSync()},true);
 document.addEventListener('change',e=>{if(e.target.id==='customParent')v900CatSync()},true);
-function originalAccounts(){
- let sums=['DOP','USD'].map(cur=>db.accounts.filter(a=>a.currency===cur).reduce((total,a)=>total+getAccountBalance(a),0));
- const all=db.accounts.filter(a=>(ui.showHidden||!isHidden(a))&&a.kind!=='cash');
- const savings=db.accounts.filter(a=>a.kind==='savings').reduce((total,a)=>total+fx(getAccountBalance(a),a.currency),0);
- const checking=db.accounts.filter(a=>a.kind==='checking').reduce((total,a)=>total+fx(getAccountBalance(a),a.currency),0);
- const physicalD=db.accounts.find(a=>a.kind==='cash'&&a.currency==='DOP');
- const physicalU=db.accounts.find(a=>a.kind==='cash'&&a.currency==='USD');
- const cashCard=[
-  {account:physicalD,title:'Efectivo · Pesos',currency:'DOP',label:'RD$',subtitle:'Efectivo personal en pesos'},
-  {account:physicalU,title:'Efectivo · Dólares',currency:'USD',label:'US$',subtitle:'Efectivo personal en dólares'}
- ].map(({account:a,title,currency,label,subtitle})=>`<article class="bank-card account-product-card v258-cash-product" aria-label="${title}">
-   <div class="split"><div><div class="name">${title}</div><div class="type">${subtitle} · Sin banco</div></div><span class="pill">${label}</span></div>
-   ${a?`<button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver historial de ${title}">${money(getAccountBalance(a),currency,2)} <span>↗</span></button>`:`<div class="v258-cash-balance">${money(0,currency,2)}</div>`}
-   <div class="product-mini-actions v176-account-actions">
-     ${a?`<button class="btn sm ghost" type="button" data-act="accountDetails" data-id="${a.id}">Ver evolución</button>`:''}
-     <button class="btn sm ghost" type="button" data-act="addCashWallet">Configurar saldo inicial</button>
-   </div>
-   <div class="bottom"><span class="subtle">Cuenta permanente · no se archiva ni se elimina</span></div>
- </article>`).join('');
- const btn=(label,value,desc,view,iconName)=>`<button type="button" class="kpi account-drill-kpi ${ui.accountBreakdown===view?'is-active':''}" data-act="accountBreakdown" data-view="${view}" aria-label="Ver evolución de ${label}"><span class="kpi-head">${label}<span class="kpi-icon">${icon(iconName)}</span></span><span class="kpi-value">${value}</span><span class="kpi-foot">${desc} · Ver evolución ↗</span></button>`;
- return `<div class="grid cards-grid section">${cashCard}${all.length?all.map(a=>`<article class="bank-card account-product-card"><div class="split"><div><div class="name">${sanitize(a.name)}</div><div class="type v28-account-bankline">${bankLogoInline(a.bankId)}<span>${sanitize(bankOf(a))} · ${a.kind==='savings'?'Ahorros':a.kind==='checking'?'Corriente':'Efectivo'}</span></div></div><span class="pill">${a.currency}</span></div><button type="button" class="account-balance-link" data-act="accountDetails" data-id="${a.id}" aria-label="Ver evolución de ${sanitize(a.name)}">${money(getAccountBalance(a),a.currency,2)} <span>↗</span></button><div class="product-mini-actions v176-account-actions">${productControls('account',a.id,a.archived)}<button class="btn sm ghost" data-act="accountDetails" data-id="${a.id}">Ver evolución</button></div><div class="bottom"><span class="subtle">${a.last4?'•••• '+sanitize(a.last4):'Sin terminación registrada'}</span></div></article>`).join(''):`<div class="panel"><div class="empty">No hay cuentas bancarias adicionales. El efectivo se gestiona desde la ficha anterior. <button class="btn sm soft" data-act="addAccount">Crear cuenta</button></div></div>`}</div>
- ${ui.accountId&&account(ui.accountId)?accountDetail(account(ui.accountId)):''}`;
-}
+
 
 function smallTxTable(tx){return tx.length?`<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Tipo</th><th class="right">Importe</th><th class="right">Acción</th></tr></thead><tbody>${tx.map(t=>`<tr><td>${prettyDate(t.date)}</td><td>${sanitize(transactionTitle(t))}</td><td>${sanitize(TRANSL[t.type]||t.type)}</td><td class="right money">${txDisplay(t)}</td><td class="right"><button class="btn sm ghost" data-act="editTransaction" data-id="${t.id}" title="Editar sin duplicar el registro">Editar</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Sin movimientos en esta selección.</div>'}
 
@@ -4327,14 +4305,7 @@ function cashWalletForm(){
 }
 
 
-function accounts(){
- let result=originalAccounts();
- // V234: account actions are now available in the compact toolbar above the accounts.
- for(const a of db.accounts.filter(a=>a.kind==='cash')){
-  result=result.replace(`data-act="editAccount" data-id="${a.id}"`,`data-act="editCashWallet" data-id="${a.id}"`);
- }
- return result;
-}
+
 function cards(){
  // V182: restore the actual executive portfolio hero, not a duplicate KPI strip.
  // In V144 pages.cards was reassigned, bypassing the legacy innerWrap hook that
@@ -5022,7 +4993,7 @@ document.addEventListener('change', event=>{
 });
 
 const vwmHead=t=>window.matchMedia&&window.matchMedia('(max-width:790px)').matches?`<header class="vwm-head"><h1>${t}</h1></header>`:'';
-const pages={score:()=>vwmHead('Vive Score')+(window.ViveScoreHost?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:()=>'',expenses:()=>'',banks,overview,accounts,cards,benefits,personal,payments,loans,certificates,advanced,transactions,annual,analytics,settings};
+const pages={score:()=>vwmHead('Vive Score')+(window.ViveScoreHost?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:()=>'',expenses:()=>'',banks,overview,cards,benefits,personal,payments,advanced,transactions,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -5113,7 +5084,7 @@ function cardForm(id,preBank){
  queueMicrotask(refreshCardOverdraft);
 }
 
-function certificates(){let ordered=db.certificates.filter(c=>ui.showHidden||!isHidden(c)).sort((a,b)=>a.maturityDate.localeCompare(b.maturityDate));return `<div class="section-title"><div><h2>Certificados financieros</h2><p>Capital invertido, intereses estimados, fecha de vencimiento y rendimientos realmente cobrados, por banco.</p></div></div><div class="certificate-grid section v257-cert-grid">${ordered.length?ordered.map(c=>{let p=certProjection(c),days=p.expiry;return `<article class="cert-card glass-loan"><div class="cert-top"><span class="cert-emblem">${icon('building')}</span><div><span class="cert-bank">${sanitize(bankOf(c))}</span><h3>${sanitize(c.name)}</h3></div><span class="pill ${days<0?'orange':days<=30?'blue':'green'}">${days<0?'Vencido':days===0?'Hoy':days+' días'}</span></div><div class="cert-amount">${money(p.capital,c.currency,2)}</div><div class="cert-metrics"><div><span>ANTIGÜEDAD</span><strong>${sanitize(antiguedadTexto(c,'certificate')||'—')}</strong></div><div><span>TASA ANUAL</span><strong>${num(c.rate).toFixed(2)}%</strong></div><div><span>GANANCIA NETA ORIENTATIVA</span><strong>${money(p.net,c.currency,2)}</strong></div><div><span>INTERÉS COBRADO</span><strong>${money(p.collected,c.currency,2)}</strong></div><div><span>VENCE</span><strong>${prettyDate(c.maturityDate)}</strong></div></div><div class="product-mini-actions">${productControls('certificate',c.id,c.archived)}</div><div class="cert-actions"><button class="btn sm ghost" data-act="editCertificate" data-id="${c.id}">Editar</button>${c.capitalMode==='pending'?`<button class="btn sm ghost" data-act="certificateFund" data-id="${c.id}">Constitución</button>`:''}<button class="btn sm ghost" data-act="certificateInterest" data-id="${c.id}">Cobrar interés</button><button class="btn sm soft" data-act="certificateRedeem" data-id="${c.id}">Rescatar capital</button></div></article>`}).join(''):`<div class="panel empty">${db.certificates.some(c=>c.archived)&&!ui.showHidden?`No hay certificados visibles. Tienes ${db.certificates.filter(c=>c.archived).length} archivado(s); utiliza «Archivados» dentro del KPI principal para consultarlos.`:`No tienes certificados registrados. Añade un instrumento vinculado a su banco, moneda, plazo, tasa y retención aplicable.`}</div>`}</div><div class="panel section"><div class="panel-head"><h3>Cómo se contabilizan los certificados</h3></div><div class="grid columns equal"><div class="mini-row"><span>Constitución</span><strong>Cuenta → activo invertido</strong></div><div class="mini-row"><span>Rescate</span><strong>Activo → cuenta</strong></div><div class="mini-row"><span>Intereses</span><strong>Ingreso real cuando se cobra</strong></div><div class="mini-row"><span>Proyecciones</span><strong>No alteran saldos</strong></div></div><p class="footnote">El formulario diferencia certificados ya existentes de capital pendiente de transferir. Si el saldo inicial de una cuenta ya descuenta la constitución del certificado, no registres otra salida: evitarías el doble descuento. La tasa impositiva es editable y debe corresponder a tus condiciones reales.</p></div>`}
+
 function certificateForm(id,preBank){if(!ensureBanks())return;let c=certificate(id)||{},o={name:'',bankId:preBank||'',currency:'DOP',principal:0,rate:0,startDate:today(),maturityDate:plusMonths(today(),12),taxPct:0,payoutFrequency:'maturity',capitalMode:'already',note:'',...c};modal(id?'Editar certificado':'Nuevo certificado financiero',`${formItem('name','Nombre del certificado',o.name,'text','required maxlength="80"')}${formSelect('bankId','Banco emisor',v40FinancialOpts(),preBank||o.bankId,'required')}${formSelect('currency','Moneda',['DOP','USD'],o.currency)}${formItem('principal','Capital original',o.principal,'number','min="0.01" step="0.01" required')}${formSelect('capitalMode','Situación del capital',[['already','Ya estaba constituido y descontado de mis cuentas'],['pending','Todavía debo trasladarlo desde una cuenta']],o.capitalMode||'already')}${formItem('rate','Tasa anual nominal (%)',o.rate,'number','min="0" max="100" step="0.001" required')}${formItem('startDate','Fecha de constitución',o.startDate,'date','required')}${formItem('maturityDate','Fecha de vencimiento',o.maturityDate,'date','required')}${formSelect('payoutFrequency','Pago de interés',[['monthly','Mensual'],['quarterly','Trimestral'],['maturity','Al vencimiento'],['other','Según contrato']],o.payoutFrequency)}${formItem('taxPct','Retención aplicada a intereses (%)',o.taxPct,'number','min="0" max="100" step="0.01"')}${formItem('acquiredOn','Mes y año en que lo adquiriste (antigüedad)',String(o.acquiredOn||'').slice(0,7),'month','max="'+today().slice(0,7)+'"')}${formItem('note','Referencia opcional',o.note||'','text','maxlength="140"')}${para('El saldo invertido se registra como activo distinto del efectivo. Para disminuir una cuenta al constituirlo, usa «Constitución» después de crearlo. Nunca registres de nuevo la salida si ya está reflejada en el saldo inicial.')}`,'certificateForm',true);document.getElementById('certificateForm').dataset.id=id||'';queueMicrotask(()=>window.v385CertificateSetup?.())}
 function certificateTransfer(kind,id){let c=certificate(id);if(!c)return;let ac=db.accounts.filter(a=>!a.archived&&a.currency===c.currency);if(!ac.length){toast('Primero crea una cuenta bancaria en '+c.currency);return}if(kind==='certificate_funding'&&c.capitalMode!=='pending'){toast('Capital ya constituido: no lo descuentes dos veces de la cuenta.');return}let already=db.transactions.filter(t=>t.type==='certificate_funding'&&t.certificateId===c.id).reduce((x,t)=>x+num(t.amount),0);let amount=kind==='certificate_funding'?Math.max(0,num(c.principal)-already):certificateCapital(c);transactionForm({type:kind,certificateId:id,accountId:ac[0].id,currency:c.currency,amount:amount,note:kind==='certificate_funding'?'Constitución de certificado':'Rescate de capital del certificado'})}
 function annualExpenseInsight(monthly){
@@ -15416,7 +15387,6 @@ document.addEventListener('click',function(event){
 
 /* V239 · Tres experiencias bancarias móviles, sin cambios al motor contable ni a desktop. */
 (function v239MobileProductExperiences(){
-  const desktop={accounts:pages.accounts,loans:pages.loans,certificates:pages.certificates};
   const mobile=()=>window.matchMedia('(max-width: 790px)').matches;
   const fmt=(n,c='DOP')=>money(num(n),c,2);
   const cash=a=>a.kind==='cash';
@@ -15462,28 +15432,7 @@ document.addEventListener('click',function(event){
 
   vBanksAccountDetail=accountsMobile;
 
-  function loansMobile(){
-    const selected=ui.loanId?loan(ui.loanId):null;
-    if(selected)return `<div class="v239-mobile-root v239-loans v239-loan-deep">${loanDetail(selected)}</div>`;
-    const visible=db.loans.filter(l=>ui.showHidden||!l.archived);
-    const active=visible.filter(l=>!l.archived&&!loanAccounting(l).settled), settled=visible.filter(l=>loanAccounting(l).settled);
-    const outstanding=active.reduce((s,l)=>s+fx(Math.max(0,loanAccounting(l).balance),l.currency),0);
-    const dues=upcoming().filter(o=>o.kind==='loan'&&o.date>=today()&&!loan(o.ref)?.archived).sort((a,b)=>a.date.localeCompare(b.date));
-    const scope=ui.v239Loans||'active';
-    const shown=visible.filter(l=>scope==='all'||(scope==='active'?!l.archived&&!loanAccounting(l).settled:loanAccounting(l).settled));
-    return `<div class="v239-mobile-root v239-loans">
-      ${top('FINANCIAMIENTO','Mis préstamos','Control de capital, cuotas y avance real.','addLoan','Nuevo')}
-      <section class="v239-hero v239-loan-hero"><div class="v239-hero-top"><span class="v239-hero-label">CAPITAL PENDIENTE · EQUIVALENTE RD$</span><span class="v239-hero-icon">${icon('receipt')}</span></div><strong class="v239-hero-amount">${fmt(outstanding)}</strong><div class="v239-hero-metrics"><div><small>PRÉSTAMOS ACTIVOS</small><strong>${active.length}</strong></div><div><small>PRÓXIMA CUOTA</small><strong>${dues.length?cDate(dues[0].date):'Sin fecha'}</strong></div></div></section>
-      <div class="v239-list-head"><div><span class="v239-eyebrow">CARTERA</span><h3>Tus compromisos</h3></div>${db.loans.some(l=>l.archived)?visibilityControl():''}</div>
-      <div class="v239-segments" role="tablist" aria-label="Filtrar préstamos">${tab('Loans','active','Activos',active.length)}${tab('Loans','all','Todos',visible.length)}${tab('Loans','closed','Liquidados',settled.length)}</div>
-      <div class="v239-product-list">${shown.length?shown.map(l=>{const a=loanAccounting(l),bal=Math.max(0,num(a.balance)),progress=Math.max(0,Math.min(100,num(l.principal)?num(a.paidPrincipal)/num(l.principal)*100:0)),sett=a.settled,inst=loanStatus(l).installment;return `<article class="v239-product v239-loan-item v1245-loan ${sett?'is-settled':''}"><div class="v239-product-top"><span class="v239-logo v239-logo-bank">${v1002BankGlyph(l,'building')}</span><span class="v239-product-meta"><strong>${sanitize(l.name)}</strong><small>${bankCaption(bankOf(l))} · ${l.currency} · ${v49LoanPeriodsPerMonth(l)===2?'Quincenal':'Mensual'}</small></span><span class="v239-status ${sett?'is-paid':''}">${sett?'Liquidado':l.archived?'Cancelado':'Activo'}</span></div>
-<div class="v1245-body"><div class="v1245-ring" role="progressbar" aria-label="Capital amortizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.toFixed(1)}" style="--p:${progress.toFixed(2)}"><div><b>${progress.toFixed(0)}%</b><small>pagado</small></div></div>
-<div class="v1245-figs"><small>CAPITAL PENDIENTE</small><strong>${fmt(bal,l.currency)}</strong><div class="v1245-sub"><span><i>Cuota</i>${fmt(inst,l.currency)}</span><span><i>Tasa</i>${num(l.currentRate??l.rate).toFixed(2)}%</span></div></div></div>
-${sett?'<div class="v1245-next is-done"><div><small>ESTADO</small><strong>Completado</strong></div></div>':validDate(a.next)?`<div class="v1245-next ${a.next<today()?'is-late':''}"><div><small>PRÓXIMA CUOTA</small><strong>${cDate(a.next)}</strong></div><span class="v1245-when">${whenTxt(a.next)}</span></div>`:'<div class="v1245-next"><div><small>PRÓXIMA CUOTA</small><strong>Sin fecha</strong></div></div>'}
-<div class="v239-card-actions v1245-actions">${action('Registrar pago','payLoan',{id:l.id,ico:'check',primary:true,disabled:sett||l.archived})}${action('Ver préstamo','loanDetails',{id:l.id,ico:'arrow'})}</div></article>`}).join(''):empty('receipt',scope==='closed'?'Sin préstamos liquidados':'No hay préstamos en esta vista','Crea un préstamo o selecciona otro filtro para ver la cartera.','addLoan','Nuevo préstamo')}</div>
-      <p class="v239-bottom-note">El capital pendiente no suma intereses futuros; US$ al cambio configurado. Las proyecciones de intereses y seguros se consultan dentro de cada préstamo y nunca modifican tus pagos reales.</p>
-    </div>`;
-  }
+  
 
   vBanksCertificateDetail=function(selected){const p=certProjection(selected),capital=certificateCapital(selected),days=validDate(selected.maturityDate)?diffDays(selected.maturityDate,today()):null;return `<div class="v239-mobile-root v239-certificates v239-detail-mode"><button class="v239-back" type="button" data-v239-cert-close>${icon('arrow')} Mis certificados</button>
       <section class="v239-hero v239-cert-hero v239-detail-hero"><span class="v239-hero-label">INVERSIÓN · ${selected.currency}</span><h2>${sanitize(selected.name)}</h2><p>${bankCaption(bankOf(selected))}</p><small>CAPITAL CONSTITUIDO</small><strong>${fmt(capital,selected.currency)}</strong><div class="v239-hero-bottom"><span>Tasa anual ${num(selected.rate).toFixed(2)}%</span><span>${days===null?'Sin vencimiento':days<0?'Vencido':days===0?'Vence hoy':'En '+days+' días'}</span></div></section>
@@ -15493,29 +15442,9 @@ ${sett?'<div class="v1245-next is-done"><div><small>ESTADO</small><strong>Comple
       <section class="v239-sheet"><div class="v239-sheet-head"><h3>Movimientos del certificado</h3></div>${txList(recentTx().filter(t=>t.certificateId===selected.id),selected.currency)}</section>
       <details class="v239-more"><summary>Administrar certificado ${icon('arrow')}</summary><div class="v239-more-body">${productControls('certificate',selected.id,selected.archived)}</div></details></div>`}
 ;
-  function certificatesMobile(){
-    const visible=db.certificates.filter(c=>ui.showHidden||!c.archived),selected=ui.v239CertificateId?certificate(ui.v239CertificateId):null;
-    const invested=visible.filter(c=>!c.archived).reduce((s,c)=>s+fx(certificateCapital(c),c.currency),0);
-    const upcomingCerts=visible.filter(c=>certificateCapital(c)>0&&validDate(c.maturityDate)&&c.maturityDate>=today()).sort((a,b)=>a.maturityDate.localeCompare(b.maturityDate));
-    const accrued=visible.filter(c=>!c.archived).reduce((s,c)=>s+fx(certProjection(c).collected,c.currency),0);
-    if(selected)return vBanksCertificateDetail(selected);
-    const scope=ui.v239Certificates||'active';
-    const shown=visible.filter(c=>scope==='all'||(scope==='soon'?validDate(c.maturityDate)&&c.maturityDate>=today()&&diffDays(c.maturityDate,today())<=90&&certificateCapital(c)>0:!c.archived));
-    const near=visible.filter(c=>!c.archived&&certificateCapital(c)>0&&validDate(c.maturityDate)&&c.maturityDate>=today()&&diffDays(c.maturityDate,today())<=90);
-    return `<div class="v239-mobile-root v239-certificates">
-      ${top('TUS INVERSIONES','Certificados','Capital, rendimientos y fechas importantes.','addCertificate','Nuevo')}
-      <section class="v239-hero v239-cert-hero"><div class="v239-hero-top"><span class="v239-hero-label">CAPITAL INVERTIDO · EQUIVALENTE RD$</span><span class="v239-hero-icon">${icon('chart')}</span></div><strong class="v239-hero-amount">${fmt(invested)}</strong><div class="v239-hero-metrics"><div><small>PRÓXIMO VENCIMIENTO</small><strong>${upcomingCerts.length?cDate(upcomingCerts[0].maturityDate):'Sin fecha'}</strong></div><div><small>INTERÉS COBRADO*</small><strong>${fmt(accrued)}</strong></div></div><p class="v239-hero-footnote">*Cobros registrados de los certificados visibles. No incluye rendimientos estimados.</p></section>
-      <div class="v239-list-head"><div><span class="v239-eyebrow">PORTAFOLIO</span><h3>Mis inversiones</h3></div>${db.certificates.some(c=>c.archived)?visibilityControl():''}</div>
-      <div class="v239-segments" role="tablist" aria-label="Filtrar certificados">${tab('Certificates','active','Vigentes')}${tab('Certificates','soon','Próximos 90 días',near.length)}${tab('Certificates','all','Todos',visible.length)}</div>
-      <div class="v239-product-list">${shown.length?shown.slice().sort((a,b)=>String(a.maturityDate).localeCompare(String(b.maturityDate))).map(c=>{const p=certProjection(c),capital=certificateCapital(c),days=validDate(c.maturityDate)?diffDays(c.maturityDate,today()):null;return `<article class="v239-product v239-certificate-item"><div class="v239-product-top"><span class="v239-logo v239-logo-cert v239-logo-bank">${v1002BankGlyph(c,'chart')}</span><span class="v239-product-meta"><strong>${sanitize(c.name)}</strong><small>${bankCaption(bankOf(c))} · ${c.currency}</small></span><span class="v239-status ${days!==null&&days<=30?'is-due':''}">${days===null?'Sin fecha':days<0?'Vencido':days===0?'Hoy':days+' días'}</span></div><div class="v239-product-value"><small>CAPITAL CONSTITUIDO</small><strong>${fmt(capital,c.currency)}</strong></div><div class="v239-cert-info"><div><small>TASA ANUAL</small><strong>${num(c.rate).toFixed(2)}%</strong></div><div><small>VENCIMIENTO</small><strong>${cDate(c.maturityDate)}</strong></div><div><small>INTERÉS COBRADO</small><strong>${fmt(p.collected,c.currency)}</strong></div></div><div class="v239-card-actions"><button type="button" class="v239-direct-open v239-action v239-action-primary" data-v239-cert-open="${sanitize(c.id)}" aria-label="Ver detalle de ${sanitize(c.name)}">Ver inversión ${icon('arrow')}</button>${action('Cobrar interés','certificateInterest',{id:c.id,ico:'up'})}</div></article>`}).join(''):empty('chart','Sin certificados en esta vista','Crea uno nuevo o consulta otro filtro.','addCertificate','Nuevo certificado')}</div>
-      <p class="v239-bottom-note">Un certificado no es efectivo disponible. Su capital se refleja aquí hasta que se registra un rescate.</p>
-    </div>`;
-  }
+  
 
   // Páginas de escritorio quedan intactas; solo se reemplaza su cuerpo móvil.
-  pages.accounts=()=>mobile()?accountsMobile():desktop.accounts();
-  pages.loans=()=>mobile()?loansMobile():desktop.loans();
-  pages.certificates=()=>mobile()?certificatesMobile():desktop.certificates();
 
   const oldMain=main;
   main=function(){if(mobile()&&ui.page==='advanced')ui.page='overview';if(ui.page!=='certificates')ui.v239CertificateId=null;return oldMain();};
@@ -19848,7 +19777,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  const FREQ={monthly:'Mensual',weekly:'Semanal',semi_monthly:'Quincenal',quarterly:'Trimestral',semiannual:'Semestral',annual:'Anual',yearly:'Anual'};
  const freq=r=>FREQ[r.frequency]||'Periódico';
  const catOf=r=>String(r.category||'').trim()||'Sin categoría';
- const ymd=s=>{const m=/^(\d{4})-(\d\d)-(\d\d)/.exec(String(s||''));return m?{y:+m[1],m:+m[2],d:+m[3]}:null};
+ 
  const local=s=>{const p=ymd(s);return p?new Date(p.y,p.m-1,p.d):null};
  const WD=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
  
@@ -20224,7 +20153,6 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
    ${pts.length>1?grafico(a,pts):`<p class="v1191-empty">Todavía no hay suficientes cierres para trazar la evolución.</p>`}</div>`;
  }
  accountDetail=function(a){return vista(a)};
- const prevAcc=pages.accounts;pages.accounts=function(...x){const a=ui.accountId?account(ui.accountId):null;return a?vista(a):prevAcc.apply(this,x)};
  document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v1191-range]');if(!b)return;e.preventDefault();const v=b.dataset.v1191Range;St().range=v==='all'?'all':+v;render()});
  const show=(svg,i)=>{try{const pts=JSON.parse(svg.dataset.pts);const q=pts[i];if(!q)return;const cur=svg.dataset.cur;const l=svg.querySelector('.v1191-cur'),d=svg.querySelector('.v1191-dot');l.setAttribute('x1',q.x);l.setAttribute('x2',q.x);d.setAttribute('cx',q.x);d.setAttribute('cy',q.y);
   const root=svg.closest('.v1191');root.querySelector('#v1191-d').textContent=prettyDate(q.d);root.querySelector('#v1191-v').textContent=money(q.v,cur,2);const pv=pts[i-1];root.querySelector('#v1191-c').textContent=pv?((q.v-pv.v>=0?'+':'−')+money(Math.abs(q.v-pv.v),cur,2)+' frente al cierre anterior'):'Primer cierre del período'}catch(_){}};
@@ -20564,7 +20492,7 @@ function vIntelForMomentos(){
 }
 window.__viveIntel=Object.freeze({run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,strategic:vIntelStrategic,audit:()=>{const d=vIntelDiscover();return d&&{audit:d.audit,strategy:d.strategy&&d.strategy.benchmark,governance:d.strategy&&d.strategy.governance}},answer:vIntelAnswer,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
  go:id=>{const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=id;b.hidden=true;document.body.append(b);b.click();b.remove()},
- render:()=>render(),page:()=>ui.page,toast:m=>toast(m)});
+ render:()=>render(),page:()=>{if(ui.page==='banks'){const t=ui.vBanksPcProduct;if(t==='accounts'||t==='loans'||t==='certificates'||t==='cards')return t}return ui.page},toast:m=>toast(m)});
 /* Carga bajo demanda: motor, interfaz y estilos se descargan una sola vez, en reposo, la primera vez que se muestra una página con Intelligence. */
 const vIntelPages=new Set(['overview','mobilehub','register','expenses','categories','income','banks','accounts','wallet','cards','loans','patrimony','certificates','recurring','payments','pressure','budget','personal','benefits','kpis']);
 let vIntelLoading=null;
@@ -20578,6 +20506,20 @@ function vIntelEnsure(){
  });
  return vIntelLoading;
 }
+/* Bancos centralizado: Cuentas, Préstamos y Certificados ya no tienen una pantalla-lista propia (la vista vieja). La lista vive en la
+   página nueva de Bancos (filtrada por tipo); la vista antigua solo se usa al «adentrarse» en un producto concreto (cuenta, préstamo o certificado abierto). */
+const vLegacyBanksRender=render;
+render=function(...args){
+ const t=ui.page;
+ if(t==='accounts'||t==='loans'||t==='certificates'){
+  const did=t==='accounts'?ui.accountId:t==='loans'?ui.loanId:ui.v239CertificateId;
+  ui.page='banks';vBanksSelect(V_BANKS_ALL);ui.vBanksPcProduct=t;ui.vBanksDesktopSection=null;ui.vBanksPcBenefits=false;
+  ui.vBanksProductDetail=did?{kind:t,id:did}:null;   // «adentrarse» en un producto = detalle dentro de Bancos
+  if(t==='loans'&&did)loanWorkspace.tab=loanWorkspace.tab||'vision';
+  if(window.matchMedia('(max-width:790px)').matches)ui.vBanksMobileProducts=true;
+ }
+ return vLegacyBanksRender.apply(this,args);
+};
 const vIntelOldRender=render;
 render=function(...args){
  const out=vIntelOldRender.apply(this,args);

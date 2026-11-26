@@ -1260,57 +1260,6 @@ margin:6px 0 12px}
 color:#d5def5;
 line-height:1.6;
 max-width:590px}
-
-
-
-.certificate-grid{display:grid;
-grid-template-columns:repeat(2,minmax(0,1fr));
-gap:16px}
-.cert-card{padding:25px 28px}
-.cert-top{display:flex;
-gap:12px;
-align-items:center}
-.cert-emblem{width:45px;
-height:45px;
-display:grid;
-place-items:center;
-border-radius:14px;
-background:#e8f6f3;
-color:#0f8e79}
-.cert-emblem svg{width:22px;
-height:22px}
-.cert-bank{font-size:12px;
-text-transform:uppercase;
-letter-spacing:1.1px;
-font-weight:700;
-color:#6ba59b}
-.cert-top h3{font-size:16px;
-margin-top:3px;
-color:#263b4c}
-.cert-top .pill{margin-left:auto}
-.cert-amount{font-size:clamp(23px,3vw,34px);
-font-weight:700;
-color:#153d43;
-letter-spacing:-1.2px;
-margin:27px 0 19px}
-.cert-metrics{display:grid;
-grid-template-columns:1fr 1fr;
-gap:17px 10px;
-border-top:1px solid #e6eff0;
-padding-top:17px}
-.cert-metrics span{font-size:12px;
-color:#8a9fa7;
-font-weight:700}
-.cert-metrics strong{display:block;
-margin-top:5px;
-font-size:13px;
-color:#2e555b}
-.cert-actions{display:flex;
-flex-wrap:wrap;
-gap:7px;
-margin-top:24px;
-padding-top:18px;
-border-top:1px solid #e6eff0}
 @media(max-width:1250px){.world-banks .product-columns{grid-template-columns:repeat(2,minmax(0,1fr))}
 .world-banks .bank-workspace .grid.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -1318,14 +1267,12 @@ border-top:1px solid #e6eff0}
 .advanced-hero{flex-direction:column;
 align-items:flex-start;
 padding:25px}
-.certificate-grid{grid-template-columns:1fr}
 .world-banks .product-columns{grid-template-columns:1fr}
 }
 @media(max-width:450px){
 
 
 .world-banks .bank-workspace .grid.kpis{grid-template-columns:1fr}
-.cert-card{padding:18px}
 }
 
 
@@ -4483,10 +4430,7 @@ body.theme-dark .ff-executive-bubbles .ff-bubble:not(.featured) > small{color:#d
 .matrix-child-name{display:block;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding-left:19px}
 .matrix-footnote{font-size:12px;color:#7287a5;line-height:1.6;margin:12px 4px 4px}
 .matrix-report-panel{min-width:0;padding:14px 12px}.matrix-report-head{margin:16px 0!important}.matrix-top-kpis{margin-bottom:15px!important}.matrix-muted{color:#a8b6c9!important}.matrix-strong{font-weight:700!important}.matrix-empty{text-align:center!important;color:#8d9db5!important;padding:25px!important}
-.account-drill-kpi{font:inherit;text-align:left;min-width:0;cursor:pointer;width:100%;display:flex;flex-direction:column;justify-content:space-between;transition:transform .16s,border-color .16s}
-.account-drill-kpi:hover,.account-drill-kpi.is-active{transform:translateY(-2px);border-color:#97b8ef!important;box-shadow:0 15px 26px #45689514!important}
-.account-drill-kpi .kpi-head{display:flex;width:100%;align-items:center;justify-content:space-between}.account-drill-kpi .kpi-value{display:block}.account-drill-kpi .kpi-foot{display:block}
-.account-breakdown-panel{margin:16px 0;min-width:0}.account-breakdown-panel .panel-head{flex-wrap:wrap}.account-balance-link{display:block;width:100%;text-align:left;border:0;background:transparent;letter-spacing:-.5px;font-weight:700;color:#294a77;cursor:pointer;padding:0}.account-balance-link span{color:#7395c8}.account-balance-link:hover{color:#4f78ca}
+.account-breakdown-panel{margin:16px 0;min-width:0}.account-breakdown-panel .panel-head{flex-wrap:wrap}
 body.theme-dark .matrix-detail-table .matrix-group td{background:#354766!important;color:#d3e3ff!important}body.theme-dark .matrix-detail-table td:first-child,body.theme-dark .matrix-fit .compact-grid td:first-child{background:#1a2940!important;color:#e6efff!important}body.theme-dark .matrix-detail-table td.matrix-num,body.theme-dark .matrix-fit .compact-grid td.matrix-num{color:#e2e9fc!important}body.theme-dark .matrix-detail-table thead th,body.theme-dark .matrix-fit .compact-grid th{background:#263653!important;color:#dbe6f9!important}body.theme-dark .matrix-detail-table .matrix-child td,body.theme-dark .matrix-detail-table .matrix-total td,body.theme-dark .matrix-fit .compact-grid tbody td{background:#1b2b44!important}body.theme-dark .matrix-expand,body.theme-dark .matrix-static-label,body.theme-dark .account-balance-link{color:#d5e6ff!important}
 @media(max-width:1250px){.matrix-fit .compact-grid,.matrix-detail-table{min-width:1070px!important}.matrix-report-panel{padding:10px}.matrix-fit .compact-grid th,.matrix-fit .compact-grid td,.matrix-detail-table th,.matrix-detail-table td{font-size:12px!important;padding:9px 4px!important}}
 @media(max-width:750px){.matrix-fit .compact-grid,.matrix-detail-table{min-width:1040px!important}.matrix-report-head{flex-wrap:wrap}.matrix-report-panel{padding:8px}}
@@ -6078,8 +6022,6 @@ body.theme-dark #page .v27-budget-last strong{color:#8fe0c6!important}
 .credit-network-discover{font-weight:700;font-size:12px;letter-spacing:-.35px}
 .credit-network-generic{font-size:12px;opacity:.8;font-weight:700;letter-spacing:.6px}
 /* Las gestiones especiales se integran al mismo registro rápido, sin tarjetas azules pesadas. */
-.v28-account-bankline{display:flex;align-items:center;gap:7px}
-.v28-account-bankline .bank-inline-logo{width:20px;height:20px}
 @media(max-width:580px){.v28-card-identifiers{grid-template-columns:1fr}.v28-bank-upload{align-items:flex-start;padding:13px;gap:11px}.v28-bank-upload #bankLogoPreview .bank-photo-mark{width:59px;height:59px}.v28-card-bottom small{display:none}}
 
 /* V59 · Tarjetas móviles estilo wallet */
@@ -8457,21 +8399,10 @@ body.theme-black .v213-apple-badge{background:#17282d;border-color:#38636b;color
 /* ==== vive-v220-instituciones-cuentas-fix ==== */
 /* V220 · Refinamiento visual de cuentas e instituciones, sin cambiar la lógica */
 .cards-grid{align-items:start!important}
-.account-product-card{display:grid!important;grid-template-rows:auto auto auto auto!important;align-content:start!important;gap:12px!important;min-height:0!important;padding:16px 18px 15px!important}
-.account-product-card .split{align-items:flex-start!important;gap:10px!important}
-.account-product-card .name{font-size:15px!important;line-height:1.2!important}
-.account-product-card .type{font-size:12px!important;line-height:1.45!important}
-.account-balance-link{margin:0!important;font-size:clamp(21px,1.9vw,28px)!important;line-height:1.05!important}
-.account-balance-link span{font-size:.8em!important}
-.account-product-card .product-mini-actions,.v176-account-actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin:0!important}
-.account-product-card .bottom{margin-top:0!important;padding-top:10px!important;border-top:1px solid #edf2f8!important;align-items:flex-start!important;justify-content:space-between!important;gap:10px!important}
 
 /* Instituciones: tarjetas laterales más compactas y limpias */
 
 /* Detalle de institución: menos estirado, más organizado y más cercano al flujo de tarjetas */
-@media(max-width:680px){
-  .account-product-card{padding:15px!important}
-}
 /* ==== v221-movimientos-unificados ==== */
 /* V221 — Estados integrados, sin segunda pantalla de confirmación. */
 .v221-status-summary{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:13px 0 16px;max-width:100%}
@@ -17476,16 +17407,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   gap: 7px;
   flex-wrap: wrap;
 }
-.v176-account-actions {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.v176-account-actions .product-controls {
-  display: contents;
-}
 .v176-card-kpi {
   display: block;
   text-align: left;
@@ -20199,9 +20120,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
     pointer-events: none;
     z-index: -1;
   }
-  .main .v239-loan-hero {
-    background: linear-gradient(135deg,#222d52 0%,#354d85 55%,#526dab 100%);
-  }
   .main .v239-cert-hero {
     background: linear-gradient(135deg,#174f53 0%,#276d6a 53%,#448d83 100%);
   }
@@ -20299,12 +20217,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
     font-weight: 700;
     color: #fff !important;
     overflow-wrap: anywhere;
-  }
-  .main .v239-hero-footnote {
-    font-size: 12px;
-    color: rgba(245,249,255,.7) !important;
-    line-height: 1.45;
-    margin: 11px 0 0;
   }
   .main .v239-actions {
     display: grid;
@@ -20453,10 +20365,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
     color: #237d68;
     background: #e7f7ee;
   }
-  .main .v239-logo-cert {
-    color: #1d8471;
-    background: #e0f4ea;
-  }
   .main .v239-product-meta {
     flex: 1 1 auto;
     min-width: 0;
@@ -20486,14 +20394,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
     font-weight: 700;
     white-space: nowrap;
     color: var(--v239-muted);
-  }
-  .main .v239-status.is-paid {
-    color: #17836b;
-    background: #e9f8ee;
-  }
-  .main .v239-status.is-due {
-    color: #be1d38;
-    background: #ffe2e7;
   }
   .main .v239-product-value {
     padding: 18px 0 13px;
@@ -20580,62 +20480,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   .main .v239-empty .v239-action {
     width: auto;
     padding: 0 17px;
-  }
-  .main .v239-cert-info small {
-    display: block;
-    color: var(--v239-muted);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .05em;
-    margin-bottom: 5px;
-  }
-  .main .v239-cert-info strong {
-    font-size: 13px;
-    line-height: 1.3;
-    color: var(--v239-ink);
-    font-weight: 700;
-    overflow-wrap: anywhere;
-  }
-  .main .v239-card-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 14px;
-  }
-  .main .v239-card-actions .v239-action {
-    min-height: 43px;
-  }
-  .main .v239-card-actions .v239-direct-open {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    border-radius: 13px;
-    min-height: 43px;
-    border: 0;
-    background: var(--v239-blue);
-    color: #fff !important;
-    font-size: 12px;
-    font-weight: 700;
-    box-shadow: none;
-  }
-  .main .v239-card-actions .v239-direct-open svg {
-    height: 16px;
-    width: 16px;
-  }
-  .main .v239-cert-info {
-    display: grid;
-    grid-template-columns: .7fr 1.1fr 1.2fr;
-    border-top: 1px solid var(--v239-line);
-    gap: 7px;
-    padding-top: 14px;
-  }
-  .main .v239-cert-info>div+div {
-    border-left: 1px solid var(--v239-line);
-    padding-left: 9px;
-  }
-  .main .v239-cert-info strong {
-    font-size: 12px;
   }
   .main .v239-back {
     display: inline-flex;
@@ -20871,30 +20715,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
     width: 100%;
   }
   /*El detalle de amortización conserva TODAS sus pestañas, gráficas y acciones.*/
-  .main .v239-loan-deep {
-    padding-top: 0;
-  }
-  .main .v239-loan-deep .loan-workspace {
-    min-width: 0;
-    max-width: 100%;
-    width: 100%;
-    overflow-x: clip;
-  }
-  .main .v239-loan-deep :is(.loan-detail-top,.loan-compact-facts,.loan-detail-kpis,.loan-tab-content,.loan-compare,.loan-panel,.loan-product,.glass-loan) {
-    min-width: 0;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-  .main .v239-loan-deep .loan-back {
-    min-height: 40px;
-    max-width: 100%;
-    font-size: 12px;
-  }
-  .main .v239-loan-deep :is(.loan-compare-scroll,.loan-line-chart,.loan-amort-scroll,.table-wrap,.loan-tab-content table) {
-    max-width: 100%;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-  }
   /*Ocultar exclusivamente el acceso móvil a analítica avanzada.*/
   .main [data-act="navigate"][data-id="advanced"],
   .main .universe-switch [data-id="advanced"],
@@ -20918,9 +20738,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   }
   .main .v239-segment {
     padding: 7px 8px;
-    font-size: 12px;
-  }
-  .main .v239-cert-info strong {
     font-size: 12px;
   }
 }
@@ -20955,23 +20772,12 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
     background: #1d453e;
     color: #8de1c9;
   }
-  body.theme-black .main .v239-status.is-paid {
-    background: #1e473b;
-    color: #91e4be;
-  }
-  body.theme-black .main .v239-status.is-due {
-    background: #503d2c;
-    color: #ff9bac;
-  }
   body.theme-black .main .v239-hero {
     background: linear-gradient(135deg,#1d3970,#31549d 68%,#5272ab) !important;
     border-color: rgba(168,195,243,.25) !important;
   }
   body.theme-black .main .v239-cert-hero {
     background: linear-gradient(135deg,#154c49,#22665f 68%,#428479) !important;
-  }
-  body.theme-black .main .v239-loan-hero {
-    background: linear-gradient(135deg,#252e52,#384e84 68%,#526da4) !important;
   }
   body.theme-black .main .v239-hero :is(.v239-hero-amount,.v239-hero-metrics strong,.v239-hero-label,.v239-detail-hero h2,.v239-detail-hero>strong) {
     color: #fff !important;
@@ -33629,18 +33435,6 @@ html body.theme-black #app .vive-mobile-home .v421-creative-compact{
   }
 
   /* PRÉSTAMOS · con diseño geométrico / arcos */
-  html body #app .v239-loans .v239-hero{
-    background:linear-gradient(135deg,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 58%,#243e84) 0%,color-mix(in srgb,var(--vive-theme-color,#5f7cff) 32%,#6b89dc) 100%)!important;
-    border:1px solid rgba(255,255,255,.12)!important;
-    box-shadow:0 16px 32px color-mix(in srgb,var(--vive-theme-color,#5f7cff) 13%,transparent)!important;
-  }
-  html body #app .v239-loans .v239-hero::before{
-    content:"";position:absolute;inset:-24px -12px auto auto;width:170px;height:170px;border-radius:50%;
-    border:1px solid rgba(255,255,255,.12);box-shadow:0 0 0 18px rgba(255,255,255,.05),0 0 0 40px rgba(255,255,255,.035);pointer-events:none;
-  }
-  html body #app .v239-loans .v239-hero::after{
-    content:"";position:absolute;left:0;top:0;bottom:0;width:44%;background:linear-gradient(90deg,rgba(255,255,255,.035),transparent);pointer-events:none;
-  }
 
   /* CERTIFICADOS · rayado elegante */
   html body #app .v239-certificates .v239-cert-hero{
@@ -46944,12 +46738,8 @@ html body #app#app .v144-card-face.tier-titanium{background:linear-gradient(125d
  html body #app#app .main .v239-action.v239-action-primary *{color:#fff!important}
  html body #app#app .main .v239-add{color:var(--vx-accent-ink)!important}
  /* Detalle del préstamo: tonos terracota → acento */
- html body #app#app .main .v239-loan-deep :is(.loan-overline,.loan-detail-micro,.loan-inline-button,.loan-compare-header strong:last-child,.loan-compare-row b:last-child){color:var(--vx-accent-ink)!important}
- html body #app#app #page#page .v239-loan-deep .btn.sm:is(.ghost,.soft),
- html body #app#app #page#page .v239-loan-deep .btn:is(.ghost,.soft){background:rgba(255,255,255,.72)!important;color:var(--vx-accent-ink)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 30%,transparent)!important;box-shadow:none!important}
  /* Acciones de cabecera: cuadrícula ordenada, sin textos partidos */
  /* Comparativa de escenarios: columnas con ancho real; desplazamiento solo dentro de la tarjeta */
- html body #app#app .main .v239-loan-deep :is(.loan-compare-header,.loan-compare-row){grid-template-columns:104px repeat(3,minmax(110px,1fr))!important;column-gap:8px}
  /* Hero v239: cifras secundarias en una sola línea */
  html body #app#app .main .v239-hero :is(.v239-hero-bottom,.v239-hero-metrics) strong{font-size:clamp(15px,4.6vw,18px)!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 }
@@ -47921,7 +47711,6 @@ html body:not(.theme-black):not(.theme-dark) #app :is(.module-switch-tab,.inner-
 html body:not(.theme-black):not(.theme-dark) #app :is(.module-switch-tab,.inner-menu-tab):not(.active):not(.selected){color:color-mix(in srgb,var(--vx-accent-ink) 14%,#6a7484)}
 html body:not(.theme-black):not(.theme-dark) #app :is(.module-switch-tab,.inner-menu-tab) svg{stroke:currentColor}
 html body #app#app .v58-left>.v58-kicker,html body #app#app .v58-kicker{color:rgba(255,255,255,.8)!important}
-html body:not(.theme-black):not(.theme-dark) #app#app .account-balance-link span,html body:not(.theme-black):not(.theme-dark) #app#app .account-balance-link{color:var(--vx-accent-ink)}
 
 /* V1014 · Contraste AA: texto atenuado más legible en tema claro */
 html body:not(.theme-black):not(.theme-dark){--muted:var(--vx-mute)}
@@ -50360,50 +50149,6 @@ flex-wrap:nowrap}
 }
 .account-history .panel-head{display:flex;justify-content:space-between;align-items:center}
 .account-history .panel-head h3{font-size:15px;margin:0 0 5px}
-@media (max-width:790px){
-.main .v239-loan-deep .loan-tabs {
-    display: flex;
-    gap: 7px;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    scrollbar-width: none;
-    white-space: nowrap;
-    padding: 5px 0 8px;
-    overscroll-behavior-inline: contain;
-  }
-.main .v239-loan-deep .loan-tabs::-webkit-scrollbar {
-    display: none;
-  }
-.main .v239-loan-deep .loan-tab {
-    flex: 0 0 auto;
-    white-space: nowrap;
-    min-height: 43px;
-    border-radius: 12px;
-    padding: 8px 11px;
-    font-size: 12px;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-@media (max-width:790px){
-html body #app#app .main .v239-loan-deep .loan-tab.on{color:var(--vx-accent-ink)!important;box-shadow:0 6px 16px -10px var(--v424-accent-shadow,rgba(75,70,201,.5))}
-html body #app#app .main .v239-loan-deep .loan-action-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-html body #app#app .main .v239-loan-deep .loan-action-row .btn{min-height:44px;white-space:nowrap;justify-content:center}
-html body #app#app .main .v239-loan-deep .loan-compare-table{min-width:470px}
-html body #app#app .main .v239-loan-deep .loan-compare-row b{white-space:nowrap;font-variant-numeric:tabular-nums;font-size:12.5px}
-html body #app#app .main .v239-loan-deep .loan-compare-header strong{font-size:12px;white-space:normal}
-}
 
 
 /* v1131b · Web: acento dinámico en la columna lateral y proporciones a pantalla completa */
@@ -50464,12 +50209,7 @@ html body #app#app #page :is(.v911-eyebrow,.v911-kicker,.v56-section-label,.summ
 html body #app#app #page .v911-month{align-self:flex-end;margin-left:auto}
 html body #app#app #page .v252-hero-title{font-size:26px!important;font-weight:700!important;letter-spacing:-.04em!important}
 /* v1136 · Cuentas: efectivo (RD$/US$) con la misma tipografía, color y alto que las cuentas bancarias */
-html body #app#app #page .account-product-card.v258-cash-product .name{color:var(--v424-ink,#17243b)!important;font-size:15px!important;font-weight:700!important}
-html body:is(.theme-black,.theme-dark) #app#app #page .account-product-card.v258-cash-product .name{color:#f4f6fb!important}
-html body #app#app #page .account-product-card .account-balance-link{color:var(--vx-accent-ink)!important;font-size:26px!important;font-weight:700!important;letter-spacing:-.03em!important}
-html body #app#app #page .account-product-card .type{font-size:12px!important}
 html body #app#app #page .cards-grid:has(.account-product-card){align-items:stretch}
-html body #app#app #page .account-product-card{display:flex;flex-direction:column;justify-content:space-between;gap:10px}
 
 /* v1149 · % de participación bajo el importe de cada compromiso */
 html body #app#app .v1149-amt{display:inline-flex;flex-direction:column;align-items:center;gap:2px;line-height:1.1}
@@ -50982,7 +50722,6 @@ html body #app#app #page .loan-vision-v2>.loan-compare{grid-column:2;grid-row:1;
 }
 /* v1226 · Cuentas: todas las tarjetas con la misma dimensión y alineadas */
 html body #app#app #page .cards-grid:has(.account-product-card){grid-auto-rows:1fr;align-items:stretch!important}
-html body #app#app #page .cards-grid .account-product-card{height:100%!important;min-height:0!important;align-self:stretch!important;margin:0!important;transform:none!important;display:flex!important;flex-direction:column;justify-content:space-between}
 @media(min-width:791px){html body #app#app #page .loan-vision-v2{align-items:stretch}html body #app#app #page .loan-vision-v2>.loan-compare{height:auto}}
 /* v1227 · Hojas móviles: el botón principal ocupa todo el ancho, en una sola línea y centrado */
 @media(max-width:790px){
@@ -51240,38 +50979,6 @@ html body #app#app .v1244-ccy i{font-style:normal;font-size:12px;font-weight:700
 }
 
 /* V1245 · Préstamos móvil rediseñado */
-@media(max-width:790px){
-html body #app#app .v239-loan-hero{padding:18px 20px 16px!important}
-html body #app#app .v239-loan-hero .v239-hero-amount{font-size:34px!important;margin:6px 0 12px!important}
-html body #app#app .v239-loan-hero .v239-hero-metrics{padding-top:12px!important}
-html body #app#app .v1245-loan{display:grid;gap:14px;padding:16px!important}
-html body #app#app .v1245-body{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;align-items:center}
-html body #app#app .v1245-ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--v424-accent-strong) calc(var(--p)*1%),color-mix(in srgb,var(--v424-accent-strong) 14%,transparent) 0)}
-html body #app#app .v1245-ring>div{width:72px;height:72px;border-radius:50%;display:grid;place-content:center;text-align:center;background:var(--v1245-in,#fff)}
-html body.theme-black #app#app .v1245-ring>div,html body.theme-dark #app#app .v1245-ring>div{--v1245-in:#0b0b0e}
-html body #app#app .v1245-ring b{font-size:19px;font-weight:700;letter-spacing:-.04em;line-height:1}
-html body #app#app .v1245-ring small{font-size:12px;opacity:.6;margin-top:2px}
-html body #app#app .v1245-figs{display:grid;gap:3px;min-width:0}
-html body #app#app .v1245-figs>small{font-size:12px;font-weight:700;letter-spacing:.13em;opacity:.6}
-html body #app#app .v1245-figs>strong{font-size:25px;font-weight:700;letter-spacing:-.04em;line-height:1.05}
-html body #app#app .v1245-sub{display:flex;gap:14px;flex-wrap:wrap;margin-top:5px;font-size:13px;font-weight:700}
-html body #app#app .v1245-sub i{font-style:normal;font-size:12px;font-weight:700;opacity:.55;margin-right:5px}
-html body #app#app .v1245-next{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 14px;border-radius:16px;background:color-mix(in srgb,var(--v424-accent-strong) 8%,transparent)}
-html body #app#app .v1245-next small{display:block;font-size:12px;font-weight:700;letter-spacing:.13em;opacity:.6}
-html body #app#app .v1245-next strong{font-size:14.5px}
-html body #app#app .v1245-when{font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:color-mix(in srgb,var(--v424-accent-strong) 16%,transparent);white-space:nowrap}
-html body #app#app .v1245-next.is-late{background:rgba(212,82,94,.1)}html body #app#app .v1245-next.is-late .v1245-when{background:rgba(212,82,94,.18);color:#c23d4b}
-html body #app#app .v1245-actions{display:grid!important;grid-template-columns:1.4fr 1fr;gap:10px}
-}
-@media(max-width:790px){
-html body #app#app .v1245-body{grid-template-columns:84px minmax(0,1fr);gap:14px}
-html body #app#app .v1245-ring{width:84px;height:84px}
-html body #app#app .v1245-ring>div{width:62px;height:62px}
-html body #app#app .v1245-ring b{font-size:17px}
-html body #app#app .v1245-figs>strong{font-size:22px;white-space:nowrap}
-html body #app#app .v1245-sub{gap:4px 12px;font-size:12.5px}
-html body #app#app .v1245-sub span{white-space:nowrap}
-}
 
 /* V1246 · Detalle de préstamo rediseñado (web y móvil) */
 html body #app#app .v1246{display:grid;gap:14px}
@@ -51880,7 +51587,6 @@ html body:is(.theme-black,.theme-dark) #app#app #page#page#page#page .v726-profi
 html body #app#app #page .v439-mac-top>div:first-child>:is(h1,span){display:none!important}
 html body #app#app #page .v439-mac-top{min-height:0!important;margin-bottom:6px!important;padding-block:0!important}
 }
-@media(min-width:791px){html body #app#app #page .certificate-grid>.cert-card:only-child{grid-column:1/-1}}
 @media(min-width:791px){
 html body #app#app .main.world-loans #page .loans-world .loan-card-grid{grid-template-columns:repeat(auto-fill,minmax(420px,1fr))!important}
 html body #app#app .main.world-loans #page .loans-world .loan-card-grid>.loan-product.v1265-loan:only-child{grid-column:1/-1;max-width:none!important}
@@ -51888,7 +51594,6 @@ html body #app#app .main.world-loans #page .v1265-loan:only-child{grid-template-
 html body #app#app .main.world-loans #page .v1265-loan:only-child>.v1265-head,html body #app#app .main.world-loans #page .v1265-loan:only-child>.v1265-foot{grid-column:1/-1}
 html body #app#app .main.world-loans #page .v1265-loan:only-child>.v1265-stats,html body #app#app .main.world-loans #page .v1265-loan:only-child>.v1265-next{grid-column:2}
 html body #app#app .main.world-loans #page .v1265-loan:only-child>.v1265-body{grid-column:1;grid-row:2/span 2}
-html body #app#app #page .cards-grid:has(.account-product-card)>.account-product-card:only-child{grid-column:1/-1}
 }
 /* V1276 · Movimientos (web): sin título repetido ni explicación; queda el conteo y el botón */
 @media(min-width:791px){

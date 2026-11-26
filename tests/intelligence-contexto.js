@@ -4,7 +4,7 @@ let ok=0,bad=0;const check=(n,c,x)=>{if(c){ok++;console.log('✓',n)}else{bad++;
 (async()=>{const b=await chromium.launch();const errs=[];
  for(const [name,w,h,touch] of [['móvil',390,844,'1'],['PC',1440,900,'']]){if(touch)process.env.TOUCH='1';else delete process.env.TOUCH;
   const {p}=await open(b,w,h);p.on('pageerror',e=>errs.push(e.message));await p.evaluate(g=>window.__T.go(g),'overview');await p.waitForTimeout(1300);
-  const T={};for(const pg of ['overview','wallet','loans','register','recurring','pressure','banks']){await p.evaluate(g=>window.__T.go(g),pg);await p.waitForTimeout(900);
+  const T={};for(const pg of ['overview','wallet','loans','register','recurring','pressure','banks']){await p.evaluate(g=>window.__viveIntel.go(g),pg);await p.waitForTimeout(900);
    T[pg]=await p.evaluate(()=>{const s=document.querySelector('.vi-strip');return s?s.querySelector('strong').textContent:null})}
   const titles=Object.values(T).filter(Boolean);
   check(`[${name}] el mensaje varía según la página (≥ 6 mensajes distintos en 7 páginas)`,new Set(titles).size>=6,T);

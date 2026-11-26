@@ -115,3 +115,10 @@
 - `48abaa0` V1042: sin destello blanco al cambiar de vista: se retiran backdrop-filter de paneles/barras y el fondo fijo pasa a capa propia
 - `613f9bf` V1043: sincronización incremental por colección, sin descargas con la pestaña oculta, sondeo Apple Pay cada 10 min
 - `5e915f0` V1044: Apple Pay con sondeo mínimo (Realtime como vía principal); documentación de la limpieza de tablas heredadas
+
+## Bancos centralizado: se elimina la vista vieja de Cuentas / Préstamos / Certificados
+- Cuentas, Préstamos y Certificados ya no tienen pantalla-lista propia: cualquier entrada (menú, botones, buscador, Intelligence) abre la página nueva de Bancos filtrada por tipo; al «adentrarse» en un producto se abre su detalle dentro de Bancos (el mismo que ya usaba la interfaz nueva).
+- Código eliminado (detectado con análisis de alcance, no a ojo): `originalAccounts`, `accounts`, `certificates`, `loansMobile`, `certificatesMobile`, `ymd` y los registros `pages.accounts/loans/certificates`; 112 reglas de `styles.css` que ya ningún HTML emite (−13 KB CSS, −16 KB JS).
+- Se conserva lo reutilizado al adentrarse: `loans()`/`loanDetail`/`loanWorkspace`, el detalle de cuenta y de certificado.
+- Verificación: 51 de 52 capturas (PC y móvil, claro y Black, 9 pantallas + tipos y detalles de Bancos) idénticas píxel a píxel antes/después (la restante, 0,08 %); `bancos-pc-glass`, `bancos-movil-referencia`, `detalles`, `movimientos-costos-prestamo` y `remediacion-03` pasan; `prestamos` queda igual que antes (1 fallo previo). Las pruebas `prestamos` y `detalles` se actualizaron al flujo nuevo.
+- Pendiente (no se tocó): las familias CSS `v46/v57/v239` siguen en uso por los detalles y no se pueden quitar sin rehacerlos con el diseño nuevo; `auditoria-estados` falla igual que antes.
