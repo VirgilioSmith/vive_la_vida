@@ -368,7 +368,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     }
     assert.equal(individual[0].cuts[0],(await p.evaluate(()=>window.__T.fn.today().endsWith('-01')))?1910:1390);
     assert.deepEqual(individual[1].cuts,[275,20.05]);
-    await openTools();await p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]').tap();await waitSelected(GLOBAL);
+    await openTools();await p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]').tap();await waitSelected(GLOBAL);await p.waitForTimeout(700);   // deja terminar el repintado de la vista consolidada
     assert.equal(await read('.v565-secondary > b'),3994);
     assert.equal(await read('.v565-primary > strong'),5394);
     assert.equal(await read('.v1244-limits > strong'),7100);
