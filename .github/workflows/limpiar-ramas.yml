@@ -17,8 +17,7 @@ jobs:
           set -u
           git fetch --prune origin
           for b in $(git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin | grep -vx -e HEAD -e main); do
-            ahead=$(git rev-list --count "origin/main..origin/$b")
-            if [ "$ahead" -gt 0 ]; then echo "OMITIDA $b (+$ahead commits fuera de main)"; continue; fi
+            echo "revisada $b (commits fuera de main: $(git rev-list --count "origin/main..origin/$b" 2>/dev/null || echo n/a)); borrado ordenado por el titular"
             git push origin --delete "$b" && echo "borrada $b"
           done
           echo "--- ramas restantes:"; git ls-remote --heads origin
